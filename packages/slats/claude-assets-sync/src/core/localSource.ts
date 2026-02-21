@@ -1,6 +1,10 @@
 import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
-import type { AssetType, GitHubEntry } from '@/claude-assets-sync/utils/types.js';
+
+import type {
+  AssetType,
+  GitHubEntry,
+} from '@/claude-assets-sync/utils/types.js';
 
 export interface LocalSourceResult {
   available: boolean;
@@ -23,7 +27,10 @@ export const canUseLocalSource = (
   const docsPath = join(cwd, 'node_modules', packageName, assetPath);
 
   if (!existsSync(docsPath)) {
-    return { available: false, reason: `Local docs path not found: ${docsPath}` };
+    return {
+      available: false,
+      reason: `Local docs path not found: ${docsPath}`,
+    };
   }
 
   // Check installed version
@@ -37,7 +44,10 @@ export const canUseLocalSource = (
       };
     }
   } catch {
-    return { available: false, reason: 'Failed to read package.json from node_modules' };
+    return {
+      available: false,
+      reason: 'Failed to read package.json from node_modules',
+    };
   }
 
   return { available: true, docsPath };
@@ -47,7 +57,9 @@ export const canUseLocalSource = (
  * Read directory contents and return .md files and subdirs in GitHubEntry format.
  * Returns null if the directory doesn't exist.
  */
-export const fetchLocalDirectoryContents = (dirPath: string): GitHubEntry[] | null => {
+export const fetchLocalDirectoryContents = (
+  dirPath: string,
+): GitHubEntry[] | null => {
   if (!existsSync(dirPath)) return null;
 
   try {
@@ -106,7 +118,11 @@ export const expandLocalDirectoryEntries = (
       const subDirPath = join(dirPath, entry.name);
       const subEntries = fetchLocalDirectoryContents(subDirPath);
       if (subEntries) {
-        const expanded = expandLocalDirectoryEntries(subDirPath, subEntries, entryPrefix);
+        const expanded = expandLocalDirectoryEntries(
+          subDirPath,
+          subEntries,
+          entryPrefix,
+        );
         result.push(...expanded);
       }
     }

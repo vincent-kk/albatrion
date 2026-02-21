@@ -216,7 +216,10 @@ describe('CLI E2E Tests', () => {
           'canard-schemaForm': {
             originalName: '@canard/schema-form',
             version: '0.10.0',
-            files: { commands: [{ name: 'test.md', isDirectory: false }], skills: [{ name: 'skill.md', isDirectory: false }] },
+            files: {
+              commands: [{ name: 'test.md', isDirectory: false }],
+              skills: [{ name: 'skill.md', isDirectory: false }],
+            },
           },
         },
       };

@@ -3,6 +3,7 @@
  */
 import pc from 'picocolors';
 
+import { SCHEMA_VERSIONS } from '@/claude-assets-sync/core/constants';
 import {
   buildSkillUnitsFromTree,
   scanPackageAssets,
@@ -14,7 +15,6 @@ import {
   updatePackageVersion,
   writeUnifiedSyncMeta,
 } from '@/claude-assets-sync/core/syncMeta';
-import { SCHEMA_VERSIONS } from '@/claude-assets-sync/core/constants';
 import { logger } from '@/claude-assets-sync/utils/logger';
 import {
   findGitRoot,
@@ -83,16 +83,28 @@ export const runUpdateCommand = async (
 
     if (!currentPkgInfo) {
       const location = isLocal ? 'workspace' : 'node_modules';
-      console.log(pc.yellow(`  ⚠ Package not found in ${location}, skipping version update`));
+      console.log(
+        pc.yellow(
+          `  ⚠ Package not found in ${location}, skipping version update`,
+        ),
+      );
     } else {
       // Step 2: Update version if changed
       const newVersion = currentPkgInfo.version;
       if (newVersion !== packageInfo.version) {
         if (options.dryRun) {
-          console.log(pc.gray(`  [DRY RUN] Would update version: ${packageInfo.version} → ${newVersion}`));
+          console.log(
+            pc.gray(
+              `  [DRY RUN] Would update version: ${packageInfo.version} → ${newVersion}`,
+            ),
+          );
         } else {
           updatedMeta = updatePackageVersion(updatedMeta, prefix, newVersion);
-          console.log(pc.green(`  ✓ Version updated: ${packageInfo.version} → ${newVersion}`));
+          console.log(
+            pc.green(
+              `  ✓ Version updated: ${packageInfo.version} → ${newVersion}`,
+            ),
+          );
           hasChanges = true;
         }
       } else {
@@ -120,7 +132,9 @@ export const runUpdateCommand = async (
 
           const added = scannedUnits.filter((u) => !currentNames.has(u.name));
           const removed = currentUnits.filter((u) => !scannedNames.has(u.name));
-          const unchanged = currentUnits.filter((u) => scannedNames.has(u.name));
+          const unchanged = currentUnits.filter((u) =>
+            scannedNames.has(u.name),
+          );
 
           if (added.length > 0 || removed.length > 0) {
             // Merge: keep current selection, add new, warn about removed
@@ -128,15 +142,27 @@ export const runUpdateCommand = async (
 
             if (options.dryRun) {
               if (added.length > 0) {
-                console.log(pc.gray(`  [DRY RUN] ${assetType}: ${added.length} new skill(s) found`));
+                console.log(
+                  pc.gray(
+                    `  [DRY RUN] ${assetType}: ${added.length} new skill(s) found`,
+                  ),
+                );
                 for (const u of added) {
-                  console.log(pc.gray(`    + ${u.name}${u.isDirectory ? '/' : ''}`));
+                  console.log(
+                    pc.gray(`    + ${u.name}${u.isDirectory ? '/' : ''}`),
+                  );
                 }
               }
               if (removed.length > 0) {
-                console.log(pc.yellow(`  [DRY RUN] ${assetType}: ${removed.length} skill(s) no longer in upstream`));
+                console.log(
+                  pc.yellow(
+                    `  [DRY RUN] ${assetType}: ${removed.length} skill(s) no longer in upstream`,
+                  ),
+                );
                 for (const u of removed) {
-                  console.log(pc.yellow(`    - ${u.name}${u.isDirectory ? '/' : ''}`));
+                  console.log(
+                    pc.yellow(`    - ${u.name}${u.isDirectory ? '/' : ''}`),
+                  );
                 }
               }
             } else {
@@ -148,15 +174,27 @@ export const runUpdateCommand = async (
               );
 
               if (added.length > 0) {
-                console.log(pc.green(`  ✓ ${assetType}: ${added.length} new skill(s) added to meta`));
+                console.log(
+                  pc.green(
+                    `  ✓ ${assetType}: ${added.length} new skill(s) added to meta`,
+                  ),
+                );
                 for (const u of added) {
-                  console.log(pc.green(`    + ${u.name}${u.isDirectory ? '/' : ''}`));
+                  console.log(
+                    pc.green(`    + ${u.name}${u.isDirectory ? '/' : ''}`),
+                  );
                 }
               }
               if (removed.length > 0) {
-                console.log(pc.yellow(`  ⚠ ${assetType}: ${removed.length} skill(s) no longer in upstream (kept in meta)`));
+                console.log(
+                  pc.yellow(
+                    `  ⚠ ${assetType}: ${removed.length} skill(s) no longer in upstream (kept in meta)`,
+                  ),
+                );
                 for (const u of removed) {
-                  console.log(pc.yellow(`    - ${u.name}${u.isDirectory ? '/' : ''}`));
+                  console.log(
+                    pc.yellow(`    - ${u.name}${u.isDirectory ? '/' : ''}`),
+                  );
                 }
               }
               hasChanges = true;
@@ -167,8 +205,12 @@ export const runUpdateCommand = async (
             const refreshedUnits = currentUnits.map((current) => {
               const scanned = scannedUnits.find((s) => s.name === current.name);
               if (scanned && scanned.isDirectory && current.isDirectory) {
-                const currentInternal = (current.internalFiles || []).sort().join(',');
-                const scannedInternal = (scanned.internalFiles || []).sort().join(',');
+                const currentInternal = (current.internalFiles || [])
+                  .sort()
+                  .join(',');
+                const scannedInternal = (scanned.internalFiles || [])
+                  .sort()
+                  .join(',');
                 if (currentInternal !== scannedInternal) {
                   internalChanged = true;
                   return { ...current, internalFiles: scanned.internalFiles };
@@ -184,10 +226,16 @@ export const runUpdateCommand = async (
                 assetType,
                 refreshedUnits,
               );
-              console.log(pc.green(`  ✓ ${assetType}: internal file lists updated`));
+              console.log(
+                pc.green(`  ✓ ${assetType}: internal file lists updated`),
+              );
               hasChanges = true;
             } else if (internalChanged && options.dryRun) {
-              console.log(pc.gray(`  [DRY RUN] ${assetType}: would update internal file lists`));
+              console.log(
+                pc.gray(
+                  `  [DRY RUN] ${assetType}: would update internal file lists`,
+                ),
+              );
             } else {
               console.log(pc.gray(`  ${assetType}: no changes`));
             }
@@ -195,7 +243,11 @@ export const runUpdateCommand = async (
         }
       }
     } catch {
-      console.log(pc.yellow(`  ⚠ Could not scan package assets, skipping filesystem update`));
+      console.log(
+        pc.yellow(
+          `  ⚠ Could not scan package assets, skipping filesystem update`,
+        ),
+      );
     }
 
     // Step 4: Optionally re-sync files
@@ -217,7 +269,8 @@ export const runUpdateCommand = async (
         );
         console.log(pc.green(`  ✓ Files synced`));
       } catch (error) {
-        const message = error instanceof Error ? error.message : 'Unknown error';
+        const message =
+          error instanceof Error ? error.message : 'Unknown error';
         console.log(pc.red(`  ✗ Sync failed: ${message}`));
       }
     } else if (options.sync && options.dryRun) {

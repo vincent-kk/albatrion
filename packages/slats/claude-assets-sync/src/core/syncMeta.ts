@@ -306,7 +306,11 @@ export function needsSkillUnitMigration(meta: UnifiedSyncMeta): boolean {
       }
 
       // New format: has isDirectory key
-      if (typeof first === 'object' && first !== null && 'isDirectory' in first) {
+      if (
+        typeof first === 'object' &&
+        first !== null &&
+        'isDirectory' in first
+      ) {
         return false;
       }
     }
@@ -350,7 +354,10 @@ export function migrateToSkillUnitSchema(
       ) {
         // Old flat format: FileMapping[] -> group by first path segment
         const fileMappings = files as unknown as FileMapping[];
-        const groupedByDir = new Map<string, { transformed: string; internalFiles: string[] }>();
+        const groupedByDir = new Map<
+          string,
+          { transformed: string; internalFiles: string[] }
+        >();
         const singleFiles: SkillUnit[] = [];
 
         for (const mapping of fileMappings) {
@@ -367,12 +374,16 @@ export function migrateToSkillUnitSchema(
             const dirName = mapping.original.substring(0, slashIndex);
             const internalFile = mapping.original.substring(slashIndex + 1);
             const transformedSlashIndex = mapping.transformed.indexOf('/');
-            const transformedDir = transformedSlashIndex !== -1
-              ? mapping.transformed.substring(0, transformedSlashIndex)
-              : mapping.transformed;
+            const transformedDir =
+              transformedSlashIndex !== -1
+                ? mapping.transformed.substring(0, transformedSlashIndex)
+                : mapping.transformed;
 
             if (!groupedByDir.has(dirName)) {
-              groupedByDir.set(dirName, { transformed: transformedDir, internalFiles: [] });
+              groupedByDir.set(dirName, {
+                transformed: transformedDir,
+                internalFiles: [],
+              });
             }
             groupedByDir.get(dirName)!.internalFiles.push(internalFile);
           }

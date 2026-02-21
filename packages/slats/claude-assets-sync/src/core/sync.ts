@@ -12,7 +12,13 @@ import {
 } from '../utils/package';
 import { packageNameToPrefix } from '../utils/packageName';
 import { getDestinationDir, getFlatDestinationDir } from '../utils/paths';
-import type { CliOptions, GitHubEntry, SkillUnit, SyncResult } from '../utils/types';
+import type {
+  CliOptions,
+  GitHubEntry,
+  SkillUnit,
+  SyncResult,
+} from '../utils/types';
+import { SCHEMA_VERSIONS } from './constants';
 import {
   cleanAssetDir,
   cleanFlatAssetFiles,
@@ -23,7 +29,11 @@ import {
   writeSyncMeta,
 } from './filesystem';
 import { RateLimitError, downloadAssetFiles, fetchAssetFiles } from './github';
-import { canUseLocalSource, downloadLocalAssetFiles, fetchLocalAssetFiles } from './localSource';
+import {
+  canUseLocalSource,
+  downloadLocalAssetFiles,
+  fetchLocalAssetFiles,
+} from './localSource';
 import {
   createEmptyUnifiedMeta,
   needsSyncUnified,
@@ -31,7 +41,6 @@ import {
   updatePackageInMeta,
   writeUnifiedSyncMeta,
 } from './syncMeta';
-import { SCHEMA_VERSIONS } from './constants';
 
 /**
  * Group flattened GitHub entries into SkillUnit array.
@@ -168,7 +177,10 @@ export const syncPackage = async (
       if (useLocalSource.available && useLocalSource.docsPath) {
         isLocalSource = true;
         logger.step('Using', 'local docs from node_modules');
-        assetFiles = await fetchLocalAssetFiles(useLocalSource.docsPath, assetTypes);
+        assetFiles = await fetchLocalAssetFiles(
+          useLocalSource.docsPath,
+          assetTypes,
+        );
       } else {
         if (!repoInfo) {
           return {
@@ -179,7 +191,8 @@ export const syncPackage = async (
           };
         }
         isLocalSource = false;
-        const tag = options.ref ?? buildVersionTag(packageName, packageInfo.version);
+        const tag =
+          options.ref ?? buildVersionTag(packageName, packageInfo.version);
         logger.step('Fetching', `asset list from GitHub (ref: ${tag})`);
         assetFiles = await fetchAssetFiles(
           repoInfo,
@@ -237,7 +250,10 @@ export const syncPackage = async (
           }));
         } else {
           // Flat structure: group entries into skill units
-          fileMappings[assetType] = groupEntriesIntoSkillUnits(filteredEntries, prefix);
+          fileMappings[assetType] = groupEntriesIntoSkillUnits(
+            filteredEntries,
+            prefix,
+          );
         }
       }
 
@@ -317,9 +333,14 @@ export const syncPackage = async (
         logger.step('Downloading', assetType);
         let downloadedFiles: Map<string, string>;
         if (isLocalSource && useLocalSource.docsPath) {
-          downloadedFiles = await downloadLocalAssetFiles(useLocalSource.docsPath, assetType, filteredEntries);
+          downloadedFiles = await downloadLocalAssetFiles(
+            useLocalSource.docsPath,
+            assetType,
+            filteredEntries,
+          );
         } else {
-          const tag = options.ref ?? buildVersionTag(packageName, packageInfo.version);
+          const tag =
+            options.ref ?? buildVersionTag(packageName, packageInfo.version);
           downloadedFiles = await downloadAssetFiles(
             repoInfo!,
             assetPath,
@@ -398,7 +419,10 @@ export const syncPackage = async (
       if (useLocalSource.available && useLocalSource.docsPath) {
         isLocalSource = true;
         logger.step('Using', 'local docs from node_modules');
-        assetFiles = await fetchLocalAssetFiles(useLocalSource.docsPath, assetTypes);
+        assetFiles = await fetchLocalAssetFiles(
+          useLocalSource.docsPath,
+          assetTypes,
+        );
       } else {
         if (!repoInfo) {
           return {
@@ -409,7 +433,8 @@ export const syncPackage = async (
           };
         }
         isLocalSource = false;
-        const tag = options.ref ?? buildVersionTag(packageName, packageInfo.version);
+        const tag =
+          options.ref ?? buildVersionTag(packageName, packageInfo.version);
         logger.step('Fetching', `asset list from GitHub (ref: ${tag})`);
         assetFiles = await fetchAssetFiles(
           repoInfo,
@@ -507,9 +532,14 @@ export const syncPackage = async (
         logger.step('Downloading', assetType);
         let downloadedFiles: Map<string, string>;
         if (isLocalSource && useLocalSource.docsPath) {
-          downloadedFiles = await downloadLocalAssetFiles(useLocalSource.docsPath, assetType, filteredEntries);
+          downloadedFiles = await downloadLocalAssetFiles(
+            useLocalSource.docsPath,
+            assetType,
+            filteredEntries,
+          );
         } else {
-          const tag = options.ref ?? buildVersionTag(packageName, packageInfo.version);
+          const tag =
+            options.ref ?? buildVersionTag(packageName, packageInfo.version);
           downloadedFiles = await downloadAssetFiles(
             repoInfo!,
             assetPath,
