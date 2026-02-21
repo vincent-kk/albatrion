@@ -80,13 +80,10 @@ export default function SchemaFormPlayground({
       }}
       options={{
         externalResources: [],
-      }}>
+      }}
+    >
       <SandpackLayout>
-        <SandpackCodeEditor
-          showTabs
-          showLineNumbers
-          style={{ height: 480 }}
-        />
+        <SandpackCodeEditor showTabs showLineNumbers style={{ height: 480 }} />
         <SandpackPreview
           showOpenInCodeSandbox={false}
           style={{ height: 480 }}

@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
+
 import { Form, registerPlugin } from '@canard/schema-form';
 import { plugin } from '@canard/schema-form-antd5-plugin';
+
 import DemoWrapper from '../DemoWrapper';
 
 registerPlugin(plugin);
@@ -42,7 +44,8 @@ const schema = {
               title: 'Profile Type',
               enum: ['adult', 'child', 'none'],
               default: 'adult',
-              description: 'Selecting adult/child enables additional required fields',
+              description:
+                'Selecting adult/child enables additional required fields',
             },
             age: { type: 'integer', title: 'Age', minimum: 0, default: 28 },
             gender: {
@@ -69,8 +72,16 @@ const schema = {
                   title: 'Notifications',
                   description: 'Notification channel preferences',
                   properties: {
-                    email: { type: 'boolean', title: 'Email Notifications', default: true },
-                    sms: { type: 'boolean', title: 'SMS Notifications', default: false },
+                    email: {
+                      type: 'boolean',
+                      title: 'Email Notifications',
+                      default: true,
+                    },
+                    sms: {
+                      type: 'boolean',
+                      title: 'SMS Notifications',
+                      default: false,
+                    },
                   },
                   required: ['email', 'sms'],
                 },
@@ -110,7 +121,11 @@ const schema = {
           title: 'Security',
           description: 'Two-factor auth and backup codes',
           properties: {
-            '2FA': { type: 'boolean', title: 'Two-Factor Authentication', default: true },
+            '2FA': {
+              type: 'boolean',
+              title: 'Two-Factor Authentication',
+              default: true,
+            },
             backupCodes: {
               type: 'array',
               title: 'Backup Codes',

@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
+
 import { Form, registerPlugin } from '@canard/schema-form';
 import { plugin } from '@canard/schema-form-antd5-plugin';
+
 import DemoWrapper from '../DemoWrapper';
 
 registerPlugin(plugin);
@@ -13,7 +15,8 @@ const schema = {
       title: 'Participant Type',
       enum: ['adult', 'minor'],
       default: 'adult',
-      description: 'Required fields change based on participant type and region',
+      description:
+        'Required fields change based on participant type and region',
     },
     participantRegion: {
       type: 'string',

@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
+
 import { Form, registerPlugin } from '@canard/schema-form';
 import { plugin } from '@canard/schema-form-antd5-plugin';
+
 import DemoWrapper from '../DemoWrapper';
 
 registerPlugin(plugin);
@@ -40,9 +42,11 @@ const schema = {
     finalPrice: {
       type: 'number',
       title: 'Final Price',
-      description: 'Auto-calculated: Price × Quantity × (1 + Tax%) × (1 − Discount%)',
+      description:
+        'Auto-calculated: Price × Quantity × (1 + Tax%) × (1 − Discount%)',
       computed: {
-        derived: '../price * ../quantity * (1 + ../taxRate / 100) * (1 - ../discountRate / 100)',
+        derived:
+          '../price * ../quantity * (1 + ../taxRate / 100) * (1 - ../discountRate / 100)',
       },
     },
   },

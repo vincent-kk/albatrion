@@ -6,7 +6,11 @@ interface DemoWrapperProps {
   children: React.ReactNode;
 }
 
-export default function DemoWrapper({ schema, values, children }: DemoWrapperProps) {
+export default function DemoWrapper({
+  schema,
+  values,
+  children,
+}: DemoWrapperProps) {
   return (
     <div
       className="demo-form"

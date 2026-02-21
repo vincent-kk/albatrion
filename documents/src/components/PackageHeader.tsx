@@ -18,7 +18,8 @@ export default function PackageHeader({
             <a
               href={`https://www.npmjs.com/package/${name}`}
               target="_blank"
-              rel="noopener noreferrer">
+              rel="noopener noreferrer"
+            >
               <img
                 src={`https://img.shields.io/npm/v/${name}?style=flat-square`}
                 alt={`${name} npm version`}

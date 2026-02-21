@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
+
 import { Form, registerPlugin } from '@canard/schema-form';
 import { plugin } from '@canard/schema-form-antd5-plugin';
+
 import DemoWrapper from '../DemoWrapper';
 
 registerPlugin(plugin);
@@ -46,8 +48,16 @@ const schema = {
           type: 'object',
           title: 'Employee Benefits',
           properties: {
-            healthInsurance: { type: 'boolean', title: 'Health Insurance', default: true },
-            pension: { type: 'boolean', title: 'Retirement Plan', default: true },
+            healthInsurance: {
+              type: 'boolean',
+              title: 'Health Insurance',
+              default: true,
+            },
+            pension: {
+              type: 'boolean',
+              title: 'Retirement Plan',
+              default: true,
+            },
           },
         },
         probationPeriod: {

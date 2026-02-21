@@ -1,4 +1,5 @@
-import React, { useState, useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
+
 import { Form } from '@canard/schema-form';
 
 interface InputShowcaseProps {
@@ -7,7 +8,11 @@ interface InputShowcaseProps {
   schema: Record<string, unknown>;
 }
 
-export default function InputShowcase({ name, trigger, schema }: InputShowcaseProps) {
+export default function InputShowcase({
+  name,
+  trigger,
+  schema,
+}: InputShowcaseProps) {
   const [value, setValue] = useState<unknown>(undefined);
 
   const formSchema = {

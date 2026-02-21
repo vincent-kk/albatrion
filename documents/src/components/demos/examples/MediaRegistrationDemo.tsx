@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
+
 import { Form, registerPlugin } from '@canard/schema-form';
 import { plugin } from '@canard/schema-form-antd5-plugin';
+
 import DemoWrapper from '../DemoWrapper';
 
 registerPlugin(plugin);
@@ -39,7 +41,11 @@ const schema = {
                   name: { type: 'string', title: 'Stage Name' },
                   description: { type: 'string', title: 'Description' },
                 },
-                default: { label: 1, name: 'Prologue', description: 'The journey begins...' },
+                default: {
+                  label: 1,
+                  name: 'Prologue',
+                  description: 'The journey begins...',
+                },
               },
             },
             platforms: {
@@ -57,10 +63,26 @@ const schema = {
               title: 'System Requirements',
               description: 'Minimum hardware specifications to run the game',
               properties: {
-                cpu: { type: 'string', title: 'CPU', default: 'Intel Core i5-12400' },
-                gpu: { type: 'string', title: 'GPU', default: 'NVIDIA GeForce RTX 3060' },
-                memory: { type: 'string', title: 'Memory', default: '16GB DDR4' },
-                storage: { type: 'string', title: 'Storage', default: '50GB SSD' },
+                cpu: {
+                  type: 'string',
+                  title: 'CPU',
+                  default: 'Intel Core i5-12400',
+                },
+                gpu: {
+                  type: 'string',
+                  title: 'GPU',
+                  default: 'NVIDIA GeForce RTX 3060',
+                },
+                memory: {
+                  type: 'string',
+                  title: 'Memory',
+                  default: '16GB DDR4',
+                },
+                storage: {
+                  type: 'string',
+                  title: 'Storage',
+                  default: '50GB SSD',
+                },
               },
             },
           },
@@ -74,7 +96,15 @@ const schema = {
               description: 'Select one or more genres',
               items: {
                 type: 'string',
-                enum: ['action', 'comedy', 'drama', 'horror', 'romance', 'sci-fi', 'thriller'],
+                enum: [
+                  'action',
+                  'comedy',
+                  'drama',
+                  'horror',
+                  'romance',
+                  'sci-fi',
+                  'thriller',
+                ],
                 default: 'sci-fi',
               },
             },

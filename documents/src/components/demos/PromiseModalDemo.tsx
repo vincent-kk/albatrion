@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
+
 import { ModalProvider, alert, confirm, prompt } from '@lerx/promise-modal';
 
 function DemoButtons() {
   const [log, setLog] = useState<string[]>([]);
 
   const addLog = (message: string) => {
-    setLog(prev => [...prev.slice(-4), message]);
+    setLog((prev) => [...prev.slice(-4), message]);
   };
 
   const handleAlert = async () => {
@@ -32,7 +33,7 @@ function DemoButtons() {
       Input: ({ value, onChange }) => (
         <input
           value={value ?? ''}
-          onChange={e => onChange(e.target.value)}
+          onChange={(e) => onChange(e.target.value)}
           placeholder="Type your name..."
           style={{
             width: '100%',
@@ -44,13 +45,20 @@ function DemoButtons() {
           }}
         />
       ),
-      disabled: v => !v || v.trim().length < 2,
+      disabled: (v) => !v || v.trim().length < 2,
     });
     addLog(name ? `Prompt result: "${name}"` : 'Prompt cancelled');
   };
 
   return (
-    <div style={{ border: '1px solid var(--ifm-color-emphasis-300)', borderRadius: 8, padding: 24, background: 'var(--ifm-background-surface-color)' }}>
+    <div
+      style={{
+        border: '1px solid var(--ifm-color-emphasis-300)',
+        borderRadius: 8,
+        padding: 24,
+        background: 'var(--ifm-background-surface-color)',
+      }}
+    >
       <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
         <button onClick={handleAlert} style={btnStyle('#1677ff')}>
           Alert
@@ -63,7 +71,16 @@ function DemoButtons() {
         </button>
       </div>
       {log.length > 0 && (
-        <pre style={{ marginTop: 16, padding: 12, borderRadius: 6, background: 'var(--ifm-color-emphasis-100)', fontSize: 13, overflow: 'auto' }}>
+        <pre
+          style={{
+            marginTop: 16,
+            padding: 12,
+            borderRadius: 6,
+            background: 'var(--ifm-color-emphasis-100)',
+            fontSize: 13,
+            overflow: 'auto',
+          }}
+        >
           {log.join('\n')}
         </pre>
       )}

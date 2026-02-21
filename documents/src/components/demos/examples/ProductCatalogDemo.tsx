@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
+
 import { Form, registerPlugin } from '@canard/schema-form';
 import { plugin } from '@canard/schema-form-antd5-plugin';
+
 import DemoWrapper from '../DemoWrapper';
 
 registerPlugin(plugin);
@@ -39,9 +41,24 @@ const schema = {
               type: 'object',
               title: 'Dimensions',
               properties: {
-                length: { type: 'number', title: 'Length (cm)', minimum: 0, default: 20 },
-                width: { type: 'number', title: 'Width (cm)', minimum: 0, default: 15 },
-                height: { type: 'number', title: 'Height (cm)', minimum: 0, default: 8 },
+                length: {
+                  type: 'number',
+                  title: 'Length (cm)',
+                  minimum: 0,
+                  default: 20,
+                },
+                width: {
+                  type: 'number',
+                  title: 'Width (cm)',
+                  minimum: 0,
+                  default: 15,
+                },
+                height: {
+                  type: 'number',
+                  title: 'Height (cm)',
+                  minimum: 0,
+                  default: 8,
+                },
               },
             },
             shipping: {
@@ -59,7 +76,12 @@ const schema = {
                 {
                   computed: { if: "./method === 'standard'" },
                   properties: {
-                    cost: { type: 'number', title: 'Cost ($)', minimum: 0, default: 5.99 },
+                    cost: {
+                      type: 'number',
+                      title: 'Cost ($)',
+                      minimum: 0,
+                      default: 5.99,
+                    },
                     days: {
                       type: 'number',
                       title: 'Delivery Days',
@@ -72,7 +94,12 @@ const schema = {
                 {
                   computed: { if: "./method === 'express'" },
                   properties: {
-                    cost: { type: 'number', title: 'Cost ($)', minimum: 10, default: 15.99 },
+                    cost: {
+                      type: 'number',
+                      title: 'Cost ($)',
+                      minimum: 10,
+                      default: 15.99,
+                    },
                     hours: {
                       type: 'number',
                       title: 'Delivery Hours',

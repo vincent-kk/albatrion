@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
+
 import { Form, registerPlugin } from '@canard/schema-form';
-import { plugin } from '@canard/schema-form-antd5-plugin';
 import { plugin as ajv8Plugin } from '@canard/schema-form-ajv8-plugin/2020';
+import { plugin } from '@canard/schema-form-antd5-plugin';
+
 import DemoWrapper from '../DemoWrapper';
 
 registerPlugin(plugin);
@@ -27,9 +29,27 @@ const schema = {
       title: 'RGB Color [R, G, B]',
       description: 'Color value — each channel ranges from 0 to 255',
       prefixItems: [
-        { type: 'number', title: 'Red (0-255)', default: 66, minimum: 0, maximum: 255 },
-        { type: 'number', title: 'Green (0-255)', default: 133, minimum: 0, maximum: 255 },
-        { type: 'number', title: 'Blue (0-255)', default: 244, minimum: 0, maximum: 255 },
+        {
+          type: 'number',
+          title: 'Red (0-255)',
+          default: 66,
+          minimum: 0,
+          maximum: 255,
+        },
+        {
+          type: 'number',
+          title: 'Green (0-255)',
+          default: 133,
+          minimum: 0,
+          maximum: 255,
+        },
+        {
+          type: 'number',
+          title: 'Blue (0-255)',
+          default: 244,
+          minimum: 0,
+          maximum: 255,
+        },
       ],
       items: false,
       minItems: 3,

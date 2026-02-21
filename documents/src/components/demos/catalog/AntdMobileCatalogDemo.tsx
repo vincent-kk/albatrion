@@ -1,6 +1,8 @@
 import React from 'react';
+
 import { registerPlugin } from '@canard/schema-form';
 import { plugin } from '@canard/schema-form-antd-mobile-plugin';
+
 import InputShowcase from '../InputShowcase';
 
 registerPlugin(plugin);
@@ -114,7 +116,7 @@ const sections = [
 export default function AntdMobileCatalogDemo() {
   return (
     <div>
-      {sections.map(section => (
+      {sections.map((section) => (
         <div key={section.title} style={{ marginBottom: 32 }}>
           <h4
             style={{
@@ -125,7 +127,7 @@ export default function AntdMobileCatalogDemo() {
           >
             {section.title}
           </h4>
-          {section.items.map(item => (
+          {section.items.map((item) => (
             <InputShowcase key={item.name} {...item} />
           ))}
         </div>

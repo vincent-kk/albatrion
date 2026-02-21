@@ -41,7 +41,8 @@ export default function Home(): React.ReactElement {
               fontSize: '1.1rem',
               opacity: 0.7,
               margin: '0.75rem 0 0',
-            }}>
+            }}
+          >
             Technical documentation for the Albatrion monorepo packages.
           </p>
         </div>
@@ -51,8 +52,9 @@ export default function Home(): React.ReactElement {
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
             gap: '1rem',
-          }}>
-          {namespaces.map(pkg => (
+          }}
+        >
+          {namespaces.map((pkg) => (
             <Link
               key={pkg.ns}
               to={pkg.link}
@@ -66,26 +68,30 @@ export default function Home(): React.ReactElement {
                 textDecoration: 'none',
                 color: 'inherit',
                 transition: 'border-color 0.2s',
-              }}>
+              }}
+            >
               <div
                 style={{
                   display: 'flex',
                   justifyContent: 'space-between',
                   alignItems: 'baseline',
-                }}>
+                }}
+              >
                 <span
                   style={{
                     fontFamily: 'var(--ifm-font-family-monospace)',
                     fontWeight: 600,
                     fontSize: '1rem',
-                  }}>
+                  }}
+                >
                   {pkg.ns}
                 </span>
                 <span
                   style={{
                     fontSize: '0.8rem',
                     opacity: 0.5,
-                  }}>
+                  }}
+                >
                   {pkg.count} {pkg.count === 1 ? 'package' : 'packages'}
                 </span>
               </div>
