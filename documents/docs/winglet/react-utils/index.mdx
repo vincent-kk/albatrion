@@ -106,25 +106,39 @@ const App = withPortal(() => (
 ## AI Reference
 
 **Package**: `@winglet/react-utils` v0.10.0
-**Peer deps**: `react >=16 <20`, `react-dom >=16 <20`
 **Purpose**: React hooks, HOCs, portal system, and render utilities.
 
-### Key exports by sub-path
+### Key exports
 ```
-/hook    → useConstant, useTruthyConstant, useMemorize, useHandle, useSnapshot,
-           useSnapshotReference, useReference, useVersion, useDebounce, useTimeout,
-           useWindowSize, useEffectUntil, useLayoutEffectUntil, useOnMount,
-           useOnMountLayout, useOnUnmount, useOnUnmountLayout, useRestProperties
-/hoc     → withErrorBoundary, withErrorBoundaryForwardRef, withUploader
-/portal  → Portal, Portal.Anchor, withPortal
-/filter  → isReactComponent, isReactElement
-/render  → renderComponent, remainOnlyReactComponent
+./portal → Portal — Portal system for rendering React components at different DOM locations while maintaining component hierarchy.
+./hoc → withErrorBoundary
+        withErrorBoundaryForwardRef
+        withUploader
+./hook → useConstant
+         useDebounce
+         useEffectUntil
+         useLayoutEffectUntil
+         useHandle
+         useMemorize
+         useOnMount
+         useOnMountLayout
+         useOnUnmount
+         useOnUnmountLayout
+         useReference
+         useRestProperties
+         useSnapshot
+         useSnapshotReference
+         useTimeout
+         useTruthyConstant
+         useVersion
+         useWindowSize
+./filter → isClassComponent
+           isFunctionComponent
+           isMemoComponent
+           isReactComponent
+           isReactElement
+./object → remainOnlyReactComponent
+./render → renderComponent
 ```
-
-### Usage patterns
-- `useConstant(factory)` — initializes once, never re-creates
-- `useHandle(fn)` — stable ref-backed callback (replaces useCallback with empty deps)
-- `withErrorBoundary(Component, { fallback })` — wraps with error boundary
-- Portal system requires `withPortal` HOC at tree root and `Portal.Anchor` to declare target
 
 </ForAI>

@@ -87,37 +87,14 @@ const errors = await validate(formData); // null | ValidationError[]
 
 <ForAI>
 
-## AI Reference Summary
+## AI Reference
 
 **Package**: `@canard/schema-form-ajv6-plugin` v0.10.0
-**Purpose**: AJV 6.x validator plugin for `@canard/schema-form`.
-**AJV version**: `ajv ^6.0.0` (bundled as direct dependency)
-**Supported drafts**: Draft-04, Draft-06, Draft-07
 
-### Default config
-```ts
-{ allErrors: true, nullable: true, verbose: true, format: false }
-```
-
-### Key exports
+### Exports
 ```ts
 import { plugin } from '@canard/schema-form-ajv6-plugin';
-// plugin.validator: ValidatorPlugin
-
 import { createValidatorFactory } from '@canard/schema-form-ajv6-plugin';
-// createValidatorFactory(ajv: Ajv) => (schema: JsonSchema) => ValidateFunction
 ```
-
-### Usage pattern
-```ts
-registerPlugin(plugin);                          // global registration
-plugin.validator.bind(customAjv);               // optional: custom instance
-const validate = createValidatorFactory(ajv)(schema); // direct use
-```
-
-### Important constraints
-- Transforms AJV6 JSONPath error paths → JSONPointer automatically
-- No Draft 2019-09 / 2020-12 support
-- For legacy schemas only; prefer ajv8-plugin for new projects
 
 </ForAI>

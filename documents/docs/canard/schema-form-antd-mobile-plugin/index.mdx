@@ -125,42 +125,13 @@ const schema = {
 
 <ForAI>
 
-## AI Reference Summary
+## AI Reference
 
 **Package**: `@canard/schema-form-antd-mobile-plugin` v0.10.0
-**Purpose**: Ant Design Mobile UI plugin for `@canard/schema-form`. Mobile-first, touch-optimized.
-**UI library**: `antd-mobile ^5.0.0` (direct dependency, not peer)
-**Component count**: 10
-**Peer deps**: `dayjs >=1`, `react >=18 <20`, `react-dom >=18 <20`
 
-### Key export
+### Exports
 ```ts
 import { plugin } from '@canard/schema-form-antd-mobile-plugin';
-// plugin: SchemaFormPlugin (FormGroup, FormLabel, FormInput, FormError, formTypeInputDefinitions)
-registerPlugin(plugin);
 ```
-
-### Component list (priority order)
-1. `FormTypeInputBooleanSwitch` — `boolean` + `formType:"switch"`
-2. `FormTypeInputStringCheckbox` — `array` + `formType:"checkbox"` + string items with enum
-3. `FormTypeInputStringSwitch` — `string` + `formType:"switch"` + 2-value enum
-4. `FormTypeInputRadioGroup` — `string|number|integer` + `formType:"radio"|"radiogroup"` + enum
-5. `FormTypeInputArray` — `array` (dynamic list)
-6. `FormTypeInputSlider` — `(number|integer)` + `format:"slider"` OR `array` with numeric items + slider format
-7. `FormTypeInputTextarea` — `string` + `format:"textarea"` or `formType:"textarea"`
-8. `FormTypeInputString` — `string` (default; password via `format:"password"`)
-9. `FormTypeInputNumber` — `number|integer` (Stepper component)
-10. `FormTypeInputBoolean` — `boolean` (Checkbox, default)
-
-### Mobile-specific features
-- `FormTypeInputNumber` uses `Stepper` (mobile-friendly) instead of `InputNumber`
-- `FormTypeInputSlider` supports range sliders for array types
-- `FormTypeInputBooleanSwitch` supports custom on/off labels via context
-- No date/time pickers (not included in mobile plugin)
-
-### Important constraints
-- No `FormTypeInputDate`, `FormTypeInputTime`, `FormTypeInputStringEnum` — not supported in this plugin
-- `antd-mobile` is a direct dependency; do not add as peer
-- Plugin must be registered before any `<Form>` renders
 
 </ForAI>

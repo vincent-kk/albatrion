@@ -102,26 +102,33 @@ isArraySchema({ type: 'array', items: {} });         // true
 
 ### Key exports
 ```
-/scanner       → JsonSchemaScanner, SchemaVisitor, SchemaEntry, JsonScannerOptions
-/async-scanner → JsonSchemaScannerAsync
-/filter        → isObjectSchema, isArraySchema, isStringSchema, isNumberSchema,
-                 isBooleanSchema, isNullSchema, isNonNullable*/isNullable* variants,
-                 isCompatibleSchemaType, isIdenticalSchemaType
-Main export    → resolveReference, InferValueType<Schema>
+./scanner → JsonSchemaScanner
+            JsonScannerOptions (type)
+            SchemaVisitor (type)
+            SchemaEntry (type)
+./async-scanner → JsonSchemaScannerAsync
+                  JsonScannerOptionsAsync (type)
+                  SchemaVisitor (type)
+                  SchemaEntry (type)
+./filter → isArraySchema
+           isNonNullableArraySchema
+           isNullableArraySchema
+           isBooleanSchema
+           isNonNullableBooleanSchema
+           isNullableBooleanSchema
+           isNullSchema
+           isNonNullableNumberSchema
+           isNullableNumberSchema
+           isNumberSchema
+           isNonNullableObjectSchema
+           isNullableObjectSchema
+           isObjectSchema
+           isNonNullableStringSchema
+           isNullableStringSchema
+           isStringSchema
+           hasNullInType
+           isCompatibleSchemaType
+           isIdenticalSchemaType
 ```
-
-### Scanner usage
-```ts
-new JsonSchemaScanner({
-  visitor: { enter(entry, ctx) {}, exit(entry, ctx) {} },
-  maxDepth: 10,
-  resolveReference: (ref, root) => resolvedSchema,
-}).scan(rootSchema);
-```
-
-### Constraints
-- Stack-based circular reference detection
-- `$ref` resolution is opt-in via `resolveReference` option
-- Async scanner returns `Promise<void>` from `scan()`
 
 </ForAI>

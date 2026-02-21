@@ -331,76 +331,30 @@ const results = await syncPackages(['@canard/schema-form', '@lerx/promise-modal'
 
 <ForAI>
 
-## Package: @slats/claude-assets-sync
+## AI Reference
 
-**Purpose:** Sync Claude Code commands and skills from npm packages into a project's `.claude/` directory.
+**Package**: `@slats/claude-assets-sync` v0.0.6
+**Purpose**: Claude Code asset synchronization CLI tool.
 
-**CLI entry:** `npx @slats/claude-assets-sync`
-**npm:** https://www.npmjs.com/package/@slats/claude-assets-sync
-**Version:** 0.0.6
-
-### Commands
-
-| Command | Trigger | Key options |
-|---------|---------|-------------|
-| `sync` (default) | `-p <pkg>` | `--force`, `--dry-run`, `--local`, `--ref`, `--no-flat` |
-| `add` | `add -p <pkg>` | `--local`, `--ref` |
-| `list` | `list` | `--json` |
-| `status` | `status` | `--no-remote` |
-| `remove` | `remove -p <pkg>` | `--yes`, `--dry-run` |
-| `migrate` | `migrate` | `--dry-run` |
-
-### Key types
-
+### Exports
 ```ts
-type AssetType = 'commands' | 'skills';
-
-interface ClaudeConfig {
-  assetPath: string; // e.g. "docs/claude"
-}
-
-interface SyncResult {
-  package: string;
-  version: string;
-  skipped: boolean;
-  files: { commands: string[]; skills: string[] };
-  error?: string;
-}
-
-interface UnifiedSyncMeta {
-  version: string;
-  syncedAt: string;
-  packages: Record<string, PackageSyncInfo>;
-}
-
-interface PackageSyncInfo {
-  originalName: string;
-  version: string;
-  files: Record<AssetType, FileMapping[]>;
-}
-
-interface FileMapping {
-  original: string;
-  transformed: string;
-}
+import { syncPackage } from '@slats/claude-assets-sync';
+import { syncPackages } from '@slats/claude-assets-sync';
+import { createProgram } from '@slats/claude-assets-sync';
+import { run } from '@slats/claude-assets-sync';
+import { migrateToFlat } from '@slats/claude-assets-sync';
+import { needsMigration } from '@slats/claude-assets-sync';
+import type { MigrationResult } from '@slats/claude-assets-sync';
+import type { AssetType } from '@slats/claude-assets-sync';
+import type { CliOptions } from '@slats/claude-assets-sync';
+import type { ClaudeConfig } from '@slats/claude-assets-sync';
+import type { GitHubRepoInfo } from '@slats/claude-assets-sync';
+import type { PackageInfo } from '@slats/claude-assets-sync';
+import type { SyncMeta } from '@slats/claude-assets-sync';
+import type { SyncResult } from '@slats/claude-assets-sync';
+import type { UnifiedSyncMeta } from '@slats/claude-assets-sync';
+import type { PackageSyncInfo } from '@slats/claude-assets-sync';
+import type { FileMapping } from '@slats/claude-assets-sync';
 ```
-
-### Package author requirements
-
-A package must have in its `package.json`:
-1. `repository.type = "git"` and `repository.url` pointing to a GitHub repo
-2. `claude.assetPath` pointing to a directory that contains `commands/` and/or `skills/` subdirectories
-3. Asset files must be `.md`
-
-### Flat vs nested
-
-- **Flat (default):** all files in `.claude/commands/` and `.claude/skills/`, prefixed with `@scope-name-`
-- **Nested (`--no-flat`):** files under `.claude/commands/@scope/name/` and `.claude/skills/@scope/name/`
-- Use `migrate` command to convert nested → flat
-
-### Environment
-
-- `GITHUB_TOKEN`: set to avoid GitHub API rate limits (60 → 5,000 req/hr)
-- `VERBOSE`: set to any value for debug output
 
 </ForAI>

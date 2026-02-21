@@ -137,54 +137,14 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 
 <ForAI>
 
-## AI Reference Summary
+## AI Reference
 
 **Package**: `@canard/schema-form-mui-plugin` v0.10.0
-**Purpose**: Material UI v7 UI plugin for `@canard/schema-form`.
-**UI library**: `@mui/material ^7.0.0` + `@mui/x-date-pickers ^8.0.0`
-**Component count**: 15
-**Peer deps**: `@mui/material >=7.0.0`, `@mui/x-date-pickers >=8.0.0`, `@mui/icons-material >=7.0.0`, `@emotion/react >=11.0.0`, `@emotion/styled >=11.0.0`, `dayjs >=1`, `react >=18 <20`, `react-dom >=18 <20`
 
-### Key exports
+### Exports
 ```ts
 import { plugin } from '@canard/schema-form-mui-plugin';
-// plugin: SchemaFormPlugin (FormGroup, FormLabel, FormInput, FormError, formTypeInputDefinitions)
-registerPlugin(plugin);
-
 import type { MuiContext } from '@canard/schema-form-mui-plugin';
-// MuiContext: { size?, variant?, fullWidth? }
 ```
-
-### Component list (priority order)
-1. `FormTypeInputBooleanSwitch` — `boolean` + `formType:"switch"`
-2. `FormTypeInputStringCheckbox` — `array` + `formType:"checkbox"` + string items with enum
-3. `FormTypeInputStringSwitch` — `string` + `formType:"switch"` + 2-value enum
-4. `FormTypeInputUri` — `string` + `format:"uri"` or `formType:"uri"`
-5. `FormTypeInputMonth` — `string` + `format:"month"` (MUI X)
-6. `FormTypeInputDate` — `string` + `format:"date"` (MUI X)
-7. `FormTypeInputTime` — `string` + `format:"time"` (MUI X, outputs HH:mm:00Z)
-8. `FormTypeInputRadioGroup` — `string|number|integer` + `formType:"radio"|"radiogroup"` + enum
-9. `FormTypeInputStringEnum` — `string` + enum (MUI Select)
-10. `FormTypeInputArray` — `array` (dynamic list)
-11. `FormTypeInputSlider` — `number|integer` + `formType:"slider"` (MUI Slider)
-12. `FormTypeInputTextarea` — `string` + `format:"textarea"` or `formType:"textarea"`
-13. `FormTypeInputString` — `string` (default; password via `format:"password"`)
-14. `FormTypeInputNumber` — `number|integer` (default)
-15. `FormTypeInputBoolean` — `boolean` (MUI Checkbox, default)
-
-### MuiContext type
-```ts
-type MuiContext = {
-  size?:      'small' | 'medium';
-  variant?:   'outlined' | 'filled' | 'standard';
-  fullWidth?: boolean;
-};
-```
-
-### Important constraints
-- Date/time components require `<LocalizationProvider dateAdapter={AdapterDayjs}>` wrapper
-- No range picker components (unlike antd5/antd6 plugins)
-- `strictSchema: false` required in AJV plugin (custom `formType` keyword)
-- Plugin must be registered before any `<Form>` renders
 
 </ForAI>

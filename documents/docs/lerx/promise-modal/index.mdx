@@ -122,61 +122,37 @@ function App() {
 
 <ForAI>
 
-## AI Agent Reference
+## AI Reference
 
-### Package identity
+**Package**: `@lerx/promise-modal` v0.10.5
+**Purpose**: Promise-based modal management for React.
 
-- npm: `@lerx/promise-modal`
-- Import: `import { alert, confirm, prompt, ModalProvider, useModal } from '@lerx/promise-modal'`
-- Peer deps: `react@^18 || ^19`, `react-dom@^18 || ^19`
-
-### Mandatory setup
-
-`ModalProvider` must be mounted once at the app root before any modal function is called. Without it, `alert`/`confirm`/`prompt` have no DOM target and will not render.
-
-### Core pattern
-
+### Exports
 ```ts
-// Static functions — usable anywhere, including outside React
-import { alert, confirm, prompt } from '@lerx/promise-modal';
-
-await alert({ title: string, content: ReactNode });
-const confirmed: boolean = await confirm({ title: string, content: ReactNode });
-const value: T = await prompt<T>({ title: string, defaultValue: T, Input: ... });
-```
-
-### Component-scoped modals
-
-```ts
-// useModal — inside React components only; auto-closes on unmount
-const { alert, confirm, prompt } = useModal();
-```
-
-### ModalProvider props summary
-
-| Prop | Type | Description |
-|---|---|---|
-| `ForegroundComponent` | `ComponentType<PropsWithChildren<ModalFrameProps>>` | Modal container/card |
-| `BackgroundComponent` | `ComponentType<ModalFrameProps>` | Backdrop overlay |
-| `TitleComponent` | `ComponentType<WrapperComponentProps>` | Title wrapper |
-| `SubtitleComponent` | `ComponentType<WrapperComponentProps>` | Subtitle wrapper |
-| `ContentComponent` | `ComponentType<WrapperComponentProps>` | Content wrapper |
-| `FooterComponent` | `ComponentType<FooterComponentProps>` | Footer with action buttons |
-| `options` | `ModalOptions` | Global defaults |
-| `context` | `Dictionary` | Passed to all modal component slots |
-| `usePathname` | `() => { pathname: string }` | Custom router hook |
-| `root` | `HTMLElement \| null` | Custom DOM mount target |
-
-### ModalOptions
-
-```ts
-interface ModalOptions {
-  zIndex?: number;
-  duration?: number | string;  // ms or CSS duration string e.g. '250ms'
-  backdrop?: string | CSSProperties;
-  manualDestroy?: boolean;
-  closeOnBackdropClick?: boolean;
-}
+import { useModalOptions } from '@lerx/promise-modal';
+import { useModalBackdrop } from '@lerx/promise-modal';
+import { useInitializeModal } from '@lerx/promise-modal';
+import { ModalProvider } from '@lerx/promise-modal';
+import type { ModalProviderHandle } from '@lerx/promise-modal';
+import type { ModalProviderProps } from '@lerx/promise-modal';
+import { useModal } from '@lerx/promise-modal';
+import { useActiveModalCount } from '@lerx/promise-modal';
+import { useDestroyAfter } from '@lerx/promise-modal';
+import { useModalAnimation } from '@lerx/promise-modal';
+import { useModalDuration } from '@lerx/promise-modal';
+import { useSubscribeModal } from '@lerx/promise-modal';
+import { alert } from '@lerx/promise-modal';
+import { confirm } from '@lerx/promise-modal';
+import { prompt } from '@lerx/promise-modal';
+import type { ModalOptions } from '@lerx/promise-modal';
+import type { ModalFrameProps } from '@lerx/promise-modal';
+import type { FooterComponentProps } from '@lerx/promise-modal';
+import type { ModalBackground } from '@lerx/promise-modal';
+import type { PromptInputProps } from '@lerx/promise-modal';
+import type { AlertContentProps } from '@lerx/promise-modal';
+import type { ConfirmContentProps } from '@lerx/promise-modal';
+import type { PromptContentProps } from '@lerx/promise-modal';
+import type { WrapperComponentProps } from '@lerx/promise-modal';
 ```
 
 </ForAI>

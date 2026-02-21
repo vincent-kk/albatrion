@@ -123,89 +123,43 @@ Plugin System
 
 <ForAI>
 
-## AI Reference Summary
+## AI Reference
 
 **Package**: `@canard/schema-form` v0.10.5
-**Purpose**: JSON Schema-driven React form engine with plugin architecture for validation and UI rendering.
-**Bundle size**: ≤20KB (CJS and ESM)
-**Peer deps**: React 18–19
+**Purpose**: JSON Schema-driven dynamic form generation for React.
 
-### Key exports
+### Exports
 ```ts
-// Plugin system
-registerPlugin(plugin: SchemaFormPlugin | null): void
-
-// Main component
-<Form
-  jsonSchema={schema}
-  defaultValue={value}
-  onChange={fn}
-  onSubmit={fn}
-  onValidate={fn}
-  ref={formRef}
-  showError={ShowError.DirtyTouched}
-  validationMode={ValidationMode.OnChange}
-  formTypeInputDefinitions={[...]}
-  formTypeInputMap={{ '/path': Component }}
-  readOnly={bool}
-  disabled={bool}
-  context={dict}
-/>
-
-// Sub-components (Form.*)
-Form.Group    // path + FormTypeInput + FormTypeRenderer + Wrapper
-Form.Label    // label only
-Form.Input    // input only
-Form.Error    // error only
-Form.Render   // custom layout slot
-
-// Hooks
-useFormSubmit(ref)           // { submit, pending }
-useSchemaNodeTracker(node)   // re-renders on node events
-useSchemaNodeSubscribe(node, listener) // raw event subscription
-useChildNodeComponentMap(node)
-useChildNodeErrors(node)
-
-// Node types (interfaces, not classes)
-SchemaNode, StringNode, NumberNode, BooleanNode,
-NullNode, ObjectNode, ArrayNode, VirtualNode
-
-// Enums
-ValidationMode.OnChange | OnRequest | None
-NodeEventType (UpdateValue, UpdateState, UpdateError, ...)
-SetValueOption (Overwrite | Merge | Isolate)
-ShowError (Dirty | Touched | DirtyTouched)
-NodeState
-
-// Type guards
-isArrayNode, isObjectNode, isStringNode, isBooleanNode,
-isNumberNode, isBranchNode, isTerminalNode, isVirtualNode
-
-// Error guards
-isSchemaFormError, isJsonSchemaError, isValidationError, isUnhandledError
-
-// Plugin interfaces
-SchemaFormPlugin, ValidatorPlugin
-
-// FormTypeInput types
-FormTypeInputProps, FormTypeInputDefinition, FormTypeInputMap,
-FormTypeTestFn, FormTypeTestObject, FormTypeRendererProps
-
-// FormHandle (ref API)
-FormHandle: {
-  node, focus, select, reset, findNode, findNodes,
-  getValue, setValue, getState, setState, clearState,
-  getErrors, getAttachedFilesMap, validate, showError, submit
-}
+import type { SchemaFormPlugin } from '@canard/schema-form';
+import type { ValidatorPlugin } from '@canard/schema-form';
+import { registerPlugin } from '@canard/schema-form';
+import { Form } from '@canard/schema-form';
+import type { FormChildrenProps } from '@canard/schema-form';
+import type { FormErrorProps } from '@canard/schema-form';
+import type { FormHandle } from '@canard/schema-form';
+import type { FormLabelProps } from '@canard/schema-form';
+import type { FormProps } from '@canard/schema-form';
+import { isSchemaFormError } from '@canard/schema-form';
+import { isJsonSchemaError } from '@canard/schema-form';
+import { isUnhandledError } from '@canard/schema-form';
+import { isValidationError } from '@canard/schema-form';
+import { JSONPointer } from '@canard/schema-form';
+import type { SchemaNode } from '@canard/schema-form';
+import type { ArrayNode } from '@canard/schema-form';
+import type { BooleanNode } from '@canard/schema-form';
+import type { NullNode } from '@canard/schema-form';
+import type { NumberNode } from '@canard/schema-form';
+import type { ObjectNode } from '@canard/schema-form';
+import type { StringNode } from '@canard/schema-form';
+import type { VirtualNode } from '@canard/schema-form';
+import { NodeState } from '@canard/schema-form';
+import { ValidationMode } from '@canard/schema-form';
+import { NodeEventType } from '@canard/schema-form';
+import { SetValueOption } from '@canard/schema-form';
+import { isArrayNode } from '@canard/schema-form';
+import { isBooleanNode } from '@canard/schema-form';
+import { isBranchNode } from '@canard/schema-form';
+import { isNumberNode } from '@canard/schema-form';
 ```
-
-### Dependencies
-- `@winglet/common-utils`, `@winglet/react-utils`, `@winglet/json`, `@winglet/json-schema` (internal workspace)
-
-### Important constraints
-- Must call `registerPlugin()` before rendering any `<Form>`
-- No default UI components or validator included
-- Plugins are global; use `FormProvider` for per-subtree overrides
-- `registerPlugin(null)` resets all plugins
 
 </ForAI>

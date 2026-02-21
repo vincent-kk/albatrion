@@ -130,44 +130,13 @@ import { plugin } from '@canard/schema-form-antd6-plugin';
 
 <ForAI>
 
-## AI Reference Summary
+## AI Reference
 
 **Package**: `@canard/schema-form-antd6-plugin` v0.10.0
-**Purpose**: Ant Design v6 UI plugin for `@canard/schema-form`.
-**UI library**: `antd ^6.0.0`
-**Component count**: 18
-**Peer deps**: `antd >=6.0.0`, `dayjs >=1`, `react >=18 <20`, `react-dom >=18 <20`
 
-### Key export
+### Exports
 ```ts
 import { plugin } from '@canard/schema-form-antd6-plugin';
-// plugin: SchemaFormPlugin (FormGroup, FormLabel, FormInput, FormError, formTypeInputDefinitions)
-registerPlugin(plugin);
 ```
-
-### Component list (priority order)
-1. `FormTypeInputBooleanSwitch` — `boolean` + `formType:"switch"`
-2. `FormTypeInputStringCheckbox` — `array` + `formType:"checkbox"` + string items with enum
-3. `FormTypeInputStringSwitch` — `string` + `formType:"switch"` + 2-value enum
-4. `FormTypeInputUri` — `string` + `format:"uri"` or `formType:"uri"`
-5. `FormTypeInputMonth` — `string` + `format:"month"`
-6. `FormTypeInputDate` — `string` + `format:"date"`
-7. `FormTypeInputTime` — `string` + `format:"time"`
-8. `FormTypeInputMonthRange` — `array` + `format:"month-range"` or `formType:"monthRange"`
-9. `FormTypeInputDateRange` — `array` + `format:"date-range"` or `formType:"dateRange"`
-10. `FormTypeInputTimeRange` — `array` + `format:"time-range"` or `formType:"timeRange"`
-11. `FormTypeInputRadioGroup` — `string|number|integer` + `formType:"radio"|"radiogroup"` + enum
-12. `FormTypeInputStringEnum` — `string` + enum (Select dropdown)
-13. `FormTypeInputArray` — `array` (dynamic list)
-14. `FormTypeInputSlider` — `number|integer` + `formType:"slider"`
-15. `FormTypeInputTextarea` — `string` + `format:"textarea"` or `formType:"textarea"`
-16. `FormTypeInputString` — `string` (default; password via `format:"password"`)
-17. `FormTypeInputNumber` — `number|integer` (default)
-18. `FormTypeInputBoolean` — `boolean` (checkbox, default)
-
-### Important constraints
-- API-identical to `@canard/schema-form-antd5-plugin`; only peer dep version differs
-- `strictSchema: false` required in AJV plugin (custom `formType` keyword)
-- Plugin must be registered before any `<Form>` renders
 
 </ForAI>

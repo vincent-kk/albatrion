@@ -94,34 +94,12 @@ userLoader.clearAll();
 ## AI Reference
 
 **Package**: `@winglet/data-loader` v0.10.0
-**Purpose**: Request batching and caching for async data fetching. Solves N+1 problem.
+**Purpose**: Request batching and caching for async data fetching.
 
 ### Exports
 ```ts
 import { DataLoader } from '@winglet/data-loader';
 import type { DataLoaderOptions } from '@winglet/data-loader';
 ```
-
-### Constructor
-```ts
-new DataLoader<Key, Value, CacheKey = Key>(
-  batchLoader: (keys: readonly Key[]) => Promise<(Value | Error)[]>,
-  options?: DataLoaderOptions<Key, Value, CacheKey>
-)
-```
-
-### Methods
-```
-load(key): Promise<Value>
-loadMany(keys): Promise<(Value | Error)[]>
-clear(key): this
-clearAll(): this
-prime(key, value): this
-```
-
-### Constraints
-- `batchLoader` must return values in **same order** as input keys
-- Failed keys should resolve to `Error` instances, not rejected promises
-- Cache stores promises (not values) so concurrent loads share one request
 
 </ForAI>

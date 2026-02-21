@@ -94,29 +94,12 @@ const addStyle = styleManagerFactory('shadow-scope', {
 ## AI Reference
 
 **Package**: `@winglet/style-utils` v0.10.0
-**Purpose**: Scoped CSS injection, CSS compression, and className utilities. Zero runtime deps.
+**Purpose**: Scoped CSS injection, CSS compression, and className utilities.
 
 ### Key exports
 ```
-/style-manager → styleManagerFactory(scopeId, opts?): (styleId, css) => () => void
-                 destroyScope(scopeId): void
-/util          → cx(...inputs): string         — strings | objects | arrays
-                 cxLite(...inputs): string      — truthy strings only
-                 compressCss(css): string       — single-pass CSS minification
-```
-
-### StyleManager behavior
-- Singleton per `(scopeId, target)` pair
-- CSS selectors auto-prefixed: `.scopeId .selector { ... }`
-- `@`-rules, `:root`, `:host` selectors are not prefixed
-- DOM updates batched via `requestAnimationFrame`
-- Modern: `adoptedStyleSheets`; legacy: `<style>` fallback
-- Shadow DOM: pass `{ shadowRoot }` option
-
-### cx vs cxLite
-```ts
-cx('a', { b: true, c: false }, ['d'])  // → 'a b d'
-cxLite('a', true && 'b', false && 'c') // → 'a b'
+./style-manager → destroyScope
+                  styleManagerFactory
 ```
 
 </ForAI>

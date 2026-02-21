@@ -97,23 +97,32 @@ applyPatch(a, patch); // { x: 1, y: 3, z: 4 }
 
 ### Key exports
 ```
-/pointer-manipulator → getValue(obj, pointer, opts?), setValue(obj, pointer, value, opts?), compilePointer(pointer)
-/pointer-patch       → compare(a, b, opts?), applyPatch(obj, patches, opts?), difference(a, b), mergePatch(obj, patch)
-/pointer-escape      → escapePath(token), unescapePath(token)
+./path → JSONPath
+./path-common → convertJsonPathToPointer
+                getJSONPath
+./pointer → JSONPointer
+./pointer-common → convertJsonPointerToPath
+                   getJSONPointer
+./pointer-escape → escapeSegment
+                   escapePath
+                   unescapePath
+                   unescapeSegment
+./pointer-manipulator → getValue
+                        setValue
+                        compilePointer
+./pointer-patch → applyPatch
+                  ApplyPatchOptions (type)
+                  compare
+                  CompareOptions (type)
+                  difference
+                  mergePatch
+                  Patch (type)
+                  TestPatch (type)
+                  AddPatch (type)
+                  ReplacePatch (type)
+                  RemovePatch (type)
+                  CopyPatch (type)
+                  MovePatch (type)
 ```
-
-### Default options
-```ts
-{ immutable: true, protectPrototype: true, strict: false }
-```
-
-### Error types
-- `JSONPointerError` with codes: `INVALID_INPUT`, `INVALID_POINTER`, `PROPERTY_NOT_FOUND`
-
-### Constraints
-- Pointer format: RFC 6901 (`/foo/bar`, `/arr/0`)
-- Escape: `~0` = `~`, `~1` = `/`
-- `protectPrototype: true` blocks prototype pollution via `__proto__`, `constructor`, `prototype`
-- `immutable: true` (default) returns new objects; `immutable: false` mutates in place
 
 </ForAI>

@@ -93,34 +93,138 @@ await withTimeout(fetchData(), 5000); // throws TimeoutError if >5s
 ## AI Reference
 
 **Package**: `@winglet/common-utils` v0.10.0
-**Purpose**: Comprehensive JS/TS utility library with tree-shakeable sub-path exports.
+**Purpose**: General-purpose TypeScript utility functions.
 
-### Key exports by sub-path
+### Key exports
 ```
-/array     → chunk, map, filter, forEach, forEachReverse, groupBy, sortWithReference,
-             unique, uniqueBy, uniqueWith, difference, differenceBy, differenceWith,
-             intersection, intersectionBy, intersectionWith
-/filter    → isString, isNumber, isBoolean, isSymbol, isObject, isPlainObject,
-             isArray, isArrayLike, isDate, isRegex, isBlob, isFile, isNil, isNotNil,
-             isTruthy, isEmptyArray, isCloneable, isValidRegexPattern
-/object    → clone, merge, equals, stableEquals, serializeObject, stableSerialize,
-             transformKeys, transformValues, sortObjectKeys, removeUndefined,
-             getObjectKeys, getSymbols
-/function  → debounce, throttle, getTrackableHandler
-/promise   → delay, timeout, withTimeout, waitAndExecute, waitAndReturn
-/scheduler → scheduleMacrotask, scheduleCancelableMacrotask, scheduleMicrotask, scheduleNextTick
-/hash      → murmur3 hash, polynomial hash (base36)
+./lib → cacheMapFactory
+        cacheWeakMapFactory
+        counterFactory
+        getKeys
+        getTypeTag
+        hasOwnProperty
+        getRandomBoolean
+        getRandomNumber
+        getRandomString
+./error → BaseError
+          ErrorDetails (type)
+          AbortError
+          isAbortError
+          InvalidTypeError
+          isInvalidTypeError
+          TimeoutError
+          isTimeoutError
+./constant → VOID_FUNCTION
+             NULL_FUNCTION
+             FALSE_FUNCTION
+             TRUE_FUNCTION
+             IDENTITY_FUNCTION
+             NOOP_FUNCTION
+             MILLISECOND
+             SECOND
+             MINUTE
+             HOUR
+             DAY
+             ARGUMENTS_TAG
+             ARRAY_BUFFER_TAG
+             ARRAY_TAG
+             BIG_INT_64_ARRAY_TAG
+             BIG_UINT_64_ARRAY_TAG
+             BOOLEAN_TAG
+             DATA_VIEW_TAG
+             DATE_TAG
+             ERROR_TAG
+./filter → isArray
+           isArrayBuffer
+           isArrayIndex
+           isArrayLike
+           isBlob
+           isBoolean
+           isBuffer
+           isCloneable
+           isDataView
+           isDate
+           isEmpty
+           isEmptyArray
+           isEmptyObject
+           isEmptyPlainObject
+           isError
+           isFalsy
+           isFile
+           isFunction
+           isInteger
+           isMap
+./array → at
+          chunk
+          difference
+          differenceBy
+          differenceLite
+          differenceWith
+          forEach
+          forEachDual
+          forEachReverse
+          groupBy
+          intersection
+          intersectionBy
+          intersectionLite
+          intersectionWith
+          map
+          orderedMerge
+          primitiveArrayEqual
+          sortWithReference
+          unique
+          uniqueBy
+./console → printError
+./convert → convertMsFromDuration
+./function → getTrackableHandler
+             TrackableHandlerFunction (type)
+             TrackableHandlerOptions (type)
+             debounce
+             DebouncedFn (type)
+             throttle
+             ThrottledFn (type)
+./hash → Murmur3
+         polynomialHash
+./object → clone
+           cloneLite
+           countKey
+           countObjectKey
+           equals
+           getEmptyObject
+           getFirstKey
+           getObjectKeys
+           getSymbols
+           hasUndefined
+           merge
+           removePrototype
+           removeUndefined
+           serializeNative
+           serializeObject
+           serializeWithFullSortedKeys
+           shallowClone
+           stableEquals
+           stableSerialize
+           sortObjectKeys
+./promise → delay
+            timeout
+            withTimeout
+            waitAndExecute
+            waitAndReturn
+./scheduler → MessageChannelScheduler
+              SchedulerOptions (type)
+              setImmediate
+              clearImmediate
+              getPendingCount
+              destroyGlobalScheduler
+              isMessageChannelSchedulerError
+              cancelMacrotask
+              scheduleMacrotask
+              scheduleCancelableMacrotask
+              cancelMacrotaskSafe
+              scheduleMacrotaskSafe
+              scheduleCancelableMacrotaskSafe
+              scheduleMicrotask
+              scheduleNextTick
 ```
-
-### Error hierarchy
-```
-BaseError → AbortError, InvalidTypeError, TimeoutError
-```
-
-### Important constraints
-- Zero runtime dependencies
-- All functions are pure (side-effect free) where possible
-- Sub-path exports enable optimal tree-shaking
-- ES2020 target
 
 </ForAI>

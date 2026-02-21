@@ -122,42 +122,15 @@ const errors = await validate(formData); // null | ValidationError[]
 
 <ForAI>
 
-## AI Reference Summary
+## AI Reference
 
 **Package**: `@canard/schema-form-ajv8-plugin` v0.10.0
-**Purpose**: AJV 8.x validator plugin for `@canard/schema-form`. Recommended default validator.
-**AJV version**: `ajv ^8.0.0` (bundled as direct dependency)
 
-### Subpath exports and draft support
+### Key exports
 ```
-@canard/schema-form-ajv8-plugin        → Draft-07 (default)
-@canard/schema-form-ajv8-plugin/2019   → Draft 2019-09
-@canard/schema-form-ajv8-plugin/2020   → Draft 2020-12
+Main export → plugin
+./2019 → plugin
+./2020 → plugin
 ```
-
-### Default config (all subpaths)
-```ts
-{ allErrors: true, strictSchema: false, validateFormats: false }
-```
-
-### Key exports (per subpath)
-```ts
-import { plugin } from '@canard/schema-form-ajv8-plugin';
-// plugin.validator: ValidatorPlugin
-
-import { createValidatorFactory } from '@canard/schema-form-ajv8-plugin';
-// createValidatorFactory(ajv: Ajv) => (schema: JsonSchema) => ValidateFunction
-```
-
-### Usage pattern
-```ts
-registerPlugin(plugin);                          // global registration
-plugin.validator.bind(customAjv);               // optional: custom instance
-```
-
-### Important constraints
-- `strictSchema: false` is required because schema-form adds custom properties (`formType`, etc.)
-- Error paths are JSONPointer format natively — no transformation applied
-- Each subpath bundles a different AJV internal class; do not mix subpaths in one app
 
 </ForAI>
