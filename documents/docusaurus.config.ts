@@ -18,7 +18,14 @@ const config: Config = {
 
   i18n: {
     defaultLocale: 'en',
-    locales: ['en'],
+    locales: ['en', 'ko'],
+    localeConfigs: {
+      ko: {
+        label: '한국어',
+        direction: 'ltr',
+        htmlLang: 'ko',
+      },
+    },
   },
 
   future: {
@@ -56,7 +63,7 @@ const config: Config = {
       '@easyops-cn/docusaurus-search-local',
       {
         hashed: true,
-        language: ['en'],
+        language: ['en', 'ko'],
         indexBlog: false,
         docsRouteBasePath: '/docs',
       },
@@ -86,6 +93,10 @@ const config: Config = {
           position: 'left',
           label: '@slats',
           to: '/docs/slats/',
+        },
+        {
+          type: 'localeDropdown',
+          position: 'right',
         },
         {
           href: 'https://github.com/vincent-kk/albatrion',

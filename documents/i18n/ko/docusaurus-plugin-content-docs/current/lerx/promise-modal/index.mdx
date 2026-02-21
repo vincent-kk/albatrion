@@ -1,0 +1,161 @@
+---
+title: '@lerx/promise-modal'
+sidebar_label: 'promise-modal'
+sidebar_position: 1
+---
+
+import PackageHeader from '@site/src/components/PackageHeader';
+import ForAI from '@site/src/components/ForAI';
+
+# @lerx/promise-modal
+
+<PackageHeader
+  name="@lerx/promise-modal"
+  description="Promise-based modal utility for React — alert, confirm, and prompt as async functions, usable inside and outside components."
+/>
+
+`@lerx/promise-modal`은 모달 인터랙션을 awaitable 프로미스로 전환합니다.
+이벤트 핸들러, 비동기 함수, React 트리 외부 등 어디서든 `alert`, `confirm`,
+`prompt`를 호출하고 사용자 응답을 await할 수 있습니다.
+
+- React 컴포넌트 내부 및 외부 모두에서 사용 가능
+- alert, confirm, prompt 모달 타입 지원
+- 컴포넌트 슬롯 완전 커스터마이징 (foreground, background, title, footer 등)
+- 모달별 및 전역 설정
+- `useModal`을 통한 컴포넌트 라이프사이클 연동 모달
+
+## Visual Guide
+
+Promise Modal은 모달 다이얼로그를 위한 프로그래밍 방식의 API를 제공합니다. React 상태 변수로 모달 상태를 관리하는 대신, Promise를 반환하는 함수를 호출합니다:
+
+1. **호출** `openModal(MyComponent, props)` from any code
+2. **모달 표시** with your component rendered inside
+3. **사용자 상호작용** and the modal resolves/rejects the Promise
+4. **결과 반환** as a resolved Promise value
+
+:::info 스크린샷
+비주얼 데모 스크린샷이 `/img/demos/promise-modal-demo.png`에 추가될 예정입니다.
+:::
+
+## Requirements
+
+- React 18 or 19
+- Node.js 16.11.0+
+
+## Setup
+
+### 1. Wrap your app with `ModalProvider`
+
+```tsx
+import { ModalProvider } from '@lerx/promise-modal';
+
+function App() {
+  return (
+    <ModalProvider>
+      <YourApp />
+    </ModalProvider>
+  );
+}
+```
+
+### 2. Call modal functions anywhere
+
+```tsx
+import { alert, confirm, prompt } from '@lerx/promise-modal';
+
+// In an event handler, async function, or outside React:
+async function handleDelete() {
+  const ok = await confirm({
+    title: 'Delete item',
+    content: 'This cannot be undone.',
+    footer: { confirm: 'Delete', cancel: 'Cancel' },
+  });
+  if (ok) await deleteItem();
+}
+```
+
+### 3. Use `useModal` inside components for lifecycle-scoped modals
+
+```tsx
+import { useModal } from '@lerx/promise-modal';
+
+function MyComponent() {
+  const modal = useModal();
+  // Modals opened via `modal.*` are closed automatically when MyComponent unmounts.
+  return <button onClick={() => modal.alert({ title: 'Hi' })}>Open</button>;
+}
+```
+
+## ModalProvider with custom components and options
+
+```tsx
+import { ModalProvider } from '@lerx/promise-modal';
+import { CustomBackground, CustomForeground, CustomFooter } from './components';
+
+function App() {
+  return (
+    <ModalProvider
+      ForegroundComponent={CustomForeground}
+      BackgroundComponent={CustomBackground}
+      FooterComponent={CustomFooter}
+      options={{
+        duration: 250,                   // animation duration in ms
+        backdrop: 'rgba(0,0,0,0.35)',    // backdrop CSS color
+        manualDestroy: false,            // auto-destroy on confirm/close
+        closeOnBackdropClick: true,      // close when backdrop clicked
+        zIndex: 1000,                    // z-index for modal stack
+      }}
+      context={{ theme: 'light', locale: 'en-US' }}
+    >
+      <YourApp />
+    </ModalProvider>
+  );
+}
+```
+
+<ForAI>
+
+## AI Reference
+
+**Package**: `@lerx/promise-modal` v0.10.5
+**Purpose**: Promise-based modal management for React — alert, confirm, prompt as async functions.
+
+### Core functions (usable anywhere, including outside React)
+```ts
+import { alert, confirm, prompt } from '@lerx/promise-modal';
+```
+
+### Provider
+```ts
+import { ModalProvider } from '@lerx/promise-modal';
+import type { ModalProviderHandle, ModalProviderProps } from '@lerx/promise-modal';
+```
+
+### Hooks (inside React components)
+```ts
+import { useModal } from '@lerx/promise-modal';              // lifecycle-scoped modals
+import { useInitializeModal } from '@lerx/promise-modal';    // provider initialization
+import { useActiveModalCount } from '@lerx/promise-modal';   // open modal count
+import { useModalAnimation } from '@lerx/promise-modal';     // animation state
+import { useModalDuration } from '@lerx/promise-modal';      // animation duration
+import { useModalOptions } from '@lerx/promise-modal';       // current options
+import { useModalBackdrop } from '@lerx/promise-modal';      // backdrop state
+import { useDestroyAfter } from '@lerx/promise-modal';       // auto-destroy timer
+import { useSubscribeModal } from '@lerx/promise-modal';     // modal event subscription
+```
+
+### Types
+```ts
+import type { ModalOptions } from '@lerx/promise-modal';
+import type { ModalFrameProps, ModalBackground } from '@lerx/promise-modal';
+import type { FooterComponentProps, PromptInputProps } from '@lerx/promise-modal';
+import type { AlertContentProps, ConfirmContentProps, PromptContentProps } from '@lerx/promise-modal';
+import type { WrapperComponentProps } from '@lerx/promise-modal';
+```
+
+### Architecture
+- `ModalProvider` wraps app → enables global modal rendering
+- `alert/confirm/prompt` → returns `Promise<boolean | string | void>`
+- `useModal()` → returns lifecycle-scoped instance (auto-closes on unmount)
+
+</ForAI>

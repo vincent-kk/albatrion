@@ -1,8 +1,8 @@
 ---
+sidebar_label: 'Examples'
 sidebar_position: 5
 ---
 
-import LangTabs from '@site/src/components/LangTabs';
 import ForAI from '@site/src/components/ForAI';
 
 # Examples
@@ -100,10 +100,7 @@ function AccountForm() {
 
 ## oneOf — Exclusive Branches
 
-<LangTabs
-  en={<p>Use <code>&amp;if</code> to bind each branch activation to a field value. Only the matching branch's fields appear in the form.</p>}
-  kr={<p><code>&amp;if</code>를 사용하여 각 브랜치 활성화를 필드 값에 바인딩합니다. 매칭되는 브랜치의 필드만 폼에 나타납니다.</p>}
-/>
+Use `&if` to bind each branch activation to a field value. Only the matching branch's fields appear in the form.
 
 ```tsx
 const schema = {

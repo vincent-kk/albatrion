@@ -1,30 +1,17 @@
 ---
+sidebar_label: 'API Reference'
 sidebar_position: 4
 ---
 
-import LangTabs from '@site/src/components/LangTabs';
 import ForAI from '@site/src/components/ForAI';
 
 # API Reference
 
 ## `<Form>`
 
-<LangTabs
-  en={<>
-    <p>
-      Main schema-driven form component. Accepts a JSON Schema and manages the full
-      node tree lifecycle. Supports both controlled and uncontrolled usage via
-      <code>defaultValue</code> / <code>onChange</code> or imperative <code>ref</code> API.
-    </p>
-  </>}
-  kr={<>
-    <p>
-      스키마 기반 폼 컴포넌트. JSON Schema를 받아 전체 노드 트리 라이프사이클을 관리합니다.
-      <code>defaultValue</code> / <code>onChange</code> 또는 명령형 <code>ref</code> API를 통해
-      제어/비제어 사용 방식 모두를 지원합니다.
-    </p>
-  </>}
-/>
+Main schema-driven form component. Accepts a JSON Schema and manages the full
+node tree lifecycle. Supports both controlled and uncontrolled usage via
+`defaultValue` / `onChange` or imperative `ref` API.
 
 ### Props
 
@@ -74,20 +61,8 @@ ValidationMode.OnRequest // validate only when validate() called explicitly
 
 ## `FormHandle` (ref API)
 
-<LangTabs
-  en={<>
-    <p>
-      Obtained via <code>useRef&lt;FormHandle&lt;typeof schema&gt;&gt;(null)</code> and passed
-      to <code>ref</code> prop. All methods are safe to call after mount.
-    </p>
-  </>}
-  kr={<>
-    <p>
-      <code>useRef&lt;FormHandle&lt;typeof schema&gt;&gt;(null)</code>로 획득하고 <code>ref</code> prop에
-      전달합니다. 마운트 후 모든 메서드를 안전하게 호출할 수 있습니다.
-    </p>
-  </>}
-/>
+Obtained via `useRef<FormHandle<typeof schema>>(null)` and passed
+to `ref` prop. All methods are safe to call after mount.
 
 ```ts
 interface FormHandle<Schema, Value> {
@@ -137,10 +112,7 @@ All sub-components require a `<Form>` ancestor and use its internal context.
 
 ### `Form.Group`
 
-<LangTabs
-  en={<p>Renders a complete field group: label + input + error. Wraps <code>Form.Label</code>, <code>Form.Input</code>, and <code>Form.Error</code> together using the plugin's <code>FormGroup</code> component.</p>}
-  kr={<p>완전한 필드 그룹을 렌더링합니다: 레이블 + 입력 + 오류. 플러그인의 <code>FormGroup</code> 컴포넌트를 사용하여 <code>Form.Label</code>, <code>Form.Input</code>, <code>Form.Error</code>를 함께 감쌉니다.</p>}
-/>
+Renders a complete field group: label + input + error. Wraps `Form.Label`, `Form.Input`, and `Form.Error` together using the plugin's `FormGroup` component.
 
 ```ts
 interface FormGroupProps<Value> extends ChildNodeComponentProps {
@@ -189,10 +161,7 @@ Renders only the error message using the plugin's `FormError` component.
 
 ### `Form.Render`
 
-<LangTabs
-  en={<p>Low-level slot for custom rendering. Passes raw <code>FormTypeRendererProps</code> to a render prop or component. Use when you need full control over how a field is presented.</p>}
-  kr={<p>커스텀 렌더링을 위한 저수준 슬롯. 렌더 prop 또는 컴포넌트에 원시 <code>FormTypeRendererProps</code>를 전달합니다. 필드가 표시되는 방식을 완전히 제어할 때 사용합니다.</p>}
-/>
+Low-level slot for custom rendering. Passes raw `FormTypeRendererProps` to a render prop or component. Use when you need full control over how a field is presented.
 
 ```tsx
 <Form.Render path="/status">
@@ -207,10 +176,7 @@ Renders only the error message using the plugin's `FormError` component.
 
 ### `FormProvider`
 
-<LangTabs
-  en={<p>Context provider for sharing plugin configuration across a subtree without global registration. Useful when multiple form instances in the same app need different plugins.</p>}
-  kr={<p>전역 등록 없이 서브트리 전체에 플러그인 구성을 공유하는 컨텍스트 프로바이더입니다. 동일한 앱의 여러 폼 인스턴스가 다른 플러그인이 필요할 때 유용합니다.</p>}
-/>
+Context provider for sharing plugin configuration across a subtree without global registration. Useful when multiple form instances in the same app need different plugins.
 
 ```tsx
 import { FormProvider } from '@canard/schema-form';
@@ -234,10 +200,7 @@ const { submit, pending } = useFormSubmit(formRef);
 // pending: boolean | undefined
 ```
 
-<LangTabs
-  en={<p>Synchronizes with the form's internal submit handler via <code>useSyncExternalStore</code>. <code>pending</code> is <code>true</code> while the <code>onSubmit</code> promise is in flight.</p>}
-  kr={<p><code>useSyncExternalStore</code>를 통해 폼의 내부 제출 핸들러와 동기화됩니다. <code>onSubmit</code> promise가 처리 중일 때 <code>pending</code>은 <code>true</code>입니다.</p>}
-/>
+Synchronizes with the form's internal submit handler via `useSyncExternalStore`. `pending` is `true` while the `onSubmit` promise is in flight.
 
 ```tsx
 function SubmitButton({ formRef }) {
@@ -295,16 +258,9 @@ const errors = useChildNodeErrors(node);
 registerPlugin(plugin: SchemaFormPlugin | null): void
 ```
 
-<LangTabs
-  en={<>
-    <p>Globally registers a plugin. Deduplicated by stable content hash — calling with the same plugin object twice is a no-op.</p>
-    <p>Call <code>registerPlugin(null)</code> to reset all plugins to system defaults.</p>
-  </>}
-  kr={<>
-    <p>플러그인을 전역으로 등록합니다. 안정적인 콘텐츠 해시로 중복 제거됩니다 — 동일한 플러그인 객체로 두 번 호출해도 아무 일도 일어나지 않습니다.</p>
-    <p><code>registerPlugin(null)</code>을 호출하면 모든 플러그인이 시스템 기본값으로 재설정됩니다.</p>
-  </>}
-/>
+Globally registers a plugin. Deduplicated by stable content hash — calling with the same plugin object twice is a no-op.
+
+Call `registerPlugin(null)` to reset all plugins to system defaults.
 
 ## `SchemaFormPlugin` Interface
 
@@ -335,10 +291,7 @@ type ValidateFunction = (
 
 ## `FormTypeInputProps` Interface
 
-<LangTabs
-  en={<p>All custom input components registered via <code>formTypeInputDefinitions</code> receive these props.</p>}
-  kr={<p><code>formTypeInputDefinitions</code>를 통해 등록된 모든 커스텀 입력 컴포넌트는 이 props를 받습니다.</p>}
-/>
+All custom input components registered via `formTypeInputDefinitions` receive these props.
 
 ```ts
 interface FormTypeInputProps<Value, Context, WatchValues, Schema, Node> {

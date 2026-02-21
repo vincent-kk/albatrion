@@ -1,10 +1,10 @@
 ---
+title: '@lerx/promise-modal'
 sidebar_label: 'promise-modal'
 sidebar_position: 1
 ---
 
 import PackageHeader from '@site/src/components/PackageHeader';
-import LangTabs from '@site/src/components/LangTabs';
 import ForAI from '@site/src/components/ForAI';
 
 # @lerx/promise-modal
@@ -14,36 +14,29 @@ import ForAI from '@site/src/components/ForAI';
   description="Promise-based modal utility for React — alert, confirm, and prompt as async functions, usable inside and outside components."
 />
 
-<LangTabs
-  en={<>
-    <p>
-      <code>@lerx/promise-modal</code> turns modal interactions into awaitable promises.
-      Call <code>alert</code>, <code>confirm</code>, or <code>prompt</code> from anywhere — event handlers,
-      async functions, or outside the React tree — and await the user's response.
-    </p>
-    <ul>
-      <li>Works inside and outside React components</li>
-      <li>Supports alert, confirm, and prompt modal types</li>
-      <li>Fully customizable component slots (foreground, background, title, footer, etc.)</li>
-      <li>Per-modal and global configuration</li>
-      <li>Component-lifecycle-scoped modals via <code>useModal</code></li>
-    </ul>
-  </>}
-  kr={<>
-    <p>
-      <code>@lerx/promise-modal</code>은 모달 인터랙션을 awaitable 프로미스로 전환합니다.
-      이벤트 핸들러, 비동기 함수, React 트리 외부 등 어디서든 <code>alert</code>, <code>confirm</code>,
-      <code>prompt</code>를 호출하고 사용자 응답을 await할 수 있습니다.
-    </p>
-    <ul>
-      <li>React 컴포넌트 내부 및 외부 모두에서 사용 가능</li>
-      <li>alert, confirm, prompt 모달 타입 지원</li>
-      <li>컴포넌트 슬롯 완전 커스터마이징 (foreground, background, title, footer 등)</li>
-      <li>모달별 및 전역 설정</li>
-      <li><code>useModal</code>을 통한 컴포넌트 라이프사이클 연동 모달</li>
-    </ul>
-  </>}
-/>
+`@lerx/promise-modal` turns modal interactions into awaitable promises.
+Call `alert`, `confirm`, or `prompt` from anywhere — event handlers,
+async functions, or outside the React tree — and await the user's response.
+<ul>
+  <li>Works inside and outside React components</li>
+  <li>Supports alert, confirm, and prompt modal types</li>
+  <li>Fully customizable component slots (foreground, background, title, footer, etc.)</li>
+  <li>Per-modal and global configuration</li>
+  <li>Component-lifecycle-scoped modals via <code>useModal</code></li>
+</ul>
+
+## Visual Guide
+
+Promise Modal provides a programmatic API for modal dialogs. Instead of managing modal state with React state variables, you call a function that returns a Promise:
+
+1. **Call** `openModal(MyComponent, props)` from any code
+2. **Modal appears** with your component rendered inside
+3. **User interacts** and the modal resolves/rejects the Promise
+4. **Result returned** as a resolved Promise value
+
+:::info Screenshots
+Visual demo screenshot will be added at `/img/demos/promise-modal-demo.png`.
+:::
 
 ## Requirements
 

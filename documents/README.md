@@ -30,7 +30,7 @@ yarn workspace documents serve
 ## Features
 
 - **Interactive Playground**: Sandpack-based live code editor for `@canard/schema-form`
-- **Bilingual Tabs**: In-page EN/KR language switching via `<LangTabs>` component
+- **i18n Support**: Full-page English/Korean translation via Docusaurus i18n
 - **AI-Friendly Output**: `llms.txt` and `llms-full.txt` generated via `docusaurus-plugin-llms`
 - **Local Search**: Offline-capable search via `@easyops-cn/docusaurus-search-local`
 - **Fast Builds**: Rspack bundler via `@docusaurus/faster`
@@ -38,5 +38,6 @@ yarn workspace documents serve
 ## Adding Documentation
 
 1. Create `.mdx` files under `docs/{namespace}/{package}/`
-2. Use shared components: `<LangTabs>`, `<ForAI>`, `<PackageHeader>`
+2. Use shared components: `<ForAI>`, `<PackageHeader>`
+3. Add Korean translations under `i18n/ko/docusaurus-plugin-content-docs/current/`
 3. Run `yarn workspace documents build` to verify

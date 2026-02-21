@@ -1,0 +1,314 @@
+---
+sidebar_label: 'Core Concepts'
+sidebar_position: 3
+---
+
+import ForAI from '@site/src/components/ForAI';
+
+# Core Concepts
+
+## JSON Schema as the Single Source of Truth
+
+폼 구조, 필드 타입, 검증 규칙, 조건부 로직은 모두 단일 JSON Schema 객체에 인코딩됩니다.
+라이브러리는 마운트 시 이 스키마를 파싱하여 내부 **노드 트리**를 구성합니다 —
+스키마 필드당 하나의 노드. 컴포넌트 코드에서 폼 필드나 검증 규칙을 수동으로 정의할 필요가 없습니다.
+
+```ts
+const schema = {
+  type: 'object',
+  properties: {
+    title:    { type: 'string', minLength: 1 },
+    price:    { type: 'number', minimum: 0 },
+    inStock:  { type: 'boolean' },
+    tags:     { type: 'array', items: { type: 'string' } },
+  },
+  required: ['title', 'price'],
+};
+// → ObjectNode
+//     ├── StringNode  (title)
+//     ├── NumberNode  (price)
+//     ├── BooleanNode (inStock)
+//     └── ArrayNode   (tags)
+//           └── StringNode (items)
+```
+
+## Node Tree
+
+각 노드는 자체 값, 검증 오류, 상태 플래그(`dirty`, `touched`, `validated`)를
+소유하는 반응형 객체입니다. 변경 사항은 위로 전파됩니다: 리프 노드의 값이 변경되면
+모든 상위 노드가 `UpdateValue` 이벤트를 받고 집계된 값을 업데이트합니다.
+
+### Node State Flags
+
+| Property | Type | Description |
+|---|---|---|
+| `value` | `any` | Current value |
+| `defaultValue` | `any` | Value at initialization |
+| `errors` | `JsonSchemaError[]` | Validation errors for this node |
+| `dirty` | `boolean` | Value changed since initialization |
+| `touched` | `boolean` | User has interacted with this field |
+| `validated` | `boolean` | Validation has been run |
+| `visible` | `boolean` | Computed — controls visibility |
+| `active` | `boolean` | Computed — controls active state |
+| `readOnly` | `boolean` | Computed or inherited |
+| `disabled` | `boolean` | Computed or inherited |
+| `initialized` | `boolean` | Node has completed initialization |
+| `required` | `boolean` | Field is required in parent schema |
+| `nullable` | `boolean` | Schema type includes `"null"` |
+
+### Node Navigation
+
+```ts
+// Absolute path from root (RFC 6901 JSONPointer)
+const node = rootNode.find('/address/street');
+
+// Relative path from current node
+const sibling = node.find('./city');
+
+// Find all matching nodes
+const allItems = rootNode.findAll('/items/*');
+```
+
+## Plugin Architecture
+
+라이브러리는 두 개의 독립적인 플러그인 레이어로 분리되어 있습니다.
+어떤 validator와 UI 라이브러리도 조합할 수 있습니다.
+
+```
+┌─────────────────────────────────────────────────────┐
+│                  SchemaFormPlugin                    │
+│                                                      │
+│  FormGroup   FormLabel   FormInput   FormError       │  ← UI layer
+│  formTypeInputDefinitions                            │
+├─────────────────────────────────────────────────────┤
+│                  ValidatorPlugin                     │
+│                                                      │
+│  bind(instance)                                      │  ← Validation layer
+│  compile(jsonSchema) → ValidateFunction              │
+└─────────────────────────────────────────────────────┘
+```
+
+### Plugin Merge Behavior
+
+When multiple plugins are registered, the merge rules are:
+
+| Property | Merge strategy |
+|---|---|
+| `FormGroup`, `FormLabel`, `FormInput`, `FormError` | Last wins |
+| `formTypeInputDefinitions` | Prepended (first match wins) |
+| `validator` | Last wins |
+| `formatError` | Last wins |
+
+## FormType System
+
+`FormTypeInputDefinition`은 **테스트 조건**과
+**React 컴포넌트**를 쌍으로 연결합니다. 라이브러리는 등록된 모든 정의를
+우선순위 순서로 평가하고, 첫 번째 매칭 컴포넌트를 사용하여 필드를 렌더링합니다.
+
+```ts
+// Object test — declarative
+const definition: FormTypeInputDefinition = {
+  test: { type: 'string', format: 'date' },  // matches date fields
+  Component: DatePickerInput,
+};
+
+// Function test — imperative
+const definition: FormTypeInputDefinition = {
+  test: (hint) => hint.jsonSchema.widget === 'richtext',
+  Component: RichTextEditor,
+};
+
+// Hint object available in test function:
+type Hint = {
+  type: JsonSchemaType;       // 'string' | 'number' | 'boolean' | ...
+  path: string;               // JSONPointer path
+  required: boolean;
+  nullable: boolean;
+  jsonSchema: JsonSchema;
+  format?: string;
+  formType?: string;          // custom jsonSchema.formType field
+};
+```
+
+### FormTypeInputMap (path-based override)
+
+```ts
+// Map specific paths to specific components
+const formTypeInputMap: FormTypeInputMap = {
+  '/user/avatar':     AvatarUploader,
+  '/items/*/price':   CurrencyInput,   // * matches any segment
+};
+
+<Form jsonSchema={schema} formTypeInputMap={formTypeInputMap} />
+```
+
+## Computed Properties
+
+필드는 `computed` (또는 `&computed`) 키의 JSONPointer 표현식을 사용하여
+형제 또는 부모 값에 반응할 수 있습니다. 의존성은 표현식에서 자동으로 추적되거나,
+`watch`를 통해 명시적으로 선언됩니다.
+
+```ts
+{
+  type: 'object',
+  properties: {
+    isPremium: { type: 'boolean' },
+    discount: {
+      type: 'number',
+      computed: {
+        visible:  '../isPremium === true',   // show only for premium
+        readOnly: '../isPremium === false',  // lock if not premium
+        watch: ['../isPremium'],             // explicit dep (optional)
+      },
+    },
+  },
+}
+```
+
+Supported computed keys: `visible`, `active`, `readOnly`, `disabled`, `watch`.
+
+### JSONPointer Extensions (computed scope only)
+
+| Syntax | Meaning |
+|---|---|
+| `../field` | Parent node's `field` |
+| `./field` | Current node's `field` (relative) |
+| `..` | Navigate to parent |
+| `*` | Wildcard — any segment (FormTypeInputMap only) |
+
+## Schema Composition
+
+라이브러리는 모든 표준 JSON Schema 구성 키워드를 지원합니다.
+`oneOf`와 `anyOf` 브랜치는 커스텀 `&if` 표현식을
+사용하여 활성화를 필드 값에 바인딩할 수 있습니다.
+
+```ts
+// Standard if/then/else
+{
+  if:   { properties: { type: { enum: ['movie'] } } },
+  then: { properties: { releaseDate: { type: 'string', format: 'date' } } },
+  else: { properties: { version:     { type: 'string' } } },
+}
+
+// oneOf with &if expression (exclusive branches)
+{
+  oneOf: [
+    { '&if': "./type === 'movie'", properties: { director: { type: 'string' } } },
+    { '&if': "./type === 'game'",  properties: { platform: { type: 'string' } } },
+  ],
+}
+
+// anyOf with &if (non-exclusive, multiple can be active)
+{
+  anyOf: [
+    { '&if': './flag1 === true', properties: { field1: { type: 'string' } } },
+    { '&if': './flag2 === true', properties: { field2: { type: 'string' } } },
+  ],
+}
+
+// allOf (always merged)
+{
+  allOf: [
+    { properties: { firstName: { type: 'string' } } },
+    { properties: { lastName:  { type: 'string' } } },
+    { required: ['firstName', 'lastName'] },
+  ],
+}
+```
+
+### Conditional setValue Filtering
+
+**부모 노드**가 `setValue()`를 호출하면, 활성 `oneOf`/`anyOf`
+브랜치와 일치하지 않는 필드는 자동으로 값에서 제거됩니다. **자식 노드**가
+`setValue()`를 호출하면 이 필터링이 우회됩니다 — 현재 브랜치 조건과
+관계없이 값이 전파됩니다.
+
+## Validation System
+
+### ValidationMode
+
+```ts
+enum ValidationMode {
+  None      = 0,   // No automatic validation
+  OnChange  = 1,   // Validate after every setValue()
+  OnRequest = 2,   // Validate only when validate() is called
+}
+
+// Default: OnChange | OnRequest (bitwise OR)
+<Form validationMode={ValidationMode.OnChange | ValidationMode.OnRequest} />
+```
+
+### ShowError
+
+```ts
+enum ShowError {
+  Dirty        = 1,  // show when node.dirty === true
+  Touched      = 2,  // show when node.touched === true
+  DirtyTouched = 3,  // show when both dirty AND touched (default)
+}
+
+<Form showError={ShowError.DirtyTouched} />  // default
+<Form showError={true} />                    // always show
+<Form showError={false} />                   // never show
+```
+
+### Error Structure
+
+```ts
+interface JsonSchemaError {
+  dataPath: string;   // JSONPointer to the failing field
+  keyword:  string;   // JSON Schema keyword (e.g., 'minLength', 'required')
+  message:  string;
+  details:  any;      // keyword-specific details
+  source:   any;      // raw error from the validator library
+}
+```
+
+## Event System
+
+노드는 배치 이벤트 시스템을 통해 통신합니다. 동일한 동기 호출 스택에서 예약된 이벤트는
+단일 배치로 병합되어 다음 마이크로태스크에서 디스패치됩니다. `UpdateValue`는
+예외로, 초기화 완료 후 동기적으로 발생합니다(즉시 모드).
+
+```ts
+// Key event types (NodeEventType enum)
+UpdateValue              // value changed — synchronous after init
+UpdateState              // dirty/touched/validated changed
+UpdateError              // validation errors changed
+UpdateComputedProperties // computed visible/readOnly/disabled changed
+UpdateChildren           // array/object children added or removed
+RequestRefresh           // internal: sync uncontrolled component
+RequestRemount           // external: force full component remount
+```
+
+<ForAI>
+
+## AI Concept Glossary
+
+| Term | Definition |
+|---|---|
+| `SchemaNode` | Base interface for all nodes — the public API surface |
+| `StringNode` / `NumberNode` / `BooleanNode` / `NullNode` | Terminal nodes — no children |
+| `ObjectNode` / `ArrayNode` | Branch nodes — have children |
+| `VirtualNode` | Non-schema node created for conditional branches (`oneOf`/`anyOf`) |
+| `BranchStrategy` | Strategy for complex nested structures with child nodes |
+| `TerminalStrategy` | Strategy for simple non-nested structures |
+| `FormTypeInputDefinition` | `{ test, Component }` pair — maps a schema pattern to a React component |
+| `FormTypeInputMap` | `{ [jsonPointerPath]: Component }` — path-based component override |
+| `FormTypeInputProps` | Props interface all custom input components must satisfy |
+| `FormTypeRendererProps` | Props for `FormGroup`/`FormLabel`/`FormInput`/`FormError` renderer components |
+| `SchemaFormPlugin` | Plugin object with optional renderer components + `formTypeInputDefinitions` + `validator` + `formatError` |
+| `ValidatorPlugin` | `{ bind(instance), compile(jsonSchema) → ValidateFunction }` |
+| `ValidateFunction` | `(value) => JsonSchemaError[] \| null \| Promise<...>` |
+| `computed` / `&computed` | JSON Schema extension for reactive field properties |
+| `&if` | JSON Schema extension — expression to activate a `oneOf`/`anyOf` branch |
+| `enhancedValue` | Value including virtual/conditional field values — used for validation |
+| `ShowError` | Enum controlling when validation errors are displayed |
+| `ValidationMode` | Enum controlling when validation runs |
+| `NodeEventType` | Enum of all events nodes can emit |
+| `SetValueOption` | Bitwise options for `setValue()` — `Overwrite`, `Merge`, `Isolate` |
+| `FormHandle` | Ref interface for imperative form control |
+| `FormProvider` | Context provider for sharing plugin config across a subtree |
+| `JSONPointer` | RFC 6901 path string (e.g., `/address/street`) — extended with `..`, `.`, `*` |
+
+</ForAI>

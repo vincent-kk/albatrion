@@ -1,30 +1,30 @@
 ---
+title: '@canard/schema-form-antd-mobile-plugin'
 sidebar_label: 'antd-mobile-plugin'
 sidebar_position: 8
 ---
 
 import PackageHeader from '@site/src/components/PackageHeader';
-import LangTabs from '@site/src/components/LangTabs';
 import ForAI from '@site/src/components/ForAI';
 
 <PackageHeader name="@canard/schema-form-antd-mobile-plugin" />
 
-<LangTabs
-  en={<>
-    <p>
-      Ant Design Mobile UI plugin for <code>@canard/schema-form</code>.
-      Provides 10 touch-optimized form input components built on <code>antd-mobile ^5.0.0</code>.
-      Designed for mobile web applications — switches and sliders are preferred over desktop-style inputs.
-    </p>
-  </>}
-  kr={<>
-    <p>
-      <code>@canard/schema-form</code>를 위한 Ant Design Mobile UI 플러그인입니다.
-      <code>antd-mobile ^5.0.0</code> 기반의 10개 터치 최적화 폼 입력 컴포넌트를 제공합니다.
-      모바일 웹 애플리케이션을 위해 설계되었으며, 데스크탑 방식의 입력 대신 스위치와 슬라이더를 선호합니다.
-    </p>
-  </>}
-/>
+Ant Design Mobile UI plugin for `@canard/schema-form`.
+Provides 10 touch-optimized form input components built on `antd-mobile ^5.0.0`.
+Designed for mobile web applications — switches and sliders are preferred over desktop-style inputs.
+
+## Visual Guide
+
+When configured with a JSON Schema, this plugin renders Ant Design Mobile form components optimized for touch interfaces:
+- **Text fields** → Mobile `Input` component
+- **Numbers** → Mobile `Stepper` control
+- **Booleans** → `Checkbox` or `Switch`
+- **Enums** → `Picker` or `CheckList`
+- **Dates** → Mobile `DatePicker`, `CalendarPicker`
+
+:::info Screenshots
+Visual demo screenshot will be added at `/img/demos/schema-form-antd-mobile-demo.png`.
+:::
 
 ## Installation
 

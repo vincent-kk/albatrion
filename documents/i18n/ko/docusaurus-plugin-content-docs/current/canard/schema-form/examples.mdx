@@ -1,0 +1,606 @@
+---
+sidebar_label: 'Examples'
+sidebar_position: 5
+---
+
+import ForAI from '@site/src/components/ForAI';
+
+# Examples
+
+## Basic Form — Primitive Fields
+
+```tsx
+import { Form, ShowError } from '@canard/schema-form';
+
+const schema = {
+  type: 'object',
+  properties: {
+    name:      { type: 'string',  title: 'Name',     minLength: 1, maxLength: 100 },
+    age:       { type: 'number',  title: 'Age',      minimum: 0, maximum: 150 },
+    email:     { type: 'string',  title: 'Email',    format: 'email' },
+    isActive:  { type: 'boolean', title: 'Active' },
+    bio:       { type: 'string',  title: 'Bio',      maxLength: 500 },
+  },
+  required: ['name', 'email'],
+} as const;
+
+function BasicForm() {
+  return (
+    <Form
+      jsonSchema={schema}
+      showError={ShowError.DirtyTouched}
+      onSubmit={async (value) => {
+        console.log(value);
+        // value is typed as { name: string; age?: number; email: string; ... }
+      }}
+    />
+  );
+}
+```
+
+## Nullable Fields
+
+```tsx
+const schema = {
+  type: 'object',
+  properties: {
+    name:     { type: 'string' },
+    nickname: { type: ['string', 'null'] as const },  // nullable
+    score:    { type: ['number', 'null'] as const },   // nullable
+  },
+} as const;
+
+// Custom input that handles null
+const NullableTextInput: FC<FormTypeInputProps<string | null>> = ({
+  value, onChange, nullable, placeholder,
+}) => (
+  <input
+    value={value ?? ''}
+    placeholder={nullable ? `${placeholder} (optional)` : placeholder}
+    onChange={(e) => onChange(e.target.value || (nullable ? null : ''))}
+  />
+);
+```
+
+## Conditional Rendering — if/then/else
+
+```tsx
+const schema = {
+  type: 'object',
+  properties: {
+    accountType: {
+      type: 'string',
+      title: 'Account Type',
+      enum: ['personal', 'business'],
+    },
+  },
+  if: {
+    properties: { accountType: { const: 'business' } },
+  },
+  then: {
+    properties: {
+      companyName: { type: 'string', title: 'Company Name', minLength: 1 },
+      taxId:       { type: 'string', title: 'Tax ID' },
+    },
+    required: ['companyName'],
+  },
+  else: {
+    properties: {
+      dateOfBirth: { type: 'string', title: 'Date of Birth', format: 'date' },
+    },
+  },
+} as const;
+
+function AccountForm() {
+  return <Form jsonSchema={schema} />;
+  // When accountType='business': shows companyName + taxId
+  // When accountType='personal': shows dateOfBirth
+}
+```
+
+## oneOf — Exclusive Branches
+
+`&if`를 사용하여 각 브랜치 활성화를 필드 값에 바인딩합니다. 매칭되는 브랜치의 필드만 폼에 나타납니다.
+
+```tsx
+const schema = {
+  type: 'object',
+  properties: {
+    paymentMethod: {
+      type: 'string',
+      title: 'Payment Method',
+      enum: ['card', 'bank', 'paypal'],
+    },
+  },
+  oneOf: [
+    {
+      '&if': "./paymentMethod === 'card'",
+      properties: {
+        cardNumber: { type: 'string', title: 'Card Number', pattern: '^[0-9]{16}$' },
+        expiryDate: { type: 'string', title: 'Expiry',      format: 'date' },
+        cvv:        { type: 'string', title: 'CVV',         pattern: '^[0-9]{3,4}$' },
+      },
+      required: ['cardNumber', 'expiryDate', 'cvv'],
+    },
+    {
+      '&if': "./paymentMethod === 'bank'",
+      properties: {
+        accountNumber: { type: 'string', title: 'Account Number' },
+        routingNumber:  { type: 'string', title: 'Routing Number' },
+      },
+      required: ['accountNumber', 'routingNumber'],
+    },
+    {
+      '&if': "./paymentMethod === 'paypal'",
+      properties: {
+        paypalEmail: { type: 'string', title: 'PayPal Email', format: 'email' },
+      },
+      required: ['paypalEmail'],
+    },
+  ],
+} as const;
+```
+
+## anyOf — Non-Exclusive Branches
+
+```tsx
+const schema = {
+  type: 'object',
+  properties: {
+    notifyBySms:   { type: 'boolean', title: 'Notify by SMS' },
+    notifyByEmail: { type: 'boolean', title: 'Notify by Email' },
+  },
+  anyOf: [
+    {
+      '&if': './notifyBySms === true',
+      properties: {
+        phoneNumber: { type: 'string', title: 'Phone Number', format: 'phone' },
+      },
+      required: ['phoneNumber'],
+    },
+    {
+      '&if': './notifyByEmail === true',
+      properties: {
+        notificationEmail: { type: 'string', title: 'Notification Email', format: 'email' },
+      },
+      required: ['notificationEmail'],
+    },
+  ],
+} as const;
+// Both branches can be active simultaneously
+```
+
+## allOf — Schema Composition
+
+```tsx
+const basePersonSchema = {
+  properties: {
+    firstName: { type: 'string', title: 'First Name', minLength: 1 },
+    lastName:  { type: 'string', title: 'Last Name',  minLength: 1 },
+  },
+  required: ['firstName', 'lastName'],
+};
+
+const contactInfoSchema = {
+  properties: {
+    email:  { type: 'string', title: 'Email',  format: 'email' },
+    phone:  { type: 'string', title: 'Phone' },
+  },
+  required: ['email'],
+};
+
+const schema = {
+  type: 'object',
+  allOf: [basePersonSchema, contactInfoSchema],
+} as const;
+```
+
+## Array Fields
+
+```tsx
+const schema = {
+  type: 'object',
+  properties: {
+    tags: {
+      type: 'array',
+      title: 'Tags',
+      items: { type: 'string', minLength: 1 },
+      minItems: 1,
+      maxItems: 10,
+    },
+    addresses: {
+      type: 'array',
+      title: 'Addresses',
+      items: {
+        type: 'object',
+        properties: {
+          street: { type: 'string', title: 'Street' },
+          city:   { type: 'string', title: 'City'   },
+          zip:    { type: 'string', title: 'ZIP'    },
+        },
+        required: ['street', 'city'],
+      },
+    },
+  },
+} as const;
+
+// Access array node imperatively
+function ArrayManager({ formRef }) {
+  const addAddress = () => {
+    const node = formRef.current?.findNode('/addresses');
+    if (isArrayNode(node)) node.push();
+  };
+
+  const removeAddress = (index: number) => {
+    const node = formRef.current?.findNode('/addresses');
+    if (isArrayNode(node)) node.remove(index);
+  };
+}
+```
+
+## Computed Properties — Reactive Fields
+
+```tsx
+const schema = {
+  type: 'object',
+  properties: {
+    isPremium:    { type: 'boolean', title: 'Premium Member' },
+    discount:     {
+      type: 'number',
+      title: 'Discount %',
+      minimum: 0,
+      maximum: 100,
+      computed: {
+        visible:  '../isPremium === true',
+        readOnly: '../isPremium === false',
+      },
+    },
+    memberSince:  {
+      type: 'string',
+      title: 'Member Since',
+      format: 'date',
+      computed: {
+        visible: '../isPremium === true',
+        watch: ['../isPremium'],
+      },
+    },
+    totalOrders: { type: 'number', title: 'Total Orders' },
+    averageOrder: {
+      type: 'number',
+      title: 'Average Order Value',
+      computed: {
+        // visible when total orders > 0
+        visible: '../totalOrders > 0',
+        watch: ['../totalOrders'],
+      },
+    },
+  },
+} as const;
+```
+
+## Custom FormTypeInput Component
+
+```tsx
+import type { FC } from 'react';
+import type { FormTypeInputProps } from '@canard/schema-form';
+
+// Custom rating input for { type: 'number', formType: 'rating' }
+const RatingInput: FC<FormTypeInputProps<number>> = ({
+  value,
+  onChange,
+  readOnly,
+  disabled,
+  jsonSchema,
+}) => {
+  const max = jsonSchema.maximum ?? 5;
+  return (
+    <div className="rating">
+      {Array.from({ length: max }, (_, i) => i + 1).map((star) => (
+        <button
+          key={star}
+          type="button"
+          disabled={disabled || readOnly}
+          className={star <= (value ?? 0) ? 'active' : ''}
+          onClick={() => onChange(star)}
+        >
+          ★
+        </button>
+      ))}
+    </div>
+  );
+};
+
+// Register
+registerPlugin({
+  formTypeInputDefinitions: [
+    {
+      test: (hint) => hint.formType === 'rating',
+      Component: RatingInput,
+    },
+  ],
+});
+
+// Use in schema
+const schema = {
+  type: 'object',
+  properties: {
+    rating: { type: 'number', formType: 'rating', minimum: 1, maximum: 5 },
+  },
+};
+```
+
+## Validation and Error Display
+
+```tsx
+import { Form, ShowError, ValidationMode } from '@canard/schema-form';
+
+const schema = {
+  type: 'object',
+  properties: {
+    username: {
+      type: 'string',
+      title: 'Username',
+      minLength: 3,
+      maxLength: 20,
+      pattern: '^[a-zA-Z0-9_]+$',
+      errorMessages: {
+        minLength: 'Username must be at least 3 characters',
+        maxLength: 'Username cannot exceed 20 characters',
+        pattern:   'Only letters, numbers, and underscores allowed',
+      },
+    },
+  },
+  required: ['username'],
+} as const;
+
+// Show errors immediately (e.g., for a server-rendered form)
+<Form
+  jsonSchema={schema}
+  showError={true}
+  validationMode={ValidationMode.OnChange}
+/>
+
+// Show errors only after submission attempt
+<Form
+  jsonSchema={schema}
+  showError={ShowError.Dirty}
+  validationMode={ValidationMode.OnRequest}
+  ref={formRef}
+/>
+// then: await formRef.current?.validate(); formRef.current?.showError(true);
+
+// Inject server-side errors
+<Form
+  jsonSchema={schema}
+  errors={[
+    { dataPath: '/username', keyword: 'unique', message: 'Username already taken' },
+  ]}
+  showError={true}
+/>
+```
+
+## Submit and Reset
+
+```tsx
+import { useRef } from 'react';
+import { Form, type FormHandle, useFormSubmit } from '@canard/schema-form';
+
+const schema = { type: 'object', properties: { name: { type: 'string' } } } as const;
+
+function MyForm() {
+  const formRef = useRef<FormHandle<typeof schema>>(null);
+  const { submit, pending } = useFormSubmit(formRef);
+
+  const handleSubmit = async (value: any) => {
+    await api.save(value);
+  };
+
+  const handleReset = () => {
+    formRef.current?.reset();
+  };
+
+  return (
+    <>
+      <Form
+        ref={formRef}
+        jsonSchema={schema}
+        onSubmit={handleSubmit}
+      />
+      <button onClick={submit} disabled={pending}>
+        {pending ? 'Saving…' : 'Save'}
+      </button>
+      <button type="button" onClick={handleReset}>
+        Reset
+      </button>
+    </>
+  );
+}
+```
+
+## Controlled vs Uncontrolled
+
+```tsx
+// ── Uncontrolled (recommended for most cases) ─────────────────
+// Use defaultValue + onChange. Form manages internal state.
+<Form
+  jsonSchema={schema}
+  defaultValue={{ name: 'Alice' }}
+  onChange={(value) => console.log(value)}
+/>
+
+// ── Imperative (for programmatic updates) ──────────────────────
+// Use ref to read/write values imperatively.
+formRef.current?.getValue();
+formRef.current?.setValue({ name: 'Bob' });
+
+// ── FormHandle setValue with merge ────────────────────────────
+// Merge only changed fields (deep merge)
+formRef.current?.setValue(
+  { address: { city: 'Seoul' } },
+  SetValueOption.Merge
+);
+```
+
+## Custom Layout with Form.Group
+
+```tsx
+const profileSchema = {
+  type: 'object',
+  properties: {
+    avatar:     { type: 'string', title: 'Avatar',      formType: 'image-upload' },
+    firstName:  { type: 'string', title: 'First Name',  minLength: 1 },
+    lastName:   { type: 'string', title: 'Last Name',   minLength: 1 },
+    bio:        { type: 'string', title: 'Bio',         maxLength: 500 },
+    website:    { type: 'string', title: 'Website',     format: 'uri' },
+  },
+  required: ['firstName', 'lastName'],
+} as const;
+
+function ProfileForm() {
+  return (
+    <Form jsonSchema={profileSchema} onSubmit={handleSubmit}>
+      <div className="avatar-section">
+        <Form.Group path="/avatar" />
+      </div>
+      <div className="name-row">
+        <Form.Group path="/firstName" placeholder="First name" />
+        <Form.Group path="/lastName"  placeholder="Last name" />
+      </div>
+      <Form.Group path="/bio"     placeholder="Tell us about yourself" />
+      <Form.Group path="/website" placeholder="https://..." />
+    </Form>
+  );
+}
+```
+
+## Watching Node State in Custom Components
+
+```tsx
+import { useSchemaNodeTracker } from '@canard/schema-form';
+
+function FieldStatus({ node }: { node: SchemaNode }) {
+  // Re-renders on any node event
+  useSchemaNodeTracker(node);
+
+  return (
+    <div>
+      <span>Value: {JSON.stringify(node.value)}</span>
+      <span>Dirty: {node.dirty ? 'yes' : 'no'}</span>
+      <span>Errors: {node.errors.length}</span>
+      <span>Visible: {node.visible ? 'yes' : 'no'}</span>
+    </div>
+  );
+}
+```
+
+## Programmatic Node Access
+
+```tsx
+import { isArrayNode, isObjectNode } from '@canard/schema-form';
+
+function FormController({ formRef }) {
+  const fillDefaults = () => {
+    formRef.current?.setValue({
+      status: 'draft',
+      createdAt: new Date().toISOString(),
+    }, SetValueOption.Merge);
+  };
+
+  const addTag = () => {
+    const tagsNode = formRef.current?.findNode('/tags');
+    if (isArrayNode(tagsNode)) tagsNode.push('new-tag');
+  };
+
+  const clearTags = () => {
+    const tagsNode = formRef.current?.findNode('/tags');
+    if (isArrayNode(tagsNode)) tagsNode.clear();
+  };
+
+  const validateField = async () => {
+    const emailNode = formRef.current?.findNode('/email');
+    if (emailNode) {
+      const errors = await emailNode.validate();
+      console.log('Email errors:', errors);
+    }
+  };
+}
+```
+
+## Type Inference
+
+```tsx
+import type { InferValueType } from '@winglet/json-schema';
+
+const schema = {
+  type: 'object',
+  properties: {
+    name:     { type: 'string' },
+    age:      { type: 'number' },
+    nickname: { type: ['string', 'null'] as const },
+  },
+  required: ['name'],
+} as const;
+
+// Inferred type: { name: string; age?: number; nickname?: string | null }
+type FormValue = InferValueType<typeof schema>;
+
+// Type-safe ref
+const formRef = useRef<FormHandle<typeof schema>>(null);
+// formRef.current?.getValue() returns FormValue
+```
+
+<ForAI>
+
+## AI Example Patterns
+
+```ts
+// Pattern: register once at app entry
+registerPlugin(validatorPlugin); // e.g., ajvValidatorPlugin
+registerPlugin(uiPlugin);        // e.g., antd5Plugin
+
+// Pattern: minimal form
+<Form jsonSchema={schema} onSubmit={async (value) => { ... }} />
+
+// Pattern: controlled read
+<Form jsonSchema={schema} onChange={setValue} defaultValue={initial} />
+
+// Pattern: imperative ref
+const ref = useRef<FormHandle<typeof schema>>(null);
+<Form ref={ref} jsonSchema={schema} />
+await ref.current?.validate();
+ref.current?.getValue();
+ref.current?.setValue(patch, SetValueOption.Merge);
+ref.current?.focus('/fieldPath');
+ref.current?.reset();
+
+// Pattern: submit with loading
+const { submit, pending } = useFormSubmit(ref);
+<button onClick={submit} disabled={pending}>Submit</button>
+
+// Pattern: custom input component
+const MyInput: FC<FormTypeInputProps<string>> = ({ value, onChange, errors }) => (
+  <input value={value ?? ''} onChange={e => onChange(e.target.value)} />
+);
+registerPlugin({ formTypeInputDefinitions: [{ test: { type: 'string' }, Component: MyInput }] });
+
+// Pattern: conditional field (oneOf with &if)
+oneOf: [
+  { '&if': "./type === 'A'", properties: { fieldA: { type: 'string' } } },
+  { '&if': "./type === 'B'", properties: { fieldB: { type: 'string' } } },
+]
+
+// Pattern: reactive visibility
+computed: { visible: '../otherField === true' }
+
+// Pattern: array manipulation
+const node = ref.current?.findNode('/items');
+if (isArrayNode(node)) { node.push(); node.remove(0); node.clear(); }
+
+// Pattern: inject server errors
+<Form errors={serverErrors} showError={true} />
+
+// Pattern: path-based component override
+<Form formTypeInputMap={{ '/profile/photo': ImageUploader, '/items/*/sku': SkuInput }} />
+```
+
+</ForAI>

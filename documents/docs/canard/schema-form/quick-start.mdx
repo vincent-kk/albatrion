@@ -1,8 +1,8 @@
 ---
+sidebar_label: 'Quick Start'
 sidebar_position: 2
 ---
 
-import LangTabs from '@site/src/components/LangTabs';
 import ForAI from '@site/src/components/ForAI';
 
 # Quick Start
@@ -23,21 +23,9 @@ yarn add @canard/schema-form-mui6-plugin    # MUI 6
 
 ## Register Plugins
 
-<LangTabs
-  en={<>
-    <p>
-      Register plugins <strong>once</strong> at application entry point, before any
-      <code>&lt;Form&gt;</code> renders. The call is idempotent — duplicate registrations
-      are ignored by content hash.
-    </p>
-  </>}
-  kr={<>
-    <p>
-      <code>&lt;Form&gt;</code>이 렌더링되기 전, 애플리케이션 진입점에서 <strong>한 번</strong> 플러그인을
-      등록합니다. 중복 등록은 콘텐츠 해시로 자동 무시됩니다.
-    </p>
-  </>}
-/>
+Register plugins **once** at application entry point, before any
+`<Form>` renders. The call is idempotent — duplicate registrations
+are ignored by content hash.
 
 ```ts title="src/main.tsx (or index.tsx)"
 import { registerPlugin } from '@canard/schema-form';
@@ -117,22 +105,9 @@ function LoginForm() {
 
 ## Custom Layout with Form.Group
 
-<LangTabs
-  en={<>
-    <p>
-      Use <code>Form.Group</code>, <code>Form.Label</code>, <code>Form.Input</code>,
-      and <code>Form.Error</code> sub-components to build a custom layout.
-      Each takes a <code>path</code> prop (JSONPointer string).
-    </p>
-  </>}
-  kr={<>
-    <p>
-      <code>Form.Group</code>, <code>Form.Label</code>, <code>Form.Input</code>,
-      <code>Form.Error</code> 서브 컴포넌트를 사용하여 커스텀 레이아웃을 구성합니다.
-      각각 JSONPointer 문자열인 <code>path</code> prop을 받습니다.
-    </p>
-  </>}
-/>
+Use `Form.Group`, `Form.Label`, `Form.Input`,
+and `Form.Error` sub-components to build a custom layout.
+Each takes a `path` prop (JSONPointer string).
 
 ```tsx
 <Form jsonSchema={schema} onSubmit={handleSubmit}>

@@ -1,0 +1,184 @@
+---
+title: '@canard/schema-form-mui-plugin'
+sidebar_label: 'mui-plugin'
+sidebar_position: 9
+---
+
+import PackageHeader from '@site/src/components/PackageHeader';
+import ForAI from '@site/src/components/ForAI';
+
+<PackageHeader name="@canard/schema-form-mui-plugin" />
+
+`@canard/schema-form`를 위한 Material UI v7 플러그인입니다.
+`@mui/material ^7.0.0`과 MUI X date/time picker 기반의 15개 폼 입력 컴포넌트를 제공합니다.
+MUI의 `size`, `variant`, `fullWidth` 컨텍스트 옵션을 지원합니다.
+
+## Visual Guide
+
+JSON Schema를 설정하면 이 플러그인이 자동으로 Material Design 가이드라인을 따르는 Material UI 폼 컴포넌트를 렌더링합니다:
+- **텍스트 필드** → `TextField` with outlined/filled variants
+- **숫자** → `TextField` with number type
+- **불리언** → `Checkbox` or `Switch`
+- **열거형** → `Select` or `RadioGroup`
+- **날짜** → MUI `DatePicker`
+- **배열** → Dynamic list with add/remove IconButtons
+
+:::info 스크린샷
+비주얼 데모 스크린샷이 `/img/demos/schema-form-mui-demo.png`에 추가될 예정입니다.
+:::
+
+## Installation
+
+```bash
+yarn add @canard/schema-form-mui-plugin
+```
+
+### Peer Dependencies
+
+```bash
+yarn add @mui/material@>=7.0.0 @mui/x-date-pickers@>=8.0.0 \
+         @mui/icons-material@>=7.0.0 \
+         @emotion/react@>=11.0.0 @emotion/styled@>=11.0.0 \
+         dayjs@>=1 react@>=18 react-dom@>=18
+```
+
+## Quick Setup
+
+```ts
+import { registerPlugin } from '@canard/schema-form';
+import { plugin } from '@canard/schema-form-mui-plugin';
+
+registerPlugin(plugin);
+```
+
+## Component Mapping
+
+Components are selected automatically based on JSON Schema properties. Priority order matches the list below (top = highest priority).
+
+| Component | type | format | formType | enum | Notes |
+|---|---|---|---|---|---|
+| `FormTypeInputBooleanSwitch` | `boolean` | — | `"switch"` | — | MUI Switch |
+| `FormTypeInputStringCheckbox` | `array` | — | `"checkbox"` | items.enum | MUI Checkbox group; items must be string schema |
+| `FormTypeInputStringSwitch` | `string` | — | `"switch"` | 2 values | Toggle between two enum values |
+| `FormTypeInputUri` | `string` | `"uri"` or formType `"uri"` | — | — | URI input with protocol dropdown |
+| `FormTypeInputMonth` | `string` | `"month"` | — | — | MUI X MonthPicker |
+| `FormTypeInputDate` | `string` | `"date"` | — | — | MUI X DatePicker |
+| `FormTypeInputTime` | `string` | `"time"` | — | — | MUI X TimePicker (HH:mm:00Z format) |
+| `FormTypeInputRadioGroup` | `string` \| `number` \| `integer` | — | `"radio"` or `"radiogroup"` | required | MUI RadioGroup |
+| `FormTypeInputStringEnum` | `string` | — | — | required | MUI Select dropdown |
+| `FormTypeInputArray` | `array` | — | — | — | Dynamic list with add/remove |
+| `FormTypeInputSlider` | `number` \| `integer` | — | `"slider"` | — | MUI Slider |
+| `FormTypeInputTextarea` | `string` | `"textarea"` or formType `"textarea"` | — | — | MUI TextField multiline |
+| `FormTypeInputString` | `string` | — | — | — | MUI TextField (password via `format:"password"`) |
+| `FormTypeInputNumber` | `number` \| `integer` | — | — | — | MUI TextField type=number |
+| `FormTypeInputBoolean` | `boolean` | — | — | — | MUI Checkbox with indeterminate |
+
+## Schema Extension Properties
+
+```ts
+{
+  formType?: 'switch' | 'radio' | 'radiogroup' | 'checkbox' | 'slider' | 'textarea' | 'uri',
+  format?:   'date' | 'time' | 'month' | 'password' | 'uri' | 'textarea',
+}
+```
+
+## Usage Example
+
+```tsx
+import { Form } from '@canard/schema-form';
+
+const schema = {
+  type: 'object',
+  properties: {
+    name:     { type: 'string' },
+    age:      { type: 'integer' },
+    active:   { type: 'boolean', formType: 'switch' },
+    role:     { type: 'string', enum: ['admin', 'user', 'guest'] },
+    birthday: { type: 'string', format: 'date' },
+    bio:      { type: 'string', format: 'textarea' },
+    score:    { type: 'number', formType: 'slider', minimum: 0, maximum: 100 },
+  },
+};
+
+<Form jsonSchema={schema} onChange={setValue} />
+```
+
+## MUI Context
+
+Pass MUI styling options through `<Form context={...}>`:
+
+```ts
+type MuiContext = {
+  size?:      'small' | 'medium';
+  variant?:   'outlined' | 'filled' | 'standard';
+  fullWidth?: boolean;
+};
+```
+
+```tsx
+<Form
+  jsonSchema={schema}
+  context={{ size: 'small', variant: 'outlined', fullWidth: true }}
+  onChange={setValue}
+/>
+```
+
+## Date/Time Picker Setup
+
+MUI X date pickers require a `LocalizationProvider`. Wrap your app:
+
+```tsx
+import { LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+
+<LocalizationProvider dateAdapter={AdapterDayjs}>
+  <Form jsonSchema={schema} onChange={setValue} />
+</LocalizationProvider>
+```
+
+<ForAI>
+
+## AI Reference
+
+**Package**: `@canard/schema-form-mui-plugin` v0.10.0
+**Purpose**: Material UI v7 plugin — 15 form input components with MUI X date/time pickers.
+
+### Exports
+```ts
+import { plugin } from '@canard/schema-form-mui-plugin';
+import type { MuiContext } from '@canard/schema-form-mui-plugin';
+```
+
+### Peer dependencies
+`@mui/material@>=7`, `@mui/x-date-pickers@>=8`, `@mui/icons-material@>=7`, `@emotion/react@>=11`, `@emotion/styled@>=11`, `dayjs@>=1`, `react@>=18`
+
+### Component mapping (priority order, high → low)
+| Component | Trigger |
+|---|---|
+| BooleanSwitch | `boolean` + `formType: "switch"` |
+| StringCheckbox | `array` + `formType: "checkbox"` + items.enum |
+| StringSwitch | `string` + `formType: "switch"` + 2 enum values |
+| Uri | `string` + `format: "uri"` |
+| Month / Date / Time | `string` + `format: "month"/"date"/"time"` (MUI X pickers) |
+| RadioGroup | `string\|number` + `formType: "radio"` + enum |
+| StringEnum | `string` + enum (MUI Select) |
+| Array | `array` (dynamic list) |
+| Slider | `number` + `formType: "slider"` |
+| Textarea | `string` + `format: "textarea"` (multiline TextField) |
+| String | `string` (TextField, password via `format: "password"`) |
+| Number | `number\|integer` (TextField type=number) |
+| Boolean | `boolean` (Checkbox with indeterminate) |
+
+### Context type
+```ts
+type MuiContext = { size?: 'small' | 'medium'; variant?: 'outlined' | 'filled' | 'standard'; fullWidth?: boolean };
+```
+
+### Required setup for date/time pickers
+```tsx
+import { LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+<LocalizationProvider dateAdapter={AdapterDayjs}><Form ... /></LocalizationProvider>
+```
+
+</ForAI>

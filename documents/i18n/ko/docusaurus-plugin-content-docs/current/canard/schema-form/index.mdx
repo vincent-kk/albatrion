@@ -1,0 +1,137 @@
+---
+title: '@canard/schema-form'
+sidebar_label: 'schema-form'
+sidebar_position: 1
+---
+
+import PackageHeader from '@site/src/components/PackageHeader';
+import ForAI from '@site/src/components/ForAI';
+
+<PackageHeader name="@canard/schema-form" />
+
+JSON Schema 기반 React 폼 엔진으로, 두 레이어의 플러그인 아키텍처를 제공합니다:
+JSON Schema 검증을 위한 **Validator 플러그인**과
+폼 렌더링 컴포넌트를 위한 **UI 플러그인**.
+JSON Schema에 데이터 구조를 한 번 선언하면, 라이브러리가 전체 폼 상태 트리를 자동으로 구축하고 검증합니다.
+
+## Visual Guide
+
+각 UI 플러그인은 JSON Schema를 네이티브 프레임워크 컴포넌트로 렌더링합니다. 플러그인을 선택하면 폼 출력을 확인할 수 있습니다:
+
+| Plugin | Framework | Preview |
+|---|---|---|
+| [antd5-plugin](/docs/canard/schema-form-antd5-plugin/) | Ant Design 5 | Text inputs, selects, date pickers, switches |
+| [antd6-plugin](/docs/canard/schema-form-antd6-plugin/) | Ant Design 6 | Text inputs, selects, date pickers, switches |
+| [antd-mobile-plugin](/docs/canard/schema-form-antd-mobile-plugin/) | Ant Design Mobile | Mobile-optimized form controls |
+| [mui-plugin](/docs/canard/schema-form-mui-plugin/) | Material UI | Material Design form components |
+
+:::info 스크린샷
+각 플러그인의 비주얼 데모 스크린샷이 이 섹션에 추가될 예정입니다. 사용 예제는 개별 플러그인 페이지를 참조하세요.
+:::
+
+## Architecture
+
+```
+JSON Schema
+    │
+    ▼
+nodeFromJsonSchema()          ← builds a typed node tree
+    │
+    ├── StringNode / NumberNode / BooleanNode / NullNode   (terminal)
+    ├── ObjectNode / ArrayNode                             (branch)
+    └── VirtualNode                                        (conditional / computed)
+    │
+    ▼
+Plugin System
+    ├── ValidatorPlugin       ← compile(jsonSchema) → ValidateFunction
+    └── SchemaFormPlugin      ← FormGroup / FormLabel / FormInput / FormError
+                                 + formTypeInputDefinitions
+    │
+    ▼
+<Form>  →  React component tree
+```
+
+## Plugin System
+
+이 라이브러리는 *기본 validator와 기본 UI 컴포넌트를 제공하지 않습니다*.
+폼을 렌더링하기 전에 두 가지 모두 플러그인을 통해 제공해야 합니다.
+플러그인은 `registerPlugin()`으로 전역 등록되며 애플리케이션의 모든 `<Form>`에 영향을 줍니다.
+
+- **Validator 플러그인** — `compile(jsonSchema)`을 구현하여 모든 검증 라이브러리(AJV, Zod, Yup 등)를 통합합니다.
+- **UI 플러그인** — `FormGroup`, `FormLabel`, `FormInput`, `FormError` 렌더러 컴포넌트와 필드별 입력 컴포넌트를 위한 `formTypeInputDefinitions`를 제공합니다.
+
+## Node Types
+
+| Node | Schema types | Strategy |
+|---|---|---|
+| `StringNode` | `"string"` | terminal |
+| `NumberNode` | `"number"`, `"integer"` | terminal |
+| `BooleanNode` | `"boolean"` | terminal |
+| `NullNode` | `"null"` | terminal |
+| `ObjectNode` | `"object"` | branch (BranchStrategy or TerminalStrategy) |
+| `ArrayNode` | `"array"` | branch (BranchStrategy or TerminalStrategy) |
+| `VirtualNode` | conditional / oneOf / anyOf branches | special |
+
+## FormTypeInput Resolution Order
+
+필드를 렌더링할 때, 라이브러리는 다음 우선순위로 입력 컴포넌트를 결정합니다 (높은 순):
+
+1. `Form.Group`의 직접 `FormTypeInput` prop
+2. `<Form>`의 `formTypeInputMap` 경로 매핑
+3. 폼 레벨 `formTypeInputDefinitions` prop
+4. `FormProvider` `formTypeInputDefinitions`
+5. 플러그인 제공 `formTypeInputDefinitions`
+
+<ForAI>
+
+## AI Reference
+
+**Package**: `@canard/schema-form` v0.10.5
+**Purpose**: JSON Schema-driven dynamic form generation for React with two-layer plugin architecture.
+
+### Plugin system
+```ts
+import type { SchemaFormPlugin } from '@canard/schema-form';
+import type { ValidatorPlugin } from '@canard/schema-form';
+import { registerPlugin } from '@canard/schema-form';
+```
+
+### Form component
+```ts
+import { Form } from '@canard/schema-form';
+import type { FormProps } from '@canard/schema-form';
+import type { FormHandle } from '@canard/schema-form';        // ref API: submit(), reset(), validate(), getValues()
+import type { FormChildrenProps } from '@canard/schema-form';  // render-prop children
+import type { FormLabelProps } from '@canard/schema-form';
+import type { FormErrorProps } from '@canard/schema-form';
+```
+
+### Node types
+```ts
+import type { SchemaNode } from '@canard/schema-form';
+import type { StringNode, NumberNode, BooleanNode, NullNode } from '@canard/schema-form';  // terminal
+import type { ObjectNode, ArrayNode } from '@canard/schema-form';                          // branch
+import type { VirtualNode } from '@canard/schema-form';                                    // conditional
+```
+
+### Enums
+```ts
+import { NodeState } from '@canard/schema-form';       // Initialized | Mounted | Unmounted
+import { ValidationMode } from '@canard/schema-form';  // OnChange | OnBlur | OnSubmit
+import { NodeEventType } from '@canard/schema-form';   // ValueChange | StateChange | ...
+import { SetValueOption } from '@canard/schema-form';  // Merge | Replace
+```
+
+### Type guards & error utilities
+```ts
+import { isArrayNode, isBooleanNode, isBranchNode, isNumberNode } from '@canard/schema-form';
+import { isSchemaFormError, isJsonSchemaError, isUnhandledError, isValidationError } from '@canard/schema-form';
+import { JSONPointer } from '@canard/schema-form';
+```
+
+### Architecture
+- No default validator or UI — both via plugins: `registerPlugin(plugin)`
+- Node tree: JSON Schema → nodeFromJsonSchema() → typed node tree
+- Input resolution: Direct prop > formTypeInputMap > form-level > FormProvider > plugin
+
+</ForAI>

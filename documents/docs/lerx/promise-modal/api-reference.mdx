@@ -1,16 +1,13 @@
 ---
+sidebar_label: 'API Reference'
 sidebar_position: 2
 ---
 
-import LangTabs from '@site/src/components/LangTabs';
 import ForAI from '@site/src/components/ForAI';
 
 # API Reference
 
-<LangTabs
-  en={<p>Complete reference for all exported functions, components, hooks, and types.</p>}
-  kr={<p>내보낸 모든 함수, 컴포넌트, 훅, 타입에 대한 전체 레퍼런스입니다.</p>}
-/>
+Complete reference for all exported functions, components, hooks, and types.
 
 ---
 
@@ -18,10 +15,7 @@ import ForAI from '@site/src/components/ForAI';
 
 ### `alert(options)`
 
-<LangTabs
-  en={<p>Displays a notification modal. Returns a promise that resolves when the user closes the modal.</p>}
-  kr={<p>알림 모달을 표시합니다. 사용자가 모달을 닫으면 resolve되는 프로미스를 반환합니다.</p>}
-/>
+Displays a notification modal. Returns a promise that resolves when the user closes the modal.
 
 ```ts
 function alert<B = any>(options: AlertProps<B>): Promise<void>
@@ -59,10 +53,7 @@ await alert({
 
 ### `confirm(options)`
 
-<LangTabs
-  en={<p>Displays a confirmation modal. Returns a promise that resolves to <code>true</code> (confirmed) or <code>false</code> (cancelled).</p>}
-  kr={<p>확인 모달을 표시합니다. 확인 시 <code>true</code>, 취소 시 <code>false</code>로 resolve되는 프로미스를 반환합니다.</p>}
-/>
+Displays a confirmation modal. Returns a promise that resolves to `true` (confirmed) or `false` (cancelled).
 
 ```ts
 function confirm<B = any>(options: ConfirmProps<B>): Promise<boolean>
@@ -98,10 +89,7 @@ if (confirmed) await deleteItem();
 
 ### `prompt<T>(options)`
 
-<LangTabs
-  en={<p>Displays an input modal. Returns a promise that resolves to the value entered by the user, or <code>undefined</code> if cancelled (unless <code>returnOnCancel</code> is set).</p>}
-  kr={<p>입력 모달을 표시합니다. 사용자가 입력한 값으로 resolve되거나, 취소 시 <code>undefined</code>를 반환합니다 (<code>returnOnCancel</code> 설정 시 기본값 반환).</p>}
-/>
+Displays an input modal. Returns a promise that resolves to the value entered by the user, or `undefined` if cancelled (unless `returnOnCancel` is set).
 
 ```ts
 function prompt<T, B = any>(options: PromptProps<T, B>): Promise<T | undefined>
@@ -147,10 +135,7 @@ const name = await prompt<string>({
 
 ### `ModalProvider`
 
-<LangTabs
-  en={<p>Must be mounted once at the app root. Initializes the modal service and provides configuration to all modal calls.</p>}
-  kr={<p>앱 루트에 한 번만 마운트해야 합니다. 모달 서비스를 초기화하고 모든 모달 호출에 설정을 제공합니다.</p>}
-/>
+Must be mounted once at the app root. Initializes the modal service and provides configuration to all modal calls.
 
 ```ts
 import { ModalProvider, type ModalProviderProps, type ModalProviderHandle } from '@lerx/promise-modal';
@@ -193,10 +178,7 @@ ref.current?.initialize(containerElement);
 
 ### `useModal(configuration?)`
 
-<LangTabs
-  en={<p>Returns <code>alert</code>, <code>confirm</code>, and <code>prompt</code> handlers tied to the component's lifecycle. All modals opened through this hook are automatically closed when the component unmounts.</p>}
-  kr={<p>컴포넌트 라이프사이클에 연동된 <code>alert</code>, <code>confirm</code>, <code>prompt</code> 핸들러를 반환합니다. 이 훅을 통해 열린 모든 모달은 컴포넌트가 언마운트될 때 자동으로 닫힙니다.</p>}
-/>
+Returns `alert`, `confirm`, and `prompt` handlers tied to the component's lifecycle. All modals opened through this hook are automatically closed when the component unmounts.
 
 ```ts
 function useModal(configuration?: OverridableHandleProps): {
@@ -212,10 +194,7 @@ The optional `configuration` object provides default values merged into every ca
 
 ### `useInitializeModal(options?)`
 
-<LangTabs
-  en={<p>Provides manual control over modal service initialization. Useful when you need to mount modals into a specific DOM container.</p>}
-  kr={<p>모달 서비스 초기화를 수동으로 제어합니다. 특정 DOM 컨테이너에 모달을 마운트해야 할 때 유용합니다.</p>}
-/>
+Provides manual control over modal service initialization. Useful when you need to mount modals into a specific DOM container.
 
 ```ts
 function useInitializeModal(options?: { mode?: 'auto' | 'manual' }): {
@@ -228,10 +207,7 @@ function useInitializeModal(options?: { mode?: 'auto' | 'manual' }): {
 
 ### `useActiveModalCount()`
 
-<LangTabs
-  en={<p>Returns the number of currently active (open) modals.</p>}
-  kr={<p>현재 활성화된(열린) 모달의 수를 반환합니다.</p>}
-/>
+Returns the number of currently active (open) modals.
 
 ```ts
 function useActiveModalCount(): number
@@ -241,10 +217,7 @@ function useActiveModalCount(): number
 
 ### `useModalOptions()`
 
-<LangTabs
-  en={<p>Returns the current global modal configuration options.</p>}
-  kr={<p>현재 전역 모달 설정 옵션을 반환합니다.</p>}
-/>
+Returns the current global modal configuration options.
 
 ```ts
 function useModalOptions(): ConfigurationContextProps
@@ -254,10 +227,7 @@ function useModalOptions(): ConfigurationContextProps
 
 ### `useModalDuration()`
 
-<LangTabs
-  en={<p>Returns the modal animation duration from configuration.</p>}
-  kr={<p>설정에서 모달 애니메이션 시간을 반환합니다.</p>}
-/>
+Returns the modal animation duration from configuration.
 
 ```ts
 function useModalDuration(): {
@@ -270,10 +240,7 @@ function useModalDuration(): {
 
 ### `useModalBackdrop()`
 
-<LangTabs
-  en={<p>Returns the modal backdrop CSS value from configuration.</p>}
-  kr={<p>설정에서 모달 백드롭 CSS 값을 반환합니다.</p>}
-/>
+Returns the modal backdrop CSS value from configuration.
 
 ```ts
 function useModalBackdrop(): string | CSSProperties
@@ -283,10 +250,7 @@ function useModalBackdrop(): string | CSSProperties
 
 ### `useModalAnimation(visible, handlers)`
 
-<LangTabs
-  en={<p>Fires callbacks when the modal's visibility state changes. Use inside custom <code>ForegroundComponent</code> implementations to drive CSS transitions.</p>}
-  kr={<p>모달의 가시성 상태가 변경될 때 콜백을 실행합니다. CSS 트랜지션을 구동하기 위해 커스텀 <code>ForegroundComponent</code> 구현 내에서 사용하세요.</p>}
-/>
+Fires callbacks when the modal's visibility state changes. Use inside custom `ForegroundComponent` implementations to drive CSS transitions.
 
 ```ts
 function useModalAnimation(
@@ -302,10 +266,7 @@ function useModalAnimation(
 
 ### `useDestroyAfter(modalId, delayMs)`
 
-<LangTabs
-  en={<p>Automatically destroys a modal after the specified delay. Used in custom foreground components (e.g., toast notifications).</p>}
-  kr={<p>지정된 지연 시간 후 모달을 자동으로 제거합니다. 커스텀 foreground 컴포넌트(예: 토스트 알림)에서 사용합니다.</p>}
-/>
+Automatically destroys a modal after the specified delay. Used in custom foreground components (e.g., toast notifications).
 
 ```ts
 function useDestroyAfter(modalId: number, delayMs: number): void
@@ -315,10 +276,7 @@ function useDestroyAfter(modalId: number, delayMs: number): void
 
 ### `useSubscribeModal(modal)`
 
-<LangTabs
-  en={<p>Subscribes to a modal node's state changes and returns the current version number. Causes the component to re-render when the modal updates.</p>}
-  kr={<p>모달 노드의 상태 변경을 구독하고 현재 버전 번호를 반환합니다. 모달이 업데이트될 때 컴포넌트를 리렌더링합니다.</p>}
-/>
+Subscribes to a modal node's state changes and returns the current version number. Causes the component to re-render when the modal updates.
 
 ```ts
 function useSubscribeModal(modal: ModalNode): number

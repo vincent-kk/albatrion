@@ -1,33 +1,34 @@
 ---
+title: '@canard/schema-form'
 sidebar_label: 'schema-form'
 sidebar_position: 1
 ---
 
 import PackageHeader from '@site/src/components/PackageHeader';
-import LangTabs from '@site/src/components/LangTabs';
 import ForAI from '@site/src/components/ForAI';
 
 <PackageHeader name="@canard/schema-form" />
 
-<LangTabs
-  en={<>
-    <p>
-      JSON Schema-driven React form engine with a two-layer plugin architecture:
-      a <strong>Validator plugin</strong> for JSON Schema validation and
-      a <strong>UI plugin</strong> for form rendering components.
-      Declare your data shape once in JSON Schema — the library builds, validates,
-      and manages the full form state tree automatically.
-    </p>
-  </>}
-  kr={<>
-    <p>
-      JSON Schema 기반 React 폼 엔진으로, 두 레이어의 플러그인 아키텍처를 제공합니다:
-      JSON Schema 검증을 위한 <strong>Validator 플러그인</strong>과
-      폼 렌더링 컴포넌트를 위한 <strong>UI 플러그인</strong>.
-      JSON Schema에 데이터 구조를 한 번 선언하면, 라이브러리가 전체 폼 상태 트리를 자동으로 구축하고 검증합니다.
-    </p>
-  </>}
-/>
+JSON Schema-driven React form engine with a two-layer plugin architecture:
+a **Validator plugin** for JSON Schema validation and
+a **UI plugin** for form rendering components.
+Declare your data shape once in JSON Schema — the library builds, validates,
+and manages the full form state tree automatically.
+
+## Visual Guide
+
+Each UI plugin renders JSON Schema as native framework components. Select a plugin to see its form output:
+
+| Plugin | Framework | Preview |
+|---|---|---|
+| [antd5-plugin](/docs/canard/schema-form-antd5-plugin/) | Ant Design 5 | Text inputs, selects, date pickers, switches |
+| [antd6-plugin](/docs/canard/schema-form-antd6-plugin/) | Ant Design 6 | Text inputs, selects, date pickers, switches |
+| [antd-mobile-plugin](/docs/canard/schema-form-antd-mobile-plugin/) | Ant Design Mobile | Mobile-optimized form controls |
+| [mui-plugin](/docs/canard/schema-form-mui-plugin/) | Material UI | Material Design form components |
+
+:::info Screenshots
+Visual demo screenshots for each plugin will be added to this section. See individual plugin pages for usage examples.
+:::
 
 ## Architecture
 
@@ -53,37 +54,23 @@ Plugin System
 
 ## Plugin System
 
-<LangTabs
-  en={<>
-    <p>
-      The library ships with <em>no default validator and no default UI components</em>.
-      Both must be supplied via plugins before rendering any form.
-      Plugins are registered globally with <code>registerPlugin()</code> and affect every
-      <code>&lt;Form&gt;</code> in the application.
-    </p>
-    <ul>
-      <li><strong>Validator plugin</strong> — integrates any validation library (AJV, Zod, Yup, etc.) by implementing <code>compile(jsonSchema)</code>.</li>
-      <li><strong>UI plugin</strong> — provides <code>FormGroup</code>, <code>FormLabel</code>, <code>FormInput</code>, <code>FormError</code> renderer components and <code>formTypeInputDefinitions</code> for per-field input components.</li>
-    </ul>
-    <p>Official plugin packages:</p>
-    <ul>
-      <li><code>@canard/schema-form-ajv8-plugin</code> — AJV 8 validator</li>
-      <li><code>@canard/schema-form-antd5-plugin</code> — Ant Design 5 UI</li>
-      <li><code>@canard/schema-form-mui6-plugin</code> — MUI 6 UI</li>
-    </ul>
-  </>}
-  kr={<>
-    <p>
-      이 라이브러리는 <em>기본 validator와 기본 UI 컴포넌트를 제공하지 않습니다</em>.
-      폼을 렌더링하기 전에 두 가지 모두 플러그인을 통해 제공해야 합니다.
-      플러그인은 <code>registerPlugin()</code>으로 전역 등록되며 애플리케이션의 모든 <code>&lt;Form&gt;</code>에 영향을 줍니다.
-    </p>
-    <ul>
-      <li><strong>Validator 플러그인</strong> — <code>compile(jsonSchema)</code>을 구현하여 모든 검증 라이브러리(AJV, Zod, Yup 등)를 통합합니다.</li>
-      <li><strong>UI 플러그인</strong> — <code>FormGroup</code>, <code>FormLabel</code>, <code>FormInput</code>, <code>FormError</code> 렌더러 컴포넌트와 필드별 입력 컴포넌트를 위한 <code>formTypeInputDefinitions</code>를 제공합니다.</li>
-    </ul>
-  </>}
-/>
+The library ships with *no default validator and no default UI components*.
+Both must be supplied via plugins before rendering any form.
+Plugins are registered globally with `registerPlugin()` and affect every
+`<Form>` in the application.
+
+<ul>
+  <li><strong>Validator plugin</strong> — integrates any validation library (AJV, Zod, Yup, etc.) by implementing <code>compile(jsonSchema)</code>.</li>
+  <li><strong>UI plugin</strong> — provides <code>FormGroup</code>, <code>FormLabel</code>, <code>FormInput</code>, <code>FormError</code> renderer components and <code>formTypeInputDefinitions</code> for per-field input components.</li>
+</ul>
+
+Official plugin packages:
+
+<ul>
+  <li><code>@canard/schema-form-ajv8-plugin</code> — AJV 8 validator</li>
+  <li><code>@canard/schema-form-antd5-plugin</code> — Ant Design 5 UI</li>
+  <li><code>@canard/schema-form-mui6-plugin</code> — MUI 6 UI</li>
+</ul>
 
 ## Node Types
 
@@ -99,28 +86,14 @@ Plugin System
 
 ## FormTypeInput Resolution Order
 
-<LangTabs
-  en={<>
-    <p>When rendering a field, the library resolves which input component to use in this priority order (highest first):</p>
-    <ol>
-      <li>Direct <code>FormTypeInput</code> prop on <code>Form.Group</code></li>
-      <li><code>formTypeInputMap</code> path mapping on <code>&lt;Form&gt;</code></li>
-      <li>Form-level <code>formTypeInputDefinitions</code> prop</li>
-      <li><code>FormProvider</code> <code>formTypeInputDefinitions</code></li>
-      <li>Plugin-provided <code>formTypeInputDefinitions</code></li>
-    </ol>
-  </>}
-  kr={<>
-    <p>필드를 렌더링할 때, 라이브러리는 다음 우선순위로 입력 컴포넌트를 결정합니다 (높은 순):</p>
-    <ol>
-      <li><code>Form.Group</code>의 직접 <code>FormTypeInput</code> prop</li>
-      <li><code>&lt;Form&gt;</code>의 <code>formTypeInputMap</code> 경로 매핑</li>
-      <li>폼 레벨 <code>formTypeInputDefinitions</code> prop</li>
-      <li><code>FormProvider</code> <code>formTypeInputDefinitions</code></li>
-      <li>플러그인 제공 <code>formTypeInputDefinitions</code></li>
-    </ol>
-  </>}
-/>
+When rendering a field, the library resolves which input component to use in this priority order (highest first):
+<ol>
+  <li>Direct <code>FormTypeInput</code> prop on <code>Form.Group</code></li>
+  <li><code>formTypeInputMap</code> path mapping on <code>&lt;Form&gt;</code></li>
+  <li>Form-level <code>formTypeInputDefinitions</code> prop</li>
+  <li><code>FormProvider</code> <code>formTypeInputDefinitions</code></li>
+  <li>Plugin-provided <code>formTypeInputDefinitions</code></li>
+</ol>
 
 <ForAI>
 

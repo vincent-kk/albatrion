@@ -1,10 +1,10 @@
 ---
+title: '@slats/claude-assets-sync'
 sidebar_label: 'claude-assets-sync'
 sidebar_position: 1
 ---
 
 import PackageHeader from '@site/src/components/PackageHeader';
-import LangTabs from '@site/src/components/LangTabs';
 import ForAI from '@site/src/components/ForAI';
 
 # @slats/claude-assets-sync
@@ -14,38 +14,17 @@ import ForAI from '@site/src/components/ForAI';
   description="CLI tool to sync Claude commands and skills from npm packages to your project's .claude/ directory."
 />
 
-<LangTabs
-  en={<>
-    <p>
-      Allows npm package authors to distribute Claude Code commands and skills alongside their packages.
-      When users install these packages, they can sync the assets to their local <code>.claude/</code> directory for immediate use.
-    </p>
-    <ul>
-      <li>Multi-package sync in a single command</li>
-      <li>Version tracking — skips re-sync when version is unchanged</li>
-      <li>Flat file structure with prefixed filenames (default)</li>
-      <li>Interactive add/list UI (ink-based terminal UI)</li>
-      <li>Status monitoring with npm registry update checks</li>
-      <li>Dry-run mode to preview changes before applying</li>
-      <li>Legacy nested structure support and migration tool</li>
-    </ul>
-  </>}
-  kr={<>
-    <p>
-      npm 패키지 작성자가 Claude Code 커맨드와 스킬을 패키지와 함께 배포할 수 있도록 합니다.
-      사용자는 패키지 설치 후 <code>.claude/</code> 디렉토리로 에셋을 동기화하여 즉시 사용할 수 있습니다.
-    </p>
-    <ul>
-      <li>단일 명령으로 여러 패키지 동기화</li>
-      <li>버전 추적 — 버전이 동일하면 재동기화 생략</li>
-      <li>접두사 파일명을 사용하는 플랫 구조 (기본값)</li>
-      <li>ink 기반 인터랙티브 터미널 UI</li>
-      <li>npm 레지스트리 업데이트 확인이 포함된 상태 모니터링</li>
-      <li>변경 사항 미리보기를 위한 드라이런 모드</li>
-      <li>레거시 중첩 구조 지원 및 마이그레이션 도구</li>
-    </ul>
-  </>}
-/>
+Allows npm package authors to distribute Claude Code commands and skills alongside their packages.
+When users install these packages, they can sync the assets to their local `.claude/` directory for immediate use.
+<ul>
+  <li>Multi-package sync in a single command</li>
+  <li>Version tracking — skips re-sync when version is unchanged</li>
+  <li>Flat file structure with prefixed filenames (default)</li>
+  <li>Interactive add/list UI (ink-based terminal UI)</li>
+  <li>Status monitoring with npm registry update checks</li>
+  <li>Dry-run mode to preview changes before applying</li>
+  <li>Legacy nested structure support and migration tool</li>
+</ul>
 
 ## Installation
 

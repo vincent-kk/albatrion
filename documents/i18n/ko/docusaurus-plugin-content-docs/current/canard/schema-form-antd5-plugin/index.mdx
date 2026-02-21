@@ -1,0 +1,161 @@
+---
+title: '@canard/schema-form-antd5-plugin'
+sidebar_label: 'antd5-plugin'
+sidebar_position: 6
+---
+
+import PackageHeader from '@site/src/components/PackageHeader';
+import ForAI from '@site/src/components/ForAI';
+
+<PackageHeader name="@canard/schema-form-antd5-plugin" />
+
+`@canard/schema-form`를 위한 Ant Design v5 UI 플러그인입니다.
+`antd ^5.10.0` 기반의 18개 폼 입력 컴포넌트를 제공하며,
+문자열, 숫자, 불리언, 날짜, 범위, 선택 컨트롤을 모두 포함합니다.
+
+## Visual Guide
+
+JSON Schema를 설정하면 이 플러그인이 자동으로 Ant Design 5 폼 컴포넌트를 렌더링합니다:
+- **텍스트 필드** → `Input` component
+- **숫자** → `InputNumber` with step controls
+- **불리언** → `Checkbox` or `Switch` (via `formType: "switch"`)
+- **열거형** → `Select` dropdown or `Radio.Group`
+- **날짜** → `DatePicker`, `MonthPicker`, `TimePicker`
+- **배열** → Dynamic list with add/remove buttons
+
+:::info 스크린샷
+비주얼 데모 스크린샷이 `/img/demos/schema-form-antd5-demo.png`에 추가될 예정입니다.
+:::
+
+## Installation
+
+```bash
+yarn add @canard/schema-form-antd5-plugin
+```
+
+### Peer Dependencies
+
+```bash
+yarn add antd@>=5.10.0 dayjs@>=1 react@>=18 react-dom@>=18
+```
+
+## Quick Setup
+
+```ts
+import { registerPlugin } from '@canard/schema-form';
+import { plugin } from '@canard/schema-form-antd5-plugin';
+
+registerPlugin(plugin);
+```
+
+## Component Mapping
+
+Components are selected automatically based on JSON Schema properties. Priority order matches the list below (top = highest priority).
+
+| Component | type | format | formType | enum | Notes |
+|---|---|---|---|---|---|
+| `FormTypeInputBooleanSwitch` | `boolean` | — | `"switch"` | — | Switch toggle |
+| `FormTypeInputStringCheckbox` | `array` | — | `"checkbox"` | items.enum | Checkbox group; items must be string schema |
+| `FormTypeInputStringSwitch` | `string` | — | `"switch"` | 2 values | Toggle between two enum values |
+| `FormTypeInputUri` | `string` | `"uri"` or formType `"uri"` | — | — | URI input with protocol selector |
+| `FormTypeInputMonth` | `string` | `"month"` | — | — | Month picker |
+| `FormTypeInputDate` | `string` | `"date"` | — | — | Date picker |
+| `FormTypeInputTime` | `string` | `"time"` | — | — | Time picker |
+| `FormTypeInputMonthRange` | `array` | `"month-range"` or formType `"monthRange"` | — | — | Month range picker; items must be string schema |
+| `FormTypeInputDateRange` | `array` | `"date-range"` or formType `"dateRange"` | — | — | Date range picker; items must be string schema |
+| `FormTypeInputTimeRange` | `array` | `"time-range"` or formType `"timeRange"` | — | — | Time range picker; items must be string schema |
+| `FormTypeInputRadioGroup` | `string` \| `number` \| `integer` | — | `"radio"` or `"radiogroup"` | required | Radio button group |
+| `FormTypeInputStringEnum` | `string` | — | — | required | Select dropdown; also handles string-item arrays with enum |
+| `FormTypeInputArray` | `array` | — | — | — | Dynamic list with add/remove |
+| `FormTypeInputSlider` | `number` \| `integer` | — | `"slider"` | — | Slider input |
+| `FormTypeInputTextarea` | `string` | `"textarea"` or formType `"textarea"` | — | — | Multi-line textarea |
+| `FormTypeInputString` | `string` | — | — | — | Default text input (password supported via `format: "password"`) |
+| `FormTypeInputNumber` | `number` \| `integer` | — | — | — | Numeric input |
+| `FormTypeInputBoolean` | `boolean` | — | — | — | Checkbox |
+
+## Schema Extension Properties
+
+```ts
+// Custom schema properties recognized by this plugin
+{
+  formType?: 'switch' | 'radio' | 'radiogroup' | 'checkbox' | 'slider' |
+             'textarea' | 'uri' | 'dateRange' | 'monthRange' | 'timeRange',
+  // Standard JSON Schema properties also used for routing:
+  format?: 'date' | 'time' | 'month' | 'password' | 'uri' |
+           'textarea' | 'date-range' | 'month-range' | 'time-range',
+}
+```
+
+## Usage Example
+
+```tsx
+import { Form } from '@canard/schema-form';
+
+const schema = {
+  type: 'object',
+  properties: {
+    name:      { type: 'string' },
+    age:       { type: 'integer' },
+    active:    { type: 'boolean', formType: 'switch' },
+    role:      { type: 'string', enum: ['admin', 'user', 'guest'] },
+    birthday:  { type: 'string', format: 'date' },
+    bio:       { type: 'string', format: 'textarea' },
+    score:     { type: 'number', formType: 'slider', minimum: 0, maximum: 100 },
+  },
+};
+
+<Form jsonSchema={schema} onChange={setValue} />
+```
+
+## Context
+
+The plugin reads `context` passed to `<Form context={...}>` for size configuration:
+
+```ts
+type AntdContext = {
+  size?: 'small' | 'middle' | 'large';
+};
+```
+
+<ForAI>
+
+## AI Reference
+
+**Package**: `@canard/schema-form-antd5-plugin` v0.10.0
+**Purpose**: Ant Design v5 UI plugin — 18 form input components for `@canard/schema-form`.
+
+### Exports
+```ts
+import { plugin } from '@canard/schema-form-antd5-plugin';
+```
+
+### Peer dependencies
+`antd@>=5.10.0`, `dayjs@>=1`, `react@>=18`
+
+### Component mapping (priority order, high → low)
+| Component | Trigger |
+|---|---|
+| BooleanSwitch | `boolean` + `formType: "switch"` |
+| StringCheckbox | `array` + `formType: "checkbox"` + items.enum |
+| StringSwitch | `string` + `formType: "switch"` + 2 enum values |
+| Uri | `string` + `format: "uri"` |
+| Month / Date / Time | `string` + `format: "month"/"date"/"time"` |
+| MonthRange / DateRange / TimeRange | `array` + `format: "*-range"` |
+| RadioGroup | `string\|number` + `formType: "radio"` + enum |
+| StringEnum | `string` + enum |
+| Array | `array` (dynamic list) |
+| Slider | `number` + `formType: "slider"` |
+| Textarea | `string` + `format: "textarea"` |
+| String | `string` (default) |
+| Number | `number\|integer` (default) |
+| Boolean | `boolean` (default checkbox) |
+
+### Context type
+```ts
+type AntdContext = { size?: 'small' | 'middle' | 'large' };
+```
+
+### Schema extensions
+`formType`: `'switch' | 'radio' | 'radiogroup' | 'checkbox' | 'slider' | 'textarea' | 'uri' | 'dateRange' | 'monthRange' | 'timeRange'`
+
+</ForAI>

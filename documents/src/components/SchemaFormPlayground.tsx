@@ -30,18 +30,18 @@ const defaultSchema = `{
 }`;
 
 const appCode = `import { Form, registerPlugin } from "@canard/schema-form";
-import { Antd5Plugin } from "@canard/schema-form-antd5-plugin";
-import { Ajv8Plugin } from "@canard/schema-form-ajv8-plugin";
+import { plugin as antd5Plugin } from "@canard/schema-form-antd5-plugin";
+import { plugin as ajv8Plugin } from "@canard/schema-form-ajv8-plugin";
 import schema from "./schema.json";
 
-registerPlugin(Antd5Plugin);
-registerPlugin(Ajv8Plugin);
+registerPlugin(antd5Plugin);
+registerPlugin(ajv8Plugin);
 
 export default function App() {
   return (
     <div style={{ padding: 24 }}>
       <Form
-        schema={schema}
+        jsonSchema={schema}
         showError
         onSubmit={(value) => {
           alert(JSON.stringify(value, null, 2));

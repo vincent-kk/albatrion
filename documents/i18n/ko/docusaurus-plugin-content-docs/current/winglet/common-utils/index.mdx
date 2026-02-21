@@ -1,0 +1,218 @@
+---
+title: '@winglet/common-utils'
+sidebar_label: 'common-utils'
+sidebar_position: 1
+---
+
+import PackageHeader from '@site/src/components/PackageHeader';
+import ForAI from '@site/src/components/ForAI';
+
+<PackageHeader name="@winglet/common-utils" />
+
+JavaScript/TypeScript 프로젝트를 위한 종합 유틸리티 라이브러리입니다.
+배열 처리, 객체 조작, Promise 핸들링, 타입 체크, 스케줄링, 해싱 등을
+트리 쉐이킹 가능한 서브패스 익스포트로 제공합니다.
+
+## Installation
+
+```bash
+yarn add @winglet/common-utils
+```
+
+## Sub-path Exports
+
+| Import path | Contents |
+|---|---|
+| `@winglet/common-utils` | All exports |
+| `@winglet/common-utils/array` | `chunk`, `unique`, `uniqueBy`, `groupBy`, `difference`, `intersection`, `sortWithReference` |
+| `@winglet/common-utils/filter` | `isString`, `isNumber`, `isObject`, `isArray`, `isNil`, `isPlainObject`, `isTruthy` … |
+| `@winglet/common-utils/object` | `clone`, `merge`, `equals`, `serializeObject`, `transformKeys`, `removeUndefined` |
+| `@winglet/common-utils/function` | `debounce`, `throttle`, `getTrackableHandler` |
+| `@winglet/common-utils/promise` | `delay`, `timeout`, `withTimeout`, `waitAndExecute` |
+| `@winglet/common-utils/scheduler` | `scheduleMacrotask`, `scheduleMicrotask`, `scheduleNextTick` |
+| `@winglet/common-utils/hash` | Murmur3 hash, polynomial hash |
+| `@winglet/common-utils/convert` | Type conversion utilities |
+| `@winglet/common-utils/console` | Console helpers |
+| `@winglet/common-utils/math` | Math utilities |
+
+## Usage Examples
+
+```ts
+import { chunk, unique, intersection } from '@winglet/common-utils/array';
+import { isObject, isNil } from '@winglet/common-utils/filter';
+import { debounce } from '@winglet/common-utils/function';
+
+// Array utilities
+chunk([1, 2, 3, 4, 5], 2);        // [[1,2], [3,4], [5]]
+unique([1, 2, 2, 3]);              // [1, 2, 3]
+intersection([1, 2, 3], [2, 3, 4]); // [2, 3]
+
+// Type checking
+isObject({});   // true
+isNil(null);    // true
+
+// Function enhancement
+const debouncedSave = debounce(save, 300);
+```
+
+```ts
+import { clone, merge, equals } from '@winglet/common-utils/object';
+import { delay, withTimeout } from '@winglet/common-utils/promise';
+
+// Deep clone and merge
+const copy = clone(original);
+const merged = merge(defaults, overrides);
+equals({ a: 1 }, { a: 1 }); // true
+
+// Promise utilities
+await delay(1000);
+await withTimeout(fetchData(), 5000); // throws TimeoutError if >5s
+```
+
+## Error Classes
+
+- `BaseError` — foundation error class
+- `AbortError` — operation cancellation
+- `InvalidTypeError` — type validation failures
+- `TimeoutError` — timeout scenarios
+
+<ForAI>
+
+## AI Reference
+
+**Package**: `@winglet/common-utils` v0.10.0
+**Purpose**: General-purpose TypeScript utility functions.
+
+### Key exports
+```
+./lib → cacheMapFactory
+        cacheWeakMapFactory
+        counterFactory
+        getKeys
+        getTypeTag
+        hasOwnProperty
+        getRandomBoolean
+        getRandomNumber
+        getRandomString
+./error → BaseError
+          ErrorDetails (type)
+          AbortError
+          isAbortError
+          InvalidTypeError
+          isInvalidTypeError
+          TimeoutError
+          isTimeoutError
+./constant → VOID_FUNCTION
+             NULL_FUNCTION
+             FALSE_FUNCTION
+             TRUE_FUNCTION
+             IDENTITY_FUNCTION
+             NOOP_FUNCTION
+             MILLISECOND
+             SECOND
+             MINUTE
+             HOUR
+             DAY
+             ARGUMENTS_TAG
+             ARRAY_BUFFER_TAG
+             ARRAY_TAG
+             BIG_INT_64_ARRAY_TAG
+             BIG_UINT_64_ARRAY_TAG
+             BOOLEAN_TAG
+             DATA_VIEW_TAG
+             DATE_TAG
+             ERROR_TAG
+./filter → isArray
+           isArrayBuffer
+           isArrayIndex
+           isArrayLike
+           isBlob
+           isBoolean
+           isBuffer
+           isCloneable
+           isDataView
+           isDate
+           isEmpty
+           isEmptyArray
+           isEmptyObject
+           isEmptyPlainObject
+           isError
+           isFalsy
+           isFile
+           isFunction
+           isInteger
+           isMap
+./array → at
+          chunk
+          difference
+          differenceBy
+          differenceLite
+          differenceWith
+          forEach
+          forEachDual
+          forEachReverse
+          groupBy
+          intersection
+          intersectionBy
+          intersectionLite
+          intersectionWith
+          map
+          orderedMerge
+          primitiveArrayEqual
+          sortWithReference
+          unique
+          uniqueBy
+./console → printError
+./convert → convertMsFromDuration
+./function → getTrackableHandler
+             TrackableHandlerFunction (type)
+             TrackableHandlerOptions (type)
+             debounce
+             DebouncedFn (type)
+             throttle
+             ThrottledFn (type)
+./hash → Murmur3
+         polynomialHash
+./object → clone
+           cloneLite
+           countKey
+           countObjectKey
+           equals
+           getEmptyObject
+           getFirstKey
+           getObjectKeys
+           getSymbols
+           hasUndefined
+           merge
+           removePrototype
+           removeUndefined
+           serializeNative
+           serializeObject
+           serializeWithFullSortedKeys
+           shallowClone
+           stableEquals
+           stableSerialize
+           sortObjectKeys
+./promise → delay
+            timeout
+            withTimeout
+            waitAndExecute
+            waitAndReturn
+./scheduler → MessageChannelScheduler
+              SchedulerOptions (type)
+              setImmediate
+              clearImmediate
+              getPendingCount
+              destroyGlobalScheduler
+              isMessageChannelSchedulerError
+              cancelMacrotask
+              scheduleMacrotask
+              scheduleCancelableMacrotask
+              cancelMacrotaskSafe
+              scheduleMacrotaskSafe
+              scheduleCancelableMacrotaskSafe
+              scheduleMicrotask
+              scheduleNextTick
+```
+
+</ForAI>

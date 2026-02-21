@@ -1,32 +1,32 @@
 ---
+title: '@canard/schema-form-antd6-plugin'
 sidebar_label: 'antd6-plugin'
 sidebar_position: 7
 ---
 
 import PackageHeader from '@site/src/components/PackageHeader';
-import LangTabs from '@site/src/components/LangTabs';
 import ForAI from '@site/src/components/ForAI';
 
 <PackageHeader name="@canard/schema-form-antd6-plugin" />
 
-<LangTabs
-  en={<>
-    <p>
-      Ant Design v6 UI plugin for <code>@canard/schema-form</code>.
-      Provides 18 form input components built on <code>antd ^6.0.0</code>.
-      Identical component set and API as <code>@canard/schema-form-antd5-plugin</code> —
-      use this package when your project runs Ant Design v6.
-    </p>
-  </>}
-  kr={<>
-    <p>
-      <code>@canard/schema-form</code>를 위한 Ant Design v6 UI 플러그인입니다.
-      <code>antd ^6.0.0</code> 기반의 18개 폼 입력 컴포넌트를 제공합니다.
-      컴포넌트 구성과 API는 <code>@canard/schema-form-antd5-plugin</code>과 동일하며,
-      프로젝트에서 Ant Design v6를 사용할 때 이 패키지를 선택하세요.
-    </p>
-  </>}
-/>
+Ant Design v6 UI plugin for `@canard/schema-form`.
+Provides 18 form input components built on `antd ^6.0.0`.
+Identical component set and API as `@canard/schema-form-antd5-plugin` —
+use this package when your project runs Ant Design v6.
+
+## Visual Guide
+
+When configured with a JSON Schema, this plugin renders Ant Design 6 form components automatically:
+- **Text fields** → `Input` component
+- **Numbers** → `InputNumber` with step controls
+- **Booleans** → `Checkbox` or `Switch` (via `formType: "switch"`)
+- **Enums** → `Select` dropdown or `Radio.Group`
+- **Dates** → `DatePicker`, `MonthPicker`, `TimePicker`
+- **Arrays** → Dynamic list with add/remove buttons
+
+:::info Screenshots
+Visual demo screenshot will be added at `/img/demos/schema-form-antd6-demo.png`.
+:::
 
 ## Installation
 

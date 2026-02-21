@@ -1,30 +1,31 @@
 ---
+title: '@canard/schema-form-antd5-plugin'
 sidebar_label: 'antd5-plugin'
 sidebar_position: 6
 ---
 
 import PackageHeader from '@site/src/components/PackageHeader';
-import LangTabs from '@site/src/components/LangTabs';
 import ForAI from '@site/src/components/ForAI';
 
 <PackageHeader name="@canard/schema-form-antd5-plugin" />
 
-<LangTabs
-  en={<>
-    <p>
-      Ant Design v5 UI plugin for <code>@canard/schema-form</code>.
-      Provides 18 form input components built on <code>antd ^5.10.0</code>,
-      covering strings, numbers, booleans, dates, ranges, and selection controls.
-    </p>
-  </>}
-  kr={<>
-    <p>
-      <code>@canard/schema-form</code>를 위한 Ant Design v5 UI 플러그인입니다.
-      <code>antd ^5.10.0</code> 기반의 18개 폼 입력 컴포넌트를 제공하며,
-      문자열, 숫자, 불리언, 날짜, 범위, 선택 컨트롤을 모두 포함합니다.
-    </p>
-  </>}
-/>
+Ant Design v5 UI plugin for `@canard/schema-form`.
+Provides 18 form input components built on `antd ^5.10.0`,
+covering strings, numbers, booleans, dates, ranges, and selection controls.
+
+## Visual Guide
+
+When configured with a JSON Schema, this plugin renders Ant Design 5 form components automatically:
+- **Text fields** → `Input` component
+- **Numbers** → `InputNumber` with step controls
+- **Booleans** → `Checkbox` or `Switch` (via `formType: "switch"`)
+- **Enums** → `Select` dropdown or `Radio.Group`
+- **Dates** → `DatePicker`, `MonthPicker`, `TimePicker`
+- **Arrays** → Dynamic list with add/remove buttons
+
+:::info Screenshots
+Visual demo screenshot will be added at `/img/demos/schema-form-antd5-demo.png`.
+:::
 
 ## Installation
 

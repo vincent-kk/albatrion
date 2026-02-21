@@ -1,0 +1,412 @@
+---
+sidebar_label: 'Examples'
+sidebar_position: 3
+---
+
+import ForAI from '@site/src/components/ForAI';
+
+# Examples
+
+일반적인 모달 시나리오에 대한 실용적인 사용 패턴입니다.
+
+---
+
+## Basic alert / confirm / prompt
+
+```tsx
+import { alert, confirm, prompt } from '@lerx/promise-modal';
+
+// Alert — resolves void on close
+await alert({ title: 'Done', content: 'Your changes were saved.' });
+
+// Confirm — resolves boolean
+const ok = await confirm({
+  title: 'Delete item',
+  content: 'This cannot be undone.',
+  footer: { confirm: 'Delete', cancel: 'Cancel' },
+});
+
+// Prompt — resolves typed value
+const name = await prompt<string>({
+  title: 'Enter name',
+  defaultValue: '',
+  Input: ({ value, onChange }) => (
+    <input value={value ?? ''} onChange={e => onChange(e.target.value)} />
+  ),
+  disabled: v => !v || v.trim().length < 2,
+});
+```
+
+---
+
+## Subtypes
+
+`subtype` prop은 컴포넌트 슬롯으로 전달되므로 시맨틱 타입별로 다른 스타일을 적용할 수 있습니다.
+
+```tsx
+await alert({ title: 'Info',    content: '...', subtype: 'info' });
+await alert({ title: 'Success', content: '...', subtype: 'success' });
+await alert({ title: 'Warning', content: '...', subtype: 'warning' });
+await alert({ title: 'Error',   content: '...', subtype: 'error' });
+```
+
+---
+
+## Custom footer text
+
+```tsx
+await alert({
+  title: 'Notice',
+  content: 'Please acknowledge.',
+  footer: { confirm: 'I understand' },
+});
+
+const result = await confirm({
+  title: 'Publish?',
+  content: 'This will go live immediately.',
+  footer: { confirm: 'Publish now', cancel: 'Not yet' },
+});
+```
+
+---
+
+## Prompt with complex value
+
+```tsx
+type UserInfo = { name: string; age: number };
+
+const user = await prompt<UserInfo>({
+  title: 'User info',
+  defaultValue: { name: '', age: 0 },
+  Input: ({ value, onChange }) => (
+    <div>
+      <input
+        value={value?.name ?? ''}
+        onChange={e => onChange({ ...value!, name: e.target.value })}
+        placeholder="Name"
+      />
+      <input
+        type="number"
+        value={value?.age ?? 0}
+        onChange={e => onChange({ ...value!, age: Number(e.target.value) })}
+        placeholder="Age"
+      />
+    </div>
+  ),
+  disabled: v => !v?.name,
+});
+```
+
+---
+
+## Custom modal components
+
+`ModalProvider`에서 전역으로, 또는 개별 모달 옵션에서 per-call로 컴포넌트 슬롯을 재정의할 수 있습니다.
+
+```tsx
+import { ModalProvider, alert, type ModalFrameProps, type WrapperComponentProps, type FooterComponentProps } from '@lerx/promise-modal';
+
+// Foreground — receives ModalFrameProps + children
+const MyForeground = ({ children, type }: React.PropsWithChildren<ModalFrameProps>) => (
+  <div style={{ background: '#fff', borderRadius: 12, padding: 24, maxWidth: 480 }}>
+    {children}
+  </div>
+);
+
+// Title wrapper
+const MyTitle = ({ children }: WrapperComponentProps) => (
+  <h2 style={{ margin: '0 0 8px' }}>{children}</h2>
+);
+
+// Footer — receives onConfirm, onCancel, disabled, labels
+const MyFooter = ({ onConfirm, onCancel, confirmLabel, cancelLabel, disabled }: FooterComponentProps) => (
+  <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end', marginTop: 24 }}>
+    {onCancel && <button onClick={onCancel}>{cancelLabel ?? 'Cancel'}</button>}
+    <button onClick={onConfirm} disabled={disabled}>{confirmLabel ?? 'OK'}</button>
+  </div>
+);
+
+function App() {
+  return (
+    <ModalProvider
+      ForegroundComponent={MyForeground}
+      TitleComponent={MyTitle}
+      FooterComponent={MyFooter}
+    >
+      <YourApp />
+    </ModalProvider>
+  );
+}
+```
+
+### Per-call component override
+
+```tsx
+await alert({
+  title: 'Special modal',
+  content: 'Uses a different foreground just for this call.',
+  ForegroundComponent: ({ children }) => (
+    <div style={{ background: '#f0f8ff', padding: 32, borderRadius: 16 }}>
+      {children}
+    </div>
+  ),
+});
+```
+
+---
+
+## Background data
+
+`background.data`를 통해 `BackgroundComponent`에 타입이 지정된 데이터를 전달합니다.
+
+```tsx
+type BgData = 'danger' | 'normal';
+
+const MyBackground = ({ background, children, onClick }: ModalFrameProps<object, BgData>) => {
+  const color = background?.data === 'danger' ? 'rgba(200,0,0,0.4)' : 'rgba(0,0,0,0.35)';
+  return (
+    <div style={{ position: 'fixed', inset: 0, background: color, display: 'flex', alignItems: 'center', justifyContent: 'center' }} onClick={onClick}>
+      {children}
+    </div>
+  );
+};
+
+await confirm({
+  title: 'Delete account',
+  content: 'This is permanent.',
+  background: { data: 'danger' },
+});
+```
+
+---
+
+## Async operations in modals
+
+```tsx
+async function handleSubmit() {
+  const confirmed = await confirm({
+    title: 'Submit order',
+    content: 'Proceed with checkout?',
+  });
+  if (!confirmed) return;
+
+  // Show a loading-style alert while work completes
+  const done = submitOrder();
+  await alert({
+    title: 'Processing',
+    content: 'Please wait...',
+    manualDestroy: true,   // keep alive until we call onDestroy
+    closeOnBackdropClick: false,
+    footer: false,
+  });
+  await done;
+}
+```
+
+---
+
+## Nested / sequential modals
+
+```tsx
+async function multiStep() {
+  const go = await confirm({
+    title: 'Start',
+    content: 'This takes multiple steps.',
+    footer: { confirm: 'Continue', cancel: 'Cancel' },
+  });
+  if (!go) return;
+
+  const name = await prompt<string>({
+    title: 'Your name',
+    defaultValue: '',
+    Input: ({ value, onChange }) => (
+      <input value={value ?? ''} onChange={e => onChange(e.target.value)} />
+    ),
+  });
+  if (!name) return;
+
+  const final = await confirm({
+    title: 'Confirm',
+    content: `Submit as "${name}"?`,
+    subtype: 'warning',
+  });
+
+  if (final) {
+    await alert({ title: 'Done', content: `Submitted as ${name}.`, subtype: 'success' });
+  }
+}
+```
+
+---
+
+## Component-lifecycle-scoped modals (`useModal`)
+
+`useModal`을 통해 열린 모달은 컴포넌트가 언마운트될 때 자동으로 닫힙니다. 폼이나 상세 뷰에 유용합니다.
+
+```tsx
+import { useModal } from '@lerx/promise-modal';
+
+function ItemEditor({ itemId }: { itemId: string }) {
+  const modal = useModal();
+
+  const handleDelete = async () => {
+    const ok = await modal.confirm({
+      title: 'Delete item',
+      content: `Delete item ${itemId}?`,
+    });
+    if (ok) await deleteItem(itemId);
+  };
+
+  return <button onClick={handleDelete}>Delete</button>;
+  // If ItemEditor unmounts while the confirm modal is open, it will be closed automatically.
+}
+```
+
+---
+
+## Custom anchor (render modals into a specific DOM node)
+
+```tsx
+import { useRef, useEffect } from 'react';
+import { ModalProvider, type ModalProviderHandle, alert } from '@lerx/promise-modal';
+
+function CustomAnchorExample() {
+  const providerRef = useRef<ModalProviderHandle>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (providerRef.current && containerRef.current) {
+      providerRef.current.initialize(containerRef.current);
+    }
+  }, []);
+
+  return (
+    <ModalProvider ref={providerRef}>
+      <div ref={containerRef} style={{ position: 'relative', height: 400 }} />
+      <button onClick={() => alert({ title: 'In container', content: 'Rendered inside the div above.' })}>
+        Open
+      </button>
+    </ModalProvider>
+  );
+}
+```
+
+---
+
+## Toast notifications
+
+커스텀 `ForegroundComponent`와 `useDestroyAfter`를 사용하여 `alert`로 토스트 메시지를 구현합니다.
+
+```tsx
+import { useRef, useEffect } from 'react';
+import {
+  alert,
+  type ModalFrameProps,
+  useModalAnimation,
+  useModalDuration,
+  useDestroyAfter,
+} from '@lerx/promise-modal';
+
+function ToastForeground({ id, visible, children, onClose, hideAfterMs = 3000 }: React.PropsWithChildren<ModalFrameProps & { hideAfterMs?: number }>) {
+  const ref = useRef<HTMLDivElement>(null);
+  const { milliseconds } = useModalDuration();
+
+  useEffect(() => {
+    const t = setTimeout(onClose, hideAfterMs);
+    return () => clearTimeout(t);
+  }, [onClose, hideAfterMs]);
+
+  useModalAnimation(visible, {
+    onVisible: () => ref.current?.classList.add('toast--visible'),
+    onHidden:  () => ref.current?.classList.remove('toast--visible'),
+  });
+
+  useDestroyAfter(id, milliseconds);
+
+  return (
+    <div ref={ref} className="toast">
+      {children}
+    </div>
+  );
+}
+
+let destroyPrevToast: (() => void) | undefined;
+
+export function toast(message: React.ReactNode, duration = 3000) {
+  destroyPrevToast?.();
+  return alert({
+    content: message,
+    footer: false,
+    dimmed: false,
+    closeOnBackdropClick: false,
+    ForegroundComponent: (props: ModalFrameProps) => {
+      destroyPrevToast = props.onDestroy;
+      return <ToastForeground {...props} hideAfterMs={duration} />;
+    },
+  });
+}
+```
+
+---
+
+## Context: theme / locale in modal components
+
+`ModalProvider`의 `context` prop을 통해 모든 모달 컴포넌트 슬롯에 공유 데이터를 전달합니다.
+
+```tsx
+// Provider setup
+<ModalProvider context={{ theme: 'dark', locale: 'ko-KR' }}>
+  <App />
+</ModalProvider>
+
+// In a custom component slot — context is always injected
+const MyTitle = ({ children, context }: WrapperComponentProps<{ theme: string }>) => (
+  <h2 style={{ color: context.theme === 'dark' ? '#fff' : '#000' }}>{children}</h2>
+);
+
+// In a prompt Input — context is also available
+const myPrompt = await prompt<string>({
+  title: 'Name',
+  defaultValue: '',
+  Input: ({ value, onChange, context }) => (
+    <input
+      value={value ?? ''}
+      onChange={e => onChange(e.target.value)}
+      placeholder={context.locale === 'ko-KR' ? '이름 입력' : 'Enter name'}
+    />
+  ),
+});
+```
+
+<ForAI>
+
+## AI Agent Reference — Examples Summary
+
+### Pattern index
+
+| Goal | Key APIs |
+|---|---|
+| Simple notification | `await alert({ title, content })` |
+| Yes/no decision | `const ok = await confirm(...)` |
+| User text input | `const val = await prompt<T>({ Input, defaultValue })` |
+| Typed input validation | `prompt({ disabled: v => condition })` |
+| Custom look | `ModalProvider` slots or per-call `ForegroundComponent` |
+| Background data | `alert({ background: { data: myData } })` |
+| Sequential workflow | `await confirm(...)` then `await prompt(...)` then `await alert(...)` |
+| Auto-close on unmount | `const modal = useModal(); await modal.confirm(...)` |
+| Custom DOM target | `ModalProviderHandle.initialize(element)` |
+| Toast | `alert({ footer: false, dimmed: false, ForegroundComponent: toastComponent })` |
+| Theme/locale in components | `ModalProvider context={...}` + `WrapperComponentProps.context` |
+
+### Important constraints for code generation
+
+1. `ModalProvider` must exist in the React tree before any `alert`/`confirm`/`prompt` call renders.
+2. `prompt` requires the `Input` prop — it is not optional.
+3. Custom `ForegroundComponent` must forward `children` (it wraps title, content, footer slots).
+4. `BackgroundComponent` does NOT receive `children` — it is a sibling layer, not a wrapper.
+5. `manualDestroy: true` requires calling `onDestroy()` explicitly; otherwise the modal DOM node leaks.
+6. `useDestroyAfter` and `useModalAnimation` must be called inside a `ForegroundComponent` rendered by the modal system (they read modal context internally).
+7. `footer: false` hides the footer entirely — no confirm/cancel buttons.
+8. `disabled` in `prompt` controls the confirm button state; it does not prevent the modal from being closed via backdrop or cancel.
+
+</ForAI>

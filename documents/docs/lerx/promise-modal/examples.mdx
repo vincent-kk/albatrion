@@ -1,16 +1,13 @@
 ---
+sidebar_label: 'Examples'
 sidebar_position: 3
 ---
 
-import LangTabs from '@site/src/components/LangTabs';
 import ForAI from '@site/src/components/ForAI';
 
 # Examples
 
-<LangTabs
-  en={<p>Practical usage patterns for common modal scenarios.</p>}
-  kr={<p>일반적인 모달 시나리오에 대한 실용적인 사용 패턴입니다.</p>}
-/>
+Practical usage patterns for common modal scenarios.
 
 ---
 
@@ -44,10 +41,7 @@ const name = await prompt<string>({
 
 ## Subtypes
 
-<LangTabs
-  en={<p>The <code>subtype</code> prop is forwarded to component slots so you can apply different styles per semantic type.</p>}
-  kr={<p><code>subtype</code> prop은 컴포넌트 슬롯으로 전달되므로 시맨틱 타입별로 다른 스타일을 적용할 수 있습니다.</p>}
-/>
+The `subtype` prop is forwarded to component slots so you can apply different styles per semantic type.
 
 ```tsx
 await alert({ title: 'Info',    content: '...', subtype: 'info' });
@@ -107,10 +101,7 @@ const user = await prompt<UserInfo>({
 
 ## Custom modal components
 
-<LangTabs
-  en={<p>Override component slots globally on <code>ModalProvider</code> or per-call on individual modal options.</p>}
-  kr={<p><code>ModalProvider</code>에서 전역으로, 또는 개별 모달 옵션에서 per-call로 컴포넌트 슬롯을 재정의할 수 있습니다.</p>}
-/>
+Override component slots globally on `ModalProvider` or per-call on individual modal options.
 
 ```tsx
 import { ModalProvider, alert, type ModalFrameProps, type WrapperComponentProps, type FooterComponentProps } from '@lerx/promise-modal';
@@ -166,10 +157,7 @@ await alert({
 
 ## Background data
 
-<LangTabs
-  en={<p>Pass typed data to <code>BackgroundComponent</code> via <code>background.data</code>.</p>}
-  kr={<p><code>background.data</code>를 통해 <code>BackgroundComponent</code>에 타입이 지정된 데이터를 전달합니다.</p>}
-/>
+Pass typed data to `BackgroundComponent` via `background.data`.
 
 ```tsx
 type BgData = 'danger' | 'normal';
@@ -253,10 +241,7 @@ async function multiStep() {
 
 ## Component-lifecycle-scoped modals (`useModal`)
 
-<LangTabs
-  en={<p>Modals opened via <code>useModal</code> are automatically closed when the component unmounts. Useful for forms and detail views.</p>}
-  kr={<p><code>useModal</code>을 통해 열린 모달은 컴포넌트가 언마운트될 때 자동으로 닫힙니다. 폼이나 상세 뷰에 유용합니다.</p>}
-/>
+Modals opened via `useModal` are automatically closed when the component unmounts. Useful for forms and detail views.
 
 ```tsx
 import { useModal } from '@lerx/promise-modal';
@@ -310,10 +295,7 @@ function CustomAnchorExample() {
 
 ## Toast notifications
 
-<LangTabs
-  en={<p>Build toast messages using <code>alert</code> with a custom <code>ForegroundComponent</code> and <code>useDestroyAfter</code>.</p>}
-  kr={<p>커스텀 <code>ForegroundComponent</code>와 <code>useDestroyAfter</code>를 사용하여 <code>alert</code>로 토스트 메시지를 구현합니다.</p>}
-/>
+Build toast messages using `alert` with a custom `ForegroundComponent` and `useDestroyAfter`.
 
 ```tsx
 import { useRef, useEffect } from 'react';
@@ -369,10 +351,7 @@ export function toast(message: React.ReactNode, duration = 3000) {
 
 ## Context: theme / locale in modal components
 
-<LangTabs
-  en={<p>Pass shared data to all modal component slots via the <code>context</code> prop on <code>ModalProvider</code>.</p>}
-  kr={<p><code>ModalProvider</code>의 <code>context</code> prop을 통해 모든 모달 컴포넌트 슬롯에 공유 데이터를 전달합니다.</p>}
-/>
+Pass shared data to all modal component slots via the `context` prop on `ModalProvider`.
 
 ```tsx
 // Provider setup
