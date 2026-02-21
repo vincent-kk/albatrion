@@ -25,7 +25,7 @@ import { plugin as ajv8Plugin } from '@canard/schema-form-ajv8-plugin/2020';
 registerPlugin(ajv8Plugin);
 ```
 
-Without this plugin, the schema validator cannot process `prefixItems` and the form will fail to render.
+Without this plugin, the schema validator cannot process `prefixItems`, so validation will not work. The form itself will still render normally.
 :::
 
 <BrowserOnly fallback={<div>Loading demo...</div>}>
