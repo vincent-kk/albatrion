@@ -9,7 +9,6 @@ import {
 } from '@canard/schema-form';
 import { plugin as ajv8Plugin } from '@canard/schema-form-ajv8-plugin';
 
-import { FormTypeInputArrayDefinition } from '../src/formTypeInputs/FormTypeInputArray';
 import { FormTypeInputBooleanDefinition } from '../src/formTypeInputs/FormTypeInputBoolean';
 import { FormTypeInputBooleanSwitchDefinition } from '../src/formTypeInputs/FormTypeInputBooleanSwitch';
 import { FormTypeInputDateDefinition } from '../src/formTypeInputs/FormTypeInputDate';
@@ -280,6 +279,5 @@ Array.args = {
       disabled: true,
     },
     minItems: 3,
-    FormTypeInput: FormTypeInputArrayDefinition.Component,
   },
 };
