@@ -45,6 +45,7 @@ export class BranchStrategy implements ArrayNodeStrategy {
   /** Flag indicating whether the array value is not changed */
   private __idle__: boolean = false;
 
+  /** Flag indicating whether the array value is nullish */
   private __nullish__: Nullish | false = false;
 
   /** Flag indicating whether the array edges are expired */
@@ -72,6 +73,7 @@ export class BranchStrategy implements ArrayNodeStrategy {
   /** Current value of the array node */
   private __value__: ArrayValue = [];
 
+  /** Array of child nodes */
   private __children__: ChildNode[] = [];
 
   /**
@@ -231,6 +233,16 @@ export class BranchStrategy implements ArrayNodeStrategy {
    */
   public get length() {
     return this.__keys__.length;
+  }
+
+  /** Minimum number of items required in the array (from JSON Schema minItems) */
+  public get minItems() {
+    return this.__minItems__;
+  }
+
+  /** Maximum number of items allowed in the array (from JSON Schema maxItems) */
+  public get maxItems() {
+    return this.__maxItems__;
   }
 
   /**

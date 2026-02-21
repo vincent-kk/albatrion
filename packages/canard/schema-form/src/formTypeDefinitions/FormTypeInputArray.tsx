@@ -42,7 +42,7 @@ const FormTypeInputArray = ({
             </div>
           );
         })}
-      {!readOnly && (
+      {!readOnly && node.maxItems > node.length && (
         <label
           style={{
             display: 'flex',

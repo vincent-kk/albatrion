@@ -21,6 +21,12 @@ export interface ArrayNodeStrategy {
    */
   get length(): number;
 
+  /** Minimum number of items required in the array (from JSON Schema minItems) */
+  get minItems(): number;
+
+  /** Maximum number of items allowed in the array (from JSON Schema maxItems) */
+  get maxItems(): number;
+
   /**
    * Gets the list of child nodes.
    * @returns Array containing key and node information

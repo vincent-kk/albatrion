@@ -35,6 +35,16 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
     return this.__strategy__.length;
   }
 
+  /** Minimum number of items required in the array (from JSON Schema minItems) */
+  public get minItems() {
+    return this.__strategy__.minItems;
+  }
+
+  /** Maximum number of items allowed in the array (from JSON Schema maxItems) */
+  public get maxItems() {
+    return this.__strategy__.maxItems;
+  }
+
   /**
    * @internal Strategy used by the array node.
    * @remarks `BranchStrategy` for branch node with child nodes, `TerminalStrategy` for simple array data, without child nodes.
