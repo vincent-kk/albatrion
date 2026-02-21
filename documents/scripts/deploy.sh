@@ -34,11 +34,11 @@ if [[ "$REMOTE_URL" == git@* ]] || [[ "$REMOTE_URL" == ssh://* ]]; then
 else
   # HTTPS remote
   if [[ -z "${GIT_USER:-}" ]]; then
-    # Try to get GitHub username from git config
-    GIT_USER_CANDIDATE=$(git config user.name 2>/dev/null || echo "")
+    # Extract GitHub username from HTTPS remote URL
+    GIT_USER_CANDIDATE=$(echo "$REMOTE_URL" | sed -E 's|https://github.com/([^/]+)/.*|\1|')
     if [[ -n "$GIT_USER_CANDIDATE" ]]; then
       export GIT_USER="$GIT_USER_CANDIDATE"
-      echo "Using GIT_USER from git config: $GIT_USER"
+      echo "Using GIT_USER from remote URL: $GIT_USER"
     else
       echo "Error: HTTPS remote detected but GIT_USER is not set."
       echo "Set it with: GIT_USER=<github-username> yarn deploy:gh-pages"
