@@ -5174,7 +5174,22 @@ interface Person {
 }
 
 const allPeople: Person[] = [
-  { firstName: 'John', lastName: 'Doe', age: 30, email: 'john
+  { firstName: 'John', lastName: 'Doe', age: 30, email: 'john@example.com' },
+  { firstName: 'Jane', lastName: 'Doe', age: 28, email: 'jane@example.com' },
+  { firstName: 'Bob', lastName: 'Smith', age: 35, email: 'bob@example.com' }
+];
+
+const duplicates: Person[] = [
+  { firstName: 'John', lastName: 'Doe', age: 31, email: 'john.doe@example.com' } // Different age and email
+];
+
+// Compare by first and last name only
+const result = differenceWith(
+  allPeople,
+  duplicates,
+  (a, b) => a.firstName === b.firstName && a.lastName === b.lastName
+);
+console.log(result); // [{ firstName: 'Jane', ... }, { firstName: 'Bob', ... }]
 ```
 
 ### Approximate numeric comparison
@@ -5336,7 +5351,19 @@ interface User {
 }
 
 const users: User[] = [
-  { id: 1, name: 'Alice', email: 'alice
+  { id: 1, name: 'Alice', email: 'alice@example.com' },
+  { id: 2, name: 'Bob', email: 'bob@example.com' },
+  { id: 3, name: 'Charlie', email: 'charlie@example.com' }
+];
+
+let foundUser: User | undefined;
+forEach(users, (user) => {
+  if (user.name === 'Bob') {
+    foundUser = user;
+    return false; // Stop searching
+  }
+});
+console.log(foundUser); // { id: 2, name: 'Bob', email: 'bob@example.com' }
 ```
 
 ### Conditional processing with early exit
@@ -5542,7 +5569,28 @@ const oldUsers: OldUser[] = [
 ];
 
 const newUsers: NewUser[] = [
-  { id: 1, email: 'alice
+  { id: 1, email: 'alice@example.com' },
+  { id: 2, email: 'bob@example.com' },
+  { id: 3, email: 'charlie@example.com' }
+];
+
+const mergedUsers: Array<{id: number; name?: string; email?: string}> = [];
+
+forEachDual(oldUsers, newUsers, (oldUser, newUser, index) => {
+  const merged = {
+    id: oldUser?.id || newUser?.id || index,
+    name: oldUser?.name,
+    email: newUser?.email
+  };
+  mergedUsers.push(merged);
+});
+
+console.log(mergedUsers);
+// [
+//   { id: 1, name: 'Alice', email: 'alice@example.com' },
+//   { id: 2, name: 'Bob', email: 'bob@example.com' },
+//   { id: 3, name: undefined, email: 'charlie@example.com' }
+// ]
 ```
 
 ### Parallel processing with validation
@@ -6950,7 +6998,15 @@ interface ClientUser {
 }
 
 const apiUsers: ApiUser[] = [
-  { user_id: 1, first_name: 'John', last_name: 'Doe', email_address: 'john
+  { user_id: 1, first_name: 'John', last_name: 'Doe', email_address: 'john@example.com', created_at: '2024-01-15T10:30:00Z' }
+];
+
+const clientUsers = map(apiUsers, (apiUser): ClientUser => ({
+  id: apiUser.user_id,
+  name: `${apiUser.first_name} ${apiUser.last_name}`,
+  email: apiUser.email_address,
+  createdDate: new Date(apiUser.created_at)
+}));
 ```
 
 ### Nested array processing
@@ -7476,7 +7532,21 @@ Array with duplicates removed based on mapped values
 import { uniqueBy } from '@winglet/common-utils';
 
 const users = [
-  { id: 1, name: 'Alice', email: 'alice
+  { id: 1, name: 'Alice', email: 'alice@example.com' },
+  { id: 2, name: 'Bob', email: 'bob@example.com' },
+  { id: 1, name: 'Alice Updated', email: 'alice.new@example.com' },
+  { id: 3, name: 'Charlie', email: 'charlie@example.com' },
+  { id: 2, name: 'Bob Smith', email: 'bob.smith@example.com' }
+];
+
+const uniqueUsers = uniqueBy(users, user => user.id);
+console.log(uniqueUsers);
+// [
+//   { id: 1, name: 'Alice', email: 'alice@example.com' },
+//   { id: 2, name: 'Bob', email: 'bob@example.com' },
+//   { id: 3, name: 'Charlie', email: 'charlie@example.com' }
+// ]
+// Note: First occurrence of each ID is kept
 ```
 
 ### Remove duplicate strings by length
@@ -7655,7 +7725,21 @@ console.log(uniqueCustomerProduct);
   code={`import { uniqueBy } from '@winglet/common-utils';
 
 const users = [
-  { id: 1, name: 'Alice', email: 'alice`}
+  { id: 1, name: 'Alice', email: 'alice@example.com' },
+  { id: 2, name: 'Bob', email: 'bob@example.com' },
+  { id: 1, name: 'Alice Updated', email: 'alice.new@example.com' },
+  { id: 3, name: 'Charlie', email: 'charlie@example.com' },
+  { id: 2, name: 'Bob Smith', email: 'bob.smith@example.com' }
+];
+
+const uniqueUsers = uniqueBy(users, user => user.id);
+console.log(uniqueUsers);
+// [
+//   { id: 1, name: 'Alice', email: 'alice@example.com' },
+//   { id: 2, name: 'Bob', email: 'bob@example.com' },
+//   { id: 3, name: 'Charlie', email: 'charlie@example.com' }
+// ]
+// Note: First occurrence of each ID is kept`}
 />
 
 ## Notes
@@ -7731,7 +7815,22 @@ interface Person {
 }
 
 const people: Person[] = [
-  { firstName: 'John', lastName: 'Doe', age: 30, email: 'john
+  { firstName: 'John', lastName: 'Doe', age: 30, email: 'john@example.com' },
+  { firstName: 'Jane', lastName: 'Smith', age: 25, email: 'jane@example.com' },
+  { firstName: 'John', lastName: 'Doe', age: 31, email: 'john.doe@example.com' }, // Same name, different age/email
+  { firstName: 'Bob', lastName: 'Johnson', age: 35, email: 'bob@example.com' }
+];
+
+// Remove duplicates based on first and last name only
+const uniquePeople = uniqueWith(people, (a, b) =>
+  a.firstName === b.firstName && a.lastName === b.lastName
+);
+console.log(uniquePeople);
+// [
+//   { firstName: 'John', lastName: 'Doe', age: 30, email: 'john@example.com' },
+//   { firstName: 'Jane', lastName: 'Smith', age: 25, email: 'jane@example.com' },
+//   { firstName: 'Bob', lastName: 'Johnson', age: 35, email: 'bob@example.com' }
+// ]
 ```
 
 ### Approximate numeric comparison
@@ -11794,7 +11893,9 @@ function validateForm(data: FormData): string[] {
 }
 
 // Usage
-const form1 = { username: '', email: 'john
+const form1 = { username: '', email: 'john@example.com', preferences: {} };
+console.log(validateForm(form1));
+// ['Username is required', 'At least one preference must be selected']
 ```
 
 ### Data filtering and cleanup
@@ -14697,7 +14798,13 @@ function extractNonNilProperties(obj: Record<string, any>) {
 const data = {
   name: 'John',
   age: null,
-  email: 'john
+  email: 'john@example.com',
+  phone: undefined,
+  active: false
+};
+
+const clean = extractNonNilProperties(data);
+// { name: 'John', email: 'john@example.com', active: false }
 ```
 
 ### Default value assignment
@@ -19133,7 +19240,7 @@ function createUser(
 
 // Usage
 const user1 = createUser('John');
-const user2 = createUser('Jane', 'jane
+const user2 = createUser('Jane', 'jane@example.com', 25, { role: 'admin' });
 ```
 
 ### Configuration merging
@@ -20307,7 +20414,17 @@ class ObjectValidator implements Validator {
 
 // Usage
 const validator = new ObjectValidator();
-const userData = { name: 'John', age: 30, email: 'john
+const userData = { name: 'John', age: 30, email: 'john@example.com' };
+
+const rules = [
+  (obj: any) => typeof obj.name === 'string' && obj.name.length > 0,
+  (obj: any) => typeof obj.age === 'number' && obj.age > 0,
+  (obj: any) => typeof obj.email === 'string' && obj.email.includes('@')
+];
+
+const isValid = validator.validate(userData, rules);
+console.log('Is valid:', isValid); // true
+console.log('Is cached:', validator.isValidated(userData)); // true
 ```
 
 ### System resource cleanup tracking
@@ -21303,7 +21420,16 @@ import { cacheMapFactory } from '@winglet/common-utils';
 const userCache = cacheMapFactory<Map<string, User>>();
 
 // Store user data
-userCache.set('user123', { id: '123', name: 'John Doe', email: 'john
+userCache.set('user123', { id: '123', name: 'John Doe', email: 'john@example.com' });
+userCache.set('user456', { id: '456', name: 'Jane Smith', email: 'jane@example.com' });
+
+// Retrieve user data
+const user = userCache.get('user123');
+console.log(user?.name); // 'John Doe'
+
+// Check cache status
+console.log(userCache.has('user123')); // true
+console.log(userCache.size()); // 2
 ```
 
 ### Initialize with existing data
@@ -21420,7 +21546,16 @@ cache.raw.forEach((value, key) => {
 const userCache = cacheMapFactory<Map<string, User>>();
 
 // Store user data
-userCache.set('user123', { id: '123', name: 'John Doe', email: 'john`}
+userCache.set('user123', { id: '123', name: 'John Doe', email: 'john@example.com' });
+userCache.set('user456', { id: '456', name: 'Jane Smith', email: 'jane@example.com' });
+
+// Retrieve user data
+const user = userCache.get('user123');
+console.log(user?.name); // 'John Doe'
+
+// Check cache status
+console.log(userCache.has('user123')); // true
+console.log(userCache.size()); // 2`}
 />
 
 ## Notes
@@ -25327,7 +25462,19 @@ The count of own enumerable properties only
 import { countObjectKey } from '@winglet/common-utils';
 
 // Plain object with own properties
-const user = { name: 'Alice', age: 25, email: 'alice
+const user = { name: 'Alice', age: 25, email: 'alice@example.com' };
+console.log(countObjectKey(user)); // 3
+
+// Empty object
+console.log(countObjectKey({})); // 0
+
+// Object with mixed key types
+const mixed = {
+  str: 'value',
+  123: 'numeric',
+  [Symbol.for('sym')]: 'symbol' // Symbols are not counted
+};
+console.log(countObjectKey(mixed)); // 2 (symbols excluded)
 ```
 
 ### Excluding inherited properties from prototype chain
@@ -25436,7 +25583,19 @@ for (const key in data) {
   code={`import { countObjectKey } from '@winglet/common-utils';
 
 // Plain object with own properties
-const user = { name: 'Alice', age: 25, email: 'alice`}
+const user = { name: 'Alice', age: 25, email: 'alice@example.com' };
+console.log(countObjectKey(user)); // 3
+
+// Empty object
+console.log(countObjectKey({})); // 0
+
+// Object with mixed key types
+const mixed = {
+  str: 'value',
+  123: 'numeric',
+  [Symbol.for('sym')]: 'symbol' // Symbols are not counted
+};
+console.log(countObjectKey(mixed)); // 2 (symbols excluded)`}
 />
 
 ## Notes
@@ -26028,7 +26187,16 @@ The first enumerable property key, or undefined if object is empty
 import { getFirstKey } from '@winglet/common-utils';
 
 // Object with multiple properties
-const user = { id: 1, name: 'Alice', email: 'alice
+const user = { id: 1, name: 'Alice', email: 'alice@example.com' };
+const firstKey = getFirstKey(user);
+console.log(firstKey); // 'id' (typically, but order not guaranteed)
+
+// Empty object
+console.log(getFirstKey({})); // undefined
+
+// Single property object
+const single = { onlyKey: 'value' };
+console.log(getFirstKey(single)); // 'onlyKey'
 ```
 
 ### Quick emptiness check
@@ -26146,7 +26314,16 @@ console.log(getFirstKey(mixed)); // '0' (typically)
   code={`import { getFirstKey } from '@winglet/common-utils';
 
 // Object with multiple properties
-const user = { id: 1, name: 'Alice', email: 'alice`}
+const user = { id: 1, name: 'Alice', email: 'alice@example.com' };
+const firstKey = getFirstKey(user);
+console.log(firstKey); // 'id' (typically, but order not guaranteed)
+
+// Empty object
+console.log(getFirstKey({})); // undefined
+
+// Single property object
+const single = { onlyKey: 'value' };
+console.log(getFirstKey(single)); // 'onlyKey'`}
 />
 
 ## Notes
@@ -26231,7 +26408,14 @@ Array of filtered and optionally sorted object keys
 import { getObjectKeys } from '@winglet/common-utils';
 
 // Simple object keys
-const user = { id: 1, name: 'John', email: 'john
+const user = { id: 1, name: 'John', email: 'john@example.com' };
+console.log(getObjectKeys(user)); // ['id', 'name', 'email']
+
+// Empty object
+console.log(getObjectKeys({})); // []
+
+// Undefined input handling
+console.log(getObjectKeys(undefined)); // []
 ```
 
 ### Key filtering with exclusion
@@ -26338,7 +26522,14 @@ console.log(publicKeys); // ['id', 'personalInfo', 'preferences']
   code={`import { getObjectKeys } from '@winglet/common-utils';
 
 // Simple object keys
-const user = { id: 1, name: 'John', email: 'john`}
+const user = { id: 1, name: 'John', email: 'john@example.com' };
+console.log(getObjectKeys(user)); // ['id', 'name', 'email']
+
+// Empty object
+console.log(getObjectKeys({})); // []
+
+// Undefined input handling
+console.log(getObjectKeys(undefined)); // []`}
 />
 
 ## Notes
@@ -26436,7 +26627,16 @@ const debugSymbol = Symbol('debug');
 
 const user = {
   // Regular properties
-  email: 'user
+  email: 'user@example.com',
+  active: true,
+  // Symbol properties
+  [nameSymbol]: 'John Doe',
+  [idSymbol]: 12345,
+  [debugSymbol]: { logs: [], errors: [] }
+};
+
+console.log(getSymbols(user)); // [Symbol(name), Symbol(id), Symbol(debug)]
+console.log(Object.keys(user)); // ['email', 'active'] (symbols not included)
 ```
 
 ### Working with non-enumerable symbols
@@ -26560,7 +26760,16 @@ const debugSymbol = Symbol('debug');
 
 const user = {
   // Regular properties
-  email: 'user`}
+  email: 'user@example.com',
+  active: true,
+  // Symbol properties
+  [nameSymbol]: 'John Doe',
+  [idSymbol]: 12345,
+  [debugSymbol]: { logs: [], errors: [] }
+};
+
+console.log(getSymbols(user)); // [Symbol(name), Symbol(id), Symbol(debug)]
+console.log(Object.keys(user)); // ['email', 'active'] (symbols not included)`}
 />
 
 ## Notes
@@ -26759,7 +26968,27 @@ function validateFormData(formData: Record<string, any>): boolean {
 
 const invalidForm = {
   username: 'john_doe',
-  email: 'john
+  email: 'john@example.com',
+  password: undefined,  // missing password
+  profile: {
+    firstName: 'John',
+    lastName: undefined  // missing last name
+  }
+};
+console.log(validateFormData(invalidForm)); // false
+
+// API response validation
+function isCompleteApiResponse(response: any): boolean {
+  return !hasUndefined(response);
+}
+
+const incompleteResponse = {
+  success: true,
+  data: {
+    users: [{ id: 1, name: 'Alice' }, { id: 2, name: undefined }]
+  }
+};
+console.log(isCompleteApiResponse(incompleteResponse)); // false
 ```
 
 ### Performance considerations with large objects
@@ -26950,7 +27179,26 @@ const userDefaults = {
 
 const userData = {
   profile: {
-    personal: { name: 'John', email: 'john
+    personal: { name: 'John', email: 'john@example.com' },
+    settings: { theme: 'dark' }
+  },
+  preferences: {
+    language: 'es'
+  }
+};
+
+const merged = merge(userDefaults, userData);
+console.log(merged);
+// {
+//   profile: {
+//     personal: { name: 'John', age: 0, email: 'john@example.com' },
+//     settings: { theme: 'dark', notifications: true }
+//   },
+//   preferences: {
+//     language: 'es',
+//     timezone: 'UTC'
+//   }
+// }
 ```
 
 ### Array merging behavior
@@ -27648,7 +27896,29 @@ const formData = {
     firstName: 'John',
     lastName: 'Doe',
     middleName: undefined,  // Optional field not filled
-    email: 'john
+    email: 'john@example.com'
+  },
+  contactInfo: {
+    phone: '+1234567890',
+    alternatePhone: undefined,  // Not provided
+    address: {
+      street: '123 Main St',
+      apartment: undefined,  // Not applicable
+      city: 'Anytown',
+      state: 'CA',
+      zipCode: '12345'
+    }
+  },
+  preferences: {
+    newsletter: true,
+    marketing: undefined,  // Not selected
+    categories: ['tech', undefined, 'news']  // Some unselected
+  }
+};
+
+const processedForm = removeUndefined(formData);
+// Result contains only fields with actual values
+console.log(processedForm.preferences.categories); // ['tech', 'news']
 ```
 
 ### Configuration object cleaning
@@ -27888,7 +28158,18 @@ console.log(serializeNative(data, null, '\t')); // Tab-indented
 const sensitiveData = {
   username: 'john_doe',
   password: 'secret123',
-  email: 'john
+  email: 'john@example.com',
+  apiKey: 'sk-abc123'
+};
+
+// Hide sensitive fields
+const safeReplacer = (key: string, value: any) => {
+  const sensitiveFields = ['password', 'apiKey'];
+  return sensitiveFields.includes(key) ? '[REDACTED]' : value;
+};
+
+console.log(serializeNative(sensitiveData, safeReplacer));
+// '{"username":"john_doe","password":"[REDACTED]","email":"john@example.com","apiKey":"[REDACTED]"}'
 ```
 
 ### Property filtering with replacer array
@@ -28005,7 +28286,18 @@ console.log(serializeObject(config));
 const userData = {
   id: 123,
   name: 'Alice',
-  email: 'alice
+  email: 'alice@example.com',
+  password: 'secret123',
+  apiToken: 'abc-xyz-789'
+};
+
+// Exclude sensitive fields
+const publicData = serializeObject(userData, ['password', 'apiToken']);
+console.log(publicData); // 'email:alice@example.com|name:Alice|id:123'
+
+// Exclude multiple system fields
+const systemFields = ['createdAt', 'updatedAt', 'version', '_id'];
+const cleanData = serializeObject(userData, systemFields);
 ```
 
 ### Nested object handling
@@ -28567,7 +28859,27 @@ import { shallowClone } from '@winglet/common-utils';
 const original = {
   id: 1,
   name: 'John',
-  email: 'john
+  email: 'john@example.com'
+};
+
+const cloned = shallowClone(original);
+console.log(cloned); // { id: 1, name: 'John', email: 'john@example.com' }
+console.log(cloned !== original); // true (different reference)
+console.log(cloned.name === original.name); // true (same primitive value)
+
+// Nested objects share references (shallow copy)
+const withNested = {
+  id: 1,
+  profile: { name: 'John' }
+};
+
+const clonedNested = shallowClone(withNested);
+console.log(clonedNested !== withNested); // true (new object)
+console.log(clonedNested.profile === withNested.profile); // true (same nested reference)
+
+// Modifying nested objects affects both
+clonedNested.profile.name = 'Jane';
+console.log(withNested.profile.name); // 'Jane' (shared reference)
 ```
 
 ### Array shallow cloning
@@ -28666,7 +28978,20 @@ const formData = {
     lastName: 'Doe'
   },
   contactInfo: {
-    email: 'john
+    email: 'john@example.com',
+    phone: '+1234567890'
+  }
+};
+
+// Clone for editing without affecting original
+const editableData = shallowClone(formData);
+editableData.personalInfo = {
+  ...editableData.personalInfo,
+  firstName: 'Jane'
+};
+
+console.log(formData.personalInfo.firstName); // 'John' (unchanged)
+console.log(editableData.personalInfo.firstName); // 'Jane'
 ```
 
 ### Component props handling
@@ -28734,7 +29059,27 @@ console.log(apiResponse.pagination === processedResponse.pagination); // true
 const original = {
   id: 1,
   name: 'John',
-  email: 'john`}
+  email: 'john@example.com'
+};
+
+const cloned = shallowClone(original);
+console.log(cloned); // { id: 1, name: 'John', email: 'john@example.com' }
+console.log(cloned !== original); // true (different reference)
+console.log(cloned.name === original.name); // true (same primitive value)
+
+// Nested objects share references (shallow copy)
+const withNested = {
+  id: 1,
+  profile: { name: 'John' }
+};
+
+const clonedNested = shallowClone(withNested);
+console.log(clonedNested !== withNested); // true (new object)
+console.log(clonedNested.profile === withNested.profile); // true (same nested reference)
+
+// Modifying nested objects affects both
+clonedNested.profile.name = 'Jane';
+console.log(withNested.profile.name); // 'Jane' (shared reference)`}
 />
 
 ## Notes
@@ -28845,7 +29190,13 @@ New object with properties ordered according to keys array
 import { sortObjectKeys } from '@winglet/common-utils';
 
 // Reorder object properties
-const user = { email: 'john
+const user = { email: 'john@example.com', name: 'John', id: 123, active: true };
+const ordered = sortObjectKeys(user, ['id', 'name', 'email', 'active']);
+console.log(ordered); // { id: 123, name: 'John', email: 'john@example.com', active: true }
+
+// Partial ordering - specified keys first, others follow
+const partialOrder = sortObjectKeys(user, ['name', 'id']);
+console.log(partialOrder); // { name: 'John', id: 123, email: 'john@example.com', active: true }
 ```
 
 ### API response standardization
@@ -28924,7 +29275,31 @@ const formData = {
   country: 'USA',
   firstName: 'John',
   lastName: 'Doe',
-  email: 'john
+  email: 'john@example.com',
+  phone: undefined,  // Optional field
+  city: 'New York',
+  zipCode: '10001'
+};
+
+// Logical field order for forms
+const fieldOrder = [
+  'firstName', 'lastName', 'email', 'phone',
+  'city', 'zipCode', 'country', 'newsletter'
+];
+
+const orderedForm = sortObjectKeys(formData, fieldOrder, {
+  ignoreUndefinedValue: true
+});
+console.log(orderedForm);
+// {
+//   firstName: 'John',
+//   lastName: 'Doe',
+//   email: 'john@example.com',
+//   city: 'New York',
+//   zipCode: '10001',
+//   country: 'USA',
+//   newsletter: true
+// }
 ```
 
 ### Database record normalization
@@ -29017,7 +29392,13 @@ console.log(JSON.stringify(prepared, null, 2));
   code={`import { sortObjectKeys } from '@winglet/common-utils';
 
 // Reorder object properties
-const user = { email: 'john`}
+const user = { email: 'john@example.com', name: 'John', id: 123, active: true };
+const ordered = sortObjectKeys(user, ['id', 'name', 'email', 'active']);
+console.log(ordered); // { id: 123, name: 'John', email: 'john@example.com', active: true }
+
+// Partial ordering - specified keys first, others follow
+const partialOrder = sortObjectKeys(user, ['name', 'id']);
+console.log(partialOrder); // { name: 'John', id: 123, email: 'john@example.com', active: true }`}
 />
 
 ## Notes
@@ -29507,7 +29888,26 @@ console.log(stableSerialize(another) === serialized); // true (structurally iden
 const userData = {
   id: 123,
   name: 'John Doe',
-  email: 'john
+  email: 'john@example.com',
+  password: 'secret123',
+  sessionToken: 'abc-xyz-789',
+  lastLogin: '2023-01-01T10:00:00Z',
+  preferences: {
+    theme: 'dark',
+    notifications: true
+  }
+};
+
+// Serialize excluding sensitive fields
+const publicData = stableSerialize(userData, ['password', 'sessionToken']);
+console.log(publicData);
+// '{email:john@example.com|id:123|lastLogin:2023-01-01T10:00:00Z|name:John Doe|preferences:{notifications:true|theme:dark}}'
+
+// Using Set for exclusion (better performance for many keys)
+const excludeSet = new Set(['password', 'sessionToken', 'lastLogin']);
+const minimalData = stableSerialize(userData, excludeSet);
+console.log(minimalData);
+// '{email:john@example.com|id:123|name:John Doe|preferences:{notifications:true|theme:dark}}'
 ```
 
 ### Cache key generation
@@ -29777,7 +30177,21 @@ const snakeCase = {
   user_name: 'Alice',
   first_name: 'Alice',
   last_name: 'Smith',
-  email_address: 'alice
+  email_address: 'alice@example.com'
+};
+
+const camelCase = transformKeys(snakeCase, (_, key) =>
+  key.replace(/_([a-z])/g, (_, letter) => letter.toUpperCase())
+);
+console.log(camelCase);
+// { userName: 'Alice', firstName: 'Alice', lastName: 'Smith', emailAddress: 'alice@example.com' }
+
+// Camel case to kebab case
+const kebabCase = transformKeys(camelCase, (_, key) =>
+  key.replace(/[A-Z]/g, letter => `-${letter.toLowerCase()}`)
+);
+console.log(kebabCase);
+// { 'user-name': 'Alice', 'first-name': 'Alice', 'last-name': 'Smith', 'email-address': 'alice@example.com' }
 ```
 
 ### Value-dependent key transformation
@@ -29845,7 +30259,31 @@ console.log(frontendFormat);
 const dbRecord = {
   id: 1,
   usr_nm: 'alice',
-  eml_addr: 'alice
+  eml_addr: 'alice@example.com',
+  crt_dt: '2023-01-01',
+  updt_dt: '2023-01-02'
+};
+
+const columnMapping = {
+  id: 'id',
+  usr_nm: 'username',
+  eml_addr: 'email',
+  crt_dt: 'createdDate',
+  updt_dt: 'updatedDate'
+};
+
+const domainModel = transformKeys(dbRecord, (_, key) =>
+  columnMapping[key] || key
+);
+
+console.log(domainModel);
+// {
+//   id: 1,
+//   username: 'alice',
+//   email: 'alice@example.com',
+//   createdDate: '2023-01-01',
+//   updatedDate: '2023-01-02'
+// }
 ```
 
 ### Advanced transformation with context
@@ -29881,7 +30319,29 @@ console.log(roleBasedKeys);
 const unsafeKeys = {
   'user name': 'John',
   'user-age': 30,
-  'user.email': 'john
+  'user.email': 'john@example.com',
+  '123invalid': 'value',
+  'valid_key': 'good'
+};
+
+const sanitized = transformKeys(unsafeKeys, (_, key) => {
+  // Replace invalid characters and ensure valid identifier
+  let clean = key.replace(/[^a-zA-Z0-9_]/g, '_');
+  // Ensure it doesn't start with a number
+  if (/^\d/.test(clean)) {
+    clean = `key_${clean}`;
+  }
+  return clean;
+});
+
+console.log(sanitized);
+// {
+//   user_name: 'John',
+//   user_age: 30,
+//   user_email: 'john@example.com',
+//   key_123invalid: 'value',
+//   valid_key: 'good'
+// }
 ```
 
 ## Playground
@@ -30056,7 +30516,10 @@ console.log(processed);
 // {
 //   firstName: 'Alice',
 //   lastName: 'Smith',
-//   email: 'alice.smith
+//   email: 'alice.smith@example.com',
+//   age: 25,
+//   phone: '12345678900'
+// }
 ```
 
 ### Context-aware transformation
@@ -30134,7 +30597,9 @@ console.log(sanitized);
 //   username: 'johndoe123',
 //   password: '[WEAK:8]',
 //   confirmPassword: '[WEAK:8]',
-//   email: 'john
+//   email: 'john@example.com',
+//   website: 'https://example.com'
+// }
 ```
 
 ### API response processing
@@ -31717,7 +32182,17 @@ async function executeWithMinimumDuration<T>(
 const userCreation = await executeWithMinimumDuration(
   () => database.users.create({
     name: 'John Doe',
-    email: 'john
+    email: 'john@example.com'
+  }),
+  'User creation',
+  1000
+);
+
+if (userCreation.success) {
+  console.log('User created:', userCreation.data);
+} else {
+  console.error('User creation failed:', userCreation.error);
+}
 ```
 
 ### Testing with minimum execution time
