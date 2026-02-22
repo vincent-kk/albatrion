@@ -94,11 +94,12 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@albatrion/documents@workspace:documents"
   dependencies:
-    "@ant-design/icons": "npm:^5.0.0"
+    "@ant-design/icons": "npm:^6.0.0"
     "@canard/schema-form": "workspace:^"
     "@canard/schema-form-ajv8-plugin": "workspace:^"
     "@canard/schema-form-antd-mobile-plugin": "workspace:^"
     "@canard/schema-form-antd5-plugin": "workspace:^"
+    "@canard/schema-form-antd6-plugin": "workspace:^"
     "@canard/schema-form-mui-plugin": "workspace:^"
     "@codesandbox/sandpack-react": "npm:^2.20.0"
     "@docusaurus/core": "npm:^3.9.2"
@@ -120,7 +121,7 @@ __metadata:
     "@winglet/common-utils": "workspace:^"
     "@winglet/react-utils": "workspace:^"
     "@winglet/style-utils": "workspace:^"
-    antd: "npm:^5.10.0"
+    antd: "npm:^6.0.0"
     antd-mobile: "npm:^5.0.0"
     clsx: "npm:^2.0.0"
     dayjs: "npm:^1.0.0"
@@ -2126,7 +2127,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@canard/schema-form-antd6-plugin@workspace:packages/canard/schema-form-antd6-plugin":
+"@canard/schema-form-antd6-plugin@workspace:^, @canard/schema-form-antd6-plugin@workspace:packages/canard/schema-form-antd6-plugin":
   version: 0.0.0-use.local
   resolution: "@canard/schema-form-antd6-plugin@workspace:packages/canard/schema-form-antd6-plugin"
   dependencies:

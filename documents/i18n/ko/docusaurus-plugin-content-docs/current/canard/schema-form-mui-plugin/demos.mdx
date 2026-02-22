@@ -3,16 +3,11 @@ sidebar_label: '컴포넌트 카탈로그'
 sidebar_position: 2
 ---
 
-import BrowserOnly from '@docusaurus/BrowserOnly';
+import LazyDemo from '@site/src/components/LazyDemo';
 
 # MUI 컴포넌트 카탈로그
 
 `@canard/schema-form-mui-plugin`이 제공하는 15개 폼 입력 컴포넌트의 인터랙티브 카탈로그입니다.
 각 컴포넌트는 JSON Schema의 `type`, `format`, `formType`, `enum` 속성에 따라 자동으로 선택됩니다.
 
-<BrowserOnly fallback={<div>카탈로그 로딩 중...</div>}>
-  {() => {
-    const Demo = require('@site/src/components/demos/catalog/MuiCatalogDemo').default;
-    return <Demo />;
-  }}
-</BrowserOnly>
+<LazyDemo load={() => import('@site/src/components/demos/catalog/MuiCatalogDemo')} />

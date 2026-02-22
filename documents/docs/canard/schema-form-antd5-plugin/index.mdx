@@ -6,7 +6,7 @@ sidebar_position: 6
 
 import PackageHeader from '@site/src/components/PackageHeader';
 import ForAI from '@site/src/components/ForAI';
-import BrowserOnly from '@docusaurus/BrowserOnly';
+import LazyDemo from '@site/src/components/LazyDemo';
 
 <PackageHeader name="@canard/schema-form-antd5-plugin" />
 
@@ -18,12 +18,7 @@ covering strings, numbers, booleans, dates, ranges, and selection controls.
 
 ### Preview
 
-<BrowserOnly fallback={<div>Loading preview...</div>}>
-  {() => {
-    const Demo = require('@site/src/components/demos/InputShowcase').default;
-    return <Demo componentName="FormTypeInputString" schema={{ type: 'string', title: 'Text Input' }} />;
-  }}
-</BrowserOnly>
+<LazyDemo load={() => import('@site/src/components/demos/showcase/Antd5QuickDemo')} />
 
 :::tip Full Catalog
 See all 18 components in the [Component Catalog](./demos) page.

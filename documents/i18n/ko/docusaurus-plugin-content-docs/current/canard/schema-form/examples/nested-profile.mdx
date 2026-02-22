@@ -3,7 +3,7 @@ sidebar_label: '중첩 프로필'
 sidebar_position: 9
 ---
 
-import BrowserOnly from '@docusaurus/BrowserOnly';
+import LazyDemo from '@site/src/components/LazyDemo';
 
 # 중첩 프로필 & 보안 설정
 
@@ -19,9 +19,4 @@ import BrowserOnly from '@docusaurus/BrowserOnly';
 - `minItems`/`maxItems` 제약 조건
 :::
 
-<BrowserOnly fallback={<div>데모 로딩 중...</div>}>
-  {() => {
-    const Demo = require('@site/src/components/demos/examples/NestedProfileDemo').default;
-    return <Demo />;
-  }}
-</BrowserOnly>
+<LazyDemo load={() => import('@site/src/components/demos/examples/NestedProfileDemo')} />

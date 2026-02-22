@@ -6,7 +6,7 @@ sidebar_position: 1
 
 import PackageHeader from '@site/src/components/PackageHeader';
 import ForAI from '@site/src/components/ForAI';
-import BrowserOnly from '@docusaurus/BrowserOnly';
+import LazyDemo from '@site/src/components/LazyDemo';
 
 # @lerx/promise-modal
 
@@ -29,12 +29,7 @@ import BrowserOnly from '@docusaurus/BrowserOnly';
 
 아래 버튼을 클릭하여 `alert`, `confirm`, `prompt`를 직접 사용해보세요 — 각각 사용자 응답으로 resolve되는 Promise를 반환합니다:
 
-<BrowserOnly fallback={<div>데모 로딩 중...</div>}>
-  {() => {
-    const Demo = require('@site/src/components/demos/PromiseModalDemo').default;
-    return <Demo />;
-  }}
-</BrowserOnly>
+<LazyDemo load={() => import('@site/src/components/demos/PromiseModalDemo')} />
 
 ## Requirements
 

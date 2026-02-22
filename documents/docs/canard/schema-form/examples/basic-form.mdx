@@ -3,7 +3,7 @@ sidebar_label: 'Basic Form'
 sidebar_position: 1
 ---
 
-import BrowserOnly from '@docusaurus/BrowserOnly';
+import LazyDemo from '@site/src/components/LazyDemo';
 
 # Basic Form
 
@@ -18,9 +18,4 @@ A simple form demonstrating the most common field types. This example shows how 
 - `formType: switch` — toggle switch
 :::
 
-<BrowserOnly fallback={<div>Loading demo...</div>}>
-  {() => {
-    const Demo = require('@site/src/components/demos/examples/BasicFormDemo').default;
-    return <Demo />;
-  }}
-</BrowserOnly>
+<LazyDemo load={() => import('@site/src/components/demos/examples/BasicFormDemo')} />

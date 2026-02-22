@@ -3,7 +3,7 @@ sidebar_label: 'Nested Profile'
 sidebar_position: 9
 ---
 
-import BrowserOnly from '@docusaurus/BrowserOnly';
+import LazyDemo from '@site/src/components/LazyDemo';
 
 # Nested Profile & Security Settings
 
@@ -19,9 +19,4 @@ A deeply nested form with user profile, preferences, and security settings. Demo
 - `minItems`/`maxItems` constraints
 :::
 
-<BrowserOnly fallback={<div>Loading demo...</div>}>
-  {() => {
-    const Demo = require('@site/src/components/demos/examples/NestedProfileDemo').default;
-    return <Demo />;
-  }}
-</BrowserOnly>
+<LazyDemo load={() => import('@site/src/components/demos/examples/NestedProfileDemo')} />

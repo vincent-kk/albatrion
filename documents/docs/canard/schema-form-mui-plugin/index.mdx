@@ -6,7 +6,7 @@ sidebar_position: 9
 
 import PackageHeader from '@site/src/components/PackageHeader';
 import ForAI from '@site/src/components/ForAI';
-import BrowserOnly from '@docusaurus/BrowserOnly';
+import LazyDemo from '@site/src/components/LazyDemo';
 
 <PackageHeader name="@canard/schema-form-mui-plugin" />
 
@@ -19,12 +19,7 @@ Supports MUI's `size`, `variant`, and `fullWidth` context options.
 
 ### Preview
 
-<BrowserOnly fallback={<div>Loading preview...</div>}>
-  {() => {
-    const Demo = require('@site/src/components/demos/InputShowcase').default;
-    return <Demo componentName="FormTypeInputString" schema={{ type: 'string', title: 'Text Input' }} />;
-  }}
-</BrowserOnly>
+<LazyDemo load={() => import('@site/src/components/demos/showcase/MuiQuickDemo')} />
 
 :::tip Full Catalog
 See all 15 components in the [Component Catalog](./demos) page.

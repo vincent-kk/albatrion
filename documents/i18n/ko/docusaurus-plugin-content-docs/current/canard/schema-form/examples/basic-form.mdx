@@ -3,7 +3,7 @@ sidebar_label: '기본 폼'
 sidebar_position: 1
 ---
 
-import BrowserOnly from '@docusaurus/BrowserOnly';
+import LazyDemo from '@site/src/components/LazyDemo';
 
 # 기본 폼
 
@@ -18,9 +18,4 @@ import BrowserOnly from '@docusaurus/BrowserOnly';
 - `formType: switch` — 토글 스위치
 :::
 
-<BrowserOnly fallback={<div>데모 로딩 중...</div>}>
-  {() => {
-    const Demo = require('@site/src/components/demos/examples/BasicFormDemo').default;
-    return <Demo />;
-  }}
-</BrowserOnly>
+<LazyDemo load={() => import('@site/src/components/demos/examples/BasicFormDemo')} />

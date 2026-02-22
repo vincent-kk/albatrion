@@ -3,7 +3,7 @@ sidebar_label: '고용 계약'
 sidebar_position: 5
 ---
 
-import BrowserOnly from '@docusaurus/BrowserOnly';
+import LazyDemo from '@site/src/components/LazyDemo';
 
 # 고용 계약 폼
 
@@ -16,9 +16,4 @@ import BrowserOnly from '@docusaurus/BrowserOnly';
 - 계약직: 계약유형 + 조건부 근무시간 (`computed.active`)
 :::
 
-<BrowserOnly fallback={<div>데모 로딩 중...</div>}>
-  {() => {
-    const Demo = require('@site/src/components/demos/examples/EmploymentContractDemo').default;
-    return <Demo />;
-  }}
-</BrowserOnly>
+<LazyDemo load={() => import('@site/src/components/demos/examples/EmploymentContractDemo')} />

@@ -3,7 +3,7 @@ sidebar_label: 'Media Registration'
 sidebar_position: 7
 ---
 
-import BrowserOnly from '@docusaurus/BrowserOnly';
+import LazyDemo from '@site/src/components/LazyDemo';
 
 # Media Registration Form
 
@@ -17,9 +17,4 @@ A complex media catalog form with `oneOf` branching at multiple levels. Games sh
 - Checkbox groups for multi-select
 :::
 
-<BrowserOnly fallback={<div>Loading demo...</div>}>
-  {() => {
-    const Demo = require('@site/src/components/demos/examples/MediaRegistrationDemo').default;
-    return <Demo />;
-  }}
-</BrowserOnly>
+<LazyDemo load={() => import('@site/src/components/demos/examples/MediaRegistrationDemo')} />

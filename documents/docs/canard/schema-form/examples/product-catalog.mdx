@@ -3,7 +3,7 @@ sidebar_label: 'Product Catalog'
 sidebar_position: 6
 ---
 
-import BrowserOnly from '@docusaurus/BrowserOnly';
+import LazyDemo from '@site/src/components/LazyDemo';
 
 # Product Catalog with Nested Branching
 
@@ -17,9 +17,4 @@ A product registration form with two levels of `oneOf` branching. The product ty
 - Shipping oneOf: standard (days) vs express (hours)
 :::
 
-<BrowserOnly fallback={<div>Loading demo...</div>}>
-  {() => {
-    const Demo = require('@site/src/components/demos/examples/ProductCatalogDemo').default;
-    return <Demo />;
-  }}
-</BrowserOnly>
+<LazyDemo load={() => import('@site/src/components/demos/examples/ProductCatalogDemo')} />

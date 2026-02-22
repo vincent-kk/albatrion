@@ -6,7 +6,7 @@ sidebar_position: 8
 
 import PackageHeader from '@site/src/components/PackageHeader';
 import ForAI from '@site/src/components/ForAI';
-import BrowserOnly from '@docusaurus/BrowserOnly';
+import LazyDemo from '@site/src/components/LazyDemo';
 
 <PackageHeader name="@canard/schema-form-antd-mobile-plugin" />
 
@@ -18,12 +18,7 @@ import BrowserOnly from '@docusaurus/BrowserOnly';
 
 ### Preview
 
-<BrowserOnly fallback={<div>Loading preview...</div>}>
-  {() => {
-    const Demo = require('@site/src/components/demos/InputShowcase').default;
-    return <Demo componentName="FormTypeInputString" schema={{ type: 'string', title: 'Text Input' }} />;
-  }}
-</BrowserOnly>
+<LazyDemo load={() => import('@site/src/components/demos/showcase/AntdMobileQuickDemo')} />
 
 :::tip 전체 카탈로그
 10개 컴포넌트 전체를 [컴포넌트 카탈로그](./demos) 페이지에서 확인하세요.

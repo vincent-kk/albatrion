@@ -3,7 +3,7 @@ sidebar_label: '자동 계산'
 sidebar_position: 2
 ---
 
-import BrowserOnly from '@docusaurus/BrowserOnly';
+import LazyDemo from '@site/src/components/LazyDemo';
 
 # 자동 계산 필드
 
@@ -15,9 +15,4 @@ import BrowserOnly from '@docusaurus/BrowserOnly';
 - 의존성 변경 시 실시간 재계산
 :::
 
-<BrowserOnly fallback={<div>데모 로딩 중...</div>}>
-  {() => {
-    const Demo = require('@site/src/components/demos/examples/AutoCalculationDemo').default;
-    return <Demo />;
-  }}
-</BrowserOnly>
+<LazyDemo load={() => import('@site/src/components/demos/examples/AutoCalculationDemo')} />

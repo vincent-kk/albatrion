@@ -3,7 +3,7 @@ sidebar_label: '상품 카탈로그'
 sidebar_position: 6
 ---
 
-import BrowserOnly from '@docusaurus/BrowserOnly';
+import LazyDemo from '@site/src/components/LazyDemo';
 
 # 중첩 분기를 가진 상품 카탈로그
 
@@ -17,9 +17,4 @@ import BrowserOnly from '@docusaurus/BrowserOnly';
 - 배송 oneOf: 일반(일수) vs 특급(시간)
 :::
 
-<BrowserOnly fallback={<div>데모 로딩 중...</div>}>
-  {() => {
-    const Demo = require('@site/src/components/demos/examples/ProductCatalogDemo').default;
-    return <Demo />;
-  }}
-</BrowserOnly>
+<LazyDemo load={() => import('@site/src/components/demos/examples/ProductCatalogDemo')} />

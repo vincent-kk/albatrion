@@ -14,7 +14,12 @@ const config: Config = {
   projectName: 'albatrion',
 
   onBrokenLinks: 'throw',
-  onBrokenMarkdownLinks: 'warn',
+
+  markdown: {
+    hooks: {
+      onBrokenMarkdownLinks: 'warn',
+    },
+  },
 
   i18n: {
     defaultLocale: 'en',
@@ -72,6 +77,67 @@ const config: Config = {
               ],
             },
           };
+        },
+      };
+    },
+    // Isolate heavy vendor libraries into async chunks loaded only on pages that need them.
+    // Uses in-place mutation of config (not the return value) because webpack-merge
+    // has unreliable deep-merge behavior for splitChunks.cacheGroups.
+    function bundleOptimizationPlugin() {
+      return {
+        name: 'bundle-optimization',
+        configureWebpack(config) {
+          if (!config.optimization) config.optimization = {};
+          if (!config.optimization.splitChunks)
+            config.optimization.splitChunks = {};
+          const splitChunks = config.optimization.splitChunks as Record<
+            string,
+            unknown
+          >;
+          if (!splitChunks.cacheGroups) splitChunks.cacheGroups = {};
+          const cacheGroups = splitChunks.cacheGroups as Record<
+            string,
+            unknown
+          >;
+
+          Object.assign(cacheGroups, {
+            sandpack: {
+              test: /[\\/]node_modules[\\/]@codesandbox[\\/]/,
+              name: 'vendor-sandpack',
+              chunks: 'async',
+              priority: 30,
+              enforce: true,
+              minSize: 0,
+            },
+            mui: {
+              test: /[\\/]node_modules[\\/](@mui|@emotion)[\\/]/,
+              name: 'vendor-mui',
+              chunks: 'async',
+              priority: 25,
+              enforce: true,
+              minSize: 0,
+            },
+            // antd-mobile must have higher priority than antd because
+            // the antd regex also matches "antd-mobile" (starts with "antd").
+            antdMobile: {
+              test: /[\\/]node_modules[\\/]antd-mobile[\\/]/,
+              name: 'vendor-antd-mobile',
+              chunks: 'async',
+              priority: 22,
+              enforce: true,
+              minSize: 0,
+            },
+            antd: {
+              test: /[\\/]node_modules[\\/](antd|@ant-design|rc-)[\\/]/,
+              name: 'vendor-antd',
+              chunks: 'async',
+              priority: 20,
+              enforce: true,
+              minSize: 0,
+            },
+          });
+
+          return {};
         },
       };
     },

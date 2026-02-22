@@ -30,11 +30,11 @@ const defaultSchema = `{
 }`;
 
 const appCode = `import { Form, registerPlugin } from "@canard/schema-form";
-import { plugin as antd5Plugin } from "@canard/schema-form-antd5-plugin";
+import { plugin as antd6Plugin } from "@canard/schema-form-antd6-plugin";
 import { plugin as ajv8Plugin } from "@canard/schema-form-ajv8-plugin";
 import schema from "./schema.json";
 
-registerPlugin(antd5Plugin);
+registerPlugin(antd6Plugin);
 registerPlugin(ajv8Plugin);
 
 export default function App() {
@@ -72,9 +72,9 @@ export default function SchemaFormPlayground({
       customSetup={{
         dependencies: {
           '@canard/schema-form': '0.10.5',
-          '@canard/schema-form-antd5-plugin': '0.10.0',
+          '@canard/schema-form-antd6-plugin': '0.10.1',
           '@canard/schema-form-ajv8-plugin': '0.10.0',
-          antd: '^5.10.0',
+          antd: '^6.0.0',
           dayjs: '^1.11.0',
         },
       }}

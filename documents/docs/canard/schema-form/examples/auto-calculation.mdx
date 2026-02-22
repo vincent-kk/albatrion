@@ -3,7 +3,7 @@ sidebar_label: 'Auto-Calculation'
 sidebar_position: 2
 ---
 
-import BrowserOnly from '@docusaurus/BrowserOnly';
+import LazyDemo from '@site/src/components/LazyDemo';
 
 # Auto-Calculated Fields
 
@@ -15,9 +15,4 @@ Demonstrates `computed.derived` — fields whose values are automatically calcul
 - Real-time recalculation on dependency changes
 :::
 
-<BrowserOnly fallback={<div>Loading demo...</div>}>
-  {() => {
-    const Demo = require('@site/src/components/demos/examples/AutoCalculationDemo').default;
-    return <Demo />;
-  }}
-</BrowserOnly>
+<LazyDemo load={() => import('@site/src/components/demos/examples/AutoCalculationDemo')} />

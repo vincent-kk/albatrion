@@ -3,7 +3,7 @@ sidebar_label: 'Role-Based Access'
 sidebar_position: 8
 ---
 
-import BrowserOnly from '@docusaurus/BrowserOnly';
+import LazyDemo from '@site/src/components/LazyDemo';
 
 # Role-Based Field Access Control
 
@@ -18,9 +18,4 @@ Demonstrates the difference between `&visible` and `&active` computed properties
 - Compare Form values to see data differences
 :::
 
-<BrowserOnly fallback={<div>Loading demo...</div>}>
-  {() => {
-    const Demo = require('@site/src/components/demos/examples/RoleBasedAccessDemo').default;
-    return <Demo />;
-  }}
-</BrowserOnly>
+<LazyDemo load={() => import('@site/src/components/demos/examples/RoleBasedAccessDemo')} />

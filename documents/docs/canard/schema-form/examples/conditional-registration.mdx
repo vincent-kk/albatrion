@@ -3,7 +3,7 @@ sidebar_label: 'Conditional Registration'
 sidebar_position: 3
 ---
 
-import BrowserOnly from '@docusaurus/BrowserOnly';
+import LazyDemo from '@site/src/components/LazyDemo';
 
 # Conditional Registration Form
 
@@ -16,9 +16,4 @@ An event registration form with multi-level `if/then/else` conditions. Different
 - Condition 3: minor → guardian consent + contact required
 :::
 
-<BrowserOnly fallback={<div>Loading demo...</div>}>
-  {() => {
-    const Demo = require('@site/src/components/demos/examples/ConditionalRegistrationDemo').default;
-    return <Demo />;
-  }}
-</BrowserOnly>
+<LazyDemo load={() => import('@site/src/components/demos/examples/ConditionalRegistrationDemo')} />

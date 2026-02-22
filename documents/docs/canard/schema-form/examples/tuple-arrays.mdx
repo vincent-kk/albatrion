@@ -3,7 +3,7 @@ sidebar_label: 'Tuple Arrays'
 sidebar_position: 10
 ---
 
-import BrowserOnly from '@docusaurus/BrowserOnly';
+import LazyDemo from '@site/src/components/LazyDemo';
 
 # Tuple Arrays (prefixItems)
 
@@ -28,9 +28,4 @@ registerPlugin(ajv8Plugin);
 Without this plugin, the schema validator cannot process `prefixItems`, so validation will not work. The form itself will still render normally.
 :::
 
-<BrowserOnly fallback={<div>Loading demo...</div>}>
-  {() => {
-    const Demo = require('@site/src/components/demos/examples/TupleArraysDemo').default;
-    return <Demo />;
-  }}
-</BrowserOnly>
+<LazyDemo load={() => import('@site/src/components/demos/examples/TupleArraysDemo')} />

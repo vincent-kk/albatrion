@@ -6,7 +6,7 @@ sidebar_position: 1
 
 import PackageHeader from '@site/src/components/PackageHeader';
 import ForAI from '@site/src/components/ForAI';
-import BrowserOnly from '@docusaurus/BrowserOnly';
+import LazyDemo from '@site/src/components/LazyDemo';
 
 # @lerx/promise-modal
 
@@ -30,12 +30,7 @@ async functions, or outside the React tree — and await the user's response.
 
 Click the buttons below to try `alert`, `confirm`, and `prompt` — each returns a Promise that resolves with the user's response:
 
-<BrowserOnly fallback={<div>Loading demo...</div>}>
-  {() => {
-    const Demo = require('@site/src/components/demos/PromiseModalDemo').default;
-    return <Demo />;
-  }}
-</BrowserOnly>
+<LazyDemo load={() => import('@site/src/components/demos/PromiseModalDemo')} />
 
 ## Requirements
 

@@ -6,7 +6,7 @@ sidebar_position: 1
 
 import PackageHeader from '@site/src/components/PackageHeader';
 import ForAI from '@site/src/components/ForAI';
-import BrowserOnly from '@docusaurus/BrowserOnly';
+import LazyDemo from '@site/src/components/LazyDemo';
 
 <PackageHeader name="@canard/schema-form" />
 
@@ -21,12 +21,7 @@ and manages the full form state tree automatically.
 Try the interactive form below to see what `@canard/schema-form` can build from JSON Schema alone.
 This conference registration form demonstrates conditional fields, computed values, and 10+ input types — all driven by a single schema.
 
-<BrowserOnly fallback={<div>Loading demo...</div>}>
-  {() => {
-    const Demo = require('@site/src/components/demos/showcase/HeroDemo').default;
-    return <Demo />;
-  }}
-</BrowserOnly>
+<LazyDemo load={() => import('@site/src/components/demos/showcase/HeroDemo')} />
 
 :::tip More Examples
 Explore 10 interactive examples covering if/then/else, oneOf, computed values, and more in the [Examples](./examples) section.

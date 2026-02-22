@@ -3,7 +3,7 @@ sidebar_label: '튜플 배열'
 sidebar_position: 10
 ---
 
-import BrowserOnly from '@docusaurus/BrowserOnly';
+import LazyDemo from '@site/src/components/LazyDemo';
 
 # 튜플 배열 (prefixItems)
 
@@ -28,9 +28,4 @@ registerPlugin(ajv8Plugin);
 이 플러그인이 없으면 스키마 유효성 검사기가 `prefixItems`를 처리할 수 없어 유효성 검증이 동작하지 않습니다. 폼 렌더링 자체는 정상적으로 수행됩니다.
 :::
 
-<BrowserOnly fallback={<div>데모 로딩 중...</div>}>
-  {() => {
-    const Demo = require('@site/src/components/demos/examples/TupleArraysDemo').default;
-    return <Demo />;
-  }}
-</BrowserOnly>
+<LazyDemo load={() => import('@site/src/components/demos/examples/TupleArraysDemo')} />

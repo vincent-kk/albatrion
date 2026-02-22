@@ -3,7 +3,7 @@ sidebar_label: '역할 기반 접근 제어'
 sidebar_position: 8
 ---
 
-import BrowserOnly from '@docusaurus/BrowserOnly';
+import LazyDemo from '@site/src/components/LazyDemo';
 
 # 역할 기반 필드 접근 제어
 
@@ -18,9 +18,4 @@ import BrowserOnly from '@docusaurus/BrowserOnly';
 - Form values를 비교하여 데이터 차이 확인
 :::
 
-<BrowserOnly fallback={<div>데모 로딩 중...</div>}>
-  {() => {
-    const Demo = require('@site/src/components/demos/examples/RoleBasedAccessDemo').default;
-    return <Demo />;
-  }}
-</BrowserOnly>
+<LazyDemo load={() => import('@site/src/components/demos/examples/RoleBasedAccessDemo')} />

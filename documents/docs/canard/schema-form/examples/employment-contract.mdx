@@ -3,7 +3,7 @@ sidebar_label: 'Employment Contract'
 sidebar_position: 5
 ---
 
-import BrowserOnly from '@docusaurus/BrowserOnly';
+import LazyDemo from '@site/src/components/LazyDemo';
 
 # Employment Contract Form
 
@@ -16,9 +16,4 @@ Uses `oneOf` with `const` field matching to display completely different field s
 - contractor: contract type + conditional working hours (`computed.active`)
 :::
 
-<BrowserOnly fallback={<div>Loading demo...</div>}>
-  {() => {
-    const Demo = require('@site/src/components/demos/examples/EmploymentContractDemo').default;
-    return <Demo />;
-  }}
-</BrowserOnly>
+<LazyDemo load={() => import('@site/src/components/demos/examples/EmploymentContractDemo')} />

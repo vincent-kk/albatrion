@@ -6,7 +6,7 @@ sidebar_position: 8
 
 import PackageHeader from '@site/src/components/PackageHeader';
 import ForAI from '@site/src/components/ForAI';
-import BrowserOnly from '@docusaurus/BrowserOnly';
+import LazyDemo from '@site/src/components/LazyDemo';
 
 <PackageHeader name="@canard/schema-form-antd-mobile-plugin" />
 
@@ -18,12 +18,7 @@ Designed for mobile web applications — switches and sliders are preferred over
 
 ### Preview
 
-<BrowserOnly fallback={<div>Loading preview...</div>}>
-  {() => {
-    const Demo = require('@site/src/components/demos/InputShowcase').default;
-    return <Demo componentName="FormTypeInputString" schema={{ type: 'string', title: 'Text Input' }} />;
-  }}
-</BrowserOnly>
+<LazyDemo load={() => import('@site/src/components/demos/showcase/AntdMobileQuickDemo')} />
 
 :::tip Full Catalog
 See all 10 components in the [Component Catalog](./demos) page.

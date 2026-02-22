@@ -3,7 +3,7 @@ sidebar_label: 'Dynamic Billing'
 sidebar_position: 4
 ---
 
-import BrowserOnly from '@docusaurus/BrowserOnly';
+import LazyDemo from '@site/src/components/LazyDemo';
 
 # Dynamic Billing Form
 
@@ -17,9 +17,4 @@ A cascading conditional form where the combination of account type, subscription
 - Personal + free → only email required
 :::
 
-<BrowserOnly fallback={<div>Loading demo...</div>}>
-  {() => {
-    const Demo = require('@site/src/components/demos/examples/DynamicBillingDemo').default;
-    return <Demo />;
-  }}
-</BrowserOnly>
+<LazyDemo load={() => import('@site/src/components/demos/examples/DynamicBillingDemo')} />

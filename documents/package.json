@@ -32,11 +32,12 @@
     ]
   },
   "dependencies": {
-    "@ant-design/icons": "^5.0.0",
+    "@ant-design/icons": "^6.0.0",
     "@canard/schema-form": "workspace:^",
     "@canard/schema-form-ajv8-plugin": "workspace:^",
     "@canard/schema-form-antd-mobile-plugin": "workspace:^",
     "@canard/schema-form-antd5-plugin": "workspace:^",
+    "@canard/schema-form-antd6-plugin": "workspace:^",
     "@canard/schema-form-mui-plugin": "workspace:^",
     "@codesandbox/sandpack-react": "^2.20.0",
     "@docusaurus/core": "^3.9.2",
@@ -53,7 +54,7 @@
     "@winglet/common-utils": "workspace:^",
     "@winglet/react-utils": "workspace:^",
     "@winglet/style-utils": "workspace:^",
-    "antd": "^5.10.0",
+    "antd": "^6.0.0",
     "antd-mobile": "^5.0.0",
     "clsx": "^2.0.0",
     "dayjs": "^1.0.0",

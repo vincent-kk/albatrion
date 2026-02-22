@@ -3,7 +3,7 @@ sidebar_label: '동적 빌링'
 sidebar_position: 4
 ---
 
-import BrowserOnly from '@docusaurus/BrowserOnly';
+import LazyDemo from '@site/src/components/LazyDemo';
 
 # 동적 빌링 폼
 
@@ -17,9 +17,4 @@ import BrowserOnly from '@docusaurus/BrowserOnly';
 - 개인 + 무료 플랜 → 이메일만 필수
 :::
 
-<BrowserOnly fallback={<div>데모 로딩 중...</div>}>
-  {() => {
-    const Demo = require('@site/src/components/demos/examples/DynamicBillingDemo').default;
-    return <Demo />;
-  }}
-</BrowserOnly>
+<LazyDemo load={() => import('@site/src/components/demos/examples/DynamicBillingDemo')} />

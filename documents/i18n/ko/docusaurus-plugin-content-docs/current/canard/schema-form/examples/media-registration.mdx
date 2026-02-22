@@ -3,7 +3,7 @@ sidebar_label: '미디어 등록'
 sidebar_position: 7
 ---
 
-import BrowserOnly from '@docusaurus/BrowserOnly';
+import LazyDemo from '@site/src/components/LazyDemo';
 
 # 미디어 등록 폼
 
@@ -17,9 +17,4 @@ import BrowserOnly from '@docusaurus/BrowserOnly';
 - 다중 선택을 위한 체크박스 그룹
 :::
 
-<BrowserOnly fallback={<div>데모 로딩 중...</div>}>
-  {() => {
-    const Demo = require('@site/src/components/demos/examples/MediaRegistrationDemo').default;
-    return <Demo />;
-  }}
-</BrowserOnly>
+<LazyDemo load={() => import('@site/src/components/demos/examples/MediaRegistrationDemo')} />

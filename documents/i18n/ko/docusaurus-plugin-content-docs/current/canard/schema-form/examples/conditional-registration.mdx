@@ -3,7 +3,7 @@ sidebar_label: '조건부 등록'
 sidebar_position: 3
 ---
 
-import BrowserOnly from '@docusaurus/BrowserOnly';
+import LazyDemo from '@site/src/components/LazyDemo';
 
 # 조건부 등록 폼
 
@@ -16,9 +16,4 @@ import BrowserOnly from '@docusaurus/BrowserOnly';
 - 조건 3: 미성년자 → 보호자 동의 + 연락처 필수
 :::
 
-<BrowserOnly fallback={<div>데모 로딩 중...</div>}>
-  {() => {
-    const Demo = require('@site/src/components/demos/examples/ConditionalRegistrationDemo').default;
-    return <Demo />;
-  }}
-</BrowserOnly>
+<LazyDemo load={() => import('@site/src/components/demos/examples/ConditionalRegistrationDemo')} />
