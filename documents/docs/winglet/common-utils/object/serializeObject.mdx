@@ -59,7 +59,18 @@ console.log(serializeObject(config));
 const userData = {
   id: 123,
   name: 'Alice',
-  email: 'alice
+  email: 'alice@example.com',
+  password: 'secret123',
+  apiToken: 'abc-xyz-789'
+};
+
+// Exclude sensitive fields
+const publicData = serializeObject(userData, ['password', 'apiToken']);
+console.log(publicData); // 'email:alice@example.com|name:Alice|id:123'
+
+// Exclude multiple system fields
+const systemFields = ['createdAt', 'updatedAt', 'version', '_id'];
+const cleanData = serializeObject(userData, systemFields);
 ```
 
 ### Nested object handling

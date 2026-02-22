@@ -44,7 +44,16 @@ const debugSymbol = Symbol('debug');
 
 const user = {
   // Regular properties
-  email: 'user
+  email: 'user@example.com',
+  active: true,
+  // Symbol properties
+  [nameSymbol]: 'John Doe',
+  [idSymbol]: 12345,
+  [debugSymbol]: { logs: [], errors: [] }
+};
+
+console.log(getSymbols(user)); // [Symbol(name), Symbol(id), Symbol(debug)]
+console.log(Object.keys(user)); // ['email', 'active'] (symbols not included)
 ```
 
 ### Working with non-enumerable symbols
@@ -168,7 +177,16 @@ const debugSymbol = Symbol('debug');
 
 const user = {
   // Regular properties
-  email: 'user`}
+  email: 'user@example.com',
+  active: true,
+  // Symbol properties
+  [nameSymbol]: 'John Doe',
+  [idSymbol]: 12345,
+  [debugSymbol]: { logs: [], errors: [] }
+};
+
+console.log(getSymbols(user)); // [Symbol(name), Symbol(id), Symbol(debug)]
+console.log(Object.keys(user)); // ['email', 'active'] (symbols not included)`}
 />
 
 ## Notes

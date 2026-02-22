@@ -129,7 +129,15 @@ interface ClientUser {
 }
 
 const apiUsers: ApiUser[] = [
-  { user_id: 1, first_name: 'John', last_name: 'Doe', email_address: 'john
+  { user_id: 1, first_name: 'John', last_name: 'Doe', email_address: 'john@example.com', created_at: '2024-01-15T10:30:00Z' }
+];
+
+const clientUsers = map(apiUsers, (apiUser): ClientUser => ({
+  id: apiUser.user_id,
+  name: `${apiUser.first_name} ${apiUser.last_name}`,
+  email: apiUser.email_address,
+  createdDate: new Date(apiUser.created_at)
+}));
 ```
 
 ### Nested array processing

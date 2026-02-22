@@ -38,7 +38,19 @@ The count of own enumerable properties only
 import { countObjectKey } from '@winglet/common-utils';
 
 // Plain object with own properties
-const user = { name: 'Alice', age: 25, email: 'alice
+const user = { name: 'Alice', age: 25, email: 'alice@example.com' };
+console.log(countObjectKey(user)); // 3
+
+// Empty object
+console.log(countObjectKey({})); // 0
+
+// Object with mixed key types
+const mixed = {
+  str: 'value',
+  123: 'numeric',
+  [Symbol.for('sym')]: 'symbol' // Symbols are not counted
+};
+console.log(countObjectKey(mixed)); // 2 (symbols excluded)
 ```
 
 ### Excluding inherited properties from prototype chain
@@ -147,7 +159,19 @@ for (const key in data) {
   code={`import { countObjectKey } from '@winglet/common-utils';
 
 // Plain object with own properties
-const user = { name: 'Alice', age: 25, email: 'alice`}
+const user = { name: 'Alice', age: 25, email: 'alice@example.com' };
+console.log(countObjectKey(user)); // 3
+
+// Empty object
+console.log(countObjectKey({})); // 0
+
+// Object with mixed key types
+const mixed = {
+  str: 'value',
+  123: 'numeric',
+  [Symbol.for('sym')]: 'symbol' // Symbols are not counted
+};
+console.log(countObjectKey(mixed)); // 2 (symbols excluded)`}
 />
 
 ## Notes

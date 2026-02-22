@@ -85,7 +85,22 @@ interface Person {
 }
 
 const allPeople: Person[] = [
-  { firstName: 'John', lastName: 'Doe', age: 30, email: 'john
+  { firstName: 'John', lastName: 'Doe', age: 30, email: 'john@example.com' },
+  { firstName: 'Jane', lastName: 'Doe', age: 28, email: 'jane@example.com' },
+  { firstName: 'Bob', lastName: 'Smith', age: 35, email: 'bob@example.com' }
+];
+
+const duplicates: Person[] = [
+  { firstName: 'John', lastName: 'Doe', age: 31, email: 'john.doe@example.com' } // Different age and email
+];
+
+// Compare by first and last name only
+const result = differenceWith(
+  allPeople,
+  duplicates,
+  (a, b) => a.firstName === b.firstName && a.lastName === b.lastName
+);
+console.log(result); // [{ firstName: 'Jane', ... }, { firstName: 'Bob', ... }]
 ```
 
 ### Approximate numeric comparison

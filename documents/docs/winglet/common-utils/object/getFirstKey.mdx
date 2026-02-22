@@ -38,7 +38,16 @@ The first enumerable property key, or undefined if object is empty
 import { getFirstKey } from '@winglet/common-utils';
 
 // Object with multiple properties
-const user = { id: 1, name: 'Alice', email: 'alice
+const user = { id: 1, name: 'Alice', email: 'alice@example.com' };
+const firstKey = getFirstKey(user);
+console.log(firstKey); // 'id' (typically, but order not guaranteed)
+
+// Empty object
+console.log(getFirstKey({})); // undefined
+
+// Single property object
+const single = { onlyKey: 'value' };
+console.log(getFirstKey(single)); // 'onlyKey'
 ```
 
 ### Quick emptiness check
@@ -156,7 +165,16 @@ console.log(getFirstKey(mixed)); // '0' (typically)
   code={`import { getFirstKey } from '@winglet/common-utils';
 
 // Object with multiple properties
-const user = { id: 1, name: 'Alice', email: 'alice`}
+const user = { id: 1, name: 'Alice', email: 'alice@example.com' };
+const firstKey = getFirstKey(user);
+console.log(firstKey); // 'id' (typically, but order not guaranteed)
+
+// Empty object
+console.log(getFirstKey({})); // undefined
+
+// Single property object
+const single = { onlyKey: 'value' };
+console.log(getFirstKey(single)); // 'onlyKey'`}
 />
 
 ## Notes

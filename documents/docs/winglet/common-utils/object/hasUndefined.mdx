@@ -140,7 +140,27 @@ function validateFormData(formData: Record<string, any>): boolean {
 
 const invalidForm = {
   username: 'john_doe',
-  email: 'john
+  email: 'john@example.com',
+  password: undefined,  // missing password
+  profile: {
+    firstName: 'John',
+    lastName: undefined  // missing last name
+  }
+};
+console.log(validateFormData(invalidForm)); // false
+
+// API response validation
+function isCompleteApiResponse(response: any): boolean {
+  return !hasUndefined(response);
+}
+
+const incompleteResponse = {
+  success: true,
+  data: {
+    users: [{ id: 1, name: 'Alice' }, { id: 2, name: undefined }]
+  }
+};
+console.log(isCompleteApiResponse(incompleteResponse)); // false
 ```
 
 ### Performance considerations with large objects

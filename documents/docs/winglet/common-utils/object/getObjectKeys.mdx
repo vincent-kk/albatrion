@@ -39,7 +39,14 @@ Array of filtered and optionally sorted object keys
 import { getObjectKeys } from '@winglet/common-utils';
 
 // Simple object keys
-const user = { id: 1, name: 'John', email: 'john
+const user = { id: 1, name: 'John', email: 'john@example.com' };
+console.log(getObjectKeys(user)); // ['id', 'name', 'email']
+
+// Empty object
+console.log(getObjectKeys({})); // []
+
+// Undefined input handling
+console.log(getObjectKeys(undefined)); // []
 ```
 
 ### Key filtering with exclusion
@@ -146,7 +153,14 @@ console.log(publicKeys); // ['id', 'personalInfo', 'preferences']
   code={`import { getObjectKeys } from '@winglet/common-utils';
 
 // Simple object keys
-const user = { id: 1, name: 'John', email: 'john`}
+const user = { id: 1, name: 'John', email: 'john@example.com' };
+console.log(getObjectKeys(user)); // ['id', 'name', 'email']
+
+// Empty object
+console.log(getObjectKeys({})); // []
+
+// Undefined input handling
+console.log(getObjectKeys(undefined)); // []`}
 />
 
 ## Notes

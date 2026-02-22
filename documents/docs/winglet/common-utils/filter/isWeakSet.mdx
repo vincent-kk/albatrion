@@ -274,7 +274,17 @@ class ObjectValidator implements Validator {
 
 // Usage
 const validator = new ObjectValidator();
-const userData = { name: 'John', age: 30, email: 'john
+const userData = { name: 'John', age: 30, email: 'john@example.com' };
+
+const rules = [
+  (obj: any) => typeof obj.name === 'string' && obj.name.length > 0,
+  (obj: any) => typeof obj.age === 'number' && obj.age > 0,
+  (obj: any) => typeof obj.email === 'string' && obj.email.includes('@')
+];
+
+const isValid = validator.validate(userData, rules);
+console.log('Is valid:', isValid); // true
+console.log('Is cached:', validator.isValidated(userData)); // true
 ```
 
 ### System resource cleanup tracking

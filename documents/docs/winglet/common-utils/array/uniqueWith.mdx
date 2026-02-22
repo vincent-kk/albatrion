@@ -54,7 +54,22 @@ interface Person {
 }
 
 const people: Person[] = [
-  { firstName: 'John', lastName: 'Doe', age: 30, email: 'john
+  { firstName: 'John', lastName: 'Doe', age: 30, email: 'john@example.com' },
+  { firstName: 'Jane', lastName: 'Smith', age: 25, email: 'jane@example.com' },
+  { firstName: 'John', lastName: 'Doe', age: 31, email: 'john.doe@example.com' }, // Same name, different age/email
+  { firstName: 'Bob', lastName: 'Johnson', age: 35, email: 'bob@example.com' }
+];
+
+// Remove duplicates based on first and last name only
+const uniquePeople = uniqueWith(people, (a, b) =>
+  a.firstName === b.firstName && a.lastName === b.lastName
+);
+console.log(uniquePeople);
+// [
+//   { firstName: 'John', lastName: 'Doe', age: 30, email: 'john@example.com' },
+//   { firstName: 'Jane', lastName: 'Smith', age: 25, email: 'jane@example.com' },
+//   { firstName: 'Bob', lastName: 'Johnson', age: 35, email: 'bob@example.com' }
+// ]
 ```
 
 ### Approximate numeric comparison

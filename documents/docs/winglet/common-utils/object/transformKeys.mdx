@@ -56,7 +56,21 @@ const snakeCase = {
   user_name: 'Alice',
   first_name: 'Alice',
   last_name: 'Smith',
-  email_address: 'alice
+  email_address: 'alice@example.com'
+};
+
+const camelCase = transformKeys(snakeCase, (_, key) =>
+  key.replace(/_([a-z])/g, (_, letter) => letter.toUpperCase())
+);
+console.log(camelCase);
+// { userName: 'Alice', firstName: 'Alice', lastName: 'Smith', emailAddress: 'alice@example.com' }
+
+// Camel case to kebab case
+const kebabCase = transformKeys(camelCase, (_, key) =>
+  key.replace(/[A-Z]/g, letter => `-${letter.toLowerCase()}`)
+);
+console.log(kebabCase);
+// { 'user-name': 'Alice', 'first-name': 'Alice', 'last-name': 'Smith', 'email-address': 'alice@example.com' }
 ```
 
 ### Value-dependent key transformation
@@ -124,7 +138,31 @@ console.log(frontendFormat);
 const dbRecord = {
   id: 1,
   usr_nm: 'alice',
-  eml_addr: 'alice
+  eml_addr: 'alice@example.com',
+  crt_dt: '2023-01-01',
+  updt_dt: '2023-01-02'
+};
+
+const columnMapping = {
+  id: 'id',
+  usr_nm: 'username',
+  eml_addr: 'email',
+  crt_dt: 'createdDate',
+  updt_dt: 'updatedDate'
+};
+
+const domainModel = transformKeys(dbRecord, (_, key) =>
+  columnMapping[key] || key
+);
+
+console.log(domainModel);
+// {
+//   id: 1,
+//   username: 'alice',
+//   email: 'alice@example.com',
+//   createdDate: '2023-01-01',
+//   updatedDate: '2023-01-02'
+// }
 ```
 
 ### Advanced transformation with context
@@ -160,7 +198,29 @@ console.log(roleBasedKeys);
 const unsafeKeys = {
   'user name': 'John',
   'user-age': 30,
-  'user.email': 'john
+  'user.email': 'john@example.com',
+  '123invalid': 'value',
+  'valid_key': 'good'
+};
+
+const sanitized = transformKeys(unsafeKeys, (_, key) => {
+  // Replace invalid characters and ensure valid identifier
+  let clean = key.replace(/[^a-zA-Z0-9_]/g, '_');
+  // Ensure it doesn't start with a number
+  if (/^\d/.test(clean)) {
+    clean = `key_${clean}`;
+  }
+  return clean;
+});
+
+console.log(sanitized);
+// {
+//   user_name: 'John',
+//   user_age: 30,
+//   user_email: 'john@example.com',
+//   key_123invalid: 'value',
+//   valid_key: 'good'
+// }
 ```
 
 ## Playground

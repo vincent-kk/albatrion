@@ -100,7 +100,18 @@ console.log(serializeNative(data, null, '\t')); // Tab-indented
 const sensitiveData = {
   username: 'john_doe',
   password: 'secret123',
-  email: 'john
+  email: 'john@example.com',
+  apiKey: 'sk-abc123'
+};
+
+// Hide sensitive fields
+const safeReplacer = (key: string, value: any) => {
+  const sensitiveFields = ['password', 'apiKey'];
+  return sensitiveFields.includes(key) ? '[REDACTED]' : value;
+};
+
+console.log(serializeNative(sensitiveData, safeReplacer));
+// '{"username":"john_doe","password":"[REDACTED]","email":"john@example.com","apiKey":"[REDACTED]"}'
 ```
 
 ### Property filtering with replacer array

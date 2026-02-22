@@ -43,7 +43,13 @@ New object with properties ordered according to keys array
 import { sortObjectKeys } from '@winglet/common-utils';
 
 // Reorder object properties
-const user = { email: 'john
+const user = { email: 'john@example.com', name: 'John', id: 123, active: true };
+const ordered = sortObjectKeys(user, ['id', 'name', 'email', 'active']);
+console.log(ordered); // { id: 123, name: 'John', email: 'john@example.com', active: true }
+
+// Partial ordering - specified keys first, others follow
+const partialOrder = sortObjectKeys(user, ['name', 'id']);
+console.log(partialOrder); // { name: 'John', id: 123, email: 'john@example.com', active: true }
 ```
 
 ### API response standardization
@@ -122,7 +128,31 @@ const formData = {
   country: 'USA',
   firstName: 'John',
   lastName: 'Doe',
-  email: 'john
+  email: 'john@example.com',
+  phone: undefined,  // Optional field
+  city: 'New York',
+  zipCode: '10001'
+};
+
+// Logical field order for forms
+const fieldOrder = [
+  'firstName', 'lastName', 'email', 'phone',
+  'city', 'zipCode', 'country', 'newsletter'
+];
+
+const orderedForm = sortObjectKeys(formData, fieldOrder, {
+  ignoreUndefinedValue: true
+});
+console.log(orderedForm);
+// {
+//   firstName: 'John',
+//   lastName: 'Doe',
+//   email: 'john@example.com',
+//   city: 'New York',
+//   zipCode: '10001',
+//   country: 'USA',
+//   newsletter: true
+// }
 ```
 
 ### Database record normalization
@@ -215,7 +245,13 @@ console.log(JSON.stringify(prepared, null, 2));
   code={`import { sortObjectKeys } from '@winglet/common-utils';
 
 // Reorder object properties
-const user = { email: 'john`}
+const user = { email: 'john@example.com', name: 'John', id: 123, active: true };
+const ordered = sortObjectKeys(user, ['id', 'name', 'email', 'active']);
+console.log(ordered); // { id: 123, name: 'John', email: 'john@example.com', active: true }
+
+// Partial ordering - specified keys first, others follow
+const partialOrder = sortObjectKeys(user, ['name', 'id']);
+console.log(partialOrder); // { name: 'John', id: 123, email: 'john@example.com', active: true }`}
 />
 
 ## Notes

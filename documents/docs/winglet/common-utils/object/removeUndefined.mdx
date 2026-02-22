@@ -180,7 +180,29 @@ const formData = {
     firstName: 'John',
     lastName: 'Doe',
     middleName: undefined,  // Optional field not filled
-    email: 'john
+    email: 'john@example.com'
+  },
+  contactInfo: {
+    phone: '+1234567890',
+    alternatePhone: undefined,  // Not provided
+    address: {
+      street: '123 Main St',
+      apartment: undefined,  // Not applicable
+      city: 'Anytown',
+      state: 'CA',
+      zipCode: '12345'
+    }
+  },
+  preferences: {
+    newsletter: true,
+    marketing: undefined,  // Not selected
+    categories: ['tech', undefined, 'news']  // Some unselected
+  }
+};
+
+const processedForm = removeUndefined(formData);
+// Result contains only fields with actual values
+console.log(processedForm.preferences.categories); // ['tech', 'news']
 ```
 
 ### Configuration object cleaning

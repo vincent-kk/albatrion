@@ -367,7 +367,17 @@ async function executeWithMinimumDuration<T>(
 const userCreation = await executeWithMinimumDuration(
   () => database.users.create({
     name: 'John Doe',
-    email: 'john
+    email: 'john@example.com'
+  }),
+  'User creation',
+  1000
+);
+
+if (userCreation.success) {
+  console.log('User created:', userCreation.data);
+} else {
+  console.error('User creation failed:', userCreation.error);
+}
 ```
 
 ### Testing with minimum execution time

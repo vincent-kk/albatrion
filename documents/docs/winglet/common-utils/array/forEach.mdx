@@ -67,7 +67,19 @@ interface User {
 }
 
 const users: User[] = [
-  { id: 1, name: 'Alice', email: 'alice
+  { id: 1, name: 'Alice', email: 'alice@example.com' },
+  { id: 2, name: 'Bob', email: 'bob@example.com' },
+  { id: 3, name: 'Charlie', email: 'charlie@example.com' }
+];
+
+let foundUser: User | undefined;
+forEach(users, (user) => {
+  if (user.name === 'Bob') {
+    foundUser = user;
+    return false; // Stop searching
+  }
+});
+console.log(foundUser); // { id: 2, name: 'Bob', email: 'bob@example.com' }
 ```
 
 ### Conditional processing with early exit

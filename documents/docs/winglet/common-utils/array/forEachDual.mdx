@@ -101,7 +101,28 @@ const oldUsers: OldUser[] = [
 ];
 
 const newUsers: NewUser[] = [
-  { id: 1, email: 'alice
+  { id: 1, email: 'alice@example.com' },
+  { id: 2, email: 'bob@example.com' },
+  { id: 3, email: 'charlie@example.com' }
+];
+
+const mergedUsers: Array<{id: number; name?: string; email?: string}> = [];
+
+forEachDual(oldUsers, newUsers, (oldUser, newUser, index) => {
+  const merged = {
+    id: oldUser?.id || newUser?.id || index,
+    name: oldUser?.name,
+    email: newUser?.email
+  };
+  mergedUsers.push(merged);
+});
+
+console.log(mergedUsers);
+// [
+//   { id: 1, name: 'Alice', email: 'alice@example.com' },
+//   { id: 2, name: 'Bob', email: 'bob@example.com' },
+//   { id: 3, name: undefined, email: 'charlie@example.com' }
+// ]
 ```
 
 ### Parallel processing with validation

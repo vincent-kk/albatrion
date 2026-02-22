@@ -40,7 +40,27 @@ import { shallowClone } from '@winglet/common-utils';
 const original = {
   id: 1,
   name: 'John',
-  email: 'john
+  email: 'john@example.com'
+};
+
+const cloned = shallowClone(original);
+console.log(cloned); // { id: 1, name: 'John', email: 'john@example.com' }
+console.log(cloned !== original); // true (different reference)
+console.log(cloned.name === original.name); // true (same primitive value)
+
+// Nested objects share references (shallow copy)
+const withNested = {
+  id: 1,
+  profile: { name: 'John' }
+};
+
+const clonedNested = shallowClone(withNested);
+console.log(clonedNested !== withNested); // true (new object)
+console.log(clonedNested.profile === withNested.profile); // true (same nested reference)
+
+// Modifying nested objects affects both
+clonedNested.profile.name = 'Jane';
+console.log(withNested.profile.name); // 'Jane' (shared reference)
 ```
 
 ### Array shallow cloning
@@ -139,7 +159,20 @@ const formData = {
     lastName: 'Doe'
   },
   contactInfo: {
-    email: 'john
+    email: 'john@example.com',
+    phone: '+1234567890'
+  }
+};
+
+// Clone for editing without affecting original
+const editableData = shallowClone(formData);
+editableData.personalInfo = {
+  ...editableData.personalInfo,
+  firstName: 'Jane'
+};
+
+console.log(formData.personalInfo.firstName); // 'John' (unchanged)
+console.log(editableData.personalInfo.firstName); // 'Jane'
 ```
 
 ### Component props handling
@@ -207,7 +240,27 @@ console.log(apiResponse.pagination === processedResponse.pagination); // true
 const original = {
   id: 1,
   name: 'John',
-  email: 'john`}
+  email: 'john@example.com'
+};
+
+const cloned = shallowClone(original);
+console.log(cloned); // { id: 1, name: 'John', email: 'john@example.com' }
+console.log(cloned !== original); // true (different reference)
+console.log(cloned.name === original.name); // true (same primitive value)
+
+// Nested objects share references (shallow copy)
+const withNested = {
+  id: 1,
+  profile: { name: 'John' }
+};
+
+const clonedNested = shallowClone(withNested);
+console.log(clonedNested !== withNested); // true (new object)
+console.log(clonedNested.profile === withNested.profile); // true (same nested reference)
+
+// Modifying nested objects affects both
+clonedNested.profile.name = 'Jane';
+console.log(withNested.profile.name); // 'Jane' (shared reference)`}
 />
 
 ## Notes

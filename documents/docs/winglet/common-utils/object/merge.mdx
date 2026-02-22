@@ -68,7 +68,26 @@ const userDefaults = {
 
 const userData = {
   profile: {
-    personal: { name: 'John', email: 'john
+    personal: { name: 'John', email: 'john@example.com' },
+    settings: { theme: 'dark' }
+  },
+  preferences: {
+    language: 'es'
+  }
+};
+
+const merged = merge(userDefaults, userData);
+console.log(merged);
+// {
+//   profile: {
+//     personal: { name: 'John', age: 0, email: 'john@example.com' },
+//     settings: { theme: 'dark', notifications: true }
+//   },
+//   preferences: {
+//     language: 'es',
+//     timezone: 'UTC'
+//   }
+// }
 ```
 
 ### Array merging behavior

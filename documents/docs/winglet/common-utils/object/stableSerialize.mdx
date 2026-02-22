@@ -115,7 +115,26 @@ console.log(stableSerialize(another) === serialized); // true (structurally iden
 const userData = {
   id: 123,
   name: 'John Doe',
-  email: 'john
+  email: 'john@example.com',
+  password: 'secret123',
+  sessionToken: 'abc-xyz-789',
+  lastLogin: '2023-01-01T10:00:00Z',
+  preferences: {
+    theme: 'dark',
+    notifications: true
+  }
+};
+
+// Serialize excluding sensitive fields
+const publicData = stableSerialize(userData, ['password', 'sessionToken']);
+console.log(publicData);
+// '{email:john@example.com|id:123|lastLogin:2023-01-01T10:00:00Z|name:John Doe|preferences:{notifications:true|theme:dark}}'
+
+// Using Set for exclusion (better performance for many keys)
+const excludeSet = new Set(['password', 'sessionToken', 'lastLogin']);
+const minimalData = stableSerialize(userData, excludeSet);
+console.log(minimalData);
+// '{email:john@example.com|id:123|name:John Doe|preferences:{notifications:true|theme:dark}}'
 ```
 
 ### Cache key generation

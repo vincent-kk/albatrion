@@ -155,7 +155,13 @@ function extractNonNilProperties(obj: Record<string, any>) {
 const data = {
   name: 'John',
   age: null,
-  email: 'john
+  email: 'john@example.com',
+  phone: undefined,
+  active: false
+};
+
+const clean = extractNonNilProperties(data);
+// { name: 'John', email: 'john@example.com', active: false }
 ```
 
 ### Default value assignment

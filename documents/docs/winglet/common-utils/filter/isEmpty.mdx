@@ -129,7 +129,9 @@ function validateForm(data: FormData): string[] {
 }
 
 // Usage
-const form1 = { username: '', email: 'john
+const form1 = { username: '', email: 'john@example.com', preferences: {} };
+console.log(validateForm(form1));
+// ['Username is required', 'At least one preference must be selected']
 ```
 
 ### Data filtering and cleanup

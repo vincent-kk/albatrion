@@ -262,27 +262,56 @@ function parseTemplates(jsdoc: string): TemplateInfo[] {
   return templates;
 }
 
-/** Parse @example blocks from JSDoc. */
+/** Parse @example blocks from JSDoc, respecting code blocks (``` ... ```). */
 function parseExamples(jsdoc: string): Example[] {
   const examples: Example[] = [];
+  const lines = jsdoc.split('\n');
 
-  // Split on @example boundaries
-  const exampleParts = jsdoc.split(/@example\b/);
-  // Skip the first part (before any @example)
-  for (let i = 1; i < exampleParts.length; i++) {
-    const part = exampleParts[i];
+  // Find @example tag positions, skipping occurrences inside code blocks
+  const exampleStartLines: number[] = [];
+  let inCodeBlock = false;
 
-    // Find the end: next @tag or end of JSDoc
-    const endIdx = findNextTagIndex(part);
-    const exampleText = endIdx !== -1 ? part.substring(0, endIdx) : part;
+  for (let i = 0; i < lines.length; i++) {
+    const stripped = lines[i].replace(/^\s*\*\s?/, '').trim();
 
-    // Clean up the lines
-    const cleanLines = exampleText
-      .split('\n')
-      .map(l => l.replace(/^\s*\*\s?/, '').replace(/\s*\*\/\s*$/, ''))
-      .filter(l => l !== undefined);
+    if (stripped.startsWith('```')) {
+      inCodeBlock = !inCodeBlock;
+    }
 
-    // Find title (text before ```)
+    if (!inCodeBlock && /^@example\b/.test(stripped)) {
+      exampleStartLines.push(i);
+    }
+  }
+
+  for (let idx = 0; idx < exampleStartLines.length; idx++) {
+    const startLine = exampleStartLines[idx];
+
+    // Find end: next @tag (outside code block) or end of JSDoc
+    let endLine = lines.length;
+    let blockState = false;
+
+    for (let i = startLine + 1; i < lines.length; i++) {
+      const stripped = lines[i].replace(/^\s*\*\s?/, '').trim();
+
+      if (stripped.startsWith('```')) {
+        blockState = !blockState;
+        continue;
+      }
+
+      if (!blockState && /^@\w+/.test(stripped)) {
+        endLine = i;
+        break;
+      }
+
+      if (stripped === '*/') {
+        endLine = i;
+        break;
+      }
+    }
+
+    const cleanLines = lines.slice(startLine + 1, endLine)
+      .map(l => l.replace(/^\s*\*\s?/, '').replace(/\s*\*\/\s*$/, ''));
+
     const titleLines: string[] = [];
     const codeLines: string[] = [];
     let inCode = false;
@@ -310,18 +339,11 @@ function parseExamples(jsdoc: string): Example[] {
     const code = codeLines.join('\n').trim();
 
     if (code) {
-      examples.push({ title: title || `Example ${i}`, code });
+      examples.push({ title: title || `Example ${idx + 1}`, code });
     }
   }
 
   return examples;
-}
-
-/** Find the index of the next @tag in text (excluding @example). */
-function findNextTagIndex(text: string): number {
-  const tagRegex = /\n\s*\*\s*@(?!example\b)(\w+)/g;
-  const match = tagRegex.exec(text);
-  return match ? match.index : -1;
 }
 
 /** Parse @remarks text from JSDoc. */

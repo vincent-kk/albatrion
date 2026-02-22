@@ -39,7 +39,21 @@ Array with duplicates removed based on mapped values
 import { uniqueBy } from '@winglet/common-utils';
 
 const users = [
-  { id: 1, name: 'Alice', email: 'alice
+  { id: 1, name: 'Alice', email: 'alice@example.com' },
+  { id: 2, name: 'Bob', email: 'bob@example.com' },
+  { id: 1, name: 'Alice Updated', email: 'alice.new@example.com' },
+  { id: 3, name: 'Charlie', email: 'charlie@example.com' },
+  { id: 2, name: 'Bob Smith', email: 'bob.smith@example.com' }
+];
+
+const uniqueUsers = uniqueBy(users, user => user.id);
+console.log(uniqueUsers);
+// [
+//   { id: 1, name: 'Alice', email: 'alice@example.com' },
+//   { id: 2, name: 'Bob', email: 'bob@example.com' },
+//   { id: 3, name: 'Charlie', email: 'charlie@example.com' }
+// ]
+// Note: First occurrence of each ID is kept
 ```
 
 ### Remove duplicate strings by length
@@ -218,7 +232,21 @@ console.log(uniqueCustomerProduct);
   code={`import { uniqueBy } from '@winglet/common-utils';
 
 const users = [
-  { id: 1, name: 'Alice', email: 'alice`}
+  { id: 1, name: 'Alice', email: 'alice@example.com' },
+  { id: 2, name: 'Bob', email: 'bob@example.com' },
+  { id: 1, name: 'Alice Updated', email: 'alice.new@example.com' },
+  { id: 3, name: 'Charlie', email: 'charlie@example.com' },
+  { id: 2, name: 'Bob Smith', email: 'bob.smith@example.com' }
+];
+
+const uniqueUsers = uniqueBy(users, user => user.id);
+console.log(uniqueUsers);
+// [
+//   { id: 1, name: 'Alice', email: 'alice@example.com' },
+//   { id: 2, name: 'Bob', email: 'bob@example.com' },
+//   { id: 3, name: 'Charlie', email: 'charlie@example.com' }
+// ]
+// Note: First occurrence of each ID is kept`}
 />
 
 ## Notes

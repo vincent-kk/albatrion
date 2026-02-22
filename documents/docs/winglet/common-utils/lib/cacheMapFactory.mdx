@@ -95,7 +95,16 @@ import { cacheMapFactory } from '@winglet/common-utils';
 const userCache = cacheMapFactory<Map<string, User>>();
 
 // Store user data
-userCache.set('user123', { id: '123', name: 'John Doe', email: 'john
+userCache.set('user123', { id: '123', name: 'John Doe', email: 'john@example.com' });
+userCache.set('user456', { id: '456', name: 'Jane Smith', email: 'jane@example.com' });
+
+// Retrieve user data
+const user = userCache.get('user123');
+console.log(user?.name); // 'John Doe'
+
+// Check cache status
+console.log(userCache.has('user123')); // true
+console.log(userCache.size()); // 2
 ```
 
 ### Initialize with existing data
@@ -212,7 +221,16 @@ cache.raw.forEach((value, key) => {
 const userCache = cacheMapFactory<Map<string, User>>();
 
 // Store user data
-userCache.set('user123', { id: '123', name: 'John Doe', email: 'john`}
+userCache.set('user123', { id: '123', name: 'John Doe', email: 'john@example.com' });
+userCache.set('user456', { id: '456', name: 'Jane Smith', email: 'jane@example.com' });
+
+// Retrieve user data
+const user = userCache.get('user123');
+console.log(user?.name); // 'John Doe'
+
+// Check cache status
+console.log(userCache.has('user123')); // true
+console.log(userCache.size()); // 2`}
 />
 
 ## Notes
