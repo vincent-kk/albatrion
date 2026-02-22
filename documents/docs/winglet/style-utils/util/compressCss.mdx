@@ -1,0 +1,94 @@
+---
+title: 'compressCss'
+sidebar_label: 'compressCss'
+---
+<!-- sync-winglet-docs:auto -->
+
+import WingletPlayground from '@site/src/components/WingletPlayground';
+
+# compressCss
+
+Compresses CSS by removing unnecessary whitespace, comments, and redundant semicolons.
+Uses byte-level processing for optimal performance while preserving CSS functionality.
+Prioritizes speed over perfect compression - some trailing spaces may remain.
+
+## Signature
+
+```typescript
+const compressCss: (css: string) => string
+```
+
+## Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `css` | `-` | The CSS string to compress |
+
+## Returns
+
+A compressed CSS string with minimal whitespace and no comments
+
+## Examples
+
+### Example 1
+
+```typescript
+Basic CSS compression:
+compressCss('.class { color: red; background: blue; }')
+// Returns: '.class{color:red;background:blue}'
+
+Comment removal:
+compressCss('.class { color: red; /* inline comment *\/ background: blue; }')
+// Returns: '.class{color:red;background:blue}'
+
+Multiple whitespace handling:
+compressCss('.class1   { color  :   red  ; margin :  10px   20px  ; }')
+// Returns: '.class1{color:red;margin:10px 20px}'
+
+CSS selectors with combinators:
+compressCss('.class1   .class2   >   .class3 { color: red; }')
+// Returns: '.class1 .class2>.class3{color:red}'
+
+Media queries (may have trailing spaces for performance):
+compressCss('@media (max-width: 768px) { .container { padding: 0 16px; } }')
+// Returns: '@media (max-width:768px){.container{padding:0 16px }}' (note trailing space)
+
+Complex CSS with comments:
+compressCss('.container { width: 100%; /* comment *\/ margin: 0 auto; }')
+// Returns: '.container{width:100%;margin:0 auto}'
+
+Empty input:
+compressCss('') // Returns: ''
+```
+
+## Playground
+
+<WingletPlayground
+  dependencies={{ "@winglet/style-utils": "0.10.0" }}
+  code={`Basic CSS compression:
+compressCss('.class { color: red; background: blue; }')
+// Returns: '.class{color:red;background:blue}'
+
+Comment removal:
+compressCss('.class { color: red; /* inline comment *\/ background: blue; }')
+// Returns: '.class{color:red;background:blue}'
+
+Multiple whitespace handling:
+compressCss('.class1   { color  :   red  ; margin :  10px   20px  ; }')
+// Returns: '.class1{color:red;margin:10px 20px}'
+
+CSS selectors with combinators:
+compressCss('.class1   .class2   >   .class3 { color: red; }')
+// Returns: '.class1 .class2>.class3{color:red}'
+
+Media queries (may have trailing spaces for performance):
+compressCss('@media (max-width: 768px) { .container { padding: 0 16px; } }')
+// Returns: '@media (max-width:768px){.container{padding:0 16px }}' (note trailing space)
+
+Complex CSS with comments:
+compressCss('.container { width: 100%; /* comment *\/ margin: 0 auto; }')
+// Returns: '.container{width:100%;margin:0 auto}'
+
+Empty input:
+compressCss('') // Returns: ''`}
+/>

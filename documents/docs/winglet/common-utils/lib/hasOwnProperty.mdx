@@ -1,0 +1,62 @@
+---
+title: 'hasOwnProperty'
+sidebar_label: 'hasOwnProperty'
+---
+<!-- sync-winglet-docs:auto -->
+
+import WingletPlayground from '@site/src/components/WingletPlayground';
+
+# hasOwnProperty
+
+Safely checks if an object has its own (non-inherited) property.
+Uses Object.prototype.hasOwnProperty.call() to avoid prototype pollution
+and ensure accurate own-property detection, even for objects without
+Object.prototype in their prototype chain.
+
+## Signature
+
+```typescript
+const hasOwnProperty: (value: unknown, key: PropertyKey) => key is keyof typeof value
+```
+
+## Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `value` | `-` | Object or value to inspect |
+| `key` | `-` | Property key to check for ownership |
+
+## Returns
+
+Type-safe boolean indicating direct property ownership
+
+## Examples
+
+### Own property detection
+
+```typescript
+import { hasOwnProperty } from '@winglet/common-utils';
+
+const obj = { name: 'John', age: 30 };
+console.log(hasOwnProperty(obj, 'name')); // true
+console.log(hasOwnProperty(obj, 'toString')); // false (inherited)
+
+const nullObj = Object.create(null);
+nullObj.prop = 'value';
+console.log(hasOwnProperty(nullObj, 'prop')); // true (safe even without prototype)
+```
+
+## Playground
+
+<WingletPlayground
+  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  code={`import { hasOwnProperty } from '@winglet/common-utils';
+
+const obj = { name: 'John', age: 30 };
+console.log(hasOwnProperty(obj, 'name')); // true
+console.log(hasOwnProperty(obj, 'toString')); // false (inherited)
+
+const nullObj = Object.create(null);
+nullObj.prop = 'value';
+console.log(hasOwnProperty(nullObj, 'prop')); // true (safe even without prototype)`}
+/>

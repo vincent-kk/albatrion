@@ -1,0 +1,18 @@
+---
+title: 'TestPatch'
+sidebar_label: 'TestPatch'
+---
+<!-- sync-winglet-docs:auto -->
+
+import WingletPlayground from '@site/src/components/WingletPlayground';
+
+# TestPatch
+
+## Signature
+
+```typescript
+interface TestPatch<Value> extends BasePatch {
+    op: typeof Operation.TEST;
+    value: Value;
+}
+```

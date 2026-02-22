@@ -1,0 +1,131 @@
+---
+title: 'isClose'
+sidebar_label: 'isClose'
+---
+<!-- sync-winglet-docs:auto -->
+
+import WingletPlayground from '@site/src/components/WingletPlayground';
+
+# isClose
+
+Compares two numbers for equality within a specified tolerance.
+Handles floating-point precision issues by using a combined relative and absolute
+tolerance comparison. This approach works correctly across all number magnitudes,
+from very small numbers near zero to very large numbers.
+
+## Signature
+
+```typescript
+const isClose: (left: number, right: number, epsilon?: number) => boolean
+```
+
+## Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `left` | `-` | First number to compare |
+| `right` | `-` | Second number to compare |
+| `epsilon` | `-` | Tolerance for comparison (default: 1e-8, matching NumPy's atol) |
+
+## Returns
+
+true if the numbers are close within the specified tolerance
+
+## Examples
+
+### Basic floating-point comparison
+
+```typescript
+import { isClose } from '@winglet/common-utils/math';
+
+// Standard equality fails due to floating-point precision
+console.log(0.1 + 0.2 === 0.3);        // false
+console.log(isClose(0.1 + 0.2, 0.3));   // true
+
+// Works with various magnitudes
+console.log(isClose(1e10, 1e10 + 1e-5));     // true (within tolerance)
+console.log(isClose(1e-15, 2e-15));          // true (both near zero)
+console.log(isClose(0.999999999, 1));        // true
+```
+
+### Custom epsilon for stricter or looser comparison
+
+```typescript
+// Stricter comparison (smaller epsilon)
+console.log(isClose(1.0001, 1.0002, 1e-5));  // false
+console.log(isClose(1.0001, 1.0002, 1e-3));  // true
+
+// Use Number.EPSILON for machine-precision comparison
+console.log(isClose(1, 1 + Number.EPSILON, Number.EPSILON));  // true
+```
+
+### Special value handling
+
+```typescript
+// NaN comparison (unlike ===, treats NaN as equal to NaN)
+console.log(NaN === NaN);          // false
+console.log(isClose(NaN, NaN));     // true
+
+// Infinity handling
+console.log(isClose(Infinity, Infinity));    // true
+console.log(isClose(-Infinity, -Infinity));  // true
+console.log(isClose(Infinity, -Infinity));   // false
+console.log(isClose(Infinity, 1e308));       // false
+```
+
+### Convergence detection in iterative algorithms
+
+```typescript
+function findFixedPoint(f: (x: number) => number, x0: number) {
+  let current = x0;
+  let next = f(current);
+
+  while (!isClose(current, next)) {
+    current = next;
+    next = f(current);
+  }
+
+  return next;
+}
+```
+
+## Playground
+
+<WingletPlayground
+  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  code={`import { isClose } from '@winglet/common-utils/math';
+
+// Standard equality fails due to floating-point precision
+console.log(0.1 + 0.2 === 0.3);        // false
+console.log(isClose(0.1 + 0.2, 0.3));   // true
+
+// Works with various magnitudes
+console.log(isClose(1e10, 1e10 + 1e-5));     // true (within tolerance)
+console.log(isClose(1e-15, 2e-15));          // true (both near zero)
+console.log(isClose(0.999999999, 1));        // true`}
+/>
+
+## Notes
+
+**Algorithm:**
+Uses a combined relative-absolute tolerance formula:
+`|left - right| <= epsilon * max(|left|, |right|, 1)`
+
+This approach:
+- Provides relative comparison for large numbers
+- Falls back to absolute comparison near zero (due to the `1` in max)
+- Handles edge cases efficiently with early returns
+
+**Special Cases:**
+- `NaN === NaN` returns `true` (unlike standard equality)
+- `Infinity === Infinity` returns `true` (same sign required)
+- `0 === -0` returns `true`
+
+**Performance:** O(1) time and space complexity with minimal branching.
+
+**Use Cases:**
+- Floating-point arithmetic validation
+- Convergence detection in numerical algorithms
+- Unit testing with tolerance
+- Physics simulations and game development
+- Financial calculations requiring precision tolerance

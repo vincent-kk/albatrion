@@ -1,0 +1,72 @@
+---
+title: 'cx'
+sidebar_label: 'cx'
+---
+<!-- sync-winglet-docs:auto -->
+
+import WingletPlayground from '@site/src/components/WingletPlayground';
+
+# cx
+
+Concatenates CSS class names conditionally, similar to clsx/classnames but more lightweight.
+Accepts various input types including strings, numbers, arrays, and objects.
+Filters out falsy values and handles nested structures recursively.
+
+## Signature
+
+```typescript
+const cx: (...args: ClassValue[]) => string
+```
+
+## Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `args` | `-` | Variable number of class value arguments that can be strings, numbers, arrays, or objects |
+
+## Returns
+
+A single concatenated string of class names, separated by spaces
+
+## Examples
+
+### Example 1
+
+```typescript
+// String and number inputs
+cx('btn', 'primary') // 'btn primary'
+cx('btn', 123) // 'btn 123'
+
+// Conditional classes with falsy values
+cx('btn', false && 'hidden', null, undefined, 'active') // 'btn active'
+
+// Object notation for conditional classes
+cx('btn', { 'btn-primary': true, 'btn-disabled': false }) // 'btn btn-primary'
+
+// Array inputs with nesting
+cx(['btn', 'primary'], ['large', false && 'hidden']) // 'btn primary large'
+
+// Mixed inputs
+cx('btn', { primary: true }, ['large'], null, 'active') // 'btn primary large active'
+```
+
+## Playground
+
+<WingletPlayground
+  dependencies={{ "@winglet/style-utils": "0.10.0" }}
+  code={`// String and number inputs
+cx('btn', 'primary') // 'btn primary'
+cx('btn', 123) // 'btn 123'
+
+// Conditional classes with falsy values
+cx('btn', false && 'hidden', null, undefined, 'active') // 'btn active'
+
+// Object notation for conditional classes
+cx('btn', { 'btn-primary': true, 'btn-disabled': false }) // 'btn btn-primary'
+
+// Array inputs with nesting
+cx(['btn', 'primary'], ['large', false && 'hidden']) // 'btn primary large'
+
+// Mixed inputs
+cx('btn', { primary: true }, ['large'], null, 'active') // 'btn primary large active'`}
+/>

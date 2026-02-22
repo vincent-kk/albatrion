@@ -1,0 +1,41 @@
+---
+title: 'isCompatibleSchemaType'
+sidebar_label: 'isCompatibleSchemaType'
+---
+<!-- sync-winglet-docs:auto -->
+
+import WingletPlayground from '@site/src/components/WingletPlayground';
+
+# isCompatibleSchemaType
+
+Checks if two JSON Schemas have compatible types.
+Unlike `isIdenticalSchemaType`, this function considers `number` and `integer`
+as compatible types, and treats nullable differences as compatible.
+Compatibility rules:
+- `number` and `integer` are compatible with each other
+- `[...types, 'null']` is compatible with `[...types]` (nullable compatibility)
+- `[type]` is equivalent to `type` (single element array equivalence)
+- `[type, 'null']` is compatible with `type` (nullable single type)
+- `[]` (empty array) is not compatible with anything, including itself
+- `['null']` is compatible with `['null']` (null-only arrays are equal)
+Additional behaviors:
+- Array element order does not affect compatibility
+- Only the `type` property is compared; other schema properties are ignored
+- The function is symmetric: `isCompatibleSchemaType(a, b) === isCompatibleSchemaType(b, a)`
+
+## Signature
+
+```typescript
+const isCompatibleSchemaType: (left: UnknownSchema, right: UnknownSchema) => boolean
+```
+
+## Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `left` | `-` | First schema to compare |
+| `right` | `-` | Second schema to compare |
+
+## Returns
+
+`true` if both schemas have compatible types

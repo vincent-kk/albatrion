@@ -1,0 +1,29 @@
+---
+title: 'getJSONPath'
+sidebar_label: 'getJSONPath'
+---
+<!-- sync-winglet-docs:auto -->
+
+import WingletPlayground from '@site/src/components/WingletPlayground';
+
+# getJSONPath
+
+Generates a JSONPath from the root object to the target object.
+JSONPath is a query language for JSON similar to XPath for XML.
+
+## Signature
+
+```typescript
+const getJSONPath: <Root extends object, Target>(root: Root, target: Target) => string | null
+```
+
+## Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `root` | `-` | Root object to start the search from |
+| `target` | `-` | Target object to find |
+
+## Returns
+
+JSONPath string to the target object or null if not found

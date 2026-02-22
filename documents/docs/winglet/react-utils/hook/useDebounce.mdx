@@ -1,0 +1,34 @@
+---
+title: 'useDebounce'
+sidebar_label: 'useDebounce'
+---
+<!-- sync-winglet-docs:auto -->
+
+import WingletPlayground from '@site/src/components/WingletPlayground';
+
+# useDebounce
+
+Debounces a callback function execution based on dependency changes.
+Delays the callback execution until the specified timeout has passed without any dependency changes.
+
+## Signature
+
+```typescript
+const useDebounce: (callback: Fn, dependencyList?: DependencyList, ms?: number, options?: UseDebounceOptions) => {
+    readonly isIdle: Fn<[], boolean>;
+    readonly cancel: Fn<[], void>;
+}
+```
+
+## Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `callback` | `-` | The function to debounce |
+| `dependencyList` | `-` | Array of dependencies that trigger the debounce when changed (defaults to `undefined`) |
+| `ms` | `-` | The delay in milliseconds before executing the callback (defaults to `0`) |
+| `options` | `-` | Configuration options for debounce behavior |
+
+## Returns
+
+An object containing debounce control functions

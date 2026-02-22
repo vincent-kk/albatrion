@@ -1,0 +1,31 @@
+---
+title: 'isIdenticalSchemaType'
+sidebar_label: 'isIdenticalSchemaType'
+---
+<!-- sync-winglet-docs:auto -->
+
+import WingletPlayground from '@site/src/components/WingletPlayground';
+
+# isIdenticalSchemaType
+
+Compares whether two JSON Schemas have identical types.
+Supports both JSON Schema and OpenAPI 3.0 nullable representations:
+- `nullable: true` property (OpenAPI 3.0)
+- `type: ['string', 'null']` array format (JSON Schema)
+
+## Signature
+
+```typescript
+const isIdenticalSchemaType: (left: UnknownSchema, right: UnknownSchema) => boolean
+```
+
+## Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `left` | `-` | First schema to compare |
+| `right` | `-` | Second schema to compare |
+
+## Returns
+
+`true` if both schemas have identical types (considering nullable)

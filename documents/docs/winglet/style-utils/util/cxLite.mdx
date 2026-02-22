@@ -1,0 +1,70 @@
+---
+title: 'cxLite'
+sidebar_label: 'cxLite'
+---
+<!-- sync-winglet-docs:auto -->
+
+import WingletPlayground from '@site/src/components/WingletPlayground';
+
+# cxLite
+
+Lightweight version of the cx function that concatenates CSS class names.
+Only handles simple truthy/falsy filtering without object or array processing.
+Provides better performance for basic use cases where complex input types are not needed.
+
+## Signature
+
+```typescript
+const cxLite: (...args: ClassValue[]) => string
+```
+
+## Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `args` | `-` | Variable number of class value arguments (primarily strings and numbers) |
+
+## Returns
+
+A single concatenated string of class names, separated by spaces
+
+## Examples
+
+### Example 1
+
+```typescript
+// Basic string concatenation
+cxLite('btn', 'primary') // 'btn primary'
+cxLite('btn', 'primary', 'large') // 'btn primary large'
+
+// Conditional classes with falsy values
+cxLite('btn', false && 'hidden', null, undefined, 'active') // 'btn active'
+cxLite('btn', condition ? 'active' : '', 'primary') // 'btn primary' (if condition is false)
+
+// Number inputs
+cxLite('item', 123, 'selected') // 'item 123 selected'
+
+// Note: Unlike cx(), this function does NOT process objects or arrays
+// cxLite('btn', { primary: true }) // This will not work as expected
+// Use cx() instead for complex input types
+```
+
+## Playground
+
+<WingletPlayground
+  dependencies={{ "@winglet/style-utils": "0.10.0" }}
+  code={`// Basic string concatenation
+cxLite('btn', 'primary') // 'btn primary'
+cxLite('btn', 'primary', 'large') // 'btn primary large'
+
+// Conditional classes with falsy values
+cxLite('btn', false && 'hidden', null, undefined, 'active') // 'btn active'
+cxLite('btn', condition ? 'active' : '', 'primary') // 'btn primary' (if condition is false)
+
+// Number inputs
+cxLite('item', 123, 'selected') // 'item 123 selected'
+
+// Note: Unlike cx(), this function does NOT process objects or arrays
+// cxLite('btn', { primary: true }) // This will not work as expected
+// Use cx() instead for complex input types`}
+/>

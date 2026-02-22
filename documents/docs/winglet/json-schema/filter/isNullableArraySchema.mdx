@@ -1,0 +1,48 @@
+---
+title: 'isNullableArraySchema'
+sidebar_label: 'isNullableArraySchema'
+---
+<!-- sync-winglet-docs:auto -->
+
+import WingletPlayground from '@site/src/components/WingletPlayground';
+
+# isNullableArraySchema
+
+Determines whether a given JSON schema represents a nullable array type.
+Validates that the schema's `type` property is an array containing both
+`'array'` and `'null'`, indicating it describes nullable array values.
+
+## Signature
+
+```typescript
+const isNullableArraySchema: (schema: UnknownSchema) => schema is NullableArraySchema
+```
+
+## Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `schema` | `-` | The JSON schema object to inspect |
+
+## Returns
+
+Type-safe boolean indicating whether the schema is a NullableArraySchema
+
+## Examples
+
+### Example 1
+
+```typescript
+isNullableArraySchema({ type: ['array', 'null'], items: { type: 'string' } }); // true
+isNullableArraySchema({ type: 'array' }); // false
+isNullableArraySchema({ type: ['object', 'null'] }); // false
+```
+
+## Playground
+
+<WingletPlayground
+  dependencies={{ "@winglet/json-schema": "0.10.0" }}
+  code={`isNullableArraySchema({ type: ['array', 'null'], items: { type: 'string' } }); // true
+isNullableArraySchema({ type: 'array' }); // false
+isNullableArraySchema({ type: ['object', 'null'] }); // false`}
+/>

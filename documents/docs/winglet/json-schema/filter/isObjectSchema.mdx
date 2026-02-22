@@ -1,0 +1,48 @@
+---
+title: 'isObjectSchema'
+sidebar_label: 'isObjectSchema'
+---
+<!-- sync-winglet-docs:auto -->
+
+import WingletPlayground from '@site/src/components/WingletPlayground';
+
+# isObjectSchema
+
+Determines whether a given JSON schema represents an object type (nullable or non-nullable).
+This is a combined filter that matches both `{ type: 'object' }` and
+`{ type: ['object', 'null'] }` schemas.
+
+## Signature
+
+```typescript
+const isObjectSchema: (schema: UnknownSchema) => schema is ObjectSchema
+```
+
+## Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `schema` | `-` | The JSON schema object to inspect |
+
+## Returns
+
+Type-safe boolean indicating whether the schema is an object schema (nullable or not)
+
+## Examples
+
+### Example 1
+
+```typescript
+isObjectSchema({ type: 'object', properties: { name: { type: 'string' } } }); // true
+isObjectSchema({ type: ['object', 'null'] }); // true
+isObjectSchema({ type: 'array' }); // false
+```
+
+## Playground
+
+<WingletPlayground
+  dependencies={{ "@winglet/json-schema": "0.10.0" }}
+  code={`isObjectSchema({ type: 'object', properties: { name: { type: 'string' } } }); // true
+isObjectSchema({ type: ['object', 'null'] }); // true
+isObjectSchema({ type: 'array' }); // false`}
+/>

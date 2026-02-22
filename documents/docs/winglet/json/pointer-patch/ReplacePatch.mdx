@@ -1,0 +1,18 @@
+---
+title: 'ReplacePatch'
+sidebar_label: 'ReplacePatch'
+---
+<!-- sync-winglet-docs:auto -->
+
+import WingletPlayground from '@site/src/components/WingletPlayground';
+
+# ReplacePatch
+
+## Signature
+
+```typescript
+interface ReplacePatch<Value> extends BasePatch {
+    op: typeof Operation.REPLACE;
+    value: Value;
+}
+```

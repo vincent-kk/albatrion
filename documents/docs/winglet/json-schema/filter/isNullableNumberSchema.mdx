@@ -1,0 +1,50 @@
+---
+title: 'isNullableNumberSchema'
+sidebar_label: 'isNullableNumberSchema'
+---
+<!-- sync-winglet-docs:auto -->
+
+import WingletPlayground from '@site/src/components/WingletPlayground';
+
+# isNullableNumberSchema
+
+Determines whether a given JSON schema represents a nullable number type.
+Validates that the schema's `type` property is an array containing both
+`'number'` (or `'integer'`) and `'null'`, indicating it describes nullable numeric values.
+
+## Signature
+
+```typescript
+const isNullableNumberSchema: (schema: UnknownSchema) => schema is NullableNumberSchema
+```
+
+## Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `schema` | `-` | The JSON schema object to inspect |
+
+## Returns
+
+Type-safe boolean indicating whether the schema is a NullableNumberSchema
+
+## Examples
+
+### Example 1
+
+```typescript
+isNullableNumberSchema({ type: ['number', 'null'] }); // true
+isNullableNumberSchema({ type: ['integer', 'null'] }); // true
+isNullableNumberSchema({ type: 'number' }); // false
+isNullableNumberSchema({ type: ['string', 'null'] }); // false
+```
+
+## Playground
+
+<WingletPlayground
+  dependencies={{ "@winglet/json-schema": "0.10.0" }}
+  code={`isNullableNumberSchema({ type: ['number', 'null'] }); // true
+isNullableNumberSchema({ type: ['integer', 'null'] }); // true
+isNullableNumberSchema({ type: 'number' }); // false
+isNullableNumberSchema({ type: ['string', 'null'] }); // false`}
+/>

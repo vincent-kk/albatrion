@@ -1,0 +1,370 @@
+---
+title: 'scheduleCancelableMacrotaskSafe'
+sidebar_label: 'scheduleCancelableMacrotaskSafe'
+---
+<!-- sync-winglet-docs:auto -->
+
+import WingletPlayground from '@site/src/components/WingletPlayground';
+
+# scheduleCancelableMacrotaskSafe
+
+Creates a cancellable macrotask with a fluent API that returns a cancellation function.
+Combines `setImmediate`/`setTimeout` scheduling with cancellation support to ensure safe
+browser rendering. The returned cancellation function allows tasks to be cancelled before
+execution, preventing unnecessary work and maintaining smooth UI performance by not
+blocking rendering cycles with cancelled tasks.
+
+## Signature
+
+```typescript
+const scheduleCancelableMacrotaskSafe: (callback: Fn) => Fn
+```
+
+## Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `callback` | `-` | Function to execute in the next macrotask cycle |
+
+## Returns
+
+Cancellation function that prevents execution when called
+
+## Examples
+
+### Basic cancellable task
+
+```typescript
+import { scheduleCancelableMacrotask } from '@winglet/common-utils';
+
+// Schedule a task and get cancellation function
+const cancelTask = scheduleCancelableMacrotask(() => {
+  console.log('This may or may not execute');
+});
+
+// Cancel the task before execution
+cancelTask();
+// No output - task was cancelled
+
+// Alternative: let it execute naturally
+const cancelTask2 = scheduleCancelableMacrotask(() => {
+  console.log('This will execute');
+});
+// Don't call cancelTask2() - output: "This will execute"
+```
+
+### Conditional cancellation patterns
+
+```typescript
+// Auto-cancelling timeout pattern
+function createAutoTimeout(callback: () => void, timeoutMs: number) {
+  const cancelTask = scheduleCancelableMacrotask(callback);
+
+  setTimeout(() => {
+    cancelTask(); // Auto-cancel after timeout
+  }, timeoutMs);
+
+  return cancelTask; // Return manual cancellation option
+}
+
+// Conditional execution with early cancellation
+function scheduleConditionalWork(
+  work: () => void,
+  condition: () => boolean
+) {
+  const cancelTask = scheduleCancelableMacrotask(() => {
+    if (condition()) {
+      work();
+    }
+  });
+
+  // Cancel immediately if condition is already false
+  if (!condition()) {
+    cancelTask();
+  }
+
+  return cancelTask;
+}
+
+// User interaction cancellation
+function scheduleWithUserCancellation(task: () => void) {
+  const cancelTask = scheduleCancelableMacrotask(task);
+
+  // Allow user to cancel via UI
+  const button = document.createElement('button');
+  button.textContent = 'Cancel Task';
+  button.onclick = () => {
+    cancelTask();
+    button.disabled = true;
+    button.textContent = 'Task Cancelled';
+  };
+
+  document.body.appendChild(button);
+  return cancelTask;
+}
+```
+
+### Resource management and cleanup
+
+```typescript
+// Component lifecycle integration
+class AsyncComponent {
+  private pendingTasks: (() => void)[] = [];
+
+  scheduleWork(work: () => void) {
+    const cancelTask = scheduleCancelableMacrotask(work);
+    this.pendingTasks.push(cancelTask);
+    return cancelTask;
+  }
+
+  destroy() {
+    // Cancel all pending tasks
+    this.pendingTasks.forEach(cancel => cancel());
+    this.pendingTasks.length = 0;
+  }
+}
+
+// Batch processor with individual task cancellation
+class CancellableBatchProcessor {
+  private activeTasks = new Map<string, () => void>();
+
+  processItem(id: string, processor: () => void) {
+    // Cancel existing task for this ID if any
+    const existingCancel = this.activeTasks.get(id);
+    if (existingCancel) {
+      existingCancel();
+    }
+
+    // Schedule new task
+    const cancelTask = scheduleCancelableMacrotask(() => {
+      processor();
+      this.activeTasks.delete(id);
+    });
+
+    this.activeTasks.set(id, cancelTask);
+    return cancelTask;
+  }
+
+  cancelItem(id: string): boolean {
+    const cancelTask = this.activeTasks.get(id);
+    if (cancelTask) {
+      cancelTask();
+      this.activeTasks.delete(id);
+      return true;
+    }
+    return false;
+  }
+
+  cancelAll() {
+    this.activeTasks.forEach(cancel => cancel());
+    this.activeTasks.clear();
+  }
+}
+```
+
+### Async coordination and chaining
+
+```typescript
+// Chainable cancellable tasks
+function createTaskChain(...tasks: (() => void)[]) {
+  const cancellations: (() => void)[] = [];
+  let chainCancelled = false;
+
+  function scheduleNext(index: number) {
+    if (chainCancelled || index >= tasks.length) return;
+
+    const cancelTask = scheduleCancelableMacrotask(() => {
+      if (!chainCancelled) {
+        tasks[index]();
+        scheduleNext(index + 1);
+      }
+    });
+
+    cancellations.push(cancelTask);
+  }
+
+  scheduleNext(0);
+
+  return () => {
+    chainCancelled = true;
+    cancellations.forEach(cancel => cancel());
+  };
+}
+
+// Promise-based cancellable scheduling
+function createCancellablePromise<T>(
+  executor: () => T
+): { promise: Promise<T>; cancel: () => void } {
+  let cancelled = false;
+
+  const promise = new Promise<T>((resolve, reject) => {
+    const cancelTask = scheduleCancelableMacrotask(() => {
+      if (!cancelled) {
+        try {
+          resolve(executor());
+        } catch (error) {
+          reject(error);
+        }
+      }
+    });
+
+    // Store cancellation for external access
+    promise.cancel = () => {
+      cancelled = true;
+      cancelTask();
+      reject(new Error('Task was cancelled'));
+    };
+  });
+
+  return {
+    promise,
+    cancel: () => (promise as any).cancel()
+  };
+}
+```
+
+### Error handling and safety
+
+```typescript
+// Safe execution with error handling
+function createSafeCancellableTask(
+  task: () => void,
+  errorHandler: (error: Error) => void = console.error
+) {
+  return scheduleCancelableMacrotask(() => {
+    try {
+      task();
+    } catch (error) {
+      errorHandler(error as Error);
+    }
+  });
+}
+
+// Multiple cancellation safety
+function createIdempotentCancellation(task: () => void) {
+  let cancelled = false;
+  let originalCancel: (() => void) | null = null;
+
+  originalCancel = scheduleCancelableMacrotask(() => {
+    if (!cancelled) {
+      task();
+    }
+  });
+
+  return () => {
+    if (!cancelled && originalCancel) {
+      cancelled = true;
+      originalCancel();
+      originalCancel = null;
+    }
+  };
+}
+
+// Timeout with automatic cancellation
+function scheduleWithDeadline(
+  task: () => void,
+  deadlineMs: number
+): { cancel: () => void; expired: () => boolean } {
+  let expired = false;
+  let executed = false;
+
+  const cancelTask = scheduleCancelableMacrotask(() => {
+    if (!expired) {
+      executed = true;
+      task();
+    }
+  });
+
+  const timeoutId = setTimeout(() => {
+    if (!executed) {
+      expired = true;
+      cancelTask();
+    }
+  }, deadlineMs);
+
+  return {
+    cancel: () => {
+      clearTimeout(timeoutId);
+      cancelTask();
+    },
+    expired: () => expired
+  };
+}
+```
+
+## Playground
+
+<WingletPlayground
+  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  code={`import { scheduleCancelableMacrotask } from '@winglet/common-utils';
+
+// Schedule a task and get cancellation function
+const cancelTask = scheduleCancelableMacrotask(() => {
+  console.log('This may or may not execute');
+});
+
+// Cancel the task before execution
+cancelTask();
+// No output - task was cancelled
+
+// Alternative: let it execute naturally
+const cancelTask2 = scheduleCancelableMacrotask(() => {
+  console.log('This will execute');
+});
+// Don't call cancelTask2() - output: "This will execute"`}
+/>
+
+## Notes
+
+**Cancellation Strategy:**
+- **Two-Layer Protection**: Platform cancellation + execution guard boolean
+- **Race Condition Safe**: Handles cancellation before and during execution
+- **Memory Efficient**: Automatic cleanup of cancelled tasks
+- **Idempotent**: Safe to call cancellation function multiple times
+
+**Internal Implementation:**
+- **Scheduling**: Uses `scheduleMacrotask` for platform-optimized timing
+- **Cancellation**: Combines `cancelMacrotask` with boolean flag
+- **State Management**: Minimal state tracking for optimal performance
+- **Cleanup**: Automatic garbage collection of completed/cancelled tasks
+
+**Performance Characteristics:**
+- **Time Complexity**: O(1) for scheduling and cancellation
+- **Space Complexity**: O(1) per scheduled task
+- **Memory Overhead**: ~40 bytes per task (closure + boolean flag)
+- **Cancellation Speed**: Immediate (no async overhead)
+
+**Comparison with Alternatives:**
+- **AbortController**: More complex API, larger memory footprint
+- **Promise cancellation**: Requires additional promise infrastructure
+- **Manual ID tracking**: More error-prone, requires external state management
+- **setTimeout with clearTimeout**: Similar performance, less ergonomic API
+
+**Event Loop Integration:**
+- **Execution Timing**: Same as `scheduleMacrotask` (after microtasks)
+- **Cancellation Timing**: Immediate, no event loop involvement
+- **Platform Behavior**: Inherits all platform-specific optimizations
+- **Nested Scheduling**: Full support for task scheduling within tasks
+
+**Use Cases:**
+- Component cleanup and lifecycle management
+- User interaction cancellation (cancel buttons, navigation)
+- Timeout and deadline management
+- Batch processing with individual item cancellation
+- Resource loading with cancellation support
+- Animation and transition management
+- Testing and development tools
+
+**Best Practices:**
+- Store cancellation functions when cleanup is needed
+- Call cancellation in component/object destroy methods
+- Use with timeout patterns for deadline management
+- Combine with error handling for robust task execution
+- Consider memory implications with large numbers of pending tasks
+- Test cancellation paths in your application logic
+
+**Thread Safety and Concurrency:**
+- **Single-threaded**: Safe in JavaScript's single-threaded environment
+- **Async Safety**: Safe to cancel from different async contexts
+- **Re-entrance**: Safe to call cancellation from within task callbacks
+- **Memory Model**: No memory ordering concerns in JavaScript

@@ -1,0 +1,28 @@
+---
+title: 'remainOnlyReactComponent'
+sidebar_label: 'remainOnlyReactComponent'
+---
+<!-- sync-winglet-docs:auto -->
+
+import WingletPlayground from '@site/src/components/WingletPlayground';
+
+# remainOnlyReactComponent
+
+Extracts only React components from an input object and creates a new object.
+Filters out non-component values using component type checking.
+
+## Signature
+
+```typescript
+const remainOnlyReactComponent: <Input extends Record<string, unknown>, Output extends Record<string, ComponentType>>(dictionary: Input) => Output
+```
+
+## Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `dictionary` | `-` | An object containing React components and other values |
+
+## Returns
+
+A new object containing only React components

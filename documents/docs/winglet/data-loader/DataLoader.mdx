@@ -1,0 +1,253 @@
+---
+title: 'DataLoader'
+sidebar_label: 'DataLoader'
+---
+<!-- sync-winglet-docs:auto -->
+
+import WingletPlayground from '@site/src/components/WingletPlayground';
+
+# DataLoader
+
+DataLoader – A rewritten utility for batching and caching asynchronous data fetching.
+This implementation is inspired by the original "Loader" API developed by [@schrockn](https://github.com/schrockn)
+at Facebook in 2010, which was designed to simplify and consolidate various key-value store back-end APIs.
+While conceptually based on [GraphQL DataLoader](https://github.com/graphql/dataloader), this version is a
+ground-up rewrite focused on performance optimizations, type safety, and adaptation to specific runtime requirements.
+
+## Signature
+
+```typescript
+class DataLoader
+```
+
+## Examples
+
+### Basic usage with database queries
+
+```typescript
+import { DataLoader } from '@winglet/data-loader';
+
+// Create a batch loading function
+async function batchLoadUsers(userIds: string[]): Promise<User[]> {
+  const users = await db.query(
+    'SELECT * FROM users WHERE id IN (?)',
+    [userIds]
+  );
+
+  // IMPORTANT: Return array in same order as input keys
+  return userIds.map(id =>
+    users.find(user => user.id === id) || new Error(`User ${id} not found`)
+  );
+}
+
+// Create the DataLoader instance
+const userLoader = new DataLoader(batchLoadUsers, {
+  maxBatchSize: 100, // Limit SQL query size
+  cache: true,       // Enable caching (default)
+});
+
+// Load individual users - automatically batched
+const user1 = await userLoader.load('user-1');
+const user2 = await userLoader.load('user-2');
+const user3 = await userLoader.load('user-3');
+// Results in ONE database query: SELECT * FROM users WHERE id IN ('user-1', 'user-2', 'user-3')
+```
+
+### GraphQL resolver integration
+
+```typescript
+// Define DataLoaders per request to avoid cross-request caching
+function createLoaders() {
+  return {
+    users: new DataLoader(batchLoadUsers),
+    posts: new DataLoader(batchLoadPosts),
+    comments: new DataLoader(batchLoadComments),
+  };
+}
+
+// GraphQL resolvers
+const resolvers = {
+  Query: {
+    user: (parent, { id }, { loaders }) => loaders.users.load(id),
+  },
+  User: {
+    posts: (user, args, { loaders }) =>
+      loaders.posts.loadMany(user.postIds),
+  },
+  Post: {
+    author: (post, args, { loaders }) =>
+      loaders.users.load(post.authorId),
+    comments: (post, args, { loaders }) =>
+      loaders.comments.loadMany(post.commentIds),
+  },
+};
+
+// Express middleware
+app.use('/graphql', (req, res) => {
+  const loaders = createLoaders(); // Fresh loaders per request
+  return graphqlHTTP({
+    schema,
+    rootValue: resolvers,
+    context: { loaders },
+  })(req, res);
+});
+```
+
+### Custom cache key for complex objects
+
+```typescript
+interface ProductQuery {
+  id: string;
+  currency: string;
+  includeReviews?: boolean;
+}
+
+const productLoader = new DataLoader<ProductQuery, Product, string>(
+  async (queries) => {
+    // Group by options for efficient fetching
+    const results = await Promise.all(
+      queries.map(query => fetchProduct(query))
+    );
+    return results;
+  },
+  {
+    // Custom cache key to handle complex query objects
+    cacheKeyFn: (query) =>
+      `${query.id}-${query.currency}-${query.includeReviews || false}`,
+  }
+);
+
+// Same product with different currencies cached separately
+const productUSD = await productLoader.load({
+  id: 'prod-1',
+  currency: 'USD'
+});
+const productEUR = await productLoader.load({
+  id: 'prod-1',
+  currency: 'EUR'
+});
+```
+
+### Custom batch scheduling
+
+```typescript
+// Immediate batching for time-sensitive operations
+const immediateLoader = new DataLoader(batchLoad, {
+  batchScheduler: (callback) => callback(), // No delay
+});
+
+// Debounced batching for less critical operations
+const debouncedLoader = new DataLoader(batchLoad, {
+  batchScheduler: (callback) => {
+    setTimeout(callback, 10); // 10ms debounce
+  },
+});
+
+// RAF-based batching for UI operations
+const uiLoader = new DataLoader(batchLoad, {
+  batchScheduler: (callback) => {
+    if (typeof requestAnimationFrame !== 'undefined') {
+      requestAnimationFrame(callback);
+    } else {
+      setImmediate(callback);
+    }
+  },
+});
+```
+
+### Disabling cache for sensitive data
+
+```typescript
+// Disable caching for frequently changing data
+const stockPriceLoader = new DataLoader(batchLoadStockPrices, {
+  cache: false, // Always fetch fresh data
+});
+
+// Or use a custom cache with TTL
+class TtlMap<K, V> implements MapLike<K, V> {
+  private cache = new Map<K, { value: V; expires: number }>();
+  private ttl: number;
+
+  constructor(ttlMs: number) {
+    this.ttl = ttlMs;
+  }
+
+  get(key: K): V | undefined {
+    const item = this.cache.get(key);
+    if (!item) return undefined;
+
+    if (Date.now() > item.expires) {
+      this.cache.delete(key);
+      return undefined;
+    }
+
+    return item.value;
+  }
+
+  set(key: K, value: V): void {
+    this.cache.set(key, {
+      value,
+      expires: Date.now() + this.ttl,
+    });
+  }
+
+  delete(key: K): boolean {
+    return this.cache.delete(key);
+  }
+
+  clear(): void {
+    this.cache.clear();
+  }
+}
+
+const cachedLoader = new DataLoader(batchLoadPrices, {
+  cacheMap: new TtlMap(60000), // 1 minute TTL
+});
+```
+
+## Playground
+
+<WingletPlayground
+  dependencies={{ "@winglet/data-loader": "0.10.0" }}
+  code={`import { DataLoader } from '@winglet/data-loader';
+
+// Create a batch loading function
+async function batchLoadUsers(userIds: string[]): Promise<User[]> {
+  const users = await db.query(
+    'SELECT * FROM users WHERE id IN (?)',
+    [userIds]
+  );
+
+  // IMPORTANT: Return array in same order as input keys
+  return userIds.map(id =>
+    users.find(user => user.id === id) || new Error(\`User \${id} not found\`)
+  );
+}
+
+// Create the DataLoader instance
+const userLoader = new DataLoader(batchLoadUsers, {
+  maxBatchSize: 100, // Limit SQL query size
+  cache: true,       // Enable caching (default)
+});
+
+// Load individual users - automatically batched
+const user1 = await userLoader.load('user-1');
+const user2 = await userLoader.load('user-2');
+const user3 = await userLoader.load('user-3');
+// Results in ONE database query: SELECT * FROM users WHERE id IN ('user-1', 'user-2', 'user-3')`}
+/>
+
+## Notes
+
+**Key Benefits:**
+- **Batching**: Multiple loads are automatically batched into a single request
+- **Caching**: Results are cached to prevent duplicate fetches within a request
+- **Deduplication**: Identical keys in the same batch are deduplicated
+- **Error Boundaries**: Individual errors don't fail the entire batch
+
+**Important Considerations:**
+- Batch functions must return arrays in the same order as input keys
+- Use Error instances to represent individual failures
+- Create new DataLoader instances per request to avoid cross-request pollution
+- Consider disabling cache for frequently changing data
+- Prime the cache after mutations to keep it consistent

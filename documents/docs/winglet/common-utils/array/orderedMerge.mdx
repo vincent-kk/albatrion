@@ -1,0 +1,47 @@
+---
+title: 'orderedMerge'
+sidebar_label: 'orderedMerge'
+---
+<!-- sync-winglet-docs:auto -->
+
+import WingletPlayground from '@site/src/components/WingletPlayground';
+
+# orderedMerge
+
+Merges two string arrays with priority-based ordering and duplicate removal.
+This function is used when merging object property keys in JSON schema,
+preserving the order of important properties defined in the schema while including additional properties.
+
+## Signature
+
+```typescript
+const orderedMerge: (preferred: string[], source: string[]) => string[]
+```
+
+## Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `preferredKeys` | `-` | Array of keys to be placed first (order is preserved) |
+| `keys` | `-` | Array of additional keys to merge |
+
+## Returns
+
+Array of keys with duplicates removed and sorted by priority
+
+## Examples
+
+### Example 1
+
+```typescript
+orderedMerge(['name', 'email'], ['id', 'name', 'phone'])
+// Result: ['name', 'email', 'id', 'phone']
+```
+
+## Playground
+
+<WingletPlayground
+  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  code={`orderedMerge(['name', 'email'], ['id', 'name', 'phone'])
+// Result: ['name', 'email', 'id', 'phone']`}
+/>

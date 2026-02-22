@@ -1,0 +1,25 @@
+---
+title: 'Falsy'
+sidebar_label: 'Falsy'
+---
+<!-- sync-winglet-docs:auto -->
+
+import WingletPlayground from '@site/src/components/WingletPlayground';
+
+# Falsy
+
+Union type representing all falsy values in JavaScript.
+Includes all falsy values:
+- false (boolean false)
+- null (null value)
+- undefined (undefined value)
+- '' (empty string)
+- 0 (number zero, including -0 and +0)
+- 0n (BigInt zero)
+- NaN (Not a Number) - Note: NaN is of type number but falsy
+
+## Signature
+
+```typescript
+export type Falsy = false | null | undefined | '' | 0 | 0n | typeof NaN
+```

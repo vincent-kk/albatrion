@@ -1,0 +1,32 @@
+---
+title: 'DataLoaderOptions'
+sidebar_label: 'DataLoaderOptions'
+---
+<!-- sync-winglet-docs:auto -->
+
+import WingletPlayground from '@site/src/components/WingletPlayground';
+
+# DataLoaderOptions
+
+DataLoader configuration options
+
+## Signature
+
+```typescript
+export type DataLoaderOptions<Key, Value, CacheKey = Key> = {
+    /** The name of the loader */
+    name?: string;
+    /** Cache map object or false (disabled) */
+    cache?: MapLike<CacheKey, Promise<Value>> | false;
+    /** Function for scheduling batch execution */
+    batchScheduler?: Fn<[task: Fn]>;
+    /** Function that converts loader keys to cache keys */
+    cacheKeyFn?: Fn<[key: Key], CacheKey>;
+} & ({
+    /** Maximum batch size to process at once */
+    maxBatchSize?: number;
+} | {
+    /** Option to disable batch processing */
+    disableBatch: true;
+})
+```

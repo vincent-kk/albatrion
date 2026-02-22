@@ -1,0 +1,27 @@
+---
+title: 'DebouncedFn'
+sidebar_label: 'DebouncedFn'
+---
+<!-- sync-winglet-docs:auto -->
+
+import WingletPlayground from '@site/src/components/WingletPlayground';
+
+# DebouncedFn
+
+Interface for a debounced function
+
+## Signature
+
+```typescript
+interface DebouncedFn<F extends Fn<any[]>> {
+    /**
+     * Call the debounced function
+     * @param args - Arguments to pass to the original function
+     */
+    (...args: Parameters<F>): void;
+    /** Execute the function immediately, ignoring the debounce timer */
+    execute: Fn;
+    /** Cancel scheduled function execution and reset the timer */
+    clear: Fn;
+}
+```

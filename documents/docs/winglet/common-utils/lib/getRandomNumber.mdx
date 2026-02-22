@@ -1,0 +1,53 @@
+---
+title: 'getRandomNumber'
+sidebar_label: 'getRandomNumber'
+---
+<!-- sync-winglet-docs:auto -->
+
+import WingletPlayground from '@site/src/components/WingletPlayground';
+
+# getRandomNumber
+
+Generates a random integer within an inclusive range.
+Uses Math.random() with proper scaling and flooring to ensure uniform
+distribution across the specified range with both bounds inclusive.
+
+## Signature
+
+```typescript
+const getRandomNumber: (min: number, max: number) => number
+```
+
+## Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `min` | `-` | Minimum value (inclusive) |
+| `max` | `-` | Maximum value (inclusive) |
+
+## Returns
+
+Random integer between min and max
+
+## Examples
+
+### Integer generation
+
+```typescript
+import { getRandomNumber } from '@winglet/common-utils';
+
+console.log(getRandomNumber(1, 10)); // 7 (between 1-10)
+console.log(getRandomNumber(0, 100)); // 42 (between 0-100)
+console.log(getRandomNumber(-5, 5)); // -2 (between -5 to 5)
+```
+
+## Playground
+
+<WingletPlayground
+  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  code={`import { getRandomNumber } from '@winglet/common-utils';
+
+console.log(getRandomNumber(1, 10)); // 7 (between 1-10)
+console.log(getRandomNumber(0, 100)); // 42 (between 0-100)
+console.log(getRandomNumber(-5, 5)); // -2 (between -5 to 5)`}
+/>

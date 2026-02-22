@@ -1,0 +1,53 @@
+---
+title: 'getRandomString'
+sidebar_label: 'getRandomString'
+---
+<!-- sync-winglet-docs:auto -->
+
+import WingletPlayground from '@site/src/components/WingletPlayground';
+
+# getRandomString
+
+Generates a random string using specified radix conversion.
+Creates pseudo-random strings by converting Math.random() output to the
+specified radix and removing the '0.' prefix. Higher radix values produce
+shorter strings with more character variety.
+
+## Signature
+
+```typescript
+const getRandomString: (radix?: number) => string
+```
+
+## Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `radix` | `-` | Base for number conversion (2-36, defaults to 32) |
+
+## Returns
+
+Random string without decimal prefix
+
+## Examples
+
+### String generation
+
+```typescript
+import { getRandomString } from '@winglet/common-utils';
+
+console.log(getRandomString()); // 'k2j4h7m' (base 32)
+console.log(getRandomString(16)); // 'a7f3d9e2' (hexadecimal)
+console.log(getRandomString(36)); // 'xyz123' (alphanumeric)
+```
+
+## Playground
+
+<WingletPlayground
+  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  code={`import { getRandomString } from '@winglet/common-utils';
+
+console.log(getRandomString()); // 'k2j4h7m' (base 32)
+console.log(getRandomString(16)); // 'a7f3d9e2' (hexadecimal)
+console.log(getRandomString(36)); // 'xyz123' (alphanumeric)`}
+/>

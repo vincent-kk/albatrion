@@ -1,0 +1,43 @@
+---
+title: 'SchemaEntry'
+sidebar_label: 'SchemaEntry'
+---
+<!-- sync-winglet-docs:auto -->
+
+import WingletPlayground from '@site/src/components/WingletPlayground';
+
+# SchemaEntry
+
+## Signature
+
+```typescript
+export type SchemaEntry<Schema extends UnknownSchema = UnknownSchema> = {
+    /** The schema node being processed */
+    schema: Schema;
+    /** JSON pointer path of the current node */
+    path: string;
+    /** Data pointer path corresponding to the current node */
+    dataPath: string;
+    /** Traversal depth */
+    depth: number;
+    /** Whether there is a reference */
+    hasReference?: boolean;
+    /** Processed reference path */
+    referencePath?: string;
+    /** Whether reference is resolved */
+    referenceResolved?: boolean;
+} & ({
+    keyword: CompositionKeyword;
+    variant: number;
+} | {
+    keyword: ItemsKeyword;
+    variant?: number;
+} | {
+    keyword: DefinitionKeyword | PropertiesKeyword;
+    variant: string;
+} | {
+    keyword: ConditionalKeyword | AdditionalPropertiesKeyword;
+} | {
+    keyword?: never;
+})
+```

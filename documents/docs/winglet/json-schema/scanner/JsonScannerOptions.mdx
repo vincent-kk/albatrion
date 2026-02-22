@@ -1,0 +1,33 @@
+---
+title: 'JsonScannerOptions'
+sidebar_label: 'JsonScannerOptions'
+---
+<!-- sync-winglet-docs:auto -->
+
+import WingletPlayground from '@site/src/components/WingletPlayground';
+
+# JsonScannerOptions
+
+## Signature
+
+```typescript
+interface JsonScannerOptions<Schema extends UnknownSchema = UnknownSchema, ContextType = void> {
+    /** Schema node filtering function */
+    filter?: Fn<[entry: SchemaEntry<Schema>, context?: ContextType], boolean>;
+    /** Function to mutate schema */
+    mutate?: Fn<[
+        entry: SchemaEntry<Schema>,
+        context?: ContextType
+    ], Schema | void>;
+    /** Function to resolve $ref references */
+    resolveReference?: Fn<[
+        reference: string,
+        entry: SchemaEntry<Schema>,
+        context?: ContextType
+    ], Schema | undefined>;
+    /** Maximum traversal depth */
+    maxDepth?: number;
+    /** Context object passed to visitors and filters */
+    context?: ContextType;
+}
+```

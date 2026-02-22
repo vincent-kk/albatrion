@@ -1,0 +1,18 @@
+---
+title: 'AddPatch'
+sidebar_label: 'AddPatch'
+---
+<!-- sync-winglet-docs:auto -->
+
+import WingletPlayground from '@site/src/components/WingletPlayground';
+
+# AddPatch
+
+## Signature
+
+```typescript
+interface AddPatch<Value> extends BasePatch {
+    op: typeof Operation.ADD;
+    value: Value;
+}
+```

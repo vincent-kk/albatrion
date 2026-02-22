@@ -1,0 +1,177 @@
+---
+title: 'cancelMacrotask'
+sidebar_label: 'cancelMacrotask'
+---
+<!-- sync-winglet-docs:auto -->
+
+import WingletPlayground from '@site/src/components/WingletPlayground';
+
+# cancelMacrotask
+
+Cancels a previously scheduled macrotask using its numeric identifier.
+Provides reliable cancellation of pending macrotask execution across different JavaScript
+environments. Automatically uses the appropriate cancellation method (native `clearImmediate` in
+Node.js, MessageChannelScheduler's `clearImmediate` in browsers) based on the scheduling
+mechanism. Safe to call multiple times with the same ID or with invalid IDs.
+
+## Signature
+
+```typescript
+const cancelMacrotask: Fn<[id: number], void>
+```
+
+## Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `id` | `-` | Numeric identifier returned by `scheduleMacrotask` |
+
+## Examples
+
+### Basic task cancellation
+
+```typescript
+import { scheduleMacrotask, cancelMacrotask } from '@winglet/common-utils';
+
+// Schedule a task
+const taskId = scheduleMacrotask(() => {
+  console.log('This will not execute');
+});
+
+// Cancel before execution
+cancelMacrotask(taskId);
+
+// Task is safely cancelled, no output
+```
+
+### Batch cancellation with MessageChannelScheduler
+
+```typescript
+// Schedule multiple tasks that will be batched
+const task1 = scheduleMacrotask(() => console.log('Task 1'));
+const task2 = scheduleMacrotask(() => console.log('Task 2'));
+const task3 = scheduleMacrotask(() => console.log('Task 3'));
+
+// Cancel individual task from batch
+cancelMacrotask(task2);
+
+// Only task1 and task3 will execute
+// MessageChannelScheduler handles partial batch cancellation efficiently
+```
+
+### Conditional cancellation patterns
+
+```typescript
+// Timeout-based cancellation
+function scheduleWithTimeout<T>(
+  task: () => T,
+  timeoutMs: number
+): Promise<T> {
+  return new Promise((resolve, reject) => {
+    let completed = false;
+
+    // Schedule main task with MessageChannelScheduler optimization
+    const taskId = scheduleMacrotask(() => {
+      if (!completed) {
+        completed = true;
+        try {
+          resolve(task());
+        } catch (error) {
+          reject(error);
+        }
+      }
+    });
+
+    // Schedule timeout cancellation
+    setTimeout(() => {
+      if (!completed) {
+        completed = true;
+        cancelMacrotask(taskId);
+        reject(new Error('Task timeout'));
+      }
+    }, timeoutMs);
+  });
+}
+```
+
+### Resource management with efficient cancellation
+
+```typescript
+// MessageChannelScheduler-optimized batch processor
+class OptimizedBatchProcessor {
+  private taskIds: Set<number> = new Set();
+  private cancelled = false;
+
+  processBatches(data: any[], batchSize: number) {
+    for (let i = 0; i < data.length; i += batchSize) {
+      const batch = data.slice(i, i + batchSize);
+
+      // Tasks scheduled synchronously will be automatically batched
+      const taskId = scheduleMacrotask(() => {
+        if (!this.cancelled) {
+          this.processBatch(batch);
+          this.taskIds.delete(taskId);
+        }
+      });
+
+      this.taskIds.add(taskId);
+    }
+  }
+
+  cancel() {
+    this.cancelled = true;
+    // Efficient O(1) cancellation per task
+    this.taskIds.forEach(id => cancelMacrotask(id));
+    this.taskIds.clear();
+  }
+
+  private processBatch(batch: any[]) {
+    // Process batch logic
+  }
+}
+```
+
+## Playground
+
+<WingletPlayground
+  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  code={`import { scheduleMacrotask, cancelMacrotask } from '@winglet/common-utils';
+
+// Schedule a task
+const taskId = scheduleMacrotask(() => {
+  console.log('This will not execute');
+});
+
+// Cancel before execution
+cancelMacrotask(taskId);
+
+// Task is safely cancelled, no output`}
+/>
+
+## Notes
+
+**Cancellation Guarantees:**
+- **Timing**: Safe to cancel at any point before task execution
+- **Memory**: Automatic cleanup of cancelled tasks
+- **Safety**: No errors thrown for invalid or already-executed IDs
+- **Atomicity**: Cancellation is immediate and irreversible
+- **Batch Support**: Efficient individual task cancellation from batched groups
+
+**Platform Behavior:**
+- **Node.js**: Uses native `clearImmediate` for tasks scheduled with `setImmediate`
+- **Browsers**: Uses MessageChannelScheduler's `clearImmediate` with O(1) performance
+- **Cross-platform**: Consistent API regardless of underlying implementation
+- **Error Handling**: Silent failure for invalid IDs (matches native behavior)
+
+**Performance Characteristics:**
+- **Time Complexity**: O(1) for cancellation operation
+- **Space Complexity**: O(1) per cancelled task
+- **Overhead**: Negligible cancellation cost
+- **Memory**: Immediate cleanup of cancelled task references
+- **Batch Efficiency**: Individual cancellation doesn't affect batch performance
+
+**MessageChannelScheduler Cancellation Features:**
+- **Precise Control**: Cancel individual tasks from batched groups
+- **Memory Efficiency**: Immediate cleanup of cancelled task references
+- **No Side Effects**: Cancellation doesn't affect other tasks in queue
+- **Consistent Behavior**: Same cancellation semantics as native implementations

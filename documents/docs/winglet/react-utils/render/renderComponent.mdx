@@ -1,0 +1,29 @@
+---
+title: 'renderComponent'
+sidebar_label: 'renderComponent'
+---
+<!-- sync-winglet-docs:auto -->
+
+import WingletPlayground from '@site/src/components/WingletPlayground';
+
+# renderComponent
+
+Appropriately renders ReactNode, component types, or component instances.
+Handles different input types and returns the appropriate rendered output.
+
+## Signature
+
+```typescript
+const renderComponent: <P extends object>(Component: ReactComponent<P>, props?: P) => ReactNode
+```
+
+## Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `Component` | `-` | The ReactNode or component to render |
+| `props` | `-` | Props to pass to the component |
+
+## Returns
+
+The rendered ReactNode or null

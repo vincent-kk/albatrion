@@ -1,0 +1,48 @@
+---
+title: 'isNonNullableStringSchema'
+sidebar_label: 'isNonNullableStringSchema'
+---
+<!-- sync-winglet-docs:auto -->
+
+import WingletPlayground from '@site/src/components/WingletPlayground';
+
+# isNonNullableStringSchema
+
+Determines whether a given JSON schema represents a non-nullable string type.
+Validates that the schema's `type` property is set to `'string'` (not an array),
+indicating it describes non-nullable string values.
+
+## Signature
+
+```typescript
+const isNonNullableStringSchema: (schema: UnknownSchema) => schema is NonNullableStringSchema
+```
+
+## Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `schema` | `-` | The JSON schema object to inspect |
+
+## Returns
+
+Type-safe boolean indicating whether the schema is a non-nullable StringSchema
+
+## Examples
+
+### Example 1
+
+```typescript
+isNonNullableStringSchema({ type: 'string' }); // true
+isNonNullableStringSchema({ type: ['string', 'null'] }); // false
+isNonNullableStringSchema({ type: 'number' }); // false
+```
+
+## Playground
+
+<WingletPlayground
+  dependencies={{ "@winglet/json-schema": "0.10.0" }}
+  code={`isNonNullableStringSchema({ type: 'string' }); // true
+isNonNullableStringSchema({ type: ['string', 'null'] }); // false
+isNonNullableStringSchema({ type: 'number' }); // false`}
+/>

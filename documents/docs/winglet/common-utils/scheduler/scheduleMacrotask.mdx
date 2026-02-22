@@ -1,0 +1,247 @@
+---
+title: 'scheduleMacrotask'
+sidebar_label: 'scheduleMacrotask'
+---
+<!-- sync-winglet-docs:auto -->
+
+import WingletPlayground from '@site/src/components/WingletPlayground';
+
+# scheduleMacrotask
+
+Schedules a callback function to execute in the next macrotask cycle with optimized MessageChannel-based timing.
+Automatically selects the most appropriate macrotask scheduling mechanism based on the runtime
+environment. In Node.js, uses native `setImmediate` for true macrotask semantics that execute after
+I/O events. In browsers and other environments, uses a custom MessageChannelScheduler-based
+`setImmediate` implementation that provides immediate macro task execution with automatic batching
+optimization, significantly outperforming traditional `setTimeout(0)` approaches.
+
+## Signature
+
+```typescript
+const scheduleMacrotask: Fn<[callback: Fn<[], void>], number>
+```
+
+## Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `callback` | `-` | Function to execute in the next macrotask cycle |
+
+## Returns
+
+Numeric ID that can be used with `cancelMacrotask` to cancel execution
+
+## Examples
+
+### Basic macrotask scheduling
+
+```typescript
+import { scheduleMacrotask } from '@winglet/common-utils';
+
+console.log('1: Synchronous code');
+
+// Schedule macrotask
+const taskId = scheduleMacrotask(() => {
+  console.log('4: Macrotask executed');
+});
+
+// Schedule microtask for comparison
+Promise.resolve().then(() => {
+  console.log('3: Microtask executed');
+});
+
+console.log('2: More synchronous code');
+
+// Output order:
+// 1: Synchronous code
+// 2: More synchronous code
+// 3: Microtask executed
+// 4: Macrotask executed
+```
+
+### Automatic batching demonstration
+
+```typescript
+// These tasks will be automatically batched by MessageChannelScheduler
+const task1 = scheduleMacrotask(() => {
+  console.log('Task 1 - batched execution');
+});
+
+const task2 = scheduleMacrotask(() => {
+  console.log('Task 2 - batched execution');
+});
+
+const task3 = scheduleMacrotask(() => {
+  console.log('Task 3 - batched execution');
+});
+
+// All three tasks execute together in single macro task cycle
+// More efficient than individual setTimeout calls
+```
+
+### Performance comparison with traditional approaches
+
+```typescript
+// MessageChannelScheduler-based (preferred)
+const startTime = performance.now();
+scheduleMacrotask(() => {
+  const endTime = performance.now();
+  console.log(`MessageChannel delay: ${endTime - startTime}ms`);
+  // Typically ~0.1-1ms in browsers
+});
+
+// Traditional setTimeout (slower)
+const startTime2 = performance.now();
+setTimeout(() => {
+  const endTime2 = performance.now();
+  console.log(`setTimeout delay: ${endTime2 - startTime2}ms`);
+  // Typically ~4-10ms in browsers due to minimum delay
+}, 0);
+```
+
+### UI updates and rendering coordination
+
+```typescript
+// Defer heavy computation to avoid blocking UI
+function processLargeDataset(data: any[], callback: (result: any) => void) {
+  const batchSize = 1000;
+  let index = 0;
+  const results: any[] = [];
+
+  function processBatch() {
+    const end = Math.min(index + batchSize, data.length);
+
+    // Process batch synchronously
+    for (let i = index; i < end; i++) {
+      results.push(processItem(data[i]));
+    }
+
+    index = end;
+
+    if (index < data.length) {
+      // Schedule next batch with optimal timing
+      scheduleMacrotask(processBatch);
+    } else {
+      callback(results);
+    }
+  }
+
+  scheduleMacrotask(processBatch);
+}
+
+// DOM manipulation coordination
+function updateUIAfterDataChange(newData: any) {
+  // Update data model (synchronous)
+  updateModel(newData);
+
+  // Schedule DOM updates for next macrotask
+  scheduleMacrotask(() => {
+    updateDOM();
+
+    // Schedule analytics after DOM is updated
+    scheduleMacrotask(() => {
+      trackUserInteraction('data-updated');
+    });
+  });
+}
+```
+
+### Event loop execution order with MessageChannel optimization
+
+```typescript
+const executionOrder: string[] = [];
+
+// Synchronous execution
+executionOrder.push('sync-1');
+
+// Macrotask (runs after microtasks, with batching)
+scheduleMacrotask(() => {
+  executionOrder.push('macrotask-1');
+
+  // Nested microtask (runs before next macrotask)
+  queueMicrotask(() => {
+    executionOrder.push('nested-microtask');
+  });
+
+  // Nested macrotask (runs in subsequent cycle)
+  scheduleMacrotask(() => {
+    executionOrder.push('nested-macrotask');
+  });
+});
+
+// Microtask (runs before macro tasks)
+queueMicrotask(() => {
+  executionOrder.push('microtask-1');
+});
+
+// Another macrotask (batched with first if scheduled synchronously)
+scheduleMacrotask(() => {
+  executionOrder.push('macrotask-2');
+});
+
+executionOrder.push('sync-2');
+
+// Final order: ['sync-1', 'sync-2', 'microtask-1', 'macrotask-1', 'macrotask-2', 'nested-microtask', 'nested-macrotask']
+```
+
+## Playground
+
+<WingletPlayground
+  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  code={`import { scheduleMacrotask } from '@winglet/common-utils';
+
+console.log('1: Synchronous code');
+
+// Schedule macrotask
+const taskId = scheduleMacrotask(() => {
+  console.log('4: Macrotask executed');
+});
+
+// Schedule microtask for comparison
+Promise.resolve().then(() => {
+  console.log('3: Microtask executed');
+});
+
+console.log('2: More synchronous code');
+
+// Output order:
+// 1: Synchronous code
+// 2: More synchronous code
+// 3: Microtask executed
+// 4: Macrotask executed`}
+/>
+
+## Notes
+
+**Event Loop Integration:**
+- **Execution Timing**: Runs after all microtasks but before next I/O polling
+- **Priority**: Lower than microtasks, higher than I/O callbacks
+- **Concurrency**: Non-blocking, allows other work between scheduled tasks
+- **Rendering**: Occurs before browser rendering in most implementations
+- **Batching**: MessageChannelScheduler automatically groups synchronous schedules
+
+**Platform Behavior:**
+- **Node.js (native setImmediate)**: Executes after I/O events, true macrotask semantics
+- **Browsers (MessageChannelScheduler)**: Immediate execution without 4ms minimum delay
+- **Web Workers**: Consistent MessageChannelScheduler behavior across all environments
+- **Electron**: Node.js behavior in main process, MessageChannelScheduler in renderers
+
+**Performance Characteristics:**
+- **Time Complexity**: O(1) for scheduling operation
+- **Space Complexity**: O(1) per scheduled task
+- **Scheduling Overhead**: ~0.001ms in Node.js, ~0.01ms with MessageChannelScheduler
+- **Memory Usage**: Minimal, automatic cleanup after execution
+- **Batching Efficiency**: Automatic optimization for synchronously scheduled tasks
+
+**Comparison with Alternatives:**
+- **setTimeout(0)**: MessageChannelScheduler is 4-10x faster, no minimum delay
+- **Promise.resolve().then()**: Executes earlier (microtask queue)
+- **requestAnimationFrame**: Tied to browser rendering, different timing
+- **Native MessageChannel**: More complex setup, similar timing characteristics
+
+**MessageChannelScheduler Advantages:**
+- **No Minimum Delay**: Executes immediately after microtasks
+- **Automatic Batching**: Groups synchronously scheduled tasks for efficiency
+- **Memory Efficient**: Optimized task management and cleanup
+- **Error Isolation**: Task errors don't affect other tasks in batch
+- **Consistent Timing**: Predictable execution across environments

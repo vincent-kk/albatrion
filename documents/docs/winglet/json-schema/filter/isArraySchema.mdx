@@ -1,0 +1,48 @@
+---
+title: 'isArraySchema'
+sidebar_label: 'isArraySchema'
+---
+<!-- sync-winglet-docs:auto -->
+
+import WingletPlayground from '@site/src/components/WingletPlayground';
+
+# isArraySchema
+
+Determines whether a given JSON schema represents an array type (nullable or non-nullable).
+This is a combined filter that matches both `{ type: 'array' }` and
+`{ type: ['array', 'null'] }` schemas.
+
+## Signature
+
+```typescript
+const isArraySchema: (schema: UnknownSchema) => schema is ArraySchema
+```
+
+## Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `schema` | `-` | The JSON schema object to inspect |
+
+## Returns
+
+Type-safe boolean indicating whether the schema is an array schema (nullable or not)
+
+## Examples
+
+### Example 1
+
+```typescript
+isArraySchema({ type: 'array', items: { type: 'string' } }); // true
+isArraySchema({ type: ['array', 'null'] }); // true
+isArraySchema({ type: 'object' }); // false
+```
+
+## Playground
+
+<WingletPlayground
+  dependencies={{ "@winglet/json-schema": "0.10.0" }}
+  code={`isArraySchema({ type: 'array', items: { type: 'string' } }); // true
+isArraySchema({ type: ['array', 'null'] }); // true
+isArraySchema({ type: 'object' }); // false`}
+/>

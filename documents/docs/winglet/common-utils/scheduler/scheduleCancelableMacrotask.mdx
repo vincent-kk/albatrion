@@ -1,0 +1,215 @@
+---
+title: 'scheduleCancelableMacrotask'
+sidebar_label: 'scheduleCancelableMacrotask'
+---
+<!-- sync-winglet-docs:auto -->
+
+import WingletPlayground from '@site/src/components/WingletPlayground';
+
+# scheduleCancelableMacrotask
+
+Creates a cancellable macrotask with a fluent API that returns a cancellation function.
+Schedules a callback for execution in the next macrotask cycle using MessageChannelScheduler
+optimization and returns a cancellation function that can prevent execution. Uses a two-layer
+cancellation strategy: immediate task cancellation via the platform API and a boolean flag
+to prevent execution if the task has already been queued but not yet cancelled. Leverages
+MessageChannelScheduler's automatic batching for optimal performance.
+
+## Signature
+
+```typescript
+const scheduleCancelableMacrotask: (callback: Fn) => Fn
+```
+
+## Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `callback` | `-` | Function to execute in the next macrotask cycle |
+
+## Returns
+
+Cancellation function that prevents execution when called
+
+## Examples
+
+### Basic cancellable task with MessageChannelScheduler
+
+```typescript
+import { scheduleCancelableMacrotask } from '@winglet/common-utils';
+
+// Schedule a task and get cancellation function
+const cancelTask = scheduleCancelableMacrotask(() => {
+  console.log('This may or may not execute');
+});
+
+// Cancel the task before execution
+cancelTask();
+// No output - task was cancelled
+
+// Alternative: let it execute naturally with batching optimization
+const cancelTask2 = scheduleCancelableMacrotask(() => {
+  console.log('This will execute in optimized batch');
+});
+// Don't call cancelTask2() - output: "This will execute in optimized batch"
+```
+
+### Batch processing with individual cancellation
+
+```typescript
+// Schedule multiple tasks that benefit from automatic batching
+const cancellations: (() => void)[] = [];
+
+for (let i = 0; i < 10; i++) {
+  const cancel = scheduleCancelableMacrotask(() => {
+    console.log(`Processing item ${i}`);
+  });
+  cancellations.push(cancel);
+}
+
+// Cancel specific items (e.g., items 3, 5, 7)
+[3, 5, 7].forEach(index => {
+  if (cancellations[index]) {
+    cancellations[index]();
+  }
+});
+
+// Remaining tasks execute in batched manner for optimal performance
+```
+
+### Real-time data processing with cancellation
+
+```typescript
+// MessageChannelScheduler-optimized data processor
+class RealTimeProcessor {
+  private pendingCancellations = new Set<() => void>();
+
+  processDataStream(dataItems: any[]) {
+    // Clear previous processing
+    this.cancelAll();
+
+    // Schedule processing for each item (will be automatically batched)
+    dataItems.forEach((item, index) => {
+      const cancel = scheduleCancelableMacrotask(() => {
+        this.processItem(item);
+        this.pendingCancellations.delete(cancel);
+      });
+
+      this.pendingCancellations.add(cancel);
+    });
+  }
+
+  cancelItem(predicate: (item: any) => boolean) {
+    // Selective cancellation based on business logic
+    // MessageChannelScheduler handles efficient individual cancellation
+  }
+
+  cancelAll() {
+    this.pendingCancellations.forEach(cancel => cancel());
+    this.pendingCancellations.clear();
+  }
+
+  private processItem(item: any) {
+    // Item processing logic
+  }
+}
+```
+
+### UI interaction with optimized scheduling
+
+```typescript
+// User interaction handler with batched updates
+class InteractiveUI {
+  private pendingUpdates = new Map<string, () => void>();
+
+  scheduleUpdate(componentId: string, updateFn: () => void) {
+    // Cancel existing update for this component
+    const existingCancel = this.pendingUpdates.get(componentId);
+    if (existingCancel) {
+      existingCancel();
+    }
+
+    // Schedule new update (benefits from MessageChannelScheduler batching)
+    const cancel = scheduleCancelableMacrotask(() => {
+      updateFn();
+      this.pendingUpdates.delete(componentId);
+    });
+
+    this.pendingUpdates.set(componentId, cancel);
+    return cancel;
+  }
+
+  cancelUpdate(componentId: string): boolean {
+    const cancel = this.pendingUpdates.get(componentId);
+    if (cancel) {
+      cancel();
+      this.pendingUpdates.delete(componentId);
+      return true;
+    }
+    return false;
+  }
+
+  destroy() {
+    // Cancel all pending updates efficiently
+    this.pendingUpdates.forEach(cancel => cancel());
+    this.pendingUpdates.clear();
+  }
+}
+```
+
+## Playground
+
+<WingletPlayground
+  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  code={`import { scheduleCancelableMacrotask } from '@winglet/common-utils';
+
+// Schedule a task and get cancellation function
+const cancelTask = scheduleCancelableMacrotask(() => {
+  console.log('This may or may not execute');
+});
+
+// Cancel the task before execution
+cancelTask();
+// No output - task was cancelled
+
+// Alternative: let it execute naturally with batching optimization
+const cancelTask2 = scheduleCancelableMacrotask(() => {
+  console.log('This will execute in optimized batch');
+});
+// Don't call cancelTask2() - output: "This will execute in optimized batch"`}
+/>
+
+## Notes
+
+**Cancellation Strategy:**
+- **Two-Layer Protection**: MessageChannelScheduler cancellation + execution guard boolean
+- **Race Condition Safe**: Handles cancellation before and during execution
+- **Memory Efficient**: Automatic cleanup of cancelled tasks
+- **Idempotent**: Safe to call cancellation function multiple times
+- **Batch Aware**: Individual cancellation doesn't affect batch performance
+
+**MessageChannelScheduler Integration:**
+- **Automatic Batching**: Multiple synchronous schedules are automatically optimized
+- **Immediate Execution**: No artificial delays like setTimeout(0)
+- **Error Isolation**: Task errors don't affect other tasks in the batch
+- **Memory Optimization**: Efficient task management and cleanup
+- **Consistent Timing**: Predictable execution timing across environments
+
+**Performance Characteristics:**
+- **Time Complexity**: O(1) for scheduling and cancellation
+- **Space Complexity**: O(1) per scheduled task
+- **Memory Overhead**: ~40 bytes per task (closure + boolean flag)
+- **Cancellation Speed**: Immediate (no async overhead)
+- **Batch Efficiency**: Optimal performance for multiple synchronous schedules
+
+**Comparison with Alternatives:**
+- **setTimeout-based**: 4-10x faster execution, automatic batching
+- **AbortController**: More complex API, larger memory footprint
+- **Promise cancellation**: Requires additional promise infrastructure
+- **Manual ID tracking**: More error-prone, requires external state management
+
+**Event Loop Integration:**
+- **Execution Timing**: After microtasks, optimized macro task execution
+- **Cancellation Timing**: Immediate, no event loop involvement
+- **Platform Behavior**: Inherits MessageChannelScheduler optimizations
+- **Nested Scheduling**: Full support for task scheduling within tasks with batching

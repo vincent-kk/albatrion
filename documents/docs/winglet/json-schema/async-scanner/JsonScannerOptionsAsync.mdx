@@ -1,0 +1,21 @@
+---
+title: 'JsonScannerOptionsAsync'
+sidebar_label: 'JsonScannerOptionsAsync'
+---
+<!-- sync-winglet-docs:auto -->
+
+import WingletPlayground from '@site/src/components/WingletPlayground';
+
+# JsonScannerOptionsAsync
+
+## Signature
+
+```typescript
+interface JsonScannerOptionsAsync<Schema extends UnknownSchema = UnknownSchema, ContextType = void> extends Omit<JsonScannerOptions<Schema, ContextType>, 'resolveReference'> {
+    resolveReference?: Fn<[
+        reference: string,
+        entry: SchemaEntry<Schema>,
+        context?: ContextType
+    ], Schema | Promise<Schema | undefined> | undefined>;
+}
+```

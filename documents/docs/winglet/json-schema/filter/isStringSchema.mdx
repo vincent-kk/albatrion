@@ -1,0 +1,48 @@
+---
+title: 'isStringSchema'
+sidebar_label: 'isStringSchema'
+---
+<!-- sync-winglet-docs:auto -->
+
+import WingletPlayground from '@site/src/components/WingletPlayground';
+
+# isStringSchema
+
+Determines whether a given JSON schema represents a string type (nullable or non-nullable).
+This is a combined filter that matches both `{ type: 'string' }` and
+`{ type: ['string', 'null'] }` schemas.
+
+## Signature
+
+```typescript
+const isStringSchema: (schema: UnknownSchema) => schema is StringSchema
+```
+
+## Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `schema` | `-` | The JSON schema object to inspect |
+
+## Returns
+
+Type-safe boolean indicating whether the schema is a string schema (nullable or not)
+
+## Examples
+
+### Example 1
+
+```typescript
+isStringSchema({ type: 'string' }); // true
+isStringSchema({ type: ['string', 'null'] }); // true
+isStringSchema({ type: 'number' }); // false
+```
+
+## Playground
+
+<WingletPlayground
+  dependencies={{ "@winglet/json-schema": "0.10.0" }}
+  code={`isStringSchema({ type: 'string' }); // true
+isStringSchema({ type: ['string', 'null'] }); // true
+isStringSchema({ type: 'number' }); // false`}
+/>

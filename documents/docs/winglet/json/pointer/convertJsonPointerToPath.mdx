@@ -1,0 +1,48 @@
+---
+title: 'convertJsonPointerToPath'
+sidebar_label: 'convertJsonPointerToPath'
+---
+<!-- sync-winglet-docs:auto -->
+
+import WingletPlayground from '@site/src/components/WingletPlayground';
+
+# convertJsonPointerToPath
+
+Converts JSON Pointer format to AJV dataPath format.
+
+## Signature
+
+```typescript
+const convertJsonPointerToPath: (jsonPointer: string) => string
+```
+
+## Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `jsonPointer` | `-` | JSON Pointer string to convert (e.g., "/data/users/0/name") |
+
+## Returns
+
+AJV dataPath format string (e.g., ".data.users[0].name")
+
+## Examples
+
+### Example 1
+
+```typescript
+convertJsonPointerToPath('/data/users/0/name') // '.data.users[0].name'
+convertJsonPointerToPath('/items/-/id')        // '.items[].id'
+convertJsonPointerToPath('/0/value')           // '.[0].value'
+convertJsonPointerToPath('/')                  // '.'
+```
+
+## Playground
+
+<WingletPlayground
+  dependencies={{ "@winglet/json": "0.10.0" }}
+  code={`convertJsonPointerToPath('/data/users/0/name') // '.data.users[0].name'
+convertJsonPointerToPath('/items/-/id')        // '.items[].id'
+convertJsonPointerToPath('/0/value')           // '.[0].value'
+convertJsonPointerToPath('/')                  // '.'`}
+/>

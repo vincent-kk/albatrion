@@ -1,0 +1,48 @@
+---
+title: 'isNullableObjectSchema'
+sidebar_label: 'isNullableObjectSchema'
+---
+<!-- sync-winglet-docs:auto -->
+
+import WingletPlayground from '@site/src/components/WingletPlayground';
+
+# isNullableObjectSchema
+
+Determines whether a given JSON schema represents a nullable object type.
+Validates that the schema's `type` property is an array containing both
+`'object'` and `'null'`, indicating it describes nullable object values.
+
+## Signature
+
+```typescript
+const isNullableObjectSchema: (schema: UnknownSchema) => schema is NullableObjectSchema
+```
+
+## Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `schema` | `-` | The JSON schema object to inspect |
+
+## Returns
+
+Type-safe boolean indicating whether the schema is a NullableObjectSchema
+
+## Examples
+
+### Example 1
+
+```typescript
+isNullableObjectSchema({ type: ['object', 'null'], properties: {} }); // true
+isNullableObjectSchema({ type: 'object' }); // false
+isNullableObjectSchema({ type: ['array', 'null'] }); // false
+```
+
+## Playground
+
+<WingletPlayground
+  dependencies={{ "@winglet/json-schema": "0.10.0" }}
+  code={`isNullableObjectSchema({ type: ['object', 'null'], properties: {} }); // true
+isNullableObjectSchema({ type: 'object' }); // false
+isNullableObjectSchema({ type: ['array', 'null'] }); // false`}
+/>

@@ -1,0 +1,27 @@
+---
+title: 'ThrottledFn'
+sidebar_label: 'ThrottledFn'
+---
+<!-- sync-winglet-docs:auto -->
+
+import WingletPlayground from '@site/src/components/WingletPlayground';
+
+# ThrottledFn
+
+Interface for a throttled function
+
+## Signature
+
+```typescript
+interface ThrottledFn<F extends Fn<any[]>> {
+    /**
+     * Call the throttled function
+     * @param args - Arguments to pass to the original function
+     */
+    (...args: Parameters<F>): void;
+    /** Execute the function immediately, ignoring the throttle timer */
+    execute: Fn;
+    /** Cancel scheduled function execution and reset the timer */
+    clear: Fn;
+}
+```

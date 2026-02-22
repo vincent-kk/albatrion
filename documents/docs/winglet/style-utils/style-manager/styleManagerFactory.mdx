@@ -1,0 +1,103 @@
+---
+title: 'styleManagerFactory'
+sidebar_label: 'styleManagerFactory'
+---
+<!-- sync-winglet-docs:auto -->
+
+import WingletPlayground from '@site/src/components/WingletPlayground';
+
+# styleManagerFactory
+
+Creates a style manager factory for a specific scope that can add and remove scoped CSS styles.
+This factory function returns a curried function that allows you to:
+- Add CSS styles to a specific scope with automatic scoping
+- Get a cleanup function to remove specific styles
+- Automatically batch style updates using requestAnimationFrame for optimal performance
+- Handle both modern CSSStyleSheet API and fallback style element injection
+The returned function adds CSS styles that are automatically scoped with `className=".${scopeId}"`,
+ensuring styles only apply to elements within that scope.
+
+## Signature
+
+```typescript
+const styleManagerFactory: (scopeId: string, config?: StyleManagerConfig) => Fn<[styleId: string, cssString: string, compress?: boolean], Fn>
+```
+
+## Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `scopeId` | `-` | The unique identifier for the style scope |
+
+## Returns
+
+A function that accepts (styleId, cssString) and returns a cleanup function
+
+## Examples
+
+### Example 1
+
+```typescript
+// Create a style manager for a specific component scope
+const addStyle = styleManagerFactory('header-component');
+
+// Add a style and get cleanup function
+const removeButtonStyle = addStyle('button-primary', `
+  .btn-primary {
+    background-color: blue;
+    color: white;
+    padding: 8px 16px;
+  }
+`);
+
+// The CSS will be scoped as:
+// .header-component .btn-primary { ... }
+
+// Later, remove the specific style
+removeButtonStyle();
+
+// Or destroy the entire scope
+destroyScope('header-component');
+```
+
+### Example 2
+
+```typescript
+// Multiple styles in the same scope
+const addStyle = styleManagerFactory('my-widget');
+
+const cleanupFns = [
+  addStyle('layout', '.container { display: flex; }'),
+  addStyle('theme', '.dark { background: #333; }'),
+  addStyle('responsive', '@media (max-width: 768px) { .container { flex-direction: column; } }')
+];
+
+// Clean up all styles
+cleanupFns.forEach(cleanup => cleanup());
+```
+
+## Playground
+
+<WingletPlayground
+  dependencies={{ "@winglet/style-utils": "0.10.0" }}
+  code={`// Create a style manager for a specific component scope
+const addStyle = styleManagerFactory('header-component');
+
+// Add a style and get cleanup function
+const removeButtonStyle = addStyle('button-primary', \`
+  .btn-primary {
+    background-color: blue;
+    color: white;
+    padding: 8px 16px;
+  }
+\`);
+
+// The CSS will be scoped as:
+// .header-component .btn-primary { ... }
+
+// Later, remove the specific style
+removeButtonStyle();
+
+// Or destroy the entire scope
+destroyScope('header-component');`}
+/>

@@ -1,0 +1,59 @@
+---
+title: 'sortWithReference'
+sidebar_label: 'sortWithReference'
+---
+<!-- sync-winglet-docs:auto -->
+
+import WingletPlayground from '@site/src/components/WingletPlayground';
+
+# sortWithReference
+
+Sorts an array based on the order defined in a reference array.
+Elements present in the reference array are sorted according to their order in the reference,
+while elements not in the reference array are placed after the sorted elements.
+
+## Signature
+
+```typescript
+const sortWithReference: <Value>(source: Value[], reference?: Value[]) => Value[]
+```
+
+## Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `source` | `-` | The array to be sorted |
+| `reference` | `-` | The reference array that defines the sorting order |
+
+## Returns
+
+A new sorted array without modifying the original target array
+
+## Examples
+
+### Example 1
+
+```typescript
+const target = ['c', 'a', 'b', 'd'];
+const reference = ['a', 'b', 'c'];
+const result = sortWithReference(target, reference);
+// Returns: ['a', 'b', 'c', 'd']
+```
+
+## Playground
+
+<WingletPlayground
+  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  code={`const target = ['c', 'a', 'b', 'd'];
+const reference = ['a', 'b', 'c'];
+const result = sortWithReference(target, reference);
+// Returns: ['a', 'b', 'c', 'd']`}
+/>
+
+## Notes
+
+- Time complexity: O(n + m) where n is target length and m is reference length
+- Space complexity: O(n + m) with minimal object creation
+- Elements not present in the reference array maintain their relative order at the end
+- The original target array is not modified (immutable operation)
+- Handles duplicate elements correctly

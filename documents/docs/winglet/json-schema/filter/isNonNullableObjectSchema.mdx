@@ -1,0 +1,48 @@
+---
+title: 'isNonNullableObjectSchema'
+sidebar_label: 'isNonNullableObjectSchema'
+---
+<!-- sync-winglet-docs:auto -->
+
+import WingletPlayground from '@site/src/components/WingletPlayground';
+
+# isNonNullableObjectSchema
+
+Determines whether a given JSON schema represents a non-nullable object type.
+Validates that the schema's `type` property is set to `'object'` (not an array of types),
+indicating it describes non-nullable object values.
+
+## Signature
+
+```typescript
+const isNonNullableObjectSchema: (schema: UnknownSchema) => schema is NonNullableObjectSchema
+```
+
+## Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `schema` | `-` | The JSON schema object to inspect |
+
+## Returns
+
+Type-safe boolean indicating whether the schema is a non-nullable ObjectSchema
+
+## Examples
+
+### Example 1
+
+```typescript
+isNonNullableObjectSchema({ type: 'object', properties: { name: { type: 'string' } } }); // true
+isNonNullableObjectSchema({ type: ['object', 'null'] }); // false
+isNonNullableObjectSchema({ type: 'array' }); // false
+```
+
+## Playground
+
+<WingletPlayground
+  dependencies={{ "@winglet/json-schema": "0.10.0" }}
+  code={`isNonNullableObjectSchema({ type: 'object', properties: { name: { type: 'string' } } }); // true
+isNonNullableObjectSchema({ type: ['object', 'null'] }); // false
+isNonNullableObjectSchema({ type: 'array' }); // false`}
+/>

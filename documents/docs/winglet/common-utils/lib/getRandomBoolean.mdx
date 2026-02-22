@@ -1,0 +1,52 @@
+---
+title: 'getRandomBoolean'
+sidebar_label: 'getRandomBoolean'
+---
+<!-- sync-winglet-docs:auto -->
+
+import WingletPlayground from '@site/src/components/WingletPlayground';
+
+# getRandomBoolean
+
+Generates a random boolean value with equal probability.
+Uses Math.random() with 0.5 threshold to provide true/false values
+with approximately 50% probability each.
+
+## Signature
+
+```typescript
+const getRandomBoolean: () => boolean
+```
+
+## Returns
+
+Boolean value (true or false with equal likelihood)
+
+## Examples
+
+### Boolean generation
+
+```typescript
+import { getRandomBoolean } from '@winglet/common-utils';
+
+console.log(getRandomBoolean()); // true or false
+
+// Usage in conditional logic
+if (getRandomBoolean()) {
+  console.log('Random condition met!');
+}
+```
+
+## Playground
+
+<WingletPlayground
+  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  code={`import { getRandomBoolean } from '@winglet/common-utils';
+
+console.log(getRandomBoolean()); // true or false
+
+// Usage in conditional logic
+if (getRandomBoolean()) {
+  console.log('Random condition met!');
+}`}
+/>

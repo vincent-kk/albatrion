@@ -1,0 +1,48 @@
+---
+title: 'isNonNullableArraySchema'
+sidebar_label: 'isNonNullableArraySchema'
+---
+<!-- sync-winglet-docs:auto -->
+
+import WingletPlayground from '@site/src/components/WingletPlayground';
+
+# isNonNullableArraySchema
+
+Determines whether a given JSON schema represents a non-nullable array type.
+Validates that the schema's `type` property is set to `'array'` (not an array of types),
+indicating it describes non-nullable array values.
+
+## Signature
+
+```typescript
+const isNonNullableArraySchema: (schema: UnknownSchema) => schema is NonNullableArraySchema
+```
+
+## Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `schema` | `-` | The JSON schema object to inspect |
+
+## Returns
+
+Type-safe boolean indicating whether the schema is a non-nullable ArraySchema
+
+## Examples
+
+### Example 1
+
+```typescript
+isNonNullableArraySchema({ type: 'array', items: { type: 'string' } }); // true
+isNonNullableArraySchema({ type: ['array', 'null'] }); // false
+isNonNullableArraySchema({ type: 'object' }); // false
+```
+
+## Playground
+
+<WingletPlayground
+  dependencies={{ "@winglet/json-schema": "0.10.0" }}
+  code={`isNonNullableArraySchema({ type: 'array', items: { type: 'string' } }); // true
+isNonNullableArraySchema({ type: ['array', 'null'] }); // false
+isNonNullableArraySchema({ type: 'object' }); // false`}
+/>

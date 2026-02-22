@@ -1,0 +1,20 @@
+---
+title: 'SchemaVisitor'
+sidebar_label: 'SchemaVisitor'
+---
+<!-- sync-winglet-docs:auto -->
+
+import WingletPlayground from '@site/src/components/WingletPlayground';
+
+# SchemaVisitor
+
+## Signature
+
+```typescript
+interface SchemaVisitor<Schema extends UnknownSchema = UnknownSchema, ContextType = void> {
+    /** Callback called when node processing starts */
+    enter?: Fn<[entry: SchemaEntry<Schema>, context?: ContextType]>;
+    /** Callback called when node processing ends */
+    exit?: Fn<[entry: SchemaEntry<Schema>, context?: ContextType]>;
+}
+```

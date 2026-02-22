@@ -1,0 +1,50 @@
+---
+title: 'isNumberSchema'
+sidebar_label: 'isNumberSchema'
+---
+<!-- sync-winglet-docs:auto -->
+
+import WingletPlayground from '@site/src/components/WingletPlayground';
+
+# isNumberSchema
+
+Determines whether a given JSON schema represents a number type (nullable or non-nullable).
+This is a combined filter that matches both `{ type: 'number' }`, `{ type: 'integer' }`,
+`{ type: ['number', 'null'] }`, and `{ type: ['integer', 'null'] }` schemas.
+
+## Signature
+
+```typescript
+const isNumberSchema: (schema: UnknownSchema) => schema is NumberSchema
+```
+
+## Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `schema` | `-` | The JSON schema object to inspect |
+
+## Returns
+
+Type-safe boolean indicating whether the schema is a number schema (nullable or not)
+
+## Examples
+
+### Example 1
+
+```typescript
+isNumberSchema({ type: 'number' }); // true
+isNumberSchema({ type: 'integer' }); // true
+isNumberSchema({ type: ['number', 'null'] }); // true
+isNumberSchema({ type: 'string' }); // false
+```
+
+## Playground
+
+<WingletPlayground
+  dependencies={{ "@winglet/json-schema": "0.10.0" }}
+  code={`isNumberSchema({ type: 'number' }); // true
+isNumberSchema({ type: 'integer' }); // true
+isNumberSchema({ type: ['number', 'null'] }); // true
+isNumberSchema({ type: 'string' }); // false`}
+/>

@@ -1,0 +1,48 @@
+---
+title: 'isNullableBooleanSchema'
+sidebar_label: 'isNullableBooleanSchema'
+---
+<!-- sync-winglet-docs:auto -->
+
+import WingletPlayground from '@site/src/components/WingletPlayground';
+
+# isNullableBooleanSchema
+
+Determines whether a given JSON schema represents a nullable boolean type.
+Validates that the schema's `type` property is an array containing both
+`'boolean'` and `'null'`, indicating it describes nullable boolean values.
+
+## Signature
+
+```typescript
+const isNullableBooleanSchema: (schema: UnknownSchema) => schema is NullableBooleanSchema
+```
+
+## Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `schema` | `-` | The JSON schema object to inspect |
+
+## Returns
+
+Type-safe boolean indicating whether the schema is a NullableBooleanSchema
+
+## Examples
+
+### Example 1
+
+```typescript
+isNullableBooleanSchema({ type: ['boolean', 'null'] }); // true
+isNullableBooleanSchema({ type: 'boolean' }); // false
+isNullableBooleanSchema({ type: ['string', 'null'] }); // false
+```
+
+## Playground
+
+<WingletPlayground
+  dependencies={{ "@winglet/json-schema": "0.10.0" }}
+  code={`isNullableBooleanSchema({ type: ['boolean', 'null'] }); // true
+isNullableBooleanSchema({ type: 'boolean' }); // false
+isNullableBooleanSchema({ type: ['string', 'null'] }); // false`}
+/>
