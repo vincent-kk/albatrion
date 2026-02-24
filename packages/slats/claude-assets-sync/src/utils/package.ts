@@ -18,6 +18,31 @@ import type {
 export { getAssetStructure } from '../core/assetStructure';
 
 /**
+ * Resolve package path in node_modules by walking up the directory tree.
+ * Mimics Node.js module resolution: checks cwd/node_modules, then ../node_modules, etc.
+ *
+ * @param packageName - Package name (e.g., "@canard/schema-form")
+ * @param cwd - Starting directory for resolution
+ * @returns Absolute path to the package directory, or null if not found
+ */
+export const resolvePackagePath = (
+  packageName: string,
+  cwd: string,
+): string | null => {
+  let dir = cwd;
+  while (true) {
+    const candidate = join(dir, 'node_modules', packageName);
+    if (existsSync(join(candidate, 'package.json'))) {
+      return candidate;
+    }
+    const parent = dirname(dir);
+    if (parent === dir) break; // reached filesystem root
+    dir = parent;
+  }
+  return null;
+};
+
+/**
  * Read package.json from node_modules
  * @param packageName - Package name (e.g., "@canard/schema-form")
  * @param cwd - Current working directory
@@ -28,13 +53,10 @@ export const readPackageJson = (
   cwd: string = process.cwd(),
 ): PackageInfo | null => {
   try {
-    const packageJsonPath = join(
-      cwd,
-      'node_modules',
-      packageName,
-      'package.json',
-    );
-    const content = readFileSync(packageJsonPath, 'utf-8');
+    const packagePath = resolvePackagePath(packageName, cwd);
+    if (!packagePath) return null;
+
+    const content = readFileSync(join(packagePath, 'package.json'), 'utf-8');
     const json = JSON.parse(content);
 
     // Validate required fields

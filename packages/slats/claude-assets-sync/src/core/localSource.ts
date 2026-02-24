@@ -1,6 +1,7 @@
 import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 
+import { resolvePackagePath } from '@/claude-assets-sync/utils/package.js';
 import type {
   AssetType,
   GitHubEntry,
@@ -24,7 +25,16 @@ export const canUseLocalSource = (
   assetPath: string,
   cwd: string,
 ): LocalSourceResult => {
-  const docsPath = join(cwd, 'node_modules', packageName, assetPath);
+  // Resolve package path (walks up directory tree for monorepo hoisting)
+  const packagePath = resolvePackagePath(packageName, cwd);
+  if (!packagePath) {
+    return {
+      available: false,
+      reason: `Package ${packageName} not found in node_modules`,
+    };
+  }
+
+  const docsPath = join(packagePath, assetPath);
 
   if (!existsSync(docsPath)) {
     return {
@@ -35,7 +45,7 @@ export const canUseLocalSource = (
 
   // Check installed version
   try {
-    const pkgJsonPath = join(cwd, 'node_modules', packageName, 'package.json');
+    const pkgJsonPath = join(packagePath, 'package.json');
     const pkgJson = JSON.parse(readFileSync(pkgJsonPath, 'utf-8'));
     if (pkgJson.version !== requestedVersion) {
       return {

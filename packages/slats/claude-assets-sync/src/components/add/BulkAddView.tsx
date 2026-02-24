@@ -85,7 +85,6 @@ export const BulkAddView: React.FC<BulkAddViewProps> = ({
       }));
       setScanSteps(initialScanSteps);
 
-      // Track which packages actually have assets
       const packagesWithAssets: string[] = [];
       const scanResults: PackageScanResult[] = [];
 
@@ -98,12 +97,7 @@ export const BulkAddView: React.FC<BulkAddViewProps> = ({
         );
 
         try {
-          const trees = await scanPackageAssets(pkgName, {
-            local,
-            ref,
-            cwd,
-          });
-
+          const trees = await scanPackageAssets(pkgName, { local, ref, cwd });
           const hasAssets = trees.length > 0;
 
           if (hasAssets) {
@@ -130,9 +124,7 @@ export const BulkAddView: React.FC<BulkAddViewProps> = ({
           // Packages without claude asset config throw errors about missing assetPath /
           // asset path not existing — treat these as silent skips.
           const isNoAssets =
-            /no repository|asset path.*does not exist|not found in (local workspace|node_modules)/i.test(
-              msg,
-            );
+            /no repository|asset path.*does not exist|not found in/i.test(msg);
 
           if (isNoAssets) {
             scanResults.push({ name: pkgName, status: 'skipped', assetCount: 0 });

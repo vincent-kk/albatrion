@@ -5,6 +5,7 @@ import { toFlatFileName } from '@/claude-assets-sync/utils/nameTransform.js';
 import {
   parseGitHubRepo,
   resolveClaudeConfig,
+  resolvePackagePath,
 } from '@/claude-assets-sync/utils/package.js';
 import type {
   GitHubEntry,
@@ -56,7 +57,7 @@ export async function scanPackageAssets(
     return scanLocalAssets(packageName, cwd);
   }
 
-  return scanRemoteAssets(packageName, options.ref);
+  return scanRemoteAssets(packageName, cwd, options.ref);
 }
 
 /**
@@ -105,10 +106,16 @@ async function scanLocalAssets(
  */
 async function scanRemoteAssets(
   packageName: string,
+  cwd: string,
   ref?: string,
 ): Promise<TreeNode[]> {
-  // Read package.json from node_modules
-  const nodeModulesPath = join(process.cwd(), 'node_modules', packageName);
+  // Resolve package in node_modules (walks up directory tree like Node.js)
+  const nodeModulesPath = resolvePackagePath(packageName, cwd);
+
+  if (!nodeModulesPath) {
+    throw new Error(`Package ${packageName} not found`);
+  }
+
   const pkgInfo = readPackageJsonFromPath(nodeModulesPath);
 
   if (!pkgInfo) {
