@@ -10,6 +10,11 @@ import { VERSION } from '../version';
 export const CLAUDE_BASE_DIR = '.claude' as const;
 
 /**
+ * Default asset path when claude.assetPath is not configured
+ */
+export const DEFAULT_ASSET_PATH = 'docs/claude' as const;
+
+/**
  * Asset directory names
  */
 export const ASSET_DIRS = {

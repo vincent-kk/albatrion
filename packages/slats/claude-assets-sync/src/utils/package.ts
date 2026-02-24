@@ -6,8 +6,13 @@ import {
   DEFAULT_ASSET_STRUCTURES,
   DEFAULT_ASSET_TYPES,
 } from '../core/assetStructure';
-import { FS_PATTERNS } from '../core/constants';
-import type { GitHubRepoInfo, PackageInfo, WorkspaceInfo } from './types';
+import { DEFAULT_ASSET_PATH, FS_PATTERNS } from '../core/constants';
+import type {
+  ClaudeConfig,
+  GitHubRepoInfo,
+  PackageInfo,
+  WorkspaceInfo,
+} from './types';
 
 // Re-export for backward compatibility
 export { getAssetStructure } from '../core/assetStructure';
@@ -275,3 +280,12 @@ export function getAssetTypes(config: {
 
   return Object.keys(config.assets);
 }
+
+/**
+ * Resolve claude config with default assetPath fallback.
+ * If claude config is missing or assetPath is not set, defaults to DEFAULT_ASSET_PATH.
+ */
+export const resolveClaudeConfig = (claude?: ClaudeConfig): ClaudeConfig => ({
+  assetPath: claude?.assetPath ?? DEFAULT_ASSET_PATH,
+  ...(claude?.assets ? { assets: claude.assets } : {}),
+});

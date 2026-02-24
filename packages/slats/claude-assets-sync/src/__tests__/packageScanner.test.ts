@@ -147,7 +147,7 @@ describe('scanRemoteAssets - local source fallback', () => {
     expect(fileNames).not.toContain('local-skill.md');
   });
 
-  it('should throw when package has no claude.assetPath', async () => {
+  it('should return empty array when package has no claude.assetPath (uses default path)', async () => {
     const noClaudePackage: PackageInfo = {
       name: '@some/package',
       version: '1.0.0',
@@ -156,9 +156,9 @@ describe('scanRemoteAssets - local source fallback', () => {
     const noClaudeFixture = createTestFixture([noClaudePackage]);
     process.cwd = () => noClaudeFixture.tempDir;
 
-    await expect(
-      scanPackageAssets('@some/package', { local: false }),
-    ).rejects.toThrow('claude.assetPath');
+    // No claude config falls back to default assetPath (docs/claude); no assets found returns []
+    const result = await scanPackageAssets('@some/package', { local: false });
+    expect(result).toEqual([]);
 
     noClaudeFixture.cleanup();
   });

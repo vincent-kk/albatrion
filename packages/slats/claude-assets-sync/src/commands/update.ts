@@ -22,6 +22,7 @@ import {
   readPackageJson,
 } from '@/claude-assets-sync/utils/package';
 import { packageNameToPrefix } from '@/claude-assets-sync/utils/packageName';
+import type { UnifiedSyncMeta } from '@/claude-assets-sync/utils/types';
 
 export interface UpdateCommandOptions {
   package?: string;
@@ -29,6 +30,70 @@ export interface UpdateCommandOptions {
   ref?: string;
   dryRun?: boolean;
   sync?: boolean;
+}
+
+export interface UpdatePackageResult {
+  updatedMeta: UnifiedSyncMeta;
+  versionChanged: boolean;
+  oldVersion?: string;
+  newVersion?: string;
+}
+
+/**
+ * Higher-level orchestration: read installed version, compare with meta, update if different,
+ * optionally re-sync files. Can be called from both CLI and interactive list UI.
+ */
+export async function updatePackageVersionAndSync(
+  prefix: string,
+  meta: UnifiedSyncMeta,
+  options: { local?: boolean; ref?: string; sync?: boolean },
+  cwd: string,
+): Promise<UpdatePackageResult> {
+  const packageInfo = meta.packages[prefix];
+  if (!packageInfo) {
+    throw new Error(`Package ${prefix} not found in metadata`);
+  }
+
+  const packageName = packageInfo.originalName;
+  const isLocal = options.local ?? packageInfo.local ?? false;
+
+  const currentPkgInfo = isLocal
+    ? readLocalPackageJson(packageName, cwd)
+    : readPackageJson(packageName, cwd);
+
+  if (!currentPkgInfo) {
+    return { updatedMeta: meta, versionChanged: false };
+  }
+
+  const newVersion = currentPkgInfo.version;
+  const oldVersion = packageInfo.version;
+
+  if (newVersion === oldVersion) {
+    return { updatedMeta: meta, versionChanged: false, oldVersion, newVersion };
+  }
+
+  // Update version in meta
+  let updatedMeta = updatePackageVersion(meta, prefix, newVersion);
+  updatedMeta.syncedAt = new Date().toISOString();
+
+  // Optionally re-sync files
+  if (options.sync) {
+    const destDir = findGitRoot(cwd) ?? cwd;
+    await syncPackage(
+      packageName,
+      { force: true, dryRun: false, local: isLocal, ref: options.ref, flat: true },
+      cwd,
+      packageInfo.exclusions,
+      destDir,
+    );
+  } else {
+    // Write updated meta to disk
+    const destDir = findGitRoot(cwd) ?? cwd;
+    updatedMeta.skillUnitFormat = SCHEMA_VERSIONS.SKILL_UNIT_FORMAT;
+    writeUnifiedSyncMeta(destDir, updatedMeta);
+  }
+
+  return { updatedMeta, versionChanged: true, oldVersion, newVersion };
 }
 
 /**

@@ -12,6 +12,16 @@ export interface CommandResult {
 }
 
 /**
+ * Options for add command
+ */
+export interface AddCommandOptions {
+  package?: string;
+  pattern?: string;
+  local?: boolean;
+  ref?: string;
+}
+
+/**
  * Options for sync command
  */
 export interface SyncCommandOptions {

@@ -66,7 +66,8 @@ describe('syncPackage', () => {
 
     expect(result.success).toBe(false);
     expect(result.skipped).toBe(true);
-    expect(result.reason).toContain('claude.assetPath');
+    // No claude config falls back to default assetPath (docs/claude), then skips if no assets found
+    expect(result.reason).toContain('No assets found');
 
     fixtureWithoutClaude.cleanup();
   });

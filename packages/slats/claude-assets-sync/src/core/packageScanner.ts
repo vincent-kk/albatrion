@@ -2,7 +2,10 @@ import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 
 import { toFlatFileName } from '@/claude-assets-sync/utils/nameTransform.js';
-import { parseGitHubRepo } from '@/claude-assets-sync/utils/package.js';
+import {
+  parseGitHubRepo,
+  resolveClaudeConfig,
+} from '@/claude-assets-sync/utils/package.js';
 import type {
   GitHubEntry,
   PackageInfo,
@@ -71,13 +74,11 @@ async function scanLocalAssets(
 
   // Read package.json to get claude config
   const pkgInfo = readPackageJsonFromPath(packagePath);
-  if (!pkgInfo || !pkgInfo.claude?.assetPath) {
-    throw new Error(
-      `Package ${packageName} has no claude.assetPath configured`,
-    );
+  if (!pkgInfo) {
+    throw new Error(`Package ${packageName} not found in local workspace`);
   }
-
-  const assetPath = join(packagePath, pkgInfo.claude.assetPath);
+  const claudeConfig = resolveClaudeConfig(pkgInfo.claude);
+  const assetPath = join(packagePath, claudeConfig.assetPath);
   if (!existsSync(assetPath)) {
     throw new Error(`Asset path ${assetPath} does not exist`);
   }
@@ -110,13 +111,11 @@ async function scanRemoteAssets(
   const nodeModulesPath = join(process.cwd(), 'node_modules', packageName);
   const pkgInfo = readPackageJsonFromPath(nodeModulesPath);
 
-  if (!pkgInfo || !pkgInfo.claude?.assetPath) {
-    throw new Error(
-      `Package ${packageName} has no claude.assetPath configured`,
-    );
+  if (!pkgInfo) {
+    throw new Error(`Package ${packageName} not found`);
   }
-
-  const assetBasePath = pkgInfo.claude.assetPath;
+  const claudeConfig = resolveClaudeConfig(pkgInfo.claude);
+  const assetBasePath = claudeConfig.assetPath;
 
   // Try local docs first when no explicit ref is specified
   if (!ref) {

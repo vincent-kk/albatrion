@@ -9,6 +9,7 @@ import {
   parseGitHubRepo,
   readLocalPackageJson,
   readPackageJson,
+  resolveClaudeConfig,
 } from '../utils/package';
 import { packageNameToPrefix } from '../utils/packageName';
 import { getDestinationDir, getFlatDestinationDir } from '../utils/paths';
@@ -123,14 +124,8 @@ export const syncPackage = async (
       };
     }
 
-    // Step 2: Check for claude config
-    if (!packageInfo.claude?.assetPath)
-      return {
-        packageName,
-        success: false,
-        skipped: true,
-        reason: 'Package does not have claude.assetPath in package.json',
-      };
+    // Step 2: Resolve claude config (defaults to docs/claude if not configured)
+    const claudeConfig = resolveClaudeConfig(packageInfo.claude);
 
     // Step 3: Parse GitHub repository (may be null; validated when GitHub fallback is needed)
     const repoInfo = parseGitHubRepo(packageInfo.repository);
@@ -160,7 +155,7 @@ export const syncPackage = async (
       }
 
       // Step 5: Build asset path
-      const assetPath = buildAssetPath(packageInfo.claude.assetPath);
+      const assetPath = buildAssetPath(claudeConfig.assetPath);
 
       // Determine document source: local (node_modules) or remote (GitHub)
       // If options.ref is explicitly set, always use GitHub (user wants a specific git ref)
@@ -169,7 +164,7 @@ export const syncPackage = async (
         : canUseLocalSource(packageName, packageInfo.version, assetPath, cwd);
 
       // Step 6: Get asset types from config and fetch asset file lists
-      const assetTypes = getAssetTypes(packageInfo.claude);
+      const assetTypes = getAssetTypes(claudeConfig);
 
       let assetFiles: Record<string, GitHubEntry[]>;
       let isLocalSource: boolean;
@@ -240,7 +235,7 @@ export const syncPackage = async (
 
         if (filteredEntries.length === 0) continue;
 
-        const structure = getAssetStructure(assetType, packageInfo.claude);
+        const structure = getAssetStructure(assetType, claudeConfig);
 
         if (structure === 'nested') {
           // Nested structure: store as SkillUnit with no transformed name
@@ -263,7 +258,7 @@ export const syncPackage = async (
           const units = fileMappings[assetType];
           if (!units || units.length === 0) continue;
 
-          const structure = getAssetStructure(assetType, packageInfo.claude);
+          const structure = getAssetStructure(assetType, claudeConfig);
 
           if (structure === 'nested') {
             logger.step(
@@ -303,7 +298,7 @@ export const syncPackage = async (
 
       // Step 7: Clean previous files for this package (based on structure)
       for (const assetType of assetTypes) {
-        const structure = getAssetStructure(assetType, packageInfo.claude);
+        const structure = getAssetStructure(assetType, claudeConfig);
 
         if (structure === 'nested') {
           cleanAssetDir(destDir, packageName, assetType);
@@ -328,7 +323,7 @@ export const syncPackage = async (
 
         if (filteredEntries.length === 0) continue;
 
-        const structure = getAssetStructure(assetType, packageInfo.claude);
+        const structure = getAssetStructure(assetType, claudeConfig);
 
         logger.step('Downloading', assetType);
         let downloadedFiles: Map<string, string>;
@@ -402,7 +397,7 @@ export const syncPackage = async (
       // ============================================
 
       // Step 5: Build asset path
-      const assetPath = buildAssetPath(packageInfo.claude.assetPath);
+      const assetPath = buildAssetPath(claudeConfig.assetPath);
 
       // Determine document source: local (node_modules) or remote (GitHub)
       // If options.ref is explicitly set, always use GitHub (user wants a specific git ref)
@@ -411,7 +406,7 @@ export const syncPackage = async (
         : canUseLocalSource(packageName, packageInfo.version, assetPath, cwd);
 
       // Step 6: Get asset types from config and fetch asset file lists
-      const assetTypes = getAssetTypes(packageInfo.claude);
+      const assetTypes = getAssetTypes(claudeConfig);
 
       let assetFiles: Record<string, GitHubEntry[]>;
       let isLocalSource: boolean;

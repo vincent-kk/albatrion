@@ -1,8 +1,8 @@
 import { Command } from 'commander';
 
 import {
+  registerListCommand,
   runAddCommand,
-  runListCommand,
   runMigrateCommand,
   runRemoveCommand,
   runStatusCommand,
@@ -65,7 +65,8 @@ export const createProgram = (): Command => {
   program
     .command('add')
     .description('Add a package with interactive asset selection')
-    .requiredOption('-p, --package <name>', 'Package name to add')
+    .option('-p, --package <name>', 'Package name to add')
+    .option('--pattern <regex>', 'Regex pattern to bulk add matching packages')
     .option(
       '-l, --local',
       'Read packages from local workspace instead of node_modules',
@@ -75,19 +76,14 @@ export const createProgram = (): Command => {
     .action(async (opts) => {
       await runAddCommand({
         package: opts.package,
+        pattern: opts.pattern,
         local: opts.local,
         ref: opts.ref,
       });
     });
 
-  // List command
-  program
-    .command('list')
-    .description('List all synced packages')
-    .option('--json', 'Output as JSON')
-    .action(async (opts) => {
-      await runListCommand({ json: opts.json });
-    });
+  // List command (persistent interactive menu)
+  registerListCommand(program);
 
   // Remove command
   program

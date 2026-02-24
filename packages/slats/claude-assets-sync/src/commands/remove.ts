@@ -3,10 +3,12 @@
  */
 import * as fs from 'node:fs';
 import * as path from 'node:path';
-import * as readline from 'node:readline/promises';
 
+import { render } from 'ink';
 import pc from 'picocolors';
+import React from 'react';
 
+import { RemoveConfirm } from '@/claude-assets-sync/components/remove/RemoveConfirm';
 import {
   readUnifiedSyncMeta,
   writeUnifiedSyncMeta,
@@ -16,6 +18,52 @@ import { packageNameToPrefix } from '@/claude-assets-sync/utils/packageName.js';
 import type { SkillUnit } from '@/claude-assets-sync/utils/types';
 
 import type { RemoveCommandOptions } from './types';
+
+/**
+ * Check if running in TTY (interactive terminal)
+ */
+function isTTY(): boolean {
+  return process.stdout.isTTY === true && process.stdin.isTTY === true;
+}
+
+/**
+ * Perform the actual file removal and metadata update
+ */
+function performRemoval(
+  filesToRemove: Array<{ assetType: string; path: string }>,
+  meta: ReturnType<typeof readUnifiedSyncMeta>,
+  prefix: string,
+  packageName: string,
+  cwd: string,
+): void {
+  // Remove files
+  for (const { path: filePath } of filesToRemove) {
+    try {
+      const stat = fs.statSync(filePath);
+      if (stat.isDirectory()) {
+        fs.rmSync(filePath, { recursive: true, force: true });
+        console.log(`${pc.red('-')} ${filePath}`);
+      } else {
+        fs.unlinkSync(filePath);
+        console.log(`${pc.red('-')} ${filePath}`);
+      }
+    } catch (error) {
+      // Ignore errors if file doesn't exist
+      if ((error as NodeJS.ErrnoException).code !== 'ENOENT') {
+        logger.error(`Failed to remove ${filePath}: ${error}`);
+      }
+    }
+  }
+
+  // Update metadata
+  if (meta) {
+    delete meta.packages[prefix];
+    meta.syncedAt = new Date().toISOString();
+    writeUnifiedSyncMeta(cwd, meta);
+  }
+
+  logger.success(`\nRemoved package ${packageName}`);
+}
 
 /**
  * Run the remove command
@@ -87,43 +135,32 @@ export const runRemoveCommand = async (
 
   // Confirmation prompt
   if (!yes) {
-    const rl = readline.createInterface({
-      input: process.stdin,
-      output: process.stdout,
-    });
+    if (isTTY()) {
+      // Interactive ink-based confirmation
+      let confirmed = false;
 
-    const answer = await rl.question(pc.yellow('Remove these files? (y/N): '));
-    rl.close();
+      const { waitUntilExit } = render(
+        React.createElement(RemoveConfirm, {
+          packageName,
+          filesToRemove,
+          onConfirm: (result: boolean) => {
+            confirmed = result;
+          },
+        }),
+      );
 
-    if (answer.toLowerCase() !== 'y') {
-      logger.info('Cancelled.');
+      await waitUntilExit();
+
+      if (!confirmed) {
+        logger.info('Cancelled.');
+        return;
+      }
+    } else {
+      // Non-TTY: skip interactive confirmation, treat as cancelled
+      logger.info('Cancelled (non-interactive terminal).');
       return;
     }
   }
 
-  // Remove files
-  for (const { path: filePath } of filesToRemove) {
-    try {
-      const stat = fs.statSync(filePath);
-      if (stat.isDirectory()) {
-        fs.rmSync(filePath, { recursive: true, force: true });
-        console.log(`${pc.red('-')} ${filePath}`);
-      } else {
-        fs.unlinkSync(filePath);
-        console.log(`${pc.red('-')} ${filePath}`);
-      }
-    } catch (error) {
-      // Ignore errors if file doesn't exist
-      if ((error as NodeJS.ErrnoException).code !== 'ENOENT') {
-        logger.error(`Failed to remove ${filePath}: ${error}`);
-      }
-    }
-  }
-
-  // Update metadata
-  delete meta.packages[prefix];
-  meta.syncedAt = new Date().toISOString();
-  writeUnifiedSyncMeta(cwd, meta);
-
-  logger.success(`\nRemoved package ${packageName}`);
+  performRemoval(filesToRemove, meta, prefix, packageName, cwd);
 };

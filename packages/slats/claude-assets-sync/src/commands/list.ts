@@ -1,6 +1,7 @@
 /**
  * List command - list all synced packages
  */
+import type { Command } from 'commander';
 import { render } from 'ink';
 import pc from 'picocolors';
 import React from 'react';
@@ -23,7 +24,7 @@ function isTTY(): boolean {
  * Run the list command
  * @param options - List command options
  */
-export const runListCommand = async (
+const runListCommand = async (
   options: ListCommandOptions,
   cwd: string = process.cwd(),
 ): Promise<void> => {
@@ -70,9 +71,12 @@ export const runListCommand = async (
     return;
   }
 
-  // Interactive mode (TTY)
+  // Interactive mode (TTY) - persistent menu
   if (isTTY()) {
-    render(React.createElement(ListCommand, { cwd: destDir }));
+    const { waitUntilExit } = render(
+      React.createElement(ListCommand, { cwd: destDir }),
+    );
+    await waitUntilExit();
     return;
   }
 
@@ -114,3 +118,19 @@ export const runListCommand = async (
     console.log('');
   }
 };
+
+/**
+ * Register the list command with the CLI program
+ */
+export function registerListCommand(program: Command): void {
+  program
+    .command('list')
+    .description('List all synced packages')
+    .option('--json', 'Output as JSON')
+    .action(async (opts: { json?: boolean }) => {
+      await runListCommand({ json: opts.json });
+    });
+}
+
+// Keep named export for backward compatibility (used by commands/index.ts)
+export { runListCommand };

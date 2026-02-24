@@ -4,13 +4,12 @@
 
 export * from './types';
 export { runSyncCommand } from './sync';
-export { runListCommand } from './list';
+export { runListCommand, registerListCommand } from './list';
 export { runRemoveCommand } from './remove';
 export { runStatusCommand } from './status';
 export { runMigrateCommand } from './migrate';
 export { runAddCommand } from './add';
 export { runUpdateCommand } from './update';
-export type { AddCommandOptions } from './add';
 export type { UpdateCommandOptions } from './update';
 
 /**

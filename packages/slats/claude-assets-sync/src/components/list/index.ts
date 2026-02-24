@@ -8,3 +8,4 @@ export { ListCommand } from './ListCommand.js';
 export type { EditableTreeItemProps } from './EditableTreeItem.js';
 export type { SyncedPackageTreeProps } from './SyncedPackageTree.js';
 export type { ListCommandProps } from './ListCommand.js';
+export type { ListPhase, SelectItem, PackageDetailInfo } from './types.js';
