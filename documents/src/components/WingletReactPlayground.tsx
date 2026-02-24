@@ -36,10 +36,7 @@ export default function WingletReactPlayground({
           showLineNumbers
           style={{ height }}
         />
-        <SandpackPreview
-          showOpenInCodeSandbox={false}
-          style={{ height }}
-        />
+        <SandpackPreview showOpenInCodeSandbox={false} style={{ height }} />
       </SandpackLayout>
     </SandpackProvider>
   );

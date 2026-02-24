@@ -1,10 +1,13 @@
-import React, { lazy, Suspense } from 'react';
+import React, { Suspense, lazy } from 'react';
 
 import BrowserOnly from '@docusaurus/BrowserOnly';
 
 type Loader = () => Promise<{ default: React.ComponentType }>;
 
-const lazyCache = new Map<Loader, React.LazyExoticComponent<React.ComponentType>>();
+const lazyCache = new Map<
+  Loader,
+  React.LazyExoticComponent<React.ComponentType>
+>();
 
 function getLazy(load: Loader) {
   let component = lazyCache.get(load);
