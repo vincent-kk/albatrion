@@ -72,7 +72,7 @@ export const AssetTreeNode: React.FC<AssetTreeNodeProps> = ({
     selectionIcon = '◐'; // Half circle - partial selection
     iconColor = 'yellow';
   } else if (node.selected) {
-    selectionIcon = '●'; // Filled circle - fully selected
+    selectionIcon = '◉'; // Filled circle - fully selected
     iconColor = 'green';
   } else {
     selectionIcon = '○'; // Empty circle - not selected
