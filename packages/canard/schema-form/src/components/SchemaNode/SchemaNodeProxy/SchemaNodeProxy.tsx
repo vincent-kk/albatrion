@@ -4,6 +4,7 @@ import { NULL_FUNCTION } from '@winglet/common-utils/constant';
 import { withErrorBoundary } from '@winglet/react-utils/hoc';
 import { useConstant, useMemorize } from '@winglet/react-utils/hook';
 
+import { DISPLAY_CONTENT } from '@/schema-form/app/constants';
 import { NodeEventType } from '@/schema-form/core';
 import { useSchemaNode } from '@/schema-form/hooks/useSchemaNode';
 import { useSchemaNodeTracker } from '@/schema-form/hooks/useSchemaNodeTracker';
@@ -86,7 +87,7 @@ export const SchemaNodeProxy = ({
 
   return (
     <Wrapper key={version}>
-      <span data-path={node.path}>
+      <div data-path={node.path} role="none" style={DISPLAY_CONTENT}>
         <FormTypeRenderer
           {...node.jsonSchema.FormTypeRendererProps}
           {...overridePropsRef?.current}
@@ -107,7 +108,7 @@ export const SchemaNodeProxy = ({
           formatError={formatError}
           context={context}
         />
-      </span>
+      </div>
     </Wrapper>
   );
 };
