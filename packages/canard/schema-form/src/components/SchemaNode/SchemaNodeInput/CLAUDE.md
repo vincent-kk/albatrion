@@ -46,4 +46,5 @@ SchemaNodeInput/
 - `@/schema-form/providers` — `useFormTypeInputsContext`, `useExternalFormContext`, `useFormTypeRendererContext`, `useInputControlContext`, `useWorkspaceContext`
 - `@/schema-form/app/plugin` — `PluginManager` (fallback FormTypeInput 정의)
 - `@/schema-form/hooks` — `useSchemaNodeSubscribe`, `useSchemaNodeTracker`
+- `@/schema-form/app/constants` — `DISPLAY_CONTENT` 스타일 상수
 - `@winglet/react-utils` — `isMemoComponent`, `isReactComponent`, `withErrorBoundary`, `useMemorize`, `useReference`, `useSnapshot`, `useOnUnmount`, `useVersion`

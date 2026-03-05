@@ -30,7 +30,7 @@ export const useFormTypeInputControl = <Node extends SchemaNode>(
   node: Node,
 ) => {
   const [version, update] = useVersion();
-  const ref = useRef<HTMLSpanElement>(null);
+  const ref = useRef<HTMLDivElement>(null);
   useLayoutEffect(() => {
     if (!node) return;
     const unsubscribe = node.subscribe(({ type }) => {

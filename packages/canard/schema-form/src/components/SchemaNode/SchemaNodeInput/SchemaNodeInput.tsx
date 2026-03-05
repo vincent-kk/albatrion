@@ -3,6 +3,7 @@ import { memo, useCallback, useMemo, useRef } from 'react';
 import { isArray } from '@winglet/common-utils/filter';
 import { useMemorize, useOnUnmount } from '@winglet/react-utils/hook';
 
+import { DISPLAY_CONTENT } from '@/schema-form/app/constants';
 import { NodeEventType, NodeState } from '@/schema-form/core';
 import { useSchemaNodeTracker } from '@/schema-form/hooks/useSchemaNodeTracker';
 import {
@@ -97,7 +98,13 @@ export const SchemaNodeInput = memo(
     if (!FormTypeInput) return null;
 
     return (
-      <span ref={ref} onFocus={handleFocus} onBlur={handleBlur}>
+      <div
+        ref={ref}
+        role="none"
+        style={DISPLAY_CONTENT}
+        onFocus={handleFocus}
+        onBlur={handleBlur}
+      >
         <FormTypeInput
           // Overridable: UI behavior and styling
           required={node.required}
@@ -124,7 +131,7 @@ export const SchemaNodeInput = memo(
           ChildNodeComponents={ChildNodeComponents}
           context={context}
         />
-      </span>
+      </div>
     );
   },
 );

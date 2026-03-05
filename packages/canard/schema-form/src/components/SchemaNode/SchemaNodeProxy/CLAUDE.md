@@ -14,7 +14,7 @@ SchemaNodeProxy/
 ## Conventions
 - TypeScript + React (TSX), 비-memo 함수형 컴포넌트 (상위에서 memo 처리)
 - `path` 또는 `node` prop으로 노드 접근 (`useSchemaNode` 훅 위임)
-- `data-path={node.path}` span으로 DOM 경로 추적 지원
+- `data-path={node.path}` div(`display: contents`, `role="none"`)로 DOM 경로 추적 지원
 - `FormTypeRenderer`는 `memo(withErrorBoundary(...))` 래핑 필수
 - `Wrapper`가 없으면 `Fragment`를 기본값으로 사용
 - `RequestRemount` 이벤트로 version을 Wrapper의 key로 활용 → 강제 리마운트
@@ -43,4 +43,5 @@ SchemaNodeProxy/
 - `../SchemaNodeInput` — `SchemaNodeInputWrapper`
 - `@winglet/react-utils/hoc` — `withErrorBoundary`
 - `@winglet/react-utils/hook` — `useConstant`, `useMemorize`
+- `@/schema-form/app/constants` — `DISPLAY_CONTENT` 스타일 상수
 - `@winglet/common-utils/constant` — `NULL_FUNCTION`

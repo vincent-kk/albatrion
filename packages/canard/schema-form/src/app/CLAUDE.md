@@ -8,12 +8,13 @@
 - `constants/bitmask.ts` — BIT_FLAG_00 ~ BIT_FLAG_31 비트 플래그 상수
 - `constants/control.ts` — ASCII 제어 문자 상수 (FILE_SEPARATOR 등)
 - `constants/internal.ts` — 내부 전용 상수
+- `constants/style.ts` — 스타일 관련 상수 (DISPLAY_CONTENT 등)
 - `constants/index.ts` — barrel export
 
 ## Conventions
 - TypeScript, 클래스 기반 singleton 패턴 (`PluginManager` static class)
 - 플러그인은 콘텐츠 해시로 중복 등록을 방지 (`stableSerialize`)
-- 상수는 용도별로 파일 분리 (bitmask / control / internal)
+- 상수는 용도별로 파일 분리 (bitmask / control / internal / style)
 
 ## Boundaries
 

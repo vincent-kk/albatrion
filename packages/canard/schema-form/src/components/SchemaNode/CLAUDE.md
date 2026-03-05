@@ -16,7 +16,7 @@ SchemaNode/
 - TypeScript + React (TSX), 함수형 컴포넌트 + memo
 - `SchemaNodeProxy`가 공개 API, `SchemaNodeInput`은 내부 구현
 - 노드 이벤트 구독은 `useSchemaNodeTracker` / `useSchemaNodeSubscribe` 훅 사용
-- `data-path` 속성을 span에 부여하여 DOM에서 경로 추적 가능
+- `data-path` 속성을 div(`display: contents`, `role="none"`)에 부여하여 DOM에서 경로 추적 가능
 
 ## Boundaries
 
