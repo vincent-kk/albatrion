@@ -121,6 +121,8 @@ import { usePortalAnchorRef } from './context/usePortalContext';
 export const Anchor = memo(
   (props: Omit<HTMLAttributes<HTMLDivElement>, 'children'>) => {
     const ref = usePortalAnchorRef();
-    return <div {...props} ref={ref} />;
+    return <div role="none" style={style} {...props} ref={ref} />;
   },
 );
+
+const style = { display: 'contents' } as const;
