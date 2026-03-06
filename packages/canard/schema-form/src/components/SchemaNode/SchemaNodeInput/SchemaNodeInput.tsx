@@ -3,7 +3,7 @@ import { memo, useCallback, useMemo, useRef } from 'react';
 import { isArray } from '@winglet/common-utils/filter';
 import { useMemorize, useOnUnmount } from '@winglet/react-utils/hook';
 
-import { DISPLAY_CONTENT } from '@/schema-form/app/constants';
+import { DISPLAY_CONTENT, NONE_ROLE } from '@/schema-form/app/constants';
 import { NodeEventType, NodeState } from '@/schema-form/core';
 import { useSchemaNodeTracker } from '@/schema-form/hooks/useSchemaNodeTracker';
 import {
@@ -100,7 +100,7 @@ export const SchemaNodeInput = memo(
     return (
       <div
         ref={ref}
-        role="none"
+        role={NONE_ROLE}
         style={DISPLAY_CONTENT}
         onFocus={handleFocus}
         onBlur={handleBlur}
