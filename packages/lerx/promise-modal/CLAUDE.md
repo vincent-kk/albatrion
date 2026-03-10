@@ -1,125 +1,34 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+`@lerx/promise-modal` — Promise 기반 React 모달 유틸리티. `alert`, `confirm`, `prompt`를 React 컴포넌트 내외부에서 모두 사용 가능.
 
-## Project Overview
+## Commands
 
-`@lerx/promise-modal` is a React-based universal modal utility that provides promise-based modal interactions (alert, confirm, prompt) that can be used both inside and outside React components. The library is built with TypeScript and targets ES2022.
-
-## Development Commands
-
-### Building
-- `yarn build` - Build the library using Rollup and generate type declarations
-- `yarn build:types` - Generate TypeScript declarations using tsc and tsc-alias
-- `yarn build:publish:npm` - Build and publish to NPM
-
-### Testing
-- `yarn test` - Run tests using Vitest (requires build:chain first)
-- Tests are located in `src/core/__tests__/` 
-- Test configuration is in `vite.config.ts` with jsdom environment
-
-### Linting and Formatting
-- `yarn lint` - Lint TypeScript/TSX files using ESLint
-- `yarn format` - Format code using Prettier
-
-### Development
-- `yarn storybook` - Run Storybook development server on port 6006
-- `yarn start` - Build and run Storybook
-- Story files are in the `coverage/` directory
-
-### Bundle Analysis
-- `yarn size-limit` - Check bundle size limits
-- `yarn make-dependency-graph` - Generate dependency visualization
+```bash
+yarn build             # ESM + CJS 빌드 + 타입 선언
+yarn test              # Vitest 테스트 (jsdom)
+yarn lint              # ESLint
+yarn storybook         # Storybook dev (port 6006)
+yarn size-limit        # 번들 크기 확인
+```
 
 ## Architecture
 
-### Core Structure
+```
+src/
+├── index.ts                      # Public API
+├── core/handle/                  # alert / confirm / prompt 함수
+├── core/node/                    # AbstractNode, AlertNode, ConfirmNode, PromptNode
+├── app/ModalManager.ts           # 싱글톤 — 모달 생명주기, DOM 앵커, 스타일 주입
+├── bootstrap/BootstrapProvider/  # ModalProvider 컴포넌트
+├── providers/                    # Context 분리 (설정, 모달 관리, 사용자 데이터)
+└── components/                   # Anchor, Background, Foreground 등 UI
+```
 
-The library follows a layered architecture:
-
-1. **Core Layer** (`src/core/`)
-   - `handle/` - Contains the main API functions (alert, confirm, prompt)
-   - `node/` - Modal node implementations with AbstractNode base class
-   - Provides the primary public API
-
-2. **Application Layer** (`src/app/`)
-   - `ModalManager` - Singleton class managing modal lifecycle, styling, and DOM anchoring
-   - Handles prerendering, style injection, and modal state
-
-3. **Bootstrap Layer** (`src/bootstrap/`)
-   - `BootstrapProvider` - Main provider component (exported as `ModalProvider`)
-   - Handles initialization and component setup
-
-4. **Provider Layer** (`src/providers/`)
-   - Context providers for configuration, modal management, and user-defined data
-   - Separate contexts for different concerns
-
-5. **Component Layer** (`src/components/`)
-   - Reusable UI components (Anchor, Background, Foreground, etc.)
-   - Fallback components for default implementations
-
-### Key Design Patterns
-
-- **Promise-based API**: Modal functions return promises that resolve with user interactions
-- **Provider Pattern**: Multiple context providers for different aspects of configuration
-- **Factory Pattern**: Node factory for creating different modal types
-- **Observer Pattern**: Modal nodes use subscription system for state updates
-- **Singleton Pattern**: ModalManager manages global state
-
-### Modal Node System
-
-Modal nodes extend `AbstractNode` which provides:
-- Subscription-based state management
-- Promise resolution handling  
-- Lifecycle management
-
-Three concrete implementations:
-- `AlertNode` - Simple notification modals
-- `ConfirmNode` - Yes/no confirmation modals  
-- `PromptNode` - Input collection modals
-
-### Styling System
-
-Uses `@winglet/style-utils` for dynamic CSS injection:
-- Scoped CSS with polynomial hashing
-- Runtime style sheet management
-- CSS compression for production
-
-## Build System
-
-- **Rollup** for bundling with ESM/CJS dual output
-- **TypeScript** compilation with path alias resolution
-- **Peer dependencies** for React externalization
-- **Bundle analysis** with rollup-plugin-visualizer
-
-## Import Paths
-
-The project uses path aliases:
-- `@/promise-modal` maps to `./src`
-- Configured in `vite.config.ts` and TypeScript config
+## Key Design
+- **Promise API**: 모달 함수가 Promise 반환 → 사용자 인터랙션으로 resolve
+- **Singleton**: `ModalManager`가 전역 상태 관리
+- **Styling**: `@winglet/style-utils`로 런타임 CSS 주입 (polynomial hashing 스코핑)
 
 ## Dependencies
-
-### Runtime Dependencies
-- `@winglet/common-utils` - Utility functions (hashing, random strings)
-- `@winglet/react-utils` - React hooks and utilities  
-- `@winglet/style-utils` - Dynamic CSS management
-
-### Peer Dependencies
-- React 18-19
-- React DOM 18-19
-
-## Testing Strategy
-
-- Unit tests for core node logic using Vitest
-- Storybook for component testing and documentation
-- Tests focus on subscription system and modal lifecycle
-
-## Key Files
-
-- `src/index.ts` - Main export file with public API
-- `src/app/ModalManager.ts` - Central state and DOM management
-- `src/core/handle/` - Promise-based modal functions
-- `src/bootstrap/BootstrapProvider/` - Provider component implementation
-- `rollup.config.mjs` - Build configuration
-- `vite.config.ts` - Test and development configuration
+`@winglet/common-utils`, `@winglet/react-utils`, `@winglet/style-utils`, React 18-19 (peer)
