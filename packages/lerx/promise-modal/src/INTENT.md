@@ -39,6 +39,6 @@
 
 ### Never do
 
-- organ 디렉토리(hooks, types, helpers, components)에 CLAUDE.md 생성
+- organ 디렉토리(hooks, types, helpers, components)에 INTENT.md 생성
 - `@winglet/*` 의존성을 직접 인라인으로 대체
 - React peer dependency 버전 범위 축소

@@ -32,7 +32,7 @@ SchemaNode/
 ### Never do
 - `SchemaNodeInput`을 `SchemaNode` 모듈 외부에서 직접 import
 - 노드 이벤트를 `useEffect` 없이 동기적으로 구독
-- `__tests__` 디렉토리에 CLAUDE.md 생성 (organ 디렉토리)
+- `__tests__` 디렉토리에 INTENT.md 생성 (organ 디렉토리)
 
 ## Dependencies
 - `@/schema-form/core` — `SchemaNode`, `NodeEventType`, `isTerminalNode`

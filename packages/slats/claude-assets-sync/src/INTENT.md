@@ -33,7 +33,7 @@ claude-assets-sync 패키지의 메인 소스 디렉토리. npm 패키지의 Cla
 
 ### Never do
 
-- organ 디렉토리(core, utils, __tests__)에 CLAUDE.md 생성
+- organ 디렉토리(core, utils, __tests__)에 INTENT.md 생성
 - components/ 하위 fractal 모듈을 우회하여 직접 import
 
 ## Dependencies

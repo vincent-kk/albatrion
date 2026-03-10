@@ -35,7 +35,7 @@ JSON Schema 타입별 노드 클래스 집합. `AbstractNode` 를 기반으로 `
 
 ### Never do
 - 노드 내부 `__method__` 를 외부에서 직접 호출
-- `organ` 디렉토리(`utils`, `types`, `strategies`) 에 CLAUDE.md 생성
+- `organ` 디렉토리(`utils`, `types`, `strategies`) 에 INTENT.md 생성
 - `AbstractNode` 를 우회하여 이벤트 발행 또는 상태 변경
 
 ## Dependencies

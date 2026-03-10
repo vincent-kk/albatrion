@@ -418,7 +418,7 @@ describe('SchemaNodeProxy Refresh Integration', () => {
  *
  * All tests use FormHandle.setValue() to verify form state and DOM synchronization.
  *
- * @see CLAUDE.md#6-schema-composition for conditional schema specifications
+ * @see INTENT.md#6-schema-composition for conditional schema specifications
  */
 describe('FormHandle Advanced Feature Integration', () => {
   beforeEach(() => {

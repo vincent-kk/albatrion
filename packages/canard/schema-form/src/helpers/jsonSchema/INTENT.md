@@ -30,7 +30,7 @@ JSON Schema 처리를 위한 헬퍼 함수 모음. 스키마 추출, $ref 해석
 - `filter.ts`의 타입 분류 기준 변경 (`virtual` 타입 추가/제거 등)
 
 ### Never do
-- `helpers` organ 디렉토리 자체에 CLAUDE.md 생성
+- `helpers` organ 디렉토리 자체에 INTENT.md 생성
 - 이 디렉토리에서 직접 React 컴포넌트나 노드 인스턴스 생성
 - `index.ts`를 우회하여 서브디렉토리 내부 파일을 직접 import
 
