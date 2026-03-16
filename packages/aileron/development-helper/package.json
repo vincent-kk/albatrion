@@ -28,7 +28,7 @@
   ],
   "scripts": {
     "build": "rollup -c && yarn build:types",
-    "build:types": "tsc -p ./tsconfig.declarations.json && tsc-alias -p ./tsconfig.declarations.json",
+    "build:types": "node ../script/build/buildTypes.mjs",
     "test": "vitest"
   },
   "devDependencies": {

@@ -8,6 +8,7 @@ import { createClearDir } from './utils/createClearDir.mjs';
 import { validateBuildOptions } from './utils/validateBuildOptions.mjs';
 
 export { getEntrypoints } from './utils/getEntrypoints.mjs';
+export { fixDtsExtensions } from './utils/fixDtsExtensions.mjs';
 
 /**
  * Determines whether a module should be treated as external.

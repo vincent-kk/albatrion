@@ -10,6 +10,7 @@ coverage
 
 # production
 build
+!packages/aileron/script/build/
 *.tsbuildinfo
 **/storybook-static
 

@@ -46,7 +46,7 @@
   "scripts": {
     "build": "rollup -c && yarn build:types",
     "build:publish:npm": "yarn build && yarn publish:npm",
-    "build:types": "tsc -p ./tsconfig.declarations.json && tsc-alias -p ./tsconfig.declarations.json",
+    "build:types": "node ../../aileron/script/build/buildTypes.mjs",
     "build-storybook": "storybook build",
     "format": "prettier --write \"src/**/*.{ts,tsx}\"",
     "lint": "eslint \"src/**/*.{ts,tsx}\" --report-unused-disable-directives --max-warnings 0",
