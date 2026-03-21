@@ -4,6 +4,7 @@ export { difference } from './difference';
 export { differenceBy } from './differenceBy';
 export { differenceLite } from './differenceLite';
 export { differenceWith } from './differenceWith';
+export { filter } from './filter';
 export { forEach } from './forEach';
 export { forEachDual } from './forEachDual';
 export { forEachReverse } from './forEachReverse';
