@@ -8,6 +8,8 @@ coverage
 
 .omc
 
+.maencof-lens
+
 # production
 build
 !packages/aileron/script/build/
