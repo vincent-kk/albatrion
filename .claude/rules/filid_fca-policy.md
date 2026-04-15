@@ -135,7 +135,8 @@ export const MY_CONSTANT = 'value';
 - Section headings (`## Purpose`, `## Structure`, `## Conventions`, `## Boundaries`,
   `### Always do`, `### Ask first`, `### Never do`, `## Dependencies`) MUST remain in English
   — they are machine-readable anchors for the validator.
-  All descriptive content MUST follow the user's conversation language.
+  All descriptive content MUST follow the language specified by the `[filid:lang]` tag
+  (configured in `.filid/config.json`). If no tag is present, follow the system's language setting; default to English.
 
 ### DETAIL.md
 
@@ -144,7 +145,8 @@ export const MY_CONSTANT = 'value';
 - MUST reflect current intended behavior, not historical evolution.
 - Update DETAIL.md **before** code changes. Update INTENT.md when boundaries change.
 - Section headings (`## Requirements`, `## API Contracts`, `## Last Updated`) MUST remain in English.
-  All descriptive content MUST follow the user's conversation language.
+  All descriptive content MUST follow the language specified by the `[filid:lang]` tag
+  (configured in `.filid/config.json`). If no tag is present, follow the system's language setting; default to English.
 
 ---
 
@@ -178,6 +180,6 @@ Before any implementation that touches a fractal module:
 2. Update DETAIL.md with new or changed requirements.
 3. Update INTENT.md if the module's public interface or boundaries change.
 4. Implement the change.
-5. Run `/filid:fca-scan` to confirm no new violations.
+5. Run `/filid:filid-scan` to confirm no new violations.
 
-Use `/filid:fca-sync` for structural drift, `/filid:fca-init` for project initialization, `/filid:fca-review` for architectural review.
+Use `/filid:filid-sync` for structural drift, `/filid:filid-setup` for project initialization, `/filid:filid-review` for architectural review.
