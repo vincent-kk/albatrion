@@ -1,28 +1,12 @@
-// Standalone dev bin — used when developing this package directly, and also
-// the entry point that serves the legacy deprecation stubs (sync, add, list, …).
-// Real consumers should call `program` via their own `bin/inject-docs.mjs` wrapper.
-import { readFileSync } from 'node:fs';
-import { resolve } from 'node:path';
+// Primary bin entry for @slats/claude-assets-sync v0.4+.
+//
+// Drives the top-level `claude-sync` CLI (discover + inject + list + build-hashes).
+// Consumer packages ship a 3-line re-export stub (`bin/claude-sync.mjs`) that
+// calls `runCli(process.argv)` from this package's `.` entry.
+import { runCli } from './commands/root.js';
+import { VERSION } from './version.js';
 
-import { program } from './program.js';
-
-const cwd = process.cwd();
-
-function readOptionalPackage(): { name?: string; version?: string } {
-  try {
-    return JSON.parse(readFileSync(resolve(cwd, 'package.json'), 'utf-8'));
-  } catch {
-    return {};
-  }
-}
-
-const pkg = readOptionalPackage();
-
-program({
-  packageName: pkg.name ?? '@slats/claude-assets-sync',
-  packageVersion: pkg.version ?? '0.2.0',
-  packageRoot: cwd,
-}).catch((err) => {
+runCli(process.argv, { version: VERSION }).catch((err) => {
   process.stderr.write(
     `[claude-assets-sync] ${err instanceof Error ? err.message : String(err)}\n`,
   );

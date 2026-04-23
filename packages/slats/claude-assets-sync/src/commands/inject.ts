@@ -3,6 +3,7 @@ import { join } from 'node:path';
 
 import { injectDocs } from '../core/inject.js';
 import { isInteractive, isValidScope, type Scope } from '../core/scope.js';
+import { startHeartbeat } from '../utils/heartbeat.js';
 import { logger } from '../utils/logger.js';
 
 export interface InjectCommandContext {
@@ -10,8 +11,9 @@ export interface InjectCommandContext {
   packageVersion: string;
   packageRoot: string;
   assetRoot?: string;
-  /** Lazily imported to avoid pulling ink into CLI startup when non-TTY. */
+  /** Scope picker. Default: src/prompts/selectScope. */
   renderScopeSelect?: () => Promise<Scope>;
+  /** Force confirmation prompt. Default: src/prompts/confirmForce. */
   renderForceConfirm?: (divergedCount: number, orphanCount: number, relPaths: string[]) => Promise<boolean>;
 }
 
@@ -26,26 +28,31 @@ export function registerInjectCommand(cmd: Command, ctx: InjectCommandContext): 
     .action(async (flags: { scope?: string; dryRun?: boolean; force?: boolean }) => {
       const scope = await resolveScopeOrThrow(flags.scope, ctx);
       const assetRoot = ctx.assetRoot ?? join(ctx.packageRoot, 'docs', 'claude');
-      const report = await injectDocs({
-        packageName: ctx.packageName,
-        packageVersion: ctx.packageVersion,
-        packageRoot: ctx.packageRoot,
-        assetRoot,
-        scope,
-        dryRun: flags.dryRun ?? false,
-        force: flags.force ?? false,
-        confirmForce: async (plan) => {
-          if (!ctx.renderForceConfirm) return true;
-          const diverged = plan.actions.filter((a) => a.kind === 'warn-diverged');
-          const orphans = plan.actions.filter((a) => a.kind === 'warn-orphan');
-          return ctx.renderForceConfirm(
-            diverged.length,
-            orphans.length,
-            [...diverged, ...orphans].map((a) => a.relPath).slice(0, 3),
-          );
-        },
-      });
-      if (report.exitCode !== 0) process.exit(report.exitCode);
+      const stopHeartbeat = startHeartbeat({ label: `injecting ${ctx.packageName}` });
+      try {
+        const report = await injectDocs({
+          packageName: ctx.packageName,
+          packageVersion: ctx.packageVersion,
+          packageRoot: ctx.packageRoot,
+          assetRoot,
+          scope,
+          dryRun: flags.dryRun ?? false,
+          force: flags.force ?? false,
+          confirmForce: async (plan) => {
+            if (!ctx.renderForceConfirm) return true;
+            const diverged = plan.actions.filter((a) => a.kind === 'warn-diverged');
+            const orphans = plan.actions.filter((a) => a.kind === 'warn-orphan');
+            return ctx.renderForceConfirm(
+              diverged.length,
+              orphans.length,
+              [...diverged, ...orphans].map((a) => a.relPath).slice(0, 3),
+            );
+          },
+        });
+        if (report.exitCode !== 0) process.exit(report.exitCode);
+      } finally {
+        stopHeartbeat();
+      }
     });
 }
 

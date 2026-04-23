@@ -109,4 +109,19 @@ export const logger = {
     );
     console.log();
   },
+
+  /**
+   * Top-level section heading with a distinct accent.
+   */
+  heading(message: string): void {
+    console.log();
+    console.log(pc.bold(pc.cyan(`▸ ${message}`)));
+  },
+
+  /**
+   * Inline accent — cyan bold, for short labels interleaved with content.
+   */
+  accent(message: string): string {
+    return pc.cyan(pc.bold(message));
+  },
 };

@@ -1,4 +1,6 @@
 // Public programmatic API.
+export { runCli, type RunCliOptions } from './commands/root.js';
+export { discover, type ConsumerPackage, type DiscoverOptions } from './discover.js';
 export { program, type ProgramOptions } from './program.js';
 export { injectDocs, type InjectOptions, type InjectReport } from './core/inject.js';
 export {
@@ -7,5 +9,11 @@ export {
   HASH_MANIFEST_FILENAME,
   type HashManifest,
 } from './core/hashManifest.js';
-export { resolveScope, isInteractive, isValidScope, type Scope, type ScopeResolution } from './core/scope.js';
+export {
+  resolveScope,
+  isInteractive,
+  isValidScope,
+  type Scope,
+  type ScopeResolution,
+} from './core/scope.js';
 export type { ClaudeConfig, PackageInfo, AssetType } from './utils/types.js';

@@ -1,74 +1,99 @@
 # CLAUDE.md
 
-`@slats/claude-assets-sync` — shared CLI engine for injecting Claude docs from a consumer package's `docs/claude` tree into a user's `.claude` directory.
+`@slats/claude-assets-sync` — thin CLI engine that discovers any package declaring `claude.assetPath` in its `package.json` and injects that package's `docs/claude/` tree into the user's `.claude` directory.
 
 ## Commands
 
 ```bash
-yarn build     # inject-version → rollup (ESM + CJS) → build:types
-yarn dev       # standalone bin (uses cwd as packageRoot)
-yarn test      # vitest
-yarn lint      # eslint
+yarn build           # inject-version → rollup (ESM + CJS) → build:types
+yarn test            # vitest
+yarn lint            # eslint
 ```
 
 ## Public API
 
-- `./cli` — `program({ packageName, packageVersion, packageRoot, assetRoot?, argv? })`. Called by each consumer's `bin/inject-docs.mjs` wrapper.
-- `.` — programmatic: `program`, `injectDocs`, `readHashManifest`, `resolveScope`, etc.
-- `./buildHashes` — `buildHashes({ packageName, packageVersion, packageRoot, assetPathRel? })`. Called from each consumer's `scripts/build-hashes.mjs` during its own build.
+- `.` (main barrel)
+  - `runCli(argv, options?)` — primary CLI entry; used by consumers' `bin/claude-sync.mjs` 3-line stub
+  - `discover(options?)` — returns `ConsumerPackage[]` for all packages with `claude.assetPath` in the walked tree
+  - `injectDocs(options)` — headless programmatic inject (UI-free)
+  - `readHashManifest`, `resolveScope`, `computeNamespacePrefixes`, `isInteractive`, `isValidScope`
+  - `program` (`@deprecated`) — legacy factory retained for backward compat; scheduled for removal
+- `./cli` — legacy `program()` factory subpath; forwards to the new prompts layer internally
+- `./buildHashes` — `buildHashes({ packageRoot? })` library function shared with the `claude-build-hashes` bin
+
+Bin entries: `claude-sync`, `claude-assets-sync` (legacy alias), `claude-build-hashes` (standalone CLI for hash generation).
+
+## CLI Surface
+
+```
+claude-sync [--scope=user|project|local] [--dry-run] [--force]
+            [--package=@scope/pkg] [--all]
+            [--root=<cwd>] [--no-workspaces]
+
+claude-sync list [--json] [--root=<cwd>]
+claude-sync build-hashes [pkgRoot]
+claude-sync inject-docs [options]    # legacy alias
+```
 
 ## Consumer Integration Pattern
 
+Each consumer package ships:
 ```
 <consumer>/
-  bin/inject-docs.mjs          # 15-line wrapper → @slats/claude-assets-sync/cli
+  bin/claude-sync.mjs          # 3-line re-export stub → @slats/claude-assets-sync runCli
   scripts/build-hashes.mjs     # calls buildHashes → dist/claude-hashes.json
   docs/claude/                  # authored content
   dist/claude-hashes.json      # GENERATED at build, publish-included
 ```
 
 Consumer `package.json` must:
-- `bin: { "inject-docs": "./bin/inject-docs.mjs" }`
-- `files: [..., "bin"]`
-- `dependencies: { "@slats/claude-assets-sync": "^0.2.0" }`
-- `scripts.build` chains `yarn build:hashes`
-- NEVER expose `./bin/*` in `exports` (blocks consumers from accidentally importing CLI into a bundle)
+- `bin: { "claude-sync": "./bin/claude-sync.mjs" }`
+- `files: [..., "bin", "docs", "dist/claude-hashes.json"]`
+- `dependencies: { "@slats/claude-assets-sync": "^0.4.0" }`
+- `claude: { "assetPath": "docs/claude" }`
+- Include `yarn build:hashes` in the build chain
+- NEVER expose `./bin/*` in `exports` (blocks consumers from accidentally bundling the CLI)
 
 ## Architecture
 
 ```
 src/
-├── program.ts              # ./cli subpath — Commander program factory
-├── index.ts                # programmatic barrel
-├── cli.ts                  # standalone dev bin
+├── cli.ts                  # primary bin entry — calls runCli(process.argv, { version })
+├── program.ts              # @deprecated legacy factory, retained for v0.3 consumer wrappers
+├── index.ts                # public programmatic barrel
+├── discover.ts             # node_modules + yarn workspace walker
 ├── core/
-│   ├── hash.ts             # sha256 compute/compare
+│   ├── hash.ts             # sha256 compute/compare (untouched since v0.2)
 │   ├── scope.ts            # user | project | local → target dir
-│   ├── hashManifest.ts     # dist/claude-hashes.json IO + namespace prefix derivation
+│   ├── hashManifest.ts     # dist/claude-hashes.json IO + namespace prefixes
 │   ├── injectPlan.ts       # copy / skip / warn-diverged / warn-orphan / delete
-│   └── inject.ts           # orchestrate plan → apply
+│   └── inject.ts           # orchestrate plan → apply (UI-free, UNTOUCHED)
 ├── commands/
-│   ├── inject.ts           # commander binding for `inject-docs`
-│   └── _deprecated.ts      # 7 legacy stubs (exit 1 + MIGRATION.md pointer)
-├── components/
-│   ├── primitives/         # Box, Text, Spinner
-│   ├── shared/             # Confirm, MenuItem, …
-│   └── inject/             # ScopeSelect, ForceConfirm (confirmForceAsync wrapper)
-└── utils/                  # asyncPool, logger, types
+│   ├── root.ts             # top-level commander root + subcommand router
+│   ├── inject.ts           # commander binding for `inject-docs` (also used by root default)
+│   ├── list.ts             # `claude-sync list` handler (tabular + --json)
+│   ├── buildHashesCmd.ts   # `claude-sync build-hashes` thin wrapper
+│   └── _deprecated.ts      # legacy subcommand stubs (sync, add, list, …) — removed in v1.0
+├── prompts/                # @inquirer/prompts-based selectScope + confirmForce
+└── utils/
+    ├── asyncPool.ts        # concurrency limiter (8)
+    ├── heartbeat.ts        # wall-clock ticker at COMMAND layer (never touches core)
+    ├── logger.ts           # picocolors-based; bold/heading/accent/heartbeat helpers
+    └── types.ts
 ```
 
-## Hash Strategy (Option A)
+## Hash Strategy (unchanged since v0.2, Option A)
 
-- `dist/claude-hashes.json` is the sole source of truth for file hashes (sha256, v1 schema, `previousVersions: {}` reserved for future Option A+).
-- Consumer-side comparison: copy if missing, skip if equal, warn+require `--force` if different (user-edit vs source-update is indistinguishable).
-- `--force` in TTY: interactive confirm prompt shows diverged file names (max 3) + "in git?" question. In non-TTY: emits diverged/orphan list to stderr, then proceeds (exit 0).
+- `dist/claude-hashes.json` is the sole source of truth (schema v1, `previousVersions: {}` reserved).
+- Consumer-side comparison: copy if missing, skip if equal, warn+require `--force` if different.
+- `--force` in TTY: interactive confirm via `@inquirer/prompts.confirm` shows diverged/orphan file list. Non-TTY: stderr emission + exit 0.
 
 ## Boundaries
 
-- `src/` must never import `bin/` or `docs/` (depcruise rule on the consumer side).
-- `components/` subdirectories (`primitives/`, `shared/`, `inject/`) are fractal modules with their own INTENT.md.
-- `scripts/buildHashes.mjs` is pure ESM Node, runs outside rollup; ignores `.omc/**`, `*.log`, `.DS_Store`.
+- `src/core/**` never imports from `src/prompts/`, `src/commands/`, or `src/utils/heartbeat.ts`. Heartbeat is wrapped at the command layer.
+- The legacy ink/react tree (`src/components/**`) has been removed. Migration reference lives only in git history. `src/prompts/` is the sole prompt surface going forward.
+- `scripts/buildHashes.mjs` stays pure Node ESM (no top-level await) so Rollup can bundle it; `scripts/claude-build-hashes.mjs` holds the self-executing CLI wrapper.
 
 ## Build Output
 
-`dist/index.{mjs,cjs,d.ts}` + `dist/program.{mjs,cjs,d.ts}` + `dist/cli.mjs` (shebang, standalone dev bin).
+`dist/index.{mjs,cjs,d.ts}` + `dist/program.{mjs,cjs,d.ts}` + `dist/cli.mjs` (shebang) + `dist/discover.{mjs,cjs,d.ts}` + `dist/commands/*` + `dist/prompts/*`. Total ≈ 300 KB across both formats.

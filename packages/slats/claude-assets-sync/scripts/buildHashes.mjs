@@ -1,12 +1,12 @@
-#!/usr/bin/env node
-// Library + CLI mode for the hash manifest builder.
+// Library + importable implementation for the hash manifest builder.
 //
-// CLI mode: `claude-build-hashes` (registered as bin in this package's
-// package.json). Reads the CONSUMER's package.json from `process.cwd()`,
-// hashes files under `<cwd>/<claude.assetPath ?? docs/claude>`, writes
-// `<cwd>/dist/claude-hashes.json`. Mirrors `scripts/inject-version.js`.
+// Self-executing CLI behavior lives in `./claude-build-hashes.mjs` so this
+// file stays free of top-level await and can be bundled into CJS/ESM outputs
+// via Rollup without format errors.
 //
-// Library mode: `import { buildHashes } from '@slats/claude-assets-sync/buildHashes'`.
+// Exported for:
+//   - Consumer packages: `import { buildHashes } from '@slats/claude-assets-sync/buildHashes'`
+//   - Internal command layer: `src/commands/buildHashesCmd.ts`
 
 import { createHash } from 'node:crypto';
 import { mkdir, readFile, readdir, writeFile } from 'node:fs/promises';
@@ -67,16 +67,4 @@ export async function buildHashes(opts = {}) {
   const outPath = join(distDir, MANIFEST_FILENAME);
   await writeFile(outPath, `${JSON.stringify(manifest, null, 2)}\n`, 'utf-8');
   return { outPath, fileCount: Object.keys(sorted).length };
-}
-
-// Self-executing CLI mode.
-const isDirectRun = import.meta.url === `file://${process.argv[1]}`;
-if (isDirectRun) {
-  try {
-    const { outPath, fileCount } = await buildHashes();
-    console.log(`✓ claude-hashes.json written: ${fileCount} file(s) → ${outPath}`);
-  } catch (err) {
-    console.error('❌ buildHashes failed:', err?.message ?? err);
-    process.exit(1);
-  }
 }

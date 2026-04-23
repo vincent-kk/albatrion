@@ -45,7 +45,8 @@
   "types": "dist/index.d.ts",
   "bin": {
     "claude-assets-sync": "./dist/cli.mjs",
-    "claude-build-hashes": "./scripts/buildHashes.mjs"
+    "claude-build-hashes": "./scripts/claude-build-hashes.mjs",
+    "claude-sync": "./dist/cli.mjs"
   },
   "files": [
     "dist",
@@ -66,15 +67,11 @@
     "version:patch": "yarn version patch"
   },
   "dependencies": {
+    "@inquirer/prompts": "^8.4.2",
     "commander": "^12.1.0",
-    "ink": "^6.6.0",
-    "ink-select-input": "^6.2.0",
-    "picocolors": "^1.1.1",
-    "react": "^19.1.1",
-    "react-dom": "^19.1.1"
+    "picocolors": "^1.1.1"
   },
   "devDependencies": {
-    "@types/react": "^19.0.0",
-    "ink-testing-library": "^4.0.0"
+    "@inquirer/testing": "^3.3.5"
   }
 }
