@@ -1,14 +1,6 @@
+# Form Handle
 
-# Form Handle Skill
-
-Expert skill for @canard/schema-form's FormHandle API.
-
-## Skill Info
-
-- **Name**: form-handle
-- **Purpose**: Guide for programmatic form control through FormHandle
-- **Triggers**: FormHandle, useRef, formRef, getValue, setValue, validate, reset, submit related questions
-
+Programmatic control of a `<Form>` via `useRef<FormHandle<typeof schema>>()`. Exposes value I/O, validation, state management, focus, and submission. Prefer `as const` on the schema for end-to-end type inference.
 
 ## FormHandle Interface
 

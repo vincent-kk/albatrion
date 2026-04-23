@@ -52,13 +52,15 @@ const server = new ApolloServer({
 
 ## Custom Cache Implementations
 
+The option is **`cache`** (not `cacheMap`). It accepts any object implementing the `MapLike` interface: `get`, `set`, `delete`, `clear`.
+
 ### LRU Cache (size-bounded)
 
 ```typescript
 import LRU from 'lru-cache';
 
 const userLoader = new DataLoader(batchLoadUsers, {
-  cacheMap: new LRU<string, Promise<User>>({ max: 500 }),
+  cache: new LRU<string, Promise<User>>({ max: 500 }),
 });
 ```
 
@@ -88,7 +90,7 @@ class TtlMap<K, V> {
 }
 
 const priceLoader = new DataLoader(batchLoadPrices, {
-  cacheMap: new TtlMap<string, Promise<Price>>(60_000), // 1-minute TTL
+  cache: new TtlMap<string, Promise<Price>>(60_000), // 1-minute TTL
 });
 ```
 
@@ -171,6 +173,8 @@ async function batchWithRetry(
 const userLoader = new DataLoader(batchWithRetry);
 ```
 
+Remember: if the BatchLoader itself throws (rather than returning Error values), DataLoader clears those keys from the cache before rejecting, so the next `load()` can retry cleanly.
+
 ## Cache Warming (Prime on Startup)
 
 ```typescript
@@ -194,13 +198,15 @@ class UserService {
 
 ## Post-Mutation Cache Consistency
 
+`prime()` is a no-op if the key is already cached — always `clear()` first when replacing:
+
 ```typescript
 class UserRepository {
   private loader = new DataLoader<string, User>(batchLoadUsers);
 
   async update(id: string, patch: Partial<User>): Promise<User> {
     const updated = await db.updateUser(id, patch);
-    // Clear stale entry, then prime with fresh data
+    // Clear stale entry FIRST, then prime with fresh data
     this.loader.clear(id).prime(id, updated);
     return updated;
   }
@@ -224,3 +230,5 @@ function handleLoadError(loader: DataLoader, key: string, err: Error) {
   logger.error(`[${loader.name ?? 'DataLoader'}] Failed to load key ${key}`, err);
 }
 ```
+
+`name` is a readonly public field; defaults to `null` when not provided.

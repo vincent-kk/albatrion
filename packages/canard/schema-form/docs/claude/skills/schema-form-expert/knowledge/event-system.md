@@ -1,14 +1,6 @@
+# Event System
 
-# Event System Skill
-
-Expert skill for @canard/schema-form's event system.
-
-## Skill Info
-
-- **Name**: event-system
-- **Purpose**: Guide for node events, subscriptions, and event batching mechanism
-- **Triggers**: event, subscribe, event batching, UpdateValue, subscription/unsubscription related questions
-
+Every `AbstractNode` publishes typed events (`NodeEventType`) and batches them through an `EventCascade` microtask queue. Subscribers receive merged events per tick; use `subscribe(listener)` and store its cleanup function.
 
 ## Event Types
 

@@ -1,14 +1,6 @@
+# Context Usage
 
-# Context Usage Skill
-
-Expert skill for @canard/schema-form's context feature.
-
-## Skill Info
-
-- **Name**: context-usage
-- **Purpose**: Guide for integrating external data using context prop and @ references
-- **Triggers**: context, @, external data, userRole, permissions, mode related questions
-
+Inject external data into a form via the `context` prop and reference it inside computed expressions using `@`. Context updates automatically recompute dependent computed properties.
 
 ## Basic Syntax
 

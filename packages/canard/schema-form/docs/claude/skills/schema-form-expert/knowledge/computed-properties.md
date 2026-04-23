@@ -1,14 +1,6 @@
+# Computed Properties
 
-# Computed Properties Skill
-
-Expert skill for Computed Properties features in @canard/schema-form.
-
-## Skill Info
-
-- **Name**: computed-properties
-- **Purpose**: Q&A and implementation guide for Computed Properties
-- **Triggers**: computed, watch, active, visible, readOnly, disabled, pristine, derived related questions
-
+Dynamic schema behavior driven by expressions over form values and context. Supported keys: `watch`, `active`, `visible`, `readOnly`, `disabled`, `pristine`, `derived`. Each has a shorthand alias (`&active`, `&visible`, ...) that lives directly on the schema node.
 
 ## Basic Syntax
 

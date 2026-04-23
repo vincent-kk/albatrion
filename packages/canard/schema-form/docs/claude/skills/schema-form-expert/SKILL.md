@@ -1,397 +1,117 @@
 ---
 name: schema-form-expert
-description: "@canard/schema-form library expert. Provides Q&A, usage examples, and troubleshooting by referencing all knowledge files."
+description: "Expert knowledge base for @canard/schema-form. Triggers on FormTypeInput, computed properties (active/visible/readOnly/derived), conditional schemas (oneOf/anyOf/allOf/if-then-else), JSONPointer (.., ., *, @), FormHandle, virtual schemas, plugins (AJV/Antd/MUI), validation, state, injectTo, arrays, context, events, troubleshooting."
 user-invocable: false
 ---
 
-# Schema Form Expert Skill
+# Schema Form Expert
 
-This is an expert skill for @canard/schema-form. This skill answers questions about the schema-form library, provides usage examples, and assists with troubleshooting.
+Knowledge base for `@canard/schema-form`. Answer questions, show usage examples, and diagnose issues by routing to the right knowledge file in `knowledge/`.
 
-## Skill Info
+## How to Use This Skill
 
-- **Name**: schema-form-expert
-- **Purpose**: @canard/schema-form library Q&A and guidance
-- **Triggers**: `/schema-form` command or schema-form related questions
+1. Identify the topic in the user's question.
+2. Locate the matching knowledge file using the Topic Router below.
+3. Load that knowledge file and any related files listed in the router.
+4. Answer with a concept explanation, a concrete TSX example, and references to the knowledge file(s) used.
 
----
+Do not inline the full interface definitions or long examples from knowledge files into the answer — cite them and quote only the minimal relevant snippet.
 
-## Knowledge Files Reference
+## Topic Router
 
-Refer to the following knowledge files for detailed guides by feature:
+| Topic keywords in user question | Knowledge file |
+|---|---|
+| `computed`, `watch`, `active`, `visible`, `readOnly`, `disabled`, `pristine`, `derived`, `&active`, `&visible` | `knowledge/computed-properties.md` |
+| `oneOf`, `anyOf`, `allOf`, `if/then/else`, `&if`, conditional fields, dynamic forms | `knowledge/conditional-schema.md` |
+| `FormTypeInput`, `FormTypeInputProps`, `formTypeInputDefinitions`, `formTypeInputMap`, custom input | `knowledge/formtype-input.md` |
+| `validate`, `ValidationMode`, `errorMessages`, `formatError`, `useChildNodeErrors`, validation plugin | `knowledge/validation.md` |
+| `injectTo`, field value propagation, circular reference, auto-populate | `knowledge/inject-to.md` |
+| `ArrayNode`, `push`, `remove`, `clear`, `minItems`, `maxItems`, `prefixItems`, tuple | `knowledge/array-operations.md` |
+| `FormHandle`, `useRef`, `getValue`, `setValue`, `validate()`, `reset`, `submit`, `focus`, programmatic control | `knowledge/form-handle.md` |
+| `JSONPointer`, paths, `..`, `.`, `*`, `@`, `~0`, `~1`, `find`, `findNode` | `knowledge/jsonpointer.md` |
+| `registerPlugin`, plugin development, AJV, Antd, MUI, UI plugin, validator plugin | `knowledge/plugin-system.md` |
+| `Form.Render`, `Form.Input`, `Form.Label`, custom layout, path-based rendering | `knowledge/form-render.md` |
+| `virtual`, `VirtualNode`, field grouping, date range, multi-field combination | `knowledge/virtual-schema.md` |
+| `NodeState`, `dirty`, `touched`, `validated`, `showError`, `globalState`, `onStateChange`, `clearState` | `knowledge/state-management.md` |
+| `context`, `@.`, `(@).`, external data, `userRole`, permissions, multi-tenant | `knowledge/context-usage.md` |
+| `NodeEventType`, `subscribe`, `EventCascade`, event batching, `UpdateValue`, `RequestRefresh`, `RequestRemount` | `knowledge/event-system.md` |
+| errors, not working, bug, debug, unexpected behavior | `knowledge/troubleshooting.md` |
+| performance, slow, memory, large data, Strategy, virtualization, bulk operation | `knowledge/performance-optimization.md` |
+| testing, unit test, component test, integration test, Vitest, testing-library | `knowledge/testing-guide.md` |
 
-| File | Topics | Load When |
-|------|--------|-----------|
-| `knowledge/computed-properties.md` | watch, active, visible, readOnly, disabled, pristine, derived | Computed property questions |
-| `knowledge/conditional-schema.md` | oneOf, anyOf, allOf, if-then-else, &if | Conditional schema questions |
-| `knowledge/formtype-input.md` | FormTypeInput, FormTypeInputProps, formTypeInputDefinitions | Custom input component questions |
-| `knowledge/validation.md` | validate, ValidationMode, errorMessages, formatError | Validation questions |
-| `knowledge/inject-to.md` | injectTo, field value injection, circular references | Value injection questions |
-| `knowledge/array-operations.md` | ArrayNode, push, remove, clear, prefixItems | Array manipulation questions |
-| `knowledge/form-handle.md` | FormHandle, useRef, getValue, setValue, validate, reset | Programmatic control questions |
-| `knowledge/jsonpointer.md` | JSONPointer, paths, .., ., *, @ | Path reference questions |
-| `knowledge/plugin-system.md` | registerPlugin, plugin development, UI plugins | Plugin questions |
-| `knowledge/form-render.md` | Form.Render, Form.Input, Form.Label, custom layouts | Custom layout questions |
-| `knowledge/virtual-schema.md` | virtual, VirtualNode, field grouping | Virtual field questions |
-| `knowledge/state-management.md` | NodeState, dirty, touched, globalState, onStateChange | State management questions |
-| `knowledge/context-usage.md` | context, @, userRole, permissions, mode | External data integration questions |
-| `knowledge/event-system.md` | event, subscribe, events, UpdateValue, subscription, batching | Event system questions |
-| `knowledge/troubleshooting.md` | errors, issues, not working, bugs, debugging | Troubleshooting questions |
-| `knowledge/performance-optimization.md` | performance, optimization, slow, Strategy, memory, bulk | Performance optimization questions |
-| `knowledge/testing-guide.md` | testing, test, unit testing, component testing | Test writing questions |
+## Architecture Cheat Sheet
 
----
+Use this section for quick orientation. Load the matching knowledge file for depth.
 
-## Knowledge Base
+### Node System
 
-### Core Architecture
+- **Terminal nodes**: `StringNode`, `NumberNode`, `BooleanNode`, `NullNode`
+- **Branch nodes**: `ObjectNode`, `ArrayNode` (each with `BranchStrategy` or `TerminalStrategy`)
+- **Special**: `VirtualNode` (field grouping, computed values)
+- Creation entry: `nodeFromJsonSchema()`
 
-1. **Node System**
-   - Terminal Nodes: StringNode, NumberNode, BooleanNode, NullNode
-   - Branch Nodes: ObjectNode, ArrayNode (BranchStrategy/TerminalStrategy)
-   - VirtualNode: Conditional/computed fields
+### FormTypeInput Resolution Priority (highest → lowest)
 
-2. **FormTypeInput Priority** (highest to lowest)
-   1. `FormTypeInput` property in JSON Schema
-   2. `formTypeInputMap` path mapping
-   3. Form's `formTypeInputDefinitions`
-   4. FormProvider's `formTypeInputDefinitions`
-   5. Plugin's `formTypeInputDefinitions`
+1. `FormTypeInput` property set directly on a JSON Schema node
+2. `formTypeInputMap` path mapping (`formTypeInputMap` prop on `Form`)
+3. `Form`-level `formTypeInputDefinitions`
+4. `FormProvider`-level `formTypeInputDefinitions`
+5. Plugin-provided `formTypeInputDefinitions`
 
-3. **JSONPointer Extensions**
-   - `..` : Parent navigation (computed, node.find() only)
-   - `.` : Current node (computed, node.find() only)
-   - `*` : Wildcard (FormTypeInputMap only)
-   - `@` : Context reference (computed only)
+### JSONPointer Extensions by Context
 
-### Key Interfaces
+| Syntax | computed expressions | `node.find()` | `formTypeInputMap` |
+|---|---|---|---|
+| Absolute `/a/b` | ✓ | ✓ | ✓ |
+| Relative `..`, `.` | ✓ | ✓ | ✗ |
+| Wildcard `*` | ✗ | ✗ | ✓ |
+| Context `@` | ✓ | ✗ | ✗ |
 
-```typescript
-// FormProps
-interface FormProps<
-  Schema extends JsonSchema = JsonSchema,
-  Value extends AllowedValue = InferValueType<Schema>,
-> {
-  jsonSchema: Schema;
-  defaultValue?: Value;
-  readOnly?: boolean;
-  disabled?: boolean;
-  onChange?: SetStateFn<Value>;
-  onValidate?: Fn<[jsonSchemaError: JsonSchemaError[]]>;
-  onSubmit?: Fn<[value: Value], Promise<void> | void>;
-  onStateChange?: Fn<[state: NodeStateFlags]>;
-  formTypeInputDefinitions?: FormTypeInputDefinition[];
-  formTypeInputMap?: FormTypeInputMap;
-  CustomFormTypeRenderer?: ComponentType<FormTypeRendererProps>;
-  errors?: JsonSchemaError[];
-  formatError?: FormTypeRendererProps['formatError'];
-  showError?: boolean | ShowError;
-  validationMode?: ValidationMode;
-  validatorFactory?: ValidatorFactory;
-  context?: Dictionary;
-  children?: ReactNode | Fn<[props: FormChildrenProps<Schema, Value>], ReactNode>;
-}
+### Computed Property Keys
 
-// FormHandle
-interface FormHandle<
-  Schema extends JsonSchema,
-  Value extends AllowedValue = InferValueType<Schema>,
-> {
-  node?: InferSchemaNode<Schema>;
-  focus: Fn<[dataPath: SchemaNode['path']]>;
-  select: Fn<[dataPath: SchemaNode['path']]>;
-  reset: Fn;
-  findNode: Fn<[path: SchemaNode['path']], SchemaNode | null>;
-  findNodes: Fn<[path: SchemaNode['path']], SchemaNode[]>;
-  getState: Fn<[], NodeStateFlags>;
-  setState: Fn<[state: NodeStateFlags]>;
-  clearState: Fn;
-  getValue: Fn<[], Value>;
-  setValue: SetStateFnWithOptions<Value>;
-  getErrors: Fn<[], JsonSchemaError[]>;
-  getAttachedFilesMap: Fn<[], AttachedFilesMap>;
-  validate: Fn<[], Promise<JsonSchemaError[]>>;
-  showError: Fn<[visible: boolean]>;
-  submit: TrackableHandlerFunction<[], void, { loading: boolean }>;
-}
+`watch` | `active` | `visible` | `readOnly` | `disabled` | `pristine` | `derived`
 
-// FormTypeInputProps
-interface FormTypeInputProps<
-  Value extends AllowedValue = any,
-  Context extends Dictionary = object,
-  WatchValues extends Array<any> = Array<any>,
-  Schema extends JsonSchemaWithVirtual = InferJsonSchema<Value>,
-  Node extends SchemaNode = InferSchemaNode<Schema>,
-> {
-  jsonSchema: Schema;
-  readOnly: boolean;
-  disabled: boolean;
-  required: boolean;
-  node: Node;
-  type: Node['schemaType'];
-  name: Node['name'];
-  path: Node['path'];
-  nullable: Node['nullable'];
-  errors: Node['errors'];
-  errorVisible: boolean;
-  watchValues: WatchValues;
-  defaultValue: Value | undefined;
-  value: Value | undefined;
-  onChange: SetStateFnWithOptions<Value | undefined>;
-  onFileAttach: Fn<[file: File | File[] | undefined]>;
-  ChildNodeComponents: ChildNodeComponent[];
-  placeholder: string | undefined;
-  className: string | undefined;
-  style: CSSProperties | undefined;
-  context: Context;
-  [alt: string]: any;
-}
-```
+Shorthand aliases (top-level schema keys): `&active`, `&visible`, `&readOnly`, `&disabled`, `&pristine`, `&derived`, `&if`.
 
-### Computed Properties
+**active vs visible**
+- `active: false` → value removed from form data (use for conditional fields, payment methods)
+- `visible: false` → UI hidden but value retained (use for collapsible UI, step forms)
 
-```typescript
-computed: {
-  watch: string | string[];     // Value subscription
-  active: boolean | string;     // Active state (false removes value)
-  visible: boolean | string;    // Visibility (false retains value)
-  readOnly: boolean | string;   // Read-only state
-  disabled: boolean | string;   // Disabled state
-  pristine: boolean | string;   // State reset
-  derived: string;              // Derived value
-}
-
-// Shorthand syntax
-'&active': '../toggle === true'
-'&visible': "@.userRole === 'admin'"
-'&derived': '(../price ?? 0) * (../quantity ?? 0)'
-```
-
-**Choosing active vs visible:**
-- `active`: **Removes value** when hidden → Conditional fields, payment method fields
-- `visible`: **Retains value** when hidden → Collapsible UI, step-by-step forms
-
-### Conditional Schemas
-
-```typescript
-// oneOf (exclusive choice)
-oneOf: [
-  { '&if': "./type === 'A'", properties: { fieldA: {...} } },
-  { '&if': "./type === 'B'", properties: { fieldB: {...} } },
-]
-
-// anyOf (non-exclusive choice)
-anyOf: [
-  { '&if': './hasFeature1', properties: { config1: {...} } },
-  { '&if': './hasFeature2', properties: { config2: {...} } },
-]
-
-// if-then-else
-if: { properties: { country: { const: 'KR' } } },
-then: { properties: { phone: { pattern: '^010-' } } },
-else: { properties: { phone: { pattern: '^\\+' } } }
-```
+See `knowledge/computed-properties.md` for the full decision table.
 
 ### ValidationMode
 
 ```typescript
-enum ValidationMode {
-  None = 0,      // Validation disabled
-  OnChange = 1,  // Validate on value change
-  OnRequest = 2, // Validate on validate() call
-}
-
-// Combination
-ValidationMode.OnChange | ValidationMode.OnRequest
+enum ValidationMode { None = 0, OnChange = 1, OnRequest = 2 }
+// Combinable: ValidationMode.OnChange | ValidationMode.OnRequest
 ```
 
-### Plugins
+### Available Plugins
 
-```typescript
-// Available plugins
-@canard/schema-form-ajv8-plugin  // AJV 8.x validation
-@canard/schema-form-ajv7-plugin  // AJV 7.x validation
-@canard/schema-form-ajv6-plugin  // AJV 6.x validation
-@canard/schema-form-antd5-plugin // Ant Design 5 UI
-@canard/schema-form-antd6-plugin // Ant Design 6 UI
-@canard/schema-form-antd-mobile-plugin // Ant Design Mobile UI
-@canard/schema-form-mui-plugin   // Material UI
+| Category | Packages |
+|---|---|
+| Validator | `@canard/schema-form-ajv8-plugin`, `@canard/schema-form-ajv7-plugin`, `@canard/schema-form-ajv6-plugin` |
+| UI | `@canard/schema-form-antd5-plugin`, `@canard/schema-form-antd6-plugin`, `@canard/schema-form-antd-mobile-plugin`, `@canard/schema-form-mui-plugin` |
 
-// Registration
-import { registerPlugin } from '@canard/schema-form';
-registerPlugin(plugin);
-```
+Register via `registerPlugin(plugin)` before the first render. Order: UI plugins before validator plugins.
 
----
+## Answer Format
 
-## Response Guidelines
+Structure every answer as:
 
-### Response by Question Type
+1. **Concept** — one-paragraph explanation rooted in the cited knowledge file.
+2. **Example** — minimal TSX snippet that compiles against the public API.
+3. **References** — `knowledge/<file>.md` and related story (`stories/NN.Topic.stories.tsx`) or test file when applicable.
 
-1. **Concept questions**: Explain with reference to knowledge files
-2. **Usage questions**: Explain with code examples
-3. **Troubleshooting**: Analyze cause → Suggest solution
-4. **Comparison questions**: Organize differences in tables or lists
+Keep code examples focused on the single concept being asked. Link to the knowledge file for variants and edge cases instead of inlining them.
 
-### Question-Skill Mapping
+## Reference Map
 
-| Question Type | Knowledge File to Reference |
-|----------|----------------|
-| "What is computed visible?" | `knowledge/computed-properties.md` |
-| "How to set oneOf conditions?" | `knowledge/conditional-schema.md` |
-| "Create custom input component" | `knowledge/formtype-input.md` |
-| "How to customize error messages?" | `knowledge/validation.md` |
-| "Update field B when field A changes" | `knowledge/inject-to.md` |
-| "How to add array items?" | `knowledge/array-operations.md` |
-| "Get form value from outside?" | `knowledge/form-handle.md` |
-| "What is the path syntax?" | `knowledge/jsonpointer.md` |
-| "Develop custom plugin" | `knowledge/plugin-system.md` |
-| "Build custom form layout?" | `knowledge/form-render.md` |
-| "Group multiple fields?" | `knowledge/virtual-schema.md` |
-| "Manage dirty, touched state" | `knowledge/state-management.md` |
-| "Control fields with external data" | `knowledge/context-usage.md` |
-| "How event system works" | `knowledge/event-system.md` |
-| "It's not working" | `knowledge/troubleshooting.md` |
-| "How to improve performance?" | `knowledge/performance-optimization.md` |
-| "How to write tests?" | `knowledge/testing-guide.md` |
-
-### Response Format
-
-```markdown
-## [Question Summary]
-
-### Answer
-[Core explanation]
-
-### Example Code
-```tsx
-// Related example
-```
-
-### References
-- Related knowledge: [File name] (`knowledge/filename.md`)
-- Related story: [Story filename]
-- Notes: [If any]
-```
-
----
-
-## Reference Documents
-
-Specification document location: `packages/canard/schema-form/docs/`
-
-| File | Content |
-|------|------|
-| `ko/SPECIFICATION.md` | Full specification (Korean) |
-| `en/SPECIFICATION.md` | Full specification (English) |
-| `claude/skills/schema-form-expert/knowledge/*.md` | Detailed guides by feature (17 knowledge files) |
-
----
-
-## Example Responses
-
-### Question: What is the FormTypeInput priority?
-
-```markdown
-## FormTypeInput Priority
-
-FormTypeInput selection follows this priority order (highest to lowest):
-
-1. **Direct assignment in JSON Schema**
-   ```tsx
-   { type: 'string', FormTypeInput: CustomInput }
-   ```
-
-2. **formTypeInputMap** (path-based)
-   ```tsx
-   <Form formTypeInputMap={{ '/email': EmailInput }} />
-   ```
-
-3. **Form's formTypeInputDefinitions**
-   ```tsx
-   <Form formTypeInputDefinitions={[...]} />
-   ```
-
-4. **FormProvider's formTypeInputDefinitions**
-   ```tsx
-   <FormProvider formTypeInputDefinitions={[...]} />
-   ```
-
-5. **Plugin's formTypeInputDefinitions**
-   ```tsx
-   registerPlugin({ formTypeInputDefinitions: [...] })
-   ```
-
-### References
-- Related knowledge: FormTypeInput (`knowledge/formtype-input.md`)
-- When conditions match, the first defined takes priority
-```
-
-### Question: How to reference sibling fields in computed
-
-```markdown
-## Referencing Sibling Fields in Computed
-
-Use `..` (parent navigation) to reference sibling fields.
-
-### Example
-```tsx
-const schema = {
-  type: 'object',
-  properties: {
-    category: {
-      type: 'string',
-      enum: ['A', 'B'],
-    },
-    details: {
-      type: 'string',
-      computed: {
-        // ../category = navigate to parent then reference category
-        active: "../category === 'A'",
-        watch: '../category',
-      },
-    },
-  },
-};
-```
-
-### Path Reference Rules
-- `../field` : Sibling field
-- `../../field` : Parent's sibling
-- `./field` : Current object's child (in array items)
-- `/field` : Absolute path (from root)
-- `@.prop` : Context object property
-
-### References
-- Related knowledge: Computed Properties (`knowledge/computed-properties.md`), JSONPointer (`knowledge/jsonpointer.md`)
-```
-
----
-
-## Implementation Guide
-
-This skill uses a directory-based structure:
-
-```
-schema-form-expert/
-├── SKILL.md                          # This file (main skill definition)
-└── knowledge/                        # Knowledge files directory
-    ├── array-operations.md           # Array manipulation
-    ├── computed-properties.md        # Computed Properties
-    ├── conditional-schema.md         # Conditional schemas
-    ├── context-usage.md              # Context usage
-    ├── event-system.md               # Event system
-    ├── form-handle.md                # FormHandle API
-    ├── form-render.md                # Custom layouts
-    ├── formtype-input.md             # FormTypeInput system
-    ├── inject-to.md                  # InjectTo feature
-    ├── jsonpointer.md                # JSONPointer extensions
-    ├── performance-optimization.md   # Performance optimization
-    ├── plugin-system.md              # Plugin system
-    ├── state-management.md           # State management
-    ├── testing-guide.md              # Test writing
-    ├── troubleshooting.md            # Troubleshooting
-    └── virtual-schema.md             # Virtual Schema
-```
-
-All knowledge files are written in pure markdown format without frontmatter.
+| Resource | Path |
+|---|---|
+| Full specification (Korean) | `packages/canard/schema-form/docs/ko/SPECIFICATION.md` |
+| Full specification (English) | `packages/canard/schema-form/docs/en/SPECIFICATION.md` |
+| Quick reference | `packages/canard/schema-form/docs/QUICK_REFERENCE.md` |
+| Storybook examples | `packages/canard/schema-form/stories/*.stories.tsx` |
+| Unit tests | `packages/canard/schema-form/src/core/__tests__/*.test.ts` |
+| Package CLAUDE.md (architecture) | `packages/canard/schema-form/CLAUDE.md` |

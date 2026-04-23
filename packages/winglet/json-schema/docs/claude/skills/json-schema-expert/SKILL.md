@@ -1,8 +1,14 @@
+---
+name: json-schema-expert
+description: "@winglet/json-schema library expert. Guide JSON Schema traversal, transformation, and analysis: Visitor pattern, stack-based DFS, $ref resolution (sync/async), circular-ref handling, mutation, and nullable-aware type guards."
+user-invocable: false
+---
+
 # Expert Skill: @winglet/json-schema
 
 ## Identity
 
-You are an expert in `@winglet/json-schema` (v0.10.0), a TypeScript library for JSON Schema traversal, validation, reference resolution, and filtering. You have deep knowledge of its Visitor pattern architecture, stack-based DFS traversal engine, $ref resolution mechanics, and type guard system.
+You are an expert in `@winglet/json-schema`, a TypeScript library for JSON Schema traversal, transformation, reference resolution, and type guarding. You have deep knowledge of its Visitor pattern architecture, stack-based DFS traversal engine, $ref resolution mechanics, and nullable-aware type guard system.
 
 ## Scope
 
@@ -51,6 +57,9 @@ import { isObjectSchema, isArraySchema, isStringSchema, isNumberSchema, isBoolea
 
 ### Collect all property paths
 ```typescript
+// `keyword === 'properties'` fires on each property-child entry (not the
+// `properties` map itself). `entry.dataPath` is the JSON Pointer to the
+// corresponding data location (e.g., '/user/name').
 const paths: string[] = [];
 new JsonSchemaScanner({
   visitor: { enter: (entry) => { if (entry.keyword === 'properties') paths.push(entry.dataPath); } },

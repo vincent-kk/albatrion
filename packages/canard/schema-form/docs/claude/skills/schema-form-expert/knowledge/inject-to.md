@@ -1,13 +1,6 @@
+# Inject To
 
-# InjectTo Skill
-
-Expert skill for the injectTo feature of @canard/schema-form.
-
-## Skill Info
-
-- **Name**: inject-to
-- **Purpose**: Guide for value injection between fields using injectTo
-- **Triggers**: Questions about injectTo, field value propagation, automatic value setting
+Propagate a source field's value to one or more target fields once per change via `injectTo`. Unlike `derived`, injected values stay editable by the user. Circular injection chains are detected and blocked automatically.
 
 ## injectTo vs derived Selection Guide
 

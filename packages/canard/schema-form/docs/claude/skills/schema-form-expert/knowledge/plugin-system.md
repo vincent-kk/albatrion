@@ -1,13 +1,6 @@
+# Plugin System
 
-# Plugin System Skill
-
-Expert skill for the plugin system of @canard/schema-form.
-
-## Skill Info
-
-- **Name**: plugin-system
-- **Purpose**: Guide for plugin registration, development, and extension
-- **Triggers**: Questions about plugin, registerPlugin, validator, UI plugins
+Register validators and UI component sets via `registerPlugin()` before the first render. Plugin-provided `formTypeInputDefinitions` have the lowest priority; `FormProvider` and `Form` props override them.
 
 ## Available Plugins
 

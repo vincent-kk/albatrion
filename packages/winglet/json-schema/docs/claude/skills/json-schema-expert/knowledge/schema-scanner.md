@@ -239,23 +239,28 @@ scanner.scan(schema);
 
 ### Typed context
 
+`context` is passed by reference to every callback. Hold onto your own
+reference to the context object — the scanner's internal options are private,
+so mutations are observed through the variable you supplied, not through the
+scanner instance.
+
 ```typescript
 interface Stats { strings: number; objects: number }
 
-const scanner = new JsonSchemaScanner<UnknownSchema, Stats>({
-  options: { context: { strings: 0, objects: 0 } },
+const stats: Stats = { strings: 0, objects: 0 };
+
+new JsonSchemaScanner<UnknownSchema, Stats>({
+  options: { context: stats },
   visitor: {
     enter: (entry, ctx) => {
       if (isStringSchema(entry.schema)) ctx!.strings++;
       if (isObjectSchema(entry.schema)) ctx!.objects++;
     },
   },
-});
-scanner.scan(mySchema);
-console.log(scanner.options?.context); // { strings: N, objects: M }
-```
+}).scan(mySchema);
 
-> Note: `context` is accessible at `scanner['__options__'].context` internally. In production code, pass context in and read it from the variable you passed.
+console.log(stats); // { strings: N, objects: M }
+```
 
 ### Async remote ref resolution
 

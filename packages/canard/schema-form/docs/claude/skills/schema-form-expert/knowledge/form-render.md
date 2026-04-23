@@ -1,14 +1,6 @@
+# Form.Render / Form.Input / Form.Label
 
-# Form.Render Skill
-
-Expert skill for @canard/schema-form's custom layout feature.
-
-## Skill Info
-
-- **Name**: form-render
-- **Purpose**: Guide for custom layouts using Form.Render, Form.Input, Form.Label
-- **Triggers**: Form.Render, Form.Input, Form.Label, custom layout, path-based rendering related questions
-
+Path-based rendering primitives for custom layouts. Place `<Form.Input path="/..." />`, `<Form.Label path="/..." />`, or `<Form.Render path="/...">{...}</Form.Render>` inside `<Form>` to take over the layout.
 
 ## Basic Usage
 

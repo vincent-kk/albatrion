@@ -1,14 +1,6 @@
+# Virtual Schema
 
-# Virtual Schema Skill
-
-Expert skill for @canard/schema-form's Virtual Schema feature.
-
-## Skill Info
-
-- **Name**: virtual-schema
-- **Purpose**: Guide for grouping virtual fields using the virtual property
-- **Triggers**: Questions about virtual, VirtualNode, field grouping, date ranges, multi-field combinations
-
+Group multiple sibling fields under a single virtual field using the `virtual` property. The virtual field presents a tuple value to its `FormTypeInput` while the underlying fields remain addressable and storable individually.
 
 ## Basic Syntax
 

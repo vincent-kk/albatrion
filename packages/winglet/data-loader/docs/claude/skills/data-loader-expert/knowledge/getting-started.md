@@ -41,16 +41,16 @@ const user = await userLoader.load('user-42');
 
 ## The Key Ordering Rule
 
-This is the single most important constraint: **the BatchLoader must return results in the same order as the input keys**.
+This is the single most important constraint: **the BatchLoader must return results in the same order as the input keys, with exactly `keys.length` elements.**
 
 ```typescript
 // Input:  ['id-1', 'id-2', 'id-3']
-// Output: [value1, value2, value3]   ← same positions
+// Output: [value1, value2, value3]   ← same positions, same length
 
 // WRONG — returning in database order (may differ)
 async function wrong(ids: ReadonlyArray<string>) {
   return db.query('SELECT * FROM users WHERE id IN (?)', [[...ids]]);
-  // Database may return rows in any order!
+  // Database may return rows in any order, or skip missing IDs!
 }
 
 // CORRECT — sort results to match key order
@@ -60,11 +60,13 @@ async function correct(ids: ReadonlyArray<string>) {
 }
 ```
 
+If the returned array length differs from `keys.length`, or the returned value is not array-like, DataLoader throws `DataLoaderError('INVALID_BATCH_LOADER')` and rejects every pending promise in that batch.
+
 ## Key Constraints
 
-- Keys must be **non-null and non-undefined**. Passing `null` or `undefined` throws a `DataLoaderError` immediately.
+- Keys must be **non-null and non-undefined**. Passing `null` or `undefined` throws `DataLoaderError('INVALID_KEY')` synchronously.
 - Keys are compared by **identity** (like a `Map` key) unless you provide a `cacheKeyFn`.
-- Object keys require `cacheKeyFn` to work correctly since `{}` !== `{}`.
+- Object keys require `cacheKeyFn` to work correctly since `{} !== {}`.
 
 ```typescript
 // Object keys need cacheKeyFn
@@ -86,7 +88,7 @@ const user = await userLoader.load('user-1');
 
 // Multiple keys — partial failure safe
 const results = await userLoader.loadMany(['user-1', 'user-2', 'missing-id']);
-// results[2] is an Error, not a thrown exception
+// results[2] is an Error value in the array, NOT a thrown exception
 
 // Concurrent loads — automatically batched into ONE request
 const [a, b, c] = await Promise.all([
@@ -112,3 +114,17 @@ const [user1, user2, user3] = await Promise.all([
 ]);
 // → SELECT * FROM users WHERE id IN ('user-1', 'user-2', 'user-3')
 ```
+
+## Error Surface Quick Reference
+
+| Error code | Thrown by | Cause |
+|---|---|---|
+| `INVALID_KEY` | `load()` | Key is `null` or `undefined` |
+| `INVALID_KEYS` | `loadMany()` | `keys` is not array-like |
+| `INVALID_BATCH_LOADER` | Constructor / dispatch | BatchLoader not a function, non-Promise return, non-array result, or length mismatch |
+| `INVALID_MAX_BATCH_SIZE` | Constructor | `maxBatchSize` not a positive number |
+| `INVALID_CACHE` | Constructor | Custom `cache` is missing `get`/`set`/`delete`/`clear` |
+| `INVALID_CACHE_KEY_FN` | Constructor | `cacheKeyFn` is not a function |
+| `INVALID_BATCH_SCHEDULER` | Constructor | `batchScheduler` is not a function |
+
+All are instances of `DataLoaderError` (detectable with `isDataLoaderError(err)`).

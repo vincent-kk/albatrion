@@ -1,14 +1,6 @@
+# Conditional Schema
 
-# Conditional Schema Skill
-
-Expert skill for conditional schema features in @canard/schema-form.
-
-## Skill Info
-
-- **Name**: conditional-schema
-- **Purpose**: Q&A and implementation guide for oneOf, anyOf, allOf, if-then-else
-- **Triggers**: oneOf, anyOf, allOf, if-then-else, conditional fields, dynamic forms related questions
-
+Model branching field sets with `oneOf` (exclusive), `anyOf` (non-exclusive), `allOf` (merge), and `if`/`then`/`else`. Branch conditions use `&if` (shorthand for `computed.if`) with JSONPointer expressions.
 
 ## oneOf (Exclusive Choice)
 

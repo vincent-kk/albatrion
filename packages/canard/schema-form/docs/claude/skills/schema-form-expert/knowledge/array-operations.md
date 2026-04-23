@@ -1,20 +1,6 @@
-# Array Operations Skill
+# Array Operations
 
-Expert skill for array manipulation features in @canard/schema-form.
-
-## Skill Info
-
-- **Name**: array-operations
-- **Purpose**: ArrayNode manipulation, array item management guide
-- **Triggers**: array, push, remove, clear, minItems, maxItems, prefixItems related questions
-
----
-
-## Overview
-
-ArrayNode handles JSON Schema's array type and provides manipulation methods for adding/removing/clearing items.
-
----
+`ArrayNode` handles JSON Schema arrays and exposes `push()`, `remove(index)`, `clear()` for programmatic mutation. Item type drives the internal strategy: primitives use `TerminalStrategy`, objects/arrays use `BranchStrategy`.
 
 ## Array Schema Definition
 

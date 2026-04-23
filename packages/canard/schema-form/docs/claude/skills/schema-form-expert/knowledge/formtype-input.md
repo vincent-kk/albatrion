@@ -1,14 +1,6 @@
+# FormTypeInput
 
-# FormTypeInput Skill
-
-Expert skill for @canard/schema-form's FormTypeInput system.
-
-## Skill Info
-
-- **Name**: formtype-input
-- **Purpose**: Guide for developing and customizing FormTypeInput components
-- **Triggers**: FormTypeInput, formTypeInputDefinitions, formTypeInputMap, custom input component related questions
-
+Develop custom input components for JSON Schema fields. `FormTypeInput` is selected by resolution priority (schema-level → `formTypeInputMap` → `Form` → `FormProvider` → plugin).
 
 ## FormTypeInputProps Interface
 

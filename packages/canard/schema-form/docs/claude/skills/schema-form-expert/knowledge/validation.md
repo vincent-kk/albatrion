@@ -1,14 +1,6 @@
+# Validation
 
-# Validation Skill
-
-Expert skill for @canard/schema-form's validation system.
-
-## Skill Info
-
-- **Name**: validation
-- **Purpose**: Guide for form validation, error handling, and error message formatting
-- **Triggers**: Questions about validation, validate, errors, errorMessages, formatError, ValidationMode
-
+JSON Schema validation is delegated to a registered validator plugin (AJV 6/7/8). Control when validation runs via `ValidationMode` and customize error output via `errorMessages` + `formatError`.
 
 ## ValidationMode
 

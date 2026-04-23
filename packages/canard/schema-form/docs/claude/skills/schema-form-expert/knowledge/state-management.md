@@ -1,13 +1,6 @@
+# State Management
 
-# State Management Skill
-
-Expert skill for node state management in @canard/schema-form.
-
-## Skill Info
-
-- **Name**: state-management
-- **Purpose**: Guide for NodeState, dirty, touched, globalState management
-- **Triggers**: Questions about NodeState, dirty, touched, state, globalState, onStateChange, clearState
+Track user interaction with `NodeState` flags: `Dirty`, `Touched`, `Validated`, `ShowError`. Aggregated form-wide state surfaces via `onStateChange` (global) or `FormHandle.getState()`.
 
 ## NodeState Type
 

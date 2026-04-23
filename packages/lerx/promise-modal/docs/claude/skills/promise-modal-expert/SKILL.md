@@ -1,37 +1,33 @@
 ---
 name: promise-modal-expert
 description: "@lerx/promise-modal library expert. Guide users on React-based Promise modal utilities (alert, confirm, prompt), architecture, and customization."
-user-invocable: false
 ---
 
-# Promise Modal Expert Skill
+# Promise Modal Expert
 
-## Role
+Guide users on the `@lerx/promise-modal` library for React-based Promise modal utilities. Apply this skill when users ask how to implement, configure, customize, or troubleshoot modal dialogs built with `@lerx/promise-modal`.
 
-You are an expert on the `@lerx/promise-modal` library. Help users effectively implement modal dialogs using React-based Promise modal utilities.
-
-## Core Knowledge
-
-### Library Overview
+## Library Overview
 
 `@lerx/promise-modal` is a universal modal utility for React that provides:
+
 - Promise-based modal interactions (alert, confirm, prompt)
 - Usage both inside and outside React components
 - High-level component customization
 - Automatic lifecycle management
 - Programmatic modal cancellation via AbortSignal
 
-### Architecture
+## Architecture
 
 The library uses a layered architecture:
 
-1. **Core Layer** - Main API functions (alert, confirm, prompt)
-2. **Application Layer** - ModalManager singleton for lifecycle and DOM management
-3. **Bootstrap Layer** - ModalProvider component for initialization
-4. **Provider Layer** - Context providers for configuration and state
-5. **Component Layer** - Customizable UI components
+1. **Core Layer** — Main API functions (alert, confirm, prompt)
+2. **Application Layer** — ModalManager singleton for lifecycle and DOM management
+3. **Bootstrap Layer** — ModalProvider component for initialization
+4. **Provider Layer** — Context providers for configuration and state
+5. **Component Layer** — Customizable UI components
 
-### Configuration Priority
+## Configuration Priority
 
 Configuration is applied hierarchically, with lower levels overriding higher levels:
 
@@ -49,9 +45,9 @@ Provider Config (Lowest) < Hook Config < Handler Config (Highest)
 
 ## Basic Usage Patterns
 
-### Pattern 1: Basic Static API
+### Pattern A: Static API
 
-Static functions usable outside React components.
+Use static functions outside React components.
 
 ```typescript
 import { alert, confirm, prompt } from '@lerx/promise-modal';
@@ -85,9 +81,9 @@ const name = await prompt({
 });
 ```
 
-### Pattern 2: Component-Scoped with useModal
+### Pattern B: Component-Scoped with useModal
 
-Tied to component lifecycle, automatically cleaned up on unmount.
+Tie modals to component lifecycle — automatically cleaned up on unmount.
 
 ```typescript
 import { useModal } from '@lerx/promise-modal';
@@ -107,13 +103,15 @@ function MyComponent() {
 }
 ```
 
-**Key Differences**:
+**Static API vs useModal**:
 
 | Feature | Static Handlers | useModal Hook |
 |------|------------|-------------|
 | Lifecycle | Independent | Tied to component |
 | Cleanup | Manual | Auto on unmount |
 | Usage Location | Anywhere | Inside React components |
+
+For advanced patterns (AbortSignal cancellation, toasts, nested modals, custom anchors, complex forms), see `knowledge/advanced-patterns.md`.
 
 ---
 
@@ -147,25 +145,25 @@ function MyComponent() {
 
 ## Best Practices
 
-1. **Place ModalProvider at Root**: Wrap entire app
-2. **Use useModal in Components**: For automatic cleanup
-3. **Use Static API in Utilities**: For non-component code
-4. **Customize at Provider Level**: Set global styles once
-5. **Use subtype Semantically**: info, success, warning, error
-6. **Handle Promises Properly**: Always await or handle rejection
-7. **Keep Modal Content Simple**: Avoid complex state in modals
-8. **Test Accessibility**: Verify keyboard navigation
-9. **Leverage AbortSignal**: When programmatic modal closure is needed
+1. **Place ModalProvider at Root** — wrap the entire app
+2. **Use useModal in Components** — for automatic cleanup
+3. **Use Static API in Utilities** — for non-component code
+4. **Customize at Provider Level** — set global styles once
+5. **Use subtype Semantically** — info, success, warning, error
+6. **Handle Promises Properly** — always await or handle rejection
+7. **Keep Modal Content Simple** — avoid complex state in modals
+8. **Test Accessibility** — verify keyboard navigation
+9. **Leverage AbortSignal** — when programmatic modal closure is needed
 
 ---
 
-## Knowledge Files Reference
+## Resources
 
-For detailed API, advanced patterns, and type definitions, refer to these knowledge files:
+Load these files on demand for detailed API, patterns, and type definitions:
 
 | File | Contents |
 |------|------|
 | `knowledge/api-reference.md` | Static functions (alert, confirm, prompt) and ModalProvider detailed API |
 | `knowledge/hooks-reference.md` | Complete reference for 8 hooks (useModal, useActiveModalCount, etc.) |
-| `knowledge/advanced-patterns.md` | Advanced patterns including AbortSignal, toast, nested modals, custom anchors |
-| `knowledge/type-definitions.md` | TypeScript interface definitions (ModalFrameProps, etc.) |
+| `knowledge/advanced-patterns.md` | Advanced patterns: AbortSignal, toast, nested modals, custom anchors, complex forms |
+| `knowledge/type-definitions.md` | TypeScript interface definitions (ModalFrameProps, FooterComponentProps, PromptInputProps) |

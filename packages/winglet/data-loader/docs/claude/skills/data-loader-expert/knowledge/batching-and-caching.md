@@ -4,7 +4,7 @@
 
 ### The Event-Loop Window
 
-DataLoader collects keys during a single JavaScript event-loop tick. The default scheduler is `process.nextTick`, which fires after the current synchronous code completes but before I/O callbacks.
+DataLoader collects keys during a single JavaScript event-loop tick. The default scheduler is `scheduleNextTick` (from `@winglet/common-utils/scheduler`), which fires after the current synchronous code completes but before I/O callbacks.
 
 ```
 Synchronous code runs:
@@ -14,11 +14,11 @@ Synchronous code runs:
 
 ↓ synchronous code finishes
 
-process.nextTick fires:
+scheduler fires:
   batchLoader(['A', 'B', 'C'])  → ONE call with all three keys
 ```
 
-If loads happen in separate ticks (e.g., across `await` boundaries), they go into separate batches:
+If loads happen in separate ticks (e.g., across `await` boundaries), they land in separate batches:
 
 ```typescript
 // Two separate batches
@@ -38,18 +38,23 @@ const loader = new DataLoader(batchLoad, { maxBatchSize: 100 });
 // → batch 2: batchLoad(keys[100..149])
 ```
 
+`maxBatchSize` must be a positive number; otherwise the constructor throws `DataLoaderError('INVALID_MAX_BATCH_SIZE')`. The default is `Infinity`.
+
 ### Disabling Batching
 
 For cases where batching is counterproductive (e.g., a loader that handles only single items):
 
 ```typescript
 const singleLoader = new DataLoader(batchLoad, { disableBatch: true });
-// maxBatchSize is effectively 1 — each load dispatches immediately
+// Internally equivalent to maxBatchSize: 1 — every load() gets its own batch
+// Note: still uses the scheduler; each batch simply holds one key
 ```
+
+`disableBatch: true` and `maxBatchSize` are mutually exclusive in the type — pick one.
 
 ### Custom Schedulers
 
-Replace `process.nextTick` with any scheduling function:
+Replace the default `scheduleNextTick` with any scheduling function:
 
 ```typescript
 // Microtask queue (faster than nextTick in most environments)
@@ -80,28 +85,29 @@ const syncLoader = new DataLoader(batchLoad, {
 The cache stores `Promise<Value>`, not resolved values. This means:
 
 - On the first `load('key')`, a Promise is created and stored in the cache.
-- On subsequent `load('key')` calls, the **same Promise** is returned (deduplication).
-- Both calls resolve to the same value when the batch completes.
+- On subsequent `load('key')` calls, a **new wrapping Promise** is returned that resolves to the cached one. The underlying fetch happens only once.
 
 ```typescript
 const p1 = loader.load('user-1');
 const p2 = loader.load('user-1');
-// p1 === p2 is NOT guaranteed (cache hits return a new wrapping Promise)
-// but both resolve to the same value — only ONE fetch occurs
+// p1 !== p2 (cache hits return a new wrapping Promise),
+// but both resolve to the same value — only ONE fetch occurs.
 ```
 
 ### Default Cache: Map
 
-By default, a plain `Map` is used. This provides O(1) key lookups but no size limit or TTL.
+By default, a plain `Map` is used. O(1) lookups, no size limit or TTL.
 
 ```typescript
 // Default — uses new Map() internally
 const loader = new DataLoader(batchLoad);
 
-// Explicit custom Map instance
+// Explicit custom Map instance (e.g., to share across loaders)
 const sharedMap = new Map<string, Promise<User>>();
 const loader = new DataLoader(batchLoad, { cache: sharedMap });
 ```
+
+Any object implementing `get`/`set`/`delete`/`clear` (the `MapLike` interface) is accepted. Missing methods throw `DataLoaderError('INVALID_CACHE')`.
 
 ### Disabling the Cache
 
@@ -111,13 +117,18 @@ const loader = new DataLoader(batchLoad, { cache: false });
 // Useful for real-time data where staleness is unacceptable
 ```
 
+When `cache: false`:
+- `prime()` is a no-op.
+- `clear()` / `clearAll()` are no-ops.
+- Duplicate keys in one tick produce duplicate entries in the batch.
+
 ### Cache Invalidation
 
 ```typescript
 // After a mutation, clear the stale entry
 userLoader.clear('user-42');
 
-// Optionally re-prime with fresh data
+// Optionally re-prime with fresh data (chainable)
 userLoader.clear('user-42').prime('user-42', updatedUser);
 
 // Clear everything (e.g., on logout, environment switch)
@@ -126,7 +137,7 @@ userLoader.clearAll();
 
 ### Priming the Cache
 
-`prime()` inserts a value without triggering a batch load. It is a no-op if the key is already cached.
+`prime()` inserts a value without triggering a batch load. It is a **no-op if the key is already cached** — clear first if you need to overwrite.
 
 ```typescript
 // After creating a resource, prime so subsequent loads don't fetch
@@ -140,7 +151,9 @@ async function createUser(data: CreateUserInput) {
 const users = await api.listUsers();
 users.forEach(user => userLoader.prime(user.id, user));
 
-// Prime with an error to mark a key as permanently missing
+// Prime with an Error to mark a key as permanently missing
+// (the rejected promise has .catch(NOOP_FUNCTION) attached internally,
+//  so it never surfaces as an unhandled rejection)
 userLoader.prime('deleted-id', new Error('User was deleted'));
 ```
 
@@ -149,11 +162,21 @@ userLoader.prime('deleted-id', new Error('User was deleted'));
 Within the same batch, duplicate keys are NOT automatically deduplicated at the key level — but the cache deduplicates at the Promise level. If `cache: false`, the same key can appear multiple times in one batch:
 
 ```typescript
-// With cache enabled (default): one fetch, same Promise returned
+// With cache enabled (default): one fetch; a wrapping Promise is returned per call
 const p1 = loader.load('key');
-const p2 = loader.load('key'); // cache hit — no duplicate in batch
+const p2 = loader.load('key'); // cache hit — key does NOT appear twice in the batch
 
 // With cache: false: key appears twice in batch
 const p1 = noCacheLoader.load('key');
 const p2 = noCacheLoader.load('key'); // both added to batch
 ```
+
+## Batch Failure Clears the Cache
+
+When a dispatch fails (loader throws, returns a non-array, or returns a wrong-length array), DataLoader:
+
+1. Resolves any pending cache-hit callbacks for the batch.
+2. For each key in the batch: **calls `clear(key)`** so subsequent `load(key)` can refetch instead of serving the failed promise.
+3. Rejects every pending promise with the error.
+
+This means a transient network failure will not "stick" a rejected promise in the cache forever — the next `load()` of that key will go through a fresh batch.

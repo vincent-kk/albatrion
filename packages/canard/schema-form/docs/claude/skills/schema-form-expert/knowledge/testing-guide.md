@@ -1,14 +1,6 @@
+# Testing Guide
 
-# Testing Guide Skill
-
-Expert skill for writing tests for @canard/schema-form.
-
-## Skill Info
-
-- **Name**: testing-guide
-- **Purpose**: Guide for writing unit tests, component tests, and integration tests
-- **Triggers**: Questions about testing, test, unit testing, component testing, integration testing
-
+Test schema-form code with Vitest + @testing-library/react + jsdom. Register a validator plugin in `setup.ts` once. Use `delay()` to flush the event microtask queue between `setValue()` and assertions.
 
 ## Test Environment Setup
 

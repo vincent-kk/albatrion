@@ -1,14 +1,8 @@
+# Troubleshooting
 
-# Troubleshooting Skill
+Common issues, symptoms, and targeted fixes. Grouped by subsystem: plugins, `formTypeInputMap`, computed properties, arrays, validation display, performance, and TypeScript inference.
 
-Common issues and solutions when using @canard/schema-form.
-
-## Skill Info
-
-- **Name**: troubleshooting
-- **Purpose**: Guide for error resolution, debugging, and problem diagnosis
-- **Triggers**: Questions about errors, issues, not working, bugs, debugging
-
+## Plugin Issues
 
 ### Issue: Plugin Registration Order
 
@@ -255,4 +249,4 @@ const formRef = useRef<FormHandle<typeof schema>>(null);
 
 - Full specification: `docs/ko/SPECIFICATION.md`
 - Quick Reference: `docs/QUICK_REFERENCE.md`
-- Event System: `docs/claude/skills/event-system.md`
+- Event System: `knowledge/event-system.md`

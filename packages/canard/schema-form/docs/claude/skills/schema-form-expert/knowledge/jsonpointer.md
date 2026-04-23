@@ -1,13 +1,6 @@
+# JSONPointer
 
-# JSONPointer Skill
-
-Expert skill for the JSONPointer extended syntax of @canard/schema-form.
-
-## Skill Info
-
-- **Name**: jsonpointer
-- **Purpose**: Guide for JSONPointer path syntax and extended features
-- **Triggers**: Questions about JSONPointer, path references, path, find, wildcard, relative paths
+Extended JSONPointer syntax for path references. Standard absolute paths follow RFC 6901; schema-form adds context-specific extensions: relative navigation (`..`, `.`), wildcards (`*`), and context references (`@`).
 
 ## Standard JSONPointer (RFC 6901)
 

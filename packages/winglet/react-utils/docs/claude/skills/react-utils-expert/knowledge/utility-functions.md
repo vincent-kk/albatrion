@@ -144,14 +144,15 @@ import { remainOnlyReactComponent } from '@winglet/react-utils/object';
 const registry = {
   Button: ButtonComponent,      // component — kept
   Icon: IconComponent,          // component — kept
-  helper: helperFunction,       // plain function (could pass isFunctionComponent but...) — kept if function
+  helper: helperFunction,       // plain function — ALSO kept (isFunctionComponent returns true)
   config: { timeout: 3000 },    // plain object — removed
   label: 'Submit',              // string — removed
 };
 
 const components = remainOnlyReactComponent(registry);
 // { Button: ButtonComponent, Icon: IconComponent, helper: helperFunction }
-// (helper is kept because isFunctionComponent returns true for any plain function)
+// `helper` is retained because isFunctionComponent returns true for any plain function.
+// Validate component behavior downstream if your registry mixes functions with components.
 ```
 
 **Note**: Since `isReactComponent` uses `isFunctionComponent` internally and `isFunctionComponent` returns `true` for any non-class function, be aware that non-component functions will also pass through. Validate component behavior separately if needed.

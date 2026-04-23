@@ -20,13 +20,7 @@ function MyComponent() {
 }
 ```
 
-**Key Feature**: Modals are automatically cleaned up when component unmounts.
-
-| Feature | Static Handlers | useModal Hook |
-|------|------------|-------------|
-| Lifecycle | Independent | Tied to component |
-| Cleanup | Manual | Auto on unmount |
-| Usage Location | Anywhere | Inside React components |
+**Key Feature**: Modals are automatically cleaned up when component unmounts. For a comparison with the Static API, see `SKILL.md`.
 
 ---
 

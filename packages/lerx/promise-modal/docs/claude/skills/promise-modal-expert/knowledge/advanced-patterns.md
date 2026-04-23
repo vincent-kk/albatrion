@@ -1,6 +1,8 @@
 # Advanced Patterns
 
-## Pattern 3: Modal Cancellation with AbortSignal
+These patterns extend the basic Static API and `useModal` patterns documented in `SKILL.md`.
+
+## Pattern 1: Modal Cancellation with AbortSignal
 
 Programmatically cancel modals.
 
@@ -47,7 +49,7 @@ function ManualAbortControl() {
 
 ---
 
-## Pattern 4: Toast Implementation
+## Pattern 2: Toast Implementation
 
 Implement auto-dismissing toast notifications.
 
@@ -104,7 +106,7 @@ toast('An error occurred.', 2000);
 
 ---
 
-## Pattern 5: Nested Modals
+## Pattern 3: Nested Modals
 
 Display multiple modals sequentially in steps.
 
@@ -149,7 +151,7 @@ async function multiStepProcess() {
 
 ---
 
-## Pattern 6: Custom Anchor
+## Pattern 4: Custom Anchor
 
 Render modals inside a specific DOM element.
 
@@ -191,7 +193,7 @@ function CustomAnchorExample() {
 
 ---
 
-## Pattern 7: Complex Form Input
+## Pattern 5: Complex Form Input
 
 Collect complex form data using prompt.
 
@@ -258,7 +260,7 @@ async function collectUserInfo() {
 
 ---
 
-## Pattern 8: Conditional Modal Styles
+## Pattern 6: Conditional Modal Styles
 
 Display different styled modals based on situation.
 

@@ -1,13 +1,6 @@
+# Performance Optimization
 
-# Performance Optimization Skill
-
-Expert skill for performance optimization of @canard/schema-form.
-
-## Skill Info
-
-- **Name**: performance-optimization
-- **Purpose**: Guide for large-scale forms, array processing, and memory management optimization
-- **Triggers**: Questions about performance, optimization, slow, memory, large data, Strategy
+Scale forms with large arrays, heavy schemas, and frequent updates. Core levers: array strategy (`terminal` flag), `ValidationMode`, batch mutation, minimized `watch` paths, and `React.memo` on custom inputs.
 
 ## Strategy Pattern
 
@@ -252,5 +245,5 @@ const handleSubmit = async () => {
 ## References
 
 - Full specification: `docs/ko/SPECIFICATION.md`
-- Event System: `docs/claude/skills/event-system.md`
-- Array Operations: `docs/claude/skills/array-operations.md`
+- Event System: `knowledge/event-system.md`
+- Array Operations: `knowledge/array-operations.md`
