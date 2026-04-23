@@ -39,7 +39,7 @@
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
   "bin": {
-    "inject-docs": "./bin/inject-docs.mjs"
+    "claude-sync": "./bin/claude-sync.mjs"
   },
   "files": [
     "dist",

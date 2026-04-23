@@ -15,28 +15,36 @@ yarn storybook         # Storybook dev (port 6006)
 yarn size-limit        # 번들 크기 확인 (CJS/ESM 각 20KB 제한)
 ```
 
-## Claude Docs Injector
+## Claude Docs Injector (v0.11.4+)
 
-`docs/claude/` 의 자산(rules/skills)을 사용자 환경에 주입하는 CLI 도구가 이 패키지에 번들됩니다.
+`docs/claude/` 의 자산(rules/skills)을 사용자 환경에 주입하는 얇은 CLI 스텁이 번들됩니다. 실제 주입 로직은 `@slats/claude-assets-sync` 가 제공하고, 이 패키지의 bin 은 3-line re-export입니다.
 
 ```bash
-npx @canard/schema-form inject-docs --scope=user      # ~/.claude
-npx @canard/schema-form inject-docs --scope=project   # <cwd>/.claude
-npx @canard/schema-form inject-docs --scope=local     # <cwd>/.claude (gitignored 영역)
-npx @canard/schema-form inject-docs --dry-run         # 미리보기
-npx @canard/schema-form inject-docs --force           # 사용자 수정 덮어쓰기 (TTY 확인 프롬프트)
+# direct-dep 유저 (npm/yarn add @canard/schema-form 직접 설치)
+npx claude-sync --scope=user                 # ~/.claude
+npx claude-sync --scope=project              # <cwd>/.claude
+npx claude-sync --scope=local                # gitignored 영역
+npx claude-sync --scope=user --dry-run       # 미리보기
+npx claude-sync --scope=user --force         # 수정 덮어쓰기 (TTY 확인 프롬프트)
+
+# 항상 동작 (transitive-dep 포함)
+npx -p @canard/schema-form claude-sync --scope=user
+
+# 여러 consumer 가 설치되어 있으면 --package 또는 --all 명시 필요
+npx claude-sync --package=@canard/schema-form --scope=user
 ```
 
 구조:
-- `bin/inject-docs.mjs` — 15라인 wrapper, `@slats/claude-assets-sync/cli` 호출
+- `bin/claude-sync.mjs` — 3라인 re-export (`@slats/claude-assets-sync` 의 `runCli` 호출)
 - `scripts/build-hashes.mjs` — `yarn build` 체인에서 `dist/claude-hashes.json` 생성
 - `docs/claude/` — 주입 대상 자산 (사람이 저작, publish tarball 포함)
+- `claude.assetPath: "docs/claude"` — discover 용 convention
 
 ### Isolation Guardrails
 
-- `src/**` 는 `bin/**`, `docs/**`, `@slats/claude-assets-sync` 어느 것도 import 금지. `.dependency-cruiser.js` 3룰 + `sideEffects: false` + import 그래프 단절로 3중 방어.
+- `src/**` 는 `bin/**`, `docs/**`, `@slats/claude-assets-sync` 어느 것도 import 금지. `.dependency-cruiser.cjs` 3룰 + `sideEffects: false` + import 그래프 단절로 3중 방어.
 - **절대 `exports` 에 `./bin/*` 를 추가하지 말 것.** subpath 미노출로 consumer 번들러가 실수로 CLI 자산을 끌어들이는 경로를 원천 차단.
-- `yarn depcheck` (있다면) 로 CI 에서 격리 회귀 확인.
+- `yarn depcheck` 로 CI 에서 격리 회귀 확인.
 
 
 ## Architecture
