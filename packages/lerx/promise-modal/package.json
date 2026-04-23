@@ -42,15 +42,21 @@
   "main": "dist/index.cjs",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
+  "bin": {
+    "claude-sync": "./bin/claude-sync.mjs"
+  },
   "files": [
     "dist",
     "docs",
+    "bin",
     "README.md"
   ],
   "scripts": {
-    "build": "rollup -c && yarn build:types",
+    "build": "rollup -c && yarn build:types && yarn build:hashes",
+    "build:hashes": "node scripts/build-hashes.mjs",
     "build:publish:npm": "yarn build && yarn publish:npm",
     "build:types": "node ../../aileron/script/build/buildTypes.mjs",
+    "prepublishOnly": "yarn build",
     "build-storybook": "storybook build",
     "format": "prettier --write \"src/**/*.{ts,tsx}\"",
     "lint": "eslint \"src/**/*.{ts,tsx}\"",
@@ -65,6 +71,7 @@
     "version:patch": "yarn version patch"
   },
   "dependencies": {
+    "@slats/claude-assets-sync": "workspace:^",
     "@winglet/common-utils": "workspace:^",
     "@winglet/react-utils": "workspace:^",
     "@winglet/style-utils": "workspace:^"

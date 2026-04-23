@@ -5493,6 +5493,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@lerx/promise-modal@workspace:packages/lerx/promise-modal"
   dependencies:
+    "@slats/claude-assets-sync": "workspace:^"
     "@types/react": "npm:^19.0.0"
     "@types/react-dom": "npm:^19.0.0"
     "@winglet/common-utils": "workspace:^"
@@ -5504,6 +5505,8 @@ __metadata:
   peerDependencies:
     react: ">=18 <20"
     react-dom: ">=18 <20"
+  bin:
+    claude-sync: ./bin/claude-sync.mjs
   languageName: unknown
   linkType: soft
 
@@ -7628,9 +7631,8 @@ __metadata:
     commander: "npm:^12.1.0"
     picocolors: "npm:^1.1.1"
   bin:
-    claude-assets-sync: ./dist/cli.mjs
     claude-build-hashes: ./scripts/claude-build-hashes.mjs
-    claude-sync: ./dist/cli.mjs
+    claude-sync: ./dist/main.mjs
   languageName: unknown
   linkType: soft
 
