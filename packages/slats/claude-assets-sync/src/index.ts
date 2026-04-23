@@ -1,17 +1,11 @@
-// Export for programmatic use
-export { syncPackage, syncPackages } from './core/sync';
-export { createProgram, run } from './core/cli.js';
-export { migrateToFlat, needsMigration } from './core/migration';
-export type { MigrationResult } from './core/migration';
-export type {
-  AssetType,
-  CliOptions,
-  ClaudeConfig,
-  GitHubRepoInfo,
-  PackageInfo,
-  SyncMeta,
-  SyncResult,
-  UnifiedSyncMeta,
-  PackageSyncInfo,
-  FileMapping,
-} from './utils/types';
+// Public programmatic API.
+export { program, type ProgramOptions } from './program.js';
+export { injectDocs, type InjectOptions, type InjectReport } from './core/inject.js';
+export {
+  readHashManifest,
+  computeNamespacePrefixes,
+  HASH_MANIFEST_FILENAME,
+  type HashManifest,
+} from './core/hashManifest.js';
+export { resolveScope, isInteractive, isValidScope, type Scope, type ScopeResolution } from './core/scope.js';
+export type { ClaudeConfig, PackageInfo, AssetType } from './utils/types.js';

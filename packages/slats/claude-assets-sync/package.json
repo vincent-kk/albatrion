@@ -1,13 +1,13 @@
 {
   "name": "@slats/claude-assets-sync",
-  "version": "0.1.4",
-  "description": "CLI tool to sync Claude commands and skills from npm packages to your project's .claude directory",
+  "version": "0.2.0",
+  "description": "Shared CLI engine that lets consumer packages inject their Claude docs (skills, rules, commands) into a user's .claude directory via a thin bin/inject-docs wrapper.",
   "keywords": [
     "claude",
     "claude-code",
     "cli",
-    "sync",
-    "commands",
+    "inject",
+    "docs",
     "skills",
     "assets"
   ],
@@ -29,14 +29,27 @@
       "source": "./src/index.ts",
       "import": "./dist/index.mjs",
       "require": "./dist/index.cjs"
+    },
+    "./cli": {
+      "types": "./dist/program.d.ts",
+      "source": "./src/program.ts",
+      "import": "./dist/program.mjs",
+      "require": "./dist/program.cjs"
+    },
+    "./buildHashes": {
+      "import": "./scripts/buildHashes.mjs"
     }
   },
   "main": "dist/index.cjs",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
-  "bin": "./dist/cli.mjs",
+  "bin": {
+    "claude-assets-sync": "./dist/cli.mjs",
+    "claude-build-hashes": "./scripts/buildHashes.mjs"
+  },
   "files": [
     "dist",
+    "scripts",
     "README.md"
   ],
   "scripts": {
@@ -53,11 +66,9 @@
     "version:patch": "yarn version patch"
   },
   "dependencies": {
-    "@winglet/react-utils": "workspace:^",
     "commander": "^12.1.0",
     "ink": "^6.6.0",
     "ink-select-input": "^6.2.0",
-    "ink-spinner": "^5.0.0",
     "picocolors": "^1.1.1",
     "react": "^19.1.1",
     "react-dom": "^19.1.1"

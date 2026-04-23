@@ -1,45 +1,74 @@
 # CLAUDE.md
 
-`@slats/claude-assets-sync` — Claude Code 자산(commands, skills)을 npm 패키지에서 `.claude/` 디렉토리로 동기화하는 CLI 도구.
+`@slats/claude-assets-sync` — shared CLI engine for injecting Claude docs from a consumer package's `docs/claude` tree into a user's `.claude` directory.
 
 ## Commands
 
 ```bash
-yarn build             # ESM + CJS 빌드 + 타입 선언
-yarn test              # Vitest 테스트
-yarn lint              # ESLint
+yarn build     # inject-version → rollup (ESM + CJS) → build:types
+yarn dev       # standalone bin (uses cwd as packageRoot)
+yarn test      # vitest
+yarn lint      # eslint
 ```
 
-## Sync Flow
+## Public API
 
-1. `node_modules`의 `package.json`에서 `claude.assetPath` 설정 읽기
-2. 저장소 URL → GitHub owner/repo 파싱
-3. `.sync-meta.json` 버전 비교 (일치 시 스킵, `--force`로 강제)
-4. GitHub Contents API로 `commands/`, `skills/` 파일 목록 조회
-5. `raw.githubusercontent.com`에서 파일 다운로드
-6. `.claude/{type}/{scope}/{name}/`에 저장
-7. `.sync-meta.json` 업데이트
+- `./cli` — `program({ packageName, packageVersion, packageRoot, assetRoot?, argv? })`. Called by each consumer's `bin/inject-docs.mjs` wrapper.
+- `.` — programmatic: `program`, `injectDocs`, `readHashManifest`, `resolveScope`, etc.
+- `./buildHashes` — `buildHashes({ packageName, packageVersion, packageRoot, assetPathRel? })`. Called from each consumer's `scripts/build-hashes.mjs` during its own build.
+
+## Consumer Integration Pattern
+
+```
+<consumer>/
+  bin/inject-docs.mjs          # 15-line wrapper → @slats/claude-assets-sync/cli
+  scripts/build-hashes.mjs     # calls buildHashes → dist/claude-hashes.json
+  docs/claude/                  # authored content
+  dist/claude-hashes.json      # GENERATED at build, publish-included
+```
+
+Consumer `package.json` must:
+- `bin: { "inject-docs": "./bin/inject-docs.mjs" }`
+- `files: [..., "bin"]`
+- `dependencies: { "@slats/claude-assets-sync": "^0.2.0" }`
+- `scripts.build` chains `yarn build:hashes`
+- NEVER expose `./bin/*` in `exports` (blocks consumers from accidentally importing CLI into a bundle)
 
 ## Architecture
 
 ```
 src/
-├── index.ts              # CLI 진입점
+├── program.ts              # ./cli subpath — Commander program factory
+├── index.ts                # programmatic barrel
+├── cli.ts                  # standalone dev bin
 ├── core/
-│   ├── cli.ts            # Commander.js CLI 정의
-│   ├── github.ts         # GitHub API 클라이언트
-│   ├── filesystem.ts     # 파일 시스템 관리, .sync-meta.json
-│   ├── sync.ts           # 동기화 오케스트레이션
-│   └── migration.ts      # 마이그레이션 로직
-├── commands/             # sync, add, list, status, remove, migrate 커맨드
-├── components/           # ink 기반 인터랙티브 터미널 UI
-└── utils/                # types, package.json 파싱, logger
+│   ├── hash.ts             # sha256 compute/compare
+│   ├── scope.ts            # user | project | local → target dir
+│   ├── hashManifest.ts     # dist/claude-hashes.json IO + namespace prefix derivation
+│   ├── injectPlan.ts       # copy / skip / warn-diverged / warn-orphan / delete
+│   └── inject.ts           # orchestrate plan → apply
+├── commands/
+│   ├── inject.ts           # commander binding for `inject-docs`
+│   └── _deprecated.ts      # 7 legacy stubs (exit 1 + MIGRATION.md pointer)
+├── components/
+│   ├── primitives/         # Box, Text, Spinner
+│   ├── shared/             # Confirm, MenuItem, …
+│   └── inject/             # ScopeSelect, ForceConfirm (confirmForceAsync wrapper)
+└── utils/                  # asyncPool, logger, types
 ```
 
-## Key Details
-- **ink**: 인터랙티브 터미널 UI (TreeSelect, AddCommand, ListCommand 등)
-- **인증**: `GITHUB_TOKEN` 환경변수로 GitHub API rate limit 우회
-- **런타임 의존성 없음**: Node.js 내장 모듈 + `commander`, `picocolors`만 사용
+## Hash Strategy (Option A)
+
+- `dist/claude-hashes.json` is the sole source of truth for file hashes (sha256, v1 schema, `previousVersions: {}` reserved for future Option A+).
+- Consumer-side comparison: copy if missing, skip if equal, warn+require `--force` if different (user-edit vs source-update is indistinguishable).
+- `--force` in TTY: interactive confirm prompt shows diverged file names (max 3) + "in git?" question. In non-TTY: emits diverged/orphan list to stderr, then proceeds (exit 0).
+
+## Boundaries
+
+- `src/` must never import `bin/` or `docs/` (depcruise rule on the consumer side).
+- `components/` subdirectories (`primitives/`, `shared/`, `inject/`) are fractal modules with their own INTENT.md.
+- `scripts/buildHashes.mjs` is pure ESM Node, runs outside rollup; ignores `.omc/**`, `*.log`, `.DS_Store`.
 
 ## Build Output
-`dist/index.cjs` + `dist/index.mjs` (CLI shebang 포함) + `dist/index.d.ts`
+
+`dist/index.{mjs,cjs,d.ts}` + `dist/program.{mjs,cjs,d.ts}` + `dist/cli.mjs` (shebang, standalone dev bin).

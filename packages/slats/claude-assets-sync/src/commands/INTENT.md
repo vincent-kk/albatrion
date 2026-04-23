@@ -2,36 +2,33 @@
 
 ## Purpose
 
-CLI 명령어 구현 모듈. sync, add, list, remove, status, migrate, update 명령을 제공한다.
+Commander action handlers. Binds the `inject-docs` command and the 7 legacy deprecation stubs to the core engine.
 
 ## Structure
 
-- `index.ts` — barrel export 및 COMMANDS 메타데이터 레지스트리
-- `sync.ts` — 패키지 동기화 명령
-- `add.ts` — 대화형 에셋 추가
-- `list.ts` — 동기화된 패키지 목록 및 트리 UI
-- `remove.ts` — 패키지 제거
-- `status.ts` — 동기화 상태 표시
-- `migrate.ts` — 레거시→flat 구조 마이그레이션
-- `update.ts` — 패키지 메타데이터 업데이트
-- `types.ts` — 명령어 공통 타입
+- `index.ts` — barrel (registerInjectCommand, registerDeprecatedCommands)
+- `inject.ts` — registers the `inject-docs` action, resolves `--scope` via interactive picker or errors in non-TTY
+- `_deprecated.ts` — factory that registers `sync`/`add`/`list`/`remove`/`status`/`migrate`/`update` as exit-1 stubs pointing at MIGRATION.md
 
 ## Conventions
 
-- 각 명령어는 `run<Name>Command` 패턴의 함수로 export
-- COMMANDS 객체에 명령어 메타데이터(name, description, options) 등록
+- Each command registers via `register<Name>Command(cmd, ctx)` taking a `Command` and context
+- Context objects carry consumer identity (packageName/version/root) plus optional UI render hooks
+- Commands delegate I/O to `core/`; no direct filesystem or hash logic here
 
 ## Boundaries
 
 ### Always do
 
-- 새 명령어 추가 시 index.ts의 COMMANDS에 메타데이터 등록
-- core/ 모듈의 로직을 활용하여 구현
+- Route all user-facing errors through `process.exit(<code>)` with the documented exit-code mapping (0/1/2)
+- Keep render hooks injected rather than imported, so `commands/` stays UI-agnostic
 
 ### Ask first
 
-- 기존 명령어의 옵션 시그니처 변경
+- Adding a command beyond `inject-docs`
+- Changing the deprecation stub list or the MIGRATION.md pointer
 
 ### Never do
 
-- 명령어 파일에서 직접 파일시스템/네트워크 I/O 수행 (core/에 위임)
+- Reintroduce legacy runtime logic inside `_deprecated.ts`
+- Import from `components/` directly — render hooks are provided by `program.ts`
