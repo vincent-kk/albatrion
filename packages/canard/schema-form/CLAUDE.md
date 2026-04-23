@@ -5,14 +5,39 @@
 ## Commands
 
 ```bash
-yarn build             # ESM + CJS 빌드 + 타입 선언
+yarn build             # ESM + CJS 빌드 + 타입 선언 + claude-hashes.json
 yarn build:types       # 타입 선언만
+yarn build:hashes      # docs/claude/** 해시 매니페스트만 재생성
 yarn test              # Vitest 테스트 (352개)
 yarn test --coverage   # 커버리지 포함
 yarn lint              # ESLint
 yarn storybook         # Storybook dev (port 6006)
 yarn size-limit        # 번들 크기 확인 (CJS/ESM 각 20KB 제한)
 ```
+
+## Claude Docs Injector
+
+`docs/claude/` 의 자산(rules/skills)을 사용자 환경에 주입하는 CLI 도구가 이 패키지에 번들됩니다.
+
+```bash
+npx @canard/schema-form inject-docs --scope=user      # ~/.claude
+npx @canard/schema-form inject-docs --scope=project   # <cwd>/.claude
+npx @canard/schema-form inject-docs --scope=local     # <cwd>/.claude (gitignored 영역)
+npx @canard/schema-form inject-docs --dry-run         # 미리보기
+npx @canard/schema-form inject-docs --force           # 사용자 수정 덮어쓰기 (TTY 확인 프롬프트)
+```
+
+구조:
+- `bin/inject-docs.mjs` — 15라인 wrapper, `@slats/claude-assets-sync/cli` 호출
+- `scripts/build-hashes.mjs` — `yarn build` 체인에서 `dist/claude-hashes.json` 생성
+- `docs/claude/` — 주입 대상 자산 (사람이 저작, publish tarball 포함)
+
+### Isolation Guardrails
+
+- `src/**` 는 `bin/**`, `docs/**`, `@slats/claude-assets-sync` 어느 것도 import 금지. `.dependency-cruiser.js` 3룰 + `sideEffects: false` + import 그래프 단절로 3중 방어.
+- **절대 `exports` 에 `./bin/*` 를 추가하지 말 것.** subpath 미노출로 consumer 번들러가 실수로 CLI 자산을 끌어들이는 경로를 원천 차단.
+- `yarn depcheck` (있다면) 로 CI 에서 격리 회귀 확인.
+
 
 ## Architecture
 

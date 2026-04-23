@@ -28,6 +28,7 @@ module.exports = {
           '[.]d[.]ts$', // TypeScript declaration files
           '(^|/)tsconfig[.]json$', // TypeScript config
           '(^|/)(?:babel|webpack)[.]config[.](?:js|cjs|mjs|ts|cts|mts|json)$', // other configs
+          '^bin/', // bin entry points are orphans by design
         ],
       },
       to: {},
@@ -191,6 +192,34 @@ module.exports = {
         dependencyTypes: ['npm-peer'],
       },
     },
+    {
+      name: 'src-no-bin',
+      severity: 'error',
+      comment:
+        'src/ must not import from bin/. bin/ is a CLI-only entry point and must ' +
+        'never leak into the library bundle.',
+      from: { path: '^src/' },
+      to: { path: '^bin/' },
+    },
+    {
+      name: 'src-no-docs',
+      severity: 'error',
+      comment:
+        'src/ must not import from docs/. docs/claude/** contains pure markdown assets ' +
+        'meant only for the inject-docs CLI, not for the library runtime.',
+      from: { path: '^src/' },
+      to: { path: '^docs/' },
+    },
+    {
+      name: 'src-no-claude-assets-sync',
+      severity: 'error',
+      comment:
+        '@slats/claude-assets-sync is a CLI-only dependency. It is allowed only ' +
+        'from bin/. Importing it from src/ would leak the CLI engine into ' +
+        'consumer production bundles.',
+      from: { path: '^src/' },
+      to: { path: 'node_modules/@slats/claude-assets-sync' },
+    },
   ],
   options: {
     /* Which modules not to follow further when encountered */
@@ -214,7 +243,7 @@ module.exports = {
     /* Which modules to exclusively include (array of regular expressions in strings)
        dependency-cruiser will skip everything not matching this pattern
     */
-    includeOnly: ['^src'],
+    includeOnly: ['^src', '^bin'],
 
     /* List of module systems to cruise.
        When left out dependency-cruiser will fall back to the list of _all_
