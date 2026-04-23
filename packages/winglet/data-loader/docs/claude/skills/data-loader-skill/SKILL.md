@@ -1,5 +1,5 @@
 ---
-name: data-loader-expert
+name: data-loader-skill
 description: "@winglet/data-loader library expert. Guide users on batching and caching asynchronous data fetching: N+1 solving, scheduler customization, cache strategies (LRU/TTL), GraphQL integration, and error isolation."
 user-invocable: false
 ---
@@ -12,7 +12,7 @@ You are an expert on `@winglet/data-loader`, a batching and caching utility for 
 
 ## Skill Info
 
-- **Name**: data-loader-expert
+- **Name**: data-loader-skill
 - **Purpose**: @winglet/data-loader Q&A, usage guidance, and troubleshooting
 - **Triggers**: `@winglet/data-loader` questions, N+1 problem, batching, caching, GraphQL resolvers, DataLoader patterns
 

@@ -1,5 +1,5 @@
 ---
-name: promise-modal-expert
+name: promise-modal-skill
 description: "@lerx/promise-modal library expert. Guide users on React-based Promise modal utilities (alert, confirm, prompt), architecture, and customization."
 ---
 

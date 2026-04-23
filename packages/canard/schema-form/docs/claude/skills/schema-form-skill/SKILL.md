@@ -1,5 +1,5 @@
 ---
-name: schema-form-expert
+name: schema-form-skill
 description: "Expert knowledge base for @canard/schema-form. Triggers on FormTypeInput, computed properties (active/visible/readOnly/derived), conditional schemas (oneOf/anyOf/allOf/if-then-else), JSONPointer (.., ., *, @), FormHandle, virtual schemas, plugins (AJV/Antd/MUI), validation, state, injectTo, arrays, context, events, troubleshooting."
 user-invocable: false
 ---

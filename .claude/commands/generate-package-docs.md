@@ -163,7 +163,7 @@ Create the following structure if not exists:
 
 ```markdown
 ---
-name: {package-name-slug}-expert
+name: {package-name-slug}-skill
 description: "@{package-name} library expert. Provides Q&A, usage examples, and troubleshooting by referencing all knowledge files."
 user-invocable: false
 ---
@@ -174,7 +174,7 @@ This is an expert skill for @{package-name}. This skill answers questions about 
 
 ## Skill Info
 
-- **Name**: {package-name-slug}-expert
+- **Name**: {package-name-slug}-skill
 - **Purpose**: @{package-name} library Q&A and guidance
 - **Triggers**: `/{package-name-slug}` command or {package-name} related questions
 
@@ -235,7 +235,7 @@ Refer to the following knowledge files for detailed guides by feature:
 # @{package-name} Q&A Command
 
 **Package**: `@{package-name}`
-**Expert Skill**: `{package-name-slug}-expert` (directory-based skill)
+**Expert Skill**: `{package-name-slug}-skill` (directory-based skill)
 
 Ask questions about @{package-name} and get answers through the `/{package-name-slug}` command.
 
@@ -283,7 +283,7 @@ For more detailed information, you can check the in-depth knowledge in the follo
 
 | Topic | Knowledge File |
 |------|-----------|
-| Comprehensive guide | `{package-name-slug}-expert` (directory skill) |
+| Comprehensive guide | `{package-name-slug}-skill` (directory skill) |
 | {Topic 1} | `knowledge/{topic-1}.md` |
 | {Topic 2} | `knowledge/{topic-2}.md` |
 | {Topic 3} | `knowledge/{topic-3}.md` |

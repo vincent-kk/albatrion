@@ -1,5 +1,5 @@
 ---
-name: react-utils-expert
+name: react-utils-skill
 description: "@winglet/react-utils library expert. Guide users on 18 custom React hooks, three HOCs (withErrorBoundary, withErrorBoundaryForwardRef, withUploader), the context-based Portal system, and React component type-check / render utilities."
 ---
 

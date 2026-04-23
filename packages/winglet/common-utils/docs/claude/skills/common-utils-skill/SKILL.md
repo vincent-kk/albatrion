@@ -1,5 +1,5 @@
 ---
-name: common-utils-expert
+name: common-utils-skill
 description: Expert on `@winglet/common-utils` v0.11.x — zero-dependency TS utility library. Trigger for questions about its array/object/filter/math/promise/scheduler/function/hash APIs, sub-path imports, or debounce/throttle trade-offs.
 ---
 

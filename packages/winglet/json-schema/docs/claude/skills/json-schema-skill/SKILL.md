@@ -1,5 +1,5 @@
 ---
-name: json-schema-expert
+name: json-schema-skill
 description: "@winglet/json-schema library expert. Guide JSON Schema traversal, transformation, and analysis: Visitor pattern, stack-based DFS, $ref resolution (sync/async), circular-ref handling, mutation, and nullable-aware type guards."
 user-invocable: false
 ---
