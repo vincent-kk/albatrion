@@ -4,6 +4,11 @@ import pc from 'picocolors';
 
 import { discover } from '../discover.js';
 
+const ANSI_SGR_PATTERN = new RegExp(
+  `${String.fromCharCode(0x1b)}\\[[0-9;]*m`,
+  'g',
+);
+
 export interface ListOptions {
   cwd?: string;
   json?: boolean;
@@ -48,7 +53,7 @@ export async function listConsumers(opts: ListOptions = {}): Promise<void> {
 }
 
 function stripAnsi(s: string): string {
-  return s.replace(/\x1b\[[0-9;]*m/g, '');
+  return s.replace(ANSI_SGR_PATTERN, '');
 }
 
 function padRight(s: string, width: number): string {
