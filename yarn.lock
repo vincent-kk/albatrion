@@ -7632,6 +7632,7 @@ __metadata:
     picocolors: "npm:^1.1.1"
   bin:
     claude-build-hashes: ./scripts/claude-build-hashes.mjs
+    claude-sync: ./bin/claude-sync.mjs
   languageName: unknown
   linkType: soft
 
@@ -9981,6 +9982,10 @@ __metadata:
 "@winglet/common-utils@workspace:^, @winglet/common-utils@workspace:packages/winglet/common-utils":
   version: 0.0.0-use.local
   resolution: "@winglet/common-utils@workspace:packages/winglet/common-utils"
+  dependencies:
+    "@slats/claude-assets-sync": "workspace:^"
+  bin:
+    claude-sync: ./bin/claude-sync.mjs
   languageName: unknown
   linkType: soft
 
@@ -9988,7 +9993,10 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@winglet/data-loader@workspace:packages/winglet/data-loader"
   dependencies:
+    "@slats/claude-assets-sync": "workspace:^"
     "@winglet/common-utils": "workspace:^"
+  bin:
+    claude-sync: ./bin/claude-sync.mjs
   languageName: unknown
   linkType: soft
 
@@ -10046,8 +10054,11 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@winglet/json-schema@workspace:packages/winglet/json-schema"
   dependencies:
+    "@slats/claude-assets-sync": "workspace:^"
     "@winglet/common-utils": "workspace:^"
     "@winglet/json": "workspace:^"
+  bin:
+    claude-sync: ./bin/claude-sync.mjs
   languageName: unknown
   linkType: soft
 
@@ -10100,7 +10111,10 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@winglet/json@workspace:packages/winglet/json"
   dependencies:
+    "@slats/claude-assets-sync": "workspace:^"
     "@winglet/common-utils": "workspace:^"
+  bin:
+    claude-sync: ./bin/claude-sync.mjs
   languageName: unknown
   linkType: soft
 
@@ -10168,6 +10182,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@winglet/react-utils@workspace:packages/winglet/react-utils"
   dependencies:
+    "@slats/claude-assets-sync": "workspace:^"
     "@types/react": "npm:^19.0.0"
     "@types/react-dom": "npm:^19.0.0"
     "@winglet/common-utils": "workspace:^"
@@ -10176,6 +10191,8 @@ __metadata:
   peerDependencies:
     react: ">=16 <20"
     react-dom: ">=16 <20"
+  bin:
+    claude-sync: ./bin/claude-sync.mjs
   languageName: unknown
   linkType: soft
 

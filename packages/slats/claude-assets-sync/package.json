@@ -38,20 +38,25 @@
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
   "bin": {
-    "claude-build-hashes": "./scripts/claude-build-hashes.mjs"
+    "claude-build-hashes": "./scripts/claude-build-hashes.mjs",
+    "claude-sync": "./bin/claude-sync.mjs"
   },
   "files": [
     "dist",
+    "docs",
+    "bin",
     "scripts",
     "README.md"
   ],
   "scripts": {
-    "build": "node scripts/inject-version.js && rollup -c && yarn build:types",
+    "build": "node scripts/inject-version.js && rollup -c && yarn build:types && yarn build:hashes",
+    "build:hashes": "node scripts/build-hashes.mjs",
     "build:publish:npm": "yarn build && yarn publish:npm",
     "build:types": "node ../../aileron/script/build/buildTypes.mjs",
     "dev": "node scripts/inject-version.js && tsx src/main.ts",
     "format": "prettier --write \"src/**/*.ts\"",
     "lint": "eslint \"src/**/*.ts\"",
+    "prepublishOnly": "yarn build",
     "publish:npm": "yarn npm publish --access public",
     "test": "vitest",
     "version:major": "yarn version major",
@@ -65,5 +70,8 @@
   },
   "devDependencies": {
     "@inquirer/testing": "^3.3.5"
+  },
+  "claude": {
+    "assetPath": "docs/claude"
   }
 }
