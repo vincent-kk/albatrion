@@ -6,7 +6,7 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import {
   findNearestDotClaudeAncestor,
   resolveScope,
-} from '../../src/core/scope.js';
+} from '../../src/core/scope/index.js';
 
 describe('core/scope — walk-up .claude resolver', () => {
   let tmp: string;

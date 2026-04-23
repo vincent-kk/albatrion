@@ -3,7 +3,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
-import { injectDocs } from '../../src/core/inject.js';
+import { injectDocs } from '../../src/core/injectDocs/index.js';
 
 async function writeManifest(packageRoot: string, files: Record<string, string>): Promise<void> {
   await mkdir(join(packageRoot, 'dist'), { recursive: true });

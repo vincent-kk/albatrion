@@ -2,36 +2,32 @@
 
 ## Purpose
 
-Commander action handlers. Binds the top-level `claude-sync` CLI (`runCli`), the per-consumer `inject-docs` legacy factory, the `list` and `build-hashes` subcommands, and the 7 legacy deprecation stubs to the core engine.
+Commander 액션 핸들러. 최상위 `claude-sync` CLI(`runCli`), `list` 열거기,
+`build-hashes` 하위 커맨드를 core 엔진에 바인드한다. 모든 하위 커맨드는
+`runCli` 내부에서 만들어진 동일한 commander 루트를 공유한다.
 
 ## Structure
 
-- `index.ts` — barrel export
-- `root.ts` — `runCli(argv, options?)`; top-level commander root, subcommand router, and default-action inject flow (uses `discover()` to locate consumers)
-- `inject.ts` — `registerInjectCommand(cmd, ctx)`; legacy per-consumer inject binding used by `program()`
-- `list.ts` — `listConsumers({ cwd?, json? })` handler for `claude-sync list` (tabular + `--json`)
-- `buildHashesCmd.ts` — thin wrapper around `scripts/buildHashes.mjs` for `claude-sync build-hashes`
-- `_deprecated.ts` — registers `sync`/`add`/`list`/`remove`/`status`/`migrate`/`update` as exit-1 stubs pointing at MIGRATION.md
-
-## Conventions
-
-- Each command registers via `register<Name>Command(cmd, ctx)` or a plain async handler taking parsed flags
-- Render hooks (`selectScopeAsync`, `confirmForceAsync`) are imported from `../prompts/` — never fabricated inside core
-- Commands delegate I/O to `core/`; no direct filesystem or hash logic here
+- `INTENT.md`, `DETAIL.md`
+- `index.ts` — 모든 public 심볼을 재-export 하는 집계 배럴
+- `runCli/` — 최상위 `claude-sync` CLI (기본 액션 + 하위 커맨드 와이어링)
+- `listConsumers/` — `claude-sync list` 표/JSON 핸들러
+- `buildHashesCmd/` — `claude-sync build-hashes [pkgRoot]` 핸들러
 
 ## Boundaries
 
 ### Always do
 
-- Route all user-facing errors through `process.exit(<code>)` with the documented exit-code mapping (0/1/2)
-- Use `startHeartbeat` at the command layer so `core/` stays tick-free
+- 모든 사용자 대상 오류는 문서화된 exit code 0 / 1 / 2 매핑에 따라
+  `process.exit(<code>)` 로 라우팅
+- `startHeartbeat` 는 이 커맨드 레이어에서 사용 (core 는 tick-free 유지)
 
 ### Ask first
 
-- Adding a command beyond `inject` (default), `list`, `build-hashes`, and the legacy `inject-docs` alias
-- Changing the deprecation stub list or the MIGRATION.md pointer
+- `list`, `build-hashes` 이외의 하위 커맨드 추가
+- per-consumer 레거시 진입점 재도입 (대신 `runCli` 사용)
 
 ### Never do
 
-- Reintroduce legacy runtime logic inside `_deprecated.ts`
-- Import prompt libraries directly from `core/`; commands pass callbacks into `injectDocs` instead
+- `@inquirer/prompts` 직접 import; 프롬프트는 반드시 `prompts/` 경유
+- sub-fractal 내부 파일로 접근; 항상 sibling `index.ts` 통해 접근

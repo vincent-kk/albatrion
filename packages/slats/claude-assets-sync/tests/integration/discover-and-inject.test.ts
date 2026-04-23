@@ -4,8 +4,8 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
-import { discover } from '../../src/discover.js';
-import { injectDocs } from '../../src/core/inject.js';
+import { discover } from '../../src/discover/index.js';
+import { injectDocs } from '../../src/core/injectDocs/index.js';
 
 describe('discover + inject integration (fixture monorepo)', () => {
   let tmp: string;

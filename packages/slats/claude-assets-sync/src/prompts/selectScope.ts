@@ -1,7 +1,7 @@
 import { select } from '@inquirer/prompts';
 import pc from 'picocolors';
 
-import type { Scope } from '../core/scope.js';
+import type { Scope } from '../core/scope/index.js';
 
 const CHOICES: { name: string; value: Scope; description: string }[] = [
   {

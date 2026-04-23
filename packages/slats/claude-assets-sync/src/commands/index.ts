@@ -1,5 +1,10 @@
-export { registerInjectCommand, type InjectCommandContext } from './inject.js';
-export { registerDeprecatedCommands } from './_deprecated.js';
-export { runCli, type RunCliOptions } from './root.js';
-export { listConsumers, type ListOptions } from './list.js';
-export { buildHashesCmd, type BuildHashesCmdOptions } from './buildHashesCmd.js';
+export {
+  buildHashesCmd,
+  type BuildHashesCmdOptions,
+} from './buildHashesCmd/index.js';
+export { listConsumers, type ListOptions } from './listConsumers/index.js';
+export {
+  runCli,
+  type DefaultFlags,
+  type RunCliOptions,
+} from './runCli/index.js';
