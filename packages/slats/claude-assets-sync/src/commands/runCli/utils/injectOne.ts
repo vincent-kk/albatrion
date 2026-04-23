@@ -1,9 +1,8 @@
 import { type Scope, injectDocs } from '../../../core/index.js';
-import type { ConsumerPackage } from '../../../discover/index.js';
 import { confirmForceAsync } from '../../../prompts/index.js';
 import { startHeartbeat } from '../../../utils/heartbeat.js';
 import { logger } from '../../../utils/logger.js';
-import type { DefaultFlags } from '../type.js';
+import type { ConsumerPackage, DefaultFlags } from '../type.js';
 
 export async function injectOne(
   target: ConsumerPackage,
@@ -13,7 +12,7 @@ export async function injectOne(
 ): Promise<void> {
   if (!target.hashesPresent) {
     logger.warn(
-      `${target.name}: dist/claude-hashes.json missing — run "claude-sync build-hashes" in that package first.`,
+      `${target.name}: dist/claude-hashes.json missing — build the package (e.g. yarn build) to regenerate the hash manifest first.`,
     );
     return;
   }

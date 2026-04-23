@@ -1,47 +1,50 @@
-import { discover } from '../../../discover/index.js';
+import { stat } from 'node:fs/promises';
+import { isAbsolute, join, resolve } from 'node:path';
+
 import { logger } from '../../../utils/logger.js';
-import type { DefaultFlags, RunCliOptions } from '../type.js';
+import type { ConsumerPackage, DefaultFlags, RunCliOptions } from '../type.js';
 import { injectOne } from './injectOne.js';
-import { resolveCwdPackageName } from './resolveCwdPackageName.js';
-import { resolveInvokedPackageName } from './resolveInvokedPackageName.js';
 import { resolveScopeFlag } from './resolveScopeFlag.js';
-import { resolveTargets } from './resolveTargets.js';
 
 export async function runInject(
   flags: DefaultFlags,
   options: RunCliOptions,
 ): Promise<void> {
-  const originCwd = flags.root ?? process.cwd();
-
-  const all = await discover({
-    cwd: originCwd,
-    includeWorkspaces: flags.workspaces ?? true,
-  });
-
-  if (all.length === 0) {
+  if (
+    !options.packageRoot ||
+    !options.packageName ||
+    !options.packageVersion ||
+    !options.assetPath
+  ) {
     logger.error(
-      'No consumer packages with claude.assetPath found in this tree.',
+      'runCli requires { packageRoot, packageName, packageVersion, assetPath }.',
     );
-    logger.error(
-      '  Ensure the target package.json has a `"claude": { "assetPath": "..." }` field.',
-    );
-    process.exit(1);
+    process.exit(2);
   }
 
-  const invokedPackageName = options.invokedFromBin
-    ? await resolveInvokedPackageName(options.invokedFromBin)
-    : null;
-  const cwdPackageName = resolveCwdPackageName(all, originCwd);
+  if (!isAbsolute(options.packageRoot)) {
+    logger.error(
+      `packageRoot must be an absolute path; received: ${options.packageRoot}`,
+    );
+    process.exit(2);
+  }
 
-  const targets = resolveTargets(
-    all,
-    flags,
-    cwdPackageName,
-    invokedPackageName,
+  const assetRoot = resolve(options.packageRoot, options.assetPath);
+  const hashesPath = join(options.packageRoot, 'dist', 'claude-hashes.json');
+  const hashesPresent = await stat(hashesPath).then(
+    () => true,
+    () => false,
   );
-  const scope = await resolveScopeFlag(flags.scope);
 
-  for (const target of targets) {
-    await injectOne(target, scope, flags, originCwd);
-  }
+  const target: ConsumerPackage = {
+    name: options.packageName,
+    version: options.packageVersion,
+    packageRoot: options.packageRoot,
+    assetRoot,
+    hashesPresent,
+  };
+
+  const originCwd = flags.root ?? process.cwd();
+  const scope = await resolveScopeFlag(flags.scope);
+  await injectOne(target, scope, flags, originCwd);
 }

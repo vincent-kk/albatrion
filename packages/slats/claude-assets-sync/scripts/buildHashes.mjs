@@ -6,11 +6,15 @@
 //
 // Exported for:
 //   - Consumer packages: `import { buildHashes } from '@slats/claude-assets-sync/buildHashes'`
-//   - Internal command layer: `src/commands/buildHashesCmd.ts`
+//   - Standalone bin: `./claude-build-hashes.mjs`
+//
+// The caller owns all package metadata. This function does not read
+// package.json — consumers parse their own manifest and pass a ready-made
+// set of values so the library stays free of field-shape assumptions.
 
 import { createHash } from 'node:crypto';
 import { mkdir, readFile, readdir, writeFile } from 'node:fs/promises';
-import { join, relative, resolve, sep } from 'node:path';
+import { isAbsolute, join, relative, resolve, sep } from 'node:path';
 
 const MANIFEST_FILENAME = 'claude-hashes.json';
 const NOISE = [/(^|\/)\.omc(\/|$)/, /(^|\/)\.DS_Store$/, /\.log$/];
@@ -32,14 +36,25 @@ async function* walk(root) {
   }
 }
 
-export async function buildHashes(opts = {}) {
-  const packageRoot = opts.packageRoot ?? process.cwd();
-  const pkg = JSON.parse(
-    await readFile(resolve(packageRoot, 'package.json'), 'utf-8'),
-  );
-  const assetPathRel =
-    opts.assetPathRel ?? pkg.claude?.assetPath ?? 'docs/claude';
-  const assetRoot = resolve(packageRoot, assetPathRel);
+export async function buildHashes(opts) {
+  if (
+    !opts ||
+    typeof opts.packageRoot !== 'string' ||
+    typeof opts.packageName !== 'string' ||
+    typeof opts.packageVersion !== 'string' ||
+    typeof opts.assetPath !== 'string'
+  ) {
+    throw new Error(
+      'buildHashes requires { packageRoot, packageName, packageVersion, assetPath }.',
+    );
+  }
+  const { packageRoot, packageName, packageVersion, assetPath } = opts;
+  if (!isAbsolute(packageRoot)) {
+    throw new Error(
+      `packageRoot must be an absolute path; received: ${packageRoot}`,
+    );
+  }
+  const assetRoot = resolve(packageRoot, assetPath);
   const files = {};
   for await (const abs of walk(assetRoot)) {
     const rel = toPosix(relative(assetRoot, abs));
@@ -52,13 +67,10 @@ export async function buildHashes(opts = {}) {
   );
   const manifest = {
     schemaVersion: 1,
-    package: {
-      name: opts.packageName ?? pkg.name,
-      version: opts.packageVersion ?? pkg.version,
-    },
+    package: { name: packageName, version: packageVersion },
     generatedAt: new Date().toISOString(),
     algorithm: 'sha256',
-    assetRoot: assetPathRel,
+    assetRoot: assetPath,
     files: sorted,
     previousVersions: {},
   };

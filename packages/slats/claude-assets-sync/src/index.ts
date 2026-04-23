@@ -14,9 +14,4 @@ export {
   type Scope,
   type ScopeResolution,
 } from './core/index.js';
-export {
-  discover,
-  type ConsumerPackage,
-  type DiscoverOptions,
-} from './discover/index.js';
-export type { AssetType, ClaudeConfig, PackageInfo } from './utils/types.js';
+export type { AssetType } from './utils/types.js';

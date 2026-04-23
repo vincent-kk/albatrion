@@ -38,8 +38,7 @@
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
   "bin": {
-    "claude-build-hashes": "./scripts/claude-build-hashes.mjs",
-    "claude-sync": "./dist/main.mjs"
+    "claude-build-hashes": "./scripts/claude-build-hashes.mjs"
   },
   "files": [
     "dist",

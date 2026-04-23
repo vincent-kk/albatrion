@@ -7632,7 +7632,6 @@ __metadata:
     picocolors: "npm:^1.1.1"
   bin:
     claude-build-hashes: ./scripts/claude-build-hashes.mjs
-    claude-sync: ./dist/main.mjs
   languageName: unknown
   linkType: soft
 

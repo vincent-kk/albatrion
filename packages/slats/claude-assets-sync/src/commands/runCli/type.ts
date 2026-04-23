@@ -1,19 +1,30 @@
 export interface RunCliOptions {
   version?: string;
-  /**
-   * When set, the package that owns this file becomes the implicit
-   * `--package` target. Consumer bin stubs pass `import.meta.url`; slats's
-   * own top-level bin omits it so `discover()` returns every consumer.
-   */
-  invokedFromBin?: string;
+  /** Absolute filesystem path to the consumer package root. */
+  packageRoot: string;
+  /** Consumer package name used in logs and error messages. */
+  packageName: string;
+  /** Consumer package version used in logs. */
+  packageVersion: string;
+  /** Asset directory path relative to `packageRoot`. */
+  assetPath: string;
 }
 
 export interface DefaultFlags {
-  package?: string;
-  all?: boolean;
   scope?: string;
   dryRun?: boolean;
   force?: boolean;
   root?: string;
-  workspaces?: boolean;
+}
+
+/**
+ * Resolved consumer metadata passed to the injection pipeline.
+ * The caller owns the definition; the library does not read `package.json`.
+ */
+export interface ConsumerPackage {
+  name: string;
+  version: string;
+  packageRoot: string;
+  assetRoot: string;
+  hashesPresent: boolean;
 }

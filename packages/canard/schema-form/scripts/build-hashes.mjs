@@ -1,14 +1,29 @@
 #!/usr/bin/env node
-// Thin wrapper — delegates to @slats/claude-assets-sync/buildHashes.
-// Mirrors the `scripts/inject-version.js` pattern: a small, self-contained
-// script invoked from package.json build chain.
-
+// Thin wrapper — parses this package's package.json and delegates to
+// @slats/claude-assets-sync/buildHashes. The `claude.assetPath` convention
+// lives here, in the consumer; the library is generic.
 import { buildHashes } from '@slats/claude-assets-sync/buildHashes';
+import { readFile } from 'node:fs/promises';
+import { resolve } from 'node:path';
 
-try {
-  const { outPath, fileCount } = await buildHashes();
-  console.log(`✓ claude-hashes.json written: ${fileCount} file(s) → ${outPath}`);
-} catch (err) {
-  console.error('❌ build-hashes failed:', err?.message ?? err);
-  process.exit(1);
+const packageRoot = process.cwd();
+const pkg = JSON.parse(
+  await readFile(resolve(packageRoot, 'package.json'), 'utf-8'),
+);
+
+if (typeof pkg.claude?.assetPath === 'string') {
+  try {
+    const { outPath, fileCount } = await buildHashes({
+      packageRoot,
+      packageName: pkg.name,
+      packageVersion: pkg.version,
+      assetPath: pkg.claude.assetPath,
+    });
+    console.log(
+      `✓ claude-hashes.json written: ${fileCount} file(s) → ${outPath}`,
+    );
+  } catch (err) {
+    console.error('❌ build-hashes failed:', err?.message ?? err);
+    process.exit(1);
+  }
 }
