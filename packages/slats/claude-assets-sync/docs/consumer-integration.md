@@ -39,13 +39,23 @@ Do **not** expose `./bin/*` in `exports`. That would let consumer bundlers accid
 #!/usr/bin/env node
 import { runCli } from '@slats/claude-assets-sync';
 
-runCli(process.argv).catch((err) => {
+runCli(process.argv, { invokedFromBin: import.meta.url }).catch((err) => {
   process.stderr.write(
     `[@your-scope/your-package] claude-sync failed: ${err instanceof Error ? err.message : String(err)}\n`,
   );
   process.exit(1);
 });
 ```
+
+`runCli` determines the implicit `--package` target in this priority order:
+
+1. `--all` or `--package=<name>` (explicit)
+2. The consumer that owns `process.cwd()` (i.e. the terminal you launched from). When you `cd` into a consumer's package directory and run `yarn claude-sync`, that consumer is picked automatically.
+3. The consumer that owns `invokedFromBin` (fallback). This keeps bare `npx <pkg> claude-sync` working from arbitrary cwds — including from inside another consumer's directory where option 2 would have picked a different package.
+4. The sole discovered consumer, if exactly one exists.
+5. Otherwise an error asking for `--package=<name>` or `--all`.
+
+Passing `invokedFromBin: import.meta.url` remains the mechanism for the fallback case. Omit it in slats's own global bin so it behaves as a cross-consumer dispatcher.
 
 Remember `chmod +x bin/claude-sync.mjs` (or rely on `files` entry to ship executable bit via npm).
 
@@ -102,6 +112,20 @@ Plus `"sideEffects": false` in `package.json`. The guardrails ensure the CLI eng
 | Consumer is a **transitive dep** | `npx -p @your-scope/your-package claude-sync --scope=user` |
 | User has no consumer installed | `npx @slats/claude-assets-sync --package=@your-scope/your-package --scope=user` |
 | Multiple consumers discovered | `npx claude-sync --package=@your-scope/your-package` *or* `npx claude-sync --all` |
+
+### Scope resolution (project / local)
+
+For `--scope=project` and `--scope=local`, the target `.claude` directory is resolved by walking up from `process.cwd()` and reusing the first existing `.claude` directory found. Only if no ancestor owns a `.claude` does the CLI fall back to `process.cwd()/.claude`.
+
+```
+workspace/
+  .claude/                            ← reused target (auto-located)
+  packages/
+    @your-scope/your-package/         ← cd here and run claude-sync
+      bin/claude-sync.mjs
+```
+
+Running `yarn claude-sync --scope=project` from `packages/@your-scope/your-package/` injects into `workspace/.claude`, not `packages/@your-scope/your-package/.claude`. The CLI logs `(auto-located)` in its resolution line when this happens.
 
 ## 6. Authoring `docs/claude/`
 

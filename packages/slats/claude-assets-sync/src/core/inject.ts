@@ -15,6 +15,12 @@ export interface InjectOptions {
   scope: Scope;
   dryRun: boolean;
   force: boolean;
+  /**
+   * Origin directory used to resolve project/local scope targets. When set,
+   * `resolveScope` walks up from this path to find the nearest existing
+   * `.claude` ancestor. Defaults to `process.cwd()`.
+   */
+  originCwd?: string;
   /** Called AFTER plan is built but BEFORE apply. Return false to abort. */
   confirmForce?: (plan: InjectPlan) => Promise<boolean>;
 }
@@ -30,7 +36,7 @@ export interface InjectReport {
 
 export async function injectDocs(opts: InjectOptions): Promise<InjectReport> {
   const manifest = await readHashManifest(opts.packageRoot);
-  const resolution = resolveScope(opts.scope);
+  const resolution = resolveScope(opts.scope, opts.originCwd ?? process.cwd());
   const plan = await buildPlan({
     sourceHashes: manifest.files,
     targetRoot: resolution.targetRoot,

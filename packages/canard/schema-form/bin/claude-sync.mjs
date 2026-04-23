@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import { runCli } from '@slats/claude-assets-sync';
 
-runCli(process.argv).catch((err) => {
+runCli(process.argv, { invokedFromBin: import.meta.url }).catch((err) => {
   process.stderr.write(
     `[@canard/schema-form] claude-sync failed: ${err instanceof Error ? err.message : String(err)}\n`,
   );

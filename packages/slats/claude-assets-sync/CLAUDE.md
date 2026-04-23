@@ -40,16 +40,20 @@ claude-sync inject-docs [options]    # legacy alias
 Each consumer package ships:
 ```
 <consumer>/
-  bin/claude-sync.mjs          # 3-line re-export stub → @slats/claude-assets-sync runCli
+  bin/claude-sync.mjs          # 3-line re-export stub → runCli(argv, { invokedFromBin: import.meta.url })
   scripts/build-hashes.mjs     # calls buildHashes → dist/claude-hashes.json
   docs/claude/                  # authored content
   dist/claude-hashes.json      # GENERATED at build, publish-included
 ```
 
+The implicit `--package` target is picked in this order: `--all` / `--package` > **consumer that owns `process.cwd()`** > `invokedFromBin` consumer (fallback) > sole discovered consumer > error. The `invokedFromBin: import.meta.url` hint in the stub keeps the fallback working for `npx -p <pkg> claude-sync` and similar launches from cwds outside every consumer root. Consumers can still override via `--package=<other>` or `--all`. Slats's own top-level bin (`./dist/cli.mjs`) omits `invokedFromBin` so it behaves as a cross-consumer dispatcher.
+
+For `--scope=project` / `--scope=local`, the target `.claude` directory is resolved by walking up from `process.cwd()` and reusing the nearest existing `.claude` ancestor; the CLI logs `(auto-located)` in its resolution line when this happens. If no ancestor owns a `.claude`, the CLI falls back to `process.cwd()/.claude`.
+
 Consumer `package.json` must:
 - `bin: { "claude-sync": "./bin/claude-sync.mjs" }`
 - `files: [..., "bin", "docs", "dist/claude-hashes.json"]`
-- `dependencies: { "@slats/claude-assets-sync": "^0.4.0" }`
+- `dependencies: { "@slats/claude-assets-sync": "workspace:^" }` (or the equivalent published range)
 - `claude: { "assetPath": "docs/claude" }`
 - Include `yarn build:hashes` in the build chain
 - NEVER expose `./bin/*` in `exports` (blocks consumers from accidentally bundling the CLI)
@@ -59,11 +63,11 @@ Consumer `package.json` must:
 ```
 src/
 ├── cli.ts                  # primary bin entry — calls runCli(process.argv, { version })
-├── program.ts              # @deprecated legacy factory, retained for v0.3 consumer wrappers
+├── program.ts              # @deprecated legacy factory, retained for legacy consumer wrappers
 ├── index.ts                # public programmatic barrel
 ├── discover.ts             # node_modules + yarn workspace walker
 ├── core/
-│   ├── hash.ts             # sha256 compute/compare (untouched since v0.2)
+│   ├── hash.ts             # sha256 compute/compare
 │   ├── scope.ts            # user | project | local → target dir
 │   ├── hashManifest.ts     # dist/claude-hashes.json IO + namespace prefixes
 │   ├── injectPlan.ts       # copy / skip / warn-diverged / warn-orphan / delete
@@ -82,7 +86,7 @@ src/
     └── types.ts
 ```
 
-## Hash Strategy (unchanged since v0.2, Option A)
+## Hash Strategy (Option A)
 
 - `dist/claude-hashes.json` is the sole source of truth (schema v1, `previousVersions: {}` reserved).
 - Consumer-side comparison: copy if missing, skip if equal, warn+require `--force` if different.

@@ -22,8 +22,8 @@ yarn size-limit        # 번들 크기 확인 (CJS/ESM 각 20KB 제한)
 ```bash
 # direct-dep 유저 (npm/yarn add @canard/schema-form 직접 설치)
 npx claude-sync --scope=user                 # ~/.claude
-npx claude-sync --scope=project              # <cwd>/.claude
-npx claude-sync --scope=local                # gitignored 영역
+npx claude-sync --scope=project              # cwd 에서 위로 탐색해 첫 기존 .claude (없으면 cwd/.claude)
+npx claude-sync --scope=local                # 동일 규칙, gitignored 영역
 npx claude-sync --scope=user --dry-run       # 미리보기
 npx claude-sync --scope=user --force         # 수정 덮어쓰기 (TTY 확인 프롬프트)
 
@@ -33,6 +33,8 @@ npx -p @canard/schema-form claude-sync --scope=user
 # 여러 consumer 가 설치되어 있으면 --package 또는 --all 명시 필요
 npx claude-sync --package=@canard/schema-form --scope=user
 ```
+
+> `--scope=project` 와 `--scope=local` 은 터미널 `process.cwd()` 에서 상위로 거슬러 올라가며 처음 만나는 기존 `.claude` 를 타겟으로 재사용합니다. 로그에 `(auto-located)` 가 찍히면 그 경로가 재사용된 것입니다. 기본 `--package` 암시 타겟도 `cwd` 가 속한 consumer 를 우선하므로, 모노레포 루트에서 `yarn schemaForm claude-sync` 를 실행해도 schema-form 에만 주입되고 `.claude` 는 모노레포 루트의 것을 재사용합니다.
 
 구조:
 - `bin/claude-sync.mjs` — 3라인 re-export (`@slats/claude-assets-sync` 의 `runCli` 호출)

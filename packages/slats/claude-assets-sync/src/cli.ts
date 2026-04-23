@@ -1,8 +1,10 @@
-// Primary bin entry for @slats/claude-assets-sync v0.4+.
+// Primary bin entry for @slats/claude-assets-sync.
 //
 // Drives the top-level `claude-sync` CLI (discover + inject + list + build-hashes).
 // Consumer packages ship a 3-line re-export stub (`bin/claude-sync.mjs`) that
-// calls `runCli(process.argv)` from this package's `.` entry.
+// calls `runCli(process.argv, { invokedFromBin: import.meta.url })` so that a
+// bare invocation targets only the consumer's own package. This slats bin
+// omits `invokedFromBin` so it stays a cross-consumer dispatcher.
 import { runCli } from './commands/root.js';
 import { VERSION } from './version.js';
 

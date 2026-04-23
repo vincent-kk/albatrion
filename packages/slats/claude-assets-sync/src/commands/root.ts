@@ -1,3 +1,7 @@
+import { readFile } from 'node:fs/promises';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
+
 import { Command } from 'commander';
 
 import { injectDocs } from '../core/inject.js';
@@ -12,14 +16,21 @@ import { listConsumers } from './list.js';
 
 export interface RunCliOptions {
   version?: string;
+  /**
+   * When set, the package that owns this file becomes the implicit
+   * `--package` target. Consumer bin stubs pass `import.meta.url`; slats's
+   * own top-level bin omits it so `discover()` returns every consumer.
+   */
+  invokedFromBin?: string;
 }
 
 /**
- * Top-level CLI entry for @slats/claude-assets-sync v0.4+.
+ * Top-level CLI entry for `@slats/claude-assets-sync`.
  *
  * Consumers' `bin/claude-sync.mjs` is a 3-line re-export stub that calls
- * `runCli(process.argv)`. The same function also backs slats's own
- * `claude-sync` and legacy `claude-assets-sync` bins.
+ * `runCli(process.argv, { invokedFromBin: import.meta.url })`. The same
+ * function also backs slats's own `claude-sync` and legacy
+ * `claude-assets-sync` bins (which omit `invokedFromBin`).
  */
 export async function runCli(
   argv: readonly string[] = process.argv,
@@ -46,7 +57,7 @@ export async function runCli(
       'Disable yarn workspace package walking (shallow node_modules only)',
     )
     .action(async (flags: DefaultFlags) => {
-      await runInject(flags);
+      await runInject(flags, options);
     });
 
   cmd
@@ -77,7 +88,7 @@ export async function runCli(
     .option('--force', 'Overwrite user modifications', false)
     .option('--root <path>')
     .action(async (flags: DefaultFlags) => {
-      await runInject(flags);
+      await runInject(flags, options);
     });
 
   try {
@@ -89,7 +100,7 @@ export async function runCli(
   }
 }
 
-interface DefaultFlags {
+export interface DefaultFlags {
   package?: string;
   all?: boolean;
   scope?: string;
@@ -104,9 +115,14 @@ interface ListFlags {
   root?: string;
 }
 
-async function runInject(flags: DefaultFlags): Promise<void> {
+async function runInject(
+  flags: DefaultFlags,
+  options: RunCliOptions,
+): Promise<void> {
+  const originCwd = flags.root ?? process.cwd();
+
   const all = await discover({
-    cwd: flags.root,
+    cwd: originCwd,
     includeWorkspaces: flags.workspaces ?? true,
   });
 
@@ -120,17 +136,26 @@ async function runInject(flags: DefaultFlags): Promise<void> {
     process.exit(1);
   }
 
-  const targets = resolveTargets(all, flags);
+  const invokedPackageName = options.invokedFromBin
+    ? await resolveInvokedPackageName(options.invokedFromBin)
+    : null;
+  const cwdPackageName = resolveCwdPackageName(all, originCwd);
+
+  const targets = resolveTargets(all, flags, cwdPackageName, invokedPackageName);
   const scope = await resolveScope(flags.scope);
 
   for (const target of targets) {
-    await injectOne(target, scope, flags);
+    await injectOne(target, scope, flags, originCwd);
   }
 }
 
-function resolveTargets(
+
+
+export function resolveTargets(
   all: ConsumerPackage[],
   flags: DefaultFlags,
+  cwdPackageName: string | null,
+  invokedPackageName: string | null,
 ): ConsumerPackage[] {
   if (flags.all) return all;
   if (flags.package) {
@@ -142,21 +167,73 @@ function resolveTargets(
     }
     return [match];
   }
+  if (cwdPackageName) {
+    const match = all.find((p) => p.name === cwdPackageName);
+    if (match) return [match];
+  }
+  if (invokedPackageName) {
+    const match = all.find((p) => p.name === invokedPackageName);
+    if (match) return [match];
+  }
   if (all.length === 1) return all;
   logger.error(
     'Multiple consumer packages discovered; specify --package=<name> or --all.',
   );
-  if (isInteractive()) {
-    logger.error('  Interactive multi-select is not implemented in v0.4.0.');
-  }
   logger.error(`  Available: ${all.map((p) => p.name).join(', ')}`);
   process.exit(2);
+}
+
+/**
+ * Returns the consumer whose `packageRoot` contains `cwd` (including equality).
+ * When multiple consumers match (e.g. nested packages), the longest
+ * `packageRoot` wins — the deepest owner takes priority.
+ */
+export function resolveCwdPackageName(
+  all: ConsumerPackage[],
+  cwd: string,
+): string | null {
+  let best: ConsumerPackage | null = null;
+  for (const pkg of all) {
+    if (!isPathInside(cwd, pkg.packageRoot)) continue;
+    if (!best || pkg.packageRoot.length > best.packageRoot.length) best = pkg;
+  }
+  return best ? best.name : null;
+}
+
+function isPathInside(child: string, parent: string): boolean {
+  if (child === parent) return true;
+  const prefix = parent.endsWith('/') ? parent : `${parent}/`;
+  return child.startsWith(prefix);
+}
+
+async function resolveInvokedPackageName(
+  fileUrl: string,
+): Promise<string | null> {
+  let current: string;
+  try {
+    current = dirname(fileURLToPath(fileUrl));
+  } catch {
+    return null;
+  }
+  while (true) {
+    try {
+      const raw = await readFile(join(current, 'package.json'), 'utf-8');
+      const pkg = JSON.parse(raw) as { name?: string };
+      if (typeof pkg.name === 'string' && pkg.name.length > 0) return pkg.name;
+    } catch {
+      /* not at this level; keep walking up */
+    }
+    const parent = dirname(current);
+    if (parent === current) return null;
+    current = parent;
+  }
 }
 
 async function injectOne(
   target: ConsumerPackage,
   scope: Scope,
   flags: DefaultFlags,
+  originCwd: string,
 ): Promise<void> {
   if (!target.hashesPresent) {
     logger.warn(
@@ -178,6 +255,7 @@ async function injectOne(
       packageRoot: target.packageRoot,
       assetRoot: target.assetRoot,
       scope,
+      originCwd,
       dryRun: flags.dryRun ?? false,
       force: flags.force ?? false,
       confirmForce: async (plan) => {

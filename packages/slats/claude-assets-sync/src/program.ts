@@ -13,11 +13,10 @@ export interface ProgramOptions {
 }
 
 /**
- * @deprecated Since v0.4.0. Prefer `runCli` from the package entry or the
- *   `claude-sync` bin, which auto-discovers consumers via `discover()`.
- *   Retained as a forwarding shim so legacy consumer wrappers
- *   (`bin/inject-docs.mjs`) keep working without code changes.
- *   Scheduled for removal in v1.0.
+ * @deprecated Prefer `runCli` from the package entry or the `claude-sync`
+ *   bin, which auto-discovers consumers via `discover()`. Retained as a
+ *   forwarding shim so legacy per-consumer bin wrappers keep working without
+ *   code changes. Scheduled for removal.
  */
 export async function program(options: ProgramOptions): Promise<void> {
   const cmd = new Command();
