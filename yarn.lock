@@ -10312,10 +10312,13 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@winglet/style-utils@workspace:packages/winglet/style-utils"
   dependencies:
+    "@slats/claude-assets-sync": "workspace:^"
     "@types/react": "npm:^19.0.0"
     "@types/react-dom": "npm:^19.0.0"
     classnames: "npm:^2.5.1"
     clsx: "npm:^2.1.1"
+  bin:
+    claude-sync: ./bin/claude-sync.mjs
   languageName: unknown
   linkType: soft
 

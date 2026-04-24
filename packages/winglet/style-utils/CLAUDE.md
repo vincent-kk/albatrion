@@ -39,3 +39,24 @@ cxLite('base', isActive && 'active', size)      // 경량 버전
 - **DOM API**: `adoptedStyleSheets` (모던) / `<style>` 요소 (레거시) 자동 선택
 - **배치 업데이트**: `requestAnimationFrame` 기반 DOM 업데이트 최적화
 - **메모리**: `destroy()` 호출 시 AnimationFrame 취소, DOM 제거, 캐시 초기화
+
+## Claude Docs Injector
+
+Thin CLI stub that injects `docs/claude/` assets into the user's `.claude`
+directory. Engine: `@slats/claude-assets-sync`.
+
+```bash
+npx claude-sync --scope=user                 # ~/.claude
+npx claude-sync --scope=project              # nearest existing .claude walking up from cwd
+npx claude-sync --scope=local                # same rule, gitignored area
+npx claude-sync --scope=user --dry-run       # preview
+npx claude-sync --scope=user --force         # overwrite local edits
+
+npx -p @winglet/style-utils claude-sync --scope=user  # transitive-dep context
+```
+
+### Isolation Guardrails
+
+- `src/**` MUST NOT import from `bin/**`, `docs/**`, or `@slats/claude-assets-sync`.
+- **Never add `./bin/*` to `exports`.**
+- `yarn depcheck` enforces the isolation in CI.

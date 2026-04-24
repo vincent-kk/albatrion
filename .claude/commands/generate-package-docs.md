@@ -1,51 +1,105 @@
 # /generate-package-docs - Package Documentation Generator
 
-This command generates or updates documentation, skills, and commands for a given package path.
+This command generates or updates documentation, skills, and optional consumer rules for a given package path.
 
 ## Usage
 
 ```bash
-# Basic usage
+# Basic (skill + SPECIFICATION only)
 /generate-package-docs {package-path}
+
+# With optional consumer rules
+/generate-package-docs {package-path} --rules
 
 # Examples
 /generate-package-docs packages/lerx/promise-modal
 /generate-package-docs packages/winglet/react-utils
-/generate-package-docs packages/canard/schema-form
+/generate-package-docs packages/winglet/common-utils
+/generate-package-docs packages/canard/schema-form --rules
 ```
+
+**Flag policy**
+
+- `--rules` MUST be passed explicitly to create or update `docs/claude/rules/{slug}-rule.md`.
+- If `--rules` is absent, rules artifacts are left untouched — even when a rules file already exists.
+- Rationale: consumer-authored rule content MUST NOT be silently overwritten. Opt-in only.
 
 ## Overview
 
 This command automates the creation and maintenance of package documentation:
 
-- **CREATE Mode**: When `docs/` doesn't exist → Analyzes package and generates all documentation
-- **UPDATE Mode**: When `docs/` exists → Re-analyzes and updates existing documentation
+- **CREATE Mode**: When `docs/` does not exist → analyze the package and generate all artifacts from templates.
+- **UPDATE Mode**: When `docs/` exists → re-analyze the package and, per file, prompt the user for **Delta merge** vs **Template regenerate**.
+
+Scope of artifacts:
+
+- Skill bundle: `docs/claude/skills/{slug}-skill/SKILL.md` + `knowledge/*.md`
+- Specification: `docs/en/SPECIFICATION.md` + `docs/ko/SPECIFICATION.md`
+- Consumer rules (opt-in via `--rules`): `docs/claude/rules/{slug}-rule.md`
+
+Note: This command does NOT generate any files under `docs/claude/commands/`. Slash commands are not part of the per-package artifact set.
+
+---
+
+## Slug Convention
+
+`{slug}` is the kebab-case package name derived from `package.json`'s `name`:
+
+| `name` | `{slug}` |
+|---|---|
+| `@canard/schema-form` | `schema-form` |
+| `@winglet/common-utils` | `common-utils` |
+| `@lerx/promise-modal` | `promise-modal` |
+
+Derive with:
+
+```bash
+PKG_NAME=$(node -p "require('./$PACKAGE_PATH/package.json').name")
+SLUG="${PKG_NAME##*/}"
+```
+
+All generated paths and identifiers use `{slug}`. Never mix `expert/`, generic, or scoped names.
 
 ---
 
 ## Phase 1: Pre-Execution Checks
 
-### 1.1 Package Path Validation
+### 1.1 Package Path Validation & Flag Parsing
 
 ```bash
-PACKAGE_PATH="$1"
+PACKAGE_PATH=""
+WITH_RULES="false"
 
-# Check if directory exists
+for arg in "$@"; do
+  case "$arg" in
+    --rules) WITH_RULES="true" ;;
+    --*)     echo "❌ Unknown flag: $arg"; exit 1 ;;
+    *)       [ -z "$PACKAGE_PATH" ] && PACKAGE_PATH="$arg" ;;
+  esac
+done
+
+if [ -z "$PACKAGE_PATH" ]; then
+  echo "❌ Package path is required"
+  exit 1
+fi
+
 if [ ! -d "$PACKAGE_PATH" ]; then
   echo "❌ Package directory not found: $PACKAGE_PATH"
   exit 1
 fi
 
-# Check for package.json
 if [ ! -f "$PACKAGE_PATH/package.json" ]; then
   echo "❌ package.json not found in $PACKAGE_PATH"
   exit 1
 fi
 
-# Check for README.md (optional but recommended)
 if [ ! -f "$PACKAGE_PATH/README.md" ]; then
-  echo "⚠️ README.md not found - will generate from source analysis"
+  echo "⚠️ README.md not found — will generate from source analysis"
 fi
+
+PKG_NAME=$(node -p "require('./$PACKAGE_PATH/package.json').name")
+SLUG="${PKG_NAME##*/}"
+echo "📦 Package: $PKG_NAME  → slug: $SLUG  (rules: $WITH_RULES)"
 ```
 
 ### 1.2 Mode Detection
@@ -66,21 +120,48 @@ fi
 
 ```bash
 if [ "$MODE" = "UPDATE" ]; then
-  # Check for existing documentation files
-  SKILL_FILE="$DOCS_PATH/claude/skills/expert/SKILL.md"
-  COMMAND_FILE="$DOCS_PATH/claude/commands/guide.md"
-  KNOWLEDGE_FILES=$(find "$DOCS_PATH/claude/skills/expert/knowledge" -name "*.md" 2>/dev/null)
+  SKILL_FILE="$DOCS_PATH/claude/skills/${SLUG}-skill/SKILL.md"
+  KNOWLEDGE_DIR="$DOCS_PATH/claude/skills/${SLUG}-skill/knowledge"
+  KNOWLEDGE_FILES=$(find "$KNOWLEDGE_DIR" -name "*.md" 2>/dev/null)
   EN_SPEC="$DOCS_PATH/en/SPECIFICATION.md"
   KO_SPEC="$DOCS_PATH/ko/SPECIFICATION.md"
+  RULES_FILE="$DOCS_PATH/claude/rules/${SLUG}-rule.md"
 
   echo "📁 Existing files detected:"
-  [ -f "$SKILL_FILE" ] && echo "  - Expert Skill: $SKILL_FILE"
-  [ -f "$COMMAND_FILE" ] && echo "  - Guide Command: $COMMAND_FILE"
+  [ -f "$SKILL_FILE" ]   && echo "  - Expert Skill: $SKILL_FILE"
   [ -n "$KNOWLEDGE_FILES" ] && echo "  - Knowledge Files: $(echo "$KNOWLEDGE_FILES" | wc -l) files"
-  [ -f "$EN_SPEC" ] && echo "  - English Spec: $EN_SPEC"
-  [ -f "$KO_SPEC" ] && echo "  - Korean Spec: $KO_SPEC"
+  [ -f "$EN_SPEC" ]      && echo "  - English Spec: $EN_SPEC"
+  [ -f "$KO_SPEC" ]      && echo "  - Korean Spec: $KO_SPEC"
+  [ -f "$RULES_FILE" ]   && echo "  - Consumer Rules: $RULES_FILE ($([ "$WITH_RULES" = "true" ] && echo "in scope" || echo "IGNORED — pass --rules to include"))"
 fi
 ```
+
+### 1.4 Rules Generation Decision (flag-only)
+
+Rules generation is strictly controlled by the `--rules` flag:
+
+| Flag | Rules file absent | Rules file present |
+|---|---|---|
+| `--rules` | Create via template | Update via per-file strategy (see §1.5) |
+| (omitted) | Skip entirely | **Leave untouched** — diff 0 |
+
+There is no prompt fallback. If the user forgets the flag, rules artifacts are ignored even when they already exist. This is intentional.
+
+### 1.5 UPDATE Strategy Decision (per-file)
+
+For every artifact that already exists in UPDATE mode, call `AskUserQuestion` with two options:
+
+- **Delta merge** (recommended) — preserve hand-written content, append newly discovered APIs / topics / sections only.
+- **Template regenerate** — overwrite file with freshly rendered template (erases manual work).
+
+Prompt scope:
+
+- `SKILL.md` — always, when it exists.
+- Each existing `knowledge/*.md` — once per file.
+- `en/SPECIFICATION.md` and `ko/SPECIFICATION.md` — once each.
+- `rules/{slug}-rule.md` — **only when `--rules` is set** AND the file exists.
+
+If a target file does not exist yet, skip the prompt and generate from template.
 
 ---
 
@@ -88,69 +169,53 @@ fi
 
 ### 2.1 Source Code Structure Analysis
 
-Analyze the following files and directories:
+Analyze:
 
 ```
 {package-path}/
 ├── src/
 │   ├── index.ts          # Main exports
 │   ├── **/*.ts           # Source files
-│   └── **/*.tsx          # React components
-├── package.json          # Package metadata
-├── README.md             # Existing documentation
-├── CLAUDE.md             # Claude-specific instructions
-├── stories/              # Storybook stories (if exists)
-└── src/*/tests/          # Test files
+│   └── **/*.tsx          # React components (if any)
+├── package.json
+├── README.md
+├── CLAUDE.md
+├── stories/              # Storybook stories (if any)
+└── src/**/__tests__/     # Test files
 ```
 
 ### 2.2 Information Extraction
 
-Extract the following information:
-
-1. **Package Metadata** (from package.json):
-   - Package name
-   - Version
-   - Description
-   - Dependencies
-   - Peer dependencies
-
-2. **Architecture** (from source code):
-   - Directory structure
-   - Design patterns used
-   - Layer organization
-
-3. **API Surface** (from exports):
-   - Functions
-   - Classes
-   - Hooks
-   - Components
-   - Types/Interfaces
-
-4. **Usage Patterns** (from README/stories):
-   - Basic usage examples
-   - Advanced patterns
-   - Customization options
+1. **Package Metadata** — name, version, description, dependencies, peer dependencies.
+2. **Architecture** — directory structure, design patterns, layer organization.
+3. **API Surface** — functions, classes, hooks, components, types/interfaces.
+4. **Usage Patterns** — basic usage, advanced patterns, customization examples drawn from README and stories.
+5. **Consumer Invariants** (only when `--rules` is set):
+   - Silent-bug shapes: misuse that compiles but breaks at runtime (e.g. unstable references, missing cleanup, mixed rendering surfaces).
+   - Public API boundary: which deep imports or internal members must be avoided.
+   - State ownership: where mirroring state into external stores causes drift.
+   - Decision routing: which topics MUST delegate to the `{slug}-skill` skill rather than being answered from memory.
 
 ---
 
-## Phase 3: Document Generation/Update
+## Phase 3: Document Generation / Update
 
 ### 3.1 Directory Structure
 
-Create the following structure if not exists:
+Produce only the files in scope:
 
 ```
 {package-path}/docs/
 ├── claude/
-│   ├── skills/
-│   │   └── expert/
-│   │       ├── SKILL.md
-│   │       └── knowledge/
-│   │           ├── {topic-1}.md
-│   │           ├── {topic-2}.md
-│   │           └── ...
-│   └── commands/
-│       └── guide.md
+│   ├── rules/                               # only when --rules is set
+│   │   └── {slug}-rule.md
+│   └── skills/
+│       └── {slug}-skill/
+│           ├── SKILL.md
+│           └── knowledge/
+│               ├── {topic-1}.md             # kebab-case
+│               ├── {topic-2}.md
+│               └── ...
 ├── en/
 │   └── SPECIFICATION.md
 └── ko/
@@ -159,261 +224,199 @@ Create the following structure if not exists:
 
 ### 3.2 File Templates
 
-#### Skills Template: `claude/skills/expert/SKILL.md`
+#### Skill Template: `claude/skills/{slug}-skill/SKILL.md`
 
 ```markdown
 ---
-name: {package-name-slug}-skill
-description: "@{package-name} library expert. Provides Q&A, usage examples, and troubleshooting by referencing all knowledge files."
+name: {slug}-skill
+description: "Expert knowledge base for @{package-name}. Triggers on {symbol-1}, {symbol-2}, {concept-1}, {concept-2}, ... — enumerate concrete API names, types, and concepts that should invoke this skill."
 user-invocable: false
 ---
 
-# {Package Display Name} Expert Skill
+# {Package Display Name} Expert
 
-This is an expert skill for @{package-name}. This skill answers questions about the {package-name} library, provides usage examples, and assists with troubleshooting.
+Knowledge base for `@{package-name}`. Answer questions, show usage examples, and diagnose issues by routing to the right knowledge file in `knowledge/`.
 
-## Skill Info
+## How to Use This Skill
 
-- **Name**: {package-name-slug}-skill
-- **Purpose**: @{package-name} library Q&A and guidance
-- **Triggers**: `/{package-name-slug}` command or {package-name} related questions
+1. Identify the topic in the user's question.
+2. Locate the matching knowledge file using the Topic Router below.
+3. Load that knowledge file and any related files listed in the router.
+4. Answer with a concept explanation, a concrete code example, and references to the knowledge file(s) used.
 
----
+Do not inline full interface definitions or long examples from knowledge files into the answer — cite them and quote only the minimal relevant snippet.
 
-## Knowledge Files Reference
+## Topic Router
 
-Refer to the following knowledge files for detailed guides by feature:
+| Topic keywords in user question | Knowledge file |
+|---|---|
+| `{keyword-a}`, `{keyword-b}` | `knowledge/{topic-1}.md` |
+| `{keyword-c}`, `{keyword-d}` | `knowledge/{topic-2}.md` |
 
-| File | Topics | Load When |
-|------|--------|-----------|
-| `knowledge/{topic-1}.md` | {topic-1 description} | {when to load topic-1} |
-| `knowledge/{topic-2}.md` | {topic-2 description} | {when to load topic-2} |
-| `knowledge/{topic-3}.md` | {topic-3 description} | {when to load topic-3} |
+## Architecture Cheat Sheet
 
----
+Summarize the subsystem map, resolution priorities, or sub-path import table that best fits this package:
 
-## Knowledge Base
+- **Application / React library** (e.g. schema-form, promise-modal): document subsystems, resolution priorities, API primitives, plugin surface.
+- **Utility library** (e.g. common-utils): document sub-path import map and per-sub-path key exports.
 
-### Core Architecture
+## Answer Format
 
-{architecture analysis from package}
+1. **Concept** — one-paragraph explanation rooted in the cited knowledge file.
+2. **Example** — minimal code snippet that compiles against the public API.
+3. **References** — `knowledge/<file>.md` and any relevant story/test file.
 
-### Key Interfaces
+## Reference Map
 
-```typescript
-{extracted key interfaces and types}
+| Resource | Path |
+|---|---|
+| Full specification (Korean) | `{package-path}/docs/ko/SPECIFICATION.md` |
+| Full specification (English) | `{package-path}/docs/en/SPECIFICATION.md` |
+| Storybook examples (if any) | `{package-path}/stories/*.stories.tsx` |
+| Unit tests | `{package-path}/src/**/__tests__/*.test.ts` |
+| Package CLAUDE.md | `{package-path}/CLAUDE.md` |
 ```
 
-### Usage Patterns
+**Frontmatter rules**
 
-{extracted usage patterns from README/stories}
+- `name` MUST be `{slug}-skill`.
+- `description` MUST list concrete trigger keywords (API names, concepts, symbols) separated by commas. Avoid generic marketing copy.
+- `user-invocable` MUST be `false` — the skill is loaded via topic routing, not a user-invoked slash command.
 
----
+#### Knowledge Files Template: `claude/skills/{slug}-skill/knowledge/{topic}.md`
 
-## Common Questions
+Knowledge files are topic-specific deep-dives referenced by the expert skill. Each file owns one feature or concept.
 
-### Installation & Setup
+**File naming**: kebab-case (e.g. `computed-properties.md`, `async-utils.md`, `hooks-reference.md`).
 
-{installation and setup guidance}
-
-### Basic Usage
-
-{basic usage examples}
-
-### Advanced Features
-
-{advanced features overview}
-
-### Troubleshooting
-
-{common issues and solutions}
-```
-
-#### Commands Template: `claude/commands/guide.md`
+**Template structure**:
 
 ```markdown
-# @{package-name} Q&A Command
-
-**Package**: `@{package-name}`
-**Expert Skill**: `{package-name-slug}-skill` (directory-based skill)
-
-Ask questions about @{package-name} and get answers through the `/{package-name-slug}` command.
-
-## Usage
-
-```
-/{package-name-slug} [question or topic]
-```
-
-## Examples
-
-```
-/{package-name-slug} How to get started?
-/{package-name-slug} What is the main API?
-/{package-name-slug} How to customize components?
-/{package-name-slug} How to handle errors?
-```
-
-## Supported Topics
-
-### Basic Concepts
-- Installation and setup
-- Main component usage
-- Basic examples
-
-### Core Features
-- {Feature 1}
-- {Feature 2}
-- {Feature 3}
-
-### Advanced Features
-- {Advanced Feature 1}
-- {Advanced Feature 2}
-- {Advanced Feature 3}
-
-### Troubleshooting
-- Frequently asked questions
-- Common problem resolution
-- Performance optimization
-- Debugging tips
-
-## Knowledge Sources
-
-For more detailed information, you can check the in-depth knowledge in the following related skills:
-
-| Topic | Knowledge File |
-|------|-----------|
-| Comprehensive guide | `{package-name-slug}-skill` (directory skill) |
-| {Topic 1} | `knowledge/{topic-1}.md` |
-| {Topic 2} | `knowledge/{topic-2}.md` |
-| {Topic 3} | `knowledge/{topic-3}.md` |
-
-Full API specifications are available in the SPECIFICATION documents:
-- English: `en/SPECIFICATION.md`
-- Korean: `ko/SPECIFICATION.md`
-```
-
-#### Knowledge Files Template: `claude/skills/expert/knowledge/{topic}.md`
-
-Knowledge files are detailed topic-specific guides referenced by the expert skill. Each file should focus on a single feature or concept.
-
-**File naming convention:** Use kebab-case (e.g., `computed-properties.md`, `validation-system.md`, `event-handling.md`)
-
-**Template structure:**
-
-```markdown
-# {Topic Name} Knowledge
+# {Topic Name}
 
 Expert knowledge for {topic} features in @{package-name}.
 
 ## Overview
 
-{Brief description of the topic and when to use it}
-
-## Basic Concepts
-
-### Concept 1
-
-{Explanation with code examples}
-
-### Concept 2
-
-{Explanation with code examples}
-
----
+{Brief description of the topic and when to use it.}
 
 ## API Reference
 
-### Function/Hook/Component 1
+### {Symbol 1}
 
-```typescript
-{Type signature}
-```
+​```typescript
+{type signature}
+​```
 
-{Description and usage}
+{description and usage}
 
-**Parameters:**
-- `param1` - {description}
-- `param2` - {description}
+**Parameters**
+- `param1` — {description}
 
-**Returns:** {return value description}
+**Returns** {return value}
 
-**Example:**
-
-```typescript
+**Example**
+​```typescript
 {code example}
-```
-
-### Function/Hook/Component 2
-
-{Similar structure}
-
----
+​```
 
 ## Common Patterns
 
-### Pattern 1: {Pattern Name}
+### {Pattern Name}
 
-{Description and use case}
-
-```typescript
-{code example}
-```
-
-### Pattern 2: {Pattern Name}
-
-{Description and use case}
-
-```typescript
-{code example}
-```
-
----
-
-## Best Practices
-
-1. **{Practice 1}**: {Description}
-2. **{Practice 2}**: {Description}
-3. **{Practice 3}**: {Description}
-
----
+{description + code example}
 
 ## Troubleshooting
 
-### Issue 1: {Issue Description}
+### {Symptom}
 
-**Symptom:** {What the user sees}
+**Cause** {why it happens}
+**Fix** {how to resolve}
 
-**Cause:** {Why it happens}
+## Related
 
-**Solution:** {How to fix it}
-
-```typescript
-{code example if applicable}
+- `knowledge/{related-topic}.md`
 ```
 
-### Issue 2: {Issue Description}
+**Suggested topic inventory** (pick the relevant subset for the package):
+`getting-started.md`, `core-concepts.md`, `api-reference.md`, `advanced-patterns.md`, `performance.md`, `troubleshooting.md`, `testing.md`, `migration.md`.
 
-{Similar structure}
+#### Rules Template: `claude/rules/{slug}-rule.md`  *(only when `--rules` is set)*
+
+Consumer-facing rules are **perspective-level**: they describe the mental model, invariants, and anti-patterns required to use the package correctly. They do not duplicate API shapes from the skill.
+
+**Reference original**: `packages/canard/schema-form/docs/claude/rules/schema-form-rule.md`.
+
+**Structure**:
+
+```markdown
+# {Package Display Name} Consumer Rules
+
+These rules apply when authoring application code that imports from `@{package-name}`.
+They do not apply to plugin authoring (if applicable) or to work inside the library itself.
+Rules are perspective-level. For concrete API shapes, defaults, and edge behavior, invoke the `{slug}-skill` skill; §3 lists the topics that trigger that invocation.
 
 ---
 
-## Related Topics
+## 1. Mental Model
 
-- See `knowledge/{related-topic-1}.md` for {related topic 1}
-- See `knowledge/{related-topic-2}.md` for {related topic 2}
-- See main SPECIFICATION for comprehensive API reference
+### {principle-name}
+
+- {Core principle stated as an imperative.}
+- {Consequence of violation.}
+
+---
+
+## 2. Composition / Core Concepts
+
+{Topology, resolution order, state ownership, lifecycle — the structural facts that govern correct usage. Use tables or bullet lists.}
+
+---
+
+## 3. Decision Routing
+
+When the task touches any of these areas, invoke the `{slug}-skill` skill.
+The skill owns the concrete API shapes, defaults, and edge behavior.
+Do not attempt to answer these from memory.
+
+- {trigger topic 1}
+- {trigger topic 2}
+
+---
+
+## 4. Invariants
+
+Each rule is a single hard requirement. Violations typically produce silent bugs, not compile errors.
+
+### {invariant-name}
+
+- {MUST statement.}
+- Why: {consequence of violation — what breaks silently.}
+
+---
+
+## 5. Red Flags
+
+Reject these on sight.
+
+- {anti-pattern 1} → violates `{invariant-name}`.
+- {anti-pattern 2} → ...
+
+---
+
+## 6. Extending the Knowledge
+
+- For {adjacent topic A}, invoke the `{adjacent-skill}` skill.
+- For topics outside the `{slug}-skill` skill's coverage → consult `{package-path}/docs/en/SPECIFICATION.md`.
+- For package-internal structural rules (FCA) → see `.claude/rules/filid_fca-policy.md`. Scope is disjoint: this document is for consumers.
 ```
 
-**Example topics to create:**
-- `getting-started.md` - Installation and basic setup
-- `core-concepts.md` - Fundamental concepts and architecture
-- `api-reference.md` - Core API functions and hooks
-- `advanced-patterns.md` - Complex usage patterns
-- `performance.md` - Performance optimization techniques
-- `troubleshooting.md` - Common issues and solutions
-- `testing.md` - Testing strategies and examples
-- `migration.md` - Migration guides from previous versions
+**Rules content policy**
+
+- Document only consumer-facing concerns (people who `import` from the package).
+- Keep each rule body short (≤5 lines). Link to skill knowledge for depth.
+- Every invariant MUST include a `Why:` line describing the consequence of violation.
+- Do not restate API signatures — route to the skill via §3.
 
 #### SPECIFICATION Template (English): `en/SPECIFICATION.md`
 
@@ -443,51 +446,41 @@ Expert knowledge for {topic} features in @{package-name}.
 ---
 
 ## Installation
-
-{installation instructions}
+{…}
 
 ## Quick Start
-
-{quick start guide with code examples}
+{…}
 
 ## Architecture
-
-{architecture overview with diagrams}
+{…}
 
 ## Core API
-
-{detailed API documentation}
+{…}
 
 ## Hooks
-
-{hooks documentation}
+{…}
 
 ## Components
-
-{components documentation}
+{…}
 
 ## Type Definitions
-
-{type definitions}
+{…}
 
 ## Usage Patterns
-
-{usage pattern examples}
+{…}
 
 ## Advanced Examples
-
-{advanced examples}
+{…}
 
 ---
 
 ## License
-
-{license info}
+{…}
 ```
 
 #### SPECIFICATION Template (Korean): `ko/SPECIFICATION.md`
 
-Same structure as English but with Korean translations.
+Same structure as English, translated into Korean.
 
 ---
 
@@ -496,16 +489,14 @@ Same structure as English but with Korean translations.
 ### 4.1 File Existence Check
 
 ```bash
-# Verify all files were created/updated
-FILES=(
-  "$DOCS_PATH/claude/skills/expert/SKILL.md"
-  "$DOCS_PATH/claude/commands/guide.md"
+CORE_FILES=(
+  "$DOCS_PATH/claude/skills/${SLUG}-skill/SKILL.md"
   "$DOCS_PATH/en/SPECIFICATION.md"
   "$DOCS_PATH/ko/SPECIFICATION.md"
 )
 
-echo "📝 Checking core documentation files:"
-for file in "${FILES[@]}"; do
+echo "📝 Core documentation files:"
+for file in "${CORE_FILES[@]}"; do
   if [ -f "$file" ]; then
     echo "✅ $file"
   else
@@ -513,18 +504,24 @@ for file in "${FILES[@]}"; do
   fi
 done
 
-# Check for knowledge files
-KNOWLEDGE_DIR="$DOCS_PATH/claude/skills/expert/knowledge"
+KNOWLEDGE_DIR="$DOCS_PATH/claude/skills/${SLUG}-skill/knowledge"
 if [ -d "$KNOWLEDGE_DIR" ]; then
   KNOWLEDGE_COUNT=$(find "$KNOWLEDGE_DIR" -name "*.md" 2>/dev/null | wc -l)
   echo ""
   echo "📚 Knowledge files: $KNOWLEDGE_COUNT"
-  if [ "$KNOWLEDGE_COUNT" -gt 0 ]; then
-    echo "Knowledge topics:"
-    find "$KNOWLEDGE_DIR" -name "*.md" -exec basename {} \; | sed 's/^/  - /'
-  fi
+  find "$KNOWLEDGE_DIR" -name "*.md" -exec basename {} \; | sed 's/^/  - /'
 else
   echo "⚠️ Knowledge directory not found: $KNOWLEDGE_DIR"
+fi
+
+if [ "$WITH_RULES" = "true" ]; then
+  RULES_FILE="$DOCS_PATH/claude/rules/${SLUG}-rule.md"
+  echo ""
+  if [ -f "$RULES_FILE" ]; then
+    echo "📏 Consumer rules: ✅ $RULES_FILE"
+  else
+    echo "📏 Consumer rules: ❌ Missing $RULES_FILE"
+  fi
 fi
 ```
 
@@ -539,6 +536,12 @@ Verify that documentation covers:
 - [ ] Usage examples for each major API
 - [ ] Troubleshooting section
 
+When `--rules` is set, additionally verify:
+
+- [ ] Mental Model section documents the library's core invariants
+- [ ] Decision Routing lists the `{slug}-skill` skill as the depth resource
+- [ ] Every invariant entry includes a `Why:` line
+
 ---
 
 ## Output Format
@@ -551,6 +554,7 @@ Verify that documentation covers:
 📦 Package: {package-name}
 📂 Path: {package-path}
 🔄 Mode: CREATE (new documentation)
+🏷️  Rules: {generated | skipped — pass --rules to include}
 
 📊 Analysis Results:
 - Core APIs: X functions
@@ -559,19 +563,20 @@ Verify that documentation covers:
 - Types: X interfaces
 
 📁 Generated Files:
-├── docs/claude/skills/expert/SKILL.md
-├── docs/claude/skills/expert/knowledge/
+├── docs/claude/skills/{slug}-skill/SKILL.md
+├── docs/claude/skills/{slug}-skill/knowledge/
 │   ├── {topic-1}.md
 │   ├── {topic-2}.md
 │   └── ... (X knowledge files)
-├── docs/claude/commands/guide.md
 ├── docs/en/SPECIFICATION.md
-└── docs/ko/SPECIFICATION.md
+├── docs/ko/SPECIFICATION.md
+[and, only when --rules was set:]
+└── docs/claude/rules/{slug}-rule.md
 
 💡 Next Steps:
 1. Review generated documentation
-2. Test skill with: /{package-name-slug}
-3. Update CLAUDE.md to reference new docs
+2. Validate that the skill is invoked on expected topics
+3. Update CLAUDE.md to reference the new docs if needed
 ```
 
 ### UPDATE Mode Success
@@ -582,21 +587,23 @@ Verify that documentation covers:
 📦 Package: {package-name}
 📂 Path: {package-path}
 🔄 Mode: UPDATE (existing documentation)
+🏷️  Rules: {updated | skipped — pass --rules to include}
 
 📊 Changes Detected:
 - New APIs: X ({list})
 - Modified APIs: X ({list})
 - Removed APIs: X ({list})
 
-📁 Updated Files:
-├── docs/claude/skills/expert/SKILL.md ✏️
-├── docs/claude/skills/expert/knowledge/ ✏️
-│   ├── {topic-1}.md (updated)
-│   ├── {topic-2}.md (new)
-│   └── ... (X files updated/added)
-├── docs/claude/commands/guide.md ✏️
-├── docs/en/SPECIFICATION.md ✏️
-└── docs/ko/SPECIFICATION.md ✏️
+📁 Updated Files (per-file strategy shown):
+├── docs/claude/skills/{slug}-skill/SKILL.md ✏️  [Delta]
+├── docs/claude/skills/{slug}-skill/knowledge/
+│   ├── {topic-1}.md  [Delta]
+│   ├── {topic-2}.md  [New]
+│   └── ...
+├── docs/en/SPECIFICATION.md ✏️  [Regenerated]
+├── docs/ko/SPECIFICATION.md ✏️  [Regenerated]
+[and, only when --rules was set:]
+└── docs/claude/rules/{slug}-rule.md ✏️  [Delta]
 
 💡 Summary:
 {change summary}
@@ -621,27 +628,34 @@ Verify that documentation covers:
 When this command is invoked:
 
 1. **Parse Input**
-   - Extract package path from arguments
-   - Validate path exists
+   - Extract package path and flags (`--rules`)
+   - Validate path exists and contains a `package.json`
 
 2. **Pre-Execution Checks**
-   - Validate package structure
+   - Derive `{slug}` from `package.json` name (`@scope/name` → `name`)
    - Determine CREATE or UPDATE mode
-   - Identify existing documentation
+   - Identify existing documentation per artifact type
+   - Decide whether rules are in scope (flag-only)
 
 3. **Package Analysis**
-   - Read package.json for metadata
-   - Analyze src/ directory structure
-   - Extract exports from index.ts
-   - Parse README.md and CLAUDE.md
-   - Analyze stories/ if exists
+   - Read `package.json` for metadata
+   - Analyze `src/` directory structure
+   - Extract exports from `src/index.ts`
+   - Parse `README.md` and `CLAUDE.md`
+   - Analyze `stories/` if present
+   - When `--rules` is set, additionally collect consumer invariants and red flags
 
-4. **Document Generation**
-   - CREATE mode: Generate all files from scratch
-   - UPDATE mode: Compare current spec with docs, update differences
+4. **Strategy Decision (UPDATE only)**
+   - For each existing target artifact, prompt Delta merge vs Template regenerate
+   - Skip the prompt for artifacts that do not exist yet
+   - Never prompt for rules unless `--rules` was passed
 
-5. **Verification**
-   - Check all files exist
+5. **Document Generation / Update**
+   - CREATE mode: render templates
+   - UPDATE mode: apply per-file strategy selected in step 4
+
+6. **Verification**
+   - Check all required files exist
    - Verify API coverage
    - Output results
 
@@ -651,24 +665,24 @@ When this command is invoked:
 
 All documentation follows a consistent language policy:
 
-- **Claude documents**: English only
-  - `claude/skills/expert/SKILL.md`: English
-  - `claude/skills/expert/knowledge/*.md`: English
-  - `claude/commands/guide.md`: English
-  - **Rationale**: Claude works best with English technical documentation
+- **Claude artifacts**: English only
+  - `claude/skills/{slug}-skill/SKILL.md`: English
+  - `claude/skills/{slug}-skill/knowledge/*.md`: English
+  - `claude/rules/{slug}-rule.md`: English
+  - Rationale: Claude works best with English technical documentation.
 
 - **User documentation (SPECIFICATION)**: Bilingual
   - `en/SPECIFICATION.md`: English
   - `ko/SPECIFICATION.md`: Korean
-  - **Rationale**: End-user documentation should support multiple languages
+  - Rationale: End-user documentation should support multiple languages.
 
 ---
 
 ## Related Commands
 
-- `/code-review` - Review code changes
-- `/create-pr` - Create pull request
-- `/analyze-requirements` - Requirements analysis
+- `/code-review` — Review code changes
+- `/create-pr` — Create pull request
+- `/analyze-requirements` — Requirements analysis
 
 ---
 
@@ -676,25 +690,34 @@ All documentation follows a consistent language policy:
 
 ### "Package directory not found"
 
-- Verify the path is correct
-- Use relative path from repository root
-- Example: `packages/lerx/promise-modal` not `/absolute/path`
+- Verify the path is correct.
+- Use a relative path from the repository root.
+- Example: `packages/lerx/promise-modal`, not `/absolute/path`.
 
 ### "No exports found"
 
-- Ensure `src/index.ts` exists and has exports
-- Check if package uses different export pattern
+- Ensure `src/index.ts` exists and has exports.
+- Check whether the package uses a different export entry (update the analysis target accordingly).
 
 ### "README.md not found"
 
-- Command will still work but may produce less detailed docs
-- Consider adding README.md first for better results
+- The command still works but produces less detailed docs.
+- Consider adding `README.md` first for better results.
+
+### "Rules file exists but I ran without --rules and nothing happened"
+
+- Expected behavior. Rules generation is strictly opt-in.
+- Re-run with `--rules` to update the rules artifact.
+
+### "Skill directory has the old `expert/` name in an existing package"
+
+- The 4 first-party packages already use `{slug}-skill/`. If you encounter a legacy `expert/` directory in an unfamiliar package, rename it manually first. This command does not migrate it automatically (by design — no silent structural moves).
 
 ---
 
 ## Notes
 
-- This command uses the Task tool with Explore agent for codebase analysis
-- Analysis results are cached in memory during execution
-- For large packages, execution may take longer
-- Generated documentation should be reviewed before committing
+- This command uses the Task tool with Explore agent for codebase analysis.
+- Analysis results are cached in memory during execution.
+- For large packages, execution may take longer.
+- Generated documentation should be reviewed before committing.
