@@ -1,25 +1,15 @@
-export interface RunCliOptions {
-  version?: string;
-  /** Absolute filesystem path to the consumer package root. */
-  packageRoot: string;
-  /** Consumer package name used in logs and error messages. */
-  packageName: string;
-  /** Consumer package version used in logs. */
-  packageVersion: string;
-  /** Asset directory path relative to `packageRoot`. */
-  assetPath: string;
-}
-
 export interface DefaultFlags {
   scope?: string;
   dryRun?: boolean;
   force?: boolean;
   root?: string;
+  package?: string;
 }
 
 /**
  * Resolved consumer metadata passed to the injection pipeline.
- * The caller owns the definition; the library does not read `package.json`.
+ * The dispatcher bin populates this by resolving a single explicitly-named
+ * target package — `core/**` still never reads `package.json` itself.
  */
 export interface ConsumerPackage {
   name: string;

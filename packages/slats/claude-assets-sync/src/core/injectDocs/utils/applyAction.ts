@@ -16,7 +16,7 @@ export async function applyAction(
     await unlink(action.dstAbs).catch((error) => {
       if (error?.code !== 'ENOENT') {
         logger.warn(
-          `[claude-sync] unlink failed: ${action.dstAbs} (${error?.code ?? error})`,
+          `[claude-assets-sync] unlink failed: ${action.dstAbs} (${error?.code ?? error})`,
         );
       }
     });

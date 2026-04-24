@@ -2187,8 +2187,6 @@ __metadata:
   peerDependencies:
     react: ">=18 <20"
     react-dom: ">=18 <20"
-  bin:
-    claude-sync: ./bin/claude-sync.mjs
   languageName: unknown
   linkType: soft
 
@@ -5505,8 +5503,6 @@ __metadata:
   peerDependencies:
     react: ">=18 <20"
     react-dom: ">=18 <20"
-  bin:
-    claude-sync: ./bin/claude-sync.mjs
   languageName: unknown
   linkType: soft
 
@@ -7667,7 +7663,7 @@ __metadata:
     picocolors: "npm:^1.1.1"
   bin:
     claude-build-hashes: ./scripts/claude-build-hashes.mjs
-    claude-sync: ./bin/claude-sync.mjs
+    inject-claude-settings: ./bin/inject-claude-settings.mjs
   languageName: unknown
   linkType: soft
 
@@ -10096,8 +10092,6 @@ __metadata:
   resolution: "@winglet/common-utils@workspace:packages/winglet/common-utils"
   dependencies:
     "@slats/claude-assets-sync": "workspace:^"
-  bin:
-    claude-sync: ./bin/claude-sync.mjs
   languageName: unknown
   linkType: soft
 
@@ -10107,8 +10101,6 @@ __metadata:
   dependencies:
     "@slats/claude-assets-sync": "workspace:^"
     "@winglet/common-utils": "workspace:^"
-  bin:
-    claude-sync: ./bin/claude-sync.mjs
   languageName: unknown
   linkType: soft
 
@@ -10169,8 +10161,6 @@ __metadata:
     "@slats/claude-assets-sync": "workspace:^"
     "@winglet/common-utils": "workspace:^"
     "@winglet/json": "workspace:^"
-  bin:
-    claude-sync: ./bin/claude-sync.mjs
   languageName: unknown
   linkType: soft
 
@@ -10225,8 +10215,6 @@ __metadata:
   dependencies:
     "@slats/claude-assets-sync": "workspace:^"
     "@winglet/common-utils": "workspace:^"
-  bin:
-    claude-sync: ./bin/claude-sync.mjs
   languageName: unknown
   linkType: soft
 
@@ -10303,8 +10291,6 @@ __metadata:
   peerDependencies:
     react: ">=16 <20"
     react-dom: ">=16 <20"
-  bin:
-    claude-sync: ./bin/claude-sync.mjs
   languageName: unknown
   linkType: soft
 
@@ -10317,8 +10303,6 @@ __metadata:
     "@types/react-dom": "npm:^19.0.0"
     classnames: "npm:^2.5.1"
     clsx: "npm:^2.1.1"
-  bin:
-    claude-sync: ./bin/claude-sync.mjs
   languageName: unknown
   linkType: soft
 

@@ -1,11 +1,11 @@
 # CLAUDE.md
 
-`@slats/claude-assets-sync` — generic single-consumer asset sync engine. The caller owns all package metadata (`packageRoot`, `packageName`, `packageVersion`, `assetPath`); the library never walks `node_modules` or yarn workspaces, and never reads `package.json`.
+`@slats/claude-assets-sync` — shared engine + dispatcher that lets any npm package ship its own Claude Code docs and inject them into a user's `.claude/` through the `inject-claude-settings` bin. Consumers own no runtime files — they declare `claude.assetPath` in `package.json` and hand the rest to the engine.
 
 ## Commands
 
 ```bash
-yarn build           # inject-version → rollup (ESM + CJS) → build:types
+yarn build           # inject-version → rollup (ESM + CJS) → build:types → build:hashes
 yarn test            # vitest
 yarn lint            # eslint
 ```
@@ -13,82 +13,74 @@ yarn lint            # eslint
 ## Public API
 
 - `.` (main barrel)
-  - `runCli(argv, options)` — CLI entry. `options` MUST include `{ packageRoot, packageName, packageVersion, assetPath }`.
-  - `injectDocs(options)` — headless programmatic inject (UI-free)
+  - `runCli(argv: string[]): Promise<void>` — dispatcher entry. Parses `--package=<name>` from argv.
+  - `injectDocs(options)` — headless programmatic inject (UI-free). Caller owns metadata.
   - `readHashManifest`, `resolveScope`, `computeNamespacePrefixes`, `isInteractive`, `isValidScope`, `HASH_MANIFEST_FILENAME`
-- `./buildHashes` — `buildHashes({ packageRoot, packageName, packageVersion, assetPath })` produces `<packageRoot>/dist/claude-hashes.json`.
+- `./buildHashes` — `buildHashes(options?)` produces `<packageRoot>/dist/claude-hashes.json`.
 
-Bin entries: `claude-build-hashes` (convenience standalone bin that parses `process.cwd()/package.json` with the consumer convention `pkg.claude?.assetPath ?? 'claude'`).
+Bin entries:
+- `inject-claude-settings` — the dispatcher. Two-line stub in `bin/inject-claude-settings.mjs` calls `runCli(process.argv)`.
+- `claude-build-hashes` — standalone bin that parses `process.cwd()/package.json` and delegates to `buildHashes`. Consumer convention: `pkg.claude?.assetPath ?? 'claude'`.
 
 ## CLI Surface
 
 ```
-claude-sync [--scope=user|project] [--dry-run] [--force] [--root=<cwd>]
+inject-claude-settings --package=<name> [--scope=user|project] [--dry-run] [--force] [--root=<cwd>]
 ```
 
-The library targets exactly one consumer per invocation — the one described by the caller's options. There is no cross-package discovery.
+The library operates on exactly one consumer per invocation — the target named in `--package`. Cross-package discovery (`--all`, workspace scan) is not supported.
 
 ## Consumer Integration Pattern
 
-Each consumer package ships:
+Each consumer ships only:
+
 ```
 <consumer>/
-  bin/claude-sync.mjs          # reads its own package.json → calls runCli with metadata
-  scripts/build-hashes.mjs     # reads its own package.json → calls buildHashes
-  docs/claude/ (or any dir)    # authored content — caller picks the path
+  docs/claude/ (or any path)   # authored content — caller picks the path
   dist/claude-hashes.json      # GENERATED at build, publish-included
+  package.json: {
+    "scripts": { "build:hashes": "claude-build-hashes" },
+    "dependencies": { "@slats/claude-assets-sync": "workspace:^" },
+    "claude": { "assetPath": "docs/claude" }
+  }
 ```
 
-Recommended stub shape:
+No bin stub. No scripts wrapper. No `bin/` or `scripts/` directory in the consumer.
 
-```js
-// bin/claude-sync.mjs
-import { runCli } from '@slats/claude-assets-sync';
-import { readFile } from 'node:fs/promises';
-import { dirname, resolve } from 'node:path';
-import { fileURLToPath } from 'node:url';
+Consumer `package.json` should:
+- `scripts.build:hashes: "claude-build-hashes"` — engine bin, transitively hoisted from `dependencies`
+- `dependencies: { "@slats/claude-assets-sync": "workspace:^" }` — MUST NOT be `devDependencies` or `peerDependencies`
+- `claude.assetPath: "docs/claude"` — consumer-side convention
+- `files: ["dist", "docs", "README.md"]` — NEVER include `"bin"` or `"scripts"`
+- NEVER expose `./bin/*` or `./docs/*` in `exports`
 
-const packageRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
-const pkg = JSON.parse(
-  await readFile(resolve(packageRoot, 'package.json'), 'utf-8'),
-);
-
-if (
-  typeof pkg.claude?.assetPath === 'string' &&
-  pkg.claude.assetPath.length > 0
-) {
-  runCli(process.argv, {
-    packageRoot,
-    packageName: pkg.name,
-    packageVersion: pkg.version,
-    assetPath: pkg.claude.assetPath,
-  }).catch((err) => {
-    process.stderr.write(
-      `[${pkg.name}] claude-sync failed: ${err instanceof Error ? err.message : String(err)}\n`,
-    );
-    process.exit(1);
-  });
-}
-```
-
-The `claude.assetPath` field in a consumer's `package.json` is a **consumer-side convention**; the library does not enforce or even know about it. Consumers are free to use any field shape and resolve `assetPath` in their stub.
+The `claude.assetPath` field is a **consumer-side convention**; the engine dispatcher exits 2 when it is missing. `claude-build-hashes` silently no-ops when the field is missing — that is the intentional opt-out.
 
 For `--scope=project`, the target `.claude` directory is resolved by walking up from `process.cwd()` and reusing the nearest existing `.claude` ancestor; the CLI logs `(auto-located)` when this happens. If no ancestor owns a `.claude`, it falls back to `process.cwd()/.claude`.
 
-Consumer `package.json` should:
-- `bin: { "claude-sync": "./bin/claude-sync.mjs" }`
-- `files: [..., "bin", "docs" (or wherever assets live), "dist/claude-hashes.json"]`
-- `dependencies: { "@slats/claude-assets-sync": "workspace:^" }` (or the equivalent published range)
-- Include `yarn build:hashes` in the build chain
-- NEVER expose `./bin/*` in `exports` (blocks consumers from accidentally bundling the CLI)
+### End-user invocation
+
+```bash
+# universal — every PM (pnpm strict / yarn-berry PnP included)
+npx -p @slats/claude-assets-sync inject-claude-settings --package=@canard/schema-form --scope=user
+
+# simple — npm / yarn-classic only (relies on transitive bin hoist)
+npx inject-claude-settings --package=@canard/schema-form --scope=user
+```
 
 ## Architecture
 
 ```
+bin/
+├── inject-claude-settings.mjs      # 2-line dispatcher
 src/
 ├── index.ts                        # public programmatic barrel
 ├── commands/
-│   └── runCli/                     # sole CLI surface (default action only)
+│   └── runCli/                     # sole CLI surface
+│       ├── runCli.ts               # commander root + action
+│       ├── utils/resolvePackage.ts # dispatcher-only single-target resolve
+│       ├── utils/runInject.ts      # orchestrator
+│       └── utils/injectOne.ts      # per-target inject
 ├── core/
 │   ├── hash/                       # sha256 compute / compare
 │   ├── hashManifest/               # dist/claude-hashes.json IO + namespace prefixes
@@ -97,22 +89,25 @@ src/
 │   └── injectDocs/                 # orchestrate plan → apply (UI-free)
 ├── prompts/                        # @inquirer/prompts-based selectScope + confirmForce
 └── utils/                          # asyncPool, heartbeat, logger, types, version (organ)
+scripts/
+├── buildHashes.mjs                 # pure Node ESM, importable from Rollup
+└── claude-build-hashes.mjs         # self-executing bin
 ```
 
-Each directory is a fractal with `index.ts` barrel + `INTENT.md`; helpers live under `utils/` organs inside each fractal.
+Each directory under `src/` is a fractal with `index.ts` barrel + `INTENT.md`.
 
 ## Hash Strategy (Option A)
 
 - `dist/claude-hashes.json` is the sole source of truth (schema v1, `previousVersions: {}` reserved).
-- Consumer-side comparison: copy if missing, skip if equal, warn+require `--force` if different.
-- `--force` in TTY: interactive confirm via `@inquirer/prompts.confirm` shows diverged/orphan file list. Non-TTY: stderr emission + exit 0.
+- Per-file SHA-256 comparison: copy if missing, skip if equal, warn + require `--force` if different.
+- `--force` on TTY: interactive confirm via `@inquirer/prompts.confirm` listing diverged/orphan files. Non-TTY: stderr emission + proceed.
 
 ## Boundaries
 
 - `src/core/**` never imports from `src/prompts/`, `src/commands/`, or `src/utils/heartbeat.ts`. Heartbeat is wrapped at the command layer.
+- `src/core/**` and `src/utils/**` never read `package.json` or walk the filesystem. Only the `bin/` dispatcher layer (and `src/commands/runCli/utils/resolvePackage.ts`, invoked from that dispatcher) is allowed to resolve a single caller-named target.
 - `src/prompts/` is the sole prompt surface (no ink/react).
-- The library never reads `package.json` or walks the filesystem looking for other packages.
-- `scripts/buildHashes.mjs` stays pure Node ESM (no top-level await) so Rollup can import it if needed; `scripts/claude-build-hashes.mjs` holds the self-executing CLI wrapper.
+- `scripts/buildHashes.mjs` stays pure Node ESM (no top-level await) so Rollup can import it; `scripts/claude-build-hashes.mjs` holds the self-executing CLI wrapper.
 
 ## Build Output
 

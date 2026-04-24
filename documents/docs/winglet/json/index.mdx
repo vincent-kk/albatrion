@@ -80,22 +80,22 @@ applyPatch(a, patch); // { x: 1, y: 3, z: 4 }
 
 `@winglet/json` ships Claude Code assets — the `json-skill` expert skill and its knowledge base covering JSON Pointer, JSON Path, JSON Patch, and security options — under `docs/claude/`. They are published alongside the package so AI assistants can reason about pointer-based manipulation with package-specific context.
 
-Inject those assets into your local Claude Code environment with the bundled `claude-sync` CLI (engine: `@slats/claude-assets-sync`):
+Inject those assets into your local Claude Code environment with `@slats/claude-assets-sync` (bin: `inject-claude-settings`):
 
 ```bash
-# Direct dependency — bin is hoisted to your project's .bin
-npx claude-sync --scope=user         # inject into ~/.claude (user-level)
-npx claude-sync --scope=project      # inject into the nearest existing .claude, walking up from cwd
+# universal — works across npm / yarn-classic / pnpm / yarn-berry
+npx -p @slats/claude-assets-sync inject-claude-settings --package=@winglet/json --scope=user         # inject into ~/.claude (user-level)
+npx -p @slats/claude-assets-sync inject-claude-settings --package=@winglet/json --scope=project      # inject into the nearest existing .claude, walking up from cwd
 
 # Preview / overwrite flags
-npx claude-sync --scope=user --dry-run   # show the plan without writing
-npx claude-sync --scope=user --force     # overwrite locally-modified files
+npx -p @slats/claude-assets-sync inject-claude-settings --package=@winglet/json --scope=user --dry-run   # show the plan without writing
+npx -p @slats/claude-assets-sync inject-claude-settings --package=@winglet/json --scope=user --force     # overwrite locally-modified files
 
-# Transitive dependency — pin the package explicitly
-npx -p @winglet/json claude-sync --scope=user
+# simple — npm / yarn-classic with transitive bin hoist
+npx inject-claude-settings --package=@winglet/json --scope=user
 ```
 
-The CLI is a thin stub: it reads `@winglet/json`'s own `package.json`, resolves `claude.assetPath` (`docs/claude`), and copies the tree into the selected `.claude` directory with hash-based change detection (skip unchanged, warn on divergence, require `--force` to overwrite).
+The CLI resolves `@winglet/json/package.json` via `createRequire`, reads its `claude.assetPath` (`docs/claude`), and applies hash-based diff into the selected `.claude/` (skip unchanged, warn on divergence, require `--force` to overwrite).
 
 <ForAI>
 

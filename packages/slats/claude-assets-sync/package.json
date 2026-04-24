@@ -39,7 +39,7 @@
   "types": "dist/index.d.ts",
   "bin": {
     "claude-build-hashes": "./scripts/claude-build-hashes.mjs",
-    "claude-sync": "./bin/claude-sync.mjs"
+    "inject-claude-settings": "./bin/inject-claude-settings.mjs"
   },
   "files": [
     "dist",

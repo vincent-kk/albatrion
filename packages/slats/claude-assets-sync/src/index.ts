@@ -1,5 +1,5 @@
 // Public programmatic API.
-export { runCli, type RunCliOptions } from './commands/index.js';
+export { runCli } from './commands/index.js';
 export {
   HASH_MANIFEST_FILENAME,
   computeNamespacePrefixes,

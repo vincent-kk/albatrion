@@ -2,44 +2,33 @@ import { stat } from 'node:fs/promises';
 import { isAbsolute, join, resolve } from 'node:path';
 
 import { logger } from '../../../utils/logger.js';
-import type { ConsumerPackage, DefaultFlags, RunCliOptions } from '../type.js';
+import type { ConsumerPackage, DefaultFlags } from '../type.js';
 import { injectOne } from './injectOne.js';
+import type { ResolvedMetadata } from './resolvePackage.js';
 import { resolveScopeFlag } from './resolveScopeFlag.js';
 
 export async function runInject(
   flags: DefaultFlags,
-  options: RunCliOptions,
+  metadata: ResolvedMetadata,
 ): Promise<void> {
-  if (
-    !options.packageRoot ||
-    !options.packageName ||
-    !options.packageVersion ||
-    !options.assetPath
-  ) {
+  if (!isAbsolute(metadata.packageRoot)) {
     logger.error(
-      'runCli requires { packageRoot, packageName, packageVersion, assetPath }.',
+      `packageRoot must be an absolute path; received: ${metadata.packageRoot}`,
     );
     process.exit(2);
   }
 
-  if (!isAbsolute(options.packageRoot)) {
-    logger.error(
-      `packageRoot must be an absolute path; received: ${options.packageRoot}`,
-    );
-    process.exit(2);
-  }
-
-  const assetRoot = resolve(options.packageRoot, options.assetPath);
-  const hashesPath = join(options.packageRoot, 'dist', 'claude-hashes.json');
+  const assetRoot = resolve(metadata.packageRoot, metadata.assetPath);
+  const hashesPath = join(metadata.packageRoot, 'dist', 'claude-hashes.json');
   const hashesPresent = await stat(hashesPath).then(
     () => true,
     () => false,
   );
 
   const target: ConsumerPackage = {
-    name: options.packageName,
-    version: options.packageVersion,
-    packageRoot: options.packageRoot,
+    name: metadata.packageName,
+    version: metadata.packageVersion,
+    packageRoot: metadata.packageRoot,
     assetRoot,
     hashesPresent,
   };

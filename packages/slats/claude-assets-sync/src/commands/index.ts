@@ -1,5 +1,1 @@
-export {
-  runCli,
-  type DefaultFlags,
-  type RunCliOptions,
-} from './runCli/index.js';
+export { runCli, type DefaultFlags } from './runCli/index.js';

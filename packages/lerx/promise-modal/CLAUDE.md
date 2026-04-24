@@ -14,22 +14,23 @@ yarn size-limit        # 번들 크기 확인
 
 ## Claude Docs Injector
 
-`docs/claude/` 자산을 사용자 `.claude` 디렉터리로 주입하는 얇은 CLI 스텁. 엔진: `@slats/claude-assets-sync`.
+`docs/claude/**` 자산을 사용자 `.claude/` 에 주입. 엔진: `@slats/claude-assets-sync` (bin: `inject-claude-settings`).
 
 ```bash
-npx claude-sync --scope=user                 # ~/.claude
-npx claude-sync --scope=project              # cwd 에서 위로 탐색해 첫 기존 .claude
-npx claude-sync --scope=user --dry-run       # 미리보기
-npx claude-sync --scope=user --force         # 로컬 수정 덮어쓰기
+# universal — 모든 PM (pnpm strict / yarn-berry PnP 포함)
+npx -p @slats/claude-assets-sync inject-claude-settings --package=@lerx/promise-modal --scope=user
+npx -p @slats/claude-assets-sync inject-claude-settings --package=@lerx/promise-modal --scope=project
+npx -p @slats/claude-assets-sync inject-claude-settings --package=@lerx/promise-modal --scope=user --dry-run
+npx -p @slats/claude-assets-sync inject-claude-settings --package=@lerx/promise-modal --scope=user --force
 
-npx -p @winglet/react-utils claude-sync --scope=user  # transitive-dep 환경
+# 간편 — npm / yarn-classic 에서만 (transitive bin hoist 기반)
+npx inject-claude-settings --package=@lerx/promise-modal --scope=user
 ```
 
 ### Isolation Guardrails
 
-- `src/**` 는 `bin/**`, `docs/**`, `@slats/claude-assets-sync` 어느 것도 import 금지.
-- **절대 `exports` 에 `./bin/*` 를 추가하지 말 것.**
-- `yarn depcheck` 로 CI 에서 격리 회귀 검증.
+- `src/**` 는 `docs/**` 와 `@slats/claude-assets-sync` 어느 것도 import 금지.
+- **절대 `exports` 에 `./docs/*` 를 추가하지 말 것.**
 
 ## Architecture
 

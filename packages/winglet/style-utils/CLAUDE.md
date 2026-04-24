@@ -42,20 +42,20 @@ cxLite('base', isActive && 'active', size)      // 경량 버전
 
 ## Claude Docs Injector
 
-Thin CLI stub that injects `docs/claude/` assets into the user's `.claude`
-directory. Engine: `@slats/claude-assets-sync`.
+Inject `docs/claude/**` into the user's `.claude/`. Engine: `@slats/claude-assets-sync` (bin: `inject-claude-settings`).
 
 ```bash
-npx claude-sync --scope=user                 # ~/.claude
-npx claude-sync --scope=project              # nearest existing .claude walking up from cwd
-npx claude-sync --scope=user --dry-run       # preview
-npx claude-sync --scope=user --force         # overwrite local edits
+# universal — every PM (pnpm strict / yarn-berry PnP included)
+npx -p @slats/claude-assets-sync inject-claude-settings --package=@winglet/style-utils --scope=user
+npx -p @slats/claude-assets-sync inject-claude-settings --package=@winglet/style-utils --scope=project
+npx -p @slats/claude-assets-sync inject-claude-settings --package=@winglet/style-utils --scope=user --dry-run
+npx -p @slats/claude-assets-sync inject-claude-settings --package=@winglet/style-utils --scope=user --force
 
-npx -p @winglet/style-utils claude-sync --scope=user  # transitive-dep context
+# simple — npm / yarn-classic only (relies on transitive bin hoist)
+npx inject-claude-settings --package=@winglet/style-utils --scope=user
 ```
 
 ### Isolation Guardrails
 
-- `src/**` MUST NOT import from `bin/**`, `docs/**`, or `@slats/claude-assets-sync`.
-- **Never add `./bin/*` to `exports`.**
-- `yarn depcheck` enforces the isolation in CI.
+- `src/**` MUST NOT import from `docs/**` or `@slats/claude-assets-sync`.
+- **Never add `./docs/*` to `exports`.**

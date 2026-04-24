@@ -120,18 +120,14 @@
   "main": "dist/index.cjs",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
-  "bin": {
-    "claude-sync": "./bin/claude-sync.mjs"
-  },
   "files": [
     "dist",
     "docs",
-    "bin",
     "README.md"
   ],
   "scripts": {
     "build": "rollup -c && yarn build:types && yarn build:hashes",
-    "build:hashes": "node scripts/build-hashes.mjs",
+    "build:hashes": "claude-build-hashes",
     "build:publish:npm": "yarn build && yarn publish:npm",
     "build:types": "node ../../aileron/script/build/buildTypes.mjs",
     "format": "prettier --write \"src/**/*.{ts,tsx}\"",
