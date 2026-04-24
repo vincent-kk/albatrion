@@ -26,7 +26,6 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ```bash
 npx claude-sync --scope=user                 # ~/.claude
 npx claude-sync --scope=project              # cwd 에서 위로 탐색해 첫 기존 .claude
-npx claude-sync --scope=local                # 동일 규칙, gitignored 영역
 npx claude-sync --scope=user --dry-run       # 미리보기
 npx claude-sync --scope=user --force         # 로컬 수정 덮어쓰기
 

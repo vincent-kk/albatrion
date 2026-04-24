@@ -83,9 +83,9 @@ rather than debugging the nested call.
 
 ## `--scope=project` walks upward
 
-`--scope=project` and `--scope=local` walk `process.cwd()` upward looking for
-an existing `.claude` directory. The first one found is reused; if none is
-found, the engine creates one at `cwd`.
+`--scope=project` walks `process.cwd()` upward looking for an existing
+`.claude` directory. The first one found is reused; if none is found, the
+engine creates one at `cwd`.
 
 Consequence: running the smoke tests from the monorepo root would reuse the
 monorepo's real `.claude`, corrupting it. Always run smoke tests from
