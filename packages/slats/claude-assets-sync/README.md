@@ -4,7 +4,7 @@ Shared CLI engine that lets any npm package ship its own Claude Code docs (skill
 
 ## Overview
 
-A package becomes "claude-sync aware" by declaring `claude.assetPath` in its `package.json` and shipping a 3-line `bin/claude-sync.mjs` wrapper. End users run `npx claude-sync` (or the consumer's own bin) and this engine walks the workspace + `node_modules` tree, compares a per-file SHA-256 manifest against the target `.claude/`, and copies only what's out of date.
+A consumer package ships a thin `bin/claude-sync.mjs` stub that reads its own `package.json` and calls `runCli(argv, { packageRoot, packageName, packageVersion, assetPath })`. End users run `npx claude-sync` (or the consumer's own bin alias) and this engine compares a per-file SHA-256 manifest against the target `.claude/`, copying only what is out of date. The library operates on exactly one consumer per invocation — the one supplied by the caller; it never walks `node_modules` or yarn workspaces.
 
 No GitHub fetch, no `.sync-meta.json`, no migrations — the consumer's `dist/claude-hashes.json` is the single source of truth.
 
@@ -20,44 +20,21 @@ yarn add -D @slats/claude-assets-sync
 
 ```
 claude-sync [--scope=user|project|local] [--dry-run] [--force]
-            [--package=@scope/pkg] [--all]
-            [--root=<cwd>] [--no-workspaces]
-
-claude-sync list [--json] [--root=<cwd>]
-claude-sync build-hashes [pkgRoot]
 ```
 
-### Default action — inject
-
-Default invocation discovers every consumer reachable from the current workspace + all ancestor `node_modules`, picks one target (see precedence below), and syncs its `docs/claude/` tree into the chosen scope.
+Each consumer package exposes its own `claude-sync` bin entry (see [Consumer Integration](#consumer-integration-3-steps) below). When invoked, the engine operates on exactly one consumer — the one whose metadata was passed by the stub. There is no cross-package discovery.
 
 | Flag | Meaning |
 |---|---|
 | `--scope=user` | `~/.claude` (applies globally) |
-| `--scope=project` | nearest ancestor `.claude` or `<cwd>/.claude` |
-| `--scope=local` | same path as `project`, expected to be gitignored |
+| `--scope=project` | nearest ancestor `.claude` directory, or `<cwd>/.claude` if none found |
+| `--scope=local` | same path resolution as `project`, expected to be gitignored |
 | `--dry-run` | print the copy / skip / warn plan, no writes |
 | `--force` | overwrite diverged files & delete orphans (interactive confirm on TTY) |
-| `--package=<name>` | target a single consumer by package name |
-| `--all` | inject every discovered consumer |
-| `--root=<cwd>` | override the walk origin |
-| `--no-workspaces` | skip yarn workspace discovery (shallow `node_modules` only) |
 
-**Target precedence**: `--all` / `--package` > consumer owning `process.cwd()` > consumer owning `invokedFromBin` > sole discovered consumer > error.
+**Exit codes**: `0` success / up-to-date / dry-run, `1` runtime error, `2` user / configuration error (e.g. missing `--scope` in non-TTY, invalid `assetPath`).
 
-### `list`
-
-```bash
-claude-sync list          # tabular view
-claude-sync list --json   # structured output for scripts
-```
-
-### `build-hashes`
-
-```bash
-claude-sync build-hashes            # writes <cwd>/dist/claude-hashes.json
-claude-sync build-hashes packages/x # writes packages/x/dist/claude-hashes.json
-```
+For `--scope=project` / `--scope=local` the target `.claude` directory is resolved by walking up from `process.cwd()` to the nearest existing `.claude` ancestor; the CLI logs `(auto-located)` when this happens.
 
 ## Consumer Integration (3 steps)
 
@@ -81,19 +58,41 @@ claude-sync build-hashes packages/x # writes packages/x/dist/claude-hashes.json
 
 Do **not** expose `./bin/*` in `exports` — that would let consumer bundlers pull CLI code into app bundles.
 
-### 2. `bin/claude-sync.mjs` (3-line re-export stub)
+### 2. `bin/claude-sync.mjs`
 
 ```javascript
 #!/usr/bin/env node
 import { runCli } from '@slats/claude-assets-sync';
+import { readFile } from 'node:fs/promises';
+import { dirname, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
-runCli(process.argv, { invokedFromBin: import.meta.url }).catch((err) => {
+const packageRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
+const pkg = JSON.parse(
+  await readFile(resolve(packageRoot, 'package.json'), 'utf-8'),
+);
+
+if (typeof pkg.claude?.assetPath !== 'string') {
   process.stderr.write(
-    `[@your-scope/your-package] claude-sync failed: ${err instanceof Error ? err.message : String(err)}\n`,
+    `[claude-sync] missing or invalid "claude.assetPath" in ${resolve(packageRoot, 'package.json')}\n`,
+  );
+  process.exit(2);
+}
+
+await runCli(process.argv, {
+  packageRoot,
+  packageName: pkg.name,
+  packageVersion: pkg.version,
+  assetPath: pkg.claude.assetPath,
+}).catch((err) => {
+  process.stderr.write(
+    `[${pkg.name}] claude-sync failed: ${err instanceof Error ? err.message : String(err)}\n`,
   );
   process.exit(1);
 });
 ```
+
+The `claude.assetPath` field in the consumer's `package.json` is a **consumer-side convention**; the library does not enforce or read it. Consumers are free to resolve `assetPath` in any way they choose and pass the result to `runCli`.
 
 ### 3. `scripts/build-hashes.mjs`
 
@@ -145,7 +144,6 @@ Every file under the asset root is hashed and tracked in `dist/claude-hashes.jso
 ```ts
 import {
   runCli,
-  discover,
   injectDocs,
   readHashManifest,
   resolveScope,

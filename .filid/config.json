@@ -16,7 +16,8 @@
     },
     "module-entry-point": {
       "enabled": true,
-      "severity": "warning"
+      "severity": "warning",
+      "allowed-no-entry": ["packages/slats/claude-assets-sync"]
     },
     "max-depth": {
       "enabled": true,
@@ -32,7 +33,21 @@
     },
     "zero-peer-file": {
       "enabled": true,
-      "severity": "warning"
+      "severity": "warning",
+      "additional-allowed": [
+        "packages/slats/claude-assets-sync/src/prompts/*.ts",
+        "type.ts",
+        "CLAUDE.md",
+        "LICENSE",
+        "README.md",
+        "README-ko_kr.md",
+        "eslint.config.js",
+        "package.json",
+        "rollup.config.mjs",
+        "vite.config.ts",
+        "tsconfig.json",
+        "tsconfig.declarations.json"
+      ]
     }
   }
 }

@@ -4,9 +4,10 @@
 // lives here, in the consumer; the library is generic.
 import { buildHashes } from '@slats/claude-assets-sync/buildHashes';
 import { readFile } from 'node:fs/promises';
-import { resolve } from 'node:path';
+import { dirname, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
-const packageRoot = process.cwd();
+const packageRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const pkg = JSON.parse(
   await readFile(resolve(packageRoot, 'package.json'), 'utf-8'),
 );
