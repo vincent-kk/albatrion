@@ -1788,6 +1788,27 @@ When rendering a field, the library resolves which input component to use in thi
   <code>FormProvider</code> <code>formTypeInputDefinitions</code>
   Plugin-provided <code>formTypeInputDefinitions</code>
 
+## Claude Code Integration
+
+`@canard/schema-form` ships Claude Code assets — the `schema-form-skill` expert skill, its knowledge base, and the `schema-form-rule` authoring rule — under `docs/claude/`. Each release publishes them alongside the package so AI assistants can reason about the form engine with package-specific context.
+
+Inject those assets into your local Claude Code environment with the bundled `claude-sync` CLI (engine: `@slats/claude-assets-sync`):
+
+```bash
+# Direct dependency — bin is hoisted to your project's .bin
+npx claude-sync --scope=user         # inject into ~/.claude (user-level)
+npx claude-sync --scope=project      # inject into the nearest existing .claude, walking up from cwd
+
+# Preview / overwrite flags
+npx claude-sync --scope=user --dry-run   # show the plan without writing
+npx claude-sync --scope=user --force     # overwrite locally-modified files
+
+# Transitive dependency — pin the package explicitly
+npx -p @canard/schema-form claude-sync --scope=user
+```
+
+The CLI is a thin stub: it reads `@canard/schema-form`'s own `package.json`, resolves `claude.assetPath` (`docs/claude`), and copies the tree into the selected `.claude` directory with hash-based change detection (skip unchanged, warn on divergence, require `--force` to overwrite).
+
 <ForAI>
 
 ## AI Reference
@@ -4049,6 +4070,27 @@ function App() {
   );
 }
 ```
+
+## Claude Code Integration
+
+`@lerx/promise-modal` ships Claude Code assets — the `promise-modal-skill` expert skill with its API, hooks, and advanced-pattern knowledge base — under `docs/claude/`. They are published alongside the package so AI assistants can reason about modal flows with package-specific context.
+
+Inject those assets into your local Claude Code environment with the bundled `claude-sync` CLI (engine: `@slats/claude-assets-sync`):
+
+```bash
+# Direct dependency — bin is hoisted to your project's .bin
+npx claude-sync --scope=user         # inject into ~/.claude (user-level)
+npx claude-sync --scope=project      # inject into the nearest existing .claude, walking up from cwd
+
+# Preview / overwrite flags
+npx claude-sync --scope=user --dry-run   # show the plan without writing
+npx claude-sync --scope=user --force     # overwrite locally-modified files
+
+# Transitive dependency — pin the package explicitly
+npx -p @lerx/promise-modal claude-sync --scope=user
+```
+
+The CLI is a thin stub: it reads `@lerx/promise-modal`'s own `package.json`, resolves `claude.assetPath` (`docs/claude`), and copies the tree into the selected `.claude` directory with hash-based change detection (skip unchanged, warn on divergence, require `--force` to overwrite).
 
 <ForAI>
 
@@ -21182,6 +21224,27 @@ await withTimeout(fetchData(), 5000); // throws TimeoutError if >5s
 - `InvalidTypeError` — type validation failures
 - `TimeoutError` — timeout scenarios
 
+## Claude Code Integration
+
+`@winglet/common-utils` ships Claude Code assets — the `common-utils-skill` expert skill and its knowledge base covering array, async, filter, function, math, and object utilities — under `docs/claude/`. They are published alongside the package so AI assistants can reason about utility usage with package-specific context.
+
+Inject those assets into your local Claude Code environment with the bundled `claude-sync` CLI (engine: `@slats/claude-assets-sync`):
+
+```bash
+# Direct dependency — bin is hoisted to your project's .bin
+npx claude-sync --scope=user         # inject into ~/.claude (user-level)
+npx claude-sync --scope=project      # inject into the nearest existing .claude, walking up from cwd
+
+# Preview / overwrite flags
+npx claude-sync --scope=user --dry-run   # show the plan without writing
+npx claude-sync --scope=user --force     # overwrite locally-modified files
+
+# Transitive dependency — pin the package explicitly
+npx -p @winglet/common-utils claude-sync --scope=user
+```
+
+The CLI is a thin stub: it reads `@winglet/common-utils`'s own `package.json`, resolves `claude.assetPath` (`docs/claude`), and copies the tree into the selected `.claude` directory with hash-based change detection (skip unchanged, warn on divergence, require `--force` to overwrite).
+
 <ForAI>
 
 ## AI Reference
@@ -35561,6 +35624,27 @@ userLoader.clear(1);
 userLoader.clearAll();
 ```
 
+## Claude Code Integration
+
+`@winglet/data-loader` ships Claude Code assets — the `data-loader-skill` expert skill and its knowledge base covering batching, caching, and advanced patterns — under `docs/claude/`. They are published alongside the package so AI assistants can reason about N+1 mitigation and scheduler semantics with package-specific context.
+
+Inject those assets into your local Claude Code environment with the bundled `claude-sync` CLI (engine: `@slats/claude-assets-sync`):
+
+```bash
+# Direct dependency — bin is hoisted to your project's .bin
+npx claude-sync --scope=user         # inject into ~/.claude (user-level)
+npx claude-sync --scope=project      # inject into the nearest existing .claude, walking up from cwd
+
+# Preview / overwrite flags
+npx claude-sync --scope=user --dry-run   # show the plan without writing
+npx claude-sync --scope=user --force     # overwrite locally-modified files
+
+# Transitive dependency — pin the package explicitly
+npx -p @winglet/data-loader claude-sync --scope=user
+```
+
+The CLI is a thin stub: it reads `@winglet/data-loader`'s own `package.json`, resolves `claude.assetPath` (`docs/claude`), and copies the tree into the selected `.claude` directory with hash-based change detection (skip unchanged, warn on divergence, require `--force` to overwrite).
+
 <ForAI>
 
 ## AI Reference
@@ -35694,6 +35778,27 @@ const patch = compare(a, b);
 
 applyPatch(a, patch); // { x: 1, y: 3, z: 4 }
 ```
+
+## Claude Code Integration
+
+`@winglet/json` ships Claude Code assets — the `json-skill` expert skill and its knowledge base covering JSON Pointer, JSON Path, JSON Patch, and security options — under `docs/claude/`. They are published alongside the package so AI assistants can reason about pointer-based manipulation with package-specific context.
+
+Inject those assets into your local Claude Code environment with the bundled `claude-sync` CLI (engine: `@slats/claude-assets-sync`):
+
+```bash
+# Direct dependency — bin is hoisted to your project's .bin
+npx claude-sync --scope=user         # inject into ~/.claude (user-level)
+npx claude-sync --scope=project      # inject into the nearest existing .claude, walking up from cwd
+
+# Preview / overwrite flags
+npx claude-sync --scope=user --dry-run   # show the plan without writing
+npx claude-sync --scope=user --force     # overwrite locally-modified files
+
+# Transitive dependency — pin the package explicitly
+npx -p @winglet/json claude-sync --scope=user
+```
+
+The CLI is a thin stub: it reads `@winglet/json`'s own `package.json`, resolves `claude.assetPath` (`docs/claude`), and copies the tree into the selected `.claude` directory with hash-based change detection (skip unchanged, warn on divergence, require `--force` to overwrite).
 
 <ForAI>
 
@@ -39175,6 +39280,27 @@ import { isObjectSchema, isArraySchema } from '@winglet/json-schema/filter';
 isObjectSchema({ type: 'object', properties: {} }); // true
 isArraySchema({ type: 'array', items: {} });         // true
 ```
+
+## Claude Code Integration
+
+`@winglet/json-schema` ships Claude Code assets — the `json-schema-skill` expert skill and its knowledge base covering schema scanner, filter type guards, and reference resolution — under `docs/claude/`. They are published alongside the package so AI assistants can reason about schema traversal and `$ref` handling with package-specific context.
+
+Inject those assets into your local Claude Code environment with the bundled `claude-sync` CLI (engine: `@slats/claude-assets-sync`):
+
+```bash
+# Direct dependency — bin is hoisted to your project's .bin
+npx claude-sync --scope=user         # inject into ~/.claude (user-level)
+npx claude-sync --scope=project      # inject into the nearest existing .claude, walking up from cwd
+
+# Preview / overwrite flags
+npx claude-sync --scope=user --dry-run   # show the plan without writing
+npx claude-sync --scope=user --force     # overwrite locally-modified files
+
+# Transitive dependency — pin the package explicitly
+npx -p @winglet/json-schema claude-sync --scope=user
+```
+
+The CLI is a thin stub: it reads `@winglet/json-schema`'s own `package.json`, resolves `claude.assetPath` (`docs/claude`), and copies the tree into the selected `.claude` directory with hash-based change detection (skip unchanged, warn on divergence, require `--force` to overwrite).
 
 <ForAI>
 
@@ -44435,6 +44561,27 @@ const App = withPortal(() => (
 ));
 ```
 
+## Claude Code Integration
+
+`@winglet/react-utils` ships Claude Code assets — the `react-utils-skill` expert skill and its knowledge base covering hooks, HOC patterns, the portal system, and utility helpers — under `docs/claude/`. They are published alongside the package so AI assistants can reason about React-specific utilities with package-specific context.
+
+Inject those assets into your local Claude Code environment with the bundled `claude-sync` CLI (engine: `@slats/claude-assets-sync`):
+
+```bash
+# Direct dependency — bin is hoisted to your project's .bin
+npx claude-sync --scope=user         # inject into ~/.claude (user-level)
+npx claude-sync --scope=project      # inject into the nearest existing .claude, walking up from cwd
+
+# Preview / overwrite flags
+npx claude-sync --scope=user --dry-run   # show the plan without writing
+npx claude-sync --scope=user --force     # overwrite locally-modified files
+
+# Transitive dependency — pin the package explicitly
+npx -p @winglet/react-utils claude-sync --scope=user
+```
+
+The CLI is a thin stub: it reads `@winglet/react-utils`'s own `package.json`, resolves `claude.assetPath` (`docs/claude`), and copies the tree into the selected `.claude` directory with hash-based change detection (skip unchanged, warn on divergence, require `--force` to overwrite).
+
 <ForAI>
 
 ## AI Reference
@@ -44612,6 +44759,27 @@ const addStyle = styleManagerFactory('shadow-scope', {
   shadowRoot: element.shadowRoot,
 });
 ```
+
+## Claude Code Integration
+
+`@winglet/style-utils` ships Claude Code assets — the `style-utils-skill` expert skill and its knowledge base covering `classnames`, CSS compression, scoped style management, and Shadow DOM usage — under `docs/claude/`. They are published alongside the package so AI assistants can reason about style injection with package-specific context.
+
+Inject those assets into your local Claude Code environment with the bundled `claude-sync` CLI (engine: `@slats/claude-assets-sync`):
+
+```bash
+# Direct dependency — bin is hoisted to your project's .bin
+npx claude-sync --scope=user         # inject into ~/.claude (user-level)
+npx claude-sync --scope=project      # inject into the nearest existing .claude, walking up from cwd
+
+# Preview / overwrite flags
+npx claude-sync --scope=user --dry-run   # show the plan without writing
+npx claude-sync --scope=user --force     # overwrite locally-modified files
+
+# Transitive dependency — pin the package explicitly
+npx -p @winglet/style-utils claude-sync --scope=user
+```
+
+The CLI is a thin stub: it reads `@winglet/style-utils`'s own `package.json`, resolves `claude.assetPath` (`docs/claude`), and copies the tree into the selected `.claude` directory with hash-based change detection (skip unchanged, warn on divergence, require `--force` to overwrite).
 
 <ForAI>
 
