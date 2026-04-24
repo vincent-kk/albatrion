@@ -16,6 +16,8 @@
     "**/__tests__/**",
     "**/coverage/**",
     "**/*.test.ts",
-    "**/*.spec.ts"
+    "**/*.spec.ts",
+    "**/*.test.tsx",
+    "**/*.spec.tsx"
   ]
 }

@@ -27,14 +27,12 @@
     ".": {
       "types": "./dist/index.d.ts",
       "source": "./src/index.ts",
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.cjs"
+      "import": "./dist/index.mjs"
     },
     "./buildHashes": {
       "import": "./scripts/buildHashes.mjs"
     }
   },
-  "main": "dist/index.cjs",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
   "bin": {
@@ -54,6 +52,8 @@
     "build:publish:npm": "yarn build && yarn publish:npm",
     "build:types": "node ../../aileron/script/build/buildTypes.mjs",
     "dev": "node scripts/inject-version.js && tsx src/main.ts",
+    "dev:ui": "tsx scripts/dev-ui.tsx",
+    "dev:cli": "tsx bin/inject-claude-settings.mjs",
     "format": "prettier --write \"src/**/*.ts\"",
     "lint": "eslint \"src/**/*.ts\"",
     "prepublishOnly": "yarn build",
@@ -64,12 +64,17 @@
     "version:patch": "yarn version patch"
   },
   "dependencies": {
-    "@inquirer/prompts": "^8.4.2",
     "commander": "^12.1.0",
-    "picocolors": "^1.1.1"
+    "ink": "^7.0.0",
+    "ink-gradient": "^4.0.0",
+    "ink-select-input": "^6.2.0",
+    "ink-spinner": "^5.0.0",
+    "picocolors": "^1.1.1",
+    "react": "^19.2.0"
   },
   "devDependencies": {
-    "@inquirer/testing": "^3.3.5"
+    "@types/react": "^19.2.0",
+    "ink-testing-library": "^4.0.0"
   },
   "claude": {
     "assetPath": "docs/claude"

@@ -4,6 +4,7 @@ export interface DefaultFlags {
   force?: boolean;
   root?: string;
   package?: string[];
+  json?: boolean;
 }
 
 /**

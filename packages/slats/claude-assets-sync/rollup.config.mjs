@@ -9,6 +9,8 @@ const packageJson = createRequire(import.meta.url)('./package.json');
 
 const { libBuildOptions, clearDir } = getLibBuildOptions(import.meta.url);
 
+const JSX_OPTIONS = { jsx: 'react-jsx' };
+
 export default async () => {
   clearDir('dist');
   const entrypoints = getEntrypoints(packageJson);
@@ -19,15 +21,8 @@ export default async () => {
     entrypoints,
     outDir: 'dist',
     sourcemap: false,
+    tsconfigCompilerOptions: JSX_OPTIONS,
   });
 
-  const cjsConfig = await libBuildOptions({
-    format: 'cjs',
-    extension: 'cjs',
-    entrypoints,
-    outDir: 'dist',
-    sourcemap: false,
-  });
-
-  return [esmConfig, cjsConfig];
+  return [esmConfig];
 };

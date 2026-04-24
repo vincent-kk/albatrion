@@ -3,13 +3,10 @@ export { runCli } from './commands/index.js';
 export {
   HASH_MANIFEST_FILENAME,
   computeNamespacePrefixes,
-  injectDocs,
-  isInteractive,
   isValidScope,
   readHashManifest,
   resolveScope,
   type HashManifest,
-  type InjectOptions,
   type InjectReport,
   type Scope,
   type ScopeResolution,

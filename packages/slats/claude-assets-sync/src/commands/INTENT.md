@@ -5,7 +5,9 @@
 Commander action handlers. The only public entry is `runCli(argv)`,
 which parses `--package <name...>`, classifies each value as a scope
 alias or a package name, resolves every target, and dispatches one
-inject pass per resolved consumer through `core/injectDocs`.
+inject pass per resolved consumer. TTY invocations render through the
+Ink UI layer (`ui/`); non-TTY and `--json` invocations use
+`renderPlain` which composes `core/**` primitives directly.
 
 ## Structure
 
@@ -19,7 +21,8 @@ inject pass per resolved consumer through `core/injectDocs`.
 
 - Route user-facing errors through `process.exit(<code>)` with documented
   exit codes 0 / 1 / 2
-- Wrap `startHeartbeat` here; the core layer stays tick-free
+- Branch TTY vs plain path exactly once, via
+  `runCli/utils/renderOrFallback.ts`
 
 ### Ask first
 
@@ -28,10 +31,9 @@ inject pass per resolved consumer through `core/injectDocs`.
 
 ### Never do
 
-- Import `@inquirer/prompts` directly; always go through `prompts/`
+- Import from `ui/` statically; only `runCli/utils/renderOrFallback.ts`
+  may dynamic-import it
 - Reach into a sub-fractal's internal files; always use its `index.ts`
 - Walk `node_modules` or enumerate workspaces outside
-  `runCli/utils/resolveScopeAlias.ts`. The scope-alias helper is the
-  SOLE workspace-enumeration exception; `runCli/utils/resolvePackage.ts`
-  still resolves ONLY one explicitly-named target via Node module
-  resolution.
+  `runCli/utils/resolveScopeAlias.ts`. That file is the SOLE
+  workspace-enumeration exception.

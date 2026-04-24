@@ -11,8 +11,8 @@ export {
   type HashManifest,
 } from './hashManifest/index.js';
 export {
-  injectDocs,
-  type InjectOptions,
+  applyAction,
+  summarize,
   type InjectReport,
 } from './injectDocs/index.js';
 export {
@@ -23,7 +23,6 @@ export {
 } from './buildPlan/index.js';
 export {
   findNearestDotClaudeAncestor,
-  isInteractive,
   isValidScope,
   resolveScope,
   type Scope,

@@ -1,6 +1,5 @@
 export {
   findNearestDotClaudeAncestor,
-  isInteractive,
   isValidScope,
   resolveScope,
   type Scope,

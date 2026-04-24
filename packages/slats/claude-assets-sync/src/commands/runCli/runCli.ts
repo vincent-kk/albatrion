@@ -3,8 +3,9 @@ import { Command } from 'commander';
 import { logger } from '../../utils/logger.js';
 import { VERSION } from '../../utils/version.js';
 import type { DefaultFlags } from './type.js';
+import { renderOrFallback } from './utils/renderOrFallback.js';
 import { resolveTargets } from './utils/resolveTargets.js';
-import { runInject } from './utils/runInject.js';
+import { toConsumerPackages } from './utils/toConsumerPackages.js';
 
 /**
  * CLI entry for `@slats/claude-assets-sync`.
@@ -43,6 +44,11 @@ export async function runCli(
     .option('--dry-run', 'Preview without writing', false)
     .option('--force', 'Overwrite user modifications', false)
     .option('--root <path>', 'Override scope resolution cwd (default: cwd)')
+    .option(
+      '--json',
+      'Emit structured JSON output (forces non-interactive legacy logger path)',
+      false,
+    )
     .action(async (flags: DefaultFlags) => {
       const targets = flags.package ?? [];
       if (targets.length === 0) {
@@ -59,7 +65,13 @@ export async function runCli(
         );
         return;
       }
-      await runInject(flags, metadataList);
+      const consumerPackages = await toConsumerPackages(metadataList);
+      const exitCode = await renderOrFallback(
+        consumerPackages,
+        flags,
+        originCwd,
+      );
+      if (exitCode !== 0) process.exit(exitCode);
     });
 
   try {

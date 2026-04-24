@@ -1,2 +1,3 @@
-export { injectDocs } from './injectDocs.js';
-export type { InjectOptions, InjectReport } from './type.js';
+export { applyAction } from './utils/applyAction.js';
+export { summarize } from './utils/summarize.js';
+export type { InjectReport } from './type.js';

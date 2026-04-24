@@ -1,0 +1,35 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Banner visual snapshot > renders a rounded single-color frame with scope chip 1`] = `
+"╭─────────────────────────────────╮
+│ claude-sync v0.3.0-dev  →  user │
+╰─────────────────────────────────╯"
+`;
+
+exports[`Banner visual snapshot > renders without scope when not provided 1`] = `
+"╭────────────────────────╮
+│ claude-sync v0.3.0-dev │
+╰────────────────────────╯"
+`;
+
+exports[`Summary visual snapshot > marks dry-run in the title 1`] = `
+"
+╔══════════════════════════════════╗
+║  Summary (dry-run)               ║
+║                                  ║
+║  created     3    updated     0  ║
+║  skipped     2    warnings    1  ║
+║  deleted     0    exit        0  ║
+╚══════════════════════════════════╝"
+`;
+
+exports[`Summary visual snapshot > renders a double-line box with two-column layout 1`] = `
+"
+╔══════════════════════════════════╗
+║  Summary                         ║
+║                                  ║
+║  created     3    updated     0  ║
+║  skipped     2    warnings    1  ║
+║  deleted     0    exit        0  ║
+╚══════════════════════════════════╝"
+`;
