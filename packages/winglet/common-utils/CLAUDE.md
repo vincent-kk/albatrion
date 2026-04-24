@@ -17,14 +17,10 @@ yarn lint              # ESLint
 `docs/claude/**` 자산을 사용자 `.claude/` 에 주입. 엔진: `@slats/claude-assets-sync` (bin: `inject-claude-settings`).
 
 ```bash
-# universal — 모든 PM (pnpm strict / yarn-berry PnP 포함)
 npx -p @slats/claude-assets-sync inject-claude-settings --package=@winglet/common-utils --scope=user
 npx -p @slats/claude-assets-sync inject-claude-settings --package=@winglet/common-utils --scope=project
 npx -p @slats/claude-assets-sync inject-claude-settings --package=@winglet/common-utils --scope=user --dry-run
 npx -p @slats/claude-assets-sync inject-claude-settings --package=@winglet/common-utils --scope=user --force
-
-# 간편 — npm / yarn-classic 에서만 (transitive bin hoist 기반)
-npx inject-claude-settings --package=@winglet/common-utils --scope=user
 ```
 
 ### Isolation Guardrails

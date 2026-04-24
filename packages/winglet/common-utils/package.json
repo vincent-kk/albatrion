@@ -139,7 +139,7 @@
     "version:minor": "yarn version minor",
     "version:patch": "yarn version patch"
   },
-  "dependencies": {
+  "devDependencies": {
     "@slats/claude-assets-sync": "workspace:^"
   },
   "claude": {

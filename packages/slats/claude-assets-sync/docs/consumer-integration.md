@@ -12,7 +12,7 @@ How to make a package ship Claude Code assets through the `inject-claude-setting
     "build": "… && yarn build:hashes",
     "build:hashes": "claude-build-hashes"
   },
-  "dependencies": {
+  "devDependencies": {
     "@slats/claude-assets-sync": "workspace:^"
   },
   "files": ["dist", "docs", "README.md"],
@@ -22,10 +22,10 @@ How to make a package ship Claude Code assets through the `inject-claude-setting
 }
 ```
 
-- `@slats/claude-assets-sync` MUST be in `dependencies`, not `devDependencies` or `peerDependencies`.
+- `@slats/claude-assets-sync` MUST be in `devDependencies`. The engine is a CLI-only tool; declaring it in `dependencies` would pull `commander`, `@inquirer/prompts`, and their transitive trees into every end-user's production install even though the consumer's runtime never imports the engine.
 - Do **not** add any `bin` field. Bin names collide across consumers under `node_modules/.bin/` and the engine is the sole CLI surface.
 - Do **not** expose `./bin/*` or `./docs/*` in `exports`. Exposing them would let bundlers pull CLI code or the docs tree into app bundles.
-- Do **not** create a `bin/` or `scripts/` directory in the consumer. The engine's `claude-build-hashes` bin (resolved via `node_modules/.bin/`) handles build-time hashing.
+- Do **not** create a `bin/` or `scripts/` directory in the consumer. The engine's `claude-build-hashes` bin (resolved via `node_modules/.bin/` from `devDependencies` at workspace install time) handles build-time hashing.
 
 ## 2. `docs/claude/` authoring
 
@@ -65,12 +65,13 @@ The legacy `src-no-bin` and `src-no-claude-assets-sync` rules are no longer load
 
 ## 4. End-user invocations
 
-| Install topology | Invocation |
+The engine is not shipped as a runtime dependency of any consumer, so end users never get a hoisted `inject-claude-settings` bin. Always invoke via `npx -p @slats/claude-assets-sync ...`; the package manager fetches and caches the engine on demand.
+
+| Scenario | Invocation |
 |---|---|
-| End user installs consumer as a **direct dep** on npm / yarn-classic | `npx inject-claude-settings --package=@your-scope/your-package --scope=user` |
-| End user installs consumer as a **direct dep** on pnpm strict / yarn-berry PnP | `npx -p @slats/claude-assets-sync inject-claude-settings --package=@your-scope/your-package --scope=user` |
-| End user has **no consumer installed** yet | `npx -p @slats/claude-assets-sync inject-claude-settings --package=@your-scope/your-package --scope=user` (resolves to whatever is on the registry under that exact name) |
-| End user has **multiple consumers installed** | Call `inject-claude-settings --package=<one-name>` per target. There is no `--all`. |
+| Single consumer target | `npx -p @slats/claude-assets-sync inject-claude-settings --package=@your-scope/your-package --scope=user` |
+| All packages under one npm scope | `npx -p @slats/claude-assets-sync inject-claude-settings --package=@your-scope --scope=user` (scope alias — no slash) |
+| Multiple specific targets | Repeat `--package` or comma-separate: `--package=@scope-a --package=@scope-b/pkg`. There is no `--all`. |
 
 ### Scope resolution (project)
 

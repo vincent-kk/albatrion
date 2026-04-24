@@ -72,9 +72,11 @@
     "version:patch": "yarn version patch"
   },
   "dependencies": {
-    "@slats/claude-assets-sync": "workspace:^",
     "@winglet/common-utils": "workspace:^",
     "@winglet/json": "workspace:^"
+  },
+  "devDependencies": {
+    "@slats/claude-assets-sync": "workspace:^"
   },
   "claude": {
     "assetPath": "docs/claude"

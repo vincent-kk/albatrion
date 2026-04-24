@@ -27,12 +27,10 @@ claude-build-hashes
 
 ### 최종 사용자 호출
 
-```bash
-# universal — 모든 PM (pnpm strict / yarn-berry PnP 포함)
-npx -p @slats/claude-assets-sync inject-claude-settings --package=@canard/schema-form --scope=user
+엔진은 컨슈머의 런타임 의존성으로 배포되지 않습니다. 항상 `npx -p @slats/claude-assets-sync ...` 형태로 호출하세요 — 패키지 매니저가 엔진을 필요 시 받아와 캐시합니다.
 
-# 간편 — npm / yarn-classic 에서만 (transitive bin hoist 기반)
-npx inject-claude-settings --package=@canard/schema-form --scope=user
+```bash
+npx -p @slats/claude-assets-sync inject-claude-settings --package=@canard/schema-form --scope=user
 ```
 
 | 플래그 | 의미 |
@@ -59,7 +57,7 @@ npx inject-claude-settings --package=@canard/schema-form --scope=user
     "build": "… && yarn build:hashes",
     "build:hashes": "claude-build-hashes"
   },
-  "dependencies": {
+  "devDependencies": {
     "@slats/claude-assets-sync": "workspace:^"
   },
   "files": ["dist", "docs", "README.md"],
@@ -67,7 +65,7 @@ npx inject-claude-settings --package=@canard/schema-form --scope=user
 }
 ```
 
-- `@slats/claude-assets-sync` 는 **반드시** `dependencies` 에 위치 — 아래 근거 참조.
+- `@slats/claude-assets-sync` 는 **반드시** `devDependencies` 에 위치 — 엔진은 CLI-only 도구이므로 최종 사용자의 production 설치에 유출되면 안 됩니다. 아래 근거 참조.
 - `bin` 필드 절대 추가 금지. 엔진이 유일한 CLI 표면이며, 패키지마다 bin 을 두면 `node_modules/.bin/` 에서 충돌합니다.
 - `exports` 에 `./bin/*` 또는 `./docs/*` 절대 노출 금지. 컨슈머 번들러가 CLI 코드나 문서 트리를 앱 번들로 끌어올 수 있습니다.
 - 컨슈머에 `bin/` 또는 `scripts/` 디렉토리 생성 금지.
@@ -82,10 +80,12 @@ yarn build
 
 결과물인 `dist/` (`claude-hashes.json` 포함) 를 `docs/` 와 함께 publish 합니다.
 
-### 근거: `dependencies`, `devDependencies` 아님
+### 근거: `devDependencies`, `dependencies` 아님
 
-- 모노레포 빌드 체인이 `.bin/claude-build-hashes` resolve 에 의존하며, 이는 엔진이 direct dep 일 때만 가능합니다.
-- npm / yarn-classic 의 최종 사용자 입장에서 엔진을 `dependencies` 로 두면 `inject-claude-settings` 이 `node_modules/.bin/` 로 transitive hoist 되어 `npx inject-claude-settings --package=<THIS>` 단축 호출이 가능합니다. Pnpm strict 사용자는 transitive hoist 가 되지 않으므로 universal 형식 `npx -p @slats/claude-assets-sync inject-claude-settings --package=<THIS>` 를 써야 합니다.
+- 엔진이 쓰이는 시점은 두 번뿐입니다: (1) 컨슈머의 자체 빌드에서 `claude-build-hashes` 가 `dist/claude-hashes.json` 을 생성할 때, (2) 최종 사용자가 `inject-claude-settings` 을 일회성으로 호출할 때. 두 경우 모두 컨슈머 라이브러리의 런타임 동작이 아닙니다.
+- 엔진을 `dependencies` 에 두면 컨슈머를 설치하는 모든 하위 사용자가 `commander`, `@inquirer/prompts` 와 그 transitive 트리를 production `node_modules` 에 강제로 받게 됩니다 — Claude Code 자산을 한 번도 설정하지 않는 사용자에게는 순수한 부담입니다.
+- 워크스페이스 빌드 체인은 여전히 `yarn install` 시점에 `devDependencies` 에서 `.bin/claude-build-hashes` 를 resolve 합니다. yarn workspaces 는 workspace-local 빌드에서 devDeps 와 deps 를 동일하게 링크합니다.
+- 최종 사용자는 hoist 된 `inject-claude-settings` bin 에 의존하지 않습니다. 표준 호출은 `npx -p @slats/claude-assets-sync inject-claude-settings --package=<THIS>` 이며, 패키지 매니저가 필요 시 엔진을 받아와 캐시합니다.
 - 번들 격리는 import 그래프로 강제됩니다 (컨슈머의 `src/**` 가 엔진을 참조하지 않음). dependency-type 으로 강제되는 게 아닙니다.
 
 ## `docs/claude/` 작성

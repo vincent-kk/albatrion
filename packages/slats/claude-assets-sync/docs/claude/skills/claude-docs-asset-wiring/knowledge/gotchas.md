@@ -27,22 +27,25 @@ case — it would break silently-disabled packages.
 
 ---
 
-## `@slats/claude-assets-sync` must be in `dependencies`
+## `@slats/claude-assets-sync` must be in `devDependencies`
 
-Not `devDependencies`, not `peerDependencies`. Reasons:
+Not `dependencies`, not `peerDependencies`. Reasons:
 
-1. Monorepo build chain needs `.bin/claude-build-hashes` resolved,
-   which requires the engine as a direct dep of each consumer.
-2. For end users on npm / yarn-classic, listing the engine in
-   `dependencies` makes `inject-claude-settings` transitively
-   hoisted into `node_modules/.bin/`, enabling the short
-   invocation `npx inject-claude-settings --package=<THIS>`.
-3. Bundle isolation is enforced by the import graph (`src/**`
+1. The engine is CLI-only. Declaring it in `dependencies` would
+   pull `commander`, `@inquirer/prompts`, and their transitive
+   trees into every end-user's production install even though the
+   consumer's runtime never imports the engine.
+2. The monorepo build chain still resolves `.bin/claude-build-hashes`
+   from `devDependencies` at `yarn install` time — yarn workspaces
+   link devDeps and deps identically for workspace-local builds.
+3. End users never rely on a hoisted `inject-claude-settings` bin.
+   The canonical invocation is `npx -p @slats/claude-assets-sync
+   inject-claude-settings --package=<THIS>`, which fetches the
+   engine on demand and caches it.
+4. Bundle isolation is enforced by the import graph (`src/**`
    never references the engine), not by dependency-type.
 
-Pnpm strict users do not get the transitive hoist and must use the
-universal form `npx -p @slats/claude-assets-sync inject-claude-settings
---package=<THIS>`. Every consumer's CLAUDE.md documents both paths.
+Every consumer's CLAUDE.md documents the single `npx -p` path.
 
 ---
 

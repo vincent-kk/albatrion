@@ -53,7 +53,7 @@ Each consumer ships only:
   dist/claude-hashes.json      # GENERATED at build, publish-included
   package.json: {
     "scripts": { "build:hashes": "claude-build-hashes" },
-    "dependencies": { "@slats/claude-assets-sync": "workspace:^" },
+    "devDependencies": { "@slats/claude-assets-sync": "workspace:^" },
     "claude": { "assetPath": "docs/claude" }
   }
 ```
@@ -61,11 +61,13 @@ Each consumer ships only:
 No bin stub. No scripts wrapper. No `bin/` or `scripts/` directory in the consumer.
 
 Consumer `package.json` should:
-- `scripts.build:hashes: "claude-build-hashes"` — engine bin, transitively hoisted from `dependencies`
-- `dependencies: { "@slats/claude-assets-sync": "workspace:^" }` — MUST NOT be `devDependencies` or `peerDependencies`
+- `scripts.build:hashes: "claude-build-hashes"` — engine bin, linked into workspace `.bin/` at install time
+- `devDependencies: { "@slats/claude-assets-sync": "workspace:^" }` — MUST be `devDependencies` (the engine is a CLI-only tool and must not leak into end-user production installs)
 - `claude.assetPath: "docs/claude"` — consumer-side convention
 - `files: ["dist", "docs", "README.md"]` — NEVER include `"bin"` or `"scripts"`
 - NEVER expose `./bin/*` or `./docs/*` in `exports`
+
+End users never install the engine transitively. They invoke the dispatcher via `npx -p @slats/claude-assets-sync inject-claude-settings --package=<name>`, which pulls the engine on demand and caches it. The workspace build chain still gets `.bin/claude-build-hashes` from devDependencies during `yarn install`.
 
 The `claude.assetPath` field is a **consumer-side convention**; the engine dispatcher exits 2 when it is missing. `claude-build-hashes` silently no-ops when the field is missing — that is the intentional opt-out.
 
@@ -73,8 +75,10 @@ For `--scope=project`, the target `.claude` directory is resolved by walking up 
 
 ### End-user invocation
 
+The engine is not shipped as a runtime dep of consumers. Always invoke via `npx -p @slats/claude-assets-sync ...`; the package manager fetches and caches the engine on demand.
+
 ```bash
-# single scoped package (v0.3.0 style; still works)
+# single scoped package
 npx -p @slats/claude-assets-sync inject-claude-settings --package @canard/schema-form --scope=user
 
 # all packages under an npm scope (scope alias — no slash)
@@ -83,9 +87,6 @@ npx -p @slats/claude-assets-sync inject-claude-settings --package @winglet --sco
 # mixed targets: repeat --package or comma-separate
 npx -p @slats/claude-assets-sync inject-claude-settings --package @canard --package @lerx/promise-modal --scope=user
 npx -p @slats/claude-assets-sync inject-claude-settings --package @canard,@winglet --scope=user
-
-# simple — npm / yarn-classic only (relies on transitive bin hoist)
-npx inject-claude-settings --package @canard/schema-form --scope=user
 ```
 
 ## Architecture

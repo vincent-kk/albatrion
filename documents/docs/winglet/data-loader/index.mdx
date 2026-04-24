@@ -84,7 +84,6 @@ userLoader.clearAll();
 Inject those assets into your local Claude Code environment with `@slats/claude-assets-sync` (bin: `inject-claude-settings`):
 
 ```bash
-# universal — works across npm / yarn-classic / pnpm / yarn-berry
 npx -p @slats/claude-assets-sync inject-claude-settings --package=@winglet/data-loader --scope=user         # inject into ~/.claude (user-level)
 npx -p @slats/claude-assets-sync inject-claude-settings --package=@winglet/data-loader --scope=project      # inject into the nearest existing .claude, walking up from cwd
 
@@ -92,8 +91,6 @@ npx -p @slats/claude-assets-sync inject-claude-settings --package=@winglet/data-
 npx -p @slats/claude-assets-sync inject-claude-settings --package=@winglet/data-loader --scope=user --dry-run   # show the plan without writing
 npx -p @slats/claude-assets-sync inject-claude-settings --package=@winglet/data-loader --scope=user --force     # overwrite locally-modified files
 
-# simple — npm / yarn-classic with transitive bin hoist
-npx inject-claude-settings --package=@winglet/data-loader --scope=user
 ```
 
 The CLI resolves `@winglet/data-loader/package.json` via `createRequire`, reads its `claude.assetPath` (`docs/claude`), and applies hash-based diff into the selected `.claude/` (skip unchanged, warn on divergence, require `--force` to overwrite).

@@ -45,14 +45,10 @@ cxLite('base', isActive && 'active', size)      // 경량 버전
 Inject `docs/claude/**` into the user's `.claude/`. Engine: `@slats/claude-assets-sync` (bin: `inject-claude-settings`).
 
 ```bash
-# universal — every PM (pnpm strict / yarn-berry PnP included)
 npx -p @slats/claude-assets-sync inject-claude-settings --package=@winglet/style-utils --scope=user
 npx -p @slats/claude-assets-sync inject-claude-settings --package=@winglet/style-utils --scope=project
 npx -p @slats/claude-assets-sync inject-claude-settings --package=@winglet/style-utils --scope=user --dry-run
 npx -p @slats/claude-assets-sync inject-claude-settings --package=@winglet/style-utils --scope=user --force
-
-# simple — npm / yarn-classic only (relies on transitive bin hoist)
-npx inject-claude-settings --package=@winglet/style-utils --scope=user
 ```
 
 ### Isolation Guardrails

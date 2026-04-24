@@ -67,12 +67,12 @@
     "version:patch": "yarn version patch"
   },
   "dependencies": {
-    "@slats/claude-assets-sync": "workspace:^",
     "@winglet/common-utils": "workspace:^",
     "@winglet/react-utils": "workspace:^",
     "@winglet/style-utils": "workspace:^"
   },
   "devDependencies": {
+    "@slats/claude-assets-sync": "workspace:^",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
     "antd": "^5.22.5",

@@ -53,8 +53,9 @@ Point to the engine's bin (NOT a local stub):
 
 `claude-build-hashes` reads `process.cwd()/package.json` and picks
 up `claude.assetPath`. Works because `@slats/claude-assets-sync` is
-in `dependencies`, so `node_modules/.bin/claude-build-hashes` is
-linked.
+in `devDependencies`, so `node_modules/.bin/claude-build-hashes` is
+linked at workspace install time (yarn workspaces link devDeps and
+deps identically for workspace-local builds).
 
 If a different `build:hashes` script exists, ask.
 
@@ -74,30 +75,34 @@ If the target already has a `prepublishOnly` that calls `yarn build`
 
 ---
 
-## 5. `dependencies."@slats/claude-assets-sync"`
+## 5. `devDependencies."@slats/claude-assets-sync"`
 
-**Must be in `dependencies`, never `devDependencies` or
+**Must be in `devDependencies`, never `dependencies` or
 `peerDependencies`.**
 
 ```json
-"dependencies": {
+"devDependencies": {
   "@slats/claude-assets-sync": "workspace:^"
 }
 ```
 
 Reasons:
 
-- Monorepo build chain needs `.bin/claude-build-hashes` resolved,
-  which requires the engine as a direct dep.
-- On npm / yarn-classic, listing the engine in `dependencies` makes
-  `inject-claude-settings` transitively hoisted into
-  `node_modules/.bin/` for end users, enabling the short
-  invocation `npx inject-claude-settings --package=<THIS>`.
+- The engine is CLI-only. Declaring it in `dependencies` would pull
+  `commander`, `@inquirer/prompts`, and their transitive trees into
+  every end-user's production install even though the consumer's
+  runtime never imports the engine.
+- The monorepo build chain still resolves `.bin/claude-build-hashes`
+  from `devDependencies` at `yarn install` time — yarn workspaces
+  link devDeps and deps identically for workspace-local builds.
+- End users invoke the engine via `npx -p @slats/claude-assets-sync
+  inject-claude-settings --package=<THIS>`, which fetches the engine
+  on demand and caches it. No transitive bin hoist is required.
 - Bundle isolation is enforced by the import graph (`src/**` never
   references the engine), not by dependency-type.
 
-If the target already has it in `devDependencies` or
-`peerDependencies`, move it to `dependencies`. Do not duplicate.
+If the target already has it in `dependencies` or
+`peerDependencies`, move it to `devDependencies`. Do not duplicate.
 
 ---
 

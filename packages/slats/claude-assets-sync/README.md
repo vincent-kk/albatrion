@@ -27,12 +27,10 @@ claude-build-hashes
 
 ### End-user invocation
 
-```bash
-# universal — every PM (pnpm strict / yarn-berry PnP included)
-npx -p @slats/claude-assets-sync inject-claude-settings --package=@canard/schema-form --scope=user
+The engine is not shipped as a runtime dependency of consumers. Always invoke via `npx -p @slats/claude-assets-sync ...`; the package manager fetches and caches the engine on demand.
 
-# simple — npm / yarn-classic only (relies on transitive bin hoist from the consumer's dependencies)
-npx inject-claude-settings --package=@canard/schema-form --scope=user
+```bash
+npx -p @slats/claude-assets-sync inject-claude-settings --package=@canard/schema-form --scope=user
 ```
 
 | Flag | Meaning |
@@ -59,7 +57,7 @@ For `--scope=project` the target `.claude` directory is resolved by walking up f
     "build": "… && yarn build:hashes",
     "build:hashes": "claude-build-hashes"
   },
-  "dependencies": {
+  "devDependencies": {
     "@slats/claude-assets-sync": "workspace:^"
   },
   "files": ["dist", "docs", "README.md"],
@@ -67,7 +65,7 @@ For `--scope=project` the target `.claude` directory is resolved by walking up f
 }
 ```
 
-- `@slats/claude-assets-sync` MUST be in `dependencies`, not `devDependencies` — see Rationale below.
+- `@slats/claude-assets-sync` MUST be in `devDependencies` — the engine is a CLI-only tool and must not leak into end-user production installs. See Rationale below.
 - Do **not** add any `bin` field. The engine is the sole CLI surface; per-consumer bins would collide under `node_modules/.bin/`.
 - Do **not** expose `./bin/*` or `./docs/*` in `exports`. That would let consumer bundlers pull CLI code or the asset tree into app bundles.
 - Do **not** create a `bin/` or `scripts/` directory in the consumer.
@@ -82,10 +80,12 @@ yarn build
 
 Ship the resulting `dist/` (including `claude-hashes.json`) alongside `docs/` when you publish.
 
-### Rationale: `dependencies`, not `devDependencies`
+### Rationale: `devDependencies`, not `dependencies`
 
-- The monorepo build chain needs `.bin/claude-build-hashes` resolved, which requires the engine as a direct dep.
-- For end users on npm / yarn-classic, listing the engine in `dependencies` makes `inject-claude-settings` transitively hoisted into `node_modules/.bin/`, enabling the short invocation `npx inject-claude-settings --package=<THIS>`. Pnpm strict users do not get the transitive hoist and must use the universal form `npx -p @slats/claude-assets-sync inject-claude-settings --package=<THIS>`.
+- The engine is used at two moments only: (1) the consumer's own build, where `claude-build-hashes` produces `dist/claude-hashes.json`, and (2) the end user's one-off `inject-claude-settings` invocation. Neither is runtime behaviour of the consumer library.
+- Putting the engine in `dependencies` would force every downstream installer of the consumer to pull `commander`, `@inquirer/prompts`, and their transitive trees into their production `node_modules` — dead weight for anyone who never sets up Claude Code assets.
+- The workspace build chain still resolves `.bin/claude-build-hashes` from `devDependencies` at `yarn install` time; yarn workspaces link devDeps and deps identically for workspace-local builds.
+- End users never rely on a hoisted `inject-claude-settings` bin. The canonical invocation is `npx -p @slats/claude-assets-sync inject-claude-settings --package=<THIS>`, which fetches the engine on demand and caches it.
 - Bundle isolation is enforced by the import graph (`src/**` in the consumer never references the engine), not by dependency-type.
 
 ## Authoring `docs/claude/`

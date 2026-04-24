@@ -78,7 +78,7 @@ See `knowledge/package-json-patches.md` for the complete patch list:
 - `scripts.build` — ensure the chain ends with `&& yarn build:hashes`.
 - `scripts.build:hashes` — set to `claude-build-hashes` (the engine's bin).
 - `scripts.prepublishOnly` — `yarn build` if not already present.
-- `dependencies."@slats/claude-assets-sync"` — add (NOT `devDependencies`, NOT `peerDependencies`).
+- `devDependencies."@slats/claude-assets-sync"` — add (NOT `dependencies`, NOT `peerDependencies`). The engine is CLI-only and must not leak into end-user production installs.
 - `files` — ensure `"dist"`, `"docs"`, `"README.md"` are listed. Never include `"bin"` or `"scripts"`.
 
 Do NOT add any `bin` entry. Do NOT add `./bin/*` or `./docs/*` to `exports`.
