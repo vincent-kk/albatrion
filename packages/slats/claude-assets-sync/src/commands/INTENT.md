@@ -3,15 +3,15 @@
 ## Purpose
 
 Commander action handlers. The only public entry is `runCli(argv)`,
-which parses `--package=<name>`, resolves that single target's
-metadata via the `bin/`-layer resolver, and dispatches a single
-inject pass through `core/injectDocs`.
+which parses `--package <name...>`, classifies each value as a scope
+alias or a package name, resolves every target, and dispatches one
+inject pass per resolved consumer through `core/injectDocs`.
 
 ## Structure
 
 - `INTENT.md`, `DETAIL.md`
 - `index.ts` — aggregates public exports (`runCli`, `DefaultFlags`)
-- `runCli/` — sole CLI surface; parses argv, resolves one target, dispatches
+- `runCli/` — sole CLI surface; parses argv, resolves targets, dispatches
 
 ## Boundaries
 
@@ -24,14 +24,14 @@ inject pass through `core/injectDocs`.
 ### Ask first
 
 - Adding top-level subcommands (`list`, `all`, etc.) — today the CLI is
-  intentionally single-action with one named target per invocation
-- Accepting more than one consumer per invocation
+  intentionally single-action even when multiple targets resolve
 
 ### Never do
 
 - Import `@inquirer/prompts` directly; always go through `prompts/`
 - Reach into a sub-fractal's internal files; always use its `index.ts`
-- Walk `node_modules` or enumerate workspaces looking for sibling
-  packages. The `bin/` dispatcher layer is allowed to resolve exactly
-  **one** named target's `package.json` via Node module resolution —
-  that is the sole, narrow exception.
+- Walk `node_modules` or enumerate workspaces outside
+  `runCli/utils/resolveScopeAlias.ts`. The scope-alias helper is the
+  SOLE workspace-enumeration exception; `runCli/utils/resolvePackage.ts`
+  still resolves ONLY one explicitly-named target via Node module
+  resolution.

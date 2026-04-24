@@ -3,18 +3,21 @@ import { Command } from 'commander';
 import { logger } from '../../utils/logger.js';
 import { VERSION } from '../../utils/version.js';
 import type { DefaultFlags } from './type.js';
-import { resolvePackage } from './utils/resolvePackage.js';
+import { resolveTargets } from './utils/resolveTargets.js';
 import { runInject } from './utils/runInject.js';
 
 /**
  * CLI entry for `@slats/claude-assets-sync`.
  *
- * The `inject-claude-settings` dispatcher parses `--package=<name>` from argv,
- * resolves that single target's `package.json` via Node module resolution, and
- * injects its Claude assets into the selected `.claude/` directory.
+ * The `inject-claude-settings` dispatcher parses `--package <name...>`
+ * from argv and classifies each value:
+ * - `@<scope>` — enumerate every workspace package under that scope
+ * - `@<scope>/<name>` — one scoped package
+ * - `<name>` — one unscoped package
  *
- * `src/core/**` never reads `package.json`. The dispatcher exception applies
- * only to the `bin/` layer — one named target per invocation, no discovery.
+ * Targets are resolved via Node module resolution (`resolvePackage`)
+ * except for scope aliases, which are the only path allowed to walk
+ * the monorepo — that exception is isolated to `resolveScopeAlias.ts`.
  */
 export async function runCli(
   argv: readonly string[] = process.argv,
@@ -24,12 +27,14 @@ export async function runCli(
   cmd
     .name('inject-claude-settings')
     .description(
-      "Inject a target consumer's Claude assets into the selected .claude directory",
+      "Inject target consumer(s)' Claude assets into the selected .claude directory",
     )
     .version(VERSION)
     .option(
-      '--package <name>',
-      'Target consumer package name (e.g. @canard/schema-form)',
+      '--package <name...>',
+      'Target(s). "@<scope>" = whole npm scope; "@<scope>/<name>" or "<name>" = one package. Repeat the flag or comma-separate values.',
+      collectPackageValues,
+      [] as string[],
     )
     .option(
       '--scope <scope>',
@@ -39,14 +44,22 @@ export async function runCli(
     .option('--force', 'Overwrite user modifications', false)
     .option('--root <path>', 'Override scope resolution cwd (default: cwd)')
     .action(async (flags: DefaultFlags) => {
-      if (typeof flags.package !== 'string' || flags.package.length === 0) {
+      const targets = flags.package ?? [];
+      if (targets.length === 0) {
         logger.error(
-          'missing required flag: --package <name> (e.g. --package=@canard/schema-form)',
+          'missing required flag: --package <name> (e.g. --package=@canard/schema-form or --package=@canard)',
         );
         process.exit(2);
       }
-      const metadata = await resolvePackage(flags.package);
-      await runInject(flags, metadata);
+      const originCwd = flags.root ?? process.cwd();
+      const metadataList = await resolveTargets(targets, originCwd);
+      if (metadataList.length === 0) {
+        logger.warn(
+          `no packages resolved from --package target(s): ${targets.join(', ')}`,
+        );
+        return;
+      }
+      await runInject(flags, metadataList);
     });
 
   try {
@@ -56,4 +69,17 @@ export async function runCli(
     logger.error(msg);
     process.exit(1);
   }
+}
+
+function collectPackageValues(
+  value: string,
+  previous: readonly string[] = [],
+): string[] {
+  return [
+    ...previous,
+    ...value
+      .split(',')
+      .map((s) => s.trim())
+      .filter(Boolean),
+  ];
 }

@@ -2,19 +2,23 @@
 
 ## Purpose
 
-Sole `inject-claude-settings` CLI driver. Parses `--package=<name>`
-from argv, resolves that one target via
-`createRequire(import.meta.url).resolve(`${name}/package.json`)` in
-`utils/resolvePackage.ts`, and dispatches a single inject pass
-through `core/injectDocs`. Never enumerates sibling packages.
+Sole `inject-claude-settings` CLI driver. Parses `--package <name...>`
+from argv — each value is a scope alias (`@<scope>`), a scoped package
+(`@<scope>/<name>`), or an unscoped package (`<name>`). Resolves every
+target and dispatches one inject pass per resolved consumer through
+`core/injectDocs`. Workspace enumeration is confined to
+`utils/resolveScopeAlias.ts`.
 
 ## Structure
 
 - `index.ts` — barrel export (`runCli`, `DefaultFlags`)
 - `runCli.ts` — commander root + default action
 - `type.ts` — `DefaultFlags`, `ConsumerPackage`
-- `utils/resolvePackage.ts` — dispatcher-only single-target resolve
-- `utils/runInject.ts` — default action orchestrator
+- `utils/classifyTarget.ts` — pure classifier (scope | package | invalid)
+- `utils/resolvePackage.ts` — dispatcher single-target resolve
+- `utils/resolveScopeAlias.ts` — scope→packages enumeration (isolated)
+- `utils/resolveTargets.ts` — classify/resolve/dedupe orchestrator
+- `utils/runInject.ts` — default action orchestrator (batch)
 - `utils/injectOne.ts` — per-target inject with heartbeat + force confirm
 - `utils/resolveScopeFlag.ts` — scope flag → prompt fallback
 
@@ -24,17 +28,18 @@ through `core/injectDocs`. Never enumerates sibling packages.
 
 - Terminate every error path with `process.exit(0 | 1 | 2)`
 - Wrap long inject runs with `startHeartbeat` here (core stays tick-free)
+- Run `resolveScopeFlag` once per invocation, before the inject loop
 
 ### Ask first
 
-- Adding top-level subcommands — today the CLI is intentionally
-  single-action for one explicitly-named target
-- Accepting more than one consumer per invocation
+- Adding top-level subcommands — the CLI is intentionally single-action
+  even when multiple targets resolve
 
 ### Never do
 
-- Walk `node_modules` or yarn workspaces looking for sibling packages.
-  `utils/resolvePackage.ts` resolves ONLY the one name passed via
-  `--package`; nothing else.
+- Walk `node_modules` or yarn workspaces outside
+  `utils/resolveScopeAlias.ts`. That file is the SOLE enumeration
+  exception; `utils/resolvePackage.ts` still resolves ONLY one
+  explicitly-named package at a time.
 - Call `@inquirer/prompts` directly; route through `prompts/`
 - Import from `core/` internals; always go through `core/index.ts`

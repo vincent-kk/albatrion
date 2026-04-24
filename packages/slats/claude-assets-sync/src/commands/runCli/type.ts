@@ -3,7 +3,7 @@ export interface DefaultFlags {
   dryRun?: boolean;
   force?: boolean;
   root?: string;
-  package?: string;
+  package?: string[];
 }
 
 /**

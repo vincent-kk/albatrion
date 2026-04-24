@@ -9,12 +9,12 @@ export async function injectOne(
   scope: Scope,
   flags: DefaultFlags,
   originCwd: string,
-): Promise<void> {
+): Promise<number> {
   if (!target.hashesPresent) {
     logger.warn(
       `${target.name}: dist/claude-hashes.json missing — build the package (e.g. yarn build) to regenerate the hash manifest first.`,
     );
-    return;
+    return 0;
   }
 
   logger.heading(`${target.name}@${target.version}`);
@@ -43,7 +43,7 @@ export async function injectOne(
         );
       },
     });
-    if (report.exitCode !== 0) process.exit(report.exitCode);
+    return report.exitCode;
   } finally {
     stopHeartbeat();
   }

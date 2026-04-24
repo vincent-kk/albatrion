@@ -13,7 +13,7 @@ yarn lint            # eslint
 ## Public API
 
 - `.` (main barrel)
-  - `runCli(argv: string[]): Promise<void>` — dispatcher entry. Parses `--package=<name>` from argv.
+  - `runCli(argv: string[]): Promise<void>` — dispatcher entry. Parses `--package <name...>` from argv (variadic: repeat or comma-separate). Each value is a scope alias (`@<scope>`), a scoped package (`@<scope>/<name>`), or an unscoped package (`<name>`).
   - `injectDocs(options)` — headless programmatic inject (UI-free). Caller owns metadata.
   - `readHashManifest`, `resolveScope`, `computeNamespacePrefixes`, `isInteractive`, `isValidScope`, `HASH_MANIFEST_FILENAME`
 - `./buildHashes` — `buildHashes(options?)` produces `<packageRoot>/dist/claude-hashes.json`.
@@ -25,10 +25,23 @@ Bin entries:
 ## CLI Surface
 
 ```
-inject-claude-settings --package=<name> [--scope=user|project] [--dry-run] [--force] [--root=<cwd>]
+inject-claude-settings --package <name...> [--scope=user|project] [--dry-run] [--force] [--root=<cwd>]
 ```
 
-The library operates on exactly one consumer per invocation — the target named in `--package`. Cross-package discovery (`--all`, workspace scan) is not supported.
+`--package` is variadic. Each value is classified by shape:
+
+| Shape | Meaning |
+|-------|---------|
+| `@<scope>` (no slash) | all packages under the npm scope (workspace-enumerated) |
+| `@<scope>/<name>` | one scoped package |
+| `<name>` (no `@`) | one unscoped package |
+| anything else | invalid → exit 2 |
+
+Repeat the flag or comma-separate values. Targets are deduped by resolved package name.
+
+Single-target invocations preserve v0.3.0 behaviour (asset-missing → exit 2; failure → exit report code). Batch invocations (scope alias or multi-target) warn and skip asset-missing packages, continue past individual failures, and exit 1 iff any target failed.
+
+Workspace enumeration (scope alias) is confined to `src/commands/runCli/utils/resolveScopeAlias.ts`; every other file still operates on exactly one explicitly-named target.
 
 ## Consumer Integration Pattern
 
@@ -61,11 +74,18 @@ For `--scope=project`, the target `.claude` directory is resolved by walking up 
 ### End-user invocation
 
 ```bash
-# universal — every PM (pnpm strict / yarn-berry PnP included)
-npx -p @slats/claude-assets-sync inject-claude-settings --package=@canard/schema-form --scope=user
+# single scoped package (v0.3.0 style; still works)
+npx -p @slats/claude-assets-sync inject-claude-settings --package @canard/schema-form --scope=user
+
+# all packages under an npm scope (scope alias — no slash)
+npx -p @slats/claude-assets-sync inject-claude-settings --package @winglet --scope=user
+
+# mixed targets: repeat --package or comma-separate
+npx -p @slats/claude-assets-sync inject-claude-settings --package @canard --package @lerx/promise-modal --scope=user
+npx -p @slats/claude-assets-sync inject-claude-settings --package @canard,@winglet --scope=user
 
 # simple — npm / yarn-classic only (relies on transitive bin hoist)
-npx inject-claude-settings --package=@canard/schema-form --scope=user
+npx inject-claude-settings --package @canard/schema-form --scope=user
 ```
 
 ## Architecture
@@ -76,11 +96,14 @@ bin/
 src/
 ├── index.ts                        # public programmatic barrel
 ├── commands/
-│   └── runCli/                     # sole CLI surface
-│       ├── runCli.ts               # commander root + action
-│       ├── utils/resolvePackage.ts # dispatcher-only single-target resolve
-│       ├── utils/runInject.ts      # orchestrator
-│       └── utils/injectOne.ts      # per-target inject
+│   └── runCli/                         # sole CLI surface
+│       ├── runCli.ts                   # commander root + action
+│       ├── utils/classifyTarget.ts     # pure: scope | package | invalid
+│       ├── utils/resolvePackage.ts     # single-target resolve
+│       ├── utils/resolveScopeAlias.ts  # scope → packages enumeration (only enumerator)
+│       ├── utils/resolveTargets.ts     # classify/resolve/dedupe orchestrator
+│       ├── utils/runInject.ts          # batch orchestrator
+│       └── utils/injectOne.ts          # per-target inject
 ├── core/
 │   ├── hash/                       # sha256 compute / compare
 │   ├── hashManifest/               # dist/claude-hashes.json IO + namespace prefixes
@@ -105,7 +128,7 @@ Each directory under `src/` is a fractal with `index.ts` barrel + `INTENT.md`.
 ## Boundaries
 
 - `src/core/**` never imports from `src/prompts/`, `src/commands/`, or `src/utils/heartbeat.ts`. Heartbeat is wrapped at the command layer.
-- `src/core/**` and `src/utils/**` never read `package.json` or walk the filesystem. Only the `bin/` dispatcher layer (and `src/commands/runCli/utils/resolvePackage.ts`, invoked from that dispatcher) is allowed to resolve a single caller-named target.
+- `src/core/**` and `src/utils/**` never read `package.json` or walk the filesystem. Only the `bin/` dispatcher layer is allowed to resolve consumer metadata: `src/commands/runCli/utils/resolvePackage.ts` resolves ONE caller-named target, and `src/commands/runCli/utils/resolveScopeAlias.ts` is the SOLE file permitted to enumerate workspace siblings (triggered only when a `--package` value is a scope alias like `@canard`).
 - `src/prompts/` is the sole prompt surface (no ink/react).
 - `scripts/buildHashes.mjs` stays pure Node ESM (no top-level await) so Rollup can import it; `scripts/claude-build-hashes.mjs` holds the self-executing CLI wrapper.
 

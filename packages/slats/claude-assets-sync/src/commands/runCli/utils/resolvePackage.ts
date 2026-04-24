@@ -12,10 +12,24 @@ export interface ResolvedMetadata {
   assetPath: string;
 }
 
+export interface ResolvePackageOptions {
+  /**
+   * When `true`, a package without `claude.assetPath` is warned and the
+   * function returns `null` instead of calling `process.exit`. Default
+   * `false` preserves the v0.3.0 strict behavior for single-target
+   * dispatcher calls.
+   */
+  skipMissingAsset?: boolean;
+}
+
 // Dispatcher exception to the src/core purity rule: the bin layer is
 // allowed to read the package.json of ONE explicitly-named target.
 // Never walks node_modules for siblings; never enumerates workspaces.
-export async function resolvePackage(name: string): Promise<ResolvedMetadata> {
+// Scope-alias enumeration is confined to `resolveScopeAlias.ts`.
+export async function resolvePackage(
+  name: string,
+  options: ResolvePackageOptions = {},
+): Promise<ResolvedMetadata | null> {
   const pkgJsonPath = resolvePackageJsonPath(name);
   if (!pkgJsonPath) {
     logger.error(
@@ -33,12 +47,24 @@ export async function resolvePackage(name: string): Promise<ResolvedMetadata> {
   };
 
   if (typeof pkg.name !== 'string' || typeof pkg.version !== 'string') {
+    if (options.skipMissingAsset) {
+      logger.warn(
+        `"${name}" package.json is missing a string "name" or "version" — skipping.`,
+      );
+      return null;
+    }
     logger.error(`${pkgJsonPath} must define string "name" and "version".`);
     process.exit(2);
   }
 
   const assetPath = pkg.claude?.assetPath;
   if (typeof assetPath !== 'string' || assetPath.length === 0) {
+    if (options.skipMissingAsset) {
+      logger.warn(
+        `"${name}" is missing "claude.assetPath" — skipping (the package does not ship Claude assets).`,
+      );
+      return null;
+    }
     logger.error(
       `"${name}" is missing "claude.assetPath" in its package.json — the package does not ship Claude assets.`,
     );

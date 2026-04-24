@@ -23,15 +23,14 @@ describe('runInject — dispatcher-resolved metadata validation', () => {
 
     try {
       await expect(
-        runInject(
-          {},
+        runInject({}, [
           {
             packageRoot: 'relative/path',
             packageName: '@test/fixture',
             packageVersion: '1.0.0',
             assetPath: 'docs/claude',
           } satisfies ResolvedMetadata,
-        ),
+        ]),
       ).rejects.toThrow('test:exit');
       expect(exit.calls).toContain(2);
     } finally {
@@ -53,15 +52,14 @@ describe('runInject — dispatcher-resolved metadata validation', () => {
 
     try {
       // dry-run avoids scope prompt requirement; missing hashes → warn + return.
-      await runInject(
-        { scope: 'project', dryRun: true, root: packageRoot },
+      await runInject({ scope: 'project', dryRun: true, root: packageRoot }, [
         {
           packageRoot,
           packageName: '@test/fixture',
           packageVersion: '0.0.0',
           assetPath: 'docs/claude',
         } satisfies ResolvedMetadata,
-      );
+      ]);
       expect(exit.calls).toEqual([]);
     } finally {
       exit.restore();
