@@ -14,7 +14,7 @@ Playwright-cli 패턴을 따라: 컨슈머는 래퍼만 소유하고, 이 패키
 - `commands/` — commander 핸들러: `runCli`, `listConsumers`, `buildHashesCmd` (fractal-of-fractals)
 - `core/` — `hash`, `hashManifest`, `scope`, `buildPlan`, `injectDocs` (fractal-of-fractals)
 - `discover/` — workspace + node_modules walker (fractal)
-- `prompts/` — `@inquirer/prompts` 기반 scope picker & force confirm (fractal)
+- `prompts/` — `@inquirer/prompts` 기반 scope picker & force confirm (organ)
 - `utils/` — logger, asyncPool, heartbeat, types, version (organ)
 
 ## Conventions

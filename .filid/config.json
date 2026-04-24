@@ -16,8 +16,7 @@
     },
     "module-entry-point": {
       "enabled": true,
-      "severity": "warning",
-      "allowed-no-entry": ["packages/slats/claude-assets-sync"]
+      "severity": "warning"
     },
     "max-depth": {
       "enabled": true,
@@ -33,21 +32,22 @@
     },
     "zero-peer-file": {
       "enabled": true,
-      "severity": "warning",
-      "additional-allowed": [
-        "packages/slats/claude-assets-sync/src/prompts/*.ts",
-        "type.ts",
-        "CLAUDE.md",
-        "LICENSE",
-        "README.md",
-        "README-ko_kr.md",
-        "eslint.config.js",
-        "package.json",
-        "rollup.config.mjs",
-        "vite.config.ts",
-        "tsconfig.json",
-        "tsconfig.declarations.json"
-      ]
+      "severity": "warning"
     }
-  }
+  },
+  "additional-allowed": [
+    "type.ts",
+    "CLAUDE.md",
+    "LICENSE",
+    "README.md",
+    "README-ko_kr.md",
+    "eslint.config.js",
+    "package.json",
+    "rollup.config.mjs",
+    "vite.config.ts",
+    "tsconfig.json",
+    "tsconfig.declarations.json",
+    "confirmForce.ts",
+    "selectScope.ts"
+  ]
 }
