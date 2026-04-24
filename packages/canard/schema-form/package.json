@@ -38,19 +38,26 @@
   "main": "dist/index.cjs",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
+  "bin": {
+    "claude-sync": "./bin/claude-sync.mjs"
+  },
   "files": [
     "dist",
     "docs",
+    "bin",
     "README.md"
   ],
   "scripts": {
-    "build": "rollup -c && yarn build:types",
+    "build": "rollup -c && yarn build:types && yarn build:hashes",
+    "build:hashes": "node scripts/build-hashes.mjs",
     "build:publish:npm": "yarn build && yarn publish:npm",
     "build:types": "node ../../aileron/script/build/buildTypes.mjs",
     "build-storybook": "storybook build",
+    "depcheck": "depcruise src bin --config .dependency-cruiser.cjs --no-progress",
     "format": "prettier --write \"src/**/*.{ts,tsx}\"",
     "lint": "eslint \"src/**/*.{ts,tsx}\"",
-    "make-dependency-graph": "npx depcruise src --config .dependency-cruiser.js --output-type dot > dependency-graph.dot && dot -Tpng dependency-graph.dot -o dependency-graph.png",
+    "make-dependency-graph": "npx depcruise src --config .dependency-cruiser.cjs --output-type dot > dependency-graph.dot && dot -Tpng dependency-graph.dot -o dependency-graph.png",
+    "prepublishOnly": "yarn build",
     "publish:npm": "yarn npm publish --access public",
     "size-limit": "size-limit",
     "start": "yarn build && yarn storybook",
@@ -62,6 +69,7 @@
     "version:patch": "yarn version patch"
   },
   "dependencies": {
+    "@slats/claude-assets-sync": "workspace:^",
     "@winglet/common-utils": "workspace:^",
     "@winglet/json": "workspace:^",
     "@winglet/json-schema": "workspace:^",

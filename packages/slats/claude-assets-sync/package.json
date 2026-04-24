@@ -1,13 +1,13 @@
 {
   "name": "@slats/claude-assets-sync",
-  "version": "0.1.4",
-  "description": "CLI tool to sync Claude commands and skills from npm packages to your project's .claude directory",
+  "version": "0.2.0",
+  "description": "Shared CLI engine that lets consumer packages inject their Claude docs (skills, rules, commands) into a user's .claude directory via a thin bin/inject-docs wrapper.",
   "keywords": [
     "claude",
     "claude-code",
     "cli",
-    "sync",
-    "commands",
+    "inject",
+    "docs",
     "skills",
     "assets"
   ],
@@ -29,23 +29,34 @@
       "source": "./src/index.ts",
       "import": "./dist/index.mjs",
       "require": "./dist/index.cjs"
+    },
+    "./buildHashes": {
+      "import": "./scripts/buildHashes.mjs"
     }
   },
   "main": "dist/index.cjs",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
-  "bin": "./dist/cli.mjs",
+  "bin": {
+    "claude-build-hashes": "./scripts/claude-build-hashes.mjs",
+    "claude-sync": "./bin/claude-sync.mjs"
+  },
   "files": [
     "dist",
+    "docs",
+    "bin",
+    "scripts",
     "README.md"
   ],
   "scripts": {
-    "build": "node scripts/inject-version.js && rollup -c && yarn build:types",
+    "build": "node scripts/inject-version.js && rollup -c && yarn build:types && yarn build:hashes",
+    "build:hashes": "node scripts/build-hashes.mjs",
     "build:publish:npm": "yarn build && yarn publish:npm",
     "build:types": "node ../../aileron/script/build/buildTypes.mjs",
-    "dev": "node scripts/inject-version.js && tsx src/cli.ts",
+    "dev": "node scripts/inject-version.js && tsx src/main.ts",
     "format": "prettier --write \"src/**/*.ts\"",
     "lint": "eslint \"src/**/*.ts\"",
+    "prepublishOnly": "yarn build",
     "publish:npm": "yarn npm publish --access public",
     "test": "vitest",
     "version:major": "yarn version major",
@@ -53,17 +64,14 @@
     "version:patch": "yarn version patch"
   },
   "dependencies": {
-    "@winglet/react-utils": "workspace:^",
+    "@inquirer/prompts": "^8.4.2",
     "commander": "^12.1.0",
-    "ink": "^6.6.0",
-    "ink-select-input": "^6.2.0",
-    "ink-spinner": "^5.0.0",
-    "picocolors": "^1.1.1",
-    "react": "^19.1.1",
-    "react-dom": "^19.1.1"
+    "picocolors": "^1.1.1"
   },
   "devDependencies": {
-    "@types/react": "^19.0.0",
-    "ink-testing-library": "^4.0.0"
+    "@inquirer/testing": "^3.3.5"
+  },
+  "claude": {
+    "assetPath": "docs/claude"
   }
 }

@@ -1,45 +1,119 @@
 # CLAUDE.md
 
-`@slats/claude-assets-sync` — Claude Code 자산(commands, skills)을 npm 패키지에서 `.claude/` 디렉토리로 동기화하는 CLI 도구.
+`@slats/claude-assets-sync` — generic single-consumer asset sync engine. The caller owns all package metadata (`packageRoot`, `packageName`, `packageVersion`, `assetPath`); the library never walks `node_modules` or yarn workspaces, and never reads `package.json`.
 
 ## Commands
 
 ```bash
-yarn build             # ESM + CJS 빌드 + 타입 선언
-yarn test              # Vitest 테스트
-yarn lint              # ESLint
+yarn build           # inject-version → rollup (ESM + CJS) → build:types
+yarn test            # vitest
+yarn lint            # eslint
 ```
 
-## Sync Flow
+## Public API
 
-1. `node_modules`의 `package.json`에서 `claude.assetPath` 설정 읽기
-2. 저장소 URL → GitHub owner/repo 파싱
-3. `.sync-meta.json` 버전 비교 (일치 시 스킵, `--force`로 강제)
-4. GitHub Contents API로 `commands/`, `skills/` 파일 목록 조회
-5. `raw.githubusercontent.com`에서 파일 다운로드
-6. `.claude/{type}/{scope}/{name}/`에 저장
-7. `.sync-meta.json` 업데이트
+- `.` (main barrel)
+  - `runCli(argv, options)` — CLI entry. `options` MUST include `{ packageRoot, packageName, packageVersion, assetPath }`.
+  - `injectDocs(options)` — headless programmatic inject (UI-free)
+  - `readHashManifest`, `resolveScope`, `computeNamespacePrefixes`, `isInteractive`, `isValidScope`, `HASH_MANIFEST_FILENAME`
+- `./buildHashes` — `buildHashes({ packageRoot, packageName, packageVersion, assetPath })` produces `<packageRoot>/dist/claude-hashes.json`.
+
+Bin entries: `claude-build-hashes` (convenience standalone bin that parses `process.cwd()/package.json` with the consumer convention `pkg.claude?.assetPath ?? 'claude'`).
+
+## CLI Surface
+
+```
+claude-sync [--scope=user|project] [--dry-run] [--force] [--root=<cwd>]
+```
+
+The library targets exactly one consumer per invocation — the one described by the caller's options. There is no cross-package discovery.
+
+## Consumer Integration Pattern
+
+Each consumer package ships:
+```
+<consumer>/
+  bin/claude-sync.mjs          # reads its own package.json → calls runCli with metadata
+  scripts/build-hashes.mjs     # reads its own package.json → calls buildHashes
+  docs/claude/ (or any dir)    # authored content — caller picks the path
+  dist/claude-hashes.json      # GENERATED at build, publish-included
+```
+
+Recommended stub shape:
+
+```js
+// bin/claude-sync.mjs
+import { runCli } from '@slats/claude-assets-sync';
+import { readFile } from 'node:fs/promises';
+import { dirname, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const packageRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
+const pkg = JSON.parse(
+  await readFile(resolve(packageRoot, 'package.json'), 'utf-8'),
+);
+
+if (
+  typeof pkg.claude?.assetPath === 'string' &&
+  pkg.claude.assetPath.length > 0
+) {
+  runCli(process.argv, {
+    packageRoot,
+    packageName: pkg.name,
+    packageVersion: pkg.version,
+    assetPath: pkg.claude.assetPath,
+  }).catch((err) => {
+    process.stderr.write(
+      `[${pkg.name}] claude-sync failed: ${err instanceof Error ? err.message : String(err)}\n`,
+    );
+    process.exit(1);
+  });
+}
+```
+
+The `claude.assetPath` field in a consumer's `package.json` is a **consumer-side convention**; the library does not enforce or even know about it. Consumers are free to use any field shape and resolve `assetPath` in their stub.
+
+For `--scope=project`, the target `.claude` directory is resolved by walking up from `process.cwd()` and reusing the nearest existing `.claude` ancestor; the CLI logs `(auto-located)` when this happens. If no ancestor owns a `.claude`, it falls back to `process.cwd()/.claude`.
+
+Consumer `package.json` should:
+- `bin: { "claude-sync": "./bin/claude-sync.mjs" }`
+- `files: [..., "bin", "docs" (or wherever assets live), "dist/claude-hashes.json"]`
+- `dependencies: { "@slats/claude-assets-sync": "workspace:^" }` (or the equivalent published range)
+- Include `yarn build:hashes` in the build chain
+- NEVER expose `./bin/*` in `exports` (blocks consumers from accidentally bundling the CLI)
 
 ## Architecture
 
 ```
 src/
-├── index.ts              # CLI 진입점
+├── index.ts                        # public programmatic barrel
+├── commands/
+│   └── runCli/                     # sole CLI surface (default action only)
 ├── core/
-│   ├── cli.ts            # Commander.js CLI 정의
-│   ├── github.ts         # GitHub API 클라이언트
-│   ├── filesystem.ts     # 파일 시스템 관리, .sync-meta.json
-│   ├── sync.ts           # 동기화 오케스트레이션
-│   └── migration.ts      # 마이그레이션 로직
-├── commands/             # sync, add, list, status, remove, migrate 커맨드
-├── components/           # ink 기반 인터랙티브 터미널 UI
-└── utils/                # types, package.json 파싱, logger
+│   ├── hash/                       # sha256 compute / compare
+│   ├── hashManifest/               # dist/claude-hashes.json IO + namespace prefixes
+│   ├── scope/                      # user | project → target dir
+│   ├── buildPlan/                  # copy / skip / warn-diverged / warn-orphan / delete
+│   └── injectDocs/                 # orchestrate plan → apply (UI-free)
+├── prompts/                        # @inquirer/prompts-based selectScope + confirmForce
+└── utils/                          # asyncPool, heartbeat, logger, types, version (organ)
 ```
 
-## Key Details
-- **ink**: 인터랙티브 터미널 UI (TreeSelect, AddCommand, ListCommand 등)
-- **인증**: `GITHUB_TOKEN` 환경변수로 GitHub API rate limit 우회
-- **런타임 의존성 없음**: Node.js 내장 모듈 + `commander`, `picocolors`만 사용
+Each directory is a fractal with `index.ts` barrel + `INTENT.md`; helpers live under `utils/` organs inside each fractal.
+
+## Hash Strategy (Option A)
+
+- `dist/claude-hashes.json` is the sole source of truth (schema v1, `previousVersions: {}` reserved).
+- Consumer-side comparison: copy if missing, skip if equal, warn+require `--force` if different.
+- `--force` in TTY: interactive confirm via `@inquirer/prompts.confirm` shows diverged/orphan file list. Non-TTY: stderr emission + exit 0.
+
+## Boundaries
+
+- `src/core/**` never imports from `src/prompts/`, `src/commands/`, or `src/utils/heartbeat.ts`. Heartbeat is wrapped at the command layer.
+- `src/prompts/` is the sole prompt surface (no ink/react).
+- The library never reads `package.json` or walks the filesystem looking for other packages.
+- `scripts/buildHashes.mjs` stays pure Node ESM (no top-level await) so Rollup can import it if needed; `scripts/claude-build-hashes.mjs` holds the self-executing CLI wrapper.
 
 ## Build Output
-`dist/index.cjs` + `dist/index.mjs` (CLI shebang 포함) + `dist/index.d.ts`
+
+`dist/index.{mjs,cjs,d.ts}` + subpath entrypoints per rollup config.

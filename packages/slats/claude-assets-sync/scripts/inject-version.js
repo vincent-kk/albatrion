@@ -51,7 +51,7 @@ function readPackageVersion() {
  * Generate src/version.ts with current version
  */
 function generateVersionFile(version) {
-  const versionFilePath = join(__dirname, '..', 'src', 'version.ts');
+  const versionFilePath = join(__dirname, '..', 'src', 'utils', 'version.ts');
 
   try {
     // Check if file exists and read current version

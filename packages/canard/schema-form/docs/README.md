@@ -16,7 +16,7 @@ docs/
 │   ├── commands/
 │   │   └── schema-form.md     # /schema-form 커맨드
 │   └── skills/
-│       └── schema-form-expert/  # 전문가 스킬 디렉토리
+│       └── schema-form-skill/   # Claude 스킬 디렉토리
 │           ├── SKILL.md         # 스킬 정의
 │           └── knowledge/       # 지식 베이스
 └── README.md                  # 이 파일
@@ -55,7 +55,7 @@ mkdir -p .claude/commands .claude/skills
 cp node_modules/@canard/schema-form/docs/claude/commands/schema-form.md .claude/commands/
 
 # 스킬 복사
-cp -r node_modules/@canard/schema-form/docs/claude/skills/schema-form-expert .claude/skills/
+cp -r node_modules/@canard/schema-form/docs/claude/skills/schema-form-skill .claude/skills/
 ```
 
 ### 사용 방법
@@ -71,7 +71,7 @@ Claude Code에서 `/schema-form` 커맨드를 사용합니다:
 ### 파일 설명
 
 - **commands/schema-form.md**: `/schema-form` 커맨드 정의
-- **skills/schema-form-expert.md**: schema-form 전문가 스킬 (지식 베이스, 응답 가이드라인)
+- **skills/schema-form-skill/**: schema-form Claude 스킬 (지식 베이스, 응답 가이드라인)
 
 ---
 

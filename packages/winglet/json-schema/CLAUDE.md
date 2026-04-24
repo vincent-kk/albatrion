@@ -39,6 +39,26 @@ yarn version:major
 yarn publish:npm
 ```
 
+## Claude Docs Injector
+
+`docs/claude/` 자산을 사용자 `.claude` 디렉터리로 주입하는 얇은 CLI 스텁. 엔진: `@slats/claude-assets-sync`.
+
+```bash
+npx claude-sync --scope=user                 # ~/.claude
+npx claude-sync --scope=project              # cwd 에서 위로 탐색해 첫 기존 .claude
+npx claude-sync --scope=local                # 동일 규칙, gitignored 영역
+npx claude-sync --scope=user --dry-run       # 미리보기
+npx claude-sync --scope=user --force         # 로컬 수정 덮어쓰기
+
+npx -p @winglet/json-schema claude-sync --scope=user  # transitive-dep 환경
+```
+
+### Isolation Guardrails
+
+- `src/**` 는 `bin/**`, `docs/**`, `@slats/claude-assets-sync` 어느 것도 import 금지.
+- **절대 `exports` 에 `./bin/*` 를 추가하지 말 것.**
+- `yarn depcheck` 로 CI 에서 격리 회귀 검증.
+
 ## Architecture Overview
 
 This is a TypeScript library for JSON Schema manipulation with these core architectural patterns:
