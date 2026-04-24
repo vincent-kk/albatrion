@@ -5,7 +5,7 @@
 
 ## Structure
 
-- `selectScope.ts` — scope picker (user / project / local)
+- `selectScope.ts` — scope picker (user / project)
 - `confirmForce.ts` — 발산/고아 파일 리스트를 포함한 Y/N 확인
 - `index.ts` — 배럴 export
 

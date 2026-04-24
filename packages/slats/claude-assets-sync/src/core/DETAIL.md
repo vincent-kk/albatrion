@@ -9,7 +9,7 @@
     거부 시 파일시스템 변경 없이 `InjectReport.exitCode === 2` 반환.
   - 비상호작용: 발산 파일 리스트가 stderr 로 방출되고 플랜은 적용된다.
 - `--dry-run` 은 플랜 출력 이후 짧게 리턴; exit code 0.
-- `resolveScope` 는 `project` / `local` 에 대해 가장 가까운 조상 `.claude`
+- `resolveScope` 는 `project` 에 대해 가장 가까운 조상 `.claude`
   를 자동 탐지하고 해당 시 description 에 `(auto-located)` 태그 부착.
 - `readHashManifest` 는 `schemaVersion !== 1` 을 명시적 오류로 거부.
 - `buildPlan` orphan 탐지는 제공된 `namespacePrefixes`(현재 `skills/<name>/`)

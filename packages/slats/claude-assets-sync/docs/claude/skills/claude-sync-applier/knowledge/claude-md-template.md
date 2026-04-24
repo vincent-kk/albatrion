@@ -24,7 +24,6 @@ directory. Engine: `@slats/claude-assets-sync`.
 ```bash
 npx claude-sync --scope=user                 # ~/.claude
 npx claude-sync --scope=project              # nearest existing .claude walking up from cwd
-npx claude-sync --scope=local                # same rule, gitignored area
 npx claude-sync --scope=user --dry-run       # preview
 npx claude-sync --scope=user --force         # overwrite local edits
 

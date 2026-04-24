@@ -25,7 +25,10 @@ export async function runCli(
       "Inject this package's assets into the target .claude directory",
     )
     .version(options.version ?? VERSION)
-    .option('--scope <scope>', 'Target: user | project | local')
+    .option(
+      '--scope <scope>',
+      'Target scope: user (~/.claude) | project (nearest ancestor .claude or <cwd>/.claude)',
+    )
     .option('--dry-run', 'Preview without writing', false)
     .option('--force', 'Overwrite user modifications', false)
     .option('--root <path>', 'Override scope resolution cwd (default: cwd)')

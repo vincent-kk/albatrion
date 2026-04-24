@@ -24,7 +24,7 @@ describe('selectScopeAsync', () => {
     expect(result).toBe('project');
   });
 
-  it('forwards a choices array containing user, project, and local', async () => {
+  it('forwards a choices array containing user and project', async () => {
     vi.mocked(select).mockResolvedValueOnce('user' as never);
     await selectScopeAsync();
 
@@ -33,11 +33,11 @@ describe('selectScopeAsync', () => {
       choices: { value: string }[];
     };
     const values = call.choices.map((c) => c.value);
-    expect(values).toEqual(['user', 'project', 'local']);
+    expect(values).toEqual(['user', 'project']);
   });
 
   it('applies color to the select message via picocolors', async () => {
-    vi.mocked(select).mockResolvedValueOnce('local' as never);
+    vi.mocked(select).mockResolvedValueOnce('project' as never);
     await selectScopeAsync();
     const call = vi.mocked(select).mock.calls[0][0] as { message: string };
     // picocolors bold wraps with SGR 1; message must include the literal text.

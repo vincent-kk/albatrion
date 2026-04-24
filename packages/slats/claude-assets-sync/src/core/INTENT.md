@@ -13,7 +13,7 @@ Claude docs 주입용 헤드리스·UI 없는 엔진. 5개 leaf fractal(`hash`,
 - `index.ts` — 모든 public 심볼을 재-export 하는 집계 배럴
 - `hash/` — SHA-256 콘텐츠 프리미티브
 - `hashManifest/` — `dist/claude-hashes.json` IO + 네임스페이스 prefix
-- `scope/` — `user | project | local` → 타겟 경로 해석
+- `scope/` — `user | project` → 타겟 경로 해석
 - `buildPlan/` — 플랜 빌더 (copy / skip / diverged / orphan / delete)
 - `injectDocs/` — 동시성 풀로 플랜을 적용하는 오케스트레이터 (`injectDocs`)
 

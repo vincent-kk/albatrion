@@ -113,9 +113,9 @@ Plus `"sideEffects": false` in `package.json`. The guardrails ensure the CLI eng
 | User has no consumer installed | `npx @slats/claude-assets-sync --package=@your-scope/your-package --scope=user` |
 | Multiple consumers discovered | `npx claude-sync --package=@your-scope/your-package` *or* `npx claude-sync --all` |
 
-### Scope resolution (project / local)
+### Scope resolution (project)
 
-For `--scope=project` and `--scope=local`, the target `.claude` directory is resolved by walking up from `process.cwd()` and reusing the first existing `.claude` directory found. Only if no ancestor owns a `.claude` does the CLI fall back to `process.cwd()/.claude`.
+For `--scope=project`, the target `.claude` directory is resolved by walking up from `process.cwd()` and reusing the first existing `.claude` directory found. Only if no ancestor owns a `.claude` does the CLI fall back to `process.cwd()/.claude`.
 
 ```
 workspace/

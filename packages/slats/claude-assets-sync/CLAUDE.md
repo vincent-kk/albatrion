@@ -23,7 +23,7 @@ Bin entries: `claude-build-hashes` (convenience standalone bin that parses `proc
 ## CLI Surface
 
 ```
-claude-sync [--scope=user|project|local] [--dry-run] [--force] [--root=<cwd>]
+claude-sync [--scope=user|project] [--dry-run] [--force] [--root=<cwd>]
 ```
 
 The library targets exactly one consumer per invocation — the one described by the caller's options. There is no cross-package discovery.
@@ -73,7 +73,7 @@ if (
 
 The `claude.assetPath` field in a consumer's `package.json` is a **consumer-side convention**; the library does not enforce or even know about it. Consumers are free to use any field shape and resolve `assetPath` in their stub.
 
-For `--scope=project` / `--scope=local`, the target `.claude` directory is resolved by walking up from `process.cwd()` and reusing the nearest existing `.claude` ancestor; the CLI logs `(auto-located)` when this happens. If no ancestor owns a `.claude`, it falls back to `process.cwd()/.claude`.
+For `--scope=project`, the target `.claude` directory is resolved by walking up from `process.cwd()` and reusing the nearest existing `.claude` ancestor; the CLI logs `(auto-located)` when this happens. If no ancestor owns a `.claude`, it falls back to `process.cwd()/.claude`.
 
 Consumer `package.json` should:
 - `bin: { "claude-sync": "./bin/claude-sync.mjs" }`
@@ -92,7 +92,7 @@ src/
 ├── core/
 │   ├── hash/                       # sha256 compute / compare
 │   ├── hashManifest/               # dist/claude-hashes.json IO + namespace prefixes
-│   ├── scope/                      # user | project | local → target dir
+│   ├── scope/                      # user | project → target dir
 │   ├── buildPlan/                  # copy / skip / warn-diverged / warn-orphan / delete
 │   └── injectDocs/                 # orchestrate plan → apply (UI-free)
 ├── prompts/                        # @inquirer/prompts-based selectScope + confirmForce

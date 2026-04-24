@@ -23,6 +23,7 @@ export async function confirmForceAsync(
   if (extra > 0) {
     process.stderr.write(`  ${pc.dim(`... and ${extra} more`)}\n`);
   }
+  process.stderr.write('\n');
 
   const answer = await confirm({
     message: pc.bold('Do you have these in git? Proceed?'),

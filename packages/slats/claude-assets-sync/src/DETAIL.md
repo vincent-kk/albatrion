@@ -4,7 +4,7 @@
 
 - 컨슈머 패키지는 `claude-sync` bin(3줄 re-export 스텁)을 노출하여
   `package.json` 의 `claude.assetPath` 로 sibling 패키지를 발견하고
-  `docs/claude/**` 를 사용자 선택 스코프(`user` / `project` / `local`)에 주입한다.
+  `docs/claude/**` 를 사용자 선택 스코프(`user` / `project`)에 주입한다.
 - `claude-sync` 는 `list` 와 `build-hashes` 하위 커맨드도 제공한다.
 - 파일 단위 SHA-256 비교: 부재 시 복사, 일치 시 skip, 불일치 시 경고 후
   `--force` 요구 (Option A: 사용자 편집/버전 변경 구분 없음).

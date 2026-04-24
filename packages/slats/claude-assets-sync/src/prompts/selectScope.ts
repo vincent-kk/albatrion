@@ -12,12 +12,7 @@ const CHOICES: { name: string; value: Scope; description: string }[] = [
   {
     name: 'project',
     value: 'project',
-    description: '<cwd>/.claude (committed alongside the project)',
-  },
-  {
-    name: 'local',
-    value: 'local',
-    description: '<cwd>/.claude (expected to be gitignored)',
+    description: 'nearest ancestor .claude (or <cwd>/.claude)',
   },
 ];
 

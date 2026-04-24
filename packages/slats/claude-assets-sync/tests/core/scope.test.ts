@@ -59,18 +59,6 @@ describe('core/scope — walk-up .claude resolver', () => {
     const res = resolveScope('project', deep);
     expect(res.targetRoot).toBe(join(tmp, '.claude'));
     expect(res.description).toContain('auto-located');
-    expect(res.isGitIgnoredRegion).toBe(false);
-  });
-
-  it('resolveScope("local") auto-locates and preserves gitignored flag', async () => {
-    await mkdir(join(tmp, '.claude'), { recursive: true });
-    const deep = join(tmp, 'packages', 'b');
-    await mkdir(deep, { recursive: true });
-
-    const res = resolveScope('local', deep);
-    expect(res.targetRoot).toBe(join(tmp, '.claude'));
-    expect(res.description).toContain('auto-located');
-    expect(res.isGitIgnoredRegion).toBe(true);
   });
 
   it('resolveScope("user") is unchanged by walk-up logic', async () => {

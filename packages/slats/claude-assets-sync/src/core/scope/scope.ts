@@ -3,17 +3,16 @@ import { dirname, join } from 'node:path';
 
 import { isDirectory } from './utils/isDirectory.js';
 
-export type Scope = 'user' | 'project' | 'local';
+export type Scope = 'user' | 'project';
 
 export interface ScopeResolution {
   scope: Scope;
   targetRoot: string;
-  isGitIgnoredRegion: boolean;
   description: string;
 }
 
 export function isValidScope(value: unknown): value is Scope {
-  return value === 'user' || value === 'project' || value === 'local';
+  return value === 'user' || value === 'project';
 }
 
 /**
@@ -40,30 +39,18 @@ export function resolveScope(
     return {
       scope,
       targetRoot: join(homedir(), '.claude'),
-      isGitIgnoredRegion: false,
       description: '~/.claude (user)',
     };
   }
   const ancestor = findNearestDotClaudeAncestor(cwd);
   const base = ancestor ?? cwd;
-  const autoLocated = ancestor !== null;
-  if (scope === 'project') {
-    return {
-      scope,
-      targetRoot: join(base, '.claude'),
-      isGitIgnoredRegion: false,
-      description: autoLocated
-        ? `${base}/.claude (project, auto-located)`
-        : `${base}/.claude (project)`,
-    };
-  }
   return {
     scope,
     targetRoot: join(base, '.claude'),
-    isGitIgnoredRegion: true,
-    description: autoLocated
-      ? `${base}/.claude (local, auto-located, expected to be gitignored)`
-      : `${base}/.claude (local, expected to be gitignored)`,
+    description:
+      ancestor !== null
+        ? `${base}/.claude (project, auto-located)`
+        : `${base}/.claude (project)`,
   };
 }
 

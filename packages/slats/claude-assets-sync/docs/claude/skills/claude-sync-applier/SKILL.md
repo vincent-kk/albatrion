@@ -18,7 +18,7 @@ targets exactly one consumer — it does not discover other packages.
 **Outcome**
 
 ```bash
-npx <PACKAGE_NAME> claude-sync --scope=user|project|local [--dry-run] [--force] [--root=<cwd>]
+npx <PACKAGE_NAME> claude-sync --scope=user|project [--dry-run] [--force] [--root=<cwd>]
 ```
 
 ## Role

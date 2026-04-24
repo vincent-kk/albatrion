@@ -5,7 +5,7 @@
 - `runCli` is the sole CLI entry. It receives the consumer's package
   metadata (`packageRoot`, `packageName`, `packageVersion`, `assetPath`) from
   the caller and never reads `package.json` itself.
-- Default inject flags: `--scope <user|project|local>`, `--dry-run`,
+- Default inject flags: `--scope <user|project>`, `--dry-run`,
   `--force`, `--root`.
 - When `--scope` is omitted: TTY opens `selectScopeAsync`, non-TTY prints
   an error and exits with code 2.

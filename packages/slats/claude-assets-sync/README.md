@@ -19,7 +19,7 @@ yarn add -D @slats/claude-assets-sync
 ## CLI Surface
 
 ```
-claude-sync [--scope=user|project|local] [--dry-run] [--force]
+claude-sync [--scope=user|project] [--dry-run] [--force]
 ```
 
 Each consumer package exposes its own `claude-sync` bin entry (see [Consumer Integration](#consumer-integration-3-steps) below). When invoked, the engine operates on exactly one consumer — the one whose metadata was passed by the stub. There is no cross-package discovery.
@@ -28,13 +28,12 @@ Each consumer package exposes its own `claude-sync` bin entry (see [Consumer Int
 |---|---|
 | `--scope=user` | `~/.claude` (applies globally) |
 | `--scope=project` | nearest ancestor `.claude` directory, or `<cwd>/.claude` if none found |
-| `--scope=local` | same path resolution as `project`, expected to be gitignored |
 | `--dry-run` | print the copy / skip / warn plan, no writes |
 | `--force` | overwrite diverged files & delete orphans (interactive confirm on TTY) |
 
 **Exit codes**: `0` success / up-to-date / dry-run, `1` runtime error, `2` user / configuration error (e.g. missing `--scope` in non-TTY, invalid `assetPath`).
 
-For `--scope=project` / `--scope=local` the target `.claude` directory is resolved by walking up from `process.cwd()` to the nearest existing `.claude` ancestor; the CLI logs `(auto-located)` when this happens.
+For `--scope=project` the target `.claude` directory is resolved by walking up from `process.cwd()` to the nearest existing `.claude` ancestor; the CLI logs `(auto-located)` when this happens.
 
 ## Consumer Integration (3 steps)
 

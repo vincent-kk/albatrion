@@ -2,8 +2,8 @@
 
 ## Purpose
 
-`user | project | local` 스코프 토큰을 절대 경로 타겟 디렉토리(`targetRoot`)와
-사용자 대상 메타데이터로 변환한다. `project` / `local` 은 `cwd` 에서 위로 올라가며
+`user | project` 스코프 토큰을 절대 경로 타겟 디렉토리(`targetRoot`)와
+사용자 대상 메타데이터로 변환한다. `project` 는 `cwd` 에서 위로 올라가며
 가장 가까운 기존 `.claude` 조상을 재사용한다.
 
 ## Structure
@@ -21,7 +21,7 @@
 
 ### Ask first
 
-- `user | project | local` 이외의 스코프 추가
+- `user | project` 이외의 스코프 추가
 - walk-up 정책 변경 (예: repo 루트에서 중단, `.git` 경계 존중)
 
 ### Never do
