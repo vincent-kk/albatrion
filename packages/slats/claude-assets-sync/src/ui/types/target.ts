@@ -1,6 +1,6 @@
+import type { ConsumerPackage } from '../../commands/runCli/type.js';
 import type { InjectPlan } from '../../core/buildPlan/index.js';
 import type { ScopeResolution } from '../../core/index.js';
-import type { ConsumerPackage } from '../../commands/runCli/type.js';
 
 export interface PlanStepState {
   readonly packageName: string;

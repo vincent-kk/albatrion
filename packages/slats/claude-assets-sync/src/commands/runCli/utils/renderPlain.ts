@@ -1,14 +1,14 @@
+import type { InjectPlan } from '../../../core/buildPlan/index.js';
 import {
+  type InjectReport,
+  type Scope,
   applyAction,
   buildPlan,
   computeNamespacePrefixes,
   readHashManifest,
   resolveScope,
   summarize,
-  type InjectReport,
-  type Scope,
 } from '../../../core/index.js';
-import type { InjectPlan } from '../../../core/buildPlan/index.js';
 import { asyncPool } from '../../../utils/asyncPool.js';
 import { logger } from '../../../utils/logger.js';
 import type { ConsumerPackage, DefaultFlags } from '../type.js';
@@ -76,9 +76,7 @@ async function renderOneTarget(
     force: flags.force ?? false,
   });
 
-  logger.info(
-    `${target.name}@${target.version} → ${resolution.description}`,
-  );
+  logger.info(`${target.name}@${target.version} → ${resolution.description}`);
   printPlan(plan);
 
   if (plan.requiresForce && !flags.force) {
@@ -131,6 +129,5 @@ function emitForceList(plan: InjectPlan): void {
   process.stderr.write(
     `[claude-assets-sync] --force overwriting ${divergent.length} file(s) in non-TTY mode:\n`,
   );
-  for (const action of divergent)
-    process.stderr.write(`  ${action.relPath}\n`);
+  for (const action of divergent) process.stderr.write(`  ${action.relPath}\n`);
 }

@@ -1,5 +1,5 @@
-import type { ConsumerPackage, DefaultFlags } from '../type.js';
 import type { RenderInput } from '../../../ui/types/index.js';
+import type { ConsumerPackage, DefaultFlags } from '../type.js';
 import { renderPlain } from './renderPlain.js';
 
 interface UiModule {

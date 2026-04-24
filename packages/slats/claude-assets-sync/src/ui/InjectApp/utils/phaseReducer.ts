@@ -19,7 +19,10 @@ export function phaseReducer(phase: Phase, event: InjectEvent): Phase {
     }
     case 'planning-started': {
       const progress = new Map<string, PlanStepState>(
-        event.targets.map((t) => [t.name, { packageName: t.name, status: 'pending' }]),
+        event.targets.map((t) => [
+          t.name,
+          { packageName: t.name, status: 'pending' },
+        ]),
       );
       return {
         kind: 'planning',
@@ -48,7 +51,8 @@ export function phaseReducer(phase: Phase, event: InjectEvent): Phase {
       return { ...phase, focusedIndex: event.index };
     }
     case 'force-confirm-required': {
-      if (phase.kind !== 'diff-review' && phase.kind !== 'applying') return phase;
+      if (phase.kind !== 'diff-review' && phase.kind !== 'applying')
+        return phase;
       return {
         kind: 'force-confirm',
         plans: phase.kind === 'diff-review' ? phase.plans : phase.plans,
@@ -74,14 +78,18 @@ export function phaseReducer(phase: Phase, event: InjectEvent): Phase {
         plans: phase.plans,
         progress: {
           done: 0,
-          total: phase.plans.reduce((acc, tp) => acc + tp.plan.actions.length, 0),
+          total: phase.plans.reduce(
+            (acc, tp) => acc + tp.plan.actions.length,
+            0,
+          ),
           startedAt: Date.now(),
         },
         scope: phase.scope,
       };
     }
     case 'apply-start': {
-      if (phase.kind !== 'diff-review' && phase.kind !== 'force-confirm') return phase;
+      if (phase.kind !== 'diff-review' && phase.kind !== 'force-confirm')
+        return phase;
       const plans = phase.kind === 'diff-review' ? phase.plans : phase.plans;
       return {
         kind: 'applying',

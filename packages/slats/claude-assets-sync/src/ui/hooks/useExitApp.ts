@@ -1,5 +1,5 @@
-import { useEffect } from 'react';
 import { useApp } from 'ink';
+import { useEffect } from 'react';
 
 interface UseExitAppOptions {
   readonly enabled: boolean;

@@ -23,9 +23,10 @@
 - Batch mode (scope alias or multiple resolved consumers): asset-missing
   warns and is skipped; per-target failure continues; post-loop exits 1
   iff any target failed.
-- Scope enumeration walks `<monorepo>/packages/<scope>/*`; directory
-  names may diverge from package names (authoritative = `package.json`
-  `name` field).
+- Scope enumeration walks every ancestor `<cwd>/node_modules/@<scope>/*`
+  upward to the filesystem root; directory names may diverge from
+  declared package names (authoritative = `package.json` `name` field),
+  and nearest-wins dedup resolves nested install layouts.
 - Scope enumeration is confined to `utils/resolveScopeAlias.ts` — no
   other file in `runCli/**` reads sibling `package.json` files.
 - Resolved targets are deduped by `packageName` before rendering.

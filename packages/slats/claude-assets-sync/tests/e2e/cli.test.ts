@@ -11,8 +11,9 @@ const REPO_ROOT = resolve(__dirname, '../../../../..');
 
 // Every CLI invocation runs with `--dry-run` so no file is ever written to
 // the target `.claude/` directory. `--scope=project` satisfies the non-TTY
-// scope requirement; `--root REPO_ROOT` pins scope resolution to the
-// monorepo root so scope-alias enumeration finds `packages/<scope>/*`.
+// scope requirement; `--root REPO_ROOT` pins the scope-alias ancestor
+// walk to the albatrion root, where yarn workspaces hoist the `@winglet/*`
+// consumer packages as symlinks under `node_modules/@winglet/`.
 function runCli(packageArgs: readonly string[]) {
   return spawnSync(
     process.execPath,

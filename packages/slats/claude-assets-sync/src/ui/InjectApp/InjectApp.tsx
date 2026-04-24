@@ -1,5 +1,7 @@
-import { useCallback } from 'react';
 import { Box, Text } from 'ink';
+import { useCallback } from 'react';
+
+import { VERSION } from '@/claude-assets-sync/utils/version.js';
 
 import { Banner } from '../components/Banner.js';
 import { ConfirmForce } from '../components/ConfirmForce.js';
@@ -17,10 +19,8 @@ import { usePhase } from '../hooks/usePhase.js';
 import { colors } from '../theme/colors.js';
 import { icons } from '../theme/icons.js';
 import type { Phase } from '../types/index.js';
-import type { InjectAppProps } from './utils/type.js';
 import { etaSeconds, scopeLabel } from './utils/eventSelectors.js';
-
-const VERSION = '0.3.0';
+import type { InjectAppProps } from './utils/type.js';
 
 export function InjectApp(props: InjectAppProps): React.ReactElement {
   const { targets, flags, originCwd, onExit } = props;
@@ -104,8 +104,7 @@ function renderPhaseBody(phase: Phase): React.ReactNode {
                 <Text>{step.packageName}</Text>
                 {step.error ? (
                   <Text color={colors.danger} dimColor>
-                    {'  '}
-                    ({step.error})
+                    {'  '}({step.error})
                   </Text>
                 ) : null}
               </Box>

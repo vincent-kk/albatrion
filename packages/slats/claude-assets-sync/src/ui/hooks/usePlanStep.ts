@@ -2,11 +2,11 @@ import { useEffect, useRef } from 'react';
 
 import type { ConsumerPackage } from '../../commands/runCli/type.js';
 import {
+  type Scope,
   buildPlan,
   computeNamespacePrefixes,
   readHashManifest,
   resolveScope,
-  type Scope,
 } from '../../core/index.js';
 import type { InjectEvent, TargetPlan, Warning } from '../types/index.js';
 
@@ -16,7 +16,10 @@ interface UsePlanStepOptions {
   readonly originCwd: string;
   readonly force: boolean;
   readonly dispatch: (event: InjectEvent) => void;
-  readonly onPlansReady: (plans: readonly TargetPlan[], warnings: readonly Warning[]) => void;
+  readonly onPlansReady: (
+    plans: readonly TargetPlan[],
+    warnings: readonly Warning[],
+  ) => void;
 }
 
 export function usePlanStep({
@@ -65,7 +68,10 @@ export function usePlanStep({
           });
           results.push({ target, scope: scopeResolution, plan });
           for (const action of plan.actions) {
-            if (action.kind === 'warn-diverged' || action.kind === 'warn-orphan') {
+            if (
+              action.kind === 'warn-diverged' ||
+              action.kind === 'warn-orphan'
+            ) {
               warnings.push({
                 packageName: target.name,
                 kind: action.kind,

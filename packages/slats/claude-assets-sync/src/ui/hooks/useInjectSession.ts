@@ -1,6 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-import type { ConsumerPackage, DefaultFlags } from '../../commands/runCli/type.js';
+import type {
+  ConsumerPackage,
+  DefaultFlags,
+} from '../../commands/runCli/type.js';
 import type { Scope } from '../../core/index.js';
 import type { InjectEvent, TargetPlan, Warning } from '../types/index.js';
 import { applyAllPlans } from './useApplyStep.js';

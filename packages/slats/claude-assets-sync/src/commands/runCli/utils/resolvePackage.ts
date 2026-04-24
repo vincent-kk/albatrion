@@ -24,8 +24,8 @@ export interface ResolvePackageOptions {
 
 // Dispatcher exception to the src/core purity rule: the bin layer is
 // allowed to read the package.json of ONE explicitly-named target.
-// Never walks node_modules for siblings; never enumerates workspaces.
-// Scope-alias enumeration is confined to `resolveScopeAlias.ts`.
+// Never walks node_modules for siblings; sibling enumeration is
+// confined to `resolveScopeAlias.ts`.
 export async function resolvePackage(
   name: string,
   options: ResolvePackageOptions = {},

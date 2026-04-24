@@ -12,13 +12,15 @@ import { toConsumerPackages } from './utils/toConsumerPackages.js';
  *
  * The `inject-claude-settings` dispatcher parses `--package <name...>`
  * from argv and classifies each value:
- * - `@<scope>` — enumerate every workspace package under that scope
+ * - `@<scope>` — enumerate every installed `node_modules/@<scope>/*`
+ *   package that declares `claude.assetPath`
  * - `@<scope>/<name>` — one scoped package
  * - `<name>` — one unscoped package
  *
  * Targets are resolved via Node module resolution (`resolvePackage`)
  * except for scope aliases, which are the only path allowed to walk
- * the monorepo — that exception is isolated to `resolveScopeAlias.ts`.
+ * `node_modules` siblings — that exception is isolated to
+ * `resolveScopeAlias.ts`.
  */
 export async function runCli(
   argv: readonly string[] = process.argv,

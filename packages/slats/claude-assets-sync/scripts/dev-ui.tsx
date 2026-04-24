@@ -15,10 +15,9 @@ import { TargetCard } from '../src/ui/components/TargetCard.js';
 import { colors } from '../src/ui/theme/colors.js';
 import { icons } from '../src/ui/theme/icons.js';
 import type { Phase } from '../src/ui/types/index.js';
+import { VERSION } from '../src/utils/version.js';
 
 import { buildPhase, PHASES, type PhaseKey } from './dev-ui-fixtures.js';
-
-const VERSION = '0.3.0-dev';
 
 interface CliArgs {
   mode: 'usage' | 'phase' | 'tour';

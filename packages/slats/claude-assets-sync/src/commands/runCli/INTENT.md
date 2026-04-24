@@ -6,8 +6,8 @@ Sole `inject-claude-settings` CLI driver. Parses `--package <name...>`
 from argv — each value is a scope alias (`@<scope>`), a scoped package
 (`@<scope>/<name>`), or an unscoped package (`<name>`). Resolves every
 target and delegates rendering to Ink (`ui/`) on TTY or `renderPlain`
-on non-TTY / `--json`. Workspace enumeration is confined to
-`utils/resolveScopeAlias.ts`.
+on non-TTY / `--json`. Scope-alias `node_modules/@<scope>/*`
+enumeration is confined to `utils/resolveScopeAlias.ts`.
 
 ## Structure
 
@@ -38,9 +38,8 @@ on non-TTY / `--json`. Workspace enumeration is confined to
 
 ### Never do
 
-- Walk `node_modules` or yarn workspaces outside
-  `utils/resolveScopeAlias.ts`. That file is the SOLE enumeration
-  exception.
+- Walk `node_modules` outside `utils/resolveScopeAlias.ts`. That file
+  is the SOLE enumeration exception.
 - Import from `ui/` statically. Only `utils/renderOrFallback.ts` may
   dynamic-import it.
 - Import from `core/` internals; always go through `core/index.ts`.

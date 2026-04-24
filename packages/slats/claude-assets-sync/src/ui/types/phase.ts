@@ -1,6 +1,11 @@
 import type { ConsumerPackage } from '../../commands/runCli/type.js';
 import type { InjectReport, Scope } from '../../core/index.js';
-import type { ApplyProgress, PlanStepState, TargetPlan, Warning } from './target.js';
+import type {
+  ApplyProgress,
+  PlanStepState,
+  TargetPlan,
+  Warning,
+} from './target.js';
 
 export type Phase =
   | { readonly kind: 'booting' }

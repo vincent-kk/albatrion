@@ -34,6 +34,5 @@ Ink UI layer (`ui/`); non-TTY and `--json` invocations use
 - Import from `ui/` statically; only `runCli/utils/renderOrFallback.ts`
   may dynamic-import it
 - Reach into a sub-fractal's internal files; always use its `index.ts`
-- Walk `node_modules` or enumerate workspaces outside
-  `runCli/utils/resolveScopeAlias.ts`. That file is the SOLE
-  workspace-enumeration exception.
+- Walk `node_modules` outside `runCli/utils/resolveScopeAlias.ts`.
+  That file is the SOLE `node_modules`-enumeration exception.

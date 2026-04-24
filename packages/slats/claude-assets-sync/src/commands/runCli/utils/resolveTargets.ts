@@ -1,6 +1,6 @@
 import { logger } from '../../../utils/logger.js';
 import { classifyTarget } from './classifyTarget.js';
-import { resolvePackage, type ResolvedMetadata } from './resolvePackage.js';
+import { type ResolvedMetadata, resolvePackage } from './resolvePackage.js';
 import { resolveScopeAlias } from './resolveScopeAlias.js';
 
 /**

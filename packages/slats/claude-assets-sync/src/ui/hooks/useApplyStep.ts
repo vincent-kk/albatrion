@@ -1,5 +1,5 @@
-import { applyAction, summarize } from '../../core/injectDocs/index.js';
 import type { InjectReport } from '../../core/index.js';
+import { applyAction, summarize } from '../../core/injectDocs/index.js';
 import { asyncPool } from '../../utils/asyncPool.js';
 import type { InjectEvent, TargetPlan } from '../types/index.js';
 

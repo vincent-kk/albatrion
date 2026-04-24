@@ -4,9 +4,9 @@ Engine + dispatcher CLI that lets any npm package ship its own Claude Code docs 
 
 ## Overview
 
-A consumer package declares `claude.assetPath` in `package.json` and runs `claude-build-hashes` during build to emit `dist/claude-hashes.json`. End users run `npx -p @slats/claude-assets-sync inject-claude-settings --package=<name>` and this engine resolves that single package's metadata via `createRequire`, compares the hash manifest against the target `.claude/`, and copies only what is out of date.
+A consumer package declares `claude.assetPath` in `package.json` and runs `claude-build-hashes` during build to emit `dist/claude-hashes.json`. End users run `npx -p @slats/claude-assets-sync inject-claude-settings --package=<name>` and this engine resolves each consumer's metadata, compares its hash manifest against the target `.claude/`, and copies only what is out of date.
 
-The library operates on exactly one consumer per invocation — the one named in `--package`. It never walks `node_modules` for siblings; it never enumerates workspaces.
+`--package` accepts a scoped name (`@scope/pkg`), an unscoped name (`pkg`), or a **scope alias** (`@scope` with no slash) that fans out to every installed `node_modules/@scope/*` package declaring `claude.assetPath`. Single-target resolution uses `createRequire`; scope-alias enumeration walks ancestor `node_modules/@<scope>/` directories from `cwd` upward and is isolated to `runCli/utils/resolveScopeAlias.ts`.
 
 No GitHub fetch, no `.sync-meta.json`, no migrations — the consumer's `dist/claude-hashes.json` is the single source of truth.
 
@@ -30,12 +30,16 @@ claude-build-hashes
 The engine is not shipped as a runtime dependency of consumers. Always invoke via `npx -p @slats/claude-assets-sync ...`; the package manager fetches and caches the engine on demand.
 
 ```bash
+# Single consumer:
 npx -p @slats/claude-assets-sync inject-claude-settings --package=@canard/schema-form --scope=user
+
+# Scope alias — every installed @winglet/* that declares claude.assetPath:
+npx -p @slats/claude-assets-sync inject-claude-settings --package=@winglet --scope=user
 ```
 
 | Flag | Meaning |
 |---|---|
-| `--package <name>` | **Required.** Scoped npm name of a consumer that declares `claude.assetPath`. |
+| `--package <name>` | **Required.** Repeatable/comma-separable. Accepts `@scope/pkg`, `pkg`, or a scope alias `@scope` (fans out to every installed `node_modules/@scope/*` with `claude.assetPath`). |
 | `--scope=user` | `~/.claude` (applies globally). |
 | `--scope=project` | Nearest ancestor `.claude` directory, or `<cwd>/.claude` if none found. |
 | `--dry-run` | Print the copy / skip / warn plan, no writes. |

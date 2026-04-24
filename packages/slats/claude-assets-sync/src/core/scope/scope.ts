@@ -53,4 +53,3 @@ export function resolveScope(
         : `${base}/.claude (project)`,
   };
 }
-
