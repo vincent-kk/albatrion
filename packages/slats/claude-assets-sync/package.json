@@ -1,6 +1,6 @@
 {
   "name": "@slats/claude-assets-sync",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Shared CLI engine that lets consumer packages inject their Claude docs (skills, rules, commands) into a user's .claude directory via a thin bin/inject-docs wrapper.",
   "keywords": [
     "claude",
