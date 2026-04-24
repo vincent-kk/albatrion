@@ -76,6 +76,27 @@ await withTimeout(fetchData(), 5000); // throws TimeoutError if >5s
 - `InvalidTypeError` — type validation failures
 - `TimeoutError` — timeout scenarios
 
+## Claude Code Integration
+
+`@winglet/common-utils` ships Claude Code assets — the `common-utils-skill` expert skill and its knowledge base covering array, async, filter, function, math, and object utilities — under `docs/claude/`. They are published alongside the package so AI assistants can reason about utility usage with package-specific context.
+
+Inject those assets into your local Claude Code environment with the bundled `claude-sync` CLI (engine: `@slats/claude-assets-sync`):
+
+```bash
+# Direct dependency — bin is hoisted to your project's .bin
+npx claude-sync --scope=user         # inject into ~/.claude (user-level)
+npx claude-sync --scope=project      # inject into the nearest existing .claude, walking up from cwd
+
+# Preview / overwrite flags
+npx claude-sync --scope=user --dry-run   # show the plan without writing
+npx claude-sync --scope=user --force     # overwrite locally-modified files
+
+# Transitive dependency — pin the package explicitly
+npx -p @winglet/common-utils claude-sync --scope=user
+```
+
+The CLI is a thin stub: it reads `@winglet/common-utils`'s own `package.json`, resolves `claude.assetPath` (`docs/claude`), and copies the tree into the selected `.claude` directory with hash-based change detection (skip unchanged, warn on divergence, require `--force` to overwrite).
+
 <ForAI>
 
 ## AI Reference

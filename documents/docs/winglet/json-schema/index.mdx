@@ -81,6 +81,27 @@ isObjectSchema({ type: 'object', properties: {} }); // true
 isArraySchema({ type: 'array', items: {} });         // true
 ```
 
+## Claude Code Integration
+
+`@winglet/json-schema` ships Claude Code assets — the `json-schema-skill` expert skill and its knowledge base covering schema scanner, filter type guards, and reference resolution — under `docs/claude/`. They are published alongside the package so AI assistants can reason about schema traversal and `$ref` handling with package-specific context.
+
+Inject those assets into your local Claude Code environment with the bundled `claude-sync` CLI (engine: `@slats/claude-assets-sync`):
+
+```bash
+# Direct dependency — bin is hoisted to your project's .bin
+npx claude-sync --scope=user         # inject into ~/.claude (user-level)
+npx claude-sync --scope=project      # inject into the nearest existing .claude, walking up from cwd
+
+# Preview / overwrite flags
+npx claude-sync --scope=user --dry-run   # show the plan without writing
+npx claude-sync --scope=user --force     # overwrite locally-modified files
+
+# Transitive dependency — pin the package explicitly
+npx -p @winglet/json-schema claude-sync --scope=user
+```
+
+The CLI is a thin stub: it reads `@winglet/json-schema`'s own `package.json`, resolves `claude.assetPath` (`docs/claude`), and copies the tree into the selected `.claude` directory with hash-based change detection (skip unchanged, warn on divergence, require `--force` to overwrite).
+
 <ForAI>
 
 ## AI Reference
