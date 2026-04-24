@@ -46,8 +46,6 @@
     "rollup.config.mjs",
     "vite.config.ts",
     "tsconfig.json",
-    "tsconfig.declarations.json",
-    "confirmForce.ts",
-    "selectScope.ts"
+    "tsconfig.declarations.json"
   ]
 }
