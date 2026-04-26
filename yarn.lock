@@ -7375,6 +7375,7 @@ __metadata:
     picocolors: "npm:^1.1.1"
     react: "npm:^19.2.0"
   bin:
+    claude-assets-sync: ./bin/inject-claude-settings.mjs
     claude-build-hashes: ./scripts/claude-build-hashes.mjs
     inject-claude-settings: ./bin/inject-claude-settings.mjs
   languageName: unknown
