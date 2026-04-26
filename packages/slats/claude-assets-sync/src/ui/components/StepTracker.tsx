@@ -11,7 +11,7 @@ const STEPS = [
   { key: 'scope', label: 'scope', phases: ['scope-select'] },
   { key: 'plan', label: 'plan', phases: ['planning', 'diff-review', 'force-confirm'] },
   { key: 'apply', label: 'apply', phases: ['applying'] },
-  { key: 'done', label: 'done', phases: ['summary', 'error'] },
+  { key: 'done', label: 'done', phases: [] },
 ] as const;
 
 interface StepTrackerProps {
@@ -30,6 +30,7 @@ function stepState(
 }
 
 function phaseToIndex(kind: Phase['kind']): number {
+  if (kind === 'summary' || kind === 'error') return STEPS.length;
   for (let i = 0; i < STEPS.length; i += 1) {
     const step = STEPS[i];
     if ((step.phases as readonly string[]).includes(kind)) return i;

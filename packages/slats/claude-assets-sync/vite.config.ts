@@ -1,6 +1,8 @@
 import { resolve } from 'path';
 import { defineConfig } from 'vitest/config';
 
+process.env.FORCE_COLOR = '0';
+
 export default defineConfig({
   resolve: {
     alias: {
