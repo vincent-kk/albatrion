@@ -113,9 +113,11 @@ describe('resolveScopeAlias', () => {
 
     await resolveScopeAlias('lerx', root);
 
-    expect(resolvePackageMock).toHaveBeenCalledWith('@lerx/promise-modal', {
-      skipMissingAsset: true,
-    });
+    expect(resolvePackageMock).toHaveBeenCalledWith(
+      '@lerx/promise-modal',
+      { skipMissingAsset: true },
+      root,
+    );
   });
 
   // 12 edge cases (FCA-AI 3+12 cap).

@@ -1,3 +1,5 @@
+import { basename } from 'node:path';
+
 import { Command } from 'commander';
 
 import { logger } from '../../utils/logger.js';
@@ -6,6 +8,8 @@ import type { DefaultFlags } from './type.js';
 import { renderOrFallback } from './utils/renderOrFallback.js';
 import { resolveTargets } from './utils/resolveTargets.js';
 import { toConsumerPackages } from './utils/toConsumerPackages.js';
+
+const FALLBACK_PROGRAM_NAME = 'inject-claude-settings';
 
 /**
  * CLI entry for `@slats/claude-assets-sync`.
@@ -28,7 +32,7 @@ export async function runCli(
   const cmd = new Command();
 
   cmd
-    .name('inject-claude-settings')
+    .name(deriveProgramName(argv))
     .description(
       "Inject target consumer(s)' Claude assets into the selected .claude directory",
     )
@@ -96,4 +100,17 @@ function collectPackageValues(
       .map((s) => s.trim())
       .filter(Boolean),
   ];
+}
+
+// Derive the program name shown in commander's help/error output from
+// the actual invocation. `npx @slats/claude-assets-sync ...` runs the
+// `claude-assets-sync` bin, while a locally installed user runs
+// `inject-claude-settings ...` — both should self-identify correctly.
+function deriveProgramName(argv: readonly string[]): string {
+  const argv1 = argv[1];
+  if (typeof argv1 !== 'string' || argv1.length === 0) {
+    return FALLBACK_PROGRAM_NAME;
+  }
+  const base = basename(argv1).replace(/\.(mjs|cjs|js)$/, '');
+  return base.length > 0 ? base : FALLBACK_PROGRAM_NAME;
 }

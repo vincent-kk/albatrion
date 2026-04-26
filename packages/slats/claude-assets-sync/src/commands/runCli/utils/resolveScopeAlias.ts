@@ -38,7 +38,11 @@ export async function resolveScopeAlias(
 
   const resolved: ResolvedMetadata[] = [];
   for (const name of matchedNames) {
-    const meta = await resolvePackage(name, { skipMissingAsset: true });
+    const meta = await resolvePackage(
+      name,
+      { skipMissingAsset: true },
+      rootCwd,
+    );
     if (meta) resolved.push(meta);
   }
   return resolved;

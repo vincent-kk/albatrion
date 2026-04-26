@@ -20,15 +20,20 @@ yarn dev:ui --tour   # cycle through all Ink phases with fixture data
   - No `injectDocs` orchestrator — both renderers (Ink `ui/` and plain `renderPlain`) compose primitives directly.
 - `./buildHashes` — `buildHashes(options?)` produces `<packageRoot>/dist/claude-hashes.json`.
 
-Bin entries:
-- `inject-claude-settings` — the dispatcher. Two-line stub in `bin/inject-claude-settings.mjs` calls `runCli(process.argv)`.
-- `claude-build-hashes` — standalone bin that parses `process.cwd()/package.json` and delegates to `buildHashes`.
+Bin entries (all map to the same engine; choose by invocation context):
+- `claude-assets-sync` — npx canonical alias. Matches the package's unscoped name so `npx @slats/claude-assets-sync ...` works directly. Routes to the same dispatcher stub.
+- `inject-claude-settings` — descriptive name for installed environments (`yarn add -D` / `npm i -g`). Two-line stub in `bin/inject-claude-settings.mjs` calls `runCli(process.argv)`.
+- `claude-build-hashes` — standalone build helper that parses `process.cwd()/package.json` and delegates to `buildHashes`.
+
+The commander `name(...)` is derived from `argv[1]` basename at runtime, so help/error output reflects the actual invocation (`claude-assets-sync` vs `inject-claude-settings`).
 
 ## CLI Surface
 
 ```
-inject-claude-settings --package <name...> [--scope=user|project] [--dry-run] [--force] [--root=<cwd>] [--json]
+<bin> --package <name...> [--scope=user|project] [--dry-run] [--force] [--root=<cwd>] [--json]
 ```
+
+Where `<bin>` is `claude-assets-sync` (npx) or `inject-claude-settings` (installed). Both bins point at the same dispatcher.
 
 `--package` is variadic. Each value is classified by shape:
 
@@ -72,7 +77,7 @@ Consumers must:
 - `claude.assetPath: "docs/claude"` — consumer-side convention
 - `files: ["dist", "docs", "README.md"]` — NEVER include `"bin"` or `"scripts"`
 
-End users invoke via `npx -p @slats/claude-assets-sync inject-claude-settings --package=<name>`.
+End users invoke via `npx @slats/claude-assets-sync --package=<name>`.
 
 ## Architecture
 

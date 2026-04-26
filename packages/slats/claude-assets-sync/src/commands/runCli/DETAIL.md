@@ -39,7 +39,11 @@
   - `scope?: 'user' | 'project'`
   - `dryRun?: boolean`, `force?: boolean`, `root?: string`,
     `json?: boolean`
-- `resolvePackage(name, opts?): Promise<ResolvedMetadata | null>`
+- `resolvePackage(name, opts?, originCwd?): Promise<ResolvedMetadata | null>`
+  - Two-pass resolution: cwd-rooted require first (catches the host
+    project's `node_modules` when invoked via `npx -p`), then
+    engine-rooted require as fallback. `originCwd` defaults to
+    `process.cwd()` when omitted.
 - `resolveScopeAlias(scope, rootCwd): Promise<ResolvedMetadata[]>`
 - `resolveTargets(targets, rootCwd): Promise<ResolvedMetadata[]>`
 - `toConsumerPackages(metadata): Promise<ConsumerPackage[]>`
@@ -48,4 +52,4 @@
 
 ## Last Updated
 
-2026-04-25 — `renderPlain` replaces `runInject`/`injectOne`.
+2026-04-26 — `resolvePackage` accepts `originCwd` for cwd-first resolve so npx invocations see the host project's node_modules; commander program name derived from argv[1] basename so the bin alias `claude-assets-sync` self-identifies in help output.

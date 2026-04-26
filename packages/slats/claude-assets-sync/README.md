@@ -4,7 +4,7 @@ Engine + dispatcher CLI that lets any npm package ship its own Claude Code docs 
 
 ## Overview
 
-A consumer package declares `claude.assetPath` in `package.json` and runs `claude-build-hashes` during build to emit `dist/claude-hashes.json`. End users run `npx -p @slats/claude-assets-sync inject-claude-settings --package=<name>` and this engine resolves each consumer's metadata, compares its hash manifest against the target `.claude/`, and copies only what is out of date.
+A consumer package declares `claude.assetPath` in `package.json` and runs `claude-build-hashes` during build to emit `dist/claude-hashes.json`. End users run `npx @slats/claude-assets-sync --package=<name>` and this engine resolves each consumer's metadata, compares its hash manifest against the target `.claude/`, and copies only what is out of date.
 
 `--package` accepts a scoped name (`@scope/pkg`), an unscoped name (`pkg`), or a **scope alias** (`@scope` with no slash) that fans out to every installed `node_modules/@scope/*` package declaring `claude.assetPath`. Single-target resolution uses `createRequire`; scope-alias enumeration walks ancestor `node_modules/@<scope>/` directories from `cwd` upward and is isolated to `runCli/utils/resolveScopeAlias.ts`.
 
@@ -21,21 +21,44 @@ yarn add -D @slats/claude-assets-sync
 ## CLI Surface
 
 ```
-inject-claude-settings --package=<name> [--scope=user|project] [--dry-run] [--force] [--root=<cwd>]
+<bin> --package=<name> [--scope=user|project] [--dry-run] [--force] [--root=<cwd>]
 claude-build-hashes
 ```
 
+`<bin>` is one of three entry points that all dispatch to the same engine:
+
+| Bin | Use when |
+|---|---|
+| `claude-assets-sync` | invoking via `npx` — matches the package's unscoped name so `npx @slats/claude-assets-sync ...` works directly |
+| `inject-claude-settings` | the engine is installed (`yarn add -D` / `npm i -g`) and you prefer a descriptive command name |
+| `claude-build-hashes` | build-time helper for consumer packages (run from `package.json` scripts) |
+
 ### End-user invocation
 
-The engine is not shipped as a runtime dependency of consumers. Always invoke via `npx -p @slats/claude-assets-sync ...`; the package manager fetches and caches the engine on demand.
+The engine is not shipped as a runtime dependency of consumers. The canonical npx form is:
 
 ```bash
 # Single consumer:
-npx -p @slats/claude-assets-sync inject-claude-settings --package=@canard/schema-form --scope=user
+npx @slats/claude-assets-sync --package=@canard/schema-form --scope=user
 
 # Scope alias — every installed @winglet/* that declares claude.assetPath:
-npx -p @slats/claude-assets-sync inject-claude-settings --package=@winglet --scope=user
+npx @slats/claude-assets-sync --package=@winglet --scope=user
 ```
+
+The dispatcher walks `node_modules` from the current working directory (or `--root <path>`) up to the filesystem root, so it works as long as the target package is installed somewhere in the host project's hoisting chain.
+
+#### Installed CLI (alternative)
+
+```bash
+yarn add -D @slats/claude-assets-sync
+yarn inject-claude-settings --package=@canard/schema-form --scope=user
+
+# or globally:
+npm i -g @slats/claude-assets-sync
+inject-claude-settings --package=@canard/schema-form --scope=user
+```
+
+The legacy explicit form `npx -p @slats/claude-assets-sync inject-claude-settings ...` continues to work for backward compatibility.
 
 | Flag | Meaning |
 |---|---|
@@ -89,7 +112,7 @@ Ship the resulting `dist/` (including `claude-hashes.json`) alongside `docs/` wh
 - The engine is used at two moments only: (1) the consumer's own build, where `claude-build-hashes` produces `dist/claude-hashes.json`, and (2) the end user's one-off `inject-claude-settings` invocation. Neither is runtime behaviour of the consumer library.
 - Putting the engine in `dependencies` would force every downstream installer of the consumer to pull `commander`, `@inquirer/prompts`, and their transitive trees into their production `node_modules` — dead weight for anyone who never sets up Claude Code assets.
 - The workspace build chain still resolves `.bin/claude-build-hashes` from `devDependencies` at `yarn install` time; yarn workspaces link devDeps and deps identically for workspace-local builds.
-- End users never rely on a hoisted `inject-claude-settings` bin. The canonical invocation is `npx -p @slats/claude-assets-sync inject-claude-settings --package=<THIS>`, which fetches the engine on demand and caches it.
+- End users never rely on a hoisted `inject-claude-settings` bin. The canonical invocation is `npx @slats/claude-assets-sync --package=<THIS>`, which fetches the engine on demand and caches it.
 - Bundle isolation is enforced by the import graph (`src/**` in the consumer never references the engine), not by dependency-type.
 
 ## Authoring `docs/claude/`

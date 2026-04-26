@@ -1,10 +1,10 @@
 # @slats/claude-assets-sync
 
-임의의 npm 패키지가 자신의 Claude Code 문서(skills, rules, commands)를 배포하고, 엔진의 `inject-claude-settings` bin 을 통해 사용자의 `.claude/` 디렉토리에 주입할 수 있게 해주는 공용 CLI 엔진입니다.
+임의의 npm 패키지가 자신의 Claude Code 문서(skills, rules, commands)를 배포하고, 엔진의 dispatcher CLI 를 통해 사용자의 `.claude/` 디렉토리에 주입할 수 있게 해주는 공용 엔진입니다.
 
 ## 개요
 
-컨슈머 패키지는 `package.json` 에 `claude.assetPath` 를 선언하고, 빌드 중 `claude-build-hashes` 를 실행해 `dist/claude-hashes.json` 을 생성합니다. 최종 사용자는 `npx -p @slats/claude-assets-sync inject-claude-settings --package=<name>` 을 실행하고, 이 엔진은 각 컨슈머의 메타데이터를 해석해 파일별 SHA-256 매니페스트를 대상 `.claude/` 와 비교하여 변경이 필요한 파일만 복사합니다.
+컨슈머 패키지는 `package.json` 에 `claude.assetPath` 를 선언하고, 빌드 중 `claude-build-hashes` 를 실행해 `dist/claude-hashes.json` 을 생성합니다. 최종 사용자는 `npx @slats/claude-assets-sync --package=<name>` 을 실행하고, 이 엔진은 각 컨슈머의 메타데이터를 해석해 파일별 SHA-256 매니페스트를 대상 `.claude/` 와 비교하여 변경이 필요한 파일만 복사합니다.
 
 `--package` 는 scoped 이름 (`@scope/pkg`), unscoped 이름 (`pkg`), 또는 **scope alias** (`@scope` — 슬래시 없음) 를 받습니다. scope alias 는 설치된 `node_modules/@scope/*` 중 `claude.assetPath` 를 선언한 모든 패키지로 전개됩니다. 단일 타깃은 `createRequire` 로 해석되고, scope alias 열거는 `cwd` 에서 상위로 올라가며 각 조상의 `node_modules/@<scope>/` 디렉토리를 훑으며 `runCli/utils/resolveScopeAlias.ts` 에 격리돼 있습니다.
 
@@ -21,21 +21,44 @@ yarn add -D @slats/claude-assets-sync
 ## CLI 표면
 
 ```
-inject-claude-settings --package=<name> [--scope=user|project] [--dry-run] [--force] [--root=<cwd>]
+<bin> --package=<name> [--scope=user|project] [--dry-run] [--force] [--root=<cwd>]
 claude-build-hashes
 ```
 
+`<bin>` 은 동일한 엔진을 가리키는 세 가지 진입점 중 하나입니다:
+
+| Bin | 사용 시점 |
+|---|---|
+| `claude-assets-sync` | `npx` 로 호출할 때 — 패키지 unscoped 이름과 일치해서 `npx @slats/claude-assets-sync ...` 가 바로 동작 |
+| `inject-claude-settings` | 엔진을 설치 (`yarn add -D` / `npm i -g`) 한 환경에서 명시적인 명령 이름을 선호할 때 |
+| `claude-build-hashes` | 컨슈머 패키지 빌드 시 보조 도구 (`package.json` 의 scripts 에서 호출) |
+
 ### 최종 사용자 호출
 
-엔진은 컨슈머의 런타임 의존성으로 배포되지 않습니다. 항상 `npx -p @slats/claude-assets-sync ...` 형태로 호출하세요 — 패키지 매니저가 엔진을 필요 시 받아와 캐시합니다.
+엔진은 컨슈머의 런타임 의존성으로 배포되지 않습니다. 표준 npx 형식은 다음과 같습니다:
 
 ```bash
 # 단일 컨슈머:
-npx -p @slats/claude-assets-sync inject-claude-settings --package=@canard/schema-form --scope=user
+npx @slats/claude-assets-sync --package=@canard/schema-form --scope=user
 
 # Scope alias — 설치된 @winglet/* 중 claude.assetPath 를 선언한 모두:
-npx -p @slats/claude-assets-sync inject-claude-settings --package=@winglet --scope=user
+npx @slats/claude-assets-sync --package=@winglet --scope=user
 ```
+
+dispatcher 는 현재 작업 디렉토리 (또는 `--root <path>`) 에서 시작해 `node_modules` 를 filesystem root 까지 거슬러 올라가므로, 호스트 프로젝트의 hoisting 체인 어딘가에 대상 패키지가 설치되어 있으면 동작합니다.
+
+#### 설치 후 호출 (대안)
+
+```bash
+yarn add -D @slats/claude-assets-sync
+yarn inject-claude-settings --package=@canard/schema-form --scope=user
+
+# 또는 글로벌:
+npm i -g @slats/claude-assets-sync
+inject-claude-settings --package=@canard/schema-form --scope=user
+```
+
+기존 명시 형식 `npx -p @slats/claude-assets-sync inject-claude-settings ...` 도 backward compatibility 를 위해 그대로 동작합니다.
 
 | 플래그 | 의미 |
 |---|---|
@@ -89,7 +112,7 @@ yarn build
 - 엔진이 쓰이는 시점은 두 번뿐입니다: (1) 컨슈머의 자체 빌드에서 `claude-build-hashes` 가 `dist/claude-hashes.json` 을 생성할 때, (2) 최종 사용자가 `inject-claude-settings` 을 일회성으로 호출할 때. 두 경우 모두 컨슈머 라이브러리의 런타임 동작이 아닙니다.
 - 엔진을 `dependencies` 에 두면 컨슈머를 설치하는 모든 하위 사용자가 `commander`, `@inquirer/prompts` 와 그 transitive 트리를 production `node_modules` 에 강제로 받게 됩니다 — Claude Code 자산을 한 번도 설정하지 않는 사용자에게는 순수한 부담입니다.
 - 워크스페이스 빌드 체인은 여전히 `yarn install` 시점에 `devDependencies` 에서 `.bin/claude-build-hashes` 를 resolve 합니다. yarn workspaces 는 workspace-local 빌드에서 devDeps 와 deps 를 동일하게 링크합니다.
-- 최종 사용자는 hoist 된 `inject-claude-settings` bin 에 의존하지 않습니다. 표준 호출은 `npx -p @slats/claude-assets-sync inject-claude-settings --package=<THIS>` 이며, 패키지 매니저가 필요 시 엔진을 받아와 캐시합니다.
+- 최종 사용자는 hoist 된 `inject-claude-settings` bin 에 의존하지 않습니다. 표준 호출은 `npx @slats/claude-assets-sync --package=<THIS>` 이며, 패키지 매니저가 필요 시 엔진을 받아와 캐시합니다.
 - 번들 격리는 import 그래프로 강제됩니다 (컨슈머의 `src/**` 가 엔진을 참조하지 않음). dependency-type 으로 강제되는 게 아닙니다.
 
 ## `docs/claude/` 작성

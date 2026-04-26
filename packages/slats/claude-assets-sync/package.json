@@ -36,6 +36,7 @@
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
   "bin": {
+    "claude-assets-sync": "./bin/inject-claude-settings.mjs",
     "claude-build-hashes": "./scripts/claude-build-hashes.mjs",
     "inject-claude-settings": "./bin/inject-claude-settings.mjs"
   },

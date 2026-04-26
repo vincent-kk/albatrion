@@ -37,9 +37,11 @@ export async function resolveTargets(
     if (classification.kind === 'scope') {
       candidates = await resolveScopeAlias(classification.scope, rootCwd);
     } else {
-      const meta = await resolvePackage(classification.name, {
-        skipMissingAsset: !isSingleTarget,
-      });
+      const meta = await resolvePackage(
+        classification.name,
+        { skipMissingAsset: !isSingleTarget },
+        rootCwd,
+      );
       candidates = meta ? [meta] : [];
     }
 
