@@ -22,8 +22,15 @@ import { mergeEventEntries } from './utils/mergeEventEntries';
 /**
  * Maximum number of event batches allowed before detecting an infinite loop.
  * This prevents browser tab freezing due to circular derived value dependencies.
+ *
+ * @remarks
+ * The threshold is intentionally kept low. Any cascade exceeding this budget —
+ * whether truly divergent or merely a slow-converging cycle — is treated as a
+ * design defect. Convergent derived schemas requiring more than ~100 batches
+ * indicate damping that is too weak and should be redesigned at the schema layer
+ * rather than accommodated by raising this constant.
  */
-const MAX_LOOP_COUNT = 50;
+const MAX_LOOP_COUNT = 100;
 
 /**
  * Event batch data structure

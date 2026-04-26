@@ -30,6 +30,12 @@ describe('AbstractNode - 순환 참조 derived 테스트', () => {
       const onChange = vi.fn();
       const MAX_UPDATES = 100;
 
+      let caughtError: unknown = null;
+      const errorHandler = (error: Error) => {
+        if (isSchemaFormError(error)) caughtError = error;
+      };
+      process.on('uncaughtException', errorHandler);
+
       // 수렴하는 순환 참조: A = B * 0.5, B = A + 10
       // 수렴점: A = 10, B = 20
       // 주의: 발산하는 순환 참조 (A = B + 1, B = A + 1)는 무한루프를 발생시킴
@@ -84,6 +90,8 @@ describe('AbstractNode - 순환 참조 derived 테스트', () => {
       // 충분한 시간을 대기하여 순환이 안정화
       await wait(200);
 
+      process.off('uncaughtException', errorHandler);
+
       // 총 업데이트 횟수 확인
       const totalUpdates = aUpdateCount + bUpdateCount;
       console.log(
@@ -98,6 +106,9 @@ describe('AbstractNode - 순환 참조 derived 테스트', () => {
       const bValue = bNode?.value as number;
       expect(aValue).toBeCloseTo(bValue * 0.5, 0);
       expect(bValue).toBeCloseTo(aValue + 10, 0);
+
+      // microtask 에서도 INFINITE_LOOP_DETECTED 가 누출되지 않아야 함
+      expect(caughtError).toBeNull();
     });
 
     it('자기 자신을 참조하는 발산하는 derived에서 무한 루프가 제어되어야 함', async () => {
@@ -666,6 +677,12 @@ describe('AbstractNode - 순환 참조 derived 테스트', () => {
     it('수렴하는 순환 참조가 안정화 후 더 이상 업데이트되지 않아야 함', async () => {
       const onChange = vi.fn();
 
+      let caughtError: unknown = null;
+      const errorHandler = (error: Error) => {
+        if (isSchemaFormError(error)) caughtError = error;
+      };
+      process.on('uncaughtException', errorHandler);
+
       // 수렴하는 순환: A = B * 0.5, B = A + 10 → A=10, B=20
       const jsonSchema = {
         type: 'object',
@@ -718,10 +735,15 @@ describe('AbstractNode - 순환 참조 derived 테스트', () => {
       // 추가 대기
       await wait(100);
 
+      process.off('uncaughtException', errorHandler);
+
       console.log(`안정화 후 업데이트 횟수: ${postStabilizationUpdates}`);
 
       // 안정화 후에는 추가 업데이트가 발생하지 않아야 함
       expect(postStabilizationUpdates).toBe(0);
+
+      // microtask 에서도 INFINITE_LOOP_DETECTED 가 누출되지 않아야 함
+      expect(caughtError).toBeNull();
     });
   });
 
@@ -1462,6 +1484,12 @@ describe('AbstractNode - 순환 참조 derived 테스트', () => {
 
       let caughtError: unknown = null;
 
+      // microtask 에서 발생하는 SchemaFormError 도 캡처 (동기 try/catch 로는 불가)
+      const errorHandler = (error: Error) => {
+        if (isSchemaFormError(error)) caughtError = error;
+      };
+      process.on('uncaughtException', errorHandler);
+
       try {
         const node = nodeFromJsonSchema({
           jsonSchema,
@@ -1479,7 +1507,9 @@ describe('AbstractNode - 순환 참조 derived 테스트', () => {
         caughtError = error;
       }
 
-      // 수렴하는 순환에서는 에러가 발생하지 않아야 함
+      process.off('uncaughtException', errorHandler);
+
+      // 수렴하는 순환에서는 동기·비동기 어느 쪽에서도 에러가 발생하지 않아야 함
       expect(caughtError).toBeNull();
     });
 

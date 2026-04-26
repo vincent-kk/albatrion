@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 
+import { isSchemaFormError } from '@/schema-form/errors';
 import type { JsonSchemaWithVirtual } from '@/schema-form/types';
 
 import { nodeFromJsonSchema } from '../nodeFromJsonSchema';
@@ -631,6 +632,13 @@ describe('AbstractNode - derivedValue', () => {
 
     it('UpdateValue 이벤트 횟수가 무한하지 않아야 함 (수렴하는 순환 참조)', async () => {
       const onChange = vi.fn();
+
+      let caughtError: unknown = null;
+      const errorHandler = (error: Error) => {
+        if (isSchemaFormError(error)) caughtError = error;
+      };
+      process.on('uncaughtException', errorHandler);
+
       const jsonSchema = {
         type: 'object',
         properties: {
@@ -671,6 +679,8 @@ describe('AbstractNode - derivedValue', () => {
 
       await wait(100);
 
+      process.off('uncaughtException', errorHandler);
+
       // 업데이트 횟수가 합리적인 범위 내여야 함 (무한 루프가 아님)
       // 수렴하는 순환 참조에서는 몇 번의 반복 후 안정화됨
       expect(aUpdateCount).toBeLessThan(28);
@@ -679,6 +689,9 @@ describe('AbstractNode - derivedValue', () => {
       // 최종 값이 수렴했는지 확인
       expect(aNode?.value).toBeCloseTo(10);
       expect(bNode?.value).toBeCloseTo(20);
+
+      // microtask 에서도 INFINITE_LOOP_DETECTED 가 누출되지 않아야 함
+      expect(caughtError).toBeNull();
     });
 
     it('값이 같아지면 업데이트가 중단되어야 함 (equals 체크)', async () => {
@@ -2005,6 +2018,13 @@ describe('AbstractNode - derivedValue', () => {
     describe('위험 패턴 감지 및 안정화 테스트', () => {
       it('수렴하는 순환 참조가 oneOf와 결합되어도 안정화되어야 함', async () => {
         const onChange = vi.fn();
+
+        let caughtError: unknown = null;
+        const errorHandler = (error: Error) => {
+          if (isSchemaFormError(error)) caughtError = error;
+        };
+        process.on('uncaughtException', errorHandler);
+
         // 수렴하는 순환: a = b * 0.5, b = a + 10 → a=10, b=20
         const jsonSchema: JsonSchemaWithVirtual = {
           type: 'object',
@@ -2065,12 +2085,17 @@ describe('AbstractNode - derivedValue', () => {
         // 수렴 시간 대기
         await wait(100);
 
+        process.off('uncaughtException', errorHandler);
+
         // 수렴 값 확인: a=10, b=20
         expect(node.find('/a')?.value).toBeCloseTo(10);
         expect(node.find('/b')?.value).toBeCloseTo(20);
 
         // oneOf가 올바른 분기 선택 (a=10 < 15)
         expect(node.find('/display/message')?.value).toBe('A is low');
+
+        // microtask 에서도 INFINITE_LOOP_DETECTED 가 누출되지 않아야 함
+        expect(caughtError).toBeNull();
       });
 
       it('active=false인 노드의 derived가 oneOf 조건에 영향을 주지 않아야 함', async () => {
