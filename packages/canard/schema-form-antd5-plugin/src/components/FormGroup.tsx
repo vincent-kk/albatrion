@@ -24,7 +24,9 @@ export const FormGroup = ({
         }}
       >
         <legend>
-          <Typography.Text>{name}</Typography.Text>
+          <Typography.Text style={{ wordBreak: 'unset' }}>
+            {name}
+          </Typography.Text>
         </legend>
         <Input />
       </fieldset>
@@ -40,7 +42,9 @@ export const FormGroup = ({
         <Flex gap={10} align="center">
           {node.parentNode && isArraySchema(node.parentNode) === false && (
             <label htmlFor={path}>
-              <Typography.Text>{name}</Typography.Text>
+              <Typography.Text style={{ wordBreak: 'unset' }}>
+                {name}
+              </Typography.Text>
               {required && (
                 <Typography.Text type="danger" style={{ marginLeft: 4 }}>
                   *
