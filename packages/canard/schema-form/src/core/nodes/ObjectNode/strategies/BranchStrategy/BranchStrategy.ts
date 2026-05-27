@@ -241,7 +241,7 @@ export class BranchStrategy implements ObjectNodeStrategy {
   private readonly __propertyChildren__: ChildNode[];
 
   /** Current active children nodes (combination of property and oneOf children) */
-  private __children__: ChildNode[];
+  private __children__: ChildNode[] = [];
 
   /** Array of child nodes for regular properties and oneOf properties */
   private readonly __subnodes__: ChildNode[];
@@ -572,6 +572,31 @@ export class BranchStrategy implements ObjectNodeStrategy {
       if (!enabled && childNode.__computeManager__.isEnabled) enabled = true;
     }
     if (enabled) this.__prepareProcessComputedProperties__();
+    this.__primeInitialBranch__();
+    this.__processChildren__();
+  }
+
+  /**
+   * Snaps active oneOf/anyOf maps once at init,
+   * ahead of the UpdateComputedProperties cascade,
+   * so React's first `useState(node.children)` reads the complete list.
+   * @private
+   */
+  private __primeInitialBranch__() {
+    if (this.__oneOfChildNodeMapList__) {
+      const index = this.__host__.oneOfIndex;
+      if (index > -1)
+        this.__oneOfChildNodeMap__ = this.__oneOfChildNodeMapList__[index];
+    }
+    if (this.__anyOfChildNodeMapList__) {
+      const indices = this.__host__.anyOfIndices;
+      if (indices.length > 0) {
+        const maps = new Array<ChildNodeMap>(indices.length);
+        for (let i = 0, l = indices.length; i < l; i++)
+          maps[i] = this.__anyOfChildNodeMapList__[indices[i]];
+        this.__anyOfChildNodeMaps__ = maps;
+      }
+    }
   }
 
   /**
@@ -701,8 +726,6 @@ export class BranchStrategy implements ObjectNodeStrategy {
       nodeFactory,
     );
 
-    this.__children__ = this.__propertyChildren__;
-
     const subnodes = [...this.__propertyChildren__];
     if (this.__oneOfChildNodeMapList__)
       for (const childNodeMap of this.__oneOfChildNodeMapList__)
@@ -717,7 +740,6 @@ export class BranchStrategy implements ObjectNodeStrategy {
     this.__emitChange__(SetValueOption.Default);
     // @ts-expect-error [internal] setDefaultValue delegation
     this.__host__.__setDefaultValue__(this.__value__);
-    this.__publishChildrenChange__();
 
     this.__prepareCompositionChildren__();
   }
