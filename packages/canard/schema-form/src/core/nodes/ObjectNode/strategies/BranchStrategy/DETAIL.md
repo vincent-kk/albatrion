@@ -29,13 +29,13 @@
 
 ### 공개 인터페이스 (`ObjectNodeStrategy` 구현)
 
-| 멤버 | 종류 | 설명 |
-|---|---|---|
-| `children` | getter | 현재 활성 자식 노드 배열 |
-| `subnodes` | getter | 모든 분기 포함 전체 자식 노드 배열 |
-| `value` | getter | 현재 커밋된 객체 값 |
-| `applyValue(input, option)` | method | 외부에서 값 적용 (draft 갱신 → emit) |
-| `initialize()` | method | 자식 노드 활성화 및 초기 분기 확정 (`ObjectNode.__initialize__` 전용) |
+| 멤버                        | 종류   | 설명                                                                  |
+| --------------------------- | ------ | --------------------------------------------------------------------- |
+| `children`                  | getter | 현재 활성 자식 노드 배열                                              |
+| `subnodes`                  | getter | 모든 분기 포함 전체 자식 노드 배열                                    |
+| `value`                     | getter | 현재 커밋된 객체 값                                                   |
+| `applyValue(input, option)` | method | 외부에서 값 적용 (draft 갱신 → emit)                                  |
+| `initialize()`              | method | 자식 노드 활성화 및 초기 분기 확정 (`ObjectNode.__initialize__` 전용) |
 
 ### 수용 기준
 
