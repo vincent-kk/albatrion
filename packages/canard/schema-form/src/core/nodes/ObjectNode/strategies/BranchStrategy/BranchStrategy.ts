@@ -572,6 +572,65 @@ export class BranchStrategy implements ObjectNodeStrategy {
       if (!enabled && childNode.__computeManager__.isEnabled) enabled = true;
     }
     if (enabled) this.__prepareProcessComputedProperties__();
+    this.__settleInitialCompositionChildren__();
+  }
+
+  /**
+   * Synchronously seeds `__children__` and the active composition node maps
+   * so React's first render reads a complete children list.
+   *
+   * Why this exists: `host.oneOfIndex` is computed synchronously inside
+   * `super.__initialize__()`, but the listener that normally rebuilds
+   * `__children__` is registered against the `UpdateComputedProperties`
+   * event whose dispatch is deferred to a microtask. React's
+   * `useChildNodeComponents` captures `node.children` via `useState`
+   * synchronously during render — i.e. before that microtask drains —
+   * so a hydration-recovery render can lock in `__propertyChildren__`
+   * alone and the oneOf branch never appears.
+   *
+   * Deliberately limited scope: this pass updates ONLY
+   * `__oneOfChildNodeMap__`, `__anyOfChildNodeMaps__`, and `__children__`.
+   * It does NOT touch `__oneOfIndex__`/`__anyOfIndices__`, does NOT call
+   * `__reset__` on the new branch's children, and does NOT publish any
+   * events. The existing `UpdateComputedProperties` subscription still
+   * fires later and performs the full reset/derived/emit cycle as before,
+   * preserving the cascading dependency updates (e.g. external `derived`
+   * fields reading values across oneOf branches).
+   * @private
+   */
+  private __settleInitialCompositionChildren__() {
+    if (this.__isPristine__) return;
+    let touched = false;
+    if (this.__oneOfChildNodeMapList__) {
+      const current = this.__host__.oneOfIndex;
+      if (current > -1) {
+        this.__oneOfChildNodeMap__ = this.__oneOfChildNodeMapList__[current];
+        touched = true;
+      }
+    }
+    if (this.__anyOfChildNodeMapList__) {
+      const indices = this.__host__.anyOfIndices;
+      if (indices.length > 0) {
+        const maps = new Array<ChildNodeMap>(indices.length);
+        for (let i = 0, l = indices.length; i < l; i++)
+          maps[i] = this.__anyOfChildNodeMapList__[indices[i]];
+        this.__anyOfChildNodeMaps__ = maps;
+        touched = true;
+      }
+    }
+    if (!touched) return;
+    const oneOfChildNodeMap = this.__oneOfChildNodeMap__;
+    const anyOfChildNodeMaps = this.__anyOfChildNodeMaps__;
+    const keys = this.__propertyKeys__;
+    const children: ChildNode[] = [];
+    for (let i = 0, k = keys[0], l = keys.length; i < l; i++, k = keys[i]) {
+      const childNode =
+        this.__childNodeMap__.get(k) ||
+        oneOfChildNodeMap?.get(k) ||
+        anyOfChildNodeMaps?.find((map) => map.has(k))?.get(k);
+      if (childNode) children.push(childNode);
+    }
+    this.__children__ = children;
   }
 
   /**

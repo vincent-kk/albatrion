@@ -8,22 +8,26 @@ import type { JsonSchema } from '@/schema-form/types';
 import type { ObjectNode } from '../nodes/ObjectNode';
 
 /**
- * Reproduction tests for BranchStrategy oneOf initial-render race.
+ * Regression guards for the BranchStrategy oneOf initial-render race.
  *
- * The thesis under test:
- *   1. `nodeFromJsonSchema` is called synchronously inside `useMemo` during React render.
- *   2. Inside the BranchStrategy constructor, `__children__` is initialised to
- *      `__propertyChildren__` (regular props only) BEFORE the oneOf branch is wired in.
- *   3. The oneOf branch children are appended later, when the
- *      `UpdateComputedProperties` listener fires inside a microtask.
- *   4. React captures `node.children` via `useState(node.children)` during render —
- *      i.e. SYNCHRONOUSLY, before that microtask runs.
- *   5. If anything dropped or delayed the follow-up `UpdateChildren` event, the form
- *      would render with only the property children and the oneOf branch fields
- *      would never appear.
+ * Background — what the race was:
+ *   1. `nodeFromJsonSchema` is called synchronously inside `useMemo` during
+ *      React render.
+ *   2. `host.oneOfIndex` is computed synchronously inside
+ *      `super.__initialize__()`.
+ *   3. Prior to the fix, the listener that rebuilt `__children__` from that
+ *      index was registered against `UpdateComputedProperties`, whose
+ *      dispatch is deferred to a microtask.
+ *   4. React captures `node.children` via `useState(node.children)`
+ *      synchronously during render — BEFORE that microtask drains. In
+ *      hydration-recovery renders (React #418), the cascading `UpdateChildren`
+ *      could arrive after the subscription had already taken its snapshot,
+ *      so the oneOf branch never appeared until the user changed a value.
  *
- * Production builds compress timing windows; dev mode (StrictMode double mount +
- * slower JS) often hides this race. That matches the user's report.
+ * The fix: `BranchStrategy.initialize()` now calls
+ * `__settleInitialCompositionChildren__()` synchronously after the children
+ * are initialised, so `node.children` is complete by the time it is exposed
+ * to React. These tests guard that contract.
  */
 
 const employmentSchema: JsonSchema = {
@@ -55,7 +59,7 @@ const employmentSchema: JsonSchema = {
 };
 
 describe('BranchStrategy oneOf - initial-render race', () => {
-  it('SYNC immediately after construction: shows the bug snapshot', () => {
+  it('SYNC immediately after construction: oneOf children are already wired in', () => {
     const node = nodeFromJsonSchema({
       onChange: () => {},
       jsonSchema: employmentSchema,
@@ -64,10 +68,8 @@ describe('BranchStrategy oneOf - initial-render race', () => {
     const syncChildren = node.children?.map((c) => c.node.name) ?? [];
     const syncOneOfIndex = node.oneOfIndex;
 
-    // What React sees when capturing initial state via useState(node.children):
-    //   - oneOf branch children NOT yet present
-    //   - oneOfIndex still -1 (BranchStrategy listener hasn't run yet)
-    // This snapshot documents the race window.
+    // After the fix, `node.children` exposed to React during the first render
+    // already includes the active oneOf branch — no microtask drain needed.
     // eslint-disable-next-line no-console
     console.log(
       '[SYNC] children:',
@@ -76,11 +78,11 @@ describe('BranchStrategy oneOf - initial-render race', () => {
       syncOneOfIndex,
     );
 
-    // The bug surface: salary/bonus (oneOf branch 0 fields) are NOT in children
-    // immediately after construction even though employmentType defaults to full_time.
-    expect(syncChildren).not.toContain('salary');
-    expect(syncChildren).not.toContain('bonus');
-    expect(syncOneOfIndex).toBe(-1);
+    expect(syncOneOfIndex).toBe(0);
+    expect(syncChildren).toContain('employmentType');
+    expect(syncChildren).toContain('commonField');
+    expect(syncChildren).toContain('salary');
+    expect(syncChildren).toContain('bonus');
   });
 
   it('AFTER microtask drain: BranchStrategy resolves children correctly', async () => {
@@ -215,13 +217,16 @@ describe('BranchStrategy oneOf - initial-render race', () => {
       jsonSchema: productSchema,
     }) as ObjectNode;
 
-    // Sync snapshot — both outer and inner BranchStrategy are still on initial children
+    // Sync snapshot — fix ensures both outer and inner BranchStrategy have
+    // their oneOf branch already settled before the constructor returns.
     const product = node.find('product') as ObjectNode | null;
     expect(product).not.toBeNull();
     const productSyncChildren =
       product?.children?.map((c) => c.node.name) ?? [];
     // eslint-disable-next-line no-console
     console.log('[SYNC] product.children:', productSyncChildren);
+    expect(productSyncChildren).toContain('name');
+    expect(productSyncChildren).toContain('shipping');
 
     await delay();
 
