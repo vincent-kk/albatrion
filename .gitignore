@@ -12,6 +12,8 @@ coverage
 
 .filid/review/
 
+.playwright-*
+
 # production
 build
 !packages/aileron/script/build/
