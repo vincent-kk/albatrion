@@ -241,7 +241,7 @@ export class BranchStrategy implements ObjectNodeStrategy {
   private readonly __propertyChildren__: ChildNode[];
 
   /** Current active children nodes (combination of property and oneOf children) */
-  private __children__: ChildNode[];
+  private __children__: ChildNode[] = [];
 
   /** Array of child nodes for regular properties and oneOf properties */
   private readonly __subnodes__: ChildNode[];
@@ -572,41 +572,21 @@ export class BranchStrategy implements ObjectNodeStrategy {
       if (!enabled && childNode.__computeManager__.isEnabled) enabled = true;
     }
     if (enabled) this.__prepareProcessComputedProperties__();
-    this.__settleInitialCompositionChildren__();
+    this.__primeInitialBranch__();
+    this.__processChildren__();
   }
 
   /**
-   * Synchronously seeds `__children__` and the active composition node maps
-   * so React's first render reads a complete children list.
-   *
-   * Why this exists: `host.oneOfIndex` is computed synchronously inside
-   * `super.__initialize__()`, but the listener that normally rebuilds
-   * `__children__` is registered against the `UpdateComputedProperties`
-   * event whose dispatch is deferred to a microtask. React's
-   * `useChildNodeComponents` captures `node.children` via `useState`
-   * synchronously during render — i.e. before that microtask drains —
-   * so a hydration-recovery render can lock in `__propertyChildren__`
-   * alone and the oneOf branch never appears.
-   *
-   * Deliberately limited scope: this pass updates ONLY
-   * `__oneOfChildNodeMap__`, `__anyOfChildNodeMaps__`, and `__children__`.
-   * It does NOT touch `__oneOfIndex__`/`__anyOfIndices__`, does NOT call
-   * `__reset__` on the new branch's children, and does NOT publish any
-   * events. The existing `UpdateComputedProperties` subscription still
-   * fires later and performs the full reset/derived/emit cycle as before,
-   * preserving the cascading dependency updates (e.g. external `derived`
-   * fields reading values across oneOf branches).
+   * Snaps active oneOf/anyOf maps once at init,
+   * ahead of the UpdateComputedProperties cascade,
+   * so React's first `useState(node.children)` reads the complete list.
    * @private
    */
-  private __settleInitialCompositionChildren__() {
-    if (this.__isPristine__) return;
-    let touched = false;
+  private __primeInitialBranch__() {
     if (this.__oneOfChildNodeMapList__) {
-      const current = this.__host__.oneOfIndex;
-      if (current > -1) {
-        this.__oneOfChildNodeMap__ = this.__oneOfChildNodeMapList__[current];
-        touched = true;
-      }
+      const index = this.__host__.oneOfIndex;
+      if (index > -1)
+        this.__oneOfChildNodeMap__ = this.__oneOfChildNodeMapList__[index];
     }
     if (this.__anyOfChildNodeMapList__) {
       const indices = this.__host__.anyOfIndices;
@@ -615,22 +595,8 @@ export class BranchStrategy implements ObjectNodeStrategy {
         for (let i = 0, l = indices.length; i < l; i++)
           maps[i] = this.__anyOfChildNodeMapList__[indices[i]];
         this.__anyOfChildNodeMaps__ = maps;
-        touched = true;
       }
     }
-    if (!touched) return;
-    const oneOfChildNodeMap = this.__oneOfChildNodeMap__;
-    const anyOfChildNodeMaps = this.__anyOfChildNodeMaps__;
-    const keys = this.__propertyKeys__;
-    const children: ChildNode[] = [];
-    for (let i = 0, k = keys[0], l = keys.length; i < l; i++, k = keys[i]) {
-      const childNode =
-        this.__childNodeMap__.get(k) ||
-        oneOfChildNodeMap?.get(k) ||
-        anyOfChildNodeMaps?.find((map) => map.has(k))?.get(k);
-      if (childNode) children.push(childNode);
-    }
-    this.__children__ = children;
   }
 
   /**
@@ -760,8 +726,6 @@ export class BranchStrategy implements ObjectNodeStrategy {
       nodeFactory,
     );
 
-    this.__children__ = this.__propertyChildren__;
-
     const subnodes = [...this.__propertyChildren__];
     if (this.__oneOfChildNodeMapList__)
       for (const childNodeMap of this.__oneOfChildNodeMapList__)
@@ -776,7 +740,6 @@ export class BranchStrategy implements ObjectNodeStrategy {
     this.__emitChange__(SetValueOption.Default);
     // @ts-expect-error [internal] setDefaultValue delegation
     this.__host__.__setDefaultValue__(this.__value__);
-    this.__publishChildrenChange__();
 
     this.__prepareCompositionChildren__();
   }
