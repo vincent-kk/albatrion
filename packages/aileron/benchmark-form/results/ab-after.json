@@ -1,0 +1,874 @@
+{
+  "timestamp": "2026-05-29T05-25-10-836Z",
+  "repeat": 4,
+  "versions": [
+    "latest"
+  ],
+  "runs": [
+    [
+      {
+        "name": "@canard/schema-form@latest - Form Rendering v2",
+        "hz": 370.6003789955081,
+        "stats": {
+          "mean": 0.0026983242777852655,
+          "deviation": 0.0011835142273555717
+        }
+      },
+      {
+        "name": "@canard/schema-form@latest - Scale Render Flat flat-50",
+        "hz": 91.27414694303444,
+        "stats": {
+          "mean": 0.01095600488738739,
+          "deviation": 0.002546776871254073
+        }
+      },
+      {
+        "name": "@canard/schema-form@latest - Scale Render Flat flat-100",
+        "hz": 47.51316784096023,
+        "stats": {
+          "mean": 0.021046797034188033,
+          "deviation": 0.00498849138893844
+        }
+      },
+      {
+        "name": "@canard/schema-form@latest - Scale Render Flat flat-500",
+        "hz": 9.039346631770009,
+        "stats": {
+          "mean": 0.11062746465384617,
+          "deviation": 0.023291204434241927
+        }
+      },
+      {
+        "name": "@canard/schema-form@latest - Scale Render Nested nested-d3-f4",
+        "hz": 56.41674798487917,
+        "stats": {
+          "mean": 0.017725232944444443,
+          "deviation": 0.004696509863480232
+        }
+      },
+      {
+        "name": "@canard/schema-form@latest - Scale Render Nested nested-d5-f4",
+        "hz": 3.2143877855196,
+        "stats": {
+          "mean": 0.3111012319375,
+          "deviation": 0.03559363743184143
+        }
+      },
+      {
+        "name": "@canard/schema-form@latest - Scale Render Array array-100",
+        "hz": 9.729009993722805,
+        "stats": {
+          "mean": 0.10278538110714286,
+          "deviation": 0.024335406645882275
+        }
+      },
+      {
+        "name": "@canard/schema-form@latest - Scale Render Array array-500",
+        "hz": 1.8727703339327522,
+        "stats": {
+          "mean": 0.5339683045384614,
+          "deviation": 0.05924424678411905
+        }
+      },
+      {
+        "name": "@canard/schema-form@latest - Scale Render OneOf oneOf-5",
+        "hz": 736.2776296244863,
+        "stats": {
+          "mean": 0.0013581833261863687,
+          "deviation": 0.00019462479917271378
+        }
+      },
+      {
+        "name": "@canard/schema-form@latest - Scale Render OneOf oneOf-10",
+        "hz": 702.8635644825491,
+        "stats": {
+          "mean": 0.001422751228734134,
+          "deviation": 0.00025734292282052803
+        }
+      },
+      {
+        "name": "@canard/schema-form@latest - Scale Render OneOf oneOf-20",
+        "hz": 784.6941798157966,
+        "stats": {
+          "mean": 0.0012743818238014019,
+          "deviation": 0.000136340833085197
+        }
+      },
+      {
+        "name": "@canard/schema-form@latest - Scale Interact Flat flat-50",
+        "hz": 71.47962421136693,
+        "stats": {
+          "mean": 0.01399000080138889,
+          "deviation": 0.0033176556161825053
+        }
+      },
+      {
+        "name": "@canard/schema-form@latest - Scale Interact Flat flat-100",
+        "hz": 37.88119086175257,
+        "stats": {
+          "mean": 0.026398325323232327,
+          "deviation": 0.006590729827408533
+        }
+      },
+      {
+        "name": "@canard/schema-form@latest - Scale Interact Flat flat-500",
+        "hz": 7.1921339593362585,
+        "stats": {
+          "mean": 0.1390407917391304,
+          "deviation": 0.0274071908180394
+        }
+      },
+      {
+        "name": "@canard/schema-form@latest - Scale Interact Nested nested-d3-f4",
+        "hz": 44.71377442274869,
+        "stats": {
+          "mean": 0.022364472981981978,
+          "deviation": 0.004971645596438933
+        }
+      },
+      {
+        "name": "@canard/schema-form@latest - Scale Interact Nested nested-d5-f4",
+        "hz": 3.0166904693030507,
+        "stats": {
+          "mean": 0.33148909713333335,
+          "deviation": 0.03854675002382594
+        }
+      },
+      {
+        "name": "@canard/schema-form@latest - Array Stress push x100",
+        "hz": 9.535945698216969,
+        "stats": {
+          "mean": 0.10486636896296296,
+          "deviation": 0.021354488278562456
+        }
+      },
+      {
+        "name": "@canard/schema-form@latest - Array Stress applyValue 200",
+        "hz": 4.846230485325657,
+        "stats": {
+          "mean": 0.20634594310526316,
+          "deviation": 0.03728590381256038
+        }
+      },
+      {
+        "name": "@canard/schema-form@latest - Array Stress push+remove x100",
+        "hz": 9.631042504329383,
+        "stats": {
+          "mean": 0.10383091960714286,
+          "deviation": 0.026952907435980063
+        }
+      }
+    ],
+    [
+      {
+        "name": "@canard/schema-form@latest - Form Rendering v2",
+        "hz": 512.2374852844761,
+        "stats": {
+          "mean": 0.0019522194855470998,
+          "deviation": 0.0004892224038915913
+        }
+      },
+      {
+        "name": "@canard/schema-form@latest - Scale Render Flat flat-50",
+        "hz": 90.04971488712238,
+        "stats": {
+          "mean": 0.01110497685921053,
+          "deviation": 0.0026977471308514234
+        }
+      },
+      {
+        "name": "@canard/schema-form@latest - Scale Render Flat flat-100",
+        "hz": 48.57819927153843,
+        "stats": {
+          "mean": 0.02058536576068376,
+          "deviation": 0.004640754849144294
+        }
+      },
+      {
+        "name": "@canard/schema-form@latest - Scale Render Flat flat-500",
+        "hz": 8.88286398086241,
+        "stats": {
+          "mean": 0.11257630446153843,
+          "deviation": 0.025700123776059305
+        }
+      },
+      {
+        "name": "@canard/schema-form@latest - Scale Render Nested nested-d3-f4",
+        "hz": 57.51177507365548,
+        "stats": {
+          "mean": 0.017387743618055562,
+          "deviation": 0.003923818973989209
+        }
+      },
+      {
+        "name": "@canard/schema-form@latest - Scale Render Nested nested-d5-f4",
+        "hz": 3.1627206323796653,
+        "stats": {
+          "mean": 0.316183475,
+          "deviation": 0.04007449659877877
+        }
+      },
+      {
+        "name": "@canard/schema-form@latest - Scale Render Array array-100",
+        "hz": 9.576805519898864,
+        "stats": {
+          "mean": 0.10441895242857145,
+          "deviation": 0.022818189607907973
+        }
+      },
+      {
+        "name": "@canard/schema-form@latest - Scale Render Array array-500",
+        "hz": 1.8418288391741044,
+        "stats": {
+          "mean": 0.5429386155384616,
+          "deviation": 0.06113230804386117
+        }
+      },
+      {
+        "name": "@canard/schema-form@latest - Scale Render OneOf oneOf-5",
+        "hz": 726.4023046421303,
+        "stats": {
+          "mean": 0.0013766476147025173,
+          "deviation": 0.00014815123443814236
+        }
+      },
+      {
+        "name": "@canard/schema-form@latest - Scale Render OneOf oneOf-10",
+        "hz": 706.8141872512538,
+        "stats": {
+          "mean": 0.0014147989924889926,
+          "deviation": 0.00015415365873393868
+        }
+      },
+      {
+        "name": "@canard/schema-form@latest - Scale Render OneOf oneOf-20",
+        "hz": 765.4646323219207,
+        "stats": {
+          "mean": 0.001306396086474501,
+          "deviation": 0.00012364114613319318
+        }
+      },
+      {
+        "name": "@canard/schema-form@latest - Scale Interact Flat flat-50",
+        "hz": 68.90841131889758,
+        "stats": {
+          "mean": 0.01451201647027027,
+          "deviation": 0.003526929127152587
+        }
+      },
+      {
+        "name": "@canard/schema-form@latest - Scale Interact Flat flat-100",
+        "hz": 37.24812710632163,
+        "stats": {
+          "mean": 0.026846987424242418,
+          "deviation": 0.005844436047861548
+        }
+      },
+      {
+        "name": "@canard/schema-form@latest - Scale Interact Flat flat-500",
+        "hz": 7.070021380786713,
+        "stats": {
+          "mean": 0.14144228795652178,
+          "deviation": 0.020510435417545204
+        }
+      },
+      {
+        "name": "@canard/schema-form@latest - Scale Interact Nested nested-d3-f4",
+        "hz": 44.14100896730708,
+        "stats": {
+          "mean": 0.02265467018981481,
+          "deviation": 0.005236114914024214
+        }
+      },
+      {
+        "name": "@canard/schema-form@latest - Scale Interact Nested nested-d5-f4",
+        "hz": 3.060775758831637,
+        "stats": {
+          "mean": 0.32671455826666673,
+          "deviation": 0.04530378959762434
+        }
+      },
+      {
+        "name": "@canard/schema-form@latest - Array Stress push x100",
+        "hz": 9.04849769386716,
+        "stats": {
+          "mean": 0.11051558323076928,
+          "deviation": 0.026346466571601786
+        }
+      },
+      {
+        "name": "@canard/schema-form@latest - Array Stress applyValue 200",
+        "hz": 4.838793883112773,
+        "stats": {
+          "mean": 0.20666307021052627,
+          "deviation": 0.03473824726193099
+        }
+      },
+      {
+        "name": "@canard/schema-form@latest - Array Stress push+remove x100",
+        "hz": 9.344429167864009,
+        "stats": {
+          "mean": 0.1070156327407407,
+          "deviation": 0.022571610967794573
+        }
+      }
+    ],
+    [
+      {
+        "name": "@canard/schema-form@latest - Form Rendering v2",
+        "hz": 508.93092584143807,
+        "stats": {
+          "mean": 0.0019649031906376208,
+          "deviation": 0.0004261992051769874
+        }
+      },
+      {
+        "name": "@canard/schema-form@latest - Scale Render Flat flat-50",
+        "hz": 92.25449813996484,
+        "stats": {
+          "mean": 0.01083957985964912,
+          "deviation": 0.0029263021504989774
+        }
+      },
+      {
+        "name": "@canard/schema-form@latest - Scale Render Flat flat-100",
+        "hz": 46.387933035688484,
+        "stats": {
+          "mean": 0.021557330421052637,
+          "deviation": 0.005343868418777014
+        }
+      },
+      {
+        "name": "@canard/schema-form@latest - Scale Render Flat flat-500",
+        "hz": 8.879000308301089,
+        "stats": {
+          "mean": 0.11262529173076921,
+          "deviation": 0.025644332220594177
+        }
+      },
+      {
+        "name": "@canard/schema-form@latest - Scale Render Nested nested-d3-f4",
+        "hz": 55.36717717213056,
+        "stats": {
+          "mean": 0.01806124225714286,
+          "deviation": 0.005101208567762477
+        }
+      },
+      {
+        "name": "@canard/schema-form@latest - Scale Render Nested nested-d5-f4",
+        "hz": 3.129979948483794,
+        "stats": {
+          "mean": 0.3194908646249999,
+          "deviation": 0.03747003129607752
+        }
+      },
+      {
+        "name": "@canard/schema-form@latest - Scale Render Array array-100",
+        "hz": 9.34790311315132,
+        "stats": {
+          "mean": 0.1069758627037037,
+          "deviation": 0.026926273751695397
+        }
+      },
+      {
+        "name": "@canard/schema-form@latest - Scale Render Array array-500",
+        "hz": 1.8484431922663696,
+        "stats": {
+          "mean": 0.5409957980769231,
+          "deviation": 0.051976808002563026
+        }
+      },
+      {
+        "name": "@canard/schema-form@latest - Scale Render OneOf oneOf-5",
+        "hz": 724.1968453768325,
+        "stats": {
+          "mean": 0.0013808400387047455,
+          "deviation": 0.00014567676907586714
+        }
+      },
+      {
+        "name": "@canard/schema-form@latest - Scale Render OneOf oneOf-10",
+        "hz": 704.8149227726486,
+        "stats": {
+          "mean": 0.001418812184149184,
+          "deviation": 0.00017355370796390607
+        }
+      },
+      {
+        "name": "@canard/schema-form@latest - Scale Render OneOf oneOf-20",
+        "hz": 741.6820830626745,
+        "stats": {
+          "mean": 0.0013482865810518668,
+          "deviation": 0.00015350274804077464
+        }
+      },
+      {
+        "name": "@canard/schema-form@latest - Scale Interact Flat flat-50",
+        "hz": 69.45873199899137,
+        "stats": {
+          "mean": 0.014397037942105267,
+          "deviation": 0.003476262456395063
+        }
+      },
+      {
+        "name": "@canard/schema-form@latest - Scale Interact Flat flat-100",
+        "hz": 34.517155266674166,
+        "stats": {
+          "mean": 0.02897110124731183,
+          "deviation": 0.007670940901470215
+        }
+      },
+      {
+        "name": "@canard/schema-form@latest - Scale Interact Flat flat-500",
+        "hz": 6.9359476279791,
+        "stats": {
+          "mean": 0.14417640582608696,
+          "deviation": 0.02402419647009084
+        }
+      },
+      {
+        "name": "@canard/schema-form@latest - Scale Interact Nested nested-d3-f4",
+        "hz": 43.71659881759289,
+        "stats": {
+          "mean": 0.022874606603603607,
+          "deviation": 0.0052791284633843935
+        }
+      },
+      {
+        "name": "@canard/schema-form@latest - Scale Interact Nested nested-d5-f4",
+        "hz": 2.958655768551242,
+        "stats": {
+          "mean": 0.33799133060000003,
+          "deviation": 0.038457873805986004
+        }
+      },
+      {
+        "name": "@canard/schema-form@latest - Array Stress push x100",
+        "hz": 9.290743227136707,
+        "stats": {
+          "mean": 0.10763401544444445,
+          "deviation": 0.022360183577823323
+        }
+      },
+      {
+        "name": "@canard/schema-form@latest - Array Stress applyValue 200",
+        "hz": 4.763944116833356,
+        "stats": {
+          "mean": 0.20991010294736845,
+          "deviation": 0.034617319797486834
+        }
+      },
+      {
+        "name": "@canard/schema-form@latest - Array Stress push+remove x100",
+        "hz": 9.363683656670451,
+        "stats": {
+          "mean": 0.10679557711111111,
+          "deviation": 0.024832073945904715
+        }
+      }
+    ],
+    [
+      {
+        "name": "@canard/schema-form@latest - Form Rendering v2",
+        "hz": 504.14657020971566,
+        "stats": {
+          "mean": 0.0019835501401586813,
+          "deviation": 0.00044721215391461554
+        }
+      },
+      {
+        "name": "@canard/schema-form@latest - Scale Render Flat flat-50",
+        "hz": 87.68236803742779,
+        "stats": {
+          "mean": 0.011404801471296298,
+          "deviation": 0.0031861866262747653
+        }
+      },
+      {
+        "name": "@canard/schema-form@latest - Scale Render Flat flat-100",
+        "hz": 46.5948831156342,
+        "stats": {
+          "mean": 0.021461584043859644,
+          "deviation": 0.00446281000243449
+        }
+      },
+      {
+        "name": "@canard/schema-form@latest - Scale Render Flat flat-500",
+        "hz": 8.787970806536741,
+        "stats": {
+          "mean": 0.1137919119230769,
+          "deviation": 0.030014751802016647
+        }
+      },
+      {
+        "name": "@canard/schema-form@latest - Scale Render Nested nested-d3-f4",
+        "hz": 55.21134818007305,
+        "stats": {
+          "mean": 0.01811221846527778,
+          "deviation": 0.004461594612882077
+        }
+      },
+      {
+        "name": "@canard/schema-form@latest - Scale Render Nested nested-d5-f4",
+        "hz": 3.015981561432394,
+        "stats": {
+          "mean": 0.3315670138,
+          "deviation": 0.03982571711911412
+        }
+      },
+      {
+        "name": "@canard/schema-form@latest - Scale Render Array array-100",
+        "hz": 9.778084486798667,
+        "stats": {
+          "mean": 0.10226951928571429,
+          "deviation": 0.019904548172070116
+        }
+      },
+      {
+        "name": "@canard/schema-form@latest - Scale Render Array array-500",
+        "hz": 1.8266991224487112,
+        "stats": {
+          "mean": 0.5474355287692307,
+          "deviation": 0.04372083926057772
+        }
+      },
+      {
+        "name": "@canard/schema-form@latest - Scale Render OneOf oneOf-5",
+        "hz": 709.1330565667704,
+        "stats": {
+          "mean": 0.0014101725913631023,
+          "deviation": 0.00015583502950103936
+        }
+      },
+      {
+        "name": "@canard/schema-form@latest - Scale Render OneOf oneOf-10",
+        "hz": 658.6418621450914,
+        "stats": {
+          "mean": 0.0015182757997542998,
+          "deviation": 0.00032889792341039923
+        }
+      },
+      {
+        "name": "@canard/schema-form@latest - Scale Render OneOf oneOf-20",
+        "hz": 740.9975612068023,
+        "stats": {
+          "mean": 0.0013495321069227023,
+          "deviation": 0.00022847743229036574
+        }
+      },
+      {
+        "name": "@canard/schema-form@latest - Scale Interact Flat flat-50",
+        "hz": 69.29250868086898,
+        "stats": {
+          "mean": 0.014431574480952381,
+          "deviation": 0.0030456551816033686
+        }
+      },
+      {
+        "name": "@canard/schema-form@latest - Scale Interact Flat flat-100",
+        "hz": 34.638686472344524,
+        "stats": {
+          "mean": 0.028869454989247312,
+          "deviation": 0.008359644884381793
+        }
+      },
+      {
+        "name": "@canard/schema-form@latest - Scale Interact Flat flat-500",
+        "hz": 6.854763636698057,
+        "stats": {
+          "mean": 0.14588395063636367,
+          "deviation": 0.03535108854491668
+        }
+      },
+      {
+        "name": "@canard/schema-form@latest - Scale Interact Nested nested-d3-f4",
+        "hz": 42.4977549893105,
+        "stats": {
+          "mean": 0.023530654742857145,
+          "deviation": 0.0056063470509495495
+        }
+      },
+      {
+        "name": "@canard/schema-form@latest - Scale Interact Nested nested-d5-f4",
+        "hz": 2.9041739259301314,
+        "stats": {
+          "mean": 0.3443319944,
+          "deviation": 0.04279492282276343
+        }
+      },
+      {
+        "name": "@canard/schema-form@latest - Array Stress push x100",
+        "hz": 9.328958651082774,
+        "stats": {
+          "mean": 0.1071931002592593,
+          "deviation": 0.019685610586842806
+        }
+      },
+      {
+        "name": "@canard/schema-form@latest - Array Stress applyValue 200",
+        "hz": 4.585698715270817,
+        "stats": {
+          "mean": 0.21806927626315792,
+          "deviation": 0.03792943143939368
+        }
+      },
+      {
+        "name": "@canard/schema-form@latest - Array Stress push+remove x100",
+        "hz": 9.324063150835425,
+        "stats": {
+          "mean": 0.10724938085714286,
+          "deviation": 0.02792222632241788
+        }
+      }
+    ]
+  ],
+  "aggregate": [
+    {
+      "name": "@canard/schema-form@latest - Form Rendering v2",
+      "runs": 4,
+      "meanHz": 473.9788400827845,
+      "stdHz": 59.75485417381182,
+      "relStd": 0.12607072113889117,
+      "samples": [
+        370.6003789955081,
+        512.2374852844761,
+        508.93092584143807,
+        504.14657020971566
+      ]
+    },
+    {
+      "name": "@canard/schema-form@latest - Scale Render Flat flat-50",
+      "runs": 4,
+      "meanHz": 90.31518200188737,
+      "stdHz": 1.7090013898642615,
+      "relStd": 0.018922636836723062,
+      "samples": [
+        91.27414694303444,
+        90.04971488712238,
+        92.25449813996484,
+        87.68236803742779
+      ]
+    },
+    {
+      "name": "@canard/schema-form@latest - Scale Render Flat flat-100",
+      "runs": 4,
+      "meanHz": 47.268545815955335,
+      "stdHz": 0.8666505079055109,
+      "relStd": 0.01833461328131182,
+      "samples": [
+        47.51316784096023,
+        48.57819927153843,
+        46.387933035688484,
+        46.5948831156342
+      ]
+    },
+    {
+      "name": "@canard/schema-form@latest - Scale Render Flat flat-500",
+      "runs": 4,
+      "meanHz": 8.897295431867562,
+      "stdHz": 0.09037891820258183,
+      "relStd": 0.010158021490313838,
+      "samples": [
+        9.039346631770009,
+        8.88286398086241,
+        8.879000308301089,
+        8.787970806536741
+      ]
+    },
+    {
+      "name": "@canard/schema-form@latest - Scale Render Nested nested-d3-f4",
+      "runs": 4,
+      "meanHz": 56.126762102684566,
+      "stdHz": 0.924297660127081,
+      "relStd": 0.016468038160406755,
+      "samples": [
+        56.41674798487917,
+        57.51177507365548,
+        55.36717717213056,
+        55.21134818007305
+      ]
+    },
+    {
+      "name": "@canard/schema-form@latest - Scale Render Nested nested-d5-f4",
+      "runs": 4,
+      "meanHz": 3.130767481953863,
+      "stdHz": 0.07278356055711935,
+      "relStd": 0.023247833311369474,
+      "samples": [
+        3.2143877855196,
+        3.1627206323796653,
+        3.129979948483794,
+        3.015981561432394
+      ]
+    },
+    {
+      "name": "@canard/schema-form@latest - Scale Render Array array-100",
+      "runs": 4,
+      "meanHz": 9.607950778392913,
+      "stdHz": 0.1674780789211293,
+      "relStd": 0.017431196597901672,
+      "samples": [
+        9.729009993722805,
+        9.576805519898864,
+        9.34790311315132,
+        9.778084486798667
+      ]
+    },
+    {
+      "name": "@canard/schema-form@latest - Scale Render Array array-500",
+      "runs": 4,
+      "meanHz": 1.8474353719554844,
+      "stdHz": 0.016615514238238868,
+      "relStd": 0.008993827059103876,
+      "samples": [
+        1.8727703339327522,
+        1.8418288391741044,
+        1.8484431922663696,
+        1.8266991224487112
+      ]
+    },
+    {
+      "name": "@canard/schema-form@latest - Scale Render OneOf oneOf-5",
+      "runs": 4,
+      "meanHz": 724.0024590525549,
+      "stdHz": 9.71565730858102,
+      "relStd": 0.013419370593430218,
+      "samples": [
+        736.2776296244863,
+        726.4023046421303,
+        724.1968453768325,
+        709.1330565667704
+      ]
+    },
+    {
+      "name": "@canard/schema-form@latest - Scale Render OneOf oneOf-10",
+      "runs": 4,
+      "meanHz": 693.2836341628856,
+      "stdHz": 20.049151586421537,
+      "relStd": 0.028919118523012804,
+      "samples": [
+        702.8635644825491,
+        706.8141872512538,
+        704.8149227726486,
+        658.6418621450914
+      ]
+    },
+    {
+      "name": "@canard/schema-form@latest - Scale Render OneOf oneOf-20",
+      "runs": 4,
+      "meanHz": 758.2096141017985,
+      "stdHz": 18.189843028066132,
+      "relStd": 0.02399052015400049,
+      "samples": [
+        784.6941798157966,
+        765.4646323219207,
+        741.6820830626745,
+        740.9975612068023
+      ]
+    },
+    {
+      "name": "@canard/schema-form@latest - Scale Interact Flat flat-50",
+      "runs": 4,
+      "meanHz": 69.78481905253122,
+      "stdHz": 0.9986437441001539,
+      "relStd": 0.014310329347539253,
+      "samples": [
+        71.47962421136693,
+        68.90841131889758,
+        69.45873199899137,
+        69.29250868086898
+      ]
+    },
+    {
+      "name": "@canard/schema-form@latest - Scale Interact Flat flat-100",
+      "runs": 4,
+      "meanHz": 36.071289926773225,
+      "stdHz": 1.5106599833325192,
+      "relStd": 0.04187984367621022,
+      "samples": [
+        37.88119086175257,
+        37.24812710632163,
+        34.517155266674166,
+        34.638686472344524
+      ]
+    },
+    {
+      "name": "@canard/schema-form@latest - Scale Interact Flat flat-500",
+      "runs": 4,
+      "meanHz": 7.013216651200032,
+      "stdHz": 0.12875950470587533,
+      "relStd": 0.01835955041882861,
+      "samples": [
+        7.1921339593362585,
+        7.070021380786713,
+        6.9359476279791,
+        6.854763636698057
+      ]
+    },
+    {
+      "name": "@canard/schema-form@latest - Scale Interact Nested nested-d3-f4",
+      "runs": 4,
+      "meanHz": 43.76728429923979,
+      "stdHz": 0.8139083744871438,
+      "relStd": 0.018596273164274917,
+      "samples": [
+        44.71377442274869,
+        44.14100896730708,
+        43.71659881759289,
+        42.4977549893105
+      ]
+    },
+    {
+      "name": "@canard/schema-form@latest - Scale Interact Nested nested-d5-f4",
+      "runs": 4,
+      "meanHz": 2.985073980654015,
+      "stdHz": 0.05910393886786011,
+      "relStd": 0.019799823807016913,
+      "samples": [
+        3.0166904693030507,
+        3.060775758831637,
+        2.958655768551242,
+        2.9041739259301314
+      ]
+    },
+    {
+      "name": "@canard/schema-form@latest - Array Stress push x100",
+      "runs": 4,
+      "meanHz": 9.301036317575901,
+      "stdHz": 0.17309230051993452,
+      "relStd": 0.018610001575076852,
+      "samples": [
+        9.535945698216969,
+        9.04849769386716,
+        9.290743227136707,
+        9.328958651082774
+      ]
+    },
+    {
+      "name": "@canard/schema-form@latest - Array Stress applyValue 200",
+      "runs": 4,
+      "meanHz": 4.758666800135651,
+      "stdHz": 0.10492087118849798,
+      "relStd": 0.02204837522675618,
+      "samples": [
+        4.846230485325657,
+        4.838793883112773,
+        4.763944116833356,
+        4.585698715270817
+      ]
+    },
+    {
+      "name": "@canard/schema-form@latest - Array Stress push+remove x100",
+      "runs": 4,
+      "meanHz": 9.415804619924817,
+      "stdHz": 0.12505488195296566,
+      "relStd": 0.0132813802963091,
+      "samples": [
+        9.631042504329383,
+        9.344429167864009,
+        9.363683656670451,
+        9.324063150835425
+      ]
+    }
+  ]
+}

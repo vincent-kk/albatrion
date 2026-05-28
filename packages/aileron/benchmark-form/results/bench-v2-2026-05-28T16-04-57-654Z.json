@@ -1,0 +1,31 @@
+{
+  "timestamp": "2026-05-28T16-04-57-654Z",
+  "repeat": 1,
+  "versions": [
+    "latest"
+  ],
+  "runs": [
+    [
+      {
+        "name": "@canard/schema-form@latest - Form Rendering v2",
+        "hz": 547.5059787342886,
+        "stats": {
+          "mean": 0.0018264640731627739,
+          "deviation": 0.0004594489371210045
+        }
+      }
+    ]
+  ],
+  "aggregate": [
+    {
+      "name": "@canard/schema-form@latest - Form Rendering v2",
+      "runs": 1,
+      "meanHz": 547.5059787342886,
+      "stdHz": 0,
+      "relStd": 0,
+      "samples": [
+        547.5059787342886
+      ]
+    }
+  ]
+}

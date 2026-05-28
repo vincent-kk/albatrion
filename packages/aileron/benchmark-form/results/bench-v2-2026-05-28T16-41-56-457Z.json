@@ -1,0 +1,1635 @@
+{
+  "timestamp": "2026-05-28T16-41-56-457Z",
+  "repeat": 15,
+  "versions": [
+    "0.4.14",
+    "0.5.0",
+    "0.6.0",
+    "0.7.0",
+    "0.8.0",
+    "0.9.0",
+    "0.10.0",
+    "0.11.0",
+    "0.12.0",
+    "0.12.5",
+    "latest"
+  ],
+  "runs": [
+    [
+      {
+        "name": "@canard/schema-form@0.4.14 - Form Rendering v2",
+        "hz": 591.814038566953,
+        "stats": {
+          "mean": 0.0016897199708568054,
+          "deviation": 0.00039787421386770376
+        }
+      },
+      {
+        "name": "@canard/schema-form@0.5.0 - Form Rendering v2",
+        "hz": 639.9923377518722,
+        "stats": {
+          "mean": 0.0015625187068844318,
+          "deviation": 0.00036359157774905934
+        }
+      },
+      {
+        "name": "@canard/schema-form@0.6.0 - Form Rendering v2",
+        "hz": 580.722791511555,
+        "stats": {
+          "mean": 0.0017219919979326358,
+          "deviation": 0.00045991037717109807
+        }
+      },
+      {
+        "name": "@canard/schema-form@0.7.0 - Form Rendering v2",
+        "hz": 583.566656981379,
+        "stats": {
+          "mean": 0.001713600302616174,
+          "deviation": 0.0003774576409353082
+        }
+      },
+      {
+        "name": "@canard/schema-form@0.8.0 - Form Rendering v2",
+        "hz": 569.01916671875,
+        "stats": {
+          "mean": 0.0017574100460736705,
+          "deviation": 0.0004641046391636487
+        }
+      },
+      {
+        "name": "@canard/schema-form@0.9.0 - Form Rendering v2",
+        "hz": 554.5432100504256,
+        "stats": {
+          "mean": 0.0018032859872345534,
+          "deviation": 0.00048491665364567047
+        }
+      },
+      {
+        "name": "@canard/schema-form@0.10.0 - Form Rendering v2",
+        "hz": 564.0974528364685,
+        "stats": {
+          "mean": 0.0017727433353433336,
+          "deviation": 0.0004108688745691362
+        }
+      },
+      {
+        "name": "@canard/schema-form@0.11.0 - Form Rendering v2",
+        "hz": 552.94334108385,
+        "stats": {
+          "mean": 0.0018085035585017686,
+          "deviation": 0.0004416815876046552
+        }
+      },
+      {
+        "name": "@canard/schema-form@0.12.0 - Form Rendering v2",
+        "hz": 523.3875251319196,
+        "stats": {
+          "mean": 0.0019106301774157693,
+          "deviation": 0.0004790080130427685
+        }
+      },
+      {
+        "name": "@canard/schema-form@0.12.5 - Form Rendering v2",
+        "hz": 523.7816830390359,
+        "stats": {
+          "mean": 0.0019091923837387663,
+          "deviation": 0.00045619104233479593
+        }
+      },
+      {
+        "name": "@canard/schema-form@latest - Form Rendering v2",
+        "hz": 540.7579314523277,
+        "stats": {
+          "mean": 0.0018492562787091698,
+          "deviation": 0.00042643692097668384
+        }
+      }
+    ],
+    [
+      {
+        "name": "@canard/schema-form@0.4.14 - Form Rendering v2",
+        "hz": 596.1381975574828,
+        "stats": {
+          "mean": 0.0016774633870086384,
+          "deviation": 0.00038310327363266913
+        }
+      },
+      {
+        "name": "@canard/schema-form@0.5.0 - Form Rendering v2",
+        "hz": 585.0517356287461,
+        "stats": {
+          "mean": 0.001709250548458446,
+          "deviation": 0.000421583779144502
+        }
+      },
+      {
+        "name": "@canard/schema-form@0.6.0 - Form Rendering v2",
+        "hz": 565.9340399053486,
+        "stats": {
+          "mean": 0.0017669903725304244,
+          "deviation": 0.00039105293674978367
+        }
+      },
+      {
+        "name": "@canard/schema-form@0.7.0 - Form Rendering v2",
+        "hz": 574.3971454106711,
+        "stats": {
+          "mean": 0.0017409557272173417,
+          "deviation": 0.00039184819510846604
+        }
+      },
+      {
+        "name": "@canard/schema-form@0.8.0 - Form Rendering v2",
+        "hz": 552.6608030481572,
+        "stats": {
+          "mean": 0.0018094281238773921,
+          "deviation": 0.0005805017591548218
+        }
+      },
+      {
+        "name": "@canard/schema-form@0.9.0 - Form Rendering v2",
+        "hz": 504.51690486912815,
+        "stats": {
+          "mean": 0.0019820941386679606,
+          "deviation": 0.0004706954210285366
+        }
+      },
+      {
+        "name": "@canard/schema-form@0.10.0 - Form Rendering v2",
+        "hz": 521.1494142925807,
+        "stats": {
+          "mean": 0.0019188355058547294,
+          "deviation": 0.0004364502759313895
+        }
+      },
+      {
+        "name": "@canard/schema-form@0.11.0 - Form Rendering v2",
+        "hz": 559.8189882369956,
+        "stats": {
+          "mean": 0.0017862916782248495,
+          "deviation": 0.0004333051639645981
+        }
+      },
+      {
+        "name": "@canard/schema-form@0.12.0 - Form Rendering v2",
+        "hz": 508.36226146814477,
+        "stats": {
+          "mean": 0.0019671011713418905,
+          "deviation": 0.0004881740212085484
+        }
+      },
+      {
+        "name": "@canard/schema-form@0.12.5 - Form Rendering v2",
+        "hz": 544.6827262217105,
+        "stats": {
+          "mean": 0.0018359311794899015,
+          "deviation": 0.00040935577197193844
+        }
+      },
+      {
+        "name": "@canard/schema-form@latest - Form Rendering v2",
+        "hz": 528.7777423152353,
+        "stats": {
+          "mean": 0.0018911537305286985,
+          "deviation": 0.0004451852012820773
+        }
+      }
+    ],
+    [
+      {
+        "name": "@canard/schema-form@0.4.14 - Form Rendering v2",
+        "hz": 579.1640746936064,
+        "stats": {
+          "mean": 0.0017266264322921398,
+          "deviation": 0.00043001150445690355
+        }
+      },
+      {
+        "name": "@canard/schema-form@0.5.0 - Form Rendering v2",
+        "hz": 606.0698223600103,
+        "stats": {
+          "mean": 0.001649974909006428,
+          "deviation": 0.0003853326100890107
+        }
+      },
+      {
+        "name": "@canard/schema-form@0.6.0 - Form Rendering v2",
+        "hz": 589.3847698467474,
+        "stats": {
+          "mean": 0.001696684494002146,
+          "deviation": 0.0004025331985286195
+        }
+      },
+      {
+        "name": "@canard/schema-form@0.7.0 - Form Rendering v2",
+        "hz": 581.3338063571892,
+        "stats": {
+          "mean": 0.0017201820865473106,
+          "deviation": 0.0003726669709825894
+        }
+      },
+      {
+        "name": "@canard/schema-form@0.8.0 - Form Rendering v2",
+        "hz": 544.6377937509641,
+        "stats": {
+          "mean": 0.0018360826433158814,
+          "deviation": 0.00044632149586121744
+        }
+      },
+      {
+        "name": "@canard/schema-form@0.9.0 - Form Rendering v2",
+        "hz": 507.1272018456384,
+        "stats": {
+          "mean": 0.00197189185742867,
+          "deviation": 0.0004750730992328356
+        }
+      },
+      {
+        "name": "@canard/schema-form@0.10.0 - Form Rendering v2",
+        "hz": 527.4758267649422,
+        "stats": {
+          "mean": 0.001895821475143405,
+          "deviation": 0.0004503607127072329
+        }
+      },
+      {
+        "name": "@canard/schema-form@0.11.0 - Form Rendering v2",
+        "hz": 536.6267733750184,
+        "stats": {
+          "mean": 0.0018634925605941692,
+          "deviation": 0.00043514027891624783
+        }
+      },
+      {
+        "name": "@canard/schema-form@0.12.0 - Form Rendering v2",
+        "hz": 523.5467836741798,
+        "stats": {
+          "mean": 0.0019100489797342212,
+          "deviation": 0.0004228964685897445
+        }
+      },
+      {
+        "name": "@canard/schema-form@0.12.5 - Form Rendering v2",
+        "hz": 491.9972230467259,
+        "stats": {
+          "mean": 0.00203253179724762,
+          "deviation": 0.0005882482293685423
+        }
+      },
+      {
+        "name": "@canard/schema-form@latest - Form Rendering v2",
+        "hz": 486.73553103921125,
+        "stats": {
+          "mean": 0.0020545038038725805,
+          "deviation": 0.000561397054020633
+        }
+      }
+    ],
+    [
+      {
+        "name": "@canard/schema-form@0.4.14 - Form Rendering v2",
+        "hz": 580.8710712050923,
+        "stats": {
+          "mean": 0.0017215524228558507,
+          "deviation": 0.0005034454474586976
+        }
+      },
+      {
+        "name": "@canard/schema-form@0.5.0 - Form Rendering v2",
+        "hz": 620.321477041333,
+        "stats": {
+          "mean": 0.0016120673505769468,
+          "deviation": 0.0003788428490906472
+        }
+      },
+      {
+        "name": "@canard/schema-form@0.6.0 - Form Rendering v2",
+        "hz": 583.7915879038295,
+        "stats": {
+          "mean": 0.00171294006409139,
+          "deviation": 0.00042343491536876623
+        }
+      },
+      {
+        "name": "@canard/schema-form@0.7.0 - Form Rendering v2",
+        "hz": 551.314487615483,
+        "stats": {
+          "mean": 0.0018138467652557952,
+          "deviation": 0.0005185641053372975
+        }
+      },
+      {
+        "name": "@canard/schema-form@0.8.0 - Form Rendering v2",
+        "hz": 508.41897223352527,
+        "stats": {
+          "mean": 0.0019668817542487053,
+          "deviation": 0.0006638309850923014
+        }
+      },
+      {
+        "name": "@canard/schema-form@0.9.0 - Form Rendering v2",
+        "hz": 558.0631064803482,
+        "stats": {
+          "mean": 0.0017919120407491305,
+          "deviation": 0.000444246395135819
+        }
+      },
+      {
+        "name": "@canard/schema-form@0.10.0 - Form Rendering v2",
+        "hz": 562.6340135139116,
+        "stats": {
+          "mean": 0.0017773543297792008,
+          "deviation": 0.00043764068986659743
+        }
+      },
+      {
+        "name": "@canard/schema-form@0.11.0 - Form Rendering v2",
+        "hz": 575.2040436022712,
+        "stats": {
+          "mean": 0.0017385135085932338,
+          "deviation": 0.00040764346998745495
+        }
+      },
+      {
+        "name": "@canard/schema-form@0.12.0 - Form Rendering v2",
+        "hz": 531.0039104560783,
+        "stats": {
+          "mean": 0.0018832253026933488,
+          "deviation": 0.0004941195882553628
+        }
+      },
+      {
+        "name": "@canard/schema-form@0.12.5 - Form Rendering v2",
+        "hz": 516.0116912117402,
+        "stats": {
+          "mean": 0.0019379405874539771,
+          "deviation": 0.00046032299628717466
+        }
+      },
+      {
+        "name": "@canard/schema-form@latest - Form Rendering v2",
+        "hz": 528.6796934109041,
+        "stats": {
+          "mean": 0.0018915044637864936,
+          "deviation": 0.00044407361535607763
+        }
+      }
+    ],
+    [
+      {
+        "name": "@canard/schema-form@0.4.14 - Form Rendering v2",
+        "hz": 576.8743637903424,
+        "stats": {
+          "mean": 0.0017334797015931137,
+          "deviation": 0.00043953298584582784
+        }
+      },
+      {
+        "name": "@canard/schema-form@0.5.0 - Form Rendering v2",
+        "hz": 579.4164880922489,
+        "stats": {
+          "mean": 0.001725874255481646,
+          "deviation": 0.0004346864858191492
+        }
+      },
+      {
+        "name": "@canard/schema-form@0.6.0 - Form Rendering v2",
+        "hz": 549.5151180402485,
+        "stats": {
+          "mean": 0.0018197861481342472,
+          "deviation": 0.0006390834252773413
+        }
+      },
+      {
+        "name": "@canard/schema-form@0.7.0 - Form Rendering v2",
+        "hz": 568.7088099975502,
+        "stats": {
+          "mean": 0.0017583691028178507,
+          "deviation": 0.0004237854605012064
+        }
+      },
+      {
+        "name": "@canard/schema-form@0.8.0 - Form Rendering v2",
+        "hz": 515.92882941001,
+        "stats": {
+          "mean": 0.0019382518343538761,
+          "deviation": 0.0005062041357913136
+        }
+      },
+      {
+        "name": "@canard/schema-form@0.9.0 - Form Rendering v2",
+        "hz": 516.4488246472239,
+        "stats": {
+          "mean": 0.0019363002726999726,
+          "deviation": 0.0004744039952695841
+        }
+      },
+      {
+        "name": "@canard/schema-form@0.10.0 - Form Rendering v2",
+        "hz": 494.52342376843194,
+        "stats": {
+          "mean": 0.002022148905262504,
+          "deviation": 0.0006760039995272182
+        }
+      },
+      {
+        "name": "@canard/schema-form@0.11.0 - Form Rendering v2",
+        "hz": 564.1769358942357,
+        "stats": {
+          "mean": 0.0017724935855716484,
+          "deviation": 0.00045415331805507165
+        }
+      },
+      {
+        "name": "@canard/schema-form@0.12.0 - Form Rendering v2",
+        "hz": 505.84909092003505,
+        "stats": {
+          "mean": 0.001976874166525053,
+          "deviation": 0.00045351910752507293
+        }
+      },
+      {
+        "name": "@canard/schema-form@0.12.5 - Form Rendering v2",
+        "hz": 522.4956644732706,
+        "stats": {
+          "mean": 0.0019138914789046202,
+          "deviation": 0.0005254173604400179
+        }
+      },
+      {
+        "name": "@canard/schema-form@latest - Form Rendering v2",
+        "hz": 531.2392753222557,
+        "stats": {
+          "mean": 0.0018823909421858706,
+          "deviation": 0.00046346689981763907
+        }
+      }
+    ],
+    [
+      {
+        "name": "@canard/schema-form@0.4.14 - Form Rendering v2",
+        "hz": 594.7535155279329,
+        "stats": {
+          "mean": 0.0016813687920992785,
+          "deviation": 0.000416228443824863
+        }
+      },
+      {
+        "name": "@canard/schema-form@0.5.0 - Form Rendering v2",
+        "hz": 573.778742291915,
+        "stats": {
+          "mean": 0.0017428320819373282,
+          "deviation": 0.0005031752436141861
+        }
+      },
+      {
+        "name": "@canard/schema-form@0.6.0 - Form Rendering v2",
+        "hz": 540.7548143343838,
+        "stats": {
+          "mean": 0.0018492669385309164,
+          "deviation": 0.0004589828034337543
+        }
+      },
+      {
+        "name": "@canard/schema-form@0.7.0 - Form Rendering v2",
+        "hz": 583.1753705597324,
+        "stats": {
+          "mean": 0.0017147500571572474,
+          "deviation": 0.00043386725957671114
+        }
+      },
+      {
+        "name": "@canard/schema-form@0.8.0 - Form Rendering v2",
+        "hz": 568.7258931868166,
+        "stats": {
+          "mean": 0.0017583162855423524,
+          "deviation": 0.0006024491123520375
+        }
+      },
+      {
+        "name": "@canard/schema-form@0.9.0 - Form Rendering v2",
+        "hz": 571.3075239562821,
+        "stats": {
+          "mean": 0.0017503707864287158,
+          "deviation": 0.0004072075609126214
+        }
+      },
+      {
+        "name": "@canard/schema-form@0.10.0 - Form Rendering v2",
+        "hz": 602.0511403495453,
+        "stats": {
+          "mean": 0.001660988465895786,
+          "deviation": 0.0004570518823001613
+        }
+      },
+      {
+        "name": "@canard/schema-form@0.11.0 - Form Rendering v2",
+        "hz": 556.4065607978242,
+        "stats": {
+          "mean": 0.0017972469601474736,
+          "deviation": 0.0004392797976255375
+        }
+      },
+      {
+        "name": "@canard/schema-form@0.12.0 - Form Rendering v2",
+        "hz": 578.6489238311216,
+        "stats": {
+          "mean": 0.0017281635873081648,
+          "deviation": 0.00044367080986829424
+        }
+      },
+      {
+        "name": "@canard/schema-form@0.12.5 - Form Rendering v2",
+        "hz": 569.5583839711073,
+        "stats": {
+          "mean": 0.0017557462555949806,
+          "deviation": 0.0004612707780609833
+        }
+      },
+      {
+        "name": "@canard/schema-form@latest - Form Rendering v2",
+        "hz": 576.6973065188436,
+        "stats": {
+          "mean": 0.0017340119135224798,
+          "deviation": 0.0004575733890638106
+        }
+      }
+    ],
+    [
+      {
+        "name": "@canard/schema-form@0.4.14 - Form Rendering v2",
+        "hz": 649.9884013894921,
+        "stats": {
+          "mean": 0.0015384889912839702,
+          "deviation": 0.00033830930079981904
+        }
+      },
+      {
+        "name": "@canard/schema-form@0.5.0 - Form Rendering v2",
+        "hz": 612.3896174135529,
+        "stats": {
+          "mean": 0.0016329473452269356,
+          "deviation": 0.00048687613479876624
+        }
+      },
+      {
+        "name": "@canard/schema-form@0.6.0 - Form Rendering v2",
+        "hz": 582.1022625981894,
+        "stats": {
+          "mean": 0.001717911206076646,
+          "deviation": 0.0004204863037406029
+        }
+      },
+      {
+        "name": "@canard/schema-form@0.7.0 - Form Rendering v2",
+        "hz": 572.692394261247,
+        "stats": {
+          "mean": 0.0017461380839359055,
+          "deviation": 0.00043064589870058065
+        }
+      },
+      {
+        "name": "@canard/schema-form@0.8.0 - Form Rendering v2",
+        "hz": 539.8431447309034,
+        "stats": {
+          "mean": 0.001852389920591604,
+          "deviation": 0.0006052631990717857
+        }
+      },
+      {
+        "name": "@canard/schema-form@0.9.0 - Form Rendering v2",
+        "hz": 466.166580801189,
+        "stats": {
+          "mean": 0.002145155918902047,
+          "deviation": 0.0009372787915622175
+        }
+      },
+      {
+        "name": "@canard/schema-form@0.10.0 - Form Rendering v2",
+        "hz": 510.84576431312115,
+        "stats": {
+          "mean": 0.0019575380082569372,
+          "deviation": 0.0006195134432617226
+        }
+      },
+      {
+        "name": "@canard/schema-form@0.11.0 - Form Rendering v2",
+        "hz": 534.3026792083745,
+        "stats": {
+          "mean": 0.001871598326030491,
+          "deviation": 0.0005546332966603875
+        }
+      },
+      {
+        "name": "@canard/schema-form@0.12.0 - Form Rendering v2",
+        "hz": 518.7426196799535,
+        "stats": {
+          "mean": 0.0019277382695429305,
+          "deviation": 0.0005972432982060453
+        }
+      },
+      {
+        "name": "@canard/schema-form@0.12.5 - Form Rendering v2",
+        "hz": 465.5951812230997,
+        "stats": {
+          "mean": 0.0021477885517909366,
+          "deviation": 0.0005098260493732326
+        }
+      },
+      {
+        "name": "@canard/schema-form@latest - Form Rendering v2",
+        "hz": 440.7301855127267,
+        "stats": {
+          "mean": 0.0022689619020232134,
+          "deviation": 0.0008163864500625984
+        }
+      }
+    ],
+    [
+      {
+        "name": "@canard/schema-form@0.4.14 - Form Rendering v2",
+        "hz": 618.5813571442462,
+        "stats": {
+          "mean": 0.0016166022277435226,
+          "deviation": 0.00040067953277148104
+        }
+      },
+      {
+        "name": "@canard/schema-form@0.5.0 - Form Rendering v2",
+        "hz": 590.3521793402737,
+        "stats": {
+          "mean": 0.0016939041389116463,
+          "deviation": 0.0004910536540395514
+        }
+      },
+      {
+        "name": "@canard/schema-form@0.6.0 - Form Rendering v2",
+        "hz": 580.6167147685583,
+        "stats": {
+          "mean": 0.00172230660014432,
+          "deviation": 0.000354606446739742
+        }
+      },
+      {
+        "name": "@canard/schema-form@0.7.0 - Form Rendering v2",
+        "hz": 569.6068715205037,
+        "stats": {
+          "mean": 0.0017555967984210035,
+          "deviation": 0.0005798307296983799
+        }
+      },
+      {
+        "name": "@canard/schema-form@0.8.0 - Form Rendering v2",
+        "hz": 574.7615306587269,
+        "stats": {
+          "mean": 0.0017398520023668123,
+          "deviation": 0.0005322201470054369
+        }
+      },
+      {
+        "name": "@canard/schema-form@0.9.0 - Form Rendering v2",
+        "hz": 582.7449706044353,
+        "stats": {
+          "mean": 0.0017160165259989786,
+          "deviation": 0.00035249716102502026
+        }
+      },
+      {
+        "name": "@canard/schema-form@0.10.0 - Form Rendering v2",
+        "hz": 576.0963556926743,
+        "stats": {
+          "mean": 0.001735820735747654,
+          "deviation": 0.00045145043108244654
+        }
+      },
+      {
+        "name": "@canard/schema-form@0.11.0 - Form Rendering v2",
+        "hz": 604.7454281813465,
+        "stats": {
+          "mean": 0.001653588358670696,
+          "deviation": 0.0003407132041383404
+        }
+      },
+      {
+        "name": "@canard/schema-form@0.12.0 - Form Rendering v2",
+        "hz": 567.8396766538825,
+        "stats": {
+          "mean": 0.00176106045617086,
+          "deviation": 0.0005911109964369523
+        }
+      },
+      {
+        "name": "@canard/schema-form@0.12.5 - Form Rendering v2",
+        "hz": 572.0478666505296,
+        "stats": {
+          "mean": 0.0017481054616202442,
+          "deviation": 0.0005667819798631483
+        }
+      },
+      {
+        "name": "@canard/schema-form@latest - Form Rendering v2",
+        "hz": 579.8416595841816,
+        "stats": {
+          "mean": 0.0017246087504597793,
+          "deviation": 0.0005058359469609378
+        }
+      }
+    ],
+    [
+      {
+        "name": "@canard/schema-form@0.4.14 - Form Rendering v2",
+        "hz": 664.5247460041332,
+        "stats": {
+          "mean": 0.0015048348553054188,
+          "deviation": 0.00033369036110160075
+        }
+      },
+      {
+        "name": "@canard/schema-form@0.5.0 - Form Rendering v2",
+        "hz": 656.3361982158062,
+        "stats": {
+          "mean": 0.0015236093982297708,
+          "deviation": 0.0004299801405692955
+        }
+      },
+      {
+        "name": "@canard/schema-form@0.6.0 - Form Rendering v2",
+        "hz": 646.9537252983736,
+        "stats": {
+          "mean": 0.001545705605974836,
+          "deviation": 0.00030228894265443075
+        }
+      },
+      {
+        "name": "@canard/schema-form@0.7.0 - Form Rendering v2",
+        "hz": 627.8287568518967,
+        "stats": {
+          "mean": 0.0015927910104249932,
+          "deviation": 0.00043409257783571164
+        }
+      },
+      {
+        "name": "@canard/schema-form@0.8.0 - Form Rendering v2",
+        "hz": 625.0033066691609,
+        "stats": {
+          "mean": 0.0015999915349717338,
+          "deviation": 0.0004645502782645788
+        }
+      },
+      {
+        "name": "@canard/schema-form@0.9.0 - Form Rendering v2",
+        "hz": 624.1203774689582,
+        "stats": {
+          "mean": 0.0016022550073679287,
+          "deviation": 0.0005592591899716652
+        }
+      },
+      {
+        "name": "@canard/schema-form@0.10.0 - Form Rendering v2",
+        "hz": 609.5426523607148,
+        "stats": {
+          "mean": 0.001640574283238543,
+          "deviation": 0.0005592552063712118
+        }
+      },
+      {
+        "name": "@canard/schema-form@0.11.0 - Form Rendering v2",
+        "hz": 619.4196327864098,
+        "stats": {
+          "mean": 0.001614414440662108,
+          "deviation": 0.0003939322014062692
+        }
+      },
+      {
+        "name": "@canard/schema-form@0.12.0 - Form Rendering v2",
+        "hz": 577.3086438387363,
+        "stats": {
+          "mean": 0.0017321756926254113,
+          "deviation": 0.0005045613458475954
+        }
+      },
+      {
+        "name": "@canard/schema-form@0.12.5 - Form Rendering v2",
+        "hz": 588.7430003981224,
+        "stats": {
+          "mean": 0.001698533994160059,
+          "deviation": 0.00039398589719377025
+        }
+      },
+      {
+        "name": "@canard/schema-form@latest - Form Rendering v2",
+        "hz": 586.1515153043567,
+        "stats": {
+          "mean": 0.0017060435295143,
+          "deviation": 0.0005077940097317885
+        }
+      }
+    ],
+    [
+      {
+        "name": "@canard/schema-form@0.4.14 - Form Rendering v2",
+        "hz": 664.9516809437498,
+        "stats": {
+          "mean": 0.001503868669947152,
+          "deviation": 0.00032794345370713385
+        }
+      },
+      {
+        "name": "@canard/schema-form@0.5.0 - Form Rendering v2",
+        "hz": 648.5245654578174,
+        "stats": {
+          "mean": 0.0015419616360932498,
+          "deviation": 0.0004673386760468113
+        }
+      },
+      {
+        "name": "@canard/schema-form@0.6.0 - Form Rendering v2",
+        "hz": 637.2911178199381,
+        "stats": {
+          "mean": 0.0015691415932813026,
+          "deviation": 0.0003079859615545715
+        }
+      },
+      {
+        "name": "@canard/schema-form@0.7.0 - Form Rendering v2",
+        "hz": 624.4906169601232,
+        "stats": {
+          "mean": 0.0016013050842425306,
+          "deviation": 0.000507527400776025
+        }
+      },
+      {
+        "name": "@canard/schema-form@0.8.0 - Form Rendering v2",
+        "hz": 625.4789641612127,
+        "stats": {
+          "mean": 0.0015987747906774641,
+          "deviation": 0.00046850095048248986
+        }
+      },
+      {
+        "name": "@canard/schema-form@0.9.0 - Form Rendering v2",
+        "hz": 625.7967486816428,
+        "stats": {
+          "mean": 0.0015979629202399754,
+          "deviation": 0.00031717394490998535
+        }
+      },
+      {
+        "name": "@canard/schema-form@0.10.0 - Form Rendering v2",
+        "hz": 600.1992211119023,
+        "stats": {
+          "mean": 0.0016661134583737791,
+          "deviation": 0.0005232624071928361
+        }
+      },
+      {
+        "name": "@canard/schema-form@0.11.0 - Form Rendering v2",
+        "hz": 604.4742560373727,
+        "stats": {
+          "mean": 0.0016543301720663738,
+          "deviation": 0.0005090257013869722
+        }
+      },
+      {
+        "name": "@canard/schema-form@0.12.0 - Form Rendering v2",
+        "hz": 592.5580977432529,
+        "stats": {
+          "mean": 0.001687598235191591,
+          "deviation": 0.0003458747334583732
+        }
+      },
+      {
+        "name": "@canard/schema-form@0.12.5 - Form Rendering v2",
+        "hz": 568.6675724352208,
+        "stats": {
+          "mean": 0.001758496612911604,
+          "deviation": 0.0005760147132152826
+        }
+      },
+      {
+        "name": "@canard/schema-form@latest - Form Rendering v2",
+        "hz": 592.6747388401086,
+        "stats": {
+          "mean": 0.001687266108147355,
+          "deviation": 0.0003200416034991991
+        }
+      }
+    ],
+    [
+      {
+        "name": "@canard/schema-form@0.4.14 - Form Rendering v2",
+        "hz": 659.556924056332,
+        "stats": {
+          "mean": 0.0015161693608641293,
+          "deviation": 0.00029644800166156167
+        }
+      },
+      {
+        "name": "@canard/schema-form@0.5.0 - Form Rendering v2",
+        "hz": 635.5355676468549,
+        "stats": {
+          "mean": 0.0015734760584724115,
+          "deviation": 0.0005039268868612069
+        }
+      },
+      {
+        "name": "@canard/schema-form@0.6.0 - Form Rendering v2",
+        "hz": 627.8518508200228,
+        "stats": {
+          "mean": 0.00159273242357082,
+          "deviation": 0.00030497983497780725
+        }
+      },
+      {
+        "name": "@canard/schema-form@0.7.0 - Form Rendering v2",
+        "hz": 609.9308121133355,
+        "stats": {
+          "mean": 0.0016395302223462405,
+          "deviation": 0.0005623996811731297
+        }
+      },
+      {
+        "name": "@canard/schema-form@0.8.0 - Form Rendering v2",
+        "hz": 609.3235767717351,
+        "stats": {
+          "mean": 0.0016411641336744468,
+          "deviation": 0.0005480713995544249
+        }
+      },
+      {
+        "name": "@canard/schema-form@0.9.0 - Form Rendering v2",
+        "hz": 574.2038033436348,
+        "stats": {
+          "mean": 0.0017415419301943314,
+          "deviation": 0.0003930484111922136
+        }
+      },
+      {
+        "name": "@canard/schema-form@0.10.0 - Form Rendering v2",
+        "hz": 579.9903621278227,
+        "stats": {
+          "mean": 0.001724166581546768,
+          "deviation": 0.0005835221045068866
+        }
+      },
+      {
+        "name": "@canard/schema-form@0.11.0 - Form Rendering v2",
+        "hz": 598.0358829009814,
+        "stats": {
+          "mean": 0.0016721404661358306,
+          "deviation": 0.0003508048480640949
+        }
+      },
+      {
+        "name": "@canard/schema-form@0.12.0 - Form Rendering v2",
+        "hz": 548.0032149696945,
+        "stats": {
+          "mean": 0.0018248068125937943,
+          "deviation": 0.0005191113749264233
+        }
+      },
+      {
+        "name": "@canard/schema-form@0.12.5 - Form Rendering v2",
+        "hz": 559.390011478472,
+        "stats": {
+          "mean": 0.0017876615232313364,
+          "deviation": 0.0005963574527421273
+        }
+      },
+      {
+        "name": "@canard/schema-form@latest - Form Rendering v2",
+        "hz": 585.3338008378735,
+        "stats": {
+          "mean": 0.0017084268814965998,
+          "deviation": 0.00035428874272805394
+        }
+      }
+    ],
+    [
+      {
+        "name": "@canard/schema-form@0.4.14 - Form Rendering v2",
+        "hz": 641.167266122118,
+        "stats": {
+          "mean": 0.0015596554172956452,
+          "deviation": 0.000341064995024007
+        }
+      },
+      {
+        "name": "@canard/schema-form@0.5.0 - Form Rendering v2",
+        "hz": 592.2031938766844,
+        "stats": {
+          "mean": 0.0016886096028185756,
+          "deviation": 0.0006494150178034496
+        }
+      },
+      {
+        "name": "@canard/schema-form@0.6.0 - Form Rendering v2",
+        "hz": 575.5323711627445,
+        "stats": {
+          "mean": 0.0017375217278911804,
+          "deviation": 0.00042586766541299475
+        }
+      },
+      {
+        "name": "@canard/schema-form@0.7.0 - Form Rendering v2",
+        "hz": 553.8640140618531,
+        "stats": {
+          "mean": 0.0018054973325786867,
+          "deviation": 0.00067866101009241
+        }
+      },
+      {
+        "name": "@canard/schema-form@0.8.0 - Form Rendering v2",
+        "hz": 510.8874237742986,
+        "stats": {
+          "mean": 0.0019573783840914883,
+          "deviation": 0.0008599778840816773
+        }
+      },
+      {
+        "name": "@canard/schema-form@0.9.0 - Form Rendering v2",
+        "hz": 462.03194531478874,
+        "stats": {
+          "mean": 0.002164352508826389,
+          "deviation": 0.000923741422876113
+        }
+      },
+      {
+        "name": "@canard/schema-form@0.10.0 - Form Rendering v2",
+        "hz": 503.8484505176615,
+        "stats": {
+          "mean": 0.0019847237775021138,
+          "deviation": 0.0006498941615283068
+        }
+      },
+      {
+        "name": "@canard/schema-form@0.11.0 - Form Rendering v2",
+        "hz": 500.5741121072715,
+        "stats": {
+          "mean": 0.0019977061853843994,
+          "deviation": 0.0008257132002850434
+        }
+      },
+      {
+        "name": "@canard/schema-form@0.12.0 - Form Rendering v2",
+        "hz": 463.57448447965055,
+        "stats": {
+          "mean": 0.002157150648881101,
+          "deviation": 0.0007741846040427268
+        }
+      },
+      {
+        "name": "@canard/schema-form@0.12.5 - Form Rendering v2",
+        "hz": 490.5341800336009,
+        "stats": {
+          "mean": 0.002038593926179622,
+          "deviation": 0.0005381929565009573
+        }
+      },
+      {
+        "name": "@canard/schema-form@latest - Form Rendering v2",
+        "hz": 475.822537379728,
+        "stats": {
+          "mean": 0.0021016238648695084,
+          "deviation": 0.0009667093804246462
+        }
+      }
+    ],
+    [
+      {
+        "name": "@canard/schema-form@0.4.14 - Form Rendering v2",
+        "hz": 560.7656434103683,
+        "stats": {
+          "mean": 0.0017832761542208107,
+          "deviation": 0.0004070426537802853
+        }
+      },
+      {
+        "name": "@canard/schema-form@0.5.0 - Form Rendering v2",
+        "hz": 567.7697256050184,
+        "stats": {
+          "mean": 0.0017612774244600568,
+          "deviation": 0.00039179241749691163
+        }
+      },
+      {
+        "name": "@canard/schema-form@0.6.0 - Form Rendering v2",
+        "hz": 510.0953259524313,
+        "stats": {
+          "mean": 0.001960417884897958,
+          "deviation": 0.00078832023023343
+        }
+      },
+      {
+        "name": "@canard/schema-form@0.7.0 - Form Rendering v2",
+        "hz": 498.10531244818407,
+        "stats": {
+          "mean": 0.0020076075781745974,
+          "deviation": 0.0007934384317290488
+        }
+      },
+      {
+        "name": "@canard/schema-form@0.8.0 - Form Rendering v2",
+        "hz": 494.0447308617113,
+        "stats": {
+          "mean": 0.002024108218411323,
+          "deviation": 0.0007491825872315733
+        }
+      },
+      {
+        "name": "@canard/schema-form@0.9.0 - Form Rendering v2",
+        "hz": 513.0495081467415,
+        "stats": {
+          "mean": 0.0019491296339260533,
+          "deviation": 0.0007423462528389521
+        }
+      },
+      {
+        "name": "@canard/schema-form@0.10.0 - Form Rendering v2",
+        "hz": 503.4286151031434,
+        "stats": {
+          "mean": 0.0019863789423156214,
+          "deviation": 0.0007820308711667519
+        }
+      },
+      {
+        "name": "@canard/schema-form@0.11.0 - Form Rendering v2",
+        "hz": 511.4640338339305,
+        "stats": {
+          "mean": 0.0019551716911627346,
+          "deviation": 0.0007804099935419271
+        }
+      },
+      {
+        "name": "@canard/schema-form@0.12.0 - Form Rendering v2",
+        "hz": 493.870273149061,
+        "stats": {
+          "mean": 0.002024823226601002,
+          "deviation": 0.0004780230422486023
+        }
+      },
+      {
+        "name": "@canard/schema-form@0.12.5 - Form Rendering v2",
+        "hz": 474.18129914025053,
+        "stats": {
+          "mean": 0.002108898013930798,
+          "deviation": 0.00089138183153191
+        }
+      },
+      {
+        "name": "@canard/schema-form@latest - Form Rendering v2",
+        "hz": 499.85183392885364,
+        "stats": {
+          "mean": 0.0020005928399621214,
+          "deviation": 0.0008541697515100927
+        }
+      }
+    ],
+    [
+      {
+        "name": "@canard/schema-form@0.4.14 - Form Rendering v2",
+        "hz": 558.0752470639072,
+        "stats": {
+          "mean": 0.001791873058805431,
+          "deviation": 0.00039955331243296256
+        }
+      },
+      {
+        "name": "@canard/schema-form@0.5.0 - Form Rendering v2",
+        "hz": 540.0969013203128,
+        "stats": {
+          "mean": 0.0018515196024184086,
+          "deviation": 0.0003945705979104071
+        }
+      },
+      {
+        "name": "@canard/schema-form@0.6.0 - Form Rendering v2",
+        "hz": 512.0444984320635,
+        "stats": {
+          "mean": 0.001952955266704573,
+          "deviation": 0.0009484870224317791
+        }
+      },
+      {
+        "name": "@canard/schema-form@0.7.0 - Form Rendering v2",
+        "hz": 494.26669890577307,
+        "stats": {
+          "mean": 0.002023199220610733,
+          "deviation": 0.0008469509011949308
+        }
+      },
+      {
+        "name": "@canard/schema-form@0.8.0 - Form Rendering v2",
+        "hz": 461.33005988612814,
+        "stats": {
+          "mean": 0.0021676454385973327,
+          "deviation": 0.001479464959160512
+        }
+      },
+      {
+        "name": "@canard/schema-form@0.9.0 - Form Rendering v2",
+        "hz": 527.4113253507013,
+        "stats": {
+          "mean": 0.001896053330548129,
+          "deviation": 0.0004067698330213954
+        }
+      },
+      {
+        "name": "@canard/schema-form@0.10.0 - Form Rendering v2",
+        "hz": 509.7809389913536,
+        "stats": {
+          "mean": 0.001961626894050978,
+          "deviation": 0.0007951102679185942
+        }
+      },
+      {
+        "name": "@canard/schema-form@0.11.0 - Form Rendering v2",
+        "hz": 507.25161376498323,
+        "stats": {
+          "mean": 0.001971408218059044,
+          "deviation": 0.0008409318653732008
+        }
+      },
+      {
+        "name": "@canard/schema-form@0.12.0 - Form Rendering v2",
+        "hz": 489.9339196137999,
+        "stats": {
+          "mean": 0.002041091583918643,
+          "deviation": 0.000508895210708034
+        }
+      },
+      {
+        "name": "@canard/schema-form@0.12.5 - Form Rendering v2",
+        "hz": 487.97801327011075,
+        "stats": {
+          "mean": 0.0020492726573860397,
+          "deviation": 0.0007919633660135028
+        }
+      },
+      {
+        "name": "@canard/schema-form@latest - Form Rendering v2",
+        "hz": 499.29498959405197,
+        "stats": {
+          "mean": 0.002002824023555779,
+          "deviation": 0.0008457823767798159
+        }
+      }
+    ],
+    [
+      {
+        "name": "@canard/schema-form@0.4.14 - Form Rendering v2",
+        "hz": 565.9883590208374,
+        "stats": {
+          "mean": 0.00176682079067846,
+          "deviation": 0.0003826071719344395
+        }
+      },
+      {
+        "name": "@canard/schema-form@0.5.0 - Form Rendering v2",
+        "hz": 550.5291492927497,
+        "stats": {
+          "mean": 0.001816434245642894,
+          "deviation": 0.00041050493259633513
+        }
+      },
+      {
+        "name": "@canard/schema-form@0.6.0 - Form Rendering v2",
+        "hz": 505.82554598376214,
+        "stats": {
+          "mean": 0.001976966185160015,
+          "deviation": 0.0008679009825958297
+        }
+      },
+      {
+        "name": "@canard/schema-form@0.7.0 - Form Rendering v2",
+        "hz": 516.5192643336002,
+        "stats": {
+          "mean": 0.001936036212105611,
+          "deviation": 0.0008472421599798778
+        }
+      },
+      {
+        "name": "@canard/schema-form@0.8.0 - Form Rendering v2",
+        "hz": 526.8336916135326,
+        "stats": {
+          "mean": 0.001898132211205593,
+          "deviation": 0.0006665397449903364
+        }
+      },
+      {
+        "name": "@canard/schema-form@0.9.0 - Form Rendering v2",
+        "hz": 541.5592952668118,
+        "stats": {
+          "mean": 0.0018465198709355117,
+          "deviation": 0.0007117305159820512
+        }
+      },
+      {
+        "name": "@canard/schema-form@0.10.0 - Form Rendering v2",
+        "hz": 535.6078259699894,
+        "stats": {
+          "mean": 0.0018670376934634837,
+          "deviation": 0.00046049587708666995
+        }
+      },
+      {
+        "name": "@canard/schema-form@0.11.0 - Form Rendering v2",
+        "hz": 503.357059897434,
+        "stats": {
+          "mean": 0.001986661317919657,
+          "deviation": 0.0012935063239412823
+        }
+      },
+      {
+        "name": "@canard/schema-form@0.12.0 - Form Rendering v2",
+        "hz": 485.15838897979046,
+        "stats": {
+          "mean": 0.002061182538970084,
+          "deviation": 0.0004111419363576232
+        }
+      },
+      {
+        "name": "@canard/schema-form@0.12.5 - Form Rendering v2",
+        "hz": 513.8475246804668,
+        "stats": {
+          "mean": 0.0019461025926355187,
+          "deviation": 0.0010427429848855712
+        }
+      },
+      {
+        "name": "@canard/schema-form@latest - Form Rendering v2",
+        "hz": 524.2605086012362,
+        "stats": {
+          "mean": 0.0019074486511831113,
+          "deviation": 0.0008053191816477901
+        }
+      }
+    ]
+  ],
+  "aggregate": [
+    {
+      "name": "@canard/schema-form@0.4.14 - Form Rendering v2",
+      "runs": 15,
+      "meanHz": 606.8809924331061,
+      "stdHz": 37.99642804382147,
+      "relStd": 0.06260935589939348,
+      "samples": [
+        591.814038566953,
+        596.1381975574828,
+        579.1640746936064,
+        580.8710712050923,
+        576.8743637903424,
+        594.7535155279329,
+        649.9884013894921,
+        618.5813571442462,
+        664.5247460041332,
+        664.9516809437498,
+        659.556924056332,
+        641.167266122118,
+        560.7656434103683,
+        558.0752470639072,
+        565.9883590208374
+      ]
+    },
+    {
+      "name": "@canard/schema-form@0.5.0 - Form Rendering v2",
+      "runs": 15,
+      "meanHz": 599.891180089013,
+      "stdHz": 34.21187702020085,
+      "relStd": 0.05703013839130695,
+      "samples": [
+        639.9923377518722,
+        585.0517356287461,
+        606.0698223600103,
+        620.321477041333,
+        579.4164880922489,
+        573.778742291915,
+        612.3896174135529,
+        590.3521793402737,
+        656.3361982158062,
+        648.5245654578174,
+        635.5355676468549,
+        592.2031938766844,
+        567.7697256050184,
+        540.0969013203128,
+        550.5291492927497
+      ]
+    },
+    {
+      "name": "@canard/schema-form@0.6.0 - Form Rendering v2",
+      "runs": 15,
+      "meanHz": 572.5611022918798,
+      "stdHz": 42.447123429604616,
+      "relStd": 0.0741355346349846,
+      "samples": [
+        580.722791511555,
+        565.9340399053486,
+        589.3847698467474,
+        583.7915879038295,
+        549.5151180402485,
+        540.7548143343838,
+        582.1022625981894,
+        580.6167147685583,
+        646.9537252983736,
+        637.2911178199381,
+        627.8518508200228,
+        575.5323711627445,
+        510.0953259524313,
+        512.0444984320635,
+        505.82554598376214
+      ]
+    },
+    {
+      "name": "@canard/schema-form@0.7.0 - Form Rendering v2",
+      "runs": 15,
+      "meanHz": 567.3200678919015,
+      "stdHz": 38.89192161148949,
+      "relStd": 0.06855375618212758,
+      "samples": [
+        583.566656981379,
+        574.3971454106711,
+        581.3338063571892,
+        551.314487615483,
+        568.7088099975502,
+        583.1753705597324,
+        572.692394261247,
+        569.6068715205037,
+        627.8287568518967,
+        624.4906169601232,
+        609.9308121133355,
+        553.8640140618531,
+        498.10531244818407,
+        494.26669890577307,
+        516.5192643336002
+      ]
+    },
+    {
+      "name": "@canard/schema-form@0.8.0 - Form Rendering v2",
+      "runs": 15,
+      "meanHz": 548.4598591650423,
+      "stdHz": 46.34683788978368,
+      "relStd": 0.08450360972695543,
+      "samples": [
+        569.01916671875,
+        552.6608030481572,
+        544.6377937509641,
+        508.41897223352527,
+        515.92882941001,
+        568.7258931868166,
+        539.8431447309034,
+        574.7615306587269,
+        625.0033066691609,
+        625.4789641612127,
+        609.3235767717351,
+        510.8874237742986,
+        494.0447308617113,
+        461.33005988612814,
+        526.8336916135326
+      ]
+    },
+    {
+      "name": "@canard/schema-form@0.9.0 - Form Rendering v2",
+      "runs": 15,
+      "meanHz": 541.9394217885299,
+      "stdHz": 47.75481084721146,
+      "relStd": 0.08811835590333905,
+      "samples": [
+        554.5432100504256,
+        504.51690486912815,
+        507.1272018456384,
+        558.0631064803482,
+        516.4488246472239,
+        571.3075239562821,
+        466.166580801189,
+        582.7449706044353,
+        624.1203774689582,
+        625.7967486816428,
+        574.2038033436348,
+        462.03194531478874,
+        513.0495081467415,
+        527.4113253507013,
+        541.5592952668118
+      ]
+    },
+    {
+      "name": "@canard/schema-form@0.10.0 - Form Rendering v2",
+      "runs": 15,
+      "meanHz": 546.7514305142843,
+      "stdHz": 38.84076620615028,
+      "relStd": 0.07103916704820681,
+      "samples": [
+        564.0974528364685,
+        521.1494142925807,
+        527.4758267649422,
+        562.6340135139116,
+        494.52342376843194,
+        602.0511403495453,
+        510.84576431312115,
+        576.0963556926743,
+        609.5426523607148,
+        600.1992211119023,
+        579.9903621278227,
+        503.8484505176615,
+        503.4286151031434,
+        509.7809389913536,
+        535.6078259699894
+      ]
+    },
+    {
+      "name": "@canard/schema-form@0.11.0 - Form Rendering v2",
+      "runs": 15,
+      "meanHz": 555.2534227805533,
+      "stdHz": 38.31064851907566,
+      "relStd": 0.0689966904251156,
+      "samples": [
+        552.94334108385,
+        559.8189882369956,
+        536.6267733750184,
+        575.2040436022712,
+        564.1769358942357,
+        556.4065607978242,
+        534.3026792083745,
+        604.7454281813465,
+        619.4196327864098,
+        604.4742560373727,
+        598.0358829009814,
+        500.5741121072715,
+        511.4640338339305,
+        507.25161376498323,
+        503.357059897434
+      ]
+    },
+    {
+      "name": "@canard/schema-form@0.12.0 - Form Rendering v2",
+      "runs": 15,
+      "meanHz": 527.1858543059533,
+      "stdHz": 37.19662831089221,
+      "relStd": 0.0705569544536851,
+      "samples": [
+        523.3875251319196,
+        508.36226146814477,
+        523.5467836741798,
+        531.0039104560783,
+        505.84909092003505,
+        578.6489238311216,
+        518.7426196799535,
+        567.8396766538825,
+        577.3086438387363,
+        592.5580977432529,
+        548.0032149696945,
+        463.57448447965055,
+        493.870273149061,
+        489.9339196137999,
+        485.15838897979046
+      ]
+    },
+    {
+      "name": "@canard/schema-form@0.12.5 - Form Rendering v2",
+      "runs": 15,
+      "meanHz": 525.9674680848976,
+      "stdHz": 38.032548150653305,
+      "relStd": 0.07230969681287282,
+      "samples": [
+        523.7816830390359,
+        544.6827262217105,
+        491.9972230467259,
+        516.0116912117402,
+        522.4956644732706,
+        569.5583839711073,
+        465.5951812230997,
+        572.0478666505296,
+        588.7430003981224,
+        568.6675724352208,
+        559.390011478472,
+        490.5341800336009,
+        474.18129914025053,
+        487.97801327011075,
+        513.8475246804668
+      ]
+    },
+    {
+      "name": "@canard/schema-form@latest - Form Rendering v2",
+      "runs": 15,
+      "meanHz": 531.7899499761263,
+      "stdHz": 44.377910867981335,
+      "relStd": 0.08345007435731645,
+      "samples": [
+        540.7579314523277,
+        528.7777423152353,
+        486.73553103921125,
+        528.6796934109041,
+        531.2392753222557,
+        576.6973065188436,
+        440.7301855127267,
+        579.8416595841816,
+        586.1515153043567,
+        592.6747388401086,
+        585.3338008378735,
+        475.822537379728,
+        499.85183392885364,
+        499.29498959405197,
+        524.2605086012362
+      ]
+    }
+  ]
+}

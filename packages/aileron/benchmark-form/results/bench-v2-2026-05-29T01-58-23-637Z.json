@@ -1,0 +1,473 @@
+{
+  "timestamp": "2026-05-29T01-58-23-637Z",
+  "repeat": 15,
+  "versions": [
+    "latest"
+  ],
+  "runs": [
+    [
+      {
+        "name": "@canard/schema-form@latest - Array Stress push x100",
+        "hz": 100.51677764187896,
+        "stats": {
+          "mean": 0.00994858792193676,
+          "deviation": 0.029112276983879436
+        }
+      },
+      {
+        "name": "@canard/schema-form@latest - Array Stress applyValue 200",
+        "hz": 4.401055706240033,
+        "stats": {
+          "mean": 0.2272182100722222,
+          "deviation": 0.02944160070347217
+        }
+      },
+      {
+        "name": "@canard/schema-form@latest - Array Stress push+remove x100",
+        "hz": 8.14275328243056,
+        "stats": {
+          "mean": 0.1228085839414634,
+          "deviation": 0.0035528039295888024
+        }
+      }
+    ],
+    [
+      {
+        "name": "@canard/schema-form@latest - Array Stress push x100",
+        "hz": 8.711883280739718,
+        "stats": {
+          "mean": 0.11478574353846152,
+          "deviation": 0.02291479537671754
+        }
+      },
+      {
+        "name": "@canard/schema-form@latest - Array Stress applyValue 200",
+        "hz": 7.6226197401848115,
+        "stats": {
+          "mean": 0.13118849346875,
+          "deviation": 0.04206054649664236
+        }
+      },
+      {
+        "name": "@canard/schema-form@latest - Array Stress push+remove x100",
+        "hz": 8.508534101906543,
+        "stats": {
+          "mean": 0.11752905823999998,
+          "deviation": 0.021725624462484237
+        }
+      }
+    ],
+    [
+      {
+        "name": "@canard/schema-form@latest - Array Stress push x100",
+        "hz": 8.480910115064686,
+        "stats": {
+          "mean": 0.11791187342307692,
+          "deviation": 0.025880764265355873
+        }
+      },
+      {
+        "name": "@canard/schema-form@latest - Array Stress applyValue 200",
+        "hz": 8.04221345126211,
+        "stats": {
+          "mean": 0.12434387697619047,
+          "deviation": 0.05024502425342339
+        }
+      },
+      {
+        "name": "@canard/schema-form@latest - Array Stress push+remove x100",
+        "hz": 7.3469099576307375,
+        "stats": {
+          "mean": 0.136111645,
+          "deviation": 0.08029841066342282
+        }
+      }
+    ],
+    [
+      {
+        "name": "@canard/schema-form@latest - Array Stress push x100",
+        "hz": 7.936263335833029,
+        "stats": {
+          "mean": 0.1260038834,
+          "deviation": 0.028743418322833923
+        }
+      },
+      {
+        "name": "@canard/schema-form@latest - Array Stress applyValue 200",
+        "hz": 7.270399771266722,
+        "stats": {
+          "mean": 0.13754401841176472,
+          "deviation": 0.044227846239970225
+        }
+      },
+      {
+        "name": "@canard/schema-form@latest - Array Stress push+remove x100",
+        "hz": 8.50236773290446,
+        "stats": {
+          "mean": 0.11761429655999998,
+          "deviation": 0.02111900569904492
+        }
+      }
+    ],
+    [
+      {
+        "name": "@canard/schema-form@latest - Array Stress push x100",
+        "hz": 7.9280421264750895,
+        "stats": {
+          "mean": 0.12613454671999996,
+          "deviation": 0.02768917895770993
+        }
+      },
+      {
+        "name": "@canard/schema-form@latest - Array Stress applyValue 200",
+        "hz": 6.949649999151284,
+        "stats": {
+          "mean": 0.14389213847058824,
+          "deviation": 0.052277324328264
+        }
+      },
+      {
+        "name": "@canard/schema-form@latest - Array Stress push+remove x100",
+        "hz": 7.711159700974392,
+        "stats": {
+          "mean": 0.12968217995454545,
+          "deviation": 0.04818391147740477
+        }
+      }
+    ],
+    [
+      {
+        "name": "@canard/schema-form@latest - Array Stress push x100",
+        "hz": 8.213242161912374,
+        "stats": {
+          "mean": 0.12175459828000001,
+          "deviation": 0.027244170592799263
+        }
+      },
+      {
+        "name": "@canard/schema-form@latest - Array Stress applyValue 200",
+        "hz": 7.173478610183298,
+        "stats": {
+          "mean": 0.13940238123529414,
+          "deviation": 0.041523660175129526
+        }
+      },
+      {
+        "name": "@canard/schema-form@latest - Array Stress push+remove x100",
+        "hz": 6.719720549938168,
+        "stats": {
+          "mean": 0.14881571228571427,
+          "deviation": 0.12256550287975282
+        }
+      }
+    ],
+    [
+      {
+        "name": "@canard/schema-form@latest - Array Stress push x100",
+        "hz": 8.255523044141565,
+        "stats": {
+          "mean": 0.12113102884615387,
+          "deviation": 0.028498211615719218
+        }
+      },
+      {
+        "name": "@canard/schema-form@latest - Array Stress applyValue 200",
+        "hz": 7.475690261275072,
+        "stats": {
+          "mean": 0.1337669118235294,
+          "deviation": 0.05677782852119763
+        }
+      },
+      {
+        "name": "@canard/schema-form@latest - Array Stress push+remove x100",
+        "hz": 6.826612019095659,
+        "stats": {
+          "mean": 0.1464855476190476,
+          "deviation": 0.10612852495231075
+        }
+      }
+    ],
+    [
+      {
+        "name": "@canard/schema-form@latest - Array Stress push x100",
+        "hz": 7.976829329891704,
+        "stats": {
+          "mean": 0.12536309336,
+          "deviation": 0.024832892181493833
+        }
+      },
+      {
+        "name": "@canard/schema-form@latest - Array Stress applyValue 200",
+        "hz": 6.249413823010557,
+        "stats": {
+          "mean": 0.16001500753846154,
+          "deviation": 0.10140949733125945
+        }
+      },
+      {
+        "name": "@canard/schema-form@latest - Array Stress push+remove x100",
+        "hz": 8.10096546408814,
+        "stats": {
+          "mean": 0.12344207668,
+          "deviation": 0.023090186193967972
+        }
+      }
+    ],
+    [
+      {
+        "name": "@canard/schema-form@latest - Array Stress push x100",
+        "hz": 7.988925860899242,
+        "stats": {
+          "mean": 0.12517327328,
+          "deviation": 0.027465535957858844
+        }
+      },
+      {
+        "name": "@canard/schema-form@latest - Array Stress applyValue 200",
+        "hz": 7.210132529535092,
+        "stats": {
+          "mean": 0.1386937058235294,
+          "deviation": 0.050650833055671904
+        }
+      },
+      {
+        "name": "@canard/schema-form@latest - Array Stress push+remove x100",
+        "hz": 6.771463045362897,
+        "stats": {
+          "mean": 0.14767857304999998,
+          "deviation": 0.09554356474285049
+        }
+      }
+    ],
+    [
+      {
+        "name": "@canard/schema-form@latest - Array Stress push x100",
+        "hz": 8.06311297036263,
+        "stats": {
+          "mean": 0.12402157872222223,
+          "deviation": 0.02407282019094679
+        }
+      },
+      {
+        "name": "@canard/schema-form@latest - Array Stress applyValue 200",
+        "hz": 7.33533815079982,
+        "stats": {
+          "mean": 0.13632636688888888,
+          "deviation": 0.046357590325050615
+        }
+      },
+      {
+        "name": "@canard/schema-form@latest - Array Stress push+remove x100",
+        "hz": 6.937589728079882,
+        "stats": {
+          "mean": 0.14414227984000003,
+          "deviation": 0.09191286302571607
+        }
+      }
+    ],
+    [
+      {
+        "name": "@canard/schema-form@latest - Array Stress push x100",
+        "hz": 7.602698301150486,
+        "stats": {
+          "mean": 0.13153224820833334,
+          "deviation": 0.03045869507123671
+        }
+      },
+      {
+        "name": "@canard/schema-form@latest - Array Stress applyValue 200",
+        "hz": 7.239370871860013,
+        "stats": {
+          "mean": 0.1381335502352941,
+          "deviation": 0.050427707522415904
+        }
+      },
+      {
+        "name": "@canard/schema-form@latest - Array Stress push+remove x100",
+        "hz": 7.555756572261518,
+        "stats": {
+          "mean": 0.13234942,
+          "deviation": 0.05326121396975652
+        }
+      }
+    ],
+    [
+      {
+        "name": "@canard/schema-form@latest - Array Stress push x100",
+        "hz": 7.823383264927506,
+        "stats": {
+          "mean": 0.12782193664,
+          "deviation": 0.028190754817531943
+        }
+      },
+      {
+        "name": "@canard/schema-form@latest - Array Stress applyValue 200",
+        "hz": 7.000859741610107,
+        "stats": {
+          "mean": 0.14283959926470588,
+          "deviation": 0.08146803881541709
+        }
+      },
+      {
+        "name": "@canard/schema-form@latest - Array Stress push+remove x100",
+        "hz": 6.606449539756738,
+        "stats": {
+          "mean": 0.151367235,
+          "deviation": 0.12153195313363949
+        }
+      }
+    ],
+    [
+      {
+        "name": "@canard/schema-form@latest - Array Stress push x100",
+        "hz": 7.757760815433758,
+        "stats": {
+          "mean": 0.12890317499999995,
+          "deviation": 0.027076517202175444
+        }
+      },
+      {
+        "name": "@canard/schema-form@latest - Array Stress applyValue 200",
+        "hz": 5.65089673495419,
+        "stats": {
+          "mean": 0.17696306390000005,
+          "deviation": 0.10646491613152716
+        }
+      },
+      {
+        "name": "@canard/schema-form@latest - Array Stress push+remove x100",
+        "hz": 8.183762342588325,
+        "stats": {
+          "mean": 0.12219318672000001,
+          "deviation": 0.022713277970241624
+        }
+      }
+    ],
+    [
+      {
+        "name": "@canard/schema-form@latest - Array Stress push x100",
+        "hz": 6.86224711056257,
+        "stats": {
+          "mean": 0.14572486007692306,
+          "deviation": 0.06081509098434505
+        }
+      },
+      {
+        "name": "@canard/schema-form@latest - Array Stress applyValue 200",
+        "hz": 6.313120717413441,
+        "stats": {
+          "mean": 0.1584002658529412,
+          "deviation": 0.0910078908961129
+        }
+      },
+      {
+        "name": "@canard/schema-form@latest - Array Stress push+remove x100",
+        "hz": 6.707954750505163,
+        "stats": {
+          "mean": 0.1490767360833333,
+          "deviation": 0.07191252766808226
+        }
+      }
+    ],
+    [
+      {
+        "name": "@canard/schema-form@latest - Array Stress push x100",
+        "hz": 7.484173797693487,
+        "stats": {
+          "mean": 0.133615283,
+          "deviation": 0.030068963999034616
+        }
+      },
+      {
+        "name": "@canard/schema-form@latest - Array Stress applyValue 200",
+        "hz": 5.027517578804991,
+        "stats": {
+          "mean": 0.19890532142857142,
+          "deviation": 0.1788320842077293
+        }
+      },
+      {
+        "name": "@canard/schema-form@latest - Array Stress push+remove x100",
+        "hz": 6.711484815208863,
+        "stats": {
+          "mean": 0.14899832563636364,
+          "deviation": 0.12640355956272914
+        }
+      }
+    ]
+  ],
+  "aggregate": [
+    {
+      "name": "@canard/schema-form@latest - Array Stress push x100",
+      "runs": 15,
+      "meanHz": 14.106784877131123,
+      "stdHz": 23.097810577479436,
+      "relStd": 1.6373547040420173,
+      "samples": [
+        100.51677764187896,
+        8.711883280739718,
+        8.480910115064686,
+        7.936263335833029,
+        7.9280421264750895,
+        8.213242161912374,
+        8.255523044141565,
+        7.976829329891704,
+        7.988925860899242,
+        8.06311297036263,
+        7.602698301150486,
+        7.823383264927506,
+        7.757760815433758,
+        6.86224711056257,
+        7.484173797693487
+      ]
+    },
+    {
+      "name": "@canard/schema-form@latest - Array Stress applyValue 200",
+      "runs": 15,
+      "meanHz": 6.730783845836769,
+      "stdHz": 0.9809212879110524,
+      "relStd": 0.14573656061140447,
+      "samples": [
+        4.401055706240033,
+        7.6226197401848115,
+        8.04221345126211,
+        7.270399771266722,
+        6.949649999151284,
+        7.173478610183298,
+        7.475690261275072,
+        6.249413823010557,
+        7.210132529535092,
+        7.33533815079982,
+        7.239370871860013,
+        7.000859741610107,
+        5.65089673495419,
+        6.313120717413441,
+        5.027517578804991
+      ]
+    },
+    {
+      "name": "@canard/schema-form@latest - Array Stress push+remove x100",
+      "runs": 15,
+      "meanHz": 7.422232240182137,
+      "stdHz": 0.6928686180316044,
+      "relStd": 0.09335043631221675,
+      "samples": [
+        8.14275328243056,
+        8.508534101906543,
+        7.3469099576307375,
+        8.50236773290446,
+        7.711159700974392,
+        6.719720549938168,
+        6.826612019095659,
+        8.10096546408814,
+        6.771463045362897,
+        6.937589728079882,
+        7.555756572261518,
+        6.606449539756738,
+        8.183762342588325,
+        6.707954750505163,
+        6.711484815208863
+      ]
+    }
+  ]
+}

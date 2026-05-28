@@ -1,0 +1,53 @@
+{
+  "timestamp": "2026-05-28T16-06-10-557Z",
+  "repeat": 3,
+  "versions": [
+    "latest"
+  ],
+  "runs": [
+    [
+      {
+        "name": "@canard/schema-form@latest - Form Rendering v2",
+        "hz": 533.3158932288989,
+        "stats": {
+          "mean": 0.0018750613148721608,
+          "deviation": 0.000511535916905639
+        }
+      }
+    ],
+    [
+      {
+        "name": "@canard/schema-form@latest - Form Rendering v2",
+        "hz": 546.5877382708551,
+        "stats": {
+          "mean": 0.0018295324427941371,
+          "deviation": 0.000399356821893693
+        }
+      }
+    ],
+    [
+      {
+        "name": "@canard/schema-form@latest - Form Rendering v2",
+        "hz": 564.9406967126129,
+        "stats": {
+          "mean": 0.0017700972966171408,
+          "deviation": 0.0003904447993544237
+        }
+      }
+    ]
+  ],
+  "aggregate": [
+    {
+      "name": "@canard/schema-form@latest - Form Rendering v2",
+      "runs": 3,
+      "meanHz": 548.2814427374556,
+      "stdHz": 12.966200290525087,
+      "relStd": 0.023648803843857157,
+      "samples": [
+        533.3158932288989,
+        546.5877382708551,
+        564.9406967126129
+      ]
+    }
+  ]
+}

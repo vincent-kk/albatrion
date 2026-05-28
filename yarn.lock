@@ -17,11 +17,16 @@ __metadata:
   resolution: "@aileron/benchmark-form@workspace:packages/aileron/benchmark-form"
   dependencies:
     "@canard/schema-form": "workspace:^"
+    "@canard/schema-form_0.10.0": "npm:@canard/schema-form@0.10.0"
+    "@canard/schema-form_0.11.0": "npm:@canard/schema-form@0.11.0"
+    "@canard/schema-form_0.12.0": "npm:@canard/schema-form@0.12.0"
+    "@canard/schema-form_0.12.5": "npm:@canard/schema-form@0.12.5"
     "@canard/schema-form_0.4.14": "npm:@canard/schema-form@0.4.14"
     "@canard/schema-form_0.5.0": "npm:@canard/schema-form@0.5.0"
     "@canard/schema-form_0.6.0": "npm:@canard/schema-form@0.6.0"
     "@canard/schema-form_0.7.0": "npm:@canard/schema-form@0.7.0"
     "@canard/schema-form_0.8.0": "npm:@canard/schema-form@0.8.0"
+    "@canard/schema-form_0.9.0": "npm:@canard/schema-form@0.9.0"
     "@react-genie-form/next": "npm:^0.2.46"
     "@types/benchmark": "npm:^2.1.5"
     "@types/d3": "npm:^7.4.3"
@@ -2202,7 +2207,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@canard/schema-form@workspace:^, @canard/schema-form@workspace:packages/canard/schema-form":
+"@canard/schema-form@workspace:^, @canard/schema-form@workspace:packages/canard/schema-form, @canard/schema-form_0.12.5@npm:@canard/schema-form@0.12.5":
   version: 0.0.0-use.local
   resolution: "@canard/schema-form@workspace:packages/canard/schema-form"
   dependencies:
@@ -2221,6 +2226,54 @@ __metadata:
     react-dom: ">=18 <20"
   languageName: unknown
   linkType: soft
+
+"@canard/schema-form_0.10.0@npm:@canard/schema-form@0.10.0":
+  version: 0.10.0
+  resolution: "@canard/schema-form@npm:0.10.0"
+  dependencies:
+    "@winglet/common-utils": "npm:^0.10.0"
+    "@winglet/json": "npm:^0.10.0"
+    "@winglet/json-schema": "npm:^0.10.0"
+    "@winglet/react-utils": "npm:^0.10.0"
+  peerDependencies:
+    react: ">=18 <20"
+    react-dom: ">=18 <20"
+  checksum: 10c0/4308f85f63c290973f069bbe54b5effd3d4a6a667a58a042bc0137891c9860bf3b89429d274e8faa96ac5d133a598d3ab27217263f4a5c576dca7936f313ba9d
+  languageName: node
+  linkType: hard
+
+"@canard/schema-form_0.11.0@npm:@canard/schema-form@0.11.0":
+  version: 0.11.0
+  resolution: "@canard/schema-form@npm:0.11.0"
+  dependencies:
+    "@winglet/common-utils": "npm:^0.11.0"
+    "@winglet/json": "npm:^0.11.0"
+    "@winglet/json-schema": "npm:^0.11.0"
+    "@winglet/react-utils": "npm:^0.11.0"
+  peerDependencies:
+    react: ">=18 <20"
+    react-dom: ">=18 <20"
+  checksum: 10c0/d374eb1a2250adc721d9c84be7fe3630d05ee08d434571c4ae53c4c1c26f7b2c864ef0433735694296e71b8ac2cc565c3a704b6918e8f29cb3745c708c89ae52
+  languageName: node
+  linkType: hard
+
+"@canard/schema-form_0.12.0@npm:@canard/schema-form@0.12.0":
+  version: 0.12.0
+  resolution: "@canard/schema-form@npm:0.12.0"
+  dependencies:
+    "@slats/claude-assets-sync": "npm:^0.2.0"
+    "@winglet/common-utils": "npm:^0.12.0"
+    "@winglet/json": "npm:^0.12.0"
+    "@winglet/json-schema": "npm:^0.12.0"
+    "@winglet/react-utils": "npm:^0.12.0"
+  peerDependencies:
+    react: ">=18 <20"
+    react-dom: ">=18 <20"
+  bin:
+    claude-sync: ./bin/claude-sync.mjs
+  checksum: 10c0/94d4ced9b8b98e20364eeabb2383bcc871acff5e1dcb08fcade86325603caada5739ca27e3d23aa6bd32eeb7fba4ec2b4bf034ed9fb365caebf003da631c6ee7
+  languageName: node
+  linkType: hard
 
 "@canard/schema-form_0.4.14@npm:@canard/schema-form@0.4.14":
   version: 0.4.14
@@ -2294,6 +2347,21 @@ __metadata:
     react: ">=18 <20"
     react-dom: ">=18 <20"
   checksum: 10c0/725e69c576e38579f0745b56e77e8fd698dc3228a501e66d052046121f61dcb0511e4675002d27cd4487d3ec2744fd01f3513716e3343826018b802202c59202
+  languageName: node
+  linkType: hard
+
+"@canard/schema-form_0.9.0@npm:@canard/schema-form@0.9.0":
+  version: 0.9.0
+  resolution: "@canard/schema-form@npm:0.9.0"
+  dependencies:
+    "@winglet/common-utils": "npm:^0.9.0"
+    "@winglet/json": "npm:^0.9.0"
+    "@winglet/json-schema": "npm:^0.9.0"
+    "@winglet/react-utils": "npm:^0.9.0"
+  peerDependencies:
+    react: ">=18 <20"
+    react-dom: ">=18 <20"
+  checksum: 10c0/9a66d3f0c222dc695915c625fb0d00cc41d34fadc81bb8d18079f91e9c55608ec744b5e31799498350bec41cdf9c5553268acdc084760924837db801962046d4
   languageName: node
   linkType: hard
 
@@ -4723,6 +4791,96 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@inquirer/ansi@npm:^2.0.6":
+  version: 2.0.6
+  resolution: "@inquirer/ansi@npm:2.0.6"
+  checksum: 10c0/13248f6197c918b286870b20ea5afe843de63ccc2b7ba0c7fbb84d6d58d6d281c963983a91a67555214d0c85d7b16d003152f00d26b5dad31f7e0c482089ef39
+  languageName: node
+  linkType: hard
+
+"@inquirer/checkbox@npm:^5.2.0":
+  version: 5.2.0
+  resolution: "@inquirer/checkbox@npm:5.2.0"
+  dependencies:
+    "@inquirer/ansi": "npm:^2.0.6"
+    "@inquirer/core": "npm:^11.2.0"
+    "@inquirer/figures": "npm:^2.0.6"
+    "@inquirer/type": "npm:^4.0.6"
+  peerDependencies:
+    "@types/node": ">=18"
+  peerDependenciesMeta:
+    "@types/node":
+      optional: true
+  checksum: 10c0/932e97e5a8a554b458002c6f48265d4b116e24e84e15fd7087f03f825560e295a6076cc5b89ae440e7339a0e6faf49f45b6fe08852f7d65563ea4686a4ba350a
+  languageName: node
+  linkType: hard
+
+"@inquirer/confirm@npm:^6.1.0":
+  version: 6.1.0
+  resolution: "@inquirer/confirm@npm:6.1.0"
+  dependencies:
+    "@inquirer/core": "npm:^11.2.0"
+    "@inquirer/type": "npm:^4.0.6"
+  peerDependencies:
+    "@types/node": ">=18"
+  peerDependenciesMeta:
+    "@types/node":
+      optional: true
+  checksum: 10c0/86ef0b147649e288c13ea41a299c93ecb85abe9d4de6e5c61b37bedcd218c9fb4a7204d9b55e4d01145cc7b062d2c28b5ef32ec1d606af4d355e83d010c36ca7
+  languageName: node
+  linkType: hard
+
+"@inquirer/core@npm:^11.2.0":
+  version: 11.2.0
+  resolution: "@inquirer/core@npm:11.2.0"
+  dependencies:
+    "@inquirer/ansi": "npm:^2.0.6"
+    "@inquirer/figures": "npm:^2.0.6"
+    "@inquirer/type": "npm:^4.0.6"
+    cli-width: "npm:^4.1.0"
+    fast-wrap-ansi: "npm:^0.2.0"
+    mute-stream: "npm:^4.0.0"
+    signal-exit: "npm:^4.1.0"
+  peerDependencies:
+    "@types/node": ">=18"
+  peerDependenciesMeta:
+    "@types/node":
+      optional: true
+  checksum: 10c0/59ca63f737bba8e0578766cf05c459f58295692a19bf0e075d46027675772f46105c3591040381369c84dceda8461649b18b2734e0e4e65b0ecf4c29bd9e2a1b
+  languageName: node
+  linkType: hard
+
+"@inquirer/editor@npm:^5.2.0":
+  version: 5.2.0
+  resolution: "@inquirer/editor@npm:5.2.0"
+  dependencies:
+    "@inquirer/core": "npm:^11.2.0"
+    "@inquirer/external-editor": "npm:^3.0.1"
+    "@inquirer/type": "npm:^4.0.6"
+  peerDependencies:
+    "@types/node": ">=18"
+  peerDependenciesMeta:
+    "@types/node":
+      optional: true
+  checksum: 10c0/fc8eca7d54d14626c38ab7bf00cb4b9946b60eda0b5fcbd070601959d2d03e6b3888037ffba26abbe3bad662826179df954c656f628d94026dcff915bfc6e10d
+  languageName: node
+  linkType: hard
+
+"@inquirer/expand@npm:^5.1.0":
+  version: 5.1.0
+  resolution: "@inquirer/expand@npm:5.1.0"
+  dependencies:
+    "@inquirer/core": "npm:^11.2.0"
+    "@inquirer/type": "npm:^4.0.6"
+  peerDependencies:
+    "@types/node": ">=18"
+  peerDependenciesMeta:
+    "@types/node":
+      optional: true
+  checksum: 10c0/be0a2087fb2c786bced9339b88dc2b63d3a64bc6de744a52086df284968f5377a300171b210980e068633cbda7ce203aa9f8313a3b421b58b6f6f2e73706019f
+  languageName: node
+  linkType: hard
+
 "@inquirer/external-editor@npm:^1.0.0":
   version: 1.0.1
   resolution: "@inquirer/external-editor@npm:1.0.1"
@@ -4735,6 +4893,157 @@ __metadata:
     "@types/node":
       optional: true
   checksum: 10c0/bdac4395e0bba7065d39b141d618bfc06369f246c402c511396a5238baf2657f3038ccba8438521a49e5cb602f4302b9d1f46b52b647b27af2c9911720022118
+  languageName: node
+  linkType: hard
+
+"@inquirer/external-editor@npm:^3.0.1":
+  version: 3.0.1
+  resolution: "@inquirer/external-editor@npm:3.0.1"
+  dependencies:
+    chardet: "npm:^2.1.1"
+    iconv-lite: "npm:^0.7.2"
+  peerDependencies:
+    "@types/node": ">=18"
+  peerDependenciesMeta:
+    "@types/node":
+      optional: true
+  checksum: 10c0/8463e6a4e1833a7ba24d3268195a8e76c6e18e83d7704347a6936c035397e1836789ea1354372da4da87d40d554c229ef81889113153458988a2b4d3ae2edc91
+  languageName: node
+  linkType: hard
+
+"@inquirer/figures@npm:^2.0.6":
+  version: 2.0.6
+  resolution: "@inquirer/figures@npm:2.0.6"
+  checksum: 10c0/809550159aa5d461c87daec269a1dcf9a57b02c9d8a96baaf370e55302c147258783045edb8fdf8c8aaf36e5c8d4c73ade6c9df7a1a16b68696d9cdea049b032
+  languageName: node
+  linkType: hard
+
+"@inquirer/input@npm:^5.1.0":
+  version: 5.1.0
+  resolution: "@inquirer/input@npm:5.1.0"
+  dependencies:
+    "@inquirer/core": "npm:^11.2.0"
+    "@inquirer/type": "npm:^4.0.6"
+  peerDependencies:
+    "@types/node": ">=18"
+  peerDependenciesMeta:
+    "@types/node":
+      optional: true
+  checksum: 10c0/c96c985fda7d10b2a8b6561d608c82c166b7f9e468c17ebe080f6d984b54b03482f40e9b21ecd95ed54665f57a887b296c91c23b86c187d09af3663aefc505d1
+  languageName: node
+  linkType: hard
+
+"@inquirer/number@npm:^4.1.0":
+  version: 4.1.0
+  resolution: "@inquirer/number@npm:4.1.0"
+  dependencies:
+    "@inquirer/core": "npm:^11.2.0"
+    "@inquirer/type": "npm:^4.0.6"
+  peerDependencies:
+    "@types/node": ">=18"
+  peerDependenciesMeta:
+    "@types/node":
+      optional: true
+  checksum: 10c0/cffbe3c20fd2f92e61141a226e020d7da2bcac76f16b25395170e97555fc983b8832ce2dc54a4e17aa5ca5ecbe88aa501926e1f14aedc31100c7b59a81024e43
+  languageName: node
+  linkType: hard
+
+"@inquirer/password@npm:^5.1.0":
+  version: 5.1.0
+  resolution: "@inquirer/password@npm:5.1.0"
+  dependencies:
+    "@inquirer/ansi": "npm:^2.0.6"
+    "@inquirer/core": "npm:^11.2.0"
+    "@inquirer/type": "npm:^4.0.6"
+  peerDependencies:
+    "@types/node": ">=18"
+  peerDependenciesMeta:
+    "@types/node":
+      optional: true
+  checksum: 10c0/ad3b960278b904b0f9c81aca6064a543f0dc2e1d7c16c70f41d3b2a093e3c9c08e0a21eb8ae5f30c98a200d78b862bbe2f8d65d22bac3dc5f145f95de187998e
+  languageName: node
+  linkType: hard
+
+"@inquirer/prompts@npm:^8.4.2":
+  version: 8.5.0
+  resolution: "@inquirer/prompts@npm:8.5.0"
+  dependencies:
+    "@inquirer/checkbox": "npm:^5.2.0"
+    "@inquirer/confirm": "npm:^6.1.0"
+    "@inquirer/editor": "npm:^5.2.0"
+    "@inquirer/expand": "npm:^5.1.0"
+    "@inquirer/input": "npm:^5.1.0"
+    "@inquirer/number": "npm:^4.1.0"
+    "@inquirer/password": "npm:^5.1.0"
+    "@inquirer/rawlist": "npm:^5.3.0"
+    "@inquirer/search": "npm:^4.2.0"
+    "@inquirer/select": "npm:^5.2.0"
+  peerDependencies:
+    "@types/node": ">=18"
+  peerDependenciesMeta:
+    "@types/node":
+      optional: true
+  checksum: 10c0/c35a5b6e03800d3c3c7f1e4f22a0a3ec6aec28da7e348b507acf2c88342969e0ceb1da8160219f0cf09f6c3457ac3a9f061647a854dca3033b6a2484948e2c90
+  languageName: node
+  linkType: hard
+
+"@inquirer/rawlist@npm:^5.3.0":
+  version: 5.3.0
+  resolution: "@inquirer/rawlist@npm:5.3.0"
+  dependencies:
+    "@inquirer/core": "npm:^11.2.0"
+    "@inquirer/type": "npm:^4.0.6"
+  peerDependencies:
+    "@types/node": ">=18"
+  peerDependenciesMeta:
+    "@types/node":
+      optional: true
+  checksum: 10c0/cc4fa069ad9dc43d2f075a67af8d67d634a5539e5947e0b7135c8fbbccdd51a862019c3255c9adb0a7f22ea2be8fbd25cb89280126fef948595543817e011757
+  languageName: node
+  linkType: hard
+
+"@inquirer/search@npm:^4.2.0":
+  version: 4.2.0
+  resolution: "@inquirer/search@npm:4.2.0"
+  dependencies:
+    "@inquirer/core": "npm:^11.2.0"
+    "@inquirer/figures": "npm:^2.0.6"
+    "@inquirer/type": "npm:^4.0.6"
+  peerDependencies:
+    "@types/node": ">=18"
+  peerDependenciesMeta:
+    "@types/node":
+      optional: true
+  checksum: 10c0/a0a897d68e30947cfb56303480fa0c80a1999ce7643d026e63e36b980e29401e4549311bffc97c28539ab25e05400f5692307ce61c8f97135782145c6bd23cc3
+  languageName: node
+  linkType: hard
+
+"@inquirer/select@npm:^5.2.0":
+  version: 5.2.0
+  resolution: "@inquirer/select@npm:5.2.0"
+  dependencies:
+    "@inquirer/ansi": "npm:^2.0.6"
+    "@inquirer/core": "npm:^11.2.0"
+    "@inquirer/figures": "npm:^2.0.6"
+    "@inquirer/type": "npm:^4.0.6"
+  peerDependencies:
+    "@types/node": ">=18"
+  peerDependenciesMeta:
+    "@types/node":
+      optional: true
+  checksum: 10c0/99c6cf2828418b79cdd756bcf70905442abbb4a793c308ef65efa36719b6b362a955287cf4b051dc97c979cd4476167e724cf2c7625642849acf0b21ec187864
+  languageName: node
+  linkType: hard
+
+"@inquirer/type@npm:^4.0.6":
+  version: 4.0.6
+  resolution: "@inquirer/type@npm:4.0.6"
+  peerDependencies:
+    "@types/node": ">=18"
+  peerDependenciesMeta:
+    "@types/node":
+      optional: true
+  checksum: 10c0/8271e73b0d088b833d89fe223b23978ab68667b72c12ae6ed52ff43f229317f41fa262328b0f12086e4aba5d878f06c6a23a5cfaea71772bd3c4aa9aaae2b53f
   languageName: node
   linkType: hard
 
@@ -7694,6 +8003,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@slats/claude-assets-sync@npm:^0.2.0":
+  version: 0.2.0
+  resolution: "@slats/claude-assets-sync@npm:0.2.0"
+  dependencies:
+    "@inquirer/prompts": "npm:^8.4.2"
+    commander: "npm:^12.1.0"
+    picocolors: "npm:^1.1.1"
+  bin:
+    claude-build-hashes: ./scripts/claude-build-hashes.mjs
+    claude-sync: ./bin/claude-sync.mjs
+  checksum: 10c0/1d41be33905d9cb1d278d6c2044555cf9c3b0c33eacfb97b9a96eb5efdaf3eff6ca1388cfca7485702d5f2b61c76afc8b0916b86f6c586d6395c368709cc602c
+  languageName: node
+  linkType: hard
+
 "@slats/claude-assets-sync@workspace:^, @slats/claude-assets-sync@workspace:packages/slats/claude-assets-sync":
   version: 0.0.0-use.local
   resolution: "@slats/claude-assets-sync@workspace:packages/slats/claude-assets-sync"
@@ -10140,6 +10463,28 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@winglet/common-utils@npm:^0.10.0":
+  version: 0.10.0
+  resolution: "@winglet/common-utils@npm:0.10.0"
+  checksum: 10c0/9d356939e1270f41b1624dfb2c67591cd3407ba42b3d24d773aa3224185426d45df784b7ff35794712d579c44680dca141f4eaf679d7bd22c2406e0d1b09a9d5
+  languageName: node
+  linkType: hard
+
+"@winglet/common-utils@npm:^0.11.0, @winglet/common-utils@npm:^0.11.1":
+  version: 0.11.2
+  resolution: "@winglet/common-utils@npm:0.11.2"
+  checksum: 10c0/0d0bac48a5ae7f7ac609c803c9da7cd6013ae83f52d362145423d44859126d05170c7494373e650c404bba85fe4c045768d3007d4d902eaa223ad72d16a85d28
+  languageName: node
+  linkType: hard
+
+"@winglet/common-utils@npm:^0.12.0, @winglet/common-utils@workspace:^, @winglet/common-utils@workspace:packages/winglet/common-utils":
+  version: 0.0.0-use.local
+  resolution: "@winglet/common-utils@workspace:packages/winglet/common-utils"
+  dependencies:
+    "@slats/claude-assets-sync": "workspace:^"
+  languageName: unknown
+  linkType: soft
+
 "@winglet/common-utils@npm:^0.4.3, @winglet/common-utils@npm:^0.4.4":
   version: 0.4.4
   resolution: "@winglet/common-utils@npm:0.4.4"
@@ -10175,13 +10520,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@winglet/common-utils@workspace:^, @winglet/common-utils@workspace:packages/winglet/common-utils":
-  version: 0.0.0-use.local
-  resolution: "@winglet/common-utils@workspace:packages/winglet/common-utils"
-  dependencies:
-    "@slats/claude-assets-sync": "workspace:^"
-  languageName: unknown
-  linkType: soft
+"@winglet/common-utils@npm:^0.9.0":
+  version: 0.9.1
+  resolution: "@winglet/common-utils@npm:0.9.1"
+  checksum: 10c0/3b4c721d4cf4b5987d86d68a27f0722933e9b91b77ec01ecbc06c72194ed5bcd118ad0beeef4e817761fc4a1a562a7e7b22c8425f106c2b6e582bac5bce9afe5
+  languageName: node
+  linkType: hard
 
 "@winglet/data-loader@workspace:packages/winglet/data-loader":
   version: 0.0.0-use.local
@@ -10189,6 +10533,36 @@ __metadata:
   dependencies:
     "@slats/claude-assets-sync": "workspace:^"
     "@winglet/common-utils": "workspace:^"
+  languageName: unknown
+  linkType: soft
+
+"@winglet/json-schema@npm:^0.10.0":
+  version: 0.10.0
+  resolution: "@winglet/json-schema@npm:0.10.0"
+  dependencies:
+    "@winglet/common-utils": "npm:^0.10.0"
+    "@winglet/json": "npm:^0.10.0"
+  checksum: 10c0/ebc78717e5c45933f7d88ff2495f1fe8463e05df1c491b9102b9bc00e78acf00b75d81a19f928750d2fe682512814e0bbbf90567fc0b207289049a60ce673532
+  languageName: node
+  linkType: hard
+
+"@winglet/json-schema@npm:^0.11.0":
+  version: 0.11.1
+  resolution: "@winglet/json-schema@npm:0.11.1"
+  dependencies:
+    "@winglet/common-utils": "npm:^0.11.1"
+    "@winglet/json": "npm:^0.11.1"
+  checksum: 10c0/3764799f9a2f7f8e541acc221776d5b9beca2ef006c7791f1ae1656ad78a6173c89c6c5fc4b9a061bf3d1c4588cb20b817525adcf967af01a2461ea010c6e8d8
+  languageName: node
+  linkType: hard
+
+"@winglet/json-schema@npm:^0.12.0, @winglet/json-schema@workspace:^, @winglet/json-schema@workspace:packages/winglet/json-schema":
+  version: 0.0.0-use.local
+  resolution: "@winglet/json-schema@workspace:packages/winglet/json-schema"
+  dependencies:
+    "@slats/claude-assets-sync": "workspace:^"
+    "@winglet/common-utils": "workspace:^"
+    "@winglet/json": "workspace:^"
   languageName: unknown
   linkType: soft
 
@@ -10242,13 +10616,40 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@winglet/json-schema@workspace:^, @winglet/json-schema@workspace:packages/winglet/json-schema":
+"@winglet/json-schema@npm:^0.9.0":
+  version: 0.9.3
+  resolution: "@winglet/json-schema@npm:0.9.3"
+  dependencies:
+    "@winglet/common-utils": "npm:^0.9.0"
+    "@winglet/json": "npm:^0.9.1"
+  checksum: 10c0/15195c430859e391510a17ca291e477c450d449208bfa863da447d6c50615a91c712526b5f4536918afeb62e96326a65416a85bda649e42f263fd80d8c210c87
+  languageName: node
+  linkType: hard
+
+"@winglet/json@npm:^0.10.0":
+  version: 0.10.0
+  resolution: "@winglet/json@npm:0.10.0"
+  dependencies:
+    "@winglet/common-utils": "npm:^0.10.0"
+  checksum: 10c0/20105796e0f7caf95135a86be1f8799f089ba819bf413cdd50ad559b194e899babf91d8558e1fb98eabb7d041bb27d420ae77314edbd7a36bc91cfd0a903ffca
+  languageName: node
+  linkType: hard
+
+"@winglet/json@npm:^0.11.0, @winglet/json@npm:^0.11.1":
+  version: 0.11.1
+  resolution: "@winglet/json@npm:0.11.1"
+  dependencies:
+    "@winglet/common-utils": "npm:^0.11.1"
+  checksum: 10c0/7015869a380eaedb57fb4a83c9664a9837592887d7a69254593b921114ceeb38dcd7aec4197f9352e208d7f4a1f14f8f967dc8ed0ee5b3d12715caeff26fc180
+  languageName: node
+  linkType: hard
+
+"@winglet/json@npm:^0.12.0, @winglet/json@workspace:^, @winglet/json@workspace:packages/winglet/json":
   version: 0.0.0-use.local
-  resolution: "@winglet/json-schema@workspace:packages/winglet/json-schema"
+  resolution: "@winglet/json@workspace:packages/winglet/json"
   dependencies:
     "@slats/claude-assets-sync": "workspace:^"
     "@winglet/common-utils": "workspace:^"
-    "@winglet/json": "workspace:^"
   languageName: unknown
   linkType: soft
 
@@ -10297,12 +10698,52 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@winglet/json@workspace:^, @winglet/json@workspace:packages/winglet/json":
+"@winglet/json@npm:^0.9.0, @winglet/json@npm:^0.9.1":
+  version: 0.9.1
+  resolution: "@winglet/json@npm:0.9.1"
+  dependencies:
+    "@winglet/common-utils": "npm:^0.9.0"
+  checksum: 10c0/b412cecc81b6f7da26b2cd259aac1ed4f8b2c050d24b9d9f380faf6cd8c7e433c7d758454faae2f8cddf923e82fa48b25d212902650fbe6364010981e651b737
+  languageName: node
+  linkType: hard
+
+"@winglet/react-utils@npm:^0.10.0":
+  version: 0.10.0
+  resolution: "@winglet/react-utils@npm:0.10.0"
+  dependencies:
+    "@winglet/common-utils": "npm:^0.10.0"
+  peerDependencies:
+    react: ">=16 <20"
+    react-dom: ">=16 <20"
+  checksum: 10c0/2eef9674f922edac22c687d41d47299fbb8665ac0e1b1347a845665caa717c7f92654b94a5bb0d519f426e7eaea8753973af6331805362b2c7053750cc1f4702
+  languageName: node
+  linkType: hard
+
+"@winglet/react-utils@npm:^0.11.0":
+  version: 0.11.2
+  resolution: "@winglet/react-utils@npm:0.11.2"
+  dependencies:
+    "@winglet/common-utils": "npm:^0.11.1"
+  peerDependencies:
+    react: ">=16 <20"
+    react-dom: ">=16 <20"
+  checksum: 10c0/ccb677657472f4f356329f42a00072de056b31d45ef54654020117346c74dea35aca75445c7406bbd954c8db916eb0473ec5baebec5d3c31e2f5a31f05e359e0
+  languageName: node
+  linkType: hard
+
+"@winglet/react-utils@npm:^0.12.0, @winglet/react-utils@workspace:^, @winglet/react-utils@workspace:packages/winglet/react-utils":
   version: 0.0.0-use.local
-  resolution: "@winglet/json@workspace:packages/winglet/json"
+  resolution: "@winglet/react-utils@workspace:packages/winglet/react-utils"
   dependencies:
     "@slats/claude-assets-sync": "workspace:^"
+    "@types/react": "npm:^19.0.0"
+    "@types/react-dom": "npm:^19.0.0"
     "@winglet/common-utils": "workspace:^"
+    react: "npm:^19.0.0"
+    react-dom: "npm:^19.0.0"
+  peerDependencies:
+    react: ">=16 <20"
+    react-dom: ">=16 <20"
   languageName: unknown
   linkType: soft
 
@@ -10366,21 +10807,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@winglet/react-utils@workspace:^, @winglet/react-utils@workspace:packages/winglet/react-utils":
-  version: 0.0.0-use.local
-  resolution: "@winglet/react-utils@workspace:packages/winglet/react-utils"
+"@winglet/react-utils@npm:^0.9.0":
+  version: 0.9.0
+  resolution: "@winglet/react-utils@npm:0.9.0"
   dependencies:
-    "@slats/claude-assets-sync": "workspace:^"
-    "@types/react": "npm:^19.0.0"
-    "@types/react-dom": "npm:^19.0.0"
-    "@winglet/common-utils": "workspace:^"
-    react: "npm:^19.0.0"
-    react-dom: "npm:^19.0.0"
+    "@winglet/common-utils": "npm:^0.9.0"
   peerDependencies:
     react: ">=16 <20"
     react-dom: ">=16 <20"
-  languageName: unknown
-  linkType: soft
+  checksum: 10c0/ebb146999c1c4019ccaab43079040204724e44add68bd9dccafd0c07c1e33a3644c756729a26962aae6e56893d7fe0ca34e290638db8ca0b9d070e72db356798
+  languageName: node
+  linkType: hard
 
 "@winglet/style-utils@workspace:^, @winglet/style-utils@workspace:packages/winglet/style-utils":
   version: 0.0.0-use.local
@@ -11951,7 +12388,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"chardet@npm:^2.1.0":
+"chardet@npm:^2.1.0, chardet@npm:^2.1.1":
   version: 2.1.1
   resolution: "chardet@npm:2.1.1"
   checksum: 10c0/d8391dd412338442b3de0d3a488aa9327f8bcf74b62b8723d6bd0b85c4084d50b731320e0a7c710edb1d44de75969995d2784b80e4c13b004a6c7a0db4c6e793
@@ -12208,6 +12645,13 @@ __metadata:
   version: 3.0.0
   resolution: "cli-width@npm:3.0.0"
   checksum: 10c0/125a62810e59a2564268c80fdff56c23159a7690c003e34aeb2e68497dccff26911998ff49c33916fcfdf71e824322cc3953e3f7b48b27267c7a062c81348a9a
+  languageName: node
+  linkType: hard
+
+"cli-width@npm:^4.1.0":
+  version: 4.1.0
+  resolution: "cli-width@npm:4.1.0"
+  checksum: 10c0/1fbd56413578f6117abcaf858903ba1f4ad78370a4032f916745fa2c7e390183a9d9029cf837df320b0fdce8137668e522f60a30a5f3d6529ff3872d265a955f
   languageName: node
   linkType: hard
 
@@ -15402,10 +15846,35 @@ __metadata:
   languageName: node
   linkType: hard
 
+"fast-string-truncated-width@npm:^3.0.2":
+  version: 3.0.3
+  resolution: "fast-string-truncated-width@npm:3.0.3"
+  checksum: 10c0/043b8663397d14a3880ce4f3407bcda60b40db9bbeafe62863a35d1f9c69ea17c8da3fcd72de235553e6c9cd053128cde9e24ca0d4a7463208f48db3cd23d981
+  languageName: node
+  linkType: hard
+
+"fast-string-width@npm:^3.0.2":
+  version: 3.0.2
+  resolution: "fast-string-width@npm:3.0.2"
+  dependencies:
+    fast-string-truncated-width: "npm:^3.0.2"
+  checksum: 10c0/c8822d175315bb353ebe782b65214ac53b13e3bf704e03b132ea7bdfa8de6a636375b3ab7a4097545393d109381c37c4f387c72a462c90b61412dbc4632f39a7
+  languageName: node
+  linkType: hard
+
 "fast-uri@npm:^3.0.1":
   version: 3.0.6
   resolution: "fast-uri@npm:3.0.6"
   checksum: 10c0/74a513c2af0584448aee71ce56005185f81239eab7a2343110e5bad50c39ad4fb19c5a6f99783ead1cac7ccaf3461a6034fda89fffa2b30b6d99b9f21c2f9d29
+  languageName: node
+  linkType: hard
+
+"fast-wrap-ansi@npm:^0.2.0":
+  version: 0.2.2
+  resolution: "fast-wrap-ansi@npm:0.2.2"
+  dependencies:
+    fast-string-width: "npm:^3.0.2"
+  checksum: 10c0/1aa7be4f7cb86f4bdb14691cb6bcc0b8df8b3b89df142ade3ae1602332dcf6f990cd750a923cd581ca0847808cb4ec1aa5afaafa7a72f849e87a2a62c98fa370
   languageName: node
   linkType: hard
 
@@ -16847,6 +17316,15 @@ __metadata:
   dependencies:
     safer-buffer: "npm:>= 2.1.2 < 3.0.0"
   checksum: 10c0/98102bc66b33fcf5ac044099d1257ba0b7ad5e3ccd3221f34dd508ab4070edff183276221684e1e0555b145fce0850c9f7d2b60a9fcac50fbb4ea0d6e845a3b1
+  languageName: node
+  linkType: hard
+
+"iconv-lite@npm:^0.7.2":
+  version: 0.7.2
+  resolution: "iconv-lite@npm:0.7.2"
+  dependencies:
+    safer-buffer: "npm:>= 2.1.2 < 3.0.0"
+  checksum: 10c0/3c228920f3bd307f56bf8363706a776f4a060eb042f131cd23855ceca962951b264d0997ab38a1ad340e1c5df8499ed26e1f4f0db6b2a2ad9befaff22f14b722
   languageName: node
   linkType: hard
 
@@ -20296,6 +20774,13 @@ __metadata:
   version: 0.0.8
   resolution: "mute-stream@npm:0.0.8"
   checksum: 10c0/18d06d92e5d6d45e2b63c0e1b8f25376af71748ac36f53c059baa8b76ffac31c5ab225480494e7d35d30215ecdb18fed26ec23cafcd2f7733f2f14406bcd19e2
+  languageName: node
+  linkType: hard
+
+"mute-stream@npm:^4.0.0":
+  version: 4.0.0
+  resolution: "mute-stream@npm:4.0.0"
+  checksum: 10c0/2c7c9a3da0534ff74d335ed64f5d76165773504d6c8ad6237639cf90f42103ab80b578c54318d869f5ae8bc7e9e2a65f1c11597892946090835969f1a42543bb
   languageName: node
   linkType: hard
 
@@ -24708,7 +25193,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"signal-exit@npm:^4.0.1":
+"signal-exit@npm:^4.0.1, signal-exit@npm:^4.1.0":
   version: 4.1.0
   resolution: "signal-exit@npm:4.1.0"
   checksum: 10c0/41602dce540e46d599edba9d9860193398d135f7ff72cab629db5171516cfae628d21e7bfccde1bbfdf11c48726bc2a6d1a8fb8701125852fbfda7cf19c6aa83

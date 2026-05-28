@@ -1,1 +1,0 @@
-export { ResultSelector } from './ResultSelector';

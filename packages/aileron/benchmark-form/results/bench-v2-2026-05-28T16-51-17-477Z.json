@@ -1,0 +1,67 @@
+{
+  "timestamp": "2026-05-28T16-51-17-477Z",
+  "repeat": 1,
+  "versions": [
+    "latest"
+  ],
+  "runs": [
+    [
+      {
+        "name": "@canard/schema-form@latest - Array Stress push x100",
+        "hz": 73.21538708764115,
+        "stats": {
+          "mean": 0.013658331121065688,
+          "deviation": 0.007208629593193535
+        }
+      },
+      {
+        "name": "@canard/schema-form@latest - Array Stress applyValue 200",
+        "hz": 37.0828929841659,
+        "stats": {
+          "mean": 0.026966612352142857,
+          "deviation": 0.014782338831959663
+        }
+      },
+      {
+        "name": "@canard/schema-form@latest - Array Stress push+remove x100",
+        "hz": 48.13515342762095,
+        "stats": {
+          "mean": 0.020774837697435888,
+          "deviation": 0.007200415259188949
+        }
+      }
+    ]
+  ],
+  "aggregate": [
+    {
+      "name": "@canard/schema-form@latest - Array Stress push x100",
+      "runs": 1,
+      "meanHz": 73.21538708764115,
+      "stdHz": 0,
+      "relStd": 0,
+      "samples": [
+        73.21538708764115
+      ]
+    },
+    {
+      "name": "@canard/schema-form@latest - Array Stress applyValue 200",
+      "runs": 1,
+      "meanHz": 37.0828929841659,
+      "stdHz": 0,
+      "relStd": 0,
+      "samples": [
+        37.0828929841659
+      ]
+    },
+    {
+      "name": "@canard/schema-form@latest - Array Stress push+remove x100",
+      "runs": 1,
+      "meanHz": 48.13515342762095,
+      "stdHz": 0,
+      "relStd": 0,
+      "samples": [
+        48.13515342762095
+      ]
+    }
+  ]
+}

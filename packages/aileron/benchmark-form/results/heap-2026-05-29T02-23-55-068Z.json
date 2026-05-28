@@ -1,0 +1,127 @@
+{
+  "timestamp": "2026-05-29T02-23-55-068Z",
+  "repeat": 3,
+  "floor": -3408,
+  "results": [
+    {
+      "scenario": "empty",
+      "nodeCount": 0,
+      "deltaHeap": -3408,
+      "samples": [
+        -45424,
+        -3392,
+        -3408
+      ]
+    },
+    {
+      "scenario": "flat-50",
+      "nodeCount": 51,
+      "deltaHeap": 4999784,
+      "samples": [
+        6498968,
+        4955568,
+        4999784
+      ]
+    },
+    {
+      "scenario": "flat-100",
+      "nodeCount": 101,
+      "deltaHeap": 9566504,
+      "samples": [
+        9506416,
+        9583968,
+        9566504
+      ]
+    },
+    {
+      "scenario": "flat-500",
+      "nodeCount": 501,
+      "deltaHeap": 38979808,
+      "samples": [
+        43090176,
+        38854888,
+        38979808
+      ]
+    },
+    {
+      "scenario": "nested-d3-f4",
+      "nodeCount": 85,
+      "deltaHeap": 7683688,
+      "samples": [
+        6090560,
+        7683688,
+        7839400
+      ]
+    },
+    {
+      "scenario": "nested-d5-f4",
+      "nodeCount": 1365,
+      "deltaHeap": 107432120,
+      "samples": [
+        107432120,
+        109882272,
+        102355744
+      ]
+    },
+    {
+      "scenario": "array-100",
+      "nodeCount": 402,
+      "deltaHeap": 32356112,
+      "samples": [
+        38617624,
+        32356112,
+        32036600
+      ]
+    },
+    {
+      "scenario": "array-500",
+      "nodeCount": 2002,
+      "deltaHeap": 163350016,
+      "samples": [
+        164444456,
+        159002296,
+        163350016
+      ]
+    },
+    {
+      "scenario": "array-1000",
+      "nodeCount": 4002,
+      "deltaHeap": 322931136,
+      "samples": [
+        323255384,
+        322844584,
+        322931136
+      ]
+    },
+    {
+      "scenario": "oneOf-5",
+      "nodeCount": 22,
+      "deltaHeap": 92912,
+      "samples": [
+        -421936,
+        158072,
+        92912
+      ]
+    },
+    {
+      "scenario": "oneOf-10",
+      "nodeCount": 42,
+      "deltaHeap": 237016,
+      "samples": [
+        245696,
+        237016,
+        230960
+      ]
+    },
+    {
+      "scenario": "oneOf-20",
+      "nodeCount": 82,
+      "deltaHeap": 339496,
+      "samples": [
+        339496,
+        347320,
+        326720
+      ]
+    }
+  ]
+}

@@ -30,3 +30,6 @@ dependency-graph.png
 
 # StoryBook 빌드 결과
 storybook-static
+
+# vitest bench outputs
+bench/.results

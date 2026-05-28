@@ -1,0 +1,686 @@
+{
+  "timestamp": "2026-05-28T16-00-13-997Z",
+  "results": [
+    {
+      "name": "@canard/schema-form@0.4.14 - Form Rendering",
+      "hz": 207.10363715824454,
+      "stats": {
+        "mean": 0.004828500424818306,
+        "deviation": 0.0003816337381682991
+      }
+    },
+    {
+      "name": "@canard/schema-form@0.4.14 - User Interaction",
+      "hz": 4.50778635728265,
+      "stats": {
+        "mean": 0.22183837492307698,
+        "deviation": 0.0018716916710414015
+      }
+    },
+    {
+      "name": "@canard/schema-form@0.4.14 - OneOf Switching",
+      "hz": 6.519043875440969,
+      "stats": {
+        "mean": 0.15339672797222226,
+        "deviation": 0.0011169444731316779
+      }
+    },
+    {
+      "name": "@canard/schema-form@0.4.14 - IfThenElse Logic",
+      "hz": 6.541154529614972,
+      "stats": {
+        "mean": 0.1528782106388889,
+        "deviation": 0.001106678960637148
+      }
+    },
+    {
+      "name": "@canard/schema-form@0.4.14 - Computed Properties",
+      "hz": 5.3358669196243955,
+      "stats": {
+        "mean": 0.18741097089999995,
+        "deviation": 0.0017752832736941686
+      }
+    },
+    {
+      "name": "@canard/schema-form@0.4.14 - Memory Usage",
+      "hz": 4.744374877437421,
+      "stats": {
+        "mean": 0.21077592429629632,
+        "deviation": 0.001842162948340133
+      }
+    },
+    {
+      "name": "@canard/schema-form@0.5.0 - Form Rendering",
+      "hz": 210.23570149848348,
+      "stats": {
+        "mean": 0.004756566048831689,
+        "deviation": 0.00025312542587095193
+      }
+    },
+    {
+      "name": "@canard/schema-form@0.5.0 - User Interaction",
+      "hz": 4.5021911083598525,
+      "stats": {
+        "mean": 0.22211407199999997,
+        "deviation": 0.001412851671686419
+      }
+    },
+    {
+      "name": "@canard/schema-form@0.5.0 - OneOf Switching",
+      "hz": 6.519420182124437,
+      "stats": {
+        "mean": 0.15338787377777777,
+        "deviation": 0.0014668982768453044
+      }
+    },
+    {
+      "name": "@canard/schema-form@0.5.0 - IfThenElse Logic",
+      "hz": 6.506837403631638,
+      "stats": {
+        "mean": 0.15368449186111113,
+        "deviation": 0.0012609464041260687
+      }
+    },
+    {
+      "name": "@canard/schema-form@0.5.0 - Computed Properties",
+      "hz": 5.317150920550574,
+      "stats": {
+        "mean": 0.18807064440000007,
+        "deviation": 0.0018477324404180624
+      }
+    },
+    {
+      "name": "@canard/schema-form@0.5.0 - Memory Usage",
+      "hz": 4.741808280937818,
+      "stats": {
+        "mean": 0.21089001088888892,
+        "deviation": 0.0016917782407175415
+      }
+    },
+    {
+      "name": "@canard/schema-form@0.6.0 - Form Rendering",
+      "hz": 208.23257787280204,
+      "stats": {
+        "mean": 0.004802322529046563,
+        "deviation": 0.0002699638033465953
+      }
+    },
+    {
+      "name": "@canard/schema-form@0.6.0 - User Interaction",
+      "hz": 4.494562175556367,
+      "stats": {
+        "mean": 0.22249108165384612,
+        "deviation": 0.001937418408686033
+      }
+    },
+    {
+      "name": "@canard/schema-form@0.6.0 - OneOf Switching",
+      "hz": 6.537340670405528,
+      "stats": {
+        "mean": 0.15296739919444452,
+        "deviation": 0.0011444669810800826
+      }
+    },
+    {
+      "name": "@canard/schema-form@0.6.0 - IfThenElse Logic",
+      "hz": 6.4801952407285475,
+      "stats": {
+        "mean": 0.15431633814285714,
+        "deviation": 0.0028735586089803484
+      }
+    },
+    {
+      "name": "@canard/schema-form@0.6.0 - Computed Properties",
+      "hz": 5.3234838235629764,
+      "stats": {
+        "mean": 0.18784691250000002,
+        "deviation": 0.0018783199869508997
+      }
+    },
+    {
+      "name": "@canard/schema-form@0.6.0 - Memory Usage",
+      "hz": 4.754511651416378,
+      "stats": {
+        "mean": 0.21032654314814817,
+        "deviation": 0.001853514431951776
+      }
+    },
+    {
+      "name": "@canard/schema-form@0.7.0 - Form Rendering",
+      "hz": 208.14145395604757,
+      "stats": {
+        "mean": 0.004804424976348854,
+        "deviation": 0.0002556855029749022
+      }
+    },
+    {
+      "name": "@canard/schema-form@0.7.0 - User Interaction",
+      "hz": 4.4833662250323325,
+      "stats": {
+        "mean": 0.22304669076923075,
+        "deviation": 0.002438768979840006
+      }
+    },
+    {
+      "name": "@canard/schema-form@0.7.0 - OneOf Switching",
+      "hz": 6.478196991219288,
+      "stats": {
+        "mean": 0.1543639382,
+        "deviation": 0.0013934966563935022
+      }
+    },
+    {
+      "name": "@canard/schema-form@0.7.0 - IfThenElse Logic",
+      "hz": 6.461187069979065,
+      "stats": {
+        "mean": 0.15477032148571426,
+        "deviation": 0.0023166878415362803
+      }
+    },
+    {
+      "name": "@canard/schema-form@0.7.0 - Computed Properties",
+      "hz": 5.293209005148678,
+      "stats": {
+        "mean": 0.18892131389999997,
+        "deviation": 0.00240808300560815
+      }
+    },
+    {
+      "name": "@canard/schema-form@0.7.0 - Memory Usage",
+      "hz": 4.681860397593771,
+      "stats": {
+        "mean": 0.2135903070740741,
+        "deviation": 0.01776275886881861
+      }
+    },
+    {
+      "name": "@canard/schema-form@0.8.0 - Form Rendering",
+      "hz": 208.6388940775352,
+      "stats": {
+        "mean": 0.004792970191015181,
+        "deviation": 0.0002606032467448339
+      }
+    },
+    {
+      "name": "@canard/schema-form@0.8.0 - User Interaction",
+      "hz": 4.483454745836787,
+      "stats": {
+        "mean": 0.22304228696153844,
+        "deviation": 0.002242641225032547
+      }
+    },
+    {
+      "name": "@canard/schema-form@0.8.0 - OneOf Switching",
+      "hz": 6.473979404175794,
+      "stats": {
+        "mean": 0.15446450128571432,
+        "deviation": 0.0017251426422068513
+      }
+    },
+    {
+      "name": "@canard/schema-form@0.8.0 - IfThenElse Logic",
+      "hz": 6.472535897493157,
+      "stats": {
+        "mean": 0.15449894999999994,
+        "deviation": 0.0022290445964339672
+      }
+    },
+    {
+      "name": "@canard/schema-form@0.8.0 - Computed Properties",
+      "hz": 5.3111844337236,
+      "stats": {
+        "mean": 0.1882819195,
+        "deviation": 0.0015641902719700609
+      }
+    },
+    {
+      "name": "@canard/schema-form@0.8.0 - Memory Usage",
+      "hz": 4.759647337262298,
+      "stats": {
+        "mean": 0.21009959964285715,
+        "deviation": 0.0016589877324883508
+      }
+    },
+    {
+      "name": "@canard/schema-form@0.9.0 - Form Rendering",
+      "hz": 202.80999248922885,
+      "stats": {
+        "mean": 0.004930723519715675,
+        "deviation": 0.00036696659929753405
+      }
+    },
+    {
+      "name": "@canard/schema-form@0.9.0 - User Interaction",
+      "hz": 4.4793448285872985,
+      "stats": {
+        "mean": 0.22324693415384617,
+        "deviation": 0.0021729245890766235
+      }
+    },
+    {
+      "name": "@canard/schema-form@0.9.0 - OneOf Switching",
+      "hz": 6.476770530472024,
+      "stats": {
+        "mean": 0.15439793571428576,
+        "deviation": 0.0018480515098122016
+      }
+    },
+    {
+      "name": "@canard/schema-form@0.9.0 - IfThenElse Logic",
+      "hz": 6.4552536805805545,
+      "stats": {
+        "mean": 0.1549125796571429,
+        "deviation": 0.0018046630617534235
+      }
+    },
+    {
+      "name": "@canard/schema-form@0.9.0 - Computed Properties",
+      "hz": 5.300712630014608,
+      "stats": {
+        "mean": 0.1886538791666667,
+        "deviation": 0.0020359266569324156
+      }
+    },
+    {
+      "name": "@canard/schema-form@0.9.0 - Memory Usage",
+      "hz": 4.733586449970496,
+      "stats": {
+        "mean": 0.21125630862962963,
+        "deviation": 0.0016926101382415033
+      }
+    },
+    {
+      "name": "@canard/schema-form@0.10.0 - Form Rendering",
+      "hz": 203.82348791701193,
+      "stats": {
+        "mean": 0.004906205905018938,
+        "deviation": 0.00031485776037584664
+      }
+    },
+    {
+      "name": "@canard/schema-form@0.10.0 - User Interaction",
+      "hz": 4.468258066290392,
+      "stats": {
+        "mean": 0.2238008604615385,
+        "deviation": 0.002529657377019842
+      }
+    },
+    {
+      "name": "@canard/schema-form@0.10.0 - OneOf Switching",
+      "hz": 6.436191352152794,
+      "stats": {
+        "mean": 0.15537139051428567,
+        "deviation": 0.003452231266263054
+      }
+    },
+    {
+      "name": "@canard/schema-form@0.10.0 - IfThenElse Logic",
+      "hz": 6.4450677984708555,
+      "stats": {
+        "mean": 0.15515740582857143,
+        "deviation": 0.002233663469173133
+      }
+    },
+    {
+      "name": "@canard/schema-form@0.10.0 - Computed Properties",
+      "hz": 5.298515295381557,
+      "stats": {
+        "mean": 0.1887321153666667,
+        "deviation": 0.0019234424973344473
+      }
+    },
+    {
+      "name": "@canard/schema-form@0.10.0 - Memory Usage",
+      "hz": 4.741686560809238,
+      "stats": {
+        "mean": 0.21089542448148144,
+        "deviation": 0.001550893791897443
+      }
+    },
+    {
+      "name": "@canard/schema-form@0.11.0 - Form Rendering",
+      "hz": 202.01595046714368,
+      "stats": {
+        "mean": 0.004950104175871213,
+        "deviation": 0.0003279533558541031
+      }
+    },
+    {
+      "name": "@canard/schema-form@0.11.0 - User Interaction",
+      "hz": 4.469578534851837,
+      "stats": {
+        "mean": 0.22373474192307694,
+        "deviation": 0.0031468672091933213
+      }
+    },
+    {
+      "name": "@canard/schema-form@0.11.0 - OneOf Switching",
+      "hz": 6.451271957367677,
+      "stats": {
+        "mean": 0.15500819165714286,
+        "deviation": 0.0020684539063226715
+      }
+    },
+    {
+      "name": "@canard/schema-form@0.11.0 - IfThenElse Logic",
+      "hz": 6.466044100545322,
+      "stats": {
+        "mean": 0.1546540642857143,
+        "deviation": 0.0018191987941218307
+      }
+    },
+    {
+      "name": "@canard/schema-form@0.11.0 - Computed Properties",
+      "hz": 5.277920215356372,
+      "stats": {
+        "mean": 0.1894685708,
+        "deviation": 0.002912392806764515
+      }
+    },
+    {
+      "name": "@canard/schema-form@0.11.0 - Memory Usage",
+      "hz": 4.740957828900571,
+      "stats": {
+        "mean": 0.21092784118518518,
+        "deviation": 0.0015186942167053857
+      }
+    },
+    {
+      "name": "@canard/schema-form@0.12.0 - Form Rendering",
+      "hz": 194.93201595683408,
+      "stats": {
+        "mean": 0.005129993629273505,
+        "deviation": 0.0009346488728941575
+      }
+    },
+    {
+      "name": "@canard/schema-form@0.12.0 - User Interaction",
+      "hz": 4.480054208931625,
+      "stats": {
+        "mean": 0.22321158480769226,
+        "deviation": 0.0026607007745869053
+      }
+    },
+    {
+      "name": "@canard/schema-form@0.12.0 - OneOf Switching",
+      "hz": 6.501975099106017,
+      "stats": {
+        "mean": 0.1537994201388889,
+        "deviation": 0.001400712464837689
+      }
+    },
+    {
+      "name": "@canard/schema-form@0.12.0 - IfThenElse Logic",
+      "hz": 6.517434813404518,
+      "stats": {
+        "mean": 0.15343459944444449,
+        "deviation": 0.001041295129159355
+      }
+    },
+    {
+      "name": "@canard/schema-form@0.12.0 - Computed Properties",
+      "hz": 5.323599309449316,
+      "stats": {
+        "mean": 0.1878428375,
+        "deviation": 0.001851859276257056
+      }
+    },
+    {
+      "name": "@canard/schema-form@0.12.0 - Memory Usage",
+      "hz": 4.756500813157704,
+      "stats": {
+        "mean": 0.21023858489285716,
+        "deviation": 0.0015793438393797723
+      }
+    },
+    {
+      "name": "@canard/schema-form@0.12.5 - Form Rendering",
+      "hz": 203.16379717223495,
+      "stats": {
+        "mean": 0.004922136787747848,
+        "deviation": 0.0004136902869280416
+      }
+    },
+    {
+      "name": "@canard/schema-form@0.12.5 - User Interaction",
+      "hz": 4.493790553410232,
+      "stats": {
+        "mean": 0.2225292852692308,
+        "deviation": 0.006228903373755088
+      }
+    },
+    {
+      "name": "@canard/schema-form@0.12.5 - OneOf Switching",
+      "hz": 6.520810819773596,
+      "stats": {
+        "mean": 0.15335516205555558,
+        "deviation": 0.0009513459427822061
+      }
+    },
+    {
+      "name": "@canard/schema-form@0.12.5 - IfThenElse Logic",
+      "hz": 6.534010028493332,
+      "stats": {
+        "mean": 0.15304537269444451,
+        "deviation": 0.001077224296051734
+      }
+    },
+    {
+      "name": "@canard/schema-form@0.12.5 - Computed Properties",
+      "hz": 5.335183500041459,
+      "stats": {
+        "mean": 0.18743497763333336,
+        "deviation": 0.001537577407628334
+      }
+    },
+    {
+      "name": "@canard/schema-form@0.12.5 - Memory Usage",
+      "hz": 4.766453902798178,
+      "stats": {
+        "mean": 0.20979957435714283,
+        "deviation": 0.001392690450840419
+      }
+    },
+    {
+      "name": "@canard/schema-form@latest - Form Rendering",
+      "hz": 202.41178761980333,
+      "stats": {
+        "mean": 0.004940423735984846,
+        "deviation": 0.000312912732100235
+      }
+    },
+    {
+      "name": "@canard/schema-form@latest - User Interaction",
+      "hz": 4.497337784033723,
+      "stats": {
+        "mean": 0.22235376750000005,
+        "deviation": 0.0028329517233165453
+      }
+    },
+    {
+      "name": "@canard/schema-form@latest - OneOf Switching",
+      "hz": 6.513759580244213,
+      "stats": {
+        "mean": 0.15352117125,
+        "deviation": 0.0011958934228795133
+      }
+    },
+    {
+      "name": "@canard/schema-form@latest - IfThenElse Logic",
+      "hz": 6.508738654846588,
+      "stats": {
+        "mean": 0.1536395994722222,
+        "deviation": 0.0013416903734996919
+      }
+    },
+    {
+      "name": "@canard/schema-form@latest - Computed Properties",
+      "hz": 5.344961278064565,
+      "stats": {
+        "mean": 0.18709209439999996,
+        "deviation": 0.0013462483184060862
+      }
+    },
+    {
+      "name": "@canard/schema-form@latest - Memory Usage",
+      "hz": 4.708577217556351,
+      "stats": {
+        "mean": 0.21237837966666676,
+        "deviation": 0.013069053139349683
+      }
+    }
+  ],
+  "chartConfig": {
+    "type": "bar",
+    "data": {
+      "labels": [
+        "@canard/schema-form@0.4.14 - Form Rendering",
+        "@canard/schema-form@0.4.14 - User Interaction",
+        "@canard/schema-form@0.4.14 - OneOf Switching",
+        "@canard/schema-form@0.4.14 - IfThenElse Logic",
+        "@canard/schema-form@0.4.14 - Computed Properties",
+        "@canard/schema-form@0.4.14 - Memory Usage",
+        "@canard/schema-form@0.5.0 - Form Rendering",
+        "@canard/schema-form@0.5.0 - User Interaction",
+        "@canard/schema-form@0.5.0 - OneOf Switching",
+        "@canard/schema-form@0.5.0 - IfThenElse Logic",
+        "@canard/schema-form@0.5.0 - Computed Properties",
+        "@canard/schema-form@0.5.0 - Memory Usage",
+        "@canard/schema-form@0.6.0 - Form Rendering",
+        "@canard/schema-form@0.6.0 - User Interaction",
+        "@canard/schema-form@0.6.0 - OneOf Switching",
+        "@canard/schema-form@0.6.0 - IfThenElse Logic",
+        "@canard/schema-form@0.6.0 - Computed Properties",
+        "@canard/schema-form@0.6.0 - Memory Usage",
+        "@canard/schema-form@0.7.0 - Form Rendering",
+        "@canard/schema-form@0.7.0 - User Interaction",
+        "@canard/schema-form@0.7.0 - OneOf Switching",
+        "@canard/schema-form@0.7.0 - IfThenElse Logic",
+        "@canard/schema-form@0.7.0 - Computed Properties",
+        "@canard/schema-form@0.7.0 - Memory Usage",
+        "@canard/schema-form@0.8.0 - Form Rendering",
+        "@canard/schema-form@0.8.0 - User Interaction",
+        "@canard/schema-form@0.8.0 - OneOf Switching",
+        "@canard/schema-form@0.8.0 - IfThenElse Logic",
+        "@canard/schema-form@0.8.0 - Computed Properties",
+        "@canard/schema-form@0.8.0 - Memory Usage",
+        "@canard/schema-form@0.9.0 - Form Rendering",
+        "@canard/schema-form@0.9.0 - User Interaction",
+        "@canard/schema-form@0.9.0 - OneOf Switching",
+        "@canard/schema-form@0.9.0 - IfThenElse Logic",
+        "@canard/schema-form@0.9.0 - Computed Properties",
+        "@canard/schema-form@0.9.0 - Memory Usage",
+        "@canard/schema-form@0.10.0 - Form Rendering",
+        "@canard/schema-form@0.10.0 - User Interaction",
+        "@canard/schema-form@0.10.0 - OneOf Switching",
+        "@canard/schema-form@0.10.0 - IfThenElse Logic",
+        "@canard/schema-form@0.10.0 - Computed Properties",
+        "@canard/schema-form@0.10.0 - Memory Usage",
+        "@canard/schema-form@0.11.0 - Form Rendering",
+        "@canard/schema-form@0.11.0 - User Interaction",
+        "@canard/schema-form@0.11.0 - OneOf Switching",
+        "@canard/schema-form@0.11.0 - IfThenElse Logic",
+        "@canard/schema-form@0.11.0 - Computed Properties",
+        "@canard/schema-form@0.11.0 - Memory Usage",
+        "@canard/schema-form@0.12.0 - Form Rendering",
+        "@canard/schema-form@0.12.0 - User Interaction",
+        "@canard/schema-form@0.12.0 - OneOf Switching",
+        "@canard/schema-form@0.12.0 - IfThenElse Logic",
+        "@canard/schema-form@0.12.0 - Computed Properties",
+        "@canard/schema-form@0.12.0 - Memory Usage",
+        "@canard/schema-form@0.12.5 - Form Rendering",
+        "@canard/schema-form@0.12.5 - User Interaction",
+        "@canard/schema-form@0.12.5 - OneOf Switching",
+        "@canard/schema-form@0.12.5 - IfThenElse Logic",
+        "@canard/schema-form@0.12.5 - Computed Properties",
+        "@canard/schema-form@0.12.5 - Memory Usage",
+        "@canard/schema-form@latest - Form Rendering",
+        "@canard/schema-form@latest - User Interaction",
+        "@canard/schema-form@latest - OneOf Switching",
+        "@canard/schema-form@latest - IfThenElse Logic",
+        "@canard/schema-form@latest - Computed Properties",
+        "@canard/schema-form@latest - Memory Usage"
+      ],
+      "datasets": [
+        {
+          "label": "Operations/sec",
+          "data": [
+            207.10363715824454,
+            4.50778635728265,
+            6.519043875440969,
+            6.541154529614972,
+            5.3358669196243955,
+            4.744374877437421,
+            210.23570149848348,
+            4.5021911083598525,
+            6.519420182124437,
+            6.506837403631638,
+            5.317150920550574,
+            4.741808280937818,
+            208.23257787280204,
+            4.494562175556367,
+            6.537340670405528,
+            6.4801952407285475,
+            5.3234838235629764,
+            4.754511651416378,
+            208.14145395604757,
+            4.4833662250323325,
+            6.478196991219288,
+            6.461187069979065,
+            5.293209005148678,
+            4.681860397593771,
+            208.6388940775352,
+            4.483454745836787,
+            6.473979404175794,
+            6.472535897493157,
+            5.3111844337236,
+            4.759647337262298,
+            202.80999248922885,
+            4.4793448285872985,
+            6.476770530472024,
+            6.4552536805805545,
+            5.300712630014608,
+            4.733586449970496,
+            203.82348791701193,
+            4.468258066290392,
+            6.436191352152794,
+            6.4450677984708555,
+            5.298515295381557,
+            4.741686560809238,
+            202.01595046714368,
+            4.469578534851837,
+            6.451271957367677,
+            6.466044100545322,
+            5.277920215356372,
+            4.740957828900571,
+            194.93201595683408,
+            4.480054208931625,
+            6.501975099106017,
+            6.517434813404518,
+            5.323599309449316,
+            4.756500813157704,
+            203.16379717223495,
+            4.493790553410232,
+            6.520810819773596,
+            6.534010028493332,
+            5.335183500041459,
+            4.766453902798178,
+            202.41178761980333,
+            4.497337784033723,
+            6.513759580244213,
+            6.508738654846588,
+            5.344961278064565,
+            4.708577217556351
+          ]
+        }
+      ]
+    },
+    "options": {
+      "scales": {
+        "y": {
+          "beginAtZero": true
+        }
+      }
+    }
+  }
+}

@@ -1,196 +1,240 @@
 import Benchmark, { type Deferred } from 'benchmark';
+import fs from 'node:fs';
+import path from 'node:path';
 
 import { Form as WorkspaceForm } from '@canard/schema-form';
 
-import { runComputedPropertiesBenchmark } from './benchmarks/canard/computed-performance';
-import { runFormRenderingBenchmark } from './benchmarks/canard/form-rendering';
-import { runIfThenElseBenchmark } from './benchmarks/canard/ifthenelse-performance';
-import { runInteractionBenchmark } from './benchmarks/canard/interaction-performance';
-import { runMemoryBenchmark } from './benchmarks/canard/memory-performance';
-import { runOneOfBenchmark } from './benchmarks/canard/oneof-performance';
-import { generateReport } from './reporters/report-generator';
+import { ARRAY_STRESS_RUNNERS } from './benchmarks/canard/array-node-stress';
+import { runFormRenderingV2 } from './benchmarks/canard/form-rendering';
+import { SCALE_INTERACTION_RUNNERS } from './benchmarks/canard/scale-interaction';
+import { SCALE_RENDERING_RUNNERS } from './benchmarks/canard/scale-rendering';
+import { forceGc } from './utils/setup-env';
 import { getSchemaFormVersions } from './utils/version-parser';
 
-async function runBenchmarks() {
+interface CategoryRunner {
+  category: string;
+  run: (mod: { Form: typeof WorkspaceForm }) => Promise<void>;
+  /**
+   * When true, the category runs only against `latest` even in
+   * `--all-versions` mode. Used for benches that rely on
+   * workspace-only APIs (e.g. ArrayNode.push via FormHandle ref).
+   */
+  latestOnly?: boolean;
+}
+
+const CORE_CATEGORIES: CategoryRunner[] = [
+  { category: 'Form Rendering v2', run: runFormRenderingV2 },
+];
+
+const SCALE_CATEGORIES: CategoryRunner[] = [
+  ...SCALE_RENDERING_RUNNERS,
+  ...SCALE_INTERACTION_RUNNERS,
+];
+
+const ARRAY_STRESS_CATEGORIES: CategoryRunner[] = ARRAY_STRESS_RUNNERS.map(
+  (r) => ({ ...r, latestOnly: true }),
+);
+
+function selectCategories(): CategoryRunner[] {
+  const args = process.argv;
+  const scale = args.includes('--scale');
+  const arrayStress = args.includes('--array-stress');
+  const core = args.includes('--no-core') ? [] : CORE_CATEGORIES;
+  const selected = [
+    ...core,
+    ...(scale ? SCALE_CATEGORIES : []),
+    ...(arrayStress ? ARRAY_STRESS_CATEGORIES : []),
+  ];
+
+  // Optional category substring exclusion. Comma-separated; a category is
+  // dropped if its name contains any token. Used to skip the slow giant
+  // cases (flat-500/array-500/array-1000) when only the per-version
+  // regression ratio is needed.
+  const excludeFlag = args.find((a) => a.startsWith('--exclude='));
+  if (!excludeFlag) return selected;
+  const tokens = excludeFlag
+    .split('=')[1]
+    .split(',')
+    .map((t) => t.trim())
+    .filter(Boolean);
+  if (tokens.length === 0) return selected;
+  return selected.filter((c) => !tokens.some((t) => c.category.includes(t)));
+}
+
+async function runOnce(
+  versions: string[],
+  categories: CategoryRunner[],
+  options: { minSamples: number; maxTime: number },
+) {
   const suite = new Benchmark.Suite();
 
-  // 버전별 벤치마크 실행
-  const installedVersions = await getSchemaFormVersions();
-  const versions = process.argv.includes('--all-versions')
-    ? installedVersions
-    : ['latest'];
-
-  console.log('🚀 @canard/schema-form 종합 성능 비교');
-  console.log(
-    'Following @canard/schema-form versions will be tested:',
-    versions.join(', '),
-  );
-
-  // @canard/schema-form 버전별 종합 테스트
-  console.log('\n📊 @canard/schema-form 테스트 시작...');
-
   for (const version of versions) {
-    const SchemaFormModule =
+    const mod =
       version === 'latest'
         ? { Form: WorkspaceForm }
         : await import(`@canard/schema-form_${version}`);
 
-    // 1. 📊 폼 렌더링 성능 (기본)
-    suite.add(`@canard/schema-form@${version} - Form Rendering`, {
-      defer: true,
-      fn: async (deferred: Deferred) => {
-        await runFormRenderingBenchmark(SchemaFormModule);
-        deferred.resolve();
-      },
-    });
-
-    // 2. ⚡ 상호작용 성능 (microtask 배칭 효과)
-    suite.add(`@canard/schema-form@${version} - User Interaction`, {
-      defer: true,
-      fn: async (deferred: Deferred) => {
-        const result = await runInteractionBenchmark(SchemaFormModule);
-        console.log(`📱 Canard interaction metrics for ${version}:`, {
-          avgTime: result.avgInteractionTime.toFixed(3) + 'ms',
-          changeEvents: result.changeCount,
-          batchingEfficiency:
-            (result.changeCount / result.avgInteractionTime).toFixed(2) +
-            ' events/ms',
-        });
-        deferred.resolve();
-      },
-    });
-
-    // 3. 🔄 oneOf 조건부 스키마 전환 (3회 이벤트 발행)
-    suite.add(`@canard/schema-form@${version} - OneOf Switching`, {
-      defer: true,
-      fn: async (deferred: Deferred) => {
-        const result = await runOneOfBenchmark(SchemaFormModule);
-        console.log(`🔄 Canard oneOf switching metrics for ${version}:`, {
-          avgSwitchTime: result.avgSwitchingTime.toFixed(3) + 'ms',
-          switches: result.totalSwitches,
-          eventMultiplier: result.eventMultiplier.toFixed(1) + 'x',
-          expectedEvents: '~3x (아키텍처 특성)',
-        });
-        deferred.resolve();
-      },
-    });
-
-    // 4. 🔀 if-then-else 조건부 로직 (2회 이벤트 발행)
-    suite.add(`@canard/schema-form@${version} - IfThenElse Logic`, {
-      defer: true,
-      fn: async (deferred: Deferred) => {
-        const result = await runIfThenElseBenchmark(SchemaFormModule);
-        console.log(`🔀 Canard ifThenElse metrics for ${version}:`, {
-          avgSwitchTime: result.avgSwitchingTime.toFixed(3) + 'ms',
-          eventMultiplier: result.eventMultiplier.toFixed(1) + 'x',
-          expectedEvents: '~2x (아키텍처 특성)',
-        });
-        deferred.resolve();
-      },
-    });
-
-    // 5. 🧮 computed properties 성능 (동적 가시성)
-    suite.add(`@canard/schema-form@${version} - Computed Properties`, {
-      defer: true,
-      fn: async (deferred: Deferred) => {
-        const result = await runComputedPropertiesBenchmark(SchemaFormModule);
-        console.log(`🧮 Canard computed properties metrics for ${version}:`, {
-          avgComputeTime: result.avgComputationTime.toFixed(3) + 'ms',
-          dependencyTracking: result.dependencyTrackingEfficiency.toFixed(2),
-          avgVisibilityChanges:
-            result.avgVisibilityChanges.toFixed(1) + ' fields',
-        });
-        deferred.resolve();
-      },
-    });
-
-    // 6. 💾 메모리 사용량 분석
-    suite.add(`@canard/schema-form@${version} - Memory Usage`, {
-      defer: true,
-      fn: async (deferred: Deferred) => {
-        const result = await runMemoryBenchmark(SchemaFormModule);
-        console.log(`💾 Canard memory metrics for ${version}:`, {
-          memoryPerForm: result.memoryPerInstance.heapUsed.toFixed(2) + 'MB',
-          totalMemoryIncrease: result.memoryDiff.heapUsed.toFixed(2) + 'MB',
-          potentialLeak: result.memoryLeakCheck.potentialLeak
-            ? '⚠️ Possible'
-            : '✅ Clean',
-        });
-        deferred.resolve();
-      },
-    });
+    for (const { category, run, latestOnly } of categories) {
+      if (latestOnly && version !== 'latest') continue;
+      suite.add(`@canard/schema-form@${version} - ${category}`, {
+        defer: true,
+        minSamples: options.minSamples,
+        maxTime: options.maxTime,
+        fn: async (deferred: Deferred) => {
+          await run(mod);
+          deferred.resolve();
+        },
+      });
+    }
   }
 
-  // 결과 수집 및 보고서 생성
-  suite.on('complete', function (this: Benchmark.Suite) {
-    console.log('\n🎉 All benchmarks completed!');
-    console.log('\n📊 종합 성능 비교 분석:');
-    console.log('==================================================');
+  const results: Array<{
+    name: string;
+    hz: number;
+    stats: { mean: number; deviation: number };
+  }> = [];
 
-    // 성능 분석 요약
-    const canardTests = this.filter((test: Benchmark) =>
-      test.name?.includes('@canard/schema-form'),
-    );
-
-    // 카테고리별 비교
-    const categories = [
-      'Form Rendering',
-      'User Interaction',
-      'OneOf Switching',
-      'IfThenElse Logic',
-      'Computed Properties',
-      'Memory Usage',
-    ];
-
-    categories.forEach((category) => {
-      console.log(`\n🔍 ${category} 비교:`);
-
-      const canardCategoryTests = canardTests.filter((test: Benchmark) =>
-        test.name?.includes(category),
-      );
-
-      canardCategoryTests.forEach((test: Benchmark) => {
-        console.log(
-          `  ${test.name}: ${test.hz.toFixed(2)} ops/sec (비동기 아키텍처)`,
-        );
+  await new Promise<void>((resolve) => {
+    suite.on('cycle', (event: Benchmark.Event) => {
+      // benchmark.js types `event.target` as the loose `Target` shape;
+      // at runtime it is the full Benchmark instance.
+      const t = event.target as unknown as Benchmark;
+      results.push({
+        name: t.name || 'unknown',
+        hz: t.hz,
+        stats: {
+          mean: t.stats?.mean ?? 0,
+          deviation: t.stats?.deviation ?? 0,
+        },
       });
+      const ms = (t.stats?.mean ?? 0) * 1000;
+      // eslint-disable-next-line no-console
+      console.log(
+        `  ${t.name}: ${t.hz.toFixed(2)} hz | mean=${ms.toFixed(2)}ms | dev=±${(((t.stats?.deviation ?? 0) / (t.stats?.mean ?? 1)) * 100).toFixed(2)}%`,
+      );
     });
-
-    const canardAvg =
-      canardTests.reduce((sum: number, test: Benchmark) => sum + test.hz, 0) /
-      canardTests.length;
-
-    console.log('\n🏆 전체 종합 평가:');
-    console.log(`  @canard/schema-form 평균: ${canardAvg.toFixed(2)} ops/sec`);
-    console.log(
-      `  버전 일관성: ${canardTests.map((t: Benchmark) => t.hz).every((hz: number) => Math.abs(hz - canardAvg) < canardAvg * 0.15) ? '✅ 안정적' : '⚠️ 버전별 차이 있음'}`,
-    );
-
-    console.log('\n🔬 @canard/schema-form 비동기 아키텍처 특화 기능들:');
-    console.log('  • EventCascade 배칭: microtask 단위로 이벤트 최적화');
-    console.log('  • oneOf 조건부 전환: 3회 이벤트 발행으로 정교한 상태 관리');
-    console.log('  • if-then-else 로직: 2회 이벤트 발행으로 효율적 조건 처리');
-    console.log('  • computed properties: 동적 의존성 추적 및 재계산');
-    console.log('  • Memory management: AbstractNode 기반 구조적 메모리 관리');
-
-    generateReport(this);
+    suite.on('complete', () => resolve());
+    suite.run({ async: true });
   });
 
-  // 벤치마크 실행
-  suite.run({ async: true });
+  return results;
 }
 
-// 추가 명령어 옵션 처리
-const args = process.argv.slice(2);
-const testType = args.find((arg) => arg.startsWith('--test='))?.split('=')[1];
-const verbose = args.includes('--verbose');
-
-if (testType) {
-  console.log(`🎯 Running specific test: ${testType}`);
+function aggregate(runs: Array<Awaited<ReturnType<typeof runOnce>>>) {
+  const byName = new Map<string, number[]>();
+  for (const r of runs)
+    for (const e of r) {
+      if (!byName.has(e.name)) byName.set(e.name, []);
+      byName.get(e.name)!.push(e.hz);
+    }
+  const out: Array<{
+    name: string;
+    runs: number;
+    meanHz: number;
+    stdHz: number;
+    relStd: number;
+    samples: number[];
+  }> = [];
+  for (const [name, samples] of byName) {
+    const meanHz = samples.reduce((s, x) => s + x, 0) / samples.length;
+    const variance =
+      samples.reduce((s, x) => s + (x - meanHz) ** 2, 0) / samples.length;
+    const stdHz = Math.sqrt(variance);
+    out.push({
+      name,
+      runs: samples.length,
+      meanHz,
+      stdHz,
+      relStd: stdHz / meanHz,
+      samples,
+    });
+  }
+  return out;
 }
 
-if (verbose) {
-  console.log('🔍 Verbose mode enabled - detailed metrics will be shown');
+async function main() {
+  const installed = await getSchemaFormVersions();
+  const versionsFlag = process.argv.find((a) => a.startsWith('--versions='));
+  const versions = versionsFlag
+    ? versionsFlag
+        .split('=')[1]
+        .split(',')
+        .map((v) => v.trim())
+        .filter(Boolean)
+    : process.argv.includes('--all-versions')
+      ? installed
+      : ['latest'];
+  const n = (() => {
+    const flag = process.argv.find((a) => a.startsWith('--repeat='));
+    if (!flag) return 1;
+    return Math.max(1, parseInt(flag.split('=')[1], 10) || 1);
+  })();
+  const minSamples = (() => {
+    const flag = process.argv.find((a) => a.startsWith('--min-samples='));
+    if (!flag) return 30;
+    return Math.max(3, parseInt(flag.split('=')[1], 10) || 30);
+  })();
+  const maxTime = (() => {
+    const flag = process.argv.find((a) => a.startsWith('--max-time='));
+    if (!flag) return 5;
+    return Math.max(0.5, parseFloat(flag.split('=')[1]) || 5);
+  })();
+
+  const categories = selectCategories();
+  // eslint-disable-next-line no-console
+  console.log(
+    `🚀 v2 bench | versions: ${versions.join(', ')} | repeat: ${n} | minSamples=${minSamples} maxTime=${maxTime}s | gc: ${typeof (globalThis as any).gc === 'function' ? 'on' : 'off'} | categories: ${categories.map((c) => c.category).join(', ') || '(none)'}`,
+  );
+  if (categories.length === 0) {
+    // eslint-disable-next-line no-console
+    console.error(
+      'No categories selected. Pass --scale and/or --array-stress.',
+    );
+    process.exit(1);
+  }
+
+  const runs: Array<Awaited<ReturnType<typeof runOnce>>> = [];
+  for (let i = 1; i <= n; i++) {
+    // eslint-disable-next-line no-console
+    console.log(`\n--- sweep ${i}/${n} ---`);
+    forceGc();
+    runs.push(await runOnce(versions, categories, { minSamples, maxTime }));
+  }
+
+  // eslint-disable-next-line no-console
+  console.log('\n📊 Aggregate (mean ± std across sweeps):');
+  const agg = aggregate(runs);
+  for (const a of agg) {
+    // eslint-disable-next-line no-console
+    console.log(
+      `  ${a.name}: ${a.meanHz.toFixed(2)} hz ± ${(a.relStd * 100).toFixed(2)}% (n=${a.runs}, std=${a.stdHz.toFixed(2)})`,
+    );
+  }
+
+  // Persist. `--out=<path>` overrides the default timestamped name — used
+  // by the regression harness to write to a fixed baseline/current file.
+  const outDir = path.resolve(process.cwd(), 'results');
+  fs.mkdirSync(outDir, { recursive: true });
+  const ts = new Date().toISOString().replace(/[:.]/g, '-');
+  const outFlag = process.argv.find((a) => a.startsWith('--out='));
+  const outPath = outFlag
+    ? path.resolve(process.cwd(), outFlag.split('=')[1])
+    : path.join(outDir, `bench-v2-${ts}.json`);
+  fs.mkdirSync(path.dirname(outPath), { recursive: true });
+  fs.writeFileSync(
+    outPath,
+    JSON.stringify(
+      { timestamp: ts, repeat: n, versions, runs, aggregate: agg },
+      null,
+      2,
+    ),
+  );
+  // eslint-disable-next-line no-console
+  console.log(`\n💾 Saved: ${outPath}`);
 }
 
-runBenchmarks().catch(console.error);
+main().catch((err) => {
+  // eslint-disable-next-line no-console
+  console.error(err);
+  process.exit(1);
+});

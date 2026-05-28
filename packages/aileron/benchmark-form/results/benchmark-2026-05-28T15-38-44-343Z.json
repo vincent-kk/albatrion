@@ -1,0 +1,86 @@
+{
+  "timestamp": "2026-05-28T15-38-44-343Z",
+  "results": [
+    {
+      "name": "@canard/schema-form@latest - Form Rendering",
+      "hz": 204.59401918728662,
+      "stats": {
+        "mean": 0.004887728409522049,
+        "deviation": 0.0002973306028825563
+      }
+    },
+    {
+      "name": "@canard/schema-form@latest - User Interaction",
+      "hz": 4.503882376490062,
+      "stats": {
+        "mean": 0.22203066519230769,
+        "deviation": 0.0019946514473209585
+      }
+    },
+    {
+      "name": "@canard/schema-form@latest - OneOf Switching",
+      "hz": 6.513562907435643,
+      "stats": {
+        "mean": 0.15352580672222216,
+        "deviation": 0.0012954394601930608
+      }
+    },
+    {
+      "name": "@canard/schema-form@latest - IfThenElse Logic",
+      "hz": 6.517347648315714,
+      "stats": {
+        "mean": 0.15343665152777775,
+        "deviation": 0.0012965991518203615
+      }
+    },
+    {
+      "name": "@canard/schema-form@latest - Computed Properties",
+      "hz": 5.337103384412156,
+      "stats": {
+        "mean": 0.18736755276666667,
+        "deviation": 0.0013842626561217674
+      }
+    },
+    {
+      "name": "@canard/schema-form@latest - Memory Usage",
+      "hz": 4.727878418546795,
+      "stats": {
+        "mean": 0.21151136122222225,
+        "deviation": 0.004518136453334966
+      }
+    }
+  ],
+  "chartConfig": {
+    "type": "bar",
+    "data": {
+      "labels": [
+        "@canard/schema-form@latest - Form Rendering",
+        "@canard/schema-form@latest - User Interaction",
+        "@canard/schema-form@latest - OneOf Switching",
+        "@canard/schema-form@latest - IfThenElse Logic",
+        "@canard/schema-form@latest - Computed Properties",
+        "@canard/schema-form@latest - Memory Usage"
+      ],
+      "datasets": [
+        {
+          "label": "Operations/sec",
+          "data": [
+            204.59401918728662,
+            4.503882376490062,
+            6.513562907435643,
+            6.517347648315714,
+            5.337103384412156,
+            4.727878418546795
+          ]
+        }
+      ]
+    },
+    "options": {
+      "scales": {
+        "y": {
+          "beginAtZero": true
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "timestamp": "2026-05-29T02-24-15-340Z",
+  "repeat": 1,
+  "floor": 0,
+  "results": [
+    {
+      "scenario": "array-100",
+      "nodeCount": 402,
+      "deltaHeap": 41577336,
+      "samples": [
+        41577336
+      ]
+    }
+  ]
+}

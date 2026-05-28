@@ -59,6 +59,8 @@
     "start": "yarn build && yarn storybook",
     "storybook": "storybook dev -p 6006",
     "test": "vitest",
+    "bench": "vitest bench --config vitest.bench.config.ts --run",
+    "bench:watch": "vitest bench --config vitest.bench.config.ts",
     "test-storybook": "test-storybook",
     "version:major": "yarn version major",
     "version:minor": "yarn version minor",

@@ -1,0 +1,73 @@
+name: benchmark
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - "packages/canard/schema-form/src/**"
+      - "packages/canard/schema-form/bench/**"
+      - "packages/aileron/benchmark-form/src/**"
+      - ".github/workflows/benchmark.yml"
+  schedule:
+    # 03:30 UTC nightly — outside peak GitHub Actions hours.
+    - cron: "30 3 * * *"
+  workflow_dispatch:
+    inputs:
+      repeat:
+        description: "v2 sweep repeat count"
+        required: false
+        default: "3"
+
+jobs:
+  bench:
+    name: schema-form benchmarks
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+    env:
+      # node 20 matches the .nvmrc the existing v2 bench was tuned on.
+      NODE_VERSION: "20.19.5"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Install
+        run: yarn install --immutable
+
+      - name: schema-form build (workspace deps for benchmark-form)
+        run: yarn workspace @canard/schema-form build
+
+      - name: schema-form micro bench
+        run: yarn workspace @canard/schema-form bench
+        env:
+          NODE_OPTIONS: --expose-gc
+
+      - name: aileron bench (latest only, sweep)
+        run: |
+          REPEAT="${{ github.event.inputs.repeat || '3' }}"
+          yarn workspace @aileron/benchmark-form exec \
+            node --expose-gc --import tsx src/index.ts \
+              --scale --array-stress --repeat=$REPEAT
+
+      - name: Warn-only regression check
+        # exits non-zero only when --fail is set; here we just print findings.
+        run: yarn workspace @aileron/benchmark-form regression-check
+
+      - name: Upload bench artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: bench-results-${{ github.run_id }}
+          path: |
+            packages/aileron/benchmark-form/results/bench-v2-*.json
+            packages/canard/schema-form/bench/.results/*.json
+          retention-days: 30
