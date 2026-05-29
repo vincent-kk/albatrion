@@ -1,6 +1,6 @@
 import { bench, describe } from 'vitest';
 
-import { ComputedPropertiesManager } from '@/schema-form/core/nodes/AbstractNode/utils/ComputedPropertiesManager';
+import { ComputedPropertiesManager } from '@/schema-form/core/nodes/AbstractNode/utils/getComputedPropertiesManager/ComputedPropertiesManager';
 import type {
   JsonSchemaType,
   JsonSchemaWithVirtual,
