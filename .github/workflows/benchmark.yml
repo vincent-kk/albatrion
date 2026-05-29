@@ -44,7 +44,11 @@ jobs:
         run: yarn install --immutable
 
       - name: schema-form build (workspace deps for benchmark-form)
-        run: yarn workspace @canard/schema-form build
+        # schema-form depends on @winglet/* subpath exports whose .d.ts live in
+        # each package's dist/. On a clean checkout those dists don't exist, so
+        # building schema-form alone fails type resolution. -Rt --from builds the
+        # dependency closure (winglet/* + claude-assets-sync) in topological order.
+        run: yarn workspaces foreach -Rt --from '@canard/schema-form' run build
 
       - name: schema-form micro bench
         run: yarn workspace @canard/schema-form bench
