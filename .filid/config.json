@@ -16,7 +16,8 @@
     },
     "module-entry-point": {
       "enabled": true,
-      "severity": "warning"
+      "severity": "warning",
+      "exempt": ["**/canard/schema-form/src/app"]
     },
     "max-depth": {
       "enabled": true,
@@ -32,7 +33,8 @@
     },
     "zero-peer-file": {
       "enabled": true,
-      "severity": "warning"
+      "severity": "warning",
+      "exempt": ["**/canard/schema-form/**"]
     }
   },
   "additional-allowed": [
@@ -47,5 +49,6 @@
     "vite.config.ts",
     "tsconfig.json",
     "tsconfig.declarations.json"
-  ]
+  ],
+  "additional-route-patterns": ["^__[a-zA-Z][a-zA-Z0-9]*__$"]
 }
