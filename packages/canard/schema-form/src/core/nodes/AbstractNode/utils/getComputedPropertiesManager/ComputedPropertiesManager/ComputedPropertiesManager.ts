@@ -3,6 +3,7 @@ import type {
   JsonSchemaWithVirtual,
 } from '@/schema-form/types';
 
+import type { ComputedProperties } from './type';
 import { checkComputedOptionFactory } from './utils/checkComputedOptionFactory';
 import {
   getConditionIndexFactory,
@@ -41,7 +42,7 @@ import type { DynamicFunction } from './utils/type';
  * console.log(manager.visible); // Result of condition evaluation
  * ```
  */
-export class ComputedPropertiesManager {
+export class ComputedPropertiesManager implements ComputedProperties {
   /** @internal Internal function to calculate active state */
   private __active__: DynamicFunction<boolean> | undefined;
 

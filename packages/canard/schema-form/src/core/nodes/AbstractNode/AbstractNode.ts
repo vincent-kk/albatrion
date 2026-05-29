@@ -42,7 +42,7 @@ import {
   ValidationMode,
 } from '../type';
 import {
-  ComputedPropertiesManager,
+  type ComputedProperties,
   EventCascadeManager,
   InjectionGuardManager,
   ValidationErrorManager,
@@ -52,6 +52,7 @@ import {
   depthFirstSearch,
   findNode,
   findNodes,
+  getComputedPropertiesManager,
   getNodeGroup,
   getSafeEmptyValue,
   getScopedSegment,
@@ -391,7 +392,7 @@ export abstract class AbstractNode<
   }
 
   /** @internal Manager for computed property evaluation and caching. */
-  private __computeManager__: ComputedPropertiesManager;
+  private __computeManager__: ComputedProperties;
 
   /**
    * @internal Whether this node belongs to the active `oneOf`/`anyOf` branch.
@@ -1090,7 +1091,8 @@ export abstract class AbstractNode<
       defaultValue !== undefined ? defaultValue : getDefaultValue(jsonSchema),
     );
 
-    this.__computeManager__ = new ComputedPropertiesManager(
+    /** Real manager only when the schema needs it; plain nodes share a frozen sentinel. */
+    this.__computeManager__ = getComputedPropertiesManager(
       this.schemaType,
       this.jsonSchema,
       this.rootNode.jsonSchema,

@@ -18,7 +18,12 @@ import type { AllowedValue, ArrayValue } from '@/schema-form/types';
 import { resolveArrayLimits } from '../../utils';
 import type { ArrayNodeStrategy } from '../type';
 import type { ChildSegmentKey } from './type';
-import { getChildSchema, promiseAfterMicrotask } from './utils';
+import {
+  RESOLVED_LENGTH,
+  RESOLVED_VOID,
+  getChildSchema,
+  promiseAfterMicrotask,
+} from './utils';
 
 export class BranchStrategy implements ArrayNodeStrategy {
   /** Host ArrayNode instance that this strategy belongs to */
@@ -289,12 +294,14 @@ export class BranchStrategy implements ArrayNodeStrategy {
     option?: UnionSetValueOption,
   ) {
     const host = this.__host__;
+    const wants = !this.__locked__;
     if (unlimited !== true && this.__maxItems__ <= this.length)
-      return promiseAfterMicrotask(this.length);
+      return wants ? promiseAfterMicrotask(this.length) : RESOLVED_LENGTH;
 
     const index = this.__keys__.length;
     const childSchema = getChildSchema(host.jsonSchema, index);
-    if (childSchema === null) return promiseAfterMicrotask(this.length);
+    if (childSchema === null)
+      return wants ? promiseAfterMicrotask(this.length) : RESOLVED_LENGTH;
 
     const key = ('#' + this.__revision__++) as ChildSegmentKey;
     this.__keys__.push(key);
@@ -316,7 +323,7 @@ export class BranchStrategy implements ArrayNodeStrategy {
 
     this.__expire__();
     this.__emitChange__(option);
-    return promiseAfterMicrotask(this.length);
+    return wants ? promiseAfterMicrotask(this.length) : RESOLVED_LENGTH;
   }
 
   /**
@@ -363,6 +370,7 @@ export class BranchStrategy implements ArrayNodeStrategy {
 
   /** Clears all elements to initialize the array. */
   public clear(option?: UnionSetValueOption) {
+    const wants = !this.__locked__;
     for (let i = 0, l = this.__keys__.length; i < l; i++)
       this.__sourceMap__
         .get(this.__keys__[i])
@@ -372,7 +380,7 @@ export class BranchStrategy implements ArrayNodeStrategy {
     this.__sourceMap__.clear();
     this.__expire__();
     this.__emitChange__(option);
-    return promiseAfterMicrotask(void 0);
+    return wants ? promiseAfterMicrotask(void 0) : RESOLVED_VOID;
   }
 
   /**

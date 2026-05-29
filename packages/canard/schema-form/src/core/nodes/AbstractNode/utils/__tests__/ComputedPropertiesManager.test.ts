@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import type { JsonSchemaWithVirtual } from '@/schema-form/types';
 
-import { ComputedPropertiesManager } from '../ComputedPropertiesManager';
+import { ComputedPropertiesManager } from '../getComputedPropertiesManager/ComputedPropertiesManager';
 
 /**
  * Helper function to set dependency values and recalculate

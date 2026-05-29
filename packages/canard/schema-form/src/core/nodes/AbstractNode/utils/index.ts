@@ -1,4 +1,3 @@
-export * from './ComputedPropertiesManager';
 export * from './EventCascadeManager';
 export * from './InjectionGuardManager';
 export * from './ValidationErrorManager';
@@ -6,6 +5,7 @@ export * from './ValidationManager';
 export * from './afterMicrotask';
 export * from './checkDefinedValue';
 export * from './findNode';
+export * from './getComputedPropertiesManager';
 export * from './getNodeGroup';
 export * from './getSafeEmptyValue';
 export * from './getScopedSegment';

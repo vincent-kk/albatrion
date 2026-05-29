@@ -25,3 +25,28 @@ export type DynamicFunction<ReturnType = any> = Fn<
   [dependencies: unknown[]],
   ReturnType
 >;
+
+/**
+ * Runtime list of the conditional state field names (active/visible/readOnly/
+ * disabled/pristine). `satisfies` keeps it in lockstep with
+ * {@link ConditionFieldName} — adding/removing a state key fails to compile
+ * until this list is updated.
+ */
+export const STATE_FIELD_NAMES = [
+  'active',
+  'visible',
+  'readOnly',
+  'disabled',
+  'pristine',
+] as const satisfies readonly ConditionFieldName[];
+
+/**
+ * Runtime list of ALL computed-block field names (state + watch/derived/if).
+ * `satisfies` keeps it in lockstep with {@link ComputedFieldName}.
+ */
+export const COMPUTED_FIELD_NAMES = [
+  ...STATE_FIELD_NAMES,
+  'watch',
+  'derived',
+  'if',
+] as const satisfies readonly ComputedFieldName[];
