@@ -78,7 +78,11 @@
     "@types/react-dom": "^19.0.0",
     "ajv": "^8.17.1",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "rollup": "^4.59.0",
+    "rollup-plugin-peer-deps-external": "^2.2.4",
+    "tsc-alias": "^1.8.16",
+    "typescript": "^5.7.2"
   },
   "peerDependencies": {
     "react": ">=18 <20",

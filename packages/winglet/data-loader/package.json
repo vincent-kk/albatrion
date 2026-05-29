@@ -63,7 +63,10 @@
     "@winglet/common-utils": "workspace:^"
   },
   "devDependencies": {
-    "@slats/claude-assets-sync": "workspace:^"
+    "@slats/claude-assets-sync": "workspace:^",
+    "rollup": "^4.59.0",
+    "tsc-alias": "^1.8.16",
+    "typescript": "^5.7.2"
   },
   "claude": {
     "assetPath": "docs/claude"

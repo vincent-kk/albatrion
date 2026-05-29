@@ -62,6 +62,10 @@ __metadata:
     "@types/react-dom": "npm:^18.3.1"
     react: "npm:^19.0.0"
     react-dom: "npm:^19.0.0"
+    rollup: "npm:^4.59.0"
+    rollup-plugin-peer-deps-external: "npm:^2.2.4"
+    tsc-alias: "npm:^1.8.16"
+    typescript: "npm:^5.7.2"
   peerDependencies:
     react: ">=16 <20"
   languageName: unknown
@@ -2075,6 +2079,10 @@ __metadata:
     ajv: "npm:^6.0.0"
     react: "npm:^19.0.0"
     react-dom: "npm:^19.0.0"
+    rollup: "npm:^4.59.0"
+    rollup-plugin-peer-deps-external: "npm:^2.2.4"
+    tsc-alias: "npm:^1.8.16"
+    typescript: "npm:^5.7.2"
   languageName: unknown
   linkType: soft
 
@@ -2088,6 +2096,10 @@ __metadata:
     ajv: "npm:^7.0.0"
     react: "npm:^19.0.0"
     react-dom: "npm:^19.0.0"
+    rollup: "npm:^4.59.0"
+    rollup-plugin-peer-deps-external: "npm:^2.2.4"
+    tsc-alias: "npm:^1.8.16"
+    typescript: "npm:^5.7.2"
   languageName: unknown
   linkType: soft
 
@@ -2102,6 +2114,9 @@ __metadata:
     ajv: "npm:^8.0.0"
     react: "npm:^19.0.0"
     react-dom: "npm:^19.0.0"
+    rollup: "npm:^4.59.0"
+    tsc-alias: "npm:^1.8.16"
+    typescript: "npm:^5.7.2"
   languageName: unknown
   linkType: soft
 
@@ -2119,6 +2134,10 @@ __metadata:
     dayjs: "npm:^1.0.0"
     react: "npm:^19.0.0"
     react-dom: "npm:^19.0.0"
+    rollup: "npm:^4.59.0"
+    rollup-plugin-peer-deps-external: "npm:^2.2.4"
+    tsc-alias: "npm:^1.8.16"
+    typescript: "npm:^5.7.2"
   peerDependencies:
     dayjs: ">=1"
     react: ">=18 <20"
@@ -2141,6 +2160,10 @@ __metadata:
     dayjs: "npm:^1.0.0"
     react: "npm:^19.0.0"
     react-dom: "npm:^19.0.0"
+    rollup: "npm:^4.59.0"
+    rollup-plugin-peer-deps-external: "npm:^2.2.4"
+    tsc-alias: "npm:^1.8.16"
+    typescript: "npm:^5.7.2"
   peerDependencies:
     antd: ">=5.10.0"
     dayjs: ">=1"
@@ -2164,6 +2187,10 @@ __metadata:
     dayjs: "npm:^1.0.0"
     react: "npm:^19.0.0"
     react-dom: "npm:^19.0.0"
+    rollup: "npm:^4.59.0"
+    rollup-plugin-peer-deps-external: "npm:^2.2.4"
+    tsc-alias: "npm:^1.8.16"
+    typescript: "npm:^5.7.2"
   peerDependencies:
     antd: ">=6.0.0"
     dayjs: ">=1"
@@ -2190,6 +2217,10 @@ __metadata:
     dayjs: "npm:^1.0.0"
     react: "npm:^19.0.0"
     react-dom: "npm:^19.0.0"
+    rollup: "npm:^4.59.0"
+    rollup-plugin-peer-deps-external: "npm:^2.2.4"
+    tsc-alias: "npm:^1.8.16"
+    typescript: "npm:^5.7.2"
   peerDependencies:
     "@emotion/react": ">=11.0.0"
     "@emotion/styled": ">=11.0.0"
@@ -2216,6 +2247,10 @@ __metadata:
     ajv: "npm:^8.17.1"
     react: "npm:^19.0.0"
     react-dom: "npm:^19.0.0"
+    rollup: "npm:^4.59.0"
+    rollup-plugin-peer-deps-external: "npm:^2.2.4"
+    tsc-alias: "npm:^1.8.16"
+    typescript: "npm:^5.7.2"
   peerDependencies:
     react: ">=18 <20"
     react-dom: ">=18 <20"
@@ -5480,6 +5515,10 @@ __metadata:
     antd: "npm:^5.22.5"
     react: "npm:^19.0.0"
     react-dom: "npm:^19.0.0"
+    rollup: "npm:^4.59.0"
+    rollup-plugin-peer-deps-external: "npm:^2.2.4"
+    tsc-alias: "npm:^1.8.16"
+    typescript: "npm:^5.7.2"
   peerDependencies:
     react: ">=18 <20"
     react-dom: ">=18 <20"
@@ -7991,6 +8030,9 @@ __metadata:
     ink-testing-library: "npm:^4.0.0"
     picocolors: "npm:^1.1.1"
     react: "npm:^19.2.0"
+    rollup: "npm:^4.59.0"
+    tsc-alias: "npm:^1.8.16"
+    typescript: "npm:^5.7.2"
   bin:
     claude-assets-sync: ./bin/inject-claude-settings.mjs
     claude-build-hashes: ./scripts/claude-build-hashes.mjs
@@ -10214,6 +10256,9 @@ __metadata:
   resolution: "@winglet/common-utils@workspace:packages/winglet/common-utils"
   dependencies:
     "@slats/claude-assets-sync": "workspace:^"
+    rollup: "npm:^4.59.0"
+    tsc-alias: "npm:^1.8.16"
+    typescript: "npm:^5.7.2"
   languageName: unknown
   linkType: soft
 
@@ -10230,6 +10275,9 @@ __metadata:
   dependencies:
     "@slats/claude-assets-sync": "workspace:^"
     "@winglet/common-utils": "workspace:^"
+    rollup: "npm:^4.59.0"
+    tsc-alias: "npm:^1.8.16"
+    typescript: "npm:^5.7.2"
   languageName: unknown
   linkType: soft
 
@@ -10260,6 +10308,9 @@ __metadata:
     "@slats/claude-assets-sync": "workspace:^"
     "@winglet/common-utils": "workspace:^"
     "@winglet/json": "workspace:^"
+    rollup: "npm:^4.59.0"
+    tsc-alias: "npm:^1.8.16"
+    typescript: "npm:^5.7.2"
   languageName: unknown
   linkType: soft
 
@@ -10297,6 +10348,9 @@ __metadata:
   dependencies:
     "@slats/claude-assets-sync": "workspace:^"
     "@winglet/common-utils": "workspace:^"
+    rollup: "npm:^4.59.0"
+    tsc-alias: "npm:^1.8.16"
+    typescript: "npm:^5.7.2"
   languageName: unknown
   linkType: soft
 
@@ -10343,6 +10397,10 @@ __metadata:
     "@winglet/common-utils": "workspace:^"
     react: "npm:^19.0.0"
     react-dom: "npm:^19.0.0"
+    rollup: "npm:^4.59.0"
+    rollup-plugin-peer-deps-external: "npm:^2.2.4"
+    tsc-alias: "npm:^1.8.16"
+    typescript: "npm:^5.7.2"
   peerDependencies:
     react: ">=16 <20"
     react-dom: ">=16 <20"
@@ -10370,6 +10428,9 @@ __metadata:
     "@types/react-dom": "npm:^19.0.0"
     classnames: "npm:^2.5.1"
     clsx: "npm:^2.1.1"
+    rollup: "npm:^4.59.0"
+    tsc-alias: "npm:^1.8.16"
+    typescript: "npm:^5.7.2"
   languageName: unknown
   linkType: soft
 
