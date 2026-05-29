@@ -58,6 +58,13 @@ jobs:
             node --expose-gc --import tsx src/index.ts \
               --scale --array-stress --repeat=$REPEAT
 
+      - name: framework comparison + over-render guard
+        # --assert fails the job if schema-form re-renders sibling fields on a
+        # single change. That fine-grained edge over rjsf/Formik must hold.
+        run: |
+          yarn workspace @aileron/benchmark-form exec \
+            node --expose-gc --import tsx src/utils/compare-frameworks.tsx --assert
+
       - name: Warn-only regression check
         # exits non-zero only when --fail is set; here we just print findings.
         run: yarn workspace @aileron/benchmark-form regression-check
@@ -69,5 +76,6 @@ jobs:
           name: bench-results-${{ github.run_id }}
           path: |
             packages/aileron/benchmark-form/results/bench-v2-*.json
+            packages/aileron/benchmark-form/results/compare-*.json
             packages/canard/schema-form/bench/.results/*.json
           retention-days: 30
