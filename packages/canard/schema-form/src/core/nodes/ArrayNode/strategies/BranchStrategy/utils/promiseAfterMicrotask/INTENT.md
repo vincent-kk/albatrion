@@ -1,30 +1,43 @@
 # promiseAfterMicrotask
 
 ## Purpose
-값을 macrotask(setTimeout 0) 후에 resolve하는 Promise로 래핑하는 유틸. `BranchStrategy`의 `push`/`remove`/`update` 등 조작 메서드가 비동기 반환값을 제공할 때 사용된다.
+
+값을 macrotask(setTimeout 0) 이후에 resolve하는 `Promise`로 래핑하는 유틸.
+`BranchStrategy`의 `push`/`remove`/`update` 조작 메서드가 비동기 반환값을 제공할 때 사용된다.
 
 ## Structure
-- `promiseAfterMicrotask.ts` — 핵심 구현
-- `index.ts` — re-export
+
+| 파일                       | 역할                                                            |
+| -------------------------- | --------------------------------------------------------------- |
+| `promiseAfterMicrotask.ts` | `promiseAfterMicrotask<Value>(value): Promise<Value>` 핵심 구현 |
+| `index.ts`                 | barrel re-export                                                |
 
 ## Conventions
-- `scheduleMacrotask` (`@winglet/common-utils/scheduler`)에 의존
-- 제네릭 함수: `<Value>(value: Value): Promise<Value>`
-- microtask가 아닌 macrotask(setTimeout) 기반이므로 이벤트 배치 완료 후 resolve됨
+
+- 제네릭 함수: `<Value>(value: Value): Promise<Value>` — 값 타입을 보존한다
+- `scheduleMacrotask`(`@winglet/common-utils/scheduler`) 기반 — microtask가 아닌 macrotask(setTimeout) 스케줄
+- React 렌더 배치 완료 후 resolve되므로 이벤트 순서가 보장된다
+- 단일 책임: 스케줄링 위임만 수행, 값 변환 없음
 
 ## Boundaries
 
 ### Always do
-- `BranchStrategy` 조작 메서드의 반환값을 이 함수로 래핑
-- 반환 타입 `Promise<Value>`를 항상 유지
+
+- `BranchStrategy` 조작 메서드(`push`, `remove`, `update`)의 public 경로 반환값을 이 함수로 래핑한다
+- 반환 타입 `Promise<Value>`를 항상 유지한다
 
 ### Ask first
-- `scheduleMacrotask` 대신 다른 스케줄러로 교체 (타이밍 계약 변경)
-- microtask 기반으로 전환 (이벤트 순서에 영향)
+
+- `scheduleMacrotask` 대신 다른 스케줄러로 교체하는 경우 (타이밍 계약 변경)
+- microtask 기반(`Promise.resolve`)으로 전환하는 경우 (이벤트 순서에 영향)
 
 ### Never do
-- Promise를 즉시 resolve하도록 변경 (동기 반환값과 혼용 시 이벤트 순서 파괴)
-- `BranchStrategy` 외부에서 이 함수를 직접 사용
+
+- Promise를 즉시 resolve하도록 변경하는 것 (동기 반환과 혼용 시 이벤트 순서 파괴)
+- `BranchStrategy/utils` 경계 밖에서 직접 import하는 것
 
 ## Dependencies
-- `@winglet/common-utils/scheduler` (`scheduleMacrotask`)
+
+**외부**
+
+- `@winglet/common-utils/scheduler` — `scheduleMacrotask`
