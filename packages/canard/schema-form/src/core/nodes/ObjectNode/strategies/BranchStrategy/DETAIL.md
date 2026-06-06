@@ -44,7 +44,9 @@
 - `UpdateComputedProperties` 이벤트 구독 시점에 `__oneOfChildNodeMap__`과 `__anyOfChildNodeMaps__`는 이미 초기값으로 채워져 있어야 한다.
 - `oneOfIndex`가 변경될 때마다 이전 분기 노드는 `__reset__`되고 새 분기 노드는 복원된다.
 - `__subnodes__`와 `__children__`은 항상 `BranchStrategy` 내부에서만 동기화된다.
+- 순수 computed 속성(`visible`/`readOnly`/`computeManager.active`)은 `__primeInitialBranch__` 동기 시점에 이미 확정된다. 단, oneOf 분기 자식의 scope-gated `active`(`__scoped__`)는 마이크로태스크 `__processOneOfChildren__`의 `__reset__({ updateScoped })`에서 확정되며, 목록이 동기 확정된 덕에 안전하게 복구된다.
+- `__children__`이 `[]`로 시작하여 constructor 단계 `__processComputedProperties__`가 no-op이어도, 초기화 정착 후 비활성 자식 값은 최종 `value`에서 제외되어야 한다.
 
 ## Last Updated
 
-2026-05-28 — `__primeInitialBranch__()` 추가로 인한 초기화 순서 불변식 문서화 (fix/schema-form-oneOf).
+2026-06-06 — 초기화 순서 불변식(`__primeInitialBranch__()`)에 더해, 초기 computed 정합성(순수 computed 동기 / scope-gated `active` 마이크로태스크)과 비활성 값 필터링 무해성을 수용 기준으로 명문화. 회귀 가드: `BranchStrategy.oneOf.initialComputed`.
