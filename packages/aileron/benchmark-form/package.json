@@ -29,22 +29,22 @@
     "@canard/schema-form_0.12.0": "npm:@canard/schema-form@0.12.0",
     "@canard/schema-form_0.12.5": "npm:@canard/schema-form@0.12.5",
     "@canard/schema-form_0.9.0": "npm:@canard/schema-form@0.9.0",
-    "@rjsf/core": "^6.6.1",
-    "@rjsf/utils": "^6.6.1",
-    "@rjsf/validator-ajv8": "^6.6.1",
-    "@tanstack/react-form": "^1.33.0",
-    "benchmark": "^2.1.4",
-    "formik": "^2.4.9",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
-    "react-hook-form": "^7.76.1",
-    "tsx": "^4.7.0"
+    "@rjsf/core": "6.6.1",
+    "@rjsf/utils": "6.6.1",
+    "@rjsf/validator-ajv8": "6.6.1",
+    "@tanstack/react-form": "1.33.0",
+    "benchmark": "2.1.4",
+    "formik": "2.4.9",
+    "react": "19.2.6",
+    "react-dom": "19.2.6",
+    "react-hook-form": "7.76.1",
+    "tsx": "4.20.4"
   },
   "devDependencies": {
-    "@types/benchmark": "^2.1.5",
-    "@types/jsdom": "^21.1.7",
-    "@types/react": "^19.0.0",
-    "@types/react-dom": "^19.0.0",
-    "jsdom": "^26.1.0"
+    "@types/benchmark": "2.1.5",
+    "@types/jsdom": "21.1.7",
+    "@types/react": "19.2.14",
+    "@types/react-dom": "19.1.7",
+    "jsdom": "26.1.0"
   }
 }

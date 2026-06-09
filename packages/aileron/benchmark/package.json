@@ -7,12 +7,12 @@
     "test": "vitest"
   },
   "devDependencies": {
-    "@types/benchmark": "^2",
-    "@types/inquirer": "^8.2.6",
-    "benchmark": "^2.1.4",
-    "clsx": "^2.1.1",
-    "es-toolkit": "^1.27.0",
-    "fast-json-patch": "^3.1.1",
-    "inquirer": "^8.2.6"
+    "@types/benchmark": "2.1.5",
+    "@types/inquirer": "8.2.12",
+    "benchmark": "2.1.4",
+    "clsx": "2.1.1",
+    "es-toolkit": "1.46.0",
+    "fast-json-patch": "3.1.1",
+    "inquirer": "8.2.7"
   }
 }
