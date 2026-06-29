@@ -989,6 +989,7 @@ export abstract class AbstractNode<
    * Resets the node to its initial or derived value.
    * @param options - Reset configuration
    * @param options.updateScoped - Update scoped state for `oneOf`/`anyOf` branches
+   * @param options.isolate - Force composition processing while resetting
    * @param options.preferLatest - Prefer current value over default
    * @param options.checkDefaultValueFirst - Check default value before current value
    * @param options.inputValue - Explicit value with highest priority
@@ -1022,7 +1023,9 @@ export abstract class AbstractNode<
 
     this.setValue(
       this.__computeManager__.active ? value : undefined,
-      SetValueOption.StableReset,
+      options.isolate
+        ? SetValueOption.IsolateStableReset
+        : SetValueOption.StableReset,
     );
     this.setState();
   }

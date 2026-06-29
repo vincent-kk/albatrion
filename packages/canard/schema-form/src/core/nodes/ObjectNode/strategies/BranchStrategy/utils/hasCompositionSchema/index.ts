@@ -1,0 +1,1 @@
+export { hasCompositionSchema } from './hasCompositionSchema';

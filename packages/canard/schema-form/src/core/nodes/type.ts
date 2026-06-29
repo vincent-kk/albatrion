@@ -356,6 +356,8 @@ export enum SetValueOption {
   IsolateReset = Reset | Isolate,
   /** Reset the node to its initial value and trigger a refresh */
   StableReset = Reset | Refresh | Normalize,
+  /** Reset the node in isolation and trigger a refresh */
+  IsolateStableReset = StableReset | Isolate,
   /** Both propagate to children and trigger a refresh */
   Merge = Propagate | Refresh | Isolate | BatchDefault,
   /** Replace the value and propagate the update with refresh */
@@ -379,6 +381,8 @@ export type UnionSetValueOption = SetValueOption | PublicSetValueOption;
 export interface ResetOptions<Value = unknown> {
   /** Whether to update the scoped property (for oneOf/anyOf branches) */
   updateScoped?: boolean;
+  /** Whether to force composition processing while resetting */
+  isolate?: boolean;
   /** Whether to prefer the latest (current) value over the initial value */
   preferLatest?: boolean;
   /** Whether to apply the derived value when preferLatest is true and derivedValue is defined */

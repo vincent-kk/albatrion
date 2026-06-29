@@ -296,6 +296,79 @@ export const NestedObjectAnyOf = () => {
   );
 };
 
+export const NestedAnyOfInitialDefaults = () => {
+  const schema = {
+    type: 'object',
+    properties: {
+      enabled: {
+        type: 'boolean',
+        title: 'Enable Shipping Configuration',
+        default: true,
+      },
+    },
+    anyOf: [
+      {
+        computed: { if: './enabled === true' },
+        properties: {
+          config: {
+            type: 'object',
+            title: 'Shipping Configuration',
+            properties: {
+              mode: {
+                type: 'string',
+                title: 'Shipping Mode',
+                enum: ['standard', 'express'],
+                default: 'standard',
+              },
+            },
+            anyOf: [
+              {
+                computed: { if: "./mode === 'standard'" },
+                properties: {
+                  cost: {
+                    type: 'number',
+                    title: 'Standard Cost ($)',
+                    default: 5.99,
+                  },
+                  days: {
+                    type: 'number',
+                    title: 'Delivery Days',
+                    default: 7,
+                  },
+                },
+              },
+              {
+                computed: { if: "./mode === 'express'" },
+                properties: {
+                  expressCost: {
+                    type: 'number',
+                    title: 'Express Cost ($)',
+                    default: 15.99,
+                  },
+                  hours: {
+                    type: 'number',
+                    title: 'Delivery Hours',
+                    default: 24,
+                  },
+                },
+              },
+            ],
+          },
+        },
+      },
+    ],
+  } satisfies JsonSchema;
+
+  const [value, setValue] = useState<Record<string, unknown>>();
+  const [errors, setErrors] = useState<JsonSchemaError[]>([]);
+
+  return (
+    <StoryLayout jsonSchema={schema} value={value} errors={errors}>
+      <Form jsonSchema={schema} onChange={setValue} onValidate={setErrors} />
+    </StoryLayout>
+  );
+};
+
 export const ArrayWithAnyOf = () => {
   const schema = {
     type: 'object',

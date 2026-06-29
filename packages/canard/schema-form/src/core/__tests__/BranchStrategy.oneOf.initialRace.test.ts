@@ -156,7 +156,7 @@ describe('BranchStrategy oneOf - initial-render race', () => {
     expect(childrenAfterEvent).toContain('salary');
   });
 
-  it('NESTED oneOf (product-catalog shape): nested BranchStrategy must also recover', async () => {
+  it('NESTED oneOf (product-catalog shape): preserves nested branch defaults', async () => {
     // Reproduces the product-catalog scenario: outer oneOf at root,
     // inner oneOf on a nested object (`shipping`).
     const productSchema: JsonSchema = {
@@ -187,12 +187,14 @@ describe('BranchStrategy oneOf - initial-render race', () => {
                     {
                       '&if': "./method === 'standard'",
                       properties: {
+                        cost: { type: 'number', default: 5.99 },
                         days: { type: 'number', default: 7 },
                       },
                     },
                     {
                       '&if': "./method === 'express'",
                       properties: {
+                        cost: { type: 'number', default: 15.99 },
                         hours: { type: 'number', default: 24 },
                       },
                     },
@@ -241,6 +243,18 @@ describe('BranchStrategy oneOf - initial-render race', () => {
     // eslint-disable-next-line no-console
     console.log('[SETTLED] shipping.children:', shippingChildren);
     expect(shippingChildren).toContain('method');
+    expect(shippingChildren).toContain('cost');
     expect(shippingChildren).toContain('days');
+    expect(node.value).toEqual({
+      productType: 'physical',
+      product: {
+        name: 'Headphones',
+        shipping: {
+          method: 'standard',
+          cost: 5.99,
+          days: 7,
+        },
+      },
+    });
   });
 });

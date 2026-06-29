@@ -34,6 +34,7 @@ import {
   getConditionsMap,
   getFieldConditionMap,
   getVirtualReferencesMap,
+  hasCompositionSchema,
   processValueWithCondition,
   processValueWithValidate,
   validateSchemaType,
@@ -233,7 +234,10 @@ export class BranchStrategy implements ObjectNodeStrategy {
   public applyValue(input: ObjectValue | Nullish, option: UnionSetValueOption) {
     this.__draft__ = input;
     this.__expired__ = true;
-    this.__isolated__ = (option & SetValueOption.Isolate) > 0;
+    // Keep a pending composition reset isolated until its event is settled.
+    this.__isolated__ =
+      (option & SetValueOption.Isolate) > 0 ||
+      (!this.__isPristine__ && this.__isolated__);
     this.__emitChange__(option);
   }
 
@@ -346,6 +350,8 @@ export class BranchStrategy implements ObjectNodeStrategy {
 
     const oneOfChildNodeMap =
       current > -1 ? this.__oneOfChildNodeMapList__[current] : null;
+    const preserveInitial =
+      previous === -1 && this.__oneOfChildNodeMap__ === oneOfChildNodeMap;
 
     this.__locked__ = true;
     const previousOneOfChildNodeMap =
@@ -363,11 +369,13 @@ export class BranchStrategy implements ObjectNodeStrategy {
         // @ts-expect-error [internal] reset child node
         node.__reset__({
           updateScoped: true,
+          isolate: !preserveInitial && hasCompositionSchema(node),
           preferLatest:
             isolation ||
+            preserveInitial ||
             (node.type === previousNode?.type && isTerminalType(node.type)),
           applyDerivedValue: true,
-          checkDefaultValueFirst: isolation === false,
+          checkDefaultValueFirst: isolation === false && !preserveInitial,
           fallbackValue: validateSchemaType(
             previousValue,
             node.type,
@@ -405,6 +413,12 @@ export class BranchStrategy implements ObjectNodeStrategy {
     for (let i = 0, l = current.length; i < l; i++)
       anyOfChildNodeMaps[i] = this.__anyOfChildNodeMapList__[current[i]];
 
+    const primedAnyOfMaps = this.__anyOfChildNodeMaps__;
+    const preserveInitial =
+      previous.length === 0 &&
+      primedAnyOfMaps !== null &&
+      primitiveArrayEqual(primedAnyOfMaps, anyOfChildNodeMaps);
+
     this.__locked__ = true;
     const disables = isolation ? previous : differenceLite(previous, current);
     if (disables.length > 0)
@@ -426,7 +440,8 @@ export class BranchStrategy implements ObjectNodeStrategy {
           // @ts-expect-error [internal] reset child node
           node.__reset__({
             updateScoped: true,
-            preferLatest: isolation,
+            isolate: !preserveInitial && hasCompositionSchema(node),
+            preferLatest: isolation || preserveInitial,
             applyDerivedValue: true,
             fallbackValue: this.__value__?.[node.name],
           });
