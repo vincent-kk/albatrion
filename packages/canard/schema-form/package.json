@@ -61,6 +61,8 @@
     "test": "vitest",
     "bench": "vitest bench --config vitest.bench.config.ts --run",
     "bench:watch": "vitest bench --config vitest.bench.config.ts",
+    "bench:baseline": "vitest bench --config vitest.bench.config.ts --run --outputJson bench/.results/baseline.json",
+    "bench:compare": "vitest bench --config vitest.bench.config.ts --run --compare bench/.results/baseline.json",
     "test-storybook": "test-storybook",
     "version:major": "yarn version major",
     "version:minor": "yarn version minor",
