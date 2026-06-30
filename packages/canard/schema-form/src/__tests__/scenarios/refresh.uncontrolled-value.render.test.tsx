@@ -4,6 +4,7 @@ import { describe, expect, it } from 'vitest';
 
 import type { JsonSchema } from '@winglet/json-schema';
 
+import { NodeEventType } from '@/schema-form';
 import type { NumberNode, StringNode } from '@/schema-form';
 import { SetValueOption } from '@/schema-form/core';
 
@@ -267,6 +268,36 @@ describe('uncontrolled-value refresh contract', () => {
       expect(form.value('/profile/name')).toBe('harry');
       expect(form.value('/profile/age')).toBe('9');
       expect(form.getValue()?.profile).toEqual({ name: 'harry', age: 9 });
+    });
+  });
+
+  // ---------------------------------------------------------------------------
+  // GAP-13 — RequestRemount escape hatch must force a Wrapper remount
+  // ---------------------------------------------------------------------------
+  describe('GAP-13: RequestRemount escape hatch', () => {
+    it('publishing RequestRemount remounts the subtree (Wrapper key bump)', async () => {
+      const schema: JsonSchema = {
+        type: 'object',
+        properties: { name: { type: 'string', default: 'x' } },
+      };
+      const form = await renderForm(schema, { instrument: true });
+      const before = form.mountOrdinal('/name');
+      expect(Number.isNaN(before)).toBe(false);
+
+      // RequestRemount is wired to the SchemaNodeProxy Wrapper key but never
+      // published internally (external-only). Publishing it via the public
+      // `publish` must remount the subtree — guarding that the wiring stays
+      // live (the tracker mask must keep RequestRemount).
+      await act(async () => {
+        (form.node('/name') as any).publish(NodeEventType.RequestRemount);
+        await new Promise((r) => setTimeout(r, 0));
+      });
+
+      expect(form.mountOrdinal('/name')).toBeGreaterThan(before);
+      // value is preserved across the remount
+      expect(form.value('/name')).toBe('x');
+      expect(form.node('/name')?.value).toBe('x');
+      expect(form.caughtErrors()).toEqual([]);
     });
   });
 });

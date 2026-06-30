@@ -53,6 +53,13 @@ export class ValidationManager {
   private __errorDataPaths__: string[] | undefined;
 
   /**
+   * @internal Monotonic token incremented on every `validate()` call.
+   * An async validation whose token is no longer the latest is dropped, so a
+   * slow validation of a now-obsolete value cannot clobber a newer result.
+   */
+  private __generation__ = 0;
+
+  /**
    * Indicates whether validation is enabled for this manager.
    * @description `true` if a validator was successfully compiled, `false` otherwise.
    * @readonly
@@ -112,7 +119,10 @@ export class ValidationManager {
   public async validate(this: ValidationManager, value: any) {
     if (this.__host__.isRoot === false || this.enabled === false) return;
 
+    const generation = ++this.__generation__;
     const internalErrors = await this.__validate__(value);
+
+    if (generation !== this.__generation__) return;
 
     // @ts-expect-error [internal] __setGlobalErrors__ is protected
     if (this.__host__.__setGlobalErrors__(internalErrors)) return;

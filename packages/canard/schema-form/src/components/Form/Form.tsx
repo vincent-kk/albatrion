@@ -93,7 +93,7 @@ const FormInner = <
     () => preprocessSchema(clone(inputJsonSchema)),
     [version],
   );
-  const defaultValue = useMemorize(inputDefaultValue, [version]);
+  const defaultValue = useMemorize(() => clone(inputDefaultValue), [version]);
 
   const [rootNode, setRootNode] = useState<Node>();
   const [children, setChildren] = useState<ReactNode>(
