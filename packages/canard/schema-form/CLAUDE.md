@@ -13,7 +13,6 @@ yarn test --coverage   # 커버리지 포함
 yarn test --run src/__tests__/   # 렌더 레벨(node tree + DOM) 통합 스위트만
 yarn lint              # ESLint
 yarn storybook         # Storybook dev (port 6006)
-yarn size-limit        # 번들 크기 확인 (CJS/ESM 각 20KB 제한)
 ```
 
 ## Claude Docs Injector
