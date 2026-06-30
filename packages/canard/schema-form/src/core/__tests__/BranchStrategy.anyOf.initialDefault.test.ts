@@ -6,6 +6,7 @@ import { nodeFromJsonSchema } from '@/schema-form/core';
 import type { JsonSchema } from '@/schema-form/types';
 
 import type { BooleanNode } from '../nodes/BooleanNode';
+import type { NumberNode } from '../nodes/NumberNode';
 import type { ObjectNode } from '../nodes/ObjectNode';
 
 type CompositionScope = 'oneOf' | 'anyOf';
@@ -68,7 +69,7 @@ describe('BranchStrategy anyOf - nested defaults', () => {
       }) as ObjectNode;
 
       await delay();
-      node.find('config/cost')?.setValue(99);
+      (node.find('config/cost') as NumberNode | null)?.setValue(99);
       await delay();
       expect(node.value?.config?.cost).toBe(99);
 

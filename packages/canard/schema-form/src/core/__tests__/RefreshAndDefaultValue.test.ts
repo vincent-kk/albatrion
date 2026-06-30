@@ -10,6 +10,7 @@ import {
   type UnionNodeEventType,
 } from '../nodes';
 import type { ArrayNode } from '../nodes/ArrayNode';
+import type { BooleanNode } from '../nodes/BooleanNode';
 import type { NumberNode } from '../nodes/NumberNode';
 import type { ObjectNode } from '../nodes/ObjectNode';
 import type { StringNode } from '../nodes/StringNode';
@@ -885,7 +886,7 @@ describe('Refresh and DefaultValue Migration Verification', () => {
       const originalArrayDefault = node.defaultValue;
 
       // Get first item and modify it
-      const firstItem = node.children[0]?.node as ObjectNode;
+      const firstItem = node.children![0]?.node as ObjectNode;
       const nameNode = firstItem.find('./name') as StringNode;
       nameNode.setValue('modified-first');
       await delay();
@@ -995,7 +996,7 @@ describe('Refresh and DefaultValue Migration Verification', () => {
 
       // Navigate deep and modify
       const usersNode = node.find('/users') as ArrayNode;
-      const firstUser = usersNode.children[0]?.node as ObjectNode;
+      const firstUser = usersNode.children![0]?.node as ObjectNode;
       const tagsNode = firstUser.find('./profile/tags') as ArrayNode;
 
       tagsNode.push('new-tag');
@@ -1048,7 +1049,7 @@ describe('Refresh and DefaultValue Migration Verification', () => {
       expect(dependentNode.visible).toBe(false);
 
       // Toggle to true
-      const toggleNode = node.find('/toggle');
+      const toggleNode = node.find('/toggle') as BooleanNode | null;
       toggleNode?.setValue(true);
       await delay();
 
@@ -1085,7 +1086,7 @@ describe('Refresh and DefaultValue Migration Verification', () => {
       expect(priceNode.readOnly).toBe(false);
 
       // Change category to 'B'
-      const categoryNode = node.find('/category');
+      const categoryNode = node.find('/category') as StringNode | null;
       categoryNode?.setValue('B');
       await delay();
 
@@ -1163,7 +1164,7 @@ describe('Refresh and DefaultValue Migration Verification', () => {
       const originalDefault = secretNode.defaultValue;
 
       // Toggle isAdmin
-      const isAdminNode = node.find('/isAdmin');
+      const isAdminNode = node.find('/isAdmin') as BooleanNode | null;
       isAdminNode?.setValue(true);
       await delay();
 
@@ -1171,7 +1172,7 @@ describe('Refresh and DefaultValue Migration Verification', () => {
       expect(secretNode.defaultValue).toBe(originalDefault);
 
       // Toggle isActive
-      const isActiveNode = node.find('/isActive');
+      const isActiveNode = node.find('/isActive') as BooleanNode | null;
       isActiveNode?.setValue(false);
       await delay();
 
@@ -1238,10 +1239,10 @@ describe('Refresh and DefaultValue Migration Verification', () => {
 
       // Verify defaultValue is correctly set
       expect(node.defaultValue).toEqual(largeArray);
-      expect(node.children.length).toBe(100);
+      expect(node.children!.length).toBe(100);
 
       // Modify one item
-      const firstItem = node.children[0]?.node as ObjectNode;
+      const firstItem = node.children![0]?.node as ObjectNode;
       const nameNode = firstItem.find('./name') as StringNode;
       nameNode.setValue('modified-item-0');
       await delay();

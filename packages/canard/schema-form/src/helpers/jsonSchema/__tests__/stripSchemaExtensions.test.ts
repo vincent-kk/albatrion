@@ -750,4 +750,35 @@ describe('stripSchemaExtensions', () => {
       });
     });
   });
+
+  describe('입력 비변경 (불변성)', () => {
+    it('확장 제거 시 입력 스키마를 in-place로 변경하지 않아야 한다', () => {
+      const schema: JsonSchemaWithVirtual = {
+        type: 'object',
+        properties: {
+          profile: {
+            type: 'object',
+            FormTypeRendererProps: { description: 'parent' },
+            properties: {
+              nickname: {
+                type: 'string',
+                FormTypeRendererProps: { helperText: 'child' },
+              },
+            },
+          },
+        },
+      };
+      const snapshot = structuredClone(schema);
+
+      const result = stripSchemaExtensions(schema) as any;
+
+      // 입력은 자식의 확장 속성까지 그대로 보존되어야 한다 (순수 함수).
+      expect(schema).toEqual(snapshot);
+      // 결과물은 모든 깊이의 확장이 제거된 별도 사본이어야 한다.
+      expect(result.properties.profile.FormTypeRendererProps).toBeUndefined();
+      expect(
+        result.properties.profile.properties.nickname.FormTypeRendererProps,
+      ).toBeUndefined();
+    });
+  });
 });

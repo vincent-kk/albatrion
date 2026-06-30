@@ -317,49 +317,50 @@ describe('ReactNode helperText / description render without corruption', () => {
     expect(desc).toHaveTextContent('contact');
   });
 
-  it.fails(
-    'renders ReactNode props inside a nested object schema // BUG: an ancestor object carrying ANY extension prop (here FormTypeRendererProps) strips descendant FormTypeRendererProps/FormTypeInputProps from the child node.jsonSchema, so the nested renderer never receives helperText/description (mirrors story 33 NestedObjectWithReactNode)',
-    async () => {
-      const schema = {
-        type: 'object',
-        properties: {
-          profile: {
-            type: 'object',
-            FormTypeRendererProps: { description: <h4>profile info</h4> },
-            properties: {
-              nickname: {
-                type: 'string',
-                FormTypeRendererProps: {
-                  helperText: <span>2-15 chars</span>,
-                  description: <strong>display name</strong>,
-                },
+  // Regression: an ancestor object carrying an extension prop used to strip
+  // descendant FormTypeRendererProps/FormTypeInputProps from the child
+  // node.jsonSchema (stripSchemaExtensions mutated its input in place). Fixed by
+  // cloning the input before scanning. Mirrors story 33 NestedObjectWithReactNode.
+  it('renders ReactNode props inside a nested object schema even when an ancestor carries extension props', async () => {
+    const schema = {
+      type: 'object',
+      properties: {
+        profile: {
+          type: 'object',
+          FormTypeRendererProps: { description: <h4>profile info</h4> },
+          properties: {
+            nickname: {
+              type: 'string',
+              FormTypeRendererProps: {
+                helperText: <span>2-15 chars</span>,
+                description: <strong>display name</strong>,
               },
             },
           },
         },
-      } satisfies JsonSchema;
+      },
+    } satisfies JsonSchema;
 
-      const form = await renderForm(schema, {
-        CustomFormTypeRenderer: TestRenderer,
-      });
+    const form = await renderForm(schema, {
+      CustomFormTypeRenderer: TestRenderer,
+    });
 
-      // The parent branch keeps its own ReactNode description (this renders)...
-      expect(
-        form.container.querySelector('[data-testid="desc/profile"]'),
-      ).toHaveTextContent('profile info');
-      // ...but the nested terminal's renderer props were stripped from
-      // node.jsonSchema, so neither helperText nor description reaches the DOM.
-      expect(
-        form.node('/profile/nickname')?.jsonSchema.FormTypeRendererProps,
-      ).toBeDefined();
-      expect(
-        form.container.querySelector('[data-testid="helper/profile/nickname"]'),
-      ).toHaveTextContent('2-15 chars');
-      expect(
-        form.container.querySelector('[data-testid="desc/profile/nickname"]'),
-      ).toHaveTextContent('display name');
-    },
-  );
+    // The parent branch keeps its own ReactNode description...
+    expect(
+      form.container.querySelector('[data-testid="desc/profile"]'),
+    ).toHaveTextContent('profile info');
+    // ...and the nested terminal's renderer props survive on node.jsonSchema
+    // and reach the DOM (no longer stripped by the ancestor's extension prop).
+    expect(
+      form.node('/profile/nickname')?.jsonSchema.FormTypeRendererProps,
+    ).toBeDefined();
+    expect(
+      form.container.querySelector('[data-testid="helper/profile/nickname"]'),
+    ).toHaveTextContent('2-15 chars');
+    expect(
+      form.container.querySelector('[data-testid="desc/profile/nickname"]'),
+    ).toHaveTextContent('display name');
+  });
 
   it('still edits a nested field whose renderer props were stripped (tree stays correct)', async () => {
     const schema = {
