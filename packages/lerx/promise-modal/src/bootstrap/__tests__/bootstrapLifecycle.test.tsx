@@ -1,4 +1,4 @@
-import { StrictMode } from 'react';
+import { StrictMode, useState } from 'react';
 
 import {
   act,
@@ -11,7 +11,7 @@ import {
 import { afterEach, describe, expect, it } from 'vitest';
 
 import { ModalManager } from '@/promise-modal/app';
-import { alert, confirm, prompt } from '@/promise-modal/core';
+import { alert, alertHandler, confirm, prompt } from '@/promise-modal/core';
 
 import { BootstrapProvider } from '../BootstrapProvider';
 
@@ -168,5 +168,53 @@ describe('bootstrap lifecycle (real rendering)', () => {
         false,
       ),
     );
+  });
+
+  it('경로 변경 시 다른 initiator의 모달은 onHide, 원래 경로 복귀 시 onShow 되어야 함', async () => {
+    let setPath!: (path: string) => void;
+    const useTestPathname = () => {
+      const [pathname, setPathname] = useState('/origin');
+      setPath = setPathname;
+      return { pathname };
+    };
+
+    render(
+      <BootstrapProvider usePathname={useTestPathname}>
+        {null}
+      </BootstrapProvider>,
+    );
+
+    let handled!: ReturnType<typeof alertHandler>;
+    act(() => {
+      handled = alertHandler({ title: 'Route Scoped' });
+    });
+    expect(handled.modalNode?.visible).toBe(true);
+
+    act(() => setPath('/elsewhere'));
+    expect(handled.modalNode?.visible).toBe(false);
+
+    act(() => setPath('/origin'));
+    expect(handled.modalNode?.visible).toBe(true);
+  });
+
+  it('manualDestroy: 닫힌 뒤에도 alive가 유지되고 onDestroy 시점에 파괴되어야 함', async () => {
+    render(<BootstrapProvider>{null}</BootstrapProvider>);
+
+    let handled!: ReturnType<typeof alertHandler>;
+    act(() => {
+      handled = alertHandler({ title: 'Manual Destroy', manualDestroy: true });
+    });
+
+    fireEvent.click(await screen.findByText('Confirm'));
+    await expect(handled.promiseHandler).resolves.toBeUndefined();
+
+    const modalNode = handled.modalNode;
+    expect(modalNode?.visible).toBe(false);
+    expect(modalNode?.alive).toBe(true);
+
+    act(() => {
+      modalNode?.onDestroy();
+    });
+    expect(modalNode?.alive).toBe(false);
   });
 });
