@@ -1,7 +1,7 @@
 import {
-  type FormEvent,
   type ForwardedRef,
   type ReactNode,
+  type SubmitEvent,
   forwardRef,
   memo,
   useCallback,
@@ -42,7 +42,7 @@ import type {
 
 import { FormRootProxy } from './components/FormRootProxy';
 import type { FormHandle, FormProps } from './type';
-import { createChildren } from './util';
+import { NOT_EMITTED, createChildren } from './util';
 
 const FormInner = <
   Schema extends JsonSchema,
@@ -72,9 +72,11 @@ const FormInner = <
 ) => {
   type Node = InferSchemaNode<Schema>;
   const ready = useRef(false);
+  const emittedValueRef = useRef<Value | typeof NOT_EMITTED>(NOT_EMITTED);
   const attachedFilesMapRef = useRef<AttachedFilesMap>(new Map());
   const [version, update] = useVersion(() => {
     ready.current = false;
+    emittedValueRef.current = NOT_EMITTED;
     attachedFilesMapRef.current.clear();
   });
 
@@ -93,6 +95,8 @@ const FormInner = <
 
   const handleChange = useHandle((input: Parameter<typeof onChange>) => {
     if (!ready.current) return;
+    if (input === emittedValueRef.current) return;
+    emittedValueRef.current = input;
     onChange?.(input);
   });
 
@@ -114,7 +118,7 @@ const FormInner = <
   });
   const handleSubmit = useMemo(() => getTrackableHandler(onSubmit), [onSubmit]);
   const handleFormSubmit = useCallback(
-    async (event: FormEvent<HTMLFormElement>) => {
+    async (event: SubmitEvent<HTMLFormElement>) => {
       event.preventDefault();
       await handleSubmit();
     },

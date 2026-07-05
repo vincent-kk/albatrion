@@ -24,12 +24,18 @@ import { renderForm } from '../renderForm';
  *    delivered only after `flush()`. So `[data-path]` for the branch field is
  *    absent synchronously and appears only post-flush.
  *
- * → GAP-1 is therefore a CONFIRMED node-tree-vs-DOM divergence at first paint;
- *   those cases are pinned with `it.fails` (tree-side assertions pass, the
- *   synchronous DOM-presence assertion fails) so the suite stays green while
- *   flagging the regression. The post-flush behavior is correct: the DOM
- *   converges and the seeded branch defaults are NOT clobbered (GAP-2) — those
- *   cases pass.
+ * → GAP-1 is therefore a node-tree-vs-DOM divergence *window*, not a product
+ *   defect: the tree is settled synchronously but its DOM reflection is
+ *   microtask-deferred. In CSR this is invisible — the browser paints only
+ *   after the microtask queue drains, so users always see the converged DOM;
+ *   the exposure here is an artifact of the async harness observing the gap
+ *   mid-cascade. It becomes a REAL fault only under SSR/`renderToString`
+ *   (synchronous, no microtask drain → hydration mismatch), which needs the
+ *   model pre-settled before mount (option C). Until SSR support lands these
+ *   cases are pinned with `it.fails` (tree-side assertions pass, the synchronous
+ *   DOM-presence assertion fails) so the suite stays green while tracking the
+ *   gap. The post-flush behavior is correct: the DOM converges and the seeded
+ *   branch defaults are NOT clobbered (GAP-2) — those cases pass.
  *
  * Schemas mirror stories/17.OneOf and stories/06.IfThenElse, kept compact.
  * Inputs are the built-in uncontrolled FormTypeInputs (no custom definitions),
@@ -37,12 +43,13 @@ import { renderForm } from '../renderForm';
  */
 describe('composition.oneOf — initial branch priming', () => {
   // ---------------------------------------------------------------------------
-  // GAP-1 — tree primed synchronously, but the branch field is missing from the
-  // first-paint DOM. Verified divergence → it.fails.
+  // GAP-1 — tree primed synchronously, but the branch field's DOM reflection is
+  // microtask-deferred. CSR-harmless (browser paints post-drain); SSR-unsafe.
+  // Pinned with it.fails until the model is pre-settled before mount (option C).
   // ---------------------------------------------------------------------------
   describe('default-selected branch primed in tree but absent from first-paint DOM (GAP-1)', () => {
     it.fails(
-      'first branch (index 0) // BUG: branch child enabled in tree but [data-path] missing at first paint',
+      'first branch (index 0) // GAP (CSR-harmless/SSR-unsafe): tree primed, DOM reflection microtask-deferred',
       async () => {
         const schema = {
           type: 'object',
@@ -81,7 +88,7 @@ describe('composition.oneOf — initial branch priming', () => {
     );
 
     it.fails(
-      'non-first branch (index 2) // BUG: seeded branch default in tree but [data-path] missing at first paint',
+      'non-first branch (index 2) // GAP (CSR-harmless/SSR-unsafe): seeded branch default in tree, DOM reflection deferred',
       async () => {
         const schema = {
           type: 'object',
@@ -125,7 +132,7 @@ describe('composition.oneOf — initial branch priming', () => {
     );
 
     it.fails(
-      'const-discriminated branch (index 2) // BUG: const-matched branch in tree but [data-path] missing at first paint',
+      'const-discriminated branch (index 2) // GAP (CSR-harmless/SSR-unsafe): const-matched branch in tree, DOM reflection deferred',
       async () => {
         const schema = {
           type: 'object',
@@ -171,7 +178,7 @@ describe('composition.oneOf — initial branch priming', () => {
     );
 
     it.fails(
-      'nested object oneOf branch // BUG: nested branch child in tree but [data-path] missing at first paint',
+      'nested object oneOf branch // GAP (CSR-harmless/SSR-unsafe): nested branch child in tree, DOM reflection deferred',
       async () => {
         const schema = {
           type: 'object',

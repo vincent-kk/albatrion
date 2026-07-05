@@ -24,10 +24,11 @@ import type { ObjectNode } from '../nodes/ObjectNode';
  *      could arrive after the subscription had already taken its snapshot,
  *      so the oneOf branch never appeared until the user changed a value.
  *
- * The fix: `BranchStrategy.initialize()` now calls
- * `__settleInitialCompositionChildren__()` synchronously after the children
- * are initialised, so `node.children` is complete by the time it is exposed
- * to React. These tests guard that contract.
+ * The fix: `BranchStrategy.initialize()` now calls `__primeInitialBranch__()`
+ * (snap the active oneOf/anyOf maps) followed by `__processChildren__()`
+ * (rebuild `__children__`) synchronously after the children are initialised,
+ * so `node.children` is complete by the time it is exposed to React. These
+ * tests guard that contract.
  */
 
 const employmentSchema: JsonSchema = {
