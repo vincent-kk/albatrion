@@ -1,8 +1,6 @@
 import { useCallback, useRef, useState } from 'react';
 
-import type {
-  FormHandle,
-  JsonSchemaError} from '@canard/schema-form';
+import type { FormHandle, JsonSchemaError } from '@canard/schema-form';
 import {
   Form,
   type JsonSchema,

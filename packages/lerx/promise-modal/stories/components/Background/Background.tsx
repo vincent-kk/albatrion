@@ -1,9 +1,4 @@
-import {
-  type ForwardedRef,
-  forwardRef,
-  useLayoutEffect,
-  useRef,
-} from 'react';
+import { type ForwardedRef, forwardRef, useLayoutEffect, useRef } from 'react';
 
 import type { ModalFrameProps } from '../../../src';
 import { useModalDuration } from '../../../src';
