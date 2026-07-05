@@ -93,7 +93,7 @@ Identity → Tree Structure → Value Management → Computed Properties → Sta
 
 ## Key Hooks
 
-- `useSchemaNode`, `useSchemaNodeSubscribe`, `useFormSubmit`
+- `useSchemaNodeTracker`, `useSchemaNodeSubscribe`, `useChildNodeComponentMap`, `useChildNodeErrors`, `useFormSubmit` (`useSchemaNode` 는 내부 전용, 공개 index 미노출)
 
 ## Key Type Utilities
 
@@ -105,4 +105,4 @@ Identity → Tree Structure → Value Management → Computed Properties → Sta
 
 ## Build Output
 
-`dist/index.cjs` + `dist/index.mjs` + `dist/index.d.ts`, 각 20KB 이하
+`dist/index.cjs` + `dist/index.mjs` + `dist/index.d.ts` — raw 약 240KB / gzip 약 44KB. 비압축 배포는 의도된 선택(최종 minify 는 소비자 번들러에 위임)
