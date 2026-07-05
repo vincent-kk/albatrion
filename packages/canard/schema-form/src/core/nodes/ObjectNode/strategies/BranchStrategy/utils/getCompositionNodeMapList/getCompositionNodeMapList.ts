@@ -13,7 +13,13 @@ import {
   formatCompositionPropertyExclusivenessError,
   formatCompositionPropertyRedefinitionError,
   formatCompositionTypeRedefinitionError,
+  formatNestedCompositionIgnoredWarning,
 } from '@/schema-form/helpers/error';
+import {
+  NESTED_COMPOSITION_IGNORED_FOR_FORM,
+  SCHEMA_FORM_WARNING,
+  warnDevelopmentIssue,
+} from '@/schema-form/helpers/warning';
 import type {
   JsonSchema,
   ObjectSchema,
@@ -55,6 +61,23 @@ export const getCompositionNodeMapList = (
   const childNodeMapList = new Array<ChildNodeMap>(compositionLength);
   for (let index = 0; index < compositionLength; index++) {
     const subSchema = compositionSchemas[index] as Partial<ObjectSchema>;
+
+    const nestedScope =
+      subSchema.oneOf !== undefined
+        ? 'oneOf'
+        : subSchema.anyOf !== undefined
+          ? 'anyOf'
+          : undefined;
+    if (nestedScope !== undefined)
+      warnDevelopmentIssue({
+        code: `${SCHEMA_FORM_WARNING}.${NESTED_COMPOSITION_IGNORED_FOR_FORM}`,
+        message: formatNestedCompositionIgnoredWarning(
+          scope,
+          nestedScope,
+          parentNode.path,
+        ),
+        details: { path: parentNode.path, scope, nestedScope },
+      });
 
     if (
       subSchema.type !== undefined &&

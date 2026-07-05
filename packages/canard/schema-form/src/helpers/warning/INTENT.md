@@ -7,6 +7,7 @@
 ## Structure
 
 - `warnDevelopmentIssue.ts` — 구조화된 diagnostic을 받아 dev 전용 경고 출력 (중복 제거 + 패키지 프리픽스)
+- `warningCode.ts` — `SCHEMA_FORM_WARNING.*` 경고 코드 상수 (call site 간 일관성)
 - `index.ts` — barrel export
 
 ## Conventions

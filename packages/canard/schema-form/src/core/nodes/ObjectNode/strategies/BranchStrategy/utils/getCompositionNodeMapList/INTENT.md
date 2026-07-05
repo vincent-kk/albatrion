@@ -15,6 +15,7 @@
 - `oneOf`의 경우 분기 간 프로퍼티 중복 금지 (`COMPOSITION_PROPERTY_EXCLUSIVENESS_REDEFINITION`)
 - `anyOf`의 경우 분기 간 중복 금지 + 기본 `properties`와의 중복 금지 (`COMPOSITION_PROPERTY_REDEFINITION`)
 - 분기 스키마 타입이 부모와 다르면 `COMPOSITION_TYPE_REDEFINITION` 오류
+- `oneOf`/`anyOf`는 `type`과 동일 위계에서만 동작 — 분기 스키마 직속의 중첩 `oneOf`/`anyOf`는 필드로 확장하지 않고 무시하되, `warnDevelopmentIssue`로 dev 경고(`NESTED_COMPOSITION_IGNORED_FOR_FORM`, 프로덕션 무음)를 방출
 
 ## Boundaries
 
@@ -35,5 +36,5 @@
 
 ## Dependencies
 
-- 내부: `@/schema-form/core/nodes/ObjectNode`(`ObjectNode`), `@/schema-form/core/nodes/type`(`SchemaNodeFactory`, `HandleChange`), `@/schema-form/errors`(`JsonSchemaError`), `@/schema-form/helpers/error`(`formatCompositionPropertyExclusivenessError`, `formatCompositionPropertyRedefinitionError`, `formatCompositionTypeRedefinitionError`), `@/schema-form/types`(`JsonSchema`, `ObjectSchema`, `ObjectValue`), `../../type`(`ChildNodeMap`)
+- 내부: `@/schema-form/core/nodes/ObjectNode`(`ObjectNode`), `@/schema-form/core/nodes/type`(`SchemaNodeFactory`, `HandleChange`), `@/schema-form/errors`(`JsonSchemaError`), `@/schema-form/helpers/error`(`formatCompositionPropertyExclusivenessError`, `formatCompositionPropertyRedefinitionError`, `formatCompositionTypeRedefinitionError`, `formatNestedCompositionIgnoredWarning`), `@/schema-form/helpers/warning`(`warnDevelopmentIssue`), `@/schema-form/types`(`JsonSchema`, `ObjectSchema`, `ObjectValue`), `../../type`(`ChildNodeMap`)
 - 외부: `@winglet/common-utils/filter`(`isArray`, `isPlainObject`), `@winglet/json-schema/filter`(`isIdenticalSchemaType`), `@aileron/declare`(`Fn`, `Nullish`)

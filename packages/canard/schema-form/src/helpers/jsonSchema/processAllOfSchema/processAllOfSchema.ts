@@ -5,7 +5,11 @@ import {
   formatAllOfIgnoredKeywordWarning,
   formatAllOfTypeRedefinitionError,
 } from '@/schema-form/helpers/error';
-import { warnDevelopmentIssue } from '@/schema-form/helpers/warning';
+import {
+  ALL_OF_KEYWORD_IGNORED_FOR_FORM,
+  SCHEMA_FORM_WARNING,
+  warnDevelopmentIssue,
+} from '@/schema-form/helpers/warning';
 import type { JsonSchema } from '@/schema-form/types';
 
 import { getCloneDepth } from './utils/getCloneDepth';
@@ -35,7 +39,7 @@ export const processAllOfSchema = (schema: JsonSchema): JsonSchema => {
     for (let j = 0, jl = IGNORE_FIELDS.length; j < jl; j++)
       if (IGNORE_FIELDS[j] in allOfSchema)
         warnDevelopmentIssue({
-          code: 'SCHEMA_FORM_WARNING.ALL_OF_KEYWORD_IGNORED_FOR_FORM',
+          code: `${SCHEMA_FORM_WARNING}.${ALL_OF_KEYWORD_IGNORED_FOR_FORM}`,
           message: formatAllOfIgnoredKeywordWarning(IGNORE_FIELDS[j]),
           details: { keyword: IGNORE_FIELDS[j], allOfSchema },
         });
