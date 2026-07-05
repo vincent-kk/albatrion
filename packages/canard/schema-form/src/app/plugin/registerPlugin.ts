@@ -192,7 +192,11 @@ const RegisteredPlugin = new Set<string>();
  * - After reset, previously registered plugins need to be re-registered
  */
 export const registerPlugin = (plugin: SchemaFormPlugin | null) => {
-  if (plugin === null) PluginManager.reset();
+  if (plugin === null) {
+    PluginManager.reset();
+    RegisteredPlugin.clear();
+    return;
+  }
   if (!isPlainObject(plugin)) return;
   const hash = stableSerialize(plugin);
   if (RegisteredPlugin.has(hash)) return;
