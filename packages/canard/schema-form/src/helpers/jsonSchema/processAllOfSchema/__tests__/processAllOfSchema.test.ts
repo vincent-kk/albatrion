@@ -20,7 +20,7 @@ describe('processAllOfSchema', () => {
     expect(processed.required).toEqual(['name']);
   });
 
-  it('allOf 항목의 미지원 키워드는 dev 경고(ALL_OF_UNSUPPORTED_KEYWORD)를 방출한다', () => {
+  it('allOf 항목에서 form 구성에 사용되지 않는 키워드를 dev 경고한다', () => {
     const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
     const schema = {
       type: 'object',
@@ -35,7 +35,7 @@ describe('processAllOfSchema', () => {
     processAllOfSchema(schema);
     expect(warn).toHaveBeenCalledTimes(2); // 'if' + 'then'
     expect(warn.mock.calls[0][0]).toContain(
-      'SCHEMA_FORM_ERROR.ALL_OF_UNSUPPORTED_KEYWORD',
+      'SCHEMA_FORM_WARNING.ALL_OF_KEYWORD_IGNORED_FOR_FORM',
     );
     expect(warn.mock.calls[0][0]).toContain("'if'");
   });

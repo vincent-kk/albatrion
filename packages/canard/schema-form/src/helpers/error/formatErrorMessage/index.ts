@@ -1,4 +1,4 @@
-export { formatAllOfIgnoredKeywordError } from './formatAllOfIgnoredKeywordError';
+export { formatAllOfIgnoredKeywordWarning } from './formatAllOfIgnoredKeywordWarning';
 export { formatInfiniteLoopError } from './formatInfiniteLoopError';
 export { formatCircularReferenceError } from './formatCircularReferenceError';
 export {

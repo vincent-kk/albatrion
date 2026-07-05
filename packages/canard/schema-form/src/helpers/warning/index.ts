@@ -1,1 +1,4 @@
-export { warnDevelopmentIssue } from './warnDevelopmentIssue';
+export {
+  warnDevelopmentIssue,
+  type DevelopmentIssue,
+} from './warnDevelopmentIssue';
