@@ -1,3 +1,4 @@
+export { IGNORE_FIELDS } from './utils/constants';
 export { intersectArraySchema } from './intersectArraySchema';
 export { intersectBooleanSchema } from './intersectBooleanSchema';
 export { intersectNullSchema } from './intersectNullSchema';
