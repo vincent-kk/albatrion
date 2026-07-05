@@ -13,7 +13,7 @@ import {
   DEFAULT_ANIMATION_DURATION,
   DEFAULT_BACKDROP_COLOR,
   DEFAULT_Z_INDEX,
-} from '@/promise-modal/app/constant';
+} from '@/promise-modal/app';
 import {
   FallbackContent,
   FallbackFooter,

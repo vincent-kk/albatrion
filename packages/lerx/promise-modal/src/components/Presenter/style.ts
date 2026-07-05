@@ -1,4 +1,4 @@
-import { ModalManager } from '@/promise-modal/app/ModalManager';
+import { ModalManager } from '@/promise-modal/app';
 
 export const presenter = ModalManager.getHashedClassNames('presenter');
 
