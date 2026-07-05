@@ -423,7 +423,7 @@ export const ImmutableConfiguration = () => {
       },
       defaultValue: 'test',
       duration: 300,
-    }).then((value: string) => {
+    }).then((value: string | null) => {
       const foregroundUnchanged =
         hookConfig.ForegroundComponent === hookConfigBefore.ForegroundComponent;
 

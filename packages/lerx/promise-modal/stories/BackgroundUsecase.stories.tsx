@@ -6,7 +6,7 @@ import { Background } from './components/Background';
 export default {
   title: 'PromiseModal/BackgroundUsecase',
   decorators: [
-    (Story) => (
+    (Story: React.ComponentType) => (
       <ModalProvider
         BackgroundComponent={Background}
         options={{
@@ -62,7 +62,7 @@ export const NormalUsecase = () => {
         data: 'prompt',
       },
     }).then((value) => {
-      setValue(value);
+      setValue(value ?? '');
     });
   };
 
@@ -108,7 +108,7 @@ export const MultiModalUsecase = () => {
       },
       defaultValue: 'value',
     }).then((value) => {
-      setValue(value);
+      setValue(value ?? '');
     });
   };
 
@@ -132,7 +132,7 @@ export const MultiModalUsecase = () => {
         },
         defaultValue: 'value',
       }).then((value) => {
-        setValue(value);
+        setValue(value ?? '');
       });
     }, 250);
   }, []);

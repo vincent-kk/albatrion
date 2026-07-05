@@ -1,4 +1,4 @@
-import React, { type PropsWithChildren, useRef } from 'react';
+import { type PropsWithChildren, useRef } from 'react';
 
 import { useOnMount } from '@winglet/react-utils/hook';
 

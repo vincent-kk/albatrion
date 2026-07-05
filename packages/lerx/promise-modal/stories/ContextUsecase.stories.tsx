@@ -14,7 +14,7 @@ import { ForegroundWithContext } from './components/Foreground';
 export default {
   title: 'PromiseModal/UserDefinedContext',
   decorators: [
-    (Story) => (
+    (Story: React.ComponentType) => (
       <ModalProvider
         ForegroundComponent={ForegroundWithContext}
         BackgroundComponent={Background}
@@ -83,7 +83,7 @@ export const AmataModalUsecase = () => {
         data: 'prompt',
       },
     }).then((value) => {
-      setValue(value);
+      setValue(value ?? '');
     });
   };
 
@@ -141,7 +141,7 @@ export const AmataModalUsecase = () => {
               );
             },
           });
-          setValue2(innerValue);
+          setValue2(innerValue ?? '');
           if (innerValue?.length) onConfirm();
           else onCancel();
         };

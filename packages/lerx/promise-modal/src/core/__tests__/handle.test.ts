@@ -80,7 +80,7 @@ describe('Modal Handlers', () => {
 
       // handleResolve를 호출하여 promise resolve
       setTimeout(() => {
-        if (modalNode.handleResolve) {
+        if (modalNode?.handleResolve) {
           modalNode.handleResolve(null);
         }
       }, 0);
@@ -146,7 +146,7 @@ describe('Modal Handlers', () => {
       const { modalNode, promiseHandler } = confirmHandler({ title: 'Test' });
 
       setTimeout(() => {
-        if (modalNode.handleResolve) {
+        if (modalNode?.handleResolve) {
           modalNode.handleResolve(true);
         }
       }, 0);
@@ -159,7 +159,7 @@ describe('Modal Handlers', () => {
       const { modalNode, promiseHandler } = confirmHandler({ title: 'Test' });
 
       setTimeout(() => {
-        if (modalNode.handleResolve) {
+        if (modalNode?.handleResolve) {
           modalNode.handleResolve(false);
         }
       }, 0);
@@ -232,7 +232,7 @@ describe('Modal Handlers', () => {
       });
 
       setTimeout(() => {
-        if (modalNode.handleResolve) {
+        if (modalNode?.handleResolve) {
           modalNode.handleResolve('user input');
         }
       }, 0);
@@ -293,7 +293,7 @@ describe('Modal Handlers', () => {
       });
 
       setTimeout(() => {
-        if (modalNode.handleResolve) {
+        if (modalNode?.handleResolve) {
           modalNode.handleResolve(null);
         }
       }, 0);
@@ -317,7 +317,7 @@ describe('Modal Handlers', () => {
       });
 
       setTimeout(() => {
-        if (modalNode.handleResolve) {
+        if (modalNode?.handleResolve) {
           modalNode.handleResolve(userData);
         }
       }, 0);

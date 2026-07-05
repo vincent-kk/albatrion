@@ -183,7 +183,7 @@ describe('ajvValidatorPlugin (2019) - Draft 2019-09 전용 스펙 검증', () =>
   describe('$ref와 $recursiveRef (Draft 2019-09)', () => {
     it('$defs와 $ref를 사용한 재귀 스키마 검증', async () => {
       // Arrange - 재귀적 트리 구조
-      ajvValidatorPlugin.bind(
+      ajvValidatorPlugin.bind!(
         new Ajv({
           allErrors: true,
           strictSchema: false,

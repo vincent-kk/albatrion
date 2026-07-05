@@ -191,7 +191,7 @@ describe('ajvValidatorPlugin (2020) - Draft 2020-12 전용 스펙 검증', () =>
   describe('$defs와 $ref (Draft 2020-12)', () => {
     it('$defs와 $ref를 사용한 재귀 스키마 검증', async () => {
       // Arrange - 재귀적 트리 구조
-      ajvValidatorPlugin.bind(
+      ajvValidatorPlugin.bind!(
         new Ajv({
           allErrors: true,
           strictSchema: false,

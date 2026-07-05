@@ -186,13 +186,13 @@ describe('createValidatorFactory', () => {
 describe('ajvValidatorPlugin', () => {
   beforeEach(() => {
     // 각 테스트 전에 ajvInstance를 리셋
-    ajvValidatorPlugin.bind(null as any);
+    ajvValidatorPlugin.bind!(null as any);
   });
 
   it('should bind ajv instance correctly', () => {
     const ajv = new Ajv();
 
-    ajvValidatorPlugin.bind(ajv);
+    ajvValidatorPlugin.bind!(ajv);
 
     // bind 함수가 인스턴스를 저장하는지 확인 (compile에서 사용됨을 통해 간접 확인)
     const schema = { type: 'string' } as any;
@@ -241,7 +241,7 @@ describe('ajvValidatorPlugin', () => {
       verbose: false,
     });
 
-    ajvValidatorPlugin.bind(customAjv);
+    ajvValidatorPlugin.bind!(customAjv);
 
     const schema = {
       type: 'object',

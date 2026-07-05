@@ -12,7 +12,7 @@ import {
   registerPlugin,
 } from '@canard/schema-form';
 
-import { plugin } from '../src';
+import { plugin } from '../src/default';
 import StoryLayout from './components/StoryLayout';
 
 registerPlugin(plugin);

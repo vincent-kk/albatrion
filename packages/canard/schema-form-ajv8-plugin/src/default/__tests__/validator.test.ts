@@ -561,7 +561,7 @@ describe('ajvValidatorPlugin', () => {
       });
 
       // Act
-      ajvValidatorPlugin.bind(customAjv);
+      ajvValidatorPlugin.bind!(customAjv);
 
       const schema = {
         type: 'object',
@@ -587,7 +587,7 @@ describe('ajvValidatorPlugin', () => {
     it('기본 인스턴스는 allErrors: true로 모든 에러를 반환한다', async () => {
       // Arrange
       // 기본 인스턴스로 재설정 (null로 설정하면 새로운 기본 인스턴스 생성)
-      ajvValidatorPlugin.bind(
+      ajvValidatorPlugin.bind!(
         new Ajv({
           allErrors: true, // 모든 에러를 반환하도록 설정 (기본값)
           strictSchema: false,
@@ -646,13 +646,13 @@ describe('ajvValidatorPlugin', () => {
 
       // Act & Assert
       // 첫 번째 인스턴스 설정 (allErrors: false)
-      ajvValidatorPlugin.bind(customAjv1);
+      ajvValidatorPlugin.bind!(customAjv1);
       const validator1 = ajvValidatorPlugin.compile(schema);
       const result1 = await validator1({});
       expect(result1).toHaveLength(1); // 하나의 에러만
 
       // 두 번째 인스턴스로 교체 (allErrors: true)
-      ajvValidatorPlugin.bind(customAjv2);
+      ajvValidatorPlugin.bind!(customAjv2);
       const validator2 = ajvValidatorPlugin.compile(schema);
       const result2 = await validator2({});
       expect(result2!.length).toBeGreaterThan(1); // 모든 에러
@@ -666,7 +666,7 @@ describe('ajvValidatorPlugin', () => {
         validateFormats: false, // format 검증 비활성화 (email format 지원하지 않음)
       });
 
-      ajvValidatorPlugin.bind(customAjv);
+      ajvValidatorPlugin.bind!(customAjv);
 
       const schema = {
         type: 'object',
@@ -707,7 +707,7 @@ describe('ajvValidatorPlugin', () => {
     it('bind 없이 compile 호출 시 기본 인스턴스가 생성된다', async () => {
       // Arrange
       // 새로운 기본 인스턴스로 재설정하여 테스트
-      ajvValidatorPlugin.bind(
+      ajvValidatorPlugin.bind!(
         new Ajv({
           allErrors: true,
           strictSchema: false,

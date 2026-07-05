@@ -5,7 +5,7 @@ import { ModalProvider, alert, confirm, prompt } from '@lerx/promise-modal';
 export default {
   title: 'PromiseModal/BuildUsecase',
   decorators: [
-    (Story) => (
+    (Story: React.ComponentType) => (
       <ModalProvider>
         <Story />
       </ModalProvider>
@@ -46,7 +46,7 @@ export const BuildUsecase = () => {
       },
       defaultValue: 'value',
     }).then((value) => {
-      setValue(value);
+      setValue(value ?? '');
     });
   };
 
@@ -92,7 +92,7 @@ export const NestedModalProviderUsecase = () => {
       },
       defaultValue: 'value',
     }).then((value) => {
-      setValue(value);
+      setValue(value ?? '');
     });
   };
 
@@ -141,7 +141,7 @@ export const MultiModalUsecase = () => {
       },
       defaultValue: 'value',
     }).then((value) => {
-      setValue(value);
+      setValue(value ?? '');
     });
   };
 
@@ -165,7 +165,7 @@ export const MultiModalUsecase = () => {
         },
         defaultValue: 'value',
       }).then((value) => {
-        setValue(value);
+        setValue(value ?? '');
       });
     }, 250);
   }, []);

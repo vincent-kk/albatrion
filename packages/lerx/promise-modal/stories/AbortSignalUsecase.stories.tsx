@@ -5,7 +5,7 @@ import { ModalProvider, alert, confirm, prompt } from '../src';
 export default {
   title: 'PromiseModal/AbortSignalUsecase',
   decorators: [
-    (Story) => (
+    (Story: React.ComponentType) => (
       <ModalProvider>
         <Story />
       </ModalProvider>
@@ -93,7 +93,7 @@ export const AbortPromptDuringInput = () => {
       defaultValue: '',
       signal: controller.signal,
     }).then((inputValue) => {
-      setValue(inputValue);
+      setValue(inputValue ?? '');
       setStatus('Input received');
     });
 

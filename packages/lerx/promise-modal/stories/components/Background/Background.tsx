@@ -1,4 +1,4 @@
-import React, {
+import {
   type ForwardedRef,
   forwardRef,
   useLayoutEffect,
