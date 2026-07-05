@@ -72,8 +72,18 @@ export const dispatchModal = <Node extends ModalNode, Result>(
           cleanupAbort = () => signal.removeEventListener('abort', handleAbort);
         }
         ModalManager.bindPrerender(modal, () => {
-          const flushed = ModalManager.open(modal) as Node | undefined;
-          if (flushed) wire(flushed);
+          // Runs at flush time, outside the executor's try/catch: contain
+          // failures here so one broken entry neither strands this promise
+          // nor aborts the remaining queue flush.
+          try {
+            const flushed = ModalManager.open(modal) as Node | undefined;
+            if (flushed) wire(flushed);
+          } catch (error) {
+            settled = true;
+            cleanupAbort?.();
+            cleanupAbort = null;
+            reject(error);
+          }
         });
       }
     } catch (error) {

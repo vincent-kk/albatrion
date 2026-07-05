@@ -159,6 +159,35 @@ describe('prerender flow (real ModalManager, no mocking)', () => {
     await expect(promiseHandler).resolves.toBe('initial');
   });
 
+  it('flush 중 openHandler가 throw하면 해당 promise만 reject되고 나머지 큐는 계속 flush되어야 함', async () => {
+    const first = alertHandler({ title: 'flush-throw-target' });
+    const second = confirmHandler({ title: 'flush-survivor' });
+    expect(ModalManager.prerender.length).toBe(2);
+
+    const created: ModalNode[] = [];
+    let sequence = 0;
+    ModalManager.openHandler = (modal: Modal) => {
+      if (modal.title === 'flush-throw-target')
+        throw new Error('flush failure');
+      const modalNode = nodeFactory({
+        duration: 0,
+        manualDestroy: false,
+        closeOnBackdropClick: true,
+        ...modal,
+        id: sequence++,
+        initiator: '/flush-throw',
+      });
+      created.push(modalNode);
+      return modalNode;
+    };
+
+    await expect(first.promiseHandler).rejects.toThrow('flush failure');
+    expect(created.length).toBe(1);
+
+    created[0].onClose();
+    await expect(second.promiseHandler).resolves.toBe(false);
+  });
+
   it('openHandler가 throw하면 promise는 reject되어야 함', async () => {
     ModalManager.openHandler = () => {
       throw new Error('Failed to open modal');
