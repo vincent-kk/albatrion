@@ -124,7 +124,6 @@ export class ValidationManager {
 
     if (generation !== this.__generation__) return;
 
-    // @ts-expect-error [internal] __setGlobalErrors__ is protected
     if (this.__host__.__setGlobalErrors__(internalErrors)) return;
 
     const errorsByDataPath = new Map<

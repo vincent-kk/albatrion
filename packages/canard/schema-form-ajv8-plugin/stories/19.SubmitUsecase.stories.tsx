@@ -1,8 +1,6 @@
 import { useCallback, useRef, useState } from 'react';
 
-import type {
-  FormHandle,
-  JsonSchemaError} from '@canard/schema-form';
+import type { FormHandle, JsonSchemaError } from '@canard/schema-form';
 import {
   Form,
   type JsonSchema,
@@ -12,7 +10,7 @@ import {
   useFormSubmit,
 } from '@canard/schema-form';
 
-import { plugin } from '../src';
+import { plugin } from '../src/default';
 import StoryLayout from './components/StoryLayout';
 
 registerPlugin(plugin);

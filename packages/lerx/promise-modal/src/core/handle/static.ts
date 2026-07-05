@@ -76,8 +76,9 @@ export const confirm = <BackgroundValue = any>(
  * @typeParam InputValue - Type of the value collected from user input
  * @typeParam BackgroundValue - Type of background data passed to BackgroundComponent
  * @param args - Prompt modal configuration options
- * @returns Promise that resolves with user input value
- * @throws Rejects when cancelled (unless returnOnCancel is true)
+ * @returns Promise that resolves with the user input value on confirm, or null
+ *   on cancel. With returnOnCancel: true, cancel resolves with the input value
+ *   at cancel time (initially defaultValue) instead of null.
  *
  * @example
  * ```tsx
@@ -94,6 +95,9 @@ export const confirm = <BackgroundValue = any>(
  *   ),
  *   defaultValue: 'John Doe',
  * });
+ * if (name === null) {
+ *   console.log('User cancelled');
+ * }
  * ```
  *
  * @example

@@ -1,13 +1,16 @@
-import type { ReactNode } from 'react';
+import { type ReactNode, createElement } from 'react';
 
-import type { InferSchemaNode } from '@/schema-form/core';
 import type {
   AllowedValue,
   InferValueType,
   JsonSchema,
 } from '@/schema-form/types';
 
+import { FormChildrenRenderer } from './components/FormChildrenRenderer';
 import type { FormProps } from './type';
+
+/** Sentinel for "no value emitted yet" — distinct from any real value (incl. undefined). */
+export const NOT_EMITTED = Symbol('@canard/schema-form::not-emitted');
 
 export const createChildren = <
   Schema extends JsonSchema,
@@ -15,15 +18,11 @@ export const createChildren = <
 >(
   children: FormProps<Schema, Value>['children'] | undefined,
   jsonSchema: Schema,
-  rootNode?: InferSchemaNode<Schema>,
 ): ReactNode => {
   if (children == null) return null;
   if (typeof children !== 'function') return children;
-  return children({
+  return createElement(FormChildrenRenderer<Schema, Value>, {
     jsonSchema,
-    node: rootNode,
-    defaultValue: rootNode?.defaultValue as Value,
-    value: rootNode?.value as Value,
-    errors: rootNode?.globalErrors || undefined,
+    render: children,
   });
 };

@@ -5,7 +5,7 @@ import { ModalProvider, useModal } from '../src';
 export default {
   title: 'PromiseModal/UnmountCleanupManualDestroyFalse',
   decorators: [
-    (Story) => (
+    (Story: React.ComponentType) => (
       <ModalProvider
         options={{
           duration: '250ms',

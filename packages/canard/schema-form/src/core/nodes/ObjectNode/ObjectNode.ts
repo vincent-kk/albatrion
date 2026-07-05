@@ -43,7 +43,7 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
   private __strategy__: ObjectNodeStrategy;
 
   /** @internal */
-  protected override __equals__(
+  public override __equals__(
     this: ObjectNode,
     left: ObjectValue | Nullish,
     right: ObjectValue | Nullish,
@@ -69,7 +69,7 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
   }
 
   /** @internal */
-  protected override __initialize__(
+  public override __initialize__(
     this: ObjectNode,
     actor?: SchemaNode,
   ): boolean {

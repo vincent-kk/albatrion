@@ -52,7 +52,7 @@ export const NormalUsecase = () => {
       },
       defaultValue: 'value',
     }).then((value) => {
-      setValue(value);
+      setValue(value ?? '');
     });
   };
 
@@ -128,7 +128,7 @@ export const NestedModalProviderUsecase = () => {
       },
       defaultValue: 'value',
     }).then((value) => {
-      setValue(value);
+      setValue(value ?? '');
     });
   };
 
@@ -183,7 +183,7 @@ export const ModalInitializeHookUsecase = () => {
       },
       defaultValue: 'value',
     }).then((value) => {
-      setValue(value);
+      setValue(value ?? '');
     });
   };
 

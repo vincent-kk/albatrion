@@ -7,7 +7,7 @@
 ## Structure
 
 - `BootstrapProvider.tsx` — 메인 프로바이더 컴포넌트
-- `useBootstrap.ts` — 초기화 로직 훅
+- `useBootstrap.tsx` — 초기화 로직 훅
 - `type.ts` — BootstrapProviderHandle, BootstrapProviderProps 정의
 - `hooks/` — 내부 전용 훅
 - `helpers/` — 내부 유틸리티 함수
@@ -25,7 +25,7 @@
 
 - Provider 중첩 순서: Configuration → ModalManager → UserDefined
 - ModalManager.anchor() 호출로 DOM 앵커 보장
-- prerender 리스트 처리 (마운트 전 호출된 모달)
+- 언마운트 시 초기화의 역연산 보장 (앵커 제거 + ModalManager.reset(), 단 자신이 초기화한 경우만)
 
 ### Ask first
 

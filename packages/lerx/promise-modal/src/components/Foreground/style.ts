@@ -1,4 +1,4 @@
-import { ModalManager } from '@/promise-modal/app/ModalManager';
+import { ModalManager } from '@/promise-modal/app';
 
 export const foreground = ModalManager.getHashedClassNames('foreground');
 export const active = ModalManager.getHashedClassNames('foreground-active');

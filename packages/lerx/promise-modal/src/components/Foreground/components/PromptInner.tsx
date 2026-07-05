@@ -59,7 +59,7 @@ export const PromptInner = memo(
     }, [onConfirm]);
 
     const disabled = useMemo(
-      () => (value ? !!checkDisabled?.(value) : false),
+      () => (checkDisabled ? !!checkDisabled(value) : false),
       [checkDisabled, value],
     );
 

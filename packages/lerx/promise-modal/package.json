@@ -29,7 +29,11 @@
     "name": "Vincent K. Kelvin",
     "email": "lunox273@gmail.com"
   },
-  "sideEffects": false,
+  "sideEffects": [
+    "./dist/index.mjs",
+    "./dist/index.cjs",
+    "**/style.ts"
+  ],
   "type": "module",
   "exports": {
     ".": {
@@ -61,7 +65,8 @@
     "size-limit": "size-limit",
     "start": "yarn build && yarn storybook",
     "storybook": "storybook dev -p 6006",
-    "test": "vitest",
+    "test": "yarn run -T vitest",
+    "test:prod": "yarn run -T vitest run --config vitest.prod.config.ts",
     "version:major": "yarn version major",
     "version:minor": "yarn version minor",
     "version:patch": "yarn version patch"
@@ -73,6 +78,8 @@
   },
   "devDependencies": {
     "@slats/claude-assets-sync": "workspace:^",
+    "@testing-library/dom": "^10.4.0",
+    "@testing-library/react": "^16.1.0",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
     "antd": "^5.22.5",

@@ -25,7 +25,7 @@ export class NumberNode extends AbstractNode<NumberSchema, NumberValue> {
   private __value__: NumberValue | Nullish = undefined;
 
   /** @internal */
-  protected override __equals__(
+  public override __equals__(
     this: NumberNode,
     left: NumberValue | Nullish,
     right: NumberValue | Nullish,

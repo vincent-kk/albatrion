@@ -6,6 +6,7 @@ Promise 기반 모달 API 함수(alert, confirm, prompt)를 제공하는 모듈.
 
 ## Structure
 
+- `dispatchModal.ts` — 공통 배선: open/prerender 바인딩, AbortSignal, Promise settle
 - `alert.ts` — alertHandler 구현
 - `confirm.ts` — confirmHandler 구현
 - `prompt.ts` — promptHandler 구현
@@ -15,7 +16,9 @@ Promise 기반 모달 API 함수(alert, confirm, prompt)를 제공하는 모듈.
 
 ## Conventions
 
-- 각 핸들러는 `{Handler}` 패턴으로 내부 로직 처리 후 `{ promiseHandler }` 반환
+- 각 핸들러는 dispatchModal 결과 `{ modalNode, promiseHandler, cancel }`를 그대로 반환 (`cancel`은 마운트 전 큐 항목 취소용)
+- `modalNode`는 라이브 getter: 마운트 전 undefined, 큐 flush 후 실제 노드 참조
+- Promise 배선은 modal 데이터의 `handleResolve` 채널로 전달 (prerender에도 유효)
 - static.ts에서 핸들러를 래핑하여 `.promiseHandler`만 노출
 - 제네릭 타입: `BackgroundValue`(배경 데이터), `InputValue`(prompt 입력값)
 

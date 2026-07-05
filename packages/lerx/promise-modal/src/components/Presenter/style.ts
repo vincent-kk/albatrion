@@ -1,4 +1,4 @@
-import { ModalManager } from '@/promise-modal/app/ModalManager';
+import { ModalManager } from '@/promise-modal/app';
 
 export const presenter = ModalManager.getHashedClassNames('presenter');
 
@@ -9,6 +9,7 @@ const style = `
   z-index: var(--z-index);
   pointer-events: none;
   overflow: hidden;
+}
 `;
 
 ModalManager.defineStyleSheet('presenter', style);

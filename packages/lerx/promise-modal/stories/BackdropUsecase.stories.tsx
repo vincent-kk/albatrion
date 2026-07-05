@@ -1,5 +1,3 @@
-import React from 'react';
-
 import { ModalProvider, alert } from '../src';
 
 export default {

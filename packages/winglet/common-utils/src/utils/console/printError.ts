@@ -1,5 +1,7 @@
 import { map } from '@/common-utils/utils/array';
 
+import type { PrintConsoleOptions } from './type';
+
 /**
  * Print an error message to the console
  * @param title - The title of the error
@@ -9,12 +11,7 @@ import { map } from '@/common-utils/utils/array';
 export const printError = (
   title: string,
   message: string[],
-  options?: {
-    info?: string;
-    emoji?: string;
-    titleColor?: `#${string}`;
-    messageColor?: `#${string}`;
-  },
+  options?: PrintConsoleOptions,
 ) =>
   console.error(
     `%c${options?.info || ''}\n\n` +
@@ -23,4 +20,5 @@ export const printError = (
     'color: #666;',
     `color: ${options?.titleColor || '#ff0000'}; font-weight: bold; font-size: 1.25em;`,
     ...map(message, () => `color: ${options?.messageColor || '#ff6b6b'}`),
+    ...(options?.details === undefined ? [] : [options.details]),
   );

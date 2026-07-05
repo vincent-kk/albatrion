@@ -34,11 +34,13 @@
     "zero-peer-file": {
       "enabled": true,
       "severity": "warning",
-      "exempt": ["**/canard/schema-form/**"]
+      "exempt": ["**/canard/schema-form/**", "**/lerx/promise-modal/**"]
     }
   },
   "additional-allowed": [
     "type.ts",
+    "style.ts",
+    "constant.ts",
     "CLAUDE.md",
     "LICENSE",
     "README.md",
@@ -47,6 +49,7 @@
     "package.json",
     "rollup.config.mjs",
     "vite.config.ts",
+    "vitest.prod.config.ts",
     "tsconfig.json",
     "tsconfig.declarations.json"
   ],

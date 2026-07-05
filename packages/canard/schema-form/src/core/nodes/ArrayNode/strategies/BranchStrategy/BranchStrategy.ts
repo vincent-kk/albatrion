@@ -196,7 +196,6 @@ export class BranchStrategy implements ArrayNodeStrategy {
       if (this.__sourceMap__.has(key)) {
         const node = this.__sourceMap__.get(key)!.node;
         const name = '' + i;
-        // @ts-expect-error [internal] setName delegation
         if (node.name !== name) node.__setName__(name, this.__host__);
       }
     }
@@ -278,9 +277,9 @@ export class BranchStrategy implements ArrayNodeStrategy {
    */
   public initialize() {
     for (let i = 0, l = this.__keys__.length; i < l; i++)
-      (this.__sourceMap__.get(this.__keys__[i])?.node as AbstractNode)
-        // @ts-expect-error [internal] child node initialization
-        ?.__initialize__(this.__host__);
+      (
+        this.__sourceMap__.get(this.__keys__[i])?.node as AbstractNode
+      )?.__initialize__(this.__host__);
   }
 
   /**
@@ -318,7 +317,6 @@ export class BranchStrategy implements ArrayNodeStrategy {
     });
     this.__sourceMap__.set(key, { node: childNode, data: childNode.value });
 
-    // @ts-expect-error [internal] child node initialization
     if (host.initialized) (childNode as AbstractNode).__initialize__(host);
 
     this.__expire__();
@@ -374,7 +372,6 @@ export class BranchStrategy implements ArrayNodeStrategy {
     for (let i = 0, l = this.__keys__.length; i < l; i++)
       this.__sourceMap__
         .get(this.__keys__[i])
-        // @ts-expect-error [internal] child node cleanup
         ?.node?.__cleanUp__(this.__host__);
     this.__keys__ = [];
     this.__sourceMap__.clear();
@@ -425,7 +422,6 @@ export class BranchStrategy implements ArrayNodeStrategy {
 
     this.__locked__ = false;
     this.__emitChange__(SetValueOption.Default, false);
-    // @ts-expect-error [internal] setDefaultValue delegation
     host.__setDefaultValue__(this.value);
     this.__publishUpdateChildren__();
   }

@@ -1,5 +1,3 @@
-import React from 'react';
-
 import type { WrapperComponentProps } from '../../../src';
 import type { UserDefinedContext } from '../type';
 // @ts-expect-error css module

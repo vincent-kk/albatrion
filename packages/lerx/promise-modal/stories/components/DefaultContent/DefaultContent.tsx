@@ -1,4 +1,4 @@
-import React, { type PropsWithChildren } from 'react';
+import { type PropsWithChildren } from 'react';
 
 // @ts-expect-error css module
 import styles from './DefaultContent.module.css';

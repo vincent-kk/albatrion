@@ -1,8 +1,4 @@
-import React, {
-  type ForwardedRef,
-  type PropsWithChildren,
-  forwardRef,
-} from 'react';
+import { type ForwardedRef, type PropsWithChildren, forwardRef } from 'react';
 
 import { type ModalFrameProps } from '../../src';
 

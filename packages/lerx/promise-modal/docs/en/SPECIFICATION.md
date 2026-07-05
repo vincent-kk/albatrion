@@ -311,7 +311,7 @@ Opens a prompt modal to collect user input.
 #### Signature
 
 ```typescript
-function prompt<T, B = any>(options: PromptProps<T, B>): Promise<T>;
+function prompt<T, B = any>(options: PromptProps<T, B>): Promise<T | null>;
 ```
 
 #### Parameters
@@ -322,8 +322,8 @@ All options from `alert`, plus:
 |--------|------|----------|-------------|
 | `Input` | `(props: PromptInputProps<T>) => ReactNode` | Yes | Input component |
 | `defaultValue` | `T` | No | Default value |
-| `disabled` | `(value: T) => boolean` | No | Disable confirm |
-| `returnOnCancel` | `boolean` | No | Return default on cancel |
+| `disabled` | `(value: T | undefined) => boolean` | No | Disable confirm |
+| `returnOnCancel` | `boolean` | No | Resolve current value on cancel (instead of null) |
 
 #### PromptInputProps
 

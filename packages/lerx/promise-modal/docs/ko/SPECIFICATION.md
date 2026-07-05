@@ -311,7 +311,7 @@ if (shouldDelete) {
 #### 시그니처
 
 ```typescript
-function prompt<T, B = any>(options: PromptProps<T, B>): Promise<T>;
+function prompt<T, B = any>(options: PromptProps<T, B>): Promise<T | null>;
 ```
 
 #### 매개변수
@@ -322,8 +322,8 @@ function prompt<T, B = any>(options: PromptProps<T, B>): Promise<T>;
 |------|------|------|------|
 | `Input` | `(props: PromptInputProps<T>) => ReactNode` | 예 | 입력 컴포넌트 |
 | `defaultValue` | `T` | 아니오 | 기본값 |
-| `disabled` | `(value: T) => boolean` | 아니오 | 확인 버튼 비활성화 |
-| `returnOnCancel` | `boolean` | 아니오 | 취소 시 기본값 반환 |
+| `disabled` | `(value: T | undefined) => boolean` | 아니오 | 확인 버튼 비활성화 |
+| `returnOnCancel` | `boolean` | 아니오 | 취소 시 null 대신 현재 입력값 반환 |
 
 #### PromptInputProps
 

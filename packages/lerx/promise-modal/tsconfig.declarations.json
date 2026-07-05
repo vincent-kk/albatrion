@@ -15,6 +15,7 @@
     "dist",
     "**/__tests__/**",
     "**/coverage/**",
+    "**/stories/**",
     "**/*.test.tsx?",
     "**/*.spec.tsx?",
     "**/*.story.tsx?",

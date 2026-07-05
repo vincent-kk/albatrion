@@ -70,9 +70,13 @@ export interface PromptProps<InputValue, BackgroundValue = any>
   defaultValue?: InputValue;
   /** Input component that receives value, onChange, and other props */
   Input: Fn<[props: PromptInputProps<InputValue>], ReactNode>;
-  /** Validation function. Returns true to disable the confirm button */
-  disabled?: Fn<[value: InputValue], boolean>;
-  /** If true, returns defaultValue instead of rejecting on cancel */
+  /**
+   * Validation function. Returns true to disable the confirm button.
+   * Called with the current value, which stays undefined until the first
+   * input when no defaultValue is provided.
+   */
+  disabled?: Fn<[value: InputValue | undefined], boolean>;
+  /** If true, cancel resolves with the current input value instead of null */
   returnOnCancel?: boolean;
   /** Footer configuration. Can be a render function, options object, or false */
   footer?: PromptFooterRender<InputValue> | FooterOptions | false;

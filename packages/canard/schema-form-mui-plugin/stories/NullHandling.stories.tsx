@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import { useState, useRef } from 'react';
 import type { JsonSchema } from '@winglet/json-schema';
 
 import { Form, type FormHandle } from '@canard/schema-form';

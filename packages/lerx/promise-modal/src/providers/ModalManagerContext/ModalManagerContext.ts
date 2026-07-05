@@ -7,8 +7,8 @@ import type { ModalActions, ModalHandlersWithId } from '@/promise-modal/types';
 
 export interface ModalManagerContextProps extends ModalHandlersWithId {
   modalIds: ModalNode['id'][];
-  getModal: Fn<[id: ModalNode['id']], ModalActions>;
-  getModalNode: Fn<[id: ModalNode['id']], ModalNode | undefined>;
+  getModal: Fn<[id: ModalNode['id'] | undefined], ModalActions>;
+  getModalNode: Fn<[id: ModalNode['id'] | undefined], ModalNode | undefined>;
 }
 
 export const ModalManagerContext = createContext<ModalManagerContextProps>(

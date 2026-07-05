@@ -32,14 +32,6 @@ export class InjectionGuardManager {
   }
 
   /**
-   * Removes the injection mark from a node path.
-   * @param path - The data path of the node to unmark
-   */
-  public remove(this: InjectionGuardManager, path: AbstractNode['path']) {
-    this.__injectedPaths__.delete(path);
-  }
-
-  /**
    * Checks if a node path is currently being injected.
    * @param path - The data path of the node to check
    * @returns `true` if the node is currently being injected, `false` otherwise

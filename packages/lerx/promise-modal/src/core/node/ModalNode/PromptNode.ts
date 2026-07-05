@@ -20,7 +20,7 @@ export class PromptNode<T = any, B = any> extends AbstractNode<T, B> {
   readonly content?: ReactNode | ComponentType<PromptContentProps>;
   readonly defaultValue: T | undefined;
   readonly Input: Fn<[props: PromptInputProps<T>], ReactNode>;
-  readonly disabled?: Fn<[value: T], boolean>;
+  readonly disabled?: Fn<[value: T | undefined], boolean>;
   readonly returnOnCancel?: boolean;
   readonly footer?: PromptFooterRender<T> | FooterOptions | false;
 

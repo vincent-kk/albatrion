@@ -793,11 +793,13 @@ Opens a prompt modal to receive input from the user.
     - props: `{ value: T; onChange: (value: T) => void }`
   - `defaultValue?`: Default value (T)
   - `disabled?`: Function to determine if confirm button should be disabled
-    - `(value: T) => boolean`
-  - `returnOnCancel?`: Whether to return default value on cancel (boolean)
+    - `(value: T | undefined) => boolean`
+  - `returnOnCancel?`: If true, cancel resolves with the current input value instead of null (boolean)
   - `footer?`: Footer settings (similar to confirm)
 
-**Returns:** `Promise<T>` - Resolves to the input value
+**Returns:** `Promise<T | null>` - Resolves to the input value on confirm, or null on cancel
+
+> **Upgrade note:** `prompt()` now types cancellation explicitly — the return is `Promise<T | null>` and the `disabled` callback receives `T | undefined`. Consumers that previously annotated these as non-null may hit new TypeScript errors on upgrade; the runtime behaviour (cancel resolves `null`) is unchanged.
 
 ```typescript
 // Example

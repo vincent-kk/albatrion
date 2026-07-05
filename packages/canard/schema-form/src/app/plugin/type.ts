@@ -196,6 +196,12 @@ export interface SchemaFormPlugin {
  *     };
  *   },
  * };
+ *
+ * // The core NEVER calls bind(); inject the shared instance yourself BEFORE
+ * // registering — otherwise `ajvInstance` stays null and every compile()
+ * // silently creates a new default Ajv (the "shared" instance is never shared):
+ * ajvValidatorPlugin.bind(new Ajv({ allErrors: true }));
+ * registerPlugin(ajvValidatorPlugin);
  * ```
  *
  * @example
@@ -224,14 +230,20 @@ export interface SchemaFormPlugin {
  * ```
  *
  * @remarks
- * - The `bind` method is called once when the plugin is registered
+ * - The `bind` method is optional and never invoked by the core; consumers may
+ *   call it directly on the plugin object before registration to inject a
+ *   custom validator instance (e.g. `ajvValidatorPlugin.bind(customAjv)`)
  * - The `compile` method is called for each unique schema that needs validation
  * - Validators should return `null` for valid data, or an array of errors
  * - Support both sync and async validation by returning Promise when needed
  */
 export interface ValidatorPlugin {
-  /** Inject Custom Validator Instance */
-  bind: Fn<[instance: any]>;
+  /**
+   * Inject Custom Validator Instance
+   * @remarks Consumer-facing hook: call it on the plugin object before
+   *          `registerPlugin()` to supply a custom instance. The core never calls it.
+   */
+  bind?: Fn<[instance: any]>;
   /** Validator Factory Function */
   compile: ValidatorFactory;
 }

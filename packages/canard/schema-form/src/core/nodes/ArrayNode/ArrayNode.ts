@@ -52,7 +52,7 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
   private __strategy__: ArrayNodeStrategy;
 
   /** @internal */
-  protected override __equals__(
+  public override __equals__(
     this: ArrayNode,
     left: ArrayValue | Nullish,
     right: ArrayValue | Nullish,
@@ -126,10 +126,7 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
   }
 
   /** @internal */
-  protected override __initialize__(
-    this: ArrayNode,
-    actor?: SchemaNode,
-  ): boolean {
+  public override __initialize__(this: ArrayNode, actor?: SchemaNode): boolean {
     if (super.__initialize__(actor)) {
       this.__strategy__.initialize?.();
       return true;

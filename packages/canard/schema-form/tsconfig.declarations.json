@@ -2,6 +2,7 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "declaration": true,
+    "stripInternal": true,
     "emitDeclarationOnly": true,
     "rootDir": "src",
     "removeComments": false,

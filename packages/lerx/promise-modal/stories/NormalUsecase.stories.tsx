@@ -6,7 +6,7 @@ import { Foreground } from './components/Foreground';
 export default {
   title: 'PromiseModal/NormalUsecase',
   decorators: [
-    (Story) => (
+    (Story: React.ComponentType) => (
       <ModalProvider>
         <Story />
       </ModalProvider>
@@ -47,7 +47,7 @@ export const NormalUsecase = () => {
       },
       defaultValue: 'value',
     }).then((value) => {
-      setValue(value);
+      setValue(value ?? '');
     });
   };
 
@@ -106,7 +106,7 @@ export const NestedModalProviderUsecase = () => {
       },
       defaultValue: 'value',
     }).then((value) => {
-      setValue(value);
+      setValue(value ?? '');
     });
   };
 
@@ -155,7 +155,7 @@ export const MultiModalUsecase = () => {
       },
       defaultValue: 'value',
     }).then((value) => {
-      setValue(value);
+      setValue(value ?? '');
     });
   };
 
@@ -179,7 +179,7 @@ export const MultiModalUsecase = () => {
         },
         defaultValue: 'value',
       }).then((value) => {
-        setValue(value);
+        setValue(value ?? '');
       });
     }, 250);
   }, []);
@@ -229,7 +229,7 @@ export const PreferredFrameUsecase = () => {
       defaultValue: 'value',
       closeOnBackdropClick: false,
     }).then((value) => {
-      setValue(value);
+      setValue(value ?? '');
     });
   };
 

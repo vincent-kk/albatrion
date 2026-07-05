@@ -8,17 +8,17 @@ AbstractNode를 확장한 구체 모달 노드 구현체. Alert, Confirm, Prompt
 
 - `AlertNode.ts` — 알림 모달 노드 (resolve only)
 - `ConfirmNode.ts` — 확인 모달 노드 (boolean resolve)
-- `PromptNode.ts` — 입력 모달 노드 (값 resolve/reject)
+- `PromptNode.ts` — 입력 모달 노드 (값/null resolve)
 - `index.ts` — 세 노드 클래스 재export
 
 ## Conventions
 
 - 모든 노드는 AbstractNode<T, B> 제네릭 기반
 - 구독 기반 상태 업데이트: subscribe/notify 패턴
-- Promise 생명주기: 생성 → 상태 변경 → resolve/reject → 정리
+- Promise 생명주기: 생성 → 상태 변경 → resolve → 정리 (reject는 내부 오류 전용)
 - AlertNode: 닫기 시 void resolve
 - ConfirmNode: 확인=true, 취소=false resolve
-- PromptNode: 확인=입력값 resolve, 취소=reject
+- PromptNode: 확인=입력값 resolve, 취소=null resolve (returnOnCancel=true면 현재 입력값)
 
 ## Boundaries
 

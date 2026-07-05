@@ -11,7 +11,7 @@ import { Foreground } from './components/Foreground';
 export default {
   title: 'PromiseModal/UnmountCleanupUsecase',
   decorators: [
-    (Story) => (
+    (Story: React.ComponentType) => (
       <ModalProvider
         ForegroundComponent={Foreground}
         BackgroundComponent={Background}

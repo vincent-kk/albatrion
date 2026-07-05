@@ -105,33 +105,6 @@ import type { BootstrapProviderProps } from './type';
  * ```
  *
  * @example
- * Multiple modal systems:
- * ```tsx
- * function MultiModalApp() {
- *   // System modals (errors, confirmations)
- *   const { portal: systemPortal } = useBootstrap({
- *     ForegroundComponent: SystemModal,
- *     options: { backdrop: 'rgba(255, 0, 0, 0.8)' },
- *   });
- *
- *   // Feature modals (forms, wizards)
- *   const { portal: featurePortal } = useBootstrap({
- *     ForegroundComponent: FeatureModal,
- *     options: { backdrop: 'rgba(0, 0, 255, 0.8)' },
- *   });
- *
- *   return (
- *     <>
- *       <SystemSection />
- *       <FeatureSection />
- *       {systemPortal}
- *       {featurePortal}
- *     </>
- *   );
- * }
- * ```
- *
- * @example
  * With custom hooks for specific modal types:
  * ```tsx
  * function useConfirmDialog() {
@@ -187,7 +160,8 @@ import type { BootstrapProviderProps } from './type';
  * @remarks
  * - Use `mode: 'manual'` when you need to control the initialization timing
  * - The portal element must be rendered in your component tree
- * - Each hook instance creates an independent modal system
+ * - The modal system is a singleton: mount exactly one bootstrap
+ *   (ModalProvider or useBootstrap) at a time
  * - Context changes will affect all modals created after the change
  */
 export const useBootstrap = ({
@@ -207,12 +181,15 @@ export const useBootstrap = ({
     [useExternalPathname],
   );
 
-  const { anchorRef, handleInitialize } = useInitialize();
+  const { anchorRef, handleInitialize, handleReset } = useInitialize();
 
   useOnMount(() => {
     if (mode === 'auto') handleInitialize();
     return () => {
-      if (anchorRef.current) anchorRef.current.remove();
+      // Only the instance that actually initialized owns the singleton state.
+      if (anchorRef.current === null) return;
+      anchorRef.current.remove();
+      handleReset();
     };
   });
 

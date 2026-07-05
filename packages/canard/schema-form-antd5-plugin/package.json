@@ -52,7 +52,7 @@
     "publish:npm": "yarn npm publish --access public",
     "start": "yarn build && yarn storybook",
     "storybook": "storybook dev -p 6006",
-    "test": "vitest",
+    "test": "yarn run -T vitest",
     "version:major": "yarn version major",
     "version:minor": "yarn version minor",
     "version:patch": "yarn version patch"
