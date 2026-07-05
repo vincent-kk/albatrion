@@ -5,7 +5,7 @@ import { counterFactory } from '@winglet/common-utils/lib';
 import { withErrorBoundary } from '@winglet/react-utils/hoc';
 import { useVersion } from '@winglet/react-utils/hook';
 
-import { ModalManager } from '@/promise-modal/app/ModalManager';
+import { ModalManager } from '@/promise-modal/app';
 import { Presenter } from '@/promise-modal/components/Presenter';
 import type { ModalNode } from '@/promise-modal/core';
 import { useActiveModalCount } from '@/promise-modal/hooks/useActiveModalCount';
@@ -29,7 +29,10 @@ const AnchorInner = () => {
 
   const options = useConfigurationOptions();
   const dimmed = useActiveModalCount(validateDimmable, version);
-  if (!dimmed) reset();
+
+  useEffect(() => {
+    if (!dimmed) reset();
+  }, [dimmed]);
 
   const anchorStyle = useMemo(
     () =>
