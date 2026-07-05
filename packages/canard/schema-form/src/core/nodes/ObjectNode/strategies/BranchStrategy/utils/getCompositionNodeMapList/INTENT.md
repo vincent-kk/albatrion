@@ -6,7 +6,8 @@
 
 ## Structure
 
-- `getCompositionNodeMapList.ts` — 핵심 구현
+- `getCompositionNodeMapList.ts` — 핵심 구현 (분기 순회 + 자식 노드 맵 생성)
+- `utils/` — 가드 헬퍼: `warnIfNestedComposition`(중첩 composition dev 경고), `throwIfTypeRedefinition`(분기 타입 재정의 오류)
 - `index.ts` — re-export
 
 ## Conventions
@@ -36,5 +37,6 @@
 
 ## Dependencies
 
-- 내부: `@/schema-form/core/nodes/ObjectNode`(`ObjectNode`), `@/schema-form/core/nodes/type`(`SchemaNodeFactory`, `HandleChange`), `@/schema-form/errors`(`JsonSchemaError`), `@/schema-form/helpers/error`(`formatCompositionPropertyExclusivenessError`, `formatCompositionPropertyRedefinitionError`, `formatCompositionTypeRedefinitionError`, `formatNestedCompositionIgnoredWarning`), `@/schema-form/helpers/warning`(`warnDevelopmentIssue`), `@/schema-form/types`(`JsonSchema`, `ObjectSchema`, `ObjectValue`), `../../type`(`ChildNodeMap`)
-- 외부: `@winglet/common-utils/filter`(`isArray`, `isPlainObject`), `@winglet/json-schema/filter`(`isIdenticalSchemaType`), `@aileron/declare`(`Fn`, `Nullish`)
+- 내부(핵심): `@/schema-form/core/nodes/ObjectNode`(`ObjectNode`), `@/schema-form/core/nodes/type`(`SchemaNodeFactory`, `HandleChange`), `@/schema-form/errors`(`JsonSchemaError`), `@/schema-form/helpers/error`(`formatCompositionPropertyExclusivenessError`, `formatCompositionPropertyRedefinitionError`), `@/schema-form/types`(`JsonSchema`, `ObjectSchema`, `ObjectValue`), `../../type`(`ChildNodeMap`), `./utils`(`warnIfNestedComposition`, `throwIfTypeRedefinition`)
+- `utils/` 헬퍼가 캡슐화: `formatCompositionTypeRedefinitionError`, `formatNestedCompositionIgnoredWarning`, `warnDevelopmentIssue`, `isIdenticalSchemaType`
+- 외부: `@winglet/common-utils/filter`(`isArray`, `isPlainObject`), `@aileron/declare`(`Fn`, `Nullish`)

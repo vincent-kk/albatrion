@@ -62,10 +62,12 @@ const RegisteredPlugin = new Set<string>();
  * const ajv = new Ajv({ allErrors: true });
  * addFormats(ajv);
  *
+ * // `bind` is optional and NEVER called by core — invoke it yourself on the
+ * // plugin object before registerPlugin() if a custom instance is required.
  * registerPlugin({
  *   validator: {
  *     bind: (instance) => {
- *       // Access validator instance if needed
+ *       // Consumer-invoked only; not a core lifecycle hook
  *       console.log('Validator bound:', instance);
  *     },
  *     compile: (jsonSchema) => {

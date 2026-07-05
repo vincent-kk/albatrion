@@ -1,10 +1,12 @@
 import { afterEach, describe, expect, it } from 'vitest';
 
 import type { ModalNode } from '@/promise-modal/core';
-import { alertHandler } from '@/promise-modal/core/handle/alert';
-import { confirmHandler } from '@/promise-modal/core/handle/confirm';
-import { promptHandler } from '@/promise-modal/core/handle/prompt';
-import { nodeFactory } from '@/promise-modal/core/node/nodeFactory';
+import {
+  alertHandler,
+  confirmHandler,
+  nodeFactory,
+  promptHandler,
+} from '@/promise-modal/core';
 import type { Modal } from '@/promise-modal/types';
 
 import { ModalManager } from '../ModalManager';

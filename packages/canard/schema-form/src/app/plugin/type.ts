@@ -196,6 +196,12 @@ export interface SchemaFormPlugin {
  *     };
  *   },
  * };
+ *
+ * // The core NEVER calls bind(); inject the shared instance yourself BEFORE
+ * // registering — otherwise `ajvInstance` stays null and every compile()
+ * // silently creates a new default Ajv (the "shared" instance is never shared):
+ * ajvValidatorPlugin.bind(new Ajv({ allErrors: true }));
+ * registerPlugin(ajvValidatorPlugin);
  * ```
  *
  * @example

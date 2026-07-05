@@ -25,6 +25,7 @@
 - 각 allOf 항목 병합 전 `validateCompatibility` 호출
 - 타입 비호환 시 `JsonSchemaError` throw (에러 무시 금지)
 - `getMergeSchemaHandler`가 `null`이면 병합 없이 원본 반환
+- allOf 항목에 폼 빌드 시 무시되는 키워드(`IGNORE_FIELDS`)가 있으면 `warnDevelopmentIssue`로 dev 경고 방출
 
 ### Ask first
 - 복제 깊이 기준 변경 (`getCloneDepth` 로직 수정)
@@ -39,6 +40,7 @@
 ## Dependencies
 - `@winglet/common-utils/object` — `cloneLite`
 - `@/schema-form/errors` — `JsonSchemaError`
-- `@/schema-form/helpers/error` — `formatAllOfTypeRedefinitionError`
+- `@/schema-form/helpers/error` — `formatAllOfTypeRedefinitionError`, `formatAllOfIgnoredKeywordWarning`
+- `@/schema-form/helpers/warning` — `warnDevelopmentIssue`, `SCHEMA_FORM_WARNING`, `ALL_OF_KEYWORD_IGNORED_FOR_FORM`
 - `@/schema-form/types` — `JsonSchema`
-- `./utils/getCloneDepth`, `./utils/getMergeSchemaHandler`, `./utils/validateCompatibility`
+- `./utils/getCloneDepth`, `./utils/getMergeSchemaHandler`(+`IGNORE_FIELDS`), `./utils/validateCompatibility`

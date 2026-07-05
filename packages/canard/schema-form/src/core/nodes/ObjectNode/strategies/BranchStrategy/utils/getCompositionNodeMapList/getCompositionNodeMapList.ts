@@ -1,5 +1,4 @@
 import { isArray, isPlainObject } from '@winglet/common-utils/filter';
-import { isIdenticalSchemaType } from '@winglet/json-schema/filter';
 
 import type { Fn, Nullish } from '@aileron/declare';
 
@@ -12,14 +11,7 @@ import { JsonSchemaError } from '@/schema-form/errors';
 import {
   formatCompositionPropertyExclusivenessError,
   formatCompositionPropertyRedefinitionError,
-  formatCompositionTypeRedefinitionError,
-  formatNestedCompositionIgnoredWarning,
 } from '@/schema-form/helpers/error';
-import {
-  NESTED_COMPOSITION_IGNORED_FOR_FORM,
-  SCHEMA_FORM_WARNING,
-  warnDevelopmentIssue,
-} from '@/schema-form/helpers/warning';
 import type {
   JsonSchema,
   ObjectSchema,
@@ -27,6 +19,8 @@ import type {
 } from '@/schema-form/types';
 
 import type { ChildNodeMap } from '../../type';
+import { throwIfTypeRedefinition } from './utils/throwIfTypeRedefinition';
+import { warnIfNestedComposition } from './utils/warnIfNestedComposition';
 
 /**
  * Generate child node maps for composition schemas (oneOf/anyOf)
@@ -62,44 +56,8 @@ export const getCompositionNodeMapList = (
   for (let index = 0; index < compositionLength; index++) {
     const subSchema = compositionSchemas[index] as Partial<ObjectSchema>;
 
-    const nestedScope =
-      subSchema.oneOf !== undefined
-        ? 'oneOf'
-        : subSchema.anyOf !== undefined
-          ? 'anyOf'
-          : undefined;
-    if (nestedScope !== undefined)
-      warnDevelopmentIssue({
-        code: `${SCHEMA_FORM_WARNING}.${NESTED_COMPOSITION_IGNORED_FOR_FORM}`,
-        message: formatNestedCompositionIgnoredWarning(
-          scope,
-          nestedScope,
-          parentNode.path,
-        ),
-        details: { path: parentNode.path, scope, nestedScope },
-      });
-
-    if (
-      subSchema.type !== undefined &&
-      isIdenticalSchemaType(jsonSchema, subSchema) === false
-    )
-      throw new JsonSchemaError(
-        'COMPOSITION_TYPE_REDEFINITION',
-        formatCompositionTypeRedefinitionError(
-          scope,
-          jsonSchema,
-          parentNode.path,
-          jsonSchema.type,
-          subSchema.type,
-        ),
-        {
-          jsonSchema,
-          type: jsonSchema.type,
-          path: parentNode.path,
-          compositionType: scope,
-          subSchemaType: subSchema.type,
-        },
-      );
+    warnIfNestedComposition(subSchema, scope, parentNode.path);
+    throwIfTypeRedefinition(parentNode, scope, jsonSchema, subSchema);
 
     const properties = subSchema.properties;
     if (!isPlainObject(properties)) continue;
