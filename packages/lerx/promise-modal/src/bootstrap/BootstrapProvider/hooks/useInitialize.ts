@@ -2,7 +2,7 @@ import { useRef } from 'react';
 
 import { useVersion } from '@winglet/react-utils/hook';
 
-import { ModalManager } from '@/promise-modal/app/ModalManager';
+import { ModalManager } from '@/promise-modal/app';
 
 export const useInitialize = () => {
   const [, update] = useVersion();

@@ -1,8 +1,6 @@
-import { ModalManager } from '@/promise-modal/app/ModalManager';
 import type { ConfirmNode } from '@/promise-modal/core';
-import { closeModal } from '@/promise-modal/helpers/closeModal';
-import { subscribeAbortSignal } from '@/promise-modal/helpers/subscribeAbortSignal';
 
+import { dispatchModal } from './dispatchModal';
 import type { ConfirmProps } from './type';
 
 /**
@@ -13,10 +11,11 @@ import type { ConfirmProps } from './type';
  * @returns Object containing modalNode and promiseHandler
  *
  * @remarks
- * - modalNode: The created modal node instance
+ * - modalNode: The created modal node instance; undefined while the modal is
+ *   queued before the ModalProvider mounts (the promise stays valid)
  * - promiseHandler: Promise that resolves to true if confirmed, false if cancelled
  * - Returns true only when explicitly confirmed via the confirm action
- * - Returns false for cancel action or backdrop click (if enabled)
+ * - Returns false for cancel action, backdrop click (if enabled), or abort
  *
  * @example
  * ```tsx
@@ -34,23 +33,16 @@ import type { ConfirmProps } from './type';
 export const confirmHandler = <BackgroundValue = any>(
   args: ConfirmProps<BackgroundValue>,
 ) => {
-  const modalNode = ModalManager.open({
-    ...args,
-    type: 'confirm',
-  }) as ConfirmNode<BackgroundValue>;
-  const unsubscribe = subscribeAbortSignal(modalNode, args.signal);
-  const promiseHandler = new Promise<boolean>((resolve, reject) => {
-    try {
-      modalNode.handleResolve = (result) => {
-        unsubscribe?.();
-        resolve(result ?? false);
-      };
-      if (args.signal?.aborted) closeModal(modalNode);
-    } catch (error) {
-      closeModal(modalNode);
-      unsubscribe?.();
-      reject(error);
-    }
-  });
+  const { modalNode, promiseHandler } = dispatchModal<
+    ConfirmNode<BackgroundValue>,
+    boolean
+  >(
+    { ...args, type: 'confirm' },
+    {
+      signal: args.signal,
+      mapResult: (result) => (result as boolean | null) ?? false,
+      cancelResult: () => null,
+    },
+  );
   return { modalNode, promiseHandler } as const;
 };

@@ -2,17 +2,17 @@ import { useRef } from 'react';
 
 import { useOnUnmount } from '@winglet/react-utils/hook';
 
-import { ModalManager } from '@/promise-modal/app/ModalManager';
+import { ModalManager } from '@/promise-modal/app';
 import {
   type AlertProps,
   type ConfirmProps,
   type ModalNode,
+  type OverridableHandleProps,
   type PromptProps,
   alertHandler,
   confirmHandler,
   promptHandler,
 } from '@/promise-modal/core';
-import type { OverridableHandleProps } from '@/promise-modal/core/handle/type';
 import { closeModal } from '@/promise-modal/helpers/closeModal';
 
 export const useModal = (configuration?: OverridableHandleProps) => {
@@ -23,7 +23,7 @@ export const useModal = (configuration?: OverridableHandleProps) => {
     const { modalNode, promiseHandler } = alertHandler<Background>(
       baseArgsRef.current ? { ...baseArgsRef.current, ...args } : args,
     );
-    modalNodesRef.current.push(modalNode);
+    if (modalNode) modalNodesRef.current.push(modalNode);
     return promiseHandler;
   });
 
@@ -32,7 +32,7 @@ export const useModal = (configuration?: OverridableHandleProps) => {
       const { modalNode, promiseHandler } = confirmHandler<Background>(
         baseArgsRef.current ? { ...baseArgsRef.current, ...args } : args,
       );
-      modalNodesRef.current.push(modalNode);
+      if (modalNode) modalNodesRef.current.push(modalNode);
       return promiseHandler;
     },
   );
@@ -42,7 +42,7 @@ export const useModal = (configuration?: OverridableHandleProps) => {
       const { modalNode, promiseHandler } = promptHandler<Value, Background>(
         baseArgsRef.current ? { ...baseArgsRef.current, ...args } : args,
       );
-      modalNodesRef.current.push(modalNode);
+      if (modalNode) modalNodesRef.current.push(modalNode);
       return promiseHandler;
     },
   );

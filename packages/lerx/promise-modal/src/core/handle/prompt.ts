@@ -1,8 +1,6 @@
-import { ModalManager } from '@/promise-modal/app/ModalManager';
 import type { PromptNode } from '@/promise-modal/core';
-import { closeModal } from '@/promise-modal/helpers/closeModal';
-import { subscribeAbortSignal } from '@/promise-modal/helpers/subscribeAbortSignal';
 
+import { dispatchModal } from './dispatchModal';
 import type { PromptProps } from './type';
 
 /**
@@ -14,12 +12,14 @@ import type { PromptProps } from './type';
  * @returns Object containing modalNode and promiseHandler
  *
  * @remarks
- * - modalNode: The created modal node instance
- * - promiseHandler: Promise that resolves with user input value
+ * - modalNode: The created modal node instance; undefined while the modal is
+ *   queued before the ModalProvider mounts (the promise stays valid)
+ * - promiseHandler: Promise that resolves with the user input value
  * - Input component receives value, onChange, onConfirm, onCancel, and context props
  * - Use disabled function to control confirm button's enabled state
- * - If returnOnCancel is false (default), promise rejects on cancel
- * - If returnOnCancel is true, returns defaultValue on cancel
+ * - If returnOnCancel is false (default), the promise resolves with null on cancel
+ * - If returnOnCancel is true, resolves with the input value at cancel time
+ *   (initially defaultValue)
  *
  * @example
  * ```tsx
@@ -36,34 +36,24 @@ import type { PromptProps } from './type';
  *   defaultValue: '',
  * });
  *
- * try {
- *   const name = await promiseHandler;
- *   console.log('User entered:', name);
- * } catch {
- *   console.log('User cancelled');
- * }
+ * const name = await promiseHandler;
+ * if (name === null) console.log('User cancelled');
  * ```
  */
 export const promptHandler = <InputValue, BackgroundValue = any>(
   args: PromptProps<InputValue, BackgroundValue>,
 ) => {
-  const modalNode = ModalManager.open({
-    ...args,
-    type: 'prompt',
-  }) as PromptNode<InputValue, BackgroundValue>;
-  const unsubscribe = subscribeAbortSignal(modalNode, args.signal);
-  const promiseHandler = new Promise<InputValue>((resolve, reject) => {
-    try {
-      modalNode.handleResolve = (result) => {
-        unsubscribe?.();
-        resolve(result as InputValue);
-      };
-      if (args.signal?.aborted) closeModal(modalNode);
-    } catch (error) {
-      closeModal(modalNode);
-      unsubscribe?.();
-      reject(error);
-    }
-  });
+  const { modalNode, promiseHandler } = dispatchModal<
+    PromptNode<InputValue, BackgroundValue>,
+    InputValue | null
+  >(
+    { ...args, type: 'prompt' },
+    {
+      signal: args.signal,
+      mapResult: (result) => (result as InputValue | null) ?? null,
+      cancelResult: () =>
+        args.returnOnCancel ? (args.defaultValue ?? null) : null,
+    },
+  );
   return { modalNode, promiseHandler } as const;
 };

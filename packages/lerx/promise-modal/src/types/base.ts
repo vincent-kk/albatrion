@@ -14,6 +14,11 @@ export interface BaseModal<T, B> {
   duration?: number;
   manualDestroy?: boolean;
   closeOnBackdropClick?: boolean;
+  /**
+   * @internal Promise settlement channel injected by the handle layer
+   * (dispatchModal). Travels with the modal data so prerendered modals keep
+   * their wiring; not part of the public props surface.
+   */
   handleResolve?: Fn<[result: T | null]>;
   ForegroundComponent?: ForegroundComponent;
   BackgroundComponent?: BackgroundComponent;

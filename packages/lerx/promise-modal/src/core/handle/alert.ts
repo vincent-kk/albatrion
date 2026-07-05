@@ -1,8 +1,6 @@
-import { ModalManager } from '@/promise-modal/app/ModalManager';
 import type { AlertNode } from '@/promise-modal/core';
-import { closeModal } from '@/promise-modal/helpers/closeModal';
-import { subscribeAbortSignal } from '@/promise-modal/helpers/subscribeAbortSignal';
 
+import { dispatchModal } from './dispatchModal';
 import type { AlertProps } from './type';
 
 /**
@@ -13,7 +11,8 @@ import type { AlertProps } from './type';
  * @returns Object containing modalNode and promiseHandler
  *
  * @remarks
- * - modalNode: The created modal node instance
+ * - modalNode: The created modal node instance; undefined while the modal is
+ *   queued before the ModalProvider mounts (the promise stays valid)
  * - promiseHandler: Promise that resolves when the modal is closed
  *
  * @example
@@ -29,23 +28,16 @@ import type { AlertProps } from './type';
 export const alertHandler = <BackgroundValue = any>(
   args: AlertProps<BackgroundValue>,
 ) => {
-  const modalNode = ModalManager.open({
-    ...args,
-    type: 'alert',
-  }) as AlertNode<BackgroundValue>;
-  const unsubscribe = subscribeAbortSignal(modalNode, args.signal);
-  const promiseHandler = new Promise<void>((resolve, reject) => {
-    try {
-      modalNode.handleResolve = () => {
-        unsubscribe?.();
-        resolve();
-      };
-      if (args.signal?.aborted) closeModal(modalNode);
-    } catch (error) {
-      closeModal(modalNode);
-      unsubscribe?.();
-      reject(error);
-    }
-  });
+  const { modalNode, promiseHandler } = dispatchModal<
+    AlertNode<BackgroundValue>,
+    void
+  >(
+    { ...args, type: 'alert' },
+    {
+      signal: args.signal,
+      mapResult: () => undefined,
+      cancelResult: () => null,
+    },
+  );
   return { modalNode, promiseHandler } as const;
 };

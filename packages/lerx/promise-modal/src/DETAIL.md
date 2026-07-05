@@ -3,8 +3,10 @@
 ## Requirements
 
 - React 컴포넌트 내외부에서 사용 가능한 promise 기반 모달 API 제공
+- ModalProvider 마운트 전 호출은 prerender 큐에 적재되고, 마운트 시 동일한 Promise가
+  유효하게 연결되어야 함 (마운트 전 호출도 정상적으로 resolve 가능)
 - alert (알림), confirm (확인), prompt (입력) 세 가지 모달 타입 지원
-- ModalProvider를 통한 React 트리 초기화
+- ModalProvider를 통한 React 트리 초기화; 언마운트 시 initialize의 역연산으로 완전 정리
 - 커스텀 컴포넌트 주입을 통한 UI 교체 가능
 - 구독 기반 상태 관리로 모달 생명주기 제어
 
@@ -14,7 +16,7 @@
 
 - `alert<BackgroundValue>(props: AlertProps<BackgroundValue>): Promise<void>` — 알림 모달 표시, 닫힘 시 resolve
 - `confirm<BackgroundValue>(props: ConfirmProps<BackgroundValue>): Promise<boolean>` — 확인 모달 표시, 확인=true/취소=false resolve
-- `prompt<InputValue, BackgroundValue>(props: PromptProps<InputValue, BackgroundValue>): Promise<InputValue>` — 입력 모달 표시, 확인=입력값 resolve, 취소=reject
+- `prompt<InputValue, BackgroundValue>(props: PromptProps<InputValue, BackgroundValue>): Promise<InputValue | null>` — 입력 모달 표시, 확인=입력값 resolve, 취소=`null` resolve (`returnOnCancel: true`면 취소 시점의 현재 입력값 resolve). reject는 내부 오류(openHandler throw)에서만 발생
 
 ### Provider Component
 
@@ -36,4 +38,4 @@
 
 ## Last Updated
 
-2026-02-24
+2026-07-05

@@ -171,10 +171,11 @@ export const BootstrapProvider = memo(
          *   In this case, the `ModalProvider`(=`BootstrapProvider`) is not receiving the `ref`,
          *   so it should be initialized automatically.
          */
-        if (handleRef !== null) return;
-        handleInitialize();
+        if (handleRef === null) handleInitialize();
         return () => {
-          if (anchorRef.current) anchorRef.current.remove();
+          // Only the instance that actually initialized owns the singleton state.
+          if (anchorRef.current === null) return;
+          anchorRef.current.remove();
           handleReset();
         };
       });
