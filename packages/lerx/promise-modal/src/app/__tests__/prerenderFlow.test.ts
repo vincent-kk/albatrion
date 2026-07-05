@@ -198,6 +198,14 @@ describe('prerender flow (real ModalManager, no mocking)', () => {
     ).rejects.toThrow('Failed to open modal');
   });
 
+  it('마운트 전 결과의 modalNode getter는 flush 후 생성된 노드를 반환해야 함', () => {
+    const handled = alertHandler({ title: 'live-getter' });
+    expect(handled.modalNode).toBeUndefined();
+
+    const created = installOpenHandler();
+    expect(handled.modalNode).toBe(created[0]);
+  });
+
   it('reset() 후에는 다시 prerender 큐잉 모드로 돌아가야 함', () => {
     installOpenHandler();
     ModalManager.reset();

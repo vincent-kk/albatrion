@@ -11,8 +11,8 @@ import type { ConfirmProps } from './type';
  * @returns Object containing modalNode and promiseHandler
  *
  * @remarks
- * - modalNode: The created modal node instance; undefined while the modal is
- *   queued before the ModalProvider mounts (the promise stays valid)
+ * - modalNode: live getter for the modal node; undefined while the modal is
+ *   queued before the ModalProvider mounts, then set once the queue flushes
  * - promiseHandler: Promise that resolves to true if confirmed, false if cancelled
  * - Returns true only when explicitly confirmed via the confirm action
  * - Returns false for cancel action, backdrop click (if enabled), or abort
@@ -32,11 +32,8 @@ import type { ConfirmProps } from './type';
  */
 export const confirmHandler = <BackgroundValue = any>(
   args: ConfirmProps<BackgroundValue>,
-) => {
-  const { modalNode, promiseHandler } = dispatchModal<
-    ConfirmNode<BackgroundValue>,
-    boolean
-  >(
+) =>
+  dispatchModal<ConfirmNode<BackgroundValue>, boolean>(
     { ...args, type: 'confirm' },
     {
       signal: args.signal,
@@ -44,5 +41,3 @@ export const confirmHandler = <BackgroundValue = any>(
       cancelResult: () => null,
     },
   );
-  return { modalNode, promiseHandler } as const;
-};

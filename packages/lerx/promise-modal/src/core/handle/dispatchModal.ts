@@ -21,7 +21,8 @@ interface DispatchModalOptions<Result> {
  * survives the prerender queue: modals opened before the provider mounts are
  * flushed later and still settle the very same promise.
  *
- * @returns modalNode - undefined while the modal is queued before mount
+ * @returns modalNode - live getter: undefined while the modal is queued before
+ *   mount, then the node created by the flush (late reads see the real node)
  * @returns promiseHandler - settles on user interaction or abort; rejects only
  *   when the open handler itself throws
  */
@@ -91,5 +92,10 @@ export const dispatchModal = <Node extends ModalNode, Result>(
       reject(error);
     }
   });
-  return { modalNode, promiseHandler };
+  return {
+    get modalNode() {
+      return modalNode;
+    },
+    promiseHandler,
+  };
 };

@@ -11,8 +11,8 @@ import type { AlertProps } from './type';
  * @returns Object containing modalNode and promiseHandler
  *
  * @remarks
- * - modalNode: The created modal node instance; undefined while the modal is
- *   queued before the ModalProvider mounts (the promise stays valid)
+ * - modalNode: live getter for the modal node; undefined while the modal is
+ *   queued before the ModalProvider mounts, then set once the queue flushes
  * - promiseHandler: Promise that resolves when the modal is closed
  *
  * @example
@@ -27,11 +27,8 @@ import type { AlertProps } from './type';
  */
 export const alertHandler = <BackgroundValue = any>(
   args: AlertProps<BackgroundValue>,
-) => {
-  const { modalNode, promiseHandler } = dispatchModal<
-    AlertNode<BackgroundValue>,
-    void
-  >(
+) =>
+  dispatchModal<AlertNode<BackgroundValue>, void>(
     { ...args, type: 'alert' },
     {
       signal: args.signal,
@@ -39,5 +36,3 @@ export const alertHandler = <BackgroundValue = any>(
       cancelResult: () => null,
     },
   );
-  return { modalNode, promiseHandler } as const;
-};

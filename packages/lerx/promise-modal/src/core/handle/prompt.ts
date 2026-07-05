@@ -12,8 +12,8 @@ import type { PromptProps } from './type';
  * @returns Object containing modalNode and promiseHandler
  *
  * @remarks
- * - modalNode: The created modal node instance; undefined while the modal is
- *   queued before the ModalProvider mounts (the promise stays valid)
+ * - modalNode: live getter for the modal node; undefined while the modal is
+ *   queued before the ModalProvider mounts, then set once the queue flushes
  * - promiseHandler: Promise that resolves with the user input value
  * - Input component receives value, onChange, onConfirm, onCancel, and context props
  * - Use disabled function to control confirm button's enabled state
@@ -42,11 +42,8 @@ import type { PromptProps } from './type';
  */
 export const promptHandler = <InputValue, BackgroundValue = any>(
   args: PromptProps<InputValue, BackgroundValue>,
-) => {
-  const { modalNode, promiseHandler } = dispatchModal<
-    PromptNode<InputValue, BackgroundValue>,
-    InputValue | null
-  >(
+) =>
+  dispatchModal<PromptNode<InputValue, BackgroundValue>, InputValue | null>(
     { ...args, type: 'prompt' },
     {
       signal: args.signal,
@@ -55,5 +52,3 @@ export const promptHandler = <InputValue, BackgroundValue = any>(
         args.returnOnCancel ? (args.defaultValue ?? null) : null,
     },
   );
-  return { modalNode, promiseHandler } as const;
-};

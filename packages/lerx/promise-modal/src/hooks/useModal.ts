@@ -16,41 +16,48 @@ import {
 import { closeModal } from '@/promise-modal/helpers/closeModal';
 
 export const useModal = (configuration?: OverridableHandleProps) => {
-  const modalNodesRef = useRef<Array<ModalNode>>([]);
+  // Handler results expose modalNode as a live getter, so modals queued
+  // before the provider mounted are still reachable at cleanup time.
+  const modalResultsRef = useRef<
+    Array<{ readonly modalNode: ModalNode | undefined }>
+  >([]);
   const baseArgsRef = useRef(configuration);
 
   const alertRef = useRef(<Background = any>(args: AlertProps<Background>) => {
-    const { modalNode, promiseHandler } = alertHandler<Background>(
+    const result = alertHandler<Background>(
       baseArgsRef.current ? { ...baseArgsRef.current, ...args } : args,
     );
-    if (modalNode) modalNodesRef.current.push(modalNode);
-    return promiseHandler;
+    modalResultsRef.current.push(result);
+    return result.promiseHandler;
   });
 
   const confirmRef = useRef(
     <Background = any>(args: ConfirmProps<Background>) => {
-      const { modalNode, promiseHandler } = confirmHandler<Background>(
+      const result = confirmHandler<Background>(
         baseArgsRef.current ? { ...baseArgsRef.current, ...args } : args,
       );
-      if (modalNode) modalNodesRef.current.push(modalNode);
-      return promiseHandler;
+      modalResultsRef.current.push(result);
+      return result.promiseHandler;
     },
   );
 
   const promptRef = useRef(
     <Value, Background = any>(args: PromptProps<Value, Background>) => {
-      const { modalNode, promiseHandler } = promptHandler<Value, Background>(
+      const result = promptHandler<Value, Background>(
         baseArgsRef.current ? { ...baseArgsRef.current, ...args } : args,
       );
-      if (modalNode) modalNodesRef.current.push(modalNode);
-      return promiseHandler;
+      modalResultsRef.current.push(result);
+      return result.promiseHandler;
     },
   );
 
   useOnUnmount(() => {
-    for (const node of modalNodesRef.current) closeModal(node, false);
+    for (const result of modalResultsRef.current) {
+      const modalNode = result.modalNode;
+      if (modalNode) closeModal(modalNode, false);
+    }
     ModalManager.refresh();
-    modalNodesRef.current = [];
+    modalResultsRef.current = [];
   });
 
   return {
