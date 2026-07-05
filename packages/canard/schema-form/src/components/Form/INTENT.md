@@ -6,13 +6,13 @@
 
 ## Structure
 
-| 파일          | 역할                                                                         |
-| ------------- | ---------------------------------------------------------------------------- |
-| `Form.tsx`    | 핵심 폼 컴포넌트 (forwardRef + memo + ErrorBoundary)                         |
-| `type.ts`     | `FormProps`, `FormHandle`, `FormChildrenProps` 타입 정의                     |
-| `util.ts`     | `createChildren()` 헬퍼                                                      |
-| `index.ts`    | `Form` 네임스페이스 조립 및 public export                                    |
-| `components/` | `FormGroup`·`FormInput`·`FormLabel`·`FormError`·`FormRender`·`FormRootProxy` |
+| 파일          | 역할                                                                                                |
+| ------------- | --------------------------------------------------------------------------------------------------- |
+| `Form.tsx`    | 핵심 폼 컴포넌트 (forwardRef + memo + ErrorBoundary)                                                |
+| `type.ts`     | `FormProps`, `FormHandle`, `FormChildrenProps` 타입 정의                                            |
+| `util.ts`     | `createChildren()` — 함수형 children을 `FormChildrenRenderer`로 브리지                              |
+| `index.ts`    | `Form` 네임스페이스 조립 및 public export                                                           |
+| `components/` | `FormGroup`·`FormInput`·`FormLabel`·`FormError`·`FormRender`·`FormRootProxy`·`FormChildrenRenderer` |
 
 ## Conventions
 
@@ -20,7 +20,7 @@
 - `Form` = `BaseForm` + `{ Render, Group, Label, Input, Error }` 네임스페이스
 - `FormHandle` ref로 명령형 API 제공: `focus`, `select`, `reset`, `validate`, `submit`, `setValue`, `getValue`, `getErrors`, `getAttachedFilesMap`
 - Provider 중첩 순서: `WorkspaceContext → FormTypeInputsContext → FormTypeRendererContext → InputControlContext → RootNodeContext → FormRootProxy`
-- `children`은 ReactNode 또는 `(props: FormChildrenProps) => ReactNode` 렌더 함수 모두 지원
+- `children`은 ReactNode 또는 `(props: FormChildrenProps) => ReactNode` 렌더 함수 모두 지원 — 함수형은 `FormChildrenRenderer`가 트래커(`useSchemaNodeTracker`)로 재실행 구동
 - `ValidationError`는 submit 시 검증 실패 전용 에러 클래스
 
 ## Boundaries
@@ -46,5 +46,5 @@
 
 ## Dependencies
 
-- 내부: `@/schema-form/providers`(5개 Provider), `@/schema-form/core`(`SchemaNode`, `NodeEventType`, `InferSchemaNode`), `@/schema-form/errors`(`ValidationError`), `@/schema-form/helpers/jsonSchema`(`preprocessSchema`), `@/schema-form/helpers/error`(`formatSchemaValidationFailedError`)
-- 외부: `@winglet/react-utils/hoc`(`withErrorBoundaryForwardRef`), `@winglet/react-utils/hook`(`useHandle`·`useMemorize`·`useReference`·`useVersion`), `@winglet/common-utils/function`(`getTrackableHandler`)
+- 내부: `@/schema-form/providers`(5개 Provider + `useRootNodeContext`), `@/schema-form/core`(`SchemaNode`, `NodeEventType`, `InferSchemaNode`), `@/schema-form/hooks`(`useSchemaNodeTracker`), `@/schema-form/errors`(`ValidationError`), `@/schema-form/helpers/jsonSchema`(`preprocessSchema`), `@/schema-form/helpers/error`(`formatSchemaValidationFailedError`)
+- 외부: `@winglet/react-utils/hoc`(`withErrorBoundaryForwardRef`), `@winglet/react-utils/hook`(`useHandle`·`useMemorize`·`useVersion`), `@winglet/common-utils/function`(`getTrackableHandler`)

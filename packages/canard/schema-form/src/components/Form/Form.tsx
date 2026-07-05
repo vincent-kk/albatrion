@@ -5,7 +5,6 @@ import {
   forwardRef,
   memo,
   useCallback,
-  useEffect,
   useImperativeHandle,
   useMemo,
   useRef,
@@ -15,12 +14,7 @@ import {
 import { getTrackableHandler } from '@winglet/common-utils/function';
 import { clone } from '@winglet/common-utils/object';
 import { withErrorBoundaryForwardRef } from '@winglet/react-utils/hoc';
-import {
-  useHandle,
-  useMemorize,
-  useReference,
-  useVersion,
-} from '@winglet/react-utils/hook';
+import { useHandle, useMemorize, useVersion } from '@winglet/react-utils/hook';
 
 import type { Fn, Parameter } from '@aileron/declare';
 
@@ -49,11 +43,6 @@ import type {
 import { FormRootProxy } from './components/FormRootProxy';
 import type { FormHandle, FormProps } from './type';
 import { createChildren } from './util';
-
-const UPDATE_CHILDREN_MASK =
-  NodeEventType.UpdateError |
-  NodeEventType.RequestRefresh |
-  NodeEventType.RequestRemount;
 
 const FormInner = <
   Schema extends JsonSchema,
@@ -96,8 +85,9 @@ const FormInner = <
   const defaultValue = useMemorize(() => clone(inputDefaultValue), [version]);
 
   const [rootNode, setRootNode] = useState<Node>();
-  const [children, setChildren] = useState<ReactNode>(
-    createChildren(ChildComponent, jsonSchema),
+  const children = useMemo(
+    () => createChildren(ChildComponent, jsonSchema),
+    [ChildComponent, jsonSchema],
   );
   const [showError, setShowError] = useState(inputShowError);
 
@@ -137,23 +127,6 @@ const FormInner = <
     handleChange(rootNode.value as Value);
     rootNode.validate().then((errors) => handleValidate(errors));
   }) as Fn<[SchemaNode], void>;
-
-  const ChildComponentRef = useReference(ChildComponent);
-  useEffect(() => {
-    if (!rootNode) return;
-    const unsubscribe = rootNode.subscribe(({ type }) => {
-      if (type & UPDATE_CHILDREN_MASK)
-        setChildren(
-          createChildren(ChildComponentRef.current, jsonSchema, rootNode),
-        );
-    });
-    return unsubscribe;
-  }, [ChildComponentRef, jsonSchema, rootNode]);
-
-  useEffect(() => {
-    if (!rootNode) return;
-    setChildren(createChildren(ChildComponent, jsonSchema, rootNode));
-  }, [ChildComponent, jsonSchema, rootNode]);
 
   useImperativeHandle(
     ref,
