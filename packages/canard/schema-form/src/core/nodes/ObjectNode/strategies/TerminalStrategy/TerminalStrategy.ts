@@ -54,7 +54,6 @@ export class TerminalStrategy implements ObjectNodeStrategy {
     const previous = this.__value__ ? { ...this.__value__ } : this.__value__;
     const current = this.__parseValue__(input, normalize);
 
-    // @ts-expect-error [internal] equals delegation
     if (retain && host.__equals__(previous, current)) return;
     this.__value__ = current;
 
@@ -147,7 +146,6 @@ export class TerminalStrategy implements ObjectNodeStrategy {
       getObjectDefaultValue(jsonSchema, host.defaultValue),
     );
 
-    // @ts-expect-error [internal] setDefaultValue delegation
     host.__setDefaultValue__(defaultValue);
     this.__emitChange__(defaultValue);
   }

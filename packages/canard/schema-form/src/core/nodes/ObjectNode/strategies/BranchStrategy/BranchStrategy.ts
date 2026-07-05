@@ -136,7 +136,6 @@ export class BranchStrategy implements ObjectNodeStrategy {
       this.__propagate__(current, draft, replace, option);
     if (option & SetValueOption.Refresh)
       host.publish(NodeEventType.RequestRefresh);
-    // @ts-expect-error [internal] computed property update
     if (option & SetValueOption.Isolate) host.__updateComputedProperties__();
     if (option & SetValueOption.PublishUpdateEvent)
       host.publish(
@@ -166,7 +165,6 @@ export class BranchStrategy implements ObjectNodeStrategy {
     if (draft === undefined) return undefined;
     if (draft === null) return nullable ? null : {};
     if (replace || base == null) return this.__processValue__(draft, normalize);
-    // @ts-expect-error [internal] equals delegation
     if (isEmptyObject(draft) || this.__host__.__equals__(base, draft))
       return false;
     return this.__processValue__({ ...base, ...draft }, normalize);
@@ -358,7 +356,6 @@ export class BranchStrategy implements ObjectNodeStrategy {
       previous > -1 ? this.__oneOfChildNodeMapList__[previous] : null;
     if (previousOneOfChildNodeMap)
       for (const child of previousOneOfChildNodeMap.values()) {
-        // @ts-expect-error [internal] reset child node
         child.node.__reset__({ updateScoped: true });
       }
     if (oneOfChildNodeMap)
@@ -366,7 +363,6 @@ export class BranchStrategy implements ObjectNodeStrategy {
         const node = child.node;
         const previousNode = previousOneOfChildNodeMap?.get(node.name)?.node;
         const previousValue = this.__value__?.[node.name];
-        // @ts-expect-error [internal] reset child node
         node.__reset__({
           updateScoped: true,
           isolate: !preserveInitial && hasCompositionSchema(node),
@@ -384,7 +380,6 @@ export class BranchStrategy implements ObjectNodeStrategy {
             ? previousValue
             : undefined,
         });
-        // @ts-expect-error [internal] recursive computed property update
         node.__updateComputedPropertiesRecursively__();
       }
     this.__locked__ = false;
@@ -426,7 +421,6 @@ export class BranchStrategy implements ObjectNodeStrategy {
         const anyOfChildNodes =
           this.__anyOfChildNodeMapList__[disables[i]].values();
         for (const child of anyOfChildNodes) {
-          // @ts-expect-error [internal] reset child node
           child.node.__reset__({ updateScoped: true });
         }
       }
@@ -437,7 +431,6 @@ export class BranchStrategy implements ObjectNodeStrategy {
           this.__anyOfChildNodeMapList__[enables[i]].values();
         for (const child of anyOfChildNodes) {
           const node = child.node;
-          // @ts-expect-error [internal] reset child node
           node.__reset__({
             updateScoped: true,
             isolate: !preserveInitial && hasCompositionSchema(node),
@@ -445,7 +438,6 @@ export class BranchStrategy implements ObjectNodeStrategy {
             applyDerivedValue: true,
             fallbackValue: this.__value__?.[node.name],
           });
-          // @ts-expect-error [internal] recursive computed property update
           node.__updateComputedPropertiesRecursively__();
         }
       }
@@ -497,9 +489,7 @@ export class BranchStrategy implements ObjectNodeStrategy {
     );
     this.__expired__ = false;
     this.__processComputedProperties__(this.__draft__);
-    // @ts-expect-error [internal] validationEnabled delegation
     if (this.__host__.__validationEnabled__)
-      // @ts-expect-error [internal] enhancer adjustment
       this.__host__.__adjustEnhancer__(
         joinSegment(this.__host__.path, ENHANCED_KEY),
         this.__oneOfIndex__,
@@ -581,9 +571,7 @@ export class BranchStrategy implements ObjectNodeStrategy {
     let enabled = false;
     for (let i = 0, l = this.__subnodes__.length; i < l; i++) {
       const childNode = this.__subnodes__[i].node;
-      // @ts-expect-error [internal] child node initialization
       (childNode as AbstractNode).__initialize__(this.__host__);
-      // @ts-expect-error [internal] computeEnabled delegation
       if (!enabled && childNode.__computeManager__.isEnabled) enabled = true;
     }
     if (enabled) this.__prepareProcessComputedProperties__();
@@ -667,7 +655,7 @@ export class BranchStrategy implements ObjectNodeStrategy {
       );
     } else this.__propertyKeys__ = propertyKeys;
 
-    const handelChangeFactory =
+    const handleChangeFactory =
       (property: string): HandleChange =>
       (input, batched) => {
         if (this.__draft__ == null) this.__draft__ = {};
@@ -703,7 +691,7 @@ export class BranchStrategy implements ObjectNodeStrategy {
       conditionsMap,
       virtualReferencesMap,
       virtualReferenceFieldsMap,
-      handelChangeFactory,
+      handleChangeFactory,
       nodeFactory,
     );
 
@@ -725,7 +713,7 @@ export class BranchStrategy implements ObjectNodeStrategy {
       this.__childNodeMap__,
       this.__oneOfKeySetList__,
       this.__anyOfKeySet__,
-      handelChangeFactory,
+      handleChangeFactory,
       nodeFactory,
     );
 
@@ -737,7 +725,7 @@ export class BranchStrategy implements ObjectNodeStrategy {
       this.__childNodeMap__,
       this.__anyOfKeySetList__,
       this.__oneOfKeySet__,
-      handelChangeFactory,
+      handleChangeFactory,
       nodeFactory,
     );
 
@@ -753,7 +741,6 @@ export class BranchStrategy implements ObjectNodeStrategy {
     this.__locked__ = false;
 
     this.__emitChange__(SetValueOption.Default);
-    // @ts-expect-error [internal] setDefaultValue delegation
     this.__host__.__setDefaultValue__(this.__value__);
 
     this.__prepareCompositionChildren__();

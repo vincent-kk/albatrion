@@ -83,7 +83,6 @@ export class TerminalStrategy implements ArrayNodeStrategy {
     const previous = this.__value__ ? [...this.__value__] : this.__value__;
     const current = this.__parseValue__(input);
 
-    // @ts-expect-error [internal] equals delegation
     if (retain && host.__equals__(previous, current)) return;
     this.__value__ = current;
 
@@ -254,7 +253,6 @@ export class TerminalStrategy implements ArrayNodeStrategy {
     this.__locked__ = false;
 
     this.__emitChange__(this.__value__, FIRST_EMIT_CHANGE_OPTION);
-    // @ts-expect-error [internal] setDefaultValue delegation
     host.__setDefaultValue__(this.__value__);
   }
 }

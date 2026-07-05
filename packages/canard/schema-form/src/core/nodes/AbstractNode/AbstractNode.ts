@@ -172,7 +172,7 @@ export abstract class AbstractNode<
    * @param actor - The node requesting the change (must be parent or self)
    * @internal Only the parent node or self can change the name.
    */
-  protected __setName__(this: AbstractNode, name: string, actor: SchemaNode) {
+  public __setName__(this: AbstractNode, name: string, actor: SchemaNode) {
     if (actor !== this.parentNode && actor !== this) return;
     this.__name__ = name;
     this.__escapedName__ = escapeSegment(name);
@@ -293,7 +293,7 @@ export abstract class AbstractNode<
    * @param defaultValue - The default value to set
    * @internal For use during construction or by inherited nodes.
    */
-  protected __setDefaultValue__(
+  public __setDefaultValue__(
     this: AbstractNode,
     defaultValue: Value | Nullish,
   ) {
@@ -361,7 +361,7 @@ export abstract class AbstractNode<
    * @returns `true` if values are considered equal
    * @internal Can be overridden by subclasses for deep comparison.
    */
-  protected __equals__(
+  public __equals__(
     this: AbstractNode,
     left: Value | Nullish,
     right: Value | Nullish,
@@ -392,7 +392,7 @@ export abstract class AbstractNode<
   }
 
   /** @internal Manager for computed property evaluation and caching. */
-  private __computeManager__: ComputedProperties;
+  public __computeManager__: ComputedProperties;
 
   /**
    * @internal Whether this node belongs to the active `oneOf`/`anyOf` branch.
@@ -526,7 +526,7 @@ export abstract class AbstractNode<
    * @param reset - Whether to reset the node when `active` state changes (default: `true`)
    * @internal Publishes `UpdateComputedProperties` event after recalculation.
    */
-  protected __updateComputedProperties__(
+  public __updateComputedProperties__(
     this: AbstractNode,
     reset: boolean = true,
   ) {
@@ -544,7 +544,7 @@ export abstract class AbstractNode<
    * @param includeInactive - Whether to include inactive child nodes (default: `true`)
    * @internal Used for bulk computed property recalculation.
    */
-  protected __updateComputedPropertiesRecursively__(
+  public __updateComputedPropertiesRecursively__(
     this: AbstractNode,
     includeSelf: boolean = false,
     includeInactive: boolean = true,
@@ -553,7 +553,6 @@ export abstract class AbstractNode<
     const list = includeInactive ? this.subnodes : this.children;
     if (!list?.length) return;
     for (let i = 0, e = list[0], l = list.length; i < l; i++, e = list[i]) {
-      // @ts-expect-error [internal] update computed properties recursively
       e.node.__updateComputedPropertiesRecursively__(true, includeInactive);
     }
   }
@@ -668,7 +667,7 @@ export abstract class AbstractNode<
    * @internal Whether validation is enabled for this form.
    * @remarks Delegates to root node for child nodes.
    */
-  protected get __validationEnabled__(): boolean {
+  public get __validationEnabled__(): boolean {
     if (this.isRoot) return this.__validationManager__?.enabled === true;
     else return this.rootNode.__validationManager__?.enabled === true;
   }
@@ -711,11 +710,7 @@ export abstract class AbstractNode<
    * @param value - Value to set (typically from virtual/computed fields)
    * @internal Delegates to root node for child nodes.
    */
-  protected __adjustEnhancer__(
-    this: AbstractNode,
-    pointer: string,
-    value: any,
-  ) {
+  public __adjustEnhancer__(this: AbstractNode, pointer: string, value: any) {
     if (this.isRoot) setValue(this.__enhancer__, pointer, value);
     else (this.rootNode as AbstractNode).__adjustEnhancer__(pointer, value);
   }
@@ -747,7 +742,7 @@ export abstract class AbstractNode<
    * @returns `true` if unchanged (no publish needed), `false` if changed
    * @internal Publishes `UpdateGlobalError` event when errors change.
    */
-  protected __setGlobalErrors__(this: AbstractNode, errors: ValidationError[]) {
+  public __setGlobalErrors__(this: AbstractNode, errors: ValidationError[]) {
     if (this.__errorManager__.setGlobalErrors(errors)) return true;
     this.publish(
       EventType.UpdateGlobalError,
@@ -846,7 +841,7 @@ export abstract class AbstractNode<
    * @param actor - The node requesting cleanup (must be parent or self if root)
    * @internal Called during node destruction or reinitialization.
    */
-  protected __cleanUp__(this: AbstractNode, actor?: SchemaNode) {
+  public __cleanUp__(this: AbstractNode, actor?: SchemaNode) {
     if (!this.isRoot && actor !== this.parentNode) return;
     this.__eventManager__.cleanUp();
   }
@@ -975,7 +970,7 @@ export abstract class AbstractNode<
    * @returns `true` if initialization occurred, `false` if skipped
    * @internal Sets up dependency subscriptions, `injectTo` handlers, and publishes `Initialized` event.
    */
-  protected __initialize__(this: AbstractNode, actor?: SchemaNode) {
+  public __initialize__(this: AbstractNode, actor?: SchemaNode) {
     if (this.__initialized__ || (!this.isRoot && actor !== this.parentNode))
       return false;
     this.__prepareUpdateDependencies__();
@@ -997,7 +992,7 @@ export abstract class AbstractNode<
    * @param options.applyDerivedValue - Apply computed derived value if available
    * @internal Value priority: `inputValue` > `derivedValue` > `fallbackValue`/`defaultValue`
    */
-  protected __reset__(this: AbstractNode, options: ResetOptions<Value> = {}) {
+  public __reset__(this: AbstractNode, options: ResetOptions<Value> = {}) {
     if (options.updateScoped) this.__updateScoped__();
 
     let value: Value | Nullish;
