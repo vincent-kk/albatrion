@@ -71,9 +71,16 @@ export class ModalManager {
     ModalManager.__openHandler__ = handler;
     const entries = ModalManager.__prerenderList__;
     ModalManager.__prerenderList__ = [];
+    // Isolate flush failures per queued modal at the flush point itself: a
+    // single entry throwing must not abort the loop and silently drop the
+    // remaining queued modals (the list has already been cleared above).
     for (const entry of entries)
-      if (entry.dispatch) entry.dispatch();
-      else handler(entry.modal);
+      try {
+        if (entry.dispatch) entry.dispatch();
+        else handler(entry.modal);
+      } catch {
+        // per-entry isolation — the failing modal surfaces its own rejection
+      }
   }
 
   /** Attaches a flush-time dispatcher to a queued modal; no-op if not queued. */

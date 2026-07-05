@@ -130,6 +130,22 @@ describe('prerender flow (real ModalManager, no mocking)', () => {
     expect(created.length).toBe(0);
   });
 
+  it('마운트 전 cancel(): 큐에서 제거되고 cancel 값으로 resolve되어야 함 (useModal 언마운트 경로)', async () => {
+    const { modalNode, cancel, promiseHandler } = confirmHandler({
+      title: 'pre-mount-cancel',
+    });
+    expect(modalNode).toBeUndefined();
+    expect(ModalManager.prerender.length).toBe(1);
+
+    cancel();
+    expect(ModalManager.prerender.length).toBe(0);
+    await expect(promiseHandler).resolves.toBe(false);
+
+    // cancel 이후 openHandler를 설정해도 flush할 항목이 없어야 함 (orphan 방지)
+    const created = installOpenHandler();
+    expect(created.length).toBe(0);
+  });
+
   it('마운트 후 abort: closeModal 경로로 cancel 값이 resolve되어야 함', async () => {
     installOpenHandler();
     const controller = new AbortController();

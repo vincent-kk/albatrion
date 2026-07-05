@@ -19,7 +19,10 @@ export const useModal = (configuration?: OverridableHandleProps) => {
   // Handler results expose modalNode as a live getter, so modals queued
   // before the provider mounted are still reachable at cleanup time.
   const modalResultsRef = useRef<
-    Array<{ readonly modalNode: ModalNode | undefined }>
+    Array<{
+      readonly modalNode: ModalNode | undefined;
+      readonly cancel: () => void;
+    }>
   >([]);
   const baseArgsRef = useRef(configuration);
 
@@ -55,6 +58,9 @@ export const useModal = (configuration?: OverridableHandleProps) => {
     for (const result of modalResultsRef.current) {
       const modalNode = result.modalNode;
       if (modalNode) closeModal(modalNode, false);
+      // Still queued before the provider mounted: cancel the prerender entry so
+      // it does not orphan a queued modal and a forever-pending promise.
+      else result.cancel();
     }
     ModalManager.refresh();
     modalResultsRef.current = [];

@@ -9,8 +9,7 @@
 - `processAllOfSchema.ts` — 공개 함수 (진입점)
 - `index.ts` — barrel export
 - `utils/getCloneDepth/` — 스키마 타입별 복제 깊이 결정
-- `utils/getMergeSchemaHandler/` — 타입별 교집합 핸들러 선택
-- `utils/getMergeSchemaHandler/intersectSchema/` — 타입별 스키마 교집합 구현
+- `utils/getMergeSchemaHandler/`(+`intersectSchema/`) — 타입별 교집합 핸들러 선택 및 구현
 - `utils/validateCompatibility/` — allOf 스키마 타입 호환성 검증
 
 ## Conventions
@@ -29,7 +28,7 @@
 - 각 allOf 항목 병합 전 `validateCompatibility` 호출
 - 타입 비호환 시 `JsonSchemaError` throw (에러 무시 금지)
 - `getMergeSchemaHandler`가 `null`이면 병합 없이 원본 반환
-- allOf 항목에 폼 빌드 시 무시되는 키워드(`IGNORE_FIELDS`)가 있으면 `warnDevelopmentIssue`로 dev 경고 방출
+- allOf 항목에 무시되는 키워드(`IGNORE_FIELDS`)가 있으면 `warnDevelopmentIssue`로 dev 경고 방출
 
 ### Ask first
 
@@ -45,9 +44,5 @@
 
 ## Dependencies
 
-- `@winglet/common-utils/object` — `cloneLite`
-- `@/schema-form/errors` — `JsonSchemaError`
-- `@/schema-form/helpers/error` — `formatAllOfTypeRedefinitionError`, `formatAllOfIgnoredKeywordWarning`
-- `@/schema-form/helpers/warning` — `warnDevelopmentIssue`, `SCHEMA_FORM_WARNING`, `ALL_OF_KEYWORD_IGNORED_FOR_FORM`
-- `@/schema-form/types` — `JsonSchema`
-- `./utils/getCloneDepth`, `./utils/getMergeSchemaHandler`(+`IGNORE_FIELDS`), `./utils/validateCompatibility`
+- 외부: `@winglet/common-utils/object`(`cloneLite`)
+- 내부: `@/schema-form/errors`(`JsonSchemaError`), `@/schema-form/helpers/error`(`formatAllOfTypeRedefinitionError`, `formatAllOfIgnoredKeywordWarning`), `@/schema-form/helpers/warning`(`warnDevelopmentIssue`, `ALL_OF_KEYWORD_IGNORED_FOR_FORM`), `@/schema-form/types`(`JsonSchema`), `./utils/{getCloneDepth, getMergeSchemaHandler(+IGNORE_FIELDS), validateCompatibility}`

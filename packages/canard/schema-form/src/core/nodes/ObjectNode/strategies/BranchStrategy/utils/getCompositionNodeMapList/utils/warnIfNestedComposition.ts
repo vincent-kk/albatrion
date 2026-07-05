@@ -1,7 +1,6 @@
 import { formatNestedCompositionIgnoredWarning } from '@/schema-form/helpers/error';
 import {
   NESTED_COMPOSITION_IGNORED_FOR_FORM,
-  SCHEMA_FORM_WARNING,
   warnDevelopmentIssue,
 } from '@/schema-form/helpers/warning';
 import type { ObjectSchema } from '@/schema-form/types';
@@ -23,7 +22,7 @@ export const warnIfNestedComposition = (
         : undefined;
   if (nestedScope === undefined) return;
   warnDevelopmentIssue({
-    code: `${SCHEMA_FORM_WARNING}.${NESTED_COMPOSITION_IGNORED_FOR_FORM}`,
+    code: NESTED_COMPOSITION_IGNORED_FOR_FORM,
     message: formatNestedCompositionIgnoredWarning(
       scope,
       nestedScope,

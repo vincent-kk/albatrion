@@ -9,6 +9,7 @@ const style = `
   z-index: var(--z-index);
   pointer-events: none;
   overflow: hidden;
+}
 `;
 
 ModalManager.defineStyleSheet('presenter', style);

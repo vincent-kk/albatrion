@@ -31,6 +31,9 @@ export const dispatchModal = <Node extends ModalNode, Result>(
   { signal, mapResult, cancelResult }: DispatchModalOptions<Result>,
 ) => {
   let modalNode: Node | undefined;
+  // Cancels a still-queued (pre-mount) modal: drops it from the prerender queue
+  // and settles the promise as cancelled. No-op once the modal has flushed.
+  let cancel: Fn = () => {};
   const promiseHandler = new Promise<Result>((resolve, reject) => {
     let cleanupAbort: Fn | null = null;
     let settled = false;
@@ -42,6 +45,9 @@ export const dispatchModal = <Node extends ModalNode, Result>(
       resolve(mapResult(result));
     };
     modal.handleResolve = settle;
+    cancel = () => {
+      if (ModalManager.cancelPrerender(modal)) settle(cancelResult());
+    };
 
     const wire = (node: Node) => {
       modalNode = node;
@@ -97,5 +103,6 @@ export const dispatchModal = <Node extends ModalNode, Result>(
       return modalNode;
     },
     promiseHandler,
+    cancel,
   };
 };

@@ -799,6 +799,8 @@ Opens a prompt modal to receive input from the user.
 
 **Returns:** `Promise<T | null>` - Resolves to the input value on confirm, or null on cancel
 
+> **Upgrade note:** `prompt()` now types cancellation explicitly — the return is `Promise<T | null>` and the `disabled` callback receives `T | undefined`. Consumers that previously annotated these as non-null may hit new TypeScript errors on upgrade; the runtime behaviour (cancel resolves `null`) is unchanged.
+
 ```typescript
 // Example
 const value = await prompt<string>({
