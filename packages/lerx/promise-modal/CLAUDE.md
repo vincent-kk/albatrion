@@ -6,15 +6,15 @@
 
 ```bash
 yarn build             # ESM + CJS 빌드 + 타입 선언
-yarn test              # Vitest 테스트 (jsdom, development React)
+yarn test              # Vitest 테스트 (jsdom, development React) — 루트 vitest에 위임
 yarn test:prod         # 전체 스위트를 production React로 재실행 (*.prod.test.* 포함)
-yarn lint              # ESLint
+yarn lint              # ESLint (루트 바이너리 필요 시 `yarn run -T eslint` 사용)
 yarn storybook         # Storybook dev (port 6006)
 yarn size-limit        # 번들 크기 확인
 ```
 
-> vitest/eslint 바이너리는 루트 워크스페이스에서 제공됩니다. 패키지 디렉토리에서
-> 단독 실행 시 `yarn run -T vitest`, `yarn run -T eslint` 형태를 사용하세요.
+> test/test:prod 스크립트는 `yarn run -T`로 루트 워크스페이스의 vitest 바이너리에
+> 위임됩니다(빌드 도구 일원화 설계). 서브패키지 분리 시 devDependencies로 전환하세요.
 
 ## Claude Docs Injector
 
