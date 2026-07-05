@@ -12,7 +12,9 @@
   "include": [
     "src",
     "src/**/*.tsx?",
-    "coverage"
+    "coverage",
+    "stories/**/*.ts",
+    "stories/**/*.tsx"
   ],
   "exclude": [
     "node_modules",
