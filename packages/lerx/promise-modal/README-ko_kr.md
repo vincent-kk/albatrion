@@ -793,11 +793,11 @@ const result = await confirm({
 - props: `{ value: T; onChange: (value: T) => void }`
 - `defaultValue?`: 기본 값 (T)
   - `disabled?`: 확인 버튼을 비활성화할지 여부를 결정하는 함수
-- `(value: T) => boolean`
-- `returnOnCancel?`: 취소 시 기본 값을 반환할지 여부 (boolean)
+- `(value: T | undefined) => boolean`
+- `returnOnCancel?`: 취소 시 null 대신 현재 입력값을 반환할지 여부 (boolean)
 - `footer?`: 푸터 설정 (확인 모달과 유사)
 
-**반환 값:** `Promise<T>` - 입력 값으로 해결됩니다
+**반환 값:** `Promise<T | null>` - 확인 시 입력 값, 취소 시 null로 해결됩니다
 
 ```typescript
 // 예시

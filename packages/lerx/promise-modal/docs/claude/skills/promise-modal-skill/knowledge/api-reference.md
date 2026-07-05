@@ -118,10 +118,10 @@ const userInfo = await prompt<{ name: string; age: number }>({
 |------|------|------|
 | `Input` | `(props: PromptInputProps<T>) => ReactNode` | Input component (required) |
 | `defaultValue` | `T` | Default input value |
-| `disabled` | `(value: T) => boolean` | Condition to disable confirm button |
-| `returnOnCancel` | `boolean` | Whether to return default value on cancel |
+| `disabled` | `(value: T | undefined) => boolean` | Condition to disable confirm button |
+| `returnOnCancel` | `boolean` | If true, cancel resolves with the current input value instead of null |
 
-**Return Value**: `Promise<T>`
+**Return Value**: `Promise<T | null>` — resolves null on cancel
 
 ---
 

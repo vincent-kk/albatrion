@@ -6,11 +6,15 @@
 
 ```bash
 yarn build             # ESM + CJS 빌드 + 타입 선언
-yarn test              # Vitest 테스트 (jsdom)
+yarn test              # Vitest 테스트 (jsdom, development React)
+yarn test:prod         # 전체 스위트를 production React로 재실행 (*.prod.test.* 포함)
 yarn lint              # ESLint
 yarn storybook         # Storybook dev (port 6006)
 yarn size-limit        # 번들 크기 확인
 ```
+
+> vitest/eslint 바이너리는 루트 워크스페이스에서 제공됩니다. 패키지 디렉토리에서
+> 단독 실행 시 `yarn run -T vitest`, `yarn run -T eslint` 형태를 사용하세요.
 
 ## Claude Docs Injector
 
@@ -42,9 +46,11 @@ src/
 ```
 
 ## Key Design
+
 - **Promise API**: 모달 함수가 Promise 반환 → 사용자 인터랙션으로 resolve
 - **Singleton**: `ModalManager`가 전역 상태 관리
 - **Styling**: `@winglet/style-utils`로 런타임 CSS 주입 (polynomial hashing 스코핑)
 
 ## Dependencies
+
 `@winglet/common-utils`, `@winglet/react-utils`, `@winglet/style-utils`, React 18-19 (peer)
