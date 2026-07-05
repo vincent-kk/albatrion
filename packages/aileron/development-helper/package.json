@@ -29,7 +29,7 @@
   "scripts": {
     "build": "rollup -c && yarn build:types",
     "build:types": "node ../script/build/buildTypes.mjs",
-    "test": "vitest"
+    "test": "yarn run -T vitest"
   },
   "devDependencies": {
     "@types/react": "18.3.23",
