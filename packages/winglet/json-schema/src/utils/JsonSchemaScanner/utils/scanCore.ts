@@ -7,7 +7,7 @@ import type { UnknownSchema } from '@/json-schema/types/jsonSchema';
 import type { SchemaEntry } from '../type';
 import { getStackEntriesForNode } from './getStackEntriesForNode';
 import { isDefinitionSchema } from './isDefinitionSchema';
-import type { KeywordDescriptor } from './keywordDescriptors';
+import type { KeywordMap } from './keywordDescriptors';
 
 /**
  * Effect kinds yielded by {@link scanCore} to its driver. Each corresponds to a
@@ -42,7 +42,7 @@ export interface ScanConfig<
   maxDepth: number | undefined;
   cloneResolvedSchema: boolean;
   cacheResolvedReference: boolean;
-  keywords: readonly KeywordDescriptor[];
+  keywordMap: KeywordMap;
   resolves: Array<[path: string, schema: UnknownSchema]>;
   filter?: (entry: SchemaEntry<Schema>, context?: ContextType) => unknown;
   mutate?: (entry: SchemaEntry<Schema>, context?: ContextType) => unknown;
@@ -88,7 +88,7 @@ export function* scanCore<
     maxDepth,
     cloneResolvedSchema,
     cacheResolvedReference,
-    keywords,
+    keywordMap,
     resolves,
   } = config;
   const hasFilter = config.filter !== undefined;
@@ -215,7 +215,7 @@ export function* scanCore<
     if (descend && !(maxDepth !== undefined && entry.depth + 1 > maxDepth)) {
       const children = getStackEntriesForNode(
         entry,
-        keywords,
+        keywordMap,
       ) as SchemaEntry<Schema>[];
       const count = children.length;
       if (count > 0) {

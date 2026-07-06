@@ -6,6 +6,7 @@ import {
   DEFINITIONS,
   ITEMS,
   type KeywordDescriptor,
+  type KeywordKind,
   PREFIX_ITEMS,
   PROPERTIES,
 } from '../type';
@@ -55,3 +56,42 @@ export const EXTENDED_KEYWORDS: readonly KeywordDescriptor[] = [
   { keyword: 'unevaluatedItems', kind: 'schema' },
   { keyword: 'contentSchema', kind: 'schema' },
 ];
+
+/** A descriptor plus its position in the traversal order — the value stored in
+ * a {@link KeywordMap}. `order` restores descriptor order when a node carries
+ * more than one applicator keyword. */
+export interface OrderedKeywordDescriptor {
+  keyword: string;
+  kind: KeywordKind;
+  order: number;
+}
+
+/**
+ * keyword → descriptor lookup consumed per node. Iterating a node's own keys
+ * against this map is far cheaper than probing every descriptor against the
+ * node (which, for the common leaf, means many misses).
+ */
+export type KeywordMap = Map<string, OrderedKeywordDescriptor>;
+
+/**
+ * Builds a {@link KeywordMap} from an ordered descriptor list. Keywords are
+ * deduplicated (a later duplicate overrides an earlier one), so a table that
+ * re-declares a keyword traverses it once rather than repeatedly.
+ */
+export const buildKeywordMap = (
+  descriptors: readonly KeywordDescriptor[],
+): KeywordMap => {
+  const map: KeywordMap = new Map();
+  for (let i = 0, l = descriptors.length; i < l; i++) {
+    const descriptor = descriptors[i];
+    map.set(descriptor.keyword, {
+      keyword: descriptor.keyword,
+      kind: descriptor.kind,
+      order: i,
+    });
+  }
+  return map;
+};
+
+/** Precomputed map for the built-in vocabulary (the default, no-options path). */
+export const DEFAULT_KEYWORD_MAP: KeywordMap = buildKeywordMap(DEFAULT_KEYWORDS);

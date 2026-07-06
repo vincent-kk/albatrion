@@ -4,7 +4,11 @@ import { setValue } from '@winglet/json/pointer';
 import type { UnknownSchema } from '@/json-schema/types/jsonSchema';
 
 import type { JsonScannerOptionsAsync, SchemaVisitor } from '../type';
-import { DEFAULT_KEYWORDS } from '../utils/keywordDescriptors';
+import {
+  DEFAULT_KEYWORDS,
+  DEFAULT_KEYWORD_MAP,
+  buildKeywordMap,
+} from '../utils/keywordDescriptors';
 import { Effect, type ScanConfig, scanCore } from '../utils/scanCore';
 
 interface JsonSchemaScannerProps<Schema extends UnknownSchema, ContextType> {
@@ -330,9 +334,9 @@ export class JsonSchemaScannerAsync<
       maxDepth: options.maxDepth,
       cloneResolvedSchema: options.cloneResolvedSchema !== false,
       cacheResolvedReference: options.cacheResolvedReference === true,
-      keywords: options.additionalKeywords
-        ? DEFAULT_KEYWORDS.concat(options.additionalKeywords)
-        : DEFAULT_KEYWORDS,
+      keywordMap: options.additionalKeywords
+        ? buildKeywordMap(DEFAULT_KEYWORDS.concat(options.additionalKeywords))
+        : DEFAULT_KEYWORD_MAP,
       resolves: this.__resolves__,
       filter: options.filter,
       mutate: options.mutate,
