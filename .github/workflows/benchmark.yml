@@ -10,6 +10,15 @@ on:
       - "packages/winglet/json-schema/src/**"
       - "packages/winglet/json-schema/benchmark/**"
       - ".github/workflows/benchmark.yml"
+  pull_request:
+    branches: [master]
+    paths:
+      - "packages/canard/schema-form/src/**"
+      - "packages/canard/schema-form/bench/**"
+      - "packages/aileron/benchmark-form/src/**"
+      - "packages/winglet/json-schema/src/**"
+      - "packages/winglet/json-schema/benchmark/**"
+      - ".github/workflows/benchmark.yml"
   schedule:
     # 03:30 UTC nightly — outside peak GitHub Actions hours.
     - cron: "30 3 * * *"
@@ -21,8 +30,35 @@ on:
         default: "3"
 
 jobs:
+  changes:
+    name: detect changed packages
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
+    outputs:
+      schemaform: ${{ steps.filter.outputs.schemaform }}
+      jsonschema: ${{ steps.filter.outputs.jsonschema }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Path filter
+        uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            schemaform:
+              - 'packages/canard/schema-form/**'
+              - 'packages/aileron/benchmark-form/**'
+            jsonschema:
+              - 'packages/winglet/json-schema/src/**'
+              - 'packages/winglet/json-schema/benchmark/**'
+
   bench:
     name: schema-form benchmarks
+    # push/schedule/manual → always run; pull_request → only when schema-form / aileron changed.
+    needs: changes
+    if: ${{ github.event_name != 'pull_request' || needs.changes.outputs.schemaform == 'true' }}
     runs-on: ubuntu-latest
     timeout-minutes: 30
     permissions:
@@ -88,6 +124,9 @@ jobs:
 
   json-schema-bench:
     name: winglet/json-schema benchmarks
+    # push/schedule/manual → always run; pull_request → only when json-schema changed.
+    needs: changes
+    if: ${{ github.event_name != 'pull_request' || needs.changes.outputs.jsonschema == 'true' }}
     runs-on: ubuntu-latest
     timeout-minutes: 30
     permissions:
