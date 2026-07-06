@@ -4,244 +4,114 @@ import { JSONPointer as $, escapeSegment } from '@winglet/json/pointer';
 
 import type { Dictionary } from '@aileron/declare';
 
-import type { UnknownSchema } from '@/json-schema/types/jsonSchema';
-
-import type { DefinitionKeyword, ItemsKeyword, SchemaEntry } from '../type';
-import {
-  $DEFS,
-  ADDITIONAL_PROPERTIES,
-  COMPOSITION_KEYWORDS,
-  CONDITIONAL_KEYWORDS,
-  DEFINITIONS,
-  ITEMS,
-  PREFIX_ITEMS,
-  PROPERTIES,
-} from '../type';
+import type { SchemaEntry } from '../type';
+import { DEFAULT_KEYWORDS, type KeywordDescriptor } from './keywordDescriptors';
 
 /**
- * Returns the child nodes of a given node as an array of SchemaEntry.
- * Orders them properly so they can be added to the stack in reverse order for stack-based traversal.
+ * Returns the child nodes of a given node as an array of SchemaEntry, ordered
+ * so they can be pushed onto the traversal stack in reverse for DFS.
+ *
+ * The set and order of keywords descended into is driven by `descriptors`
+ * (defaults to {@link DEFAULT_KEYWORDS}); every child subschema is validated to
+ * be a non-null object before it is emitted, so boolean/primitive/`null`
+ * subschemas and malformed containers never produce garbage entries.
+ *
  * @param entry The schema entry to extract child nodes from
+ * @param descriptors The keyword traversal vocabulary (order is significant)
  * @returns Array of child schema entries
  */
 export const getStackEntriesForNode = <Entry extends SchemaEntry>(
   entry: Entry,
+  descriptors: readonly KeywordDescriptor[] = DEFAULT_KEYWORDS,
 ): Entry[] => {
   const { schema, path, dataPath, depth } = entry;
   const entries: Entry[] = [];
+  const childDepth = depth + 1;
 
-  if (hasOwnProperty(schema, $DEFS))
-    handleDefinitionsNode(schema, entries, path, dataPath, depth, $DEFS);
+  for (let d = 0, dl = descriptors.length; d < dl; d++) {
+    const keyword = descriptors[d].keyword;
+    if (!hasOwnProperty(schema, keyword)) continue;
+    const node = (schema as Dictionary)[keyword];
 
-  if (hasOwnProperty(schema, DEFINITIONS))
-    handleDefinitionsNode(schema, entries, path, dataPath, depth, DEFINITIONS);
-
-  if (
-    hasOwnProperty(schema, ADDITIONAL_PROPERTIES) &&
-    isObject(schema.additionalProperties)
-  )
-    handleAdditionalProperties(schema, entries, path, dataPath, depth);
-
-  handleConditionalNode(schema, entries, path, dataPath, depth);
-
-  handleCompositionNode(schema, entries, path, dataPath, depth);
-
-  if (hasOwnProperty(schema, PREFIX_ITEMS))
-    handleArrayItems(schema, entries, path, dataPath, depth, PREFIX_ITEMS);
-
-  if (hasOwnProperty(schema, ITEMS))
-    handleArrayItems(schema, entries, path, dataPath, depth, ITEMS);
-
-  if (hasOwnProperty(schema, PROPERTIES))
-    handleObjectProperties(schema, entries, path, dataPath, depth);
+    switch (descriptors[d].kind) {
+      case 'schema': {
+        if (isObject(node))
+          entries.push({
+            schema: node,
+            path: path + $.Separator + keyword,
+            keyword,
+            dataPath,
+            depth: childDepth,
+          } as unknown as Entry);
+        break;
+      }
+      case 'schemaList': {
+        if (!isArray(node)) break;
+        for (let i = 0, l = node.length; i < l; i++) {
+          const child = node[i];
+          if (!isObject(child)) continue;
+          entries.push({
+            schema: child,
+            path: path + $.Separator + keyword + $.Separator + i,
+            keyword,
+            variant: i,
+            dataPath,
+            depth: childDepth,
+          } as unknown as Entry);
+        }
+        break;
+      }
+      case 'schemaMap':
+      case 'objectMap': {
+        if (!isObject(node)) break;
+        const contributesDataPath = descriptors[d].kind === 'objectMap';
+        const map = node as Dictionary;
+        const keys = Object.keys(map);
+        for (let i = 0, l = keys.length; i < l; i++) {
+          const key = keys[i];
+          const child = map[key];
+          if (!isObject(child)) continue;
+          const escapedKey = escapeSegment(key);
+          entries.push({
+            schema: child,
+            path: path + $.Separator + keyword + $.Separator + escapedKey,
+            keyword,
+            variant: key,
+            dataPath: contributesDataPath
+              ? dataPath + $.Separator + escapedKey
+              : dataPath,
+            depth: childDepth,
+          } as unknown as Entry);
+        }
+        break;
+      }
+      case 'items': {
+        if (isArray(node)) {
+          for (let i = 0, l = node.length; i < l; i++) {
+            const child = node[i];
+            if (!isObject(child)) continue;
+            entries.push({
+              schema: child,
+              path: path + $.Separator + keyword + $.Separator + i,
+              keyword,
+              variant: i,
+              dataPath: dataPath + $.Separator + i,
+              depth: childDepth,
+            } as unknown as Entry);
+          }
+        } else if (isObject(node)) {
+          entries.push({
+            schema: node,
+            path: path + $.Separator + keyword,
+            keyword,
+            dataPath,
+            depth: childDepth,
+          } as unknown as Entry);
+        }
+        break;
+      }
+    }
+  }
 
   return entries;
-};
-
-/**
- * Processes child schemas of definitions node and adds them to stack entries.
- * @param schema Schema object
- * @param entries Array of stack entries to add to
- * @param path Current path
- * @param dataPath Current data path
- * @param depth Current depth
- * @param fieldName Field name (definitions or $defs)
- */
-const handleDefinitionsNode = (
-  schema: UnknownSchema,
-  entries: SchemaEntry[],
-  path: string,
-  dataPath: string,
-  depth: number,
-  fieldName: DefinitionKeyword,
-) => {
-  const definitions = schema[fieldName];
-  const keys = Object.keys(definitions);
-  for (let i = 0, l = keys.length; i < l; i++) {
-    const key = keys[i];
-    entries.push({
-      schema: definitions[key],
-      path: path + $.Separator + fieldName + $.Separator + key,
-      keyword: fieldName,
-      variant: key,
-      dataPath,
-      depth: depth + 1,
-    });
-  }
-};
-
-/**
- * Processes child schemas of conditional nodes (not, if, then, else) and adds them to stack entries.
- * @param schema Schema object
- * @param entries Array of stack entries to add to
- * @param path Current path
- * @param dataPath Current data path
- * @param depth Current depth
- */
-const handleConditionalNode = (
-  schema: UnknownSchema,
-  entries: SchemaEntry[],
-  path: string,
-  dataPath: string,
-  depth: number,
-) => {
-  for (let i = 0, l = CONDITIONAL_KEYWORDS.length; i < l; i++) {
-    const keyword = CONDITIONAL_KEYWORDS[i];
-    const conditionalNode = schema[keyword];
-    if (!conditionalNode || typeof conditionalNode !== 'object') continue;
-    entries.push({
-      schema: conditionalNode,
-      path: path + $.Separator + keyword,
-      keyword,
-      dataPath,
-      depth: depth + 1,
-    });
-  }
-};
-
-/**
- * Processes child schemas of composition nodes (allOf, anyOf, oneOf) and adds them to stack entries.
- * @param schema Schema object
- * @param entries Array of stack entries to add to
- * @param path Current path
- * @param dataPath Current data path
- * @param depth Current depth
- */
-const handleCompositionNode = (
-  schema: UnknownSchema,
-  entries: SchemaEntry[],
-  path: string,
-  dataPath: string,
-  depth: number,
-) => {
-  for (let i = 0, il = COMPOSITION_KEYWORDS.length; i < il; i++) {
-    const keyword = COMPOSITION_KEYWORDS[i];
-    const compositionNode = schema[keyword];
-    if (!compositionNode || !isArray(compositionNode)) continue;
-    for (let j = 0, jl = compositionNode.length; j < jl; j++) {
-      entries.push({
-        schema: compositionNode[j],
-        path: path + $.Separator + keyword + $.Separator + j,
-        keyword,
-        variant: j,
-        dataPath,
-        depth: depth + 1,
-      });
-    }
-  }
-};
-
-/**
- * Processes the child schema of additionalProperties node and adds it to stack entries.
- * @param schema Schema object
- * @param entries Array of stack entries to add to
- * @param path Current path
- * @param dataPath Current data path
- * @param depth Current depth
- */
-const handleAdditionalProperties = (
-  schema: UnknownSchema,
-  entries: SchemaEntry[],
-  path: string,
-  dataPath: string,
-  depth: number,
-) => {
-  entries.push({
-    schema: schema.additionalProperties,
-    path: path + $.Separator + ADDITIONAL_PROPERTIES,
-    keyword: ADDITIONAL_PROPERTIES,
-    dataPath,
-    depth: depth + 1,
-  });
-};
-
-/**
- * Processes the items node of array type schema and adds it to stack entries.
- * @param schema Schema object
- * @param entries Array of stack entries to add to
- * @param path Current path
- * @param dataPath Current data path
- * @param depth Current depth
- * @param fieldName Field name (items or prefixItems)
- */
-const handleArrayItems = (
-  schema: UnknownSchema,
-  entries: SchemaEntry[],
-  path: string,
-  dataPath: string,
-  depth: number,
-  fieldName: ItemsKeyword,
-) => {
-  const items = schema[fieldName];
-  if (isArray(items)) {
-    for (let i = 0, l = items.length; i < l; i++) {
-      entries.push({
-        schema: items[i],
-        path: path + $.Separator + fieldName + $.Separator + i,
-        keyword: fieldName,
-        variant: i,
-        dataPath: dataPath + $.Separator + i,
-        depth: depth + 1,
-      });
-    }
-  } else {
-    entries.push({
-      schema: items,
-      path: path + $.Separator + fieldName,
-      keyword: fieldName,
-      dataPath,
-      depth: depth + 1,
-    });
-  }
-};
-
-/**
- * Processes the properties node of object type schema and adds it to stack entries.
- * @param schema Schema object
- * @param entries Array of stack entries to add to
- * @param path Current path
- * @param dataPath Current data path
- * @param depth Current depth
- */
-const handleObjectProperties = (
-  schema: UnknownSchema,
-  entries: SchemaEntry[],
-  path: string,
-  dataPath: string,
-  depth: number,
-) => {
-  const properties = schema.properties as Dictionary;
-  const keys = Object.keys(properties);
-  for (let i = 0, l = keys.length; i < l; i++) {
-    const key = keys[i];
-    const escapedKey = escapeSegment(key);
-    entries.push({
-      schema: properties[key],
-      path: path + $.Separator + PROPERTIES + $.Separator + escapedKey,
-      keyword: PROPERTIES,
-      variant: key,
-      dataPath: dataPath + $.Separator + escapedKey,
-      depth: depth + 1,
-    });
-  }
 };

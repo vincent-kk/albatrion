@@ -4,3 +4,4 @@ export type {
   SchemaVisitor,
   SchemaEntry,
 } from '../type';
+export type { KeywordDescriptor, KeywordKind } from '../type';

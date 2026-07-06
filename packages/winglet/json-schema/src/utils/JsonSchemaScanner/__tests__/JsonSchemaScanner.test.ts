@@ -725,6 +725,7 @@ describe('JsonSchemaScannerAsync', () => {
           dataPath: '/ref',
           depth: 1,
           hasReference: true,
+          referenceSkipped: 'unresolved',
           keyword: 'properties',
           path: '#/properties/ref',
           schema: {
