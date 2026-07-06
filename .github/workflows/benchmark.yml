@@ -7,6 +7,8 @@ on:
       - "packages/canard/schema-form/src/**"
       - "packages/canard/schema-form/bench/**"
       - "packages/aileron/benchmark-form/src/**"
+      - "packages/winglet/json-schema/src/**"
+      - "packages/winglet/json-schema/benchmark/**"
       - ".github/workflows/benchmark.yml"
   schedule:
     # 03:30 UTC nightly — outside peak GitHub Actions hours.
@@ -83,3 +85,41 @@ jobs:
             packages/aileron/benchmark-form/results/compare-*.json
             packages/canard/schema-form/bench/.results/*.json
           retention-days: 30
+
+  json-schema-bench:
+    name: winglet/json-schema benchmarks
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+    env:
+      # node 20 matches the repo's .nvmrc.
+      NODE_VERSION: "20.19.5"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Install
+        run: yarn install --immutable
+
+      - name: json-schema build (workspace deps)
+        # verify.mjs / equivalence.mjs import the BUILT package via its own
+        # subpath exports (@winglet/json-schema/scanner, /async-scanner), so
+        # dist/ must exist first. -Rt --from builds json-schema plus its
+        # workspace deps (@winglet/common-utils, @winglet/json) in topological
+        # order.
+        run: yarn workspaces foreach -Rt --from '@winglet/json-schema' run build
+
+      - name: json-schema scanner verify (correctness invariants)
+        run: yarn workspace @winglet/json-schema exec node benchmark/verify.mjs
+
+      - name: json-schema scanner equivalence (behaviour snapshot)
+        run: yarn workspace @winglet/json-schema exec node benchmark/equivalence.mjs

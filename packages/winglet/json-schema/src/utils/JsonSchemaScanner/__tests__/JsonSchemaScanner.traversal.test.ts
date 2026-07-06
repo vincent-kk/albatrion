@@ -102,6 +102,19 @@ describe('JsonSchemaScanner - traversal strategy invariants', () => {
     expect(paths.filter((p) => p === '#/properties/a')).toHaveLength(1);
   });
 
+  it('R-D2: re-declaring a built-in keyword with a DIFFERENT kind overrides the built-in (documented contract, not purely additive)', () => {
+    // `properties` is built in as kind 'objectMap' (one child per key, each
+    // contributing a dataPath segment). Re-declaring it as kind 'schema'
+    // makes the consumer entry win — the whole `properties` map is now
+    // walked as a single subschema, so the per-key child is never produced.
+    const paths = visitedPaths(
+      { type: 'object', properties: { a: { type: 'string' } } },
+      { additionalKeywords: [{ keyword: 'properties', kind: 'schema' }] },
+    );
+    expect(paths).toContain('#/properties');
+    expect(paths).not.toContain('#/properties/a');
+  });
+
   it('R-E: opted-in extended keywords are ordered after the built-in ones', () => {
     const order = depth1Keywords(
       {

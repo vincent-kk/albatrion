@@ -15,6 +15,128 @@ const byOrder = (a: OrderedKeywordDescriptor, b: OrderedKeywordDescriptor) =>
   a.order - b.order;
 
 /**
+ * Pushes the single subschema of a `schema`-kind keyword (`not`, `if`,
+ * `additionalProperties`, …) onto `entries` when it is a valid object node.
+ */
+const pushSchemaChild = <Entry extends SchemaEntry>(
+  entries: Entry[],
+  node: unknown,
+  keyword: string,
+  path: string,
+  dataPath: string,
+  childDepth: number,
+): void => {
+  if (isObject(node))
+    entries.push({
+      schema: node,
+      path: path + $.Separator + keyword,
+      keyword,
+      dataPath,
+      depth: childDepth,
+    } as unknown as Entry);
+};
+
+/**
+ * Pushes each object element of a `schemaList`-kind keyword (`allOf`, `anyOf`,
+ * `oneOf`); the array index becomes both a `path` segment and the `variant`.
+ */
+const pushSchemaListChildren = <Entry extends SchemaEntry>(
+  entries: Entry[],
+  node: unknown,
+  keyword: string,
+  path: string,
+  dataPath: string,
+  childDepth: number,
+): void => {
+  if (!isArray(node)) return;
+  for (let i = 0, l = node.length; i < l; i++) {
+    const child = node[i];
+    if (!isObject(child)) continue;
+    entries.push({
+      schema: child,
+      path: path + $.Separator + keyword + $.Separator + i,
+      keyword,
+      variant: i,
+      dataPath,
+      depth: childDepth,
+    } as unknown as Entry);
+  }
+};
+
+/**
+ * Pushes each object value of a map-kind keyword. `schemaMap` (`$defs`,
+ * `definitions`, …) and `objectMap` (`properties`) differ only in whether the
+ * RFC-6901-escaped key also contributes a `dataPath` segment, selected by
+ * `contributesDataPath`.
+ */
+const pushMapChildren = <Entry extends SchemaEntry>(
+  entries: Entry[],
+  node: unknown,
+  keyword: string,
+  path: string,
+  dataPath: string,
+  childDepth: number,
+  contributesDataPath: boolean,
+): void => {
+  if (!isObject(node)) return;
+  const map = node as Dictionary;
+  const keys = Object.keys(map);
+  for (let i = 0, l = keys.length; i < l; i++) {
+    const key = keys[i];
+    const child = map[key];
+    if (!isObject(child)) continue;
+    const escapedKey = escapeSegment(key);
+    entries.push({
+      schema: child,
+      path: path + $.Separator + keyword + $.Separator + escapedKey,
+      keyword,
+      variant: key,
+      dataPath: contributesDataPath
+        ? dataPath + $.Separator + escapedKey
+        : dataPath,
+      depth: childDepth,
+    } as unknown as Entry);
+  }
+};
+
+/**
+ * Pushes the children of an `items`-kind keyword (`items`, `prefixItems`):
+ * tuple form (array — each element adds its index to both `path` and
+ * `dataPath`) or single-subschema form (object).
+ */
+const pushItemsChildren = <Entry extends SchemaEntry>(
+  entries: Entry[],
+  node: unknown,
+  keyword: string,
+  path: string,
+  dataPath: string,
+  childDepth: number,
+): void => {
+  if (isArray(node)) {
+    for (let i = 0, l = node.length; i < l; i++) {
+      const child = node[i];
+      if (!isObject(child)) continue;
+      entries.push({
+        schema: child,
+        path: path + $.Separator + keyword + $.Separator + i,
+        keyword,
+        variant: i,
+        dataPath: dataPath + $.Separator + i,
+        depth: childDepth,
+      } as unknown as Entry);
+    }
+  } else if (isObject(node)) {
+    entries.push({
+      schema: node,
+      path: path + $.Separator + keyword,
+      keyword,
+      dataPath,
+      depth: childDepth,
+    } as unknown as Entry);
+  }
+};
+
+/**
  * Returns the child nodes of a given node as an array of SchemaEntry, ordered
  * so they can be pushed onto the traversal stack in reverse for DFS.
  *
@@ -63,82 +185,34 @@ export const getStackEntriesForNode = <Entry extends SchemaEntry>(
     const node = dict[keyword];
 
     switch (kind) {
-      case 'schema': {
-        if (isObject(node))
-          entries.push({
-            schema: node,
-            path: path + $.Separator + keyword,
-            keyword,
-            dataPath,
-            depth: childDepth,
-          } as unknown as Entry);
+      case 'schema':
+        pushSchemaChild(entries, node, keyword, path, dataPath, childDepth);
         break;
-      }
-      case 'schemaList': {
-        if (!isArray(node)) break;
-        for (let i = 0, l = node.length; i < l; i++) {
-          const child = node[i];
-          if (!isObject(child)) continue;
-          entries.push({
-            schema: child,
-            path: path + $.Separator + keyword + $.Separator + i,
-            keyword,
-            variant: i,
-            dataPath,
-            depth: childDepth,
-          } as unknown as Entry);
-        }
+      case 'schemaList':
+        pushSchemaListChildren(
+          entries,
+          node,
+          keyword,
+          path,
+          dataPath,
+          childDepth,
+        );
         break;
-      }
       case 'schemaMap':
-      case 'objectMap': {
-        if (!isObject(node)) break;
-        const contributesDataPath = kind === 'objectMap';
-        const map = node as Dictionary;
-        const keys = Object.keys(map);
-        for (let i = 0, l = keys.length; i < l; i++) {
-          const key = keys[i];
-          const child = map[key];
-          if (!isObject(child)) continue;
-          const escapedKey = escapeSegment(key);
-          entries.push({
-            schema: child,
-            path: path + $.Separator + keyword + $.Separator + escapedKey,
-            keyword,
-            variant: key,
-            dataPath: contributesDataPath
-              ? dataPath + $.Separator + escapedKey
-              : dataPath,
-            depth: childDepth,
-          } as unknown as Entry);
-        }
+      case 'objectMap':
+        pushMapChildren(
+          entries,
+          node,
+          keyword,
+          path,
+          dataPath,
+          childDepth,
+          kind === 'objectMap',
+        );
         break;
-      }
-      case 'items': {
-        if (isArray(node)) {
-          for (let i = 0, l = node.length; i < l; i++) {
-            const child = node[i];
-            if (!isObject(child)) continue;
-            entries.push({
-              schema: child,
-              path: path + $.Separator + keyword + $.Separator + i,
-              keyword,
-              variant: i,
-              dataPath: dataPath + $.Separator + i,
-              depth: childDepth,
-            } as unknown as Entry);
-          }
-        } else if (isObject(node)) {
-          entries.push({
-            schema: node,
-            path: path + $.Separator + keyword,
-            keyword,
-            dataPath,
-            depth: childDepth,
-          } as unknown as Entry);
-        }
+      case 'items':
+        pushItemsChildren(entries, node, keyword, path, dataPath, childDepth);
         break;
-      }
     }
   }
 

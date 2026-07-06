@@ -84,18 +84,11 @@ export function* scanCore<
   rootSchema: Schema,
   config: ScanConfig<Schema, ContextType>,
 ): Generator<ScanRequest<Schema>, void, unknown> {
-  const {
-    maxDepth,
-    cloneResolvedSchema,
-    cacheResolvedReference,
-    keywordMap,
-    resolves,
-  } = config;
+  const { maxDepth, cacheResolvedReference, keywordMap, resolves } = config;
   const hasFilter = config.filter !== undefined;
   const hasMutate = config.mutate !== undefined;
   const hasEnter = config.enter !== undefined;
   const hasExit = config.exit !== undefined;
-  const hasResolve = config.resolveReference !== undefined;
 
   const stack: Frame<Schema>[] = [
     {
@@ -170,46 +163,19 @@ export function* scanCore<
     let descend = true;
     const schema = entry.schema;
     if (isObject(schema) && typeof schema.$ref === 'string') {
-      const reference = schema.$ref;
-      if (visitedReference.has(reference)) {
-        entry.hasReference = true;
-        entry.referenceSkipped = 'cycle';
-        descend = false;
-      } else {
-        // `isDefinition` is only meaningful (and only computed) when a resolver
-        // exists — matching the original short-circuit. The resolve decision
-        // stays exactly `hasResolve && !isDefinitionSchema(path)`.
-        const isDefinition = hasResolve && isDefinitionSchema(entry.path);
-        let resolved: UnknownSchema | undefined;
-        if (hasResolve && !isDefinition) {
-          if (referenceCache !== undefined && referenceCache.has(reference)) {
-            resolved = referenceCache.get(reference);
-          } else {
-            request.type = Effect.Resolve;
-            request.entry = entry;
-            request.reference = reference;
-            resolved = (yield request) as UnknownSchema | undefined;
-            if (referenceCache !== undefined)
-              referenceCache.set(reference, resolved);
-          }
-        }
-        if (resolved) {
-          const inlined = cloneResolvedSchema
-            ? (clone(resolved) as UnknownSchema)
-            : resolved;
-          resolves.push([entry.path, inlined]);
-          entry.schema = inlined as Schema;
-          entry.referencePath = reference;
-          entry.referenceResolved = true;
-          visitedReference.add(reference);
-        } else {
-          entry.hasReference = true;
-          // 'definition' only when the node genuinely lives under $defs/definitions;
-          // a missing resolver or a resolver that returned nothing is 'unresolved'.
-          entry.referenceSkipped = isDefinition ? 'definition' : 'unresolved';
-          descend = false;
-        }
-      }
+      // The $ref block is delegated to an internal sub-generator via `yield*`,
+      // which is transparent to the driver: the SAME Effect.Resolve request
+      // (reusing the shared `request` object) is yielded in the SAME position,
+      // so single-pass/single-visit semantics and output are unchanged. The
+      // sub-generator returns whether to descend into this node's children.
+      descend = yield* resolveReferenceEffect(
+        entry,
+        schema.$ref,
+        config,
+        referenceCache,
+        visitedReference,
+        request,
+      );
     }
 
     if (descend && !(maxDepth !== undefined && entry.depth + 1 > maxDepth)) {
@@ -239,5 +205,66 @@ export function* scanCore<
     )
       visitedReference.delete(entry.referencePath);
     stack.pop();
+  }
+}
+
+/**
+ * `$ref` resolution effect for a single VISIT, extracted verbatim from
+ * {@link scanCore} to keep the engine's cyclomatic complexity in check.
+ *
+ * Delegated with `yield*`, so it is behaviourally identical to inlining: it
+ * yields the exact same {@link Effect.Resolve} request — reusing the shared
+ * `request` object, so no extra allocation — in the exact same sequence,
+ * mutates the same `entry` fields / `resolves` list / `referenceCache` /
+ * `visitedReference` set, and returns whether the caller should descend into
+ * this node's children (`false` for a cycle or an unresolved/definition ref,
+ * `true` when the ref was inlined or the node had no resolver work to do).
+ */
+function* resolveReferenceEffect<Schema extends UnknownSchema, ContextType>(
+  entry: SchemaEntry<Schema>,
+  reference: string,
+  config: ScanConfig<Schema, ContextType>,
+  referenceCache: Map<string, UnknownSchema | undefined> | undefined,
+  visitedReference: Set<string>,
+  request: ScanRequest<Schema>,
+): Generator<ScanRequest<Schema>, boolean, unknown> {
+  if (visitedReference.has(reference)) {
+    entry.hasReference = true;
+    entry.referenceSkipped = 'cycle';
+    return false;
+  }
+  // `isDefinition` is only meaningful (and only computed) when a resolver
+  // exists — matching the original short-circuit. The resolve decision
+  // stays exactly `hasResolve && !isDefinitionSchema(path)`.
+  const hasResolve = config.resolveReference !== undefined;
+  const isDefinition = hasResolve && isDefinitionSchema(entry.path);
+  let resolved: UnknownSchema | undefined;
+  if (hasResolve && !isDefinition) {
+    if (referenceCache !== undefined && referenceCache.has(reference)) {
+      resolved = referenceCache.get(reference);
+    } else {
+      request.type = Effect.Resolve;
+      request.entry = entry;
+      request.reference = reference;
+      resolved = (yield request) as UnknownSchema | undefined;
+      if (referenceCache !== undefined) referenceCache.set(reference, resolved);
+    }
+  }
+  if (resolved) {
+    const inlined = config.cloneResolvedSchema
+      ? (clone(resolved) as UnknownSchema)
+      : resolved;
+    config.resolves.push([entry.path, inlined]);
+    entry.schema = inlined as Schema;
+    entry.referencePath = reference;
+    entry.referenceResolved = true;
+    visitedReference.add(reference);
+    return true;
+  } else {
+    entry.hasReference = true;
+    // 'definition' only when the node genuinely lives under $defs/definitions;
+    // a missing resolver or a resolver that returned nothing is 'unresolved'.
+    entry.referenceSkipped = isDefinition ? 'definition' : 'unresolved';
+    return false;
   }
 }

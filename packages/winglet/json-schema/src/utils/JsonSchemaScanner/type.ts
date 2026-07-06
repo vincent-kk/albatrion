@@ -120,6 +120,13 @@ export interface JsonScannerOptions<
    * and (2) multiple occurrences of the same `$ref` do not become aliased
    * in the processed output. Set to `false` only when the resolver already
    * returns a freshly-owned object and the extra clone is pure overhead.
+   *
+   * @remarks
+   * Versions before this option existed behaved as if it were `false`: the
+   * resolved schema was assigned in place with no clone, so repeated
+   * occurrences of the same `$ref` shared one aliased object. The current
+   * default (`true`) deep-clones each resolved `$ref` instead; pass `false`
+   * to restore the previous aliased behavior.
    */
   cloneResolvedSchema?: boolean;
   /**
@@ -134,11 +141,15 @@ export interface JsonScannerOptions<
   cacheResolvedReference?: boolean;
   /**
    * Extra applicator keywords to descend into, appended after the built-in
-   * vocabulary. Opt-in and purely additive — the default traversal is
-   * unchanged. Use the shared `EXTENDED_KEYWORDS` preset for draft 2019-09 /
-   * 2020-12 keywords (`patternProperties`, `propertyNames`, `contains`,
-   * `dependentSchemas`, `unevaluatedProperties`, …) or supply your own
-   * descriptors (e.g. vendor `x-*` keywords).
+   * vocabulary. Opt-in: descriptors are appended after the built-ins, and the
+   * two lists are merged by `keyword`. If a descriptor's `keyword` equals a
+   * built-in keyword (e.g. `properties`), the later (consumer) entry
+   * overrides the built-in's `kind` and ordering — do NOT reuse a built-in
+   * keyword name unless you intend to override it. Use the shared
+   * `EXTENDED_KEYWORDS` preset for draft 2019-09 / 2020-12 keywords
+   * (`patternProperties`, `propertyNames`, `contains`, `dependentSchemas`,
+   * `unevaluatedProperties`, …) or supply your own descriptors (e.g. vendor
+   * `x-*` keywords).
    */
   additionalKeywords?: KeywordDescriptor[];
   /** Context object passed to visitors and filters */
