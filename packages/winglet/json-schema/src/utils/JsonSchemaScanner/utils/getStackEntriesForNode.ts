@@ -1,4 +1,5 @@
 import { isArray, isObject } from '@winglet/common-utils/filter';
+import { hasOwnProperty } from '@winglet/common-utils/lib';
 import { JSONPointer as $, escapeSegment } from '@winglet/json/pointer';
 
 import type { Dictionary } from '@aileron/declare';
@@ -41,12 +42,17 @@ export const getStackEntriesForNode = <Entry extends SchemaEntry>(
   if (schema === null || typeof schema !== 'object') return entries;
   const dict = schema as Dictionary;
 
-  // Which applicator keywords are actually present? Iterate the node's own keys
-  // (usually just `type` + a validator or two) instead of every descriptor.
+  // Which applicator keywords are actually present? Iterate the node's keys
+  // (usually just `type` + a validator or two) instead of probing every
+  // descriptor. `for..in` avoids allocating a keys array; hasOwnProperty is
+  // called ONLY on the rare applicator match, both to keep the previous
+  // own-only semantics (for..in also yields inherited enumerable keys) and
+  // because non-applicator keys skip the check entirely.
   let matched: OrderedKeywordDescriptor[] | null = null;
   for (const key in dict) {
     const descriptor = keywordMap.get(key);
-    if (descriptor !== undefined) (matched ??= []).push(descriptor);
+    if (descriptor !== undefined && hasOwnProperty(dict, key))
+      (matched ??= []).push(descriptor);
   }
   if (matched === null) return entries;
   if (matched.length > 1) matched.sort(byOrder);

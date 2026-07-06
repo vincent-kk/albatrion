@@ -94,4 +94,5 @@ export const buildKeywordMap = (
 };
 
 /** Precomputed map for the built-in vocabulary (the default, no-options path). */
-export const DEFAULT_KEYWORD_MAP: KeywordMap = buildKeywordMap(DEFAULT_KEYWORDS);
+export const DEFAULT_KEYWORD_MAP: KeywordMap =
+  buildKeywordMap(DEFAULT_KEYWORDS);
