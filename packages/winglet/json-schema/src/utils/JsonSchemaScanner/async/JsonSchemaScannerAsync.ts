@@ -1,16 +1,19 @@
 import { clone } from '@winglet/common-utils/object';
-import { JSONPointer, setValue } from '@winglet/json/pointer';
+import { setValue } from '@winglet/json/pointer';
 
 import type { UnknownSchema } from '@/json-schema/types/jsonSchema';
 
+import type { JsonScannerOptionsAsync, SchemaVisitor } from '../type';
 import {
-  type JsonScannerOptionsAsync,
-  OperationPhase,
-  type SchemaEntry,
-  type SchemaVisitor,
-} from '../type';
-import { getStackEntriesForNode } from '../utils/getStackEntriesForNode';
-import { isDefinitionSchema } from '../utils/isDefinitionSchema';
+  DEFAULT_KEYWORDS,
+  DEFAULT_KEYWORD_MAP,
+  buildKeywordMap,
+} from '../utils/keywordDescriptors';
+import {
+  Effect,
+  type ScanConfig,
+  scannerFactory,
+} from '../utils/scannerFactory';
 
 interface JsonSchemaScannerProps<Schema extends UnknownSchema, ContextType> {
   visitor?: SchemaVisitor<Schema, ContextType>;
@@ -256,7 +259,16 @@ export class JsonSchemaScannerAsync<
     this.__originalSchema__ = schema;
     this.__processedSchema__ = undefined; // Reset previous results when starting new scan
     this.__resolves__ = [];
-    await this.__run__(this.__originalSchema__ as Schema);
+    try {
+      await this.__run__(this.__originalSchema__ as Schema);
+    } catch (error) {
+      // Reset state so a failed scan cannot report partial results.
+      // The exception itself still propagates to the caller (current behavior).
+      this.__originalSchema__ = undefined;
+      this.__processedSchema__ = undefined;
+      this.__resolves__ = [];
+      throw error;
+    }
     return this;
   }
 
@@ -308,126 +320,81 @@ export class JsonSchemaScannerAsync<
 
   /**
    * Internal logic that asynchronously traverses the schema using depth-first search (DFS) and resolves references.
-   * Uses a state machine (OperationPhase) to manage the processing stages of each node.
+   *
+   * Drives the shared {@link scannerFactory} generator: every time the core needs a
+   * user callback it yields a request, which this driver executes and — only
+   * when the callback actually returns a thenable — awaits before resuming the
+   * generator. Synchronous callbacks incur no microtask hop.
    *
    * @param {Schema} schema - The schema node to start traversal from.
    * @private
    */
   private async __run__(this: this, schema: Schema): Promise<void> {
-    type Entry = SchemaEntry<Schema>;
-    const stack: Entry[] = [
-      {
-        schema,
-        path: JSONPointer.Fragment,
-        dataPath: JSONPointer.Root,
-        depth: 0,
-      },
-    ];
-    const entryPhase = new Map<Entry, OperationPhase>();
-    const visitedReference = new Set<string>();
+    const options = this.__options__;
+    const visitor = this.__visitor__;
+    const context = options.context;
+    const config: ScanConfig<Schema, ContextType> = {
+      context,
+      maxDepth: options.maxDepth,
+      cloneResolvedSchema: options.cloneResolvedSchema !== false,
+      cacheResolvedReference: options.cacheResolvedReference === true,
+      keywordMap: options.additionalKeywords
+        ? buildKeywordMap(DEFAULT_KEYWORDS.concat(options.additionalKeywords))
+        : DEFAULT_KEYWORD_MAP,
+      resolves: this.__resolves__,
+      filter: options.filter,
+      mutate: options.mutate,
+      enter: visitor.enter,
+      exit: visitor.exit,
+      resolveReference: options.resolveReference,
+    };
 
-    const context = this.__options__.context;
-    const maxDepth = this.__options__.maxDepth;
-    const filter = this.__options__.filter;
-    const mutate = this.__options__.mutate;
-    const resolveReference = this.__options__.resolveReference;
-    const enter = this.__visitor__.enter;
-    const exit = this.__visitor__.exit;
-
-    while (stack.length > 0) {
-      const entry = stack[stack.length - 1];
-      const currentPhase = entryPhase.get(entry) ?? OperationPhase.Enter;
-
-      switch (currentPhase) {
-        case OperationPhase.Enter: {
-          if (filter && !(await filter(entry, context))) {
-            stack.pop();
-            entryPhase.delete(entry);
-            break;
-          }
-
-          const mutatedSchema = mutate?.(entry, context);
-          if (mutatedSchema) {
-            entry.schema = mutatedSchema;
-            this.__resolves__.push([entry.path, mutatedSchema]);
-          }
-
-          await enter?.(entry, context);
-          entryPhase.set(entry, OperationPhase.Reference);
+    const generator = scannerFactory<Schema, ContextType>(schema, config);
+    let step = generator.next();
+    while (!step.done) {
+      const request = step.value;
+      let result: unknown;
+      switch (request.type) {
+        case Effect.Filter: {
+          const value = config.filter!(request.entry, context);
+          result = isThenable(value) ? await value : value;
           break;
         }
-
-        case OperationPhase.Reference: {
-          if (typeof entry.schema.$ref === 'string') {
-            const referencePath = entry.schema.$ref;
-
-            if (visitedReference.has(referencePath)) {
-              entry.hasReference = true;
-              entryPhase.set(entry, OperationPhase.Exit);
-              break;
-            }
-
-            const resolvedReference =
-              resolveReference && !isDefinitionSchema(entry.path)
-                ? await resolveReference(referencePath, entry, context)
-                : undefined;
-
-            if (resolvedReference) {
-              this.__resolves__.push([entry.path, resolvedReference]);
-
-              entry.schema = resolvedReference;
-              entry.referencePath = referencePath;
-              entry.referenceResolved = true;
-
-              visitedReference.add(referencePath);
-              entryPhase.set(entry, OperationPhase.ChildEntries);
-            } else {
-              entry.hasReference = true;
-              entryPhase.set(entry, OperationPhase.Exit);
-            }
-            break;
-          }
-
-          entryPhase.set(entry, OperationPhase.ChildEntries);
+        case Effect.Mutate: {
+          const value = config.mutate!(request.entry, context);
+          result = isThenable(value) ? await value : value;
           break;
         }
-
-        case OperationPhase.ChildEntries: {
-          if (maxDepth !== undefined && entry.depth + 1 > maxDepth) {
-            entryPhase.set(entry, OperationPhase.Exit);
-            break;
-          }
-
-          const childEntries = getStackEntriesForNode(entry);
-          entryPhase.set(entry, OperationPhase.Exit);
-          if (childEntries.length > 0) {
-            for (let i = childEntries.length - 1; i >= 0; i--) {
-              const child = childEntries[i];
-              stack.push(child);
-            }
-          }
+        case Effect.Enter: {
+          const value = config.enter!(request.entry, context);
+          if (isThenable(value)) await value;
+          result = undefined;
           break;
         }
-
-        case OperationPhase.Exit: {
-          await exit?.(entry, context);
-          if (
-            entry.referenceResolved &&
-            entry.referencePath &&
-            visitedReference.has(entry.referencePath)
-          )
-            visitedReference.delete(entry.referencePath);
-          stack.pop();
-          entryPhase.delete(entry);
+        case Effect.Resolve: {
+          const value = config.resolveReference!(
+            request.reference,
+            request.entry,
+            context,
+          );
+          result = isThenable(value) ? await value : value;
           break;
         }
-
-        default: {
-          stack.pop();
-          entryPhase.delete(entry);
+        case Effect.Exit: {
+          const value = config.exit!(request.entry, context);
+          if (isThenable(value)) await value;
+          result = undefined;
           break;
         }
       }
+      step = generator.next(result);
     }
   }
 }
+
+/** Narrow guard used by the async driver to avoid a needless microtask hop when
+ * a user callback happens to be synchronous. */
+const isThenable = (value: unknown): value is PromiseLike<unknown> =>
+  value !== null &&
+  (typeof value === 'object' || typeof value === 'function') &&
+  typeof (value as { then?: unknown }).then === 'function';

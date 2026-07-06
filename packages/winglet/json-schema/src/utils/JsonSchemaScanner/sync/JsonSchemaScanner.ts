@@ -1,16 +1,19 @@
 import { clone } from '@winglet/common-utils/object';
-import { JSONPointer, setValue } from '@winglet/json/pointer';
+import { setValue } from '@winglet/json/pointer';
 
 import type { UnknownSchema } from '@/json-schema/types/jsonSchema';
 
+import type { JsonScannerOptions, SchemaVisitor } from '../type';
 import {
-  type JsonScannerOptions,
-  OperationPhase,
-  type SchemaEntry,
-  type SchemaVisitor,
-} from '../type';
-import { getStackEntriesForNode } from '../utils/getStackEntriesForNode';
-import { isDefinitionSchema } from '../utils/isDefinitionSchema';
+  DEFAULT_KEYWORDS,
+  DEFAULT_KEYWORD_MAP,
+  buildKeywordMap,
+} from '../utils/keywordDescriptors';
+import {
+  Effect,
+  type ScanConfig,
+  scannerFactory,
+} from '../utils/scannerFactory';
 
 interface JsonSchemaScannerProps<Schema extends UnknownSchema, ContextType> {
   visitor?: SchemaVisitor<Schema, ContextType>;
@@ -154,6 +157,8 @@ interface JsonSchemaScannerProps<Schema extends UnknownSchema, ContextType> {
  * @example
  * Built-in reference resolution utility:
  * ```typescript
+ * import { resolveReference } from '@winglet/json-schema';
+ *
  * const schemaWithInternalRefs = {
  *   type: 'object',
  *   properties: {
@@ -165,29 +170,32 @@ interface JsonSchemaScannerProps<Schema extends UnknownSchema, ContextType> {
  *   }
  * };
  *
- * // Automatically resolve all internal references
- * const fullyResolvedSchema = JsonSchemaScanner.resolveReference(schemaWithInternalRefs);
+ * // Inline all internal $ref references in one call
+ * const fullyResolvedSchema = resolveReference(schemaWithInternalRefs);
  * ```
  *
  * @remarks
- * **Processing Phases:**
- * 1. **Enter**: Initial node processing, filtering, and mutation
- * 2. **Reference**: $ref resolution and circular reference detection
- * 3. **ChildEntries**: Depth checking and child node discovery
- * 4. **Exit**: Final processing and cleanup
+ * **Traversal:** A single stack-based (non-recursive) depth-first pass driven by
+ * a shared generator core. Each node is visited once — filtering, mutation,
+ * `enter`, `$ref` resolution and child discovery are fused — and revisited once
+ * on exit only if it has children. The sync scanner runs the core to completion
+ * synchronously; the async scanner awaits callbacks that return thenables.
  *
  * **Key Features:**
  * - **Circular Reference Detection**: Prevents infinite loops when schemas reference each other
  * - **Lazy Reference Resolution**: References are resolved only when encountered
+ * - **Reference Isolation**: resolved subtrees are cloned at inline time
+ *   (`cloneResolvedSchema`, default `true`) so the original schema is never
+ *   mutated and repeated `$ref`s are never aliased in the output
  * - **Schema Mutation**: Transform schemas during traversal
  * - **Filtering**: Skip unwanted schema nodes
  * - **Depth Limiting**: Control traversal depth for performance
- * - **Result Caching**: Processed schemas are cached for efficiency
  *
  * **Performance Considerations:**
- * - Uses stack-based traversal (not recursion) to handle deep schemas
- * - Implements copy-on-write for mutations to minimize memory usage
- * - Caches resolved references to avoid redundant processing
+ * - Stack-based traversal (not recursion) handles arbitrarily deep schemas
+ * - The processed schema is built once, on first `getValue`, and cached
+ * - Optional resolver memoization (`cacheResolvedReference`, default `false`)
+ *   avoids redundant resolver calls when the same reference appears repeatedly
  *
  * This scanner is ideal for complex schema analysis, transformation,
  * documentation generation, form building, and validation preprocessing.
@@ -227,7 +235,16 @@ export class JsonSchemaScanner<
     this.__originalSchema__ = schema;
     this.__processedSchema__ = undefined;
     this.__resolves__ = [];
-    this.__run__(this.__originalSchema__ as Schema);
+    try {
+      this.__run__(this.__originalSchema__ as Schema);
+    } catch (error) {
+      // Reset state so a failed scan cannot report partial results.
+      // The exception itself still propagates to the caller (current behavior).
+      this.__originalSchema__ = undefined;
+      this.__processedSchema__ = undefined;
+      this.__resolves__ = [];
+      throw error;
+    }
     return this;
   }
 
@@ -278,125 +295,63 @@ export class JsonSchemaScanner<
 
   /**
    * Internal logic that traverses the schema using depth-first search (DFS) and resolves references.
-   * Uses a state machine (OperationPhase) to manage the processing stages of each node.
+   *
+   * Drives the shared {@link scannerFactory} generator synchronously: every time the
+   * core needs a user callback it yields a request, which this driver executes
+   * immediately (no awaiting) and feeds the result back into the generator.
    *
    * @param {Schema} schema - The schema node to start traversal from.
    * @private
    */
   private __run__(this: this, schema: Schema): void {
-    type Entry = SchemaEntry<Schema>;
-    const stack: Entry[] = [
-      {
-        schema,
-        path: JSONPointer.Fragment,
-        dataPath: JSONPointer.Root,
-        depth: 0,
-      },
-    ];
-    const entryPhase = new Map<Entry, OperationPhase>();
-    const visitedReference = new Set<string>();
+    const options = this.__options__;
+    const visitor = this.__visitor__;
+    const context = options.context;
+    const config: ScanConfig<Schema, ContextType> = {
+      context,
+      maxDepth: options.maxDepth,
+      cloneResolvedSchema: options.cloneResolvedSchema !== false,
+      cacheResolvedReference: options.cacheResolvedReference === true,
+      keywordMap: options.additionalKeywords
+        ? buildKeywordMap(DEFAULT_KEYWORDS.concat(options.additionalKeywords))
+        : DEFAULT_KEYWORD_MAP,
+      resolves: this.__resolves__,
+      filter: options.filter,
+      mutate: options.mutate,
+      enter: visitor.enter,
+      exit: visitor.exit,
+      resolveReference: options.resolveReference,
+    };
 
-    const context = this.__options__.context;
-    const maxDepth = this.__options__.maxDepth;
-    const filter = this.__options__.filter;
-    const mutate = this.__options__.mutate;
-    const resolveReference = this.__options__.resolveReference;
-    const enter = this.__visitor__.enter;
-    const exit = this.__visitor__.exit;
-
-    while (stack.length > 0) {
-      const entry = stack[stack.length - 1];
-      const currentPhase = entryPhase.get(entry) ?? OperationPhase.Enter;
-
-      switch (currentPhase) {
-        case OperationPhase.Enter: {
-          if (filter && !filter(entry, context)) {
-            stack.pop();
-            entryPhase.delete(entry);
-            break;
-          }
-
-          const mutatedSchema = mutate?.(entry, context);
-          if (mutatedSchema) {
-            entry.schema = mutatedSchema;
-            this.__resolves__.push([entry.path, mutatedSchema]);
-          }
-
-          enter?.(entry, context);
-          entryPhase.set(entry, OperationPhase.Reference);
+    const generator = scannerFactory<Schema, ContextType>(schema, config);
+    let step = generator.next();
+    while (!step.done) {
+      const request = step.value;
+      let result: unknown;
+      switch (request.type) {
+        case Effect.Filter:
+          result = config.filter!(request.entry, context);
           break;
-        }
-
-        case OperationPhase.Reference: {
-          if (typeof entry.schema.$ref === 'string') {
-            const referencePath = entry.schema.$ref;
-
-            if (visitedReference.has(referencePath)) {
-              entry.hasReference = true;
-              entryPhase.set(entry, OperationPhase.Exit);
-              break;
-            }
-            const resolvedReference =
-              resolveReference && !isDefinitionSchema(entry.path)
-                ? resolveReference(referencePath, entry, context)
-                : undefined;
-
-            if (resolvedReference) {
-              this.__resolves__.push([entry.path, resolvedReference]);
-
-              entry.schema = resolvedReference;
-              entry.referencePath = referencePath;
-              entry.referenceResolved = true;
-
-              visitedReference.add(referencePath);
-              entryPhase.set(entry, OperationPhase.ChildEntries);
-            } else {
-              entry.hasReference = true;
-              entryPhase.set(entry, OperationPhase.Exit);
-            }
-            break;
-          }
-
-          entryPhase.set(entry, OperationPhase.ChildEntries);
+        case Effect.Mutate:
+          result = config.mutate!(request.entry, context);
           break;
-        }
-
-        case OperationPhase.ChildEntries: {
-          if (maxDepth !== undefined && entry.depth + 1 > maxDepth) {
-            entryPhase.set(entry, OperationPhase.Exit);
-            break;
-          }
-
-          const childEntries = getStackEntriesForNode(entry);
-          entryPhase.set(entry, OperationPhase.Exit);
-          if (childEntries.length > 0) {
-            for (let i = childEntries.length - 1; i >= 0; i--) {
-              const child = childEntries[i];
-              stack.push(child);
-            }
-          }
+        case Effect.Enter:
+          config.enter!(request.entry, context);
+          result = undefined;
           break;
-        }
-
-        case OperationPhase.Exit: {
-          exit?.(entry, context);
-          if (
-            entry.referenceResolved &&
-            entry.referencePath &&
-            visitedReference.has(entry.referencePath)
-          )
-            visitedReference.delete(entry.referencePath);
-          stack.pop();
-          entryPhase.delete(entry);
+        case Effect.Resolve:
+          result = config.resolveReference!(
+            request.reference,
+            request.entry,
+            context,
+          );
           break;
-        }
-
-        default: {
-          stack.pop();
-          entryPhase.delete(entry);
+        case Effect.Exit:
+          config.exit!(request.entry, context);
+          result = undefined;
           break;
-        }
       }
+      step = generator.next(result);
     }
   }
 }

@@ -613,5 +613,38 @@ describe('JsonSchemaScannerAsync - Schema Mutation', () => {
         },
       });
     });
+
+    it('should await a genuinely async mutate (Promise-returning)', async () => {
+      const originalSchema: UnknownSchema = {
+        type: 'object',
+        properties: {
+          a: { type: 'string' },
+          b: { type: 'number' },
+        },
+      };
+
+      const scanner = new JsonSchemaScannerAsync({
+        options: {
+          mutate: async ({ schema, path }) => {
+            await new Promise((resolve) => setTimeout(resolve, 5));
+            if (path.endsWith('/properties/a'))
+              return { ...schema, title: 'awaited' };
+            return undefined;
+          },
+        },
+      });
+
+      const finalSchema = (await scanner.scan(originalSchema)).getValue();
+
+      // If the async mutate were not awaited, the resolved value would be a
+      // Promise and the whole tree would collapse. Assert it was awaited.
+      expect(finalSchema).toEqual({
+        type: 'object',
+        properties: {
+          a: { type: 'string', title: 'awaited' },
+          b: { type: 'number' },
+        },
+      });
+    });
   });
 });
