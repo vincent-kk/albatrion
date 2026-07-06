@@ -9,7 +9,11 @@ import {
   DEFAULT_KEYWORD_MAP,
   buildKeywordMap,
 } from '../utils/keywordDescriptors';
-import { Effect, type ScanConfig, scanCore } from '../utils/scanCore';
+import {
+  Effect,
+  type ScanConfig,
+  scannerFactory,
+} from '../utils/scannerFactory';
 
 interface JsonSchemaScannerProps<Schema extends UnknownSchema, ContextType> {
   visitor?: SchemaVisitor<Schema, ContextType>;
@@ -292,7 +296,7 @@ export class JsonSchemaScanner<
   /**
    * Internal logic that traverses the schema using depth-first search (DFS) and resolves references.
    *
-   * Drives the shared {@link scanCore} generator synchronously: every time the
+   * Drives the shared {@link scannerFactory} generator synchronously: every time the
    * core needs a user callback it yields a request, which this driver executes
    * immediately (no awaiting) and feeds the result back into the generator.
    *
@@ -319,7 +323,7 @@ export class JsonSchemaScanner<
       resolveReference: options.resolveReference,
     };
 
-    const generator = scanCore<Schema, ContextType>(schema, config);
+    const generator = scannerFactory<Schema, ContextType>(schema, config);
     let step = generator.next();
     while (!step.done) {
       const request = step.value;

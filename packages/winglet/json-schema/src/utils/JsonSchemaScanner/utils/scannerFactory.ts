@@ -10,7 +10,7 @@ import { isDefinitionSchema } from './isDefinitionSchema';
 import type { KeywordMap } from './keywordDescriptors';
 
 /**
- * Effect kinds yielded by {@link scanCore} to its driver. Each corresponds to a
+ * Effect kinds yielded by {@link scannerFactory} to its driver. Each corresponds to a
  * user-supplied callback that may be synchronous or asynchronous; the driver
  * decides how to execute it (the sync driver calls it directly, the async
  * driver awaits thenable results). Kept as plain integer constants for a fast
@@ -77,7 +77,7 @@ interface Frame<Schema extends UnknownSchema> {
  * @yields ScanRequest — the driver executes the corresponding callback and
  *   resumes the generator with its (already-awaited, for async) result.
  */
-export function* scanCore<
+export function* scannerFactory<
   Schema extends UnknownSchema = UnknownSchema,
   ContextType = void,
 >(
@@ -210,7 +210,7 @@ export function* scanCore<
 
 /**
  * `$ref` resolution effect for a single VISIT, extracted verbatim from
- * {@link scanCore} to keep the engine's cyclomatic complexity in check.
+ * {@link scannerFactory} to keep the engine's cyclomatic complexity in check.
  *
  * Delegated with `yield*`, so it is behaviourally identical to inlining: it
  * yields the exact same {@link Effect.Resolve} request — reusing the shared
