@@ -4,8 +4,8 @@
 // Run `yarn build` first so dist is current, then e.g. `node benchmark/bench.mjs`.
 
 export async function loadScanners() {
-  const sync = await import("@winglet/json-schema/scanner");
-  const asyncM = await import("@winglet/json-schema/async-scanner");
+  const sync = await import('@winglet/json-schema/scanner');
+  const asyncM = await import('@winglet/json-schema/async-scanner');
   return {
     JsonSchemaScanner: sync.JsonSchemaScanner,
     JsonSchemaScannerAsync: asyncM.JsonSchemaScannerAsync,
@@ -16,14 +16,14 @@ export async function loadScanners() {
 // Mirrors @canard/schema-form getReferenceTable pattern (returns original ref,
 // no clone) so the R1 original-mutation / aliasing bug is exercised faithfully.
 export function unescapeSegment(seg) {
-  return seg.replace(/~1/g, "/").replace(/~0/g, "~");
+  return seg.replace(/~1/g, '/').replace(/~0/g, '~');
 }
 export function getByPointer(root, pointer) {
-  if (pointer === "#" || pointer === "" || pointer === "#/") return root;
+  if (pointer === '#' || pointer === '' || pointer === '#/') return root;
   let p = pointer;
-  if (p[0] === "#") p = p.slice(1);
-  if (p[0] === "/") p = p.slice(1);
-  const segs = p.split("/").map(unescapeSegment);
+  if (p[0] === '#') p = p.slice(1);
+  if (p[0] === '/') p = p.slice(1);
+  const segs = p.split('/').map(unescapeSegment);
   let cur = root;
   for (const s of segs) {
     if (cur == null) return undefined;
@@ -41,33 +41,33 @@ export function makeOriginalRefResolver(rootGetter) {
 export function genWide(n) {
   const properties = {};
   for (let i = 0; i < n; i++)
-    properties[`p${i}`] = { type: "string", minLength: i % 5 };
-  return { type: "object", properties };
+    properties[`p${i}`] = { type: 'string', minLength: i % 5 };
+  return { type: 'object', properties };
 }
 export function genDeep(n) {
-  let node = { type: "string" };
+  let node = { type: 'string' };
   for (let i = 0; i < n; i++)
-    node = { type: "object", properties: { child: node } };
+    node = { type: 'object', properties: { child: node } };
   return node;
 }
 export function genBranchy(breadth, depth) {
   function build(d) {
-    if (d === 0) return { type: "string" };
+    if (d === 0) return { type: 'string' };
     const properties = {};
     for (let i = 0; i < breadth; i++) properties[`b${i}`] = build(d - 1);
-    return { type: "object", properties };
+    return { type: 'object', properties };
   }
   return build(depth);
 }
 export function genMixed(breadth, depth) {
   function build(d) {
-    if (d === 0) return { type: "number" };
+    if (d === 0) return { type: 'number' };
     const properties = {};
     for (let i = 0; i < breadth; i++) properties[`m${i}`] = build(d - 1);
     return {
-      type: "object",
+      type: 'object',
       properties,
-      allOf: [{ type: "object" }],
+      allOf: [{ type: 'object' }],
       items: build(Math.max(0, d - 2)),
     };
   }
@@ -78,8 +78,8 @@ export function genRefHeavy(refCount, defNodeBreadth = 3, defNodeDepth = 3) {
   const def = genBranchy(defNodeBreadth, defNodeDepth);
   const properties = {};
   for (let i = 0; i < refCount; i++)
-    properties[`r${i}`] = { $ref: "#/definitions/D" };
-  return { type: "object", properties, definitions: { D: def } };
+    properties[`r${i}`] = { $ref: '#/definitions/D' };
+  return { type: 'object', properties, definitions: { D: def } };
 }
 
 // --- timing helpers ---
