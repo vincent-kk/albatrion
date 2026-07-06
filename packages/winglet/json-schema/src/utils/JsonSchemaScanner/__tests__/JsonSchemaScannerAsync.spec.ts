@@ -1,4 +1,4 @@
-import { getValue } from '@winglet/json/pointer';
+import { JSONPointer, getValue } from '@winglet/json/pointer';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import type { UnknownSchema } from '@/json-schema/types/jsonSchema';
@@ -573,6 +573,221 @@ describe('JsonSchemaScannerAsync 실제 데이터 테스트', () => {
       required: ['root'],
       title: 'Tree Schema with $defs',
       type: 'object',
+    });
+  });
+});
+
+describe('JsonSchemaScannerAsync', () => {
+  describe('기본 동작 테스트', () => {
+    it('should scan a simple schema asynchronously', async () => {
+      const visitor = {
+        enter: vi.fn(),
+        exit: vi.fn(),
+      };
+
+      const schema: UnknownSchema = {
+        type: 'object',
+        properties: {
+          name: { type: 'string' },
+          age: { type: 'number' },
+        },
+      };
+
+      const scanner = new JsonSchemaScannerAsync({ visitor });
+      await scanner.scan(schema);
+
+      expect(visitor.enter).toHaveBeenCalledWith(
+        {
+          schema,
+          path: JSONPointer.Fragment,
+          dataPath: JSONPointer.Root,
+          depth: 0,
+        },
+        undefined,
+      );
+      expect(visitor.enter).toHaveBeenCalledWith(
+        {
+          schema: schema.properties.name,
+          path: `${JSONPointer.Fragment}/properties/name`,
+          dataPath: `/name`,
+          depth: 1,
+          keyword: 'properties',
+          variant: 'name',
+        },
+        undefined,
+      );
+      expect(visitor.enter).toHaveBeenCalledWith(
+        {
+          schema: schema.properties.age,
+          path: `${JSONPointer.Fragment}/properties/age`,
+          dataPath: `/age`,
+          depth: 1,
+          keyword: 'properties',
+          variant: 'age',
+        },
+        undefined,
+      );
+    });
+  });
+
+  describe('비동기 참조 해결 테스트', () => {
+    it('should handle async $ref resolution', async () => {
+      const visitor = {
+        enter: vi.fn(),
+        exit: vi.fn(),
+      };
+
+      const resolveReference = vi.fn().mockResolvedValue({ type: 'string' });
+      const schema: UnknownSchema = {
+        type: 'object',
+        properties: {
+          ref: { $ref: '#/definitions/string' },
+        },
+      };
+
+      const scanner = new JsonSchemaScannerAsync({
+        visitor,
+        options: { resolveReference },
+      });
+      await scanner.scan(schema);
+
+      expect(resolveReference).toHaveBeenCalledWith(
+        '#/definitions/string',
+        {
+          dataPath: '/ref',
+          depth: 1,
+          keyword: 'properties',
+          path: '#/properties/ref',
+          referencePath: '#/definitions/string',
+          referenceResolved: true,
+          schema: {
+            type: 'string',
+          },
+          variant: 'ref',
+        },
+        undefined,
+      );
+      // 루트 객체 방문 확인
+      expect(visitor.enter).toHaveBeenCalledWith(
+        {
+          depth: 0,
+          path: '#',
+          dataPath: JSONPointer.Root,
+          schema: {
+            properties: {
+              ref: {
+                $ref: '#/definitions/string',
+              },
+            },
+            type: 'object',
+          },
+        },
+        undefined,
+      );
+      // $ref 노드 방문 확인 ($ref 해결 전)
+      // expect(visitor.enter).toHaveBeenCalledWith(
+      //   {
+      //     depth: 1,
+      //     path: '#/properties/ref',
+      //     schema: { $ref: '#/definitions/string' },
+      //   },
+      //   undefined,
+      // );
+      // $ref 해결 후 방문 확인 (referenceResolved 플래그와 해결된 스키마 확인)
+      expect(visitor.enter).toHaveBeenCalledWith(
+        {
+          depth: 1,
+          path: '#/properties/ref',
+          dataPath: `/ref`,
+          referencePath: '#/definitions/string',
+          referenceResolved: true,
+          keyword: 'properties',
+          variant: 'ref',
+          schema: { type: 'string' }, // 해결된 스키마
+        },
+        undefined,
+      );
+    });
+
+    it('should handle failed async $ref resolution', async () => {
+      const visitor = {
+        enter: vi.fn(),
+        exit: vi.fn(),
+      };
+
+      const resolveReference = vi.fn().mockResolvedValue(undefined);
+      const schema: UnknownSchema = {
+        type: 'object',
+        properties: {
+          ref: { $ref: '#/definitions/nonexistent' },
+        },
+      };
+
+      const scanner = new JsonSchemaScannerAsync({
+        visitor,
+        options: { resolveReference },
+      });
+      await scanner.scan(schema);
+
+      expect(resolveReference).toHaveBeenCalledWith(
+        '#/definitions/nonexistent',
+        {
+          dataPath: '/ref',
+          depth: 1,
+          hasReference: true,
+          referenceSkipped: 'unresolved',
+          keyword: 'properties',
+          path: '#/properties/ref',
+          schema: {
+            $ref: '#/definitions/nonexistent',
+          },
+          variant: 'ref',
+        },
+        undefined,
+      );
+      // Should not visit undefined reference
+      expect(visitor.enter).not.toHaveBeenCalledWith(
+        undefined,
+        expect.any(String),
+        expect.any(Number),
+        undefined,
+      );
+    });
+  });
+
+  it('scan 이전 getValue는 undefined를 반환한다', async () => {
+    const scanner = new JsonSchemaScannerAsync();
+    const value = scanner.getValue();
+    expect(value).toBeUndefined();
+  });
+
+  it('scan 후 getValue는 root schema를 반환한다', async () => {
+    const schema: UnknownSchema = { type: 'string' };
+    const scanner = new JsonSchemaScannerAsync();
+    await scanner.scan(schema);
+    const value = scanner.getValue();
+    expect(value).toEqual(schema);
+  });
+
+  describe('비동기 콜백 동작 테스트', () => {
+    it('visitor.enter/exit가 비동기로 동작하면 scan이 await로 동작한다', async () => {
+      const callOrder: string[] = [];
+      const visitor = {
+        enter: async () => {
+          callOrder.push('enter');
+          await new Promise((resolve) => setTimeout(resolve, 30));
+          callOrder.push('enter-done');
+        },
+        exit: async () => {
+          callOrder.push('exit');
+          await new Promise((resolve) => setTimeout(resolve, 10));
+          callOrder.push('exit-done');
+        },
+      };
+      const schema: UnknownSchema = { type: 'string' };
+      const scanner = new JsonSchemaScannerAsync({ visitor });
+      await scanner.scan(schema);
+      expect(callOrder).toEqual(['enter', 'enter-done', 'exit', 'exit-done']);
     });
   });
 });
