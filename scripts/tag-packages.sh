@@ -175,8 +175,8 @@ main() {
     
     # Confirmation
     echo
-    read -p "Do you want to create these tags? (y/N): " -r
-    if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+    read -p "Do you want to create these tags? (Y/n): " -r
+    if [[ $REPLY =~ ^[Nn]$ ]]; then
         print_info "Operation cancelled."
         exit 0
     fi
@@ -200,8 +200,8 @@ main() {
     # Push tags if requested
     if [[ "$push_tags" == true ]]; then
         echo
-        read -p "Do you want to push the tags to origin? (y/N): " -r
-        if [[ $REPLY =~ ^[Yy]$ ]]; then
+        read -p "Do you want to push the tags to origin? (Y/n): " -r
+        if [[ ! $REPLY =~ ^[Nn]$ ]]; then
             print_info "Pushing tags to origin..."
             if git push origin --tags; then
                 print_success "Tags pushed successfully!"
