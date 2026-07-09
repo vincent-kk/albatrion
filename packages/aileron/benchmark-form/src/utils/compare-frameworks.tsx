@@ -4,6 +4,15 @@ import { resolve } from 'node:path';
 import type { BenchResult } from '../benchmarks/competitors/harness';
 import { setupJsdom } from './setup-env';
 
+// Measure against the PRODUCTION React build — the deploy reality. react-dom's
+// dev build spends ~half of mount on validateProperty / warnUnknownProperties /
+// logComponentRender / runWithFiberInDEV, which no user ships (dev ~79ms vs
+// prod ~36ms per 500-field mount here). This must run BEFORE the adapters — and
+// thus react-dom — are dynamically imported inside main(), so react-dom/client
+// resolves to react-dom-client.production.js. Pass NODE_ENV=development to
+// deliberately profile the dev paths instead.
+if (!process.env.NODE_ENV) process.env.NODE_ENV = 'production';
+
 // JSDOM must exist before any form library module evaluates.
 setupJsdom();
 

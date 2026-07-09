@@ -94,6 +94,13 @@ jobs:
           NODE_OPTIONS: --expose-gc
 
       - name: aileron bench (latest only, sweep)
+        # Measure against production React (deploy reality). The dev build adds
+        # ~2x mount overhead (dev-only validation/warning passes) that no user
+        # ships. src/index.ts imports react-dom statically, so the env must be
+        # set at the process level here — a top-level assignment would run too
+        # late (after the static import evaluates).
+        env:
+          NODE_ENV: production
         run: |
           REPEAT="${{ github.event.inputs.repeat || '3' }}"
           yarn workspace @aileron/benchmark-form exec \
@@ -103,6 +110,10 @@ jobs:
       - name: framework comparison + over-render guard
         # --assert fails the job if schema-form re-renders sibling fields on a
         # single change. That fine-grained edge over rjsf/Formik must hold.
+        # NODE_ENV=production for the deploy-realistic mount cost (compare-
+        # frameworks.tsx also defaults to it, so this is belt-and-suspenders).
+        env:
+          NODE_ENV: production
         run: |
           yarn workspace @aileron/benchmark-form exec \
             node --expose-gc --import tsx src/utils/compare-frameworks.tsx --assert
