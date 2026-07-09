@@ -9,7 +9,7 @@ import {
 
 import { map } from '@winglet/common-utils/array';
 import { isTruthy } from '@winglet/common-utils/filter';
-import { useVersion } from '@winglet/react-utils/hook';
+import { useHandle, useVersion } from '@winglet/react-utils/hook';
 
 import { NodeEventType, NodeState, type SchemaNode } from '@/schema-form/core';
 import {
@@ -110,24 +110,55 @@ export const useChildNodeErrors = (
   );
   const [version, update] = useVersion();
 
-  useSchemaNodeSubscribe(node, ({ type }) => {
-    if (type & NodeEventType.UpdateChildren) {
-      const children = node.children;
-      const length = children?.length || 0;
-      setChildren(children);
-      setErrorMatrix(new Array(length).fill(null).map(() => []));
-      setFormattedErrors(new Array(length).fill(null));
-    }
-    if (type & NodeEventType.UpdateState) {
-      const {
-        [NodeState.Dirty]: dirty,
-        [NodeState.Touched]: touched,
-        [NodeState.ShowError]: showError,
-      } = node.state;
-      nodeStateMap.current.set(node.path, { dirty, touched, showError });
-      update();
-    }
+  // Applies the current children snapshot; no-op when the reference is
+  // unchanged (children getters return a fresh array on structural change).
+  const appliedChildrenRef = useRef(children);
+  const applyChildren = useHandle(() => {
+    const current = node.children;
+    if (appliedChildrenRef.current === current) return;
+    appliedChildrenRef.current = current;
+    const length = current?.length || 0;
+    setChildren(current);
+    setErrorMatrix(new Array(length).fill(null).map(() => []));
+    setFormattedErrors(new Array(length).fill(null));
   });
+
+  useSchemaNodeSubscribe(
+    node,
+    ({ type }) => {
+      if (type & NodeEventType.UpdateChildren) applyChildren();
+      if (type & NodeEventType.UpdateState) {
+        const {
+          [NodeState.Dirty]: dirty,
+          [NodeState.Touched]: touched,
+          [NodeState.ShowError]: showError,
+        } = node.state;
+        nodeStateMap.current.set(node.path, { dirty, touched, showError });
+        update();
+      }
+    },
+    {
+      // Catch up on deliveries that predate the subscription (e.g. the
+      // render→commit gap of a concurrent mount): re-read the children
+      // snapshot and this node's own state flags.
+      onSubscribe: () => {
+        applyChildren();
+        const {
+          [NodeState.Dirty]: dirty,
+          [NodeState.Touched]: touched,
+          [NodeState.ShowError]: showError,
+        } = node.state;
+        if (
+          dirty !== undefined ||
+          touched !== undefined ||
+          showError !== undefined
+        ) {
+          nodeStateMap.current.set(node.path, { dirty, touched, showError });
+          update();
+        }
+      },
+    },
+  );
 
   // Clear all errors when disabled
   useEffect(() => {
@@ -145,30 +176,36 @@ export const useChildNodeErrors = (
 
     const unsubscribes = new Array(childrenLength);
 
+    // Applies a child's error set to the indexed mirrors (shared between the
+    // event listener and the subscribe-time catch-up below).
+    const applyChildErrors = (
+      index: number,
+      childNode: SchemaNode,
+      errors: JsonSchemaError[] | undefined,
+    ) => {
+      const firstError = errors?.find(isTruthy);
+      setErrorMatrix((prev) => {
+        if (prev[index] === errors) return prev;
+        const newErrors = [...prev];
+        newErrors[index] = errors || [];
+        return newErrors;
+      });
+      setFormattedErrors((prev) => {
+        if (prev[index] === firstError) return prev;
+        const formattedError = [...prev];
+        formattedError[index] = firstError
+          ? formatError(firstError, childNode, context)
+          : null;
+        return formattedError;
+      });
+    };
+
     // Create subscription for each child node
     for (let i = 0; i < childrenLength; i++) {
       const node = children[i].node;
       unsubscribes[i] = node.subscribe(({ type, payload }) => {
-        if (type & NodeEventType.UpdateError) {
-          const errors = payload?.[NodeEventType.UpdateError];
-          const firstError = errors?.find(isTruthy);
-
-          setErrorMatrix((prev) => {
-            if (prev[i] === errors) return prev;
-            const newErrors = [...prev];
-            newErrors[i] = errors || [];
-            return newErrors;
-          });
-
-          setFormattedErrors((prev) => {
-            if (prev[i] === firstError) return prev;
-            const formattedError = [...prev];
-            formattedError[i] = firstError
-              ? formatError(firstError, node, context)
-              : null;
-            return formattedError;
-          });
-        }
+        if (type & NodeEventType.UpdateError)
+          applyChildErrors(i, node, payload?.[NodeEventType.UpdateError]);
         if (type & NodeEventType.UpdateState) {
           const {
             [NodeState.Dirty]: dirty,
@@ -179,6 +216,23 @@ export const useChildNodeErrors = (
           update();
         }
       });
+      // Catch up on deliveries that predate this subscription (concurrent
+      // mount gap, or errors settled before the children mirror caught up).
+      const errors = node.errors;
+      if (errors && errors.length > 0) applyChildErrors(i, node, errors);
+      const {
+        [NodeState.Dirty]: dirty,
+        [NodeState.Touched]: touched,
+        [NodeState.ShowError]: showError,
+      } = node.state;
+      if (
+        dirty !== undefined ||
+        touched !== undefined ||
+        showError !== undefined
+      ) {
+        nodeStateMap.current.set(node.path, { dirty, touched, showError });
+        update();
+      }
     }
     // Cleanup all subscriptions
     return () => {

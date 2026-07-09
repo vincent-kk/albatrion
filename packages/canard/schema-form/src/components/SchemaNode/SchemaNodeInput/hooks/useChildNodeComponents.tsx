@@ -4,7 +4,6 @@ import {
   memo,
   useMemo,
   useRef,
-  useState,
 } from 'react';
 
 import {
@@ -19,7 +18,7 @@ import {
   type SchemaNode,
   isTerminalNode,
 } from '@/schema-form/core';
-import { useSchemaNodeSubscribe } from '@/schema-form/hooks/useSchemaNodeSubscribe';
+import { useSchemaNodeTracker } from '@/schema-form/hooks/useSchemaNodeTracker';
 import type { ChildNodeComponentProps } from '@/schema-form/types';
 
 import type {
@@ -32,15 +31,19 @@ import type {
  * @param node - SchemaNode
  * @param NodeProxy - SchemaNodeProxy
  * @returns ChildNodeComponent[]
+ *
+ * @remarks `node.children` is read during render and kept consistent by the
+ *          tracker: `useSchemaNodeTracker` is `useSyncExternalStore`-based, so
+ *          `UpdateChildren` deliveries landing between render and commit
+ *          (concurrent mount gap) still force a resync render instead of
+ *          being lost.
  */
 export const useChildNodeComponents = (
   node: SchemaNode,
   NodeProxy: ComponentType<SchemaNodeProxyProps>,
 ): ChildNodeComponent[] => {
-  const [children, setChildren] = useState(node.children);
-  useSchemaNodeSubscribe(node, ({ type }) => {
-    if (type & NodeEventType.UpdateChildren) setChildren(node.children);
-  });
+  useSchemaNodeTracker(node, NodeEventType.UpdateChildren);
+  const children = node.children;
 
   const cache = useRef(new Map<string, ChildNodeComponent>());
   useOnUnmount(() => cache.current.clear());

@@ -12,6 +12,7 @@ import type {
   NodeEventPayload,
   NodeEventType,
   NodeListener,
+  UnionNodeEventType,
 } from '@/schema-form/core/nodes/type';
 import { SchemaFormError } from '@/schema-form/errors';
 import { formatInfiniteLoopError } from '@/schema-form/helpers/error';
@@ -31,6 +32,12 @@ import { mergeEventEntries } from './utils/mergeEventEntries';
  * rather than accommodated by raising this constant.
  */
 const MAX_LOOP_COUNT = 100;
+
+/**
+ * Number of event-type slots in the delivery ledger.
+ * Event types are 32-bit bitmask flags, so one counter per bit position.
+ */
+const LEDGER_SIZE = 32;
 
 /**
  * Event batch data structure
@@ -149,6 +156,51 @@ export class EventCascadeManager {
   private __listeners__: Set<NodeListener> = new Set();
 
   /**
+   * Monotonic delivery counters indexed by event-type bit position.
+   * @note Incremented at the single delivery point (`__resolve__`) whether or
+   *       not any listener is attached. Subscriptions that attach after a
+   *       delivery (e.g. React commits detached from the render phase under
+   *       concurrent rendering) compare revisions to detect what they missed.
+   */
+  private __ledger__: number[] = new Array(LEDGER_SIZE).fill(0);
+
+  /**
+   * Records a delivery in the ledger, one increment per event-type bit.
+   * @param type - Merged event-type bitmask of the delivered collection
+   */
+  private __recordDelivery__(
+    this: EventCascadeManager,
+    type: UnionNodeEventType,
+  ): void {
+    let bits: number = type;
+    while (bits !== 0) {
+      const flag = bits & -bits;
+      this.__ledger__[31 - Math.clz32(flag)]++;
+      bits ^= flag;
+    }
+  }
+
+  /**
+   * Monotonic revision of deliveries matching the given event-type mask.
+   * @param mask - Bitmask of event types to count
+   * @returns Sum of delivery counts for every set bit; strictly increases
+   *          whenever a matching collection is delivered
+   * @remarks Counted at delivery time regardless of listener presence, so a
+   *          late subscriber can compare a captured revision against the
+   *          current one to detect (and re-pull) notifications it missed.
+   */
+  public revision(this: EventCascadeManager, mask: UnionNodeEventType): number {
+    let revision = 0;
+    let bits: number = mask;
+    while (bits !== 0) {
+      const flag = bits & -bits;
+      revision += this.__ledger__[31 - Math.clz32(flag)];
+      bits ^= flag;
+    }
+    return revision;
+  }
+
+  /**
    * Dispatches an event collection to all listeners.
    * @param eventCollection - Merged event collection to dispatch
    */
@@ -156,6 +208,7 @@ export class EventCascadeManager {
     this: EventCascadeManager,
     eventCollection: NodeEventCollection,
   ): void {
+    this.__recordDelivery__(eventCollection.type);
     for (const listener of this.__listeners__) listener(eventCollection);
   }
 

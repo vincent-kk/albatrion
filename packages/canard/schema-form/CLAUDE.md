@@ -55,7 +55,8 @@ npx -p @slats/claude-assets-sync inject-claude-settings --package=@canard/schema
 - `node.find('/path')` — JSONPointer 노드 탐색 (`..` 부모, `*` 와일드카드는 제한적 사용)
 - `node.value` / `node.enhancedValue` (가상 필드 포함)
 - `node.validate()` / `node.errors`
-- `node.subscribe()` — 노드 이벤트 구독 (cleanup 함수 반환)
+- `node.subscribe()` — 노드 이벤트 구독 (cleanup 함수 반환). 구독 전에 전달된 이벤트는 재생되지 않음 — 상태 미러는 `useSchemaNodeSubscribe`의 `onSubscribe` catch-up 사용
+- `node.revision(mask?)` — 전달된 이벤트 배치의 단조 리비전 (리스너 유무 무관 집계, 늦은 구독자의 갭 감지용; `useSchemaNodeTracker`가 useSyncExternalStore 스냅샷으로 사용)
 
 ### FormTypeInput 우선순위 (높음 → 낮음)
 

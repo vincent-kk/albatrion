@@ -5,7 +5,7 @@ import { escapeSegment, setValue } from '@winglet/json/pointer';
 
 import type { Dictionary, Fn, Nullish } from '@aileron/declare';
 
-import { UNIT_SEPARATOR } from '@/schema-form/app/constants';
+import { BIT_MASK_ALL, UNIT_SEPARATOR } from '@/schema-form/app/constants';
 import { JsonSchemaError } from '@/schema-form/errors';
 import {
   getDefaultValue,
@@ -38,6 +38,7 @@ import {
   type SchemaNode,
   type SchemaNodeConstructorProps,
   SetValueOption,
+  type UnionNodeEventType,
   type UnionSetValueOption,
   ValidationMode,
 } from '../type';
@@ -880,6 +881,31 @@ export abstract class AbstractNode<
    */
   public subscribe(this: AbstractNode, listener: NodeListener): Fn {
     return this.__eventManager__.subscribe(listener);
+  }
+
+  /**
+   * Monotonic revision of events this node has delivered, filtered by mask.
+   * @param mask - Bitmask of `NodeEventType`s to count (defaults to all events)
+   * @returns Number that strictly increases whenever a matching event batch
+   *          is delivered to this node's listeners
+   * @remarks Deliveries are counted even while no listener is attached. A
+   *          subscriber that attaches late (e.g. a React commit detached from
+   *          its render phase under concurrent rendering) can therefore
+   *          compare a previously captured revision against the current one
+   *          to detect notifications it missed and re-read the node state.
+   * @example
+   * ```ts
+   * const seen = node.revision(NodeEventType.UpdateChildren);
+   * const unsubscribe = node.subscribe(listener);
+   * // catch up on anything delivered before the subscription attached
+   * if (node.revision(NodeEventType.UpdateChildren) !== seen) resync();
+   * ```
+   */
+  public revision(
+    this: AbstractNode,
+    mask: UnionNodeEventType = BIT_MASK_ALL,
+  ): number {
+    return this.__eventManager__.revision(mask);
   }
 
   /**

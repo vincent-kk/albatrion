@@ -18,24 +18,25 @@ import { renderForm } from '../renderForm';
  *    (scoped && active && visible), and its schema/default value is seeded
  *    (`getValue()` includes it). `__primeInitialBranch__` does its job at the
  *    tree level.
- *  - But the FIRST-PAINT DOM omits that branch field: `useChildNodeComponents`
- *    captured `useState(node.children)` before the branch key was appended to
- *    `__children__`, and the resync `UpdateChildren` event is microtask-batched,
- *    delivered only after `flush()`. So `[data-path]` for the branch field is
- *    absent synchronously and appears only post-flush.
+ *  - The branch children's `__scoped__`/enable settles via the microtask
+ *    cascade (by design — synchronous priming was reverted for value-priority
+ *    regressions), so the first RENDER pass necessarily reads a pre-settle
+ *    snapshot. The DOM still converges at first paint because the tracker
+ *    rides the delivery ledger (`node.revision` + useSyncExternalStore) and
+ *    resyncs on the cascade's deliveries within the same microtask drain.
  *
- * → GAP-1 is therefore a node-tree-vs-DOM divergence *window*, not a product
- *   defect: the tree is settled synchronously but its DOM reflection is
- *   microtask-deferred. In CSR this is invisible — the browser paints only
- *   after the microtask queue drains, so users always see the converged DOM;
- *   the exposure here is an artifact of the async harness observing the gap
- *   mid-cascade. It becomes a REAL fault only under SSR/`renderToString`
- *   (synchronous, no microtask drain → hydration mismatch), which needs the
- *   model pre-settled before mount (option C). Until SSR support lands these
- *   cases are pinned with `it.fails` (tree-side assertions pass, the synchronous
- *   DOM-presence assertion fails) so the suite stays green while tracking the
- *   gap. The post-flush behavior is correct: the DOM converges and the seeded
- *   branch defaults are NOT clobbered (GAP-2) — those cases pass.
+ * → GAP-1 (resolved in CSR): the divergence window is closed by the delivery
+ *   ledger — `useSchemaNodeTracker` consumes `node.revision(mask)` through
+ *   `useSyncExternalStore`, so cascade deliveries force a sync-lane resync
+ *   render within the same microtask drain (observable below: the branch
+ *   field is already in the DOM at the post-render snapshot), and deliveries
+ *   landing in a concurrent mount's render→commit gap are re-detected at
+ *   commit instead of being lost (see
+ *   composition.oneOf.concurrentMount.render.test.tsx for that repro).
+ *   SSR/`renderToString` remains out of scope — no effects/stores run there,
+ *   so a synchronous first-paint DOM still requires the model pre-settled
+ *   before mount (option C). The post-flush behavior is unchanged: the DOM
+ *   converges and the seeded branch defaults are NOT clobbered (GAP-2).
  *
  * Schemas mirror stories/17.OneOf and stories/06.IfThenElse, kept compact.
  * Inputs are the built-in uncontrolled FormTypeInputs (no custom definitions),
@@ -43,179 +44,167 @@ import { renderForm } from '../renderForm';
  */
 describe('composition.oneOf — initial branch priming', () => {
   // ---------------------------------------------------------------------------
-  // GAP-1 — tree primed synchronously, but the branch field's DOM reflection is
-  // microtask-deferred. CSR-harmless (browser paints post-drain); SSR-unsafe.
-  // Pinned with it.fails until the model is pre-settled before mount (option C).
+  // GAP-1 (resolved in CSR) — tree primed synchronously AND the DOM converges
+  // within the same microtask drain via the delivery-ledger resync. SSR still
+  // needs option C (model pre-settled before mount) — no stores run there.
   // ---------------------------------------------------------------------------
-  describe('default-selected branch primed in tree but absent from first-paint DOM (GAP-1)', () => {
-    it.fails(
-      'first branch (index 0) // GAP (CSR-harmless/SSR-unsafe): tree primed, DOM reflection microtask-deferred',
-      async () => {
-        const schema = {
-          type: 'object',
-          properties: {
-            category: {
-              type: 'string',
-              enum: ['game', 'movie'],
-              default: 'game',
+  describe('default-selected branch primed in tree and present at first paint (GAP-1 resolved)', () => {
+    it('first branch (index 0)', async () => {
+      const schema = {
+        type: 'object',
+        properties: {
+          category: {
+            type: 'string',
+            enum: ['game', 'movie'],
+            default: 'game',
+          },
+        },
+        oneOf: [
+          {
+            computed: { if: "./category === 'game'" },
+            properties: { gamePrice: { type: 'number' } },
+          },
+          {
+            computed: { if: "./category === 'movie'" },
+            properties: { moviePrice: { type: 'number', minimum: 50 } },
+          },
+        ],
+      } satisfies JsonSchema;
+
+      const form = await renderForm(schema, { flushOnMount: false });
+
+      // Node tree is correctly primed synchronously.
+      expect(form.node('/gamePrice')).not.toBeNull();
+      expect((form.node('/gamePrice') as any).enabled).toBe(true);
+      expect(form.getValue()?.category).toBe('game');
+      // Inactive branch correctly excluded from the value tree + DOM.
+      expect(form.getValue()).not.toHaveProperty('moviePrice');
+      expect(form.exists('/moviePrice')).toBe(false);
+
+      // The active branch field reaches the DOM within the same drain.
+      expect(form.exists('/gamePrice')).toBe(true);
+    });
+
+    it('non-first branch (index 2)', async () => {
+      const schema = {
+        type: 'object',
+        properties: {
+          category: {
+            type: 'string',
+            enum: ['game', 'movie', 'console'],
+            default: 'console',
+          },
+        },
+        oneOf: [
+          {
+            computed: { if: "./category === 'game'" },
+            properties: { gamePrice: { type: 'number' } },
+          },
+          {
+            computed: { if: "./category === 'movie'" },
+            properties: { moviePrice: { type: 'number', minimum: 50 } },
+          },
+          {
+            computed: { if: "./category === 'console'" },
+            properties: { consolePrice: { type: 'number', default: 100 } },
+          },
+        ],
+      } satisfies JsonSchema;
+
+      const form = await renderForm(schema, { flushOnMount: false });
+
+      // Tree: index-2 branch primed with its default value.
+      expect(form.node('/consolePrice')?.value).toBe(100);
+      expect(form.getValue()).toMatchObject({
+        category: 'console',
+        consolePrice: 100,
+      });
+      expect(form.getValue()).not.toHaveProperty('gamePrice');
+      expect(form.exists('/gamePrice')).toBe(false);
+
+      // Present at first paint (ledger resync).
+      expect(form.exists('/consolePrice')).toBe(true);
+    });
+
+    it('const-discriminated branch (index 2)', async () => {
+      const schema = {
+        type: 'object',
+        properties: {
+          role: {
+            type: 'string',
+            enum: ['admin', 'editor', 'viewer'],
+            default: 'viewer',
+          },
+        },
+        oneOf: [
+          {
+            properties: {
+              role: { const: 'admin' },
+              adminLevel: { type: 'number', default: 5 },
             },
           },
-          oneOf: [
-            {
-              computed: { if: "./category === 'game'" },
-              properties: { gamePrice: { type: 'number' } },
-            },
-            {
-              computed: { if: "./category === 'movie'" },
-              properties: { moviePrice: { type: 'number', minimum: 50 } },
-            },
-          ],
-        } satisfies JsonSchema;
-
-        const form = await renderForm(schema, { flushOnMount: false });
-
-        // Node tree is correctly primed synchronously.
-        expect(form.node('/gamePrice')).not.toBeNull();
-        expect((form.node('/gamePrice') as any).enabled).toBe(true);
-        expect(form.getValue()?.category).toBe('game');
-        // Inactive branch correctly excluded from the value tree + DOM.
-        expect(form.getValue()).not.toHaveProperty('moviePrice');
-        expect(form.exists('/moviePrice')).toBe(false);
-
-        // BUG: the active branch field is missing from the first-paint DOM.
-        expect(form.exists('/gamePrice')).toBe(true);
-      },
-    );
-
-    it.fails(
-      'non-first branch (index 2) // GAP (CSR-harmless/SSR-unsafe): seeded branch default in tree, DOM reflection deferred',
-      async () => {
-        const schema = {
-          type: 'object',
-          properties: {
-            category: {
-              type: 'string',
-              enum: ['game', 'movie', 'console'],
-              default: 'console',
+          {
+            properties: {
+              role: { const: 'editor' },
+              editGroup: { type: 'string', default: 'g1' },
             },
           },
-          oneOf: [
-            {
-              computed: { if: "./category === 'game'" },
-              properties: { gamePrice: { type: 'number' } },
-            },
-            {
-              computed: { if: "./category === 'movie'" },
-              properties: { moviePrice: { type: 'number', minimum: 50 } },
-            },
-            {
-              computed: { if: "./category === 'console'" },
-              properties: { consolePrice: { type: 'number', default: 100 } },
-            },
-          ],
-        } satisfies JsonSchema;
-
-        const form = await renderForm(schema, { flushOnMount: false });
-
-        // Tree: index-2 branch primed with its default value.
-        expect(form.node('/consolePrice')?.value).toBe(100);
-        expect(form.getValue()).toMatchObject({
-          category: 'console',
-          consolePrice: 100,
-        });
-        expect(form.getValue()).not.toHaveProperty('gamePrice');
-        expect(form.exists('/gamePrice')).toBe(false);
-
-        // BUG: missing from first-paint DOM.
-        expect(form.exists('/consolePrice')).toBe(true);
-      },
-    );
-
-    it.fails(
-      'const-discriminated branch (index 2) // GAP (CSR-harmless/SSR-unsafe): const-matched branch in tree, DOM reflection deferred',
-      async () => {
-        const schema = {
-          type: 'object',
-          properties: {
-            role: {
-              type: 'string',
-              enum: ['admin', 'editor', 'viewer'],
-              default: 'viewer',
+          {
+            properties: {
+              role: { const: 'viewer' },
+              viewMode: { type: 'string', default: 'compact' },
             },
           },
-          oneOf: [
-            {
-              properties: {
-                role: { const: 'admin' },
-                adminLevel: { type: 'number', default: 5 },
+        ],
+      } satisfies JsonSchema;
+
+      const form = await renderForm(schema, { flushOnMount: false });
+
+      // Tree: const-matched 'viewer' branch primed with its default.
+      expect(form.node('/viewMode')?.value).toBe('compact');
+      expect(form.getValue()).not.toHaveProperty('adminLevel');
+      expect(form.exists('/adminLevel')).toBe(false);
+
+      // Present at first paint (ledger resync).
+      expect(form.exists('/viewMode')).toBe(true);
+    });
+
+    it('nested object oneOf branch', async () => {
+      const schema = {
+        type: 'object',
+        properties: {
+          productType: {
+            type: 'string',
+            enum: ['physical', 'digital'],
+            default: 'physical',
+          },
+          product: {
+            type: 'object',
+            oneOf: [
+              {
+                computed: { if: "../productType === 'physical'" },
+                properties: { weight: { type: 'number', default: 0.25 } },
               },
-            },
-            {
-              properties: {
-                role: { const: 'editor' },
-                editGroup: { type: 'string', default: 'g1' },
+              {
+                computed: { if: "../productType === 'digital'" },
+                properties: { fileSize: { type: 'number', default: 256 } },
               },
-            },
-            {
-              properties: {
-                role: { const: 'viewer' },
-                viewMode: { type: 'string', default: 'compact' },
-              },
-            },
-          ],
-        } satisfies JsonSchema;
-
-        const form = await renderForm(schema, { flushOnMount: false });
-
-        // Tree: const-matched 'viewer' branch primed with its default.
-        expect(form.node('/viewMode')?.value).toBe('compact');
-        expect(form.getValue()).not.toHaveProperty('adminLevel');
-        expect(form.exists('/adminLevel')).toBe(false);
-
-        // BUG: missing from first-paint DOM.
-        expect(form.exists('/viewMode')).toBe(true);
-      },
-    );
-
-    it.fails(
-      'nested object oneOf branch // GAP (CSR-harmless/SSR-unsafe): nested branch child in tree, DOM reflection deferred',
-      async () => {
-        const schema = {
-          type: 'object',
-          properties: {
-            productType: {
-              type: 'string',
-              enum: ['physical', 'digital'],
-              default: 'physical',
-            },
-            product: {
-              type: 'object',
-              oneOf: [
-                {
-                  computed: { if: "../productType === 'physical'" },
-                  properties: { weight: { type: 'number', default: 0.25 } },
-                },
-                {
-                  computed: { if: "../productType === 'digital'" },
-                  properties: { fileSize: { type: 'number', default: 256 } },
-                },
-              ],
-            },
+            ],
           },
-        } satisfies JsonSchema;
+        },
+      } satisfies JsonSchema;
 
-        const form = await renderForm(schema, { flushOnMount: false });
+      const form = await renderForm(schema, { flushOnMount: false });
 
-        // Tree: nested physical branch primed; container DOM renders.
-        expect(form.node('/product/weight')?.value).toBe(0.25);
-        expect(form.getValue()?.product).not.toHaveProperty('fileSize');
-        expect(form.exists('/product')).toBe(true);
-        expect(form.exists('/product/fileSize')).toBe(false);
+      // Tree: nested physical branch primed; container DOM renders.
+      expect(form.node('/product/weight')?.value).toBe(0.25);
+      expect(form.getValue()?.product).not.toHaveProperty('fileSize');
+      expect(form.exists('/product')).toBe(true);
+      expect(form.exists('/product/fileSize')).toBe(false);
 
-        // BUG: the nested branch child is missing from the first-paint DOM.
-        expect(form.exists('/product/weight')).toBe(true);
-      },
-    );
+      // The nested branch child reaches the DOM within the same drain.
+      expect(form.exists('/product/weight')).toBe(true);
+    });
   });
 
   // ---------------------------------------------------------------------------

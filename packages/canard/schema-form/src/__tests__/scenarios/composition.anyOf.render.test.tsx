@@ -56,32 +56,28 @@ const multiBranchSchema = {
 } satisfies JsonSchema;
 
 describe('composition/anyOf render — initial active branches on mount', () => {
-  // GAP-1: priming snaps the active-branch node maps so the NODE TREE is
-  // correct synchronously, but React's first `useState(node.children)`
-  // snapshot does not include the anyOf branch child — so the field is absent
-  // from the DOM at first paint and only appears after the microtask cascade.
-  // The node tree is verified correct at the same synchronous instant, which
-  // makes this a true DOM-vs-tree divergence (not a deferred-tree artifact).
-  it.fails(
-    'primes a default-active anyOf branch into the DOM at first paint // BUG: GAP-1 anyOf branch field absent from synchronous DOM while node tree already holds its value',
-    async () => {
-      const form = await renderForm(multiBranchSchema, { flushOnMount: false });
+  // GAP-1 (resolved): the tree is primed synchronously and the DOM converges
+  // within the same microtask drain — `useSchemaNodeTracker` rides the node's
+  // delivery ledger via useSyncExternalStore, so the cascade's UpdateChildren/
+  // enable deliveries force a sync-lane resync render instead of waiting for
+  // a later flush (and are never lost under concurrent mounts).
+  it('primes a default-active anyOf branch into the DOM at first paint', async () => {
+    const form = await renderForm(multiBranchSchema, { flushOnMount: false });
 
-      // Node tree is already correct at the synchronous snapshot.
-      expect(form.node('/valueA')?.value).toBe('A-def');
-      expect(form.getValue()).toMatchObject({ showA: true, valueA: 'A-def' });
+    // Node tree is already correct at the synchronous snapshot.
+    expect(form.node('/valueA')?.value).toBe('A-def');
+    expect(form.getValue()).toMatchObject({ showA: true, valueA: 'A-def' });
 
-      // ...but the DOM has not rendered the branch field yet (the divergence).
-      expect(form.exists('/valueA')).toBe(true);
-    },
-  );
+    // ...and the DOM has converged within the same microtask drain.
+    expect(form.exists('/valueA')).toBe(true);
+  });
 
   it('settles the single default-active branch into the DOM after the cascade', async () => {
     const form = await renderForm(multiBranchSchema, { flushOnMount: false });
 
-    // Synchronous: tree correct, DOM branch field not yet committed.
+    // Tree correct and DOM already converged (ledger resync, same drain).
     expect(form.node('/valueA')?.value).toBe('A-def');
-    expect(form.exists('/valueA')).toBe(false);
+    expect(form.exists('/valueA')).toBe(true);
 
     await form.flush();
 

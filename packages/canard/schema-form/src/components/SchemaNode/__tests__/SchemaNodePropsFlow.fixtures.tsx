@@ -96,6 +96,7 @@ export const createMockSchemaNode = (
     }),
     publish: vi.fn(),
     subscribe: vi.fn(() => vi.fn()), // Returns unsubscribe function
+    revision: vi.fn(() => 0), // Delivery-ledger revision (no deliveries on a mock)
     find: vi.fn(),
     setExternalErrors: vi.fn(),
     validate: vi.fn(),

@@ -224,24 +224,21 @@ describe('oneOf default-branch priming (two-phase)', () => {
     expect(form.getValue().category).toBe('console');
   });
 
-  // BUG: with a default-selected non-zero oneOf branch the node tree is primed
-  // synchronously (active=true, value='Sony') but the DOM omits the branch
-  // field at first paint — `[data-path="/maker"]` only appears after the
-  // microtask UpdateChildren cascade. DOM lags a correct tree (GAP-1).
-  it.fails(
-    'renders a default-selected non-zero oneOf branch field on first paint // BUG: branch field absent in DOM until microtask cascade despite primed tree',
-    async () => {
-      const form = await renderForm(categorySchema, {
-        defaultValue: { category: 'console' },
-        flushOnMount: false,
-      });
+  // GAP-1 (resolved): the node tree is primed synchronously (active=true,
+  // value='Sony') and the DOM converges within the same microtask drain —
+  // the tracker rides the delivery ledger (useSyncExternalStore), so the
+  // UpdateChildren cascade forces a sync-lane resync render at first paint.
+  it('renders a default-selected non-zero oneOf branch field on first paint', async () => {
+    const form = await renderForm(categorySchema, {
+      defaultValue: { category: 'console' },
+      flushOnMount: false,
+    });
 
-      // Tree is correct synchronously...
-      expect(form.node('/maker')?.active).toBe(true);
-      // ...but the DOM has NOT rendered the branch field yet (this throws).
-      expect(form.exists('/maker')).toBe(true);
-    },
-  );
+    // Tree is correct synchronously...
+    expect(form.node('/maker')?.active).toBe(true);
+    // ...and the DOM has rendered the branch field within the same drain.
+    expect(form.exists('/maker')).toBe(true);
+  });
 });
 
 describe('oneOf switch-back stale value (instrument / mountOrdinal)', () => {
