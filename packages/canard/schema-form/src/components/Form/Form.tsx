@@ -31,6 +31,7 @@ import {
   FormTypeRendererContextProvider,
   InputControlContextProvider,
   RootNodeContextProvider,
+  VirtualizationContextProvider,
   WorkspaceContextProvider,
 } from '@/schema-form/providers';
 import type {
@@ -65,6 +66,7 @@ const FormInner = <
     showError: inputShowError,
     validationMode,
     validatorFactory,
+    virtualization,
     context,
     children: ChildComponent,
   }: FormProps<Schema, Value>,
@@ -174,22 +176,24 @@ const FormInner = <
           showError={showError}
         >
           <InputControlContextProvider readOnly={readOnly} disabled={disabled}>
-            <RootNodeContextProvider
-              key={version}
-              jsonSchema={jsonSchema}
-              defaultValue={defaultValue}
-              errors={errors}
-              onChange={handleChange}
-              onValidate={handleValidate}
-              onStateChange={handleStateChange}
-              onReady={handleReady}
-              validationMode={validationMode}
-              validatorFactory={validatorFactory}
-            >
-              <FormRootProxy onSubmit={handleFormSubmit}>
-                {children}
-              </FormRootProxy>
-            </RootNodeContextProvider>
+            <VirtualizationContextProvider virtualization={virtualization}>
+              <RootNodeContextProvider
+                key={version}
+                jsonSchema={jsonSchema}
+                defaultValue={defaultValue}
+                errors={errors}
+                onChange={handleChange}
+                onValidate={handleValidate}
+                onStateChange={handleStateChange}
+                onReady={handleReady}
+                validationMode={validationMode}
+                validatorFactory={validatorFactory}
+              >
+                <FormRootProxy onSubmit={handleFormSubmit}>
+                  {children}
+                </FormRootProxy>
+              </RootNodeContextProvider>
+            </VirtualizationContextProvider>
           </InputControlContextProvider>
         </FormTypeRendererContextProvider>
       </FormTypeInputsContextProvider>

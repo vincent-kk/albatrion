@@ -22,6 +22,11 @@ export {
 export { RootNodeContextProvider, useRootNodeContext } from './RootNodeContext';
 
 export {
+  VirtualizationContextProvider,
+  useVirtualizationContext,
+} from './VirtualizationContext';
+
+export {
   WorkspaceContextProvider,
   useWorkspaceContext,
 } from './WorkspaceContext';

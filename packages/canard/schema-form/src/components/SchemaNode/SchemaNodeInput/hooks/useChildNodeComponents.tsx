@@ -12,6 +12,7 @@ import {
   useReference,
 } from '@winglet/react-utils/hook';
 
+import { DeferrableNodeProxy } from '@/schema-form/components/SchemaNode/DeferrableNodeProxy';
 import type { SchemaNodeProxyProps } from '@/schema-form/components/SchemaNode/SchemaNodeProxy';
 import {
   NodeEventType,
@@ -19,6 +20,7 @@ import {
   isTerminalNode,
 } from '@/schema-form/core';
 import { useSchemaNodeTracker } from '@/schema-form/hooks/useSchemaNodeTracker';
+import { useVirtualizationContext } from '@/schema-form/providers';
 import type { ChildNodeComponentProps } from '@/schema-form/types';
 
 import type {
@@ -45,11 +47,14 @@ export const useChildNodeComponents = (
   useSchemaNodeTracker(node, NodeEventType.UpdateChildren);
   const children = node.children;
 
+  const { manager } = useVirtualizationContext();
+
   const cache = useRef(new Map<string, ChildNodeComponent>());
   useOnUnmount(() => cache.current.clear());
 
   return useMemo(() => {
     if (isTerminalNode(node) || children === null) return [];
+    const gateManager = manager?.forBranch(children.length) ?? null;
     const ChildNodeComponents: ChildNodeComponent[] = [];
     for (const child of children) {
       const node = child.node;
@@ -58,6 +63,10 @@ export const useChildNodeComponents = (
       const CachedComponent = cache.current.get(key);
       if (CachedComponent) ChildNodeComponents.push(CachedComponent);
       else {
+        // Deferrable is baked at creation so the component's hook set stays
+        // static; revealed-ness itself is resolved dynamically by the gate.
+        const deferredManager =
+          gateManager?.forChild(ChildNodeComponents.length, node) ?? null;
         const ChildComponent = memo(
           ({
             FormTypeRenderer: InputFormTypeRenderer,
@@ -69,7 +78,17 @@ export const useChildNodeComponents = (
             const onFileAttachRef = useReference(onFileAttach);
             const overridePropsRef = useReference(restProps);
             const FormTypeRenderer = useConstant(InputFormTypeRenderer);
-            return (
+            return deferredManager !== null ? (
+              <DeferrableNodeProxy
+                node={node}
+                manager={deferredManager}
+                NodeProxy={NodeProxy}
+                onChangeRef={onChangeRef}
+                onFileAttachRef={onFileAttachRef}
+                overridePropsRef={overridePropsRef}
+                FormTypeRenderer={FormTypeRenderer}
+              />
+            ) : (
               <NodeProxy
                 node={node}
                 onChangeRef={onChangeRef}
@@ -91,5 +110,5 @@ export const useChildNodeComponents = (
       }
     }
     return ChildNodeComponents;
-  }, [node, children, NodeProxy]);
+  }, [node, children, NodeProxy, manager]);
 };

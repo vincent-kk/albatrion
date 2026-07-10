@@ -102,6 +102,13 @@ interface FormProps<
   validationMode?: ValidationMode;
   /** Custom ValidatorFactory function */
   validatorFactory?: ValidatorFactory;
+  /**
+   * Render-level virtualization (deferred mount) for large forms (default: off)
+   *  - `true`: Enable with default options
+   *  - `VirtualizationOptions`: Enable with custom options
+   *  - Requires IntersectionObserver; silently disabled when unavailable (e.g. SSR)
+   */
+  virtualization?: boolean | VirtualizationOptions;
   /** User-defined context */
   context?: Dictionary;
   /** Child components */
@@ -1194,6 +1201,7 @@ const formInputMap = {
 ```
 
 **Wildcard matching examples:**
+
 - `/users/*/name` matches `/users/0/name`, `/users/1/name` (array indices)
 - `/config/*/enabled` matches `/config/theme/enabled`, `/config/lang/enabled` (object keys)
 - `/data/*/*/status` matches any deeply nested status field
@@ -1732,20 +1740,22 @@ const jsonSchema = {
 `injectTo` supports both relative and absolute JSON Pointer paths:
 
 **Relative paths** (from current node):
+
 ```tsx
 injectTo: (value) => ({
-  '../sibling': value,           // Sibling field
-  '../nested/child': value,      // Nested sibling's child
-  '../../uncle': value,          // Parent's sibling
-})
+  '../sibling': value, // Sibling field
+  '../nested/child': value, // Nested sibling's child
+  '../../uncle': value, // Parent's sibling
+});
 ```
 
 **Absolute paths** (from root):
+
 ```tsx
 injectTo: (value) => ({
-  '/rootField': value,           // Root level field
-  '/user/profile/name': value,   // Deeply nested field
-})
+  '/rootField': value, // Root level field
+  '/user/profile/name': value, // Deeply nested field
+});
 ```
 
 #### Multiple Targets
@@ -1761,7 +1771,10 @@ const jsonSchema = {
       injectTo: (value: string) => ({
         '../displayName': value,
         '../searchName': value.toLowerCase(),
-        '../initials': value.split(' ').map(n => n[0]).join(''),
+        '../initials': value
+          .split(' ')
+          .map((n) => n[0])
+          .join(''),
       }),
     },
     displayName: { type: 'string' },
@@ -1779,7 +1792,7 @@ For dynamic paths or when order matters, use array format:
 injectTo: (value: number) => [
   ['/calculations/doubled', value * 2],
   ['/calculations/squared', value * value],
-]
+];
 ```
 
 #### Accessing Context
@@ -1833,10 +1846,7 @@ const jsonSchema = {
 };
 
 // Pass context to Form
-<Form
-  jsonSchema={jsonSchema}
-  context={{ userRole: 'admin' }}
-/>
+<Form jsonSchema={jsonSchema} context={{ userRole: 'admin' }} />;
 ```
 
 #### Circular Reference Prevention
@@ -1875,7 +1885,7 @@ injectTo: (value) => {
     throw new Error('Value is required');
   }
   return { '../target': value };
-}
+};
 
 // Error includes:
 // - Source node path
@@ -1897,10 +1907,10 @@ interface FormContext {
 }
 
 const typedHandler: InjectToHandler<
-  string,        // Value type
-  ParentType,    // Parent value type
-  RootType,      // Root form value type
-  FormContext    // Context type
+  string, // Value type
+  ParentType, // Parent value type
+  RootType, // Root form value type
+  FormContext // Context type
 > = (value, ctx) => {
   // ctx.context is typed as FormContext
   if (ctx.context.permissions.includes('write')) {
@@ -2219,6 +2229,38 @@ The library is optimized for performance with features like:
    // Reuse within component
    <Form jsonSchema={jsonSchema} formTypeInputDefinitions={CUSTOM_INPUTS} />;
    ```
+
+### Virtualization for Very Large Forms
+
+For forms with hundreds of fields, the initial React mount is the dominant cost — the node tree itself is cheap. The `virtualization` prop defers mounting of off-screen fields: they render as lightweight placeholders and are replaced by the real components when they approach the viewport, during browser idle time (backfill), or when focused programmatically. Once mounted, a field never returns to a placeholder.
+
+The node tree is always fully built, so values, validation, `getValue()`/`setValue()` and submit behave identically whether a field is mounted or still deferred. Works with every FormTypeInput plugin — the gate sits below the layout, so custom layouts need no changes.
+
+```tsx
+// Defaults: threshold 30, eagerCount 20, rootMargin '100%',
+//           backfill 'idle', estimateHeight 40
+<Form jsonSchema={largeSchema} virtualization />
+
+// Tuned
+<Form
+  jsonSchema={largeSchema}
+  virtualization={{
+    threshold: 30, // gate a branch only when it has ≥ N children
+    eagerCount: 20, // leading fields mounted immediately (no first-frame blank)
+    rootMargin: '100%', // pre-mount fields within one extra viewport
+    backfill: 'idle', // 'idle': fill the rest on browser idle | 'none'
+    estimateHeight: 40, // placeholder height px, or (node) => number
+  }}
+/>
+```
+
+Measured with `compare-frameworks` (production React, 500 flat fields): mount drops from ~55ms/500 field-renders to ~19ms/20 field-renders; keystroke/setValue stay at exactly 1 render.
+
+> **Caveats**
+>
+> - Requires `IntersectionObserver`; when unavailable the option is silently ignored and everything mounts eagerly. Do not enable it in SSR/hydration apps — the server renders all fields while the client would gate them, causing a hydration mismatch.
+> - Placeholders occupy `estimateHeight` until revealed, so scrollbar length is approximate for unmounted regions. Fields hidden by `computed.visible` render no placeholder.
+> - With `backfill: 'none'`, screen readers, tab order past the mounted range, and browser autofill only see fields once they are scrolled into view; the default `'idle'` backfill restores the full DOM within a few idle frames.
 
 ---
 

@@ -47,6 +47,10 @@ import {
  *     renders `null` when `!node.enabled` (scoped && active && visible).
  *     → `[data-path="/x"]` presence is the canonical "is this node rendered"
  *       hook for ALL node types (object / array / terminal), not just inputs.
+ *   - Virtualization placeholders share the SAME identity attribute
+ *     (`data-path`) plus a `data-deferred` state marker, so
+ *     `[data-path="/x"]` addresses a node uniformly while
+ *     `:not([data-deferred])` distinguishes an actually mounted subtree.
  *   - Every built-in terminal input renders with `id={node.path}` (the
  *     JSONPointer) and is UNCONTROLLED (defaultValue / defaultChecked). After a
  *     programmatic setValue the DOM only updates when the input re-mounts via
@@ -225,12 +229,16 @@ export interface FormHarness {
   unmount: () => void;
 
   // ---- DOM presence (by JSONPointer path; canonical [data-path] hook) ----
-  /** The `[data-path]` wrapper element for an enabled node, or null. */
+  /** The `[data-path]` element for an enabled node (mounted wrapper OR deferred placeholder), or null. */
   wrapper: (path: string) => HTMLElement | null;
-  /** Whether a node is currently rendered (enabled) in the DOM. */
+  /** Whether a node's subtree is actually mounted (placeholders excluded). */
   exists: (path: string) => boolean;
-  /** All node paths currently rendered (enabled), in document order. */
+  /** All node paths with a mounted subtree, in document order. */
   renderedPaths: () => string[];
+  /** Whether a node currently renders as a virtualization placeholder (`data-deferred`). */
+  deferred: (path: string) => boolean;
+  /** All node paths currently deferred as placeholders, in document order. */
+  deferredPaths: () => string[];
 
   // ---- DOM input values (terminal fields, by id={path}) ----
   /** The input/select element rendered for `path`, or null. */
@@ -393,9 +401,17 @@ export const renderForm = async (
     },
 
     wrapper: (path) => byPath(container, path),
-    exists: (path) => byPath(container, path) !== null,
+    exists: (path) =>
+      container.querySelector(`[data-path="${path}"]:not([data-deferred])`) !==
+      null,
     renderedPaths: () =>
-      Array.from(container.querySelectorAll('[data-path]')).map(
+      Array.from(
+        container.querySelectorAll('[data-path]:not([data-deferred])'),
+      ).map((el) => (el as HTMLElement).dataset.path ?? ''),
+    deferred: (path) =>
+      container.querySelector(`[data-path="${path}"][data-deferred]`) !== null,
+    deferredPaths: () =>
+      Array.from(container.querySelectorAll('[data-path][data-deferred]')).map(
         (el) => (el as HTMLElement).dataset.path ?? '',
       ),
 
