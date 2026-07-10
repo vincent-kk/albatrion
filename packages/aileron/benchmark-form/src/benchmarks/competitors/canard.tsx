@@ -5,6 +5,7 @@ import { createRoot } from 'react-dom/client';
 import {
   Form,
   type FormHandle,
+  type FormProps,
   type FormTypeRendererProps,
   type JsonSchema,
 } from '@canard/schema-form';
@@ -14,8 +15,11 @@ import { fireReactChange } from './fire';
 import type { CompetitorAdapter } from './harness';
 import { buildFlatSchema, flatFieldName } from './schema';
 
-export const canardAdapter: CompetitorAdapter = {
-  name: '@canard/schema-form',
+const createCanardAdapter = (
+  name: string,
+  virtualization?: FormProps['virtualization'],
+): CompetitorAdapter => ({
+  name,
   async mount(container, fieldCount) {
     let renders = 0;
     // Count leaf-field commits only (depth 0 is the root object container,
@@ -32,6 +36,7 @@ export const canardAdapter: CompetitorAdapter = {
         jsonSchema={buildFlatSchema(fieldCount)}
         CustomFormTypeRenderer={Renderer}
         onChange={() => {}}
+        virtualization={virtualization}
       />,
     );
     await drainUntilReady(
@@ -59,4 +64,17 @@ export const canardAdapter: CompetitorAdapter = {
       unmount: () => root.unmount(),
     };
   },
-};
+});
+
+export const canardAdapter = createCanardAdapter('@canard/schema-form');
+
+/**
+ * Virtualized variant: placeholders stay deferred under the never-firing
+ * IntersectionObserver stub (setup-env), so mount measures the eager-only
+ * cost — default options mount the leading 20 fields per gated branch.
+ * Keystroke/setValue target field 0, which is inside the eager window.
+ */
+export const canardVirtualizedAdapter = createCanardAdapter(
+  '@canard/schema-form (virtualized)',
+  { backfill: 'none' },
+);

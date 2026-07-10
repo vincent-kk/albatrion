@@ -40,6 +40,21 @@ export function setupJsdom(): JSDOM {
   set('MouseEvent', dom.window.MouseEvent);
   set('KeyboardEvent', dom.window.KeyboardEvent);
 
+  // jsdom has no IntersectionObserver. Provide a never-firing stub so
+  // virtualization-enabled adapters keep their placeholders deferred — mount
+  // then measures the eager-only cost instead of silently disabling the
+  // feature (schema-form falls back to mount-everything when the API is
+  // absent). Adapters without virtualization never construct an observer.
+  class NoopIntersectionObserver {
+    observe(): void {}
+    unobserve(): void {}
+    disconnect(): void {}
+    takeRecords(): never[] {
+      return [];
+    }
+  }
+  set('IntersectionObserver', NoopIntersectionObserver);
+
   cached = dom;
   return dom;
 }
