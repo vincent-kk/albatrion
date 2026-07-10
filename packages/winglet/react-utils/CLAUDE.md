@@ -42,6 +42,7 @@ import { isReactComponent } from '@winglet/react-utils/filter';
 **Hooks** (`@winglet/react-utils/hook`):
 - `useHandle` — 안정적인 이벤트 핸들러 (schema-form 플러그인에서 주로 사용)
 - `useConstant` — 비싼 연산 메모이제이션
+- `useLazyConstant` — factory 1회 실행 + identity 보장 (useMemo와 달리 재계산 불가 보장, 리소스 소유 인스턴스용)
 - `useMemorize` — 향상된 memoization
 - `useEffectUntil` / `useLayoutEffectUntil` — 조건부 effect
 - `useWindowSize` — 브라우저 윈도우 크기 추적

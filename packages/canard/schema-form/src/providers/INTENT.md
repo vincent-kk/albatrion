@@ -19,7 +19,7 @@
 
 - 각 Context 모듈은 `Context.ts`, `ContextProvider.tsx`, `useContext.ts`, `index.ts` 4파일 구조; 훅 네이밍은 `use<ContextName>Context()`
 - Provider 중첩 순서 (Form.tsx 기준): `Workspace → FormTypeInputs → FormTypeRenderer → InputControl → Virtualization → RootNode`
-- `VirtualizationContext`의 manager는 마운트 시 `VirtualizationManager.create`로 1회 생성·고정 (비활성/IO 부재 시 null)
+- `VirtualizationContext`의 manager는 마운트 시 `VirtualizationManager.create`로 1회 생성·고정 (`useLazyConstant` — memo가 아닌 보장; 비활성/IO 부재 시 null)
 - `ExternalFormContext`는 앱 최상단의 선택적 외부 설정 레이어; 함수/컴포넌트 레퍼런스는 `useConstant`로 고정하여 불필요한 리렌더 방지
 
 ## Boundaries
@@ -46,4 +46,4 @@
 - `@/schema-form/types` — `ShowError`, `FormatError`, `AttachedFilesMap`, `ValidatorFactory`
 - `@/schema-form/helpers` — normalize 헬퍼, `transformErrors`; `helpers/virtualization` — `VirtualizationManager`(`create`)
 - `@/schema-form/app/plugin` — `PluginManager` (FormTypeRendererContext fallback)
-- `@winglet/react-utils/hook` — `useConstant`, `useSnapshot`, `useMemorize`
+- `@winglet/react-utils/hook` — `useConstant`, `useLazyConstant`, `useSnapshot`, `useMemorize`

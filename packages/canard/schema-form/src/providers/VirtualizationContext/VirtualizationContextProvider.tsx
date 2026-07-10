@@ -1,4 +1,6 @@
-import { type PropsWithChildren, useEffect, useState } from 'react';
+import { type PropsWithChildren, useEffect } from 'react';
+
+import { useLazyConstant } from '@winglet/react-utils/hook';
 
 import type { FormProps } from '@/schema-form/components/Form';
 import { VirtualizationManager } from '@/schema-form/helpers/virtualization';
@@ -18,10 +20,10 @@ export const VirtualizationContextProvider = ({
   virtualization,
   children,
 }: PropsWithChildren<VirtualizationContextProviderProps>) => {
-  const [contextValue] = useState<VirtualizationContext>(() => ({
+  const contextValue = useLazyConstant(() => ({
     manager: VirtualizationManager.create(virtualization),
   }));
-  const { manager } = contextValue;
+  const manager = contextValue.manager;
   useEffect(() => {
     if (manager === null) return;
     return () => manager.disconnect();
