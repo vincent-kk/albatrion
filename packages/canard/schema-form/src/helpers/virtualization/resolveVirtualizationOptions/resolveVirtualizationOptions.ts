@@ -1,13 +1,14 @@
-import type {
-  ResolvedVirtualizationOptions,
-  VirtualizationOptions,
+import {
+  type ResolvedVirtualizationOptions,
+  VirtualizationBackfill,
+  type VirtualizationOptions,
 } from '../type';
 
 const DEFAULT_OPTIONS = {
   threshold: 30,
   eagerCount: 20,
   rootMargin: '100%',
-  backfill: 'idle',
+  backfill: VirtualizationBackfill.Idle,
   estimateHeight: 40,
   Placeholder: null,
 } satisfies ResolvedVirtualizationOptions;

@@ -8,6 +8,7 @@ import {
   type FormProps,
   type FormTypeRendererProps,
   type JsonSchema,
+  VirtualizationBackfill,
 } from '@canard/schema-form';
 
 import { drainTicks, drainUntilReady } from '../../utils/setup-env';
@@ -76,5 +77,5 @@ export const canardAdapter = createCanardAdapter('@canard/schema-form');
  */
 export const canardVirtualizedAdapter = createCanardAdapter(
   '@canard/schema-form (virtualized)',
-  { backfill: 'none' },
+  { backfill: VirtualizationBackfill.None },
 );

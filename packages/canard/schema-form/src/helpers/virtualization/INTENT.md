@@ -40,6 +40,6 @@
 
 ## Dependencies
 
-- `@/schema-form/core` — `SchemaNode` (type-only)
+- `@/schema-form/core` — `SchemaNode` (type-only); `@/schema-form/app/constants` — `BIT_FLAG_*` (enum 멤버값)
 - `@winglet/common-utils/scheduler` — `scheduleCancelableMacrotaskSafe`
 - `@aileron/declare` — `Fn`

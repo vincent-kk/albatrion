@@ -12,6 +12,7 @@ import {
   Form,
   type FormHandle,
   type JsonSchema,
+  VirtualizationBackfill,
   type VirtualizationPlaceholderProps,
 } from '../src';
 
@@ -128,7 +129,7 @@ const Guide = ({ children }: PropsWithChildren) => (
 const FIELD_COUNT = 500;
 
 /**
- * backfill: 'none' — reveals happen ONLY when a placeholder approaches the
+ * backfill: VirtualizationBackfill.None — reveals happen ONLY when a placeholder approaches the
  * viewport, so the windowing behavior stays visible while you scroll.
  */
 export const ScrollReveal = () => {
@@ -147,7 +148,7 @@ export const ScrollReveal = () => {
       <ScrollFrame scrollRef={scrollRef}>
         <Form
           jsonSchema={flatSchema(FIELD_COUNT)}
-          virtualization={{ backfill: 'none' }}
+          virtualization={{ backfill: VirtualizationBackfill.None }}
         />
       </ScrollFrame>
     </div>
@@ -155,7 +156,7 @@ export const ScrollReveal = () => {
 };
 
 /**
- * backfill: 'idle' (default) — the initial mount is O(visible), then the
+ * backfill: VirtualizationBackfill.Idle (default) — the initial mount is O(visible), then the
  * browser's idle time progressively mounts the rest (~25 per slice).
  */
 export const IdleBackfill = () => {
@@ -208,7 +209,7 @@ const MountBench = ({
         {visible && (
           <Form
             jsonSchema={flatSchema(FIELD_COUNT)}
-            virtualization={virtualized ? { backfill: 'none' } : undefined}
+            virtualization={virtualized ? { backfill: VirtualizationBackfill.None } : undefined}
           />
         )}
       </ScrollFrame>
@@ -259,7 +260,7 @@ export const FocusCommandReveal = () => {
         <Form
           ref={formRef}
           jsonSchema={flatSchema(FIELD_COUNT)}
-          virtualization={{ backfill: 'none' }}
+          virtualization={{ backfill: VirtualizationBackfill.None }}
         />
       </ScrollFrame>
     </div>
@@ -305,7 +306,7 @@ export const ComponentPlaceholder = () => {
       <ScrollFrame scrollRef={scrollRef} styled={false}>
         <Form
           jsonSchema={flatSchema(FIELD_COUNT)}
-          virtualization={{ backfill: 'none', Placeholder: FieldSkeleton }}
+          virtualization={{ backfill: VirtualizationBackfill.None, Placeholder: FieldSkeleton }}
         />
       </ScrollFrame>
     </div>
@@ -339,7 +340,7 @@ export const ArrayItems1000 = () => {
           defaultValue={{
             items: Array.from({ length: 1000 }, (_, i) => `item ${i}`),
           }}
-          virtualization={{ backfill: 'none' }}
+          virtualization={{ backfill: VirtualizationBackfill.None }}
         />
       </ScrollFrame>
     </div>

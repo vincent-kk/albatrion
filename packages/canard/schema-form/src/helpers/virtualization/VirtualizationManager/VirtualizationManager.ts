@@ -5,10 +5,11 @@ import type { Fn } from '@aileron/declare';
 import type { SchemaNode } from '@/schema-form/core';
 
 import { resolveVirtualizationOptions } from '../resolveVirtualizationOptions';
-import type {
-  ResolvedVirtualizationOptions,
-  VirtualizationOptions,
-  VirtualizationPlaceholderProps,
+import {
+  type ResolvedVirtualizationOptions,
+  VirtualizationBackfill,
+  type VirtualizationOptions,
+  type VirtualizationPlaceholderProps,
 } from '../type';
 import { type IdleDeadlineLike, scheduleIdle } from './scheduleIdle';
 
@@ -88,7 +89,7 @@ export class VirtualizationManager {
   public register(element: Element, reveal: Fn): void {
     this.registry.set(element, reveal);
     this.ensureObserver()?.observe(element);
-    if (this.options.backfill === 'idle') this.ensureIdlePump();
+    if (this.options.backfill === VirtualizationBackfill.Idle) this.ensureIdlePump();
   }
 
   /**
@@ -143,7 +144,7 @@ export class VirtualizationManager {
     if (this.observer !== null) return this.observer;
     if (typeof IntersectionObserver === 'undefined') return null;
     this.observer = new IntersectionObserver(this.handleIntersections, {
-      rootMargin: this.options.rootMargin,
+      rootMargin: this.options.rootMargin as string,
     });
     return this.observer;
   }

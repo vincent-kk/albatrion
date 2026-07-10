@@ -2238,7 +2238,7 @@ The node tree is always fully built, so values, validation, `getValue()`/`setVal
 
 ```tsx
 // Defaults: threshold 30, eagerCount 20, rootMargin '100%',
-//           backfill 'idle', estimateHeight 40
+//           backfill VirtualizationBackfill.Idle, estimateHeight 40
 <Form jsonSchema={largeSchema} virtualization />
 
 // Tuned
@@ -2248,7 +2248,7 @@ The node tree is always fully built, so values, validation, `getValue()`/`setVal
     threshold: 30, // gate a branch only when it has ≥ N children
     eagerCount: 20, // leading fields mounted immediately (no first-frame blank)
     rootMargin: '100%', // pre-mount fields within one extra viewport
-    backfill: 'idle', // 'idle': fill the rest on browser idle | 'none'
+    backfill: VirtualizationBackfill.Idle, // or .None: reveal only on scroll/commands
     estimateHeight: 40, // placeholder height px, or (node) => number
     Placeholder: FieldSkeleton, // optional component rendered inside placeholders
   }}
@@ -2263,7 +2263,7 @@ Measured with `compare-frameworks` (production React, 500 flat fields): mount dr
 >
 > - Requires `IntersectionObserver`; when unavailable the option is silently ignored and everything mounts eagerly. Do not enable it in SSR/hydration apps — the server renders all fields while the client would gate them, causing a hydration mismatch.
 > - Placeholders occupy `estimateHeight` until revealed, so scrollbar length is approximate for unmounted regions. Fields hidden by `computed.visible` render no placeholder.
-> - With `backfill: 'none'`, screen readers, tab order past the mounted range, and browser autofill only see fields once they are scrolled into view; the default `'idle'` backfill restores the full DOM within a few idle frames.
+> - With `backfill: VirtualizationBackfill.None`, screen readers, tab order past the mounted range, and browser autofill only see fields once they are scrolled into view; the default `Idle` backfill restores the full DOM within a few idle frames.
 
 ---
 

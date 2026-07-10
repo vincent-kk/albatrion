@@ -2,7 +2,10 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type { SchemaNode } from '@/schema-form/core';
 import type { ResolvedVirtualizationOptions } from '@/schema-form/helpers/virtualization';
-import { VirtualizationManager } from '@/schema-form/helpers/virtualization';
+import {
+  VirtualizationBackfill,
+  VirtualizationManager,
+} from '@/schema-form/helpers/virtualization';
 
 import type { IdleDeadlineLike } from '../VirtualizationManager/scheduleIdle';
 
@@ -69,7 +72,7 @@ const OPTIONS: ResolvedVirtualizationOptions = {
   threshold: 30,
   eagerCount: 20,
   rootMargin: '100%',
-  backfill: 'idle',
+  backfill: VirtualizationBackfill.Idle,
   estimateHeight: 40,
   Placeholder: null,
 };
@@ -192,7 +195,7 @@ describe('VirtualizationManager', () => {
   });
 
   it('backfill none never schedules idle work', () => {
-    const manager = createManager({ backfill: 'none' });
+    const manager = createManager({ backfill: VirtualizationBackfill.None });
     const elements = createElements(5);
     elements.forEach((element) => manager.register(element, vi.fn()));
     expect(idleQueue).toHaveLength(0);

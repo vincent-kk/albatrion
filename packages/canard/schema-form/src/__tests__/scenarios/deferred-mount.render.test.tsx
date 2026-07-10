@@ -4,7 +4,10 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type { JsonSchema } from '@winglet/json-schema';
 
-import type { VirtualizationPlaceholderProps } from '@/schema-form';
+import {
+  VirtualizationBackfill,
+  type VirtualizationPlaceholderProps,
+} from '@/schema-form';
 
 import { type FormHarness, renderForm } from '../renderForm';
 
@@ -114,7 +117,7 @@ const items = (count: number) =>
 const VIRTUALIZATION = {
   threshold: 10,
   eagerCount: 3,
-  backfill: 'none',
+  backfill: VirtualizationBackfill.None,
 } as const;
 
 describe('deferred-mount (virtualization)', () => {
@@ -143,6 +146,12 @@ describe('deferred-mount (virtualization)', () => {
       expect(form.value('/f02')).toBe('v2');
       expect(form.exists('/f03')).toBe(false);
       expect(form.deferred('/f03')).toBe(true);
+      // Numeric estimateHeight lands as px via React's inline-style
+      // serialization (height is not a unitless CSS property).
+      const placeholder = form.container.querySelector<HTMLElement>(
+        '[data-path="/f03"][data-deferred]',
+      );
+      expect(placeholder?.style.height).toBe('40px');
       expect(form.deferredPaths()).toHaveLength(17);
       await form.flush(10);
       expect(form.deferredPaths()).toHaveLength(17);
@@ -178,7 +187,7 @@ describe('deferred-mount (virtualization)', () => {
 
     it('idle backfill reveals every deferred field', async () => {
       const form = await renderForm(flatSchema(20), {
-        virtualization: { ...VIRTUALIZATION, backfill: 'idle' },
+        virtualization: { ...VIRTUALIZATION, backfill: VirtualizationBackfill.Idle },
       });
       expect(form.deferredPaths()).toHaveLength(17);
       await flushIdle();
@@ -275,7 +284,7 @@ describe('deferred-mount (virtualization)', () => {
         ],
       } satisfies JsonSchema;
       const form = await renderForm(schema, {
-        virtualization: { threshold: 3, eagerCount: 1, backfill: 'none' },
+        virtualization: { threshold: 3, eagerCount: 1, backfill: VirtualizationBackfill.None },
       });
       expect(form.exists('/category')).toBe(true);
       expect(form.deferred('/platform')).toBe(true);

@@ -2,7 +2,30 @@ import type { ComponentType } from 'react';
 
 import type { Fn } from '@aileron/declare';
 
+import { BIT_FLAG_00, BIT_FLAG_01 } from '@/schema-form/app/constants';
 import type { SchemaNode } from '@/schema-form/core';
+
+/** IntersectionObserver rootMargin component — the spec allows only px or % */
+type RootMarginUnit = `${number}px` | `${number}%`;
+
+/**
+ * CSS-margin shorthand (1-4 components) restricted to the units
+ * IntersectionObserver.rootMargin accepts; anything else (em/rem/vh/calc)
+ * throws a SyntaxError at observer construction.
+ */
+export type VirtualizationRootMargin =
+  | RootMarginUnit
+  | `${RootMarginUnit} ${RootMarginUnit}`
+  | `${RootMarginUnit} ${RootMarginUnit} ${RootMarginUnit}`
+  | `${RootMarginUnit} ${RootMarginUnit} ${RootMarginUnit} ${RootMarginUnit}`;
+
+/** Backfill strategy applied after the initial eager mount */
+export enum VirtualizationBackfill {
+  /** Do not backfill — reveal only on visibility or focus/select commands */
+  None = BIT_FLAG_00,
+  /** Progressively mount the remaining fields during browser idle time */
+  Idle = BIT_FLAG_01,
+}
 
 /** Props handed to a custom placeholder component while a field is deferred */
 export interface VirtualizationPlaceholderProps {
@@ -33,14 +56,15 @@ export interface VirtualizationOptions {
   /**
    * IntersectionObserver rootMargin — pre-mount distance around the viewport (default: '100%')
    *  - '100%' mounts fields within one extra viewport above and below
+   *  - Percentages resolve against the root (viewport) size; only px/% are valid
    */
-  rootMargin?: string;
+  rootMargin?: VirtualizationRootMargin;
   /**
-   * Backfill strategy after the initial mount (default: 'idle')
-   *  - `'idle'`: progressively mount remaining fields during browser idle time
-   *  - `'none'`: mount only on visibility or focus/select commands
+   * Backfill strategy after the initial mount (default: `VirtualizationBackfill.Idle`)
+   *  - `Idle`: progressively mount remaining fields during browser idle time
+   *  - `None`: mount only on visibility or focus/select commands
    */
-  backfill?: 'idle' | 'none';
+  backfill?: VirtualizationBackfill;
   /**
    * Placeholder height in px before reveal, or a per-node estimator (default: 40)
    *  - Approximates scroll height; replaced by the real height after reveal
@@ -62,8 +86,8 @@ export interface VirtualizationOptions {
 export interface ResolvedVirtualizationOptions {
   threshold: number;
   eagerCount: number;
-  rootMargin: string;
-  backfill: 'idle' | 'none';
+  rootMargin: VirtualizationRootMargin;
+  backfill: VirtualizationBackfill;
   estimateHeight: number | Fn<[node: SchemaNode], number>;
   Placeholder: ComponentType<VirtualizationPlaceholderProps> | null;
 }
