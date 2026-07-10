@@ -4,6 +4,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type { JsonSchema } from '@winglet/json-schema';
 
+import type { VirtualizationPlaceholderProps } from '@/schema-form';
+
 import { type FormHarness, renderForm } from '../renderForm';
 
 /**
@@ -310,6 +312,24 @@ describe('deferred-mount (virtualization)', () => {
       expect(form.value('/items/10')).toBe('v11');
       expect(form.deferred('/items/5')).toBe(true);
       expect(form.caughtErrors()).toEqual([]);
+    });
+
+    it('renders a custom Placeholder inside deferred wrappers and drops it on reveal', async () => {
+      const Placeholder = ({ node }: VirtualizationPlaceholderProps) => (
+        <div data-skeleton={node.path} style={{ height: '100%' }} />
+      );
+      const form = await renderForm(flatSchema(20), {
+        virtualization: { ...VIRTUALIZATION, Placeholder },
+      });
+      expect(
+        form.container.querySelectorAll('[data-deferred] [data-skeleton]'),
+      ).toHaveLength(17);
+      await intersect(form, '/f05');
+      expect(form.container.querySelectorAll('[data-skeleton]')).toHaveLength(
+        16,
+      );
+      expect(form.container.querySelector('[data-skeleton="/f05"]')).toBeNull();
+      expect(form.value('/f05')).toBe('v5');
     });
 
     it('revealed fields mount exactly once and are not remounted by sibling reveals', async () => {

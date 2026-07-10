@@ -2250,9 +2250,12 @@ The node tree is always fully built, so values, validation, `getValue()`/`setVal
     rootMargin: '100%', // pre-mount fields within one extra viewport
     backfill: 'idle', // 'idle': fill the rest on browser idle | 'none'
     estimateHeight: 40, // placeholder height px, or (node) => number
+    Placeholder: FieldSkeleton, // optional component rendered inside placeholders
   }}
 />
 ```
+
+Placeholders are unstyled by default (an empty box carrying `data-path` and a `data-deferred` state marker). To render skeletons, either style the marker with a CSS attribute selector (`[data-deferred] { … }`) or pass `virtualization.Placeholder` — a React component (Suspense-fallback style) rendered inside each deferred box with `{ node, height }` props. Space reservation always stays with `estimateHeight`, and the component mounts once per deferred field, so keep it light.
 
 Measured with `compare-frameworks` (production React, 500 flat fields): mount drops from ~55ms/500 field-renders to ~19ms/20 field-renders; keystroke/setValue stay at exactly 1 render.
 

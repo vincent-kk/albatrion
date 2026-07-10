@@ -22,7 +22,10 @@ export {
 
 export { JSONPointer } from './helpers/jsonPointer';
 
-export type { VirtualizationOptions } from './helpers/virtualization';
+export type {
+  VirtualizationOptions,
+  VirtualizationPlaceholderProps,
+} from './helpers/virtualization';
 
 export {
   type SchemaNode,

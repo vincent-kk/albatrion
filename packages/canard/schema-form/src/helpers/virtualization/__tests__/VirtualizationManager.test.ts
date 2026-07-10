@@ -71,6 +71,7 @@ const OPTIONS: ResolvedVirtualizationOptions = {
   rootMargin: '100%',
   backfill: 'idle',
   estimateHeight: 40,
+  Placeholder: null,
 };
 
 const createManager = (options?: Partial<ResolvedVirtualizationOptions>) =>

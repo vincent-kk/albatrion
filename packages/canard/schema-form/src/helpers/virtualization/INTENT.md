@@ -13,7 +13,7 @@
 
 ## Conventions
 
-- 이 모듈은 React를 import하지 않는다 (providers/components에서 소비하는 순수 레이어)
+- 이 모듈은 런타임에 React를 import하지 않는다 (type-only `ComponentType`만 허용 — `Placeholder` 옵션 타입)
 - 생성은 `VirtualizationManager.create(input)` 정적 팩토리로 — 비활성/IO 부재 시 null 반환
 - 게이트 판정은 self-selecting 메서드(`forBranch`/`forChild`)로 노출 — 소비층은 옵셔널 체인으로 조합하고, 옵션 원값은 비공개
 - reveal은 단방향: 한 번 reveal된 노드는 되돌리지 않는다 (defer-once)

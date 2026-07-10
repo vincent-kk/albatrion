@@ -1,6 +1,16 @@
+import type { ComponentType } from 'react';
+
 import type { Fn } from '@aileron/declare';
 
 import type { SchemaNode } from '@/schema-form/core';
+
+/** Props handed to a custom placeholder component while a field is deferred */
+export interface VirtualizationPlaceholderProps {
+  /** Node whose subtree is not mounted yet */
+  node: SchemaNode;
+  /** Reserved height (px) resolved from `estimateHeight` — fill it (e.g. `height: '100%'`) */
+  height: number;
+}
 
 /**
  * Render-level virtualization (deferred mount) options for large forms.
@@ -36,6 +46,13 @@ export interface VirtualizationOptions {
    *  - Approximates scroll height; replaced by the real height after reveal
    */
   estimateHeight?: number | Fn<[node: SchemaNode], number>;
+  /**
+   * Custom component rendered inside deferred placeholders (default: none — an empty box)
+   *  - Purely visual (skeletons, shimmer); space reservation stays with `estimateHeight`
+   *  - Mounted once per deferred field — keep it light, or it erodes the mount savings
+   *  - Rendered under `aria-hidden`; it is decoration, not content
+   */
+  Placeholder?: ComponentType<VirtualizationPlaceholderProps>;
 }
 
 /**
@@ -48,4 +65,5 @@ export interface ResolvedVirtualizationOptions {
   rootMargin: string;
   backfill: 'idle' | 'none';
   estimateHeight: number | Fn<[node: SchemaNode], number>;
+  Placeholder: ComponentType<VirtualizationPlaceholderProps> | null;
 }

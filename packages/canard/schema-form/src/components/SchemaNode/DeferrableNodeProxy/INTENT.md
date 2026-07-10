@@ -15,7 +15,7 @@ DeferrableNodeProxy/
 
 ## Conventions
 
-- placeholder: `<div data-path={path} data-deferred aria-hidden style={{height}}/>` — 실제 레이아웃 박스 필요(`display: contents` 금지)
+- placeholder: `<div data-path={path} data-deferred aria-hidden style={{height}}>` — 실제 레이아웃 박스 필요(`display: contents` 금지); 옵션 `Placeholder` 컴포넌트는 wrapper "내부"의 시각 채움만 담당(관찰 대상·공간 예약은 wrapper 소유)
 - identity는 마운트 wrapper와 동일한 `data-path`로 통일(DOM 소비자 조회 인터페이스 불변), 상태 구분은 `data-deferred` 마커가 전담
 - `NodeProxy`는 prop으로 수신 (`SchemaNodeProxy` 직접 import 시 순환 의존)
 - ref는 null-pattern 콜백 (React 18 호환 — ref cleanup 함수 금지)

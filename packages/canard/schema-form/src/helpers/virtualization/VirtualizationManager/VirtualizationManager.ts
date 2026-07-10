@@ -1,3 +1,5 @@
+import type { ComponentType } from 'react';
+
 import type { Fn } from '@aileron/declare';
 
 import type { SchemaNode } from '@/schema-form/core';
@@ -6,6 +8,7 @@ import { resolveVirtualizationOptions } from '../resolveVirtualizationOptions';
 import type {
   ResolvedVirtualizationOptions,
   VirtualizationOptions,
+  VirtualizationPlaceholderProps,
 } from '../type';
 import { type IdleDeadlineLike, scheduleIdle } from './scheduleIdle';
 
@@ -30,6 +33,9 @@ const MIN_IDLE_BUDGET_MS = 4;
  *          to a placeholder.
  */
 export class VirtualizationManager {
+  /** Custom placeholder visual for deferred fields, null for the bare box */
+  public readonly Placeholder: ComponentType<VirtualizationPlaceholderProps> | null;
+
   /** Resolved virtualization options this manager was created with */
   private readonly options: ResolvedVirtualizationOptions;
 
@@ -187,5 +193,6 @@ export class VirtualizationManager {
 
   constructor(options: ResolvedVirtualizationOptions) {
     this.options = options;
+    this.Placeholder = options.Placeholder;
   }
 }

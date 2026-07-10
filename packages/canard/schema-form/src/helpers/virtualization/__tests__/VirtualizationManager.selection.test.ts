@@ -35,7 +35,7 @@ describe('VirtualizationManager selection API', () => {
     expect(VirtualizationManager.create({ threshold: 1 })).toBeNull();
   });
 
-  it('create(true) applies the documented defaults (threshold 30, eagerCount 20, estimateHeight 40)', () => {
+  it('create(true) applies the documented defaults (threshold 30, eagerCount 20, estimateHeight 40, no Placeholder)', () => {
     const manager = VirtualizationManager.create(true);
     expect(manager).toBeInstanceOf(VirtualizationManager);
     expect(manager?.forBranch(29)).toBeNull();
@@ -44,6 +44,16 @@ describe('VirtualizationManager selection API', () => {
     expect(manager?.forChild(19, node)).toBeNull();
     expect(manager?.forChild(20, node)).toBe(manager);
     expect(manager?.estimateHeight(node)).toBe(40);
+    expect(manager?.Placeholder).toBeNull();
+  });
+
+  it('treats explicitly undefined option fields as absent instead of clobbering defaults', () => {
+    const manager = VirtualizationManager.create({
+      threshold: undefined,
+      Placeholder: undefined,
+    });
+    expect(manager?.forBranch(30)).toBe(manager);
+    expect(manager?.Placeholder).toBeNull();
   });
 
   it('create merges partial options over the defaults', () => {

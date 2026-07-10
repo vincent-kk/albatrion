@@ -8,7 +8,12 @@ import {
 
 import { flushSync } from 'react-dom';
 
-import { Form, type FormHandle, type JsonSchema } from '../src';
+import {
+  Form,
+  type FormHandle,
+  type JsonSchema,
+  type VirtualizationPlaceholderProps,
+} from '../src';
 
 export default {
   title: 'Form/40. Virtualization',
@@ -93,10 +98,13 @@ const MountStatus = ({
 const ScrollFrame = ({
   scrollRef,
   height = 460,
+  styled = true,
   children,
 }: PropsWithChildren<{
   scrollRef: RefObject<HTMLDivElement | null>;
   height?: number;
+  /** Inject the demo CSS skeleton for bare placeholders (off when a Placeholder component draws its own) */
+  styled?: boolean;
 }>) => (
   <div
     ref={scrollRef}
@@ -108,7 +116,7 @@ const ScrollFrame = ({
       padding: '0 12px 12px',
     }}
   >
-    <style>{SKELETON_CSS}</style>
+    {styled && <style>{SKELETON_CSS}</style>}
     {children}
   </div>
 );
@@ -252,6 +260,52 @@ export const FocusCommandReveal = () => {
           ref={formRef}
           jsonSchema={flatSchema(FIELD_COUNT)}
           virtualization={{ backfill: 'none' }}
+        />
+      </ScrollFrame>
+    </div>
+  );
+};
+
+/** Light, node-aware skeleton drawn INSIDE each deferred placeholder box */
+const FieldSkeleton = ({ height }: VirtualizationPlaceholderProps) => (
+  <div style={{ height, display: 'flex', alignItems: 'center', gap: 8 }}>
+    <div
+      style={{ width: 56, height: 12, borderRadius: 3, background: '#e2e2e2' }}
+    />
+    <div
+      style={{
+        flex: 1,
+        maxWidth: 240,
+        height: 22,
+        borderRadius: 4,
+        background: '#f2f2f2',
+        border: '1px solid #e2e2e2',
+      }}
+    />
+  </div>
+);
+
+/**
+ * React-component placeholders via `virtualization.Placeholder` — the
+ * Suspense-fallback-style alternative to CSS attribute styling. The wrapper
+ * div still owns observation and space reservation; the component only fills
+ * it visually. Keep it light: it mounts once per deferred field.
+ */
+export const ComponentPlaceholder = () => {
+  const scrollRef = useRef<HTMLDivElement>(null);
+  return (
+    <div>
+      <Guide>
+        This story passes a React component through virtualization.Placeholder
+        instead of styling the bare box with CSS — the idiomatic way to plug in
+        design-system skeletons (like a Suspense fallback). The reserved height
+        still comes from estimateHeight; the component only paints inside it.
+      </Guide>
+      <MountStatus scrollRef={scrollRef} total={FIELD_COUNT} />
+      <ScrollFrame scrollRef={scrollRef} styled={false}>
+        <Form
+          jsonSchema={flatSchema(FIELD_COUNT)}
+          virtualization={{ backfill: 'none', Placeholder: FieldSkeleton }}
         />
       </ScrollFrame>
     </div>

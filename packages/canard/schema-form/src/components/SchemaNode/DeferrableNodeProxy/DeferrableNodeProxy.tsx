@@ -69,13 +69,18 @@ export const DeferrableNodeProxy = ({
 
   if (!node.enabled) return null;
   if (revealed) return <NodeProxy {...proxyProps} />;
+
+  const Placeholder = manager.Placeholder;
+  const height = manager.estimateHeight(node);
   return (
     <div
       ref={handlePlaceholder}
       data-path={node.path}
       data-deferred
       aria-hidden
-      style={{ height: manager.estimateHeight(node) }}
-    />
+      style={{ height }}
+    >
+      {Placeholder !== null && <Placeholder node={node} height={height} />}
+    </div>
   );
 };
