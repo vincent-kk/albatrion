@@ -39,10 +39,10 @@ function resolveBarrel(
     // Pattern 1: export { name1, name2 } from './file';
     // Also handles: export { type Name, Name2 } from './file';
     const namedMatch = trimmed.match(
-      /^export\s+\{([^}]+)\}\s+from\s+['"]([^'"]+)['"]\s*;?\s*$/
+      /^export\s+\{([^}]+)\}\s+from\s+['"]([^'"]+)['"]\s*;?\s*$/,
     );
     if (namedMatch) {
-      const names = namedMatch[1].split(',').map(s => s.trim());
+      const names = namedMatch[1].split(',').map((s) => s.trim());
       const fromPath = namedMatch[2];
       const targetPath = resolveRelativeDts(barrelDir, fromPath);
 
@@ -62,10 +62,10 @@ function resolveBarrel(
 
     // Pattern 2: export type { Name1, Name2 } from './file';
     const typeReExportMatch = trimmed.match(
-      /^export\s+type\s+\{([^}]+)\}\s+from\s+['"]([^'"]+)['"]\s*;?\s*$/
+      /^export\s+type\s+\{([^}]+)\}\s+from\s+['"]([^'"]+)['"]\s*;?\s*$/,
     );
     if (typeReExportMatch) {
-      const names = typeReExportMatch[1].split(',').map(s => s.trim());
+      const names = typeReExportMatch[1].split(',').map((s) => s.trim());
       const fromPath = typeReExportMatch[2];
       const targetPath = resolveRelativeDts(barrelDir, fromPath);
 
@@ -82,7 +82,7 @@ function resolveBarrel(
 
     // Pattern 3: export * from './file'; (wildcard re-export)
     const wildcardMatch = trimmed.match(
-      /^export\s+\*\s+from\s+['"]([^'"]+)['"]\s*;?\s*$/
+      /^export\s+\*\s+from\s+['"]([^'"]+)['"]\s*;?\s*$/,
     );
     if (wildcardMatch) {
       const fromPath = wildcardMatch[1];
@@ -101,7 +101,7 @@ function resolveBarrel(
 
     // Pattern 4: export type * from './file'; (type-only wildcard)
     const typeWildcardMatch = trimmed.match(
-      /^export\s+type\s+\*\s+from\s+['"]([^'"]+)['"]\s*;?\s*$/
+      /^export\s+type\s+\*\s+from\s+['"]([^'"]+)['"]\s*;?\s*$/,
     );
     if (typeWildcardMatch) {
       const fromPath = typeWildcardMatch[1];
@@ -120,11 +120,27 @@ function resolveBarrel(
 
 /**
  * Resolve a relative import path to an absolute .d.ts file path.
- * Tries: exact path, path + .d.ts, path/index.d.ts
+ * Tries: NodeNext .js/.mjs/.cjs → .d.ts mapping, exact path, path + .d.ts,
+ * path/index.d.ts
  */
-function resolveRelativeDts(baseDir: string, relativePath: string): string | null {
-  // Try exact path
+function resolveRelativeDts(
+  baseDir: string,
+  relativePath: string,
+): string | null {
   const exact = path.resolve(baseDir, relativePath);
+
+  // NodeNext-style declaration barrels re-export the emitted JS path
+  // (e.g. `from './useConstant.js'` written by tsc-alias) — map the JS
+  // suffix back to its declaration counterpart before other fallbacks.
+  const stripped = exact.replace(/\.(?:m|c)?js$/, '');
+  if (stripped !== exact) {
+    const strippedDts = stripped + '.d.ts';
+    if (fs.existsSync(strippedDts)) return strippedDts;
+    const strippedIndexDts = path.join(stripped, 'index.d.ts');
+    if (fs.existsSync(strippedIndexDts)) return strippedIndexDts;
+  }
+
+  // Try exact path
   if (fs.existsSync(exact) && fs.statSync(exact).isFile()) return exact;
 
   // Try with .d.ts extension
@@ -144,7 +160,10 @@ function isBarrelFile(filePath: string): boolean {
 }
 
 /** Extract exported symbol names from a leaf .d.ts file and add to result map. */
-function extractDirectExportNames(filePath: string, result: SymbolFileMap): void {
+function extractDirectExportNames(
+  filePath: string,
+  result: SymbolFileMap,
+): void {
   if (!fs.existsSync(filePath)) return;
 
   const content = fs.readFileSync(filePath, 'utf-8');
@@ -155,26 +174,48 @@ function extractDirectExportNames(filePath: string, result: SymbolFileMap): void
 
     // export declare function name
     const funcMatch = trimmed.match(/^export\s+declare\s+function\s+(\w+)/);
-    if (funcMatch) { result[funcMatch[1]] = filePath; continue; }
+    if (funcMatch) {
+      result[funcMatch[1]] = filePath;
+      continue;
+    }
 
     // export declare const name
     const constMatch = trimmed.match(/^export\s+declare\s+const\s+(\w+)/);
-    if (constMatch) { result[constMatch[1]] = filePath; continue; }
+    if (constMatch) {
+      result[constMatch[1]] = filePath;
+      continue;
+    }
 
     // export declare class name
     const classMatch = trimmed.match(/^export\s+declare\s+class\s+(\w+)/);
-    if (classMatch) { result[classMatch[1]] = filePath; continue; }
+    if (classMatch) {
+      result[classMatch[1]] = filePath;
+      continue;
+    }
 
     // export declare type name / export type name
-    const typeMatch = trimmed.match(/^export\s+(?:declare\s+)?type\s+(\w+)\s*[<=]/);
-    if (typeMatch) { result[typeMatch[1]] = filePath; continue; }
+    const typeMatch = trimmed.match(
+      /^export\s+(?:declare\s+)?type\s+(\w+)\s*[<=]/,
+    );
+    if (typeMatch) {
+      result[typeMatch[1]] = filePath;
+      continue;
+    }
 
     // export interface name / export declare interface name
-    const ifaceMatch = trimmed.match(/^export\s+(?:declare\s+)?interface\s+(\w+)/);
-    if (ifaceMatch) { result[ifaceMatch[1]] = filePath; continue; }
+    const ifaceMatch = trimmed.match(
+      /^export\s+(?:declare\s+)?interface\s+(\w+)/,
+    );
+    if (ifaceMatch) {
+      result[ifaceMatch[1]] = filePath;
+      continue;
+    }
 
     // export declare enum name
     const enumMatch = trimmed.match(/^export\s+declare\s+enum\s+(\w+)/);
-    if (enumMatch) { result[enumMatch[1]] = filePath; continue; }
+    if (enumMatch) {
+      result[enumMatch[1]] = filePath;
+      continue;
+    }
   }
 }

@@ -149,6 +149,8 @@ console.log(`Found ${stats.stringFieldCount} string fields, ${stats.objectFieldC
 ### Built-in reference resolution utility
 
 ```typescript
+import { resolveReference } from '@winglet/json-schema';
+
 const schemaWithInternalRefs = {
   type: 'object',
   properties: {
@@ -160,14 +162,14 @@ const schemaWithInternalRefs = {
   }
 };
 
-// Automatically resolve all internal references
-const fullyResolvedSchema = JsonSchemaScanner.resolveReference(schemaWithInternalRefs);
+// Inline all internal $ref references in one call
+const fullyResolvedSchema = resolveReference(schemaWithInternalRefs);
 ```
 
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/json-schema": "0.10.0" }}
+  dependencies={{ "@winglet/json-schema": "0.12.3" }}
   code={`import { JsonSchemaScanner } from '@winglet/json-schema';
 
 const schema = {
@@ -209,24 +211,27 @@ const processedSchema = scanner.scan(schema).getValue();`}
 
 ## Notes
 
-**Processing Phases:**
-1. **Enter**: Initial node processing, filtering, and mutation
-2. **Reference**: $ref resolution and circular reference detection
-3. **ChildEntries**: Depth checking and child node discovery
-4. **Exit**: Final processing and cleanup
+**Traversal:** A single stack-based (non-recursive) depth-first pass driven by
+a shared generator core. Each node is visited once — filtering, mutation,
+`enter`, `$ref` resolution and child discovery are fused — and revisited once
+on exit only if it has children. The sync scanner runs the core to completion
+synchronously; the async scanner awaits callbacks that return thenables.
 
 **Key Features:**
 - **Circular Reference Detection**: Prevents infinite loops when schemas reference each other
 - **Lazy Reference Resolution**: References are resolved only when encountered
+- **Reference Isolation**: resolved subtrees are cloned at inline time
+  (`cloneResolvedSchema`, default `true`) so the original schema is never
+  mutated and repeated `$ref`s are never aliased in the output
 - **Schema Mutation**: Transform schemas during traversal
 - **Filtering**: Skip unwanted schema nodes
 - **Depth Limiting**: Control traversal depth for performance
-- **Result Caching**: Processed schemas are cached for efficiency
 
 **Performance Considerations:**
-- Uses stack-based traversal (not recursion) to handle deep schemas
-- Implements copy-on-write for mutations to minimize memory usage
-- Caches resolved references to avoid redundant processing
+- Stack-based traversal (not recursion) handles arbitrarily deep schemas
+- The processed schema is built once, on first `getValue`, and cached
+- Optional resolver memoization (`cacheResolvedReference`, default `false`)
+  avoids redundant resolver calls when the same reference appears repeatedly
 
 This scanner is ideal for complex schema analysis, transformation,
 documentation generation, form building, and validation preprocessing.

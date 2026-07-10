@@ -1,0 +1,22 @@
+---
+title: 'KeywordKind'
+sidebar_label: 'KeywordKind'
+---
+<!-- sync-winglet-docs:auto -->
+
+import WingletPlayground from '@site/src/components/WingletPlayground';
+
+# KeywordKind
+
+How a keyword's value maps to child subschemas during traversal.
+- `schema`     — single subschema (`not`, `if`, `additionalProperties`, …).
+- `schemaList` — array of subschemas (`allOf`, …); `variant` is the index.
+- `schemaMap`  — record of subschemas keyed by name (`$defs`, `patternProperties`, …).
+- `objectMap`  — like `schemaMap` but the key contributes an (escaped) `dataPath` segment (`properties`).
+- `items`      — tuple (array, each child adds its index to `dataPath`) or single subschema (`items`, `prefixItems`).
+
+## Signature
+
+```typescript
+export type KeywordKind = 'schema' | 'schemaList' | 'schemaMap' | 'objectMap' | 'items'
+```

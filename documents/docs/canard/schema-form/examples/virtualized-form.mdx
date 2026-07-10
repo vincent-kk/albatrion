@@ -1,0 +1,59 @@
+---
+sidebar_label: 'Virtualized Form'
+sidebar_position: 11
+---
+
+import LazyDemo from '@site/src/components/LazyDemo';
+
+# Virtualized Form
+
+A 300-field form mounted with render-level virtualization. Only the fields near
+the viewport mount as real inputs — the rest render as lightweight placeholders
+(styled here as shimmer skeletons) and are swapped in when they approach the
+viewport, on browser idle time, or when focused programmatically.
+
+:::info Key Features
+
+- `virtualization` — initial mount cost drops from O(all fields) to O(visible fields)
+- The node tree is always fully built: values, validation and `getValue()` include
+  deferred fields (open the **Values** panel below — every field has its default)
+- Placeholders carry `data-path` + `data-deferred`; the skeleton styling here is
+  plain CSS on the `[data-deferred]` attribute selector
+- Once a field mounts it never returns to a placeholder (defer-once)
+  :::
+
+Scroll the frame and watch the counter — fields materialize as they come within
+one viewport (`rootMargin: '100%'`) of the visible area. This demo uses
+`backfill: VirtualizationBackfill.None` so the windowing behavior stays visible;
+the default (`Idle`) progressively mounts the rest during browser idle time,
+restoring full-DOM behavior (tab order, autofill, Ctrl+F) within a few frames.
+
+<LazyDemo
+  load={() => import('@site/src/components/demos/examples/VirtualizedFormDemo')}
+/>
+
+## Usage
+
+```tsx
+import { Form, VirtualizationBackfill } from '@canard/schema-form';
+
+// Defaults: threshold 30, eagerCount 20, rootMargin '100%',
+//           backfill VirtualizationBackfill.Idle, estimateHeight 40
+<Form jsonSchema={largeSchema} virtualization />
+
+// Tuned
+<Form
+  jsonSchema={largeSchema}
+  virtualization={{
+    threshold: 30,
+    eagerCount: 20,
+    rootMargin: '100%',
+    backfill: VirtualizationBackfill.Idle,
+    estimateHeight: (node) => (node.type === 'object' ? 320 : 48),
+    Placeholder: FieldSkeleton, // optional React component inside placeholders
+  }}
+/>
+```
+
+See the [API Reference](../api-reference#virtualization) for every option, the
+placeholder DOM contract, and the SSR caveat.

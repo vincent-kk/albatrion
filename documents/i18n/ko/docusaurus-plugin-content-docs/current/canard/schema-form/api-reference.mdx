@@ -33,6 +33,7 @@ import ForAI from '@site/src/components/ForAI';
 | `formTypeInputMap` | `FormTypeInputMap` | `{}` | Path-based input component overrides |
 | `CustomFormTypeRenderer` | `ComponentType<FormTypeRendererProps>` | plugin default | Override the entire field renderer |
 | `formatError` | `FormatError` | plugin default | Custom error message formatter |
+| `virtualization` | `boolean \| VirtualizationOptions` | off | 초대형 폼을 위한 렌더 레벨 가상화(지연 마운트) |
 | `context` | `Dictionary` | `{}` | User-defined context, available in all input components |
 | `children` | `ReactNode \| (props: FormChildrenProps) => ReactNode` | — | Custom layout or render prop |
 | `ref` | `Ref<FormHandle>` | — | Imperative handle |
@@ -58,6 +59,44 @@ ValidationMode.OnChange  // validate on every value change
 ValidationMode.OnRequest // validate only when validate() called explicitly
 // Combine with bitwise OR: ValidationMode.OnChange | ValidationMode.OnRequest
 ```
+
+### Virtualization
+
+초대형 폼을 위한 렌더 레벨 가상화입니다. node tree는 항상 전량 생성되므로
+값·검증·submit은 영향을 받지 않고, 화면 밖 필드만 경량 placeholder로
+마운트됐다가 뷰포트 근접, 브라우저 idle 시간, 또는 `focus`/`select` 명령
+시점에 실제 컴포넌트로 교체(reveal)됩니다. reveal은 단방향이라 한 번
+마운트된 필드는 placeholder로 되돌아가지 않습니다. 기본값은 꺼짐(opt-in)이며,
+`true`(기본 옵션) 또는 `VirtualizationOptions` 객체를 전달합니다.
+
+```tsx
+import { Form, VirtualizationBackfill } from '@canard/schema-form';
+
+<Form jsonSchema={largeSchema} virtualization />
+```
+
+| Option | Type | Default | Description |
+|---|---|---|---|
+| `threshold` | `number` | `30` | branch의 렌더 자식 수가 이 값 이상일 때만 그 자식들을 게이트 |
+| `eagerCount` | `number` | `20` | 게이트된 branch에서 앞쪽 N개는 즉시 마운트 (첫 프레임 공백 방지) |
+| `rootMargin` | `VirtualizationRootMargin` | `'100%'` | 뷰포트 주변 선행 마운트 거리 — IntersectionObserver 스펙상 `px`/`%`만 유효 |
+| `backfill` | `VirtualizationBackfill` | `Idle` | `Idle`: 브라우저 idle 시간에 나머지를 점진 마운트, `None`: 가시성/명령 시에만 reveal |
+| `estimateHeight` | `number \| (node: SchemaNode) => number` | `40` | placeholder 높이(px) — reveal 전까지 스크롤 지오메트리를 근사 |
+| `Placeholder` | `ComponentType<VirtualizationPlaceholderProps>` | — | placeholder 내부에 렌더되는 커스텀 컴포넌트 (Suspense fallback 스타일), `{ node, height }` 수신 |
+
+**Placeholder DOM 계약** — 지연된 필드는
+`<div data-path={path} data-deferred aria-hidden style={{ height }} />`로
+렌더됩니다: 마운트된 wrapper와 동일한 `data-path` identity에 `data-deferred`
+마커가 상태를 표시합니다. 스켈레톤은 CSS 속성 셀렉터(`[data-deferred] { … }`)
+또는 `Placeholder` 컴포넌트로 스타일링하세요.
+
+:::warning SSR / hydration
+`IntersectionObserver`가 필요하며, 없으면 옵션이 조용히 무시되고 전체가 즉시
+마운트됩니다. SSR/hydration 앱에서는 켜지 마세요 — 서버는 전체를 렌더하고
+클라이언트는 게이트를 렌더해 hydration mismatch가 발생합니다.
+:::
+
+라이브 데모는 [가상화 폼 예제](./examples/virtualized-form)를 참고하세요.
 
 ## `FormHandle` (ref API)
 

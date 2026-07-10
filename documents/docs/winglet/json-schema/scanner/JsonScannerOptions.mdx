@@ -27,6 +27,47 @@ interface JsonScannerOptions<Schema extends UnknownSchema = UnknownSchema, Conte
     ], Schema | undefined>;
     /** Maximum traversal depth */
     maxDepth?: number;
+    /**
+     * Whether to deep-clone the schema returned by `resolveReference` before
+     * inlining it into the traversal and the processed output.
+     *
+     * Defaults to `true`. Cloning isolates the resolved subtree so that
+     * (1) the original schema passed to `resolveReference` is never mutated,
+     * and (2) multiple occurrences of the same `$ref` do not become aliased
+     * in the processed output. Set to `false` only when the resolver already
+     * returns a freshly-owned object and the extra clone is pure overhead.
+     *
+     * @remarks
+     * Versions before this option existed behaved as if it were `false`: the
+     * resolved schema was assigned in place with no clone, so repeated
+     * occurrences of the same `$ref` shared one aliased object. The current
+     * default (`true`) deep-clones each resolved `$ref` instead; pass `false`
+     * to restore the previous aliased behavior.
+     */
+    cloneResolvedSchema?: boolean;
+    /**
+     * Whether to memoize `resolveReference` results per reference string.
+     *
+     * Defaults to `false` (each occurrence invokes the resolver). Enable to
+     * avoid redundant resolver calls (e.g. remote fetches) when the same
+     * reference appears multiple times. The raw resolver result is cached and
+     * cloned at inline time (see `cloneResolvedSchema`) so caching never
+     * introduces shared references into the output.
+     */
+    cacheResolvedReference?: boolean;
+    /**
+     * Extra applicator keywords to descend into, appended after the built-in
+     * vocabulary. Opt-in: descriptors are appended after the built-ins, and the
+     * two lists are merged by `keyword`. If a descriptor's `keyword` equals a
+     * built-in keyword (e.g. `properties`), the later (consumer) entry
+     * overrides the built-in's `kind` and ordering — do NOT reuse a built-in
+     * keyword name unless you intend to override it. Use the shared
+     * `EXTENDED_KEYWORDS` preset for draft 2019-09 / 2020-12 keywords
+     * (`patternProperties`, `propertyNames`, `contains`, `dependentSchemas`,
+     * `unevaluatedProperties`, …) or supply your own descriptors (e.g. vendor
+     * `x-*` keywords).
+     */
+    additionalKeywords?: KeywordDescriptor[];
     /** Context object passed to visitors and filters */
     context?: ContextType;
 }
