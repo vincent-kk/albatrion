@@ -3,11 +3,11 @@ import {
   type MemoExoticComponent,
   memo,
   useMemo,
-  useRef,
 } from 'react';
 
 import {
   useConstant,
+  useLazyConstant,
   useOnUnmount,
   useReference,
 } from '@winglet/react-utils/hook';
@@ -49,8 +49,8 @@ export const useChildNodeComponents = (
 
   const { manager } = useVirtualizationContext();
 
-  const cache = useRef(new Map<string, ChildNodeComponent>());
-  useOnUnmount(() => cache.current.clear());
+  const cache = useLazyConstant(() => new Map<string, ChildNodeComponent>());
+  useOnUnmount(() => cache.clear());
 
   return useMemo(() => {
     if (isTerminalNode(node) || children === null) return [];
@@ -60,7 +60,7 @@ export const useChildNodeComponents = (
       const node = child.node;
       if (!node?.schemaPath || child.virtual === true) continue;
       const key = child.nonce ? node.key + child.nonce : node.key;
-      const CachedComponent = cache.current.get(key);
+      const CachedComponent = cache.get(key);
       if (CachedComponent) ChildNodeComponents.push(CachedComponent);
       else {
         // Deferrable is baked at creation so the component's hook set stays
@@ -105,10 +105,10 @@ export const useChildNodeComponents = (
         ChildComponent.path = node.path;
         ChildComponent.field = node.name;
 
-        cache.current.set(key, ChildComponent);
+        cache.set(key, ChildComponent);
         ChildNodeComponents.push(ChildComponent);
       }
     }
     return ChildNodeComponents;
-  }, [node, children, NodeProxy, manager]);
+  }, [node, children, NodeProxy, manager, cache]);
 };

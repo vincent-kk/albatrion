@@ -1,6 +1,6 @@
 import { type PropsWithChildren, useEffect, useMemo, useRef } from 'react';
 
-import { useMemorize } from '@winglet/react-utils/hook';
+import { useLazyConstant } from '@winglet/react-utils/hook';
 
 import type { Fn } from '@aileron/declare';
 
@@ -76,7 +76,7 @@ export const RootNodeContextProvider = <
   } = useExternalFormContext();
   const { context } = useWorkspaceContext();
 
-  const contextNode = useMemorize(() => contextNodeFactory(context));
+  const contextNode = useLazyConstant(() => contextNodeFactory(context));
   useEffect(() => {
     contextNode.setValue(context);
   }, [contextNode, context]);

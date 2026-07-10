@@ -6,23 +6,18 @@
 
 ## Structure
 
-```
-SchemaNodeInput/
-  SchemaNodeInput.tsx         — FormTypeInput 마운트 및 이벤트 핸들링
-  SchemaNodeInputWrapper.tsx  — 클로저 기반 ChildNodeComponent 팩토리
-  type.ts                     — SchemaNodeInputProps, ChildNodeComponent, HANDLE_CHANGE_OPTION
-  index.ts                    — SchemaNodeInputWrapper, ChildNodeComponent re-export
-  hooks/
-    useChildNodeComponents.tsx  — 자식을 ChildNodeComponent[]로 변환 (가상화 시 DeferrableNodeProxy 게이트 bake)
-    useFormTypeInput.ts         — 우선순위에 따라 FormTypeInput 컴포넌트 선택
-    useFormTypeInputControl.ts  — RequestRefresh/Focus/Select 이벤트 처리
-```
+- `SchemaNodeInput.tsx` — FormTypeInput 마운트 및 이벤트 핸들링
+- `SchemaNodeInputWrapper.tsx` — 클로저 기반 ChildNodeComponent 팩토리
+- `type.ts` — SchemaNodeInputProps, ChildNodeComponent, HANDLE_CHANGE_OPTION
+- `index.ts` — SchemaNodeInputWrapper, ChildNodeComponent re-export
+- `hooks/useChildNodeComponents.tsx` — 자식을 ChildNodeComponent[]로 변환 (가상화 시 DeferrableNodeProxy 게이트 bake)
+- `hooks/useFormTypeInput.ts` — 우선순위에 따라 FormTypeInput 컴포넌트 선택
+- `hooks/useFormTypeInputControl.ts` — RequestRefresh/Focus/Select 이벤트 처리
 
 ## Conventions
 
-- TypeScript + React (TSX), 내부 전용 모듈 (`SchemaNodeProxy`에서만 사용)
+- TypeScript + React (TSX), 내부 전용 모듈(`SchemaNodeProxy`에서만 사용); `SchemaNodeInputWrapper`는 React 컴포넌트가 아닌 팩토리 함수(클로저로 node 캡처)
 - `HANDLE_CHANGE_OPTION` = `Replace | Propagate | EmitChange | PublishUpdateEvent` (사용자 입력 기본값)
-- `SchemaNodeInputWrapper`는 팩토리 함수 (React 컴포넌트가 아님) — 클로저로 node를 캡처
 - FormTypeInput 선택 우선순위: InlineFormTypeInput → FormTypeInputMap → FormTypeInputDefinitions → ExternalFormTypeInputDefinitions → PluginManager fallback
 - `useFormTypeInputControl`: `RequestRefresh` → version 증가(key 변경), `RequestFocus` → DOM focus, `RequestSelect` → DOM select
 
@@ -30,8 +25,7 @@ SchemaNodeInput/
 
 ### Always do
 
-- `onChange` 핸들러에서 `node.clearExternalErrors()` 호출
-- `onChange` 후 `NodeState.Dirty` 플래그 설정
+- `onChange` 핸들러에서 `node.clearExternalErrors()` 호출 후 `NodeState.Dirty` 플래그 설정
 - 언마운트 시 `attachedFilesMap`에서 해당 경로 항목 삭제
 - `readOnly` 또는 `disabled` 상태에서 `onChange` 차단
 
@@ -49,8 +43,7 @@ SchemaNodeInput/
 
 ## Dependencies
 
-- `@/schema-form/core` — `SchemaNode`, `NodeEventType`, `NodeState`, `SetValueOption`, `isTerminalNode`
+- `@/schema-form/core` — `SchemaNode`, `NodeEventType`, `NodeState`, `SetValueOption`, `isTerminalNode`; `@/schema-form/app` — `PluginManager`(fallback 정의), `DISPLAY_CONTENT`
 - `@/schema-form/providers` — `useFormTypeInputsContext`, `useExternalFormContext`, `useFormTypeRendererContext`, `useInputControlContext`, `useWorkspaceContext`, `useVirtualizationContext`
-- `@/schema-form/app` — `PluginManager`(plugin, fallback 정의), `DISPLAY_CONTENT`(constants)
 - `@/schema-form/hooks` — `useSchemaNodeSubscribe`, `useSchemaNodeTracker`
-- `@winglet/react-utils` — `isMemoComponent`, `isReactComponent`, `withErrorBoundary`, `useMemorize`, `useReference`, `useSnapshot`, `useOnUnmount`, `useVersion`
+- `@winglet/react-utils` — `isMemoComponent`, `isReactComponent`, `withErrorBoundary`, `useLazyConstant`, `useMemorize`, `useReference`, `useSnapshot`, `useOnUnmount`, `useVersion`
