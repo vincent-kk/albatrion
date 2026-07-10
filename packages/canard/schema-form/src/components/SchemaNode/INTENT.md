@@ -32,8 +32,7 @@ SchemaNode/
 
 ### Ask first
 
-- `RERENDERING_EVENT` 마스크 변경 시 (리렌더 범위에 영향)
-- `SchemaNodeProxy`의 공개 props 인터페이스(`SchemaNodeProxyProps`) 수정 시
+- `RERENDERING_EVENT` 마스크(리렌더 범위) 또는 `SchemaNodeProxyProps` 공개 인터페이스 수정 시
 
 ### Never do
 
@@ -47,4 +46,4 @@ SchemaNode/
 - `@/schema-form/hooks` — `useSchemaNode`, `useSchemaNodeTracker`, `useSchemaNodeSubscribe`
 - `@/schema-form/providers` — `useFormTypeRendererContext`, `useWorkspaceContext`
 - `@winglet/react-utils/hoc` — `withErrorBoundary`
-- `@winglet/react-utils/hook` — `useConstant`, `useMemorize`
+- `@winglet/react-utils/hook` — `useConstant`, `useLazyConstant`, `useMemorize`

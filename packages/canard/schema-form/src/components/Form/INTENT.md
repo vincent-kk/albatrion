@@ -35,8 +35,7 @@
 ### Ask first
 
 - Provider 중첩 순서 또는 컨텍스트 구성 변경 시
-- `FormHandle` 인터페이스에 새 메서드 추가 시
-- `FormProps`에 새 공개 prop 추가 시
+- `FormHandle` 새 메서드 또는 `FormProps` 새 공개 prop 추가 시
 
 ### Never do
 
@@ -47,4 +46,4 @@
 ## Dependencies
 
 - 내부: `@/schema-form/providers`(6개 Provider + `useRootNodeContext`), `@/schema-form/core`(`SchemaNode`, `NodeEventType`, `InferSchemaNode`), `@/schema-form/hooks`(`useSchemaNodeTracker`), `@/schema-form/errors`(`ValidationError`), `@/schema-form/helpers/jsonSchema`(`preprocessSchema`), `@/schema-form/helpers/error`(`formatSchemaValidationFailedError`)
-- 외부: `@winglet/react-utils/hoc`(`withErrorBoundaryForwardRef`), `@winglet/react-utils/hook`(`useHandle`·`useMemorize`·`useVersion`), `@winglet/common-utils/function`(`getTrackableHandler`)
+- 외부: `@winglet/react-utils/hoc`(`withErrorBoundaryForwardRef`), `@winglet/react-utils/hook`(`useHandle`·`useLazyConstant`·`useMemorize`·`useVersion`), `@winglet/common-utils/function`(`getTrackableHandler`)

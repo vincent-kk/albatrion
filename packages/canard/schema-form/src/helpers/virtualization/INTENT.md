@@ -6,10 +6,10 @@
 
 ## Structure
 
-- `type.ts` — `VirtualizationOptions`(공개 입력), `ResolvedVirtualizationOptions`(기본값 적용 결과)
+- `type.ts` — `VirtualizationOptions`(공개 입력), `VirtualizationBackfill` enum(backfill 전략), `ResolvedVirtualizationOptions`(기본값 적용 결과)
 - `resolveVirtualizationOptions/` — 옵션 정규화 (모듈 내부 전용, `VirtualizationManager.create`가 사용)
 - `VirtualizationManager/` — 공유 IO + idle 펌프 + reveal 레지스트리(WeakSet) 관리 클래스
-- `index.ts` — barrel export (`VirtualizationManager` + 타입만 공개)
+- `index.ts` — barrel export (`VirtualizationManager` 클래스 + `VirtualizationBackfill` enum + 타입 export)
 
 ## Conventions
 

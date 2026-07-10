@@ -46,4 +46,4 @@
 - `@/schema-form/core` — `SchemaNode`, `NodeEventType`, `NodeState`, `SetValueOption`, `isTerminalNode`; `@/schema-form/app` — `PluginManager`(fallback 정의), `DISPLAY_CONTENT`
 - `@/schema-form/providers` — `useFormTypeInputsContext`, `useExternalFormContext`, `useFormTypeRendererContext`, `useInputControlContext`, `useWorkspaceContext`, `useVirtualizationContext`
 - `@/schema-form/hooks` — `useSchemaNodeSubscribe`, `useSchemaNodeTracker`
-- `@winglet/react-utils` — `isMemoComponent`, `isReactComponent`, `withErrorBoundary`, `useLazyConstant`, `useMemorize`, `useReference`, `useSnapshot`, `useOnUnmount`, `useVersion`
+- `@winglet/react-utils` — `isMemoComponent`, `isReactComponent`, `withErrorBoundary`, `useConstant`, `useLazyConstant`, `useMemorize`, `useReference`, `useSnapshot`, `useOnUnmount`, `useVersion`
