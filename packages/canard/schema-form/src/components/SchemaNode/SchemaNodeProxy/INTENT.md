@@ -6,12 +6,9 @@ SchemaNode 렌더링의 공개 조율 레이어. 경로 또는 노드 참조로 
 
 ## Structure
 
-```
-SchemaNodeProxy/
-  SchemaNodeProxy.tsx   — 핵심 조율 컴포넌트
-  type.ts               — SchemaNodeProxyProps 인터페이스
-  index.ts              — SchemaNodeProxy, SchemaNodeProxyProps re-export
-```
+- `SchemaNodeProxy.tsx` — 핵심 조율 컴포넌트
+- `type.ts` — SchemaNodeProxyProps 인터페이스
+- `index.ts` — SchemaNodeProxy, SchemaNodeProxyProps re-export
 
 ## Conventions
 
@@ -44,11 +41,7 @@ SchemaNodeProxy/
 
 ## Dependencies
 
-- `@/schema-form/core` — `SchemaNode`, `NodeEventType`
-- `@/schema-form/hooks` — `useSchemaNode`, `useSchemaNodeTracker`
-- `@/schema-form/providers` — `useFormTypeRendererContext`, `useWorkspaceContext`
-- `../SchemaNodeInput` — `SchemaNodeInputWrapper`
-- `@winglet/react-utils/hoc` — `withErrorBoundary`
-- `@winglet/react-utils/hook` — `useConstant`, `useLazyConstant`
+- `@/schema-form/core` — `SchemaNode`, `NodeEventType`; `@/schema-form/hooks` — `useSchemaNode`, `useSchemaNodeTracker`
+- `@/schema-form/providers` — `useFormTypeRendererContext`, `useWorkspaceContext`; `../SchemaNodeInput` — `SchemaNodeInputWrapper`
+- `@winglet/react-utils` — `withErrorBoundary`(hoc), `useConstant`·`useLazyConstant`(hook); `@winglet/common-utils/constant` — `NULL_FUNCTION`
 - `@/schema-form/app/constants` — `DISPLAY_CONTENT` 스타일 상수
-- `@winglet/common-utils/constant` — `NULL_FUNCTION`
