@@ -2,7 +2,7 @@
 
 ## Purpose
 
-초대형 폼의 렌더 가상화(지연 마운트)를 위한 React-free 코어. Form당 하나의 VirtualizationManager가 공유 IntersectionObserver와 idle backfill 큐로 placeholder → 실제 컴포넌트 교체(reveal)를 조율한다.
+초대형 폼의 렌더 가상화(지연 마운트) 코어(React 의존은 `Placeholder` 방어로 한정). Form당 하나의 VirtualizationManager가 공유 IntersectionObserver와 idle backfill 큐로 placeholder → 실제 컴포넌트 교체(reveal)를 조율한다.
 
 ## Structure
 
@@ -13,7 +13,7 @@
 
 ## Conventions
 
-- 이 모듈은 런타임에 React를 import하지 않는다 (type-only `ComponentType`만 허용 — `Placeholder` 옵션 타입)
+- React 런타임 import는 `Placeholder` 방어(`withErrorBoundary`/`isReactComponent`)로 한정 — 그 외엔 type-only `ComponentType`만 허용
 - 생성은 `VirtualizationManager.create(input)` 정적 팩토리로 — 비활성/IO 부재 시 null 반환
 - 게이트 판정은 self-selecting 메서드(`forBranch`/`forChild`)로 노출 — 소비층은 옵셔널 체인으로 조합하고, 옵션 원값은 비공개
 - reveal은 단방향: 한 번 reveal된 노드는 되돌리지 않는다 (defer-once)
@@ -34,7 +34,7 @@
 
 ### Never do
 
-- React/컴포넌트 레이어 import (의존 방향: providers/components → helpers)
+- React/컴포넌트 레이어 import — 예외: `Placeholder` 방어용 `withErrorBoundary`/`isReactComponent` (의존 방향: providers/components → helpers)
 - reveal 취소·역방향 전환 로직 추가
 - 노드 값/상태 변경 (이 모듈은 렌더 타이밍만 다룬다)
 

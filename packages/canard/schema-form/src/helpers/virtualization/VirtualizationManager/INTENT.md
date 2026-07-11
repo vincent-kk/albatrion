@@ -34,7 +34,7 @@ Form당 하나씩 존재하는 상태형 가상화 조율자. 공유 Intersectio
 ### Never do
 
 - `create()`를 우회한 직접 `new VirtualizationManager()` 인스턴스화 (단위 테스트 제외)
-- React 런타임 import 추가 (Placeholder의 type-only `ComponentType` 참조는 기존 예외)
+- React 런타임 import 추가 — 예외: `Placeholder` 방어용 `withErrorBoundary`/`isReactComponent`, type-only `ComponentType`
 - `registry`/`revealedNodes`를 클래스 외부에서 직접 변경
 
 ## Dependencies

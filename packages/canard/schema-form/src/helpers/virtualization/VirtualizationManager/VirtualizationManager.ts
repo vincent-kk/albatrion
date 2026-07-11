@@ -1,5 +1,8 @@
 import type { ComponentType } from 'react';
 
+import { isReactComponent } from '@winglet/react-utils/filter';
+import { withErrorBoundary } from '@winglet/react-utils/hoc';
+
 import type { Fn } from '@aileron/declare';
 
 import type { SchemaNode } from '@/schema-form/core';
@@ -207,6 +210,8 @@ export class VirtualizationManager {
 
   constructor(options: ResolvedVirtualizationOptions) {
     this.options = options;
-    this.Placeholder = options.Placeholder;
+    this.Placeholder = isReactComponent(options.Placeholder)
+      ? withErrorBoundary(options.Placeholder)
+      : null;
   }
 }

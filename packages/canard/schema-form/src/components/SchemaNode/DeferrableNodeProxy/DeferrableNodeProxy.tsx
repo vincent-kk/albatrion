@@ -1,6 +1,4 @@
-import { useCallback, useLayoutEffect, useMemo, useRef, useState } from 'react';
-
-import { withErrorBoundary } from '@winglet/react-utils/hoc';
+import { useCallback, useLayoutEffect, useRef, useState } from 'react';
 
 import { NodeEventType } from '@/schema-form/core';
 import { useSchemaNodeSubscribe } from '@/schema-form/hooks/useSchemaNodeSubscribe';
@@ -69,17 +67,10 @@ export const DeferrableNodeProxy = ({
     [manager],
   );
 
-  const Placeholder = useMemo(
-    () =>
-      manager.Placeholder !== null
-        ? withErrorBoundary(manager.Placeholder)
-        : null,
-    [manager],
-  );
-
   if (!node.enabled) return null;
   if (revealed) return <NodeProxy {...proxyProps} />;
 
+  const Placeholder = manager.Placeholder;
   const height = manager.estimateHeight(node);
   return (
     <div
