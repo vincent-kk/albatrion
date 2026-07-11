@@ -13,6 +13,7 @@
 3. [Sub-path Imports](#sub-path-imports)
 4. [Hooks API](#hooks-api)
    - [useConstant](#useconstant)
+   - [useLazyConstant](#uselazyconstant)
    - [useTruthyConstant](#usetruthyconstant)
    - [useMemorize](#usememorize)
    - [useReference](#usereference)
@@ -65,11 +66,11 @@ npm install react react-dom
 
 ```tsx
 import {
+  Portal,
   useConstant,
   useHandle,
   useOnMount,
   useWindowSize,
-  Portal,
   withErrorBoundary,
 } from '@winglet/react-utils';
 
@@ -91,7 +92,9 @@ const isMobile = width < 768;
 // Portal for modals
 const App = Portal.with(() => (
   <div>
-    <Portal><Modal /></Portal>
+    <Portal>
+      <Modal />
+    </Portal>
     <Portal.Anchor />
   </div>
 ));
@@ -106,15 +109,15 @@ const SafeWidget = withErrorBoundary(Widget, <p>Failed to load.</p>);
 
 Use sub-path imports to reduce bundle size:
 
-| Sub-path | Contents |
-|----------|----------|
-| `@winglet/react-utils` | All exports |
-| `@winglet/react-utils/hook` | All 18 hooks |
-| `@winglet/react-utils/hoc` | `withErrorBoundary`, `withErrorBoundaryForwardRef`, `withUploader` |
-| `@winglet/react-utils/portal` | `Portal` compound object |
+| Sub-path                      | Contents                                                                                           |
+| ----------------------------- | -------------------------------------------------------------------------------------------------- |
+| `@winglet/react-utils`        | All exports                                                                                        |
+| `@winglet/react-utils/hook`   | All 18 hooks                                                                                       |
+| `@winglet/react-utils/hoc`    | `withErrorBoundary`, `withErrorBoundaryForwardRef`, `withUploader`                                 |
+| `@winglet/react-utils/portal` | `Portal` compound object                                                                           |
 | `@winglet/react-utils/filter` | `isReactComponent`, `isReactElement`, `isClassComponent`, `isFunctionComponent`, `isMemoComponent` |
-| `@winglet/react-utils/object` | `remainOnlyReactComponent` |
-| `@winglet/react-utils/render` | `renderComponent` |
+| `@winglet/react-utils/object` | `remainOnlyReactComponent`                                                                         |
+| `@winglet/react-utils/render` | `renderComponent`                                                                                  |
 
 ---
 
@@ -125,12 +128,13 @@ Use sub-path imports to reduce bundle size:
 Creates a constant value that persists throughout the entire component lifecycle.
 
 ```typescript
-function useConstant<T>(input: T): T
+function useConstant<T>(input: T): T;
 ```
 
 The value is stored on the first render and never recomputed. If a function is passed, the function itself is stored (not called). Use `useTruthyConstant` for lazy factory initialization.
 
 **Parameters**:
+
 - `input` — The value to store permanently. Any type.
 
 **Returns**: The constant value, identical on every render.
@@ -155,10 +159,11 @@ const MyComponent = () => {
 Creates a lazily initialized constant. If a function is provided, it is called on first access (when the stored value is falsy).
 
 ```typescript
-function useTruthyConstant<T>(input: T | (() => T)): T
+function useTruthyConstant<T>(input: T | (() => T)): T;
 ```
 
 **Parameters**:
+
 - `input` — A value or a factory function. Functions are called lazily.
 
 **Returns**: The constant value.
@@ -184,6 +189,7 @@ function useMemorize<T>(input: T, dependencies?: DependencyList): T;
 ```
 
 **Parameters**:
+
 - `input` — A value to memoize or a factory function that returns the value.
 - `dependencies` — Dependency array (defaults to `[]`).
 
@@ -195,10 +201,40 @@ const config = useMemorize({ theme, locale }, [theme, locale]);
 
 // Memoize expensive computation
 const processed = useMemorize(
-  () => rawData.map(item => expensiveTransform(item)),
+  () => rawData.map((item) => expensiveTransform(item)),
   [rawData],
 );
 ```
+
+---
+
+### useLazyConstant
+
+```typescript
+function useLazyConstant<T>(factory: () => T): T;
+```
+
+Runs `factory` **exactly once** on the initial render and holds the result in React state, so the value keeps one referential identity for the component's entire lifetime. No setter is ever called, so the value is never replaced.
+
+```typescript
+// A lifecycle-managed instance that must keep one identity
+const contextValue = useLazyConstant(() => ({
+  manager: Manager.create(options),
+}));
+
+// Exactly-once even for a falsy result — stays null forever, never re-detected
+const detector = useLazyConstant(() =>
+  typeof IntersectionObserver === 'undefined' ? null : createDetector(),
+);
+```
+
+**vs the other constant hooks**:
+
+- Unlike `useMemo`/`useMemorize`, the value is **guaranteed** never recomputed — React may drop a memo cache at any time. Reach for it when re-running the factory would be a **correctness bug**, not merely wasted work.
+- Unlike `useConstant`, the factory **runs once** (`useConstant(expr)` evaluates `expr` on every render and keeps the first result).
+- Unlike `useTruthyConstant`, the factory runs once **even when it returns falsy** (`null` / `false` / `0`) — no retry.
+
+**Use cases**: resource-owning instances (managers, observers, stores), mount-frozen configuration, stable context values. In StrictMode (dev) the factory may run twice for the discarded double-render (only one is committed) — keep factories side-effect-free.
 
 ---
 
@@ -207,10 +243,11 @@ const processed = useMemorize(
 Creates a ref whose `current` property is always updated to the latest value on every render.
 
 ```typescript
-function useReference<T>(value: T): RefObject<T>
+function useReference<T>(value: T): RefObject<T>;
 ```
 
 **Parameters**:
+
 - `value` — The value to track. Updated on every render.
 
 **Returns**: A stable `RefObject<T>`. The ref object itself never changes; only `ref.current` is updated.
@@ -240,11 +277,12 @@ Creates a stable callback function that always calls the latest version of the p
 
 ```typescript
 function useHandle<P extends any[], R>(
-  handler?: (...args: P) => R
-): (...args: P) => R
+  handler?: (...args: P) => R,
+): (...args: P) => R;
 ```
 
 **Parameters**:
+
 - `handler` — Optional. The function to wrap. If `undefined`, the returned function returns `null`.
 
 **Returns**: A stable function reference that never changes identity.
@@ -269,11 +307,12 @@ Returns a stable object reference that updates only when the object's contents c
 ```typescript
 function useSnapshot<T extends object | undefined>(
   input: T,
-  omit?: Set<keyof T> | Array<keyof T>
-): T
+  omit?: Set<keyof T> | Array<keyof T>,
+): T;
 ```
 
 **Parameters**:
+
 - `input` — The object to track.
 - `omit` — Optional. Properties to exclude from deep comparison.
 
@@ -282,7 +321,9 @@ function useSnapshot<T extends object | undefined>(
 ```tsx
 // Effect only re-runs when config content actually changes
 const stableConfig = useSnapshot({ theme: user.theme, locale: user.locale });
-useEffect(() => { initWidget(stableConfig); }, [stableConfig]);
+useEffect(() => {
+  initWidget(stableConfig);
+}, [stableConfig]);
 
 // Exclude volatile fields (e.g., timestamps) from comparison
 const stableResponse = useSnapshot(apiResponse, ['timestamp', 'requestId']);
@@ -299,11 +340,12 @@ Same deep-comparison logic as `useSnapshot`, but returns a ref object.
 ```typescript
 function useSnapshotReference<T extends object | undefined>(
   input: T,
-  omit?: Set<keyof T> | Array<keyof T>
-): RefObject<T>
+  omit?: Set<keyof T> | Array<keyof T>,
+): RefObject<T>;
 ```
 
 **Parameters**:
+
 - `input` — The object to track.
 - `omit` — Optional. Properties to exclude from deep comparison.
 
@@ -326,10 +368,11 @@ const processData = useCallback(() => {
 Maintains referential stability for object props using shallow equality comparison.
 
 ```typescript
-function useRestProperties<T extends Dictionary>(props: T): T
+function useRestProperties<T extends Dictionary>(props: T): T;
 ```
 
 **Parameters**:
+
 - `props` — The properties object to stabilize.
 
 **Returns**: Previous object reference if contents are shallowly equal; new object otherwise.
@@ -337,9 +380,7 @@ function useRestProperties<T extends Dictionary>(props: T): T
 ```tsx
 const Button = ({ variant, size, ...restProps }) => {
   const stableRest = useRestProperties(restProps);
-  return (
-    <MemoizedButton variant={variant} size={size} {...stableRest} />
-  );
+  return <MemoizedButton variant={variant} size={size} {...stableRest} />;
 };
 ```
 
@@ -350,10 +391,11 @@ const Button = ({ variant, size, ...restProps }) => {
 Executes a side effect once when the component mounts.
 
 ```typescript
-function useOnMount(handler: EffectCallback): void
+function useOnMount(handler: EffectCallback): void;
 ```
 
 **Parameters**:
+
 - `handler` — Effect function. Can return a cleanup function.
 
 ```tsx
@@ -371,10 +413,11 @@ useOnMount(() => {
 Synchronous version of `useOnMount`. Runs before browser paint via `useLayoutEffect`.
 
 ```typescript
-function useOnMountLayout(handler: EffectCallback): void
+function useOnMountLayout(handler: EffectCallback): void;
 ```
 
 **Parameters**:
+
 - `handler` — Synchronous effect. Can return a cleanup function.
 
 **Use for**: Preventing flash of unstyled content, initial DOM measurements, scroll restoration.
@@ -393,10 +436,11 @@ useOnMountLayout(() => {
 Executes a cleanup function when the component unmounts.
 
 ```typescript
-function useOnUnmount(handler: Fn): void
+function useOnUnmount(handler: Fn): void;
 ```
 
 **Parameters**:
+
 - `handler` — Cleanup function. Captured at mount time (stale closure).
 
 **Important**: Use `useReference` to access current state values in the cleanup function.
@@ -420,7 +464,7 @@ useOnUnmount(() => {
 Synchronous cleanup on unmount via `useLayoutEffect`.
 
 ```typescript
-function useOnUnmountLayout(handler: Fn): void
+function useOnUnmountLayout(handler: Fn): void;
 ```
 
 **Use for**: Removing DOM elements before reflow, stopping animations, restoring global styles synchronously.
@@ -443,11 +487,12 @@ Runs an effect repeatedly until it returns `true`, then permanently stops.
 ```typescript
 function useEffectUntil<D extends DependencyList>(
   effect: () => boolean,
-  dependencies?: D
-): void
+  dependencies?: D,
+): void;
 ```
 
 **Parameters**:
+
 - `effect` — Function returning `boolean`. Return `true` to stop permanently.
 - `dependencies` — Optional dependency array.
 
@@ -472,8 +517,8 @@ Synchronous version of `useEffectUntil` using `useLayoutEffect`.
 ```typescript
 function useLayoutEffectUntil<D extends DependencyList>(
   effect: () => boolean,
-  dependencies?: D
-): void
+  dependencies?: D,
+): void;
 ```
 
 ```tsx
@@ -482,7 +527,7 @@ useLayoutEffectUntil(() => {
   const el = containerRef.current;
   if (!el) return false;
   if (el.scrollWidth > el.clientWidth) {
-    setFontSize(prev => prev - 1);
+    setFontSize((prev) => prev - 1);
     return false;
   }
   return true;
@@ -500,11 +545,12 @@ function useDebounce(
   callback: Fn,
   dependencyList?: DependencyList,
   ms?: number,
-  options?: { immediate?: boolean }
-): { isIdle: () => boolean; cancel: () => void }
+  options?: { immediate?: boolean },
+): { isIdle: () => boolean; cancel: () => void };
 ```
 
 **Parameters**:
+
 - `callback` — Function to debounce.
 - `dependencyList` — Dependencies that trigger the debounce.
 - `ms` — Delay in milliseconds (default: `0`).
@@ -515,11 +561,7 @@ function useDebounce(
 ```tsx
 const [query, setQuery] = useState('');
 
-const { cancel } = useDebounce(
-  () => searchAPI(query),
-  [query],
-  300,
-);
+const { cancel } = useDebounce(() => searchAPI(query), [query], 300);
 
 // Clean up pending debounce on unmount
 useEffect(() => cancel, [cancel]);
@@ -534,15 +576,17 @@ Provides manual control over a `setTimeout` with React lifecycle integration.
 ```typescript
 function useTimeout(
   callback: Fn,
-  timeout?: number
-): { isIdle: () => boolean; schedule: () => void; cancel: () => void }
+  timeout?: number,
+): { isIdle: () => boolean; schedule: () => void; cancel: () => void };
 ```
 
 **Parameters**:
+
 - `callback` — Function to execute after the timeout.
 - `timeout` — Delay in milliseconds (default: `0`).
 
 **Returns**:
+
 - `isIdle()` — Returns `true` if no timeout is pending.
 - `schedule()` — Starts or resets the timeout.
 - `cancel()` — Aborts any pending timeout.
@@ -567,10 +611,11 @@ return (
 Returns a version counter and an update function. Calling `update()` increments the counter and triggers a re-render.
 
 ```typescript
-function useVersion(callback?: Fn): [version: number, update: () => void]
+function useVersion(callback?: Fn): [version: number, update: () => void];
 ```
 
 **Parameters**:
+
 - `callback` — Optional. Called before incrementing the version.
 
 **Returns**: `[version, update]` tuple. `version` starts at `0`.
@@ -594,7 +639,7 @@ return <button onClick={refresh}>Refresh</button>;
 Tracks browser window dimensions, updating on resize.
 
 ```typescript
-function useWindowSize(): { width: number; height: number }
+function useWindowSize(): { width: number; height: number };
 ```
 
 **Returns**: `{ width, height }` — current `window.innerWidth` and `window.innerHeight` in pixels. Returns `{ width: 0, height: 0 }` during SSR.
@@ -663,8 +708,8 @@ Renders its children at the `Portal.Anchor` location. Renders `null` at its own 
 </Portal>
 ```
 
-| Prop | Type | Description |
-|------|------|-------------|
+| Prop       | Type        | Description                              |
+| ---------- | ----------- | ---------------------------------------- |
 | `children` | `ReactNode` | Content to render at the anchor location |
 
 #### `Portal.Anchor`
@@ -695,8 +740,12 @@ All `<Portal>` instances under the same provider render at the single `<Portal.A
 ```tsx
 const Page = Portal.with(() => (
   <div>
-    <Portal><ModalA /></Portal>
-    <Portal><TooltipB /></Portal>
+    <Portal>
+      <ModalA />
+    </Portal>
+    <Portal>
+      <TooltipB />
+    </Portal>
     <main>Content</main>
     <Portal.Anchor /> {/* Both ModalA and TooltipB render here */}
   </div>
@@ -710,7 +759,9 @@ Each `Portal.with` creates an independent scope:
 ```tsx
 const Outer = Portal.with(() => (
   <div>
-    <Portal><div>Outer content</div></Portal>
+    <Portal>
+      <div>Outer content</div>
+    </Portal>
     <Inner />
     <Portal.Anchor id="outer" />
   </div>
@@ -718,7 +769,9 @@ const Outer = Portal.with(() => (
 
 const Inner = Portal.with(() => (
   <div>
-    <Portal><div>Inner content</div></Portal>
+    <Portal>
+      <div>Inner content</div>
+    </Portal>
     <Portal.Anchor id="inner" /> {/* Inner content only appears here */}
   </div>
 ));
@@ -736,10 +789,11 @@ Wraps a component with an error boundary to prevent application crashes.
 function withErrorBoundary<Props extends Dictionary>(
   Component: ComponentType<Props>,
   fallback?: ReactNode,
-): ComponentType<Props>
+): ComponentType<Props>;
 ```
 
 **Parameters**:
+
 - `Component` — The component to protect.
 - `fallback` — Optional custom UI to show on error. Default: a `FallbackMessage` component.
 
@@ -752,7 +806,7 @@ const SafeChart = withErrorBoundary(
 );
 
 // Usage
-<SafeChart data={chartData} width={800} height={400} />
+<SafeChart data={chartData} width={800} height={400} />;
 ```
 
 ---
@@ -765,7 +819,7 @@ Same as `withErrorBoundary` but for components created with `React.forwardRef`. 
 function withErrorBoundaryForwardRef<Props extends Dictionary, Ref>(
   Component: ForwardRefExoticComponent<Props & RefAttributes<Ref>>,
   fallback?: ReactNode,
-): ForwardRefExoticComponent<PropsWithoutRef<Props> & RefAttributes<Ref>>
+): ForwardRefExoticComponent<PropsWithoutRef<Props> & RefAttributes<Ref>>;
 ```
 
 ```tsx
@@ -779,7 +833,7 @@ const SafeInput = withErrorBoundaryForwardRef(CustomInput);
 
 // Ref still works after wrapping
 const inputRef = useRef<HTMLInputElement>(null);
-<SafeInput ref={inputRef} placeholder="Enter value" />
+<SafeInput ref={inputRef} placeholder="Enter value" />;
 ```
 
 ---
@@ -796,10 +850,10 @@ function withUploader<Props extends { onClick?: Fn<[e?: MouseEvent]> }>(
 
 **Added props** (on the returned component):
 
-| Prop | Type | Description |
-|------|------|-------------|
-| `onChange` | `(file: File) => void` | Called with the selected `File` |
-| `acceptFormat` | `string[]` | File extensions to allow (e.g. `['.jpg', '.png']`) |
+| Prop           | Type                   | Description                                        |
+| -------------- | ---------------------- | -------------------------------------------------- |
+| `onChange`     | `(file: File) => void` | Called with the selected `File`                    |
+| `acceptFormat` | `string[]`             | File extensions to allow (e.g. `['.jpg', '.png']`) |
 
 All original component props are preserved and forwarded.
 
@@ -816,10 +870,11 @@ const UploadButton = withUploader(Button);
   }}
 >
   Upload Photo
-</UploadButton>
+</UploadButton>;
 ```
 
 **Behavior**:
+
 - Opens native file dialog on click
 - Calls original `onClick` handler before opening dialog
 - Clears input after selection (allows re-selecting the same file)
@@ -834,7 +889,9 @@ const UploadButton = withUploader(Button);
 #### `isReactComponent(value)`
 
 ```typescript
-function isReactComponent<Props = any>(value: unknown): value is ComponentType<Props>
+function isReactComponent<Props = any>(
+  value: unknown,
+): value is ComponentType<Props>;
 ```
 
 Returns `true` for function components, class components, and `React.memo` wrapped components.
@@ -842,26 +899,32 @@ Returns `true` for function components, class components, and `React.memo` wrapp
 **Does not detect**: `React.forwardRef` components.
 
 ```tsx
-isReactComponent(() => <div />);              // true
-isReactComponent(React.memo(() => <div />));  // true
-isReactComponent(class extends React.Component { render() { return <div />; } }); // true
+isReactComponent(() => <div />); // true
+isReactComponent(React.memo(() => <div />)); // true
+isReactComponent(
+  class extends React.Component {
+    render() {
+      return <div />;
+    }
+  },
+); // true
 isReactComponent(React.forwardRef((_, ref) => <div ref={ref} />)); // false
-isReactComponent(<div />);    // false (element, not component)
-isReactComponent('string');   // false
+isReactComponent(<div />); // false (element, not component)
+isReactComponent('string'); // false
 ```
 
 #### `isReactElement(value)`
 
 ```typescript
-function isReactElement(value: unknown): value is React.ReactElement
+function isReactElement(value: unknown): value is React.ReactElement;
 ```
 
 Returns `true` for rendered JSX or `React.createElement` results.
 
 ```tsx
-isReactElement(<div>Hello</div>);         // true
+isReactElement(<div>Hello</div>); // true
 isReactElement(React.createElement('p')); // true
-isReactElement(() => <div />);            // false (component, not element)
+isReactElement(() => <div />); // false (component, not element)
 ```
 
 #### `isFunctionComponent(value)`
@@ -885,18 +948,18 @@ Returns `true` for components wrapped with `React.memo()`.
 ```typescript
 function remainOnlyReactComponent<
   Input extends Record<string, unknown>,
-  Output extends Record<string, ComponentType>
->(dictionary: Input): Output
+  Output extends Record<string, ComponentType>,
+>(dictionary: Input): Output;
 ```
 
 Filters an object to retain only values that pass `isReactComponent`.
 
 ```tsx
 const components = remainOnlyReactComponent({
-  Button: ButtonComponent,   // kept
-  Icon: IconComponent,       // kept
-  config: { size: 'lg' },    // removed (not a component)
-  label: 'Submit',           // removed (string)
+  Button: ButtonComponent, // kept
+  Icon: IconComponent, // kept
+  config: { size: 'lg' }, // removed (not a component)
+  label: 'Submit', // removed (string)
 });
 // Result: { Button: ButtonComponent, Icon: IconComponent }
 ```
@@ -911,17 +974,17 @@ const components = remainOnlyReactComponent({
 function renderComponent<P extends object>(
   Component: ReactNode | ComponentType<P>,
   props?: P,
-): ReactNode
+): ReactNode;
 ```
 
 Renders a value that may be a component type, a pre-rendered element, or `null`/`undefined`.
 
-| Input | Result |
-|-------|--------|
-| `null`, `undefined`, falsy | `null` |
-| React element | Returns element as-is |
-| React component | `React.createElement(Component, props)` |
-| Other | `null` |
+| Input                      | Result                                  |
+| -------------------------- | --------------------------------------- |
+| `null`, `undefined`, falsy | `null`                                  |
+| React element              | Returns element as-is                   |
+| React component            | `React.createElement(Component, props)` |
+| Other                      | `null`                                  |
 
 ```tsx
 import { renderComponent } from '@winglet/react-utils/render';
@@ -980,14 +1043,14 @@ type UseTimeoutReturn = {
 
 ## Compatibility
 
-| Environment | Requirement |
-|-------------|-------------|
-| React | 16, 17, 18, 19 |
-| React DOM | 16, 17, 18, 19 |
-| Node.js | 14.0.0 or higher |
-| Browsers | Modern browsers with ES2020 support |
-| Module formats | ESM (`.mjs`) and CJS (`.cjs`) |
-| TypeScript | Full declaration files included |
+| Environment    | Requirement                         |
+| -------------- | ----------------------------------- |
+| React          | 16, 17, 18, 19                      |
+| React DOM      | 16, 17, 18, 19                      |
+| Node.js        | 14.0.0 or higher                    |
+| Browsers       | Modern browsers with ES2020 support |
+| Module formats | ESM (`.mjs`) and CJS (`.cjs`)       |
+| TypeScript     | Full declaration files included     |
 
 For legacy browser support, transpile with Babel targeting your required environments.
 
