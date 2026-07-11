@@ -340,7 +340,7 @@
 
 ## Phase 4 — CI 통합 + 회귀 가드
 
-- [x] `.github/workflows/benchmark.yml` (master push + nightly cron 03:30 UTC + workflow_dispatch)
+- [x] `.github/workflows/performance-benchmarks.yml` (master push + nightly cron 03:30 UTC + workflow_dispatch)
   - [x] schema-form micro bench (`yarn workspace @canard/schema-form bench`)
   - [x] aileron bench (`bench:full:repeat` 와 동일: scale + array-stress + core, `--repeat=3`)
   - [x] artifact 업로드 (`bench-results-${run_id}`, 30일 보관)
@@ -354,7 +354,7 @@
 - **regression-check.ts 는 `bench-v2-*.json` 만 본다** — micro bench `latest.json` 은 별도 형식. 후속에서 통합 가능.
 - **artifact 우선, commit-back 보류.** main 에 자동 push 는 hook 무한 루프 위험 + write permission 필요. 필요해지면 별도 PR 브랜치로 분리.
 
-**산출**: `.github/workflows/benchmark.yml` + `regression-check.ts` + `regression-check` yarn script.
+**산출**: `.github/workflows/performance-benchmarks.yml` + `regression-check.ts` + `regression-check` yarn script.
 
 ## Phase 5 — 더 깊은 측정 (선택)
 
@@ -441,7 +441,7 @@
 - `src/benchmarks/canard/scale-interaction.tsx` — 5 cases 의 mount + 10 onChange
 - `src/benchmarks/canard/array-node-stress.tsx` — push/apply/remove 분리 (latest only, FormHandle.findNode 사용)
 - `src/utils/regression-check.ts` — warn-only 회귀 가드 (직전 N개 평균 vs latest, 임계치 -15%)
-- `.github/workflows/benchmark.yml` — master push + nightly cron + workflow_dispatch
+- `.github/workflows/performance-benchmarks.yml` — master push + nightly cron + workflow_dispatch
 - `package.json` scripts: `bench`, `bench:all`, `bench:repeat`, `bench:scale`, `bench:scale:repeat`, `bench:array-stress`, `bench:full`, `bench:full:repeat`, `regression-check`
 - **legacy 제거 (사용자 지시):** `src/index.ts`(legacy)/`compare-benchmark.ts`/`benchmarks/genie/**`/`reporters/**`/`visualizer/**`/`v2/` 서브디렉토리 삭제 및 평탄화. unused deps 제거.
 

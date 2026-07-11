@@ -5,14 +5,14 @@ Albatrion 모노레포의 npm 배포 절차입니다. npm의 **2FA-bypass 토큰
 
 ## 배포 모델
 
-|                 | 기본: CI + OIDC                       | 폴백: 로컬 대화형 2FA         |
-| --------------- | ------------------------------------- | ----------------------------- |
-| 실행 위치       | GitHub Actions 러너                   | 내 로컬 머신                  |
-| 트리거          | Actions 탭 "Run workflow" (내가 누름) | 터미널에서 직접               |
-| 저장 토큰       | **없음** (OIDC 토큰리스)              | 없음 (`npm login` 세션)       |
-| 매 배포 인증    | 자동                                  | 2FA OTP 입력                  |
-| provenance 서명 | ✅ 자동                               | ❌                            |
-| 진입점          | `.github/workflows/release.yml`       | `scripts/publish-packages.sh` |
+|                 | 기본: CI + OIDC                              | 폴백: 로컬 대화형 2FA         |
+| --------------- | -------------------------------------------- | ----------------------------- |
+| 실행 위치       | GitHub Actions 러너                          | 내 로컬 머신                  |
+| 트리거          | Actions 탭 "Run workflow" (내가 누름)        | 터미널에서 직접               |
+| 저장 토큰       | **없음** (OIDC 토큰리스)                     | 없음 (`npm login` 세션)       |
+| 매 배포 인증    | 자동                                         | 2FA OTP 입력                  |
+| provenance 서명 | ✅ 자동                                      | ❌                            |
+| 진입점          | `.github/workflows/publish-npm-packages.yml` | `scripts/publish-packages.sh` |
 
 두 경로 모두 동일한 **버전 차이 가드**를 씁니다 → 버전이 올라간 패키지만 배포되고,
 이미 배포된 버전은 건너뜁니다(충돌 403 없음).
@@ -21,7 +21,7 @@ Albatrion 모노레포의 npm 배포 절차입니다. npm의 **2FA-bypass 토큰
 
 ## 1회 설정 — npmjs Trusted Publisher 등록 (필수, 최초 1회)
 
-CI 배포가 동작하려면 각 public 패키지(16개)에 "이 저장소의 `release.yml`을 신뢰"를
+CI 배포가 동작하려면 각 public 패키지(16개)에 "이 저장소의 `publish-npm-packages.yml`을 신뢰"를
 등록해야 합니다. `scripts/setup-trusted-publishers.sh`가 `npm trust`로 일괄 등록합니다.
 
 ```bash
@@ -41,7 +41,7 @@ yarn npm:setup-trust               # 16개 패키지 일괄 등록
 
 1. `https://www.npmjs.com/package/<패키지명>/access` 접속
 2. **Trusted Publisher** → **GitHub Actions** 선택
-3. Organization/user `vincent-kk`, Repository `albatrion`, Workflow `release.yml`, Environment 비움 → 저장
+3. Organization/user `vincent-kk`, Repository `albatrion`, Workflow `publish-npm-packages.yml`, Environment 비움 → 저장
 
 > **신규 패키지의 최초 배포 주의:** Trusted Publisher는 npm에 이미 존재하는 패키지에만
 > 설정할 수 있습니다. 완전히 새 패키지 이름을 처음 올릴 때는 (a) 로컬 대화형 2FA로 첫
@@ -112,10 +112,10 @@ DRY_RUN=true yarn publish:changed
 ## 마이그레이션 체크리스트
 
 - [x] `scripts/publish-packages.sh` — 버전 가드 + OIDC/2FA 배포 스크립트
-- [x] `.github/workflows/release.yml` — CI OIDC 릴리스 워크플로
+- [x] `.github/workflows/publish-npm-packages.yml` — CI OIDC 릴리스 워크플로
 - [x] `scripts/setup-npm-token.sh` — 폐지 예정 배너 추가
 - [x] `scripts/setup-trusted-publishers.sh` — TP 일괄 등록 스크립트
 - [ ] **`npm login` 후 `./scripts/setup-trusted-publishers.sh` 실행** (16개 TP 등록)
-- [ ] `release.yml` `dry_run: true`로 첫 실행 검증
+- [ ] `publish-npm-packages.yml` `dry_run: true`로 첫 실행 검증
 - [ ] 실배포 1회로 CI 경로 확정
 - [ ] 확정 후 `~/.zshrc`의 `NPM_TOKEN` 제거, `setup-npm-token.sh` 사용 중단

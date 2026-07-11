@@ -76,12 +76,17 @@ check_tag_exists() {
 main() {
     local commit_hash=""
     local push_tags=false
-    
+    local assume_yes=false
+
     # Parse arguments
     while [[ $# -gt 0 ]]; do
         case $1 in
             --push|-p)
                 push_tags=true
+                shift
+                ;;
+            --yes|-y)
+                assume_yes=true
                 shift
                 ;;
             -*)
@@ -174,11 +179,13 @@ main() {
     done
     
     # Confirmation
-    echo
-    read -p "Do you want to create these tags? (Y/n): " -r
-    if [[ $REPLY =~ ^[Nn]$ ]]; then
-        print_info "Operation cancelled."
-        exit 0
+    if [[ "$assume_yes" != true ]]; then
+        echo
+        read -p "Do you want to create these tags? (Y/n): " -r
+        if [[ $REPLY =~ ^[Nn]$ ]]; then
+            print_info "Operation cancelled."
+            exit 0
+        fi
     fi
     
     # Create tags
@@ -199,9 +206,15 @@ main() {
     
     # Push tags if requested
     if [[ "$push_tags" == true ]]; then
-        echo
-        read -p "Do you want to push the tags to origin? (Y/n): " -r
-        if [[ ! $REPLY =~ ^[Nn]$ ]]; then
+        local do_push=true
+        if [[ "$assume_yes" != true ]]; then
+            echo
+            read -p "Do you want to push the tags to origin? (Y/n): " -r
+            if [[ $REPLY =~ ^[Nn]$ ]]; then
+                do_push=false
+            fi
+        fi
+        if [[ "$do_push" == true ]]; then
             print_info "Pushing tags to origin..."
             if git push origin --tags; then
                 print_success "Tags pushed successfully!"

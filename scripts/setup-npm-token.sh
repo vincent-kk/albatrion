@@ -11,7 +11,7 @@
 #     After that date, `yarn publish:all` with NPM_TOKEN stops working.
 #
 #     Preferred path → CI OIDC Trusted Publishing (no stored token) via
-#     .github/workflows/release.yml. Local fallback → interactive 2FA publish
+#     .github/workflows/publish-npm-packages.yml. Local fallback → interactive 2FA publish
 #     with scripts/publish-packages.sh. See scripts/PUBLISHING.md.
 #
 #     This script remains functional only for the transition period.

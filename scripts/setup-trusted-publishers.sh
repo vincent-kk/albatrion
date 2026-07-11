@@ -5,7 +5,7 @@
 #
 # Replaces clicking through the npmjs.com "Trusted Publisher" screen once per
 # package. Points each package at this repo's release workflow so that
-# .github/workflows/release.yml can publish it tokenlessly via OIDC.
+# .github/workflows/publish-npm-packages.yml can publish it tokenlessly via OIDC.
 #
 # Prerequisites:
 #   - npm >= 11.15.0        (bulk `npm trust` support)
@@ -21,7 +21,7 @@
 #   DRY_RUN=true            print the planned commands without running them
 #   NPM_OTP=123456          2FA one-time password (else npm prompts interactively)
 #   REPO=owner/repo         override the repo derived from `git remote`
-#   WORKFLOW_FILE=name.yml  override the workflow filename (default release.yml)
+#   WORKFLOW_FILE=name.yml  override the workflow filename (default publish-npm-packages.yml)
 #
 # Usage:
 #   ./scripts/setup-trusted-publishers.sh
@@ -33,7 +33,7 @@ set -eo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT"
 
-WORKFLOW_FILE="${WORKFLOW_FILE:-release.yml}"
+WORKFLOW_FILE="${WORKFLOW_FILE:-publish-npm-packages.yml}"
 DRY_RUN="${DRY_RUN:-false}"
 ALLOW_STAGE="${ALLOW_STAGE:-false}"
 

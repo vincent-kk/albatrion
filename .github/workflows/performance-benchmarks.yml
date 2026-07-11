@@ -1,4 +1,4 @@
-name: benchmark
+name: performance-benchmarks
 
 on:
   push:
@@ -9,7 +9,7 @@ on:
       - "packages/aileron/benchmark-form/src/**"
       - "packages/winglet/json-schema/src/**"
       - "packages/winglet/json-schema/benchmark/**"
-      - ".github/workflows/benchmark.yml"
+      - ".github/workflows/performance-benchmarks.yml"
   pull_request:
     branches: [master]
     paths:
@@ -18,7 +18,7 @@ on:
       - "packages/aileron/benchmark-form/src/**"
       - "packages/winglet/json-schema/src/**"
       - "packages/winglet/json-schema/benchmark/**"
-      - ".github/workflows/benchmark.yml"
+      - ".github/workflows/performance-benchmarks.yml"
   schedule:
     # 03:30 UTC nightly — outside peak GitHub Actions hours.
     - cron: "30 3 * * *"

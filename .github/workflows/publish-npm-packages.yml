@@ -1,4 +1,4 @@
-name: release
+name: publish-npm-packages
 
 # Publish public workspaces to npm via OIDC Trusted Publishing (tokenless).
 #
@@ -8,7 +8,7 @@ name: release
 # so bumping a subset and triggering a release publishes just that subset.
 #
 # One-time prerequisite: configure a Trusted Publisher for each package on
-# npmjs.com (repo vincent-kk/albatrion, workflow release.yml). See
+# npmjs.com (repo vincent-kk/albatrion, workflow publish-npm-packages.yml). See
 # scripts/PUBLISHING.md.
 
 on:
@@ -21,7 +21,7 @@ on:
 
 # Never run two releases at once; do not cancel an in-flight publish.
 concurrency:
-  group: release
+  group: publish-npm-packages
   cancel-in-progress: false
 
 jobs:
@@ -30,14 +30,19 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     permissions:
-      contents: read
+      contents: write # required: push per-package git tags after publishing
       id-token: write # required: npm exchanges this OIDC token for a publish token
     env:
-      # Matches the repo .nvmrc; the build is tuned on node 20.
-      NODE_VERSION: "20.19.5"
+      # node 22 LTS: required by npm 12 (the OIDC publish tool). Dev/bench pin
+      # node 20 (.nvmrc), but the published build output is deterministic across
+      # node versions (rollup/tsc), so building the release on 22 is safe.
+      NODE_VERSION: "22"
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          # Full history + tags so tag-packages.sh can skip already-created tags.
+          fetch-depth: 0
 
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -49,7 +54,8 @@ jobs:
         run: corepack enable
 
       - name: Upgrade npm for OIDC (>= 11.5.1)
-        # node 20 ships npm 10.x; Trusted Publishing needs npm >= 11.5.1.
+        # node 22 still bundles npm 10.x; Trusted Publishing needs npm >= 11.5.1.
+        # npm@latest (v12) requires node >= 22.22.2, satisfied by node 22 LTS.
         run: npm install -g npm@latest
 
       - name: Install
@@ -62,3 +68,11 @@ jobs:
         env:
           DRY_RUN: ${{ inputs.dry_run }}
         run: ./scripts/publish-packages.sh
+
+      - name: Tag & push published versions
+        # Real runs only, and only if publish succeeded. success() is explicit
+        # because a custom `if:` does not reliably inherit the implicit success()
+        # gate — without it a failed publish could still tag HEAD.
+        # Tags every non-private package version at HEAD, skipping existing tags.
+        if: ${{ !inputs.dry_run && success() }}
+        run: ./scripts/tag-packages.sh HEAD --push --yes
