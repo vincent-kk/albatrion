@@ -91,7 +91,10 @@ export interface FormProps<
    *  - Off-screen fields render as lightweight placeholders and mount when they
    *    approach the viewport, on browser idle time, or on focus/select commands
    *  - The node tree is always fully built; values, validation and submit are unaffected
-   *  - Requires IntersectionObserver; silently disabled when unavailable (e.g. SSR)
+   *  - Client-side rendering only. Requires IntersectionObserver and is silently
+   *    disabled when it is unavailable. Do NOT enable it in SSR/hydration apps:
+   *    the server renders all fields while the client gates them, causing a
+   *    hydration mismatch.
    */
   virtualization?: boolean | VirtualizationOptions;
   /** User-defined context */

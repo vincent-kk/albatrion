@@ -3,6 +3,11 @@ import type { ComponentType } from 'react';
 import type { Fn } from '@aileron/declare';
 
 import type { SchemaNode } from '@/schema-form/core';
+import { formatVirtualizationDisabledWarning } from '@/schema-form/helpers/error';
+import {
+  VIRTUALIZATION_DISABLED_FOR_FORM,
+  warnDevelopmentIssue,
+} from '@/schema-form/helpers/warning';
 
 import { resolveVirtualizationOptions } from '../resolveVirtualizationOptions';
 import {
@@ -188,7 +193,14 @@ export class VirtualizationManager {
   public static create(
     input: boolean | VirtualizationOptions | undefined,
   ): VirtualizationManager | null {
-    if (typeof IntersectionObserver === 'undefined') return null;
+    if (typeof IntersectionObserver === 'undefined') {
+      if (input)
+        warnDevelopmentIssue({
+          code: VIRTUALIZATION_DISABLED_FOR_FORM,
+          message: formatVirtualizationDisabledWarning(),
+        });
+      return null;
+    }
     const options = resolveVirtualizationOptions(input);
     return options === null ? null : new VirtualizationManager(options);
   }
