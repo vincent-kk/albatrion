@@ -18,6 +18,7 @@
     "heap-parse": "node --import tsx src/utils/parse-heapsnapshot.ts",
     "summary": "node --import tsx src/utils/summary.ts",
     "bench:compare": "node --expose-gc --import tsx src/utils/compare-frameworks.tsx",
+    "bench:browser": "node browser-bench/run.mjs",
     "render-trace": "node --expose-gc --import tsx src/utils/render-trace.tsx",
     "guard:baseline": "node --expose-gc --import tsx src/index.ts --scale --array-stress --repeat=5 --min-samples=8 --max-time=2 --exclude=array-500,array-1000 --out=results/baseline.json",
     "guard:check": "node --expose-gc --import tsx src/index.ts --scale --array-stress --repeat=5 --min-samples=8 --max-time=2 --exclude=array-500,array-1000 --out=results/current.json && node --import tsx src/utils/stat-regression.ts --baseline results/baseline.json --current results/current.json --fail"
