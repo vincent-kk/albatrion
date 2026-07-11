@@ -76,8 +76,9 @@ registerPlugin(ajvValidatorPlugin);
 ### 2. 기본 사용법
 
 ```tsx
-import { Form } from '@canard/schema-form';
 import { useState } from 'react';
+
+import { Form } from '@canard/schema-form';
 
 export const App = () => {
   const jsonSchema = {
@@ -91,11 +92,7 @@ export const App = () => {
   const [value, setValue] = useState({ name: '', age: 0 });
 
   return (
-    <Form
-      jsonSchema={jsonSchema}
-      defaultValue={value}
-      onChange={setValue}
-    />
+    <Form jsonSchema={jsonSchema} defaultValue={value} onChange={setValue} />
   );
 };
 ```
@@ -129,12 +126,12 @@ export const App = () => {
 
 ### 디자인 패턴
 
-| 패턴 | 용도 |
-|------|------|
+| 패턴                 | 용도                                     |
+| -------------------- | ---------------------------------------- |
 | **Strategy Pattern** | Array/Object 노드의 Branch/Terminal 전략 |
-| **Factory Pattern** | JSON Schema에서 노드 생성 |
-| **Observer Pattern** | 노드 상태 변경 구독 |
-| **Plugin Pattern** | 검증 및 UI 컴포넌트 확장 |
+| **Factory Pattern**  | JSON Schema에서 노드 생성                |
+| **Observer Pattern** | 노드 상태 변경 구독                      |
+| **Plugin Pattern**   | 검증 및 UI 컴포넌트 확장                 |
 
 ---
 
@@ -191,6 +188,15 @@ interface FormProps<
   validationMode?: ValidationMode;
   /** 커스텀 ValidatorFactory 함수 */
   validatorFactory?: ValidatorFactory;
+  /**
+   * 대형 폼용 렌더 레벨 가상화(지연 마운트, 기본값: off)
+   *  - `true`: 기본 옵션으로 활성화
+   *  - `VirtualizationOptions`: 커스텀 옵션으로 활성화
+   *  - 화면 밖 필드는 placeholder로 지연되고 뷰포트 근접·idle·focus/select 시 마운트
+   *  - node tree는 항상 전량 생성 — 값/검증/제출은 영향 없음
+   *  - CSR 전용: IntersectionObserver 필요, SSR/하이드레이션 앱에서 켜지 말 것(하이드레이션 mismatch)
+   */
+  virtualization?: boolean | VirtualizationOptions;
   /** 사용자 정의 context */
   context?: Dictionary;
   /** 자식 컴포넌트 */
@@ -272,24 +278,24 @@ type AttachedFilesMap = Map<string, File[]>;
 
 **Terminal Nodes** (원시 값):
 
-| 노드 | 설명 |
-|------|------|
-| `StringNode` | 문자열 값, format 검증 지원 (email, date 등) |
-| `NumberNode` | 숫자 값, min/max 제약, 정수 강제 |
-| `BooleanNode` | 불리언 값 |
-| `NullNode` | 명시적 null 값 |
+| 노드          | 설명                                         |
+| ------------- | -------------------------------------------- |
+| `StringNode`  | 문자열 값, format 검증 지원 (email, date 등) |
+| `NumberNode`  | 숫자 값, min/max 제약, 정수 강제             |
+| `BooleanNode` | 불리언 값                                    |
+| `NullNode`    | 명시적 null 값                               |
 
 **Branch Nodes** (컨테이너 구조):
 
-| 노드 | 설명 |
-|------|------|
-| `ObjectNode` | 키-값 구조, `required`, `additionalProperties` 지원 |
-| `ArrayNode` | 순서가 있는 컬렉션, `minItems`, `maxItems`, 배열 조작 메서드 |
+| 노드         | 설명                                                         |
+| ------------ | ------------------------------------------------------------ |
+| `ObjectNode` | 키-값 구조, `required`, `additionalProperties` 지원          |
+| `ArrayNode`  | 순서가 있는 컬렉션, `minItems`, `maxItems`, 배열 조작 메서드 |
 
 **Special Nodes**:
 
-| 노드 | 설명 |
-|------|------|
+| 노드          | 설명                                          |
+| ------------- | --------------------------------------------- |
 | `VirtualNode` | 조건부 필드 및 계산된 값을 위한 비스키마 노드 |
 
 ### 노드 초기화
@@ -297,7 +303,7 @@ type AttachedFilesMap = Map<string, File[]>;
 ```typescript
 const node = nodeFromJsonSchema({
   jsonSchema: { type: 'object', properties: { name: { type: 'string' } } },
-  onChange: (value) => console.log('Form value changed:', value)
+  onChange: (value) => console.log('Form value changed:', value),
 });
 
 await delay(); // 초기화 완료 대기
@@ -306,15 +312,15 @@ await delay(); // 초기화 완료 대기
 ### 노드 상태 플래그
 
 ```typescript
-node.dirty;        // 초기화 이후 값이 변경되었는가?
-node.touched;      // 사용자가 이 필드와 상호작용했는가?
-node.validated;    // 검증이 실행되었는가?
-node.errors;       // 현재 검증 오류
-node.visible;      // 필드가 보이는가? (computed property)
-node.active;       // 필드가 활성 상태인가? (computed property)
-node.readOnly;     // 필드가 읽기 전용인가? (computed property)
-node.disabled;     // 필드가 비활성화되었는가? (computed property)
-node.initialized;  // 노드가 초기화를 완료했는가?
+node.dirty; // 초기화 이후 값이 변경되었는가?
+node.touched; // 사용자가 이 필드와 상호작용했는가?
+node.validated; // 검증이 실행되었는가?
+node.errors; // 현재 검증 오류
+node.visible; // 필드가 보이는가? (computed property)
+node.active; // 필드가 활성 상태인가? (computed property)
+node.readOnly; // 필드가 읽기 전용인가? (computed property)
+node.disabled; // 필드가 비활성화되었는가? (computed property)
+node.initialized; // 노드가 초기화를 완료했는가?
 ```
 
 ---
@@ -368,18 +374,18 @@ interface FormTypeInputProps<
   Schema extends JsonSchemaWithVirtual = InferJsonSchema<Value>,
   Node extends SchemaNode = InferSchemaNode<Schema>,
 > {
-  jsonSchema: Schema;           // FormTypeInput 컴포넌트의 JSON Schema
-  readOnly: boolean;            // 읽기 전용 상태
-  disabled: boolean;            // 비활성화 상태
-  required: boolean;            // 필수 여부
-  node: Node;                   // 스키마 노드
-  type: Node['schemaType'];     // JSON Schema 타입
-  name: Node['name'];           // 노드 이름
-  path: Node['path'];           // 노드 경로
-  nullable: Node['nullable'];   // null 허용 여부
-  errors: Node['errors'];       // 검증 오류
-  errorVisible: boolean;        // 오류 표시 여부
-  watchValues: WatchValues;     // computed.watch로 구독 중인 값
+  jsonSchema: Schema; // FormTypeInput 컴포넌트의 JSON Schema
+  readOnly: boolean; // 읽기 전용 상태
+  disabled: boolean; // 비활성화 상태
+  required: boolean; // 필수 여부
+  node: Node; // 스키마 노드
+  type: Node['schemaType']; // JSON Schema 타입
+  name: Node['name']; // 노드 이름
+  path: Node['path']; // 노드 경로
+  nullable: Node['nullable']; // null 허용 여부
+  errors: Node['errors']; // 검증 오류
+  errorVisible: boolean; // 오류 표시 여부
+  watchValues: WatchValues; // computed.watch로 구독 중인 값
   defaultValue: Value | undefined;
   value: Value | undefined;
   onChange: SetStateFnWithOptions<Value | undefined>;
@@ -398,21 +404,25 @@ interface FormTypeInputProps<
 FormTypeInput은 다음 우선순위로 선택됩니다 (높은 순):
 
 1. **JSON Schema의 직접 할당**
+
    ```tsx
    { type: 'string', FormTypeInput: CustomInput }
    ```
 
 2. **formTypeInputMap** (경로 기반)
+
    ```tsx
    <Form formTypeInputMap={{ '/email': EmailInput }} />
    ```
 
 3. **Form의 formTypeInputDefinitions**
+
    ```tsx
    <Form formTypeInputDefinitions={[...]} />
    ```
 
 4. **FormProvider의 formTypeInputDefinitions**
+
    ```tsx
    <FormProvider formTypeInputDefinitions={[...]} />
    ```
@@ -431,8 +441,8 @@ type FormTypeInputMap = {
 
 // 와일드카드 지원
 const formInputMap = {
-  '/users/*/name': CustomNameInput,      // 배열 인덱스 매칭
-  '/config/*/value': ConfigValueInput,   // 동적 키 매칭
+  '/users/*/name': CustomNameInput, // 배열 인덱스 매칭
+  '/config/*/value': ConfigValueInput, // 동적 키 매칭
 };
 ```
 
@@ -471,13 +481,13 @@ const formInputMap = {
 
 ### 경로 참조
 
-| 문법 | 의미 | 예시 |
-|------|------|------|
-| `../field` | 형제 필드 | `'../category === "A"'` |
-| `../../field` | 부모의 형제 | `'../../parentField'` |
-| `./field` | 현재 객체의 자식 | `'./nestedChild'` |
-| `/field` | 절대 경로 (루트에서) | `'/rootField'` |
-| `@.prop` | context 객체의 속성 | `'@.userRole === "admin"'` |
+| 문법          | 의미                 | 예시                       |
+| ------------- | -------------------- | -------------------------- |
+| `../field`    | 형제 필드            | `'../category === "A"'`    |
+| `../../field` | 부모의 형제          | `'../../parentField'`      |
+| `./field`     | 현재 객체의 자식     | `'./nestedChild'`          |
+| `/field`      | 절대 경로 (루트에서) | `'/rootField'`             |
+| `@.prop`      | context 객체의 속성  | `'@.userRole === "admin"'` |
 
 ### 예제
 
@@ -588,18 +598,18 @@ const jsonSchema = {
 ### 표준 JSONPointer (RFC 6901)
 
 ```typescript
-node.find('/path/to/field');     // 루트에서 절대 경로
-node.find('./childField');       // 현재 노드에서 상대 경로
+node.find('/path/to/field'); // 루트에서 절대 경로
+node.find('./childField'); // 현재 노드에서 상대 경로
 ```
 
 ### 확장 문법
 
-| 문법 | 의미 | 사용 가능 컨텍스트 |
-|------|------|-------------------|
-| `..` | 부모 탐색 | computed 속성, node.find() |
-| `.` | 현재 노드 | computed 속성, node.find() |
-| `*` | 와일드카드 | FormTypeInputMap만 |
-| `@` | context 참조 | computed 속성만 |
+| 문법 | 의미         | 사용 가능 컨텍스트         |
+| ---- | ------------ | -------------------------- |
+| `..` | 부모 탐색    | computed 속성, node.find() |
+| `.`  | 현재 노드    | computed 속성, node.find() |
+| `*`  | 와일드카드   | FormTypeInputMap만         |
+| `@`  | context 참조 | computed 속성만            |
 
 ### 이스케이프 규칙
 
@@ -619,13 +629,13 @@ node.find('/field~1with~0special');
 
 ```typescript
 enum ValidationMode {
-  None = 0,      // 검증 비활성화
-  OnChange = 1,  // 값 변경 시 검증
+  None = 0, // 검증 비활성화
+  OnChange = 1, // 값 변경 시 검증
   OnRequest = 2, // 요청 시 검증 (validate() 호출)
 }
 
 // 조합 가능
-ValidationMode.OnChange | ValidationMode.OnRequest
+ValidationMode.OnChange | ValidationMode.OnRequest;
 ```
 
 ### 오류 메시지 포맷팅
@@ -679,11 +689,13 @@ registerPlugin(ajvValidatorPlugin);
 ### 사용 가능한 플러그인
 
 **Validator 플러그인:**
+
 - `@canard/schema-form-ajv8-plugin`: AJV 8.x (최신 JSON Schema 지원)
 - `@canard/schema-form-ajv7-plugin`: AJV 7.x
 - `@canard/schema-form-ajv6-plugin`: AJV 6.x
 
 **UI 플러그인:**
+
 - `@canard/schema-form-antd5-plugin`: Ant Design 5
 - `@canard/schema-form-antd6-plugin`: Ant Design 6
 - `@canard/schema-form-antd-mobile-plugin`: Ant Design Mobile
@@ -712,6 +724,41 @@ interface ValidatorPlugin {
 
 ## 고급 기능
 
+### 렌더 가상화 (Virtualization)
+
+수백 개 이상 필드를 가진 폼에서는 초기 React 마운트가 지배적 비용이다(node tree 자체는 저렴). `virtualization` prop은 화면 밖 필드의 마운트를 지연한다 — 경량 placeholder로 렌더하다가 뷰포트에 근접하거나, 브라우저 idle 시간, 또는 focus/select 명령 시 실제 컴포넌트로 교체한다(한 번 reveal되면 되돌아가지 않음, defer-once). node tree는 항상 전량 생성되므로 `value`·검증·`getValue()`/`setValue()`·제출은 마운트 여부와 무관하게 동일하다. 모든 FormTypeInput 플러그인과 호환된다(게이트가 레이아웃 아래에 위치).
+
+```tsx
+import { Form, VirtualizationBackfill } from '@canard/schema-form';
+
+<Form
+  jsonSchema={largeSchema}
+  virtualization={{
+    threshold: 30, // 자식 30개 이상인 branch만 게이팅
+    eagerCount: 20, // 선행 20개 필드 즉시 마운트
+    rootMargin: '100%', // IntersectionObserver 여백 (px 또는 % 만)
+    backfill: VirtualizationBackfill.Idle, // 또는 .None (스크롤/명령 시에만)
+    estimateHeight: 40, // placeholder 높이(px) 또는 (node) => number
+    Placeholder: FieldSkeleton, // placeholder 안에 렌더할 컴포넌트(선택)
+  }}
+/>;
+// 기본값으로 활성화: <Form jsonSchema={largeSchema} virtualization />
+```
+
+**VirtualizationOptions**
+
+| 옵션             | 타입                                      | 기본값   | 설명                                                                |
+| ---------------- | ----------------------------------------- | -------- | ------------------------------------------------------------------- |
+| `threshold`      | `number`                                  | `30`     | 이 수 이상 자식을 가진 branch만 게이팅 대상                         |
+| `eagerCount`     | `number`                                  | `20`     | 게이팅된 branch에서 즉시 마운트할 선행 필드 수                      |
+| `rootMargin`     | `` `${number}px` `` \| `` `${number}%` `` | `'100%'` | IntersectionObserver rootMargin (px/% 만 허용)                      |
+| `backfill`       | `VirtualizationBackfill`                  | `Idle`   | `Idle`=idle 시 나머지 점진 마운트, `None`=스크롤/명령 시에만 reveal |
+| `estimateHeight` | `number \| ((node) => number)`            | `40`     | placeholder 공간 예약 높이(px)                                      |
+| `Placeholder`    | `ComponentType<{ node, height }>`         | `null`   | placeholder 안에 렌더할 시각 컴포넌트                               |
+
+- **Placeholder 스타일**: placeholder는 `[data-path]`와 `[data-deferred]` 마커를 가진 박스다. CSS 속성 선택자(`[data-deferred] { … }`) 또는 `Placeholder` 컴포넌트로 스타일링하며, 공간 예약은 항상 `estimateHeight`가 담당한다.
+- **⚠️ CSR 전용**: `IntersectionObserver`가 필요하다. SSR/하이드레이션 앱에서는 활성화하지 말 것 — 서버는 전 필드를 마운트하고 클라이언트는 게이팅해 하이드레이션 mismatch가 발생한다. `IntersectionObserver`가 없으면 무음 비활성화된다(개발 모드 경고 출력).
+
 ### 커스텀 레이아웃 (Form.Render)
 
 ```tsx
@@ -734,13 +781,13 @@ interface ValidatorPlugin {
 ```tsx
 const arrayNode = node.find('/items') as ArrayNode;
 
-arrayNode.push();              // 기본값으로 항목 추가
-arrayNode.push('custom');      // 커스텀 값으로 항목 추가
-arrayNode.remove(index);       // 인덱스의 항목 제거
-arrayNode.clear();             // 모든 항목 제거
+arrayNode.push(); // 기본값으로 항목 추가
+arrayNode.push('custom'); // 커스텀 값으로 항목 추가
+arrayNode.remove(index); // 인덱스의 항목 제거
+arrayNode.clear(); // 모든 항목 제거
 
-arrayNode.length;              // 현재 항목 수
-arrayNode.children;            // 자식 노드 배열
+arrayNode.length; // 현재 항목 수
+arrayNode.children; // 자식 노드 배열
 ```
 
 ### Value Injection (injectTo)
@@ -840,11 +887,11 @@ const handleClick = async () => {
 
 **children 함수 props:**
 
-| prop | 타입 | 설명 |
-|------|------|------|
-| `value` | `InferValueType<Schema>` | 현재 폼 값 |
-| `errors` | `JsonSchemaError[]` | 전체 검증 에러 목록 |
-| `node` | `InferSchemaNode<Schema>` | 루트 노드 (프로그래매틱 접근용) |
+| prop     | 타입                      | 설명                            |
+| -------- | ------------------------- | ------------------------------- |
+| `value`  | `InferValueType<Schema>`  | 현재 폼 값                      |
+| `errors` | `JsonSchemaError[]`       | 전체 검증 에러 목록             |
+| `node`   | `InferSchemaNode<Schema>` | 루트 노드 (프로그래매틱 접근용) |
 
 ---
 
@@ -853,7 +900,11 @@ const handleClick = async () => {
 ### 타입 유틸리티
 
 ```typescript
-import { InferValueType, InferSchemaNode, FormHandle } from '@canard/schema-form';
+import {
+  FormHandle,
+  InferSchemaNode,
+  InferValueType,
+} from '@canard/schema-form';
 
 // 스키마에서 값 타입 추론
 type FormValue = InferValueType<typeof jsonSchema>;

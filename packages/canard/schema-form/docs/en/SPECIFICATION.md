@@ -76,8 +76,9 @@ registerPlugin(ajvValidatorPlugin);
 ### 2. Basic Usage
 
 ```tsx
-import { Form } from '@canard/schema-form';
 import { useState } from 'react';
+
+import { Form } from '@canard/schema-form';
 
 export const App = () => {
   const jsonSchema = {
@@ -91,11 +92,7 @@ export const App = () => {
   const [value, setValue] = useState({ name: '', age: 0 });
 
   return (
-    <Form
-      jsonSchema={jsonSchema}
-      defaultValue={value}
-      onChange={setValue}
-    />
+    <Form jsonSchema={jsonSchema} defaultValue={value} onChange={setValue} />
   );
 };
 ```
@@ -129,12 +126,12 @@ export const App = () => {
 
 ### Design Patterns
 
-| Pattern | Purpose |
-|---------|---------|
+| Pattern              | Purpose                                           |
+| -------------------- | ------------------------------------------------- |
 | **Strategy Pattern** | Branch/Terminal strategies for Array/Object nodes |
-| **Factory Pattern** | Node creation from JSON Schema |
-| **Observer Pattern** | Node state change subscription |
-| **Plugin Pattern** | Validation and UI component extension |
+| **Factory Pattern**  | Node creation from JSON Schema                    |
+| **Observer Pattern** | Node state change subscription                    |
+| **Plugin Pattern**   | Validation and UI component extension             |
 
 ---
 
@@ -191,6 +188,17 @@ interface FormProps<
   validationMode?: ValidationMode;
   /** Custom ValidatorFactory function */
   validatorFactory?: ValidatorFactory;
+  /**
+   * Render-level virtualization (deferred mount) for large forms (default: off)
+   *  - `true`: enable with default options
+   *  - `VirtualizationOptions`: enable with custom options
+   *  - Off-screen fields render as placeholders and mount when they approach the
+   *    viewport, on browser idle time, or on focus/select commands
+   *  - The node tree is always fully built — values, validation and submit are unaffected
+   *  - Client-side rendering only: requires IntersectionObserver; do NOT enable it in
+   *    SSR/hydration apps (hydration mismatch)
+   */
+  virtualization?: boolean | VirtualizationOptions;
   /** User-defined context */
   context?: Dictionary;
   /** Child components */
@@ -272,24 +280,24 @@ type AttachedFilesMap = Map<string, File[]>;
 
 **Terminal Nodes** (primitive values):
 
-| Node | Description |
-|------|-------------|
-| `StringNode` | String values, format validation support (email, date, etc.) |
-| `NumberNode` | Numeric values, min/max constraints, integer enforcement |
-| `BooleanNode` | Boolean values |
-| `NullNode` | Explicit null values |
+| Node          | Description                                                  |
+| ------------- | ------------------------------------------------------------ |
+| `StringNode`  | String values, format validation support (email, date, etc.) |
+| `NumberNode`  | Numeric values, min/max constraints, integer enforcement     |
+| `BooleanNode` | Boolean values                                               |
+| `NullNode`    | Explicit null values                                         |
 
 **Branch Nodes** (container structures):
 
-| Node | Description |
-|------|-------------|
-| `ObjectNode` | Key-value structures, `required`, `additionalProperties` support |
-| `ArrayNode` | Ordered collections, `minItems`, `maxItems`, array manipulation methods |
+| Node         | Description                                                             |
+| ------------ | ----------------------------------------------------------------------- |
+| `ObjectNode` | Key-value structures, `required`, `additionalProperties` support        |
+| `ArrayNode`  | Ordered collections, `minItems`, `maxItems`, array manipulation methods |
 
 **Special Nodes**:
 
-| Node | Description |
-|------|-------------|
+| Node          | Description                                                 |
+| ------------- | ----------------------------------------------------------- |
 | `VirtualNode` | Non-schema nodes for conditional fields and computed values |
 
 ### Node Initialization
@@ -297,7 +305,7 @@ type AttachedFilesMap = Map<string, File[]>;
 ```typescript
 const node = nodeFromJsonSchema({
   jsonSchema: { type: 'object', properties: { name: { type: 'string' } } },
-  onChange: (value) => console.log('Form value changed:', value)
+  onChange: (value) => console.log('Form value changed:', value),
 });
 
 await delay(); // Wait for initialization to complete
@@ -306,15 +314,15 @@ await delay(); // Wait for initialization to complete
 ### Node State Flags
 
 ```typescript
-node.dirty;        // Has value changed since initialization?
-node.touched;      // Has user interacted with this field?
-node.validated;    // Has validation been run?
-node.errors;       // Current validation errors
-node.visible;      // Is field visible? (computed property)
-node.active;       // Is field active? (computed property)
-node.readOnly;     // Is field read-only? (computed property)
-node.disabled;     // Is field disabled? (computed property)
-node.initialized;  // Has node completed initialization?
+node.dirty; // Has value changed since initialization?
+node.touched; // Has user interacted with this field?
+node.validated; // Has validation been run?
+node.errors; // Current validation errors
+node.visible; // Is field visible? (computed property)
+node.active; // Is field active? (computed property)
+node.readOnly; // Is field read-only? (computed property)
+node.disabled; // Is field disabled? (computed property)
+node.initialized; // Has node completed initialization?
 ```
 
 ---
@@ -368,18 +376,18 @@ interface FormTypeInputProps<
   Schema extends JsonSchemaWithVirtual = InferJsonSchema<Value>,
   Node extends SchemaNode = InferSchemaNode<Schema>,
 > {
-  jsonSchema: Schema;           // JSON Schema for FormTypeInput component
-  readOnly: boolean;            // Read-only state
-  disabled: boolean;            // Disabled state
-  required: boolean;            // Required field
-  node: Node;                   // Schema node
-  type: Node['schemaType'];     // JSON Schema type
-  name: Node['name'];           // Node name
-  path: Node['path'];           // Node path
-  nullable: Node['nullable'];   // Accepts null
-  errors: Node['errors'];       // Validation errors
-  errorVisible: boolean;        // Error visibility
-  watchValues: WatchValues;     // Values subscribed via computed.watch
+  jsonSchema: Schema; // JSON Schema for FormTypeInput component
+  readOnly: boolean; // Read-only state
+  disabled: boolean; // Disabled state
+  required: boolean; // Required field
+  node: Node; // Schema node
+  type: Node['schemaType']; // JSON Schema type
+  name: Node['name']; // Node name
+  path: Node['path']; // Node path
+  nullable: Node['nullable']; // Accepts null
+  errors: Node['errors']; // Validation errors
+  errorVisible: boolean; // Error visibility
+  watchValues: WatchValues; // Values subscribed via computed.watch
   defaultValue: Value | undefined;
   value: Value | undefined;
   onChange: SetStateFnWithOptions<Value | undefined>;
@@ -398,21 +406,25 @@ interface FormTypeInputProps<
 FormTypeInput is selected with the following priority (highest first):
 
 1. **Directly assigned FormTypeInput in JSON Schema**
+
    ```tsx
    { type: 'string', FormTypeInput: CustomInput }
    ```
 
 2. **formTypeInputMap** (path-based)
+
    ```tsx
    <Form formTypeInputMap={{ '/email': EmailInput }} />
    ```
 
 3. **Form's formTypeInputDefinitions**
+
    ```tsx
    <Form formTypeInputDefinitions={[...]} />
    ```
 
 4. **FormProvider's formTypeInputDefinitions**
+
    ```tsx
    <FormProvider formTypeInputDefinitions={[...]} />
    ```
@@ -431,8 +443,8 @@ type FormTypeInputMap = {
 
 // Wildcard support
 const formInputMap = {
-  '/users/*/name': CustomNameInput,      // Array index matching
-  '/config/*/value': ConfigValueInput,   // Dynamic key matching
+  '/users/*/name': CustomNameInput, // Array index matching
+  '/config/*/value': ConfigValueInput, // Dynamic key matching
 };
 ```
 
@@ -471,13 +483,13 @@ const formInputMap = {
 
 ### Path References
 
-| Syntax | Meaning | Example |
-|--------|---------|---------|
-| `../field` | Sibling field | `'../category === "A"'` |
-| `../../field` | Parent's sibling | `'../../parentField'` |
-| `./field` | Current object's child | `'./nestedChild'` |
-| `/field` | Absolute path (from root) | `'/rootField'` |
-| `@.prop` | Context object's property | `'@.userRole === "admin"'` |
+| Syntax        | Meaning                   | Example                    |
+| ------------- | ------------------------- | -------------------------- |
+| `../field`    | Sibling field             | `'../category === "A"'`    |
+| `../../field` | Parent's sibling          | `'../../parentField'`      |
+| `./field`     | Current object's child    | `'./nestedChild'`          |
+| `/field`      | Absolute path (from root) | `'/rootField'`             |
+| `@.prop`      | Context object's property | `'@.userRole === "admin"'` |
 
 ### Example
 
@@ -588,18 +600,18 @@ const jsonSchema = {
 ### Standard JSONPointer (RFC 6901)
 
 ```typescript
-node.find('/path/to/field');     // Absolute path from root
-node.find('./childField');       // Relative path from current node
+node.find('/path/to/field'); // Absolute path from root
+node.find('./childField'); // Relative path from current node
 ```
 
 ### Extended Syntax
 
-| Syntax | Meaning | Available Context |
-|--------|---------|-------------------|
-| `..` | Parent navigation | computed properties, node.find() |
-| `.` | Current node | computed properties, node.find() |
-| `*` | Wildcard | FormTypeInputMap only |
-| `@` | Context reference | computed properties only |
+| Syntax | Meaning           | Available Context                |
+| ------ | ----------------- | -------------------------------- |
+| `..`   | Parent navigation | computed properties, node.find() |
+| `.`    | Current node      | computed properties, node.find() |
+| `*`    | Wildcard          | FormTypeInputMap only            |
+| `@`    | Context reference | computed properties only         |
 
 ### Escape Rules
 
@@ -619,13 +631,13 @@ node.find('/field~1with~0special');
 
 ```typescript
 enum ValidationMode {
-  None = 0,      // Disable validation
-  OnChange = 1,  // Validate on value change
+  None = 0, // Disable validation
+  OnChange = 1, // Validate on value change
   OnRequest = 2, // Validate on request (validate() call)
 }
 
 // Can be combined
-ValidationMode.OnChange | ValidationMode.OnRequest
+ValidationMode.OnChange | ValidationMode.OnRequest;
 ```
 
 ### Error Message Formatting
@@ -679,11 +691,13 @@ registerPlugin(ajvValidatorPlugin);
 ### Available Plugins
 
 **Validator Plugins:**
+
 - `@canard/schema-form-ajv8-plugin`: AJV 8.x (latest JSON Schema support)
 - `@canard/schema-form-ajv7-plugin`: AJV 7.x
 - `@canard/schema-form-ajv6-plugin`: AJV 6.x
 
 **UI Plugins:**
+
 - `@canard/schema-form-antd5-plugin`: Ant Design 5
 - `@canard/schema-form-antd6-plugin`: Ant Design 6
 - `@canard/schema-form-antd-mobile-plugin`: Ant Design Mobile
@@ -712,6 +726,41 @@ interface ValidatorPlugin {
 
 ## Advanced Features
 
+### Render-Level Virtualization
+
+For forms with hundreds of fields the initial React mount is the dominant cost (the node tree itself is cheap). The `virtualization` prop defers mounting of off-screen fields — they render as lightweight placeholders and are replaced by the real components when they approach the viewport, during browser idle time, or on focus/select commands (once revealed, a field never returns to a placeholder — defer-once). The node tree is always fully built, so `value`, validation, `getValue()`/`setValue()` and submit behave identically regardless of mount state. Works with every FormTypeInput plugin (the gate sits below the layout).
+
+```tsx
+import { Form, VirtualizationBackfill } from '@canard/schema-form';
+
+<Form
+  jsonSchema={largeSchema}
+  virtualization={{
+    threshold: 30, // gate a branch only when it has >= 30 children
+    eagerCount: 20, // mount the leading 20 fields immediately
+    rootMargin: '100%', // IntersectionObserver margin (px or % only)
+    backfill: VirtualizationBackfill.Idle, // or .None: reveal only on scroll/commands
+    estimateHeight: 40, // placeholder height (px) or (node) => number
+    Placeholder: FieldSkeleton, // optional component rendered inside each placeholder
+  }}
+/>;
+// Enable with defaults: <Form jsonSchema={largeSchema} virtualization />
+```
+
+**VirtualizationOptions**
+
+| Option           | Type                                      | Default  | Description                                                                                |
+| ---------------- | ----------------------------------------- | -------- | ------------------------------------------------------------------------------------------ |
+| `threshold`      | `number`                                  | `30`     | Gate a branch only when it has at least this many children                                 |
+| `eagerCount`     | `number`                                  | `20`     | Number of leading fields mounted immediately in a gated branch                             |
+| `rootMargin`     | `` `${number}px` `` \| `` `${number}%` `` | `'100%'` | IntersectionObserver rootMargin (px/% only)                                                |
+| `backfill`       | `VirtualizationBackfill`                  | `Idle`   | `Idle` = progressively mount the rest during idle; `None` = reveal only on scroll/commands |
+| `estimateHeight` | `number \| ((node) => number)`            | `40`     | Placeholder space-reservation height (px)                                                  |
+| `Placeholder`    | `ComponentType<{ node, height }>`         | `null`   | Component rendered inside each placeholder                                                 |
+
+- **Placeholder styling**: placeholders are boxes carrying `[data-path]` and a `[data-deferred]` marker. Style them with a CSS attribute selector (`[data-deferred] { … }`) or pass a `Placeholder` component; space reservation always stays with `estimateHeight`.
+- **⚠️ Client-side rendering only**: requires `IntersectionObserver`. Do NOT enable it in SSR/hydration apps — the server renders all fields while the client gates them, causing a hydration mismatch. When `IntersectionObserver` is unavailable it is silently disabled (with a development warning).
+
 ### Custom Layout (Form.Render)
 
 ```tsx
@@ -734,13 +783,13 @@ interface ValidatorPlugin {
 ```tsx
 const arrayNode = node.find('/items') as ArrayNode;
 
-arrayNode.push();              // Add item with default value
-arrayNode.push('custom');      // Add item with custom value
-arrayNode.remove(index);       // Remove item at index
-arrayNode.clear();             // Remove all items
+arrayNode.push(); // Add item with default value
+arrayNode.push('custom'); // Add item with custom value
+arrayNode.remove(index); // Remove item at index
+arrayNode.clear(); // Remove all items
 
-arrayNode.length;              // Current number of items
-arrayNode.children;            // Array of child nodes
+arrayNode.length; // Current number of items
+arrayNode.children; // Array of child nodes
 ```
 
 ### Value Injection (injectTo)
@@ -840,11 +889,11 @@ Pass `children` as a function to `Form` component to access form state and node.
 
 **children function props:**
 
-| prop | Type | Description |
-|------|------|-------------|
-| `value` | `InferValueType<Schema>` | Current form value |
-| `errors` | `JsonSchemaError[]` | List of all validation errors |
-| `node` | `InferSchemaNode<Schema>` | Root node (for programmatic access) |
+| prop     | Type                      | Description                         |
+| -------- | ------------------------- | ----------------------------------- |
+| `value`  | `InferValueType<Schema>`  | Current form value                  |
+| `errors` | `JsonSchemaError[]`       | List of all validation errors       |
+| `node`   | `InferSchemaNode<Schema>` | Root node (for programmatic access) |
 
 ---
 
@@ -853,7 +902,11 @@ Pass `children` as a function to `Form` component to access form state and node.
 ### Type Utilities
 
 ```typescript
-import { InferValueType, InferSchemaNode, FormHandle } from '@canard/schema-form';
+import {
+  FormHandle,
+  InferSchemaNode,
+  InferValueType,
+} from '@canard/schema-form';
 
 // Infer value type from schema
 type FormValue = InferValueType<typeof jsonSchema>;

@@ -13,8 +13,9 @@
 5. [FormHandle API](#formhandle-api)
 6. [FormTypeInput](#formtypeinput)
 7. [ValidationMode](#validationmode)
-8. [노드 타입](#노드-타입)
-9. [이벤트 타입](#이벤트-타입)
+8. [Virtualization](#virtualization-대형-폼)
+9. [노드 타입](#노드-타입)
+10. [이벤트 타입](#이벤트-타입)
 
 ---
 
@@ -45,27 +46,27 @@ registerPlugin(ajvValidatorPlugin);
 
 ### 기본 경로
 
-| 문법 | 의미 | 예시 |
-|------|------|------|
-| `/field` | 절대 경로 (루트) | `/user/name` |
-| `./field` | 현재 노드 자식 | `./nested/child` |
-| `../field` | 형제 필드 | `../siblingField` |
-| `../../field` | 부모의 형제 | `../../anotherField` |
+| 문법          | 의미             | 예시                 |
+| ------------- | ---------------- | -------------------- |
+| `/field`      | 절대 경로 (루트) | `/user/name`         |
+| `./field`     | 현재 노드 자식   | `./nested/child`     |
+| `../field`    | 형제 필드        | `../siblingField`    |
+| `../../field` | 부모의 형제      | `../../anotherField` |
 
 ### 특수 문법
 
-| 문법 | 의미 | 사용 가능 컨텍스트 |
-|------|------|-------------------|
-| `*` | 와일드카드 | `formTypeInputMap`만 |
-| `@.prop` | context 속성 참조 | `computed` 표현식만 |
-| `.` | 현재 노드 | `&if` 조건문 |
+| 문법     | 의미              | 사용 가능 컨텍스트   |
+| -------- | ----------------- | -------------------- |
+| `*`      | 와일드카드        | `formTypeInputMap`만 |
+| `@.prop` | context 속성 참조 | `computed` 표현식만  |
+| `.`      | 현재 노드         | `&if` 조건문         |
 
 ### 이스케이프 규칙
 
-| 문자 | 이스케이프 | 예시 |
-|------|-----------|------|
-| `/` | `~1` | `field/with/slash` → `field~1with~1slash` |
-| `~` | `~0` | `field~name` → `field~0name` |
+| 문자 | 이스케이프 | 예시                                      |
+| ---- | ---------- | ----------------------------------------- |
+| `/`  | `~1`       | `field/with/slash` → `field~1with~1slash` |
+| `~`  | `~0`       | `field~name` → `field~0name`              |
 
 ### 예시
 
@@ -89,15 +90,15 @@ formTypeInputMap: {
 
 ### 속성 종류
 
-| 속성 | 타입 | 동작 | 값 제거 |
-|------|------|------|---------|
-| `active` | `boolean \| string` | 조건부 활성화 | ✅ Yes |
-| `visible` | `boolean \| string` | 조건부 표시 | ❌ No |
-| `readOnly` | `boolean \| string` | 읽기 전용 | - |
-| `disabled` | `boolean \| string` | 비활성화 | - |
-| `derived` | `string` | 파생 값 계산 | - |
-| `watch` | `string \| string[]` | 값 구독 | - |
-| `pristine` | `boolean \| string` | 상태 초기화 | - |
+| 속성       | 타입                 | 동작          | 값 제거 |
+| ---------- | -------------------- | ------------- | ------- |
+| `active`   | `boolean \| string`  | 조건부 활성화 | ✅ Yes  |
+| `visible`  | `boolean \| string`  | 조건부 표시   | ❌ No   |
+| `readOnly` | `boolean \| string`  | 읽기 전용     | -       |
+| `disabled` | `boolean \| string`  | 비활성화      | -       |
+| `derived`  | `string`             | 파생 값 계산  | -       |
+| `watch`    | `string \| string[]` | 값 구독       | -       |
+| `pristine` | `boolean \| string`  | 상태 초기화   | -       |
 
 ### active vs visible 선택
 
@@ -106,12 +107,12 @@ formTypeInputMap: {
                  → NO  → visible
 ```
 
-| 시나리오 | 선택 |
-|----------|------|
-| 할인 옵션 체크 해제 시 할인율 필드 제거 | `active` |
-| 단계별 폼 (이전 단계 데이터 유지) | `visible` |
-| 권한 없는 사용자에게 필드 숨김 | `active` |
-| 접기/펼치기 UI | `visible` |
+| 시나리오                                | 선택      |
+| --------------------------------------- | --------- |
+| 할인 옵션 체크 해제 시 할인율 필드 제거 | `active`  |
+| 단계별 폼 (이전 단계 데이터 유지)       | `visible` |
+| 권한 없는 사용자에게 필드 숨김          | `active`  |
+| 접기/펼치기 UI                          | `visible` |
 
 ### 문법
 
@@ -143,12 +144,12 @@ formTypeInputMap: {
 
 ### 키워드 비교
 
-| 키워드 | 동작 | 다중 활성화 | 값 처리 |
-|--------|------|------------|---------|
-| `oneOf` | 배타적 선택 | ❌ 하나만 | 비활성 브랜치 값 제거 |
-| `anyOf` | 비배타적 선택 | ✅ 여러 개 | 비활성 브랜치 값 제거 |
-| `allOf` | 스키마 병합 | ✅ 모두 | 항상 모든 값 포함 |
-| `if-then-else` | 조건부 분기 | - | 조건에 따라 |
+| 키워드         | 동작          | 다중 활성화 | 값 처리               |
+| -------------- | ------------- | ----------- | --------------------- |
+| `oneOf`        | 배타적 선택   | ❌ 하나만   | 비활성 브랜치 값 제거 |
+| `anyOf`        | 비배타적 선택 | ✅ 여러 개  | 비활성 브랜치 값 제거 |
+| `allOf`        | 스키마 병합   | ✅ 모두     | 항상 모든 값 포함     |
+| `if-then-else` | 조건부 분기   | -           | 조건에 따라           |
 
 ### oneOf 예시
 
@@ -189,27 +190,27 @@ formTypeInputMap: {
 
 ```tsx
 const formRef = useRef<FormHandle<typeof schema>>(null);
-<Form ref={formRef} jsonSchema={schema} />
+<Form ref={formRef} jsonSchema={schema} />;
 ```
 
 ### 메서드 요약
 
-| 메서드 | 반환 타입 | 설명 |
-|--------|----------|------|
-| `getValue()` | `Value` | 현재 폼 값 |
-| `setValue(v)` | `void` | 폼 값 설정 |
-| `reset()` | `void` | 초기값으로 리셋 |
-| `validate()` | `Promise<Error[]>` | 검증 실행 |
-| `getErrors()` | `Error[]` | 현재 에러 목록 |
-| `showError(bool)` | `void` | 에러 표시 제어 |
-| `findNode(path)` | `SchemaNode \| null` | 노드 탐색 |
-| `findNodes(path)` | `SchemaNode[]` | 와일드카드 탐색 |
-| `focus(path)` | `void` | 필드 포커스 |
-| `getState()` | `NodeStateFlags` | 폼 상태 |
-| `setState(s)` | `void` | 상태 설정 |
-| `clearState()` | `void` | 상태 초기화 |
-| `submit()` | `void` | 폼 제출 |
-| `getAttachedFilesMap()` | `Map` | 첨부 파일 |
+| 메서드                  | 반환 타입            | 설명            |
+| ----------------------- | -------------------- | --------------- |
+| `getValue()`            | `Value`              | 현재 폼 값      |
+| `setValue(v)`           | `void`               | 폼 값 설정      |
+| `reset()`               | `void`               | 초기값으로 리셋 |
+| `validate()`            | `Promise<Error[]>`   | 검증 실행       |
+| `getErrors()`           | `Error[]`            | 현재 에러 목록  |
+| `showError(bool)`       | `void`               | 에러 표시 제어  |
+| `findNode(path)`        | `SchemaNode \| null` | 노드 탐색       |
+| `findNodes(path)`       | `SchemaNode[]`       | 와일드카드 탐색 |
+| `focus(path)`           | `void`               | 필드 포커스     |
+| `getState()`            | `NodeStateFlags`     | 폼 상태         |
+| `setState(s)`           | `void`               | 상태 설정       |
+| `clearState()`          | `void`               | 상태 초기화     |
+| `submit()`              | `void`               | 폼 제출         |
+| `getAttachedFilesMap()` | `Map`                | 첨부 파일       |
 
 ### 일반적인 패턴
 
@@ -221,7 +222,7 @@ const value = formRef.current?.getValue();
 formRef.current?.setValue({ name: 'Alice' });
 
 // 함수형 업데이트
-formRef.current?.setValue(prev => ({ ...prev, name: 'Bob' }));
+formRef.current?.setValue((prev) => ({ ...prev, name: 'Bob' }));
 
 // 검증 후 제출
 const errors = await formRef.current?.validate();
@@ -264,21 +265,21 @@ const definitions: FormTypeInputDefinition[] = [
 
 ### FormTypeInputProps 주요 속성
 
-| 속성 | 타입 | 설명 |
-|------|------|------|
-| `value` | `Value` | 현재 값 |
-| `defaultValue` | `Value` | 기본값 |
-| `onChange` | `(v) => void` | 값 변경 핸들러 |
-| `node` | `SchemaNode` | 스키마 노드 |
-| `errors` | `Error[]` | 검증 에러 |
-| `errorVisible` | `boolean` | 에러 표시 여부 |
-| `readOnly` | `boolean` | 읽기 전용 |
-| `disabled` | `boolean` | 비활성화 |
-| `required` | `boolean` | 필수 여부 |
-| `nullable` | `boolean` | null 허용 |
-| `watchValues` | `any[]` | 구독 값 |
-| `context` | `object` | 사용자 컨텍스트 |
-| `ChildNodeComponents` | `FC[]` | 자식 컴포넌트 |
+| 속성                  | 타입          | 설명            |
+| --------------------- | ------------- | --------------- |
+| `value`               | `Value`       | 현재 값         |
+| `defaultValue`        | `Value`       | 기본값          |
+| `onChange`            | `(v) => void` | 값 변경 핸들러  |
+| `node`                | `SchemaNode`  | 스키마 노드     |
+| `errors`              | `Error[]`     | 검증 에러       |
+| `errorVisible`        | `boolean`     | 에러 표시 여부  |
+| `readOnly`            | `boolean`     | 읽기 전용       |
+| `disabled`            | `boolean`     | 비활성화        |
+| `required`            | `boolean`     | 필수 여부       |
+| `nullable`            | `boolean`     | null 허용       |
+| `watchValues`         | `any[]`       | 구독 값         |
+| `context`             | `object`      | 사용자 컨텍스트 |
+| `ChildNodeComponents` | `FC[]`        | 자식 컴포넌트   |
 
 ---
 
@@ -286,10 +287,10 @@ const definitions: FormTypeInputDefinition[] = [
 
 ### 모드 종류
 
-| 모드 | 값 | 동작 |
-|------|---|------|
-| `None` | `0` | 검증 비활성화 |
-| `OnChange` | `1` | 값 변경 시 검증 |
+| 모드        | 값  | 동작                   |
+| ----------- | --- | ---------------------- |
+| `None`      | `0` | 검증 비활성화          |
+| `OnChange`  | `1` | 값 변경 시 검증        |
 | `OnRequest` | `2` | `validate()` 호출 시만 |
 
 ### 사용 예시
@@ -309,28 +310,65 @@ import { ValidationMode } from '@canard/schema-form';
 
 ---
 
+## Virtualization (대형 폼)
+
+수백 개 필드 폼의 초기 React 마운트 비용을 줄이는 **옵트인** 렌더 가상화. 화면 밖 필드를 placeholder로 지연 마운트한다(node tree는 전량 유지 → 값/검증/제출 동일 동작).
+
+```typescript
+import { Form, VirtualizationBackfill } from '@canard/schema-form';
+
+// 기본값으로 활성화 (threshold 30 / eagerCount 20 / rootMargin '100%' / backfill Idle)
+<Form jsonSchema={largeSchema} virtualization />
+
+// 커스텀 옵션
+<Form
+  virtualization={{
+    threshold: 30,      // 자식 30개 이상 branch만 게이팅
+    eagerCount: 20,     // 앞 20개는 즉시 마운트
+    rootMargin: '100%', // IntersectionObserver 여백 (px 또는 % 만)
+    backfill: VirtualizationBackfill.Idle, // 또는 .None (스크롤/명령 시에만 reveal)
+    estimateHeight: 40, // placeholder 높이 px, 또는 (node) => number
+    Placeholder: FieldSkeleton, // placeholder 안에 렌더할 컴포넌트 (선택)
+  }}
+/>
+```
+
+| 옵션             | 기본값   | 설명                                                  |
+| ---------------- | -------- | ----------------------------------------------------- |
+| `threshold`      | `30`     | 이 수 이상 자식을 가진 branch만 게이팅                |
+| `eagerCount`     | `20`     | 즉시 마운트할 선행 필드 수                            |
+| `rootMargin`     | `'100%'` | IntersectionObserver 여백 (px/% 만)                   |
+| `backfill`       | `Idle`   | `Idle`=idle 시 점진 마운트, `None`=스크롤/명령 시에만 |
+| `estimateHeight` | `40`     | placeholder 공간 예약 높이(px)                        |
+| `Placeholder`    | `null`   | placeholder 시각 컴포넌트 (`{node, height}`)          |
+
+- placeholder는 `[data-path][data-deferred]` 박스 — CSS `[data-deferred] { … }` 또는 `Placeholder` 컴포넌트로 스타일링.
+- ⚠️ **CSR 전용**: `IntersectionObserver` 필요. SSR/하이드레이션 앱에서 켜지 말 것(하이드레이션 mismatch). IO 부재 시 무음 비활성(dev 경고).
+
+---
+
 ## 노드 타입
 
 ### Terminal Nodes (원시값)
 
-| 노드 | 설명 |
-|------|------|
-| `StringNode` | 문자열, format 검증 |
-| `NumberNode` | 숫자, min/max 제약 |
-| `BooleanNode` | 불리언 |
-| `NullNode` | 명시적 null |
+| 노드          | 설명                |
+| ------------- | ------------------- |
+| `StringNode`  | 문자열, format 검증 |
+| `NumberNode`  | 숫자, min/max 제약  |
+| `BooleanNode` | 불리언              |
+| `NullNode`    | 명시적 null         |
 
 ### Branch Nodes (컨테이너)
 
-| 노드 | 설명 |
-|------|------|
-| `ObjectNode` | 객체, properties 관리 |
-| `ArrayNode` | 배열, push/remove/clear |
+| 노드         | 설명                    |
+| ------------ | ----------------------- |
+| `ObjectNode` | 객체, properties 관리   |
+| `ArrayNode`  | 배열, push/remove/clear |
 
 ### Special Nodes
 
-| 노드 | 설명 |
-|------|------|
+| 노드          | 설명              |
+| ------------- | ----------------- |
 | `VirtualNode` | 가상 필드, 그룹화 |
 
 ### 타입 가드
@@ -339,7 +377,7 @@ import { ValidationMode } from '@canard/schema-form';
 import { isArrayNode, isObjectNode, isVirtualNode } from '@canard/schema-form';
 
 if (isArrayNode(node)) {
-  node.push();  // ArrayNode 메서드 사용 가능
+  node.push(); // ArrayNode 메서드 사용 가능
 }
 ```
 
@@ -347,17 +385,17 @@ if (isArrayNode(node)) {
 
 ## 이벤트 타입
 
-| 이벤트 | 설명 |
-|--------|------|
-| `Initialized` | 노드 초기화 완료 |
-| `UpdateValue` | 값 변경 |
-| `UpdateState` | 상태 변경 (dirty, touched) |
-| `UpdateError` | 검증 에러 변경 |
-| `UpdateComputedProperties` | computed 재계산 |
-| `UpdateChildren` | 자식 노드 변경 |
-| `UpdatePath` | 경로 변경 (배열 재정렬) |
-| `RequestRefresh` | UI 동기화 요청 |
-| `RequestRemount` | 컴포넌트 리마운트 요청 |
+| 이벤트                     | 설명                       |
+| -------------------------- | -------------------------- |
+| `Initialized`              | 노드 초기화 완료           |
+| `UpdateValue`              | 값 변경                    |
+| `UpdateState`              | 상태 변경 (dirty, touched) |
+| `UpdateError`              | 검증 에러 변경             |
+| `UpdateComputedProperties` | computed 재계산            |
+| `UpdateChildren`           | 자식 노드 변경             |
+| `UpdatePath`               | 경로 변경 (배열 재정렬)    |
+| `RequestRefresh`           | UI 동기화 요청             |
+| `RequestRemount`           | 컴포넌트 리마운트 요청     |
 
 ### 구독 패턴
 
@@ -405,12 +443,12 @@ unsubscribe();
 ```typescript
 const arrayNode = formRef.current?.findNode('/items') as ArrayNode;
 
-arrayNode.push();           // 기본값으로 아이템 추가
-arrayNode.push('custom');   // 특정 값으로 추가
-arrayNode.remove(0);        // 인덱스 0 삭제
-arrayNode.clear();          // 전체 삭제 (minItems 유지)
-arrayNode.length;           // 현재 아이템 수
-arrayNode.children;         // 자식 노드 배열
+arrayNode.push(); // 기본값으로 아이템 추가
+arrayNode.push('custom'); // 특정 값으로 추가
+arrayNode.remove(0); // 인덱스 0 삭제
+arrayNode.clear(); // 전체 삭제 (minItems 유지)
+arrayNode.length; // 현재 아이템 수
+arrayNode.children; // 자식 노드 배열
 ```
 
 ---
@@ -441,20 +479,20 @@ arrayNode.children;         // 자식 노드 배열
 
 ### Validator
 
-| 패키지 | 설명 |
-|--------|------|
+| 패키지                            | 설명           |
+| --------------------------------- | -------------- |
 | `@canard/schema-form-ajv8-plugin` | AJV 8.x (권장) |
-| `@canard/schema-form-ajv7-plugin` | AJV 7.x |
-| `@canard/schema-form-ajv6-plugin` | AJV 6.x |
+| `@canard/schema-form-ajv7-plugin` | AJV 7.x        |
+| `@canard/schema-form-ajv6-plugin` | AJV 6.x        |
 
 ### UI
 
-| 패키지 | 설명 |
-|--------|------|
-| `@canard/schema-form-antd5-plugin` | Ant Design 5 |
-| `@canard/schema-form-antd6-plugin` | Ant Design 6 |
+| 패키지                                   | 설명              |
+| ---------------------------------------- | ----------------- |
+| `@canard/schema-form-antd5-plugin`       | Ant Design 5      |
+| `@canard/schema-form-antd6-plugin`       | Ant Design 6      |
 | `@canard/schema-form-antd-mobile-plugin` | Ant Design Mobile |
-| `@canard/schema-form-mui-plugin` | Material UI |
+| `@canard/schema-form-mui-plugin`         | Material UI       |
 
 ---
 
