@@ -1,11 +1,15 @@
 #!/usr/bin/env bash
 
 # =============================================================================
-# Bulk-configure npm OIDC Trusted Publishers for every public workspace.
+# Bulk-configure (and re-point) npm OIDC Trusted Publishers for every public
+# workspace so .github/workflows/publish-npm-packages.yml can publish them
+# tokenlessly via OIDC. Replaces clicking the npmjs.com "Trusted Publisher"
+# screen once per package.
 #
-# Replaces clicking through the npmjs.com "Trusted Publisher" screen once per
-# package. Points each package at this repo's release workflow so that
-# .github/workflows/publish-npm-packages.yml can publish it tokenlessly via OIDC.
+# Idempotent: a package already trusting the target workflow file is skipped;
+# one trusting a different file is revoked and re-created (npm trust has no
+# in-place update), preserving its existing permissions. Safe to re-run after
+# renaming the workflow file or adding a package.
 #
 # Prerequisites:
 #   - npm >= 11.15.0        (bulk `npm trust` support)
@@ -19,7 +23,6 @@
 # Options (environment variables):
 #   ALLOW_STAGE=true        also grant staged-publish (--allow-stage-publish)
 #   DRY_RUN=true            print the planned commands without running them
-#   NPM_OTP=123456          2FA one-time password (else npm prompts interactively)
 #   REPO=owner/repo         override the repo derived from `git remote`
 #   WORKFLOW_FILE=name.yml  override the workflow filename (default publish-npm-packages.yml)
 #
@@ -77,17 +80,26 @@ if [ "$DRY_RUN" != "true" ]; then
   echo ""
 fi
 
-allow_flags=(--allow-publish)
-[ "$ALLOW_STAGE" = "true" ] && allow_flags+=(--allow-stage-publish)
-
 configured=()
 failed=()
 
+# Parse one field from `npm trust list --json` (a single JSON object, or empty
+# when the package has no trusted publisher). Array fields are space-joined.
+trust_field() {
+  printf '%s' "$1" | python3 -c "import json,sys
+try:
+    d = json.load(sys.stdin)
+    v = d.get(sys.argv[1], '') if isinstance(d, dict) else ''
+    print(' '.join(v) if isinstance(v, list) else v)
+except Exception:
+    print('')" "$2"
+}
+
 # Collect names FIRST. Reading the list with `while ... done < <(...)` ties the
-# loop body's stdin to that pipe, so npm's interactive 2FA/OTP prompt cannot
-# reach the terminal (→ EOTP). Gather names now, then iterate with the tty as
-# stdin. `--no-private` still emits the monorepo root (no `private: true`), so
-# the location "." guard drops it.
+# loop body's stdin to that pipe, so npm's interactive 2FA prompt cannot reach
+# the terminal (→ EOTP). Gather names now, then iterate with the tty as stdin.
+# `--no-private` still emits the monorepo root (no `private: true`), so the
+# location "." guard drops it.
 names=()
 while IFS= read -r line; do
   [ -z "$line" ] && continue
@@ -97,24 +109,72 @@ while IFS= read -r line; do
   names+=("$name")
 done < <(yarn workspaces list --json --no-private)
 
-otp_flag=()
-[ -n "${NPM_OTP:-}" ] && otp_flag=(--otp "$NPM_OTP")
+# Prime npm's 2FA session before the loop. The per-package `npm trust list`
+# below runs in command substitution (captured stdout, stderr hidden), where npm
+# cannot surface an interactive 2FA prompt — so authenticate once here,
+# interactively, to open the 5-minute skip window the whole batch then rides on.
+# Without this the FIRST list returns empty, its stale config is never revoked,
+# and create hits 409 Conflict.
+if [ "$DRY_RUN" != "true" ] && [ "${#names[@]}" -gt 0 ]; then
+  echo "▶ authenticating once — approve the 2FA prompt to open the batch window…"
+  # No stdout redirect: npm only enters the interactive web-auth flow when its
+  # stdout is a TTY. Redirecting it (even to /dev/null) makes npm treat the call
+  # as non-interactive and fail EOTP instead of prompting.
+  npm trust list "${names[0]}" || true
+  echo ""
+fi
 
+# npm trust allows exactly one config per package and has no in-place update.
+# Per package: inspect the current config, skip if it already trusts the target
+# workflow file, otherwise revoke the stale one and create the new one —
+# preserving whatever permissions it had (createStagedPackage → stage).
 for name in "${names[@]}"; do
   echo "▸ $name"
+
   if [ "$DRY_RUN" = "true" ]; then
-    echo "  dry-run → npm trust github $name --repo $REPO --file $WORKFLOW_FILE ${allow_flags[*]} --yes"
+    # Inspecting existing configs needs 2FA, so dry-run makes no npm calls; it
+    # just states the per-package plan.
+    echo "  dry-run → inspect TP; skip if already trusts $WORKFLOW_FILE, else revoke + create"
+    configured+=("$name")
+    continue
+  fi
+
+  existing="$(npm trust list "$name" --json 2>/dev/null || true)"
+  existing_id="$(trust_field "$existing" id)"
+  existing_file="$(trust_field "$existing" file)"
+  existing_perms="$(trust_field "$existing" permissions)"
+
+  flags=(--allow-publish)
+  if [ "$ALLOW_STAGE" = "true" ] || printf '%s' "$existing_perms" | grep -q "createStagedPackage"; then
+    flags+=(--allow-stage-publish)
+  fi
+
+  # Idempotent: already trusts the target workflow file → nothing to do.
+  if [ -n "$existing_id" ] && [ "$existing_file" = "$WORKFLOW_FILE" ]; then
+    echo "  · already trusts $WORKFLOW_FILE — skip"
+    configured+=("$name")
+    continue
+  fi
+
+  # Revoke the stale config (points at a different file) before re-creating.
+  if [ -n "$existing_id" ]; then
+    echo "  revoke stale config (file=$existing_file)"
+    if ! npm trust revoke "$name" --id "$existing_id"; then
+      echo "  ✗ revoke failed: $name"
+      failed+=("$name")
+      continue
+    fi
+  fi
+
+  echo "  create → $WORKFLOW_FILE ${flags[*]}"
+  if npm trust github "$name" --repo "$REPO" --file "$WORKFLOW_FILE" "${flags[@]}" --yes; then
     configured+=("$name")
   else
-    if npm trust github "$name" --repo "$REPO" --file "$WORKFLOW_FILE" "${allow_flags[@]}" "${otp_flag[@]}" --yes; then
-      configured+=("$name")
-    else
-      echo "  ✗ failed: $name"
-      failed+=("$name")
-    fi
-    # Gentle pacing so the 5-minute 2FA-skip window covers the whole batch.
-    sleep 2
+    echo "  ✗ create failed: $name"
+    failed+=("$name")
   fi
+  # Gentle pacing so the 5-minute 2FA-skip window covers the whole batch.
+  sleep 2
 done
 
 echo ""
