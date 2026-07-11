@@ -66,14 +66,19 @@ async function main() {
   });
   page.on('pageerror', (e) => console.error('  [pageerror]', e.message));
   await page.goto('file://' + join(outdir, 'index.html'));
-  await page.waitForFunction('window.__benchReady === true', { timeout: 30000 });
+  await page.waitForFunction('window.__benchReady === true', {
+    timeout: 30000,
+  });
 
   // Per-mount hard timeout so a browser stall surfaces instead of hanging.
   const runMount = (mode, size) =>
     Promise.race([
       page.evaluate(([m, s]) => window.__benchMount(m, s), [mode, size]),
       new Promise((_, rej) =>
-        setTimeout(() => rej(new Error(`evaluate timeout: ${mode} ${size}`)), 30000),
+        setTimeout(
+          () => rej(new Error(`evaluate timeout: ${mode} ${size}`)),
+          30000,
+        ),
       ),
     ]);
 
@@ -85,7 +90,10 @@ async function main() {
       let last = {};
       for (let i = 0; i < SAMPLES; i++) {
         const r = await runMount(mode, size);
-        if (r.capped) console.log(`  ⚠️ ${mode} ${size}: capped at 6s (inputs=${r.inputs})`);
+        if (r.capped)
+          console.log(
+            `  ⚠️ ${mode} ${size}: capped at 6s (inputs=${r.inputs})`,
+          );
         mount.push(r.mountMs);
         last = r;
       }
@@ -115,7 +123,10 @@ async function main() {
 
   const ts = new Date().toISOString().replace(/[:.]/g, '-');
   const outPath = resolve(`results/browser-${ts}.json`);
-  writeFileSync(outPath, JSON.stringify({ ts, samples: SAMPLES, rows }, null, 2));
+  writeFileSync(
+    outPath,
+    JSON.stringify({ ts, samples: SAMPLES, rows }, null, 2),
+  );
   console.log(`\n💾 saved: ${outPath}\n done.`);
 }
 
