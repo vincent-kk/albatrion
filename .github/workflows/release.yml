@@ -1,0 +1,64 @@
+name: release
+
+# Publish public workspaces to npm via OIDC Trusted Publishing (tokenless).
+#
+# Trigger this manually from the Actions tab ("Run workflow"). You stay in
+# control of *when* a release happens — the job only runs what you trigger.
+# It publishes every public package whose version is not yet on the registry,
+# so bumping a subset and triggering a release publishes just that subset.
+#
+# One-time prerequisite: configure a Trusted Publisher for each package on
+# npmjs.com (repo vincent-kk/albatrion, workflow release.yml). See
+# scripts/PUBLISHING.md.
+
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Pack + registry diff only, do not publish"
+        type: boolean
+        default: false
+
+# Never run two releases at once; do not cancel an in-flight publish.
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    name: publish public packages (OIDC)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      id-token: write # required: npm exchanges this OIDC token for a publish token
+    env:
+      # Matches the repo .nvmrc; the build is tuned on node 20.
+      NODE_VERSION: "20.19.5"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          registry-url: "https://registry.npmjs.org"
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Upgrade npm for OIDC (>= 11.5.1)
+        # node 20 ships npm 10.x; Trusted Publishing needs npm >= 11.5.1.
+        run: npm install -g npm@latest
+
+      - name: Install
+        run: yarn install --immutable
+
+      - name: Build all workspaces
+        run: yarn build:all
+
+      - name: Publish changed packages
+        env:
+          DRY_RUN: ${{ inputs.dry_run }}
+        run: ./scripts/publish-packages.sh

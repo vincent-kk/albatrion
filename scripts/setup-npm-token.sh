@@ -1,7 +1,20 @@
 #!/bin/bash
 
 # =============================================================================
-# NPM Granular Access Token Setup Script
+# NPM Granular Access Token Setup Script  [DEPRECATED]
+#
+# ⚠️  DEPRECATED — this flow relies on a "Bypass two-factor authentication"
+#     Granular Access Token, which npm is phasing out:
+#       - Early Aug 2026: 2FA-bypass tokens can no longer do account/package
+#         management (token/2FA/access/org changes).
+#       - ~Jan 2027:      2FA-bypass tokens lose publishing ability entirely.
+#     After that date, `yarn publish:all` with NPM_TOKEN stops working.
+#
+#     Preferred path → CI OIDC Trusted Publishing (no stored token) via
+#     .github/workflows/release.yml. Local fallback → interactive 2FA publish
+#     with scripts/publish-packages.sh. See scripts/PUBLISHING.md.
+#
+#     This script remains functional only for the transition period.
 #
 # Usage: ./scripts/setup-npm-token.sh <NPM_TOKEN>
 #
@@ -44,6 +57,12 @@ CURRENT_DATE=$(date '+%Y-%m-%d %H:%M:%S')
 if [[ ! "$NPM_TOKEN" =~ ^npm_ ]]; then
     echo -e "${YELLOW}Warning: Token does not start with 'npm_'. Please verify this is a Granular Access Token.${NC}"
 fi
+
+echo -e "${YELLOW}============================================================${NC}"
+echo -e "${YELLOW}⚠️  DEPRECATED: 2FA-bypass tokens lose publishing ~Jan 2027.${NC}"
+echo -e "${YELLOW}   Migrate to OIDC Trusted Publishing — see scripts/PUBLISHING.md${NC}"
+echo -e "${YELLOW}============================================================${NC}"
+echo ""
 
 echo -e "${BLUE}Setting up NPM token in ~/.zshrc...${NC}"
 echo ""
