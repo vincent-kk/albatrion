@@ -2,7 +2,6 @@ import type { ComponentType } from 'react';
 
 import type { Fn } from '@aileron/declare';
 
-import { BIT_FLAG_00, BIT_FLAG_01 } from '@/schema-form/app/constants';
 import type { SchemaNode } from '@/schema-form/core';
 
 /** IntersectionObserver rootMargin component — the spec allows only px or % */
@@ -19,12 +18,17 @@ export type VirtualizationRootMargin =
   | `${RootMarginUnit} ${RootMarginUnit} ${RootMarginUnit}`
   | `${RootMarginUnit} ${RootMarginUnit} ${RootMarginUnit} ${RootMarginUnit}`;
 
-/** Backfill strategy applied after the initial eager mount */
+/**
+ * Backfill strategy applied after the initial eager mount.
+ * Mutually exclusive single choice (never combined) — string-literal enum, not a
+ * `BIT_FLAG` bitmask, since bitmask values here would only invite an unusable
+ * `None | Idle` combination.
+ */
 export enum VirtualizationBackfill {
   /** Do not backfill — reveal only on visibility or focus/select commands */
-  None = BIT_FLAG_00,
+  None = 'none',
   /** Progressively mount the remaining fields during browser idle time */
-  Idle = BIT_FLAG_01,
+  Idle = 'idle',
 }
 
 /** Props handed to a custom placeholder component while a field is deferred */

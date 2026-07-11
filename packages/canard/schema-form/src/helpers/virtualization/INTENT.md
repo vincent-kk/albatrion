@@ -40,7 +40,7 @@
 
 ## Dependencies
 
-- `@/schema-form/core` — `SchemaNode` (type-only); `@/schema-form/app/constants` — `BIT_FLAG_*` (enum 멤버값)
+- `@/schema-form/core` — `SchemaNode` (type-only)
 - `@winglet/common-utils/scheduler` — `scheduleCancelableMacrotaskSafe`
 - `@/schema-form/helpers/{warning,error}` — SSR 비활성 dev 경고 (`warnDevelopmentIssue` + 포매터, 비-React)
 - `@aileron/declare` — `Fn`
