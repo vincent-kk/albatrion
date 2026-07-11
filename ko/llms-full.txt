@@ -38,36 +38,37 @@ node tree lifecycle. Supports both controlled and uncontrolled usage via
 
 ### Props
 
-| Prop | Type | Default | Description |
-|---|---|---|---|
-| `jsonSchema` | `JsonSchema` | — | **Required.** JSON Schema defining the form structure |
-| `defaultValue` | `Value` | `undefined` | Initial form value |
-| `onChange` | `(value: Value) => void` | — | Called when any field value changes |
-| `onSubmit` | `(value: Value) => Promise<void> \| void` | — | Called on valid form submit (after validation passes) |
-| `onValidate` | `(errors: JsonSchemaError[]) => void` | — | Called after each validation run |
-| `onStateChange` | `(state: NodeStateFlags) => void` | — | Called when dirty/touched/validated state changes |
-| `showError` | `boolean \| ShowError` | `ShowError.DirtyTouched` | When to display validation errors |
-| `validationMode` | `ValidationMode` | `OnChange \| OnRequest` | When validation runs |
-| `validatorFactory` | `ValidatorFactory` | plugin default | Override validator factory per form |
-| `readOnly` | `boolean` | `false` | Apply `readOnly` to all inputs |
-| `disabled` | `boolean` | `false` | Apply `disabled` to all inputs |
-| `errors` | `JsonSchemaError[]` | `undefined` | Inject external validation errors |
-| `formTypeInputDefinitions` | `FormTypeInputDefinition[]` | `[]` | Form-level input component definitions |
-| `formTypeInputMap` | `FormTypeInputMap` | `{}` | Path-based input component overrides |
-| `CustomFormTypeRenderer` | `ComponentType<FormTypeRendererProps>` | plugin default | Override the entire field renderer |
-| `formatError` | `FormatError` | plugin default | Custom error message formatter |
-| `context` | `Dictionary` | `{}` | User-defined context, available in all input components |
-| `children` | `ReactNode \| (props: FormChildrenProps) => ReactNode` | — | Custom layout or render prop |
-| `ref` | `Ref<FormHandle>` | — | Imperative handle |
+| Prop                       | Type                                                   | Default                  | Description                                                       |
+| -------------------------- | ------------------------------------------------------ | ------------------------ | ----------------------------------------------------------------- |
+| `jsonSchema`               | `JsonSchema`                                           | —                        | **Required.** JSON Schema defining the form structure             |
+| `defaultValue`             | `Value`                                                | `undefined`              | Initial form value                                                |
+| `onChange`                 | `(value: Value) => void`                               | —                        | Called when any field value changes                               |
+| `onSubmit`                 | `(value: Value) => Promise<void> \| void`              | —                        | Called on valid form submit (after validation passes)             |
+| `onValidate`               | `(errors: JsonSchemaError[]) => void`                  | —                        | Called after each validation run                                  |
+| `onStateChange`            | `(state: NodeStateFlags) => void`                      | —                        | Called when dirty/touched/validated state changes                 |
+| `showError`                | `boolean \| ShowError`                                 | `ShowError.DirtyTouched` | When to display validation errors                                 |
+| `validationMode`           | `ValidationMode`                                       | `OnChange \| OnRequest`  | When validation runs                                              |
+| `validatorFactory`         | `ValidatorFactory`                                     | plugin default           | Override validator factory per form                               |
+| `readOnly`                 | `boolean`                                              | `false`                  | Apply `readOnly` to all inputs                                    |
+| `disabled`                 | `boolean`                                              | `false`                  | Apply `disabled` to all inputs                                    |
+| `errors`                   | `JsonSchemaError[]`                                    | `undefined`              | Inject external validation errors                                 |
+| `formTypeInputDefinitions` | `FormTypeInputDefinition[]`                            | `[]`                     | Form-level input component definitions                            |
+| `formTypeInputMap`         | `FormTypeInputMap`                                     | `{}`                     | Path-based input component overrides                              |
+| `CustomFormTypeRenderer`   | `ComponentType<FormTypeRendererProps>`                 | plugin default           | Override the entire field renderer                                |
+| `formatError`              | `FormatError`                                          | plugin default           | Custom error message formatter                                    |
+| `virtualization`           | `boolean \| VirtualizationOptions`                     | off                      | Render-level virtualization (deferred mount) for very large forms |
+| `context`                  | `Dictionary`                                           | `{}`                     | User-defined context, available in all input components           |
+| `children`                 | `ReactNode \| (props: FormChildrenProps) => ReactNode` | —                        | Custom layout or render prop                                      |
+| `ref`                      | `Ref<FormHandle>`                                      | —                        | Imperative handle                                                 |
 
 ### ShowError Values
 
 ```ts
 import { ShowError } from '@canard/schema-form';
 
-ShowError.Dirty        // show when node.dirty === true
-ShowError.Touched      // show when node.touched === true
-ShowError.DirtyTouched // show when dirty AND touched (default)
+ShowError.Dirty; // show when node.dirty === true
+ShowError.Touched; // show when node.touched === true
+ShowError.DirtyTouched; // show when dirty AND touched (default)
 // Also accepts: true (always show), false (never show)
 ```
 
@@ -76,11 +77,50 @@ ShowError.DirtyTouched // show when dirty AND touched (default)
 ```ts
 import { ValidationMode } from '@canard/schema-form';
 
-ValidationMode.None      // disable validation
-ValidationMode.OnChange  // validate on every value change
-ValidationMode.OnRequest // validate only when validate() called explicitly
+ValidationMode.None; // disable validation
+ValidationMode.OnChange; // validate on every value change
+ValidationMode.OnRequest; // validate only when validate() called explicitly
 // Combine with bitwise OR: ValidationMode.OnChange | ValidationMode.OnRequest
 ```
+
+### Virtualization
+
+Render-level virtualization for very large forms: the node tree is always fully
+built (values, validation and submit are unaffected), but off-screen fields
+mount as lightweight placeholders and are revealed when they approach the
+viewport, on browser idle time, or on `focus`/`select` commands. Reveal is
+one-way — a mounted field never returns to a placeholder. Opt-in: pass `true`
+for defaults or a `VirtualizationOptions` object.
+
+```tsx
+import { Form, VirtualizationBackfill } from '@canard/schema-form';
+
+<Form jsonSchema={largeSchema} virtualization />;
+```
+
+| Option           | Type                                            | Default  | Description                                                                                                  |
+| ---------------- | ----------------------------------------------- | -------- | ------------------------------------------------------------------------------------------------------------ |
+| `threshold`      | `number`                                        | `30`     | Gate a branch's children only when it has at least this many rendered children                               |
+| `eagerCount`     | `number`                                        | `20`     | Leading children per gated branch mounted immediately (prevents a blank first frame)                         |
+| `rootMargin`     | `VirtualizationRootMargin`                      | `'100%'` | Pre-mount distance around the viewport; only `px`/`%` units are valid (IntersectionObserver spec)            |
+| `backfill`       | `VirtualizationBackfill`                        | `Idle`   | `Idle` progressively mounts the rest during browser idle time; `None` reveals only on visibility or commands |
+| `estimateHeight` | `number \| (node: SchemaNode) => number`        | `40`     | Placeholder height in px — approximates scroll geometry until reveal                                         |
+| `Placeholder`    | `ComponentType<VirtualizationPlaceholderProps>` | —        | Optional component rendered inside placeholders (Suspense-fallback style); receives `{ node, height }`       |
+
+**Placeholder DOM contract** — deferred fields render as
+``: the
+same `data-path` identity as mounted wrappers, with `data-deferred` marking the
+state. Style skeletons with a plain CSS attribute selector
+(`[data-deferred] { … }`) or the `Placeholder` component.
+
+:::warning SSR / hydration
+Requires `IntersectionObserver`; when unavailable the option is silently
+ignored and everything mounts eagerly. Do not enable it in SSR/hydration apps —
+the server renders all fields while the client would gate them, causing a
+hydration mismatch.
+:::
+
+See the [Virtualized Form example](./examples/virtualized-form) for a live demo.
 
 ## `FormHandle` (ref API)
 
@@ -89,20 +129,23 @@ to `ref` prop. All methods are safe to call after mount.
 
 ```ts
 interface FormHandle<Schema, Value> {
-  node:        InferSchemaNode<Schema> | undefined; // root node
-  getValue():  Value;
-  setValue(value: Value | ((prev: Value) => Value), options?: SetValueOption): void;
-  getState():  NodeStateFlags;
+  node: InferSchemaNode<Schema> | undefined; // root node
+  getValue(): Value;
+  setValue(
+    value: Value | ((prev: Value) => Value),
+    options?: SetValueOption,
+  ): void;
+  getState(): NodeStateFlags;
   setState(state: NodeStateFlags): void;
   clearState(): void;
   getErrors(): JsonSchemaError[];
-  validate():  Promise<JsonSchemaError[]>;
+  validate(): Promise<JsonSchemaError[]>;
   showError(visible: boolean): void;
-  focus(path: string): void;    // focuses input at path
-  select(path: string): void;   // selects input at path
-  findNode(path: string):  SchemaNode | null;
+  focus(path: string): void; // focuses input at path
+  select(path: string): void; // selects input at path
+  findNode(path: string): SchemaNode | null;
   findNodes(path: string): SchemaNode[];
-  reset(): void;                // remounts the form (re-reads jsonSchema + defaultValue)
+  reset(): void; // remounts the form (re-reads jsonSchema + defaultValue)
   submit: TrackableHandlerFunction; // callable + subscribe(listener) + pending
   getAttachedFilesMap(): AttachedFilesMap;
 }
@@ -124,9 +167,9 @@ formRef.current?.reset();
 import { SetValueOption } from '@canard/schema-form';
 
 // Bitwise flags (can be combined)
-SetValueOption.Overwrite  // replace entire value (default)
-SetValueOption.Merge      // deep merge with current value
-SetValueOption.Isolate    // compute dependencies synchronously
+SetValueOption.Overwrite; // replace entire value (default)
+SetValueOption.Merge; // deep merge with current value
+SetValueOption.Isolate; // compute dependencies synchronously
 ```
 
 ## Form Sub-Components
@@ -139,16 +182,16 @@ Renders a complete field group: label + input + error. Wraps `Form.Label`, `Form
 
 ```ts
 interface FormGroupProps<Value> extends ChildNodeComponentProps {
-  path?:              string;
-  FormTypeInput?:     ComponentType<FormTypeInputProps<Value>>;
-  FormTypeRenderer?:  ComponentType<FormTypeRendererProps>;
-  Wrapper?:           ComponentType<PropsWithChildren<Dictionary>>;
+  path?: string;
+  FormTypeInput?: ComponentType<FormTypeInputProps<Value>>;
+  FormTypeRenderer?: ComponentType<FormTypeRendererProps>;
+  Wrapper?: ComponentType<PropsWithChildren<Dictionary>>;
   // + any extra props forwarded to the input component
   className?: string;
-  style?:     CSSProperties;
+  style?: CSSProperties;
   placeholder?: string;
-  readOnly?:  boolean;
-  disabled?:  boolean;
+  readOnly?: boolean;
+  disabled?: boolean;
 }
 ```
 
@@ -210,7 +253,7 @@ import { FormProvider } from '@canard/schema-form';
   formatError={myFormatError}
 >
   <Form jsonSchema={schema} />
-</FormProvider>
+</FormProvider>;
 ```
 
 ## Hooks
@@ -289,13 +332,13 @@ Call `registerPlugin(null)` to reset all plugins to system defaults.
 
 ```ts
 interface SchemaFormPlugin {
-  FormGroup?:               ComponentType<FormTypeRendererProps>;
-  FormLabel?:               ComponentType<FormTypeRendererProps>;
-  FormInput?:               ComponentType<FormTypeRendererProps>;
-  FormError?:               ComponentType<FormTypeRendererProps>;
+  FormGroup?: ComponentType<FormTypeRendererProps>;
+  FormLabel?: ComponentType<FormTypeRendererProps>;
+  FormInput?: ComponentType<FormTypeRendererProps>;
+  FormError?: ComponentType<FormTypeRendererProps>;
   formTypeInputDefinitions?: FormTypeInputDefinition[];
-  validator?:               ValidatorPlugin;
-  formatError?:             FormatError;
+  validator?: ValidatorPlugin;
+  formatError?: FormatError;
 }
 ```
 
@@ -308,7 +351,7 @@ interface ValidatorPlugin {
 }
 
 type ValidateFunction = (
-  value: any
+  value: any,
 ) => JsonSchemaError[] | null | Promise<JsonSchemaError[] | null>;
 ```
 
@@ -318,28 +361,28 @@ All custom input components registered via `formTypeInputDefinitions` receive th
 
 ```ts
 interface FormTypeInputProps<Value, Context, WatchValues, Schema, Node> {
-  jsonSchema:         Schema;
-  node:               Node;
-  type:               JsonSchemaType;     // 'string' | 'number' | 'boolean' | ...
-  name:               string;
-  path:               string;
-  required:           boolean;
-  nullable:           boolean;
-  readOnly:           boolean;
-  disabled:           boolean;
-  value:              Value | undefined;
-  defaultValue:       Value | undefined;
-  onChange:           SetStateFnWithOptions<Value | undefined>;
-  errors:             JsonSchemaError[];
-  errorVisible:       boolean;
-  watchValues:        WatchValues;        // values from computed.watch paths
-  onFileAttach:       (file: File | File[] | undefined) => void;
+  jsonSchema: Schema;
+  node: Node;
+  type: JsonSchemaType; // 'string' | 'number' | 'boolean' | ...
+  name: string;
+  path: string;
+  required: boolean;
+  nullable: boolean;
+  readOnly: boolean;
+  disabled: boolean;
+  value: Value | undefined;
+  defaultValue: Value | undefined;
+  onChange: SetStateFnWithOptions<Value | undefined>;
+  errors: JsonSchemaError[];
+  errorVisible: boolean;
+  watchValues: WatchValues; // values from computed.watch paths
+  onFileAttach: (file: File | File[] | undefined) => void;
   ChildNodeComponents: ChildNodeComponent[];
-  placeholder?:       string;
-  className?:         string;
-  style?:             CSSProperties;
-  context:            Context;
-  [alt: string]:      any;               // extra props from Form.Group
+  placeholder?: string;
+  className?: string;
+  style?: CSSProperties;
+  context: Context;
+  [alt: string]: any; // extra props from Form.Group
 }
 ```
 
@@ -348,45 +391,45 @@ interface FormTypeInputProps<Value, Context, WatchValues, Schema, Node> {
 ```ts
 interface SchemaNode {
   // Identity
-  readonly type:       string;           // node type ('string', 'object', etc.)
+  readonly type: string; // node type ('string', 'object', etc.)
   readonly schemaType: JsonSchemaType;
   readonly jsonSchema: JsonSchema;
-  readonly required:   boolean;
-  readonly nullable:   boolean;
+  readonly required: boolean;
+  readonly nullable: boolean;
 
   // Tree structure
-  readonly depth:      number;
-  readonly isRoot:     boolean;
+  readonly depth: number;
+  readonly isRoot: boolean;
   readonly parentNode: SchemaNode | null;
-  readonly name:       string;
-  readonly path:       string;
+  readonly name: string;
+  readonly path: string;
 
   // Value
-  readonly value:        any;
+  readonly value: any;
   readonly defaultValue: any;
-  readonly enhancedValue: any;  // includes virtual field values
+  readonly enhancedValue: any; // includes virtual field values
   setValue(input: any | ((prev: any) => any), option?: SetValueOption): void;
 
   // Computed properties
-  readonly visible:   boolean;
-  readonly active:    boolean;
-  readonly readOnly:  boolean;
-  readonly disabled:  boolean;
+  readonly visible: boolean;
+  readonly active: boolean;
+  readonly readOnly: boolean;
+  readonly disabled: boolean;
 
   // State
-  readonly dirty:      boolean;
-  readonly touched:    boolean;
-  readonly validated:  boolean;
+  readonly dirty: boolean;
+  readonly touched: boolean;
+  readonly validated: boolean;
   readonly initialized: boolean;
-  readonly errors:     JsonSchemaError[];
+  readonly errors: JsonSchemaError[];
   readonly globalErrors: JsonSchemaError[];
-  readonly globalState:  NodeStateFlags;
+  readonly globalState: NodeStateFlags;
 
   // Validation
   validate(): Promise<JsonSchemaError[]>;
 
   // Navigation
-  find(path: string):    SchemaNode | undefined;
+  find(path: string): SchemaNode | undefined;
   findAll(path: string): SchemaNode[];
 
   // Events
@@ -399,11 +442,11 @@ interface SchemaNode {
 
 ```ts
 interface ArrayNode extends SchemaNode {
-  readonly length:   number;
+  readonly length: number;
   readonly children: Array<{ node: SchemaNode }>;
-  push(value?: any): void;    // add item (respects maxItems)
+  push(value?: any): void; // add item (respects maxItems)
   remove(index: number): void;
-  clear(): void;              // remove all items (respects minItems)
+  clear(): void; // remove all items (respects minItems)
 }
 ```
 
@@ -411,13 +454,19 @@ interface ArrayNode extends SchemaNode {
 
 ```ts
 import {
-  isArrayNode, isObjectNode, isStringNode, isBooleanNode,
-  isNumberNode, isBranchNode, isTerminalNode, isVirtualNode,
+  isArrayNode,
+  isBooleanNode,
+  isBranchNode,
+  isNumberNode,
+  isObjectNode,
   isSchemaNode,
+  isStringNode,
+  isTerminalNode,
+  isVirtualNode,
 } from '@canard/schema-form';
 
 if (isArrayNode(node)) {
-  node.push();  // TypeScript knows it's ArrayNode here
+  node.push(); // TypeScript knows it's ArrayNode here
 }
 ```
 
@@ -425,10 +474,10 @@ if (isArrayNode(node)) {
 
 ```ts
 import {
-  isSchemaFormError,
   isJsonSchemaError,
-  isValidationError,
+  isSchemaFormError,
   isUnhandledError,
+  isValidationError,
 } from '@canard/schema-form';
 ```
 
@@ -436,8 +485,8 @@ import {
 
 ```ts
 type FormatError = (
-  error:   JsonSchemaError,
-  node:    SchemaNode,
+  error: JsonSchemaError,
+  node: SchemaNode,
   context: Dictionary,
 ) => ReactNode;
 
@@ -457,8 +506,8 @@ const formatError: FormatError = (error, node, context) => {
 import { JSONPointer } from '@canard/schema-form';
 
 // Static utilities for RFC 6901 JSONPointer strings
-JSONPointer.escape('path/with/slashes');  // → 'path~1with~1slashes'
-JSONPointer.unescape('path~1with~1slashes');  // → 'path/with/slashes'
+JSONPointer.escape('path/with/slashes'); // → 'path~1with~1slashes'
+JSONPointer.unescape('path~1with~1slashes'); // → 'path/with/slashes'
 ```
 
 <ForAI>
@@ -968,10 +1017,12 @@ Explore interactive demos and code patterns for `@canard/schema-form`.
 Try these live demos to see JSON Schema features in action:
 
 ### Getting Started
+
 - [Basic Form](./basic-form) — Common field types: text, number, date, enum, switch
 - [Auto-Calculation](./auto-calculation) — Computed derived values with live formula
 
 ### Advanced Patterns
+
 - [Conditional Registration](./conditional-registration) — Multi-level if/then/else conditions
 - [Dynamic Billing](./dynamic-billing) — Cascading conditions across 3 fields
 - [Employment Contract](./employment-contract) — oneOf with const-based field switching
@@ -980,6 +1031,7 @@ Try these live demos to see JSON Schema features in action:
 - [Role-Based Access](./role-based-access) — Field visibility vs activity control
 - [Nested Profile & Security](./nested-profile) — Deep nesting with conditional validation
 - [Tuple Arrays](./tuple-arrays) — Fixed-length typed arrays with prefixItems
+- [Virtualized Form](./virtualized-form) — Render-level virtualization for very large forms (300+ fields)
 
 ---
 
@@ -993,11 +1045,11 @@ import { Form, ShowError } from '@canard/schema-form';
 const schema = {
   type: 'object',
   properties: {
-    name:      { type: 'string',  title: 'Name',     minLength: 1, maxLength: 100 },
-    age:       { type: 'number',  title: 'Age',      minimum: 0, maximum: 150 },
-    email:     { type: 'string',  title: 'Email',    format: 'email' },
-    isActive:  { type: 'boolean', title: 'Active' },
-    bio:       { type: 'string',  title: 'Bio',      maxLength: 500 },
+    name: { type: 'string', title: 'Name', minLength: 1, maxLength: 100 },
+    age: { type: 'number', title: 'Age', minimum: 0, maximum: 150 },
+    email: { type: 'string', title: 'Email', format: 'email' },
+    isActive: { type: 'boolean', title: 'Active' },
+    bio: { type: 'string', title: 'Bio', maxLength: 500 },
   },
   required: ['name', 'email'],
 } as const;
@@ -1022,15 +1074,18 @@ function BasicForm() {
 const schema = {
   type: 'object',
   properties: {
-    name:     { type: 'string' },
-    nickname: { type: ['string', 'null'] as const },  // nullable
-    score:    { type: ['number', 'null'] as const },   // nullable
+    name: { type: 'string' },
+    nickname: { type: ['string', 'null'] as const }, // nullable
+    score: { type: ['number', 'null'] as const }, // nullable
   },
 } as const;
 
 // Custom input that handles null
 const NullableTextInput: FC<FormTypeInputProps<string | null>> = ({
-  value, onChange, nullable, placeholder,
+  value,
+  onChange,
+  nullable,
+  placeholder,
 }) => (
   <input
     value={value ?? ''}
@@ -1058,7 +1113,7 @@ const schema = {
   then: {
     properties: {
       companyName: { type: 'string', title: 'Company Name', minLength: 1 },
-      taxId:       { type: 'string', title: 'Tax ID' },
+      taxId: { type: 'string', title: 'Tax ID' },
     },
     required: ['companyName'],
   },
@@ -1094,9 +1149,13 @@ const schema = {
     {
       '&if': "./paymentMethod === 'card'",
       properties: {
-        cardNumber: { type: 'string', title: 'Card Number', pattern: '^[0-9]{16}$' },
-        expiryDate: { type: 'string', title: 'Expiry',      format: 'date' },
-        cvv:        { type: 'string', title: 'CVV',         pattern: '^[0-9]{3,4}$' },
+        cardNumber: {
+          type: 'string',
+          title: 'Card Number',
+          pattern: '^[0-9]{16}$',
+        },
+        expiryDate: { type: 'string', title: 'Expiry', format: 'date' },
+        cvv: { type: 'string', title: 'CVV', pattern: '^[0-9]{3,4}$' },
       },
       required: ['cardNumber', 'expiryDate', 'cvv'],
     },
@@ -1104,7 +1163,7 @@ const schema = {
       '&if': "./paymentMethod === 'bank'",
       properties: {
         accountNumber: { type: 'string', title: 'Account Number' },
-        routingNumber:  { type: 'string', title: 'Routing Number' },
+        routingNumber: { type: 'string', title: 'Routing Number' },
       },
       required: ['accountNumber', 'routingNumber'],
     },
@@ -1125,7 +1184,7 @@ const schema = {
 const schema = {
   type: 'object',
   properties: {
-    notifyBySms:   { type: 'boolean', title: 'Notify by SMS' },
+    notifyBySms: { type: 'boolean', title: 'Notify by SMS' },
     notifyByEmail: { type: 'boolean', title: 'Notify by Email' },
   },
   anyOf: [
@@ -1139,7 +1198,11 @@ const schema = {
     {
       '&if': './notifyByEmail === true',
       properties: {
-        notificationEmail: { type: 'string', title: 'Notification Email', format: 'email' },
+        notificationEmail: {
+          type: 'string',
+          title: 'Notification Email',
+          format: 'email',
+        },
       },
       required: ['notificationEmail'],
     },
@@ -1154,15 +1217,15 @@ const schema = {
 const basePersonSchema = {
   properties: {
     firstName: { type: 'string', title: 'First Name', minLength: 1 },
-    lastName:  { type: 'string', title: 'Last Name',  minLength: 1 },
+    lastName: { type: 'string', title: 'Last Name', minLength: 1 },
   },
   required: ['firstName', 'lastName'],
 };
 
 const contactInfoSchema = {
   properties: {
-    email:  { type: 'string', title: 'Email',  format: 'email' },
-    phone:  { type: 'string', title: 'Phone' },
+    email: { type: 'string', title: 'Email', format: 'email' },
+    phone: { type: 'string', title: 'Phone' },
   },
   required: ['email'],
 };
@@ -1193,8 +1256,8 @@ const schema = {
         type: 'object',
         properties: {
           street: { type: 'string', title: 'Street' },
-          city:   { type: 'string', title: 'City'   },
-          zip:    { type: 'string', title: 'ZIP'    },
+          city: { type: 'string', title: 'City' },
+          zip: { type: 'string', title: 'ZIP' },
         },
         required: ['street', 'city'],
       },
@@ -1222,18 +1285,18 @@ function ArrayManager({ formRef }) {
 const schema = {
   type: 'object',
   properties: {
-    isPremium:    { type: 'boolean', title: 'Premium Member' },
-    discount:     {
+    isPremium: { type: 'boolean', title: 'Premium Member' },
+    discount: {
       type: 'number',
       title: 'Discount %',
       minimum: 0,
       maximum: 100,
       computed: {
-        visible:  '../isPremium === true',
+        visible: '../isPremium === true',
         readOnly: '../isPremium === false',
       },
     },
-    memberSince:  {
+    memberSince: {
       type: 'string',
       title: 'Member Since',
       format: 'date',
@@ -1260,6 +1323,7 @@ const schema = {
 
 ```tsx
 import type { FC } from 'react';
+
 import type { FormTypeInputProps } from '@canard/schema-form';
 
 // Custom rating input for { type: 'number', formType: 'rating' }
@@ -1361,9 +1425,13 @@ const schema = {
 
 ```tsx
 import { useRef } from 'react';
+
 import { Form, type FormHandle, useFormSubmit } from '@canard/schema-form';
 
-const schema = { type: 'object', properties: { name: { type: 'string' } } } as const;
+const schema = {
+  type: 'object',
+  properties: { name: { type: 'string' } },
+} as const;
 
 function MyForm() {
   const formRef = useRef<FormHandle<typeof schema>>(null);
@@ -1379,11 +1447,7 @@ function MyForm() {
 
   return (
     <>
-      <Form
-        ref={formRef}
-        jsonSchema={schema}
-        onSubmit={handleSubmit}
-      />
+      <Form ref={formRef} jsonSchema={schema} onSubmit={handleSubmit} />
       <button onClick={submit} disabled={pending}>
         {pending ? 'Saving…' : 'Save'}
       </button>
@@ -1404,7 +1468,7 @@ function MyForm() {
   jsonSchema={schema}
   defaultValue={{ name: 'Alice' }}
   onChange={(value) => console.log(value)}
-/>
+/>;
 
 // ── Imperative (for programmatic updates) ──────────────────────
 // Use ref to read/write values imperatively.
@@ -1413,10 +1477,7 @@ formRef.current?.setValue({ name: 'Bob' });
 
 // ── FormHandle setValue with merge ────────────────────────────
 // Merge only changed fields (deep merge)
-formRef.current?.setValue(
-  { address: { city: 'Seoul' } },
-  SetValueOption.Merge
-);
+formRef.current?.setValue({ address: { city: 'Seoul' } }, SetValueOption.Merge);
 ```
 
 ## Custom Layout with Form.Group
@@ -1425,11 +1486,11 @@ formRef.current?.setValue(
 const profileSchema = {
   type: 'object',
   properties: {
-    avatar:     { type: 'string', title: 'Avatar',      formType: 'image-upload' },
-    firstName:  { type: 'string', title: 'First Name',  minLength: 1 },
-    lastName:   { type: 'string', title: 'Last Name',   minLength: 1 },
-    bio:        { type: 'string', title: 'Bio',         maxLength: 500 },
-    website:    { type: 'string', title: 'Website',     format: 'uri' },
+    avatar: { type: 'string', title: 'Avatar', formType: 'image-upload' },
+    firstName: { type: 'string', title: 'First Name', minLength: 1 },
+    lastName: { type: 'string', title: 'Last Name', minLength: 1 },
+    bio: { type: 'string', title: 'Bio', maxLength: 500 },
+    website: { type: 'string', title: 'Website', format: 'uri' },
   },
   required: ['firstName', 'lastName'],
 } as const;
@@ -1442,9 +1503,9 @@ function ProfileForm() {
       
       
         <Form.Group path="/firstName" placeholder="First name" />
-        <Form.Group path="/lastName"  placeholder="Last name" />
+        <Form.Group path="/lastName" placeholder="Last name" />
       
-      <Form.Group path="/bio"     placeholder="Tell us about yourself" />
+      <Form.Group path="/bio" placeholder="Tell us about yourself" />
       <Form.Group path="/website" placeholder="https://..." />
     </Form>
   );
@@ -1478,10 +1539,13 @@ import { isArrayNode, isObjectNode } from '@canard/schema-form';
 
 function FormController({ formRef }) {
   const fillDefaults = () => {
-    formRef.current?.setValue({
-      status: 'draft',
-      createdAt: new Date().toISOString(),
-    }, SetValueOption.Merge);
+    formRef.current?.setValue(
+      {
+        status: 'draft',
+        createdAt: new Date().toISOString(),
+      },
+      SetValueOption.Merge,
+    );
   };
 
   const addTag = () => {
@@ -1512,8 +1576,8 @@ import type { InferValueType } from '@winglet/json-schema';
 const schema = {
   type: 'object',
   properties: {
-    name:     { type: 'string' },
-    age:      { type: 'number' },
+    name: { type: 'string' },
+    age: { type: 'number' },
     nickname: { type: ['string', 'null'] as const },
   },
   required: ['name'],
@@ -1696,6 +1760,65 @@ Without this plugin, the schema validator cannot process `prefixItems`, so valid
 :::
 
 <LazyDemo load={() => import('@site/src/components/demos/examples/TupleArraysDemo')} />
+
+---
+
+## Virtualized Form
+
+import LazyDemo from '@site/src/components/LazyDemo';
+
+# Virtualized Form
+
+A 300-field form mounted with render-level virtualization. Only the fields near
+the viewport mount as real inputs — the rest render as lightweight placeholders
+(styled here as shimmer skeletons) and are swapped in when they approach the
+viewport, on browser idle time, or when focused programmatically.
+
+:::info Key Features
+
+- `virtualization` — initial mount cost drops from O(all fields) to O(visible fields)
+- The node tree is always fully built: values, validation and `getValue()` include
+  deferred fields (open the **Values** panel below — every field has its default)
+- Placeholders carry `data-path` + `data-deferred`; the skeleton styling here is
+  plain CSS on the `[data-deferred]` attribute selector
+- Once a field mounts it never returns to a placeholder (defer-once)
+  :::
+
+Scroll the frame and watch the counter — fields materialize as they come within
+one viewport (`rootMargin: '100%'`) of the visible area. This demo uses
+`backfill: VirtualizationBackfill.None` so the windowing behavior stays visible;
+the default (`Idle`) progressively mounts the rest during browser idle time,
+restoring full-DOM behavior (tab order, autofill, Ctrl+F) within a few frames.
+
+<LazyDemo
+  load={() => import('@site/src/components/demos/examples/VirtualizedFormDemo')}
+/>
+
+## Usage
+
+```tsx
+import { Form, VirtualizationBackfill } from '@canard/schema-form';
+
+// Defaults: threshold 30, eagerCount 20, rootMargin '100%',
+//           backfill VirtualizationBackfill.Idle, estimateHeight 40
+<Form jsonSchema={largeSchema} virtualization />
+
+// Tuned
+<Form
+  jsonSchema={largeSchema}
+  virtualization={{
+    threshold: 30,
+    eagerCount: 20,
+    rootMargin: '100%',
+    backfill: VirtualizationBackfill.Idle,
+    estimateHeight: (node) => (node.type === 'object' ? 320 : 48),
+    Placeholder: FieldSkeleton, // optional React component inside placeholders
+  }}
+/>
+```
+
+See the [API Reference](../api-reference#virtualization) for every option, the
+placeholder DOM contract, and the SSR caveat.
 
 ---
 
@@ -4571,7 +4694,7 @@ console.log(at([], 0)); // undefined
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  dependencies={{ "@winglet/common-utils": "0.12.3" }}
   code={`import { at } from '@winglet/common-utils';
 
 const numbers = [10, 20, 30, 40, 50];
@@ -4686,7 +4809,7 @@ console.log(chunk(users, 2));
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  dependencies={{ "@winglet/common-utils": "0.12.3" }}
   code={`import { chunk } from '@winglet/common-utils';
 
 const numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9];
@@ -4802,7 +4925,7 @@ console.log(difference(words, exclude));
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  dependencies={{ "@winglet/common-utils": "0.12.3" }}
   code={`import { difference } from '@winglet/common-utils';
 
 const fruits = ['apple', 'banana', 'orange', 'grape'];
@@ -4966,7 +5089,7 @@ console.log(nonEmployees); // [{ name: 'Charlie', age: 35 }]
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  dependencies={{ "@winglet/common-utils": "0.12.3" }}
   code={`import { differenceBy } from '@winglet/common-utils';
 
 const users = [
@@ -5092,7 +5215,7 @@ console.log(differenceLite(words, exclude));
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  dependencies={{ "@winglet/common-utils": "0.12.3" }}
   code={`import { differenceLite } from '@winglet/common-utils';
 
 const fruits = ['apple', 'banana', 'orange', 'grape'];
@@ -5281,7 +5404,7 @@ console.log(result); // [{ name: 'Conference', ... }, { name: 'Workshop', ... }]
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  dependencies={{ "@winglet/common-utils": "0.12.3" }}
   code={`import { differenceWith } from '@winglet/common-utils';
 
 const products = [
@@ -5317,6 +5440,178 @@ the comparison function can handle both types.
 
 **Order Preservation:** Maintains the original order of elements from the source array
 in the result array.
+
+---
+
+## filter
+
+<!-- sync-winglet-docs:auto -->
+
+import WingletPlayground from '@site/src/components/WingletPlayground';
+
+# filter
+
+Creates a new array with elements that pass the test implemented by the provided callback function.
+Iterates through each element of the source array and includes only those elements
+for which the callback function returns a truthy value. The callback receives
+the current element, its index, and the entire array as arguments.
+
+## Signature
+
+```typescript
+const filter: <Type>(array: Type[], callback: (item: Type, index: number, array: Type[]) => boolean) => Type[]
+```
+
+## Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `array` | `-` | Source array to filter |
+| `callback` | `-` | Filtering function to test each element |
+
+## Returns
+
+New filtered array containing only elements that pass the test
+
+## Examples
+
+### Filter numbers by condition
+
+```typescript
+import { filter } from '@winglet/common-utils';
+
+const numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+const evens = filter(numbers, num => num % 2 === 0);
+console.log(evens); // [2, 4, 6, 8, 10]
+
+const greaterThanFive = filter(numbers, num => num > 5);
+console.log(greaterThanFive); // [6, 7, 8, 9, 10]
+```
+
+### Filter objects by property
+
+```typescript
+interface User {
+  id: number;
+  name: string;
+  age: number;
+  isActive: boolean;
+}
+
+const users: User[] = [
+  { id: 1, name: 'Alice', age: 30, isActive: true },
+  { id: 2, name: 'Bob', age: 25, isActive: false },
+  { id: 3, name: 'Charlie', age: 35, isActive: true },
+  { id: 4, name: 'Diana', age: 28, isActive: false }
+];
+
+const activeUsers = filter(users, user => user.isActive);
+console.log(activeUsers); // [{ id: 1, name: 'Alice', ... }, { id: 3, name: 'Charlie', ... }]
+
+const adultsOver30 = filter(users, user => user.age > 30);
+console.log(adultsOver30); // [{ id: 3, name: 'Charlie', age: 35, ... }]
+```
+
+### Using index and array parameters
+
+```typescript
+const items = ['a', 'b', 'c', 'd', 'e'];
+
+// Filter by index (get every other element)
+const everyOther = filter(items, (item, index) => index % 2 === 0);
+console.log(everyOther); // ['a', 'c', 'e']
+
+// Filter based on array context
+const duplicatesRemoved = filter(items, (item, index, array) =>
+  array.indexOf(item) === index
+);
+```
+
+### Filter strings by criteria
+
+```typescript
+const words = ['apple', 'banana', 'apricot', 'cherry', 'avocado'];
+
+// Filter by starting letter
+const startsWithA = filter(words, word => word.startsWith('a'));
+console.log(startsWithA); // ['apple', 'apricot', 'avocado']
+
+// Filter by length
+const longWords = filter(words, word => word.length > 5);
+console.log(longWords); // ['banana', 'apricot', 'cherry', 'avocado']
+```
+
+### Complex filtering with multiple conditions
+
+```typescript
+interface Product {
+  name: string;
+  price: number;
+  category: string;
+  inStock: boolean;
+}
+
+const products: Product[] = [
+  { name: 'Laptop', price: 999, category: 'Electronics', inStock: true },
+  { name: 'Book', price: 15, category: 'Education', inStock: true },
+  { name: 'Phone', price: 699, category: 'Electronics', inStock: false },
+  { name: 'Desk', price: 299, category: 'Furniture', inStock: true }
+];
+
+// Filter expensive electronics in stock
+const expensiveElectronics = filter(products, product =>
+  product.category === 'Electronics' &&
+  product.price > 500 &&
+  product.inStock
+);
+console.log(expensiveElectronics); // [{ name: 'Laptop', ... }]
+```
+
+### Working with nested objects
+
+```typescript
+const employees = [
+  { name: 'John', skills: ['JavaScript', 'Python'], department: { name: 'Engineering' } },
+  { name: 'Jane', skills: ['Java', 'C++'], department: { name: 'Engineering' } },
+  { name: 'Bob', skills: ['Marketing', 'Sales'], department: { name: 'Sales' } }
+];
+
+// Filter engineers with JavaScript skills
+const jsEngineers = filter(employees, emp =>
+  emp.department.name === 'Engineering' &&
+  emp.skills.includes('JavaScript')
+);
+console.log(jsEngineers); // [{ name: 'John', ... }]
+```
+
+## Playground
+
+<WingletPlayground
+  dependencies={{ "@winglet/common-utils": "0.12.3" }}
+  code={`import { filter } from '@winglet/common-utils';
+
+const numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+const evens = filter(numbers, num => num % 2 === 0);
+console.log(evens); // [2, 4, 6, 8, 10]
+
+const greaterThanFive = filter(numbers, num => num > 5);
+console.log(greaterThanFive); // [6, 7, 8, 9, 10]`}
+/>
+
+## Notes
+
+**Performance:** Uses dynamic array growth with direct index assignment for optimal
+performance. Time complexity is O(n) where n is the array length.
+
+**Callback Parameters:** The callback function receives three parameters:
+- `item`: The current element being processed
+- `index`: The index of the current element
+- `array`: The entire source array
+
+**Immutability:** Does not modify the original array, returns a new filtered array.
+
+**Truthy Values:** Elements are included if the callback returns any truthy value,
+not just boolean `true`.
 
 ---
 
@@ -5475,7 +5770,7 @@ forEach(items, (item, index, array) => {
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  dependencies={{ "@winglet/common-utils": "0.12.3" }}
   code={`import { forEach } from '@winglet/common-utils';
 
 const numbers = [1, 2, 3, 4, 5];
@@ -5677,7 +5972,7 @@ forEachDual(xCoords, yCoords, (x, y, index) => {
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  dependencies={{ "@winglet/common-utils": "0.12.3" }}
   code={`import { forEachDual } from '@winglet/common-utils';
 
 const names = ['Alice', 'Bob', 'Charlie'];
@@ -5890,7 +6185,7 @@ forEachReverse(operations, (operation, index) => {
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  dependencies={{ "@winglet/common-utils": "0.12.3" }}
   code={`import { forEachReverse } from '@winglet/common-utils';
 
 const numbers = [1, 2, 3, 4, 5];
@@ -6056,7 +6351,7 @@ const byRole = groupBy(users, user => user.profile.role);
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  dependencies={{ "@winglet/common-utils": "0.12.3" }}
   code={`import { groupBy } from '@winglet/common-utils';
 
 interface Person {
@@ -6228,7 +6523,7 @@ console.log('Granted:', grantedPermissions); // ['read', 'write']
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  dependencies={{ "@winglet/common-utils": "0.12.3" }}
   code={`import { intersection } from '@winglet/common-utils';
 
 const array1 = [1, 2, 3, 4, 5];
@@ -6446,7 +6741,7 @@ console.log(matchingAgePeople); // [{ name: 'Alice', age: 25 }, { name: 'Bob', a
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  dependencies={{ "@winglet/common-utils": "0.12.3" }}
   code={`import { intersectionBy } from '@winglet/common-utils';
 
 const users = [
@@ -6617,7 +6912,7 @@ console.log('Granted:', grantedPermissions); // ['read', 'write']
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  dependencies={{ "@winglet/common-utils": "0.12.3" }}
   code={`import { intersectionLite } from '@winglet/common-utils';
 
 const array1 = [1, 2, 3, 4, 5];
@@ -6863,7 +7158,7 @@ console.log(matchingEmails); // ['user@company.com', 'admin@company.com', 'suppo
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  dependencies={{ "@winglet/common-utils": "0.12.3" }}
   code={`import { intersectionWith } from '@winglet/common-utils';
 
 const products = [
@@ -7097,7 +7392,7 @@ console.log(parsed);
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  dependencies={{ "@winglet/common-utils": "0.12.3" }}
   code={`import { map } from '@winglet/common-utils';
 
 const numbers = [1, 2, 3, 4, 5];
@@ -7169,7 +7464,7 @@ orderedMerge(['name', 'email'], ['id', 'name', 'phone'])
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  dependencies={{ "@winglet/common-utils": "0.12.3" }}
   code={`orderedMerge(['name', 'email'], ['id', 'name', 'phone'])
 // Result: ['name', 'email', 'id', 'phone']`}
 />
@@ -7250,7 +7545,7 @@ console.log(primitiveArrayEqual(refs1, refs3)); // false (different references)
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  dependencies={{ "@winglet/common-utils": "0.12.3" }}
   code={`import { primitiveArrayEqual } from '@winglet/common-utils';
 
 const numbers1 = [1, 2, 3, 4, 5];
@@ -7326,7 +7621,7 @@ const result = sortWithReference(target, reference);
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  dependencies={{ "@winglet/common-utils": "0.12.3" }}
   code={`const target = ['c', 'a', 'b', 'd'];
 const reference = ['a', 'b', 'c'];
 const result = sortWithReference(target, reference);
@@ -7498,7 +7793,7 @@ const manualUnique = largeArray.filter((item, index) => largeArray.indexOf(item)
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  dependencies={{ "@winglet/common-utils": "0.12.3" }}
   code={`import { unique } from '@winglet/common-utils';
 
 const numbers = [1, 2, 2, 3, 3, 3, 4, 5, 5];
@@ -7757,7 +8052,7 @@ console.log(uniqueCustomerProduct);
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  dependencies={{ "@winglet/common-utils": "0.12.3" }}
   code={`import { uniqueBy } from '@winglet/common-utils';
 
 const users = [
@@ -8025,7 +8320,7 @@ console.log(uniqueTasks);
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  dependencies={{ "@winglet/common-utils": "0.12.3" }}
   code={`import { uniqueWith } from '@winglet/common-utils';
 
 const names = ['Alice', 'BOB', 'alice', 'Charlie', 'bob', 'CHARLIE'];
@@ -8053,6 +8348,28 @@ function is called for each pair until a match is found or all comparisons are c
 
 ---
 
+## PrintConsoleOptions
+
+<!-- sync-winglet-docs:auto -->
+
+import WingletPlayground from '@site/src/components/WingletPlayground';
+
+# PrintConsoleOptions
+
+## Signature
+
+```typescript
+interface PrintConsoleOptions {
+    info?: string;
+    emoji?: string;
+    titleColor?: `#${string}`;
+    messageColor?: `#${string}`;
+    details?: unknown;
+}
+```
+
+---
+
 ## printError
 
 <!-- sync-winglet-docs:auto -->
@@ -8066,12 +8383,7 @@ Print an error message to the console
 ## Signature
 
 ```typescript
-const printError: (title: string, message: string[], options?: {
-    info?: string;
-    emoji?: string;
-    titleColor?: `#${string}`;
-    messageColor?: `#${string}`;
-}) => void
+const printError: (title: string, message: string[], options?: PrintConsoleOptions) => void
 ```
 
 ## Parameters
@@ -8081,6 +8393,32 @@ const printError: (title: string, message: string[], options?: {
 | `title` | `-` | The title of the error |
 | `message` | `-` | The message to print |
 | `options` | `-` | The options for the error |
+
+---
+
+## printWarning
+
+<!-- sync-winglet-docs:auto -->
+
+import WingletPlayground from '@site/src/components/WingletPlayground';
+
+# printWarning
+
+Prints a warning message to the console.
+
+## Signature
+
+```typescript
+const printWarning: (title: string, message: string[], options?: PrintConsoleOptions) => void
+```
+
+## Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `title` | `-` | The title of the warning |
+| `message` | `-` | The message lines to print |
+| `options` | `-` | Presentation options and optional structured details |
 
 ---
 
@@ -9203,7 +9541,7 @@ console.timeEnd('cached-conversion'); // Significantly faster
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  dependencies={{ "@winglet/common-utils": "0.12.3" }}
   code={`import { convertMsFromDuration } from '@winglet/common-utils';
 
 // Millisecond conversions
@@ -9716,7 +10054,7 @@ function flattenDeep(value: unknown): unknown[] {
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  dependencies={{ "@winglet/common-utils": "0.12.3" }}
   code={`import { isArray } from '@winglet/common-utils';
 
 console.log(isArray([1, 2, 3])); // true
@@ -9840,7 +10178,7 @@ async function handleFileUpload(file: File) {
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  dependencies={{ "@winglet/common-utils": "0.12.3" }}
   code={`import { isArrayBuffer } from '@winglet/common-utils';
 
 const buffer = new ArrayBuffer(16);
@@ -9981,7 +10319,7 @@ function parseFormArrayData(formData: Record<string, string>) {
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  dependencies={{ "@winglet/common-utils": "0.12.3" }}
   code={`import { isArrayIndex } from '@winglet/common-utils';
 
 console.log(isArrayIndex('0')); // true
@@ -10141,7 +10479,7 @@ function flexibleFunction(...args: any[]) {
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  dependencies={{ "@winglet/common-utils": "0.12.3" }}
   code={`import { isArrayLike } from '@winglet/common-utils';
 
 // True cases - array-like structures
@@ -10561,7 +10899,7 @@ if (validationErrors.length > 0) {
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  dependencies={{ "@winglet/common-utils": "0.12.3" }}
   code={`import { isBlob } from '@winglet/common-utils';
 
 // True cases - Blob instances (in browser environment)
@@ -10776,7 +11114,7 @@ function processValue(value: unknown) {
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  dependencies={{ "@winglet/common-utils": "0.12.3" }}
   code={`import { isBoolean } from '@winglet/common-utils';
 
 // True cases - actual boolean values
@@ -11164,7 +11502,7 @@ function createBufferFromData(data: number[] | string): Buffer | Uint8Array | nu
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  dependencies={{ "@winglet/common-utils": "0.12.3" }}
   code={`import { isBuffer } from '@winglet/common-utils';
 
 // True cases - Buffer instances (in Node.js environment)
@@ -11355,7 +11693,7 @@ function validateForSerialization(data: any[]): {
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  dependencies={{ "@winglet/common-utils": "0.12.3" }}
   code={`import { isCloneable } from '@winglet/common-utils';
 
 // True cases - cloneable types
@@ -11555,7 +11893,7 @@ function parsePacketHeader(data: unknown): PacketHeader | null {
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  dependencies={{ "@winglet/common-utils": "0.12.3" }}
   code={`import { isDataView } from '@winglet/common-utils';
 
 const buffer = new ArrayBuffer(16);
@@ -11757,7 +12095,7 @@ function convertDateStringsToObjects(obj: any): any {
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  dependencies={{ "@winglet/common-utils": "0.12.3" }}
   code={`import { isDate } from '@winglet/common-utils';
 
 // True cases - Date objects
@@ -12202,7 +12540,7 @@ console.log(buildQuery('users', {
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  dependencies={{ "@winglet/common-utils": "0.12.3" }}
   code={`import { isEmpty } from '@winglet/common-utils';
 
 // True cases - empty values
@@ -12433,7 +12771,7 @@ function handleApiResponse(response: ApiResponse) {
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  dependencies={{ "@winglet/common-utils": "0.12.3" }}
   code={`import { isEmptyArray } from '@winglet/common-utils';
 
 // True cases - empty arrays
@@ -12637,7 +12975,7 @@ function safeObjectOperation(obj: unknown, operation: 'keys' | 'values' | 'entri
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  dependencies={{ "@winglet/common-utils": "0.12.3" }}
   code={`import { isEmptyObject } from '@winglet/common-utils';
 
 // True cases - empty objects
@@ -12874,7 +13212,7 @@ function validateApiPayload(payload: unknown) {
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  dependencies={{ "@winglet/common-utils": "0.12.3" }}
   code={`import { isEmptyPlainObject } from '@winglet/common-utils';
 
 // True cases - empty plain objects
@@ -13145,7 +13483,7 @@ function handleApiResponse<T>(response: ApiResponse<T>) {
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  dependencies={{ "@winglet/common-utils": "0.12.3" }}
   code={`import { isError } from '@winglet/common-utils';
 
 // True cases - Error instances
@@ -13480,7 +13818,7 @@ console.log('Invalid:', invalid); // [0, '', false, null, undefined, NaN]
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  dependencies={{ "@winglet/common-utils": "0.12.3" }}
   code={`import { isFalsy } from '@winglet/common-utils';
 
 // True cases - falsy values
@@ -13888,7 +14226,7 @@ function createFileIfSupported(content: string, filename: string): File | null {
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  dependencies={{ "@winglet/common-utils": "0.12.3" }}
   code={`import { isFile } from '@winglet/common-utils';
 
 // True cases - File instances (in browser environment)
@@ -14079,7 +14417,7 @@ function safeInvoke(fn: unknown, ...args: any[]) {
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  dependencies={{ "@winglet/common-utils": "0.12.3" }}
   code={`import { isFunction } from '@winglet/common-utils';
 
 const regularFunc = function() { return 'hello'; };
@@ -14363,7 +14701,7 @@ function validateServerConfig(config: ServerConfig) {
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  dependencies={{ "@winglet/common-utils": "0.12.3" }}
   code={`import { isInteger } from '@winglet/common-utils';
 
 // True cases - integers
@@ -14628,7 +14966,7 @@ function validateAppSettings(settings: AppSettings) {
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  dependencies={{ "@winglet/common-utils": "0.12.3" }}
   code={`import { isMap } from '@winglet/common-utils';
 
 // True cases - Map instances
@@ -14861,7 +15199,7 @@ const config = {
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  dependencies={{ "@winglet/common-utils": "0.12.3" }}
   code={`import { isNil } from '@winglet/common-utils';
 
 // True cases - nil values
@@ -15131,7 +15469,7 @@ console.log(nullResult); // null
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  dependencies={{ "@winglet/common-utils": "0.12.3" }}
   code={`import { isNotNil } from '@winglet/common-utils';
 
 // True cases - non-nil values
@@ -15431,7 +15769,7 @@ console.log(cache.isNullValue('user:2')); // false (not cached)
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  dependencies={{ "@winglet/common-utils": "0.12.3" }}
   code={`import { isNull } from '@winglet/common-utils';
 
 // True cases - null value
@@ -15755,7 +16093,7 @@ function calculateStatistics(values: unknown[]) {
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  dependencies={{ "@winglet/common-utils": "0.12.3" }}
   code={`import { isNumber } from '@winglet/common-utils';
 
 // True cases - number type
@@ -15918,7 +16256,7 @@ fetch('/api/data')
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  dependencies={{ "@winglet/common-utils": "0.12.3" }}
   code={`import { isObject } from '@winglet/common-utils';
 
 console.log(isObject({})); // true
@@ -16107,7 +16445,7 @@ function isJsonLike(value: unknown): boolean {
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  dependencies={{ "@winglet/common-utils": "0.12.3" }}
   code={`import { isPlainObject } from '@winglet/common-utils';
 
 // Plain objects (return true)
@@ -16359,7 +16697,7 @@ console.log(analyzeValue(42));       // primitive number
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  dependencies={{ "@winglet/common-utils": "0.12.3" }}
   code={`import { isPrimitiveObject } from '@winglet/common-utils';
 
 // True cases - objects (including boxed primitives)
@@ -16671,7 +17009,7 @@ function insertRecord(data: Record<string, unknown>) {
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  dependencies={{ "@winglet/common-utils": "0.12.3" }}
   code={`import { isPrimitiveType } from '@winglet/common-utils';
 
 // True cases - primitive types
@@ -16980,7 +17318,7 @@ function createLoadingState<T>(
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  dependencies={{ "@winglet/common-utils": "0.12.3" }}
   code={`import { isPromise } from '@winglet/common-utils';
 
 // True cases - Promise instances
@@ -17312,7 +17650,7 @@ console.log(result); // 'Hello John, you have 5 messages'
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  dependencies={{ "@winglet/common-utils": "0.12.3" }}
   code={`import { isRegex } from '@winglet/common-utils';
 
 // True cases - RegExp instances
@@ -17517,7 +17855,7 @@ console.log(convertToArray(uniqueNumbers)); // [1, 2, 3, 4]
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  dependencies={{ "@winglet/common-utils": "0.12.3" }}
   code={`import { isSet } from '@winglet/common-utils';
 
 // True cases - Set instances
@@ -17898,7 +18236,7 @@ if (isMainThread) {
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  dependencies={{ "@winglet/common-utils": "0.12.3" }}
   code={`import { isSharedArrayBuffer } from '@winglet/common-utils';
 
 // True cases - SharedArrayBuffer instances (if supported)
@@ -18224,7 +18562,7 @@ console.log(result); // 'Hello John, you have 5 messages'
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  dependencies={{ "@winglet/common-utils": "0.12.3" }}
   code={`import { isString } from '@winglet/common-utils';
 
 // True cases - string type
@@ -18568,7 +18906,7 @@ console.log(analysis);
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  dependencies={{ "@winglet/common-utils": "0.12.3" }}
   code={`import { isSymbol } from '@winglet/common-utils';
 
 // True cases - symbol type
@@ -18887,7 +19225,7 @@ console.log(activeUsers); // [{ name: 'John', active: true }]
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  dependencies={{ "@winglet/common-utils": "0.12.3" }}
   code={`import { isTruthy } from '@winglet/common-utils';
 
 // True cases - truthy values
@@ -19026,7 +19364,7 @@ function processBinaryData(data: unknown) {
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  dependencies={{ "@winglet/common-utils": "0.12.3" }}
   code={`import { isTypedArray } from '@winglet/common-utils';
 
 // True cases - TypedArray instances
@@ -19376,7 +19714,7 @@ function getRequiredEnv(name: string): string {
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  dependencies={{ "@winglet/common-utils": "0.12.3" }}
   code={`import { isUndefined } from '@winglet/common-utils';
 
 // True cases - undefined value
@@ -19755,7 +20093,7 @@ console.log(testResult);
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  dependencies={{ "@winglet/common-utils": "0.12.3" }}
   code={`import { isValidRegexPattern } from '@winglet/common-utils';
 
 // True cases - valid patterns
@@ -20123,7 +20461,7 @@ console.log(validation.report);
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  dependencies={{ "@winglet/common-utils": "0.12.3" }}
   code={`import { isWeakMap } from '@winglet/common-utils';
 
 // True cases - WeakMap instances
@@ -20517,7 +20855,7 @@ class ResourceCleanupTracker {
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  dependencies={{ "@winglet/common-utils": "0.12.3" }}
   code={`import { isWeakSet } from '@winglet/common-utils';
 
 // True cases - WeakSet instances
@@ -20777,7 +21115,7 @@ debouncedResize.clear();
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  dependencies={{ "@winglet/common-utils": "0.12.3" }}
   code={`import { debounce } from '@winglet/common-utils';
 
 const searchApi = async (query: string) => {
@@ -21031,7 +21369,7 @@ searchInput.addEventListener('input', (e) => {
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  dependencies={{ "@winglet/common-utils": "0.12.3" }}
   code={`import { throttle } from '@winglet/common-utils';
 
 const handleScroll = () => {
@@ -21594,7 +21932,7 @@ cache.raw.forEach((value, key) => {
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  dependencies={{ "@winglet/common-utils": "0.12.3" }}
   code={`import { cacheMapFactory } from '@winglet/common-utils';
 
 const userCache = cacheMapFactory<Map<string, User>>();
@@ -21863,7 +22201,7 @@ function getComputedValues(model: DataModel): ComputedValues {
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  dependencies={{ "@winglet/common-utils": "0.12.3" }}
   code={`import { cacheWeakMapFactory } from '@winglet/common-utils';
 
 interface ComponentConfig {
@@ -22037,7 +22375,7 @@ async function fetchWithRetry(url: string): Promise<Response> {
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  dependencies={{ "@winglet/common-utils": "0.12.3" }}
   code={`import { counterFactory } from '@winglet/common-utils';
 
 const counter = counterFactory(10);
@@ -22132,7 +22470,7 @@ console.log(getKeys(undefined)); // []
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  dependencies={{ "@winglet/common-utils": "0.12.3" }}
   code={`import { getKeys } from '@winglet/common-utils';
 
 const array = ['a', 'b', 'c'];
@@ -22194,7 +22532,7 @@ if (getRandomBoolean()) {
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  dependencies={{ "@winglet/common-utils": "0.12.3" }}
   code={`import { getRandomBoolean } from '@winglet/common-utils';
 
 console.log(getRandomBoolean()); // true or false
@@ -22251,7 +22589,7 @@ console.log(getRandomNumber(-5, 5)); // -2 (between -5 to 5)
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  dependencies={{ "@winglet/common-utils": "0.12.3" }}
   code={`import { getRandomNumber } from '@winglet/common-utils';
 
 console.log(getRandomNumber(1, 10)); // 7 (between 1-10)
@@ -22305,7 +22643,7 @@ console.log(getRandomString(36)); // 'xyz123' (alphanumeric)
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  dependencies={{ "@winglet/common-utils": "0.12.3" }}
   code={`import { getRandomString } from '@winglet/common-utils';
 
 console.log(getRandomString()); // 'k2j4h7m' (base 32)
@@ -22362,7 +22700,7 @@ console.log(getTypeTag(undefined)); // '[object Undefined]'
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  dependencies={{ "@winglet/common-utils": "0.12.3" }}
   code={`import { getTypeTag } from '@winglet/common-utils';
 
 console.log(getTypeTag([])); // '[object Array]'
@@ -22429,7 +22767,7 @@ console.log(hasOwnProperty(nullObj, 'prop')); // true (safe even without prototy
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  dependencies={{ "@winglet/common-utils": "0.12.3" }}
   code={`import { hasOwnProperty } from '@winglet/common-utils';
 
 const obj = { name: 'John', age: 30 };
@@ -22501,7 +22839,7 @@ console.log(distance(-5, 5));   // 10
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  dependencies={{ "@winglet/common-utils": "0.12.3" }}
   code={`import { abs } from '@winglet/common-utils';
 
 console.log(abs(5));      // 5
@@ -22588,7 +22926,7 @@ function constrainPosition(x: number, y: number) {
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  dependencies={{ "@winglet/common-utils": "0.12.3" }}
   code={`import { clamp } from '@winglet/common-utils';
 
 console.log(clamp(5, 0, 10));   // 5 (within range)
@@ -22675,7 +23013,7 @@ console.log(combination(100, 2)); // 4950
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  dependencies={{ "@winglet/common-utils": "0.12.3" }}
   code={`import { combination } from '@winglet/common-utils';
 
 console.log(combination(5, 2)); // 10 - choosing 2 items from 5
@@ -22768,7 +23106,7 @@ console.log(digitSum(1000000000)); // 1 (1+0+0+0+0+0+0+0+0+0)
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  dependencies={{ "@winglet/common-utils": "0.12.3" }}
   code={`import { digitSum } from '@winglet/common-utils';
 
 console.log(digitSum(123)); // 6 (1 + 2 + 3)
@@ -22858,7 +23196,7 @@ console.log(factorial(20)); // Uses cached factorial(15) to optimize computation
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  dependencies={{ "@winglet/common-utils": "0.12.3" }}
   code={`import { factorial } from '@winglet/common-utils';
 
 console.log(factorial(0)); // 1 (by definition)
@@ -22950,7 +23288,7 @@ console.log(fibonacci(78)); // 8944394323791464 (near safe integer limit)
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  dependencies={{ "@winglet/common-utils": "0.12.3" }}
   code={`import { fibonacci } from '@winglet/common-utils';
 
 console.log(fibonacci(0)); // 0 (first Fibonacci number)
@@ -23052,7 +23390,7 @@ console.log(fromBase('ABC', 16)); // 2748
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  dependencies={{ "@winglet/common-utils": "0.12.3" }}
   code={`import { fromBase } from '@winglet/common-utils';
 
 // Binary (base 2)
@@ -23151,7 +23489,7 @@ console.log(gcd(-12, 8)); // 4 (absolute values used)
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  dependencies={{ "@winglet/common-utils": "0.12.3" }}
   code={`import { gcd } from '@winglet/common-utils';
 
 console.log(gcd(12, 8)); // 4 (largest number dividing both 12 and 8)
@@ -23246,7 +23584,7 @@ console.log(inRange(5, 5, 5)); // true (single point range)
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  dependencies={{ "@winglet/common-utils": "0.12.3" }}
   code={`import { inRange } from '@winglet/common-utils';
 
 console.log(inRange(5, 1, 10)); // true (5 is between 1 and 10)
@@ -23368,7 +23706,7 @@ function findFixedPoint(f: (x: number) => number, x0: number) {
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  dependencies={{ "@winglet/common-utils": "0.12.3" }}
   code={`import { isClose } from '@winglet/common-utils/math';
 
 // Standard equality fails due to floating-point precision
@@ -23468,7 +23806,7 @@ console.log(isEven(999999)); // false
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  dependencies={{ "@winglet/common-utils": "0.12.3" }}
   code={`import { isEven } from '@winglet/common-utils';
 
 console.log(isEven(2)); // true
@@ -23560,7 +23898,7 @@ console.log(isOdd(1000001)); // true
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  dependencies={{ "@winglet/common-utils": "0.12.3" }}
   code={`import { isOdd } from '@winglet/common-utils';
 
 console.log(isOdd(1)); // true
@@ -23654,7 +23992,7 @@ console.log(isPrime(-5)); // false (negative numbers not prime)
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  dependencies={{ "@winglet/common-utils": "0.12.3" }}
   code={`import { isPrime } from '@winglet/common-utils';
 
 // Prime numbers
@@ -23747,7 +24085,7 @@ console.log(lcm(-6, -9)); // 18 (absolute values used)
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  dependencies={{ "@winglet/common-utils": "0.12.3" }}
   code={`import { lcm } from '@winglet/common-utils';
 
 console.log(lcm(12, 8)); // 24 (smallest number divisible by both 12 and 8)
@@ -23840,7 +24178,7 @@ console.log(max([1.1, 1.9, 1.5])); // 1.9
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  dependencies={{ "@winglet/common-utils": "0.12.3" }}
   code={`import { max } from '@winglet/common-utils';
 
 console.log(max([1, 5, 3, 9, 2])); // 9
@@ -23932,7 +24270,7 @@ console.log(maxLite(0.1 + 0.2, 0.3)); // 0.30000000000000004 (floating point)
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  dependencies={{ "@winglet/common-utils": "0.12.3" }}
   code={`import { maxLite } from '@winglet/common-utils';
 
 console.log(maxLite(5, 3)); // 5
@@ -24024,7 +24362,7 @@ console.log(mean([1.1, 2.2, 3.3])); // 2.2 (decimal precision)
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  dependencies={{ "@winglet/common-utils": "0.12.3" }}
   code={`import { mean } from '@winglet/common-utils';
 
 console.log(mean([1, 2, 3, 4, 5])); // 3 (sum: 15, count: 5)
@@ -24120,7 +24458,7 @@ console.log(median([1.1, 2.2, 3.3, 4.4])); // 2.75
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  dependencies={{ "@winglet/common-utils": "0.12.3" }}
   code={`import { median } from '@winglet/common-utils';
 
 // Odd length arrays (middle element)
@@ -24216,7 +24554,7 @@ console.log(min([1.9, 1.1, 1.5])); // 1.1
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  dependencies={{ "@winglet/common-utils": "0.12.3" }}
   code={`import { min } from '@winglet/common-utils';
 
 console.log(min([5, 1, 9, 3])); // 1
@@ -24308,7 +24646,7 @@ console.log(minLite(0.1 + 0.2, 0.3)); // 0.3 (smaller due to floating point)
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  dependencies={{ "@winglet/common-utils": "0.12.3" }}
   code={`import { minLite } from '@winglet/common-utils';
 
 console.log(minLite(5, 3)); // 3
@@ -24401,7 +24739,7 @@ console.log(permutation(8, 4)); // 1680
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  dependencies={{ "@winglet/common-utils": "0.12.3" }}
   code={`import { permutation } from '@winglet/common-utils';
 
 console.log(permutation(5, 2)); // 20 (5×4 arrangements)
@@ -24495,7 +24833,7 @@ console.log(range([150.5, 147.2, 153.8, 149.1])); // 6.6 (153.8 - 147.2)
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  dependencies={{ "@winglet/common-utils": "0.12.3" }}
   code={`import { range } from '@winglet/common-utils';
 
 console.log(range([1, 5, 3, 9, 2])); // 8 (9 - 1)
@@ -24595,7 +24933,7 @@ console.log(round(0.5, 0)); // 1 (rounds half up)
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  dependencies={{ "@winglet/common-utils": "0.12.3" }}
   code={`import { round } from '@winglet/common-utils';
 
 // Default (integer rounding)
@@ -24692,7 +25030,7 @@ console.log(sum(Array(1000).fill(1))); // 1000
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  dependencies={{ "@winglet/common-utils": "0.12.3" }}
   code={`import { sum } from '@winglet/common-utils';
 
 console.log(sum([1, 2, 3, 4, 5])); // 15
@@ -24793,7 +25131,7 @@ console.log(toBase(100, 10)); // "100" (decimal to decimal)
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  dependencies={{ "@winglet/common-utils": "0.12.3" }}
   code={`import { toBase } from '@winglet/common-utils';
 
 // Binary (base 2)
@@ -24990,7 +25328,7 @@ console.log(cloned !== complex); // true (different reference)
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  dependencies={{ "@winglet/common-utils": "0.12.3" }}
   code={`import { clone } from '@winglet/common-utils';
 
 // Primitives (returned as-is)
@@ -25216,7 +25554,7 @@ const slow = clone(simpleData); // ~15ms
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  dependencies={{ "@winglet/common-utils": "0.12.3" }}
   code={`import { cloneLite } from '@winglet/common-utils';
 
 // Primitives (returned as-is)
@@ -25433,7 +25771,7 @@ console.log('toString' in nullProto); // false
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  dependencies={{ "@winglet/common-utils": "0.12.3" }}
   code={`import { countKey } from '@winglet/common-utils';
 
 // Plain object with own properties only
@@ -25633,7 +25971,7 @@ for (const key in data) {
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  dependencies={{ "@winglet/common-utils": "0.12.3" }}
   code={`import { countObjectKey } from '@winglet/common-utils';
 
 // Plain object with own properties
@@ -25822,7 +26160,7 @@ console.log(equals({ fn: fn1 }, { fn: fn3 })); // true (same reference)
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  dependencies={{ "@winglet/common-utils": "0.12.3" }}
   code={`import { equals } from '@winglet/common-utils';
 
 // Primitive values
@@ -26133,7 +26471,7 @@ console.timeEnd('regular object'); // ~1.2ms
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  dependencies={{ "@winglet/common-utils": "0.12.3" }}
   code={`import { getEmptyObject } from '@winglet/common-utils';
 
 // Create a truly empty object
@@ -26364,7 +26702,7 @@ console.log(getFirstKey(mixed)); // '0' (typically)
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  dependencies={{ "@winglet/common-utils": "0.12.3" }}
   code={`import { getFirstKey } from '@winglet/common-utils';
 
 // Object with multiple properties
@@ -26572,7 +26910,7 @@ console.log(publicKeys); // ['id', 'personalInfo', 'preferences']
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  dependencies={{ "@winglet/common-utils": "0.12.3" }}
   code={`import { getObjectKeys } from '@winglet/common-utils';
 
 // Simple object keys
@@ -26804,7 +27142,7 @@ console.log(Object.getOwnPropertySymbols(iterable)); // [Symbol.iterator, Symbol
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  dependencies={{ "@winglet/common-utils": "0.12.3" }}
   code={`import { getSymbols } from '@winglet/common-utils';
 
 // Create symbols for private-like properties
@@ -27098,7 +27436,7 @@ console.log(hasUndefined(funcWithProps)); // true
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  dependencies={{ "@winglet/common-utils": "0.12.3" }}
   code={`import { hasUndefined } from '@winglet/common-utils';
 
 // Direct undefined values
@@ -27400,7 +27738,7 @@ console.log(target3); // { a: undefined }
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  dependencies={{ "@winglet/common-utils": "0.12.3" }}
   code={`import { merge } from '@winglet/common-utils';
 
 const target = { a: 1, b: 2, c: { x: 10 } };
@@ -27685,7 +28023,7 @@ console.timeEnd('without prototype'); // ~3ms
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  dependencies={{ "@winglet/common-utils": "0.12.3" }}
   code={`import { removePrototype } from '@winglet/common-utils';
 
 // Regular object with prototype
@@ -28043,7 +28381,7 @@ console.log(removeUndefined(sparse)); // ['first', 'last']
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  dependencies={{ "@winglet/common-utils": "0.12.3" }}
   code={`import { removeUndefined } from '@winglet/common-utils';
 
 // Simple object cleaning
@@ -28246,7 +28584,7 @@ console.log(serializeNative(fullData, publicFields));
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  dependencies={{ "@winglet/common-utils": "0.12.3" }}
   code={`import { serializeNative } from '@winglet/common-utils';
 
 // Simple object serialization
@@ -28462,7 +28800,7 @@ const isSameConfig = (config1: any, config2: any) => {
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  dependencies={{ "@winglet/common-utils": "0.12.3" }}
   code={`import { serializeObject } from '@winglet/common-utils';
 
 // Simple object
@@ -28804,7 +29142,7 @@ console.log(diff);
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  dependencies={{ "@winglet/common-utils": "0.12.3" }}
   code={`import { serializeWithFullSortedKeys } from '@winglet/common-utils';
 
 // Simple nested structure
@@ -29106,7 +29444,7 @@ console.log(apiResponse.pagination === processedResponse.pagination); // true
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  dependencies={{ "@winglet/common-utils": "0.12.3" }}
   code={`import { shallowClone } from '@winglet/common-utils';
 
 // Simple object cloning
@@ -29442,7 +29780,7 @@ console.log(JSON.stringify(prepared, null, 2));
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  dependencies={{ "@winglet/common-utils": "0.12.3" }}
   code={`import { sortObjectKeys } from '@winglet/common-utils';
 
 // Reorder object properties
@@ -29758,7 +30096,7 @@ console.log(stableEquals(/regex/, {})); // false (RegExp vs plain object)
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  dependencies={{ "@winglet/common-utils": "0.12.3" }}
   code={`import { stableEquals } from '@winglet/common-utils';
 
 // Primitive values with NaN handling
@@ -30089,7 +30427,7 @@ console.log(result1 === result2); // true
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  dependencies={{ "@winglet/common-utils": "0.12.3" }}
   code={`import { stableSerialize } from '@winglet/common-utils';
 
 // Objects with different property order produce identical strings
@@ -30401,7 +30739,7 @@ console.log(sanitized);
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  dependencies={{ "@winglet/common-utils": "0.12.3" }}
   code={`import { transformKeys } from '@winglet/common-utils';
 
 // Add prefix to all keys
@@ -30749,7 +31087,7 @@ console.log(config);
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  dependencies={{ "@winglet/common-utils": "0.12.3" }}
   code={`import { transformValues } from '@winglet/common-utils';
 
 // Double all numeric values
@@ -31036,7 +31374,7 @@ describe('User interaction flow', () => {
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  dependencies={{ "@winglet/common-utils": "0.12.3" }}
   code={`import { delay } from '@winglet/common-utils';
 
 // Simple 1 second delay
@@ -31364,7 +31702,7 @@ describe('Timeout behavior', () => {
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  dependencies={{ "@winglet/common-utils": "0.12.3" }}
   code={`import { timeout } from '@winglet/common-utils';
 
 try {
@@ -31812,7 +32150,7 @@ emailInput.addEventListener('input', (e) => {
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  dependencies={{ "@winglet/common-utils": "0.12.3" }}
   code={`import { waitAndExecute } from '@winglet/common-utils';
 
 // Execute after 2 seconds
@@ -32354,7 +32692,7 @@ try {
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  dependencies={{ "@winglet/common-utils": "0.12.3" }}
   code={`import { waitAndReturn } from '@winglet/common-utils';
 
 // Function executes immediately, but result returned after 1 second minimum
@@ -32792,7 +33130,7 @@ describe('Async operations with timeout', () => {
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  dependencies={{ "@winglet/common-utils": "0.12.3" }}
   code={`import { withTimeout } from '@winglet/common-utils';
 
 async function fetchUserData(userId: string) {
@@ -33000,7 +33338,7 @@ class OptimizedBatchProcessor {
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  dependencies={{ "@winglet/common-utils": "0.12.3" }}
   code={`import { scheduleMacrotask, cancelMacrotask } from '@winglet/common-utils';
 
 // Schedule a task
@@ -33242,7 +33580,7 @@ function createDebouncedScheduler(delayMs: number = 0) {
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  dependencies={{ "@winglet/common-utils": "0.12.3" }}
   code={`import { scheduleMacrotask, cancelMacrotask } from '@winglet/common-utils';
 
 // Schedule a task
@@ -33445,7 +33783,7 @@ class InteractiveUI {
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  dependencies={{ "@winglet/common-utils": "0.12.3" }}
   code={`import { scheduleCancelableMacrotask } from '@winglet/common-utils';
 
 // Schedule a task and get cancellation function
@@ -33796,7 +34134,7 @@ function scheduleWithDeadline(
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  dependencies={{ "@winglet/common-utils": "0.12.3" }}
   code={`import { scheduleCancelableMacrotask } from '@winglet/common-utils';
 
 // Schedule a task and get cancellation function
@@ -34059,7 +34397,7 @@ executionOrder.push('sync-2');
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  dependencies={{ "@winglet/common-utils": "0.12.3" }}
   code={`import { scheduleMacrotask } from '@winglet/common-utils';
 
 console.log('1: Synchronous code');
@@ -34337,7 +34675,7 @@ function scheduleCleanup(resources: Resource[]) {
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  dependencies={{ "@winglet/common-utils": "0.12.3" }}
   code={`import { scheduleMacrotask } from '@winglet/common-utils';
 
 console.log('1: Synchronous code');
@@ -34720,7 +35058,7 @@ class PriorityMicrotaskScheduler {
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  dependencies={{ "@winglet/common-utils": "0.12.3" }}
   code={`import { scheduleMicrotask } from '@winglet/common-utils';
 
 console.log('1: Synchronous code');
@@ -35164,7 +35502,7 @@ function getEnvironmentInfo() {
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.10.0" }}
+  dependencies={{ "@winglet/common-utils": "0.12.3" }}
   code={`import { scheduleNextTick } from '@winglet/common-utils';
 
 console.log('1: Synchronous code');
@@ -35461,7 +35799,7 @@ const cachedLoader = new DataLoader(batchLoadPrices, {
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/data-loader": "0.10.0" }}
+  dependencies={{ "@winglet/data-loader": "0.12.2" }}
   code={`import { DataLoader } from '@winglet/data-loader';
 
 // Create a batch loading function
@@ -35905,7 +36243,7 @@ convertJsonPathToPointer('')                   // '/'
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/json": "0.10.0" }}
+  dependencies={{ "@winglet/json": "0.12.2" }}
   code={`convertJsonPathToPointer('data.users[0].name') // '/data/users/0/name'
 convertJsonPathToPointer('items[].id')         // '/items/-/id'
 convertJsonPathToPointer('[0].value')          // '/0/value'
@@ -36169,7 +36507,7 @@ convertJsonPointerToPath('/')                  // '.'
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/json": "0.10.0" }}
+  dependencies={{ "@winglet/json": "0.12.2" }}
   code={`convertJsonPointerToPath('/data/users/0/name') // '.data.users[0].name'
 convertJsonPointerToPath('/items/-/id')        // '.items[].id'
 convertJsonPointerToPath('/0/value')           // '.[0].value'
@@ -36325,7 +36663,7 @@ escapePath('/special!@#$%^&*()/chars');
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/json": "0.10.0" }}
+  dependencies={{ "@winglet/json": "0.12.2" }}
   code={`// Basic segment escaping (only tildes in segments are escaped)
 escapePath('/users/john~doe/settings');
 // Returns: "/users/john~0doe/settings"
@@ -36454,7 +36792,7 @@ const configPointer = `/${escapedConfigKey}/database`; // "/config~0prod/databas
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/json": "0.10.0" }}
+  dependencies={{ "@winglet/json": "0.12.2" }}
   code={`// Basic character escaping
 escapePath('foo~bar');
 // Returns: "foo~0bar"
@@ -36595,7 +36933,7 @@ getValue(complex, '/api/v1/endpoints/0/methods/1');
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/json": "0.10.0" }}
+  dependencies={{ "@winglet/json": "0.12.2" }}
   code={`// Basic object property access
 const obj = {
   foo: {
@@ -36791,7 +37129,7 @@ setValue(obj, '', { completely: "new" });
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/json": "0.10.0" }}
+  dependencies={{ "@winglet/json": "0.12.2" }}
   code={`// Basic object property setting
 const obj = {
   foo: {
@@ -36950,7 +37288,7 @@ console.log(data[actualConfigKey].database); // "localhost"
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/json": "0.10.0" }}
+  dependencies={{ "@winglet/json": "0.12.2" }}
   code={`// Basic escape sequence unescaping
 unescapePath('foo~0bar');
 // Returns: "foo~bar"
@@ -37108,7 +37446,7 @@ escapePath('/special!@#$%^&*()/chars');
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/json": "0.10.0" }}
+  dependencies={{ "@winglet/json": "0.12.2" }}
   code={`// Basic segment escaping (only tildes in segments are escaped)
 escapePath('/users/john~doe/settings');
 // Returns: "/users/john~0doe/settings"
@@ -37237,7 +37575,7 @@ const configPointer = `/${escapedConfigKey}/database`; // "/config~0prod/databas
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/json": "0.10.0" }}
+  dependencies={{ "@winglet/json": "0.12.2" }}
   code={`// Basic character escaping
 escapePath('foo~bar');
 // Returns: "foo~0bar"
@@ -37390,7 +37728,7 @@ console.log(data[actualConfigKey].database); // "localhost"
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/json": "0.10.0" }}
+  dependencies={{ "@winglet/json": "0.12.2" }}
   code={`// Basic escape sequence unescaping
 unescapePath('foo~0bar');
 // Returns: "foo~bar"
@@ -37547,7 +37885,7 @@ getValue(complex, '/api/v1/endpoints/0/methods/1');
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/json": "0.10.0" }}
+  dependencies={{ "@winglet/json": "0.12.2" }}
   code={`// Basic object property access
 const obj = {
   foo: {
@@ -37743,7 +38081,7 @@ setValue(obj, '', { completely: "new" });
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/json": "0.10.0" }}
+  dependencies={{ "@winglet/json": "0.12.2" }}
   code={`// Basic object property setting
 const obj = {
   foo: {
@@ -37900,7 +38238,18 @@ import WingletPlayground from '@site/src/components/WingletPlayground';
 ## Signature
 
 ```typescript
-interface JsonScannerOptionsAsync<Schema extends UnknownSchema = UnknownSchema, ContextType = void> extends Omit<JsonScannerOptions<Schema, ContextType>, 'resolveReference'> {
+interface JsonScannerOptionsAsync<Schema extends UnknownSchema = UnknownSchema, ContextType = void> extends Omit<JsonScannerOptions<Schema, ContextType>, 'filter' | 'mutate' | 'resolveReference'> {
+    /** Schema node filtering function (may be async) */
+    filter?: Fn<[
+        entry: SchemaEntry<Schema>,
+        context?: ContextType
+    ], boolean | Promise<boolean>>;
+    /** Function to mutate schema (may be async) */
+    mutate?: Fn<[
+        entry: SchemaEntry<Schema>,
+        context?: ContextType
+    ], Schema | void | Promise<Schema | void>>;
+    /** Function to resolve $ref references (may be async) */
     resolveReference?: Fn<[
         reference: string,
         entry: SchemaEntry<Schema>,
@@ -38107,7 +38456,7 @@ const batchingScanner = new JsonSchemaScannerAsync({
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/json-schema": "0.10.0" }}
+  dependencies={{ "@winglet/json-schema": "0.12.3" }}
   code={`import { JsonSchemaScannerAsync } from '@winglet/json-schema';
 
 const schemaWithRemoteRefs = {
@@ -38172,6 +38521,50 @@ distributed schema systems, and complex validation workflows.
 
 ---
 
+## KeywordDescriptor
+
+<!-- sync-winglet-docs:auto -->
+
+import WingletPlayground from '@site/src/components/WingletPlayground';
+
+# KeywordDescriptor
+
+A single entry in the traversal vocabulary: which keyword to descend into and how.
+
+## Signature
+
+```typescript
+interface KeywordDescriptor {
+    keyword: string;
+    kind: KeywordKind;
+}
+```
+
+---
+
+## KeywordKind
+
+<!-- sync-winglet-docs:auto -->
+
+import WingletPlayground from '@site/src/components/WingletPlayground';
+
+# KeywordKind
+
+How a keyword's value maps to child subschemas during traversal.
+- `schema`     — single subschema (`not`, `if`, `additionalProperties`, …).
+- `schemaList` — array of subschemas (`allOf`, …); `variant` is the index.
+- `schemaMap`  — record of subschemas keyed by name (`$defs`, `patternProperties`, …).
+- `objectMap`  — like `schemaMap` but the key contributes an (escaped) `dataPath` segment (`properties`).
+- `items`      — tuple (array, each child adds its index to `dataPath`) or single subschema (`items`, `prefixItems`).
+
+## Signature
+
+```typescript
+export type KeywordKind = 'schema' | 'schemaList' | 'schemaMap' | 'objectMap' | 'items'
+```
+
+---
+
 ## SchemaEntry
 
 <!-- sync-winglet-docs:auto -->
@@ -38194,6 +38587,13 @@ export type SchemaEntry<Schema extends UnknownSchema = UnknownSchema> = {
     depth: number;
     /** Whether there is a reference */
     hasReference?: boolean;
+    /**
+     * When `hasReference` is `true`, why the `$ref` was left in place instead of
+     * being inlined: `'cycle'` (already being resolved on the current path),
+     * `'unresolved'` (resolver returned nothing), or `'definition'` (the node
+     * lives under `$defs`/`definitions`, so it is intentionally not resolved).
+     */
+    referenceSkipped?: 'cycle' | 'unresolved' | 'definition';
     /** Processed reference path */
     referencePath?: string;
     /** Whether reference is resolved */
@@ -38278,7 +38678,7 @@ isArraySchema({ type: 'object' }); // false
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/json-schema": "0.10.0" }}
+  dependencies={{ "@winglet/json-schema": "0.12.3" }}
   code={`isArraySchema({ type: 'array', items: { type: 'string' } }); // true
 isArraySchema({ type: ['array', 'null'] }); // true
 isArraySchema({ type: 'object' }); // false`}
@@ -38327,7 +38727,7 @@ isBooleanSchema({ type: 'string' }); // false
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/json-schema": "0.10.0" }}
+  dependencies={{ "@winglet/json-schema": "0.12.3" }}
   code={`isBooleanSchema({ type: 'boolean' }); // true
 isBooleanSchema({ type: ['boolean', 'null'] }); // true
 isBooleanSchema({ type: 'string' }); // false`}
@@ -38450,7 +38850,7 @@ isNonNullableArraySchema({ type: 'object' }); // false
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/json-schema": "0.10.0" }}
+  dependencies={{ "@winglet/json-schema": "0.12.3" }}
   code={`isNonNullableArraySchema({ type: 'array', items: { type: 'string' } }); // true
 isNonNullableArraySchema({ type: ['array', 'null'] }); // false
 isNonNullableArraySchema({ type: 'object' }); // false`}
@@ -38499,7 +38899,7 @@ isNonNullableBooleanSchema({ type: 'string' }); // false
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/json-schema": "0.10.0" }}
+  dependencies={{ "@winglet/json-schema": "0.12.3" }}
   code={`isNonNullableBooleanSchema({ type: 'boolean' }); // true
 isNonNullableBooleanSchema({ type: ['boolean', 'null'] }); // false
 isNonNullableBooleanSchema({ type: 'string' }); // false`}
@@ -38549,7 +38949,7 @@ isNonNullableNumberSchema({ type: 'string' }); // false
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/json-schema": "0.10.0" }}
+  dependencies={{ "@winglet/json-schema": "0.12.3" }}
   code={`isNonNullableNumberSchema({ type: 'number' }); // true
 isNonNullableNumberSchema({ type: 'integer' }); // true
 isNonNullableNumberSchema({ type: ['number', 'null'] }); // false
@@ -38599,7 +38999,7 @@ isNonNullableObjectSchema({ type: 'array' }); // false
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/json-schema": "0.10.0" }}
+  dependencies={{ "@winglet/json-schema": "0.12.3" }}
   code={`isNonNullableObjectSchema({ type: 'object', properties: { name: { type: 'string' } } }); // true
 isNonNullableObjectSchema({ type: ['object', 'null'] }); // false
 isNonNullableObjectSchema({ type: 'array' }); // false`}
@@ -38648,7 +39048,7 @@ isNonNullableStringSchema({ type: 'number' }); // false
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/json-schema": "0.10.0" }}
+  dependencies={{ "@winglet/json-schema": "0.12.3" }}
   code={`isNonNullableStringSchema({ type: 'string' }); // true
 isNonNullableStringSchema({ type: ['string', 'null'] }); // false
 isNonNullableStringSchema({ type: 'number' }); // false`}
@@ -38757,7 +39157,7 @@ Object.entries(formFieldSchemas).forEach(([fieldName, schema]) => {
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/json-schema": "0.10.0" }}
+  dependencies={{ "@winglet/json-schema": "0.12.3" }}
   code={`import { isNullSchema } from '@winglet/json-schema';
 
 const nullSchema = {
@@ -38832,7 +39232,7 @@ isNullableArraySchema({ type: ['object', 'null'] }); // false
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/json-schema": "0.10.0" }}
+  dependencies={{ "@winglet/json-schema": "0.12.3" }}
   code={`isNullableArraySchema({ type: ['array', 'null'], items: { type: 'string' } }); // true
 isNullableArraySchema({ type: 'array' }); // false
 isNullableArraySchema({ type: ['object', 'null'] }); // false`}
@@ -38881,7 +39281,7 @@ isNullableBooleanSchema({ type: ['string', 'null'] }); // false
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/json-schema": "0.10.0" }}
+  dependencies={{ "@winglet/json-schema": "0.12.3" }}
   code={`isNullableBooleanSchema({ type: ['boolean', 'null'] }); // true
 isNullableBooleanSchema({ type: 'boolean' }); // false
 isNullableBooleanSchema({ type: ['string', 'null'] }); // false`}
@@ -38931,7 +39331,7 @@ isNullableNumberSchema({ type: ['string', 'null'] }); // false
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/json-schema": "0.10.0" }}
+  dependencies={{ "@winglet/json-schema": "0.12.3" }}
   code={`isNullableNumberSchema({ type: ['number', 'null'] }); // true
 isNullableNumberSchema({ type: ['integer', 'null'] }); // true
 isNullableNumberSchema({ type: 'number' }); // false
@@ -38981,7 +39381,7 @@ isNullableObjectSchema({ type: ['array', 'null'] }); // false
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/json-schema": "0.10.0" }}
+  dependencies={{ "@winglet/json-schema": "0.12.3" }}
   code={`isNullableObjectSchema({ type: ['object', 'null'], properties: {} }); // true
 isNullableObjectSchema({ type: 'object' }); // false
 isNullableObjectSchema({ type: ['array', 'null'] }); // false`}
@@ -39030,7 +39430,7 @@ isNullableStringSchema({ type: ['number', 'null'] }); // false
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/json-schema": "0.10.0" }}
+  dependencies={{ "@winglet/json-schema": "0.12.3" }}
   code={`isNullableStringSchema({ type: ['string', 'null'] }); // true
 isNullableStringSchema({ type: 'string' }); // false
 isNullableStringSchema({ type: ['number', 'null'] }); // false`}
@@ -39080,7 +39480,7 @@ isNumberSchema({ type: 'string' }); // false
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/json-schema": "0.10.0" }}
+  dependencies={{ "@winglet/json-schema": "0.12.3" }}
   code={`isNumberSchema({ type: 'number' }); // true
 isNumberSchema({ type: 'integer' }); // true
 isNumberSchema({ type: ['number', 'null'] }); // true
@@ -39130,7 +39530,7 @@ isObjectSchema({ type: 'array' }); // false
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/json-schema": "0.10.0" }}
+  dependencies={{ "@winglet/json-schema": "0.12.3" }}
   code={`isObjectSchema({ type: 'object', properties: { name: { type: 'string' } } }); // true
 isObjectSchema({ type: ['object', 'null'] }); // true
 isObjectSchema({ type: 'array' }); // false`}
@@ -39179,7 +39579,7 @@ isStringSchema({ type: 'number' }); // false
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/json-schema": "0.10.0" }}
+  dependencies={{ "@winglet/json-schema": "0.12.3" }}
   code={`isStringSchema({ type: 'string' }); // true
 isStringSchema({ type: ['string', 'null'] }); // true
 isStringSchema({ type: 'number' }); // false`}
@@ -39326,6 +39726,51 @@ The CLI resolves `@winglet/json-schema/package.json` via `createRequire`, reads 
 
 ---
 
+## DEFAULT_KEYWORDS
+
+<!-- sync-winglet-docs:auto -->
+
+import WingletPlayground from '@site/src/components/WingletPlayground';
+
+# DEFAULT_KEYWORDS
+
+The built-in traversal vocabulary. Order is significant — it fixes the order
+in which child subschemas are discovered (and therefore visited) and MUST NOT
+change, as it defines the scanner's observable traversal sequence.
+
+## Signature
+
+```typescript
+const DEFAULT_KEYWORDS: readonly KeywordDescriptor[]
+```
+
+---
+
+## EXTENDED_KEYWORDS
+
+<!-- sync-winglet-docs:auto -->
+
+import WingletPlayground from '@site/src/components/WingletPlayground';
+
+# EXTENDED_KEYWORDS
+
+Additional draft 2019-09 / 2020-12 applicator keywords that the built-in
+vocabulary intentionally does NOT traverse by default (to preserve existing
+observable behaviour). Pass via `options.additionalKeywords` to opt in:
+```ts
+new JsonSchemaScanner({ options: { additionalKeywords: EXTENDED_KEYWORDS } });
+```
+`dependencies` (draft-07, whose values may be either a schema or a string[])
+is deliberately excluded because its array form is not a subschema.
+
+## Signature
+
+```typescript
+const EXTENDED_KEYWORDS: readonly KeywordDescriptor[]
+```
+
+---
+
 ## JsonScannerOptions
 
 <!-- sync-winglet-docs:auto -->
@@ -39353,6 +39798,47 @@ interface JsonScannerOptions<Schema extends UnknownSchema = UnknownSchema, Conte
     ], Schema | undefined>;
     /** Maximum traversal depth */
     maxDepth?: number;
+    /**
+     * Whether to deep-clone the schema returned by `resolveReference` before
+     * inlining it into the traversal and the processed output.
+     *
+     * Defaults to `true`. Cloning isolates the resolved subtree so that
+     * (1) the original schema passed to `resolveReference` is never mutated,
+     * and (2) multiple occurrences of the same `$ref` do not become aliased
+     * in the processed output. Set to `false` only when the resolver already
+     * returns a freshly-owned object and the extra clone is pure overhead.
+     *
+     * @remarks
+     * Versions before this option existed behaved as if it were `false`: the
+     * resolved schema was assigned in place with no clone, so repeated
+     * occurrences of the same `$ref` shared one aliased object. The current
+     * default (`true`) deep-clones each resolved `$ref` instead; pass `false`
+     * to restore the previous aliased behavior.
+     */
+    cloneResolvedSchema?: boolean;
+    /**
+     * Whether to memoize `resolveReference` results per reference string.
+     *
+     * Defaults to `false` (each occurrence invokes the resolver). Enable to
+     * avoid redundant resolver calls (e.g. remote fetches) when the same
+     * reference appears multiple times. The raw resolver result is cached and
+     * cloned at inline time (see `cloneResolvedSchema`) so caching never
+     * introduces shared references into the output.
+     */
+    cacheResolvedReference?: boolean;
+    /**
+     * Extra applicator keywords to descend into, appended after the built-in
+     * vocabulary. Opt-in: descriptors are appended after the built-ins, and the
+     * two lists are merged by `keyword`. If a descriptor's `keyword` equals a
+     * built-in keyword (e.g. `properties`), the later (consumer) entry
+     * overrides the built-in's `kind` and ordering — do NOT reuse a built-in
+     * keyword name unless you intend to override it. Use the shared
+     * `EXTENDED_KEYWORDS` preset for draft 2019-09 / 2020-12 keywords
+     * (`patternProperties`, `propertyNames`, `contains`, `dependentSchemas`,
+     * `unevaluatedProperties`, …) or supply your own descriptors (e.g. vendor
+     * `x-*` keywords).
+     */
+    additionalKeywords?: KeywordDescriptor[];
     /** Context object passed to visitors and filters */
     context?: ContextType;
 }
@@ -39509,6 +39995,8 @@ console.log(`Found ${stats.stringFieldCount} string fields, ${stats.objectFieldC
 ### Built-in reference resolution utility
 
 ```typescript
+import { resolveReference } from '@winglet/json-schema';
+
 const schemaWithInternalRefs = {
   type: 'object',
   properties: {
@@ -39520,14 +40008,14 @@ const schemaWithInternalRefs = {
   }
 };
 
-// Automatically resolve all internal references
-const fullyResolvedSchema = JsonSchemaScanner.resolveReference(schemaWithInternalRefs);
+// Inline all internal $ref references in one call
+const fullyResolvedSchema = resolveReference(schemaWithInternalRefs);
 ```
 
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/json-schema": "0.10.0" }}
+  dependencies={{ "@winglet/json-schema": "0.12.3" }}
   code={`import { JsonSchemaScanner } from '@winglet/json-schema';
 
 const schema = {
@@ -39569,27 +40057,74 @@ const processedSchema = scanner.scan(schema).getValue();`}
 
 ## Notes
 
-**Processing Phases:**
-1. **Enter**: Initial node processing, filtering, and mutation
-2. **Reference**: $ref resolution and circular reference detection
-3. **ChildEntries**: Depth checking and child node discovery
-4. **Exit**: Final processing and cleanup
+**Traversal:** A single stack-based (non-recursive) depth-first pass driven by
+a shared generator core. Each node is visited once — filtering, mutation,
+`enter`, `$ref` resolution and child discovery are fused — and revisited once
+on exit only if it has children. The sync scanner runs the core to completion
+synchronously; the async scanner awaits callbacks that return thenables.
 
 **Key Features:**
 - **Circular Reference Detection**: Prevents infinite loops when schemas reference each other
 - **Lazy Reference Resolution**: References are resolved only when encountered
+- **Reference Isolation**: resolved subtrees are cloned at inline time
+  (`cloneResolvedSchema`, default `true`) so the original schema is never
+  mutated and repeated `$ref`s are never aliased in the output
 - **Schema Mutation**: Transform schemas during traversal
 - **Filtering**: Skip unwanted schema nodes
 - **Depth Limiting**: Control traversal depth for performance
-- **Result Caching**: Processed schemas are cached for efficiency
 
 **Performance Considerations:**
-- Uses stack-based traversal (not recursion) to handle deep schemas
-- Implements copy-on-write for mutations to minimize memory usage
-- Caches resolved references to avoid redundant processing
+- Stack-based traversal (not recursion) handles arbitrarily deep schemas
+- The processed schema is built once, on first `getValue`, and cached
+- Optional resolver memoization (`cacheResolvedReference`, default `false`)
+  avoids redundant resolver calls when the same reference appears repeatedly
 
 This scanner is ideal for complex schema analysis, transformation,
 documentation generation, form building, and validation preprocessing.
+
+---
+
+## KeywordDescriptor(Scanner)
+
+<!-- sync-winglet-docs:auto -->
+
+import WingletPlayground from '@site/src/components/WingletPlayground';
+
+# KeywordDescriptor
+
+A single entry in the traversal vocabulary: which keyword to descend into and how.
+
+## Signature
+
+```typescript
+interface KeywordDescriptor {
+    keyword: string;
+    kind: KeywordKind;
+}
+```
+
+---
+
+## KeywordKind(Scanner)
+
+<!-- sync-winglet-docs:auto -->
+
+import WingletPlayground from '@site/src/components/WingletPlayground';
+
+# KeywordKind
+
+How a keyword's value maps to child subschemas during traversal.
+- `schema`     — single subschema (`not`, `if`, `additionalProperties`, …).
+- `schemaList` — array of subschemas (`allOf`, …); `variant` is the index.
+- `schemaMap`  — record of subschemas keyed by name (`$defs`, `patternProperties`, …).
+- `objectMap`  — like `schemaMap` but the key contributes an (escaped) `dataPath` segment (`properties`).
+- `items`      — tuple (array, each child adds its index to `dataPath`) or single subschema (`items`, `prefixItems`).
+
+## Signature
+
+```typescript
+export type KeywordKind = 'schema' | 'schemaList' | 'schemaMap' | 'objectMap' | 'items'
+```
 
 ---
 
@@ -39615,6 +40150,13 @@ export type SchemaEntry<Schema extends UnknownSchema = UnknownSchema> = {
     depth: number;
     /** Whether there is a reference */
     hasReference?: boolean;
+    /**
+     * When `hasReference` is `true`, why the `$ref` was left in place instead of
+     * being inlined: `'cycle'` (already being resolved on the current path),
+     * `'unresolved'` (resolver returned nothing), or `'definition'` (the node
+     * lives under `$defs`/`definitions`, so it is intentionally not resolved).
+     */
+    referenceSkipped?: 'cycle' | 'unresolved' | 'definition';
     /** Processed reference path */
     referencePath?: string;
     /** Whether reference is resolved */
@@ -39730,7 +40272,7 @@ if (isClassComponent<Props>(someComponent)) {
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/react-utils": "0.10.0" }}
+  dependencies={{ "@winglet/react-utils": "0.12.2" }}
   code={`import React, { Component } from 'react';
 import { isClassComponent } from '@winglet/react-utils';
 
@@ -39846,7 +40388,7 @@ if (isFunctionComponent<Props>(someComponent)) {
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/react-utils": "0.10.0" }}
+  dependencies={{ "@winglet/react-utils": "0.12.2" }}
   code={`import React, { Component, forwardRef } from 'react';
 import { isFunctionComponent } from '@winglet/react-utils';
 
@@ -39980,7 +40522,7 @@ if (isMemoComponent<ComponentProps>(someComponent)) {
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/react-utils": "0.10.0" }}
+  dependencies={{ "@winglet/react-utils": "0.12.2" }}
   code={`import React, { memo, Component } from 'react';
 import { isMemoComponent } from '@winglet/react-utils';
 
@@ -40128,7 +40670,7 @@ function registerComponents(components: Record<string, unknown>): ComponentRegis
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/react-utils": "0.10.0" }}
+  dependencies={{ "@winglet/react-utils": "0.12.2" }}
   code={`import React, { Component, memo, forwardRef } from 'react';
 import { isReactComponent } from '@winglet/react-utils';
 
@@ -40247,7 +40789,7 @@ const [filters, setFilters] = useState(defaultFilters);
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/react-utils": "0.10.0" }}
+  dependencies={{ "@winglet/react-utils": "0.12.2" }}
   code={`// Stable object reference for React.memo optimization
 const EmptyState = React.memo(({ config }) => { ... });
 const Parent = () => {
@@ -40389,7 +40931,7 @@ useEffectUntil(() => {
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/react-utils": "0.10.0" }}
+  dependencies={{ "@winglet/react-utils": "0.12.2" }}
   code={`// Keep trying to connect until successful
 useEffectUntil(() => {
   const socket = connectToWebSocket();
@@ -40519,7 +41061,7 @@ const safeHandler = useHandle(props.onComplete);
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/react-utils": "0.10.0" }}
+  dependencies={{ "@winglet/react-utils": "0.12.2" }}
   code={`// Problem: Stale closure in interval
 const [count, setCount] = useState(0);
 useEffect(() => {
@@ -40646,7 +41188,7 @@ useLayoutEffectUntil(() => {
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/react-utils": "0.10.0" }}
+  dependencies={{ "@winglet/react-utils": "0.12.2" }}
   code={`// Measure and adjust layout until it fits
 useLayoutEffectUntil(() => {
   const element = ref.current;
@@ -40684,6 +41226,113 @@ useLayoutEffectUntil(() => {
   return true; // Initialization complete
 }, []);`}
 />
+
+---
+
+## useLazyConstant
+
+<!-- sync-winglet-docs:auto -->
+
+import WingletPlayground from '@site/src/components/WingletPlayground';
+
+# useLazyConstant
+
+Lazily creates a value exactly once per component instance, with guaranteed
+referential identity for the component's entire lifecycle.
+The factory runs on the initial render only, and the produced value is held
+in React state — never replaced, because no setter is ever called. Unlike a
+`useMemo` cache, React state is part of the instance itself and is never
+"forgotten": the React docs explicitly reserve the right to discard memoized
+values and recompute them (e.g. to free memory for offscreen components), so
+`useMemo` is a performance hint, not a semantic guarantee. Reach for this
+hook when re-running the factory would be a correctness bug, not merely
+wasted work.
+### Key Differences from Related Hooks
+- Unlike `useConstant`, the value is produced by a factory that runs once —
+`useConstant(expr)` evaluates `expr` eagerly on every render and merely
+keeps the first result
+- Unlike `useMemorize`/`useMemo`, the value is guaranteed never to be
+recomputed — a memo cache may be dropped by React at any time
+- Unlike `useTruthyConstant`, the factory runs exactly once even when it
+returns a falsy value (`null`, `false`, `0`) — no retry on later renders
+### Use Cases
+- **Resource-owning instances**: managers, observers, stores or emitters
+whose identity must never change mid-life (consumers close over them and
+effects manage their lifecycle)
+- **Mount-frozen configuration**: capture a prop once at mount and
+intentionally ignore later changes, without `exhaustive-deps` friction
+- **Stable context values**: provider values that must keep one identity for
+the provider's lifetime
+
+## Signature
+
+```typescript
+const useLazyConstant: <Type>(factory: Fn<[], Type>) => Type
+```
+
+## Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `factory` | `-` | Executed once on the initial render to produce the value |
+
+## Returns
+
+The value produced by the factory, referentially stable for the component's lifetime
+
+## Examples
+
+### Example 1
+
+```typescript
+// A lifecycle-managed coordinator that must keep one identity
+const Provider = ({ options, children }: Props) => {
+  const contextValue = useLazyConstant(() => ({
+    manager: Manager.create(options), // read once at mount, by design
+  }));
+  const { manager } = contextValue;
+  useEffect(() => {
+    if (manager === null) return;
+    return () => manager.dispose();
+  }, [manager]);
+  return <Context.Provider value={contextValue}>{children}</Context.Provider>;
+};
+
+// Exactly-once evaluation even for falsy results
+const detection = useLazyConstant(() =>
+  typeof IntersectionObserver === 'undefined' ? null : createDetector(),
+); // stays null forever; never re-detected on later renders
+```
+
+## Playground
+
+<WingletPlayground
+  dependencies={{ "@winglet/react-utils": "0.12.2" }}
+  code={`// A lifecycle-managed coordinator that must keep one identity
+const Provider = ({ options, children }: Props) => {
+  const contextValue = useLazyConstant(() => ({
+    manager: Manager.create(options), // read once at mount, by design
+  }));
+  const { manager } = contextValue;
+  useEffect(() => {
+    if (manager === null) return;
+    return () => manager.dispose();
+  }, [manager]);
+  return <Context.Provider value={contextValue}>{children}</Context.Provider>;
+};
+
+// Exactly-once evaluation even for falsy results
+const detection = useLazyConstant(() =>
+  typeof IntersectionObserver === 'undefined' ? null : createDetector(),
+); // stays null forever; never re-detected on later renders`}
+/>
+
+## Notes
+
+In StrictMode (dev) the factory may be invoked twice for the
+         discarded double-render, and only one result is committed — keep
+         factories free of external side effects (allocate real resources
+         lazily inside the produced instance instead).
 
 ---
 
@@ -40764,7 +41413,7 @@ const result = useMemorize(() => {
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/react-utils": "0.10.0" }}
+  dependencies={{ "@winglet/react-utils": "0.12.2" }}
   code={`// Direct value memoization with dependencies
 const config = useMemorize({ theme, locale, apiUrl }, [theme, locale, apiUrl]);
 // Only creates new object when theme, locale, or apiUrl changes
@@ -40883,7 +41532,7 @@ useOnMount(() => {
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/react-utils": "0.10.0" }}
+  dependencies={{ "@winglet/react-utils": "0.12.2" }}
   code={`// Simple initialization
 useOnMount(() => {
   console.log('Component mounted!');
@@ -41025,7 +41674,7 @@ useOnMountLayout(() => {
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/react-utils": "0.10.0" }}
+  dependencies={{ "@winglet/react-utils": "0.12.2" }}
   code={`// Prevent layout shift by measuring before paint
 useOnMountLayout(() => {
   const element = containerRef.current;
@@ -41200,7 +41849,7 @@ useOnUnmount(() => {
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/react-utils": "0.10.0" }}
+  dependencies={{ "@winglet/react-utils": "0.12.2" }}
   code={`// ❌ Problematic: captures stale state
 const [count, setCount] = useState(0);
 useOnUnmount(() => {
@@ -41431,7 +42080,7 @@ useOnUnmountLayout(() => {
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/react-utils": "0.10.0" }}
+  dependencies={{ "@winglet/react-utils": "0.12.2" }}
   code={`// Portal cleanup to prevent layout shift
 const portalRoot = useRef<HTMLDivElement>();
 
@@ -41642,7 +42291,7 @@ useImperativeHandle(ref, () => ({
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/react-utils": "0.10.0" }}
+  dependencies={{ "@winglet/react-utils": "0.12.2" }}
   code={`// Problem: Stale state in async callback
 const [count, setCount] = useState(0);
 const handleAsync = useCallback(async () => {
@@ -41862,7 +42511,7 @@ const withErrorBoundary = (Component) => {
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/react-utils": "0.10.0" }}
+  dependencies={{ "@winglet/react-utils": "0.12.2" }}
   code={`// ❌ Problem: New object on every render
 const ExpensiveChild = React.memo(({ config }) => {
   return Renders on every parent update;
@@ -42171,7 +42820,7 @@ const TodoList = ({ todos, filters }) => {
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/react-utils": "0.10.0" }}
+  dependencies={{ "@winglet/react-utils": "0.12.2" }}
   code={`// ❌ Problem: Effect runs on every render despite identical content
 const MyComponent = ({ userData }) => {
   const config = { theme: userData.theme, locale: userData.locale };
@@ -42538,7 +43187,7 @@ const AutoSaver = ({ formData, onSave }) => {
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/react-utils": "0.10.0" }}
+  dependencies={{ "@winglet/react-utils": "0.12.2" }}
   code={`// ❌ Problem: Callback recreated on every render
 const DataProcessor = ({ complexData, onProcess }) => {
   const processData = useCallback(() => {
@@ -42836,7 +43485,7 @@ const handleUserInput = () => {
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/react-utils": "0.10.0" }}
+  dependencies={{ "@winglet/react-utils": "0.12.2" }}
   code={`// Auto-dismiss notification
 const Notification = ({ message, duration = 3000 }) => {
   const { schedule, cancel } = useTimeout(() => {
@@ -43191,7 +43840,7 @@ const AdvancedChart = ({ data, options }) => {
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/react-utils": "0.10.0" }}
+  dependencies={{ "@winglet/react-utils": "0.12.2" }}
   code={`// ❌ Eager initialization - always runs on mount
 const EagerComponent = () => {
   const heavyData = useConstant(() => {
@@ -43684,7 +44333,7 @@ const ErrorRecoveryComponent = () => {
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/react-utils": "0.10.0" }}
+  dependencies={{ "@winglet/react-utils": "0.12.2" }}
   code={`// Basic manual refresh functionality
 const DataList = () => {
   const [renderCount, refresh] = useVersion();
@@ -44204,7 +44853,7 @@ const ConditionalFeatures = () => {
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/react-utils": "0.10.0" }}
+  dependencies={{ "@winglet/react-utils": "0.12.2" }}
   code={`// Basic responsive layout switching
 const ResponsiveLayout = () => {
   const { width, height } = useWindowSize();
@@ -44831,7 +45480,7 @@ destroyScope('my-scope');
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/style-utils": "0.10.0" }}
+  dependencies={{ "@winglet/style-utils": "0.12.2" }}
   code={`// Create and use a style scope
 const addStyle = styleManagerFactory('my-scope');
 const removeStyle = addStyle('button-style', '.button { color: red; }');
@@ -44921,7 +45570,7 @@ cleanupFns.forEach(cleanup => cleanup());
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/style-utils": "0.10.0" }}
+  dependencies={{ "@winglet/style-utils": "0.12.2" }}
   code={`// Create a style manager for a specific component scope
 const addStyle = styleManagerFactory('header-component');
 
@@ -45010,7 +45659,7 @@ compressCss('') // Returns: ''
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/style-utils": "0.10.0" }}
+  dependencies={{ "@winglet/style-utils": "0.12.2" }}
   code={`Basic CSS compression:
 compressCss('.class { color: red; background: blue; }')
 // Returns: '.class{color:red;background:blue}'
@@ -45094,7 +45743,7 @@ cx('btn', { primary: true }, ['large'], null, 'active') // 'btn primary large ac
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/style-utils": "0.10.0" }}
+  dependencies={{ "@winglet/style-utils": "0.12.2" }}
   code={`// String and number inputs
 cx('btn', 'primary') // 'btn primary'
 cx('btn', 123) // 'btn 123'
@@ -45166,7 +45815,7 @@ cxLite('item', 123, 'selected') // 'item 123 selected'
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/style-utils": "0.10.0" }}
+  dependencies={{ "@winglet/style-utils": "0.12.2" }}
   code={`// Basic string concatenation
 cxLite('btn', 'primary') // 'btn primary'
 cxLite('btn', 'primary', 'large') // 'btn primary large'
