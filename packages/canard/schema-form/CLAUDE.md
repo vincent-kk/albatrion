@@ -47,6 +47,10 @@ npx -p @slats/claude-assets-sync inject-claude-settings --package=@canard/schema
 - UI 컴포넌트 플러그인: `FormGroup`, `FormLabel`, `FormInput`, `FormError`
 - FormTypeInput 플러그인: 커스텀 입력 컴포넌트
 
+### Error Isolation (user-injected render surfaces)
+
+사용자 주입 컴포넌트(FormTypeRenderer/FormTypeInput, virtualization `Placeholder` 등)는 반드시 `@winglet/react-utils/hoc`의 `withErrorBoundary`로 감싼다 — 하나가 렌더 중 throw해도 폼 전체가 아니라 그 서브트리만 fallback으로 격리된다. 래핑은 **컴포넌트를 해석·소유하는 지점에서 1회**만: 렌더러는 `SchemaNodeProxy`/`SchemaNodeInputWrapper`가 `memo(withErrorBoundary(...))`로, `Placeholder`는 `VirtualizationManager` 생성자가 form당 1회 래핑해 모든 지연 필드가 동일 인스턴스를 공유한다. 소비처(개별 렌더 위치)마다 반복 래핑하지 말 것. (`helpers/virtualization`는 이 `Placeholder` 방어만 React 예외로 허용 — INTENT.md 참조.)
+
 ### Key APIs
 
 - `Form` — 메인 진입점
