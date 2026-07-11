@@ -1,0 +1,50 @@
+{
+  "ts": "2026-07-11T08-06-41-575Z",
+  "samples": 3,
+  "rows": [
+    {
+      "size": 50,
+      "mode": "baseline",
+      "commitMed": -1,
+      "commitP95": -1,
+      "layoutMed": 0,
+      "mountMed": 4.800000000745058,
+      "inputs": 50,
+      "deferred": 0,
+      "domNodes": 153
+    },
+    {
+      "size": 50,
+      "mode": "virtualized",
+      "commitMed": -1,
+      "commitP95": -1,
+      "layoutMed": 0.2000000011175871,
+      "mountMed": 2.400000000372529,
+      "inputs": 20,
+      "deferred": 30,
+      "domNodes": 93
+    },
+    {
+      "size": 500,
+      "mode": "baseline",
+      "commitMed": -1,
+      "commitP95": -1,
+      "layoutMed": 0,
+      "mountMed": 29.100000001490116,
+      "inputs": 500,
+      "deferred": 0,
+      "domNodes": 1503
+    },
+    {
+      "size": 500,
+      "mode": "virtualized",
+      "commitMed": -1,
+      "commitP95": -1,
+      "layoutMed": 0,
+      "mountMed": 8.099999999627471,
+      "inputs": 20,
+      "deferred": 480,
+      "domNodes": 543
+    }
+  ]
+}

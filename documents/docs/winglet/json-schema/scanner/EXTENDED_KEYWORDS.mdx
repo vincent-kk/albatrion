@@ -1,0 +1,24 @@
+---
+title: 'EXTENDED_KEYWORDS'
+sidebar_label: 'EXTENDED_KEYWORDS'
+---
+<!-- sync-winglet-docs:auto -->
+
+import WingletPlayground from '@site/src/components/WingletPlayground';
+
+# EXTENDED_KEYWORDS
+
+Additional draft 2019-09 / 2020-12 applicator keywords that the built-in
+vocabulary intentionally does NOT traverse by default (to preserve existing
+observable behaviour). Pass via `options.additionalKeywords` to opt in:
+```ts
+new JsonSchemaScanner({ options: { additionalKeywords: EXTENDED_KEYWORDS } });
+```
+`dependencies` (draft-07, whose values may be either a schema or a string[])
+is deliberately excluded because its array form is not a subschema.
+
+## Signature
+
+```typescript
+const EXTENDED_KEYWORDS: readonly KeywordDescriptor[]
+```

@@ -84,6 +84,7 @@ Various custom hooks that extend React functionality.
 #### State Management and References
 
 - [`useConstant`](./src/hooks/useConstant.ts) - Provides constant values that do not change during the component lifecycle.
+- [`useLazyConstant`](./src/hooks/useLazyConstant.ts) - Runs a factory exactly once per component instance with guaranteed referential identity (unlike a `useMemo` cache, never recomputed).
 - [`useMemorize`](./src/hooks/useMemorize.ts) - Provides values that are recalculated only when specific dependency arrays change.
 - [`useReference`](./src/hooks/useReference.ts) - Manages reference objects.
 - [`useSnapshot`](./src/hooks/useSnapshot.ts) - Creates and manages snapshots of values.

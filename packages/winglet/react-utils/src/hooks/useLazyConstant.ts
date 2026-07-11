@@ -1,0 +1,68 @@
+import { useState } from 'react';
+
+import type { Fn } from '@aileron/declare';
+
+/**
+ * Lazily creates a value exactly once per component instance, with guaranteed
+ * referential identity for the component's entire lifecycle.
+ *
+ * The factory runs on the initial render only, and the produced value is held
+ * in React state — never replaced, because no setter is ever called. Unlike a
+ * `useMemo` cache, React state is part of the instance itself and is never
+ * "forgotten": the React docs explicitly reserve the right to discard memoized
+ * values and recompute them (e.g. to free memory for offscreen components), so
+ * `useMemo` is a performance hint, not a semantic guarantee. Reach for this
+ * hook when re-running the factory would be a correctness bug, not merely
+ * wasted work.
+ *
+ * ### Key Differences from Related Hooks
+ * - Unlike `useConstant`, the value is produced by a factory that runs once —
+ *   `useConstant(expr)` evaluates `expr` eagerly on every render and merely
+ *   keeps the first result
+ * - Unlike `useMemorize`/`useMemo`, the value is guaranteed never to be
+ *   recomputed — a memo cache may be dropped by React at any time
+ * - Unlike `useTruthyConstant`, the factory runs exactly once even when it
+ *   returns a falsy value (`null`, `false`, `0`) — no retry on later renders
+ *
+ * ### Use Cases
+ * - **Resource-owning instances**: managers, observers, stores or emitters
+ *   whose identity must never change mid-life (consumers close over them and
+ *   effects manage their lifecycle)
+ * - **Mount-frozen configuration**: capture a prop once at mount and
+ *   intentionally ignore later changes, without `exhaustive-deps` friction
+ * - **Stable context values**: provider values that must keep one identity for
+ *   the provider's lifetime
+ *
+ * @remarks In StrictMode (dev) the factory may be invoked twice for the
+ *          discarded double-render, and only one result is committed — keep
+ *          factories free of external side effects (allocate real resources
+ *          lazily inside the produced instance instead).
+ *
+ * @example
+ * ```tsx
+ * // A lifecycle-managed coordinator that must keep one identity
+ * const Provider = ({ options, children }: Props) => {
+ *   const contextValue = useLazyConstant(() => ({
+ *     manager: Manager.create(options), // read once at mount, by design
+ *   }));
+ *   const { manager } = contextValue;
+ *   useEffect(() => {
+ *     if (manager === null) return;
+ *     return () => manager.dispose();
+ *   }, [manager]);
+ *   return <Context.Provider value={contextValue}>{children}</Context.Provider>;
+ * };
+ *
+ * // Exactly-once evaluation even for falsy results
+ * const detection = useLazyConstant(() =>
+ *   typeof IntersectionObserver === 'undefined' ? null : createDetector(),
+ * ); // stays null forever; never re-detected on later renders
+ * ```
+ *
+ * @typeParam Type - The type of the value produced by the factory
+ * @param factory - Executed once on the initial render to produce the value
+ * @returns The value produced by the factory, referentially stable for the
+ *          component's lifetime
+ */
+export const useLazyConstant = <Type>(factory: Fn<[], Type>): Type =>
+  useState(factory)[0];

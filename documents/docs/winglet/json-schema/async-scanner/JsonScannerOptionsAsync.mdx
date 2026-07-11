@@ -11,7 +11,18 @@ import WingletPlayground from '@site/src/components/WingletPlayground';
 ## Signature
 
 ```typescript
-interface JsonScannerOptionsAsync<Schema extends UnknownSchema = UnknownSchema, ContextType = void> extends Omit<JsonScannerOptions<Schema, ContextType>, 'resolveReference'> {
+interface JsonScannerOptionsAsync<Schema extends UnknownSchema = UnknownSchema, ContextType = void> extends Omit<JsonScannerOptions<Schema, ContextType>, 'filter' | 'mutate' | 'resolveReference'> {
+    /** Schema node filtering function (may be async) */
+    filter?: Fn<[
+        entry: SchemaEntry<Schema>,
+        context?: ContextType
+    ], boolean | Promise<boolean>>;
+    /** Function to mutate schema (may be async) */
+    mutate?: Fn<[
+        entry: SchemaEntry<Schema>,
+        context?: ContextType
+    ], Schema | void | Promise<Schema | void>>;
+    /** Function to resolve $ref references (may be async) */
     resolveReference?: Fn<[
         reference: string,
         entry: SchemaEntry<Schema>,

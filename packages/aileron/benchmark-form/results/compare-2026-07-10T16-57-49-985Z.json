@@ -1,0 +1,190 @@
+{
+  "timestamp": "2026-07-10T16-57-49-985Z",
+  "sizes": [
+    50,
+    100,
+    500
+  ],
+  "results": [
+    {
+      "name": "@canard/schema-form",
+      "fieldCount": 50,
+      "mountMs": 11.416750000000093,
+      "mountRenders": 50,
+      "keystrokeMs": 1.1544156250000015,
+      "keystrokeRenders": 1,
+      "setValueMs": 1.2036333500000012,
+      "setValueRenders": 1
+    },
+    {
+      "name": "@canard/schema-form (virtualized)",
+      "fieldCount": 50,
+      "mountMs": 8.329124999999976,
+      "mountRenders": 20,
+      "keystrokeMs": 1.2136124999999993,
+      "keystrokeRenders": 1,
+      "setValueMs": 1.2163354249999998,
+      "setValueRenders": 1
+    },
+    {
+      "name": "@rjsf/core",
+      "fieldCount": 50,
+      "mountMs": 6.078499999999963,
+      "mountRenders": 50,
+      "keystrokeMs": 1.270132300000003,
+      "keystrokeRenders": 1,
+      "setValueMs": 1.1324197749999996,
+      "setValueRenders": 1
+    },
+    {
+      "name": "react-hook-form",
+      "fieldCount": 50,
+      "mountMs": 3.4175420000001395,
+      "mountRenders": 50,
+      "keystrokeMs": 1.232030199999997,
+      "keystrokeRenders": 0,
+      "setValueMs": 1.1608228999999994,
+      "setValueRenders": 0
+    },
+    {
+      "name": "formik",
+      "fieldCount": 50,
+      "mountMs": 3.364708999999948,
+      "mountRenders": 50,
+      "keystrokeMs": 1.1845583500000032,
+      "keystrokeRenders": 50,
+      "setValueMs": 1.2084822750000002,
+      "setValueRenders": 50
+    },
+    {
+      "name": "@tanstack/react-form",
+      "fieldCount": 50,
+      "mountMs": 5.167707999999948,
+      "mountRenders": 50,
+      "keystrokeMs": 1.4427031250000026,
+      "keystrokeRenders": 1,
+      "setValueMs": 1.2605156249999994,
+      "setValueRenders": 1
+    },
+    {
+      "name": "@canard/schema-form",
+      "fieldCount": 100,
+      "mountMs": 13.053542000000107,
+      "mountRenders": 100,
+      "keystrokeMs": 1.2858260499999972,
+      "keystrokeRenders": 1,
+      "setValueMs": 1.20938855,
+      "setValueRenders": 1
+    },
+    {
+      "name": "@canard/schema-form (virtualized)",
+      "fieldCount": 100,
+      "mountMs": 9.36649999999986,
+      "mountRenders": 20,
+      "keystrokeMs": 1.190885400000002,
+      "keystrokeRenders": 1,
+      "setValueMs": 1.2122489500000029,
+      "setValueRenders": 1
+    },
+    {
+      "name": "@rjsf/core",
+      "fieldCount": 100,
+      "mountMs": 8.256875000000036,
+      "mountRenders": 100,
+      "keystrokeMs": 1.3991156250000016,
+      "keystrokeRenders": 1,
+      "setValueMs": 1.2211051999999996,
+      "setValueRenders": 1
+    },
+    {
+      "name": "react-hook-form",
+      "fieldCount": 100,
+      "mountMs": 3.9313340000001062,
+      "mountRenders": 100,
+      "keystrokeMs": 1.2409312499999998,
+      "keystrokeRenders": 0,
+      "setValueMs": 1.1466041749999931,
+      "setValueRenders": 0
+    },
+    {
+      "name": "formik",
+      "fieldCount": 100,
+      "mountMs": 3.558082999999897,
+      "mountRenders": 100,
+      "keystrokeMs": 1.4155656249999993,
+      "keystrokeRenders": 100,
+      "setValueMs": 1.2394364500000052,
+      "setValueRenders": 100
+    },
+    {
+      "name": "@tanstack/react-form",
+      "fieldCount": 100,
+      "mountMs": 7.1342500000000655,
+      "mountRenders": 100,
+      "keystrokeMs": 1.5933198000000062,
+      "keystrokeRenders": 1,
+      "setValueMs": 1.4343322999999941,
+      "setValueRenders": 1
+    },
+    {
+      "name": "@canard/schema-form",
+      "fieldCount": 500,
+      "mountMs": 51.15341600000011,
+      "mountRenders": 500,
+      "keystrokeMs": 1.8153687500000046,
+      "keystrokeRenders": 1,
+      "setValueMs": 1.1668687500000032,
+      "setValueRenders": 1
+    },
+    {
+      "name": "@canard/schema-form (virtualized)",
+      "fieldCount": 500,
+      "mountMs": 19.81304199999977,
+      "mountRenders": 20,
+      "keystrokeMs": 1.344709375000002,
+      "keystrokeRenders": 1,
+      "setValueMs": 1.1708166750000033,
+      "setValueRenders": 1
+    },
+    {
+      "name": "@rjsf/core",
+      "fieldCount": 500,
+      "mountMs": 30.809707999999773,
+      "mountRenders": 500,
+      "keystrokeMs": 7.5717728999999965,
+      "keystrokeRenders": 1,
+      "setValueMs": 5.110675000000003,
+      "setValueRenders": 1
+    },
+    {
+      "name": "react-hook-form",
+      "fieldCount": 500,
+      "mountMs": 11.271292000000358,
+      "mountRenders": 500,
+      "keystrokeMs": 1.3143208250000042,
+      "keystrokeRenders": 0,
+      "setValueMs": 1.2143364499999962,
+      "setValueRenders": 0
+    },
+    {
+      "name": "formik",
+      "fieldCount": 500,
+      "mountMs": 11.030749999999898,
+      "mountRenders": 500,
+      "keystrokeMs": 4.257911449999995,
+      "keystrokeRenders": 500,
+      "setValueMs": 3.9831291499999906,
+      "setValueRenders": 500
+    },
+    {
+      "name": "@tanstack/react-form",
+      "fieldCount": 500,
+      "mountMs": 136.37954199999967,
+      "mountRenders": 500,
+      "keystrokeMs": 3.685374999999999,
+      "keystrokeRenders": 1,
+      "setValueMs": 3.3838531250000186,
+      "setValueRenders": 1
+    }
+  ]
+}

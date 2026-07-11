@@ -19,7 +19,7 @@
 - TypeScript + React 18+, Generic 타입 파라미터(`Schema`, `Value`) 사용
 - `Form` = `BaseForm` + `{ Render, Group, Label, Input, Error }` 네임스페이스
 - `FormHandle` ref로 명령형 API 제공: `focus`, `select`, `reset`, `validate`, `submit`, `setValue`, `getValue`, `getErrors`, `getAttachedFilesMap`
-- Provider 중첩 순서: `WorkspaceContext → FormTypeInputsContext → FormTypeRendererContext → InputControlContext → RootNodeContext → FormRootProxy`
+- Provider 중첩 순서: `WorkspaceContext → FormTypeInputsContext → FormTypeRendererContext → InputControlContext → VirtualizationContext → RootNodeContext → FormRootProxy`
 - `children`은 ReactNode 또는 `(props: FormChildrenProps) => ReactNode` 렌더 함수 모두 지원 — 함수형은 `FormChildrenRenderer`가 트래커(`useSchemaNodeTracker`)로 재실행 구동
 - `ValidationError`는 submit 시 검증 실패 전용 에러 클래스
 
@@ -35,8 +35,7 @@
 ### Ask first
 
 - Provider 중첩 순서 또는 컨텍스트 구성 변경 시
-- `FormHandle` 인터페이스에 새 메서드 추가 시
-- `FormProps`에 새 공개 prop 추가 시
+- `FormHandle` 새 메서드 또는 `FormProps` 새 공개 prop 추가 시
 
 ### Never do
 
@@ -46,5 +45,5 @@
 
 ## Dependencies
 
-- 내부: `@/schema-form/providers`(5개 Provider + `useRootNodeContext`), `@/schema-form/core`(`SchemaNode`, `NodeEventType`, `InferSchemaNode`), `@/schema-form/hooks`(`useSchemaNodeTracker`), `@/schema-form/errors`(`ValidationError`), `@/schema-form/helpers/jsonSchema`(`preprocessSchema`), `@/schema-form/helpers/error`(`formatSchemaValidationFailedError`)
-- 외부: `@winglet/react-utils/hoc`(`withErrorBoundaryForwardRef`), `@winglet/react-utils/hook`(`useHandle`·`useMemorize`·`useVersion`), `@winglet/common-utils/function`(`getTrackableHandler`)
+- 내부: `@/schema-form/providers`(6개 Provider + `useRootNodeContext`), `@/schema-form/core`(`SchemaNode`, `NodeEventType`, `InferSchemaNode`), `@/schema-form/hooks`(`useSchemaNodeTracker`), `@/schema-form/errors`(`ValidationError`), `@/schema-form/helpers/jsonSchema`(`preprocessSchema`), `@/schema-form/helpers/error`(`formatSchemaValidationFailedError`)
+- 외부: `@winglet/react-utils/hoc`(`withErrorBoundaryForwardRef`), `@winglet/react-utils/hook`(`useHandle`·`useLazyConstant`·`useMemorize`·`useVersion`), `@winglet/common-utils/function`(`getTrackableHandler`)

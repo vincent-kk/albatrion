@@ -10,6 +10,7 @@ import type {
   ValidationMode,
 } from '@/schema-form/core';
 import type { NodeStateFlags } from '@/schema-form/core/nodes';
+import type { VirtualizationOptions } from '@/schema-form/helpers/virtualization';
 import type {
   AllowedValue,
   AttachedFilesMap,
@@ -83,6 +84,19 @@ export interface FormProps<
   validationMode?: ValidationMode;
   /** Externally declared ValidatorFactory, creates internally if not provided */
   validatorFactory?: ValidatorFactory;
+  /**
+   * Render-level virtualization (deferred mount) for large forms (default: off)
+   *  - `true`: Enable with default options
+   *  - `VirtualizationOptions`: Enable with custom options
+   *  - Off-screen fields render as lightweight placeholders and mount when they
+   *    approach the viewport, on browser idle time, or on focus/select commands
+   *  - The node tree is always fully built; values, validation and submit are unaffected
+   *  - Client-side rendering only. Requires IntersectionObserver and is silently
+   *    disabled when it is unavailable. Do NOT enable it in SSR/hydration apps:
+   *    the server renders all fields while the client gates them, causing a
+   *    hydration mismatch.
+   */
+  virtualization?: boolean | VirtualizationOptions;
   /** User-defined context */
   context?: Dictionary;
   /** Child components */

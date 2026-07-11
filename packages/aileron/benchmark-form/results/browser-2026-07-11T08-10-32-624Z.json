@@ -1,0 +1,60 @@
+{
+  "ts": "2026-07-11T08-10-32-624Z",
+  "samples": 20,
+  "rows": [
+    {
+      "size": 50,
+      "mode": "baseline",
+      "mountMed": 2.599999999627471,
+      "mountP95": 3.800000000745058,
+      "inputs": 50,
+      "deferred": 0,
+      "domNodes": 153
+    },
+    {
+      "size": 50,
+      "mode": "virtualized",
+      "mountMed": 1.5,
+      "mountP95": 7.199999999254942,
+      "inputs": 20,
+      "deferred": 30,
+      "domNodes": 93
+    },
+    {
+      "size": 100,
+      "mode": "baseline",
+      "mountMed": 4.25,
+      "mountP95": 5.200000001117587,
+      "inputs": 100,
+      "deferred": 0,
+      "domNodes": 303
+    },
+    {
+      "size": 100,
+      "mode": "virtualized",
+      "mountMed": 1.8999999994412065,
+      "mountP95": 7.5,
+      "inputs": 20,
+      "deferred": 80,
+      "domNodes": 143
+    },
+    {
+      "size": 500,
+      "mode": "baseline",
+      "mountMed": 21.999999999068677,
+      "mountP95": 24.09999999962747,
+      "inputs": 500,
+      "deferred": 0,
+      "domNodes": 1503
+    },
+    {
+      "size": 500,
+      "mode": "virtualized",
+      "mountMed": 7.5,
+      "mountP95": 270.2999999988824,
+      "inputs": 20,
+      "deferred": 480,
+      "domNodes": 543
+    }
+  ]
+}

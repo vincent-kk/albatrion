@@ -3,6 +3,7 @@ export { useDebounce } from './useDebounce';
 export { useEffectUntil } from './useEffectUntil';
 export { useLayoutEffectUntil } from './useLayoutEffectUntil';
 export { useHandle } from './useHandle';
+export { useLazyConstant } from './useLazyConstant';
 export { useMemorize } from './useMemorize';
 export { useOnMount } from './useOnMount';
 export { useOnMountLayout } from './useOnMountLayout';

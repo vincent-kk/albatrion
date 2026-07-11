@@ -22,6 +22,13 @@ export {
 
 export { JSONPointer } from './helpers/jsonPointer';
 
+export { VirtualizationBackfill } from './helpers/virtualization';
+export type {
+  VirtualizationOptions,
+  VirtualizationPlaceholderProps,
+  VirtualizationRootMargin,
+} from './helpers/virtualization';
+
 export {
   type SchemaNode,
   type ArrayNode,

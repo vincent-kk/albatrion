@@ -1,0 +1,19 @@
+---
+title: 'DEFAULT_KEYWORDS'
+sidebar_label: 'DEFAULT_KEYWORDS'
+---
+<!-- sync-winglet-docs:auto -->
+
+import WingletPlayground from '@site/src/components/WingletPlayground';
+
+# DEFAULT_KEYWORDS
+
+The built-in traversal vocabulary. Order is significant — it fixes the order
+in which child subschemas are discovered (and therefore visited) and MUST NOT
+change, as it defines the scanner's observable traversal sequence.
+
+## Signature
+
+```typescript
+const DEFAULT_KEYWORDS: readonly KeywordDescriptor[]
+```

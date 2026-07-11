@@ -14,7 +14,12 @@ import {
 import { getTrackableHandler } from '@winglet/common-utils/function';
 import { clone } from '@winglet/common-utils/object';
 import { withErrorBoundaryForwardRef } from '@winglet/react-utils/hoc';
-import { useHandle, useMemorize, useVersion } from '@winglet/react-utils/hook';
+import {
+  useHandle,
+  useLazyConstant,
+  useMemorize,
+  useVersion,
+} from '@winglet/react-utils/hook';
 
 import type { Fn, Parameter } from '@aileron/declare';
 
@@ -31,6 +36,7 @@ import {
   FormTypeRendererContextProvider,
   InputControlContextProvider,
   RootNodeContextProvider,
+  VirtualizationContextProvider,
   WorkspaceContextProvider,
 } from '@/schema-form/providers';
 import type {
@@ -65,6 +71,7 @@ const FormInner = <
     showError: inputShowError,
     validationMode,
     validatorFactory,
+    virtualization,
     context,
     children: ChildComponent,
   }: FormProps<Schema, Value>,
@@ -73,11 +80,11 @@ const FormInner = <
   type Node = InferSchemaNode<Schema>;
   const ready = useRef(false);
   const emittedValueRef = useRef<Value | typeof NOT_EMITTED>(NOT_EMITTED);
-  const attachedFilesMapRef = useRef<AttachedFilesMap>(new Map());
+  const attachedFilesMap = useLazyConstant<AttachedFilesMap>(() => new Map());
   const [version, update] = useVersion(() => {
     ready.current = false;
     emittedValueRef.current = NOT_EMITTED;
-    attachedFilesMapRef.current.clear();
+    attachedFilesMap.clear();
   });
 
   const jsonSchema = useMemorize(
@@ -150,18 +157,18 @@ const FormInner = <
         setState: (state) => rootNode?.setSubtreeState(state),
         clearState: () => rootNode?.clearSubtreeState(),
         getErrors: () => rootNode?.globalErrors || [],
-        getAttachedFilesMap: () => attachedFilesMapRef.current,
+        getAttachedFilesMap: () => attachedFilesMap,
         validate: async () => (await rootNode?.validate()) || [],
         showError: (visible = true) =>
           visible ? setShowError(true) : setShowError(inputShowError),
         submit: handleSubmit,
       }) satisfies FormHandle<Schema, Value>,
-    [rootNode, handleSubmit, update, inputShowError],
+    [rootNode, handleSubmit, update, inputShowError, attachedFilesMap],
   );
 
   return (
     <WorkspaceContextProvider
-      attachedFilesMap={attachedFilesMapRef.current}
+      attachedFilesMap={attachedFilesMap}
       context={context}
     >
       <FormTypeInputsContextProvider
@@ -174,22 +181,24 @@ const FormInner = <
           showError={showError}
         >
           <InputControlContextProvider readOnly={readOnly} disabled={disabled}>
-            <RootNodeContextProvider
-              key={version}
-              jsonSchema={jsonSchema}
-              defaultValue={defaultValue}
-              errors={errors}
-              onChange={handleChange}
-              onValidate={handleValidate}
-              onStateChange={handleStateChange}
-              onReady={handleReady}
-              validationMode={validationMode}
-              validatorFactory={validatorFactory}
-            >
-              <FormRootProxy onSubmit={handleFormSubmit}>
-                {children}
-              </FormRootProxy>
-            </RootNodeContextProvider>
+            <VirtualizationContextProvider virtualization={virtualization}>
+              <RootNodeContextProvider
+                key={version}
+                jsonSchema={jsonSchema}
+                defaultValue={defaultValue}
+                errors={errors}
+                onChange={handleChange}
+                onValidate={handleValidate}
+                onStateChange={handleStateChange}
+                onReady={handleReady}
+                validationMode={validationMode}
+                validatorFactory={validatorFactory}
+              >
+                <FormRootProxy onSubmit={handleFormSubmit}>
+                  {children}
+                </FormRootProxy>
+              </RootNodeContextProvider>
+            </VirtualizationContextProvider>
           </InputControlContextProvider>
         </FormTypeRendererContextProvider>
       </FormTypeInputsContextProvider>

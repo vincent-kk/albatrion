@@ -47,6 +47,10 @@ npx -p @slats/claude-assets-sync inject-claude-settings --package=@canard/schema
 - UI 컴포넌트 플러그인: `FormGroup`, `FormLabel`, `FormInput`, `FormError`
 - FormTypeInput 플러그인: 커스텀 입력 컴포넌트
 
+### Error Isolation (user-injected render surfaces)
+
+사용자 주입 컴포넌트(FormTypeRenderer/FormTypeInput, virtualization `Placeholder` 등)는 반드시 `@winglet/react-utils/hoc`의 `withErrorBoundary`로 감싼다 — 하나가 렌더 중 throw해도 폼 전체가 아니라 그 서브트리만 fallback으로 격리된다. 래핑은 **컴포넌트를 해석·소유하는 지점에서 1회**만: 렌더러는 `SchemaNodeProxy`/`SchemaNodeInputWrapper`가 `memo(withErrorBoundary(...))`로, `Placeholder`는 `VirtualizationManager` 생성자가 form당 1회 래핑해 모든 지연 필드가 동일 인스턴스를 공유한다. 소비처(개별 렌더 위치)마다 반복 래핑하지 말 것. (`helpers/virtualization`는 이 `Placeholder` 방어만 React 예외로 허용 — INTENT.md 참조.)
+
 ### Key APIs
 
 - `Form` — 메인 진입점
@@ -57,6 +61,7 @@ npx -p @slats/claude-assets-sync inject-claude-settings --package=@canard/schema
 - `node.validate()` / `node.errors`
 - `node.subscribe()` — 노드 이벤트 구독 (cleanup 함수 반환). 구독 전에 전달된 이벤트는 재생되지 않음 — 상태 미러는 `useSchemaNodeSubscribe`의 `onSubscribe` catch-up 사용
 - `node.revision(mask?)` — 전달된 이벤트 배치의 단조 리비전 (리스너 유무 무관 집계, 늦은 구독자의 갭 감지용; `useSchemaNodeTracker`가 useSyncExternalStore 스냅샷으로 사용)
+- `virtualization` prop — 초대형 폼 렌더 가상화(지연 마운트). node tree는 전량 생성 유지, branch 자식 수 ≥ `threshold`면 `eagerCount` 이후 필드를 placeholder(`[data-path][data-deferred]` — identity는 `data-path`로 통일, 마커가 상태 구분)로 지연 → IO 교차·idle backfill·RequestFocus/Select 시 마운트(defer-once). 게이트는 `useChildNodeComponents`에서 bake, 조율은 `VirtualizationManager`(helpers/virtualization). placeholder 시각은 CSS `[data-deferred]` 셀렉터 또는 `Placeholder` 컴포넌트 옵션(공간 예약은 `estimateHeight` 소유, 컴포넌트는 시각 채움만). CSR 전용 — SSR 하이드레이션에서 켜지 말 것
 
 ### FormTypeInput 우선순위 (높음 → 낮음)
 
@@ -84,7 +89,7 @@ computed: {
 
 버그 다수는 **node tree는 맞는데 렌더된 DOM이 어긋나는** 구간(초기 마운트 priming, 가지 전환, 배열 identity, Refresh-gated 비제어 입력)에서 발생한다. node-tree 전용 단위 테스트는 이를 못 잡는다.
 
-- `src/__tests__/renderForm.tsx` — 공유 하니스. 실제 `<Form>`을 렌더하고 **두 레이어를 동시 검증**: 존재는 `[data-path]` 기반 `exists(path)`, 값은 `id={path}` 기반 `value/checked(path)`, 트리는 `node(path)/getValue()`. `flushOnMount:false`(동기 priming 단언), `instrument`(remount 감지), `strictMode`, `validator`(AJV), `caughtErrors`(수렴 가드), userEvent(`type/selectOption/toggle/addItem/removeItem`) 지원.
+- `src/__tests__/renderForm.tsx` — 공유 하니스. 실제 `<Form>`을 렌더하고 **두 레이어를 동시 검증**: 존재는 `[data-path]` 기반 `exists(path)`, 값은 `id={path}` 기반 `value/checked(path)`, 트리는 `node(path)/getValue()`, 가상화 placeholder는 `deferred(path)/deferredPaths()`. `flushOnMount:false`(동기 priming 단언), `instrument`(remount 감지), `strictMode`, `validator`(AJV), `caughtErrors`(수렴 가드), userEvent(`type/selectOption/toggle/addItem/removeItem`) 지원.
 - `src/__tests__/scenarios/*.render.test.tsx` — 시나리오 패밀리별 스위트(composition/array/computed/refresh/reset/validation/...). 파일당 ≤15 케이스. 신규 시나리오는 여기에 추가한다.
 - 검증된 product 버그는 `it.fails('... // BUG: ...')`로 표면화(스위트는 green 유지). src를 고쳐 통과시키지 말 것.
 

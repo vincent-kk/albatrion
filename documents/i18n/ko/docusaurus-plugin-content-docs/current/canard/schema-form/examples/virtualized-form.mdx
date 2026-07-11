@@ -1,0 +1,59 @@
+---
+sidebar_label: '가상화 폼'
+sidebar_position: 11
+---
+
+import LazyDemo from '@site/src/components/LazyDemo';
+
+# 가상화 폼
+
+렌더 레벨 가상화로 마운트되는 300필드 폼입니다. 뷰포트 근처의 필드만 실제
+input으로 마운트되고, 나머지는 경량 placeholder(여기서는 shimmer 스켈레톤으로
+스타일링)로 렌더됐다가 뷰포트에 가까워지거나, 브라우저 idle 시간이 오거나,
+프로그램적으로 포커스될 때 실제 컴포넌트로 교체됩니다.
+
+:::info 핵심 특징
+
+- `virtualization` — 초기 마운트 비용이 O(전체 필드) → O(보이는 필드)로 감소
+- node tree는 항상 전량 생성: 값·검증·`getValue()`에 지연된 필드가 모두 포함됩니다
+  (아래 **Values** 패널을 열어보세요 — 모든 필드에 기본값이 존재)
+- placeholder는 `data-path` + `data-deferred`를 가진 div — 이 데모의 스켈레톤은
+  `[data-deferred]` 속성 셀렉터에 CSS만 입힌 것입니다
+- 한 번 마운트된 필드는 placeholder로 되돌아가지 않습니다 (defer-once)
+  :::
+
+프레임을 스크롤하면서 카운터를 보세요 — 필드가 가시 영역에서 한 화면
+거리(`rootMargin: '100%'`) 안으로 들어오는 순간 실체화됩니다. 이 데모는
+windowing 동작이 계속 보이도록 `backfill: VirtualizationBackfill.None`을
+사용합니다; 기본값(`Idle`)은 브라우저 idle 시간에 나머지를 점진 마운트해
+몇 프레임 안에 전체 DOM 동작(탭 순서, autofill, Ctrl+F)을 복원합니다.
+
+<LazyDemo
+  load={() => import('@site/src/components/demos/examples/VirtualizedFormDemo')}
+/>
+
+## 사용법
+
+```tsx
+import { Form, VirtualizationBackfill } from '@canard/schema-form';
+
+// 기본값: threshold 30, eagerCount 20, rootMargin '100%',
+//         backfill VirtualizationBackfill.Idle, estimateHeight 40
+<Form jsonSchema={largeSchema} virtualization />
+
+// 튜닝
+<Form
+  jsonSchema={largeSchema}
+  virtualization={{
+    threshold: 30,
+    eagerCount: 20,
+    rootMargin: '100%',
+    backfill: VirtualizationBackfill.Idle,
+    estimateHeight: (node) => (node.type === 'object' ? 320 : 48),
+    Placeholder: FieldSkeleton, // placeholder 내부에 렌더할 커스텀 컴포넌트
+  }}
+/>
+```
+
+전체 옵션·placeholder DOM 계약·SSR 주의사항은
+[API Reference](../api-reference#virtualization)를 참고하세요.

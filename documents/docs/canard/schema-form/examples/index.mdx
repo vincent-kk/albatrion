@@ -14,10 +14,12 @@ Explore interactive demos and code patterns for `@canard/schema-form`.
 Try these live demos to see JSON Schema features in action:
 
 ### Getting Started
+
 - [Basic Form](./basic-form) — Common field types: text, number, date, enum, switch
 - [Auto-Calculation](./auto-calculation) — Computed derived values with live formula
 
 ### Advanced Patterns
+
 - [Conditional Registration](./conditional-registration) — Multi-level if/then/else conditions
 - [Dynamic Billing](./dynamic-billing) — Cascading conditions across 3 fields
 - [Employment Contract](./employment-contract) — oneOf with const-based field switching
@@ -26,6 +28,7 @@ Try these live demos to see JSON Schema features in action:
 - [Role-Based Access](./role-based-access) — Field visibility vs activity control
 - [Nested Profile & Security](./nested-profile) — Deep nesting with conditional validation
 - [Tuple Arrays](./tuple-arrays) — Fixed-length typed arrays with prefixItems
+- [Virtualized Form](./virtualized-form) — Render-level virtualization for very large forms (300+ fields)
 
 ---
 
@@ -39,11 +42,11 @@ import { Form, ShowError } from '@canard/schema-form';
 const schema = {
   type: 'object',
   properties: {
-    name:      { type: 'string',  title: 'Name',     minLength: 1, maxLength: 100 },
-    age:       { type: 'number',  title: 'Age',      minimum: 0, maximum: 150 },
-    email:     { type: 'string',  title: 'Email',    format: 'email' },
-    isActive:  { type: 'boolean', title: 'Active' },
-    bio:       { type: 'string',  title: 'Bio',      maxLength: 500 },
+    name: { type: 'string', title: 'Name', minLength: 1, maxLength: 100 },
+    age: { type: 'number', title: 'Age', minimum: 0, maximum: 150 },
+    email: { type: 'string', title: 'Email', format: 'email' },
+    isActive: { type: 'boolean', title: 'Active' },
+    bio: { type: 'string', title: 'Bio', maxLength: 500 },
   },
   required: ['name', 'email'],
 } as const;
@@ -68,15 +71,18 @@ function BasicForm() {
 const schema = {
   type: 'object',
   properties: {
-    name:     { type: 'string' },
-    nickname: { type: ['string', 'null'] as const },  // nullable
-    score:    { type: ['number', 'null'] as const },   // nullable
+    name: { type: 'string' },
+    nickname: { type: ['string', 'null'] as const }, // nullable
+    score: { type: ['number', 'null'] as const }, // nullable
   },
 } as const;
 
 // Custom input that handles null
 const NullableTextInput: FC<FormTypeInputProps<string | null>> = ({
-  value, onChange, nullable, placeholder,
+  value,
+  onChange,
+  nullable,
+  placeholder,
 }) => (
   <input
     value={value ?? ''}
@@ -104,7 +110,7 @@ const schema = {
   then: {
     properties: {
       companyName: { type: 'string', title: 'Company Name', minLength: 1 },
-      taxId:       { type: 'string', title: 'Tax ID' },
+      taxId: { type: 'string', title: 'Tax ID' },
     },
     required: ['companyName'],
   },
@@ -140,9 +146,13 @@ const schema = {
     {
       '&if': "./paymentMethod === 'card'",
       properties: {
-        cardNumber: { type: 'string', title: 'Card Number', pattern: '^[0-9]{16}$' },
-        expiryDate: { type: 'string', title: 'Expiry',      format: 'date' },
-        cvv:        { type: 'string', title: 'CVV',         pattern: '^[0-9]{3,4}$' },
+        cardNumber: {
+          type: 'string',
+          title: 'Card Number',
+          pattern: '^[0-9]{16}$',
+        },
+        expiryDate: { type: 'string', title: 'Expiry', format: 'date' },
+        cvv: { type: 'string', title: 'CVV', pattern: '^[0-9]{3,4}$' },
       },
       required: ['cardNumber', 'expiryDate', 'cvv'],
     },
@@ -150,7 +160,7 @@ const schema = {
       '&if': "./paymentMethod === 'bank'",
       properties: {
         accountNumber: { type: 'string', title: 'Account Number' },
-        routingNumber:  { type: 'string', title: 'Routing Number' },
+        routingNumber: { type: 'string', title: 'Routing Number' },
       },
       required: ['accountNumber', 'routingNumber'],
     },
@@ -171,7 +181,7 @@ const schema = {
 const schema = {
   type: 'object',
   properties: {
-    notifyBySms:   { type: 'boolean', title: 'Notify by SMS' },
+    notifyBySms: { type: 'boolean', title: 'Notify by SMS' },
     notifyByEmail: { type: 'boolean', title: 'Notify by Email' },
   },
   anyOf: [
@@ -185,7 +195,11 @@ const schema = {
     {
       '&if': './notifyByEmail === true',
       properties: {
-        notificationEmail: { type: 'string', title: 'Notification Email', format: 'email' },
+        notificationEmail: {
+          type: 'string',
+          title: 'Notification Email',
+          format: 'email',
+        },
       },
       required: ['notificationEmail'],
     },
@@ -200,15 +214,15 @@ const schema = {
 const basePersonSchema = {
   properties: {
     firstName: { type: 'string', title: 'First Name', minLength: 1 },
-    lastName:  { type: 'string', title: 'Last Name',  minLength: 1 },
+    lastName: { type: 'string', title: 'Last Name', minLength: 1 },
   },
   required: ['firstName', 'lastName'],
 };
 
 const contactInfoSchema = {
   properties: {
-    email:  { type: 'string', title: 'Email',  format: 'email' },
-    phone:  { type: 'string', title: 'Phone' },
+    email: { type: 'string', title: 'Email', format: 'email' },
+    phone: { type: 'string', title: 'Phone' },
   },
   required: ['email'],
 };
@@ -239,8 +253,8 @@ const schema = {
         type: 'object',
         properties: {
           street: { type: 'string', title: 'Street' },
-          city:   { type: 'string', title: 'City'   },
-          zip:    { type: 'string', title: 'ZIP'    },
+          city: { type: 'string', title: 'City' },
+          zip: { type: 'string', title: 'ZIP' },
         },
         required: ['street', 'city'],
       },
@@ -268,18 +282,18 @@ function ArrayManager({ formRef }) {
 const schema = {
   type: 'object',
   properties: {
-    isPremium:    { type: 'boolean', title: 'Premium Member' },
-    discount:     {
+    isPremium: { type: 'boolean', title: 'Premium Member' },
+    discount: {
       type: 'number',
       title: 'Discount %',
       minimum: 0,
       maximum: 100,
       computed: {
-        visible:  '../isPremium === true',
+        visible: '../isPremium === true',
         readOnly: '../isPremium === false',
       },
     },
-    memberSince:  {
+    memberSince: {
       type: 'string',
       title: 'Member Since',
       format: 'date',
@@ -306,6 +320,7 @@ const schema = {
 
 ```tsx
 import type { FC } from 'react';
+
 import type { FormTypeInputProps } from '@canard/schema-form';
 
 // Custom rating input for { type: 'number', formType: 'rating' }
@@ -407,9 +422,13 @@ const schema = {
 
 ```tsx
 import { useRef } from 'react';
+
 import { Form, type FormHandle, useFormSubmit } from '@canard/schema-form';
 
-const schema = { type: 'object', properties: { name: { type: 'string' } } } as const;
+const schema = {
+  type: 'object',
+  properties: { name: { type: 'string' } },
+} as const;
 
 function MyForm() {
   const formRef = useRef<FormHandle<typeof schema>>(null);
@@ -425,11 +444,7 @@ function MyForm() {
 
   return (
     <>
-      <Form
-        ref={formRef}
-        jsonSchema={schema}
-        onSubmit={handleSubmit}
-      />
+      <Form ref={formRef} jsonSchema={schema} onSubmit={handleSubmit} />
       <button onClick={submit} disabled={pending}>
         {pending ? 'Saving…' : 'Save'}
       </button>
@@ -450,7 +465,7 @@ function MyForm() {
   jsonSchema={schema}
   defaultValue={{ name: 'Alice' }}
   onChange={(value) => console.log(value)}
-/>
+/>;
 
 // ── Imperative (for programmatic updates) ──────────────────────
 // Use ref to read/write values imperatively.
@@ -459,10 +474,7 @@ formRef.current?.setValue({ name: 'Bob' });
 
 // ── FormHandle setValue with merge ────────────────────────────
 // Merge only changed fields (deep merge)
-formRef.current?.setValue(
-  { address: { city: 'Seoul' } },
-  SetValueOption.Merge
-);
+formRef.current?.setValue({ address: { city: 'Seoul' } }, SetValueOption.Merge);
 ```
 
 ## Custom Layout with Form.Group
@@ -471,11 +483,11 @@ formRef.current?.setValue(
 const profileSchema = {
   type: 'object',
   properties: {
-    avatar:     { type: 'string', title: 'Avatar',      formType: 'image-upload' },
-    firstName:  { type: 'string', title: 'First Name',  minLength: 1 },
-    lastName:   { type: 'string', title: 'Last Name',   minLength: 1 },
-    bio:        { type: 'string', title: 'Bio',         maxLength: 500 },
-    website:    { type: 'string', title: 'Website',     format: 'uri' },
+    avatar: { type: 'string', title: 'Avatar', formType: 'image-upload' },
+    firstName: { type: 'string', title: 'First Name', minLength: 1 },
+    lastName: { type: 'string', title: 'Last Name', minLength: 1 },
+    bio: { type: 'string', title: 'Bio', maxLength: 500 },
+    website: { type: 'string', title: 'Website', format: 'uri' },
   },
   required: ['firstName', 'lastName'],
 } as const;
@@ -488,9 +500,9 @@ function ProfileForm() {
       </div>
       <div className="name-row">
         <Form.Group path="/firstName" placeholder="First name" />
-        <Form.Group path="/lastName"  placeholder="Last name" />
+        <Form.Group path="/lastName" placeholder="Last name" />
       </div>
-      <Form.Group path="/bio"     placeholder="Tell us about yourself" />
+      <Form.Group path="/bio" placeholder="Tell us about yourself" />
       <Form.Group path="/website" placeholder="https://..." />
     </Form>
   );
@@ -524,10 +536,13 @@ import { isArrayNode, isObjectNode } from '@canard/schema-form';
 
 function FormController({ formRef }) {
   const fillDefaults = () => {
-    formRef.current?.setValue({
-      status: 'draft',
-      createdAt: new Date().toISOString(),
-    }, SetValueOption.Merge);
+    formRef.current?.setValue(
+      {
+        status: 'draft',
+        createdAt: new Date().toISOString(),
+      },
+      SetValueOption.Merge,
+    );
   };
 
   const addTag = () => {
@@ -558,8 +573,8 @@ import type { InferValueType } from '@winglet/json-schema';
 const schema = {
   type: 'object',
   properties: {
-    name:     { type: 'string' },
-    age:      { type: 'number' },
+    name: { type: 'string' },
+    age: { type: 'number' },
     nickname: { type: ['string', 'null'] as const },
   },
   required: ['name'],

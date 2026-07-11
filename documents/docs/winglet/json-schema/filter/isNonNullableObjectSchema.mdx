@@ -41,7 +41,7 @@ isNonNullableObjectSchema({ type: 'array' }); // false
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/json-schema": "0.10.0" }}
+  dependencies={{ "@winglet/json-schema": "0.12.3" }}
   code={`isNonNullableObjectSchema({ type: 'object', properties: { name: { type: 'string' } } }); // true
 isNonNullableObjectSchema({ type: ['object', 'null'] }); // false
 isNonNullableObjectSchema({ type: 'array' }); // false`}
