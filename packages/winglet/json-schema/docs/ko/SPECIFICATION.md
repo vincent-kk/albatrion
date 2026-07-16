@@ -75,13 +75,13 @@ import { JsonSchemaScanner } from '@winglet/json-schema/scanner';
 const schema = {
   type: 'object',
   properties: {
-    name:    { type: 'string', minLength: 1 },
-    age:     { type: 'number', minimum: 0 },
+    name: { type: 'string', minLength: 1 },
+    age: { type: 'number', minimum: 0 },
     address: {
       type: 'object',
       properties: {
-        city:  { type: 'string' },
-        zip:   { type: 'string' },
+        city: { type: 'string' },
+        zip: { type: 'string' },
       },
     },
   },
@@ -105,7 +105,11 @@ console.log(fieldPaths);
 ### 런타임에 스키마 타입 확인
 
 ```typescript
-import { isObjectSchema, isStringSchema, isArraySchema } from '@winglet/json-schema/filter';
+import {
+  isArraySchema,
+  isObjectSchema,
+  isStringSchema,
+} from '@winglet/json-schema/filter';
 
 const s = { type: ['string', 'null'], minLength: 1 };
 
@@ -178,7 +182,7 @@ new JsonSchemaScanner<Schema extends UnknownSchema = UnknownSchema, ContextType 
 ```typescript
 interface SchemaVisitor<Schema, ContextType> {
   enter?: (entry: SchemaEntry<Schema>, context?: ContextType) => void;
-  exit?:  (entry: SchemaEntry<Schema>, context?: ContextType) => void;
+  exit?: (entry: SchemaEntry<Schema>, context?: ContextType) => void;
 }
 ```
 
@@ -187,13 +191,13 @@ interface SchemaVisitor<Schema, ContextType> {
 
 ### JsonScannerOptions
 
-| 옵션 | 타입 | 설명 |
-|------|------|------|
-| `filter` | `(entry, context?) => boolean` | `false` 반환 시 노드와 모든 자손 건너뜀 |
-| `mutate` | `(entry, context?) => Schema \| void` | 새 스키마 반환 시 노드 교체 (getValue()에서 적용됨) |
-| `resolveReference` | `(ref, entry, context?) => Schema \| undefined` | `$ref` 포인터를 스키마 객체로 해석 |
-| `maxDepth` | `number` | 최대 순회 깊이 (루트 = 깊이 0) |
-| `context` | `ContextType` | 모든 콜백에 전달되는 공유 변경 가능 컨텍스트 |
+| 옵션               | 타입                                            | 설명                                                |
+| ------------------ | ----------------------------------------------- | --------------------------------------------------- |
+| `filter`           | `(entry, context?) => boolean`                  | `false` 반환 시 노드와 모든 자손 건너뜀             |
+| `mutate`           | `(entry, context?) => Schema \| void`           | 새 스키마 반환 시 노드 교체 (getValue()에서 적용됨) |
+| `resolveReference` | `(ref, entry, context?) => Schema \| undefined` | `$ref` 포인터를 스키마 객체로 해석                  |
+| `maxDepth`         | `number`                                        | 최대 순회 깊이 (루트 = 깊이 0)                      |
+| `context`          | `ContextType`                                   | 모든 콜백에 전달되는 공유 변경 가능 컨텍스트        |
 
 ### scan(schema)
 
@@ -220,16 +224,16 @@ getValue<OutputSchema extends UnknownSchema = Schema>(): OutputSchema | undefine
 
 ```typescript
 type SchemaEntry<Schema> = {
-  schema:             Schema;     // 현재 스키마 노드
-  path:               string;     // JSON 포인터: "#/properties/name"
-  dataPath:           string;     // 데이터 경로: "/name"
-  depth:              number;     // 루트에서 0
-  hasReference?:      boolean;    // true: $ref 발견됐지만 해석되지 않음
-  referencePath?:     string;     // 해석된 경우 원본 $ref 값
-  referenceResolved?: boolean;    // true: resolveReference() 성공
-  keyword?:           string;     // 이 항목을 생성한 구조적 키워드
-  variant?:           string | number; // 프로퍼티 이름 또는 배열 인덱스
-}
+  schema: Schema; // 현재 스키마 노드
+  path: string; // JSON 포인터: "#/properties/name"
+  dataPath: string; // 데이터 경로: "/name"
+  depth: number; // 루트에서 0
+  hasReference?: boolean; // true: $ref 발견됐지만 해석되지 않음
+  referencePath?: string; // 해석된 경우 원본 $ref 값
+  referenceResolved?: boolean; // true: resolveReference() 성공
+  keyword?: string; // 이 항목을 생성한 구조적 키워드
+  variant?: string | number; // 프로퍼티 이름 또는 배열 인덱스
+};
 ```
 
 **keyword 값:** `'properties'`, `'$defs'`, `'definitions'`, `'items'`, `'prefixItems'`, `'additionalProperties'`, `'not'`, `'if'`, `'then'`, `'else'`, `'allOf'`, `'anyOf'`, `'oneOf'`
@@ -274,8 +278,10 @@ async scan(schema: Schema): Promise<this>
 동기 스캐너와 동일합니다. `scan()`을 await한 후 호출하세요.
 
 ```typescript
-const scanner = new JsonSchemaScannerAsync({ /* ... */ });
-const result = await scanner.scan(schema).then(s => s.getValue());
+const scanner = new JsonSchemaScannerAsync({
+  /* ... */
+});
+const result = await scanner.scan(schema).then((s) => s.getValue());
 ```
 
 ### 비동기 사용 사례
@@ -296,14 +302,14 @@ const result = await scanner.scan(schema).then(s => s.getValue());
 
 nullable과 non-nullable 스키마를 모두 처리합니다.
 
-| 함수 | 매칭 대상 |
-|------|----------|
-| `isObjectSchema(s)` | `{ type: 'object' }` 또는 `{ type: ['object', 'null'] }` |
-| `isArraySchema(s)` | `{ type: 'array' }` 또는 `{ type: ['array', 'null'] }` |
-| `isStringSchema(s)` | `{ type: 'string' }` 또는 `{ type: ['string', 'null'] }` |
-| `isNumberSchema(s)` | `{ type: 'number'\|'integer' }` 또는 nullable 변형 |
+| 함수                 | 매칭 대상                                                  |
+| -------------------- | ---------------------------------------------------------- |
+| `isObjectSchema(s)`  | `{ type: 'object' }` 또는 `{ type: ['object', 'null'] }`   |
+| `isArraySchema(s)`   | `{ type: 'array' }` 또는 `{ type: ['array', 'null'] }`     |
+| `isStringSchema(s)`  | `{ type: 'string' }` 또는 `{ type: ['string', 'null'] }`   |
+| `isNumberSchema(s)`  | `{ type: 'number'\|'integer' }` 또는 nullable 변형         |
 | `isBooleanSchema(s)` | `{ type: 'boolean' }` 또는 `{ type: ['boolean', 'null'] }` |
-| `isNullSchema(s)` | `{ type: 'null' }` (순수 null, nullable 아님) |
+| `isNullSchema(s)`    | `{ type: 'null' }` (순수 null, nullable 아님)              |
 
 모든 가드는 인수의 TypeScript 타입을 좁혀 타입별 필드(`properties`, `items`, `pattern` 등)에 접근할 수 있게 합니다.
 
@@ -312,11 +318,11 @@ nullable과 non-nullable 스키마를 모두 처리합니다.
 nullable과 non-nullable을 구분해야 하는 경우:
 
 ```typescript
-isNonNullableObjectSchema(s)  // { type: 'object' } 만
-isNullableObjectSchema(s)     // { type: ['object', 'null'] } 만
+isNonNullableObjectSchema(s); // { type: 'object' } 만
+isNullableObjectSchema(s); // { type: ['object', 'null'] } 만
 
-isNonNullableStringSchema(s)  // { type: 'string' } 만
-isNullableStringSchema(s)     // { type: ['string', 'null'] } 만
+isNonNullableStringSchema(s); // { type: 'string' } 만
+isNullableStringSchema(s); // { type: ['string', 'null'] } 만
 
 // array, number, boolean도 동일한 패턴
 ```
@@ -330,8 +336,8 @@ hasNullInType(schema: UnknownSchema): boolean
 `schema.type`이 `'null'`을 포함하는 배열일 때 `true`를 반환합니다. `{ type: 'null' }`에는 매칭되지 않습니다.
 
 ```typescript
-hasNullInType({ type: ['string', 'null'] })  // true
-hasNullInType({ type: 'null' })              // false
+hasNullInType({ type: ['string', 'null'] }); // true
+hasNullInType({ type: 'null' }); // false
 ```
 
 ### 스키마 비교
@@ -345,9 +351,12 @@ isIdenticalSchemaType(left: UnknownSchema, right: UnknownSchema): boolean
 nullable을 인식하는 엄격한 동등성 비교입니다. JSON Schema 배열 형식과 OpenAPI 3.0의 `nullable: true`를 모두 지원합니다.
 
 ```typescript
-isIdenticalSchemaType({ type: 'string' }, { type: 'string' })                           // true
-isIdenticalSchemaType({ type: ['string', 'null'] }, { type: 'string', nullable: true }) // true
-isIdenticalSchemaType({ type: 'number' }, { type: 'integer' })                           // false
+isIdenticalSchemaType({ type: 'string' }, { type: 'string' }); // true
+isIdenticalSchemaType(
+  { type: ['string', 'null'] },
+  { type: 'string', nullable: true },
+); // true
+isIdenticalSchemaType({ type: 'number' }, { type: 'integer' }); // false
 ```
 
 #### isCompatibleSchemaType
@@ -359,9 +368,9 @@ isCompatibleSchemaType(left: UnknownSchema, right: UnknownSchema): boolean
 느슨한 검사입니다. `number`와 `integer`는 호환 가능한 것으로 처리됩니다. nullable 차이는 무시됩니다.
 
 ```typescript
-isCompatibleSchemaType({ type: 'number' }, { type: 'integer' })           // true
-isCompatibleSchemaType({ type: ['string', 'null'] }, { type: 'string' }) // true
-isCompatibleSchemaType({ type: [] }, { type: [] })                        // false (빈 배열)
+isCompatibleSchemaType({ type: 'number' }, { type: 'integer' }); // true
+isCompatibleSchemaType({ type: ['string', 'null'] }, { type: 'string' }); // true
+isCompatibleSchemaType({ type: [] }, { type: [] }); // false (빈 배열)
 ```
 
 ---
@@ -372,16 +381,21 @@ isCompatibleSchemaType({ type: [] }, { type: [] })                        // fal
 
 ```typescript
 // 기본 타입 — 모든 스키마 객체
-type UnknownSchema = { type?: string | Readonly<string[]>; [key: string]: any }
+type UnknownSchema = { type?: string | Readonly<string[]>; [key: string]: any };
 
 // 전체 JSON Schema 유니온
 type JsonSchema<Options = object> =
-  | NonNullableNumberSchema | NullableNumberSchema
-  | NonNullableStringSchema | NullableStringSchema
-  | NonNullableBooleanSchema | NullableBooleanSchema
-  | NonNullableArraySchema | NullableArraySchema
-  | NonNullableObjectSchema | NullableObjectSchema
-  | NullSchema
+  | NonNullableNumberSchema
+  | NullableNumberSchema
+  | NonNullableStringSchema
+  | NullableStringSchema
+  | NonNullableBooleanSchema
+  | NullableBooleanSchema
+  | NonNullableArraySchema
+  | NullableArraySchema
+  | NonNullableObjectSchema
+  | NullableObjectSchema
+  | NullSchema;
 
 // $ref 노드
 interface RefSchema {
@@ -430,23 +444,50 @@ InferValueType<{ type: 'array' }>              // any[]
 InferValueType<{ type: 'object' }>             // Record<string, any>
 ```
 
+`object`와 `array`는 `properties`와 `items`가 리터럴일 때 — 즉 스키마를 `as const`로
+선언했을 때 — 재귀합니다. `as const`가 없으면 `type`이 `string`으로 넓어져 결과는 `any`입니다.
+
+```typescript
+InferValueType<{ type: 'array'; items: { type: 'string' } }>; // string[]
+
+InferValueType<{
+  type: 'object';
+  properties: { id: { type: 'number' } };
+  required: ['id'];
+}>;
+// { id?: number } & Record<string, any>
+```
+
+객체 결과에는 두 가지 규칙이 적용됩니다:
+
+- **`required`에 있는 키를 포함해 모든 키가 optional입니다.** 스키마가 기술하는 값은 런타임에
+  키를 생략할 수 있으므로, 여기서 필수로 표시하는 것은 이 타입이 지킬 수 없는 약속입니다.
+  정확한 형태가 필요하면 직접 정의하세요.
+- **스키마가 `additionalProperties: false`를 지정하지 않는 한 `Record<string, any>`와 교차합니다.**
+  열린 상태가 JSON Schema의 기본값이고, 이 덕분에 이 타입이 모델링하지 않는 applicator
+  (`oneOf`, `anyOf`, `if`/`then`/`else`, `patternProperties`, `dependentSchemas`, `$ref`)가
+  기여하는 키가 초과 속성으로 거부되지 않습니다.
+
+모델링하지 않은 것은 좁히지 않고 폴백합니다. 리터럴이 아닌 `properties`(예: `Dictionary<JsonSchema>`)는
+`Record<string, any>`, `['string', 'number']` 같은 다중 타입은 `any`, `items: false`는 `any[]`가 됩니다.
+
 ### 공통 BasicSchema 필드
 
 모든 타입 스키마는 `BasicSchema`에서 상속된 다음 공통 필드를 포함합니다.
 
-| 필드 | 타입 | 설명 |
-|------|------|------|
-| `$defs` | `Dictionary<Schema>` | 재사용 가능한 스키마 정의 |
-| `if/then/else` | `Partial<Schema>` | 조건부 스키마 |
-| `not` | `Partial<Schema>` | 부정 스키마 |
-| `allOf/anyOf/oneOf` | `Partial<Schema>[]` | 합성 스키마 |
-| `const` | `Nullable<Type>` | 상수 값 제약 |
-| `default` | `Nullable<Type>` | 기본값 |
-| `enum` | `Nullable<Type>[]` | 허용 값 목록 |
-| `nullable` | `boolean` | OpenAPI 3.0 nullable 플래그 |
-| `readOnly` | `boolean` | 읽기 전용 힌트 |
-| `disabled` | `boolean` | 비활성화 힌트 |
-| `options` | `Options` | 커스텀 확장 옵션 |
+| 필드                | 타입                 | 설명                        |
+| ------------------- | -------------------- | --------------------------- |
+| `$defs`             | `Dictionary<Schema>` | 재사용 가능한 스키마 정의   |
+| `if/then/else`      | `Partial<Schema>`    | 조건부 스키마               |
+| `not`               | `Partial<Schema>`    | 부정 스키마                 |
+| `allOf/anyOf/oneOf` | `Partial<Schema>[]`  | 합성 스키마                 |
+| `const`             | `Nullable<Type>`     | 상수 값 제약                |
+| `default`           | `Nullable<Type>`     | 기본값                      |
+| `enum`              | `Nullable<Type>[]`   | 허용 값 목록                |
+| `nullable`          | `boolean`            | OpenAPI 3.0 nullable 플래그 |
+| `readOnly`          | `boolean`            | 읽기 전용 힌트              |
+| `disabled`          | `boolean`            | 비활성화 힌트               |
+| `options`           | `Options`            | 커스텀 확장 옵션            |
 
 ### 타입별 추가 필드
 
@@ -502,7 +543,7 @@ dependentSchemas?:     Dictionary<Partial<Schema>>;
 ```typescript
 import { resolveReference } from '@winglet/json-schema';
 
-function resolveReference(jsonSchema: UnknownSchema): UnknownSchema | undefined
+function resolveReference(jsonSchema: UnknownSchema): UnknownSchema | undefined;
 ```
 
 자기 완결적인 스키마(모든 참조를 `$defs` 또는 `definitions`에 정의하는 스키마)의 모든 내부 `$ref` 포인터를 해석하는 편의 유틸리티입니다.
@@ -525,7 +566,9 @@ const inlined = new JsonSchemaScanner({
   options: {
     resolveReference: (ref, entry, context) => myCustomResolver(ref),
   },
-}).scan(schema).getValue();
+})
+  .scan(schema)
+  .getValue();
 ```
 
 ---
@@ -556,7 +599,7 @@ new JsonSchemaScanner({
 순회 중 추가 메타데이터로 스키마를 보강합니다.
 
 ```typescript
-import { isStringSchema, isNumberSchema } from '@winglet/json-schema/filter';
+import { isNumberSchema, isStringSchema } from '@winglet/json-schema/filter';
 
 const enriched = new JsonSchemaScanner({
   options: {
@@ -567,7 +610,9 @@ const enriched = new JsonSchemaScanner({
         return { ...schema, minimum: 0 };
     },
   },
-}).scan(schema).getValue();
+})
+  .scan(schema)
+  .getValue();
 ```
 
 ### 패턴 3: 커스텀 리졸버로 $ref 인라인화
@@ -586,7 +631,9 @@ const inlined = new JsonSchemaScanner({
   options: {
     resolveReference: (ref) => registry[ref],
   },
-}).scan(schema).getValue();
+})
+  .scan(schema)
+  .getValue();
 ```
 
 ### 패턴 4: 비동기 스키마 합성
@@ -602,14 +649,14 @@ const scanner = new JsonSchemaScannerAsync({
   options: {
     resolveReference: async (ref) => {
       if (schemaCache.has(ref)) return schemaCache.get(ref)!;
-      const schema = await fetch(ref).then(r => r.json());
+      const schema = await fetch(ref).then((r) => r.json());
       schemaCache.set(ref, schema);
       return schema;
     },
   },
 });
 
-const composed = await scanner.scan(rootSchema).then(s => s.getValue());
+const composed = await scanner.scan(rootSchema).then((s) => s.getValue());
 ```
 
 ### 패턴 5: 조건부 순회
@@ -659,7 +706,10 @@ const ageSchema: InferJsonSchema<number | null, FormFieldOptions> = {
 `scan()`은 각 호출 시 내부 상태를 초기화합니다. 동일한 스캐너 인스턴스를 안전하게 재사용할 수 있습니다.
 
 ```typescript
-const scanner = new JsonSchemaScanner({ visitor: myVisitor, options: myOptions });
+const scanner = new JsonSchemaScanner({
+  visitor: myVisitor,
+  options: myOptions,
+});
 
 const result1 = scanner.scan(schema1).getValue();
 const result2 = scanner.scan(schema2).getValue();
@@ -670,15 +720,16 @@ const result2 = scanner.scan(schema2).getValue();
 
 ## 호환성
 
-| 환경 | 최소 버전 |
-|------|----------|
-| Node.js | 16.11.0 |
-| Chrome | 94 |
-| Firefox | 93 |
-| Safari | 15 |
+| 환경    | 최소 버전 |
+| ------- | --------- |
+| Node.js | 16.11.0   |
+| Chrome  | 94        |
+| Firefox | 93        |
+| Safari  | 15        |
 
 ESM(`import`)과 CommonJS(`require`) 빌드가 모두 포함됩니다. 레거시 환경의 경우 Babel 또는 SWC를 사용하여 ES2022 구문을 트랜스파일하세요.
 
 **의존성:**
+
 - `@winglet/common-utils` — 객체 클로닝, 유틸리티 함수
 - `@winglet/json` — JSON 포인터 연산 (`getValue`, `setValue`, `escapeSegment`)

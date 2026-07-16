@@ -916,6 +916,38 @@ type RootNode = InferSchemaNode<typeof jsonSchema>;
 const formRef = useRef<FormHandle<typeof jsonSchema>>(null);
 ```
 
+`InferValueType`은 스키마에 `as const`가 필요합니다. 없으면 `type`이 `string`으로 넓어져
+결과가 `any`로 떨어집니다. `as const`가 있으면 `properties`와 `items`를 재귀 순회하며,
+모든 필드를 **optional**로 만들고 `Record<string, any>`와 교차한 타입을 냅니다:
+
+```typescript
+const jsonSchema = {
+  type: 'object',
+  properties: { name: { type: 'string' } },
+  required: ['name'],
+} as const;
+
+type FormValue = InferValueType<typeof jsonSchema>;
+// { name?: string } & Record<string, any>
+```
+
+- `required`에 있어도 optional로 유지됩니다. 폼이 런타임에 필드를 제외할 수 있기 때문입니다
+  (`computed.active`가 false, `options.omitEmpty` 등).
+- 객체 타입은 열려 있습니다 — JSON Schema의 기본값입니다. 그래서 `oneOf`/`anyOf`,
+  `if`/`then`/`else`, `patternProperties`가 기여하는 키가 거부되지 않습니다.
+  `additionalProperties: false`를 지정하면 추론 타입이 닫힙니다.
+
+정확한 형태를 알고 있다면 직접 정의해 두 번째 타입 인자로 넘기세요:
+
+```typescript
+interface SignUpValue {
+  name: string;
+}
+
+<Form<typeof jsonSchema, SignUpValue> jsonSchema={jsonSchema} onChange={(v) => v.name} />;
+const formRef = useRef<FormHandle<typeof jsonSchema, SignUpValue>>(null);
+```
+
 ### Nullable 스키마
 
 ```typescript

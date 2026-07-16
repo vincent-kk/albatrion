@@ -918,6 +918,38 @@ type RootNode = InferSchemaNode<typeof jsonSchema>;
 const formRef = useRef<FormHandle<typeof jsonSchema>>(null);
 ```
 
+`InferValueType` requires `as const` on the schema; without it `type` widens to `string`
+and the result falls back to `any`. With `as const` it walks `properties` and `items`,
+and produces every field as **optional**, intersected with `Record<string, any>`:
+
+```typescript
+const jsonSchema = {
+  type: 'object',
+  properties: { name: { type: 'string' } },
+  required: ['name'],
+} as const;
+
+type FormValue = InferValueType<typeof jsonSchema>;
+// { name?: string } & Record<string, any>
+```
+
+- Fields stay optional even when listed in `required`, because a form may drop them at
+  runtime (`computed.active` false, `options.omitEmpty`).
+- The object stays open — the JSON Schema default — so keys contributed by `oneOf`/`anyOf`,
+  `if`/`then`/`else`, or `patternProperties` are not rejected. Setting
+  `additionalProperties: false` closes the inferred type.
+
+When the exact shape is known, declare it and pass it as the second type argument:
+
+```typescript
+interface SignUpValue {
+  name: string;
+}
+
+<Form<typeof jsonSchema, SignUpValue> jsonSchema={jsonSchema} onChange={(v) => v.name} />;
+const formRef = useRef<FormHandle<typeof jsonSchema, SignUpValue>>(null);
+```
+
 ### Nullable Schema
 
 ```typescript

@@ -75,13 +75,13 @@ import { JsonSchemaScanner } from '@winglet/json-schema/scanner';
 const schema = {
   type: 'object',
   properties: {
-    name:    { type: 'string', minLength: 1 },
-    age:     { type: 'number', minimum: 0 },
+    name: { type: 'string', minLength: 1 },
+    age: { type: 'number', minimum: 0 },
     address: {
       type: 'object',
       properties: {
-        city:  { type: 'string' },
-        zip:   { type: 'string' },
+        city: { type: 'string' },
+        zip: { type: 'string' },
       },
     },
   },
@@ -105,7 +105,11 @@ console.log(fieldPaths);
 ### Check schema types at runtime
 
 ```typescript
-import { isObjectSchema, isStringSchema, isArraySchema } from '@winglet/json-schema/filter';
+import {
+  isArraySchema,
+  isObjectSchema,
+  isStringSchema,
+} from '@winglet/json-schema/filter';
 
 const s = { type: ['string', 'null'], minLength: 1 };
 
@@ -178,7 +182,7 @@ new JsonSchemaScanner<Schema extends UnknownSchema = UnknownSchema, ContextType 
 ```typescript
 interface SchemaVisitor<Schema, ContextType> {
   enter?: (entry: SchemaEntry<Schema>, context?: ContextType) => void;
-  exit?:  (entry: SchemaEntry<Schema>, context?: ContextType) => void;
+  exit?: (entry: SchemaEntry<Schema>, context?: ContextType) => void;
 }
 ```
 
@@ -187,13 +191,13 @@ interface SchemaVisitor<Schema, ContextType> {
 
 ### JsonScannerOptions
 
-| Option | Type | Description |
-|--------|------|-------------|
-| `filter` | `(entry, context?) => boolean` | Return `false` to skip node and all descendants |
-| `mutate` | `(entry, context?) => Schema \| void` | Return new schema to replace node; applied by `getValue()` |
-| `resolveReference` | `(ref, entry, context?) => Schema \| undefined` | Resolve a `$ref` pointer to a schema object |
-| `maxDepth` | `number` | Maximum traversal depth (root = depth 0) |
-| `context` | `ContextType` | Shared mutable context passed to all callbacks |
+| Option             | Type                                            | Description                                                |
+| ------------------ | ----------------------------------------------- | ---------------------------------------------------------- |
+| `filter`           | `(entry, context?) => boolean`                  | Return `false` to skip node and all descendants            |
+| `mutate`           | `(entry, context?) => Schema \| void`           | Return new schema to replace node; applied by `getValue()` |
+| `resolveReference` | `(ref, entry, context?) => Schema \| undefined` | Resolve a `$ref` pointer to a schema object                |
+| `maxDepth`         | `number`                                        | Maximum traversal depth (root = depth 0)                   |
+| `context`          | `ContextType`                                   | Shared mutable context passed to all callbacks             |
 
 ### scan(schema)
 
@@ -210,6 +214,7 @@ getValue<OutputSchema extends UnknownSchema = Schema>(): OutputSchema | undefine
 ```
 
 Returns the processed schema after traversal:
+
 - Returns `undefined` if called before `scan()`
 - Returns original schema reference when no mutations or resolved references exist
 - Returns a deep-cloned schema with all mutations and inlined references applied otherwise
@@ -219,16 +224,16 @@ Returns the processed schema after traversal:
 
 ```typescript
 type SchemaEntry<Schema> = {
-  schema:             Schema;     // current schema node
-  path:               string;     // JSON Pointer: "#/properties/name"
-  dataPath:           string;     // data path: "/name"
-  depth:              number;     // 0 at root
-  hasReference?:      boolean;    // true: $ref found but not resolved
-  referencePath?:     string;     // original $ref value when resolved
-  referenceResolved?: boolean;    // true: resolveReference() succeeded
-  keyword?:           string;     // structural keyword producing this entry
-  variant?:           string | number; // property name or array index
-}
+  schema: Schema; // current schema node
+  path: string; // JSON Pointer: "#/properties/name"
+  dataPath: string; // data path: "/name"
+  depth: number; // 0 at root
+  hasReference?: boolean; // true: $ref found but not resolved
+  referencePath?: string; // original $ref value when resolved
+  referenceResolved?: boolean; // true: resolveReference() succeeded
+  keyword?: string; // structural keyword producing this entry
+  variant?: string | number; // property name or array index
+};
 ```
 
 **keyword values:** `'properties'`, `'$defs'`, `'definitions'`, `'items'`, `'prefixItems'`, `'additionalProperties'`, `'not'`, `'if'`, `'then'`, `'else'`, `'allOf'`, `'anyOf'`, `'oneOf'`
@@ -273,8 +278,10 @@ Returns a `Promise` that resolves to `this` after traversal completes. Must be a
 Identical to the sync scanner. Synchronous. Call after awaiting `scan()`.
 
 ```typescript
-const scanner = new JsonSchemaScannerAsync({ /* ... */ });
-const result = await scanner.scan(schema).then(s => s.getValue());
+const scanner = new JsonSchemaScannerAsync({
+  /* ... */
+});
+const result = await scanner.scan(schema).then((s) => s.getValue());
 ```
 
 ### Async use cases
@@ -295,14 +302,14 @@ All type guards are available from `@winglet/json-schema/filter`.
 
 Handle both nullable and non-nullable schemas:
 
-| Function | Matches |
-|----------|---------|
-| `isObjectSchema(s)` | `{ type: 'object' }` or `{ type: ['object', 'null'] }` |
-| `isArraySchema(s)` | `{ type: 'array' }` or `{ type: ['array', 'null'] }` |
-| `isStringSchema(s)` | `{ type: 'string' }` or `{ type: ['string', 'null'] }` |
-| `isNumberSchema(s)` | `{ type: 'number'\|'integer' }` or nullable variants |
+| Function             | Matches                                                  |
+| -------------------- | -------------------------------------------------------- |
+| `isObjectSchema(s)`  | `{ type: 'object' }` or `{ type: ['object', 'null'] }`   |
+| `isArraySchema(s)`   | `{ type: 'array' }` or `{ type: ['array', 'null'] }`     |
+| `isStringSchema(s)`  | `{ type: 'string' }` or `{ type: ['string', 'null'] }`   |
+| `isNumberSchema(s)`  | `{ type: 'number'\|'integer' }` or nullable variants     |
 | `isBooleanSchema(s)` | `{ type: 'boolean' }` or `{ type: ['boolean', 'null'] }` |
-| `isNullSchema(s)` | `{ type: 'null' }` (pure null, not nullable) |
+| `isNullSchema(s)`    | `{ type: 'null' }` (pure null, not nullable)             |
 
 All guards narrow the TypeScript type of the argument, giving access to type-specific fields (`properties`, `items`, `pattern`, etc.).
 
@@ -311,11 +318,11 @@ All guards narrow the TypeScript type of the argument, giving access to type-spe
 For cases where nullable vs. non-nullable distinction matters:
 
 ```typescript
-isNonNullableObjectSchema(s)  // only { type: 'object' }
-isNullableObjectSchema(s)     // only { type: ['object', 'null'] }
+isNonNullableObjectSchema(s); // only { type: 'object' }
+isNullableObjectSchema(s); // only { type: ['object', 'null'] }
 
-isNonNullableStringSchema(s)  // only { type: 'string' }
-isNullableStringSchema(s)     // only { type: ['string', 'null'] }
+isNonNullableStringSchema(s); // only { type: 'string' }
+isNullableStringSchema(s); // only { type: ['string', 'null'] }
 
 // Same pattern for array, number, boolean
 ```
@@ -329,8 +336,8 @@ hasNullInType(schema: UnknownSchema): boolean
 Returns `true` when `schema.type` is an array that contains `'null'`. Does not match `{ type: 'null' }`.
 
 ```typescript
-hasNullInType({ type: ['string', 'null'] })  // true
-hasNullInType({ type: 'null' })              // false
+hasNullInType({ type: ['string', 'null'] }); // true
+hasNullInType({ type: 'null' }); // false
 ```
 
 ### Schema Comparison
@@ -344,9 +351,12 @@ isIdenticalSchemaType(left: UnknownSchema, right: UnknownSchema): boolean
 Strict equality with nullable-aware comparison. Supports both JSON Schema array format and OpenAPI 3.0 `nullable: true`.
 
 ```typescript
-isIdenticalSchemaType({ type: 'string' }, { type: 'string' })                         // true
-isIdenticalSchemaType({ type: ['string', 'null'] }, { type: 'string', nullable: true }) // true
-isIdenticalSchemaType({ type: 'number' }, { type: 'integer' })                         // false
+isIdenticalSchemaType({ type: 'string' }, { type: 'string' }); // true
+isIdenticalSchemaType(
+  { type: ['string', 'null'] },
+  { type: 'string', nullable: true },
+); // true
+isIdenticalSchemaType({ type: 'number' }, { type: 'integer' }); // false
 ```
 
 #### isCompatibleSchemaType
@@ -358,9 +368,9 @@ isCompatibleSchemaType(left: UnknownSchema, right: UnknownSchema): boolean
 Looser check. `number` and `integer` are treated as compatible. Nullable differences are ignored.
 
 ```typescript
-isCompatibleSchemaType({ type: 'number' }, { type: 'integer' })           // true
-isCompatibleSchemaType({ type: ['string', 'null'] }, { type: 'string' }) // true
-isCompatibleSchemaType({ type: [] }, { type: [] })                        // false (empty array)
+isCompatibleSchemaType({ type: 'number' }, { type: 'integer' }); // true
+isCompatibleSchemaType({ type: ['string', 'null'] }, { type: 'string' }); // true
+isCompatibleSchemaType({ type: [] }, { type: [] }); // false (empty array)
 ```
 
 ---
@@ -371,16 +381,21 @@ isCompatibleSchemaType({ type: [] }, { type: [] })                        // fal
 
 ```typescript
 // Base type — any schema object
-type UnknownSchema = { type?: string | Readonly<string[]>; [key: string]: any }
+type UnknownSchema = { type?: string | Readonly<string[]>; [key: string]: any };
 
 // Full JSON Schema union
 type JsonSchema<Options = object> =
-  | NonNullableNumberSchema | NullableNumberSchema
-  | NonNullableStringSchema | NullableStringSchema
-  | NonNullableBooleanSchema | NullableBooleanSchema
-  | NonNullableArraySchema | NullableArraySchema
-  | NonNullableObjectSchema | NullableObjectSchema
-  | NullSchema
+  | NonNullableNumberSchema
+  | NullableNumberSchema
+  | NonNullableStringSchema
+  | NullableStringSchema
+  | NonNullableBooleanSchema
+  | NullableBooleanSchema
+  | NonNullableArraySchema
+  | NullableArraySchema
+  | NonNullableObjectSchema
+  | NullableObjectSchema
+  | NullSchema;
 
 // $ref node
 interface RefSchema {
@@ -429,23 +444,52 @@ InferValueType<{ type: 'array' }>              // any[]
 InferValueType<{ type: 'object' }>             // Record<string, any>
 ```
 
+`object` and `array` recurse into `properties` and `items` when those are literal —
+that is, when the schema is declared `as const`. Without `as const`, `type` widens to
+`string` and the result is `any`.
+
+```typescript
+InferValueType<{ type: 'array'; items: { type: 'string' } }>; // string[]
+
+InferValueType<{
+  type: 'object';
+  properties: { id: { type: 'number' } };
+  required: ['id'];
+}>;
+// { id?: number } & Record<string, any>
+```
+
+Two rules govern the object result:
+
+- **Every key is optional, including those in `required`.** The value described by a schema
+  may legitimately omit a key at runtime, so a required marker here would be a promise this
+  type cannot keep. Declare the exact shape yourself when you need one.
+- **The result is intersected with `Record<string, any>`** unless the schema sets
+  `additionalProperties: false` — open is the JSON Schema default, and it keeps keys
+  contributed by applicators this type does not model (`oneOf`, `anyOf`, `if`/`then`/`else`,
+  `patternProperties`, `dependentSchemas`, `$ref`) from being rejected as excess properties.
+
+Anything not modeled falls back rather than narrowing: a non-literal `properties`
+(e.g. `Dictionary<JsonSchema>`) yields `Record<string, any>`, a multi-type such as
+`['string', 'number']` yields `any`, and `items: false` yields `any[]`.
+
 ### Common BasicSchema Fields
 
 All typed schemas include these common fields inherited from `BasicSchema`:
 
-| Field | Type | Description |
-|-------|------|-------------|
-| `$defs` | `Dictionary<Schema>` | Reusable schema definitions |
-| `if/then/else` | `Partial<Schema>` | Conditional schemas |
-| `not` | `Partial<Schema>` | Negation schema |
-| `allOf/anyOf/oneOf` | `Partial<Schema>[]` | Composition schemas |
-| `const` | `Nullable<Type>` | Constant value constraint |
-| `default` | `Nullable<Type>` | Default value |
-| `enum` | `Nullable<Type>[]` | Allowed values |
-| `nullable` | `boolean` | OpenAPI 3.0 nullable flag |
-| `readOnly` | `boolean` | Read-only hint |
-| `disabled` | `boolean` | Disabled hint |
-| `options` | `Options` | Custom extension options |
+| Field               | Type                 | Description                 |
+| ------------------- | -------------------- | --------------------------- |
+| `$defs`             | `Dictionary<Schema>` | Reusable schema definitions |
+| `if/then/else`      | `Partial<Schema>`    | Conditional schemas         |
+| `not`               | `Partial<Schema>`    | Negation schema             |
+| `allOf/anyOf/oneOf` | `Partial<Schema>[]`  | Composition schemas         |
+| `const`             | `Nullable<Type>`     | Constant value constraint   |
+| `default`           | `Nullable<Type>`     | Default value               |
+| `enum`              | `Nullable<Type>[]`   | Allowed values              |
+| `nullable`          | `boolean`            | OpenAPI 3.0 nullable flag   |
+| `readOnly`          | `boolean`            | Read-only hint              |
+| `disabled`          | `boolean`            | Disabled hint               |
+| `options`           | `Options`            | Custom extension options    |
 
 ---
 
@@ -454,7 +498,7 @@ All typed schemas include these common fields inherited from `BasicSchema`:
 ```typescript
 import { resolveReference } from '@winglet/json-schema';
 
-function resolveReference(jsonSchema: UnknownSchema): UnknownSchema | undefined
+function resolveReference(jsonSchema: UnknownSchema): UnknownSchema | undefined;
 ```
 
 A convenience utility for resolving all internal `$ref` pointers in a self-contained schema (one that defines all its references in `$defs` or `definitions`).
@@ -497,7 +541,12 @@ interface Report {
   nullable: string[];
 }
 
-const report: Report = { totalFields: 0, requiredFields: [], optionalFields: [], nullable: [] };
+const report: Report = {
+  totalFields: 0,
+  requiredFields: [],
+  optionalFields: [],
+  nullable: [],
+};
 
 new JsonSchemaScanner<UnknownSchema, Report>({
   options: { context: report },
@@ -521,7 +570,7 @@ new JsonSchemaScanner<UnknownSchema, Report>({
 Enrich schemas with additional metadata during traversal.
 
 ```typescript
-import { isStringSchema, isNumberSchema } from '@winglet/json-schema/filter';
+import { isNumberSchema, isStringSchema } from '@winglet/json-schema/filter';
 
 const enriched = new JsonSchemaScanner({
   options: {
@@ -532,7 +581,9 @@ const enriched = new JsonSchemaScanner({
         return { ...schema, minimum: 0 };
     },
   },
-}).scan(schema).getValue();
+})
+  .scan(schema)
+  .getValue();
 ```
 
 ### Pattern 3: $ref Inlining with Custom Resolver
@@ -541,14 +592,19 @@ Resolve references from an external registry.
 
 ```typescript
 const registry: Record<string, UnknownSchema> = {
-  '#/definitions/Address': { type: 'object', properties: { city: { type: 'string' } } },
+  '#/definitions/Address': {
+    type: 'object',
+    properties: { city: { type: 'string' } },
+  },
 };
 
 const inlined = new JsonSchemaScanner({
   options: {
     resolveReference: (ref) => registry[ref],
   },
-}).scan(schema).getValue();
+})
+  .scan(schema)
+  .getValue();
 ```
 
 ### Pattern 4: Async Schema Composition
@@ -564,14 +620,14 @@ const scanner = new JsonSchemaScannerAsync({
   options: {
     resolveReference: async (ref) => {
       if (schemaCache.has(ref)) return schemaCache.get(ref)!;
-      const schema = await fetch(ref).then(r => r.json());
+      const schema = await fetch(ref).then((r) => r.json());
       schemaCache.set(ref, schema);
       return schema;
     },
   },
 });
 
-const composed = await scanner.scan(rootSchema).then(s => s.getValue());
+const composed = await scanner.scan(rootSchema).then((s) => s.getValue());
 ```
 
 ### Pattern 5: Conditional Traversal
@@ -602,7 +658,10 @@ interface UserFormOptions {
   autocomplete?: string;
 }
 
-type UserSchema = InferJsonSchema<{ name: string; age: number }, UserFormOptions>;
+type UserSchema = InferJsonSchema<
+  { name: string; age: number },
+  UserFormOptions
+>;
 
 const userSchema: InferJsonSchema<string, UserFormOptions> = {
   type: 'string',
@@ -616,14 +675,15 @@ const userSchema: InferJsonSchema<string, UserFormOptions> = {
 ## Compatibility
 
 | Environment | Minimum Version |
-|-------------|-----------------|
-| Node.js | 16.11.0 |
-| Chrome | 94 |
-| Firefox | 93 |
-| Safari | 15 |
+| ----------- | --------------- |
+| Node.js     | 16.11.0         |
+| Chrome      | 94              |
+| Firefox     | 93              |
+| Safari      | 15              |
 
 Both ESM (`import`) and CommonJS (`require`) builds are included. For legacy environments, use Babel or SWC to transpile ES2022 syntax.
 
 **Dependencies:**
+
 - `@winglet/common-utils` — object cloning, utility functions
 - `@winglet/json` — JSON Pointer operations (`getValue`, `setValue`, `escapeSegment`)

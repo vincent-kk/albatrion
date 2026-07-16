@@ -21,6 +21,7 @@ RefSchema             { $ref: string; type?: undefined }
 ```
 
 Union alias types (exported):
+
 - `NumberSchema` = `NonNullableNumberSchema | NullableNumberSchema`
 - `StringSchema` = `NonNullableStringSchema | NullableStringSchema`
 - `BooleanSchema` = `NonNullableBooleanSchema | NullableBooleanSchema`
@@ -35,18 +36,18 @@ All typed schemas extend `BasicSchema<Type, Options, Schema>` which provides:
 
 ```typescript
 interface BasicSchema<Type, Options, Schema> extends CustomOptions<Options> {
-  $defs?:    Dictionary<Schema>;      // reusable sub-schemas (JSON Schema 2019+)
-  if?:       Partial<Schema>;
-  then?:     Partial<Schema>;
-  else?:     Partial<Schema>;
-  not?:      Partial<Schema>;
-  allOf?:    Partial<Schema>[];
-  anyOf?:    Partial<Schema>[];
-  oneOf?:    Partial<Schema>[];
-  nullable?: boolean;                  // OpenAPI 3.0 nullable flag (deprecated path)
-  const?:    Nullable<Type>;
-  default?:  Nullable<Type>;
-  enum?:     Nullable<Type>[];
+  $defs?: Dictionary<Schema>; // reusable sub-schemas (JSON Schema 2019+)
+  if?: Partial<Schema>;
+  then?: Partial<Schema>;
+  else?: Partial<Schema>;
+  not?: Partial<Schema>;
+  allOf?: Partial<Schema>[];
+  anyOf?: Partial<Schema>[];
+  oneOf?: Partial<Schema>[];
+  nullable?: boolean; // OpenAPI 3.0 nullable flag (deprecated path)
+  const?: Nullable<Type>;
+  default?: Nullable<Type>;
+  enum?: Nullable<Type>[];
 }
 ```
 
@@ -113,7 +114,7 @@ required?:             string[];
 ```typescript
 export interface RefSchema {
   type?: undefined;
-  $ref: string;           // JSON Pointer, e.g. '#/definitions/Address' or remote URL
+  $ref: string; // JSON Pointer, e.g. '#/definitions/Address' or remote URL
   [alt: string]: any;
 }
 ```
@@ -141,10 +142,10 @@ type InferJsonSchema<
 **Examples**
 
 ```typescript
-type A = InferJsonSchema<string>;         // NonNullableStringSchema
-type B = InferJsonSchema<string | null>;  // NullableStringSchema
-type C = InferJsonSchema<number>;         // NonNullableNumberSchema
-type D = InferJsonSchema<null>;           // NullSchema
+type A = InferJsonSchema<string>; // NonNullableStringSchema
+type B = InferJsonSchema<string | null>; // NullableStringSchema
+type C = InferJsonSchema<number>; // NonNullableNumberSchema
+type D = InferJsonSchema<null>; // NullSchema
 type E = InferJsonSchema<{ id: string }>; // NonNullableObjectSchema
 ```
 
@@ -159,24 +160,51 @@ export type InferValueType<
   T extends { type?: string | readonly string[] | string[] },
 > = T extends { type: infer Type }
   ? HasNull<Type> extends true
-    ? InferNonNullableValueType<ExtractPrimaryType<Type>> | null
-    : InferNonNullableValueType<Type>
-  : any;
+    ? InferNonNullableValueType<T, ExtractPrimaryType<Type>> | NullValue
+    : InferNonNullableValueType<T, Type>
+  : AnyValue;
 ```
+
+`InferNonNullableValueType` takes the whole schema, not just its `type`, so `object` and
+`array` can recurse into `properties` and `items`.
 
 **Examples**
 
 ```typescript
-type A = InferValueType<{ type: 'string' }>;               // string
-type B = InferValueType<{ type: ['string', 'null'] }>;     // string | null
-type C = InferValueType<{ type: 'number' }>;               // number
-type D = InferValueType<{ type: 'integer' }>;              // number
-type E = InferValueType<{ type: 'boolean' }>;              // boolean
-type F = InferValueType<{ type: 'array' }>;                // any[]
-type G = InferValueType<{ type: 'object' }>;               // Record<string, any>
-type H = InferValueType<{ type: 'null' }>;                 // null
-type I = InferValueType<{ type: ['number', 'null'] }>;     // number | null
+type A = InferValueType<{ type: 'string' }>; // string
+type B = InferValueType<{ type: ['string', 'null'] }>; // string | null
+type C = InferValueType<{ type: 'number' }>; // number
+type D = InferValueType<{ type: 'integer' }>; // number
+type E = InferValueType<{ type: 'boolean' }>; // boolean
+type F = InferValueType<{ type: 'array' }>; // any[]
+type G = InferValueType<{ type: 'object' }>; // Record<string, any>
+type H = InferValueType<{ type: 'null' }>; // null
+type I = InferValueType<{ type: ['number', 'null'] }>; // number | null
+
+// Recursion — requires the schema to be `as const`
+type J = InferValueType<{ type: 'array'; items: { type: 'string' } }>; // string[]
+type K = InferValueType<{
+  type: 'object';
+  properties: { id: { type: 'number' } };
+  required: ['id'];
+}>;
+// { id?: number } & Record<string, any>
 ```
+
+## Object inference rules
+
+- **Every key is optional, `required` included.** The described value may omit a key at
+  runtime, so a required marker would be a promise this type cannot keep. Consumers who
+  know the exact shape should declare it and pass it explicitly.
+- **Open by default.** The result is intersected with `Record<string, any>` unless the
+  schema sets `additionalProperties: false`. Open is the JSON Schema default, and it keeps
+  keys contributed by unmodeled applicators (`oneOf`, `anyOf`, `if`/`then`/`else`,
+  `patternProperties`, `dependentSchemas`, `$ref`) from being rejected as excess properties.
+- **Unmodeled shapes fall back, never narrow.** Non-literal `properties`
+  (`Dictionary<JsonSchema>`) → `Record<string, any>`; multi-type `['string', 'number']` →
+  `any`; `items: false` → `any[]`.
+- **`-readonly` is applied** so an `as const` schema does not make the inferred value
+  readonly — the schema is frozen, the value it describes is not.
 
 ---
 
@@ -184,17 +212,18 @@ type I = InferValueType<{ type: ['number', 'null'] }>;     // number | null
 
 ```typescript
 type SchemaEntry<Schema extends UnknownSchema = UnknownSchema> = {
-  schema:             Schema;
-  path:               string;    // JSON Pointer fragment — starts with '#'
-  dataPath:           string;    // Data JSON Pointer — starts with '/'  or ''
-  depth:              number;    // 0 at root
-  hasReference?:      boolean;   // $ref found but not resolved (or circular)
-  referencePath?:     string;    // original $ref value when resolved
-  referenceResolved?: boolean;   // true when resolveReference succeeded
+  schema: Schema;
+  path: string; // JSON Pointer fragment — starts with '#'
+  dataPath: string; // Data JSON Pointer — starts with '/'  or ''
+  depth: number; // 0 at root
+  hasReference?: boolean; // $ref found but not resolved (or circular)
+  referencePath?: string; // original $ref value when resolved
+  referenceResolved?: boolean; // true when resolveReference succeeded
 } & KeywordVariant;
 ```
 
 `KeywordVariant` is a discriminated union covering all possible `keyword` / `variant` combinations:
+
 - `{ keyword: 'allOf' | 'anyOf' | 'oneOf'; variant: number }`
 - `{ keyword: 'items' | 'prefixItems'; variant?: number }`
 - `{ keyword: '$defs' | 'definitions' | 'properties'; variant: string }`
@@ -208,21 +237,24 @@ type SchemaEntry<Schema extends UnknownSchema = UnknownSchema> = {
 ```typescript
 import { resolveReference } from '@winglet/json-schema';
 
-function resolveReference(jsonSchema: UnknownSchema): UnknownSchema | undefined
+function resolveReference(jsonSchema: UnknownSchema): UnknownSchema | undefined;
 ```
 
 A **two-pass** convenience function for resolving all internal `$ref` pointers in a self-contained schema.
 
 **Pass 1** — Collect unresolvable refs:
+
 - Scans the schema with a visitor that records `$ref` values found in definition nodes (`hasReference: true`).
 - Uses `@winglet/json/pointer` `getValue` to look up each ref inside the schema.
 - Builds a `Map<refPath, resolvedSchema>`.
 
 **Pass 2** — Inline all refs:
+
 - Re-scans with `resolveReference` option pointing to the map from Pass 1.
 - Returns the inlined schema via `getValue()`.
 
 **When to use**
+
 - You have a standalone schema with internal `#/definitions/...` or `#/$defs/...` refs.
 - You want a fully inlined schema with no `$ref` nodes remaining.
 - You do not need custom resolution logic.
@@ -234,18 +266,23 @@ For remote or custom resolution, use `JsonSchemaScanner` directly with a custom 
 ## Value Type Primitives
 
 ```typescript
-export type BooleanValue   = boolean;
-export type NumberValue    = number;
-export type StringValue    = string;
-export type ArrayValue     = any[];
-export type ObjectValue    = Record<string, any>;
-export type NullValue      = null;
+export type BooleanValue = boolean;
+export type NumberValue = number;
+export type StringValue = string;
+export type ArrayValue = any[];
+export type ObjectValue = Record<string, any>;
+export type NullValue = null;
 export type UndefinedValue = undefined;
-export type AnyValue       = any;
+export type AnyValue = any;
 
 export type AllowedValue =
-  | BooleanValue | NumberValue | StringValue
-  | ObjectValue | ArrayValue | NullValue | UndefinedValue;
+  | BooleanValue
+  | NumberValue
+  | StringValue
+  | ObjectValue
+  | ArrayValue
+  | NullValue
+  | UndefinedValue;
 ```
 
 These primitives are used as the generic `Type` parameter in `BasicSchema<Type, ...>` to constrain `const`, `default`, and `enum` fields.
@@ -258,10 +295,10 @@ Used internally by the scanner's state machine. Exposed as a named export for ad
 
 ```typescript
 export enum OperationPhase {
-  Enter        = 1 << 0,  // 1
-  ChildEntries = 1 << 1,  // 2
-  Reference    = 1 << 2,  // 4
-  Exit         = 1 << 3,  // 8
+  Enter = 1 << 0, // 1
+  ChildEntries = 1 << 1, // 2
+  Reference = 1 << 2, // 4
+  Exit = 1 << 3, // 8
 }
 ```
 
@@ -270,15 +307,15 @@ export enum OperationPhase {
 ## Keyword Constants
 
 ```typescript
-export const $DEFS                = '$defs';
-export const DEFINITIONS          = 'definitions';
-export const PROPERTIES           = 'properties';
+export const $DEFS = '$defs';
+export const DEFINITIONS = 'definitions';
+export const PROPERTIES = 'properties';
 export const ADDITIONAL_PROPERTIES = 'additionalProperties';
-export const ITEMS                = 'items';
-export const PREFIX_ITEMS         = 'prefixItems';
+export const ITEMS = 'items';
+export const PREFIX_ITEMS = 'prefixItems';
 
-export const CONDITIONAL_KEYWORDS  = ['not', 'if', 'then', 'else'] as const;
-export const COMPOSITION_KEYWORDS  = ['allOf', 'anyOf', 'oneOf'] as const;
+export const CONDITIONAL_KEYWORDS = ['not', 'if', 'then', 'else'] as const;
+export const COMPOSITION_KEYWORDS = ['allOf', 'anyOf', 'oneOf'] as const;
 ```
 
 These constants are used internally and can be imported when building custom traversal logic that needs to match specific keywords.

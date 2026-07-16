@@ -1184,6 +1184,7 @@ const formInputMap = {
 ```
 
 **와일드카드 매칭 예시:**
+
 - `/users/*/name`은 `/users/0/name`, `/users/1/name` 매칭 (배열 인덱스)
 - `/config/*/enabled`는 `/config/theme/enabled`, `/config/lang/enabled` 매칭 (객체 키)
 - `/data/*/*/status`는 깊게 중첩된 모든 status 필드를 매칭
@@ -1722,20 +1723,22 @@ const jsonSchema = {
 `injectTo`는 상대 경로와 절대 경로 모두 지원합니다:
 
 **상대 경로** (현재 노드 기준):
+
 ```tsx
 injectTo: (value) => ({
-  '../sibling': value,           // 형제 필드
-  '../nested/child': value,      // 중첩된 형제의 자식
-  '../../uncle': value,          // 부모의 형제
-})
+  '../sibling': value, // 형제 필드
+  '../nested/child': value, // 중첩된 형제의 자식
+  '../../uncle': value, // 부모의 형제
+});
 ```
 
 **절대 경로** (루트 기준):
+
 ```tsx
 injectTo: (value) => ({
-  '/rootField': value,           // 루트 레벨 필드
-  '/user/profile/name': value,   // 깊이 중첩된 필드
-})
+  '/rootField': value, // 루트 레벨 필드
+  '/user/profile/name': value, // 깊이 중첩된 필드
+});
 ```
 
 #### 다중 타겟
@@ -1751,7 +1754,10 @@ const jsonSchema = {
       injectTo: (value: string) => ({
         '../displayName': value,
         '../searchName': value.toLowerCase(),
-        '../initials': value.split(' ').map(n => n[0]).join(''),
+        '../initials': value
+          .split(' ')
+          .map((n) => n[0])
+          .join(''),
       }),
     },
     displayName: { type: 'string' },
@@ -1769,7 +1775,7 @@ const jsonSchema = {
 injectTo: (value: number) => [
   ['/calculations/doubled', value * 2],
   ['/calculations/squared', value * value],
-]
+];
 ```
 
 #### 컨텍스트 접근
@@ -1823,10 +1829,7 @@ const jsonSchema = {
 };
 
 // Form에 컨텍스트 전달
-<Form
-  jsonSchema={jsonSchema}
-  context={{ userRole: 'admin' }}
-/>
+<Form jsonSchema={jsonSchema} context={{ userRole: 'admin' }} />;
 ```
 
 #### 순환 참조 방지
@@ -1865,7 +1868,7 @@ injectTo: (value) => {
     throw new Error('값이 필요합니다');
   }
   return { '../target': value };
-}
+};
 
 // 에러에 포함되는 정보:
 // - 소스 노드 경로
@@ -1887,10 +1890,10 @@ interface FormContext {
 }
 
 const typedHandler: InjectToHandler<
-  string,        // Value 타입
-  ParentType,    // 부모 값 타입
-  RootType,      // 루트 폼 값 타입
-  FormContext    // 컨텍스트 타입
+  string, // Value 타입
+  ParentType, // 부모 값 타입
+  RootType, // 루트 폼 값 타입
+  FormContext // 컨텍스트 타입
 > = (value, ctx) => {
   // ctx.context는 FormContext 타입으로 지정됨
   if (ctx.context.permissions.includes('write')) {
@@ -2209,7 +2212,52 @@ const CUSTOM_INPUTS = [
 
 - `InferValueType<Schema>`: JSON Schema에서 값 유형을 추론합니다
 - `InferSchemaNode<Schema>`: JSON Schema에서 스키마 노드 유형을 추론합니다
-- `FormHandle<Schema>`: 스키마 특정 메서드를 가진 양식 참조 핸들러의 유형
+- `FormHandle<Schema, Value>`: 스키마 특정 메서드를 가진 양식 참조 핸들러의 유형
+
+### `InferValueType`이 보장하는 것
+
+스키마에 `as const`를 붙이세요. 없으면 `type: 'object'`가 `string`으로 넓어져 추론이 `any`로 떨어집니다.
+
+`as const`가 있으면 `InferValueType`이 `properties`와 `items`를 재귀 순회해, 선언된 필드에 실제 타입이 붙습니다:
+
+```typescript
+const jsonSchema = {
+  type: 'object',
+  properties: {
+    name: { type: 'string' },
+    tags: { type: 'array', items: { type: 'string' } },
+  },
+  required: ['name'],
+} as const;
+
+type Value = InferValueType<typeof jsonSchema>;
+// { name?: string; tags?: string[] } & Record<string, any>
+```
+
+이 결과에는 의도된 성질이 두 가지 있습니다:
+
+- **`required`에 있는 필드까지 포함해 모든 필드가 optional입니다.** 폼은 런타임에 필드를 값에서 제외할 수 있습니다 — `computed.active`가 false인 분기, `options.omitEmpty` 등. 필수로 표시하면 `value.name.trim()`이 컴파일을 통과한 뒤 터집니다.
+- **스키마가 `additionalProperties: false`를 지정하지 않는 한 객체 타입은 열려 있습니다.** JSON Schema의 기본값이 그렇습니다. 이 덕분에 `oneOf`/`anyOf` 분기, `if`/`then`/`else`, `patternProperties`가 기여하는 키가 초과 속성으로 거부되지 않습니다. `additionalProperties: false`를 지정하면 추론 타입이 닫혀서 오타를 잡아줍니다.
+
+### 값 타입을 직접 정의해 주입하기
+
+`InferValueType`은 어디까지나 기본값입니다. 정확한 형태를 알고 있다면 직접 정의해 두 번째 타입 인자로 넘기세요. 추론은 폼이 실제로 어떤 필드를 유지하는지 알 수 없지만, 작성자는 알고 있습니다:
+
+```typescript
+interface SignUpValue {
+  name: string;
+  tags?: string[];
+}
+
+<Form<typeof jsonSchema, SignUpValue>
+  jsonSchema={jsonSchema}
+  onChange={(value) => value.name.trim()} // value: SignUpValue
+/>;
+
+const formRef = useRef<FormHandle<typeof jsonSchema, SignUpValue>>(null);
+```
+
+`defaultValue`를 넘기면 그 값으로부터도 `Value`가 추론되므로, 명시적 타입 인자가 항상 필요하지는 않습니다.
 
 ---
 

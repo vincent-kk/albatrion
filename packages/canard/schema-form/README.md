@@ -2273,7 +2273,52 @@ Measured with `compare-frameworks` (production React, 500 flat fields): mount dr
 
 - `InferValueType<Schema>`: Infers the value type from a JSON Schema
 - `InferSchemaNode<Schema>`: Infers the schema node type from a JSON Schema
-- `FormHandle<Schema>`: Type for form ref handle with schema-specific methods
+- `FormHandle<Schema, Value>`: Type for form ref handle with schema-specific methods
+
+### What `InferValueType` guarantees
+
+Apply `as const` to the schema — without it, `type: 'object'` widens to `string` and inference falls back to `any`.
+
+With `as const`, `InferValueType` walks `properties` and `items`, so declared fields get real types:
+
+```typescript
+const jsonSchema = {
+  type: 'object',
+  properties: {
+    name: { type: 'string' },
+    tags: { type: 'array', items: { type: 'string' } },
+  },
+  required: ['name'],
+} as const;
+
+type Value = InferValueType<typeof jsonSchema>;
+// { name?: string; tags?: string[] } & Record<string, any>
+```
+
+Two properties of that result are deliberate:
+
+- **Every field is optional, including `required` ones.** A form may drop a field from its value at runtime — an inactive `computed.active` branch, or `options.omitEmpty`. Marking it required would let `value.name.trim()` compile and then throw.
+- **The object stays open** unless the schema sets `additionalProperties: false`, which is the JSON Schema default. This is what keeps keys contributed by `oneOf`/`anyOf` branches, `if`/`then`/`else`, and `patternProperties` from being rejected as excess properties. Set `additionalProperties: false` and the inferred type closes, so typos are caught.
+
+### Declaring the value type yourself
+
+`InferValueType` is only the default. When you know the exact shape, declare it and pass it as the second type argument — inference cannot know which fields your form actually keeps, but you can:
+
+```typescript
+interface SignUpValue {
+  name: string;
+  tags?: string[];
+}
+
+<Form<typeof jsonSchema, SignUpValue>
+  jsonSchema={jsonSchema}
+  onChange={(value) => value.name.trim()} // value: SignUpValue
+/>;
+
+const formRef = useRef<FormHandle<typeof jsonSchema, SignUpValue>>(null);
+```
+
+Passing `defaultValue` infers `Value` from it as well, so an explicit type argument is not always necessary.
 
 ---
 
