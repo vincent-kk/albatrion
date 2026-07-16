@@ -123,7 +123,7 @@
  * order from the source array.
  */
 export const groupBy = <Type, Key extends PropertyKey>(
-  array: Type[],
+  array: readonly Type[],
   getKey: (item: Type) => Key,
 ): Record<Key, Type[]> => {
   const result = {} as Record<Key, Type[]>;

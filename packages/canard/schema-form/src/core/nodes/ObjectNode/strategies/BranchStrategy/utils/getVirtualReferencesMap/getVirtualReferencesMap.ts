@@ -31,11 +31,8 @@ export const getVirtualReferencesMap = (
 } => {
   if (!virtualReferences) return {} as const;
 
-  const virtualReferenceFieldsMap = new Map<
-    string,
-    VirtualReference['fields']
-  >();
-  const virtualReferencesMap = new Map<string, VirtualReference>();
+  const virtualReferenceFieldsMap: VirtualReferenceFieldsMap = new Map();
+  const virtualReferencesMap: VirtualReferencesMap = new Map();
 
   const keys = Object.keys(virtualReferences);
   for (let i = 0, k = keys[0], l = keys.length; i < l; i++, k = keys[i]) {

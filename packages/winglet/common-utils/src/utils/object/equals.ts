@@ -252,7 +252,7 @@ import { countObjectKey } from './countObjectKey';
 export const equals = <Left, Right>(
   left: Left,
   right: Right,
-  omit?: Set<PropertyKey> | Array<PropertyKey>,
+  omit?: Set<PropertyKey> | readonly PropertyKey[],
 ): boolean => {
   const omits = omit ? (omit instanceof Set ? omit : new Set(omit)) : null;
   return equalsRecursive(left, right, omits);

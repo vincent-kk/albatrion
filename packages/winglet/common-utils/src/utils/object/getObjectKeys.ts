@@ -176,7 +176,7 @@ import type { Dictionary, Fn } from '@aileron/declare';
  */
 export const getObjectKeys = <Type extends Dictionary>(
   object: Type | undefined,
-  omit?: Set<keyof Type> | Array<keyof Type>,
+  omit?: Set<keyof Type> | readonly (keyof Type)[],
   sort?: Fn<[a: keyof Type, b: keyof Type], number>,
 ): Array<keyof Type> => {
   if (!object) return [];

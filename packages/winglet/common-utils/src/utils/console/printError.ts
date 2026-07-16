@@ -10,7 +10,7 @@ import type { PrintConsoleOptions } from './type';
  */
 export const printError = (
   title: string,
-  message: string[],
+  message: readonly string[],
   options?: PrintConsoleOptions,
 ) =>
   console.error(

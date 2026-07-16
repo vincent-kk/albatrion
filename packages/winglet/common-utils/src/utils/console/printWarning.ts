@@ -10,7 +10,7 @@ import type { PrintConsoleOptions } from './type';
  */
 export const printWarning = (
   title: string,
-  message: string[],
+  message: readonly string[],
   options?: PrintConsoleOptions,
 ) =>
   console.warn(

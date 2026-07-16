@@ -291,7 +291,7 @@
 export const stableEquals = (
   left: unknown,
   right: unknown,
-  omit?: PropertyKey[],
+  omit?: readonly PropertyKey[],
 ): boolean => {
   const omits = omit ? new Set(omit) : null;
   const visited = new Map<object, Set<object>>();

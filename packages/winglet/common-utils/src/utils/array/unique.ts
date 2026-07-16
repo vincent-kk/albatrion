@@ -148,5 +148,5 @@
  * **Reference vs Value:** For objects and arrays, comparison is done by reference,
  * not by content. Use `uniqueBy` or `uniqueWith` for content-based deduplication.
  */
-export const unique = <Type>(source: Type[]): Type[] =>
+export const unique = <Type>(source: readonly Type[]): Type[] =>
   Array.from(new Set(source));

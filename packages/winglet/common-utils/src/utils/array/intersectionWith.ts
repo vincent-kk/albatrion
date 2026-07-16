@@ -204,8 +204,8 @@
  * providing some optimization for cases where matches are found early.
  */
 export const intersectionWith = <Type1, Type2>(
-  source: Type1[],
-  target: Type2[],
+  source: readonly Type1[],
+  target: readonly Type2[],
   isEqual: (source: Type1, target: Type2) => boolean,
 ): Type1[] => {
   const result: Type1[] = [];

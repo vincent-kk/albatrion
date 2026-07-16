@@ -221,7 +221,7 @@
  * providing efficient lookup and maintaining insertion order.
  */
 export const uniqueBy = <Type, SubType>(
-  source: Type[],
+  source: readonly Type[],
   mapper: (item: Type) => SubType,
 ): Type[] => {
   const map = new Map<SubType, Type>();

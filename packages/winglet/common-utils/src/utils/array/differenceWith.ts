@@ -146,8 +146,8 @@
  * in the result array.
  */
 export const differenceWith = <Type1, Type2>(
-  source: Type1[],
-  exclude: Type2[],
+  source: readonly Type1[],
+  exclude: readonly Type2[],
   isEqual: (source: Type1, exclude: Type2) => boolean,
 ): Type1[] => {
   const result: Type1[] = [];

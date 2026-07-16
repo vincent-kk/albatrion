@@ -149,8 +149,8 @@
  * rather than creating new arrays. Use `map` or `filter` for functional transformations.
  */
 export const forEach = <Type>(
-  array: Type[],
-  callback: (item: Type, index: number, array: Type[]) => boolean | void,
+  array: readonly Type[],
+  callback: (item: Type, index: number, array: readonly Type[]) => boolean | void,
 ) => {
   for (let i = 0, l = array.length; i < l; i++)
     if (callback(array[i], i, array) === false) break;

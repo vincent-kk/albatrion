@@ -221,7 +221,7 @@
  * function is called for each pair until a match is found or all comparisons are complete.
  */
 export const uniqueWith = <Type>(
-  source: Type[],
+  source: readonly Type[],
   isEqual: (item1: Type, item2: Type) => boolean,
 ): Type[] => {
   const result: Type[] = [];

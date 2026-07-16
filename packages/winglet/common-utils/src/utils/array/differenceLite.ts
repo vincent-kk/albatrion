@@ -89,8 +89,8 @@
  * Result array grows dynamically without pre-allocation.
  */
 export const differenceLite = <Type>(
-  source: Type[],
-  exclude: Type[],
+  source: readonly Type[],
+  exclude: readonly Type[],
 ): Type[] => {
   const result: Type[] = [];
   for (let i = 0, e = source[0], l = source.length; i < l; i++, e = source[i])

@@ -21,10 +21,10 @@ import { formatEmptyEnumIntersectionError } from '@/schema-form/helpers/error';
  * @throws {JsonSchemaError} When intersection results in empty array (impossible constraint)
  */
 export const intersectEnum = <T>(
-  baseEnum?: T[],
-  sourceEnum?: T[],
+  baseEnum?: readonly T[],
+  sourceEnum?: readonly T[],
   deepEqual?: boolean,
-): T[] | undefined => {
+): readonly T[] | undefined => {
   if (!baseEnum && !sourceEnum) return undefined;
   if (!baseEnum) return sourceEnum;
   if (!sourceEnum) return baseEnum;

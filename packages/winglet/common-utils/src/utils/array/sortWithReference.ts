@@ -24,7 +24,7 @@
  */
 export const sortWithReference = <Value>(
   source: Value[],
-  reference?: Value[],
+  reference?: readonly Value[],
 ): Value[] => {
   if (!reference) return source;
 

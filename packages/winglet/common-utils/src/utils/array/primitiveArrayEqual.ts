@@ -63,7 +63,7 @@
  * **Limitations:** Does not perform deep comparison of objects or nested arrays.
  * For deep equality, consider using a deep comparison utility.
  */
-export const primitiveArrayEqual = (base: unknown[], target: unknown[]) => {
+export const primitiveArrayEqual = (base: readonly unknown[], target: readonly unknown[]) => {
   if (base.length !== target.length) return false;
   for (let i = 0, e = base[0], l = base.length; i < l; i++, e = base[i])
     if (e !== target[i]) return false;

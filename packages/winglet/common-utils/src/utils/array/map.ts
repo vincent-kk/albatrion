@@ -186,8 +186,8 @@
  * array to minimize memory allocations during transformation.
  */
 export const map = <Type, Result = Type>(
-  array: Type[],
-  callback: (item: Type, index: number, array: Type[]) => Result,
+  array: readonly Type[],
+  callback: (item: Type, index: number, array: readonly Type[]) => Result,
 ): Result[] => {
   const result = new Array<Result>(array.length);
   for (let i = 0, l = array.length; i < l; i++)

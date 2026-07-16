@@ -224,7 +224,7 @@ import { serializeNative } from './serializeNative';
  * - No support for circular references in nested objects
  * - Property order depends on JavaScript engine implementation
  */
-export const serializeObject = (object: any, omits?: string[]): string => {
+export const serializeObject = (object: any, omits?: readonly string[]): string => {
   if (!object || typeof object !== 'object') return serializeNative(object);
   const keys = getObjectKeys(object, omits) as string[];
   const segments = new Array(keys.length);

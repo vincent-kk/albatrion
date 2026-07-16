@@ -260,7 +260,7 @@ import { hasOwnProperty } from '@/common-utils/libs/hasOwnProperty';
  */
 export const sortObjectKeys = <Dict extends Dictionary>(
   object: Dict | Nullish,
-  keys: string[],
+  keys: readonly string[],
   options?: {
     ignoreUndefinedKey?: boolean;
     ignoreUndefinedValue?: boolean;

@@ -128,8 +128,8 @@
  * in the result array.
  */
 export const differenceBy = <Type1, Type2>(
-  source: Type1[],
-  exclude: Type2[],
+  source: readonly Type1[],
+  exclude: readonly Type2[],
   mapper: (item: Type1 | Type2) => unknown,
 ): Type1[] => {
   const excludeSet = new Set<unknown>();

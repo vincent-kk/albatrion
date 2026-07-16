@@ -81,7 +81,7 @@
  * **Memory Efficiency:** Pre-allocates result array and uses direct indexing
  * to minimize memory allocations and improve performance.
  */
-export const difference = <Type>(source: Type[], exclude: Type[]): Type[] => {
+export const difference = <Type>(source: readonly Type[], exclude: readonly Type[]): Type[] => {
   const result: Type[] = [];
   const excludeSet = new Set(exclude);
   for (let i = 0, e = source[0], l = source.length; i < l; i++, e = source[i])

@@ -12,9 +12,9 @@ import { unique } from '@winglet/common-utils/array';
  * @returns Combined unique required fields array, or undefined if both are undefined
  */
 export const unionRequired = (
-  baseRequired?: string[],
-  sourceRequired?: string[],
-): string[] | undefined => {
+  baseRequired?: readonly string[],
+  sourceRequired?: readonly string[],
+): readonly string[] | undefined => {
   if (!baseRequired && !sourceRequired) return undefined;
   if (!baseRequired) return sourceRequired;
   if (!sourceRequired) return baseRequired;

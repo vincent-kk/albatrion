@@ -170,14 +170,14 @@
  * for optimal performance with minimal overhead.
  */
 export const forEachDual = <Type1, Type2>(
-  array1: Type1[],
-  array2: Type2[],
+  array1: readonly Type1[],
+  array2: readonly Type2[],
   callback: (
     item1: Type1 | undefined,
     item2: Type2 | undefined,
     index: number,
-    array1: Type1[],
-    array2: Type2[],
+    array1: readonly Type1[],
+    array2: readonly Type2[],
   ) => boolean | void,
 ) => {
   const array1Length = array1.length;

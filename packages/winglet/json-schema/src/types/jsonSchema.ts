@@ -13,7 +13,7 @@ import type {
 
 /** Base type for any JSON Schema definition */
 export type UnknownSchema = {
-  type?: string | Readonly<string[]>;
+  type?: string | readonly string[];
   [key: string]: any;
 };
 
@@ -105,8 +105,8 @@ export interface NullableNumberSchema<
   Schema extends UnknownSchema = JsonSchema,
 > extends BaseNumberSchema<NumberValue, Options, Schema> {
   type:
-    | Readonly<['number' | 'integer', 'null']>
-    | Readonly<['null', 'number' | 'integer']>;
+    | readonly ['number' | 'integer', 'null']
+    | readonly ['null', 'number' | 'integer'];
 }
 
 /** Base number schema with numeric constraints */
@@ -150,7 +150,7 @@ export interface NullableStringSchema<
   Options extends Dictionary = object,
   Schema extends UnknownSchema = JsonSchema,
 > extends BaseStringSchema<StringValue, Options, Schema> {
-  type: Readonly<['string', 'null']> | Readonly<['null', 'string']>;
+  type: readonly ['string', 'null'] | readonly ['null', 'string'];
 }
 
 /** Base string schema with string constraints */
@@ -190,7 +190,7 @@ export interface NullableBooleanSchema<
   Options extends Dictionary = object,
   Schema extends UnknownSchema = JsonSchema,
 > extends BasicSchema<BooleanValue, Options, Schema> {
-  type: Readonly<['boolean', 'null']> | Readonly<['null', 'boolean']>;
+  type: readonly ['boolean', 'null'] | readonly ['null', 'boolean'];
 }
 
 /** Array type schema */
@@ -214,7 +214,7 @@ export interface NullableArraySchema<
   Options extends Dictionary = object,
   Schema extends UnknownSchema = JsonSchema,
 > extends BaseArraySchema<ArrayValue, Options, Schema> {
-  type: Readonly<['array', 'null']> | Readonly<['null', 'array']>;
+  type: readonly ['array', 'null'] | readonly ['null', 'array'];
 }
 
 /** Base array schema with array constraints */
@@ -226,7 +226,7 @@ interface BaseArraySchema<
   /** Schema for all array items */
   items?: Schema | false;
   /** Schema for all array items */
-  prefixItems?: Schema[];
+  prefixItems?: readonly Schema[];
   /** Schema for items that must be present */
   contains?: Partial<Schema>;
   /** Minimum number of items */
@@ -264,7 +264,7 @@ export interface NullableObjectSchema<
   Options extends Dictionary = object,
   Schema extends UnknownSchema = JsonSchema,
 > extends BaseObjectSchema<ObjectValue, Options, Schema> {
-  type: Readonly<['object', 'null']> | Readonly<['null', 'object']>;
+  type: readonly ['object', 'null'] | readonly ['null', 'object'];
 }
 
 /** Base object schema with object constraints */
@@ -284,9 +284,9 @@ interface BaseObjectSchema<
   /** Schema for property names */
   propertyNames?: Partial<Extract<Schema, { type: StringSchema['type'] }>>;
   /** Property dependencies (deprecated, use dependentSchemas) */
-  dependencies?: Dictionary<Partial<Schema> | string[]>;
+  dependencies?: Dictionary<Partial<Schema> | readonly string[]>;
   /** Required properties when another property is present */
-  dependentRequired?: Dictionary<string[]>;
+  dependentRequired?: Dictionary<readonly string[]>;
   /** Schema dependencies when another property is present */
   dependentSchemas?: Dictionary<Partial<Schema>>;
   /** Minimum number of properties */
@@ -294,7 +294,7 @@ interface BaseObjectSchema<
   /** Maximum number of properties */
   maxProperties?: number;
   /** List of required property names */
-  required?: string[];
+  required?: readonly string[];
 }
 
 /** Null type schema */
@@ -330,11 +330,11 @@ export interface BasicSchema<
   /** Schema that must NOT be valid */
   not?: Partial<Schema>;
   /** All schemas must be valid */
-  allOf?: Partial<Schema>[];
+  allOf?: readonly Partial<Schema>[];
   /** At least one schema must be valid */
-  anyOf?: Partial<Schema>[];
+  anyOf?: readonly Partial<Schema>[];
   /** Exactly one schema must be valid */
-  oneOf?: Partial<Schema>[];
+  oneOf?: readonly Partial<Schema>[];
   /** Whether the value can be null (deprecated, use type array) */
   nullable?: boolean;
   /** Constant value constraint */
@@ -342,7 +342,7 @@ export interface BasicSchema<
   /** Default value */
   default?: Nullable<Type>;
   /** Enumeration of allowed values */
-  enum?: Nullable<Type>[];
+  enum?: readonly Nullable<Type>[];
 }
 
 /** Custom options for schema extensions */

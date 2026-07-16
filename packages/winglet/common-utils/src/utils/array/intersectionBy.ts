@@ -184,8 +184,8 @@
  * will be included in the result.
  */
 export const intersectionBy = <Type1, Type2>(
-  source: Type1[],
-  target: Type2[],
+  source: readonly Type1[],
+  target: readonly Type2[],
   mapper: (item: Type1 | Type2) => unknown,
 ): Type1[] => {
   const targetSet = new Set<unknown>();

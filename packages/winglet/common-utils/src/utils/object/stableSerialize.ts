@@ -319,7 +319,7 @@ const { increment } = counterFactory();
  */
 export const stableSerialize = (
   input: unknown,
-  omit?: Set<string> | Array<string>,
+  omit?: Set<string> | readonly string[],
 ): string => {
   const omitSet = omit ? (omit instanceof Set ? omit : new Set(omit)) : null;
   const omitKeys = omit ? (isArray(omit) ? omit : Array.from(omit)) : null;

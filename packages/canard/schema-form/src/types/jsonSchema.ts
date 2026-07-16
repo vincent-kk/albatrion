@@ -174,7 +174,7 @@ export type NonNullableObjectSchema<Options extends Dictionary = object> =
   BasicSchema &
     BaseNonNullableObjectSchema<Options, JsonSchema<Options>> & {
       /** Property keys order for rendering */
-      propertyKeys?: string[];
+      propertyKeys?: readonly string[];
       /** Virtual property definitions for conditional fields */
       virtual?: VirtualSchemaProperties;
     };
@@ -183,20 +183,20 @@ export type NullableObjectSchema<Options extends Dictionary = object> =
   BasicSchema &
     BaseNullableObjectSchema<Options, JsonSchema<Options>> & {
       /** Property keys order for rendering */
-      propertyKeys?: string[];
+      propertyKeys?: readonly string[];
       /** Virtual property definitions for conditional fields */
       virtual?: VirtualSchemaProperties;
     };
 /** Virtual schema property definitions (cannot be nullable) */
 type VirtualSchemaProperties = Dictionary<
-  { fields: string[]; nullable?: never } & BasicSchema
+  { fields: readonly string[]; nullable?: never } & BasicSchema
 >;
 
 /** Virtual node schema for non-schema computed fields */
 export type VirtualSchema<Options extends Dictionary = object> = {
   type: 'virtual';
   /** Dependent field paths for reactivity */
-  fields?: string[];
+  fields?: readonly string[];
   nullable?: never;
 } & BasicSchema &
   BaseBasicSchema<VirtualNodeValue, Options, JsonSchema<Options>>;
@@ -281,7 +281,7 @@ export type BasicSchema = {
   /** Alias for computed.disabled */
   '&disabled'?: boolean | string;
   /** Alias for computed.watch */
-  '&watch'?: string | string[];
+  '&watch'?: string | readonly string[];
   /** Alias for computed.derived */
   '&derived'?: string;
   /** Computed properties with JSONPointer expressions */
@@ -326,7 +326,7 @@ export type BasicSchema = {
      * @warning The watchValues passed to this field returns a new array reference even when internal values haven't changed, so do not use it directly in dependency arrays.
      * @note If field path is changed, the node's `watchValues` will be updated.
      */
-    watch?: string | string[];
+    watch?: string | readonly string[];
     /**
      * Value expression for auto update value
      * @warning This expression can cause infinite loop if not used correctly

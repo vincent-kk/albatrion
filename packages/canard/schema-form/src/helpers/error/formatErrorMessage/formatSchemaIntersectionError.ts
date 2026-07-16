@@ -93,8 +93,8 @@ How to fix:
  * @param sourceEnum - The source enum array
  */
 export const formatEmptyEnumIntersectionError = <T>(
-  baseEnum: T[],
-  sourceEnum: T[],
+  baseEnum: readonly T[],
+  sourceEnum: readonly T[],
 ): string => {
   const divider = createDivider();
   const baseEnumPreview = formatArrayPreview(baseEnum);

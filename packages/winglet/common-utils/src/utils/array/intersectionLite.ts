@@ -131,8 +131,8 @@
  * Result array grows dynamically without pre-allocation.
  */
 export const intersectionLite = <Type>(
-  source: Type[],
-  target: Type[],
+  source: readonly Type[],
+  target: readonly Type[],
 ): Type[] => {
   const result: Type[] = [];
   for (let i = 0, e = source[0], l = source.length; i < l; i++, e = source[i])

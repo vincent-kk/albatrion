@@ -123,7 +123,7 @@
  * **Memory Efficiency:** Uses direct array indexing and Set for optimal memory usage
  * and performance with large arrays.
  */
-export const intersection = <Type>(source: Type[], target: Type[]): Type[] => {
+export const intersection = <Type>(source: readonly Type[], target: readonly Type[]): Type[] => {
   const result: Type[] = [];
   const targetSet = new Set(target);
   for (let i = 0, e = source[0], l = source.length; i < l; i++, e = source[i])

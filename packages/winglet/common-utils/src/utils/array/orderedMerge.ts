@@ -27,8 +27,8 @@ const SMALL_ARRAY_THRESHOLD = 20;
  * - Optimized for array sizes: 100~1000 elements
  */
 export const orderedMerge = (
-  preferred: string[],
-  source: string[],
+  preferred: readonly string[],
+  source: readonly string[],
 ): string[] => {
   const totalLength = preferred.length + source.length;
 
@@ -46,8 +46,8 @@ export const orderedMerge = (
  * @internal
  */
 const mergeWithLinearSearch = (
-  preferred: string[],
-  source: string[],
+  preferred: readonly string[],
+  source: readonly string[],
   totalLength: number,
 ): string[] => {
   const result = new Array<string>(totalLength);
@@ -93,8 +93,8 @@ const mergeWithLinearSearch = (
  * @internal
  */
 const mergeWithSetOptimization = (
-  preferred: string[],
-  source: string[],
+  preferred: readonly string[],
+  source: readonly string[],
   totalLength: number,
 ): string[] => {
   const visited = new Set<string>();

@@ -134,8 +134,8 @@
  * not just boolean `true`.
  */
 export const filter = <Type>(
-  array: Type[],
-  callback: (item: Type, index: number, array: Type[]) => boolean,
+  array: readonly Type[],
+  callback: (item: Type, index: number, array: readonly Type[]) => boolean,
 ): Type[] => {
   const result = new Array<Type>();
   for (let i = 0, l = array.length; i < l; i++)
