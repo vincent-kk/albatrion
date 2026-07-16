@@ -9,7 +9,12 @@
     "declarationDir": "dist",
     "declarationMap": false,
     "composite": false,
-    "noEmit": false
+    "noEmit": false,
+    "paths": {
+      "@/schema-form": ["./src"],
+      "@/schema-form/*": ["./src/*"],
+      "@aileron/*": ["../../aileron/common/*", "./dist/@aileron/*"]
+    }
   },
   "include": ["src/**/*.ts", "src/**/*.tsx"],
   "exclude": [

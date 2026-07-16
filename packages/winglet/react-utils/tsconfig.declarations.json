@@ -8,7 +8,12 @@
     "declarationDir": "dist",
     "declarationMap": false,
     "composite": false,
-    "noEmit": false
+    "noEmit": false,
+    "paths": {
+      "@/react-utils": ["./src"],
+      "@/react-utils/*": ["./src/*"],
+      "@aileron/*": ["../../aileron/common/*", "./dist/@aileron/*"]
+    }
   },
   "exclude": [
     "node_modules",

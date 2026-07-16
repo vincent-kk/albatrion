@@ -14,7 +14,7 @@ import type {
 export const getObjectDefaultValue = (
   jsonSchema: ObjectSchema,
   inputDefault?: ObjectValue | Nullish,
-) => {
+): ObjectValue | Nullish => {
   const defaultValue =
     inputDefault !== undefined ? inputDefault : jsonSchema.default;
   const result = defaultValue || {};

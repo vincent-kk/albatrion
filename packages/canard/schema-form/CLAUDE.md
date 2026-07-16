@@ -103,7 +103,7 @@ Identity → Tree Structure → Value Management → Computed Properties → Sta
 
 ## Key Type Utilities
 
-- `InferValueType<Schema>`, `InferSchemaNode<Schema>`, `FormHandle<Schema, Value>`
+- `InferValueType<Schema>`, `InferSchemaNode<Schema>`, `FormHandle<Schema, Value>` (모두 공개 index 노출 — README `TypeScript Support` 절이 문서화)
 
 ## Dependencies
 

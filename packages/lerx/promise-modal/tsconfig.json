@@ -1,12 +1,11 @@
 {
   "extends": "../../../tsconfig.base.json",
   "compilerOptions": {
-    "baseUrl": "../../",
     "outDir": "./dist",
     "paths": {
-      "@/promise-modal": ["./lerx/promise-modal/src"],
-      "@/promise-modal/*": ["./lerx/promise-modal/src/*"],
-      "@aileron/*": ["./aileron/common/*"]
+      "@/promise-modal": ["./src"],
+      "@/promise-modal/*": ["./src/*"],
+      "@aileron/*": ["../../aileron/common/*"]
     }
   },
   "include": [

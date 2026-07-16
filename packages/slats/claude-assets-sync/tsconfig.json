@@ -1,31 +1,15 @@
 {
   "extends": "../../../tsconfig.base.json",
   "compilerOptions": {
-    "baseUrl": "../../",
     "outDir": "./dist",
     "jsx": "react-jsx",
-    "types": [
-      "node"
-    ],
+    "types": ["node"],
     "paths": {
-      "@/claude-assets-sync": [
-        "./slats/claude-assets-sync/src"
-      ],
-      "@/claude-assets-sync/*": [
-        "./slats/claude-assets-sync/src/*"
-      ],
-      "@aileron/*": [
-        "./aileron/common/*"
-      ]
+      "@/claude-assets-sync": ["./src"],
+      "@/claude-assets-sync/*": ["./src/*"],
+      "@aileron/*": ["../../aileron/common/*"]
     }
   },
-  "include": [
-    "src",
-    "src/**/*.ts",
-    "src/**/*.tsx"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist"
-  ]
+  "include": ["src", "src/**/*.ts", "src/**/*.tsx"],
+  "exclude": ["node_modules", "dist"]
 }

@@ -8,7 +8,10 @@
     "declarationDir": "dist",
     "declarationMap": false,
     "composite": false,
-    "noEmit": false
+    "noEmit": false,
+    "paths": {
+      "@aileron/*": ["../../aileron/common/*", "./dist/@aileron/*"]
+    }
   },
   "exclude": [
     "node_modules",

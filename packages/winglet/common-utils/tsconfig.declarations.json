@@ -9,6 +9,11 @@
     "declarationMap": false,
     "composite": false,
     "noEmit": false,
+    "paths": {
+      "@/common-utils": ["./src"],
+      "@/common-utils/*": ["./src/*"],
+      "@aileron/*": ["../../aileron/common/*", "./dist/@aileron/*"]
+    }
   },
   "exclude": [
     "node_modules",

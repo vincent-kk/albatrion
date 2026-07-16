@@ -1,25 +1,14 @@
 {
   "extends": "../../../tsconfig.base.json",
   "compilerOptions": {
-    "baseUrl": "../../",
     "rootDir": "../../",
     "outDir": "./dist",
     "paths": {
-      "@/schema-form": [
-        "./canard/schema-form/src"
-      ],
-      "@/schema-form/*": [
-        "./canard/schema-form/src/*"
-      ],
-      "@/common-utils": [
-        "./winglet/common-utils/src"
-      ],
-      "@/common-utils/*": [
-        "./winglet/common-utils/src/*"
-      ],
-      "@aileron/*": [
-        "./aileron/common/*"
-      ]
+      "@/schema-form": ["../../canard/schema-form/src"],
+      "@/schema-form/*": ["../../canard/schema-form/src/*"],
+      "@/common-utils": ["../../winglet/common-utils/src"],
+      "@/common-utils/*": ["../../winglet/common-utils/src/*"],
+      "@aileron/*": ["../../aileron/common/*"]
     }
   },
   "include": [

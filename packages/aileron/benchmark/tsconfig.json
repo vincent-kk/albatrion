@@ -1,49 +1,22 @@
 {
   "extends": "../../../tsconfig.base.json",
   "compilerOptions": {
-    "baseUrl": "../../",
     "rootDir": "../../",
     "outDir": "./dist",
     "paths": {
-      "@/benchmark": [
-        "./aileron/benchmark/src"
-      ],
-      "@/benchmark/*": [
-        "./aileron/benchmark/src/*"
-      ],
-      "@/schema-form": [
-        "./canard/schema-form/src"
-      ],
-      "@/schema-form/*": [
-        "./canard/schema-form/src/*"
-      ],
-      "@/common-utils": [
-        "./winglet/common-utils/src"
-      ],
-      "@/common-utils/*": [
-        "./winglet/common-utils/src/*"
-      ],
-      "@/json": [
-        "./winglet/json/src"
-      ],
-      "@/json/*": [
-        "./winglet/json/src/*"
-      ],
-      "@/json-schema": [
-        "./winglet/json-schema/src"
-      ],
-      "@/json-schema/*": [
-        "./winglet/json-schema/src/*"
-      ],
-      "@/style-utils": [
-        "./winglet/style-utils/src"
-      ],
-      "@/style-utils/*": [
-        "./winglet/style-utils/src/*"
-      ],
-      "@aileron/*": [
-        "./aileron/common/*"
-      ]
+      "@/benchmark": ["./src"],
+      "@/benchmark/*": ["./src/*"],
+      "@/schema-form": ["../../canard/schema-form/src"],
+      "@/schema-form/*": ["../../canard/schema-form/src/*"],
+      "@/common-utils": ["../../winglet/common-utils/src"],
+      "@/common-utils/*": ["../../winglet/common-utils/src/*"],
+      "@/json": ["../../winglet/json/src"],
+      "@/json/*": ["../../winglet/json/src/*"],
+      "@/json-schema": ["../../winglet/json-schema/src"],
+      "@/json-schema/*": ["../../winglet/json-schema/src/*"],
+      "@/style-utils": ["../../winglet/style-utils/src"],
+      "@/style-utils/*": ["../../winglet/style-utils/src/*"],
+      "@aileron/*": ["../../aileron/common/*"]
     }
   },
   "include": [

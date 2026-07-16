@@ -5,6 +5,8 @@ import { counterFactory } from '@winglet/common-utils/lib';
 import { withErrorBoundary } from '@winglet/react-utils/hoc';
 import { useVersion } from '@winglet/react-utils/hook';
 
+import type { Dictionary } from '@aileron/declare';
+
 import { ModalManager } from '@/promise-modal/app';
 import { Presenter } from '@/promise-modal/components/Presenter';
 import type { ModalNode } from '@/promise-modal/core';
@@ -69,4 +71,4 @@ const AnchorInner = () => {
 
 const validateDimmable = (modal?: ModalNode) => modal?.visible && modal.dimmed;
 
-export const Anchor = memo(withErrorBoundary(AnchorInner));
+export const Anchor = memo(withErrorBoundary<Dictionary>(AnchorInner));

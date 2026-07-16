@@ -32,7 +32,7 @@ export const SchemaNodeInputWrapper = (
     | undefined,
   OverridePreferredFormTypeInput: ComponentType<FormTypeInputProps> | undefined,
   NodeProxy: ComponentType<SchemaNodeProxyProps>,
-) => {
+): ComponentType<ChildNodeComponentProps> => {
   if (!node) return NULL_FUNCTION;
   return ({
     onChange: preferredOnChange,

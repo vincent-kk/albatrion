@@ -31,6 +31,7 @@ export type {
 
 export {
   type SchemaNode,
+  type InferSchemaNode,
   type ArrayNode,
   type BooleanNode,
   type NullNode,
@@ -65,6 +66,8 @@ export type {
   FormTypeTestFn,
   FormTypeTestObject,
   FormatError,
+  Hint,
+  InferValueType,
   InjectToHandler,
   ValidatorFactory,
   ValidateFunction,

@@ -85,7 +85,11 @@ export interface VirtualizationOptions {
 
 /**
  * VirtualizationOptions with all defaults applied.
- * @internal Consumed by VirtualizationManager and the render layer.
+ * @remarks Consumed by VirtualizationManager and the render layer. Package
+ * internal, but must survive `stripInternal`: `VirtualizationManager`'s
+ * constructor signature references it, so stripping the declaration leaves the
+ * `index.ts` re-export dangling. Never name the strip tag in this comment —
+ * TypeScript matches it as a plain substring anywhere in the comment text.
  */
 export interface ResolvedVirtualizationOptions {
   threshold: number;
