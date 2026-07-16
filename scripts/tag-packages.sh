@@ -196,7 +196,7 @@ main() {
     for package in "${packages_to_tag[@]}"; do
         if git tag "$package" "$commit_hash"; then
             print_success "Created tag: $package"
-            ((created_count++))
+            created_count=$((created_count + 1))
         else
             print_error "Failed to create tag: $package"
         fi
