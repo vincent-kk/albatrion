@@ -200,7 +200,9 @@ describe('JsonSchemaScanner', () => {
         },
       };
 
-      const resolveReference = (ref: string) => {
+      // Return type is annotated so Schema infers as UnknownSchema; without it the
+      // literal `{ type: 'number' }` narrows Schema and scan(schema) stops matching.
+      const resolveReference = (ref: string): UnknownSchema | undefined => {
         if (ref === '#/definitions/Bar') {
           return { type: 'number' };
         }

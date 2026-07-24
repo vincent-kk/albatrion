@@ -2299,6 +2299,7 @@ Two properties of that result are deliberate:
 
 - **Every field is optional, including `required` ones.** A form may drop a field from its value at runtime — an inactive `computed.active` branch, or `options.omitEmpty`. Marking it required would let `value.name.trim()` compile and then throw.
 - **The object stays open** unless the schema sets `additionalProperties: false`, which is the JSON Schema default. This is what keeps keys contributed by `oneOf`/`anyOf` branches, `if`/`then`/`else`, and `patternProperties` from being rejected as excess properties. Set `additionalProperties: false` and the inferred type closes, so typos are caught.
+- **Nullable schemas add `| null`.** Both the type array (`type: ['string', 'null']`) and the deprecated `nullable: true` keyword yield `T | null`, since the runtime accepts `null` for a nullable node. A type that rejected `null` would fail to compile a `setValue({ field: null })` the form accepts.
 
 ### Declaring the value type yourself
 

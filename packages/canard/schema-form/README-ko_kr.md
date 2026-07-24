@@ -2234,10 +2234,11 @@ type Value = InferValueType<typeof jsonSchema>;
 // { name?: string; tags?: string[] } & Record<string, any>
 ```
 
-이 결과에는 의도된 성질이 두 가지 있습니다:
+이 결과에는 의도된 성질이 세 가지 있습니다:
 
 - **`required`에 있는 필드까지 포함해 모든 필드가 optional입니다.** 폼은 런타임에 필드를 값에서 제외할 수 있습니다 — `computed.active`가 false인 분기, `options.omitEmpty` 등. 필수로 표시하면 `value.name.trim()`이 컴파일을 통과한 뒤 터집니다.
 - **스키마가 `additionalProperties: false`를 지정하지 않는 한 객체 타입은 열려 있습니다.** JSON Schema의 기본값이 그렇습니다. 이 덕분에 `oneOf`/`anyOf` 분기, `if`/`then`/`else`, `patternProperties`가 기여하는 키가 초과 속성으로 거부되지 않습니다. `additionalProperties: false`를 지정하면 추론 타입이 닫혀서 오타를 잡아줍니다.
+- **nullable 스키마에는 `| null`이 붙습니다.** 타입 배열(`type: ['string', 'null']`)과 deprecated된 `nullable: true` 키워드 모두 `T | null`을 만듭니다. 런타임이 nullable 노드에 `null`을 허용하므로, `null`을 거부하는 타입은 폼이 정상 처리하는 `setValue({ field: null })`을 컴파일 실패로 만듭니다.
 
 ### 값 타입을 직접 정의해 주입하기
 

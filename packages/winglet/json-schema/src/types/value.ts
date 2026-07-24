@@ -23,10 +23,36 @@ type HasNull<T> = T extends readonly (infer U)[]
     : false
   : false;
 
-/** Helper type to extract the primary type from a type array (excluding 'null') */
+/**
+ * Helper type to extract the primary type from a type array (excluding 'null').
+ *
+ * Applied to every `type` array, not just nullable ones: a single-member array
+ * (`['string']`) carries no null yet still has to be unwrapped, otherwise the
+ * array itself reaches InferNonNullableValueType, matches no branch, and falls
+ * through to AnyValue — looser than the runtime, which normalizes a length-1
+ * array to its sole member.
+ */
 type ExtractPrimaryType<T> = T extends readonly (infer U)[]
   ? Exclude<U, 'null'>
   : T;
+
+/**
+ * Whether a schema describes a nullable value.
+ *
+ * Two spellings, checked in this order:
+ * 1. `type` array containing `'null'` — the JSON Schema form
+ * 2. `nullable: true` — deprecated, still honored at runtime
+ *
+ * The array is checked first so a schema carrying both never adds NullValue
+ * twice, and a contradictory `nullable: false` alongside `['T','null']` still
+ * resolves as nullable — matching the runtime, which reads the array first.
+ */
+type IsNullableSchema<T, Type> =
+  HasNull<Type> extends true
+    ? true
+    : T extends { nullable: true }
+      ? true
+      : false;
 
 /** Helper type to narrow a property to something InferValueType accepts */
 type InferPropertyValue<T> = T extends { type?: any }
@@ -98,16 +124,30 @@ type InferNonNullableValueType<T, Type> = Type extends 'string'
  * Infers the value type from a JSON Schema type definition.
  * - For single types (e.g., 'string'), returns the corresponding value type
  * - For nullable types (e.g., ['string', 'null']), returns the value type | null
+ * - For the deprecated `nullable: true` keyword, also returns the value type | null
+ * - For single-member arrays (e.g., ['string']), unwraps to the member's value type
  * - For pure null type, returns NullValue
  * - For 'object'/'array', recurses into `properties`/`items` when they are literal
  *   (i.e. the schema is `as const`); otherwise falls back to ObjectValue/ArrayValue
+ *
+ * `nullable: true` is superseded by the type array but still honored here because
+ * consumers interpret it at runtime (@canard/schema-form accepts null for a
+ * nullable node). Inferring a type that rejects null would make a schema the
+ * runtime accepts fail to type-check. The type array is checked first, so a schema
+ * carrying both never gets NullValue added twice.
+ *
+ * Known limit: `nullable` must be the literal `true` at the type level. A schema
+ * whose `nullable` widened to `boolean` (no `as const`/`satisfies`, or an explicit
+ * `boolean` annotation) infers without `| null`, because a static type cannot know
+ * the runtime value. That direction is deliberate — stricter than the runtime never
+ * admits a value the form would reject.
  */
 export type InferValueType<
   T extends { type?: string | readonly string[] | string[] },
 > = T extends {
   type: infer Type;
 }
-  ? HasNull<Type> extends true
+  ? IsNullableSchema<T, Type> extends true
     ? InferNonNullableValueType<T, ExtractPrimaryType<Type>> | NullValue
-    : InferNonNullableValueType<T, Type>
+    : InferNonNullableValueType<T, ExtractPrimaryType<Type>>
   : AnyValue;

@@ -129,7 +129,9 @@ describe('JsonSchemaScanner - invariants', () => {
         properties: { x: { $ref: '#/definitions/A' } },
         definitions: { A: { type: 'string' } },
       };
-      const scanner = new JsonSchemaScanner({
+      // Schema is pinned explicitly: a resolveReference that only throws infers
+      // `never`, which would narrow scan()'s parameter to `never`.
+      const scanner = new JsonSchemaScanner<UnknownSchema>({
         options: {
           resolveReference: () => {
             throw new Error('boom');
@@ -194,6 +196,11 @@ describe('JsonSchemaScanner - invariants', () => {
     it('honors a mutate that returns a valid falsy schema (false)', () => {
       const out = new JsonSchemaScanner({
         options: {
+          // JSON Schema's boolean form (`false`) is a valid schema and the scanner
+          // honors it, but UnknownSchema models object schemas only — so `mutate`'s
+          // declared return type cannot express it. Kept as an expected error so
+          // widening that type later surfaces here instead of going unnoticed.
+          // @ts-expect-error — boolean-form schema is outside UnknownSchema
           mutate: (e) => (e.path === '#/properties/a' ? false : undefined),
         },
       })
