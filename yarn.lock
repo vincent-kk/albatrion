@@ -87,7 +87,7 @@ __metadata:
     globals: "npm:16.3.0"
     react: "npm:19.2.6"
     react-dom: "npm:19.2.6"
-    react-router-dom: "npm:7.18.1"
+    react-router: "npm:7.18.1"
     typescript: "npm:5.9.2"
     typescript-eslint: "npm:8.40.0"
     vite: "npm:7.3.5"
@@ -23616,18 +23616,6 @@ __metadata:
     react: ">=15"
     react-router: ">=5"
   checksum: 10c0/1f8f4e55ca68b7b012293e663eb0ee4d670a3df929b78928f713ef98cd9d62c7f5c30a098d6668e64bbb11c7d6bb24e9e6b9c985a8b82465a1858dc7ba663f2b
-  languageName: node
-  linkType: hard
-
-"react-router-dom@npm:7.18.1":
-  version: 7.18.1
-  resolution: "react-router-dom@npm:7.18.1"
-  dependencies:
-    react-router: "npm:7.18.1"
-  peerDependencies:
-    react: ">=18"
-    react-dom: ">=18"
-  checksum: 10c0/5efb99f2f09cecf445788f3459a8f5ff952ed85061f2d40f8de25fdd6e2ce6aeea8e40e4bacad470ea42a45d0460feb6fb59c62f14d87720b43d5c96cd9b2cb6
   languageName: node
   linkType: hard
 

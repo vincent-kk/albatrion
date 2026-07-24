@@ -3,6 +3,7 @@ import {
   Form,
   SetValueOption,
   type FormHandle,
+  type InferValueType,
   type JsonSchema,
 } from "@canard/schema-form";
 import StoryLayout from "../components/StoryLayout";
@@ -257,9 +258,17 @@ const schema = {
   ],
 } satisfies JsonSchema;
 
+/**
+ * `defaultValue` 로 넘기는 객체 리터럴이 Form 의 `Value` 를 required 키로 추론시켜
+ * `FormHandle` 의 기본 `Value`(InferValueType — 모든 키 optional)와 어긋난다.
+ * 양쪽이 같은 인스턴스화를 쓰도록 `Value` 를 여기서 고정한다.
+ */
+type FormSchema = typeof schema;
+type FormValue = InferValueType<FormSchema>;
+
 const CanardForm = () => {
   const [value, setValue] = useState<Record<string, unknown>>({});
-  const formHandle = useRef<FormHandle<typeof schema>>(null);
+  const formHandle = useRef<FormHandle<FormSchema, FormValue>>(null);
   const defaultValue = useRef({
     userType: "individual",
     accountTier: "premium",
@@ -575,7 +584,7 @@ const CanardForm = () => {
         </button>
       </div>
       <StoryLayout jsonSchema={schema} value={value}>
-        <Form
+        <Form<FormSchema, FormValue>
           jsonSchema={schema}
           ref={formHandle}
           defaultValue={defaultValue.current}

@@ -4,14 +4,24 @@ import { waitAndExecute } from '../waitAndExecute';
 
 describe('waitAndExecute', () => {
   it('should execute the function after the specified delay', async () => {
-    const fn = vi.fn().mockReturnValue('result');
-    const startTime = Date.now();
+    // 실제 타이머로 경과 시간을 재면 Date.now()의 ms 해상도와 setTimeout의
+    // 조기 발화 때문에 99ms가 측정될 수 있다. 가상 타이머로 경계를 고정한다.
+    vi.useFakeTimers();
+    try {
+      const fn = vi.fn().mockReturnValue('result');
+      const promise = waitAndExecute(fn, 100);
 
-    const result = await waitAndExecute(fn, 100);
+      // 지정한 delay 이전에는 실행되지 않는다
+      await vi.advanceTimersByTimeAsync(99);
+      expect(fn).not.toHaveBeenCalled();
 
-    expect(result).toBe('result');
-    expect(fn).toHaveBeenCalledTimes(1);
-    expect(Date.now() - startTime).toBeGreaterThanOrEqual(100);
+      // 지정한 delay에 도달하면 실행된다
+      await vi.advanceTimersByTimeAsync(1);
+      expect(fn).toHaveBeenCalledTimes(1);
+      await expect(promise).resolves.toBe('result');
+    } finally {
+      vi.useRealTimers();
+    }
   });
 
   it('should use default delay of 0 if not specified', async () => {

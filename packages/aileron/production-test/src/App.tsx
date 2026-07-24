@@ -1,4 +1,4 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route } from "react-router";
 import { ModalProvider } from "@lerx/promise-modal";
 import Navigation from "./components/Navigation";
 import { DarkModalForeground } from "./components/DarkModalForeground";

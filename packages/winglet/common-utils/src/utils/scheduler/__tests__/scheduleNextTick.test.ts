@@ -29,9 +29,10 @@ describe('scheduleNextTick', () => {
     // 동기 코드
     executionOrder.push(2);
 
-    setTimeout(() => {
-      expect(executionOrder).toEqual([1, 2, 3, 4, 5]);
-    });
+    // macrotask 경계까지 대기 — nextTick·microtask 큐가 모두 비워진 뒤 검증한다
+    await delay();
+
+    expect(executionOrder).toEqual([1, 2, 3, 4, 5]);
   });
 
   it('should maintain correct execution order with multiple async tasks', async () => {
@@ -69,20 +70,20 @@ describe('scheduleNextTick', () => {
     // 동기 코드
     executionOrder.push(2);
 
-    setTimeout(() => {
-      expect(executionOrder).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9]);
-    });
+    await delay();
+
+    expect(executionOrder).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9]);
   });
 
-  it('should execute after setTimeout in Node.js environment', async () => {
+  it('should execute before setTimeout (macrotask) in Node.js environment', async () => {
     const executionOrder: number[] = [];
 
     // 동기 코드
     executionOrder.push(1);
 
-    // setTimeout (macrotask)
+    // setTimeout (macrotask) — nextTick 큐보다 늦게 처리되므로 마지막에 실행된다
     setTimeout(() => {
-      executionOrder.push(4);
+      executionOrder.push(5);
     }, 0);
 
     // microtask
@@ -95,21 +96,18 @@ describe('scheduleNextTick', () => {
       executionOrder.push(3.5);
     });
 
-    // scheduleNextTick
+    // scheduleNextTick — microtask 이후, macrotask 이전에 실행된다
     scheduleNextTick(() => {
-      executionOrder.push(5);
+      executionOrder.push(4);
     });
 
     // 동기 코드
     executionOrder.push(2);
 
     // 모든 큐가 비워질 때까지 대기
-    await Promise.resolve();
-    await delay();
+    await delay(10);
 
-    setTimeout(() => {
-      expect(executionOrder).toEqual([1, 2, 3, 3.5, 4, 5]);
-    }, 10);
+    expect(executionOrder).toEqual([1, 2, 3, 3.5, 4, 5]);
   });
 
   it('should work with async callbacks', async () => {
@@ -133,8 +131,8 @@ describe('scheduleNextTick', () => {
     // 동기 코드
     executionOrder.push(2);
 
-    setTimeout(() => {
-      expect(executionOrder).toEqual([1, 2, 3, 4, 5]);
-    });
+    await delay();
+
+    expect(executionOrder).toEqual([1, 2, 3, 4, 5]);
   });
 });
