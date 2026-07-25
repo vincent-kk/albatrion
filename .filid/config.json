@@ -47,7 +47,7 @@
     "README-ko_kr.md",
     "eslint.config.js",
     "package.json",
-    "rollup.config.mjs",
+    "rolldown.config.mjs",
     "vite.config.ts",
     "vitest.prod.config.ts",
     "tsconfig.json",

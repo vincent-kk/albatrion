@@ -7,7 +7,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ### Building
 
 ```bash
-# Build the library (rollup + types)
+# Build the library (rolldown + types)
 yarn build
 
 # Build types only
@@ -102,7 +102,7 @@ The heart of the library is the schema traversal system located in `src/utils/Js
 
 ### Build System
 
-- **Rollup**: Configured to build both ESM (.mjs) and CJS (.cjs) formats
+- **Rolldown**: Configured to build both ESM (.mjs) and CJS (.cjs) formats
 - **TypeScript**: Separate type declaration builds with path aliasing
 - **Vitest**: Test runner with coverage reporting
 - **Multi-format Support**: Supports both CommonJS and ES modules

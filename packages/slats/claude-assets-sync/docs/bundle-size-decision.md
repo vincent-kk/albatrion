@@ -17,7 +17,7 @@
 | Bundled, no minify | 62.0 KB (63,522 bytes) |
 | Raw `node_modules/@inquirer` footprint | 1.6 MB (includes unused prompt families) |
 
-The minified bundle represents the realistic runtime cost after slats's Rollup build. The raw node_modules number is not representative because tree-shaking and dead-code elimination eliminate unused prompts from the published `dist/`.
+The minified bundle represents the realistic runtime cost after slats's Rolldown build. The raw node_modules number is not representative because tree-shaking and dead-code elimination eliminate unused prompts from the published `dist/`.
 
 ## Decision
 

@@ -32,7 +32,7 @@ Ensure the build chain invokes `yarn build:hashes` at the end:
 
 ```json
 "scripts": {
-  "build": "rollup -c && yarn build:types && yarn build:hashes"
+  "build": "rolldown -c && yarn build:types && yarn build:hashes"
 }
 ```
 

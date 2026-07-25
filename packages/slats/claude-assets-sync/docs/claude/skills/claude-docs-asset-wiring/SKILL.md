@@ -63,7 +63,7 @@ Stop and report on any failure. Do not attempt to fix silently.
 
 - [ ] `${TARGET_PATH}/docs/claude/skills/<name>/SKILL.md` and `knowledge/*.md` exist — the docs to be injected.
 - [ ] `${TARGET_PATH}/package.json` has `"type": "module"` and `"sideEffects": false`.
-- [ ] Build pipeline uses `rollup -c && yarn build:types` where `build:types` runs `node ../../aileron/script/build/buildTypes.mjs`.
+- [ ] Build pipeline uses `rolldown -c && yarn build:types` where `build:types` runs `node ../../aileron/script/build/buildTypes.mjs`.
 - [ ] `git status` in `${TARGET_PATH}` is clean. Unrelated changes present → confirm with user before proceeding.
 
 ## Steps
@@ -103,7 +103,7 @@ yarn install
 yarn ${SHORTCUT:-workspace ${PACKAGE_NAME}} build
 ```
 
-Expected: `rollup` → `buildTypes` → `claude-build-hashes` succeed, and
+Expected: `rolldown` → `buildTypes` → `claude-build-hashes` succeed, and
 `${TARGET_PATH}/dist/claude-hashes.json` is written.
 
 ### Step 5 — E2E smoke via engine dispatcher

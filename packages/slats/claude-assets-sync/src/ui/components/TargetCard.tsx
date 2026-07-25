@@ -1,4 +1,4 @@
-import React from 'react';
+import type React from 'react';
 import { Box, Text } from 'ink';
 
 import type { Action, InjectPlan } from '../../core/buildPlan/index.js';

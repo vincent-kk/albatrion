@@ -80,7 +80,7 @@ This is a TypeScript package that implements a batching and caching utility for 
 
 ## Package Configuration
 
-- **Build System**: Uses Rollup for bundling with TypeScript compilation
+- **Build System**: Uses Rolldown for bundling with TypeScript compilation
 - **Testing**: Vitest for unit testing with coverage reporting  
 - **Module Format**: Dual ESM/CJS output with proper package.json exports
 - **Target**: ES2022 with Node.js 14+ and modern browser support

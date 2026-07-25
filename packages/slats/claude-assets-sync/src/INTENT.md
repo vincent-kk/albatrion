@@ -18,9 +18,9 @@ their asset tree at build time.
 
 ## Conventions
 
-- TypeScript strict mode, ESM-only rollup build
+- TypeScript strict mode, ESM-only rolldown build
 - `./buildHashes` subpath is build-time hash generation, pure Node ESM
-- `scripts/buildHashes.mjs` runs outside rollup; self-executing bin is
+- `scripts/buildHashes.mjs` runs outside rolldown; self-executing bin is
   `scripts/claude-build-hashes.mjs`
 - Dispatcher entry point is `bin/inject-claude-settings.mjs`, a two-line
   re-export of `runCli(process.argv)`

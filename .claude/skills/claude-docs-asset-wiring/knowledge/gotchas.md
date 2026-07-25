@@ -64,7 +64,7 @@ something is misconfigured.
 
 ---
 
-## `yarn workspace ${PACKAGE_NAME} build` can fail with `rollup: command not found`
+## `yarn workspace ${PACKAGE_NAME} build` can fail with `rolldown: command not found`
 
 Yarn v4 workspace dispatch does not always propagate the
 workspace-local PATH. Prefer `yarn ${SHORTCUT} build` from the
@@ -72,7 +72,7 @@ monorepo root, where `${SHORTCUT}` is the root-level script alias
 (e.g. `yarn schemaForm`, `yarn claudeAssetsSync`).
 
 If no shortcut exists, the full form may still work depending on
-yarn version and cache state — but if it fails with `rollup:
+yarn version and cache state — but if it fails with `rolldown:
 command not found`, add a shortcut to the root `package.json`
 rather than debugging the nested call.
 

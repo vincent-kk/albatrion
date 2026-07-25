@@ -89,7 +89,7 @@ Extensive TypeScript generics and type constraints using `Dictionary` and `Array
 ### Build System
 
 **Multi-format Output:**
-- ESM (`.mjs`) and CommonJS (`.cjs`) via Rollup
+- ESM (`.mjs`) and CommonJS (`.cjs`) via Rolldown
 - TypeScript declarations via `tsc` with `tsc-alias`
 - Shared build utilities from `../../aileron/script/build/`
 

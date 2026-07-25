@@ -44,7 +44,7 @@
     "README.md"
   ],
   "scripts": {
-    "build": "rollup -c && yarn build:types && yarn typecheck",
+    "build": "rolldown -c && yarn build:types && yarn typecheck",
     "build:publish:npm": "yarn build && yarn publish:npm",
     "build:types": "node ../../aileron/script/build/buildTypes.mjs",
     "build-storybook": "storybook build",
@@ -68,8 +68,7 @@
     "eslint": "8.57.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "rollup": "^4.59.0",
-    "rollup-plugin-peer-deps-external": "^2.2.4",
+    "rolldown": "^1.2.0",
     "tsc-alias": "^1.8.16",
     "typescript": "^5.7.2"
   }

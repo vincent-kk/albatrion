@@ -5,7 +5,7 @@
 ## Commands
 
 ```bash
-yarn build           # inject-version → rollup (ESM) → build:types → build:hashes
+yarn build           # inject-version → rolldown (ESM) → build:types → build:hashes
 yarn test            # vitest
 yarn lint            # eslint
 yarn dev:ui          # preview Ink phases (see scripts/dev-ui.tsx)
@@ -112,7 +112,7 @@ src/
 │   └── types/                      # Phase, InjectEvent, RenderInput, target
 └── utils/                          # asyncPool, logger, types, version
 scripts/
-├── buildHashes.mjs                 # pure Node ESM, importable from Rollup
+├── buildHashes.mjs                 # pure Node ESM, importable from Rolldown
 ├── claude-build-hashes.mjs         # self-executing bin
 ├── dev-ui.tsx                      # Ink phase preview / tour
 └── dev-ui-fixtures.ts              # mock plans + targets for dev preview
@@ -129,8 +129,8 @@ scripts/
 - `src/core/**` never imports from `src/ui/`, `src/commands/`, or `src/utils/logger.ts` (applyAction has a single `logger.warn` for rare unlink failures, the only exception).
 - `src/ui/**` never calls into `src/commands/**`; it's loaded via dynamic import from `renderOrFallback` only.
 - `src/ui/` is **not** exposed as a package subpath — internal only.
-- `scripts/buildHashes.mjs` stays pure Node ESM (no top-level await) so Rollup can import it; `scripts/claude-build-hashes.mjs` holds the self-executing CLI wrapper.
+- `scripts/buildHashes.mjs` stays pure Node ESM (no top-level await) so rolldown can import it; `scripts/claude-build-hashes.mjs` holds the self-executing CLI wrapper.
 
 ## Build Output
 
-ESM-only: `dist/index.{mjs,d.ts}` + `dist/ui/**` + subpath entrypoints per rollup config.
+ESM-only: `dist/index.{mjs,d.ts}` + `dist/ui/**` + subpath entrypoints per rolldown config.

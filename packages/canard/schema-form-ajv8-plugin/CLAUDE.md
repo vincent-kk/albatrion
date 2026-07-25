@@ -24,7 +24,7 @@ yarn storybook         # Storybook dev (port 6006)
 - **AJV 기본 설정**: `allErrors: true`, `strictSchema: false`, `validateFormats: false`
 - **에러 변환**: `required` 에러는 `JSON_POINTER_SEPARATOR`로 missing property를 instancePath에 append, 나머지는 그대로 사용
 - **비동기 검증**: 모든 validator는 `$async: true`로 컴파일
-- **빌드 타겟**: ES2022, ESM(.mjs) + CJS(.cjs), Rollup 사용
+- **빌드 타겟**: ES2022, ESM(.mjs) + CJS(.cjs), Rolldown 사용
 
 ## AJV 7.x와의 차이점
 

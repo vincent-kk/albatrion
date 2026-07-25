@@ -18,7 +18,7 @@
 
 - Brotli 기준 ~40KB → 3G에서도 ~0.1초 전송
 - 외부 런타임 의존성 0개 (React/ReactDOM만 peer dependency)
-- 현재 `minify: false` 상태 (`rollup.config.mjs:23`). 활성화 시 추가 절감 가능
+- 현재 `minify: false` 상태 (`rolldown.config.mjs:21`). 활성화 시 추가 절감 가능
 
 **판정: PASS** (전체 예제 공통)
 
@@ -532,5 +532,5 @@ userType 변경: 'guest' → 'admin'
 | `src/hooks/useSchemaNodeTracker.ts:13-26` | 노드별 독립 구독 메커니즘 |
 | `src/core/nodes/AbstractNode/utils/EventCascadeManager/EventCascadeManager.ts:106-110` | microtask 배칭 |
 | `src/core/nodes/AbstractNode/utils/ComputedPropertiesManager/utils/createDynamicFunction/createDynamicFunction.ts:41` | `new Function()` — CSP 관련 |
-| `rollup.config.mjs:23` | `minify: false` 설정 |
+| `rolldown.config.mjs:21` | `minify: false` 설정 |
 | `package.json:84-93` | size-limit 설정 (20KB) |

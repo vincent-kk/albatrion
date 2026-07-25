@@ -1,8 +1,6 @@
-// 번들 빌드 예제 - rollup.config.bundle.mjs
 import { createRequire } from 'node:module';
-import peerDepsExternal from 'rollup-plugin-peer-deps-external';
 
-import { getBundleBuildOptions } from '../../aileron/script/build/rollup.bundle.mjs';
+import { getBundleBuildOptions } from '../../aileron/script/build/rolldown.bundle.mjs';
 
 const { bundleBuildOptions, clearDir } = getBundleBuildOptions(import.meta.url);
 
@@ -21,10 +19,6 @@ export default async () => {
       outFile: mainEntry.import,
       sourcemap: false,
       minify: false,
-      optimizeImports: true,
-      plugins: {
-        beforeTransform: [peerDepsExternal()],
-      },
     }),
     // CJS 단일 번들
     await bundleBuildOptions({
@@ -33,10 +27,6 @@ export default async () => {
       outFile: mainEntry.require,
       sourcemap: false,
       minify: false,
-      optimizeImports: true,
-      plugins: {
-        beforeTransform: [peerDepsExternal()],
-      },
     }),
   ];
 };

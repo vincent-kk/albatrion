@@ -1,10 +1,9 @@
 import { createRequire } from 'node:module';
-import peerDepsExternal from 'rollup-plugin-peer-deps-external';
 
 import {
   getEntrypoints,
   getLibBuildOptions,
-} from '../../aileron/script/build/rollup.transpile.mjs';
+} from '../../aileron/script/build/rolldown.transpile.mjs';
 
 const packageJson = createRequire(import.meta.url)('./package.json');
 
@@ -20,12 +19,6 @@ export default async () => {
       entrypoints,
       outDir: 'dist',
       sourcemap: false,
-      tsconfigCompilerOptions: {
-        importHelpers: false,
-      },
-      plugins: {
-        beforeTransform: [peerDepsExternal()],
-      },
     }),
     await libBuildOptions({
       format: 'cjs',
@@ -33,12 +26,6 @@ export default async () => {
       entrypoints,
       outDir: 'dist',
       sourcemap: false,
-      tsconfigCompilerOptions: {
-        importHelpers: false,
-      },
-      plugins: {
-        beforeTransform: [peerDepsExternal()],
-      },
     }),
   ];
 };

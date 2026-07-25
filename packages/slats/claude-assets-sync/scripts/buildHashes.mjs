@@ -2,7 +2,7 @@
 //
 // Self-executing CLI behavior lives in `./claude-build-hashes.mjs` so this
 // file stays free of top-level await and can be bundled into CJS/ESM outputs
-// via Rollup without format errors.
+// via Rolldown without format errors.
 //
 // Exported for:
 //   - Consumer packages: `import { buildHashes } from '@slats/claude-assets-sync/buildHashes'`

@@ -1,7 +1,6 @@
-// 번들 빌드 예제 - rollup.config.bundle.mjs
 import { createRequire } from 'node:module';
 
-import { getBundleBuildOptions } from '../../aileron/script/build/rollup.bundle.mjs';
+import { getBundleBuildOptions } from '../../aileron/script/build/rolldown.bundle.mjs';
 
 const { bundleBuildOptions, clearDir } = getBundleBuildOptions(import.meta.url);
 
@@ -18,18 +17,16 @@ export default async () => {
       entry: mainEntry.source,
       format: 'esm',
       outFile: mainEntry.import,
-      sourcemap: true,
+      sourcemap: false,
       minify: false,
-      optimizeImports: true,
     }),
     // CJS 단일 번들
     await bundleBuildOptions({
       entry: mainEntry.source,
       format: 'cjs',
       outFile: mainEntry.require,
-      sourcemap: true,
+      sourcemap: false,
       minify: false,
-      optimizeImports: true,
     }),
   ];
 };

@@ -52,7 +52,7 @@ tech_stack:
     mocking: "msw"
 
   build_tools:
-    bundler: "rollup"
+    bundler: "rolldown"
     compiler: "esbuild"
 
 development:

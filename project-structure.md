@@ -44,7 +44,7 @@ albatrion/
 
 ## Technology Stack
 ### Core Dependencies (detected from package.json)
-- **Build Tools**: Rollup, Vite, TypeScript
+- **Build Tools**: Rolldown, Vite, TypeScript
 - **Testing**: Vitest, Jest DOM, Testing Library
 - **Quality**: ESLint, Prettier, Size Limit
 - **Documentation**: Storybook

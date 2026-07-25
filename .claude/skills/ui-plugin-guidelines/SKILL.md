@@ -81,7 +81,7 @@ user-invocable: false
 │   └── ...
 ├── package.json
 ├── tsconfig.json
-├── rollup.config.mjs
+├── rolldown.config.mjs
 ├── vite.config.ts                  # Vitest 설정
 ├── README.md
 └── README-ko_kr.md

@@ -37,7 +37,7 @@
 ├── package.json
 ├── tsconfig.json
 ├── tsconfig.declarations.json
-├── rollup.config.mjs
+├── rolldown.config.mjs
 ├── vite.config.ts
 ├── eslint.config.js
 ├── README.md
@@ -155,7 +155,7 @@ export * from './FormTypeInputNumber';
 - **타입**: camelCase (`.ts`)
   - `type.ts`
 - **설정**: kebab-case (`.mjs`, `.json`)
-  - `rollup.config.mjs`
+  - `rolldown.config.mjs`
   - `tsconfig.json`
 
 ### Export

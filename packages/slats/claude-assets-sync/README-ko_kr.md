@@ -27,11 +27,11 @@ claude-build-hashes
 
 `<bin>` 은 동일한 엔진을 가리키는 세 가지 진입점 중 하나입니다:
 
-| Bin | 사용 시점 |
-|---|---|
-| `claude-assets-sync` | `npx` 로 호출할 때 — 패키지 unscoped 이름과 일치해서 `npx @slats/claude-assets-sync ...` 가 바로 동작 |
-| `inject-claude-settings` | 엔진을 설치 (`yarn add -D` / `npm i -g`) 한 환경에서 명시적인 명령 이름을 선호할 때 |
-| `claude-build-hashes` | 컨슈머 패키지 빌드 시 보조 도구 (`package.json` 의 scripts 에서 호출) |
+| Bin                      | 사용 시점                                                                                             |
+| ------------------------ | ----------------------------------------------------------------------------------------------------- |
+| `claude-assets-sync`     | `npx` 로 호출할 때 — 패키지 unscoped 이름과 일치해서 `npx @slats/claude-assets-sync ...` 가 바로 동작 |
+| `inject-claude-settings` | 엔진을 설치 (`yarn add -D` / `npm i -g`) 한 환경에서 명시적인 명령 이름을 선호할 때                   |
+| `claude-build-hashes`    | 컨슈머 패키지 빌드 시 보조 도구 (`package.json` 의 scripts 에서 호출)                                 |
 
 ### 최종 사용자 호출
 
@@ -60,14 +60,14 @@ inject-claude-settings --package=@canard/schema-form --scope=user
 
 기존 명시 형식 `npx -p @slats/claude-assets-sync inject-claude-settings ...` 도 backward compatibility 를 위해 그대로 동작합니다.
 
-| 플래그 | 의미 |
-|---|---|
+| 플래그             | 의미                                                                                                                                                                           |
+| ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `--package <name>` | **필수.** 반복 지정 / 콤마 구분 가능. `@scope/pkg`, `pkg`, 또는 scope alias `@scope` (설치된 `node_modules/@scope/*` 중 `claude.assetPath` 를 선언한 모든 패키지로 전개) 형식. |
-| `--scope=user` | `~/.claude` (모든 프로젝트에 전역 적용). |
-| `--scope=project` | 가장 가까운 조상 `.claude` 디렉토리, 없으면 `<cwd>/.claude`. |
-| `--dry-run` | copy / skip / warn 플랜만 출력, 쓰기 없음. |
-| `--force` | 발산 파일 덮어쓰기 & 고아 파일 삭제 (TTY 에서는 대화형 확인). |
-| `--root <path>` | scope 해석용 cwd 재정의. |
+| `--scope=user`     | `~/.claude` (모든 프로젝트에 전역 적용).                                                                                                                                       |
+| `--scope=project`  | 가장 가까운 조상 `.claude` 디렉토리, 없으면 `<cwd>/.claude`.                                                                                                                   |
+| `--dry-run`        | copy / skip / warn 플랜만 출력, 쓰기 없음.                                                                                                                                     |
+| `--force`          | 발산 파일 덮어쓰기 & 고아 파일 삭제 (TTY 에서는 대화형 확인).                                                                                                                  |
+| `--root <path>`    | scope 해석용 cwd 재정의.                                                                                                                                                       |
 
 **Exit code**: `0` 성공 / up-to-date / dry-run, `1` 런타임 오류, `2` 사용자 / 설정 오류 (`--package` 누락, 비-TTY 환경에서 `--scope` 누락, 해석 불가한 패키지, `claude.assetPath` 누락).
 
@@ -82,13 +82,13 @@ inject-claude-settings --package=@canard/schema-form --scope=user
   "name": "@your-scope/your-package",
   "scripts": {
     "build": "… && yarn build:hashes",
-    "build:hashes": "claude-build-hashes"
+    "build:hashes": "claude-build-hashes",
   },
   "devDependencies": {
-    "@slats/claude-assets-sync": "workspace:^"
+    "@slats/claude-assets-sync": "workspace:^",
   },
   "files": ["dist", "docs", "README.md"],
-  "claude": { "assetPath": "docs/claude" }
+  "claude": { "assetPath": "docs/claude" },
 }
 ```
 
@@ -101,7 +101,7 @@ inject-claude-settings --package=@canard/schema-form --scope=user
 
 ```bash
 yarn build
-# 라이브러리 rollup → 타입 emit → claude-build-hashes 가 claude.assetPath 하위의
+# 라이브러리 rolldown → 타입 emit → claude-build-hashes 가 claude.assetPath 하위의
 # 모든 파일을 해싱해 dist/claude-hashes.json 기록
 ```
 
@@ -153,13 +153,13 @@ asset 루트 하위의 모든 파일은 해시되어 `dist/claude-hashes.json` �
 
 ```ts
 import {
-  runCli,
+  computeNamespacePrefixes,
   injectDocs,
-  readHashManifest,
-  resolveScope,
   isInteractive,
   isValidScope,
-  computeNamespacePrefixes,
+  readHashManifest,
+  resolveScope,
+  runCli,
 } from '@slats/claude-assets-sync';
 ```
 

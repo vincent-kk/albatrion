@@ -35,7 +35,7 @@ jobs:
     env:
       # node 22 LTS: required by npm 12 (the OIDC publish tool). Dev/bench pin
       # node 20 (.nvmrc), but the published build output is deterministic across
-      # node versions (rollup/tsc), so building the release on 22 is safe.
+      # node versions (rolldown/tsc), so building the release on 22 is safe.
       NODE_VERSION: "22"
     steps:
       - name: Checkout
