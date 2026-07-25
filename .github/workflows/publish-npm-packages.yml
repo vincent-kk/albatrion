@@ -62,7 +62,23 @@ jobs:
         run: yarn install --immutable
 
       - name: Build all workspaces
-        run: yarn build:all
+        # rolldown does NOT fail on an option it does not recognize: it prints a
+        # yellow "Invalid input/output options" warning, drops the key, and
+        # builds anyway. A renamed or stale option would therefore ship silently
+        # changed artifacts, so treat any such warning as a release blocker.
+        # It also reports only the first unknown key per object, so fix-and-rerun
+        # until this step is clean rather than trusting one pass.
+        # The log goes to RUNNER_TEMP, not the repo: the later tag step runs git
+        # here, and a stray untracked file has no business in a release tree.
+        run: |
+          set -o pipefail
+          LOG="${RUNNER_TEMP:-/tmp}/build-all.log"
+          yarn build:all 2>&1 | tee "$LOG"
+          if grep -qE 'Invalid (input|output) options' "$LOG"; then
+            echo "::error::rolldown rejected build options — a key is being silently ignored:"
+            grep -E 'Invalid (input|output) options' -A3 "$LOG"
+            exit 1
+          fi
 
       - name: Publish changed packages
         env:

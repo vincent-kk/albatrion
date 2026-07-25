@@ -1,5 +1,7 @@
 import type { ValidatorPlugin } from '@canard/schema-form';
-import Ajv, { type Options } from 'ajv/dist/2019';
+// `.js` is required, not cosmetic: ajv ships no `exports` map, so Node's ESM
+// resolver takes this subpath literally and will not try extensions.
+import Ajv, { type Options } from 'ajv/dist/2019.js';
 
 import { createValidatorFactory } from '../validator/createValidatorFactory';
 
