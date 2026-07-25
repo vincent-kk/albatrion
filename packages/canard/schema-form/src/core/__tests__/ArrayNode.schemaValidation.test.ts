@@ -26,9 +26,7 @@ describe('ArrayNode Schema Validation', () => {
         prefixItems: [{ type: 'string' }, { type: 'number' }],
       } as const;
 
-      // @ts-expect-error - Testing schema without items (valid per JSON Schema spec)
       expect(() => validateArraySchema(schema)).not.toThrow();
-      // @ts-expect-error - Testing schema without items (valid per JSON Schema spec)
       expect(validateArraySchema(schema)).toBe(true);
     });
 
@@ -39,9 +37,7 @@ describe('ArrayNode Schema Validation', () => {
         items: false,
       } as const;
 
-      // @ts-expect-error - Testing tuple schema with items: false
       expect(() => validateArraySchema(schema)).not.toThrow();
-      // @ts-expect-error - Testing tuple schema with items: false
       expect(validateArraySchema(schema)).toBe(true);
     });
 
@@ -52,9 +48,7 @@ describe('ArrayNode Schema Validation', () => {
         items: { type: 'boolean' },
       } as const;
 
-      // @ts-expect-error - Testing open tuple schema
       expect(() => validateArraySchema(schema)).not.toThrow();
-      // @ts-expect-error - Testing open tuple schema
       expect(validateArraySchema(schema)).toBe(true);
     });
 
@@ -88,9 +82,7 @@ describe('ArrayNode Schema Validation', () => {
         maxItems: 5, // prefixItems.length = 2, maxItems = 5
       } as const;
 
-      // @ts-expect-error - Testing invalid schema configuration
       expect(() => validateArraySchema(schema)).toThrow(JsonSchemaError);
-      // @ts-expect-error - Testing invalid schema configuration
       expect(() => validateArraySchema(schema)).toThrow(
         "Invalid array schema: 'maxItems' exceeds 'prefixItems' length without 'items' schema.",
       );
@@ -103,9 +95,7 @@ describe('ArrayNode Schema Validation', () => {
         minItems: 4, // prefixItems.length = 2, minItems = 4
       } as const;
 
-      // @ts-expect-error - Testing invalid schema configuration
       expect(() => validateArraySchema(schema)).toThrow(JsonSchemaError);
-      // @ts-expect-error - Testing invalid schema configuration
       expect(() => validateArraySchema(schema)).toThrow(
         "Invalid array schema: 'minItems' exceeds 'prefixItems' length without 'items' schema.",
       );
@@ -122,9 +112,7 @@ describe('ArrayNode Schema Validation', () => {
         maxItems: 3, // prefixItems.length = 3, maxItems = 3 (equal is OK)
       } as const;
 
-      // @ts-expect-error - Testing valid schema configuration
       expect(() => validateArraySchema(schema)).not.toThrow();
-      // @ts-expect-error - Testing valid schema configuration
       expect(validateArraySchema(schema)).toBe(true);
     });
 
@@ -135,9 +123,7 @@ describe('ArrayNode Schema Validation', () => {
         minItems: 2, // prefixItems.length = 2, minItems = 2 (equal is OK)
       } as const;
 
-      // @ts-expect-error - Testing valid schema configuration
       expect(() => validateArraySchema(schema)).not.toThrow();
-      // @ts-expect-error - Testing valid schema configuration
       expect(validateArraySchema(schema)).toBe(true);
     });
 
@@ -152,9 +138,7 @@ describe('ArrayNode Schema Validation', () => {
         maxItems: 2, // prefixItems.length = 3, maxItems = 2 (less is OK)
       } as const;
 
-      // @ts-expect-error - Testing valid schema configuration
       expect(() => validateArraySchema(schema)).not.toThrow();
-      // @ts-expect-error - Testing valid schema configuration
       expect(validateArraySchema(schema)).toBe(true);
     });
 
@@ -167,9 +151,7 @@ describe('ArrayNode Schema Validation', () => {
         minItems: 5, // OK because items schema handles indices beyond prefixItems
       } as const;
 
-      // @ts-expect-error - Testing valid open tuple schema
       expect(() => validateArraySchema(schema)).not.toThrow();
-      // @ts-expect-error - Testing valid open tuple schema
       expect(validateArraySchema(schema)).toBe(true);
     });
 
@@ -182,9 +164,7 @@ describe('ArrayNode Schema Validation', () => {
         maxItems: 10, // OK because items schema handles indices beyond prefixItems
       } as const;
 
-      // @ts-expect-error - Testing valid open tuple schema
       expect(() => validateArraySchema(schema)).not.toThrow();
-      // @ts-expect-error - Testing valid open tuple schema
       expect(validateArraySchema(schema)).toBe(true);
     });
   });

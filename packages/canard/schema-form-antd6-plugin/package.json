@@ -43,7 +43,7 @@
     "README.md"
   ],
   "scripts": {
-    "build": "rollup -c && yarn build:types",
+    "build": "rollup -c && yarn build:types && yarn typecheck",
     "build:publish:npm": "yarn build && yarn publish:npm",
     "build:types": "node ../../aileron/script/build/buildTypes.mjs",
     "build-storybook": "storybook build",
@@ -53,6 +53,7 @@
     "start": "yarn build && yarn storybook",
     "storybook": "storybook dev -p 6006",
     "test": "yarn run -T vitest",
+    "typecheck": "tsc --noEmit --composite false --declaration false --emitDeclarationOnly false --rootDir . -p tsconfig.json",
     "version:major": "yarn version major",
     "version:minor": "yarn version minor",
     "version:patch": "yarn version patch"
@@ -69,6 +70,7 @@
     "@canard/schema-form-ajv8-plugin": "workspace:^",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
+    "eslint": "8.57.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "rollup": "^4.59.0",

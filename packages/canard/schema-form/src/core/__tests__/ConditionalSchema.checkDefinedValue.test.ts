@@ -109,7 +109,6 @@ describe('ConditionalSchema - checkDefinedValue with Reset Logic', () => {
       // - preferLatest: true (would be triggered by isolation=true or terminal type match)
       // - checkDefaultValueFirst: true
       // - fallbackValue is provided
-      // @ts-expect-error [internal] direct __reset__ call for testing
       nestedDataNode.__reset__({
         preferLatest: true,
         checkDefaultValueFirst: true,
@@ -191,7 +190,6 @@ describe('ConditionalSchema - checkDefinedValue with Reset Logic', () => {
       expect(nestedDataNode.value).toEqual({ initial: false, count: 999 });
 
       // Direct __reset__ call
-      // @ts-expect-error [internal] direct __reset__ call for testing
       nestedDataNode.__reset__({
         preferLatest: true,
         checkDefaultValueFirst: true,
@@ -264,7 +262,6 @@ describe('ConditionalSchema - checkDefinedValue with Reset Logic', () => {
       expect(itemsNode!.value).toEqual(['item1', 'item2', 'item3']);
 
       // Direct __reset__ call
-      // @ts-expect-error [internal] direct __reset__ call for testing
       itemsNode!.__reset__({
         preferLatest: true,
         checkDefaultValueFirst: true,
@@ -342,7 +339,6 @@ describe('ConditionalSchema - checkDefinedValue with Reset Logic', () => {
       expect(nestedDataNode.value).toEqual({ value: 'custom-value' });
 
       // Direct __reset__ call
-      // @ts-expect-error [internal] direct __reset__ call for testing
       nestedDataNode.__reset__({
         preferLatest: true,
         checkDefaultValueFirst: true,
@@ -418,7 +414,6 @@ describe('ConditionalSchema - checkDefinedValue with Reset Logic', () => {
       expect(dataNode.defaultValue).toEqual({});
 
       // Direct __reset__ call
-      // @ts-expect-error [internal] direct __reset__ call for testing
       dataNode.__reset__({
         preferLatest: true,
         checkDefaultValueFirst: true,
@@ -510,7 +505,6 @@ describe('ConditionalSchema - checkDefinedValue with Reset Logic', () => {
 
       const dataNode = node.find('./data') as ObjectNode;
 
-      // @ts-expect-error [internal] direct __reset__ call for testing
       dataNode.__reset__({
         preferLatest: true,
         checkDefaultValueFirst: false,
@@ -543,7 +537,6 @@ describe('ConditionalSchema - checkDefinedValue with Reset Logic', () => {
       // defaultValue is {} (empty)
       expect(dataNode.defaultValue).toEqual({});
 
-      // @ts-expect-error [internal] direct __reset__ call for testing
       dataNode.__reset__({
         preferLatest: false,
         checkDefaultValueFirst: true, // This is ignored when preferLatest=false
@@ -571,7 +564,6 @@ describe('ConditionalSchema - checkDefinedValue with Reset Logic', () => {
 
       const dataNode = node.find('./data') as ObjectNode;
 
-      // @ts-expect-error [internal] direct __reset__ call for testing
       dataNode.__reset__({
         preferLatest: false,
         checkDefaultValueFirst: false,
@@ -628,7 +620,6 @@ describe('ConditionalSchema - checkDefinedValue with Reset Logic', () => {
       const dataNode = node.find('./data') as ObjectNode;
       expect(dataNode.defaultValue).toEqual({ value: 'schema-default' });
 
-      // @ts-expect-error [internal] direct __reset__ call for testing
       dataNode.__reset__({
         preferLatest: true,
         checkDefaultValueFirst: true,
@@ -681,7 +672,6 @@ describe('ConditionalSchema - checkDefinedValue with Reset Logic', () => {
       const dataNode = node.find('./data') as StringNode;
 
       // First reset with preferLatest=true to use fallbackValue
-      // @ts-expect-error [internal] direct __reset__ call for testing
       dataNode.__reset__({
         preferLatest: true,
         checkDefaultValueFirst: true,
@@ -691,7 +681,6 @@ describe('ConditionalSchema - checkDefinedValue with Reset Logic', () => {
       expect(dataNode.value).toBe('reset1');
 
       // Second reset with different fallback
-      // @ts-expect-error [internal] direct __reset__ call for testing
       dataNode.__reset__({
         preferLatest: true,
         checkDefaultValueFirst: true,
@@ -701,7 +690,6 @@ describe('ConditionalSchema - checkDefinedValue with Reset Logic', () => {
       expect(dataNode.value).toBe('reset2');
 
       // Third reset
-      // @ts-expect-error [internal] direct __reset__ call for testing
       dataNode.__reset__({
         preferLatest: true,
         checkDefaultValueFirst: true,
@@ -738,7 +726,6 @@ describe('ConditionalSchema - checkDefinedValue with Reset Logic', () => {
       await delay();
       expect(dataNode.value).toBe('modified');
 
-      // @ts-expect-error [internal] direct __reset__ call for testing
       dataNode.__reset__({
         preferLatest: false,
         checkDefaultValueFirst: true,
@@ -804,7 +791,6 @@ describe('ConditionalSchema - checkDefinedValue with Reset Logic', () => {
       expect(deepDataNode.value).toBe('deep-value');
 
       // Reset - preferLatest=false means use defaultValue
-      // @ts-expect-error [internal] direct __reset__ call for testing
       deepDataNode.__reset__({
         preferLatest: false,
         checkDefaultValueFirst: true,
@@ -866,7 +852,6 @@ describe('ConditionalSchema - checkDefinedValue with Reset Logic', () => {
       expect(childNode.defaultValue).toBe('child-default');
 
       // Reset parent level with preferLatest=false
-      // @ts-expect-error [internal] direct __reset__ call for testing
       parentNode.__reset__({
         preferLatest: false,
         checkDefaultValueFirst: true,
@@ -933,7 +918,6 @@ describe('ConditionalSchema - checkDefinedValue with Reset Logic', () => {
       expect(field2Node.value).toBe('value2');
 
       // Reset field1 with preferLatest=true (to use fallbackValue)
-      // @ts-expect-error [internal] direct __reset__ call for testing
       field1Node.__reset__({
         preferLatest: true, // Changed to true to allow fallbackValue usage
         checkDefaultValueFirst: true,
@@ -984,7 +968,6 @@ describe('ConditionalSchema - checkDefinedValue with Reset Logic', () => {
       expect(condNode.defaultValue).toBe('default-cond');
 
       // Reset with checkDefaultValueFirst
-      // @ts-expect-error [internal] direct __reset__ call for testing
       condNode.__reset__({
         preferLatest: false,
         checkDefaultValueFirst: true,
@@ -1026,7 +1009,6 @@ describe('ConditionalSchema - checkDefinedValue with Reset Logic', () => {
       expect(itemsNode.defaultValue).toEqual([]);
       expect(itemsNode.value).toEqual(['a', 'b', 'c']);
 
-      // @ts-expect-error [internal] direct __reset__ call for testing
       itemsNode.__reset__({
         preferLatest: true, // Must be true to use fallbackValue
         checkDefaultValueFirst: true,
@@ -1064,7 +1046,6 @@ describe('ConditionalSchema - checkDefinedValue with Reset Logic', () => {
       const itemsNode = node.find('/items') as ArrayNode;
       expect(itemsNode.defaultValue).toEqual(['default1', 'default2']);
 
-      // @ts-expect-error [internal] direct __reset__ call for testing
       itemsNode.__reset__({
         preferLatest: true,
         checkDefaultValueFirst: true,
@@ -1101,7 +1082,6 @@ describe('ConditionalSchema - checkDefinedValue with Reset Logic', () => {
       const itemsNode = node.find('/items') as ArrayNode;
       expect(itemsNode.defaultValue).toEqual([]);
 
-      // @ts-expect-error [internal] direct __reset__ call for testing
       itemsNode.__reset__({
         preferLatest: false,
         checkDefaultValueFirst: true,

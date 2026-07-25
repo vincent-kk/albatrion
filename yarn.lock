@@ -54,7 +54,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@aileron/development-helper@workspace:packages/aileron/development-helper":
+"@aileron/development-helper@workspace:*, @aileron/development-helper@workspace:packages/aileron/development-helper":
   version: 0.0.0-use.local
   resolution: "@aileron/development-helper@workspace:packages/aileron/development-helper"
   dependencies:
@@ -2169,6 +2169,7 @@ __metadata:
     "@types/react": "npm:^19.0.0"
     "@types/react-dom": "npm:^19.0.0"
     ajv: "npm:^6.0.0"
+    eslint: "npm:8.57.1"
     react: "npm:^19.0.0"
     react-dom: "npm:^19.0.0"
     rollup: "npm:^4.59.0"
@@ -2186,6 +2187,7 @@ __metadata:
     "@types/react": "npm:^19.0.0"
     "@types/react-dom": "npm:^19.0.0"
     ajv: "npm:^7.0.0"
+    eslint: "npm:8.57.1"
     react: "npm:^19.0.0"
     react-dom: "npm:^19.0.0"
     rollup: "npm:^4.59.0"
@@ -2204,6 +2206,7 @@ __metadata:
     "@types/react-dom": "npm:^19.0.0"
     "@winglet/common-utils": "workspace:^"
     ajv: "npm:^8.0.0"
+    eslint: "npm:8.57.1"
     react: "npm:^19.0.0"
     react-dom: "npm:^19.0.0"
     rollup: "npm:^4.59.0"
@@ -2224,6 +2227,7 @@ __metadata:
     "@winglet/react-utils": "workspace:^"
     antd-mobile: "npm:^5.0.0"
     dayjs: "npm:^1.0.0"
+    eslint: "npm:8.57.1"
     react: "npm:^19.0.0"
     react-dom: "npm:^19.0.0"
     rollup: "npm:^4.59.0"
@@ -2250,6 +2254,7 @@ __metadata:
     "@winglet/react-utils": "workspace:^"
     antd: "npm:^5.10.0"
     dayjs: "npm:^1.0.0"
+    eslint: "npm:8.57.1"
     react: "npm:^19.0.0"
     react-dom: "npm:^19.0.0"
     rollup: "npm:^4.59.0"
@@ -2277,6 +2282,7 @@ __metadata:
     "@winglet/react-utils": "workspace:^"
     antd: "npm:^6.0.0"
     dayjs: "npm:^1.0.0"
+    eslint: "npm:8.57.1"
     react: "npm:^19.0.0"
     react-dom: "npm:^19.0.0"
     rollup: "npm:^4.59.0"
@@ -2307,6 +2313,7 @@ __metadata:
     "@winglet/common-utils": "workspace:^"
     "@winglet/react-utils": "workspace:^"
     dayjs: "npm:^1.0.0"
+    eslint: "npm:8.57.1"
     react: "npm:^19.0.0"
     react-dom: "npm:^19.0.0"
     rollup: "npm:^4.59.0"
@@ -2329,6 +2336,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@canard/schema-form@workspace:packages/canard/schema-form"
   dependencies:
+    "@aileron/development-helper": "workspace:*"
     "@slats/claude-assets-sync": "workspace:^"
     "@types/react": "npm:^19.0.0"
     "@types/react-dom": "npm:^19.0.0"
@@ -2337,6 +2345,7 @@ __metadata:
     "@winglet/json-schema": "workspace:^"
     "@winglet/react-utils": "workspace:^"
     ajv: "npm:^8.17.1"
+    eslint: "npm:8.57.1"
     react: "npm:^19.0.0"
     react-dom: "npm:^19.0.0"
     rollup: "npm:^4.59.0"
@@ -5608,6 +5617,7 @@ __metadata:
     "@winglet/react-utils": "workspace:^"
     "@winglet/style-utils": "workspace:^"
     antd: "npm:^5.22.5"
+    eslint: "npm:8.57.1"
     react: "npm:^19.0.0"
     react-dom: "npm:^19.0.0"
     rollup: "npm:^4.59.0"
@@ -8279,6 +8289,7 @@ __metadata:
   dependencies:
     "@types/react": "npm:^19.2.0"
     commander: "npm:^12.1.0"
+    eslint: "npm:8.57.1"
     ink: "npm:^7.0.0"
     ink-gradient: "npm:^4.0.0"
     ink-select-input: "npm:^6.2.0"
@@ -10600,6 +10611,7 @@ __metadata:
   resolution: "@winglet/common-utils@workspace:packages/winglet/common-utils"
   dependencies:
     "@slats/claude-assets-sync": "workspace:^"
+    eslint: "npm:8.57.1"
     rollup: "npm:^4.59.0"
     tsc-alias: "npm:^1.8.16"
     typescript: "npm:^5.7.2"
@@ -10612,6 +10624,7 @@ __metadata:
   dependencies:
     "@slats/claude-assets-sync": "workspace:^"
     "@winglet/common-utils": "workspace:^"
+    eslint: "npm:8.57.1"
     rollup: "npm:^4.59.0"
     tsc-alias: "npm:^1.8.16"
     typescript: "npm:^5.7.2"
@@ -10665,6 +10678,7 @@ __metadata:
     "@slats/claude-assets-sync": "workspace:^"
     "@winglet/common-utils": "workspace:^"
     "@winglet/json": "workspace:^"
+    eslint: "npm:8.57.1"
     rollup: "npm:^4.59.0"
     tsc-alias: "npm:^1.8.16"
     typescript: "npm:^5.7.2"
@@ -10713,6 +10727,7 @@ __metadata:
   dependencies:
     "@slats/claude-assets-sync": "workspace:^"
     "@winglet/common-utils": "workspace:^"
+    eslint: "npm:8.57.1"
     rollup: "npm:^4.59.0"
     tsc-alias: "npm:^1.8.16"
     typescript: "npm:^5.7.2"
@@ -10775,6 +10790,7 @@ __metadata:
     "@types/react": "npm:^19.0.0"
     "@types/react-dom": "npm:^19.0.0"
     "@winglet/common-utils": "workspace:^"
+    eslint: "npm:8.57.1"
     react: "npm:^19.0.0"
     react-dom: "npm:^19.0.0"
     rollup: "npm:^4.59.0"
@@ -10796,6 +10812,7 @@ __metadata:
     "@types/react-dom": "npm:^19.0.0"
     classnames: "npm:^2.5.1"
     clsx: "npm:^2.1.1"
+    eslint: "npm:8.57.1"
     rollup: "npm:^4.59.0"
     tsc-alias: "npm:^1.8.16"
     typescript: "npm:^5.7.2"
@@ -11037,6 +11054,7 @@ __metadata:
     "@changesets/changelog-github": "npm:0.5.1"
     "@changesets/cli": "npm:2.29.6"
     "@chromatic-com/storybook": "npm:5.2.1"
+    "@eslint/js": "npm:8.57.1"
     "@rollup/plugin-commonjs": "npm:28.0.6"
     "@rollup/plugin-node-resolve": "npm:15.3.1"
     "@rollup/plugin-replace": "npm:6.0.2"

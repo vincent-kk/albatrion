@@ -171,11 +171,10 @@ describe('distributeAllOfItems', () => {
         },
       },
     };
-    const source: Partial<ArraySchema> = {
-      items: {
-        required: ['name'],
-      } as JsonSchema,
-    };
+    // A bare `{ required }` fragment carries no `type`, so it is not a whole
+    // JsonSchema — `Partial<JsonSchema>` is what distributeSchema() accepts.
+    const items: Partial<JsonSchema> = { required: ['name'] };
+    const source = { items } as Partial<ArraySchema>;
 
     distributeAllOfItems(base, source);
 

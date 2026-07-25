@@ -16,7 +16,7 @@ describe('forEachReverse', () => {
 
   it('인덱스와 원본 배열에 접근할 수 있어야 합니다', () => {
     const array = ['a', 'b', 'c'];
-    const result: Array<[string, number, string[]]> = [];
+    const result: Array<[string, number, readonly string[]]> = [];
 
     forEachReverse(array, (item, index, arr) => {
       result.push([item, index, arr]);
@@ -75,6 +75,11 @@ describe('forEachReverse', () => {
     const result: number[] = [];
 
     forEachReverse(array, (_, index, arr) => {
+      // Same as forEachDual: the callback gets the caller's array by reference,
+      // while the declared type is `readonly` to discourage mutating it. Pinned
+      // as an expected error so the aliasing stays covered without implying it
+      // is supported usage.
+      // @ts-expect-error — readonly by contract, mutable at runtime
       arr[index] = arr[index] * 2;
       result.push(arr[index]);
     });

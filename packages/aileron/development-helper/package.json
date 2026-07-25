@@ -27,9 +27,10 @@
     "README.md"
   ],
   "scripts": {
-    "build": "rollup -c && yarn build:types",
+    "build": "rollup -c && yarn build:types && yarn typecheck",
     "build:types": "node ../script/build/buildTypes.mjs",
-    "test": "yarn run -T vitest"
+    "test": "yarn run -T vitest",
+    "typecheck": "tsc --noEmit --composite false --rootDir . -p tsconfig.json"
   },
   "devDependencies": {
     "@types/react": "18.3.23",

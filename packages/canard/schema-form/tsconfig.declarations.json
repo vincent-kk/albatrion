@@ -22,9 +22,13 @@
     "**/__tests__/**",
     "**/coverage/**",
     "**/stories/**",
-    "**/*.test.tsx?",
-    "**/*.spec.tsx?",
-    "**/*.story.tsx?",
-    "**/*.stories.tsx?"
+    "**/*.test.ts",
+    "**/*.test.tsx",
+    "**/*.spec.ts",
+    "**/*.spec.tsx",
+    "**/*.story.ts",
+    "**/*.story.tsx",
+    "**/*.stories.ts",
+    "**/*.stories.tsx"
   ]
 }

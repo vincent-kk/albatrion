@@ -64,6 +64,15 @@ export function createESLintConfig(
         },
       },
       rules: {
+        // Promoted to recommended in @eslint/js 9.x, which used to reach this
+        // config by accident: @eslint/js was undeclared here and resolved to the
+        // 9.33.0 copy hoisted from @aileron/production-test. Declaring 8.57.1
+        // (the version paired with this project's eslint CLI) would have dropped
+        // these four silently — all exist in eslint 8 core, so keep them on.
+        "no-constant-binary-expression": "error",
+        "no-empty-static-block": "error",
+        "no-new-native-nonconstructor": "error",
+        "no-unused-private-class-members": "error",
         "react-refresh/only-export-components": "warn",
         "@typescript-eslint/no-explicit-any": "off",
         "@typescript-eslint/no-require-imports": "off",

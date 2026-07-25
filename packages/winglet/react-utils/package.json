@@ -81,7 +81,7 @@
     "README.md"
   ],
   "scripts": {
-    "build": "rollup -c && yarn build:types && yarn build:hashes",
+    "build": "rollup -c && yarn build:types && yarn build:hashes && yarn typecheck",
     "build:hashes": "claude-build-hashes",
     "build:publish:npm": "yarn build && yarn publish:npm",
     "build:types": "node ../../aileron/script/build/buildTypes.mjs",
@@ -90,6 +90,7 @@
     "prepublishOnly": "yarn build",
     "publish:npm": "yarn npm publish --access public",
     "test": "yarn run -T vitest",
+    "typecheck": "tsc --noEmit --composite false --rootDir . -p tsconfig.json",
     "version:major": "yarn version major",
     "version:minor": "yarn version minor",
     "version:patch": "yarn version patch"
@@ -101,6 +102,7 @@
     "@slats/claude-assets-sync": "workspace:^",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
+    "eslint": "8.57.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "rollup": "^4.59.0",

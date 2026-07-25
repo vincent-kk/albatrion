@@ -48,7 +48,7 @@
     "README.md"
   ],
   "scripts": {
-    "build": "node scripts/inject-version.js && rollup -c && yarn build:types && yarn build:hashes",
+    "build": "node scripts/inject-version.js && rollup -c && yarn build:types && yarn build:hashes && yarn typecheck",
     "build:hashes": "node scripts/build-hashes.mjs",
     "build:publish:npm": "yarn build && yarn publish:npm",
     "build:types": "node ../../aileron/script/build/buildTypes.mjs",
@@ -60,6 +60,7 @@
     "prepublishOnly": "yarn build",
     "publish:npm": "yarn npm publish --access public",
     "test": "yarn run -T vitest",
+    "typecheck": "tsc --noEmit --composite false --rootDir . -p tsconfig.json",
     "version:major": "yarn version major",
     "version:minor": "yarn version minor",
     "version:patch": "yarn version patch"
@@ -75,6 +76,7 @@
   },
   "devDependencies": {
     "@types/react": "^19.2.0",
+    "eslint": "8.57.1",
     "ink-testing-library": "^4.0.0",
     "rollup": "^4.59.0",
     "tsc-alias": "^1.8.16",

@@ -15,7 +15,6 @@ import { NodeEventType, type SchemaNode } from '../nodes/type';
  * Helper function to access protected __computeEnabled__ property for testing
  */
 const getComputeEnabled = (node: SchemaNode | null | undefined): boolean => {
-  // @ts-expect-error [test] access protected property for testing
   return (node as AbstractNode)?.__computeManager__?.isEnabled ?? false;
 };
 

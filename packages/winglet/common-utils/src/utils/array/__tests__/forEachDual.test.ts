@@ -68,7 +68,7 @@ describe('forEachDual', () => {
   it('원본 배열에 접근할 수 있어야 합니다', () => {
     const array1 = [1, 2, 3];
     const array2 = ['a', 'b', 'c'];
-    const result: Array<[number[], string[]]> = [];
+    const result: Array<[readonly number[], readonly string[]]> = [];
 
     forEachDual(array1, array2, (_, __, ___, arr1, arr2) => {
       result.push([arr1, arr2]);
@@ -110,6 +110,11 @@ describe('forEachDual', () => {
     const result: number[] = [];
 
     forEachDual(array1, array2, (_, __, index, arr1) => {
+      // The callback receives the original array by reference, so a write lands
+      // on the caller's array. The declared type is `readonly` to discourage
+      // exactly this, so the mutation is flagged deliberately — this case pins
+      // the runtime aliasing, not a supported usage.
+      // @ts-expect-error — readonly by contract, mutable at runtime
       arr1[index] = arr1[index] * 2;
       result.push(arr1[index]);
     });

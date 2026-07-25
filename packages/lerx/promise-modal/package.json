@@ -52,7 +52,7 @@
     "README.md"
   ],
   "scripts": {
-    "build": "rollup -c && yarn build:types && yarn build:hashes",
+    "build": "rollup -c && yarn build:types && yarn build:hashes && yarn typecheck",
     "build:hashes": "claude-build-hashes",
     "build:publish:npm": "yarn build && yarn publish:npm",
     "build:types": "node ../../aileron/script/build/buildTypes.mjs",
@@ -67,6 +67,7 @@
     "storybook": "storybook dev -p 6006",
     "test": "yarn run -T vitest",
     "test:prod": "yarn run -T vitest run --config vitest.prod.config.ts",
+    "typecheck": "tsc --noEmit --composite false --rootDir . -p tsconfig.json",
     "version:major": "yarn version major",
     "version:minor": "yarn version minor",
     "version:patch": "yarn version patch"
@@ -83,6 +84,7 @@
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
     "antd": "^5.22.5",
+    "eslint": "8.57.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "rollup": "^4.59.0",

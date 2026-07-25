@@ -3,7 +3,7 @@
   "compilerOptions": {
     "outDir": "./dist"
   },
-  "include": ["src", "src/**/*.tsx?", "./**/*.d.ts"],
+  "include": ["src", "src/**/*.ts", "src/**/*.tsx", "./**/*.d.ts"],
   "exclude": [
     "node_modules",
     "dist",
@@ -13,8 +13,10 @@
     "scripts",
     "__test__",
     "__tests__",
-    "**/*.test.tsx?",
-    "**/*.spec.tsx?",
+    "**/*.test.ts",
+    "**/*.test.tsx",
+    "**/*.spec.ts",
+    "**/*.spec.tsx",
     "**/*.story.tsx",
     "**/*.stories.tsx"
   ]

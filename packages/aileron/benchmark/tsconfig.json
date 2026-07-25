@@ -21,7 +21,8 @@
   },
   "include": [
     "src",
-    "src/**/*.tsx?",
+    "src/**/*.ts",
+    "src/**/*.tsx",
     "src/**/*.d.ts",
     "../../canard/schema-form/src/**/*.ts",
     "../../winglet/common-utils/src/**/*.ts",
@@ -38,8 +39,10 @@
     "scripts",
     "__test__",
     "__tests__",
-    "**/*.test.tsx?",
-    "**/*.spec.tsx?",
+    "**/*.test.ts",
+    "**/*.test.tsx",
+    "**/*.spec.ts",
+    "**/*.spec.tsx",
     "**/*.stories.tsx"
   ]
 }

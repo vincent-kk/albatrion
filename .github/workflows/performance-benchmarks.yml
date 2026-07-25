@@ -84,9 +84,14 @@ jobs:
       - name: schema-form build (workspace deps for benchmark-form)
         # schema-form depends on @winglet/* subpath exports whose .d.ts live in
         # each package's dist/. On a clean checkout those dists don't exist, so
-        # building schema-form alone fails type resolution. -Rt --from builds the
-        # dependency closure (winglet/* + claude-assets-sync) in topological order.
-        run: yarn workspaces foreach -Rt --from '@canard/schema-form' run build
+        # building schema-form alone fails type resolution. -R --from builds the
+        # dependency closure (winglet/* + claude-assets-sync + development-helper).
+        # --topological-dev, not -t: -R pulls devDependencies into the closure but
+        # -t orders by dependencies only, so a devDep can land AFTER its dependent
+        # and its dist is still missing when that dependent type-checks.
+        run: >-
+          yarn workspaces foreach -R --topological-dev
+          --from '@canard/schema-form' run build
 
       - name: schema-form micro bench
         run: yarn workspace @canard/schema-form bench
@@ -163,10 +168,14 @@ jobs:
       - name: json-schema build (workspace deps)
         # verify.mjs / equivalence.mjs import the BUILT package via its own
         # subpath exports (@winglet/json-schema/scanner, /async-scanner), so
-        # dist/ must exist first. -Rt --from builds json-schema plus its
-        # workspace deps (@winglet/common-utils, @winglet/json) in topological
-        # order.
-        run: yarn workspaces foreach -Rt --from '@winglet/json-schema' run build
+        # dist/ must exist first. -R --from builds json-schema plus its
+        # workspace deps (@winglet/common-utils, @winglet/json).
+        # --topological-dev, not -t: -R pulls devDependencies into the closure but
+        # -t orders by dependencies only, so a devDep can land AFTER its dependent
+        # and its dist is still missing when that dependent type-checks.
+        run: >-
+          yarn workspaces foreach -R --topological-dev
+          --from '@winglet/json-schema' run build
 
       - name: json-schema scanner verify (correctness invariants)
         run: yarn workspace @winglet/json-schema exec node benchmark/verify.mjs
