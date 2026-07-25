@@ -3,6 +3,7 @@ export { formatNestedCompositionIgnoredWarning } from './formatNestedComposition
 export { formatVirtualizationDisabledWarning } from './formatVirtualizationDisabledWarning';
 export { formatInfiniteLoopError } from './formatInfiniteLoopError';
 export { formatCircularReferenceError } from './formatCircularReferenceError';
+export { formatSchemaCompileError } from './formatSchemaCompileError';
 export {
   formatCreateDynamicFunctionError,
   formatConditionIndexError,

@@ -3,6 +3,7 @@ import type { ValidationMode } from '@/schema-form/core/nodes/type';
 import { JsonSchemaError } from '@/schema-form/errors';
 import {
   formatCircularReferenceError,
+  formatSchemaCompileError,
   transformErrors,
 } from '@/schema-form/helpers/error';
 import { stripSchemaExtensions } from '@/schema-form/helpers/jsonSchema';
@@ -14,6 +15,7 @@ import type {
 
 import type { AbstractNode } from '../../AbstractNode';
 import { getFallbackValidator } from './utils/getFallbackValidator';
+import { isCircularReferenceError } from './utils/isCircularReferenceError';
 import { matchesSchemaPath } from './utils/matchesSchemaPath';
 
 /**
@@ -201,11 +203,20 @@ export class ValidationManager {
         validatorFactory?.(schema) || PluginManager.validator?.compile(schema);
       this.enabled = this.__validator__ !== undefined;
     } catch (error: any) {
-      const jsonSchemaError = new JsonSchemaError(
-        'CIRCULAR_REFERENCE',
-        formatCircularReferenceError(error.message, jsonSchema),
-        { error, schema: jsonSchema },
-      );
+      // Circular graphs keep their dedicated diagnosis; every other compile
+      // failure shares one code and carries the validator's own message as the
+      // reason, since guessing a cause here would misdirect the reader.
+      const jsonSchemaError = isCircularReferenceError(error)
+        ? new JsonSchemaError(
+            'CIRCULAR_REFERENCE',
+            formatCircularReferenceError(error.message, jsonSchema),
+            { error, schema: jsonSchema },
+          )
+        : new JsonSchemaError(
+            'SCHEMA_COMPILE_FAILED',
+            formatSchemaCompileError(error, jsonSchema),
+            { error, schema: jsonSchema },
+          );
       this.__validator__ = getFallbackValidator(jsonSchemaError, jsonSchema);
       console.error(jsonSchemaError);
     }
