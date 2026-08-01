@@ -1,23 +1,23 @@
 {
-  "version": "1.0",
+  "version": "2.0",
   "language": "ko",
+  "adapters": {
+    "mode": "auto",
+    "enabled": [
+      "ecmascript"
+    ]
+  },
   "rules": {
-    "naming-convention": {
-      "enabled": true,
-      "severity": "warning"
-    },
     "organ-no-intentmd": {
       "enabled": true,
       "severity": "error"
     },
-    "index-barrel-pattern": {
-      "enabled": true,
-      "severity": "warning"
-    },
     "module-entry-point": {
       "enabled": true,
       "severity": "warning",
-      "exempt": ["**/canard/schema-form/src/app"]
+      "exempt": [
+        "**/canard/schema-form/src/app"
+      ]
     },
     "max-depth": {
       "enabled": true,
@@ -34,24 +34,56 @@
     "zero-peer-file": {
       "enabled": true,
       "severity": "warning",
-      "exempt": ["**/canard/schema-form/**", "**/lerx/promise-modal/**"]
+      "exempt": [
+        "**/canard/schema-form/**",
+        "**/lerx/promise-modal/**"
+      ]
     }
   },
-  "additional-allowed": [
-    "type.ts",
-    "style.ts",
-    "constant.ts",
-    "CLAUDE.md",
-    "LICENSE",
-    "README.md",
-    "README-ko_kr.md",
-    "eslint.config.js",
-    "package.json",
-    "rolldown.config.mjs",
-    "vite.config.ts",
-    "vitest.prod.config.ts",
-    "tsconfig.json",
-    "tsconfig.declarations.json"
-  ],
-  "additional-route-patterns": ["^__[a-zA-Z][a-zA-Z0-9]*__$"]
+  "structure": {
+    "additionalAllowedPeers": [
+      {
+        "basename": "type.ts"
+      },
+      {
+        "basename": "style.ts"
+      },
+      {
+        "basename": "constant.ts"
+      },
+      {
+        "basename": "CLAUDE.md"
+      },
+      {
+        "basename": "LICENSE"
+      },
+      {
+        "basename": "README.md"
+      },
+      {
+        "basename": "README-ko_kr.md"
+      },
+      {
+        "basename": "eslint.config.js"
+      },
+      {
+        "basename": "package.json"
+      },
+      {
+        "basename": "rolldown.config.mjs"
+      },
+      {
+        "basename": "vite.config.ts"
+      },
+      {
+        "basename": "vitest.prod.config.ts"
+      },
+      {
+        "basename": "tsconfig.json"
+      },
+      {
+        "basename": "tsconfig.declarations.json"
+      }
+    ]
+  }
 }
