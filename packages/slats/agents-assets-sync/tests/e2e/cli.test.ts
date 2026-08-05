@@ -1,48 +1,96 @@
 import { spawnSync } from 'node:child_process';
-import { existsSync } from 'node:fs';
-import { dirname, resolve } from 'node:path';
+import { existsSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { describe, expect, it } from 'vitest';
+import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const BIN_PATH = resolve(__dirname, '../../bin/inject-agents-settings.mjs');
 const DIST_INDEX = resolve(__dirname, '../../dist/index.mjs');
 const REPO_ROOT = resolve(__dirname, '../../../../..');
 
-// Every CLI invocation runs with `--dry-run` so no file is ever written to
-// the target `.claude/` directory. `--scope=project` satisfies the non-TTY
-// scope requirement; `--root REPO_ROOT` pins the scope-alias ancestor
-// walk to the albatrion root, where yarn workspaces hoist the `@winglet/*`
-// consumer packages as symlinks under `node_modules/@winglet/`.
-function runCli(packageArgs: readonly string[]) {
-  return spawnSync(
-    process.execPath,
-    [
-      BIN_PATH,
-      ...packageArgs,
-      '--scope=project',
-      '--dry-run',
-      '--root',
-      REPO_ROOT,
-    ],
-    { encoding: 'utf-8' },
-  );
+// Every invocation is --dry-run AND pinned to a scratch root. The pin is
+// load-bearing, not belt-and-braces: project scope now anchors on .git and
+// AGENTS.md too, so an unpinned run would target this repository's own
+// AGENTS.md. The scratch root gets its own AGENTS.md to be that anchor.
+let scratchRoot: string;
+
+function runCliFrom(root: string, args: readonly string[]) {
+  return spawnSync(process.execPath, [BIN_PATH, ...args, '--dry-run', '--root', root], {
+    encoding: 'utf-8',
+    cwd: REPO_ROOT,
+  });
 }
 
-// Requires a prior `yarn build` to produce dist/index.mjs. On a fresh
-// checkout the suite auto-skips so `yarn test` does not fail before build.
+function runCli(args: readonly string[]) {
+  return runCliFrom(scratchRoot, args);
+}
+
+// `--root` feeds two things at once: scope resolution and the ancestor walk
+// that expands a scope alias into installed packages. A scratch root has no
+// node_modules, so the alias case has to point at the repository — safe here
+// only because --dry-run writes nothing regardless of where the root is.
+function runCliFromRepo(args: readonly string[]) {
+  return runCliFrom(REPO_ROOT, args);
+}
+
 describe.skipIf(!existsSync(DIST_INDEX))(
   'inject-agents-settings CLI (e2e, dry-run)',
   () => {
-    it('resolves a single scoped package (v0.3.0 backward compatibility)', () => {
-      const result = runCli(['--package', '@canard/schema-form']);
+    beforeAll(() => {
+      scratchRoot = mkdtempSync(join(tmpdir(), 'slats-e2e-'));
+      writeFileSync(join(scratchRoot, 'AGENTS.md'), '', 'utf-8');
+    });
+
+    afterAll(() => {
+      rmSync(scratchRoot, { recursive: true, force: true });
+    });
+
+    it('injects one package for claude', () => {
+      const result = runCli([
+        '--package',
+        '@canard/schema-form',
+        '--agent=claude',
+        '--scope=project',
+      ]);
       expect(result.status).toBe(0);
       expect(result.stdout).toContain('@canard/schema-form@');
+      expect(result.stdout).toContain('· claude');
       expect(result.stdout).toContain('[DRY RUN]');
     });
 
+    it('routes codex rules into AGENTS.md and skills into .codex', () => {
+      const result = runCli([
+        '--package',
+        '@canard/schema-form',
+        '--agent=codex',
+        '--scope=project',
+      ]);
+      expect(result.status).toBe(0);
+      expect(result.stdout).toContain('AGENTS.md ▸ rules/schema-form-rule.md');
+      expect(result.stdout).toContain(join(scratchRoot, '.codex', 'skills'));
+    });
+
+    it('plans both agents in one run', () => {
+      const result = runCli([
+        '--package',
+        '@canard/schema-form',
+        '--agent=claude,codex',
+        '--scope=project',
+      ]);
+      expect(result.status).toBe(0);
+      expect(result.stdout).toContain('· claude');
+      expect(result.stdout).toContain('· codex');
+    });
+
     it('enumerates every asset-bearing package under a scope alias', () => {
-      const result = runCli(['--package', '@winglet']);
+      const result = runCliFromRepo([
+        '--package',
+        '@winglet',
+        '--agent=codex',
+        '--scope=project',
+      ]);
       expect(result.status).toBe(0);
       for (const name of [
         'common-utils',
@@ -56,26 +104,54 @@ describe.skipIf(!existsSync(DIST_INDEX))(
       }
     });
 
-    it('aggregates repeated --package flags', () => {
+    it('leaves AGENTS.md out of the plan when --asset=skills', () => {
       const result = runCli([
         '--package',
         '@canard/schema-form',
-        '--package',
-        '@lerx/promise-modal',
+        '--agent=codex',
+        '--asset=skills',
+        '--scope=project',
       ]);
       expect(result.status).toBe(0);
-      expect(result.stdout).toContain('@canard/schema-form@');
-      expect(result.stdout).toContain('@lerx/promise-modal@');
+      expect(result.stdout).toContain('skills/schema-form-skill/SKILL.md');
+      expect(result.stdout).not.toContain('AGENTS.md ▸');
     });
 
-    it('splits comma-separated values into distinct targets', () => {
-      const result = runCli([
-        '--package',
-        '@canard/schema-form,@winglet/common-utils',
-      ]);
-      expect(result.status).toBe(0);
-      expect(result.stdout).toContain('@canard/schema-form@');
-      expect(result.stdout).toContain('@winglet/common-utils@');
+    it.each([
+      [
+        'missing --agent',
+        ['--package', '@canard/schema-form', '--scope=project'],
+      ],
+      [
+        'unknown agent',
+        [
+          '--package',
+          '@canard/schema-form',
+          '--agent=gemini',
+          '--scope=project',
+        ],
+      ],
+      [
+        'unknown asset kind',
+        [
+          '--package',
+          '@canard/schema-form',
+          '--agent=claude',
+          '--asset=prompts',
+          '--scope=project',
+        ],
+      ],
+      [
+        'missing --scope',
+        ['--package', '@canard/schema-form', '--agent=claude'],
+      ],
+      ['missing --package', ['--agent=claude', '--scope=project']],
+      [
+        'unresolvable package',
+        ['--package', '@does/not-exist', '--agent=claude', '--scope=project'],
+      ],
+    ])('exits 2 on %s', (_label, args) => {
+      expect(runCli(args).status).toBe(2);
     });
   },
 );

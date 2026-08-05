@@ -4,9 +4,9 @@
 
 ## 개요
 
-컨슈머 패키지는 `package.json` 에 `claude.assetPath` 를 선언하고, 빌드 중 `agents-build-hashes` 를 실행해 `dist/agents-hashes.json` 을 생성합니다. 최종 사용자는 `npx @slats/agents-assets-sync --package=<name>` 을 실행하고, 이 엔진은 각 컨슈머의 메타데이터를 해석해 파일별 SHA-256 매니페스트를 대상 `.claude/` 와 비교하여 변경이 필요한 파일만 복사합니다.
+컨슈머 패키지는 `package.json` 에 `agents.assetPath` 를 선언하고, 빌드 중 `agents-build-hashes` 를 실행해 `dist/agents-hashes.json` 을 생성합니다. 최종 사용자는 `npx @slats/agents-assets-sync --package=<name>` 을 실행하고, 이 엔진은 각 컨슈머의 메타데이터를 해석해 파일별 SHA-256 매니페스트를 대상 `.claude/` 와 비교하여 변경이 필요한 파일만 복사합니다.
 
-`--package` 는 scoped 이름 (`@scope/pkg`), unscoped 이름 (`pkg`), 또는 **scope alias** (`@scope` — 슬래시 없음) 를 받습니다. scope alias 는 설치된 `node_modules/@scope/*` 중 `claude.assetPath` 를 선언한 모든 패키지로 전개됩니다. 단일 타깃은 `createRequire` 로 해석되고, scope alias 열거는 `cwd` 에서 상위로 올라가며 각 조상의 `node_modules/@<scope>/` 디렉토리를 훑으며 `runCli/utils/resolveScopeAlias.ts` 에 격리돼 있습니다.
+`--package` 는 scoped 이름 (`@scope/pkg`), unscoped 이름 (`pkg`), 또는 **scope alias** (`@scope` — 슬래시 없음) 를 받습니다. scope alias 는 설치된 `node_modules/@scope/*` 중 `agents.assetPath` 를 선언한 모든 패키지로 전개됩니다. 단일 타깃은 `createRequire` 로 해석되고, scope alias 열거는 `cwd` 에서 상위로 올라가며 각 조상의 `node_modules/@<scope>/` 디렉토리를 훑으며 `runCli/utils/resolveScopeAlias.ts` 에 격리돼 있습니다.
 
 GitHub fetch 없음, `.sync-meta.json` 없음, 마이그레이션 없음 — 컨슈머의 `dist/agents-hashes.json` 이 유일한 진실의 원천입니다.
 
@@ -21,7 +21,8 @@ yarn add -D @slats/agents-assets-sync
 ## CLI 표면
 
 ```
-<bin> --package=<name> [--scope=user|project] [--dry-run] [--force] [--root=<cwd>]
+<bin> --package=<name...> [--agent=claude|codex] [--scope=user|project] [--asset=<kind...>]
+      [--dry-run] [--force] [--yes] [--no-interactive] [--root=<cwd>] [--json]
 agents-build-hashes
 ```
 
@@ -33,16 +34,38 @@ agents-build-hashes
 | `inject-agents-settings` | 엔진을 설치 (`yarn add -D` / `npm i -g`) 한 환경에서 명시적인 명령 이름을 선호할 때                   |
 | `agents-build-hashes`    | 컨슈머 패키지 빌드 시 보조 도구 (`package.json` 의 scripts 에서 호출)                                 |
 
+### 에이전트별 목적지
+
+`projectRoot` 는 `--scope=user` 이면 홈 디렉터리, `--scope=project` 이면 `.claude`, `AGENTS.md`, `.codex`, `.git` 중 하나라도 가진 최근접 조상(없으면 cwd)입니다. 두 에이전트가 이 루트를 공유하므로 한 번의 실행이 서로 다른 프로젝트에 걸칠 수 없습니다.
+
+| Kind | claude | codex |
+|---|---|---|
+| `skills` | `<root>/.claude/skills/**` | `<root>/.codex/skills/**` |
+| `rules` | `<root>/.claude/rules/**` | `AGENTS.md` 내 마커 블록 |
+| `commands` | `<root>/.claude/commands/**` | 미지원 — 사유와 함께 스킵 |
+
+codex 의 `AGENTS.md` 는 `project` scope 에서 `<projectRoot>/AGENTS.md`, `user` scope 에서 `<projectRoot>/.codex/AGENTS.md` 입니다.
+
+rule 파일 1개가 블록 1개가 되므로, 블록 본문 해시가 그 파일의 매니페스트 해시와 같고 copy/skip/diverged 판정이 파일 경로와 완전히 동일한 입자도를 갖습니다:
+
+```
+<!-- AGENTS-ASSETS-SYNC:START:@canard/schema-form:rules/schema-form-rule.md -->
+…원본 바이트 그대로…
+<!-- AGENTS-ASSETS-SYNC:END:@canard/schema-form:rules/schema-form-rule.md -->
+```
+
+형식은 해당 파일이 이미 지니고 있는 `FILID:` / `SEIRI:` 마커 규약을 따릅니다. 이 도구의 블록 밖 내용 — 타 도구의 블록, 사람이 쓴 본문 — 은 바이트 단위로 보존됩니다.
+
 ### 최종 사용자 호출
 
 엔진은 컨슈머의 런타임 의존성으로 배포되지 않습니다. 표준 npx 형식은 다음과 같습니다:
 
 ```bash
 # 단일 컨슈머:
-npx @slats/agents-assets-sync --package=@canard/schema-form --scope=user
+npx @slats/agents-assets-sync --package=@canard/schema-form --agent=claude --scope=user
 
-# Scope alias — 설치된 @winglet/* 중 claude.assetPath 를 선언한 모두:
-npx @slats/agents-assets-sync --package=@winglet --scope=user
+# Scope alias — 설치된 @winglet/* 중 agents.assetPath 를 선언한 모두:
+npx @slats/agents-assets-sync --package=@winglet --agent=claude,codex --scope=user
 ```
 
 dispatcher 는 현재 작업 디렉토리 (또는 `--root <path>`) 에서 시작해 `node_modules` 를 filesystem root 까지 거슬러 올라가므로, 호스트 프로젝트의 hoisting 체인 어딘가에 대상 패키지가 설치되어 있으면 동작합니다.
@@ -51,25 +74,25 @@ dispatcher 는 현재 작업 디렉토리 (또는 `--root <path>`) 에서 시작
 
 ```bash
 yarn add -D @slats/agents-assets-sync
-yarn inject-agents-settings --package=@canard/schema-form --scope=user
+yarn inject-agents-settings --package=@canard/schema-form --agent=claude --scope=user
 
 # 또는 글로벌:
 npm i -g @slats/agents-assets-sync
-inject-agents-settings --package=@canard/schema-form --scope=user
+inject-agents-settings --package=@canard/schema-form --agent=claude --scope=user
 ```
 
 기존 명시 형식 `npx -p @slats/agents-assets-sync inject-agents-settings ...` 도 backward compatibility 를 위해 그대로 동작합니다.
 
 | 플래그             | 의미                                                                                                                                                                           |
 | ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `--package <name>` | **필수.** 반복 지정 / 콤마 구분 가능. `@scope/pkg`, `pkg`, 또는 scope alias `@scope` (설치된 `node_modules/@scope/*` 중 `claude.assetPath` 를 선언한 모든 패키지로 전개) 형식. |
+| `--package <name>` | **필수.** 반복 지정 / 콤마 구분 가능. `@scope/pkg`, `pkg`, 또는 scope alias `@scope` (설치된 `node_modules/@scope/*` 중 `agents.assetPath` 를 선언한 모든 패키지로 전개) 형식. |
 | `--scope=user`     | `~/.claude` (모든 프로젝트에 전역 적용).                                                                                                                                       |
 | `--scope=project`  | 가장 가까운 조상 `.claude` 디렉토리, 없으면 `<cwd>/.claude`.                                                                                                                   |
 | `--dry-run`        | copy / skip / warn 플랜만 출력, 쓰기 없음.                                                                                                                                     |
 | `--force`          | 발산 파일 덮어쓰기 & 고아 파일 삭제 (TTY 에서는 대화형 확인).                                                                                                                  |
 | `--root <path>`    | scope 해석용 cwd 재정의.                                                                                                                                                       |
 
-**Exit code**: `0` 성공 / up-to-date / dry-run, `1` 런타임 오류, `2` 사용자 / 설정 오류 (`--package` 누락, 비-TTY 환경에서 `--scope` 누락, 해석 불가한 패키지, `claude.assetPath` 누락).
+**Exit code**: `0` 성공 / up-to-date / dry-run, `1` 런타임 오류, `2` 사용자 / 설정 오류 (`--package` 누락, 비-TTY 환경에서 `--scope` 누락, 해석 불가한 패키지, `agents.assetPath` 누락).
 
 `--scope=project` 의 경우 대상 `.claude` 디렉토리는 `process.cwd()` 에서 위로 올라가며 가장 가까운 기존 `.claude` 조상을 찾아 해석됩니다. 자동 탐지된 경우 CLI 가 `(auto-located)` 로 로그에 표시합니다.
 
@@ -88,7 +111,7 @@ inject-agents-settings --package=@canard/schema-form --scope=user
     "@slats/agents-assets-sync": "workspace:^",
   },
   "files": ["dist", "docs", "README.md"],
-  "claude": { "assetPath": "docs/claude" },
+  "agents": { "assetPath": "docs/agents" },
 }
 ```
 
@@ -101,7 +124,7 @@ inject-agents-settings --package=@canard/schema-form --scope=user
 
 ```bash
 yarn build
-# 라이브러리 rolldown → 타입 emit → agents-build-hashes 가 claude.assetPath 하위의
+# 라이브러리 rolldown → 타입 emit → agents-build-hashes 가 agents.assetPath 하위의
 # 모든 파일을 해싱해 dist/agents-hashes.json 기록
 ```
 
@@ -115,12 +138,12 @@ yarn build
 - 최종 사용자는 hoist 된 `inject-agents-settings` bin 에 의존하지 않습니다. 표준 호출은 `npx @slats/agents-assets-sync --package=<THIS>` 이며, 패키지 매니저가 필요 시 엔진을 받아와 캐시합니다.
 - 번들 격리는 import 그래프로 강제됩니다 (컨슈머의 `src/**` 가 엔진을 참조하지 않음). dependency-type 으로 강제되는 게 아닙니다.
 
-## `docs/claude/` 작성
+## `docs/agents/` 작성
 
 어떤 트리 구조든 동작하지만, Claude Code 컨벤션에 맞춘 권장 레이아웃:
 
 ```
-docs/claude/
+docs/agents/
 ├── skills/
 │   └── <skill-name>/
 │       ├── SKILL.md

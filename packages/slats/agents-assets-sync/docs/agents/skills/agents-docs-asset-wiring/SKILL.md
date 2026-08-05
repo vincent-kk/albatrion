@@ -1,19 +1,19 @@
 ---
-name: claude-docs-asset-wiring
-description: "Wire a consumer package's docs/claude assets into the @slats/agents-assets-sync engine. Adds package.json.claude.assetPath, points scripts.build:hashes at agents-build-hashes, declares the engine as a dependency, updates CLAUDE.md, and runs the dispatcher smoke test. Idempotent — asks before clobbering."
+name: agents-docs-asset-wiring
+description: "Wire a consumer package's docs/agents assets into the @slats/agents-assets-sync engine. Adds package.json.agents.assetPath, points scripts.build:hashes at agents-build-hashes, declares the engine as a dependency, updates the consumer CLAUDE.md, and runs the dispatcher smoke test. Idempotent — asks before clobbering."
 user-invocable: true
 disable-model-invocation: true
 argument-hint: <target-package-path>
 ---
 
-# claude-docs-asset-wiring
+# agents-docs-asset-wiring
 
-Wire a consumer package's `docs/claude/**` into `@slats/agents-assets-sync`
+Wire a consumer package's `docs/agents/**` into `@slats/agents-assets-sync`
 so end users can inject those assets via the engine's `inject-agents-settings`
 bin. Reference consumer: `packages/canard/schema-form`.
 
 The engine is single-dispatcher. Consumers do NOT ship their own bin stubs
-— they declare `claude.assetPath` in `package.json` and let the engine's
+— they declare `agents.assetPath` in `package.json` and let the engine's
 `agents-build-hashes` bin regenerate `dist/agents-hashes.json` during
 build. `src/core/**` never reads `package.json`; only the engine's `bin/`
 layer resolves a single explicitly-named target.
@@ -39,7 +39,7 @@ load on demand.
 
 - `knowledge/reference-files.md` — what the consumer should (and should not) own
 - `knowledge/package-json-patches.md` — every required `package.json` edit, with guard conditions
-- `knowledge/claude-md-template.md` — the `## Claude Docs Injector` section to inject into the target `CLAUDE.md`
+- `knowledge/agent-md-template.md` — the `## Claude Docs Injector` section to inject into the target `CLAUDE.md`
 - `knowledge/smoke-tests.md` — E2E 8-path matrix via the engine dispatcher
 - `knowledge/dependency-cruiser.md` — optional CI-time isolation rule
 - `knowledge/gotchas.md` — invariants and pitfalls
@@ -61,7 +61,7 @@ syntax: `yarn workspace ${PACKAGE_NAME} <subcommand>`.
 
 Stop and report on any failure. Do not attempt to fix silently.
 
-- [ ] `${TARGET_PATH}/docs/claude/skills/<name>/SKILL.md` and `knowledge/*.md` exist — the docs to be injected.
+- [ ] `${TARGET_PATH}/docs/agents/skills/<name>/SKILL.md` and `knowledge/*.md` exist — the docs to be injected.
 - [ ] `${TARGET_PATH}/package.json` has `"type": "module"` and `"sideEffects": false`.
 - [ ] Build pipeline uses `rolldown -c && yarn build:types` where `build:types` runs `node ../../aileron/script/build/buildTypes.mjs`.
 - [ ] `git status` in `${TARGET_PATH}` is clean. Unrelated changes present → confirm with user before proceeding.
@@ -74,7 +74,7 @@ Execute in order. Each step is idempotent; on conflict, ask rather than overwrit
 
 See `knowledge/package-json-patches.md` for the complete patch list:
 
-- `claude.assetPath` — set to `docs/claude` (or the consumer's chosen path).
+- `agents.assetPath` — set to `docs/agents` (or the consumer's chosen path).
 - `scripts.build` — ensure the chain ends with `&& yarn build:hashes`.
 - `scripts.build:hashes` — set to `agents-build-hashes` (the engine's bin).
 - `scripts.prepublishOnly` — `yarn build` if not already present.
@@ -87,7 +87,7 @@ Do NOT create `bin/` or `scripts/` directories in the consumer.
 ### Step 2 — Patch `${TARGET_PATH}/CLAUDE.md`
 
 If `CLAUDE.md` exists, append or replace the `## Claude Docs Injector`
-section from `knowledge/claude-md-template.md`, substituting
+section from `knowledge/agent-md-template.md`, substituting
 `${PACKAGE_NAME}`. Skip if `CLAUDE.md` does not exist (do not create one).
 
 ### Step 3 — (Optional) Dependency-cruiser isolation gate
@@ -125,10 +125,10 @@ Summarize:
 ## Report Template
 
 ```markdown
-## claude-docs-asset-wiring — ${PACKAGE_NAME}
+## agents-docs-asset-wiring — ${PACKAGE_NAME}
 
 **Files patched**
-- package.json                 — patched: [claude.assetPath, scripts.build, scripts.build:hashes, dependencies, files]
+- package.json                 — patched: [agents.assetPath, scripts.build, scripts.build:hashes, dependencies, files]
 - CLAUDE.md                    — section added | skipped (no CLAUDE.md)
 - .dependency-cruiser.cjs      — updated | skipped (not present)
 

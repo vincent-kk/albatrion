@@ -15,10 +15,10 @@ fields in `package.json`.
 
 ---
 
-## `claude.assetPath` is the opt-in marker
+## `agents.assetPath` is the opt-in marker
 
 The engine's `agents-build-hashes` bin silently no-ops when
-`claude.assetPath` is missing or not a string. The dispatcher
+`agents.assetPath` is missing or not a string. The dispatcher
 (`inject-agents-settings`) exits 2 with a clear error when a target
 lacks the field. Both behaviors are intentional: missing = opt-out.
 

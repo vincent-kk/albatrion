@@ -1,4 +1,4 @@
-# `CLAUDE.md` — `## Claude Docs Injector` section
+# `CLAUDE.md` — `## Agent Docs Injector` section
 
 Reference: `packages/canard/schema-form/CLAUDE.md`.
 
@@ -16,15 +16,15 @@ do not duplicate it into every consumer's `CLAUDE.md`.
 ## Template (Korean — used by all consumers except `@winglet/style-utils`)
 
 ````markdown
-## Claude Docs Injector
+## Agent Docs Injector
 
-`docs/claude/**` 자산을 사용자 `.claude/` 에 주입. 엔진: `@slats/agents-assets-sync` (bin: `inject-agents-settings`). 엔진은 `devDependencies` 에만 있으므로 항상 `npx -p @slats/agents-assets-sync ...` 로 호출합니다.
+`docs/agents/**` 자산을 사용자 `.claude/` 에 주입. 엔진: `@slats/agents-assets-sync` (bin: `inject-agents-settings`). 엔진은 `devDependencies` 에만 있으므로 항상 `npx -p @slats/agents-assets-sync ...` 로 호출합니다.
 
 ```bash
-npx -p @slats/agents-assets-sync inject-agents-settings --package=@canard/schema-form --scope=user
-npx -p @slats/agents-assets-sync inject-agents-settings --package=@canard/schema-form --scope=project
-npx -p @slats/agents-assets-sync inject-agents-settings --package=@canard/schema-form --scope=user --dry-run
-npx -p @slats/agents-assets-sync inject-agents-settings --package=@canard/schema-form --scope=user --force
+npx -p @slats/agents-assets-sync inject-agents-settings --package=@canard/schema-form --agent=claude --scope=user
+npx -p @slats/agents-assets-sync inject-agents-settings --package=@canard/schema-form --agent=claude --scope=project
+npx -p @slats/agents-assets-sync inject-agents-settings --package=@canard/schema-form --agent=claude --scope=user --dry-run
+npx -p @slats/agents-assets-sync inject-agents-settings --package=@canard/schema-form --agent=claude --scope=user --force
 ```
 
 ### Isolation Guardrails
@@ -38,15 +38,15 @@ npx -p @slats/agents-assets-sync inject-agents-settings --package=@canard/schema
 ## Template (English — `@winglet/style-utils` convention)
 
 ````markdown
-## Claude Docs Injector
+## Agent Docs Injector
 
-Inject `docs/claude/**` into the user's `.claude/`. Engine: `@slats/agents-assets-sync` (bin: `inject-agents-settings`). The engine is declared only in `devDependencies`, so always invoke via `npx -p @slats/agents-assets-sync ...`.
+Inject `docs/agents/**` into the user's `.claude/`. Engine: `@slats/agents-assets-sync` (bin: `inject-agents-settings`). The engine is declared only in `devDependencies`, so always invoke via `npx -p @slats/agents-assets-sync ...`.
 
 ```bash
-npx -p @slats/agents-assets-sync inject-agents-settings --package=@winglet/style-utils --scope=user
-npx -p @slats/agents-assets-sync inject-agents-settings --package=@winglet/style-utils --scope=project
-npx -p @slats/agents-assets-sync inject-agents-settings --package=@winglet/style-utils --scope=user --dry-run
-npx -p @slats/agents-assets-sync inject-agents-settings --package=@winglet/style-utils --scope=user --force
+npx -p @slats/agents-assets-sync inject-agents-settings --package=@winglet/style-utils --agent=claude --scope=user
+npx -p @slats/agents-assets-sync inject-agents-settings --package=@winglet/style-utils --agent=claude --scope=project
+npx -p @slats/agents-assets-sync inject-agents-settings --package=@winglet/style-utils --agent=claude --scope=user --dry-run
+npx -p @slats/agents-assets-sync inject-agents-settings --package=@winglet/style-utils --agent=claude --scope=user --force
 ```
 
 ### Isolation Guardrails

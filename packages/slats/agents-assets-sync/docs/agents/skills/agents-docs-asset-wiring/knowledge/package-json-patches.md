@@ -8,11 +8,11 @@ Reference: `packages/canard/schema-form/package.json`.
 
 ---
 
-## 1. `claude.assetPath`
+## 1. `agents.assetPath`
 
 ```json
-"claude": {
-  "assetPath": "docs/claude"
+"agents": {
+  "assetPath": "docs/agents"
 }
 ```
 
@@ -52,7 +52,7 @@ Point to the engine's bin (NOT a local stub):
 ```
 
 `agents-build-hashes` reads `process.cwd()/package.json` and picks
-up `claude.assetPath`. Works because `@slats/agents-assets-sync` is
+up `agents.assetPath`. Works because `@slats/agents-assets-sync` is
 in `devDependencies`, so `node_modules/.bin/agents-build-hashes` is
 linked at workspace install time (yarn workspaces link devDeps and
 deps identically for workspace-local builds).
@@ -145,6 +145,6 @@ bundles.
 See `packages/canard/schema-form/package.json` for the canonical
 shape. The relevant keys are `scripts.build`,
 `scripts.build:hashes`, `scripts.prepublishOnly`,
-`dependencies."@slats/agents-assets-sync"`, `claude.assetPath`, and
+`dependencies."@slats/agents-assets-sync"`, `agents.assetPath`, and
 `files`. Everything else in that file is schema-form-specific and
 must not be copied.

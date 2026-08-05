@@ -2,11 +2,11 @@
 
 ## Purpose
 
-UI-free, stateless primitives for Claude docs injection. Five leaf
-fractals (`hash`, `hashManifest`, `scope`, `buildPlan`, `injectDocs`)
-compose the pipeline. Both the Ink (`ui/`) and plain (`commands/.../
-renderPlain.ts`) renderers consume these primitives directly — no
-orchestrator function lives here.
+UI-free, stateless primitives for agent asset injection. Seven leaf
+fractals compose the pipeline: locate the project, decide where each
+agent keeps things, compare, and apply. Both the Ink (`ui/`) and plain
+(`commands/.../renderPlain.ts`) renderers consume these primitives
+directly — no orchestrator function lives here.
 
 ## Structure
 
@@ -14,9 +14,17 @@ orchestrator function lives here.
 - `index.ts` — aggregates public symbols
 - `hash/` — SHA-256 content primitives
 - `hashManifest/` — `dist/agents-hashes.json` IO + namespace prefixes
-- `scope/` — `user | project` → target path resolution
+- `scope/` — `user | project` → one agent-neutral project root
+- `agentTarget/` — project root → per-agent destinations + orphan scans
+- `markerBlock/` — this tool's own blocks inside a shared `AGENTS.md`
 - `buildPlan/` — plan builder (copy / skip / diverged / orphan / delete)
 - `injectDocs/` — apply + summarize primitives (no orchestrator)
+
+## Conventions
+
+- Dependencies run one way: `scope → agentTarget → buildPlan`, and
+  `markerBlock → buildPlan`, `markerBlock → injectDocs`. The graph is
+  acyclic and every edge crosses a sibling's `index.ts`.
 
 ## Boundaries
 
@@ -27,11 +35,11 @@ orchestrator function lives here.
 
 ### Ask first
 
-- Adding a new sub-fractal beyond the five above
+- Adding a sub-fractal, or an agent to `AgentType`
 - Expanding the public API beyond what `commands/` and `ui/` consume
 
 ### Never do
 
 - Import from `commands/` or `ui/` anywhere in this tree
 - Perform TTY prompts — prompting is a renderer concern
-- Re-introduce GitHub fetch, `.sync-meta.json`, or legacy sync state
+- Touch content in a shared document outside this tool's own markers

@@ -20,7 +20,7 @@ module.exports = {
       name: 'src-no-docs',
       severity: 'error',
       comment:
-        'src/ must not import from docs/. docs/claude/** contains pure markdown ' +
+        'src/ must not import from docs/. docs/agents/** contains pure markdown ' +
         'assets meant only for the engine dispatcher, not for the library runtime.',
       from: { path: '^src/' },
       to: { path: '^docs/' },

@@ -1,0 +1,110 @@
+---
+title: '@slats/agents-assets-sync'
+sidebar_label: 'agents-assets-sync'
+sidebar_position: 1
+---
+
+import PackageHeader from '@site/src/components/PackageHeader';
+
+# @slats/agents-assets-sync
+
+<PackageHeader
+  name="@slats/agents-assets-sync"
+  description="CLI engine that injects a package's agent docs (skills, rules, commands) into Claude Code and Codex asset locations."
+/>
+
+A package author authors one asset tree and declares where it lives. End users
+pick which agents to inject for, and the engine writes each asset where that
+agent actually reads it.
+
+Every choice is reachable by flag, so a coding agent can drive a whole run
+without a prompt.
+
+## Installation
+
+The engine is never a runtime dependency of a consumer, so end users invoke it
+through `npx`:
+
+```bash
+npx @slats/agents-assets-sync \
+  --package=@canard/schema-form \
+  --agent=claude,codex \
+  --scope=project
+```
+
+## CLI Surface
+
+```
+<bin> --package <name...> [--agent <type...>] [--scope=user|project] [--asset <kind...>]
+      [--dry-run] [--force] [--yes] [--no-interactive] [--root=<cwd>] [--json]
+```
+
+| Flag | Meaning |
+|---|---|
+| `--package <name>` | **Required.** `@scope/pkg`, `pkg`, or a scope alias `@scope` that fans out to every installed package declaring `agents.assetPath`. |
+| `--agent <type>` | `claude` \| `codex`. Omitted, an interactive terminal asks; anywhere else the run exits 2. |
+| `--scope` | `user` (home) or `project` (nearest ancestor owning `.claude`, `AGENTS.md`, `.codex` or `.git`). |
+| `--asset <kind>` | `skills` \| `rules` \| `commands`. Default: all. An excluded kind is absent from the plan, so it is neither reported nor deleted. |
+| `--dry-run` | Print the plan; write nothing. |
+| `--force` | Overwrite diverged content and delete orphans. |
+| `--yes` | Approve the confirmation without showing it. |
+| `--no-interactive` | Never prompt, even on a terminal. |
+
+## Agent destinations
+
+Both agents resolve from one shared project root, so a single run cannot
+straddle two projects.
+
+| Kind | claude | codex |
+|---|---|---|
+| `skills` | `<root>/.claude/skills/**` | `<root>/.codex/skills/**` |
+| `rules` | `<root>/.claude/rules/**` | marker block in `AGENTS.md` |
+| `commands` | `<root>/.claude/commands/**` | unsupported — skipped with a reason |
+
+One rule file becomes one marker block, so its body hash equals the manifest
+hash for that file and the copy/skip/diverged verdict is as precise as it is
+for a copied file:
+
+```
+<!-- AGENTS-ASSETS-SYNC:START:@canard/schema-form:rules/schema-form-rule.md -->
+…source bytes, verbatim…
+<!-- AGENTS-ASSETS-SYNC:END:@canard/schema-form:rules/schema-form-rule.md -->
+```
+
+Everything outside this tool's own blocks — other tools' blocks, hand-written
+prose — is carried through byte for byte.
+
+## Shipping assets from your package
+
+```jsonc
+{
+  "scripts": {
+    "build": "… && yarn build:hashes",
+    "build:hashes": "agents-build-hashes"
+  },
+  "devDependencies": {
+    "@slats/agents-assets-sync": "^0.1.0"
+  },
+  "files": ["dist", "docs", "README.md"],
+  "agents": {
+    "assetPath": "docs/agents"
+  }
+}
+```
+
+```
+docs/agents/
+├── skills/<skill-name>/SKILL.md
+├── rules/*.md
+└── commands/*.md
+```
+
+`agents-build-hashes` hashes the tree at build time into
+`dist/agents-hashes.json`, which the engine compares against on every inject.
+
+## Relationship to `@slats/claude-assets-sync`
+
+`@slats/claude-assets-sync` is the single-agent predecessor. It is frozen, not
+deprecated — packages already published against its `claude.assetPath` contract
+keep working. New packages should declare `agents.assetPath` and use this
+engine.

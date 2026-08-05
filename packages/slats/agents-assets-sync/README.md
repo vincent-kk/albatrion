@@ -1,12 +1,12 @@
 # @slats/agents-assets-sync
 
-Engine + dispatcher CLI that lets any npm package ship its own Claude Code docs (skills, rules, commands) and inject them into a user's `.claude/` directory. Consumers declare `claude.assetPath` in `package.json` and the engine's `inject-agents-settings` bin handles the rest.
+Engine + dispatcher CLI that lets any npm package ship its own Claude Code docs (skills, rules, commands) and inject them into a user's `.claude/` directory. Consumers declare `agents.assetPath` in `package.json` and the engine's `inject-agents-settings` bin handles the rest.
 
 ## Overview
 
-A consumer package declares `claude.assetPath` in `package.json` and runs `agents-build-hashes` during build to emit `dist/agents-hashes.json`. End users run `npx @slats/agents-assets-sync --package=<name>` and this engine resolves each consumer's metadata, compares its hash manifest against the target `.claude/`, and copies only what is out of date.
+A consumer package declares `agents.assetPath` in `package.json` and runs `agents-build-hashes` during build to emit `dist/agents-hashes.json`. End users run `npx @slats/agents-assets-sync --package=<name>` and this engine resolves each consumer's metadata, compares its hash manifest against the target `.claude/`, and copies only what is out of date.
 
-`--package` accepts a scoped name (`@scope/pkg`), an unscoped name (`pkg`), or a **scope alias** (`@scope` with no slash) that fans out to every installed `node_modules/@scope/*` package declaring `claude.assetPath`. Single-target resolution uses `createRequire`; scope-alias enumeration walks ancestor `node_modules/@<scope>/` directories from `cwd` upward and is isolated to `runCli/utils/resolveScopeAlias.ts`.
+`--package` accepts a scoped name (`@scope/pkg`), an unscoped name (`pkg`), or a **scope alias** (`@scope` with no slash) that fans out to every installed `node_modules/@scope/*` package declaring `agents.assetPath`. Single-target resolution uses `createRequire`; scope-alias enumeration walks ancestor `node_modules/@<scope>/` directories from `cwd` upward and is isolated to `runCli/utils/resolveScopeAlias.ts`.
 
 No GitHub fetch, no `.sync-meta.json`, no migrations — the consumer's `dist/agents-hashes.json` is the single source of truth.
 
@@ -21,7 +21,8 @@ yarn add -D @slats/agents-assets-sync
 ## CLI Surface
 
 ```
-<bin> --package=<name> [--scope=user|project] [--dry-run] [--force] [--root=<cwd>]
+<bin> --package=<name...> [--agent=claude|codex] [--scope=user|project] [--asset=<kind...>]
+      [--dry-run] [--force] [--yes] [--no-interactive] [--root=<cwd>] [--json]
 agents-build-hashes
 ```
 
@@ -33,16 +34,38 @@ agents-build-hashes
 | `inject-agents-settings` | the engine is installed (`yarn add -D` / `npm i -g`) and you prefer a descriptive command name |
 | `agents-build-hashes` | build-time helper for consumer packages (run from `package.json` scripts) |
 
+### Agent destinations
+
+`projectRoot` is the home directory for `--scope=user`, and for `--scope=project` the nearest ancestor owning any of `.claude`, `AGENTS.md`, `.codex`, `.git` (falling back to cwd). Both agents share it, so one run cannot straddle two projects.
+
+| Kind | claude | codex |
+|---|---|---|
+| `skills` | `<root>/.claude/skills/**` | `<root>/.codex/skills/**` |
+| `rules` | `<root>/.claude/rules/**` | marker block in `AGENTS.md` |
+| `commands` | `<root>/.claude/commands/**` | unsupported — skipped with a reason |
+
+Codex's `AGENTS.md` is `<projectRoot>/AGENTS.md` for `project` scope and `<projectRoot>/.codex/AGENTS.md` for `user` scope.
+
+One rule file becomes one marker block, so a block's body hash equals the manifest hash for that file and the copy/skip/diverged verdict matches the file path exactly:
+
+```
+<!-- AGENTS-ASSETS-SYNC:START:@canard/schema-form:rules/schema-form-rule.md -->
+…source bytes, verbatim…
+<!-- AGENTS-ASSETS-SYNC:END:@canard/schema-form:rules/schema-form-rule.md -->
+```
+
+The shape mirrors the `FILID:` / `SEIRI:` markers such files already carry. Everything outside this tool's own blocks — other tools' blocks, hand-written prose — is carried through byte for byte.
+
 ### End-user invocation
 
 The engine is not shipped as a runtime dependency of consumers. The canonical npx form is:
 
 ```bash
 # Single consumer:
-npx @slats/agents-assets-sync --package=@canard/schema-form --scope=user
+npx @slats/agents-assets-sync --package=@canard/schema-form --agent=claude --scope=user
 
-# Scope alias — every installed @winglet/* that declares claude.assetPath:
-npx @slats/agents-assets-sync --package=@winglet --scope=user
+# Scope alias — every installed @winglet/* that declares agents.assetPath:
+npx @slats/agents-assets-sync --package=@winglet --agent=claude,codex --scope=user
 ```
 
 The dispatcher walks `node_modules` from the current working directory (or `--root <path>`) up to the filesystem root, so it works as long as the target package is installed somewhere in the host project's hoisting chain.
@@ -51,25 +74,29 @@ The dispatcher walks `node_modules` from the current working directory (or `--ro
 
 ```bash
 yarn add -D @slats/agents-assets-sync
-yarn inject-agents-settings --package=@canard/schema-form --scope=user
+yarn inject-agents-settings --package=@canard/schema-form --agent=claude --scope=user
 
 # or globally:
 npm i -g @slats/agents-assets-sync
-inject-agents-settings --package=@canard/schema-form --scope=user
+inject-agents-settings --package=@canard/schema-form --agent=claude --scope=user
 ```
 
 The legacy explicit form `npx -p @slats/agents-assets-sync inject-agents-settings ...` continues to work for backward compatibility.
 
 | Flag | Meaning |
 |---|---|
-| `--package <name>` | **Required.** Repeatable/comma-separable. Accepts `@scope/pkg`, `pkg`, or a scope alias `@scope` (fans out to every installed `node_modules/@scope/*` with `claude.assetPath`). |
-| `--scope=user` | `~/.claude` (applies globally). |
-| `--scope=project` | Nearest ancestor `.claude` directory, or `<cwd>/.claude` if none found. |
+| `--package <name>` | **Required.** Repeatable/comma-separable. Accepts `@scope/pkg`, `pkg`, or a scope alias `@scope` (fans out to every installed `node_modules/@scope/*` with `agents.assetPath`). |
+| `--agent <type>` | **Required outside an interactive TTY.** `claude` \| `codex`, repeatable/comma-separable. |
+| `--asset <kind>` | `skills` \| `rules` \| `commands`. Default: all. An excluded kind is absent from the plan, so it is neither reported nor deleted. |
+| `--yes` | Approve the force dialog without showing it. |
+| `--no-interactive` | Never prompt, even on a TTY; a missing flag exits 2. |
+| `--scope=user` | Home directory (applies globally). |
+| `--scope=project` | Nearest ancestor owning `.claude`, `AGENTS.md`, `.codex` or `.git`; `<cwd>` if none found. |
 | `--dry-run` | Print the copy / skip / warn plan, no writes. |
 | `--force` | Overwrite diverged files & delete orphans (interactive confirm on TTY). |
 | `--root <path>` | Override scope-resolution cwd. |
 
-**Exit codes**: `0` success / up-to-date / dry-run, `1` runtime error, `2` user / configuration error (missing `--package`, missing `--scope` in non-TTY, unresolvable package, missing `claude.assetPath`).
+**Exit codes**: `0` success / up-to-date / dry-run, `1` runtime error, `2` user / configuration error (missing `--package`, missing `--scope` in non-TTY, unresolvable package, missing `agents.assetPath`).
 
 For `--scope=project` the target `.claude` directory is resolved by walking up from `process.cwd()` to the nearest existing `.claude` ancestor; the CLI logs `(auto-located)` when this happens.
 
@@ -88,7 +115,7 @@ For `--scope=project` the target `.claude` directory is resolved by walking up f
     "@slats/agents-assets-sync": "workspace:^"
   },
   "files": ["dist", "docs", "README.md"],
-  "claude": { "assetPath": "docs/claude" }
+  "agents": { "assetPath": "docs/agents" }
 }
 ```
 
@@ -102,7 +129,7 @@ For `--scope=project` the target `.claude` directory is resolved by walking up f
 ```bash
 yarn build
 # rolls up the library, emits types, then `agents-build-hashes` hashes every
-# file under `claude.assetPath` and writes dist/agents-hashes.json
+# file under `agents.assetPath` and writes dist/agents-hashes.json
 ```
 
 Ship the resulting `dist/` (including `agents-hashes.json`) alongside `docs/` when you publish.
@@ -115,12 +142,12 @@ Ship the resulting `dist/` (including `agents-hashes.json`) alongside `docs/` wh
 - End users never rely on a hoisted `inject-agents-settings` bin. The canonical invocation is `npx @slats/agents-assets-sync --package=<THIS>`, which fetches the engine on demand and caches it.
 - Bundle isolation is enforced by the import graph (`src/**` in the consumer never references the engine), not by dependency-type.
 
-## Authoring `docs/claude/`
+## Authoring `docs/agents/`
 
 Any tree works, but the recommended layout matches Claude Code conventions:
 
 ```
-docs/claude/
+docs/agents/
 ├── skills/
 │   └── <skill-name>/
 │       ├── SKILL.md

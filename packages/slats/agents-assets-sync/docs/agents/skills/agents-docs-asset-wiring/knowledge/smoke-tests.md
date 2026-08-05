@@ -97,7 +97,7 @@ smoke directory before invoking.
 
 | Observed | Meaning                                                                 | Action                                                             |
 |----------|-------------------------------------------------------------------------|--------------------------------------------------------------------|
-| 1 ≠ 0    | Dry-run crashed. Likely an engine bug or bad `claude.assetPath`.        | Stop, capture stderr, report.                                      |
+| 1 ≠ 0    | Dry-run crashed. Likely an engine bug or bad `agents.assetPath`.        | Stop, capture stderr, report.                                      |
 | 2 ≠ 0    | First write failed. Permissions, engine bug, or manifest issue.         | Stop, inspect `dist/agents-hashes.json`, report.                   |
 | 3 ≠ 0    | Idempotency broken — re-run should be no-op.                            | Stop, diff `$DIR/.claude` before/after, report.                    |
 | 4 = 0    | CI mode did not refuse tampered files. Safety regression.               | Stop — the engine's CI gate is broken.                             |
