@@ -45,6 +45,9 @@ export async function renderPlain(
   originCwd: string,
 ): Promise<number> {
   if (targets.length === 0) return 0;
+  // One stamp for the whole run: a computed manifest records when the run
+  // looked, not when each unit happened to reach the hasher.
+  const generatedAt = new Date().toISOString();
 
   const scope = resolveScopeFlag(flags.scope);
   const agents = resolveAgentFlag(flags.agent ?? [], false);
@@ -73,6 +76,7 @@ export async function renderPlain(
           assetKinds,
           flags,
           originCwd,
+          generatedAt,
         );
       } catch (err) {
         const msg = err instanceof Error ? err.message : String(err);
@@ -97,8 +101,9 @@ async function renderOneUnit(
   assetKinds: ReadonlySet<AssetKind>,
   flags: DefaultFlags,
   originCwd: string,
+  generatedAt: string,
 ): Promise<number> {
-  const manifest = await resolveHashManifest(target);
+  const manifest = await resolveHashManifest(target, generatedAt);
   const agentTarget = resolveAgentTarget(agent, scope, originCwd);
   const { destinations, orphanScans } = resolveDestinations({
     agentTarget,

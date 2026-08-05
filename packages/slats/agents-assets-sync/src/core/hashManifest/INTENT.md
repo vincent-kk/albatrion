@@ -20,6 +20,7 @@ inject 시 source 쪽 해시를 공급한다. `dist/agents-hashes.json`(스키�
 
 - 지원하지 않는 `schemaVersion` 은 명시적 `Error` 로 거부
 - 런타임에서 manifest 를 불변 읽기 전용 표면으로 취급
+- 시계·환경을 읽지 않는다. `generatedAt` 은 인자로 받는다
 - 계산 경로의 잡음 필터 · POSIX 키 · 키 정렬을 `scripts/buildHashes.mjs` 와 일치시킨다. 한쪽을 바꾸면 다른 쪽도 바꾸고 동등성 검사를 돌린다
 
 ### Ask first

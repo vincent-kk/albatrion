@@ -69,6 +69,7 @@ export async function renderJson(
   originCwd: string,
 ): Promise<number> {
   const dryRun = Boolean(flags.dryRun);
+  const generatedAt = new Date().toISOString();
   const scope = parseScopeFlag(flags.scope);
   const agents = parseAgentFlag(flags.agent ?? [], false);
   const assets = parseAssetFlag(flags.asset ?? []);
@@ -93,6 +94,7 @@ export async function renderJson(
         assets.kinds,
         flags,
         originCwd,
+        generatedAt,
       );
       units.push(unit);
       if (unit.error) exitCode = 1;
@@ -110,6 +112,7 @@ async function runUnit(
   assetKinds: ReadonlySet<AssetKind>,
   flags: DefaultFlags,
   originCwd: string,
+  generatedAt: string,
 ): Promise<JsonUnit> {
   const agentTarget = resolveAgentTarget(agent, scope, originCwd);
   const base = {
@@ -131,7 +134,7 @@ async function runUnit(
     };
 
   try {
-    const manifest = await resolveHashManifest(target);
+    const manifest = await resolveHashManifest(target, generatedAt);
     const { destinations, orphanScans } = resolveDestinations({
       agentTarget,
       packageName: target.name,

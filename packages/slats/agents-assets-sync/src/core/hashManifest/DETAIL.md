@@ -9,7 +9,7 @@
 - `schemaVersion !== 1` 은 조용히 넘어가지 않고 명시적 `Error` 로 거부한다. 메시지는 `[agents-assets-sync]` 접두사와 발견된 버전을 포함한다.
 - 파일이 없거나 JSON 이 깨진 경우의 오류는 그대로 전파된다. 호출자가 "빌드가 필요하다" 는 진단으로 바꾸는 것은 렌더러의 몫이다.
 - 어느 출처든 매니페스트는 런타임에서 읽기 전용 표면으로만 다룬다. 디스크 쓰기는 `scripts/buildHashes.mjs` 전담이며 이 fractal 은 파일을 쓰지 않는다.
-- `generatedAt` 은 기록용 필드다. 런타임의 어떤 판정도 이 값을 읽지 않으므로 `resolveHashManifest` 의 기본 인자로 시계를 잡되, 검사에서는 주입할 수 있다.
+- `generatedAt` 은 필수 인자다. 이 fractal 은 시계를 읽지 않으며, 같은 입력이면 언제 불러도 같은 결과를 낸다. 시각은 렌더러가 실행 시작에 한 번 잡아 그 실행 내내 쓴다 — 계산된 매니페스트는 각 쌍이 해셔에 닿은 시각이 아니라 실행이 들여다본 시각을 기록한다.
 - `computeNamespacePrefixes` 는 orphan 탐색 범위를 정한다. `skills/` 로 시작하고 세그먼트가 3개 이상인 경로에서만 `skills/<name>/` 접두사를 모으며, 중복은 제거된다.
 - 이 접두사 집합이 orphan 삭제 후보의 상한이다. 다른 kind 나 다른 네임스페이스는 집합에 들어오지 않으므로 삭제 제안 대상이 되지 않는다.
 - `previousVersions` 는 schema v1 에서 항상 빈 객체이며 예약 필드다.
@@ -19,10 +19,10 @@
 
 - `needsBuiltManifest(target: { hashSource; hashesPresent }): boolean`
   - 렌더러가 계획 전에 "이 target 은 빌드를 기다려야 하는가" 를 묻는 유일한 자리
-- `resolveHashManifest(source: HashManifestSource, generatedAt?: string): Promise<HashManifest>`
+- `resolveHashManifest(source: HashManifestSource, generatedAt: string): Promise<HashManifest>`
   - `source.hashSource === 'manifest'` → `readHashManifest(source.packageRoot)`
   - `source.hashSource === 'directory'` → `source.assetRoot` 를 훑어 계산
-  - `generatedAt` 생략 시 호출 시각. 계산 경로에서만 쓰인다.
+  - `generatedAt` 은 호출자가 소유한다. 계산 경로에서만 기록되고 판정에는 쓰이지 않는다.
 - `readHashManifest(packageRoot: string): Promise<HashManifest>`
   - `schemaVersion !== 1` 이면 throw
 - `computeNamespacePrefixes(manifest: HashManifest): string[]`

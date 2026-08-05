@@ -33,15 +33,16 @@ export function needsBuiltManifest(target: {
  * the named directory is hashed on the spot and is the only truth.
  *
  * @param source - the target's identity, asset root, and chosen source
- * @param generatedAt - ISO timestamp for a computed manifest; defaults to now.
- *   Nothing at run time reads it, so the default clock is safe to take here
+ * @param generatedAt - ISO timestamp stamped onto a computed manifest. Passed
+ *   in rather than read here so the same inputs always give the same answer;
+ *   the caller owns the clock
  * @returns the manifest
  * @throws when `hashSource` is `manifest` and the file is absent, unreadable,
  *   or declares an unsupported `schemaVersion`
  */
 export async function resolveHashManifest(
   source: HashManifestSource,
-  generatedAt: string = new Date().toISOString(),
+  generatedAt: string,
 ): Promise<HashManifest> {
   if (source.hashSource === 'manifest')
     return readHashManifest(source.packageRoot);

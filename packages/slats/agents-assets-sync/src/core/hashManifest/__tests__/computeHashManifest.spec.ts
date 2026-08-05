@@ -126,17 +126,20 @@ describe('source selection', () => {
       packageVersion: '1.2.3',
       assetPath: ASSET_PATH,
     });
-    const manifest = await resolveHashManifest({
-      ...directorySource(),
-      hashSource: 'manifest',
-    });
+    const manifest = await resolveHashManifest(
+      { ...directorySource(), hashSource: 'manifest' },
+      GENERATED_AT,
+    );
     expect(manifest.generatedAt).not.toBe(GENERATED_AT);
     expect(Object.keys(manifest.files)).toHaveLength(3);
   });
 
   it('fails when the source is the manifest and the file is absent', async () => {
     await expect(
-      resolveHashManifest({ ...directorySource(), hashSource: 'manifest' }),
+      resolveHashManifest(
+        { ...directorySource(), hashSource: 'manifest' },
+        GENERATED_AT,
+      ),
     ).rejects.toThrow();
   });
 });

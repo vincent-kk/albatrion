@@ -49,6 +49,9 @@ export function usePlanStep({
     (async () => {
       const results: TargetPlan[] = [];
       const warnings: Warning[] = [];
+      // One stamp for the whole planning pass: a computed manifest records when
+      // the run looked, not when each pair happened to reach the hasher.
+      const generatedAt = new Date().toISOString();
       for (const agent of agents) {
         for (const target of targets) {
           if (cancelled) return;
@@ -69,7 +72,7 @@ export function usePlanStep({
               });
               continue;
             }
-            const manifest = await resolveHashManifest(target);
+            const manifest = await resolveHashManifest(target, generatedAt);
             const agentTarget = resolveAgentTarget(agent, scope, originCwd);
             const { destinations, orphanScans } = resolveDestinations({
               agentTarget,
