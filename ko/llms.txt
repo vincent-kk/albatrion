@@ -38,8 +38,9 @@ This file contains links to documentation sections following the llmstxt.org sta
 - [API Reference](https://vincent-kk.github.io/albatrion/ko/docs/lerx/promise-modal/api-reference): import ForAI from '@site/src/components/ForAI';
 - [Examples](https://vincent-kk.github.io/albatrion/ko/docs/lerx/promise-modal/examples): import ForAI from '@site/src/components/ForAI';
 - [@lerx/promise-modal](https://vincent-kk.github.io/docs/lerx/promise-modal): import PackageHeader from '@site/src/components/PackageHeader';
+- [@slats/agents-assets-sync](https://vincent-kk.github.io/docs/slats/agents-assets-sync): import PackageHeader from '@site/src/components/PackageHeader';
 - [@slats/claude-assets-sync](https://vincent-kk.github.io/docs/slats/claude-assets-sync): import PackageHeader from '@site/src/components/PackageHeader';
-- [@slats](https://vincent-kk.github.io/docs/slats): Developer tooling packages for Claude Code integration.
+- [@slats](https://vincent-kk.github.io/docs/slats): Developer tooling packages for coding-agent integration.
 - [at](https://vincent-kk.github.io/albatrion/ko/docs/winglet/common-utils/array/at): <!-- sync-winglet-docs:auto -->
 - [chunk](https://vincent-kk.github.io/albatrion/ko/docs/winglet/common-utils/array/chunk): <!-- sync-winglet-docs:auto -->
 - [difference](https://vincent-kk.github.io/albatrion/ko/docs/winglet/common-utils/array/difference): <!-- sync-winglet-docs:auto -->
