@@ -44,6 +44,10 @@
     "README.md"
   ],
   "scripts": {
+    "bench": "vitest bench --config vitest.bench.config.ts --run",
+    "bench:baseline": "vitest bench --config vitest.bench.config.ts --run --outputJson bench/.results/baseline.json",
+    "bench:compare": "vitest bench --config vitest.bench.config.ts --run --compare bench/.results/baseline.json",
+    "bench:watch": "vitest bench --config vitest.bench.config.ts",
     "build": "rolldown -c && yarn build:types && yarn build:hashes && yarn typecheck",
     "build:hashes": "agents-build-hashes",
     "build:publish:npm": "yarn build && yarn publish:npm",
@@ -57,10 +61,6 @@
     "storybook": "storybook dev -p 6006",
     "test": "vitest",
     "typecheck": "tsc --noEmit --composite false --rootDir . -p tsconfig.json",
-    "bench": "vitest bench --config vitest.bench.config.ts --run",
-    "bench:watch": "vitest bench --config vitest.bench.config.ts",
-    "bench:baseline": "vitest bench --config vitest.bench.config.ts --run --outputJson bench/.results/baseline.json",
-    "bench:compare": "vitest bench --config vitest.bench.config.ts --run --compare bench/.results/baseline.json",
     "version:major": "yarn version major",
     "version:minor": "yarn version minor",
     "version:patch": "yarn version patch"
