@@ -1,5 +1,6 @@
 import type { RenderInput } from '../../../ui/types/index.js';
 import type { ConsumerPackage, DefaultFlags } from '../type.js';
+import { renderJson } from './renderJson.js';
 import { renderPlain } from './renderPlain.js';
 
 interface UiModule {
@@ -13,9 +14,10 @@ interface RenderEnv {
 /**
  * Choose the renderer for this invocation and run it exactly once.
  *
- * Ink is used only when prompting is both possible and permitted: a TTY,
- * no `--json`, and no `--no-interactive`. Every other case takes the plain
- * path, where a missing required flag exits 2 instead of asking.
+ * `--json` takes the machine-readable renderer. Otherwise Ink is used only
+ * when prompting is both possible and permitted — a TTY without
+ * `--no-interactive` — and every other case takes the plain renderer, where a
+ * missing required flag exits 2 instead of asking.
  *
  * @param targets - resolved consumer packages
  * @param flags - parsed CLI flags
@@ -30,7 +32,8 @@ export async function renderOrFallback(
   env: RenderEnv = {},
 ): Promise<number> {
   const isTTY = env.isTTY ?? Boolean(process.stdout.isTTY);
-  if (flags.json || !isTTY || flags.interactive === false) {
+  if (flags.json) return renderJson(targets, flags, originCwd);
+  if (!isTTY || flags.interactive === false) {
     return renderPlain(targets, flags, originCwd);
   }
   const ui = (await import('../../../ui/index.js')) as unknown as UiModule;

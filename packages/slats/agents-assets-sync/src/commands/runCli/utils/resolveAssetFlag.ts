@@ -14,16 +14,31 @@ const ALL_KINDS: readonly AssetKind[] = ['skills', 'rules', 'commands'];
  * @returns the kinds to inject; every kind when nothing was passed
  */
 export function resolveAssetFlag(values: readonly string[]): Set<AssetKind> {
-  if (values.length === 0) return new Set(ALL_KINDS);
+  const parsed = parseAssetFlag(values);
+  if ('error' in parsed) {
+    for (const line of parsed.error) logger.error(line);
+    process.exit(2);
+  }
+  return parsed.kinds;
+}
+
+/**
+ * Same validation as `resolveAssetFlag`, reporting instead of exiting.
+ *
+ * @param values - raw `--asset` values
+ * @returns the kinds, or the message lines describing why there are none
+ */
+export function parseAssetFlag(
+  values: readonly string[],
+): { kinds: Set<AssetKind> } | { error: string[] } {
+  if (values.length === 0) return { kinds: new Set(ALL_KINDS) };
   const kinds = new Set<AssetKind>();
   for (const value of values) {
-    if (!ALL_KINDS.includes(value as AssetKind)) {
-      logger.error(
-        `Invalid --asset: ${value}. Expected ${ALL_KINDS.join(' | ')}.`,
-      );
-      process.exit(2);
-    }
+    if (!ALL_KINDS.includes(value as AssetKind))
+      return {
+        error: [`Invalid --asset: ${value}. Expected ${ALL_KINDS.join(' | ')}.`],
+      };
     kinds.add(value as AssetKind);
   }
-  return kinds;
+  return { kinds };
 }

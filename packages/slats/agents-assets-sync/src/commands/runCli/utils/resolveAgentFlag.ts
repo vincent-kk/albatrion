@@ -18,20 +18,41 @@ export function resolveAgentFlag(
   values: readonly string[],
   interactive: boolean,
 ): AgentType[] {
+  const parsed = parseAgentFlag(values, interactive);
+  if ('error' in parsed) {
+    for (const line of parsed.error) logger.error(line);
+    process.exit(2);
+  }
+  return parsed.agents;
+}
+
+/**
+ * Same validation as `resolveAgentFlag`, reporting instead of exiting.
+ *
+ * The `--json` renderer needs the failure as data so it can place it in the
+ * document it owns; exiting here would leave that document unwritten.
+ *
+ * @param values - raw `--agent` values
+ * @param interactive - whether the caller can still show a picker
+ * @returns the agents, or the message lines describing why there are none
+ */
+export function parseAgentFlag(
+  values: readonly string[],
+  interactive: boolean,
+): { agents: AgentType[] } | { error: string[] } {
   const agents: AgentType[] = [];
   for (const value of values) {
-    if (!isValidAgent(value)) {
-      logger.error(`Invalid --agent: ${value}. Expected claude | codex | agents.`);
-      process.exit(2);
-    }
+    if (!isValidAgent(value))
+      return {
+        error: [`Invalid --agent: ${value}. Expected claude | codex | agents.`],
+      };
     if (!agents.includes(value)) agents.push(value);
   }
-  if (agents.length > 0) return agents;
-
-  if (interactive) return [];
-  logger.error('--agent is required in non-interactive environments.');
-  logger.error(
-    '  Pass one or more of claude, codex, agents — e.g. --agent=claude,codex.',
-  );
-  process.exit(2);
+  if (agents.length > 0 || interactive) return { agents };
+  return {
+    error: [
+      '--agent is required in non-interactive environments.',
+      '  Pass one or more of claude, codex, agents — e.g. --agent=claude,codex.',
+    ],
+  };
 }

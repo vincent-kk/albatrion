@@ -200,6 +200,49 @@ See `src/index.ts` and `src/DETAIL.md` for the full export surface.
 - `docs/consumer-integration.md` — complete consumer checklist (package.json patches, verification steps, end-user install topologies)
 - `docs/bundle-size-decision.md` — why `@inquirer/prompts` over ink
 
+## JSON Output
+
+`--json` swaps in a third renderer that writes exactly one document to stdout
+and diverts every diagnostic to stderr, so the whole stream parses:
+
+```jsonc
+{
+  "schemaVersion": 1,
+  "tool": "agents-assets-sync",
+  "version": "0.1.0",
+  "dryRun": true,
+  "exitCode": 0,
+  "errors": [],
+  "units": [
+    {
+      "package": { "name": "@canard/schema-form", "version": "0.13.2" },
+      "agent": "codex",
+      "scope": "project",
+      "projectRoot": "/repo",
+      "destination": "/repo/.agents/skills + /repo/AGENTS.md (codex, project)",
+      "requiresForce": false,
+      "actions": [
+        {
+          "kind": "skip-uptodate",
+          "relPath": "rules/schema-form-rule.md",
+          "target": {
+            "kind": "block",
+            "fileAbs": "/repo/AGENTS.md",
+            "blockId": "@canard/schema-form:rules/schema-form-rule.md"
+          }
+        }
+      ],
+      "report": { "created": [], "updated": [], "skipped": [], "warnings": [], "deleted": [], "exitCode": 0 }
+    }
+  ]
+}
+```
+
+One `unit` per `(package, agent)` pair. A flag error becomes `errors` with
+`exitCode: 2` and empty `units`, so a reader always has a document to parse.
+The exception is a failure upstream of the renderer — an unresolvable
+`--package` — where stdout stays empty and the exit code carries the verdict.
+
 ## License
 
 MIT — see [LICENSE](./LICENSE).

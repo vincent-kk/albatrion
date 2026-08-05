@@ -1,5 +1,24 @@
 import pc from 'picocolors';
 
+// Diagnostics normally share stdout with the human-readable transcript. In
+// `--json` mode stdout belongs to the document alone, so every level moves to
+// stderr — a single stray line there would make the whole stream unparseable.
+let write = (line: string): void => {
+  process.stdout.write(`${line}\n`);
+};
+
+/**
+ * Route every subsequent log line to stderr instead of stdout.
+ *
+ * Called once, before any output, when the run will emit a machine-readable
+ * document. There is no way back: a run is either a transcript or a document.
+ */
+export function divertLogsToStderr(): void {
+  write = (line) => {
+    process.stderr.write(`${line}\n`);
+  };
+}
+
 /**
  * Logger utility with colored output
  */
@@ -8,28 +27,28 @@ export const logger = {
    * Log info message
    */
   info(message: string): void {
-    console.log(pc.blue('info'), message);
+    write(`${pc.blue('info')} ${message}`);
   },
 
   /**
    * Log success message
    */
   success(message: string): void {
-    console.log(pc.green('success'), message);
+    write(`${pc.green('success')} ${message}`);
   },
 
   /**
    * Log warning message
    */
   warn(message: string): void {
-    console.log(pc.yellow('warn'), message);
+    write(`${pc.yellow('warn')} ${message}`);
   },
 
   /**
    * Log error message
    */
   error(message: string): void {
-    console.log(pc.red('error'), message);
+    write(`${pc.red('error')} ${message}`);
   },
 
   /**
@@ -37,7 +56,7 @@ export const logger = {
    */
   debug(message: string): void {
     if (process.env.VERBOSE) {
-      console.log(pc.gray('debug'), message);
+      write(`${pc.gray('debug')} ${message}`);
     }
   },
 
@@ -46,7 +65,7 @@ export const logger = {
    */
   step(step: string, detail?: string): void {
     const stepText = pc.cyan(`[${step}]`);
-    console.log(stepText, detail || '');
+    write(`${stepText} ${detail || ''}`);
   },
 
   /**
@@ -63,15 +82,15 @@ export const logger = {
       update: '~',
       skip: '-',
     };
-    console.log(`  ${colors[operation](symbols[operation])} ${path}`);
+    write(`  ${colors[operation](symbols[operation])} ${path}`);
   },
 
   /**
    * Log package sync start
    */
   packageStart(packageName: string): void {
-    console.log();
-    console.log(pc.bold(pc.cyan(`Syncing ${packageName}...`)));
+    write('');
+    write(pc.bold(pc.cyan(`Syncing ${packageName}...`)));
   },
 
   /**
@@ -82,40 +101,38 @@ export const logger = {
     result: { success: boolean; skipped: boolean; reason?: string },
   ): void {
     if (result.skipped)
-      console.log(pc.gray(`  Skipped: ${result.reason || 'Unknown reason'}`));
-    else if (result.success) console.log(pc.green(`  Completed successfully`));
-    else console.log(pc.red(`  Failed: ${result.reason || 'Unknown error'}`));
+      write(pc.gray(`  Skipped: ${result.reason || 'Unknown reason'}`));
+    else if (result.success) write(pc.green(`  Completed successfully`));
+    else write(pc.red(`  Failed: ${result.reason || 'Unknown error'}`));
   },
 
   /**
    * Log summary at the end
    */
   summary(results: { success: number; skipped: number; failed: number }): void {
-    console.log();
-    console.log(pc.bold('Summary:'));
-    console.log(`  ${pc.green('Success:')} ${results.success}`);
-    console.log(`  ${pc.gray('Skipped:')} ${results.skipped}`);
+    write('');
+    write(pc.bold('Summary:'));
+    write(`  ${pc.green('Success:')} ${results.success}`);
+    write(`  ${pc.gray('Skipped:')} ${results.skipped}`);
     if (results.failed > 0)
-      console.log(`  ${pc.red('Failed:')} ${results.failed}`);
+      write(`  ${pc.red('Failed:')} ${results.failed}`);
   },
 
   /**
    * Log dry-run notice
    */
   dryRunNotice(): void {
-    console.log();
-    console.log(
-      pc.yellow(pc.bold('[DRY RUN] No files will be created or modified.')),
-    );
-    console.log();
+    write('');
+    write(pc.yellow(pc.bold('[DRY RUN] No files will be created or modified.')));
+    write('');
   },
 
   /**
    * Top-level section heading with a distinct accent.
    */
   heading(message: string): void {
-    console.log();
-    console.log(pc.bold(pc.cyan(`▸ ${message}`)));
+    write('');
+    write(pc.bold(pc.cyan(`▸ ${message}`)));
   },
 
   /**

@@ -2,7 +2,7 @@ import { basename } from 'node:path';
 
 import { Command } from 'commander';
 
-import { logger } from '../../utils/logger.js';
+import { divertLogsToStderr, logger } from '../../utils/logger.js';
 import { VERSION } from '../../utils/version.js';
 import type { DefaultFlags } from './type.js';
 import { renderOrFallback } from './utils/renderOrFallback.js';
@@ -74,10 +74,13 @@ export async function runCli(
     .option('--root <path>', 'Override scope resolution cwd (default: cwd)')
     .option(
       '--json',
-      'Emit structured JSON output (forces non-interactive legacy logger path)',
+      'Emit one JSON document on stdout and divert all diagnostics to stderr',
       false,
     )
     .action(async (flags: DefaultFlags) => {
+      // stdout belongs to the JSON document alone; every diagnostic from here
+      // on — including the exits below — has to go to stderr instead.
+      if (flags.json) divertLogsToStderr();
       const targets = flags.package ?? [];
       if (targets.length === 0) {
         logger.error(

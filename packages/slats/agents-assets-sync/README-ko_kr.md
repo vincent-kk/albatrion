@@ -99,6 +99,49 @@ inject-agents-settings --package=@canard/schema-form --agent=claude --scope=user
 
 `--scope=project` 의 경우 대상 `.claude` 디렉토리는 `process.cwd()` 에서 위로 올라가며 가장 가까운 기존 `.claude` 조상을 찾아 해석됩니다. 자동 탐지된 경우 CLI 가 `(auto-located)` 로 로그에 표시합니다.
 
+## JSON 출력
+
+`--json` 은 세 번째 렌더러로 전환해 stdout 에는 문서 **하나만** 쓰고 모든 진단을
+stderr 로 돌립니다. 따라서 스트림 전체가 그대로 파싱됩니다.
+
+```jsonc
+{
+  "schemaVersion": 1,
+  "tool": "agents-assets-sync",
+  "version": "0.1.0",
+  "dryRun": true,
+  "exitCode": 0,
+  "errors": [],
+  "units": [
+    {
+      "package": { "name": "@canard/schema-form", "version": "0.13.2" },
+      "agent": "codex",
+      "scope": "project",
+      "projectRoot": "/repo",
+      "destination": "/repo/.agents/skills + /repo/AGENTS.md (codex, project)",
+      "requiresForce": false,
+      "actions": [
+        {
+          "kind": "skip-uptodate",
+          "relPath": "rules/schema-form-rule.md",
+          "target": {
+            "kind": "block",
+            "fileAbs": "/repo/AGENTS.md",
+            "blockId": "@canard/schema-form:rules/schema-form-rule.md"
+          }
+        }
+      ],
+      "report": { "created": [], "updated": [], "skipped": [], "warnings": [], "deleted": [], "exitCode": 0 }
+    }
+  ]
+}
+```
+
+`(패키지, 에이전트)` 쌍마다 `unit` 하나입니다. 플래그 오류는 `errors` 에 담기고
+`exitCode: 2`, `units` 는 빈 배열이 되므로 읽는 쪽은 항상 파싱할 문서를 받습니다.
+예외는 렌더러 이전 단계의 실패 — 해석 불가한 `--package` — 로, 이때 stdout 은
+비고 종료 코드가 판정을 전달합니다.
+
 ## 컨슈머 통합 (2단계)
 
 ### 1. `package.json`

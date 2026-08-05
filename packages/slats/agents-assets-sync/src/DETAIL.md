@@ -25,7 +25,13 @@
   dialog lists diverged and orphan entries first, unless `--yes`.
   Non-interactive: the list goes to stderr and the run proceeds.
 - `--dry-run`: print the plan, no writes.
-- `--json` and `--no-interactive` both force the plain render path.
+- `--json` selects a third renderer that writes exactly one JSON document to
+  stdout and diverts every diagnostic to stderr; `--no-interactive` forces the
+  plain render path instead. The document carries `schemaVersion`, `dryRun`,
+  `exitCode`, `errors`, and one `unit` per `(package, agent)` pair holding that
+  unit's destination, plan actions and report. A flag error becomes `errors`
+  with `exitCode: 2` and empty `units`; a failure upstream of the renderer
+  leaves stdout empty and reports through the exit code alone.
 - Missing `--scope` or `--agent` outside an interactive TTY: exit 2.
 - Missing `--package`, unresolvable package, missing `agents.assetPath`,
   or an invalid `--agent`/`--asset` value: exit 2.
@@ -61,6 +67,18 @@
 
 ## Acceptance Criteria
 
+### AC-JSON — machine-readable output is a single document
+
+- Given `--json`, when the CLI runs, then the entire stdout stream parses as
+  one JSON object with `schemaVersion: 1`.
+- Given several agents, then the document holds one `unit` per
+  `(package, agent)` pair, each naming its destination and actions.
+- Given an invalid `--agent`, then the document still parses, `exitCode` is 2
+  and `errors` names the offending value.
+- Given an unresolvable `--package`, then stdout is empty and the diagnostic
+  is on stderr.
+- Verified by `tests/e2e/json.test.ts`.
+
 ### AC-CLI-FLAGS — the CLI is drivable without a prompt
 
 - Given `--package`, `--agent` and `--scope`, when the CLI runs on a
@@ -81,6 +99,11 @@
 
 ## History
 
+- 2026-08-06 — `--json` became a real renderer. It previously forced the plain
+  path while its help text promised structured output, so an agent parsing
+  stdout got a colour-coded transcript. The logger gained a one-way switch to
+  stderr because it wrote diagnostics to stdout, where they would corrupt the
+  document.
 - 2026-08-05 — Forked from `@slats/claude-assets-sync` at 0.3.5 and
   reset to 0.1.0. The consumer key moved from `claude` to `agents`
   because the contract now serves more than one agent; the original
