@@ -20,7 +20,7 @@
 
 - `runCli(argv: string[]): Promise<void>` — CLI entry. Parses flags, resolves targets, branches via `renderOrFallback` to either Ink (`ui.renderInjectApp`) or plain (`renderPlain`). No other programmatic orchestrator is exposed; callers that need headless behaviour compose core primitives directly.
 - Core primitives re-exported via `.`: `readHashManifest`, `computeNamespacePrefixes`, `resolveProjectRoot`, `resolveAgentTarget`, `resolveDestinations`, `formatBlockId`, `parseBlocks`, `isValidScope`, `isValidAgent`, `MARKER_PREFIX`, `PROJECT_ANCHORS`, `HASH_MANIFEST_FILENAME`. Full contracts in `core/DETAIL.md`.
-- `buildHashes(opts?): Promise<{ outPath, fileCount }>` — `./buildHashes` subpath (Node ESM); standalone CLI is `agents-build-hashes`. Ignores `.omc/**`, `*.log`, `.DS_Store`.
+- `buildHashes(opts): Promise<{ outPath, fileCount }>` — `./buildHashes` subpath (Node ESM); standalone CLI is `agents-build-hashes`. All four of `packageRoot`, `packageName`, `packageVersion` and `assetPath` are required; the implementation throws without them, and the type declaration says so. Ignores `.omc/**`, `*.log`, `.DS_Store`.
 
 ## Subpath Exports
 

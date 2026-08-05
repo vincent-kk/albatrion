@@ -23,7 +23,7 @@
 - 그래서 scope alias 와 `--asset-path` 를 함께 주면 열거의 필터가 바뀐다. `agents.assetPath` 선언 여부가 아니라 그 디렉터리의 존재가 패키지를 남기고 거른다.
 - scope 열거는 `<cwd>/node_modules/@<scope>/*` 를 파일시스템 루트까지 거슬러 올라가며 훑는다. 디렉터리 이름은 선언된 패키지 이름과 다를 수 있으므로 권위는 `package.json` 의 `name` 필드에 있고, 중첩 설치는 nearest-wins 로 중복 제거된다.
 - scope 열거는 `targets/resolveScopeAlias.ts` 안에만 있다. `runCli/**` 의 다른 어떤 파일도 형제 `package.json` 을 읽지 않는다.
-- `utils/` 는 없다. 부속은 파이프라인 단계별 organ 셋으로 나뉜다 — `targets/`(argv → `ConsumerPackage[]`, 파일시스템·모듈해석), `flags/`(CLI 값 하나 검증, 순수), `renderers/`(상호 배타적인 출력 경로 셋). 의존은 `runCli.ts` → `targets/` → `renderers/` → `flags/` 한 방향이다.
+- `utils/` 는 없다. 부속은 파이프라인 단계별 organ 셋으로 나뉜다 — `targets/`(argv → `ConsumerPackage[]`, 파일시스템·모듈해석), `flags/`(CLI 값 하나 검증, 순수), `renderers/`(상호 배타적인 출력 경로 셋). 간선은 `runCli.ts` → `targets/`, `runCli.ts` → `renderers/`, `runCli.ts` → `flags/`, 그리고 `renderers/` → `flags/` 넷뿐이다. `targets/` 는 나머지 둘 중 어느 것도 import 하지 않으며, 이행 체인이 아니라 `runCli.ts` 를 정점으로 하는 한 방향 그래프다.
 - 해석된 target 은 렌더링 전에 `packageName` 으로 중복 제거된다.
 - commander 의 program name 은 런타임에 `argv[1]` 의 basename 에서 파생된다. `npx @slats/agents-assets-sync` 와 설치된 `inject-agents-settings` 가 각각 자기 이름으로 도움말과 오류를 낸다.
 - 렌더러가 0이 아닌 코드를 돌려주면 그 코드로 프로세스가 종료된다.

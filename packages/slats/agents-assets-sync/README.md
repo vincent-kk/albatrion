@@ -111,18 +111,18 @@ For `--scope=project` the target `.claude` directory is resolved by walking up f
 
 ### 1. `package.json`
 
-```jsonc
+```json
 {
   "name": "@your-scope/your-package",
   "scripts": {
     "build": "… && yarn build:hashes",
-    "build:hashes": "agents-build-hashes",
+    "build:hashes": "agents-build-hashes"
   },
   "devDependencies": {
-    "@slats/agents-assets-sync": "workspace:^",
+    "@slats/agents-assets-sync": "workspace:^"
   },
   "files": ["dist", "docs", "README.md"],
-  "agents": { "assetPath": "docs/agents" },
+  "agents": { "assetPath": "docs/agents" }
 }
 ```
 

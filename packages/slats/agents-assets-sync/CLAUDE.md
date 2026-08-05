@@ -138,7 +138,7 @@ bin/
 └── inject-agents-settings.mjs      # 2-line dispatcher (ESM)
 src/
 ├── index.ts                        # ESM public barrel (runCli + core primitives)
-├── __tests__/                      # e2e: spawns the built bin (cli, json)
+├── __tests__/                      # e2e: spawns the built bin (cli, json, round trip)
 ├── commands/
 │   └── runCli/
 │       ├── runCli.ts               # commander root + action

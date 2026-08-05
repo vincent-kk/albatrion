@@ -6,10 +6,12 @@ import { toPosix } from '../../utils/toPosix.js';
 import { walkFiles } from '../../utils/walkFiles.js';
 import type { HashManifest, HashManifestSource } from '../type.js';
 
-// Kept byte-identical to `scripts/buildHashes.mjs`. That script has to stay
-// pure Node ESM so rolldown can import it, which forbids sharing this list
-// through `src/` — `__tests__/computeHashManifest.spec.ts` pins the two
-// implementations to the same output instead.
+// Kept byte-identical to the list in `scripts/buildHashes.mjs`. The ban runs
+// one way — that script may not import from `src/`, because it must stay pure
+// Node ESM for rolldown — so a shared home would have to live under `scripts/`
+// with a hand-written `.d.mts`, the arrangement whose declaration drifted once
+// already. Until that trade is taken, `__tests__/computeHashManifest.spec.ts`
+// is what pins the two copies to the same output.
 const NOISE = [/(^|\/)\.omc(\/|$)/, /(^|\/)\.DS_Store$/, /\.log$/];
 
 /**

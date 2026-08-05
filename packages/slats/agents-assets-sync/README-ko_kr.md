@@ -108,7 +108,7 @@ inject-agents-settings --package=@canard/schema-form --agent=claude --scope=user
 `--json` 은 세 번째 렌더러로 전환해 stdout 에는 문서 **하나만** 쓰고 모든 진단을
 stderr 로 돌립니다. 따라서 스트림 전체가 그대로 파싱됩니다.
 
-```jsonc
+```json
 {
   "schemaVersion": 1,
   "tool": "agents-assets-sync",
@@ -131,9 +131,9 @@ stderr 로 돌립니다. 따라서 스트림 전체가 그대로 파싱됩니다
           "target": {
             "kind": "block",
             "fileAbs": "/repo/AGENTS.md",
-            "blockId": "@canard/schema-form:rules/schema-form-rule.md",
-          },
-        },
+            "blockId": "@canard/schema-form:rules/schema-form-rule.md"
+          }
+        }
       ],
       "report": {
         "created": [],
@@ -141,10 +141,10 @@ stderr 로 돌립니다. 따라서 스트림 전체가 그대로 파싱됩니다
         "skipped": [],
         "warnings": [],
         "deleted": [],
-        "exitCode": 0,
-      },
-    },
-  ],
+        "exitCode": 0
+      }
+    }
+  ]
 }
 ```
 

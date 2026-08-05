@@ -11,7 +11,7 @@
 - Plan building is read-only — `buildPlan` compares source hashes with the destination and returns `InjectPlan`; it never writes.
 - A block is judged exactly as a file is: `blockBodyMatches` compares the body between markers against the manifest hash, accepting the one trailing newline `upsertBlock` adds when the source lacks one.
 - `warn-diverged` and every orphan seen without `--force` set `requiresForce`. `skip-unsupported` does not.
-- Plan application is side-effect only. `applyAction` handles `file` targets; `applyBlockActions` rewrites one shared document per call so concurrent writers cannot drop each other's blocks. Content outside this tool's markers survives byte for byte.
+- Plan application is side-effect only. `applyAction` handles `file` targets; `applyBlockActions` rewrites one shared document per call. What that buys is confined to a single run: because the caller applies one document at a time, blocks landing in the same `AGENTS.md` within a run cannot drop each other. It is not a lock — two runs writing the same document at once each persist their own read, and the later write wins. Content outside this tool's markers survives byte for byte.
 - `partitionActions` makes `warn-diverged` executable only when `force` is granted — that is where the CLI's "--force overwrites" promise is kept.
 - Hash computation is deterministic — `hashContent`/`hashFile` use Node's `crypto` module only.
 - `readHashManifest` rejects `schemaVersion !== 1` as an explicit error.
@@ -54,7 +54,7 @@
 - `AgentType`, `AssetKind`, `AgentTarget`, `Destination`, `OrphanScan`
 - `ParsedBlock`
 - `ActionKind`, `ActionTarget`, `Action`, `InjectPlan`, `PlanInput`
-- `HashManifest`, `InjectReport`, `Sha256Hex`
+- `HashManifest`, `HashManifestSource`, `InjectReport`, `Sha256Hex`
 
 ## Acceptance Criteria
 
