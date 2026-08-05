@@ -1,8 +1,6 @@
 # @canard/schema-form 모바일 성능 검증 보고서
 
-> 작성일: 2026-02-22
-> 대상: [Examples](https://vincent-kk.github.io/albatrion/docs/canard/schema-form/examples/) 하위 전체 10개 폼
-> 버전: @canard/schema-form v0.10.6
+> 작성일: 2026-02-22 대상: [Examples](https://vincent-kk.github.io/albatrion/docs/canard/schema-form/examples/) 하위 전체 10개 폼 버전: @canard/schema-form v0.10.6
 
 ---
 
@@ -10,11 +8,11 @@
 
 모든 예제가 동일한 라이브러리를 사용하므로 번들 사이즈는 공통입니다.
 
-| 패키지 | Raw (unminified) | Gzip | Brotli |
-|--------|-----------------|------|--------|
-| `@canard/schema-form` | 231 KB | 42.8 KB | 35.4 KB |
-| `@canard/schema-form-antd6-plugin` | 27 KB | 4.4 KB | — |
-| **합계** | **258 KB** | **~47 KB** | **~40 KB** |
+| 패키지                             | Raw (unminified) | Gzip       | Brotli     |
+| ---------------------------------- | ---------------- | ---------- | ---------- |
+| `@canard/schema-form`              | 231 KB           | 42.8 KB    | 35.4 KB    |
+| `@canard/schema-form-antd6-plugin` | 27 KB            | 4.4 KB     | —          |
+| **합계**                           | **258 KB**       | **~47 KB** | **~40 KB** |
 
 - Brotli 기준 ~40KB → 3G에서도 ~0.1초 전송
 - 외부 런타임 의존성 0개 (React/ReactDOM만 peer dependency)
@@ -58,11 +56,11 @@ SchemaNodeProxy (memo 없음)
 
 ### 어떤 경우에 SchemaNodeProxy가 불필요하게 re-render되는가
 
-| 트리거 | 발생 조건 | 모든 Proxy에 전파? |
-|--------|----------|------------------|
-| `children` state 변경 | `UPDATE_CHILDREN_MASK` (Error/Refresh/Remount) | YES |
-| children 함수 패턴 | `<Form>{({ value }) => ...}</Form>` | YES |
-| value 변경 | `onChange` → `setValues()` | **NO** (Form은 memo) |
+| 트리거                | 발생 조건                                      | 모든 Proxy에 전파?   |
+| --------------------- | ---------------------------------------------- | -------------------- |
+| `children` state 변경 | `UPDATE_CHILDREN_MASK` (Error/Refresh/Remount) | YES                  |
+| children 함수 패턴    | `<Form>{({ value }) => ...}</Form>`            | YES                  |
+| value 변경            | `onChange` → `setValues()`                     | **NO** (Form은 memo) |
 
 일반적인 value 변경 시에는 Form-level re-render가 발생하지 않으므로, SchemaNodeProxy의 불필요한 re-render 자체가 트리거되지 않습니다. **모든 예제가 children 함수 패턴을 사용하지 않으므로 이 문제는 해당 없습니다.**
 
@@ -76,16 +74,16 @@ SchemaNodeProxy (memo 없음)
 
 > [basic-form](https://vincent-kk.github.io/albatrion/docs/canard/schema-form/examples/basic-form)
 
-| 항목 | 값 |
-|------|-----|
-| 필드 수 | 7 (flat) |
-| 중첩 깊이 | 1 |
-| computed | 없음 |
-| 조건부 스키마 | 없음 |
-| 배열 | 없음 |
-| 노드 수 | 8 (ObjectNode 1 + Terminal 7) |
-| `new Function()` | 0회 |
-| 의존성 구독 | 0 |
+| 항목             | 값                            |
+| ---------------- | ----------------------------- |
+| 필드 수          | 7 (flat)                      |
+| 중첩 깊이        | 1                             |
+| computed         | 없음                          |
+| 조건부 스키마    | 없음                          |
+| 배열             | 없음                          |
+| 노드 수          | 8 (ObjectNode 1 + Terminal 7) |
+| `new Function()` | 0회                           |
+| 의존성 구독      | 0                             |
 
 **리렌더 분석**: 키스트로크당 변경 필드 1개만 re-render. 나머지 6필드는 독립 구독으로 영향 없음.
 
@@ -97,16 +95,16 @@ SchemaNodeProxy (memo 없음)
 
 > [auto-calculation](https://vincent-kk.github.io/albatrion/docs/canard/schema-form/examples/auto-calculation)
 
-| 항목 | 값 |
-|------|-----|
-| 필드 수 | 5 (flat) |
-| 중첩 깊이 | 1 |
-| computed | `finalPrice.derived` — 4개 의존성 (`../price`, `../quantity`, `../taxRate`, `../discountRate`) |
-| 조건부 스키마 | 없음 |
-| 배열 | 없음 |
-| 노드 수 | 6 (ObjectNode 1 + Terminal 5) |
-| `new Function()` | **1회** (derived 표현식) |
-| 의존성 구독 | 4 (finalPrice → price, quantity, taxRate, discountRate) |
+| 항목             | 값                                                                                             |
+| ---------------- | ---------------------------------------------------------------------------------------------- |
+| 필드 수          | 5 (flat)                                                                                       |
+| 중첩 깊이        | 1                                                                                              |
+| computed         | `finalPrice.derived` — 4개 의존성 (`../price`, `../quantity`, `../taxRate`, `../discountRate`) |
+| 조건부 스키마    | 없음                                                                                           |
+| 배열             | 없음                                                                                           |
+| 노드 수          | 6 (ObjectNode 1 + Terminal 5)                                                                  |
+| `new Function()` | **1회** (derived 표현식)                                                                       |
+| 의존성 구독      | 4 (finalPrice → price, quantity, taxRate, discountRate)                                        |
 
 **리렌더 분석**:
 
@@ -132,16 +130,16 @@ SchemaNodeProxy (memo 없음)
 
 > [conditional-registration](https://vincent-kk.github.io/albatrion/docs/canard/schema-form/examples/conditional-registration)
 
-| 항목 | 값 |
-|------|-----|
-| 필드 수 | 8 (flat) |
-| 중첩 깊이 | 1 |
-| computed | 없음 |
-| 조건부 스키마 | **if-then-else 3단 중첩** (participantType × participantRegion 조합으로 required 변경) |
-| 배열 | 없음 |
-| 노드 수 | 9 (ObjectNode 1 + Terminal 8) |
-| `new Function()` | 0회 |
-| 의존성 구독 | 0 |
+| 항목             | 값                                                                                     |
+| ---------------- | -------------------------------------------------------------------------------------- |
+| 필드 수          | 8 (flat)                                                                               |
+| 중첩 깊이        | 1                                                                                      |
+| computed         | 없음                                                                                   |
+| 조건부 스키마    | **if-then-else 3단 중첩** (participantType × participantRegion 조합으로 required 변경) |
+| 배열             | 없음                                                                                   |
+| 노드 수          | 9 (ObjectNode 1 + Terminal 8)                                                          |
+| `new Function()` | 0회                                                                                    |
+| 의존성 구독      | 0                                                                                      |
 
 **핵심 특성**: if-then-else가 `required` 배열만 변경합니다. 필드의 visibility나 active 상태는 바뀌지 않습니다.
 
@@ -161,16 +159,16 @@ SchemaNodeProxy (memo 없음)
 
 > [dynamic-billing](https://vincent-kk.github.io/albatrion/docs/canard/schema-form/examples/dynamic-billing)
 
-| 항목 | 값 |
-|------|-----|
-| 필드 수 | 10 (flat) |
-| 중첩 깊이 | 1 |
-| computed | 없음 |
-| 조건부 스키마 | **if-then-else 3단 중첩** (accountType × subscriptionPlan × paymentMethod 조합) |
-| 배열 | 없음 |
-| 노드 수 | 11 (ObjectNode 1 + Terminal 10) |
-| `new Function()` | 0회 |
-| 의존성 구독 | 0 |
+| 항목             | 값                                                                              |
+| ---------------- | ------------------------------------------------------------------------------- |
+| 필드 수          | 10 (flat)                                                                       |
+| 중첩 깊이        | 1                                                                               |
+| computed         | 없음                                                                            |
+| 조건부 스키마    | **if-then-else 3단 중첩** (accountType × subscriptionPlan × paymentMethod 조합) |
+| 배열             | 없음                                                                            |
+| 노드 수          | 11 (ObjectNode 1 + Terminal 10)                                                 |
+| `new Function()` | 0회                                                                             |
+| 의존성 구독      | 0                                                                               |
 
 **핵심 특성**: Conditional Registration과 동일한 패턴이지만 필드 수가 10개로 약간 더 많고, 3개 변수의 조합으로 required가 결정됩니다.
 
@@ -188,16 +186,16 @@ SchemaNodeProxy (memo 없음)
 
 > [employment-contract](https://vincent-kk.github.io/albatrion/docs/canard/schema-form/examples/employment-contract)
 
-| 항목 | 값 |
-|------|-----|
-| 필드 수 | 가변 (full_time: 7, part_time: 4, contractor: 4) |
-| 중첩 깊이 | 2 (root → benefits object) |
-| computed | `commonField.active/visible`, `contractor.workingHours.active` |
-| 조건부 스키마 | **root-level oneOf** (3개 분기: full_time / part_time / contractor) |
-| 배열 | 없음 |
-| 노드 수 | ~18 (활성 분기에 따라 가변, 비활성 분기 노드는 `enabled=false`) |
+| 항목             | 값                                                                     |
+| ---------------- | ---------------------------------------------------------------------- |
+| 필드 수          | 가변 (full_time: 7, part_time: 4, contractor: 4)                       |
+| 중첩 깊이        | 2 (root → benefits object)                                             |
+| computed         | `commonField.active/visible`, `contractor.workingHours.active`         |
+| 조건부 스키마    | **root-level oneOf** (3개 분기: full_time / part_time / contractor)    |
+| 배열             | 없음                                                                   |
+| 노드 수          | ~18 (활성 분기에 따라 가변, 비활성 분기 노드는 `enabled=false`)        |
 | `new Function()` | **3회** (commonField.active, commonField.visible, workingHours.active) |
-| 의존성 구독 | 3 (commonField → employmentType ×2, workingHours → contractType ×1) |
+| 의존성 구독      | 3 (commonField → employmentType ×2, workingHours → contractType ×1)    |
 
 **핵심 특성**: 첫 번째로 oneOf를 사용하는 예제. 분기 전환 시 노드의 `enabled` 상태가 변경됩니다.
 
@@ -232,16 +230,16 @@ employmentType 변경: 'full_time' → 'part_time'
 
 > [media-registration](https://vincent-kk.github.io/albatrion/docs/canard/schema-form/examples/media-registration)
 
-| 항목 | 값 |
-|------|-----|
-| 필드 수 | 가변 (game: ~12, movie: ~8) |
-| 중첩 깊이 | **3** (root → details → stages[]/specs) |
-| computed | `&if` 표현식 4개 (root oneOf ×2, details oneOf ×2) |
-| 조건부 스키마 | **2중 oneOf** (root-level + details 내부) |
-| 배열 | **stages** (object items), **platforms** (checkbox), **genres** (enum items), **actors** (string items) |
-| 노드 수 | ~35 (양쪽 분기 모두 포함, 비활성 분기 enabled=false) |
-| `new Function()` | **4회** (`&if` 표현식) |
-| 의존성 구독 | 4 (각 `&if` 표현식 → type 필드) |
+| 항목             | 값                                                                                                      |
+| ---------------- | ------------------------------------------------------------------------------------------------------- |
+| 필드 수          | 가변 (game: ~12, movie: ~8)                                                                             |
+| 중첩 깊이        | **3** (root → details → stages[]/specs)                                                                 |
+| computed         | `&if` 표현식 4개 (root oneOf ×2, details oneOf ×2)                                                      |
+| 조건부 스키마    | **2중 oneOf** (root-level + details 내부)                                                               |
+| 배열             | **stages** (object items), **platforms** (checkbox), **genres** (enum items), **actors** (string items) |
+| 노드 수          | ~35 (양쪽 분기 모두 포함, 비활성 분기 enabled=false)                                                    |
+| `new Function()` | **4회** (`&if` 표현식)                                                                                  |
+| 의존성 구독      | 4 (각 `&if` 표현식 → type 필드)                                                                         |
 
 **이 예제가 가장 까다로운 이유**:
 
@@ -283,16 +281,16 @@ type 변경: 'game' → 'movie'
 
 > [nested-profile](https://vincent-kk.github.io/albatrion/docs/canard/schema-form/examples/nested-profile)
 
-| 항목 | 값 |
-|------|-----|
-| 필드 수 | ~16 |
-| 중첩 깊이 | **5** (root → user → profile → preferences → notifications) |
-| computed | `gender.active: '../age >= 18'` |
-| 조건부 스키마 | profile 내 **if-then-else** (type에 따라 required 변경), privacy **oneOf** (const 값) |
-| 배열 | **backupCodes** (string items, minItems: 5, maxItems: 10) |
-| 노드 수 | ~30 (ObjectNode 7 + Terminal ~18 + Array 1 + 배열 아이템 5) |
-| `new Function()` | **1회** (gender.active) |
-| 의존성 구독 | 1 (gender → age) |
+| 항목             | 값                                                                                    |
+| ---------------- | ------------------------------------------------------------------------------------- |
+| 필드 수          | ~16                                                                                   |
+| 중첩 깊이        | **5** (root → user → profile → preferences → notifications)                           |
+| computed         | `gender.active: '../age >= 18'`                                                       |
+| 조건부 스키마    | profile 내 **if-then-else** (type에 따라 required 변경), privacy **oneOf** (const 값) |
+| 배열             | **backupCodes** (string items, minItems: 5, maxItems: 10)                             |
+| 노드 수          | ~30 (ObjectNode 7 + Terminal ~18 + Array 1 + 배열 아이템 5)                           |
+| `new Function()` | **1회** (gender.active)                                                               |
+| 의존성 구독      | 1 (gender → age)                                                                      |
 
 **핵심 특성**: 가장 깊은 중첩 구조(5단계)와 `minItems: 5`의 배열.
 
@@ -333,16 +331,16 @@ notifications.email 변경 (depth 5)
 
 > [product-catalog](https://vincent-kk.github.io/albatrion/docs/canard/schema-form/examples/product-catalog)
 
-| 항목 | 값 |
-|------|-----|
-| 필드 수 | 가변 (physical: ~10, digital: ~5, service: ~5) |
-| 중첩 깊이 | **3** (root → product → shipping) |
-| computed | `computed.if` 5개 (product oneOf ×3, shipping oneOf ×2) |
-| 조건부 스키마 | **2중 oneOf** — product 레벨 (physical/digital/service) + shipping 레벨 (standard/express) |
-| 배열 | **availability** (enum array, service 분기) |
-| 노드 수 | ~30 (비활성 분기 포함) |
-| `new Function()` | **5회** |
-| 의존성 구독 | 5 (각 `computed.if` → productType 또는 method) |
+| 항목             | 값                                                                                         |
+| ---------------- | ------------------------------------------------------------------------------------------ |
+| 필드 수          | 가변 (physical: ~10, digital: ~5, service: ~5)                                             |
+| 중첩 깊이        | **3** (root → product → shipping)                                                          |
+| computed         | `computed.if` 5개 (product oneOf ×3, shipping oneOf ×2)                                    |
+| 조건부 스키마    | **2중 oneOf** — product 레벨 (physical/digital/service) + shipping 레벨 (standard/express) |
+| 배열             | **availability** (enum array, service 분기)                                                |
+| 노드 수          | ~30 (비활성 분기 포함)                                                                     |
+| `new Function()` | **5회**                                                                                    |
+| 의존성 구독      | 5 (각 `computed.if` → productType 또는 method)                                             |
 
 **핵심 특성**: 2중 oneOf가 독립적으로 동작. physical 분기 내부에 shipping oneOf가 중첩.
 
@@ -368,16 +366,16 @@ notifications.email 변경 (depth 5)
 
 > [role-based-access](https://vincent-kk.github.io/albatrion/docs/canard/schema-form/examples/role-based-access)
 
-| 항목 | 값 |
-|------|-----|
-| 필드 수 | 8 (flat) |
-| 중첩 깊이 | 1 |
-| computed | **`&visible` 3개, `&active` 3개** — 모두 `../userType` 의존 |
-| 조건부 스키마 | 없음 |
-| 배열 | **adminPermissions** (enum checkbox array) |
-| 노드 수 | 10 (ObjectNode 1 + Terminal 7 + Array 1 + 배열 아이템) |
-| `new Function()` | **6회** |
-| 의존성 구독 | **6** (6개 필드 → userType) |
+| 항목             | 값                                                          |
+| ---------------- | ----------------------------------------------------------- |
+| 필드 수          | 8 (flat)                                                    |
+| 중첩 깊이        | 1                                                           |
+| computed         | **`&visible` 3개, `&active` 3개** — 모두 `../userType` 의존 |
+| 조건부 스키마    | 없음                                                        |
+| 배열             | **adminPermissions** (enum checkbox array)                  |
+| 노드 수          | 10 (ObjectNode 1 + Terminal 7 + Array 1 + 배열 아이템)      |
+| `new Function()` | **6회**                                                     |
+| 의존성 구독      | **6** (6개 필드 → userType)                                 |
 
 **핵심 특성**: 가장 많은 computed 의존성. 단일 필드(`userType`) 변경으로 6개 필드가 동시에 재평가.
 
@@ -404,6 +402,7 @@ userType 변경: 'guest' → 'admin'
 **RERENDERING_EVENT 4중 마스크 영향**:
 
 이 예제에서 `UpdateComputedProperties`가 6개 필드에서 동시 발생합니다. 그러나:
+
 - 각 필드는 **자신의 노드**에서 발생한 `UpdateComputedProperties`만 수신
 - 다른 필드의 computed 변경이 전파되지 않음
 - 4중 마스크의 "불필요한 re-render" 우려는 **단일 노드 내에서** 여러 이벤트 타입이 동시에 발생할 때만 해당
@@ -416,17 +415,17 @@ userType 변경: 'guest' → 'admin'
 
 > [tuple-arrays](https://vincent-kk.github.io/albatrion/docs/canard/schema-form/examples/tuple-arrays)
 
-| 항목 | 값 |
-|------|-----|
-| 필드 수 | 12 (4개 tuple × 3개 아이템) |
-| 중첩 깊이 | 2 (root → array → items) |
-| computed | 없음 |
-| 조건부 스키마 | 없음 |
-| 배열 | **4개 고정 크기 tuple** (prefixItems, items: false, minItems: 3) |
-| 노드 수 | 17 (ObjectNode 1 + ArrayNode 4 + Terminal 12) |
-| `new Function()` | 0회 |
-| 의존성 구독 | 0 |
-| 검증 플러그인 | **@canard/schema-form-ajv8-plugin/2020** |
+| 항목             | 값                                                               |
+| ---------------- | ---------------------------------------------------------------- |
+| 필드 수          | 12 (4개 tuple × 3개 아이템)                                      |
+| 중첩 깊이        | 2 (root → array → items)                                         |
+| computed         | 없음                                                             |
+| 조건부 스키마    | 없음                                                             |
+| 배열             | **4개 고정 크기 tuple** (prefixItems, items: false, minItems: 3) |
+| 노드 수          | 17 (ObjectNode 1 + ArrayNode 4 + Terminal 12)                    |
+| `new Function()` | 0회                                                              |
+| 의존성 구독      | 0                                                                |
+| 검증 플러그인    | **@canard/schema-form-ajv8-plugin/2020**                         |
 
 **핵심 특성**: 유일하게 AJV 검증 플러그인을 사용하는 예제. `items: false` + `minItems: 3`으로 고정 크기 tuple.
 
@@ -448,18 +447,18 @@ userType 변경: 'guest' → 'admin'
 
 ## 종합 판정 매트릭스
 
-| 예제 | 필드 | 깊이 | computed | oneOf | 배열 | 노드 | 판정 |
-|------|------|------|----------|-------|------|------|------|
-| Basic Form | 7 | 1 | 0 | — | — | 8 | **PASS** |
-| Auto Calculation | 5 | 1 | 1 | — | — | 6 | **PASS** |
-| Conditional Registration | 8 | 1 | 0 | — | — | 9 | **PASS** |
-| Dynamic Billing | 10 | 1 | 0 | — | — | 11 | **PASS** |
-| Employment Contract | 4-7 | 2 | 3 | 3분기 | — | ~18 | **PASS** |
-| Media Registration | 8-12 | 3 | 4 | 2중 | 4개 | ~35 | **PASS** |
-| Nested Profile | ~16 | 5 | 1 | — | 1개(5항목) | ~30 | **PASS** |
-| Product Catalog | 5-10 | 3 | 5 | 2중 | 1개 | ~30 | **PASS** |
-| Role-Based Access | 8 | 1 | 6 | — | 1개 | 10 | **PASS** |
-| Tuple Arrays | 12 | 2 | 0 | — | 4개(고정) | 17 | **PASS** |
+| 예제                     | 필드 | 깊이 | computed | oneOf | 배열       | 노드 | 판정     |
+| ------------------------ | ---- | ---- | -------- | ----- | ---------- | ---- | -------- |
+| Basic Form               | 7    | 1    | 0        | —     | —          | 8    | **PASS** |
+| Auto Calculation         | 5    | 1    | 1        | —     | —          | 6    | **PASS** |
+| Conditional Registration | 8    | 1    | 0        | —     | —          | 9    | **PASS** |
+| Dynamic Billing          | 10   | 1    | 0        | —     | —          | 11   | **PASS** |
+| Employment Contract      | 4-7  | 2    | 3        | 3분기 | —          | ~18  | **PASS** |
+| Media Registration       | 8-12 | 3    | 4        | 2중   | 4개        | ~35  | **PASS** |
+| Nested Profile           | ~16  | 5    | 1        | —     | 1개(5항목) | ~30  | **PASS** |
+| Product Catalog          | 5-10 | 3    | 5        | 2중   | 1개        | ~30  | **PASS** |
+| Role-Based Access        | 8    | 1    | 6        | —     | 1개        | 10   | **PASS** |
+| Tuple Arrays             | 12   | 2    | 0        | —     | 4개(고정)  | 17   | **PASS** |
 
 ---
 
@@ -481,18 +480,18 @@ userType 변경: 'guest' → 'admin'
 
 ### 예제별 검증 결과
 
-| 예제 | Proxy 불필요 re-render 발생? | 발생 시 비용 | 판정 |
-|------|---------------------------|------------|------|
-| Basic Form | NO | — | OK |
-| Auto Calculation | NO (computed는 해당 노드만) | — | OK |
-| Conditional Registration | 가능 (required 변경 시) | ~0.07ms | OK |
-| Dynamic Billing | 가능 (required 변경 시) | ~0.1ms | OK |
-| Employment Contract | 가능 (oneOf 전환 시) | ~0.15ms | OK |
-| Media Registration | 가능 (2중 oneOf 전환 시) | ~0.2ms | OK |
-| Nested Profile | NO (깊은 중첩이지만 독립 구독) | — | OK |
-| Product Catalog | 가능 (2중 oneOf 전환 시) | ~0.2ms | OK |
-| Role-Based Access | NO (computed는 해당 노드만) | — | OK |
-| Tuple Arrays | NO | — | OK |
+| 예제                     | Proxy 불필요 re-render 발생?   | 발생 시 비용 | 판정 |
+| ------------------------ | ------------------------------ | ------------ | ---- |
+| Basic Form               | NO                             | —            | OK   |
+| Auto Calculation         | NO (computed는 해당 노드만)    | —            | OK   |
+| Conditional Registration | 가능 (required 변경 시)        | ~0.07ms      | OK   |
+| Dynamic Billing          | 가능 (required 변경 시)        | ~0.1ms       | OK   |
+| Employment Contract      | 가능 (oneOf 전환 시)           | ~0.15ms      | OK   |
+| Media Registration       | 가능 (2중 oneOf 전환 시)       | ~0.2ms       | OK   |
+| Nested Profile           | NO (깊은 중첩이지만 독립 구독) | —            | OK   |
+| Product Catalog          | 가능 (2중 oneOf 전환 시)       | ~0.2ms       | OK   |
+| Role-Based Access        | NO (computed는 해당 노드만)    | —            | OK   |
+| Tuple Arrays             | NO                             | —            | OK   |
 
 **모든 예제에서 SchemaNodeProxy의 memo 미적용은 성능 문제를 일으키지 않습니다.** 내부 컴포넌트의 빡빡한 memo 처리가 실질적인 렌더링 비용을 효과적으로 차단하고 있습니다.
 
@@ -502,35 +501,35 @@ userType 변경: 'guest' → 'admin'
 
 현재 예제들은 모두 안전하지만, 다음 규모에 도달하면 추가 최적화를 검토해야 합니다:
 
-| 항목 | 안전 범위 | 주의 범위 | 권장 조치 |
-|------|----------|----------|----------|
-| 총 필드 수 | < 50 | 50-100+ | 폼 분할 또는 탭/스텝 UI |
-| 배열 아이템 수 | < 30 | 30-100+ | `react-window` 가상화 |
-| computed 의존성 | < 20 | 20-50+ | 표현식 복잡도 최소화 |
-| 중첩 깊이 | < 8 | 8-15+ | microtask 체인 지연 모니터링 |
-| oneOf 분기 내 필드 | < 20 | 20+ | 분기 전환 시 프레임 드롭 체크 |
+| 항목               | 안전 범위 | 주의 범위 | 권장 조치                     |
+| ------------------ | --------- | --------- | ----------------------------- |
+| 총 필드 수         | < 50      | 50-100+   | 폼 분할 또는 탭/스텝 UI       |
+| 배열 아이템 수     | < 30      | 30-100+   | `react-window` 가상화         |
+| computed 의존성    | < 20      | 20-50+    | 표현식 복잡도 최소화          |
+| 중첩 깊이          | < 8       | 8-15+     | microtask 체인 지연 모니터링  |
+| oneOf 분기 내 필드 | < 20      | 20+       | 분기 전환 시 프레임 드롭 체크 |
 
 ---
 
 ## 참조 파일
 
-| 파일 | 관련 내용 |
-|------|----------|
-| `src/components/Form/Form.tsx:53-56` | `UPDATE_CHILDREN_MASK` — Form 리렌더 조건 |
-| `src/components/Form/Form.tsx:92-95` | 스키마 전처리 (1회) |
-| `src/components/Form/Form.tsx:325` | Form `memo` 래핑 |
-| `src/components/SchemaNode/SchemaNodeProxy/SchemaNodeProxy.tsx:19-23` | `RERENDERING_EVENT` 4중 마스크 |
-| `src/components/SchemaNode/SchemaNodeProxy/SchemaNodeProxy.tsx:25` | Proxy `memo` 미적용 |
-| `src/components/SchemaNode/SchemaNodeProxy/SchemaNodeProxy.tsx:38-48` | Input `useMemo` 캐시 |
-| `src/components/SchemaNode/SchemaNodeProxy/SchemaNodeProxy.tsx:57-59` | FormTypeRenderer `memo` 래핑 |
-| `src/components/SchemaNode/SchemaNodeProxy/SchemaNodeProxy.tsx:85` | `enabled=false` 시 null 반환 |
-| `src/components/SchemaNode/SchemaNodeInput/SchemaNodeInput.tsx:24` | SchemaNodeInput `memo` 래핑 |
-| `src/components/SchemaNode/SchemaNodeInput/SchemaNodeInputWrapper.tsx:42-51` | `useReference` ref 안정화 |
-| `src/components/SchemaNode/SchemaNodeInput/hooks/useChildNodeComponents.tsx:45-91` | `Map` 캐시 + child `memo` 래핑 |
-| `src/components/SchemaNode/SchemaNodeInput/hooks/useFormTypeInputControl.ts:29-46` | RequestRefresh/Focus/Select 구독 |
-| `src/components/SchemaNode/SchemaNodeInput/type.ts:39-43` | `REACTIVE_RERENDERING_EVENTS` |
-| `src/hooks/useSchemaNodeTracker.ts:13-26` | 노드별 독립 구독 메커니즘 |
-| `src/core/nodes/AbstractNode/utils/EventCascadeManager/EventCascadeManager.ts:106-110` | microtask 배칭 |
-| `src/core/nodes/AbstractNode/utils/ComputedPropertiesManager/utils/createDynamicFunction/createDynamicFunction.ts:41` | `new Function()` — CSP 관련 |
-| `rolldown.config.mjs:21` | `minify: false` 설정 |
-| `package.json:84-93` | size-limit 설정 (20KB) |
+| 파일                                                                                                                  | 관련 내용                                 |
+| --------------------------------------------------------------------------------------------------------------------- | ----------------------------------------- |
+| `src/components/Form/Form.tsx:53-56`                                                                                  | `UPDATE_CHILDREN_MASK` — Form 리렌더 조건 |
+| `src/components/Form/Form.tsx:92-95`                                                                                  | 스키마 전처리 (1회)                       |
+| `src/components/Form/Form.tsx:325`                                                                                    | Form `memo` 래핑                          |
+| `src/components/SchemaNode/SchemaNodeProxy/SchemaNodeProxy.tsx:19-23`                                                 | `RERENDERING_EVENT` 4중 마스크            |
+| `src/components/SchemaNode/SchemaNodeProxy/SchemaNodeProxy.tsx:25`                                                    | Proxy `memo` 미적용                       |
+| `src/components/SchemaNode/SchemaNodeProxy/SchemaNodeProxy.tsx:38-48`                                                 | Input `useMemo` 캐시                      |
+| `src/components/SchemaNode/SchemaNodeProxy/SchemaNodeProxy.tsx:57-59`                                                 | FormTypeRenderer `memo` 래핑              |
+| `src/components/SchemaNode/SchemaNodeProxy/SchemaNodeProxy.tsx:85`                                                    | `enabled=false` 시 null 반환              |
+| `src/components/SchemaNode/SchemaNodeInput/SchemaNodeInput.tsx:24`                                                    | SchemaNodeInput `memo` 래핑               |
+| `src/components/SchemaNode/SchemaNodeInput/SchemaNodeInputWrapper.tsx:42-51`                                          | `useReference` ref 안정화                 |
+| `src/components/SchemaNode/SchemaNodeInput/hooks/useChildNodeComponents.tsx:45-91`                                    | `Map` 캐시 + child `memo` 래핑            |
+| `src/components/SchemaNode/SchemaNodeInput/hooks/useFormTypeInputControl.ts:29-46`                                    | RequestRefresh/Focus/Select 구독          |
+| `src/components/SchemaNode/SchemaNodeInput/type.ts:39-43`                                                             | `REACTIVE_RERENDERING_EVENTS`             |
+| `src/hooks/useSchemaNodeTracker.ts:13-26`                                                                             | 노드별 독립 구독 메커니즘                 |
+| `src/core/nodes/AbstractNode/utils/EventCascadeManager/EventCascadeManager.ts:106-110`                                | microtask 배칭                            |
+| `src/core/nodes/AbstractNode/utils/ComputedPropertiesManager/utils/createDynamicFunction/createDynamicFunction.ts:41` | `new Function()` — CSP 관련               |
+| `rolldown.config.mjs:21`                                                                                              | `minify: false` 설정                      |
+| `package.json:84-93`                                                                                                  | size-limit 설정 (20KB)                    |

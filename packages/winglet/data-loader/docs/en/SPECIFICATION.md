@@ -1,8 +1,6 @@
 # @winglet/data-loader — Specification
 
-**Version**: 0.10.0
-**Package**: `@winglet/data-loader`
-**Description**: Batching and caching utility for async data fetching, inspired by GraphQL DataLoader
+**Version**: 0.10.0 **Package**: `@winglet/data-loader` **Description**: Batching and caching utility for async data fetching, inspired by GraphQL DataLoader
 
 ---
 
@@ -43,9 +41,13 @@ import { DataLoader } from '@winglet/data-loader';
 
 // 1. Define a batch loader function
 async function batchLoadUsers(ids: ReadonlyArray<string>) {
-  const users = await db.query('SELECT * FROM users WHERE id IN (?)', [[...ids]]);
+  const users = await db.query('SELECT * FROM users WHERE id IN (?)', [
+    [...ids],
+  ]);
   // Results MUST be returned in the same order as the input keys
-  return ids.map(id => users.find(u => u.id === id) ?? new Error(`User ${id} not found`));
+  return ids.map(
+    (id) => users.find((u) => u.id === id) ?? new Error(`User ${id} not found`),
+  );
 }
 
 // 2. Create a DataLoader instance
@@ -68,12 +70,12 @@ const [user1, user2, user3] = await Promise.all([
 
 `@winglet/data-loader` is structured around three concerns:
 
-| Layer | Files | Responsibility |
-|---|---|---|
-| Public API | `DataLoader.ts`, `index.ts` | User-facing class and exports |
-| Configuration | `utils/prepare.ts` | Option validation and defaults |
-| Batch execution | `utils/dispatch.ts` | Batch lifecycle and error dispatch |
-| Error types | `utils/error.ts` | `DataLoaderError` definition |
+| Layer           | Files                       | Responsibility                     |
+| --------------- | --------------------------- | ---------------------------------- |
+| Public API      | `DataLoader.ts`, `index.ts` | User-facing class and exports      |
+| Configuration   | `utils/prepare.ts`          | Option validation and defaults     |
+| Batch execution | `utils/dispatch.ts`         | Batch lifecycle and error dispatch |
+| Error types     | `utils/error.ts`            | `DataLoaderError` definition       |
 
 ### Batching Mechanism
 
@@ -175,14 +177,15 @@ userLoader.clearAll(); // e.g., on user logout
 #### `prime(key: Key, value: Value | Promise<Value> | Error): this`
 
 Manually seeds the cache for a key. No-op if:
+
 - Caching is disabled (`cache: false`).
 - The key already has a cached entry.
 
 Accepts a plain value, a Promise, or an Error. Returns `this` for method chaining.
 
 ```typescript
-userLoader.prime('user-1', fetchedUser);            // plain value
-userLoader.prime('user-2', somePromise);            // Promise
+userLoader.prime('user-1', fetchedUser); // plain value
+userLoader.prime('user-2', somePromise); // Promise
 userLoader.prime('deleted', new Error('Not found')); // Error
 ```
 
@@ -196,20 +199,17 @@ type DataLoaderOptions<Key, Value, CacheKey = Key> = {
   cache?: MapLike<CacheKey, Promise<Value>> | false;
   batchScheduler?: (task: () => void) => void;
   cacheKeyFn?: (key: Key) => CacheKey;
-} & (
-  | { maxBatchSize?: number }
-  | { disableBatch: true }
-);
+} & ({ maxBatchSize?: number } | { disableBatch: true });
 ```
 
-| Option | Type | Default | Description |
-|---|---|---|---|
-| `name` | `string` | `null` | Optional label for the loader, accessible via `loader.name`. Useful for logging and debugging. |
-| `cache` | `MapLike<CacheKey, Promise<Value>> \| false` | `new Map()` | Custom cache implementation. Pass `false` to disable caching entirely. |
-| `batchScheduler` | `(task: () => void) => void` | `process.nextTick` | Controls when the batch is dispatched. Replace with `queueMicrotask`, `setTimeout`, `requestAnimationFrame`, or `fn => fn()` for immediate dispatch. |
-| `cacheKeyFn` | `(key: Key) => CacheKey` | identity (`k => k`) | Converts a loader key to a cache key. Required when keys are objects (reference equality would fail). |
-| `maxBatchSize` | `number` | `Infinity` | Maximum number of keys per batch. When exceeded, a new batch is started automatically. Must be a positive integer. |
-| `disableBatch` | `true` | — | Disables batching; each `load()` call dispatches immediately (equivalent to `maxBatchSize: 1`). Mutually exclusive with `maxBatchSize`. |
+| Option           | Type                                         | Default             | Description                                                                                                                                          |
+| ---------------- | -------------------------------------------- | ------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `name`           | `string`                                     | `null`              | Optional label for the loader, accessible via `loader.name`. Useful for logging and debugging.                                                       |
+| `cache`          | `MapLike<CacheKey, Promise<Value>> \| false` | `new Map()`         | Custom cache implementation. Pass `false` to disable caching entirely.                                                                               |
+| `batchScheduler` | `(task: () => void) => void`                 | `process.nextTick`  | Controls when the batch is dispatched. Replace with `queueMicrotask`, `setTimeout`, `requestAnimationFrame`, or `fn => fn()` for immediate dispatch. |
+| `cacheKeyFn`     | `(key: Key) => CacheKey`                     | identity (`k => k`) | Converts a loader key to a cache key. Required when keys are objects (reference equality would fail).                                                |
+| `maxBatchSize`   | `number`                                     | `Infinity`          | Maximum number of keys per batch. When exceeded, a new batch is started automatically. Must be a positive integer.                                   |
+| `disableBatch`   | `true`                                       | —                   | Disables batching; each `load()` call dispatches immediately (equivalent to `maxBatchSize: 1`). Mutually exclusive with `maxBatchSize`.              |
 
 ---
 
@@ -224,6 +224,7 @@ type BatchLoader<Key, Value> = (
 The function passed as the first argument to the `DataLoader` constructor.
 
 **Contract**:
+
 1. Receives a read-only array of keys — do not mutate it.
 2. Must return a `Promise` that resolves to an array.
 3. The returned array must have **exactly the same length** as the input keys array.
@@ -259,7 +260,10 @@ import type { DataLoaderOptions } from '@winglet/data-loader';
 type Batch<Key, Value> = {
   isResolved: boolean;
   keys: Array<Key>;
-  promises: Array<{ resolve: (value: Value) => void; reject: (error: Error) => void }>;
+  promises: Array<{
+    resolve: (value: Value) => void;
+    reject: (error: Error) => void;
+  }>;
   cacheHits?: Array<() => void>;
 };
 ```
@@ -317,7 +321,11 @@ const resolvers = {
 
 // Express middleware — fresh loaders per request
 app.use('/graphql', (req, res, next) => {
-  graphqlHTTP({ schema, context: { loaders: createLoaders() } })(req, res, next);
+  graphqlHTTP({ schema, context: { loaders: createLoaders() } })(
+    req,
+    res,
+    next,
+  );
 });
 ```
 
@@ -350,12 +358,21 @@ class TtlMap<K, V> {
   get(key: K) {
     const e = this.store.get(key);
     if (!e) return undefined;
-    if (Date.now() > e.expiresAt) { this.store.delete(key); return undefined; }
+    if (Date.now() > e.expiresAt) {
+      this.store.delete(key);
+      return undefined;
+    }
     return e.value;
   }
-  set(key: K, value: V) { this.store.set(key, { value, expiresAt: Date.now() + this.ttlMs }); }
-  delete(key: K) { this.store.delete(key); }
-  clear() { this.store.clear(); }
+  set(key: K, value: V) {
+    this.store.set(key, { value, expiresAt: Date.now() + this.ttlMs });
+  }
+  delete(key: K) {
+    this.store.delete(key);
+  }
+  clear() {
+    this.store.clear();
+  }
 }
 
 const cachedLoader = new DataLoader(batchLoad, {
@@ -403,10 +420,14 @@ const timedLoader = new DataLoader(batchLoad, {
 ### Object Keys with cacheKeyFn
 
 ```typescript
-interface SearchKey { term: string; page: number; limit: number }
+interface SearchKey {
+  term: string;
+  page: number;
+  limit: number;
+}
 
 const searchLoader = new DataLoader<SearchKey, SearchResult[], string>(
-  async (queries) => Promise.all(queries.map(q => search(q))),
+  async (queries) => Promise.all(queries.map((q) => search(q))),
   {
     cacheKeyFn: ({ term, page, limit }) => `${term}:${page}:${limit}`,
   },

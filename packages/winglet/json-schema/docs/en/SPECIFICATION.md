@@ -1,7 +1,6 @@
 # @winglet/json-schema — Specification
 
-**Version:** 0.10.0
-**License:** MIT
+**Version:** 0.10.0 **License:** MIT
 
 ---
 
@@ -444,9 +443,7 @@ InferValueType<{ type: 'array' }>              // any[]
 InferValueType<{ type: 'object' }>             // Record<string, any>
 ```
 
-`object` and `array` recurse into `properties` and `items` when those are literal —
-that is, when the schema is declared `as const`. Without `as const`, `type` widens to
-`string` and the result is `any`.
+`object` and `array` recurse into `properties` and `items` when those are literal — that is, when the schema is declared `as const`. Without `as const`, `type` widens to `string` and the result is `any`.
 
 ```typescript
 InferValueType<{ type: 'array'; items: { type: 'string' } }>; // string[]
@@ -461,17 +458,10 @@ InferValueType<{
 
 Two rules govern the object result:
 
-- **Every key is optional, including those in `required`.** The value described by a schema
-  may legitimately omit a key at runtime, so a required marker here would be a promise this
-  type cannot keep. Declare the exact shape yourself when you need one.
-- **The result is intersected with `Record<string, any>`** unless the schema sets
-  `additionalProperties: false` — open is the JSON Schema default, and it keeps keys
-  contributed by applicators this type does not model (`oneOf`, `anyOf`, `if`/`then`/`else`,
-  `patternProperties`, `dependentSchemas`, `$ref`) from being rejected as excess properties.
+- **Every key is optional, including those in `required`.** The value described by a schema may legitimately omit a key at runtime, so a required marker here would be a promise this type cannot keep. Declare the exact shape yourself when you need one.
+- **The result is intersected with `Record<string, any>`** unless the schema sets `additionalProperties: false` — open is the JSON Schema default, and it keeps keys contributed by applicators this type does not model (`oneOf`, `anyOf`, `if`/`then`/`else`, `patternProperties`, `dependentSchemas`, `$ref`) from being rejected as excess properties.
 
-Anything not modeled falls back rather than narrowing: a non-literal `properties`
-(e.g. `Dictionary<JsonSchema>`) yields `Record<string, any>`, a multi-type such as
-`['string', 'number']` yields `any`, and `items: false` yields `any[]`.
+Anything not modeled falls back rather than narrowing: a non-literal `properties` (e.g. `Dictionary<JsonSchema>`) yields `Record<string, any>`, a multi-type such as `['string', 'number']` yields `any`, and `items: false` yields `any[]`.
 
 ### Common BasicSchema Fields
 

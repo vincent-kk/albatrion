@@ -44,8 +44,12 @@
     "README.md"
   ],
   "scripts": {
+    "bench": "vitest bench --config vitest.bench.config.ts --run",
+    "bench:baseline": "vitest bench --config vitest.bench.config.ts --run --outputJson bench/.results/baseline.json",
+    "bench:compare": "vitest bench --config vitest.bench.config.ts --run --compare bench/.results/baseline.json",
+    "bench:watch": "vitest bench --config vitest.bench.config.ts",
     "build": "rolldown -c && yarn build:types && yarn build:hashes && yarn typecheck",
-    "build:hashes": "claude-build-hashes",
+    "build:hashes": "agents-build-hashes",
     "build:publish:npm": "yarn build && yarn publish:npm",
     "build:types": "node ../../aileron/script/build/buildTypes.mjs",
     "build-storybook": "storybook build",
@@ -57,10 +61,6 @@
     "storybook": "storybook dev -p 6006",
     "test": "vitest",
     "typecheck": "tsc --noEmit --composite false --rootDir . -p tsconfig.json",
-    "bench": "vitest bench --config vitest.bench.config.ts --run",
-    "bench:watch": "vitest bench --config vitest.bench.config.ts",
-    "bench:baseline": "vitest bench --config vitest.bench.config.ts --run --outputJson bench/.results/baseline.json",
-    "bench:compare": "vitest bench --config vitest.bench.config.ts --run --compare bench/.results/baseline.json",
     "version:major": "yarn version major",
     "version:minor": "yarn version minor",
     "version:patch": "yarn version patch"
@@ -73,7 +73,7 @@
   },
   "devDependencies": {
     "@aileron/development-helper": "workspace:*",
-    "@slats/claude-assets-sync": "workspace:^",
+    "@slats/agents-assets-sync": "workspace:^",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
     "ajv": "^8.17.1",
@@ -89,7 +89,7 @@
     "react": ">=18 <20",
     "react-dom": ">=18 <20"
   },
-  "claude": {
-    "assetPath": "docs/claude"
+  "agents": {
+    "assetPath": "docs/agents"
   }
 }

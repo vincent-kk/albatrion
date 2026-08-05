@@ -1,8 +1,6 @@
 # @winglet/react-utils — Specification
 
-**Version**: 0.10.0
-**Description**: React utility library — custom hooks, HOCs, and utility functions
-**License**: MIT
+**Version**: 0.10.0 **Description**: React utility library — custom hooks, HOCs, and utility functions **License**: MIT
 
 ---
 

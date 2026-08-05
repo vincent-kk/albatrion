@@ -1,0 +1,92 @@
+{
+  "name": "@slats/agents-assets-sync",
+  "version": "0.1.2",
+  "description": "Shared CLI engine that lets consumer packages inject their agent docs (skills, rules, commands) into Claude Code and Codex asset locations via a thin bin/inject-agents-settings wrapper.",
+  "keywords": [
+    "agents",
+    "agents-md",
+    "claude",
+    "claude-code",
+    "codex",
+    "cli",
+    "inject",
+    "docs",
+    "skills",
+    "assets"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vincent-kk/albatrion.git",
+    "directory": "packages/slats/agents-assets-sync"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "Vincent K. Kelvin",
+    "email": "lunox273@gmail.com"
+  },
+  "sideEffects": false,
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "source": "./src/index.ts",
+      "import": "./dist/index.mjs"
+    },
+    "./buildHashes": {
+      "import": "./scripts/buildHashes.mjs"
+    }
+  },
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "bin": {
+    "agents-assets-sync": "./bin/inject-agents-settings.mjs",
+    "agents-build-hashes": "./scripts/agents-build-hashes.mjs",
+    "inject-agents-settings": "./bin/inject-agents-settings.mjs"
+  },
+  "files": [
+    "dist",
+    "docs",
+    "bin",
+    "scripts",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "yarn version:sync && rolldown -c && yarn build:types && yarn build:hashes && yarn typecheck",
+    "build:hashes": "node scripts/build-hashes.mjs",
+    "build:publish:npm": "yarn build && yarn publish:npm",
+    "build:types": "node ../../aileron/script/build/buildTypes.mjs",
+    "dev": "yarn version:sync && tsx src/main.ts",
+    "dev:cli": "tsx bin/inject-agents-settings.mjs",
+    "dev:ui": "tsx scripts/dev-ui.tsx",
+    "format": "prettier --write \"src/**/*.ts\"",
+    "lint": "eslint \"src/**/*.ts\"",
+    "prepublishOnly": "yarn build",
+    "publish:npm": "yarn npm publish --access public",
+    "test": "yarn run -T vitest",
+    "typecheck": "tsc --noEmit --composite false --rootDir . -p tsconfig.json",
+    "version:major": "yarn version major && yarn version:sync",
+    "version:minor": "yarn version minor && yarn version:sync",
+    "version:patch": "yarn version patch && yarn version:sync",
+    "version:sync": "node scripts/inject-version.js"
+  },
+  "dependencies": {
+    "commander": "^12.1.0",
+    "ink": "^7.0.0",
+    "ink-gradient": "^4.0.0",
+    "ink-select-input": "^6.2.0",
+    "ink-spinner": "^5.0.0",
+    "picocolors": "^1.1.1",
+    "react": "^19.2.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.0",
+    "eslint": "8.57.1",
+    "ink-testing-library": "^4.0.0",
+    "rolldown": "^1.2.0",
+    "tsc-alias": "^1.8.16",
+    "typescript": "^5.7.2"
+  },
+  "agents": {
+    "assetPath": "docs/agents"
+  }
+}

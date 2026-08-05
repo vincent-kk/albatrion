@@ -2,9 +2,7 @@
 
 ## Purpose
 
-JSON Schema에서 필드의 초기값을 결정하는 단일 함수 모듈.
-`schema.default` 를 최우선으로 반환하고, 없으면 `virtual` 타입 분기 후
-`extractSchemaInfo` + `getEmptyValue` 로 타입 기반 빈값을 반환한다.
+JSON Schema에서 필드의 초기값을 결정하는 단일 함수 모듈. `schema.default` 를 최우선으로 반환하고, 없으면 `virtual` 타입 분기 후 `extractSchemaInfo` + `getEmptyValue` 로 타입 기반 빈값을 반환한다.
 
 ## Structure
 

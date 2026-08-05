@@ -2,8 +2,7 @@
 
 ## Purpose
 
-배열 스키마에서 특정 인덱스의 자식 요소에 적용할 JSON Schema를 결정하는 순수 함수.
-`prefixItems`와 `items` 키워드의 우선순위를 처리하여 올바른 스키마 또는 `null`을 반환한다.
+배열 스키마에서 특정 인덱스의 자식 요소에 적용할 JSON Schema를 결정하는 순수 함수. `prefixItems`와 `items` 키워드의 우선순위를 처리하여 올바른 스키마 또는 `null`을 반환한다.
 
 ## Structure
 

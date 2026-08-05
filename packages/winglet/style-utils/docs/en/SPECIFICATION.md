@@ -43,11 +43,11 @@ pnpm add @winglet/style-utils
 
 ### Sub-path Imports
 
-| Entry | Exports |
-|-------|---------|
-| `@winglet/style-utils` | all symbols |
+| Entry                                | Exports                               |
+| ------------------------------------ | ------------------------------------- |
+| `@winglet/style-utils`               | all symbols                           |
 | `@winglet/style-utils/style-manager` | `styleManagerFactory`, `destroyScope` |
-| `@winglet/style-utils/util` | `cx`, `cxLite`, `compressCss` |
+| `@winglet/style-utils/util`          | `cx`, `cxLite`, `compressCss`         |
 
 ---
 
@@ -55,19 +55,18 @@ pnpm add @winglet/style-utils
 
 ```typescript
 import {
+  compressCss,
   cx,
   cxLite,
-  compressCss,
-  styleManagerFactory,
   destroyScope,
+  styleManagerFactory,
 } from '@winglet/style-utils';
 
 // 1. className composition
-const className = cx(
-  'btn',
-  `btn-${variant}`,
-  { 'btn-disabled': disabled, 'btn-loading': loading },
-);
+const className = cx('btn', `btn-${variant}`, {
+  'btn-disabled': disabled,
+  'btn-loading': loading,
+});
 
 // 2. Runtime CSS compression
 const minified = compressCss('.card { padding: 16px; /* note */ }');
@@ -78,7 +77,7 @@ const addStyle = styleManagerFactory('my-component');
 const cleanup = addStyle('button', '.btn { color: white; background: blue; }');
 
 // ...later
-cleanup();            // remove the single style
+cleanup(); // remove the single style
 destroyScope('my-component'); // tear down the whole scope
 ```
 
@@ -127,9 +126,9 @@ destroyScope('my-component'); // tear down the whole scope
 
 Concatenates class names conditionally. Handles strings, numbers, booleans, objects (truthy keys only), and nested arrays.
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `args` | `ClassValue[]` | Variable number of class value inputs |
+| Parameter | Type           | Description                           |
+| --------- | -------------- | ------------------------------------- |
+| `args`    | `ClassValue[]` | Variable number of class value inputs |
 
 **Returns:** Space-separated class string with no leading/trailing whitespace.
 
@@ -142,9 +141,9 @@ cx('btn', { primary: true, disabled: false }, ['large', condition && 'active']);
 
 Lightweight variant: top-level truthy filtering only. Does not recurse into objects or arrays.
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `args` | `ClassValue[]` | Primarily strings and numbers |
+| Parameter | Type           | Description                   |
+| --------- | -------------- | ----------------------------- |
+| `args`    | `ClassValue[]` | Primarily strings and numbers |
 
 **Returns:** Space-separated class string.
 
@@ -159,9 +158,9 @@ cxLite('btn', isActive && 'active', size && `btn-${size}`);
 
 Single-pass CSS minifier. Removes whitespace, block comments, and redundant semicolons before `}`. Favors throughput over perfect compression; minor trailing-space artifacts inside nested blocks may remain.
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `css` | `string` | Source CSS |
+| Parameter | Type     | Description |
+| --------- | -------- | ----------- |
+| `css`     | `string` | Source CSS  |
 
 **Returns:** Minified CSS. Empty input returns empty string.
 
@@ -183,18 +182,18 @@ function styleManagerFactory(
 
 Returns a curried `addStyle` function bound to one scope.
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `scopeId` | `string` | Scope identifier; doubles as CSS class prefix |
-| `config.shadowRoot` | `ShadowRoot?` | Optional Shadow DOM target |
+| Parameter           | Type          | Description                                   |
+| ------------------- | ------------- | --------------------------------------------- |
+| `scopeId`           | `string`      | Scope identifier; doubles as CSS class prefix |
+| `config.shadowRoot` | `ShadowRoot?` | Optional Shadow DOM target                    |
 
 **Returned `addStyle`:**
 
-| Arg | Type | Description |
-|-----|------|-------------|
-| `styleId` | `string` | Unique key inside the scope |
-| `cssString` | `string` | CSS source |
-| `compress` | `boolean?` | Set `true` when `cssString` is already minified |
+| Arg         | Type       | Description                                     |
+| ----------- | ---------- | ----------------------------------------------- |
+| `styleId`   | `string`   | Unique key inside the scope                     |
+| `cssString` | `string`   | CSS source                                      |
+| `compress`  | `boolean?` | Set `true` when `cssString` is already minified |
 
 **Returns:** `() => void` — cleanup function that removes `styleId` from the scope.
 
@@ -267,7 +266,13 @@ export type StyleRoot = Document | ShadowRoot;
 ```tsx
 import { cx } from '@winglet/style-utils';
 
-export function Button({ variant = 'primary', size, disabled, loading, children }) {
+export function Button({
+  variant = 'primary',
+  size,
+  disabled,
+  loading,
+  children,
+}) {
   return (
     <button
       className={cx('btn', `btn-${variant}`, size && `btn-${size}`, {
@@ -285,15 +290,18 @@ export function Button({ variant = 'primary', size, disabled, loading, children 
 ### Component-scoped Styles
 
 ```typescript
-import { styleManagerFactory, destroyScope } from '@winglet/style-utils';
+import { destroyScope, styleManagerFactory } from '@winglet/style-utils';
 
 const scopeId = 'my-widget';
 const addStyle = styleManagerFactory(scopeId);
 
-const removeButton = addStyle('button', `
+const removeButton = addStyle(
+  'button',
+  `
   .btn { background: #1677ff; color: #fff; padding: 8px 16px; }
   .btn:hover { background: #0f5fcb; }
-`);
+`,
+);
 
 // Apply scope class somewhere in the tree
 document.getElementById('widget-root')!.classList.add(scopeId);
@@ -312,8 +320,12 @@ class MyCard extends HTMLElement {
 
   constructor() {
     super();
-    const addStyle = styleManagerFactory('my-card', { shadowRoot: this.shadow });
-    this.cleanups.push(addStyle('host', ':host { display: block; border-radius: 8px; }'));
+    const addStyle = styleManagerFactory('my-card', {
+      shadowRoot: this.shadow,
+    });
+    this.cleanups.push(
+      addStyle('host', ':host { display: block; border-radius: 8px; }'),
+    );
     this.cleanups.push(addStyle('content', '.content { padding: 16px; }'));
   }
 
@@ -342,11 +354,15 @@ class ThemeManager {
   private removeTheme: (() => void) | null = null;
 
   applyTheme(mode: 'light' | 'dark') {
-    const vars = mode === 'light'
-      ? '--bg:#fff; --fg:#111; --primary:#1677ff;'
-      : '--bg:#0f0f10; --fg:#f5f5f5; --primary:#4096ff;';
+    const vars =
+      mode === 'light'
+        ? '--bg:#fff; --fg:#111; --primary:#1677ff;'
+        : '--bg:#0f0f10; --fg:#f5f5f5; --primary:#4096ff;';
     this.removeTheme?.();
-    this.removeTheme = this.addStyle('vars', `:root { ${vars} } body { background: var(--bg); color: var(--fg); }`);
+    this.removeTheme = this.addStyle(
+      'vars',
+      `:root { ${vars} } body { background: var(--bg); color: var(--fg); }`,
+    );
   }
 
   destroy() {

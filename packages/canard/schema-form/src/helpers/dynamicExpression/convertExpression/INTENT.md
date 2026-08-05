@@ -2,10 +2,7 @@
 
 ## Purpose
 
-조건 딕셔너리(`{ key: value | value[] }`)를 JSONPointer 기반
-JavaScript 비교 표현식 문자열로 변환한다.
-배열 값은 `[...].includes(...)`, 단일 값은 `===` / `!==` 비교식으로 변환하며
-`inverse: true` 시 드 모르간 법칙으로 연산자를 반전한다.
+조건 딕셔너리(`{ key: value | value[] }`)를 JSONPointer 기반 JavaScript 비교 표현식 문자열로 변환한다. 배열 값은 `[...].includes(...)`, 단일 값은 `===` / `!==` 비교식으로 변환하며 `inverse: true` 시 드 모르간 법칙으로 연산자를 반전한다.
 
 ## Structure
 

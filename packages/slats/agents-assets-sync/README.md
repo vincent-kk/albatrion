@@ -1,0 +1,259 @@
+# @slats/agents-assets-sync
+
+Engine + dispatcher CLI that lets any npm package ship its own Claude Code docs (skills, rules, commands) and inject them into a user's `.claude/` directory. Consumers declare `agents.assetPath` in `package.json` and the engine's `inject-agents-settings` bin handles the rest.
+
+## Overview
+
+A consumer package declares `agents.assetPath` in `package.json` and runs `agents-build-hashes` during build to emit `dist/agents-hashes.json`. End users run `npx @slats/agents-assets-sync --package=<name>` and this engine resolves each consumer's metadata, compares its hash manifest against the target `.claude/`, and copies only what is out of date.
+
+`--package` accepts a scoped name (`@scope/pkg`), an unscoped name (`pkg`), or a **scope alias** (`@scope` with no slash) that fans out to every installed `node_modules/@scope/*` package declaring `agents.assetPath`. Single-target resolution uses `createRequire`; scope-alias enumeration walks ancestor `node_modules/@<scope>/` directories from `cwd` upward and is isolated to `runCli/targets/resolveScopeAlias.ts`.
+
+No GitHub fetch, no `.sync-meta.json`, no migrations — the consumer's `dist/agents-hashes.json` is the single source of truth.
+
+## Install
+
+```bash
+npm install -D @slats/agents-assets-sync
+# or
+yarn add -D @slats/agents-assets-sync
+```
+
+## CLI Surface
+
+```
+<bin> --package=<name...> [--agent=claude|codex] [--scope=user|project] [--asset=<kind...>]
+      [--asset-path=<path>] [--dry-run] [--force] [--yes] [--no-interactive]
+      [--root=<cwd>] [--json]
+agents-build-hashes
+```
+
+`<bin>` is one of three entry points that all dispatch to the same engine:
+
+| Bin                      | Use when                                                                                                       |
+| ------------------------ | -------------------------------------------------------------------------------------------------------------- |
+| `agents-assets-sync`     | invoking via `npx` — matches the package's unscoped name so `npx @slats/agents-assets-sync ...` works directly |
+| `inject-agents-settings` | the engine is installed (`yarn add -D` / `npm i -g`) and you prefer a descriptive command name                 |
+| `agents-build-hashes`    | build-time helper for consumer packages (run from `package.json` scripts)                                      |
+
+### Agent destinations
+
+`projectRoot` is the home directory for `--scope=user`, and for `--scope=project` the nearest ancestor owning any of `.claude`, `AGENTS.md`, `.agents`, `.codex`, `.git` (falling back to cwd). Every agent shares it, so one run cannot straddle two projects.
+
+| Kind               | claude                       | codex                      | agents                     |
+| ------------------ | ---------------------------- | -------------------------- | -------------------------- |
+| `skills` (user)    | `~/.claude/skills/**`        | `~/.codex/skills/**`       | `~/.agents/skills/**`      |
+| `skills` (project) | `<root>/.claude/skills/**`   | `<root>/.agents/skills/**` | `<root>/.agents/skills/**` |
+| `rules` (user)     | `~/.claude/rules/**`         | `~/.codex/AGENTS.md`       | `~/.agents/AGENTS.md`      |
+| `rules` (project)  | `<root>/.claude/rules/**`    | `<root>/AGENTS.md`         | `<root>/AGENTS.md`         |
+| `commands`         | `<root>/.claude/commands/**` | unsupported                | unsupported                |
+
+`agents` is the vendor-neutral `.agents` convention rather than a product, for tools that read it instead of keeping a home of their own. It differs from `codex` only at `user` scope; the project layout is identical.
+
+One rule file becomes one marker block, so a block's body hash equals the manifest hash for that file and the copy/skip/diverged verdict matches the file path exactly:
+
+```
+<!-- AGENTS-ASSETS-SYNC:START:@canard/schema-form:rules/schema-form-rule.md -->
+…source bytes, verbatim…
+<!-- AGENTS-ASSETS-SYNC:END:@canard/schema-form:rules/schema-form-rule.md -->
+```
+
+The shape mirrors the `FILID:` / `SEIRI:` markers such files already carry. Everything outside this tool's own blocks — other tools' blocks, hand-written prose — is carried through byte for byte.
+
+### End-user invocation
+
+The engine is not shipped as a runtime dependency of consumers. The canonical npx form is:
+
+```bash
+# Single consumer:
+npx @slats/agents-assets-sync --package=@canard/schema-form --agent=claude --scope=user
+
+# Scope alias — every installed @winglet/* that declares agents.assetPath:
+npx @slats/agents-assets-sync --package=@winglet --agent=claude,codex --scope=user
+
+# A package that declares nothing and ships no manifest — name the directory:
+npx @slats/agents-assets-sync --package=some-pkg --asset-path=agents --agent=claude --scope=project
+```
+
+The dispatcher walks `node_modules` from the current working directory (or `--root <path>`) up to the filesystem root, so it works as long as the target package is installed somewhere in the host project's hoisting chain.
+
+#### Installed CLI (alternative)
+
+```bash
+yarn add -D @slats/agents-assets-sync
+yarn inject-agents-settings --package=@canard/schema-form --agent=claude --scope=user
+
+# or globally:
+npm i -g @slats/agents-assets-sync
+inject-agents-settings --package=@canard/schema-form --agent=claude --scope=user
+```
+
+The legacy explicit form `npx -p @slats/agents-assets-sync inject-agents-settings ...` continues to work for backward compatibility.
+
+| Flag                  | Meaning                                                                                                                                                                                                                                                                                                                                                       |
+| --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `--package <name>`    | **Required.** Repeatable/comma-separable. Accepts `@scope/pkg`, `pkg`, or a scope alias `@scope` (fans out to every installed `node_modules/@scope/*` with `agents.assetPath`).                                                                                                                                                                               |
+| `--agent <type>`      | **Required outside an interactive TTY.** `claude` \| `codex` \| `agents`, repeatable/comma-separable.                                                                                                                                                                                                                                                         |
+| `--asset <kind>`      | `skills` \| `rules` \| `commands`. Default: all. An excluded kind is absent from the plan, so it is neither reported nor deleted.                                                                                                                                                                                                                             |
+| `--asset-path <path>` | Asset root relative to each target's package root — for a package that ships assets in a directory like `agents/` or `docs/` without declaring `agents.assetPath`. Overrides the declaration on every target and hashes that directory at run time, so no `dist/agents-hashes.json` is needed. Must be relative and name a real directory inside the package. |
+| `--yes`               | Approve the force dialog without showing it.                                                                                                                                                                                                                                                                                                                  |
+| `--no-interactive`    | Never prompt, even on a TTY; a missing flag exits 2.                                                                                                                                                                                                                                                                                                          |
+| `--scope=user`        | Home directory (applies globally).                                                                                                                                                                                                                                                                                                                            |
+| `--scope=project`     | Nearest ancestor owning `.claude`, `AGENTS.md`, `.agents`, `.codex` or `.git`; `<cwd>` if none found.                                                                                                                                                                                                                                                         |
+| `--dry-run`           | Print the copy / skip / warn plan, no writes.                                                                                                                                                                                                                                                                                                                 |
+| `--force`             | Overwrite diverged files & delete orphans (interactive confirm on TTY).                                                                                                                                                                                                                                                                                       |
+| `--root <path>`       | Override scope-resolution cwd.                                                                                                                                                                                                                                                                                                                                |
+
+**Exit codes**: `0` success / up-to-date / dry-run, `1` runtime error, `2` user / configuration error (missing `--package`, missing `--scope` in non-TTY, unresolvable package, missing `agents.assetPath` with no `--asset-path`, an `--asset-path` that is absolute or names no directory inside the package, or an asset root that resolves outside its package).
+
+For `--scope=project` the target `.claude` directory is resolved by walking up from `process.cwd()` to the nearest existing `.claude` ancestor; the CLI logs `(auto-located)` when this happens.
+
+## Consumer Integration (2 steps)
+
+### 1. `package.json`
+
+```json
+{
+  "name": "@your-scope/your-package",
+  "scripts": {
+    "build": "… && yarn build:hashes",
+    "build:hashes": "agents-build-hashes"
+  },
+  "devDependencies": {
+    "@slats/agents-assets-sync": "workspace:^"
+  },
+  "files": ["dist", "docs", "README.md"],
+  "agents": { "assetPath": "docs/agents" }
+}
+```
+
+- `@slats/agents-assets-sync` MUST be in `devDependencies` — the engine is a CLI-only tool and must not leak into end-user production installs. See Rationale below.
+- Do **not** add any `bin` field. The engine is the sole CLI surface; per-consumer bins would collide under `node_modules/.bin/`.
+- Do **not** expose `./bin/*` or `./docs/*` in `exports`. That would let consumer bundlers pull CLI code or the asset tree into app bundles.
+- Do **not** create a `bin/` or `scripts/` directory in the consumer.
+
+### 2. Build
+
+```bash
+yarn build
+# rolls up the library, emits types, then `agents-build-hashes` hashes every
+# file under `agents.assetPath` and writes dist/agents-hashes.json
+```
+
+Ship the resulting `dist/` (including `agents-hashes.json`) alongside `docs/` when you publish.
+
+### Rationale: `devDependencies`, not `dependencies`
+
+- The engine is used at two moments only: (1) the consumer's own build, where `agents-build-hashes` produces `dist/agents-hashes.json`, and (2) the end user's one-off `inject-agents-settings` invocation. Neither is runtime behaviour of the consumer library.
+- Putting the engine in `dependencies` would force every downstream installer of the consumer to pull `commander`, `@inquirer/prompts`, and their transitive trees into their production `node_modules` — dead weight for anyone who never sets up Claude Code assets.
+- The workspace build chain still resolves `.bin/agents-build-hashes` from `devDependencies` at `yarn install` time; yarn workspaces link devDeps and deps identically for workspace-local builds.
+- End users never rely on a hoisted `inject-agents-settings` bin. The canonical invocation is `npx @slats/agents-assets-sync --package=<THIS>`, which fetches the engine on demand and caches it.
+- Bundle isolation is enforced by the import graph (`src/**` in the consumer never references the engine), not by dependency-type.
+
+## Authoring `docs/agents/`
+
+Any tree works, but the recommended layout matches Claude Code conventions:
+
+```
+docs/agents/
+├── skills/
+│   └── <skill-name>/
+│       ├── SKILL.md
+│       └── knowledge/...
+├── rules/...
+└── commands/...
+```
+
+Every file under the asset root is hashed and tracked in `dist/agents-hashes.json`.
+
+## Hash-Based Sync Strategy (Option A)
+
+- `dist/agents-hashes.json` (schema v1) is the sole source of truth.
+- Per-file SHA-256 comparison:
+  - **missing locally** → copy
+  - **hash equal** → skip
+  - **hash differs** → warn + require `--force` (user edit vs. source update is indistinguishable by design)
+  - **file is outside the manifest but under a managed prefix (`skills/<name>/`)** → orphan; requires `--force` to delete
+
+- `--force` on TTY opens an interactive confirm via `@inquirer/prompts.confirm`, listing up to 3 diverged/orphan paths.
+- `--force` on non-TTY prints the divergent list to stderr and proceeds.
+
+## Architectural Invariants
+
+- `src/core/**` never reads `package.json` or walks the filesystem. Only the `bin/` layer (and `src/commands/runCli/targets/resolvePackage.ts`, invoked from that dispatcher) is allowed to resolve a single explicitly-named target via `createRequire().resolve('${name}/package.json')`. Cross-package discovery (`--all`, workspace scan) is not supported.
+- Prompts go through `@inquirer/prompts` only. No ink, no React.
+- The engine assumes one consumer per invocation. That is the stable contract — extensions require explicit re-architecture.
+
+## Programmatic API
+
+```ts
+import {
+  computeNamespacePrefixes,
+  injectDocs,
+  isInteractive,
+  isValidScope,
+  readHashManifest,
+  resolveScope,
+  runCli,
+} from '@slats/agents-assets-sync';
+```
+
+See `src/index.ts` and `src/DETAIL.md` for the full export surface.
+
+## Additional Docs
+
+- `docs/consumer-integration.md` — complete consumer checklist (package.json patches, verification steps, end-user install topologies)
+- `docs/bundle-size-decision.md` — why `@inquirer/prompts` over ink
+
+## JSON Output
+
+`--json` swaps in a third renderer that writes exactly one document to stdout
+and diverts every diagnostic to stderr, so the whole stream parses:
+
+```jsonc
+{
+  "schemaVersion": 1,
+  "tool": "agents-assets-sync",
+  "version": "0.1.0",
+  "dryRun": true,
+  "exitCode": 0,
+  "errors": [],
+  "units": [
+    {
+      "package": { "name": "@canard/schema-form", "version": "0.13.2" },
+      "agent": "codex",
+      "scope": "project",
+      "projectRoot": "/repo",
+      "destination": "/repo/.agents/skills + /repo/AGENTS.md (codex, project)",
+      "requiresForce": false,
+      "actions": [
+        {
+          "kind": "skip-uptodate",
+          "relPath": "rules/schema-form-rule.md",
+          "target": {
+            "kind": "block",
+            "fileAbs": "/repo/AGENTS.md",
+            "blockId": "@canard/schema-form:rules/schema-form-rule.md",
+          },
+        },
+      ],
+      "report": {
+        "created": [],
+        "updated": [],
+        "skipped": [],
+        "warnings": [],
+        "deleted": [],
+        "exitCode": 0,
+      },
+    },
+  ],
+}
+```
+
+One `unit` per `(package, agent)` pair. A flag error becomes `errors` with
+`exitCode: 2` and empty `units`, so a reader always has a document to parse.
+The exception is a failure upstream of the renderer — an unresolvable
+`--package` — where stdout stays empty and the exit code carries the verdict.
+
+## License
+
+MIT — see [LICENSE](./LICENSE).

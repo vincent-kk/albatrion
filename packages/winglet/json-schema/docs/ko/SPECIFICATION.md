@@ -1,7 +1,6 @@
 # @winglet/json-schema — 명세서
 
-**버전:** 0.10.0
-**라이선스:** MIT
+**버전:** 0.10.0 **라이선스:** MIT
 
 ---
 
@@ -444,8 +443,7 @@ InferValueType<{ type: 'array' }>              // any[]
 InferValueType<{ type: 'object' }>             // Record<string, any>
 ```
 
-`object`와 `array`는 `properties`와 `items`가 리터럴일 때 — 즉 스키마를 `as const`로
-선언했을 때 — 재귀합니다. `as const`가 없으면 `type`이 `string`으로 넓어져 결과는 `any`입니다.
+`object`와 `array`는 `properties`와 `items`가 리터럴일 때 — 즉 스키마를 `as const`로 선언했을 때 — 재귀합니다. `as const`가 없으면 `type`이 `string`으로 넓어져 결과는 `any`입니다.
 
 ```typescript
 InferValueType<{ type: 'array'; items: { type: 'string' } }>; // string[]
@@ -460,16 +458,10 @@ InferValueType<{
 
 객체 결과에는 두 가지 규칙이 적용됩니다:
 
-- **`required`에 있는 키를 포함해 모든 키가 optional입니다.** 스키마가 기술하는 값은 런타임에
-  키를 생략할 수 있으므로, 여기서 필수로 표시하는 것은 이 타입이 지킬 수 없는 약속입니다.
-  정확한 형태가 필요하면 직접 정의하세요.
-- **스키마가 `additionalProperties: false`를 지정하지 않는 한 `Record<string, any>`와 교차합니다.**
-  열린 상태가 JSON Schema의 기본값이고, 이 덕분에 이 타입이 모델링하지 않는 applicator
-  (`oneOf`, `anyOf`, `if`/`then`/`else`, `patternProperties`, `dependentSchemas`, `$ref`)가
-  기여하는 키가 초과 속성으로 거부되지 않습니다.
+- **`required`에 있는 키를 포함해 모든 키가 optional입니다.** 스키마가 기술하는 값은 런타임에 키를 생략할 수 있으므로, 여기서 필수로 표시하는 것은 이 타입이 지킬 수 없는 약속입니다. 정확한 형태가 필요하면 직접 정의하세요.
+- **스키마가 `additionalProperties: false`를 지정하지 않는 한 `Record<string, any>`와 교차합니다.** 열린 상태가 JSON Schema의 기본값이고, 이 덕분에 이 타입이 모델링하지 않는 applicator (`oneOf`, `anyOf`, `if`/`then`/`else`, `patternProperties`, `dependentSchemas`, `$ref`)가 기여하는 키가 초과 속성으로 거부되지 않습니다.
 
-모델링하지 않은 것은 좁히지 않고 폴백합니다. 리터럴이 아닌 `properties`(예: `Dictionary<JsonSchema>`)는
-`Record<string, any>`, `['string', 'number']` 같은 다중 타입은 `any`, `items: false`는 `any[]`가 됩니다.
+모델링하지 않은 것은 좁히지 않고 폴백합니다. 리터럴이 아닌 `properties`(예: `Dictionary<JsonSchema>`)는 `Record<string, any>`, `['string', 'number']` 같은 다중 타입은 `any`, `items: false`는 `any[]`가 됩니다.
 
 ### 공통 BasicSchema 필드
 

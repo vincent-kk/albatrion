@@ -148,13 +148,13 @@ const name = await prompt<string>({
 
 ### Design Patterns
 
-| Pattern | Usage |
-|---------|-------|
-| **Promise-based API** | Modal functions return promises |
-| **Provider Pattern** | Context providers for configuration |
-| **Factory Pattern** | Node factory for modal types |
-| **Observer Pattern** | Subscription system for state |
-| **Singleton Pattern** | ModalManager for global state |
+| Pattern               | Usage                               |
+| --------------------- | ----------------------------------- |
+| **Promise-based API** | Modal functions return promises     |
+| **Provider Pattern**  | Context providers for configuration |
+| **Factory Pattern**   | Node factory for modal types        |
+| **Observer Pattern**  | Subscription system for state       |
+| **Singleton Pattern** | ModalManager for global state       |
 
 ### Modal Node System
 
@@ -166,6 +166,7 @@ AbstractNode (Base Class)
 ```
 
 Each node provides:
+
 - Subscription-based state management
 - Promise resolution handling
 - Lifecycle management
@@ -178,11 +179,11 @@ Configuration is applied hierarchically, with lower levels overriding higher lev
 Provider Settings (lowest) < Hook Settings < Handler Settings (highest)
 ```
 
-| Level | Location | Description |
-|-------|----------|-------------|
-| **Provider** | `ModalProvider` props | App-wide default settings |
-| **Hook** | `useModal(config)` | Component-level settings |
-| **Handler** | `alert/confirm/prompt(options)` | Per-modal settings |
+| Level        | Location                        | Description               |
+| ------------ | ------------------------------- | ------------------------- |
+| **Provider** | `ModalProvider` props           | App-wide default settings |
+| **Hook**     | `useModal(config)`              | Component-level settings  |
+| **Handler**  | `alert/confirm/prompt(options)` | Per-modal settings        |
 
 #### Example
 
@@ -221,21 +222,21 @@ function alert<B = any>(options: AlertProps<B>): Promise<void>;
 
 #### Parameters
 
-| Option | Type | Default | Description |
-|--------|------|---------|-------------|
-| `title` | `ReactNode` | - | Modal title |
-| `subtitle` | `ReactNode` | - | Subtitle below title |
-| `content` | `ReactNode \| ComponentType<AlertContentProps>` | - | Modal content |
-| `subtype` | `'info' \| 'success' \| 'warning' \| 'error'` | `'info'` | Modal type |
-| `dimmed` | `boolean` | `true` | Dim background |
-| `closeOnBackdropClick` | `boolean` | `true` | Close on backdrop |
-| `manualDestroy` | `boolean` | `false` | Manual destroy mode |
-| `duration` | `number \| string` | - | Animation duration (Handler level override) |
-| `background` | `ModalBackground<B>` | - | Background settings |
-| `footer` | `AlertFooterRender \| FooterOptions \| false` | - | Footer config |
-| `ForegroundComponent` | `ComponentType<ModalFrameProps>` | - | Custom foreground |
-| `BackgroundComponent` | `ComponentType<ModalFrameProps>` | - | Custom background |
-| `signal` | `AbortSignal` | - | AbortSignal for canceling modal |
+| Option                 | Type                                            | Default  | Description                                 |
+| ---------------------- | ----------------------------------------------- | -------- | ------------------------------------------- |
+| `title`                | `ReactNode`                                     | -        | Modal title                                 |
+| `subtitle`             | `ReactNode`                                     | -        | Subtitle below title                        |
+| `content`              | `ReactNode \| ComponentType<AlertContentProps>` | -        | Modal content                               |
+| `subtype`              | `'info' \| 'success' \| 'warning' \| 'error'`   | `'info'` | Modal type                                  |
+| `dimmed`               | `boolean`                                       | `true`   | Dim background                              |
+| `closeOnBackdropClick` | `boolean`                                       | `true`   | Close on backdrop                           |
+| `manualDestroy`        | `boolean`                                       | `false`  | Manual destroy mode                         |
+| `duration`             | `number \| string`                              | -        | Animation duration (Handler level override) |
+| `background`           | `ModalBackground<B>`                            | -        | Background settings                         |
+| `footer`               | `AlertFooterRender \| FooterOptions \| false`   | -        | Footer config                               |
+| `ForegroundComponent`  | `ComponentType<ModalFrameProps>`                | -        | Custom foreground                           |
+| `BackgroundComponent`  | `ComponentType<ModalFrameProps>`                | -        | Custom background                           |
+| `signal`               | `AbortSignal`                                   | -        | AbortSignal for canceling modal             |
 
 #### Example
 
@@ -264,9 +265,9 @@ function confirm<B = any>(options: ConfirmProps<B>): Promise<boolean>;
 
 All options from `alert`, plus:
 
-| Option | Type | Default | Description |
-|--------|------|---------|-------------|
-| `footer` | `ConfirmFooterRender \| FooterOptions \| false` | - | Footer config |
+| Option   | Type                                            | Default | Description   |
+| -------- | ----------------------------------------------- | ------- | ------------- |
+| `footer` | `ConfirmFooterRender \| FooterOptions \| false` | -       | Footer config |
 
 #### FooterOptions for confirm
 
@@ -318,12 +319,7 @@ function prompt<T, B = any>(options: PromptProps<T, B>): Promise<T | null>;
 
 All options from `alert`, plus:
 
-| Option | Type | Required | Description |
-|--------|------|----------|-------------|
-| `Input` | `(props: PromptInputProps<T>) => ReactNode` | Yes | Input component |
-| `defaultValue` | `T` | No | Default value |
-| `disabled` | `(value: T | undefined) => boolean` | No | Disable confirm |
-| `returnOnCancel` | `boolean` | No | Resolve current value on cancel (instead of null) |
+| Option | Type | Required | Description | | ---------------- | ------------------------------------------- | ---------------------- | ------------------------------------------------- | --------------- | | `Input` | `(props: PromptInputProps<T>) => ReactNode` | Yes | Input component | | `defaultValue` | `T` | No | Default value | | `disabled` | `(value: T                                  | undefined) => boolean` | No | Disable confirm | | `returnOnCancel` | `boolean` | No | Resolve current value on cancel (instead of null) |
 
 #### PromptInputProps
 
@@ -402,11 +398,11 @@ Modals automatically cleanup when the component unmounts.
 
 #### Comparison
 
-| Feature | Static Functions | useModal Hook |
-|---------|-----------------|---------------|
-| Lifecycle | Independent | Tied to component |
-| Cleanup | Manual | Automatic |
-| Usage | Anywhere | Inside components |
+| Feature   | Static Functions | useModal Hook     |
+| --------- | ---------------- | ----------------- |
+| Lifecycle | Independent      | Tied to component |
+| Cleanup   | Manual           | Automatic         |
+| Usage     | Anywhere         | Inside components |
 
 #### Example
 
@@ -433,16 +429,16 @@ Returns the count of active modals.
 ```typescript
 function useActiveModalCount(
   validate?: (modal?: ModalNode) => boolean,
-  refreshKey?: string | number
+  refreshKey?: string | number,
 ): number;
 ```
 
 #### Parameters
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `validate` | `(modal) => boolean` | Filter function |
-| `refreshKey` | `string \| number` | Force refresh key |
+| Parameter    | Type                 | Description       |
+| ------------ | -------------------- | ----------------- |
+| `validate`   | `(modal) => boolean` | Filter function   |
+| `refreshKey` | `string \| number`   | Force refresh key |
 
 #### Example
 
@@ -467,7 +463,7 @@ function useModalAnimation(
   options: {
     onVisible?: () => void;
     onHidden?: () => void;
-  }
+  },
 ): void;
 ```
 
@@ -504,8 +500,8 @@ Returns modal animation duration.
 
 ```typescript
 function useModalDuration(modalId?: number): {
-  duration: string;      // e.g., '300ms'
-  milliseconds: number;  // e.g., 300
+  duration: string; // e.g., '300ms'
+  milliseconds: number; // e.g., 300
 };
 ```
 
@@ -516,10 +512,7 @@ function useModalDuration(modalId?: number): {
 Auto-destroys modal after specified time.
 
 ```typescript
-function useDestroyAfter(
-  modalId: number,
-  duration: string | number
-): void;
+function useDestroyAfter(modalId: number, duration: string | number): void;
 ```
 
 #### Behavior
@@ -570,9 +563,7 @@ function ModalDebugger({ modal }) {
 Manually initializes modal service.
 
 ```typescript
-function useInitializeModal(options?: {
-  mode?: 'auto' | 'manual';
-}): {
+function useInitializeModal(options?: { mode?: 'auto' | 'manual' }): {
   initialize: (anchor?: HTMLElement) => void;
   portal: ReactPortal | null;
 };
@@ -580,9 +571,9 @@ function useInitializeModal(options?: {
 
 #### Modes
 
-| Mode | Description |
-|------|-------------|
-| `auto` | Initializes automatically |
+| Mode     | Description                     |
+| -------- | ------------------------------- |
+| `auto`   | Initializes automatically       |
 | `manual` | Requires calling `initialize()` |
 
 ---
@@ -599,11 +590,11 @@ function useModalOptions(): ModalOptions;
 
 ```typescript
 interface ModalOptions {
-  duration?: number | string;     // Animation duration
-  backdrop?: string;              // Backdrop overlay color
-  manualDestroy?: boolean;        // Manual destroy mode
+  duration?: number | string; // Animation duration
+  backdrop?: string; // Backdrop overlay color
+  manualDestroy?: boolean; // Manual destroy mode
   closeOnBackdropClick?: boolean; // Close on backdrop click
-  zIndex?: number;                // CSS z-index
+  zIndex?: number; // CSS z-index
 }
 ```
 
@@ -661,8 +652,8 @@ interface ModalProviderProps {
   FooterComponent?: ComponentType<FooterComponentProps>;
   options?: ModalOptions;
   context?: Record<string, any>;
-  usePathname?: () => { pathname: string };  // Router integration
-  root?: HTMLElement;                        // Custom root element
+  usePathname?: () => { pathname: string }; // Router integration
+  root?: HTMLElement; // Custom root element
 }
 ```
 
