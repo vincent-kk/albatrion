@@ -67,9 +67,7 @@ export function resolveAgentTarget(
       ? join(home, 'skills')
       : join(projectRoot, NEUTRAL_DIR, 'skills');
   const rulesMergeFile =
-    scope === 'user'
-      ? join(home, 'AGENTS.md')
-      : join(projectRoot, 'AGENTS.md');
+    scope === 'user' ? join(home, 'AGENTS.md') : join(projectRoot, 'AGENTS.md');
 
   return {
     agent,

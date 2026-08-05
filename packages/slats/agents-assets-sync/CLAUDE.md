@@ -67,13 +67,13 @@ Workspace enumeration (scope alias) is confined to `src/commands/runCli/utils/re
 
 `projectRoot` is the home directory for `--scope=user`, and for `--scope=project` the nearest ancestor owning any of `.claude`, `AGENTS.md`, `.agents`, `.codex`, `.git` (falling back to cwd). Every agent shares it, so one run cannot straddle two projects.
 
-| Kind | claude | codex | agents |
-|---|---|---|---|
-| `skills` (user) | `~/.claude/skills/**` | `~/.codex/skills/**` | `~/.agents/skills/**` |
-| `skills` (project) | `<root>/.claude/skills/**` | `<root>/.agents/skills/**` | `<root>/.agents/skills/**` |
-| `rules` (user) | `~/.claude/rules/**` | `~/.codex/AGENTS.md` | `~/.agents/AGENTS.md` |
-| `rules` (project) | `<root>/.claude/rules/**` | `<root>/AGENTS.md` | `<root>/AGENTS.md` |
-| `commands` | `<root>/.claude/commands/**` | unsupported — skipped with a reason | unsupported |
+| Kind               | claude                       | codex                               | agents                     |
+| ------------------ | ---------------------------- | ----------------------------------- | -------------------------- |
+| `skills` (user)    | `~/.claude/skills/**`        | `~/.codex/skills/**`                | `~/.agents/skills/**`      |
+| `skills` (project) | `<root>/.claude/skills/**`   | `<root>/.agents/skills/**`          | `<root>/.agents/skills/**` |
+| `rules` (user)     | `~/.claude/rules/**`         | `~/.codex/AGENTS.md`                | `~/.agents/AGENTS.md`      |
+| `rules` (project)  | `<root>/.claude/rules/**`    | `<root>/AGENTS.md`                  | `<root>/AGENTS.md`         |
+| `commands`         | `<root>/.claude/commands/**` | unsupported — skipped with a reason | unsupported                |
 
 `agents` is not a product: it is the vendor-neutral `.agents` convention, for tools that read it instead of keeping a home of their own. It differs from `codex` only at `user` scope — the project layout is the same `.agents/skills` plus the repository's own `AGENTS.md`. Selecting both at `--scope=project` therefore plans the same writes twice; the second run of them is a no-op, since applying is idempotent.
 
