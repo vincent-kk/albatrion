@@ -40,21 +40,21 @@
 - Given several agents, then the document holds one `unit` per `(package, agent)` pair, each naming its destination and actions.
 - Given an invalid `--agent`, then the document still parses, `exitCode` is 2 and `errors` names the offending value.
 - Given an unresolvable `--package`, then stdout is empty and the diagnostic is on stderr.
-- Verified by `tests/e2e/json.test.ts`.
+- Verified by `src/__tests__/json.test.ts`.
 
 ### AC-CLI-FLAGS — the CLI is drivable without a prompt
 
 - Given `--package`, `--agent` and `--scope`, when the CLI runs on a non-TTY, then it completes without asking anything.
 - Given `--agent` is missing on a non-TTY, then the run exits 2.
 - Given an unknown `--agent` or `--asset` value, then the run exits 2.
-- Verified by `tests/e2e/cli.test.ts`.
+- Verified by `src/__tests__/cli.test.ts`.
 
 ### AC-CLI-ROUTING — each agent receives its own plan
 
 - Given `--agent=claude,codex`, when the CLI runs, then the transcript carries one section per agent.
 - Given `--agent=codex` at `project` scope, then rule entries name the `AGENTS.md` they merge into and skill entries name `.agents/skills`.
 - Given `--agent=codex --asset=skills`, then no `AGENTS.md` entry appears at all.
-- Verified by `tests/e2e/cli.test.ts`.
+- Verified by `src/__tests__/cli.test.ts`.
 
 ## History
 

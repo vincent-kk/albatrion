@@ -34,14 +34,14 @@
 - 여러 조상이 anchor 를 가질 때, `project` scope 를 해석하면 가장 깊은 (가장 가까운) 조상이 루트가 된다.
 - 중간 레벨이 anchor 를 갖지 않아도 탐색은 멈추지 않고 계속 올라간다.
 - anchor 가 디렉터리인 경우에도 인식된다.
-- Verified by `tests/core/scope.test.ts`.
+- Verified by `__tests__/scope.test.ts`.
 
 ### AC-SCOPE-RESOLVE — 해석 결과와 autoLocated
 
 - `cwd` 위의 조상이 선택되면 `autoLocated` 는 `true` 이고 `projectRoot` 는 그 조상이다.
 - anchor 를 가진 조상이 하나도 없으면 `projectRoot` 는 `cwd` 이고 `autoLocated` 는 `false` 다.
 - `user` scope 는 홈 디렉터리를 답하며 `autoLocated` 는 결코 `true` 가 되지 않는다.
-- Verified by `tests/core/scope.test.ts`.
+- Verified by `__tests__/scope.test.ts`.
 
 ## Last Updated
 

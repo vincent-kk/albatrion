@@ -71,7 +71,7 @@
 - 점으로 시작하는 항목, `package.json` 이 없거나 깨진 항목, `name` 이 문자열이 아닌 항목은 건너뛴다.
 - 중복은 nearest-wins 로 제거되고 발견 순서(가까운 조상 우선)가 유지된다.
 - 일치가 0건이면 2로 종료한다.
-- Verified by `tests/commands/resolveScopeAlias.spec.ts` (`filid:contract AC-RUNCLI-SCOPE-ALIAS`).
+- Verified by `__tests__/resolveScopeAlias.spec.ts` (`filid:contract AC-RUNCLI-SCOPE-ALIAS`).
 
 ### AC-RUNCLI-DISPATCH — 렌더러 분기와 무프롬프트 구동
 
@@ -80,14 +80,14 @@
 - 알 수 없는 `--agent` / `--asset` 값은 2로 종료한다.
 - `--agent=claude,codex` 는 agent 당 하나씩의 구간을 전사(transcript)에 낸다.
 - `--asset=skills` 는 `AGENTS.md` 항목을 계획에서 통째로 없앤다.
-- Verified by `tests/e2e/cli.test.ts`.
+- Verified by `src/__tests__/cli.test.ts`.
 
 ### AC-RUNCLI-JSON-STREAM — `--json` 은 stdout 을 독점한다
 
 - `--json` 실행의 stdout 전체가 하나의 JSON 객체로 파싱된다.
 - 플래그 오류는 느슨한 텍스트가 아니라 `exitCode: 2` 인 문서로 보고된다.
 - 렌더러에 닿기 전에 실패하면 stdout 은 비고 진단은 stderr 로만 나간다.
-- Verified by `tests/e2e/json.test.ts`.
+- Verified by `src/__tests__/json.test.ts`.
 
 ## History
 

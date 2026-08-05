@@ -12,6 +12,7 @@ Agent asset injection의 적용(apply)과 집계(summarize) 프리미티브. 계
 - `utils/applyAction.ts` — `file` 목적지 한 건의 파일시스템 변경
 - `utils/applyBlockActions.ts` — 공유 문서 하나를 한 번에 read-modify-write
 - `utils/summarize.ts` — `InjectPlan` → `InjectReport` 집계
+- `__tests__/` — 이 fractal 의 검증 파일
 
 ## Conventions
 

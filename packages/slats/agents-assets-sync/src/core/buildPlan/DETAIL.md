@@ -37,27 +37,27 @@
 - 설치본이 없는 항목은 `copy`, 같은 항목은 `skip-uptodate`, 다른 항목은 `warn-diverged` 가 된다.
 - 매니페스트에 없는데 스캔 루트 아래 남아 있는 파일은 orphan 으로 나온다.
 - 존재하지 않는 orphan 루트를 스캔해도 실패하지 않는다.
-- Verified by `tests/core/buildPlan.test.ts`.
+- Verified by `__tests__/buildPlan.test.ts`.
 
 ### AC-PLAN-BLOCK — 블록 목적지의 판정
 
 - 문서가 아직 없을 때, 그리고 문서는 있으나 이 블록이 없을 때 모두 `copy` 다.
 - 본문이 매니페스트와 여전히 맞으면 `skip-uptodate` 다.
 - 손으로 수정된 블록은 `warn-diverged` 가 되고 force 를 요구한다.
-- Verified by `tests/core/buildPlan.test.ts`.
+- Verified by `__tests__/buildPlan.test.ts`.
 
 ### AC-PLAN-ORPHAN — orphan 은 소유한 것만 대상으로 한다
 
 - 이 패키지가 더 이상 배포하지 않는 블록은 `warn-orphan` 으로 경고된다.
 - 같은 문서에 있는 다른 패키지의 블록은 건드리지 않는다.
 - `--force` 아래에서 낡은 블록은 `delete` 로 바뀐다.
-- Verified by `tests/core/buildPlan.test.ts`.
+- Verified by `__tests__/buildPlan.test.ts`.
 
 ### AC-PLAN-ABSENCE — 부재가 필터의 기제다
 
 - 목적지가 없는 경로는 계획에서 생략된다.
 - 지원하지 않는 kind 는 force 를 요구하지 않고 보고된다.
-- Verified by `tests/core/buildPlan.test.ts`.
+- Verified by `__tests__/buildPlan.test.ts`.
 
 ## Last Updated
 

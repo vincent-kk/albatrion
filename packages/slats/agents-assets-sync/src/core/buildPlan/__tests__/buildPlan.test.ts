@@ -7,13 +7,13 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import type {
   Destination,
   OrphanScan,
-} from '../../src/core/agentTarget/index.js';
-import { buildPlan } from '../../src/core/buildPlan/index.js';
-import { hashContent } from '../../src/core/hash/index.js';
+} from '../../agentTarget/index.js';
+import { buildPlan } from '../index.js';
+import { hashContent } from '../../hash/index.js';
 import {
   formatBlockId,
   upsertBlock,
-} from '../../src/core/markerBlock/index.js';
+} from '../../markerBlock/index.js';
 
 const PKG = '@canard/schema-form';
 const RULE = 'rules/form-rule.md';

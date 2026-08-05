@@ -11,6 +11,7 @@ Decide where each agent keeps injected assets: one `(agent, scope)` pair becomes
 - `type.ts` — `AgentType`, `AssetKind`, `AgentTarget`, `Destination`, `OrphanScan`
 - `utils/splitAssetKind.ts` — manifest path → `{ kind, rest }`
 - `utils/resolveDestinations.ts` — paths → destinations + orphan scans
+- `__tests__/` — this fractal's verification files
 
 ## Conventions
 

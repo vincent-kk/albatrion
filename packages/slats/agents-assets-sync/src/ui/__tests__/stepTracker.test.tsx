@@ -1,9 +1,8 @@
 import { render } from 'ink-testing-library';
-import React from 'react';
 import { describe, expect, it } from 'vitest';
 
-import { StepTracker } from '../../src/ui/components/StepTracker.js';
-import type { Phase } from '../../src/ui/types/index.js';
+import { StepTracker } from '../components/StepTracker.js';
+import type { Phase } from '../types/index.js';
 
 const SPINNER_FRAMES = /[⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏]/u;
 const BULLET_DONE = '●';

@@ -4,16 +4,16 @@ import { join } from 'node:path';
 
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
-import type { Action } from '../../src/core/buildPlan/index.js';
+import type { Action } from '../../buildPlan/index.js';
 import {
   applyAction,
   applyBlockActions,
   partitionActions,
-} from '../../src/core/injectDocs/index.js';
+} from '../index.js';
 import {
   formatBlockId,
   upsertBlock,
-} from '../../src/core/markerBlock/index.js';
+} from '../../markerBlock/index.js';
 
 const PKG = '@canard/schema-form';
 const RULE = 'rules/form-rule.md';

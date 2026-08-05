@@ -11,6 +11,7 @@ Shared CLI engine that lets any npm package ship one set of agent docs (skills, 
 - `core/` — `hash`, `hashManifest`, `scope`, `agentTarget`, `markerBlock`, `buildPlan`, `injectDocs` primitives
 - `ui/` — Ink React UI for the TTY path (internal, dynamic-imported)
 - `utils/` — logger, asyncPool, types, version (organ)
+- `__tests__/` — end-to-end runs of the built bin, verifying this document's groups
 
 ## Conventions
 

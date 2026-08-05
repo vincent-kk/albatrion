@@ -33,7 +33,7 @@
 - 비TTY 이거나 `--no-interactive` 이면 plain 렌더러가 선택된다.
 - 그 외 TTY 실행에서만 `ui/` 가 동적 import 된다.
 - 비대화형 경로에서 `--scope` 나 `--agent` 가 없으면 묻지 않고 2로 종료한다.
-- Verified by `tests/e2e/cli.test.ts`, `tests/e2e/json.test.ts`.
+- Verified by `src/__tests__/cli.test.ts`, `src/__tests__/json.test.ts`.
 
 ## History
 

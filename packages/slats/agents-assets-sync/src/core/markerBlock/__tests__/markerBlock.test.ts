@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { hashContent } from '../../src/core/hash/index.js';
+import { hashContent } from '../../hash/index.js';
 import {
   MARKER_PREFIX,
   blockBodyMatches,
@@ -9,7 +9,7 @@ import {
   parseBlocks,
   removeBlock,
   upsertBlock,
-} from '../../src/core/markerBlock/index.js';
+} from '../index.js';
 
 const PKG = '@canard/schema-form';
 const REL = 'rules/schema-form-rule.md';

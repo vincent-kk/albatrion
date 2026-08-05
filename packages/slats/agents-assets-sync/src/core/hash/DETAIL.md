@@ -29,13 +29,13 @@
 - 설치본이 없을 때 `hashFile` 이 `null` 을 답하면 계획은 `copy` 가 된다.
 - 설치본 해시가 매니페스트 해시와 같으면 계획은 `skip-uptodate` 가 된다.
 - 두 해시가 다르면 계획은 `warn-diverged` 가 되고 force 를 요구한다.
-- Verified by `tests/core/buildPlan.test.ts`.
+- Verified by `core/buildPlan/__tests__/buildPlan.test.ts`.
 
 ### AC-HASH-BLOCK — 블록 본문도 파일과 같은 잣대로 비교된다
 
 - 매니페스트 해시와 일치하는 블록 본문은 일치로 판정된다.
 - 손으로 수정된 블록 본문은 불일치로 판정된다.
-- Verified by `tests/core/markerBlock.test.ts` (`blockBodyMatches`).
+- Verified by `core/markerBlock/__tests__/markerBlock.test.ts` (`blockBodyMatches`).
 
 ## Last Updated
 

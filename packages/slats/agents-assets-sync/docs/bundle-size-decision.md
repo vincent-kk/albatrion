@@ -29,7 +29,7 @@ The 28.5 KB minified footprint is **7× under the 200 KB threshold**. No fallbac
 
 ## Fallback plan (unused)
 
-If a future `@inquirer/prompts` major release inflates the bundle past 200 KB (e.g., new default imports that resist tree-shaking), replace with `@clack/prompts@^0.7.0` (~30 KB, zero deps) and re-run this measurement. `@clack` lacks a first-party testing kit, so `tests/prompts/*.test.ts` would need to switch to raw stdin mocking.
+If a future `@inquirer/prompts` major release inflates the bundle past 200 KB (e.g., new default imports that resist tree-shaking), replace with `@clack/prompts@^0.7.0` (~30 KB, zero deps) and re-run this measurement. `@clack` lacks a first-party testing kit, so the prompt `__tests__` would need to switch to raw stdin mocking.
 
 ## Artifacts
 

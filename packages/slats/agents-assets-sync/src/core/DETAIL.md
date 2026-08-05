@@ -60,7 +60,7 @@
 
 - Given a directory owning any single anchor, when `project` scope is resolved from a descendant, then that directory is the project root and `autoLocated` is `true`.
 - Given no ancestor owns an anchor, when `project` scope is resolved, then the starting directory is the root and `autoLocated` is `false`.
-- Verified by `tests/core/scope.test.ts`.
+- Verified by `core/scope/__tests__/scope.test.ts`.
 
 ### AC-DEST — each agent's asset locations
 
@@ -69,20 +69,20 @@
 - Given `user` scope, then codex resolves to `~/.codex` and agents to `~/.agents`.
 - Given a kind filter, when destinations are resolved, then paths of every other kind are absent and no orphan scan covers them.
 - Given a skill namespace starting with `.`, when destinations are resolved, then the call throws.
-- Verified by `tests/core/agentTarget.test.ts`.
+- Verified by `core/agentTarget/__tests__/agentTarget.test.ts`.
 
 ### AC-BLOCK — a shared AGENTS.md keeps its other owners
 
 - Given a document holding a foreign block and free prose, when this tool upserts and later removes its own block, then the document returns to its original bytes.
 - Given an unchanged block, when the plan is rebuilt, then the verdict is `skip-uptodate` and the document is not rewritten.
 - Given a hand-edited block, when the plan is rebuilt, then the verdict is `warn-diverged` and `requiresForce` is set.
-- Verified by `tests/core/markerBlock.test.ts`, `tests/core/buildPlan.test.ts`, `tests/core/applyActions.test.ts`.
+- Verified by `core/markerBlock/__tests__/markerBlock.test.ts`, `core/buildPlan/__tests__/buildPlan.test.ts`, `core/injectDocs/__tests__/applyActions.test.ts`.
 
 ### AC-FORCE — force overwrites what it announces
 
 - Given a diverged entry and no `--force`, when actions are partitioned, then nothing is executable.
 - Given the same entry with `--force`, when actions are partitioned and applied, then the destination carries the source content again.
-- Verified by `tests/core/applyActions.test.ts`.
+- Verified by `core/injectDocs/__tests__/applyActions.test.ts`.
 
 ## History
 

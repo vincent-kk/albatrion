@@ -9,6 +9,7 @@ Read and write this tool's own comment-delimited blocks inside an `AGENTS.md` th
 - `index.ts` — barrel export
 - `markerBlock.ts` — `formatBlockId`, `parseBlocks`, `findBlockBody`, `upsertBlock`, `removeBlock`, `blockBodyMatches` + `ParsedBlock`
 - `utils/markerLine.ts` — `MARKER_PREFIX`, marker line builders, and the block-scanning pattern factory
+- `__tests__/` — this fractal's verification files
 
 ## Conventions
 

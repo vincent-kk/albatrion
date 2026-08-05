@@ -55,20 +55,20 @@ entry point 표면 밖의 내부 단위다. 바꿔도 공개 계약 변경이 �
 
 - `Banner` 는 scope chip 을 단 둥근 단색 프레임으로 그려지고, scope 가 없으면 chip 없이 그려진다.
 - `Summary` 는 2단 배치의 이중선 상자로 그려지며, dry-run 은 제목에 표시된다.
-- Verified by `tests/ui/boxSnapshot.test.tsx`.
+- Verified by `__tests__/boxSnapshot.test.tsx`.
 
 ### AC-PHASE-SELECT — 선택 국면의 전이
 
 - `agent-needed` 는 `booting` 을 `agent-select` 로 옮긴다.
 - `agent-select` 는 고른 agents 를 들고 `scope-select` 로 넘어간다.
-- Verified by `tests/ui/phaseReducer.test.ts`.
+- Verified by `__tests__/phaseReducer.test.ts`.
 
 ### AC-PHASE-PLANNING — 계획 진행은 쌍마다 독립이다
 
 - `resolving` 에서 `planning` 으로 갈 때 `(agent, package)` 쌍마다 한 단계가 만들어진다.
 - 한 agent 의 단계를 갱신해도 다른 agent 의 단계는 변하지 않는다.
 - `plans-ready` 는 `diff-review` 로 넘어간다.
-- Verified by `tests/ui/phaseReducer.test.ts`.
+- Verified by `__tests__/phaseReducer.test.ts`.
 
 ### AC-PHASE-TERMINAL — 종료 국면과 코드
 
@@ -76,18 +76,18 @@ entry point 표면 밖의 내부 단위다. 바꿔도 공개 계약 변경이 �
 - `apply-progress` 는 `done` 을 증가시킨다.
 - `done` 이 종료 코드 0으로 오면 `summary` 에 기록된다.
 - `fail` 은 현재 국면과 무관하게 `error` 로 옮긴다.
-- Verified by `tests/ui/phaseReducer.test.ts`.
+- Verified by `__tests__/phaseReducer.test.ts`.
 
 ### AC-PHASE-PURE — 알 수 없는 이벤트는 아무것도 바꾸지 않는다
 
 - reducer 가 처리하지 않는 이벤트는 같은 국면 객체를 돌려준다.
-- Verified by `tests/ui/phaseReducer.test.ts`.
+- Verified by `__tests__/phaseReducer.test.ts`.
 
 ### AC-UI-STEP — 단계 표시는 종료 국면에서 멈춘다
 
 - `summary` 와 `error` 국면에서 마지막 `done` 단계는 스피너가 아니라 채워진 점으로 그려진다.
 - `applying` 국면에서 `apply` 단계는 여전히 스피너로 그려진다.
-- Verified by `tests/ui/stepTracker.test.tsx`.
+- Verified by `__tests__/stepTracker.test.tsx`.
 
 ## History
 

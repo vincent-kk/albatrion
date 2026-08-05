@@ -1,14 +1,14 @@
 import { describe, expect, it } from 'vitest';
 
-import { resolveAgentTarget } from '../../src/core/index.js';
-import type { ConsumerPackage } from '../../src/types/index.js';
-import { phaseReducer } from '../../src/ui/reducer/phaseReducer.js';
+import { resolveAgentTarget } from '../../core/index.js';
+import type { ConsumerPackage } from '../../types/index.js';
+import { phaseReducer } from '../reducer/phaseReducer.js';
 import type {
   InjectEvent,
   Phase,
   TargetPlan,
-} from '../../src/ui/types/index.js';
-import { planStepKey } from '../../src/ui/types/target.js';
+} from '../types/index.js';
+import { planStepKey } from '../types/target.js';
 
 const TARGET: ConsumerPackage = {
   name: '@canard/schema-form',

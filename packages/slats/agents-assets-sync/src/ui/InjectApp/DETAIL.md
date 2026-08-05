@@ -49,7 +49,7 @@ entry point 표면 밖의 내부 단위다. 바꿔도 공개 계약 변경이 �
 
 - `booting` 과 `resolving` 은 같은 분기로 그려진다.
 - `error` 국면에서는 본문이 `<ErrorPanel/>` 로 대체되고, `<Banner/>`·`<StepTracker/>`·`<Footer/>` 는 모든 국면에서 그려진다.
-- 직접 검증하는 파일이 없다. `tests/ui/stepTracker.test.tsx` 와 `tests/ui/boxSnapshot.test.tsx` 가 구성 요소를 개별로 덮을 뿐이며, 이 그룹은 아직 오라클을 갖지 않는다.
+- 직접 검증하는 파일이 없다. `__tests__/stepTracker.test.tsx` 와 `__tests__/boxSnapshot.test.tsx` 가 구성 요소를 개별로 덮을 뿐이며, 이 그룹은 아직 오라클을 갖지 않는다.
 
 ### AC-APP-EXIT — 종료 코드는 컴포넌트 안에서 표면화된다
 

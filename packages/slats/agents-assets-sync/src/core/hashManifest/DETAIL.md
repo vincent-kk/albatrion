@@ -37,13 +37,13 @@
 - `schemaVersion` 이 1이면 파싱된 매니페스트가 반환된다.
 - `schemaVersion` 이 1이 아니면 호출이 throw 하고, 그 메시지가 실행의 진단으로 표면화된다.
 - `dist/agents-hashes.json` 이 없는 패키지는 실행이 그 사실을 보고하고 건너뛴다.
-- Verified by `tests/e2e/json.test.ts`, `tests/e2e/cli.test.ts`.
+- Verified by `src/__tests__/json.test.ts`, `src/__tests__/cli.test.ts`.
 
 ### AC-MANIFEST-NAMESPACE — orphan 탐색은 관리 중인 네임스페이스로 제한된다
 
 - `skills/<name>/...` 경로들은 중복 없는 `skills/<name>/` 접두사 집합이 된다.
 - `skills/` 로 시작하지 않는 경로는 접두사를 만들지 않으므로 그 위치는 orphan 스캔 대상이 되지 않는다.
-- Verified by `tests/core/agentTarget.test.ts` (`resolveDestinations` 의 `namespacePrefixes` 소비 경로).
+- Verified by `core/agentTarget/__tests__/agentTarget.test.ts` (`resolveDestinations` 의 `namespacePrefixes` 소비 경로).
 
 ## Last Updated
 

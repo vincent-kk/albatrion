@@ -8,7 +8,7 @@ import {
   resolveAgentTarget,
   resolveDestinations,
   splitAssetKind,
-} from '../../src/core/agentTarget/index.js';
+} from '../index.js';
 
 const PKG = '@canard/schema-form';
 const ALL_KINDS: ReadonlySet<AssetKind> = new Set([

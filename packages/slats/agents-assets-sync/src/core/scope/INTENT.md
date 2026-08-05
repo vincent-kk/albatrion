@@ -9,6 +9,7 @@ Resolve a `user | project` scope token into one absolute project root. `user` is
 - `index.ts` — barrel export
 - `scope.ts` — `resolveProjectRoot`, `findNearestAnchorAncestor`, `isValidScope` + `Scope`, `ProjectRootResolution`
 - `utils/hasAnchor.ts` — anchor probe + the `PROJECT_ANCHORS` list
+- `__tests__/` — this fractal's verification files
 
 ## Conventions
 

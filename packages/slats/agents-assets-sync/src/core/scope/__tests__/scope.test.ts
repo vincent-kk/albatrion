@@ -9,7 +9,7 @@ import {
   findNearestAnchorAncestor,
   isValidScope,
   resolveProjectRoot,
-} from '../../src/core/scope/index.js';
+} from '../index.js';
 
 describe('core/scope — shared project anchor', () => {
   let tmp: string;

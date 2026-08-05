@@ -35,7 +35,7 @@
 - 파일 작업과 블록 작업은 갈라지고, 블록은 도착 문서별로 묶인다.
 - 아무것도 바꾸지 않는 판정은 어느 쪽에도 들어가지 않는다.
 - `warn-diverged` 는 force 가 주어졌을 때에만 실행 가능해진다.
-- Verified by `tests/core/applyActions.test.ts`.
+- Verified by `__tests__/applyActions.test.ts`.
 
 ### AC-APPLY-BLOCK — 공유 문서는 한 번에 통째로 쓰인다
 
@@ -45,13 +45,13 @@
 - 한 문서에 대한 두 블록은 한 번의 통과로 함께 쓰인다.
 - force 아래에서 diverged 블록은 소스 본문으로 덮어써진다.
 - 삭제는 지명된 블록만 지우고 외부 블록은 그대로 둔다. 삭제가 문서를 비우면 문서 내용은 빈 문자열이 된다.
-- Verified by `tests/core/applyActions.test.ts`.
+- Verified by `__tests__/applyActions.test.ts`.
 
 ### AC-APPLY-FILE — 파일 적용은 자기 몫만 한다
 
 - 복사는 없는 상위 디렉터리를 만들어 가며 수행된다.
 - 블록 목적지가 들어오면 무시된다 — 그 일은 `applyBlockActions` 의 몫이다.
-- Verified by `tests/core/applyActions.test.ts`.
+- Verified by `__tests__/applyActions.test.ts`.
 
 ## Last Updated
 

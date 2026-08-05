@@ -43,7 +43,7 @@
 - 같은 내용으로 두 번째 upsert 를 해도 문서는 달라지지 않는다.
 - 기존 블록에 대한 upsert 는 덧붙이지 않고 제자리에서 교체한다.
 - 개행으로 끝나지 않는 본문도 왕복 후 본래 내용으로 되읽힌다.
-- Verified by `tests/core/markerBlock.test.ts`.
+- Verified by `__tests__/markerBlock.test.ts`.
 
 ### AC-MB-FOREIGN — 남의 내용은 건드리지 않는다
 
@@ -51,13 +51,13 @@
 - `parseBlocks` 는 이 도구의 블록만 읽고, packageName 과 relPath 로 분해한다.
 - 한 문서 안의 두 블록은 서로 독립적으로 유지된다.
 - 해당 블록이 없는 문서에 `removeBlock` 을 걸면 문서는 변하지 않는다.
-- Verified by `tests/core/markerBlock.test.ts`.
+- Verified by `__tests__/markerBlock.test.ts`.
 
 ### AC-MB-VERDICT — 블록 판정은 파일 판정과 같다
 
 - 매니페스트와 일치하는 본문은 `blockBodyMatches` 가 받아들이고, 변경된 본문은 거부한다.
 - `upsertBlock` 이 붙인 후행 개행 하나는 불일치로 취급되지 않는다.
-- Verified by `tests/core/markerBlock.test.ts`.
+- Verified by `__tests__/markerBlock.test.ts`.
 
 ## Last Updated
 

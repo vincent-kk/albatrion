@@ -40,13 +40,13 @@
 - `claude` 는 `user`/`project` 어느 scope 에서든 skills, rules, commands 를 모두 `.claude` 아래 파일로 둔다.
 - `codex` 는 `user` scope 에서 자신의 홈(`~/.codex`) 안에 머문다.
 - `agents` 는 `user` scope 에서 vendor-neutral 홈(`~/.agents`)을 쓴다.
-- Verified by `tests/core/agentTarget.test.ts`.
+- Verified by `__tests__/agentTarget.test.ts`.
 
 ### AC-TARGET-SPLIT — 매니페스트 경로의 kind 분해
 
 - 알려진 kind 로 시작하고 뒤에 경로가 남는 값만 `{ kind, rest }` 로 분해된다.
 - 그 외의 모든 형태는 `null` 이며, 따라서 목적지를 얻지 못한다.
-- Verified by `tests/core/agentTarget.test.ts`.
+- Verified by `__tests__/agentTarget.test.ts`.
 
 ### AC-TARGET-DEST — 목적지 사상과 kind 필터
 
@@ -55,7 +55,7 @@
 - kind 필터가 걸리면 제외된 kind 는 목적지에서도 orphan 스캔에서도 사라진다.
 - rules 가 포함되면 `AGENTS.md` 에 대한 block-file orphan 스캔이 추가되고, 그 스캔은 소유 패키지를 명시한다.
 - 예약된 codex 네임스페이스를 가리는 skill 경로는 호출을 throw 시킨다.
-- Verified by `tests/core/agentTarget.test.ts`.
+- Verified by `__tests__/agentTarget.test.ts`.
 
 ## Last Updated
 

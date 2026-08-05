@@ -130,6 +130,7 @@ bin/
 └── inject-agents-settings.mjs      # 2-line dispatcher (ESM)
 src/
 ├── index.ts                        # ESM public barrel (runCli + core primitives)
+├── __tests__/                      # e2e: spawns the built bin (cli, json)
 ├── commands/
 │   └── runCli/
 │       ├── runCli.ts               # commander root + action
@@ -166,6 +167,10 @@ scripts/
 ├── dev-ui.tsx                      # Ink phase preview / tour
 └── dev-ui-fixtures.ts              # mock plans + targets for dev preview
 ```
+
+Every test lives in a `__tests__/` beside the fractal whose DETAIL declares it —
+there is no root `tests/` directory. `tsconfig.declarations.json` excludes them
+from the build; `tsconfig.json` does not, so they are type-checked.
 
 ## Hash Strategy (Option A)
 
