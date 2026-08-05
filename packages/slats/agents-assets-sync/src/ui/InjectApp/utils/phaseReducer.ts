@@ -1,12 +1,33 @@
 import type { InjectEvent, Phase, PlanStepState } from '../../types/index.js';
+import { planStepKey } from '../../types/target.js';
 
 export function phaseReducer(phase: Phase, event: InjectEvent): Phase {
   switch (event.type) {
-    case 'scope-needed': {
+    case 'agent-needed': {
       if (phase.kind === 'booting' || phase.kind === 'resolving') {
         return {
-          kind: 'scope-select',
+          kind: 'agent-select',
           targets: phase.kind === 'resolving' ? phase.targets : [],
+          pending: event.pending,
+        };
+      }
+      return phase;
+    }
+    case 'agent-selected': {
+      // 'scope-needed' / 'planning-started' drive the transition; this event
+      // is a no-op placeholder for logging and tests.
+      return phase;
+    }
+    case 'scope-needed': {
+      if (
+        phase.kind === 'booting' ||
+        phase.kind === 'resolving' ||
+        phase.kind === 'agent-select'
+      ) {
+        return {
+          kind: 'scope-select',
+          targets: phase.kind === 'booting' ? [] : phase.targets,
+          agents: event.agents,
           pending: event.pending,
         };
       }
@@ -18,15 +39,18 @@ export function phaseReducer(phase: Phase, event: InjectEvent): Phase {
       return phase;
     }
     case 'planning-started': {
-      const progress = new Map<string, PlanStepState>(
-        event.targets.map((t) => [
-          t.name,
-          { packageName: t.name, status: 'pending' },
-        ]),
-      );
+      const progress = new Map<string, PlanStepState>();
+      for (const agent of event.agents)
+        for (const target of event.targets)
+          progress.set(planStepKey(target.name, agent), {
+            packageName: target.name,
+            agent,
+            status: 'pending',
+          });
       return {
         kind: 'planning',
         targets: event.targets,
+        agents: event.agents,
         scope: event.scope,
         progress,
       };
@@ -34,7 +58,7 @@ export function phaseReducer(phase: Phase, event: InjectEvent): Phase {
     case 'plan-step': {
       if (phase.kind !== 'planning') return phase;
       const next = new Map(phase.progress);
-      next.set(event.step.packageName, event.step);
+      next.set(planStepKey(event.step.packageName, event.step.agent), event.step);
       return { ...phase, progress: next };
     }
     case 'plans-ready': {

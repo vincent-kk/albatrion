@@ -1,7 +1,7 @@
 import type React from 'react';
 import { Box, Text } from 'ink';
 
-import type { Action } from '../../core/buildPlan/index.js';
+import type { Action } from '../../core/index.js';
 import { colors } from '../theme/colors.js';
 import { icons } from '../theme/icons.js';
 
@@ -45,12 +45,27 @@ function visualFor(action: Action): Visual {
         color: colors.danger,
         note: 'delete',
       };
+    case 'skip-unsupported':
+      return {
+        icon: icons.minus,
+        color: colors.muted,
+        dim: true,
+        note: 'unsupported by this agent',
+      };
     default: {
-      const _exhaustive: never = action;
+      const _exhaustive: never = action.kind;
       void _exhaustive;
       return { icon: '?', color: colors.muted };
     }
   }
+}
+
+// A block sits inside a document shared with other tools, so name that
+// document — the manifest path alone would read as a file this tool owns.
+function labelFor(action: Action): string {
+  if (action.target.kind !== 'block') return action.relPath;
+  const parts = action.target.fileAbs.split('/');
+  return `${parts[parts.length - 1]} ▸ ${action.relPath}`;
 }
 
 export function ActionRow({ action }: ActionRowProps): React.ReactElement {
@@ -62,7 +77,7 @@ export function ActionRow({ action }: ActionRowProps): React.ReactElement {
         {visual.icon}{' '}
       </Text>
       <Text color={colors.muted} dimColor={visual.dim}>
-        {action.relPath}
+        {labelFor(action)}
       </Text>
       {visual.note ? (
         <Text color={colors.muted} dimColor>

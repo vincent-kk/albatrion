@@ -1,7 +1,7 @@
 import type React from 'react';
 import { Box, Text } from 'ink';
 
-import type { Action, InjectPlan } from '../../core/buildPlan/index.js';
+import type { Action, AgentType, InjectPlan } from '../../core/index.js';
 import { colors } from '../theme/colors.js';
 import { icons } from '../theme/icons.js';
 import type { ConsumerPackage } from '../../commands/runCli/type.js';
@@ -9,6 +9,8 @@ import { PlanTable } from './PlanTable.js';
 
 interface TargetCardProps {
   readonly target: ConsumerPackage;
+  /** Which agent this card's plan belongs to; one package can have several. */
+  readonly agent?: AgentType;
   readonly plan?: InjectPlan;
   readonly expanded?: boolean;
   readonly highlighted?: boolean;
@@ -28,7 +30,11 @@ function countActions(actions: readonly Action[]): Counts {
   let del = 0;
   for (const action of actions) {
     if (action.kind === 'copy') copy += 1;
-    else if (action.kind === 'skip-uptodate') skip += 1;
+    else if (
+      action.kind === 'skip-uptodate' ||
+      action.kind === 'skip-unsupported'
+    )
+      skip += 1;
     else if (action.kind === 'warn-diverged' || action.kind === 'warn-orphan')
       warn += 1;
     else if (action.kind === 'delete') del += 1;
@@ -38,6 +44,7 @@ function countActions(actions: readonly Action[]): Counts {
 
 export function TargetCard({
   target,
+  agent,
   plan,
   expanded = true,
   highlighted = false,
@@ -56,6 +63,12 @@ export function TargetCard({
         <Text color={colors.muted} dimColor>
           @{target.version}
         </Text>
+        {agent ? (
+          <Text color={colors.accent} bold>
+            {'  '}
+            {agent}
+          </Text>
+        ) : null}
         {counts ? (
           <Text color={colors.muted}>
             {'   ['}

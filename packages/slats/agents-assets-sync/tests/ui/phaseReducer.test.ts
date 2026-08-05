@@ -1,67 +1,105 @@
 import { describe, expect, it } from 'vitest';
 
-import { phaseReducer } from '../../src/ui/InjectApp/utils/phaseReducer.js';
 import type { ConsumerPackage } from '../../src/commands/runCli/type.js';
-import type { InjectEvent, Phase, TargetPlan } from '../../src/ui/types/index.js';
+import { resolveAgentTarget } from '../../src/core/index.js';
+import { phaseReducer } from '../../src/ui/InjectApp/utils/phaseReducer.js';
+import type {
+  InjectEvent,
+  Phase,
+  TargetPlan,
+} from '../../src/ui/types/index.js';
+import { planStepKey } from '../../src/ui/types/target.js';
 
 const TARGET: ConsumerPackage = {
   name: '@canard/schema-form',
   version: '0.12.1',
   packageRoot: '/tmp/packages/schema-form',
-  assetRoot: '/tmp/packages/schema-form/docs/claude',
+  assetRoot: '/tmp/packages/schema-form/docs/agents',
   hashesPresent: true,
 };
 
 const BOOT: Phase = { kind: 'booting' };
 
 describe('phaseReducer', () => {
-  it('transitions booting → scope-select when scope-needed fires', () => {
-    const event: InjectEvent = { type: 'scope-needed', pending: () => {} };
-    const next = phaseReducer(BOOT, event);
-    expect(next.kind).toBe('scope-select');
+  it('transitions booting → agent-select when agent-needed fires', () => {
+    const event: InjectEvent = { type: 'agent-needed', pending: () => {} };
+    expect(phaseReducer(BOOT, event).kind).toBe('agent-select');
   });
 
-  it('transitions resolving → planning via planning-started', () => {
-    const resolving: Phase = { kind: 'resolving', targets: [TARGET] };
-    const next = phaseReducer(resolving, {
-      type: 'planning-started',
-      targets: [TARGET],
-      scope: 'user',
+  it('transitions agent-select → scope-select, carrying the agents', () => {
+    const selecting = phaseReducer(
+      { kind: 'resolving', targets: [TARGET] },
+      { type: 'agent-needed', pending: () => {} },
+    );
+    const next = phaseReducer(selecting, {
+      type: 'scope-needed',
+      agents: ['claude', 'codex'],
+      pending: () => {},
     });
-    expect(next.kind).toBe('planning');
-    if (next.kind === 'planning') {
-      expect(next.scope).toBe('user');
-      expect(next.progress.get(TARGET.name)?.status).toBe('pending');
+    expect(next.kind).toBe('scope-select');
+    if (next.kind === 'scope-select') {
+      expect(next.agents).toEqual(['claude', 'codex']);
+      expect(next.targets).toEqual([TARGET]);
     }
   });
 
-  it('updates a single plan-step without dropping others', () => {
+  it('transitions resolving → planning with one step per (agent, package)', () => {
+    const next = phaseReducer(
+      { kind: 'resolving', targets: [TARGET] },
+      {
+        type: 'planning-started',
+        targets: [TARGET],
+        agents: ['claude', 'codex'],
+        scope: 'user',
+      },
+    );
+    expect(next.kind).toBe('planning');
+    if (next.kind === 'planning') {
+      expect(next.scope).toBe('user');
+      expect(next.progress.size).toBe(2);
+      expect(next.progress.get(planStepKey(TARGET.name, 'claude'))?.status).toBe(
+        'pending',
+      );
+      expect(next.progress.get(planStepKey(TARGET.name, 'codex'))?.status).toBe(
+        'pending',
+      );
+    }
+  });
+
+  it('updates one agent\'s step without touching the other\'s', () => {
     const planning = phaseReducer(
       { kind: 'resolving', targets: [TARGET] },
-      { type: 'planning-started', targets: [TARGET], scope: 'user' },
+      {
+        type: 'planning-started',
+        targets: [TARGET],
+        agents: ['claude', 'codex'],
+        scope: 'user',
+      },
     );
     const next = phaseReducer(planning, {
       type: 'plan-step',
-      step: { packageName: TARGET.name, status: 'done' },
+      step: { packageName: TARGET.name, agent: 'codex', status: 'done' },
     });
     if (next.kind !== 'planning') throw new Error('expected planning');
-    expect(next.progress.get(TARGET.name)?.status).toBe('done');
+    expect(next.progress.get(planStepKey(TARGET.name, 'codex'))?.status).toBe(
+      'done',
+    );
+    expect(next.progress.get(planStepKey(TARGET.name, 'claude'))?.status).toBe(
+      'pending',
+    );
   });
 
   it('transitions plans-ready → diff-review', () => {
     const planning: Phase = {
       kind: 'planning',
       targets: [TARGET],
+      agents: ['claude'],
       scope: 'user',
       progress: new Map(),
     };
     const plan: TargetPlan = {
       target: TARGET,
-      scope: {
-        scope: 'user',
-        targetRoot: '/tmp/.claude',
-        description: '~/.claude (user)',
-      },
+      agentTarget: resolveAgentTarget('claude', 'user', '/'),
       plan: { actions: [], requiresForce: false },
     };
     const next = phaseReducer(planning, { type: 'plans-ready', plans: [plan] });

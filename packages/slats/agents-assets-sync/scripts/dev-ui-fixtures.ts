@@ -3,7 +3,8 @@ import { join } from 'node:path';
 
 import type { ConsumerPackage } from '../src/commands/runCli/type.js';
 import type { InjectPlan, Action } from '../src/core/buildPlan/index.js';
-import type { InjectReport, ScopeResolution } from '../src/core/index.js';
+import type { AgentTarget, InjectReport } from '../src/core/index.js';
+import { resolveAgentTarget } from '../src/core/index.js';
 import type {
   ApplyProgress,
   InjectEvent,
@@ -12,9 +13,11 @@ import type {
   TargetPlan,
   Warning,
 } from '../src/ui/types/index.js';
+import { planStepKey } from '../src/ui/types/target.js';
 
 export const PHASES = [
   'resolving',
+  'agent-select',
   'scope-select',
   'planning',
   'diff-review',
@@ -51,11 +54,9 @@ const MOCK_TARGETS: ConsumerPackage[] = [
   },
 ];
 
-const scopeFixture: ScopeResolution = {
-  scope: 'user',
-  targetRoot: join(homedir(), '.claude'),
-  description: '~/.claude (user)',
-};
+const agentTargetFixture: AgentTarget = resolveAgentTarget('claude', 'user');
+const fixtureSkillsRoot =
+  agentTargetFixture.directoryRoots.skills ?? join(homedir(), '.claude', 'skills');
 
 function makeActions(
   baseDstRoot: string,
@@ -74,7 +75,10 @@ function makeActions(
     actions.push({
       kind: 'copy',
       relPath: `skills/expert/doc-${fileIdx}.md`,
-      dstAbs: `${baseDstRoot}/skills/expert/doc-${fileIdx}.md`,
+      target: {
+        kind: 'file',
+        dstAbs: `${baseDstRoot}/expert/doc-${fileIdx}.md`,
+      },
     });
   }
   for (let i = 0; i < (options.skip ?? 0); i += 1) {
@@ -82,7 +86,10 @@ function makeActions(
     actions.push({
       kind: 'skip-uptodate',
       relPath: `skills/expert/existing-${fileIdx}.md`,
-      dstAbs: `${baseDstRoot}/skills/expert/existing-${fileIdx}.md`,
+      target: {
+        kind: 'file',
+        dstAbs: `${baseDstRoot}/expert/existing-${fileIdx}.md`,
+      },
     });
   }
   for (let i = 0; i < (options.diverged ?? 0); i += 1) {
@@ -90,7 +97,10 @@ function makeActions(
     actions.push({
       kind: 'warn-diverged',
       relPath: `skills/expert/edited-${fileIdx}.md`,
-      dstAbs: `${baseDstRoot}/skills/expert/edited-${fileIdx}.md`,
+      target: {
+        kind: 'file',
+        dstAbs: `${baseDstRoot}/expert/edited-${fileIdx}.md`,
+      },
     });
   }
   for (let i = 0; i < (options.orphan ?? 0); i += 1) {
@@ -98,7 +108,10 @@ function makeActions(
     actions.push({
       kind: 'warn-orphan',
       relPath: `skills/expert/ghost-${fileIdx}.md`,
-      dstAbs: `${baseDstRoot}/skills/expert/ghost-${fileIdx}.md`,
+      target: {
+        kind: 'file',
+        dstAbs: `${baseDstRoot}/expert/ghost-${fileIdx}.md`,
+      },
     });
   }
   for (let i = 0; i < (options.del ?? 0); i += 1) {
@@ -106,7 +119,10 @@ function makeActions(
     actions.push({
       kind: 'delete',
       relPath: `skills/expert/stale-${fileIdx}.md`,
-      dstAbs: `${baseDstRoot}/skills/expert/stale-${fileIdx}.md`,
+      target: {
+        kind: 'file',
+        dstAbs: `${baseDstRoot}/expert/stale-${fileIdx}.md`,
+      },
     });
   }
   return actions;
@@ -118,18 +134,18 @@ function makeTargetPlan(
   requiresForce = false,
 ): TargetPlan {
   const plan: InjectPlan = { actions, requiresForce };
-  return { target, scope: scopeFixture, plan };
+  return { target, agentTarget: agentTargetFixture, plan };
 }
 
 const TP_CLEAN = makeTargetPlan(
   MOCK_TARGETS[0],
-  makeActions(scopeFixture.targetRoot, { copy: 4, skip: 2 }),
+  makeActions(fixtureSkillsRoot, { copy: 4, skip: 2 }),
   false,
 );
 
 const TP_WARN = makeTargetPlan(
   MOCK_TARGETS[1],
-  makeActions(scopeFixture.targetRoot, {
+  makeActions(fixtureSkillsRoot, {
     copy: 2,
     skip: 1,
     diverged: 1,
@@ -140,7 +156,7 @@ const TP_WARN = makeTargetPlan(
 
 const TP_THIRD = makeTargetPlan(
   MOCK_TARGETS[2],
-  makeActions(scopeFixture.targetRoot, { copy: 3, skip: 5 }),
+  makeActions(fixtureSkillsRoot, { copy: 3, skip: 5 }),
   false,
 );
 
@@ -149,12 +165,14 @@ const PLAN_SET: readonly TargetPlan[] = [TP_CLEAN, TP_WARN, TP_THIRD];
 const MOCK_WARNINGS: Warning[] = [
   {
     packageName: MOCK_TARGETS[1].name,
+    agent: 'claude',
     kind: 'warn-diverged',
     relPath: 'skills/expert/edited-4.md',
     description: 'local differs from source',
   },
   {
     packageName: MOCK_TARGETS[1].name,
+    agent: 'claude',
     kind: 'warn-orphan',
     relPath: 'skills/expert/ghost-5.md',
     description: 'exists locally but not in manifest',
@@ -192,16 +210,16 @@ const MOCK_APPLY_PROGRESS: ApplyProgress = {
 function makePlanningProgress(): ReadonlyMap<string, PlanStepState> {
   return new Map([
     [
-      MOCK_TARGETS[0].name,
-      { packageName: MOCK_TARGETS[0].name, status: 'done' },
+      planStepKey(MOCK_TARGETS[0].name, 'claude'),
+      { packageName: MOCK_TARGETS[0].name, agent: 'claude', status: 'done' },
     ],
     [
-      MOCK_TARGETS[1].name,
-      { packageName: MOCK_TARGETS[1].name, status: 'running' },
+      planStepKey(MOCK_TARGETS[1].name, 'claude'),
+      { packageName: MOCK_TARGETS[1].name, agent: 'claude', status: 'running' },
     ],
     [
-      MOCK_TARGETS[2].name,
-      { packageName: MOCK_TARGETS[2].name, status: 'pending' },
+      planStepKey(MOCK_TARGETS[2].name, 'claude'),
+      { packageName: MOCK_TARGETS[2].name, agent: 'claude', status: 'pending' },
     ],
   ]);
 }
@@ -210,10 +228,19 @@ export function buildPhase(kind: PhaseKey): Phase {
   switch (kind) {
     case 'resolving':
       return { kind: 'resolving', targets: MOCK_TARGETS };
+    case 'agent-select':
+      return {
+        kind: 'agent-select',
+        targets: MOCK_TARGETS,
+        pending: () => {
+          /* noop */
+        },
+      };
     case 'scope-select':
       return {
         kind: 'scope-select',
         targets: MOCK_TARGETS,
+        agents: ['claude'],
         pending: () => {
           /* noop */
         },
@@ -222,6 +249,7 @@ export function buildPhase(kind: PhaseKey): Phase {
       return {
         kind: 'planning',
         targets: MOCK_TARGETS,
+        agents: ['claude'],
         scope: 'user',
         progress: makePlanningProgress(),
       };

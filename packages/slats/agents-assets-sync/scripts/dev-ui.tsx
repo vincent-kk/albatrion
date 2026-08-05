@@ -7,6 +7,7 @@ import { ConfirmForce } from '../src/ui/components/ConfirmForce.js';
 import { ErrorPanel } from '../src/ui/components/ErrorPanel.js';
 import { Footer } from '../src/ui/components/Footer.js';
 import { ProgressBar } from '../src/ui/components/ProgressBar.js';
+import { AgentPicker } from '../src/ui/components/AgentPicker.js';
 import { ScopePicker } from '../src/ui/components/ScopePicker.js';
 import { Spinner } from '../src/ui/components/Spinner.js';
 import { StepTracker } from '../src/ui/components/StepTracker.js';
@@ -124,6 +125,8 @@ function renderPhaseBody(phase: Phase): React.ReactNode {
     case 'booting':
     case 'resolving':
       return <Spinner label="resolving targets…" />;
+    case 'agent-select':
+      return <AgentPicker onSelect={phase.pending} />;
     case 'scope-select':
       return <ScopePicker onSelect={phase.pending} />;
     case 'planning':

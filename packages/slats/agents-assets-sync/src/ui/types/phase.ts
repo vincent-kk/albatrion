@@ -1,5 +1,5 @@
 import type { ConsumerPackage } from '../../commands/runCli/type.js';
-import type { InjectReport, Scope } from '../../core/index.js';
+import type { AgentType, InjectReport, Scope } from '../../core/index.js';
 import type {
   ApplyProgress,
   PlanStepState,
@@ -14,13 +14,20 @@ export type Phase =
       readonly targets: readonly ConsumerPackage[];
     }
   | {
+      readonly kind: 'agent-select';
+      readonly targets: readonly ConsumerPackage[];
+      readonly pending: (agents: readonly AgentType[]) => void;
+    }
+  | {
       readonly kind: 'scope-select';
       readonly targets: readonly ConsumerPackage[];
+      readonly agents: readonly AgentType[];
       readonly pending: (scope: Scope) => void;
     }
   | {
       readonly kind: 'planning';
       readonly targets: readonly ConsumerPackage[];
+      readonly agents: readonly AgentType[];
       readonly scope: Scope;
       readonly progress: ReadonlyMap<string, PlanStepState>;
     }

@@ -14,6 +14,11 @@ const FALLBACK_PROGRAM_NAME = 'inject-agents-settings';
 /**
  * CLI entry for `@slats/agents-assets-sync`.
  *
+ * Every step is reachable by flag, so an agent can drive the whole run
+ * without a prompt: `--agent` picks the agents, `--asset` narrows the kinds,
+ * `--yes` approves confirmations and `--no-interactive` forbids prompting
+ * outright.
+ *
  * The `inject-agents-settings` dispatcher parses `--package <name...>`
  * from argv and classifies each value:
  * - `@<scope>` — enumerate every installed `node_modules/@<scope>/*`
@@ -40,15 +45,32 @@ export async function runCli(
     .option(
       '--package <name...>',
       'Target(s). "@<scope>" = whole npm scope; "@<scope>/<name>" or "<name>" = one package. Repeat the flag or comma-separate values.',
-      collectPackageValues,
+      collectValues,
+      [] as string[],
+    )
+    .option(
+      '--agent <type...>',
+      'Target agent(s): claude | codex. Repeat the flag or comma-separate values. Omitted on a TTY, the CLI asks.',
+      collectValues,
       [] as string[],
     )
     .option(
       '--scope <scope>',
-      'Target scope: user (~/.claude) | project (nearest ancestor .claude or <cwd>/.claude)',
+      'Target scope: user (home) | project (nearest ancestor owning .claude, AGENTS.md, .codex or .git)',
+    )
+    .option(
+      '--asset <kind...>',
+      'Asset kind(s) to inject: skills | rules | commands. Default: all.',
+      collectValues,
+      [] as string[],
     )
     .option('--dry-run', 'Preview without writing', false)
     .option('--force', 'Overwrite user modifications', false)
+    .option('--yes', 'Auto-approve every confirmation prompt', false)
+    .option(
+      '--no-interactive',
+      'Never prompt; a missing required flag exits 2 even on a TTY',
+    )
     .option('--root <path>', 'Override scope resolution cwd (default: cwd)')
     .option(
       '--json',
@@ -89,7 +111,9 @@ export async function runCli(
   }
 }
 
-function collectPackageValues(
+// Shared collector for every variadic flag: appends and comma-splits, so
+// `--flag a,b --flag c` and `--flag a --flag b --flag c` agree.
+function collectValues(
   value: string,
   previous: readonly string[] = [],
 ): string[] {

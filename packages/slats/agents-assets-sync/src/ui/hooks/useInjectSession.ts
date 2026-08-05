@@ -1,15 +1,17 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import type {
   ConsumerPackage,
   DefaultFlags,
 } from '../../commands/runCli/type.js';
-import type { Scope } from '../../core/index.js';
+import type { AgentType, AssetKind, Scope } from '../../core/index.js';
 import type { InjectEvent, TargetPlan, Warning } from '../types/index.js';
 import { applyAllPlans } from './useApplyStep.js';
 import { requestForceConfirm } from './useForceConfirmStep.js';
 import { usePlanStep } from './usePlanStep.js';
 import { useResolveStep } from './useResolveStep.js';
+
+const ALL_KINDS: readonly AssetKind[] = ['skills', 'rules', 'commands'];
 
 interface UseInjectSessionOptions {
   readonly targets: readonly ConsumerPackage[];
@@ -24,16 +26,31 @@ export function useInjectSession({
   originCwd,
   dispatch,
 }: UseInjectSessionOptions): void {
-  const [scope, setScope] = useState<Scope | null>(null);
+  const [resolved, setResolved] = useState<{
+    agents: readonly AgentType[];
+    scope: Scope;
+  } | null>(null);
   const [plansReady, setPlansReady] = useState<{
     plans: readonly TargetPlan[];
     warnings: readonly Warning[];
   } | null>(null);
   const pipelineStarted = useRef(false);
 
-  const onScopeResolved = useCallback((resolved: Scope) => {
-    setScope(resolved);
-  }, []);
+  // The CLI layer already rejected unknown values, so anything unrecognised
+  // here can only be an empty flag — which means every kind.
+  const assetKinds = useMemo(() => {
+    const requested = (flags.asset ?? []).filter((value): value is AssetKind =>
+      ALL_KINDS.includes(value as AssetKind),
+    );
+    return new Set<AssetKind>(requested.length > 0 ? requested : ALL_KINDS);
+  }, [flags.asset]);
+
+  const onResolved = useCallback(
+    (agents: readonly AgentType[], scope: Scope) => {
+      setResolved({ agents, scope });
+    },
+    [],
+  );
 
   const onPlansReady = useCallback(
     (plans: readonly TargetPlan[], warnings: readonly Warning[]) => {
@@ -42,11 +59,13 @@ export function useInjectSession({
     [],
   );
 
-  useResolveStep({ targets, flags, dispatch, onScopeResolved });
+  useResolveStep({ targets, flags, dispatch, onResolved });
   usePlanStep({
     targets,
-    scope,
+    agents: resolved?.agents ?? null,
+    scope: resolved?.scope ?? null,
     originCwd,
+    assetKinds,
     force: Boolean(flags.force),
     dispatch,
     onPlansReady,
@@ -71,12 +90,14 @@ export function useInjectSession({
         plans,
         warnings,
         force: Boolean(flags.force),
+        autoApprove: Boolean(flags.yes),
         dispatch,
       });
       if (!ok) return;
       await applyAllPlans({
         plans,
         dryRun: Boolean(flags.dryRun),
+        force: Boolean(flags.force),
         dispatch,
       });
     })().catch((error) => {
@@ -85,5 +106,5 @@ export function useInjectSession({
         error: error instanceof Error ? error : new Error(String(error)),
       });
     });
-  }, [plansReady, flags.force, flags.dryRun, dispatch]);
+  }, [plansReady, flags.force, flags.dryRun, flags.yes, dispatch]);
 }

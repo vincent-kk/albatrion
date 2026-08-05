@@ -3,6 +3,7 @@ import { useCallback } from 'react';
 
 import { VERSION } from '@/agents-assets-sync/utils/version.js';
 
+import { AgentPicker } from '../components/AgentPicker.js';
 import { Banner } from '../components/Banner.js';
 import { ConfirmForce } from '../components/ConfirmForce.js';
 import { ErrorPanel } from '../components/ErrorPanel.js';
@@ -72,6 +73,8 @@ function renderPhaseBody(phase: Phase): React.ReactNode {
     case 'booting':
     case 'resolving':
       return <Spinner label="resolving targets…" />;
+    case 'agent-select':
+      return <AgentPicker onSelect={phase.pending} />;
     case 'scope-select':
       return <ScopePicker onSelect={phase.pending} />;
     case 'planning':

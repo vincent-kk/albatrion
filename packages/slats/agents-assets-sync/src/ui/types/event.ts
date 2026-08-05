@@ -1,16 +1,26 @@
 import type { ConsumerPackage } from '../../commands/runCli/type.js';
-import type { InjectReport, Scope } from '../../core/index.js';
+import type { AgentType, InjectReport, Scope } from '../../core/index.js';
 import type { PlanStepState, TargetPlan, Warning } from './target.js';
 
 export type InjectEvent =
   | {
+      readonly type: 'agent-needed';
+      readonly pending: (agents: readonly AgentType[]) => void;
+    }
+  | {
+      readonly type: 'agent-selected';
+      readonly agents: readonly AgentType[];
+    }
+  | {
       readonly type: 'scope-needed';
+      readonly agents: readonly AgentType[];
       readonly pending: (scope: Scope) => void;
     }
   | { readonly type: 'scope-selected'; readonly scope: Scope }
   | {
       readonly type: 'planning-started';
       readonly targets: readonly ConsumerPackage[];
+      readonly agents: readonly AgentType[];
       readonly scope: Scope;
     }
   | { readonly type: 'plan-step'; readonly step: PlanStepState }

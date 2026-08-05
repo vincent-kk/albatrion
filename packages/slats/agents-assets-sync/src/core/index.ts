@@ -12,6 +12,8 @@ export {
 } from './hashManifest/index.js';
 export {
   applyAction,
+  applyBlockActions,
+  partitionActions,
   summarize,
   type InjectReport,
 } from './injectDocs/index.js';

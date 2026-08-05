@@ -1,7 +1,7 @@
 import type React from 'react';
 import { Box, Text } from 'ink';
 
-import type { InjectPlan } from '../../core/buildPlan/index.js';
+import type { InjectPlan } from '../../core/index.js';
 import { colors } from '../theme/colors.js';
 import { limits } from '../theme/layout.js';
 import { ActionRow } from './ActionRow.js';
