@@ -61,12 +61,15 @@ interface JsonDocument {
  * @param targets - resolved consumer packages
  * @param flags - parsed CLI flags
  * @param originCwd - directory project-scope resolution starts from
+ * @param notices - messages from before the renderer, such as the reason each
+ *   target was skipped; they explain an empty `units` without failing the run
  * @returns the process exit code
  */
 export async function renderJson(
   targets: readonly ConsumerPackage[],
   flags: DefaultFlags,
   originCwd: string,
+  notices: readonly string[] = [],
 ): Promise<number> {
   const dryRun = Boolean(flags.dryRun);
   const generatedAt = new Date().toISOString();
@@ -75,6 +78,7 @@ export async function renderJson(
   const assets = parseAssetFlag(flags.asset ?? []);
 
   const errors = [
+    ...notices,
     ...('error' in scope ? scope.error : []),
     ...('error' in agents ? agents.error : []),
     ...('error' in assets ? assets.error : []),

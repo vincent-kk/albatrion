@@ -12,7 +12,7 @@
 - `--asset-path` 은 단일 값이며 `--asset` 과 별개다. commander 는 long option 을 완전 일치로 매칭하고 가변 수집은 `-` 로 시작하는 다음 토큰에서 멈추므로, `--asset skills --asset-path agents` 도 서로를 삼키지 않는다.
 - `--asset-path` 의 모양 검증은 파일시스템 IO 이전에 action 에서 한다 — 빈 값, 절대 경로, `~` 로 시작하는 값은 2로 종료한다. 경로가 packageRoot 안에 있는지와 실제로 디렉터리인지는 타깃마다 다르므로 `resolvePackage` 가 판정한다.
 - `--asset-path` 오류는 `--json` 이어도 action 에서 종료한다. `--package` 누락과 같은 계층이라 stdout 은 비고 진단은 stderr 로만 나간다.
-- `--package` 값이 하나도 없으면 2로 종료한다. 해석된 패키지가 0개면 경고만 남기고 0으로 끝난다 — 아무 일도 하지 않은 것은 실패가 아니다.
+- `--package` 값이 하나도 없으면 2로 종료한다. 해석된 패키지가 0개면 경고만 남기고 0으로 끝난다 — 아무 일도 하지 않은 것은 실패가 아니다. 다만 `--json` 은 그 경우에도 렌더러까지 진행해 `units: []` 인 문서를 낸다. 문서가 없으면 소비자가 "성공했지만 대상이 없음" 과 파싱 실패를 구분할 수 없기 때문이다.
 - `renderOrFallback` 은 target 해석 이후 실행당 정확히 한 번 호출되며 렌더러 분기를 소유한다. 분기 순서: `--json` → `renderJson`; 비TTY 이거나 `flags.interactive === false` → `renderPlain`; 나머지 → `ui/` 동적 import. 패키지가 ESM 전용이므로 `await import()` 로 충분하다.
 - `renderOrFallback` 의 `env.isTTY` 는 테스트를 위해 주입 가능하며, 생략 시 `process.stdout.isTTY` 를 쓴다.
 - `--json` 이 켜지면 액션 진입 즉시 `divertLogsToStderr()` 가 호출된다. 이후의 모든 진단은 — 종료 경로의 것까지 — stderr 로 간다. stdout 은 JSON 문서만의 것이다.
@@ -29,6 +29,7 @@
 - 해석된 target 은 렌더링 전에 `packageName` 으로 중복 제거된다.
 - commander 의 program name 은 런타임에 `argv[1]` 의 basename 에서 파생된다. `npx @slats/agents-assets-sync` 와 설치된 `inject-agents-settings` 가 각각 자기 이름으로 도움말과 오류를 낸다.
 - 렌더러가 0이 아닌 코드를 돌려주면 그 코드로 프로세스가 종료된다.
+- soft skip 은 진단이자 값이다. 경고는 사람이 읽는 전사를 위해 남기고, 같은 문자열을 수집해 `--json` 이 stderr 를 긁지 않고도 빈 실행을 설명하게 한다.
 
 ## API Contracts
 
@@ -48,17 +49,20 @@
 - `resolvePackage(name, opts?, originCwd?): Promise<ResolvedMetadata | null>`
   - 2단 해석: cwd 기준 require 를 먼저 (`npx -p` 로 불렸을 때 호스트 프로젝트의 `node_modules` 를 잡기 위해), 실패하면 엔진 기준 require. `originCwd` 생략 시 `process.cwd()`.
   - `opts.skipMissingAsset` — asset 누락을 종료 대신 `null` 로 돌려준다
+  - `opts.skipReasons` — soft skip 사유를 여기에 덧붙인다. 채우는 것이 목적인 인자이며, 경고 출력과 별개로 값으로도 남긴다
   - `opts.assetPathOverride` — `agents.assetPath` 대신 쓸 경로. 있으면 부재 검사를 건너뛰고 대신 봉쇄/존재 검사를 한다
 - `ResolvedMetadata` — `{ packageRoot, packageName, packageVersion, assetPath, assetPathSource }`
   - `assetPathSource: 'package' | 'flag'` — `assetPath` 가 어디서 왔는지. `toConsumerPackages` 가 이것으로 `hashSource` 를 정한다
-- `resolveScopeAlias(scope, rootCwd, assetPathOverride?): Promise<ResolvedMetadata[]>`
-- `resolveTargets(targets, rootCwd, assetPathOverride?): Promise<ResolvedMetadata[]>`
+- `resolveScopeAlias(scope, rootCwd, assetPathOverride?, skipReasons?): Promise<ResolvedMetadata[]>`
+- `resolveTargets(targets, rootCwd, assetPathOverride?): Promise<{ resolved: ResolvedMetadata[]; skipped: string[] }>`
+  - `skipped` 는 soft skip 된 패키지마다의 사유. `--json` 이 `errors` 로 실어 빈 실행을 설명한다
 - `toConsumerPackages(metadata): Promise<ConsumerPackage[]>`
   - `assetPathSource: 'flag'` → `hashSource: 'directory'`, 그 외 `'manifest'`
   - `hashesPresent` 는 `hashSource: 'manifest'` 일 때만 조사한다. `'directory'` 는 매니페스트를 읽지 않으므로 언제나 `false` 이며, 게이트도 이 값을 보지 않는다
-- `renderOrFallback(targets, flags, originCwd, env?): Promise<number>`
+- `renderOrFallback(targets, flags, originCwd, notices?, env?): Promise<number>`
 - `renderPlain(targets, flags, originCwd): Promise<number>`
-- `renderJson(targets, flags, originCwd): Promise<number>`
+- `renderJson(targets, flags, originCwd, notices?): Promise<number>`
+  - `notices` 는 렌더러 이전 단계의 메시지다. 실행을 실패시키지 않으면서 `errors` 에 실린다
 - `resolveScopeFlag` / `resolveAgentFlag` / `resolveAssetFlag` — 실패 시 exit 2
 - `parseScopeFlag` / `parseAgentFlag` / `parseAssetFlag` — 실패를 값으로 반환
 - `resolveAssetPathFlag(value?: string): string | undefined` — 모양 검증만, 실패 시 exit 2. `parse` 짝이 없다 (렌더러가 부르지 않으므로)

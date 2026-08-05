@@ -29,6 +29,12 @@ export interface ResolvePackageOptions {
    * instead.
    */
   assetPathOverride?: string;
+  /**
+   * Collector for skip reasons. Filling it is the point: a skipped package is
+   * only a log line otherwise, and `--json` owes its reader a document that
+   * says why nothing resolved. Appended to alongside the warning, never read.
+   */
+  skipReasons?: string[];
 }
 
 // Dispatcher exception to the src/core purity rule: the bin layer is
@@ -58,10 +64,10 @@ export async function resolvePackage(
 
   if (typeof pkg.name !== 'string' || typeof pkg.version !== 'string') {
     if (options.skipMissingAsset) {
-      logger.warn(
+      return skip(
+        options,
         `"${name}" package.json is missing a string "name" or "version" — skipping.`,
       );
-      return null;
     }
     logger.error(`${pkgJsonPath} must define string "name" and "version".`);
     process.exit(2);
@@ -77,10 +83,10 @@ export async function resolvePackage(
 
   if (assetPath === undefined) {
     if (options.skipMissingAsset) {
-      logger.warn(
+      return skip(
+        options,
         `"${name}" is missing "agents.assetPath" — skipping (the package does not ship agent assets).`,
       );
-      return null;
     }
     logger.error(
       `"${name}" is missing "agents.assetPath" in its package.json — the package does not ship agent assets.`,
@@ -105,8 +111,7 @@ export async function resolvePackage(
         ? `resolves outside ${packageRoot}`
         : `is not a directory inside ${packageRoot}`;
     if (options.skipMissingAsset) {
-      logger.warn(`"${name}": ${label} ${detail} — skipping.`);
-      return null;
+      return skip(options, `"${name}": ${label} ${detail} — skipping.`);
     }
     logger.error(`"${name}": ${label} ${detail}.`);
     process.exit(2);
@@ -119,6 +124,15 @@ export async function resolvePackage(
     assetPath,
     assetPathSource: source,
   };
+}
+
+// A soft skip is both a diagnostic and a value: the warning keeps the plain
+// transcript readable, and the collected reason lets `--json` explain an empty
+// run without its reader scraping stderr.
+function skip(options: ResolvePackageOptions, reason: string): null {
+  logger.warn(reason);
+  options.skipReasons?.push(reason);
+  return null;
 }
 
 /**

@@ -21,14 +21,17 @@ import { resolveScopeAlias } from './resolveScopeAlias.js';
  * @param assetPathOverride - `--asset-path`, applied to every target; the
  *   same strict / soft-skip split then judges the directory instead of the
  *   missing `agents.assetPath` declaration
- * @returns resolved metadata, deduped by `packageName`
+ * @returns the metadata that resolved, deduped by `packageName`, and the
+ *   reason each skipped package gave — a `--json` run reports those rather
+ *   than leaving its reader to scrape stderr
  */
 export async function resolveTargets(
   targets: readonly string[],
   rootCwd: string,
   assetPathOverride?: string,
-): Promise<ResolvedMetadata[]> {
-  if (targets.length === 0) return [];
+): Promise<{ resolved: ResolvedMetadata[]; skipped: string[] }> {
+  const skipped: string[] = [];
+  if (targets.length === 0) return { resolved: [], skipped };
 
   const isSingleTarget = targets.length === 1;
   const seen = new Set<string>();
@@ -47,11 +50,16 @@ export async function resolveTargets(
         classification.scope,
         rootCwd,
         assetPathOverride,
+        skipped,
       );
     } else {
       const meta = await resolvePackage(
         classification.name,
-        { skipMissingAsset: !isSingleTarget, assetPathOverride },
+        {
+          skipMissingAsset: !isSingleTarget,
+          assetPathOverride,
+          skipReasons: skipped,
+        },
         rootCwd,
       );
       candidates = meta ? [meta] : [];
@@ -65,5 +73,5 @@ export async function resolveTargets(
     }
   }
 
-  return results;
+  return { resolved: results, skipped };
 }

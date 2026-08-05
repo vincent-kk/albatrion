@@ -15,6 +15,7 @@ export async function resolveScopeAlias(
   scope: string,
   rootCwd: string,
   assetPathOverride?: string,
+  skipReasons?: string[],
 ): Promise<ResolvedMetadata[]> {
   const expectedPrefix = `@${scope}/`;
   const seen = new Set<string>();
@@ -44,7 +45,7 @@ export async function resolveScopeAlias(
   for (const name of matchedNames) {
     const meta = await resolvePackage(
       name,
-      { skipMissingAsset: true, assetPathOverride },
+      { skipMissingAsset: true, assetPathOverride, skipReasons },
       rootCwd,
     );
     if (meta) resolved.push(meta);

@@ -11,7 +11,7 @@
 - Per-entry SHA-256 comparison: copy when missing, skip when equal, warn and require `--force` when different. A codex rule block is compared the same way, by the body between its markers.
 - `--force` overwrites diverged content. TTY: the Ink `ConfirmForce` dialog lists diverged and orphan entries first, unless `--yes`. Non-interactive: the list goes to stderr and the run proceeds.
 - `--dry-run`: print the plan, no writes.
-- `--json` selects a third renderer that writes exactly one JSON document to stdout and diverts every diagnostic to stderr; `--no-interactive` forces the plain render path instead. The document carries `schemaVersion`, `dryRun`, `exitCode`, `errors`, and one `unit` per `(package, agent)` pair holding that unit's destination, plan actions and report. A flag error becomes `errors` with `exitCode: 2` and empty `units`; a failure upstream of the renderer leaves stdout empty and reports through the exit code alone.
+- `--json` selects a third renderer that writes exactly one JSON document to stdout and diverts every diagnostic to stderr; `--no-interactive` forces the plain render path instead. The document carries `schemaVersion`, `dryRun`, `exitCode`, `errors`, and one `unit` per `(package, agent)` pair holding that unit's destination, plan actions and report. A flag error becomes `errors` with `exitCode: 2` and empty `units`. `errors` also carries notices that did not fail the run — the reason each target was skipped — so `errors` being non-empty does not by itself mean `exitCode` is 2. A failure upstream of the renderer leaves stdout empty and reports through the exit code alone.
 - Missing `--scope` or `--agent` outside an interactive TTY: exit 2.
 - Missing `--package`, unresolvable package, missing `agents.assetPath` with no `--asset-path`, or an invalid `--agent`/`--asset`/`--asset-path` value: exit 2.
 - An asset root that resolves outside its package is refused whichever named it — a declared `agents.assetPath` and `--asset-path` are judged alike, on the resolved location rather than the spelling, so a symlink out of the package is refused too.
@@ -42,6 +42,7 @@
 - Given several agents, then the document holds one `unit` per `(package, agent)` pair, each naming its destination and actions.
 - Given an invalid `--agent`, then the document still parses, `exitCode` is 2 and `errors` names the offending value.
 - Given an unresolvable `--package`, then stdout is empty and the diagnostic is on stderr.
+- Given every target skipped, then a document still arrives with `units: []` and `exitCode: 0`, and `errors` carries each skip reason. Resolving nothing is a run that did nothing, and a reader cannot tell that from a crash without a document.
 - Given `--asset-path`, then the unit carries a real plan and no manifest error — a directory source reaches the document by the same path a manifest source does.
 - Verified by `__tests__/json.test.ts`.
 

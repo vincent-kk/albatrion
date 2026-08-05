@@ -22,6 +22,8 @@ interface RenderEnv {
  * @param targets - resolved consumer packages
  * @param flags - parsed CLI flags
  * @param originCwd - directory project-scope resolution starts from
+ * @param notices - messages raised before the renderer, such as why a target
+ *   was skipped; only the `--json` document has a place to carry them
  * @param env - TTY override, for tests
  * @returns the process exit code
  */
@@ -29,10 +31,11 @@ export async function renderOrFallback(
   targets: readonly ConsumerPackage[],
   flags: DefaultFlags,
   originCwd: string,
+  notices: readonly string[] = [],
   env: RenderEnv = {},
 ): Promise<number> {
   const isTTY = env.isTTY ?? Boolean(process.stdout.isTTY);
-  if (flags.json) return renderJson(targets, flags, originCwd);
+  if (flags.json) return renderJson(targets, flags, originCwd, notices);
   if (!isTTY || flags.interactive === false) {
     return renderPlain(targets, flags, originCwd);
   }

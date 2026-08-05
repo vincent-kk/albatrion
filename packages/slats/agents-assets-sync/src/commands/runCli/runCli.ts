@@ -99,18 +99,26 @@ export async function runCli(
       }
       const assetPath = resolveAssetPathFlag(flags.assetPath);
       const originCwd = flags.root ?? process.cwd();
-      const metadataList = await resolveTargets(targets, originCwd, assetPath);
-      if (metadataList.length === 0) {
+      const { resolved, skipped } = await resolveTargets(
+        targets,
+        originCwd,
+        assetPath,
+      );
+      if (resolved.length === 0) {
         logger.warn(
           `no packages resolved from --package target(s): ${targets.join(', ')}`,
         );
-        return;
+        // Resolving nothing is a run that did nothing, not a failure — but a
+        // `--json` reader cannot tell that from a crash unless it still gets a
+        // document, so only the transcript path stops here.
+        if (!flags.json) return;
       }
-      const consumerPackages = await toConsumerPackages(metadataList);
+      const consumerPackages = await toConsumerPackages(resolved);
       const exitCode = await renderOrFallback(
         consumerPackages,
         flags,
         originCwd,
+        skipped,
       );
       if (exitCode !== 0) process.exit(exitCode);
     });

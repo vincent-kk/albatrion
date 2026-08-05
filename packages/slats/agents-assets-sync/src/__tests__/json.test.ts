@@ -52,6 +52,17 @@ describe.skipIf(!existsSync(DIST_INDEX))('--json output contract', () => {
       '# JSON Skill\n',
       'utf-8',
     );
+    // A scope where nothing survives the `--asset-path` filter, so the run
+    // reaches the renderer with no targets at all.
+    for (const name of ['a', 'b']) {
+      const dir = join(scratchRoot, 'node_modules', '@slats-e2e-empty', name);
+      mkdirSync(dir, { recursive: true });
+      writeFileSync(
+        join(dir, 'package.json'),
+        JSON.stringify({ name: `@slats-e2e-empty/${name}`, version: '1.0.0' }),
+        'utf-8',
+      );
+    }
   });
 
   afterAll(() => {
@@ -144,6 +155,25 @@ describe.skipIf(!existsSync(DIST_INDEX))('--json output contract', () => {
     expect(unit.actions.map((a: { relPath: string }) => a.relPath)).toEqual([
       'skills/json-skill/SKILL.md',
     ]);
+  });
+
+  // "Nothing resolved" is a successful run that did nothing, not a failure —
+  // but a reader must still get a document, or it cannot tell success from a
+  // parse error. The skip reasons ride along so stderr need not be scraped.
+  it('still emits a document when every target is skipped', () => {
+    const result = runJson([
+      '--package',
+      '@slats-e2e-empty',
+      '--agent=claude',
+      '--scope=project',
+      '--asset-path=agents',
+    ]);
+    expect(result.status).toBe(0);
+    const report = JSON.parse(result.stdout);
+    expect(report.exitCode).toBe(0);
+    expect(report.units).toEqual([]);
+    expect(report.errors.join(' ')).toContain('@slats-e2e-empty/a');
+    expect(report.errors.join(' ')).toContain('@slats-e2e-empty/b');
   });
 
   it('reports a flag error as a document, not as loose text', () => {
