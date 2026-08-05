@@ -114,8 +114,7 @@ export const logger = {
     write(pc.bold('Summary:'));
     write(`  ${pc.green('Success:')} ${results.success}`);
     write(`  ${pc.gray('Skipped:')} ${results.skipped}`);
-    if (results.failed > 0)
-      write(`  ${pc.red('Failed:')} ${results.failed}`);
+    if (results.failed > 0) write(`  ${pc.red('Failed:')} ${results.failed}`);
   },
 
   /**
@@ -123,7 +122,9 @@ export const logger = {
    */
   dryRunNotice(): void {
     write('');
-    write(pc.yellow(pc.bold('[DRY RUN] No files will be created or modified.')));
+    write(
+      pc.yellow(pc.bold('[DRY RUN] No files will be created or modified.')),
+    );
     write('');
   },
 
