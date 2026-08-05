@@ -19,7 +19,7 @@
 
 - `needsBuiltManifest(target: { hashSource; hashesPresent }): boolean`
   - 렌더러가 계획 전에 "이 target 은 빌드를 기다려야 하는가" 를 묻는 유일한 자리
-- `resolveHashManifest(source: HashManifestSource, generatedAt: string): Promise<HashManifest>`
+- `resolveHashManifest(source: HashManifestSource, generatedAt?: string): Promise<HashManifest>`
   - `source.hashSource === 'manifest'` → `readHashManifest(source.packageRoot)`
   - `source.hashSource === 'directory'` → `source.assetRoot` 를 훑어 계산
   - `generatedAt` 은 호출자가 소유한다. 계산 경로에서만 기록되고 판정에는 쓰이지 않는다.

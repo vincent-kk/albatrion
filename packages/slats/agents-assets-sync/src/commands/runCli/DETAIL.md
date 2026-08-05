@@ -50,7 +50,7 @@
   - 2단 해석: cwd 기준 require 를 먼저 (`npx -p` 로 불렸을 때 호스트 프로젝트의 `node_modules` 를 잡기 위해), 실패하면 엔진 기준 require. `originCwd` 생략 시 `process.cwd()`.
   - `opts.skipMissingAsset` — asset 누락을 종료 대신 `null` 로 돌려준다
   - `opts.skipReasons` — soft skip 사유를 여기에 덧붙인다. 채우는 것이 목적인 인자이며, 경고 출력과 별개로 값으로도 남긴다
-  - `opts.assetPathOverride` — `agents.assetPath` 대신 쓸 경로. 있으면 부재 검사를 건너뛰고 대신 봉쇄/존재 검사를 한다
+  - `opts.assetPathOverride` — `agents.assetPath` 대신 쓸 경로. 있으면 부재 검사를 건너뛰고 대신 포함/존재 검사를 한다
 - `ResolvedMetadata` — `{ packageRoot, packageName, packageVersion, assetPath, assetPathSource }`
   - `assetPathSource: 'package' | 'flag'` — `assetPath` 가 어디서 왔는지. `toConsumerPackages` 가 이것으로 `hashSource` 를 정한다
 - `resolveScopeAlias(scope, rootCwd, assetPathOverride?, skipReasons?): Promise<ResolvedMetadata[]>`

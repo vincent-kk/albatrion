@@ -1,6 +1,5 @@
 import { spawnSync } from 'node:child_process';
 import {
-  existsSync,
   mkdirSync,
   mkdtempSync,
   readFileSync,
@@ -8,15 +7,13 @@ import {
   writeFileSync,
 } from 'node:fs';
 import { tmpdir } from 'node:os';
-import { dirname, join, resolve } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { dirname, join } from 'node:path';
 
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const BIN_PATH = resolve(__dirname, '../../bin/inject-agents-settings.mjs');
-const DIST_INDEX = resolve(__dirname, '../../dist/index.mjs');
-const REPO_ROOT = resolve(__dirname, '../../../../..');
+import { BIN_PATH, REPO_ROOT, builtBinBlocker } from './e2eFixtures.js';
+
+const blocker = builtBinBlocker();
 
 const PACKAGE = '@slats-e2e/round-trip';
 const SKILL_REL = 'skills/rt-skill/SKILL.md';
@@ -64,8 +61,8 @@ const installed = {
     join(scratchRoot, '.agents', 'skills', 'rt-skill', 'SKILL.md'),
 };
 
-describe.skipIf(!existsSync(DIST_INDEX))(
-  '--asset-path round trip (e2e, writes)',
+describe.skipIf(blocker !== null)(
+  `--asset-path round trip (e2e, writes)${blocker ? ` — SKIPPED: ${blocker}` : ''}`,
   () => {
     beforeEach(() => {
       scratchRoot = mkdtempSync(join(tmpdir(), 'slats-roundtrip-'));

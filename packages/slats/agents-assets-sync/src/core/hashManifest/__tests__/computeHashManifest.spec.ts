@@ -9,6 +9,7 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { buildHashes } from '../../../../scripts/buildHashes.mjs';
 import { resolveHashManifest } from '../hashManifest.js';
 import type { HashManifest, HashManifestSource } from '../type.js';
+import { sortManifestFiles } from '../utils/sortManifestFiles.js';
 
 const ASSET_PATH = 'docs/agents';
 const GENERATED_AT = '2026-08-06T00:00:00.000Z';
@@ -84,6 +85,38 @@ describe('computed vs built manifest', () => {
   });
 });
 
+// `readdir` order is the filesystem's to choose, so a fixture cannot prove the
+// keys came out sorted rather than arriving that way. Feeding the sort an
+// unsorted map directly is what puts that clause under load.
+describe('sortManifestFiles', () => {
+  it('orders keys lexicographically whatever order they arrived in', () => {
+    expect(
+      Object.keys(
+        sortManifestFiles({ 'z.md': 'h3', 'a.md': 'h1', 'm.md': 'h2' }),
+      ),
+    ).toEqual(['a.md', 'm.md', 'z.md']);
+  });
+
+  it('sorts on the whole path, so a nested key sorts by its full string', () => {
+    expect(
+      Object.keys(
+        sortManifestFiles({
+          'skills/b/S.md': 'h',
+          'rules/a.md': 'h',
+          'skills/a/S.md': 'h',
+        }),
+      ),
+    ).toEqual(['rules/a.md', 'skills/a/S.md', 'skills/b/S.md']);
+  });
+
+  it('keeps every entry and its hash', () => {
+    expect(sortManifestFiles({ 'b.md': 'hb', 'a.md': 'ha' })).toEqual({
+      'a.md': 'ha',
+      'b.md': 'hb',
+    });
+  });
+});
+
 describe('computed manifest shape', () => {
   it('keys nested paths with forward slashes, sorted', async () => {
     const manifest = await resolveHashManifest(directorySource(), GENERATED_AT);
@@ -141,5 +174,25 @@ describe('source selection', () => {
         GENERATED_AT,
       ),
     ).rejects.toThrow();
+  });
+
+  // The defining behaviour of `--asset-path`: a stored manifest is not merely
+  // unnecessary, it is not consulted. Nothing guarantees the tree it describes
+  // is the tree the flag points at, so "read it when it happens to be there"
+  // would plan the wrong tree. This case is what forbids that regression —
+  // the manifest below exists and is stale on purpose.
+  it('ignores a stored manifest that is present but stale', async () => {
+    await buildHashes({
+      packageRoot,
+      packageName: '@fixture/no-declaration',
+      packageVersion: '1.2.3',
+      assetPath: ASSET_PATH,
+    });
+    await writeAsset('skills/alpha/EXTRA.md', '# Added after the build\n');
+
+    const manifest = await resolveHashManifest(directorySource(), GENERATED_AT);
+
+    expect(Object.keys(manifest.files)).toContain('skills/alpha/EXTRA.md');
+    expect(Object.keys(manifest.files)).toHaveLength(4);
   });
 });

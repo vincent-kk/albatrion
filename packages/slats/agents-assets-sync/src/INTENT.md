@@ -12,7 +12,7 @@ Shared CLI engine that lets any npm package ship one set of agent docs (skills, 
 - `ui/` — Ink React UI for the TTY path (internal, dynamic-imported)
 - `types/` — `DefaultFlags`, `ConsumerPackage`, `AssetType` (organ)
 - `utils/` — logger, asyncPool, version (organ)
-- `__tests__/` — end-to-end runs of the built bin (dry-run contracts, the `--json` document, and one applying round trip), verifying this document's groups
+- `__tests__/` — end-to-end runs of the built bin (dry-run contracts, the `--json` document, and one applying round trip), verifying this document's groups; `e2eFixtures.ts` holds the build guard and the scratch consumer builder they share
 
 ## Conventions
 

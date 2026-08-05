@@ -42,8 +42,8 @@
 - Given several agents, then the document holds one `unit` per `(package, agent)` pair, each naming its destination and actions.
 - Given an invalid `--agent`, then the document still parses, `exitCode` is 2 and `errors` names the offending value.
 - Given an unresolvable `--package`, then stdout is empty and the diagnostic is on stderr.
-- Given every target skipped, then a document still arrives with `units: []` and `exitCode: 0`, and `errors` carries each skip reason. Resolving nothing is a run that did nothing, and a reader cannot tell that from a crash without a document.
 - Given `--asset-path`, then the unit carries a real plan and no manifest error — a directory source reaches the document by the same path a manifest source does.
+- Given every target skipped, then a document still arrives with `units: []` and `exitCode: 0`, and `errors` carries each skip reason. Resolving nothing is a run that did nothing, and a reader cannot tell that from a crash without a document.
 - Verified by `__tests__/json.test.ts`.
 
 ### AC-CLI-FLAGS — the CLI is drivable without a prompt
@@ -77,6 +77,9 @@
 - Given an edit to the source directory, then the next run sees it with no build step in between, and the run after `--force` settles to up-to-date.
 - Given `--agent=codex`, then the rule merges into `AGENTS.md` as a marker block, re-running is idempotent, and content outside this tool's markers survives byte for byte.
 - Verified by `__tests__/assetPathRoundTrip.test.ts`.
+
+- The end-to-end suites drive the built bin, so `dist/` decides what they test. They refuse to run — naming the reason in the skip — when `dist/` is absent or older than `src/`; a silent skip hides the gap and a stale build reports green for code nobody ran. Verification files are excluded from that comparison, so editing a test does not demand a rebuild.
+- Those suites install their own consumer packages under a scratch root. They must not lean on a sibling workspace's `dist/agents-hashes.json`: it is git-ignored and no build of this package produces it, so a fresh checkout would not reproduce the result.
 
 ## History
 
