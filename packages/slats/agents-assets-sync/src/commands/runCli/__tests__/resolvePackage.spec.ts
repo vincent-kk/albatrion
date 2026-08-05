@@ -1,17 +1,27 @@
 // filid:contract AC-RUNCLI-RESOLVE
-import { mkdirSync, mkdtempSync, realpathSync, rmSync, writeFileSync } from 'node:fs';
+import {
+  mkdirSync,
+  mkdtempSync,
+  realpathSync,
+  rmSync,
+  symlinkSync,
+  writeFileSync,
+} from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
 import {
+  type MockInstance,
   afterEach,
   beforeEach,
   describe,
   expect,
   it,
   vi,
-  type MockInstance,
 } from 'vitest';
+
+import { logger } from '../../../utils/logger.js';
+import { resolvePackage } from '../targets/resolvePackage.js';
 
 vi.mock('../../../utils/logger.js', () => ({
   logger: {
@@ -21,16 +31,10 @@ vi.mock('../../../utils/logger.js', () => ({
   },
 }));
 
-import { resolvePackage } from '../targets/resolvePackage.js';
-import { logger } from '../../../utils/logger.js';
-
 const errorMock = vi.mocked(logger.error);
 const warnMock = vi.mocked(logger.warn);
 
-function makePkg(
-  dir: string,
-  body: Record<string, unknown>,
-): void {
+function makePkg(dir: string, body: Record<string, unknown>): void {
   mkdirSync(dir, { recursive: true });
   writeFileSync(join(dir, 'package.json'), JSON.stringify(body));
 }
@@ -43,11 +47,9 @@ describe('resolvePackage', () => {
     root = mkdtempSync(join(tmpdir(), 'resolve-package-'));
     errorMock.mockClear();
     warnMock.mockClear();
-    exitSpy = vi
-      .spyOn(process, 'exit')
-      .mockImplementation(((code?: number) => {
-        throw new Error(`process.exit(${code})`);
-      }) as never);
+    exitSpy = vi.spyOn(process, 'exit').mockImplementation(((code?: number) => {
+      throw new Error(`process.exit(${code})`);
+    }) as never);
   });
 
   afterEach(() => {
@@ -211,5 +213,55 @@ describe('resolvePackage', () => {
     expect(meta!.packageVersion).toBe('99.99.99');
     expect(meta!.assetPath).toBe('docs/agents');
     expect(meta!.packageRoot).toBe(realpathSync(dir));
+  });
+
+  // The asset root is where every byte this tool injects is read from, and
+  // `.claude/skills/**` is read back as agent instructions. Containment is
+  // therefore judged on the resolved location, not the spelling — and it is
+  // judged the same whether the path was declared or passed as a flag.
+  describe('asset root containment', () => {
+    it('rejects a declared assetPath that escapes the package', async () => {
+      const dir = join(root, 'node_modules', '@fixture', 'escaper');
+      makePkg(dir, {
+        name: '@fixture/escaper',
+        version: '1.0.0',
+        agents: { assetPath: '../neighbour/agents' },
+      });
+      mkdirSync(join(root, 'node_modules', '@fixture', 'neighbour', 'agents'), {
+        recursive: true,
+      });
+
+      await expect(
+        resolvePackage('@fixture/escaper', {}, root),
+      ).rejects.toThrow('process.exit(2)');
+    });
+
+    // `resolve()` is lexical and `stat()` follows links, so a symlinked asset
+    // root reads as "inside" while pointing anywhere on disk.
+    it.each([
+      ['declared', undefined],
+      ['flag-supplied', 'agents'],
+    ])(
+      'rejects a %s asset root that is a symlink out of the package',
+      async (_label, override) => {
+        const outside = join(root, 'outside');
+        mkdirSync(outside, { recursive: true });
+        const dir = join(root, 'node_modules', '@fixture', 'linked');
+        makePkg(dir, {
+          name: '@fixture/linked',
+          version: '1.0.0',
+          agents: { assetPath: 'agents' },
+        });
+        symlinkSync(outside, join(dir, 'agents'));
+
+        await expect(
+          resolvePackage(
+            '@fixture/linked',
+            override === undefined ? {} : { assetPathOverride: override },
+            root,
+          ),
+        ).rejects.toThrow('process.exit(2)');
+      },
+    );
   });
 });

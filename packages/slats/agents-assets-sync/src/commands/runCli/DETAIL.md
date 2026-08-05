@@ -19,7 +19,9 @@
 - 비대화형 경로의 필수 플래그 검증은 `resolveScopeFlag` / `resolveAgentFlag` / `resolveAssetFlag` 가 맡아 실패 시 2로 종료한다. `--json` 렌더러는 대신 `parse*Flag` 를 써서 실패를 값으로 받아 자기 문서에 담는다.
 - asset 누락 정책은 `--package` 값의 개수로 갈린다. 값이 정확히 하나이고 그 값이 패키지 이름이면 strict 다 — `agents.assetPath` 가 없으면 2로 종료한다. 값이 여럿이면 soft skip 이라 나머지 배치가 계속된다.
 - scope alias 는 언제나 soft skip 으로 열거된다. workspace 안의 어떤 패키지가 asset 을 선언하지 않는 것은 정상이기 때문이다.
-- `--asset-path` 가 있으면 `agents.assetPath` 부재 검사 자체를 건너뛴다. 대신 그 경로가 packageRoot 안에 있는지와 실제 디렉터리인지를 검사하고, 실패는 위와 **같은** strict / soft skip 분기를 탄다. 새 정책을 만들지 않는다.
+- `--asset-path` 가 있으면 `agents.assetPath` 부재 검사 자체를 건너뛴다. 실패는 위와 **같은** strict / soft skip 분기를 탄다. 새 정책을 만들지 않는다.
+- asset 루트 봉쇄는 **출처와 무관하게** 같다. 선언된 `agents.assetPath` 든 `--asset-path` 든, 해석된 위치가 packageRoot 안이어야 한다. 판정은 철자가 아니라 실제 위치로 한다 — `resolve` 는 어휘적이고 `stat` 은 링크를 따라가므로, 심볼릭 링크된 asset 루트는 검사를 통과하면서 디스크 어디든 가리킬 수 있기 때문이다. 여기서 읽은 바이트가 에이전트가 지시문으로 되읽는 디렉터리에 들어간다.
+- "실제 디렉터리여야 한다" 는 요구는 두 출처가 다르다. 플래그는 호출자가 있다고 단언한 경로이므로 부재가 오류다. 선언은 매니페스트를 동반하며 배포 tarball 이 소스 트리를 쳐냈을 수 있으므로 부재를 허용한다.
 - 그래서 scope alias 와 `--asset-path` 를 함께 주면 열거의 필터가 바뀐다. `agents.assetPath` 선언 여부가 아니라 그 디렉터리의 존재가 패키지를 남기고 거른다.
 - scope 열거는 `<cwd>/node_modules/@<scope>/*` 를 파일시스템 루트까지 거슬러 올라가며 훑는다. 디렉터리 이름은 선언된 패키지 이름과 다를 수 있으므로 권위는 `package.json` 의 `name` 필드에 있고, 중첩 설치는 nearest-wins 로 중복 제거된다.
 - scope 열거는 `targets/resolveScopeAlias.ts` 안에만 있다. `runCli/**` 의 다른 어떤 파일도 형제 `package.json` 을 읽지 않는다.
@@ -46,7 +48,7 @@
 - `resolvePackage(name, opts?, originCwd?): Promise<ResolvedMetadata | null>`
   - 2단 해석: cwd 기준 require 를 먼저 (`npx -p` 로 불렸을 때 호스트 프로젝트의 `node_modules` 를 잡기 위해), 실패하면 엔진 기준 require. `originCwd` 생략 시 `process.cwd()`.
   - `opts.skipMissingAsset` — asset 누락을 종료 대신 `null` 로 돌려준다
-  - `opts.assetPathOverride` — `agents.assetPath` 대신 쓸 경로. 있으면 부재 검사를 건너뛰고 대신 포함/존재 검사를 한다
+  - `opts.assetPathOverride` — `agents.assetPath` 대신 쓸 경로. 있으면 부재 검사를 건너뛰고 대신 봉쇄/존재 검사를 한다
 - `ResolvedMetadata` — `{ packageRoot, packageName, packageVersion, assetPath, assetPathSource }`
   - `assetPathSource: 'package' | 'flag'` — `assetPath` 가 어디서 왔는지. `toConsumerPackages` 가 이것으로 `hashSource` 를 정한다
 - `resolveScopeAlias(scope, rootCwd, assetPathOverride?): Promise<ResolvedMetadata[]>`
@@ -75,6 +77,7 @@
 - cwd 해석이 실패하면 엔진 기준 해석으로 대체되고, 둘 다 실패하면 2로 종료한다.
 - 둘 다 일치할 수 있는 경우 cwd 기준 해석이 우선한다.
 - `agents.assetPath` 가 없을 때 strict 모드는 2로 종료하고, `skipMissingAsset` 모드는 `null` 을 돌려 배치가 계속되게 한다.
+- asset 루트가 packageRoot 밖으로 해석되면 출처와 무관하게 거부한다 — `../` 로 나가는 선언도, 밖을 가리키는 심볼릭 링크도 마찬가지다.
 - Verified by `__tests__/resolvePackage.spec.ts` (`filid:contract AC-RUNCLI-RESOLVE`).
 
 ### AC-RUNCLI-SCOPE-ALIAS — scope 열거의 권위는 선언된 이름이다
@@ -91,7 +94,7 @@
 - 빈 값, 절대 경로, `~` 로 시작하는 값은 파일시스템 IO 이전에 2로 종료한다.
 - `agents.assetPath` 를 선언한 패키지에 함께 주면 플래그가 이기고, 해석 결과의 `assetPathSource` 는 `'flag'` 다.
 - 선언이 없는 패키지에 주면 해석에 성공한다 — 부재 검사를 건너뛰기 때문이다.
-- packageRoot 밖으로 나가는 경로와 존재하지 않는 디렉터리는 단일 타깃에서 2로 종료하고, 배치(`skipMissingAsset`)에서는 `null` 로 건너뛴다.
+- 존재하지 않는 디렉터리는 단일 타깃에서 2로 종료하고, 배치(`skipMissingAsset`)에서는 `null` 로 건너뛴다. packageRoot 밖으로 나가는 경로의 거부는 `AC-RUNCLI-RESOLVE` 가 두 출처 공통으로 소유한다.
 - `assetPathSource: 'flag'` 인 target 은 `hashSource: 'directory'` 가 되고 `assetRoot` 가 플래그 값으로 계산된다.
 - Verified by `__tests__/assetPathOverride.spec.ts` (`filid:contract AC-RUNCLI-ASSET-PATH`), `src/__tests__/cli.test.ts`.
 
@@ -114,6 +117,7 @@
 
 ## History
 
+- 2026-08-06 — asset 루트 봉쇄가 선언 경로까지 확대됐다. 처음에는 `--asset-path` 에만 어휘적 검사를 뒀는데, 그러면 opt-in 경로만 보호되고 기본 경로(`agents.assetPath`)는 `../` 로 자유롭게 나가는 거꾸로 된 상태가 된다. 동시에 검사를 realpath 기준으로 옮겼다 — 어휘적 검사는 심볼릭 링크된 asset 루트를 막지 못하고, 그 경로로 읽힌 파일은 에이전트가 지시문으로 되읽는 곳에 안착한다.
 - 2026-08-06 — `--asset-path` 가 추가되며 "asset 루트는 `agents.assetPath` 가 정한다" 는 전제가 깨졌다. 선언 없이 `agents/` 나 `docs/` 에 에셋만 둔 패키지를 위해서다. fallback 이 아니라 override 로 정한 이유: 플래그가 조건부로 이기면 어느 경로가 쓰였는지 실행 결과만 보고는 알 수 없다. 같은 이유로 override 는 저장된 매니페스트도 무시한다 — 그 매니페스트가 기술하는 트리가 플래그가 가리키는 트리라는 보장이 없다.
 - 2026-08-06 — `--json` 이 plain 경로를 강제한다는 계약이 폐기됐다. `renderJson` 이 독립 렌더러가 되었고, 분기에서 `--json` 이 TTY 판정보다 먼저 평가된다. 같은 변경으로 `parse*Flag` 계열이 생겼다 — JSON 렌더러는 플래그 오류에서 종료할 수 없고 그것을 자기 문서에 담아야 하기 때문이다.
 

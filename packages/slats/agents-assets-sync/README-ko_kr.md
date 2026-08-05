@@ -99,7 +99,7 @@ inject-agents-settings --package=@canard/schema-form --agent=claude --scope=user
 | `--force`             | 발산 파일 덮어쓰기 & 고아 파일 삭제 (TTY 에서는 대화형 확인).                                                                                                                                                                                                                                                             |
 | `--root <path>`       | scope 해석용 cwd 재정의.                                                                                                                                                                                                                                                                                                  |
 
-**Exit code**: `0` 성공 / up-to-date / dry-run, `1` 런타임 오류, `2` 사용자 / 설정 오류 (`--package` 누락, 비-TTY 환경에서 `--scope` 누락, 해석 불가한 패키지, `--asset-path` 없이 `agents.assetPath` 누락, 절대 경로이거나 패키지 안의 디렉토리를 가리키지 않는 `--asset-path`).
+**Exit code**: `0` 성공 / up-to-date / dry-run, `1` 런타임 오류, `2` 사용자 / 설정 오류 (`--package` 누락, 비-TTY 환경에서 `--scope` 누락, 해석 불가한 패키지, `--asset-path` 없이 `agents.assetPath` 누락, 절대 경로이거나 패키지 안의 디렉토리를 가리키지 않는 `--asset-path`, 패키지 밖으로 해석되는 asset 루트).
 
 `--scope=project` 의 경우 대상 `.claude` 디렉토리는 `process.cwd()` 에서 위로 올라가며 가장 가까운 기존 `.claude` 조상을 찾아 해석됩니다. 자동 탐지된 경우 CLI 가 `(auto-located)` 로 로그에 표시합니다.
 

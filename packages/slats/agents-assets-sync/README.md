@@ -103,7 +103,7 @@ The legacy explicit form `npx -p @slats/agents-assets-sync inject-agents-setting
 | `--force`             | Overwrite diverged files & delete orphans (interactive confirm on TTY).                                                                                                                                                                                                                                                                                       |
 | `--root <path>`       | Override scope-resolution cwd.                                                                                                                                                                                                                                                                                                                                |
 
-**Exit codes**: `0` success / up-to-date / dry-run, `1` runtime error, `2` user / configuration error (missing `--package`, missing `--scope` in non-TTY, unresolvable package, missing `agents.assetPath` with no `--asset-path`, an `--asset-path` that is absolute or names no directory inside the package).
+**Exit codes**: `0` success / up-to-date / dry-run, `1` runtime error, `2` user / configuration error (missing `--package`, missing `--scope` in non-TTY, unresolvable package, missing `agents.assetPath` with no `--asset-path`, an `--asset-path` that is absolute or names no directory inside the package, or an asset root that resolves outside its package).
 
 For `--scope=project` the target `.claude` directory is resolved by walking up from `process.cwd()` to the nearest existing `.claude` ancestor; the CLI logs `(auto-located)` when this happens.
 

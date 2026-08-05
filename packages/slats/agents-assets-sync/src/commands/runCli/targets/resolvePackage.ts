@@ -1,5 +1,5 @@
 import { existsSync, readFileSync } from 'node:fs';
-import { readFile, stat } from 'node:fs/promises';
+import { readFile, realpath, stat } from 'node:fs/promises';
 import { createRequire } from 'node:module';
 import { dirname, resolve as resolvePath, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -68,30 +68,14 @@ export async function resolvePackage(
   }
 
   const override = options.assetPathOverride;
-  if (override !== undefined) {
-    if (!(await isDirectoryInside(packageRoot, override))) {
-      if (options.skipMissingAsset) {
-        logger.warn(
-          `"${name}": --asset-path "${override}" is not a directory inside the package — skipping.`,
-        );
-        return null;
-      }
-      logger.error(
-        `"${name}": --asset-path "${override}" is not a directory inside ${packageRoot}.`,
-      );
-      process.exit(2);
-    }
-    return {
-      packageRoot,
-      packageName: pkg.name,
-      packageVersion: pkg.version,
-      assetPath: override,
-      assetPathSource: 'flag',
-    };
-  }
+  const declared = pkg.agents?.assetPath;
+  const assetPath =
+    override ??
+    (typeof declared === 'string' && declared.length > 0
+      ? declared
+      : undefined);
 
-  const assetPath = pkg.agents?.assetPath;
-  if (typeof assetPath !== 'string' || assetPath.length === 0) {
+  if (assetPath === undefined) {
     if (options.skipMissingAsset) {
       logger.warn(
         `"${name}" is missing "agents.assetPath" — skipping (the package does not ship agent assets).`,
@@ -104,29 +88,76 @@ export async function resolvePackage(
     process.exit(2);
   }
 
+  const source = override !== undefined ? 'flag' : 'package';
+  const label =
+    source === 'flag'
+      ? `--asset-path "${assetPath}"`
+      : `"agents.assetPath": "${assetPath}"`;
+  // A flag names a directory the caller asserts is there, so its absence is an
+  // error. A declaration is accompanied by a manifest and may legitimately
+  // point at a tree the published tarball pruned, so absence stays allowed.
+  const verdict = await inspectAssetRoot(packageRoot, assetPath, {
+    requireDirectory: source === 'flag',
+  });
+  if (verdict !== 'ok') {
+    const detail =
+      verdict === 'escapes'
+        ? `resolves outside ${packageRoot}`
+        : `is not a directory inside ${packageRoot}`;
+    if (options.skipMissingAsset) {
+      logger.warn(`"${name}": ${label} ${detail} — skipping.`);
+      return null;
+    }
+    logger.error(`"${name}": ${label} ${detail}.`);
+    process.exit(2);
+  }
+
   return {
     packageRoot,
     packageName: pkg.name,
     packageVersion: pkg.version,
     assetPath,
-    assetPathSource: 'package',
+    assetPathSource: source,
   };
 }
 
-// `--asset-path` is user input applied to every target, so it is checked per
-// package: it must stay inside that package and name a real directory. A
-// `..` segment escaping the root would let one target's flag read another
-// package's tree.
-async function isDirectoryInside(
+/**
+ * Judge an asset root against the package that must contain it.
+ *
+ * Containment is decided on the resolved location, not the spelling: `resolve`
+ * is lexical and `stat` follows links, so a symlinked asset root would read as
+ * inside the package while pointing anywhere on disk. Every byte this tool
+ * injects is read from here and lands in directories an agent reads back as
+ * instructions, so the check runs for a declared path and a flag alike.
+ *
+ * @param packageRoot - absolute package root the asset root must sit under
+ * @param relPath - asset root relative to `packageRoot`
+ * @param options.requireDirectory - when true, a missing asset root is rejected
+ * @returns `ok`, or why the path was refused
+ */
+async function inspectAssetRoot(
   packageRoot: string,
   relPath: string,
-): Promise<boolean> {
+  options: { requireDirectory: boolean },
+): Promise<'ok' | 'escapes' | 'not-a-directory'> {
   const abs = resolvePath(packageRoot, relPath);
-  if (abs !== packageRoot && !abs.startsWith(packageRoot + sep)) return false;
-  return stat(abs).then(
-    (entry) => entry.isDirectory(),
-    () => false,
-  );
+  if (!isInside(packageRoot, abs)) return 'escapes';
+
+  const real = await realpath(abs).catch(() => null);
+  // Nothing at that path: there is no location to escape to, so containment is
+  // satisfied and only the caller's own existence requirement can refuse it.
+  if (real === null) return options.requireDirectory ? 'not-a-directory' : 'ok';
+
+  const realRoot = await realpath(packageRoot).catch(() => packageRoot);
+  if (!isInside(realRoot, real)) return 'escapes';
+
+  const entry = await stat(real).catch(() => null);
+  if (entry?.isDirectory()) return 'ok';
+  return options.requireDirectory ? 'not-a-directory' : 'escapes';
+}
+
+function isInside(root: string, candidate: string): boolean {
+  return candidate === root || candidate.startsWith(root + sep);
 }
 
 // Two-pass resolution: caller's cwd first (so `npx -p` invocations see
