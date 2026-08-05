@@ -40,18 +40,19 @@ cxLite('base', isActive && 'active', size)      // 경량 버전
 - **배치 업데이트**: `requestAnimationFrame` 기반 DOM 업데이트 최적화
 - **메모리**: `destroy()` 호출 시 AnimationFrame 취소, DOM 제거, 캐시 초기화
 
-## Claude Docs Injector
+## Agent Docs Injector
 
-Inject `docs/claude/**` into the user's `.claude/`. Engine: `@slats/claude-assets-sync` (bin: `inject-claude-settings`).
+`docs/agents/**` 자산을 선택한 에이전트 위치에 주입. 엔진: `@slats/agents-assets-sync` (bin: `inject-agents-settings`).
+`--agent` 로 대상 에이전트를 고른다 — claude 는 `.claude/{skills,rules,commands}`, codex 는 `.codex/skills` + `AGENTS.md` 마커 블록.
 
 ```bash
-npx -p @slats/claude-assets-sync inject-claude-settings --package=@winglet/style-utils --scope=user
-npx -p @slats/claude-assets-sync inject-claude-settings --package=@winglet/style-utils --scope=project
-npx -p @slats/claude-assets-sync inject-claude-settings --package=@winglet/style-utils --scope=user --dry-run
-npx -p @slats/claude-assets-sync inject-claude-settings --package=@winglet/style-utils --scope=user --force
+npx -p @slats/agents-assets-sync inject-agents-settings --package=@winglet/style-utils --agent=claude --scope=user
+npx -p @slats/agents-assets-sync inject-agents-settings --package=@winglet/style-utils --agent=codex --scope=project
+npx -p @slats/agents-assets-sync inject-agents-settings --package=@winglet/style-utils --agent=claude,codex --scope=user --dry-run
+npx -p @slats/agents-assets-sync inject-agents-settings --package=@winglet/style-utils --agent=claude --scope=user --force --yes
 ```
 
 ### Isolation Guardrails
 
-- `src/**` MUST NOT import from `docs/**` or `@slats/claude-assets-sync`.
+- `src/**` MUST NOT import from `docs/**` or `@slats/agents-assets-sync`.
 - **Never add `./docs/*` to `exports`.**

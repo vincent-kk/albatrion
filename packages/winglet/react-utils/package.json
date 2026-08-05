@@ -82,7 +82,7 @@
   ],
   "scripts": {
     "build": "rolldown -c && yarn build:types && yarn build:hashes && yarn typecheck",
-    "build:hashes": "claude-build-hashes",
+    "build:hashes": "agents-build-hashes",
     "build:publish:npm": "yarn build && yarn publish:npm",
     "build:types": "node ../../aileron/script/build/buildTypes.mjs",
     "format": "prettier --write \"src/**/*.{ts,tsx}\"",
@@ -99,7 +99,7 @@
     "@winglet/common-utils": "workspace:^"
   },
   "devDependencies": {
-    "@slats/claude-assets-sync": "workspace:^",
+    "@slats/agents-assets-sync": "workspace:^",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
     "eslint": "8.57.1",
@@ -113,7 +113,7 @@
     "react": ">=16 <20",
     "react-dom": ">=16 <20"
   },
-  "claude": {
-    "assetPath": "docs/claude"
+  "agents": {
+    "assetPath": "docs/agents"
   }
 }

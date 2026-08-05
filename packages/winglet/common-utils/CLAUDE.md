@@ -5,27 +5,28 @@
 ## Commands
 
 ```bash
-yarn build             # ESM + CJS 빌드 + 타입 선언 + claude-hashes.json
-yarn build:hashes      # docs/claude/** 해시 매니페스트만 재생성
+yarn build             # ESM + CJS 빌드 + 타입 선언 + agents-hashes.json
+yarn build:hashes      # docs/agents/** 해시 매니페스트만 재생성
 yarn test              # Vitest 테스트 (Node 환경)
 yarn test --coverage   # 커버리지 포함
 yarn lint              # ESLint
 ```
 
-## Claude Docs Injector
+## Agent Docs Injector
 
-`docs/claude/**` 자산을 사용자 `.claude/` 에 주입. 엔진: `@slats/claude-assets-sync` (bin: `inject-claude-settings`).
+`docs/agents/**` 자산을 선택한 에이전트 위치에 주입. 엔진: `@slats/agents-assets-sync` (bin: `inject-agents-settings`).
+`--agent` 로 대상 에이전트를 고른다 — claude 는 `.claude/{skills,rules,commands}`, codex 는 `.codex/skills` + `AGENTS.md` 마커 블록.
 
 ```bash
-npx -p @slats/claude-assets-sync inject-claude-settings --package=@winglet/common-utils --scope=user
-npx -p @slats/claude-assets-sync inject-claude-settings --package=@winglet/common-utils --scope=project
-npx -p @slats/claude-assets-sync inject-claude-settings --package=@winglet/common-utils --scope=user --dry-run
-npx -p @slats/claude-assets-sync inject-claude-settings --package=@winglet/common-utils --scope=user --force
+npx -p @slats/agents-assets-sync inject-agents-settings --package=@winglet/common-utils --agent=claude --scope=user
+npx -p @slats/agents-assets-sync inject-agents-settings --package=@winglet/common-utils --agent=codex --scope=project
+npx -p @slats/agents-assets-sync inject-agents-settings --package=@winglet/common-utils --agent=claude,codex --scope=user --dry-run
+npx -p @slats/agents-assets-sync inject-agents-settings --package=@winglet/common-utils --agent=claude --scope=user --force --yes
 ```
 
 ### Isolation Guardrails
 
-- `src/**` 는 `docs/**` 와 `@slats/claude-assets-sync` 어느 것도 import 금지.
+- `src/**` 는 `docs/**` 와 `@slats/agents-assets-sync` 어느 것도 import 금지.
 - **절대 `exports` 에 `./docs/*` 를 추가하지 말 것.**
 
 ## Sub-path Exports

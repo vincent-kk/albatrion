@@ -2330,7 +2330,7 @@ __metadata:
   resolution: "@canard/schema-form@workspace:packages/canard/schema-form"
   dependencies:
     "@aileron/development-helper": "workspace:*"
-    "@slats/claude-assets-sync": "workspace:^"
+    "@slats/agents-assets-sync": "workspace:^"
     "@types/react": "npm:^19.0.0"
     "@types/react-dom": "npm:^19.0.0"
     "@winglet/common-utils": "workspace:^"
@@ -5628,7 +5628,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@lerx/promise-modal@workspace:packages/lerx/promise-modal"
   dependencies:
-    "@slats/claude-assets-sync": "workspace:^"
+    "@slats/agents-assets-sync": "workspace:^"
     "@testing-library/dom": "npm:^10.4.0"
     "@testing-library/react": "npm:^16.1.0"
     "@types/react": "npm:^19.0.0"
@@ -8335,7 +8335,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@slats/agents-assets-sync@workspace:packages/slats/agents-assets-sync":
+"@slats/agents-assets-sync@workspace:^, @slats/agents-assets-sync@workspace:packages/slats/agents-assets-sync":
   version: 0.0.0-use.local
   resolution: "@slats/agents-assets-sync@workspace:packages/slats/agents-assets-sync"
   dependencies:
@@ -8373,7 +8373,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@slats/claude-assets-sync@workspace:^, @slats/claude-assets-sync@workspace:packages/slats/claude-assets-sync":
+"@slats/claude-assets-sync@workspace:packages/slats/claude-assets-sync":
   version: 0.0.0-use.local
   resolution: "@slats/claude-assets-sync@workspace:packages/slats/claude-assets-sync"
   dependencies:
@@ -10676,7 +10676,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@winglet/common-utils@workspace:packages/winglet/common-utils"
   dependencies:
-    "@slats/claude-assets-sync": "workspace:^"
+    "@slats/agents-assets-sync": "workspace:^"
     eslint: "npm:8.57.1"
     rolldown: "npm:^1.2.0"
     tsc-alias: "npm:^1.8.16"
@@ -10688,7 +10688,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@winglet/data-loader@workspace:packages/winglet/data-loader"
   dependencies:
-    "@slats/claude-assets-sync": "workspace:^"
+    "@slats/agents-assets-sync": "workspace:^"
     "@winglet/common-utils": "workspace:^"
     eslint: "npm:8.57.1"
     rolldown: "npm:^1.2.0"
@@ -10741,7 +10741,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@winglet/json-schema@workspace:packages/winglet/json-schema"
   dependencies:
-    "@slats/claude-assets-sync": "workspace:^"
+    "@slats/agents-assets-sync": "workspace:^"
     "@winglet/common-utils": "workspace:^"
     "@winglet/json": "workspace:^"
     eslint: "npm:8.57.1"
@@ -10791,7 +10791,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@winglet/json@workspace:packages/winglet/json"
   dependencies:
-    "@slats/claude-assets-sync": "workspace:^"
+    "@slats/agents-assets-sync": "workspace:^"
     "@winglet/common-utils": "workspace:^"
     eslint: "npm:8.57.1"
     rolldown: "npm:^1.2.0"
@@ -10852,7 +10852,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@winglet/react-utils@workspace:packages/winglet/react-utils"
   dependencies:
-    "@slats/claude-assets-sync": "workspace:^"
+    "@slats/agents-assets-sync": "workspace:^"
     "@types/react": "npm:^19.0.0"
     "@types/react-dom": "npm:^19.0.0"
     "@winglet/common-utils": "workspace:^"
@@ -10872,7 +10872,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@winglet/style-utils@workspace:packages/winglet/style-utils"
   dependencies:
-    "@slats/claude-assets-sync": "workspace:^"
+    "@slats/agents-assets-sync": "workspace:^"
     "@types/react": "npm:^19.0.0"
     "@types/react-dom": "npm:^19.0.0"
     classnames: "npm:^2.5.1"

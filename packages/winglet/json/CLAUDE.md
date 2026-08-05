@@ -19,20 +19,21 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - Use Vitest with `@/json` alias pointing to `./src`
 - Test files follow pattern: `*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}`
 
-## Claude Docs Injector
+## Agent Docs Injector
 
-`docs/claude/**` 자산을 사용자 `.claude/` 에 주입. 엔진: `@slats/claude-assets-sync` (bin: `inject-claude-settings`).
+`docs/agents/**` 자산을 선택한 에이전트 위치에 주입. 엔진: `@slats/agents-assets-sync` (bin: `inject-agents-settings`).
+`--agent` 로 대상 에이전트를 고른다 — claude 는 `.claude/{skills,rules,commands}`, codex 는 `.codex/skills` + `AGENTS.md` 마커 블록.
 
 ```bash
-npx -p @slats/claude-assets-sync inject-claude-settings --package=@winglet/json --scope=user
-npx -p @slats/claude-assets-sync inject-claude-settings --package=@winglet/json --scope=project
-npx -p @slats/claude-assets-sync inject-claude-settings --package=@winglet/json --scope=user --dry-run
-npx -p @slats/claude-assets-sync inject-claude-settings --package=@winglet/json --scope=user --force
+npx -p @slats/agents-assets-sync inject-agents-settings --package=@winglet/json --agent=claude --scope=user
+npx -p @slats/agents-assets-sync inject-agents-settings --package=@winglet/json --agent=codex --scope=project
+npx -p @slats/agents-assets-sync inject-agents-settings --package=@winglet/json --agent=claude,codex --scope=user --dry-run
+npx -p @slats/agents-assets-sync inject-agents-settings --package=@winglet/json --agent=claude --scope=user --force --yes
 ```
 
 ### Isolation Guardrails
 
-- `src/**` 는 `docs/**` 와 `@slats/claude-assets-sync` 어느 것도 import 금지.
+- `src/**` 는 `docs/**` 와 `@slats/agents-assets-sync` 어느 것도 import 금지.
 - **절대 `exports` 에 `./docs/*` 를 추가하지 말 것.**
 
 ## Architecture
