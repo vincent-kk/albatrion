@@ -51,11 +51,11 @@
     "README.md"
   ],
   "scripts": {
-    "build": "node scripts/inject-version.js && rolldown -c && yarn build:types && yarn build:hashes && yarn typecheck",
+    "build": "yarn version:sync && rolldown -c && yarn build:types && yarn build:hashes && yarn typecheck",
     "build:hashes": "node scripts/build-hashes.mjs",
     "build:publish:npm": "yarn build && yarn publish:npm",
     "build:types": "node ../../aileron/script/build/buildTypes.mjs",
-    "dev": "node scripts/inject-version.js && tsx src/main.ts",
+    "dev": "yarn version:sync && tsx src/main.ts",
     "dev:cli": "tsx bin/inject-agents-settings.mjs",
     "dev:ui": "tsx scripts/dev-ui.tsx",
     "format": "prettier --write \"src/**/*.ts\"",
@@ -64,9 +64,10 @@
     "publish:npm": "yarn npm publish --access public",
     "test": "yarn run -T vitest",
     "typecheck": "tsc --noEmit --composite false --rootDir . -p tsconfig.json",
-    "version:major": "yarn version major",
-    "version:minor": "yarn version minor",
-    "version:patch": "yarn version patch"
+    "version:major": "yarn version major && yarn version:sync",
+    "version:minor": "yarn version minor && yarn version:sync",
+    "version:patch": "yarn version patch && yarn version:sync",
+    "version:sync": "node scripts/inject-version.js"
   },
   "dependencies": {
     "commander": "^12.1.0",

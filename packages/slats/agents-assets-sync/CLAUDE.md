@@ -7,9 +7,10 @@ Every choice is reachable by flag, so an agent can drive a whole run without a p
 ## Commands
 
 ```bash
-yarn build           # inject-version → rolldown (ESM) → build:types → build:hashes
+yarn build           # version:sync → rolldown (ESM) → build:types → build:hashes
 yarn test            # vitest
 yarn lint            # eslint
+yarn version:sync    # regenerate src/utils/version.ts from package.json
 yarn dev:ui          # preview Ink phases (see scripts/dev-ui.tsx)
 yarn dev:ui --tour   # cycle through all Ink phases with fixture data
 ```

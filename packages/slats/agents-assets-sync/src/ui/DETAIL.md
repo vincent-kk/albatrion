@@ -6,6 +6,7 @@
 - `renderInjectApp(input)` 은 `core/**` 프리미티브를 직접 조합해 Ink 가상 DOM 을 구동한다. `process.stdout` / `process.stderr` 에 직접 쓰지 않는다.
 - 파이프라인은 훅으로 나뉜다. `useInjectSession` 이 전이를 구동하고, `useResolveStep` → `usePlanStep` → `useForceConfirmStep` → `useApplyStep` 이 각 단계를 맡는다.
 - agent 가 `--agent` 로 주어지지 않으면 Ink `AgentPicker` 로 대화식 선택한다. scope 도 마찬가지로 `--scope` 가 없으면 `ScopePicker` 를 연다. 주어졌으면 그 값을 쓴다.
+- `ScopePicker` 는 `project` 를 고른 채로 열린다. 목록은 `user` 를 먼저 그리되 커서만 `project` 에 놓이므로, 흔한 쪽은 enter 한 번이고 `user` 는 화살표 한 번이 든다. 이 기본값은 이 picker 만의 것이다 — 비대화식 경로는 `--scope` 없이 여전히 종료 코드 2 다.
 - 계획은 target 마다 순차적으로 세운다. 각 `(agent, package)` 쌍에 대해 `resolveAgentTarget` → `resolveHashManifest` → `computeNamespacePrefixes` → `resolveDestinations` → `buildPlan` 순서로 조합한다.
 - 빌드 부재로 target 을 실패시킬지는 `core` 의 `needsBuiltManifest` 가 판정한다. 세 렌더러가 같은 술어에 물으며, 그 계약은 `core/hashManifest/DETAIL.md` 의 `AC-MANIFEST-GATE` 가 소유한다. 이 계층을 직접 구동하는 검사가 없으므로, 그 술어가 이 경로에 부하를 거는 유일한 지점이다.
 - force 확인은 `ConfirmForce` 로 표면화되며, 그 아래의 promise 다리가 사용자 응답이나 취소에서 resolve 된다. 취소는 종료 코드 2다.
@@ -90,11 +91,18 @@ entry point 표면 밖의 내부 단위다. 바꿔도 공개 계약 변경이 �
 - `applying` 국면에서 `apply` 단계는 여전히 스피너로 그려진다.
 - Verified by `__tests__/stepTracker.test.tsx`.
 
+### AC-UI-SCOPE-DEFAULT — scope picker 는 `project` 위에서 열린다
+
+- `ScopePicker` 를 열면 커서가 `project` 행에 놓이고 `user` 행에는 놓이지 않는다.
+- 화살표 없이 enter 만 오면 `project` 로 확정된다.
+- Verified by `__tests__/scopePicker.test.tsx`.
+
 ## History
 
+- 2026-08-06 — `ScopePicker` 의 초기 선택이 `user` 에서 `project` 로 옮겨졌다. 이 도구를 쓰는 거의 모든 실행이 project 주입이라 기본값이 흔한 쪽을 가리켜야 했다. 목록 순서는 그대로 두었다 — 순서를 뒤집으면 커서 위치와 함께 행 위치까지 움직여, 이미 손에 익은 사용자가 두 가지를 한꺼번에 다시 배우게 된다.
 - 2026-08-06 — `resolveScope` 를 조합한다는 기술이 폐기됐다. 그 함수는 `resolveProjectRoot` + `resolveAgentTarget` 으로 대체되어 더 이상 존재하지 않으며, 이 계층은 `resolveAgentTarget` 을 통해 루트에 도달한다.
 - 2026-08-06 — 진행률을 `useInterval` 로 ~10Hz 로 합친다는 기술이 폐기됐다. 실제로는 `useApplyStep` 이 액션 완료마다 `apply-progress` 를 보낸다.
 
 ## Last Updated
 
-2026-08-06 — 계약을 현행 구현에 맞춰 재작성. 조합하는 core 프리미티브 목록을 실제 import 에 맞추고, agent 선택 단계와 블록 적용 경로를 추가하고, Acceptance Criteria 를 도입했다.
+2026-08-06 — `ScopePicker` 의 기본 선택이 `project` 임을 계약에 적고 `AC-UI-SCOPE-DEFAULT` 를 추가했다.

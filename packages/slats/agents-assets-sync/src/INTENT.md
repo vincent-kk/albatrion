@@ -12,13 +12,14 @@ Shared CLI engine that lets any npm package ship one set of agent docs (skills, 
 - `ui/` — Ink React UI for the TTY path (internal, dynamic-imported)
 - `types/` — `DefaultFlags`, `ConsumerPackage`, `AssetType` (organ)
 - `utils/` — logger, asyncPool, version (organ)
-- `__tests__/` — end-to-end runs of the built bin (dry-run contracts, the `--json` document, and one applying round trip), verifying this document's groups; `e2eFixtures.ts` holds the build guard and the scratch consumer builder they share
+- `__tests__/` — end-to-end runs of the built bin (dry-run contracts, the `--json` document, and one applying round trip) plus the generated-`VERSION` drift guard, verifying this document's groups; `e2eFixtures.ts` holds the build guard and the scratch consumer builder they share
 
 ## Conventions
 
 - Every choice is reachable by flag, so an agent can drive a whole run without a prompt; the Ink picker is a convenience, never the only way
 - TypeScript strict mode, ESM-only rolldown build
 - `./buildHashes` is build-time hashing, pure Node ESM outside rolldown; its self-executing bin is `scripts/agents-build-hashes.mjs`
+- `utils/version.ts` is generated from `package.json` by `yarn version:sync`; edit the manifest, never the constant
 - Entry point is `bin/inject-agents-settings.mjs`, a two-line re-export of `runCli(process.argv)`
 
 ## Boundaries
