@@ -16,15 +16,15 @@ The implementation uses `TextEncoder`/`TextDecoder` to operate on a `Uint8Array`
 
 ### What Gets Removed
 
-| Input | Output | Rule |
-|-------|--------|------|
-| Consecutive whitespace between tokens | removed or collapsed to a single space | collapses runs of `[ \t\n\r]+` |
-| Whitespace adjacent to `{`, `}`, `;`, `:`, `,`, `>`, `+`, `~`, `(`, `)` | removed | no space needed around punctuation |
-| Whitespace before `(` following an identifier | preserved as space | protects function calls like `var (` from being merged incorrectly |
-| `/* ... */` comments | removed | block comments only (CSS has no line comments) |
-| `;` followed by `}` (with optional whitespace or comments between) | last `;` dropped | redundant terminal semicolon |
-| Multiple consecutive `;;;` | collapsed to a single `;` if not before `}`, dropped entirely if before `}` | avoids empty declarations |
-| Trailing whitespace at end of output | removed | final pass before decoding |
+| Input                                                                   | Output                                                                      | Rule                                                               |
+| ----------------------------------------------------------------------- | --------------------------------------------------------------------------- | ------------------------------------------------------------------ |
+| Consecutive whitespace between tokens                                   | removed or collapsed to a single space                                      | collapses runs of `[ \t\n\r]+`                                     |
+| Whitespace adjacent to `{`, `}`, `;`, `:`, `,`, `>`, `+`, `~`, `(`, `)` | removed                                                                     | no space needed around punctuation                                 |
+| Whitespace before `(` following an identifier                           | preserved as space                                                          | protects function calls like `var (` from being merged incorrectly |
+| `/* ... */` comments                                                    | removed                                                                     | block comments only (CSS has no line comments)                     |
+| `;` followed by `}` (with optional whitespace or comments between)      | last `;` dropped                                                            | redundant terminal semicolon                                       |
+| Multiple consecutive `;;;`                                              | collapsed to a single `;` if not before `}`, dropped entirely if before `}` | avoids empty declarations                                          |
+| Trailing whitespace at end of output                                    | removed                                                                     | final pass before decoding                                         |
 
 ### Known Trade-offs
 
@@ -45,6 +45,7 @@ export const compressCss: (css: string) => string;
 Compresses a CSS source string by a single-pass byte walk.
 
 **Parameters:**
+
 - `css` — raw CSS string (any length)
 
 **Returns:** Minified CSS string. Empty input returns empty string.
@@ -92,8 +93,8 @@ Run `compressCss` inside a build tool to normalize hand-written inline CSS strin
 
 ```typescript
 // build/normalize-inline-css.ts
-import { readFileSync, writeFileSync } from 'node:fs';
 import { compressCss } from '@winglet/style-utils';
+import { readFileSync, writeFileSync } from 'node:fs';
 
 const src = readFileSync('src/theme.css', 'utf8');
 writeFileSync('dist/theme.min.css', compressCss(src));
@@ -104,7 +105,9 @@ writeFileSync('dist/theme.min.css', compressCss(src));
 ```typescript
 const original = getSourceCss();
 const minified = compressCss(original);
-console.info(`saved ${original.length - minified.length} bytes (${(1 - minified.length / original.length) * 100 | 0}%)`);
+console.info(
+  `saved ${original.length - minified.length} bytes (${((1 - minified.length / original.length) * 100) | 0}%)`,
+);
 ```
 
 ---

@@ -5,6 +5,7 @@
 ## Hash Utilities
 
 ### Import
+
 ```typescript
 import { Murmur3, polynomialHash } from '@winglet/common-utils/hash';
 ```
@@ -15,8 +16,8 @@ Non-cryptographic 32-bit hash (MurmurHash3 by Austin Appleby). Fast and suitable
 
 ```typescript
 // Static one-shot hash
-const hash = Murmur3.hash('hello world');        // number
-const seeded = Murmur3.hash('hello', 42);        // with custom seed
+const hash = Murmur3.hash('hello world'); // number
+const seeded = Murmur3.hash('hello', 42); // with custom seed
 
 // Incremental hashing (chain multiple inputs)
 const hasher = new Murmur3();
@@ -32,6 +33,7 @@ hasher.hash(new ArrayBuffer(8));
 **Accepts:** `string`, `ArrayBuffer`, `Uint8Array`
 
 **Performance features:**
+
 - Loop unrolling for 4-chunk blocks
 - DataView optimization for large aligned binary data
 - Endianness detection for binary processing
@@ -50,8 +52,8 @@ polynomialHash(target: string, length?: number): string
 31-based polynomial rolling hash (like Java's `String.hashCode()`). Returns a base36-encoded string.
 
 ```typescript
-polynomialHash('my-cache-key');      // '2g4k8f1' (7 chars, default)
-polynomialHash('my-cache-key', 4);   // '2g4k'
+polynomialHash('my-cache-key'); // '2g4k8f1' (7 chars, default)
+polynomialHash('my-cache-key', 4); // '2g4k'
 ```
 
 - Output length: default 7, max 7
@@ -66,6 +68,7 @@ polynomialHash('my-cache-key', 4);   // '2g4k'
 ## Convert Utilities
 
 ### Import
+
 ```typescript
 import { convertMsFromDuration } from '@winglet/common-utils/convert';
 ```
@@ -80,27 +83,27 @@ Converts a human-readable duration string to milliseconds. Returns `0` for inval
 
 **Supported units:**
 
-| Unit | Meaning | Example | Result |
-|------|---------|---------|--------|
-| `ms` | milliseconds | `'500ms'` | `500` |
-| `s` | seconds | `'5s'` | `5000` |
-| `m` | minutes | `'30m'` | `1800000` |
-| `h` | hours | `'2h'` | `7200000` |
+| Unit | Meaning      | Example   | Result    |
+| ---- | ------------ | --------- | --------- |
+| `ms` | milliseconds | `'500ms'` | `500`     |
+| `s`  | seconds      | `'5s'`    | `5000`    |
+| `m`  | minutes      | `'30m'`   | `1800000` |
+| `h`  | hours        | `'2h'`    | `7200000` |
 
 ```typescript
 convertMsFromDuration('100ms'); // 100
-convertMsFromDuration('5s');    // 5000
-convertMsFromDuration('30m');   // 1800000
-convertMsFromDuration('2h');    // 7200000
+convertMsFromDuration('5s'); // 5000
+convertMsFromDuration('30m'); // 1800000
+convertMsFromDuration('2h'); // 7200000
 
 // Whitespace tolerant
 convertMsFromDuration(' 5 s '); // 5000
 
 // Invalid inputs → 0
-convertMsFromDuration('1.5s');  // 0 (decimals not supported)
-convertMsFromDuration('5S');    // 0 (case sensitive)
+convertMsFromDuration('1.5s'); // 0 (decimals not supported)
+convertMsFromDuration('5S'); // 0 (case sensitive)
 convertMsFromDuration('5 sec'); // 0 (full words not supported)
-convertMsFromDuration('');      // 0
+convertMsFromDuration(''); // 0
 ```
 
 **Regex is lazily initialized and cached** — subsequent calls reuse the same regex instance.
@@ -110,6 +113,7 @@ convertMsFromDuration('');      // 0
 ## Console Utilities
 
 ### Import
+
 ```typescript
 import { printError } from '@winglet/common-utils/console';
 ```
@@ -129,6 +133,7 @@ Prints an error to the console in a formatted way, handling various error types 
 ## Core Library Utilities
 
 ### Import
+
 ```typescript
 import { ... } from '@winglet/common-utils/lib';
 ```
@@ -146,15 +151,15 @@ Creates a Map-based cache with a convenience API. For primitive keys (strings, n
 ```typescript
 const cache = cacheMapFactory<Map<string, User>>();
 cache.set('user-1', user);
-cache.get('user-1');    // User | undefined
-cache.has('user-1');    // boolean
+cache.get('user-1'); // User | undefined
+cache.has('user-1'); // boolean
 cache.delete('user-1'); // boolean
-cache.size();           // number
-cache.keys();           // IterableIterator<string>
-cache.values();         // IterableIterator<User>
-cache.entries();        // IterableIterator<[string, User]>
-cache.clear();          // void
-cache.getCache();       // underlying Map<string, User>
+cache.size(); // number
+cache.keys(); // IterableIterator<string>
+cache.values(); // IterableIterator<User>
+cache.entries(); // IterableIterator<[string, User]>
+cache.clear(); // void
+cache.getCache(); // underlying Map<string, User>
 ```
 
 ### cacheWeakMapFactory
@@ -170,13 +175,14 @@ Creates a WeakMap-based cache for object keys. Entries are automatically garbage
 ```typescript
 const cache = cacheWeakMapFactory<ComputedValue, DataModel>();
 cache.set(model, computedValue);
-cache.get(model);    // ComputedValue | undefined
-cache.has(model);    // boolean
+cache.get(model); // ComputedValue | undefined
+cache.has(model); // boolean
 cache.delete(model); // boolean
-cache.getCache();    // underlying WeakMap
+cache.getCache(); // underlying WeakMap
 ```
 
 **Choose between them:**
+
 - `cacheMapFactory` — primitive keys, need to enumerate/count entries
 - `cacheWeakMapFactory` — object keys, automatic memory management, no enumeration needed
 
@@ -208,10 +214,10 @@ getTypeTag(value: unknown): string
 Returns the internal `[[Class]]` type tag via `Object.prototype.toString.call(value)`.
 
 ```typescript
-getTypeTag([]);           // '[object Array]'
-getTypeTag(new Date());   // '[object Date]'
-getTypeTag(new Map());    // '[object Map]'
-getTypeTag(null);         // '[object Null]'
+getTypeTag([]); // '[object Array]'
+getTypeTag(new Date()); // '[object Date]'
+getTypeTag(new Map()); // '[object Map]'
+getTypeTag(null); // '[object Null]'
 ```
 
 ### getKeys
@@ -235,11 +241,15 @@ Safe `hasOwnProperty` check that works even on `Object.create(null)` objects.
 Random number generation utilities:
 
 ```typescript
-import { getRandomNumber, getRandomString, getRandomBoolean } from '@winglet/common-utils/lib';
+import {
+  getRandomBoolean,
+  getRandomNumber,
+  getRandomString,
+} from '@winglet/common-utils/lib';
 
-getRandomNumber(min, max);           // random integer in [min, max]
-getRandomString(length);             // random alphanumeric string
-getRandomBoolean();                  // random boolean
+getRandomNumber(min, max); // random integer in [min, max]
+getRandomString(length); // random alphanumeric string
+getRandomBoolean(); // random boolean
 ```
 
 ---
@@ -247,17 +257,23 @@ getRandomBoolean();                  // random boolean
 ## Error Classes
 
 ### Import
+
 ```typescript
-import { BaseError, AbortError, InvalidTypeError, TimeoutError } from '@winglet/common-utils/error';
+import {
+  AbortError,
+  BaseError,
+  InvalidTypeError,
+  TimeoutError,
+} from '@winglet/common-utils/error';
 ```
 
 ### BaseError (abstract)
 
 ```typescript
 abstract class BaseError extends Error {
-  readonly group: string;    // error group identifier
+  readonly group: string; // error group identifier
   readonly specific: string; // specific error code
-  readonly code: string;     // format: "${group}.${specific}"
+  readonly code: string; // format: "${group}.${specific}"
   readonly details: Record<string, unknown>;
 }
 ```
@@ -273,7 +289,7 @@ try {
   await delay(5000, { signal: controller.signal });
 } catch (e) {
   if (e instanceof AbortError) {
-    console.log(e.code);    // e.g., 'ABORT.SIGNAL_RECEIVED'
+    console.log(e.code); // e.g., 'ABORT.SIGNAL_RECEIVED'
     console.log(e.message); // 'Abort signal received'
   }
 }
@@ -302,8 +318,15 @@ Thrown when a value has an unexpected type. Use in validation logic.
 ## Constants
 
 ### Import
+
 ```typescript
-import { MILLISECOND, SECOND, MINUTE, HOUR, DAY } from '@winglet/common-utils/constant';
+import {
+  DAY,
+  HOUR,
+  MILLISECOND,
+  MINUTE,
+  SECOND,
+} from '@winglet/common-utils/constant';
 // or
 import { TIME_UNITS, TYPE_TAGS } from '@winglet/common-utils/constant';
 ```
@@ -311,11 +334,11 @@ import { TIME_UNITS, TYPE_TAGS } from '@winglet/common-utils/constant';
 ### Time constants
 
 ```typescript
-MILLISECOND = 1
-SECOND      = 1_000
-MINUTE      = 60_000
-HOUR        = 3_600_000
-DAY         = 86_400_000
+MILLISECOND = 1;
+SECOND = 1_000;
+MINUTE = 60_000;
+HOUR = 3_600_000;
+DAY = 86_400_000;
 ```
 
 ### TYPE_TAGS
@@ -323,11 +346,11 @@ DAY         = 86_400_000
 String constants for `[[Class]]` type tags:
 
 ```typescript
-TYPE_TAGS.array    // '[object Array]'
-TYPE_TAGS.date     // '[object Date]'
-TYPE_TAGS.map      // '[object Map]'
-TYPE_TAGS.set      // '[object Set]'
-TYPE_TAGS.regexp   // '[object RegExp]'
+TYPE_TAGS.array; // '[object Array]'
+TYPE_TAGS.date; // '[object Date]'
+TYPE_TAGS.map; // '[object Map]'
+TYPE_TAGS.set; // '[object Set]'
+TYPE_TAGS.regexp; // '[object RegExp]'
 // ...etc
 ```
 

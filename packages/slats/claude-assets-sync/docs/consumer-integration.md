@@ -10,15 +10,15 @@ How to make a package ship Claude Code assets through the `inject-claude-setting
   "version": "…",
   "scripts": {
     "build": "… && yarn build:hashes",
-    "build:hashes": "claude-build-hashes"
+    "build:hashes": "claude-build-hashes",
   },
   "devDependencies": {
-    "@slats/claude-assets-sync": "workspace:^"
+    "@slats/claude-assets-sync": "workspace:^",
   },
   "files": ["dist", "docs", "README.md"],
   "claude": {
-    "assetPath": "docs/claude"
-  }
+    "assetPath": "docs/claude",
+  },
 }
 ```
 
@@ -67,11 +67,11 @@ The legacy `src-no-bin` and `src-no-claude-assets-sync` rules are no longer load
 
 The engine is not shipped as a runtime dependency of any consumer, so end users never get a hoisted `inject-claude-settings` bin. Always invoke via `npx -p @slats/claude-assets-sync ...`; the package manager fetches and caches the engine on demand.
 
-| Scenario | Invocation |
-|---|---|
-| Single consumer target | `npx -p @slats/claude-assets-sync inject-claude-settings --package=@your-scope/your-package --scope=user` |
+| Scenario                         | Invocation                                                                                                            |
+| -------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| Single consumer target           | `npx -p @slats/claude-assets-sync inject-claude-settings --package=@your-scope/your-package --scope=user`             |
 | All packages under one npm scope | `npx -p @slats/claude-assets-sync inject-claude-settings --package=@your-scope --scope=user` (scope alias — no slash) |
-| Multiple specific targets | Repeat `--package` or comma-separate: `--package=@scope-a --package=@scope-b/pkg`. There is no `--all`. |
+| Multiple specific targets        | Repeat `--package` or comma-separate: `--package=@scope-a --package=@scope-b/pkg`. There is no `--all`.               |
 
 ### Scope resolution (project)
 

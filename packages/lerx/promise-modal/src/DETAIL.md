@@ -3,8 +3,7 @@
 ## Requirements
 
 - React 컴포넌트 내외부에서 사용 가능한 promise 기반 모달 API 제공
-- ModalProvider 마운트 전 호출은 prerender 큐에 적재되고, 마운트 시 동일한 Promise가
-  유효하게 연결되어야 함 (마운트 전 호출도 정상적으로 resolve 가능)
+- ModalProvider 마운트 전 호출은 prerender 큐에 적재되고, 마운트 시 동일한 Promise가 유효하게 연결되어야 함 (마운트 전 호출도 정상적으로 resolve 가능)
 - alert (알림), confirm (확인), prompt (입력) 세 가지 모달 타입 지원
 - ModalProvider를 통한 React 트리 초기화; 언마운트 시 initialize의 역연산으로 완전 정리
 - 커스텀 컴포넌트 주입을 통한 UI 교체 가능

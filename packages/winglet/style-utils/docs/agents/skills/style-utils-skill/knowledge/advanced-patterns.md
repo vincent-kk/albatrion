@@ -31,13 +31,16 @@ The manager flushes once per frame via `requestAnimationFrame`. Inside a single 
 A small class that keeps one `:root` variable block alive and rotates it on demand:
 
 ```typescript
-import { destroyScope, styleManagerFactory } from '@winglet/style-utils/style-manager';
+import {
+  destroyScope,
+  styleManagerFactory,
+} from '@winglet/style-utils/style-manager';
 
 type ThemeName = 'light' | 'dark';
 
 const THEMES: Record<ThemeName, Record<string, string>> = {
   light: { '--bg': '#ffffff', '--fg': '#111111', '--primary': '#1677ff' },
-  dark:  { '--bg': '#0f0f10', '--fg': '#f5f5f5', '--primary': '#4096ff' },
+  dark: { '--bg': '#0f0f10', '--fg': '#f5f5f5', '--primary': '#4096ff' },
 };
 
 export class ThemeManager {
@@ -51,7 +54,10 @@ export class ThemeManager {
       .join(' ');
 
     this.removeTheme?.();
-    this.removeTheme = this.addStyle('vars', `:root { ${vars} } body { background: var(--bg); color: var(--fg); }`);
+    this.removeTheme = this.addStyle(
+      'vars',
+      `:root { ${vars} } body { background: var(--bg); color: var(--fg); }`,
+    );
   }
 
   registerExtra(id: string, css: string) {
@@ -149,7 +155,8 @@ addStyle('state', '.panel { background: lightyellow; }');
 For components that may be rendered multiple times and need independent styles per instance, derive a unique scope:
 
 ```typescript
-const makeScopeId = (prefix: string) => `${prefix}-${Math.random().toString(36).slice(2, 8)}`;
+const makeScopeId = (prefix: string) =>
+  `${prefix}-${Math.random().toString(36).slice(2, 8)}`;
 
 class Widget {
   private scopeId = makeScopeId('widget');
@@ -158,7 +165,9 @@ class Widget {
     const addStyle = styleManagerFactory(this.scopeId);
     // ...
   }
-  destroy() { destroyScope(this.scopeId); }
+  destroy() {
+    destroyScope(this.scopeId);
+  }
 }
 ```
 

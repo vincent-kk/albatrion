@@ -2,8 +2,7 @@
 
 ## Purpose
 
-SHA-256 기반 콘텐츠 해시 프리미티브. `hashManifest`(빌드 타임)와
-`injectPlan`(런타임 비교)이 공통으로 사용하는 긴밀하게 결합된 3개의 헬퍼.
+SHA-256 기반 콘텐츠 해시 프리미티브. `hashManifest`(빌드 타임)와 `injectPlan`(런타임 비교)이 공통으로 사용하는 긴밀하게 결합된 3개의 헬퍼.
 
 ## Structure
 

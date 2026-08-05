@@ -1,6 +1,6 @@
 ---
 name: schema-form-skill
-description: "Expert knowledge base for @canard/schema-form. Triggers on FormTypeInput, computed properties (active/visible/readOnly/derived), conditional schemas (oneOf/anyOf/allOf/if-then-else), JSONPointer (.., ., *, @), FormHandle, virtual schemas, plugins (AJV/Antd/MUI), validation, state, injectTo, arrays, context, events, troubleshooting."
+description: 'Expert knowledge base for @canard/schema-form. Triggers on FormTypeInput, computed properties (active/visible/readOnly/derived), conditional schemas (oneOf/anyOf/allOf/if-then-else), JSONPointer (.., ., *, @), FormHandle, virtual schemas, plugins (AJV/Antd/MUI), validation, state, injectTo, arrays, context, events, troubleshooting.'
 user-invocable: false
 ---
 
@@ -19,25 +19,25 @@ Do not inline the full interface definitions or long examples from knowledge fil
 
 ## Topic Router
 
-| Topic keywords in user question | Knowledge file |
-|---|---|
-| `computed`, `watch`, `active`, `visible`, `readOnly`, `disabled`, `pristine`, `derived`, `&active`, `&visible` | `knowledge/computed-properties.md` |
-| `oneOf`, `anyOf`, `allOf`, `if/then/else`, `&if`, conditional fields, dynamic forms | `knowledge/conditional-schema.md` |
-| `FormTypeInput`, `FormTypeInputProps`, `formTypeInputDefinitions`, `formTypeInputMap`, custom input | `knowledge/formtype-input.md` |
-| `validate`, `ValidationMode`, `errorMessages`, `formatError`, `useChildNodeErrors`, validation plugin | `knowledge/validation.md` |
-| `injectTo`, field value propagation, circular reference, auto-populate | `knowledge/inject-to.md` |
-| `ArrayNode`, `push`, `remove`, `clear`, `minItems`, `maxItems`, `prefixItems`, tuple | `knowledge/array-operations.md` |
-| `FormHandle`, `useRef`, `getValue`, `setValue`, `validate()`, `reset`, `submit`, `focus`, programmatic control | `knowledge/form-handle.md` |
-| `JSONPointer`, paths, `..`, `.`, `*`, `@`, `~0`, `~1`, `find`, `findNode` | `knowledge/jsonpointer.md` |
-| `registerPlugin`, plugin development, AJV, Antd, MUI, UI plugin, validator plugin | `knowledge/plugin-system.md` |
-| `Form.Render`, `Form.Input`, `Form.Label`, custom layout, path-based rendering | `knowledge/form-render.md` |
-| `virtual`, `VirtualNode`, field grouping, date range, multi-field combination | `knowledge/virtual-schema.md` |
-| `NodeState`, `dirty`, `touched`, `validated`, `showError`, `globalState`, `onStateChange`, `clearState` | `knowledge/state-management.md` |
-| `context`, `@.`, `(@).`, external data, `userRole`, permissions, multi-tenant | `knowledge/context-usage.md` |
-| `NodeEventType`, `subscribe`, `EventCascade`, event batching, `UpdateValue`, `RequestRefresh`, `RequestRemount` | `knowledge/event-system.md` |
-| errors, not working, bug, debug, unexpected behavior | `knowledge/troubleshooting.md` |
-| performance, slow, memory, large data, Strategy, virtualization, bulk operation | `knowledge/performance-optimization.md` |
-| testing, unit test, component test, integration test, Vitest, testing-library | `knowledge/testing-guide.md` |
+| Topic keywords in user question                                                                                 | Knowledge file                          |
+| --------------------------------------------------------------------------------------------------------------- | --------------------------------------- |
+| `computed`, `watch`, `active`, `visible`, `readOnly`, `disabled`, `pristine`, `derived`, `&active`, `&visible`  | `knowledge/computed-properties.md`      |
+| `oneOf`, `anyOf`, `allOf`, `if/then/else`, `&if`, conditional fields, dynamic forms                             | `knowledge/conditional-schema.md`       |
+| `FormTypeInput`, `FormTypeInputProps`, `formTypeInputDefinitions`, `formTypeInputMap`, custom input             | `knowledge/formtype-input.md`           |
+| `validate`, `ValidationMode`, `errorMessages`, `formatError`, `useChildNodeErrors`, validation plugin           | `knowledge/validation.md`               |
+| `injectTo`, field value propagation, circular reference, auto-populate                                          | `knowledge/inject-to.md`                |
+| `ArrayNode`, `push`, `remove`, `clear`, `minItems`, `maxItems`, `prefixItems`, tuple                            | `knowledge/array-operations.md`         |
+| `FormHandle`, `useRef`, `getValue`, `setValue`, `validate()`, `reset`, `submit`, `focus`, programmatic control  | `knowledge/form-handle.md`              |
+| `JSONPointer`, paths, `..`, `.`, `*`, `@`, `~0`, `~1`, `find`, `findNode`                                       | `knowledge/jsonpointer.md`              |
+| `registerPlugin`, plugin development, AJV, Antd, MUI, UI plugin, validator plugin                               | `knowledge/plugin-system.md`            |
+| `Form.Render`, `Form.Input`, `Form.Label`, custom layout, path-based rendering                                  | `knowledge/form-render.md`              |
+| `virtual`, `VirtualNode`, field grouping, date range, multi-field combination                                   | `knowledge/virtual-schema.md`           |
+| `NodeState`, `dirty`, `touched`, `validated`, `showError`, `globalState`, `onStateChange`, `clearState`         | `knowledge/state-management.md`         |
+| `context`, `@.`, `(@).`, external data, `userRole`, permissions, multi-tenant                                   | `knowledge/context-usage.md`            |
+| `NodeEventType`, `subscribe`, `EventCascade`, event batching, `UpdateValue`, `RequestRefresh`, `RequestRemount` | `knowledge/event-system.md`             |
+| errors, not working, bug, debug, unexpected behavior                                                            | `knowledge/troubleshooting.md`          |
+| performance, slow, memory, large data, Strategy, virtualization, bulk operation                                 | `knowledge/performance-optimization.md` |
+| testing, unit test, component test, integration test, Vitest, testing-library                                   | `knowledge/testing-guide.md`            |
 
 ## Architecture Cheat Sheet
 
@@ -60,12 +60,12 @@ Use this section for quick orientation. Load the matching knowledge file for dep
 
 ### JSONPointer Extensions by Context
 
-| Syntax | computed expressions | `node.find()` | `formTypeInputMap` |
-|---|---|---|---|
-| Absolute `/a/b` | ✓ | ✓ | ✓ |
-| Relative `..`, `.` | ✓ | ✓ | ✗ |
-| Wildcard `*` | ✗ | ✗ | ✓ |
-| Context `@` | ✓ | ✗ | ✗ |
+| Syntax             | computed expressions | `node.find()` | `formTypeInputMap` |
+| ------------------ | -------------------- | ------------- | ------------------ |
+| Absolute `/a/b`    | ✓                    | ✓             | ✓                  |
+| Relative `..`, `.` | ✓                    | ✓             | ✗                  |
+| Wildcard `*`       | ✗                    | ✗             | ✓                  |
+| Context `@`        | ✓                    | ✗             | ✗                  |
 
 ### Computed Property Keys
 
@@ -74,6 +74,7 @@ Use this section for quick orientation. Load the matching knowledge file for dep
 Shorthand aliases (top-level schema keys): `&active`, `&visible`, `&readOnly`, `&disabled`, `&pristine`, `&derived`, `&if`.
 
 **active vs visible**
+
 - `active: false` → value removed from form data (use for conditional fields, payment methods)
 - `visible: false` → UI hidden but value retained (use for collapsible UI, step forms)
 
@@ -82,16 +83,20 @@ See `knowledge/computed-properties.md` for the full decision table.
 ### ValidationMode
 
 ```typescript
-enum ValidationMode { None = 0, OnChange = 1, OnRequest = 2 }
+enum ValidationMode {
+  None = 0,
+  OnChange = 1,
+  OnRequest = 2,
+}
 // Combinable: ValidationMode.OnChange | ValidationMode.OnRequest
 ```
 
 ### Available Plugins
 
-| Category | Packages |
-|---|---|
-| Validator | `@canard/schema-form-ajv8-plugin`, `@canard/schema-form-ajv7-plugin`, `@canard/schema-form-ajv6-plugin` |
-| UI | `@canard/schema-form-antd5-plugin`, `@canard/schema-form-antd6-plugin`, `@canard/schema-form-antd-mobile-plugin`, `@canard/schema-form-mui-plugin` |
+| Category  | Packages                                                                                                                                           |
+| --------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Validator | `@canard/schema-form-ajv8-plugin`, `@canard/schema-form-ajv7-plugin`, `@canard/schema-form-ajv6-plugin`                                            |
+| UI        | `@canard/schema-form-antd5-plugin`, `@canard/schema-form-antd6-plugin`, `@canard/schema-form-antd-mobile-plugin`, `@canard/schema-form-mui-plugin` |
 
 Register via `registerPlugin(plugin)` before the first render. Order: UI plugins before validator plugins.
 
@@ -107,11 +112,11 @@ Keep code examples focused on the single concept being asked. Link to the knowle
 
 ## Reference Map
 
-| Resource | Path |
-|---|---|
-| Full specification (Korean) | `packages/canard/schema-form/docs/ko/SPECIFICATION.md` |
-| Full specification (English) | `packages/canard/schema-form/docs/en/SPECIFICATION.md` |
-| Quick reference | `packages/canard/schema-form/docs/QUICK_REFERENCE.md` |
-| Storybook examples | `packages/canard/schema-form/stories/*.stories.tsx` |
-| Unit tests | `packages/canard/schema-form/src/core/__tests__/*.test.ts` |
-| Package CLAUDE.md (architecture) | `packages/canard/schema-form/CLAUDE.md` |
+| Resource                         | Path                                                       |
+| -------------------------------- | ---------------------------------------------------------- |
+| Full specification (Korean)      | `packages/canard/schema-form/docs/ko/SPECIFICATION.md`     |
+| Full specification (English)     | `packages/canard/schema-form/docs/en/SPECIFICATION.md`     |
+| Quick reference                  | `packages/canard/schema-form/docs/QUICK_REFERENCE.md`      |
+| Storybook examples               | `packages/canard/schema-form/stories/*.stories.tsx`        |
+| Unit tests                       | `packages/canard/schema-form/src/core/__tests__/*.test.ts` |
+| Package CLAUDE.md (architecture) | `packages/canard/schema-form/CLAUDE.md`                    |

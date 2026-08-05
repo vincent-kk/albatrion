@@ -43,6 +43,7 @@ function ManualAbortControl() {
 ```
 
 **Use Cases**:
+
 - Timer-based auto-close
 - Close modals in response to external events
 - Programmatic modal control
@@ -99,6 +100,7 @@ export const toast = (message: ReactNode, duration = 1250) => {
 ```
 
 **Usage Example**:
+
 ```typescript
 toast('Task completed successfully!');
 toast('An error occurred.', 2000);
@@ -145,6 +147,7 @@ async function multiStepProcess() {
 ```
 
 **Notes**:
+
 - Each modal opens after the previous one closes
 - Natural flow through Promise chaining
 - Entire process stops if user cancels
@@ -187,6 +190,7 @@ function CustomAnchorExample() {
 ```
 
 **Use Cases**:
+
 - Restrict modals to specific area
 - Manage multiple modal containers
 - Use modals inside iframe or Shadow DOM
@@ -254,6 +258,7 @@ async function collectUserInfo() {
 ```
 
 **Key Points**:
+
 - Type-safe handling of complex objects
 - Validation with `disabled` function
 - Confirm button disabled until all fields are filled
@@ -291,6 +296,7 @@ notify('error', 'Network error occurred.');
 ```
 
 **Advantages**:
+
 - Consistent notification interface
 - Automatic styling by type
 - Reusable utility function

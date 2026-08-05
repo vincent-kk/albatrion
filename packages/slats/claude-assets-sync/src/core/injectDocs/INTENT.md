@@ -2,9 +2,7 @@
 
 ## Purpose
 
-Apply + summarize primitives for Claude docs injection. Consumed by
-both the Ink (`ui/`) and plain (`renderPlain`) renderers. No
-orchestrator lives here; callers drive the pipeline themselves.
+Apply + summarize primitives for Claude docs injection. Consumed by both the Ink (`ui/`) and plain (`renderPlain`) renderers. No orchestrator lives here; callers drive the pipeline themselves.
 
 ## Structure
 
@@ -24,12 +22,10 @@ orchestrator lives here; callers drive the pipeline themselves.
 ### Ask first
 
 - Adding a new `Action.kind` — callers must be updated in lockstep
-- Reintroducing an orchestrator function; both renderers compose
-  primitives today
+- Reintroducing an orchestrator function; both renderers compose primitives today
 
 ### Never do
 
 - Import from `commands/` or `ui/`
-- Re-introduce `printPlan` / `emitCiForceList` — those are renderer
-  responsibilities and must live in `commands/` or `ui/`
+- Re-introduce `printPlan` / `emitCiForceList` — those are renderer responsibilities and must live in `commands/` or `ui/`
 - Re-introduce `.sync-meta.json` or other legacy sync state

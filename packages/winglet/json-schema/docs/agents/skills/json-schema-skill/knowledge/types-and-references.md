@@ -165,8 +165,7 @@ export type InferValueType<
   : AnyValue;
 ```
 
-`InferNonNullableValueType` takes the whole schema, not just its `type`, so `object` and
-`array` can recurse into `properties` and `items`.
+`InferNonNullableValueType` takes the whole schema, not just its `type`, so `object` and `array` can recurse into `properties` and `items`.
 
 **Examples**
 
@@ -193,18 +192,10 @@ type K = InferValueType<{
 
 ## Object inference rules
 
-- **Every key is optional, `required` included.** The described value may omit a key at
-  runtime, so a required marker would be a promise this type cannot keep. Consumers who
-  know the exact shape should declare it and pass it explicitly.
-- **Open by default.** The result is intersected with `Record<string, any>` unless the
-  schema sets `additionalProperties: false`. Open is the JSON Schema default, and it keeps
-  keys contributed by unmodeled applicators (`oneOf`, `anyOf`, `if`/`then`/`else`,
-  `patternProperties`, `dependentSchemas`, `$ref`) from being rejected as excess properties.
-- **Unmodeled shapes fall back, never narrow.** Non-literal `properties`
-  (`Dictionary<JsonSchema>`) → `Record<string, any>`; multi-type `['string', 'number']` →
-  `any`; `items: false` → `any[]`.
-- **`-readonly` is applied** so an `as const` schema does not make the inferred value
-  readonly — the schema is frozen, the value it describes is not.
+- **Every key is optional, `required` included.** The described value may omit a key at runtime, so a required marker would be a promise this type cannot keep. Consumers who know the exact shape should declare it and pass it explicitly.
+- **Open by default.** The result is intersected with `Record<string, any>` unless the schema sets `additionalProperties: false`. Open is the JSON Schema default, and it keeps keys contributed by unmodeled applicators (`oneOf`, `anyOf`, `if`/`then`/`else`, `patternProperties`, `dependentSchemas`, `$ref`) from being rejected as excess properties.
+- **Unmodeled shapes fall back, never narrow.** Non-literal `properties` (`Dictionary<JsonSchema>`) → `Record<string, any>`; multi-type `['string', 'number']` → `any`; `items: false` → `any[]`.
+- **`-readonly` is applied** so an `as const` schema does not make the inferred value readonly — the schema is frozen, the value it describes is not.
 
 ---
 

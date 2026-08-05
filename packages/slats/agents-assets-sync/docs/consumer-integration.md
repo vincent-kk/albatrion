@@ -10,15 +10,15 @@ How to make a package ship Claude Code assets through the `inject-agents-setting
   "version": "…",
   "scripts": {
     "build": "… && yarn build:hashes",
-    "build:hashes": "agents-build-hashes"
+    "build:hashes": "agents-build-hashes",
   },
   "devDependencies": {
-    "@slats/agents-assets-sync": "workspace:^"
+    "@slats/agents-assets-sync": "workspace:^",
   },
   "files": ["dist", "docs", "README.md"],
   "agents": {
-    "assetPath": "docs/agents"
-  }
+    "assetPath": "docs/agents",
+  },
 }
 ```
 
@@ -67,11 +67,11 @@ The legacy `src-no-bin` and `src-no-agents-assets-sync` rules are no longer load
 
 The engine is not shipped as a runtime dependency of any consumer, so end users never get a hoisted `inject-agents-settings` bin. Always invoke via `npx -p @slats/agents-assets-sync ...`; the package manager fetches and caches the engine on demand.
 
-| Scenario | Invocation |
-|---|---|
-| Single consumer target | `npx -p @slats/agents-assets-sync inject-agents-settings --package=@your-scope/your-package --agent=claude --scope=user` |
+| Scenario                         | Invocation                                                                                                                           |
+| -------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| Single consumer target           | `npx -p @slats/agents-assets-sync inject-agents-settings --package=@your-scope/your-package --agent=claude --scope=user`             |
 | All packages under one npm scope | `npx -p @slats/agents-assets-sync inject-agents-settings --package=@your-scope --agent=claude --scope=user` (scope alias — no slash) |
-| Multiple specific targets | Repeat `--package` or comma-separate: `--package=@scope-a --package=@scope-b/pkg`. There is no `--all`. |
+| Multiple specific targets        | Repeat `--package` or comma-separate: `--package=@scope-a --package=@scope-b/pkg`. There is no `--all`.                              |
 
 ### Scope resolution (project)
 

@@ -24,12 +24,13 @@ import { DataLoader } from '@winglet/data-loader';
 // - Must return a Promise of an array with the SAME LENGTH as keys
 // - Each position must correspond to the same-index key
 async function batchLoadUsers(ids: ReadonlyArray<string>) {
-  const rows = await db.query(
-    'SELECT * FROM users WHERE id IN (?)',
-    [[...ids]],
-  );
+  const rows = await db.query('SELECT * FROM users WHERE id IN (?)', [
+    [...ids],
+  ]);
   // Map results back to key order — critical!
-  return ids.map(id => rows.find(r => r.id === id) ?? new Error(`User ${id} not found`));
+  return ids.map(
+    (id) => rows.find((r) => r.id === id) ?? new Error(`User ${id} not found`),
+  );
 }
 
 // Step 2: Create the loader
@@ -55,8 +56,12 @@ async function wrong(ids: ReadonlyArray<string>) {
 
 // CORRECT — sort results to match key order
 async function correct(ids: ReadonlyArray<string>) {
-  const rows = await db.query('SELECT * FROM users WHERE id IN (?)', [[...ids]]);
-  return ids.map(id => rows.find(r => r.id === id) ?? new Error(`Not found: ${id}`));
+  const rows = await db.query('SELECT * FROM users WHERE id IN (?)', [
+    [...ids],
+  ]);
+  return ids.map(
+    (id) => rows.find((r) => r.id === id) ?? new Error(`Not found: ${id}`),
+  );
 }
 ```
 
@@ -70,7 +75,10 @@ If the returned array length differs from `keys.length`, or the returned value i
 
 ```typescript
 // Object keys need cacheKeyFn
-interface ProductKey { id: string; locale: string }
+interface ProductKey {
+  id: string;
+  locale: string;
+}
 
 const productLoader = new DataLoader<ProductKey, Product, string>(
   batchLoadProducts,
@@ -117,14 +125,14 @@ const [user1, user2, user3] = await Promise.all([
 
 ## Error Surface Quick Reference
 
-| Error code | Thrown by | Cause |
-|---|---|---|
-| `INVALID_KEY` | `load()` | Key is `null` or `undefined` |
-| `INVALID_KEYS` | `loadMany()` | `keys` is not array-like |
-| `INVALID_BATCH_LOADER` | Constructor / dispatch | BatchLoader not a function, non-Promise return, non-array result, or length mismatch |
-| `INVALID_MAX_BATCH_SIZE` | Constructor | `maxBatchSize` not a positive number |
-| `INVALID_CACHE` | Constructor | Custom `cache` is missing `get`/`set`/`delete`/`clear` |
-| `INVALID_CACHE_KEY_FN` | Constructor | `cacheKeyFn` is not a function |
-| `INVALID_BATCH_SCHEDULER` | Constructor | `batchScheduler` is not a function |
+| Error code                | Thrown by              | Cause                                                                                |
+| ------------------------- | ---------------------- | ------------------------------------------------------------------------------------ |
+| `INVALID_KEY`             | `load()`               | Key is `null` or `undefined`                                                         |
+| `INVALID_KEYS`            | `loadMany()`           | `keys` is not array-like                                                             |
+| `INVALID_BATCH_LOADER`    | Constructor / dispatch | BatchLoader not a function, non-Promise return, non-array result, or length mismatch |
+| `INVALID_MAX_BATCH_SIZE`  | Constructor            | `maxBatchSize` not a positive number                                                 |
+| `INVALID_CACHE`           | Constructor            | Custom `cache` is missing `get`/`set`/`delete`/`clear`                               |
+| `INVALID_CACHE_KEY_FN`    | Constructor            | `cacheKeyFn` is not a function                                                       |
+| `INVALID_BATCH_SCHEDULER` | Constructor            | `batchScheduler` is not a function                                                   |
 
 All are instances of `DataLoaderError` (detectable with `isDataLoaderError(err)`).

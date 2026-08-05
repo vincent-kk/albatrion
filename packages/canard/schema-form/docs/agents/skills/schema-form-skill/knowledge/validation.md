@@ -6,9 +6,9 @@ JSON Schema validation is delegated to a registered validator plugin (AJV 6/7/8)
 
 ```typescript
 enum ValidationMode {
-  None = 0,       // Disable validation
-  OnChange = 1,   // Validate on value change
-  OnRequest = 2,  // Validate only when validate() is called
+  None = 0, // Disable validation
+  OnChange = 1, // Validate on value change
+  OnRequest = 2, // Validate only when validate() is called
 }
 
 // Combined usage
@@ -38,7 +38,6 @@ import { Form, ValidationMode } from '@canard/schema-form';
   validationMode={ValidationMode.OnChange | ValidationMode.OnRequest}
 />
 ```
-
 
 ## formatError Function
 
@@ -80,7 +79,6 @@ const formatError: FormatError = (error, node) => {
   formatError={formatError}
 />
 ```
-
 
 ## Virtual Node Errors
 
@@ -173,7 +171,6 @@ const AddressInput: FC<FormTypeInputProps> = ({ node, value, onChange }) => {
 };
 ```
 
-
 ## Validation Plugins
 
 ### Registering AJV Plugin
@@ -188,12 +185,11 @@ registerPlugin(ajvValidatorPlugin);
 
 ### Available Plugins
 
-| Plugin | Package |
-|--------|---------|
+| Plugin  | Package                           |
+| ------- | --------------------------------- |
 | AJV 8.x | `@canard/schema-form-ajv8-plugin` |
 | AJV 7.x | `@canard/schema-form-ajv7-plugin` |
 | AJV 6.x | `@canard/schema-form-ajv6-plugin` |
-
 
 ## References
 

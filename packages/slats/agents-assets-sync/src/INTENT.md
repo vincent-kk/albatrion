@@ -2,30 +2,22 @@
 
 ## Purpose
 
-Shared CLI engine that lets any npm package ship one set of agent docs
-(skills, rules, commands) and inject them where each coding agent keeps
-them. The engine owns the `inject-agents-settings` dispatcher; consumers
-only declare `agents.assetPath` in `package.json` and let
-`agents-build-hashes` hash their asset tree at build time.
+Shared CLI engine that lets any npm package ship one set of agent docs (skills, rules, commands) and inject them where each coding agent keeps them. The engine owns the `inject-agents-settings` dispatcher; consumers only declare `agents.assetPath` in `package.json` and let `agents-build-hashes` hash their asset tree at build time.
 
 ## Structure
 
 - `index.ts` — programmatic public API barrel
 - `commands/` — commander root: dispatcher + action
-- `core/` — `hash`, `hashManifest`, `scope`, `agentTarget`,
-  `markerBlock`, `buildPlan`, `injectDocs` primitives
+- `core/` — `hash`, `hashManifest`, `scope`, `agentTarget`, `markerBlock`, `buildPlan`, `injectDocs` primitives
 - `ui/` — Ink React UI for the TTY path (internal, dynamic-imported)
 - `utils/` — logger, asyncPool, types, version (organ)
 
 ## Conventions
 
-- Every choice is reachable by flag, so an agent can drive a whole run
-  without a prompt; the Ink picker is a convenience, never the only way
+- Every choice is reachable by flag, so an agent can drive a whole run without a prompt; the Ink picker is a convenience, never the only way
 - TypeScript strict mode, ESM-only rolldown build
-- `./buildHashes` is build-time hashing, pure Node ESM outside rolldown;
-  its self-executing bin is `scripts/agents-build-hashes.mjs`
-- Entry point is `bin/inject-agents-settings.mjs`, a two-line re-export
-  of `runCli(process.argv)`
+- `./buildHashes` is build-time hashing, pure Node ESM outside rolldown; its self-executing bin is `scripts/agents-build-hashes.mjs`
+- Entry point is `bin/inject-agents-settings.mjs`, a two-line re-export of `runCli(process.argv)`
 
 ## Boundaries
 
@@ -33,8 +25,7 @@ only declare `agents.assetPath` in `package.json` and let
 
 - Keep `core/` UI-free; both renderers compose its primitives directly
 - Route cross-fractal imports through each sibling's `index.ts`
-- Load `ui/` only from `commands/runCli/utils/renderOrFallback.ts`, by
-  dynamic import; `src/index.ts` MUST NOT re-export from `ui/`
+- Load `ui/` only from `commands/runCli/utils/renderOrFallback.ts`, by dynamic import; `src/index.ts` MUST NOT re-export from `ui/`
 
 ### Ask first
 
@@ -45,6 +36,5 @@ only declare `agents.assetPath` in `package.json` and let
 ### Never do
 
 - Import from `ui/` outside `renderOrFallback.ts`
-- Read `package.json` or walk `node_modules` inside `core/**`, `ui/**`
-  or `utils/**`
+- Read `package.json` or walk `node_modules` inside `core/**`, `ui/**` or `utils/**`
 - Rewrite content in a shared `AGENTS.md` outside this tool's markers

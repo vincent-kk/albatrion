@@ -118,6 +118,7 @@ const loader = new DataLoader(batchLoad, { cache: false });
 ```
 
 When `cache: false`:
+
 - `prime()` is a no-op.
 - `clear()` / `clearAll()` are no-ops.
 - Duplicate keys in one tick produce duplicate entries in the batch.
@@ -149,7 +150,7 @@ async function createUser(data: CreateUserInput) {
 
 // Prime from a list response to warm the cache
 const users = await api.listUsers();
-users.forEach(user => userLoader.prime(user.id, user));
+users.forEach((user) => userLoader.prime(user.id, user));
 
 // Prime with an Error to mark a key as permanently missing
 // (the rejected promise has .catch(NOOP_FUNCTION) attached internally,

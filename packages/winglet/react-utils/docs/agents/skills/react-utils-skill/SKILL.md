@@ -16,8 +16,7 @@ Guide users on the `@winglet/react-utils` library. Apply this skill whenever use
 - **3 HOCs**: `withErrorBoundary`, `withErrorBoundaryForwardRef`, `withUploader`
 - **Component utilities** for React runtime type checking, filtering, and rendering
 
-**Peer dependencies**: React 16–19, React DOM 16–19
-**Module formats**: ESM (`.mjs`) + CJS (`.cjs`) with full TypeScript declarations
+**Peer dependencies**: React 16–19, React DOM 16–19 **Module formats**: ESM (`.mjs`) + CJS (`.cjs`) with full TypeScript declarations
 
 ## Sub-path Exports
 

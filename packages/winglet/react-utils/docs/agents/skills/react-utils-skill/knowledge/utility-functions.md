@@ -11,8 +11,8 @@ Functions for runtime React type inspection. All return type-safe boolean predic
 ```typescript
 function isReactComponent<
   Props extends object = any,
-  Component extends ComponentType<Props> = ComponentType<Props>
->(component: unknown): component is Component
+  Component extends ComponentType<Props> = ComponentType<Props>,
+>(component: unknown): component is Component;
 ```
 
 Returns `true` for function components, class components, and `React.memo` wrapped components. Implemented as `isFunctionComponent || isMemoComponent || isClassComponent`.
@@ -41,7 +41,7 @@ isReactComponent(null); // false
 
 ```typescript
 // Re-export of React's isValidElement
-function isReactElement(object: unknown): object is React.ReactElement
+function isReactElement(object: unknown): object is React.ReactElement;
 ```
 
 Returns `true` for values that are rendered JSX elements or results of `React.createElement`. This is the **element** check (rendered instance), not the **component** check (definition).
@@ -64,8 +64,8 @@ isReactElement(null);                           // false
 ```typescript
 function isFunctionComponent<
   Props extends object = any,
-  Component extends FC<Props> = FC<Props>
->(component: unknown): component is Component
+  Component extends FC<Props> = FC<Props>,
+>(component: unknown): component is Component;
 ```
 
 Returns `true` for plain function components. Specifically: is a function AND does not have `prototype.isReactComponent`. This means it also returns `true` for arbitrary functions, not just React components — validate in context.
@@ -85,8 +85,8 @@ isFunctionComponent(React.forwardRef((_, ref) => <div ref={ref} />)); // false (
 function isClassComponent<
   Props extends object = any,
   State = any,
-  Component extends ComponentClass<Props, State> = ComponentClass<Props, State>
->(component: unknown): component is Component
+  Component extends ComponentClass<Props, State> = ComponentClass<Props, State>,
+>(component: unknown): component is Component;
 ```
 
 Returns `true` when the value is a class that extends `React.Component` or `React.PureComponent`. Checks `typeof === 'function' && prototype.isReactComponent`.
@@ -108,8 +108,10 @@ isClassComponent(React.memo(MyClass));  // false (wrapped in object)
 ```typescript
 function isMemoComponent<
   Props extends object = any,
-  Component extends MemoExoticComponent<ComponentType<Props>> = MemoExoticComponent<ComponentType<Props>>
->(component: unknown): component is Component
+  Component extends MemoExoticComponent<
+    ComponentType<Props>
+  > = MemoExoticComponent<ComponentType<Props>>,
+>(component: unknown): component is Component;
 ```
 
 Returns `true` for components wrapped with `React.memo()`. Checks `$$typeof === Symbol.for('react.memo')`.
@@ -132,8 +134,8 @@ isMemoComponent(() => <div />);    // false (not wrapped)
 ```typescript
 function remainOnlyReactComponent<
   Input extends Record<string, unknown>,
-  Output extends Record<string, ComponentType>
->(dictionary: Input): Output
+  Output extends Record<string, ComponentType>,
+>(dictionary: Input): Output;
 ```
 
 Filters an object to retain only values that pass `isReactComponent`. Useful for processing plugin registries, component maps, or configuration objects that mix components with other values.
@@ -142,11 +144,11 @@ Filters an object to retain only values that pass `isReactComponent`. Useful for
 import { remainOnlyReactComponent } from '@winglet/react-utils/object';
 
 const registry = {
-  Button: ButtonComponent,      // component — kept
-  Icon: IconComponent,          // component — kept
-  helper: helperFunction,       // plain function — ALSO kept (isFunctionComponent returns true)
-  config: { timeout: 3000 },    // plain object — removed
-  label: 'Submit',              // string — removed
+  Button: ButtonComponent, // component — kept
+  Icon: IconComponent, // component — kept
+  helper: helperFunction, // plain function — ALSO kept (isFunctionComponent returns true)
+  config: { timeout: 3000 }, // plain object — removed
+  label: 'Submit', // string — removed
 };
 
 const components = remainOnlyReactComponent(registry);
@@ -167,17 +169,17 @@ const components = remainOnlyReactComponent(registry);
 function renderComponent<P extends object>(
   Component: ReactNode | ComponentType<P>,
   props?: P,
-): ReactNode
+): ReactNode;
 ```
 
 Safely renders various forms of React "renderable" values with a unified API:
 
-| Input type | Behavior |
-|-----------|----------|
-| `null`, `undefined`, `0`, `false`, `''` | Returns `null` |
-| React element (JSX) | Returns the element as-is, ignores `props` |
+| Input type                              | Behavior                                      |
+| --------------------------------------- | --------------------------------------------- |
+| `null`, `undefined`, `0`, `false`, `''` | Returns `null`                                |
+| React element (JSX)                     | Returns the element as-is, ignores `props`    |
 | React component (function, class, memo) | Calls `React.createElement(Component, props)` |
-| Any other value | Returns `null` |
+| Any other value                         | Returns `null`                                |
 
 ```typescript
 import { renderComponent } from '@winglet/react-utils/render';

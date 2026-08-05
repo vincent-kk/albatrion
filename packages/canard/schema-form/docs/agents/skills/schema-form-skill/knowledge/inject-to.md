@@ -6,13 +6,13 @@ Propagate a source field's value to one or more target fields once per change vi
 
 ### Comparison Table
 
-| Characteristic | injectTo | derived |
-|----------------|----------|---------|
-| **Direction** | Source → Target | Dependencies → Current Field |
-| **Trigger** | On source value change | On dependency value change |
-| **User Modification** | Target field **can be modified** | Auto-calculated, **overwrites** changes |
-| **Value Sync** | One-time (independent after injection) | Continuous (always calculated) |
-| **Use Case** | Initial value copy, default value setting | Automatic derived value calculation |
+| Characteristic        | injectTo                                  | derived                                 |
+| --------------------- | ----------------------------------------- | --------------------------------------- |
+| **Direction**         | Source → Target                           | Dependencies → Current Field            |
+| **Trigger**           | On source value change                    | On dependency value change              |
+| **User Modification** | Target field **can be modified**          | Auto-calculated, **overwrites** changes |
+| **Value Sync**        | One-time (independent after injection)    | Continuous (always calculated)          |
+| **Use Case**          | Initial value copy, default value setting | Automatic derived value calculation     |
 
 ### Decision Tree
 
@@ -59,7 +59,7 @@ const schema = {
     source: {
       type: 'string',
       injectTo: (value: string) => ({
-        '../target': `injected: ${value}`,  // Inject to sibling field
+        '../target': `injected: ${value}`, // Inject to sibling field
       }),
     },
     target: {
@@ -87,7 +87,7 @@ const schema = {
             source: {
               type: 'string',
               injectTo: (value: string) => ({
-                '/rootTarget': `from-deep: ${value}`,  // Inject to root field via absolute path
+                '/rootTarget': `from-deep: ${value}`, // Inject to root field via absolute path
               }),
             },
           },
@@ -117,7 +117,7 @@ const schema = {
     fieldB: {
       type: 'string',
       injectTo: (value: string) => ({
-        '../fieldA': `fromB: ${value}`,  // Circular reference automatically blocked
+        '../fieldA': `fromB: ${value}`, // Circular reference automatically blocked
       }),
     },
   },
@@ -149,7 +149,7 @@ const schema = {
     fieldC: {
       type: 'string',
       injectTo: (value: string) => ({
-        '../fieldA': `C→A: ${value}`,  // Circular reference automatically blocked
+        '../fieldA': `C→A: ${value}`, // Circular reference automatically blocked
       }),
     },
   },
@@ -201,9 +201,10 @@ const schema = {
       type: 'string',
       enum: ['basic', 'advanced'],
       injectTo: (value: string) => ({
-        '../config': value === 'basic'
-          ? { level: 1, features: [] }
-          : { level: 2, features: ['a', 'b', 'c'] },
+        '../config':
+          value === 'basic'
+            ? { level: 1, features: [] }
+            : { level: 2, features: ['a', 'b', 'c'] },
       }),
     },
     config: {

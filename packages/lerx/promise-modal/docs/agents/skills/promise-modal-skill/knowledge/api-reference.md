@@ -22,21 +22,21 @@ await alert({
 
 **Options**:
 
-| Option | Type | Description |
-|------|------|------|
-| `title` | `ReactNode` | Modal title |
-| `subtitle` | `ReactNode` | Subtitle below title |
-| `content` | `ReactNode \| ComponentType` | Modal content |
-| `subtype` | `'info' \| 'success' \| 'warning' \| 'error'` | Modal styling type |
-| `dimmed` | `boolean` | Whether to darken background |
-| `closeOnBackdropClick` | `boolean` | Close on backdrop click |
-| `manualDestroy` | `boolean` | Manual destruction mode |
-| `duration` | `number \| string` | Animation duration |
-| `background` | `ModalBackground` | Background configuration |
-| `footer` | `Function \| Object \| false` | Footer configuration |
-| `ForegroundComponent` | `ComponentType` | Custom foreground component |
-| `BackgroundComponent` | `ComponentType` | Custom background component |
-| `signal` | `AbortSignal` | AbortSignal for modal cancellation |
+| Option                 | Type                                          | Description                        |
+| ---------------------- | --------------------------------------------- | ---------------------------------- |
+| `title`                | `ReactNode`                                   | Modal title                        |
+| `subtitle`             | `ReactNode`                                   | Subtitle below title               |
+| `content`              | `ReactNode \| ComponentType`                  | Modal content                      |
+| `subtype`              | `'info' \| 'success' \| 'warning' \| 'error'` | Modal styling type                 |
+| `dimmed`               | `boolean`                                     | Whether to darken background       |
+| `closeOnBackdropClick` | `boolean`                                     | Close on backdrop click            |
+| `manualDestroy`        | `boolean`                                     | Manual destruction mode            |
+| `duration`             | `number \| string`                            | Animation duration                 |
+| `background`           | `ModalBackground`                             | Background configuration           |
+| `footer`               | `Function \| Object \| false`                 | Footer configuration               |
+| `ForegroundComponent`  | `ComponentType`                               | Custom foreground component        |
+| `BackgroundComponent`  | `ComponentType`                               | Custom background component        |
+| `signal`               | `AbortSignal`                                 | AbortSignal for modal cancellation |
 
 **Return Value**: `Promise<void>`
 
@@ -114,12 +114,7 @@ const userInfo = await prompt<{ name: string; age: number }>({
 
 **Additional Options**:
 
-| Option | Type | Description |
-|------|------|------|
-| `Input` | `(props: PromptInputProps<T>) => ReactNode` | Input component (required) |
-| `defaultValue` | `T` | Default input value |
-| `disabled` | `(value: T | undefined) => boolean` | Condition to disable confirm button |
-| `returnOnCancel` | `boolean` | If true, cancel resolves with the current input value instead of null |
+| Option | Type | Description | | ---------------- | ------------------------------------------- | --------------------------------------------------------------------- | ----------------------------------- | | `Input` | `(props: PromptInputProps<T>) => ReactNode` | Input component (required) | | `defaultValue` | `T` | Default input value | | `disabled` | `(value: T                                  | undefined) => boolean` | Condition to disable confirm button | | `returnOnCancel` | `boolean` | If true, cancel resolves with the current input value instead of null |
 
 **Return Value**: `Promise<T | null>` — resolves null on cancel
 
@@ -162,14 +157,14 @@ function App() {
 
 **Props**:
 
-| Prop | Type | Description |
-|------|------|------|
-| `usePathname` | `() => { pathname: string }` | Router path hook (closes modals on path change) |
-| `ForegroundComponent` | `ComponentType<ModalFrameProps>` | Custom foreground component |
-| `BackgroundComponent` | `ComponentType<ModalFrameProps>` | Custom background component |
-| `TitleComponent` | `ComponentType` | Custom title component |
-| `SubtitleComponent` | `ComponentType` | Custom subtitle component |
-| `ContentComponent` | `ComponentType` | Custom content component |
-| `FooterComponent` | `ComponentType<FooterComponentProps>` | Custom footer component |
-| `options` | `ModalOptions` | Global modal options |
-| `context` | `any` | User-defined context data |
+| Prop                  | Type                                  | Description                                     |
+| --------------------- | ------------------------------------- | ----------------------------------------------- |
+| `usePathname`         | `() => { pathname: string }`          | Router path hook (closes modals on path change) |
+| `ForegroundComponent` | `ComponentType<ModalFrameProps>`      | Custom foreground component                     |
+| `BackgroundComponent` | `ComponentType<ModalFrameProps>`      | Custom background component                     |
+| `TitleComponent`      | `ComponentType`                       | Custom title component                          |
+| `SubtitleComponent`   | `ComponentType`                       | Custom subtitle component                       |
+| `ContentComponent`    | `ComponentType`                       | Custom content component                        |
+| `FooterComponent`     | `ComponentType<FooterComponentProps>` | Custom footer component                         |
+| `options`             | `ModalOptions`                        | Global modal options                            |
+| `context`             | `any`                                 | User-defined context data                       |

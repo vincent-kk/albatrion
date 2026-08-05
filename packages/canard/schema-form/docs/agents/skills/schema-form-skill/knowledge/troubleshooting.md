@@ -11,16 +11,16 @@ Common issues, symptoms, and targeted fixes. Grouped by subsystem: plugins, `for
 **Cause**: Order matters when registering multiple plugins
 
 **Solution**:
+
 ```tsx
 // Correct order: UI plugin → Validator plugin
 import { registerPlugin } from '@canard/schema-form';
-import { antd5Plugin } from '@canard/schema-form-antd5-plugin';
 import { ajvValidatorPlugin } from '@canard/schema-form-ajv8-plugin';
+import { antd5Plugin } from '@canard/schema-form-antd5-plugin';
 
-registerPlugin(antd5Plugin);       // 1. UI plugin first
+registerPlugin(antd5Plugin); // 1. UI plugin first
 registerPlugin(ajvValidatorPlugin); // 2. Validator plugin second
 ```
-
 
 ### Issue: formTypeInputMap Wildcard Not Working
 
@@ -29,6 +29,7 @@ registerPlugin(ajvValidatorPlugin); // 2. Validator plugin second
 **Cause**: Incorrect wildcard syntax
 
 **Solution**:
+
 ```tsx
 // ✅ Correct usage
 formTypeInputMap: {
@@ -42,7 +43,6 @@ formTypeInputMap: {
 }
 ```
 
-
 ## Computed Properties Issues
 
 ### Issue: Computed Expression Not Working
@@ -53,10 +53,14 @@ formTypeInputMap: {
 
 ```tsx
 // ❌ Wrong: Missing .. for sibling field reference
-computed: { active: '/toggle === true' }
+computed: {
+  active: '/toggle === true';
+}
 
 // ✅ Correct
-computed: { active: '../toggle === true' }
+computed: {
+  active: '../toggle === true';
+}
 ```
 
 **Cause 2**: Missing watch array (for complex dependencies)
@@ -69,7 +73,6 @@ computed: {
 }
 ```
 
-
 ### Issue: Derived Value Not Updating
 
 **Symptom**: Derived value doesn't change when dependency field changes
@@ -77,6 +80,7 @@ computed: {
 **Cause**: Referenced field in expression doesn't exist or path is incorrect
 
 **Solution**:
+
 ```tsx
 // Debug: Verify path
 const schema = {
@@ -95,7 +99,6 @@ const schema = {
 '&derived': '(../price ?? 0) * (../quantity ?? 1)'
 ```
 
-
 ### Issue: Conditional Field Disappears After setValue
 
 **Symptom**: Conditional field is removed when parent setValue is called
@@ -103,6 +106,7 @@ const schema = {
 **Cause**: This is normal behavior (conditional filtering)
 
 **Understanding**:
+
 ```tsx
 // Parent setValue: applies conditional filtering
 objectNode.setValue({ category: 'movie', price: 200 });
@@ -110,13 +114,13 @@ objectNode.setValue({ category: 'movie', price: 200 });
 
 // Child setValue: bypasses filtering
 const priceNode = objectNode.find('./price');
-priceNode.setValue(999);  // Value set regardless of conditions
+priceNode.setValue(999); // Value set regardless of conditions
 ```
 
 **If you don't want filtering**:
+
 - Call setValue on child node directly
 - Or redesign schema structure
-
 
 ### Issue: Error Messages Not Displayed
 
@@ -129,7 +133,7 @@ priceNode.setValue(999);  // Value set regardless of conditions
 formRef.current?.showError(true);
 
 // Or set via Form prop
-<Form showError={true} />
+<Form showError={true} />;
 ```
 
 **Cause 2**: errorVisible condition
@@ -139,13 +143,10 @@ formRef.current?.showError(true);
 const MyInput = ({ errors, errorVisible }) => (
   <div>
     <input />
-    {errorVisible && errors.length > 0 && (
-      <span>{errors[0].message}</span>
-    )}
+    {errorVisible && errors.length > 0 && <span>{errors[0].message}</span>}
   </div>
 );
 ```
-
 
 ## Array-Related Issues
 
@@ -156,6 +157,7 @@ const MyInput = ({ errors, errorVisible }) => (
 **Cause**: maxItems constraint
 
 **Verification**:
+
 ```tsx
 const arrayNode = formRef.current?.findNode('/items') as ArrayNode;
 
@@ -165,6 +167,7 @@ console.log('Schema:', arrayNode.jsonSchema);
 ```
 
 **Solution**:
+
 ```tsx
 // When maxItems is set, push() is ignored when limit is reached
 {
@@ -173,7 +176,6 @@ console.log('Schema:', arrayNode.jsonSchema);
   maxItems: 5,  // push() won't work when 5 items exist
 }
 ```
-
 
 ## Performance Issues
 
@@ -208,12 +210,11 @@ for (let i = 0; i < 100; i++) {
 
 // ✅ Fast: Set value directly
 const newItems = Array.from({ length: 100 }, (_, i) => i);
-formRef.current?.setValue(prev => ({
+formRef.current?.setValue((prev) => ({
   ...prev,
   items: [...(prev.items || []), ...newItems],
 }));
 ```
-
 
 ## Type-Related Issues
 
@@ -243,7 +244,6 @@ const schema = {
 // Specify FormHandle type
 const formRef = useRef<FormHandle<typeof schema>>(null);
 ```
-
 
 ## References
 

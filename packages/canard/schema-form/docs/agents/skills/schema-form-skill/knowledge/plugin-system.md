@@ -6,20 +6,20 @@ Register validators and UI component sets via `registerPlugin()` before the firs
 
 ### Validator Plugins
 
-| Package | Description |
-|---------|-------------|
+| Package                           | Description              |
+| --------------------------------- | ------------------------ |
 | `@canard/schema-form-ajv8-plugin` | AJV 8.x based validation |
 | `@canard/schema-form-ajv7-plugin` | AJV 7.x based validation |
 | `@canard/schema-form-ajv6-plugin` | AJV 6.x based validation |
 
 ### UI Plugins
 
-| Package | Description |
-|---------|-------------|
-| `@canard/schema-form-antd5-plugin` | Ant Design 5 components |
-| `@canard/schema-form-antd6-plugin` | Ant Design 6 components |
+| Package                                  | Description                  |
+| ---------------------------------------- | ---------------------------- |
+| `@canard/schema-form-antd5-plugin`       | Ant Design 5 components      |
+| `@canard/schema-form-antd6-plugin`       | Ant Design 6 components      |
 | `@canard/schema-form-antd-mobile-plugin` | Ant Design Mobile components |
-| `@canard/schema-form-mui-plugin` | Material UI components |
+| `@canard/schema-form-mui-plugin`         | Material UI components       |
 
 ## SchemaFormPlugin Interface
 
@@ -47,7 +47,7 @@ interface SchemaFormPlugin {
 You can implement custom validation logic.
 
 ```typescript
-import type { ValidatorFactory, Validator } from '@canard/schema-form';
+import type { Validator, ValidatorFactory } from '@canard/schema-form';
 
 const createCustomValidator: ValidatorFactory = (schema) => {
   return {

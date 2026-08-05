@@ -7,38 +7,37 @@ Every `AbstractNode` publishes typed events (`NodeEventType`) and batches them t
 ```typescript
 enum NodeEventType {
   // Lifecycle
-  Initialized,              // Node created and initialized
+  Initialized, // Node created and initialized
 
   // Value & State
-  UpdateValue,              // Value changed
-  UpdateState,              // Node state changed (touched, dirty, etc.)
-  UpdateError,              // Validation errors changed
+  UpdateValue, // Value changed
+  UpdateState, // Node state changed (touched, dirty, etc.)
+  UpdateError, // Validation errors changed
   UpdateComputedProperties, // Computed properties need recalculation
-  UpdateChildren,           // Array/Object children changed
-  UpdatePath,               // Node path changed (e.g., array item reordering)
+  UpdateChildren, // Array/Object children changed
+  UpdatePath, // Node path changed (e.g., array item reordering)
 
   // UI Sync
-  RequestRefresh,           // Sync uncontrolled component's defaultValue with UI (internal)
-  RequestRemount,           // Force full component remount (external API)
+  RequestRefresh, // Sync uncontrolled component's defaultValue with UI (internal)
+  RequestRemount, // Force full component remount (external API)
 
   // System
-  RequestEmitChange,        // Request onChange callback
-  RequestInjection,         // Request injection propagation
+  RequestEmitChange, // Request onChange callback
+  RequestInjection, // Request injection propagation
 }
 ```
 
 ### Event Categories
 
-| Category | Event | Description |
-|----------|-------|-------------|
-| **Lifecycle** | `Initialized` | Node initialization complete |
-| **Value** | `UpdateValue` | Value changed |
-| **State** | `UpdateState` | dirty, touched, etc. state changed |
-| **Validation** | `UpdateError` | Validation errors updated |
-| **Computed** | `UpdateComputedProperties` | Recalculation needed due to dependency change |
-| **Structure** | `UpdateChildren`, `UpdatePath` | Child nodes or path changed |
-| **UI** | `RequestRefresh`, `RequestRemount` | UI update requests |
-
+| Category       | Event                              | Description                                   |
+| -------------- | ---------------------------------- | --------------------------------------------- |
+| **Lifecycle**  | `Initialized`                      | Node initialization complete                  |
+| **Value**      | `UpdateValue`                      | Value changed                                 |
+| **State**      | `UpdateState`                      | dirty, touched, etc. state changed            |
+| **Validation** | `UpdateError`                      | Validation errors updated                     |
+| **Computed**   | `UpdateComputedProperties`         | Recalculation needed due to dependency change |
+| **Structure**  | `UpdateChildren`, `UpdatePath`     | Child nodes or path changed                   |
+| **UI**         | `RequestRefresh`, `RequestRemount` | UI update requests                            |
 
 ## EventCascade Batching Mechanism
 
@@ -54,7 +53,7 @@ schedule(RequestRefresh);
 
 // During microtask execution:
 scheduleMicrotask(() => {
-  nextBatch.resolved = true;  // Set at batch start
+  nextBatch.resolved = true; // Set at batch start
   this.__batchHandler__(mergeEvents(nextBatch.eventEntities));
   // If new events are scheduled during listener execution:
   //   resolved = true, so → create new batch
@@ -89,7 +88,6 @@ if (batch && !batch.resolved) {
 // Create new batch
 ```
 
-
 ## SetValueOption Impact
 
 ### SetValueOption.Overwrite (default)
@@ -116,7 +114,6 @@ nameNode.setValue('Alice');
 // event.option = { settled: true }
 // → Asynchronous computed properties update
 ```
-
 
 ## Performance Characteristics
 
@@ -147,13 +144,12 @@ node.setValue({ name: 'Alice', age: 25, email: 'alice@example.com' });
 // → Minimize re-renders
 ```
 
-
 ## RequestRefresh vs RequestRemount
 
-| Event | Purpose | Trigger |
-|-------|---------|---------|
+| Event            | Purpose                                            | Trigger                                    |
+| ---------------- | -------------------------------------------------- | ------------------------------------------ |
 | `RequestRefresh` | Sync uncontrolled component's defaultValue with UI | Automatically published by internal system |
-| `RequestRemount` | Force full component remount | User explicit call |
+| `RequestRemount` | Force full component remount                       | User explicit call                         |
 
 ### RequestRemount Usage
 
@@ -161,7 +157,6 @@ node.setValue({ name: 'Alice', age: 25, email: 'alice@example.com' });
 // Request forced remount from external code
 node.publish(NodeEventType.RequestRemount);
 ```
-
 
 ## Event Handling in Tests
 
@@ -201,7 +196,6 @@ test('events fire in correct order', async () => {
   expect(events).toContain(NodeEventType.UpdateValue);
 });
 ```
-
 
 ## References
 

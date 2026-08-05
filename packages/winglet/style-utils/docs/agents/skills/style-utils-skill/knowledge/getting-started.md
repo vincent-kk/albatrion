@@ -60,11 +60,11 @@ import { cx, cxLite, compressCss } from '@winglet/style-utils/util';
 
 The three entries correspond to the `package.json` `exports` map:
 
-| Sub-path | Source root | Symbols |
-|----------|-------------|---------|
-| `@winglet/style-utils` | `src/index.ts` | all |
+| Sub-path                             | Source root                 | Symbols                               |
+| ------------------------------------ | --------------------------- | ------------------------------------- |
+| `@winglet/style-utils`               | `src/index.ts`              | all                                   |
 | `@winglet/style-utils/style-manager` | `src/styleManager/index.ts` | `styleManagerFactory`, `destroyScope` |
-| `@winglet/style-utils/util` | `src/utils/index.ts` | `cx`, `cxLite`, `compressCss` |
+| `@winglet/style-utils/util`          | `src/utils/index.ts`        | `cx`, `cxLite`, `compressCss`         |
 
 ---
 
@@ -72,15 +72,15 @@ The three entries correspond to the `package.json` `exports` map:
 
 ### Quick Symbol Map
 
-| Symbol | Kind | Sub-path |
-|--------|------|----------|
-| `cx` | function | `/util` |
-| `cxLite` | function | `/util` |
-| `compressCss` | function | `/util` |
-| `styleManagerFactory` | function | `/style-manager` |
-| `destroyScope` | function | `/style-manager` |
-| `ClassValue`, `ClassArray`, `ClassObject` | types | `/util` (via `/src/utils/cx/type.ts`) |
-| `StyleManagerConfig`, `StyleRoot` | types | `/style-manager` (via `StyleManager/type.ts`) |
+| Symbol                                    | Kind     | Sub-path                                      |
+| ----------------------------------------- | -------- | --------------------------------------------- |
+| `cx`                                      | function | `/util`                                       |
+| `cxLite`                                  | function | `/util`                                       |
+| `compressCss`                             | function | `/util`                                       |
+| `styleManagerFactory`                     | function | `/style-manager`                              |
+| `destroyScope`                            | function | `/style-manager`                              |
+| `ClassValue`, `ClassArray`, `ClassObject` | types    | `/util` (via `/src/utils/cx/type.ts`)         |
+| `StyleManagerConfig`, `StyleRoot`         | types    | `/style-manager` (via `StyleManager/type.ts`) |
 
 See the topic-specific knowledge files for each symbol's full signature and examples.
 
@@ -103,14 +103,20 @@ const className = cx('btn', { 'btn-active': isActive });
 A typical component-level setup creates one factory per scope and stores cleanup functions:
 
 ```typescript
-import { styleManagerFactory, destroyScope } from '@winglet/style-utils/style-manager';
+import {
+  destroyScope,
+  styleManagerFactory,
+} from '@winglet/style-utils/style-manager';
 
 const scopeId = 'my-widget';
 const addStyle = styleManagerFactory(scopeId);
 
-const cleanupButton = addStyle('button', `
+const cleanupButton = addStyle(
+  'button',
+  `
   .btn { background: #1677ff; color: #fff; }
-`);
+`,
+);
 
 // On unmount
 cleanupButton();
@@ -123,12 +129,18 @@ destroyScope(scopeId);
 
 ```typescript
 import { useEffect } from 'react';
-import { styleManagerFactory, destroyScope } from '@winglet/style-utils/style-manager';
+
+import {
+  destroyScope,
+  styleManagerFactory,
+} from '@winglet/style-utils/style-manager';
 
 function useScopedStyles(scopeId: string, styles: Record<string, string>) {
   useEffect(() => {
     const addStyle = styleManagerFactory(scopeId);
-    const cleanups = Object.entries(styles).map(([id, css]) => addStyle(id, css));
+    const cleanups = Object.entries(styles).map(([id, css]) =>
+      addStyle(id, css),
+    );
     return () => {
       cleanups.forEach((fn) => fn());
       destroyScope(scopeId);
@@ -175,7 +187,8 @@ If still failing, ensure the consumer's `package.json` is not forcing `"type": "
 ```typescript
 // vitest.setup.ts
 if (typeof requestAnimationFrame === 'undefined') {
-  globalThis.requestAnimationFrame = (cb) => setTimeout(() => cb(Date.now()), 0) as any;
+  globalThis.requestAnimationFrame = (cb) =>
+    setTimeout(() => cb(Date.now()), 0) as any;
   globalThis.cancelAnimationFrame = (id) => clearTimeout(id as any);
 }
 ```

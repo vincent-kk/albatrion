@@ -43,7 +43,6 @@ interface FormHandle<
 }
 ```
 
-
 ## Value Management
 
 ### getValue()
@@ -63,6 +62,9 @@ const handleGetValue = () => {
 Set form value.
 
 ```typescript
+// Set with options
+import { SetValueOption } from '@canard/schema-form';
+
 // Set entire value
 formRef.current?.setValue({
   name: 'John Doe',
@@ -75,12 +77,9 @@ formRef.current?.setValue((prev) => ({
   name: 'New Name',
 }));
 
-// Set with options
-import { SetValueOption } from '@canard/schema-form';
-
 formRef.current?.setValue(
   { name: 'John Doe' },
-  SetValueOption.Merge  // Merge with existing value
+  SetValueOption.Merge, // Merge with existing value
 );
 ```
 
@@ -95,7 +94,6 @@ const handleReset = () => {
   // Reset state (dirty, touched)
 };
 ```
-
 
 ## Focus Control
 
@@ -118,7 +116,6 @@ const handleSelect = () => {
   formRef.current?.select('/name');
 };
 ```
-
 
 ## Validation
 
@@ -159,7 +156,6 @@ formRef.current?.showError(true);
 formRef.current?.showError(false);
 ```
 
-
 ## File Attachment
 
 ### getAttachedFilesMap()
@@ -170,7 +166,6 @@ Get map of attached files.
 const filesMap = formRef.current?.getAttachedFilesMap();
 // { '/document': File, '/images': [File, File] }
 ```
-
 
 ## Type Safety
 

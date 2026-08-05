@@ -26,23 +26,23 @@ interface ModalFrameProps<Context = any, B = any> {
 
 **Property Descriptions**:
 
-| Property | Type | Description |
-|------|------|------|
-| `id` | `number` | Unique modal ID |
-| `type` | `'alert' \| 'confirm' \| 'prompt'` | Modal type |
-| `alive` | `boolean` | Whether modal exists in DOM |
-| `visible` | `boolean` | Whether modal is visible on screen |
-| `initiator` | `string` | Identifier of modal creator |
-| `manualDestroy` | `boolean` | Whether manual destruction mode is enabled |
-| `closeOnBackdropClick` | `boolean` | Whether close on backdrop click is enabled |
-| `background` | `ModalBackground<B>` | Background configuration |
-| `onConfirm` | `() => void` | Confirm button click handler |
-| `onClose` | `() => void` | Modal close handler |
-| `onChange` | `(value: any) => void` | Value change handler (for prompt) |
-| `onDestroy` | `() => void` | Modal destruction handler |
-| `onChangeOrder` | `Function` | Modal order change handler |
-| `context` | `Context` | User-defined context data |
-| `children` | `ReactNode` | Modal internal content |
+| Property               | Type                               | Description                                |
+| ---------------------- | ---------------------------------- | ------------------------------------------ |
+| `id`                   | `number`                           | Unique modal ID                            |
+| `type`                 | `'alert' \| 'confirm' \| 'prompt'` | Modal type                                 |
+| `alive`                | `boolean`                          | Whether modal exists in DOM                |
+| `visible`              | `boolean`                          | Whether modal is visible on screen         |
+| `initiator`            | `string`                           | Identifier of modal creator                |
+| `manualDestroy`        | `boolean`                          | Whether manual destruction mode is enabled |
+| `closeOnBackdropClick` | `boolean`                          | Whether close on backdrop click is enabled |
+| `background`           | `ModalBackground<B>`               | Background configuration                   |
+| `onConfirm`            | `() => void`                       | Confirm button click handler               |
+| `onClose`              | `() => void`                       | Modal close handler                        |
+| `onChange`             | `(value: any) => void`             | Value change handler (for prompt)          |
+| `onDestroy`            | `() => void`                       | Modal destruction handler                  |
+| `onChangeOrder`        | `Function`                         | Modal order change handler                 |
+| `context`              | `Context`                          | User-defined context data                  |
+| `children`             | `ReactNode`                        | Modal internal content                     |
 
 ---
 
@@ -64,15 +64,15 @@ interface FooterComponentProps {
 
 **Property Descriptions**:
 
-| Property | Type | Description |
-|------|------|------|
-| `type` | `'alert' \| 'confirm' \| 'prompt'` | Modal type |
-| `onConfirm` | `(value?: any) => void` | Confirm button click handler |
-| `onClose` | `() => void` | Close button click handler |
-| `onCancel` | `() => void` | Cancel button click handler (optional) |
-| `disabled` | `boolean` | Confirm button disabled state (optional) |
-| `footer` | `FooterOptions` | Footer configuration options (optional) |
-| `context` | `any` | User-defined context data |
+| Property    | Type                               | Description                              |
+| ----------- | ---------------------------------- | ---------------------------------------- |
+| `type`      | `'alert' \| 'confirm' \| 'prompt'` | Modal type                               |
+| `onConfirm` | `(value?: any) => void`            | Confirm button click handler             |
+| `onClose`   | `() => void`                       | Close button click handler               |
+| `onCancel`  | `() => void`                       | Cancel button click handler (optional)   |
+| `disabled`  | `boolean`                          | Confirm button disabled state (optional) |
+| `footer`    | `FooterOptions`                    | Footer configuration options (optional)  |
+| `context`   | `any`                              | User-defined context data                |
 
 **Usage Example**:
 
@@ -118,14 +118,14 @@ interface PromptInputProps<T> {
 
 **Property Descriptions**:
 
-| Property | Type | Description |
-|------|------|------|
-| `value` | `T` | Current input value (optional) |
-| `defaultValue` | `T` | Default input value (optional) |
-| `onChange` | `(value: T \| undefined) => void` | Value change handler |
-| `onConfirm` | `() => void` | Confirm action handler (e.g., Enter key) |
-| `onCancel` | `() => void` | Cancel action handler (e.g., Escape key) |
-| `context` | `any` | User-defined context data |
+| Property       | Type                              | Description                              |
+| -------------- | --------------------------------- | ---------------------------------------- |
+| `value`        | `T`                               | Current input value (optional)           |
+| `defaultValue` | `T`                               | Default input value (optional)           |
+| `onChange`     | `(value: T \| undefined) => void` | Value change handler                     |
+| `onConfirm`    | `() => void`                      | Confirm action handler (e.g., Enter key) |
+| `onCancel`     | `() => void`                      | Cancel action handler (e.g., Escape key) |
+| `context`      | `any`                             | User-defined context data                |
 
 **Usage Examples**:
 

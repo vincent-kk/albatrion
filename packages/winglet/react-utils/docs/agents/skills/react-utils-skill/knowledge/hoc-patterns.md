@@ -6,7 +6,7 @@
 function withErrorBoundary<Props extends Dictionary>(
   Component: ComponentType<Props>,
   fallback?: ReactNode,
-): ComponentType<Props>
+): ComponentType<Props>;
 ```
 
 Wraps `Component` in an `ErrorBoundary` class component. When any error is thrown during rendering, the fallback UI is displayed instead of crashing the application. If `fallback` is omitted, a default `FallbackMessage` component is shown.
@@ -77,7 +77,7 @@ function Dashboard() {
 function withErrorBoundaryForwardRef<Props extends Dictionary, Ref>(
   Component: ForwardRefExoticComponent<Props & RefAttributes<Ref>>,
   fallback?: ReactNode,
-): ForwardRefExoticComponent<PropsWithoutRef<Props> & RefAttributes<Ref>>
+): ForwardRefExoticComponent<PropsWithoutRef<Props> & RefAttributes<Ref>>;
 ```
 
 Same as `withErrorBoundary` but for components created with `React.forwardRef`. Preserves the ref forwarding contract so consumers can still call `ref.current.focus()` or access the imperative handle.
@@ -111,6 +111,7 @@ function Form() {
 ### When to Use Over withErrorBoundary
 
 Use `withErrorBoundaryForwardRef` when:
+
 - The component is created with `forwardRef`
 - Consumers need `ref` access (focus, scroll, imperative handles)
 - The component exposes a `useImperativeHandle` API
@@ -122,12 +123,12 @@ Use `withErrorBoundaryForwardRef` when:
 ```typescript
 function withUploader<Props extends { onClick?: Fn<[e?: MouseEvent]> }>(
   Component: ComponentType<Props>,
-): MemoExoticComponent<(props: Props & UploaderProps) => JSX.Element>
+): MemoExoticComponent<(props: Props & UploaderProps) => JSX.Element>;
 
 type UploaderProps = {
   acceptFormat?: string[];
   onChange?: (file: File) => void;
-}
+};
 ```
 
 Transforms any clickable component into a file upload trigger. Renders a hidden `<input type="file">` and intercepts the component's `onClick` to open the native file dialog. After file selection, calls `onChange(file)` with the `File` object.

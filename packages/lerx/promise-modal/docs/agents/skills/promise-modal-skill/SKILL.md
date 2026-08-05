@@ -1,6 +1,6 @@
 ---
 name: promise-modal-skill
-description: "@lerx/promise-modal library expert. Guide users on React-based Promise modal utilities (alert, confirm, prompt), architecture, and customization."
+description: '@lerx/promise-modal library expert. Guide users on React-based Promise modal utilities (alert, confirm, prompt), architecture, and customization.'
 ---
 
 # Promise Modal Expert
@@ -35,11 +35,11 @@ Configuration is applied hierarchically, with lower levels overriding higher lev
 Provider Config (Lowest) < Hook Config < Handler Config (Highest)
 ```
 
-| Level | Location | Description |
-|------|------|------|
-| **Provider** | `ModalProvider` props | App-wide default configuration |
-| **Hook** | `useModal(config)` | Component-level configuration |
-| **Handler** | `alert/confirm/prompt(options)` | Individual modal configuration |
+| Level        | Location                        | Description                    |
+| ------------ | ------------------------------- | ------------------------------ |
+| **Provider** | `ModalProvider` props           | App-wide default configuration |
+| **Hook**     | `useModal(config)`              | Component-level configuration  |
+| **Handler**  | `alert/confirm/prompt(options)` | Individual modal configuration |
 
 ---
 
@@ -105,11 +105,11 @@ function MyComponent() {
 
 **Static API vs useModal**:
 
-| Feature | Static Handlers | useModal Hook |
-|------|------------|-------------|
-| Lifecycle | Independent | Tied to component |
-| Cleanup | Manual | Auto on unmount |
-| Usage Location | Anywhere | Inside React components |
+| Feature        | Static Handlers | useModal Hook           |
+| -------------- | --------------- | ----------------------- |
+| Lifecycle      | Independent     | Tied to component       |
+| Cleanup        | Manual          | Auto on unmount         |
+| Usage Location | Anywhere        | Inside React components |
 
 For advanced patterns (AbortSignal cancellation, toasts, nested modals, custom anchors, complex forms), see `knowledge/advanced-patterns.md`.
 
@@ -161,9 +161,9 @@ For advanced patterns (AbortSignal cancellation, toasts, nested modals, custom a
 
 Load these files on demand for detailed API, patterns, and type definitions:
 
-| File | Contents |
-|------|------|
-| `knowledge/api-reference.md` | Static functions (alert, confirm, prompt) and ModalProvider detailed API |
-| `knowledge/hooks-reference.md` | Complete reference for 8 hooks (useModal, useActiveModalCount, etc.) |
-| `knowledge/advanced-patterns.md` | Advanced patterns: AbortSignal, toast, nested modals, custom anchors, complex forms |
-| `knowledge/type-definitions.md` | TypeScript interface definitions (ModalFrameProps, FooterComponentProps, PromptInputProps) |
+| File                             | Contents                                                                                   |
+| -------------------------------- | ------------------------------------------------------------------------------------------ |
+| `knowledge/api-reference.md`     | Static functions (alert, confirm, prompt) and ModalProvider detailed API                   |
+| `knowledge/hooks-reference.md`   | Complete reference for 8 hooks (useModal, useActiveModalCount, etc.)                       |
+| `knowledge/advanced-patterns.md` | Advanced patterns: AbortSignal, toast, nested modals, custom anchors, complex forms        |
+| `knowledge/type-definitions.md`  | TypeScript interface definitions (ModalFrameProps, FooterComponentProps, PromptInputProps) |

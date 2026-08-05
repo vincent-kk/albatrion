@@ -2,9 +2,7 @@
 
 ## Purpose
 
-Convert a `user | project` scope token into an absolute target
-directory (`targetRoot`) with user-facing metadata. `project` walks up
-from `cwd` and reuses the nearest existing `.claude` ancestor.
+Convert a `user | project` scope token into an absolute target directory (`targetRoot`) with user-facing metadata. `project` walks up from `cwd` and reuses the nearest existing `.claude` ancestor.
 
 ## Structure
 
@@ -16,8 +14,7 @@ from `cwd` and reuses the nearest existing `.claude` ancestor.
 
 ### Always do
 
-- Attach `auto-located` marker to the description when reusing an
-  ancestor `.claude`
+- Attach `auto-located` marker to the description when reusing an ancestor `.claude`
 - Keep the module synchronous and deterministic
 
 ### Ask first

@@ -6,8 +6,8 @@ Track user interaction with `NodeState` flags: `Dirty`, `Touched`, `Validated`, 
 
 ```typescript
 enum NodeState {
-  Dirty = 'dirty',       // Value has changed
-  Touched = 'touched',   // User has interacted with field
+  Dirty = 'dirty', // Value has changed
+  Touched = 'touched', // User has interacted with field
   Validated = 'validated', // Validation has been performed
   ShowError = 'showError', // Error display enabled
 }
@@ -135,7 +135,7 @@ arrayNode.children.forEach((child, index) => {
 });
 
 // Dirty state of entire array
-console.log('Array dirty:', arrayNode.dirty);  // true if any item changed
+console.log('Array dirty:', arrayNode.dirty); // true if any item changed
 ```
 
 ## Cautions

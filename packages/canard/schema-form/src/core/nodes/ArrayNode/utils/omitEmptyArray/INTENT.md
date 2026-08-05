@@ -2,8 +2,7 @@
 
 ## Purpose
 
-빈 배열(`[]`)을 `undefined`로 변환하는 순수 유틸 함수.
-`ArrayNode`의 `onChange` 핸들러에서 `omitEmpty` 옵션이 활성화된 경우 적용된다.
+빈 배열(`[]`)을 `undefined`로 변환하는 순수 유틸 함수. `ArrayNode`의 `onChange` 핸들러에서 `omitEmpty` 옵션이 활성화된 경우 적용된다.
 
 ## Structure
 

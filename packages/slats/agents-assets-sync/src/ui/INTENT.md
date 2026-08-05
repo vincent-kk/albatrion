@@ -2,12 +2,7 @@
 
 ## Purpose
 
-React + Ink UI layer for the TTY path of `inject-agents-settings`.
-Exposes `renderInjectApp(input)` which mounts an Ink app that picks
-agents and scope, builds per-target plans, requests force-confirm,
-applies actions, and returns a final exit code. Reached only through
-dynamic `import('./ui/index.js')` from
-`commands/runCli/utils/renderOrFallback.ts`; not a public subpath.
+React + Ink UI layer for the TTY path of `inject-agents-settings`. Exposes `renderInjectApp(input)` which mounts an Ink app that picks agents and scope, builds per-target plans, requests force-confirm, applies actions, and returns a final exit code. Reached only through dynamic `import('./ui/index.js')` from `commands/runCli/utils/renderOrFallback.ts`; not a public subpath.
 
 ## Structure
 
@@ -20,20 +15,14 @@ dynamic `import('./ui/index.js')` from
 
 ## Conventions
 
-- One hook per pipeline step — `useResolveStep`, `usePlanStep`,
-  `useForceConfirmStep`, `useApplyStep` — driven by `useInjectSession`.
-  Progress is reported per completed action, not on a timer.
+- One hook per pipeline step — `useResolveStep`, `usePlanStep`, `useForceConfirmStep`, `useApplyStep` — driven by `useInjectSession`. Progress is reported per completed action, not on a timer.
 
 ## Boundaries
 
 ### Always do
 
-- Compose `core/**` primitives directly (`readHashManifest`,
-  `computeNamespacePrefixes`, `resolveAgentTarget`, `resolveDestinations`,
-  `buildPlan`, `partitionActions`, `applyAction`, `applyBlockActions`,
-  `summarize`) plus `asyncPool` to drive the pipeline
-- Surface the final exit code through `useExitApp` so `renderInjectApp`
-  resolves with a `number`
+- Compose `core/**` primitives directly (`readHashManifest`, `computeNamespacePrefixes`, `resolveAgentTarget`, `resolveDestinations`, `buildPlan`, `partitionActions`, `applyAction`, `applyBlockActions`, `summarize`) plus `asyncPool` to drive the pipeline
+- Surface the final exit code through `useExitApp` so `renderInjectApp` resolves with a `number`
 
 ### Ask first
 
@@ -42,8 +31,6 @@ dynamic `import('./ui/index.js')` from
 
 ### Never do
 
-- Write to `process.stdout`/`stderr` directly; all output goes through
-  Ink's virtual DOM
+- Write to `process.stdout`/`stderr` directly; all output goes through Ink's virtual DOM
 - Import from `commands/**`
-- Read `package.json` or walk `node_modules`; consume the
-  `ConsumerPackage[]` the caller provides
+- Read `package.json` or walk `node_modules`; consume the `ConsumerPackage[]` the caller provides

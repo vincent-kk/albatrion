@@ -72,7 +72,10 @@ Internal alias used by `StyleManager`; exposed for advanced typing.
 ### Pattern 1: Custom Element Lifecycle
 
 ```typescript
-import { destroyScope, styleManagerFactory } from '@winglet/style-utils/style-manager';
+import {
+  destroyScope,
+  styleManagerFactory,
+} from '@winglet/style-utils/style-manager';
 
 class MyCard extends HTMLElement {
   private shadow: ShadowRoot;
@@ -83,15 +86,23 @@ class MyCard extends HTMLElement {
     super();
     this.shadow = this.attachShadow({ mode: 'open' });
 
-    const addStyle = styleManagerFactory(this.scopeId, { shadowRoot: this.shadow });
+    const addStyle = styleManagerFactory(this.scopeId, {
+      shadowRoot: this.shadow,
+    });
 
     this.cleanups.push(
-      addStyle('host', `
+      addStyle(
+        'host',
+        `
         :host { display: block; border-radius: 8px; background: #fff; }
-      `),
-      addStyle('content', `
+      `,
+      ),
+      addStyle(
+        'content',
+        `
         .content { padding: 1rem; }
-      `),
+      `,
+      ),
     );
   }
 
@@ -121,11 +132,14 @@ If you render 100 `<my-card>` elements, each gets its own `ShadowRoot` and there
 ### Pattern 3: `:host` Conditional Styling
 
 ```typescript
-addStyle('host-states', `
+addStyle(
+  'host-states',
+  `
   :host { display: block; }
   :host([disabled]) { opacity: 0.5; pointer-events: none; }
   :host(:hover) { background: #f5f5f5; }
-`);
+`,
+);
 ```
 
 These pass through untouched because `:host` selectors are in the skip-prefix list.
@@ -133,10 +147,13 @@ These pass through untouched because `:host` selectors are in the skip-prefix li
 ### Pattern 4: Slotted Content
 
 ```typescript
-addStyle('slots', `
+addStyle(
+  'slots',
+  `
   ::slotted(h2) { margin: 0; font-size: 1.25rem; }
   ::slotted(p)  { margin: 0.5rem 0 0; color: #555; }
-`);
+`,
+);
 ```
 
 ---

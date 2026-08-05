@@ -17,6 +17,7 @@ clone<Type>(target: Type, maxDepth?: number): Type
 Full deep clone with comprehensive type support and circular reference detection.
 
 **Supported types:**
+
 - Primitives (returned as-is)
 - Plain objects, arrays
 - Date, RegExp, Map, Set, Error
@@ -45,6 +46,7 @@ const copy = clone(deepObject, 2); // clone only 2 levels deep
 ```
 
 **Limitations:**
+
 - Functions are cloned by reference.
 - DOM elements are returned as-is.
 - Performance: ~3x slower than `JSON.parse(JSON.stringify())` but handles far more types.
@@ -129,6 +131,7 @@ stableEquals<Left, Right>(left: Left, right: Right): boolean
 Circular-reference-safe deep equality. Handles all types including Date, RegExp, TypedArrays, Symbol properties.
 
 Use when:
+
 - Circular references may exist
 - Comparing Date, RegExp, TypedArray values
 - Maximum reliability is needed over performance
@@ -204,6 +207,7 @@ merge<Target, Source>(target: Target, source: Source): Target & Source
 Deep recursive merge. **Mutates `target` in place.**
 
 **Merge rules:**
+
 - `object + object` → recursive deep merge
 - `array + array` → concatenation (target + source)
 - incompatible types → source replaces target value
@@ -246,9 +250,9 @@ Returns a new object with all `undefined`-valued properties removed.
 Serialization functions for converting objects to JSON strings.
 
 ```typescript
-serializeObject(obj);                    // JSON.stringify with error handling
-serializeWithFullSortedKeys(obj);        // JSON.stringify with keys sorted recursively
-stableSerialize(obj);                    // stable serialization (consistent key order)
+serializeObject(obj); // JSON.stringify with error handling
+serializeWithFullSortedKeys(obj); // JSON.stringify with keys sorted recursively
+stableSerialize(obj); // stable serialization (consistent key order)
 ```
 
 ---
@@ -277,7 +281,7 @@ Creates a new object by transforming all keys. Values are unchanged.
 ```typescript
 // snake_case → camelCase
 transformKeys(apiResponse, (_, key) =>
-  key.replace(/_([a-z])/g, (_, c) => c.toUpperCase())
+  key.replace(/_([a-z])/g, (_, c) => c.toUpperCase()),
 );
 
 // Add prefix
@@ -301,6 +305,6 @@ transformValues<Type, Value>(
 Creates a new object by transforming all values. Keys are unchanged.
 
 ```typescript
-transformValues({ a: 1, b: 2, c: 3 }, v => v * 2);
+transformValues({ a: 1, b: 2, c: 3 }, (v) => v * 2);
 // { a: 2, b: 4, c: 6 }
 ```

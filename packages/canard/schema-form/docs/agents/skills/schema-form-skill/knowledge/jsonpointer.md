@@ -7,10 +7,10 @@ Extended JSONPointer syntax for path references. Standard absolute paths follow 
 ### Basic Syntax
 
 ```typescript
-'/property'           // Access property at root
-'/nested/property'    // Access nested object
-'/array/0'            // Access array index
-'/array/0/property'   // Access property of array item
+'/property'; // Access property at root
+'/nested/property'; // Access nested object
+'/array/0'; // Access array index
+'/array/0/property'; // Access property of array item
 ```
 
 ### Special Character Escaping
@@ -18,29 +18,29 @@ Extended JSONPointer syntax for path references. Standard absolute paths follow 
 In JSONPointer, `~` and `/` are special characters.
 
 | Character | Escape Sequence |
-|-----------|-----------------|
-| `~` | `~0` |
-| `/` | `~1` |
+| --------- | --------------- |
+| `~`       | `~0`            |
+| `/`       | `~1`            |
 
 ```typescript
 // Key contains slash: { 'path/to/key': 'value' }
-'/path~1to~1key'  // Access 'path/to/key'
+'/path~1to~1key'; // Access 'path/to/key'
 
 // Key contains tilde: { '~tilde': 'value' }
-'/~0tilde'        // Access '~tilde'
+'/~0tilde'; // Access '~tilde'
 
 // Combined: { 'a/b~c': 'value' }
-'/a~1b~0c'        // Access 'a/b~c'
+'/a~1b~0c'; // Access 'a/b~c'
 ```
 
 ## Supported Syntax by Usage Context
 
-| Syntax | computed | node.find() | formTypeInputMap |
-|--------|----------|-------------|------------------|
-| Absolute path (`/`) | ✓ | ✓ | ✓ |
-| Relative path (`..`, `.`) | ✓ | ✓ | ✗ |
-| Wildcard (`*`) | ✗ | ✗ | ✓ |
-| Context (`@`) | ✓ | ✗ | ✗ |
+| Syntax                    | computed | node.find() | formTypeInputMap |
+| ------------------------- | -------- | ----------- | ---------------- |
+| Absolute path (`/`)       | ✓        | ✓           | ✓                |
+| Relative path (`..`, `.`) | ✓        | ✓           | ✗                |
+| Wildcard (`*`)            | ✗        | ✗           | ✓                |
+| Context (`@`)             | ✓        | ✗           | ✗                |
 
 ## Using with node.find()
 
@@ -74,7 +74,7 @@ const allItems = formRef.current?.findNodes('/items/*');
 ```typescript
 // Key contains slash: { 'object/Node': { ... } }
 const formTypeInputMap = {
-  '/object~1Node': SpecialInput,  // Match 'object/Node' key
+  '/object~1Node': SpecialInput, // Match 'object/Node' key
 };
 ```
 
@@ -100,7 +100,7 @@ const node2 = rootNode.find('/tilde~0here');
 ### JSONPointer Generation
 
 ```typescript
-import { toJsonPointer, escapeJsonPointer } from '@winglet/json';
+import { escapeJsonPointer, toJsonPointer } from '@winglet/json';
 
 // Convert array to JSONPointer
 const path = toJsonPointer(['users', 0, 'name']);

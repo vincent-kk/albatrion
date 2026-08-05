@@ -4,17 +4,18 @@
 
 A JSON Pointer is a string of zero or more reference tokens, each prefixed with `/`.
 
-| Pointer | Meaning |
-|---------|---------|
-| `""` | Entire document (root) |
-| `"/"` | Key with empty string `""` |
-| `"/foo"` | Property `foo` |
-| `"/foo/0"` | Index 0 of array at `foo` |
-| `"/a~1b"` | Key `a/b` (slash escaped) |
-| `"/a~0b"` | Key `a~b` (tilde escaped) |
+| Pointer    | Meaning                         |
+| ---------- | ------------------------------- |
+| `""`       | Entire document (root)          |
+| `"/"`      | Key with empty string `""`      |
+| `"/foo"`   | Property `foo`                  |
+| `"/foo/0"` | Index 0 of array at `foo`       |
+| `"/a~1b"`  | Key `a/b` (slash escaped)       |
+| `"/a~0b"`  | Key `a~b` (tilde escaped)       |
 | `"/arr/-"` | Append to array (setValue only) |
 
 Escape rules (RFC 6901 §3):
+
 - `~` → `~0`
 - `/` → `~1`
 - Order matters: escape `~` before `/`
@@ -27,7 +28,7 @@ Escape rules (RFC 6901 §3):
 function getValue<Output extends Dictionary | Array<any>>(
   value: Dictionary | Array<any>,
   pointer: string | string[],
-): Output
+): Output;
 ```
 
 Reads a value from a JSON document at the location specified by `pointer`.
@@ -42,16 +43,21 @@ Reads a value from a JSON document at the location specified by `pointer`.
 ```typescript
 import { getValue } from '@winglet/json/pointer-manipulator';
 
-const doc = { users: [{ name: 'Alice', age: 30 }, { name: 'Bob', age: 25 }] };
+const doc = {
+  users: [
+    { name: 'Alice', age: 30 },
+    { name: 'Bob', age: 25 },
+  ],
+};
 
-getValue(doc, '/users/0/name');       // 'Alice'
-getValue(doc, '/users/1/age');        // 25
-getValue(doc, '');                    // entire doc
+getValue(doc, '/users/0/name'); // 'Alice'
+getValue(doc, '/users/1/age'); // 25
+getValue(doc, ''); // entire doc
 getValue(doc, ['users', '0', 'name']); // 'Alice'
 
 // Escaped keys
 const special = { 'a/b': { 'c~d': 'found' } };
-getValue(special, '/a~1b/c~0d');      // 'found'
+getValue(special, '/a~1b/c~0d'); // 'found'
 ```
 
 ### Error Cases
@@ -63,7 +69,7 @@ try {
   getValue({}, '/missing/path');
 } catch (e) {
   if (e instanceof JSONPointerError) {
-    e.code;    // 'PROPERTY_NOT_FOUND'
+    e.code; // 'PROPERTY_NOT_FOUND'
     e.message; // descriptive message
   }
 }
@@ -79,17 +85,17 @@ function setValue<Output extends Dictionary | Array<any>>(
   pointer: string | string[],
   input: any,
   options?: { overwrite?: boolean; preserveNull?: boolean },
-): Output
+): Output;
 ```
 
 Sets a value at the location specified by `pointer`. **Mutates in place and returns the same reference.**
 
 ### Options
 
-| Option | Default | Effect |
-|--------|---------|--------|
-| `overwrite` | `true` | When `false`, skips if location already has a value |
-| `preserveNull` | `true` | When `false`, replaces `null` intermediate nodes with objects/arrays |
+| Option         | Default | Effect                                                               |
+| -------------- | ------- | -------------------------------------------------------------------- |
+| `overwrite`    | `true`  | When `false`, skips if location already has a value                  |
+| `preserveNull` | `true`  | When `false`, replaces `null` intermediate nodes with objects/arrays |
 
 ### Path Creation
 
@@ -169,9 +175,9 @@ const pointer = `/${escapeSegment(key)}/status`;
 ### Escape Rules Summary
 
 | Character | Escaped As |
-|-----------|-----------|
-| `~` | `~0` |
-| `/` | `~1` |
+| --------- | ---------- |
+| `~`       | `~0`       |
+| `/`       | `~1`       |
 
 Invalid sequences (`~2`, `~a`) are left unchanged by `unescapePath`.
 
@@ -201,7 +207,7 @@ convertJsonPointerToPath('');
 ```typescript
 import { JSONPointer } from '@winglet/json/pointer-common';
 
-JSONPointer.Root;      // '' — root document
-JSONPointer.Fragment;  // '#' — URI fragment prefix
+JSONPointer.Root; // '' — root document
+JSONPointer.Fragment; // '#' — URI fragment prefix
 JSONPointer.Separator; // '/' — segment separator
 ```

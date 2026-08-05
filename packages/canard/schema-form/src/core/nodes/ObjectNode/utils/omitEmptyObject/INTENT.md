@@ -6,10 +6,7 @@
 
 ## Structure
 
-| 파일                 | 역할                             |
-| -------------------- | -------------------------------- | ----------------------- | ------- | ---------- |
-| `omitEmptyObject.ts` | 핵심 구현 — `(value: ObjectValue | Nullish) => ObjectValue | Nullish | undefined` |
-| `index.ts`           | re-export 배럴                   |
+| 파일 | 역할 | | -------------------- | -------------------------------- | ----------------------- | ------- | ---------- | | `omitEmptyObject.ts` | 핵심 구현 — `(value: ObjectValue | Nullish) => ObjectValue | Nullish | undefined` | | `index.ts` | re-export 배럴 |
 
 ## Conventions
 

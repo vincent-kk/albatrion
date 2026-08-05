@@ -1,6 +1,6 @@
 ---
 name: data-loader-skill
-description: "@winglet/data-loader library expert. Guide users on batching and caching asynchronous data fetching: N+1 solving, scheduler customization, cache strategies (LRU/TTL), GraphQL integration, and error isolation."
+description: '@winglet/data-loader library expert. Guide users on batching and caching asynchronous data fetching: N+1 solving, scheduler customization, cache strategies (LRU/TTL), GraphQL integration, and error isolation.'
 user-invocable: false
 ---
 
@@ -20,11 +20,11 @@ You are an expert on `@winglet/data-loader`, a batching and caching utility for 
 
 ## Knowledge Files Reference
 
-| File | Topics | Load When |
-|------|--------|-----------|
-| `knowledge/getting-started.md` | Installation, first DataLoader, key-ordering contract, key constraints, `cacheKeyFn` basics | Intro or setup questions |
-| `knowledge/batching-and-caching.md` | Event-loop batching, `maxBatchSize`, `disableBatch`, custom `batchScheduler`, Promise-level cache, `prime`/`clear` mechanics | How batching/caching works internally |
-| `knowledge/advanced-patterns.md` | GraphQL N+1, per-request loaders, custom `cache` (LRU/TTL), complex keys, per-key error isolation, retries, cache warming, mutation consistency | Production patterns and integration |
+| File                                | Topics                                                                                                                                          | Load When                             |
+| ----------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------- |
+| `knowledge/getting-started.md`      | Installation, first DataLoader, key-ordering contract, key constraints, `cacheKeyFn` basics                                                     | Intro or setup questions              |
+| `knowledge/batching-and-caching.md` | Event-loop batching, `maxBatchSize`, `disableBatch`, custom `batchScheduler`, Promise-level cache, `prime`/`clear` mechanics                    | How batching/caching works internally |
+| `knowledge/advanced-patterns.md`    | GraphQL N+1, per-request loaders, custom `cache` (LRU/TTL), complex keys, per-key error isolation, retries, cache warming, mutation consistency | Production patterns and integration   |
 
 ---
 
@@ -107,15 +107,15 @@ new DataLoader(batchLoad, { cacheMap: new LRU(...) }); // ❌
 
 ## Common Mistakes to Correct
 
-| Mistake | Correct Approach |
-|---|---|
-| BatchLoader returns values in wrong order | Map results back to input key order: `keys.map(k => byId.get(k) ?? new Error(...))` |
-| BatchLoader returns fewer items than keys | Must return **exactly** `keys.length` items; mismatched length throws `INVALID_BATCH_LOADER` |
-| Sharing one DataLoader instance across requests | Create a new instance per request (e.g., GraphQL context factory) to prevent cross-request cache leakage |
-| Using `cache: false` and calling `prime()` | `prime()` is a no-op when caching is disabled |
-| Passing `null` or `undefined` to `load()` | `load()` throws `DataLoaderError('INVALID_KEY')` for nil keys |
-| Using object keys without `cacheKeyFn` | Objects compare by identity — identical-shape objects miss the cache; supply `cacheKeyFn` to derive a string key |
-| Using `{ cacheMap: ... }` as an option | The option is named `cache`, not `cacheMap` |
+| Mistake                                         | Correct Approach                                                                                                 |
+| ----------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| BatchLoader returns values in wrong order       | Map results back to input key order: `keys.map(k => byId.get(k) ?? new Error(...))`                              |
+| BatchLoader returns fewer items than keys       | Must return **exactly** `keys.length` items; mismatched length throws `INVALID_BATCH_LOADER`                     |
+| Sharing one DataLoader instance across requests | Create a new instance per request (e.g., GraphQL context factory) to prevent cross-request cache leakage         |
+| Using `cache: false` and calling `prime()`      | `prime()` is a no-op when caching is disabled                                                                    |
+| Passing `null` or `undefined` to `load()`       | `load()` throws `DataLoaderError('INVALID_KEY')` for nil keys                                                    |
+| Using object keys without `cacheKeyFn`          | Objects compare by identity — identical-shape objects miss the cache; supply `cacheKeyFn` to derive a string key |
+| Using `{ cacheMap: ... }` as an option          | The option is named `cache`, not `cacheMap`                                                                      |
 
 ---
 
@@ -134,16 +134,16 @@ When answering questions about this library:
 
 ## Question-Knowledge Mapping
 
-| Question Type | Knowledge File |
-|---|---|
-| "How do I install / make my first loader?" | `knowledge/getting-started.md` |
-| "Why must I return in the same order?" | `knowledge/getting-started.md` |
-| "How does batching actually work?" | `knowledge/batching-and-caching.md` |
-| "Can I change the scheduler?" | `knowledge/batching-and-caching.md` |
+| Question Type                                | Knowledge File                      |
+| -------------------------------------------- | ----------------------------------- |
+| "How do I install / make my first loader?"   | `knowledge/getting-started.md`      |
+| "Why must I return in the same order?"       | `knowledge/getting-started.md`      |
+| "How does batching actually work?"           | `knowledge/batching-and-caching.md` |
+| "Can I change the scheduler?"                | `knowledge/batching-and-caching.md` |
 | "How do I cap batch size?" / `disableBatch`? | `knowledge/batching-and-caching.md` |
 | "What does `prime` do?" / cache invalidation | `knowledge/batching-and-caching.md` |
-| "How do I fix N+1 in GraphQL?" | `knowledge/advanced-patterns.md` |
-| "LRU / TTL / shared cache?" | `knowledge/advanced-patterns.md` |
-| "Object keys in load()?" | `knowledge/advanced-patterns.md` |
-| "How to handle partial failures / retries?" | `knowledge/advanced-patterns.md` |
-| "Cache consistency after mutation?" | `knowledge/advanced-patterns.md` |
+| "How do I fix N+1 in GraphQL?"               | `knowledge/advanced-patterns.md`    |
+| "LRU / TTL / shared cache?"                  | `knowledge/advanced-patterns.md`    |
+| "Object keys in load()?"                     | `knowledge/advanced-patterns.md`    |
+| "How to handle partial failures / retries?"  | `knowledge/advanced-patterns.md`    |
+| "Cache consistency after mutation?"          | `knowledge/advanced-patterns.md`    |

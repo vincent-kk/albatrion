@@ -28,8 +28,7 @@ const lookupTable = useConstant(() => buildLookupTable(rawData));
 // Use useTruthyConstant if you want the function to be called.
 ```
 
-**Difference from useMemo**: `useMemo` can recompute; `useConstant` never does.
-**Difference from useRef directly**: Communicates intent — "this value is intentionally immutable."
+**Difference from useMemo**: `useMemo` can recompute; `useConstant` never does. **Difference from useRef directly**: Communicates intent — "this value is intentionally immutable."
 
 ---
 

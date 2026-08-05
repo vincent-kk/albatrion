@@ -1,6 +1,6 @@
 ---
 name: style-utils-skill
-description: "@winglet/style-utils library expert. Guide users on zero-runtime className helpers (cx/cxLite), CSS compression (compressCss), and scoped style injection with Shadow DOM support (styleManagerFactory/destroyScope)."
+description: '@winglet/style-utils library expert. Guide users on zero-runtime className helpers (cx/cxLite), CSS compression (compressCss), and scoped style injection with Shadow DOM support (styleManagerFactory/destroyScope).'
 ---
 
 # Style Utils Expert
@@ -15,9 +15,7 @@ Guide users on the `@winglet/style-utils` library. Apply this skill whenever use
 - **CSS compression** — `compressCss` single-pass byte-level minifier
 - **Scoped style manager** — `styleManagerFactory` + `destroyScope`, with Shadow DOM support, `adoptedStyleSheets` / `<style>` fallback, and `requestAnimationFrame`-batched DOM writes
 
-**Runtime requirements**: Node.js 14+, ES2020 browsers; `requestAnimationFrame` required for `styleManagerFactory`
-**Module formats**: ESM (`.mjs`) + CJS (`.cjs`) with full `.d.ts` declarations
-**Package flags**: `"sideEffects": false`, no peer dependencies
+**Runtime requirements**: Node.js 14+, ES2020 browsers; `requestAnimationFrame` required for `styleManagerFactory` **Module formats**: ESM (`.mjs`) + CJS (`.cjs`) with full `.d.ts` declarations **Package flags**: `"sideEffects": false`, no peer dependencies
 
 ## Sub-path Exports
 
@@ -27,11 +25,11 @@ import { cx, cxLite, compressCss } from '@winglet/style-utils/util';            
 import { styleManagerFactory, destroyScope } from '@winglet/style-utils/style-manager'; // scoped CSS
 ```
 
-| Sub-path | Symbols |
-|----------|---------|
-| `@winglet/style-utils` | everything |
-| `@winglet/style-utils/util` | `cx`, `cxLite`, `compressCss`; types `ClassValue` / `ClassArray` / `ClassObject` |
-| `@winglet/style-utils/style-manager` | `styleManagerFactory`, `destroyScope`; types `StyleManagerConfig` / `StyleRoot` |
+| Sub-path                             | Symbols                                                                          |
+| ------------------------------------ | -------------------------------------------------------------------------------- |
+| `@winglet/style-utils`               | everything                                                                       |
+| `@winglet/style-utils/util`          | `cx`, `cxLite`, `compressCss`; types `ClassValue` / `ClassArray` / `ClassObject` |
+| `@winglet/style-utils/style-manager` | `styleManagerFactory`, `destroyScope`; types `StyleManagerConfig` / `StyleRoot`  |
 
 Prefer the narrowest sub-path: `/util` does not pull in the `StyleManager` class, keeping the bundle smaller for pure-utility consumers.
 
@@ -39,26 +37,26 @@ Prefer the narrowest sub-path: `/util` does not pull in the `StyleManager` class
 
 Load these on demand for full API details, examples, and edge cases:
 
-| File | Contents |
-|------|----------|
-| `knowledge/getting-started.md` | Install, sub-path import map, runtime requirements, first-run patterns |
-| `knowledge/classnames.md` | `cx` vs `cxLite`, `ClassValue` type, truthiness rules, migration from `classnames` / `clsx` |
-| `knowledge/css-compression.md` | `compressCss` behavior, what is stripped, known media-query trade-off, pre-compression flag |
-| `knowledge/style-manager.md` | `styleManagerFactory`, `destroyScope`, scope prefixing, singleton registry, batched DOM updates |
-| `knowledge/shadow-dom.md` | `StyleManagerConfig.shadowRoot`, per-root instance keying, `:host` / `::slotted`, Web Component lifecycle |
-| `knowledge/advanced-patterns.md` | Theme managers, hot-path rendering, lazy loading, batch updates, atomic rule swap, per-instance scopes |
-| `knowledge/troubleshooting.md` | Diagnostic flow, test leaks, rAF in tests, `@`-rule scoping, shadow vs document mode pitfalls |
+| File                             | Contents                                                                                                  |
+| -------------------------------- | --------------------------------------------------------------------------------------------------------- |
+| `knowledge/getting-started.md`   | Install, sub-path import map, runtime requirements, first-run patterns                                    |
+| `knowledge/classnames.md`        | `cx` vs `cxLite`, `ClassValue` type, truthiness rules, migration from `classnames` / `clsx`               |
+| `knowledge/css-compression.md`   | `compressCss` behavior, what is stripped, known media-query trade-off, pre-compression flag               |
+| `knowledge/style-manager.md`     | `styleManagerFactory`, `destroyScope`, scope prefixing, singleton registry, batched DOM updates           |
+| `knowledge/shadow-dom.md`        | `StyleManagerConfig.shadowRoot`, per-root instance keying, `:host` / `::slotted`, Web Component lifecycle |
+| `knowledge/advanced-patterns.md` | Theme managers, hot-path rendering, lazy loading, batch updates, atomic rule swap, per-instance scopes    |
+| `knowledge/troubleshooting.md`   | Diagnostic flow, test leaks, rAF in tests, `@`-rule scoping, shadow vs document mode pitfalls             |
 
 ## Core Competencies
 
 ### 1. cx vs cxLite
 
-| Need | Use |
-|------|-----|
-| Flat strings / numbers / booleans only, high-frequency render path | `cxLite` |
-| Objects (`{ active: isActive }`) or nested arrays | `cx` |
-| Drop-in replacement for `classnames` / `clsx` | `cx` |
-| Deduplication or sorting | Neither — dedupe upstream; both emit insertion order with duplicates |
+| Need                                                               | Use                                                                  |
+| ------------------------------------------------------------------ | -------------------------------------------------------------------- |
+| Flat strings / numbers / booleans only, high-frequency render path | `cxLite`                                                             |
+| Objects (`{ active: isActive }`) or nested arrays                  | `cx`                                                                 |
+| Drop-in replacement for `classnames` / `clsx`                      | `cx`                                                                 |
+| Deduplication or sorting                                           | Neither — dedupe upstream; both emit insertion order with duplicates |
 
 `cxLite` coerces non-primitives via `toString()`, so objects become literal `[object Object]` tokens. This is never acceptable output — recommend `cx` whenever objects or arrays may appear.
 
@@ -83,11 +81,11 @@ Writes are **batched via `requestAnimationFrame`**: multiple `addStyle` / cleanu
 
 ### 4. Cleanup Granularity
 
-| Level | Trigger | Use when |
-|-------|---------|----------|
-| Per-style | Call the function returned by `addStyle(id, css)` | One rule becomes irrelevant |
-| Per-scope | `destroyScope(scopeId)` | Full-view teardown, `afterEach`, SPA route change |
-| Per-root (shadow) | Host element is GC'd | Custom element `disconnectedCallback` — shadow manager dies with the root |
+| Level             | Trigger                                           | Use when                                                                  |
+| ----------------- | ------------------------------------------------- | ------------------------------------------------------------------------- |
+| Per-style         | Call the function returned by `addStyle(id, css)` | One rule becomes irrelevant                                               |
+| Per-scope         | `destroyScope(scopeId)`                           | Full-view teardown, `afterEach`, SPA route change                         |
+| Per-root (shadow) | Host element is GC'd                              | Custom element `disconnectedCallback` — shadow manager dies with the root |
 
 `destroyScope` only clears the **document-level** manager. Shadow-root managers (keyed internally as `${scopeId}:shadow:${uniqueShadowRootId}`) rely on per-style cleanups or host garbage collection.
 
@@ -96,30 +94,30 @@ Writes are **batched via `requestAnimationFrame`**: multiple `addStyle` / cleanu
 ```typescript
 import { compressCss, styleManagerFactory } from '@winglet/style-utils';
 
-const PRE = compressCss(largeCssString);     // run once at module init
+const PRE = compressCss(largeCssString); // run once at module init
 const addStyle = styleManagerFactory('scope');
-addStyle('base', PRE, true);                  // compress=true → skip internal compressCss pass
+addStyle('base', PRE, true); // compress=true → skip internal compressCss pass
 ```
 
 Use this on measurable hot paths or for module-init CSS — not as a default. `compressCss` is O(n); the flag saves the pass per `addStyle` call.
 
 ## Common Prescriptions
 
-| Symptom | Prescription |
-|---------|--------------|
-| `cxLite` emits `[object Object]` in output | Switch to `cx` — `cxLite` does not walk objects |
-| Duplicate class tokens in output | Neither helper dedupes; clean inputs upstream or wrap the result |
-| Styles registered but not applied | Add `classList.add(scopeId)` to the target or an ancestor; verify via `document.adoptedStyleSheets` |
-| Styles leak across tests | `afterEach(() => destroyScope(id))` for every scope registered during the test |
-| `document.styleSheets` empty right after `addStyle` | Flush is async — wait one `requestAnimationFrame` or run fake-timer rAF |
-| `@keyframes` / `@font-face` collide across scopes | Namespace the name yourself — `@`-rules are never prefixed |
-| `:host` rule has no effect | Confirm the factory was constructed with `{ shadowRoot }` and the host called `attachShadow(...)` |
-| Styles intended for a shadow root appear on `document` | Factory is missing `{ shadowRoot }` — document-mode factories always target `document` |
-| `destroyScope` does not remove per-host shadow instances | Expected — it clears only the document-level manager; rely on per-style cleanups or host GC |
-| Theme flash on first paint | Apply theme synchronously before first render, or inline the initial `:root` vars in HTML |
-| Trailing space inside `@media` block output | Known `compressCss` trade-off — browsers parse it correctly |
-| `ReferenceError: requestAnimationFrame is not defined` in tests | Polyfill `globalThis.requestAnimationFrame` / `cancelAnimationFrame` in the test setup |
-| Heap grows on repeated mount/unmount | Every `addStyle` call must have a matching cleanup, or its scope must be destroyed |
+| Symptom                                                         | Prescription                                                                                        |
+| --------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
+| `cxLite` emits `[object Object]` in output                      | Switch to `cx` — `cxLite` does not walk objects                                                     |
+| Duplicate class tokens in output                                | Neither helper dedupes; clean inputs upstream or wrap the result                                    |
+| Styles registered but not applied                               | Add `classList.add(scopeId)` to the target or an ancestor; verify via `document.adoptedStyleSheets` |
+| Styles leak across tests                                        | `afterEach(() => destroyScope(id))` for every scope registered during the test                      |
+| `document.styleSheets` empty right after `addStyle`             | Flush is async — wait one `requestAnimationFrame` or run fake-timer rAF                             |
+| `@keyframes` / `@font-face` collide across scopes               | Namespace the name yourself — `@`-rules are never prefixed                                          |
+| `:host` rule has no effect                                      | Confirm the factory was constructed with `{ shadowRoot }` and the host called `attachShadow(...)`   |
+| Styles intended for a shadow root appear on `document`          | Factory is missing `{ shadowRoot }` — document-mode factories always target `document`              |
+| `destroyScope` does not remove per-host shadow instances        | Expected — it clears only the document-level manager; rely on per-style cleanups or host GC         |
+| Theme flash on first paint                                      | Apply theme synchronously before first render, or inline the initial `:root` vars in HTML           |
+| Trailing space inside `@media` block output                     | Known `compressCss` trade-off — browsers parse it correctly                                         |
+| `ReferenceError: requestAnimationFrame is not defined` in tests | Polyfill `globalThis.requestAnimationFrame` / `cancelAnimationFrame` in the test setup              |
+| Heap grows on repeated mount/unmount                            | Every `addStyle` call must have a matching cleanup, or its scope must be destroyed                  |
 
 ## Response Guidelines
 

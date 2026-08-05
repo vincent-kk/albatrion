@@ -2,10 +2,7 @@
 
 ## Purpose
 
-Agent asset injection의 적용(apply)과 집계(summarize) 프리미티브. 계획은
-`buildPlan/` 이 이미 세웠고, 여기서는 그것을 실행하고 보고서로 접는다.
-Ink(`ui/`)와 plain(`renderPlain`) 렌더러가 함께 소비하며, orchestrator 는
-두지 않는다 — 파이프라인은 호출자가 직접 조립한다.
+Agent asset injection의 적용(apply)과 집계(summarize) 프리미티브. 계획은 `buildPlan/` 이 이미 세웠고, 여기서는 그것을 실행하고 보고서로 접는다. Ink(`ui/`)와 plain(`renderPlain`) 렌더러가 함께 소비하며, orchestrator 는 두지 않는다 — 파이프라인은 호출자가 직접 조립한다.
 
 ## Structure
 
@@ -18,17 +15,12 @@ Ink(`ui/`)와 plain(`renderPlain`) 렌더러가 함께 소비하며, orchestrato
 
 ## Conventions
 
-- 파일 작업과 블록 작업은 갈라서 다룬다. 파일은 풀로 병렬 처리해도 되지만,
-  한 `AGENTS.md` 를 여러 writer 가 동시에 쓰면 각자 읽은 판본을 저장해 마지막
-  하나만 남기 때문이다.
-- `warn-diverged` 의 실행 가능 여부는 `partitionActions` 가 결정한다. CLI 의
-  "`--force` 는 덮어쓴다" 는 약속이 지켜지는 유일한 지점이다.
+- 파일 작업과 블록 작업은 갈라서 다룬다. 파일은 풀로 병렬 처리해도 되지만, 한 `AGENTS.md` 를 여러 writer 가 동시에 쓰면 각자 읽은 판본을 저장해 마지막 하나만 남기 때문이다.
+- `warn-diverged` 의 실행 가능 여부는 `partitionActions` 가 결정한다. CLI 의 "`--force` 는 덮어쓴다" 는 약속이 지켜지는 유일한 지점이다.
 
 ## Dependencies
 
-- `buildPlan/`(`Action`, `InjectPlan`)과 `markerBlock/`(블록 쓰기)을 각
-  `index.ts` 로 소비한다. `utils/logger.ts` 는 `applyAction` 의 unlink 실패
-  경고 한 줄에만 쓰이며, 이것이 `core/**` 전체의 유일한 출력이다.
+- `buildPlan/`(`Action`, `InjectPlan`)과 `markerBlock/`(블록 쓰기)을 각 `index.ts` 로 소비한다. `utils/logger.ts` 는 `applyAction` 의 unlink 실패 경고 한 줄에만 쓰이며, 이것이 `core/**` 전체의 유일한 출력이다.
 
 ## Boundaries
 

@@ -43,11 +43,11 @@ pnpm add @winglet/style-utils
 
 ### Sub-path Imports
 
-| 진입점 | 노출 심볼 |
-|--------|-----------|
-| `@winglet/style-utils` | 모든 심볼 |
+| 진입점                               | 노출 심볼                             |
+| ------------------------------------ | ------------------------------------- |
+| `@winglet/style-utils`               | 모든 심볼                             |
 | `@winglet/style-utils/style-manager` | `styleManagerFactory`, `destroyScope` |
-| `@winglet/style-utils/util` | `cx`, `cxLite`, `compressCss` |
+| `@winglet/style-utils/util`          | `cx`, `cxLite`, `compressCss`         |
 
 ---
 
@@ -55,19 +55,18 @@ pnpm add @winglet/style-utils
 
 ```typescript
 import {
+  compressCss,
   cx,
   cxLite,
-  compressCss,
-  styleManagerFactory,
   destroyScope,
+  styleManagerFactory,
 } from '@winglet/style-utils';
 
 // 1. className 조합
-const className = cx(
-  'btn',
-  `btn-${variant}`,
-  { 'btn-disabled': disabled, 'btn-loading': loading },
-);
+const className = cx('btn', `btn-${variant}`, {
+  'btn-disabled': disabled,
+  'btn-loading': loading,
+});
 
 // 2. 런타임 CSS 압축
 const minified = compressCss('.card { padding: 16px; /* note */ }');
@@ -78,8 +77,8 @@ const addStyle = styleManagerFactory('my-component');
 const cleanup = addStyle('button', '.btn { color: white; background: blue; }');
 
 // ...나중에
-cleanup();                       // 해당 스타일만 제거
-destroyScope('my-component');    // 스코프 전체 정리
+cleanup(); // 해당 스타일만 제거
+destroyScope('my-component'); // 스코프 전체 정리
 ```
 
 ---
@@ -127,9 +126,9 @@ destroyScope('my-component');    // 스코프 전체 정리
 
 조건부로 className을 조합합니다. 문자열, 숫자, 불리언, 객체(truthy 키만), 중첩 배열을 지원합니다.
 
-| 매개변수 | 타입 | 설명 |
-|----------|------|------|
-| `args` | `ClassValue[]` | 가변 개수의 class value 입력 |
+| 매개변수 | 타입           | 설명                         |
+| -------- | -------------- | ---------------------------- |
+| `args`   | `ClassValue[]` | 가변 개수의 class value 입력 |
 
 **반환값:** 앞뒤 공백 없이 공백으로 구분된 class 문자열.
 
@@ -142,9 +141,9 @@ cx('btn', { primary: true, disabled: false }, ['large', condition && 'active']);
 
 경량 버전: 최상위 truthy 필터링만 수행합니다. 객체나 배열로 재귀하지 않습니다.
 
-| 매개변수 | 타입 | 설명 |
-|----------|------|------|
-| `args` | `ClassValue[]` | 주로 문자열과 숫자 |
+| 매개변수 | 타입           | 설명               |
+| -------- | -------------- | ------------------ |
+| `args`   | `ClassValue[]` | 주로 문자열과 숫자 |
 
 **반환값:** 공백으로 구분된 class 문자열.
 
@@ -159,9 +158,9 @@ cxLite('btn', isActive && 'active', size && `btn-${size}`);
 
 단일 패스 CSS 최소화기입니다. 공백, 블록 주석, `}` 앞의 중복 세미콜론을 제거합니다. 완벽한 압축보다는 처리량을 우선하므로, 중첩 블록 내부의 미세한 꼬리 공백은 남을 수 있습니다.
 
-| 매개변수 | 타입 | 설명 |
-|----------|------|------|
-| `css` | `string` | 소스 CSS |
+| 매개변수 | 타입     | 설명     |
+| -------- | -------- | -------- |
+| `css`    | `string` | 소스 CSS |
 
 **반환값:** 최소화된 CSS. 빈 입력은 빈 문자열을 반환합니다.
 
@@ -183,18 +182,18 @@ function styleManagerFactory(
 
 단일 스코프에 바인딩된 커리드 `addStyle` 함수를 반환합니다.
 
-| 매개변수 | 타입 | 설명 |
-|----------|------|------|
-| `scopeId` | `string` | 스코프 식별자이자 CSS 클래스 prefix |
-| `config.shadowRoot` | `ShadowRoot?` | 선택적 Shadow DOM 대상 |
+| 매개변수            | 타입          | 설명                                |
+| ------------------- | ------------- | ----------------------------------- |
+| `scopeId`           | `string`      | 스코프 식별자이자 CSS 클래스 prefix |
+| `config.shadowRoot` | `ShadowRoot?` | 선택적 Shadow DOM 대상              |
 
 **반환되는 `addStyle`:**
 
-| 인자 | 타입 | 설명 |
-|------|------|------|
-| `styleId` | `string` | 스코프 내 고유 키 |
-| `cssString` | `string` | CSS 소스 |
-| `compress` | `boolean?` | `cssString`이 이미 최소화된 경우 `true` |
+| 인자        | 타입       | 설명                                    |
+| ----------- | ---------- | --------------------------------------- |
+| `styleId`   | `string`   | 스코프 내 고유 키                       |
+| `cssString` | `string`   | CSS 소스                                |
+| `compress`  | `boolean?` | `cssString`이 이미 최소화된 경우 `true` |
 
 **반환값:** `() => void` — `styleId`를 스코프에서 제거하는 정리 함수.
 
@@ -267,7 +266,13 @@ export type StyleRoot = Document | ShadowRoot;
 ```tsx
 import { cx } from '@winglet/style-utils';
 
-export function Button({ variant = 'primary', size, disabled, loading, children }) {
+export function Button({
+  variant = 'primary',
+  size,
+  disabled,
+  loading,
+  children,
+}) {
   return (
     <button
       className={cx('btn', `btn-${variant}`, size && `btn-${size}`, {
@@ -285,15 +290,18 @@ export function Button({ variant = 'primary', size, disabled, loading, children 
 ### 컴포넌트 스코프 스타일
 
 ```typescript
-import { styleManagerFactory, destroyScope } from '@winglet/style-utils';
+import { destroyScope, styleManagerFactory } from '@winglet/style-utils';
 
 const scopeId = 'my-widget';
 const addStyle = styleManagerFactory(scopeId);
 
-const removeButton = addStyle('button', `
+const removeButton = addStyle(
+  'button',
+  `
   .btn { background: #1677ff; color: #fff; padding: 8px 16px; }
   .btn:hover { background: #0f5fcb; }
-`);
+`,
+);
 
 // 트리의 어딘가에 스코프 클래스를 적용
 document.getElementById('widget-root')!.classList.add(scopeId);
@@ -312,8 +320,12 @@ class MyCard extends HTMLElement {
 
   constructor() {
     super();
-    const addStyle = styleManagerFactory('my-card', { shadowRoot: this.shadow });
-    this.cleanups.push(addStyle('host', ':host { display: block; border-radius: 8px; }'));
+    const addStyle = styleManagerFactory('my-card', {
+      shadowRoot: this.shadow,
+    });
+    this.cleanups.push(
+      addStyle('host', ':host { display: block; border-radius: 8px; }'),
+    );
     this.cleanups.push(addStyle('content', '.content { padding: 16px; }'));
   }
 
@@ -342,11 +354,15 @@ class ThemeManager {
   private removeTheme: (() => void) | null = null;
 
   applyTheme(mode: 'light' | 'dark') {
-    const vars = mode === 'light'
-      ? '--bg:#fff; --fg:#111; --primary:#1677ff;'
-      : '--bg:#0f0f10; --fg:#f5f5f5; --primary:#4096ff;';
+    const vars =
+      mode === 'light'
+        ? '--bg:#fff; --fg:#111; --primary:#1677ff;'
+        : '--bg:#0f0f10; --fg:#f5f5f5; --primary:#4096ff;';
     this.removeTheme?.();
-    this.removeTheme = this.addStyle('vars', `:root { ${vars} } body { background: var(--bg); color: var(--fg); }`);
+    this.removeTheme = this.addStyle(
+      'vars',
+      `:root { ${vars} } body { background: var(--bg); color: var(--fg); }`,
+    );
   }
 
   destroy() {

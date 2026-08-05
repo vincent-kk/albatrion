@@ -2,11 +2,7 @@
 
 ## Purpose
 
-UI-free, stateless primitives for agent asset injection. Seven
-sub-fractals compose the pipeline: locate the project, decide where each
-agent keeps things, compare, and apply. Both the Ink (`ui/`) and plain
-(`commands/.../renderPlain.ts`) renderers consume these primitives
-directly — no orchestrator function lives here.
+UI-free, stateless primitives for agent asset injection. Seven sub-fractals compose the pipeline: locate the project, decide where each agent keeps things, compare, and apply. Both the Ink (`ui/`) and plain (`commands/.../renderPlain.ts`) renderers consume these primitives directly — no orchestrator function lives here.
 
 ## Structure
 
@@ -22,14 +18,12 @@ directly — no orchestrator function lives here.
 
 ## Conventions
 
-- Dependencies run one way, and every edge crosses a sibling's
-  `index.ts`:
+- Dependencies run one way, and every edge crosses a sibling's `index.ts`:
   - `hash → hashManifest`, `hash → markerBlock`, `hash → buildPlan`
   - `scope → agentTarget`, `markerBlock → agentTarget`
   - `agentTarget → buildPlan`, `markerBlock → buildPlan`
   - `buildPlan → injectDocs`, `markerBlock → injectDocs`
-- `hash/` and `scope/` are the only leaves; the rest build on them. The
-  graph stays acyclic.
+- `hash/` and `scope/` are the only leaves; the rest build on them. The graph stays acyclic.
 
 ## Boundaries
 

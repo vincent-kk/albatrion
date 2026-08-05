@@ -71,7 +71,6 @@ Custom render a field at a specific path using the render props pattern.
 </Form>
 ```
 
-
 ## Form.Render Props
 
 ```typescript
@@ -156,7 +155,6 @@ interface FormTypeRendererProps {
 </Form.Render>
 ```
 
-
 ## Nested Layouts
 
 Custom layout for complex nested structures:
@@ -196,7 +194,6 @@ const schema = {
 </Form>
 ```
 
-
 ## Array Item Rendering
 
 Custom rendering of array items:
@@ -233,7 +230,6 @@ const schema = {
   )}
 </Form.Render>
 ```
-
 
 ## Caveats
 

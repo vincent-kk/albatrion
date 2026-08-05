@@ -43,6 +43,7 @@ function App() {
 ```
 
 **Parameters**:
+
 - `filter?: (modal: ModalNode) => boolean` - Optional filter function
 
 **Returns**: `number` - Active modal count
@@ -69,10 +70,12 @@ function CustomForeground({ visible, children }) {
 ```
 
 **Parameters**:
+
 - `visible: boolean` - Modal visibility state
 - `callbacks: { onVisible?: () => void; onHidden?: () => void }` - State change callbacks
 
 **Timing**:
+
 - `onVisible`: When modal starts becoming visible
 - `onHidden`: When modal starts becoming hidden
 
@@ -94,10 +97,11 @@ function Component() {
 ```
 
 **Returns**:
+
 ```typescript
 {
-  duration: string;      // CSS format (e.g., '300ms')
-  milliseconds: number;  // Number format (e.g., 300)
+  duration: string; // CSS format (e.g., '300ms')
+  milliseconds: number; // Number format (e.g., 300)
 }
 ```
 
@@ -117,6 +121,7 @@ function ToastComponent({ id, duration }) {
 ```
 
 **Parameters**:
+
 - `id: number` - Modal ID
 - `duration: number | string` - Wait time before destruction
 
@@ -143,6 +148,7 @@ function ModalTracker({ modal }) {
 ```
 
 **Parameters**:
+
 - `modal: ModalNode` - Modal node to subscribe to
 
 **Returns**: `number` - Modal version (increments on state change)
@@ -174,6 +180,7 @@ function ModalDebugInfo() {
 **Returns**: `ModalOptions` - Current modal's options object
 
 **Included Properties**:
+
 - `duration` - Animation duration
 - `backdrop` - Background configuration
 - `manualDestroy` - Manual destruction mode

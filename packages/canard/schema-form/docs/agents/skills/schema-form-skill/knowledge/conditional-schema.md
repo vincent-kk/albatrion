@@ -21,7 +21,7 @@ const schema = {
   },
   oneOf: [
     {
-      '&if': "./type === 'A'",  // Alias for computed.if
+      '&if': "./type === 'A'", // Alias for computed.if
       properties: {
         fieldA: { type: 'string' },
       },
@@ -149,7 +149,6 @@ const schema = {
 };
 ```
 
-
 ## allOf (Schema Merging)
 
 All schemas are merged and applied. Always applied without conditions.
@@ -231,7 +230,6 @@ const schema = {
 };
 ```
 
-
 ## Combining oneOf + anyOf
 
 ```typescript
@@ -287,7 +285,6 @@ const schema = {
   ],
 };
 ```
-
 
 ## References
 

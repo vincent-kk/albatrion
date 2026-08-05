@@ -20,7 +20,7 @@ withPortal(Component)
 ```typescript
 type PortalContextType = {
   portalAnchorRef: RefObject<HTMLDivElement | null>;
-  register: (element: ReactNode) => string;   // returns unique id
+  register: (element: ReactNode) => string; // returns unique id
   unregister: (id: string) => void;
 };
 ```
@@ -30,6 +30,7 @@ Created with `createContext<PortalContextType | null>(null)`.
 ### PortalContextProvider
 
 Manages:
+
 - `components: { id: string; element: ReactNode }[]` — registry of all active Portal instances
 - `portalAnchorRef` — ref to the Anchor DOM node
 - `register(element)` — adds to registry with `getRandomString(36)` id, returns id
@@ -44,7 +45,9 @@ const Portal = memo(({ children }: PropsWithChildren) => {
   const { register, unregister } = usePortalContext();
   useEffect(() => {
     const id = register(children);
-    return () => { if (id) unregister(id); };
+    return () => {
+      if (id) unregister(id);
+    };
   }, [children, register, unregister]);
   return null;
 });

@@ -56,17 +56,16 @@ interface FormTypeInputProps<
 }
 ```
 
-
 ## Test Object Properties
 
 ```typescript
 interface FormTypeInputHint {
-  type: SchemaType;           // 'string' | 'number' | 'boolean' | 'array' | 'object' | 'null'
-  format?: string;            // 'email' | 'date' | 'password' | etc.
-  formType?: string;          // Custom type identifier
-  path: string;               // JSONPointer path
-  nullable: boolean;          // Whether null is allowed
-  jsonSchema: JsonSchema;     // Full schema object
+  type: SchemaType; // 'string' | 'number' | 'boolean' | 'array' | 'object' | 'null'
+  format?: string; // 'email' | 'date' | 'password' | etc.
+  formType?: string; // Custom type identifier
+  path: string; // JSONPointer path
+  nullable: boolean; // Whether null is allowed
+  jsonSchema: JsonSchema; // Full schema object
 }
 ```
 
@@ -107,7 +106,6 @@ const formTypeInputDefinitions: FormTypeInputDefinition[] = [
   },
 ];
 ```
-
 
 ## Wildcard Patterns
 
@@ -151,7 +149,6 @@ const formTypeInputMap = {
   '/products/*/variants/*/price': ProductPriceInput,
 };
 ```
-
 
 ## Utilizing ChildNodeComponents
 

@@ -28,10 +28,10 @@ Both constructors accept an optional `props` object. Omitting it creates a no-op
 
 **Type parameters**
 
-| Parameter | Default | Description |
-|-----------|---------|-------------|
-| `Schema` | `UnknownSchema` | The schema node type flowing through visitors |
-| `ContextType` | `void` | Shared mutable context passed to all callbacks |
+| Parameter     | Default         | Description                                    |
+| ------------- | --------------- | ---------------------------------------------- |
+| `Schema`      | `UnknownSchema` | The schema node type flowing through visitors  |
+| `ContextType` | `void`          | Shared mutable context passed to all callbacks |
 
 ---
 
@@ -39,8 +39,8 @@ Both constructors accept an optional `props` object. Omitting it creates a no-op
 
 ```typescript
 interface SchemaVisitor<Schema, ContextType> {
-  enter?: (entry: SchemaEntry<Schema>, context?: ContextType) => void;  // sync
-  exit?:  (entry: SchemaEntry<Schema>, context?: ContextType) => void;  // sync
+  enter?: (entry: SchemaEntry<Schema>, context?: ContextType) => void; // sync
+  exit?: (entry: SchemaEntry<Schema>, context?: ContextType) => void; // sync
 }
 // Async scanner accepts the same interface, but callbacks may return Promise<void>
 ```
@@ -54,11 +54,15 @@ interface SchemaVisitor<Schema, ContextType> {
 
 ```typescript
 interface JsonScannerOptions<Schema, ContextType> {
-  filter?:           (entry: SchemaEntry<Schema>, context?: ContextType) => boolean;
-  mutate?:           (entry: SchemaEntry<Schema>, context?: ContextType) => Schema | void;
-  resolveReference?: (reference: string, entry: SchemaEntry<Schema>, context?: ContextType) => Schema | undefined;
-  maxDepth?:         number;
-  context?:          ContextType;
+  filter?: (entry: SchemaEntry<Schema>, context?: ContextType) => boolean;
+  mutate?: (entry: SchemaEntry<Schema>, context?: ContextType) => Schema | void;
+  resolveReference?: (
+    reference: string,
+    entry: SchemaEntry<Schema>,
+    context?: ContextType,
+  ) => Schema | undefined;
+  maxDepth?: number;
+  context?: ContextType;
 }
 ```
 
@@ -67,27 +71,32 @@ For `JsonScannerOptionsAsync`, `resolveReference` may return `Schema | Promise<S
 ### Option semantics
 
 **`filter(entry, context) => boolean`**
+
 - Called at `Enter` phase before `enter` visitor fires.
 - Return `false` to skip the node AND all its descendants.
 - Does not affect sibling nodes.
 
 **`mutate(entry, context) => Schema | void`**
+
 - Called at `Enter` phase after `filter` passes.
 - Return a replacement schema to transform the node in-place.
 - The replacement is recorded in `__resolves__` and applied by `getValue()`.
 - Return `undefined` / `void` to leave the node unchanged.
 
 **`resolveReference(ref, entry, context) => Schema | undefined`**
+
 - Called at `Reference` phase when a node has a `$ref` property.
 - Not called for nodes inside `$defs` / `definitions` subtrees.
 - Not called if the same `$ref` path was already visited (circular detection).
 - Return the resolved schema to inline it; return `undefined` to leave `$ref` in place.
 
 **`maxDepth: number`**
+
 - Prevents traversal below this depth (root node is depth 0).
 - Checked at `ChildEntries` phase — the node at `maxDepth` is visited but its children are not.
 
 **`context: ContextType`**
+
 - Passed as the second argument to every callback.
 - Mutations to `context` are visible across all callbacks (shared mutable object).
 
@@ -114,6 +123,7 @@ const result = await scanner.scan(schema).then(s => s.getValue());
   - Returns the original schema reference (no clone) when no `$ref` was resolved.
 
 `getValue` accepts an optional generic to narrow the output type:
+
 ```typescript
 const typed = scanner.scan(schema).getValue<MyResolvedSchema>();
 ```
@@ -124,12 +134,12 @@ const typed = scanner.scan(schema).getValue<MyResolvedSchema>();
 
 Each stack entry cycles through these phases via an internal `Map<Entry, OperationPhase>`:
 
-| Phase | Bit | Description |
-|-------|-----|-------------|
-| `Enter` | `1` | Apply `filter`, `mutate`, call `visitor.enter` |
-| `Reference` | `4` | Detect and resolve `$ref` |
-| `ChildEntries` | `2` | Check `maxDepth`, push child entries to stack |
-| `Exit` | `8` | Call `visitor.exit`, clean up circular ref tracking |
+| Phase          | Bit | Description                                         |
+| -------------- | --- | --------------------------------------------------- |
+| `Enter`        | `1` | Apply `filter`, `mutate`, call `visitor.enter`      |
+| `Reference`    | `4` | Detect and resolve `$ref`                           |
+| `ChildEntries` | `2` | Check `maxDepth`, push child entries to stack       |
+| `Exit`         | `8` | Call `visitor.exit`, clean up circular ref tracking |
 
 Processing is **not recursive** — it uses a `while (stack.length > 0)` loop with a phase map so each entry can be resumed across iterations.
 
@@ -149,6 +159,7 @@ When `getStackEntriesForNode` processes a node, children are discovered in this 
 8. `properties` entries
 
 Each child entry carries:
+
 - `schema` — the child schema object
 - `path` — JSON Pointer fragment (e.g., `#/properties/name`)
 - `dataPath` — JSON Pointer to the corresponding data location (e.g., `/name`)
@@ -162,13 +173,13 @@ Each child entry carries:
 
 ```typescript
 type SchemaEntry<Schema> = {
-  schema:             Schema;
-  path:               string;    // JSON Pointer fragment, e.g. "#/properties/name"
-  dataPath:           string;    // data JSON Pointer, e.g. "/name"
-  depth:              number;
-  hasReference?:      boolean;   // true when $ref was encountered but not resolved
-  referencePath?:     string;    // the original $ref value when resolved
-  referenceResolved?: boolean;   // true when resolveReference returned a schema
+  schema: Schema;
+  path: string; // JSON Pointer fragment, e.g. "#/properties/name"
+  dataPath: string; // data JSON Pointer, e.g. "/name"
+  depth: number;
+  hasReference?: boolean; // true when $ref was encountered but not resolved
+  referencePath?: string; // the original $ref value when resolved
+  referenceResolved?: boolean; // true when resolveReference returned a schema
 } & KeywordVariant;
 ```
 
@@ -197,6 +208,7 @@ const inlined = resolveReference(schema);
 ```
 
 This is a two-pass utility that:
+
 1. Scans for all `$ref` nodes that could not be auto-resolved (definition schemas).
 2. Builds a map from ref path → resolved schema using `@winglet/json/pointer` `getValue`.
 3. Runs a second scan with that map as the `resolveReference` option to inline all refs.
@@ -215,7 +227,7 @@ import { JsonSchemaScanner } from '@winglet/json-schema/scanner';
 const schema = {
   type: 'object',
   properties: {
-    id:   { type: 'string' },
+    id: { type: 'string' },
     tags: { type: 'array', items: { type: 'string' } },
   },
 };
@@ -223,7 +235,7 @@ const schema = {
 const scanner = new JsonSchemaScanner({
   visitor: {
     enter: ({ path, schema }) => console.log('enter', path, schema.type),
-    exit:  ({ path })         => console.log('exit',  path),
+    exit: ({ path }) => console.log('exit', path),
   },
 });
 scanner.scan(schema);
@@ -239,13 +251,13 @@ scanner.scan(schema);
 
 ### Typed context
 
-`context` is passed by reference to every callback. Hold onto your own
-reference to the context object — the scanner's internal options are private,
-so mutations are observed through the variable you supplied, not through the
-scanner instance.
+`context` is passed by reference to every callback. Hold onto your own reference to the context object — the scanner's internal options are private, so mutations are observed through the variable you supplied, not through the scanner instance.
 
 ```typescript
-interface Stats { strings: number; objects: number }
+interface Stats {
+  strings: number;
+  objects: number;
+}
 
 const stats: Stats = { strings: 0, objects: 0 };
 
@@ -275,7 +287,9 @@ const scanner = new JsonSchemaScannerAsync({
     },
   },
 });
-const result = await scanner.scan(schemaWithRemoteRefs).then(s => s.getValue());
+const result = await scanner
+  .scan(schemaWithRemoteRefs)
+  .then((s) => s.getValue());
 ```
 
 ### Depth-limited traversal

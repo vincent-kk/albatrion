@@ -1,8 +1,6 @@
 # Schema-Form Consumer Rules
 
-These rules apply when authoring application code that imports from `@canard/schema-form`.
-They do not apply to plugin authoring (see the `create-canard-plugin` skill) or to work inside the library itself.
-Rules are perspective-level. For concrete API shapes, defaults, and edge behavior, invoke the `schema-form-skill` skill; §3 lists the topics that trigger that invocation.
+These rules apply when authoring application code that imports from `@canard/schema-form`. They do not apply to plugin authoring (see the `create-canard-plugin` skill) or to work inside the library itself. Rules are perspective-level. For concrete API shapes, defaults, and edge behavior, invoke the `schema-form-skill` skill; §3 lists the topics that trigger that invocation.
 
 ---
 
@@ -41,11 +39,11 @@ Rules are perspective-level. For concrete API shapes, defaults, and edge behavio
 
 Decide which surface owns each piece of UI before writing it.
 
-| Surface | How it is produced | When to use |
-|---|---|---|
-| Schema-driven auto-render | `<Form jsonSchema={…} />` | Default. Plugin resolves a `FormTypeInput` per node. |
-| Path-scoped slots | `<Form.Input path>`, `<Form.Label path>`, `<Form.Error path>`, `<Form.Render path>` inside `<Form>` | Custom layout that still delegates field rendering to the plugin. |
-| Per-field custom input | `FormTypeInput` on the schema, `formTypeInputMap`, or `formTypeInputDefinitions` | A field needs a UI the plugin does not provide. |
+| Surface                   | How it is produced                                                                                  | When to use                                                       |
+| ------------------------- | --------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
+| Schema-driven auto-render | `<Form jsonSchema={…} />`                                                                           | Default. Plugin resolves a `FormTypeInput` per node.              |
+| Path-scoped slots         | `<Form.Input path>`, `<Form.Label path>`, `<Form.Error path>`, `<Form.Render path>` inside `<Form>` | Custom layout that still delegates field rendering to the plugin. |
+| Per-field custom input    | `FormTypeInput` on the schema, `formTypeInputMap`, or `formTypeInputDefinitions`                    | A field needs a UI the plugin does not provide.                   |
 
 Mixing surfaces on the same path (e.g. `<Form.Input path="/x" />` inside a `<Form>` that already auto-renders `/x`) causes duplicate rendering. Pick one.
 
@@ -59,9 +57,7 @@ Mixing surfaces on the same path (e.g. `<Form.Input path="/x" />` inside a `<For
 
 ## 3. Decision Routing
 
-When the task touches any of these areas, invoke the `schema-form-skill` skill.
-The skill owns the concrete API shapes, defaults, and edge behavior; let it choose which of its own knowledge slices to read.
-Do not attempt to answer these from memory.
+When the task touches any of these areas, invoke the `schema-form-skill` skill. The skill owns the concrete API shapes, defaults, and edge behavior; let it choose which of its own knowledge slices to read. Do not attempt to answer these from memory.
 
 - Form layout with `Form.Render` / `Form.Input` / `Form.Label` / `Form.Error`
 - A custom `FormTypeInput` or `FormTypeInputMap` entry

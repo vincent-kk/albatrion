@@ -8,15 +8,9 @@ argument-hint: <target-package-path>
 
 # agents-docs-asset-wiring
 
-Wire a consumer package's `docs/agents/**` into `@slats/agents-assets-sync`
-so end users can inject those assets via the engine's `inject-agents-settings`
-bin. Reference consumer: `packages/canard/schema-form`.
+Wire a consumer package's `docs/agents/**` into `@slats/agents-assets-sync` so end users can inject those assets via the engine's `inject-agents-settings` bin. Reference consumer: `packages/canard/schema-form`.
 
-The engine is single-dispatcher. Consumers do NOT ship their own bin stubs
-— they declare `agents.assetPath` in `package.json` and let the engine's
-`agents-build-hashes` bin regenerate `dist/agents-hashes.json` during
-build. `src/core/**` never reads `package.json`; only the engine's `bin/`
-layer resolves a single explicitly-named target.
+The engine is single-dispatcher. Consumers do NOT ship their own bin stubs — they declare `agents.assetPath` in `package.json` and let the engine's `agents-build-hashes` bin regenerate `dist/agents-hashes.json` during build. `src/core/**` never reads `package.json`; only the engine's `bin/` layer resolves a single explicitly-named target.
 
 **Outcome**
 
@@ -28,14 +22,11 @@ npx -p @slats/agents-assets-sync inject-agents-settings \
 
 ## Role
 
-You are a monorepo wiring specialist. Execute the 6 steps below as a
-single, idempotent procedure. On any conflicting existing value — ask
-the user before overwriting. Never clobber silently.
+You are a monorepo wiring specialist. Execute the 6 steps below as a single, idempotent procedure. On any conflicting existing value — ask the user before overwriting. Never clobber silently.
 
 ## Knowledge Resources
 
-Consult these files as needed during execution. Do NOT preload everything;
-load on demand.
+Consult these files as needed during execution. Do NOT preload everything; load on demand.
 
 - `knowledge/reference-files.md` — what the consumer should (and should not) own
 - `knowledge/package-json-patches.md` — every required `package.json` edit, with guard conditions
@@ -48,14 +39,13 @@ load on demand.
 
 Resolve these before starting. If any is missing, stop and ask.
 
-| Variable       | Source                                                                                                    |
-|----------------|-----------------------------------------------------------------------------------------------------------|
-| `TARGET_PATH`  | Skill argument (e.g. `packages/lerx/promise-modal`). If absent, ask the user.                             |
-| `PACKAGE_NAME` | `name` field of `${TARGET_PATH}/package.json`.                                                            |
-| `SHORTCUT`     | Root `package.json` `scripts` entry whose value equals `yarn workspace ${PACKAGE_NAME}`; else unset.      |
+| Variable       | Source                                                                                               |
+| -------------- | ---------------------------------------------------------------------------------------------------- |
+| `TARGET_PATH`  | Skill argument (e.g. `packages/lerx/promise-modal`). If absent, ask the user.                        |
+| `PACKAGE_NAME` | `name` field of `${TARGET_PATH}/package.json`.                                                       |
+| `SHORTCUT`     | Root `package.json` `scripts` entry whose value equals `yarn workspace ${PACKAGE_NAME}`; else unset. |
 
-`SHORTCUT` is a convenience only. When unset, fall back to full workspace
-syntax: `yarn workspace ${PACKAGE_NAME} <subcommand>`.
+`SHORTCUT` is a convenience only. When unset, fall back to full workspace syntax: `yarn workspace ${PACKAGE_NAME} <subcommand>`.
 
 ## Pre-Flight
 
@@ -81,20 +71,15 @@ See `knowledge/package-json-patches.md` for the complete patch list:
 - `devDependencies."@slats/agents-assets-sync"` — add (NOT `dependencies`, NOT `peerDependencies`). The engine is CLI-only and must not leak into end-user production installs.
 - `files` — ensure `"dist"`, `"docs"`, `"README.md"` are listed. Never include `"bin"` or `"scripts"`.
 
-Do NOT add any `bin` entry. Do NOT add `./bin/*` or `./docs/*` to `exports`.
-Do NOT create `bin/` or `scripts/` directories in the consumer.
+Do NOT add any `bin` entry. Do NOT add `./bin/*` or `./docs/*` to `exports`. Do NOT create `bin/` or `scripts/` directories in the consumer.
 
 ### Step 2 — Patch `${TARGET_PATH}/CLAUDE.md`
 
-If `CLAUDE.md` exists, append or replace the `## Claude Docs Injector`
-section from `knowledge/agent-md-template.md`, substituting
-`${PACKAGE_NAME}`. Skip if `CLAUDE.md` does not exist (do not create one).
+If `CLAUDE.md` exists, append or replace the `## Claude Docs Injector` section from `knowledge/agent-md-template.md`, substituting `${PACKAGE_NAME}`. Skip if `CLAUDE.md` does not exist (do not create one).
 
 ### Step 3 — (Optional) Dependency-cruiser isolation gate
 
-Skip unless `${TARGET_PATH}/.dependency-cruiser.cjs` already exists or the
-user explicitly asks. See `knowledge/dependency-cruiser.md` for the single
-remaining forbidden rule (`src/**` → `docs/**`) and the `depcheck` script.
+Skip unless `${TARGET_PATH}/.dependency-cruiser.cjs` already exists or the user explicitly asks. See `knowledge/dependency-cruiser.md` for the single remaining forbidden rule (`src/**` → `docs/**`) and the `depcheck` script.
 
 ### Step 4 — Install and build
 
@@ -103,15 +88,11 @@ yarn install
 yarn ${SHORTCUT:-workspace ${PACKAGE_NAME}} build
 ```
 
-Expected: `rolldown` → `buildTypes` → `agents-build-hashes` succeed, and
-`${TARGET_PATH}/dist/agents-hashes.json` is written.
+Expected: `rolldown` → `buildTypes` → `agents-build-hashes` succeed, and `${TARGET_PATH}/dist/agents-hashes.json` is written.
 
 ### Step 5 — E2E smoke via engine dispatcher
 
-Run from `/tmp/...`, never from the monorepo root or `${TARGET_PATH}/` —
-`--scope=project` walks `cwd` upward looking for an existing `.claude`,
-which would mutate the real repo's. See `knowledge/smoke-tests.md` for
-the full 8-path matrix, expected exit codes, and rationale.
+Run from `/tmp/...`, never from the monorepo root or `${TARGET_PATH}/` — `--scope=project` walks `cwd` upward looking for an existing `.claude`, which would mutate the real repo's. See `knowledge/smoke-tests.md` for the full 8-path matrix, expected exit codes, and rationale.
 
 ### Step 6 — Report
 
@@ -128,24 +109,26 @@ Summarize:
 ## agents-docs-asset-wiring — ${PACKAGE_NAME}
 
 **Files patched**
-- package.json                 — patched: [agents.assetPath, scripts.build, scripts.build:hashes, dependencies, files]
-- CLAUDE.md                    — section added | skipped (no CLAUDE.md)
-- .dependency-cruiser.cjs      — updated | skipped (not present)
+
+- package.json — patched: [agents.assetPath, scripts.build, scripts.build:hashes, dependencies, files]
+- CLAUDE.md — section added | skipped (no CLAUDE.md)
+- .dependency-cruiser.cjs — updated | skipped (not present)
 
 **Manifest**
+
 - dist/agents-hashes.json: <N> files
 
 **Smoke tests**
-| # | command                                                     | expected | actual |
+| # | command | expected | actual |
 |---|-------------------------------------------------------------|----------|--------|
 | 1 | --package=${PACKAGE_NAME} --scope=project --dry-run         | 0        | <n>    |
-| 2 | --package=${PACKAGE_NAME} --scope=project                   | 0        | <n>    |
+| 2 | --package=${PACKAGE_NAME} --scope=project | 0 | <n> |
 | 3 | --package=${PACKAGE_NAME} --scope=project (up-to-date)      | 0        | <n>    |
-| 4 | CI=true --package=${PACKAGE_NAME} --scope=project (tampered)| 2        | <n>    |
+| 4 | CI=true --package=${PACKAGE_NAME} --scope=project (tampered)| 2 | <n> |
 | 5 | CI=true --package=${PACKAGE_NAME} --scope=project --force   | 0        | <n>    |
-| 6 | CI=true --package=${PACKAGE_NAME} (missing --scope)         | 2        | <n>    |
-| 7 | (missing --package)                                         | 2        | <n>    |
-| 8 | --package=@does/not-exist                                   | 2        | <n>    |
+| 6 | CI=true --package=${PACKAGE_NAME} (missing --scope) | 2 | <n> |
+| 7 | (missing --package) | 2 | <n> |
+| 8 | --package=@does/not-exist | 2 | <n> |
 
 **Next**: commit on its own — do not bundle with unrelated changes.
 ```

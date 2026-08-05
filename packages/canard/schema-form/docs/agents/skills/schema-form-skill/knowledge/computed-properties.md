@@ -31,14 +31,13 @@ const schema = {
     toggle: { type: 'boolean' },
     conditionalField: {
       type: 'string',
-      '&visible': '../toggle === true',  // Same as computed.visible
+      '&visible': '../toggle === true', // Same as computed.visible
     },
   },
 };
 ```
 
 Supported aliases: `&active`, `&visible`, `&readOnly`, `&disabled`, `&pristine`, `&derived`
-
 
 ## active vs visible
 
@@ -104,15 +103,14 @@ Want to conditionally hide a field
     │
 ```
 
-| Situation | Choice | Reason |
-|------|------|------|
-| Conditional fields (discount rate, additional options) | `active` | Data unnecessary when condition not met |
-| Step-by-step forms (Step 1 → Step 2) | `visible` | Need to retain previous step data |
-| Permission-based field hiding | `active` | Data should not exist without permission |
-| Collapsible UI | `visible` | Keep data when collapsed |
-| Payment method specific fields | `active` | Remove previous input when different payment method selected |
-| Preview mode | `visible` | Display read-only, retain data |
-
+| Situation                                              | Choice    | Reason                                                       |
+| ------------------------------------------------------ | --------- | ------------------------------------------------------------ |
+| Conditional fields (discount rate, additional options) | `active`  | Data unnecessary when condition not met                      |
+| Step-by-step forms (Step 1 → Step 2)                   | `visible` | Need to retain previous step data                            |
+| Permission-based field hiding                          | `active`  | Data should not exist without permission                     |
+| Collapsible UI                                         | `visible` | Keep data when collapsed                                     |
+| Payment method specific fields                         | `active`  | Remove previous input when different payment method selected |
+| Preview mode                                           | `visible` | Display read-only, retain data                               |
 
 ## Important Notes
 

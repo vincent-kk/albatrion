@@ -26,9 +26,9 @@ docs/
 
 ## 스펙 문서 (Specification Documents)
 
-| 언어 | 파일 | 내용 |
-|------|------|------|
-| 한국어 | [ko/SPECIFICATION.md](./ko/SPECIFICATION.md) | 전체 API, 아키텍처, 사용 예제 |
+| 언어    | 파일                                         | 내용                                   |
+| ------- | -------------------------------------------- | -------------------------------------- |
+| 한국어  | [ko/SPECIFICATION.md](./ko/SPECIFICATION.md) | 전체 API, 아키텍처, 사용 예제          |
 | English | [en/SPECIFICATION.md](./en/SPECIFICATION.md) | Full API, architecture, usage examples |
 
 ### 주요 내용 (Contents)

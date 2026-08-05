@@ -6,14 +6,14 @@ JSON Patch defines a format for describing changes to a JSON document as a seque
 
 Supported operations:
 
-| `op` | Description | Required Fields |
-|------|-------------|----------------|
-| `add` | Add a value | `path`, `value` |
-| `remove` | Remove a value | `path` |
-| `replace` | Replace a value | `path`, `value` |
-| `move` | Move a value | `path`, `from` |
-| `copy` | Copy a value | `path`, `from` |
-| `test` | Assert value equality | `path`, `value` |
+| `op`      | Description           | Required Fields |
+| --------- | --------------------- | --------------- |
+| `add`     | Add a value           | `path`, `value` |
+| `remove`  | Remove a value        | `path`          |
+| `replace` | Replace a value       | `path`, `value` |
+| `move`    | Move a value          | `path`, `from`  |
+| `copy`    | Copy a value          | `path`, `from`  |
+| `test`    | Assert value equality | `path`, `value` |
 
 ---
 
@@ -22,15 +22,43 @@ Supported operations:
 ```typescript
 type Operation = 'add' | 'replace' | 'remove' | 'move' | 'copy' | 'test';
 
-interface AddPatch<Value>     { op: 'add';     path: string; value: Value }
-interface ReplacePatch<Value> { op: 'replace'; path: string; value: Value }
-interface RemovePatch         { op: 'remove';  path: string }
-interface MovePatch           { op: 'move';    path: string; from: string }
-interface CopyPatch           { op: 'copy';    path: string; from: string }
-interface TestPatch<Value>    { op: 'test';    path: string; value: Value }
+interface AddPatch<Value> {
+  op: 'add';
+  path: string;
+  value: Value;
+}
+interface ReplacePatch<Value> {
+  op: 'replace';
+  path: string;
+  value: Value;
+}
+interface RemovePatch {
+  op: 'remove';
+  path: string;
+}
+interface MovePatch {
+  op: 'move';
+  path: string;
+  from: string;
+}
+interface CopyPatch {
+  op: 'copy';
+  path: string;
+  from: string;
+}
+interface TestPatch<Value> {
+  op: 'test';
+  path: string;
+  value: Value;
+}
 
-type Patch = AddPatch<any> | ReplacePatch<any> | RemovePatch
-           | MovePatch | CopyPatch | TestPatch<any>;
+type Patch =
+  | AddPatch<any>
+  | ReplacePatch<any>
+  | RemovePatch
+  | MovePatch
+  | CopyPatch
+  | TestPatch<any>;
 ```
 
 ---
@@ -42,10 +70,10 @@ function compare<Source extends JsonRoot, Target extends JsonRoot>(
   source: Source,
   target: Target,
   options?: CompareOptions,
-): Patch[]
+): Patch[];
 
 type CompareOptions = {
-  strict?: boolean;    // default: false
+  strict?: boolean; // default: false
   immutable?: boolean; // default: true
 };
 ```
@@ -101,11 +129,11 @@ function applyPatch<Result extends JsonRoot = any>(
   source: JsonRoot,
   patches: Patch[],
   options?: ApplyPatchOptions,
-): Result
+): Result;
 
 type ApplyPatchOptions = {
-  strict?: boolean;           // default: false
-  immutable?: boolean;        // default: true
+  strict?: boolean; // default: false
+  immutable?: boolean; // default: true
   protectPrototype?: boolean; // default: true
 };
 ```
@@ -127,29 +155,25 @@ const source = { name: 'John', age: 30, hobbies: ['reading'] };
 
 const result = applyPatch(source, [
   { op: 'replace', path: '/age', value: 31 },
-  { op: 'add',     path: '/city', value: 'NYC' },
-  { op: 'add',     path: '/hobbies/-', value: 'coding' },
-  { op: 'remove',  path: '/city' },
+  { op: 'add', path: '/city', value: 'NYC' },
+  { op: 'add', path: '/hobbies/-', value: 'coding' },
+  { op: 'remove', path: '/city' },
 ]);
 // { name: 'John', age: 31, hobbies: ['reading', 'coding'] }
 
 // source is unchanged because immutable: true (default)
 
 // Move operation
-applyPatch({ a: { b: 1 }, c: 2 }, [
-  { op: 'move', from: '/a/b', path: '/d' },
-]);
+applyPatch({ a: { b: 1 }, c: 2 }, [{ op: 'move', from: '/a/b', path: '/d' }]);
 // { a: {}, c: 2, d: 1 }
 
 // Copy operation
-applyPatch({ src: 'value' }, [
-  { op: 'copy', from: '/src', path: '/dst' },
-]);
+applyPatch({ src: 'value' }, [{ op: 'copy', from: '/src', path: '/dst' }]);
 // { src: 'value', dst: 'value' }
 
 // Test operation (asserts value, throws if mismatch)
 applyPatch({ status: 'active' }, [
-  { op: 'test',    path: '/status', value: 'active' },
+  { op: 'test', path: '/status', value: 'active' },
   { op: 'replace', path: '/status', value: 'inactive' },
 ]);
 // { status: 'inactive' } — test passed, replace applied
@@ -174,7 +198,7 @@ const result = applyPatch(source, patches, {
 function difference(
   source: JsonValue,
   target: JsonValue,
-): JsonValue | undefined
+): JsonValue | undefined;
 ```
 
 Generates a JSON Merge Patch (RFC 7396) representing the differences between `source` and `target`.
@@ -202,7 +226,7 @@ difference([1, 2], [1, 3]);
 // Nested
 difference(
   { user: { name: 'Alice', role: 'admin', tmp: 'data' } },
-  { user: { name: 'Bob', role: 'admin' } }
+  { user: { name: 'Bob', role: 'admin' } },
 );
 // { user: { name: 'Bob', tmp: null } }
 ```
@@ -216,7 +240,7 @@ function mergePatch<Type extends JsonValue>(
   source: JsonValue,
   mergePatchBody: JsonValue | undefined,
   immutable?: boolean, // default: true
-): Type
+): Type;
 ```
 
 Applies a JSON Merge Patch document to `source` (RFC 7396).
@@ -240,7 +264,7 @@ mergePatch({ name: 'John', tmp: 'data' }, { tmp: null });
 // Nested merge
 mergePatch(
   { user: { name: 'Alice', role: 'admin' } },
-  { user: { role: null, email: 'alice@example.com' } }
+  { user: { role: null, email: 'alice@example.com' } },
 );
 // { user: { name: 'Alice', email: 'alice@example.com' } }
 
@@ -263,13 +287,13 @@ source === result; // true — same reference
 ## compare + applyPatch Roundtrip
 
 ```typescript
-import { compare, applyPatch } from '@winglet/json/pointer-patch';
+import { applyPatch, compare } from '@winglet/json/pointer-patch';
 
 const original = { name: 'Alice', settings: { theme: 'dark' } };
-const updated  = { name: 'Alice', settings: { theme: 'light', lang: 'en' } };
+const updated = { name: 'Alice', settings: { theme: 'light', lang: 'en' } };
 
 const patches = compare(original, updated);
-const result  = applyPatch(original, patches);
+const result = applyPatch(original, patches);
 // result deep-equals updated
 ```
 
@@ -281,6 +305,6 @@ import { difference, mergePatch } from '@winglet/json/pointer-patch';
 const source = { a: 1, b: 2 };
 const target = { a: 1, b: 3, c: 4 };
 
-const patch  = difference(source, target);   // { b: 3, c: 4 }
-const result = mergePatch(source, patch);    // { a: 1, b: 3, c: 4 }
+const patch = difference(source, target); // { b: 3, c: 4 }
+const result = mergePatch(source, patch); // { a: 1, b: 3, c: 4 }
 ```

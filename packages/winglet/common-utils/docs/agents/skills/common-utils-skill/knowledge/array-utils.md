@@ -21,8 +21,8 @@ Access elements by index with negative index support. Negative indices count fro
 
 ```typescript
 const arr = [10, 20, 30, 40, 50];
-at(arr, -1);       // 50
-at(arr, [0, -1]);  // [10, 50]
+at(arr, -1); // 50
+at(arr, [0, -1]); // [10, 50]
 ```
 
 - Non-integer indices are truncated via `Math.trunc()`.
@@ -40,8 +40,8 @@ chunk<Type>(array: Type[], size: number): Type[][]
 Split an array into subarrays of at most `size` elements.
 
 ```typescript
-chunk([1,2,3,4,5], 2); // [[1,2],[3,4],[5]]
-chunk([1,2,3], 10);    // [[1,2,3]]
+chunk([1, 2, 3, 4, 5], 2); // [[1,2],[3,4],[5]]
+chunk([1, 2, 3], 10); // [[1,2,3]]
 ```
 
 - Returns `[array]` (wrapped) if `size` is not a positive integer.
@@ -58,7 +58,7 @@ difference<Type>(source: Type[], exclude: Type[]): Type[]
 Returns elements from `source` not present in `exclude`. Uses `Set` for O(1) lookup.
 
 ```typescript
-difference([1,2,3,4], [2,4]); // [1,3]
+difference([1, 2, 3, 4], [2, 4]); // [1,3]
 ```
 
 - Uses SameValueZero equality (NaN === NaN, +0 === -0).
@@ -74,11 +74,7 @@ differenceBy<Type>(source: Type[], exclude: Type[], iteratee: (item: Type) => un
 Like `difference` but compares via a key function.
 
 ```typescript
-differenceBy(
-  [{id:1},{id:2},{id:3}],
-  [{id:2}],
-  item => item.id
-); // [{id:1},{id:3}]
+differenceBy([{ id: 1 }, { id: 2 }, { id: 3 }], [{ id: 2 }], (item) => item.id); // [{id:1},{id:3}]
 ```
 
 ## differenceWith
@@ -147,10 +143,10 @@ groupBy<Type, Key extends PropertyKey>(
 Groups array elements by computed key. Returns an object where each key maps to an array of elements.
 
 ```typescript
-groupBy([1,2,3,4,5,6], n => n % 2 === 0 ? 'even' : 'odd');
+groupBy([1, 2, 3, 4, 5, 6], (n) => (n % 2 === 0 ? 'even' : 'odd'));
 // { odd: [1,3,5], even: [2,4,6] }
 
-groupBy(employees, e => e.department);
+groupBy(employees, (e) => e.department);
 // { Engineering: [...], Marketing: [...] }
 ```
 
@@ -169,7 +165,7 @@ intersection<Type>(source: Type[], target: Type[]): Type[]
 Returns elements present in both arrays. Uses `Set` for O(1) lookup.
 
 ```typescript
-intersection([1,2,3,4], [2,4,6]); // [2,4]
+intersection([1, 2, 3, 4], [2, 4, 6]); // [2,4]
 ```
 
 - Duplicates in `source` that exist in `target` are preserved.
@@ -185,9 +181,9 @@ Like `intersection` but compares elements by a key function. Useful for intersec
 
 ```typescript
 intersectionBy(
-  [{id:1},{id:2},{id:3}],
-  [{id:2},{id:4}],
-  item => item.id
+  [{ id: 1 }, { id: 2 }, { id: 3 }],
+  [{ id: 2 }, { id: 4 }],
+  (item) => item.id,
 ); // [{id:2}]
 ```
 
@@ -221,7 +217,7 @@ map<Type, Result>(
 Transforms each element. Pre-allocates result array for performance.
 
 ```typescript
-map([1,2,3], n => n * 2); // [2,4,6]
+map([1, 2, 3], (n) => n * 2); // [2,4,6]
 ```
 
 ---
@@ -251,7 +247,7 @@ sortWithReference<Value>(source: Value[], reference?: Value[]): Value[]
 Sorts `source` according to the order defined in `reference`. Elements not in `reference` are appended at the end in their original relative order.
 
 ```typescript
-sortWithReference(['c','a','b','d'], ['a','b','c']); // ['a','b','c','d']
+sortWithReference(['c', 'a', 'b', 'd'], ['a', 'b', 'c']); // ['a','b','c','d']
 ```
 
 - O(n + m) time and space complexity.
@@ -269,8 +265,8 @@ unique<Type>(source: Type[]): Type[]
 Removes duplicates using JavaScript `Set` (SameValueZero equality).
 
 ```typescript
-unique([1,2,2,3,3]); // [1,2,3]
-unique([NaN, NaN]);  // [NaN]  — NaN deduplication via Set
+unique([1, 2, 2, 3, 3]); // [1,2,3]
+unique([NaN, NaN]); // [NaN]  — NaN deduplication via Set
 ```
 
 - For objects: compares by reference, not content. Use `uniqueBy` or `uniqueWith` for content-based dedup.
@@ -285,7 +281,14 @@ uniqueBy<Type>(source: Type[], iteratee: (item: Type) => unknown): Type[]
 Returns unique elements by a key function. Keeps first occurrence.
 
 ```typescript
-uniqueBy([{id:1,v:'a'},{id:1,v:'b'},{id:2,v:'c'}], x => x.id);
+uniqueBy(
+  [
+    { id: 1, v: 'a' },
+    { id: 1, v: 'b' },
+    { id: 2, v: 'c' },
+  ],
+  (x) => x.id,
+);
 // [{id:1,v:'a'},{id:2,v:'c'}]
 ```
 

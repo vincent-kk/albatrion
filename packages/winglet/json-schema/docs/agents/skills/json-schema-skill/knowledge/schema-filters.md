@@ -41,11 +41,11 @@ JSON Schema 2019+ expresses nullable types as a type array:
 
 Each base type has **three guards**:
 
-| Guard | Matches |
-|-------|---------|
-| `isNonNullable<X>Schema` | `{ type: 'x' }` only |
-| `isNullable<X>Schema` | `{ type: ['x', 'null'] }` or `{ type: ['null', 'x'] }` |
-| `is<X>Schema` | Either — union of the two above |
+| Guard                    | Matches                                                |
+| ------------------------ | ------------------------------------------------------ |
+| `isNonNullable<X>Schema` | `{ type: 'x' }` only                                   |
+| `isNullable<X>Schema`    | `{ type: ['x', 'null'] }` or `{ type: ['null', 'x'] }` |
+| `is<X>Schema`            | Either — union of the two above                        |
 
 In most application code, use the union variant (`isObjectSchema`, `isStringSchema`, etc.) unless you specifically need to distinguish nullable from non-nullable.
 
@@ -67,11 +67,12 @@ isObjectSchema(schema: UnknownSchema): schema is ObjectSchema
 ```
 
 **Examples**
+
 ```typescript
-isObjectSchema({ type: 'object', properties: {} })          // true
-isObjectSchema({ type: ['object', 'null'] })                // true
-isObjectSchema({ type: ['null', 'object'], required: [] })  // true
-isObjectSchema({ type: 'array' })                           // false
+isObjectSchema({ type: 'object', properties: {} }); // true
+isObjectSchema({ type: ['object', 'null'] }); // true
+isObjectSchema({ type: ['null', 'object'], required: [] }); // true
+isObjectSchema({ type: 'array' }); // false
 ```
 
 ---
@@ -89,10 +90,11 @@ isArraySchema(schema): schema is ArraySchema
 ```
 
 **Examples**
+
 ```typescript
-isArraySchema({ type: 'array', items: { type: 'string' } }) // true
-isArraySchema({ type: ['array', 'null'] })                   // true
-isArraySchema({ type: 'object' })                            // false
+isArraySchema({ type: 'array', items: { type: 'string' } }); // true
+isArraySchema({ type: ['array', 'null'] }); // true
+isArraySchema({ type: 'object' }); // false
 ```
 
 ---
@@ -110,10 +112,11 @@ isStringSchema(schema): schema is StringSchema
 ```
 
 **Examples**
+
 ```typescript
-isStringSchema({ type: 'string', minLength: 1 })  // true
-isStringSchema({ type: ['string', 'null'] })       // true
-isStringSchema({ type: 'number' })                 // false
+isStringSchema({ type: 'string', minLength: 1 }); // true
+isStringSchema({ type: ['string', 'null'] }); // true
+isStringSchema({ type: 'number' }); // false
 ```
 
 ---
@@ -131,11 +134,12 @@ isNumberSchema(schema): schema is NumberSchema
 ```
 
 **Examples**
+
 ```typescript
-isNumberSchema({ type: 'number' })                  // true
-isNumberSchema({ type: 'integer', minimum: 0 })     // true
-isNumberSchema({ type: ['number', 'null'] })        // true
-isNumberSchema({ type: 'string' })                  // false
+isNumberSchema({ type: 'number' }); // true
+isNumberSchema({ type: 'integer', minimum: 0 }); // true
+isNumberSchema({ type: ['number', 'null'] }); // true
+isNumberSchema({ type: 'string' }); // false
 ```
 
 ---
@@ -174,10 +178,10 @@ hasNullInType(schema: UnknownSchema): boolean
 Returns `true` when `schema.type` is an array containing `'null'`. Does NOT return `true` for `{ type: 'null' }`.
 
 ```typescript
-hasNullInType({ type: ['string', 'null'] })  // true
-hasNullInType({ type: ['null', 'number'] })  // true
-hasNullInType({ type: 'null' })              // false — single string, not array
-hasNullInType({ type: 'string' })            // false
+hasNullInType({ type: ['string', 'null'] }); // true
+hasNullInType({ type: ['null', 'number'] }); // true
+hasNullInType({ type: 'null' }); // false — single string, not array
+hasNullInType({ type: 'string' }); // false
 ```
 
 ---
@@ -193,10 +197,12 @@ isIdenticalSchemaType(left: UnknownSchema, right: UnknownSchema): boolean
 Returns `true` when both schemas represent **exactly the same type**, with nullable equivalence across representations.
 
 Supports:
+
 - JSON Schema `type: ['string', 'null']` array format
 - OpenAPI 3.0 `nullable: true` property
 
 Rules:
+
 - `{ type: 'string' }` === `{ type: 'string' }` → `true`
 - `{ type: ['string', 'null'] }` === `{ type: 'string', nullable: true }` → `true`
 - `{ type: ['string'] }` === `{ type: 'string' }` → `true` (single-element array)
@@ -204,10 +210,13 @@ Rules:
 - Either schema missing `type` → `false`
 
 ```typescript
-isIdenticalSchemaType({ type: 'string' }, { type: 'string' })              // true
-isIdenticalSchemaType({ type: ['string', 'null'] }, { type: 'string', nullable: true }) // true
-isIdenticalSchemaType({ type: ['string'] }, { type: 'string' })            // true
-isIdenticalSchemaType({ type: 'number' }, { type: 'integer' })             // false
+isIdenticalSchemaType({ type: 'string' }, { type: 'string' }); // true
+isIdenticalSchemaType(
+  { type: ['string', 'null'] },
+  { type: 'string', nullable: true },
+); // true
+isIdenticalSchemaType({ type: ['string'] }, { type: 'string' }); // true
+isIdenticalSchemaType({ type: 'number' }, { type: 'integer' }); // false
 ```
 
 ---
@@ -221,6 +230,7 @@ isCompatibleSchemaType(left: UnknownSchema, right: UnknownSchema): boolean
 Returns `true` when both schemas have **compatible types** — a looser check than `isIdenticalSchemaType`.
 
 Additional compatibility rules beyond identical:
+
 - `number` and `integer` are **compatible** with each other
 - Nullable differences are ignored: `['string', 'null']` is compatible with `'string'`
 - Array element order does not affect compatibility
@@ -228,14 +238,14 @@ Additional compatibility rules beyond identical:
 - `['null']` is compatible with `['null']` only
 
 ```typescript
-isCompatibleSchemaType({ type: 'number' }, { type: 'integer' })               // true
-isCompatibleSchemaType({ type: ['string', 'null'] }, { type: 'string' })      // true
-isCompatibleSchemaType({ type: ['string'] }, { type: 'string' })              // true
-isCompatibleSchemaType({ type: ['null'] }, { type: ['null'] })                // true
+isCompatibleSchemaType({ type: 'number' }, { type: 'integer' }); // true
+isCompatibleSchemaType({ type: ['string', 'null'] }, { type: 'string' }); // true
+isCompatibleSchemaType({ type: ['string'] }, { type: 'string' }); // true
+isCompatibleSchemaType({ type: ['null'] }, { type: ['null'] }); // true
 
-isCompatibleSchemaType({ type: [] }, { type: [] })                            // false
-isCompatibleSchemaType({ type: ['string', 'number'] }, { type: 'string' })   // false
-isCompatibleSchemaType({ type: 'string' }, { type: 'boolean' })              // false
+isCompatibleSchemaType({ type: [] }, { type: [] }); // false
+isCompatibleSchemaType({ type: ['string', 'number'] }, { type: 'string' }); // false
+isCompatibleSchemaType({ type: 'string' }, { type: 'boolean' }); // false
 ```
 
 The function is **symmetric**: `isCompatibleSchemaType(a, b) === isCompatibleSchemaType(b, a)`.
@@ -244,13 +254,13 @@ The function is **symmetric**: `isCompatibleSchemaType(a, b) === isCompatibleSch
 
 ## Decision Guide
 
-| Goal | Use |
-|------|-----|
-| Check type at runtime, handle nullable automatically | `isObjectSchema`, `isStringSchema`, etc. |
+| Goal                                                                 | Use                                                    |
+| -------------------------------------------------------------------- | ------------------------------------------------------ |
+| Check type at runtime, handle nullable automatically                 | `isObjectSchema`, `isStringSchema`, etc.               |
 | Distinguish `{ type: 'object' }` from `{ type: ['object', 'null'] }` | `isNonNullableObjectSchema` / `isNullableObjectSchema` |
-| Check if schema's type array contains 'null' | `hasNullInType` |
-| Strict type equality, nullable-aware | `isIdenticalSchemaType` |
-| Loose type compatibility (number/integer, nullable ignored) | `isCompatibleSchemaType` |
+| Check if schema's type array contains 'null'                         | `hasNullInType`                                        |
+| Strict type equality, nullable-aware                                 | `isIdenticalSchemaType`                                |
+| Loose type compatibility (number/integer, nullable ignored)          | `isCompatibleSchemaType`                               |
 
 ---
 
@@ -259,8 +269,12 @@ The function is **symmetric**: `isCompatibleSchemaType(a, b) === isCompatibleSch
 Type guards integrate naturally with scanner callbacks:
 
 ```typescript
+import {
+  isArraySchema,
+  isObjectSchema,
+  isStringSchema,
+} from '@winglet/json-schema/filter';
 import { JsonSchemaScanner } from '@winglet/json-schema/scanner';
-import { isStringSchema, isObjectSchema, isArraySchema } from '@winglet/json-schema/filter';
 
 const scanner = new JsonSchemaScanner({
   visitor: {

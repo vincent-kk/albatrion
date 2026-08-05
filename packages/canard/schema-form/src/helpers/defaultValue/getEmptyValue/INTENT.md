@@ -2,9 +2,7 @@
 
 ## Purpose
 
-JSON Schema 타입 문자열을 받아 컨테이너 타입(`array`, `object`)에 한해
-빈 초기값을 반환하는 최소 단위 순수 함수.
-원시 타입은 `undefined` 를 반환하여 상위 계층이 직접 처리하도록 위임한다.
+JSON Schema 타입 문자열을 받아 컨테이너 타입(`array`, `object`)에 한해 빈 초기값을 반환하는 최소 단위 순수 함수. 원시 타입은 `undefined` 를 반환하여 상위 계층이 직접 처리하도록 위임한다.
 
 ## Structure
 

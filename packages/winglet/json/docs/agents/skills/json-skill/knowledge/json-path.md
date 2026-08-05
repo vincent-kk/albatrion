@@ -16,10 +16,10 @@ JSONPath is a query language for JSON analogous to XPath for XML. The standard u
 ```typescript
 import { JSONPath } from '@winglet/json/path';
 
-JSONPath.Root;    // '$'  — root node
+JSONPath.Root; // '$'  — root node
 JSONPath.Current; // '@'  — currently processing node
-JSONPath.Child;   // '.'  — child accessor
-JSONPath.Filter;  // '#'  — filter condition operator
+JSONPath.Child; // '.'  — child accessor
+JSONPath.Filter; // '#'  — filter condition operator
 ```
 
 These constants are used internally and can be used to construct or parse JSONPath expressions consistently.
@@ -32,7 +32,7 @@ These constants are used internally and can be used to construct or parse JSONPa
 function getJSONPath<Root extends object, Target>(
   root: Root,
   target: Target,
-): string | null
+): string | null;
 ```
 
 Finds the JSONPath string from `root` to `target` using depth-first search (reference equality).
@@ -53,13 +53,13 @@ const doc = {
   },
 };
 
-getJSONPath(doc, doc.a);          // '$.a'
-getJSONPath(doc, doc.a.b);        // '$.a.b'
-getJSONPath(doc, doc.a.b[2]);     // '$.a.b[2]'
-getJSONPath(doc, doc.a.b[2].c);   // null — 'found' is a primitive, not an object reference
+getJSONPath(doc, doc.a); // '$.a'
+getJSONPath(doc, doc.a.b); // '$.a.b'
+getJSONPath(doc, doc.a.b[2]); // '$.a.b[2]'
+getJSONPath(doc, doc.a.b[2].c); // null — 'found' is a primitive, not an object reference
 
-getJSONPath(doc, doc);            // '$'
-getJSONPath(doc, {});             // null — different reference
+getJSONPath(doc, doc); // '$'
+getJSONPath(doc, {}); // null — different reference
 
 // Keys with dots
 const tricky = { 'key.with.dots': { value: 'nested' } };
@@ -78,7 +78,7 @@ getJSONPath(tricky, tricky['key.with.dots']);
 ## convertJsonPathToPointer
 
 ```typescript
-function convertJsonPathToPointer(jsonPath: string): string
+function convertJsonPathToPointer(jsonPath: string): string;
 ```
 
 Converts a JSONPath string to an equivalent JSON Pointer string (RFC 6901).
@@ -126,9 +126,9 @@ import { getValue } from '@winglet/json/pointer-manipulator';
 const doc = { users: [{ name: 'Alice' }, { name: 'Bob' }] };
 const target = doc.users[1];
 
-const jsonPath = getJSONPath(doc, target);         // '$.users[1]'
-const pointer  = convertJsonPathToPointer(jsonPath); // '/users/1'
-const value    = getValue(doc, pointer);            // { name: 'Bob' }
+const jsonPath = getJSONPath(doc, target); // '$.users[1]'
+const pointer = convertJsonPathToPointer(jsonPath); // '/users/1'
+const value = getValue(doc, pointer); // { name: 'Bob' }
 ```
 
 ---

@@ -2,9 +2,7 @@
 
 ## Purpose
 
-`injectDocs` 가 적용할 선언적 액션 리스트를 생성한다. source 해시와 target
-트리를 비교하여 각 파일을 `copy`, `skip-uptodate`, `warn-diverged`,
-`warn-orphan`, 또는 `--force` 시 `delete` 로 분류한다.
+`injectDocs` 가 적용할 선언적 액션 리스트를 생성한다. source 해시와 target 트리를 비교하여 각 파일을 `copy`, `skip-uptodate`, `warn-diverged`, `warn-orphan`, 또는 `--force` 시 `delete` 로 분류한다.
 
 ## Structure
 

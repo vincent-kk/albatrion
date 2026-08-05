@@ -29,14 +29,13 @@ export default defineConfig({
 
 ```typescript
 // test/setup.ts
-import '@testing-library/jest-dom';
 import { registerPlugin } from '@canard/schema-form';
 import { ajvValidatorPlugin } from '@canard/schema-form-ajv8-plugin';
+import '@testing-library/jest-dom';
 
 // Register plugins before tests
 registerPlugin(ajvValidatorPlugin);
 ```
-
 
 ## Component Testing
 
@@ -198,7 +197,6 @@ describe('Custom FormTypeInput', () => {
 });
 ```
 
-
 ## Validation Testing
 
 ### Field-Level Validation
@@ -280,7 +278,6 @@ describe('Custom Error Messages', () => {
 });
 ```
 
-
 ## Test Utilities
 
 ### delay Function
@@ -352,7 +349,6 @@ export const createFormTestHarness = <T extends object>(
   };
 };
 ```
-
 
 ## References
 

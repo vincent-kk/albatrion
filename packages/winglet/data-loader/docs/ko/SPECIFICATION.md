@@ -1,8 +1,6 @@
 # @winglet/data-loader — 명세서
 
-**버전**: 0.10.0
-**패키지**: `@winglet/data-loader`
-**설명**: GraphQL DataLoader에서 영감을 받은 비동기 데이터 패칭용 배칭 및 캐싱 유틸리티
+**버전**: 0.10.0 **패키지**: `@winglet/data-loader` **설명**: GraphQL DataLoader에서 영감을 받은 비동기 데이터 패칭용 배칭 및 캐싱 유틸리티
 
 ---
 
@@ -43,9 +41,13 @@ import { DataLoader } from '@winglet/data-loader';
 
 // 1. 배치 로더 함수 정의
 async function batchLoadUsers(ids: ReadonlyArray<string>) {
-  const users = await db.query('SELECT * FROM users WHERE id IN (?)', [[...ids]]);
+  const users = await db.query('SELECT * FROM users WHERE id IN (?)', [
+    [...ids],
+  ]);
   // 결과는 반드시 입력 키와 동일한 순서로 반환해야 합니다
-  return ids.map(id => users.find(u => u.id === id) ?? new Error(`User ${id} not found`));
+  return ids.map(
+    (id) => users.find((u) => u.id === id) ?? new Error(`User ${id} not found`),
+  );
 }
 
 // 2. DataLoader 인스턴스 생성
@@ -68,12 +70,12 @@ const [user1, user2, user3] = await Promise.all([
 
 `@winglet/data-loader`는 세 가지 관심사로 구조화됩니다:
 
-| 레이어 | 파일 | 역할 |
-|---|---|---|
-| 공개 API | `DataLoader.ts`, `index.ts` | 사용자 대면 클래스 및 익스포트 |
-| 설정 | `utils/prepare.ts` | 옵션 유효성 검사 및 기본값 처리 |
-| 배치 실행 | `utils/dispatch.ts` | 배치 생명주기 및 오류 디스패치 |
-| 오류 타입 | `utils/error.ts` | `DataLoaderError` 정의 |
+| 레이어    | 파일                        | 역할                            |
+| --------- | --------------------------- | ------------------------------- |
+| 공개 API  | `DataLoader.ts`, `index.ts` | 사용자 대면 클래스 및 익스포트  |
+| 설정      | `utils/prepare.ts`          | 옵션 유효성 검사 및 기본값 처리 |
+| 배치 실행 | `utils/dispatch.ts`         | 배치 생명주기 및 오류 디스패치  |
+| 오류 타입 | `utils/error.ts`            | `DataLoaderError` 정의          |
 
 ### 배칭 메커니즘
 
@@ -175,15 +177,16 @@ userLoader.clearAll(); // 예: 사용자 로그아웃 시
 #### `prime(key: Key, value: Value | Promise<Value> | Error): this`
 
 키에 대한 캐시를 수동으로 초기화합니다. 다음의 경우 no-op입니다:
+
 - 캐싱이 비활성화된 경우(`cache: false`).
 - 해당 키에 이미 캐시 항목이 존재하는 경우.
 
 일반 값, Promise, 또는 Error를 허용합니다. 메서드 체이닝을 위해 `this`를 반환합니다.
 
 ```typescript
-userLoader.prime('user-1', fetchedUser);              // 일반 값
-userLoader.prime('user-2', somePromise);              // Promise
-userLoader.prime('deleted', new Error('Not found'));   // Error
+userLoader.prime('user-1', fetchedUser); // 일반 값
+userLoader.prime('user-2', somePromise); // Promise
+userLoader.prime('deleted', new Error('Not found')); // Error
 ```
 
 ---
@@ -196,20 +199,17 @@ type DataLoaderOptions<Key, Value, CacheKey = Key> = {
   cache?: MapLike<CacheKey, Promise<Value>> | false;
   batchScheduler?: (task: () => void) => void;
   cacheKeyFn?: (key: Key) => CacheKey;
-} & (
-  | { maxBatchSize?: number }
-  | { disableBatch: true }
-);
+} & ({ maxBatchSize?: number } | { disableBatch: true });
 ```
 
-| 옵션 | 타입 | 기본값 | 설명 |
-|---|---|---|---|
-| `name` | `string` | `null` | 로더의 선택적 레이블. `loader.name`으로 접근 가능. 로깅 및 디버깅에 유용합니다. |
-| `cache` | `MapLike<CacheKey, Promise<Value>> \| false` | `new Map()` | 커스텀 캐시 구현체. `false`를 전달하면 캐싱이 완전히 비활성화됩니다. |
-| `batchScheduler` | `(task: () => void) => void` | `process.nextTick` | 배치 디스패치 시점을 제어합니다. `queueMicrotask`, `setTimeout`, `requestAnimationFrame`, 또는 즉시 실행을 위한 `fn => fn()`으로 교체 가능합니다. |
-| `cacheKeyFn` | `(key: Key) => CacheKey` | identity (`k => k`) | 로더 키를 캐시 키로 변환합니다. 키가 객체인 경우(참조 동등성 실패) 필수입니다. |
-| `maxBatchSize` | `number` | `Infinity` | 배치당 최대 키 수. 초과 시 새 배치가 자동으로 시작됩니다. 양의 정수여야 합니다. |
-| `disableBatch` | `true` | — | 배칭 비활성화. 각 `load()` 호출이 즉시 디스패치됩니다(`maxBatchSize: 1`과 동일). `maxBatchSize`와 상호 배타적입니다. |
+| 옵션             | 타입                                         | 기본값              | 설명                                                                                                                                              |
+| ---------------- | -------------------------------------------- | ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `name`           | `string`                                     | `null`              | 로더의 선택적 레이블. `loader.name`으로 접근 가능. 로깅 및 디버깅에 유용합니다.                                                                   |
+| `cache`          | `MapLike<CacheKey, Promise<Value>> \| false` | `new Map()`         | 커스텀 캐시 구현체. `false`를 전달하면 캐싱이 완전히 비활성화됩니다.                                                                              |
+| `batchScheduler` | `(task: () => void) => void`                 | `process.nextTick`  | 배치 디스패치 시점을 제어합니다. `queueMicrotask`, `setTimeout`, `requestAnimationFrame`, 또는 즉시 실행을 위한 `fn => fn()`으로 교체 가능합니다. |
+| `cacheKeyFn`     | `(key: Key) => CacheKey`                     | identity (`k => k`) | 로더 키를 캐시 키로 변환합니다. 키가 객체인 경우(참조 동등성 실패) 필수입니다.                                                                    |
+| `maxBatchSize`   | `number`                                     | `Infinity`          | 배치당 최대 키 수. 초과 시 새 배치가 자동으로 시작됩니다. 양의 정수여야 합니다.                                                                   |
+| `disableBatch`   | `true`                                       | —                   | 배칭 비활성화. 각 `load()` 호출이 즉시 디스패치됩니다(`maxBatchSize: 1`과 동일). `maxBatchSize`와 상호 배타적입니다.                              |
 
 ---
 
@@ -224,6 +224,7 @@ type BatchLoader<Key, Value> = (
 `DataLoader` 생성자의 첫 번째 인자로 전달하는 함수입니다.
 
 **계약 조건**:
+
 1. 읽기 전용 키 배열을 받습니다 — 입력 배열을 변경하지 마세요.
 2. 배열로 resolve되는 `Promise`를 반환해야 합니다.
 3. 반환된 배열의 길이는 입력 키 배열과 **정확히 동일**해야 합니다.
@@ -259,7 +260,10 @@ import type { DataLoaderOptions } from '@winglet/data-loader';
 type Batch<Key, Value> = {
   isResolved: boolean;
   keys: Array<Key>;
-  promises: Array<{ resolve: (value: Value) => void; reject: (error: Error) => void }>;
+  promises: Array<{
+    resolve: (value: Value) => void;
+    reject: (error: Error) => void;
+  }>;
   cacheHits?: Array<() => void>;
 };
 ```
@@ -317,7 +321,11 @@ const resolvers = {
 
 // Express 미들웨어 — 요청별 새 로더
 app.use('/graphql', (req, res, next) => {
-  graphqlHTTP({ schema, context: { loaders: createLoaders() } })(req, res, next);
+  graphqlHTTP({ schema, context: { loaders: createLoaders() } })(
+    req,
+    res,
+    next,
+  );
 });
 ```
 
@@ -350,12 +358,21 @@ class TtlMap<K, V> {
   get(key: K) {
     const e = this.store.get(key);
     if (!e) return undefined;
-    if (Date.now() > e.expiresAt) { this.store.delete(key); return undefined; }
+    if (Date.now() > e.expiresAt) {
+      this.store.delete(key);
+      return undefined;
+    }
     return e.value;
   }
-  set(key: K, value: V) { this.store.set(key, { value, expiresAt: Date.now() + this.ttlMs }); }
-  delete(key: K) { this.store.delete(key); }
-  clear() { this.store.clear(); }
+  set(key: K, value: V) {
+    this.store.set(key, { value, expiresAt: Date.now() + this.ttlMs });
+  }
+  delete(key: K) {
+    this.store.delete(key);
+  }
+  clear() {
+    this.store.clear();
+  }
 }
 
 const cachedLoader = new DataLoader(batchLoad, {
@@ -403,10 +420,14 @@ const timedLoader = new DataLoader(batchLoad, {
 ### cacheKeyFn을 사용한 객체 키
 
 ```typescript
-interface SearchKey { term: string; page: number; limit: number }
+interface SearchKey {
+  term: string;
+  page: number;
+  limit: number;
+}
 
 const searchLoader = new DataLoader<SearchKey, SearchResult[], string>(
-  async (queries) => Promise.all(queries.map(q => search(q))),
+  async (queries) => Promise.all(queries.map((q) => search(q))),
   {
     cacheKeyFn: ({ term, page, limit }) => `${term}:${page}:${limit}`,
   },

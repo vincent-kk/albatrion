@@ -1,6 +1,6 @@
 ---
 name: json-schema-skill
-description: "@winglet/json-schema library expert. Guide JSON Schema traversal, transformation, and analysis: Visitor pattern, stack-based DFS, $ref resolution (sync/async), circular-ref handling, mutation, and nullable-aware type guards."
+description: '@winglet/json-schema library expert. Guide JSON Schema traversal, transformation, and analysis: Visitor pattern, stack-based DFS, $ref resolution (sync/async), circular-ref handling, mutation, and nullable-aware type guards.'
 user-invocable: false
 ---
 
@@ -13,6 +13,7 @@ You are an expert in `@winglet/json-schema`, a TypeScript library for JSON Schem
 ## Scope
 
 Use this skill when the user needs to:
+
 - Traverse a JSON Schema tree with `enter`/`exit` callbacks
 - Resolve `$ref` references (internal or remote)
 - Filter, transform, or annotate schema nodes during traversal
@@ -22,11 +23,11 @@ Use this skill when the user needs to:
 
 ## Knowledge Files
 
-| File | Contents |
-|------|----------|
-| `knowledge/schema-scanner.md` | JsonSchemaScanner and JsonSchemaScannerAsync — construction, scan/getValue API, traversal phases, options |
-| `knowledge/schema-filters.md` | All type guard functions — isObjectSchema, isStringSchema, etc., nullable variants, isCompatibleSchemaType, isIdenticalSchemaType |
-| `knowledge/types-and-references.md` | Full type hierarchy (JsonSchema, ObjectSchema, …), InferValueType, SchemaEntry, resolveReference utility |
+| File                                | Contents                                                                                                                          |
+| ----------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| `knowledge/schema-scanner.md`       | JsonSchemaScanner and JsonSchemaScannerAsync — construction, scan/getValue API, traversal phases, options                         |
+| `knowledge/schema-filters.md`       | All type guard functions — isObjectSchema, isStringSchema, etc., nullable variants, isCompatibleSchemaType, isIdenticalSchemaType |
+| `knowledge/types-and-references.md` | Full type hierarchy (JsonSchema, ObjectSchema, …), InferValueType, SchemaEntry, resolveReference utility                          |
 
 ## Key Invariants
 
@@ -56,17 +57,23 @@ import { isObjectSchema, isArraySchema, isStringSchema, isNumberSchema, isBoolea
 ## Common Patterns
 
 ### Collect all property paths
+
 ```typescript
 // `keyword === 'properties'` fires on each property-child entry (not the
 // `properties` map itself). `entry.dataPath` is the JSON Pointer to the
 // corresponding data location (e.g., '/user/name').
 const paths: string[] = [];
 new JsonSchemaScanner({
-  visitor: { enter: (entry) => { if (entry.keyword === 'properties') paths.push(entry.dataPath); } },
+  visitor: {
+    enter: (entry) => {
+      if (entry.keyword === 'properties') paths.push(entry.dataPath);
+    },
+  },
 }).scan(schema);
 ```
 
 ### Transform schema nodes
+
 ```typescript
 const result = new JsonSchemaScanner({
   options: {
@@ -75,11 +82,15 @@ const result = new JsonSchemaScanner({
         return { ...entry.schema, title: entry.dataPath };
     },
   },
-}).scan(schema).getValue();
+})
+  .scan(schema)
+  .getValue();
 ```
 
 ### Resolve all internal $refs
+
 ```typescript
 import { resolveReference } from '@winglet/json-schema';
+
 const inlined = resolveReference(schema); // two-pass: collect refs, then resolve
 ```

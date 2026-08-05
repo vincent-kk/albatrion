@@ -31,9 +31,9 @@ const schema = {
       items: {
         type: 'string',
       },
-      minItems: 1,      // Minimum 1 item required
-      maxItems: 10,     // Maximum 10 items allowed
-      default: ['initial value'],  // Default value
+      minItems: 1, // Minimum 1 item required
+      maxItems: 10, // Maximum 10 items allowed
+      default: ['initial value'], // Default value
     },
   },
 };
@@ -97,8 +97,8 @@ const newIndex = await arrayNode.push({ name: 'John Doe', email: 'john@example.c
 
 ```typescript
 // Remove by index
-await arrayNode.remove(0);  // Remove first item
-await arrayNode.remove(2);  // Remove third item
+await arrayNode.remove(0); // Remove first item
+await arrayNode.remove(2); // Remove third item
 ```
 
 ### clear() - Remove All
@@ -193,7 +193,7 @@ Arrays use different strategies based on item type.
 const schema = {
   type: 'array',
   items: {
-    type: 'string',  // primitive → Terminal Strategy
+    type: 'string', // primitive → Terminal Strategy
   },
 };
 
@@ -207,7 +207,7 @@ const schema = {
 const schema = {
   type: 'array',
   items: {
-    type: 'object',  // complex → Branch Strategy
+    type: 'object', // complex → Branch Strategy
     properties: {
       name: { type: 'string' },
     },
@@ -222,7 +222,7 @@ const schema = {
 ```typescript
 const schema = {
   type: 'array',
-  terminal: false,  // Force Branch Strategy usage
+  terminal: false, // Force Branch Strategy usage
   items: {
     type: 'string',
   },
@@ -246,7 +246,7 @@ const schema = {
         { type: 'number', title: 'Y coordinate' },
         { type: 'number', title: 'Z coordinate' },
       ],
-      items: false,  // No additional items allowed
+      items: false, // No additional items allowed
     },
   },
 };
@@ -264,7 +264,7 @@ const schema = {
     { type: 'number', title: 'Age' },
   ],
   items: {
-    type: 'string',  // Remaining items are strings
+    type: 'string', // Remaining items are strings
   },
 };
 
@@ -280,7 +280,7 @@ const schema = {
   type: 'object',
   properties: {
     nullableArray: {
-      type: ['array', 'null'],  // Array or null
+      type: ['array', 'null'], // Array or null
       items: {
         type: 'string',
       },

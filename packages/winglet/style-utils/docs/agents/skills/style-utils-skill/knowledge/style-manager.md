@@ -19,7 +19,9 @@ Expert knowledge for scoped CSS injection via `styleManagerFactory` and `destroy
 Given `scopeId = 'my-widget'` and the CSS `.btn { color: red; }`, the applied CSS becomes:
 
 ```css
-.my-widget .btn { color: red; }
+.my-widget .btn {
+  color: red;
+}
 ```
 
 Selectors starting with `@` (e.g. `@media`, `@keyframes`, `@supports`), or exactly equal to `:root` or `:host`, are **not** prefixed — they are passed through verbatim. Every other selector receives the `.scopeId ` prefix.
@@ -35,6 +37,7 @@ Selectors starting with `@` (e.g. `@media`, `@keyframes`, `@supports`), or exact
 Every `add` or `remove` that changes the processed style set calls `__scheduleDOMUpdate__`, which sets a `dirty` flag and schedules a single `requestAnimationFrame` flush. The flush concatenates all style blocks for the scope and writes once via `replaceSync` (or `textContent` in the fallback path).
 
 This means:
+
 - Calling `addStyle('a', ...); addStyle('b', ...); addStyle('c', ...)` in the same tick triggers exactly one DOM write.
 - Reading the current stylesheet synchronously right after `add` may not reflect the new rules until the next animation frame.
 
@@ -43,9 +46,9 @@ This means:
 On each flush, the manager checks:
 
 ```typescript
-typeof CSSStyleSheet !== 'undefined'
-  && 'replaceSync' in CSSStyleSheet.prototype
-  && 'adoptedStyleSheets' in this.__root__
+typeof CSSStyleSheet !== 'undefined' &&
+  'replaceSync' in CSSStyleSheet.prototype &&
+  'adoptedStyleSheets' in this.__root__;
 ```
 
 If all three are present, it uses the `CSSStyleSheet` + `adoptedStyleSheets` path. Otherwise it creates (or reuses) an `HTMLStyleElement` with `className = scopeId` and writes `textContent`. The element is appended to `shadowRoot` when in shadow mode, otherwise to `document.head`.
@@ -66,14 +69,17 @@ export const styleManagerFactory: (
 Returns a curried `addStyle` function bound to one scope (and optionally one shadow root).
 
 **Parameters:**
+
 - `scopeId` — unique identifier; doubles as the CSS class prefix.
 - `config.shadowRoot` — optional `ShadowRoot` target. See `knowledge/shadow-dom.md`.
 
 **Returns:** `addStyle(styleId, cssString, compress?)` which:
+
 - Registers/replaces the CSS under `styleId` inside `scopeId`.
 - Returns a cleanup function that removes that specific `styleId` on call.
 
 **Arguments of the returned function:**
+
 - `styleId` — unique key inside the scope. Reusing a key replaces the previous CSS.
 - `cssString` — the CSS source. Empty or whitespace-only strings are ignored.
 - `compress` — when `true`, skip internal `compressCss` pass (use this when the caller has pre-compressed).
@@ -110,6 +116,7 @@ Tears down the `StyleManager` instance registered under `scopeId` for the docume
 5. Deletes the manager from the internal registry.
 
 **Parameters:**
+
 - `scopeId` — same identifier used with `styleManagerFactory`.
 
 **Example:**

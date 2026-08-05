@@ -49,6 +49,7 @@ export const cx: (...args: ClassValue[]) => string;
 Concatenates class names conditionally. Handles recursion through arrays and iterates object keys to pick up truthy entries.
 
 **Parameters:**
+
 - `args` — variable number of `ClassValue` entries
 
 **Returns:** Space-separated class name string (no leading/trailing space).
@@ -58,10 +59,10 @@ Concatenates class names conditionally. Handles recursion through arrays and ite
 ```typescript
 import { cx } from '@winglet/style-utils';
 
-cx('btn', 'primary');                              // 'btn primary'
-cx('btn', false && 'hidden', 'active');            // 'btn active'
+cx('btn', 'primary'); // 'btn primary'
+cx('btn', false && 'hidden', 'active'); // 'btn active'
 cx('btn', { 'btn-primary': true, disabled: false }); // 'btn btn-primary'
-cx(['btn', 'primary'], ['large', false && 'x']);   // 'btn primary large'
+cx(['btn', 'primary'], ['large', false && 'x']); // 'btn primary large'
 cx('btn', { primary: true }, ['large'], 'active'); // 'btn primary large active'
 ```
 
@@ -74,6 +75,7 @@ export const cxLite: (...args: ClassValue[]) => string;
 Lightweight variant. Filters purely by top-level truthiness and does not recurse.
 
 **Parameters:**
+
 - `args` — primarily strings and numbers
 
 **Returns:** Space-separated class name string.
@@ -83,12 +85,12 @@ Lightweight variant. Filters purely by top-level truthiness and does not recurse
 ```typescript
 import { cxLite } from '@winglet/style-utils';
 
-cxLite('btn', 'primary', 'large');         // 'btn primary large'
+cxLite('btn', 'primary', 'large'); // 'btn primary large'
 cxLite('btn', false && 'hidden', 'active'); // 'btn active'
-cxLite('item', 123, 'selected');           // 'item 123 selected'
+cxLite('item', 123, 'selected'); // 'item 123 selected'
 
 // Do NOT do this — objects stringify via toString()
-cxLite('btn', { primary: true });          // 'btn [object Object]'  ❌
+cxLite('btn', { primary: true }); // 'btn [object Object]'  ❌
 ```
 
 If the input space might ever contain objects or arrays, use `cx`.
@@ -100,12 +102,10 @@ If the input space might ever contain objects or arrays, use `cx`.
 ### Pattern 1: Conditional Variants
 
 ```typescript
-const classes = cx(
-  'btn',
-  `btn-${variant}`,
-  size && `btn-${size}`,
-  { 'btn-disabled': disabled, 'btn-loading': loading },
-);
+const classes = cx('btn', `btn-${variant}`, size && `btn-${size}`, {
+  'btn-disabled': disabled,
+  'btn-loading': loading,
+});
 ```
 
 ### Pattern 2: Hot-path Lists
@@ -113,7 +113,11 @@ const classes = cx(
 When composing class names inside a render loop that runs thousands of times per second and the inputs are known to be flat strings, prefer `cxLite`:
 
 ```typescript
-const rowClass = cxLite('row', isSelected && 'row-selected', index % 2 && 'row-odd');
+const rowClass = cxLite(
+  'row',
+  isSelected && 'row-selected',
+  index % 2 && 'row-odd',
+);
 ```
 
 ### Pattern 3: Array Composition

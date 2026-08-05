@@ -38,26 +38,26 @@ Never set `protectPrototype: false` when the patch source is untrusted.
 
 All major functions take an options object with secure defaults. Memorize the defaults — omitting the options object applies all defaults:
 
-| Function     | `strict` | `immutable`     | `protectPrototype` | Other                                       |
-|--------------|----------|-----------------|--------------------|---------------------------------------------|
-| `getValue`   | —        | —               | —                  | no options                                  |
-| `setValue`   | —        | always mutates  | —                  | `overwrite: true`, `preserveNull: true`     |
-| `compare`    | `false`  | `true`          | —                  | —                                           |
-| `applyPatch` | `false`  | `true`          | `true`             | —                                           |
-| `mergePatch` | —        | `true` (3rd arg: positional, not in options object) | — | —                                      |
+| Function     | `strict` | `immutable`                                         | `protectPrototype` | Other                                   |
+| ------------ | -------- | --------------------------------------------------- | ------------------ | --------------------------------------- |
+| `getValue`   | —        | —                                                   | —                  | no options                              |
+| `setValue`   | —        | always mutates                                      | —                  | `overwrite: true`, `preserveNull: true` |
+| `compare`    | `false`  | `true`                                              | —                  | —                                       |
+| `applyPatch` | `false`  | `true`                                              | `true`             | —                                       |
+| `mergePatch` | —        | `true` (3rd arg: positional, not in options object) | —                  | —                                       |
 
 `setValue` is the one outlier: it always mutates in place and returns the same reference — no immutable option exists.
 
 ### Sub-path Imports (Tree-shakeable)
 
-| Sub-path                            | Exports                                                        |
-|-------------------------------------|----------------------------------------------------------------|
-| `@winglet/json/pointer-manipulator` | `getValue`, `setValue`                                         |
-| `@winglet/json/pointer-patch`       | `compare`, `applyPatch`, `difference`, `mergePatch`            |
-| `@winglet/json/pointer-escape`      | `escapePath`, `unescapePath`, `escapeSegment`                  |
-| `@winglet/json/pointer-common`      | `convertJsonPointerToPath`, `JSONPointer` constants            |
-| `@winglet/json/path`                | `JSONPath` constants                                           |
-| `@winglet/json/path-common`         | `getJSONPath`, `convertJsonPathToPointer`                      |
+| Sub-path                            | Exports                                             |
+| ----------------------------------- | --------------------------------------------------- |
+| `@winglet/json/pointer-manipulator` | `getValue`, `setValue`                              |
+| `@winglet/json/pointer-patch`       | `compare`, `applyPatch`, `difference`, `mergePatch` |
+| `@winglet/json/pointer-escape`      | `escapePath`, `unescapePath`, `escapeSegment`       |
+| `@winglet/json/pointer-common`      | `convertJsonPointerToPath`, `JSONPointer` constants |
+| `@winglet/json/path`                | `JSONPath` constants                                |
+| `@winglet/json/path-common`         | `getJSONPath`, `convertJsonPathToPointer`           |
 
 Prefer sub-path imports in library code — they reduce bundle size. Main-entry imports (`@winglet/json`) are convenient for applications.
 
@@ -65,11 +65,11 @@ Prefer sub-path imports in library code — they reduce bundle size. Main-entry 
 
 `JSONPointerError` (thrown by `getValue`/`setValue`) is the only structured error surface. Use the type guard `isJSONPointerError` before reading `.code`:
 
-| Code                 | Trigger                                                       |
-|----------------------|---------------------------------------------------------------|
-| `INVALID_INPUT`      | Value is not a plain object or array                          |
-| `INVALID_POINTER`    | Pointer string is malformed (missing leading `/`, etc.)       |
-| `PROPERTY_NOT_FOUND` | Path segment does not exist in the document                   |
+| Code                 | Trigger                                                 |
+| -------------------- | ------------------------------------------------------- |
+| `INVALID_INPUT`      | Value is not a plain object or array                    |
+| `INVALID_POINTER`    | Pointer string is malformed (missing leading `/`, etc.) |
+| `PROPERTY_NOT_FOUND` | Path segment does not exist in the document             |
 
 ## Knowledge Files
 
@@ -106,38 +106,38 @@ const name = getValue(doc, '/users/0/name');
 
 // Write — mutates and auto-creates intermediate nodes
 setValue(doc, '/settings/theme', 'dark');
-setValue(doc, '/items/-', newItem);            // '-' appends to array
+setValue(doc, '/items/-', newItem); // '-' appends to array
 
 // Build a patch from two snapshots, then apply immutably
-const patches = compare(before, after);        // Patch[]
-const next = applyPatch(before, patches);      // before unchanged
+const patches = compare(before, after); // Patch[]
+const next = applyPatch(before, patches); // before unchanged
 
 // Merge Patch — compact, null deletes, arrays replace wholesale
-const mergeDoc = difference(before, after);    // JsonValue | undefined
+const mergeDoc = difference(before, after); // JsonValue | undefined
 const merged = mergePatch(before, mergeDoc);
 
 // Escape a single dynamic key — always escapeSegment, not escapePath
 const ptr = `/config/${escapeSegment(userKey)}`;
 
 // Structural lookup + pointer conversion
-const path = getJSONPath(doc, doc.users[1]);   // '$.users[1]'
+const path = getJSONPath(doc, doc.users[1]); // '$.users[1]'
 const pointer = convertJsonPathToPointer(path); // '/users/1'
 ```
 
 ## Common Mistakes to Correct
 
-| Mistake                                                              | Correction                                                                                               |
-|----------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------|
-| Using `escapePath` on a single key that contains `/`                 | Use `escapeSegment` — `escapePath` treats `/` as a structural separator and does not escape it           |
-| Expecting `setValue` to return a cloned object                       | `setValue` always mutates in place; the return value is the same reference passed in                     |
-| Applying untrusted patches with `protectPrototype: false`            | Keep `protectPrototype: true` (default) for any externally sourced patch                                 |
-| Using `difference` result without a defined-check                    | `difference` returns `undefined` when source and target are identical — guard before passing downstream  |
-| Using `-` token in `getValue` or `remove` op                         | `-` (append) is only valid in `setValue` and JSON Patch `add` operations                                 |
-| Treating JSON Patch and Merge Patch as interchangeable               | Patch = ordered op list (RFC 6902); Merge Patch = document with `null` deletions, arrays replaced (RFC 7396) |
-| Reading `err.code` on a generic `Error`                              | Only `JSONPointerError` has `.code` — guard with `isJSONPointerError(err)` first                         |
-| Passing class instances, `Map`, or `Set` to `getValue`/`setValue`    | Inputs must be plain objects or arrays; anything else throws `INVALID_INPUT`                             |
-| Expecting `compare` to produce `move`/`copy` ops                     | `compare` only emits `add`, `remove`, `replace`; `move`/`copy` are accepted by `applyPatch` only         |
-| Inventing options not in the type definitions                        | The options surface is strictly typed — only the documented options exist                                |
+| Mistake                                                           | Correction                                                                                                   |
+| ----------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| Using `escapePath` on a single key that contains `/`              | Use `escapeSegment` — `escapePath` treats `/` as a structural separator and does not escape it               |
+| Expecting `setValue` to return a cloned object                    | `setValue` always mutates in place; the return value is the same reference passed in                         |
+| Applying untrusted patches with `protectPrototype: false`         | Keep `protectPrototype: true` (default) for any externally sourced patch                                     |
+| Using `difference` result without a defined-check                 | `difference` returns `undefined` when source and target are identical — guard before passing downstream      |
+| Using `-` token in `getValue` or `remove` op                      | `-` (append) is only valid in `setValue` and JSON Patch `add` operations                                     |
+| Treating JSON Patch and Merge Patch as interchangeable            | Patch = ordered op list (RFC 6902); Merge Patch = document with `null` deletions, arrays replaced (RFC 7396) |
+| Reading `err.code` on a generic `Error`                           | Only `JSONPointerError` has `.code` — guard with `isJSONPointerError(err)` first                             |
+| Passing class instances, `Map`, or `Set` to `getValue`/`setValue` | Inputs must be plain objects or arrays; anything else throws `INVALID_INPUT`                                 |
+| Expecting `compare` to produce `move`/`copy` ops                  | `compare` only emits `add`, `remove`, `replace`; `move`/`copy` are accepted by `applyPatch` only             |
+| Inventing options not in the type definitions                     | The options surface is strictly typed — only the documented options exist                                    |
 
 ## Behavioral Rules
 

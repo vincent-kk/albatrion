@@ -2,11 +2,7 @@
 
 ## Purpose
 
-Shared CLI engine that lets any npm package ship its own Claude Code
-docs (skills, rules, commands). The engine owns the
-`inject-claude-settings` dispatcher; consumers only declare
-`claude.assetPath` in `package.json` and let `claude-build-hashes` hash
-their asset tree at build time.
+Shared CLI engine that lets any npm package ship its own Claude Code docs (skills, rules, commands). The engine owns the `inject-claude-settings` dispatcher; consumers only declare `claude.assetPath` in `package.json` and let `claude-build-hashes` hash their asset tree at build time.
 
 ## Structure
 
@@ -20,21 +16,16 @@ their asset tree at build time.
 
 - TypeScript strict mode, ESM-only rolldown build
 - `./buildHashes` subpath is build-time hash generation, pure Node ESM
-- `scripts/buildHashes.mjs` runs outside rolldown; self-executing bin is
-  `scripts/claude-build-hashes.mjs`
-- Dispatcher entry point is `bin/inject-claude-settings.mjs`, a two-line
-  re-export of `runCli(process.argv)`
+- `scripts/buildHashes.mjs` runs outside rolldown; self-executing bin is `scripts/claude-build-hashes.mjs`
+- Dispatcher entry point is `bin/inject-claude-settings.mjs`, a two-line re-export of `runCli(process.argv)`
 
 ## Boundaries
 
 ### Always do
 
-- Keep `core/` UI-free; both TTY (Ink) and non-TTY (`renderPlain`)
-  compose core primitives directly
+- Keep `core/` UI-free; both TTY (Ink) and non-TTY (`renderPlain`) compose core primitives directly
 - Cross-fractal imports go through each sibling's `index.ts` barrel
-- `ui/` is loaded only by `commands/runCli/utils/renderOrFallback.ts`
-  via dynamic `import('../../../ui/index.js')`; the main `.` barrel
-  (`src/index.ts`) MUST NOT re-export from `ui/`
+- `ui/` is loaded only by `commands/runCli/utils/renderOrFallback.ts` via dynamic `import('../../../ui/index.js')`; the main `.` barrel (`src/index.ts`) MUST NOT re-export from `ui/`
 
 ### Ask first
 

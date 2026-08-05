@@ -2,8 +2,7 @@
 
 ## Purpose
 
-값을 macrotask(setTimeout 0) 이후에 resolve하는 `Promise`로 래핑하는 유틸.
-`BranchStrategy`의 `push`/`remove`/`update` 조작 메서드가 비동기 반환값을 제공할 때 사용된다.
+값을 macrotask(setTimeout 0) 이후에 resolve하는 `Promise`로 래핑하는 유틸. `BranchStrategy`의 `push`/`remove`/`update` 조작 메서드가 비동기 반환값을 제공할 때 사용된다.
 
 ## Structure
 

@@ -21,7 +21,7 @@ setValue(value, pointer, input, {
 
 ```typescript
 interface CompareOptions {
-  strict?: boolean;    // default: false
+  strict?: boolean; // default: false
   immutable?: boolean; // default: true
 }
 ```
@@ -30,8 +30,8 @@ interface CompareOptions {
 
 ```typescript
 interface ApplyPatchOptions {
-  strict?: boolean;           // default: false
-  immutable?: boolean;        // default: true
+  strict?: boolean; // default: false
+  immutable?: boolean; // default: true
   protectPrototype?: boolean; // default: true
 }
 ```
@@ -52,6 +52,7 @@ mergePatch(source, patch, immutable?: boolean) // default: true
 Prototype pollution is an attack where a malicious JSON Patch payload sets properties on `Object.prototype`, affecting all objects in the runtime.
 
 Example attack payload:
+
 ```json
 [
   { "op": "add", "path": "/__proto__/admin", "value": true },
@@ -64,6 +65,7 @@ If applied naively, every object in the application would have `admin === true`.
 ### Protection in applyPatch
 
 `protectPrototype: true` (default) rejects any patch with a path targeting:
+
 - `__proto__`
 - `constructor`
 - `prototype`
@@ -72,9 +74,9 @@ If applied naively, every object in the application would have `admin === true`.
 import { applyPatch } from '@winglet/json/pointer-patch';
 
 // This throws — prototype pollution attempt detected
-applyPatch({}, [
-  { op: 'add', path: '/__proto__/isAdmin', value: true }
-], { protectPrototype: true });
+applyPatch({}, [{ op: 'add', path: '/__proto__/isAdmin', value: true }], {
+  protectPrototype: true,
+});
 
 // Only disable when you fully control the patch source
 applyPatch(trustedSource, trustedPatches, {
@@ -112,6 +114,7 @@ const result = applyPatch(source, patches, { immutable: false });
 ```
 
 Use `immutable: false` only when:
+
 - You own the object and don't need the original.
 - You are in a performance-critical hot path.
 - The patch source is trusted.
@@ -122,26 +125,26 @@ Use `immutable: false` only when:
 
 `strict: true` enforces additional RFC 6902 compliance checks.
 
-| Scenario | strict: false (default) | strict: true |
-|----------|------------------------|-------------|
-| `replace` on non-existent path | silently skips or adds | throws error |
-| `remove` on non-existent path | silently skips | throws error |
-| `test` failure | throws | throws |
-| Array index out of bounds | lenient | throws |
+| Scenario                       | strict: false (default) | strict: true |
+| ------------------------------ | ----------------------- | ------------ |
+| `replace` on non-existent path | silently skips or adds  | throws error |
+| `remove` on non-existent path  | silently skips          | throws error |
+| `test` failure                 | throws                  | throws       |
+| Array index out of bounds      | lenient                 | throws       |
 
 ```typescript
 import { applyPatch } from '@winglet/json/pointer-patch';
 
 // strict: false — lenient, tolerates missing targets
-applyPatch({ a: 1 }, [
-  { op: 'replace', path: '/nonexistent', value: 42 }
-], { strict: false });
+applyPatch({ a: 1 }, [{ op: 'replace', path: '/nonexistent', value: 42 }], {
+  strict: false,
+});
 // does not throw
 
 // strict: true — RFC-compliant, throws on violations
-applyPatch({ a: 1 }, [
-  { op: 'replace', path: '/nonexistent', value: 42 }
-], { strict: true });
+applyPatch({ a: 1 }, [{ op: 'replace', path: '/nonexistent', value: 42 }], {
+  strict: true,
+});
 // throws JsonPatchError
 ```
 
@@ -162,20 +165,20 @@ class JSONPointerError extends Error {
 }
 ```
 
-| Code | Trigger |
-|------|---------|
-| `INVALID_INPUT` | `value` is not a plain object or array |
-| `INVALID_POINTER` | Pointer string is malformed |
+| Code                 | Trigger                                     |
+| -------------------- | ------------------------------------------- |
+| `INVALID_INPUT`      | `value` is not a plain object or array      |
+| `INVALID_POINTER`    | Pointer string is malformed                 |
 | `PROPERTY_NOT_FOUND` | Path segment does not exist in the document |
 
 ```typescript
 try {
-  getValue(null, '/foo');          // INVALID_INPUT
-  getValue({}, 'no-slash');        // INVALID_POINTER (must start with '/' or be '')
-  getValue({ a: 1 }, '/b/c');     // PROPERTY_NOT_FOUND
+  getValue(null, '/foo'); // INVALID_INPUT
+  getValue({}, 'no-slash'); // INVALID_POINTER (must start with '/' or be '')
+  getValue({ a: 1 }, '/b/c'); // PROPERTY_NOT_FOUND
 } catch (e) {
   if (e instanceof JSONPointerError) {
-    console.log(e.code);    // one of the codes above
+    console.log(e.code); // one of the codes above
     console.log(e.details); // { input: ... } or { pointer: ... }
   }
 }
@@ -209,7 +212,7 @@ Both `getValue` and `setValue` perform runtime type checks before processing:
 getValue('string value', '/path');
 getValue(42, '/path');
 getValue(null, '/path');
-getValue(new Map(), '/path');  // not a plain object
+getValue(new Map(), '/path'); // not a plain object
 
 // These are valid:
 getValue({}, '/path');
@@ -221,11 +224,11 @@ getValue({ nested: { arr: [1] } }, '/nested/arr/0');
 
 ## Recommended Defaults by Use Case
 
-| Use Case | Recommended Options |
-|----------|-------------------|
-| Reading config (safe) | `getValue` — no options needed |
-| Applying untrusted patch | `{ immutable: true, protectPrototype: true, strict: true }` |
+| Use Case                      | Recommended Options                                            |
+| ----------------------------- | -------------------------------------------------------------- |
+| Reading config (safe)         | `getValue` — no options needed                                 |
+| Applying untrusted patch      | `{ immutable: true, protectPrototype: true, strict: true }`    |
 | Applying trusted patch (perf) | `{ immutable: false, protectPrototype: false, strict: false }` |
-| State management diffing | `compare({ strict: false, immutable: true })` |
-| API response merging | `mergePatch(source, patch)` — defaults are fine |
-| Form field update | `setValue(state, pointer, value)` — mutations are expected |
+| State management diffing      | `compare({ strict: false, immutable: true })`                  |
+| API response merging          | `mergePatch(source, patch)` — defaults are fine                |
+| Form field update             | `setValue(state, pointer, value)` — mutations are expected     |

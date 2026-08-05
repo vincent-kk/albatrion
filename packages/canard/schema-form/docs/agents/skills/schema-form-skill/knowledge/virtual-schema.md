@@ -21,7 +21,6 @@ Group multiple sibling fields under a single virtual field using the `virtual` p
 }
 ```
 
-
 ## Virtual Field Value Structure
 
 Virtual field values are in tuple form, ordered according to the `fields` array.
@@ -40,7 +39,6 @@ virtual: {
 onChange(['2025-01-01', '2025-01-31']);
 // → Sets startDate: '2025-01-01', endDate: '2025-01-31' separately
 ```
-
 
 ## Required with Virtual
 
@@ -64,7 +62,6 @@ const schema = {
   required: ['control', 'virtualField_A'],
 };
 ```
-
 
 ## FormTypeInputProps for Virtual
 
@@ -93,17 +90,16 @@ interface VirtualFormTypeInputProps {
 }
 ```
 
-
 ## VirtualNode Characteristics
 
 ### VirtualNode vs Regular Node
 
-| Characteristic | VirtualNode | Regular Node |
-|----------------|-------------|--------------|
-| Value storage | Distributed to child fields | Direct storage |
-| Value form | Tuple array | Single value |
-| Schema location | virtual object | properties object |
-| Rendering | Custom FormTypeInput | Default or custom |
+| Characteristic  | VirtualNode                 | Regular Node      |
+| --------------- | --------------------------- | ----------------- |
+| Value storage   | Distributed to child fields | Direct storage    |
+| Value form      | Tuple array                 | Single value      |
+| Schema location | virtual object              | properties object |
+| Rendering       | Custom FormTypeInput        | Default or custom |
 
 ### VirtualNode Access
 
@@ -115,11 +111,13 @@ const virtualNode = formRef.current?.findNode('/period');
 
 if (isVirtualNode(virtualNode)) {
   // Use as VirtualNode type
-  console.log('Fields:', virtualNode.children.map(c => c.node.name));
-  console.log('Value:', virtualNode.value);  // [startDate, endDate]
+  console.log(
+    'Fields:',
+    virtualNode.children.map((c) => c.node.name),
+  );
+  console.log('Value:', virtualNode.value); // [startDate, endDate]
 }
 ```
-
 
 ## References
 

@@ -85,8 +85,12 @@ class TtlMap<K, V> {
     this.store.set(key, { value, expiresAt: Date.now() + this.ttlMs });
   }
 
-  delete(key: K) { this.store.delete(key); }
-  clear()        { this.store.clear(); }
+  delete(key: K) {
+    this.store.delete(key);
+  }
+  clear() {
+    this.store.clear();
+  }
 }
 
 const priceLoader = new DataLoader(batchLoadPrices, {
@@ -117,7 +121,7 @@ interface ProductQuery {
 
 const productLoader = new DataLoader<ProductQuery, Product, string>(
   async (queries) => {
-    const results = await Promise.all(queries.map(q => fetchProduct(q)));
+    const results = await Promise.all(queries.map((q) => fetchProduct(q)));
     return results; // order preserved since we map 1:1
   },
   {
@@ -137,7 +141,7 @@ const eur = await productLoader.load({ id: 'p1', currency: 'EUR' });
 
 ```typescript
 const loader = new DataLoader(async (ids: ReadonlyArray<string>) => {
-  const results = await Promise.allSettled(ids.map(id => fetchItem(id)));
+  const results = await Promise.allSettled(ids.map((id) => fetchItem(id)));
   return results.map((result, i) =>
     result.status === 'fulfilled'
       ? result.value
@@ -148,7 +152,7 @@ const loader = new DataLoader(async (ids: ReadonlyArray<string>) => {
 // loadMany never throws — failures are Error values in the array
 const results = await loader.loadMany(['ok-1', 'bad-1', 'ok-2']);
 const successes = results.filter((r): r is Item => !(r instanceof Error));
-const failures  = results.filter((r): r is Error => r instanceof Error);
+const failures = results.filter((r): r is Error => r instanceof Error);
 ```
 
 ### Batch-Level Retry
@@ -161,10 +165,12 @@ async function batchWithRetry(
   for (let attempt = 0; attempt <= retries; attempt++) {
     try {
       const users = await db.findUsersByIds([...ids]);
-      return ids.map(id => users.find(u => u.id === id) ?? new Error(`Not found: ${id}`));
+      return ids.map(
+        (id) => users.find((u) => u.id === id) ?? new Error(`Not found: ${id}`),
+      );
     } catch (err) {
       if (attempt === retries) return ids.map(() => err as Error);
-      await new Promise(r => setTimeout(r, 100 * 2 ** attempt)); // exponential backoff
+      await new Promise((r) => setTimeout(r, 100 * 2 ** attempt)); // exponential backoff
     }
   }
   return ids.map(() => new Error('Unreachable'));
@@ -187,7 +193,7 @@ class UserService {
 
   async warmCache(userIds: string[]) {
     const users = await db.findUsersByIds(userIds);
-    users.forEach(user => this.loader.prime(user.id, user));
+    users.forEach((user) => this.loader.prime(user.id, user));
   }
 
   getUser(id: string) {
@@ -227,7 +233,10 @@ console.log(userLoader.name); // 'UserLoader'
 
 // Use in error reporting
 function handleLoadError(loader: DataLoader, key: string, err: Error) {
-  logger.error(`[${loader.name ?? 'DataLoader'}] Failed to load key ${key}`, err);
+  logger.error(
+    `[${loader.name ?? 'DataLoader'}] Failed to load key ${key}`,
+    err,
+  );
 }
 ```
 

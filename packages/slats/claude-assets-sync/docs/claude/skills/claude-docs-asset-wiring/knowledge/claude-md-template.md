@@ -2,14 +2,9 @@
 
 Reference: `packages/canard/schema-form/CLAUDE.md`.
 
-Append the section below to `${TARGET_PATH}/CLAUDE.md` if the file
-exists. Substitute the sample package name in the chosen template
-with `${PACKAGE_NAME}` — four occurrences. Skip the entire step if
-`CLAUDE.md` does not exist (do not create one).
+Append the section below to `${TARGET_PATH}/CLAUDE.md` if the file exists. Substitute the sample package name in the chosen template with `${PACKAGE_NAME}` — four occurrences. Skip the entire step if `CLAUDE.md` does not exist (do not create one).
 
-The template is intentionally terse: CLI usage + essential isolation
-warnings. Architectural rationale lives in `knowledge/gotchas.md` —
-do not duplicate it into every consumer's `CLAUDE.md`.
+The template is intentionally terse: CLI usage + essential isolation warnings. Architectural rationale lives in `knowledge/gotchas.md` — do not duplicate it into every consumer's `CLAUDE.md`.
 
 ---
 
@@ -59,20 +54,14 @@ npx -p @slats/claude-assets-sync inject-claude-settings --package=@winglet/style
 
 ## Substitution Rules
 
-- Replace the sample package name in the chosen template with
-  `${PACKAGE_NAME}` — four occurrences.
-- Preserve the Isolation Guardrails bullets verbatim — these are
-  the sharp invariants that must stay consistent across consumers.
+- Replace the sample package name in the chosen template with `${PACKAGE_NAME}` — four occurrences.
+- Preserve the Isolation Guardrails bullets verbatim — these are the sharp invariants that must stay consistent across consumers.
 
 ---
 
 ## Placement & Skip Conditions
 
-- Append to end of `CLAUDE.md`. Ensure one blank line before the
-  injected section.
-- `${TARGET_PATH}/CLAUDE.md` does not exist → skip, report
-  "skipped (no CLAUDE.md)".
-- Section already present with identical content → skip, report
-  "unchanged".
-- Section present with different content → ask user, do not
-  clobber.
+- Append to end of `CLAUDE.md`. Ensure one blank line before the injected section.
+- `${TARGET_PATH}/CLAUDE.md` does not exist → skip, report "skipped (no CLAUDE.md)".
+- Section already present with identical content → skip, report "unchanged".
+- Section present with different content → ask user, do not clobber.

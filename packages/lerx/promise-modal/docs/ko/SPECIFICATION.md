@@ -148,13 +148,13 @@ const name = await prompt<string>({
 
 ### 디자인 패턴
 
-| 패턴 | 용도 |
-|------|------|
-| **Promise 기반 API** | 모달 함수가 Promise 반환 |
-| **Provider 패턴** | 설정을 위한 Context providers |
-| **Factory 패턴** | 모달 타입을 위한 Node factory |
-| **Observer 패턴** | 상태를 위한 구독 시스템 |
-| **Singleton 패턴** | 전역 상태를 위한 ModalManager |
+| 패턴                 | 용도                          |
+| -------------------- | ----------------------------- |
+| **Promise 기반 API** | 모달 함수가 Promise 반환      |
+| **Provider 패턴**    | 설정을 위한 Context providers |
+| **Factory 패턴**     | 모달 타입을 위한 Node factory |
+| **Observer 패턴**    | 상태를 위한 구독 시스템       |
+| **Singleton 패턴**   | 전역 상태를 위한 ModalManager |
 
 ### 모달 노드 시스템
 
@@ -166,6 +166,7 @@ AbstractNode (기본 클래스)
 ```
 
 각 노드가 제공하는 기능:
+
 - 구독 기반 상태 관리
 - Promise 해결 처리
 - 생명주기 관리
@@ -178,11 +179,11 @@ AbstractNode (기본 클래스)
 Provider 설정 (최하위) < Hook 설정 < Handler 설정 (최상위)
 ```
 
-| 레벨 | 위치 | 설명 |
-|------|------|------|
-| **Provider** | `ModalProvider` props | 앱 전역 기본 설정 |
-| **Hook** | `useModal(config)` | 컴포넌트 레벨 설정 |
-| **Handler** | `alert/confirm/prompt(options)` | 개별 모달 설정 |
+| 레벨         | 위치                            | 설명               |
+| ------------ | ------------------------------- | ------------------ |
+| **Provider** | `ModalProvider` props           | 앱 전역 기본 설정  |
+| **Hook**     | `useModal(config)`              | 컴포넌트 레벨 설정 |
+| **Handler**  | `alert/confirm/prompt(options)` | 개별 모달 설정     |
 
 #### 예제
 
@@ -221,21 +222,21 @@ function alert<B = any>(options: AlertProps<B>): Promise<void>;
 
 #### 매개변수
 
-| 옵션 | 타입 | 기본값 | 설명 |
-|------|------|--------|------|
-| `title` | `ReactNode` | - | 모달 제목 |
-| `subtitle` | `ReactNode` | - | 제목 아래 부제목 |
-| `content` | `ReactNode \| ComponentType<AlertContentProps>` | - | 모달 내용 |
-| `subtype` | `'info' \| 'success' \| 'warning' \| 'error'` | `'info'` | 모달 타입 |
-| `dimmed` | `boolean` | `true` | 배경 어둡게 |
-| `closeOnBackdropClick` | `boolean` | `true` | 배경 클릭 시 닫기 |
-| `manualDestroy` | `boolean` | `false` | 수동 제거 모드 |
-| `duration` | `number \| string` | - | 애니메이션 지속 시간 (Handler 레벨 오버라이드) |
-| `background` | `ModalBackground<B>` | - | 배경 설정 |
-| `footer` | `AlertFooterRender \| FooterOptions \| false` | - | 푸터 설정 |
-| `ForegroundComponent` | `ComponentType<ModalFrameProps>` | - | 커스텀 전경 |
-| `BackgroundComponent` | `ComponentType<ModalFrameProps>` | - | 커스텀 배경 |
-| `signal` | `AbortSignal` | - | 모달 취소를 위한 AbortSignal |
+| 옵션                   | 타입                                            | 기본값   | 설명                                           |
+| ---------------------- | ----------------------------------------------- | -------- | ---------------------------------------------- |
+| `title`                | `ReactNode`                                     | -        | 모달 제목                                      |
+| `subtitle`             | `ReactNode`                                     | -        | 제목 아래 부제목                               |
+| `content`              | `ReactNode \| ComponentType<AlertContentProps>` | -        | 모달 내용                                      |
+| `subtype`              | `'info' \| 'success' \| 'warning' \| 'error'`   | `'info'` | 모달 타입                                      |
+| `dimmed`               | `boolean`                                       | `true`   | 배경 어둡게                                    |
+| `closeOnBackdropClick` | `boolean`                                       | `true`   | 배경 클릭 시 닫기                              |
+| `manualDestroy`        | `boolean`                                       | `false`  | 수동 제거 모드                                 |
+| `duration`             | `number \| string`                              | -        | 애니메이션 지속 시간 (Handler 레벨 오버라이드) |
+| `background`           | `ModalBackground<B>`                            | -        | 배경 설정                                      |
+| `footer`               | `AlertFooterRender \| FooterOptions \| false`   | -        | 푸터 설정                                      |
+| `ForegroundComponent`  | `ComponentType<ModalFrameProps>`                | -        | 커스텀 전경                                    |
+| `BackgroundComponent`  | `ComponentType<ModalFrameProps>`                | -        | 커스텀 배경                                    |
+| `signal`               | `AbortSignal`                                   | -        | 모달 취소를 위한 AbortSignal                   |
 
 #### 예제
 
@@ -264,18 +265,18 @@ function confirm<B = any>(options: ConfirmProps<B>): Promise<boolean>;
 
 `alert`의 모든 옵션 포함, 추가:
 
-| 옵션 | 타입 | 기본값 | 설명 |
-|------|------|--------|------|
-| `footer` | `ConfirmFooterRender \| FooterOptions \| false` | - | 푸터 설정 |
+| 옵션     | 타입                                            | 기본값 | 설명      |
+| -------- | ----------------------------------------------- | ------ | --------- |
+| `footer` | `ConfirmFooterRender \| FooterOptions \| false` | -      | 푸터 설정 |
 
 #### confirm용 FooterOptions
 
 ```typescript
 interface FooterOptions {
-  confirm?: string;     // 확인 버튼 텍스트
-  cancel?: string;      // 취소 버튼 텍스트
+  confirm?: string; // 확인 버튼 텍스트
+  cancel?: string; // 취소 버튼 텍스트
   hideConfirm?: boolean; // 확인 버튼 숨김
-  hideCancel?: boolean;  // 취소 버튼 숨김
+  hideCancel?: boolean; // 취소 버튼 숨김
 }
 ```
 
@@ -318,23 +319,18 @@ function prompt<T, B = any>(options: PromptProps<T, B>): Promise<T | null>;
 
 `alert`의 모든 옵션 포함, 추가:
 
-| 옵션 | 타입 | 필수 | 설명 |
-|------|------|------|------|
-| `Input` | `(props: PromptInputProps<T>) => ReactNode` | 예 | 입력 컴포넌트 |
-| `defaultValue` | `T` | 아니오 | 기본값 |
-| `disabled` | `(value: T | undefined) => boolean` | 아니오 | 확인 버튼 비활성화 |
-| `returnOnCancel` | `boolean` | 아니오 | 취소 시 null 대신 현재 입력값 반환 |
+| 옵션 | 타입 | 필수 | 설명 | | ---------------- | ------------------------------------------- | ---------------------- | ---------------------------------- | ------------------ | | `Input` | `(props: PromptInputProps<T>) => ReactNode` | 예 | 입력 컴포넌트 | | `defaultValue` | `T` | 아니오 | 기본값 | | `disabled` | `(value: T                                  | undefined) => boolean` | 아니오 | 확인 버튼 비활성화 | | `returnOnCancel` | `boolean` | 아니오 | 취소 시 null 대신 현재 입력값 반환 |
 
 #### PromptInputProps
 
 ```typescript
 interface PromptInputProps<T> {
-  value?: T;                              // 현재 값
-  defaultValue?: T;                       // 기본값
+  value?: T; // 현재 값
+  defaultValue?: T; // 기본값
   onChange: (value: T | undefined) => void; // 값 변경 핸들러
-  onConfirm: () => void;                  // 확인 핸들러
-  onCancel: () => void;                   // 취소 핸들러
-  context: any;                           // 사용자 정의 context
+  onConfirm: () => void; // 확인 핸들러
+  onCancel: () => void; // 취소 핸들러
+  context: any; // 사용자 정의 context
 }
 ```
 
@@ -404,11 +400,11 @@ function useModal(config?: Partial<ModalOptions>): {
 
 #### 비교
 
-| 기능 | 정적 함수 | useModal 훅 |
-|------|----------|------------|
-| 생명주기 | 독립적 | 컴포넌트에 연결 |
-| 정리 | 수동 | 자동 |
-| 사용 위치 | 어디서나 | 컴포넌트 내부 |
+| 기능      | 정적 함수 | useModal 훅     |
+| --------- | --------- | --------------- |
+| 생명주기  | 독립적    | 컴포넌트에 연결 |
+| 정리      | 수동      | 자동            |
+| 사용 위치 | 어디서나  | 컴포넌트 내부   |
 
 #### 예제
 
@@ -435,16 +431,16 @@ function DeleteButton({ id }) {
 ```typescript
 function useActiveModalCount(
   validate?: (modal?: ModalNode) => boolean,
-  refreshKey?: string | number
+  refreshKey?: string | number,
 ): number;
 ```
 
 #### 매개변수
 
-| 매개변수 | 타입 | 설명 |
-|----------|------|------|
-| `validate` | `(modal) => boolean` | 필터 함수 |
-| `refreshKey` | `string \| number` | 강제 새로고침 키 |
+| 매개변수     | 타입                 | 설명             |
+| ------------ | -------------------- | ---------------- |
+| `validate`   | `(modal) => boolean` | 필터 함수        |
+| `refreshKey` | `string \| number`   | 강제 새로고침 키 |
 
 #### 예제
 
@@ -469,7 +465,7 @@ function useModalAnimation(
   options: {
     onVisible?: () => void;
     onHidden?: () => void;
-  }
+  },
 ): void;
 ```
 
@@ -506,8 +502,8 @@ function AnimatedModal({ visible, children }) {
 
 ```typescript
 function useModalDuration(modalId?: number): {
-  duration: string;      // 예: '300ms'
-  milliseconds: number;  // 예: 300
+  duration: string; // 예: '300ms'
+  milliseconds: number; // 예: 300
 };
 ```
 
@@ -518,10 +514,7 @@ function useModalDuration(modalId?: number): {
 지정된 시간 후 모달을 자동으로 제거합니다.
 
 ```typescript
-function useDestroyAfter(
-  modalId: number,
-  duration: string | number
-): void;
+function useDestroyAfter(modalId: number, duration: string | number): void;
 ```
 
 #### 동작
@@ -572,9 +565,7 @@ function ModalDebugger({ modal }) {
 모달 서비스를 수동으로 초기화합니다.
 
 ```typescript
-function useInitializeModal(options?: {
-  mode?: 'auto' | 'manual';
-}): {
+function useInitializeModal(options?: { mode?: 'auto' | 'manual' }): {
   initialize: (anchor?: HTMLElement) => void;
   portal: ReactPortal | null;
 };
@@ -582,9 +573,9 @@ function useInitializeModal(options?: {
 
 #### 모드
 
-| 모드 | 설명 |
-|------|------|
-| `auto` | 자동 초기화 |
+| 모드     | 설명                     |
+| -------- | ------------------------ |
+| `auto`   | 자동 초기화              |
 | `manual` | `initialize()` 호출 필요 |
 
 ---
@@ -601,11 +592,11 @@ function useModalOptions(): ModalOptions;
 
 ```typescript
 interface ModalOptions {
-  duration?: number | string;     // 애니메이션 지속 시간
-  backdrop?: string;              // 배경 오버레이 색상
-  manualDestroy?: boolean;        // 수동 제거 모드
+  duration?: number | string; // 애니메이션 지속 시간
+  backdrop?: string; // 배경 오버레이 색상
+  manualDestroy?: boolean; // 수동 제거 모드
   closeOnBackdropClick?: boolean; // 배경 클릭 시 닫기
-  zIndex?: number;                // CSS z-index
+  zIndex?: number; // CSS z-index
 }
 ```
 
@@ -663,8 +654,8 @@ interface ModalProviderProps {
   FooterComponent?: ComponentType<FooterComponentProps>;
   options?: ModalOptions;
   context?: Record<string, any>;
-  usePathname?: () => { pathname: string };  // 라우터 통합
-  root?: HTMLElement;                        // 커스텀 루트 엘리먼트
+  usePathname?: () => { pathname: string }; // 라우터 통합
+  root?: HTMLElement; // 커스텀 루트 엘리먼트
 }
 ```
 
@@ -672,9 +663,9 @@ interface ModalProviderProps {
 
 ```typescript
 interface ModalOptions {
-  duration?: number | string;     // 애니메이션 지속 시간
-  backdrop?: string;              // 배경 오버레이 색상
-  manualDestroy?: boolean;        // 수동 제거 모드
+  duration?: number | string; // 애니메이션 지속 시간
+  backdrop?: string; // 배경 오버레이 색상
+  manualDestroy?: boolean; // 수동 제거 모드
   closeOnBackdropClick?: boolean; // 배경 클릭 시 닫기
 }
 ```
@@ -731,21 +722,21 @@ Foreground/Background 컴포넌트에 전달되는 Props입니다.
 
 ```typescript
 interface ModalFrameProps<Context = any, B = any> {
-  id: number;                        // 모달 ID
+  id: number; // 모달 ID
   type: 'alert' | 'confirm' | 'prompt'; // 모달 타입
-  alive: boolean;                    // 활성 상태
-  visible: boolean;                  // 표시 상태
-  initiator: string;                 // 초기화 출처
-  manualDestroy: boolean;            // 수동 제거 모드
-  closeOnBackdropClick: boolean;     // 배경 클릭 닫기
-  background?: ModalBackground<B>;   // 배경 데이터
-  onConfirm: () => void;             // 확인 핸들러
-  onClose: () => void;               // 닫기 핸들러
-  onChange: (value: any) => void;    // 값 변경 핸들러
-  onDestroy: () => void;             // 제거 핸들러
-  onChangeOrder: Function;           // 순서 변경 핸들러
-  context: Context;                  // 사용자 정의 context
-  children: ReactNode;               // 자식 요소
+  alive: boolean; // 활성 상태
+  visible: boolean; // 표시 상태
+  initiator: string; // 초기화 출처
+  manualDestroy: boolean; // 수동 제거 모드
+  closeOnBackdropClick: boolean; // 배경 클릭 닫기
+  background?: ModalBackground<B>; // 배경 데이터
+  onConfirm: () => void; // 확인 핸들러
+  onClose: () => void; // 닫기 핸들러
+  onChange: (value: any) => void; // 값 변경 핸들러
+  onDestroy: () => void; // 제거 핸들러
+  onChangeOrder: Function; // 순서 변경 핸들러
+  context: Context; // 사용자 정의 context
+  children: ReactNode; // 자식 요소
 }
 ```
 
@@ -756,12 +747,12 @@ interface ModalFrameProps<Context = any, B = any> {
 ```typescript
 interface FooterComponentProps {
   type: 'alert' | 'confirm' | 'prompt'; // 모달 타입
-  onConfirm: (value?: any) => void;     // 확인 핸들러
-  onClose: () => void;                  // 닫기 핸들러
-  onCancel?: () => void;                // 취소 핸들러
-  disabled?: boolean;                   // 비활성화 상태
-  footer?: FooterOptions;               // 푸터 옵션
-  context: any;                         // 사용자 정의 context
+  onConfirm: (value?: any) => void; // 확인 핸들러
+  onClose: () => void; // 닫기 핸들러
+  onCancel?: () => void; // 취소 핸들러
+  disabled?: boolean; // 비활성화 상태
+  footer?: FooterOptions; // 푸터 옵션
+  context: any; // 사용자 정의 context
 }
 ```
 
@@ -771,8 +762,8 @@ title/subtitle/content 컴포넌트용 Props입니다.
 
 ```typescript
 interface WrapperComponentProps {
-  children: ReactNode;  // 자식 요소
-  context: any;         // 사용자 정의 context
+  children: ReactNode; // 자식 요소
+  context: any; // 사용자 정의 context
 }
 ```
 

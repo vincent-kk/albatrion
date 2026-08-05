@@ -2,8 +2,7 @@
 
 ## Purpose
 
-`dist/claude-hashes.json`(스키마 v1)을 읽고 orphan 탐지를 위한 네임스페이스
-prefix 집합을 계산한다. inject 시 source 쪽 해시의 유일한 진실 공급원이다.
+`dist/claude-hashes.json`(스키마 v1)을 읽고 orphan 탐지를 위한 네임스페이스 prefix 집합을 계산한다. inject 시 source 쪽 해시의 유일한 진실 공급원이다.
 
 ## Structure
 
@@ -20,8 +19,7 @@ prefix 집합을 계산한다. inject 시 source 쪽 해시의 유일한 진실 
 ### Ask first
 
 - `schemaVersion` 을 1 이상으로 진화
-- `computeNamespacePrefixes` 의 `skills/<name>/` 패턴 이외 확장
-  (모든 컨슈머의 orphan 의미에 영향)
+- `computeNamespacePrefixes` 의 `skills/<name>/` 패턴 이외 확장 (모든 컨슈머의 orphan 의미에 영향)
 
 ### Never do
 

@@ -2,11 +2,7 @@
 
 ## Purpose
 
-UI-free, stateless primitives for Claude docs injection. Five leaf
-fractals (`hash`, `hashManifest`, `scope`, `buildPlan`, `injectDocs`)
-compose the pipeline. Both the Ink (`ui/`) and plain (`commands/.../
-renderPlain.ts`) renderers consume these primitives directly — no
-orchestrator function lives here.
+UI-free, stateless primitives for Claude docs injection. Five leaf fractals (`hash`, `hashManifest`, `scope`, `buildPlan`, `injectDocs`) compose the pipeline. Both the Ink (`ui/`) and plain (`commands/.../ renderPlain.ts`) renderers consume these primitives directly — no orchestrator function lives here.
 
 ## Structure
 

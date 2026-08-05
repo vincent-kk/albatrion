@@ -3,7 +3,11 @@
 ## Import
 
 ```typescript
-import { debounce, throttle, getTrackableHandler } from '@winglet/common-utils/function';
+import {
+  debounce,
+  getTrackableHandler,
+  throttle,
+} from '@winglet/common-utils/function';
 ```
 
 ---
@@ -30,28 +34,34 @@ Creates a debounced function that delays execution until `ms` milliseconds have 
 interface DebouncedFn<F extends Fn<any[]>> {
   (...args: Parameters<F>): void;
   execute: () => void; // execute immediately with last arguments
-  clear: () => void;   // cancel pending execution
+  clear: () => void; // cancel pending execution
 }
 ```
 
 ### Execution modes
 
-| `leading` | `trailing` | Behavior |
-|-----------|------------|----------|
-| `false` (default) | `true` (default) | Execute only after quiet period ends |
-| `true` | `false` | Execute immediately, ignore subsequent calls during delay |
-| `true` | `true` | Execute immediately AND again after delay if calls continue |
+| `leading`         | `trailing`       | Behavior                                                    |
+| ----------------- | ---------------- | ----------------------------------------------------------- |
+| `false` (default) | `true` (default) | Execute only after quiet period ends                        |
+| `true`            | `false`          | Execute immediately, ignore subsequent calls during delay   |
+| `true`            | `true`           | Execute immediately AND again after delay if calls continue |
 
 ```typescript
 // Default: trailing only — execute after user stops typing
 const searchDebounced = debounce(searchFn, 300);
-input.addEventListener('input', e => searchDebounced(e.target.value));
+input.addEventListener('input', (e) => searchDebounced(e.target.value));
 
 // Leading only — execute immediately, block for 500ms
-const leadingDebounced = debounce(logAction, 500, { leading: true, trailing: false });
+const leadingDebounced = debounce(logAction, 500, {
+  leading: true,
+  trailing: false,
+});
 
 // Both — execute immediately and again if calls happen during window
-const bothDebounced = debounce(updateUI, 200, { leading: true, trailing: true });
+const bothDebounced = debounce(updateUI, 200, {
+  leading: true,
+  trailing: true,
+});
 ```
 
 ### Manual control
@@ -59,9 +69,9 @@ const bothDebounced = debounce(updateUI, 200, { leading: true, trailing: true })
 ```typescript
 const debounced = debounce(fn, 1000);
 
-debounced(args);        // Schedule execution
-debounced.execute();    // Execute immediately with last args (bypass timer)
-debounced.clear();      // Cancel pending execution
+debounced(args); // Schedule execution
+debounced.execute(); // Execute immediately with last args (bypass timer)
+debounced.clear(); // Cancel pending execution
 ```
 
 ### AbortSignal integration
@@ -88,7 +98,10 @@ const debounced = useMemo(() => debounce(fn, 300), []);
 useEffect(() => {
   const d = debounce(fn, 300);
   element.addEventListener('scroll', d);
-  return () => { d.clear(); element.removeEventListener('scroll', d); };
+  return () => {
+    d.clear();
+    element.removeEventListener('scroll', d);
+  };
 }, []);
 ```
 
@@ -128,11 +141,11 @@ const throttledScroll = throttle(handleScroll, 100);
 
 ### Execution modes
 
-| `leading` | `trailing` | Best for |
-|-----------|------------|----------|
+| `leading`        | `trailing`       | Best for                                  |
+| ---------------- | ---------------- | ----------------------------------------- |
 | `true` (default) | `true` (default) | Scroll/resize handlers, real-time updates |
-| `true` | `false` | Button clicks (prevent double-click) |
-| `false` | `true` | API batching (collect then send) |
+| `true`           | `false`          | Button clicks (prevent double-click)      |
+| `false`          | `true`           | API batching (collect then send)          |
 
 ```typescript
 // ~60fps animation frame rate
@@ -142,7 +155,10 @@ const smoothAnimation = throttle(updatePosition, 16);
 const throttledAPI = throttle(sendRequest, 1000);
 
 // Leading only — prevent double-clicks
-const clickProtected = throttle(submitForm, 2000, { leading: true, trailing: false });
+const clickProtected = throttle(submitForm, 2000, {
+  leading: true,
+  trailing: false,
+});
 ```
 
 ---
@@ -198,16 +214,16 @@ const fetchUser = async (userId: string) => {
 };
 
 const trackableFetch = getTrackableHandler(fetchUser, {
-  preventConcurrent: true,  // default — ignore calls while one is in flight
+  preventConcurrent: true, // default — ignore calls while one is in flight
   initialState: { data: null as User | null, error: null as string | null },
   beforeExecute: (args, sm) => sm.update({ error: null }),
-  afterExecute:  (args, sm) => sm.update(prev => ({ ...prev })), // always runs
+  afterExecute: (args, sm) => sm.update((prev) => ({ ...prev })), // always runs
 });
 
 // Subscribe to state / pending changes
 const unsubscribe = trackableFetch.subscribe(() => {
   console.log('pending:', trackableFetch.pending);
-  console.log('state:',   trackableFetch.state);
+  console.log('state:', trackableFetch.state);
 });
 
 // Call the handler like the original function

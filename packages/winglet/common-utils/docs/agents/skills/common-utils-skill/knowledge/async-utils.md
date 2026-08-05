@@ -5,6 +5,7 @@
 ## Promise Utilities
 
 ### Import
+
 ```typescript
 import { ... } from '@winglet/common-utils/promise';
 ```
@@ -33,6 +34,7 @@ try {
 ```
 
 **Behavior:**
+
 - If `signal` is already aborted, rejects immediately without creating a timer.
 - On abort during delay: clears timer and rejects with `AbortError`.
 - Event listeners are automatically cleaned up on both completion and cancellation.
@@ -72,6 +74,7 @@ try {
 ```
 
 **Error hierarchy:**
+
 - `TimeoutError` — execution exceeded `ms`
 - `AbortError` — cancelled via `signal`
 - Any error thrown by `fn` is propagated unchanged
@@ -109,6 +112,7 @@ const val = await waitAndReturn(1000, 'hello'); // resolves after 1s
 ## Scheduler Utilities
 
 ### Import
+
 ```typescript
 import { ... } from '@winglet/common-utils/scheduler';
 ```
@@ -218,6 +222,7 @@ scheduleCancelableMacrotaskSafe(callback: () => void): () => void
 - **Browsers**: delegates to `setTimeout` / `clearTimeout` (guarantees a rendering window, subject to the 4ms minimum delay).
 
 **Difference from the non-Safe variants:**
+
 - `scheduleMacrotask` (browsers) uses `MessageChannelScheduler` — ~0.01ms scheduling overhead, no 4ms floor, but no guaranteed rendering frame between tasks.
 - `scheduleMacrotaskSafe` (browsers) uses `setTimeout` — slower and floored at ~4ms, but the browser is guaranteed to paint / process user input between tasks.
 
@@ -230,11 +235,13 @@ Choose `*Safe` when the work may run long and responsiveness matters more than l
 The `MessageChannelScheduler` class powers browser macrotask scheduling for `scheduleMacrotask`. It uses `MessageChannel` for immediate macrotask execution without the 4ms minimum delay of `setTimeout`.
 
 **Key features:**
+
 - Automatic batching of synchronously scheduled tasks
 - Individual task cancellation from batches
 - ~0.01ms scheduling overhead
 
 **Exports from `@winglet/common-utils/scheduler`:**
+
 - `MessageChannelScheduler` — the scheduler class
 - `setImmediate(callback)` — schedule via the global MessageChannelScheduler instance
 - `clearImmediate(id)` — cancel a scheduled task
@@ -248,6 +255,7 @@ The `MessageChannelScheduler` class powers browser macrotask scheduling for `sch
 ## Common Async Patterns
 
 ### Retry with exponential backoff
+
 ```typescript
 import { delay } from '@winglet/common-utils/promise';
 
@@ -265,13 +273,14 @@ async function retry<T>(fn: () => Promise<T>, maxAttempts = 3): Promise<T> {
 ```
 
 ### Timeout-protected fetch
+
 ```typescript
-import { withTimeout } from '@winglet/common-utils/promise';
 import { TimeoutError } from '@winglet/common-utils/error';
+import { withTimeout } from '@winglet/common-utils/promise';
 
 async function safeFetch(url: string) {
   try {
-    return await withTimeout(() => fetch(url).then(r => r.json()), 10000);
+    return await withTimeout(() => fetch(url).then((r) => r.json()), 10000);
   } catch (e) {
     if (e instanceof TimeoutError) throw new Error('Request timed out');
     throw e;
@@ -280,6 +289,7 @@ async function safeFetch(url: string) {
 ```
 
 ### Batch updates with microtask
+
 ```typescript
 import { scheduleMicrotask } from '@winglet/common-utils/scheduler';
 

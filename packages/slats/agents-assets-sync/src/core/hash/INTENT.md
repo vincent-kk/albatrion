@@ -2,8 +2,7 @@
 
 ## Purpose
 
-SHA-256 기반 콘텐츠 해시 프리미티브. `hashManifest/`(빌드 타임 매니페스트)와
-`buildPlan/`(런타임 비교)이 공통으로 쓰는, 긴밀히 결합된 소수의 헬퍼만 둔다.
+SHA-256 기반 콘텐츠 해시 프리미티브. `hashManifest/`(빌드 타임 매니페스트)와 `buildPlan/`(런타임 비교)이 공통으로 쓰는, 긴밀히 결합된 소수의 헬퍼만 둔다.
 
 ## Structure
 
@@ -12,16 +11,13 @@ SHA-256 기반 콘텐츠 해시 프리미티브. `hashManifest/`(빌드 타임 �
 
 ## Conventions
 
-- 다이제스트는 소문자 hex 로 낸다. `dist/agents-hashes.json` 이 기록하는
-  형식과 같아야 매니페스트 해시와 직접 비교된다.
-- `null` 은 "그 자리에 아무것도 없다" 는 뜻이다. `hashEquals` 는 어느 쪽이든
-  `null` 이면 `false` — 없는 파일은 무엇과도 같지 않다.
+- 다이제스트는 소문자 hex 로 낸다. `dist/agents-hashes.json` 이 기록하는 형식과 같아야 매니페스트 해시와 직접 비교된다.
+- `null` 은 "그 자리에 아무것도 없다" 는 뜻이다. `hashEquals` 는 어느 쪽이든 `null` 이면 `false` — 없는 파일은 무엇과도 같지 않다.
 - 비교는 대소문자를 무시하되 길이가 다르면 즉시 다르다.
 
 ## Dependencies
 
-- 없음. `core/` 의 최심 리프이며 형제 fractal 에서 import 하지 않는다.
-  `hashManifest/`, `buildPlan/`, `markerBlock/` 이 소비한다.
+- 없음. `core/` 의 최심 리프이며 형제 fractal 에서 import 하지 않는다. `hashManifest/`, `buildPlan/`, `markerBlock/` 이 소비한다.
 
 ## Boundaries
 

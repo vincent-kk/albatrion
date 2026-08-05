@@ -71,8 +71,8 @@ If the element already has the class and the style still does not apply, inspect
 **Solution:**
 
 ```typescript
-import { afterEach } from 'vitest';
 import { destroyScope } from '@winglet/style-utils';
+import { afterEach } from 'vitest';
 
 const SCOPES = ['widget', 'overlay', 'theme'];
 afterEach(() => SCOPES.forEach(destroyScope));
@@ -93,15 +93,16 @@ import { vi } from 'vitest';
 
 vi.useFakeTimers();
 addStyle('x', '.x { color: red; }');
-vi.runAllTimers();          // or manually advance the rAF polyfill
-await Promise.resolve();    // let microtasks drain
+vi.runAllTimers(); // or manually advance the rAF polyfill
+await Promise.resolve(); // let microtasks drain
 // assertion
 ```
 
 If `requestAnimationFrame` is unavailable (old jsdom), polyfill it in `vitest.setup.ts`:
 
 ```typescript
-globalThis.requestAnimationFrame = (cb) => setTimeout(() => cb(Date.now()), 0) as any;
+globalThis.requestAnimationFrame = (cb) =>
+  setTimeout(() => cb(Date.now()), 0) as any;
 globalThis.cancelAnimationFrame = (id) => clearTimeout(id as any);
 ```
 

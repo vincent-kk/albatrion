@@ -27,7 +27,6 @@ computed: {
 '&visible': '@.showAdvanced'
 ```
 
-
 ## Accessing Nested Objects
 
 How to access nested objects in context:
@@ -77,7 +76,6 @@ const jsonSchema = {
 />
 ```
 
-
 ## Dynamic Context Updates
 
 When context changes, related computed properties are automatically recalculated.
@@ -104,7 +102,6 @@ const [permissions, setPermissions] = useState({
 // When permissions.canEdit changes,
 // related computed properties (readOnly, etc.) are automatically recalculated
 ```
-
 
 ## Real-World Usage Patterns
 
@@ -152,7 +149,7 @@ const jsonSchema = {
 ```typescript
 const context = {
   experiment: {
-    variant: 'B',  // 'A' or 'B'
+    variant: 'B', // 'A' or 'B'
   },
 };
 
@@ -204,7 +201,6 @@ const jsonSchema = {
   context={{ locale }}
 />
 ```
-
 
 ## References
 
