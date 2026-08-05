@@ -8373,30 +8373,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@slats/claude-assets-sync@workspace:packages/slats/claude-assets-sync":
-  version: 0.0.0-use.local
-  resolution: "@slats/claude-assets-sync@workspace:packages/slats/claude-assets-sync"
-  dependencies:
-    "@types/react": "npm:^19.2.0"
-    commander: "npm:^12.1.0"
-    eslint: "npm:8.57.1"
-    ink: "npm:^7.0.0"
-    ink-gradient: "npm:^4.0.0"
-    ink-select-input: "npm:^6.2.0"
-    ink-spinner: "npm:^5.0.0"
-    ink-testing-library: "npm:^4.0.0"
-    picocolors: "npm:^1.1.1"
-    react: "npm:^19.2.0"
-    rolldown: "npm:^1.2.0"
-    tsc-alias: "npm:^1.8.16"
-    typescript: "npm:^5.7.2"
-  bin:
-    claude-assets-sync: ./bin/inject-claude-settings.mjs
-    claude-build-hashes: ./scripts/claude-build-hashes.mjs
-    inject-claude-settings: ./bin/inject-claude-settings.mjs
-  languageName: unknown
-  linkType: soft
-
 "@slorber/remark-comment@npm:^1.0.0":
   version: 1.0.0
   resolution: "@slorber/remark-comment@npm:1.0.0"
