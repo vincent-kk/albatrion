@@ -8335,6 +8335,30 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@slats/agents-assets-sync@workspace:packages/slats/agents-assets-sync":
+  version: 0.0.0-use.local
+  resolution: "@slats/agents-assets-sync@workspace:packages/slats/agents-assets-sync"
+  dependencies:
+    "@types/react": "npm:^19.2.0"
+    commander: "npm:^12.1.0"
+    eslint: "npm:8.57.1"
+    ink: "npm:^7.0.0"
+    ink-gradient: "npm:^4.0.0"
+    ink-select-input: "npm:^6.2.0"
+    ink-spinner: "npm:^5.0.0"
+    ink-testing-library: "npm:^4.0.0"
+    picocolors: "npm:^1.1.1"
+    react: "npm:^19.2.0"
+    rolldown: "npm:^1.2.0"
+    tsc-alias: "npm:^1.8.16"
+    typescript: "npm:^5.7.2"
+  bin:
+    agents-assets-sync: ./bin/inject-agents-settings.mjs
+    agents-build-hashes: ./scripts/agents-build-hashes.mjs
+    inject-agents-settings: ./bin/inject-agents-settings.mjs
+  languageName: unknown
+  linkType: soft
+
 "@slats/claude-assets-sync@npm:^0.2.0":
   version: 0.2.0
   resolution: "@slats/claude-assets-sync@npm:0.2.0"

@@ -1,0 +1,28 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    "rootDir": "src",
+    "removeComments": false,
+    "declarationDir": "dist",
+    "declarationMap": false,
+    "composite": false,
+    "noEmit": false,
+    "paths": {
+      "@/agents-assets-sync": ["./src"],
+      "@/agents-assets-sync/*": ["./src/*"],
+      "@aileron/*": ["../../aileron/common/*", "./dist/@aileron/*"]
+    }
+  },
+  "exclude": [
+    "node_modules",
+    "dist",
+    "**/__tests__/**",
+    "**/coverage/**",
+    "**/*.test.ts",
+    "**/*.spec.ts",
+    "**/*.test.tsx",
+    "**/*.spec.tsx"
+  ]
+}

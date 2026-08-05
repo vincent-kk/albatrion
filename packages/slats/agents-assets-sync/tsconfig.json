@@ -1,0 +1,15 @@
+{
+  "extends": "../../../tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "./dist",
+    "jsx": "react-jsx",
+    "types": ["node"],
+    "paths": {
+      "@/agents-assets-sync": ["./src"],
+      "@/agents-assets-sync/*": ["./src/*"],
+      "@aileron/*": ["../../aileron/common/*"]
+    }
+  },
+  "include": ["src", "src/**/*.ts", "src/**/*.tsx"],
+  "exclude": ["node_modules", "dist"]
+}
