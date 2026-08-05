@@ -1,5 +1,11 @@
 import { spawnSync } from 'node:child_process';
-import { existsSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import {
+  existsSync,
+  mkdirSync,
+  mkdtempSync,
+  rmSync,
+  writeFileSync,
+} from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -25,6 +31,27 @@ describe.skipIf(!existsSync(DIST_INDEX))('--json output contract', () => {
   beforeAll(() => {
     scratchRoot = mkdtempSync(join(tmpdir(), 'slats-json-'));
     writeFileSync(join(scratchRoot, 'AGENTS.md'), '', 'utf-8');
+    // A package with no `agents.assetPath` and no built manifest, so the
+    // `--asset-path` unit below reports through the same document shape.
+    const pkgRoot = join(
+      scratchRoot,
+      'node_modules',
+      '@slats-e2e',
+      'json-undeclared',
+    );
+    mkdirSync(join(pkgRoot, 'agents', 'skills', 'json-skill'), {
+      recursive: true,
+    });
+    writeFileSync(
+      join(pkgRoot, 'package.json'),
+      JSON.stringify({ name: '@slats-e2e/json-undeclared', version: '1.0.0' }),
+      'utf-8',
+    );
+    writeFileSync(
+      join(pkgRoot, 'agents', 'skills', 'json-skill', 'SKILL.md'),
+      '# JSON Skill\n',
+      'utf-8',
+    );
   });
 
   afterAll(() => {
@@ -95,6 +122,28 @@ describe.skipIf(!existsSync(DIST_INDEX))('--json output contract', () => {
     expect(
       actions.find((a) => a.relPath.startsWith('skills/'))?.target.kind,
     ).toBe('file');
+  });
+
+  // A directory-sourced target reaches the document through the same path a
+  // manifest-sourced one does — no `agents-hashes.json missing` error, and a
+  // real plan rather than an empty unit.
+  it('plans an --asset-path target without any manifest error', () => {
+    const result = runJson([
+      '--package',
+      '@slats-e2e/json-undeclared',
+      '--agent=claude',
+      '--scope=project',
+      '--asset-path=agents',
+    ]);
+    expect(result.status).toBe(0);
+    const report = JSON.parse(result.stdout);
+    expect(report.exitCode).toBe(0);
+    expect(report.units).toHaveLength(1);
+    const [unit] = report.units;
+    expect(unit.error).toBeUndefined();
+    expect(unit.actions.map((a: { relPath: string }) => a.relPath)).toEqual([
+      'skills/json-skill/SKILL.md',
+    ]);
   });
 
   it('reports a flag error as a document, not as loose text', () => {

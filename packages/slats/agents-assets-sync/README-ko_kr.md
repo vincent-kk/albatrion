@@ -22,7 +22,8 @@ yarn add -D @slats/agents-assets-sync
 
 ```
 <bin> --package=<name...> [--agent=claude|codex] [--scope=user|project] [--asset=<kind...>]
-      [--dry-run] [--force] [--yes] [--no-interactive] [--root=<cwd>] [--json]
+      [--asset-path=<path>] [--dry-run] [--force] [--yes] [--no-interactive]
+      [--root=<cwd>] [--json]
 agents-build-hashes
 ```
 
@@ -38,16 +39,15 @@ agents-build-hashes
 
 `projectRoot` 는 `--scope=user` 이면 홈 디렉터리, `--scope=project` 이면 `.claude`, `AGENTS.md`, `.agents`, `.codex`, `.git` 중 하나라도 가진 최근접 조상(없으면 cwd)입니다. 모든 에이전트가 이 루트를 공유하므로 한 번의 실행이 서로 다른 프로젝트에 걸칠 수 없습니다.
 
-| Kind | claude | codex | agents |
-|---|---|---|---|
-| `skills` (user) | `~/.claude/skills/**` | `~/.codex/skills/**` | `~/.agents/skills/**` |
-| `skills` (project) | `<root>/.claude/skills/**` | `<root>/.agents/skills/**` | `<root>/.agents/skills/**` |
-| `rules` (user) | `~/.claude/rules/**` | `~/.codex/AGENTS.md` | `~/.agents/AGENTS.md` |
-| `rules` (project) | `<root>/.claude/rules/**` | `<root>/AGENTS.md` | `<root>/AGENTS.md` |
-| `commands` | `<root>/.claude/commands/**` | 미지원 | 미지원 |
+| Kind               | claude                       | codex                      | agents                     |
+| ------------------ | ---------------------------- | -------------------------- | -------------------------- |
+| `skills` (user)    | `~/.claude/skills/**`        | `~/.codex/skills/**`       | `~/.agents/skills/**`      |
+| `skills` (project) | `<root>/.claude/skills/**`   | `<root>/.agents/skills/**` | `<root>/.agents/skills/**` |
+| `rules` (user)     | `~/.claude/rules/**`         | `~/.codex/AGENTS.md`       | `~/.agents/AGENTS.md`      |
+| `rules` (project)  | `<root>/.claude/rules/**`    | `<root>/AGENTS.md`         | `<root>/AGENTS.md`         |
+| `commands`         | `<root>/.claude/commands/**` | 미지원                     | 미지원                     |
 
 `agents` 는 제품이 아니라 벤더 중립 `.agents` 규약입니다 — 자체 홈 대신 이 규약을 읽는 도구를 위한 선택지입니다. `codex` 와는 `user` scope 에서만 다르고 프로젝트 레이아웃은 동일합니다.
-
 
 rule 파일 1개가 블록 1개가 되므로, 블록 본문 해시가 그 파일의 매니페스트 해시와 같고 copy/skip/diverged 판정이 파일 경로와 완전히 동일한 입자도를 갖습니다:
 
@@ -69,6 +69,9 @@ npx @slats/agents-assets-sync --package=@canard/schema-form --agent=claude --sco
 
 # Scope alias — 설치된 @winglet/* 중 agents.assetPath 를 선언한 모두:
 npx @slats/agents-assets-sync --package=@winglet --agent=claude,codex --scope=user
+
+# 선언도 빌드 산출물도 없는 패키지 — 디렉토리를 직접 지정:
+npx @slats/agents-assets-sync --package=some-pkg --asset-path=agents --agent=claude --scope=project
 ```
 
 dispatcher 는 현재 작업 디렉토리 (또는 `--root <path>`) 에서 시작해 `node_modules` 를 filesystem root 까지 거슬러 올라가므로, 호스트 프로젝트의 hoisting 체인 어딘가에 대상 패키지가 설치되어 있으면 동작합니다.
@@ -86,16 +89,17 @@ inject-agents-settings --package=@canard/schema-form --agent=claude --scope=user
 
 기존 명시 형식 `npx -p @slats/agents-assets-sync inject-agents-settings ...` 도 backward compatibility 를 위해 그대로 동작합니다.
 
-| 플래그             | 의미                                                                                                                                                                           |
-| ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `--package <name>` | **필수.** 반복 지정 / 콤마 구분 가능. `@scope/pkg`, `pkg`, 또는 scope alias `@scope` (설치된 `node_modules/@scope/*` 중 `agents.assetPath` 를 선언한 모든 패키지로 전개) 형식. |
-| `--scope=user`     | `~/.claude` (모든 프로젝트에 전역 적용).                                                                                                                                       |
-| `--scope=project`  | 가장 가까운 조상 `.claude` 디렉토리, 없으면 `<cwd>/.claude`.                                                                                                                   |
-| `--dry-run`        | copy / skip / warn 플랜만 출력, 쓰기 없음.                                                                                                                                     |
-| `--force`          | 발산 파일 덮어쓰기 & 고아 파일 삭제 (TTY 에서는 대화형 확인).                                                                                                                  |
-| `--root <path>`    | scope 해석용 cwd 재정의.                                                                                                                                                       |
+| 플래그                | 의미                                                                                                                                                                                                                                                                                                                      |
+| --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `--package <name>`    | **필수.** 반복 지정 / 콤마 구분 가능. `@scope/pkg`, `pkg`, 또는 scope alias `@scope` (설치된 `node_modules/@scope/*` 중 `agents.assetPath` 를 선언한 모든 패키지로 전개) 형식.                                                                                                                                            |
+| `--asset-path <path>` | 각 대상 패키지 루트 기준의 asset 루트 — `agents.assetPath` 를 선언하지 않고 `agents/` 나 `docs/` 같은 디렉토리에 에셋만 둔 패키지를 위한 것. 모든 대상의 선언을 덮어쓰고 그 디렉토리를 실행 시점에 해싱하므로 `dist/agents-hashes.json` 이 필요 없습니다. 상대 경로여야 하고 패키지 안의 실제 디렉토리를 가리켜야 합니다. |
+| `--scope=user`        | `~/.claude` (모든 프로젝트에 전역 적용).                                                                                                                                                                                                                                                                                  |
+| `--scope=project`     | 가장 가까운 조상 `.claude` 디렉토리, 없으면 `<cwd>/.claude`.                                                                                                                                                                                                                                                              |
+| `--dry-run`           | copy / skip / warn 플랜만 출력, 쓰기 없음.                                                                                                                                                                                                                                                                                |
+| `--force`             | 발산 파일 덮어쓰기 & 고아 파일 삭제 (TTY 에서는 대화형 확인).                                                                                                                                                                                                                                                             |
+| `--root <path>`       | scope 해석용 cwd 재정의.                                                                                                                                                                                                                                                                                                  |
 
-**Exit code**: `0` 성공 / up-to-date / dry-run, `1` 런타임 오류, `2` 사용자 / 설정 오류 (`--package` 누락, 비-TTY 환경에서 `--scope` 누락, 해석 불가한 패키지, `agents.assetPath` 누락).
+**Exit code**: `0` 성공 / up-to-date / dry-run, `1` 런타임 오류, `2` 사용자 / 설정 오류 (`--package` 누락, 비-TTY 환경에서 `--scope` 누락, 해석 불가한 패키지, `--asset-path` 없이 `agents.assetPath` 누락, 절대 경로이거나 패키지 안의 디렉토리를 가리키지 않는 `--asset-path`).
 
 `--scope=project` 의 경우 대상 `.claude` 디렉토리는 `process.cwd()` 에서 위로 올라가며 가장 가까운 기존 `.claude` 조상을 찾아 해석됩니다. 자동 탐지된 경우 CLI 가 `(auto-located)` 로 로그에 표시합니다.
 
@@ -127,13 +131,20 @@ stderr 로 돌립니다. 따라서 스트림 전체가 그대로 파싱됩니다
           "target": {
             "kind": "block",
             "fileAbs": "/repo/AGENTS.md",
-            "blockId": "@canard/schema-form:rules/schema-form-rule.md"
-          }
-        }
+            "blockId": "@canard/schema-form:rules/schema-form-rule.md",
+          },
+        },
       ],
-      "report": { "created": [], "updated": [], "skipped": [], "warnings": [], "deleted": [], "exitCode": 0 }
-    }
-  ]
+      "report": {
+        "created": [],
+        "updated": [],
+        "skipped": [],
+        "warnings": [],
+        "deleted": [],
+        "exitCode": 0,
+      },
+    },
+  ],
 }
 ```
 

@@ -6,7 +6,8 @@
 - `renderInjectApp(input)` 은 `core/**` 프리미티브를 직접 조합해 Ink 가상 DOM 을 구동한다. `process.stdout` / `process.stderr` 에 직접 쓰지 않는다.
 - 파이프라인은 훅으로 나뉜다. `useInjectSession` 이 전이를 구동하고, `useResolveStep` → `usePlanStep` → `useForceConfirmStep` → `useApplyStep` 이 각 단계를 맡는다.
 - agent 가 `--agent` 로 주어지지 않으면 Ink `AgentPicker` 로 대화식 선택한다. scope 도 마찬가지로 `--scope` 가 없으면 `ScopePicker` 를 연다. 주어졌으면 그 값을 쓴다.
-- 계획은 target 마다 순차적으로 세운다. 각 `(agent, package)` 쌍에 대해 `resolveAgentTarget` → `readHashManifest` → `computeNamespacePrefixes` → `resolveDestinations` → `buildPlan` 순서로 조합한다.
+- 계획은 target 마다 순차적으로 세운다. 각 `(agent, package)` 쌍에 대해 `resolveAgentTarget` → `resolveHashManifest` → `computeNamespacePrefixes` → `resolveDestinations` → `buildPlan` 순서로 조합한다.
+- `dist/agents-hashes.json` 부재로 실패시키는 것은 `hashSource: 'manifest'` 인 target 뿐이다. `'directory'` 인 target 은 매니페스트를 읽지 않으므로 이 판정을 건너뛴다.
 - force 확인은 `ConfirmForce` 로 표면화되며, 그 아래의 promise 다리가 사용자 응답이나 취소에서 resolve 된다. 취소는 종료 코드 2다.
 - 적용은 계획별로 `partitionActions` 로 갈라, 파일 작업은 `asyncPool(8, …)` 로 돌리고 블록 작업은 문서 단위로 하나씩 적용한다.
 - 진행률은 액션이 끝날 때마다 `apply-progress` 이벤트로 보고된다. 파일은 한 건씩, 블록 그룹은 그룹 크기만큼 `done` 이 증가한다.
@@ -32,7 +33,7 @@ entry point 표면 밖의 내부 단위다. 바꿔도 공개 계약 변경이 �
 
 ## Composed core primitives
 
-- `readHashManifest`, `computeNamespacePrefixes` — 소스 해시와 네임스페이스
+- `resolveHashManifest`, `computeNamespacePrefixes` — 소스 해시와 네임스페이스
 - `resolveAgentTarget`, `resolveDestinations` — 목적지 해석
 - `buildPlan` — 계획 수립
 - `isValidAgent` — `--agent` 값 검증

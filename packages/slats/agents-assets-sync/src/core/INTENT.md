@@ -15,9 +15,11 @@ UI-free, stateless primitives for agent asset injection. Seven sub-fractals comp
 - `markerBlock/` — this tool's own blocks inside a shared `AGENTS.md`
 - `buildPlan/` — plan builder (copy / skip / diverged / orphan / delete)
 - `injectDocs/` — partition + apply + summarize (no orchestrator)
+- `utils/` — file walk + posix normalisation shared by `hashManifest/` and `buildPlan/` (organ)
 
 ## Conventions
 
+- `utils/` is this fractal's organ, so it has no `index.ts`; sub-fractals import its concrete files directly. It holds only what more than one sub-fractal needs.
 - Dependencies run one way, and every edge crosses a sibling's `index.ts`:
   - `hash → hashManifest`, `hash → markerBlock`, `hash → buildPlan`
   - `scope → agentTarget`, `markerBlock → agentTarget`

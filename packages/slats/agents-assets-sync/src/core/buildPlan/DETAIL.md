@@ -14,7 +14,8 @@
 - orphan 탐색은 호출자가 준 스캔만 돈다. 블록 스캔은 명시된 소유 패키지의 블록만 살피므로 다른 패키지나 다른 도구의 블록은 삭제 후보가 되지 않는다.
 - 존재하지 않는 orphan 스캔 루트는 실패가 아니다. 걷기가 조용히 비어 돌아온다.
 - 한 계획 안에서 같은 공유 문서를 여러 번 읽지 않는다 (`utils/readDocument.ts` 의 계획 단위 캐시).
-- 경로 비교는 POSIX 구분자로 정규화해서 한다 (`utils/toPosix.ts`).
+- 경로 비교는 POSIX 구분자로 정규화해서 한다 (`core/utils/toPosix.ts`).
+- 디렉터리 걷기와 POSIX 정규화는 `core/utils/` 의 공유 organ 에서 온다. `hashManifest/` 도 같은 것을 쓰며, 두 소비자의 최저 공통 fractal 이 `core/` 이기 때문이다.
 
 ## API Contracts
 

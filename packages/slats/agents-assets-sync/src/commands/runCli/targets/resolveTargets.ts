@@ -15,10 +15,18 @@ import { resolveScopeAlias } from './resolveScopeAlias.js';
  *   so the rest of the batch can proceed.
  *
  * Invalid `--package` values exit with code 2 before any filesystem IO.
+ *
+ * @param targets - raw `--package` values
+ * @param rootCwd - directory module resolution and scope enumeration start from
+ * @param assetPathOverride - `--asset-path`, applied to every target; the
+ *   same strict / soft-skip split then judges the directory instead of the
+ *   missing `agents.assetPath` declaration
+ * @returns resolved metadata, deduped by `packageName`
  */
 export async function resolveTargets(
   targets: readonly string[],
   rootCwd: string,
+  assetPathOverride?: string,
 ): Promise<ResolvedMetadata[]> {
   if (targets.length === 0) return [];
 
@@ -35,11 +43,15 @@ export async function resolveTargets(
 
     let candidates: ResolvedMetadata[];
     if (classification.kind === 'scope') {
-      candidates = await resolveScopeAlias(classification.scope, rootCwd);
+      candidates = await resolveScopeAlias(
+        classification.scope,
+        rootCwd,
+        assetPathOverride,
+      );
     } else {
       const meta = await resolvePackage(
         classification.name,
-        { skipMissingAsset: !isSingleTarget },
+        { skipMissingAsset: !isSingleTarget, assetPathOverride },
         rootCwd,
       );
       candidates = meta ? [meta] : [];

@@ -9,14 +9,14 @@ import {
   buildPlan,
   computeNamespacePrefixes,
   partitionActions,
-  readHashManifest,
   resolveAgentTarget,
   resolveDestinations,
+  resolveHashManifest,
   summarize,
 } from '../../../core/index.js';
+import type { ConsumerPackage, DefaultFlags } from '../../../types/index.js';
 import { asyncPool } from '../../../utils/asyncPool.js';
 import { VERSION } from '../../../utils/version.js';
-import type { ConsumerPackage, DefaultFlags } from '../../../types/index.js';
 import { parseAgentFlag } from '../flags/resolveAgentFlag.js';
 import { parseAssetFlag } from '../flags/resolveAssetFlag.js';
 import { parseScopeFlag } from '../flags/resolveScopeFlag.js';
@@ -119,18 +119,18 @@ async function runUnit(
     destination: agentTarget.description,
   } as const;
 
-  if (!target.hashesPresent)
+  if (target.hashSource === 'manifest' && !target.hashesPresent)
     return {
       ...base,
       requiresForce: false,
       actions: [],
       report: null,
       error:
-        'dist/agents-hashes.json missing — build the package to regenerate the hash manifest first.',
+        'dist/agents-hashes.json missing — build the package to regenerate the hash manifest first, or pass --asset-path to hash the asset directory instead.',
     };
 
   try {
-    const manifest = await readHashManifest(target.packageRoot);
+    const manifest = await resolveHashManifest(target);
     const { destinations, orphanScans } = resolveDestinations({
       agentTarget,
       packageName: target.name,

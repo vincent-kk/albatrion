@@ -2,10 +2,11 @@ import { basename } from 'node:path';
 
 import { Command } from 'commander';
 
+import type { DefaultFlags } from '../../types/index.js';
 import { divertLogsToStderr, logger } from '../../utils/logger.js';
 import { VERSION } from '../../utils/version.js';
-import type { DefaultFlags } from '../../types/index.js';
 import { renderOrFallback } from './renderers/renderOrFallback.js';
+import { resolveAssetPathFlag } from './flags/resolveAssetPathFlag.js';
 import { resolveTargets } from './targets/resolveTargets.js';
 import { toConsumerPackages } from './targets/toConsumerPackages.js';
 
@@ -25,6 +26,10 @@ const FALLBACK_PROGRAM_NAME = 'inject-agents-settings';
  *   package that declares `agents.assetPath`
  * - `@<scope>/<name>` — one scoped package
  * - `<name>` — one unscoped package
+ *
+ * `--asset-path` names the asset root instead, for a package that ships one
+ * without declaring it. It overrides `agents.assetPath` on every target and
+ * makes the named directory the only source of hashes.
  *
  * Targets are resolved via Node module resolution (`resolvePackage`)
  * except for scope aliases, which are the only path allowed to walk
@@ -64,6 +69,10 @@ export async function runCli(
       collectValues,
       [] as string[],
     )
+    .option(
+      '--asset-path <path>',
+      'Asset root relative to each target package root. Overrides "agents.assetPath" and hashes that directory at run time, so no dist/agents-hashes.json is needed.',
+    )
     .option('--dry-run', 'Preview without writing', false)
     .option('--force', 'Overwrite user modifications', false)
     .option('--yes', 'Auto-approve every confirmation prompt', false)
@@ -88,8 +97,9 @@ export async function runCli(
         );
         process.exit(2);
       }
+      const assetPath = resolveAssetPathFlag(flags.assetPath);
       const originCwd = flags.root ?? process.cwd();
-      const metadataList = await resolveTargets(targets, originCwd);
+      const metadataList = await resolveTargets(targets, originCwd, assetPath);
       if (metadataList.length === 0) {
         logger.warn(
           `no packages resolved from --package target(s): ${targets.join(', ')}`,

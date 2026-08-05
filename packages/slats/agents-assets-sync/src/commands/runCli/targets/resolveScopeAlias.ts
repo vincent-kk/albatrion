@@ -14,6 +14,7 @@ import { type ResolvedMetadata, resolvePackage } from './resolvePackage.js';
 export async function resolveScopeAlias(
   scope: string,
   rootCwd: string,
+  assetPathOverride?: string,
 ): Promise<ResolvedMetadata[]> {
   const expectedPrefix = `@${scope}/`;
   const seen = new Set<string>();
@@ -36,11 +37,14 @@ export async function resolveScopeAlias(
     process.exit(2);
   }
 
+  // With an override every enumerated package gets the same asset path, so
+  // what filters the scope is no longer the `agents.assetPath` declaration
+  // but whether that directory exists in each package.
   const resolved: ResolvedMetadata[] = [];
   for (const name of matchedNames) {
     const meta = await resolvePackage(
       name,
-      { skipMissingAsset: true },
+      { skipMissingAsset: true, assetPathOverride },
       rootCwd,
     );
     if (meta) resolved.push(meta);

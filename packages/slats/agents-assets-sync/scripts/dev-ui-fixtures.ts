@@ -36,21 +36,27 @@ const MOCK_TARGETS: ConsumerPackage[] = [
     version: '0.12.1',
     packageRoot: '/workspace/packages/canard/schema-form',
     assetRoot: '/workspace/packages/canard/schema-form/docs/agents',
+    assetPath: 'docs/agents',
     hashesPresent: true,
+    hashSource: 'manifest',
   },
   {
     name: '@canard/schema-form-antd-plugin',
     version: '0.12.1',
     packageRoot: '/workspace/packages/canard/schema-form-antd-plugin',
     assetRoot: '/workspace/packages/canard/schema-form-antd-plugin/docs/agents',
+    assetPath: 'docs/agents',
     hashesPresent: true,
+    hashSource: 'manifest',
   },
   {
     name: '@winglet/common-utils',
     version: '0.12.1',
     packageRoot: '/workspace/packages/winglet/common-utils',
     assetRoot: '/workspace/packages/winglet/common-utils/docs/agents',
+    assetPath: 'docs/agents',
     hashesPresent: true,
+    hashSource: 'manifest',
   },
 ];
 

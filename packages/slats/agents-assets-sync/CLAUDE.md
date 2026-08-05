@@ -34,17 +34,19 @@ The commander `name(...)` is derived from `argv[1]` basename at runtime, so help
 
 ```
 <bin> --package <name...> [--agent <type...>] [--scope=user|project] [--asset <kind...>]
-      [--dry-run] [--force] [--yes] [--no-interactive] [--root=<cwd>] [--json]
+      [--asset-path <path>] [--dry-run] [--force] [--yes] [--no-interactive]
+      [--root=<cwd>] [--json]
 ```
 
 Where `<bin>` is `agents-assets-sync` (npx) or `inject-agents-settings` (installed). Both bins point at the same dispatcher.
 
-| Flag                | Meaning                                                                                                                           |
-| ------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
-| `--agent <type...>` | `claude` \| `codex`. Omitted, an interactive TTY asks; anywhere else exits 2.                                                     |
-| `--asset <kind...>` | `skills` \| `rules` \| `commands`. Default: all. An excluded kind is absent from the plan, so it is neither reported nor deleted. |
-| `--yes`             | Approve the force dialog without showing it.                                                                                      |
-| `--no-interactive`  | Never prompt, even on a TTY. A missing flag exits 2.                                                                              |
+| Flag                  | Meaning                                                                                                                                                                                                                                                                                                             |
+| --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `--agent <type...>`   | `claude` \| `codex`. Omitted, an interactive TTY asks; anywhere else exits 2.                                                                                                                                                                                                                                       |
+| `--asset <kind...>`   | `skills` \| `rules` \| `commands`. Default: all. An excluded kind is absent from the plan, so it is neither reported nor deleted.                                                                                                                                                                                   |
+| `--asset-path <path>` | Asset root relative to each target's package root, for a package that ships assets without declaring `agents.assetPath`. Overrides the declaration on every target and hashes that directory at run time, so no `dist/agents-hashes.json` is needed. Must be relative and name a real directory inside the package. |
+| `--yes`               | Approve the force dialog without showing it.                                                                                                                                                                                                                                                                        |
+| `--no-interactive`    | Never prompt, even on a TTY. A missing flag exits 2.                                                                                                                                                                                                                                                                |
 
 Fully unattended: `--package=<name> --agent=claude,codex --scope=project --force --yes`.
 
@@ -114,6 +116,12 @@ Each consumer ships only:
 
 One asset tree serves every agent; the engine decides where each kind lands.
 
+A package that ships none of this — no `agents` key, no `dist/agents-hashes.json`, just an `agents/` or `docs/` directory — is still injectable by naming the directory at the call site:
+
+```bash
+npx @slats/agents-assets-sync --package=<name> --asset-path=agents --agent=claude --scope=project
+```
+
 Consumers must:
 
 - `scripts.build:hashes: "agents-build-hashes"` — engine bin, linked into workspace `.bin/` at install time
@@ -143,26 +151,33 @@ src/
 │       ├── flags/                  # one CLI flag value → a validated value
 │       │   ├── resolveScopeFlag.ts # plain-path scope flag validator
 │       │   ├── resolveAgentFlag.ts # --agent validator (exits 2 when non-interactive)
-│       │   └── resolveAssetFlag.ts # --asset validator → Set<AssetKind>
+│       │   ├── resolveAssetFlag.ts # --asset validator → Set<AssetKind>
+│       │   └── resolveAssetPathFlag.ts # --asset-path shape validator
 │       └── renderers/              # the three mutually exclusive output paths
 │           ├── renderOrFallback.ts # TTY vs plain branch + dynamic UI import
 │           ├── renderPlain.ts      # non-TTY / --no-interactive picocolors renderer
 │           └── renderJson.ts       # --json single-document renderer
 ├── core/
 │   ├── hash/                       # sha256 compute / compare
-│   ├── hashManifest/               # dist/agents-hashes.json IO + namespace prefixes
+│   ├── hashManifest/               # manifest IO, or hash the asset dir (--asset-path)
 │   ├── scope/                      # user | project → one agent-neutral project root
 │   ├── agentTarget/                # project root → per-agent destinations + orphan scans
 │   ├── markerBlock/                # this tool's blocks inside a shared AGENTS.md
 │   ├── buildPlan/                  # copy / skip / warn-diverged / warn-orphan / delete
-│   └── injectDocs/                 # apply + partition + summarize (no orchestrator)
+│   ├── injectDocs/                 # apply + partition + summarize (no orchestrator)
+│   └── utils/                      # walkFiles, toPosix — shared by hashManifest + buildPlan
 ├── ui/                             # Ink React TTY path (internal only)
 │   ├── InjectApp/                  # phase state machine + <InjectApp/>
 │   ├── components/                 # Banner, StepTracker, PlanTable, ...
 │   ├── hooks/                      # pipeline hooks + useInjectSession
 │   ├── theme/                      # colors, icons, layout
 │   └── types/                      # Phase, InjectEvent, RenderInput, target
-└── utils/                          # asyncPool, logger, types, version
+├── types/                          # DefaultFlags, ConsumerPackage, AssetType
+└── utils/                          # asyncPool, logger, version
+
+Every test lives in a `__tests__/` beside the fractal whose DETAIL declares it —
+there is no root `tests/` directory. `tsconfig.declarations.json` excludes them
+from the build; `tsconfig.json` does not, so they are type-checked.
 scripts/
 ├── buildHashes.mjs                 # pure Node ESM, importable from Rolldown
 ├── agents-build-hashes.mjs         # self-executing bin
@@ -170,13 +185,9 @@ scripts/
 └── dev-ui-fixtures.ts              # mock plans + targets for dev preview
 ```
 
-Every test lives in a `__tests__/` beside the fractal whose DETAIL declares it —
-there is no root `tests/` directory. `tsconfig.declarations.json` excludes them
-from the build; `tsconfig.json` does not, so they are type-checked.
-
 ## Hash Strategy (Option A)
 
-- `dist/agents-hashes.json` is the sole source of truth (schema v1, `previousVersions: {}` reserved).
+- `dist/agents-hashes.json` is the sole source of truth (schema v1, `previousVersions: {}` reserved) — except under `--asset-path`, where the named directory is hashed at run time and the stored manifest is not read at all. `core/hashManifest/resolveHashManifest` owns that branch; the computed document is byte-equivalent to a freshly built one, and `src/core/hashManifest/__tests__/computeHashManifest.spec.ts` keeps it so.
 - Per-entry SHA-256 comparison: copy if missing, skip if equal, warn + require `--force` if different. A codex rule block is compared by the body between its markers, against the same manifest hash.
 - `--force` on TTY: Ink `ConfirmForce` dialog, skipped by `--yes`. Non-interactive: stderr emission + proceed.
 - `--force` actually overwrites diverged content: `partitionActions` makes `warn-diverged` executable once force is granted.

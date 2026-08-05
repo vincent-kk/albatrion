@@ -10,9 +10,9 @@ Produce the declarative action list an applier executes. Compares every manifest
 - `buildPlan.ts` — the planner
 - `type.ts` — `ActionKind`, `ActionTarget`, `Action`, `InjectPlan`, `PlanInput`
 - `utils/readDocument.ts` — per-plan cached reader for shared documents
-- `utils/walkFiles.ts` — async recursive file walker (ENOENT-safe)
-- `utils/toPosix.ts` — cross-platform forward-slash normalisation
 - `__tests__/` — this fractal's verification files
+
+The file walker and the posix normaliser live in `core/utils/`; `hashManifest/` needs them too, and their lowest common fractal is `core/`.
 
 ## Conventions
 

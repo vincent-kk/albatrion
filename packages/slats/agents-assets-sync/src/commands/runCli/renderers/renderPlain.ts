@@ -11,14 +11,14 @@ import {
   buildPlan,
   computeNamespacePrefixes,
   partitionActions,
-  readHashManifest,
   resolveAgentTarget,
   resolveDestinations,
+  resolveHashManifest,
   summarize,
 } from '../../../core/index.js';
+import type { ConsumerPackage, DefaultFlags } from '../../../types/index.js';
 import { asyncPool } from '../../../utils/asyncPool.js';
 import { logger } from '../../../utils/logger.js';
-import type { ConsumerPackage, DefaultFlags } from '../../../types/index.js';
 import { resolveAgentFlag } from '../flags/resolveAgentFlag.js';
 import { resolveAssetFlag } from '../flags/resolveAssetFlag.js';
 import { resolveScopeFlag } from '../flags/resolveScopeFlag.js';
@@ -50,9 +50,9 @@ export async function renderPlain(
   const assetKinds = resolveAssetFlag(flags.asset ?? []);
 
   const usable = targets.filter((target) => {
-    if (target.hashesPresent) return true;
+    if (target.hashSource === 'directory' || target.hashesPresent) return true;
     logger.warn(
-      `${target.name}: dist/agents-hashes.json missing — build the package (e.g. yarn build) to regenerate the hash manifest first.`,
+      `${target.name}: dist/agents-hashes.json missing — build the package (e.g. yarn build) to regenerate the hash manifest first, or pass --asset-path to hash the asset directory instead.`,
     );
     return false;
   });
@@ -97,7 +97,7 @@ async function renderOneUnit(
   flags: DefaultFlags,
   originCwd: string,
 ): Promise<number> {
-  const manifest = await readHashManifest(target.packageRoot);
+  const manifest = await resolveHashManifest(target);
   const agentTarget = resolveAgentTarget(agent, scope, originCwd);
   const { destinations, orphanScans } = resolveDestinations({
     agentTarget,

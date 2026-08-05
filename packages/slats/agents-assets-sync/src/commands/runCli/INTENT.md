@@ -12,14 +12,15 @@ Sole `inject-agents-settings` CLI driver. Parses `--package <name...>` from argv
 - `targets/` — argv `--package` values → `ConsumerPackage[]` (organ):
   `classifyTarget`, `resolvePackage`, `resolveScopeAlias`, `resolveTargets`, `toConsumerPackages`
 - `flags/` — one CLI flag value → a validated value (organ):
-  `resolveScopeFlag`, `resolveAgentFlag`, `resolveAssetFlag`
+  `resolveScopeFlag`, `resolveAgentFlag`, `resolveAssetFlag`, `resolveAssetPathFlag`
 - `renderers/` — the three mutually exclusive output paths (organ):
   `renderOrFallback`, `renderPlain`, `renderJson`
 
 ## Conventions
 
 - The organs are the pipeline's stages and the dependency runs one way: `runCli.ts` drives `targets/` then `renderers/`, and `renderers/` reads `flags/`. Nothing in `targets/` touches the other two. `targets/` does filesystem and module resolution while `flags/` is pure value validation — that difference is why they are not one directory.
-- Each flag validator has two forms: `resolve*Flag` exits 2, `parse*Flag` returns the failure as a value — `renderJson` cannot exit mid-document.
+- Each flag validator a renderer calls has two forms: `resolve*Flag` exits 2, `parse*Flag` returns the failure as a value — `renderJson` cannot exit mid-document.
+- `resolveAssetPathFlag` has one form only. It runs in the action, before any renderer exists, so it exits like the `--package` check does — `--json` included, leaving stdout empty.
 
 ## Boundaries
 

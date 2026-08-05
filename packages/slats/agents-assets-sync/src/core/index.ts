@@ -8,7 +8,9 @@ export {
   HASH_MANIFEST_FILENAME,
   computeNamespacePrefixes,
   readHashManifest,
+  resolveHashManifest,
   type HashManifest,
+  type HashManifestSource,
 } from './hashManifest/index.js';
 export {
   applyAction,

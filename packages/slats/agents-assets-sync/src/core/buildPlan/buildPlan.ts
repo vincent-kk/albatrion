@@ -7,10 +7,10 @@ import {
   findBlockBody,
   parseBlocks,
 } from '../markerBlock/index.js';
+import { toPosix } from '../utils/toPosix.js';
+import { walkFiles } from '../utils/walkFiles.js';
 import type { Action, ActionKind, InjectPlan, PlanInput } from './type.js';
 import { createDocumentReader } from './utils/readDocument.js';
-import { toPosix } from './utils/toPosix.js';
-import { walkFiles } from './utils/walkFiles.js';
 
 /**
  * Compare every manifest entry against what is already installed and produce

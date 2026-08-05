@@ -15,7 +15,9 @@ const TARGET: ConsumerPackage = {
   version: '0.12.1',
   packageRoot: '/tmp/packages/schema-form',
   assetRoot: '/tmp/packages/schema-form/docs/agents',
+  assetPath: 'docs/agents',
   hashesPresent: true,
+  hashSource: 'manifest',
 };
 
 const BOOT: Phase = { kind: 'booting' };

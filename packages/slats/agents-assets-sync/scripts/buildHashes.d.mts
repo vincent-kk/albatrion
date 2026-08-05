@@ -1,8 +1,10 @@
 export interface BuildHashesOptions {
-  packageRoot?: string;
-  packageName?: string;
-  packageVersion?: string;
-  assetPathRel?: string;
+  /** Absolute path to the consumer package root. */
+  packageRoot: string;
+  packageName: string;
+  packageVersion: string;
+  /** Asset root relative to `packageRoot`. */
+  assetPath: string;
 }
 
 export interface BuildHashesResult {
@@ -11,5 +13,5 @@ export interface BuildHashesResult {
 }
 
 export function buildHashes(
-  opts?: BuildHashesOptions,
+  opts: BuildHashesOptions,
 ): Promise<BuildHashesResult>;

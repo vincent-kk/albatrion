@@ -7,6 +7,12 @@ export interface DefaultFlags {
   scope?: string;
   /** Asset kind filter: `skills` | `rules` | `commands`. Empty means all. */
   asset?: string[];
+  /**
+   * Asset root relative to each target's package root. Overrides
+   * `agents.assetPath` and makes that directory the only source of hashes,
+   * so a package that declares nothing and ships no manifest still works.
+   */
+  assetPath?: string;
   dryRun?: boolean;
   force?: boolean;
   /** Auto-approve every confirmation the run would otherwise stop on. */

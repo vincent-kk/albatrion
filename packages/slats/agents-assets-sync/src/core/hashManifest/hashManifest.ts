@@ -1,19 +1,33 @@
 import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 
-import type { Sha256Hex } from '../hash/index.js';
-
-export interface HashManifest {
-  schemaVersion: 1;
-  package: { name: string; version: string };
-  generatedAt: string;
-  algorithm: 'sha256';
-  assetRoot: string;
-  files: Record<string, Sha256Hex>;
-  previousVersions: Record<string, never>;
-}
+import type { HashManifest, HashManifestSource } from './type.js';
+import { computeHashManifest } from './utils/computeHashManifest.js';
 
 export const HASH_MANIFEST_FILENAME = 'agents-hashes.json';
+
+/**
+ * Obtain one target's manifest from whichever source it declares.
+ *
+ * A `directory` target ignores `dist/agents-hashes.json` entirely: the stored
+ * manifest may describe a different tree than the one `--asset-path` named, so
+ * the named directory is hashed on the spot and is the only truth.
+ *
+ * @param source - the target's identity, asset root, and chosen source
+ * @param generatedAt - ISO timestamp for a computed manifest; defaults to now.
+ *   Nothing at run time reads it, so the default clock is safe to take here
+ * @returns the manifest
+ * @throws when `hashSource` is `manifest` and the file is absent, unreadable,
+ *   or declares an unsupported `schemaVersion`
+ */
+export async function resolveHashManifest(
+  source: HashManifestSource,
+  generatedAt: string = new Date().toISOString(),
+): Promise<HashManifest> {
+  if (source.hashSource === 'manifest')
+    return readHashManifest(source.packageRoot);
+  return computeHashManifest(source, generatedAt);
+}
 
 export async function readHashManifest(
   packageRoot: string,

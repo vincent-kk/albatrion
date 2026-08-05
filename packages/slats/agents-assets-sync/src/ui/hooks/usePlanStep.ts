@@ -1,16 +1,16 @@
 import { useEffect, useRef } from 'react';
 
-import type { ConsumerPackage } from '../../types/index.js';
 import {
   type AgentType,
   type AssetKind,
   type Scope,
   buildPlan,
   computeNamespacePrefixes,
-  readHashManifest,
   resolveAgentTarget,
   resolveDestinations,
+  resolveHashManifest,
 } from '../../core/index.js';
+import type { ConsumerPackage } from '../../types/index.js';
 import type { InjectEvent, TargetPlan, Warning } from '../types/index.js';
 
 interface UsePlanStepOptions {
@@ -56,7 +56,7 @@ export function usePlanStep({
             step: { packageName: target.name, agent, status: 'running' },
           });
           try {
-            if (!target.hashesPresent) {
+            if (target.hashSource === 'manifest' && !target.hashesPresent) {
               dispatch({
                 type: 'plan-step',
                 step: {
@@ -68,7 +68,7 @@ export function usePlanStep({
               });
               continue;
             }
-            const manifest = await readHashManifest(target.packageRoot);
+            const manifest = await resolveHashManifest(target);
             const agentTarget = resolveAgentTarget(agent, scope, originCwd);
             const { destinations, orphanScans } = resolveDestinations({
               agentTarget,

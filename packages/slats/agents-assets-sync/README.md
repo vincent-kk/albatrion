@@ -22,32 +22,32 @@ yarn add -D @slats/agents-assets-sync
 
 ```
 <bin> --package=<name...> [--agent=claude|codex] [--scope=user|project] [--asset=<kind...>]
-      [--dry-run] [--force] [--yes] [--no-interactive] [--root=<cwd>] [--json]
+      [--asset-path=<path>] [--dry-run] [--force] [--yes] [--no-interactive]
+      [--root=<cwd>] [--json]
 agents-build-hashes
 ```
 
 `<bin>` is one of three entry points that all dispatch to the same engine:
 
-| Bin | Use when |
-|---|---|
-| `agents-assets-sync` | invoking via `npx` — matches the package's unscoped name so `npx @slats/agents-assets-sync ...` works directly |
-| `inject-agents-settings` | the engine is installed (`yarn add -D` / `npm i -g`) and you prefer a descriptive command name |
-| `agents-build-hashes` | build-time helper for consumer packages (run from `package.json` scripts) |
+| Bin                      | Use when                                                                                                       |
+| ------------------------ | -------------------------------------------------------------------------------------------------------------- |
+| `agents-assets-sync`     | invoking via `npx` — matches the package's unscoped name so `npx @slats/agents-assets-sync ...` works directly |
+| `inject-agents-settings` | the engine is installed (`yarn add -D` / `npm i -g`) and you prefer a descriptive command name                 |
+| `agents-build-hashes`    | build-time helper for consumer packages (run from `package.json` scripts)                                      |
 
 ### Agent destinations
 
 `projectRoot` is the home directory for `--scope=user`, and for `--scope=project` the nearest ancestor owning any of `.claude`, `AGENTS.md`, `.agents`, `.codex`, `.git` (falling back to cwd). Every agent shares it, so one run cannot straddle two projects.
 
-| Kind | claude | codex | agents |
-|---|---|---|---|
-| `skills` (user) | `~/.claude/skills/**` | `~/.codex/skills/**` | `~/.agents/skills/**` |
-| `skills` (project) | `<root>/.claude/skills/**` | `<root>/.agents/skills/**` | `<root>/.agents/skills/**` |
-| `rules` (user) | `~/.claude/rules/**` | `~/.codex/AGENTS.md` | `~/.agents/AGENTS.md` |
-| `rules` (project) | `<root>/.claude/rules/**` | `<root>/AGENTS.md` | `<root>/AGENTS.md` |
-| `commands` | `<root>/.claude/commands/**` | unsupported | unsupported |
+| Kind               | claude                       | codex                      | agents                     |
+| ------------------ | ---------------------------- | -------------------------- | -------------------------- |
+| `skills` (user)    | `~/.claude/skills/**`        | `~/.codex/skills/**`       | `~/.agents/skills/**`      |
+| `skills` (project) | `<root>/.claude/skills/**`   | `<root>/.agents/skills/**` | `<root>/.agents/skills/**` |
+| `rules` (user)     | `~/.claude/rules/**`         | `~/.codex/AGENTS.md`       | `~/.agents/AGENTS.md`      |
+| `rules` (project)  | `<root>/.claude/rules/**`    | `<root>/AGENTS.md`         | `<root>/AGENTS.md`         |
+| `commands`         | `<root>/.claude/commands/**` | unsupported                | unsupported                |
 
 `agents` is the vendor-neutral `.agents` convention rather than a product, for tools that read it instead of keeping a home of their own. It differs from `codex` only at `user` scope; the project layout is identical.
-
 
 One rule file becomes one marker block, so a block's body hash equals the manifest hash for that file and the copy/skip/diverged verdict matches the file path exactly:
 
@@ -69,6 +69,9 @@ npx @slats/agents-assets-sync --package=@canard/schema-form --agent=claude --sco
 
 # Scope alias — every installed @winglet/* that declares agents.assetPath:
 npx @slats/agents-assets-sync --package=@winglet --agent=claude,codex --scope=user
+
+# A package that declares nothing and ships no manifest — name the directory:
+npx @slats/agents-assets-sync --package=some-pkg --asset-path=agents --agent=claude --scope=project
 ```
 
 The dispatcher walks `node_modules` from the current working directory (or `--root <path>`) up to the filesystem root, so it works as long as the target package is installed somewhere in the host project's hoisting chain.
@@ -86,20 +89,21 @@ inject-agents-settings --package=@canard/schema-form --agent=claude --scope=user
 
 The legacy explicit form `npx -p @slats/agents-assets-sync inject-agents-settings ...` continues to work for backward compatibility.
 
-| Flag | Meaning |
-|---|---|
-| `--package <name>` | **Required.** Repeatable/comma-separable. Accepts `@scope/pkg`, `pkg`, or a scope alias `@scope` (fans out to every installed `node_modules/@scope/*` with `agents.assetPath`). |
-| `--agent <type>` | **Required outside an interactive TTY.** `claude` \| `codex` \| `agents`, repeatable/comma-separable. |
-| `--asset <kind>` | `skills` \| `rules` \| `commands`. Default: all. An excluded kind is absent from the plan, so it is neither reported nor deleted. |
-| `--yes` | Approve the force dialog without showing it. |
-| `--no-interactive` | Never prompt, even on a TTY; a missing flag exits 2. |
-| `--scope=user` | Home directory (applies globally). |
-| `--scope=project` | Nearest ancestor owning `.claude`, `AGENTS.md`, `.agents`, `.codex` or `.git`; `<cwd>` if none found. |
-| `--dry-run` | Print the copy / skip / warn plan, no writes. |
-| `--force` | Overwrite diverged files & delete orphans (interactive confirm on TTY). |
-| `--root <path>` | Override scope-resolution cwd. |
+| Flag                  | Meaning                                                                                                                                                                                                                                                                                                                                                       |
+| --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `--package <name>`    | **Required.** Repeatable/comma-separable. Accepts `@scope/pkg`, `pkg`, or a scope alias `@scope` (fans out to every installed `node_modules/@scope/*` with `agents.assetPath`).                                                                                                                                                                               |
+| `--agent <type>`      | **Required outside an interactive TTY.** `claude` \| `codex` \| `agents`, repeatable/comma-separable.                                                                                                                                                                                                                                                         |
+| `--asset <kind>`      | `skills` \| `rules` \| `commands`. Default: all. An excluded kind is absent from the plan, so it is neither reported nor deleted.                                                                                                                                                                                                                             |
+| `--asset-path <path>` | Asset root relative to each target's package root — for a package that ships assets in a directory like `agents/` or `docs/` without declaring `agents.assetPath`. Overrides the declaration on every target and hashes that directory at run time, so no `dist/agents-hashes.json` is needed. Must be relative and name a real directory inside the package. |
+| `--yes`               | Approve the force dialog without showing it.                                                                                                                                                                                                                                                                                                                  |
+| `--no-interactive`    | Never prompt, even on a TTY; a missing flag exits 2.                                                                                                                                                                                                                                                                                                          |
+| `--scope=user`        | Home directory (applies globally).                                                                                                                                                                                                                                                                                                                            |
+| `--scope=project`     | Nearest ancestor owning `.claude`, `AGENTS.md`, `.agents`, `.codex` or `.git`; `<cwd>` if none found.                                                                                                                                                                                                                                                         |
+| `--dry-run`           | Print the copy / skip / warn plan, no writes.                                                                                                                                                                                                                                                                                                                 |
+| `--force`             | Overwrite diverged files & delete orphans (interactive confirm on TTY).                                                                                                                                                                                                                                                                                       |
+| `--root <path>`       | Override scope-resolution cwd.                                                                                                                                                                                                                                                                                                                                |
 
-**Exit codes**: `0` success / up-to-date / dry-run, `1` runtime error, `2` user / configuration error (missing `--package`, missing `--scope` in non-TTY, unresolvable package, missing `agents.assetPath`).
+**Exit codes**: `0` success / up-to-date / dry-run, `1` runtime error, `2` user / configuration error (missing `--package`, missing `--scope` in non-TTY, unresolvable package, missing `agents.assetPath` with no `--asset-path`, an `--asset-path` that is absolute or names no directory inside the package).
 
 For `--scope=project` the target `.claude` directory is resolved by walking up from `process.cwd()` to the nearest existing `.claude` ancestor; the CLI logs `(auto-located)` when this happens.
 
@@ -112,13 +116,13 @@ For `--scope=project` the target `.claude` directory is resolved by walking up f
   "name": "@your-scope/your-package",
   "scripts": {
     "build": "… && yarn build:hashes",
-    "build:hashes": "agents-build-hashes"
+    "build:hashes": "agents-build-hashes",
   },
   "devDependencies": {
-    "@slats/agents-assets-sync": "workspace:^"
+    "@slats/agents-assets-sync": "workspace:^",
   },
   "files": ["dist", "docs", "README.md"],
-  "agents": { "assetPath": "docs/agents" }
+  "agents": { "assetPath": "docs/agents" },
 }
 ```
 
@@ -183,13 +187,13 @@ Every file under the asset root is hashed and tracked in `dist/agents-hashes.jso
 
 ```ts
 import {
-  runCli,
+  computeNamespacePrefixes,
   injectDocs,
-  readHashManifest,
-  resolveScope,
   isInteractive,
   isValidScope,
-  computeNamespacePrefixes,
+  readHashManifest,
+  resolveScope,
+  runCli,
 } from '@slats/agents-assets-sync';
 ```
 
@@ -228,13 +232,20 @@ and diverts every diagnostic to stderr, so the whole stream parses:
           "target": {
             "kind": "block",
             "fileAbs": "/repo/AGENTS.md",
-            "blockId": "@canard/schema-form:rules/schema-form-rule.md"
-          }
-        }
+            "blockId": "@canard/schema-form:rules/schema-form-rule.md",
+          },
+        },
       ],
-      "report": { "created": [], "updated": [], "skipped": [], "warnings": [], "deleted": [], "exitCode": 0 }
-    }
-  ]
+      "report": {
+        "created": [],
+        "updated": [],
+        "skipped": [],
+        "warnings": [],
+        "deleted": [],
+        "exitCode": 0,
+      },
+    },
+  ],
 }
 ```
 

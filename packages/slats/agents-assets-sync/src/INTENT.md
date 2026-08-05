@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Shared CLI engine that lets any npm package ship one set of agent docs (skills, rules, commands) and inject them where each coding agent keeps them. The engine owns the `inject-agents-settings` dispatcher; consumers only declare `agents.assetPath` in `package.json` and let `agents-build-hashes` hash their asset tree at build time.
+Shared CLI engine that lets any npm package ship one set of agent docs (skills, rules, commands) and inject them where each coding agent keeps them. The engine owns the `inject-agents-settings` dispatcher; consumers only declare `agents.assetPath` in `package.json` and let `agents-build-hashes` hash their asset tree at build time. A package that declares neither is reachable through `--asset-path`, which names the asset root at run time and hashes it in place.
 
 ## Structure
 
@@ -10,8 +10,9 @@ Shared CLI engine that lets any npm package ship one set of agent docs (skills, 
 - `commands/` — commander root: dispatcher + action
 - `core/` — `hash`, `hashManifest`, `scope`, `agentTarget`, `markerBlock`, `buildPlan`, `injectDocs` primitives
 - `ui/` — Ink React UI for the TTY path (internal, dynamic-imported)
-- `utils/` — logger, asyncPool, types, version (organ)
-- `__tests__/` — end-to-end runs of the built bin, verifying this document's groups
+- `types/` — `DefaultFlags`, `ConsumerPackage`, `AssetType` (organ)
+- `utils/` — logger, asyncPool, version (organ)
+- `__tests__/` — end-to-end runs of the built bin (dry-run contracts, the `--json` document, and one applying round trip), verifying this document's groups
 
 ## Conventions
 

@@ -15,6 +15,7 @@
 - `partitionActions` makes `warn-diverged` executable only when `force` is granted — that is where the CLI's "--force overwrites" promise is kept.
 - Hash computation is deterministic — `hashContent`/`hashFile` use Node's `crypto` module only.
 - `readHashManifest` rejects `schemaVersion !== 1` as an explicit error.
+- A target's source hashes come from one of two places, and `resolveHashManifest` picks by `hashSource`: the stored `dist/agents-hashes.json`, or the asset directory hashed at run time when `--asset-path` named it.
 - Orphan detection runs only the scans the caller supplied. A block scan considers blocks owned by the named package alone, so another package's or another tool's blocks are never proposed for deletion.
 
 ## API Contracts
@@ -34,6 +35,7 @@
 - `removeBlock(content: string, blockId: string): string`
 - `blockBodyMatches(body: string, expected: Sha256Hex): boolean`
 - `MARKER_PREFIX = 'AGENTS-ASSETS-SYNC'`
+- `resolveHashManifest(source: HashManifestSource, generatedAt?: string): Promise<HashManifest>`
 - `readHashManifest(packageRoot: string): Promise<HashManifest>`
 - `computeNamespacePrefixes(manifest: HashManifest): string[]`
 - `buildPlan(input: PlanInput): Promise<InjectPlan>`

@@ -1,7 +1,7 @@
 import { existsSync, readFileSync } from 'node:fs';
-import { readFile } from 'node:fs/promises';
+import { readFile, stat } from 'node:fs/promises';
 import { createRequire } from 'node:module';
-import { dirname, resolve as resolvePath } from 'node:path';
+import { dirname, resolve as resolvePath, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { logger } from '../../../utils/logger.js';
@@ -11,16 +11,24 @@ export interface ResolvedMetadata {
   packageName: string;
   packageVersion: string;
   assetPath: string;
+  /** Which source `assetPath` came from; decides how hashes are obtained. */
+  assetPathSource: 'package' | 'flag';
 }
 
 export interface ResolvePackageOptions {
   /**
-   * When `true`, a package without `agents.assetPath` is warned and the
-   * function returns `null` instead of calling `process.exit`. Default
+   * When `true`, a package whose asset root cannot be established is warned
+   * and the function returns `null` instead of calling `process.exit`. Default
    * `false` preserves the v0.3.0 strict behavior for single-target
    * dispatcher calls.
    */
   skipMissingAsset?: boolean;
+  /**
+   * `--asset-path`. Replaces `agents.assetPath` entirely: its absence is no
+   * longer checked, and the path is validated against this package's root
+   * instead.
+   */
+  assetPathOverride?: string;
 }
 
 // Dispatcher exception to the src/core purity rule: the bin layer is
@@ -59,6 +67,29 @@ export async function resolvePackage(
     process.exit(2);
   }
 
+  const override = options.assetPathOverride;
+  if (override !== undefined) {
+    if (!(await isDirectoryInside(packageRoot, override))) {
+      if (options.skipMissingAsset) {
+        logger.warn(
+          `"${name}": --asset-path "${override}" is not a directory inside the package — skipping.`,
+        );
+        return null;
+      }
+      logger.error(
+        `"${name}": --asset-path "${override}" is not a directory inside ${packageRoot}.`,
+      );
+      process.exit(2);
+    }
+    return {
+      packageRoot,
+      packageName: pkg.name,
+      packageVersion: pkg.version,
+      assetPath: override,
+      assetPathSource: 'flag',
+    };
+  }
+
   const assetPath = pkg.agents?.assetPath;
   if (typeof assetPath !== 'string' || assetPath.length === 0) {
     if (options.skipMissingAsset) {
@@ -78,7 +109,24 @@ export async function resolvePackage(
     packageName: pkg.name,
     packageVersion: pkg.version,
     assetPath,
+    assetPathSource: 'package',
   };
+}
+
+// `--asset-path` is user input applied to every target, so it is checked per
+// package: it must stay inside that package and name a real directory. A
+// `..` segment escaping the root would let one target's flag read another
+// package's tree.
+async function isDirectoryInside(
+  packageRoot: string,
+  relPath: string,
+): Promise<boolean> {
+  const abs = resolvePath(packageRoot, relPath);
+  if (abs !== packageRoot && !abs.startsWith(packageRoot + sep)) return false;
+  return stat(abs).then(
+    (entry) => entry.isDirectory(),
+    () => false,
+  );
 }
 
 // Two-pass resolution: caller's cwd first (so `npx -p` invocations see
