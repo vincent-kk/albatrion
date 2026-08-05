@@ -21,7 +21,7 @@ vi.mock('../../../utils/logger.js', () => ({
   },
 }));
 
-import { resolvePackage } from '../utils/resolvePackage.js';
+import { resolvePackage } from '../targets/resolvePackage.js';
 import { logger } from '../../../utils/logger.js';
 
 const errorMock = vi.mocked(logger.error);

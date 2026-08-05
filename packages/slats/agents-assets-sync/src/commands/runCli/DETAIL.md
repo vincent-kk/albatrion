@@ -17,7 +17,7 @@
 - asset 누락 정책은 `--package` 값의 개수로 갈린다. 값이 정확히 하나이고 그 값이 패키지 이름이면 strict 다 — `agents.assetPath` 가 없으면 2로 종료한다. 값이 여럿이면 soft skip 이라 나머지 배치가 계속된다.
 - scope alias 는 언제나 soft skip 으로 열거된다. workspace 안의 어떤 패키지가 asset 을 선언하지 않는 것은 정상이기 때문이다.
 - scope 열거는 `<cwd>/node_modules/@<scope>/*` 를 파일시스템 루트까지 거슬러 올라가며 훑는다. 디렉터리 이름은 선언된 패키지 이름과 다를 수 있으므로 권위는 `package.json` 의 `name` 필드에 있고, 중첩 설치는 nearest-wins 로 중복 제거된다.
-- scope 열거는 `utils/resolveScopeAlias.ts` 안에만 있다. `runCli/**` 의 다른 어떤 파일도 형제 `package.json` 을 읽지 않는다.
+- scope 열거는 `targets/resolveScopeAlias.ts` 안에만 있다. `runCli/**` 의 다른 어떤 파일도 형제 `package.json` 을 읽지 않는다.
 - 해석된 target 은 렌더링 전에 `packageName` 으로 중복 제거된다.
 - commander 의 program name 은 런타임에 `argv[1]` 의 basename 에서 파생된다. `npx @slats/agents-assets-sync` 와 설치된 `inject-agents-settings` 가 각각 자기 이름으로 도움말과 오류를 낸다.
 - 렌더러가 0이 아닌 코드를 돌려주면 그 코드로 프로세스가 종료된다.

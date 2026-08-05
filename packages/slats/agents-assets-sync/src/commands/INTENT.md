@@ -15,7 +15,7 @@ Commander action handlers. The only public entry is `runCli(argv)`, which parses
 ### Always do
 
 - Route user-facing errors through `process.exit(<code>)` with documented exit codes 0 / 1 / 2
-- Branch TTY vs plain path exactly once, via `runCli/utils/renderOrFallback.ts`
+- Branch TTY vs plain path exactly once, via `runCli/renderers/renderOrFallback.ts`
 
 ### Ask first
 
@@ -23,6 +23,6 @@ Commander action handlers. The only public entry is `runCli(argv)`, which parses
 
 ### Never do
 
-- Import from `ui/` statically; only `runCli/utils/renderOrFallback.ts` may dynamic-import it
+- Import from `ui/` statically; only `runCli/renderers/renderOrFallback.ts` may dynamic-import it
 - Reach into a sub-fractal's internal files; always use its `index.ts`
-- Walk `node_modules` outside `runCli/utils/resolveScopeAlias.ts`. That file is the SOLE `node_modules`-enumeration exception.
+- Walk `node_modules` outside `runCli/targets/resolveScopeAlias.ts`. That file is the SOLE `node_modules`-enumeration exception.

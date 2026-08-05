@@ -8,21 +8,17 @@ Sole `inject-agents-settings` CLI driver. Parses `--package <name...>` from argv
 
 - `index.ts` — barrel export (`runCli`, `DefaultFlags`)
 - `runCli.ts` — commander root + default action
-- `type.ts` — `DefaultFlags`, `ConsumerPackage`
-- `utils/classifyTarget.ts` — pure classifier (scope | package | invalid)
-- `utils/resolvePackage.ts` — dispatcher single-target resolve
-- `utils/resolveScopeAlias.ts` — scope→packages enumeration (isolated)
-- `utils/resolveTargets.ts` — classify/resolve/dedupe orchestrator
-- `utils/resolveScopeFlag.ts` — `--scope` validator (+ `parseScopeFlag`)
-- `utils/resolveAgentFlag.ts` — `--agent` validator (+ `parseAgentFlag`)
-- `utils/resolveAssetFlag.ts` — `--asset` validator (+ `parseAssetFlag`)
-- `utils/toConsumerPackages.ts` — `ResolvedMetadata` → `ConsumerPackage`
-- `utils/renderOrFallback.ts` — renderer branch + dynamic UI import
-- `utils/renderPlain.ts` — non-TTY / `--no-interactive` renderer
-- `utils/renderJson.ts` — `--json` single-document renderer
+- `__tests__/` — spec-documents bound to this document's acceptance groups
+- `targets/` — argv `--package` values → `ConsumerPackage[]` (organ):
+  `classifyTarget`, `resolvePackage`, `resolveScopeAlias`, `resolveTargets`, `toConsumerPackages`
+- `flags/` — one CLI flag value → a validated value (organ):
+  `resolveScopeFlag`, `resolveAgentFlag`, `resolveAssetFlag`
+- `renderers/` — the three mutually exclusive output paths (organ):
+  `renderOrFallback`, `renderPlain`, `renderJson`
 
 ## Conventions
 
+- The organs are the pipeline's stages and the dependency runs one way: `runCli.ts` drives `targets/` then `renderers/`, and `renderers/` reads `flags/`. Nothing in `targets/` touches the other two. `targets/` does filesystem and module resolution while `flags/` is pure value validation — that difference is why they are not one directory.
 - Each flag validator has two forms: `resolve*Flag` exits 2, `parse*Flag` returns the failure as a value — `renderJson` cannot exit mid-document.
 
 ## Boundaries
@@ -38,6 +34,6 @@ Sole `inject-agents-settings` CLI driver. Parses `--package <name...>` from argv
 
 ### Never do
 
-- Walk `node_modules` outside `utils/resolveScopeAlias.ts`
-- Import from `ui/` statically; only `utils/renderOrFallback.ts` may dynamic-import it
+- Walk `node_modules` outside `targets/resolveScopeAlias.ts`
+- Import from `ui/` statically; only `renderers/renderOrFallback.ts` may dynamic-import it
 - Import from `core/` internals; always go through `core/index.ts`

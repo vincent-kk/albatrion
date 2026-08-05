@@ -6,7 +6,7 @@ Engine + dispatcher CLI that lets any npm package ship its own Claude Code docs 
 
 A consumer package declares `agents.assetPath` in `package.json` and runs `agents-build-hashes` during build to emit `dist/agents-hashes.json`. End users run `npx @slats/agents-assets-sync --package=<name>` and this engine resolves each consumer's metadata, compares its hash manifest against the target `.claude/`, and copies only what is out of date.
 
-`--package` accepts a scoped name (`@scope/pkg`), an unscoped name (`pkg`), or a **scope alias** (`@scope` with no slash) that fans out to every installed `node_modules/@scope/*` package declaring `agents.assetPath`. Single-target resolution uses `createRequire`; scope-alias enumeration walks ancestor `node_modules/@<scope>/` directories from `cwd` upward and is isolated to `runCli/utils/resolveScopeAlias.ts`.
+`--package` accepts a scoped name (`@scope/pkg`), an unscoped name (`pkg`), or a **scope alias** (`@scope` with no slash) that fans out to every installed `node_modules/@scope/*` package declaring `agents.assetPath`. Single-target resolution uses `createRequire`; scope-alias enumeration walks ancestor `node_modules/@<scope>/` directories from `cwd` upward and is isolated to `runCli/targets/resolveScopeAlias.ts`.
 
 No GitHub fetch, no `.sync-meta.json`, no migrations — the consumer's `dist/agents-hashes.json` is the single source of truth.
 
@@ -175,7 +175,7 @@ Every file under the asset root is hashed and tracked in `dist/agents-hashes.jso
 
 ## Architectural Invariants
 
-- `src/core/**` never reads `package.json` or walks the filesystem. Only the `bin/` layer (and `src/commands/runCli/utils/resolvePackage.ts`, invoked from that dispatcher) is allowed to resolve a single explicitly-named target via `createRequire().resolve('${name}/package.json')`. Cross-package discovery (`--all`, workspace scan) is not supported.
+- `src/core/**` never reads `package.json` or walks the filesystem. Only the `bin/` layer (and `src/commands/runCli/targets/resolvePackage.ts`, invoked from that dispatcher) is allowed to resolve a single explicitly-named target via `createRequire().resolve('${name}/package.json')`. Cross-package discovery (`--all`, workspace scan) is not supported.
 - Prompts go through `@inquirer/prompts` only. No ink, no React.
 - The engine assumes one consumer per invocation. That is the stable contract — extensions require explicit re-architecture.
 

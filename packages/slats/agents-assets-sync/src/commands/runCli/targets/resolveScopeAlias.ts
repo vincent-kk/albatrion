@@ -5,7 +5,7 @@ import { dirname, join, resolve as resolvePath } from 'node:path';
 import { logger } from '../../../utils/logger.js';
 import { type ResolvedMetadata, resolvePackage } from './resolvePackage.js';
 
-// `runCli/utils/resolveScopeAlias.ts` is the SOLE file in this package
+// `runCli/targets/resolveScopeAlias.ts` is the SOLE file in this package
 // permitted to enumerate node_modules siblings. Scope aliases
 // (`--package @<scope>`) expand here by walking every ancestor of
 // `rootCwd` and reading `<ancestor>/node_modules/@<scope>/*/package.json`.

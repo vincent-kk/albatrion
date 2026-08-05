@@ -2,10 +2,10 @@
 
 ## Requirements
 
-- `runCli(argv)` 는 유일한 CLI 진입점이다. argv 에서 `--package <name...>` 을 읽어 각 값을 분류하고, 디스패처 계층 (`runCli/utils/resolvePackage.ts` — 단일 패키지, `runCli/utils/resolveScopeAlias.ts` — scope alias) 을 통해 모든 target 을 해석한다. 이 계층은 미리 해석된 메타데이터를 받지 않는다.
+- `runCli(argv)` 는 유일한 CLI 진입점이다. argv 에서 `--package <name...>` 을 읽어 각 값을 분류하고, 디스패처 계층 (`runCli/targets/resolvePackage.ts` — 단일 패키지, `runCli/targets/resolveScopeAlias.ts` — scope alias) 을 통해 모든 target 을 해석한다. 이 계층은 미리 해석된 메타데이터를 받지 않는다.
 - 플래그: `--package <name...>`, `--agent <type...>`, `--scope <user|project>`, `--asset <kind...>`, `--dry-run`, `--force`, `--yes`, `--no-interactive`, `--root`, `--json`.
 - `--scope` 는 설정을 쓸 위치를 고르는 것이지 npm scope 선택자가 아니다.
-- 렌더러 선택은 `runCli/utils/renderOrFallback.ts` 한 곳에서, 실행당 한 번만 일어난다. 순서가 계약이다:
+- 렌더러 선택은 `runCli/renderers/renderOrFallback.ts` 한 곳에서, 실행당 한 번만 일어난다. 순서가 계약이다:
   - `--json` → `renderJson` (TTY 여부와 무관하게 먼저 이긴다)
   - 그 외에 비TTY 이거나 `--no-interactive` → `renderPlain`
   - 나머지 (TTY 이면서 프롬프트가 허용됨) → `ui/` 를 동적 import 하여 `renderInjectApp(input)`
@@ -25,7 +25,7 @@
 
 ## Acceptance Criteria
 
-`--package` 값의 분류와 단일 패키지 해석, scope alias 열거의 승인 그룹은 `runCli/DETAIL.md` 가 소유한다. 대상 단위(`classifyTarget`, `resolvePackage`, `resolveScopeAlias`)가 `runCli/utils/` 에 있고, 그 spec-document 도 `runCli/__tests__/` 에서 마커로 결속하기 때문이다.
+`--package` 값의 분류와 단일 패키지 해석, scope alias 열거의 승인 그룹은 `runCli/DETAIL.md` 가 소유한다. 대상 단위(`classifyTarget`, `resolvePackage`, `resolveScopeAlias`)가 `runCli/targets/` 에 있고, 그 spec-document 도 `runCli/__tests__/` 에서 마커로 결속하기 때문이다.
 
 ### AC-CMD-RENDERER — 렌더러는 한 번, 정해진 순서로 선택된다
 

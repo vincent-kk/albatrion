@@ -61,7 +61,7 @@ Repeat any variadic flag or comma-separate values. Targets are deduped by resolv
 
 `--json` selects `renderJson`, which writes exactly one JSON document to stdout and diverts every diagnostic to stderr — a single stray log line would make the stream unparseable. Non-TTY and `--no-interactive` take `renderPlain` instead. One `unit` per (package, agent) pair; flag errors arrive as `errors` with `exitCode: 2` rather than loose text.
 
-Workspace enumeration (scope alias) is confined to `src/commands/runCli/utils/resolveScopeAlias.ts`.
+Workspace enumeration (scope alias) is confined to `src/commands/runCli/targets/resolveScopeAlias.ts`.
 
 ## Agent Destinations
 
@@ -134,15 +134,17 @@ src/
 ├── commands/
 │   └── runCli/
 │       ├── runCli.ts               # commander root + action
-│       └── utils/
-│           ├── classifyTarget.ts   # pure: scope | package | invalid
-│           ├── resolvePackage.ts   # single-target resolve
-│           ├── resolveScopeAlias.ts# scope → packages enumeration (only enumerator)
-│           ├── resolveTargets.ts   # classify/resolve/dedupe orchestrator
-│           ├── resolveScopeFlag.ts # plain-path scope flag validator
-│           ├── resolveAgentFlag.ts # --agent validator (exits 2 when non-interactive)
-│           ├── resolveAssetFlag.ts # --asset validator → Set<AssetKind>
-│           ├── toConsumerPackages.ts # metadata → ConsumerPackage
+│       ├── targets/                # argv --package values → ConsumerPackage[]
+│       │   ├── classifyTarget.ts   # pure: scope | package | invalid
+│       │   ├── resolvePackage.ts   # single-target resolve
+│       │   ├── resolveScopeAlias.ts# scope → packages enumeration (only enumerator)
+│       │   ├── resolveTargets.ts   # classify/resolve/dedupe orchestrator
+│       │   └── toConsumerPackages.ts # metadata → ConsumerPackage
+│       ├── flags/                  # one CLI flag value → a validated value
+│       │   ├── resolveScopeFlag.ts # plain-path scope flag validator
+│       │   ├── resolveAgentFlag.ts # --agent validator (exits 2 when non-interactive)
+│       │   └── resolveAssetFlag.ts # --asset validator → Set<AssetKind>
+│       └── renderers/              # the three mutually exclusive output paths
 │           ├── renderOrFallback.ts # TTY vs plain branch + dynamic UI import
 │           ├── renderPlain.ts      # non-TTY / --no-interactive picocolors renderer
 │           └── renderJson.ts       # --json single-document renderer

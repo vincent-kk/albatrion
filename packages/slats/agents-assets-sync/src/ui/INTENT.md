@@ -2,7 +2,7 @@
 
 ## Purpose
 
-React + Ink UI layer for the TTY path of `inject-agents-settings`. Exposes `renderInjectApp(input)` which mounts an Ink app that picks agents and scope, builds per-target plans, requests force-confirm, applies actions, and returns a final exit code. Reached only through dynamic `import('./ui/index.js')` from `commands/runCli/utils/renderOrFallback.ts`; not a public subpath.
+React + Ink UI layer for the TTY path of `inject-agents-settings`. Exposes `renderInjectApp(input)` which mounts an Ink app that picks agents and scope, builds per-target plans, requests force-confirm, applies actions, and returns a final exit code. Reached only through dynamic `import('./ui/index.js')` from `commands/runCli/renderers/renderOrFallback.ts`; not a public subpath.
 
 ## Structure
 

@@ -18,7 +18,7 @@ import {
 // forwards names it has already vetted against the declared
 // `package.json` `name`, so a straight echo is enough to verify the
 // enumeration wiring and dedup semantics.
-vi.mock('../utils/resolvePackage.js', () => ({
+vi.mock('../targets/resolvePackage.js', () => ({
   resolvePackage: vi.fn(async (name: string) => ({
     packageRoot: `/fake/${name}`,
     packageName: name,
@@ -35,8 +35,8 @@ vi.mock('../../../utils/logger.js', () => ({
   },
 }));
 
-import { resolvePackage } from '../utils/resolvePackage.js';
-import { resolveScopeAlias } from '../utils/resolveScopeAlias.js';
+import { resolvePackage } from '../targets/resolvePackage.js';
+import { resolveScopeAlias } from '../targets/resolveScopeAlias.js';
 
 const resolvePackageMock = vi.mocked(resolvePackage);
 

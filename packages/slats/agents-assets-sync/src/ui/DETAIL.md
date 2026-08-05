@@ -47,7 +47,7 @@ entry point 표면 밖의 내부 단위다. 바꿔도 공개 계약 변경이 �
 
 ## Module access
 
-- 내부 전용. `commands/runCli/utils/renderOrFallback.ts` 에서 `await import('../../../ui/index.js')` 로만 도달한다. 패키지 subpath 로 노출되지 않는다.
+- 내부 전용. `commands/runCli/renderers/renderOrFallback.ts` 에서 `await import('../../../ui/index.js')` 로만 도달한다. 패키지 subpath 로 노출되지 않는다.
 
 ## Acceptance Criteria
 

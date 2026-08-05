@@ -6,7 +6,7 @@
 
 컨슈머 패키지는 `package.json` 에 `agents.assetPath` 를 선언하고, 빌드 중 `agents-build-hashes` 를 실행해 `dist/agents-hashes.json` 을 생성합니다. 최종 사용자는 `npx @slats/agents-assets-sync --package=<name>` 을 실행하고, 이 엔진은 각 컨슈머의 메타데이터를 해석해 파일별 SHA-256 매니페스트를 대상 `.claude/` 와 비교하여 변경이 필요한 파일만 복사합니다.
 
-`--package` 는 scoped 이름 (`@scope/pkg`), unscoped 이름 (`pkg`), 또는 **scope alias** (`@scope` — 슬래시 없음) 를 받습니다. scope alias 는 설치된 `node_modules/@scope/*` 중 `agents.assetPath` 를 선언한 모든 패키지로 전개됩니다. 단일 타깃은 `createRequire` 로 해석되고, scope alias 열거는 `cwd` 에서 상위로 올라가며 각 조상의 `node_modules/@<scope>/` 디렉토리를 훑으며 `runCli/utils/resolveScopeAlias.ts` 에 격리돼 있습니다.
+`--package` 는 scoped 이름 (`@scope/pkg`), unscoped 이름 (`pkg`), 또는 **scope alias** (`@scope` — 슬래시 없음) 를 받습니다. scope alias 는 설치된 `node_modules/@scope/*` 중 `agents.assetPath` 를 선언한 모든 패키지로 전개됩니다. 단일 타깃은 `createRequire` 로 해석되고, scope alias 열거는 `cwd` 에서 상위로 올라가며 각 조상의 `node_modules/@<scope>/` 디렉토리를 훑으며 `runCli/targets/resolveScopeAlias.ts` 에 격리돼 있습니다.
 
 GitHub fetch 없음, `.sync-meta.json` 없음, 마이그레이션 없음 — 컨슈머의 `dist/agents-hashes.json` 이 유일한 진실의 원천입니다.
 
@@ -214,7 +214,7 @@ asset 루트 하위의 모든 파일은 해시되어 `dist/agents-hashes.json` �
 
 ## 아키텍처 불변식
 
-- `src/core/**` 는 `package.json` 을 읽거나 filesystem 을 walk 하지 않습니다. `bin/` 계층 (그리고 dispatcher 에서 호출되는 `src/commands/runCli/utils/resolvePackage.ts`) 만이 `createRequire().resolve('${name}/package.json')` 로 **명시된 단일** 타겟을 해석할 수 있습니다. 복수 탐색 (`--all`, workspace scan) 은 지원하지 않습니다.
+- `src/core/**` 는 `package.json` 을 읽거나 filesystem 을 walk 하지 않습니다. `bin/` 계층 (그리고 dispatcher 에서 호출되는 `src/commands/runCli/targets/resolvePackage.ts`) 만이 `createRequire().resolve('${name}/package.json')` 로 **명시된 단일** 타겟을 해석할 수 있습니다. 복수 탐색 (`--all`, workspace scan) 은 지원하지 않습니다.
 - 프롬프트는 `@inquirer/prompts` 만 경유합니다. ink / react 금지.
 - 엔진은 호출 1회당 컨슈머 1개라는 계약을 유지합니다 — 확장하려면 명시적 재설계 필요.
 

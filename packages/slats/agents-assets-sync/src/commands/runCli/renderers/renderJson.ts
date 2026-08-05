@@ -17,9 +17,9 @@ import {
 import { asyncPool } from '../../../utils/asyncPool.js';
 import { VERSION } from '../../../utils/version.js';
 import type { ConsumerPackage, DefaultFlags } from '../../../types/index.js';
-import { parseAgentFlag } from './resolveAgentFlag.js';
-import { parseAssetFlag } from './resolveAssetFlag.js';
-import { parseScopeFlag } from './resolveScopeFlag.js';
+import { parseAgentFlag } from '../flags/resolveAgentFlag.js';
+import { parseAssetFlag } from '../flags/resolveAssetFlag.js';
+import { parseScopeFlag } from '../flags/resolveScopeFlag.js';
 
 const COPY_CONCURRENCY = 8;
 

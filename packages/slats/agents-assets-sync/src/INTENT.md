@@ -26,7 +26,7 @@ Shared CLI engine that lets any npm package ship one set of agent docs (skills, 
 
 - Keep `core/` UI-free; both renderers compose its primitives directly
 - Route cross-fractal imports through each sibling's `index.ts`
-- Load `ui/` only from `commands/runCli/utils/renderOrFallback.ts`, by dynamic import; `src/index.ts` MUST NOT re-export from `ui/`
+- Load `ui/` only from `commands/runCli/renderers/renderOrFallback.ts`, by dynamic import; `src/index.ts` MUST NOT re-export from `ui/`
 
 ### Ask first
 

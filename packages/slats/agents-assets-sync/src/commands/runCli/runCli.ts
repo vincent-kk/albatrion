@@ -5,9 +5,9 @@ import { Command } from 'commander';
 import { divertLogsToStderr, logger } from '../../utils/logger.js';
 import { VERSION } from '../../utils/version.js';
 import type { DefaultFlags } from '../../types/index.js';
-import { renderOrFallback } from './utils/renderOrFallback.js';
-import { resolveTargets } from './utils/resolveTargets.js';
-import { toConsumerPackages } from './utils/toConsumerPackages.js';
+import { renderOrFallback } from './renderers/renderOrFallback.js';
+import { resolveTargets } from './targets/resolveTargets.js';
+import { toConsumerPackages } from './targets/toConsumerPackages.js';
 
 const FALLBACK_PROGRAM_NAME = 'inject-agents-settings';
 
