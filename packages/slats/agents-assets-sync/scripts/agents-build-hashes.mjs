@@ -35,7 +35,9 @@ try {
     packageVersion: pkg.version,
     assetPath,
   });
-  console.log(`✓ agents-hashes.json written: ${fileCount} file(s) → ${outPath}`);
+  console.log(
+    `✓ agents-hashes.json written: ${fileCount} file(s) → ${outPath}`,
+  );
 } catch (err) {
   console.error('❌ buildHashes failed:', err?.message ?? err);
   process.exit(1);

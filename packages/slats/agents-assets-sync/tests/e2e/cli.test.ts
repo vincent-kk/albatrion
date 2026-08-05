@@ -3,6 +3,7 @@ import { existsSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -17,10 +18,14 @@ const REPO_ROOT = resolve(__dirname, '../../../../..');
 let scratchRoot: string;
 
 function runCliFrom(root: string, args: readonly string[]) {
-  return spawnSync(process.execPath, [BIN_PATH, ...args, '--dry-run', '--root', root], {
-    encoding: 'utf-8',
-    cwd: REPO_ROOT,
-  });
+  return spawnSync(
+    process.execPath,
+    [BIN_PATH, ...args, '--dry-run', '--root', root],
+    {
+      encoding: 'utf-8',
+      cwd: REPO_ROOT,
+    },
+  );
 }
 
 function runCli(args: readonly string[]) {

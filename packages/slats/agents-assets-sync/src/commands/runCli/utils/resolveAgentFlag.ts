@@ -27,6 +27,8 @@ export function resolveAgentFlag(
 
   if (interactive) return [];
   logger.error('--agent is required in non-interactive environments.');
-  logger.error('  Pass --agent=claude, --agent=codex, or --agent=claude,codex.');
+  logger.error(
+    '  Pass --agent=claude, --agent=codex, or --agent=claude,codex.',
+  );
   process.exit(2);
 }

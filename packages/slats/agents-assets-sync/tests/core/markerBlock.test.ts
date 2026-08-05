@@ -85,8 +85,9 @@ describe('core/markerBlock', () => {
     const doc = upsertBlock('', ID, noTrailing);
     // One newline is added so the END marker owns its own line; the body is
     // recovered by hash comparison rather than by exact bytes.
-    expect(blockBodyMatches(findBlockBody(doc, ID)!, hashContent(noTrailing)))
-      .toBe(true);
+    expect(
+      blockBodyMatches(findBlockBody(doc, ID)!, hashContent(noTrailing)),
+    ).toBe(true);
   });
 
   it('blockBodyMatches accepts an exact body and rejects a changed one', () => {

@@ -1,4 +1,4 @@
-import { hashContent, hashEquals, type Sha256Hex } from '../hash/index.js';
+import { type Sha256Hex, hashContent, hashEquals } from '../hash/index.js';
 import {
   createBlockPattern,
   endMarker,
@@ -87,7 +87,8 @@ export function upsertBlock(
   const found = locateBlock(content, blockId);
   if (found)
     return content.slice(0, found.start) + rendered + content.slice(found.end);
-  const base = content.length > 0 && !content.endsWith('\n') ? `${content}\n` : content;
+  const base =
+    content.length > 0 && !content.endsWith('\n') ? `${content}\n` : content;
   return base + rendered;
 }
 

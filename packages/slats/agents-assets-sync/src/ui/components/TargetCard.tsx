@@ -1,10 +1,10 @@
-import type React from 'react';
 import { Box, Text } from 'ink';
+import type React from 'react';
 
+import type { ConsumerPackage } from '../../commands/runCli/type.js';
 import type { Action, AgentType, InjectPlan } from '../../core/index.js';
 import { colors } from '../theme/colors.js';
 import { icons } from '../theme/icons.js';
-import type { ConsumerPackage } from '../../commands/runCli/type.js';
 import { PlanTable } from './PlanTable.js';
 
 interface TargetCardProps {
@@ -57,9 +57,7 @@ export function TargetCard({
         <Text color={highlighted ? colors.accent : colors.primary} bold>
           {icons.triangleRight}{' '}
         </Text>
-        <Text bold>
-          {target.name}
-        </Text>
+        <Text bold>{target.name}</Text>
         <Text color={colors.muted} dimColor>
           @{target.version}
         </Text>

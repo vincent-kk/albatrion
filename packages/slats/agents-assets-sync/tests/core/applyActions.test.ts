@@ -1,6 +1,7 @@
 import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
+
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
 import type { Action } from '../../src/core/buildPlan/index.js';
@@ -9,23 +10,39 @@ import {
   applyBlockActions,
   partitionActions,
 } from '../../src/core/injectDocs/index.js';
-import { formatBlockId, upsertBlock } from '../../src/core/markerBlock/index.js';
+import {
+  formatBlockId,
+  upsertBlock,
+} from '../../src/core/markerBlock/index.js';
 
 const PKG = '@canard/schema-form';
 const RULE = 'rules/form-rule.md';
 const RULE_BODY = '# Form Rule\n\nValidate at the boundary.\n';
 const RULE_ID = formatBlockId(PKG, RULE);
 
-function blockAction(kind: Action['kind'], fileAbs: string, blockId: string, relPath: string): Action {
+function blockAction(
+  kind: Action['kind'],
+  fileAbs: string,
+  blockId: string,
+  relPath: string,
+): Action {
   return { kind, relPath, target: { kind: 'block', fileAbs, blockId } };
 }
 
 describe('core/injectDocs — partitionActions', () => {
   const fileTarget = { kind: 'file', dstAbs: '/tmp/a.md' } as const;
-  const blockTarget = { kind: 'block', fileAbs: '/tmp/AGENTS.md', blockId: RULE_ID } as const;
+  const blockTarget = {
+    kind: 'block',
+    fileAbs: '/tmp/AGENTS.md',
+    blockId: RULE_ID,
+  } as const;
 
   it('routes file and block work apart, grouping blocks by document', () => {
-    const other = { kind: 'block', fileAbs: '/tmp/other.md', blockId: RULE_ID } as const;
+    const other = {
+      kind: 'block',
+      fileAbs: '/tmp/other.md',
+      blockId: RULE_ID,
+    } as const;
     const { fileActions, blockGroups } = partitionActions(
       [
         { kind: 'copy', relPath: 'skills/a.md', target: fileTarget },
@@ -35,7 +52,10 @@ describe('core/injectDocs — partitionActions', () => {
       false,
     );
     expect(fileActions).toHaveLength(1);
-    expect([...blockGroups.keys()]).toEqual(['/tmp/AGENTS.md', '/tmp/other.md']);
+    expect([...blockGroups.keys()]).toEqual([
+      '/tmp/AGENTS.md',
+      '/tmp/other.md',
+    ]);
   });
 
   it('drops non-executable verdicts', () => {
@@ -93,7 +113,8 @@ describe('core/injectDocs — applyBlockActions', () => {
   });
 
   it('appends to an existing document without disturbing foreign content', async () => {
-    const original = '<!-- FILID:START:x.md -->\n# X\n<!-- FILID:END:x.md -->\n\nNotes.\n';
+    const original =
+      '<!-- FILID:START:x.md -->\n# X\n<!-- FILID:END:x.md -->\n\nNotes.\n';
     await mkdir(join(tmp, 'nested'), { recursive: true });
     await writeFile(agentsMd, original, 'utf-8');
 
@@ -142,14 +163,20 @@ describe('core/injectDocs — applyBlockActions', () => {
       [blockAction('warn-diverged', agentsMd, RULE_ID, RULE)],
       assetRoot,
     );
-    expect(await readFile(agentsMd, 'utf-8')).toContain('Validate at the boundary.');
+    expect(await readFile(agentsMd, 'utf-8')).toContain(
+      'Validate at the boundary.',
+    );
   });
 
   it('deletes only the named block, keeping a foreign one intact', async () => {
     const foreignId = formatBlockId('@winglet/json', 'rules/json.md');
     await mkdir(join(tmp, 'nested'), { recursive: true });
     const original = upsertBlock('', foreignId, '# JSON\n');
-    await writeFile(agentsMd, upsertBlock(original, RULE_ID, RULE_BODY), 'utf-8');
+    await writeFile(
+      agentsMd,
+      upsertBlock(original, RULE_ID, RULE_BODY),
+      'utf-8',
+    );
 
     await applyBlockActions(
       agentsMd,
@@ -188,7 +215,11 @@ describe('core/injectDocs — applyAction', () => {
   it('copies a file, creating missing parent directories', async () => {
     const dstAbs = join(tmp, 'out', 'skills', 'a.md');
     await applyAction(
-      { kind: 'copy', relPath: 'skills/a.md', target: { kind: 'file', dstAbs } },
+      {
+        kind: 'copy',
+        relPath: 'skills/a.md',
+        target: { kind: 'file', dstAbs },
+      },
       join(tmp, 'assets'),
     );
     expect(await readFile(dstAbs, 'utf-8')).toBe('source\n');

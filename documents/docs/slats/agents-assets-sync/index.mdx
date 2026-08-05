@@ -39,26 +39,26 @@ npx @slats/agents-assets-sync \
       [--dry-run] [--force] [--yes] [--no-interactive] [--root=<cwd>] [--json]
 ```
 
-| Flag | Meaning |
-|---|---|
+| Flag               | Meaning                                                                                                                             |
+| ------------------ | ----------------------------------------------------------------------------------------------------------------------------------- |
 | `--package <name>` | **Required.** `@scope/pkg`, `pkg`, or a scope alias `@scope` that fans out to every installed package declaring `agents.assetPath`. |
-| `--agent <type>` | `claude` \| `codex`. Omitted, an interactive terminal asks; anywhere else the run exits 2. |
-| `--scope` | `user` (home) or `project` (nearest ancestor owning `.claude`, `AGENTS.md`, `.codex` or `.git`). |
-| `--asset <kind>` | `skills` \| `rules` \| `commands`. Default: all. An excluded kind is absent from the plan, so it is neither reported nor deleted. |
-| `--dry-run` | Print the plan; write nothing. |
-| `--force` | Overwrite diverged content and delete orphans. |
-| `--yes` | Approve the confirmation without showing it. |
-| `--no-interactive` | Never prompt, even on a terminal. |
+| `--agent <type>`   | `claude` \| `codex`. Omitted, an interactive terminal asks; anywhere else the run exits 2.                                          |
+| `--scope`          | `user` (home) or `project` (nearest ancestor owning `.claude`, `AGENTS.md`, `.codex` or `.git`).                                    |
+| `--asset <kind>`   | `skills` \| `rules` \| `commands`. Default: all. An excluded kind is absent from the plan, so it is neither reported nor deleted.   |
+| `--dry-run`        | Print the plan; write nothing.                                                                                                      |
+| `--force`          | Overwrite diverged content and delete orphans.                                                                                      |
+| `--yes`            | Approve the confirmation without showing it.                                                                                        |
+| `--no-interactive` | Never prompt, even on a terminal.                                                                                                   |
 
 ## Agent destinations
 
 Both agents resolve from one shared project root, so a single run cannot
 straddle two projects.
 
-| Kind | claude | codex |
-|---|---|---|
-| `skills` | `<root>/.claude/skills/**` | `<root>/.codex/skills/**` |
-| `rules` | `<root>/.claude/rules/**` | marker block in `AGENTS.md` |
+| Kind       | claude                       | codex                               |
+| ---------- | ---------------------------- | ----------------------------------- |
+| `skills`   | `<root>/.claude/skills/**`   | `<root>/.codex/skills/**`           |
+| `rules`    | `<root>/.claude/rules/**`    | marker block in `AGENTS.md`         |
 | `commands` | `<root>/.claude/commands/**` | unsupported — skipped with a reason |
 
 One rule file becomes one marker block, so its body hash equals the manifest
@@ -80,15 +80,15 @@ prose — is carried through byte for byte.
 {
   "scripts": {
     "build": "… && yarn build:hashes",
-    "build:hashes": "agents-build-hashes"
+    "build:hashes": "agents-build-hashes",
   },
   "devDependencies": {
-    "@slats/agents-assets-sync": "^0.1.0"
+    "@slats/agents-assets-sync": "^0.1.0",
   },
   "files": ["dist", "docs", "README.md"],
   "agents": {
-    "assetPath": "docs/agents"
-  }
+    "assetPath": "docs/agents",
+  },
 }
 ```
 

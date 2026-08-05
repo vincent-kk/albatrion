@@ -22,7 +22,8 @@ export function summarize(plan: InjectPlan, exitCode: 0 | 1 | 2): InjectReport {
   };
   for (const action of plan.actions) {
     if (action.kind === 'copy') report.created.push(action.relPath);
-    else if (action.kind === 'skip-uptodate') report.skipped.push(action.relPath);
+    else if (action.kind === 'skip-uptodate')
+      report.skipped.push(action.relPath);
     else if (action.kind === 'skip-unsupported')
       report.skipped.push(action.relPath);
     else if (action.kind === 'warn-diverged')

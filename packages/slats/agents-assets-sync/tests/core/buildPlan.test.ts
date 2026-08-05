@@ -1,12 +1,19 @@
 import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
+
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
-import type { Destination, OrphanScan } from '../../src/core/agentTarget/index.js';
+import type {
+  Destination,
+  OrphanScan,
+} from '../../src/core/agentTarget/index.js';
 import { buildPlan } from '../../src/core/buildPlan/index.js';
 import { hashContent } from '../../src/core/hash/index.js';
-import { formatBlockId, upsertBlock } from '../../src/core/markerBlock/index.js';
+import {
+  formatBlockId,
+  upsertBlock,
+} from '../../src/core/markerBlock/index.js';
 
 const PKG = '@canard/schema-form';
 const RULE = 'rules/form-rule.md';
@@ -41,13 +48,21 @@ describe('core/buildPlan — block destinations', () => {
   it('plans a copy when the document does not exist yet', async () => {
     const plan = await blockPlan(false);
     expect(plan.actions).toEqual([
-      { kind: 'copy', relPath: RULE, target: { kind: 'block', fileAbs: agentsMd, blockId: RULE_ID } },
+      {
+        kind: 'copy',
+        relPath: RULE,
+        target: { kind: 'block', fileAbs: agentsMd, blockId: RULE_ID },
+      },
     ]);
     expect(plan.requiresForce).toBe(false);
   });
 
   it('plans a copy when the document exists without this block', async () => {
-    await writeFile(agentsMd, '<!-- FILID:START:x.md -->\n# X\n<!-- FILID:END:x.md -->\n', 'utf-8');
+    await writeFile(
+      agentsMd,
+      '<!-- FILID:START:x.md -->\n# X\n<!-- FILID:END:x.md -->\n',
+      'utf-8',
+    );
     const plan = await blockPlan(false);
     expect(plan.actions[0]?.kind).toBe('copy');
   });
@@ -60,7 +75,11 @@ describe('core/buildPlan — block destinations', () => {
   });
 
   it('flags a locally edited block as diverged and demands force', async () => {
-    await writeFile(agentsMd, upsertBlock('', RULE_ID, '# Edited by hand\n'), 'utf-8');
+    await writeFile(
+      agentsMd,
+      upsertBlock('', RULE_ID, '# Edited by hand\n'),
+      'utf-8',
+    );
     const plan = await blockPlan(false);
     expect(plan.actions[0]?.kind).toBe('warn-diverged');
     expect(plan.requiresForce).toBe(true);
@@ -96,7 +115,7 @@ describe('core/buildPlan — block destinations', () => {
     expect(plan.actions.some((a) => a.kind === 'delete')).toBe(true);
   });
 
-  it('leaves another package\'s block alone', async () => {
+  it("leaves another package's block alone", async () => {
     const foreignId = formatBlockId('@winglet/json', 'rules/json.md');
     await writeFile(
       agentsMd,
@@ -166,12 +185,25 @@ describe('core/buildPlan — file destinations', () => {
         'skills/form/new.md': hashContent('new\n'),
       },
       destinations: new Map<string, Destination>([
-        ['skills/form/same.md', { kind: 'file', dstAbs: join(skillsRoot, 'same.md') }],
-        ['skills/form/edited.md', { kind: 'file', dstAbs: join(skillsRoot, 'edited.md') }],
-        ['skills/form/new.md', { kind: 'file', dstAbs: join(skillsRoot, 'new.md') }],
+        [
+          'skills/form/same.md',
+          { kind: 'file', dstAbs: join(skillsRoot, 'same.md') },
+        ],
+        [
+          'skills/form/edited.md',
+          { kind: 'file', dstAbs: join(skillsRoot, 'edited.md') },
+        ],
+        [
+          'skills/form/new.md',
+          { kind: 'file', dstAbs: join(skillsRoot, 'new.md') },
+        ],
       ]),
       orphanScans: [
-        { kind: 'directory', scanRoot: skillsRoot, relPathPrefix: 'skills/form/' },
+        {
+          kind: 'directory',
+          scanRoot: skillsRoot,
+          relPathPrefix: 'skills/form/',
+        },
       ],
       force: false,
     });
@@ -194,7 +226,11 @@ describe('core/buildPlan — file destinations', () => {
           scanRoot: join(tmp, 'absent'),
           relPathPrefix: 'skills/absent/',
         },
-        { kind: 'block-file', fileAbs: join(tmp, 'absent.md'), ownerPackage: PKG },
+        {
+          kind: 'block-file',
+          fileAbs: join(tmp, 'absent.md'),
+          ownerPackage: PKG,
+        },
       ],
       force: false,
     });

@@ -58,7 +58,10 @@ export function phaseReducer(phase: Phase, event: InjectEvent): Phase {
     case 'plan-step': {
       if (phase.kind !== 'planning') return phase;
       const next = new Map(phase.progress);
-      next.set(planStepKey(event.step.packageName, event.step.agent), event.step);
+      next.set(
+        planStepKey(event.step.packageName, event.step.agent),
+        event.step,
+      );
       return { ...phase, progress: next };
     }
     case 'plans-ready': {

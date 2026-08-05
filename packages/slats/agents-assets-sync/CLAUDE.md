@@ -23,6 +23,7 @@ yarn dev:ui --tour   # cycle through all Ink phases with fixture data
 - `./buildHashes` — `buildHashes(options?)` produces `<packageRoot>/dist/agents-hashes.json`.
 
 Bin entries (all map to the same engine; choose by invocation context):
+
 - `agents-assets-sync` — npx canonical alias. Matches the package's unscoped name so `npx @slats/agents-assets-sync ...` works directly. Routes to the same dispatcher stub.
 - `inject-agents-settings` — descriptive name for installed environments (`yarn add -D` / `npm i -g`). Two-line stub in `bin/inject-agents-settings.mjs` calls `runCli(process.argv)`.
 - `agents-build-hashes` — standalone build helper that parses `process.cwd()/package.json` and delegates to `buildHashes`.
@@ -38,23 +39,23 @@ The commander `name(...)` is derived from `argv[1]` basename at runtime, so help
 
 Where `<bin>` is `agents-assets-sync` (npx) or `inject-agents-settings` (installed). Both bins point at the same dispatcher.
 
-| Flag | Meaning |
-|------|---------|
-| `--agent <type...>` | `claude` \| `codex`. Omitted, an interactive TTY asks; anywhere else exits 2. |
+| Flag                | Meaning                                                                                                                           |
+| ------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| `--agent <type...>` | `claude` \| `codex`. Omitted, an interactive TTY asks; anywhere else exits 2.                                                     |
 | `--asset <kind...>` | `skills` \| `rules` \| `commands`. Default: all. An excluded kind is absent from the plan, so it is neither reported nor deleted. |
-| `--yes` | Approve the force dialog without showing it. |
-| `--no-interactive` | Never prompt, even on a TTY. A missing flag exits 2. |
+| `--yes`             | Approve the force dialog without showing it.                                                                                      |
+| `--no-interactive`  | Never prompt, even on a TTY. A missing flag exits 2.                                                                              |
 
 Fully unattended: `--package=<name> --agent=claude,codex --scope=project --force --yes`.
 
 `--package` is variadic. Each value is classified by shape:
 
-| Shape | Meaning |
-|-------|---------|
+| Shape                 | Meaning                                                 |
+| --------------------- | ------------------------------------------------------- |
 | `@<scope>` (no slash) | all packages under the npm scope (workspace-enumerated) |
-| `@<scope>/<name>` | one scoped package |
-| `<name>` (no `@`) | one unscoped package |
-| anything else | invalid → exit 2 |
+| `@<scope>/<name>`     | one scoped package                                      |
+| `<name>` (no `@`)     | one unscoped package                                    |
+| anything else         | invalid → exit 2                                        |
 
 Repeat any variadic flag or comma-separate values. Targets are deduped by resolved package name; agents keep their listed order.
 
@@ -66,10 +67,10 @@ Workspace enumeration (scope alias) is confined to `src/commands/runCli/utils/re
 
 `projectRoot` is the home directory for `--scope=user`, and for `--scope=project` the nearest ancestor owning any of `.claude`, `AGENTS.md`, `.codex`, `.git` (falling back to cwd). Both agents share it, so one run cannot straddle two projects.
 
-| Kind | claude | codex |
-|------|--------|-------|
-| `skills` | `<root>/.claude/skills/**` | `<root>/.codex/skills/**` |
-| `rules` | `<root>/.claude/rules/**` | marker block in `AGENTS.md` |
+| Kind       | claude                       | codex                               |
+| ---------- | ---------------------------- | ----------------------------------- |
+| `skills`   | `<root>/.claude/skills/**`   | `<root>/.codex/skills/**`           |
+| `rules`    | `<root>/.claude/rules/**`    | marker block in `AGENTS.md`         |
 | `commands` | `<root>/.claude/commands/**` | unsupported — skipped with a reason |
 
 Codex's `AGENTS.md` is `<projectRoot>/AGENTS.md` for `project` scope and `<projectRoot>/.codex/AGENTS.md` for `user` scope. That asymmetry is the Codex CLI's, not this tool's.
@@ -112,6 +113,7 @@ Each consumer ships only:
 One asset tree serves every agent; the engine decides where each kind lands.
 
 Consumers must:
+
 - `scripts.build:hashes: "agents-build-hashes"` — engine bin, linked into workspace `.bin/` at install time
 - `devDependencies: { "@slats/agents-assets-sync": "workspace:^" }` — MUST be devDependencies
 - `agents.assetPath: "docs/agents"` — consumer-side convention

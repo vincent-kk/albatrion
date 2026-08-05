@@ -1,5 +1,5 @@
-import type React from 'react';
 import { Box, Text } from 'ink';
+import type React from 'react';
 
 import type { InjectPlan } from '../../core/index.js';
 import { colors } from '../theme/colors.js';
@@ -17,7 +17,9 @@ export function PlanTable({
 }: PlanTableProps): React.ReactElement {
   const actions = plan.actions;
   const overflow = actions.length > maxRows;
-  const shown = overflow ? actions.slice(0, limits.planTruncatedReveal) : actions;
+  const shown = overflow
+    ? actions.slice(0, limits.planTruncatedReveal)
+    : actions;
   const hidden = actions.length - shown.length;
 
   return (

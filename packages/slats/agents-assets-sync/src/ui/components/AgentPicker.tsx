@@ -1,5 +1,5 @@
-import type React from 'react';
 import { Box, Text, useInput } from 'ink';
+import type React from 'react';
 import { useState } from 'react';
 
 import type { AgentType } from '../../core/index.js';
@@ -66,7 +66,10 @@ export function AgentPicker({
               <Text color={ticked ? colors.success : colors.muted} bold>
                 {ticked ? icons.check : icons.bulletPending}{' '}
               </Text>
-              <Text color={focused ? colors.primary : colors.muted} bold={focused}>
+              <Text
+                color={focused ? colors.primary : colors.muted}
+                bold={focused}
+              >
                 {item.value.padEnd(8)}
               </Text>
               <Text color={colors.muted} dimColor>

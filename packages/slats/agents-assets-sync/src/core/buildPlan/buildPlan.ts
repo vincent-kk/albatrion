@@ -1,7 +1,7 @@
 import { relative } from 'node:path';
 
 import type { Destination, OrphanScan } from '../agentTarget/index.js';
-import { hashEquals, hashFile, type Sha256Hex } from '../hash/index.js';
+import { type Sha256Hex, hashEquals, hashFile } from '../hash/index.js';
 import {
   blockBodyMatches,
   findBlockBody,

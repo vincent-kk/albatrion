@@ -37,26 +37,26 @@ npx @slats/agents-assets-sync \
       [--dry-run] [--force] [--yes] [--no-interactive] [--root=<cwd>] [--json]
 ```
 
-| 플래그 | 의미 |
-|---|---|
+| 플래그             | 의미                                                                                                               |
+| ------------------ | ------------------------------------------------------------------------------------------------------------------ |
 | `--package <name>` | **필수.** `@scope/pkg`, `pkg`, 또는 `agents.assetPath` 를 선언한 설치 패키지 전체로 확장되는 scope alias `@scope`. |
-| `--agent <type>` | `claude` \| `codex`. 생략 시 대화형 터미널은 선택 UI, 그 외에는 exit 2. |
-| `--scope` | `user`(홈) 또는 `project`(`.claude`, `AGENTS.md`, `.codex`, `.git` 중 하나를 가진 최근접 조상). |
-| `--asset <kind>` | `skills` \| `rules` \| `commands`. 기본값 전체. 제외된 kind 는 플랜에 아예 없으므로 보고도 삭제도 되지 않습니다. |
-| `--dry-run` | 플랜만 출력하고 아무것도 쓰지 않음. |
-| `--force` | diverged 내용 덮어쓰기 및 orphan 삭제. |
-| `--yes` | 확인 대화를 띄우지 않고 승인. |
-| `--no-interactive` | 터미널이어도 절대 묻지 않음. |
+| `--agent <type>`   | `claude` \| `codex`. 생략 시 대화형 터미널은 선택 UI, 그 외에는 exit 2.                                            |
+| `--scope`          | `user`(홈) 또는 `project`(`.claude`, `AGENTS.md`, `.codex`, `.git` 중 하나를 가진 최근접 조상).                    |
+| `--asset <kind>`   | `skills` \| `rules` \| `commands`. 기본값 전체. 제외된 kind 는 플랜에 아예 없으므로 보고도 삭제도 되지 않습니다.   |
+| `--dry-run`        | 플랜만 출력하고 아무것도 쓰지 않음.                                                                                |
+| `--force`          | diverged 내용 덮어쓰기 및 orphan 삭제.                                                                             |
+| `--yes`            | 확인 대화를 띄우지 않고 승인.                                                                                      |
+| `--no-interactive` | 터미널이어도 절대 묻지 않음.                                                                                       |
 
 ## 에이전트별 목적지
 
 두 에이전트가 하나의 프로젝트 루트에서 목적지를 도출하므로, 한 번의 실행이 서로
 다른 프로젝트에 걸칠 수 없습니다.
 
-| Kind | claude | codex |
-|---|---|---|
-| `skills` | `<root>/.claude/skills/**` | `<root>/.codex/skills/**` |
-| `rules` | `<root>/.claude/rules/**` | `AGENTS.md` 내 마커 블록 |
+| Kind       | claude                       | codex                     |
+| ---------- | ---------------------------- | ------------------------- |
+| `skills`   | `<root>/.claude/skills/**`   | `<root>/.codex/skills/**` |
+| `rules`    | `<root>/.claude/rules/**`    | `AGENTS.md` 내 마커 블록  |
 | `commands` | `<root>/.claude/commands/**` | 미지원 — 사유와 함께 스킵 |
 
 rule 파일 1개가 마커 블록 1개가 되므로, 블록 본문 해시가 그 파일의 매니페스트
@@ -77,15 +77,15 @@ rule 파일 1개가 마커 블록 1개가 되므로, 블록 본문 해시가 그
 {
   "scripts": {
     "build": "… && yarn build:hashes",
-    "build:hashes": "agents-build-hashes"
+    "build:hashes": "agents-build-hashes",
   },
   "devDependencies": {
-    "@slats/agents-assets-sync": "^0.1.0"
+    "@slats/agents-assets-sync": "^0.1.0",
   },
   "files": ["dist", "docs", "README.md"],
   "agents": {
-    "assetPath": "docs/agents"
-  }
+    "assetPath": "docs/agents",
+  },
 }
 ```
 

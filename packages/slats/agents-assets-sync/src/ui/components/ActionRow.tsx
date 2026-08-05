@@ -1,5 +1,5 @@
-import type React from 'react';
 import { Box, Text } from 'ink';
+import type React from 'react';
 
 import type { Action } from '../../core/index.js';
 import { colors } from '../theme/colors.js';

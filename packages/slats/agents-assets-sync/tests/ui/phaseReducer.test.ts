@@ -57,16 +57,16 @@ describe('phaseReducer', () => {
     if (next.kind === 'planning') {
       expect(next.scope).toBe('user');
       expect(next.progress.size).toBe(2);
-      expect(next.progress.get(planStepKey(TARGET.name, 'claude'))?.status).toBe(
-        'pending',
-      );
+      expect(
+        next.progress.get(planStepKey(TARGET.name, 'claude'))?.status,
+      ).toBe('pending');
       expect(next.progress.get(planStepKey(TARGET.name, 'codex'))?.status).toBe(
         'pending',
       );
     }
   });
 
-  it('updates one agent\'s step without touching the other\'s', () => {
+  it("updates one agent's step without touching the other's", () => {
     const planning = phaseReducer(
       { kind: 'resolving', targets: [TARGET] },
       {
