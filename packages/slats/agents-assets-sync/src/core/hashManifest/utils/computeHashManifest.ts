@@ -5,6 +5,7 @@ import { type Sha256Hex, hashContent } from '../../hash/index.js';
 import { toPosix } from '../../utils/toPosix.js';
 import { walkFiles } from '../../utils/walkFiles.js';
 import type { HashManifest, HashManifestSource } from '../type.js';
+import { sortManifestFiles } from './sortManifestFiles.js';
 
 // Kept byte-identical to the list in `scripts/buildHashes.mjs`. The ban runs
 // one way — that script may not import from `src/`, because it must stay pure
@@ -45,9 +46,7 @@ export async function computeHashManifest(
     generatedAt,
     algorithm: 'sha256',
     assetRoot: source.assetPath,
-    files: Object.fromEntries(
-      Object.entries(files).sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0)),
-    ),
+    files: sortManifestFiles(files),
     previousVersions: {},
   };
 }

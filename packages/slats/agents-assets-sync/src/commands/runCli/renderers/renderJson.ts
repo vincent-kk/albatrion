@@ -8,6 +8,7 @@ import {
   applyBlockActions,
   buildPlan,
   computeNamespacePrefixes,
+  needsBuiltManifest,
   partitionActions,
   resolveAgentTarget,
   resolveDestinations,
@@ -119,7 +120,7 @@ async function runUnit(
     destination: agentTarget.description,
   } as const;
 
-  if (target.hashSource === 'manifest' && !target.hashesPresent)
+  if (needsBuiltManifest(target))
     return {
       ...base,
       requiresForce: false,

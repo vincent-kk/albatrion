@@ -7,9 +7,11 @@ inject 시 source 쪽 해시를 공급한다. `dist/agents-hashes.json`(스키�
 ## Structure
 
 - `index.ts` — 배럴 export
-- `hashManifest.ts` — `resolveHashManifest`, `readHashManifest`, `computeNamespacePrefixes`, `HASH_MANIFEST_FILENAME`
+- `__tests__/needsBuiltManifest.spec.ts` — `AC-MANIFEST-GATE` 결속 spec
+- `hashManifest.ts` — `resolveHashManifest`, `needsBuiltManifest`, `readHashManifest`, `computeNamespacePrefixes`, `HASH_MANIFEST_FILENAME`
 - `type.ts` — `HashManifest`, `HashManifestSource`
 - `utils/computeHashManifest.ts` — asset 디렉터리 → 메모리 매니페스트 (organ)
+- `utils/sortManifestFiles.ts` — 매니페스트 키를 사전순으로 (organ)
 - `__tests__/computeHashManifest.spec.ts` — `AC-MANIFEST-COMPUTE` 결속 spec
 
 ## Boundaries

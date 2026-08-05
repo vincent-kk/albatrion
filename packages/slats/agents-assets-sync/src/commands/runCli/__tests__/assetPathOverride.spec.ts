@@ -184,6 +184,10 @@ describe('toConsumerPackages', () => {
       { name: '@fixture/consumer', version: '3.0.0' },
       'agents',
     );
+    // The manifest is present on purpose: `hashesPresent` staying false is
+    // only evidence of "never probed" when probing would have found one.
+    mkdirSync(join(packageRoot, 'dist'), { recursive: true });
+    writeFileSync(join(packageRoot, 'dist', 'agents-hashes.json'), '{}');
 
     const [target] = await toConsumerPackages([
       {
@@ -198,7 +202,6 @@ describe('toConsumerPackages', () => {
     expect(target!.hashSource).toBe('directory');
     expect(target!.assetRoot).toBe(join(packageRoot, 'agents'));
     expect(target!.assetPath).toBe('agents');
-    // Never probed: a directory-sourced target does not read the manifest.
     expect(target!.hashesPresent).toBe(false);
   });
 

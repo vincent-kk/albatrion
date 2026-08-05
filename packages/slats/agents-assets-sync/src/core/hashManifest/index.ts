@@ -1,6 +1,7 @@
 export {
   HASH_MANIFEST_FILENAME,
   computeNamespacePrefixes,
+  needsBuiltManifest,
   readHashManifest,
   resolveHashManifest,
 } from './hashManifest.js';

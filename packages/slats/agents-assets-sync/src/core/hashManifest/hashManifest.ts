@@ -7,6 +7,25 @@ import { computeHashManifest } from './utils/computeHashManifest.js';
 export const HASH_MANIFEST_FILENAME = 'agents-hashes.json';
 
 /**
+ * Whether a target cannot be planned until its package is built.
+ *
+ * Only a manifest-sourced target depends on build output; one whose asset root
+ * came from `--asset-path` is hashed from the directory and never reads
+ * `dist/`, so a missing manifest says nothing about it. Every renderer asks
+ * this before planning — the Ink path included, which is why the answer lives
+ * in one place rather than three.
+ *
+ * @param target - the target's hash source and whether its manifest is present
+ * @returns `true` when the run must stop and ask for a build
+ */
+export function needsBuiltManifest(target: {
+  readonly hashSource: HashManifestSource['hashSource'];
+  readonly hashesPresent: boolean;
+}): boolean {
+  return target.hashSource === 'manifest' && !target.hashesPresent;
+}
+
+/**
  * Obtain one target's manifest from whichever source it declares.
  *
  * A `directory` target ignores `dist/agents-hashes.json` entirely: the stored

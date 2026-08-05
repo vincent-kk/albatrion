@@ -35,6 +35,7 @@
 - `removeBlock(content: string, blockId: string): string`
 - `blockBodyMatches(body: string, expected: Sha256Hex): boolean`
 - `MARKER_PREFIX = 'AGENTS-ASSETS-SYNC'`
+- `needsBuiltManifest(target): boolean`
 - `resolveHashManifest(source: HashManifestSource, generatedAt?: string): Promise<HashManifest>`
 - `readHashManifest(packageRoot: string): Promise<HashManifest>`
 - `computeNamespacePrefixes(manifest: HashManifest): string[]`

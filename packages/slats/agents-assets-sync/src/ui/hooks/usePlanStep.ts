@@ -6,6 +6,7 @@ import {
   type Scope,
   buildPlan,
   computeNamespacePrefixes,
+  needsBuiltManifest,
   resolveAgentTarget,
   resolveDestinations,
   resolveHashManifest,
@@ -56,7 +57,7 @@ export function usePlanStep({
             step: { packageName: target.name, agent, status: 'running' },
           });
           try {
-            if (target.hashSource === 'manifest' && !target.hashesPresent) {
+            if (needsBuiltManifest(target)) {
               dispatch({
                 type: 'plan-step',
                 step: {

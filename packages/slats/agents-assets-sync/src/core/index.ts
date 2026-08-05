@@ -7,6 +7,7 @@ export {
 export {
   HASH_MANIFEST_FILENAME,
   computeNamespacePrefixes,
+  needsBuiltManifest,
   readHashManifest,
   resolveHashManifest,
   type HashManifest,

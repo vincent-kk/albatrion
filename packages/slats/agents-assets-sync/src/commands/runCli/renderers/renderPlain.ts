@@ -10,6 +10,7 @@ import {
   applyBlockActions,
   buildPlan,
   computeNamespacePrefixes,
+  needsBuiltManifest,
   partitionActions,
   resolveAgentTarget,
   resolveDestinations,
@@ -50,7 +51,7 @@ export async function renderPlain(
   const assetKinds = resolveAssetFlag(flags.asset ?? []);
 
   const usable = targets.filter((target) => {
-    if (target.hashSource === 'directory' || target.hashesPresent) return true;
+    if (!needsBuiltManifest(target)) return true;
     logger.warn(
       `${target.name}: dist/agents-hashes.json missing — build the package (e.g. yarn build) to regenerate the hash manifest first, or pass --asset-path to hash the asset directory instead.`,
     );

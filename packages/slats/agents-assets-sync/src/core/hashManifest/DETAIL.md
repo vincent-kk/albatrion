@@ -17,6 +17,8 @@
 
 ## API Contracts
 
+- `needsBuiltManifest(target: { hashSource; hashesPresent }): boolean`
+  - 렌더러가 계획 전에 "이 target 은 빌드를 기다려야 하는가" 를 묻는 유일한 자리
 - `resolveHashManifest(source: HashManifestSource, generatedAt?: string): Promise<HashManifest>`
   - `source.hashSource === 'manifest'` → `readHashManifest(source.packageRoot)`
   - `source.hashSource === 'directory'` → `source.assetRoot` 를 훑어 계산
@@ -64,9 +66,16 @@
 - `hashSource: 'directory'` 는 `dist/agents-hashes.json` 이 없어도 성공하며, `hashSource: 'manifest'` 는 그 파일이 없으면 실패한다.
 - 같은 asset 트리에 대해 계산 경로의 `files` 는 `scripts/buildHashes.mjs` 가 만든 `files` 와 완전히 같다.
 - 잡음 파일(`.DS_Store`, `*.log`, `.omc/**`)은 두 경로 모두에서 빠진다.
-- 키는 중첩 디렉터리에서도 항상 `/` 구분자이며 사전순으로 정렬된다.
+- 키는 중첩 디렉터리에서도 항상 `/` 구분자이며 사전순으로 정렬된다. 정렬은 `sortManifestFiles` 가 맡는다 — `readdir` 순서는 플랫폼이 정하므로, 정렬되지 않은 입력을 직접 주는 것만이 이 절에 부하를 거는 방법이다. 매니페스트는 사람이 읽고 diff 하는 파일이고, 디렉터리를 돌려주는 순서가 달라졌다는 이유로 항목이 움직이면 변경이 아닌 것이 변경으로 보인다.
 - 계산된 매니페스트의 `assetRoot` 는 `packageRoot` 기준 상대 경로를 담는다.
 - Verified by `__tests__/computeHashManifest.spec.ts` (`filid:contract AC-MANIFEST-COMPUTE`).
+
+### AC-MANIFEST-GATE — 빌드가 필요한 target 은 한 곳에서 판정된다
+
+- `hashSource: 'manifest'` 이고 매니페스트가 없으면 `needsBuiltManifest` 가 `true` 다. 매니페스트가 있으면 `false`.
+- `hashSource: 'directory'` 는 `hashesPresent` 와 무관하게 언제나 `false` 다 — `dist/` 를 읽지 않으므로 그 부재가 이 target 에 대해 아무것도 말하지 않는다.
+- 세 렌더러(plain, json, Ink)가 계획 전에 모두 이 술어에 묻는다. 판정을 한 곳에 두는 이유는 중복 제거만이 아니라, 어떤 렌더러도 직접 구동하지 않는 Ink 경로를 같은 검사 아래 두기 위해서다.
+- Verified by `__tests__/needsBuiltManifest.spec.ts` (`filid:contract AC-MANIFEST-GATE`).
 
 ## History
 
