@@ -1,7 +1,7 @@
 import type {
   ConsumerPackage,
   DefaultFlags,
-} from '../../commands/runCli/type.js';
+} from '../../types/index.js';
 
 export interface RenderInput {
   readonly targets: readonly ConsumerPackage[];

@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 
-import type { ConsumerPackage } from '../../commands/runCli/type.js';
+import type { ConsumerPackage } from '../../types/index.js';
 import { type AgentType, type Scope, isValidAgent } from '../../core/index.js';
 import type { InjectEvent } from '../types/index.js';
 

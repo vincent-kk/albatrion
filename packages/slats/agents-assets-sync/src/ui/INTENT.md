@@ -10,6 +10,7 @@ React + Ink UI layer for the TTY path of `inject-agents-settings`. Exposes `rend
 - `InjectApp/` — main Ink screen + phase state machine (fractal)
 - `components/` — Ink UI primitives (organ)
 - `hooks/` — Ink-aware React hooks including pipeline steps (organ)
+- `reducer/` — framework-free `(phase, event) => phase` reducer (organ)
 - `theme/` — colors, icons, layout tokens (organ)
 - `types/` — split into `phase`, `event`, `render`, `target` (organ)
 

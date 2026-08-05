@@ -2,14 +2,13 @@
 
 ## Purpose
 
-Main Ink screen and phase state machine for the inject flow. Owns the `Phase` union, its reducer, and the top-level `InjectApp` React component that renders each phase. `renderInjectApp` mounts this component via `ink.render` and surfaces the final exit code.
+Main Ink screen for the inject flow. Owns the top-level `InjectApp` React component that renders each phase, and `renderInjectApp`, which mounts it via `ink.render` and surfaces the final exit code. The `Phase` union lives in `ui/types/` and its reducer in `ui/reducer/`; this fractal consumes both.
 
 ## Structure
 
 - `INTENT.md`, `DETAIL.md`, `index.ts`
 - `InjectApp.tsx` — eponymous React root; renders by phase
 - `utils/type.ts` — `InjectAppProps` (re-exports `Phase`/`InjectEvent`/`RenderInput`)
-- `utils/phaseReducer.ts` — pure `(phase, event) => phase` reducer
 - `utils/eventSelectors.ts` — phase → view-prop derivations
 - `utils/renderInjectApp.tsx` — `ink.render` wrapper → `Promise<number>`
 
@@ -17,7 +16,6 @@ Main Ink screen and phase state machine for the inject flow. Owns the `Phase` un
 
 ### Always do
 
-- Keep `phaseReducer` pure — no Ink, no `core/**`, no side effects
 - Surface the exit code through `useExitApp` inside `InjectApp`, not from outside — the reducer only records it on the `summary` phase
 - Drive pipeline transitions via `useInjectSession` hook; this fractal only consumes the resulting phase
 
@@ -29,4 +27,4 @@ Main Ink screen and phase state machine for the inject flow. Owns the `Phase` un
 ### Never do
 
 - Write to `process.stdout`/`stderr` directly; all output goes through Ink's virtual DOM
-- Import from `components/`, `hooks/`, or `theme/` inside `utils/phaseReducer.ts` — the reducer must stay framework-free
+- Hold phase-transition logic here; `ui/reducer/` owns it and must stay framework-free

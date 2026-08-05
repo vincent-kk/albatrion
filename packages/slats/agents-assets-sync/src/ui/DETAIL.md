@@ -21,6 +21,15 @@
   - `RenderInput` — `{ targets: readonly ConsumerPackage[]; flags: DefaultFlags; originCwd: string }`
   - Ink 가 unmount 된 뒤 최종 종료 코드로 resolve 된다
 
+## Internal Unit Contracts
+
+entry point 표면 밖의 내부 단위다. 바꿔도 공개 계약 변경이 아니다.
+
+- `phaseReducer(phase: Phase, event: InjectEvent): Phase` (`reducer/` organ)
+  - 순수하고 결정적이다. Ink 도 `core/**` 도 import 하지 않고, `Date.now()` 나 환경변수를 읽지 않는다 — 필요한 값은 이벤트로 들어온다.
+  - 알 수 없는 이벤트는 무시하고 현재 국면 객체를 그대로 돌려준다.
+  - 소비자는 `hooks/usePhase.ts` 하나다.
+
 ## Composed core primitives
 
 - `readHashManifest`, `computeNamespacePrefixes` — 소스 해시와 네임스페이스
@@ -47,6 +56,32 @@
 - `Banner` 는 scope chip 을 단 둥근 단색 프레임으로 그려지고, scope 가 없으면 chip 없이 그려진다.
 - `Summary` 는 2단 배치의 이중선 상자로 그려지며, dry-run 은 제목에 표시된다.
 - Verified by `tests/ui/boxSnapshot.test.tsx`.
+
+### AC-PHASE-SELECT — 선택 국면의 전이
+
+- `agent-needed` 는 `booting` 을 `agent-select` 로 옮긴다.
+- `agent-select` 는 고른 agents 를 들고 `scope-select` 로 넘어간다.
+- Verified by `tests/ui/phaseReducer.test.ts`.
+
+### AC-PHASE-PLANNING — 계획 진행은 쌍마다 독립이다
+
+- `resolving` 에서 `planning` 으로 갈 때 `(agent, package)` 쌍마다 한 단계가 만들어진다.
+- 한 agent 의 단계를 갱신해도 다른 agent 의 단계는 변하지 않는다.
+- `plans-ready` 는 `diff-review` 로 넘어간다.
+- Verified by `tests/ui/phaseReducer.test.ts`.
+
+### AC-PHASE-TERMINAL — 종료 국면과 코드
+
+- `force-answer` 가 `false` 면 종료 코드 2인 `summary` 로 접힌다.
+- `apply-progress` 는 `done` 을 증가시킨다.
+- `done` 이 종료 코드 0으로 오면 `summary` 에 기록된다.
+- `fail` 은 현재 국면과 무관하게 `error` 로 옮긴다.
+- Verified by `tests/ui/phaseReducer.test.ts`.
+
+### AC-PHASE-PURE — 알 수 없는 이벤트는 아무것도 바꾸지 않는다
+
+- reducer 가 처리하지 않는 이벤트는 같은 국면 객체를 돌려준다.
+- Verified by `tests/ui/phaseReducer.test.ts`.
 
 ### AC-UI-STEP — 단계 표시는 종료 국면에서 멈춘다
 

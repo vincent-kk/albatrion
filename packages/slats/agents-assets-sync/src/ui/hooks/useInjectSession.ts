@@ -3,7 +3,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type {
   ConsumerPackage,
   DefaultFlags,
-} from '../../commands/runCli/type.js';
+} from '../../types/index.js';
 import type { AgentType, AssetKind, Scope } from '../../core/index.js';
 import type { InjectEvent, TargetPlan, Warning } from '../types/index.js';
 import { applyAllPlans } from './useApplyStep.js';

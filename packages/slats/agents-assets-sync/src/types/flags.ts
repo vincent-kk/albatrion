@@ -1,3 +1,4 @@
+/** Parsed CLI flags, as commander hands them to the action. */
 export interface DefaultFlags {
   /** Target package(s): scope alias, scoped name, or unscoped name. */
   package?: string[];
@@ -17,17 +18,4 @@ export interface DefaultFlags {
   interactive?: boolean;
   root?: string;
   json?: boolean;
-}
-
-/**
- * Resolved consumer metadata passed to the injection pipeline.
- * The dispatcher bin populates this by resolving a single explicitly-named
- * target package — `core/**` still never reads `package.json` itself.
- */
-export interface ConsumerPackage {
-  name: string;
-  version: string;
-  packageRoot: string;
-  assetRoot: string;
-  hashesPresent: boolean;
 }

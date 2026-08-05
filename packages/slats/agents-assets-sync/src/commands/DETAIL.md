@@ -25,19 +25,7 @@
 
 ## Acceptance Criteria
 
-### AC-CMD-CLASSIFY — `--package` 값은 모양으로 분류된다
-
-- `@<scope>` 는 scope alias, `@<scope>/<name>` 은 scoped 패키지, `<name>` 은 unscoped 패키지로 분류된다.
-- 빈 문자열, 단독 `@`, scope 나 name 이 빠진 형태, 여분의 슬래시, 대문자를 포함한 이름은 모두 invalid 다.
-- Verified by `tests/commands/classifyTarget.spec.ts`.
-
-### AC-CMD-RESOLVE — target 해석은 cwd 를 먼저 본다
-
-- scoped/unscoped 패키지는 `<originCwd>/node_modules` 에서 해석되며, 중첩된 originCwd 에서는 조상 `node_modules` 를 따라 올라간다.
-- cwd 해석이 실패하면 엔진 기준 해석으로 대체되고, 둘 다 실패하면 2로 종료한다.
-- 둘 다 일치할 수 있는 경우 cwd 기준 해석이 우선한다.
-- `agents.assetPath` 가 없을 때 strict 모드는 2로 종료하고, `skipMissingAsset` 모드는 `null` 을 돌려 배치가 계속되게 한다.
-- Verified by `tests/commands/resolvePackage.spec.ts`, `tests/commands/resolveScopeAlias.spec.ts`.
+`--package` 값의 분류와 단일 패키지 해석, scope alias 열거의 승인 그룹은 `runCli/DETAIL.md` 가 소유한다. 대상 단위(`classifyTarget`, `resolvePackage`, `resolveScopeAlias`)가 `runCli/utils/` 에 있고, 그 spec-document 도 `runCli/__tests__/` 에서 마커로 결속하기 때문이다.
 
 ### AC-CMD-RENDERER — 렌더러는 한 번, 정해진 순서로 선택된다
 

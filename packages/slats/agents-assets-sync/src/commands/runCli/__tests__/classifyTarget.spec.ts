@@ -1,6 +1,7 @@
+// filid:contract AC-RUNCLI-CLASSIFY
 import { describe, expect, it } from 'vitest';
 
-import { classifyTarget } from '../../src/commands/runCli/utils/classifyTarget.js';
+import { classifyTarget } from '../utils/classifyTarget.js';
 
 describe('classifyTarget', () => {
   // 3 happy-path cases covering the three accepted target shapes.

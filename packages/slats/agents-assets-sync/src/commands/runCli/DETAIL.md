@@ -31,6 +31,11 @@
   - `scope?: string`, `asset?: string[]`, `root?: string`
   - `dryRun?: boolean`, `force?: boolean`, `yes?: boolean`, `json?: boolean`
   - `interactive?: boolean` — commander `--no-interactive` 관례. 플래그가 없으면 `true`.
+
+`index.ts` 가 수출하는 것은 이 둘뿐이다. 아래는 그 밖의 내부 단위이며, 바꿔도 공개 계약 변경이 아니다.
+
+## Internal Unit Contracts
+
 - `classifyTarget(value)` → scope | package | invalid
 - `resolvePackage(name, opts?, originCwd?): Promise<ResolvedMetadata | null>`
   - 2단 해석: cwd 기준 require 를 먼저 (`npx -p` 로 불렸을 때 호스트 프로젝트의 `node_modules` 를 잡기 위해), 실패하면 엔진 기준 require. `originCwd` 생략 시 `process.cwd()`.
@@ -45,12 +50,19 @@
 
 ## Acceptance Criteria
 
-### AC-RUNCLI-TARGET — `--package` 값의 분류와 해석
+### AC-RUNCLI-CLASSIFY — `--package` 값은 모양으로 분류된다
 
-- 세 가지 유효한 모양은 각각 scope alias, scoped 패키지, unscoped 패키지로 분류되고, 나머지는 invalid 로 2를 낸다.
-- scoped/unscoped 패키지는 `<originCwd>/node_modules` 에서 먼저 찾고, 없으면 조상 `node_modules` 로 올라가며, 그래도 없으면 엔진 기준으로 대체한다.
-- 둘 다 일치 가능하면 cwd 기준 해석이 이긴다.
-- Verified by `tests/commands/classifyTarget.spec.ts`, `tests/commands/resolvePackage.spec.ts`.
+- `@<scope>` 는 scope alias, `@<scope>/<name>` 은 scoped 패키지, `<name>` 은 unscoped 패키지로 분류된다.
+- 빈 문자열, 단독 `@`, scope 나 name 이 빠진 형태, 여분의 슬래시, 대문자를 포함한 이름은 모두 invalid 다.
+- Verified by `__tests__/classifyTarget.spec.ts` (`filid:contract AC-RUNCLI-CLASSIFY`).
+
+### AC-RUNCLI-RESOLVE — 단일 패키지 해석은 cwd 를 먼저 본다
+
+- scoped/unscoped 패키지는 `<originCwd>/node_modules` 에서 해석되며, 중첩된 originCwd 에서는 조상 `node_modules` 를 따라 올라간다.
+- cwd 해석이 실패하면 엔진 기준 해석으로 대체되고, 둘 다 실패하면 2로 종료한다.
+- 둘 다 일치할 수 있는 경우 cwd 기준 해석이 우선한다.
+- `agents.assetPath` 가 없을 때 strict 모드는 2로 종료하고, `skipMissingAsset` 모드는 `null` 을 돌려 배치가 계속되게 한다.
+- Verified by `__tests__/resolvePackage.spec.ts` (`filid:contract AC-RUNCLI-RESOLVE`).
 
 ### AC-RUNCLI-SCOPE-ALIAS — scope 열거의 권위는 선언된 이름이다
 
@@ -59,7 +71,7 @@
 - 점으로 시작하는 항목, `package.json` 이 없거나 깨진 항목, `name` 이 문자열이 아닌 항목은 건너뛴다.
 - 중복은 nearest-wins 로 제거되고 발견 순서(가까운 조상 우선)가 유지된다.
 - 일치가 0건이면 2로 종료한다.
-- Verified by `tests/commands/resolveScopeAlias.spec.ts`.
+- Verified by `tests/commands/resolveScopeAlias.spec.ts` (`filid:contract AC-RUNCLI-SCOPE-ALIAS`).
 
 ### AC-RUNCLI-DISPATCH — 렌더러 분기와 무프롬프트 구동
 

@@ -1,5 +1,5 @@
-import type { InjectEvent, Phase, PlanStepState } from '../../types/index.js';
-import { planStepKey } from '../../types/target.js';
+import type { InjectEvent, Phase, PlanStepState } from '../types/index.js';
+import { planStepKey } from '../types/target.js';
 
 export function phaseReducer(phase: Phase, event: InjectEvent): Phase {
   switch (event.type) {

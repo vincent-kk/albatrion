@@ -1,5 +1,5 @@
-import type { RenderInput } from '../../../ui/types/index.js';
-import type { ConsumerPackage, DefaultFlags } from '../type.js';
+import type { RenderInput } from '../../../ui/index.js';
+import type { ConsumerPackage, DefaultFlags } from '../../../types/index.js';
 import { renderJson } from './renderJson.js';
 import { renderPlain } from './renderPlain.js';
 

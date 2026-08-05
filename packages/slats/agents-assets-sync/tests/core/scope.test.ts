@@ -22,7 +22,19 @@ describe('core/scope — shared project anchor', () => {
     await rm(tmp, { recursive: true, force: true });
   });
 
-  it.each([...PROJECT_ANCHORS])(
+  // The rows are written out rather than spread from PROJECT_ANCHORS so the
+  // case count is statically countable; the guard below keeps them in step.
+  it('covers every entry of PROJECT_ANCHORS as a table row', () => {
+    expect([...PROJECT_ANCHORS]).toEqual([
+      '.claude',
+      'AGENTS.md',
+      '.agents',
+      '.codex',
+      '.git',
+    ]);
+  });
+
+  it.each(['.claude', 'AGENTS.md', '.agents', '.codex', '.git'])(
     'recognises %s as a project anchor',
     async (anchor) => {
       // AGENTS.md is a file; .git is a file inside a worktree. Existence is

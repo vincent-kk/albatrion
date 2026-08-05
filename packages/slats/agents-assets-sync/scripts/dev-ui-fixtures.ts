@@ -1,7 +1,7 @@
 import { homedir } from 'node:os';
 import { join } from 'node:path';
 
-import type { ConsumerPackage } from '../src/commands/runCli/type.js';
+import type { ConsumerPackage } from '../src/types/index.js';
 import type { InjectPlan, Action } from '../src/core/buildPlan/index.js';
 import type { AgentTarget, InjectReport } from '../src/core/index.js';
 import { resolveAgentTarget } from '../src/core/index.js';

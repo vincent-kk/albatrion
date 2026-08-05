@@ -16,7 +16,7 @@ import {
 } from '../../../core/index.js';
 import { asyncPool } from '../../../utils/asyncPool.js';
 import { VERSION } from '../../../utils/version.js';
-import type { ConsumerPackage, DefaultFlags } from '../type.js';
+import type { ConsumerPackage, DefaultFlags } from '../../../types/index.js';
 import { parseAgentFlag } from './resolveAgentFlag.js';
 import { parseAssetFlag } from './resolveAssetFlag.js';
 import { parseScopeFlag } from './resolveScopeFlag.js';

@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest';
 
-import type { ConsumerPackage } from '../../src/commands/runCli/type.js';
 import { resolveAgentTarget } from '../../src/core/index.js';
-import { phaseReducer } from '../../src/ui/InjectApp/utils/phaseReducer.js';
+import type { ConsumerPackage } from '../../src/types/index.js';
+import { phaseReducer } from '../../src/ui/reducer/phaseReducer.js';
 import type {
   InjectEvent,
   Phase,

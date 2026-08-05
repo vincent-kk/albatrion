@@ -2,7 +2,7 @@ import { stat } from 'node:fs/promises';
 import { isAbsolute, join, resolve } from 'node:path';
 
 import { logger } from '../../../utils/logger.js';
-import type { ConsumerPackage } from '../type.js';
+import type { ConsumerPackage } from '../../../types/index.js';
 import type { ResolvedMetadata } from './resolvePackage.js';
 
 /**

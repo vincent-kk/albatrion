@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 
-import type { ConsumerPackage } from '../../commands/runCli/type.js';
+import type { ConsumerPackage } from '../../types/index.js';
 import {
   type AgentType,
   type AssetKind,

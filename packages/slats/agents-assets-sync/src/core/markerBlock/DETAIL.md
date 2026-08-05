@@ -23,6 +23,11 @@
 - `removeBlock(content: string, blockId: string): string` — 해당 블록이 없으면 원본 그대로
 - `blockBodyMatches(body: string, expected: Sha256Hex): boolean`
 - `MARKER_PREFIX = 'AGENTS-ASSETS-SYNC'`
+
+## Internal Unit Contracts
+
+`utils/markerLine.ts` 의 단위다. `index.ts` 가 수출하지 않으므로 공개 계약이 아니며, 소비자는 `markerBlock.ts` 하나다.
+
 - `startMarker(blockId: string): string` / `endMarker(blockId: string): string`
 - `createBlockPattern(): RegExp` — 캡처 `1` = blockId, `2` = body
 

@@ -1,3 +1,4 @@
+// filid:contract AC-RUNCLI-SCOPE-ALIAS
 import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -17,7 +18,7 @@ import {
 // forwards names it has already vetted against the declared
 // `package.json` `name`, so a straight echo is enough to verify the
 // enumeration wiring and dedup semantics.
-vi.mock('../../src/commands/runCli/utils/resolvePackage.js', () => ({
+vi.mock('../utils/resolvePackage.js', () => ({
   resolvePackage: vi.fn(async (name: string) => ({
     packageRoot: `/fake/${name}`,
     packageName: name,
@@ -26,7 +27,7 @@ vi.mock('../../src/commands/runCli/utils/resolvePackage.js', () => ({
   })),
 }));
 
-vi.mock('../../src/utils/logger.js', () => ({
+vi.mock('../../../utils/logger.js', () => ({
   logger: {
     error: vi.fn(),
     warn: vi.fn(),
@@ -34,8 +35,8 @@ vi.mock('../../src/utils/logger.js', () => ({
   },
 }));
 
-import { resolvePackage } from '../../src/commands/runCli/utils/resolvePackage.js';
-import { resolveScopeAlias } from '../../src/commands/runCli/utils/resolveScopeAlias.js';
+import { resolvePackage } from '../utils/resolvePackage.js';
+import { resolveScopeAlias } from '../utils/resolveScopeAlias.js';
 
 const resolvePackageMock = vi.mocked(resolvePackage);
 

@@ -1,6 +1,6 @@
 import { useReducer } from 'react';
 
-import { phaseReducer } from '../InjectApp/utils/phaseReducer.js';
+import { phaseReducer } from '../reducer/phaseReducer.js';
 import type { InjectEvent, Phase } from '../types/index.js';
 
 export function usePhase(

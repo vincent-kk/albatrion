@@ -1,3 +1,4 @@
+// filid:contract AC-RUNCLI-RESOLVE
 import { mkdirSync, mkdtempSync, realpathSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -12,7 +13,7 @@ import {
   type MockInstance,
 } from 'vitest';
 
-vi.mock('../../src/utils/logger.js', () => ({
+vi.mock('../../../utils/logger.js', () => ({
   logger: {
     error: vi.fn(),
     warn: vi.fn(),
@@ -20,8 +21,8 @@ vi.mock('../../src/utils/logger.js', () => ({
   },
 }));
 
-import { resolvePackage } from '../../src/commands/runCli/utils/resolvePackage.js';
-import { logger } from '../../src/utils/logger.js';
+import { resolvePackage } from '../utils/resolvePackage.js';
+import { logger } from '../../../utils/logger.js';
 
 const errorMock = vi.mocked(logger.error);
 const warnMock = vi.mocked(logger.warn);

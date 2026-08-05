@@ -1,7 +1,7 @@
 import { Box, Text } from 'ink';
 import type React from 'react';
 
-import type { ConsumerPackage } from '../../commands/runCli/type.js';
+import type { ConsumerPackage } from '../../types/index.js';
 import type { Action, AgentType, InjectPlan } from '../../core/index.js';
 import { colors } from '../theme/colors.js';
 import { icons } from '../theme/icons.js';

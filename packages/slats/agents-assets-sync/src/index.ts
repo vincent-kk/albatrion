@@ -23,4 +23,4 @@ export {
   type ProjectRootResolution,
   type Scope,
 } from './core/index.js';
-export type { AssetType } from './utils/types.js';
+export type { AssetType } from './types/index.js';

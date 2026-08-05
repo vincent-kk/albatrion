@@ -1,4 +1,4 @@
-import type { ConsumerPackage } from '../../../commands/runCli/type.js';
+import type { ConsumerPackage } from '../../../types/index.js';
 import type { Phase } from '../../types/index.js';
 
 export function scopeLabel(phase: Phase): string | undefined {

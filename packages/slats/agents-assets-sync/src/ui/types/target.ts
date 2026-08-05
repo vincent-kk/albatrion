@@ -1,4 +1,4 @@
-import type { ConsumerPackage } from '../../commands/runCli/type.js';
+import type { ConsumerPackage } from '../../types/index.js';
 import type { AgentTarget, AgentType, InjectPlan } from '../../core/index.js';
 
 export interface PlanStepState {
