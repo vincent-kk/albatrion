@@ -2,11 +2,10 @@
 
 ## Purpose
 
-Decide where each agent keeps injected assets. Turns one
-`(agent, scope)` pair into concrete locations, then maps every manifest
-path onto a destination — a copied file, a marker block inside a shared
-`AGENTS.md`, or an explicit "this agent has no place for it". This is
-the only fractal that knows a per-agent convention.
+Decide where each agent keeps injected assets: one `(agent, scope)` pair
+becomes concrete locations, then every manifest path becomes a copied
+file, a marker block inside a shared `AGENTS.md`, or an explicit "no
+place for it here". The only fractal that knows a per-agent convention.
 
 ## Structure
 
@@ -20,15 +19,13 @@ the only fractal that knows a per-agent convention.
 ## Conventions
 
 - claude roots every kind under `<projectRoot>/.claude`.
-- codex and agents both merge rules into `AGENTS.md`, keep skills in a
-  `skills/` directory, and have no commands location. They share the
-  project layout — `<projectRoot>/.agents/skills` and the repository's
-  own `AGENTS.md` — and diverge only at `user` scope, where codex reads
-  `~/.codex` and agents reads the neutral `~/.agents`.
-- `agents` names a convention, not a product: it exists for tools that
-  read `.agents` instead of keeping a home of their own.
-- `user` scope reaches these paths through `resolveProjectRoot`, whose
-  root is the home directory, so every agent uses one formula.
+- codex and agents merge rules into `AGENTS.md`, keep skills in a
+  `skills/` directory, and have no commands location. At `project` scope
+  they are identical (`<projectRoot>/.agents/skills` + the repository's
+  `AGENTS.md`); at `user` scope codex reads `~/.codex`, agents `~/.agents`.
+- `agents` is a convention, not a product: for tools reading `.agents`.
+- Depends on `scope/` for the root and `markerBlock/` for block ids,
+  both through their `index.ts`; consumed by `buildPlan/`.
 
 ## Boundaries
 
@@ -43,8 +40,7 @@ the only fractal that knows a per-agent convention.
 ### Ask first
 
 - Adding an agent to `AgentType` — every renderer enumerates it
-- Changing an agent's directory convention; existing installs already
-  carry files at the current paths
+- Changing an agent's directory convention; installs carry the old paths
 
 ### Never do
 

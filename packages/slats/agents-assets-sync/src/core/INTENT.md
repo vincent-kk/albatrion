@@ -2,8 +2,8 @@
 
 ## Purpose
 
-UI-free, stateless primitives for agent asset injection. Seven leaf
-fractals compose the pipeline: locate the project, decide where each
+UI-free, stateless primitives for agent asset injection. Seven
+sub-fractals compose the pipeline: locate the project, decide where each
 agent keeps things, compare, and apply. Both the Ink (`ui/`) and plain
 (`commands/.../renderPlain.ts`) renderers consume these primitives
 directly — no orchestrator function lives here.
@@ -18,13 +18,18 @@ directly — no orchestrator function lives here.
 - `agentTarget/` — project root → per-agent destinations + orphan scans
 - `markerBlock/` — this tool's own blocks inside a shared `AGENTS.md`
 - `buildPlan/` — plan builder (copy / skip / diverged / orphan / delete)
-- `injectDocs/` — apply + summarize primitives (no orchestrator)
+- `injectDocs/` — partition + apply + summarize (no orchestrator)
 
 ## Conventions
 
-- Dependencies run one way: `scope → agentTarget → buildPlan`, and
-  `markerBlock → buildPlan`, `markerBlock → injectDocs`. The graph is
-  acyclic and every edge crosses a sibling's `index.ts`.
+- Dependencies run one way, and every edge crosses a sibling's
+  `index.ts`:
+  - `hash → hashManifest`, `hash → markerBlock`, `hash → buildPlan`
+  - `scope → agentTarget`, `markerBlock → agentTarget`
+  - `agentTarget → buildPlan`, `markerBlock → buildPlan`
+  - `buildPlan → injectDocs`, `markerBlock → injectDocs`
+- `hash/` and `scope/` are the only leaves; the rest build on them. The
+  graph stays acyclic.
 
 ## Boundaries
 

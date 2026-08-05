@@ -13,15 +13,20 @@ about which project they are in.
 
 - `index.ts` — barrel export
 - `scope.ts` — `resolveProjectRoot`, `findNearestAnchorAncestor`,
-  `isValidScope` + `Scope`
+  `isValidScope` + `Scope`, `ProjectRootResolution`
 - `utils/hasAnchor.ts` — anchor probe + the `PROJECT_ANCHORS` list
-- `utils/isDirectory.ts` — sync stat-based directory check
 
 ## Conventions
 
-- An anchor is any of `.claude`, `AGENTS.md`, `.codex`, `.git`.
-  Existence marks the root; a file and a directory count alike, because
-  `AGENTS.md` is a file while the other three are directories.
+- An anchor is any of `.claude`, `AGENTS.md`, `.agents`, `.codex`,
+  `.git`. Existence alone marks the root, with no directory check: a
+  file and a directory count alike, because `AGENTS.md` is a file and
+  `.git` is a file rather than a directory inside a worktree.
+- Order within the list does not affect the verdict; the first match wins.
+
+## Dependencies
+
+- None. This is the deepest leaf `agentTarget/` builds on.
 
 ## Boundaries
 
