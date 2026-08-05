@@ -12,7 +12,7 @@
 - `--package=<name>` is mandatory. The dispatcher resolves that one
   package's `package.json` via `createRequire(...).resolve()` and
   extracts `{ name, version, agents.assetPath }`.
-- `--agent=<claude|codex>` accepts repeats and comma-separated values.
+- `--agent=<claude|codex|agents>` accepts repeats and comma-separated values.
   Omitted, an interactive TTY shows the picker; every other context
   exits 2. A run selecting both agents produces one plan per pair.
 - `--asset=<skills|rules|commands>` narrows the run. A kind left out is
@@ -73,8 +73,8 @@
 
 - Given `--agent=claude,codex`, when the CLI runs, then the transcript
   carries one section per agent.
-- Given `--agent=codex`, then rule entries name the `AGENTS.md` they
-  merge into and skill entries name `.codex/skills`.
+- Given `--agent=codex` at `project` scope, then rule entries name the
+  `AGENTS.md` they merge into and skill entries name `.agents/skills`.
 - Given `--agent=codex --asset=skills`, then no `AGENTS.md` entry
   appears at all.
 - Verified by `tests/e2e/cli.test.ts`.

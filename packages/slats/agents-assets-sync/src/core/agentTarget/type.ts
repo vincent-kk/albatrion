@@ -1,7 +1,13 @@
 import type { Scope } from '../scope/index.js';
 
-/** Coding agent whose asset locations this tool knows how to write. */
-export type AgentType = 'claude' | 'codex';
+/**
+ * Coding agent whose asset locations this tool knows how to write.
+ *
+ * `agents` is not a product — it is the vendor-neutral `.agents` convention,
+ * for tools that read it rather than a home of their own. It differs from
+ * `codex` only at `user` scope; both share the project layout.
+ */
+export type AgentType = 'claude' | 'codex' | 'agents';
 
 /** Top-level asset category, taken from a manifest path's first segment. */
 export type AssetKind = 'skills' | 'rules' | 'commands';

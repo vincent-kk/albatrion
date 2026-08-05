@@ -57,7 +57,7 @@ describe('core/agentTarget — resolveAgentTarget', () => {
     expect(t.directoryRoots.rules).toBe(join(ROOT, '.claude', 'rules'));
   });
 
-  it('codex(user) puts skills under ~/.codex/skills and rules in ~/.codex/AGENTS.md', () => {
+  it('codex(user) stays inside the Codex home', () => {
     const t = resolveAgentTarget('codex', 'user', ROOT);
     const codexHome = join(homedir(), '.codex');
     expect(t.directoryRoots.skills).toBe(join(codexHome, 'skills'));
@@ -67,11 +67,24 @@ describe('core/agentTarget — resolveAgentTarget', () => {
     expect(t.unsupported.commands).toBeTruthy();
   });
 
-  it('codex(project) keeps AGENTS.md at the project root, not inside .codex', () => {
-    const t = resolveAgentTarget('codex', 'project', ROOT);
-    expect(t.directoryRoots.skills).toBe(join(ROOT, '.codex', 'skills'));
-    expect(t.rulesMergeFile).toBe(join(ROOT, 'AGENTS.md'));
+  it('agents(user) uses the vendor-neutral home instead', () => {
+    const t = resolveAgentTarget('agents', 'user', ROOT);
+    const agentsHome = join(homedir(), '.agents');
+    expect(t.directoryRoots.skills).toBe(join(agentsHome, 'skills'));
+    expect(t.rulesMergeFile).toBe(join(agentsHome, 'AGENTS.md'));
+    expect(t.unsupported.commands).toBeTruthy();
   });
+
+  // Project layout is the shared `.agents` convention, so the two agents
+  // differ only in where their user-level assets live.
+  it.each(['codex', 'agents'] as const)(
+    '%s(project) uses .agents/skills and the root AGENTS.md',
+    (agent) => {
+      const t = resolveAgentTarget(agent, 'project', ROOT);
+      expect(t.directoryRoots.skills).toBe(join(ROOT, '.agents', 'skills'));
+      expect(t.rulesMergeFile).toBe(join(ROOT, 'AGENTS.md'));
+    },
+  );
 });
 
 describe('core/agentTarget — resolveDestinations', () => {
@@ -123,7 +136,7 @@ describe('core/agentTarget — resolveDestinations', () => {
 
     expect(destinations.get('skills/form/SKILL.md')).toEqual({
       kind: 'file',
-      dstAbs: join(ROOT, '.codex', 'skills', 'form', 'SKILL.md'),
+      dstAbs: join(ROOT, '.agents', 'skills', 'form', 'SKILL.md'),
     });
     expect(destinations.get('rules/form-rule.md')).toEqual({
       kind: 'block',
@@ -132,7 +145,7 @@ describe('core/agentTarget — resolveDestinations', () => {
     });
     expect(destinations.get('commands/gen.md')).toEqual({
       kind: 'unsupported',
-      reason: expect.stringContaining('codex'),
+      reason: expect.stringContaining('commands'),
     });
   });
 
@@ -151,7 +164,7 @@ describe('core/agentTarget — resolveDestinations', () => {
     expect(orphanScans).toEqual([
       {
         kind: 'directory',
-        scanRoot: join(ROOT, '.codex', 'skills', 'form'),
+        scanRoot: join(ROOT, '.agents', 'skills', 'form'),
         relPathPrefix: 'skills/form/',
       },
     ]);

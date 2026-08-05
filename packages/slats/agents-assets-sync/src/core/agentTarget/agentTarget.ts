@@ -3,25 +3,30 @@ import { join } from 'node:path';
 import { type Scope, resolveProjectRoot } from '../scope/index.js';
 import type { AgentTarget, AgentType } from './type.js';
 
-const CODEX_NO_COMMANDS =
-  'codex has no commands directory at either scope; commands are skipped';
+const AGENTS: readonly AgentType[] = ['claude', 'codex', 'agents'];
+
+const NO_COMMANDS =
+  'this agent has no commands directory at either scope; commands are skipped';
+
+/** Vendor-neutral home used by the project layout, and by the `agents` agent. */
+const NEUTRAL_DIR = '.agents';
 
 /**
  * Narrow an unknown value to a supported agent token.
  *
  * @param value - candidate value, typically a raw CLI flag
- * @returns `true` when the value is `'claude'` or `'codex'`
+ * @returns `true` when the value names an agent this tool can write for
  */
 export function isValidAgent(value: unknown): value is AgentType {
-  return value === 'claude' || value === 'codex';
+  return AGENTS.includes(value as AgentType);
 }
 
 /**
  * Resolve where one agent writes its assets at one scope.
  *
- * The project root is resolved once and shared, so selecting both agents in a
- * single run never writes into two different projects. Nothing is created
- * here — the call reads the filesystem only to locate the root.
+ * The project root is resolved once and shared, so selecting several agents
+ * in a single run never writes into two different projects. Nothing is
+ * created here — the call reads the filesystem only to locate the root.
  *
  * @param agent - agent whose conventions decide the layout
  * @param scope - user or project
@@ -53,22 +58,26 @@ export function resolveAgentTarget(
     };
   }
 
-  // Codex keeps its own home at `<root>/.codex`, but reads project
-  // instructions from `AGENTS.md` at the project root itself.
-  const home = join(projectRoot, '.codex');
+  // At `project` scope both agents share the `.agents` convention and the
+  // repository's own AGENTS.md. They diverge only at `user` scope, where
+  // codex reads its own home and `agents` reads the neutral one.
+  const home = join(projectRoot, agent === 'codex' ? '.codex' : NEUTRAL_DIR);
+  const skillsRoot =
+    scope === 'user'
+      ? join(home, 'skills')
+      : join(projectRoot, NEUTRAL_DIR, 'skills');
   const rulesMergeFile =
-    scope === 'user' ? join(home, 'AGENTS.md') : join(projectRoot, 'AGENTS.md');
+    scope === 'user'
+      ? join(home, 'AGENTS.md')
+      : join(projectRoot, 'AGENTS.md');
+
   return {
     agent,
     scope,
     projectRoot,
-    directoryRoots: {
-      skills: join(home, 'skills'),
-      rules: null,
-      commands: null,
-    },
+    directoryRoots: { skills: skillsRoot, rules: null, commands: null },
     rulesMergeFile,
-    unsupported: { commands: CODEX_NO_COMMANDS },
-    description: `${join(home, 'skills')} + ${rulesMergeFile} ${suffix}`,
+    unsupported: { commands: NO_COMMANDS },
+    description: `${skillsRoot} + ${rulesMergeFile} ${suffix}`,
   };
 }

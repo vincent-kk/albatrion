@@ -36,15 +36,18 @@ agents-build-hashes
 
 ### Agent destinations
 
-`projectRoot` is the home directory for `--scope=user`, and for `--scope=project` the nearest ancestor owning any of `.claude`, `AGENTS.md`, `.codex`, `.git` (falling back to cwd). Both agents share it, so one run cannot straddle two projects.
+`projectRoot` is the home directory for `--scope=user`, and for `--scope=project` the nearest ancestor owning any of `.claude`, `AGENTS.md`, `.agents`, `.codex`, `.git` (falling back to cwd). Every agent shares it, so one run cannot straddle two projects.
 
-| Kind | claude | codex |
-|---|---|---|
-| `skills` | `<root>/.claude/skills/**` | `<root>/.codex/skills/**` |
-| `rules` | `<root>/.claude/rules/**` | marker block in `AGENTS.md` |
-| `commands` | `<root>/.claude/commands/**` | unsupported — skipped with a reason |
+| Kind | claude | codex | agents |
+|---|---|---|---|
+| `skills` (user) | `~/.claude/skills/**` | `~/.codex/skills/**` | `~/.agents/skills/**` |
+| `skills` (project) | `<root>/.claude/skills/**` | `<root>/.agents/skills/**` | `<root>/.agents/skills/**` |
+| `rules` (user) | `~/.claude/rules/**` | `~/.codex/AGENTS.md` | `~/.agents/AGENTS.md` |
+| `rules` (project) | `<root>/.claude/rules/**` | `<root>/AGENTS.md` | `<root>/AGENTS.md` |
+| `commands` | `<root>/.claude/commands/**` | unsupported | unsupported |
 
-Codex's `AGENTS.md` is `<projectRoot>/AGENTS.md` for `project` scope and `<projectRoot>/.codex/AGENTS.md` for `user` scope.
+`agents` is the vendor-neutral `.agents` convention rather than a product, for tools that read it instead of keeping a home of their own. It differs from `codex` only at `user` scope; the project layout is identical.
+
 
 One rule file becomes one marker block, so a block's body hash equals the manifest hash for that file and the copy/skip/diverged verdict matches the file path exactly:
 
@@ -86,12 +89,12 @@ The legacy explicit form `npx -p @slats/agents-assets-sync inject-agents-setting
 | Flag | Meaning |
 |---|---|
 | `--package <name>` | **Required.** Repeatable/comma-separable. Accepts `@scope/pkg`, `pkg`, or a scope alias `@scope` (fans out to every installed `node_modules/@scope/*` with `agents.assetPath`). |
-| `--agent <type>` | **Required outside an interactive TTY.** `claude` \| `codex`, repeatable/comma-separable. |
+| `--agent <type>` | **Required outside an interactive TTY.** `claude` \| `codex` \| `agents`, repeatable/comma-separable. |
 | `--asset <kind>` | `skills` \| `rules` \| `commands`. Default: all. An excluded kind is absent from the plan, so it is neither reported nor deleted. |
 | `--yes` | Approve the force dialog without showing it. |
 | `--no-interactive` | Never prompt, even on a TTY; a missing flag exits 2. |
 | `--scope=user` | Home directory (applies globally). |
-| `--scope=project` | Nearest ancestor owning `.claude`, `AGENTS.md`, `.codex` or `.git`; `<cwd>` if none found. |
+| `--scope=project` | Nearest ancestor owning `.claude`, `AGENTS.md`, `.agents`, `.codex` or `.git`; `<cwd>` if none found. |
 | `--dry-run` | Print the copy / skip / warn plan, no writes. |
 | `--force` | Overwrite diverged files & delete orphans (interactive confirm on TTY). |
 | `--root <path>` | Override scope-resolution cwd. |

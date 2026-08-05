@@ -65,28 +65,35 @@ describe.skipIf(!existsSync(DIST_INDEX))(
       expect(result.stdout).toContain('[DRY RUN]');
     });
 
-    it('routes codex rules into AGENTS.md and skills into .codex', () => {
-      const result = runCli([
-        '--package',
-        '@canard/schema-form',
-        '--agent=codex',
-        '--scope=project',
-      ]);
-      expect(result.status).toBe(0);
-      expect(result.stdout).toContain('AGENTS.md ▸ rules/schema-form-rule.md');
-      expect(result.stdout).toContain(join(scratchRoot, '.codex', 'skills'));
-    });
+    // At project scope codex and agents share the `.agents` layout; they
+    // differ only at user scope, which a dry-run here cannot exercise
+    // without pointing at the real home directory.
+    it.each(['codex', 'agents'] as const)(
+      'routes %s rules into AGENTS.md and skills into .agents',
+      (agent) => {
+        const result = runCli([
+          '--package',
+          '@canard/schema-form',
+          `--agent=${agent}`,
+          '--scope=project',
+        ]);
+        expect(result.status).toBe(0);
+        expect(result.stdout).toContain('AGENTS.md ▸ rules/schema-form-rule.md');
+        expect(result.stdout).toContain(join(scratchRoot, '.agents', 'skills'));
+      },
+    );
 
-    it('plans both agents in one run', () => {
+    it('plans every selected agent in one run', () => {
       const result = runCli([
         '--package',
         '@canard/schema-form',
-        '--agent=claude,codex',
+        '--agent=claude,codex,agents',
         '--scope=project',
       ]);
       expect(result.status).toBe(0);
       expect(result.stdout).toContain('· claude');
       expect(result.stdout).toContain('· codex');
+      expect(result.stdout).toContain('· agents');
     });
 
     it('enumerates every asset-bearing package under a scope alias', () => {

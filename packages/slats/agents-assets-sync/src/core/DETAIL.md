@@ -9,16 +9,18 @@
 - Scope resolution is deterministic — `resolveProjectRoot` reads only
   `cwd` and `homedir`. `user` answers with the home directory; `project`
   returns the nearest ancestor owning any of `.claude`, `AGENTS.md`,
-  `.codex`, `.git`, falling back to `cwd`, and reports `autoLocated`
+  `.agents`, `.codex`, `.git`, falling back to `cwd`, and reports `autoLocated`
   when the answer came from above `cwd`. Anchor existence decides —
   `AGENTS.md` is a file, and `.git` is a file inside a worktree.
-- One project root serves every selected agent, so a run targeting both
-  agents cannot straddle two projects.
-- `resolveAgentTarget` maps `(agent, scope)` onto asset locations:
-  claude roots all kinds under `<projectRoot>/.claude`; codex roots
-  skills under `<projectRoot>/.codex/skills`, merges rules into
-  `AGENTS.md` (at `<projectRoot>` for `project`, inside `.codex` for
-  `user`), and reports `commands` as unsupported.
+- One project root serves every selected agent, so a run targeting
+  several agents cannot straddle two projects.
+- `resolveAgentTarget` maps `(agent, scope)` onto asset locations.
+  claude roots all kinds under `<projectRoot>/.claude`. codex and agents
+  both keep skills in a `skills/` directory, merge rules into an
+  `AGENTS.md`, and report `commands` as unsupported; at `project` scope
+  they are identical (`<projectRoot>/.agents/skills` and
+  `<projectRoot>/AGENTS.md`) and differ only at `user` scope, where
+  codex uses `~/.codex` and agents uses `~/.agents`.
 - `resolveDestinations` omits a manifest path whose kind is unknown or
   filtered out. Absence is the mechanism that stops a kind-filtered run
   from reporting or deleting anything outside the requested kinds.
@@ -51,7 +53,7 @@
 - `resolveProjectRoot(scope: Scope, cwd?: string): ProjectRootResolution`
 - `findNearestAnchorAncestor(start: string): string | null`
 - `isValidScope(value: unknown): value is Scope`
-- `PROJECT_ANCHORS: readonly ['.claude', 'AGENTS.md', '.codex', '.git']`
+- `PROJECT_ANCHORS: readonly ['.claude', 'AGENTS.md', '.agents', '.codex', '.git']`
 - `resolveAgentTarget(agent: AgentType, scope: Scope, cwd?: string): AgentTarget`
 - `isValidAgent(value: unknown): value is AgentType`
 - `splitAssetKind(relPath: string): { kind: AssetKind; rest: string } | null`
@@ -98,9 +100,11 @@
 
 - Given `claude`, when destinations are resolved, then skills, rules and
   commands are files under `<projectRoot>/.claude/<kind>/`.
-- Given `codex`, when destinations are resolved, then skills are files
-  under `<projectRoot>/.codex/skills/`, rules are blocks in `AGENTS.md`,
-  and commands are `unsupported`.
+- Given `codex` or `agents` at `project` scope, then skills are files
+  under `<projectRoot>/.agents/skills/`, rules are blocks in
+  `<projectRoot>/AGENTS.md`, and commands are `unsupported`.
+- Given `user` scope, then codex resolves to `~/.codex` and agents to
+  `~/.agents`.
 - Given a kind filter, when destinations are resolved, then paths of
   every other kind are absent and no orphan scan covers them.
 - Given a skill namespace starting with `.`, when destinations are
@@ -136,6 +140,9 @@
 - 2026-08-05 — `resolveScope`/`ScopeResolution` removed in favour of
   `resolveProjectRoot` plus `resolveAgentTarget`. The old function
   hardcoded `.claude`, which cannot answer for two agents.
+- 2026-08-05 — `agents` added beside `codex`. The two share the project
+  layout; `agents` exists so a tool that reads the vendor-neutral
+  `.agents` home can be targeted without claiming to be Codex.
 - 2026-08-05 — `--force` now overwrites diverged content. Previously the
   CLI announced the overwrite while `applyAction` handled only `copy`
   and `delete`, so diverged files were silently left alone.

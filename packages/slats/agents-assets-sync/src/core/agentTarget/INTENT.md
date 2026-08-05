@@ -20,19 +20,22 @@ the only fractal that knows a per-agent convention.
 ## Conventions
 
 - claude roots every kind under `<projectRoot>/.claude`.
-- codex roots skills under `<projectRoot>/.codex/skills`, merges rules
-  into `AGENTS.md`, and has no commands location. Its `AGENTS.md` sits
-  at `<projectRoot>` for `project` and inside `.codex` for `user` —
-  that asymmetry is the Codex CLI's, not this tool's.
+- codex and agents both merge rules into `AGENTS.md`, keep skills in a
+  `skills/` directory, and have no commands location. They share the
+  project layout — `<projectRoot>/.agents/skills` and the repository's
+  own `AGENTS.md` — and diverge only at `user` scope, where codex reads
+  `~/.codex` and agents reads the neutral `~/.agents`.
+- `agents` names a convention, not a product: it exists for tools that
+  read `.agents` instead of keeping a home of their own.
 - `user` scope reaches these paths through `resolveProjectRoot`, whose
-  root is the home directory, so both agents use one formula.
+  root is the home directory, so every agent uses one formula.
 
 ## Boundaries
 
 ### Always do
 
 - Derive every location from the single shared project root, so
-  selecting both agents in one run cannot straddle two projects
+  selecting several agents in one run cannot straddle two projects
 - Leave a path out of `destinations` when its kind is unknown or
   filtered out — absence is what stops a filtered run from deleting
 - Emit an orphan scan only for kinds the caller asked for

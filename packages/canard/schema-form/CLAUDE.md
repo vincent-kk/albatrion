@@ -18,7 +18,7 @@ yarn storybook         # Storybook dev (port 6006)
 ## Agent Docs Injector
 
 `docs/agents/**` 자산을 선택한 에이전트 위치에 주입. 엔진: `@slats/agents-assets-sync` (bin: `inject-agents-settings`).
-`--agent` 로 대상 에이전트를 고른다 — claude 는 `.claude/{skills,rules,commands}`, codex 는 `.codex/skills` + `AGENTS.md` 마커 블록.
+`--agent` 로 대상 에이전트를 고른다 — `claude` 는 `.claude/{skills,rules,commands}`, `codex`/`agents` 는 `.agents/skills` + `AGENTS.md` 마커 블록(project scope 기준).
 
 ```bash
 npx -p @slats/agents-assets-sync inject-agents-settings --package=@canard/schema-form --agent=claude --scope=user

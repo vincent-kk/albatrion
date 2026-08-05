@@ -36,15 +36,18 @@ agents-build-hashes
 
 ### 에이전트별 목적지
 
-`projectRoot` 는 `--scope=user` 이면 홈 디렉터리, `--scope=project` 이면 `.claude`, `AGENTS.md`, `.codex`, `.git` 중 하나라도 가진 최근접 조상(없으면 cwd)입니다. 두 에이전트가 이 루트를 공유하므로 한 번의 실행이 서로 다른 프로젝트에 걸칠 수 없습니다.
+`projectRoot` 는 `--scope=user` 이면 홈 디렉터리, `--scope=project` 이면 `.claude`, `AGENTS.md`, `.agents`, `.codex`, `.git` 중 하나라도 가진 최근접 조상(없으면 cwd)입니다. 모든 에이전트가 이 루트를 공유하므로 한 번의 실행이 서로 다른 프로젝트에 걸칠 수 없습니다.
 
-| Kind | claude | codex |
-|---|---|---|
-| `skills` | `<root>/.claude/skills/**` | `<root>/.codex/skills/**` |
-| `rules` | `<root>/.claude/rules/**` | `AGENTS.md` 내 마커 블록 |
-| `commands` | `<root>/.claude/commands/**` | 미지원 — 사유와 함께 스킵 |
+| Kind | claude | codex | agents |
+|---|---|---|---|
+| `skills` (user) | `~/.claude/skills/**` | `~/.codex/skills/**` | `~/.agents/skills/**` |
+| `skills` (project) | `<root>/.claude/skills/**` | `<root>/.agents/skills/**` | `<root>/.agents/skills/**` |
+| `rules` (user) | `~/.claude/rules/**` | `~/.codex/AGENTS.md` | `~/.agents/AGENTS.md` |
+| `rules` (project) | `<root>/.claude/rules/**` | `<root>/AGENTS.md` | `<root>/AGENTS.md` |
+| `commands` | `<root>/.claude/commands/**` | 미지원 | 미지원 |
 
-codex 의 `AGENTS.md` 는 `project` scope 에서 `<projectRoot>/AGENTS.md`, `user` scope 에서 `<projectRoot>/.codex/AGENTS.md` 입니다.
+`agents` 는 제품이 아니라 벤더 중립 `.agents` 규약입니다 — 자체 홈 대신 이 규약을 읽는 도구를 위한 선택지입니다. `codex` 와는 `user` scope 에서만 다르고 프로젝트 레이아웃은 동일합니다.
+
 
 rule 파일 1개가 블록 1개가 되므로, 블록 본문 해시가 그 파일의 매니페스트 해시와 같고 copy/skip/diverged 판정이 파일 경로와 완전히 동일한 입자도를 갖습니다:
 

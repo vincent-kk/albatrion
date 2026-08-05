@@ -8,6 +8,7 @@ import { join } from 'node:path';
 export const PROJECT_ANCHORS = [
   '.claude',
   'AGENTS.md',
+  '.agents',
   '.codex',
   '.git',
 ] as const;

@@ -42,8 +42,8 @@ npx @slats/agents-assets-sync \
 | Flag               | Meaning                                                                                                                             |
 | ------------------ | ----------------------------------------------------------------------------------------------------------------------------------- |
 | `--package <name>` | **Required.** `@scope/pkg`, `pkg`, or a scope alias `@scope` that fans out to every installed package declaring `agents.assetPath`. |
-| `--agent <type>`   | `claude` \| `codex`. Omitted, an interactive terminal asks; anywhere else the run exits 2.                                          |
-| `--scope`          | `user` (home) or `project` (nearest ancestor owning `.claude`, `AGENTS.md`, `.codex` or `.git`).                                    |
+| `--agent <type>`   | `claude` \| `codex` \| `agents`. Omitted, an interactive terminal asks; anywhere else the run exits 2.                                          |
+| `--scope`          | `user` (home) or `project` (nearest ancestor owning `.claude`, `AGENTS.md`, `.agents`, `.codex` or `.git`).                                    |
 | `--asset <kind>`   | `skills` \| `rules` \| `commands`. Default: all. An excluded kind is absent from the plan, so it is neither reported nor deleted.   |
 | `--dry-run`        | Print the plan; write nothing.                                                                                                      |
 | `--force`          | Overwrite diverged content and delete orphans.                                                                                      |
@@ -52,14 +52,20 @@ npx @slats/agents-assets-sync \
 
 ## Agent destinations
 
-Both agents resolve from one shared project root, so a single run cannot
+Every agent resolves from one shared project root, so a single run cannot
 straddle two projects.
 
-| Kind       | claude                       | codex                               |
-| ---------- | ---------------------------- | ----------------------------------- |
-| `skills`   | `<root>/.claude/skills/**`   | `<root>/.codex/skills/**`           |
-| `rules`    | `<root>/.claude/rules/**`    | marker block in `AGENTS.md`         |
-| `commands` | `<root>/.claude/commands/**` | unsupported — skipped with a reason |
+| Kind | claude | codex | agents |
+|---|---|---|---|
+| `skills` (user) | `~/.claude/skills/**` | `~/.codex/skills/**` | `~/.agents/skills/**` |
+| `skills` (project) | `<root>/.claude/skills/**` | `<root>/.agents/skills/**` | `<root>/.agents/skills/**` |
+| `rules` (user) | `~/.claude/rules/**` | `~/.codex/AGENTS.md` | `~/.agents/AGENTS.md` |
+| `rules` (project) | `<root>/.claude/rules/**` | `<root>/AGENTS.md` | `<root>/AGENTS.md` |
+| `commands` | `<root>/.claude/commands/**` | unsupported — skipped with a reason | unsupported |
+
+`agents` is not a product: it is the vendor-neutral `.agents` convention, for
+tools that read it instead of keeping a home of their own. It differs from
+`codex` only at `user` scope.
 
 One rule file becomes one marker block, so its body hash equals the manifest
 hash for that file and the copy/skip/diverged verdict is as precise as it is

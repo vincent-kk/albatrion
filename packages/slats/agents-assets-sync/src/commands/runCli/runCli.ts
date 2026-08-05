@@ -50,7 +50,7 @@ export async function runCli(
     )
     .option(
       '--agent <type...>',
-      'Target agent(s): claude | codex. Repeat the flag or comma-separate values. Omitted on a TTY, the CLI asks.',
+      'Target agent(s): claude | codex | agents. Repeat the flag or comma-separate values. Omitted on a TTY, the CLI asks.',
       collectValues,
       [] as string[],
     )

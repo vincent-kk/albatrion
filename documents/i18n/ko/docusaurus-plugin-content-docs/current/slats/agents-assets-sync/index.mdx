@@ -40,8 +40,8 @@ npx @slats/agents-assets-sync \
 | 플래그             | 의미                                                                                                               |
 | ------------------ | ------------------------------------------------------------------------------------------------------------------ |
 | `--package <name>` | **필수.** `@scope/pkg`, `pkg`, 또는 `agents.assetPath` 를 선언한 설치 패키지 전체로 확장되는 scope alias `@scope`. |
-| `--agent <type>`   | `claude` \| `codex`. 생략 시 대화형 터미널은 선택 UI, 그 외에는 exit 2.                                            |
-| `--scope`          | `user`(홈) 또는 `project`(`.claude`, `AGENTS.md`, `.codex`, `.git` 중 하나를 가진 최근접 조상).                    |
+| `--agent <type>`   | `claude` \| `codex` \| `agents`. 생략 시 대화형 터미널은 선택 UI, 그 외에는 exit 2.                                            |
+| `--scope`          | `user`(홈) 또는 `project`(`.claude`, `AGENTS.md`, `.agents`, `.codex`, `.git` 중 하나를 가진 최근접 조상).                    |
 | `--asset <kind>`   | `skills` \| `rules` \| `commands`. 기본값 전체. 제외된 kind 는 플랜에 아예 없으므로 보고도 삭제도 되지 않습니다.   |
 | `--dry-run`        | 플랜만 출력하고 아무것도 쓰지 않음.                                                                                |
 | `--force`          | diverged 내용 덮어쓰기 및 orphan 삭제.                                                                             |
@@ -50,14 +50,19 @@ npx @slats/agents-assets-sync \
 
 ## 에이전트별 목적지
 
-두 에이전트가 하나의 프로젝트 루트에서 목적지를 도출하므로, 한 번의 실행이 서로
+모든 에이전트가 하나의 프로젝트 루트에서 목적지를 도출하므로, 한 번의 실행이 서로
 다른 프로젝트에 걸칠 수 없습니다.
 
-| Kind       | claude                       | codex                     |
-| ---------- | ---------------------------- | ------------------------- |
-| `skills`   | `<root>/.claude/skills/**`   | `<root>/.codex/skills/**` |
-| `rules`    | `<root>/.claude/rules/**`    | `AGENTS.md` 내 마커 블록  |
-| `commands` | `<root>/.claude/commands/**` | 미지원 — 사유와 함께 스킵 |
+| Kind | claude | codex | agents |
+|---|---|---|---|
+| `skills` (user) | `~/.claude/skills/**` | `~/.codex/skills/**` | `~/.agents/skills/**` |
+| `skills` (project) | `<root>/.claude/skills/**` | `<root>/.agents/skills/**` | `<root>/.agents/skills/**` |
+| `rules` (user) | `~/.claude/rules/**` | `~/.codex/AGENTS.md` | `~/.agents/AGENTS.md` |
+| `rules` (project) | `<root>/.claude/rules/**` | `<root>/AGENTS.md` | `<root>/AGENTS.md` |
+| `commands` | `<root>/.claude/commands/**` | 미지원 — 사유와 함께 스킵 | 미지원 |
+
+`agents` 는 제품이 아니라 벤더 중립 `.agents` 규약입니다 — 자체 홈 대신 이 규약을
+읽는 도구를 위한 선택지입니다. `codex` 와는 `user` scope 에서만 다릅니다.
 
 rule 파일 1개가 마커 블록 1개가 되므로, 블록 본문 해시가 그 파일의 매니페스트
 해시와 같고 copy/skip/diverged 판정이 복사되는 파일과 동일한 입자도를 갖습니다:

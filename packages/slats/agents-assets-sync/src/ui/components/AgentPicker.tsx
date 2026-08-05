@@ -12,7 +12,8 @@ interface AgentPickerProps {
 
 const ITEMS: ReadonlyArray<{ value: AgentType; hint: string }> = [
   { value: 'claude', hint: '.claude/{skills,rules,commands}' },
-  { value: 'codex', hint: '.codex/skills + AGENTS.md' },
+  { value: 'codex', hint: 'user: ~/.codex · project: .agents + AGENTS.md' },
+  { value: 'agents', hint: 'user: ~/.agents · project: .agents + AGENTS.md' },
 ];
 
 /**
