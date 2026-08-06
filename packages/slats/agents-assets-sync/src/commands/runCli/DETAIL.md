@@ -23,6 +23,8 @@
 - asset 루트 봉쇄는 **출처와 무관하게** 같다. 선언된 `agents.assetPath` 든 `--asset-path` 든, 해석된 위치가 packageRoot 안이어야 한다. 판정은 철자가 아니라 실제 위치로 한다 — `resolve` 는 어휘적이고 `stat` 은 링크를 따라가므로, 심볼릭 링크된 asset 루트는 검사를 통과하면서 디스크 어디든 가리킬 수 있기 때문이다. 여기서 읽은 바이트가 에이전트가 지시문으로 되읽는 디렉터리에 들어간다.
 - "실제 디렉터리여야 한다" 는 요구는 두 출처가 다르다. 플래그는 호출자가 있다고 단언한 경로이므로 부재가 오류다. 선언은 매니페스트를 동반하며 배포 tarball 이 소스 트리를 쳐냈을 수 있으므로 부재를 허용한다.
 - 그래서 scope alias 와 `--asset-path` 를 함께 주면 열거의 필터가 바뀐다. `agents.assetPath` 선언 여부가 아니라 그 디렉터리의 존재가 패키지를 남기고 거른다.
+- 해시 출처는 target 마다 실제로 답할 수 있는 쪽으로 정해진다. `--asset-path` 는 언제나 그 디렉터리를 진실로 삼는다. 선언된 `agents.assetPath` 는 `dist/agents-hashes.json` 이 있으면 그것을 읽고, 없으면 선언된 디렉터리를 런타임에 해싱한다. 선언은 "이 패키지가 에셋을 싣는다" 는 말이지 "빌드가 돌았다" 는 말이 아니므로, 빌드 산출물의 부재만으로 실행을 세우지 않는다.
+- 매니페스트도 디렉터리도 없으면 출처는 `manifest` 로 남아 게이트에 걸린다. 없는 디렉터리를 해싱하면 빈 매니페스트가 나오고, 빈 매니페스트는 이미 설치된 항목 전부를 orphan 으로 만든다 — `--force` 와 만나면 그 삭제가 실제로 실행된다. 답할 수 있는 출처가 하나도 없는 것은 계획할 수 없는 것이지, 아무것도 없다고 계획할 일이 아니다.
 - scope 열거는 `<cwd>/node_modules/@<scope>/*` 를 파일시스템 루트까지 거슬러 올라가며 훑는다. 디렉터리 이름은 선언된 패키지 이름과 다를 수 있으므로 권위는 `package.json` 의 `name` 필드에 있고, 중첩 설치는 nearest-wins 로 중복 제거된다.
 - scope 열거는 `targets/resolveScopeAlias.ts` 안에만 있다. `runCli/**` 의 다른 어떤 파일도 형제 `package.json` 을 읽지 않는다.
 - `utils/` 는 없다. 부속은 파이프라인 단계별 organ 셋으로 나뉜다 — `targets/`(argv → `ConsumerPackage[]`, 파일시스템·모듈해석), `flags/`(CLI 값 하나 검증, 순수), `renderers/`(상호 배타적인 출력 경로 셋). 간선은 `runCli.ts` → `targets/`, `runCli.ts` → `renderers/`, `runCli.ts` → `flags/`, 그리고 `renderers/` → `flags/` 넷뿐이다. `targets/` 는 나머지 둘 중 어느 것도 import 하지 않으며, 이행 체인이 아니라 `runCli.ts` 를 정점으로 하는 한 방향 그래프다.
@@ -57,8 +59,10 @@
 - `resolveTargets(targets, rootCwd, assetPathOverride?): Promise<{ resolved: ResolvedMetadata[]; skipped: string[] }>`
   - `skipped` 는 soft skip 된 패키지마다의 사유. `--json` 이 `errors` 로 실어 빈 실행을 설명한다
 - `toConsumerPackages(metadata): Promise<ConsumerPackage[]>`
-  - `assetPathSource: 'flag'` → `hashSource: 'directory'`, 그 외 `'manifest'`
-  - `hashesPresent` 는 `hashSource: 'manifest'` 일 때만 조사한다. `'directory'` 는 매니페스트를 읽지 않으므로 언제나 `false` 이며, 게이트도 이 값을 보지 않는다
+  - `assetRoot` 를 `packageRoot` 기준으로 해석하고, 해시 출처 판정을 `resolveHashSource` 에 맡긴다
+- `resolveHashSource(metadata, assetRoot): Promise<Pick<ConsumerPackage, 'hashSource' | 'hashesPresent'>>`
+  - `assetPathSource: 'flag'` → `'directory'`. 선언(`'package'`) 이면 `dist/agents-hashes.json` 이 있을 때 `'manifest'`, 없고 asset 디렉터리가 있으면 `'directory'`, 둘 다 없으면 `'manifest'` 로 남겨 게이트에 넘긴다
+  - `hashesPresent` 는 `dist/agents-hashes.json` 을 실제로 찾았을 때만 `true` 다. `'directory'` 로 정해진 target 은 그 파일을 읽지 않으므로 언제나 `false` 이며, 게이트도 이 값을 보지 않는다
 - `renderOrFallback(targets, flags, originCwd, notices?, env?): Promise<number>`
 - `renderPlain(targets, flags, originCwd): Promise<number>`
 - `renderJson(targets, flags, originCwd, notices?): Promise<number>`
@@ -99,8 +103,16 @@
 - `agents.assetPath` 를 선언한 패키지에 함께 주면 플래그가 이기고, 해석 결과의 `assetPathSource` 는 `'flag'` 다.
 - 선언이 없는 패키지에 주면 해석에 성공한다 — 부재 검사를 건너뛰기 때문이다.
 - 존재하지 않는 디렉터리는 단일 타깃에서 2로 종료하고, 배치(`skipMissingAsset`)에서는 `null` 로 건너뛴다. packageRoot 밖으로 나가는 경로의 거부는 `AC-RUNCLI-RESOLVE` 가 두 출처 공통으로 소유한다.
-- `assetPathSource: 'flag'` 인 target 은 `hashSource: 'directory'` 가 되고 `assetRoot` 가 플래그 값으로 계산된다.
+- 플래그가 해시 출처에 미치는 영향은 `AC-RUNCLI-HASH-SOURCE` 가 소유한다.
 - Verified by `__tests__/assetPathOverride.spec.ts` (`filid:contract AC-RUNCLI-ASSET-PATH`), `src/__tests__/cli.test.ts`.
+
+### AC-RUNCLI-HASH-SOURCE — 해시 출처는 답할 수 있는 쪽으로 정해진다
+
+- `assetPathSource: 'flag'` 인 target 은 매니페스트가 있어도 `hashSource: 'directory'` 이고 `hashesPresent` 는 `false` 다. `assetRoot` 는 플래그 값으로 계산된다.
+- 선언된 asset 경로에 `dist/agents-hashes.json` 이 있으면 `'manifest'` 이고 `hashesPresent` 는 `true` 다.
+- 선언된 asset 경로에 매니페스트가 없고 그 디렉터리가 있으면 `'directory'` 로 내려간다 — 빌드 없이 계획된다.
+- 매니페스트도 디렉터리도 없으면 `'manifest'` 인 채 `hashesPresent: false` 로 남아 게이트(`AC-MANIFEST-GATE`)에 걸린다.
+- Verified by `__tests__/hashSource.spec.ts` (`filid:contract AC-RUNCLI-HASH-SOURCE`), `src/__tests__/cli.test.ts`.
 
 ### AC-RUNCLI-DISPATCH — 렌더러 분기와 무프롬프트 구동
 
@@ -121,10 +133,11 @@
 
 ## History
 
+- 2026-08-06 — 선언된 `agents.assetPath` 가 매니페스트 없이도 동작하게 됐다. 이전에는 `--asset-path` 로 부른 실행만 디렉터리를 해싱했고, 기본 경로는 `dist/agents-hashes.json` 이 없으면 아무것도 하지 않고 "빌드부터 하라" 고만 했다 — 같은 디렉터리가 거기 있는데도. 선언은 에셋의 위치를 말할 뿐 빌드 여부를 말하지 않으므로, 부재는 오류가 아니라 다른 출처로 내려갈 신호다. 디렉터리 존재를 조건에 넣은 것은 취향이 아니라 안전 장치다 — 없는 디렉터리의 빈 매니페스트는 설치된 항목 전부를 orphan 으로 만들고 `--force` 가 그것을 삭제한다.
 - 2026-08-06 — asset 루트 봉쇄가 선언 경로까지 확대됐다. 처음에는 `--asset-path` 에만 어휘적 검사를 뒀는데, 그러면 opt-in 경로만 보호되고 기본 경로(`agents.assetPath`)는 `../` 로 자유롭게 나가는 거꾸로 된 상태가 된다. 동시에 검사를 realpath 기준으로 옮겼다 — 어휘적 검사는 심볼릭 링크된 asset 루트를 막지 못하고, 그 경로로 읽힌 파일은 에이전트가 지시문으로 되읽는 곳에 안착한다.
 - 2026-08-06 — `--asset-path` 가 추가되며 "asset 루트는 `agents.assetPath` 가 정한다" 는 전제가 깨졌다. 선언 없이 `agents/` 나 `docs/` 에 에셋만 둔 패키지를 위해서다. fallback 이 아니라 override 로 정한 이유: 플래그가 조건부로 이기면 어느 경로가 쓰였는지 실행 결과만 보고는 알 수 없다. 같은 이유로 override 는 저장된 매니페스트도 무시한다 — 그 매니페스트가 기술하는 트리가 플래그가 가리키는 트리라는 보장이 없다.
 - 2026-08-06 — `--json` 이 plain 경로를 강제한다는 계약이 폐기됐다. `renderJson` 이 독립 렌더러가 되었고, 분기에서 `--json` 이 TTY 판정보다 먼저 평가된다. 같은 변경으로 `parse*Flag` 계열이 생겼다 — JSON 렌더러는 플래그 오류에서 종료할 수 없고 그것을 자기 문서에 담아야 하기 때문이다.
 
 ## Last Updated
 
-2026-08-06 — 계약을 현행 구현에 맞춰 재작성. 렌더러 분기 순서, asset 누락 정책의 실제 판정 기준(`--package` 값 개수), `divertLogsToStderr`, program name 파생을 명시하고 Acceptance Criteria 를 도입했다.
+2026-08-06 — 해시 출처 판정을 `resolveHashSource` 로 떼어내고 `AC-RUNCLI-HASH-SOURCE` 를 추가. 선언된 asset 경로가 매니페스트 없이 런타임 해싱으로 내려가는 조건과, 그 fallback 이 디렉터리 존재를 요구하는 이유를 계약에 담았다.

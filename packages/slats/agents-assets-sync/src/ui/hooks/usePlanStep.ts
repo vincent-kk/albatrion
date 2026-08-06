@@ -67,7 +67,7 @@ export function usePlanStep({
                   packageName: target.name,
                   agent,
                   status: 'failed',
-                  error: 'dist/agents-hashes.json missing',
+                  error: `no source hashes: dist/agents-hashes.json and ${target.assetPath} are both absent`,
                 },
               });
               continue;

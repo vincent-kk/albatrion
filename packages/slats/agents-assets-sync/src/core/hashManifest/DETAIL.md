@@ -4,7 +4,7 @@
 
 - 매니페스트의 출처는 둘이며 `resolveHashManifest` 가 `hashSource` 로 가른다. `'manifest'` 는 `readHashManifest`, `'directory'` 는 asset 디렉터리 런타임 해싱이다.
 - `readHashManifest` 는 `<packageRoot>/dist/agents-hashes.json` 을 읽는다. `hashSource: 'manifest'` 인 타깃에게 이 파일이 source 쪽 해시의 유일한 진실 공급원이다.
-- `hashSource: 'directory'` 는 `--asset-path` 로 asset 루트가 지정된 타깃이다. 이때 저장된 매니페스트는 다른 디렉터리를 기술할 수 있으므로 아예 읽지 않고, 지정된 디렉터리를 그 자리에서 훑어 메모리 매니페스트를 만든다. 빌드 산출물이 필요 없다.
+- `hashSource: 'directory'` 는 asset 루트 자체가 진실인 타깃이다. 저장된 매니페스트는 읽지 않고 그 디렉터리를 그 자리에서 훑어 메모리 매니페스트를 만들며, 빌드 산출물이 필요 없다. 어느 타깃이 이 출처를 받는지는 호출자가 정한다 — `--asset-path` 로 지정된 경우(저장된 매니페스트가 다른 트리를 기술할 수 있으므로), 그리고 선언된 asset 디렉터리는 있는데 빌드가 돌지 않은 경우.
 - 런타임 계산은 `scripts/buildHashes.mjs` 와 같은 잡음 필터(`.omc/`, `.DS_Store`, `*.log`), 같은 POSIX 키, 같은 키 정렬을 쓴다. 같은 트리에 대해 두 경로의 `files` 는 같아야 한다. 두 구현이 갈라진 것은 `scripts/` 가 rolldown 이 import 할 수 있도록 순수 Node ESM 으로 남아야 해서이며, 그 대가를 동등성 검사가 치른다.
 - `schemaVersion !== 1` 은 조용히 넘어가지 않고 명시적 `Error` 로 거부한다. 메시지는 `[agents-assets-sync]` 접두사와 발견된 버전을 포함한다.
 - 파일이 없거나 JSON 이 깨진 경우의 오류는 그대로 전파된다. 호출자가 "빌드가 필요하다" 는 진단으로 바꾸는 것은 렌더러의 몫이다.
@@ -52,7 +52,7 @@
 
 - `schemaVersion` 이 1이면 파싱된 매니페스트가 반환된다.
 - `schemaVersion` 이 1이 아니면 호출이 throw 하고, 그 메시지가 실행의 진단으로 표면화된다.
-- `dist/agents-hashes.json` 이 없는 패키지는 실행이 그 사실을 보고하고 건너뛴다.
+- `hashSource: 'manifest'` 인 채 `dist/agents-hashes.json` 이 없는 타깃은 실행이 그 사실을 보고하고 건너뛴다. 어느 타깃이 그 출처를 받는지는 호출자가 정한다 — `commands/runCli/DETAIL.md` 의 `AC-RUNCLI-HASH-SOURCE`.
 - Verified by `src/__tests__/json.test.ts`, `src/__tests__/cli.test.ts`.
 
 ### AC-MANIFEST-NAMESPACE — orphan 탐색은 관리 중인 네임스페이스로 제한된다
@@ -75,12 +75,14 @@
 - `hashSource: 'manifest'` 이고 매니페스트가 없으면 `needsBuiltManifest` 가 `true` 다. 매니페스트가 있으면 `false`.
 - `hashSource: 'directory'` 는 `hashesPresent` 와 무관하게 언제나 `false` 다 — `dist/` 를 읽지 않으므로 그 부재가 이 target 에 대해 아무것도 말하지 않는다.
 - 세 렌더러(plain, json, Ink)가 계획 전에 모두 이 술어에 묻는다. 판정을 한 곳에 두는 이유는 중복 제거만이 아니라, 어떤 렌더러도 직접 구동하지 않는 Ink 경로를 같은 검사 아래 두기 위해서다.
+- 이 술어는 출처를 정하지 않는다. `'manifest'` 를 받은 타깃이 그 파일 없이 도착했다는 것은 호출자가 다른 출처도 찾지 못했다는 뜻이며, 렌더러의 진단은 그렇게 읽혀야 한다.
 - Verified by `__tests__/needsBuiltManifest.spec.ts` (`filid:contract AC-MANIFEST-GATE`).
 
 ## History
 
+- 2026-08-06 — `'directory'` 출처가 `--asset-path` 전용이기를 그만뒀다. 선언된 asset 디렉터리가 있는데 빌드만 돌지 않은 타깃도 같은 계산 경로를 쓴다. 이 fractal 의 코드는 그대로다 — 출처 판정은 처음부터 호출자의 몫이었고, 바뀐 것은 호출자가 그 판정을 내리는 조건이다.
 - 2026-08-06 — "매니페스트가 source 해시의 유일한 진실 공급원" 이라는 계약이 `--asset-path` 로 완화됐다. 플래그가 asset 루트를 지정하면 그 디렉터리가 진실이고 저장된 매니페스트는 읽지 않는다 — `agents.assetPath` 선언도 빌드 산출물도 없이 그냥 `agents/` 나 `docs/` 에 에셋을 둔 패키지를 지원하기 위함이다.
 
 ## Last Updated
 
-2026-08-06 — `resolveHashManifest` / `HashManifestSource` 와 `AC-MANIFEST-COMPUTE` 를 추가. 매니페스트 출처가 둘이 되었음을 Requirements 에 반영했다.
+2026-08-06 — `'directory'` 출처가 `--asset-path` 에 매이지 않음을 Requirements 와 게이트 계약에 반영했다. 출처 판정의 소유자는 호출자이며, 그 조건은 `commands/runCli/DETAIL.md` 의 `AC-RUNCLI-HASH-SOURCE` 가 갖는다.

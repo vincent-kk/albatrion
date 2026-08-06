@@ -15,7 +15,7 @@ export interface HashManifestSource {
   readonly assetRoot: string;
   /** `assetRoot` relative to `packageRoot`; recorded as `assetRoot` in a computed manifest. */
   readonly assetPath: string;
-  /** `directory` when `--asset-path` named the root: hash it instead of reading `dist/`. */
+  /** `directory`: hash `assetRoot` in place instead of reading `dist/`. The caller decides which source a target gets. */
   readonly hashSource: 'manifest' | 'directory';
 }
 

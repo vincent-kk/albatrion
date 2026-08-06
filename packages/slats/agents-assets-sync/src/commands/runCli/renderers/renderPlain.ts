@@ -56,7 +56,7 @@ export async function renderPlain(
   const usable = targets.filter((target) => {
     if (!needsBuiltManifest(target)) return true;
     logger.warn(
-      `${target.name}: dist/agents-hashes.json missing — build the package (e.g. yarn build) to regenerate the hash manifest first, or pass --asset-path to hash the asset directory instead.`,
+      `${target.name}: no source hashes — neither dist/agents-hashes.json nor the declared asset directory "${target.assetPath}" is there. Build the package (e.g. yarn build), or pass --asset-path to name a directory that is.`,
     );
     return false;
   });

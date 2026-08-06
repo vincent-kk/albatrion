@@ -33,6 +33,12 @@ const DECLARED = '@slats-e2e/declared';
 // The case `--asset-path` exists for: assets in a directory with no
 // `agents.assetPath` declaration and no `dist/agents-hashes.json` to read.
 const UNDECLARED = '@slats-e2e/no-declaration';
+// A declaration whose build has not run: the directory is there, the manifest
+// is not. The common shape of a workspace package before `yarn build`.
+const UNBUILT = '@slats-e2e/unbuilt';
+// A declaration pointing at a tree the tarball pruned, with no manifest
+// either — the one combination that has no source of hashes at all.
+const PRUNED = '@slats-e2e/pruned';
 // One scope holding a declared package, an undeclared one, and one with no
 // assets at all — enough to show what each enumeration keeps.
 const SCOPE = '@slats-e2e-scope';
@@ -60,6 +66,16 @@ describe.skipIf(blocker !== null)(
           'skills/e2e-skill/SKILL.md': '# E2E Skill\n',
           'rules/e2e-rule.md': '# E2E Rule\n',
         },
+      });
+      await installConsumer(scratchRoot, {
+        name: UNBUILT,
+        assetPath: 'docs/agents',
+        files: { 'skills/unbuilt-skill/SKILL.md': '# Unbuilt Skill\n' },
+      });
+      await installConsumer(scratchRoot, {
+        name: PRUNED,
+        assetPath: 'docs/agents',
+        files: {},
       });
       await installConsumer(scratchRoot, {
         name: `${SCOPE}/declared`,
@@ -173,6 +189,36 @@ describe.skipIf(blocker !== null)(
         runCli(['--package', UNDECLARED, '--agent=claude', '--scope=project'])
           .status,
       ).toBe(2);
+    });
+
+    // A declaration says where the assets are, not that a build ran. The
+    // directory it names is right there, so the default path hashes it instead
+    // of stopping for build output it does not need.
+    it('hashes a declared asset path whose manifest was never built', () => {
+      const result = runCli([
+        '--package',
+        UNBUILT,
+        '--agent=claude',
+        '--scope=project',
+      ]);
+      expect(result.status).toBe(0);
+      expect(result.stdout).toContain('skills/unbuilt-skill/SKILL.md');
+      expect(result.stderr).not.toContain('no source hashes');
+    });
+
+    // Nothing can answer for this one's hashes. Hashing the absent directory
+    // would report an empty tree, which is how installed content becomes an
+    // orphan — so the target is skipped and named instead.
+    it('skips a declared package with neither a manifest nor the directory', () => {
+      const result = runCli([
+        '--package',
+        PRUNED,
+        '--agent=claude',
+        '--scope=project',
+      ]);
+      // The transcript owns stdout here; only `--json` diverts diagnostics.
+      expect(result.stdout).toContain('no source hashes');
+      expect(result.stdout).not.toContain(`${PRUNED}@`);
     });
 
     // With an override every enumerated package gets the same asset path, so

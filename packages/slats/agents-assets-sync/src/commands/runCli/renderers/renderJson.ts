@@ -133,8 +133,7 @@ async function runUnit(
       requiresForce: false,
       actions: [],
       report: null,
-      error:
-        'dist/agents-hashes.json missing — build the package to regenerate the hash manifest first, or pass --asset-path to hash the asset directory instead.',
+      error: `no source hashes — neither dist/agents-hashes.json nor the declared asset directory "${target.assetPath}" is there. Build the package, or pass --asset-path to name a directory that is.`,
     };
 
   try {

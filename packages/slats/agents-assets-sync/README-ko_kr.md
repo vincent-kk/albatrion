@@ -8,7 +8,7 @@
 
 `--package` 는 scoped 이름 (`@scope/pkg`), unscoped 이름 (`pkg`), 또는 **scope alias** (`@scope` — 슬래시 없음) 를 받습니다. scope alias 는 설치된 `node_modules/@scope/*` 중 `agents.assetPath` 를 선언한 모든 패키지로 전개됩니다. 단일 타깃은 `createRequire` 로 해석되고, scope alias 열거는 `cwd` 에서 상위로 올라가며 각 조상의 `node_modules/@<scope>/` 디렉토리를 훑으며 `runCli/targets/resolveScopeAlias.ts` 에 격리돼 있습니다.
 
-GitHub fetch 없음, `.sync-meta.json` 없음, 마이그레이션 없음 — 컨슈머의 `dist/agents-hashes.json` 이 유일한 진실의 원천입니다.
+GitHub fetch 없음, `.sync-meta.json` 없음, 마이그레이션 없음 — 컨슈머의 asset 트리 자체가 유일한 진실의 원천이며, 빌드된 `dist/agents-hashes.json` 이 있으면 그것을 읽고 없으면 그 자리에서 해싱합니다.
 
 ## 설치
 
@@ -213,7 +213,7 @@ asset 루트 하위의 모든 파일은 해시되어 `dist/agents-hashes.json` �
 
 ## 해시 기반 동기화 전략 (Option A)
 
-- `dist/agents-hashes.json` (schema v1) 이 유일한 진실의 원천.
+- `dist/agents-hashes.json` (schema v1) 이 있으면 그것이 진실의 원천입니다. 없으면 asset 루트 — 선언된 `agents.assetPath` 또는 `--asset-path` 가 지정한 경로 — 를 실행 시점에 해싱해 같은 문서를 만들므로, 빌드하지 않은 패키지도 주입할 수 있습니다. 선언된 asset 경로에 매니페스트도 디렉토리도 없으면 참조할 원천이 없으므로 그 대상은 보고 후 건너뜁니다.
 - 파일별 SHA-256 비교:
   - **로컬에 없음** → 복사
   - **해시 일치** → 건너뜀

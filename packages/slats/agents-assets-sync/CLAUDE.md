@@ -148,7 +148,8 @@ src/
 │       │   ├── resolvePackage.ts   # single-target resolve
 │       │   ├── resolveScopeAlias.ts# scope → packages enumeration (only enumerator)
 │       │   ├── resolveTargets.ts   # classify/resolve/dedupe orchestrator
-│       │   └── toConsumerPackages.ts # metadata → ConsumerPackage
+│       │   ├── toConsumerPackages.ts # metadata → ConsumerPackage
+│       │   └── resolveHashSource.ts# manifest vs. run-time directory hashing
 │       ├── flags/                  # one CLI flag value → a validated value
 │       │   ├── resolveScopeFlag.ts # plain-path scope flag validator
 │       │   ├── resolveAgentFlag.ts # --agent validator (exits 2 when non-interactive)
@@ -188,7 +189,8 @@ scripts/
 
 ## Hash Strategy (Option A)
 
-- `dist/agents-hashes.json` is the sole source of truth (schema v1, `previousVersions: {}` reserved) — except under `--asset-path`, where the named directory is hashed at run time and the stored manifest is not read at all. `core/hashManifest/resolveHashManifest` owns that branch; the computed document is byte-equivalent to a freshly built one, and `src/core/hashManifest/__tests__/computeHashManifest.spec.ts` keeps it so.
+- `dist/agents-hashes.json` is the source of truth wherever it exists (schema v1, `previousVersions: {}` reserved). Two cases read the asset directory at run time instead: `--asset-path`, where the named directory wins outright and the stored manifest is not read at all, and a declared `agents.assetPath` whose package has not been built. `core/hashManifest/resolveHashManifest` owns the branch and `commands/runCli/targets/resolveHashSource.ts` decides which side each target takes; the computed document is byte-equivalent to a freshly built one, and `src/core/hashManifest/__tests__/computeHashManifest.spec.ts` keeps it so.
+- The fallback requires the declared directory to be present. Hashing an absent one succeeds with an empty manifest, and an empty manifest makes every already-installed file an orphan — content `--force` deletes. With neither present the target is reported and skipped.
 - Per-entry SHA-256 comparison: copy if missing, skip if equal, warn + require `--force` if different. A codex rule block is compared by the body between its markers, against the same manifest hash.
 - `--force` on TTY: Ink `ConfirmForce` dialog, skipped by `--yes`. Non-interactive: stderr emission + proceed.
 - `--force` actually overwrites diverged content: `partitionActions` makes `warn-diverged` executable once force is granted.

@@ -16,6 +16,7 @@
 - Missing `--package`, unresolvable package, missing `agents.assetPath` with no `--asset-path`, or an invalid `--agent`/`--asset`/`--asset-path` value: exit 2.
 - An asset root that resolves outside its package is refused whichever named it — a declared `agents.assetPath` and `--asset-path` are judged alike, on the resolved location rather than the spelling, so a symlink out of the package is refused too.
 - `dist/agents-hashes.json` (schema v1) is generated at build time by `buildHashes`; `previousVersions: {}` is reserved for future use. A run driven by `--asset-path` computes the same document in memory instead, so it needs no build output.
+- A declared `agents.assetPath` with no such file falls back to that same in-memory computation, so a package whose build has not run is still injectable. The fallback requires the declared directory to be there: hashing an absent one succeeds with an empty manifest, and an empty manifest makes every already-installed file an orphan that `--force` deletes. With neither present the target is reported and skipped rather than planned.
 - The version every surface reports — `--version`, the Ink banner and footer, the `--json` document — comes from `utils/version.ts`, generated from `package.json` by `scripts/inject-version.js`. `yarn version:sync` runs the generator, and `build`, `dev` and each `version:major|minor|patch` bump chain through it, so a bump cannot leave the reported version behind.
 
 ## API Contracts
@@ -70,6 +71,12 @@
 - Given a scope alias and `--asset-path`, then the packages that hold that directory are planned and the rest are skipped — the declaration stops being the filter.
 - Verified by `__tests__/cli.test.ts`.
 
+### AC-CLI-UNBUILT-MANIFEST — a declared asset tree is injectable before it is built
+
+- Given a package that declares `agents.assetPath` and ships no `dist/agents-hashes.json`, when the run names it with no `--asset-path`, then the declared directory is hashed at run time and the plan lists its files.
+- Given the same package with the declared directory absent as well, then no source can answer: the run names that and plans nothing for the target.
+- Verified by `__tests__/cli.test.ts`.
+
 ### AC-ASSET-PATH-APPLY — a computed manifest drives applying, not just planning
 
 - Given a first applying run, then every asset under the named directory lands at its destination with the source bytes.
@@ -89,6 +96,7 @@
 
 ## History
 
+- 2026-08-06 — A declared `agents.assetPath` stopped requiring build output. `--asset-path` had been the only way to reach run-time hashing, so the default path did nothing at all for a package whose `dist/agents-hashes.json` was not built yet — while the very directory it declared sat there ready to hash. The fallback is conditional on that directory existing, and deliberately so: an absent one hashes to an empty manifest, and an empty manifest reclassifies every installed file as an orphan for `--force` to delete.
 - 2026-08-06 — `utils/version.ts` had drifted to `0.1.0` while the manifest already read `0.1.1`. Only `build` and `dev` ran the generator, so a `version:*` bump left the constant behind and every surface reporting it stated the previous release until someone rebuilt. The bump scripts now chain `version:sync`, and `AC-VERSION-SYNC` keeps the two in step whether or not a build ran.
 - 2026-08-06 — `--asset-path` broke the assumption that `agents.assetPath` is the only way to name an asset root, so that a package shipping assets in `agents/` or `docs/` without declaring them is still injectable. It overrides rather than falls back, and ignores any stored manifest, because a conditional winner would leave the run's actual source unknowable from its output.
 - 2026-08-06 — `--json` became a real renderer. It previously forced the plain path while its help text promised structured output, so an agent parsing stdout got a colour-coded transcript. The logger gained a one-way switch to stderr because it wrote diagnostics to stdout, where they would corrupt the document.
@@ -96,4 +104,4 @@
 
 ## Last Updated
 
-2026-08-06 — Recorded where the reported version comes from and added `AC-VERSION-SYNC`, so the generated constant is held to `package.json` by a check rather than by remembering to build.
+2026-08-06 — Recorded the run-time hashing fallback for a declared `agents.assetPath` with no built manifest, and added `AC-CLI-UNBUILT-MANIFEST`.

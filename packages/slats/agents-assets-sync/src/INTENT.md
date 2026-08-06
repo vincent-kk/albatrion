@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Shared CLI engine that lets any npm package ship one set of agent docs (skills, rules, commands) and inject them where each coding agent keeps them. The engine owns the `inject-agents-settings` dispatcher; consumers only declare `agents.assetPath` in `package.json` and let `agents-build-hashes` hash their asset tree at build time. A package that declares neither is reachable through `--asset-path`, which names the asset root at run time and hashes it in place.
+Shared CLI engine that lets any npm package ship one set of agent docs (skills, rules, commands) and inject them where each coding agent keeps them. The engine owns the `inject-agents-settings` dispatcher; consumers only declare `agents.assetPath` in `package.json` and let `agents-build-hashes` hash their asset tree at build time — where that build output is absent, the declared directory is hashed at run time instead. A package that declares nothing is reachable through `--asset-path`, which names the asset root at the call site.
 
 ## Structure
 
