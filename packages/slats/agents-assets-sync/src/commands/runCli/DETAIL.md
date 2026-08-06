@@ -17,7 +17,7 @@
 - `renderOrFallback` 의 `env.isTTY` 는 테스트를 위해 주입 가능하며, 생략 시 `process.stdout.isTTY` 를 쓴다.
 - `--json` 이 켜지면 액션 진입 즉시 `divertLogsToStderr()` 가 호출된다. 이후의 모든 진단은 — 종료 경로의 것까지 — stderr 로 간다. stdout 은 JSON 문서만의 것이다.
 - 비대화형 경로의 필수 플래그 검증은 `resolveScopeFlag` / `resolveAgentFlag` / `resolveAssetFlag` 가 맡아 실패 시 2로 종료한다. `--json` 렌더러는 대신 `parse*Flag` 를 써서 실패를 값으로 받아 자기 문서에 담는다.
-- asset 누락 정책은 `--package` 값의 개수로 갈린다. 값이 정확히 하나이고 그 값이 패키지 이름이면 strict 다 — `agents.assetPath` 가 없으면 2로 종료한다. 값이 여럿이면 soft skip 이라 나머지 배치가 계속된다.
+- asset 누락 정책은 `--package` 가 지목한 대상의 개수로 갈린다. **중복을 제거한** 값이 정확히 하나이고 그 값이 패키지 이름이면 strict 다 — `agents.assetPath` 가 없으면 2로 종료한다. 서로 다른 값이 여럿이면 soft skip 이라 나머지 배치가 계속된다. 같은 패키지를 두 번 적는 것은 여전히 한 패키지를 지목한 것이므로 판정이 물러지지 않는다.
 - scope alias 는 언제나 soft skip 으로 열거된다. workspace 안의 어떤 패키지가 asset 을 선언하지 않는 것은 정상이기 때문이다.
 - `--asset-path` 가 있으면 `agents.assetPath` 부재 검사 자체를 건너뛴다. 실패는 위와 **같은** strict / soft skip 분기를 탄다. 새 정책을 만들지 않는다.
 - asset 루트 봉쇄는 **출처와 무관하게** 같다. 선언된 `agents.assetPath` 든 `--asset-path` 든, 해석된 위치가 packageRoot 안이어야 한다. 판정은 철자가 아니라 실제 위치로 한다 — `resolve` 는 어휘적이고 `stat` 은 링크를 따라가므로, 심볼릭 링크된 asset 루트는 검사를 통과하면서 디스크 어디든 가리킬 수 있기 때문이다. 여기서 읽은 바이트가 에이전트가 지시문으로 되읽는 디렉터리에 들어간다.
@@ -26,7 +26,7 @@
 - 해시 출처는 target 마다 실제로 답할 수 있는 쪽으로 정해진다. `--asset-path` 는 언제나 그 디렉터리를 진실로 삼는다. 선언된 `agents.assetPath` 는 `dist/agents-hashes.json` 이 있으면 그것을 읽고, 없으면 선언된 디렉터리를 런타임에 해싱한다. 선언은 "이 패키지가 에셋을 싣는다" 는 말이지 "빌드가 돌았다" 는 말이 아니므로, 빌드 산출물의 부재만으로 실행을 세우지 않는다.
 - 매니페스트도 디렉터리도 없으면 출처는 `manifest` 로 남아 게이트에 걸린다. 없는 디렉터리를 해싱하면 빈 매니페스트가 나오고, 빈 매니페스트는 이미 설치된 항목 전부를 orphan 으로 만든다 — `--force` 와 만나면 그 삭제가 실제로 실행된다. 답할 수 있는 출처가 하나도 없는 것은 계획할 수 없는 것이지, 아무것도 없다고 계획할 일이 아니다.
 - 게이트 판정은 렌더러 분기 **이전**, action 에서 한 번 내린다. 해시를 댈 수 없는 타깃은 `selectInjectableTargets` 가 사유와 함께 걸러내므로 렌더러는 그런 타깃을 아예 보지 않는다. 같은 술어를 세 렌더러가 각자 해석하면 실행 판정이 출력 형식에 따라 갈리는데, 판정은 실행의 것이지 렌더러의 것이 아니다.
-- 그 실패는 `agents.assetPath` 부재와 **같은** strict / soft skip 분기를 탄다. `--package` 값이 정확히 하나이고 그 값이 패키지 이름이면 2로 종료하고, 값이 여럿이거나 scope alias 면 사유만 남기고 나머지 배치가 계속된다. 새 정책을 만들지 않는다.
+- 그 실패는 `agents.assetPath` 부재와 **같은** strict / soft skip 분기를 탄다. 중복 제거한 `--package` 값이 정확히 하나이고 그것이 패키지 이름이면 2로 종료하고, 서로 다른 값이 여럿이거나 scope alias 면 사유만 남기고 나머지 배치가 계속된다. 새 정책을 만들지 않는다.
 - scope 열거는 `<cwd>/node_modules/@<scope>/*` 를 파일시스템 루트까지 거슬러 올라가며 훑는다. 디렉터리 이름은 선언된 패키지 이름과 다를 수 있으므로 권위는 `package.json` 의 `name` 필드에 있고, 중첩 설치는 nearest-wins 로 중복 제거된다.
 - scope 열거는 `targets/resolveScopeAlias.ts` 안에만 있다. `runCli/**` 의 다른 어떤 파일도 형제 `package.json` 을 읽지 않는다.
 - `utils/` 는 없다. 부속은 파이프라인 단계별 organ 셋으로 나뉜다 — `targets/`(argv → `ConsumerPackage[]`, 파일시스템·모듈해석), `flags/`(CLI 값 하나 검증, 순수), `renderers/`(상호 배타적인 출력 경로 셋). 간선은 `runCli.ts` → `targets/`, `runCli.ts` → `renderers/`, `runCli.ts` → `flags/`, 그리고 `renderers/` → `flags/` 넷뿐이다. `targets/` 는 나머지 둘 중 어느 것도 import 하지 않으며, 이행 체인이 아니라 `runCli.ts` 를 정점으로 하는 한 방향 그래프다.
@@ -60,7 +60,7 @@
 - `resolveScopeAlias(scope, rootCwd, assetPathOverride?, skipReasons?): Promise<ResolvedMetadata[]>`
 - `resolveTargets(targets, rootCwd, assetPathOverride?): Promise<{ resolved: ResolvedMetadata[]; skipped: string[]; strict: boolean }>`
   - `skipped` 는 soft skip 된 패키지마다의 사유. `--json` 이 `errors` 로 실어 빈 실행을 설명한다
-  - `strict` 는 이 실행이 패키지 이름 하나만 지목했는지다. asset 누락에 쓰는 그 분기를 게이트도 쓰게 하려고 값으로 돌려준다 — 두 곳이 각자 세면 갈라진다
+  - `strict` 는 이 실행이 패키지 이름 하나만 지목했는지다. 중복 제거한 값으로 세므로 `--package=X,X` 는 여전히 strict 다. asset 누락에 쓰는 그 분기를 게이트도 쓰게 하려고 값으로 돌려준다 — 두 곳이 각자 세면 갈라진다
 - `selectInjectableTargets(targets, skipReasons): ConsumerPackage[]`
   - 해시를 댈 수 없는 타깃(`needsBuiltManifest`)을 경고하고 `skipReasons` 에 사유를 적은 뒤 나머지를 돌려준다. 종료 여부는 action 이 `strict` 로 정한다 — 이 함수는 종료하지 않는다
 - `toConsumerPackages(metadata): Promise<ConsumerPackage[]>`
@@ -125,7 +125,8 @@
 
 - 해시를 댈 수 없는 타깃은 렌더러 분기 이전에 걸러지므로, 세 렌더러 중 어느 것도 그런 타깃을 계획하거나 그에 대해 판정하지 않는다.
 - 패키지 이름 하나만 지목한 실행에서 그 하나가 걸리면 2로 종료한다. `--json` 이든 아니든 같다 — `--json` 은 렌더러 이전 실패의 관례대로 stdout 이 비고 진단은 stderr 로 간다.
-- 값이 여럿이거나 scope alias 인 실행은 사유를 남기고 0으로 끝난다. `--json` 은 그 사유를 `errors` 에 싣고 나머지 타깃의 `units` 를 낸다. `--json` 이든 아니든 같다.
+- 서로 다른 값이 여럿이거나 scope alias 인 실행은 사유를 남기고 0으로 끝난다. `--json` 은 그 사유를 `errors` 에 싣고 나머지 타깃의 `units` 를 낸다. `--json` 이든 아니든 같다.
+- 같은 패키지를 두 번 적어도(`--package=X,X`) 판정은 물러지지 않는다. 이 절은 `agents.assetPath` 부재에도 같이 적용된다 — 두 실패가 한 분기를 공유하기 때문이다.
 - Verified by `src/__tests__/cli.test.ts`.
 
 ### AC-RUNCLI-DISPATCH — 렌더러 분기와 무프롬프트 구동
@@ -147,6 +148,8 @@
 
 ## History
 
+- 2026-08-06 — strict 판정이 `--package` 원시 값 개수로 세어져, 같은 패키지를 두 번 적으면(`--package=X,X`) 판정이 0으로 물러졌다. 지목한 것은 여전히 한 패키지인데 말한 횟수가 결과를 바꾼 셈이다. 중복 제거 후 세도록 고쳤고, 이 분기를 공유하는 `agents.assetPath` 부재도 함께 정정됐다 — 그쪽은 이미 배포된 동작이지만, 문서가 처음부터 "값이 정확히 하나이고 그 값이 패키지 이름이면 strict" 라고 쓰고 있었으므로 계약이 아니라 구현이 틀린 쪽이었다.
+- 2026-08-06 — 게이트에 걸린 단일 타깃에 `--json` 을 주면 문서 대신 빈 stdout 이 나가는 것을 그대로 두기로 했다. 머신 리더에게 언제나 문서를 주는 편이 renderJson 의 취지에 가깝지만, 그러려면 게이트 결과를 다시 렌더러로 실어 날라야 하고 — 방금 걷어낸 배선이다. 해석 불가 패키지와 같은 취급(렌더러 이전 실패 → 빈 stdout, 사유는 stderr, 판정은 exit code)으로 남긴다.
 - 2026-08-06 — 게이트 판정이 렌더러마다 달랐다. plain 과 Ink 는 걸린 타깃을 조용히 빼고 0으로 끝냈고, `--json` 은 같은 상황에서 1을 냈다 — 같은 입력에 출력 형식만으로 CI 판정이 갈렸다. 술어(`needsBuiltManifest`)는 한 곳이었지만 **그 답으로 무엇을 할지**는 아무도 소유하지 않은 것이 원인이라, 판정을 렌더러 분기 위 action 으로 올렸다. 새 정책 대신 `agents.assetPath` 부재가 이미 쓰던 strict / soft skip 분기를 그대로 쓴다. 렌더러가 판정을 못 하게 만드는 쪽을 택한 이유는, 셋이 합의하도록 고치면 넷째 렌더러가 생길 때 같은 버그가 다시 나기 때문이다.
 - 2026-08-06 — 선언이 packageRoot 안의 파일을 가리킬 때 "resolves outside" 라고 보고하던 오분류를 고쳤다. 봉쇄 검사는 이미 통과한 지점이었으므로 그 문구는 사실이 아니었고, 사용자를 엉뚱한 수정으로 이끌었다.
 - 2026-08-06 — `resolvePackage` 의 2단 해석이 ESM 전용 패키지 앞에서 멈춘다는 것이 드러났다. 두 단계 모두 `createRequire` 를 쓰는데, `require` 조건도 `./package.json` 도 없는 패키지는 subpath 와 bare specifier 양쪽에서 `ERR_PACKAGE_PATH_NOT_EXPORTED` 로 실패한다. 구 CJS 빌드는 main 진입점 fallback 으로 해석돼 이 구멍을 가리고 있었다. 해석기를 고치는 대신 엔진 매니페스트가 `./package.json` 을 export 하도록 한 이유는 경계다 — ESM 전용 패키지에 닿는 다른 길은 `node_modules` 를 걷는 것이고, 그것은 `resolveScopeAlias.ts` 만의 몫이다.

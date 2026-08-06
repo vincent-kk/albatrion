@@ -10,7 +10,7 @@ import { resolveScopeAlias } from './resolveScopeAlias.js';
  * - `@<scope>` values enumerate through `resolveScopeAlias` (soft skip
  *   when a workspace package lacks `agents.assetPath`).
  * - `@<scope>/<name>` and `<name>` values go through `resolvePackage`.
- *   When there is a single `--package` value, the call is strict
+ *   When the run names a single distinct package, the call is strict
  *   (asset-missing → exit 2); otherwise asset-missing is a soft skip
  *   so the rest of the batch can proceed.
  *
@@ -39,7 +39,9 @@ export async function resolveTargets(
   const skipped: string[] = [];
   if (targets.length === 0) return { resolved: [], skipped, strict: false };
 
-  const isSingleTarget = targets.length === 1;
+  // Naming one package twice still names one package: the split is about what
+  // the run asked for, not how many times it said it.
+  const isSingleTarget = new Set(targets).size === 1;
   const seen = new Set<string>();
   const results: ResolvedMetadata[] = [];
   let strict = false;

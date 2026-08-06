@@ -244,6 +244,23 @@ describe.skipIf(blocker !== null)(
       },
     );
 
+    // Naming one package twice still names one package. The strict / soft
+    // split is about what the run asked for, not how many times it said it —
+    // and both failure modes that ride the split are held to it.
+    it.each([
+      ['a gated package', PRUNED, 'no source hashes'],
+      ['an undeclared package', UNDECLARED, 'agents.assetPath'],
+    ])('stays strict when %s is named twice', (_label, name, reason) => {
+      const result = runCli([
+        '--package',
+        `${name},${name}`,
+        '--agent=claude',
+        '--scope=project',
+      ]);
+      expect(result.status).toBe(2);
+      expect(result.stdout + result.stderr).toContain(reason);
+    });
+
     // One member of a scope having nothing to inject is ordinary, so the batch
     // reports it and carries on — the same soft skip an undeclared member gets.
     it.each([[[]], [['--json']]])(
