@@ -36,7 +36,7 @@
 
 ### `slats`
 
-- **[`@slats/claude-assets-sync`](./packages/slats/claude-assets-sync/README-ko_kr.md)** - Claude Code commands와 skills를 프로젝트의 `.claude/` 디렉토리로 동기화하는 CLI 도구
+- **[`@slats/agents-assets-sync`](./packages/slats/agents-assets-sync/README-ko_kr.md)** - npm 패키지의 agent 문서(skills, rules, commands)를 Claude Code와 Codex 자산 위치로 주입하는 CLI 엔진
 
 ### `winglet`
 
