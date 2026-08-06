@@ -2,13 +2,15 @@
 import {
   mkdirSync,
   mkdtempSync,
+  readFileSync,
   realpathSync,
   rmSync,
   symlinkSync,
   writeFileSync,
 } from 'node:fs';
 import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { dirname, join, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 import {
   type MockInstance,
@@ -33,6 +35,14 @@ vi.mock('../../../utils/logger.js', () => ({
 
 const errorMock = vi.mocked(logger.error);
 const warnMock = vi.mocked(logger.warn);
+
+const PACKAGE_ROOT = resolve(
+  dirname(fileURLToPath(import.meta.url)),
+  '../../../..',
+);
+const MANIFEST = JSON.parse(
+  readFileSync(join(PACKAGE_ROOT, 'package.json'), 'utf-8'),
+) as { name: string; agents: { assetPath: string } };
 
 function makePkg(dir: string, body: Record<string, unknown>): void {
   mkdirSync(dir, { recursive: true });
@@ -131,6 +141,18 @@ describe('resolvePackage', () => {
     expect(errorArgs.some((m) => m.includes('cannot resolve package'))).toBe(
       false,
     );
+  });
+
+  // This package is ESM-only, so `createRequire` reaches it only through the
+  // `./package.json` subpath its manifest exports — a bare-specifier resolve
+  // finds no `require` condition. Resolving it by its own name is what
+  // `--package=@slats/agents-assets-sync` does, and it is how this repository
+  // re-syncs the assets this engine owns.
+  it('resolves this ESM-only package by its own declared name', async () => {
+    const meta = await resolvePackage(MANIFEST.name, {}, PACKAGE_ROOT);
+
+    expect(meta!.packageName).toBe(MANIFEST.name);
+    expect(meta!.assetPath).toBe(MANIFEST.agents.assetPath);
   });
 
   it('returns null when skipMissingAsset and agents.assetPath is absent', async () => {

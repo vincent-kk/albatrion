@@ -4,7 +4,7 @@
 
 - The engine exposes a single `inject-agents-settings` bin (dispatcher). Consumers declare `agents.assetPath` in `package.json` — or the caller names it with `--asset-path`; the engine injects that tree into the locations each selected agent uses, for one explicitly-named target per invocation or a batch via scope alias.
 - Every choice is reachable by flag. A run with `--package`, `--agent`, `--scope` and, where content diverges, `--force --yes`, completes with no prompt at all.
-- `--package=<name>` is mandatory. The dispatcher resolves that one package's `package.json` via `createRequire(...).resolve()` and extracts `{ name, version, agents.assetPath }`, taking `--asset-path` in place of the declaration when it is given.
+- `--package=<name>` is mandatory. The dispatcher resolves that one package's `package.json` via `createRequire(...).resolve()` and extracts `{ name, version, agents.assetPath }`, taking `--asset-path` in place of the declaration when it is given. A target is therefore reachable only when `createRequire` can see it — its `exports` expose `./package.json`, or its main entry is requireable. This package exposes its own, so the engine is targetable by its own dispatcher despite being ESM-only.
 - `--agent=<claude|codex|agents>` accepts repeats and comma-separated values. Omitted, an interactive TTY shows the picker; every other context exits 2. A run selecting both agents produces one plan per pair.
 - `--asset=<skills|rules|commands>` narrows the run. A kind left out is absent from the plan, so the run neither reports nor deletes anything belonging to it.
 - `--asset-path=<path>` names the asset root relative to each target's package root, for a package that ships assets in a directory like `agents/` or `docs/` without declaring one. It overrides `agents.assetPath` on every target and makes that directory the only source of hashes, so `dist/agents-hashes.json` is neither read nor required. An empty, absolute or `~`-prefixed value exits 2 before any filesystem IO; a path outside the package root or naming no directory exits 2 for a single target and is skipped in a batch.
@@ -29,6 +29,7 @@
 
 - `.` — ESM; `runCli` + core primitives + types
 - `./buildHashes` — Node ESM; `buildHashes`
+- `./package.json` — the manifest itself. An ESM-only package is invisible to `createRequire`, and the dispatcher reads every target through it, so gating this subpath would make the engine the one package its own CLI cannot inject.
 
 ## Exported Types
 
@@ -97,10 +98,11 @@
 ## History
 
 - 2026-08-06 — A declared `agents.assetPath` stopped requiring build output. `--asset-path` had been the only way to reach run-time hashing, so the default path did nothing at all for a package whose `dist/agents-hashes.json` was not built yet — while the very directory it declared sat there ready to hash. The fallback is conditional on that directory existing, and deliberately so: an absent one hashes to an empty manifest, and an empty manifest reclassifies every installed file as an orphan for `--force` to delete.
+- 2026-08-06 — `exports` gained `./package.json`. The ESM-only build left the engine unresolvable by `createRequire`, both on `<name>/package.json` and on the bare specifier, so `--package=@slats/agents-assets-sync` exited 2 and this repository's own `.claude/skills` could not be re-synced by the tool that owns them. The old CJS-built package resolved through the main-entry fallback and hid the gap. Exposing the manifest is the one fix that stays inside the boundary: reaching an ESM-only package any other way means walking `node_modules`, which `runCli/INTENT.md` reserves for `resolveScopeAlias.ts`.
 - 2026-08-06 — `utils/version.ts` had drifted to `0.1.0` while the manifest already read `0.1.1`. Only `build` and `dev` ran the generator, so a `version:*` bump left the constant behind and every surface reporting it stated the previous release until someone rebuilt. The bump scripts now chain `version:sync`, and `AC-VERSION-SYNC` keeps the two in step whether or not a build ran.
 - 2026-08-06 — `--asset-path` broke the assumption that `agents.assetPath` is the only way to name an asset root, so that a package shipping assets in `agents/` or `docs/` without declaring them is still injectable. It overrides rather than falls back, and ignores any stored manifest, because a conditional winner would leave the run's actual source unknowable from its output.
 - 2026-08-06 — `--json` became a real renderer. It previously forced the plain path while its help text promised structured output, so an agent parsing stdout got a colour-coded transcript. The logger gained a one-way switch to stderr because it wrote diagnostics to stdout, where they would corrupt the document.
-- 2026-08-05 — Forked from `@slats/claude-assets-sync` at 0.3.5 and reset to 0.1.0. The consumer key moved from `claude` to `agents` because the contract now serves more than one agent; the original package is frozen rather than migrated, so already-published consumers keep working against it.
+- 2026-08-05 — Migrated from `@slats/claude-assets-sync`, renamed in place at 0.3.5 and reset to 0.1.0. The consumer key moved from `claude` to `agents` because the contract now serves more than one agent, and every consumer in this repository moved with the rename — nothing builds or publishes the old name any more. What stays behind is only what npm already holds: `@canard/schema-form@0.12.0` was published against `@slats/claude-assets-sync@^0.2.0`, so those releases must remain on the registry for consumers that installed them.
 
 ## Last Updated
 

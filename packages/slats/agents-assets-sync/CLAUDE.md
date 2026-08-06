@@ -22,6 +22,7 @@ yarn dev:ui --tour   # cycle through all Ink phases with fixture data
   - Core primitives re-exported: `readHashManifest`, `computeNamespacePrefixes`, `resolveProjectRoot`, `resolveAgentTarget`, `resolveDestinations`, `formatBlockId`, `parseBlocks`, `isValidScope`, `isValidAgent`, `MARKER_PREFIX`, `PROJECT_ANCHORS`, `HASH_MANIFEST_FILENAME`
   - No `injectDocs` orchestrator — both renderers (Ink `ui/` and plain `renderPlain`) compose primitives directly.
 - `./buildHashes` — `buildHashes(options?)` produces `<packageRoot>/dist/agents-hashes.json`.
+- `./package.json` — the manifest itself. The dispatcher reads every target's `{ name, version, agents.assetPath }` through `createRequire(...).resolve()`, and an ESM-only package exposes nothing to `createRequire` unless it exports this subpath — so gating it would make this engine the one package its own CLI cannot inject.
 
 Bin entries (all map to the same engine; choose by invocation context):
 
@@ -182,7 +183,9 @@ there is no root `tests/` directory. `tsconfig.declarations.json` excludes them
 from the build; `tsconfig.json` does not, so they are type-checked.
 scripts/
 ├── buildHashes.mjs                 # pure Node ESM, importable from Rolldown
-├── agents-build-hashes.mjs         # self-executing bin
+├── agents-build-hashes.mjs         # self-executing bin, cwd-based (consumers)
+├── build-hashes.mjs                # this package's own `build:hashes` step
+├── inject-version.js               # regenerates src/utils/version.ts
 ├── dev-ui.tsx                      # Ink phase preview / tour
 └── dev-ui-fixtures.ts              # mock plans + targets for dev preview
 ```

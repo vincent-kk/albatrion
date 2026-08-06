@@ -86,6 +86,7 @@
 - 둘 다 일치할 수 있는 경우 cwd 기준 해석이 우선한다.
 - `agents.assetPath` 가 없을 때 strict 모드는 2로 종료하고, `skipMissingAsset` 모드는 `null` 을 돌려 배치가 계속되게 한다.
 - asset 루트가 packageRoot 밖으로 해석되면 출처와 무관하게 거부한다 — `../` 로 나가는 선언도, 밖을 가리키는 심볼릭 링크도 마찬가지다.
+- 해석은 `createRequire` 가 보는 것까지만 닿는다. `exports` 가 `./package.json` 을 막고 main 진입점마저 `import` 조건만 가진 ESM 전용 패키지는 두 단계 모두 `ERR_PACKAGE_PATH_NOT_EXPORTED` 로 실패해 2로 종료한다 — `node_modules` 를 걷는 것은 이 organ 의 몫이 아니기 때문이다. 엔진 자신이 그런 패키지였으므로, 엔진은 자기 `package.json` 을 export 해서 자기 dispatcher 의 타깃이 된다.
 - Verified by `__tests__/resolvePackage.spec.ts` (`filid:contract AC-RUNCLI-RESOLVE`).
 
 ### AC-RUNCLI-SCOPE-ALIAS — scope 열거의 권위는 선언된 이름이다
@@ -133,6 +134,7 @@
 
 ## History
 
+- 2026-08-06 — `resolvePackage` 의 2단 해석이 ESM 전용 패키지 앞에서 멈춘다는 것이 드러났다. 두 단계 모두 `createRequire` 를 쓰는데, `require` 조건도 `./package.json` 도 없는 패키지는 subpath 와 bare specifier 양쪽에서 `ERR_PACKAGE_PATH_NOT_EXPORTED` 로 실패한다. 구 CJS 빌드는 main 진입점 fallback 으로 해석돼 이 구멍을 가리고 있었다. 해석기를 고치는 대신 엔진 매니페스트가 `./package.json` 을 export 하도록 한 이유는 경계다 — ESM 전용 패키지에 닿는 다른 길은 `node_modules` 를 걷는 것이고, 그것은 `resolveScopeAlias.ts` 만의 몫이다.
 - 2026-08-06 — 선언된 `agents.assetPath` 가 매니페스트 없이도 동작하게 됐다. 이전에는 `--asset-path` 로 부른 실행만 디렉터리를 해싱했고, 기본 경로는 `dist/agents-hashes.json` 이 없으면 아무것도 하지 않고 "빌드부터 하라" 고만 했다 — 같은 디렉터리가 거기 있는데도. 선언은 에셋의 위치를 말할 뿐 빌드 여부를 말하지 않으므로, 부재는 오류가 아니라 다른 출처로 내려갈 신호다. 디렉터리 존재를 조건에 넣은 것은 취향이 아니라 안전 장치다 — 없는 디렉터리의 빈 매니페스트는 설치된 항목 전부를 orphan 으로 만들고 `--force` 가 그것을 삭제한다.
 - 2026-08-06 — asset 루트 봉쇄가 선언 경로까지 확대됐다. 처음에는 `--asset-path` 에만 어휘적 검사를 뒀는데, 그러면 opt-in 경로만 보호되고 기본 경로(`agents.assetPath`)는 `../` 로 자유롭게 나가는 거꾸로 된 상태가 된다. 동시에 검사를 realpath 기준으로 옮겼다 — 어휘적 검사는 심볼릭 링크된 asset 루트를 막지 못하고, 그 경로로 읽힌 파일은 에이전트가 지시문으로 되읽는 곳에 안착한다.
 - 2026-08-06 — `--asset-path` 가 추가되며 "asset 루트는 `agents.assetPath` 가 정한다" 는 전제가 깨졌다. 선언 없이 `agents/` 나 `docs/` 에 에셋만 둔 패키지를 위해서다. fallback 이 아니라 override 로 정한 이유: 플래그가 조건부로 이기면 어느 경로가 쓰였는지 실행 결과만 보고는 알 수 없다. 같은 이유로 override 는 저장된 매니페스트도 무시한다 — 그 매니페스트가 기술하는 트리가 플래그가 가리키는 트리라는 보장이 없다.
@@ -140,4 +142,4 @@
 
 ## Last Updated
 
-2026-08-06 — 해시 출처 판정을 `resolveHashSource` 로 떼어내고 `AC-RUNCLI-HASH-SOURCE` 를 추가. 선언된 asset 경로가 매니페스트 없이 런타임 해싱으로 내려가는 조건과, 그 fallback 이 디렉터리 존재를 요구하는 이유를 계약에 담았다.
+2026-08-06 — 해석이 `createRequire` 가 보는 범위까지라는 한계를 `AC-RUNCLI-RESOLVE` 에 명시. 이전 갱신: 해시 출처 판정을 `resolveHashSource` 로 떼어내고 `AC-RUNCLI-HASH-SOURCE` 를 추가. 선언된 asset 경로가 매니페스트 없이 런타임 해싱으로 내려가는 조건과, 그 fallback 이 디렉터리 존재를 요구하는 이유를 계약에 담았다.

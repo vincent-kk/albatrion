@@ -34,7 +34,8 @@
     },
     "./buildHashes": {
       "import": "./scripts/buildHashes.mjs"
-    }
+    },
+    "./package.json": "./package.json"
   },
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
