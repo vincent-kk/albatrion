@@ -1,105 +1,58 @@
 # Plugin System
 
-Register validators and UI component sets via `registerPlugin()` before the first render. Plugin-provided `formTypeInputDefinitions` have the lowest priority; `FormProvider` and `Form` props override them.
+Plugins supply the pieces the core does not ship: UI component sets and validators. Register once at app bootstrap, **before the first `<Form>` renders**, UI plugin before validator plugin — late or repeated registration makes input resolution nondeterministic.
 
-## Available Plugins
+```typescript
+import { registerPlugin } from '@canard/schema-form';
+import { ajvValidatorPlugin } from '@canard/schema-form-ajv8-plugin';
+import { antd5Plugin } from '@canard/schema-form-antd5-plugin';
 
-### Validator Plugins
+registerPlugin(antd5Plugin); // 1. UI
+registerPlugin(ajvValidatorPlugin); // 2. validator
+```
 
-| Package                           | Description              |
-| --------------------------------- | ------------------------ |
-| `@canard/schema-form-ajv8-plugin` | AJV 8.x based validation |
-| `@canard/schema-form-ajv7-plugin` | AJV 7.x based validation |
-| `@canard/schema-form-ajv6-plugin` | AJV 6.x based validation |
+Available plugins — validators: `@canard/schema-form-ajv8-plugin`, `-ajv7-`, `-ajv6-`; UI: `@canard/schema-form-antd5-plugin`, `-antd6-`, `-antd-mobile-`, `-mui-`.
 
-### UI Plugins
+## SchemaFormPlugin Shape
 
-| Package                                  | Description                  |
-| ---------------------------------------- | ---------------------------- |
-| `@canard/schema-form-antd5-plugin`       | Ant Design 5 components      |
-| `@canard/schema-form-antd6-plugin`       | Ant Design 6 components      |
-| `@canard/schema-form-antd-mobile-plugin` | Ant Design Mobile components |
-| `@canard/schema-form-mui-plugin`         | Material UI components       |
-
-## SchemaFormPlugin Interface
+Every property is optional — a plugin customizes only what it needs:
 
 ```typescript
 interface SchemaFormPlugin {
-  // Plugin identifier
-  name: string;
-
-  // FormTypeInput definition list
+  FormGroup?: ComponentType<FormTypeRendererProps>;
+  FormLabel?: ComponentType<FormTypeRendererProps>;
+  FormInput?: ComponentType<FormTypeRendererProps>;
+  FormError?: ComponentType<FormTypeRendererProps>;
   formTypeInputDefinitions?: FormTypeInputDefinition[];
-
-  // Form renderer component
-  FormRenderer?: ComponentType<FormRendererProps>;
-
-  // Form type renderer component
-  FormTypeRenderer?: ComponentType<FormTypeRendererProps>;
-
-  // Validator Factory
-  validatorFactory?: ValidatorFactory;
+  validator?: ValidatorPlugin;
+  formatError?: FormatError;
 }
 ```
 
-## Validator Factory
+- When multiple registered plugins define the same property, **the last one wins**.
+- Plugin-provided `formTypeInputDefinitions` sit at the BOTTOM of the resolution priority — `Form`/`FormProvider` props always override them (see SKILL.md's priority list).
+- Plugins can also be applied locally (per-subtree) via `ExternalFormContextProvider` instead of globally.
 
-You can implement custom validation logic.
+## Custom Validator
+
+The validator contract is a factory that returns a validate function directly:
 
 ```typescript
-import type { Validator, ValidatorFactory } from '@canard/schema-form';
+import type { SchemaFormPlugin, ValidatorFactory } from '@canard/schema-form';
 
-const createCustomValidator: ValidatorFactory = (schema) => {
-  return {
-    validate: async (value) => {
-      const errors = [];
-
-      // Custom validation logic
-      if (schema.customValidation) {
-        const result = schema.customValidation(value);
-        if (!result.valid) {
-          errors.push({
-            path: '',
-            keyword: 'customValidation',
-            message: result.message,
-          });
-        }
-      }
-
-      return errors;
-    },
+const factory: ValidatorFactory = (schema) => {
+  // compile once per schema; return the validate function
+  return async (data) => {
+    const errors = collectErrors(schema, data);
+    return errors.length > 0 ? errors : null; // null = valid
   };
 };
 
-export const customValidatorPlugin: SchemaFormPlugin = {
-  name: 'custom-validator',
-  validatorFactory: createCustomValidator,
+const customValidatorPlugin: SchemaFormPlugin = {
+  validator: { compile: factory },
 };
 ```
 
-## Override via FormProvider
-
-You can override definitions with higher priority than plugins.
-
-```typescript
-import { FormProvider } from '@canard/schema-form';
-
-<FormProvider
-  formTypeInputDefinitions={[
-    // This definition takes precedence over plugins
-    {
-      test: { type: 'string' },
-      Component: CustomStringInput,
-    },
-  ]}
-  FormRenderer={CustomFormRenderer}
->
-  <App />
-</FormProvider>
-```
-
-## References
-
-- Full specification: `docs/ko/SPECIFICATION.md`
-- Plugin development guide: `.cursor/rules/create-canard-form-plugin-guidelines.mdc`
-- Example plugins: `packages/canard/schema-form-antd5-plugin`, `packages/canard/schema-form-ajv8-plugin`
+- `ValidatorFactory` is `(schema: JsonSchema) => ValidateFunction` — the factory returns the function itself, not an object wrapping one.
+- A `ValidateFunction` may be sync or async and returns `JsonSchemaError[] | null` (`null` when valid).
+- `ValidatorPlugin.bind?(instance)` is a consumer-facing hook for supplying a custom validator instance (e.g. a preconfigured AJV) — call it on the plugin object before `registerPlugin()`; the core never calls it.

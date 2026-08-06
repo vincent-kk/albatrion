@@ -1,25 +1,30 @@
 # `CLAUDE.md` — `## Agent Docs Injector` section
 
-Reference: `packages/canard/schema-form/CLAUDE.md`.
+Reference: `packages/canard/schema-form/CLAUDE.md`. Every wired consumer carries this section with the same wording; only the package name differs.
 
-Append the section below to `${TARGET_PATH}/CLAUDE.md` if the file exists. Substitute the sample package name in the chosen template with `${PACKAGE_NAME}` — four occurrences. Skip the entire step if `CLAUDE.md` does not exist (do not create one).
+Append the section below to `${TARGET_PATH}/CLAUDE.md` if that file exists. Skip the entire step if it does not — do not create one.
 
-The template is intentionally terse: CLI usage + essential isolation warnings. Architectural rationale lives in `knowledge/gotchas.md` — do not duplicate it into every consumer's `CLAUDE.md`.
+The template is intentionally terse: CLI usage plus the two isolation invariants. Architectural rationale lives in `knowledge/gotchas.md` — do not duplicate it into every consumer's `CLAUDE.md`.
+
+The heading is `## Agent Docs Injector`, not `## Claude Docs Injector`. Match it exactly: a search for any other heading finds no existing section and appends a second one, which is how this step loses its idempotency.
 
 ---
 
-## Template (Korean — used by all consumers except `@winglet/style-utils`)
+## Template
+
+Prose is Korean in every deployed consumer. If the target's `CLAUDE.md` is written in English, translate the prose only — headings, commands and the guardrail structure stay as they are.
 
 ````markdown
 ## Agent Docs Injector
 
-`docs/agents/**` 자산을 사용자 `.claude/` 에 주입. 엔진: `@slats/agents-assets-sync` (bin: `inject-agents-settings`). 엔진은 `devDependencies` 에만 있으므로 항상 `npx -p @slats/agents-assets-sync ...` 로 호출합니다.
+`docs/agents/**` 자산을 선택한 에이전트 위치에 주입. 엔진: `@slats/agents-assets-sync` (bin: `inject-agents-settings`).
+`--agent` 로 대상 에이전트를 고른다 — `claude` 는 `.claude/{skills,rules,commands}`, `codex`/`agents` 는 `.agents/skills` + `AGENTS.md` 마커 블록(project scope 기준).
 
 ```bash
 npx -p @slats/agents-assets-sync inject-agents-settings --package=@canard/schema-form --agent=claude --scope=user
-npx -p @slats/agents-assets-sync inject-agents-settings --package=@canard/schema-form --agent=claude --scope=project
-npx -p @slats/agents-assets-sync inject-agents-settings --package=@canard/schema-form --agent=claude --scope=user --dry-run
-npx -p @slats/agents-assets-sync inject-agents-settings --package=@canard/schema-form --agent=claude --scope=user --force
+npx -p @slats/agents-assets-sync inject-agents-settings --package=@canard/schema-form --agent=codex --scope=project
+npx -p @slats/agents-assets-sync inject-agents-settings --package=@canard/schema-form --agent=claude,codex --scope=user --dry-run
+npx -p @slats/agents-assets-sync inject-agents-settings --package=@canard/schema-form --agent=claude --scope=user --force --yes
 ```
 
 ### Isolation Guardrails
@@ -30,31 +35,10 @@ npx -p @slats/agents-assets-sync inject-agents-settings --package=@canard/schema
 
 ---
 
-## Template (English — `@winglet/style-utils` convention)
-
-````markdown
-## Agent Docs Injector
-
-Inject `docs/agents/**` into the user's `.claude/`. Engine: `@slats/agents-assets-sync` (bin: `inject-agents-settings`). The engine is declared only in `devDependencies`, so always invoke via `npx -p @slats/agents-assets-sync ...`.
-
-```bash
-npx -p @slats/agents-assets-sync inject-agents-settings --package=@winglet/style-utils --agent=claude --scope=user
-npx -p @slats/agents-assets-sync inject-agents-settings --package=@winglet/style-utils --agent=claude --scope=project
-npx -p @slats/agents-assets-sync inject-agents-settings --package=@winglet/style-utils --agent=claude --scope=user --dry-run
-npx -p @slats/agents-assets-sync inject-agents-settings --package=@winglet/style-utils --agent=claude --scope=user --force
-```
-
-### Isolation Guardrails
-
-- `src/**` MUST NOT import from `docs/**` or `@slats/agents-assets-sync`.
-- **Never add `./docs/*` to `exports`.**
-````
-
----
-
 ## Substitution Rules
 
-- Replace the sample package name in the chosen template with `${PACKAGE_NAME}` — four occurrences.
+- Replace `@canard/schema-form` with `${PACKAGE_NAME}` — four occurrences, one per command line.
+- Keep `--agent` on every command. It is required wherever the CLI cannot prompt, so a command without it is not a shorter form of the same thing — it is one that exits 2.
 - Preserve the Isolation Guardrails bullets verbatim — these are the sharp invariants that must stay consistent across consumers.
 
 ---

@@ -12,7 +12,7 @@ Hard-earned rules. Each one reflects a previous incident or a design constraint 
 
 ## `agents.assetPath` is the opt-in marker
 
-The engine's `agents-build-hashes` bin silently no-ops when `agents.assetPath` is missing or not a string. The dispatcher (`inject-agents-settings`) exits 2 with a clear error when a target lacks the field. Both behaviors are intentional: missing = opt-out.
+The engine's `agents-build-hashes` bin silently no-ops when `agents.assetPath` is missing or not a string. The dispatcher exits 2 with a clear error when a single named target lacks the field; inside a batch or a `@scope` alias the same target is a reported skip instead, so one unwired workspace member does not fail the run.
 
 Do not add "helpful" error messages at build time for the opt-out case — it would break silently-disabled packages.
 
@@ -20,14 +20,7 @@ Do not add "helpful" error messages at build time for the opt-out case — it wo
 
 ## `@slats/agents-assets-sync` must be in `devDependencies`
 
-Not `dependencies`, not `peerDependencies`. Reasons:
-
-1. The engine is CLI-only. Declaring it in `dependencies` would pull `commander`, `@inquirer/prompts`, and their transitive trees into every end-user's production install even though the consumer's runtime never imports the engine.
-2. The monorepo build chain still resolves `.bin/agents-build-hashes` from `devDependencies` at `yarn install` time — yarn workspaces link devDeps and deps identically for workspace-local builds.
-3. End users never rely on a hoisted `inject-agents-settings` bin. The canonical invocation is `npx -p @slats/agents-assets-sync inject-agents-settings --package=<THIS>`, which fetches the engine on demand and caches it.
-4. Bundle isolation is enforced by the import graph (`src/**` never references the engine), not by dependency-type.
-
-Every consumer's CLAUDE.md documents the single `npx -p` path.
+Not `dependencies`, not `peerDependencies`. The four reasons are in `knowledge/package-json-patches.md` §5; every consumer's `CLAUDE.md` documents the single `npx -p` path that follows from them.
 
 ---
 
@@ -53,15 +46,49 @@ If no shortcut exists, the full form may still work depending on yarn version an
 
 ## `--scope=project` walks upward
 
-`--scope=project` walks `process.cwd()` upward looking for an existing `.claude` directory. The first one found is reused; if none is found, the engine creates one at `cwd`.
+`--scope=project` walks `process.cwd()` upward for the first directory owning any of `.claude`, `AGENTS.md`, `.agents`, `.codex`, `.git`. The first match is reused; with no match anywhere, the engine falls back to `cwd`.
 
-Consequence: running the smoke tests from the monorepo root would reuse the monorepo's real `.claude`, corrupting it. Always run smoke tests from `/tmp/...` with a fresh directory.
+`.git` is one of the anchors, so every directory in this repository resolves to the repository root. Running the smoke tests from anywhere inside the monorepo would write into the real `.claude/` — always run them from a fresh `/tmp/...` directory.
 
 ---
 
 ## Dispatcher exception to the `src/core` purity rule
 
-`src/core/**` never reads `package.json` or walks the filesystem. The engine's `bin/inject-agents-settings.mjs` and `src/commands/runCli/utils/resolvePackage.ts` are allowed to `createRequire().resolve(`${name}/package.json`)` for exactly one target — the one named in `--package=<name>`. The dispatcher never enumerates, never walks `node_modules` for siblings. Preserve this boundary: extensions like `--all` or workspace scan require explicit re-architecture.
+`src/core/**` never reads `package.json` or walks the filesystem. The engine's `bin/inject-agents-settings.mjs` and `src/commands/runCli/targets/resolvePackage.ts` are allowed to ``createRequire().resolve(`${name}/package.json`)`` for one explicitly-named target at a time. Sibling enumeration is confined to `targets/resolveScopeAlias.ts`, the only file allowed to walk `node_modules`. Preserve this boundary: any new enumeration path is a re-architecture, not a patch.
+
+---
+
+## Optional: dependency-cruiser isolation gate
+
+Skip unless `${TARGET_PATH}/.dependency-cruiser.cjs` already exists or the user asks for it. It is a CI-time check that the consumer's `src/**` never reaches the assets tree. One forbidden rule is all this layout needs — the consumer owns no `bin/` and imports the engine from nowhere, so nothing else is load-bearing.
+
+```javascript
+module.exports = {
+  forbidden: [
+    {
+      name: 'src-no-docs',
+      severity: 'error',
+      comment:
+        'src/ must not import from docs/. docs/agents/** contains pure markdown ' +
+        'assets meant only for the engine dispatcher, not for the library runtime.',
+      from: { path: '^src/' },
+      to: { path: '^docs/' },
+    },
+  ],
+  options: {
+    doNotFollow: { path: 'node_modules' },
+    includeOnly: '^(src|docs)',
+  },
+};
+```
+
+```json
+"scripts": {
+  "depcheck": "depcruise src docs --config .dependency-cruiser.cjs --no-progress"
+}
+```
+
+Zero errors expected. Orphan warnings on `docs/**` are acceptable — the docs tree never imports anything.
 
 ---
 

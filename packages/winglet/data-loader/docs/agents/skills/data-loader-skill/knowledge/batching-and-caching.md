@@ -4,7 +4,7 @@
 
 ### The Event-Loop Window
 
-DataLoader collects keys during a single JavaScript event-loop tick. The default scheduler is `scheduleNextTick` (from `@winglet/common-utils/scheduler`), which fires after the current synchronous code completes but before I/O callbacks.
+DataLoader collects keys during a single JavaScript event-loop tick. The default scheduler is `scheduleNextTick` (from `@winglet/common-utils/scheduler`), which resolves at import time to `Promise.resolve().then(() => process.nextTick(task))` on Node, `setImmediate` where available, and `setTimeout(task, 0)` otherwise. All three fire after the current synchronous block, so the batching window is "everything reachable without yielding" — but the browser fallbacks yield a wider window than Node, which is why a batch size that looks stable in tests can grow in a browser.
 
 ```
 Synchronous code runs:
@@ -38,7 +38,7 @@ const loader = new DataLoader(batchLoad, { maxBatchSize: 100 });
 // → batch 2: batchLoad(keys[100..149])
 ```
 
-`maxBatchSize` must be a positive number; otherwise the constructor throws `DataLoaderError('INVALID_MAX_BATCH_SIZE')`. The default is `Infinity`.
+`maxBatchSize` must be a number of at least 1; otherwise the constructor throws with code `DATA_LOADER.INVALID_MAX_BATCH_SIZE`. The default is `Infinity`.
 
 ### Disabling Batching
 
@@ -57,26 +57,19 @@ const singleLoader = new DataLoader(batchLoad, { disableBatch: true });
 Replace the default `scheduleNextTick` with any scheduling function:
 
 ```typescript
-// Microtask queue (faster than nextTick in most environments)
-const microtaskLoader = new DataLoader(batchLoad, {
-  batchScheduler: (fn) => queueMicrotask(fn),
-});
-
 // setTimeout — wider batching window, more keys per batch
 const timedLoader = new DataLoader(batchLoad, {
   batchScheduler: (fn) => setTimeout(fn, 10),
 });
 
-// requestAnimationFrame — UI-friendly batching
-const uiLoader = new DataLoader(batchLoad, {
-  batchScheduler: (fn) => requestAnimationFrame(fn),
-});
-
-// Immediate — no delay, useful for testing
+// Immediate — dispatches within the current synchronous block, so only the
+// loads issued before this one are batched. Useful in tests; defeats batching.
 const syncLoader = new DataLoader(batchLoad, {
   batchScheduler: (fn) => fn(),
 });
 ```
+
+The scheduler picks the width of the batching window: anything that defers longer collects more keys per call at the cost of latency.
 
 ## How Caching Works
 
@@ -94,20 +87,22 @@ const p2 = loader.load('user-1');
 // but both resolve to the same value — only ONE fetch occurs.
 ```
 
+The wrapper is not a formality. Its resolver is parked on the _current_ batch and only runs when that batch dispatches, so a cache hit never resolves synchronously — even when the cached Promise settled several ticks ago, and even when the batch holds nothing but cache hits. That is the point: a hit and a miss issued together complete in the same phase, so resolver code cannot accidentally depend on hit-vs-miss ordering. (Because the wrapper _adopts_ the cached Promise, a hit settles a couple of microtask turns after the freshly fetched keys of its own batch.)
+
 ### Default Cache: Map
 
 By default, a plain `Map` is used. O(1) lookups, no size limit or TTL.
 
 ```typescript
 // Default — uses new Map() internally
-const loader = new DataLoader(batchLoad);
+const defaultLoader = new DataLoader(batchLoad);
 
 // Explicit custom Map instance (e.g., to share across loaders)
 const sharedMap = new Map<string, Promise<User>>();
-const loader = new DataLoader(batchLoad, { cache: sharedMap });
+const sharingLoader = new DataLoader(batchLoad, { cache: sharedMap });
 ```
 
-Any object implementing `get`/`set`/`delete`/`clear` (the `MapLike` interface) is accepted. Missing methods throw `DataLoaderError('INVALID_CACHE')`.
+Any object implementing `get`/`set`/`delete`/`clear` (the `MapLike` interface) is accepted. A missing method throws with code `DATA_LOADER.INVALID_CACHE`, naming the methods it could not find.
 
 ### Disabling the Cache
 
@@ -152,9 +147,9 @@ async function createUser(data: CreateUserInput) {
 const users = await api.listUsers();
 users.forEach((user) => userLoader.prime(user.id, user));
 
-// Prime with an Error to mark a key as permanently missing
-// (the rejected promise has .catch(NOOP_FUNCTION) attached internally,
-//  so it never surfaces as an unhandled rejection)
+// Prime with an Error to mark a key as permanently missing.
+// The rejected promise gets an internal no-op .catch() attached, so an entry
+// nobody ever loads still never surfaces as an unhandled rejection.
 userLoader.prime('deleted-id', new Error('User was deleted'));
 ```
 
@@ -164,20 +159,16 @@ Within the same batch, duplicate keys are NOT automatically deduplicated at the 
 
 ```typescript
 // With cache enabled (default): one fetch; a wrapping Promise is returned per call
-const p1 = loader.load('key');
-const p2 = loader.load('key'); // cache hit — key does NOT appear twice in the batch
+const cached1 = loader.load('key');
+const cached2 = loader.load('key'); // cache hit — key does NOT appear twice in the batch
 
-// With cache: false: key appears twice in batch
-const p1 = noCacheLoader.load('key');
-const p2 = noCacheLoader.load('key'); // both added to batch
+// With cache: false: key appears twice in the batch, and the loader is called with ['key', 'key']
+const uncached1 = noCacheLoader.load('key');
+const uncached2 = noCacheLoader.load('key'); // both added to batch
 ```
 
 ## Batch Failure Clears the Cache
 
-When a dispatch fails (loader throws, returns a non-array, or returns a wrong-length array), DataLoader:
+A dispatch fails when the loader throws, returns something without a `then`, returns a non-array, or returns an array of the wrong length. DataLoader then resolves the batch's pending cache-hit callbacks, and walks the batch keys in order — for each one **calling `clear(key)` and then rejecting that key's promise** with the error.
 
-1. Resolves any pending cache-hit callbacks for the batch.
-2. For each key in the batch: **calls `clear(key)`** so subsequent `load(key)` can refetch instead of serving the failed promise.
-3. Rejects every pending promise with the error.
-
-This means a transient network failure will not "stick" a rejected promise in the cache forever — the next `load()` of that key will go through a fresh batch.
+The per-key order matters: the cache entry is gone before the rejection is delivered. Since rejection handlers run as microtasks, the whole loop finishes first, so a `.catch()` that immediately retries always sees a clean cache. A transient network failure cannot "stick" a rejected promise in the cache — the next `load()` of that key goes through a fresh batch.

@@ -1,228 +1,38 @@
-# Inject To
+# injectTo
 
-Propagate a source field's value to one or more target fields once per change via `injectTo`. Unlike `derived`, injected values stay editable by the user. Circular injection chains are detected and blocked automatically.
+`injectTo` propagates a source field's value to other fields **once per change**; the targets stay user-editable afterward. Its sibling `derived` is continuous and overwrites edits — picking between them is a value-ownership decision:
 
-## injectTo vs derived Selection Guide
-
-### Comparison Table
-
-| Characteristic        | injectTo                                  | derived                                 |
-| --------------------- | ----------------------------------------- | --------------------------------------- |
-| **Direction**         | Source → Target                           | Dependencies → Current Field            |
-| **Trigger**           | On source value change                    | On dependency value change              |
-| **User Modification** | Target field **can be modified**          | Auto-calculated, **overwrites** changes |
-| **Value Sync**        | One-time (independent after injection)    | Continuous (always calculated)          |
-| **Use Case**          | Initial value copy, default value setting | Automatic derived value calculation     |
-
-### Decision Tree
-
-```
-I want to set a value based on another field's value
-    │
-    ├─ Should the user be able to modify it after setting?
-    │      │
-    │      ├─ YES → Use injectTo
-    │      │   Example: name input → auto-copy to nickname (nickname can be edited later)
-    │      │
-    │      └─ NO → Use derived
-    │          Example: price × quantity = total (total is always calculated)
-    │
-```
-
-### Example Comparison
+|                   | `injectTo`                    | `derived`                             |
+| ----------------- | ----------------------------- | ------------------------------------- |
+| Direction         | Source → targets              | Dependencies → this field             |
+| After propagation | Target freely editable        | Recalculated — user edits overwritten |
+| Sync              | One-time per source change    | Continuous                            |
+| Use for           | Initial copy, default seeding | Always-computed values                |
 
 ```typescript
-// injectTo: Copy once, then independent
+// injectTo: copy once, then independent
 name: {
   type: 'string',
-  injectTo: (value) => ({ '../nickname': value }),  // Copy to nickname on name input
-}
-// nickname can be freely modified by user afterwards
+  injectTo: (value) => ({ '../nickname': value }),
+},
 
-// derived: Always calculated
-totalPrice: {
-  type: 'number',
-  '&derived': '(../price ?? 0) * (../quantity ?? 1)',  // price × quantity
-}
-// totalPrice is recalculated even if user modifies it
+// derived: always computed
+totalPrice: { type: 'number', '&derived': '(../price ?? 0) * (../quantity ?? 1)' },
 ```
 
-## Path Types
+## Handler Contract
 
-### Relative Path (Sibling Fields)
+The handler returns a map of **JSONPointer path → value**; relative (`../target`) and absolute (`/root/target`) paths can mix in one result. It is a plain function — branch inside it, return different maps, inject objects/arrays as values.
 
 ```typescript
-// Based on stories/39.InjectTo.stories.tsx
-const schema = {
-  type: 'object',
-  properties: {
-    source: {
-      type: 'string',
-      injectTo: (value: string) => ({
-        '../target': `injected: ${value}`, // Inject to sibling field
-      }),
-    },
-    target: {
-      type: 'string',
-    },
-  },
-};
+source: {
+  type: 'string',
+  injectTo: (value) => value.length > 5
+    ? { '../longTarget': value }
+    : { '../shortTarget': value, '/audit/lastShort': value },
+},
 ```
 
-### Absolute Path (Root-based)
+## Cycles
 
-```typescript
-const schema = {
-  type: 'object',
-  properties: {
-    rootTarget: {
-      type: 'string',
-    },
-    nested: {
-      type: 'object',
-      properties: {
-        deep: {
-          type: 'object',
-          properties: {
-            source: {
-              type: 'string',
-              injectTo: (value: string) => ({
-                '/rootTarget': `from-deep: ${value}`, // Inject to root field via absolute path
-              }),
-            },
-          },
-        },
-      },
-    },
-  },
-};
-```
-
-## Circular Reference Prevention
-
-Schema Form automatically detects and blocks circular references.
-
-### Direct Cycle (A ↔ B)
-
-```typescript
-const schema = {
-  type: 'object',
-  properties: {
-    fieldA: {
-      type: 'string',
-      injectTo: (value: string) => ({
-        '../fieldB': `fromA: ${value}`,
-      }),
-    },
-    fieldB: {
-      type: 'string',
-      injectTo: (value: string) => ({
-        '../fieldA': `fromB: ${value}`, // Circular reference automatically blocked
-      }),
-    },
-  },
-};
-
-// When Field A is input:
-// 1. A → B value injection
-// 2. B attempts to inject to A → Blocked as circular reference
-```
-
-### Triangle Cycle (A → B → C → A)
-
-```typescript
-const schema = {
-  type: 'object',
-  properties: {
-    fieldA: {
-      type: 'string',
-      injectTo: (value: string) => ({
-        '../fieldB': `A→B: ${value}`,
-      }),
-    },
-    fieldB: {
-      type: 'string',
-      injectTo: (value: string) => ({
-        '../fieldC': `B→C: ${value}`,
-      }),
-    },
-    fieldC: {
-      type: 'string',
-      injectTo: (value: string) => ({
-        '../fieldA': `C→A: ${value}`, // Circular reference automatically blocked
-      }),
-    },
-  },
-};
-
-// When Field A is input:
-// 1. A → B injection succeeds
-// 2. B → C injection succeeds
-// 3. C → A injection attempt → Blocked as circular reference
-```
-
-## Conditional Injection
-
-You can use conditional logic within injection functions.
-
-```typescript
-const schema = {
-  type: 'object',
-  properties: {
-    source: {
-      type: 'string',
-      injectTo: (value: string) => {
-        // Conditional injection
-        if (value.length > 5) {
-          return {
-            '../longTarget': value,
-          };
-        }
-        return {
-          '../shortTarget': value,
-        };
-      },
-    },
-    shortTarget: { type: 'string' },
-    longTarget: { type: 'string' },
-  },
-};
-```
-
-## Object/Array Injection
-
-Complex data types can also be injected.
-
-```typescript
-const schema = {
-  type: 'object',
-  properties: {
-    template: {
-      type: 'string',
-      enum: ['basic', 'advanced'],
-      injectTo: (value: string) => ({
-        '../config':
-          value === 'basic'
-            ? { level: 1, features: [] }
-            : { level: 2, features: ['a', 'b', 'c'] },
-      }),
-    },
-    config: {
-      type: 'object',
-      properties: {
-        level: { type: 'number' },
-        features: {
-          type: 'array',
-          items: { type: 'string' },
-        },
-      },
-    },
-  },
-};
-```
-
-## References
-
-- Full specification: `docs/ko/SPECIFICATION.md`
-- Related story: `stories/39.InjectTo.stories.tsx`
-- Test code: `src/core/__tests__/AbstractNode.injectTo.test.ts`
+Injection chains are traced per change; a hop that would close a cycle (`A → B → … → A`) is **blocked silently** — earlier hops in the chain still apply, and nothing throws. Design chains as DAGs; the blocking is a safety net, not a feature to lean on.

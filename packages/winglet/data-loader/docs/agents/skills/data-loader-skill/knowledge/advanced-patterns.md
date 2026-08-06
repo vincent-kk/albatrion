@@ -1,243 +1,112 @@
 # Advanced Patterns for @winglet/data-loader
 
-## Solving the N+1 Problem in GraphQL
+Production concerns that the type declarations and README cannot express: loader lifetime, cache consistency after writes, and debug identity. Constructor options, `cacheKeyFn`, LRU/TTL cache shapes, and the GraphQL resolver wiring are all covered by the README — read it there rather than reconstructing them here.
 
-The classic N+1 pattern appears when resolvers load related data naively:
+## Loader Lifetime Is a Security Boundary
+
+A DataLoader's cache has no notion of who asked. Two requests sharing one loader share every cached Promise, so a value authorized for one user is served to the next — **sharing a loader across requests leaks data between users**. There is no option that mitigates this; lifetime is the only control.
+
+The rule: a loader instance lives exactly as long as one request. Build them in a factory and call it per request.
 
 ```typescript
-// BAD: N+1 queries — one query per post
-const resolvers = {
-  Post: {
-    author: (post) => db.findUser(post.authorId), // called N times
-  },
-};
-
-// GOOD: All author IDs batched into one query
+// The factory — one call produces one request's worth of loaders
 function createLoaders() {
   return {
-    users: new DataLoader(async (ids: ReadonlyArray<string>) => {
-      const users = await db.findUsersByIds([...ids]);
-      return ids.map(id => users.find(u => u.id === id) ?? new Error(`Not found: ${id}`));
-    }),
+    users: new DataLoader(batchLoadUsers),
+    posts: new DataLoader(batchLoadPosts),
   };
 }
 
-const resolvers = {
-  Post: {
-    author: (post, _args, { loaders }) => loaders.users.load(post.authorId),
-  },
-};
-```
-
-### Per-Request Loader Instances
-
-Always create fresh loaders per request. Sharing loaders across requests leaks data between users.
-
-```typescript
-// Express + GraphQL
-app.use('/graphql', (req, res, next) => {
-  // Fresh loaders for every request — no cross-request cache pollution
-  const loaders = createLoaders();
-  graphqlHTTP({ schema, context: { loaders, user: req.user } })(req, res, next);
-});
-
-// Apollo Server
+// Apollo Server — context runs once per request
 const server = new ApolloServer({
   schema,
-  context: ({ req }) => ({
-    loaders: createLoaders(), // called once per request
-  }),
+  context: () => ({ loaders: createLoaders() }),
 });
 ```
 
-## Custom Cache Implementations
-
-The option is **`cache`** (not `cacheMap`). It accepts any object implementing the `MapLike` interface: `get`, `set`, `delete`, `clear`.
-
-### LRU Cache (size-bounded)
+Two shapes to reject on sight, because both are module-scoped and therefore process-lifetime:
 
 ```typescript
-import LRU from 'lru-cache';
+// WRONG — one instance for the process; every request shares its cache
+export const userLoader = new DataLoader(batchLoadUsers);
 
-const userLoader = new DataLoader(batchLoadUsers, {
-  cache: new LRU<string, Promise<User>>({ max: 500 }),
-});
-```
-
-### TTL Cache
-
-```typescript
-class TtlMap<K, V> {
-  private store = new Map<K, { value: V; expiresAt: number }>();
-  constructor(private ttlMs: number) {}
-
-  get(key: K): V | undefined {
-    const entry = this.store.get(key);
-    if (!entry) return undefined;
-    if (Date.now() > entry.expiresAt) {
-      this.store.delete(key);
-      return undefined;
-    }
-    return entry.value;
-  }
-
-  set(key: K, value: V) {
-    this.store.set(key, { value, expiresAt: Date.now() + this.ttlMs });
-  }
-
-  delete(key: K) {
-    this.store.delete(key);
-  }
-  clear() {
-    this.store.clear();
-  }
+// WRONG — same defect wearing a class. The singleton service holds the loader,
+// so the loader outlives the request that populated it.
+class UserService {
+  private loader = new DataLoader(batchLoadUsers);
 }
-
-const priceLoader = new DataLoader(batchLoadPrices, {
-  cache: new TtlMap<string, Promise<Price>>(60_000), // 1-minute TTL
-});
 ```
 
-### Shared Cache Between Loaders
+The tension is real: per-request loaders throw away the cache at the end of every request, which is the intended trade. When a cache genuinely must outlive a request, put the _shared_ storage behind the `cache` option — a store you can scope, bound, and expire deliberately — and keep the loader itself per-request. Authorization must then be enforced at the fetch, not assumed from the cache.
+
+## Post-Mutation Consistency
+
+`prime()` writes only when the key is absent. On a key that is already cached it does nothing, and it reports nothing — so the natural post-update call is silently a no-op and the loader keeps serving pre-update data.
 
 ```typescript
-const sharedCache = new Map<string, Promise<User>>();
+// WRONG — prime() on a cached key does nothing; stale value survives
+await db.updateUser(id, patch);
+userLoader.prime(id, updated);
 
-const primaryLoader = new DataLoader(batchFromPrimary, { cache: sharedCache });
-const replicaLoader = new DataLoader(batchFromReplica, { cache: sharedCache });
-// Both loaders share the same promise cache
+// CORRECT — clear() removes the entry, then prime() finds the slot empty
+await db.updateUser(id, patch);
+userLoader.clear(id).prime(id, updated);
 ```
 
-## Complex Keys with cacheKeyFn
+`clear(id).prime(id, updated)` is the only correct replace sequence. `clear()` alone is also correct but weaker: it forces the next `load()` to refetch, paying a round-trip for data you already hold.
 
-When keys are objects, reference equality fails. Use `cacheKeyFn` to derive a string cache key.
+Ordering against the write matters as much as the sequence. Clear _after_ the write commits — clearing first leaves a window in which a concurrent `load()` repopulates the cache from the pre-write state.
+
+### Priming a Deletion
+
+After a delete, prime the key with an `Error` so subsequent loads fail immediately instead of issuing a doomed fetch:
 
 ```typescript
-interface ProductQuery {
-  id: string;
-  currency: 'USD' | 'EUR' | 'KRW';
-  includeVariants?: boolean;
+await db.deleteUser(id);
+userLoader.clear(id).prime(id, new Error(`User ${id} not found`));
+```
+
+This is safe to do eagerly: `prime()` attaches an internal no-op `.catch()` to the rejected Promise, so an entry nobody ever loads does not surface as an unhandled rejection.
+
+## Observability: Named Loaders
+
+`name` is a readonly public field, set only through the constructor and defaulting to `null` when omitted. Nothing in the library reads it — it exists for logs, where an anonymous loader is indistinguishable from the other five in the same request.
+
+```typescript
+const userLoader = new DataLoader(batchLoadUsers, { name: 'UserLoader' });
+userLoader.name; // 'UserLoader'
+
+function reportLoadFailure(
+  loader: DataLoader<any, any>,
+  key: unknown,
+  error: Error,
+) {
+  logger.error(
+    `[${loader.name ?? 'DataLoader'}] failed to load ${String(key)}`,
+    error,
+  );
 }
-
-const productLoader = new DataLoader<ProductQuery, Product, string>(
-  async (queries) => {
-    const results = await Promise.all(queries.map((q) => fetchProduct(q)));
-    return results; // order preserved since we map 1:1
-  },
-  {
-    cacheKeyFn: ({ id, currency, includeVariants = false }) =>
-      `${id}:${currency}:${includeVariants}`,
-  },
-);
-
-// These are cached separately despite same `id`
-const usd = await productLoader.load({ id: 'p1', currency: 'USD' });
-const eur = await productLoader.load({ id: 'p1', currency: 'EUR' });
 ```
 
-## Error Handling Strategies
+The `?? 'DataLoader'` fallback is load-bearing: the default is `null`, not the class name or an empty string, so a template literal on an unnamed loader prints `null`.
 
-### Per-Key Error Isolation
+## Per-Key Error Isolation
+
+Returning `Error` instances _inside_ the result array fails single keys without failing the batch. Throwing from the BatchLoader fails all of them — reserve that for genuinely batch-wide failures like a dead connection.
 
 ```typescript
 const loader = new DataLoader(async (ids: ReadonlyArray<string>) => {
-  const results = await Promise.allSettled(ids.map((id) => fetchItem(id)));
-  return results.map((result, i) =>
+  const settled = await Promise.allSettled(ids.map((id) => fetchItem(id)));
+  return settled.map((result, i) =>
     result.status === 'fulfilled'
       ? result.value
       : new Error(`Failed to load ${ids[i]}: ${result.reason}`),
   );
 });
 
-// loadMany never throws — failures are Error values in the array
+// loadMany never rejects — failures arrive as Error values, positionally
 const results = await loader.loadMany(['ok-1', 'bad-1', 'ok-2']);
-const successes = results.filter((r): r is Item => !(r instanceof Error));
-const failures = results.filter((r): r is Error => r instanceof Error);
+const items = results.filter((r): r is Item => !(r instanceof Error));
 ```
 
-### Batch-Level Retry
-
-```typescript
-async function batchWithRetry(
-  ids: ReadonlyArray<string>,
-  retries = 2,
-): Promise<ReadonlyArray<User | Error>> {
-  for (let attempt = 0; attempt <= retries; attempt++) {
-    try {
-      const users = await db.findUsersByIds([...ids]);
-      return ids.map(
-        (id) => users.find((u) => u.id === id) ?? new Error(`Not found: ${id}`),
-      );
-    } catch (err) {
-      if (attempt === retries) return ids.map(() => err as Error);
-      await new Promise((r) => setTimeout(r, 100 * 2 ** attempt)); // exponential backoff
-    }
-  }
-  return ids.map(() => new Error('Unreachable'));
-}
-
-const userLoader = new DataLoader(batchWithRetry);
-```
-
-Remember: if the BatchLoader itself throws (rather than returning Error values), DataLoader clears those keys from the cache before rejecting, so the next `load()` can retry cleanly.
-
-## Cache Warming (Prime on Startup)
-
-```typescript
-class UserService {
-  private loader: DataLoader<string, User>;
-
-  constructor() {
-    this.loader = new DataLoader(this.batchLoad.bind(this));
-  }
-
-  async warmCache(userIds: string[]) {
-    const users = await db.findUsersByIds(userIds);
-    users.forEach((user) => this.loader.prime(user.id, user));
-  }
-
-  getUser(id: string) {
-    return this.loader.load(id); // hits cache if warmed
-  }
-}
-```
-
-## Post-Mutation Cache Consistency
-
-`prime()` is a no-op if the key is already cached — always `clear()` first when replacing:
-
-```typescript
-class UserRepository {
-  private loader = new DataLoader<string, User>(batchLoadUsers);
-
-  async update(id: string, patch: Partial<User>): Promise<User> {
-    const updated = await db.updateUser(id, patch);
-    // Clear stale entry FIRST, then prime with fresh data
-    this.loader.clear(id).prime(id, updated);
-    return updated;
-  }
-
-  async delete(id: string): Promise<void> {
-    await db.deleteUser(id);
-    // Prime with error so future loads fail fast without a round-trip
-    this.loader.clear(id).prime(id, new Error(`User ${id} not found`));
-  }
-}
-```
-
-## Observability: Named Loaders
-
-```typescript
-const userLoader = new DataLoader(batchLoadUsers, { name: 'UserLoader' });
-console.log(userLoader.name); // 'UserLoader'
-
-// Use in error reporting
-function handleLoadError(loader: DataLoader, key: string, err: Error) {
-  logger.error(
-    `[${loader.name ?? 'DataLoader'}] Failed to load key ${key}`,
-    err,
-  );
-}
-```
-
-`name` is a readonly public field; defaults to `null` when not provided.
+Note the asymmetry between the two entry points: `load()` on a key whose slot holds an `Error` rejects, while `loadMany()` catches each rejection and hands back the `Error` as a value. Code that treats `loadMany` results as values without an `instanceof Error` check will pass an `Error` object into business logic — silently, since the array's declared type is `Array<Value | Error>`.

@@ -1,6 +1,6 @@
 # Schema-Form Consumer Rules
 
-These rules apply when authoring application code that imports from `@canard/schema-form`. They do not apply to plugin authoring (see the `create-canard-plugin` skill) or to work inside the library itself. Rules are perspective-level. For concrete API shapes, defaults, and edge behavior, invoke the `schema-form-skill` skill; §3 lists the topics that trigger that invocation.
+These rules apply when authoring application code that imports from `@canard/schema-form`. They do not apply to plugin authoring (see the `create-canard-plugin` skill) or to work inside the library itself. Rules are perspective-level; concrete API shapes, defaults, and edge behavior belong to the `schema-form-skill` skill.
 
 ---
 
@@ -23,8 +23,8 @@ These rules apply when authoring application code that imports from `@canard/sch
 
 ### skill-for-depth
 
-- This document is perspective-level. Before writing code in an unfamiliar area, invoke the `schema-form-skill` skill and let it surface the concrete references.
-- Do not guess API shapes from memory.
+- Before writing code in an unfamiliar area — layout, custom inputs, computed/conditional schemas, validation and error display, imperative control, arrays, virtual fields, path expressions, events, performance, tests — invoke the `schema-form-skill` skill and let its router pick the knowledge to read.
+- Do not guess API shapes from memory; the skill routes to `dist/index.d.ts` for exact shapes.
 
 ---
 
@@ -55,32 +55,7 @@ Mixing surfaces on the same path (e.g. `<Form.Input path="/x" />` inside a `<For
 
 ---
 
-## 3. Decision Routing
-
-When the task touches any of these areas, invoke the `schema-form-skill` skill. The skill owns the concrete API shapes, defaults, and edge behavior; let it choose which of its own knowledge slices to read. Do not attempt to answer these from memory.
-
-- Form layout with `Form.Render` / `Form.Input` / `Form.Label` / `Form.Error`
-- A custom `FormTypeInput` or `FormTypeInputMap` entry
-- Dynamic `active` / `visible` / `readOnly` / `disabled` / `derived` / `watch`
-- Branching with `oneOf` / `anyOf` / `allOf` / `if-then-else` / `&if`
-- Error display policy (`ShowError`, `dirty` / `touched`, messages)
-- Validation (AJV plugin, `ValidationMode`, `onValidate`, custom validator)
-- Imperative control — submit, reset, focus, `setValue` from outside
-- Array manipulation (push, remove, clear, large lists)
-- Multi-field virtual widgets (date range, paired fields)
-- Path expressions in schema / `formTypeInputMap` / `node.find`
-- External data accessed in expressions via `@`
-- Copying initial value between fields
-- Subscribing to node events
-- Slow renders, large forms, batching
-- Unexpected value drop, stale error, missing child
-- Tests for a form
-
-If the task straddles several items, state the scope to the skill and let it bundle the relevant knowledge.
-
----
-
-## 4. Invariants
+## 3. Invariants
 
 Each rule is a single hard requirement. Violations typically produce silent bugs, not compile errors.
 
@@ -115,29 +90,22 @@ Each rule is a single hard requirement. Violations typically produce silent bugs
 
 ### jsonpointer-is-context-sensitive
 
-- `formTypeInputMap` supports absolute paths and `*`.
-- `computed` expressions support absolute and relative paths plus `@` (context reference).
-- `node.find()` supports absolute and relative paths.
-- Escape `~` as `~0` and `/` as `~1`.
+- `formTypeInputMap` supports absolute paths and `*`; computed expressions support absolute/relative paths plus `@`; `node.find()` supports absolute/relative paths. Escape `~` as `~0` and `/` as `~1`.
 - Why: a token valid in one context silently fails to match in another.
 
 ### conditional-choice
 
-- `oneOf` → mutually exclusive; inactive branch values are dropped.
-- `anyOf` → non-exclusive; multiple branches coexist.
-- `allOf` → merged schemas always applied.
-- `if/then/else` → conditional validation and `required` rules, not branch value mutation.
+- `oneOf` → mutually exclusive; inactive branch values are dropped. `anyOf` → non-exclusive; branches coexist. `allOf` → merged, always applied. `if/then/else` → conditional validation and `required`, not branch value mutation.
 - Why: the four constructs differ in value retention; misuse produces phantom or lost data.
 
 ### active-vs-visible
 
-- `computed.active: false` removes the value from form data.
-- `computed.visible: false` hides UI but keeps the value.
-- Why: choosing the wrong one causes silent data loss (active used where visible was intended) or phantom state (vice versa).
+- `computed.active: false` removes the value from form data; `computed.visible: false` hides UI but keeps the value.
+- Why: choosing wrong causes silent data loss or phantom state.
 
 ### no-complex-computed
 
-- Keep `computed` expressions limited to boolean, arithmetic, and comparison. Move list reductions and aggregations into a component reading `watchValues`.
+- Keep `computed` expressions limited to boolean, arithmetic, and comparison. Move list reductions into a component reading `watchValues`.
 - Why: `computed` is evaluated on every dependency tick; complex expressions become hotspots.
 
 ### validation-mode-explicit
@@ -167,7 +135,7 @@ Each rule is a single hard requirement. Violations typically produce silent bugs
 
 ---
 
-## 5. Red Flags
+## 4. Red Flags
 
 Reject these on sight.
 
@@ -182,8 +150,7 @@ Reject these on sight.
 
 ---
 
-## 6. Extending the Knowledge
+## 5. Extending the Knowledge
 
-- For plugin authoring (UI renderer, validator, `FormTypeInputDefinition` bundle) → invoke the `create-canard-plugin` or `ui-plugin-guidelines` skill. Not covered here.
-- For topics outside the `schema-form-skill` skill's coverage → consult `packages/canard/schema-form/docs/QUICK_REFERENCE.md` or `docs/en/SPECIFICATION.md`.
-- For package-internal structural rules (FCA) → see `.claude/rules/filid_fca-policy.md`. Scope is disjoint: this document is for consumers.
+- Plugin authoring (UI renderer, validator, `FormTypeInputDefinition` bundle) → the `create-canard-plugin` / `ui-plugin-guidelines` skills. Not covered here.
+- Topics beyond the skill's coverage → `docs/QUICK_REFERENCE.md` or `docs/en/SPECIFICATION.md` in the installed package.

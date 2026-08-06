@@ -1,171 +1,49 @@
-# FormTypeInput
+# FormTypeInput Selection
 
-Develop custom input components for JSON Schema fields. `FormTypeInput` is selected by resolution priority (schema-level → `formTypeInputMap` → `Form` → `FormProvider` → plugin).
+How the engine decides which input component renders a field, and the contract a custom input must honor. The props interface (`FormTypeInputProps`) is fully typed — enumerate it from `dist/*.d.ts`; the resolution priority list lives in SKILL.md.
 
-## FormTypeInputProps Interface
+## Definition Matching (`test`)
 
-```typescript
-interface FormTypeInputProps<
-  Value extends AllowedValue = any,
-  Context extends Dictionary = object,
-  WatchValues extends Array<any> = Array<any>,
-  Schema extends JsonSchemaWithVirtual = InferJsonSchema<Value>,
-  Node extends SchemaNode = InferSchemaNode<Schema>,
-> {
-  // Schema information
-  jsonSchema: Schema;
-  type: Node['schemaType'];
-  name: Node['name'];
-  path: Node['path'];
-  nullable: Node['nullable'];
-
-  // State
-  readOnly: boolean;
-  disabled: boolean;
-  required: boolean;
-  errorVisible: boolean;
-  errors: Node['errors'];
-
-  // Node access
-  node: Node;
-
-  // Value management
-  defaultValue: Value | undefined;
-  value: Value | undefined;
-  onChange: SetStateFnWithOptions<Value | undefined>;
-
-  // File attachment
-  onFileAttach: Fn<[file: File | File[] | undefined]>;
-
-  // Child components
-  ChildNodeComponents: ChildNodeComponent[];
-
-  // watch values
-  watchValues: WatchValues;
-
-  // Styling
-  placeholder: string | undefined;
-  className: string | undefined;
-  style: CSSProperties | undefined;
-
-  // Context
-  context: Context;
-
-  // Allow additional properties
-  [alt: string]: any;
-}
-```
-
-## Test Object Properties
+A `FormTypeInputDefinition` matches via `test`: either a partial-match object or a predicate over `FormTypeInputHint`:
 
 ```typescript
-interface FormTypeInputHint {
-  type: SchemaType; // 'string' | 'number' | 'boolean' | 'array' | 'object' | 'null'
-  format?: string; // 'email' | 'date' | 'password' | etc.
-  formType?: string; // Custom type identifier
-  path: string; // JSONPointer path
-  nullable: boolean; // Whether null is allowed
-  jsonSchema: JsonSchema; // Full schema object
-}
-```
-
-### Test Function Examples
-
-```typescript
-const formTypeInputDefinitions: FormTypeInputDefinition[] = [
-  // Complex condition
+const definitions: FormTypeInputDefinition[] = [
+  { test: { type: 'string', format: 'password' }, Component: PasswordInput },
   {
-    test: (hint) => {
-      // String type with enum
-      if (hint.type === 'string' && hint.jsonSchema.enum) {
-        return true;
-      }
-      return false;
-    },
+    test: (hint) => hint.type === 'string' && !!hint.jsonSchema.enum,
     Component: SelectInput,
-  },
-
-  // Pattern-based
-  {
-    test: (hint) => {
-      return hint.path.startsWith('/settings/');
-    },
-    Component: SettingsInput,
-  },
-
-  // Composite condition
-  {
-    test: (hint) => {
-      return (
-        hint.type === 'number' &&
-        hint.jsonSchema.minimum !== undefined &&
-        hint.jsonSchema.maximum !== undefined
-      );
-    },
-    Component: RangeSliderInput,
   },
 ];
 ```
 
-## Wildcard Patterns
+`FormTypeInputHint` carries `type`, `format`, `path`, `nullable`, `jsonSchema`, and `formType` — a **custom discriminator you place on the schema node** (`{ type: 'string', formType: 'markdown' }`) precisely to target it from `test`. Without knowing `formType` exists, schema-targeted custom inputs devolve into brittle path matching.
 
-### Array Index Matching
+## Path Matching (`formTypeInputMap`)
 
 ```typescript
-const formTypeInputMap = {
-  // name field of all array items
+formTypeInputMap: {
   '/items/*/name': ItemNameInput,
-
-  // Nested arrays
-  '/orders/*/items/*/price': PriceInput,
-};
-
-// Matching examples:
-// /items/0/name ✓
-// /items/1/name ✓
-// /items/abc/name ✓ (string keys also match)
-```
-
-### Dynamic Object Key Matching
-
-```typescript
-const formTypeInputMap = {
-  // All values in dynamic object
   '/metadata/*': MetadataValueInput,
-
-  // Subfields within specific pattern
-  '/config/*/enabled': ToggleInput,
-};
+}
 ```
 
-### Composite Patterns
+- `*` matches exactly ONE segment — and matches **any key**, not just array indexes (`/items/abc/name` matches too). `**` does not exist.
+- Escape literal `/` in a property name as `~1`, `~` as `~0` — inside map keys as well (`jsonpointer.md`).
 
-```typescript
-const formTypeInputMap = {
-  // Multiple wildcard levels
-  '/users/*/addresses/*/city': CityInput,
+## Custom Input Contract
 
-  // Wildcard + fixed path
-  '/products/*/variants/*/price': ProductPriceInput,
-};
-```
+- `value` (controlled) XOR `defaultValue` (uncontrolled) — never both (consumer rules `form-type-input-contract`).
+- Call `onChange` with the right `SetValueOption` for objects (`Merge` vs `Overwrite`).
+- A custom input on a non-terminal object/array **must render `ChildNodeComponents`** — otherwise its children silently vanish:
 
-## Utilizing ChildNodeComponents
-
-Use when rendering child nodes in object or array types.
-
-```typescript
-const CustomObjectLayout: FC<FormTypeInputProps<Record<string, any>>> = ({
+```tsx
+const ObjectLayout: FC<FormTypeInputProps<Record<string, any>>> = ({
   ChildNodeComponents,
-}) => {
-  return (
-    <div className="custom-grid">
-      {ChildNodeComponents.map((ChildNode, index) => (
-        <div key={index} className="grid-item">
-          <ChildNode />
-        </div>
-      ))}
-    </div>
-  );
-};
+}) => (
+  <div className="grid">
+    {ChildNodeComponents.map((Child, i) => (
+      <Child key={i} />
+    ))}
+  </div>
+);
 ```

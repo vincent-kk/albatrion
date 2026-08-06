@@ -1,480 +1,92 @@
-# Hooks Reference — @winglet/react-utils
+# Hooks — traps and selection rules
 
-All 18 hooks, organized by category. Each entry includes signature, behavior, key notes, and real-world patterns.
+Nineteen hooks, grouped by the decision they belong to. Signatures live in `dist/hooks/*.d.ts`; what follows is only the behavior those declarations cannot express.
 
----
+## The constant family
 
-## State / Constant Hooks
+Four hooks accept "a value or a factory" and disagree about what that means.
 
-### useConstant
+| Hook                    | Function argument              | Re-runs?                                  | Reach for it when                                             |
+| ----------------------- | ------------------------------ | ----------------------------------------- | ------------------------------------------------------------- |
+| `useConstant(x)`        | **stored as-is, never called** | never                                     | the value is already computed, or you want to hold a function |
+| `useLazyConstant(fn)`   | called once, on first render   | never — guaranteed                        | re-running the factory would be a correctness bug             |
+| `useTruthyConstant(fn)` | called on first render         | **whenever the held value is falsy**      | an expensive computation whose result is always truthy        |
+| `useMemorize(x, deps)`  | **called**                     | when `deps` change (default `[]` — never) | you want `useMemo` with a value-or-factory argument           |
 
-```typescript
-function useConstant<T>(input: T): T;
+### `useConstant` stores functions; `useMemorize` calls them
+
+The two take the same argument shape and do the opposite thing with it. `useConstant` is `useRef(input).current` — the input is never invoked. `useMemorize` is `useMemo(() => isFunction(input) ? input() : input, deps)` — a function input is invoked.
+
+```tsx
+const stored = useConstant(() => compute()); // a function; compute() never runs
+const result = useMemorize(() => compute()); // compute()'s return value, computed once
 ```
 
-Stores `input` in a `useRef` on the first render and returns it unchanged on every subsequent render. If a function is passed, it is stored as-is (not called). Use `useTruthyConstant` when you want lazy initialization from a factory function.
+The trap is well disguised: `useConstant`'s shipped JSDoc offers `useConstant(() => { ... })` as its "expensive computation that runs only once" example, while its own `@param` line — one screen further down — states that a function is stored as-is, not executed. **The `@param` line is correct and the example is wrong.** That JSDoc ships inside `dist/*.d.ts`, so editor hover repeats the mistake. Symptom when it bites: a child receives a function where it expected data, and nothing throws.
 
-**Behavior**: Eager — runs on first render, never recomputes.
+### `useTruthyConstant` re-initializes on falsy
 
-**Use when**: You need a value that must never change across the component lifecycle (stable config objects, initial data, stable callbacks you create manually).
+It holds the value in a ref guarded by `if (!ref.current)`, so any render that finds the held value falsy runs the factory again. It cannot hold `null`, `0`, `''`, or `false` — a feature-detection factory returning `null` re-detects on every single render.
 
-```typescript
-// Stable object reference — never triggers React.memo re-renders
-const defaultConfig = useConstant({ showIcon: true, pageSize: 20 });
+### `useLazyConstant` is a guarantee, not a hint
 
-// Expensive one-time array initialization
-const lookupTable = useConstant(() => buildLookupTable(rawData));
-// NOTE: the function itself is stored, not called.
-// Use useTruthyConstant if you want the function to be called.
+It is `useState(factory)[0]`: the factory runs on the initial render and the result lives in React state, which React never discards. `useMemo` explicitly reserves the right to drop its cache and recompute, so it is a performance hint. When re-running the factory would break correctness — a manager, an observer, a store, an emitter whose identity consumers close over — this is the only one of the four that promises it will not happen. It also runs exactly once for a falsy result, unlike `useTruthyConstant`.
+
+In StrictMode (development) React double-renders and may invoke the factory twice, committing only one result. Keep factories free of external side effects; allocate real resources lazily inside the produced instance.
+
+## Identity stabilizers
+
+`useReference`, `useHandle`, `useSnapshot`, `useRestProperties`, and `useSnapshotReference` all exist to stop a reference from changing.
+
+| Problem                                                               | Hook                                                               |
+| --------------------------------------------------------------------- | ------------------------------------------------------------------ |
+| Value read inside a timer, interval, or long-lived effect is stale    | `useReference(value)` → a ref updated every render                 |
+| Callback identity must never change, but must call the latest handler | `useHandle(fn)`                                                    |
+| Flat object prop defeats `React.memo`                                 | `useRestProperties(props)` — shallow comparison                    |
+| Nested object prop defeats `React.memo`                               | `useSnapshot(obj, omit?)` — deep comparison, optional key omission |
+
+`useSnapshotReference` is `useSnapshot` before the `.current` read — take it only when you need the ref object itself rather than its value.
+
+**`useSnapshot`'s `omit` set is captured on the first render and never re-read.** A dynamically computed omit list silently keeps using its initial value for the component's whole life, so keys omitted later still take part in the comparison. Pass a constant.
+
+**`useReference` writes to its ref during render**, not from an effect, so the current value is readable immediately — including by code that runs before the commit. That is what makes it safe inside a callback created in the same render.
+
+**`useHandle` never throws on a missing handler.** With no handler, the returned function still exists and returns `null` at runtime while typed as the handler's return type. A missing handler therefore surfaces as an unexpected `null` somewhere downstream instead of an error at the call site.
+
+```tsx
+const onSelect = useHandle(props.onSelect); // stable identity for the component's lifetime
+<ExpensiveChild onSelect={onSelect} />; // never re-renders because of this prop
 ```
 
-**Difference from useMemo**: `useMemo` can recompute; `useConstant` never does. **Difference from useRef directly**: Communicates intent — "this value is intentionally immutable."
+## Lifecycle hooks
 
----
+Six thin wrappers over `useEffect` / `useLayoutEffect` with an empty dependency array: `useOnMount`, `useOnMountLayout`, `useOnUnmount`, `useOnUnmountLayout`, plus the conditional pair `useEffectUntil` and `useLayoutEffectUntil`. The `Layout` variants run before paint — they block it, so use them only when the DOM must settle before the browser draws.
 
-### useTruthyConstant
+**The unmount pair captures its handler at mount.** `useOnUnmount(fn)` is `useEffect(() => fn, [])`, so `fn` is the closure from the first render forever. State read inside it yields mount-time values:
 
-```typescript
-function useTruthyConstant<T>(input: T | (() => T)): T;
-```
-
-Like `useConstant` but supports **lazy initialization**: if a function is passed, it is called on first access (when the ref is falsy). Re-initializes if the stored value becomes falsy.
-
-**Behavior**: Lazy — factory function runs only when the value is first needed.
-
-**Caveat**: Do not use for values that might legitimately be `0`, `''`, `false`, or `null` — those will trigger re-initialization.
-
-```typescript
-// Only instantiates when component accesses the value
-const analyticsService = useTruthyConstant(() => new AnalyticsService(config));
-
-// Conditional initialization
-const processor = useTruthyConstant(() => {
-  if (!videoUrl) return null; // null → re-initializes next time, use with care
-  return new VideoProcessor({ codec: 'h264' });
-});
-```
-
----
-
-### useMemorize
-
-```typescript
-function useMemorize<T>(input: T | (() => T), dependencies?: DependencyList): T;
-```
-
-Thin wrapper over `useMemo` with a cleaner overloaded API. Accepts either a direct value or a factory function, plus an optional dependency array (defaults to `[]`).
-
-**Two modes**:
-
-1. **Value mode**: `useMemorize(obj, [a, b])` — equivalent to `useMemo(() => obj, [a, b])`
-2. **Function mode**: `useMemorize(() => compute(), [a, b])` — calls factory on dep change
-
-```typescript
-// Value mode — stabilize an inline object
-const config = useMemorize({ theme, locale }, [theme, locale]);
-
-// Function mode — recompute expensive transform
-const processed = useMemorize(
-  () => rawData.map((item) => expensiveTransform(item)),
-  [rawData],
-);
-
-// One-time computation (empty deps, same as useConstant but via useMemo)
-const constant = useMemorize(() => generateLargeDataset());
-```
-
----
-
-### useLazyConstant
-
-```typescript
-function useLazyConstant<T>(factory: () => T): T;
-```
-
-Runs `factory` **exactly once** on the initial render and holds the result in React state, so the value keeps one referential identity for the component's entire lifetime. No setter is ever called, so the value is never replaced.
-
-```typescript
-// A lifecycle-managed instance that must keep one identity
-const contextValue = useLazyConstant(() => ({
-  manager: Manager.create(options),
-}));
-
-// Exactly-once even for a falsy result — stays null forever, never re-detected
-const detector = useLazyConstant(() =>
-  typeof IntersectionObserver === 'undefined' ? null : createDetector(),
-);
-```
-
-**vs the other constant hooks**:
-
-- Unlike `useMemo`/`useMemorize`, the value is **guaranteed** never recomputed — React may drop a memo cache at any time, so `useMemo` is a hint, not a guarantee. Reach for `useLazyConstant` when re-running the factory would be a **correctness bug**, not merely wasted work.
-- Unlike `useConstant`, the factory **runs once** (`useConstant(expr)` evaluates `expr` on every render and keeps the first result).
-- Unlike `useTruthyConstant`, the factory runs once **even when it returns falsy** (`null` / `false` / `0`) — no retry on later renders.
-
-**Use cases**: resource-owning instances (managers, observers, stores, emitters), mount-frozen configuration, stable context values. In StrictMode (dev) the factory may run twice for the discarded double-render, and only one result is committed — keep factories side-effect-free.
-
----
-
-## Reference Hooks
-
-### useReference
-
-```typescript
-function useReference<T>(value: T): RefObject<T>;
-```
-
-Creates a ref that is updated to the latest `value` on **every render**. The ref object itself is stable (same reference throughout lifecycle), but `ref.current` always reflects the current render's value.
-
-**Primary use case**: Solve the stale closure problem without recreating callbacks.
-
-```typescript
-const [count, setCount] = useState(0);
+```tsx
 const countRef = useReference(count);
-
-// This callback is created once and never changes,
-// but always reads the current count
-const logCount = useCallback(() => {
-  console.log(countRef.current); // always current
-}, [countRef]);
-
-useEffect(() => {
-  const id = setInterval(logCount, 1000);
-  return () => clearInterval(id);
-}, [logCount]);
+useOnUnmount(() => save(countRef.current)); // reading `count` directly would save the mount-time value
 ```
 
----
+**`useEffectUntil` stops permanently.** The effect returns a boolean; the first `true` sets an internal flag and no later dependency change ever runs it again — remounting the component is the only reset. It also does **not support cleanup**: the return value is consumed as the stop signal, so a returned function is never treated as a teardown and never runs. Anything needing cleanup belongs in a plain `useEffect`. `useLayoutEffectUntil` is the same contract before paint.
 
-### useHandle
+The dependency argument is optional, and omitting it means no dependency array at all — the effect then retries after **every** render until it succeeds. That is a useful polling shape when the retry is cheap, and an easy accident when it is not.
 
-```typescript
-function useHandle<P extends any[], R>(
-  handler?: (...args: P) => R,
-): (...args: P) => R;
-```
-
-Builds on `useReference` to create a **stable function reference** that always delegates to the latest version of `handler`. The returned function never changes identity, making it safe to pass to `React.memo` children or use in effects with empty dependency arrays.
-
-If `handler` is `undefined`, the returned function returns `null` instead of throwing.
-
-```typescript
-const [data, setData] = useState(initialData);
-
-// Stable ref — ExpensiveChild never re-renders due to onClick
-const handleClick = useHandle(() => process(data));
-// handleClick identity is stable; it internally reads latest 'data'
-
-return <ExpensiveChild onClick={handleClick} />;
-```
-
-**vs useCallback**: `useCallback` recreates the function when deps change; `useHandle` never recreates.
-
----
-
-### useSnapshot
-
-```typescript
-function useSnapshot<T extends object | undefined>(
-  input: T,
-  omit?: Set<keyof T> | Array<keyof T>,
-): T;
-```
-
-Returns the **same object reference** as long as the object's contents are deeply equal to the previous render's value. When content actually changes, returns the new object.
-
-**Use for**: Nested objects, API responses, complex configuration objects.
-
-```typescript
-// Effect only re-runs when config content actually changes
-const stableConfig = useSnapshot({ theme: user.theme, locale: user.locale });
-useEffect(() => {
-  initWidget(stableConfig);
-}, [stableConfig]);
-
-// Exclude volatile fields from comparison
-const stableResponse = useSnapshot(apiResponse, ['timestamp', 'requestId']);
-```
-
-**vs useRestProperties**: `useSnapshot` does deep comparison; `useRestProperties` does shallow.
-
----
-
-### useSnapshotReference
-
-```typescript
-function useSnapshotReference<T extends object | undefined>(
-  input: T,
-  omit?: Set<keyof T> | Array<keyof T>,
-): RefObject<T>;
-```
-
-Same deep-comparison logic as `useSnapshot`, but returns a **ref object** instead of the value directly. The ref object itself is always the same reference; only `ref.current` updates when contents change.
-
-**Use when**: You need ref semantics — stable ref for use in callbacks, timers, imperative APIs.
-
-```typescript
-const dataRef = useSnapshotReference(complexData);
-
-// Stable callback: never recreates even when complexData changes structure
-const processData = useCallback(() => {
-  const result = expensiveComputation(dataRef.current);
-  onProcess(result);
-}, [dataRef]); // dataRef ref object never changes
-```
-
----
-
-### useRestProperties
-
-```typescript
-function useRestProperties<T extends Dictionary>(props: T): T;
-```
-
-Performs **shallow equality comparison** and returns the previous object reference when all top-level property values are strictly equal. Prevents unnecessary re-renders caused by inline object literals or spread operators.
-
-**Use for**: Flat prop objects, rest props in component APIs, context values with flat shape.
-
-```typescript
-const Button = ({ variant, size, ...restProps }) => {
-  const stableRest = useRestProperties(restProps);
-  // MemoizedButton only re-renders when restProps content actually changes
-  return <MemoizedButton variant={variant} size={size} {...stableRest} />;
-};
-```
-
-**Algorithm**: O(1) for unchanged reference; O(n) for key/value comparison.
-
----
-
-## Lifecycle Hooks
-
-### useOnMount
-
-```typescript
-function useOnMount(handler: EffectCallback): void;
-```
-
-Runs `handler` once after the component mounts (after paint). Equivalent to `useEffect(handler, [])`. Supports cleanup by returning a function.
-
-```typescript
-useOnMount(() => {
-  const ws = new WebSocket('wss://api.example.com');
-  ws.onmessage = (e) => handleMessage(JSON.parse(e.data));
-  return () => ws.close();
-});
-```
-
----
-
-### useOnMountLayout
-
-```typescript
-function useOnMountLayout(handler: EffectCallback): void;
-```
-
-Synchronous version of `useOnMount` — runs before browser paint via `useLayoutEffect`. Use to prevent FOUC, apply initial DOM measurements, or restore scroll positions.
-
-```typescript
-useOnMountLayout(() => {
-  const saved = localStorage.getItem('theme');
-  if (saved === 'dark') document.documentElement.classList.add('dark-mode');
-});
-```
-
-**Performance warning**: Blocks browser paint. Use only when synchronous behavior is required.
-
----
-
-### useOnUnmount
-
-```typescript
-function useOnUnmount(handler: Fn): void;
-```
-
-Runs `handler` when the component unmounts. The handler captures values at **mount time** — a stale closure. Use `useReference` to access current state in cleanup.
-
-```typescript
-// Stale closure problem:
-const [count, setCount] = useState(0);
-useOnUnmount(() => {
-  console.log(count); // always 0 (mount-time value)
-});
-
-// Solution:
-const countRef = useReference(count);
-useOnUnmount(() => {
-  console.log(countRef.current); // current value
-  analytics.track('session_end', { finalCount: countRef.current });
-});
-```
-
----
-
-### useOnUnmountLayout
-
-```typescript
-function useOnUnmountLayout(handler: Fn): void;
-```
-
-Synchronous cleanup on unmount via `useLayoutEffect`. Use when DOM must be cleaned up before reflow/repaint to prevent visual artifacts.
-
-```typescript
-useOnMountLayout(() => {
-  document.body.style.overflow = 'hidden';
-});
-useOnUnmountLayout(() => {
-  document.body.style.overflow = ''; // restore before next paint
-});
-```
-
----
-
-### useEffectUntil
-
-```typescript
-function useEffectUntil<D extends DependencyList>(
-  effect: () => boolean,
-  dependencies?: D,
-): void;
-```
-
-Runs `effect` on mount and on dependency changes. Once `effect` returns `true`, it **permanently stops** executing even if dependencies continue to change.
-
-**Use for**: Polling until success, initialization sequences, one-shot async operations.
-
-```typescript
+```tsx
 useEffectUntil(() => {
-  const socket = connectToWebSocket(url);
-  if (socket.readyState === WebSocket.OPEN) {
-    setConnection(socket);
-    return true; // stop
-  }
-  return false; // keep trying
-}, [url]);
+  if (!containerRef.current) return false; // retry on the next dependency change
+  initialize(containerRef.current);
+  return true; // done — never runs again
+}, [deps]);
 ```
 
-No cleanup function support — use regular `useEffect` if you need cleanup.
+## Timing and environment
 
----
+**`useDebounce(callback, deps, ms, options)` is leading-edge by default** — `immediate` defaults to `true`, firing the callback immediately when idle and suppressing the trailing call. Pass `{ immediate: false }` for the trailing-edge behavior most debounce implementations default to. The options are read into a ref on the first render only, so changing them later has no effect. It returns `{ isIdle, cancel }`.
 
-### useLayoutEffectUntil
+`useTimeout(callback, ms)` returns `{ isIdle, schedule, cancel }`; `schedule()` clears any pending timer first, making it a reschedule.
 
-```typescript
-function useLayoutEffectUntil<D extends DependencyList>(
-  effect: () => boolean,
-  dependencies?: D,
-): void;
-```
+**`useWindowSize()` returns `{ width: 0, height: 0 }` on the first render** — the listener and the first measurement both happen in an effect. Every server render sees `{ 0, 0 }`, so branching on it directly produces hydration mismatches; gate on mount, or accept one corrective render.
 
-Synchronous version of `useEffectUntil`. Use for DOM-dependent initialization that must complete before paint.
-
-```typescript
-useLayoutEffectUntil(() => {
-  const el = ref.current;
-  if (!el) return false;
-  const { width } = el.getBoundingClientRect();
-  if (width > maxWidth) {
-    setFontSize((prev) => prev - 1);
-    return false;
-  }
-  return true; // fits
-}, [fontSize, maxWidth]);
-```
-
----
-
-## Utility Hooks
-
-### useDebounce
-
-```typescript
-function useDebounce(
-  callback: Fn,
-  dependencyList?: DependencyList,
-  ms?: number,
-  options?: { immediate?: boolean },
-): { isIdle: () => boolean; cancel: () => void };
-```
-
-Debounces `callback` execution triggered by dependency changes. By default (`immediate: true`), executes immediately if the debounce timer is idle, then waits `ms` before re-executing on subsequent rapid changes.
-
-Returns `isIdle()` to check pending state, and `cancel()` to abort.
-
-```typescript
-const [query, setQuery] = useState('');
-const { cancel } = useDebounce(() => searchAPI(query), [query], 300);
-
-// Cancel pending search on unmount
-useEffect(() => cancel, [cancel]);
-```
-
-**Internally**: built on `useHandle` + `useTimeout`.
-
----
-
-### useTimeout
-
-```typescript
-function useTimeout(
-  callback: Fn,
-  timeout?: number,
-): { isIdle: () => boolean; schedule: () => void; cancel: () => void };
-```
-
-Provides explicit control over a `setTimeout`: `schedule()` starts or resets the timer, `cancel()` aborts it, `isIdle()` reports whether no timer is pending. Auto-cleans on unmount.
-
-```typescript
-const { schedule, cancel, isIdle } = useTimeout(
-  () => setVisible(false),
-  3000
-);
-
-// Auto-dismiss notification, pause on hover
-useEffect(() => { schedule(); return cancel; }, []);
-return (
-  <div onMouseEnter={cancel} onMouseLeave={schedule}>
-    {message}
-  </div>
-);
-```
-
----
-
-### useVersion
-
-```typescript
-function useVersion(callback?: Fn): [version: number, update: () => void];
-```
-
-Returns `[version, update]` where `update()` optionally calls `callback` then increments `version`, triggering a re-render. Starting version is `0`.
-
-**Use for**: Manual refresh buttons, cache invalidation, forcing effect re-runs, child remount via `key` prop.
-
-```typescript
-const [version, refresh] = useVersion();
-// version as key forces child remount
-return <ComplexForm key={version} />;
-
-// version as effect dep forces refetch
-useEffect(() => { fetchData(); }, [version]);
-```
-
----
-
-### useWindowSize
-
-```typescript
-function useWindowSize(): { width: number; height: number };
-```
-
-Subscribes to `window.resize` events and returns `{ width, height }` in pixels. Returns `{ width: 0, height: 0 }` during SSR. Automatically cleans up the listener on unmount.
-
-**Performance note**: Resize events fire at high frequency. For expensive derivations, combine with `useDebounce`.
-
-```typescript
-const { width } = useWindowSize();
-const isMobile = width < 768;
-
-return isMobile ? <MobileView /> : <DesktopView />;
-```
+`useVersion(callback?)` returns `[version, update]`, where `update` has a permanent identity and increments the counter after invoking the latest `callback`. Feed `version` to a child's `key` to force a remount, or to a dependency array to invalidate.

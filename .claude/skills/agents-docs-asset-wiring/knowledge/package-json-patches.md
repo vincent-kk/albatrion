@@ -1,8 +1,36 @@
 # `package.json` Patches
 
+Wiring a consumer is `package.json` edits plus, optionally, one `CLAUDE.md` section. Nothing else — the whole CLI surface lives in `@slats/agents-assets-sync`, and no content is mirrored across consumers.
+
 All edits below are **additive**. Existing non-conflicting values remain untouched. On any conflicting existing value, stop and ask the user — do not overwrite.
 
-Reference: `packages/canard/schema-form/package.json`.
+Reference consumer: `packages/canard/schema-form`.
+
+---
+
+## What the consumer owns
+
+- `docs/agents/**` — the assets to ship (skills / rules / commands).
+- `package.json.agents.assetPath` — string, usually `"docs/agents"`.
+
+## What the consumer must NOT own
+
+- Any `bin/` directory or stub file. The engine owns the dispatcher.
+- Any `scripts/build-hashes.mjs` wrapper. `scripts.build:hashes` calls the engine's bin directly.
+- Any `"bin"` entry in `package.json`.
+- `./bin/*` or `./docs/*` in `exports` — exposing them would let bundlers pull CLI code or the docs tree into app bundles.
+
+## What the engine provides
+
+Three bins. The first two are the same dispatcher under two names; the program name in help and error output is derived from the invocation, so each self-identifies correctly.
+
+| Bin                      | Use                                                                                                                     |
+| ------------------------ | ----------------------------------------------------------------------------------------------------------------------- |
+| `agents-assets-sync`     | npx canonical alias — matches the unscoped package name, so `npx @slats/agents-assets-sync ...` works directly.         |
+| `inject-agents-settings` | descriptive name for installed environments (`yarn add -D` / `npm i -g`).                                               |
+| `agents-build-hashes`    | build-time helper: reads `process.cwd()/package.json`, hashes everything under `agents.assetPath`, writes the manifest. |
+
+`buildHashes()` is available programmatically at the `./buildHashes` subpath. There is no `injectDocs()` counterpart — both renderers compose the core primitives directly, so injection is driven through a bin. For machine-readable output, add `--json`.
 
 ---
 
@@ -16,7 +44,7 @@ Reference: `packages/canard/schema-form/package.json`.
 
 Consumer-side convention — the engine does not enforce it. Relative to the consumer's package root. If the field already exists with a non-default value, preserve it.
 
-A missing or non-string value is an intentional opt-out: the dispatcher will exit 2 with a clear error, and `agents-build-hashes` will silently no-op. Do not remove the opt-out path.
+A missing or non-string value is an intentional opt-out: the dispatcher exits 2 with a clear error, and `agents-build-hashes` silently no-ops. Do not remove the opt-out path. (A package that ships assets but declares nothing is still injectable ad hoc via `--asset-path` at the call site; that flag is for the caller, not a substitute for wiring.)
 
 ---
 
@@ -113,4 +141,4 @@ Exports control which subpaths a consumer's bundler can resolve. Keeping `./bin/
 
 ## Full Reference
 
-See `packages/canard/schema-form/package.json` for the canonical shape. The relevant keys are `scripts.build`, `scripts.build:hashes`, `scripts.prepublishOnly`, `dependencies."@slats/agents-assets-sync"`, `agents.assetPath`, and `files`. Everything else in that file is schema-form-specific and must not be copied.
+See `packages/canard/schema-form/package.json` for the canonical shape. The relevant keys are `agents.assetPath`, `scripts.build`, `scripts.build:hashes`, `scripts.prepublishOnly`, `devDependencies."@slats/agents-assets-sync"`, and `files`. Everything else in that file is schema-form-specific and must not be copied.

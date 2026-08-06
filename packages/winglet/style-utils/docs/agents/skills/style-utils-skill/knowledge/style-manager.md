@@ -1,240 +1,207 @@
-# Style Manager Knowledge
+# Style Manager — scoped injection, batching, lifecycle
 
-Expert knowledge for scoped CSS injection via `styleManagerFactory` and `destroyScope`.
+`styleManagerFactory` and `destroyScope` are the public face of an internal `StyleManager` class. One instance exists per scope key; it owns a `Map<styleId, processedCss>`, a `CSSStyleSheet` (or a `<style>` element), and a pending animation frame.
 
-## Overview
+```typescript
+const addStyle = styleManagerFactory('my-widget');
+const removeTitle = addStyle('title', '.title { font-size: 20px; }');
+container.classList.add('my-widget'); // required — see below
+removeTitle();
+destroyScope('my-widget');
+```
 
-`styleManagerFactory` and `destroyScope` wrap an internal `StyleManager` class that:
+## Scope rewriting
 
-- Maintains one singleton per `scopeId` (per root — see Shadow DOM doc).
-- Injects CSS either via `CSSStyleSheet.replaceSync` + `adoptedStyleSheets` (modern) or a `<style>` element appended to `document.head` (fallback).
-- Automatically prefixes non-`@`, non-`:root`, non-`:host` selectors with `.${scopeId}` to prevent cross-scope leaks.
-- Batches DOM writes via `requestAnimationFrame`, so multiple `add`/`remove` calls in the same frame produce a single flush.
-- Provides per-style cleanup functions and a scope-wide `destroy`.
+In document mode, each rule's selector is prefixed with `.${scopeId} `, turning `.btn { … }` into `.my-widget .btn { … }`. The prefix is a descendant combinator, so **the CSS only matches inside an element carrying the scope class**. The library never applies that class; `classList.add(scopeId)` on a container is your job, and its absence is the single most common "nothing happened" report.
 
-## Basic Concepts
+The id is interpolated into that selector raw — nothing validates or escapes it, so **`scopeId` must be a valid CSS class identifier**. The failures are quiet and each one is different:
 
-### Scope Prefixing
+```typescript
+'my widget' → '.my widget .btn'  // descendant of .my, not one class
+'a.b'       → '.a.b .btn'        // compound: needs both classes
+'7f3a9b2c'  → '.7f3a9b2c .btn'   // invalid — a class cannot start with a digit
+```
 
-Given `scopeId = 'my-widget'` and the CSS `.btn { color: red; }`, the applied CSS becomes:
+The third is the dangerous one, and it is easy to reach: deriving a per-instance scope from `crypto.randomUUID()` or `Math.random().toString(36)` yields a digit-leading id often enough to look intermittent. Every rule in that scope becomes an unparseable selector and the browser discards it silently — the styles are injected, present in the sheet's source text, and match nothing. Always prefix a generated id with a literal (`widget-${id}`).
 
-```css
-.my-widget .btn {
-  color: red;
+Three selector forms pass through unprefixed:
+
+| Selector form              | Behavior                                                    |
+| -------------------------- | ----------------------------------------------------------- |
+| Anything starting with `@` | Header emitted verbatim (but see the at-rule failure below) |
+| Exactly `:root`            | Emitted verbatim                                            |
+| Exactly `:host`            | Emitted verbatim                                            |
+
+The `:root` exception is load-bearing rather than incidental: it is _why_ CSS-variable theming works through this library. A scope can inject `:root { --bg: #fff; }` and have it land globally, so a theme scope can rotate variables that every other scope consumes through `var(--bg)`:
+
+```typescript
+const addTheme = styleManagerFactory('theme');
+let removeCurrent: (() => void) | null = null;
+
+function applyTheme(vars: string) {
+  removeCurrent?.(); // same styleId would also work — see atomic swap below
+  removeCurrent = addTheme('vars', `:root { ${vars} }`);
 }
 ```
 
-Selectors starting with `@` (e.g. `@media`, `@keyframes`, `@supports`), or exactly equal to `:root` or `:host`, are **not** prefixed — they are passed through verbatim. Every other selector receives the `.scopeId ` prefix.
+"Exactly" is literal. `:root, .a { … }` and `:host([disabled]) { … }` are not bare, so they take the prefix and come out as `.scope:root,.a` and `.scope:host([disabled])` — both meaningless in document mode.
 
-### Singleton Registry
+## Where the rewriter fails
 
-`StyleManager` keeps an internal `Map<instanceKey, StyleManager>`. The key is the `scopeId` for document roots, and `"${scopeId}:shadow:${uniqueShadowRootId}"` for shadow roots. Calling `styleManagerFactory('foo')` twice returns factories wired to the same underlying manager; both will inject into the same stylesheet.
+The rewriter finds the next `}`, treats everything before the first `{` as one selector, and prefixes it. That model cannot represent nesting or selector lists, and it reports no error when it meets one.
 
-`destroyScope(scopeId)` removes the entry for the document-root form of `scopeId`; it does not cascade to shadow-root instances with the same name (each has its own manager).
+**Comma lists lose everything after the first selector.** `.a, .b { color: red; }` becomes `.scope .a,.b{color:red}` — `.b` escapes the scope and applies document-wide. Split selector lists into separate rules before injecting them.
 
-### Batched DOM Updates
-
-Every `add` or `remove` that changes the processed style set calls `__scheduleDOMUpdate__`, which sets a `dirty` flag and schedules a single `requestAnimationFrame` flush. The flush concatenates all style blocks for the scope and writes once via `replaceSync` (or `textContent` in the fallback path).
-
-This means:
-
-- Calling `addStyle('a', ...); addStyle('b', ...); addStyle('c', ...)` in the same tick triggers exactly one DOM write.
-- Reading the current stylesheet synchronously right after `add` may not reflect the new rules until the next animation frame.
-
-### DOM Path Selection
-
-On each flush, the manager checks:
+**At-rule blocks come out unbalanced.** The at-rule header is passed through, but the inner rules are consumed as part of that same slice (so they are never scoped), and the block's closing brace is dropped entirely:
 
 ```typescript
-typeof CSSStyleSheet !== 'undefined' &&
-  'replaceSync' in CSSStyleSheet.prototype &&
-  'adoptedStyleSheets' in this.__root__;
+addStyle(
+  'm',
+  '@media (max-width: 768px) { .btn { color: red; } } .z { color: green; }',
+);
+// injected: '@media (max-width:768px){.btn{color:red}.scope .z{color:green}'
 ```
 
-If all three are present, it uses the `CSSStyleSheet` + `adoptedStyleSheets` path. Otherwise it creates (or reuses) an `HTMLStyleElement` with `className = scopeId` and writes `textContent`. The element is appended to `shadowRoot` when in shadow mode, otherwise to `document.head`.
-
----
-
-## API Reference
-
-### `styleManagerFactory`
+Two silent failures compound here: `.btn` leaks globally under the media query, and `.z` — a rule that had nothing to do with the media query — ends up nested inside the still-open block. `@keyframes` fares worse still, since its `to`/`from` steps read as ordinary selectors and get prefixed. Keep at-rules in their own `styleId`, or place them last in the string, and scope the inner selectors by hand:
 
 ```typescript
-export const styleManagerFactory: (
-  scopeId: string,
-  config?: StyleManagerConfig,
-) => (styleId: string, cssString: string, compress?: boolean) => () => void;
+addStyle(
+  'responsive',
+  '@media (max-width: 768px) { .my-widget .btn { color: red; } }',
+);
 ```
 
-Returns a curried `addStyle` function bound to one scope (and optionally one shadow root).
+Names declared by `@keyframes` and `@font-face` are global regardless — nothing namespaces them per scope, so two scopes defining `fade-in` silently collide. Prefix the names yourself.
 
-**Parameters:**
+**A leading pseudo-selector is compounded onto the scope.** `:hover { … }` is prefixed to `.scope :hover`, and the compression pass then removes the space, yielding `.scope:hover` — the scope container itself, not its descendants. The mechanism lives in `pure-utils.md`; the consequence is that top-level pseudo-selectors must be written against a real element (`.btn:hover`).
 
-- `scopeId` — unique identifier; doubles as the CSS class prefix.
-- `config.shadowRoot` — optional `ShadowRoot` target. See `knowledge/shadow-dom.md`.
+## Shadow DOM mode
 
-**Returns:** `addStyle(styleId, cssString, compress?)` which:
-
-- Registers/replaces the CSS under `styleId` inside `scopeId`.
-- Returns a cleanup function that removes that specific `styleId` on call.
-
-**Arguments of the returned function:**
-
-- `styleId` — unique key inside the scope. Reusing a key replaces the previous CSS.
-- `cssString` — the CSS source. Empty or whitespace-only strings are ignored.
-- `compress` — when `true`, skip internal `compressCss` pass (use this when the caller has pre-compressed).
-
-**Example:**
+Passing `{ shadowRoot }` changes three things at once: the manager registers under a different key, selector rewriting is skipped entirely, and the stylesheet attaches to the shadow root instead of `document`.
 
 ```typescript
-import { styleManagerFactory } from '@winglet/style-utils';
-
-const addStyle = styleManagerFactory('header');
-
-const cleanupTitle = addStyle('title', '.title { font-size: 20px; }');
-const cleanupSubtitle = addStyle('subtitle', '.subtitle { color: gray; }');
-
-// remove one
-cleanupSubtitle();
-
-// replace 'title' — same key, new CSS
-addStyle('title', '.title { font-size: 24px; }');
+class MyCard extends HTMLElement {
+  private cleanups: Array<() => void> = [];
+  constructor() {
+    super();
+    const shadowRoot = this.attachShadow({ mode: 'open' });
+    const addStyle = styleManagerFactory('my-card', { shadowRoot });
+    this.cleanups.push(
+      addStyle('host', ':host { display: block; } .content { padding: 1rem; }'),
+    );
+  }
+  disconnectedCallback() {
+    this.cleanups.forEach((fn) => fn());
+    this.cleanups = [];
+  }
+}
 ```
 
-### `destroyScope`
+Rewriting is skipped because shadow encapsulation already isolates the selectors — and because prefixing would break `:host` and `::slotted(…)`, which must stay at the root of their selector. This also means the failure modes above do not apply in shadow mode: at-rules, comma lists, and pseudo-selectors all pass through untouched.
 
-```typescript
-export const destroyScope: (scopeId: string) => void;
-```
+Never reuse a document-mode factory for a shadow root, or one host's factory for another host. Both mistakes route CSS to the wrong root, and the symptom — styles appearing on `document` instead of inside the component — looks like a scoping bug rather than a wiring one.
 
-Tears down the `StyleManager` instance registered under `scopeId` for the document root:
+## Instance keying
 
-1. Cancels any pending animation frame.
-2. Removes the scope's `CSSStyleSheet` from `document.adoptedStyleSheets` (modern path).
-3. Removes the `<style>` element from the DOM (fallback path).
-4. Clears the processed-styles cache.
-5. Deletes the manager from the internal registry.
+The registry key is the `scopeId` for document roots, and `` `${scopeId}:shadow:${uniqueShadowRootId}` `` for shadow roots, where the id is generated once per `ShadowRoot` and stashed on it under a private `Symbol`. Consequences:
 
-**Parameters:**
+- Two `styleManagerFactory('x')` calls return factories over the **same** manager. Adding through either is visible to the other, and one `destroyScope('x')` removes both sets of styles.
+- The document manager for `'x'` and each shadow manager for `'x'` are **fully separate instances** with separate stylesheets. They share nothing but the name.
+- Rendering 100 hosts under one `scopeId` produces 100 managers and 100 stylesheets. That is correct isolation, but it is not free — for large lists, prefer document-mode scoping, or share one `CSSStyleSheet` across roots outside this library.
 
-- `scopeId` — same identifier used with `styleManagerFactory`.
+## Batched writes
 
-**Example:**
+An `add` or `remove` that changes the processed style set sets a dirty flag and schedules one `requestAnimationFrame`. The flush joins every style in the scope with newlines and replaces the sheet in a single write.
 
-```typescript
-import { destroyScope, styleManagerFactory } from '@winglet/style-utils';
+The observable consequence is that **nothing is in the DOM until the next frame**. Three `addStyle` calls in one tick produce zero writes synchronously and exactly one after the frame fires. Any synchronous read of `document.styleSheets`, `adoptedStyleSheets`, or computed style between `addStyle` and the flush sees the previous state — a theme applied during startup will flash unless it is injected before first paint.
 
-const addStyle = styleManagerFactory('overlay');
-addStyle('base', '.overlay { position: fixed; inset: 0; }');
+## Write paths, and how each one fails
 
-// full teardown
-destroyScope('overlay');
-```
+The path is chosen per flush: `CSSStyleSheet.replaceSync` plus `adoptedStyleSheets` when both are available on the target root, otherwise a `<style>` element appended to the shadow root or to `document.head`. The fallback element carries `className = scopeId`, which makes it findable — `document.head.querySelector('style.my-widget')` is the quickest way to read back exactly what a scope injected.
 
-Calling `destroyScope` on a `scopeId` that was never registered is a no-op that still triggers a lazy create+destroy cycle (because `StyleManager.get` always creates an instance). This is benign; prefer to only call it for scopes you actually created.
+Neither path reports bad CSS. The fallback path only assigns `textContent`; the modern path calls `replaceSync`, which per CSSOM parses the text and **drops invalid rules rather than throwing**. So a selector the browser cannot parse — the digit-leading scope id above, or a mangled at-rule — does not raise anything anywhere. The rule simply never exists, and every valid rule around it applies normally. When a style is missing, read back what was actually injected instead of reasoning about the input.
 
----
+The modern path's `replaceSync` call is nonetheless wrapped in a `try`/`catch` that warns and returns. That is a defensive path — `replaceSync` throws on a non-modifiable sheet, not on malformed CSS, and the manager always constructs its own — but if it ever does fire, the failure mode is worth knowing: **the flush does not throw, and the sheet keeps its previous content**. Every style in the scope freezes at its last good state, with `StyleManager: Failed to apply CSS for scope "…"` on the console as the only evidence. The stored styles are not lost, so the next successful flush applies all of them.
 
-## Common Patterns
+## The `compress` argument
 
-### Pattern 1: Per-component Lifecycle
+`addStyle(styleId, css, alreadyCompressed?)`. The declared name is `compress`, which reads as an instruction and is not one — see the gotcha in `SKILL.md`. What matters operationally:
+
+- The flag gates **only** the compression pass. Scope rewriting always runs, so `addStyle('s', '.btn { color: red; }', true)` injects `.scope .btn{ color: red; }` — scoped, and still carrying its original whitespace.
+- Passing `true` on CSS that was never compressed is therefore not a correctness bug, just a silently fatter stylesheet, which is exactly why the inversion survives code review.
+- It is a performance answer only. Compress once at module init and pass the result with `true` when the same blob is injected repeatedly; otherwise leave it alone.
+
+## Cost model
+
+`add` computes the scoped and compressed output first, then compares it against the previous output for that `styleId` and short-circuits when they are identical. Re-adding unchanged CSS therefore costs a full scope-plus-compress pass and skips only the DOM flush — cheap enough to be safe in a render path, not free enough to be deliberate.
+
+Two behaviors follow from the same `Map`:
+
+- **Same `styleId` swaps atomically.** `addStyle('state', cssA)` then `addStyle('state', cssB)` replaces the entry in place, keeping its position in the concatenated output, and the reader never observes an intermediate state because the swap lands in one flush.
+- **Whitespace-only CSS is ignored, not removed.** `addStyle('state', '')` returns without touching the entry; the previous `state` rules survive. Removal goes through the returned cleanup function or `destroyScope`.
+
+## Cleanup
+
+| Level     | Trigger                             | Reaches                                 |
+| --------- | ----------------------------------- | --------------------------------------- |
+| One style | the function returned by `addStyle` | that `styleId` in that manager          |
+| One scope | `destroyScope(scopeId)`             | the document-mode manager for `scopeId` |
+| One root  | host element garbage-collected      | that shadow root's manager              |
+
+`destroyScope` cancels the pending frame, detaches the sheet or removes the `<style>` element, clears the map, and deletes the registry entry. Removing styles one by one is not equivalent: once the last style is gone the flush writes an empty string, so the stylesheet stays attached to the root — empty, but still counted in `adoptedStyleSheets`. Only `destroyScope` detaches it.
+
+Two limits are worth stating plainly. **It cannot reach shadow instances** — it looks the manager up without shadow context, so it only ever resolves the document-mode key; per-host managers are released by their cleanup functions or with the host itself. And **destroying an unknown scope is a no-op that still allocates**: the lookup creates an instance before destroying it, so a redundant `destroyScope` is harmless but pointless.
+
+For components rendered many times that each need their own rules, derive the scope per instance rather than sharing one:
 
 ```typescript
 class Widget {
-  private scopeId = `widget-${crypto.randomUUID()}`;
-  private cleanups: Array<() => void> = [];
-
-  mount(host: HTMLElement) {
+  private scopeId = `widget-${Math.random().toString(36).slice(2, 8)}`;
+  constructor(host: HTMLElement) {
     host.classList.add(this.scopeId);
-    const addStyle = styleManagerFactory(this.scopeId);
-    this.cleanups.push(addStyle('root', '.widget { display: block; }'));
-    this.cleanups.push(addStyle('title', '.title { font-weight: 600; }'));
+    styleManagerFactory(this.scopeId)('root', '.widget { display: block; }');
   }
-
-  unmount() {
-    this.cleanups.forEach((fn) => fn());
-    this.cleanups = [];
+  destroy() {
     destroyScope(this.scopeId);
   }
 }
 ```
 
-### Pattern 2: Dynamic Theme Swap
+## Diagnosing "the style is not applied"
+
+Work down this list; each step rules out one layer.
+
+1. **Which mode?** `styleManagerFactory(id)` injects into `document`; `styleManagerFactory(id, { shadowRoot })` injects into that root. Styles showing up in the wrong place is almost always a missing `{ shadowRoot }`.
+2. **Document mode — is the scope class applied?** The rule is `.scopeId .selector`; it needs an ancestor with that class. This is the most frequent cause by a wide margin.
+3. **Has a frame passed?** Flushes are asynchronous. Assertions and reads taken in the same tick see nothing.
+4. **Is the selector one the rewriter mishandles?** An `@`-rule, a comma list, a bare `:root`/`:host`, or a leading pseudo-selector — check the injected text, not the input.
+5. **Shadow mode — is it on the right root?** Inspect `host.shadowRoot.adoptedStyleSheets` rather than `document.adoptedStyleSheets`.
+
+## Test isolation
+
+The registry is module-level, so scopes survive across tests in the same file and leak into later ones. Destroy every scope a test created:
 
 ```typescript
-const addTheme = styleManagerFactory('app-theme');
-let removeCurrent: (() => void) | null = null;
-
-function applyTheme(css: string) {
-  removeCurrent?.();
-  removeCurrent = addTheme('colors', css);
-}
+afterEach(() => ['widget', 'overlay', 'theme'].forEach(destroyScope));
 ```
 
-### Pattern 3: Pre-compressed Hot Path
+Because the flush is a frame away, assertions need one to fire. Vitest's fake timers cover `requestAnimationFrame`, so the frame can be driven synchronously — this is the pattern the package's own suite uses:
 
 ```typescript
-import { compressCss, styleManagerFactory } from '@winglet/style-utils';
-
-const PRE_COMPILED = compressCss(largeCssString);
-const addStyle = styleManagerFactory('chart');
-addStyle('base', PRE_COMPILED, true); // third arg = already compressed
+vi.useFakeTimers();
+addStyle('x', '.x { color: red; }');
+vi.runAllTimers(); // fires the scheduled frame
+// assert here
 ```
 
-### Pattern 4: Targeting the Scope
+In environments without `requestAnimationFrame` at all, polyfill both halves in the setup file — the manager calls `cancelAnimationFrame` during teardown, so a one-sided polyfill throws on `destroy`:
 
-Remember to apply `class="scopeId"` (or `classList.add(scopeId)`) to a container element. The prefix `.scopeId .selector` only matches elements nested under an element bearing that class.
+```typescript
+globalThis.requestAnimationFrame = (cb) =>
+  setTimeout(() => cb(Date.now()), 0) as any;
+globalThis.cancelAnimationFrame = (id) => clearTimeout(id as any);
+```
 
----
+## Related
 
-## Best Practices
-
-1. **Give each logical scope a unique ID**: collisions mean shared styles and shared teardown.
-2. **Keep `styleId` keys stable**: reusing the key updates in place; changing it on every render leaks memory (the old key stays until removed).
-3. **Clean up on unmount**: store cleanup functions OR call `destroyScope` on the whole scope.
-4. **Let the scheduler batch**: do not force synchronous DOM reads between `add` calls within the same tick.
-5. **Skip re-compression for known inputs**: pass `compress = true` when you control the CSS source.
-
----
-
-## Troubleshooting
-
-### Issue 1: Styles not visible
-
-**Symptom:** Expected styles do not apply to the target element.
-
-**Cause:** The element does not have the `scopeId` class, so the prefixed selector `.scopeId .selector` never matches.
-
-**Solution:** Ensure the container element (or a parent) has `classList.add(scopeId)`. For Shadow DOM, styles apply inside the root regardless of outer classes — see `knowledge/shadow-dom.md`.
-
-### Issue 2: Updates not reflected immediately
-
-**Symptom:** Reading `document.styleSheets` right after `addStyle(...)` does not show new rules.
-
-**Cause:** Updates flush on the next `requestAnimationFrame`.
-
-**Solution:** Wait for the next frame, or for tests, use `vi.useFakeTimers()` in combination with a rAF polyfill. See `knowledge/troubleshooting.md`.
-
-### Issue 3: `@keyframes` rule not scoped
-
-**Symptom:** `@keyframes my-anim { ... }` appears without prefix and animations collide across scopes.
-
-**Cause:** By design — all `@`-rules pass through unscoped. Animation names are not scoped, so two scopes using the same name collide.
-
-**Solution:** Namespace animation names yourself: `@keyframes my-widget_fade { ... }`. This mirrors how global `@keyframes` behave in any CSS pipeline.
-
-### Issue 4: Duplicate style registration
-
-**Symptom:** The same `styleId` is added under different contents and you see flicker.
-
-**Cause:** `add` compares the processed (scoped + compressed) output and only marks dirty when it changes. Flicker usually indicates identical content being set back-and-forth.
-
-**Solution:** Inspect the two inputs — one likely differs only in whitespace. Stabilize the input or pre-compress both.
-
----
-
-## Related Topics
-
-- See `knowledge/shadow-dom.md` for Shadow DOM usage
-- See `knowledge/advanced-patterns.md` for theming, performance, cleanup strategies
-- See `knowledge/troubleshooting.md` for testing and scoping edge cases
+- `pure-utils.md` — `compressCss` behavior, including the string-literal corruption that reaches injected CSS

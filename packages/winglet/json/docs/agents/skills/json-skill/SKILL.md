@@ -1,150 +1,112 @@
 ---
 name: json-skill
-description: Expert for @winglet/json — RFC 6901/6902/7396 JSON Pointer, Patch, and Merge Patch with prototype-pollution protection. Use for code or questions on getValue, setValue, compare, applyPatch, difference, mergePatch, escape utilities, or JSONPath.
+description: Expert for @winglet/json — RFC 6901/6902/7396 JSON Pointer, Patch, and Merge Patch with prototype-pollution protection. Use for code or questions on getValue, setValue, compare, applyPatch, difference, mergePatch, escape utilities, JSONPointer, or JSONPath.
+user-invocable: false
 ---
 
-# Expert Skill: @winglet/json
+# @winglet/json — JSON Pointer, Patch, and Merge Patch
 
-## Identity
+Applies when code addresses a location inside a JSON document, diffs two documents, or applies a patch that came from somewhere else. The library's defaults are secure but lenient: several guarantees people assume are on are actually opt-in, and the surface names differ from the RFC vocabulary in ways that produce silent no-ops rather than errors.
 
-Expert on the `@winglet/json` library — a TypeScript implementation of RFC 6901 (JSON Pointer), RFC 6902 (JSON Patch), and RFC 7396 (JSON Merge Patch) with built-in prototype pollution protection and immutable-by-default semantics. Answer questions and write code involving pointer navigation, patch generation and application, merge patches, JSONPath conversion, and the library's security-hardened options pattern.
+## Mental Model
 
-## Core Knowledge
+**Two modules, two jobs.** `JSONPointer` addresses one location and mutates or diffs at it (RFC 6901/6902/7396). `JSONPath` is a lookup helper that answers "where does this object live", in Goessner syntax. They are not two spellings of one idea, and their string formats do not interconvert cleanly — see the knowledge file before bridging them.
 
-### Two Module Boundaries
+**`strict` is one feature split across two functions.** `compare(strict: true)` _writes_ `test` guard operations into the patch; `applyPatch(strict: true)` _enforces_ them. Both default to `false`, so by default guards are neither written nor checked. Applying `[{op:'test',path:'/v',value:1},{op:'replace',path:'/v',value:2}]` to the drifted document `{v:999}` yields `{v:2}` with no error at all. Round-trip integrity requires `strict: true` on **both** ends.
 
-The library ships two top-level modules that address different problems:
+**Immutability is per-function, not a library-wide policy.** There is no single `immutable` switch, and the word means something different in each place it appears. `setValue` always mutates. `compare` never mutates its inputs — its `immutable` option decides whether emitted patch values are deep clones or live references into the source. Only `applyPatch` and `mergePatch` protect the source document.
 
-1. **JSONPointer** — addresses a single location in a JSON document (RFC 6901). Covers read (`getValue`), write (`setValue`), escape (`escapePath`/`escapeSegment`/`unescapePath`), and diff/patch (`compare`/`applyPatch`, `difference`/`mergePatch`).
-2. **JSONPath** — queries against a JSON document in Goessner syntax. Provides constants (`JSONPath.Root`, `JSONPath.Current`, …), structural lookup (`getJSONPath`), and conversion to JSON Pointer (`convertJsonPathToPointer`).
+**Externally supplied patches are a prototype-pollution vector.** The defense is on by default in `applyPatch`, where it throws, and always on in `setValue`, where it silently abandons the write. The two functions use different rules and report differently, so "protected" does not mean "you will hear about it".
 
-### Two Patch Formats — Different Semantics
+**Failures are silent more often than loud.** A missing read returns `undefined`; a blocked write returns the document; a `test` guard passes unchecked; a mis-chosen escape function yields a valid-looking wrong pointer. Check return values — an exception is not the library's usual way of telling you something went wrong.
 
-- **JSON Patch (RFC 6902)** — a sequence of granular operations (`add`, `remove`, `replace`, `move`, `copy`, `test`). Path-based and order-dependent. Generate with `compare`, apply with `applyPatch`.
-- **JSON Merge Patch (RFC 7396)** — a single document that merges into source; `null` values remove keys; arrays replace wholesale (never merged). Generate with `difference`, apply with `mergePatch`.
+## Decision Guide
 
-Choose JSON Patch for operation-level control, array index precision, or audit logs. Choose Merge Patch for small human-authored partial updates against object shapes.
+| Question                                                 | Answer                                                                                                                                                                                                                         |
+| -------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Diff format: Patch or Merge Patch?                       | JSON Patch (`compare`/`applyPatch`) for operation-level control, array index precision, audit logs, or optimistic-concurrency guards. Merge Patch (`difference`/`mergePatch`) for small partial updates against object shapes. |
+| Escaping: `escapePath` or `escapeSegment`?               | `escapePath` for a whole pointer whose `/` are structural separators. `escapeSegment` for one key that may itself contain `/` or `~`. Picking wrong is silent — see the knowledge file.                                        |
+| Need the pointer to a nested object?                     | `getJSONPointer(root, target)` from `@winglet/json/pointer-common`. Do **not** build it by converting a `getJSONPath` result.                                                                                                  |
+| Editing one element of an array?                         | JSON Patch. Merge Patch replaces an array wholesale at every depth — there is no element-level merge.                                                                                                                          |
+| Patch must refuse a document that changed underneath it? | `strict: true` on `compare` **and** on `applyPatch`. Either one alone does nothing.                                                                                                                                            |
+| Applying a patch from a client or network?               | `{ strict: true, protectPrototype: true, immutable: true }` — only `protectPrototype` and `immutable` are already the defaults.                                                                                                |
 
-### Security Model: Prototype Pollution Protection
+## Invariants & Gotchas
 
-Any system that applies externally supplied patches is a prototype-pollution vector. The library defends at two layers:
+Defaults, from source. Omitting the options object applies all of them:
 
-1. **Input validation** — `getValue`/`setValue` reject non-plain objects and non-arrays via `isPlainObject`/`isArray`. Class instances, functions, `Map`/`Set`, and primitives all throw `INVALID_INPUT`.
-2. **Path guarding** — `applyPatch` with `protectPrototype: true` (default) rejects any path segment of `__proto__`, `constructor`, or `prototype`.
+| Function     | `strict` | `immutable`                                        | `protectPrototype` | Other                                   |
+| ------------ | -------- | -------------------------------------------------- | ------------------ | --------------------------------------- |
+| `getValue`   | —        | —                                                  | —                  | no options                              |
+| `setValue`   | —        | always mutates                                     | always on, silent  | `overwrite: true`, `preserveNull: true` |
+| `compare`    | `false`  | `true`                                             | —                  | —                                       |
+| `applyPatch` | `false`  | `true`                                             | `true`             | —                                       |
+| `mergePatch` | —        | `true` (3rd positional arg, not an options object) | —                  | —                                       |
+| `difference` | —        | —                                                  | —                  | no options                              |
 
-Never set `protectPrototype: false` when the patch source is untrusted.
+Corrections for claims that are commonly assumed and are wrong here:
 
-### Options Pattern and Default Values
+| Assumption                                                          | Reality                                                                                                                                                       |
+| ------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `getValue` throws when the path is missing                          | It returns `undefined`. It throws only for a non-plain-object/array input or a malformed pointer.                                                             |
+| `err.code === 'INVALID_INPUT'` matches                              | `.code` is namespaced: `'JSON_POINTER.INVALID_INPUT'`. The bare code is on `.specific`.                                                                       |
+| `JSONPointerError` / `isJSONPointerError` can be imported           | Neither is exported, from the main entry or any sub-path. Match on `.name` (`'JSONPointer'` / `'JsonPatch'`) or on `.code`.                                   |
+| `compare` emits only `add`/`remove`/`replace`                       | With `strict: true` it also emits a `test` guard before each `replace` and `remove`. `add` never gets a guard.                                                |
+| `strict: true` on `applyPatch` rejects RFC violations               | It governs one thing: whether `test` operations compare values. `replace` on a missing path silently adds it either way.                                      |
+| `strict: false` makes `applyPatch` lenient                          | Unrelated failures throw regardless of `strict`: `remove` of a missing property, `test` on a missing property, array index out of bounds.                     |
+| `escapePath` escapes `/` inside a key                               | It splits on `/` first, so a `/` is never escaped — `escapePath('config/database')` returns `'config/database'` unchanged.                                    |
+| `unescapeSegment` is the inverse of `escapeSegment`                 | `unescapeSegment` is an alias for `unescapePath` — the same function object.                                                                                  |
+| `setValue` reports a rejected prototype key                         | It returns the document untouched, with no error.                                                                                                             |
+| `difference` result is always usable                                | It returns `undefined` when the inputs are identical — guard before passing downstream.                                                                       |
+| `-` works wherever a path does                                      | `-` (append) is valid only in `setValue` and JSON Patch `add`.                                                                                                |
+| `getJSONPath` cannot find primitives                                | It matches with `===`, so primitives are found; with duplicate values you get one traversal-order-dependent match, not all.                                   |
+| `convertJsonPointerToPath` returns unescaped tokens                 | It returns a **string** in dot/bracket form — `'/users/0/name'` becomes `'.users[0].name'`, unescaped. `compilePointer` is the token splitter.                |
+| `convertJsonPathToPointer` takes a `$`-rooted JSONPath              | It takes a bare data path and treats `$` as an ordinary key, so a `getJSONPath` result cannot be piped into it.                                               |
+| `compare` emits `move` when a subtree relocates                     | It never emits `move` or `copy`; a relocation appears as `remove` plus `add`. Those two ops are apply-only and must be hand-written.                          |
+| `setValue(doc, ptr, undefined)` assigns `undefined`                 | It **deletes** the key instead.                                                                                                                               |
+| `protectPrototype` rejects any `constructor` or `prototype` segment | It rejects `__proto__` anywhere, and `prototype` only directly after `constructor`. A bare `/constructor/x` is refused structurally instead, guard on or off. |
+| `mergePatch` merges arrays element-wise                             | An array in the patch body replaces the target wholesale, at every depth. Use JSON Patch for element-level array edits.                                       |
 
-All major functions take an options object with secure defaults. Memorize the defaults — omitting the options object applies all defaults:
+`JSONPointerError` has exactly two codes — `INVALID_INPUT` and `INVALID_POINTER_TYPE`. There is no `INVALID_POINTER` and no `PROPERTY_NOT_FOUND`. Patch failures are a separate class, `JsonPatchError`, whose codes are prefixed `JSON_PATCH.` and include `PATCH_TEST_FAILED`, `PATCH_OBJECT_PROPERTY_NOT_FOUND`, `PATCH_ARRAY_INDEX_OUT_OF_BOUNDS`, `PATCH_ARRAY_INDEX_INVALID`, `PATCH_OPERATION_INVALID`, `PATCH_TARGET_NOT_OBJECT`, `PATCH_PATH_INVALID_INTERMEDIATE`, `PATCH_PATH_PROCESSING_ERROR`, `PATCH_MOVE_INTO_DESCENDANT_FORBIDDEN`, `PATCH_COPY_INTO_DESCENDANT_FORBIDDEN`, and `SECURITY_PROTOTYPE_MODIFICATION_FORBIDDEN`.
 
-| Function     | `strict` | `immutable`                                         | `protectPrototype` | Other                                   |
-| ------------ | -------- | --------------------------------------------------- | ------------------ | --------------------------------------- |
-| `getValue`   | —        | —                                                   | —                  | no options                              |
-| `setValue`   | —        | always mutates                                      | —                  | `overwrite: true`, `preserveNull: true` |
-| `compare`    | `false`  | `true`                                              | —                  | —                                       |
-| `applyPatch` | `false`  | `true`                                              | `true`             | —                                       |
-| `mergePatch` | —        | `true` (3rd arg: positional, not in options object) | —                  | —                                       |
+## Knowledge Router
 
-`setValue` is the one outlier: it always mutates in place and returns the same reference — no immutable option exists.
+- [pointers-and-paths.md](./knowledge/pointers-and-paths.md) — `getValue`/`setValue` semantics, the escape trio, `getJSONPointer`, `getJSONPath`, and why the JSONPath-to-pointer bridge needs care.
+- [patching-and-safety.md](./knowledge/patching-and-safety.md) — prototype pollution, the `strict` guard pipeline, per-function immutability, Merge Patch replacement rules, partial application.
 
-### Sub-path Imports (Tree-shakeable)
+## API Truth
 
-| Sub-path                            | Exports                                             |
-| ----------------------------------- | --------------------------------------------------- |
-| `@winglet/json/pointer-manipulator` | `getValue`, `setValue`                              |
-| `@winglet/json/pointer-patch`       | `compare`, `applyPatch`, `difference`, `mergePatch` |
-| `@winglet/json/pointer-escape`      | `escapePath`, `unescapePath`, `escapeSegment`       |
-| `@winglet/json/pointer-common`      | `convertJsonPointerToPath`, `JSONPointer` constants |
-| `@winglet/json/path`                | `JSONPath` constants                                |
-| `@winglet/json/path-common`         | `getJSONPath`, `convertJsonPathToPointer`           |
-
-Prefer sub-path imports in library code — they reduce bundle size. Main-entry imports (`@winglet/json`) are convenient for applications.
-
-### Error Model
-
-`JSONPointerError` (thrown by `getValue`/`setValue`) is the only structured error surface. Use the type guard `isJSONPointerError` before reading `.code`:
-
-| Code                 | Trigger                                                 |
-| -------------------- | ------------------------------------------------------- |
-| `INVALID_INPUT`      | Value is not a plain object or array                    |
-| `INVALID_POINTER`    | Pointer string is malformed (missing leading `/`, etc.) |
-| `PROPERTY_NOT_FOUND` | Path segment does not exist in the document             |
-
-## Knowledge Files
-
-- [json-pointer.md](./knowledge/json-pointer.md) — `getValue`, `setValue`, escape utilities, `convertJsonPointerToPath`, `JSONPointer` constants
-- [json-patch.md](./knowledge/json-patch.md) — `compare`, `applyPatch`, `difference`, `mergePatch`, patch type definitions, roundtrip examples
-- [json-path.md](./knowledge/json-path.md) — `JSONPath` constants, `getJSONPath`, `convertJsonPathToPointer`
-- [security-and-options.md](./knowledge/security-and-options.md) — options pattern, prototype pollution protection, `JSONPointerError` codes, recommended defaults per use case
-
-## Quick Reference
+Do not guess signatures or option names — read `node_modules/@winglet/json/dist/**/*.d.ts`. The entry points and their real exports:
 
 ```typescript
-// Main entry (convenient for applications)
-import {
-  getValue, setValue,
-  compare, applyPatch, difference, mergePatch,
-  escapePath, unescapePath, escapeSegment,
-  JSONPointer, JSONPath,
-  JSONPointerError, isJSONPointerError,
-  getJSONPath, convertJsonPathToPointer,
-} from '@winglet/json';
+// Main entry — everything below except getJSONPointer
+import { getValue, setValue, compare, applyPatch, difference, mergePatch,
+         escapePath, escapeSegment, unescapePath, unescapeSegment,
+         convertJsonPointerToPath, convertJsonPathToPointer, getJSONPath,
+         compilePointer, JSONPointer, JSONPath } from '@winglet/json';
 
-// Sub-path imports (preferred for libraries)
-import { getValue, setValue } from '@winglet/json/pointer-manipulator';
+// Sub-paths (preferred in library code)
+import { getValue, setValue, compilePointer } from '@winglet/json/pointer-manipulator';
 import { compare, applyPatch, difference, mergePatch } from '@winglet/json/pointer-patch';
-import { escapePath, escapeSegment } from '@winglet/json/pointer-escape';
+import { escapePath, escapeSegment, unescapePath, unescapeSegment } from '@winglet/json/pointer-escape';
+import { convertJsonPointerToPath, getJSONPointer } from '@winglet/json/pointer-common';
 import { getJSONPath, convertJsonPathToPointer } from '@winglet/json/path-common';
 ```
 
-### Common Usage Patterns
+`getJSONPointer` is reachable only from `@winglet/json/pointer-common` (or `@winglet/json/pointer`), never from the main entry. The `JSONPointer` and `JSONPath` constant objects come from the main entry or `@winglet/json/pointer` and `@winglet/json/path` — `pointer-common` does not carry them. Prefer sub-paths in library code so consumers can tree-shake; the main entry is a convenience for applications.
+
+Calls, with the effective options that make each one correct:
 
 ```typescript
-// Navigate — throws JSONPointerError on missing path
-const name = getValue(doc, '/users/0/name');
+getValue(doc, '/users/0/name'); // undefined if absent — never throws for a miss
+setValue(doc, '/settings/theme', 'dark'); // mutates doc, creates missing parents
+setValue(doc, '/items/-', item); // '-' appends
 
-// Write — mutates and auto-creates intermediate nodes
-setValue(doc, '/settings/theme', 'dark');
-setValue(doc, '/items/-', newItem); // '-' appends to array
+const patches = compare(before, after, { strict: true }); // writes test guards
+const next = applyPatch(before, patches, { strict: true }); // enforces them; before untouched
 
-// Build a patch from two snapshots, then apply immutably
-const patches = compare(before, after); // Patch[]
-const next = applyPatch(before, patches); // before unchanged
+const body = difference(before, after); // undefined when identical — guard it
+const merged = mergePatch(before, body);
 
-// Merge Patch — compact, null deletes, arrays replace wholesale
-const mergeDoc = difference(before, after); // JsonValue | undefined
-const merged = mergePatch(before, mergeDoc);
-
-// Escape a single dynamic key — always escapeSegment, not escapePath
-const ptr = `/config/${escapeSegment(userKey)}`;
-
-// Structural lookup + pointer conversion
-const path = getJSONPath(doc, doc.users[1]); // '$.users[1]'
-const pointer = convertJsonPathToPointer(path); // '/users/1'
+const pointer = `/config/${escapeSegment(dynamicKey)}`; // escapeSegment, never escapePath
 ```
-
-## Common Mistakes to Correct
-
-| Mistake                                                           | Correction                                                                                                   |
-| ----------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
-| Using `escapePath` on a single key that contains `/`              | Use `escapeSegment` — `escapePath` treats `/` as a structural separator and does not escape it               |
-| Expecting `setValue` to return a cloned object                    | `setValue` always mutates in place; the return value is the same reference passed in                         |
-| Applying untrusted patches with `protectPrototype: false`         | Keep `protectPrototype: true` (default) for any externally sourced patch                                     |
-| Using `difference` result without a defined-check                 | `difference` returns `undefined` when source and target are identical — guard before passing downstream      |
-| Using `-` token in `getValue` or `remove` op                      | `-` (append) is only valid in `setValue` and JSON Patch `add` operations                                     |
-| Treating JSON Patch and Merge Patch as interchangeable            | Patch = ordered op list (RFC 6902); Merge Patch = document with `null` deletions, arrays replaced (RFC 7396) |
-| Reading `err.code` on a generic `Error`                           | Only `JSONPointerError` has `.code` — guard with `isJSONPointerError(err)` first                             |
-| Passing class instances, `Map`, or `Set` to `getValue`/`setValue` | Inputs must be plain objects or arrays; anything else throws `INVALID_INPUT`                                 |
-| Expecting `compare` to produce `move`/`copy` ops                  | `compare` only emits `add`, `remove`, `replace`; `move`/`copy` are accepted by `applyPatch` only             |
-| Inventing options not in the type definitions                     | The options surface is strictly typed — only the documented options exist                                    |
-
-## Behavioral Rules
-
-1. Always cite the correct sub-path import when recommending library code; prefer sub-paths over the main entry for libraries.
-2. State the effective options (defaults or explicit) whenever security or mutation semantics are relevant to the answer.
-3. When `immutable: false` is suggested, note the input-mutation consequence explicitly.
-4. When recommending `applyPatch` on untrusted input, verify `protectPrototype: true` and `strict: true` in the recommendation.
-5. When a caller asks for a diff, clarify JSON Patch vs. Merge Patch before recommending an API.
-6. For escape questions, ask whether the user has a full pointer path or a single segment before choosing `escapePath` vs. `escapeSegment`.
-7. Never invent options, exports, or error codes; if uncertain, consult the knowledge files before answering.

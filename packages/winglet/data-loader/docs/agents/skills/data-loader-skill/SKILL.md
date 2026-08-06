@@ -1,149 +1,134 @@
 ---
 name: data-loader-skill
-description: '@winglet/data-loader library expert. Guide users on batching and caching asynchronous data fetching: N+1 solving, scheduler customization, cache strategies (LRU/TTL), GraphQL integration, and error isolation.'
+description: '@winglet/data-loader expert. Batching and caching for asynchronous data fetching: N+1 elimination, the key-ordering contract, Promise-level cache semantics, custom cache and scheduler options, per-request loader isolation, and DataLoader error codes.'
 user-invocable: false
 ---
 
-# Expert Skill: @winglet/data-loader
+# @winglet/data-loader — batching and caching for asynchronous fetching
 
-## Identity
+Applies when the project imports `@winglet/data-loader`, or when the question involves N+1 query elimination, request batching, per-key caching, or DataLoader-style resolvers. This package is a ground-up rewrite inspired by `graphql/dataloader`; the concepts carry over but the option names do not — see Option Names below before writing any constructor call.
 
-You are an expert on `@winglet/data-loader`, a batching and caching utility for asynchronous data fetching inspired by GraphQL DataLoader. You understand its internals deeply and can guide developers through every use case — from basic batching to custom cache strategies.
+## Mental Model
 
-## Skill Info
+**One tick, one batch.** `load(key)` appends the key to the currently open batch and registers the scheduler once. Every `load()` reached within the same synchronous stretch lands in a single `BatchLoader` call. Crossing an `await` starts a new batch, so sequential awaits defeat batching entirely — issue concurrent loads (`Promise.all`, or independent resolvers) and let the scheduler collect them.
 
-- **Name**: data-loader-skill
-- **Purpose**: @winglet/data-loader Q&A, usage guidance, and troubleshooting
-- **Triggers**: `@winglet/data-loader` questions, N+1 problem, batching, caching, GraphQL resolvers, DataLoader patterns
+**The cache stores Promises, not values.** An entry is written the moment a key enters a batch, long before the fetch resolves. That is what makes deduplication work in-flight rather than after the fact. A cache hit hands back a _new_ Promise that wraps the cached one — so `p1 !== p2`, but only one fetch happens.
 
----
+**The BatchLoader contract is positional.** The library never matches results to keys by content. Index `i` of the returned array is the answer for key `i`, and nothing else is inspected. Violating this does not raise an error — it silently hands callers another key's data.
 
-## Knowledge Files Reference
+## Decision Guide
 
-| File                                | Topics                                                                                                                                          | Load When                             |
-| ----------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------- |
-| `knowledge/getting-started.md`      | Installation, first DataLoader, key-ordering contract, key constraints, `cacheKeyFn` basics                                                     | Intro or setup questions              |
-| `knowledge/batching-and-caching.md` | Event-loop batching, `maxBatchSize`, `disableBatch`, custom `batchScheduler`, Promise-level cache, `prime`/`clear` mechanics                    | How batching/caching works internally |
-| `knowledge/advanced-patterns.md`    | GraphQL N+1, per-request loaders, custom `cache` (LRU/TTL), complex keys, per-key error isolation, retries, cache warming, mutation consistency | Production patterns and integration   |
+| Situation                                                     | Choice                                                          |
+| ------------------------------------------------------------- | --------------------------------------------------------------- |
+| Ordinary dedup within one request                             | Omit `cache` — a fresh `Map` is created                         |
+| Bounded or expiring storage, or a cache shared by two loaders | `cache: <MapLike>` — any `get`/`set`/`delete`/`clear` object    |
+| Value must never be served stale                              | `cache: false` — dedup off, batching still on                   |
+| Backend caps how many keys one call may carry                 | `maxBatchSize: n`                                               |
+| Backend accepts exactly one key per call                      | `disableBatch: true` (equivalent to `maxBatchSize: 1`)          |
+| One key, failure should reject                                | `load()`                                                        |
+| Many keys, partial success acceptable                         | `loadMany()` — failures arrive as `Error` _values_ in the array |
+| Wider batching window than the default tick                   | `batchScheduler` (e.g. `setTimeout(fn, 10)`)                    |
 
----
+## Invariants & Gotchas
 
-## Core Knowledge
+### The key-ordering contract
 
-### What DataLoader Does
+The BatchLoader must return exactly `keys.length` results, positionally aligned with the input keys. The canonical failure is returning rows in database order:
 
-DataLoader solves two fundamental performance problems in data-fetching code:
+```typescript
+// WRONG — the database may reorder rows and drop missing IDs
+async function wrong(ids: ReadonlyArray<string>) {
+  return db.query('SELECT * FROM users WHERE id IN (?)', [[...ids]]);
+}
 
-1. **The N+1 Problem**: When resolving a list, naive code issues one query per item. DataLoader collects all keys issued within a single event-loop tick and dispatches them as one batch call.
-2. **Redundant Fetches**: When the same key is requested multiple times (e.g., multiple resolvers loading the same user), DataLoader returns the same cached Promise, issuing only one actual load.
+// CORRECT — realign onto key order, one entry per key
+async function correct(ids: ReadonlyArray<string>) {
+  const rows = await db.query('SELECT * FROM users WHERE id IN (?)', [
+    [...ids],
+  ]);
+  return ids.map(
+    (id) => rows.find((r) => r.id === id) ?? new Error(`Not found: ${id}`),
+  );
+}
+```
 
-### Scheduler-Based Batching
+A wrong-length array or a non-array result rejects **every** pending promise in that batch with `INVALID_BATCH_LOADER`. A wrong _order_ of the correct length is not detectable and stays silent — this is why the realignment above is mandatory, not stylistic.
 
-Batching relies on the JavaScript event loop. When `load(key)` is called:
+### Option names — critical
 
-1. The key is added to the current batch.
-2. If no scheduler is pending, one is registered (default: `scheduleNextTick` from `@winglet/common-utils`).
-3. All `load()` calls that happen synchronously (same tick) accumulate into the batch.
-4. When the scheduler fires, `__dispatchBatch__` executes the `BatchLoader` with all collected keys.
+The option is **`cache`**, not `cacheMap`. Two independent sources push toward the wrong name, so take the shape from `dist/type.d.ts` rather than from recall or from an example:
 
-Batching is **automatic and transparent** — callers just call `load()` individually; the grouping happens behind the scenes.
+- Upstream `graphql/dataloader` names its option `cacheMap`. Pattern-matching from that package — or from memory of it — produces the wrong name here.
+- This package's own JSDoc examples use invalid options, and they ship inside the declarations a reader is most likely to open. `dist/DataLoader.d.ts` shows `cacheMap:` twice (from `src/DataLoader.ts:213` and `:334`) and an invalid `cache: true` (from `src/DataLoader.ts:55`). The same JSDoc claims `promise1 === promise2` for repeated `load()` of one key (`src/DataLoader.ts:394`), which is false — cache hits return a new wrapping Promise. The README, by contrast, is correct throughout.
 
-### Cache Semantics
+```typescript
+new DataLoader(batchLoad, { cache: new LRU({ max: 500 }) }); // CORRECT
+new DataLoader(batchLoad, { cache: false }); // CORRECT
+new DataLoader(batchLoad, { cacheMap: new LRU({ max: 500 }) }); // TS2353
+new DataLoader(batchLoad, { cache: true }); // TS2322
+```
 
-- Cache stores `Promise<Value>`, not resolved values.
-- On cache hit, a **new wrapping Promise** is returned that resolves to the cached Promise — this preserves batch-timing while still deduplicating the underlying fetch.
-- `prime()` only sets if no entry exists — it will **not** overwrite an existing cached Promise.
-- `cache: false` disables caching entirely; `cache: <MapLike>` accepts any object with `get`/`set`/`delete`/`clear` (LRU, TTL, shared map, etc.).
+TypeScript does reject both wrong forms — as an excess property on a literal, and as a whole-argument mismatch when the options come from a variable. The danger is the repair: silencing that error with `as any` (or writing the call in plain JavaScript) leaves the option ignored, and the loader quietly keeps its default `Map`. Fix the name, never the type error.
 
-### Error Handling Model
+### Error surface
 
-- Individual keys can fail: the `BatchLoader` returns `Error` instances in the result array for failed keys.
-- `load()` rejects its Promise for those keys.
-- `loadMany()` catches rejections and returns them as `Error` values in the array — partial success is the default.
-- If the entire batch loader throws or returns a non-array, all keys in the batch are rejected via `failedDispatch`, which **also clears** those keys from the cache so a retry can refetch.
+Every code below belongs to `DataLoaderError`, whose `code` is `DATA_LOADER.<CODE>` (`group` = `DATA_LOADER`, `specific` = the code, `name` = `DataLoader`).
 
----
+| Code                      | Thrown by                   | Cause                                                                     |
+| ------------------------- | --------------------------- | ------------------------------------------------------------------------- |
+| `INVALID_KEY`             | `load()`, synchronously     | Key is `null` or `undefined`                                              |
+| `INVALID_KEYS`            | `loadMany()`, synchronously | `keys` is not array-like                                                  |
+| `INVALID_BATCH_LOADER`    | Constructor / dispatch      | Not a function, non-thenable return, non-array result, or length mismatch |
+| `INVALID_MAX_BATCH_SIZE`  | Constructor                 | `maxBatchSize` is not a number, or is below 1                             |
+| `INVALID_CACHE`           | Constructor                 | Custom `cache` is missing any of `get`/`set`/`delete`/`clear`             |
+| `INVALID_CACHE_KEY_FN`    | Constructor                 | `cacheKeyFn` is not a function                                            |
+| `INVALID_BATCH_SCHEDULER` | Constructor                 | `batchScheduler` is not a function                                        |
 
-## Quick Reference
+`DataLoaderError` and `isDataLoaderError` exist in the source but are **not exported** — the package entry point exposes only `DataLoader` and the type `DataLoaderOptions`. Match on `error.code` or `error.specific`; an `instanceof DataLoaderError` check cannot be written by a consumer.
+
+### Common mistakes
+
+| Mistake                                     | Correct approach                                                                                      |
+| ------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| BatchLoader returns values in wrong order   | Realign onto key order: `keys.map(k => byId.get(k) ?? new Error(...))`                                |
+| BatchLoader returns fewer items than keys   | Return exactly `keys.length` items — a mismatch rejects the whole batch with `INVALID_BATCH_LOADER`   |
+| Sharing one loader across requests          | Build loaders in a per-request factory — a shared cache serves one user's data to another             |
+| `cache: false` combined with `prime()`      | `prime()`, `clear()`, and `clearAll()` are all no-ops when caching is disabled                        |
+| Calling `prime()` to overwrite a cached key | `prime()` is a no-op when the key exists — `clear(key).prime(key, next)` is the only replace sequence |
+| Passing `null`/`undefined` to `load()`      | Throws `INVALID_KEY` synchronously; guard before calling                                              |
+| Object keys without `cacheKeyFn`            | Objects are compared by identity, so equal-shaped keys always miss — derive a string key              |
+| `cacheKeyFn` that can return `''` or `0`    | A falsy cache key silently bypasses the cache in both directions — no read, no write, no dedup        |
+| Awaiting loads one at a time                | Each `await` closes the batch — issue the loads concurrently, then await                              |
+
+## Knowledge Router
+
+| Topic                                                                                                                            | File                                |
+| -------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------- |
+| Batch windows, `maxBatchSize`, `disableBatch`, custom schedulers, Promise-cache mechanics, `prime`/`clear`, failure-clears-cache | `knowledge/batching-and-caching.md` |
+| Per-request isolation, post-mutation consistency, priming a deletion, named loaders                                              | `knowledge/advanced-patterns.md`    |
+
+## API Truth
+
+Read shapes; do not recall them. `DataLoaderOptions`, `BatchLoader`, and `MapLike` are declared in `dist/type.d.ts`, and the README documents every option with a worked example. The one exception to "trust the declarations" is the JSDoc examples inside `dist/DataLoader.d.ts` — see Option Names above.
+
+The package entry exports `DataLoader` (class) and `DataLoaderOptions` (type), and nothing else. `BatchLoader` and `MapLike` can be read in `dist/type.d.ts` but not imported — the package declares no subpath exports, so annotate a batch loader with its own inline signature rather than importing the name.
 
 ```typescript
 import { DataLoader } from '@winglet/data-loader';
-import type { DataLoaderOptions } from '@winglet/data-loader';
 
 const loader = new DataLoader<Key, Value, CacheKey>(
-  async (keys) => keys.map(key => valueOrError(key)), // BatchLoader
+  async (keys) => keys.map((key) => valueOrError(key)), // BatchLoader
   {
-    name?: string,                          // debug label (loader.name)
-    cache?: MapLike | false,                // default: new Map(); false disables caching
-    cacheKeyFn?: (key) => CacheKey,         // default: identity
-    batchScheduler?: (task) => void,        // default: scheduleNextTick
-    maxBatchSize?: number,                  // default: Infinity
-    // OR (mutually exclusive):
-    disableBatch?: true,                    // forces maxBatchSize = 1
+    name, // string — readonly loader.name, defaults to null
+    cache, // MapLike | false — defaults to a new Map()
+    cacheKeyFn, // (key) => CacheKey — defaults to identity
+    batchScheduler, // (task) => void — defaults to scheduleNextTick
+    maxBatchSize, // number — defaults to Infinity
+    // disableBatch: true is the mutually exclusive alternative to maxBatchSize
   },
 );
 
-loader.load(key)           // Promise<Value>
-loader.loadMany(keys)      // Promise<Array<Value | Error>>
-loader.clear(key)          // this (chainable)
-loader.clearAll()          // this (chainable)
-loader.prime(key, value)   // this (chainable, no-op if key already cached)
+loader.load(key); // Promise<Value>
+loader.loadMany(keys); // Promise<Array<Value | Error>>
+loader.clear(key).prime(key, value); // both return `this`; clearAll() also chains
 ```
-
-### Option Names — Critical
-
-The option is `cache`, not `cacheMap`. Pass a `MapLike` (LRU, TTL, plain `Map`) or `false`:
-
-```typescript
-// CORRECT
-new DataLoader(batchLoad, { cache: new LRU({ max: 500 }) });
-new DataLoader(batchLoad, { cache: false });
-
-// WRONG — `cacheMap` is not a valid option name
-new DataLoader(batchLoad, { cacheMap: new LRU(...) }); // ❌
-```
-
----
-
-## Common Mistakes to Correct
-
-| Mistake                                         | Correct Approach                                                                                                 |
-| ----------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
-| BatchLoader returns values in wrong order       | Map results back to input key order: `keys.map(k => byId.get(k) ?? new Error(...))`                              |
-| BatchLoader returns fewer items than keys       | Must return **exactly** `keys.length` items; mismatched length throws `INVALID_BATCH_LOADER`                     |
-| Sharing one DataLoader instance across requests | Create a new instance per request (e.g., GraphQL context factory) to prevent cross-request cache leakage         |
-| Using `cache: false` and calling `prime()`      | `prime()` is a no-op when caching is disabled                                                                    |
-| Passing `null` or `undefined` to `load()`       | `load()` throws `DataLoaderError('INVALID_KEY')` for nil keys                                                    |
-| Using object keys without `cacheKeyFn`          | Objects compare by identity — identical-shape objects miss the cache; supply `cacheKeyFn` to derive a string key |
-| Using `{ cacheMap: ... }` as an option          | The option is named `cache`, not `cacheMap`                                                                      |
-
----
-
-## Response Guidelines
-
-When answering questions about this library:
-
-1. **Prefer concrete code examples** over abstract descriptions.
-2. **Reference the correct option names** — `cache` (not `cacheMap`), `cacheKeyFn`, `batchScheduler`, `maxBatchSize`, `disableBatch`, `name`.
-3. **Always return arrays in key order** in every BatchLoader example.
-4. **Flag per-request-loader requirement** when GraphQL or multi-tenant contexts appear.
-5. **Distinguish `cache: false` from custom `cache`** — the former disables dedup entirely, the latter customizes the storage.
-6. **Reference error codes** (`INVALID_KEY`, `INVALID_KEYS`, `INVALID_BATCH_LOADER`, `INVALID_MAX_BATCH_SIZE`, `INVALID_CACHE`, `INVALID_CACHE_KEY_FN`, `INVALID_BATCH_SCHEDULER`) from `DataLoaderError`.
-
----
-
-## Question-Knowledge Mapping
-
-| Question Type                                | Knowledge File                      |
-| -------------------------------------------- | ----------------------------------- |
-| "How do I install / make my first loader?"   | `knowledge/getting-started.md`      |
-| "Why must I return in the same order?"       | `knowledge/getting-started.md`      |
-| "How does batching actually work?"           | `knowledge/batching-and-caching.md` |
-| "Can I change the scheduler?"                | `knowledge/batching-and-caching.md` |
-| "How do I cap batch size?" / `disableBatch`? | `knowledge/batching-and-caching.md` |
-| "What does `prime` do?" / cache invalidation | `knowledge/batching-and-caching.md` |
-| "How do I fix N+1 in GraphQL?"               | `knowledge/advanced-patterns.md`    |
-| "LRU / TTL / shared cache?"                  | `knowledge/advanced-patterns.md`    |
-| "Object keys in load()?"                     | `knowledge/advanced-patterns.md`    |
-| "How to handle partial failures / retries?"  | `knowledge/advanced-patterns.md`    |
-| "Cache consistency after mutation?"          | `knowledge/advanced-patterns.md`    |
