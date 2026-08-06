@@ -96,7 +96,7 @@ Uses a single-pass approach optimized for performance and memory usage.
 
 ### Style Management
 
-#### **[`styleManagerFactory`](./src/utils/styleManager/styleManagerFactory.ts)**
+#### **[`styleManagerFactory`](./src/styleManager/styleManagerFactory.ts)**
 
 Factory function that creates a scoped CSS management system for efficient style injection and cleanup.
 
@@ -106,7 +106,7 @@ Supports both regular DOM and Shadow DOM environments with automatic scoping to 
 
 All style updates are batched using requestAnimationFrame for optimal performance.
 
-#### **[`destroyScope`](./src/utils/styleManager/destroyScope.ts)**
+#### **[`destroyScope`](./src/styleManager/destroyScope.ts)**
 
 Utility function that completely destroys a specific style scope and removes all associated styles from the DOM.
 
@@ -480,7 +480,7 @@ Compresses CSS by removing unnecessary whitespace and comments.
 
 ### Style Management
 
-#### `styleManagerFactory(scopeId: string, config?: StyleManagerConfig): (styleId: string, css: string, compressed?: boolean) => () => void`
+#### `styleManagerFactory(scopeId: string, config?: StyleManagerConfig): (styleId: string, css: string, compress?: boolean) => () => void`
 
 Creates a style manager factory for a specific scope that can add scoped CSS styles.
 
@@ -492,7 +492,7 @@ The returned function automatically scopes CSS selectors with the provided scope
 - `config`: Optional configuration object
   - `shadowRoot`: ShadowRoot instance for Shadow DOM support (optional)
 
-**Returns:** A function that accepts `(styleId, cssString, compressed?)` and returns a cleanup function
+**Returns:** A function that accepts `(styleId, cssString, compress?)` and returns a cleanup function — `compress: true` means the CSS is already compressed, so the internal compression pass is skipped
 
 **Example:**
 

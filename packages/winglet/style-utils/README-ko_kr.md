@@ -98,7 +98,7 @@ CSS 클래스명을 연결하는 cx 함수의 경량 버전입니다.
 
 ### 스타일 관리
 
-#### **[`styleManagerFactory`](./src/utils/styleManager/styleManagerFactory.ts)**
+#### **[`styleManagerFactory`](./src/styleManager/styleManagerFactory.ts)**
 
 일관된 구성으로 StyleManager 인스턴스를 생성하고, 스코프 스타일을 관리하는 팩토리 함수입니다.
 
@@ -106,7 +106,7 @@ StyleManager는 효율적인 스타일 주입과 정리를 제공하는 스코�
 
 일반 DOM과 Shadow DOM 환경을 모두 지원하며, 스타일 충돌을 방지하기 위한 자동 스코핑 기능을 제공합니다.
 
-#### **[`destroyScope`](./src/utils/styleManager/destroyScope.ts)**
+#### **[`destroyScope`](./src/styleManager/destroyScope.ts)**
 
 특정 StyleManager 스코프를 파괴하고 관련된 모든 스타일을 정리하는 유틸리티 함수입니다.
 
@@ -452,7 +452,7 @@ cx 함수의 경량 버전으로 간단한 truthy/falsy 필터링만 수행합�
 
 ### 스타일 관리
 
-#### `styleManagerFactory(scopeId: string, config?: StyleManagerConfig): (styleId: string, css: string, compressed?: boolean) => () => void`
+#### `styleManagerFactory(scopeId: string, config?: StyleManagerConfig): (styleId: string, css: string, compress?: boolean) => () => void`
 
 특정 스코프에 대한 스코프 CSS 스타일을 추가할 수 있는 스타일 매니저 팩토리를 생성합니다.
 
@@ -464,7 +464,7 @@ cx 함수의 경량 버전으로 간단한 truthy/falsy 필터링만 수행합�
 - `config`: 선택적 구성 객체
   - `shadowRoot`: Shadow DOM 지원을 위한 ShadowRoot 인스턴스 (선택사항)
 
-**반환값:** `(styleId, cssString, compressed?)`를 받고 정리 함수를 반환하는 함수
+**반환값:** `(styleId, cssString, compress?)`를 받고 정리 함수를 반환하는 함수 — `compress: true`는 이미 압축된 CSS라는 의미이며 내부 압축 단계를 건너뜁니다
 
 **예제:**
 

@@ -56,10 +56,7 @@ A wrong-length array or a non-array result rejects **every** pending promise in 
 
 ### Option names — critical
 
-The option is **`cache`**, not `cacheMap`. Two independent sources push toward the wrong name, so take the shape from `dist/type.d.ts` rather than from recall or from an example:
-
-- Upstream `graphql/dataloader` names its option `cacheMap`. Pattern-matching from that package — or from memory of it — produces the wrong name here.
-- This package's own JSDoc examples use invalid options, and they ship inside the declarations a reader is most likely to open. `dist/DataLoader.d.ts` shows `cacheMap:` twice (from `src/DataLoader.ts:213` and `:334`) and an invalid `cache: true` (from `src/DataLoader.ts:55`). The same JSDoc claims `promise1 === promise2` for repeated `load()` of one key (`src/DataLoader.ts:394`), which is false — cache hits return a new wrapping Promise. The README, by contrast, is correct throughout.
+The option is **`cache`**, not `cacheMap`. Upstream `graphql/dataloader` names its option `cacheMap`, so pattern-matching from that package — or from memory of it — produces the wrong name here. Take the shape from `dist/type.d.ts` rather than from recall.
 
 ```typescript
 new DataLoader(batchLoad, { cache: new LRU({ max: 500 }) }); // CORRECT
@@ -109,7 +106,7 @@ Every code below belongs to `DataLoaderError`, whose `code` is `DATA_LOADER.<COD
 
 ## API Truth
 
-Read shapes; do not recall them. `DataLoaderOptions`, `BatchLoader`, and `MapLike` are declared in `dist/type.d.ts`, and the README documents every option with a worked example. The one exception to "trust the declarations" is the JSDoc examples inside `dist/DataLoader.d.ts` — see Option Names above.
+Read shapes; do not recall them. `DataLoaderOptions`, `BatchLoader`, and `MapLike` are declared in `dist/type.d.ts`, and the README documents every option with a worked example.
 
 The package entry exports `DataLoader` (class) and `DataLoaderOptions` (type), and nothing else. `BatchLoader` and `MapLike` can be read in `dist/type.d.ts` but not imported — the package declares no subpath exports, so annotate a batch loader with its own inline signature rather than importing the name.
 

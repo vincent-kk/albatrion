@@ -52,7 +52,7 @@ import {
  * // Create the DataLoader instance
  * const userLoader = new DataLoader(batchLoadUsers, {
  *   maxBatchSize: 100, // Limit SQL query size
- *   cache: true,       // Enable caching (default)
+ *   // Caching is enabled by default (a new Map); pass `cache: false` to disable
  * });
  *
  * // Load individual users - automatically batched
@@ -210,7 +210,7 @@ import {
  * }
  *
  * const cachedLoader = new DataLoader(batchLoadPrices, {
- *   cacheMap: new TtlMap(60000), // 1 minute TTL
+ *   cache: new TtlMap(60000), // 1 minute TTL
  * });
  * ```
  *
@@ -331,7 +331,7 @@ export class DataLoader<Key = string, Value = any, CacheKey = Key> {
    *   },
    *   {
    *     // Use LRU cache with max 1000 entries
-   *     cacheMap: new LRU({ max: 1000 }),
+   *     cache: new LRU({ max: 1000 }),
    *
    *     // Cache key is the URL itself
    *     cacheKeyFn: (url) => url,
@@ -391,8 +391,8 @@ export class DataLoader<Key = string, Value = any, CacheKey = Key> {
    * const promise2 = loader.load('key-1');
    * const promise3 = loader.load('key-1');
    *
-   * console.log(promise1 === promise2); // true - same promise returned
-   * console.log(promise2 === promise3); // true
+   * // Each call returns a distinct wrapping Promise (promise1 !== promise2),
+   * // but all three resolve from the single cached fetch.
    * ```
    *
    * @example

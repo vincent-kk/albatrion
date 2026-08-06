@@ -938,7 +938,7 @@ JSONPointer follows the RFC 6901 specification:
 - `computed`(`&`) properties (with relative paths `..`, `.`)
 - Programmatic node navigation with `node.find()` method
 
-**Note**: Extended syntax is **NOT** supported in `<Form.Render path="..." />` components and `node.find()` method, which only accept standard JSONPointer paths.
+**Note**: Extended syntax is **NOT** supported in `<Form.Render path="..." />` components, which only accept standard JSONPointer paths. `node.find()` accepts relative navigation (`..`, `.`) but not wildcards — use `findNodes()` for wildcard matching.
 
 The following extensions are supported:
 
@@ -1027,7 +1027,7 @@ const jsonSchema = {
 // '/config/*/value' matches: /config/theme/value, /config/language/value, etc.
 ```
 
-**Note**: Wildcard `*` is only available in `FormTypeInputMap` keys. It is NOT supported in `<Form.Render path="..." />` or `node.find()` method.
+**Note**: Wildcard `*` is available in `FormTypeInputMap` keys and in the plural `findNodes()` method. It is NOT supported in `<Form.Render path="..." />` or the singular `node.find()` method.
 
 #### Context Reference (`@`)
 

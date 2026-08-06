@@ -55,8 +55,8 @@ import { debounce, throttle } from '@winglet/common-utils/function';
 import { Murmur3 } from '@winglet/common-utils/hash';
 // 라이브러리 유틸리티
 import {
-  mapCacheFactory,
-  weakMapCacheFactory,
+  cacheMapFactory,
+  cacheWeakMapFactory,
 } from '@winglet/common-utils/lib';
 // 객체 유틸리티
 import { clone, cloneLite, equals, merge } from '@winglet/common-utils/object';
@@ -122,9 +122,9 @@ Babel 등의 트랜스파일러를 사용하여 타겟 환경에 맞게 변환�
 
 ### 유틸리티 라이브러리 (Libs)
 
-- **[`weakMapCacheFactory`](./src/libs/cache.ts)**: WeakMap 기반의 캐시 생성 팩토리
-- **[`mapCacheFactory`](./src/libs/cache.ts)**: Map 기반의 캐시 생성 팩토리
-- **[`counter`](./src/libs/counter.ts)**: 증가하는 카운터 생성 유틸리티
+- **[`cacheWeakMapFactory`](./src/libs/cacheWeakMapFactory.ts)**: WeakMap 기반의 캐시 생성 팩토리
+- **[`cacheMapFactory`](./src/libs/cacheMapFactory.ts)**: Map 기반의 캐시 생성 팩토리
+- **[`counterFactory`](./src/libs/counterFactory.ts)**: 증가하는 카운터 생성 유틸리티
 - **[`getKeys`](./src/libs/getKeys.ts)**: 객체의 키를 반환하는 유틸리티
 - **[`getTypeTag`](./src/libs/getTypeTag.ts)**: JavaScript 값의 내부 타입 태그를 얻는 함수
 - **[`hasOwnProperty`](./src/libs/hasOwnProperty.ts)**: 객체가 특정 속성을 가지고 있는지 확인하는 함수
@@ -160,7 +160,7 @@ Babel 등의 트랜스파일러를 사용하여 타겟 환경에 맞게 변환�
 
 #### 변환 (Convert)
 
-- **[`convertMsFromDuration`](./src/utils/convert/convertMsFromDuration.ts)**: 기간 문자열(예: '1h30m')을 밀리초로 변환하는 함수
+- **[`convertMsFromDuration`](./src/utils/convert/convertMsFromDuration.ts)**: 단일 단위 기간 문자열(예: '90m', '5s')을 밀리초로 변환하는 함수
 
 #### DataLoader
 
@@ -307,16 +307,16 @@ Babel 등의 트랜스파일러를 사용하여 타겟 환경에 맞게 변환�
 ### Cache 유틸리티 사용하기
 
 ```typescript
-import { mapCacheFactory, weakMapCacheFactory } from '@winglet/common-utils';
+import { cacheMapFactory, cacheWeakMapFactory } from '@winglet/common-utils';
 
 // WeakMap 기반 캐시 생성
-const objectCache = weakMapCacheFactory<string>();
+const objectCache = cacheWeakMapFactory<string>();
 const myObject = { id: 1 };
 objectCache.set(myObject, 'cached value');
 console.log(objectCache.get(myObject)); // 'cached value'
 
 // Map 기반 캐시 생성
-const stringCache = mapCacheFactory<Map<string, number>>();
+const stringCache = cacheMapFactory<Map<string, number>>();
 stringCache.set('key1', 100);
 console.log(stringCache.get('key1')); // 100
 ```
@@ -333,10 +333,9 @@ async function delayExample() {
   console.log('1초 후');
 }
 
-// 타임아웃 추가하기
+// 비동기 작업에 타임아웃 추가하기
 async function fetchWithTimeout(url: string) {
-  const fetchPromise = fetch(url);
-  return withTimeout(fetchPromise, 5000); // 5초 타임아웃 추가
+  return withTimeout(() => fetch(url), 5000); // 5초 타임아웃 추가
 }
 ```
 
@@ -379,7 +378,7 @@ trackableFetchUser.subscribe(() => {
 
 // 함수 실행
 await trackableFetchUser('user123');
-console.log('Loading state:', trackableFetchUser.loading); // false
+console.log('Pending state:', trackableFetchUser.pending); // false
 ```
 
 ---

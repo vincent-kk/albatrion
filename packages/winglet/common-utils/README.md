@@ -56,8 +56,8 @@ import { debounce, throttle } from '@winglet/common-utils/function';
 import { Murmur3 } from '@winglet/common-utils/hash';
 // Library utilities
 import {
-  mapCacheFactory,
-  weakMapCacheFactory,
+  cacheMapFactory,
+  cacheWeakMapFactory,
 } from '@winglet/common-utils/lib';
 // Object utilities
 import {
@@ -129,9 +129,9 @@ Use transpilers like Babel to convert the code to match your target environment.
 
 ### Utility Libraries (Libs)
 
-- **[`weakMapCacheFactory`](./src/libs/cache.ts)**: Factory for WeakMap-based cache
-- **[`mapCacheFactory`](./src/libs/cache.ts)**: Factory for Map-based cache
-- **[`counter`](./src/libs/counter.ts)**: Utility for creating incrementing counters
+- **[`cacheWeakMapFactory`](./src/libs/cacheWeakMapFactory.ts)**: Factory for WeakMap-based cache
+- **[`cacheMapFactory`](./src/libs/cacheMapFactory.ts)**: Factory for Map-based cache
+- **[`counterFactory`](./src/libs/counterFactory.ts)**: Utility for creating incrementing counters
 - **[`getKeys`](./src/libs/getKeys.ts)**: Utility for getting object keys
 - **[`getTypeTag`](./src/libs/getTypeTag.ts)**: Function to get the internal type tag of a JavaScript value
 - **[`hasOwnProperty`](./src/libs/hasOwnProperty.ts)**: Function to check if an object has a specific property
@@ -167,7 +167,7 @@ Use transpilers like Babel to convert the code to match your target environment.
 
 #### Convert
 
-- **[`convertMsFromDuration`](./src/utils/convert/convertMsFromDuration.ts)**: Function to convert a duration string (e.g., '1h30m') to milliseconds
+- **[`convertMsFromDuration`](./src/utils/convert/convertMsFromDuration.ts)**: Function to convert a single-unit duration string (e.g., '90m', '5s') to milliseconds
 
 #### DataLoader
 
@@ -314,16 +314,16 @@ Use transpilers like Babel to convert the code to match your target environment.
 ### Using Cache Utilities
 
 ```typescript
-import { mapCacheFactory, weakMapCacheFactory } from '@winglet/common-utils';
+import { cacheMapFactory, cacheWeakMapFactory } from '@winglet/common-utils';
 
 // Create a WeakMap-based cache
-const objectCache = weakMapCacheFactory<string>();
+const objectCache = cacheWeakMapFactory<string>();
 const myObject = { id: 1 };
 objectCache.set(myObject, 'cached value');
 console.log(objectCache.get(myObject)); // 'cached value'
 
 // Create a Map-based cache
-const stringCache = mapCacheFactory<Map<string, number>>();
+const stringCache = cacheMapFactory<Map<string, number>>();
 stringCache.set('key1', 100);
 console.log(stringCache.get('key1')); // 100
 ```
@@ -340,10 +340,9 @@ async function delayExample() {
   console.log('After 1 second');
 }
 
-// Adding a timeout to a Promise
+// Adding a timeout to an async operation
 async function fetchWithTimeout(url: string) {
-  const fetchPromise = fetch(url);
-  return withTimeout(fetchPromise, 5000); // Add a 5-second timeout
+  return withTimeout(() => fetch(url), 5000); // Add a 5-second timeout
 }
 ```
 
@@ -386,7 +385,7 @@ trackableFetchUser.subscribe(() => {
 
 // Execute function
 await trackableFetchUser('user123');
-console.log('Loading state:', trackableFetchUser.loading); // false
+console.log('Pending state:', trackableFetchUser.pending); // false
 ```
 
 ---

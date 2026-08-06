@@ -921,7 +921,7 @@ JSONPointer는 RFC 6901 사양을 따릅니다:
 - `computed`(`&`) 속성 (상대 경로 `..`, `.` 사용)
 - `node.find()` 메서드를 통한 프로그래밍적 노드 탐색
 
-**주의**: 확장 문법은 `<Form.Render path="..." />` 컴포넌트와 `node.find()` 메서드에서는 **지원되지 않으며**, 표준 JSONPointer 경로만 허용됩니다.
+**주의**: 확장 문법은 `<Form.Render path="..." />` 컴포넌트에서는 **지원되지 않으며**, 표준 JSONPointer 경로만 허용됩니다. `node.find()`는 상대 경로 탐색(`..`, `.`)을 지원하지만 와일드카드는 지원하지 않습니다 — 와일드카드 매칭에는 `findNodes()`를 사용하세요.
 
 다음 확장 기능들이 지원됩니다:
 
@@ -1010,7 +1010,7 @@ const jsonSchema = {
 // '/config/*/value'는 /config/theme/value, /config/language/value 등을 매칭
 ```
 
-**참고**: 와일드카드 `*`는 `FormTypeInputMap` 키에서만 사용 가능합니다. `<Form.Render path="..." />` 또는 `node.find()` 메서드에서는 지원되지 않습니다.
+**참고**: 와일드카드 `*`는 `FormTypeInputMap` 키와 복수형 `findNodes()` 메서드에서 사용 가능합니다. `<Form.Render path="..." />` 또는 단수형 `node.find()` 메서드에서는 지원되지 않습니다.
 
 #### Context 참조 (`@`)
 

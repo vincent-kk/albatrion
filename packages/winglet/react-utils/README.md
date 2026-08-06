@@ -103,6 +103,8 @@ Various custom hooks that extend React functionality.
 - [`useWindowSize`](./src/hooks/useWindowSize.ts) - Tracks the browser window size.
 - [`useHandle`](./src/hooks/useHandle.ts) - Manages function handlers.
 - [`useRestProperties`](./src/hooks/useRestProperties.ts) - Manages the remaining properties of an object excluding specific ones.
+- [`useDebounce`](./src/hooks/useDebounce.ts) - Debounces callback execution based on dependency changes.
+- [`useTimeout`](./src/hooks/useTimeout.ts) - Returns a function that executes after a specified delay and provides control functions.
 
 ### Components
 
@@ -113,6 +115,7 @@ Various custom hooks that extend React functionality.
 HOCs that functionally extend components.
 
 - [`withErrorBoundary`](./src/hoc/withErrorBoundary/withErrorBoundary.tsx) - Adds an error boundary to components.
+- [`withErrorBoundaryForwardRef`](./src/hoc/withErrorBoundary/withErrorBoundaryForwardRef.tsx) - Adds an error boundary while preserving the component's forwarded ref.
 - [`withUploader`](./src/hoc/withUploader/index.ts) - Adds file upload functionality to components.
 
 ### Utility Functions
@@ -126,8 +129,6 @@ Various utility functions for working with React components.
 - [`isClassComponent`](./src/utils/filter/isClassComponent.ts) - Checks if an object is a class component.
 - [`isFunctionComponent`](./src/utils/filter/isFunctionComponent.ts) - Checks if an object is a function component.
 - [`isMemoComponent`](./src/utils/filter/isMemoComponent.ts) - Checks if an object is a memoized component.
-- [`useDebounce`](./src/hooks/useDebounce.ts) - Debounces callback execution based on dependency changes.
-- [`useTimeout`](./src/hooks/useTimeout.ts) - Returns a function that executes after a specified delay and provides control functions.
 
 #### Rendering Utilities
 

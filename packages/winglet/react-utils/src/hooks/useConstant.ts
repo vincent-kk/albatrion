@@ -10,7 +10,6 @@ import { useRef } from 'react';
  * ### Use Cases
  * - **Stable Object/Array References**: Prevent unnecessary re-renders in child components
  *   that depend on object or array props
- * - **Expensive Initial Computations**: Compute complex values only once per component instance
  * - **Default Configuration Objects**: Create immutable default settings that won't trigger effects
  * - **Event Handler References**: Maintain stable function references without useCallback overhead
  *
@@ -18,6 +17,8 @@ import { useRef } from 'react';
  * - Unlike `useMemo`, this hook never recomputes the value
  * - Unlike `useMemorize`, it doesn't accept dependencies
  * - Unlike standard `useRef` usage, it's specifically designed for immutable values
+ * - A function argument is **stored as-is, never called** — for a lazily computed
+ *   constant, use `useLazyConstant(factory)` instead
  *
  * @example
  * ```typescript
@@ -28,17 +29,14 @@ import { useRef } from 'react';
  *   return <EmptyState config={defaultConfig} />; // Never re-renders due to config
  * };
  *
- * // Expensive computation that runs only once
- * const expensiveData = useConstant(() => {
- *   return Array.from({ length: 10000 }, (_, i) =>
- *     calculateComplexValue(i)
- *   );
- * });
- *
- * // Stable callback without useCallback
- * const logHandler = useConstant(() => (value: string) => {
+ * // Stable callback without useCallback — the function itself is the stored value
+ * const logHandler = useConstant((value: string) => {
  *   console.log('[Component]:', value);
  * });
+ *
+ * // NOTE: a factory is NOT invoked — this stores the function, not its result.
+ * // For lazy one-time computation, reach for useLazyConstant:
+ * // const expensiveData = useLazyConstant(() => buildLookupTable());
  *
  * // Default values for hooks or effects
  * const defaultFilters = useConstant({ status: 'active', page: 1 });

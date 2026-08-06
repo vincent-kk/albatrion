@@ -1,10 +1,10 @@
 # Corrections — names and behaviors that get misremembered
 
-Each entry is a claim that looks right, is wrong, and type-checks anyway. The first group is reproduced from the package's own README, so an agent reading the README alongside the code will hit it.
+Each entry is a claim that looks right, is wrong, and often type-checks anyway. The first group collects call shapes that other libraries have made habitual — pattern-matching from them produces exactly these mistakes.
 
-## Errors in the package README
+## Habits imported from other libraries
 
-**`mapCacheFactory` / `weakMapCacheFactory`** → the exports are **`cacheMapFactory` / `cacheWeakMapFactory`**, from `@winglet/common-utils/lib`. The README uses the reversed word order in its feature list, its import example, and its call examples, and links both to a `src/libs/cache.ts` that does not exist. The reversed names resolve to `undefined` at runtime, not to a build error, when imported from the root barrel.
+**`mapCacheFactory` / `weakMapCacheFactory`** → the exports are **`cacheMapFactory` / `cacheWeakMapFactory`**, from `@winglet/common-utils/lib`. The reversed word order reads naturally (a "map-cache factory"), and the wrong names resolve to `undefined` at runtime, not to a build error, when imported from the root barrel.
 
 **`trackableHandler.loading`** → the property is **`.pending`**. There is no `.loading`, and because the real properties are non-enumerable, a typo here reads as `undefined` rather than failing.
 

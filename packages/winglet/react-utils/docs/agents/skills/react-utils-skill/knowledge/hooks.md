@@ -22,7 +22,7 @@ const stored = useConstant(() => compute()); // a function; compute() never runs
 const result = useMemorize(() => compute()); // compute()'s return value, computed once
 ```
 
-The trap is well disguised: `useConstant`'s shipped JSDoc offers `useConstant(() => { ... })` as its "expensive computation that runs only once" example, while its own `@param` line — one screen further down — states that a function is stored as-is, not executed. **The `@param` line is correct and the example is wrong.** That JSDoc ships inside `dist/*.d.ts`, so editor hover repeats the mistake. Symptom when it bites: a child receives a function where it expected data, and nothing throws.
+The trap is well disguised: `useConstant(() => compute())` type-checks (the constant's type is simply the function type), reads like every lazy-init hook in the ecosystem, and silently stores the function instead of its result. Symptom when it bites: a child receives a function where it expected data, and nothing throws. For a lazily computed constant, `useLazyConstant(factory)` is the hook that calls its argument.
 
 ### `useTruthyConstant` re-initializes on falsy
 
