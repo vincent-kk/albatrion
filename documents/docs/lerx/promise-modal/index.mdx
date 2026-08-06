@@ -110,21 +110,26 @@ function App() {
 
 ## Claude Code Integration
 
-`@lerx/promise-modal` ships Claude Code assets — the `promise-modal-skill` expert skill with its API, hooks, and advanced-pattern knowledge base — under `docs/claude/`. They are published alongside the package so AI assistants can reason about modal flows with package-specific context.
+`@lerx/promise-modal` ships coding-agent assets — the `promise-modal-skill` expert skill with its API, hooks, and advanced-pattern knowledge base — under `docs/agents/`. They are published alongside the package so AI assistants can reason about modal flows with package-specific context.
 
-Inject those assets into your local Claude Code environment with `@slats/claude-assets-sync` (bin: `inject-claude-settings`):
+Inject those assets with `@slats/agents-assets-sync` (bin: `inject-agents-settings`). `--agent` decides where they land — `claude`, `codex`, or the vendor-neutral `agents`:
 
 ```bash
-npx -p @slats/claude-assets-sync inject-claude-settings --package=@lerx/promise-modal --scope=user         # inject into ~/.claude (user-level)
-npx -p @slats/claude-assets-sync inject-claude-settings --package=@lerx/promise-modal --scope=project      # inject into the nearest existing .claude, walking up from cwd
+# Into ~/.claude (user-level)
+npx -p @slats/agents-assets-sync inject-agents-settings --package=@lerx/promise-modal --agent=claude --scope=user
+
+# Into the nearest existing .claude, walking up from cwd
+npx -p @slats/agents-assets-sync inject-agents-settings --package=@lerx/promise-modal --agent=claude --scope=project
+
+# The same assets into Codex locations (skills into .agents/, rules into AGENTS.md)
+npx -p @slats/agents-assets-sync inject-agents-settings --package=@lerx/promise-modal --agent=codex --scope=project
 
 # Preview / overwrite flags
-npx -p @slats/claude-assets-sync inject-claude-settings --package=@lerx/promise-modal --scope=user --dry-run   # show the plan without writing
-npx -p @slats/claude-assets-sync inject-claude-settings --package=@lerx/promise-modal --scope=user --force     # overwrite locally-modified files
-
+npx -p @slats/agents-assets-sync inject-agents-settings --package=@lerx/promise-modal --agent=claude --scope=user --dry-run
+npx -p @slats/agents-assets-sync inject-agents-settings --package=@lerx/promise-modal --agent=claude --scope=user --force
 ```
 
-The CLI resolves `@lerx/promise-modal/package.json` via `createRequire`, reads its `claude.assetPath` (`docs/claude`), and applies hash-based diff into the selected `.claude/` (skip unchanged, warn on divergence, require `--force` to overwrite).
+The CLI resolves `@lerx/promise-modal/package.json` via `createRequire`, reads its `agents.assetPath` (`docs/agents`), and applies hash-based diff into the selected agent's asset locations (skip unchanged, warn on divergence, require `--force` to overwrite).
 
 <ForAI>
 
