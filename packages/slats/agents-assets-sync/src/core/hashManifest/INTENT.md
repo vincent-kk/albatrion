@@ -2,7 +2,7 @@
 
 ## Purpose
 
-inject 시 source 쪽 해시를 공급한다. `dist/agents-hashes.json`(스키마 v1)을 읽거나, `--asset-path` 로 지정된 asset 디렉터리를 그 자리에서 훑어 같은 모양의 매니페스트를 만든다. orphan 탐지를 위한 네임스페이스 prefix 집합도 여기서 계산한다.
+inject 시 source 쪽 해시를 공급한다. `dist/agents-hashes.json`(스키마 v1)을 읽거나, 호출자가 지정한 asset 디렉터리를 그 자리에서 훑어 같은 모양의 매니페스트를 만든다. orphan 탐지를 위한 네임스페이스 prefix 집합도 여기서 계산한다.
 
 ## Structure
 

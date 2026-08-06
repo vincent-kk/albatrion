@@ -31,7 +31,7 @@ export function formatForAI(
       const label = sp.exportKey === '.' ? 'Main export' : sp.exportKey;
       const symbolSummaries = sp.symbols
         .slice(0, 20) // cap at 20 per sub-path to avoid bloat
-        .map(s => formatSymbolLine(s));
+        .map((s) => formatSymbolLine(s));
 
       if (symbolSummaries.length > 0) {
         lines.push(`${label} → ${symbolSummaries[0]}`);
@@ -44,7 +44,7 @@ export function formatForAI(
     lines.push('```');
   } else {
     // Single-export package — list all symbols
-    const rootExports = allExports.find(e => e.exportKey === '.');
+    const rootExports = allExports.find((e) => e.exportKey === '.');
     if (rootExports && rootExports.symbols.length > 0) {
       lines.push('');
       lines.push('### Exports');
@@ -60,7 +60,12 @@ export function formatForAI(
   return lines.join('\n');
 }
 
-function formatSymbolLine(sym: { name: string; kind: string; signature?: string; jsdoc?: string }): string {
+function formatSymbolLine(sym: {
+  name: string;
+  kind: string;
+  signature?: string;
+  jsdoc?: string;
+}): string {
   const desc = sym.jsdoc ? ` — ${sym.jsdoc}` : '';
   if (sym.signature && sym.kind === 'function') {
     return `${sym.name}(${extractParams(sym.signature)})${desc}`;
@@ -93,7 +98,7 @@ function extractParams(signature: string): string {
   const params = match[1].trim();
   // Simplify long parameter lists
   if (params.length > 60) {
-    const paramNames = params.split(',').map(p => {
+    const paramNames = params.split(',').map((p) => {
       const name = p.trim().split(/[:\s]/)[0];
       return name;
     });
@@ -106,14 +111,20 @@ function inferPurpose(pkg: PackageEntry): string | null {
   // Simple heuristic mapping from package name
   const purposeMap: Record<string, string> = {
     '@winglet/common-utils': 'General-purpose TypeScript utility functions.',
-    '@winglet/react-utils': 'React hooks, HOCs, portal system, and render utilities.',
-    '@winglet/json': 'RFC 6901 JSON Pointer and RFC 6902 JSON Patch with security protections.',
-    '@winglet/json-schema': 'JSON Schema traversal, type-guard filters, and $ref resolution.',
-    '@winglet/data-loader': 'Request batching and caching for async data fetching.',
-    '@winglet/style-utils': 'Scoped CSS injection, CSS compression, and className utilities.',
-    '@canard/schema-form': 'JSON Schema-driven dynamic form generation for React.',
+    '@winglet/react-utils':
+      'React hooks, HOCs, portal system, and render utilities.',
+    '@winglet/json':
+      'RFC 6901 JSON Pointer and RFC 6902 JSON Patch with security protections.',
+    '@winglet/json-schema':
+      'JSON Schema traversal, type-guard filters, and $ref resolution.',
+    '@winglet/data-loader':
+      'Request batching and caching for async data fetching.',
+    '@winglet/style-utils':
+      'Scoped CSS injection, CSS compression, and className utilities.',
+    '@canard/schema-form':
+      'JSON Schema-driven dynamic form generation for React.',
     '@lerx/promise-modal': 'Promise-based modal management for React.',
-    '@slats/claude-assets-sync': 'Claude Code asset synchronization CLI tool.',
+    '@slats/agents-assets-sync': 'AI agent asset injection CLI engine.',
   };
   return purposeMap[pkg.name] || null;
 }

@@ -8,7 +8,6 @@ import {
   applyBlockActions,
   buildPlan,
   computeNamespacePrefixes,
-  needsBuiltManifest,
   partitionActions,
   resolveAgentTarget,
   resolveDestinations,
@@ -126,16 +125,6 @@ async function runUnit(
     projectRoot: agentTarget.projectRoot,
     destination: agentTarget.description,
   } as const;
-
-  if (needsBuiltManifest(target))
-    return {
-      ...base,
-      requiresForce: false,
-      actions: [],
-      report: null,
-      error:
-        'dist/agents-hashes.json missing — build the package to regenerate the hash manifest first, or pass --asset-path to hash the asset directory instead.',
-    };
 
   try {
     const manifest = await resolveHashManifest(target, generatedAt);

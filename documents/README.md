@@ -4,12 +4,12 @@ Technical documentation for Albatrion monorepo packages, built with [Docusaurus 
 
 ## Packages
 
-| Namespace | Packages | Description |
-|-----------|----------|-------------|
-| `@canard` | schema-form, 7 plugins | JSON Schema-driven React form engine |
-| `@winglet` | 6 packages | Shared utility libraries |
-| `@lerx` | promise-modal | Promise-based modal management |
-| `@slats` | claude-assets-sync | AI agent asset synchronization |
+| Namespace  | Packages               | Description                          |
+| ---------- | ---------------------- | ------------------------------------ |
+| `@canard`  | schema-form, 7 plugins | JSON Schema-driven React form engine |
+| `@winglet` | 6 packages             | Shared utility libraries             |
+| `@lerx`    | promise-modal          | Promise-based modal management       |
+| `@slats`   | agents-assets-sync     | AI agent asset synchronization       |
 
 ## Development
 
@@ -40,4 +40,4 @@ yarn workspace documents serve
 1. Create `.mdx` files under `docs/{namespace}/{package}/`
 2. Use shared components: `<ForAI>`, `<PackageHeader>`
 3. Add Korean translations under `i18n/ko/docusaurus-plugin-content-docs/current/`
-3. Run `yarn workspace documents build` to verify
+4. Run `yarn workspace documents build` to verify

@@ -8,7 +8,7 @@ A consumer package declares `agents.assetPath` in `package.json` and runs `agent
 
 `--package` accepts a scoped name (`@scope/pkg`), an unscoped name (`pkg`), or a **scope alias** (`@scope` with no slash) that fans out to every installed `node_modules/@scope/*` package declaring `agents.assetPath`. Single-target resolution uses `createRequire`; scope-alias enumeration walks ancestor `node_modules/@<scope>/` directories from `cwd` upward and is isolated to `runCli/targets/resolveScopeAlias.ts`.
 
-No GitHub fetch, no `.sync-meta.json`, no migrations — the consumer's `dist/agents-hashes.json` is the single source of truth.
+No GitHub fetch, no `.sync-meta.json`, no migrations — the consumer's own asset tree is the single source of truth, read from `dist/agents-hashes.json` when it has been built and hashed in place when it has not.
 
 ## Install
 
@@ -167,7 +167,7 @@ Every file under the asset root is hashed and tracked in `dist/agents-hashes.jso
 
 ## Hash-Based Sync Strategy (Option A)
 
-- `dist/agents-hashes.json` (schema v1) is the sole source of truth.
+- `dist/agents-hashes.json` (schema v1) is the source of truth whenever it is there. Without it, the asset root — the declared `agents.assetPath` or the one `--asset-path` names — is hashed at run time into the same document, so a package that has not been built is still injectable. A declared asset path with neither the manifest nor the directory present has no source at all: that target is reported and skipped.
 - Per-file SHA-256 comparison:
   - **missing locally** → copy
   - **hash equal** → skip

@@ -10,8 +10,12 @@
     "moduleResolution": "bundler",
     "module": "esnext",
     "noEmit": true,
+    // Relative, not `${configDir}`: nothing extends this config, so the two
+    // mean the same directory — but `get-tsconfig` (tsx) interpolates
+    // `${configDir}` to an absolute path and then rejects it for not being
+    // relative while `baseUrl` is unset, which breaks `yarn sync-api-docs`.
     "paths": {
-      "@site/*": ["${configDir}/*"]
+      "@site/*": ["./*"]
     },
     "skipLibCheck": true
   },

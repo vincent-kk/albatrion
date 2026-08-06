@@ -79,21 +79,26 @@ userLoader.clearAll();
 
 ## Claude Code Integration
 
-`@winglet/data-loader` ships Claude Code assets — the `data-loader-skill` expert skill and its knowledge base covering batching, caching, and advanced patterns — under `docs/claude/`. They are published alongside the package so AI assistants can reason about N+1 mitigation and scheduler semantics with package-specific context.
+`@winglet/data-loader` ships coding-agent assets — the `data-loader-skill` expert skill and its knowledge base covering batching, caching, and advanced patterns — under `docs/agents/`. They are published alongside the package so AI assistants can reason about N+1 mitigation and scheduler semantics with package-specific context.
 
-Inject those assets into your local Claude Code environment with `@slats/claude-assets-sync` (bin: `inject-claude-settings`):
+Inject those assets with `@slats/agents-assets-sync` (bin: `inject-agents-settings`). `--agent` decides where they land — `claude`, `codex`, or the vendor-neutral `agents`:
 
 ```bash
-npx -p @slats/claude-assets-sync inject-claude-settings --package=@winglet/data-loader --scope=user         # inject into ~/.claude (user-level)
-npx -p @slats/claude-assets-sync inject-claude-settings --package=@winglet/data-loader --scope=project      # inject into the nearest existing .claude, walking up from cwd
+# Into ~/.claude (user-level)
+npx -p @slats/agents-assets-sync inject-agents-settings --package=@winglet/data-loader --agent=claude --scope=user
+
+# Into the nearest existing .claude, walking up from cwd
+npx -p @slats/agents-assets-sync inject-agents-settings --package=@winglet/data-loader --agent=claude --scope=project
+
+# The same assets into Codex locations (skills into .agents/, rules into AGENTS.md)
+npx -p @slats/agents-assets-sync inject-agents-settings --package=@winglet/data-loader --agent=codex --scope=project
 
 # Preview / overwrite flags
-npx -p @slats/claude-assets-sync inject-claude-settings --package=@winglet/data-loader --scope=user --dry-run   # show the plan without writing
-npx -p @slats/claude-assets-sync inject-claude-settings --package=@winglet/data-loader --scope=user --force     # overwrite locally-modified files
-
+npx -p @slats/agents-assets-sync inject-agents-settings --package=@winglet/data-loader --agent=claude --scope=user --dry-run
+npx -p @slats/agents-assets-sync inject-agents-settings --package=@winglet/data-loader --agent=claude --scope=user --force
 ```
 
-The CLI resolves `@winglet/data-loader/package.json` via `createRequire`, reads its `claude.assetPath` (`docs/claude`), and applies hash-based diff into the selected `.claude/` (skip unchanged, warn on divergence, require `--force` to overwrite).
+The CLI resolves `@winglet/data-loader/package.json` via `createRequire`, reads its `agents.assetPath` (`docs/agents`), and applies hash-based diff into the selected agent's asset locations (skip unchanged, warn on divergence, require `--force` to overwrite).
 
 <ForAI>
 

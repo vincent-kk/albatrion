@@ -9,9 +9,11 @@ export const HASH_MANIFEST_FILENAME = 'agents-hashes.json';
 /**
  * Whether a target cannot be planned until its package is built.
  *
- * Only a manifest-sourced target depends on build output; one whose asset root
- * came from `--asset-path` is hashed from the directory and never reads
- * `dist/`, so a missing manifest says nothing about it. Every renderer asks
+ * Only a manifest-sourced target depends on build output; a directory-sourced
+ * one is hashed from its asset root and never reads `dist/`, so a missing
+ * manifest says nothing about it. The caller assigns the source, and assigns
+ * `manifest` to a target whose asset directory is absent too — which is how a
+ * package with no readable source of hashes arrives here. Every renderer asks
  * this before planning — the Ink path included, which is why the answer lives
  * in one place rather than three.
  *
@@ -28,9 +30,9 @@ export function needsBuiltManifest(target: {
 /**
  * Obtain one target's manifest from whichever source it declares.
  *
- * A `directory` target ignores `dist/agents-hashes.json` entirely: the stored
- * manifest may describe a different tree than the one `--asset-path` named, so
- * the named directory is hashed on the spot and is the only truth.
+ * A `directory` target ignores `dist/agents-hashes.json` entirely: either no
+ * manifest was built, or `--asset-path` named a tree the stored one may not
+ * describe. Its asset root is hashed on the spot and is the only truth.
  *
  * @param source - the target's identity, asset root, and chosen source
  * @param generatedAt - ISO timestamp stamped onto a computed manifest. Passed

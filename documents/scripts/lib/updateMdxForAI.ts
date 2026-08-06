@@ -3,6 +3,8 @@ import * as fs from 'node:fs';
 const FOR_AI_OPEN = '<ForAI>';
 const FOR_AI_CLOSE = '</ForAI>';
 const AUTO_MARKER = '<!-- sync-api-docs:auto -->';
+const FOR_AI_IMPORT = "import ForAI from '@site/src/components/ForAI';";
+const FOR_AI_IMPORT_PATTERN = /^import\s+ForAI\s+from\s+.+;$/m;
 
 /**
  * Check if the ForAI section is auto-generated (has the marker).
@@ -63,8 +65,18 @@ export function updateMdxForAI(
   } else {
     // No existing ForAI section — append at end of file
     const trimmed = original.trimEnd();
-    updated = trimmed + '\n\n' + FOR_AI_OPEN + '\n' + markedContent + '\n' + FOR_AI_CLOSE + '\n';
+    updated =
+      trimmed +
+      '\n\n' +
+      FOR_AI_OPEN +
+      '\n' +
+      markedContent +
+      '\n' +
+      FOR_AI_CLOSE +
+      '\n';
   }
+
+  updated = ensureForAIImport(updated);
 
   // Normalize trailing newline
   if (!updated.endsWith('\n')) {
@@ -77,6 +89,30 @@ export function updateMdxForAI(
 
   fs.writeFileSync(mdxPath, updated, 'utf-8');
   return 'updated';
+}
+
+/**
+ * Ensure the page imports `ForAI` before a generated block references it.
+ *
+ * The generated section is a component call, and MDX fails the build when the
+ * component is not in scope — a page that never carried a ForAI section has no
+ * such import. Docusaurus takes imports after the frontmatter, so the line goes
+ * after the last existing import, or straight after the frontmatter. Only the
+ * head is searched: the generated block's own code fence holds `import` lines
+ * too, and anchoring to one of those would file the statement inside it.
+ *
+ * @param content - full MDX source
+ * @returns the source with the import present; unchanged when it already is
+ */
+function ensureForAIImport(content: string): string {
+  if (FOR_AI_IMPORT_PATTERN.test(content)) return content;
+  const headEnd = content.search(/^#\s/m);
+  const head = headEnd === -1 ? content : content.slice(0, headEnd);
+  const lastImport = [...head.matchAll(/^import .+;$/gm)].at(-1);
+  const at = lastImport
+    ? (lastImport.index ?? 0) + lastImport[0].length
+    : (head.match(/^---\n[\s\S]*?\n---\n/)?.[0].length ?? 0);
+  return `${content.slice(0, at)}\n${FOR_AI_IMPORT}${content.slice(at)}`;
 }
 
 /**

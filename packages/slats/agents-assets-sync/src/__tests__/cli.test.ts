@@ -33,6 +33,12 @@ const DECLARED = '@slats-e2e/declared';
 // The case `--asset-path` exists for: assets in a directory with no
 // `agents.assetPath` declaration and no `dist/agents-hashes.json` to read.
 const UNDECLARED = '@slats-e2e/no-declaration';
+// A declaration whose build has not run: the directory is there, the manifest
+// is not. The common shape of a workspace package before `yarn build`.
+const UNBUILT = '@slats-e2e/unbuilt';
+// A declaration pointing at a tree the tarball pruned, with no manifest
+// either — the one combination that has no source of hashes at all.
+const PRUNED = '@slats-e2e/pruned';
 // One scope holding a declared package, an undeclared one, and one with no
 // assets at all — enough to show what each enumeration keeps.
 const SCOPE = '@slats-e2e-scope';
@@ -62,6 +68,16 @@ describe.skipIf(blocker !== null)(
         },
       });
       await installConsumer(scratchRoot, {
+        name: UNBUILT,
+        assetPath: 'docs/agents',
+        files: { 'skills/unbuilt-skill/SKILL.md': '# Unbuilt Skill\n' },
+      });
+      await installConsumer(scratchRoot, {
+        name: PRUNED,
+        assetPath: 'docs/agents',
+        files: {},
+      });
+      await installConsumer(scratchRoot, {
         name: `${SCOPE}/declared`,
         assetPath: 'docs/agents',
         withManifest: true,
@@ -70,6 +86,13 @@ describe.skipIf(blocker !== null)(
       await installConsumer(scratchRoot, {
         name: `${SCOPE}/with-assets`,
         files: { 'skills/with-assets-skill/SKILL.md': '# With Assets\n' },
+      });
+      // A declaring member of the scope that can supply no hashes at all —
+      // the batch must carry on past it.
+      await installConsumer(scratchRoot, {
+        name: `${SCOPE}/pruned`,
+        assetPath: 'docs/agents',
+        files: {},
       });
       await installConsumer(scratchRoot, {
         name: `${SCOPE}/without-assets`,
@@ -174,6 +197,88 @@ describe.skipIf(blocker !== null)(
           .status,
       ).toBe(2);
     });
+
+    // A declaration says where the assets are, not that a build ran. The
+    // directory it names is right there, so the default path hashes it instead
+    // of stopping for build output it does not need.
+    it('hashes a declared asset path whose manifest was never built', () => {
+      const result = runCli([
+        '--package',
+        UNBUILT,
+        '--agent=claude',
+        '--scope=project',
+      ]);
+      expect(result.status).toBe(0);
+      expect(result.stdout).toContain('skills/unbuilt-skill/SKILL.md');
+      expect(result.stderr).not.toContain('no source hashes');
+    });
+
+    // Nothing can answer for this one's hashes. Hashing the absent directory
+    // would report an empty tree, which is how installed content becomes an
+    // orphan — so the target is named and never planned.
+    it('never plans a declared package with neither a manifest nor the directory', () => {
+      const result = runCli([
+        '--package',
+        PRUNED,
+        '--agent=claude',
+        '--scope=project',
+      ]);
+      // The transcript owns stdout here; only `--json` diverts diagnostics.
+      expect(result.stdout).toContain('no source hashes');
+      expect(result.stdout).not.toContain(`${PRUNED}@`);
+    });
+
+    // The verdict is the run's, not the renderer's. A reader that switches on
+    // `--json` must not get a different answer about the same packages.
+    it.each([[[]], [['--json']]])(
+      'fails a single named package that can supply no hashes (%j)',
+      (extra) => {
+        const result = runCli([
+          '--package',
+          PRUNED,
+          '--agent=claude',
+          '--scope=project',
+          ...extra,
+        ]);
+        expect(result.status).toBe(2);
+      },
+    );
+
+    // Naming one package twice still names one package. The strict / soft
+    // split is about what the run asked for, not how many times it said it —
+    // and both failure modes that ride the split are held to it.
+    it.each([
+      ['a gated package', PRUNED, 'no source hashes'],
+      ['an undeclared package', UNDECLARED, 'agents.assetPath'],
+    ])('stays strict when %s is named twice', (_label, name, reason) => {
+      const result = runCli([
+        '--package',
+        `${name},${name}`,
+        '--agent=claude',
+        '--scope=project',
+      ]);
+      expect(result.status).toBe(2);
+      expect(result.stdout + result.stderr).toContain(reason);
+    });
+
+    // One member of a scope having nothing to inject is ordinary, so the batch
+    // reports it and carries on — the same soft skip an undeclared member gets.
+    it.each([[[]], [['--json']]])(
+      'keeps a batch at 0 when one member can supply no hashes (%j)',
+      (extra) => {
+        const result = runCli([
+          '--package',
+          SCOPE,
+          '--agent=claude',
+          '--scope=project',
+          ...extra,
+        ]);
+        expect(result.status).toBe(0);
+        const transcript = result.stdout + result.stderr;
+        expect(transcript).toContain('no source hashes');
+        expect(transcript).toContain(`${SCOPE}/declared`);
+      },
+    );
 
     // With an override every enumerated package gets the same asset path, so
     // what filters the scope stops being the declaration and becomes whether

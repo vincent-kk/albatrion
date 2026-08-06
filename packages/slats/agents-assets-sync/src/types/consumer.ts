@@ -10,11 +10,15 @@ export interface ConsumerPackage {
   assetRoot: string;
   /** `assetRoot` relative to `packageRoot`. */
   assetPath: string;
-  /** Whether `dist/agents-hashes.json` exists. Meaningful only when `hashSource` is `manifest`. */
+  /**
+   * Whether `dist/agents-hashes.json` was found. Always `false` under
+   * `hashSource: 'directory'`, which never reads that file.
+   */
   hashesPresent: boolean;
   /**
    * Where this target's hashes come from: the stored manifest, or the asset
-   * directory hashed at run time because `--asset-path` named it.
+   * directory hashed at run time — because `--asset-path` named it, or because
+   * a declaring package ships the directory without built output.
    */
   hashSource: 'manifest' | 'directory';
 }

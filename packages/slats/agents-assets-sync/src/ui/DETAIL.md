@@ -8,14 +8,14 @@
 - agent 가 `--agent` 로 주어지지 않으면 Ink `AgentPicker` 로 대화식 선택한다. scope 도 마찬가지로 `--scope` 가 없으면 `ScopePicker` 를 연다. 주어졌으면 그 값을 쓴다.
 - `ScopePicker` 는 `project` 를 고른 채로 열린다. 목록은 `user` 를 먼저 그리되 커서만 `project` 에 놓이므로, 흔한 쪽은 enter 한 번이고 `user` 는 화살표 한 번이 든다. 이 기본값은 이 picker 만의 것이다 — 비대화식 경로는 `--scope` 없이 여전히 종료 코드 2 다.
 - 계획은 target 마다 순차적으로 세운다. 각 `(agent, package)` 쌍에 대해 `resolveAgentTarget` → `resolveHashManifest` → `computeNamespacePrefixes` → `resolveDestinations` → `buildPlan` 순서로 조합한다.
-- 빌드 부재로 target 을 실패시킬지는 `core` 의 `needsBuiltManifest` 가 판정한다. 세 렌더러가 같은 술어에 물으며, 그 계약은 `core/hashManifest/DETAIL.md` 의 `AC-MANIFEST-GATE` 가 소유한다. 이 계층을 직접 구동하는 검사가 없으므로, 그 술어가 이 경로에 부하를 거는 유일한 지점이다.
+- 해시를 댈 수 없는 target 은 여기 도달하지 않는다. dispatcher 가 렌더러를 고르기 전에 걸러내므로(`commands/runCli/DETAIL.md` 의 `AC-RUNCLI-GATE-VERDICT`), 이 계층은 그 판정을 내리지도 재현하지도 않는다. 직접 구동하는 검사가 없는 계층이 판정에 참여하면 그 판정만 조용히 어긋난다.
 - force 확인은 `ConfirmForce` 로 표면화되며, 그 아래의 promise 다리가 사용자 응답이나 취소에서 resolve 된다. 취소는 종료 코드 2다.
 - 적용은 계획별로 `partitionActions` 로 갈라, 파일 작업은 `asyncPool(8, …)` 로 돌리고 블록 작업은 문서 단위로 하나씩 적용한다.
 - 진행률은 액션이 끝날 때마다 `apply-progress` 이벤트로 보고된다. 파일은 한 건씩, 블록 그룹은 그룹 크기만큼 `done` 이 증가한다.
 - `--dry-run` 은 적용을 건너뛰고 `summarize(plan, 0)` 로 바로 summary 에 들어가며 종료 코드 0을 낸다.
 - summary 는 target 마다 `summarize(plan, exitCode)` 로 그려진다.
 - 종료 코드: `0` 성공/최신/dry-run, `1` 런타임 오류, `2` 사용자 취소 또는 설정 누락.
-- `dist/agents-hashes.json` 이 없는 target 은 실패한 plan step 으로 표면화된다.
+- 계획 중 던져진 오류는 실패한 plan step 으로 표면화된다.
 
 ## API Contracts
 
@@ -34,7 +34,7 @@ entry point 표면 밖의 내부 단위다. 바꿔도 공개 계약 변경이 �
 
 ## Composed core primitives
 
-- `needsBuiltManifest`, `resolveHashManifest`, `computeNamespacePrefixes` — 빌드 필요 판정, 소스 해시와 네임스페이스
+- `resolveHashManifest`, `computeNamespacePrefixes` — 소스 해시와 네임스페이스
 - `resolveAgentTarget`, `resolveDestinations` — 목적지 해석
 - `buildPlan` — 계획 수립
 - `isValidAgent` — `--agent` 값 검증

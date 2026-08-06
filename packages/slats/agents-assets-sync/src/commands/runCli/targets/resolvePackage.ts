@@ -167,7 +167,10 @@ async function inspectAssetRoot(
 
   const entry = await stat(real).catch(() => null);
   if (entry?.isDirectory()) return 'ok';
-  return options.requireDirectory ? 'not-a-directory' : 'escapes';
+  // Containment was settled above, so what is left is only "not a directory".
+  // Calling it an escape sends the reader to move a path that is already in
+  // the right place.
+  return 'not-a-directory';
 }
 
 function isInside(root: string, candidate: string): boolean {

@@ -22,7 +22,6 @@ import {
 import { logger } from '../../../utils/logger.js';
 import { resolveAssetPathFlag } from '../flags/resolveAssetPathFlag.js';
 import { resolvePackage } from '../targets/resolvePackage.js';
-import { toConsumerPackages } from '../targets/toConsumerPackages.js';
 
 vi.mock('../../../utils/logger.js', () => ({
   logger: {
@@ -177,52 +176,5 @@ describe('resolvePackage with an override', () => {
   });
 });
 
-describe('toConsumerPackages', () => {
-  it('turns a flag-sourced asset path into a directory hash source', async () => {
-    const packageRoot = makePkg(
-      '@fixture/consumer',
-      { name: '@fixture/consumer', version: '3.0.0' },
-      'agents',
-    );
-    // The manifest is present on purpose: `hashesPresent` staying false is
-    // only evidence of "never probed" when probing would have found one.
-    mkdirSync(join(packageRoot, 'dist'), { recursive: true });
-    writeFileSync(join(packageRoot, 'dist', 'agents-hashes.json'), '{}');
-
-    const [target] = await toConsumerPackages([
-      {
-        packageRoot,
-        packageName: '@fixture/consumer',
-        packageVersion: '3.0.0',
-        assetPath: 'agents',
-        assetPathSource: 'flag',
-      },
-    ]);
-
-    expect(target!.hashSource).toBe('directory');
-    expect(target!.assetRoot).toBe(join(packageRoot, 'agents'));
-    expect(target!.assetPath).toBe('agents');
-    expect(target!.hashesPresent).toBe(false);
-  });
-
-  it('keeps a declared asset path on the manifest source', async () => {
-    const packageRoot = makePkg('@fixture/declared-consumer', {
-      name: '@fixture/declared-consumer',
-      version: '3.0.0',
-      agents: { assetPath: 'docs/agents' },
-    });
-
-    const [target] = await toConsumerPackages([
-      {
-        packageRoot,
-        packageName: '@fixture/declared-consumer',
-        packageVersion: '3.0.0',
-        assetPath: 'docs/agents',
-        assetPathSource: 'package',
-      },
-    ]);
-
-    expect(target!.hashSource).toBe('manifest');
-    expect(target!.hashesPresent).toBe(false);
-  });
-});
+// What the flag does to a target's hash source belongs to
+// `AC-RUNCLI-HASH-SOURCE`, verified by `hashSource.spec.ts`.

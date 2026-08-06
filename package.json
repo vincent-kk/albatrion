@@ -20,7 +20,6 @@
     "changeset": "changeset",
     "changeset:publish": "yarn run:all && changeset publish",
     "changeset:version": "changeset version",
-    "claudeAssetsSync": "yarn workspace @slats/claude-assets-sync",
     "commonUtils": "yarn workspace @winglet/common-utils",
     "dataLoader": "yarn workspace @winglet/data-loader",
     "deploy:docs": "yarn workspace @albatrion/documents deploy:gh-pages",

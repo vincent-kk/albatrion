@@ -85,7 +85,7 @@ jobs:
         # schema-form depends on @winglet/* subpath exports whose .d.ts live in
         # each package's dist/. On a clean checkout those dists don't exist, so
         # building schema-form alone fails type resolution. -R --from builds the
-        # dependency closure (winglet/* + claude-assets-sync + development-helper).
+        # dependency closure (winglet/* + agents-assets-sync + development-helper).
         # --topological-dev, not -t: -R pulls devDependencies into the closure but
         # -t orders by dependencies only, so a devDep can land AFTER its dependent
         # and its dist is still missing when that dependent type-checks.

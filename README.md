@@ -36,7 +36,7 @@ Each package provides individual `README.md` documentation with detailed usage i
 
 ### `slats`
 
-- **[`@slats/claude-assets-sync`](./packages/slats/claude-assets-sync/README.md)** - CLI tool to sync Claude commands and skills from npm packages to your project's `.claude/` directory.
+- **[`@slats/agents-assets-sync`](./packages/slats/agents-assets-sync/README.md)** - CLI engine that injects agent docs (skills, rules, commands) from npm packages into Claude Code and Codex asset locations.
 
 ### `winglet`
 

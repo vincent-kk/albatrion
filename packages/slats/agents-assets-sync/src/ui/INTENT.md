@@ -23,7 +23,7 @@ React + Ink UI layer for the TTY path of `inject-agents-settings`. Exposes `rend
 
 ### Always do
 
-- Compose `core/**` primitives directly (`needsBuiltManifest`, `resolveHashManifest`, `computeNamespacePrefixes`, `resolveAgentTarget`, `resolveDestinations`, `buildPlan`, `partitionActions`, `applyAction`, `applyBlockActions`, `summarize`) plus `asyncPool` to drive the pipeline
+- Compose `core/**` primitives directly (`resolveHashManifest`, `computeNamespacePrefixes`, `resolveAgentTarget`, `resolveDestinations`, `buildPlan`, `partitionActions`, `applyAction`, `applyBlockActions`, `summarize`) plus `asyncPool` to drive the pipeline
 - Surface the final exit code through `useExitApp` so `renderInjectApp` resolves with a `number`
 
 ### Ask first

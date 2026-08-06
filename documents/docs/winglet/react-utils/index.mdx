@@ -92,21 +92,26 @@ const App = withPortal(() => (
 
 ## Claude Code Integration
 
-`@winglet/react-utils` ships Claude Code assets — the `react-utils-skill` expert skill and its knowledge base covering hooks, HOC patterns, the portal system, and utility helpers — under `docs/claude/`. They are published alongside the package so AI assistants can reason about React-specific utilities with package-specific context.
+`@winglet/react-utils` ships coding-agent assets — the `react-utils-skill` expert skill and its knowledge base covering hooks, HOC patterns, the portal system, and utility helpers — under `docs/agents/`. They are published alongside the package so AI assistants can reason about React-specific utilities with package-specific context.
 
-Inject those assets into your local Claude Code environment with `@slats/claude-assets-sync` (bin: `inject-claude-settings`):
+Inject those assets with `@slats/agents-assets-sync` (bin: `inject-agents-settings`). `--agent` decides where they land — `claude`, `codex`, or the vendor-neutral `agents`:
 
 ```bash
-npx -p @slats/claude-assets-sync inject-claude-settings --package=@winglet/react-utils --scope=user         # inject into ~/.claude (user-level)
-npx -p @slats/claude-assets-sync inject-claude-settings --package=@winglet/react-utils --scope=project      # inject into the nearest existing .claude, walking up from cwd
+# Into ~/.claude (user-level)
+npx -p @slats/agents-assets-sync inject-agents-settings --package=@winglet/react-utils --agent=claude --scope=user
+
+# Into the nearest existing .claude, walking up from cwd
+npx -p @slats/agents-assets-sync inject-agents-settings --package=@winglet/react-utils --agent=claude --scope=project
+
+# The same assets into Codex locations (skills into .agents/, rules into AGENTS.md)
+npx -p @slats/agents-assets-sync inject-agents-settings --package=@winglet/react-utils --agent=codex --scope=project
 
 # Preview / overwrite flags
-npx -p @slats/claude-assets-sync inject-claude-settings --package=@winglet/react-utils --scope=user --dry-run   # show the plan without writing
-npx -p @slats/claude-assets-sync inject-claude-settings --package=@winglet/react-utils --scope=user --force     # overwrite locally-modified files
-
+npx -p @slats/agents-assets-sync inject-agents-settings --package=@winglet/react-utils --agent=claude --scope=user --dry-run
+npx -p @slats/agents-assets-sync inject-agents-settings --package=@winglet/react-utils --agent=claude --scope=user --force
 ```
 
-The CLI resolves `@winglet/react-utils/package.json` via `createRequire`, reads its `claude.assetPath` (`docs/claude`), and applies hash-based diff into the selected `.claude/` (skip unchanged, warn on divergence, require `--force` to overwrite).
+The CLI resolves `@winglet/react-utils/package.json` via `createRequire`, reads its `agents.assetPath` (`docs/agents`), and applies hash-based diff into the selected agent's asset locations (skip unchanged, warn on divergence, require `--force` to overwrite).
 
 <ForAI>
 

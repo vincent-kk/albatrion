@@ -22,6 +22,7 @@ yarn dev:ui --tour   # cycle through all Ink phases with fixture data
   - Core primitives re-exported: `readHashManifest`, `computeNamespacePrefixes`, `resolveProjectRoot`, `resolveAgentTarget`, `resolveDestinations`, `formatBlockId`, `parseBlocks`, `isValidScope`, `isValidAgent`, `MARKER_PREFIX`, `PROJECT_ANCHORS`, `HASH_MANIFEST_FILENAME`
   - No `injectDocs` orchestrator — both renderers (Ink `ui/` and plain `renderPlain`) compose primitives directly.
 - `./buildHashes` — `buildHashes(options?)` produces `<packageRoot>/dist/agents-hashes.json`.
+- `./package.json` — the manifest itself. The dispatcher reads every target's `{ name, version, agents.assetPath }` through `createRequire(...).resolve()`, and an ESM-only package exposes nothing to `createRequire` unless it exports this subpath — so gating it would make this engine the one package its own CLI cannot inject.
 
 Bin entries (all map to the same engine; choose by invocation context):
 
@@ -148,7 +149,9 @@ src/
 │       │   ├── resolvePackage.ts   # single-target resolve
 │       │   ├── resolveScopeAlias.ts# scope → packages enumeration (only enumerator)
 │       │   ├── resolveTargets.ts   # classify/resolve/dedupe orchestrator
-│       │   └── toConsumerPackages.ts # metadata → ConsumerPackage
+│       │   ├── toConsumerPackages.ts # metadata → ConsumerPackage
+│       │   ├── resolveHashSource.ts# manifest vs. run-time directory hashing
+│       │   └── selectInjectableTargets.ts # drops targets with no hash source
 │       ├── flags/                  # one CLI flag value → a validated value
 │       │   ├── resolveScopeFlag.ts # plain-path scope flag validator
 │       │   ├── resolveAgentFlag.ts # --agent validator (exits 2 when non-interactive)
@@ -181,14 +184,18 @@ there is no root `tests/` directory. `tsconfig.declarations.json` excludes them
 from the build; `tsconfig.json` does not, so they are type-checked.
 scripts/
 ├── buildHashes.mjs                 # pure Node ESM, importable from Rolldown
-├── agents-build-hashes.mjs         # self-executing bin
+├── agents-build-hashes.mjs         # self-executing bin, cwd-based (consumers)
+├── build-hashes.mjs                # this package's own `build:hashes` step
+├── inject-version.js               # regenerates src/utils/version.ts
 ├── dev-ui.tsx                      # Ink phase preview / tour
 └── dev-ui-fixtures.ts              # mock plans + targets for dev preview
 ```
 
 ## Hash Strategy (Option A)
 
-- `dist/agents-hashes.json` is the sole source of truth (schema v1, `previousVersions: {}` reserved) — except under `--asset-path`, where the named directory is hashed at run time and the stored manifest is not read at all. `core/hashManifest/resolveHashManifest` owns that branch; the computed document is byte-equivalent to a freshly built one, and `src/core/hashManifest/__tests__/computeHashManifest.spec.ts` keeps it so.
+- `dist/agents-hashes.json` is the source of truth wherever it exists (schema v1, `previousVersions: {}` reserved). Two cases read the asset directory at run time instead: `--asset-path`, where the named directory wins outright and the stored manifest is not read at all, and a declared `agents.assetPath` whose package has not been built. `core/hashManifest/resolveHashManifest` owns the branch and `commands/runCli/targets/resolveHashSource.ts` decides which side each target takes; the computed document is byte-equivalent to a freshly built one, and `src/core/hashManifest/__tests__/computeHashManifest.spec.ts` keeps it so.
+- The fallback requires the declared directory to be present. Hashing an absent one succeeds with an empty manifest, and an empty manifest makes every already-installed file an orphan — content `--force` deletes. With neither present the target is reported and never planned.
+- That refusal is decided once in the action, by `targets/selectInjectableTargets.ts`, before `renderOrFallback` picks a renderer — so no renderer sees such a target and the run's exit code cannot depend on `--json`. It follows the same strict / soft-skip split as a missing `agents.assetPath`: exit 2 for a single named package, a reported skip in a batch or scope alias.
 - Per-entry SHA-256 comparison: copy if missing, skip if equal, warn + require `--force` if different. A codex rule block is compared by the body between its markers, against the same manifest hash.
 - `--force` on TTY: Ink `ConfirmForce` dialog, skipped by `--yes`. Non-interactive: stderr emission + proceed.
 - `--force` actually overwrites diverged content: `partitionActions` makes `warn-diverged` executable once force is granted.

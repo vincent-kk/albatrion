@@ -5,6 +5,7 @@ sidebar_position: 1
 ---
 
 import PackageHeader from '@site/src/components/PackageHeader';
+import ForAI from '@site/src/components/ForAI';
 
 # @slats/agents-assets-sync
 
@@ -42,8 +43,8 @@ npx @slats/agents-assets-sync \
 | Flag               | Meaning                                                                                                                             |
 | ------------------ | ----------------------------------------------------------------------------------------------------------------------------------- |
 | `--package <name>` | **Required.** `@scope/pkg`, `pkg`, or a scope alias `@scope` that fans out to every installed package declaring `agents.assetPath`. |
-| `--agent <type>`   | `claude` \| `codex` \| `agents`. Omitted, an interactive terminal asks; anywhere else the run exits 2.                                          |
-| `--scope`          | `user` (home) or `project` (nearest ancestor owning `.claude`, `AGENTS.md`, `.agents`, `.codex` or `.git`).                                    |
+| `--agent <type>`   | `claude` \| `codex` \| `agents`. Omitted, an interactive terminal asks; anywhere else the run exits 2.                              |
+| `--scope`          | `user` (home) or `project` (nearest ancestor owning `.claude`, `AGENTS.md`, `.agents`, `.codex` or `.git`).                         |
 | `--asset <kind>`   | `skills` \| `rules` \| `commands`. Default: all. An excluded kind is absent from the plan, so it is neither reported nor deleted.   |
 | `--dry-run`        | Print the plan; write nothing.                                                                                                      |
 | `--force`          | Overwrite diverged content and delete orphans.                                                                                      |
@@ -55,13 +56,13 @@ npx @slats/agents-assets-sync \
 Every agent resolves from one shared project root, so a single run cannot
 straddle two projects.
 
-| Kind | claude | codex | agents |
-|---|---|---|---|
-| `skills` (user) | `~/.claude/skills/**` | `~/.codex/skills/**` | `~/.agents/skills/**` |
-| `skills` (project) | `<root>/.claude/skills/**` | `<root>/.agents/skills/**` | `<root>/.agents/skills/**` |
-| `rules` (user) | `~/.claude/rules/**` | `~/.codex/AGENTS.md` | `~/.agents/AGENTS.md` |
-| `rules` (project) | `<root>/.claude/rules/**` | `<root>/AGENTS.md` | `<root>/AGENTS.md` |
-| `commands` | `<root>/.claude/commands/**` | unsupported — skipped with a reason | unsupported |
+| Kind               | claude                       | codex                               | agents                     |
+| ------------------ | ---------------------------- | ----------------------------------- | -------------------------- |
+| `skills` (user)    | `~/.claude/skills/**`        | `~/.codex/skills/**`                | `~/.agents/skills/**`      |
+| `skills` (project) | `<root>/.claude/skills/**`   | `<root>/.agents/skills/**`          | `<root>/.agents/skills/**` |
+| `rules` (user)     | `~/.claude/rules/**`         | `~/.codex/AGENTS.md`                | `~/.agents/AGENTS.md`      |
+| `rules` (project)  | `<root>/.claude/rules/**`    | `<root>/AGENTS.md`                  | `<root>/AGENTS.md`         |
+| `commands`         | `<root>/.claude/commands/**` | unsupported — skipped with a reason | unsupported                |
 
 `agents` is not a product: it is the vendor-neutral `.agents` convention, for
 tools that read it instead of keeping a home of their own. It differs from
@@ -110,7 +111,44 @@ docs/agents/
 
 ## Relationship to `@slats/claude-assets-sync`
 
-`@slats/claude-assets-sync` is the single-agent predecessor. It is frozen, not
-deprecated — packages already published against its `claude.assetPath` contract
-keep working. New packages should declare `agents.assetPath` and use this
-engine.
+`@slats/claude-assets-sync` is the single-agent name this engine was migrated
+from. Its published releases stay on npm, so packages released against its
+`claude.assetPath` contract keep installing and working — but nothing new ships
+under that name. Declare `agents.assetPath` and use this engine.
+
+<ForAI>
+<!-- sync-api-docs:auto -->
+
+## AI Reference
+
+**Package**: `@slats/agents-assets-sync` v0.1.2
+**Purpose**: AI agent asset injection CLI engine.
+
+### Exports
+```ts
+import { runCli } from '@slats/agents-assets-sync';
+import { HASH_MANIFEST_FILENAME } from '@slats/agents-assets-sync';
+import { MARKER_PREFIX } from '@slats/agents-assets-sync';
+import { PROJECT_ANCHORS } from '@slats/agents-assets-sync';
+import { computeNamespacePrefixes } from '@slats/agents-assets-sync';
+import { formatBlockId } from '@slats/agents-assets-sync';
+import { isValidAgent } from '@slats/agents-assets-sync';
+import { isValidScope } from '@slats/agents-assets-sync';
+import { parseBlocks } from '@slats/agents-assets-sync';
+import { readHashManifest } from '@slats/agents-assets-sync';
+import { resolveAgentTarget } from '@slats/agents-assets-sync';
+import { resolveDestinations } from '@slats/agents-assets-sync';
+import { resolveProjectRoot } from '@slats/agents-assets-sync';
+import type { AgentTarget } from '@slats/agents-assets-sync';
+import type { AgentType } from '@slats/agents-assets-sync';
+import type { AssetKind } from '@slats/agents-assets-sync';
+import type { Destination } from '@slats/agents-assets-sync';
+import type { HashManifest } from '@slats/agents-assets-sync';
+import type { InjectReport } from '@slats/agents-assets-sync';
+import type { OrphanScan } from '@slats/agents-assets-sync';
+import type { ProjectRootResolution } from '@slats/agents-assets-sync';
+import type { Scope } from '@slats/agents-assets-sync';
+import type { AssetType } from '@slats/agents-assets-sync';
+```
+
+</ForAI>
