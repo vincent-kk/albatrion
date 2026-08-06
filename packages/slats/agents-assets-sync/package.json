@@ -1,6 +1,6 @@
 {
   "name": "@slats/agents-assets-sync",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Shared CLI engine that lets consumer packages inject their agent docs (skills, rules, commands) into Claude Code and Codex asset locations via a thin bin/inject-agents-settings wrapper.",
   "keywords": [
     "agents",
