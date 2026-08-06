@@ -18,7 +18,7 @@
 ## API Contracts
 
 - `needsBuiltManifest(target: { hashSource; hashesPresent }): boolean`
-  - 렌더러가 계획 전에 "이 target 은 빌드를 기다려야 하는가" 를 묻는 유일한 자리
+  - "이 target 은 빌드를 기다려야 하는가" 를 묻는 유일한 자리. 답만 내놓고 실행 판정은 하지 않는다 — 그 판정은 dispatcher 의 몫이다
 - `resolveHashManifest(source: HashManifestSource, generatedAt?: string): Promise<HashManifest>`
   - `source.hashSource === 'manifest'` → `readHashManifest(source.packageRoot)`
   - `source.hashSource === 'directory'` → `source.assetRoot` 를 훑어 계산
@@ -74,15 +74,16 @@
 
 - `hashSource: 'manifest'` 이고 매니페스트가 없으면 `needsBuiltManifest` 가 `true` 다. 매니페스트가 있으면 `false`.
 - `hashSource: 'directory'` 는 `hashesPresent` 와 무관하게 언제나 `false` 다 — `dist/` 를 읽지 않으므로 그 부재가 이 target 에 대해 아무것도 말하지 않는다.
-- 세 렌더러(plain, json, Ink)가 계획 전에 모두 이 술어에 묻는다. 판정을 한 곳에 두는 이유는 중복 제거만이 아니라, 어떤 렌더러도 직접 구동하지 않는 Ink 경로를 같은 검사 아래 두기 위해서다.
-- 이 술어는 출처를 정하지 않는다. `'manifest'` 를 받은 타깃이 그 파일 없이 도착했다는 것은 호출자가 다른 출처도 찾지 못했다는 뜻이며, 렌더러의 진단은 그렇게 읽혀야 한다.
+- 호출자는 하나다 — dispatcher 가 렌더러를 고르기 전에 묻는다. 세 렌더러가 각자 묻던 때에는 술어는 하나였지만 그 답을 실행 판정으로 옮기는 규칙이 셋이었고, 그래서 같은 입력이 출력 형식에 따라 다른 exit code 를 냈다. 판정은 `commands/runCli/DETAIL.md` 의 `AC-RUNCLI-GATE-VERDICT` 가 소유한다.
+- 이 술어는 출처를 정하지 않고 종료 코드도 정하지 않는다. `'manifest'` 를 받은 타깃이 그 파일 없이 도착했다는 것은 호출자가 다른 출처도 찾지 못했다는 뜻이며, 진단은 그렇게 읽혀야 한다.
 - Verified by `__tests__/needsBuiltManifest.spec.ts` (`filid:contract AC-MANIFEST-GATE`).
 
 ## History
 
+- 2026-08-06 — 이 술어의 호출자가 세 렌더러에서 dispatcher 하나로 바뀌었다. 술어 자체는 그대로다 — 갈린 것은 답이 아니라 답의 사용이었다.
 - 2026-08-06 — `'directory'` 출처가 `--asset-path` 전용이기를 그만뒀다. 선언된 asset 디렉터리가 있는데 빌드만 돌지 않은 타깃도 같은 계산 경로를 쓴다. 이 fractal 의 코드는 그대로다 — 출처 판정은 처음부터 호출자의 몫이었고, 바뀐 것은 호출자가 그 판정을 내리는 조건이다.
 - 2026-08-06 — "매니페스트가 source 해시의 유일한 진실 공급원" 이라는 계약이 `--asset-path` 로 완화됐다. 플래그가 asset 루트를 지정하면 그 디렉터리가 진실이고 저장된 매니페스트는 읽지 않는다 — `agents.assetPath` 선언도 빌드 산출물도 없이 그냥 `agents/` 나 `docs/` 에 에셋을 둔 패키지를 지원하기 위함이다.
 
 ## Last Updated
 
-2026-08-06 — `'directory'` 출처가 `--asset-path` 에 매이지 않음을 Requirements 와 게이트 계약에 반영했다. 출처 판정의 소유자는 호출자이며, 그 조건은 `commands/runCli/DETAIL.md` 의 `AC-RUNCLI-HASH-SOURCE` 가 갖는다.
+2026-08-06 — 게이트 술어가 실행 판정을 소유하지 않음을 `AC-MANIFEST-GATE` 에 명시하고 호출자를 dispatcher 하나로 정정했다. 이전 갱신: `'directory'` 출처가 `--asset-path` 에 매이지 않음을 Requirements 에 반영했다.

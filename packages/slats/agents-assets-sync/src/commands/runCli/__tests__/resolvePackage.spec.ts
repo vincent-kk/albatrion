@@ -258,6 +258,26 @@ describe('resolvePackage', () => {
       ).rejects.toThrow('process.exit(2)');
     });
 
+    // A path inside the package that simply is not a directory has escaped
+    // nothing. Naming it an escape sends the reader to move something that is
+    // already where it belongs.
+    it('tells a declared assetPath naming a file what is actually wrong', async () => {
+      const dir = join(root, 'node_modules', '@fixture', 'file-asset');
+      makePkg(dir, {
+        name: '@fixture/file-asset',
+        version: '1.0.0',
+        agents: { assetPath: 'README.md' },
+      });
+      writeFileSync(join(dir, 'README.md'), '# not a directory\n');
+
+      await expect(
+        resolvePackage('@fixture/file-asset', {}, root),
+      ).rejects.toThrow('process.exit(2)');
+      expect(errorMock).toHaveBeenCalledWith(
+        expect.stringContaining('is not a directory inside'),
+      );
+    });
+
     // `resolve()` is lexical and `stat()` follows links, so a symlinked asset
     // root reads as "inside" while pointing anywhere on disk.
     it.each([

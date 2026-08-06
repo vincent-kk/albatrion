@@ -5,9 +5,10 @@ import { Command } from 'commander';
 import type { DefaultFlags } from '../../types/index.js';
 import { divertLogsToStderr, logger } from '../../utils/logger.js';
 import { VERSION } from '../../utils/version.js';
-import { renderOrFallback } from './renderers/renderOrFallback.js';
 import { resolveAssetPathFlag } from './flags/resolveAssetPathFlag.js';
+import { renderOrFallback } from './renderers/renderOrFallback.js';
 import { resolveTargets } from './targets/resolveTargets.js';
+import { selectInjectableTargets } from './targets/selectInjectableTargets.js';
 import { toConsumerPackages } from './targets/toConsumerPackages.js';
 
 const FALLBACK_PROGRAM_NAME = 'inject-agents-settings';
@@ -99,7 +100,7 @@ export async function runCli(
       }
       const assetPath = resolveAssetPathFlag(flags.assetPath);
       const originCwd = flags.root ?? process.cwd();
-      const { resolved, skipped } = await resolveTargets(
+      const { resolved, skipped, strict } = await resolveTargets(
         targets,
         originCwd,
         assetPath,
@@ -114,8 +115,15 @@ export async function runCli(
         if (!flags.json) return;
       }
       const consumerPackages = await toConsumerPackages(resolved);
+      // A target that can supply no hashes fails the way a package with no
+      // `agents.assetPath` does: fatal when the run named one package, a
+      // reported skip in a batch. Deciding it here rather than inside each
+      // renderer is what keeps the verdict from depending on `--json`.
+      const injectable = selectInjectableTargets(consumerPackages, skipped);
+      if (strict && injectable.length < consumerPackages.length)
+        process.exit(2);
       const exitCode = await renderOrFallback(
-        consumerPackages,
+        injectable,
         flags,
         originCwd,
         skipped,

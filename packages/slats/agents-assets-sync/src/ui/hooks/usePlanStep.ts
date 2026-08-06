@@ -6,7 +6,6 @@ import {
   type Scope,
   buildPlan,
   computeNamespacePrefixes,
-  needsBuiltManifest,
   resolveAgentTarget,
   resolveDestinations,
   resolveHashManifest,
@@ -60,18 +59,6 @@ export function usePlanStep({
             step: { packageName: target.name, agent, status: 'running' },
           });
           try {
-            if (needsBuiltManifest(target)) {
-              dispatch({
-                type: 'plan-step',
-                step: {
-                  packageName: target.name,
-                  agent,
-                  status: 'failed',
-                  error: `no source hashes: dist/agents-hashes.json and ${target.assetPath} are both absent`,
-                },
-              });
-              continue;
-            }
             const manifest = await resolveHashManifest(target, generatedAt);
             const agentTarget = resolveAgentTarget(agent, scope, originCwd);
             const { destinations, orphanScans } = resolveDestinations({

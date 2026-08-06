@@ -21,21 +21,28 @@ import { resolveScopeAlias } from './resolveScopeAlias.js';
  * @param assetPathOverride - `--asset-path`, applied to every target; the
  *   same strict / soft-skip split then judges the directory instead of the
  *   missing `agents.assetPath` declaration
- * @returns the metadata that resolved, deduped by `packageName`, and the
- *   reason each skipped package gave — a `--json` run reports those rather
- *   than leaving its reader to scrape stderr
+ * @returns the metadata that resolved, deduped by `packageName`; the reason
+ *   each skipped package gave — a `--json` run reports those rather than
+ *   leaving its reader to scrape stderr; and whether this run is strict, so
+ *   later stages judge their own failures by the same split rather than
+ *   counting `--package` values a second time
  */
 export async function resolveTargets(
   targets: readonly string[],
   rootCwd: string,
   assetPathOverride?: string,
-): Promise<{ resolved: ResolvedMetadata[]; skipped: string[] }> {
+): Promise<{
+  resolved: ResolvedMetadata[];
+  skipped: string[];
+  strict: boolean;
+}> {
   const skipped: string[] = [];
-  if (targets.length === 0) return { resolved: [], skipped };
+  if (targets.length === 0) return { resolved: [], skipped, strict: false };
 
   const isSingleTarget = targets.length === 1;
   const seen = new Set<string>();
   const results: ResolvedMetadata[] = [];
+  let strict = false;
 
   for (const target of targets) {
     const classification = classifyTarget(target);
@@ -53,6 +60,9 @@ export async function resolveTargets(
         skipped,
       );
     } else {
+      // A single named package is the whole run, so its failure is the run's.
+      // A scope alias never is: a workspace member without assets is ordinary.
+      strict = isSingleTarget;
       const meta = await resolvePackage(
         classification.name,
         {
@@ -73,5 +83,5 @@ export async function resolveTargets(
     }
   }
 
-  return { resolved: results, skipped };
+  return { resolved: results, skipped, strict };
 }

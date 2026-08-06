@@ -87,6 +87,13 @@ describe.skipIf(blocker !== null)(
         name: `${SCOPE}/with-assets`,
         files: { 'skills/with-assets-skill/SKILL.md': '# With Assets\n' },
       });
+      // A declaring member of the scope that can supply no hashes at all —
+      // the batch must carry on past it.
+      await installConsumer(scratchRoot, {
+        name: `${SCOPE}/pruned`,
+        assetPath: 'docs/agents',
+        files: {},
+      });
       await installConsumer(scratchRoot, {
         name: `${SCOPE}/without-assets`,
         files: {},
@@ -208,8 +215,8 @@ describe.skipIf(blocker !== null)(
 
     // Nothing can answer for this one's hashes. Hashing the absent directory
     // would report an empty tree, which is how installed content becomes an
-    // orphan — so the target is skipped and named instead.
-    it('skips a declared package with neither a manifest nor the directory', () => {
+    // orphan — so the target is named and never planned.
+    it('never plans a declared package with neither a manifest nor the directory', () => {
       const result = runCli([
         '--package',
         PRUNED,
@@ -220,6 +227,41 @@ describe.skipIf(blocker !== null)(
       expect(result.stdout).toContain('no source hashes');
       expect(result.stdout).not.toContain(`${PRUNED}@`);
     });
+
+    // The verdict is the run's, not the renderer's. A reader that switches on
+    // `--json` must not get a different answer about the same packages.
+    it.each([[[]], [['--json']]])(
+      'fails a single named package that can supply no hashes (%j)',
+      (extra) => {
+        const result = runCli([
+          '--package',
+          PRUNED,
+          '--agent=claude',
+          '--scope=project',
+          ...extra,
+        ]);
+        expect(result.status).toBe(2);
+      },
+    );
+
+    // One member of a scope having nothing to inject is ordinary, so the batch
+    // reports it and carries on — the same soft skip an undeclared member gets.
+    it.each([[[]], [['--json']]])(
+      'keeps a batch at 0 when one member can supply no hashes (%j)',
+      (extra) => {
+        const result = runCli([
+          '--package',
+          SCOPE,
+          '--agent=claude',
+          '--scope=project',
+          ...extra,
+        ]);
+        expect(result.status).toBe(0);
+        const transcript = result.stdout + result.stderr;
+        expect(transcript).toContain('no source hashes');
+        expect(transcript).toContain(`${SCOPE}/declared`);
+      },
+    );
 
     // With an override every enumerated package gets the same asset path, so
     // what filters the scope stops being the declaration and becomes whether

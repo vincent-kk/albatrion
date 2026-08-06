@@ -8,7 +8,6 @@ import {
   applyBlockActions,
   buildPlan,
   computeNamespacePrefixes,
-  needsBuiltManifest,
   partitionActions,
   resolveAgentTarget,
   resolveDestinations,
@@ -126,15 +125,6 @@ async function runUnit(
     projectRoot: agentTarget.projectRoot,
     destination: agentTarget.description,
   } as const;
-
-  if (needsBuiltManifest(target))
-    return {
-      ...base,
-      requiresForce: false,
-      actions: [],
-      report: null,
-      error: `no source hashes — neither dist/agents-hashes.json nor the declared asset directory "${target.assetPath}" is there. Build the package, or pass --asset-path to name a directory that is.`,
-    };
 
   try {
     const manifest = await resolveHashManifest(target, generatedAt);

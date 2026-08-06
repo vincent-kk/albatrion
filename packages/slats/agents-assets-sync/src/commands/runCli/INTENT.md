@@ -11,7 +11,7 @@ Sole `inject-agents-settings` CLI driver. Parses `--package <name...>` from argv
 - `__tests__/` — spec-documents bound to this document's acceptance groups
 - `targets/` — argv `--package` values → `ConsumerPackage[]` (organ):
   `classifyTarget`, `resolvePackage`, `resolveScopeAlias`, `resolveTargets`,
-  `toConsumerPackages`, `resolveHashSource`
+  `toConsumerPackages`, `resolveHashSource`, `selectInjectableTargets`
 - `flags/` — one CLI flag value → a validated value (organ):
   `resolveScopeFlag`, `resolveAgentFlag`, `resolveAssetFlag`, `resolveAssetPathFlag`
 - `renderers/` — the three mutually exclusive output paths (organ):

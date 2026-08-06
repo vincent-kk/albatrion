@@ -10,7 +10,6 @@ import {
   applyBlockActions,
   buildPlan,
   computeNamespacePrefixes,
-  needsBuiltManifest,
   partitionActions,
   resolveAgentTarget,
   resolveDestinations,
@@ -34,7 +33,11 @@ const COPY_CONCURRENCY = 8;
  * prompts, so every required choice must already have arrived as a flag:
  * `resolveScopeFlag` and `resolveAgentFlag` exit 2 when one is missing.
  *
- * @param targets - resolved consumer packages
+ * Every target handed here can supply hashes — the dispatcher drops the ones
+ * that cannot, and owns the verdict for them, so no renderer answers that
+ * question on its own.
+ *
+ * @param targets - resolved consumer packages, all injectable
  * @param flags - parsed CLI flags
  * @param originCwd - directory project-scope resolution starts from
  * @returns the process exit code
@@ -53,18 +56,10 @@ export async function renderPlain(
   const agents = resolveAgentFlag(flags.agent ?? [], false);
   const assetKinds = resolveAssetFlag(flags.asset ?? []);
 
-  const usable = targets.filter((target) => {
-    if (!needsBuiltManifest(target)) return true;
-    logger.warn(
-      `${target.name}: no source hashes — neither dist/agents-hashes.json nor the declared asset directory "${target.assetPath}" is there. Build the package (e.g. yarn build), or pass --asset-path to name a directory that is.`,
-    );
-    return false;
-  });
-
-  const fatalOnError = usable.length * agents.length === 1;
+  const fatalOnError = targets.length * agents.length === 1;
   let failureCount = 0;
 
-  for (const target of usable) {
+  for (const target of targets) {
     for (const agent of agents) {
       logger.heading(`${target.name}@${target.version} · ${agent}`);
       let exitCode: number;

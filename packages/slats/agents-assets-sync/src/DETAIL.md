@@ -16,7 +16,8 @@
 - Missing `--package`, unresolvable package, missing `agents.assetPath` with no `--asset-path`, or an invalid `--agent`/`--asset`/`--asset-path` value: exit 2.
 - An asset root that resolves outside its package is refused whichever named it — a declared `agents.assetPath` and `--asset-path` are judged alike, on the resolved location rather than the spelling, so a symlink out of the package is refused too.
 - `dist/agents-hashes.json` (schema v1) is generated at build time by `buildHashes`; `previousVersions: {}` is reserved for future use. A run driven by `--asset-path` computes the same document in memory instead, so it needs no build output.
-- A declared `agents.assetPath` with no such file falls back to that same in-memory computation, so a package whose build has not run is still injectable. The fallback requires the declared directory to be there: hashing an absent one succeeds with an empty manifest, and an empty manifest makes every already-installed file an orphan that `--force` deletes. With neither present the target is reported and skipped rather than planned.
+- A declared `agents.assetPath` with no such file falls back to that same in-memory computation, so a package whose build has not run is still injectable. The fallback requires the declared directory to be there: hashing an absent one succeeds with an empty manifest, and an empty manifest makes every already-installed file an orphan that `--force` deletes. With neither present the target is reported and never planned.
+- That target is refused the same way one with no `agents.assetPath` is: exit 2 when the run named a single package, a reported skip when it named several or a whole scope. The refusal happens before the renderer is chosen, so the verdict is the run's and does not change with `--json`.
 - The version every surface reports — `--version`, the Ink banner and footer, the `--json` document — comes from `utils/version.ts`, generated from `package.json` by `scripts/inject-version.js`. `yarn version:sync` runs the generator, and `build`, `dev` and each `version:major|minor|patch` bump chain through it, so a bump cannot leave the reported version behind.
 
 ## API Contracts
@@ -76,6 +77,8 @@
 
 - Given a package that declares `agents.assetPath` and ships no `dist/agents-hashes.json`, when the run names it with no `--asset-path`, then the declared directory is hashed at run time and the plan lists its files.
 - Given the same package with the declared directory absent as well, then no source can answer: the run names that and plans nothing for the target.
+- Given that package named alone, then the run exits 2 — with or without `--json`.
+- Given it reached through a scope alias alongside a usable package, then the run exits 0 and plans the usable one — with or without `--json`.
 - Verified by `__tests__/cli.test.ts`.
 
 ### AC-ASSET-PATH-APPLY — a computed manifest drives applying, not just planning
@@ -97,6 +100,7 @@
 
 ## History
 
+- 2026-08-06 — The verdict for a target that can supply no hashes moved out of the renderers. All three asked the same predicate and then each decided for itself what it meant: plain and Ink dropped the target and finished at 0, `--json` reported 1 — so the same packages produced a different CI outcome depending on an output flag. The decision now happens once, before the renderer is chosen, on the strict / soft-skip split a missing `agents.assetPath` already used. Making the renderers unable to answer beats making them agree: a fourth renderer would otherwise reintroduce the same divergence.
 - 2026-08-06 — A declared `agents.assetPath` stopped requiring build output. `--asset-path` had been the only way to reach run-time hashing, so the default path did nothing at all for a package whose `dist/agents-hashes.json` was not built yet — while the very directory it declared sat there ready to hash. The fallback is conditional on that directory existing, and deliberately so: an absent one hashes to an empty manifest, and an empty manifest reclassifies every installed file as an orphan for `--force` to delete.
 - 2026-08-06 — `exports` gained `./package.json`. The ESM-only build left the engine unresolvable by `createRequire`, both on `<name>/package.json` and on the bare specifier, so `--package=@slats/agents-assets-sync` exited 2 and this repository's own `.claude/skills` could not be re-synced by the tool that owns them. The old CJS-built package resolved through the main-entry fallback and hid the gap. Exposing the manifest is the one fix that stays inside the boundary: reaching an ESM-only package any other way means walking `node_modules`, which `runCli/INTENT.md` reserves for `resolveScopeAlias.ts`.
 - 2026-08-06 — `utils/version.ts` had drifted to `0.1.0` while the manifest already read `0.1.1`. Only `build` and `dev` ran the generator, so a `version:*` bump left the constant behind and every surface reporting it stated the previous release until someone rebuilt. The bump scripts now chain `version:sync`, and `AC-VERSION-SYNC` keeps the two in step whether or not a build ran.
@@ -106,4 +110,4 @@
 
 ## Last Updated
 
-2026-08-06 — Recorded the run-time hashing fallback for a declared `agents.assetPath` with no built manifest, and added `AC-CLI-UNBUILT-MANIFEST`.
+2026-08-06 — Stated that the gate verdict is the run's rather than the renderer's and extended `AC-CLI-UNBUILT-MANIFEST` with the exit codes. Earlier the same day: recorded the run-time hashing fallback for a declared `agents.assetPath` with no built manifest.
