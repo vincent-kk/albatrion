@@ -4,7 +4,7 @@
 
 - `ObjectNode`의 기본 프로퍼티 자식 노드와 `oneOf`/`anyOf` 조건부 분기 자식 노드를 통합 관리한다.
 - `oneOf` 인덱스 또는 `anyOf` 인덱스가 변경될 때 비활성 분기 노드를 `__reset__`하고 활성 분기 노드를 복원한다.
-- 분기 활성화 복원 입력은 자식 자신의 실질 컨테이너 상태(`__hasContainerState__` — same-batch 하이드레이션·비활성 분기 주입) > 합성값 순으로 선택한다. pristine 빈 컨테이너(`[]`/`{}`)는 상태로 치지 않으며, 평범한 왕복 재활성화는 기본값 복원 계약을 유지한다.
+- 분기 활성화 복원 입력은 자식 자신의 실질 배열 상태(`__hasArrayState__` — same-batch 하이드레이션·비활성 분기 주입) > 합성값 순으로 선택한다. pristine 빈 배열(`[]`)은 상태로 치지 않으며(배열 한정 판정 — 기본값 객체는 pristine 구분 불가), 평범한 왕복 재활성화는 기본값 복원 계약을 유지한다.
 - `__children__`은 현재 활성 분기만 포함하고, `__subnodes__`는 모든 분기를 포함한다.
 - `__isolated__` 모드에서 `setValue` 직접 호출 시 조건부 필드 필터링(`processValueWithCondition`)을 적용한다.
 - `__draft__` + `__value__` 이중 버퍼로 점진적 값 갱신을 지원한다.
@@ -50,7 +50,7 @@
 
 ## History
 
-- 2026-08-12 — 분기 복원이 자식의 실질 raw 상태를 우선 소비하도록 전환(`__hasContainerState__`), `__propagate__`에 필터링 자식 출력-에코 가드 추가. 이유: 복원·분배가 출력-정제된 합성값을 상태로 소비해 `options.omitTrailing` 배열의 후행 빈 항목 노드가 same-batch 하이드레이션에서 소실됐다. 왕복 재활성화의 기본값 복원 계약(`initialDefault` 스위트)은 유지. 회귀 가드: `array.omit-trailing.composite/conditional` 시나리오.
+- 2026-08-12 — 분기 복원이 자식의 실질 raw 배열 상태를 우선 소비하도록 전환(`__hasArrayState__`), `__propagate__`에 필터링 자식 출력-에코 가드 추가. 이유: 복원·분배가 출력-정제된 합성값을 상태로 소비해 `options.omitTrailing` 배열의 후행 빈 항목 노드가 same-batch 하이드레이션에서 소실됐다. 왕복 재활성화의 기본값 복원 계약(`initialDefault` 스위트)은 유지. 회귀 가드: `array.omit-trailing.composite/conditional` 시나리오.
 
 ## Last Updated
 

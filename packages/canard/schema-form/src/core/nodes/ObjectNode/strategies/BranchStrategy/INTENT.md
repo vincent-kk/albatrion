@@ -27,7 +27,7 @@
 - `processValueWithCondition`으로 조건부 필드 필터링 적용
 - `__locked__` 플래그로 자식-부모 재귀 업데이트 차단
 - `validateSchemaType`으로 이전 값 재사용 가능 여부 확인
-- 분기 복원은 자식의 실질 raw 상태(`__hasContainerState__`)를 우선 소비 — 정제된 합성값을 상태로 되먹이지 않되, 평범한 재활성화는 기본값 복원 유지
+- 분기 복원은 자식의 실질 raw 배열 상태(`__hasArrayState__`)를 우선 소비 — 정제된 합성값을 상태로 되먹이지 않되, 평범한 재활성화는 기본값 복원 유지
 
 ### Ask first
 

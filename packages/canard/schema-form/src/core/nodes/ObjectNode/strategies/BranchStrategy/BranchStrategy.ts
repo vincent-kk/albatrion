@@ -79,9 +79,9 @@ export class BranchStrategy implements ObjectNodeStrategy {
    * Whether an activating child already carries live array state of its own.
    * @param node - Child node being restored by a branch switch
    * @returns `true` for an array child holding items — a same-batch hydration or an inactive-branch injection whose raw item nodes (incl. trailing empties) must survive the restore
-   * @remarks Deliberately array-only: defaulted objects legitimately hold content right after a reset, so content cannot distinguish their pristine state and they keep the composed/defaults restoration chain.
+   * @remarks Deliberately array-only: defaulted objects legitimately hold content right after a reset, so content cannot distinguish their pristine state and they keep the composed/defaults restoration chain. The type check runs before the `value` read, so non-array getters (which may recompose) are never touched.
    */
-  private __hasContainerState__(node: SchemaNode): boolean {
+  private __hasArrayState__(node: SchemaNode): boolean {
     if (node.type !== 'array') return false;
     const value = node.value;
     return isArray(value) && value.length > 0;
@@ -358,7 +358,7 @@ export class BranchStrategy implements ObjectNodeStrategy {
 
   /**
    * Updates child nodes when oneOf index changes, if oneOf schema exists.
-   * @remarks Restore input prefers a child's own live array state (`__hasContainerState__`) over the composed value; only that case widens the preferLatest/default gates, so every other path keeps the restore-defaults contract.
+   * @remarks Restore input prefers a child's own live array state (`__hasArrayState__`) over the composed value; only that case widens the preferLatest/default gates, so every other path keeps the restore-defaults contract.
    * @private
    */
   private __processOneOfChildren__(isolation: boolean) {
@@ -385,27 +385,27 @@ export class BranchStrategy implements ObjectNodeStrategy {
       for (const child of oneOfChildNodeMap.values()) {
         const node = child.node;
         const previousNode = previousOneOfChildNodeMap?.get(node.name)?.node;
-        const ownState = this.__hasContainerState__(node);
-        const candidate = ownState ? node.value : this.__value__?.[node.name];
-        const restoreValue = validateSchemaType(
-          candidate,
-          node.type,
-          node.nullable,
-        )
-          ? candidate
-          : undefined;
-        const preserveOwnState = ownState && restoreValue !== undefined;
+        const hasArrayState = this.__hasArrayState__(node);
+        const candidate = hasArrayState
+          ? node.value
+          : this.__value__?.[node.name];
+        const restoreValue =
+          candidate !== undefined &&
+          validateSchemaType(candidate, node.type, node.nullable)
+            ? candidate
+            : undefined;
+        const preserveArrayState = hasArrayState && restoreValue !== undefined;
         node.__reset__({
           updateScoped: true,
           isolate: !preserveInitial && hasCompositionSchema(node),
           preferLatest:
             isolation ||
             preserveInitial ||
-            preserveOwnState ||
+            preserveArrayState ||
             (node.type === previousNode?.type && isTerminalType(node.type)),
           applyDerivedValue: true,
           checkDefaultValueFirst:
-            isolation === false && !preserveInitial && !preserveOwnState,
+            isolation === false && !preserveInitial && !preserveArrayState,
           fallbackValue: restoreValue,
         });
         node.__updateComputedPropertiesRecursively__();
@@ -459,8 +459,8 @@ export class BranchStrategy implements ObjectNodeStrategy {
           this.__anyOfChildNodeMapList__[enables[i]].values();
         for (const child of anyOfChildNodes) {
           const node = child.node;
-          const ownState = this.__hasContainerState__(node);
-          const restoreValue = ownState
+          const hasArrayState = this.__hasArrayState__(node);
+          const restoreValue = hasArrayState
             ? node.value
             : this.__value__?.[node.name];
           node.__reset__({
@@ -469,7 +469,7 @@ export class BranchStrategy implements ObjectNodeStrategy {
             preferLatest:
               isolation ||
               preserveInitial ||
-              (ownState &&
+              (hasArrayState &&
                 validateSchemaType(restoreValue, node.type, node.nullable)),
             applyDerivedValue: true,
             fallbackValue: restoreValue,

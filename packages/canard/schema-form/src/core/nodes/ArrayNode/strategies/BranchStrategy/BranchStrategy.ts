@@ -61,6 +61,7 @@ export class BranchStrategy implements ArrayNodeStrategy {
     this.__idle__ = false;
     this.__nullish__ = false;
     this.__expired__ = true;
+    this.__normalizedExpired__ = true;
   }
 
   /** Revision counter for generating unique keys for array elements */
@@ -77,6 +78,12 @@ export class BranchStrategy implements ArrayNodeStrategy {
 
   /** Current value of the array node */
   private __value__: ArrayValue = [];
+
+  /** Cached normalized composition; rebuilt lazily while `__normalizedExpired__` is set */
+  private __normalized__: ArrayValue = [];
+
+  /** Flag indicating whether the cached normalized composition is stale */
+  private __normalizedExpired__: boolean = true;
 
   /** Array of child nodes */
   private __children__: ChildNode[] = [];
@@ -202,6 +209,7 @@ export class BranchStrategy implements ArrayNodeStrategy {
       source.output = input;
       this.__idle__ = false;
       this.__nullish__ = false;
+      this.__normalizedExpired__ = true;
       this.__emitChange__(SetValueOption.Default, batched, false);
     };
   }
@@ -242,10 +250,15 @@ export class BranchStrategy implements ArrayNodeStrategy {
   /**
    * Gets the normalized composition of the array.
    * @returns Array of the children's normalized values, or null/undefined mirroring `value`
+   * @remarks Cached between structural/output changes so hot readers (upward emission, `__propagate__` echo guard) get a stable reference without re-allocating.
    */
   public get normalizedValue() {
     if (this.__nullish__ == null) return this.__nullish__;
-    else return this.__toNormalized__();
+    if (this.__normalizedExpired__) {
+      this.__normalized__ = this.__toNormalized__();
+      this.__normalizedExpired__ = false;
+    }
+    return this.__normalized__;
   }
 
   /**
