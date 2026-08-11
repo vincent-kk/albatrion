@@ -60,7 +60,8 @@
 ## History
 
 - 2026-08-12 — 분기 복원이 자식의 실질 raw 배열 상태를 우선 소비하도록 전환(`__hasArrayState__`), `__propagate__`에 필터링 자식 출력-에코 가드 추가. 이유: 복원·분배가 출력-정제된 합성값을 상태로 소비해 `options.omitTrailing` 배열의 후행 빈 항목 노드가 same-batch 하이드레이션에서 소실됐다. 왕복 재활성화의 기본값 복원 계약(`initialDefault` 스위트)은 유지. 회귀 가드: `array.omit-trailing.composite/conditional` 시나리오.
+- 2026-06-06 — 초기화 순서 불변식과 초기 computed 정합성을 명문화. 이유: 분기 노드가 computed 속성 계산 전에 복원되면 조건부 필드가 잘못된 활성 상태로 초기화됐다. 회귀 가드: `BranchStrategy.oneOf.initialComputed`.
 
 ## Last Updated
 
-2026-08-12 — 분기 복원 raw 상태 채널 요구사항·수용 기준 추가 (직전: 2026-06-06 초기화 순서 불변식 + 초기 computed 정합성 명문화, 회귀 가드 `BranchStrategy.oneOf.initialComputed`).
+2026-08-12 — 분기 복원 raw 상태 채널 요구사항·수용 기준 추가.
