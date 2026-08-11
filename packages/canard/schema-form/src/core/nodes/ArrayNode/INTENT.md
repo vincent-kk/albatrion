@@ -15,8 +15,8 @@ JSON Schema `array` 타입을 처리하는 노드. 배열 요소 관리와 `push
 ## Conventions
 
 - `group === 'terminal'`이면 `TerminalStrategy`, 아니면 `BranchStrategy` 선택
-- 출력 필터: `omitTrailing`(opt-in)은 부모 전파와 `outputValue` 양쪽에, `omitEmpty`(기본 on)는 부모 전파에만 적용 — 자식 노드와 `value` getter는 원본 유지
-- `minItems` 조건을 충족할 만큼 기본 항목 자동 생성
+- 값 정제: `omitTrailing`(opt-in)은 부모 전파와 `normalizedValue` 양쪽에, `omitEmpty`(기본 on)는 부모 전파에만 적용 — 자식 노드와 `value` getter는 원본 유지
+- `minItems` 기본 항목 자동 생성: 생성 시 + Reset 옵션의 `undefined` 적용 시 재충전 (분기 복원에서 빈 항목 유지)
 - `push`/`remove` 등 조작 메서드는 `Promise<value>` 반환 (microtask 후 resolve)
 
 ## Boundaries
@@ -27,7 +27,7 @@ JSON Schema `array` 타입을 처리하는 노드. 배열 요소 관리와 `push
 - 배열 조작 메서드(`push`, `pop`, `remove`, `clear`)는 반드시 전략 객체에 위임
 - `maxItems`/`minItems` 제약은 `resolveArrayLimits`로 계산한 값을 사용
 - 스키마 검증 오류는 `JsonSchemaError`로 던지기
-- `onChange` 전파 필터는 `resolveArrayValueFilter` 합성(순서: omitTrailing → omitEmpty), `outputValue`는 `omitTrailingArray`만 적용
+- `onChange` 전파 필터는 `resolveArrayValueFilter` 합성(순서: omitTrailing → omitEmpty), `normalizedValue`는 `omitTrailingArray`만 적용
 
 ### Ask first
 

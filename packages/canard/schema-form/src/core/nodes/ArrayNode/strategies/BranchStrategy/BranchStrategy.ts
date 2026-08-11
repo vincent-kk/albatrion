@@ -253,14 +253,28 @@ export class BranchStrategy implements ArrayNodeStrategy {
    * Applies input value to the array node.
    * @param input - Array value to set
    * @param option - Setting options
+   * @remarks A `Reset`-flagged `undefined` application re-establishes the construction-time
+   *          `minItems` fill, so empty item nodes survive branch restores and form resets;
+   *          a plain `setValue(undefined)` still clears every item.
    */
   public applyValue(input: ArrayValue | Nullish, option: UnionSetValueOption) {
     if (input == null) {
+      const restore =
+        input === undefined &&
+        this.__minItems__ > 0 &&
+        (option & SetValueOption.Reset) > 0;
       this.__locked__ = true;
       this.clear(option);
+      if (restore)
+        while (this.length < this.__minItems__) this.push(void 0, true, option);
       this.__locked__ = false;
-      this.__nullish__ =
-        input === null ? (this.__host__.nullable ? input : false) : undefined;
+      this.__nullish__ = restore
+        ? false
+        : input === null
+          ? this.__host__.nullable
+            ? input
+            : false
+          : undefined;
       this.__emitChange__(option, false);
     } else if (isArray(input)) {
       this.__locked__ = true;
