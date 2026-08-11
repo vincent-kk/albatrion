@@ -134,19 +134,20 @@ export type StringSchema<Options extends Dictionary = object> =
 export type NonNullableStringSchema<Options extends Dictionary = object> =
   BasicSchema &
     BaseNonNullableStringSchema<Options, JsonSchema<Options>> & {
-      options?: StringSchemaOptions;
+      options?: {
+        /** Replace the stored value with its whitespace-trimmed form when the field emits `Blurred` */
+        trim?: boolean;
+      };
     };
 /** Nullable string schema (type: ['string', 'null']) with optional trim support */
 export type NullableStringSchema<Options extends Dictionary = object> =
   BasicSchema &
     BaseNullableStringSchema<Options, JsonSchema<Options>> & {
-      options?: StringSchemaOptions;
+      options?: {
+        /** Replace the stored value with its whitespace-trimmed form when the field emits `Blurred` */
+        trim?: boolean;
+      };
     };
-/** String-specific field options (intersected with the common `BasicSchema.options`) */
-type StringSchemaOptions = {
-  /** Remove trailing whitespace from the string's outgoing value (parent propagation, root validation, external emission); child nodes keep the raw string */
-  trim?: boolean;
-};
 
 /** Boolean type schema */
 export type BooleanSchema<Options extends Dictionary = object> =
@@ -167,19 +168,20 @@ export type ArraySchema<Options extends Dictionary = object> =
 export type NonNullableArraySchema<Options extends Dictionary = object> =
   BasicSchema &
     BaseNonNullableArraySchema<Options, JsonSchema<Options>> & {
-      options?: ArraySchemaOptions;
+      options?: {
+        /** Remove trailing `undefined` items from the array's normalized value (parent propagation, root validation, external emission); child nodes keep the raw array */
+        omitTrailing?: boolean;
+      };
     };
 /** Nullable array schema (type: ['array', 'null']) */
 export type NullableArraySchema<Options extends Dictionary = object> =
   BasicSchema &
     BaseNullableArraySchema<Options, JsonSchema<Options>> & {
-      options?: ArraySchemaOptions;
+      options?: {
+        /** Remove trailing `undefined` items from the array's normalized value (parent propagation, root validation, external emission); child nodes keep the raw array */
+        omitTrailing?: boolean;
+      };
     };
-/** Array-specific field options (intersected with the common `BasicSchema.options`) */
-type ArraySchemaOptions = {
-  /** Remove trailing `undefined` items from the array's outgoing value (parent propagation, root validation, external emission); child nodes keep the raw array */
-  omitTrailing?: boolean;
-};
 
 /** Object type schema */
 export type ObjectSchema<Options extends Dictionary = object> =
@@ -189,23 +191,24 @@ export type ObjectSchema<Options extends Dictionary = object> =
 export type NonNullableObjectSchema<Options extends Dictionary = object> =
   BasicSchema &
     BaseNonNullableObjectSchema<Options, JsonSchema<Options>> & {
-      options?: ObjectSchemaOptions;
+      /** Property keys order for rendering */
+      propertyKeys?: readonly string[];
+      /** Virtual property definitions for conditional fields */
+      virtual?: VirtualSchemaProperties;
     };
 /** Nullable object schema (type: ['object', 'null']) with optional property ordering and virtual properties */
 export type NullableObjectSchema<Options extends Dictionary = object> =
   BasicSchema &
     BaseNullableObjectSchema<Options, JsonSchema<Options>> & {
-      options?: ObjectSchemaOptions;
+      /** Property keys order for rendering */
+      propertyKeys?: readonly string[];
+      /** Virtual property definitions for conditional fields */
+      virtual?: VirtualSchemaProperties;
     };
-/** Object-specific field options (intersected with the common `BasicSchema.options`) */
-type ObjectSchemaOptions = {
-  /** Property keys order for rendering */
-  propertyKeys?: readonly string[];
-  /** Virtual schema property definitions (cannot be nullable) */
-  virtual?: Dictionary<
-    { fields: readonly string[]; nullable?: never } & BasicSchema
-  >;
-};
+/** Virtual schema property definitions (cannot be nullable) */
+type VirtualSchemaProperties = Dictionary<
+  { fields: readonly string[]; nullable?: never } & BasicSchema
+>;
 
 /** Virtual node schema for non-schema computed fields */
 export type VirtualSchema<Options extends Dictionary = object> = {
