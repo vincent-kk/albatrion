@@ -203,6 +203,7 @@ export class BranchStrategy implements ObjectNodeStrategy {
    * Propagates value changes to child nodes.
    * @param replace - Whether to replace existing values
    * @param option - Setting options
+   * @remarks Skips a filtering child (raw ≠ normalized) when the incoming slice equals its own normalized output — echoing it back would erase raw-only state such as trailing empty array items.
    * @private
    */
   private __propagate__(
@@ -223,9 +224,6 @@ export class BranchStrategy implements ObjectNodeStrategy {
       const name = node.name;
       if (replace || nullify || (name in committed && name in current)) {
         const nextValue = nullify ? null : current[name];
-        /* Feeding a filtering child its own normalized output back would
-         * erase raw-only state (e.g. trailing empty array items), so skip
-         * the echo when the child already emits exactly this value. */
         if (
           !nullify &&
           node.normalizedValue !== node.value &&
@@ -360,6 +358,7 @@ export class BranchStrategy implements ObjectNodeStrategy {
 
   /**
    * Updates child nodes when oneOf index changes, if oneOf schema exists.
+   * @remarks Restore input prefers a child's own live array state (`__hasContainerState__`) over the composed value; only that case widens the preferLatest/default gates, so every other path keeps the restore-defaults contract.
    * @private
    */
   private __processOneOfChildren__(isolation: boolean) {
@@ -386,10 +385,6 @@ export class BranchStrategy implements ObjectNodeStrategy {
       for (const child of oneOfChildNodeMap.values()) {
         const node = child.node;
         const previousNode = previousOneOfChildNodeMap?.get(node.name)?.node;
-        /* Restore priority: the node's own live array state (a same-batch
-         * hydration or an inactive-branch injection) > the composed value.
-         * Only the own-state case widens the preferLatest/default gates —
-         * composed candidates keep the original restore-defaults contract. */
         const ownState = this.__hasContainerState__(node);
         const candidate = ownState ? node.value : this.__value__?.[node.name];
         const restoreValue = validateSchemaType(

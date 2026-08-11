@@ -196,9 +196,6 @@ export class BranchStrategy implements ArrayNodeStrategy {
     return (input, batched) => {
       const source = this.__sourceMap__.get(key);
       if (!source) return;
-      /* Two channels per element: `data` keeps the child's RAW value (state —
-       * trailing empty items survive restores), `output` keeps the child's
-       * filtered emission (what the array contributes upward). */
       const next = source.node.value;
       if (source.data === next && source.output === input) return;
       source.data = next;

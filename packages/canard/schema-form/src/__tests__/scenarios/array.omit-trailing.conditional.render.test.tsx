@@ -57,10 +57,7 @@ describe('array omitTrailing × conditional schemas (render)', () => {
   });
 
   it('restores the empty minItems inputs after a branch round-trip (a → b → a)', async () => {
-    // Reactivation follows the platform's restore-defaults contract (typed
-    // values reset, matching nested-defaults restoration) — what MUST survive
-    // is the minItems empty-input skeleton, re-established by the Reset
-    // refill, so the field is immediately usable again.
+    // Reactivation keeps the restore-defaults contract; the Reset refill re-establishes the minItems skeleton.
     const form = await renderForm(oneOfSchema);
     await form.selectOption('/disc', 'a');
     await form.type('/arr/0', 'x');
@@ -132,9 +129,6 @@ describe('array omitTrailing × conditional schemas (render)', () => {
   });
 
   it('keeps the empty minItems inputs across an &active exclude/restore cycle', async () => {
-    // Deactivation resets the node value (active=false excludes it from
-    // output and clears it); reactivation must still present the minItems
-    // empty inputs so the field is immediately usable again.
     const activeSchema = {
       type: 'object',
       properties: {

@@ -328,9 +328,6 @@ export const PrefixItemsAndTerminal = () => {
 };
 
 // equivalent: array.omit-trailing.composite.render.test.tsx#1-4 (setValue × oneOf × nested)
-// Known gap (pinned as it.fails in the test): when ONE setValue both selects
-// the branch and hydrates the nested arrays, trailing empty item inputs are
-// dropped by the branch restore (values stay correct).
 export const SetValueCompositeBranchesNested = () => {
   const schema = {
     type: 'object',
@@ -383,9 +380,6 @@ export const SetValueCompositeBranchesNested = () => {
 };
 
 // equivalent: array.omit-trailing.composite.render.test.tsx#6-8 (injectTo composites)
-// injectTo hands the handler the RAW source value (mirror shows the untrimmed
-// copy), and a same-round branch flip cannot address fields inside the branch
-// it just activated — the next round applies.
 export const InjectToComposite = () => {
   const schema = {
     type: 'object',

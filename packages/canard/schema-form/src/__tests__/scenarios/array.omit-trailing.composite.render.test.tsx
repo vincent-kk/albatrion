@@ -78,13 +78,7 @@ describe('array omitTrailing × composite surfaces (render)', () => {
   });
 
   it('characterizes the hydration vs emission split for an all-empty inner array (anyOf, outer+inner trimming)', async () => {
-    // Hydration snapshots read inner.normalizedValue (trim only) → an
-    // all-empty inner array lands as []; a trailing [] is NOT undefined, so
-    // the outer omitTrailing keeps it. A later interactive change to that
-    // inner array flows through the propagation chain (trim → omitEmpty) and
-    // collapses it to undefined, which the outer trim then removes. Both
-    // stances are pinned here; the split predates omitTrailing (omitEmpty
-    // hydration behaves the same) and is reported as a design note.
+    // Hydration keeps an all-empty inner as [] (a trailing [] is not undefined); interactive edits later collapse it to undefined — pre-existing dual path.
     const anyOfNestedSchema = {
       type: 'object',
       properties: {
@@ -177,11 +171,7 @@ describe('array omitTrailing × composite surfaces (render)', () => {
   });
 
   it('characterizes injectTo receiving the RAW source value (not the normalized one)', async () => {
-    // The injectTo handler reads this.value (AbstractNode), so a trimming
-    // array hands its handler the raw [1, u, u] — the mirror target then
-    // holds and emits the untrimmed copy. Pinned as the current contract;
-    // whether injectTo should receive normalizedValue is an open design
-    // question reported to the owner.
+    // injectTo handlers receive the raw source value, so the mirror holds the untrimmed copy (current contract).
     const mirrorSchema = {
       type: 'object',
       properties: {
@@ -200,11 +190,8 @@ describe('array omitTrailing × composite surfaces (render)', () => {
     expect(form.getValue()?.mirror).toEqual([1, undefined, undefined]);
   });
 
-  it('applies same-round injectTo writes into a just-flipped branch after the cascade settles', async () => {
-    // A write whose target only becomes addressable because THIS round flips
-    // the discriminator cannot resolve synchronously; the injector retries
-    // unresolved writes once after the cascade settles, so a single trigger
-    // predictably lands both the flip and the nested fill.
+  it('lands a branch flip and its nested array fill in one injectTo round', async () => {
+    // Inactive-branch injection sets the node value and the activation restore keeps that own state.
     const flipAndFillSchema = {
       type: 'object',
       properties: {
