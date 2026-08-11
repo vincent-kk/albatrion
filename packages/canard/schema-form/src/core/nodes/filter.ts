@@ -1,3 +1,4 @@
+import type { SchemaNode } from '../types';
 import type { ArrayNode } from './ArrayNode';
 import type { BooleanNode } from './BooleanNode';
 import type { NullNode } from './NullNode';
@@ -5,7 +6,6 @@ import type { NumberNode } from './NumberNode';
 import type { ObjectNode } from './ObjectNode';
 import type { StringNode } from './StringNode';
 import type { VirtualNode } from './VirtualNode';
-import type { SchemaNode } from '../types';
 
 export { isSchemaNode } from './AbstractNode';
 

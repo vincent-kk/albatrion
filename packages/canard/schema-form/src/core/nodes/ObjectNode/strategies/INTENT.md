@@ -6,12 +6,12 @@
 
 ## Structure
 
-| 경로                | 역할                                                                                           |
-| ------------------- | ---------------------------------------------------------------------------------------------- |
-| `BranchStrategy/`   | 자식 노드 생성·oneOf/anyOf 조건 처리 전략                                                      |
-| `TerminalStrategy/` | 자식 노드 없이 객체 값을 직접 처리하는 전략                                                    |
+| 경로                | 역할                                                                                  |
+| ------------------- | ------------------------------------------------------------------------------------- |
+| `BranchStrategy/`   | 자식 노드 생성·oneOf/anyOf 조건 처리 전략                                             |
+| `TerminalStrategy/` | 자식 노드 없이 객체 값을 직접 처리하는 전략                                           |
 | `types/`            | `ObjectNodeStrategy` 인터페이스 organ — `value`, `children`, `subnodes`, `applyValue` |
-| `index.ts`          | `BranchStrategy`, `TerminalStrategy`, `ObjectNodeStrategy` re-export                           |
+| `index.ts`          | `BranchStrategy`, `TerminalStrategy`, `ObjectNodeStrategy` re-export                  |
 
 ## Conventions
 
