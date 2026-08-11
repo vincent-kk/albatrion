@@ -9,6 +9,7 @@ This file contains links to documentation sections following the llmstxt.org sta
 - [@canard](https://vincent-kk.github.io/docs/canard): JSON Schema-based form generation ecosystem for React.
 - [API Reference](https://vincent-kk.github.io/albatrion/ko/docs/canard/schema-form/api-reference): import ForAI from '@site/src/components/ForAI';
 - [Core Concepts](https://vincent-kk.github.io/albatrion/ko/docs/canard/schema-form/core-concepts): import ForAI from '@site/src/components/ForAI';
+- [Array Output Filters (omitTrailing / omitEmpty)](https://vincent-kk.github.io/albatrion/ko/docs/canard/schema-form/examples/array-output-filters): import LazyDemo from '@site/src/components/LazyDemo';
 - [Auto-Calculated Fields](https://vincent-kk.github.io/albatrion/ko/docs/canard/schema-form/examples/auto-calculation): import LazyDemo from '@site/src/components/LazyDemo';
 - [Basic Form](https://vincent-kk.github.io/albatrion/ko/docs/canard/schema-form/examples/basic-form): import LazyDemo from '@site/src/components/LazyDemo';
 - [Conditional Registration Form](https://vincent-kk.github.io/albatrion/ko/docs/canard/schema-form/examples/conditional-registration): import LazyDemo from '@site/src/components/LazyDemo';
