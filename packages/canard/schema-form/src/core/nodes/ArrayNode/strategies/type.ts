@@ -16,6 +16,12 @@ export interface ArrayNodeStrategy {
   get value(): ArrayValue | Nullish;
 
   /**
+   * Gets the normalized composition of the array — each item contributed as its `normalizedValue`.
+   * @returns Array whose items are the children's normalized values, or the value itself for strategies without children
+   */
+  get normalizedValue(): ArrayValue | Nullish;
+
+  /**
    * Gets the current length of the array.
    * @returns Length of the array
    */

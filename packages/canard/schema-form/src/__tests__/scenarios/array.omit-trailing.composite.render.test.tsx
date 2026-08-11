@@ -54,7 +54,7 @@ describe('array omitTrailing × composite surfaces (render)', () => {
     expect(form.exists('/matrix/1/1')).toBe(true);
   });
 
-  it.fails('preserves trailing empty inputs when the same setValue activates the branch // BUG: the oneOf restore re-applies the parent-composed (already trimmed) value as child state, so the trailing empty item nodes are dropped (inner children 1·2 instead of 2·3); same root cause as the minItems refill issue — the branch stash consumes the output channel instead of raw state', async () => {
+  it('preserves trailing empty inputs when the same setValue activates the branch (restored from raw state)', async () => {
     const form = await renderForm(oneOfNestedSchema);
     await form.setValue({
       disc: 'a',
@@ -110,7 +110,10 @@ describe('array omitTrailing × composite surfaces (render)', () => {
     const form = await renderForm(anyOfNestedSchema);
     await form.setValue({
       mode: 'list',
-      matrix: [[1, undefined], [undefined, undefined]],
+      matrix: [
+        [1, undefined],
+        [undefined, undefined],
+      ],
     });
     expect(form.getValue()?.matrix).toEqual([[1], []]);
     expect(form.caughtErrors()).toEqual([]);
@@ -197,12 +200,11 @@ describe('array omitTrailing × composite surfaces (render)', () => {
     expect(form.getValue()?.mirror).toEqual([1, undefined, undefined]);
   });
 
-  it('characterizes injectTo branch-flip timing: same-round nested writes skip, the next round applies', async () => {
-    // Injection targets resolve at injection time; a field that only becomes
-    // addressable because THIS round flips the discriminator is not found,
-    // so its write is silently skipped. The next injection round (branch now
-    // active) applies normally. Pre-existing injectTo semantics, unrelated
-    // to omitTrailing — pinned here because composite users will hit it.
+  it('applies same-round injectTo writes into a just-flipped branch after the cascade settles', async () => {
+    // A write whose target only becomes addressable because THIS round flips
+    // the discriminator cannot resolve synchronously; the injector retries
+    // unresolved writes once after the cascade settles, so a single trigger
+    // predictably lands both the flip and the nested fill.
     const flipAndFillSchema = {
       type: 'object',
       properties: {
@@ -232,9 +234,6 @@ describe('array omitTrailing × composite surfaces (render)', () => {
     await form.type('/trigger', 'go');
     await form.flush(10);
     expect(form.getValue()?.disc).toBe('a');
-    expect(form.getValue()?.matrix).toBeUndefined();
-    await form.type('/trigger', 'go2');
-    await form.flush(10);
     expect(form.getValue()?.matrix).toEqual([[1]]);
   });
 

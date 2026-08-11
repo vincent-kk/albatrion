@@ -57,13 +57,15 @@ describe('array omitTrailing × conditional schemas (render)', () => {
   });
 
   it('restores the empty minItems inputs after a branch round-trip (a → b → a)', async () => {
-    // Branch switches reset container nodes (only same-type terminals restore
-    // via preferLatest), so the typed value resets — what MUST survive is the
-    // minItems empty-input skeleton, which the Reset-refill re-establishes.
+    // Reactivation follows the platform's restore-defaults contract (typed
+    // values reset, matching nested-defaults restoration) — what MUST survive
+    // is the minItems empty-input skeleton, re-established by the Reset
+    // refill, so the field is immediately usable again.
     const form = await renderForm(oneOfSchema);
     await form.selectOption('/disc', 'a');
     await form.type('/arr/0', 'x');
     await form.selectOption('/disc', 'b');
+    expect(form.getValue()?.arr).toBeUndefined();
     await form.selectOption('/disc', 'a');
     expect(form.exists('/arr/0')).toBe(true);
     expect(form.exists('/arr/1')).toBe(true);

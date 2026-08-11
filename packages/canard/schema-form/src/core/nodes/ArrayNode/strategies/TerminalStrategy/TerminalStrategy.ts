@@ -121,6 +121,14 @@ export class TerminalStrategy implements ArrayNodeStrategy {
   }
 
   /**
+   * Gets the normalized composition of the array.
+   * @returns The value itself — a terminal array has no children to normalize
+   */
+  public get normalizedValue() {
+    return this.__value__;
+  }
+
+  /**
    * Gets the list of child nodes.
    * @returns Empty array (Terminal strategy does not manage child nodes)
    */
