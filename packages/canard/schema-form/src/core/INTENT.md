@@ -44,9 +44,7 @@ JSON Schema를 노드 트리로 변환하고 폼 상태를 관리하는 핵심 �
 
 ## Dependencies
 
-- `@winglet/json` — JSONPointer 처리
-- `@winglet/json-schema` — Schema 타입 및 resolveSchema
+- `@winglet/json`·`@winglet/json-schema` — JSONPointer·resolveSchema
 - `@winglet/common-utils` — 필터, 유틸
 - `@aileron/declare` — `Fn` 등 공통 타입
-- `@/schema-form/helpers/` — 내부 헬퍼
-- `@/schema-form/types` — `AllowedValue`, `JsonSchema`, `ValidatorFactory`
+- `@/schema-form/helpers`·`types` — 내부 헬퍼, 공유 타입

@@ -12,7 +12,7 @@
 
 ## Conventions
 
-- `__keys__` (순서 배열) + `__sourceMap__` (키 → 데이터·노드 맵)으로 요소 관리
+- `__keys__` + `__sourceMap__`(키 → `{data: raw 상태, output: 자식 방출본, node}`)로 요소 관리; `normalizedValue`는 output 합성의 lazy 캐시(`__normalizedExpired__`)
 - 각 요소는 revision 카운터(`__revision__`)로 생성된 고유 키(`#N`)를 가짐
 - 배치 변경은 `RequestEmitChange` 이벤트로 deferred 처리
 - `__locked__` 플래그로 재귀 업데이트 방지

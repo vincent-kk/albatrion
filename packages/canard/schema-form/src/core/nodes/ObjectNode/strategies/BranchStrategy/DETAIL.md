@@ -38,15 +38,24 @@
 | `applyValue(input, option)` | method | 외부에서 값 적용 (draft 갱신 → emit)                                  |
 | `initialize()`              | method | 자식 노드 활성화 및 초기 분기 확정 (`ObjectNode.__initialize__` 전용) |
 
-### 수용 기준
+## Acceptance Criteria
+
+### initial-mount — 초기 분기 확정과 computed 정합
 
 - oneOf 스키마를 가진 `ObjectNode`를 초기 마운트할 때 `children`은 활성 분기의 자식을 포함해야 한다 (빈 배열이어서는 안 됨).
 - `initialize()` 완료 후 `__children__`은 `__processChildren__()` 결과와 동일해야 한다.
 - `UpdateComputedProperties` 이벤트 구독 시점에 `__oneOfChildNodeMap__`과 `__anyOfChildNodeMaps__`는 이미 초기값으로 채워져 있어야 한다.
-- `oneOfIndex`가 변경될 때마다 이전 분기 노드는 `__reset__`되고 새 분기 노드는 복원된다. 자식이 실질 컨테이너 상태를 이미 갖고 있으면(하이드레이션·비활성 주입) 그 raw 상태가 복원 입력이 되어 출력 필터(omitTrailing 등)가 자식 구조(빈 항목 포함)를 바꾸지 않고, 그 외 재활성화는 기본값을 복원한다.
-- `__subnodes__`와 `__children__`은 항상 `BranchStrategy` 내부에서만 동기화된다.
 - 순수 computed 속성(`visible`/`readOnly`/`computeManager.active`)은 `__primeInitialBranch__` 동기 시점에 이미 확정된다. 단, oneOf 분기 자식의 scope-gated `active`(`__scoped__`)는 마이크로태스크 `__processOneOfChildren__`의 `__reset__({ updateScoped })`에서 확정되며, 목록이 동기 확정된 덕에 안전하게 복구된다.
 - `__children__`이 `[]`로 시작하여 constructor 단계 `__processComputedProperties__`가 no-op이어도, 초기화 정착 후 비활성 자식 값은 최종 `value`에서 제외되어야 한다.
+
+### branch-restore — 분기 전환 복원
+
+- `oneOfIndex`가 변경될 때마다 이전 분기 노드는 `__reset__`되고 새 분기 노드는 복원된다. 자식이 실질 배열 상태를 이미 갖고 있으면(`__hasArrayState__` — same-batch 하이드레이션·비활성 주입) 그 raw 상태가 복원 입력이 되어 출력 필터(omitTrailing 등)가 자식 구조(빈 항목 포함)를 바꾸지 않고, 그 외 재활성화는 기본값을 복원한다.
+- `__propagate__`는 필터링 중(raw ≠ normalized)인 자식이 이미 방출 중인 값과 동일한 조각을 되적용하지 않는다.
+
+### children-sync — 자식 목록 동기화
+
+- `__subnodes__`와 `__children__`은 항상 `BranchStrategy` 내부에서만 동기화된다.
 
 ## History
 

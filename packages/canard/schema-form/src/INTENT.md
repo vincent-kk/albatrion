@@ -12,16 +12,14 @@ JSON Schema 기반 폼 생성 라이브러리의 전체 소스 루트. 노드 �
 - `formTypeDefinitions/` — 기본 FormTypeInput 정의 (string, number, boolean, array 등)
 - `providers/` — React Context Provider들 (RootNode, FormTypeInputs, Renderer 등)
 - `types/` — 공유 타입 정의 (rolled 포함)
-- `errors/` — 도메인 에러 클래스
-- `helpers/` — 내부 유틸리티 함수
+- `errors/`·`helpers/` — 도메인 에러 클래스·내부 유틸리티
 
 ## Conventions
 
-- TypeScript strict 모드
+- TypeScript strict 모드; barrel export는 `index.ts` 로만 수행
 - 클래스 멤버는 Domain-First 순서 (Identity → Tree → Value → Computed → State → Validation → Events → Lifecycle → Constructor)
 - JSDoc: `@internal`, `@remarks`, `@param name - desc`, `@example` 태그 사용
 - 내부 필드는 `__fieldName__` 이중 언더스코어 네이밍
-- barrel export는 `index.ts` 로만 수행
 
 ## Boundaries
 
@@ -47,9 +45,6 @@ JSON Schema 기반 폼 생성 라이브러리의 전체 소스 루트. 노드 �
 
 ## Dependencies
 
-- `@winglet/common-utils` — 필터, 직렬화, 에러 기반 클래스
-- `@winglet/react-utils` — React 유틸리티
-- `@winglet/json` — JSONPointer 처리
-- `@winglet/json-schema` — JSON Schema 타입 및 유틸
-- `@aileron/declare` — 공통 타입 (`Fn`, `Roll`, `Dictionary` 등)
-- React 18-19 (peer dependency)
+- `@winglet/common-utils`·`@winglet/react-utils` — 공통·React 유틸리티
+- `@winglet/json`·`@winglet/json-schema` — JSONPointer·Schema 타입/유틸
+- `@aileron/declare` — 공통 타입; React 18-19 (peer dependency)
