@@ -14,11 +14,11 @@
 
 `types/jsonSchema.ts`가 선언하는 `options` 필드. 각 옵션은 특정 스키마 타입에만 존재한다.
 
-| 옵션 | 적용 스키마 | 선언 위치 | 계약 |
-| ---- | ----------- | --------- | ---- |
-| `trim?: boolean` | `NonNullableStringSchema` · `NullableStringSchema` | `types/jsonSchema.ts:139`, `:148` | 필드가 `Blurred`를 방출할 때 저장된 값을 공백 트림된 형태로 **교체**한다. 저장 값 자체가 바뀌므로 raw `value`에도 반영된다 |
-| `omitTrailing?: boolean` | `NonNullableArraySchema` · `NullableArraySchema` | `types/jsonSchema.ts:173`, `:182` | 배열의 `normalizedValue`에서 후행 `undefined` 항목을 제거한다. 적용 범위는 부모 전파·루트 검증·외부 방출이며, **자식 노드는 raw 배열을 유지**한다 |
-| `omitEmpty?: boolean` | 객체 스키마 | `types/jsonSchema.ts:266` | 부모로 전파되는 값에서 빈 항목을 제거한다 |
+| 옵션                     | 적용 스키마                                        | 선언 위치                         | 계약                                                                                                                                              |
+| ------------------------ | -------------------------------------------------- | --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `trim?: boolean`         | `NonNullableStringSchema` · `NullableStringSchema` | `types/jsonSchema.ts:139`, `:148` | 필드가 `Blurred`를 방출할 때 저장된 값을 공백 트림된 형태로 **교체**한다. 저장 값 자체가 바뀌므로 raw `value`에도 반영된다                        |
+| `omitTrailing?: boolean` | `NonNullableArraySchema` · `NullableArraySchema`   | `types/jsonSchema.ts:173`, `:182` | 배열의 `normalizedValue`에서 후행 `undefined` 항목을 제거한다. 적용 범위는 부모 전파·루트 검증·외부 방출이며, **자식 노드는 raw 배열을 유지**한다 |
+| `omitEmpty?: boolean`    | 객체 스키마                                        | `types/jsonSchema.ts:266`         | 부모로 전파되는 값에서 빈 항목을 제거한다                                                                                                         |
 
 `trim`과 `omitTrailing`의 차이가 이 표의 요점이다 — `trim`은 **저장 값을 교체**하는 옵션이고, `omitTrailing`은 **방출 값만 걸러내는** 옵션이다. 후자는 raw 상태를 보존하므로 되돌릴 수 있고, 전자는 그렇지 않다.
 
@@ -26,13 +26,13 @@
 
 ### 값 채널
 
-| 표면 | 채널 |
-| ---- | ---- |
+| 표면                                                      | 채널                     |
+| --------------------------------------------------------- | ------------------------ |
 | `FormHandle.getValue()` · `submit` · 루트 `onChange` 방출 | 정제 (`normalizedValue`) |
-| `FormHandle.setValue()` | raw |
-| `node.value` · `UpdateValue` 이벤트 payload | raw |
-| `node.normalizedValue` | 정제 |
-| `node.enhancedValue` | 정제 + 가상 필드 |
+| `FormHandle.setValue()`                                   | raw                      |
+| `node.value` · `UpdateValue` 이벤트 payload               | raw                      |
+| `node.normalizedValue`                                    | 정제                     |
+| `node.enhancedValue`                                      | 정제 + 가상 필드         |
 
 ## Acceptance Criteria
 

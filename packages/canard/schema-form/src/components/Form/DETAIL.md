@@ -13,13 +13,13 @@
 
 ### 값 채널
 
-| 표면 | 읽는 값 | 위치 |
-| ---- | ------- | ---- |
-| `FormHandle.getValue()` | `rootNode.normalizedValue` | `Form.tsx:154` |
-| `submit` / `onSubmit` 인자 | `rootNode.normalizedValue` | `Form.tsx:116`, `:124` |
-| 최초 `onChange` 방출 | `rootNode.normalizedValue` | `Form.tsx:138` |
-| `FormHandle.setValue(value, options)` | raw → `rootNode.setValue` | `Form.tsx:155` |
-| `FormHandle.node` / `findNode` / `findNodes` | 노드 자체 (raw 접근 가능) | `Form.tsx:146`, `:152`, `:153` |
+| 표면                                         | 읽는 값                    | 위치                           |
+| -------------------------------------------- | -------------------------- | ------------------------------ |
+| `FormHandle.getValue()`                      | `rootNode.normalizedValue` | `Form.tsx:154`                 |
+| `submit` / `onSubmit` 인자                   | `rootNode.normalizedValue` | `Form.tsx:116`, `:124`         |
+| 최초 `onChange` 방출                         | `rootNode.normalizedValue` | `Form.tsx:138`                 |
+| `FormHandle.setValue(value, options)`        | raw → `rootNode.setValue`  | `Form.tsx:155`                 |
+| `FormHandle.node` / `findNode` / `findNodes` | 노드 자체 (raw 접근 가능)  | `Form.tsx:146`, `:152`, `:153` |
 
 정제의 내용은 스키마 옵션이 결정하며 `Form`은 그것을 알지 못한다 — 현재 `ArrayNode`의 `options.omitTrailing`이 유일한 적용 사례다. `Form`의 계약은 "어느 채널을 읽는가"까지이고, "무엇을 정제하는가"는 노드 쪽 계약이다.
 

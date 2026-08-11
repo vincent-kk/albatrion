@@ -15,19 +15,19 @@
 
 ### 진입점 표면
 
-| 심볼 | 계약 |
-| ---- | ---- |
-| `nodeFromJsonSchema(props)` | JSON Schema → `SchemaNode` 트리. 이 fractal의 유일한 트리 생성 경로 |
-| `SchemaNode` 및 타입별 노드 | `value`·`normalizedValue`·`setValue`·`validate`·`subscribe`·`find`·`revision` 등 노드 공개 표면 |
-| `isSchemaNode` · `isBranchNode` · `isTerminalNode` · 타입별 가드 | 런타임 타입 판별 |
-| `NodeEventType` · `SetValueOption` · `ValidationMode` | 비트 플래그·열거값 |
+| 심볼                                                             | 계약                                                                                            |
+| ---------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| `nodeFromJsonSchema(props)`                                      | JSON Schema → `SchemaNode` 트리. 이 fractal의 유일한 트리 생성 경로                             |
+| `SchemaNode` 및 타입별 노드                                      | `value`·`normalizedValue`·`setValue`·`validate`·`subscribe`·`find`·`revision` 등 노드 공개 표면 |
+| `isSchemaNode` · `isBranchNode` · `isTerminalNode` · 타입별 가드 | 런타임 타입 판별                                                                                |
+| `NodeEventType` · `SetValueOption` · `ValidationMode`            | 비트 플래그·열거값                                                                              |
 
 ### 값 채널 규약
 
-| 채널 | 읽는 곳 | 특성 |
-| ---- | ------- | ---- |
-| `value` (raw) | `UpdateValue` payload, 자식 상태 슬롯, `setValue` 왕복 | 정제되지 않음. 편집 중 상태를 보존 |
-| `normalizedValue` (정제) | 루트 검증, 루트 방출, `FormHandle.getValue`, 부모측 하이드레이션 | 스키마 출력 옵션 적용 |
+| 채널                     | 읽는 곳                                                          | 특성                               |
+| ------------------------ | ---------------------------------------------------------------- | ---------------------------------- |
+| `value` (raw)            | `UpdateValue` payload, 자식 상태 슬롯, `setValue` 왕복           | 정제되지 않음. 편집 중 상태를 보존 |
+| `normalizedValue` (정제) | 루트 검증, 루트 방출, `FormHandle.getValue`, 부모측 하이드레이션 | 스키마 출력 옵션 적용              |
 
 두 채널을 섞으면 편집 중인 화면이 정제 때문에 접히거나, 반대로 정제되지 않은 값이 폼 밖으로 나간다. 새 소비 지점을 추가할 때는 그 값이 밖으로 나가는지 안에 머무는지를 먼저 정하고 채널을 고른다.
 
