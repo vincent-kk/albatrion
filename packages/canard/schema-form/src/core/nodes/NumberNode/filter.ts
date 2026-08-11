@@ -1,4 +1,4 @@
-import { isSchemaNode } from '../filter';
+import { isSchemaNode } from '../AbstractNode';
 import type { NumberNode } from './NumberNode';
 
 /**

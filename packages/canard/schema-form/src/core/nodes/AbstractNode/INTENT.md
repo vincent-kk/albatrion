@@ -7,7 +7,7 @@
 ## Structure
 
 - `AbstractNode.ts` — 추상 클래스 본체 (1100+ lines)
-- `index.ts` — barrel export
+- `filter.ts` · `index.ts` — `isSchemaNode`(`instanceof AbstractNode`) · barrel export
 - `utils/` — 내부 매니저 및 유틸리티 (organ 디렉토리)
 
 ## Conventions
