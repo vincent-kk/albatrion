@@ -134,14 +134,19 @@ export type StringSchema<Options extends Dictionary = object> =
 export type NonNullableStringSchema<Options extends Dictionary = object> =
   BasicSchema &
     BaseNonNullableStringSchema<Options, JsonSchema<Options>> & {
-      options?: { trim?: boolean };
+      options?: StringSchemaOptions;
     };
 /** Nullable string schema (type: ['string', 'null']) with optional trim support */
 export type NullableStringSchema<Options extends Dictionary = object> =
   BasicSchema &
     BaseNullableStringSchema<Options, JsonSchema<Options>> & {
-      options?: { trim?: boolean };
+      options?: StringSchemaOptions;
     };
+/** String-specific field options (intersected with the common `BasicSchema.options`) */
+type StringSchemaOptions = {
+  /** Remove trailing whitespace from the string's outgoing value (parent propagation, root validation, external emission); child nodes keep the raw string */
+  trim?: boolean;
+};
 
 /** Boolean type schema */
 export type BooleanSchema<Options extends Dictionary = object> =
@@ -153,12 +158,6 @@ export type NonNullableBooleanSchema<Options extends Dictionary = object> =
 /** Nullable boolean schema (type: ['boolean', 'null']) */
 export type NullableBooleanSchema<Options extends Dictionary = object> =
   BasicSchema & BaseNullableBooleanSchema<Options, JsonSchema<Options>>;
-
-/** Array-specific field options (intersected with the common `BasicSchema.options`) */
-type ArraySchemaOptions = {
-  /** Remove trailing `undefined` items from the array's outgoing value (parent propagation, root validation, external emission); child nodes keep the raw array */
-  omitTrailing?: boolean;
-};
 
 /** Array type schema */
 export type ArraySchema<Options extends Dictionary = object> =
@@ -176,6 +175,11 @@ export type NullableArraySchema<Options extends Dictionary = object> =
     BaseNullableArraySchema<Options, JsonSchema<Options>> & {
       options?: ArraySchemaOptions;
     };
+/** Array-specific field options (intersected with the common `BasicSchema.options`) */
+type ArraySchemaOptions = {
+  /** Remove trailing `undefined` items from the array's outgoing value (parent propagation, root validation, external emission); child nodes keep the raw array */
+  omitTrailing?: boolean;
+};
 
 /** Object type schema */
 export type ObjectSchema<Options extends Dictionary = object> =
@@ -185,24 +189,23 @@ export type ObjectSchema<Options extends Dictionary = object> =
 export type NonNullableObjectSchema<Options extends Dictionary = object> =
   BasicSchema &
     BaseNonNullableObjectSchema<Options, JsonSchema<Options>> & {
-      /** Property keys order for rendering */
-      propertyKeys?: readonly string[];
-      /** Virtual property definitions for conditional fields */
-      virtual?: VirtualSchemaProperties;
+      options?: ObjectSchemaOptions;
     };
 /** Nullable object schema (type: ['object', 'null']) with optional property ordering and virtual properties */
 export type NullableObjectSchema<Options extends Dictionary = object> =
   BasicSchema &
     BaseNullableObjectSchema<Options, JsonSchema<Options>> & {
-      /** Property keys order for rendering */
-      propertyKeys?: readonly string[];
-      /** Virtual property definitions for conditional fields */
-      virtual?: VirtualSchemaProperties;
+      options?: ObjectSchemaOptions;
     };
-/** Virtual schema property definitions (cannot be nullable) */
-type VirtualSchemaProperties = Dictionary<
-  { fields: readonly string[]; nullable?: never } & BasicSchema
->;
+/** Object-specific field options (intersected with the common `BasicSchema.options`) */
+type ObjectSchemaOptions = {
+  /** Property keys order for rendering */
+  propertyKeys?: readonly string[];
+  /** Virtual schema property definitions (cannot be nullable) */
+  virtual?: Dictionary<
+    { fields: readonly string[]; nullable?: never } & BasicSchema
+  >;
+};
 
 /** Virtual node schema for non-schema computed fields */
 export type VirtualSchema<Options extends Dictionary = object> = {
