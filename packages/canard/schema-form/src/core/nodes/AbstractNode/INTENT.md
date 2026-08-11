@@ -12,11 +12,9 @@
 
 ## Conventions
 
-- TypeScript abstract class; `type`, `value`, `applyValue` 는 서브클래스에서 반드시 구현
 - Domain-First 멤버 순서: Identity → Tree → Value → Computed → State → Validation → Events → Injection → Lifecycle → Constructor
-- 내부 필드: `__fieldName__` 이중 언더스코어
-- Protected 내부 메서드: `__methodName__` 패턴
-- JSDoc: `@internal` (private), `@remarks` (추가 맥락), `@example` (공개 API)
+- Protected 내부 메서드 `__methodName__` 패턴; JSDoc: `@internal` (private), `@remarks` (추가 맥락), `@example` (공개 API)
+- 루트 validation 값·루트 방출 값·`FormHandle.getValue`는 공개 `outputValue` getter 경유 (기본 `this.value`, 서브클래스가 출력 필터링 목적으로만 override)
 
 ## Boundaries
 
@@ -46,8 +44,6 @@
 - `utils/ComputedPropertiesManager` — computed 속성 계산 및 의존성 구독
 - `utils/EventCascadeManager` — 이벤트 배치 발행/구독 + 전달 원장(`revision(mask)`, 늦은 구독자 갭 감지)
 - `utils/InjectionGuardManager` — 순환 inject 방지 (루트 전용)
-- `utils/ValidationManager` — JSON Schema 유효성 검사 (루트 전용)
-- `utils/ValidationErrorManager` — 에러 상태 관리
+- `utils/ValidationManager`·`ValidationErrorManager` — JSON Schema 유효성 검사(루트 전용)·에러 상태 관리
 - `utils/` 순수 함수들 — afterMicrotask, findNode, shallowPatch 등
-- `@winglet/json/pointer` — escapeSegment, setValue
-- `@/schema-form/helpers/jsonPointer` — JSONPointer 상수 및 경로 헬퍼
+- `@winglet/json/pointer`·`@/schema-form/helpers/jsonPointer` — JSONPointer 처리 및 경로 헬퍼

@@ -371,6 +371,14 @@ export abstract class AbstractNode<
   }
 
   /**
+   * Value this node exposes outside its subtree — read by root validation, root emission, and `FormHandle.getValue`.
+   * @remarks Defaults to `value`; subclasses override to filter the outgoing value (e.g. `ArrayNode` `options.omitTrailing`).
+   */
+  public get outputValue(): Value | Nullish {
+    return this.value;
+  }
+
+  /**
    * @internal Handler function called when the node's value changes.
    * @remarks For root nodes, batched via microtask. For child nodes, propagates to parent.
    */
@@ -698,7 +706,7 @@ export abstract class AbstractNode<
    * @remarks Includes virtual field values for complete schema validation.
    */
   private get __enhancedValue__(): Value | Nullish {
-    const value = this.value;
+    const value = this.outputValue;
     if (this.group === 'terminal' || value == null) return value;
     const enhancer = this.__enhancer__;
     if (enhancer === undefined || isEmptyObject(enhancer)) return value;
@@ -1136,7 +1144,7 @@ export abstract class AbstractNode<
       this.__handleChange__ = afterMicrotask(() => {
         if (validateEnabled && validateOnChange)
           this.__validationManager__?.validate(this.__enhancedValue__);
-        onChange(getSafeEmptyValue(this.value, this.schemaType));
+        onChange(getSafeEmptyValue(this.outputValue, this.schemaType));
       });
       if (validateEnabled)
         this.__enhancer__ = getEmptyValue(this.schemaType) as Value;

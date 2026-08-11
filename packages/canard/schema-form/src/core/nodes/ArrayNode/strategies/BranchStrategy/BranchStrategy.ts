@@ -315,7 +315,7 @@ export class BranchStrategy implements ArrayNodeStrategy {
       onChange: this.__handleChangeFactory__(key),
       nodeFactory: this.__nodeFactory__,
     });
-    this.__sourceMap__.set(key, { node: childNode, data: childNode.value });
+    this.__sourceMap__.set(key, { node: childNode, data: childNode.outputValue });
 
     if (host.initialized) (childNode as AbstractNode).__initialize__(host);
 
