@@ -792,6 +792,26 @@ arrayNode.length; // Current number of items
 arrayNode.children; // Array of child nodes
 ```
 
+### Array Output Filters (`omitTrailing` / `omitEmpty`)
+
+Array schemas accept output filters under `options`. They refine what the array **emits** — parent propagation, root validation, and the external surfaces (`onChange`, `getValue()`, `submit`) — while child nodes and the raw `node.value` keep every item, so pre-exposed empty inputs stay rendered.
+
+```tsx
+const jsonSchema = {
+  type: 'array',
+  minItems: 3, // three empty inputs are rendered up front
+  items: { type: 'string' },
+  options: { omitTrailing: true },
+};
+// UI renders 3 inputs; the user fills only the first one
+// getValue() / onChange / validation see: ['first']
+```
+
+- `omitTrailing` (opt-in): removes **trailing** consecutive `undefined` items only. Leading and middle `undefined` items are preserved so error `dataPath`s and validation indices stay aligned — `[1, undefined, 2]` is emitted as-is.
+- `omitEmpty` (on by default): converts an empty array to `undefined` on the parent-propagation path. Filter order is `omitTrailing → omitEmpty`, so an all-empty array collapses to `undefined` under its parent (a root-level form still emits `[]`).
+- `node.value` stays raw; the refined output is exposed as `node.normalizedValue`. Validation runs against the refined value, so `minItems` counts only the filled prefix.
+- A Reset-flagged clear (form reset, branch reactivation) refills `minItems` empty items; a plain `setValue(undefined)` clears every item.
+
 ### Value Injection (injectTo)
 
 ```tsx

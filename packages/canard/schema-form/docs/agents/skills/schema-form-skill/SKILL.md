@@ -1,6 +1,6 @@
 ---
 name: schema-form-skill
-description: 'Expert knowledge base for @canard/schema-form. Triggers on FormTypeInput, computed properties (&active/&visible/&readOnly/&derived/&watch), conditional schemas (oneOf/anyOf/allOf/if-then-else), JSONPointer (.., ., *, @), FormHandle, ShowError, virtual schemas, plugins (AJV/Antd/MUI), validation, state, injectTo, arrays, virtualization, context, events, troubleshooting.'
+description: 'Expert knowledge base for @canard/schema-form. Triggers on FormTypeInput, computed properties (&active/&visible/&readOnly/&derived/&watch), conditional schemas (oneOf/anyOf/allOf/if-then-else), JSONPointer (.., ., *, @), FormHandle, ShowError, virtual schemas, plugins (AJV/Antd/MUI), validation, state, injectTo, arrays, array output filters (omitTrailing/omitEmpty/normalizedValue), virtualization, context, events, troubleshooting.'
 ---
 
 # Schema Form Expert
@@ -18,7 +18,7 @@ Knowledge base for `@canard/schema-form`. Answer questions, show usage examples,
 | Topic keywords                                                                                                                                                                                                           | Knowledge file                       |
 | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------ |
 | `computed`, `watch`, `active`, `visible`, `readOnly`, `disabled`, `pristine`, `derived`, `&`-aliases, expression syntax, `oneOf`, `anyOf`, `allOf`, `if/then/else`, `&if`, conditional fields, `context`, `@` references | `knowledge/expressions.md`           |
-| `ArrayNode`, `push`, `remove`, `clear`, `minItems`, `maxItems`, `prefixItems`, tuple, `terminal`, strategy, performance, slow, large forms, `virtualization`                                                             | `knowledge/arrays-and-scale.md`      |
+| `ArrayNode`, `push`, `remove`, `clear`, `minItems`, `maxItems`, `prefixItems`, tuple, `terminal`, strategy, `omitTrailing`, `omitEmpty`, `normalizedValue`, performance, slow, large forms, `virtualization`             | `knowledge/arrays-and-scale.md`      |
 | `validate`, `ValidationMode`, `errorMessages`, `formatError`, `ShowError`, `showError`, `NodeState`, `dirty`, `touched`, `globalState`, `onStateChange`, `clearState`, `useChildNodeErrors`                              | `knowledge/validation-and-state.md`  |
 | `FormHandle`, `getValue`, `setValue`, `reset`, `submit`, `focus`, `getAttachedFilesMap`, `Form.Render`, `Form.Input`, `Form.Label`, custom layout                                                                        | `knowledge/imperative-and-layout.md` |
 | `FormTypeInput`, `formTypeInputDefinitions`, `formTypeInputMap`, `formType`, custom input, `ChildNodeComponents`                                                                                                         | `knowledge/formtype-input.md`        |

@@ -790,6 +790,26 @@ arrayNode.length; // 현재 항목 수
 arrayNode.children; // 자식 노드 배열
 ```
 
+### 배열 출력 필터 (`omitTrailing` / `omitEmpty`)
+
+배열 스키마는 `options` 아래에 출력 필터를 지정할 수 있습니다. 이 필터는 배열이 **내보내는 값** — 부모 전파, 루트 validation, 외부 표면(`onChange`, `getValue()`, `submit`) — 만 정제하며, 자식 노드와 raw `node.value`는 모든 항목을 유지하므로 미리 노출한 빈 input이 그대로 렌더링됩니다.
+
+```tsx
+const jsonSchema = {
+  type: 'array',
+  minItems: 3, // 빈 input 3개가 먼저 렌더링됨
+  items: { type: 'string' },
+  options: { omitTrailing: true },
+};
+// UI에는 input 3개가 보이고, 사용자가 첫 번째만 채우면
+// getValue() / onChange / validation 값은: ['first']
+```
+
+- `omitTrailing` (opt-in): **후행** 연속 `undefined` 항목만 제거합니다. 선행·중간 `undefined`는 보존되어 error `dataPath`와 validation index 정합이 유지됩니다 — `[1, undefined, 2]`는 그대로 방출됩니다.
+- `omitEmpty` (기본 활성): 빈 배열을 부모 전파 경로에서 `undefined`로 변환합니다. 필터 순서는 `omitTrailing → omitEmpty`라서 전부 빈 배열은 부모에서 `undefined`로 수렴합니다 (루트 폼은 `[]`를 방출).
+- `node.value`는 raw를 유지하고, 정제된 출력은 `node.normalizedValue`로 노출됩니다. validation은 정제된 값 기준이라 `minItems`는 채워진 prefix만 셉니다.
+- Reset 계열 초기화(폼 reset, 분기 재활성화)는 `minItems`만큼 빈 항목을 재충전하고, 일반 `setValue(undefined)`는 전부 비웁니다.
+
 ### Value Injection (injectTo)
 
 ```tsx

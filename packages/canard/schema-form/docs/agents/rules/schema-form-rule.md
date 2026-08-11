@@ -135,6 +135,10 @@ Each rule is a single hard requirement. Violations typically produce silent bugs
 
 ---
 
+### array-output-filters
+
+`options.omitTrailing` refines only what the array emits: `getValue()` / validation / parent propagation see the trimmed value while `node.value` and `node.children` keep every item (that is what renders). Count rows from `node.children`, never `value.length`, and treat `getValue() !== node.value` on a filtering array as correct behavior, not a bug.
+
 ## 4. Red Flags
 
 Reject these on sight.

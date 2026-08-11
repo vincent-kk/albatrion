@@ -10,6 +10,25 @@ Obtain the node via `formRef.current?.findNode('/items') as ArrayNode`, or recei
 - `clear()` respects `minItems`: with `minItems: 2`, two items remain after clearing.
 - `remove(index)` removes one item by index.
 
+## Array Output Filters (omitTrailing / omitEmpty)
+
+`options.omitTrailing: true` (opt-in) trims **trailing** consecutive `undefined` items from the array's outgoing value; `options.omitEmpty` (on by default) turns an empty array into `undefined` on the parent path. Filter order: `omitTrailing → omitEmpty`.
+
+Where the filters apply — and where they never do:
+
+| Surface                                                                   | Value                             |
+| ------------------------------------------------------------------------- | --------------------------------- |
+| Parent propagation, root validation, `getValue()` / `submit` / `onChange` | filtered (`node.normalizedValue`) |
+| `node.value`, `node.children`, rendered inputs                            | raw — every item node stays       |
+
+Rules of thumb:
+
+- Leading/middle `undefined` are never removed — indices must stay aligned with error `dataPath`s and validation params.
+- Primary use case: pre-expose empty inputs (`minItems`) without polluting the submitted/validated value. Validation sees the trimmed value, so `minItems` counts only the filled prefix.
+- A Reset-flagged clear (form reset, oneOf/anyOf branch reactivation) refills `minItems` empty items; a plain `setValue(undefined)` clears every item.
+- In a custom array `FormTypeInput`, derive row count from `node.children` (or `ChildNodeComponents`), never from `value.length` — the emitted value is shorter than the rendered rows by design.
+- `injectTo` handlers receive the **raw** source value, not the filtered one; mirror targets therefore hold the untrimmed copy.
+
 ## Terminal vs Branch Strategy
 
 Item type picks the strategy automatically; `terminal` is a schema key (not in standard JSON Schema) that overrides it.
