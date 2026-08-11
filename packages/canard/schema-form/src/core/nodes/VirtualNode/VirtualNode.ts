@@ -12,7 +12,7 @@ import {
   SetValueOption,
   type UnionSetValueOption,
   type VirtualNodeConstructorProps,
-} from '../type';
+} from '../../types';
 
 /**
  * Node class for handling virtual schemas.

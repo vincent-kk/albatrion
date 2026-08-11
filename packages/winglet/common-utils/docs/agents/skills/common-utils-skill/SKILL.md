@@ -1,7 +1,6 @@
 ---
 name: common-utils-skill
 description: 'Knowledge for `@winglet/common-utils` — zero-dependency TypeScript utility library. Trigger on its sub-path imports (`@winglet/common-utils/array|object|filter|math|promise|scheduler|function|hash|lib`), on choosing between near-twin exports (equals/stableEquals, clone/cloneLite, difference/differenceLite, min/minLite, serialize*), and on debounce, throttle, getTrackableHandler, macrotask scheduling, deep clone/equality/merge semantics, or circular-reference safety.'
-user-invocable: false
 ---
 
 # @winglet/common-utils

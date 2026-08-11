@@ -6,7 +6,7 @@ import type {
   ChildNode,
   SchemaNode,
   SchemaNodeFactory,
-} from '@/schema-form/core/nodes/type';
+} from '@/schema-form/core/types';
 import type { AllowedValue } from '@/schema-form/types';
 
 import type { ChildNodeMap } from '../../type';

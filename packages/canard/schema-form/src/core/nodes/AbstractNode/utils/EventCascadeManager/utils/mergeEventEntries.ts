@@ -3,7 +3,7 @@ import type {
   NodeEventCollection,
   NodeEventEntity,
   NodeEventType,
-} from '@/schema-form/core/nodes/type';
+} from '@/schema-form/core/types';
 
 /**
  * Merges an array of events into a single event.

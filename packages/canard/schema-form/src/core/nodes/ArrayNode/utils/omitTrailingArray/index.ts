@@ -1,0 +1,1 @@
+export { omitTrailingArray } from './omitTrailingArray';

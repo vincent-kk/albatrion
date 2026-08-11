@@ -1,7 +1,6 @@
 ---
 name: style-utils-skill
 description: '@winglet/style-utils library expert. Guide users on className composition (cx/cxLite), CSS minification (compressCss), and scoped CSS injection with Shadow DOM support (styleManagerFactory/destroyScope).'
-user-invocable: false
 ---
 
 # @winglet/style-utils — scoped CSS injection and className composition

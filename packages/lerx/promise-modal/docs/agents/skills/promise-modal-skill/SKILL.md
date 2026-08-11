@@ -1,7 +1,6 @@
 ---
 name: promise-modal-skill
 description: '@lerx/promise-modal expert — Promise-based React modals (alert, confirm, prompt), ModalProvider setup, useModal, custom foreground/background components, toasts, and AbortSignal cancellation.'
-user-invocable: false
 ---
 
 # @lerx/promise-modal — Promise-returning modals driven by a node registry

@@ -16,6 +16,7 @@
 - `push` 시 기존 배열을 복사하여 새 배열 생성 (불변 패턴)
 - `__locked__` 플래그로 초기화 중 재귀 이벤트 방지
 - `parseArray`로 입력값 파싱
+- `normalizedValue`는 `value`를 그대로 위임 (자식 없음)
 
 ## Boundaries
 

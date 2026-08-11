@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 
 import { BIT_MASK_ALL } from '@/schema-form/app/constants';
-import { NodeEventType } from '@/schema-form/core/nodes/type';
+import { NodeEventType } from '@/schema-form/core/types';
 
 import { EventCascadeManager } from '../EventCascadeManager';
 

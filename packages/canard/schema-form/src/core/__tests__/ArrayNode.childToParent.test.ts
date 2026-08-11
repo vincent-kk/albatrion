@@ -20,7 +20,7 @@ import type { JsonSchema } from '@/schema-form/types';
 import type { ArrayNode } from '../nodes/ArrayNode';
 import type { ObjectNode } from '../nodes/ObjectNode';
 import type { StringNode } from '../nodes/StringNode';
-import { NodeEventType } from '../nodes/type';
+import { NodeEventType } from '../types';
 
 describe('ArrayNode Child-to-Parent Updates', () => {
   describe('array item value changes', () => {

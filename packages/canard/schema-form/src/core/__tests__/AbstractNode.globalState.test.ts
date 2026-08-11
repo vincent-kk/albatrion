@@ -3,7 +3,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { nodeFromJsonSchema } from '@/schema-form/core';
 
 import type { AbstractNode } from '../nodes/AbstractNode';
-import { NodeEventType, NodeState, type SchemaNode } from '../nodes/type';
+import { NodeEventType, NodeState, type SchemaNode } from '../types';
 
 /**
  * Test helper to access private __setGlobalState__ method

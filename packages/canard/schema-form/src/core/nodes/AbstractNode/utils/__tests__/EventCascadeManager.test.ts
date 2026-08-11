@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import { NodeEventType } from '../../../type';
+import { NodeEventType } from '../../../../types';
 import { EventCascadeManager } from '../EventCascadeManager';
 
 const createEventCascadeManager = (path = '/test') =>

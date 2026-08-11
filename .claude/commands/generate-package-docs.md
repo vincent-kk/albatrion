@@ -230,7 +230,6 @@ Produce only the files in scope:
 ---
 name: {slug}-skill
 description: "Expert knowledge base for @{package-name}. Triggers on {symbol-1}, {symbol-2}, {concept-1}, {concept-2}, ... — enumerate concrete API names, types, and concepts that should invoke this skill."
-user-invocable: false
 ---
 
 # {Package Display Name} Expert

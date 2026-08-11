@@ -1,5 +1,5 @@
 import { PluginManager } from '@/schema-form/app/plugin';
-import type { ValidationMode } from '@/schema-form/core/nodes/type';
+import type { ValidationMode } from '@/schema-form/core/types';
 import { JsonSchemaError } from '@/schema-form/errors';
 import {
   formatCircularReferenceError,

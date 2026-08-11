@@ -12,11 +12,11 @@ import {
   type SchemaNodeFactory,
   SetValueOption,
   type UnionSetValueOption,
-} from '@/schema-form/core/nodes/type';
+} from '@/schema-form/core/types';
 import type { AllowedValue, ArrayValue } from '@/schema-form/types';
 
 import { resolveArrayLimits } from '../../utils';
-import type { ArrayNodeStrategy } from '../type';
+import type { ArrayNodeStrategy } from '../types';
 import type { ChildSegmentKey } from './type';
 import {
   RESOLVED_LENGTH,
@@ -61,6 +61,7 @@ export class BranchStrategy implements ArrayNodeStrategy {
     this.__idle__ = false;
     this.__nullish__ = false;
     this.__expired__ = true;
+    this.__normalizedExpired__ = true;
   }
 
   /** Revision counter for generating unique keys for array elements */
@@ -69,14 +70,20 @@ export class BranchStrategy implements ArrayNodeStrategy {
   /** Array of unique keys for each element in the array, maintaining order */
   private __keys__: ChildSegmentKey[] = [];
 
-  /** Map storing actual data and corresponding schema nodes for each array element */
+  /** Map storing each element's raw state (`data`), its outgoing filtered contribution (`output`), and the schema node */
   private __sourceMap__: Map<
     ChildSegmentKey,
-    { data: AllowedValue; node: SchemaNode }
+    { data: AllowedValue; output: AllowedValue; node: SchemaNode }
   > = new Map();
 
   /** Current value of the array node */
   private __value__: ArrayValue = [];
+
+  /** Cached normalized composition; rebuilt lazily while `__normalizedExpired__` is set */
+  private __normalized__: ArrayValue = [];
+
+  /** Flag indicating whether the cached normalized composition is stale */
+  private __normalizedExpired__: boolean = true;
 
   /** Array of child nodes */
   private __children__: ChildNode[] = [];
@@ -97,7 +104,7 @@ export class BranchStrategy implements ArrayNodeStrategy {
 
   /**
    * Converts internal array state to an object array.
-   * @returns Array containing the values of the array
+   * @returns Array containing the raw values of the array
    * @private
    */
   private __toArray__() {
@@ -105,6 +112,20 @@ export class BranchStrategy implements ArrayNodeStrategy {
     for (let i = 0, l = this.__keys__.length; i < l; i++) {
       const edge = this.__sourceMap__.get(this.__keys__[i]);
       if (edge) values[i] = edge.data;
+    }
+    return values;
+  }
+
+  /**
+   * Composes the outgoing view of the array from each element's `output` slot.
+   * @returns Array whose items carry the children's filtered contributions
+   * @private
+   */
+  private __toNormalized__() {
+    const values = new Array<AllowedValue>(this.__keys__.length);
+    for (let i = 0, l = this.__keys__.length; i < l; i++) {
+      const edge = this.__sourceMap__.get(this.__keys__[i]);
+      if (edge) values[i] = edge.output;
     }
     return values;
   }
@@ -154,7 +175,10 @@ export class BranchStrategy implements ArrayNodeStrategy {
     const current = this.value;
 
     if (option & SetValueOption.EmitChange)
-      this.__handleChange__(current, (option & SetValueOption.Batch) > 0);
+      this.__handleChange__(
+        this.normalizedValue,
+        (option & SetValueOption.Batch) > 0,
+      );
     if (option & SetValueOption.Refresh)
       host.publish(NodeEventType.RequestRefresh);
     if (option & SetValueOption.PublishUpdateEvent)
@@ -178,10 +202,14 @@ export class BranchStrategy implements ArrayNodeStrategy {
   private __handleChangeFactory__(key: ChildSegmentKey): HandleChange {
     return (input, batched) => {
       const source = this.__sourceMap__.get(key);
-      if (!source || source.data === input) return;
-      source.data = input;
+      if (!source) return;
+      const next = source.node.value;
+      if (source.data === next && source.output === input) return;
+      source.data = next;
+      source.output = input;
       this.__idle__ = false;
       this.__nullish__ = false;
+      this.__normalizedExpired__ = true;
       this.__emitChange__(SetValueOption.Default, batched, false);
     };
   }
@@ -220,6 +248,20 @@ export class BranchStrategy implements ArrayNodeStrategy {
   }
 
   /**
+   * Gets the normalized composition of the array.
+   * @returns Array of the children's normalized values, or null/undefined mirroring `value`
+   * @remarks Cached between structural/output changes so hot readers (upward emission, `__propagate__` echo guard) get a stable reference without re-allocating.
+   */
+  public get normalizedValue() {
+    if (this.__nullish__ == null) return this.__nullish__;
+    if (this.__normalizedExpired__) {
+      this.__normalized__ = this.__toNormalized__();
+      this.__normalizedExpired__ = false;
+    }
+    return this.__normalized__;
+  }
+
+  /**
    * Gets the child nodes of the array node.
    * @returns List of child nodes
    */
@@ -253,14 +295,28 @@ export class BranchStrategy implements ArrayNodeStrategy {
    * Applies input value to the array node.
    * @param input - Array value to set
    * @param option - Setting options
+   * @remarks A `Reset`-flagged `undefined` application re-establishes the construction-time
+   *          `minItems` fill, so empty item nodes survive branch restores and form resets;
+   *          a plain `setValue(undefined)` still clears every item.
    */
   public applyValue(input: ArrayValue | Nullish, option: UnionSetValueOption) {
     if (input == null) {
+      const restore =
+        input === undefined &&
+        this.__minItems__ > 0 &&
+        (option & SetValueOption.Reset) > 0;
       this.__locked__ = true;
       this.clear(option);
+      if (restore)
+        while (this.length < this.__minItems__) this.push(void 0, true, option);
       this.__locked__ = false;
-      this.__nullish__ =
-        input === null ? (this.__host__.nullable ? input : false) : undefined;
+      this.__nullish__ = restore
+        ? false
+        : input === null
+          ? this.__host__.nullable
+            ? input
+            : false
+          : undefined;
       this.__emitChange__(option, false);
     } else if (isArray(input)) {
       this.__locked__ = true;
@@ -315,7 +371,11 @@ export class BranchStrategy implements ArrayNodeStrategy {
       onChange: this.__handleChangeFactory__(key),
       nodeFactory: this.__nodeFactory__,
     });
-    this.__sourceMap__.set(key, { node: childNode, data: childNode.value });
+    this.__sourceMap__.set(key, {
+      node: childNode,
+      data: childNode.value,
+      output: childNode.normalizedValue,
+    });
 
     if (host.initialized) (childNode as AbstractNode).__initialize__(host);
 

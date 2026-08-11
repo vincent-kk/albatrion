@@ -6,7 +6,7 @@ import type { ObjectNode } from '@/schema-form/core/nodes/ObjectNode';
 import type {
   HandleChange,
   SchemaNodeFactory,
-} from '@/schema-form/core/nodes/type';
+} from '@/schema-form/core/types';
 import type { ObjectSchema, ObjectValue } from '@/schema-form/types';
 
 import type { ChildNodeMap } from '../../type';

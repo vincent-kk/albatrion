@@ -2,7 +2,7 @@ import type { Nullish } from '@aileron/declare';
 
 import type { ObjectValue } from '@/schema-form/types';
 
-import type { ChildNode, UnionSetValueOption } from '../../type';
+import type { ChildNode, UnionSetValueOption } from '../../../../types';
 
 /**
  * Strategy interface for managing ObjectNode data and operations.

@@ -7,7 +7,7 @@ import type { ArrayNode } from '../nodes/ArrayNode';
 import type { NumberNode } from '../nodes/NumberNode';
 import type { ObjectNode } from '../nodes/ObjectNode';
 import type { StringNode } from '../nodes/StringNode';
-import { type SchemaNode, ValidationMode } from '../nodes/type';
+import { type SchemaNode, ValidationMode } from '../types';
 import { createValidatorFactory } from './utils/createValidatorFactory';
 
 /**

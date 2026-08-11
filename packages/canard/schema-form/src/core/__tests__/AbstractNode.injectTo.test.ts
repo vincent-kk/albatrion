@@ -3,7 +3,7 @@ import { describe, expect, it, vi } from 'vitest';
 import type { InjectHandlerContext, JsonSchema } from '@/schema-form/types';
 
 import { contextNodeFactory, nodeFromJsonSchema } from '../nodeFromJsonSchema';
-import { NodeEventType } from '../nodes/type';
+import { NodeEventType } from '../types';
 
 const wait = (delay = 10) => {
   return new Promise((resolve) => {

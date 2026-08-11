@@ -13,7 +13,7 @@ import type {
   NodeEventType,
   NodeListener,
   UnionNodeEventType,
-} from '@/schema-form/core/nodes/type';
+} from '@/schema-form/core/types';
 import { SchemaFormError } from '@/schema-form/errors';
 import { formatInfiniteLoopError } from '@/schema-form/helpers/error';
 

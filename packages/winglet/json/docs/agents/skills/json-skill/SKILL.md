@@ -1,7 +1,6 @@
 ---
 name: json-skill
 description: Expert for @winglet/json — RFC 6901/6902/7396 JSON Pointer, Patch, and Merge Patch with prototype-pollution protection. Use for code or questions on getValue, setValue, compare, applyPatch, difference, mergePatch, escape utilities, JSONPointer, or JSONPath.
-user-invocable: false
 ---
 
 # @winglet/json — JSON Pointer, Patch, and Merge Patch

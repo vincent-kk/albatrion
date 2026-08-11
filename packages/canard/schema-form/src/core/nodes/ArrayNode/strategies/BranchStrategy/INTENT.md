@@ -12,11 +12,12 @@
 
 ## Conventions
 
-- `__keys__` (순서 배열) + `__sourceMap__` (키 → 데이터·노드 맵)으로 요소 관리
+- `__keys__` + `__sourceMap__`(키 → `{data: raw 상태, output: 자식 방출본, node}`)로 요소 관리; `normalizedValue`는 output 합성의 lazy 캐시(`__normalizedExpired__`)
 - 각 요소는 revision 카운터(`__revision__`)로 생성된 고유 키(`#N`)를 가짐
 - 배치 변경은 `RequestEmitChange` 이벤트로 deferred 처리
 - `__locked__` 플래그로 재귀 업데이트 방지
 - `push`/`remove` 후 `__updateChildName__`으로 배열 인덱스 이름 갱신
+- Reset 옵션의 `applyValue(undefined)`는 minItems만큼 빈 항목 재충전 (생성 시 채움과 동일 — 분기 복원·폼 reset에서 빈 input 유지)
 - 클래스 멤버 Domain-First 순서 준수
 
 ## Boundaries
@@ -43,7 +44,6 @@
 ## Dependencies
 
 - `ArrayNode` — 호스트 노드
-- `getChildSchema` — 인덱스별 자식 스키마 결정
-- `promiseAfterMicrotask` — 비동기 반환값 래핑
+- `getChildSchema`·`promiseAfterMicrotask` — 인덱스별 자식 스키마 결정·비동기 반환값 래핑
 - `resolveArrayLimits` — minItems/maxItems 계산
 - `SchemaNodeFactory` — 자식 노드 생성

@@ -134,13 +134,19 @@ export type StringSchema<Options extends Dictionary = object> =
 export type NonNullableStringSchema<Options extends Dictionary = object> =
   BasicSchema &
     BaseNonNullableStringSchema<Options, JsonSchema<Options>> & {
-      options?: { trim?: boolean };
+      options?: {
+        /** Replace the stored value with its whitespace-trimmed form when the field emits `Blurred` */
+        trim?: boolean;
+      };
     };
 /** Nullable string schema (type: ['string', 'null']) with optional trim support */
 export type NullableStringSchema<Options extends Dictionary = object> =
   BasicSchema &
     BaseNullableStringSchema<Options, JsonSchema<Options>> & {
-      options?: { trim?: boolean };
+      options?: {
+        /** Replace the stored value with its whitespace-trimmed form when the field emits `Blurred` */
+        trim?: boolean;
+      };
     };
 
 /** Boolean type schema */
@@ -160,10 +166,22 @@ export type ArraySchema<Options extends Dictionary = object> =
   | NullableArraySchema<Options>;
 /** Non-nullable array schema */
 export type NonNullableArraySchema<Options extends Dictionary = object> =
-  BasicSchema & BaseNonNullableArraySchema<Options, JsonSchema<Options>>;
+  BasicSchema &
+    BaseNonNullableArraySchema<Options, JsonSchema<Options>> & {
+      options?: {
+        /** Remove trailing `undefined` items from the array's normalized value (parent propagation, root validation, external emission); child nodes keep the raw array */
+        omitTrailing?: boolean;
+      };
+    };
 /** Nullable array schema (type: ['array', 'null']) */
 export type NullableArraySchema<Options extends Dictionary = object> =
-  BasicSchema & BaseNullableArraySchema<Options, JsonSchema<Options>>;
+  BasicSchema &
+    BaseNullableArraySchema<Options, JsonSchema<Options>> & {
+      options?: {
+        /** Remove trailing `undefined` items from the array's normalized value (parent propagation, root validation, external emission); child nodes keep the raw array */
+        omitTrailing?: boolean;
+      };
+    };
 
 /** Object type schema */
 export type ObjectSchema<Options extends Dictionary = object> =

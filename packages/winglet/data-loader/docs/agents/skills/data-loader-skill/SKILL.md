@@ -1,7 +1,6 @@
 ---
 name: data-loader-skill
 description: '@winglet/data-loader expert. Batching and caching for asynchronous data fetching: N+1 elimination, the key-ordering contract, Promise-level cache semantics, custom cache and scheduler options, per-request loader isolation, and DataLoader error codes.'
-user-invocable: false
 ---
 
 # @winglet/data-loader — batching and caching for asynchronous fetching

@@ -10,13 +10,13 @@ import type {
   HandleChange,
   SchemaNode,
   UnionSetValueOption,
-} from '../type';
+} from '../../types';
 import {
   type ArrayNodeStrategy,
   BranchStrategy,
   TerminalStrategy,
 } from './strategies';
-import { omitEmptyArray } from './utils';
+import { omitTrailingArray, resolveArrayValueFilter } from './utils';
 
 /**
  * Node class for handling array schemas.
@@ -63,6 +63,9 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
   /** @internal */
   protected override onChange: HandleChange<ArrayValue | Nullish>;
 
+  /** @internal Whether `options.omitTrailing` is enabled for this node. */
+  private readonly __omitTrailing__: boolean;
+
   /** Current array value or `undefined`. */
   public override get value() {
     return this.__strategy__.value;
@@ -70,6 +73,12 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
 
   public override set value(input: ArrayValue | Nullish) {
     this.setValue(input);
+  }
+
+  /** Normalized value: children contribute their own `normalizedValue`, then `options.omitTrailing` trims the tail; `options.omitEmpty` stays on the parent-propagation path, and child nodes and the `value` getter keep the raw array. */
+  public override get normalizedValue(): ArrayValue | Nullish {
+    const normalized = this.__strategy__.normalizedValue;
+    return this.__omitTrailing__ ? omitTrailingArray(normalized) : normalized;
   }
 
   protected override applyValue(
@@ -139,10 +148,10 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
     const hasDefault =
       properties.defaultValue !== undefined ||
       properties.jsonSchema.default !== undefined;
-    const handleChange: HandleChange<ArrayValue | Nullish> =
-      this.jsonSchema.options?.omitEmpty === false
-        ? (value, batch) => super.onChange(value, batch)
-        : (value, batch) => super.onChange(omitEmptyArray(value), batch);
+    this.__omitTrailing__ = this.jsonSchema.options?.omitTrailing === true;
+    const filterValue = resolveArrayValueFilter(this.jsonSchema.options);
+    const handleChange: HandleChange<ArrayValue | Nullish> = (value, batch) =>
+      super.onChange(filterValue(value), batch);
     this.onChange = handleChange;
     this.__strategy__ =
       this.group === 'terminal'

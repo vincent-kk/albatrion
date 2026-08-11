@@ -56,7 +56,7 @@ const expectedValue = {
 };
 
 describe('BranchStrategy oneOf - nested defaults', () => {
-  it.each<CompositionScope>(['oneOf', 'anyOf'])(
+  it.each(['oneOf', 'anyOf'] as const satisfies readonly CompositionScope[])(
     'preserves defaults from a nested %s during initial activation',
     async (innerScope) => {
       const node = nodeFromJsonSchema({
@@ -70,7 +70,7 @@ describe('BranchStrategy oneOf - nested defaults', () => {
     },
   );
 
-  it.each<CompositionScope>(['oneOf', 'anyOf'])(
+  it.each(['oneOf', 'anyOf'] as const satisfies readonly CompositionScope[])(
     'restores nested %s defaults after reactivation',
     async (innerScope) => {
       const node = nodeFromJsonSchema({

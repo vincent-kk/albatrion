@@ -1,4 +1,4 @@
-import { isSchemaNode } from '../filter';
+import { isSchemaNode } from '../AbstractNode';
 import type { NullNode } from './NullNode';
 
 /**

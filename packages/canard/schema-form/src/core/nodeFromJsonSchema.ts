@@ -9,7 +9,7 @@ import type {
 
 import { contextNodeFactory, createSchemaNodeFactory } from './nodes';
 import type { ContextNode } from './nodes';
-import type { InferSchemaNode, ValidationMode } from './nodes/type';
+import type { InferSchemaNode, ValidationMode } from './types';
 
 /** Properties interface for creating Node from JSON Schema */
 interface NodeFromSchemaProps<

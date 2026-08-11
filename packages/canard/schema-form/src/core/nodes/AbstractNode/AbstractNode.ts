@@ -41,7 +41,7 @@ import {
   type UnionNodeEventType,
   type UnionSetValueOption,
   ValidationMode,
-} from '../type';
+} from '../../types';
 import {
   type ComputedProperties,
   EventCascadeManager,
@@ -368,6 +368,15 @@ export abstract class AbstractNode<
     right: Value | Nullish,
   ): boolean {
     return left === right;
+  }
+
+  /**
+   * Normalized (refined) view of this node's value — schema output filters applied.
+   * @remarks Defaults to `value`; subclasses override to refine the exposed value (e.g. `ArrayNode` `options.omitTrailing`).
+   *          Read by root validation, root emission, `FormHandle.getValue`, and parent-side hydration snapshots.
+   */
+  public get normalizedValue(): Value | Nullish {
+    return this.value;
   }
 
   /**
@@ -698,7 +707,7 @@ export abstract class AbstractNode<
    * @remarks Includes virtual field values for complete schema validation.
    */
   private get __enhancedValue__(): Value | Nullish {
-    const value = this.value;
+    const value = this.normalizedValue;
     if (this.group === 'terminal' || value == null) return value;
     const enhancer = this.__enhancer__;
     if (enhancer === undefined || isEmptyObject(enhancer)) return value;
@@ -1136,7 +1145,7 @@ export abstract class AbstractNode<
       this.__handleChange__ = afterMicrotask(() => {
         if (validateEnabled && validateOnChange)
           this.__validationManager__?.validate(this.__enhancedValue__);
-        onChange(getSafeEmptyValue(this.value, this.schemaType));
+        onChange(getSafeEmptyValue(this.normalizedValue, this.schemaType));
       });
       if (validateEnabled)
         this.__enhancer__ = getEmptyValue(this.schemaType) as Value;

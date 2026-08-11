@@ -10,13 +10,13 @@ import {
   NodeEventType,
   SetValueOption,
   type UnionSetValueOption,
-} from '@/schema-form/core/nodes/type';
+} from '@/schema-form/core/types';
 import { parseArray } from '@/schema-form/core/parsers';
 import { getObjectDefaultValue } from '@/schema-form/helpers/defaultValue';
 import type { AllowedValue, ArrayValue } from '@/schema-form/types';
 
 import { resolveArrayLimits } from '../../utils';
-import type { ArrayNodeStrategy } from '../type';
+import type { ArrayNodeStrategy } from '../types';
 
 const FIRST_EMIT_CHANGE_OPTION =
   SetValueOption.Replace | SetValueOption.Default;
@@ -117,6 +117,14 @@ export class TerminalStrategy implements ArrayNodeStrategy {
    * @returns Current value of the array node or undefined or null
    */
   public get value() {
+    return this.__value__;
+  }
+
+  /**
+   * Gets the normalized composition of the array.
+   * @returns The value itself — a terminal array has no children to normalize
+   */
+  public get normalizedValue() {
     return this.__value__;
   }
 

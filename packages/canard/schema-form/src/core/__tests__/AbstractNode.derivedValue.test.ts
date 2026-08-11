@@ -9,7 +9,7 @@ import type { ArrayNode } from '../nodes/ArrayNode';
 import type { BooleanNode } from '../nodes/BooleanNode';
 import type { NumberNode } from '../nodes/NumberNode';
 import type { StringNode } from '../nodes/StringNode';
-import { NodeEventType, type SchemaNode } from '../nodes/type';
+import { NodeEventType, type SchemaNode } from '../types';
 
 /**
  * Helper function to access protected __computeEnabled__ property for testing

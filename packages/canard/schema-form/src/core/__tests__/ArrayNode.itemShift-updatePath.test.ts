@@ -20,7 +20,7 @@ import type { JsonSchema } from '@/schema-form/types';
 import type { ArrayNode } from '../nodes/ArrayNode';
 import type { ObjectNode } from '../nodes/ObjectNode';
 import type { StringNode } from '../nodes/StringNode';
-import { NodeEventType, ValidationMode } from '../nodes/type';
+import { NodeEventType, ValidationMode } from '../types';
 
 describe('ArrayNode - Item Shift and UpdatePath', () => {
   describe('remove() operation', () => {

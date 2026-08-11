@@ -6,12 +6,12 @@
 
 ## Structure
 
-| 경로                | 역할                                                                                           |
-| ------------------- | ---------------------------------------------------------------------------------------------- |
-| `BranchStrategy/`   | 자식 노드 생성·oneOf/anyOf 조건 처리 전략                                                      |
-| `TerminalStrategy/` | 자식 노드 없이 객체 값을 직접 처리하는 전략                                                    |
-| `type.ts`           | `ObjectNodeStrategy` 인터페이스 — `value`, `children`, `subnodes`, `applyValue`, `initialize?` |
-| `index.ts`          | `BranchStrategy`, `TerminalStrategy`, `ObjectNodeStrategy` re-export                           |
+| 경로                | 역할                                                                                  |
+| ------------------- | ------------------------------------------------------------------------------------- |
+| `BranchStrategy/`   | 자식 노드 생성·oneOf/anyOf 조건 처리 전략                                             |
+| `TerminalStrategy/` | 자식 노드 없이 객체 값을 직접 처리하는 전략                                           |
+| `types/`            | `ObjectNodeStrategy` 인터페이스 organ — `value`, `children`, `subnodes`, `applyValue` |
+| `index.ts`          | `BranchStrategy`, `TerminalStrategy`, `ObjectNodeStrategy` re-export                  |
 
 ## Conventions
 
@@ -25,7 +25,7 @@
 ### Always do
 
 - 새 전략 추가 시 `ObjectNodeStrategy` 인터페이스를 완전히 구현하고 `index.ts`에 export 추가
-- `type.ts`의 `Nullish`는 `@aileron/declare`에서, `ObjectValue`·`ChildNode`·`UnionSetValueOption`은 내부 타입에서 임포트
+- `types/strategy.ts`의 `Nullish`는 `@aileron/declare`에서, `ObjectValue`·`ChildNode`·`UnionSetValueOption`은 내부 타입에서 임포트
 
 ### Ask first
 
@@ -36,15 +36,10 @@
 
 - 전략 인스턴스를 `ObjectNode` 외부에서 직접 생성
 - 두 전략 간 내부 상태 공유
-- `type.ts`에 인터페이스 외 구현체 코드 추가
+- `types/`에 인터페이스 외 구현체 코드 추가
 
 ## Dependencies
 
-내부:
-
-- `../../type` — `ChildNode`, `UnionSetValueOption` (ObjectNode 로컬 타입)
-
-외부:
-
+- `../../../../types` (내부) — `ChildNode`, `UnionSetValueOption`
 - `@aileron/declare` — `Nullish`
 - `@/schema-form/types` — `ObjectValue`

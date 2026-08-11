@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import type { SchemaNode } from '@/schema-form/core/nodes/type';
+import type { SchemaNode } from '@/schema-form/core/types';
 
 import { detectsCandidate } from '../detectsCandidate';
 

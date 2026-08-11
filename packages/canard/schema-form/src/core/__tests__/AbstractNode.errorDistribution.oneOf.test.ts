@@ -6,7 +6,7 @@ import { nodeFromJsonSchema } from '@/schema-form/core';
 import type { NumberNode } from '../nodes/NumberNode';
 import type { ObjectNode } from '../nodes/ObjectNode';
 import type { StringNode } from '../nodes/StringNode';
-import { ValidationMode } from '../nodes/type';
+import { ValidationMode } from '../types';
 import { createValidatorFactory } from './utils/createValidatorFactory';
 
 /**

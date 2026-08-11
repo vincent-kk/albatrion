@@ -9,12 +9,12 @@ import {
   NodeEventType,
   SetValueOption,
   type UnionSetValueOption,
-} from '@/schema-form/core/nodes/type';
+} from '@/schema-form/core/types';
 import { parseObject } from '@/schema-form/core/parsers';
 import { getObjectDefaultValue } from '@/schema-form/helpers/defaultValue';
 import type { ObjectValue } from '@/schema-form/types';
 
-import type { ObjectNodeStrategy } from '../type';
+import type { ObjectNodeStrategy } from '../types';
 
 /**
  * Strategy class for managing ObjectNode values as terminal.
