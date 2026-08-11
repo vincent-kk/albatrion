@@ -60,7 +60,11 @@ export const RootArrayForm = () => {
   return (
     <StoryLayout jsonSchema={schema} value={value}>
       <Form jsonSchema={schema} onChange={setValue} ref={formHandle} />
-      <button onClick={() => setSnapshot(JSON.stringify(formHandle.current?.getValue()))}>
+      <button
+        onClick={() =>
+          setSnapshot(JSON.stringify(formHandle.current?.getValue()))
+        }
+      >
         getValue()
       </button>
       <pre>getValue snapshot: {snapshot}</pre>
@@ -73,7 +77,7 @@ export const OneOfBranchSwitching = () => {
   const schema = {
     type: 'object',
     properties: {
-      disc: { type: 'string', enum: ['a', 'b'] },
+      disc: { type: 'string', enum: ['a', 'b'], default: 'a' },
     },
     oneOf: [
       {
@@ -106,7 +110,7 @@ export const AnyOfActiveBranch = () => {
   const schema = {
     type: 'object',
     properties: {
-      mode: { type: 'string', enum: ['list', 'none'] },
+      mode: { type: 'string', enum: ['list', 'none'], default: 'list' },
     },
     anyOf: [
       {
@@ -139,7 +143,7 @@ export const IfThenElseRequiredWithTrim = () => {
   const schema = {
     type: 'object',
     properties: {
-      category: { type: 'string', enum: ['movie', 'game'] },
+      category: { type: 'string', enum: ['movie', 'game'], default: 'movie' },
       tags: {
         type: 'array',
         items: { type: 'string' },
@@ -319,6 +323,92 @@ export const PrefixItemsAndTerminal = () => {
       >
         inject trailing-undefined values
       </button>
+    </StoryLayout>
+  );
+};
+
+// equivalent: array.omit-trailing.composite.render.test.tsx#1-4 (setValue × oneOf × nested)
+// Known gap (pinned as it.fails in the test): when ONE setValue both selects
+// the branch and hydrates the nested arrays, trailing empty item inputs are
+// dropped by the branch restore (values stay correct).
+export const SetValueCompositeBranchesNested = () => {
+  const schema = {
+    type: 'object',
+    properties: {
+      disc: { type: 'string', enum: ['a', 'b'], default: 'b' },
+    },
+    oneOf: [
+      {
+        computed: { if: "./disc === 'a'" },
+        properties: {
+          matrix: {
+            type: 'array',
+            items: {
+              type: 'array',
+              items: { type: 'number' },
+              options: { omitTrailing: true },
+            },
+          },
+        },
+      },
+      {
+        computed: { if: "./disc === 'b'" },
+        properties: { other: { type: 'string' } },
+      },
+    ],
+  } satisfies JsonSchema;
+  const formHandle = useRef<FormHandle<typeof schema, any>>(null);
+  const [value, setValue] = useState<Record<string, unknown>>();
+  return (
+    <StoryLayout jsonSchema={schema} value={value}>
+      <Form jsonSchema={schema} onChange={setValue} ref={formHandle} />
+      <button
+        onClick={() =>
+          formHandle.current?.setValue({
+            disc: 'a',
+            matrix: [
+              [1, undefined],
+              [undefined, 2, undefined],
+            ],
+          })
+        }
+      >
+        select branch a + inject nested [[1, u], [u, 2, u]]
+      </button>
+      <button onClick={() => formHandle.current?.setValue({ disc: 'b' })}>
+        switch to branch b
+      </button>
+    </StoryLayout>
+  );
+};
+
+// equivalent: array.omit-trailing.composite.render.test.tsx#6-8 (injectTo composites)
+// injectTo hands the handler the RAW source value (mirror shows the untrimmed
+// copy), and a same-round branch flip cannot address fields inside the branch
+// it just activated — the next round applies.
+export const InjectToComposite = () => {
+  const schema = {
+    type: 'object',
+    properties: {
+      source: {
+        type: 'string',
+        injectTo: (value: string) => ({
+          '../arr': [value, undefined, undefined],
+        }),
+      },
+      arr: {
+        type: 'array',
+        items: { type: 'string' },
+        options: { omitTrailing: true },
+        injectTo: (value: string[]) => ({ '../mirror': value }),
+      },
+      mirror: { type: 'array', items: { type: 'string' } },
+    },
+  } satisfies JsonSchema;
+  const [value, setValue] = useState<Record<string, unknown>>();
+  return (
+    <StoryLayout jsonSchema={schema} value={value}>
+      <Form jsonSchema={schema} onChange={setValue} />
     </StoryLayout>
   );
 };
