@@ -4,7 +4,10 @@ import type { JsonSchema } from '@/schema-form/types';
 export type CompositionScope = 'oneOf' | 'anyOf';
 
 /** One outer/inner composition pairing exercised by the nested-composition suites. */
-export type CompositionCase = [outer: CompositionScope, inner: CompositionScope];
+export type CompositionCase = [
+  outer: CompositionScope,
+  inner: CompositionScope,
+];
 
 /**
  * Builds the two-level conditional schema the nested-composition suites share.
