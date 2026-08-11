@@ -1,7 +1,6 @@
 ---
 name: react-utils-skill
 description: '@winglet/react-utils expert — 19 React hooks (useConstant / useLazyConstant / useTruthyConstant / useMemorize, useHandle, useReference, useSnapshot, useEffectUntil, useDebounce, useWindowSize), the context-based Portal system, error-boundary and uploader HOCs, and React runtime type-check / render utilities.'
-user-invocable: false
 ---
 
 # @winglet/react-utils — identity-stability primitives for React
