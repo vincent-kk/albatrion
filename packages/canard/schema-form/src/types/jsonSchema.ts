@@ -154,16 +154,28 @@ export type NonNullableBooleanSchema<Options extends Dictionary = object> =
 export type NullableBooleanSchema<Options extends Dictionary = object> =
   BasicSchema & BaseNullableBooleanSchema<Options, JsonSchema<Options>>;
 
+/** Array-specific field options (intersected with the common `BasicSchema.options`) */
+type ArraySchemaOptions = {
+  /** Remove trailing `undefined` items from the array's outgoing value (parent propagation, root validation, external emission); child nodes keep the raw array */
+  omitTrailing?: boolean;
+};
+
 /** Array type schema */
 export type ArraySchema<Options extends Dictionary = object> =
   | NonNullableArraySchema<Options>
   | NullableArraySchema<Options>;
 /** Non-nullable array schema */
 export type NonNullableArraySchema<Options extends Dictionary = object> =
-  BasicSchema & BaseNonNullableArraySchema<Options, JsonSchema<Options>>;
+  BasicSchema &
+    BaseNonNullableArraySchema<Options, JsonSchema<Options>> & {
+      options?: ArraySchemaOptions;
+    };
 /** Nullable array schema (type: ['array', 'null']) */
 export type NullableArraySchema<Options extends Dictionary = object> =
-  BasicSchema & BaseNullableArraySchema<Options, JsonSchema<Options>>;
+  BasicSchema &
+    BaseNullableArraySchema<Options, JsonSchema<Options>> & {
+      options?: ArraySchemaOptions;
+    };
 
 /** Object type schema */
 export type ObjectSchema<Options extends Dictionary = object> =
