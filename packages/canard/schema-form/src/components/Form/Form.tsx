@@ -113,7 +113,7 @@ const FormInner = <
 
   const onSubmit = useHandle(async () => {
     if (!ready.current || !rootNode || inputOnSubmit === undefined) return;
-    const value = rootNode.value as Value;
+    const value = rootNode.outputValue as Value;
     const errors = await rootNode.validate();
     if (errors.length > 0)
       throw new ValidationError(
@@ -135,7 +135,7 @@ const FormInner = <
   const handleReady = useHandle((rootNode: Node) => {
     ready.current = true;
     setRootNode(rootNode);
-    handleChange(rootNode.value as Value);
+    handleChange(rootNode.outputValue as Value);
     rootNode.validate().then((errors) => handleValidate(errors));
   }) as Fn<[SchemaNode], void>;
 
@@ -151,7 +151,7 @@ const FormInner = <
         reset: update,
         findNode: (path) => rootNode?.find(path) || null,
         findNodes: (path) => rootNode?.findAll(path) || [],
-        getValue: () => rootNode?.value as Value,
+        getValue: () => rootNode?.outputValue as Value,
         setValue: (value, options) => rootNode?.setValue(value as any, options),
         getState: () => rootNode?.globalState || {},
         setState: (state) => rootNode?.setSubtreeState(state),
