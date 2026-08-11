@@ -9,7 +9,7 @@
 - `BranchStrategy/` — 자식 노드를 생성·관리하는 복잡한 전략
 - `TerminalStrategy/` — 자식 노드 없이 배열 값을 직접 관리하는 단순 전략
 - `index.ts` — `BranchStrategy`, `TerminalStrategy`, `ArrayNodeStrategy` 타입 export
-- `type.ts` — `ArrayNodeStrategy` 인터페이스 정의
+- `types/` — `ArrayNodeStrategy` 인터페이스를 담는 organ
 
 ## Conventions
 

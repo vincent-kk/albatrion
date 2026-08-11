@@ -1,7 +1,7 @@
 import type { ObjectSchema } from '@/schema-form/types';
 
 import { AbstractNode } from '../AbstractNode';
-import { NodeEventType, type SchemaNodeConstructorProps } from '../type';
+import { NodeEventType, type SchemaNodeConstructorProps } from '../../types';
 
 /**
  * Node class for providing context data to descendant nodes.

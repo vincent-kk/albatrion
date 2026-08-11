@@ -10,7 +10,7 @@ import {
   type SchemaNodeConstructorProps,
   SetValueOption,
   type UnionSetValueOption,
-} from '../type';
+} from '../../types';
 
 /**
  * Node class for handling string schemas.

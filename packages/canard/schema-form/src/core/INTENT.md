@@ -8,7 +8,7 @@ JSON Schema를 노드 트리로 변환하고 폼 상태를 관리하는 핵심 �
 
 - `nodeFromJsonSchema.ts` — 공개 팩토리 함수, JSON Schema → SchemaNode 변환 진입점
 - `nodes/` — 노드 구현체 (AbstractNode, StringNode, NumberNode, BooleanNode, ArrayNode, ObjectNode, NullNode, VirtualNode)
-- `parsers/` — 타입별 값 파서 (parseString, parseNumber, parseArray, parseObject, parseBoolean)
+- `parsers/` · `types/` — 타입별 값 파서 · 노드 공유 타입 organ (`SchemaNode`, `NodeEventType` 등)
 - `__tests__/` — 352개+ 명세 검증 테스트
 
 ## Conventions
@@ -45,6 +45,5 @@ JSON Schema를 노드 트리로 변환하고 폼 상태를 관리하는 핵심 �
 ## Dependencies
 
 - `@winglet/json`·`@winglet/json-schema` — JSONPointer·resolveSchema
-- `@winglet/common-utils` — 필터, 유틸
-- `@aileron/declare` — `Fn` 등 공통 타입
+- `@winglet/common-utils`·`@aileron/declare` — 필터·유틸, `Fn` 등 공통 타입
 - `@/schema-form/helpers`·`types` — 내부 헬퍼, 공유 타입

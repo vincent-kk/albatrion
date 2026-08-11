@@ -7,14 +7,10 @@ JSON Schema 타입별 노드 클래스 집합. `AbstractNode` 를 기반으로 `
 ## Structure
 
 - `AbstractNode/` — 모든 노드의 추상 기반 클래스 및 공유 유틸리티
-- `ArrayNode/` — 배열 타입 노드 (BranchStrategy / TerminalStrategy)
-- `ObjectNode/` — 객체 타입 노드 (BranchStrategy / TerminalStrategy)
-- `StringNode/` — 문자열 타입 노드
-- `NumberNode/` — 숫자/정수 타입 노드
-- `BooleanNode/` — 불리언 타입 노드
-- `NullNode/` — null 타입 노드
+- `ArrayNode/` · `ObjectNode/` — branch 노드 (각각 Branch/Terminal 전략 보유)
+- `StringNode/` · `NumberNode/` · `BooleanNode/` · `NullNode/` — terminal 노드
 - `VirtualNode/` — 스키마 외 가상 노드 (조건부 필드, 계산 값)
-- `type.ts` — 노드 공유 타입 (`SchemaNode`, `ChildNode`, `NodeEventType` 등)
+- 노드 공유 타입(`SchemaNode`, `ChildNode`, `NodeEventType` 등)은 상위 `core/types/` organ 소유
 
 ## Conventions
 

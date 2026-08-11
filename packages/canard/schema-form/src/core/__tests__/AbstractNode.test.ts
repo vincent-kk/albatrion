@@ -10,7 +10,7 @@ import {
   NodeState,
   SetValueOption,
   ValidationMode,
-} from '../nodes/type';
+} from '../types';
 import { createValidatorFactory } from './utils/createValidatorFactory';
 
 const wait = (delay = 5) => {

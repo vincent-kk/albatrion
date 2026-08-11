@@ -41,7 +41,7 @@ import {
   type UnionNodeEventType,
   type UnionSetValueOption,
   ValidationMode,
-} from '../type';
+} from '../../types';
 import {
   type ComputedProperties,
   EventCascadeManager,

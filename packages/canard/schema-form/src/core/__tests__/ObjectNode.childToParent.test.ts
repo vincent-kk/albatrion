@@ -22,7 +22,7 @@ import type { BooleanNode } from '../nodes/BooleanNode';
 import type { NumberNode } from '../nodes/NumberNode';
 import type { ObjectNode } from '../nodes/ObjectNode';
 import type { StringNode } from '../nodes/StringNode';
-import { NodeEventType } from '../nodes/type';
+import { NodeEventType } from '../types';
 
 describe('ObjectNode Child-to-Parent Updates', () => {
   describe('single child value change', () => {

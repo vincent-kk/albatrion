@@ -7,7 +7,7 @@ import type { BooleanNode } from '../nodes/BooleanNode';
 import type { NumberNode } from '../nodes/NumberNode';
 import type { ObjectNode } from '../nodes/ObjectNode';
 import type { StringNode } from '../nodes/StringNode';
-import { NodeEventType, NodeState } from '../nodes/type';
+import { NodeEventType, NodeState } from '../types';
 
 const wait = (delay = 10) => {
   return new Promise((resolve) => {

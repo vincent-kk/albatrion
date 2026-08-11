@@ -14,7 +14,7 @@
 
 ## API Contracts
 
-`type.ts`가 정의하는 `ArrayNodeStrategy` 멤버:
+`types/strategy.ts`가 정의하는 `ArrayNodeStrategy` 멤버:
 
 | 멤버                    | 시그니처                                                   | 계약                                                           |
 | ----------------------- | ---------------------------------------------------------- | -------------------------------------------------------------- |
@@ -48,14 +48,6 @@
 
 - `maxItems`에 도달한 상태에서 `push()`는 길이를 늘리지 않고, `push(value, true)`는 늘린다.
 
-## Boundary Exemptions
-
-### `packages/canard/schema-form/src/core/nodes/ArrayNode/strategies/type.ts` — 구현체의 인터페이스 직접 참조
-
-- **Consumers**: `packages/canard/schema-form/src/core/nodes/ArrayNode/strategies/BranchStrategy/BranchStrategy.ts`, `packages/canard/schema-form/src/core/nodes/ArrayNode/strategies/TerminalStrategy/TerminalStrategy.ts`
-- **Direct import**: `allowed`
-- **Reason**: 두 소비자는 이 fractal의 자식 fractal이자 `ArrayNodeStrategy`의 구현체다. 진입점 `strategies/index.ts`는 바로 그 두 구현체를 re-export하므로, 구현체가 진입점을 경유하면 `BranchStrategy → strategies → BranchStrategy` 형태의 순환이 생기고 런타임 circular import 위험이 따른다. 인터페이스를 소비자들의 lowest common fractal로 옮기는 선택지도 성립하지 않는다 — 그 조상은 이 fractal 자신이며, 인터페이스는 `ArrayNode`가 전략을 선택하는 계약이라 `strategies` 밖으로 나가면 소유자가 사라진다. 따라서 `'../type'` 직접 참조를 허용한다.
-
 ## Last Updated
 
-2026-08-12 — `ArrayNodeStrategy`에 `normalizedValue`가 추가되면서 두 구현체의 서로 다른 계약 의무와 트림 적용 지점을 명문화하고, 구현체의 `type.ts` 직접 참조에 경계 예외를 선언 (신규 문서).
+2026-08-12 — `ArrayNodeStrategy`에 `normalizedValue`가 추가되면서 두 구현체의 서로 다른 계약 의무와 트림 적용 지점을 명문화하고, 인터페이스를 `types/` organ으로 옮겨 두 구현체의 직접 참조가 경계 예외 없이 성립하도록 정리 (신규 문서).

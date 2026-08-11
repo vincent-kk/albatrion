@@ -20,7 +20,7 @@ import type { JsonSchema } from '@/schema-form/types';
 
 import type { BooleanNode } from '../nodes/BooleanNode';
 import type { StringNode } from '../nodes/StringNode';
-import { NodeEventType } from '../nodes/type';
+import { NodeEventType } from '../types';
 
 describe('Conditional Schema Event Stability', () => {
   describe('if-then-else with computed properties', () => {

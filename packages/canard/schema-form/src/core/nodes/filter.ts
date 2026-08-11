@@ -6,7 +6,7 @@ import type { NumberNode } from './NumberNode';
 import type { ObjectNode } from './ObjectNode';
 import type { StringNode } from './StringNode';
 import type { VirtualNode } from './VirtualNode';
-import type { SchemaNode } from './type';
+import type { SchemaNode } from '../types';
 
 /**
  * Type guard to check if a value is a SchemaNode instance.

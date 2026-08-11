@@ -6,7 +6,7 @@ import type { ObjectNode } from '@/schema-form/core/nodes/ObjectNode';
 import type {
   HandleChange,
   SchemaNodeFactory,
-} from '@/schema-form/core/nodes/type';
+} from '@/schema-form/core/types';
 import { JsonSchemaError } from '@/schema-form/errors';
 import {
   formatCompositionPropertyExclusivenessError,

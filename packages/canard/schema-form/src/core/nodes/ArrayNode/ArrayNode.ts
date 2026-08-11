@@ -10,7 +10,7 @@ import type {
   HandleChange,
   SchemaNode,
   UnionSetValueOption,
-} from '../type';
+} from '../../types';
 import {
   type ArrayNodeStrategy,
   BranchStrategy,

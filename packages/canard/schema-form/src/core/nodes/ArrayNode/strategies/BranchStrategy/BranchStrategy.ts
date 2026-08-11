@@ -12,11 +12,11 @@ import {
   type SchemaNodeFactory,
   SetValueOption,
   type UnionSetValueOption,
-} from '@/schema-form/core/nodes/type';
+} from '@/schema-form/core/types';
 import type { AllowedValue, ArrayValue } from '@/schema-form/types';
 
 import { resolveArrayLimits } from '../../utils';
-import type { ArrayNodeStrategy } from '../type';
+import type { ArrayNodeStrategy } from '../types';
 import type { ChildSegmentKey } from './type';
 import {
   RESOLVED_LENGTH,

@@ -19,12 +19,12 @@ import {
   type SchemaNodeFactory,
   SetValueOption,
   type UnionSetValueOption,
-} from '@/schema-form/core/nodes/type';
+} from '@/schema-form/core/types';
 import { joinSegment } from '@/schema-form/helpers/jsonPointer';
 import { isTerminalType } from '@/schema-form/helpers/jsonSchema';
 import type { ObjectValue } from '@/schema-form/types';
 
-import type { ObjectNodeStrategy } from '../type';
+import type { ObjectNodeStrategy } from '../types';
 import type { ChildNodeMap } from './type';
 import {
   type FieldConditionMap,

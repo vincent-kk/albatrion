@@ -6,7 +6,7 @@ import {
   contextNodeFactory,
   nodeFromJsonSchema,
 } from '@/schema-form/core/nodeFromJsonSchema';
-import { NodeEventType } from '@/schema-form/core/nodes/type';
+import { NodeEventType } from '@/schema-form/core/types';
 import type { JsonSchema } from '@/schema-form/types';
 
 import type { ArrayNode } from '../nodes/ArrayNode';

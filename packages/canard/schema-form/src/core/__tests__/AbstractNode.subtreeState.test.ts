@@ -3,7 +3,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { nodeFromJsonSchema } from '@/schema-form/core';
 import type { NumberNode, ObjectNode, StringNode } from '@/schema-form/core';
 
-import { NodeEventType, NodeState } from '../nodes/type';
+import { NodeEventType, NodeState } from '../types';
 
 const wait = (delay = 5) => {
   return new Promise((resolve) => {

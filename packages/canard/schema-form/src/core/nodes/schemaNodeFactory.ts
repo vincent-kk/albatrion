@@ -39,7 +39,7 @@ import {
   type SchemaNodeFactory,
   ValidationMode,
   type VirtualNodeConstructorProps,
-} from './type';
+} from '../types';
 
 /**
  * Creates a context ObjectNode for sharing form-wide data across all nodes.

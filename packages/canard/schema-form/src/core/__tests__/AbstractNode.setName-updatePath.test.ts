@@ -6,7 +6,7 @@ import { nodeFromJsonSchema } from '@/schema-form/core';
 
 import type { ArrayNode } from '../nodes/ArrayNode';
 import type { ObjectNode } from '../nodes/ObjectNode';
-import { NodeEventType, type SchemaNode, ValidationMode } from '../nodes/type';
+import { NodeEventType, type SchemaNode, ValidationMode } from '../types';
 
 /**
  * Helper function to access protected __setName__ method for testing

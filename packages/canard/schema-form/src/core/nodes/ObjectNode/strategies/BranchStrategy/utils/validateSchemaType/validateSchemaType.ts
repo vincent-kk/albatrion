@@ -1,6 +1,6 @@
 import { isArray } from '@winglet/common-utils/filter';
 
-import type { SchemaNode } from '@/schema-form/core/nodes/type';
+import type { SchemaNode } from '@/schema-form/core/types';
 
 /**
  * Checks if a JavaScript value matches the specified JSON Schema type.
