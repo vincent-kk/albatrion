@@ -2,7 +2,7 @@
 
 ## Purpose
 
-배열 끝의 연속된 `undefined` 요소를 제거하는 순수 유틸 함수. `ArrayNode`의 출력 경로(`onChange` 핸들러, `outputValue`)에서 `omitTrailing` 옵션이 활성화된 경우 적용된다.
+배열 끝의 연속된 `undefined` 요소를 제거하는 순수 유틸 함수. `ArrayNode`의 출력 경로(`onChange` 핸들러, `normalizedValue`)에서 `omitTrailing` 옵션이 활성화된 경우 적용된다.
 
 ## Structure
 

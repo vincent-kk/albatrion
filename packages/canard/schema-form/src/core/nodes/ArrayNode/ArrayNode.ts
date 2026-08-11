@@ -75,8 +75,8 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
     this.setValue(input);
   }
 
-  /** Outgoing value with `options.omitTrailing` applied; `options.omitEmpty` stays on the parent-propagation path, and child nodes and the `value` getter keep the raw array. */
-  public override get outputValue(): ArrayValue | Nullish {
+  /** Normalized value with `options.omitTrailing` applied; `options.omitEmpty` stays on the parent-propagation path, and child nodes and the `value` getter keep the raw array. */
+  public override get normalizedValue(): ArrayValue | Nullish {
     return this.__omitTrailing__ ? omitTrailingArray(this.value) : this.value;
   }
 

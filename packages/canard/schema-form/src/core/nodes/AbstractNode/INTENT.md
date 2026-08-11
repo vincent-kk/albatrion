@@ -14,7 +14,7 @@
 
 - Domain-First 멤버 순서: Identity → Tree → Value → Computed → State → Validation → Events → Injection → Lifecycle → Constructor
 - Protected 내부 메서드 `__methodName__` 패턴; JSDoc: `@internal` (private), `@remarks` (추가 맥락), `@example` (공개 API)
-- 루트 validation 값·루트 방출 값·`FormHandle.getValue`는 공개 `outputValue` getter 경유 (기본 `this.value`, 서브클래스가 출력 필터링 목적으로만 override)
+- 루트 validation 값·루트 방출 값·`FormHandle.getValue`는 공개 `normalizedValue` getter 경유 (기본 `this.value`, 서브클래스가 값 정제 목적으로만 override)
 
 ## Boundaries
 
