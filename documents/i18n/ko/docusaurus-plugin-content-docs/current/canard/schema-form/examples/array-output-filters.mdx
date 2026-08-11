@@ -1,0 +1,40 @@
+---
+sidebar_label: '배열 출력 필터'
+sidebar_position: 12
+---
+
+import LazyDemo from '@site/src/components/LazyDemo';
+
+# 배열 출력 필터 (omitTrailing / omitEmpty)
+
+`options.omitTrailing`을 켜면 배열이 빈 input을 먼저 노출하면서도 그 빈 항목을 폼이 내보내는 값에서 제외할 수 있습니다. 제거 대상은 **후행** 연속 `undefined`뿐이며, 선행·중간 `undefined`는 그대로 보존되어 error `dataPath`와 validation index 정합이 유지됩니다.
+
+:::info 주요 기능
+
+- `omitTrailing: true` — opt-in. 내보내는 값에서만 후행 `undefined`를 잘라냅니다
+- `omitEmpty` — 기본 활성. 빈 배열을 부모 값에서 제거합니다
+- 필터 순서 — `omitTrailing`이 먼저, `omitEmpty`가 그 다음입니다
+- 값 2채널 — `node.value`(raw, 렌더되는 값) vs `node.normalizedValue`(정제된 값, 방출되는 값)
+  :::
+
+아래 데모는 형태가 같고(`minItems: 3`, 문자열 항목) `options`만 다른 배열 3개를 렌더링합니다. 셋 다 빈 행 3개로 시작하며, 폼 아래 표가 두 채널을 나란히 보여주므로 렌더된 행 수와 방출되는 값이 어떻게 갈라지는지 확인할 수 있습니다.
+
+| 경로       | `options`                                  | 첫 렌더 시 방출값                   |
+| ---------- | ------------------------------------------ | ----------------------------------- |
+| `/tags`    | `{ omitTrailing: true }`                   | 키 자체가 사라짐 (`[]` → omitEmpty) |
+| `/notes`   | 없음                                       | `[null, null, null]`                |
+| `/aliases` | `{ omitTrailing: true, omitEmpty: false }` | `[]`                                |
+
+:::caution minItems와 유효성 검사
+validation은 **정제된 값**을 읽습니다. `minItems: 3`과 `omitTrailing: true`를 함께 쓰면 한 행만 채워진 배열은 길이 3이 아니라 1로 검증됩니다. 노출할 행 수를 `minItems`로 정하는 것은 방출되는 값의 계약도 그 개수를 요구할 때만 적절합니다. 그렇지 않다면 `minItems`를 빼고 사용자가 행을 추가하도록 두세요.
+:::
+
+:::tip 커스텀 배열 입력
+행 수는 `value.length`가 아니라 `node.children` 기준으로 세야 합니다 — 방출 값이 렌더된 행보다 짧은 것이 설계입니다.
+:::
+
+<LazyDemo
+  load={() =>
+    import('@site/src/components/demos/examples/ArrayOutputFiltersDemo')
+  }
+/>
