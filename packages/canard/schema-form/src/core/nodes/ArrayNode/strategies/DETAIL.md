@@ -16,19 +16,19 @@
 
 `type.ts`가 정의하는 `ArrayNodeStrategy` 멤버:
 
-| 멤버 | 시그니처 | 계약 |
-| ---- | -------- | ---- |
-| `value` | `get value(): ArrayValue \| Nullish` | raw 상태. 후행 빈 항목이 살아 있다 |
-| `normalizedValue` | `get normalizedValue(): ArrayValue \| Nullish` | 자식의 `normalizedValue` 합성. 자식이 없는 전략은 `value` 자신 |
-| `length` | `get length(): number` | 현재 항목 수 |
-| `minItems` · `maxItems` | `get (): number` | JSON Schema 제약 |
-| `children` | `get children(): ChildNode[] \| null` | 자식 없는 전략은 `null` |
-| `applyValue` | `(value, option: UnionSetValueOption) => void` | 옵션 비트로 방출 이벤트를 결정 |
-| `push` | `(data?, unlimited?) => Promise<number>` | `unlimited !== true`면 `maxItems` 가드 |
-| `update` · `remove` | `(index, ...) => Promise<ArrayValue[number] \| undefined>` | 범위 밖이면 `undefined` |
-| `pop` | `() => Promise<ArrayValue[number] \| undefined>` | 비어 있으면 `undefined` |
-| `clear` | `() => Promise<void>` | 전부 제거 |
-| `initialize?` | `() => void` | 선택적. 자식 pub-sub 연결 |
+| 멤버                    | 시그니처                                                   | 계약                                                           |
+| ----------------------- | ---------------------------------------------------------- | -------------------------------------------------------------- |
+| `value`                 | `get value(): ArrayValue \| Nullish`                       | raw 상태. 후행 빈 항목이 살아 있다                             |
+| `normalizedValue`       | `get normalizedValue(): ArrayValue \| Nullish`             | 자식의 `normalizedValue` 합성. 자식이 없는 전략은 `value` 자신 |
+| `length`                | `get length(): number`                                     | 현재 항목 수                                                   |
+| `minItems` · `maxItems` | `get (): number`                                           | JSON Schema 제약                                               |
+| `children`              | `get children(): ChildNode[] \| null`                      | 자식 없는 전략은 `null`                                        |
+| `applyValue`            | `(value, option: UnionSetValueOption) => void`             | 옵션 비트로 방출 이벤트를 결정                                 |
+| `push`                  | `(data?, unlimited?) => Promise<number>`                   | `unlimited !== true`면 `maxItems` 가드                         |
+| `update` · `remove`     | `(index, ...) => Promise<ArrayValue[number] \| undefined>` | 범위 밖이면 `undefined`                                        |
+| `pop`                   | `() => Promise<ArrayValue[number] \| undefined>`           | 비어 있으면 `undefined`                                        |
+| `clear`                 | `() => Promise<void>`                                      | 전부 제거                                                      |
+| `initialize?`           | `() => void`                                               | 선택적. 자식 pub-sub 연결                                      |
 
 `index.ts`가 노출하는 공개 표면은 `BranchStrategy`, `TerminalStrategy`, 그리고 타입 `ArrayNodeStrategy` 셋뿐이다.
 

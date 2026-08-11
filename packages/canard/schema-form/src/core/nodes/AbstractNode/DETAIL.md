@@ -21,22 +21,22 @@ public get normalizedValue(): Value | Nullish
 - **override 허용 범위**: 값 정제만. 시그니처와 `Value | Nullish` 반환 타입을 유지해야 하며, `value`가 `null`/`undefined`일 때 그 nullish 상태를 다른 값으로 바꾸지 않는다.
 - **소비 지점** — 이 네 곳이 정제값을 읽는다. 새 소비 지점을 추가할 때는 raw가 아니라 이 getter를 읽는지 확인한다.
 
-| 소비 지점 | 위치 | 읽는 이유 |
-| --------- | ---- | --------- |
-| 루트 validation 값 | `AbstractNode.ts:710` (`__enhancedValue__`) | 검증 대상은 실제로 제출될 값이어야 한다 |
-| 루트 방출 | `AbstractNode.ts:1148` (`__handleChange__` → `onChange(getSafeEmptyValue(...))`) | 폼 밖으로 나가는 값 |
-| `FormHandle.getValue` · `submit` | `components/Form/Form.tsx` | 명령형 API가 돌려주는 값 |
-| 부모측 하이드레이션 스냅샷 | `ArrayNode/strategies/BranchStrategy` (`__sourceMap__`의 `output` 슬롯) | 부모가 자식으로부터 받아 두는 기여값 |
+| 소비 지점                        | 위치                                                                             | 읽는 이유                               |
+| -------------------------------- | -------------------------------------------------------------------------------- | --------------------------------------- |
+| 루트 validation 값               | `AbstractNode.ts:710` (`__enhancedValue__`)                                      | 검증 대상은 실제로 제출될 값이어야 한다 |
+| 루트 방출                        | `AbstractNode.ts:1148` (`__handleChange__` → `onChange(getSafeEmptyValue(...))`) | 폼 밖으로 나가는 값                     |
+| `FormHandle.getValue` · `submit` | `components/Form/Form.tsx`                                                       | 명령형 API가 돌려주는 값                |
+| 부모측 하이드레이션 스냅샷       | `ArrayNode/strategies/BranchStrategy` (`__sourceMap__`의 `output` 슬롯)          | 부모가 자식으로부터 받아 두는 기여값    |
 
 ### 서브클래스 의무
 
-| 멤버 | 필수 | 계약 |
-| ---- | ---- | ---- |
-| `type` | 예 | 노드의 스키마 타입. `integer`는 `number`로 정규화되어 노출된다 |
-| `value` getter/setter | 예 | raw 값 |
-| `applyValue(input, option)` | 예 | 옵션 비트에 따른 값 적용과 이벤트 발행 |
-| `normalizedValue` | 아니오 | 정제가 필요할 때만 override |
-| `__equals__(left, right)` | 아니오 | 기본은 참조 동등(`===`). 깊은 비교가 필요할 때만 override |
+| 멤버                        | 필수   | 계약                                                           |
+| --------------------------- | ------ | -------------------------------------------------------------- |
+| `type`                      | 예     | 노드의 스키마 타입. `integer`는 `number`로 정규화되어 노출된다 |
+| `value` getter/setter       | 예     | raw 값                                                         |
+| `applyValue(input, option)` | 예     | 옵션 비트에 따른 값 적용과 이벤트 발행                         |
+| `normalizedValue`           | 아니오 | 정제가 필요할 때만 override                                    |
+| `__equals__(left, right)`   | 아니오 | 기본은 참조 동등(`===`). 깊은 비교가 필요할 때만 override      |
 
 ## Acceptance Criteria
 
