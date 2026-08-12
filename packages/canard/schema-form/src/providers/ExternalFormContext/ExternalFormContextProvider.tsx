@@ -30,7 +30,7 @@ export interface ExternalFormContextProviderProps {
   /** FormatError function declared externally */
   formatError?: FormatError;
   /**
-   * Error display condition
+   * Error display condition (default: ShowError.DirtyTouched)
    *   - `true`: Always show errors
    *   - `false`: Never show errors
    *   - `ShowError.Dirty`: Show errors when value has changed
@@ -39,7 +39,7 @@ export interface ExternalFormContextProviderProps {
    */
   showError?: boolean | ShowError;
   /**
-   * Execute Validation Mode
+   * Execute Validation Mode (default: ValidationMode.OnChange | ValidationMode.OnRequest)
    *  - `ValidationMode.None`: Disable validation
    *  - `ValidationMode.OnChange`: Validate when value changes
    *  - `ValidationMode.OnRequest`: Validate on request

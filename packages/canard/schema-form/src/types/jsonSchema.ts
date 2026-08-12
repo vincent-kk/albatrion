@@ -135,7 +135,7 @@ export type NonNullableStringSchema<Options extends Dictionary = object> =
   BasicSchema &
     BaseNonNullableStringSchema<Options, JsonSchema<Options>> & {
       options?: {
-        /** Replace the stored value with its whitespace-trimmed form when the field emits `Blurred` */
+        /** Replace the stored value with its whitespace-trimmed form when the field emits `Blurred` (default: false) */
         trim?: boolean;
       };
     };
@@ -144,7 +144,7 @@ export type NullableStringSchema<Options extends Dictionary = object> =
   BasicSchema &
     BaseNullableStringSchema<Options, JsonSchema<Options>> & {
       options?: {
-        /** Replace the stored value with its whitespace-trimmed form when the field emits `Blurred` */
+        /** Replace the stored value with its whitespace-trimmed form when the field emits `Blurred` (default: false) */
         trim?: boolean;
       };
     };
@@ -169,7 +169,7 @@ export type NonNullableArraySchema<Options extends Dictionary = object> =
   BasicSchema &
     BaseNonNullableArraySchema<Options, JsonSchema<Options>> & {
       options?: {
-        /** Remove trailing `undefined` items from the array's normalized value (parent propagation, root validation, external emission); child nodes keep the raw array */
+        /** Remove trailing `undefined` items from the array's normalized value (parent propagation, root validation, external emission); child nodes keep the raw array (default: false) */
         omitTrailing?: boolean;
       };
     };
@@ -178,7 +178,7 @@ export type NullableArraySchema<Options extends Dictionary = object> =
   BasicSchema &
     BaseNullableArraySchema<Options, JsonSchema<Options>> & {
       options?: {
-        /** Remove trailing `undefined` items from the array's normalized value (parent propagation, root validation, external emission); child nodes keep the raw array */
+        /** Remove trailing `undefined` items from the array's normalized value (parent propagation, root validation, external emission); child nodes keep the raw array (default: false) */
         omitTrailing?: boolean;
       };
     };
@@ -253,7 +253,7 @@ export type BasicSchema = {
   };
   /** Form type identifier for component selection */
   formType?: string;
-  /** Whether node is a terminal (leaf) node */
+  /** Whether node is a terminal (leaf) node (default: inferred — `object`/`array` are branch unless `FormTypeInput` is a component, every other type is terminal) */
   terminal?: boolean;
   /** Custom error messages per validation rule */
   errorMessages?: {
@@ -262,7 +262,7 @@ export type BasicSchema = {
   };
   /** Field options and configurations */
   options?: {
-    /** Omit empty values from form data */
+    /** Omit empty values from form data (default: true) */
     omitEmpty?: boolean;
     [alt: string]: any;
   };
@@ -311,13 +311,13 @@ export type BasicSchema = {
      * */
     if?: boolean | string;
     /**
-     * Active state expression
+     * Active state expression (default: true)
      * @warning When active is false, the node cannot write values and will be excluded from the final output. In this case, derived values are also not calculated.
      * @note If expression is false, the FormTypeInput component will be hidden.
      */
     active?: boolean | string;
     /**
-     * Visibility state expression
+     * Visibility state expression (default: true)
      * @warning Even when visible is false, the node can still write values and will be included in the final output.
      * @note If expression is false, the FormTypeInput component will be hidden.
      */
@@ -328,13 +328,13 @@ export type BasicSchema = {
      * */
     pristine?: boolean | string;
     /**
-     * Read-only state expression
+     * Read-only state expression (default: false)
      * @warning Even in readOnly state, values can still be changed programmatically via setValue().
      * @note This field only passes the property to the node; each FormTypeInput must implement the readOnly behavior.
      */
     readOnly?: boolean | string;
     /**
-     * Disabled state expression
+     * Disabled state expression (default: false)
      * @warning Even in disabled state, values can still be changed programmatically via setValue().
      * @note This field only passes the property to the node; each FormTypeInput must implement the disabled behavior.
      */

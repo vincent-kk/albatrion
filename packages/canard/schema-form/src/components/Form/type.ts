@@ -44,9 +44,9 @@ export interface FormProps<
   jsonSchema: Schema;
   /** Default value for this SchemaForm */
   defaultValue?: Value;
-  /** Apply readOnly property to all FormTypeInputs */
+  /** Apply readOnly property to all FormTypeInputs (default: false) */
   readOnly?: boolean;
-  /** Apply disabled property to all FormTypeInputs */
+  /** Apply disabled property to all FormTypeInputs (default: false) */
   disabled?: boolean;
   /** Function called when the value of this SchemaForm changes */
   onChange?: Fn<[value: Value]>;

@@ -26,7 +26,7 @@ export interface ExternalFormContext {
   formatError?: FormatError;
   /** Error display condition (default: ShowError.DirtyTouched) */
   showError?: boolean | ShowError;
-  /** Execute Validation Mode (default: ValidationMode.OnChange) */
+  /** Execute Validation Mode (default: ValidationMode.OnChange | ValidationMode.OnRequest) */
   validationMode?: ValidationMode;
   /** Global user-defined context, merged with user-defined context */
   context?: Dictionary;
