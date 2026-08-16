@@ -11,7 +11,7 @@
  * @template Value - Output value type after transformation
  * @param object - Object whose values will be transformed
  * @param getValue - Function that transforms each value, receives (value, key, object)
- * @returns New object with original keys and transformed values
+ * @returns New prototype-free object with original keys and transformed values
  *
  * @example
  * Basic value transformation:
@@ -304,7 +304,9 @@ export const transformValues = <
   getValue: (value: Type[Key], key: Key, object: Type) => Value,
 ): Record<Key, Value> => {
   const keys = Object.keys(object);
-  const result = {} as Record<Key, Value>;
+  // Prototype-free so a source key like `__proto__` is stored rather than
+  // swallowed by the prototype setter
+  const result = Object.create(null) as Record<Key, Value>;
   for (let i = 0, k = keys[0], l = keys.length; i < l; i++, k = keys[i])
     result[k as Key] = getValue(object[k as Key], k as Key, object);
   return result;

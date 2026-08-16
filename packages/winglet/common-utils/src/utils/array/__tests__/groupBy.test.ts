@@ -106,4 +106,13 @@ describe('groupBy', () => {
       large: [4, 5],
     });
   });
+  it('should group items under keys inherited from Object.prototype', () => {
+    const items = [{ k: 'constructor' }, { k: 'toString' }, { k: 'plain' }];
+
+    const grouped = groupBy(items, (item) => item.k);
+
+    expect(grouped.constructor).toEqual([{ k: 'constructor' }]);
+    expect(grouped.toString).toEqual([{ k: 'toString' }]);
+    expect(grouped.plain).toEqual([{ k: 'plain' }]);
+  });
 });

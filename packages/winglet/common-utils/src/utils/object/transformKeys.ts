@@ -10,7 +10,7 @@
  * @template Key - Output key type after transformation (extends PropertyKey)
  * @param object - Object whose keys will be transformed
  * @param getKey - Function that transforms each key, receives (value, key, object)
- * @returns New object with transformed keys and original values
+ * @returns New prototype-free object with transformed keys and original values
  *
  * @example
  * Basic key transformation:
@@ -262,7 +262,9 @@ export const transformKeys = <
   getKey: (value: Type[keyof Type], key: keyof Type, object: Type) => Key,
 ): Record<Key, Type[keyof Type]> => {
   const keys = Object.keys(object) as Array<keyof Type>;
-  const result = {} as Record<Key, Type[keyof Type]>;
+  // Prototype-free so a produced key like `__proto__` is stored rather than
+  // swallowed by the prototype setter
+  const result = Object.create(null) as Record<Key, Type[keyof Type]>;
   for (let i = 0, k = keys[0], l = keys.length; i < l; i++, k = keys[i]) {
     const value = object[k];
     result[getKey(value, k, object)] = value;

@@ -55,4 +55,9 @@ describe('at', () => {
     expect(at(array, [-5])).toEqual([undefined]);
     expect(at(array, [1, 5, -5])).toEqual([2, undefined, undefined]);
   });
+  it('should truncate a fractional index the same way for scalar and array input', () => {
+    expect(at([1, 2, 3], 1.5)).toBe(2);
+    expect(at([1, 2, 3], [1.5])).toEqual([2]);
+    expect(at([1, 2, 3], -1.5)).toBe(3);
+  });
 });

@@ -9,7 +9,7 @@
  * @template Key - Type of grouping key (string, number, or symbol)
  * @param array - Array to group by key
  * @param getKey - Function to extract grouping key from each element
- * @returns Object with keys as group identifiers and values as element arrays
+ * @returns Prototype-free object with keys as group identifiers and values as element arrays
  *
  * @example
  * Group by property:
@@ -126,7 +126,9 @@ export const groupBy = <Type, Key extends PropertyKey>(
   array: readonly Type[],
   getKey: (item: Type) => Key,
 ): Record<Key, Type[]> => {
-  const result = {} as Record<Key, Type[]>;
+  // Prototype-free so a key like `constructor` or `__proto__` becomes an ordinary
+  // entry instead of resolving to an inherited member
+  const result = Object.create(null) as Record<Key, Type[]>;
   for (let i = 0, l = array.length; i < l; i++) {
     const item = array[i];
     const key = getKey(item);

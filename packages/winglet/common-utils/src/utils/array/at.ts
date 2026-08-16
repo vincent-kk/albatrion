@@ -84,7 +84,9 @@ export const at = <
   indexes: Indexes,
 ): Result => {
   if (typeof indexes === 'number') {
-    const index = indexes < 0 ? indexes + array.length : indexes;
+    // Truncated exactly as the array branch does, so both forms read the same slot
+    const truncated = Math.trunc(indexes) || 0;
+    const index = truncated < 0 ? truncated + array.length : truncated;
     return array[index] as unknown as Result;
   }
   const length = array.length;

@@ -260,4 +260,12 @@ describe('sortWithReference', () => {
       ]);
     });
   });
+  it('should return a new array even when no reference is given', () => {
+    const source = [3, 1, 2];
+
+    const sorted = sortWithReference(source);
+
+    expect(sorted).not.toBe(source);
+    expect(sorted).toEqual(source);
+  });
 });
