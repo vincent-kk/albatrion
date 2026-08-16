@@ -228,12 +228,12 @@ export const serializeObject = (object: any, omits?: readonly string[]): string 
   if (!object || typeof object !== 'object') return serializeNative(object);
   const keys = getObjectKeys(object, omits) as string[];
   const segments = new Array(keys.length);
-  let key = keys.pop();
   let index = 0;
-  while (key) {
+  // Compared against undefined rather than tested for truthiness: an empty-string key
+  // would end the walk early and leave the remaining slots as holes
+  let key: string | undefined;
+  while ((key = keys.pop()) !== undefined)
     segments[index++] =
       `${key}:${typeof object[key] === 'object' ? serializeNative(object[key]) : object[key]}`;
-    key = keys.pop();
-  }
   return segments.join('|');
 };
