@@ -2,6 +2,7 @@ import { OBJECT_TAG } from '@/common-utils/constant/typeTag';
 import { getTypeTag } from '@/common-utils/libs/getTypeTag';
 import { hasOwnProperty } from '@/common-utils/libs/hasOwnProperty';
 
+import { countRetainedKeys } from './countRetainedKeys';
 import { equalsBuiltin } from './equalsBuiltin';
 
 /**
@@ -312,7 +313,9 @@ const equalsRecursive = (
 
   if (omits === null) {
     if (length !== rightKeys.length) return false;
-  } else if (countRetained(keys, omits) !== countRetained(rightKeys, omits))
+  } else if (
+    countRetainedKeys(keys, omits) !== countRetainedKeys(rightKeys, omits)
+  )
     return false;
 
   for (let i = 0, k = keys[0]; i < length; i++, k = keys[i]) {
@@ -325,20 +328,4 @@ const equalsRecursive = (
   }
 
   return true;
-};
-
-/**
- * Counts the keys that survive the omit set.
- *
- * Both sides must be counted this way: comparing raw key counts first would reject an
- * asymmetric pair before omit ever applies, which is the whole point of omitting a key.
- *
- * @param keys - Own enumerable keys of one side
- * @param omits - Keys excluded from the comparison
- * @returns Number of keys that participate in the comparison
- */
-const countRetained = (keys: string[], omits: Set<PropertyKey>): number => {
-  let count = 0;
-  for (let i = 0, l = keys.length; i < l; i++) if (!omits.has(keys[i])) count++;
-  return count;
 };
