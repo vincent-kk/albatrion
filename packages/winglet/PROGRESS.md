@@ -372,6 +372,40 @@ omit 경로 감소는 매 호출 키 정렬(M20 의 대가)이고, 훨씬 잦은
 
 **검증**: common-utils **125 파일 / 1069 테스트 통과**, `build`·`lint` 통과, 소비 패키지 전량 통과.
 
+### [x] Task 3.7 — json patch RFC 정합 (H-1, H-4, H-5, M-2, M-4, M-5, M-7, M-9, M-11, M-14, L-5, L-8, L-9) · 2026-08-17
+
+**반영**
+
+| 파일 | 변경 |
+| --- | --- |
+| `json/.../compare/compareRecursive.ts` | (H-1) 배열 노드의 remove 패치를 **인덱스 내림차순**으로 방출 — applyPatch 가 splice 하므로 오름차순이면 뒤 인덱스가 이미 줄어든 배열 밖을 가리켰다. (H-5/L-8) `toJSON` 우선 지원(`toJson` 은 별칭 유지), `in` 대신 `typeof` 로 프로토타입 체인 조회 절감. 정규화 결과가 객체면 그 값으로 재귀(세분화 비교 유지), 스칼라면 노드 통째 교체 — Date 두 개가 키 0개라 동일 판정되던 문제 제거. (L-5) 제네릭 파라미터 재대입 대신 재귀라 `@ts-expect-error` 없이 타입이 성립 |
+| `json/.../mergePatch/mergePatchRecursive.ts` | (H-4) 진입부 `if (!isPlainObject(source)) source = {}` — RFC 7396 이 요구하는 동작이며 기존 기본 파라미터는 `undefined` 만 덮었다 |
+| `json/.../mergePatch/mergePatch.ts` | (M-14) immutable 모드에서 비객체 패치도 복제 |
+| `json/.../applyPatch/applySinglePatch.ts` | (M-2) 선행 `/` 검증 — 없으면 첫 세그먼트가 조용히 버려져 다른 위치를 수정했다 |
+| `json/.../manipulator/utils/compileSegments.ts` | (M-4) 호출자 배열을 제자리 변형하지 않고 새 배열에 기록. (M-9) 숫자 세그먼트를 문자열로 정규화 |
+| `json/.../manipulator/{getValue,setValue}.ts` | (M-9) 시그니처를 `(string | number)[]` 로 정정 |
+| `json/.../manipulator/utils/setValueByPointer.ts` | (L-9) `-` → 인덱스 변환을 자동 생성 블록보다 **먼저** 수행 |
+| `json/.../difference/differenceObjectPatch.ts` | (M-5) 배열 경로 값도 `cloneLite` — 반환 패치가 target 의 배열을 참조 공유했다 |
+| `json/.../getJSONPointer/getJSONPointer.ts` | (M-7) 루트 반환값 `'/'` → `JSONPointer.Root`(빈 문자열) |
+| `json/.../escape/escapeSegment.ts` | (M-11) JSDoc 예제 11줄이 전부 `escapePath` 로 적혀 있었다 |
+| 신규 테스트 | `patch/__tests__/roundTrip.test.ts`(5), `manipulator/__tests__/pointerContract.test.ts`(4), `mergePatch/__tests__/mergePatch.immutable.test.ts`(2) |
+
+**fail-first**: 배열 축소 round-trip 2건 `JsonPatchError`, mergePatch 비객체 대상 `TypeError: Cannot create property 'b' on number '5'`, 호출자 배열 변형, 숫자 세그먼트 `TypeError: segment.indexOf is not a function`, 중간 `-` `TypeError`, immutable 미복제.
+
+**기존 단언 갱신 (근거 제시)**: `getJSONPointer.test.ts` 3건이 루트에 `'/'` 를 고정하고 있었다. RFC 6901 에서 전체 문서는 빈 문자열이고 `'/'` 는 빈 문자열 키를 가리키며, 이 패키지의 `JSONPointer.Root` JSDoc 이 그 점을 명시한다. `compare` 의 `toJson` 테스트 3건은 재귀 방식으로 정정해 **무수정 통과**시켰다.
+
+**보류 — 별도 작업으로 남긴 항목**
+
+| 항목 | 사유 |
+| --- | --- |
+| H-3 difference 숫자키 누락 | `getArrayBasePath` 가 경로 문자열만 보고 배열 여부를 단정한다. target 실조회로 바꾸려면 최상위 `''` base path 처리까지 얽혀 difference 의 경로 해석 재설계가 필요하다 |
+| H-8 JSONPath 방언 불일치 | `getJSONPath`(`$` 접두사·인용) 와 `convertJsonPathToPointer`(둘 다 없음) 중 정본을 정하는 결정이 선행 |
+| M-1 RFC 6902 배열 move/copy | 삽입이 아닌 덮어쓰기, move 원본 제거가 delete. RFC 정합은 breaking 이고 L-10 과 함께 재검토해야 한다 |
+| M-6 difference 가 constructor 키 유실 | `setValue` 의 `isForbiddenKey` 무음 유실. 보호 정책 통일(L-7)과 묶여야 한다 |
+| M-8·M-10·M-12·M-13 | 방언·이름 계약 결정 선행(H-8 과 같은 묶음) |
+
+**검증**: json **30 파일 / 556 테스트 통과**, `typecheck`·`lint`·`build` 통과, schema-form 3568 · json-schema 392 통과.
+
 ### [x] Task 3.2b — stableEquals omit·내장 객체 (H5, M8, M14) · 2026-08-17
 
 **반영**
