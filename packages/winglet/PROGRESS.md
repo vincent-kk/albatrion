@@ -262,3 +262,32 @@ M11 수정이 태그 검사 비용을 상쇄하고도 남아 전 시나리오가
 - `yarn workspace @winglet/common-utils test --run` → **117 파일 / 1034 테스트 통과** (기존 `equals.test.ts` 31 케이스 **무수정** 통과)
 - `typecheck` 통과, `build` 통과
 - 소비 패키지 전량 통과 — json 545 · react-utils 175 · schema-form 3568 · promise-modal 128 · json-schema 392 · data-loader 48
+
+### [x] Task 3.2b — stableEquals omit·내장 객체 (H5, M8, M14) · 2026-08-17
+
+**반영**
+
+| 파일 | 변경 |
+| --- | --- |
+| `common-utils/.../countRetainedKeys.ts` | 신규 내부 헬퍼. `equals` 에 두었던 `countRetained` 를 `stableEquals` 와 공유하도록 승격(`readonly PropertyKey[]` 로 일반화해 `Reflect.ownKeys` 의 symbol 키도 받는다) |
+| `common-utils/.../equals.ts` | 지역 헬퍼를 위 공유 헬퍼로 교체 |
+| `common-utils/.../stableEquals.ts` | (M8) 타입 태그 비교 추가 — 종류가 다른 두 객체가 둘 다 own key 0개라 equal 로 판정되던 문제 제거. ArrayBuffer 는 `Uint8Array` 뷰로 감싸 기존 바이트 비교 경로 재사용. `OBJECT_TAG` 가 아니면 `equalsBuiltin` 위임(Date/RegExp 의 기존 `instanceof` 분기를 대체 — 태그 기반이라 cross-realm 도 잡는다). (H5) omit 적용 후 양쪽 키 개수 비교. (M14) visited 부기를 `has`+`get` 반복(최대 6회 조회)에서 `get` 2회 + 필요 시 `set` 으로 축소 |
+| `common-utils/.../__tests__/stableEquals.contract.test.ts` | 신규 6 케이스 (기존 파일 43 케이스로 상한 초과) |
+| `common-utils/bench/stableEquals.bench.ts` | 신규. equal 트리 / 순환 구조 / equals 대조 |
+
+**fail-first**: omit 비대칭 `expected false to be true`, Map·ArrayBuffer·이종 내장 객체 3건 `expected true to be false`. 가드 2건(비-omit 비대칭 거부·Date/RegExp 상태 비교)은 수정 전에도 통과.
+
+**⚠ 성능 게이트 — 느려졌고, 그대로 수용한다 (hz)**
+
+| 시나리오 | 전 | 후 | 변화 |
+| --- | ---: | ---: | ---: |
+| equal 트리(341노드) | 21,656 | 20,645 | **-4.7%** |
+| 순환 구조 | 22,375 | 20,775 | **-7.1%** |
+
+원인은 객체 쌍마다 추가된 `getTypeTag` 2회(`Object.prototype.toString.call`)다. M14 의 visited 조회 축소(6→2회 + 필요 시 set)가 일부만 상쇄했다. 0-key 인 경우에만 태그를 확인하도록 늦추면 비용을 되찾을 수 있지만, 프로퍼티가 붙은 Date 처럼 own key 를 가진 내장 객체에서 오탐이 되살아나므로 채택하지 않았다. **소비처가 0인 유틸에서 오탐 제거와 맞바꾼 5~7% 이며, `equals`(소비처 31)는 같은 태그 검사를 넣고도 M11 덕에 오히려 빨라졌다.**
+
+**검증 (실행 결과)**
+
+- `yarn workspace @winglet/common-utils test --run` → **118 파일 / 1040 테스트 통과** (기존 `stableEquals.test.ts` 43 케이스 **무수정** 통과)
+- `typecheck` · `lint` · `build` 통과
+- 소비 패키지 전량 통과 — json 545 · react-utils 175 · schema-form 3568 · promise-modal 128 · json-schema 392 · data-loader 48
