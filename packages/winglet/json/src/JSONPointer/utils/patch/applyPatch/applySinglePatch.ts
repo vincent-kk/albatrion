@@ -104,6 +104,15 @@ export const applySinglePatch = (
   if (protectPrototype && 'from' in patch)
     assertSafeFromPointer(patch.from, patch, patchIndex);
 
+  // Rejected here as compilePointer already rejects it: the walk starts at index 1, so a
+  // path without a leading separator silently drops its first segment and edits elsewhere
+  if (patch.path[0] !== JSONPointer.Separator)
+    throw new JsonPatchError(
+      'PATCH_PATH_INVALID',
+      `Patch path '${patch.path}' must start with '${JSONPointer.Separator}'`,
+      { patch, index: patchIndex, path: patch.path, operation: patch.op },
+    );
+
   const segments = patch.path.split('/');
   let current: any = source;
   let cursor = 1;

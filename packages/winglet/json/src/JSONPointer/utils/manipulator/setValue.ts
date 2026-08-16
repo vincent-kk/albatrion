@@ -181,7 +181,7 @@ export const setValue = <
   Output extends Dictionary | Array<any> = Dictionary | Array<any>,
 >(
   value: Dictionary | Array<any>,
-  pointer: string | string[],
+  pointer: string | (string | number)[],
   input: any,
   options?: { overwrite?: boolean; preserveNull?: boolean },
 ): Output => {

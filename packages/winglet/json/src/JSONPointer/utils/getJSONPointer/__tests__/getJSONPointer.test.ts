@@ -3,9 +3,9 @@ import { describe, expect, it } from 'vitest';
 import { getJSONPointer } from '../getJSONPointer';
 
 describe('getJSONPointer', () => {
-  it('루트 객체 자체를 타겟으로 할 경우 "/"를 반환해야 합니다.', () => {
+  it('루트 객체 자체를 타겟으로 할 경우 루트 포인터(빈 문자열)를 반환해야 합니다.', () => {
     const root = { a: 1 };
-    expect(getJSONPointer(root, root)).toBe('/');
+    expect(getJSONPointer(root, root)).toBe('');
   });
 
   it('직속 자식 객체를 타겟으로 할 경우 해당 키 경로를 반환해야 합니다.', () => {
@@ -67,9 +67,9 @@ describe('getJSONPointer', () => {
     expect(getJSONPointer(root, missingTarget)).toBe(null);
   });
 
-  it('빈 객체를 루트로 사용할 때 루트 자체를 타겟으로 하면 "/"를 반환해야 합니다.', () => {
+  it('빈 객체를 루트로 사용할 때 루트 자체를 타겟으로 하면 루트 포인터(빈 문자열)를 반환해야 합니다.', () => {
     const root = {};
-    expect(getJSONPointer(root, root)).toBe('/');
+    expect(getJSONPointer(root, root)).toBe('');
   });
 
   it('빈 객체를 루트로 사용할 때 다른 객체를 찾으려 하면 null을 반환해야 합니다.', () => {
@@ -78,9 +78,9 @@ describe('getJSONPointer', () => {
     expect(getJSONPointer(root, target)).toBe(null);
   });
 
-  it('루트와 타겟이 동일한 빈 객체 참조인 경우 "/"를 반환해야 합니다.', () => {
+  it('루트와 타겟이 동일한 빈 객체 참조인 경우 루트 포인터(빈 문자열)를 반환해야 합니다.', () => {
     const obj = {};
-    expect(getJSONPointer(obj, obj)).toBe('/');
+    expect(getJSONPointer(obj, obj)).toBe('');
   });
 
   it('순환 참조 구조에서 대상을 찾지 못해도 종료해야 합니다.', () => {

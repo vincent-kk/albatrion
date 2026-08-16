@@ -23,6 +23,10 @@ export const setValueByPointer = <Input extends Dictionary | Array<any>>(
   for (let index = hasRootPrefix ? 1 : 0; index < length; ) {
     segment = segments[index++];
     if (isForbiddenKey(segment)) return value;
+    // Resolved before the auto-creation below, which would otherwise create a literal
+    // '-' property on the array and leave the cursor pointing at nothing
+    if (isArray(cursor) && segment === ADD_ITEM_ALIAS)
+      segment = '' + cursor.length;
     const isLastSegment = index === length;
     if (isLastSegment === false) {
       const current = cursor[segment];
@@ -33,8 +37,6 @@ export const setValueByPointer = <Input extends Dictionary | Array<any>>(
         else cursor[segment] = {};
       }
     }
-    if (isArray(cursor) && segment === ADD_ITEM_ALIAS)
-      segment = cursor.length.toString();
     if (isLastSegment) break;
     cursor = cursor[segment];
   }

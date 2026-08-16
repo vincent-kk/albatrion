@@ -1,3 +1,5 @@
+import { cloneLite } from '@winglet/common-utils/object';
+
 import { JSONPointer } from '@/json/JSONPointer/enum';
 import { getValue } from '@/json/JSONPointer/utils/manipulator/getValue';
 import { setValue } from '@/json/JSONPointer/utils/manipulator/setValue';
@@ -138,7 +140,9 @@ export const differenceObjectPatch = (
     if (arrayPath === null) validPatches.push(patch);
     else if (!processedArrayPaths.has(arrayPath)) {
       const segments = arrayPath.split(JSONPointer.Separator);
-      setValue(mergePatch, segments, getValue(target, segments));
+      // Cloned like the ordinary path below, whose values compare already cloned:
+      // otherwise the returned patch shares an array with `target`
+      setValue(mergePatch, segments, cloneLite(getValue(target, segments)));
       processedArrayPaths.add(arrayPath);
     }
   }

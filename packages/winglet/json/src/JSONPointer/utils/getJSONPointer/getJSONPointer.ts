@@ -3,6 +3,7 @@ import { hasOwnProperty } from '@winglet/common-utils/lib';
 
 import type { Dictionary } from '@aileron/declare';
 
+import { JSONPointer } from '@/json/JSONPointer/enum';
 import { escapeSegment } from '@/json/JSONPointer/utils/escape/escapeSegment';
 
 /**
@@ -23,7 +24,9 @@ export const getJSONPointer = <Root extends object, Target extends object>(
   root: Root,
   target: Target,
 ): string | null => {
-  if (root === (target as unknown)) return '/';
+  // RFC 6901 points at the whole document with the empty string; '/' addresses the
+  // member whose key is the empty string, as JSONPointer.Root itself documents
+  if (root === (target as unknown)) return JSONPointer.Root;
   const pointer = getPointer(root, target);
   return pointer !== null ? `/${pointer}` : null;
 };

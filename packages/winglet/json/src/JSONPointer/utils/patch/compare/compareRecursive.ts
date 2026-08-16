@@ -45,11 +45,40 @@ export const compareRecursive = <
   // @ts-expect-error: when target and source are same reference, it should return immediately
   if (source === target || (source !== source && target !== target)) return;
 
-  if ('toJson' in source && typeof source.toJson === 'function')
-    source = source.toJson();
-
-  if ('toJson' in target && typeof target.toJson === 'function')
-    target = target.toJson();
+  // Values that serialize themselves — Date above all — expose no own keys, so a key
+  // comparison would report every pair of them as identical
+  const sourceJson = serializable(source);
+  const targetJson = serializable(target);
+  if (sourceJson !== source || targetJson !== target) {
+    // A hook that yields an object keeps the structural walk — recursed rather than
+    // reassigned so the generic parameters keep describing what was actually passed in.
+    // A hook that yields a scalar — Date above all — leaves nothing to walk, so the
+    // node is replaced whole instead of comparing two key-less values as identical
+    if (isObject(sourceJson) && isObject(targetJson)) {
+      compareRecursive(
+        sourceJson,
+        targetJson,
+        patches,
+        path,
+        strict,
+        immutable,
+      );
+      return;
+    }
+    if (sourceJson === targetJson) return;
+    if (strict)
+      patches.push({
+        op: Operation.TEST,
+        path,
+        value: processValue(sourceJson, immutable),
+      });
+    patches.push({
+      op: Operation.REPLACE,
+      path,
+      value: processValue(targetJson, immutable),
+    });
+    return;
+  }
 
   const sourceKeys = getKeys(source);
   const targetKeys = getKeys(target);
@@ -68,6 +97,9 @@ export const compareRecursive = <
   }
 
   let hasRemoved = false;
+  // Array removals are emitted last index first: applyPatch splices, so an ascending
+  // order would make every later index point past the array it has already shrunk
+  const deferredRemovals: Patch[][] = [];
 
   // Process existing keys in source
   for (let i = 0, l = sourceKeys.length; i < l; i++) {
@@ -135,15 +167,23 @@ export const compareRecursive = <
     } else {
       // Key removal - exists in source but not in target
       const targetPath = path + JSONPointer.Separator + escapeSegment(key);
+      const removal: Patch[] = [];
       if (strict)
-        patches.push({
+        removal.push({
           op: Operation.TEST,
           path: targetPath,
           value: processValue(sourceValue, immutable),
         });
-      patches.push({ op: Operation.REMOVE, path: targetPath });
+      removal.push({ op: Operation.REMOVE, path: targetPath });
+      if (sourceIsArray) deferredRemovals[deferredRemovals.length] = removal;
+      else for (let r = 0, rl = removal.length; r < rl; r++) patches.push(removal[r]);
       hasRemoved = true;
     }
+  }
+
+  for (let i = deferredRemovals.length - 1; i >= 0; i--) {
+    const removal = deferredRemovals[i];
+    for (let r = 0, rl = removal.length; r < rl; r++) patches.push(removal[r]);
   }
 
   // Early exit optimization - no additions needed
@@ -163,4 +203,19 @@ export const compareRecursive = <
       value: processValue(targetValue, immutable),
     });
   }
+};
+
+/**
+ * Reduces a self-serializing value to the form its own hook produces.
+ *
+ * `toJSON` is the standard hook every built-in and most user classes implement;
+ * `toJson` is kept as the alias this module accepted before.
+ *
+ * @param value - Value to reduce
+ * @returns The hook's result, or the value itself when it has no hook
+ */
+const serializable = (value: any): any => {
+  if (typeof value?.toJSON === 'function') return value.toJSON();
+  if (typeof value?.toJson === 'function') return value.toJson();
+  return value;
 };
