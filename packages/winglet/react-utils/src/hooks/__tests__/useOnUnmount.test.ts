@@ -5,7 +5,7 @@ import { useOnUnmount } from '../useOnUnmount';
 import { useOnUnmountLayout } from '../useOnUnmountLayout';
 
 describe('useOnUnmount', () => {
-  it('언마운트 시에만 핸들러를 실행해야 합니다', () => {
+  it('should run the handler only on unmount', () => {
     const handler = vi.fn();
     const { unmount } = renderHook(() => useOnUnmount(handler));
 
@@ -15,7 +15,7 @@ describe('useOnUnmount', () => {
     expect(handler).toHaveBeenCalledTimes(1);
   });
 
-  it('리렌더링 시에는 핸들러가 실행되지 않아야 합니다', () => {
+  it('should not run the handler on re-render', () => {
     const handler = vi.fn();
     const { rerender, unmount } = renderHook(() => useOnUnmount(handler));
 
@@ -25,10 +25,25 @@ describe('useOnUnmount', () => {
     unmount();
     expect(handler).toHaveBeenCalledTimes(1);
   });
+
+  it('should run the most recently provided handler on unmount', () => {
+    const first = vi.fn();
+    const second = vi.fn();
+    const { rerender, unmount } = renderHook(
+      ({ handler }) => useOnUnmount(handler),
+      { initialProps: { handler: first } },
+    );
+
+    rerender({ handler: second });
+    unmount();
+
+    expect(first).not.toHaveBeenCalled();
+    expect(second).toHaveBeenCalledTimes(1);
+  });
 });
 
 describe('useOnUnmountLayout', () => {
-  it('언마운트 시에만 핸들러를 실행해야 합니다', () => {
+  it('should run the handler only on unmount', () => {
     const handler = vi.fn();
     const { unmount } = renderHook(() => useOnUnmountLayout(handler));
 
@@ -38,7 +53,7 @@ describe('useOnUnmountLayout', () => {
     expect(handler).toHaveBeenCalledTimes(1);
   });
 
-  it('리렌더링 시에는 핸들러가 실행되지 않아야 합니다', () => {
+  it('should not run the handler on re-render', () => {
     const handler = vi.fn();
     const { rerender, unmount } = renderHook(() => useOnUnmountLayout(handler));
 
@@ -47,5 +62,20 @@ describe('useOnUnmountLayout', () => {
 
     unmount();
     expect(handler).toHaveBeenCalledTimes(1);
+  });
+
+  it('should run the most recently provided handler on unmount', () => {
+    const first = vi.fn();
+    const second = vi.fn();
+    const { rerender, unmount } = renderHook(
+      ({ handler }) => useOnUnmountLayout(handler),
+      { initialProps: { handler: first } },
+    );
+
+    rerender({ handler: second });
+    unmount();
+
+    expect(first).not.toHaveBeenCalled();
+    expect(second).toHaveBeenCalledTimes(1);
   });
 });

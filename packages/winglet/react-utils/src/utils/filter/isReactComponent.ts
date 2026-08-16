@@ -42,7 +42,7 @@ import { isMemoComponent } from './isMemoComponent';
  * console.log(isReactComponent(FunctionComp)); // true
  * console.log(isReactComponent(ClassComp)); // true
  * console.log(isReactComponent(MemoComp)); // true
- * console.log(isReactComponent(ForwardComp)); // false (현재 구현에서는 forwardRef 미지원)
+ * console.log(isReactComponent(ForwardComp)); // false (forwardRef is not supported in the current implementation)
  * console.log(isReactComponent('not a component')); // false
  * console.log(isReactComponent({})); // false
  * ```

@@ -14,10 +14,13 @@ type UseDebounceOptions = {
  * Debounces a callback function execution based on dependency changes.
  * Delays the callback execution until the specified timeout has passed without any dependency changes.
  *
+ * @remarks `options` is read once on the initial render and later changes are
+ *          ignored, so pass a value that stays fixed for the component's lifetime.
+ *
  * @param callback - The function to debounce
- * @param dependencyList - Array of dependencies that trigger the debounce when changed (defaults to `undefined`)
+ * @param dependencyList - Array of dependencies that trigger the debounce when changed. Omitting it (defaults to `undefined`) re-arms the debounce on every render
  * @param ms - The delay in milliseconds before executing the callback (defaults to `0`)
- * @param options - Configuration options for debounce behavior
+ * @param options - Configuration options for debounce behavior, captured once on mount
  * @param options.immediate - Whether to execute the callback immediately on dependency changes (defaults to `true`)
  * @returns An object containing debounce control functions
  * @returns {Function} returns.isIdle - Function that returns whether the debounce scheduler is idle (no pending execution)
@@ -78,12 +81,15 @@ export const useDebounce = (
   ms?: number,
   options?: UseDebounceOptions,
 ) => {
-  const optionsRef = useRef({ immediate: options?.immediate ?? true });
+  const immediateRef = useRef<boolean | null>(null);
+  if (immediateRef.current === null)
+    immediateRef.current = options?.immediate ?? true;
+  const immediate = immediateRef.current;
   const isScheduled = useRef(false);
 
   const handleCallback = useHandle(callback);
   const debouncedCallback = useHandle(() => {
-    if (optionsRef.current.immediate) {
+    if (immediate) {
       if (isScheduled.current) {
         isScheduled.current = false;
         handleCallback();
@@ -94,7 +100,7 @@ export const useDebounce = (
   const { isIdle, schedule, cancel } = useTimeout(debouncedCallback, ms);
 
   useEffect(() => {
-    if (optionsRef.current.immediate) {
+    if (immediate) {
       if (isIdle()) {
         handleCallback();
         isScheduled.current = false;
@@ -103,8 +109,6 @@ export const useDebounce = (
     schedule();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, dependencyList);
-
-  useEffect(() => cancel, [cancel]);
 
   return {
     isIdle,

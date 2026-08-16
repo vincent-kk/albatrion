@@ -2,6 +2,8 @@ import { useCallback, useEffect, useRef } from 'react';
 
 import type { Fn } from '@aileron/declare';
 
+import { useReference } from './useReference';
+
 type UseTimeoutReturn = {
   isIdle: Fn<[], boolean>;
   schedule: Fn;
@@ -114,11 +116,7 @@ export const useTimeout = (
 ): UseTimeoutReturn => {
   const idleRef = useRef<boolean>(true);
   const timerIdRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const callbackRef = useRef(callback);
-
-  useEffect(() => {
-    callbackRef.current = callback;
-  }, [callback]);
+  const callbackRef = useReference(callback);
 
   const isIdle = useCallback(() => idleRef.current, []);
 
@@ -130,7 +128,7 @@ export const useTimeout = (
       timerIdRef.current = null;
       callbackRef.current();
     }, timeout);
-  }, [timeout]);
+  }, [timeout, callbackRef]);
 
   const cancel = useCallback(() => {
     idleRef.current = true;
@@ -139,6 +137,8 @@ export const useTimeout = (
       timerIdRef.current = null;
     }
   }, []);
+
+  useEffect(() => cancel, [cancel]);
 
   return {
     isIdle,

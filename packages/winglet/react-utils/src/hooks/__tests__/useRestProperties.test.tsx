@@ -5,11 +5,11 @@ import { useRestProperties } from '../useRestProperties';
 
 describe('useRestProperties', () => {
   /**
-   * 기본 동작 테스트
-   * - 동일한 props 객체가 전달될 때는 이전 참조를 유지해야 함
-   * - 메모이제이션이 제대로 동작하는지 확인
+   * Basic behavior test
+   * - Should keep the previous reference when the same props object is passed
+   * - Verifies that memoization works correctly
    */
-  it('동일한 props가 전달되면 이전 참조를 반환해야 한다', () => {
+  it('should return the previous reference when the same props are passed', () => {
     const initialProps = { a: 1, b: 2 };
     const { result, rerender } = renderHook(
       ({ props }) => useRestProperties(props),
@@ -25,11 +25,11 @@ describe('useRestProperties', () => {
   });
 
   /**
-   * 값 변경 감지 테스트
-   * - props의 값이 변경되면 새로운 참조를 반환해야 함
-   * - 얕은 비교가 제대로 동작하는지 확인
+   * Value change detection test
+   * - Should return a new reference when a props value changes
+   * - Verifies that shallow comparison works correctly
    */
-  it('props의 값이 변경되면 새로운 참조를 반환해야 한다', () => {
+  it('should return a new reference when a props value changes', () => {
     const initialProps = { a: 1, b: 2 };
     const { result, rerender } = renderHook(
       ({ props }) => useRestProperties(props),
@@ -45,11 +45,11 @@ describe('useRestProperties', () => {
   });
 
   /**
-   * 연속 변경 테스트
-   * - props가 연속적으로 변경될 때도 각각의 변경을 정확히 감지해야 함
-   * - propsRef가 제대로 업데이트되는지 확인
+   * Consecutive change test
+   * - Should accurately detect every change even when props change consecutively
+   * - Verifies that propsRef is updated correctly
    */
-  it('props의 값이 연속적으로 변경될 때도 정확하게 동작해야 한다', () => {
+  it('should work accurately even when props values change consecutively', () => {
     const initialProps = { a: 1, b: 2 };
     const { result, rerender } = renderHook(
       ({ props }) => useRestProperties(props),
@@ -71,11 +71,11 @@ describe('useRestProperties', () => {
   });
 
   /**
-   * 키 변경 테스트
-   * - props의 키가 변경될 때도 새로운 참조를 반환해야 함
-   * - 객체의 구조 변경 감지 확인
+   * Key change test
+   * - Should return a new reference when a props key changes
+   * - Verifies detection of a change in the object's structure
    */
-  it('props의 키가 변경되어도 정확하게 동작해야 한다', () => {
+  it('should work accurately even when a props key changes', () => {
     const initialProps = { a: 1, b: 2 } as any;
     const { result, rerender } = renderHook(
       ({ props }) => useRestProperties(props),
@@ -91,11 +91,11 @@ describe('useRestProperties', () => {
   });
 
   /**
-   * 중첩 객체 테스트
-   * - 중첩된 객체의 참조가 변경될 때 새로운 참조를 반환해야 함
-   * - 얕은 비교의 특성 확인
+   * Nested object test
+   * - Should return a new reference when a nested object's reference changes
+   * - Verifies the characteristics of shallow comparison
    */
-  it('props의 값이 같지만 참조가 다른 객체가 전달되어도 이전 참조를 유지해야 한다', () => {
+  it('should keep the previous reference even when an object with equal props values but a different reference is passed', () => {
     const initialProps = { a: 1, b: { value: 2 } };
     const { result, rerender } = renderHook(
       ({ props }) => useRestProperties(props),
@@ -111,10 +111,10 @@ describe('useRestProperties', () => {
   });
 
   /**
-   * 빈 객체 테스트
-   * - 빈 객체가 전달될 때도 정상적으로 동작해야 함
+   * Empty object test
+   * - Should work correctly even when an empty object is passed
    */
-  it('빈 객체가 전달되어도 정상적으로 동작해야 한다', () => {
+  it('should work correctly even when an empty object is passed', () => {
     const initialProps = {};
     const { result, rerender } = renderHook(
       ({ props }) => useRestProperties(props),
@@ -130,10 +130,10 @@ describe('useRestProperties', () => {
   });
 
   /**
-   * null/undefined 처리 테스트
-   * - undefined나 null이 전달될 때도 오류 없이 동작해야 함
+   * null/undefined handling test
+   * - Should work without errors even when undefined or null is passed
    */
-  it('undefined나 null이 전달되어도 오류 없이 동작해야 한다', () => {
+  it('should work without errors even when undefined or null is passed', () => {
     const { rerender } = renderHook(
       ({ props }) => useRestProperties(props as any),
       {
@@ -147,10 +147,10 @@ describe('useRestProperties', () => {
   });
 
   /**
-   * 배열 props 테스트
-   * - 배열이 포함된 props도 정상적으로 처리해야 함
+   * Array props test
+   * - Should correctly handle props that contain an array
    */
-  it('배열이 포함된 props도 정상적으로 처리해야 한다', () => {
+  it('should correctly handle props that contain an array', () => {
     const initialProps = { arr: [1, 2, 3] };
     const { result, rerender } = renderHook(
       ({ props }) => useRestProperties(props),
@@ -161,20 +161,20 @@ describe('useRestProperties', () => {
 
     const firstResult = result.current;
 
-    // 같은 값이지만 새로운 배열 참조
+    // Same values but a new array reference
     rerender({ props: { arr: [1, 2, 3] } });
     expect(result.current).not.toBe(firstResult);
 
-    // 값이 변경된 배열
+    // Array with a changed value
     rerender({ props: { arr: [1, 2, 4] } });
     expect(result.current).not.toBe(firstResult);
   });
 
   /**
-   * 함수 props 테스트
-   * - 함수가 포함된 props도 정상적으로 처리해야 함
+   * Function props test
+   * - Should correctly handle props that contain a function
    */
-  it('함수가 포함된 props도 정상적으로 처리해야 한다', () => {
+  it('should correctly handle props that contain a function', () => {
     const fn1 = () => {};
     const initialProps = { callback: fn1 };
     const { result, rerender } = renderHook(
@@ -186,16 +186,16 @@ describe('useRestProperties', () => {
 
     const firstResult = result.current;
 
-    // 같은 함수 참조
+    // Same function reference
     rerender({ props: { callback: fn1 } });
     expect(result.current).toBe(firstResult);
 
-    // 다른 함수 참조
+    // Different function reference
     rerender({ props: { callback: () => {} } });
     expect(result.current).not.toBe(firstResult);
   });
 
-  it('동일한 내용의 새 객체가 전달되면 이전 참조를 유지해야 한다', () => {
+  it('should keep the previous reference when a new object with the same content is passed', () => {
     const { result, rerender } = renderHook(
       ({ props }) => useRestProperties(props),
       {
@@ -212,7 +212,7 @@ describe('useRestProperties', () => {
     expect(result.current).toBe(firstResult);
   });
 
-  it('키 추가 시 새로운 참조를 반환해야 한다', () => {
+  it('should return a new reference when a key is added', () => {
     const { result, rerender } = renderHook(
       ({ props }) => useRestProperties(props),
       {
@@ -227,7 +227,7 @@ describe('useRestProperties', () => {
     expect(result.current).toEqual({ a: 1, b: 2, c: 3 });
   });
 
-  it('키 삭제 시 새로운 참조를 반환해야 한다', () => {
+  it('should return a new reference when a key is removed', () => {
     const { result, rerender } = renderHook(
       ({ props }) => useRestProperties(props),
       {
@@ -242,7 +242,7 @@ describe('useRestProperties', () => {
     expect(result.current).toEqual({ a: 1, b: 2 });
   });
 
-  it('여러 속성 중 하나만 변경되어도 감지해야 한다', () => {
+  it('should detect the change even when only one of several properties changes', () => {
     const { result, rerender } = renderHook(
       ({ props }) => useRestProperties(props),
       {
@@ -256,7 +256,7 @@ describe('useRestProperties', () => {
     expect(result.current).not.toBe(firstResult);
   });
 
-  it('0, false, 빈 문자열 등 falsy 값도 정확하게 비교해야 한다', () => {
+  it('should accurately compare falsy values such as 0, false, and an empty string', () => {
     const { result, rerender } = renderHook(
       ({ props }) => useRestProperties(props),
       {
@@ -273,7 +273,7 @@ describe('useRestProperties', () => {
     expect(result.current).not.toBe(firstResult);
   });
 
-  it('같은 배열 참조가 유지되면 이전 참조를 반환해야 한다', () => {
+  it('should return the previous reference when the same array reference is kept', () => {
     const arr = [1, 2, 3];
     const obj = { value: 1 };
     const { result, rerender } = renderHook(
@@ -289,7 +289,7 @@ describe('useRestProperties', () => {
     expect(result.current).toBe(firstResult);
   });
 
-  it('undefined에서 객체로, 객체에서 undefined로 변경 시 처리해야 한다', () => {
+  it('should handle a change from undefined to an object and from an object to undefined', () => {
     const { result, rerender } = renderHook(
       ({ props }) => useRestProperties(props as any),
       {
@@ -306,7 +306,7 @@ describe('useRestProperties', () => {
     expect(result.current).toBeUndefined();
   });
 
-  it('null에서 객체로, 객체에서 null로 변경 시 처리해야 한다', () => {
+  it('should handle a change from null to an object and from an object to null', () => {
     const { result, rerender } = renderHook(
       ({ props }) => useRestProperties(props as any),
       {
@@ -323,7 +323,7 @@ describe('useRestProperties', () => {
     expect(result.current).toBeNull();
   });
 
-  it('복잡한 객체 구조에서도 정확하게 동작해야 한다', () => {
+  it('should work accurately even with a complex object structure', () => {
     const fn = () => {};
     const arr = [1, 2, 3];
     const nestedObj = { x: 1 };
@@ -363,7 +363,7 @@ describe('useRestProperties', () => {
     expect(result.current).toBe(firstResult);
   });
 
-  it('props가 빈 객체에서 값이 있는 객체로 변경되어야 한다', () => {
+  it('should handle props changing from an empty object to an object with values', () => {
     const { result, rerender } = renderHook(
       ({ props }) => useRestProperties(props),
       {
@@ -378,7 +378,7 @@ describe('useRestProperties', () => {
     expect(result.current).toEqual({ a: 1 });
   });
 
-  it('props가 값이 있는 객체에서 빈 객체로 변경되어야 한다', () => {
+  it('should handle props changing from an object with values to an empty object', () => {
     const { result, rerender } = renderHook<any, any>(
       ({ props }) => useRestProperties(props),
       {
@@ -393,7 +393,7 @@ describe('useRestProperties', () => {
     expect(result.current).toEqual({});
   });
 
-  it('Symbol을 키로 가진 속성도 정확하게 비교해야 한다', () => {
+  it('should accurately compare a property that has a Symbol as its key', () => {
     const sym = Symbol('test');
     const { result, rerender } = renderHook(
       ({ props }) => useRestProperties(props),
@@ -408,7 +408,7 @@ describe('useRestProperties', () => {
     expect(result.current).toBe(firstResult);
   });
 
-  it('많은 속성이 있는 객체도 성능 저하 없이 처리해야 한다', () => {
+  it('should handle an object with many properties without performance degradation', () => {
     const largeObj: any = {};
     for (let i = 0; i < 100; i++) {
       largeObj[`key${i}`] = i;
@@ -439,5 +439,39 @@ describe('useRestProperties', () => {
 
     rerender({ props: largeObj3 });
     expect(result.current).not.toBe(firstResult);
+  });
+
+  /**
+   * Comparison gating test
+   * - a repeated props reference must not be walked again
+   * - the shallow comparison costs at most one pass per distinct reference
+   */
+  it('should not repeat the shallow comparison while the props identity is unchanged', () => {
+    let propertyReads = 0;
+    const first = {
+      get a() {
+        propertyReads++;
+        return 1;
+      },
+    };
+    const second = {
+      get a() {
+        propertyReads++;
+        return 1;
+      },
+    };
+
+    const { rerender } = renderHook(({ props }) => useRestProperties(props), {
+      initialProps: { props: first },
+    });
+
+    rerender({ props: second });
+    const readsAfterFirstComparison = propertyReads;
+    expect(readsAfterFirstComparison).toBeGreaterThan(0);
+
+    rerender({ props: second });
+    rerender({ props: second });
+
+    expect(propertyReads).toBe(readsAfterFirstComparison);
   });
 });
