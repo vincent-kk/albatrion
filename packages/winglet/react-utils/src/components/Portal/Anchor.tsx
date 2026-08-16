@@ -1,6 +1,6 @@
 import { type HTMLAttributes, memo } from 'react';
 
-import { usePortalAnchorRef } from './context/usePortalContext';
+import { usePortalAnchor } from './context/usePortalContext';
 
 /**
  * Defines the exact DOM location where Portal content will be rendered.
@@ -116,12 +116,12 @@ import { usePortalAnchorRef } from './context/usePortalContext';
  * ```
  *
  * @param props - All standard HTML div element attributes except children. Supports className, style, event handlers, ARIA attributes, etc.
- * @returns A div element that serves as the mounting point for Portal content. The div receives the portalAnchorRef for portal rendering
+ * @returns A div element that serves as the mounting point for Portal content. The div reports itself to the portal context through a callback ref, so replacing this anchor moves the content with it
  */
 export const Anchor = memo(
   (props: Omit<HTMLAttributes<HTMLDivElement>, 'children'>) => {
-    const ref = usePortalAnchorRef();
-    return <div role="none" style={style} {...props} ref={ref} />;
+    const setPortalAnchor = usePortalAnchor();
+    return <div role="none" style={style} {...props} ref={setPortalAnchor} />;
   },
 );
 

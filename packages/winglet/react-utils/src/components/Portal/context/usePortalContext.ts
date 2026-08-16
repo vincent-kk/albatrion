@@ -30,4 +30,4 @@ export const usePortalContext = () => {
  *
  * @returns A ref object that should be attached to the DOM element serving as the portal anchor
  */
-export const usePortalAnchorRef = () => usePortalContext().portalAnchorRef;
+export const usePortalAnchor = () => usePortalContext().setPortalAnchor;
