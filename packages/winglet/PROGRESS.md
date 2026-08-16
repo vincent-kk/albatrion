@@ -1,0 +1,223 @@
+# winglet 품질 개선 — 진행 원장
+
+> `PLAN.md` 가 사양, 이 파일이 이력이다. 한 줄에 하나: 무엇이 어디에 반영됐고 어떻게 검증했는지.
+> 재개 시 대화 기억이 아니라 이 원장과 git 이력을 신뢰한다. 완료로 표시된 Task 는 다시 하지 않는다.
+
+## Phase 0 — 벤치 인프라
+
+### [x] Task 0.1 / 0.2 — common-utils · json 벤치 하니스 · 2026-08-17 (codex 위임)
+
+**반영**: 두 패키지에 `vitest.bench.config.ts`(environment `node`, alias `@/<pkg>`→`./src`, include `bench/**/*.bench.ts`, outputJson `bench/.results/latest.json`), `package.json` bench 스크립트 4종(react-utils 와 문자열 동일), `.gitignore` 에 `bench/.results`, 스모크 벤치 `common-utils/bench/clone.bench.ts`(depth4·width4 = 341 노드, 입력은 계측 구간 밖 1회 생성) 와 `json/bench/compare.bench.ts`(변경 밀도 0/1/50% × 100·1000 노드).
+
+**검증 (실행 결과)**
+
+- `yarn workspace @winglet/common-utils bench` → 통과. `clone` 31,849 Hz / `cloneLite` 63,776 Hz / `structuredClone` 30,413 Hz
+- `yarn workspace @winglet/json bench` → 통과. 100노드 무변경 19.6M Hz vs 1% 109K Hz — `compare` 의 조기 종료 경로가 실제로 크게 버는 것을 확인
+- 두 패키지 `typecheck` / `lint` 모두 통과
+
+**비고**: `src/**` 무수정 확인. 작업 중 codex 가 관찰한 `math/**` 동시 변경은 본 세션의 Task 1.1 작업이며, codex 는 이를 보존했다.
+
+## Phase 1 — 도달 가능 HIGH
+
+### [x] Task 1.1 — gcd/lcm 무한 루프 + 지수 표기 소수 (#1, #13) · 2026-08-17
+
+**반영**
+
+| 파일                                                           | 변경                                                                                                                                                                            |
+| -------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `common-utils/src/utils/math/countDecimals.ts`                 | 신규. 지수 표기(`1e-7`)의 소수 자릿수를 지수부까지 읽어 계산. `gcd`·`lcm` 공용 내부 헬퍼(`index.ts` 미노출)                                                                     |
+| `common-utils/src/utils/math/constant.ts`                      | `MAX_FRACTION_DIGITS = 100` 추가 (`toFixed` 상한, 초과 시 RangeError)                                                                                                           |
+| `common-utils/src/utils/math/gcd.ts`                           | 진입부 유한성 가드 → `NaN`; 소수 자릿수 산출을 `countDecimals` 로 교체; 스케일 결과 유한성 가드 → `NaN`; `maxDecimals > MAX_FRACTION_DIGITS` 면 `toFixed` 생략. JSDoc 계약 갱신 |
+| `common-utils/src/utils/math/lcm.ts`                           | 진입부 유한성 가드(공개 API 경계); 소수 자릿수 산출을 `countDecimals` 로 교체; `toFixed` 상한 처리. JSDoc 계약 갱신                                                             |
+| `schema-form/.../intersectSchema/utils/intersectMultipleOf.ts` | 비유한 `multipleOf` 를 제약 없음으로 간주(호출측 신뢰 경계 가드). JSDoc 갱신                                                                                                    |
+| `common-utils/.../__tests__/gcd.test.ts`                       | +4 케이스 (7→11)                                                                                                                                                                |
+| `common-utils/.../__tests__/lcm.test.ts`                       | +2 케이스 (7→9)                                                                                                                                                                 |
+| `schema-form/.../__tests__/intersectMultipleOf.test.ts`        | +1 케이스 (15→16)                                                                                                                                                               |
+
+**fail-first 관찰**
+
+- `yarn workspace @winglet/common-utils test --run .../gcd.test.ts` — 수정 전 **90초 동안 결과 0건**(정상 1초 미만). 동기 무한 루프라 vitest 타임아웃이 끊지 못함 = 보고된 hang 증상 그대로.
+- `intersectMultipleOf(Infinity, 2)` — common-utils 재빌드 후 `expected NaN to be 2` 로 red. (재빌드 전에는 schema-form 이 stale `dist` 를 참조해 hang — `seiri_test-validity` §2 사례)
+
+**검증 (실행 결과)**
+
+- `yarn workspace @winglet/common-utils build` → 통과 (typecheck 포함)
+- `yarn workspace @winglet/common-utils test --run` → **112 파일 / 1004 테스트 통과**
+- `yarn workspace @winglet/common-utils lint` → 통과
+- `yarn workspace @canard/schema-form typecheck` → 통과
+- `yarn workspace @canard/schema-form test --run` → **204 파일 / 3568 테스트 통과**
+
+**계획 대비 편차**
+
+1. 플랜은 `uclidGcd` 루프에 `right === right` 방어를 명시했으나 **채택하지 않았다**. 진입부 유한성 가드 + 스케일 결과 유한성 가드로 `uclidGcd` 가 비유한 값을 받는 경로가 사라져, 루프 가드는 도달 불가능한 죽은 절이 된다(`seiri_test-validity` §5 위반). 대신 스케일 오버플로를 `NaN` 으로 정직하게 보고한다 — 루프 가드 방식은 `gcd(1e308, 1.5)` 에서 수학적으로 틀린 `1.5` 를 반환했다.
+2. 플랜에 없던 `lcm` 의 소수 자릿수 수정을 포함했다. `lcm` 도 동일한 문자열 파싱 결함을 갖고 있어(`lcm(1e-7, 2e-7)` → `0`), gcd 만 고치면 도달 경로가 남는다.
+3. `MAX_FRACTION_DIGITS` clamp 은 플랜에 없었으나 필수였다 — `countDecimals` 도입으로 `maxDecimals` 가 100 을 넘을 수 있게 되어 `toFixed` 가 RangeError 를 던진다(probe 로 확인). clamp 덕에 `gcd(1e-300, 2e-300)` 이 정확히 `1e-300` 을 반환한다.
+
+### [x] Task 1.2 — MessageChannelScheduler 정지 2종 (#3, #4) · 2026-08-17
+
+**반영**
+
+| 파일                                                               | 변경                                                                                                                                                                                           |
+| ------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `common-utils/.../MessageChannelScheduler.ts`                      | `__requestFlush__()` 추출 — arming 게이트를 한 곳으로 일원화. `__flushBatch__` 는 빈 큐에서 `__idle__` 를 스스로 복원(#3). 메시지 핸들러는 배치 처리 후 남은 대기 태스크가 있으면 재arming(#4) |
+| `common-utils/.../__tests__/MessageChannelScheduler.flush.test.ts` | 신규 3 케이스. 기존 파일이 이미 33 케이스로 test-record 상한(32) 초과 상태라 `filid_verification-records` §4 에 따라 인시던트 기준 분할                                                        |
+| `common-utils/.../__tests__/scheduleMacrotask.fallback.test.ts`    | 신규 2 케이스. `globalThis.setImmediate` 를 제거한 브라우저 형태에서 `scheduleMacrotask` → MessageChannelScheduler 라우팅 경로를 검증                                                          |
+
+**fail-first 관찰**
+
+- 신규 flush 스위트: `expected [] to deeply equal ['after']`(#3 정지), `expected ['first'] to deeply equal ['first','second']`(#4 유실). 세 번째 케이스(태스크 내부 재스케줄)는 수정 전에도 통과 — 수정이 그 동작을 깨지 않는지 지키는 가드.
+- 폴백 스위트: `MessageChannelScheduler.ts` 만 `git stash push -- <path>` 로 범위 한정 되돌린 뒤 실행해 동일 2건 red 확인, 즉시 `stash pop` 복원.
+
+**검증 (실행 결과)**
+
+- `yarn workspace @winglet/common-utils test --run` → **114 파일 / 1009 테스트 통과** (기존 33 케이스 스위트 무수정 통과 포함)
+- `yarn workspace @winglet/common-utils lint` → 통과
+- `yarn workspace @winglet/common-utils typecheck` → 통과
+
+**계획 대비 편차**
+
+1. 플랜은 "스냅샷 방식을 버리고 핸들러가 현재 대기 전체를 소비" 를 1안으로 제시했으나, **핸들러 tail 에서 재arming** 하는 2안을 택했다. 와이어 포맷(`MessageEvent<number[]>`)과 기존 33 케이스 스위트를 건드리지 않고 두 결함을 모두 없앤다.
+2. schema-form 소비처 회귀 테스트는 추가하지 않았다. Node 실행에서는 `globalThis.setImmediate` 가 존재해 `scheduleMacrotask` 가 네이티브 경로를 타므로 schema-form 테스트는 이 결함을 통과할 수 없다. 대신 원인 지점(common-utils)에서 브라우저 형태를 직접 재현했다.
+
+### [x] Task 1.3 — getTrackableHandler pending 영구 고착 (#9) · 2026-08-17
+
+**반영**
+
+| 파일                                                             | 변경                                                                                                                                                                     |
+| ---------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `common-utils/.../getTrackableHandler.ts`                        | `finally` 안에서 `afterExecute` 호출을 중첩 `try/finally` 로 감싸, 훅이 throw 해도 `pending = false; publish()` 에 도달하도록 수정. JSDoc:281 이 이미 약속한 계약의 이행 |
+| `common-utils/.../__tests__/getTrackableHandler.cleanup.test.ts` | 신규 3 케이스. 기존 파일이 정확히 32 케이스(test-record 상한)라 인시던트 기준 분할                                                                                       |
+
+**fail-first 관찰**
+
+3건 모두 red — `pending` 이 `true` 고착, `preventConcurrent` 기본값으로 두 번째 호출이 원본을 실행하지 못함(spy 1회), 완료 통지 누락(listener 1회).
+
+**검증 (실행 결과)**
+
+- `yarn workspace @winglet/common-utils test --run src/utils/function` → **4 파일 / 53 테스트 통과** (기존 32 케이스 스위트 무수정 통과 포함)
+
+### [x] Task 1.4 — Portal 리마운트 + anchor 교체 (react H1, H2) · 2026-08-17
+
+**반영**
+
+| 파일                                                | 변경                                                                                                                                                                                         |
+| --------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `react-utils/.../Portal.tsx`                        | 등록 id 를 `useLazyConstant(() => getRandomString(36))` 로 인스턴스당 1회 생성. 콘텐츠 upsert 와 언마운트 해제를 별도 effect 로 분리 — children 변경이 더 이상 해제·재등록을 일으키지 않는다 |
+| `react-utils/.../context/PortalContext.ts`          | `portalAnchorRef` → `setPortalAnchor` 콜백 ref, `register(element)` → `register(id, element)`                                                                                                |
+| `react-utils/.../context/PortalContextProvider.tsx` | 레지스트리를 배열 → `ReadonlyMap<string, ReactNode>`(id 기준 O(1) upsert, 삽입 순서 유지). anchor 를 `useRef` → `useState` 로 승격해 render 중 ref 읽기 제거                                 |
+| `react-utils/.../context/usePortalContext.ts`       | `usePortalAnchorRef` → `usePortalAnchor`                                                                                                                                                     |
+| `react-utils/.../Anchor.tsx`                        | 콜백 ref 사용. JSDoc 갱신                                                                                                                                                                    |
+| `react-utils/.../__tests__/Portal.render.test.tsx`  | 신규 4 케이스. 기존 `withPortal.test.tsx` 는 Portal/Anchor 를 전혀 렌더하지 않아 이 결함들이 살아남았다                                                                                      |
+
+**fail-first 관찰 (H1·H2 상호 은폐 때문에 2단계로 진행)**
+
+1. H1: `expected "spy" to be called 1 times, but got 4 times` — 부모 3회 리렌더에 포털 서브트리가 4회 마운트(감사 보고의 `{mounts:4, unmounts:3}` 와 일치).
+2. H1 수정 후 H2 테스트는 여전히 통과했다. 원인 2가지를 차례로 제거해야 표면화했다 — (a) `children` 이 매 렌더 새 객체라 `register` 재실행이 provider 를 다시 렌더시켜 stale ref 를 덮어씀 → 참조 고정 콘텐츠로 교체, (b) 두 분기가 같은 타입·같은 위치라 React 가 anchor DOM 노드를 재사용 → `key` 로 실제 언마운트/마운트 강제.
+3. 그 결과 H2 red: `expected null not to be null` — anchor 교체 후 콘텐츠가 DOM 에서 완전히 사라짐(분리된 노드로 포털됨).
+
+**검증 (실행 결과)**
+
+- `yarn workspace @winglet/react-utils test --run` → **27 파일 / 175 테스트 통과** (기존 `withPortal.test.tsx` 무수정 통과 포함)
+- `yarn workspace @winglet/react-utils typecheck` → 통과
+- `yarn workspace @winglet/react-utils lint` → 통과
+
+**계약 영향**: `PortalContext` 형태 변경은 `internal` — grep 결과 `Portal`·`usePortalAnchorRef`·`portalAnchorRef` 의 소비처가 react-utils 내부뿐이며 모노레포 외부 소비처가 없다.
+
+### Phase 1 완료 게이트 · 2026-08-17
+
+`common-utils` · `react-utils` 재빌드 후 전 소비 패키지 회귀 없음.
+
+| 패키지                        | 결과                            |
+| ----------------------------- | ------------------------------- |
+| `@winglet/common-utils` build | 통과 (typecheck 포함)           |
+| `@winglet/react-utils` build  | 통과 (typecheck 포함)           |
+| `@canard/schema-form`         | 204 파일 / **3568 테스트 통과** |
+| `@lerx/promise-modal`         | 11 파일 / **128 테스트 통과**   |
+| `@winglet/json`               | 26 파일 / **536 테스트 통과**   |
+| `@winglet/json-schema`        | 17 파일 / **392 테스트 통과**   |
+| `@winglet/data-loader`        | 2 파일 / **48 테스트 통과**     |
+
+## Phase 2 — 보안 HIGH
+
+### [x] Task 2.1 — merge prototype pollution (H1) · 2026-08-17
+
+**반영**: `merge.ts` 키 순회에서 `__proto__` 만 건너뛴다(`PROTOTYPE_POLLUTION_KEY` 상수 + 근거 JSDoc). `merge.test.ts` 에 인시던트 3 케이스 추가(9→12).
+
+**fail-first**: `expected 'yes' to be undefined` — 최상위·중첩 `__proto__` 양쪽에서 `Object.prototype` 오염 확인.
+
+**과잉 차단 회피 근거**: 함께 추가한 `constructor` 케이스는 **수정 전에도 통과**했다 — `target['constructor']` 는 함수라 `isPlainObject` 를 통과하지 못하고 평범한 own 프로퍼티로 대입되므로 오염 경로가 아니다. json 의 `isForbiddenKey` 가 `constructor` 를 무조건 막아 데이터를 조용히 잃는 문제(M-6)를 여기서 반복하지 않았다.
+
+**검증**: `merge.test.ts` 12 테스트 통과, `typecheck` 통과.
+
+### [x] Task 2.2 — 순환 참조 무한 루프 4종 (H2, H3, json H-6) · 2026-08-17
+
+**반영**
+
+| 파일                                              | 변경                                                                                                                                                                                                                                                                   |
+| ------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `common-utils/.../hasUndefined.ts`                | 전역 `WeakSet` 방문 추적. 재방문이 답을 바꿀 수 없는 boolean 탐색이라 전역 추적이 건전하다                                                                                                                                                                             |
+| `common-utils/.../serializeWithFullSortedKeys.ts` | **조상 전용** 추적(exit 센티널로 스택에서 조상 집합 유지) + `[Circular]` 마커. 전역 방문 추적을 쓰면 순환이 아닌 공유 참조까지 접혀 서로 다른 문서가 같은 지문을 갖게 되므로 채택하지 않았다. JSDoc 의 "Will cause infinite loops (not handled)" 를 실제 동작으로 갱신 |
+| `json/.../getJSONPointer.ts` · `getJSONPath.ts`   | 전역 `WeakSet` 방문 추적. `value === target` 비교가 큐잉 전에 끝나므로 대상을 놓치지 않는다                                                                                                                                                                            |
+| 각 테스트                                         | `hasUndefined` +3, `serializeWithFullSortedKeys` +2, `getJSONPointer` +2, `getJSONPath` +2                                                                                                                                                                             |
+
+**fail-first**: `hasUndefined` 는 30초 무응답(무한 루프), `serializeWithFullSortedKeys` 와 json 두 DFS 는 **FATAL ERROR: JavaScript heap out of memory**.
+
+**검증**: common-utils 관련 2 파일 31 테스트 통과, json 26 파일 540 테스트 통과, json `typecheck` 통과.
+
+**분류 정정**: 감사는 H3(`serializeWithFullSortedKeys`)를 버그로 보고했으나 JSDoc 이 "Circular References: Will cause infinite loops (not handled)" 로 **이미 한계를 선언**하고 있었다. 계약 위반이 아니라 DoS 표면 제거를 위한 개선으로 분류한다. 반면 H2(`hasUndefined`)는 JSDoc 이 "handled safely" 라고 **거짓 주장**했으므로 계약 위반이 맞다.
+
+### [x] Task 2.3 — json 프로토타입 우회 + copy 참조 공유 (H-2, H-7) · 2026-08-17
+
+**반영**
+
+| 파일                                                 | 변경                                                                                                                                                |
+| ---------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `json/.../applyPatch/utils/assertSafeFromPointer.ts` | 신규. `move`/`copy` 의 `from` 포인터를 세그먼트 단위로 검증 — `path` 는 walk 중 검사되지만 `from` 은 핸들러 안 `getValue` 로 해석돼 검사 사각이었다 |
+| `json/.../applySinglePatch.ts`                       | 루트 패치 분기 직후 `'from' in patch` 일 때 위 검증 호출                                                                                            |
+| `json/.../handleObject.ts` · `handleArray.ts`        | COPY 분기를 `cloneLite(getValue(...))` 로 변경. MOVE 는 원본을 제거하므로 클론 불필요                                                               |
+| `json/.../__tests__/applyPatch.security.test.ts`     | 신규 5 케이스. 기존 `applyPatch.test.ts` 가 50 케이스로 상한 초과라 인시던트 분할                                                                   |
+
+**fail-first**: `expected [Function] to throw an error` ×3(from 경로 무검사), `expected 999 to be 1`(copy 가 메모리 공유). 정상 경로 copy/move 가드 케이스는 수정 전에도 통과.
+
+**검증**: json 27 파일 / **545 테스트 통과**(기존 50 케이스 스위트 무수정 통과), `typecheck` · `lint` 통과.
+
+**계획 대비 편차**: 플랜의 "`getValueByPointer` 에 금지키 가드 추가" 는 이번에 하지 않았다. 그것은 `getValue` 공개 API 에 `protectPrototype` 옵션을 추가하는 breaking 변경(M-3)이라 Phase 4 소관이고, `from` 검증만으로 이번 익스플로잇 경로는 닫힌다.
+
+### Phase 2 완료 게이트 · 2026-08-17
+
+| 대상                          | 결과                                       |
+| ----------------------------- | ------------------------------------------ |
+| `common-utils` / `json` build | 통과                                       |
+| `@winglet/common-utils`       | 115 파일 / **1020 테스트 통과**, lint 통과 |
+| `@winglet/json`               | 27 파일 / **545 테스트 통과**              |
+| `@canard/schema-form`         | 204 파일 / **3568 테스트 통과**            |
+| `@lerx/promise-modal`         | 11 파일 / **128 테스트 통과**              |
+| `@winglet/json-schema`        | 17 파일 / **392 테스트 통과**              |
+| `@winglet/react-utils`        | 27 파일 / **175 테스트 통과**              |
+| `@winglet/data-loader`        | 2 파일 / **48 테스트 통과**                |
+
+## Phase 3 — 나머지 HIGH + 비효율
+
+### [x] Task 3.1 — clone 계열 (H4, M3, M2, LOW) · 2026-08-17
+
+**반영**
+
+| 파일                                                | 변경                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| --------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `common-utils/.../clone.ts`                         | (H4) Buffer 복제를 `value.subarray()` → `Uint8Array.prototype.slice.call(value)` — 실측으로 **Buffer 타입은 유지되면서 메모리는 복사**됨을 확인했고, 전역 `Buffer` 식별자를 쓰지 않아 브라우저 번들에 폴리필이 주입될 여지도 없다. (M3) Date·RegExp·Buffer·TypedArray·ArrayBuffer 분기에 `cache.set` 추가 — 공유 참조가 복제본에서도 하나로 유지된다. (LOW) RegExp 매치 배열의 `groups` 를 `index`/`input` 과 함께 보존 |
+| `common-utils/.../__tests__/clone.builtins.test.ts` | 신규 4 케이스 (기존 파일이 30 케이스로 상한 근접)                                                                                                                                                                                                                                                                                                                                                                       |
+
+**fail-first**: `expected 99 to be 1`(Buffer 메모리 공유), `expected <Date> to be <Date>`·`expected /x/g to be /x/g`(공유 참조가 둘로 갈라짐), `expected undefined to deeply equal { word: 'hello' }`(groups 유실).
+
+**검증**: clone 관련 2 파일 34 테스트 통과(기존 30 케이스 **무수정** 통과), common-utils 116 파일 / **1024 테스트 통과**, `typecheck` · `lint` 통과.
+
+**⚠ 확정 방향 번복 — M2 maxDepth**
+
+착수 전 확정은 "JSDoc 이 정본, 코드 수정" 이었고 근거는 "maxDepth 인자 실사용처 0건이라 회귀 없음" 이었다. **이 전제가 틀렸다.** `clone.test.ts:176-212` 가 maxDepth 계약을 8개 단언으로 이미 고정하고 있다:
+
+- `clone(x, 0) === x` (복제 안 함)
+- `clone(x, 1)` → 루트만 복제
+- `clone(x, 2)` → 루트 + level1 복제
+- `clone(x, 3)` → 루트 + level1 + level2 복제
+
+즉 "maxDepth = N 은 N 개 객체 레벨을 복제한다" 는 **자체적으로 일관된 계약**이며 코드가 이를 정확히 구현한다. 가드를 `depth > limit` 로 바꾸면 `maxDepth=0` 과 `1` 이 구별되지 않아 "복제하지 않음" 을 표현할 수단이 사라진다 — API 가 나빠진다. 따라서 **코드를 정본으로 두고 JSDoc 예제를 정정**했다(`clone(deep, 2)` 의 level2 단언을 참조로 수정 + `maxDepth=0` 예시 추가). 되돌리려면 JSDoc 편집 한 번이면 된다.
