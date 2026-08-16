@@ -348,6 +348,30 @@ omit 경로 감소는 매 호출 키 정렬(M20 의 대가)이고, 훨씬 잦은
 
 **소비처 영향**: `polynomialHash` 의 유일한 소비처 promise-modal `ModalManager` 는 기본값 7 을 쓰며, 길이 7 출력은 변경 전후가 동일하다(패딩된 7자에 대해 `slice(0,7)` 과 `slice(-7)` 이 같음). `Murmur3` 는 프로덕션 직접 소비가 0 이고 `stableSerialize` 의 omit 해시로만 간접 사용된다.
 
+### [x] Task 3.6 — promise·scheduler·function (#10, #11, #14, #16, #23, #17) · 2026-08-17
+
+**반영**
+
+| 파일 | 변경 |
+| --- | --- |
+| `common-utils/.../withTimeout.ts` | (#10) 내부 `AbortController` 를 외부 signal 과 연결하고 `finally` 에서 abort — 경주에서 진 `delay` 타이머가 남아 프로세스 종료를 지연시키고 반복 호출에서 누적되던 문제 제거 |
+| `common-utils/.../waitAndReturn.ts` | (#16) `fn` 을 promise 안에서 시작해 동기 예외도 지연 뒤 전달하고, `Promise.allSettled` 로 delay 와 함께 정산해 대기 중 거부가 핸들러 없이 방치되지 않게 함 |
+| `common-utils/.../scheduleMacrotask.ts` · `scheduleMacrotaskSafe.ts` | (#11) `setImmediate` 와 `clearImmediate` 를 **둘 다** 확인. 팩토리가 모듈 최상위에서 실행되므로 한쪽만 있는 폴리필에서 서브패스 전체가 임포트 불가였다 |
+| `common-utils/.../getTrackableHandler.ts` | (#14) `stateManager.update` 가 구독자에게 통지. 훅 실행 중에는 `hookRunning` 게이트로 통지를 미뤄 직후 pending publish 에 합친다 — 실행당 통지 수는 그대로 2회 |
+| `common-utils/.../debounce.ts` · `throttle.ts` | (#23) `dispose()` 추가 — `clear()` 는 대기 호출만 취소하고 공유 `AbortSignal` 의 리스너는 남아 wrapper 를 붙들었다 |
+| `common-utils/.../scheduleNextTick.ts` | (#17) "Consistent next tick semantics across all platforms" 주장을 실제 동작으로 정정 — Node 는 마이크로태스크/nextTick, 브라우저는 매크로태스크라 `setTimeout(0)` 대비 순서가 반대다 |
+| 신규 테스트 4파일 | `withTimeout.cleanup`(2), `waitAndReturn.timing`(2), `scheduleMacrotask.partialGlobals`(2), `getTrackableHandler.publish`(1), `rateLimit.dispose`(2) |
+
+**fail-first**: 7건 red — 남은 타이머 `expected 1 to be +0`·`expected 5 to be +0`, scheduler 임포트 throw 2건, 동기 예외가 1ms 만에 전달 `expected 1 to be greater than or equal to 50`, 실제 `unhandledRejection` 발생, update 통지 0회.
+
+**기존 단언 무수정**: `getTrackableHandler.test.ts` 의 "ignore duplicate subscribers"(실행당 2회 통지)가 처음에는 3회로 깨졌다. 테스트 의도는 중복 구독 dedup 이고 횟수는 부수적이지만, 플랜의 "중복 publish 정리" 지침대로 훅 창 통지를 직후 publish 에 합치는 방식을 택해 **단언을 고치지 않고** 통과시켰다.
+
+**⚠ 보류 — #12 throttle 최소 간격**
+
+감사의 제안(실행 지점에서 `previous` 갱신 + `>` → `>=`)을 그대로 적용하면 최소 간격이 보장되지 않는다. 추적해 보면 leading 게이트와 trailing 타이머가 각각 다른 기준시각을 쓰기 때문에, 보장하려면 "쿨다운 중 호출을 창 끝으로 미루는" 스케줄링 모델 자체를 다시 짜야 한다. 타이밍에 민감하고 기존 동작 테스트 9건이 걸려 있어, 한 줄짜리 반쪽 수정 대신 **별도 작업으로 남긴다**. 관측 증상은 `ms=100` 에서 trailing 직후 leading 이 발화해 간격이 4ms 로 좁아지는 것.
+
+**검증**: common-utils **125 파일 / 1069 테스트 통과**, `build`·`lint` 통과, 소비 패키지 전량 통과.
+
 ### [x] Task 3.2b — stableEquals omit·내장 객체 (H5, M8, M14) · 2026-08-17
 
 **반영**
