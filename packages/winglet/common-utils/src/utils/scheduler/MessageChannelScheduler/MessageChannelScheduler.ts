@@ -182,11 +182,7 @@ export class MessageChannelScheduler {
 
     const taskId = ++this.__taskIdCounter__;
     this.__pendingTasks__.set(taskId, callback);
-
-    if (this.__idle__) {
-      this.__idle__ = false;
-      scheduleMicrotask(() => this.__flushBatch__());
-    }
+    this.__requestFlush__();
 
     return taskId;
   }
@@ -214,12 +210,28 @@ export class MessageChannelScheduler {
   }
 
   /**
+   * Arms a flush microtask unless a batch is already armed or in flight.
+   * `__idle__` marks that neither is true, so it is the single gate for arming.
+   * @private
+   */
+  private __requestFlush__(): void {
+    if (!this.__idle__) return;
+    this.__idle__ = false;
+    scheduleMicrotask(() => this.__flushBatch__());
+  }
+
+  /**
    * Triggers batch execution by posting task IDs through MessageChannel.
    * Called automatically via microtask when batch is ready for execution.
+   * An empty queue posts nothing, so it must return the scheduler to idle itself;
+   * otherwise no later task could ever arm a flush again.
    * @private
    */
   private __flushBatch__(): void {
-    if (this.__pendingTasks__.size === 0) return;
+    if (this.__pendingTasks__.size === 0) {
+      this.__idle__ = true;
+      return;
+    }
     this.__senderPort__.postMessage(Array.from(this.__pendingTasks__.keys()));
   }
 
@@ -273,6 +285,8 @@ export class MessageChannelScheduler {
    * Creates optimized message handler for batch task execution.
    * Handles both individual tasks and batched tasks with minimal overhead.
    * Isolates task errors to prevent affecting other tasks in the batch.
+   * The batch carries the task IDs captured at flush time, so anything scheduled
+   * after that capture is still pending here and needs a fresh flush armed.
    * @returns Message event handler for task execution
    * @private
    */
@@ -292,6 +306,7 @@ export class MessageChannelScheduler {
           }
         pendingTasks.delete(taskId);
       }
+      if (pendingTasks.size > 0) this.__requestFlush__();
     };
   }
 
