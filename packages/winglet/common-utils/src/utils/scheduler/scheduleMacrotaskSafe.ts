@@ -64,7 +64,12 @@ type SchedulerFunctions<Id = any> = {
  * - **Smooth Animations**: Prevents janky animations by not blocking render cycles
  */
 const getScheduleMacrotask = (): SchedulerFunctions => {
-  if (typeof globalThis.setImmediate === 'function')
+  // Both symbols are required: a polyfill that ships only setImmediate would make
+  // clearImmediate.bind throw at module load and take the whole subpath with it
+  if (
+    typeof globalThis.setImmediate === 'function' &&
+    typeof globalThis.clearImmediate === 'function'
+  )
     return {
       scheduleMacrotaskSafe: globalThis.setImmediate.bind(globalThis),
       cancelMacrotaskSafe: globalThis.clearImmediate.bind(globalThis),

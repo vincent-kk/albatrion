@@ -511,7 +511,12 @@ export const waitAndReturn: {
   <Return>(fn: Fn<[], Return>, ms?: number): Promise<Return>;
   (fn: undefined, ms?: number): Promise<undefined>;
 } = async <Return>(fn: Fn<[], Return> | undefined, ms = 0) => {
-  const result = typeof fn === 'function' ? fn() : undefined;
-  await delay(ms);
-  return result;
+  // Started inside a promise so a synchronous throw is delivered after the wait, and
+  // settled together with the delay so the rejection is never left without a handler
+  const pending = Promise.resolve().then(() =>
+    typeof fn === 'function' ? fn() : undefined,
+  );
+  const [settled] = await Promise.allSettled([pending, delay(ms)]);
+  if (settled.status === 'rejected') throw settled.reason;
+  return settled.value;
 };

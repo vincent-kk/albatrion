@@ -17,6 +17,14 @@ export interface DebouncedFn<F extends Fn<any[]>> {
   execute: Fn;
   /** Cancel scheduled function execution and reset the timer */
   clear: Fn;
+  /**
+   * Release every resource the wrapper holds, including the abort listener.
+   *
+   * `clear` only cancels a pending call; the listener registered on a shared
+   * `AbortSignal` outlives it and keeps this wrapper reachable until that signal
+   * aborts. Call this when the wrapper is discarded before its signal is.
+   */
+  dispose: Fn;
 }
 
 /**
@@ -230,10 +238,16 @@ export const debounce = <F extends Fn<any[]>>(
     if (immediately) context.execute();
   };
 
+  const handleAbort = () => context.clear();
+
   debounced.execute = () => context.manualExecute();
   debounced.clear = () => context.clear();
+  debounced.dispose = () => {
+    signal?.removeEventListener('abort', handleAbort);
+    context.clear();
+  };
 
-  signal?.addEventListener('abort', () => context.clear(), {
+  signal?.addEventListener('abort', handleAbort, {
     once: true,
   });
 

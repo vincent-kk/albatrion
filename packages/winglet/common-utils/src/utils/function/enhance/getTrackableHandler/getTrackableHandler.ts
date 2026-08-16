@@ -365,7 +365,11 @@ export function getTrackableHandler<
    * Called whenever state changes or execution status changes.
    * @internal
    */
+  /** Set while a lifecycle hook runs, so its updates fold into the publish that follows it. */
+  let hookRunning = false;
+
   const publish = () => {
+    if (hookRunning) return;
     for (const listener of listeners) listener();
   };
 
@@ -380,6 +384,7 @@ export function getTrackableHandler<
   ) => {
     const update = typeof updater === 'function' ? updater(state) : updater;
     state = { ...state, ...update };
+    publish();
   };
 
   /**
@@ -407,7 +412,12 @@ export function getTrackableHandler<
       return Promise.resolve(undefined as Result);
 
     // Execute beforeExecute hook - may throw and prevent execution
-    beforeExecute?.(args, stateManager);
+    hookRunning = true;
+    try {
+      beforeExecute?.(args, stateManager);
+    } finally {
+      hookRunning = false;
+    }
     pending = true;
     publish(); // Notify subscribers of pending state change
 
@@ -417,9 +427,11 @@ export function getTrackableHandler<
     } finally {
       // Nested finally keeps cleanup reachable when afterExecute throws;
       // otherwise its error would seal the handler with pending stuck true
+      hookRunning = true;
       try {
         afterExecute?.(args, stateManager);
       } finally {
+        hookRunning = false;
         pending = false;
         publish(); // Notify subscribers of completion
       }

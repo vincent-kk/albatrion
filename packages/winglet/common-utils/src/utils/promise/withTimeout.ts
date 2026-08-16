@@ -416,5 +416,17 @@ export const withTimeout = <T>(
   ms: number,
   options?: DelayOptions,
 ): Promise<T> => {
-  return Promise.race([fn(), timeout(ms, options)]);
+  const controller = new AbortController();
+  const externalSignal = options?.signal;
+  const abort = () => controller.abort();
+  externalSignal?.addEventListener('abort', abort, { once: true });
+  return Promise.race([
+    fn(),
+    timeout(ms, { ...options, signal: controller.signal }),
+  ]).finally(() => {
+    // Aborting clears the pending delay timer; the resulting AbortError lands on the
+    // race's own handler, which has already settled, so nothing surfaces from it
+    externalSignal?.removeEventListener('abort', abort);
+    controller.abort();
+  });
 };
