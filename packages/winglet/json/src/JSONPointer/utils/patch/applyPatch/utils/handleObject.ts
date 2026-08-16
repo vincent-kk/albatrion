@@ -1,5 +1,5 @@
 import { hasOwnProperty } from '@winglet/common-utils/lib';
-import { equals } from '@winglet/common-utils/object';
+import { cloneLite, equals } from '@winglet/common-utils/object';
 
 import { getValue } from '@/json/JSONPointer/utils/manipulator/getValue';
 import { setValue } from '@/json/JSONPointer/utils/manipulator/setValue';
@@ -109,7 +109,9 @@ export const handleObject = (
             path: patch.path,
           },
         );
-      object[key] = getValue(source, patch.from);
+      // RFC 6902 copy yields an independent value; sharing the reference would let a
+      // later edit of the copy mutate the original
+      object[key] = cloneLite(getValue(source, patch.from));
       return source;
     default:
       throw new JsonPatchError(

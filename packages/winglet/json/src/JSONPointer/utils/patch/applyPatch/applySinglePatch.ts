@@ -5,6 +5,7 @@ import { unescapePath } from '@/json/JSONPointer/utils/escape/unescapePath';
 import type { JsonRoot } from '@/json/type';
 
 import type { Patch } from '../type';
+import { assertSafeFromPointer } from './utils/assertSafeFromPointer';
 import { JsonPatchError } from './utils/error';
 import { getArrayIndex } from './utils/getArrayIndex';
 import { handleArray } from './utils/handleArray';
@@ -99,6 +100,9 @@ export const applySinglePatch = (
   // 루트 패치 처리
   if (patch.path === '' || patch.path === JSONPointer.Fragment)
     return handleRootPatch(source, patch, patchIndex, strict);
+
+  if (protectPrototype && 'from' in patch)
+    assertSafeFromPointer(patch.from, patch, patchIndex);
 
   const segments = patch.path.split('/');
   let current: any = source;
