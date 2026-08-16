@@ -1,6 +1,8 @@
+import { OBJECT_TAG } from '@/common-utils/constant/typeTag';
+import { getTypeTag } from '@/common-utils/libs/getTypeTag';
 import { hasOwnProperty } from '@/common-utils/libs/hasOwnProperty';
 
-import { countObjectKey } from './countObjectKey';
+import { equalsBuiltin } from './equalsBuiltin';
 
 /**
  * Performs deep equality comparison between two values with optimized recursive traversal.
@@ -294,10 +296,24 @@ const equalsRecursive = (
     return true;
   }
 
+  // Built-ins keep their state in internal slots that own keys cannot see, so comparing
+  // keys would call any two of them equal. Class instances carry OBJECT_TAG and stay
+  // on the structural path below.
+  const tag = getTypeTag(left);
+  if (tag !== getTypeTag(right)) return false;
+  if (tag !== OBJECT_TAG)
+    return equalsBuiltin(left, right, tag, (leftValue, rightValue) =>
+      equalsRecursive(leftValue, rightValue, omits),
+    );
+
   const keys = Object.keys(left);
+  const rightKeys = Object.keys(right);
   const length = keys.length;
 
-  if (length !== countObjectKey(right)) return false;
+  if (omits === null) {
+    if (length !== rightKeys.length) return false;
+  } else if (countRetained(keys, omits) !== countRetained(rightKeys, omits))
+    return false;
 
   for (let i = 0, k = keys[0]; i < length; i++, k = keys[i]) {
     if (omits?.has(k)) continue;
@@ -309,4 +325,20 @@ const equalsRecursive = (
   }
 
   return true;
+};
+
+/**
+ * Counts the keys that survive the omit set.
+ *
+ * Both sides must be counted this way: comparing raw key counts first would reject an
+ * asymmetric pair before omit ever applies, which is the whole point of omitting a key.
+ *
+ * @param keys - Own enumerable keys of one side
+ * @param omits - Keys excluded from the comparison
+ * @returns Number of keys that participate in the comparison
+ */
+const countRetained = (keys: string[], omits: Set<PropertyKey>): number => {
+  let count = 0;
+  for (let i = 0, l = keys.length; i < l; i++) if (!omits.has(keys[i])) count++;
+  return count;
 };
