@@ -56,7 +56,7 @@ describe('stableSerialize', () => {
         'readonly',
       ]),
     ).toEqual(
-      "6hyqx9{type:\"object\"|properties:6hyqx9{user:6hyqx9{type:\"object\"|properties:6hyqx9{profile:6hyqx9{type:\"object\"|properties:6hyqx9{type:6hyqx9{type:\"string\"}|preferences:6hyqx9{type:\"object\"|properties:6hyqx9{theme:6hyqx9{type:\"string\"}|notifications:6hyqx9{type:\"object\"|properties:6hyqx9{sms:6hyqx9{type:\"boolean\"}|email:6hyqx9{type:\"boolean\"}}}}}|gender:6hyqx9{type:\"string\"|computed:6hyqx9{}}|age:6hyqx9{type:\"integer\"}}}|name:6hyqx9{type:\"string\"}|email:6hyqx9{type:\"string\"|format:\"email\"}}}}}",
+      "1bjyhvz{type:\"object\"|properties:1bjyhvz{user:1bjyhvz{type:\"object\"|properties:1bjyhvz{profile:1bjyhvz{type:\"object\"|properties:1bjyhvz{type:1bjyhvz{type:\"string\"}|preferences:1bjyhvz{type:\"object\"|properties:1bjyhvz{theme:1bjyhvz{type:\"string\"}|notifications:1bjyhvz{type:\"object\"|properties:1bjyhvz{sms:1bjyhvz{type:\"boolean\"}|email:1bjyhvz{type:\"boolean\"}}}}}|gender:1bjyhvz{type:\"string\"|computed:1bjyhvz{}}|age:1bjyhvz{type:\"integer\"}}}|name:1bjyhvz{type:\"string\"}|email:1bjyhvz{type:\"string\"|format:\"email\"}}}}}",
     );
   });
 

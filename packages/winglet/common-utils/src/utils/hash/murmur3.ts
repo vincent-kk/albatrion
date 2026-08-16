@@ -18,20 +18,16 @@ export class Murmur3 {
   private static readonly __DATAVIEW_THRESHOLD__ = 32; // Minimum size in bytes to use DataView optimization
 
   // Multiplication constants used in K1 mixing
-  private static readonly __M1__ = 0x2d51;
-  private static readonly __M2__ = 0xcc9e0000;
-  private static readonly __M3__ = 0x3593;
-  private static readonly __M4__ = 0x1b87;
+  private static readonly __C1__ = 0xcc9e2d51;
+  private static readonly __C2__ = 0x1b873593;
 
   // Constants used in H1 mixing
   private static readonly __H1_ADD__ = 0xe6546b64;
   private static readonly __H1_MULTIPLY__ = 5;
 
   // Finalization multiplication constants
-  private static readonly __F1__ = 0xca6b;
-  private static readonly __F2__ = 0x85eb;
-  private static readonly __F3__ = 0xae35;
-  private static readonly __F4__ = 0xc2b2;
+  private static readonly __F1__ = 0x85ebca6b;
+  private static readonly __F2__ = 0xc2b2ae35;
 
   // Bit rotation constants
   private static readonly __R1__ = 15; // For K1 mixing first rotation
@@ -44,7 +40,6 @@ export class Murmur3 {
 
   // Bit mask constants
   private static readonly __MASK_16__ = 0xffff; // Lower 16 bits mask
-  private static readonly __MASK_16_SHIFT__ = 0xffff0000; // Upper 16 bits mask
   private static readonly __MASK_8__ = 0xff; // Lower 8 bits mask
   private static readonly __MASK_8_SHIFT__ = 0xff00; // Upper 8 bits mask (within 16 bits)
 
@@ -64,16 +59,11 @@ export class Murmur3 {
    * @returns The mixed value
    */
   private static __mixK1__(k1: number): number {
-    k1 =
-      ((k1 & Murmur3.__MASK_16__) * Murmur3.__M1__ +
-        (((k1 >>> 16) * Murmur3.__M2__) & Murmur3.__MASK_16_SHIFT__)) >>>
-      0;
+    // Math.imul performs the full 32-bit multiply; the 16-bit split form this replaced
+    // dropped one cross term and could not match the reference algorithm
+    k1 = Math.imul(k1, Murmur3.__C1__);
     k1 = (k1 << Murmur3.__R1__) | (k1 >>> Murmur3.__R2__);
-    k1 =
-      ((k1 & Murmur3.__MASK_16__) * Murmur3.__M3__ +
-        (((k1 >>> 16) * Murmur3.__M4__) & Murmur3.__MASK_16_SHIFT__)) >>>
-      0;
-    return k1;
+    return Math.imul(k1, Murmur3.__C2__);
   }
 
   /**
@@ -86,8 +76,7 @@ export class Murmur3 {
   private static __mixH1__(h1: number, k1: number): number {
     h1 ^= k1;
     h1 = (h1 << Murmur3.__R3__) | (h1 >>> Murmur3.__R4__);
-    h1 = (h1 * Murmur3.__H1_MULTIPLY__ + Murmur3.__H1_ADD__) >>> 0;
-    return h1;
+    return (Math.imul(h1, Murmur3.__H1_MULTIPLY__) + Murmur3.__H1_ADD__) | 0;
   }
 
   // Hash state variables
@@ -413,7 +402,7 @@ export class Murmur3 {
       // Process remaining chunks (after multiples of DATAVIEW_CHUNK_SIZE)
       for (let i = alignedChunks; i < fullChunks; i++) {
         k1 = isLittleEndian
-          ? dataView.getUint32((i - alignedChunks) * BYTES_PER_CHUNK, true)
+          ? dataView.getUint32(i * BYTES_PER_CHUNK, true)
           : bytes[index] |
             (bytes[index + 1] << BYTE_POS_8) |
             (bytes[index + 2] << BYTE_POS_16) |
@@ -517,8 +506,9 @@ export class Murmur3 {
     let k1 = this.__k1__;
     let h1 = this.__h1__;
 
-    // Process any remaining bytes
-    if (k1 > 0) {
+    // Judged by how many tail bytes were buffered, not by the sign of k1: a trailing
+    // unit of 0x8000 or above makes k1 a negative int32 and the block was dropped
+    if (this.__remainder__ > 0) {
       k1 = Murmur3.__mixK1__(k1);
       h1 ^= k1;
     }
@@ -527,20 +517,16 @@ export class Murmur3 {
     h1 ^= this.__length__;
 
     // Avalanche bits (constant caching)
-    const MASK_16 = Murmur3.__MASK_16__;
-    const MASK_16_SHIFT = Murmur3.__MASK_16_SHIFT__;
     const R5 = Murmur3.__R5__;
     const R6 = Murmur3.__R6__;
     const R7 = Murmur3.__R7__;
     const F1 = Murmur3.__F1__;
     const F2 = Murmur3.__F2__;
-    const F3 = Murmur3.__F3__;
-    const F4 = Murmur3.__F4__;
 
     h1 ^= h1 >>> R5;
-    h1 = ((h1 & MASK_16) * F1 + (((h1 >>> 16) * F2) & MASK_16_SHIFT)) >>> 0;
+    h1 = Math.imul(h1, F1);
     h1 ^= h1 >>> R6;
-    h1 = ((h1 & MASK_16) * F3 + (((h1 >>> 16) * F4) & MASK_16_SHIFT)) >>> 0;
+    h1 = Math.imul(h1, F2);
     h1 ^= h1 >>> R7;
 
     // Return unsigned 32-bit integer
