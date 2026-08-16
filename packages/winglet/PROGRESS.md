@@ -323,6 +323,31 @@ omit 경로 감소는 매 호출 키 정렬(M20 의 대가)이고, 훨씬 잦은
 
 **검증**: common-utils **119 파일 / 1052 테스트 통과**, `typecheck`·`lint`·`build` 통과, 소비 패키지 전량 통과.
 
+### [x] Task 3.5 — hash 레퍼런스 교정 (#5, #2, #6, #7) · 2026-08-17
+
+**확정 방향**: 사용자 확정대로 **레퍼런스 교정** — `Murmur3` 를 Austin Appleby 의 MurmurHash3 x86_32 와 일치시킨다.
+
+**반영**
+
+| 파일 | 변경 |
+| --- | --- |
+| `common-utils/.../murmur3.ts` | (#5) `__mixK1__` 과 최종 혼합의 16비트 분할 곱셈을 `Math.imul` 로 교체 — 분할 형태는 교차항 하나를 누락해 레퍼런스와 일치할 수 없었다. 상수도 조각(`0x2d51`/`0xcc9e0000`)에서 전체 값(`0xcc9e2d51`/`0x1b873593`, `0x85ebca6b`/`0xc2b2ae35`)으로. (#2) DataView 잔여 청크 오프셋 `(i - alignedChunks) * 4` → `i * 4` — 버퍼 앞부분을 다시 읽어 꼬리 청크가 해시에 기여하지 못했다. (#6) `if (k1 > 0)` → `if (this.__remainder__ > 0)` — 꼬리 3번째 문자가 `0x8000` 이상이면 k1 이 음수 int32 라 블록이 통째로 버려졌다. 고아가 된 `__MASK_16_SHIFT__` 제거 |
+| `common-utils/.../polynomialHash.ts` | (#7) `.slice(0, length)` → `.slice(-length)` — 상위 자릿수는 크기만 담아 짧은 길이에서 해시가 붕괴했다. `length <= 0` 가드 추가(`slice(-0)` 은 `slice(0)` 이라 전체를 반환) |
+| `common-utils/.../__tests__/murmur3.reference.test.ts` | 신규 6 케이스. **기대값은 전부 레퍼런스에서 독립 도출** — 공개 벡터 5종으로 검증한 probe 로 생성했다 |
+| `common-utils/.../__tests__/polynomialHash.test.ts` | +2 케이스 (충돌률·0 패딩) |
+
+**fail-first**: 레퍼런스 6 케이스 전부 red — `expected 3253963644 to be 1009084850`("a"), 정렬/비정렬 불일치 `expected 3162182596 to be 576625206`, 꼬리 폐기 `expected 389533576 not to be 389533576`, seed 불일치 등. polynomialHash 는 충돌률 케이스가 red(20000 중 19851 충돌).
+
+**기존 단언 갱신 (근거 제시)**
+
+- `murmur3.test.ts` 31 케이스는 **무수정 통과**했다. 결정성·증분 일관성 같은 속성만 검증하고 레퍼런스 벡터가 하나도 없어 알고리즘 오류를 잡지 못하던 스위트다.
+- `polynomialHash.test.ts` 4건은 `// 실제 반환값` 주석이 달린 특성화 스냅샷이었다. 길이 3·1·소수점 케이스는 앞자리→뒷자리 변경의 직접 결과(`'248'`→`'87m'`, `'2'`→`'m'`), 음수 길이는 새 가드로 `''`. 길이 0·7·8·10 케이스는 그대로 통과한다.
+- `stableSerialize.test.ts` 의 omit 해시 토큰 `6hyqx9`→`1bjyhvz`. 치환 후 나머지 문자열이 **완전히 일치함을 스크립트로 확인**했다 — Murmur3 교정의 직접 파급이고 그 외 차이는 없다.
+
+**계획 대비 편차**: 플랜은 `length` 를 7로 clamp 하는 안도 담았으나 **철회**했다. 기존 테스트가 길이 8·10 에서 0 패딩된 더 긴 결과를 계약으로 고정하고 있어 clamp 는 회귀였다. 대신 JSDoc 의 부정확한 `max: 7` 표기를 실제 동작(초과 길이는 0 패딩)으로 정정했다.
+
+**소비처 영향**: `polynomialHash` 의 유일한 소비처 promise-modal `ModalManager` 는 기본값 7 을 쓰며, 길이 7 출력은 변경 전후가 동일하다(패딩된 7자에 대해 `slice(0,7)` 과 `slice(-7)` 이 같음). `Murmur3` 는 프로덕션 직접 소비가 0 이고 `stableSerialize` 의 omit 해시로만 간접 사용된다.
+
 ### [x] Task 3.2b — stableEquals omit·내장 객체 (H5, M8, M14) · 2026-08-17
 
 **반영**
