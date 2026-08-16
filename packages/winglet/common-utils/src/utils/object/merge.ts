@@ -317,6 +317,7 @@ export const merge = <
 ): Target & Source => {
   const keys = Object.keys(source) as Array<keyof Source>;
   for (let i = 0, k = keys[0], l = keys.length; i < l; i++, k = keys[i]) {
+    if (k === PROTOTYPE_POLLUTION_KEY) continue;
     const sourceValue = source[k];
     const targetValue = target[k];
     if (isArray(sourceValue))
@@ -332,3 +333,14 @@ export const merge = <
   }
   return target;
 };
+
+/**
+ * Own key that `JSON.parse` can produce but assignment cannot safely carry.
+ *
+ * Reading it falls through to the inherited accessor, which hands back
+ * `Object.prototype` — a plain object by every structural test — so merging into
+ * it writes straight into the global prototype. Other reserved-looking keys
+ * (`constructor`, `prototype`) resolve to functions and are merged as ordinary
+ * own properties, so they stay allowed rather than silently dropped.
+ */
+const PROTOTYPE_POLLUTION_KEY = '__proto__';

@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it } from 'vitest';
 
 import { merge } from '../merge';
 
@@ -107,5 +107,42 @@ describe('merge', () => {
     const result = merge(target, source);
 
     expect(result).toEqual({ a: { b: { c: [2], d: 3 }, e: [4] } });
+  });
+
+  describe('prototype pollution', () => {
+    const prototype = Object.prototype as Record<string, unknown>;
+
+    afterEach(() => {
+      delete prototype.pollutedByMerge;
+      delete prototype.nestedPollution;
+    });
+
+    it('should not let a __proto__ key reach the global prototype', () => {
+      const source = JSON.parse('{"__proto__":{"pollutedByMerge":"yes"}}');
+
+      merge({}, source);
+
+      expect(prototype.pollutedByMerge).toBeUndefined();
+      expect(({} as Record<string, unknown>).pollutedByMerge).toBeUndefined();
+    });
+
+    it('should not let a nested __proto__ key reach the global prototype', () => {
+      const source = JSON.parse(
+        '{"nested":{"__proto__":{"nestedPollution":"yes"}}}',
+      );
+
+      merge({ nested: {} }, source);
+
+      expect(prototype.nestedPollution).toBeUndefined();
+    });
+
+    it('should keep a constructor key as an ordinary own property', () => {
+      const source = JSON.parse('{"constructor":{"role":"data"}}');
+
+      const result = merge({} as Record<string, unknown>, source);
+
+      expect(result.constructor).toEqual({ role: 'data' });
+      expect(Object.prototype.constructor).toBe(Object);
+    });
   });
 });
