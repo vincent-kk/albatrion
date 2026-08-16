@@ -40,6 +40,9 @@ const getPointer = (
   target: unknown,
 ): string | null => {
   const stack: [current: Dictionary | any[], path: string][] = [[root, '']];
+  // Identity against `target` is tested before a node is queued, so a node already
+  // queued once can be skipped: cycles terminate and shared subtrees are walked once
+  const visited = new WeakSet<object>([root]);
   while (stack.length > 0) {
     const [currentNode, currentPath] = stack.pop()!;
     if (isObject(currentNode)) {
@@ -49,7 +52,10 @@ const getPointer = (
           const segments = escapeSegment('' + i);
           const path = currentPath ? `${currentPath}/${segments}` : segments;
           if (value === target) return path;
-          if (isObject(value)) stack[stack.length] = [value, path] as const;
+          if (isObject(value) && !visited.has(value)) {
+            visited.add(value);
+            stack[stack.length] = [value, path] as const;
+          }
         }
       } else {
         for (const key in currentNode) {
@@ -58,7 +64,10 @@ const getPointer = (
           const segments = escapeSegment(key);
           const path = currentPath ? `${currentPath}/${segments}` : segments;
           if (value === target) return path;
-          if (isObject(value)) stack[stack.length] = [value, path] as const;
+          if (isObject(value) && !visited.has(value)) {
+            visited.add(value);
+            stack[stack.length] = [value, path] as const;
+          }
         }
       }
     }

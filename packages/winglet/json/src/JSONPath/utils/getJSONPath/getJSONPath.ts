@@ -58,6 +58,9 @@ const getJSONPathSegments = (
   target: unknown,
 ): string | null => {
   const stack: [current: Dictionary | any[], path: string][] = [[root, '']];
+  // Identity against `target` is tested before a node is queued, so a node already
+  // queued once can be skipped: cycles terminate and shared subtrees are walked once
+  const visited = new WeakSet<object>([root]);
 
   while (stack.length > 0) {
     const [currentNode, currentPath] = stack.pop()!;
@@ -71,7 +74,10 @@ const getJSONPathSegments = (
           const path = currentPath + segment;
 
           if (value === target) return path;
-          if (isObject(value)) stack[stack.length] = [value, path] as const;
+          if (isObject(value) && !visited.has(value)) {
+            visited.add(value);
+            stack[stack.length] = [value, path] as const;
+          }
         }
       } else {
         // 객체의 경우 키에 따라 .key 또는 ['key'] 형식으로 처리
@@ -85,7 +91,10 @@ const getJSONPathSegments = (
           const path = currentPath + segment;
 
           if (value === target) return path;
-          if (isObject(value)) stack[stack.length] = [value, path] as const;
+          if (isObject(value) && !visited.has(value)) {
+            visited.add(value);
+            stack[stack.length] = [value, path] as const;
+          }
         }
       }
     }

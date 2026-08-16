@@ -82,4 +82,21 @@ describe('getJSONPointer', () => {
     const obj = {};
     expect(getJSONPointer(obj, obj)).toBe('/');
   });
+
+  it('순환 참조 구조에서 대상을 찾지 못해도 종료해야 합니다.', () => {
+    const root: Record<string, unknown> = {};
+    root.self = root;
+    root.child = { value: 1 };
+    (root.child as Record<string, unknown>).back = root;
+
+    expect(getJSONPointer(root, { notPresent: true })).toBe(null);
+  });
+
+  it('순환 참조가 있어도 대상 경로를 찾아야 합니다.', () => {
+    const child = { value: 1 };
+    const root: Record<string, unknown> = { child };
+    root.self = root;
+
+    expect(getJSONPointer(root, child)).toBe('/child');
+  });
 });
