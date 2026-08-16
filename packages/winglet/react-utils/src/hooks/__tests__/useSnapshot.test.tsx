@@ -231,6 +231,23 @@ describe('useSnapshot and useSnapshotReference hooks', () => {
 
       expect(first).not.toBe(third);
     });
+
+    it('should capture the omit option at the first comparison, not on mount', () => {
+      const testObj = { a: 1, c: 3 };
+      type TestObjKey = keyof typeof testObj;
+
+      const { result, rerender } = renderHook(
+        ({ obj, omit }) => useSnapshotReference(obj, omit),
+        { initialProps: { obj: testObj, omit: ['c' as TestObjKey] } },
+      );
+
+      // The initial render has nothing to compare, so it never reaches the capture;
+      // the omit carried by the first comparing render is the one that sticks.
+      const changedOnlyInC = { a: 1, c: 4 };
+      rerender({ obj: changedOnlyInC, omit: [] });
+
+      expect(result.current.current).toBe(changedOnlyInC);
+    });
   });
 
   describe('useSnapshot', () => {

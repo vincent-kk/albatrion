@@ -28,8 +28,10 @@ import { equals } from '@winglet/common-utils/object';
  *          render carrying that same input could ever re-examine it. Refs roll back with
  *          nothing, so gate and write always move together.
  *
- * @remarks `omit` is captured on the initial render and later changes are ignored,
- *          so pass a value that stays fixed for the component's lifetime.
+ * @remarks `omit` is captured on the first render that compares a new `input` reference,
+ *          not on mount — the initial render has nothing to compare against, so it never
+ *          reaches the capture. Later changes are ignored, so pass a value that stays
+ *          fixed for the component's lifetime.
  *
  * @example
  * ```tsx
@@ -46,7 +48,7 @@ import { equals } from '@winglet/common-utils/object';
  *
  * @typeParam Input - The type of the object to track (may be `undefined`)
  * @param input - The object to track with deep comparison
- * @param omit - Properties excluded from the comparison, captured once on mount
+ * @param omit - Properties excluded from the comparison, captured once at the first comparison
  * @returns A stable ref whose `current` updates only on real content changes
  *
  * @see useSnapshot - Direct value access without the ref wrapper
