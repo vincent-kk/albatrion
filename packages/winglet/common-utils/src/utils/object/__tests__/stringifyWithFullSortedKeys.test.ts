@@ -2,6 +2,28 @@ import { describe, expect, it } from 'vitest';
 
 import { serializeWithFullSortedKeys } from '../serializeWithFullSortedKeys';
 
+describe('serializeWithFullSortedKeys circular references', () => {
+  it('should mark a cycle instead of looping forever', () => {
+    const node: Record<string, unknown> = { name: 'root' };
+    node.self = node;
+
+    const serialized = serializeWithFullSortedKeys(node);
+
+    expect(serialized.split('|').sort()).toEqual([
+      'name:root',
+      'self:[Circular]',
+    ]);
+  });
+
+  it('should expand a shared reference on both paths, since it is not a cycle', () => {
+    const shared = { value: 1 };
+
+    const serialized = serializeWithFullSortedKeys({ a: shared, b: shared });
+
+    expect(serialized.split('|').sort()).toEqual(['a.value:1', 'b.value:1']);
+  });
+});
+
 describe('serializeWithFullSortedKeys', () => {
   it('should stringify the object', () => {
     expect(serializeWithFullSortedKeys({ a: 1, b: 2 })).toEqual('a:1|b:2');

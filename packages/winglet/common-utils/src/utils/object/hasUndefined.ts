@@ -243,10 +243,15 @@ import { getKeys } from '@/common-utils/libs/getKeys';
 export const hasUndefined = (value: any): boolean => {
   if (value === undefined) return true;
   const stack: any[] = [value];
+  // Revisiting a node cannot change the answer — its subtree is already queued —
+  // so a global visited set both terminates cycles and skips repeated work
+  const visited = new WeakSet<object>();
   while (stack.length > 0) {
     const current = stack.pop();
     if (current === undefined) return true;
     if (current === null || typeof current !== 'object') continue;
+    if (visited.has(current)) continue;
+    visited.add(current);
     if (Array.isArray(current)) {
       for (let i = 0, l = current.length; i < l; i++)
         stack[stack.length] = current[i];

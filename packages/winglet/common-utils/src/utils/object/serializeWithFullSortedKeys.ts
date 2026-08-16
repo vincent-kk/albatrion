@@ -274,25 +274,44 @@
  * - **No Array Indexing**: Arrays are treated as objects with numeric keys
  * - **String Representation**: All values become strings, losing type information
  * - **Path Collisions**: Properties with dots in names may create ambiguous paths
- * - **Circular References**: Will cause infinite loops (not handled)
+ * - **Circular References**: Rendered as `[Circular]` at the path that closes the cycle
  * - **Large Objects**: Can produce very long strings for deeply nested structures
  */
 export const serializeWithFullSortedKeys = (object: any): string => {
   if (!object || typeof object !== 'object') return String(object);
-  const stack: Array<{ obj: any; prefix: string }> = [
+  const stack: Array<{ obj: any; prefix: string; exit?: boolean }> = [
     { obj: object, prefix: '' },
   ];
   const parts: string[] = [];
+  const ancestors = new WeakSet<object>();
   while (stack.length > 0) {
-    const { obj, prefix } = stack.pop()!;
+    const entry = stack.pop()!;
+    const { obj, prefix } = entry;
+    if (entry.exit) {
+      ancestors.delete(obj);
+      continue;
+    }
+    ancestors.add(obj);
+    stack[stack.length] = { obj, prefix, exit: true };
     const keys = Object.keys(obj).sort();
     for (const key of keys) {
       const value = obj[key];
       const fullKey = prefix ? `${prefix}.${key}` : key;
       if (value && typeof value === 'object')
-        stack[stack.length] = { obj: value, prefix: fullKey };
+        if (ancestors.has(value))
+          parts[parts.length] = `${fullKey}:${CIRCULAR_REFERENCE_MARK}`;
+        else stack[stack.length] = { obj: value, prefix: fullKey };
       else parts[parts.length] = `${fullKey}:${String(value)}`;
     }
   }
   return parts.join('|');
 };
+
+/**
+ * Stands in for a value that is already on the path from the root to itself.
+ *
+ * Only ancestors are tracked, so a value shared by sibling paths is still expanded
+ * under each of them — collapsing those would let two different documents serialize
+ * to the same fingerprint.
+ */
+const CIRCULAR_REFERENCE_MARK = '[Circular]';
