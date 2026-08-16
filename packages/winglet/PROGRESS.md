@@ -295,6 +295,34 @@ omit 경로 감소는 매 호출 키 정렬(M20 의 대가)이고, 훨씬 잦은
 
 **검증**: common-utils **119 파일 / 1047 테스트 통과**, `typecheck`·`lint`·`build` 통과, 소비 패키지 전량 통과(json 545 · react-utils 175 · schema-form 3568 · promise-modal 128 · json-schema 392).
 
+### [x] Task 3.4 — array·object 유틸 (M4, M5, M6, M13, M12) · 2026-08-17
+
+**반영**
+
+| 파일 | 변경 |
+| --- | --- |
+| `common-utils/.../groupBy.ts` | (M4) 누산기를 `Object.create(null)` 로 — `constructor`/`toString` 같은 상속 멤버가 키로 오면 `result[key].push` 가 TypeError 를 던지던 문제 제거 |
+| `common-utils/.../transformKeys.ts` · `transformValues.ts` | (M5) 누산기를 `Object.create(null)` 로 — `__proto__` 키가 프로토타입 setter 에 흡수돼 조용히 사라지던 문제 제거 |
+| `common-utils/.../at.ts` | (M6) 스칼라 분기에도 배열 분기와 같은 `Math.trunc(index) || 0` 정규화 — `at(a, 1.5)` 와 `at(a, [1.5])` 가 다른 슬롯을 읽던 불일치 제거 |
+| `common-utils/.../sortWithReference.ts` | (M13) reference 생략 시에도 복사본 반환 — 한쪽 경로만 입력을 그대로 돌려주던 aliasing 제거. (M12) reference 길이만큼 빈 배열을 선할당하던 버킷 방식을 안정 정렬로 교체 |
+| 각 테스트 | groupBy +1, transformKeys +1, transformValues +1, at +1, sortWithReference +1 |
+| `common-utils/bench/sortWithReference.bench.ts` | 신규 (sparse / dense) |
+
+**fail-first**: `TypeError: result[key].push is not a function`(groupBy), `expected [] to deeply equal ['__proto__']`(transformKeys), `expected ['a'] to deeply equal ['__proto__','a']`(transformValues), `expected undefined to be 2`(at), `expected [3,1,2] not to be [3,1,2]`(sortWithReference aliasing).
+
+**성능 게이트 (hz)**
+
+| 시나리오 | 전 | 후 | 변화 |
+| --- | ---: | ---: | ---: |
+| sparse (3 items / 5000 reference) | 5,698 | 6,040 | +6.0% |
+| dense (100 items / 100 reference) | 226,417 | 230,129 | +1.6% |
+
+감사는 빈 배열 선할당이 26% 를 차지한다고 추정했으나, 실측에서는 5000 엔트리 `Map` 구축이 지배 비용이라 실제 이득은 +6% 였다. 그래도 감소는 없고 aliasing 결함이 함께 사라진다.
+
+**반환 계약 변화**: `groupBy`·`transformKeys`·`transformValues` 의 반환 객체는 이제 프로토타입이 없다. `result.hasOwnProperty(...)` 처럼 상속 메서드를 호출하던 코드가 있으면 깨지므로 각 `@returns` 에 명시했다. 세 함수 모두 모노레포 내 소비처가 0 이고, 소비 패키지 전량 통과로 확인했다.
+
+**검증**: common-utils **119 파일 / 1052 테스트 통과**, `typecheck`·`lint`·`build` 통과, 소비 패키지 전량 통과.
+
 ### [x] Task 3.2b — stableEquals omit·내장 객체 (H5, M8, M14) · 2026-08-17
 
 **반영**
