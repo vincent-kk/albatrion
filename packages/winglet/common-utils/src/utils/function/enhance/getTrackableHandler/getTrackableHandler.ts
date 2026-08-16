@@ -415,10 +415,14 @@ export function getTrackableHandler<
       // Execute original function and return its result
       return await origin(...args);
     } finally {
-      // Always execute afterExecute hook and reset pending state
-      afterExecute?.(args, stateManager);
-      pending = false;
-      publish(); // Notify subscribers of completion
+      // Nested finally keeps cleanup reachable when afterExecute throws;
+      // otherwise its error would seal the handler with pending stuck true
+      try {
+        afterExecute?.(args, stateManager);
+      } finally {
+        pending = false;
+        publish(); // Notify subscribers of completion
+      }
     }
   };
 
