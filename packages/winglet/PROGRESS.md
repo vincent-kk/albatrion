@@ -263,6 +263,38 @@ M11 수정이 태그 검사 비용을 상쇄하고도 남아 전 시나리오가
 - `typecheck` 통과, `build` 통과
 - 소비 패키지 전량 통과 — json 545 · react-utils 175 · schema-form 3568 · promise-modal 128 · json-schema 392 · data-loader 48
 
+### [x] Task 3.3 — serialize 계열 (H7, H8, M18, M20, M1) · 2026-08-17
+
+**반영**
+
+| 파일 | 변경 |
+| --- | --- |
+| `common-utils/.../stableSerialize.ts` | (M20) omit 키를 복사 후 정렬해 해시 — 나열 순서가 결과를 바꾸지 않는다. (H7) 캐시 항목을 `{omitHash, result}` 튜플로 바꿔 omit 집합이 일치할 때만 재사용 — 빈 omitHash 가 모든 결과의 접두사라 omit 결과가 일반 호출로 새던 문제 제거. (M18) 문자열만 `JSON.stringify` 로 인용해 `1` 과 `'1'` 충돌 제거, `null`/`undefined` 를 명시 처리해 `undefined` 반환 제거, 무효 Date 는 `Invalid Date` 로(그 `toJSON()` 은 `null` 이라 실제 null 과 충돌) |
+| `common-utils/.../serializeObject.ts` | (M1) `while (key)` → `while ((key = keys.pop()) !== undefined)` — 빈 문자열 키에서 순회가 끊겨 남은 슬롯이 hole 로 남던 문제 |
+| `common-utils/.../__tests__/stableSerialize.contract.test.ts` | 신규 6 케이스 |
+| `common-utils/.../__tests__/serializeObject.test.ts` | +1 케이스 (7→8) |
+| `common-utils/bench/stableSerialize.bench.ts` | 신규 |
+
+**fail-first**: omit 오염 `expected '1n37n{a:1}' not to be '1n37n{a:1}'`, omit 순서 의존, `typeof` 가 `'undefined'`, `1`/`'1'` 충돌, `{a:1}`/`{a:'1'}` 충돌 — 5건. serializeObject 는 `expected 'b:3||' to be 'b:3|:2|a:1'`.
+
+**기존 스냅샷 3건 갱신 (근거 제시)**: `stableSerialize.test.ts` 의 정확 출력 단언 3건을 갱신했다. 기대/실제 diff 를 전부 대조해 **변경이 두 종류뿐임을 확인**했다 — (1) 문자열 값에 인용 부호 추가(충돌 수정의 직접 결과), (2) omit 해시 `1toy9cy`→`6hyqx9`(키 정렬의 직접 결과). 구조·키 순서·숫자 표현은 한 글자도 바뀌지 않았다.
+
+**⚠ 계획 대비 편차 — H7 캐시 처리**
+
+플랜은 "가변 입력이면 memo 를 호출 단위로 한정" 이었다. 벤치 기준선이 캐시 히트 경로를 **12.2M hz** 로 보여줬고, 캐시를 제거하면 전체 순회(수만 hz 수준)로 100배 이상 느려진다 — 성능 게이트를 통과할 수 없다. 대신 **캐시를 유지하되 omit 오염만 정확히 제거하고, 입력을 불변으로 취급한다는 전제를 JSDoc `Limitations` 에 명시**했다. H8 역시 결정(인스턴스 안정 id)대로 동작이 이미 맞으므로, 거짓이던 JSDoc 주장(`구조가 같은 다른 객체도 같은 문자열`)을 사실에 맞게 정정했다.
+
+**성능 게이트 (hz)**
+
+| 시나리오 | 전 | 후 | 변화 |
+| --- | ---: | ---: | ---: |
+| 같은 입력 반복 | 12,207,588 | 15,234,528 | **+24.8%** |
+| 매번 다른 입력 | 11,899,178 | 14,151,330 | +18.9% |
+| omit 있는 반복 | 3,638,113 | 3,183,716 | **-12.5%** |
+
+omit 경로 감소는 매 호출 키 정렬(M20 의 대가)이고, 훨씬 잦은 무-omit 경로는 튜플 비교가 문자열 `startsWith` 를 대체해 빨라졌다.
+
+**검증**: common-utils **119 파일 / 1047 테스트 통과**, `typecheck`·`lint`·`build` 통과, 소비 패키지 전량 통과(json 545 · react-utils 175 · schema-form 3568 · promise-modal 128 · json-schema 392).
+
 ### [x] Task 3.2b — stableEquals omit·내장 객체 (H5, M8, M14) · 2026-08-17
 
 **반영**
