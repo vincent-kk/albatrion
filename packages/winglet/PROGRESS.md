@@ -221,3 +221,44 @@
 - `clone(x, 3)` → 루트 + level1 + level2 복제
 
 즉 "maxDepth = N 은 N 개 객체 레벨을 복제한다" 는 **자체적으로 일관된 계약**이며 코드가 이를 정확히 구현한다. 가드를 `depth > limit` 로 바꾸면 `maxDepth=0` 과 `1` 이 구별되지 않아 "복제하지 않음" 을 표현할 수단이 사라진다 — API 가 나빠진다. 따라서 **코드를 정본으로 두고 JSDoc 예제를 정정**했다(`clone(deep, 2)` 의 level2 단언을 참조로 수정 + `maxDepth=0` 예시 추가). 되돌리려면 JSDoc 편집 한 번이면 된다.
+
+**커밋 후 발견한 빌드 파손**: 린터가 `groups` 대입 줄을 줄바꿈하면서 `@ts-expect-error` 지시자가 `if` 줄에 붙어 `tsc -p tsconfig.declarations.json` 이 실패했다(`yarn typecheck` 는 다른 tsconfig 라 통과). 지시자를 블록 안 대상 줄 바로 위로 옮겨 줄바꿈에 견디게 수정했다. 커밋 직전 `/seiri:verify` 게이트가 잡았다.
+
+### [x] Task 3.2a — equals omit·내장 객체 계약 (H5, H6, M11) · 2026-08-17 〔A급 계약 변경〕
+
+**반영**
+
+| 파일 | 변경 |
+| --- | --- |
+| `common-utils/.../equalsBuiltin.ts` | 신규 내부 헬퍼(`index.ts` 미노출). Date 는 `getTime()`(무효 날짜의 NaN 포함), RegExp 는 `source`+`flags`, Set/Map 은 크기와 내용으로 비교. 재귀 비교자는 인자로 받아 `equals` 로의 의존 순환을 만들지 않는다 |
+| `common-utils/.../equals.ts` | (H6) 배열 처리 뒤 타입 태그를 비교하고, `OBJECT_TAG` 가 아니면 `equalsBuiltin` 위임 — 클래스 인스턴스는 `OBJECT_TAG` 라 구조 비교 경로를 그대로 탄다. (H5) 키 개수 비교를 omit 적용 후 양쪽 모두에 대해 수행(`countRetained`). (M11) `countObjectKey(right)` → `Object.keys(right).length` |
+| `common-utils/.../__tests__/equals.contract.test.ts` | 신규 9 케이스 (기존 파일 31 케이스로 상한 근접) |
+| `common-utils/bench/equals.bench.ts` | 신규. deep/early-mismatch/flat 50·500키/omit 3종 |
+
+**fail-first**: omit 비대칭 2건 `expected false to be true`, 내장 객체 2건 `expected true to be false`. 가드 3건(비-omit 비대칭 거부·자기 자신과 동등·클래스 인스턴스 구조 비교)은 수정 전에도 통과.
+
+**⚠ 확정 방향 변경 — H6 (사용자 재확정)**
+
+플랜은 "비-plain 객체는 `left === right` 폴백" 이었다. 그러나 구현 직후 **기존 테스트 `equals.test.ts:229` 가 깨졌다** — Date·RegExp·Set 을 담은 복잡 구조가 구조적으로 같으면 equal 이길 기대하는 케이스다. 참조 비교를 택하면 값이 같은 Date 두 개도 unequal 이 되어 그 단언을 내가 고쳐야 했다. 사용자에게 근거와 함께 3개 선택지를 제시했고 **구조 비교** 로 재확정받았다. 그 결과 **깨진 기존 테스트가 무수정으로 통과**한다.
+
+문서화된 한계: Set 멤버와 Map 키는 SameValueZero 로 매칭한다(객체 멤버는 identity). 순서 무관 페어링 탐색은 선형 비교를 이차로 만들기 때문이며, 테스트에 명시 케이스를 남겼다.
+
+**성능 게이트 (bench 전후, hz — 높을수록 빠름)**
+
+| 시나리오 | 전 | 후 | 변화 |
+| --- | ---: | ---: | ---: |
+| flat 500키 | 25,481 | 34,657 | **+36.0%** |
+| flat 50키 | 285,418 | 355,380 | **+24.5%** |
+| omit 없음 | 286,090 | 355,337 | +24.2% |
+| omit(array) | 260,170 | 278,249 | +7.0% |
+| omit(Set) | 263,511 | 281,508 | +6.8% |
+| deep 341노드 | 62,834 | 64,268 | +2.3% |
+| early mismatch | 8,916,015 | 9,350,056 | +4.9% |
+
+M11 수정이 태그 검사 비용을 상쇄하고도 남아 전 시나리오가 빨라졌다.
+
+**검증 (실행 결과)**
+
+- `yarn workspace @winglet/common-utils test --run` → **117 파일 / 1034 테스트 통과** (기존 `equals.test.ts` 31 케이스 **무수정** 통과)
+- `typecheck` 통과, `build` 통과
+- 소비 패키지 전량 통과 — json 545 · react-utils 175 · schema-form 3568 · promise-modal 128 · json-schema 392 · data-loader 48
