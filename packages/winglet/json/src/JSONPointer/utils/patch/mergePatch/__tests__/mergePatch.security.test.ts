@@ -39,4 +39,18 @@ describe('mergePatch security', () => {
     expect(prototype.x).toBeUndefined();
     expect(({} as Record<string, unknown>).x).toBeUndefined();
   });
+
+  it('RC-4: own __proto__ 가 섞인 패치에서 형제 키가 소실되지 않아야 한다', () => {
+    const result = mergePatch(
+      { a: 1, b: 2 },
+      JSON.parse('{"__proto__":{"x":1},"c":3}'),
+    ) as Record<string, unknown>;
+
+    expect(result.a).toBe(1);
+    expect(result.b).toBe(2);
+    expect(result.c).toBe(3);
+    expect(Object.getPrototypeOf(result)).toBe(Object.prototype);
+    expect(prototype.x).toBeUndefined();
+    expect(({} as Record<string, unknown>).x).toBeUndefined();
+  });
 });
