@@ -30,9 +30,9 @@ describe('patch round trips', () => {
   it('should rebuild the target for growth and replacement', () => {
     expect(roundTripsThroughApplyPatch([1], [1, 2, 3])).toEqual([1, 2, 3]);
     expect(roundTripsThroughApplyPatch([1, 2], [3, 4])).toEqual([3, 4]);
-    expect(
-      roundTripsThroughApplyPatch({ a: 1, b: 2 }, { a: 1, c: 3 }),
-    ).toEqual({ a: 1, c: 3 });
+    expect(roundTripsThroughApplyPatch({ a: 1, b: 2 }, { a: 1, c: 3 })).toEqual(
+      { a: 1, c: 3 },
+    );
   });
 
   it('should rebuild the target through difference and mergePatch', () => {

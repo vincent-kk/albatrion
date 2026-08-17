@@ -40,12 +40,12 @@ describe('stableEquals contract', () => {
     });
 
     it('should keep comparing Date and RegExp by state', () => {
-      expect(
-        stableEquals(new Date('2023-01-01'), new Date('2023-01-01')),
-      ).toBe(true);
-      expect(
-        stableEquals(new Date('2023-01-01'), new Date('2024-06-15')),
-      ).toBe(false);
+      expect(stableEquals(new Date('2023-01-01'), new Date('2023-01-01'))).toBe(
+        true,
+      );
+      expect(stableEquals(new Date('2023-01-01'), new Date('2024-06-15'))).toBe(
+        false,
+      );
       expect(stableEquals(/abc/g, /abc/g)).toBe(true);
       expect(stableEquals(/abc/g, /abc/i)).toBe(false);
     });

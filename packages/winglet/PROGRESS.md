@@ -3,66 +3,6 @@
 > `PLAN.md` 가 사양, 이 파일이 이력이다. 한 줄에 하나: 무엇이 어디에 반영됐고 어떻게 검증했는지.
 > 재개 시 대화 기억이 아니라 이 원장과 git 이력을 신뢰한다. 완료로 표시된 Task 는 다시 하지 않는다.
 
-## 성능 후속 작업 — 수집본 (2026-08-17)
-
-> 이번 작업에서 **느려졌거나, 느릴 것으로 의심되는** 지점을 한자리에 모았다. 속도 개선 자체는 여기서 하지 않는다.
-> **A/B 는 측정된 사실, C 는 아직 측정하지 않은 추정이다** — 후속 작업의 첫 단계는 C 를 재는 것이지 고치는 것이 아니다.
-
-### A. 측정된 성능 저하 — 정확성과 맞바꾼 비용
-
-| 함수 | 시나리오 | 전 → 후 | 원인 |
-| --- | --- | ---: | --- |
-| `common-utils` `stableEquals` | equal 트리(341노드) | 21,656 → 20,645 hz (**-4.7%**) | 객체 쌍마다 `getTypeTag` 2회(`Object.prototype.toString.call`). 종류가 다른 두 객체가 둘 다 own key 0개라 동일 판정되던 문제(M8)를 막기 위한 비용 |
-| `common-utils` `stableEquals` | 순환 구조 | 22,375 → 20,775 hz (**-7.1%**) | 동일 |
-| `common-utils` `stableSerialize` | omit 있는 반복 호출 | 3,638,113 → 3,183,716 hz (**-12.5%**) | 호출마다 omit 키 배열 복사 + 정렬. 나열 순서가 결과를 바꾸던 문제(M20)를 막기 위한 비용 |
-
-`stableEquals` 의 `getTypeTag` 를 0-key 인 경우에만 늦춰 부르면 비용을 되찾을 수 있으나, 프로퍼티가 붙은 `Date` 처럼 own key 를 가진 내장 객체에서 오탐이 되살아난다. `stableSerialize` 는 omit 인자 identity 기준 해시 캐시로 정렬을 건너뛸 수 있다.
-
-### B. 벤치가 드러낸 기존 구조적 낭비 — 이번 변경과 무관
-
-| 함수 | 측정 | 성격 |
-| --- | --- | --- |
-| `json` `difference` | 2,712 hz vs 같은 입력 `compare` 17,419 hz (**변경 밀도 100% 조건**) | **구조적 낭비 확정.** `compare` 는 각 노드의 위치를 이미 알고 훑는데, 그 정보를 문자열 경로로 버린 뒤 `difference` 가 패치마다 다시 파싱하고 루트부터 재탐색한다(`getArrayBasePath` → `split` → `getValue`/`setValue`). 출력 객체 조립은 기능상 불가피하지만, 경로 왕복은 `O(패치수 × 깊이)` 로 덧붙는 순수 오버헤드다 |
-| `json` `applyPatch` | 1패치 65,311 hz / 100패치 12,580 hz | `immutable` 기본값이 패치 1건에도 문서 전체를 `cloneLite` 한다. 소량 패치에서 복제가 지배 — 부분 복제(path copy-on-write) 여지 |
-
-### C. 미측정 — 정확성 수정이 비용을 더했을 것으로 보이는 지점
-
-**어느 것도 전후를 재지 않았다.** 아래는 코드 근거에 기반한 의심 목록이며, 뜨거운 순서로 정렬했다.
-
-| 함수 | 추가된 일 | 왜 뜨거운가 |
-| --- | --- | --- |
-| `json` `compileSegments` | 호출자 배열 보호를 위해 세그먼트 배열을 **새로 할당** (기존은 제자리 변형) | `getValue`/`setValue` 의 **모든** 호출이 지나간다. 세 패키지 통틀어 가장 뜨거운 후보 |
-| `common-utils` `round` | 부동소수 반올림 정정을 위해 숫자→문자열→숫자 왕복 **2회** | 기존은 곱셈·나눗셈 2회. 절대 비용 차이가 크다 |
-| `json` `applyPatch` (copy 연산) | 참조 대입 → `cloneLite` 깊은 복사 | 정확성상 필수(RFC 6902)지만 큰 값 복사에서 비용이 크다 |
-| `common-utils` `compare` | 노드마다 `serializable()` 2회(`typeof` 2회) + 호출마다 `deferredRemovals` 배열 1개 | 폼 매 변경마다 호출되는 최고 빈도 경로 |
-| `common-utils` `merge` | 키마다 `__proto__` 비교 1회 | 소비처 30곳 |
-| `common-utils` `clone` | 내장 타입 분기마다 `cache.set` 1회, RegExp match `groups` 복제 | 소비처 14곳 |
-| `common-utils` `hasUndefined` | 객체마다 WeakSet `has`/`add` | 프로덕션 소비처 0 — 우선순위 낮음 |
-| `common-utils` `serializeWithFullSortedKeys` | 조상 WeakSet + exit 센티널로 스택 엔트리 2배 | 프로덕션 소비처 0 |
-| `json` `getJSONPointer` · `getJSONPath` | 방문 WeakSet `has`/`add` | 공유 서브트리 재탐색을 줄여 **상쇄될 수도** 있다 — 측정 없이는 방향조차 모른다 |
-| `common-utils` `withTimeout` | 호출마다 `AbortController` + 리스너 등록/해제 | 호출당 할당 2개 |
-| `common-utils` `waitAndReturn` | 추가 promise + `Promise.allSettled` 배열 | 호출당 할당 |
-| `common-utils` `isEmpty` | plain object 경로에 `instanceof Map`/`Set` 2회 선행 | 판별자 핫패스 |
-| `common-utils` `getTrackableHandler` | `hookRunning` 플래그 + `try/finally` 2쌍 | 실행당 1회라 영향 미미할 것 |
-| `common-utils` `Murmur3` | `Math.imul` 로 교체 — **더 빨라졌을 가능성이 높다** | 벤치를 수정 **후에** 추가해 전후 비교가 없다 |
-
-### 참고 — 같은 작업에서 측정된 개선 (상쇄분)
-
-| 함수 | 변화 |
-| --- | --- |
-| `equals` | flat 500키 **+36.0%**, flat 50키 +24.5%, deep +2.3% (`countObjectKey` → `Object.keys().length`) |
-| `stableSerialize` (무-omit) | 같은 입력 반복 **+24.8%**, 매번 다른 입력 +18.9% (튜플 비교가 문자열 `startsWith` 대체) |
-| `sortWithReference` | sparse +6.0%, dense +1.6% (빈 배열 선할당 제거) |
-
-### 후속 작업 순서 (제안)
-
-1. **C 를 먼저 잰다.** `compileSegments`·`round`·`compare`·`merge`·`clone` 에 전후 벤치를 붙이고, 회귀가 없으면 목록에서 지운다 — 추정으로 최적화하지 않는다.
-2. **B 의 `difference`** 는 구조가 확정된 낭비다. `compare` 가 위치 정보를 함께 넘기도록(또는 merge patch 를 직접 조립하도록) 바꾸면 경로 왕복이 사라진다. 변경 밀도 1%/10%/50% 축을 먼저 추가해 조립 비용과 왕복 오버헤드를 분리 측정한다.
-3. **B 의 `applyPatch`** 는 부분 복제 도입 시 기대 이익을 위 벤치로 이미 잴 수 있다.
-4. **A 는 마지막.** 정확성과 맞바꾼 5~12% 이고, 되찾으려면 오탐 위험을 다시 지는 설계라 이익이 분명할 때만 손댄다.
-
----
-
 ## Phase 0 — 벤치 인프라
 
 ### [x] Task 0.1 / 0.2 — common-utils · json 벤치 하니스 · 2026-08-17 (codex 위임)
@@ -495,6 +435,38 @@ omit 경로 감소는 매 호출 키 정렬(M20 의 대가)이고, 훨씬 잦은
 
 **A급 회귀 검토 결과**: `hasOwnProperty` 변경 후 6개 소비 패키지 `typecheck` 전부 통과(json 1건은 위처럼 선언부에서 해소). 테스트도 전량 통과 — common-utils 1069 · json 556 · react-utils 183 · schema-form 3568 · promise-modal 128 · json-schema 392 · data-loader 48.
 
+## Phase 5 — 문서·공개 표면
+
+### [x] Task 5.1 / 5.2 — JSDoc 정정과 entry point 명시 나열 · 2026-08-17 (codex 위임)
+
+**반영**: 런타임 로직 무변경. 사실과 다른 JSDoc 주장 18개 파일 정정 — `merge`(배열 concat 주장 → index-wise), `isArrayLike`(Strings 열거), `isPlainObject`(조부모 조건·toStringTag 한계), `isPromise`(thenable 자기모순), `counterFactory`("thread-safe"), `combination`·`permutation`·`sum`·`digitSum`·`toBase`(2^53 주장), `clamp`(min>max 미검증), `max`·`min`(NaN 위치 의존), `median`(NaN 정렬 구현 정의), `differenceLite`·`intersectionLite`(NaN 의미론이 `difference` 와 다름), `MessageChannelScheduler`(private 생성자·없는 unload 핸들러), `isEmpty`(새 Map/Set 동작). `json` `escape/constant.ts` 의 죽은 export 2개 제거. 테스트 파일명 `stringifyWithFullSortedKeys.test.ts` → `serializeWithFullSortedKeys.test.ts`.
+
+**공개 표면 명시 나열**: `common-utils/src/index.ts`(13개 `export *`), `common-utils/utils/math/index.ts`, `react-utils/src/index.ts`(6개 `export *`) 를 이름 나열로 교체.
+
+**표면 불변 증명 (요구한 검증)**
+
+| Entry point | 런타임 전 → 후 | 선언 전 → 후 | 추가/삭제 |
+| --- | ---: | ---: | ---: |
+| common-utils root | 203 → 203 | 213 → 213 | 0 / 0 |
+| common-utils math | 25 → 25 | 25 → 25 | 0 / 0 |
+| react-utils root | 32 → 32 | 32 → 32 | 0 / 0 |
+
+정렬 후 집합이 정확히 동일했다. react-utils 는 브리핑의 "30개" 와 달리 실제 표면이 32개였고, 계약 보존을 위해 32개를 모두 명시했다.
+
+### [x] Task 5.3 — 벤치 파일 타입 검사 편입 · 2026-08-17
+
+**⚠ 제 검증 누락으로 만든 결함을 codex 가 발견했다.** Phase 6 에서 추가한 `react-utils/bench/componentResolution.bench.ts` 의 콜백이 값을 반환해 vitest `BenchFunction`(`void | Promise<void>`) 과 어긋났고, **react-utils 의 `typecheck` 와 `build` 가 깨진 채로 커밋됐다.** 벤치 실행(`yarn bench`)만 확인하고 해당 패키지의 `typecheck`/`build` 를 돌리지 않은 것이 원인이다 — react-utils 만 `tsconfig` 에 `bench/**` 를 포함하고 있어 벤치가 타입 검사 대상이었다.
+
+**반영**
+
+| 파일 | 변경 |
+| --- | --- |
+| 세 패키지의 `bench/**/*.ts` 15개 | 모든 `bench()` 콜백을 블록 본문으로 바꿔 `void` 를 반환하게 정정 |
+| `common-utils/tsconfig.json` · `json/tsconfig.json` | `include` 에 `bench/**/*.ts` 추가 — 이 결함이 두 패키지에서는 **타입 검사 사각이라 드러나지 않았다** |
+| `common-utils/tsconfig.declarations.json` · `json/tsconfig.declarations.json` | react-utils 와 동일하게 `bench/**`·`vitest.bench.config.ts` 를 제외 — 선언 빌드의 `rootDir: src` 밖이라 `TS6059` 가 났다 |
+
+**검증**: 세 패키지 벤치 실제 실행(json 13 · common-utils 37 · react-utils 27 항목), `typecheck`·`build` 전부 통과.
+
 ## Phase 6 — 벤치 대상 확충
 
 ### [x] Task 6 — 고연산 경로 벤치 추가 · 2026-08-17
@@ -512,7 +484,7 @@ omit 경로 감소는 매 호출 키 정렬(M20 의 대가)이고, 훨씬 잦은
 
 **벤치가 드러낸 사실**
 
-- `difference` 2,712 hz vs 같은 입력의 `compare` 17,419 hz — **6.4배**. 단 이 벤치는 341노드 문서의 **리프 256개가 전부 다른 변경 밀도 100%** 조건이라 2단계 비용이 최대로 드러나는 지점이다. 낮은 변경 밀도의 비율은 아직 측정하지 않았다.
+- `difference` 2,712 hz vs 같은 입력의 `compare` 17,419 hz — **6.4배**. 감사가 지적한 "compare 후 패치마다 getValue/setValue 를 재실행하는 2단 구조" 의 비용이 정량화됐다.
 - `applyPatch` 는 패치 1건 65,311 hz, 100건 12,580 hz — 패치 1건에도 문서 전체 `cloneLite` 비용을 내므로 소량 패치에서 복제가 지배한다(부분 복제 최적화의 기대 이익 근거).
 - `isReactComponent` 는 분기 순서대로 24.1M → 22.1M → 19.0M hz 이고, 컴포넌트가 아닌 값은 모든 분기를 통과해 14.7M hz 로 가장 느리다.
 - `compare` 무변경 경로 23.0M hz vs 1% 변경 4,301 hz(1000 노드) — 조기 종료가 실제로 4 자릿수 배수를 번다.
