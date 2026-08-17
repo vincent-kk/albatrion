@@ -430,6 +430,9 @@ export const isEmpty = (value: unknown): boolean => {
   const type = typeof value;
   if (type === 'function') return false;
   if (type !== 'object') return isFalsy(value);
+  // Map and Set keep their contents in internal slots that own keys cannot see, so a
+  // key walk reports a populated collection as empty
+  if (value instanceof Map || value instanceof Set) return value.size === 0;
   for (const key in value) if (hasOwnProperty(value, key)) return false;
   return true;
 };

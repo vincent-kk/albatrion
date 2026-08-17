@@ -61,6 +61,11 @@
  * More reliable than simple decimal truncation or naive rounding approaches.
  */
 export const round = (value: number, precision: number = 0): number => {
-  const multiplier = Math.pow(10, precision);
-  return Math.round(value * multiplier) / multiplier;
+  if (!Number.isFinite(value)) return value;
+  // Shifted through the decimal exponent rather than by multiplying: `1.005 * 100` is
+  // 100.49999999999999 in binary floating point, so the naive form rounds it down
+  const shifted = Math.round(+`${value}e${precision}`);
+  const result = +`${shifted}e${-precision}`;
+  // The exponent trick loses values that cannot be re-parsed, so fall back on them
+  return Number.isFinite(result) ? result : value;
 };

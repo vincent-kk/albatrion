@@ -139,4 +139,10 @@ describe('isEmpty', () => {
       expect(isEmpty(sparse)).toBe(false);
     });
   });
+  it('should read the size of a Map or Set rather than its own keys', () => {
+    expect(isEmpty(new Map())).toBe(true);
+    expect(isEmpty(new Set())).toBe(true);
+    expect(isEmpty(new Map([['a', 1]]))).toBe(false);
+    expect(isEmpty(new Set([1, 2, 3]))).toBe(false);
+  });
 });
