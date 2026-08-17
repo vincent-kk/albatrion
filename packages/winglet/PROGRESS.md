@@ -3,6 +3,66 @@
 > `PLAN.md` 가 사양, 이 파일이 이력이다. 한 줄에 하나: 무엇이 어디에 반영됐고 어떻게 검증했는지.
 > 재개 시 대화 기억이 아니라 이 원장과 git 이력을 신뢰한다. 완료로 표시된 Task 는 다시 하지 않는다.
 
+## 성능 후속 작업 — 수집본 (2026-08-17)
+
+> 이번 작업에서 **느려졌거나, 느릴 것으로 의심되는** 지점을 한자리에 모았다. 속도 개선 자체는 여기서 하지 않는다.
+> **A/B 는 측정된 사실, C 는 아직 측정하지 않은 추정이다** — 후속 작업의 첫 단계는 C 를 재는 것이지 고치는 것이 아니다.
+
+### A. 측정된 성능 저하 — 정확성과 맞바꾼 비용
+
+| 함수 | 시나리오 | 전 → 후 | 원인 |
+| --- | --- | ---: | --- |
+| `common-utils` `stableEquals` | equal 트리(341노드) | 21,656 → 20,645 hz (**-4.7%**) | 객체 쌍마다 `getTypeTag` 2회(`Object.prototype.toString.call`). 종류가 다른 두 객체가 둘 다 own key 0개라 동일 판정되던 문제(M8)를 막기 위한 비용 |
+| `common-utils` `stableEquals` | 순환 구조 | 22,375 → 20,775 hz (**-7.1%**) | 동일 |
+| `common-utils` `stableSerialize` | omit 있는 반복 호출 | 3,638,113 → 3,183,716 hz (**-12.5%**) | 호출마다 omit 키 배열 복사 + 정렬. 나열 순서가 결과를 바꾸던 문제(M20)를 막기 위한 비용 |
+
+`stableEquals` 의 `getTypeTag` 를 0-key 인 경우에만 늦춰 부르면 비용을 되찾을 수 있으나, 프로퍼티가 붙은 `Date` 처럼 own key 를 가진 내장 객체에서 오탐이 되살아난다. `stableSerialize` 는 omit 인자 identity 기준 해시 캐시로 정렬을 건너뛸 수 있다.
+
+### B. 벤치가 드러낸 기존 구조적 낭비 — 이번 변경과 무관
+
+| 함수 | 측정 | 성격 |
+| --- | --- | --- |
+| `json` `difference` | 2,712 hz vs 같은 입력 `compare` 17,419 hz (**변경 밀도 100% 조건**) | **구조적 낭비 확정.** `compare` 는 각 노드의 위치를 이미 알고 훑는데, 그 정보를 문자열 경로로 버린 뒤 `difference` 가 패치마다 다시 파싱하고 루트부터 재탐색한다(`getArrayBasePath` → `split` → `getValue`/`setValue`). 출력 객체 조립은 기능상 불가피하지만, 경로 왕복은 `O(패치수 × 깊이)` 로 덧붙는 순수 오버헤드다 |
+| `json` `applyPatch` | 1패치 65,311 hz / 100패치 12,580 hz | `immutable` 기본값이 패치 1건에도 문서 전체를 `cloneLite` 한다. 소량 패치에서 복제가 지배 — 부분 복제(path copy-on-write) 여지 |
+
+### C. 미측정 — 정확성 수정이 비용을 더했을 것으로 보이는 지점
+
+**어느 것도 전후를 재지 않았다.** 아래는 코드 근거에 기반한 의심 목록이며, 뜨거운 순서로 정렬했다.
+
+| 함수 | 추가된 일 | 왜 뜨거운가 |
+| --- | --- | --- |
+| `json` `compileSegments` | 호출자 배열 보호를 위해 세그먼트 배열을 **새로 할당** (기존은 제자리 변형) | `getValue`/`setValue` 의 **모든** 호출이 지나간다. 세 패키지 통틀어 가장 뜨거운 후보 |
+| `common-utils` `round` | 부동소수 반올림 정정을 위해 숫자→문자열→숫자 왕복 **2회** | 기존은 곱셈·나눗셈 2회. 절대 비용 차이가 크다 |
+| `json` `applyPatch` (copy 연산) | 참조 대입 → `cloneLite` 깊은 복사 | 정확성상 필수(RFC 6902)지만 큰 값 복사에서 비용이 크다 |
+| `common-utils` `compare` | 노드마다 `serializable()` 2회(`typeof` 2회) + 호출마다 `deferredRemovals` 배열 1개 | 폼 매 변경마다 호출되는 최고 빈도 경로 |
+| `common-utils` `merge` | 키마다 `__proto__` 비교 1회 | 소비처 30곳 |
+| `common-utils` `clone` | 내장 타입 분기마다 `cache.set` 1회, RegExp match `groups` 복제 | 소비처 14곳 |
+| `common-utils` `hasUndefined` | 객체마다 WeakSet `has`/`add` | 프로덕션 소비처 0 — 우선순위 낮음 |
+| `common-utils` `serializeWithFullSortedKeys` | 조상 WeakSet + exit 센티널로 스택 엔트리 2배 | 프로덕션 소비처 0 |
+| `json` `getJSONPointer` · `getJSONPath` | 방문 WeakSet `has`/`add` | 공유 서브트리 재탐색을 줄여 **상쇄될 수도** 있다 — 측정 없이는 방향조차 모른다 |
+| `common-utils` `withTimeout` | 호출마다 `AbortController` + 리스너 등록/해제 | 호출당 할당 2개 |
+| `common-utils` `waitAndReturn` | 추가 promise + `Promise.allSettled` 배열 | 호출당 할당 |
+| `common-utils` `isEmpty` | plain object 경로에 `instanceof Map`/`Set` 2회 선행 | 판별자 핫패스 |
+| `common-utils` `getTrackableHandler` | `hookRunning` 플래그 + `try/finally` 2쌍 | 실행당 1회라 영향 미미할 것 |
+| `common-utils` `Murmur3` | `Math.imul` 로 교체 — **더 빨라졌을 가능성이 높다** | 벤치를 수정 **후에** 추가해 전후 비교가 없다 |
+
+### 참고 — 같은 작업에서 측정된 개선 (상쇄분)
+
+| 함수 | 변화 |
+| --- | --- |
+| `equals` | flat 500키 **+36.0%**, flat 50키 +24.5%, deep +2.3% (`countObjectKey` → `Object.keys().length`) |
+| `stableSerialize` (무-omit) | 같은 입력 반복 **+24.8%**, 매번 다른 입력 +18.9% (튜플 비교가 문자열 `startsWith` 대체) |
+| `sortWithReference` | sparse +6.0%, dense +1.6% (빈 배열 선할당 제거) |
+
+### 후속 작업 순서 (제안)
+
+1. **C 를 먼저 잰다.** `compileSegments`·`round`·`compare`·`merge`·`clone` 에 전후 벤치를 붙이고, 회귀가 없으면 목록에서 지운다 — 추정으로 최적화하지 않는다.
+2. **B 의 `difference`** 는 구조가 확정된 낭비다. `compare` 가 위치 정보를 함께 넘기도록(또는 merge patch 를 직접 조립하도록) 바꾸면 경로 왕복이 사라진다. 변경 밀도 1%/10%/50% 축을 먼저 추가해 조립 비용과 왕복 오버헤드를 분리 측정한다.
+3. **B 의 `applyPatch`** 는 부분 복제 도입 시 기대 이익을 위 벤치로 이미 잴 수 있다.
+4. **A 는 마지막.** 정확성과 맞바꾼 5~12% 이고, 되찾으려면 오탐 위험을 다시 지는 설계라 이익이 분명할 때만 손댄다.
+
+---
+
 ## Phase 0 — 벤치 인프라
 
 ### [x] Task 0.1 / 0.2 — common-utils · json 벤치 하니스 · 2026-08-17 (codex 위임)
@@ -228,12 +288,12 @@
 
 **반영**
 
-| 파일 | 변경 |
-| --- | --- |
-| `common-utils/.../equalsBuiltin.ts` | 신규 내부 헬퍼(`index.ts` 미노출). Date 는 `getTime()`(무효 날짜의 NaN 포함), RegExp 는 `source`+`flags`, Set/Map 은 크기와 내용으로 비교. 재귀 비교자는 인자로 받아 `equals` 로의 의존 순환을 만들지 않는다 |
-| `common-utils/.../equals.ts` | (H6) 배열 처리 뒤 타입 태그를 비교하고, `OBJECT_TAG` 가 아니면 `equalsBuiltin` 위임 — 클래스 인스턴스는 `OBJECT_TAG` 라 구조 비교 경로를 그대로 탄다. (H5) 키 개수 비교를 omit 적용 후 양쪽 모두에 대해 수행(`countRetained`). (M11) `countObjectKey(right)` → `Object.keys(right).length` |
-| `common-utils/.../__tests__/equals.contract.test.ts` | 신규 9 케이스 (기존 파일 31 케이스로 상한 근접) |
-| `common-utils/bench/equals.bench.ts` | 신규. deep/early-mismatch/flat 50·500키/omit 3종 |
+| 파일                                                 | 변경                                                                                                                                                                                                                                                                                       |
+| ---------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `common-utils/.../equalsBuiltin.ts`                  | 신규 내부 헬퍼(`index.ts` 미노출). Date 는 `getTime()`(무효 날짜의 NaN 포함), RegExp 는 `source`+`flags`, Set/Map 은 크기와 내용으로 비교. 재귀 비교자는 인자로 받아 `equals` 로의 의존 순환을 만들지 않는다                                                                               |
+| `common-utils/.../equals.ts`                         | (H6) 배열 처리 뒤 타입 태그를 비교하고, `OBJECT_TAG` 가 아니면 `equalsBuiltin` 위임 — 클래스 인스턴스는 `OBJECT_TAG` 라 구조 비교 경로를 그대로 탄다. (H5) 키 개수 비교를 omit 적용 후 양쪽 모두에 대해 수행(`countRetained`). (M11) `countObjectKey(right)` → `Object.keys(right).length` |
+| `common-utils/.../__tests__/equals.contract.test.ts` | 신규 9 케이스 (기존 파일 31 케이스로 상한 근접)                                                                                                                                                                                                                                            |
+| `common-utils/bench/equals.bench.ts`                 | 신규. deep/early-mismatch/flat 50·500키/omit 3종                                                                                                                                                                                                                                           |
 
 **fail-first**: omit 비대칭 2건 `expected false to be true`, 내장 객체 2건 `expected true to be false`. 가드 3건(비-omit 비대칭 거부·자기 자신과 동등·클래스 인스턴스 구조 비교)은 수정 전에도 통과.
 
@@ -245,15 +305,15 @@
 
 **성능 게이트 (bench 전후, hz — 높을수록 빠름)**
 
-| 시나리오 | 전 | 후 | 변화 |
-| --- | ---: | ---: | ---: |
-| flat 500키 | 25,481 | 34,657 | **+36.0%** |
-| flat 50키 | 285,418 | 355,380 | **+24.5%** |
-| omit 없음 | 286,090 | 355,337 | +24.2% |
-| omit(array) | 260,170 | 278,249 | +7.0% |
-| omit(Set) | 263,511 | 281,508 | +6.8% |
-| deep 341노드 | 62,834 | 64,268 | +2.3% |
-| early mismatch | 8,916,015 | 9,350,056 | +4.9% |
+| 시나리오       |        전 |        후 |       변화 |
+| -------------- | --------: | --------: | ---------: |
+| flat 500키     |    25,481 |    34,657 | **+36.0%** |
+| flat 50키      |   285,418 |   355,380 | **+24.5%** |
+| omit 없음      |   286,090 |   355,337 |     +24.2% |
+| omit(array)    |   260,170 |   278,249 |      +7.0% |
+| omit(Set)      |   263,511 |   281,508 |      +6.8% |
+| deep 341노드   |    62,834 |    64,268 |      +2.3% |
+| early mismatch | 8,916,015 | 9,350,056 |      +4.9% |
 
 M11 수정이 태그 검사 비용을 상쇄하고도 남아 전 시나리오가 빨라졌다.
 
@@ -267,13 +327,13 @@ M11 수정이 태그 검사 비용을 상쇄하고도 남아 전 시나리오가
 
 **반영**
 
-| 파일 | 변경 |
-| --- | --- |
-| `common-utils/.../stableSerialize.ts` | (M20) omit 키를 복사 후 정렬해 해시 — 나열 순서가 결과를 바꾸지 않는다. (H7) 캐시 항목을 `{omitHash, result}` 튜플로 바꿔 omit 집합이 일치할 때만 재사용 — 빈 omitHash 가 모든 결과의 접두사라 omit 결과가 일반 호출로 새던 문제 제거. (M18) 문자열만 `JSON.stringify` 로 인용해 `1` 과 `'1'` 충돌 제거, `null`/`undefined` 를 명시 처리해 `undefined` 반환 제거, 무효 Date 는 `Invalid Date` 로(그 `toJSON()` 은 `null` 이라 실제 null 과 충돌) |
-| `common-utils/.../serializeObject.ts` | (M1) `while (key)` → `while ((key = keys.pop()) !== undefined)` — 빈 문자열 키에서 순회가 끊겨 남은 슬롯이 hole 로 남던 문제 |
-| `common-utils/.../__tests__/stableSerialize.contract.test.ts` | 신규 6 케이스 |
-| `common-utils/.../__tests__/serializeObject.test.ts` | +1 케이스 (7→8) |
-| `common-utils/bench/stableSerialize.bench.ts` | 신규 |
+| 파일                                                          | 변경                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| ------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `common-utils/.../stableSerialize.ts`                         | (M20) omit 키를 복사 후 정렬해 해시 — 나열 순서가 결과를 바꾸지 않는다. (H7) 캐시 항목을 `{omitHash, result}` 튜플로 바꿔 omit 집합이 일치할 때만 재사용 — 빈 omitHash 가 모든 결과의 접두사라 omit 결과가 일반 호출로 새던 문제 제거. (M18) 문자열만 `JSON.stringify` 로 인용해 `1` 과 `'1'` 충돌 제거, `null`/`undefined` 를 명시 처리해 `undefined` 반환 제거, 무효 Date 는 `Invalid Date` 로(그 `toJSON()` 은 `null` 이라 실제 null 과 충돌) |
+| `common-utils/.../serializeObject.ts`                         | (M1) `while (key)` → `while ((key = keys.pop()) !== undefined)` — 빈 문자열 키에서 순회가 끊겨 남은 슬롯이 hole 로 남던 문제                                                                                                                                                                                                                                                                                                                     |
+| `common-utils/.../__tests__/stableSerialize.contract.test.ts` | 신규 6 케이스                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| `common-utils/.../__tests__/serializeObject.test.ts`          | +1 케이스 (7→8)                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| `common-utils/bench/stableSerialize.bench.ts`                 | 신규                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 
 **fail-first**: omit 오염 `expected '1n37n{a:1}' not to be '1n37n{a:1}'`, omit 순서 의존, `typeof` 가 `'undefined'`, `1`/`'1'` 충돌, `{a:1}`/`{a:'1'}` 충돌 — 5건. serializeObject 는 `expected 'b:3||' to be 'b:3|:2|a:1'`.
 
@@ -285,11 +345,11 @@ M11 수정이 태그 검사 비용을 상쇄하고도 남아 전 시나리오가
 
 **성능 게이트 (hz)**
 
-| 시나리오 | 전 | 후 | 변화 |
-| --- | ---: | ---: | ---: |
+| 시나리오       |         전 |         후 |       변화 |
+| -------------- | ---------: | ---------: | ---------: |
 | 같은 입력 반복 | 12,207,588 | 15,234,528 | **+24.8%** |
-| 매번 다른 입력 | 11,899,178 | 14,151,330 | +18.9% |
-| omit 있는 반복 | 3,638,113 | 3,183,716 | **-12.5%** |
+| 매번 다른 입력 | 11,899,178 | 14,151,330 |     +18.9% |
+| omit 있는 반복 |  3,638,113 |  3,183,716 | **-12.5%** |
 
 omit 경로 감소는 매 호출 키 정렬(M20 의 대가)이고, 훨씬 잦은 무-omit 경로는 튜플 비교가 문자열 `startsWith` 를 대체해 빨라졌다.
 
@@ -299,22 +359,22 @@ omit 경로 감소는 매 호출 키 정렬(M20 의 대가)이고, 훨씬 잦은
 
 **반영**
 
-| 파일 | 변경 |
-| --- | --- |
-| `common-utils/.../groupBy.ts` | (M4) 누산기를 `Object.create(null)` 로 — `constructor`/`toString` 같은 상속 멤버가 키로 오면 `result[key].push` 가 TypeError 를 던지던 문제 제거 |
-| `common-utils/.../transformKeys.ts` · `transformValues.ts` | (M5) 누산기를 `Object.create(null)` 로 — `__proto__` 키가 프로토타입 setter 에 흡수돼 조용히 사라지던 문제 제거 |
-| `common-utils/.../at.ts` | (M6) 스칼라 분기에도 배열 분기와 같은 `Math.trunc(index) || 0` 정규화 — `at(a, 1.5)` 와 `at(a, [1.5])` 가 다른 슬롯을 읽던 불일치 제거 |
-| `common-utils/.../sortWithReference.ts` | (M13) reference 생략 시에도 복사본 반환 — 한쪽 경로만 입력을 그대로 돌려주던 aliasing 제거. (M12) reference 길이만큼 빈 배열을 선할당하던 버킷 방식을 안정 정렬로 교체 |
-| 각 테스트 | groupBy +1, transformKeys +1, transformValues +1, at +1, sortWithReference +1 |
-| `common-utils/bench/sortWithReference.bench.ts` | 신규 (sparse / dense) |
+| 파일                                                       | 변경                                                                                                                                                                   |
+| ---------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --- | ---------------------------------------------------------------------- |
+| `common-utils/.../groupBy.ts`                              | (M4) 누산기를 `Object.create(null)` 로 — `constructor`/`toString` 같은 상속 멤버가 키로 오면 `result[key].push` 가 TypeError 를 던지던 문제 제거                       |
+| `common-utils/.../transformKeys.ts` · `transformValues.ts` | (M5) 누산기를 `Object.create(null)` 로 — `__proto__` 키가 프로토타입 setter 에 흡수돼 조용히 사라지던 문제 제거                                                        |
+| `common-utils/.../at.ts`                                   | (M6) 스칼라 분기에도 배열 분기와 같은 `Math.trunc(index)                                                                                                               |     | 0`정규화 —`at(a, 1.5)`와`at(a, [1.5])` 가 다른 슬롯을 읽던 불일치 제거 |
+| `common-utils/.../sortWithReference.ts`                    | (M13) reference 생략 시에도 복사본 반환 — 한쪽 경로만 입력을 그대로 돌려주던 aliasing 제거. (M12) reference 길이만큼 빈 배열을 선할당하던 버킷 방식을 안정 정렬로 교체 |
+| 각 테스트                                                  | groupBy +1, transformKeys +1, transformValues +1, at +1, sortWithReference +1                                                                                          |
+| `common-utils/bench/sortWithReference.bench.ts`            | 신규 (sparse / dense)                                                                                                                                                  |
 
 **fail-first**: `TypeError: result[key].push is not a function`(groupBy), `expected [] to deeply equal ['__proto__']`(transformKeys), `expected ['a'] to deeply equal ['__proto__','a']`(transformValues), `expected undefined to be 2`(at), `expected [3,1,2] not to be [3,1,2]`(sortWithReference aliasing).
 
 **성능 게이트 (hz)**
 
-| 시나리오 | 전 | 후 | 변화 |
-| --- | ---: | ---: | ---: |
-| sparse (3 items / 5000 reference) | 5,698 | 6,040 | +6.0% |
+| 시나리오                          |      전 |      후 |  변화 |
+| --------------------------------- | ------: | ------: | ----: |
+| sparse (3 items / 5000 reference) |   5,698 |   6,040 | +6.0% |
 | dense (100 items / 100 reference) | 226,417 | 230,129 | +1.6% |
 
 감사는 빈 배열 선할당이 26% 를 차지한다고 추정했으나, 실측에서는 5000 엔트리 `Map` 구축이 지배 비용이라 실제 이득은 +6% 였다. 그래도 감소는 없고 aliasing 결함이 함께 사라진다.
@@ -329,12 +389,12 @@ omit 경로 감소는 매 호출 키 정렬(M20 의 대가)이고, 훨씬 잦은
 
 **반영**
 
-| 파일 | 변경 |
-| --- | --- |
-| `common-utils/.../murmur3.ts` | (#5) `__mixK1__` 과 최종 혼합의 16비트 분할 곱셈을 `Math.imul` 로 교체 — 분할 형태는 교차항 하나를 누락해 레퍼런스와 일치할 수 없었다. 상수도 조각(`0x2d51`/`0xcc9e0000`)에서 전체 값(`0xcc9e2d51`/`0x1b873593`, `0x85ebca6b`/`0xc2b2ae35`)으로. (#2) DataView 잔여 청크 오프셋 `(i - alignedChunks) * 4` → `i * 4` — 버퍼 앞부분을 다시 읽어 꼬리 청크가 해시에 기여하지 못했다. (#6) `if (k1 > 0)` → `if (this.__remainder__ > 0)` — 꼬리 3번째 문자가 `0x8000` 이상이면 k1 이 음수 int32 라 블록이 통째로 버려졌다. 고아가 된 `__MASK_16_SHIFT__` 제거 |
-| `common-utils/.../polynomialHash.ts` | (#7) `.slice(0, length)` → `.slice(-length)` — 상위 자릿수는 크기만 담아 짧은 길이에서 해시가 붕괴했다. `length <= 0` 가드 추가(`slice(-0)` 은 `slice(0)` 이라 전체를 반환) |
-| `common-utils/.../__tests__/murmur3.reference.test.ts` | 신규 6 케이스. **기대값은 전부 레퍼런스에서 독립 도출** — 공개 벡터 5종으로 검증한 probe 로 생성했다 |
-| `common-utils/.../__tests__/polynomialHash.test.ts` | +2 케이스 (충돌률·0 패딩) |
+| 파일                                                   | 변경                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| ------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `common-utils/.../murmur3.ts`                          | (#5) `__mixK1__` 과 최종 혼합의 16비트 분할 곱셈을 `Math.imul` 로 교체 — 분할 형태는 교차항 하나를 누락해 레퍼런스와 일치할 수 없었다. 상수도 조각(`0x2d51`/`0xcc9e0000`)에서 전체 값(`0xcc9e2d51`/`0x1b873593`, `0x85ebca6b`/`0xc2b2ae35`)으로. (#2) DataView 잔여 청크 오프셋 `(i - alignedChunks) * 4` → `i * 4` — 버퍼 앞부분을 다시 읽어 꼬리 청크가 해시에 기여하지 못했다. (#6) `if (k1 > 0)` → `if (this.__remainder__ > 0)` — 꼬리 3번째 문자가 `0x8000` 이상이면 k1 이 음수 int32 라 블록이 통째로 버려졌다. 고아가 된 `__MASK_16_SHIFT__` 제거 |
+| `common-utils/.../polynomialHash.ts`                   | (#7) `.slice(0, length)` → `.slice(-length)` — 상위 자릿수는 크기만 담아 짧은 길이에서 해시가 붕괴했다. `length <= 0` 가드 추가(`slice(-0)` 은 `slice(0)` 이라 전체를 반환)                                                                                                                                                                                                                                                                                                                                                                               |
+| `common-utils/.../__tests__/murmur3.reference.test.ts` | 신규 6 케이스. **기대값은 전부 레퍼런스에서 독립 도출** — 공개 벡터 5종으로 검증한 probe 로 생성했다                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| `common-utils/.../__tests__/polynomialHash.test.ts`    | +2 케이스 (충돌률·0 패딩)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
 
 **fail-first**: 레퍼런스 6 케이스 전부 red — `expected 3253963644 to be 1009084850`("a"), 정렬/비정렬 불일치 `expected 3162182596 to be 576625206`, 꼬리 폐기 `expected 389533576 not to be 389533576`, seed 불일치 등. polynomialHash 는 충돌률 케이스가 red(20000 중 19851 충돌).
 
@@ -352,15 +412,15 @@ omit 경로 감소는 매 호출 키 정렬(M20 의 대가)이고, 훨씬 잦은
 
 **반영**
 
-| 파일 | 변경 |
-| --- | --- |
-| `common-utils/.../withTimeout.ts` | (#10) 내부 `AbortController` 를 외부 signal 과 연결하고 `finally` 에서 abort — 경주에서 진 `delay` 타이머가 남아 프로세스 종료를 지연시키고 반복 호출에서 누적되던 문제 제거 |
-| `common-utils/.../waitAndReturn.ts` | (#16) `fn` 을 promise 안에서 시작해 동기 예외도 지연 뒤 전달하고, `Promise.allSettled` 로 delay 와 함께 정산해 대기 중 거부가 핸들러 없이 방치되지 않게 함 |
-| `common-utils/.../scheduleMacrotask.ts` · `scheduleMacrotaskSafe.ts` | (#11) `setImmediate` 와 `clearImmediate` 를 **둘 다** 확인. 팩토리가 모듈 최상위에서 실행되므로 한쪽만 있는 폴리필에서 서브패스 전체가 임포트 불가였다 |
-| `common-utils/.../getTrackableHandler.ts` | (#14) `stateManager.update` 가 구독자에게 통지. 훅 실행 중에는 `hookRunning` 게이트로 통지를 미뤄 직후 pending publish 에 합친다 — 실행당 통지 수는 그대로 2회 |
-| `common-utils/.../debounce.ts` · `throttle.ts` | (#23) `dispose()` 추가 — `clear()` 는 대기 호출만 취소하고 공유 `AbortSignal` 의 리스너는 남아 wrapper 를 붙들었다 |
-| `common-utils/.../scheduleNextTick.ts` | (#17) "Consistent next tick semantics across all platforms" 주장을 실제 동작으로 정정 — Node 는 마이크로태스크/nextTick, 브라우저는 매크로태스크라 `setTimeout(0)` 대비 순서가 반대다 |
-| 신규 테스트 4파일 | `withTimeout.cleanup`(2), `waitAndReturn.timing`(2), `scheduleMacrotask.partialGlobals`(2), `getTrackableHandler.publish`(1), `rateLimit.dispose`(2) |
+| 파일                                                                 | 변경                                                                                                                                                                                  |
+| -------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `common-utils/.../withTimeout.ts`                                    | (#10) 내부 `AbortController` 를 외부 signal 과 연결하고 `finally` 에서 abort — 경주에서 진 `delay` 타이머가 남아 프로세스 종료를 지연시키고 반복 호출에서 누적되던 문제 제거          |
+| `common-utils/.../waitAndReturn.ts`                                  | (#16) `fn` 을 promise 안에서 시작해 동기 예외도 지연 뒤 전달하고, `Promise.allSettled` 로 delay 와 함께 정산해 대기 중 거부가 핸들러 없이 방치되지 않게 함                            |
+| `common-utils/.../scheduleMacrotask.ts` · `scheduleMacrotaskSafe.ts` | (#11) `setImmediate` 와 `clearImmediate` 를 **둘 다** 확인. 팩토리가 모듈 최상위에서 실행되므로 한쪽만 있는 폴리필에서 서브패스 전체가 임포트 불가였다                                |
+| `common-utils/.../getTrackableHandler.ts`                            | (#14) `stateManager.update` 가 구독자에게 통지. 훅 실행 중에는 `hookRunning` 게이트로 통지를 미뤄 직후 pending publish 에 합친다 — 실행당 통지 수는 그대로 2회                        |
+| `common-utils/.../debounce.ts` · `throttle.ts`                       | (#23) `dispose()` 추가 — `clear()` 는 대기 호출만 취소하고 공유 `AbortSignal` 의 리스너는 남아 wrapper 를 붙들었다                                                                    |
+| `common-utils/.../scheduleNextTick.ts`                               | (#17) "Consistent next tick semantics across all platforms" 주장을 실제 동작으로 정정 — Node 는 마이크로태스크/nextTick, 브라우저는 매크로태스크라 `setTimeout(0)` 대비 순서가 반대다 |
+| 신규 테스트 4파일                                                    | `withTimeout.cleanup`(2), `waitAndReturn.timing`(2), `scheduleMacrotask.partialGlobals`(2), `getTrackableHandler.publish`(1), `rateLimit.dispose`(2)                                  |
 
 **fail-first**: 7건 red — 남은 타이머 `expected 1 to be +0`·`expected 5 to be +0`, scheduler 임포트 throw 2건, 동기 예외가 1ms 만에 전달 `expected 1 to be greater than or equal to 50`, 실제 `unhandledRejection` 발생, update 통지 0회.
 
@@ -376,19 +436,19 @@ omit 경로 감소는 매 호출 키 정렬(M20 의 대가)이고, 훨씬 잦은
 
 **반영**
 
-| 파일 | 변경 |
-| --- | --- |
-| `json/.../compare/compareRecursive.ts` | (H-1) 배열 노드의 remove 패치를 **인덱스 내림차순**으로 방출 — applyPatch 가 splice 하므로 오름차순이면 뒤 인덱스가 이미 줄어든 배열 밖을 가리켰다. (H-5/L-8) `toJSON` 우선 지원(`toJson` 은 별칭 유지), `in` 대신 `typeof` 로 프로토타입 체인 조회 절감. 정규화 결과가 객체면 그 값으로 재귀(세분화 비교 유지), 스칼라면 노드 통째 교체 — Date 두 개가 키 0개라 동일 판정되던 문제 제거. (L-5) 제네릭 파라미터 재대입 대신 재귀라 `@ts-expect-error` 없이 타입이 성립 |
-| `json/.../mergePatch/mergePatchRecursive.ts` | (H-4) 진입부 `if (!isPlainObject(source)) source = {}` — RFC 7396 이 요구하는 동작이며 기존 기본 파라미터는 `undefined` 만 덮었다 |
-| `json/.../mergePatch/mergePatch.ts` | (M-14) immutable 모드에서 비객체 패치도 복제 |
-| `json/.../applyPatch/applySinglePatch.ts` | (M-2) 선행 `/` 검증 — 없으면 첫 세그먼트가 조용히 버려져 다른 위치를 수정했다 |
-| `json/.../manipulator/utils/compileSegments.ts` | (M-4) 호출자 배열을 제자리 변형하지 않고 새 배열에 기록. (M-9) 숫자 세그먼트를 문자열로 정규화 |
-| `json/.../manipulator/{getValue,setValue}.ts` | (M-9) 시그니처를 `(string | number)[]` 로 정정 |
-| `json/.../manipulator/utils/setValueByPointer.ts` | (L-9) `-` → 인덱스 변환을 자동 생성 블록보다 **먼저** 수행 |
-| `json/.../difference/differenceObjectPatch.ts` | (M-5) 배열 경로 값도 `cloneLite` — 반환 패치가 target 의 배열을 참조 공유했다 |
-| `json/.../getJSONPointer/getJSONPointer.ts` | (M-7) 루트 반환값 `'/'` → `JSONPointer.Root`(빈 문자열) |
-| `json/.../escape/escapeSegment.ts` | (M-11) JSDoc 예제 11줄이 전부 `escapePath` 로 적혀 있었다 |
-| 신규 테스트 | `patch/__tests__/roundTrip.test.ts`(5), `manipulator/__tests__/pointerContract.test.ts`(4), `mergePatch/__tests__/mergePatch.immutable.test.ts`(2) |
+| 파일                                              | 변경                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| ------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------ |
+| `json/.../compare/compareRecursive.ts`            | (H-1) 배열 노드의 remove 패치를 **인덱스 내림차순**으로 방출 — applyPatch 가 splice 하므로 오름차순이면 뒤 인덱스가 이미 줄어든 배열 밖을 가리켰다. (H-5/L-8) `toJSON` 우선 지원(`toJson` 은 별칭 유지), `in` 대신 `typeof` 로 프로토타입 체인 조회 절감. 정규화 결과가 객체면 그 값으로 재귀(세분화 비교 유지), 스칼라면 노드 통째 교체 — Date 두 개가 키 0개라 동일 판정되던 문제 제거. (L-5) 제네릭 파라미터 재대입 대신 재귀라 `@ts-expect-error` 없이 타입이 성립 |
+| `json/.../mergePatch/mergePatchRecursive.ts`      | (H-4) 진입부 `if (!isPlainObject(source)) source = {}` — RFC 7396 이 요구하는 동작이며 기존 기본 파라미터는 `undefined` 만 덮었다                                                                                                                                                                                                                                                                                                                                      |
+| `json/.../mergePatch/mergePatch.ts`               | (M-14) immutable 모드에서 비객체 패치도 복제                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| `json/.../applyPatch/applySinglePatch.ts`         | (M-2) 선행 `/` 검증 — 없으면 첫 세그먼트가 조용히 버려져 다른 위치를 수정했다                                                                                                                                                                                                                                                                                                                                                                                          |
+| `json/.../manipulator/utils/compileSegments.ts`   | (M-4) 호출자 배열을 제자리 변형하지 않고 새 배열에 기록. (M-9) 숫자 세그먼트를 문자열로 정규화                                                                                                                                                                                                                                                                                                                                                                         |
+| `json/.../manipulator/{getValue,setValue}.ts`     | (M-9) 시그니처를 `(string                                                                                                                                                                                                                                                                                                                                                                                                                                              | number)[]` 로 정정 |
+| `json/.../manipulator/utils/setValueByPointer.ts` | (L-9) `-` → 인덱스 변환을 자동 생성 블록보다 **먼저** 수행                                                                                                                                                                                                                                                                                                                                                                                                             |
+| `json/.../difference/differenceObjectPatch.ts`    | (M-5) 배열 경로 값도 `cloneLite` — 반환 패치가 target 의 배열을 참조 공유했다                                                                                                                                                                                                                                                                                                                                                                                          |
+| `json/.../getJSONPointer/getJSONPointer.ts`       | (M-7) 루트 반환값 `'/'` → `JSONPointer.Root`(빈 문자열)                                                                                                                                                                                                                                                                                                                                                                                                                |
+| `json/.../escape/escapeSegment.ts`                | (M-11) JSDoc 예제 11줄이 전부 `escapePath` 로 적혀 있었다                                                                                                                                                                                                                                                                                                                                                                                                              |
+| 신규 테스트                                       | `patch/__tests__/roundTrip.test.ts`(5), `manipulator/__tests__/pointerContract.test.ts`(4), `mergePatch/__tests__/mergePatch.immutable.test.ts`(2)                                                                                                                                                                                                                                                                                                                     |
 
 **fail-first**: 배열 축소 round-trip 2건 `JsonPatchError`, mergePatch 비객체 대상 `TypeError: Cannot create property 'b' on number '5'`, 호출자 배열 변형, 숫자 세그먼트 `TypeError: segment.indexOf is not a function`, 중간 `-` `TypeError`, immutable 미복제.
 
@@ -396,13 +456,13 @@ omit 경로 감소는 매 호출 키 정렬(M20 의 대가)이고, 훨씬 잦은
 
 **보류 — 별도 작업으로 남긴 항목**
 
-| 항목 | 사유 |
-| --- | --- |
-| H-3 difference 숫자키 누락 | `getArrayBasePath` 가 경로 문자열만 보고 배열 여부를 단정한다. target 실조회로 바꾸려면 최상위 `''` base path 처리까지 얽혀 difference 의 경로 해석 재설계가 필요하다 |
-| H-8 JSONPath 방언 불일치 | `getJSONPath`(`$` 접두사·인용) 와 `convertJsonPathToPointer`(둘 다 없음) 중 정본을 정하는 결정이 선행 |
-| M-1 RFC 6902 배열 move/copy | 삽입이 아닌 덮어쓰기, move 원본 제거가 delete. RFC 정합은 breaking 이고 L-10 과 함께 재검토해야 한다 |
-| M-6 difference 가 constructor 키 유실 | `setValue` 의 `isForbiddenKey` 무음 유실. 보호 정책 통일(L-7)과 묶여야 한다 |
-| M-8·M-10·M-12·M-13 | 방언·이름 계약 결정 선행(H-8 과 같은 묶음) |
+| 항목                                  | 사유                                                                                                                                                                  |
+| ------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| H-3 difference 숫자키 누락            | `getArrayBasePath` 가 경로 문자열만 보고 배열 여부를 단정한다. target 실조회로 바꾸려면 최상위 `''` base path 처리까지 얽혀 difference 의 경로 해석 재설계가 필요하다 |
+| H-8 JSONPath 방언 불일치              | `getJSONPath`(`$` 접두사·인용) 와 `convertJsonPathToPointer`(둘 다 없음) 중 정본을 정하는 결정이 선행                                                                 |
+| M-1 RFC 6902 배열 move/copy           | 삽입이 아닌 덮어쓰기, move 원본 제거가 delete. RFC 정합은 breaking 이고 L-10 과 함께 재검토해야 한다                                                                  |
+| M-6 difference 가 constructor 키 유실 | `setValue` 의 `isForbiddenKey` 무음 유실. 보호 정책 통일(L-7)과 묶여야 한다                                                                                           |
+| M-8·M-10·M-12·M-13                    | 방언·이름 계약 결정 선행(H-8 과 같은 묶음)                                                                                                                            |
 
 **검증**: json **30 파일 / 556 테스트 통과**, `typecheck`·`lint`·`build` 통과, schema-form 3568 · json-schema 392 통과.
 
@@ -412,20 +472,20 @@ omit 경로 감소는 매 호출 키 정렬(M20 의 대가)이고, 훨씬 잦은
 
 **반영**
 
-| 파일 | 변경 |
-| --- | --- |
-| `common-utils/libs/hasOwnProperty.ts` | **(H10, A급)** `key is keyof typeof value`(=`keyof unknown`=`never`) → `<Type>(value: Type, key: PropertyKey): key is keyof Type`. 12+ 소비처의 가드가 실제로 좁히기 시작한다 |
-| `json/.../compareRecursive.ts` | H10 이 표면화시킨 유일한 오류. `hasOwnProperty` 가 실제로 좁히자 서로 무관한 두 제네릭의 값을 비교하던 지점이 드러났다 — 호출부 캐스트가 아니라 값 선언을 `unknown` 으로 정직하게 잡아 해소 |
-| `common-utils/utils/filter/isFalsy.ts` | (#8) `Falsy` 에서 `typeof NaN` 제거 — 리터럴이 아니라 `number` 전체라 `Falsy` 가 모든 수를 삼켰고, `[1,0,2].filter(isTruthy)` 가 `never[]` 가 되며 `isFalsy(string|number)` 는 unsound 했다 |
-| `common-utils/utils/array/at.ts` | (M7) 반환을 `Type \| undefined` / `(Type \| undefined)[]` 로, 제약을 `readonly number[] \| number` 로 |
-| `common-utils/.../getTrackableHandler/{type,getTrackableHandler}.ts` | (#15) 동시 실행 차단 시 반환이 `undefined` 이므로 호출 시그니처를 `Promise<Result \| undefined>` 로. `undefined as Result` 캐스트 제거 |
-| `react-utils/.../isForwardRefComponent.ts` · `isLazyComponent.ts` | **(H3)** 신규. `forwardRef`/`lazy` 는 함수가 아니라 객체라 기존 판별이 놓쳤고, `renderComponent` 가 오류 없이 `null` 을 돌려줘 화면에서 조용히 사라졌다 |
-| `react-utils/.../isReactComponent.ts` · `filter/index.ts` | 두 판별을 합류시키고 공개 |
-| `react-utils/.../isMemoComponent.ts` | (L12) `Symbol.for` 를 모듈 상수로 승격 |
-| `react-utils/.../ErrorBoundary.tsx` | (L10) `fallback || FALLBACK` → `!== undefined` — `null` 은 "에러 시 아무것도 렌더하지 않는다" 라는 유효한 의사다 |
-| `react-utils/.../withUploader.tsx` | (L15) `src/**` 에서 유일하게 alias 를 쓰던 import 를 상대 경로로 통일 |
-| `react-utils/.../isFunctionComponent.ts` · `remainOnlyReactComponent.ts` | 런타임에서 임의 함수와 컴포넌트 함수를 구별할 수 없다는 사실을 `@remarks` 와 예제에 명시 — 예제가 약속하던 "helper 는 제외된다" 는 지킬 수 없는 주장이었다 |
-| 신규 테스트 | `isReactComponent.exotic`(4), `withErrorBoundary.fallback`(2), `renderComponent.falsy`(2) |
+| 파일                                                                     | 변경                                                                                                                                                                                        |
+| ------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------ | ----------------------------------------------------------------------------------------- |
+| `common-utils/libs/hasOwnProperty.ts`                                    | **(H10, A급)** `key is keyof typeof value`(=`keyof unknown`=`never`) → `<Type>(value: Type, key: PropertyKey): key is keyof Type`. 12+ 소비처의 가드가 실제로 좁히기 시작한다               |
+| `json/.../compareRecursive.ts`                                           | H10 이 표면화시킨 유일한 오류. `hasOwnProperty` 가 실제로 좁히자 서로 무관한 두 제네릭의 값을 비교하던 지점이 드러났다 — 호출부 캐스트가 아니라 값 선언을 `unknown` 으로 정직하게 잡아 해소 |
+| `common-utils/utils/filter/isFalsy.ts`                                   | (#8) `Falsy` 에서 `typeof NaN` 제거 — 리터럴이 아니라 `number` 전체라 `Falsy` 가 모든 수를 삼켰고, `[1,0,2].filter(isTruthy)` 가 `never[]` 가 되며 `isFalsy(string                          | number)` 는 unsound 했다 |
+| `common-utils/utils/array/at.ts`                                         | (M7) 반환을 `Type \| undefined` / `(Type \| undefined)[]` 로, 제약을 `readonly number[] \| number` 로                                                                                       |
+| `common-utils/.../getTrackableHandler/{type,getTrackableHandler}.ts`     | (#15) 동시 실행 차단 시 반환이 `undefined` 이므로 호출 시그니처를 `Promise<Result \| undefined>` 로. `undefined as Result` 캐스트 제거                                                      |
+| `react-utils/.../isForwardRefComponent.ts` · `isLazyComponent.ts`        | **(H3)** 신규. `forwardRef`/`lazy` 는 함수가 아니라 객체라 기존 판별이 놓쳤고, `renderComponent` 가 오류 없이 `null` 을 돌려줘 화면에서 조용히 사라졌다                                     |
+| `react-utils/.../isReactComponent.ts` · `filter/index.ts`                | 두 판별을 합류시키고 공개                                                                                                                                                                   |
+| `react-utils/.../isMemoComponent.ts`                                     | (L12) `Symbol.for` 를 모듈 상수로 승격                                                                                                                                                      |
+| `react-utils/.../ErrorBoundary.tsx`                                      | (L10) `fallback                                                                                                                                                                             |                          | FALLBACK`→`!== undefined`—`null` 은 "에러 시 아무것도 렌더하지 않는다" 라는 유효한 의사다 |
+| `react-utils/.../withUploader.tsx`                                       | (L15) `src/**` 에서 유일하게 alias 를 쓰던 import 를 상대 경로로 통일                                                                                                                       |
+| `react-utils/.../isFunctionComponent.ts` · `remainOnlyReactComponent.ts` | 런타임에서 임의 함수와 컴포넌트 함수를 구별할 수 없다는 사실을 `@remarks` 와 예제에 명시 — 예제가 약속하던 "helper 는 제외된다" 는 지킬 수 없는 주장이었다                                  |
+| 신규 테스트                                                              | `isReactComponent.exotic`(4), `withErrorBoundary.fallback`(2), `renderComponent.falsy`(2)                                                                                                   |
 
 **fail-first**: forwardRef/lazy 미인식 `expected false to be true`, forwardRef 가 렌더되지 않음 `expected null not to be null`, `fallback={null}` 이 기본 메시지로 대체 `expected 'An unexpected error has occurred' to be ''`.
 
@@ -441,18 +501,18 @@ omit 경로 감소는 매 호출 키 정렬(M20 의 대가)이고, 훨씬 잦은
 
 **추가한 벤치**
 
-| 파일 | 측정 |
-| --- | --- |
-| `common-utils/bench/merge.bench.ts` | overlay(341 노드) 빈 target vs 채워진 target, flat 200키, 200 요소 배열 |
-| `common-utils/bench/murmur3.bench.ts` | 16B/1KB/64KB, 정렬 vs 비정렬(byteOffset 1), 문자열 — DataView 오프셋 수정(#2)의 회귀 기준선 |
-| `common-utils/bench/filterPredicates.bench.ts` | `isPlainObject`·`isEmpty`·`isArrayLike` 를 입력 종류별로 — schema-form·json 내부 루프에서 필드 수만큼 반복되는 경로 |
-| `json/bench/applyPatch.bench.ts` | 패치 1/10/100건 × immutable on·off |
-| `json/bench/difference.bench.ts` | `difference` vs 내부에서 돌리는 `compare`, 배열 포함 문서 |
-| `react-utils/bench/componentResolution.bench.ts` | `isReactComponent` 분기별 + `remainOnlyReactComponent` 레지스트리 필터 |
+| 파일                                             | 측정                                                                                                                |
+| ------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------- |
+| `common-utils/bench/merge.bench.ts`              | overlay(341 노드) 빈 target vs 채워진 target, flat 200키, 200 요소 배열                                             |
+| `common-utils/bench/murmur3.bench.ts`            | 16B/1KB/64KB, 정렬 vs 비정렬(byteOffset 1), 문자열 — DataView 오프셋 수정(#2)의 회귀 기준선                         |
+| `common-utils/bench/filterPredicates.bench.ts`   | `isPlainObject`·`isEmpty`·`isArrayLike` 를 입력 종류별로 — schema-form·json 내부 루프에서 필드 수만큼 반복되는 경로 |
+| `json/bench/applyPatch.bench.ts`                 | 패치 1/10/100건 × immutable on·off                                                                                  |
+| `json/bench/difference.bench.ts`                 | `difference` vs 내부에서 돌리는 `compare`, 배열 포함 문서                                                           |
+| `react-utils/bench/componentResolution.bench.ts` | `isReactComponent` 분기별 + `remainOnlyReactComponent` 레지스트리 필터                                              |
 
 **벤치가 드러낸 사실**
 
-- `difference` 2,712 hz vs 같은 입력의 `compare` 17,419 hz — **6.4배**. 감사가 지적한 "compare 후 패치마다 getValue/setValue 를 재실행하는 2단 구조" 의 비용이 정량화됐다.
+- `difference` 2,712 hz vs 같은 입력의 `compare` 17,419 hz — **6.4배**. 단 이 벤치는 341노드 문서의 **리프 256개가 전부 다른 변경 밀도 100%** 조건이라 2단계 비용이 최대로 드러나는 지점이다. 낮은 변경 밀도의 비율은 아직 측정하지 않았다.
 - `applyPatch` 는 패치 1건 65,311 hz, 100건 12,580 hz — 패치 1건에도 문서 전체 `cloneLite` 비용을 내므로 소량 패치에서 복제가 지배한다(부분 복제 최적화의 기대 이익 근거).
 - `isReactComponent` 는 분기 순서대로 24.1M → 22.1M → 19.0M hz 이고, 컴포넌트가 아닌 값은 모든 분기를 통과해 14.7M hz 로 가장 느리다.
 - `compare` 무변경 경로 23.0M hz vs 1% 변경 4,301 hz(1000 노드) — 조기 종료가 실제로 4 자릿수 배수를 번다.
@@ -463,22 +523,22 @@ omit 경로 감소는 매 호출 키 정렬(M20 의 대가)이고, 훨씬 잦은
 
 **반영**
 
-| 파일 | 변경 |
-| --- | --- |
-| `common-utils/.../countRetainedKeys.ts` | 신규 내부 헬퍼. `equals` 에 두었던 `countRetained` 를 `stableEquals` 와 공유하도록 승격(`readonly PropertyKey[]` 로 일반화해 `Reflect.ownKeys` 의 symbol 키도 받는다) |
-| `common-utils/.../equals.ts` | 지역 헬퍼를 위 공유 헬퍼로 교체 |
-| `common-utils/.../stableEquals.ts` | (M8) 타입 태그 비교 추가 — 종류가 다른 두 객체가 둘 다 own key 0개라 equal 로 판정되던 문제 제거. ArrayBuffer 는 `Uint8Array` 뷰로 감싸 기존 바이트 비교 경로 재사용. `OBJECT_TAG` 가 아니면 `equalsBuiltin` 위임(Date/RegExp 의 기존 `instanceof` 분기를 대체 — 태그 기반이라 cross-realm 도 잡는다). (H5) omit 적용 후 양쪽 키 개수 비교. (M14) visited 부기를 `has`+`get` 반복(최대 6회 조회)에서 `get` 2회 + 필요 시 `set` 으로 축소 |
-| `common-utils/.../__tests__/stableEquals.contract.test.ts` | 신규 6 케이스 (기존 파일 43 케이스로 상한 초과) |
-| `common-utils/bench/stableEquals.bench.ts` | 신규. equal 트리 / 순환 구조 / equals 대조 |
+| 파일                                                       | 변경                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| ---------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `common-utils/.../countRetainedKeys.ts`                    | 신규 내부 헬퍼. `equals` 에 두었던 `countRetained` 를 `stableEquals` 와 공유하도록 승격(`readonly PropertyKey[]` 로 일반화해 `Reflect.ownKeys` 의 symbol 키도 받는다)                                                                                                                                                                                                                                                                    |
+| `common-utils/.../equals.ts`                               | 지역 헬퍼를 위 공유 헬퍼로 교체                                                                                                                                                                                                                                                                                                                                                                                                          |
+| `common-utils/.../stableEquals.ts`                         | (M8) 타입 태그 비교 추가 — 종류가 다른 두 객체가 둘 다 own key 0개라 equal 로 판정되던 문제 제거. ArrayBuffer 는 `Uint8Array` 뷰로 감싸 기존 바이트 비교 경로 재사용. `OBJECT_TAG` 가 아니면 `equalsBuiltin` 위임(Date/RegExp 의 기존 `instanceof` 분기를 대체 — 태그 기반이라 cross-realm 도 잡는다). (H5) omit 적용 후 양쪽 키 개수 비교. (M14) visited 부기를 `has`+`get` 반복(최대 6회 조회)에서 `get` 2회 + 필요 시 `set` 으로 축소 |
+| `common-utils/.../__tests__/stableEquals.contract.test.ts` | 신규 6 케이스 (기존 파일 43 케이스로 상한 초과)                                                                                                                                                                                                                                                                                                                                                                                          |
+| `common-utils/bench/stableEquals.bench.ts`                 | 신규. equal 트리 / 순환 구조 / equals 대조                                                                                                                                                                                                                                                                                                                                                                                               |
 
 **fail-first**: omit 비대칭 `expected false to be true`, Map·ArrayBuffer·이종 내장 객체 3건 `expected true to be false`. 가드 2건(비-omit 비대칭 거부·Date/RegExp 상태 비교)은 수정 전에도 통과.
 
 **⚠ 성능 게이트 — 느려졌고, 그대로 수용한다 (hz)**
 
-| 시나리오 | 전 | 후 | 변화 |
-| --- | ---: | ---: | ---: |
+| 시나리오            |     전 |     후 |      변화 |
+| ------------------- | -----: | -----: | --------: |
 | equal 트리(341노드) | 21,656 | 20,645 | **-4.7%** |
-| 순환 구조 | 22,375 | 20,775 | **-7.1%** |
+| 순환 구조           | 22,375 | 20,775 | **-7.1%** |
 
 원인은 객체 쌍마다 추가된 `getTypeTag` 2회(`Object.prototype.toString.call`)다. M14 의 visited 조회 축소(6→2회 + 필요 시 set)가 일부만 상쇄했다. 0-key 인 경우에만 태그를 확인하도록 늦추면 비용을 되찾을 수 있지만, 프로퍼티가 붙은 Date 처럼 own key 를 가진 내장 객체에서 오탐이 되살아나므로 채택하지 않았다. **소비처가 0인 유틸에서 오탐 제거와 맞바꾼 5~7% 이며, `equals`(소비처 31)는 같은 태그 검사를 넣고도 M11 덕에 오히려 빨라졌다.**
 
