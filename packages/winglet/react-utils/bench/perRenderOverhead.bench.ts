@@ -1,9 +1,6 @@
 import { bench, describe } from 'vitest';
 
-import { useHandle } from '@/react-utils/hooks/useHandle';
-import { useOnUnmount } from '@/react-utils/hooks/useOnUnmount';
-import { useOnUnmountLayout } from '@/react-utils/hooks/useOnUnmountLayout';
-import { useTimeout } from '@/react-utils/hooks/useTimeout';
+import { useHandle, useOnUnmount, useOnUnmountLayout, useTimeout } from '@/react-utils';
 
 import { RENDERS, driveRenders } from './utils/driveRenders';
 

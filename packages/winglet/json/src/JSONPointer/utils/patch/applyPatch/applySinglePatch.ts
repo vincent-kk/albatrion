@@ -4,7 +4,7 @@ import { JSONPointer } from '@/json/JSONPointer/enum';
 import { unescapePath } from '@/json/JSONPointer/utils/escape/unescapePath';
 import type { JsonRoot } from '@/json/type';
 
-import { Operation, type Patch } from '../type';
+import { Operation, type Patch } from '../../patchModel';
 import { assertSafeFromPointer } from './utils/assertSafeFromPointer';
 import { ensureOwnedFromPath } from './utils/ensureOwnedFromPath';
 import { JsonPatchError } from './utils/error';

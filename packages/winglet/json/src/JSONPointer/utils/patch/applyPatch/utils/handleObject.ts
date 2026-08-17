@@ -5,7 +5,7 @@ import { getValue } from '@/json/JSONPointer/utils/manipulator/getValue';
 import { setValue } from '@/json/JSONPointer/utils/manipulator/setValue';
 import type { JsonObject, JsonRoot } from '@/json/type';
 
-import { Operation, type Patch } from '../../type';
+import { Operation, type Patch } from '../../../patchModel';
 import { JsonPatchError } from './error';
 import { isCircularMoveReference } from './isCircularMoveReference';
 

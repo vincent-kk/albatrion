@@ -1,7 +1,6 @@
 import { bench, describe } from 'vitest';
 
-import { compare } from '@/json/JSONPointer/utils/patch/compare/compare';
-import { difference } from '@/json/JSONPointer/utils/patch/difference/difference';
+import { compare, difference } from '@/json';
 
 /** A recursively nested plain object whose leaves are numbers. */
 interface NestedDocument {

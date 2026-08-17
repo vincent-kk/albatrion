@@ -1,8 +1,8 @@
 import { ARRAY_BUFFER_TAG, OBJECT_TAG } from '@/common-utils/constant/typeTag';
 import { getTypeTag } from '@/common-utils/libs/getTypeTag';
 
-import { countRetainedKeys } from './countRetainedKeys';
-import { equalsBuiltin } from './equalsBuiltin';
+import { countRetainedKeys } from './utils/countRetainedKeys';
+import { equalsBuiltin } from './utils/equalsBuiltin';
 
 /**
  * Sentinel used to bypass internal-state tag checks for current-realm

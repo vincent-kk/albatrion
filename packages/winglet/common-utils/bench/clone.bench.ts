@@ -1,7 +1,6 @@
 import { bench, describe } from 'vitest';
 
-import { clone } from '@/common-utils/utils/object/clone';
-import { cloneLite } from '@/common-utils/utils/object/cloneLite';
+import { clone, cloneLite } from '@/common-utils';
 
 /** A recursively nested plain object whose leaves are numbers. */
 interface NestedPlainObject {

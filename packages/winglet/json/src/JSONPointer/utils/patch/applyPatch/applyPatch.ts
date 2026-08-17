@@ -2,7 +2,7 @@ import { isArray } from '@winglet/common-utils/filter';
 
 import type { JsonRoot } from '@/json/type';
 
-import type { Patch } from '../type';
+import type { Patch } from '../../patchModel';
 import { applySinglePatch } from './applySinglePatch';
 import type { ApplyPatchOptions } from './type';
 

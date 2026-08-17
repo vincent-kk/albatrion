@@ -1,6 +1,6 @@
 import { bench, describe } from 'vitest';
 
-import { useRestProperties } from '@/react-utils/hooks/useRestProperties';
+import { useRestProperties } from '@/react-utils';
 
 import { RENDERS, driveRenders } from './utils/driveRenders';
 

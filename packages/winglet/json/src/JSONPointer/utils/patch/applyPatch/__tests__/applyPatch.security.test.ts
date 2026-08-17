@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it } from 'vitest';
 
-import { Operation, type Patch } from '../../type';
+import { Operation, type Patch } from '../../../patchModel';
 import { applyPatch } from '../applyPatch';
 
 /**

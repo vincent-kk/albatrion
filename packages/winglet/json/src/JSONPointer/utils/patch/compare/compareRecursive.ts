@@ -5,7 +5,7 @@ import { JSONPointer } from '@/json/JSONPointer/enum';
 import { escapeSegment } from '@/json/JSONPointer/utils/escape/escapeSegment';
 import type { JsonRoot } from '@/json/type';
 
-import { Operation, type Patch } from '../type';
+import { Operation, type Patch } from '../../patchModel';
 import { processValue } from './utils/processValue';
 
 /**

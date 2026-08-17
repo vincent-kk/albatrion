@@ -1,6 +1,6 @@
 import { abs } from './abs';
 import { MAX_FRACTION_DIGITS } from './constant';
-import { countDecimals } from './countDecimals';
+import { countDecimals } from './utils/countDecimals';
 import { maxLite } from './maxLite';
 
 /**

@@ -1,8 +1,6 @@
 import { bench, describe } from 'vitest';
 
-import { isArrayLike } from '@/common-utils/utils/filter/isArrayLike';
-import { isEmpty } from '@/common-utils/utils/filter/isEmpty';
-import { isPlainObject } from '@/common-utils/utils/filter/isPlainObject';
+import { isArrayLike, isEmpty, isPlainObject } from '@/common-utils';
 
 /**
  * Type guards called once per field in the schema-form and json traversals, so their

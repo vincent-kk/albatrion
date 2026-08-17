@@ -1,4 +1,4 @@
-import { maxLite } from './maxLite';
+import { maxLite } from '../maxLite';
 
 /**
  * Counts how many decimal places a number carries in its exact decimal form.

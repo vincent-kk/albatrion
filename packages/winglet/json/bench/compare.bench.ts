@@ -1,6 +1,6 @@
 import { bench, describe } from 'vitest';
 
-import { compare } from '@/json/JSONPointer/utils/patch/compare/compare';
+import { compare } from '@/json';
 
 /** A flat JSON document with one numeric value per measured node. */
 type JsonDocument = Record<string, number>;

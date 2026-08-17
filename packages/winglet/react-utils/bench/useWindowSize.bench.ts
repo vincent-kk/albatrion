@@ -1,7 +1,7 @@
 import { act, renderHook } from '@testing-library/react';
 import { bench, describe } from 'vitest';
 
-import { useWindowSize } from '@/react-utils/hooks/useWindowSize';
+import { useWindowSize } from '@/react-utils';
 
 /**
  * Cost of a resize storm.

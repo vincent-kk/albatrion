@@ -1,6 +1,6 @@
 import { unescapePath } from '@/json/JSONPointer/utils/escape/unescapePath';
 
-import type { Patch } from '../../type';
+import type { Patch } from '../../../patchModel';
 import { JsonPatchError } from './error';
 import { isPrototypeModification } from './isPrototypeModification';
 

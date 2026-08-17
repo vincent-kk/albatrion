@@ -1,6 +1,6 @@
 import { bench, describe } from 'vitest';
 
-import { Murmur3 } from '@/common-utils/utils/hash/murmur3';
+import { Murmur3 } from '@/common-utils';
 
 /**
  * Builds a byte buffer of the requested size, optionally offset inside a larger one so

@@ -1,7 +1,6 @@
 import { bench, describe } from 'vitest';
 
-import { equals } from '@/common-utils/utils/object/equals';
-import { stableEquals } from '@/common-utils/utils/object/stableEquals';
+import { equals, stableEquals } from '@/common-utils';
 
 /** A recursively nested plain object whose leaves are numbers. */
 interface NestedPlainObject {

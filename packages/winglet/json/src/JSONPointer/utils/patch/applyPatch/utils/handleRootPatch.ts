@@ -3,7 +3,7 @@ import { equals } from '@winglet/common-utils/object';
 import { getValue } from '@/json/JSONPointer/utils/manipulator/getValue';
 import type { JsonRoot } from '@/json/type';
 
-import { Operation, type Patch } from '../../type';
+import { Operation, type Patch } from '../../../patchModel';
 import { JsonPatchError } from './error';
 import { isCircularMoveReference } from './isCircularMoveReference';
 

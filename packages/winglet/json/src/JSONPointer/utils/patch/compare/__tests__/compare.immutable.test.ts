@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { Operation } from '../../type';
+import { Operation } from '../../../patchModel';
 import { compare } from '../compare';
 
 describe('compare - immutable mode', () => {

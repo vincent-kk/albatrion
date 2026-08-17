@@ -1,6 +1,6 @@
 import { bench, describe } from 'vitest';
 
-import { sortWithReference } from '@/common-utils/utils/array/sortWithReference';
+import { sortWithReference } from '@/common-utils';
 
 /**
  * Builds a reference order of distinct string entries.

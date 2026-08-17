@@ -1,6 +1,6 @@
 import type { JsonObject } from '@/json/type';
 
-import { differenceRecursive } from './differenceRecursive';
+import { differenceRecursive } from './utils/differenceRecursive';
 
 /**
  * Generates an optimized JSON Merge Patch for transforming one object into another.

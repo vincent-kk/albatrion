@@ -2,8 +2,7 @@ import { forwardRef, memo } from 'react';
 
 import { bench, describe } from 'vitest';
 
-import { isReactComponent } from '@/react-utils/utils/filter/isReactComponent';
-import { remainOnlyReactComponent } from '@/react-utils/utils/object/remainOnlyReactComponent';
+import { isReactComponent, remainOnlyReactComponent } from '@/react-utils';
 
 /**
  * Component resolution runs once per field while a schema-form plugin map is read, so

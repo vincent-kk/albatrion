@@ -1,6 +1,6 @@
 import { bench, describe } from 'vitest';
 
-import { stableSerialize } from '@/common-utils/utils/object/stableSerialize';
+import { stableSerialize } from '@/common-utils';
 
 /** A recursively nested plain object whose leaves are numbers. */
 interface NestedPlainObject {

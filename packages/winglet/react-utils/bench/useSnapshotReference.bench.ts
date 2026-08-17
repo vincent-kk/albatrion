@@ -1,6 +1,6 @@
 import { bench, describe } from 'vitest';
 
-import { useSnapshotReference } from '@/react-utils/hooks/useSnapshotReference';
+import { useSnapshotReference } from '@/react-utils';
 
 import { RENDERS, driveRenders } from './utils/driveRenders';
 

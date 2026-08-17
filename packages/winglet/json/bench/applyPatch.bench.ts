@@ -1,7 +1,6 @@
 import { bench, describe } from 'vitest';
 
-import { applyPatch } from '@/json/JSONPointer/utils/patch/applyPatch/applyPatch';
-import { Operation, type Patch } from '@/json/JSONPointer/utils/patch/type';
+import { applyPatch, Operation, type Patch } from '@/json';
 
 /** A recursively nested plain object whose leaves are numbers. */
 interface NestedDocument {
