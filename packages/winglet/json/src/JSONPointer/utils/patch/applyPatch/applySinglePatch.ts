@@ -4,7 +4,7 @@ import { JSONPointer } from '@/json/JSONPointer/enum';
 import { unescapePath } from '@/json/JSONPointer/utils/escape/unescapePath';
 import type { JsonRoot } from '@/json/type';
 
-import type { Patch } from '../type';
+import { Operation, type Patch } from '../type';
 import { assertSafeFromPointer } from './utils/assertSafeFromPointer';
 import { JsonPatchError } from './utils/error';
 import { getArrayIndex } from './utils/getArrayIndex';
@@ -101,19 +101,30 @@ export const applySinglePatch = (
   if (patch.path === '' || patch.path === JSONPointer.Fragment)
     return handleRootPatch(source, patch, patchIndex, strict);
 
-  if (protectPrototype && 'from' in patch)
-    assertSafeFromPointer(patch.from, patch, patchIndex);
-
-  // Rejected here as compilePointer already rejects it: the walk starts at index 1, so a
-  // path without a leading separator silently drops its first segment and edits elsewhere
-  if (patch.path[0] !== JSONPointer.Separator)
-    throw new JsonPatchError(
-      'PATCH_PATH_INVALID',
-      `Patch path '${patch.path}' must start with '${JSONPointer.Separator}'`,
-      { patch, index: patchIndex, path: patch.path, operation: patch.op },
-    );
+  // Judged by operation rather than key presence: `move` and `copy` require a `from`
+  // pointer, and a missing or non-string one must surface as a patch error rather than
+  // as a TypeError thrown from somewhere deeper
+  if (patch.op === Operation.MOVE || patch.op === Operation.COPY) {
+    if (typeof patch.from !== 'string')
+      throw new JsonPatchError(
+        'PATCH_PATH_INVALID',
+        `Patch operation '${patch.op}' requires a string 'from' pointer`,
+        { patch, index: patchIndex, operation: patch.op },
+      );
+    if (protectPrototype) assertSafeFromPointer(patch.from, patch, patchIndex);
+  }
 
   const segments = patch.path.split('/');
+
+  // Same set compilePointer accepts: a leading separator or the URI fragment form.
+  // The walk starts at index 1, so anything else silently drops its first segment
+  // and edits somewhere the caller never named
+  if (segments[0] !== '' && segments[0] !== JSONPointer.Fragment)
+    throw new JsonPatchError(
+      'PATCH_PATH_INVALID',
+      `Patch path '${patch.path}' must start with '${JSONPointer.Separator}' or '${JSONPointer.Fragment}'`,
+      { patch, index: patchIndex, path: patch.path, operation: patch.op },
+    );
   let current: any = source;
   let cursor = 1;
 
