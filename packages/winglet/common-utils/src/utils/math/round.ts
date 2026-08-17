@@ -64,8 +64,24 @@ export const round = (value: number, precision: number = 0): number => {
   if (!Number.isFinite(value)) return value;
   // Shifted through the decimal exponent rather than by multiplying: `1.005 * 100` is
   // 100.49999999999999 in binary floating point, so the naive form rounds it down
-  const shifted = Math.round(+`${value}e${precision}`);
-  const result = +`${shifted}e${-precision}`;
-  // The exponent trick loses values that cannot be re-parsed, so fall back on them
+  const scaled = shiftExponent(value, precision);
+  if (!Number.isFinite(scaled)) return value;
+  const result = shiftExponent(Math.round(scaled), -precision);
   return Number.isFinite(result) ? result : value;
+};
+
+/**
+ * Moves a number's decimal point by rewriting its exponent instead of multiplying.
+ *
+ * The existing exponent is folded in rather than appended, so a value already printed in
+ * exponential form — anything below `1e-6` or at or above `1e21` — shifts correctly
+ * instead of producing an unparsable `1e-7e7`.
+ *
+ * @param value - Finite number to shift
+ * @param exponent - Decimal places to move by; negative moves right
+ * @returns The shifted number, or `NaN` when the result leaves the representable range
+ */
+const shiftExponent = (value: number, exponent: number): number => {
+  const parts = value.toString().split('e');
+  return +(parts[0] + 'e' + (parts[1] ? +parts[1] + exponent : exponent));
 };

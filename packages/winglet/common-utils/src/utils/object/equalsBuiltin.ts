@@ -19,21 +19,24 @@ import {
  * @param right - Second built-in object
  * @param tag - Shared `Object.prototype.toString` tag of both operands
  * @param compare - Recursive comparator applied to nested values
- * @returns Whether the two carry the same state, `false` for tags handled by reference
+ * @returns Whether the two carry the same state, or `undefined` when this tag has no
+ *   state rule and the caller should fall back to comparing own keys
  *
  * @remarks
  * `Set` members and `Map` keys are matched by SameValueZero, so object members match
  * only by identity — structural matching would require an order-insensitive pairing
  * search and turn a linear comparison quadratic. `Map` values are compared recursively.
- * Any other tag (`ArrayBuffer`, `Error`, `Promise`, typed arrays, …) returns `false`;
- * identical references never reach this function.
+ * Any other tag — typed arrays, `Error`, a plain object carrying a custom
+ * `Symbol.toStringTag` — returns `undefined` rather than `false`: those expose their
+ * state through own keys, so refusing them here would report structurally identical
+ * values as unequal.
  */
 export const equalsBuiltin = (
   left: object,
   right: object,
   tag: string,
   compare: (left: unknown, right: unknown) => boolean,
-): boolean => {
+): boolean | undefined => {
   if (tag === DATE_TAG) {
     const leftTime = (left as Date).getTime();
     const rightTime = (right as Date).getTime();
@@ -64,5 +67,5 @@ export const equalsBuiltin = (
         return false;
     return true;
   }
-  return false;
+  return undefined;
 };

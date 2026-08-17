@@ -77,6 +77,20 @@ describe('equals contract', () => {
       expect(equals({}, new Date())).toBe(false);
     });
 
+    it('should keep comparing values it has no built-in rule for by structure', () => {
+      expect(equals(new Uint8Array([1, 2, 3]), new Uint8Array([1, 2, 3]))).toBe(
+        true,
+      );
+      expect(equals(new Uint8Array([1, 2, 3]), new Uint8Array([1, 2, 4]))).toBe(
+        false,
+      );
+
+      const tagged = { [Symbol.toStringTag]: 'X', a: 1 };
+      const twin = { [Symbol.toStringTag]: 'X', a: 1 };
+      expect(equals(tagged, twin)).toBe(true);
+      expect(equals(tagged, { [Symbol.toStringTag]: 'X', a: 2 })).toBe(false);
+    });
+
     it('should keep comparing class instances structurally', () => {
       class Point {
         constructor(

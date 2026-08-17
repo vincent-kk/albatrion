@@ -392,10 +392,12 @@ const stableEqualsRecursive = (
 
   // Everything left is either a plain object or a class instance, both OBJECT_TAG;
   // built-ins carry their state where own keys cannot reach it
-  if (tag !== OBJECT_TAG)
-    return equalsBuiltin(left, right, tag, (leftValue, rightValue) =>
+  if (tag !== OBJECT_TAG) {
+    const byState = equalsBuiltin(left, right, tag, (leftValue, rightValue) =>
       stableEqualsRecursive(leftValue, rightValue, visited, omits),
     );
+    if (byState !== undefined) return byState;
+  }
 
   const leftKeys = Reflect.ownKeys(left);
   const rightKeys = Reflect.ownKeys(right);

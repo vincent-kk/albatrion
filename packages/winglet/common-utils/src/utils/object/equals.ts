@@ -302,10 +302,12 @@ const equalsRecursive = (
   // on the structural path below.
   const tag = getTypeTag(left);
   if (tag !== getTypeTag(right)) return false;
-  if (tag !== OBJECT_TAG)
-    return equalsBuiltin(left, right, tag, (leftValue, rightValue) =>
+  if (tag !== OBJECT_TAG) {
+    const byState = equalsBuiltin(left, right, tag, (leftValue, rightValue) =>
       equalsRecursive(leftValue, rightValue, omits),
     );
+    if (byState !== undefined) return byState;
+  }
 
   const keys = Object.keys(left);
   const rightKeys = Object.keys(right);
