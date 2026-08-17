@@ -1,6 +1,8 @@
 import { hasOwnProperty } from '@/common-utils/libs/hasOwnProperty';
 
 import { isFalsy } from './isFalsy';
+import { isMap } from './isMap';
+import { isSet } from './isSet';
 
 /**
  * Determines whether a value is empty with comprehensive checking.
@@ -436,8 +438,9 @@ export const isEmpty = (value: unknown): boolean => {
   if (type === 'function') return false;
   if (type !== 'object') return isFalsy(value);
   // Map and Set keep their contents in internal slots that own keys cannot see, so a
-  // key walk reports a populated collection as empty
-  if (value instanceof Map || value instanceof Set) return value.size === 0;
+  // key walk reports a populated collection as empty. Tag-based like the rest of this
+  // directory, so a collection from another realm is recognised too
+  if (isMap(value) || isSet(value)) return value.size === 0;
   for (const key in value) if (hasOwnProperty(value, key)) return false;
   return true;
 };

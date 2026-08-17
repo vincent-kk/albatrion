@@ -30,18 +30,32 @@ export const sortWithReference = <Value>(
   // mutate the input through the result
   if (!reference) return source.slice();
 
-  const referenceLength = reference.length;
   const referenceMap = new Map<Value, number>();
-  for (let i = 0; i < referenceLength; i++) referenceMap.set(reference[i], i);
+  for (let i = 0, l = reference.length; i < l; i++)
+    referenceMap.set(reference[i], i);
 
-  // Unreferenced items rank past every referenced one, and a stable sort keeps items
-  // that share a rank in source order — the bucket-per-reference-entry form allocated
-  // one array for every reference entry even when the source touched none of them
-  return source
-    .slice()
-    .sort(
-      (left, right) =>
-        (referenceMap.get(left) ?? referenceLength) -
-        (referenceMap.get(right) ?? referenceLength),
-    );
+  // Bucketed rather than sorted: Array.prototype.sort relocates `undefined` entries to
+  // the end without ever consulting the comparator, so a reference order that places
+  // `undefined` anywhere but last could not be honoured
+  const referencedGroups: Value[][] = new Array(reference.length);
+  for (let i = 0, l = reference.length; i < l; i++) referencedGroups[i] = [];
+
+  const unreferencedItems: Value[] = [];
+
+  for (let i = 0, l = source.length; i < l; i++) {
+    const item = source[i];
+    const referenceIndex = referenceMap.get(item);
+    if (referenceIndex === undefined) unreferencedItems.push(item);
+    else referencedGroups[referenceIndex].push(item);
+  }
+
+  const result: Value[] = [];
+  for (let i = 0, il = referencedGroups.length; i < il; i++) {
+    const group = referencedGroups[i];
+    for (let j = 0, jl = group.length; j < jl; j++) result.push(group[j]);
+  }
+  for (let i = 0, l = unreferencedItems.length; i < l; i++)
+    result.push(unreferencedItems[i]);
+
+  return result;
 };
