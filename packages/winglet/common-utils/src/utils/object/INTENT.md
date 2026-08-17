@@ -15,7 +15,7 @@
 
 ### Always do
 
-- 예약 멤버 이름을 읽거나 쓰는 코드 경로는 데이터 속성 프리미티브(`getDataProperty`/`setDataProperty`/`deleteDataProperty`)를 경유하거나, 동등한 own 데이터 속성 의미론을 지킨다
+- 예약 멤버 이름을 읽거나 쓰는 코드 경로는 데이터 속성 프리미티브(`getDataProperty`/`setDataProperty`/`deleteDataProperty`)를 경유하거나, 공유 판별자(`isReservedName`) 분기 위에서 동등한 own 데이터 속성 의미론을 지킨다
 - 예약 멤버 계약을 바꾸는 변경은 DETAIL.md를 먼저 갱신한다
 
 ### Ask first
