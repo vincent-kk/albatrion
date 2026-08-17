@@ -1,10 +1,10 @@
 import { combineConditions } from '@/schema-form/helpers/dynamicExpression';
 import type { PartialJsonSchema } from '@/schema-form/types';
 
-import type { PathManager } from '../../../getPathManager';
-import { JSON_POINTER_PATH_REGEX } from '../../../regex';
-import { ALIAS, type ConditionIndexName } from '../../../type';
-import { getExpressionFromSchema } from './utils/getExpressionFromSchema';
+import type { PathManager } from '../../getPathManager';
+import { JSON_POINTER_PATH_REGEX } from '../../regex';
+import { ALIAS, type ConditionIndexName } from '../../type';
+import { getExpressionFromSchema } from './getExpressionFromSchema';
 
 /**
  * Extracts and processes conditional information from an array of JSON schemas

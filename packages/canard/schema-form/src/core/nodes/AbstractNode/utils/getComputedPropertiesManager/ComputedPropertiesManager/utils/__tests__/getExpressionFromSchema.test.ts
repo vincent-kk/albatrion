@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import type { PartialJsonSchema } from '@/schema-form/types';
 
-import { getExpressionFromSchema } from '../getExpressionFromSchema';
+import { getExpressionFromSchema } from '../getConditionIndexFactory/utils/getExpressionFromSchema';
 
 describe('getExpressionFromSchema', () => {
   it('properties가 없으면 null을 반환해야 합니다', () => {

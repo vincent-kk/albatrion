@@ -6,7 +6,7 @@ import {
 
 import type { Dictionary } from '@aileron/declare';
 
-import { SIMPLE_EQUALITY_REGEX } from '../../../regex';
+import { SIMPLE_EQUALITY_REGEX } from '../../regex';
 
 /**
  * Creates an optimized index factory for simple equality-based condition matching
