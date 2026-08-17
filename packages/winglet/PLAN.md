@@ -19,7 +19,7 @@ Phase 0~6 를 순차 실행했다. **작업 이력·검증 결과·계획 대비
 | 4 타입               | 완료                              |
 | 5 문서·공개 표면     | 완료                              |
 | 6 벤치 확충          | 완료                              |
-| 7 성능 회수          | **계획 확정 — 미착수 (0/5)**      |
+| 7 성능 회수          | **진행 중 (1/5)**                 |
 
 ### 별도 작업으로 남긴 항목
 
@@ -666,6 +666,7 @@ Phase 7 (성능 회수)    ──> PROGRESS §성능 후속 작업 수집본. Ta
 | `applyPatch` 배열 `move`/`copy`      | 덮어쓰기 → splice 삽입, 제거는 `delete` 가 아니라 splice(구멍이 남지 않는다). RFC 6902 정합                                                  | Task 3.7 |
 | `applyPatch` `move`/`copy` 의 `from` | 문자열이 아니면 `JsonPatchError('PATCH_PATH_INVALID')` — 이전엔 조용히 통과했다                                                              | Task 3.7 |
 | `compare` 배열 제거 순서             | 배열 원소 제거 패치를 역순으로 방출 — 이전 순서로는 스스로 만든 패치를 되적용할 수 없었다                                                    | Task 3.7 |
+| `difference`                         | 숫자키 plain object 를 배열로 오판하지 않는다(H-3) — 이전엔 remove 가 누락돼 병합 결과에 제거된 키가 남았다. Date leaf 는 ISO 문자열 대신 Date 클론으로 패치에 실린다. 변경이 금지 키뿐이면 `{}` 대신 `undefined` 반환 | Task 7.1 |
 
 ### @winglet/react-utils — minor
 

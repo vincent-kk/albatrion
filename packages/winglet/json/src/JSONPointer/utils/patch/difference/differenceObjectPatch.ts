@@ -1,42 +1,33 @@
-import { cloneLite } from '@winglet/common-utils/object';
+import { isPlainObject } from '@winglet/common-utils/filter';
+import { hasOwnProperty } from '@winglet/common-utils/lib';
+import { cloneLite, equals } from '@winglet/common-utils/object';
 
-import { JSONPointer } from '@/json/JSONPointer/enum';
-import { getValue } from '@/json/JSONPointer/utils/manipulator/getValue';
-import { setValue } from '@/json/JSONPointer/utils/manipulator/setValue';
-import { compare } from '@/json/JSONPointer/utils/patch/compare';
-import { Operation, type Patch } from '@/json/JSONPointer/utils/patch/type';
+import {
+  CONSTRUCTOR_KEY,
+  PROTOTYPE_ASSESS_KEY,
+  PROTOTYPE_KEY,
+} from '@/json/JSONPointer/constants/prototypeKey';
 import type { JsonObject } from '@/json/type';
-
-import { getArrayBasePath } from './utils/getArrayBasePath';
 
 /**
  * Generates an optimized JSON Merge Patch for transforming one object into another.
  *
- * This function implements a high-performance algorithm to create merge patches between two plain objects.
- * It uses an intelligent two-phase approach to optimize the handling of array changes while minimizing
- * redundant operations:
+ * The source and target are traversed directly at matching object depths. Plain-object
+ * values are compared recursively, while arrays and other leaf values are compared and
+ * replaced as complete values. Patch objects are allocated lazily, and JSON-compatible
+ * replacement values are cloned to avoid sharing arrays or plain-object subtrees with the target.
  *
- * **Phase 1 - Array Optimization**:
- * - Detects paths that target array elements using `getArrayBasePath()`
- * - For arrays with changes, replaces the entire array rather than individual element patches
- * - Prevents redundant individual element operations when the whole array is being updated
- * - Stores non-array patches for processing in phase 2
+ * Removed properties and existing properties whose target value is `undefined` are encoded
+ * as `null`. New properties whose target value is `undefined` are omitted because applying
+ * them would not change the source under JSON Merge Patch semantics.
  *
- * **Phase 2 - Individual Patches**:
- * - Processes remaining patches that don't affect arrays
- * - Applies ADD, REPLACE, and REMOVE operations directly
- * - Uses optimized JSON Pointer path manipulation
- *
- * The algorithm provides O(n) time complexity where n is the number of patches, with optimized
- * space usage through single-pass processing and minimal intermediate allocations.
+ * Prototype-polluting keys (`__proto__`, `constructor`, `prototype`) never enter the patch,
+ * matching the protection `setValue` applies when a patch is written through a pointer.
  *
  * @param source - The source object to transform from
  * @param target - The target object to transform to
  *
  * @see https://datatracker.ietf.org/doc/html/rfc7396 - JSON Merge Patch specification
- * @see https://datatracker.ietf.org/doc/html/rfc6901 - JSON Pointer specification
- * @see https://datatracker.ietf.org/doc/html/rfc6902 - JSON Patch specification (used internally by compare())
- *
  * @returns A JSON Merge Patch object maintaining the original structure, or `undefined` if no changes are needed.
  *          The patch uses the following conventions:
  *          - Property additions/changes: nested object structure with new values
@@ -55,13 +46,13 @@ import { getArrayBasePath } from './utils/getArrayBasePath';
  *
  * @example
  * ```typescript
- * // Array optimization in action
+ * // Array replacement
  * const source = { users: [{ id: 1, name: "Alice" }, { id: 2, name: "Bob" }] };
  * const target = { users: [{ id: 1, name: "Alice" }, { id: 2, name: "Bobby" }, { id: 3, name: "Charlie" }] };
  *
  * const patch = differenceObjectPatch(source, target);
  * // Returns: { users: [{ id: 1, name: "Alice" }, { id: 2, name: "Bobby" }, { id: 3, name: "Charlie" }] }
- * // Note: Entire array is replaced rather than individual element patches
+ * // The entire array is replaced rather than merged by element.
  * ```
  *
  * @example
@@ -123,38 +114,66 @@ import { getArrayBasePath } from './utils/getArrayBasePath';
 export const differenceObjectPatch = (
   source: JsonObject,
   target: JsonObject,
+): JsonObject | undefined => differenceRecursive(source, target);
+
+/**
+ * Builds the merge patch for two corresponding plain-object nodes.
+ *
+ * @param source - The source node to compare
+ * @param target - The target node to compare
+ * @returns The lazily allocated patch node, or `undefined` when the nodes are equal
+ */
+const differenceRecursive = (
+  source: JsonObject,
+  target: JsonObject,
 ): JsonObject | undefined => {
-  const patches = compare(source, target);
-  const patchCount = patches.length;
-
-  if (patchCount === 0) return undefined;
-
-  const mergePatch: JsonObject = {};
-  const processedArrayPaths = new Set<string>();
-  const validPatches: Array<Patch> = [];
-
-  // 단일 패스: 배열 패치와 일반 패치 분리 및 배열 패치 즉시 처리
-  for (let i = 0; i < patchCount; i++) {
-    const patch = patches[i];
-    const arrayPath = getArrayBasePath(patch.path);
-    if (arrayPath === null) validPatches.push(patch);
-    else if (!processedArrayPaths.has(arrayPath)) {
-      const segments = arrayPath.split(JSONPointer.Separator);
-      // Cloned like the ordinary path below, whose values compare already cloned:
-      // otherwise the returned patch shares an array with `target`
-      setValue(mergePatch, segments, cloneLite(getValue(target, segments)));
-      processedArrayPaths.add(arrayPath);
+  let patch: JsonObject | undefined = undefined;
+  let hasRemoved = false;
+  const sourceKeys = Object.keys(source);
+  for (let i = 0, l = sourceKeys.length; i < l; i++) {
+    const key = sourceKeys[i];
+    // Skipped, not just sanitized: assigning '__proto__' on the patch literal would
+    // swap its prototype instead of defining a key
+    if (
+      key === PROTOTYPE_KEY ||
+      key === CONSTRUCTOR_KEY ||
+      key === PROTOTYPE_ASSESS_KEY
+    )
+      continue;
+    const sourceValue = source[key];
+    if (hasOwnProperty(target, key)) {
+      const targetValue = target[key];
+      if (
+        sourceValue === targetValue ||
+        (sourceValue !== sourceValue && targetValue !== targetValue)
+      )
+        continue;
+      if (targetValue === undefined) {
+        (patch ??= {})[key] = null;
+        hasRemoved = true;
+      } else if (isPlainObject(sourceValue) && isPlainObject(targetValue)) {
+        const child = differenceRecursive(sourceValue, targetValue);
+        if (child !== undefined) (patch ??= {})[key] = child;
+      } else if (!equals(sourceValue, targetValue))
+        (patch ??= {})[key] = cloneLite(targetValue);
+    } else {
+      (patch ??= {})[key] = null;
+      hasRemoved = true;
     }
   }
-
-  // 일반 패치들 처리 (배열과 무관한 패치들만 포함)
-  for (let i = 0, l = validPatches.length; i < l; i++) {
-    const patch = validPatches[i];
-    if (patch.op === Operation.ADD || patch.op === Operation.REPLACE)
-      setValue(mergePatch, patch.path, patch.value);
-    else if (patch.op === Operation.REMOVE)
-      setValue(mergePatch, patch.path, null);
+  const targetKeys = Object.keys(target);
+  if (!hasRemoved && targetKeys.length === sourceKeys.length) return patch;
+  for (let i = 0, l = targetKeys.length; i < l; i++) {
+    const key = targetKeys[i];
+    if (
+      key === PROTOTYPE_KEY ||
+      key === CONSTRUCTOR_KEY ||
+      key === PROTOTYPE_ASSESS_KEY
+    )
+      continue;
+    const targetValue = target[key];
+    if (hasOwnProperty(source, key) || targetValue === undefined) continue;
+    (patch ??= {})[key] = cloneLite(targetValue);
   }
-
-  return mergePatch;
+  return patch;
 };

@@ -601,3 +601,39 @@ omit 경로 감소는 매 호출 키 정렬(M20 의 대가)이고, 훨씬 잦은
 ### 계획 확정 · 2026-08-17
 
 위 5건을 **`PLAN.md` Phase 7 (Task 7.1~7.5)** 로 계획 확정. 사용자 방향 확정 2건 — ① difference 는 1단 재귀로 재작성하며 보류 항목 json H-3(숫자키 remove 누락)을 합류 해소(동작 변화), ② applyPatch immutable 기본을 copy-on-write 로 변경("반환값 완전 분리" → "원본 불변 + 구조 공유", breaking). C 항목(isReactComponent·compare)은 측정 선행 필요로 스코프 제외. 상세 설계·게이트는 PLAN.md 가 정본.
+
+## Phase 7 — 성능 회수
+
+### [x] Task 7.1 — difference 1단 재귀 (B-1 + H-3) · 2026-08-17 (codex 위임 + 세션 검수 수정)
+
+**반영**
+
+| 파일                                             | 변경                                                                                                                                                            |
+| ------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `json/.../difference/differenceObjectPatch.ts`   | compare 경유 2단 구조 → source/target 직접 재귀. 경로 문자열·패치 배열·이스케이프 왕복 소멸. patch 지연 할당, leaf 는 `equals` 판정 후 `cloneLite` 교체(M-5 유지) |
+| `json/.../difference/difference.ts`              | 거짓이 된 JSDoc 서술 2건 제거(RFC 6901 내부 사용·compare 경유)                                                                                                   |
+| `json/.../utils/getArrayBasePath.ts`             | **삭제** (유일 소비처 소멸, grep 무결과)                                                                                                                         |
+| `json/.../__tests__/arrayBasePath.test.ts`       | **삭제** (검증 대상 삭제, 16케이스)                                                                                                                              |
+| `json/.../__tests__/difference.roundTrip.test.ts` | 신규 3케이스 — H-3 round-trip, Date leaf characterization, 금지 키 드롭 characterization                                                                         |
+
+**fail-first 관찰**
+
+- H-3(codex): `expected { a: { '0': 'z', '2': 'w' } } to deeply equal { a: { '0': 'z' } }` — 숫자키 객체가 배열로 오판되어 remove 가 누락되는 증상 그대로 red.
+- 금지 키(세션 검수, 아래 편차 1): codex 구현에서 `expected { constructor: {...}, prototype: {...}, safe: 2 } to deeply equal { safe: 2 }` red 관찰 후 수정.
+
+**성능 게이트 (세션 직접 측정, hz)**
+
+| 시나리오                | 전(기준) | 후         |      변화 |
+| ----------------------- | -------: | ---------- | --------: |
+| difference, no arrays   |    2,712 | **17,611** | **+549%** |
+| compare, same input     |   17,419 | 15,252     |  (참조)   |
+| difference, with arrays |  (2,276) | 16,234     | **+613%** |
+
+같은 실행에서 difference 가 compare 보다 1.15배 빠름 — "compare 단독 이상" 게이트 충족. codex 자체 측정은 9.4~9.6배(23,796/21,773 hz)로 더 컸으며 차이는 환경 부하와 검수에서 추가한 금지 키 검사 비용.
+
+**계획 대비 편차**
+
+1. **금지 키 보존 (세션 검수가 발견한 위임 결함)**: 기존 구현은 `setValue` 경유라 `isForbiddenKey`(`__proto__`·`constructor`·`prototype`)가 패치를 무음 드롭했는데, 직접 대입 재귀는 이 방어를 잃었다 — constructor/prototype own 키가 결과에 노출되고 `__proto__` 대입은 patch 리터럴의 프로토타입을 교체한다. 계획의 동작 대조표가 이 지점을 누락했다. 두 순회에 금지 키 skip 을 추가해 기존 동작을 보존했다(JSDoc 명시). 미세 편차: 변경이 금지 키뿐인 입력에서 기존은 `{}`, 이제 `undefined` 를 반환한다 — 기존 테스트가 고정하지 않은 코너이며 "변경 없음" 의 정직한 표현.
+2. `difference.ts` JSDoc 정리(codex) — 구현 변경으로 거짓이 된 설명 제거, 문서성 보완.
+
+**검증 (세션 직접 실행)**: json **31 파일 / 546 테스트 통과**(기존 `difference.test.ts` 37 + `escapeHandling.test.ts` 21 **무수정** 통과), `typecheck`·`lint`·`build` 통과. 테스트 수 559→546 은 arrayBasePath 16케이스 삭제 + 신규 3케이스.
