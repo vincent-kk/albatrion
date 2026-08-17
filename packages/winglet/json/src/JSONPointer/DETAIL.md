@@ -9,7 +9,7 @@
 ## API Contracts
 
 - `JSONPointer` 상수는 `Root`(빈 문자열), `Fragment`(`#`), `Separator`(슬래시)를 제공하며 값은 RFC 6901 §5–6과 일치한다. 이 값들은 하위 호환 대상이다.
-- 예약 멤버 접근 판별과 특수 경로는 `@winglet/common-utils`의 데이터 속성 프리미티브가 한 벌로 소유한다. 이 패키지는 자체 판별자를 두지 않는다.
+- 예약 멤버 접근 판별과 특수 경로는 `@winglet/common-utils`의 데이터 속성 프리미티브(`isReservedName` 판별자 포함)가 한 벌로 소유한다. 성능 임계의 최경량 순회 루프는 동일 판정의 인라인 분기를 가질 수 있으나, 예약 멤버 **접근**은 언제나 프리미티브를 경유하고 판정 동일성은 정합 스위트(RC-5)가 고정한다.
 - 세 공개 쓰기 API(`setValue`, `applyPatch`, `mergePatch`)는 동일한 예약 멤버 입력에 대해 서로 정합하는 관측 결과를 낸다 — 하나만 조용히 무시하거나 하나만 예외를 던지지 않는다.
 
 ## Acceptance Criteria
