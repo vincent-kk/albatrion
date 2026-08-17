@@ -1,18 +1,17 @@
 import { isArray } from '@winglet/common-utils/filter';
+import { getDataProperty, setDataProperty } from '@winglet/common-utils/object';
 
 import { JSONPointer } from '@/json/JSONPointer/enum';
 import { unescapePath } from '@/json/JSONPointer/utils/escape/unescapePath';
 import type { JsonRoot } from '@/json/type';
 
 import { Operation, type Patch } from '../../patchModel';
-import { assertSafeFromPointer } from './utils/assertSafeFromPointer';
 import { ensureOwnedFromPath } from './utils/ensureOwnedFromPath';
 import { JsonPatchError } from './utils/error';
 import { getArrayIndex } from './utils/getArrayIndex';
 import { handleArray } from './utils/handleArray';
 import { handleObject } from './utils/handleObject';
 import { handleRootPatch } from './utils/handleRootPatch';
-import { isPrototypeModification } from './utils/isPrototypeModification';
 
 /**
  * Applies a single JSON Patch operation to a source object or array.
@@ -24,7 +23,9 @@ import { isPrototypeModification } from './utils/isPrototypeModification';
  * The function performs the following key operations:
  * - Parses and validates JSON Pointer paths
  * - Handles path escaping/unescaping according to RFC 6901
- * - Provides security protection against prototype pollution
+ * - Accesses reserved member names (__proto__, constructor, prototype) as
+ *   opaque own data through the data-property primitives, so no patch input
+ *   can reach or modify the prototype chain
  * - Validates intermediate path segments during traversal
  * - Delegates final operation to appropriate type-specific handlers
  * - Provides detailed error information for debugging
@@ -39,7 +40,6 @@ import { isPrototypeModification } from './utils/isPrototypeModification';
  * @param patch - A single JSON Patch operation containing op, path, and optional value
  * @param patchIndex - The index of this patch in the original patches array (for error reporting)
  * @param strict - Whether to enforce strict validation rules
- * @param protectPrototype - Whether to prevent prototype pollution attempts
  * @param cloned - Owned object references in immutable mode, or null in mutating mode
  *
  * @see https://datatracker.ietf.org/doc/html/rfc6901 - JSON Pointer specification
@@ -48,7 +48,6 @@ import { isPrototypeModification } from './utils/isPrototypeModification';
  * @returns The modified source object/array with the patch operation applied
  *
  * @throws {JsonPatchError} When the patch operation fails due to:
- *         - SECURITY_PROTOTYPE_MODIFICATION_FORBIDDEN: Attempt to modify prototype properties
  *         - PATCH_TARGET_NOT_OBJECT: Target of operation is not an object/array when required
  *         - PATCH_PATH_INVALID_INTERMEDIATE: Invalid intermediate value during path traversal
  *         - PATCH_PATH_PROCESSING_ERROR: Unexpected error during path processing
@@ -84,12 +83,14 @@ import { isPrototypeModification } from './utils/isPrototypeModification';
  *
  * @example
  * ```typescript
- * // Security protection - this will throw an error
+ * // Reserved member names are opaque own data — the prototype chain is
+ * // unreachable, so this creates an own '__proto__' data container is absent:
  * const source = {};
- * const maliciousPatch = { op: "add", path: "/__proto__/isAdmin", value: true };
+ * const patch = { op: "add", path: "/__proto__/isAdmin", value: true };
  *
- * // Throws JsonPatchError with SECURITY_PROTOTYPE_MODIFICATION_FORBIDDEN
- * applySinglePatch(source, maliciousPatch, 0, false, true, null);
+ * // Throws JsonPatchError with PATCH_PATH_INVALID_INTERMEDIATE, exactly like
+ * // any other missing intermediate path; Object.prototype is never touched
+ * applySinglePatch(source, patch, 0, false, null);
  * ```
  */
 export const applySinglePatch = (
@@ -97,7 +98,6 @@ export const applySinglePatch = (
   patch: Patch,
   patchIndex: number,
   strict: boolean,
-  protectPrototype: boolean,
   cloned: WeakSet<object> | null,
 ): any => {
   // 루트 패치 처리
@@ -114,7 +114,6 @@ export const applySinglePatch = (
         `Patch operation '${patch.op}' requires a string 'from' pointer`,
         { patch, index: patchIndex, operation: patch.op },
       );
-    if (protectPrototype) assertSafeFromPointer(patch.from, patch, patchIndex);
     if (patch.op === Operation.MOVE && cloned !== null)
       ensureOwnedFromPath(source, patch.from, cloned);
   }
@@ -136,19 +135,6 @@ export const applySinglePatch = (
   const segmentsLength = segments.length;
   while (cursor < segmentsLength) {
     let segment: string | number = unescapePath(segments[cursor]);
-
-    if (protectPrototype && isPrototypeModification(segment, segments, cursor))
-      throw new JsonPatchError(
-        'SECURITY_PROTOTYPE_MODIFICATION_FORBIDDEN',
-        'Modifying prototype properties (__proto__, constructor.prototype) is forbidden for security reasons',
-        {
-          patch,
-          index: patchIndex,
-          segment,
-          path: segments.slice(0, cursor + 1).join('/'),
-          operation: patch.op,
-        },
-      );
 
     if (cursor === segmentsLength - 1) {
       if (isArray(current)) {
@@ -188,7 +174,7 @@ export const applySinglePatch = (
 
     if (isArray(current)) segment = getArrayIndex(segment, current);
 
-    let next: any = current[segment];
+    let next: any = getDataProperty(current, segment as string);
     if (
       cloned !== null &&
       next !== null &&
@@ -197,7 +183,7 @@ export const applySinglePatch = (
     ) {
       next = isArray(next) ? next.slice() : { ...next };
       cloned.add(next);
-      current[segment] = next;
+      setDataProperty(current, segment as string, next);
     }
     current = next;
 

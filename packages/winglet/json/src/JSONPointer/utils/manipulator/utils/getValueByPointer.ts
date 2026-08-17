@@ -1,3 +1,5 @@
+import { getDataProperty } from '@winglet/common-utils/object';
+
 import type { Dictionary } from '@aileron/declare';
 
 export const getValueByPointer = <Input extends Dictionary | Array<any>>(
@@ -9,7 +11,7 @@ export const getValueByPointer = <Input extends Dictionary | Array<any>>(
   if (length === 0 || (length === 1 && hasRootPrefix)) return value;
   let cursor: any = value;
   for (let i = hasRootPrefix ? 1 : 0; i < length; ) {
-    cursor = cursor[segments[i++]];
+    cursor = getDataProperty(cursor, segments[i++]);
     if (i === length) break;
     if (typeof cursor !== 'object' || cursor === null) return undefined;
   }

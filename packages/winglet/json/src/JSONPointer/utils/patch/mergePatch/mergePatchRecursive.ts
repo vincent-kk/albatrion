@@ -1,16 +1,20 @@
 import { isPlainObject } from '@winglet/common-utils/filter';
 import { hasOwnProperty } from '@winglet/common-utils/lib';
+import {
+  deleteDataProperty,
+  getDataProperty,
+  setDataProperty,
+} from '@winglet/common-utils/object';
 
 import type { JsonObject } from '@/json/type';
-
-import { isForbiddenKey } from '../../isForbiddenKey';
 
 /**
  * Merge the patch into the source object recursively
  *
  * Reserved member names (`__proto__`, `constructor`, `prototype`) in the patch
- * are excluded from merging at every depth to prevent prototype pollution,
- * matching the behavior of `setValue`.
+ * are merged as own data properties at every depth — reads and writes go
+ * through the data-property primitives, so the prototype chain is never
+ * touched and inherited objects are never modified.
  *
  * @example
  * ```typescript
@@ -36,10 +40,14 @@ export const mergePatchRecursive = (
   if (!isPlainObject(source)) source = {};
   for (const key in patch) {
     if (!hasOwnProperty(patch, key)) continue;
-    if (isForbiddenKey(key)) continue;
     const value = patch[key];
-    if (value === null) delete source[key];
-    else source[key] = mergePatchRecursive(source[key], value);
+    if (value === null) deleteDataProperty(source, key);
+    else
+      setDataProperty(
+        source,
+        key,
+        mergePatchRecursive(getDataProperty(source, key), value),
+      );
   }
   return source;
 };

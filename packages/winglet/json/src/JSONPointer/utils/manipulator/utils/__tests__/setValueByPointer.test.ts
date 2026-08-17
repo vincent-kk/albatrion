@@ -40,17 +40,20 @@ describe('setValueByPointer', () => {
       expect(obj).toEqual({ foo: { bar: 'new' } });
     });
 
-    it('should handle forbidden keys', () => {
+    it('should write reserved member keys as own data without touching the prototype', () => {
       const obj = {};
       const original = setValueByPointer(
         obj,
         ['__proto__'],
-        'malicious',
+        'value',
         true,
         false,
       );
-      expect(original).toEqual({});
-      expect(Object.getPrototypeOf(obj)).not.toHaveProperty('malicious');
+      expect(
+        Object.getOwnPropertyDescriptor(original, '__proto__')?.value,
+      ).toBe('value');
+      expect(Object.getPrototypeOf(obj)).toBe(Object.prototype);
+      expect(({} as Record<string, unknown>).value).toBeUndefined();
     });
   });
 
@@ -173,17 +176,20 @@ describe('setValue, not overwrite', () => {
       expect(obj).toEqual({ foo: { bar: 'old' } });
     });
 
-    it('should handle forbidden keys', () => {
+    it('should write reserved member keys as own data when absent even without overwrite', () => {
       const obj = {};
       const original = setValueByPointer(
         obj,
         ['__proto__'],
-        'malicious',
+        'value',
         false,
         false,
       );
-      expect(original).toEqual({});
-      expect(Object.getPrototypeOf(obj)).not.toHaveProperty('malicious');
+      expect(
+        Object.getOwnPropertyDescriptor(original, '__proto__')?.value,
+      ).toBe('value');
+      expect(Object.getPrototypeOf(obj)).toBe(Object.prototype);
+      expect(({} as Record<string, unknown>).value).toBeUndefined();
     });
   });
 

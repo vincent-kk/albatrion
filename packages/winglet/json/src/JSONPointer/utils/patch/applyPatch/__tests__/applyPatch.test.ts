@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import type { Patch } from '../../../patchModel';
 import { Operation } from '../../../patchModel';
 import { applyPatch } from '../applyPatch';
+import type { ApplyPatchOptions } from '../type';
 import { JsonPatchError } from '../utils/error';
 
 describe('applyPatch', () => {
@@ -412,25 +413,26 @@ describe('applyPatch', () => {
       expect(result).toEqual({ name: 'John', age: 30 });
     });
 
-    it('protectPrototype: false로 설정하면 프로토타입 수정을 허용해야 한다', () => {
+    it('예약 멤버 경로는 옵션과 무관하게 own 데이터 의미론으로 처리되어야 한다', () => {
       const source = { name: 'John' };
       const patches: Patch[] = [
         { op: Operation.ADD, path: '/__proto__/custom', value: 'value' },
       ];
 
-      // protectPrototype: true (기본값)일 때는 에러 발생
+      // own '__proto__' 컨테이너가 없으므로 일반 누락 중간 경로와 동일하게 실패한다
       expect(() => {
         applyPatch(source, patches);
       }).toThrow(JsonPatchError);
 
-      // protectPrototype: false일 때는 정상 처리 (보안상 권장하지 않음)
+      // 제거된 legacy protectPrototype 옵션을 넘겨도 동작은 달라지지 않는다
+      const legacyOptions: ApplyPatchOptions & { protectPrototype: boolean } = {
+        protectPrototype: false,
+      };
       expect(() => {
-        applyPatch(source, patches, { protectPrototype: false });
-      }).not.toThrow();
+        applyPatch(source, patches, legacyOptions);
+      }).toThrow(JsonPatchError);
 
-      // Cleanup: 테스트 후 프로토타입 속성 제거
-      // @ts-expect-error: Intentionally accessing prototype for cleanup
-      delete Object.prototype.custom;
+      expect(({} as Record<string, unknown>).custom).toBeUndefined();
     });
   });
 
@@ -887,38 +889,29 @@ describe('applyPatch', () => {
   });
 
   describe('에러 처리 - 보안 및 연산 관련', () => {
-    it('프로토타입 수정 시도 시 SECURITY_PROTOTYPE_MODIFICATION_FORBIDDEN 에러를 발생시켜야 한다', () => {
+    it('예약 멤버 경로 쓰기는 own 데이터로 적용되고 프로토타입 체인에 도달하지 않아야 한다', () => {
       const source = { name: 'John' };
 
-      // __proto__ 직접 수정 시도
       const prototypePatch: Patch[] = [
         {
           op: Operation.ADD,
           path: '/__proto__',
-          value: { malicious: 'value' },
+          value: { member: 'value' },
         },
       ];
 
-      expect(() => {
-        applyPatch(source, prototypePatch);
-      }).toThrow(JsonPatchError);
+      const result = applyPatch<Record<string, unknown>>(
+        source,
+        prototypePatch,
+      );
 
-      try {
-        applyPatch(source, prototypePatch);
-      } catch (error) {
-        expect(error).toBeInstanceOf(JsonPatchError);
-        expect((error as JsonPatchError).specific).toBe(
-          'SECURITY_PROTOTYPE_MODIFICATION_FORBIDDEN',
-        );
-        expect((error as JsonPatchError).message).toContain(
-          'Modifying prototype properties',
-        );
-        expect((error as JsonPatchError).message).toContain(
-          'forbidden for security reasons',
-        );
-        expect((error as JsonPatchError).details.operation).toBe('add');
-        expect((error as JsonPatchError).details.segment).toBeDefined();
-      }
+      expect(
+        Object.getOwnPropertyDescriptor(result, '__proto__')?.value,
+      ).toEqual({ member: 'value' });
+      expect(result.name).toBe('John');
+      expect(Object.getPrototypeOf(result)).toBe(Object.prototype);
+      expect(({} as Record<string, unknown>).member).toBeUndefined();
+      expect(Object.getPrototypeOf(source)).toBe(Object.prototype);
     });
 
     it('잘못된 연산에 대해 PATCH_OPERATION_INVALID 에러를 발생시켜야 한다', () => {

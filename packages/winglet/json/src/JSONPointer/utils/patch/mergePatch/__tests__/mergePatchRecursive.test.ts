@@ -319,17 +319,25 @@ describe('mergePatchRecursive', () => {
       expect(source.self).toBe(source); // 순환 참조 유지
     });
 
-    it('prototype 오염을 방지한다', () => {
+    it('예약 멤버를 own 데이터로 병합하면서 prototype 오염을 방지한다', () => {
       const source = { a: 1 };
-      const maliciousPatch = {
-        __proto__: { polluted: true },
-        constructor: { prototype: { polluted: true } },
-      };
+      // JSON.parse 로 만들어야 own 예약 멤버 키가 된다 — 객체 리터럴의 __proto__ 는
+      // own 속성이 아니라 프로토타입 대입이 되어 다른 것을 검사하게 된다
+      const maliciousPatch = JSON.parse(
+        '{"__proto__":{"polluted":true},"constructor":{"prototype":{"polluted":true}}}',
+      );
 
       mergePatchRecursive(source, maliciousPatch);
 
       expect((Object.prototype as any).polluted).toBeUndefined();
-      expect(source.constructor).toBeDefined(); // 예약 멤버는 병합에서 제외되어 상속 constructor 가 유지된다
+      expect(({} as any).polluted).toBeUndefined();
+      expect(
+        Object.getOwnPropertyDescriptor(source, '__proto__')?.value,
+      ).toEqual({ polluted: true });
+      expect(
+        Object.getOwnPropertyDescriptor(source, 'constructor')?.value,
+      ).toEqual({ prototype: { polluted: true } });
+      expect(Object.getPrototypeOf(source)).toBe(Object.prototype);
     });
 
     it('Symbol 키를 올바르게 처리한다', () => {
