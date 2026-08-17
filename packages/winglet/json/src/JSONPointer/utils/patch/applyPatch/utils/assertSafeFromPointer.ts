@@ -1,5 +1,4 @@
-import { unescapePath } from '@/json/JSONPointer/utils/escape/unescapePath';
-
+import { unescapePath } from '../../../escape';
 import type { Patch } from '../../../patchModel';
 import { JsonPatchError } from './error';
 import { isPrototypeModification } from './isPrototypeModification';

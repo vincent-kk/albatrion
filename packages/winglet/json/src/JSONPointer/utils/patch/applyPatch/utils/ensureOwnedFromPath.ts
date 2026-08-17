@@ -1,9 +1,9 @@
 import { isArray } from '@winglet/common-utils/filter';
 
 import { JSONPointer } from '@/json/JSONPointer/enum';
-import { unescapePath } from '@/json/JSONPointer/utils/escape/unescapePath';
 import type { JsonRoot } from '@/json/type';
 
+import { unescapePath } from '../../../escape';
 import { getArrayIndex } from './getArrayIndex';
 
 /**
