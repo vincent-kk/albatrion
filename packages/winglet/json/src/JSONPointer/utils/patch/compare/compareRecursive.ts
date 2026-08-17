@@ -104,11 +104,11 @@ export const compareRecursive = <
   // Process existing keys in source
   for (let i = 0, l = sourceKeys.length; i < l; i++) {
     const key = sourceKeys[i];
-    const sourceValue = source[key as keyof Source];
+    const sourceValue: unknown = source[key as keyof Source];
 
     // Check if key exists in target (optimized)
     if (hasOwnProperty(target, key)) {
-      const targetValue = target[key];
+      const targetValue: unknown = target[key];
 
       // Fast path: identical values
       if (

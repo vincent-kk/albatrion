@@ -15,9 +15,10 @@ import { isReactComponent } from '../filter';
  * const components = remainOnlyReactComponent({
  *   Button: ButtonComponent,
  *   Icon: IconComponent,
- *   helper: helperFunction, // Not a component, will be excluded
+ *   iconName: 'star', // Not callable as a component, will be excluded
  * });
  * // Result: { Button: ButtonComponent, Icon: IconComponent }
+ * // A plain function is kept: nothing at runtime tells it apart from a component
  */
 export const remainOnlyReactComponent = <
   Input extends Record<string, unknown>,

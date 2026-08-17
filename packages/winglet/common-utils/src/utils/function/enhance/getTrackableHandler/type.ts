@@ -114,9 +114,10 @@ export type TrackableHandlerFunction<
    * Executes the original function.
    *
    * @param args - Arguments to pass to the original function
-   * @returns Promise containing the result of the original function execution
+   * @returns Promise containing the result, or `undefined` when `preventConcurrent`
+   *   turned the call away because an execution was already in flight
    */
-  (...args: Args): Promise<Result>;
+  (...args: Args): Promise<Result | undefined>;
 
   /**
    * Subscribes to state change events.

@@ -305,4 +305,4 @@ export const isFalsy = <T>(value: T): value is Extract<T, Falsy> => !value;
  * - 0n (BigInt zero)
  * - NaN (Not a Number) - Note: NaN is of type number but falsy
  */
-export type Falsy = false | null | undefined | '' | 0 | 0n | typeof NaN;
+export type Falsy = false | null | undefined | '' | 0 | 0n;

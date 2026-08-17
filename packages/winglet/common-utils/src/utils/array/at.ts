@@ -77,8 +77,10 @@
  */
 export const at = <
   Type,
-  Indexes extends number[] | number,
-  Result = Indexes extends number[] ? Type[] : Type,
+  Indexes extends readonly number[] | number,
+  Result = Indexes extends readonly number[]
+    ? (Type | undefined)[]
+    : Type | undefined,
 >(
   array: readonly Type[],
   indexes: Indexes,

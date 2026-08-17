@@ -1,7 +1,9 @@
 import type { ComponentType } from 'react';
 
 import { isClassComponent } from './isClassComponent';
+import { isForwardRefComponent } from './isForwardRefComponent';
 import { isFunctionComponent } from './isFunctionComponent';
+import { isLazyComponent } from './isLazyComponent';
 import { isMemoComponent } from './isMemoComponent';
 
 /**
@@ -114,4 +116,6 @@ export const isReactComponent = <
 ): component is Component =>
   isFunctionComponent<Props>(component) ||
   isMemoComponent<Props>(component) ||
+  isForwardRefComponent<Props>(component) ||
+  isLazyComponent<Props>(component) ||
   isClassComponent<Props>(component);

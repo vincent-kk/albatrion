@@ -1,5 +1,8 @@
 import type { ComponentType, MemoExoticComponent } from 'react';
 
+/** React's brand for a value produced by `memo`. */
+const MEMO_TYPE = Symbol.for('react.memo');
+
 /**
  * Determines whether a given value is a React component wrapped with React.memo().
  *
@@ -95,4 +98,4 @@ export const isMemoComponent = <
 ): component is Component =>
   typeof component === 'object' &&
   component !== null &&
-  (component as any).$$typeof === Symbol.for('react.memo');
+  (component as { $$typeof?: unknown }).$$typeof === MEMO_TYPE;

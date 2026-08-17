@@ -406,10 +406,9 @@ export function getTrackableHandler<
    * @returns Result of the original function execution, or undefined if execution was prevented
    * @internal
    */
-  const handler = async (...args: Args): Promise<Result> => {
+  const handler = async (...args: Args): Promise<Result | undefined> => {
     // Check for concurrent execution prevention (based on pending status)
-    if (preventConcurrent && pending)
-      return Promise.resolve(undefined as Result);
+    if (preventConcurrent && pending) return undefined;
 
     // Execute beforeExecute hook - may throw and prevent execution
     hookRunning = true;
