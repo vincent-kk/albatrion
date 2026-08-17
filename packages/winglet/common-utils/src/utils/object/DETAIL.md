@@ -39,6 +39,14 @@
 - 기존 cloneLite 스위트(깊이 제한, 희소 배열, 중첩)가 전량 통과한다.
 - 일반 키 경로 bench에 유의미한 회귀가 없다.
 
+## Boundary Exemptions
+
+### `*.ts` (fractal root) — flat 단일 함수 컬렉션 유지
+
+- **Consumers**: `entry-point`
+- **Direct import**: `allowed`
+- **Reason**: 함수당 한 파일의 flat 컬렉션이 이 fractal의 정본 형태다 — 하위 organ 재배치는 배럴 깊이만 늘리고 tree-shaking 단위를 바꾸지 못한다. 배럴 경유 시 재수출 그래프가 번들에 딸려오므로, 개별 파일이 필요한 소비자의 직접 import도 같은 이유로 허용된다.
+
 ## History
 
 - 2026-08-18 — 예약 멤버 접근 프리미티브 신설 및 cloneLite own `__proto__` 보존 계약 채택. 이전 cloneLite는 own `__proto__`를 프로토타입 대입으로 처리해 형제 키를 소실시켰다(`@winglet/json` mergePatch RC-4의 원인). RFC 6901/6902/7396이 멤버 이름을 불투명 문자열로 규정하는 것과 `JSON.parse`가 own `__proto__` 데이터 속성을 만드는 플랫폼 동작에 정합시켰다.

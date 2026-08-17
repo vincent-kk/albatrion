@@ -31,6 +31,20 @@
 
 - 존재하지 않는 중간 경로는 다음 세그먼트 형태에 따라 배열 또는 객체로 생성된다.
 
+## Boundary Exemptions
+
+### `getValue.ts` — 단일 함수 직접 import 허용
+
+- **Consumers**: `packages/winglet/json/src/JSONPointer/utils/patch/applyPatch/utils/handleObject.ts`
+- **Direct import**: `allowed`
+- **Reason**: 배럴 경유 import는 이 fractal의 재수출 그래프 전체를 소비자 번들에 끌어들인다. 단일 함수만 필요한 내부 소비자는 개별 파일을 직접 import하는 것이 의도된 형태다. 같은 이유로 구현 파일은 fractal 루트의 flat 단일 함수 파일로 유지한다.
+
+### `setValue.ts` — 단일 함수 직접 import 허용
+
+- **Consumers**: `packages/winglet/json/src/JSONPointer/utils/patch/applyPatch/utils/handleObject.ts`
+- **Direct import**: `allowed`
+- **Reason**: `getValue.ts`와 동일 — 배럴 pull-in 회피가 목적이며, flat root peer 형태도 함께 의도된 것이다.
+
 ## History
 
 - 2026-08-18 — 예약 멤버 세그먼트 의미론을 "순회 중단 후 원본 반환(silent skip)"에서 RFC 정합 own 데이터 기록으로 전환. 판별·접근은 `@winglet/common-utils` 데이터 속성 프리미티브로 수렴. skip에 의존하던 호출자는 이제 예약 멤버 키가 own 데이터로 기록되는 것을 관측한다.

@@ -24,6 +24,14 @@
 
 - 빈 문자열과 `#`는 문서 전체를 가리키고, 단독 `/`는 빈 문자열 키를 가리킨다.
 
+## Boundary Exemptions
+
+### `enum.ts` — 포인터 문법 상수 root peer 유지
+
+- **Consumers**: 하위 연산 fractal 전반과 `entry-point`
+- **Direct import**: `allowed`
+- **Reason**: RFC 6901 문법 상수는 이 fractal 전체가 공유하는 원자 단위다. 배럴 경유를 강제하면 상수 하나에 재수출 그래프 전체가 딸려온다 — 개별 파일 직접 import와 root peer 배치가 의도된 형태다.
+
 ## History
 
 - 2026-08-18 — 예약 멤버 의미론을 "차단(silent skip / throw)"에서 RFC 정합 own 데이터 취급으로 전환. 판별·접근을 `@winglet/common-utils` 데이터 속성 프리미티브 한 벌로 수렴시키면서 패키지 내부 판별자 `isForbiddenKey`와 `isPrototypeModification`은 소비자가 사라져 제거했다. 근거: RFC 6901/6902/7396이 멤버 이름을 불투명 문자열로 규정하고, `JSON.parse`가 이미 own `__proto__` 데이터 속성을 만든다.

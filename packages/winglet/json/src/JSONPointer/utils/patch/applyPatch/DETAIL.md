@@ -32,6 +32,14 @@
 
 - 기본 호출에서 소스는 변경되지 않고, 무변경 서브트리는 반환 문서와 구조를 공유한다.
 
+## Boundary Exemptions
+
+### `applySinglePatch.ts` — 연산 코어 root peer 유지
+
+- **Consumers**: `applyPatch.ts`와 `__tests__`
+- **Direct import**: `allowed`
+- **Reason**: 진입점 `applyPatch`와 단일 연산 코어는 한 몸의 두 파일이다 — organ 재배치는 경로 깊이만 늘리고 경계를 바꾸지 못한다. flat root peer가 의도된 형태다.
+
 ## History
 
 - 2026-08-18 — `protectPrototype` 옵션 제거. 이전 의미론은 true(기본)=예약 멤버 경로에서 `JsonPatchError` throw, false=문서화되지 않은 제3의 동작(멤버를 데이터로 넣지 않으면서 반환 객체의 프로토타입을 교체)이었다. 예약 멤버를 own 데이터로 취급하는 RFC 정합 전환(J-3) 이후 안전성이 구조적 보증이 되어 옵션의 두 값이 구별되는 안전한 표현을 제공하지 못했고, 모노레포 내 외부 소비자도 없어 제거했다. throw에 의존하던 호출자는 사전 검증으로 대체해야 한다.

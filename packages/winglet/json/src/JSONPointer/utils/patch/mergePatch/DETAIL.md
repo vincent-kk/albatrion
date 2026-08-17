@@ -34,6 +34,14 @@
 - 기본 호출에서 소스 객체는 변경되지 않는다.
 - immutable이 false면 소스가 제자리 수정된다.
 
+## Boundary Exemptions
+
+### `mergePatchRecursive.ts` — 재귀 코어 root peer 유지
+
+- **Consumers**: `mergePatch.ts`
+- **Direct import**: `allowed`
+- **Reason**: 진입점 `mergePatch`와 재귀 코어는 한 몸의 두 파일이다 — organ 재배치는 경로 깊이만 늘리고 경계를 바꾸지 못한다. flat root peer가 의도된 형태다.
+
 ## History
 
 - 2026-08-18 — 예약 멤버 의미론을 "모든 깊이에서 병합 제외(silent skip)"에서 RFC 7396 정합 own 데이터 병합으로 전환. 무오염 불변식은 그대로 유지된다 — 바뀐 것은 예약 멤버 키가 결과 문서에 데이터로 나타난다는 점이다. skip에 의존하던 호출자는 결과에서 예약 멤버 own 키를 관측하게 된다.
