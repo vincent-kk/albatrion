@@ -406,6 +406,35 @@ omit 경로 감소는 매 호출 키 정렬(M20 의 대가)이고, 훨씬 잦은
 
 **검증**: json **30 파일 / 556 테스트 통과**, `typecheck`·`lint`·`build` 통과, schema-form 3568 · json-schema 392 통과.
 
+## Phase 4 — 타입 개선
+
+### [x] Task 4.1 / 4.3 — 선언부 타입 정정 (H10, M7, #8, #15, react H3·L10·L12·L15) · 2026-08-17
+
+**반영**
+
+| 파일 | 변경 |
+| --- | --- |
+| `common-utils/libs/hasOwnProperty.ts` | **(H10, A급)** `key is keyof typeof value`(=`keyof unknown`=`never`) → `<Type>(value: Type, key: PropertyKey): key is keyof Type`. 12+ 소비처의 가드가 실제로 좁히기 시작한다 |
+| `json/.../compareRecursive.ts` | H10 이 표면화시킨 유일한 오류. `hasOwnProperty` 가 실제로 좁히자 서로 무관한 두 제네릭의 값을 비교하던 지점이 드러났다 — 호출부 캐스트가 아니라 값 선언을 `unknown` 으로 정직하게 잡아 해소 |
+| `common-utils/utils/filter/isFalsy.ts` | (#8) `Falsy` 에서 `typeof NaN` 제거 — 리터럴이 아니라 `number` 전체라 `Falsy` 가 모든 수를 삼켰고, `[1,0,2].filter(isTruthy)` 가 `never[]` 가 되며 `isFalsy(string|number)` 는 unsound 했다 |
+| `common-utils/utils/array/at.ts` | (M7) 반환을 `Type \| undefined` / `(Type \| undefined)[]` 로, 제약을 `readonly number[] \| number` 로 |
+| `common-utils/.../getTrackableHandler/{type,getTrackableHandler}.ts` | (#15) 동시 실행 차단 시 반환이 `undefined` 이므로 호출 시그니처를 `Promise<Result \| undefined>` 로. `undefined as Result` 캐스트 제거 |
+| `react-utils/.../isForwardRefComponent.ts` · `isLazyComponent.ts` | **(H3)** 신규. `forwardRef`/`lazy` 는 함수가 아니라 객체라 기존 판별이 놓쳤고, `renderComponent` 가 오류 없이 `null` 을 돌려줘 화면에서 조용히 사라졌다 |
+| `react-utils/.../isReactComponent.ts` · `filter/index.ts` | 두 판별을 합류시키고 공개 |
+| `react-utils/.../isMemoComponent.ts` | (L12) `Symbol.for` 를 모듈 상수로 승격 |
+| `react-utils/.../ErrorBoundary.tsx` | (L10) `fallback || FALLBACK` → `!== undefined` — `null` 은 "에러 시 아무것도 렌더하지 않는다" 라는 유효한 의사다 |
+| `react-utils/.../withUploader.tsx` | (L15) `src/**` 에서 유일하게 alias 를 쓰던 import 를 상대 경로로 통일 |
+| `react-utils/.../isFunctionComponent.ts` · `remainOnlyReactComponent.ts` | 런타임에서 임의 함수와 컴포넌트 함수를 구별할 수 없다는 사실을 `@remarks` 와 예제에 명시 — 예제가 약속하던 "helper 는 제외된다" 는 지킬 수 없는 주장이었다 |
+| 신규 테스트 | `isReactComponent.exotic`(4), `withErrorBoundary.fallback`(2), `renderComponent.falsy`(2) |
+
+**fail-first**: forwardRef/lazy 미인식 `expected false to be true`, forwardRef 가 렌더되지 않음 `expected null not to be null`, `fallback={null}` 이 기본 메시지로 대체 `expected 'An unexpected error has occurred' to be ''`.
+
+**감사 재분류 — react L13 은 버그가 아니다**
+
+감사는 `renderComponent(0)`·`renderComponent('')` 가 `null` 이 되는 것을 falsy 노드 유실로 분류했다. 그러나 기존 `renderComponent.test.tsx` 가 `renderComponent('not a component') === null` 을 계약으로 고정하고 있다 — 이 함수는 **노드가 아니라 컴포넌트/엘리먼트만** 렌더한다. 그 계약에서 `0`·`''` 드롭은 일관된 동작이므로 통과시키려던 수정을 되돌리고, 계약을 명시하는 테스트를 남겼다.
+
+**A급 회귀 검토 결과**: `hasOwnProperty` 변경 후 6개 소비 패키지 `typecheck` 전부 통과(json 1건은 위처럼 선언부에서 해소). 테스트도 전량 통과 — common-utils 1069 · json 556 · react-utils 183 · schema-form 3568 · promise-modal 128 · json-schema 392 · data-loader 48.
+
 ### [x] Task 3.2b — stableEquals omit·내장 객체 (H5, M8, M14) · 2026-08-17
 
 **반영**
