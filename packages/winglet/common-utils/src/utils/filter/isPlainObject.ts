@@ -1,9 +1,9 @@
 /**
  * Determines whether a value is a plain data object (not a class instance or built-in).
  *
- * Performs sophisticated plain object detection by checking prototype chain
- * and constructor properties, distinguishing plain data objects from class
- * instances, built-in objects, and objects with custom prototypes.
+ * Performs plain object detection by checking the prototype chain and default
+ * object tag, distinguishing plain data objects from class instances, built-in
+ * objects, and objects with custom prototypes.
  *
  * @template T - Expected object type extending Record<PropertyKey, any>
  * @param value - Value to test for plain object characteristics
@@ -30,6 +30,7 @@
  * console.log(isPlainObject(1)); // false (primitive)
  * console.log(isPlainObject(null)); // false (null)
  * console.log(isPlainObject(undefined)); // false (undefined)
+ * console.log(isPlainObject({ [Symbol.toStringTag]: 'Tagged' })); // false
  * ```
  *
  * @example
@@ -121,8 +122,10 @@
  * @remarks
  * **Detection Criteria:**
  * 1. Must be a non-null object type
- * 2. Prototype must be null, Object.prototype, or have Object.prototype as grandparent
+ * 2. Prototype must be null, Object.prototype, or itself have a null prototype
  * 3. Must have '[object Object]' toString tag
+ * 4. An otherwise plain object with `Symbol.toStringTag` is rejected when the
+ *    custom tag changes the result of `Object.prototype.toString`
  *
  * **Use Cases:**
  * - Configuration object validation

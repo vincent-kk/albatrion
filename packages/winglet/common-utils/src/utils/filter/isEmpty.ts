@@ -6,8 +6,8 @@ import { isFalsy } from './isFalsy';
  * Determines whether a value is empty with comprehensive checking.
  *
  * Provides reliable emptiness detection for various data types including
- * primitives, objects, arrays, and other data structures. Checks for
- * null/undefined, falsy primitives, and objects without enumerable properties.
+ * primitives, objects, arrays, Maps, and Sets. Checks for null/undefined, falsy
+ * primitives, Map/Set size, and own enumerable properties on other objects.
  *
  * @param value - Value to test for emptiness
  * @returns Boolean indicating whether the value is considered empty
@@ -386,14 +386,18 @@ import { isFalsy } from './isFalsy';
  * - For primitives (non-objects/functions): uses `isFalsy()` check
  *   - Empty: `''`, `0`, `false`, `NaN`, `0n`
  *   - Non-empty: any other primitive value
- * - For objects: checks for enumerable properties
- *   - Empty: `{}`, `[]`, `new Set()`, `new Map()`, etc. (no enumerable properties)
- *   - Non-empty: objects with at least one enumerable property
+ * - For Map and Set instances: checks `size`
+ *   - Empty: `new Set()`, `new Map()`
+ *   - Non-empty: collections whose `size` is greater than zero
+ * - For other objects: checks for own enumerable properties
+ *   - Empty: `{}`, `[]`, and objects without own enumerable properties
+ *   - Non-empty: objects with at least one own enumerable property
  * - Functions are never considered empty
  *
  * **Special Cases:**
  * - Empty arrays `[]` return true (no enumerable indices)
  * - Empty objects `{}` return true (no enumerable properties)
+ * - Empty Map and Set instances return true; populated instances return false
  * - Objects with only non-enumerable properties return true
  * - Objects with only inherited properties return true
  * - Functions always return false (never empty)
@@ -404,6 +408,7 @@ import { isFalsy } from './isFalsy';
  * **Implementation Details:**
  * - Uses loose equality (`==`) for null check to catch both null and undefined
  * - Checks primitive types using `isFalsy()` for consistency
+ * - Checks Map and Set contents through their `size` property
  * - Uses `for...in` loop for efficient enumerable property detection
  * - Returns immediately when first enumerable property is found
  *

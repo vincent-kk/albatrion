@@ -3,11 +3,11 @@ import { abs } from './abs';
 /**
  * Calculates the sum of all digits in an integer.
  *
- * Computes the digital root by adding all individual digits of the given integer.
+ * Computes the digit sum by adding all individual digits of the given integer.
  * For negative numbers, the calculation is performed on the absolute value.
  * This function is useful in number theory, digital root calculations, and checksum algorithms.
  *
- * @param value - Integer to calculate digit sum for (must be an integer)
+ * @param value - Integer to calculate digit sum for; exact decimal digits require a safe integer
  * @returns Sum of all digits in the number
  * @throws {Error} When value is not an integer or is a special value (Infinity, NaN)
  *
@@ -42,6 +42,8 @@ import { abs } from './abs';
  * - For single-digit numbers, returns the number itself
  * - For negative numbers, uses absolute value (sign is ignored)
  * - Can be used iteratively to find digital root: digitSum(digitSum(n))
+ * - Integers outside the safe integer range may already have lost decimal-digit
+ *   information, so the result reflects the stored Number value
  *
  * **Use Cases:**
  * - Digital root calculations in numerology

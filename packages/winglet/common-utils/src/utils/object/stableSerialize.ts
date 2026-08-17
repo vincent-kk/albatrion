@@ -364,7 +364,8 @@ const createHash = (
     const cached = get(input);
     // Matching on the omit set rather than a string prefix: an empty omit hash is a
     // prefix of every result, so prefix matching handed omitted results to plain calls
-    if (cached !== undefined && cached.omitHash === omitHash) return cached.result;
+    if (cached !== undefined && cached.omitHash === omitHash)
+      return cached.result;
     let result = `${omitHash}${increment()}@`;
     set(input, { omitHash, result });
     if (isArray(input)) {
@@ -397,7 +398,8 @@ const createHash = (
   if (input === undefined) return 'undefined';
   // Quoted so a string can never serialize like the number or keyword it spells
   if (typeof input === 'string') return JSON.stringify(input);
-  if (isFunction((input as { toString?: unknown }).toString)) return String(input);
+  if (isFunction((input as { toString?: unknown }).toString))
+    return String(input);
   return serializeNative(input);
 };
 

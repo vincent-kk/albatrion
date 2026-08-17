@@ -15,7 +15,6 @@
  *
  * // True cases - array-like structures
  * console.log(isArrayLike([1, 2, 3])); // true (actual array)
- * console.log(isArrayLike('hello')); // true (string has length and indices)
  * console.log(isArrayLike({ 0: 'a', 1: 'b', length: 2 })); // true
  * console.log(isArrayLike({ length: 0 })); // true (empty array-like)
  *
@@ -31,9 +30,11 @@
  * console.log(isArrayLike(null)); // false
  * console.log(isArrayLike(undefined)); // false
  * console.log(isArrayLike({})); // false (no length property)
+ * console.log(isArrayLike('hello')); // false (strings are not objects)
  * console.log(isArrayLike({ length: 'not a number' })); // false
  * console.log(isArrayLike({ length: 2 })); // false (no indexed access)
- * console.log(isArrayLike({ 0: 'a', length: 1, 1: 'missing' })); // false
+ * console.log(isArrayLike({ 0: 'a', length: 2 })); // false (final index is absent)
+ * console.log(isArrayLike(new Array(3))); // false (last index is absent)
  * ```
  *
  * @example
@@ -67,7 +68,7 @@
  * }
  *
  * // Usage with different array-like structures
- * processArrayLike('hello', char => console.log(char)); // h, e, l, l, o
+ * processArrayLike({ 0: 'a', 1: 'b', length: 2 }, value => console.log(value)); // a, b
  * processArrayLike([1, 2, 3], num => console.log(num * 2)); // 2, 4, 6
  * ```
  *
@@ -95,12 +96,12 @@
  * **Detection Criteria:**
  * 1. Must be non-null object
  * 2. Must have 'length' property of type number
- * 3. If length > 0, must have indexed access to `length - 1`
+ * 3. If length > 0, the `length - 1` property must exist, so arrays with a
+ *    missing final slot are rejected
  * 4. Empty array-like objects (length === 0) are valid
  *
  * **Common Array-like Objects:**
  * - JavaScript Arrays
- * - Strings
  * - Arguments object
  * - NodeList, HTMLCollection (browser)
  * - TypedArrays (Uint8Array, etc.)

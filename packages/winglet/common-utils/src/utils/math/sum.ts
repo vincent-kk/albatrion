@@ -43,10 +43,11 @@
  * - Handles NaN and Infinity following JavaScript arithmetic rules
  * - Returns 0 for empty arrays (mathematical identity element)
  * - Preserves floating-point precision characteristics
+ * - Uses ordinary IEEE-754 addition without compensated summation, so rounding
+ *   error can accumulate and exact financial totals require a decimal or scaled-integer approach
  *
  * **Use Cases:**
  * - Statistical calculations and data analysis
- * - Financial computations (totals, running balances)
  * - Scientific calculations and measurements
  * - Performance metrics and aggregation
  * - Gaming systems (score totals, resource counting)

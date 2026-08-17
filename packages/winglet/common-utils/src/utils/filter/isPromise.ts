@@ -1,9 +1,8 @@
 /**
  * Determines whether a value is a Promise with enhanced type safety.
  *
- * Provides reliable Promise detection using instanceof check, identifying
- * Promise instances and thenable objects that follow the Promise specification.
- * Works with native Promises and Promise-like objects from different contexts.
+ * Detects Promise instances using the current realm's `Promise` constructor.
+ * Thenable objects and Promise instances created in another realm are not detected.
  *
  * @template T - Expected Promise type extending Promise<any>
  * @param value - Value to test for Promise type
@@ -225,10 +224,10 @@
  *
  * @remarks
  * **Promise Detection:**
- * - Uses `instanceof Promise` for reliable detection
- * - Works with native Promises and most Promise implementations
+ * - Uses `instanceof Promise` against the current realm's constructor
+ * - Detects native Promises and subclasses created in the current realm
  * - Does not detect thenable objects (objects with `then` method)
- * - Cross-frame compatible in most environments
+ * - Does not detect Promise instances from another realm or frame
  *
  * **Important Notes:**
  * - This checks for actual Promise instances, not just thenable objects

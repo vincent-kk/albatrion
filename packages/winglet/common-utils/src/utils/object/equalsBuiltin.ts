@@ -39,7 +39,8 @@ export const equalsBuiltin = (
     const rightTime = (right as Date).getTime();
     // Invalid dates carry NaN, which is never equal to itself
     return (
-      leftTime === rightTime || (leftTime !== leftTime && rightTime !== rightTime)
+      leftTime === rightTime ||
+      (leftTime !== leftTime && rightTime !== rightTime)
     );
   }
   if (tag === REGEXP_TAG)
@@ -59,7 +60,8 @@ export const equalsBuiltin = (
     const rightMap = right as Map<unknown, unknown>;
     if (leftMap.size !== rightMap.size) return false;
     for (const [key, value] of leftMap)
-      if (!rightMap.has(key) || !compare(value, rightMap.get(key))) return false;
+      if (!rightMap.has(key) || !compare(value, rightMap.get(key)))
+        return false;
     return true;
   }
   return false;

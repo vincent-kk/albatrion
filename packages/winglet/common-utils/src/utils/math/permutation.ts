@@ -3,7 +3,8 @@
  *
  * Computes P(n, r) = n! / (n-r)! representing the number of ways to arrange
  * r items from n total items where order matters. Uses efficient iterative
- * calculation avoiding full factorial computation to prevent overflow.
+ * calculation without computing a full factorial. Results are exact only while
+ * the permutation count is within JavaScript's safe integer range.
  *
  * @param n - Total number of items (must be non-negative integer)
  * @param r - Number of items to arrange (must be non-negative integer)
@@ -45,6 +46,7 @@
  * - P(n, n) = n! (full arrangement)
  * - P(n, r) = 0 when r > n
  * - Order matters (unlike combinations)
+ * - Results above `Number.MAX_SAFE_INTEGER` can silently lose integer precision
  *
  * **Use Cases:**
  * - Arranging people in seats or positions

@@ -1,9 +1,9 @@
 /**
  * Creates a stateful counter with increment, decrement, and reset capabilities.
  *
- * Provides a simple but powerful counter implementation with immutable interface
- * and consistent state management. Ideal for tracking quantities, iterations,
- * sequence numbers, and other numeric state that needs controlled modification.
+ * Provides an encapsulated mutable counter through methods that synchronously
+ * update closure state. Ideal for tracking quantities, iterations, sequence
+ * numbers, and other numeric state that needs controlled modification.
  *
  * @param initialValue - Starting counter value (defaults to 0)
  * @returns Counter object with manipulation methods and current value access
@@ -71,8 +71,8 @@
  * @remarks
  * **Key Features:**
  * - **Encapsulated State**: Counter value is private and controlled
- * - **Immutable Interface**: Methods return new values without side effects on return
- * - **Atomic Operations**: Each operation is atomic and thread-safe
+ * - **Mutable Operations**: Increment, decrement, and reset mutate the closure state
+ * - **Synchronous Access**: No cross-thread synchronization or thread-safety guarantee
  * - **Reset Capability**: Can restore to initial value at any time
  * - **Type Safety**: Full TypeScript support with number type guarantees
  *

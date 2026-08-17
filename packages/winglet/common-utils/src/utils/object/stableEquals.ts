@@ -1,7 +1,4 @@
-import {
-  ARRAY_BUFFER_TAG,
-  OBJECT_TAG,
-} from '@/common-utils/constant/typeTag';
+import { ARRAY_BUFFER_TAG, OBJECT_TAG } from '@/common-utils/constant/typeTag';
 import { getTypeTag } from '@/common-utils/libs/getTypeTag';
 
 import { countRetainedKeys } from './countRetainedKeys';

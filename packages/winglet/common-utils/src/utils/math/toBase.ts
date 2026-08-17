@@ -7,7 +7,7 @@ import { BASE_36_DIGITS } from './constant';
  * base system. Uses digits 0-9 and letters A-Z for bases greater than 10.
  * Supports negative numbers and provides efficient conversion algorithm.
  *
- * @param value - Integer to convert (must be an integer)
+ * @param value - Integer to convert; exact conversion requires a safe integer
  * @param base - Target base from 2 to 36 (2=binary, 8=octal, 16=hex, etc.)
  * @returns String representation of the number in the specified base
  * @throws {Error} When value is not an integer or base is out of range
@@ -53,6 +53,8 @@ import { BASE_36_DIGITS } from './constant';
  * - Base 10 (decimal): digits 0-9
  * - Base 16 (hexadecimal): digits 0-9, A-F
  * - Base 36 (maximum): digits 0-9, A-Z
+ * - Integers outside the safe integer range may already have lost digit information,
+ *   so the output represents the stored Number value rather than the intended integer
  *
  * **Use Cases:**
  * - Number system conversion for educational purposes

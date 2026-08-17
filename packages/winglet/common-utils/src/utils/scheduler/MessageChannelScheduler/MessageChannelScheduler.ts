@@ -10,8 +10,8 @@ import type { SchedulerOptions } from './type';
  *
  * Provides efficient scheduling of callback functions with automatic batching, cancellation
  * support, and resource management. Uses MessageChannel API for precise timing control
- * and better performance compared to setTimeout-based schedulers. Implements singleton
- * pattern for global usage while supporting multiple independent instances.
+ * and better performance compared to setTimeout-based schedulers. Exposes a singleton
+ * instance through `getInstance()` and recreates it after explicit destruction.
  *
  * @example
  * Basic usage with singleton pattern:
@@ -87,13 +87,12 @@ import type { SchedulerOptions } from './type';
  * - `getInstance()` returns same instance across calls
  * - Options only apply to first `getInstance()` call
  * - Instance persists until explicitly destroyed
- * - Multiple independent instances can be created via constructor
  *
  * **Resource Management:**
  * - MessageChannel ports are properly closed on destroy
  * - Task references are cleared to prevent memory leaks
  * - Event listeners are removed during cleanup
- * - Automatic cleanup on browser page unload
+ * - No page-unload hook is installed; callers must invoke `destroy()` explicitly
  */
 export class MessageChannelScheduler {
   /** Global singleton instance for shared usage across application */
