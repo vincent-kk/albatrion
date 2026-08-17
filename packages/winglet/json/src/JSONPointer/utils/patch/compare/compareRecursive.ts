@@ -176,7 +176,9 @@ export const compareRecursive = <
         });
       removal.push({ op: Operation.REMOVE, path: targetPath });
       if (sourceIsArray) deferredRemovals[deferredRemovals.length] = removal;
-      else for (let r = 0, rl = removal.length; r < rl; r++) patches.push(removal[r]);
+      else
+        for (let r = 0, rl = removal.length; r < rl; r++)
+          patches.push(removal[r]);
       hasRemoved = true;
     }
   }
