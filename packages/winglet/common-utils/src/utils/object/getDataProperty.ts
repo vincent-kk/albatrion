@@ -1,8 +1,8 @@
-import { hasOwnProperty } from '@/common-utils/libs/hasOwnProperty';
-
 import type { Dictionary } from '@aileron/declare';
 
-import { isReservedName } from './utils/isReservedName';
+import { hasOwnProperty } from '@/common-utils/libs/hasOwnProperty';
+
+import { isReservedName } from './isReservedName';
 
 /**
  * Reads a property while treating reserved member names as opaque own data.

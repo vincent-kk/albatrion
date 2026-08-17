@@ -25,19 +25,19 @@ describe('setDataProperty', () => {
       const target: Record<string, unknown> = {};
       setDataProperty(target, 'constructor', { c: 1 });
 
-      expect(Object.getOwnPropertyDescriptor(target, 'constructor')?.value).toEqual(
-        { c: 1 },
-      );
-      expect(({}).constructor).toBe(Object);
+      expect(
+        Object.getOwnPropertyDescriptor(target, 'constructor')?.value,
+      ).toEqual({ c: 1 });
+      expect({}.constructor).toBe(Object);
     });
 
     it('should create an own prototype data property', () => {
       const target: Record<string, unknown> = {};
       setDataProperty(target, 'prototype', { p: 1 });
 
-      expect(Object.getOwnPropertyDescriptor(target, 'prototype')?.value).toEqual(
-        { p: 1 },
-      );
+      expect(
+        Object.getOwnPropertyDescriptor(target, 'prototype')?.value,
+      ).toEqual({ p: 1 });
       expect(Object.getPrototypeOf(target)).toBe(Object.prototype);
     });
   });
@@ -47,9 +47,9 @@ describe('setDataProperty', () => {
       const target = JSON.parse('{"__proto__":{"x":1}}');
       setDataProperty(target, '__proto__', { x: 2 });
 
-      expect(Object.getOwnPropertyDescriptor(target, '__proto__')?.value).toEqual(
-        { x: 2 },
-      );
+      expect(
+        Object.getOwnPropertyDescriptor(target, '__proto__')?.value,
+      ).toEqual({ x: 2 });
       expect(Object.getPrototypeOf(target)).toBe(Object.prototype);
     });
 

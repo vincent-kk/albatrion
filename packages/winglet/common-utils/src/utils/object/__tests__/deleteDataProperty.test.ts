@@ -8,7 +8,9 @@ describe('deleteDataProperty', () => {
       const target = JSON.parse('{"__proto__":{"x":1},"keep":1}');
 
       expect(deleteDataProperty(target, '__proto__')).toBe(true);
-      expect(Object.getOwnPropertyDescriptor(target, '__proto__')).toBeUndefined();
+      expect(
+        Object.getOwnPropertyDescriptor(target, '__proto__'),
+      ).toBeUndefined();
       expect(Object.getPrototypeOf(target)).toBe(Object.prototype);
       expect(target.keep).toBe(1);
     });
@@ -17,14 +19,18 @@ describe('deleteDataProperty', () => {
       const target = JSON.parse('{"constructor":{"c":1}}');
 
       expect(deleteDataProperty(target, 'constructor')).toBe(true);
-      expect(Object.getOwnPropertyDescriptor(target, 'constructor')).toBeUndefined();
+      expect(
+        Object.getOwnPropertyDescriptor(target, 'constructor'),
+      ).toBeUndefined();
     });
 
     it('should remove an own prototype data property', () => {
       const target = JSON.parse('{"prototype":{"p":1}}');
 
       expect(deleteDataProperty(target, 'prototype')).toBe(true);
-      expect(Object.getOwnPropertyDescriptor(target, 'prototype')).toBeUndefined();
+      expect(
+        Object.getOwnPropertyDescriptor(target, 'prototype'),
+      ).toBeUndefined();
     });
   });
 
@@ -34,7 +40,7 @@ describe('deleteDataProperty', () => {
 
       expect(deleteDataProperty(target, 'constructor')).toBe(true);
       expect(deleteDataProperty(target, '__proto__')).toBe(true);
-      expect(({}).constructor).toBe(Object);
+      expect({}.constructor).toBe(Object);
       expect(Object.getPrototypeOf({})).toBe(Object.prototype);
     });
   });

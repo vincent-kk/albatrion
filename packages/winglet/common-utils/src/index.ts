@@ -200,6 +200,7 @@ export {
   getObjectKeys,
   getSymbols,
   hasUndefined,
+  isReservedName,
   merge,
   removePrototype,
   removeUndefined,

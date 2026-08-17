@@ -1,6 +1,6 @@
 import type { Dictionary } from '@aileron/declare';
 
-import { isReservedName } from './utils/isReservedName';
+import { isReservedName } from './isReservedName';
 
 /**
  * Writes a property while treating reserved member names as opaque own data.

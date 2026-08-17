@@ -10,6 +10,7 @@ export { getFirstKey } from './getFirstKey';
 export { getObjectKeys } from './getObjectKeys';
 export { getSymbols } from './getSymbols';
 export { hasUndefined } from './hasUndefined';
+export { isReservedName } from './isReservedName';
 export { merge } from './merge';
 export { removePrototype } from './removePrototype';
 export { removeUndefined } from './removeUndefined';

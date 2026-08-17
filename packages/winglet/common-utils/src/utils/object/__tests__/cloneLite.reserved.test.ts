@@ -9,9 +9,11 @@ describe('cloneLite reserved member names', () => {
     const cloned = cloneLite(source);
 
     expect(Object.keys(cloned).sort()).toEqual(['__proto__', 'keep'].sort());
-    expect(Object.getOwnPropertyDescriptor(cloned, '__proto__')?.value).toEqual({
-      x: 1,
-    });
+    expect(Object.getOwnPropertyDescriptor(cloned, '__proto__')?.value).toEqual(
+      {
+        x: 1,
+      },
+    );
     expect(cloned.keep).toBe(1);
   });
 
