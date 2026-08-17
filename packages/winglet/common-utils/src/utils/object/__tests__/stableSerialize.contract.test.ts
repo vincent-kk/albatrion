@@ -25,6 +25,16 @@ describe('stableSerialize contract', () => {
     );
   });
 
+  it('should reuse a memoized omit collection after its contents change', () => {
+    const input = { a: 1, b: 2 };
+    const omit = ['b'];
+    const initial = stableSerialize(input, omit);
+
+    omit[0] = 'a';
+
+    expect(stableSerialize(input, omit)).toBe(initial);
+  });
+
   it('should always return a string', () => {
     expect(typeof stableSerialize(undefined)).toBe('string');
     expect(typeof stableSerialize(null)).toBe('string');

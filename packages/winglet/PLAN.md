@@ -19,7 +19,7 @@ Phase 0~6 를 순차 실행했다. **작업 이력·검증 결과·계획 대비
 | 4 타입               | 완료                              |
 | 5 문서·공개 표면     | 완료                              |
 | 6 벤치 확충          | 완료                              |
-| 7 성능 회수          | **진행 중 (2/5)**                 |
+| 7 성능 회수          | **진행 중 (3/5)**                 |
 
 ### 별도 작업으로 남긴 항목
 
@@ -657,6 +657,7 @@ Phase 7 (성능 회수)    ──> PROGRESS §성능 후속 작업 수집본. Ta
 | `hasOwnProperty`                                | 타입 가드 `key is never` → `key is keyof Type`. 가드 내부에서 통과하던 잘못된 키 사용이 타입 에러로 드러날 수 있다         | Task 4.1 |
 | `at`                                            | 스칼라 인덱스도 `Math.trunc` 정규화 — `at(a, 1.5)` 가 배열 인자와 같은 슬롯을 읽는다                                       | Task 3.4 |
 | `getTrackableHandler`                           | 차단된 호출의 반환이 `Promise<Result \| undefined>` — 이전엔 `Result` 로 거짓 주장                                         | Task 4.1 |
+| `stableSerialize` omit                          | omit 컬렉션이 identity 로 memo 된다 — 같은 컬렉션 객체를 변형해 재사용하면 이전 정렬·해시가 재사용된다(JSDoc Limitations 명시) | Task 7.3 |
 
 ### @winglet/json — major
 
@@ -667,7 +668,7 @@ Phase 7 (성능 회수)    ──> PROGRESS §성능 후속 작업 수집본. Ta
 | `applyPatch` `move`/`copy` 의 `from` | 문자열이 아니면 `JsonPatchError('PATCH_PATH_INVALID')` — 이전엔 조용히 통과했다                                                                                                                                        | Task 3.7 |
 | `compare` 배열 제거 순서             | 배열 원소 제거 패치를 역순으로 방출 — 이전 순서로는 스스로 만든 패치를 되적용할 수 없었다                                                                                                                              | Task 3.7 |
 | `difference`                         | 숫자키 plain object 를 배열로 오판하지 않는다(H-3) — 이전엔 remove 가 누락돼 병합 결과에 제거된 키가 남았다. Date leaf 는 ISO 문자열 대신 Date 클론으로 패치에 실린다. 변경이 금지 키뿐이면 `{}` 대신 `undefined` 반환 | Task 7.1 |
-| `applyPatch` immutable               | deep copy → **copy-on-write 구조 공유**. 원본 불변은 유지되나 패치가 닿지 않은 서브트리를 반환값과 원본이 공유한다 — **반환값을 변형하는 소비자는 원본을 변형하게 된다**                                                | Task 7.2 |
+| `applyPatch` immutable               | deep copy → **copy-on-write 구조 공유**. 원본 불변은 유지되나 패치가 닿지 않은 서브트리를 반환값과 원본이 공유한다 — **반환값을 변형하는 소비자는 원본을 변형하게 된다**                                               | Task 7.2 |
 
 ### @winglet/react-utils — minor
 

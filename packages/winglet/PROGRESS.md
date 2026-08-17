@@ -642,12 +642,12 @@ omit 경로 감소는 매 호출 키 정렬(M20 의 대가)이고, 훨씬 잦은
 
 **반영**
 
-| 파일                                                  | 변경                                                                                                                                                     |
-| ----------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `json/.../applyPatch/applyPatch.ts`                   | JSDoc 계약을 구조 공유로 선행 갱신(공유 한계 `@remarks` 포함). 전체 `cloneLite` → 얕은 루트 복제 + `WeakSet` 소유 추적                                   |
-| `json/.../applyPatch/applySinglePatch.ts`             | 시그니처 말미 `cloned: WeakSet<object> \| null`. walk 하강부 소유권 확보(미소유 노드 얕은 복제). MOVE 검증 블록에서 from 경로 사전 소유 확보             |
-| `json/.../applyPatch/utils/ensureOwnedFromPath.ts`    | 신규 1함수. MOVE 의 `setValue(source, from, undefined)` 가 path walk 밖 경로를 직접 변형하므로, from 중간 노드를 사전 소유화. 미존재 세그먼트에서 중단 |
-| `json/.../__tests__/applyPatch.copyOnWrite.test.ts`   | 신규 4케이스 — 공유(신규 계약)·원본 불변·MOVE from 보존·move 된 서브트리 후속 패치                                                                       |
+| 파일                                                | 변경                                                                                                                                                   |
+| --------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `json/.../applyPatch/applyPatch.ts`                 | JSDoc 계약을 구조 공유로 선행 갱신(공유 한계 `@remarks` 포함). 전체 `cloneLite` → 얕은 루트 복제 + `WeakSet` 소유 추적                                 |
+| `json/.../applyPatch/applySinglePatch.ts`           | 시그니처 말미 `cloned: WeakSet<object> \| null`. walk 하강부 소유권 확보(미소유 노드 얕은 복제). MOVE 검증 블록에서 from 경로 사전 소유 확보           |
+| `json/.../applyPatch/utils/ensureOwnedFromPath.ts`  | 신규 1함수. MOVE 의 `setValue(source, from, undefined)` 가 path walk 밖 경로를 직접 변형하므로, from 중간 노드를 사전 소유화. 미존재 세그먼트에서 중단 |
+| `json/.../__tests__/applyPatch.copyOnWrite.test.ts` | 신규 4케이스 — 공유(신규 계약)·원본 불변·MOVE from 보존·move 된 서브트리 후속 패치                                                                     |
 
 핸들러 3파일(handleObject/handleArray/handleRootPatch)은 설계 목표대로 **무수정**.
 
@@ -655,15 +655,33 @@ omit 경로 감소는 매 호출 키 정렬(M20 의 대가)이고, 훨씬 잦은
 
 **성능 게이트 (세션 직접 측정, hz)**
 
-| 시나리오             |  전(기준) | 후            |        변화 |
-| -------------------- | --------: | ------------- | ----------: |
-| 1 patch              |    65,311 | **1,052,133** | **+1,511%** |
-| 10 patches           |  (43,248) | 109,178       |   **+152%** |
-| 100 patches          |    12,580 | 13,879        |      +10.3% |
-| 10 patches, mutating |  (46,078) | 46,807        | +1.6%(무해) |
+| 시나리오             | 전(기준) | 후            |        변화 |
+| -------------------- | -------: | ------------- | ----------: |
+| 1 patch              |   65,311 | **1,052,133** | **+1,511%** |
+| 10 patches           | (43,248) | 109,178       |   **+152%** |
+| 100 patches          |   12,580 | 13,879        |      +10.3% |
+| 10 patches, mutating | (46,078) | 46,807        | +1.6%(무해) |
 
 **mutating 게이트 판정**: codex 가 1차 보고의 "±5% 통과" 를 스스로 철회했다 — 7회 재실행에서 평균 +4.12%, 3회가 +5% 초과(빠른 방향), 엄격한 대칭 ±5% 밴드는 통계적으로 입증 불가. 그러나 **감속은 한 번도 관찰되지 않았고**(추가 비용은 패치당 세그먼트별 `cloned !== null` 단락 분기뿐), PLAN 게이트 문언은 "5% 넘게 **느려지면** 되돌린다" 이므로 통과로 판정한다. 세션 직접 측정도 +1.6%(빠름 방향).
 
 **얕은 복제 vs cloneLite 대조 (codex 보고, 검수 수용)**: spread 는 enumerable symbol key 를 복사(기존은 생략), Array subclass 는 `slice()` 가 `Symbol.species` 를 따를 수 있음, own `__proto__` 키는 spread 가 오히려 안전(own data key 보존), 비-plain 노드 내부로 패치가 내려가면 닿은 노드가 plain 으로 복제됨 — 전부 `JsonRoot`(plain object/array) 타입 범위 밖 특수 입력이라 수용.
 
 **검증 (세션 직접 실행)**: json **32 파일 / 550 테스트 통과**(기존 applyPatch 3스위트 무수정 통과, 루트 분리 단언 `result !== source` 포함), `typecheck`·`lint`·`build` 통과.
+
+### [x] Task 7.3 — stableSerialize omit 정렬 memo (A-1) · 2026-08-17 (codex 위임 + 세션 JSDoc 보완)
+
+**반영**: `stableSerialize.ts` — omit 컬렉션 객체를 키로 하는 `WeakMap` memo(`resolveOmitEntry`). 매 호출 복사·정렬·Set 구축·Murmur3 해시가 컬렉션당 1회로. 기존 정렬·`join`·base36 로직 그대로 이전이라 **출력 문자열 불변**. `Limitations` JSDoc 을 코드보다 먼저 갱신(omit 컬렉션 identity memo 전제). falsy omit 은 `if (!omit)` 가드로 기존 무-omit 경로 유지. codex 가 초안의 `omit as object` 캐스트를 WeakMap 선언부 타입 구체화로 스스로 제거(호출부 캐스트 금지 규칙 부합). `stableSerialize.contract.test.ts` +1 — 변형된 omit 컬렉션이 memo 를 재사용하는 문서화된 한계의 characterization(memo 도입 전 red: `expected 'gos6uq{b:2}' to be '15l00zn{a:1}'`).
+
+**세션 검수 보완**: 신규 선언 3개(`OmitEntry`·`omitEntryCache`·`resolveOmitEntry`)에 JSDoc 이 없어 파일 관례(`CacheEntry` 등 전 선언 JSDoc)에 맞춰 추가 — 제거된 기존 인라인 주석의 정렬·복사 사유를 `resolveOmitEntry` JSDoc 으로 이전.
+
+**성능 게이트 (hz)**
+
+| 시나리오               | 전(기준)  | 후(codex 전후쌍) |      변화 | 세션 재확인 |
+| ---------------------- | --------: | ---------------: | --------: | ----------: |
+| same input with omit   | 3,616,187 |   **14,648,980** | **+305%** |  11,629,989 |
+| same input every call  | 15,543,534 |       15,312,344 |     -1.5% |  12,435,942 |
+| a different input      | 14,668,020 |       14,443,086 |     -1.5% |  11,765,322 |
+
+게이트: omit 시나리오가 원값(3,638,113) 의 3.2~4.0배로 회복+초과, 무-omit 은 동일 환경 전후쌍 -1.5%(5% 이내). 세션 절대값 차이는 환경 부하이며 같은 실행 내 상대 구조(omit ≈ 무-omit 의 94%)가 회수를 확인.
+
+**검증 (세션 직접 실행, JSDoc 보완 후)**: common-utils **127 파일 / 1,078 테스트 통과**(stableSerialize 기존 2파일 무수정, contract 는 +1 만), `typecheck`·`lint`·`build` 통과.

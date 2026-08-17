@@ -14,6 +14,38 @@ import { serializeNative } from './serializeNative';
 const { get, set, delete: remove } = cacheWeakMapFactory<CacheEntry>();
 const { increment } = counterFactory();
 
+/** The lookup set and hash prefix derived from one omit collection. */
+type OmitEntry = { set: Set<string>; hash: string };
+
+/** Derived omit entries, memoized by collection identity. */
+const omitEntryCache = new WeakMap<
+  Set<string> | readonly string[],
+  OmitEntry
+>();
+
+/**
+ * Derives the lookup set and hash prefix for an omit collection, once per collection.
+ *
+ * Keys are copied and sorted so the same set of omitted keys hashes alike however the
+ * caller ordered it, without the sort ever reaching the caller's array.
+ *
+ * @param omit - Omit collection, treated as immutable for the lifetime of the memo
+ * @returns The memoized entry for this collection
+ */
+const resolveOmitEntry = (
+  omit: Set<string> | readonly string[],
+): OmitEntry => {
+  const cached = omitEntryCache.get(omit);
+  if (cached !== undefined) return cached;
+  const keys = [...omit].sort();
+  const entry: OmitEntry = {
+    set: new Set(keys),
+    hash: Murmur3.hash(keys.join(',')).toString(36),
+  };
+  omitEntryCache.set(omit, entry);
+  return entry;
+};
+
 /**
  * Creates deterministic, stable serialization strings with circular reference support.
  *
@@ -315,8 +347,10 @@ const { increment } = counterFactory();
  * - **Type Distinction**: Better handling of functions, undefined, symbols
  *
  * **Limitations:**
- * - **Inputs Are Treated As Immutable**: each object's result is cached by identity, so
- *   mutating an object after serializing it yields the string computed before the change
+ * - **Inputs Are Treated As Immutable**: each object's result is cached by identity, and
+ *   each omit collection's sorted keys and hash are memoized by identity. Mutating an
+ *   object after serializing it yields the string computed before the change; mutating a
+ *   reused omit collection reuses its memoized sort and hash
  * - **Identity, Not Structure, For Opaque Values**: circular references, class instances,
  *   `Map`, `Set` and functions serialize to a per-instance marker. The same object always
  *   yields the same marker, but two structurally identical instances yield different ones
@@ -331,14 +365,9 @@ export const stableSerialize = (
   input: unknown,
   omit?: Set<string> | readonly string[],
 ): string => {
-  // Sorted so the same set of omitted keys hashes alike however the caller ordered it,
-  // and copied so sorting never reaches the caller's array
-  const omitKeys = omit ? [...omit].sort() : null;
-  const omitSet = omitKeys ? new Set(omitKeys) : null;
-  const omitHash = omitKeys
-    ? Murmur3.hash(omitKeys.join(',')).toString(36)
-    : '';
-  return createHash(input, omitSet, omitHash);
+  if (!omit) return createHash(input, null, '');
+  const entry = resolveOmitEntry(omit);
+  return createHash(input, entry.set, entry.hash);
 };
 
 /** A cached string together with the omit set it was produced under. */
