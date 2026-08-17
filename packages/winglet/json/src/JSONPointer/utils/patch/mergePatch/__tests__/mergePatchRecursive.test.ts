@@ -329,7 +329,7 @@ describe('mergePatchRecursive', () => {
       mergePatchRecursive(source, maliciousPatch);
 
       expect((Object.prototype as any).polluted).toBeUndefined();
-      expect(source.constructor).toBeDefined(); // constructor가 변경됨
+      expect(source.constructor).toBeDefined(); // 예약 멤버는 병합에서 제외되어 상속 constructor 가 유지된다
     });
 
     it('Symbol 키를 올바르게 처리한다', () => {
