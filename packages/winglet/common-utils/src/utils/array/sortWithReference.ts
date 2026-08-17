@@ -43,8 +43,7 @@ export const sortWithReference = <Value>(
       referenceMap.set(reference[i], i);
 
     const referencedGroups: Value[][] = new Array(reference.length);
-    for (let i = 0, l = reference.length; i < l; i++)
-      referencedGroups[i] = [];
+    for (let i = 0, l = reference.length; i < l; i++) referencedGroups[i] = [];
     const unreferencedItems: Value[] = [];
 
     for (let i = 0, l = source.length; i < l; i++) {

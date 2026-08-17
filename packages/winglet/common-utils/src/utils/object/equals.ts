@@ -6,6 +6,12 @@ import { countRetainedKeys } from './countRetainedKeys';
 import { equalsBuiltin } from './equalsBuiltin';
 
 /**
+ * Sentinel used to bypass internal-state tag checks for current-realm
+ * literal-prototype pairs.
+ */
+const OBJECT_PROTOTYPE = Object.prototype;
+
+/**
  * Performs deep equality comparison between two values with optimized recursive traversal.
  *
  * Compares values recursively by examining all nested properties of objects and arrays.
@@ -297,16 +303,21 @@ const equalsRecursive = (
     return true;
   }
 
-  // Built-ins keep their state in internal slots that own keys cannot see, so comparing
-  // keys would call any two of them equal. Class instances carry OBJECT_TAG and stay
-  // on the structural path below.
-  const tag = getTypeTag(left);
-  if (tag !== getTypeTag(right)) return false;
-  if (tag !== OBJECT_TAG) {
-    const byState = equalsBuiltin(left, right, tag, (leftValue, rightValue) =>
-      equalsRecursive(leftValue, rightValue, omits),
-    );
-    if (byState !== undefined) return byState;
+  if (
+    Object.getPrototypeOf(left) !== OBJECT_PROTOTYPE ||
+    Object.getPrototypeOf(right) !== OBJECT_PROTOTYPE
+  ) {
+    // Built-ins keep their state in internal slots that own keys cannot see, so comparing
+    // keys would call any two of them equal. Class instances carry OBJECT_TAG and stay
+    // on the structural path below.
+    const tag = getTypeTag(left);
+    if (tag !== getTypeTag(right)) return false;
+    if (tag !== OBJECT_TAG) {
+      const byState = equalsBuiltin(left, right, tag, (leftValue, rightValue) =>
+        equalsRecursive(leftValue, rightValue, omits),
+      );
+      if (byState !== undefined) return byState;
+    }
   }
 
   const keys = Object.keys(left);
