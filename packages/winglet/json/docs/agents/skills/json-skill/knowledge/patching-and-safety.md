@@ -1,6 +1,6 @@
 # Patching and Safety
 
-Generating and applying diffs, and the three things that decide whether that is safe: the prototype guard, the `strict` guard pipeline, and which function is allowed to mutate what.
+Generating and applying diffs, and the three things that decide whether that is safe: the reserved-member data contract, the `strict` guard pipeline, and which function is allowed to mutate what.
 
 ## Prototype pollution
 
@@ -13,14 +13,14 @@ A patch that arrives from a client, a queue, or a config file is arbitrary attac
 ]
 ```
 
-The library defends on two layers, and each layer's rule is narrower than "reject these three words":
+The library defends structurally, and the rule is uniform across `setValue`, `applyPatch`, and `mergePatch`:
 
 1. **Container validation.** `getValue` and `setValue` accept only plain objects and arrays. Class instances, functions, `Map`, `Set`, and primitives are rejected outright, so a patch cannot start a traversal on a prototype chain by accident.
-2. **Path-segment guarding.** `applyPatch` with `protectPrototype: true` (the default) rejects a segment of `__proto__` at any depth, and rejects `prototype` **only when the preceding segment is `constructor`**. Both payload lines above are stopped. A bare `/constructor/x` or `/prototype/x` is _not_ stopped by this guard — it fails structurally instead, with `PATCH_PATH_INVALID_INTERMEDIATE`, and fails the same way when the guard is off.
+2. **Reserved members are opaque own data.** `__proto__`, `constructor`, and `prototype` are treated exactly like any other member name, per RFC 6901/6902/7396: reads return the own data property or `undefined` — never the prototype chain — and writes define an own data property without triggering the `__proto__` setter. There is no guard to configure and nothing to switch off; no input can modify `Object.prototype` or any inherited object.
 
-`setValue` uses a different and broader rule that cannot be switched off: any segment equal to `__proto__`, `constructor`, or `prototype` aborts the write. It reports nothing — the document comes back unchanged. So the same malicious pointer produces a thrown `JsonPatchError` through `applyPatch` and a silent no-op through `setValue`. If you need to know that a write was refused, compare the document, because no error will tell you.
+Both payload lines above therefore fail structurally with `PATCH_PATH_INVALID_INTERMEDIATE`, for the same reason `/missing/isAdmin` fails: the intermediate container is not an own property. Writing `/__proto__` directly (one segment, no missing intermediate) succeeds — as an own data property on the document, prototype untouched. The same pointer produces the same observable result through all three write APIs: no API throws a security error, none silently skips, and there is no `protectPrototype` option.
 
-Turning `protectPrototype: false` genuinely disables the guard: the first payload line then succeeds and pollutes the global prototype. Use it only when you produced the patch yourself.
+One consequence worth knowing: a returned document can now carry an own `__proto__` data key (exactly as `JSON.parse` output can). Spread (`{ ...x }`), `JSON.parse(JSON.stringify(x))`, and `structuredClone` preserve it as data, but `Object.assign({}, x)` and a `for-in` copy loop will swap the copy's prototype. Prefer spread when copying documents that may contain reserved member keys.
 
 ## The strict pipeline: compare writes guards, applyPatch enforces them
 
@@ -106,7 +106,7 @@ try {
   if (error instanceof Error && error.name === 'JsonPatch') {
     const code = (error as Error & { specific: string }).specific;
     if (code === 'PATCH_TEST_FAILED') return retryWithFreshDocument();
-    if (code === 'SECURITY_PROTOTYPE_MODIFICATION_FORBIDDEN') return reject(error);
+    if (code === 'PATCH_PATH_INVALID_INTERMEDIATE') return reject(error);
   }
   throw error;
 }
@@ -116,12 +116,12 @@ Matching on `code` works too, but remember it is prefixed — `'JSON_PATCH.PATCH
 
 ## Recommended options by use case
 
-| Use case                                         | Options                                                                                                |
-| ------------------------------------------------ | ------------------------------------------------------------------------------------------------------ |
-| Reading a value that may be absent               | `getValue` — no options; check for `undefined`                                                         |
-| Applying a patch from an untrusted source        | `{ strict: true, immutable: true, protectPrototype: true }`                                            |
-| Applying a patch you generated, in a hot path    | `{ immutable: false, protectPrototype: false, strict: false }` — after confirming you own the document |
-| Optimistic concurrency against a shared document | `compare(..., { strict: true })` **and** `applyPatch(..., { strict: true })`                           |
-| Diffing for state management                     | `compare` defaults; keep `immutable: true` if the patch outlives the tick                              |
-| Merging an API response                          | `mergePatch(source, patch)` — defaults are correct                                                     |
-| Updating one form field                          | `setValue(state, pointer, value)` — mutation is the point                                              |
+| Use case                                         | Options                                                                       |
+| ------------------------------------------------ | ----------------------------------------------------------------------------- |
+| Reading a value that may be absent               | `getValue` — no options; check for `undefined`                                |
+| Applying a patch from an untrusted source        | `{ strict: true, immutable: true }` — reserved-member safety is structural    |
+| Applying a patch you generated, in a hot path    | `{ immutable: false, strict: false }` — after confirming you own the document |
+| Optimistic concurrency against a shared document | `compare(..., { strict: true })` **and** `applyPatch(..., { strict: true })`  |
+| Diffing for state management                     | `compare` defaults; keep `immutable: true` if the patch outlives the tick     |
+| Merging an API response                          | `mergePatch(source, patch)` — defaults are correct                            |
+| Updating one form field                          | `setValue(state, pointer, value)` — mutation is the point                     |

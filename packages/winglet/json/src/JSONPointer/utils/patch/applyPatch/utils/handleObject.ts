@@ -1,5 +1,10 @@
 import { hasOwnProperty } from '@winglet/common-utils/lib';
-import { cloneLite, equals } from '@winglet/common-utils/object';
+import {
+  cloneLite,
+  deleteDataProperty,
+  equals,
+  setDataProperty,
+} from '@winglet/common-utils/object';
 
 import { getValue } from '@/json/JSONPointer/utils/manipulator/getValue';
 import { setValue } from '@/json/JSONPointer/utils/manipulator/setValue';
@@ -34,7 +39,7 @@ export const handleObject = (
   switch (patch.op) {
     case Operation.ADD:
     case Operation.REPLACE:
-      object[key] = patch.value;
+      setDataProperty(object, key, patch.value);
       return source;
     case Operation.REMOVE:
       if (!hasOwnProperty(object, key)) {
@@ -50,7 +55,7 @@ export const handleObject = (
           },
         );
       }
-      delete object[key];
+      deleteDataProperty(object, key);
       return source;
     case Operation.TEST:
       if (!hasOwnProperty(object, key)) {
@@ -93,7 +98,7 @@ export const handleObject = (
             path: patch.path,
           },
         );
-      object[key] = getValue(source, patch.from);
+      setDataProperty(object, key, getValue(source, patch.from));
       setValue(source, patch.from, undefined);
       return source;
     case Operation.COPY:
@@ -111,7 +116,7 @@ export const handleObject = (
         );
       // RFC 6902 copy yields an independent value; sharing the reference would let a
       // later edit of the copy mutate the original
-      object[key] = cloneLite(getValue(source, patch.from));
+      setDataProperty(object, key, cloneLite(getValue(source, patch.from)));
       return source;
     default:
       throw new JsonPatchError(

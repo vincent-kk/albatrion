@@ -33,6 +33,8 @@ equals(previous, next, ['updatedAt', 'requestId']);
 
 The `cloneLite` trap is not that it fails on a `Date`; it is that it _succeeds_ and hands back the very same `Date`, so a later mutation reaches the original. Both `clone` and `cloneLite` accept a depth bound, and both return nodes at or beyond that depth by reference — a bounded clone shares state by design.
 
+An own `__proto__` key (as `JSON.parse` produces) is cloned by `cloneLite` as an own data property: every own key survives and the clone keeps the input's prototype — the write goes through `setDataProperty`, never the `__proto__` setter.
+
 ### The three meanings of `Lite`
 
 | Family                               | What `Lite` changes                      | Consequence                                                                                                 |

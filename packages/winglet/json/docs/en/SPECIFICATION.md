@@ -345,7 +345,6 @@ function applyPatch<Result>(
   options?: {
     strict?: boolean; // default: false
     immutable?: boolean; // default: true
-    protectPrototype?: boolean; // default: true
   },
 ): Result;
 ```
@@ -576,7 +575,6 @@ type CompareOptions = { strict?: boolean; immutable?: boolean };
 type ApplyPatchOptions = {
   strict?: boolean;
   immutable?: boolean;
-  protectPrototype?: boolean;
 };
 ```
 
@@ -586,15 +584,22 @@ type ApplyPatchOptions = {
 
 ### Prototype Pollution Protection
 
-`applyPatch` rejects patches targeting `__proto__`, `constructor`, or `prototype` paths when `protectPrototype: true` (the default).
+The reserved member names `__proto__`, `constructor`, and `prototype` are opaque strings, handled as own data properties — exactly how RFC 6901/6902/7396 define member names and how `JSON.parse` already materializes them. Reads never walk the prototype chain (a non-own reserved member reads as `undefined`), writes define own data properties without triggering the `__proto__` setter, and no input can modify `Object.prototype` or any other inherited object. This safety is structural — no option exists to switch it off.
 
 ```typescript
-// This throws — prototype pollution blocked
-applyPatch({}, [{ op: 'add', path: '/__proto__/isAdmin', value: true }]);
+// Own data property — the prototype chain is untouched, no error
+const result = applyPatch({}, [
+  { op: 'add', path: '/__proto__', value: { isAdmin: true } },
+]);
+Object.getOwnPropertyDescriptor(result, '__proto__')?.value; // { isAdmin: true }
+Object.getPrototypeOf(result) === Object.prototype; // true
 
-// Explicit opt-out (trusted sources only)
-applyPatch(trustedSource, trustedPatches, { protectPrototype: false });
+// A reserved intermediate without an own container fails like any missing path
+applyPatch({}, [{ op: 'add', path: '/__proto__/isAdmin', value: true }]);
+// throws PATCH_PATH_INVALID_INTERMEDIATE — Object.prototype is never reached
 ```
+
+`setValue` and `mergePatch` observe identically: the same reserved-member input produces the same own-data result, the same unchanged prototype, and no error across all three APIs.
 
 ### Input Validation
 
@@ -646,7 +651,6 @@ try {
 | ----------------------------- | ---------------------------------------------------------------- |
 | Large deeply-nested documents | `immutable: false` to avoid deep clone overhead                  |
 | Sequential patch application  | `strict: false` (default) — skips extra validation per operation |
-| Trusted patch sources         | `protectPrototype: false` to remove prototype checks             |
 | Memory-sensitive environments | `immutable: false` in `mergePatch` to avoid cloning              |
 
 ```typescript
@@ -654,7 +658,6 @@ try {
 applyPatch(source, patches, {
   immutable: false,
   strict: false,
-  protectPrototype: false,
 });
 ```
 

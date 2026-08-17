@@ -17,7 +17,8 @@ import type { ApplyPatchOptions } from './type';
  * The application process follows these principles:
  * - Operations are applied sequentially in the order provided
  * - Each operation is validated before application
- * - Path validation ensures security against prototype pollution
+ * - Reserved member names (__proto__, constructor, prototype) are handled as
+ *   opaque own data — no patch input can modify the prototype chain
  * - Immutable mode preserves the source with copy-on-write path cloning while unchanged
  *   subtrees remain structurally shared between the source and result
  * - Strict mode enforces additional validation rules
@@ -29,7 +30,6 @@ import type { ApplyPatchOptions } from './type';
  * @param options.strict - Whether to use strict validation (default: false)
  * @param options.immutable - Whether to preserve the source with copy-on-write path cloning
  *                            (default: true)
- * @param options.protectPrototype - Whether to prevent prototype pollution attacks (default: true)
  *
  * @see https://datatracker.ietf.org/doc/html/rfc6902
  *
@@ -43,7 +43,6 @@ import type { ApplyPatchOptions } from './type';
  * @throws {JsonPatchError} When a patch operation fails due to:
  *         - Invalid path syntax or structure
  *         - Attempting to modify non-existent properties in strict mode
- *         - Security violations (prototype pollution attempts)
  *         - Type mismatches between expected and actual values
  *         - Array index out of bounds or invalid format
  *
@@ -85,7 +84,6 @@ export const applyPatch = <Result extends JsonRoot = any>(
 ): Result => {
   const strict = options?.strict ?? false;
   const immutable = options?.immutable ?? true;
-  const protectPrototype = options?.protectPrototype ?? true;
 
   const cloned = immutable ? new WeakSet<object>() : null;
   let result: any = source;
@@ -94,13 +92,6 @@ export const applyPatch = <Result extends JsonRoot = any>(
     cloned.add(result);
   }
   for (let i = 0, l = patches.length; i < l; i++)
-    result = applySinglePatch(
-      result,
-      patches[i],
-      i,
-      strict,
-      protectPrototype,
-      cloned,
-    );
+    result = applySinglePatch(result, patches[i], i, strict, cloned);
   return result as Result;
 };

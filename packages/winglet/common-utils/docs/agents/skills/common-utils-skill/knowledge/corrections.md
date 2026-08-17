@@ -24,6 +24,8 @@ Each entry is a claim that looks right, is wrong, and often type-checks anyway. 
 
 **`cloneLite(target)` only** → `cloneLite` also accepts **`maxDepth`**, exactly like `clone`.
 
+**`cloneLite` drops an own `__proto__` key** → it preserves it as an **own data property**; the clone keeps the input's prototype and sibling keys survive. Use `getDataProperty`/`setDataProperty`/`deleteDataProperty` (with the `isReservedName` predicate) for the same own-data semantics in your own code.
+
 ## Behaviors that are the opposite of the obvious reading
 
 **`merge({tags:['a']}, {tags:['b']})` → `{tags:['a','b']}`** → the result is **`{tags:['b']}`**. Arrays merge index-wise through the same key walk used for objects, so `merge({a:[1,2]},{a:[3]})` gives `{a:[3,2]}` — index `0` is overwritten and the target's surplus elements survive. Nothing is concatenated.

@@ -339,7 +339,6 @@ function applyPatch<Result>(
   options?: {
     strict?: boolean; // 기본값: false
     immutable?: boolean; // 기본값: true
-    protectPrototype?: boolean; // 기본값: true
   },
 ): Result;
 ```
@@ -570,7 +569,6 @@ type CompareOptions = { strict?: boolean; immutable?: boolean };
 type ApplyPatchOptions = {
   strict?: boolean;
   immutable?: boolean;
-  protectPrototype?: boolean;
 };
 ```
 
@@ -580,15 +578,22 @@ type ApplyPatchOptions = {
 
 ### 프로토타입 오염 방지
 
-`applyPatch`는 `protectPrototype: true`(기본값)일 때 `__proto__`, `constructor`, `prototype` 경로를 대상으로 하는 패치를 거부합니다.
+예약 멤버 이름 `__proto__`, `constructor`, `prototype`은 불투명한 문자열, 즉 own 데이터 속성으로 처리됩니다 — RFC 6901/6902/7396이 멤버 이름을 규정하는 방식이며 `JSON.parse`가 이미 만들어내는 형태입니다. 읽기는 프로토타입 체인으로 넘어가지 않고(own이 아닌 예약 멤버는 `undefined`), 쓰기는 `__proto__` setter를 트리거하지 않는 own 데이터 속성을 만들며, 어떤 입력도 `Object.prototype` 등 상속 객체를 변경할 수 없습니다. 이 안전성은 구조적이어서 끌 수 있는 옵션이 존재하지 않습니다.
 
 ```typescript
-// 예외 발생 — 프로토타입 오염 시도 차단
-applyPatch({}, [{ op: 'add', path: '/__proto__/isAdmin', value: true }]);
+// own 데이터 속성 — 프로토타입 체인은 건드리지 않고, 에러도 없음
+const result = applyPatch({}, [
+  { op: 'add', path: '/__proto__', value: { isAdmin: true } },
+]);
+Object.getOwnPropertyDescriptor(result, '__proto__')?.value; // { isAdmin: true }
+Object.getPrototypeOf(result) === Object.prototype; // true
 
-// 신뢰할 수 있는 소스에서만 비활성화
-applyPatch(trustedSource, trustedPatches, { protectPrototype: false });
+// own 컨테이너가 없는 예약 멤버 중간 경로는 일반 누락 경로와 동일하게 실패
+applyPatch({}, [{ op: 'add', path: '/__proto__/isAdmin', value: true }]);
+// PATCH_PATH_INVALID_INTERMEDIATE 발생 — Object.prototype에는 도달하지 않음
 ```
+
+`setValue`와 `mergePatch`도 동일하게 관측됩니다: 같은 예약 멤버 입력에 대해 세 API 모두 같은 own 데이터 결과, 같은 프로토타입 불변, 무에러를 보입니다.
 
 ### 입력 유효성 검사
 
@@ -648,19 +653,17 @@ function safeGet<T>(obj: object, ptr: string, fallback: T): T {
 
 ## 성능
 
-| 상황                         | 권장 설정                                        |
-| ---------------------------- | ------------------------------------------------ |
-| 깊은 중첩 구조의 대용량 문서 | `immutable: false` — 딥 클론 오버헤드 제거       |
-| 순차적 패치 다량 적용        | `strict: false`(기본값) — 연산별 추가 검증 생략  |
-| 신뢰할 수 있는 패치 소스     | `protectPrototype: false` — 프로토타입 검사 제거 |
-| 메모리 제약 환경             | `mergePatch`의 `immutable: false`                |
+| 상황                         | 권장 설정                                       |
+| ---------------------------- | ----------------------------------------------- |
+| 깊은 중첩 구조의 대용량 문서 | `immutable: false` — 딥 클론 오버헤드 제거      |
+| 순차적 패치 다량 적용        | `strict: false`(기본값) — 연산별 추가 검증 생략 |
+| 메모리 제약 환경             | `mergePatch`의 `immutable: false`               |
 
 ```typescript
 // 최고 성능 (신뢰할 수 있는 환경에서만 사용)
 applyPatch(source, patches, {
   immutable: false,
   strict: false,
-  protectPrototype: false,
 });
 ```
 
