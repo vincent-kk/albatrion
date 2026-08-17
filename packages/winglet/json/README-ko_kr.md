@@ -239,9 +239,10 @@ interface CompareOptions {
 interface ApplyPatchOptions {
   strict?: boolean; // 엄격한 적용 모드 (기본값: false)
   immutable?: boolean; // 불변성 모드 (기본값: true)
-  protectPrototype?: boolean; // 프로토타입 보호 (기본값: true)
 }
 ```
+
+예약 멤버 이름(`__proto__`, `constructor`, `prototype`)은 항상 불투명한 own 데이터 속성으로 처리됩니다 — 별도 옵션이 필요 없고 존재하지도 않으며, 어떤 패치 입력도 프로토타입 체인에 도달하거나 이를 변경할 수 없습니다.
 
 ---
 
@@ -287,10 +288,10 @@ const patches = [
   { op: 'replace', path: '/user/role', value: 'admin' },
 ];
 
-// 안전한 패치 적용 (프로토타입 오염 방지)
+// 안전한 패치 적용 — 프로토타입 오염은 구조적으로 불가능:
+// 예약 멤버 이름은 체인을 거치지 않고 own 데이터로 기록됩니다
 const result = applyPatch(data, patches, {
   immutable: true, // 원본 데이터 보존
-  protectPrototype: true, // 프로토타입 오염 방지
   strict: true, // 엄격한 검증
 });
 

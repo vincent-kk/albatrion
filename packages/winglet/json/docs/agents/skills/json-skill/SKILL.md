@@ -28,20 +28,22 @@ Applies when code addresses a location inside a JSON document, diffs two documen
 | Need the pointer to a nested object?                     | `getJSONPointer(root, target)` from `@winglet/json/pointer-common`. Do **not** build it by converting a `getJSONPath` result.                                                                                                  |
 | Editing one element of an array?                         | JSON Patch. Merge Patch replaces an array wholesale at every depth — there is no element-level merge.                                                                                                                          |
 | Patch must refuse a document that changed underneath it? | `strict: true` on `compare` **and** on `applyPatch`. Either one alone does nothing.                                                                                                                                            |
-| Applying a patch from a client or network?               | `{ strict: true, protectPrototype: true, immutable: true }` — only `protectPrototype` and `immutable` are already the defaults.                                                                                                |
+| Applying a patch from a client or network?               | `{ strict: true, immutable: true }` — `immutable` is already the default, and reserved-member safety is structural (no option involved).                                                                                       |
 
 ## Invariants & Gotchas
 
 Defaults, from source. Omitting the options object applies all of them:
 
-| Function     | `strict` | `immutable`                                        | `protectPrototype` | Other                                   |
-| ------------ | -------- | -------------------------------------------------- | ------------------ | --------------------------------------- |
-| `getValue`   | —        | —                                                  | —                  | no options                              |
-| `setValue`   | —        | always mutates                                     | always on, silent  | `overwrite: true`, `preserveNull: true` |
-| `compare`    | `false`  | `true`                                             | —                  | —                                       |
-| `applyPatch` | `false`  | `true`                                             | `true`             | —                                       |
-| `mergePatch` | —        | `true` (3rd positional arg, not an options object) | —                  | —                                       |
-| `difference` | —        | —                                                  | —                  | no options                              |
+| Function     | `strict` | `immutable`                                        | Other                                   |
+| ------------ | -------- | -------------------------------------------------- | --------------------------------------- |
+| `getValue`   | —        | —                                                  | no options                              |
+| `setValue`   | —        | always mutates                                     | `overwrite: true`, `preserveNull: true` |
+| `compare`    | `false`  | `true`                                             | —                                       |
+| `applyPatch` | `false`  | `true`                                             | —                                       |
+| `mergePatch` | —        | `true` (3rd positional arg, not an options object) | —                                       |
+| `difference` | —        | —                                                  | no options                              |
+
+Reserved member names (`__proto__`, `constructor`, `prototype`) are opaque own data in every function above — reads are own-only, writes define own data properties, and no option exists to change that.
 
 Corrections for claims that are commonly assumed and are wrong here:
 
@@ -55,7 +57,7 @@ Corrections for claims that are commonly assumed and are wrong here:
 | `strict: false` makes `applyPatch` lenient                          | Unrelated failures throw regardless of `strict`: `remove` of a missing property, `test` on a missing property, array index out of bounds.                     |
 | `escapePath` escapes `/` inside a key                               | It splits on `/` first, so a `/` is never escaped — `escapePath('config/database')` returns `'config/database'` unchanged.                                    |
 | `unescapeSegment` is the inverse of `escapeSegment`                 | `unescapeSegment` is an alias for `unescapePath` — the same function object.                                                                                  |
-| `setValue` reports a rejected prototype key                         | It returns the document untouched, with no error.                                                                                                             |
+| `setValue` skips or rejects reserved member keys                    | It writes them as own data properties, prototype untouched. There is no silent skip.                                                                          |
 | `difference` result is always usable                                | It returns `undefined` when the inputs are identical — guard before passing downstream.                                                                       |
 | `-` works wherever a path does                                      | `-` (append) is valid only in `setValue` and JSON Patch `add`.                                                                                                |
 | `getJSONPath` cannot find primitives                                | It matches with `===`, so primitives are found; with duplicate values you get one traversal-order-dependent match, not all.                                   |
@@ -63,10 +65,10 @@ Corrections for claims that are commonly assumed and are wrong here:
 | `convertJsonPathToPointer` takes a `$`-rooted JSONPath              | It takes a bare data path and treats `$` as an ordinary key, so a `getJSONPath` result cannot be piped into it.                                               |
 | `compare` emits `move` when a subtree relocates                     | It never emits `move` or `copy`; a relocation appears as `remove` plus `add`. Those two ops are apply-only and must be hand-written.                          |
 | `setValue(doc, ptr, undefined)` assigns `undefined`                 | It **deletes** the key instead.                                                                                                                               |
-| `protectPrototype` rejects any `constructor` or `prototype` segment | It rejects `__proto__` anywhere, and `prototype` only directly after `constructor`. A bare `/constructor/x` is refused structurally instead, guard on or off. |
+| `protectPrototype` guards `applyPatch` against pollution            | No such option exists. Reserved members are own data everywhere; a reserved intermediate without an own container fails as `PATCH_PATH_INVALID_INTERMEDIATE` like any missing path. |
 | `mergePatch` merges arrays element-wise                             | An array in the patch body replaces the target wholesale, at every depth. Use JSON Patch for element-level array edits.                                       |
 
-`JSONPointerError` has exactly two codes — `INVALID_INPUT` and `INVALID_POINTER_TYPE`. There is no `INVALID_POINTER` and no `PROPERTY_NOT_FOUND`. Patch failures are a separate class, `JsonPatchError`, whose codes are prefixed `JSON_PATCH.` and include `PATCH_TEST_FAILED`, `PATCH_OBJECT_PROPERTY_NOT_FOUND`, `PATCH_ARRAY_INDEX_OUT_OF_BOUNDS`, `PATCH_ARRAY_INDEX_INVALID`, `PATCH_OPERATION_INVALID`, `PATCH_TARGET_NOT_OBJECT`, `PATCH_PATH_INVALID_INTERMEDIATE`, `PATCH_PATH_PROCESSING_ERROR`, `PATCH_MOVE_INTO_DESCENDANT_FORBIDDEN`, `PATCH_COPY_INTO_DESCENDANT_FORBIDDEN`, and `SECURITY_PROTOTYPE_MODIFICATION_FORBIDDEN`.
+`JSONPointerError` has exactly two codes — `INVALID_INPUT` and `INVALID_POINTER_TYPE`. There is no `INVALID_POINTER` and no `PROPERTY_NOT_FOUND`. Patch failures are a separate class, `JsonPatchError`, whose codes are prefixed `JSON_PATCH.` and include `PATCH_TEST_FAILED`, `PATCH_OBJECT_PROPERTY_NOT_FOUND`, `PATCH_ARRAY_INDEX_OUT_OF_BOUNDS`, `PATCH_ARRAY_INDEX_INVALID`, `PATCH_OPERATION_INVALID`, `PATCH_TARGET_NOT_OBJECT`, `PATCH_PATH_INVALID_INTERMEDIATE`, `PATCH_PATH_PROCESSING_ERROR`, `PATCH_MOVE_INTO_DESCENDANT_FORBIDDEN`, and `PATCH_COPY_INTO_DESCENDANT_FORBIDDEN`. There is no security-specific code — reserved-member paths fail (or succeed) exactly like ordinary paths.
 
 ## Knowledge Router
 
