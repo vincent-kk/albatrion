@@ -393,3 +393,41 @@ Phase 6 (벤치 확충)
 | 4   | stableSerialize 비-plain | **결정적 안정 키** — WeakMap 기반 인스턴스 안정 id 로 "같은 입력 → 같은 출력" 보장. 구조 동일성까지는 미지원(JSDoc 명시). registerPlugin 캐시 무력화 해소가 목적                                         | Task 3.3 H8 |
 
 > #3 의 동작 수정 2건은 계약 변경(breaking)이나 **`isEmpty` · `round` 모두 프로덕션 소비처 0건**(grep 실측, 2026-08-17)으로 확인되어 §계약 변경 마스터 리스트 **B급(위험 낮음, 수정 자유)** 에 속한다. 공개 npm 패키지이므로 changeset 에는 breaking 으로 기록한다.
+
+---
+
+## 릴리스 기록 — changeset 에 breaking 으로 남길 항목
+
+> 이 저장소는 `.changeset/` 를 추적하지 않는다(릴리스 시점에 `yarn changeset` 으로 생성). 그래서 **실제로 착지한** 계약 변경을 여기 한 곳에 모아 둔다. 릴리스 담당자는 이 표를 그대로 changeset 본문으로 옮기면 된다. "모노레포 소비처 0" 은 저장소 내부 이야기일 뿐, **공개 npm 패키지이므로 외부 소비자에게는 전부 breaking** 이다.
+
+### @winglet/common-utils — major
+
+| 유틸                                          | 변화                                                                                                              | 근거      |
+| --------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- | --------- |
+| `equals` · `stableEquals`                     | omit 키를 개수 비교 **전에** 제외 → 비대칭 키셋이 이제 equal. Date/RegExp/Map/Set 는 상태 비교(이전엔 무조건 true) | Task 3.2  |
+| `stableSerialize`                             | 출력 문자열 형식 변경(문자열 인용, `null`/`undefined` 명시, Invalid Date 표기, omit 키 정렬). 캐시 키로 쓰던 값이 달라진다 | Task 3.3  |
+| `Murmur3`                                     | MurmurHash3 x86_32 레퍼런스와 일치하도록 교정 → **모든 해시값이 달라진다**. 저장된 해시가 있으면 재계산 필요       | Task 3.5  |
+| `polynomialHash(_, length)` (length < 7)      | `slice(0, n)` → `slice(-n)` — 저비트를 보존하도록 잘라내는 쪽이 바뀜                                               | Task 3.5  |
+| `groupBy` · `transformKeys` · `transformValues` | 반환 객체가 `Object.create(null)` 산 — 프로토타입이 없다. `result.hasOwnProperty(...)` 같은 상속 메서드 호출이 깨진다 | Task 3.4  |
+| `isEmpty`                                     | 내용이 있는 `Map`/`Set` 을 이제 non-empty 로 판정(이전엔 own key 가 없어 empty)                                    | Task 5.1  |
+| `round`                                       | 지수 표기로 밀려 잘못 반올림되던 입력이 교정됨                                                                    | Task 5.1  |
+| `merge`                                       | `__proto__` 키를 병합에서 제외 — 프로토타입 오염 차단. 그 키를 실제로 병합하던 코드가 있다면 무시된다              | Task 2.1  |
+| `hasOwnProperty`                              | 타입 가드 `key is never` → `key is keyof Type`. 가드 내부에서 통과하던 잘못된 키 사용이 타입 에러로 드러날 수 있다 | Task 4.1  |
+| `at`                                          | 스칼라 인덱스도 `Math.trunc` 정규화 — `at(a, 1.5)` 가 배열 인자와 같은 슬롯을 읽는다                               | Task 3.4  |
+| `getTrackableHandler`                         | 차단된 호출의 반환이 `Promise<Result \| undefined>` — 이전엔 `Result` 로 거짓 주장                                 | Task 4.1  |
+
+### @winglet/json — major
+
+| 유틸                     | 변화                                                                              | 근거     |
+| ------------------------ | ----------------------------------------------------------------------------------- | -------- |
+| `getJSONPointer`         | 루트 반환 `'/'` → `''`(RFC 6901). **`''` 는 falsy 이므로 `if (pointer)` 로 존재를 판정하던 코드가 루트를 놓친다** — `!= null` 로 바꿔야 한다 | Task 3.7 |
+| `applyPatch` 배열 `move`/`copy` | 덮어쓰기 → splice 삽입, 제거는 `delete` 가 아니라 splice(구멍이 남지 않는다). RFC 6902 정합 | Task 3.7 |
+| `applyPatch` `move`/`copy` 의 `from`      | 문자열이 아니면 `JsonPatchError('PATCH_PATH_INVALID')` — 이전엔 조용히 통과했다 | Task 3.7 |
+| `compare` 배열 제거 순서 | 배열 원소 제거 패치를 역순으로 방출 — 이전 순서로는 스스로 만든 패치를 되적용할 수 없었다 | Task 3.7 |
+
+### @winglet/react-utils — minor
+
+| 유틸               | 변화                                                             | 근거     |
+| ------------------ | ------------------------------------------------------------------ | -------- |
+| `isReactComponent` | `forwardRef`/`lazy` 컴포넌트를 이제 컴포넌트로 인정(이전엔 탈락) | Task 4.3 |
+| `isForwardRefComponent` · `isLazyComponent` | 신규 export(추가만, 기존 표면 불변)                | Task 4.3 |

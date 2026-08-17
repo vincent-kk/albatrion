@@ -295,7 +295,7 @@ omit 경로 감소는 매 호출 키 정렬(M20 의 대가)이고, 훨씬 잦은
 
 **검증**: common-utils **119 파일 / 1047 테스트 통과**, `typecheck`·`lint`·`build` 통과, 소비 패키지 전량 통과(json 545 · react-utils 175 · schema-form 3568 · promise-modal 128 · json-schema 392).
 
-### [x] Task 3.4 — array·object 유틸 (M4, M5, M6, M13, M12) · 2026-08-17
+### [x] Task 3.4 — array·object 유틸 (M4, M5, M6, M13 / M12 되돌림) · 2026-08-17
 
 **반영**
 
@@ -304,20 +304,17 @@ omit 경로 감소는 매 호출 키 정렬(M20 의 대가)이고, 훨씬 잦은
 | `common-utils/.../groupBy.ts`                              | (M4) 누산기를 `Object.create(null)` 로 — `constructor`/`toString` 같은 상속 멤버가 키로 오면 `result[key].push` 가 TypeError 를 던지던 문제 제거                       |
 | `common-utils/.../transformKeys.ts` · `transformValues.ts` | (M5) 누산기를 `Object.create(null)` 로 — `__proto__` 키가 프로토타입 setter 에 흡수돼 조용히 사라지던 문제 제거                                                        |
 | `common-utils/.../at.ts`                                   | (M6) 스칼라 분기에도 배열 분기와 같은 `Math.trunc(index)                                                                                                               |     | 0`정규화 —`at(a, 1.5)`와`at(a, [1.5])` 가 다른 슬롯을 읽던 불일치 제거 |
-| `common-utils/.../sortWithReference.ts`                    | (M13) reference 생략 시에도 복사본 반환 — 한쪽 경로만 입력을 그대로 돌려주던 aliasing 제거. (M12) reference 길이만큼 빈 배열을 선할당하던 버킷 방식을 안정 정렬로 교체 |
+| `common-utils/.../sortWithReference.ts`                    | (M13) reference 생략 시에도 복사본 반환 — 한쪽 경로만 입력을 그대로 돌려주던 aliasing 제거. M12(버킷 → 정렬)는 아래 〔되돌림〕 참조                                    |
 | 각 테스트                                                  | groupBy +1, transformKeys +1, transformValues +1, at +1, sortWithReference +1                                                                                          |
 | `common-utils/bench/sortWithReference.bench.ts`            | 신규 (sparse / dense)                                                                                                                                                  |
 
 **fail-first**: `TypeError: result[key].push is not a function`(groupBy), `expected [] to deeply equal ['__proto__']`(transformKeys), `expected ['a'] to deeply equal ['__proto__','a']`(transformValues), `expected undefined to be 2`(at), `expected [3,1,2] not to be [3,1,2]`(sortWithReference aliasing).
 
-**성능 게이트 (hz)**
+**⚠ 되돌림 — M12 버킷 제거 (리뷰 지적 CONFIRMED)**
 
-| 시나리오                          |      전 |      후 |  변화 |
-| --------------------------------- | ------: | ------: | ----: |
-| sparse (3 items / 5000 reference) |   5,698 |   6,040 | +6.0% |
-| dense (100 items / 100 reference) | 226,417 | 230,129 | +1.6% |
+버킷을 `Array.prototype.sort` 로 교체했을 때 벤치는 sparse +6.0%(5,698→6,040 hz), dense +1.6%(226,417→230,129 hz)였다. 그러나 리뷰가 의미 회귀를 짚었다 — `Array.prototype.sort` 는 `undefined` 원소를 **비교 함수에 넘기지 않고** 무조건 끝으로 옮긴다. 따라서 reference 가 `undefined` 를 마지막이 아닌 위치에 두면 정렬 구현은 그 순서를 지킬 수 없다. 6%/1.6% 로는 계약 손상을 살 수 없어 **버킷 구현으로 되돌리고, 이유를 코드 주석으로 남겼다**(`sortWithReference.ts:37-39`). M13 aliasing 수정만 유지된다. M12(빈 배열 선할당 제거)는 다시 성능 백로그로 — 정렬이 아닌 다른 수단(예: 등장한 인덱스만 지연 생성)이 필요하다.
 
-감사는 빈 배열 선할당이 26% 를 차지한다고 추정했으나, 실측에서는 5000 엔트리 `Map` 구축이 지배 비용이라 실제 이득은 +6% 였다. 그래도 감소는 없고 aliasing 결함이 함께 사라진다.
+감사는 빈 배열 선할당이 26% 를 차지한다고 추정했으나, 실측에서는 5000 엔트리 `Map` 구축이 지배 비용이었다.
 
 **반환 계약 변화**: `groupBy`·`transformKeys`·`transformValues` 의 반환 객체는 이제 프로토타입이 없다. `result.hasOwnProperty(...)` 처럼 상속 메서드를 호출하던 코드가 있으면 깨지므로 각 `@returns` 에 명시했다. 세 함수 모두 모노레포 내 소비처가 0 이고, 소비 패키지 전량 통과로 확인했다.
 
@@ -519,3 +516,84 @@ omit 경로 감소는 매 호출 키 정렬(M20 의 대가)이고, 훨씬 잦은
 - `yarn workspace @winglet/common-utils test --run` → **118 파일 / 1040 테스트 통과** (기존 `stableEquals.test.ts` 43 케이스 **무수정** 통과)
 - `typecheck` · `lint` · `build` 통과
 - 소비 패키지 전량 통과 — json 545 · react-utils 175 · schema-form 3568 · promise-modal 128 · json-schema 392 · data-loader 48
+
+---
+
+## 리뷰 대응 · 2026-08-17
+
+`/seiri:request-review` 로 받은 12건을 이 저장소 기준으로 검증했다. **회귀 주장 4건이 CONFIRMED** 였고, 그중 3건은 내가 이번 작업에서 만든 것이다.
+
+### 확인되어 고친 것
+
+| # | 지적                                                                                   | 검증 결과                                                                                                                                                                             | 조치                                                                                        |
+| - | -------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- |
+| 1 | `round` 가 지수 표기 입력에서 **반올림하지 않고 원값을 돌려준다**                       | CONFIRMED. 내가 쓴 `` +`${value}e${precision}` `` 가 `Number("1.2e-7e7")` → `NaN` 을 만들어 폴백이 원값을 반환했다. `round(1e-7, 3)` 이 `0` 대신 `1e-7`. 내 테스트 `round(1e300, 20)` 은 같은 NaN 경로를 밟아 **공허하게** 통과했다 | 기존 지수를 접는 `shiftExponent` 로 교체, 테스트 +2                                         |
+| 2 | `equals` 가 **TypedArray 를 더 이상 구조 비교하지 않는다**                              | CONFIRMED. `Object.keys(new Uint8Array([1,2,3]))` 는 `['0','1','2']` 라 이전엔 구조 비교로 통과했다. 비-`OBJECT_TAG` 전량을 `equalsBuiltin` 으로 보내면서 `false` 로 떨어졌고, 커스텀 `Symbol.toStringTag` 객체도 같이 깨졌다 | `equalsBuiltin` 반환을 `boolean \| undefined` 로 — 규칙 없는 태그는 구조 비교로 되돌린다. 테스트 +2 |
+| 3 | `applyPatch` 가 **fragment 포인터 `#/a/b` 를 거부한다**                                 | CONFIRMED. `compileSegments.ts:21` 이 `#` 을 명시적으로 받고 schema-form 문서가 `'#/properties/user'` 를 쓴다. "compilePointer 가 이미 거른다" 던 내 주석은 사실이 아니었다             | 첫 세그먼트로 `''` 와 `JSONPointer.Fragment` 를 모두 허용, 신규 `applyPatch.pathForms.test.ts` |
+| 4 | `sortWithReference` 정렬 교체가 **`undefined` 순서 계약을 깬다**                        | CONFIRMED. `Array.prototype.sort` 는 `undefined` 를 비교 함수에 넘기지 않고 끝으로 옮긴다                                                                                              | 버킷 구현으로 되돌림(Task 3.4 〔되돌림〕 참조)                                              |
+| 5 | `getTrackableHandler` — `beforeExecute` 가 던지면 `hookRunning` 이 켜진 채 남는다       | CONFIRMED. 이후 모든 publish 가 막힌다                                                                                                                                                | catch 에서 `hookRunning` 복구 + `publish()` 후 rethrow, 테스트 +1                            |
+| 6 | `stableSerialize` — 순회 중 예외가 나면 **오염된 캐시 항목이 남는다**                   | CONFIRMED (getter 가 던지는 입력으로 재현)                                                                                                                                            | 순회를 try/catch 로 감싸고 throw 시 `remove(input)`, 신규 `stableSerialize.failure.test.ts`  |
+| 7 | `withTimeout` — `fn()` 이 **동기적으로 던지면** abort 리스너가 외부 signal 에 남는다    | CONFIRMED (리스너 누수)                                                                                                                                                               | `fn()` 을 리스너 등록 **전에** 평가, 신규 `withTimeout.syncThrow.test.ts`                     |
+| 8 | `isEmpty` 의 `instanceof Map/Set` 은 cross-realm 에서 오판한다                          | 타당. 이 디렉터리의 나머지는 전부 태그 기반이다                                                                                                                                       | `isMap`/`isSet` 로 교체                                                                     |
+| 9 | `Falsy` 타입 JSDoc 이 `NaN` 을 멤버로 열거하는데 유니온에는 없다                        | 타당. `isFalsy(value: number)` 안에서 `NaN` 이 `0` 으로 좁혀지는 결과를 설명하는 문장이 없었다                                                                                        | 열거에서 `NaN` 을 빼고 `@remarks` 로 이유와 한계를 명시                                     |
+
+### 기록으로 닫은 것
+
+| #  | 지적                                                                                       | 판단                                                                                                                                                                            |
+| -- | -------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 10 | `getJSONPointer` 루트 반환 `''` 은 **falsy** 라 `if (pointer)` 로 존재를 판정하던 코드가 루트를 놓친다 | 코드 변경은 옳다(RFC 6901). 위험은 **외부 소비자** 에게 있으므로 §릴리스 기록에 breaking + 이행 방법(`!= null`)까지 적어 두었다. 저장소 내 소비처는 0(grep 무결과) |
+| 11 | `groupBy`·`transformKeys`·`transformValues` 의 프로토타입 없는 반환은 breaking                | 동의. 각 `@returns` 에 이미 명시했고, §릴리스 기록에 breaking 으로 올렸다                                                                                                       |
+| 12 | 느려진 3개 시나리오를 벤치 회귀로 방치하지 말 것                                             | 동의. 아래 §성능 후속 작업으로 모았다. 사용자가 **별도 작업** 으로 두기로 확정했다                                                                                             |
+
+**검증 (실행 결과, 2026-08-17 최종)**
+
+| 패키지                    |     test |                    typecheck · lint · build |
+| ------------------------- | -------: | ------------------------------------------: |
+| `@winglet/common-utils`   | 127 파일 / **1077** | 통과                             |
+| `@winglet/json`           |  31 파일 /  **559** | 통과                             |
+| `@winglet/react-utils`    |  30 파일 /  **183** | 통과                             |
+| `@winglet/json-schema`    |  17 파일 /  **392** | typecheck 통과                   |
+| `@canard/schema-form`     | 204 파일 / **3568** | typecheck 통과                   |
+| `@lerx/promise-modal`     |  11 파일 /  **128** | typecheck 통과                   |
+| `@winglet/data-loader`    |   2 파일 /   **48** | typecheck 통과                   |
+
+합계 **422 파일 / 5955 테스트, 실패 0**.
+
+---
+
+## 성능 후속 작업 — 수집본 (별도 작업)
+
+> 사용자 지시: "느려진 함수들을 모두 모아서 리스트업. 속도개선을 위한 작업은 따로 하지". 아래는 **이번 작업에서 실측된 것만** 이다. 숫자는 각 Task 의 성능 게이트 표에서 그대로 옮겼다(hz — 높을수록 빠름).
+
+### A — 이번 작업으로 실제 느려진 것
+
+| 유틸                | 시나리오            |        전 |        후 |      변화 | 원인                                                    |
+| ------------------- | ------------------- | --------: | --------: | --------: | ------------------------------------------------------- |
+| `stableSerialize`   | omit 있는 반복      | 3,638,113 | 3,183,716 | **-12.5%** | M20 — 매 호출 omit 키 정렬                              |
+| `stableEquals`      | 순환 구조           |    22,375 |    20,775 |  **-7.1%** | M8 — 객체 쌍마다 `getTypeTag` 2회                       |
+| `stableEquals`      | equal 트리(341노드) |    21,656 |    20,645 |  **-4.7%** | 동일                                                    |
+
+셋 다 정확성과 맞바꾼 값이며, `stableEquals` 는 프로덕션 소비처가 0이고 `stableSerialize` 의 무-omit 경로는 오히려 +24.8% 다. **회수 방향**: omit 키 정렬을 호출마다가 아니라 omit 컬렉션 단위로 memo; 태그 조회를 own key 0 인 경우로 늦추되 프로퍼티가 붙은 내장 객체를 놓치지 않는 판별을 함께 마련.
+
+### B — 구조적 낭비 (이번 작업이 만든 것이 아니라, 벤치가 드러낸 것)
+
+| 대상                 | 실측                                                     | 낭비의 정체                                                                                         |
+| -------------------- | -------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
+| `json` `difference`  | 2,712 hz vs 같은 입력 `compare` **17,419 hz (6.4배)**    | `compare` 로 패치를 만든 뒤 패치마다 `getValue`/`setValue` 를 다시 도는 2단 구조 — 경로 문자열 왕복 + `O(patches × depth)` 재탐색. 차집합 연산 자체의 비용(출력 조립)과 분리 가능한 부분이다 |
+| `json` `applyPatch`  | 패치 1건 65,311 hz / 100건 12,580 hz                     | 패치 1건에도 문서 전체 `cloneLite` — 소량 패치에서 복제가 지배한다. 부분 복제로 회수 가능           |
+| `sortWithReference`  | sparse(3/5000) 5,698 hz                                  | M12 — reference 길이만큼 빈 배열 선할당. 정렬 교체는 `undefined` 계약을 깨서 되돌렸으므로, 등장한 인덱스만 지연 생성하는 쪽으로 다시 접근해야 한다 |
+
+`difference` 6.4배는 **변경 밀도 100%(256 리프 전부 상이)** 조건의 수치다. 밀도가 낮으면 격차는 줄어든다.
+
+### C — 미실측 의심 (측정부터 필요)
+
+- `isReactComponent`: 컴포넌트가 **아닌** 값이 모든 분기를 통과해 14.7M hz 로 가장 느리다(통과 경로는 24.1M/22.1M/19.0M). 레지스트리 필터처럼 비-컴포넌트가 다수인 입력에서는 분기 순서가 비용이다.
+- `compare`: 무변경 23.0M hz vs 1% 변경 4,301 hz(1000 노드) — 조기 종료는 이미 4자릿수 배수를 번다. 추가 이득은 변경이 있는 경로에서 찾아야 한다.
+
+### 후속 작업 순서 (제안)
+
+1. B-`difference` 2단 구조 — 격차가 가장 크고 원인이 특정돼 있다
+2. B-`applyPatch` 부분 복제 — 소량 패치가 지배적 사용 형태다
+3. A-`stableSerialize` omit 정렬 memo — 회수 폭이 명확하다
+4. B-`sortWithReference` M12 재접근 — 계약을 지키는 수단이 필요하다
+5. A-`stableEquals` 태그 조회 — 소비처 0이라 우선순위 최하
