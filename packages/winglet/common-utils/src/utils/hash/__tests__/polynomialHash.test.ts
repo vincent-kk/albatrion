@@ -23,7 +23,7 @@ describe('polynomialHash', () => {
       const result3 = polynomialHash('test', 10);
 
       expect(result1.length).toBe(3);
-      expect(result1).toBe('248'); // 실제 반환값
+      expect(result1).toBe('87m'); // 하위 자릿수 유지
 
       expect(result2.length).toBe(8);
       expect(result2).toBe('0002487m'); // 실제 반환값
@@ -157,7 +157,7 @@ describe('polynomialHash', () => {
       const result = polynomialHash('test', 1);
       expect(result.length).toBe(1);
       expect(result).toMatch(/^[0-9a-z]$/);
-      expect(result).toBe('2'); // 실제 반환값
+      expect(result).toBe('m'); // 하위 자릿수 유지
     });
 
     it('매우 큰 길이 요청 시 가능한 최대 길이까지 반환해야 함', () => {
@@ -208,16 +208,31 @@ describe('polynomialHash', () => {
   });
 
   describe('예외 상황', () => {
-    it('음수 길이에 대해 slice 결과를 반환해야 함', () => {
+    it('음수 길이에 대해 빈 문자열을 반환해야 함', () => {
       const result = polynomialHash('test', -1);
       // slice(0, -1)의 결과로 마지막 문자가 제거됨
-      expect(result).toBe('2487'); // 실제 반환값
+      expect(result).toBe(''); // 길이가 양수가 아니면 식별자를 만들 수 없다
     });
 
     it('소수점이 포함된 길이는 정수로 처리되어야 함', () => {
       const result = polynomialHash('test', 3.7);
       expect(result.length).toBe(3);
-      expect(result).toBe('248'); // 실제 반환값
+      expect(result).toBe('87m'); // 하위 자릿수 유지
     });
+  });
+  it('should keep the low-order digits so short results stay well distributed', () => {
+    const seen = new Set<string>();
+    for (let index = 0; index < 20000; index++)
+      seen.add(polynomialHash(`key-${index}`, 4));
+
+    // 36^4 슬롯에 2만 개를 넣으면 생일 문제상 기대 충돌은 120건 미만이다
+    expect(20000 - seen.size).toBeLessThan(200);
+  });
+
+  it('should zero-pad a length wider than a uint32 needs', () => {
+    const wide = polynomialHash('abc', 12);
+
+    expect(wide).toHaveLength(12);
+    expect(wide.startsWith('00000')).toBe(true);
   });
 });

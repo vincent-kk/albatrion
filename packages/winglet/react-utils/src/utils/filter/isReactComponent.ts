@@ -1,7 +1,9 @@
 import type { ComponentType } from 'react';
 
 import { isClassComponent } from './isClassComponent';
+import { isForwardRefComponent } from './isForwardRefComponent';
 import { isFunctionComponent } from './isFunctionComponent';
+import { isLazyComponent } from './isLazyComponent';
 import { isMemoComponent } from './isMemoComponent';
 
 /**
@@ -42,7 +44,7 @@ import { isMemoComponent } from './isMemoComponent';
  * console.log(isReactComponent(FunctionComp)); // true
  * console.log(isReactComponent(ClassComp)); // true
  * console.log(isReactComponent(MemoComp)); // true
- * console.log(isReactComponent(ForwardComp)); // false (현재 구현에서는 forwardRef 미지원)
+ * console.log(isReactComponent(ForwardComp)); // false (forwardRef is not supported in the current implementation)
  * console.log(isReactComponent('not a component')); // false
  * console.log(isReactComponent({})); // false
  * ```
@@ -114,4 +116,6 @@ export const isReactComponent = <
 ): component is Component =>
   isFunctionComponent<Props>(component) ||
   isMemoComponent<Props>(component) ||
+  isForwardRefComponent<Props>(component) ||
+  isLazyComponent<Props>(component) ||
   isClassComponent<Props>(component);

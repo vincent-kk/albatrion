@@ -7,17 +7,22 @@ import { lcm } from '@winglet/common-utils/math';
  * ensuring that the result is a multiple of both original values.
  * This creates the most restrictive valid constraint.
  *
+ * JSON Schema requires `multipleOf` to be a finite number, so a non-finite value
+ * carries no constraint and is treated as absent rather than propagated as `NaN`.
+ *
  * @param baseMultiple - The base multipleOf value (optional)
  * @param sourceMultiple - The source multipleOf value (optional)
- * @returns LCM of both values, or undefined if both are undefined
+ * @returns LCM of both values, the sole constrained value when only one applies,
+ *   or undefined when neither is a usable constraint
  */
 export const intersectMultipleOf = (
   baseMultiple?: number,
   sourceMultiple?: number,
 ): number | undefined => {
-  if (baseMultiple === undefined && sourceMultiple === undefined)
-    return undefined;
-  if (baseMultiple === undefined) return sourceMultiple;
-  if (sourceMultiple === undefined) return baseMultiple;
-  return lcm(baseMultiple, sourceMultiple);
+  const base = Number.isFinite(baseMultiple) ? baseMultiple : undefined;
+  const source = Number.isFinite(sourceMultiple) ? sourceMultiple : undefined;
+  if (base === undefined && source === undefined) return undefined;
+  if (base === undefined) return source;
+  if (source === undefined) return base;
+  return lcm(base, source);
 };

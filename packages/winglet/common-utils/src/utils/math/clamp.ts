@@ -9,7 +9,7 @@
  * @param value - The number to be clamped
  * @param min - The lower boundary of the range
  * @param max - The upper boundary of the range
- * @returns The clamped value within [min, max] range
+ * @returns The clamped value within [min, max] when min is less than or equal to max
  *
  * @example
  * Basic range restriction:
@@ -20,6 +20,7 @@
  * console.log(clamp(-5, 0, 10));  // 0 (below minimum)
  * console.log(clamp(15, 0, 10));  // 10 (above maximum)
  * console.log(clamp(0.5, 0, 1));  // 0.5 (works with decimals)
+ * console.log(clamp(5, 10, 1));   // 10 (bounds are not reordered or validated)
  * ```
  *
  * @example
@@ -39,6 +40,7 @@
  * @remarks
  * **Special Cases:**
  * - When min equals max, always returns that value
+ * - Does not validate bound order; when min > max, the lower-bound check runs first
  * - Handles Infinity: clamps to boundary values
  * - Returns NaN if value is NaN
  *

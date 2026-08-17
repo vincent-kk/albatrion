@@ -64,13 +64,12 @@ import { type DependencyList, useLayoutEffect, useRef } from 'react';
  * }, []);
  * ```
  *
- * @typeParam Dependencies - The type of the dependency array
  * @param effect - A function that performs synchronous side effects and returns `true` when done
- * @param dependencies - Optional dependency array that triggers re-execution when changed
+ * @param dependencies - Optional dependency array that triggers re-execution when changed. Omitting it re-runs the effect on every render until it returns `true`
  */
-export const useLayoutEffectUntil = <Dependencies extends DependencyList>(
+export const useLayoutEffectUntil = (
   effect: () => boolean,
-  dependencies?: Dependencies,
+  dependencies?: DependencyList,
 ) => {
   const isCompleted = useRef(false);
   useLayoutEffect(() => {

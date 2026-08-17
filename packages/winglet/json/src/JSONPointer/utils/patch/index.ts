@@ -3,6 +3,7 @@ export { compare, type CompareOptions } from './compare';
 export { difference } from './difference';
 export { mergePatch } from './mergePatch';
 
+export { Operation } from '../patchModel';
 export type {
   Patch,
   TestPatch,
@@ -11,4 +12,4 @@ export type {
   RemovePatch,
   CopyPatch,
   MovePatch,
-} from './type';
+} from '../patchModel';

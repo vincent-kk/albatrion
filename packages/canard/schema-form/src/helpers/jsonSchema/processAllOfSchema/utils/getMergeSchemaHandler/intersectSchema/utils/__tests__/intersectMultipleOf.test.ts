@@ -96,4 +96,12 @@ describe('intersectMultipleOf', () => {
     expect(intersectMultipleOf(7, 0)).toBe(0);
     expect(intersectMultipleOf(0, 0)).toBe(0);
   });
+
+  test('non-finite multiples are not valid JSON Schema values and are ignored', () => {
+    expect(intersectMultipleOf(Infinity, 2)).toBe(2);
+    expect(intersectMultipleOf(2, Infinity)).toBe(2);
+    expect(intersectMultipleOf(NaN, 3)).toBe(3);
+    expect(intersectMultipleOf(3, NaN)).toBe(3);
+    expect(intersectMultipleOf(NaN, Infinity)).toBeUndefined();
+  });
 });

@@ -17,6 +17,14 @@ export interface ThrottledFn<F extends Fn<any[]>> {
   execute: Fn;
   /** Cancel scheduled function execution and reset the timer */
   clear: Fn;
+  /**
+   * Release every resource the wrapper holds, including the abort listener.
+   *
+   * `clear` only cancels a pending call; the listener registered on a shared
+   * `AbortSignal` outlives it and keeps this wrapper reachable until that signal
+   * aborts. Call this when the wrapper is discarded before its signal is.
+   */
+  dispose: Fn;
 }
 
 /**
@@ -234,10 +242,16 @@ export const throttle = <F extends Fn<any[]>>(
     if (immediately) context.execute();
   };
 
+  const handleAbort = () => context.clear();
+
   throttled.execute = () => context.execute();
   throttled.clear = () => context.clear();
+  throttled.dispose = () => {
+    signal?.removeEventListener('abort', handleAbort);
+    context.clear();
+  };
 
-  signal?.addEventListener('abort', () => context.clear(), {
+  signal?.addEventListener('abort', handleAbort, {
     once: true,
   });
 

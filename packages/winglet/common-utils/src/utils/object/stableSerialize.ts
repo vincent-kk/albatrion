@@ -11,8 +11,38 @@ import { Murmur3 } from '@/common-utils/utils/hash';
 
 import { serializeNative } from './serializeNative';
 
-const { get, set } = cacheWeakMapFactory<string>();
+const { get, set, delete: remove } = cacheWeakMapFactory<CacheEntry>();
 const { increment } = counterFactory();
+
+/** The lookup set and hash prefix derived from one omit collection. */
+type OmitEntry = { set: Set<string>; hash: string };
+
+/** Derived omit entries, memoized by collection identity. */
+const omitEntryCache = new WeakMap<
+  Set<string> | readonly string[],
+  OmitEntry
+>();
+
+/**
+ * Derives the lookup set and hash prefix for an omit collection, once per collection.
+ *
+ * Keys are copied and sorted so the same set of omitted keys hashes alike however the
+ * caller ordered it, without the sort ever reaching the caller's array.
+ *
+ * @param omit - Omit collection, treated as immutable for the lifetime of the memo
+ * @returns The memoized entry for this collection
+ */
+const resolveOmitEntry = (omit: Set<string> | readonly string[]): OmitEntry => {
+  const cached = omitEntryCache.get(omit);
+  if (cached !== undefined) return cached;
+  const keys = [...omit].sort();
+  const entry: OmitEntry = {
+    set: new Set(keys),
+    hash: Murmur3.hash(keys.join(',')).toString(36),
+  };
+  omitEntryCache.set(omit, entry);
+  return entry;
+};
 
 /**
  * Creates deterministic, stable serialization strings with circular reference support.
@@ -93,12 +123,15 @@ const { increment } = counterFactory();
  * // Output includes unique identifiers for circular references
  * // e.g., '1@{child:{name:child|parent:2@}|id:1|name:parent|self:3@}'
  *
- * // Different object with same circular structure
+ * // The same object always serializes to the same string
+ * console.log(stableSerialize(circular) === serialized); // true
+ *
+ * // A different object with the same circular structure does NOT
  * const another: any = { name: 'parent', id: 1 };
  * another.self = another;
  * another.child = { name: 'child', parent: another };
  *
- * console.log(stableSerialize(another) === serialized); // true (structurally identical)
+ * console.log(stableSerialize(another) === serialized); // false (see remarks)
  * ```
  *
  * @example
@@ -268,7 +301,9 @@ const { increment } = counterFactory();
  * - **RegExp**: Includes pattern and flags
  *
  * **Internal Caching Mechanism:**
- * - **Cache Factory**: Uses `cacheWeakMapFactory<string>()` for object-to-string mapping
+ * - **Cache Factory**: Uses `cacheWeakMapFactory()` to map each object to its last result
+ *   together with the omit set that produced it, so a result computed under one omit set
+ *   is never handed to a call using another
  * - **WeakMap Storage**: `get()` and `set()` operations for object key storage
  * - **Automatic Cleanup**: Cached entries automatically removed when objects are GC'd
  * - **Counter System**: `counterFactory()` generates unique IDs for circular references
@@ -310,6 +345,13 @@ const { increment } = counterFactory();
  * - **Type Distinction**: Better handling of functions, undefined, symbols
  *
  * **Limitations:**
+ * - **Inputs Are Treated As Immutable**: each object's result is cached by identity, and
+ *   each omit collection's sorted keys and hash are memoized by identity. Mutating an
+ *   object after serializing it yields the string computed before the change; mutating a
+ *   reused omit collection reuses its memoized sort and hash
+ * - **Identity, Not Structure, For Opaque Values**: circular references, class instances,
+ *   `Map`, `Set` and functions serialize to a per-instance marker. The same object always
+ *   yields the same marker, but two structurally identical instances yield different ones
  * - **One-Way Operation**: Cannot deserialize back to original object
  * - **String Output Only**: All values converted to string representation
  * - **Function Serialization**: Functions serialized by toString(), may vary by engine
@@ -321,12 +363,15 @@ export const stableSerialize = (
   input: unknown,
   omit?: Set<string> | readonly string[],
 ): string => {
-  const omitSet = omit ? (omit instanceof Set ? omit : new Set(omit)) : null;
-  const omitKeys = omit ? (isArray(omit) ? omit : Array.from(omit)) : null;
-  const omitHash = omitKeys
-    ? Murmur3.hash(omitKeys.join(',')).toString(36)
-    : '';
-  return createHash(input, omitSet, omitHash);
+  if (!omit) return createHash(input, null, '');
+  const entry = resolveOmitEntry(omit);
+  return createHash(input, entry.set, entry.hash);
+};
+
+/** A cached string together with the omit set it was produced under. */
+type CacheEntry = {
+  omitHash: string;
+  result: string;
 };
 
 /**
@@ -343,30 +388,58 @@ const createHash = (
   omitHash: string,
 ): string => {
   if (isPrimitiveObject(input) && !isDate(input) && !isRegex(input)) {
-    let result = get(input);
-    if (result && (!omitHash || result.startsWith(omitHash))) return result;
-    result = `${omitHash}${increment()}@`;
-    set(input, result);
-    if (isArray(input)) {
-      const segments = [];
-      for (let i = 0, e = input[0], l = input.length; i < l; i++, e = input[i])
-        segments[segments.length] = createHash(e, omit, omitHash);
-      result = `${omitHash}[${segments.join(',')}]`;
-    } else if (isPlainObject(input)) {
-      const segments = [];
-      const keys = Object.keys(input).sort();
-      let key: string;
-      while (!isUndefined((key = keys.pop() as string))) {
-        if (omit?.has(key)) continue;
-        segments[segments.length] =
-          key + ':' + createHash(input[key], omit, omitHash);
+    const cached = get(input);
+    // Matching on the omit set rather than a string prefix: an empty omit hash is a
+    // prefix of every result, so prefix matching handed omitted results to plain calls
+    if (cached !== undefined && cached.omitHash === omitHash)
+      return cached.result;
+    let result = `${omitHash}${increment()}@`;
+    set(input, { omitHash, result });
+    try {
+      if (isArray(input)) {
+        const segments = [];
+        for (
+          let i = 0, e = input[0], l = input.length;
+          i < l;
+          i++, e = input[i]
+        )
+          segments[segments.length] = createHash(e, omit, omitHash);
+        result = `${omitHash}[${segments.join(',')}]`;
+      } else if (isPlainObject(input)) {
+        const segments = [];
+        const keys = Object.keys(input).sort();
+        let key: string;
+        while (!isUndefined((key = keys.pop() as string))) {
+          if (omit?.has(key)) continue;
+          segments[segments.length] =
+            key + ':' + createHash(input[key], omit, omitHash);
+        }
+        result = `${omitHash}{${segments.join('|')}}`;
       }
-      result = `${omitHash}{${segments.join('|')}}`;
+    } catch (error) {
+      // The placeholder above stands in only while the walk runs; leaving it cached
+      // would make every later call return a circular-reference marker
+      remove(input);
+      throw error;
     }
-    set(input, result);
+    set(input, { omitHash, result });
     return result;
   }
-  if (isDate(input)) return input.toJSON();
-  if (isFunction(input?.toString)) return input.toString();
+  if (isDate(input)) {
+    const time = input.getTime();
+    // An invalid date's toJSON() is null, which would serialize like an actual null
+    return time === time ? input.toJSON() : INVALID_DATE_MARK;
+  }
+  // Spelled out rather than left to serializeNative, whose JSON.stringify yields
+  // `undefined` — not a string — for exactly these two inputs
+  if (input === null) return 'null';
+  if (input === undefined) return 'undefined';
+  // Quoted so a string can never serialize like the number or keyword it spells
+  if (typeof input === 'string') return JSON.stringify(input);
+  if (isFunction((input as { toString?: unknown }).toString))
+    return String(input);
   return serializeNative(input);
 };
+
+/** Stands in for a date that carries no time, whose `toJSON()` would be `null`. */
+const INVALID_DATE_MARK = 'Invalid Date';

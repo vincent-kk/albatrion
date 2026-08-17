@@ -75,11 +75,11 @@ import { isPlainObject } from '@/common-utils/utils/filter/isPlainObject';
  * @example
  * Array merging behavior:
  * ```typescript
- * // Arrays are merged by concatenation
+ * // Arrays are merged recursively by index
  * const target1 = { tags: ['old', 'legacy'] };
  * const source1 = { tags: ['new', 'modern'] };
  * merge(target1, source1);
- * console.log(target1.tags); // ['old', 'legacy', 'new', 'modern']
+ * console.log(target1.tags); // ['new', 'modern']
  *
  * // Nested arrays in objects
  * const target2 = {
@@ -98,7 +98,7 @@ import { isPlainObject } from '@/common-utils/utils/filter/isPlainObject';
  * console.log(target2);
  * // {
  * //   data: {
- * //     numbers: [1, 2, 3, 4],
+ * //     numbers: [3, 4],
  * //     strings: ['a', 'b'],
  * //     booleans: [true, false]
  * //   }
@@ -121,13 +121,13 @@ import { isPlainObject } from '@/common-utils/utils/filter/isPlainObject';
  * };
  * const source = {
  *   config: { port: 8080, ssl: true },  // object + object = merge
- *   items: [3, 4]                      // array + array = merge
+ *   items: [3, 4]                      // array + array = index-wise merge
  * };
  * merge(target, source);
  * console.log(target);
  * // {
  * //   config: { port: 8080, host: 'localhost', ssl: true },
- * //   items: [1, 2, 3, 4]
+ * //   items: [3, 4]
  * // }
  *
  * // Incompatible types are replaced
@@ -184,10 +184,10 @@ import { isPlainObject } from '@/common-utils/utils/filter/isPlainObject';
  * //     port: 5432,
  * //     options: { ssl: true, timeout: 30000, pool: { min: 2, max: 10 } }
  * //   },
- * //   features: ['basic', 'auth', 'advanced', 'analytics'],
+ * //   features: ['advanced', 'analytics'],
  * //   logging: {
  * //     level: 'error',
- * //     outputs: ['console', 'file', 'remote']
+ * //     outputs: ['file', 'remote']
  * //   }
  * // }
  * ```
@@ -217,13 +217,14 @@ import { isPlainObject } from '@/common-utils/utils/filter/isPlainObject';
  * @remarks
  * **Merging Strategy:**
  * - **Objects**: Deep recursive merge of compatible plain objects
- * - **Arrays**: Concatenation merge preserving order (target + source)
+ * - **Arrays**: Recursive index-wise merge; source indices replace or merge the
+ *   corresponding target indices, while an unmatched target tail is preserved
  * - **Primitives**: Source value always replaces target value
  * - **Mixed Types**: Source value replaces target when types incompatible
  *
  * **Type Compatibility Rules:**
  * - `isPlainObject(target) && isPlainObject(source)` → Deep merge
- * - `isArray(target) && isArray(source)` → Concatenation merge
+ * - `isArray(target) && isArray(source)` → Recursive index-wise merge
  * - `target === undefined || source !== undefined` → Source replaces target
  * - Otherwise → Source value replaces target value
  *
@@ -317,6 +318,7 @@ export const merge = <
 ): Target & Source => {
   const keys = Object.keys(source) as Array<keyof Source>;
   for (let i = 0, k = keys[0], l = keys.length; i < l; i++, k = keys[i]) {
+    if (k === PROTOTYPE_POLLUTION_KEY) continue;
     const sourceValue = source[k];
     const targetValue = target[k];
     if (isArray(sourceValue))
@@ -332,3 +334,14 @@ export const merge = <
   }
   return target;
 };
+
+/**
+ * Own key that `JSON.parse` can produce but assignment cannot safely carry.
+ *
+ * Reading it falls through to the inherited accessor, which hands back
+ * `Object.prototype` — a plain object by every structural test — so merging into
+ * it writes straight into the global prototype. Other reserved-looking keys
+ * (`constructor`, `prototype`) resolve to functions and are merged as ordinary
+ * own properties, so they stay allowed rather than silently dropped.
+ */
+const PROTOTYPE_POLLUTION_KEY = '__proto__';

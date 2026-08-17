@@ -407,8 +407,11 @@ const getScheduleNextTick = (): Fn<[task: Fn]> => {
  * **Event Loop Integration:**
  * - **Node.js**: Executes after current I/O phase, before next I/O polling cycle
  * - **Browsers**: Executes after current macrotask, similar to setImmediate timing
- * - **Universal**: Consistent "next tick" semantics across all platforms
- * - **Priority**: Lower than microtasks, higher than regular macrotasks
+ * - **Not Universal**: the two paths sit on opposite sides of the macrotask boundary.
+ *   Under Node the callback runs in the microtask/nextTick phase, so it lands *before*
+ *   a `setTimeout(0)` queued alongside it; in a browser it runs as a macrotask and lands
+ *   *after* one. Code that depends on ordering against timers must not assume either
+ * - **Priority**: below microtasks in a browser; alongside them under Node
  *
  * **Platform-Specific Behavior:**
  * - **Node.js**: Uses `Promise.resolve().then(() => process.nextTick(task))` for I/O coordination

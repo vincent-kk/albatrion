@@ -4,12 +4,12 @@ import { describe, expect, it, vi } from 'vitest';
 import { useVersion } from '../useVersion';
 
 describe('useVersion', () => {
-  it('초기 version 값은 0이어야 합니다', () => {
+  it('should have an initial version value of 0', () => {
     const { result } = renderHook(() => useVersion());
     expect(result.current[0]).toBe(0);
   });
 
-  it('updateVersion을 호출하면 version 값이 증가해야 합니다', async () => {
+  it('should increment the version value when updateVersion is called', async () => {
     const { result } = renderHook(() => useVersion());
     const [, updateVersion] = result.current;
 
@@ -24,7 +24,7 @@ describe('useVersion', () => {
     expect(result.current[0]).toBe(2);
   });
 
-  it('callback이 제공되면 updateVersion 호출 시 실행되어야 합니다', async () => {
+  it('should run the callback on updateVersion when a callback is provided', async () => {
     const callback = vi.fn();
     const { result } = renderHook(() => useVersion(callback));
     const [, updateVersion] = result.current;
@@ -40,7 +40,7 @@ describe('useVersion', () => {
     expect(callback).toHaveBeenCalledTimes(2);
   });
 
-  it('callback이 변경되면 새로운 callback이 실행되어야 합니다', async () => {
+  it('should run the new callback when the callback changes', async () => {
     const callback1 = vi.fn();
     const callback2 = vi.fn();
     const { result, rerender } = renderHook(
@@ -65,7 +65,7 @@ describe('useVersion', () => {
     expect(callback2).toHaveBeenCalledTimes(1);
   });
 
-  it('update 함수의 참조는 리렌더링 시에도 안정적으로 유지되어야 합니다', () => {
+  it('should keep the update function reference stable across re-renders', () => {
     const { result, rerender } = renderHook(() => useVersion());
     const [, firstUpdate] = result.current;
 
@@ -79,7 +79,7 @@ describe('useVersion', () => {
     expect(secondUpdate).toBe(thirdUpdate);
   });
 
-  it('callback이 변경되어도 update 함수의 참조는 안정적으로 유지되어야 합니다', () => {
+  it('should keep the update function reference stable even when the callback changes', () => {
     const callback1 = vi.fn();
     const callback2 = vi.fn();
     const { result, rerender } = renderHook(

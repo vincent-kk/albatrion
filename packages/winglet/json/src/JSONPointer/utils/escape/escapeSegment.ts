@@ -41,33 +41,33 @@ import { ESCAPE_SEPARATOR, ESCAPE_TILDE, SEPARATOR, TILDE } from './constant';
  * @example
  * ```typescript
  * // Basic character escaping
- * escapePath('foo~bar');
+ * escapeSegment('foo~bar');
  * // Returns: "foo~0bar"
  *
- * escapePath('foo/bar');
+ * escapeSegment('foo/bar');
  * // Returns: "foo~1bar"
  * ```
  *
  * @example
  * ```typescript
  * // Multiple special characters
- * escapePath('path~with/both~chars');
+ * escapeSegment('path~with/both~chars');
  * // Returns: "path~0with~1both~0chars"
  *
- * escapePath('~/~/~/');
+ * escapeSegment('~/~/~/');
  * // Returns: "~0~1~0~1~0~1"
  * ```
  *
  * @example
  * ```typescript
  * // Edge cases and performance optimization
- * escapePath('');
+ * escapeSegment('');
  * // Returns: "" (empty string, no processing needed)
  *
- * escapePath('normal_key_123');
+ * escapeSegment('normal_key_123');
  * // Returns: "normal_key_123" (no special chars, early exit)
  *
- * escapePath('user@domain.com');
+ * escapeSegment('user@domain.com');
  * // Returns: "user@domain.com" (no special chars, early exit)
  * ```
  *
@@ -75,12 +75,12 @@ import { ESCAPE_SEPARATOR, ESCAPE_TILDE, SEPARATOR, TILDE } from './constant';
  * ```typescript
  * // Real-world usage scenarios
  * const objectKey = 'config/database';
- * const escapedKey = escapePath(objectKey);
+ * const escapedKey = escapeSegment(objectKey);
  * // escapedKey: "config~1database"
  * // Can now be safely used in JSON Pointer: `/settings/${escapedKey}/host`
  *
  * const fileName = 'backup~2023-12-01.json';
- * const escapedFileName = escapePath(fileName);
+ * const escapedFileName = escapeSegment(fileName);
  * // escapedFileName: "backup~02023-12-01.json"
  * // Can now be safely used in JSON Pointer: `/files/${escapedFileName}/size`
  * ```
@@ -94,8 +94,8 @@ import { ESCAPE_SEPARATOR, ESCAPE_TILDE, SEPARATOR, TILDE } from './constant';
  * };
  *
  * // These keys need escaping when used in JSON Pointers
- * const escapedFileKey = escapePath('files/docs');     // "files~1docs"
- * const escapedConfigKey = escapePath('config~prod');  // "config~0prod"
+ * const escapedFileKey = escapeSegment('files/docs');     // "files~1docs"
+ * const escapedConfigKey = escapeSegment('config~prod');  // "config~0prod"
  *
  * // Now safe to use in JSON Pointer expressions
  * const filePointer = `/${escapedFileKey}/size`;      // "/files~1docs/size"

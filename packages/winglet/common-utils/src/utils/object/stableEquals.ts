@@ -1,3 +1,15 @@
+import { ARRAY_BUFFER_TAG, OBJECT_TAG } from '@/common-utils/constant/typeTag';
+import { getTypeTag } from '@/common-utils/libs/getTypeTag';
+
+import { countRetainedKeys } from './utils/countRetainedKeys';
+import { equalsBuiltin } from './utils/equalsBuiltin';
+
+/**
+ * Sentinel used to bypass internal-state tag checks for current-realm
+ * literal-prototype pairs.
+ */
+const OBJECT_PROTOTYPE = Object.prototype;
+
 /**
  * Performs robust deep equality comparison with advanced type support and circular reference handling.
  *
@@ -324,43 +336,35 @@ const stableEqualsRecursive = (
   )
     return false;
 
-  if (visited.has(left) && visited.get(left)!.has(right)) return true;
+  let leftSeen = visited.get(left);
+  if (leftSeen === undefined) visited.set(left, (leftSeen = new Set()));
+  else if (leftSeen.has(right)) return true;
+  leftSeen.add(right);
 
-  if (!visited.has(left)) visited.set(left, new Set());
-  visited.get(left)!.add(right);
-  if (!visited.has(right)) visited.set(right, new Set());
-  visited.get(right)!.add(left);
-
-  if (left instanceof Date && right instanceof Date)
-    return left.getTime() === right.getTime();
-
-  if (left instanceof RegExp && right instanceof RegExp)
-    return left.source === right.source && left.flags === right.flags;
-
-  if (ArrayBuffer.isView(left) && ArrayBuffer.isView(right)) {
-    if (left.constructor !== right.constructor) return false;
-    if (left.byteLength !== right.byteLength) return false;
-
-    const viewLeft = new DataView(
-      left.buffer,
-      left.byteOffset,
-      left.byteLength,
-    );
-    const viewRight = new DataView(
-      right.buffer,
-      right.byteOffset,
-      right.byteLength,
-    );
-    for (let i = 0, l = left.byteLength; i < l; i++)
-      if (viewLeft.getUint8(i) !== viewRight.getUint8(i)) return false;
-    return true;
-  }
+  // Registered both ways so a cycle re-entered with the operands swapped still resolves
+  let rightSeen = visited.get(right);
+  if (rightSeen === undefined) visited.set(right, (rightSeen = new Set()));
+  rightSeen.add(left);
 
   const leftIsArray = Array.isArray(left);
   const rightIsArray = Array.isArray(right);
 
   if (leftIsArray !== rightIsArray) return false;
   if (leftIsArray && rightIsArray) {
+    // Custom array tags retain tag discrimination and the ArrayBuffer special case.
+    if (Symbol.toStringTag in left || Symbol.toStringTag in right) {
+      const tag = getTypeTag(left);
+      if (tag !== getTypeTag(right)) return false;
+
+      if (tag === ARRAY_BUFFER_TAG)
+        return stableEqualsRecursive(
+          new Uint8Array(left),
+          new Uint8Array(right),
+          visited,
+          omits,
+        );
+    }
+
     const length = left.length;
     if (length !== right.length) return false;
     for (let i = 0; i < length; i++) {
@@ -374,10 +378,62 @@ const stableEqualsRecursive = (
     return true;
   }
 
+  if (
+    Object.getPrototypeOf(left) !== OBJECT_PROTOTYPE ||
+    Object.getPrototypeOf(right) !== OBJECT_PROTOTYPE
+  ) {
+    // Operands of different kinds are never equal; without this an exotic object and a
+    // plain one both expose no own keys and would compare equal
+    const tag = getTypeTag(left);
+    if (tag !== getTypeTag(right)) return false;
+
+    if (tag === ARRAY_BUFFER_TAG)
+      return stableEqualsRecursive(
+        new Uint8Array(left as ArrayBufferLike),
+        new Uint8Array(right as ArrayBufferLike),
+        visited,
+        omits,
+      );
+
+    if (ArrayBuffer.isView(left) && ArrayBuffer.isView(right)) {
+      if (left.constructor !== right.constructor) return false;
+      if (left.byteLength !== right.byteLength) return false;
+
+      const viewLeft = new DataView(
+        left.buffer,
+        left.byteOffset,
+        left.byteLength,
+      );
+      const viewRight = new DataView(
+        right.buffer,
+        right.byteOffset,
+        right.byteLength,
+      );
+      for (let i = 0, l = left.byteLength; i < l; i++)
+        if (viewLeft.getUint8(i) !== viewRight.getUint8(i)) return false;
+      return true;
+    }
+
+    // Everything left is either a plain object or a class instance, both OBJECT_TAG;
+    // built-ins carry their state where own keys cannot reach it
+    if (tag !== OBJECT_TAG) {
+      const byState = equalsBuiltin(left, right, tag, (leftValue, rightValue) =>
+        stableEqualsRecursive(leftValue, rightValue, visited, omits),
+      );
+      if (byState !== undefined) return byState;
+    }
+  }
+
   const leftKeys = Reflect.ownKeys(left);
+  const rightKeys = Reflect.ownKeys(right);
   const leftLength = leftKeys.length;
 
-  if (leftLength !== Reflect.ownKeys(right).length) return false;
+  if (omits === null) {
+    if (leftLength !== rightKeys.length) return false;
+  } else if (
+    countRetainedKeys(leftKeys, omits) !== countRetainedKeys(rightKeys, omits)
+  )
+    return false;
   for (let i = 0, k = leftKeys[0]; i < leftLength; i++, k = leftKeys[i]) {
     if (omits?.has(k)) continue;
     if (!Reflect.has(right, k)) return false;

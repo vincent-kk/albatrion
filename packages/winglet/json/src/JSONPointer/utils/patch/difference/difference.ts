@@ -27,7 +27,6 @@ import { differenceObjectPatch } from './differenceObjectPatch';
  * @param target - The target JSON value to compare to
  *
  * @see https://datatracker.ietf.org/doc/html/rfc7396 - JSON Merge Patch specification
- * @see https://datatracker.ietf.org/doc/html/rfc6901 - JSON Pointer specification (used internally)
  *
  * @returns A JSON Merge Patch that transforms source into target, or `undefined` if no changes are needed.
  *          The patch format depends on the input types:
@@ -95,7 +94,6 @@ export const difference = (
   // If `target` is primitive type, return `target` (replacement)
   if (isPrimitiveType(target)) return target;
 
-  // [`object` -> `object`]: use `compare` to create patches and return `mergePatch`
   if (isPlainObject(source) && isPlainObject(target))
     return differenceObjectPatch(source, target);
 

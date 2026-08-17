@@ -1,4 +1,6 @@
 import { abs } from './abs';
+import { MAX_FRACTION_DIGITS } from './constant';
+import { countDecimals } from './utils/countDecimals';
 import { gcd } from './gcd';
 import { maxLite } from './maxLite';
 
@@ -9,9 +11,10 @@ import { maxLite } from './maxLite';
  * Supports both integers and decimal numbers by handling floating-point precision
  * issues appropriately. Uses the mathematical relationship: LCM(a,b) = |a×b| / GCD(a,b).
  *
- * @param left - First number (integer or decimal)
- * @param right - Second number (integer or decimal)
- * @returns Least common multiple of the two numbers
+ * @param left - First number (finite integer or decimal)
+ * @param right - Second number (finite integer or decimal)
+ * @returns Least common multiple of the two numbers, or `NaN` when either input
+ *   is not finite or the underlying {@link gcd} cannot be computed
  *
  * @example
  * Integer LCM calculations:
@@ -37,6 +40,13 @@ import { maxLite } from './maxLite';
  * console.log(lcm(7, 0)); // 0 (LCM with zero)
  * console.log(lcm(-12, 8)); // 24 (absolute values used)
  * console.log(lcm(-6, -9)); // 18 (absolute values used)
+ *
+ * // Values printed in exponential notation
+ * console.log(lcm(1e-7, 2e-7)); // 2e-7
+ *
+ * // Undefined results
+ * console.log(lcm(NaN, 5)); // NaN
+ * console.log(lcm(Infinity, 5)); // NaN
  * ```
  *
  * @remarks
@@ -59,13 +69,14 @@ import { maxLite } from './maxLite';
  * Space complexity is O(1). Includes precision handling for decimal inputs.
  */
 export const lcm = (left: number, right: number): number => {
+  if (!Number.isFinite(left) || !Number.isFinite(right)) return NaN;
   if (left === 0 || right === 0) return 0;
 
   const result = abs(left * right) / gcd(left, right);
   if (Number.isInteger(result)) return result;
 
-  const leftDecimals = left.toString().split('.')[1]?.length || 0;
-  const rightDecimals = right.toString().split('.')[1]?.length || 0;
-  const maxDecimals = maxLite(leftDecimals, rightDecimals);
-  return parseFloat(result.toFixed(maxDecimals + 1));
+  const maxDecimals = maxLite(countDecimals(left), countDecimals(right));
+  return maxDecimals >= MAX_FRACTION_DIGITS
+    ? result
+    : parseFloat(result.toFixed(maxDecimals + 1));
 };

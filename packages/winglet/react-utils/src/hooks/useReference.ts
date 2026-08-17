@@ -76,6 +76,13 @@ import { useRef } from 'react';
  * }), [itemsRef]);
  * ```
  *
+ * @remarks The ref is assigned during render rather than inside an effect, so the value is
+ *          already current for anything reading it in the same commit. The trade-off is
+ *          that a render React discards — a transition, `useDeferredValue`, a Suspense
+ *          retry — still leaves its value behind. Read `current` as "the latest value
+ *          React attempted", not "the latest value React committed"; when that distinction
+ *          matters, keep the value in state instead.
+ *
  * @typeParam T - The type of the value to keep current reference to
  * @param value - The value to track. The ref will always contain this latest value
  * @returns A ref object whose `current` property always equals the latest `value`

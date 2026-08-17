@@ -128,7 +128,7 @@ export const getValue = <
   Output extends Dictionary | Array<any> = Dictionary | Array<any>,
 >(
   value: Dictionary | Array<any>,
-  pointer: string | string[],
+  pointer: string | (string | number)[],
 ): Output => {
   if (!(isPlainObject(value) || isArray(value)))
     throw new JSONPointerError(

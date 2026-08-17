@@ -82,4 +82,12 @@ describe('transformValues', () => {
     const result = transformValues(input, (value) => value);
     expect(result).toEqual({});
   });
+  it('should keep an entry whose source key is __proto__', () => {
+    const source = JSON.parse('{"__proto__":1,"a":2}');
+
+    const transformed = transformValues(source, (value) => (value as number) * 2);
+
+    expect(Object.keys(transformed).sort()).toEqual(['__proto__', 'a']);
+    expect(transformed['__proto__' as keyof typeof transformed]).toBe(2);
+  });
 });

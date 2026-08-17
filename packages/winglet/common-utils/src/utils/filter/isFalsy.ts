@@ -294,15 +294,20 @@
 export const isFalsy = <T>(value: T): value is Extract<T, Falsy> => !value;
 
 /**
- * Union type representing all falsy values in JavaScript.
+ * Union type representing the falsy values JavaScript can express as types.
  *
- * Includes all falsy values:
+ * Members:
  * - false (boolean false)
  * - null (null value)
  * - undefined (undefined value)
  * - '' (empty string)
  * - 0 (number zero, including -0 and +0)
  * - 0n (BigInt zero)
- * - NaN (Not a Number) - Note: NaN is of type number but falsy
+ *
+ * @remarks
+ * `NaN` is falsy at runtime but has no type-level representation, so it cannot appear
+ * here. A consequence: inside `isFalsy(value: number)` the value narrows to `0` even
+ * when it is `NaN`. Widening this member to `number` instead would swallow every
+ * number and break `Exclude` in {@link isTruthy}; this is the lesser gap.
  */
-export type Falsy = false | null | undefined | '' | 0 | 0n | typeof NaN;
+export type Falsy = false | null | undefined | '' | 0 | 0n;

@@ -37,6 +37,10 @@
  * // Real data: test scores
  * console.log(median([85, 90, 78, 92, 88])); // 88
  * console.log(median([1.1, 2.2, 3.3, 4.4])); // 2.75
+ *
+ * // NaN makes the numeric sort comparator return NaN; the resulting placement
+ * // and median are not defined by this utility
+ * console.log(median([1, NaN, 3])); // runtime sort outcome dependent
  * ```
  *
  * @remarks
@@ -46,6 +50,8 @@
  * - For odd-length arrays: returns the exact middle element
  * - For even-length arrays: returns average of two middle elements
  * - Returns NaN for empty datasets
+ * - Inputs containing NaN have no defined median because the sort comparator
+ *   returns NaN and the result depends on the runtime's sort outcome
  *
  * **Use Cases:**
  * - Statistical analysis and data science

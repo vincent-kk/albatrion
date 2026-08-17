@@ -92,8 +92,14 @@ export const mergePatch = <Type extends JsonValue>(
   // If patch is undefined, return source unchanged
   if (mergePatchBody === undefined) return source as Type;
 
-  // If patch is not an object (including null and arrays), return patch (complete replacement)
-  if (!isPlainObject(mergePatchBody)) return mergePatchBody as Type;
+  // If patch is not an object (including null and arrays), return patch (complete replacement).
+  // Cloned under immutable so an array patch is not shared with the caller
+  if (!isPlainObject(mergePatchBody))
+    return (
+      immutable && typeof mergePatchBody === 'object' && mergePatchBody !== null
+        ? cloneLite(mergePatchBody)
+        : mergePatchBody
+    ) as Type;
 
   // If source is not a plain object, start with an empty object
   const target: JsonObject = isPlainObject(source)

@@ -18,6 +18,8 @@
   "exclude": [
     "node_modules",
     "dist",
+    "bench/**",
+    "vitest.bench.config.ts",
     "**/__tests__/**",
     "**/coverage/**",
     "**/*.test.ts",

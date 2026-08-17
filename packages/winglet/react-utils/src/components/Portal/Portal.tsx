@@ -1,5 +1,8 @@
 import { type PropsWithChildren, memo, useEffect } from 'react';
 
+import { getRandomString } from '@winglet/common-utils/lib';
+
+import { useLazyConstant } from '../../hooks/useLazyConstant';
 import { usePortalContext } from './context/usePortalContext';
 
 /**
@@ -97,14 +100,18 @@ import { usePortalContext } from './context/usePortalContext';
  *
  * @param children - The React elements to render at the Portal.Anchor location. Can be any valid ReactNode
  * @returns null - This component doesn't render anything in its own location, content appears at the anchor
+ *
+ * @remarks
+ * The registration id is created once per Portal instance, so updating `children`
+ * replaces the registered content in place. The rendered subtree keeps its React key
+ * across parent renders and is therefore never remounted by an unrelated update.
  */
 export const Portal = memo(({ children }: PropsWithChildren) => {
   const { register, unregister } = usePortalContext();
+  const id = useLazyConstant(() => getRandomString(36));
   useEffect(() => {
-    const id = register(children);
-    return () => {
-      if (id) unregister(id);
-    };
-  }, [children, register, unregister]);
+    register(id, children);
+  }, [id, children, register]);
+  useEffect(() => () => unregister(id), [id, unregister]);
   return null;
 });

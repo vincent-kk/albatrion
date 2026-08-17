@@ -1,9 +1,9 @@
 /**
  * Returns elements from the source array that also exist in the target array.
  *
- * Lightweight version of the `intersection` function optimized for small arrays (< 100 elements).
- * Uses indexOf for element checking instead of Set, providing better performance
- * for small arrays while maintaining O(n*m) complexity.
+ * Small-array alternative to `intersection` with different equality semantics:
+ * this function uses `indexOf` and strict equality, while `intersection` uses a
+ * Set and SameValueZero equality. It maintains O(n*m) complexity.
  *
  * @template Type - Type of array elements
  * @param source - Source array to use as base for intersection
@@ -84,6 +84,9 @@
  *
  * // All elements in common
  * console.log(intersectionLite([1, 2, 3], [1, 2, 3])); // [1, 2, 3]
+ *
+ * // NaN is not equal to itself under indexOf's strict-equality lookup
+ * console.log(intersectionLite([NaN], [NaN])); // []
  * ```
  *
  * @example
@@ -108,7 +111,8 @@
  * ```
  *
  * @remarks
- * **Performance Optimization:** This is a lightweight alternative to the standard `intersection` function.
+ * **Performance Optimization:** This is a small-array alternative to `intersection`
+ * with intentionally different equality semantics.
  * - For arrays with < 100 elements: Uses indexOf (O(n*m)) which is faster due to lower overhead
  * - For arrays with >= 100 elements: Consider using `intersection` which uses Set (O(n+m))
  * - Optimized loop structure with cached element reference reduces array access overhead

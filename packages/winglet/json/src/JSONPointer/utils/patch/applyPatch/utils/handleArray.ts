@@ -1,10 +1,10 @@
-import { equals } from '@winglet/common-utils/object';
+import { cloneLite, equals } from '@winglet/common-utils/object';
 
 import { getValue } from '@/json/JSONPointer/utils/manipulator/getValue';
 import { setValue } from '@/json/JSONPointer/utils/manipulator/setValue';
 import type { JsonArray, JsonRoot } from '@/json/type';
 
-import { Operation, type Patch } from '../../type';
+import { Operation, type Patch } from '../../../patchModel';
 import { JsonPatchError } from './error';
 import { isCircularMoveReference } from './isCircularMoveReference';
 
@@ -167,7 +167,9 @@ export const handleArray = (
           },
         );
       }
-      array[index] = getValue(source, patch.from);
+      // RFC 6902 copy yields an independent value; sharing the reference would let a
+      // later edit of the copy mutate the original
+      array[index] = cloneLite(getValue(source, patch.from));
       return source;
     default:
       throw new JsonPatchError(

@@ -125,4 +125,28 @@ describe('hasUndefined', () => {
     objWithNullProtoNoUndefined.b = null;
     expect(hasUndefined(objWithNullProtoNoUndefined)).toBe(false);
   });
+
+  describe('circular references', () => {
+    it('should terminate on a cycle that holds no undefined', () => {
+      const node: Record<string, unknown> = { name: 'root' };
+      node.self = node;
+
+      expect(hasUndefined(node)).toBe(false);
+    });
+
+    it('should still find undefined reached through a cycle', () => {
+      const node: Record<string, unknown> = { name: 'root' };
+      node.self = node;
+      node.child = { value: undefined };
+
+      expect(hasUndefined(node)).toBe(true);
+    });
+
+    it('should terminate on a cycle formed through an array', () => {
+      const list: unknown[] = [1];
+      list[1] = list;
+
+      expect(hasUndefined(list)).toBe(false);
+    });
+  });
 });

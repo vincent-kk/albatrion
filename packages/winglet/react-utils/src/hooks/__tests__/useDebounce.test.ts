@@ -12,7 +12,7 @@ describe('useDebounce', () => {
     vi.useRealTimers();
   });
 
-  // === 기본 동작 테스트 ===
+  // === Basic behavior tests ===
 
   it('should initialize with isIdle as false', () => {
     // Arrange
@@ -117,7 +117,7 @@ describe('useDebounce', () => {
     expect(result.current.isIdle()).toBe(true);
   });
 
-  // === immediate=true 모드 테스트 ===
+  // === immediate=true mode tests ===
 
   describe('immediate=true mode', () => {
     it('should execute immediately on mount and start timer', () => {
@@ -236,7 +236,7 @@ describe('useDebounce', () => {
     });
   });
 
-  // === immediate=false 모드 테스트 ===
+  // === immediate=false mode tests ===
 
   describe('immediate=false mode', () => {
     it('should schedule timer on mount and execute after timeout', () => {
@@ -300,7 +300,7 @@ describe('useDebounce', () => {
     });
   });
 
-  // === 기존 테스트들 (수정된 버전) ===
+  // === Existing tests (revised versions) ===
 
   it('should reset timeout when dependencies change multiple times', () => {
     // Arrange
@@ -536,7 +536,7 @@ describe('useDebounce', () => {
     expect(firstRender.cancel).toBe(secondRender.cancel);
   });
 
-  // === 엣지 케이스 테스트 ===
+  // === Edge case tests ===
 
   describe('Edge Cases', () => {
     it('should handle rapid dependency changes with precise timing', () => {

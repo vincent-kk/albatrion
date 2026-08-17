@@ -81,6 +81,10 @@
     "README.md"
   ],
   "scripts": {
+    "bench": "yarn run -T vitest bench --config vitest.bench.config.ts --run",
+    "bench:baseline": "yarn run -T vitest bench --config vitest.bench.config.ts --run --outputJson bench/.results/baseline.json",
+    "bench:compare": "yarn run -T vitest bench --config vitest.bench.config.ts --run --compare bench/.results/baseline.json",
+    "bench:watch": "yarn run -T vitest bench --config vitest.bench.config.ts",
     "build": "rolldown -c && yarn build:types && yarn build:hashes && yarn typecheck",
     "build:hashes": "agents-build-hashes",
     "build:publish:npm": "yarn build && yarn publish:npm",

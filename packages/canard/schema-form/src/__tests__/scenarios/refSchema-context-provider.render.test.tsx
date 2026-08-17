@@ -1,4 +1,4 @@
-import { type FC, createRef } from 'react';
+import { type FC, type ReactElement, createRef } from 'react';
 
 import '@testing-library/jest-dom';
 import { act, render } from '@testing-library/react';
@@ -184,6 +184,41 @@ const renderWithProvider = async (
 
 // ===========================================================================
 
+/**
+ * Renders an element, drains the mount cascade, and can re-render it with different
+ * props. `renderForm` and `renderWithProvider` both own the tree they mount, so a test
+ * that changes a Form- or provider-level prop between renders needs its own root.
+ */
+const renderSwappable = async (element: ReactElement) => {
+  let utils!: ReturnType<typeof render>;
+  const drain = async () => {
+    await act(async () => {
+      await new Promise((r) => setTimeout(r, 0));
+    });
+  };
+  await act(async () => {
+    utils = render(element);
+  });
+  await drain();
+  return {
+    /** Parses the `data-context` the ContextProbe rendered for `path`. */
+    contextOf: (path: string) =>
+      JSON.parse(
+        (
+          utils.container.querySelector(
+            `#${CSS.escape(path)}`,
+          ) as HTMLElement | null
+        )?.getAttribute('data-context') ?? 'null',
+      ),
+    swap: async (next: ReactElement) => {
+      await act(async () => {
+        utils.rerender(next);
+      });
+      await drain();
+    },
+  };
+};
+
 describe('$ref resolution renders the referenced subschema fields', () => {
   it('renders a $defs string ref as a terminal input carrying its value', async () => {
     const form = await renderForm(simpleRefSchema, {
@@ -271,6 +306,26 @@ describe('context passed via Form context prop reaches FormTypeInput', () => {
     expect(form.value('/greeting')).toBe('hi');
     // Tree agrees on the underlying value.
     expect(form.node('/greeting')?.value).toBe('hi');
+  });
+
+  it('clears props.context when the Form context prop is emptied', async () => {
+    // `WorkspaceContextProvider` stabilizes the prop through `useSnapshot`, so emptying
+    // it is the non-empty -> empty transition that snapshot comparison must not skip.
+    const mount = (context: object) => (
+      <Form
+        jsonSchema={contextProbeSchema as any}
+        formTypeInputDefinitions={probeDefs}
+        context={context}
+      />
+    );
+    const view = await renderSwappable(mount({ greeting: 'hello', count: 3 }));
+    expect(view.contextOf('/greeting')).toEqual({
+      greeting: 'hello',
+      count: 3,
+    });
+
+    await view.swap(mount({}));
+    expect(view.contextOf('/greeting')).toEqual({});
   });
 
   it('hides a context-gated `&active` field when the context disables it', async () => {
@@ -390,5 +445,29 @@ describe('FormProvider supplies definitions/context to a nested Form', () => {
     expect(form.value('/greeting')).toBe('merged');
     // Tree agrees on the value.
     expect(form.node('/greeting')?.value).toBe('merged');
+  });
+
+  it('clears the merged context when FormProvider context is emptied', async () => {
+    // `ExternalFormContextProvider` stabilizes its own context through `useSnapshot`
+    // too, so the base half of the `{...external, ...form}` merge has the same
+    // non-empty -> empty transition to honour.
+    const mount = (context: object) => (
+      <FormProvider context={context}>
+        <Form
+          jsonSchema={contextProbeSchema as any}
+          formTypeInputDefinitions={probeDefs}
+        />
+      </FormProvider>
+    );
+    const view = await renderSwappable(
+      mount({ userRole: 'admin', tier: 'gold' }),
+    );
+    expect(view.contextOf('/greeting')).toEqual({
+      userRole: 'admin',
+      tier: 'gold',
+    });
+
+    await view.swap(mount({}));
+    expect(view.contextOf('/greeting')).toEqual({});
   });
 });

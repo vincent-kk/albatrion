@@ -78,6 +78,12 @@ import type { FC } from 'react';
  * - Components created with React.forwardRef (they're objects, not functions)
  * - Non-function values
  */
+/**
+ * @remarks
+ * A component function is an ordinary function, so nothing at runtime separates one from
+ * any other function. This reports every function that is not a class component — treat a
+ * `true` as "callable as a component", not as proof that the value was written as one.
+ */
 export const isFunctionComponent = <
   Props extends object = any,
   Component extends FC<Props> = FC<Props>,

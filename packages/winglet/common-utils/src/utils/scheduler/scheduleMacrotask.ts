@@ -1,9 +1,6 @@
 import type { Fn } from '@aileron/declare';
 
-import {
-  clearImmediate,
-  setImmediate,
-} from './MessageChannelScheduler/handler';
+import { clearImmediate, setImmediate } from './MessageChannelScheduler';
 
 /**
  * Type definition for macrotask scheduling functions
@@ -70,7 +67,12 @@ type SchedulerFunctions<Id = any> = {
  * - **Automatic Batching**: MessageChannelScheduler groups synchronously scheduled tasks
  */
 const getScheduleMacrotask = (): SchedulerFunctions => {
-  if (typeof globalThis.setImmediate === 'function')
+  // Both symbols are required: a polyfill that ships only setImmediate would make
+  // clearImmediate.bind throw at module load and take the whole subpath with it
+  if (
+    typeof globalThis.setImmediate === 'function' &&
+    typeof globalThis.clearImmediate === 'function'
+  )
     return {
       scheduleMacrotask: globalThis.setImmediate.bind(globalThis),
       cancelMacrotask: globalThis.clearImmediate.bind(globalThis),

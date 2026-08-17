@@ -297,13 +297,11 @@ describe('useTimeout', () => {
       vi.advanceTimersByTime(timeout + 100);
     });
 
-    // Assert - callback should not be called after unmount
-    // Note: The cleanup happens but the callback might still be called due to timing
-    // This is expected behavior for the current implementation
+    // Assert - the pending timer is cleared, so the scheduler reports idle again
     expect(result.current.isIdle()).toBe(true);
   });
 
-  // === 엄밀한 테스트 케이스들 ===
+  // === Rigorous test cases ===
 
   describe('Edge Cases and Rigorous Testing', () => {
     it('should handle rapid schedule/cancel cycles', () => {
@@ -495,6 +493,26 @@ describe('useTimeout', () => {
       expect(firstRender.isIdle).toBe(secondRender.isIdle);
       expect(firstRender.schedule).toBe(secondRender.schedule);
       expect(firstRender.cancel).toBe(secondRender.cancel);
+    });
+  });
+
+  describe('unmount', () => {
+    it('should not run a pending callback after the component unmounts', () => {
+      // Arrange
+      const callback = vi.fn();
+      const { result, unmount } = renderHook(() => useTimeout(callback, 100));
+      act(() => {
+        result.current.schedule();
+      });
+
+      // Act
+      unmount();
+      act(() => {
+        vi.advanceTimersByTime(200);
+      });
+
+      // Assert
+      expect(callback).not.toHaveBeenCalled();
     });
   });
 });

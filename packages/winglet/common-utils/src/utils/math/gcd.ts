@@ -1,4 +1,6 @@
 import { abs } from './abs';
+import { MAX_FRACTION_DIGITS } from './constant';
+import { countDecimals } from './utils/countDecimals';
 import { maxLite } from './maxLite';
 
 /**
@@ -8,9 +10,10 @@ import { maxLite } from './maxLite';
  * Supports both integers and decimal numbers by scaling decimals to integers with
  * appropriate precision handling. Uses the efficient Euclidean algorithm for computation.
  *
- * @param left - First number (integer or decimal)
- * @param right - Second number (integer or decimal)
- * @returns Greatest common divisor of the two numbers
+ * @param left - First number (finite integer or decimal)
+ * @param right - Second number (finite integer or decimal)
+ * @returns Greatest common divisor of the two numbers, or `NaN` when either
+ *   input is not finite or scaling a decimal input overflows to infinity
  *
  * @example
  * Integer GCD calculations:
@@ -36,6 +39,13 @@ import { maxLite } from './maxLite';
  * console.log(gcd(7, 0)); // 7 (GCD with zero)
  * console.log(gcd(0, 0)); // 0 (by convention)
  * console.log(gcd(-12, 8)); // 4 (absolute values used)
+ *
+ * // Values printed in exponential notation
+ * console.log(gcd(1e-7, 2e-7)); // 1e-7
+ *
+ * // Undefined results
+ * console.log(gcd(NaN, 5)); // NaN
+ * console.log(gcd(Infinity, 5)); // NaN
  * ```
  *
  * @remarks
@@ -44,7 +54,13 @@ import { maxLite } from './maxLite';
  * - gcd(0, 0) = 0 by convention
  * - gcd(a, b) = gcd(b, a) (commutative)
  * - gcd(a, b) = gcd(|a|, |b|) (sign independent)
- * - Always returns a non-negative result
+ * - Always returns a non-negative result, or `NaN` where no result is defined
+ *
+ * **Decimal precision:** decimal inputs are scaled to integers by a power of ten
+ * derived from their decimal places. When that scaling overflows to infinity the
+ * result is `NaN` rather than an arbitrary finite value. Results needing more than
+ * {@link MAX_FRACTION_DIGITS} fraction digits skip the final rounding pass, since
+ * `toFixed` rejects counts above that limit.
  *
  * **Use Cases:**
  * - Simplifying fractions to lowest terms
@@ -58,6 +74,7 @@ import { maxLite } from './maxLite';
  * For decimal inputs, includes O(1) scaling operations. Space complexity is O(1).
  */
 export const gcd = (left: number, right: number): number => {
+  if (!Number.isFinite(left) || !Number.isFinite(right)) return NaN;
   if (left === 0 && right === 0) return 0;
   if (left === 0) return abs(right);
   if (right === 0) return abs(left);
@@ -65,16 +82,19 @@ export const gcd = (left: number, right: number): number => {
   if (Number.isInteger(left) && Number.isInteger(right))
     return uclidGcd(left, right);
 
-  const leftDecimals = left.toString().split('.')[1]?.length || 0;
-  const rightDecimals = right.toString().split('.')[1]?.length || 0;
-
-  const maxDecimals = maxLite(leftDecimals, rightDecimals);
+  const maxDecimals = maxLite(countDecimals(left), countDecimals(right));
   const scale = Math.pow(10, maxDecimals);
-  const result =
-    uclidGcd(Math.round(left * scale), Math.round(right * scale)) / scale;
-  return parseFloat(result.toFixed(maxDecimals));
+  const scaledLeft = Math.round(left * scale);
+  const scaledRight = Math.round(right * scale);
+  if (!Number.isFinite(scaledLeft) || !Number.isFinite(scaledRight)) return NaN;
+
+  const result = uclidGcd(scaledLeft, scaledRight) / scale;
+  return maxDecimals > MAX_FRACTION_DIGITS
+    ? result
+    : parseFloat(result.toFixed(maxDecimals));
 };
 
+/** Euclidean algorithm over finite operands; non-finite input would not terminate. */
 const uclidGcd = (left: number, right: number): number => {
   let temp;
   while (right !== 0) {

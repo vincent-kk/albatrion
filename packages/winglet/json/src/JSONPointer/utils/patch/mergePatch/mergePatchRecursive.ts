@@ -25,6 +25,9 @@ export const mergePatchRecursive = (
 ): JsonObject => {
   if (patch === undefined) return source;
   if (!isPlainObject(patch)) return patch;
+  // RFC 7396 replaces a non-object target with an empty object before merging; the
+  // default parameter only covers undefined, leaving numbers, strings, null and arrays
+  if (!isPlainObject(source)) source = {};
   for (const key in patch) {
     if (!hasOwnProperty(patch, key)) continue;
     const value = patch[key];

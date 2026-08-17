@@ -27,7 +27,8 @@
  * console.log(max([])); // -Infinity
  *
  * // Arrays with special values
- * console.log(max([1, NaN, 3])); // NaN (NaN propagates)
+ * console.log(max([NaN, 1])); // NaN (the initial value is retained)
+ * console.log(max([1, NaN])); // 1 (a later NaN never compares greater)
  * console.log(max([1, Infinity, 3])); // Infinity
  * console.log(max([-Infinity, 100])); // 100
  *
@@ -39,7 +40,9 @@
  * **Algorithm Properties:**
  * - Single-pass O(n) iteration through the array
  * - No sorting required (more efficient than sort-based approaches)
- * - Handles NaN values following JavaScript comparison rules
+ * - NaN handling is position-dependent: an initial NaN is retained, while later
+ *   NaN values are ignored because comparisons with NaN are false
+ * - Unlike `Math.max`, a NaN appearing after the first element does not force NaN
  * - Returns -Infinity for empty arrays (consistent with Math.max())
  *
  * **Use Cases:**

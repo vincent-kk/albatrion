@@ -57,4 +57,15 @@ describe('lcm', () => {
     expect(lcm(0.1, 0.2)).toBe(0.2);
     expect(lcm(0.3, 0.7)).toBe(2.1);
   });
+
+  it('유한하지 않은 입력에 대해 무한 루프 없이 NaN을 반환해야 합니다', () => {
+    expect(lcm(NaN, 5)).toBeNaN();
+    expect(lcm(Infinity, 5)).toBeNaN();
+    expect(lcm(5, -Infinity)).toBeNaN();
+  });
+
+  it('지수 표기로 출력되는 소수의 최소공배수를 계산해야 합니다', () => {
+    expect(lcm(1e-7, 2e-7)).toBe(2e-7);
+    expect(lcm(1e-7, 3e-7)).toBe(3e-7);
+  });
 });

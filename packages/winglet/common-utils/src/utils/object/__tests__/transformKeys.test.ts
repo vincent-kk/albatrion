@@ -57,4 +57,10 @@ describe('transformKeys', () => {
     const result = transformKeys(input, (_, key) => key);
     expect(result).toEqual({});
   });
+  it('should keep an entry whose new key is __proto__', () => {
+    const transformed = transformKeys({ a: 1 }, () => '__proto__');
+
+    expect(Object.keys(transformed)).toEqual(['__proto__']);
+    expect(transformed['__proto__' as keyof typeof transformed]).toBe(1);
+  });
 });

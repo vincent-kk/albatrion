@@ -7,9 +7,10 @@ const __hasOwnProperty__ = Object.prototype.hasOwnProperty;
  * and ensure accurate own-property detection, even for objects without
  * Object.prototype in their prototype chain.
  *
+ * @typeParam Type - Type of the inspected value, whose keys the guard narrows to
  * @param value - Object or value to inspect
  * @param key - Property key to check for ownership
- * @returns Type-safe boolean indicating direct property ownership
+ * @returns Whether `key` is an own property, narrowing it to `keyof Type`
  *
  * @example
  * Own property detection:
@@ -25,7 +26,7 @@ const __hasOwnProperty__ = Object.prototype.hasOwnProperty;
  * console.log(hasOwnProperty(nullObj, 'prop')); // true (safe even without prototype)
  * ```
  */
-export const hasOwnProperty = (
-  value: unknown,
+export const hasOwnProperty = <Type>(
+  value: Type,
   key: PropertyKey,
-): key is keyof typeof value => __hasOwnProperty__.call(value, key);
+): key is keyof Type => __hasOwnProperty__.call(value, key);

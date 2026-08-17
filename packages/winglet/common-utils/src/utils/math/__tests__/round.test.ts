@@ -49,4 +49,24 @@ describe('round', () => {
     expect(round(-Infinity, 2)).toBe(-Infinity);
     expect(round(NaN, 2)).toBeNaN();
   });
+  it('should not lose a decimal half to binary representation', () => {
+    expect(round(1.005, 2)).toBe(1.01);
+    expect(round(2.675, 2)).toBe(2.68);
+    // Math.round lifts a half toward +Infinity, so a negative half rounds up in value
+    expect(round(-1.005, 2)).toBe(-1);
+    expect(round(-1.015, 2)).toBe(-1.01);
+  });
+
+  it('should round values printed in exponential notation', () => {
+    expect(round(1e-7, 3)).toBe(0);
+    expect(round(1.2e-7, 7)).toBe(1e-7);
+    expect(round(1.5e-7, 8)).toBe(1.5e-7);
+  });
+
+  it('should return a finite value when scaling would overflow', () => {
+    expect(round(1e300, 20)).toBe(1e300);
+    expect(round(1e21, 2)).toBe(1e21);
+    expect(round(Infinity)).toBe(Infinity);
+    expect(round(NaN)).toBeNaN();
+  });
 });

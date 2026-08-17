@@ -1,6 +1,6 @@
 import type { JsonRoot } from '@/json/type';
 
-import type { Patch } from '../type';
+import type { Patch } from '../../patchModel';
 import { compareRecursive } from './compareRecursive';
 import type { CompareOptions } from './type';
 

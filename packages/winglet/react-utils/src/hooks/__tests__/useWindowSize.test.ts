@@ -8,7 +8,7 @@ describe('useWindowSize', () => {
   const originalInnerHeight = window.innerHeight;
 
   beforeEach(() => {
-    // window.innerWidth와 window.innerHeight를 모킹합니다
+    // Mock window.innerWidth and window.innerHeight
     Object.defineProperty(window, 'innerWidth', {
       writable: true,
       configurable: true,
@@ -22,7 +22,7 @@ describe('useWindowSize', () => {
   });
 
   afterEach(() => {
-    // 원래 값으로 복원합니다
+    // Restore the original values
     Object.defineProperty(window, 'innerWidth', {
       writable: true,
       configurable: true,
@@ -35,7 +35,7 @@ describe('useWindowSize', () => {
     });
   });
 
-  it('초기 윈도우 크기를 반환해야 합니다', () => {
+  it('should return the initial window size', () => {
     const { result } = renderHook(() => useWindowSize());
 
     expect(result.current).toEqual({
@@ -44,11 +44,11 @@ describe('useWindowSize', () => {
     });
   });
 
-  it('윈도우 크기가 변경되면 새로운 크기를 반환해야 합니다', async () => {
+  it('should return the new size when the window size changes', async () => {
     const { result } = renderHook(() => useWindowSize());
 
     await act(async () => {
-      // 윈도우 크기를 변경합니다
+      // Change the window size
       Object.defineProperty(window, 'innerWidth', {
         writable: true,
         configurable: true,
@@ -59,7 +59,7 @@ describe('useWindowSize', () => {
         configurable: true,
         value: 600,
       });
-      // resize 이벤트를 발생시킵니다
+      // Dispatch the resize event
       window.dispatchEvent(new Event('resize'));
     });
 
@@ -69,7 +69,25 @@ describe('useWindowSize', () => {
     });
   });
 
-  it('언마운트 시 resize 이벤트 리스너를 제거해야 합니다', () => {
+  it('should not re-render on a resize event that does not change the size', () => {
+    let renderCount = 0;
+    const { result } = renderHook(() => {
+      renderCount++;
+      return useWindowSize();
+    });
+
+    const settledRenderCount = renderCount;
+    const settledSize = result.current;
+
+    act(() => {
+      window.dispatchEvent(new Event('resize'));
+    });
+
+    expect(renderCount).toBe(settledRenderCount);
+    expect(result.current).toBe(settledSize);
+  });
+
+  it('should remove the resize event listener on unmount', () => {
     const removeEventListenerSpy = vi.spyOn(window, 'removeEventListener');
     const { unmount } = renderHook(() => useWindowSize());
 

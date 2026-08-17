@@ -1,9 +1,9 @@
 /**
  * Returns elements from the source array that are not present in the exclude array.
  *
- * Lightweight version of the `difference` function optimized for small arrays (< 100 elements).
- * Uses indexOf for exclusion checking instead of Set, providing better performance
- * for small arrays while maintaining O(n*m) complexity.
+ * Small-array alternative to `difference` with different equality semantics:
+ * this function uses `indexOf` and strict equality, while `difference` uses a
+ * Set and SameValueZero equality. It maintains O(n*m) complexity.
  *
  * @template Type - Type of array elements
  * @param source - Source array to filter elements from
@@ -56,6 +56,9 @@
  *
  * // All elements excluded
  * console.log(differenceLite([1, 2, 3], [1, 2, 3, 4, 5])); // []
+ *
+ * // NaN is not equal to itself under indexOf's strict-equality lookup
+ * console.log(differenceLite([NaN], [NaN])); // [NaN]
  * ```
  *
  * @example
@@ -69,7 +72,8 @@
  * ```
  *
  * @remarks
- * **Performance Optimization:** This is a lightweight alternative to the standard `difference` function.
+ * **Performance Optimization:** This is a small-array alternative to `difference`
+ * with intentionally different equality semantics.
  * - For arrays with < 100 elements: Uses indexOf (O(n*m)) which is faster due to lower overhead
  * - For arrays with >= 100 elements: Consider using `difference` which uses Set (O(n+m))
  * - Optimized loop structure with cached element reference reduces array access overhead

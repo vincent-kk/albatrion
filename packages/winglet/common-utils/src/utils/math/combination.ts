@@ -3,7 +3,8 @@
  *
  * Computes the binomial coefficient C(n, r) = n! / (r! * (n-r)!) using an optimized
  * algorithm that avoids computing large factorials. Automatically uses the symmetry
- * property C(n, r) = C(n, n-r) to minimize iterations and prevent overflow.
+ * property C(n, r) = C(n, n-r) to minimize iterations. Results are exact only
+ * while the binomial coefficient is within JavaScript's safe integer range.
  *
  * @param n - Total number of items (must be non-negative integer)
  * @param r - Number of items to choose (must be non-negative integer)
@@ -42,7 +43,8 @@
  * - Returns 1 when r = 0 or r = n (choosing nothing or everything)
  * - Returns 0 when r > n (impossible combinations)
  * - Uses symmetry C(n, r) = C(n, n-r) to optimize performance
- * - Avoids factorial computation to prevent integer overflow
+ * - Avoids factorial intermediates but can silently lose integer precision when
+ *   the result exceeds `Number.MAX_SAFE_INTEGER`
  *
  * **Use Cases:**
  * - Probability calculations and combinatorial analysis

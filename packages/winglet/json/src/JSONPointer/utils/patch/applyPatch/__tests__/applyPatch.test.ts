@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
-import type { Patch } from '../../type';
-import { Operation } from '../../type';
+import type { Patch } from '../../../patchModel';
+import { Operation } from '../../../patchModel';
 import { applyPatch } from '../applyPatch';
 import { JsonPatchError } from '../utils/error';
 

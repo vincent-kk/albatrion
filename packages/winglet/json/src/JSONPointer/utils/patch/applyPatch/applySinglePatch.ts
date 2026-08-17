@@ -4,7 +4,9 @@ import { JSONPointer } from '@/json/JSONPointer/enum';
 import { unescapePath } from '@/json/JSONPointer/utils/escape/unescapePath';
 import type { JsonRoot } from '@/json/type';
 
-import type { Patch } from '../type';
+import { Operation, type Patch } from '../../patchModel';
+import { assertSafeFromPointer } from './utils/assertSafeFromPointer';
+import { ensureOwnedFromPath } from './utils/ensureOwnedFromPath';
 import { JsonPatchError } from './utils/error';
 import { getArrayIndex } from './utils/getArrayIndex';
 import { handleArray } from './utils/handleArray';
@@ -38,6 +40,7 @@ import { isPrototypeModification } from './utils/isPrototypeModification';
  * @param patchIndex - The index of this patch in the original patches array (for error reporting)
  * @param strict - Whether to enforce strict validation rules
  * @param protectPrototype - Whether to prevent prototype pollution attempts
+ * @param cloned - Owned object references in immutable mode, or null in mutating mode
  *
  * @see https://datatracker.ietf.org/doc/html/rfc6901 - JSON Pointer specification
  * @see https://datatracker.ietf.org/doc/html/rfc6902 - JSON Patch specification
@@ -56,7 +59,7 @@ import { isPrototypeModification } from './utils/isPrototypeModification';
  * const source = { user: { name: "John", age: 30 } };
  * const patch = { op: "replace", path: "/user/age", value: 31 };
  *
- * const result = applySinglePatch(source, patch, 0, false, true);
+ * const result = applySinglePatch(source, patch, 0, false, true, null);
  * // Returns: { user: { name: "John", age: 31 } }
  * ```
  *
@@ -65,7 +68,7 @@ import { isPrototypeModification } from './utils/isPrototypeModification';
  * const sourceArray = [1, 2, 3];
  * const patch = { op: "add", path: "/1", value: 5 };
  *
- * const result = applySinglePatch(sourceArray, patch, 0, false, true);
+ * const result = applySinglePatch(sourceArray, patch, 0, false, true, null);
  * // Returns: [1, 5, 2, 3]
  * ```
  *
@@ -75,7 +78,7 @@ import { isPrototypeModification } from './utils/isPrototypeModification';
  * const source = { old: "data" };
  * const patch = { op: "replace", path: "", value: { new: "data" } };
  *
- * const result = applySinglePatch(source, patch, 0, false, true);
+ * const result = applySinglePatch(source, patch, 0, false, true, null);
  * // Returns: { new: "data" }
  * ```
  *
@@ -86,7 +89,7 @@ import { isPrototypeModification } from './utils/isPrototypeModification';
  * const maliciousPatch = { op: "add", path: "/__proto__/isAdmin", value: true };
  *
  * // Throws JsonPatchError with SECURITY_PROTOTYPE_MODIFICATION_FORBIDDEN
- * applySinglePatch(source, maliciousPatch, 0, false, true);
+ * applySinglePatch(source, maliciousPatch, 0, false, true, null);
  * ```
  */
 export const applySinglePatch = (
@@ -95,12 +98,38 @@ export const applySinglePatch = (
   patchIndex: number,
   strict: boolean,
   protectPrototype: boolean,
+  cloned: WeakSet<object> | null,
 ): any => {
   // 루트 패치 처리
   if (patch.path === '' || patch.path === JSONPointer.Fragment)
     return handleRootPatch(source, patch, patchIndex, strict);
 
+  // Judged by operation rather than key presence: `move` and `copy` require a `from`
+  // pointer, and a missing or non-string one must surface as a patch error rather than
+  // as a TypeError thrown from somewhere deeper
+  if (patch.op === Operation.MOVE || patch.op === Operation.COPY) {
+    if (typeof patch.from !== 'string')
+      throw new JsonPatchError(
+        'PATCH_PATH_INVALID',
+        `Patch operation '${patch.op}' requires a string 'from' pointer`,
+        { patch, index: patchIndex, operation: patch.op },
+      );
+    if (protectPrototype) assertSafeFromPointer(patch.from, patch, patchIndex);
+    if (patch.op === Operation.MOVE && cloned !== null)
+      ensureOwnedFromPath(source, patch.from, cloned);
+  }
+
   const segments = patch.path.split('/');
+
+  // Same set compilePointer accepts: a leading separator or the URI fragment form.
+  // The walk starts at index 1, so anything else silently drops its first segment
+  // and edits somewhere the caller never named
+  if (segments[0] !== '' && segments[0] !== JSONPointer.Fragment)
+    throw new JsonPatchError(
+      'PATCH_PATH_INVALID',
+      `Patch path '${patch.path}' must start with '${JSONPointer.Separator}' or '${JSONPointer.Fragment}'`,
+      { patch, index: patchIndex, path: patch.path, operation: patch.op },
+    );
   let current: any = source;
   let cursor = 1;
 
@@ -159,7 +188,18 @@ export const applySinglePatch = (
 
     if (isArray(current)) segment = getArrayIndex(segment, current);
 
-    current = current[segment];
+    let next: any = current[segment];
+    if (
+      cloned !== null &&
+      next !== null &&
+      typeof next === 'object' &&
+      !cloned.has(next)
+    ) {
+      next = isArray(next) ? next.slice() : { ...next };
+      cloned.add(next);
+      current[segment] = next;
+    }
+    current = next;
 
     // 경로가 더 남았는데 현재 값이 객체가 아닌 경우
     if (!current || typeof current !== 'object') {

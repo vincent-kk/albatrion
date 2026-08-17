@@ -9,6 +9,6 @@
       "@aileron/*": ["../../aileron/common/*"]
     }
   },
-  "include": ["src", "src/**/*.ts", "src/**/*.tsx"],
+  "include": ["src", "src/**/*.ts", "src/**/*.tsx", "bench/**/*.ts"],
   "exclude": ["node_modules", "dist"]
 }

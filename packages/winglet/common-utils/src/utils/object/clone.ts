@@ -115,15 +115,18 @@ import { getSymbols } from './getSymbols';
  *   }
  * };
  *
- * // Clone only 2 levels deep (improves performance for deep structures)
+ * // maxDepth counts how many object levels are replicated, starting at the root
  * const shallowClone = clone(deep, 2);
- * console.log(shallowClone.level1 !== deep.level1); // true (cloned)
- * console.log(shallowClone.level1.level2 !== deep.level1.level2); // true (cloned)
- * console.log(shallowClone.level1.level2.level3 === deep.level1.level2.level3); // true (reference)
+ * console.log(shallowClone !== deep); // true (cloned, level 1)
+ * console.log(shallowClone.level1 !== deep.level1); // true (cloned, level 2)
+ * console.log(shallowClone.level1.level2 === deep.level1.level2); // true (reference, beyond the limit)
  *
- * // Changes to deep levels don't affect the original
- * shallowClone.level1.level2.level3 = { modified: true };
+ * // Replacing a referenced branch on the clone leaves the original untouched
+ * shallowClone.level1.level2 = { modified: true };
  * console.log(deep.level1.level2.level3.level4.data); // 'very deep' (unchanged)
+ *
+ * // maxDepth of 0 replicates nothing and hands back the input itself
+ * console.log(clone(deep, 0) === deep); // true
  * ```
  *
  * @example
@@ -239,14 +242,23 @@ const replicate = <Type>(
     if ('index' in value) result.index = value.index;
     // @ts-expect-error: The `input` property is only available in the result of a RegExp match.
     if ('input' in value) result.input = value.input;
+    if ('groups' in value) {
+      // @ts-expect-error: The `groups` property is only available in the result of a RegExp match.
+      result.groups = replicate(value.groups, limit, depth, cache);
+    }
     return result as Type;
   }
 
-  if (value instanceof Date) return new Date(value.getTime()) as Type;
+  if (value instanceof Date) {
+    const result = new Date(value.getTime());
+    cache.set(value, result);
+    return result as Type;
+  }
 
   if (value instanceof RegExp) {
     const result = new RegExp(value.source, value.flags);
     result.lastIndex = value.lastIndex;
+    cache.set(value, result);
     return result as Type;
   }
 
@@ -268,12 +280,25 @@ const replicate = <Type>(
     return result as Type;
   }
 
-  if (isBuffer(value)) return value.subarray() as Type;
+  if (isBuffer(value)) {
+    // Both Buffer.prototype.subarray and its deprecated slice hand back a view over the
+    // same memory; the Uint8Array implementation copies while species keeps the Buffer type
+    const result = Uint8Array.prototype.slice.call(value);
+    cache.set(value, result);
+    return result as Type;
+  }
 
-  if (isTypedArray(value)) return value.slice() as Type;
+  if (isTypedArray(value)) {
+    const result = value.slice();
+    cache.set(value, result);
+    return result as Type;
+  }
 
-  if (isArrayBuffer(value) || isSharedArrayBuffer(value))
-    return value.slice() as Type;
+  if (isArrayBuffer(value) || isSharedArrayBuffer(value)) {
+    const result = value.slice();
+    cache.set(value, result);
+    return result as Type;
+  }
 
   if (value instanceof DataView) {
     const result = new DataView(
