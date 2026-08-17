@@ -116,12 +116,12 @@ Matching on `code` works too, but remember it is prefixed — `'JSON_PATCH.PATCH
 
 ## Recommended options by use case
 
-| Use case                                         | Options                                                                      |
-| ------------------------------------------------ | ---------------------------------------------------------------------------- |
-| Reading a value that may be absent               | `getValue` — no options; check for `undefined`                               |
-| Applying a patch from an untrusted source        | `{ strict: true, immutable: true }` — reserved-member safety is structural   |
+| Use case                                         | Options                                                                       |
+| ------------------------------------------------ | ----------------------------------------------------------------------------- |
+| Reading a value that may be absent               | `getValue` — no options; check for `undefined`                                |
+| Applying a patch from an untrusted source        | `{ strict: true, immutable: true }` — reserved-member safety is structural    |
 | Applying a patch you generated, in a hot path    | `{ immutable: false, strict: false }` — after confirming you own the document |
-| Optimistic concurrency against a shared document | `compare(..., { strict: true })` **and** `applyPatch(..., { strict: true })` |
-| Diffing for state management                     | `compare` defaults; keep `immutable: true` if the patch outlives the tick    |
-| Merging an API response                          | `mergePatch(source, patch)` — defaults are correct                           |
-| Updating one form field                          | `setValue(state, pointer, value)` — mutation is the point                    |
+| Optimistic concurrency against a shared document | `compare(..., { strict: true })` **and** `applyPatch(..., { strict: true })`  |
+| Diffing for state management                     | `compare` defaults; keep `immutable: true` if the patch outlives the tick     |
+| Merging an API response                          | `mergePatch(source, patch)` — defaults are correct                            |
+| Updating one form field                          | `setValue(state, pointer, value)` — mutation is the point                     |
