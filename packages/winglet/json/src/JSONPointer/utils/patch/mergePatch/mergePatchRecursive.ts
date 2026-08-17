@@ -3,8 +3,14 @@ import { hasOwnProperty } from '@winglet/common-utils/lib';
 
 import type { JsonObject } from '@/json/type';
 
+import { isForbiddenKey } from '../../isForbiddenKey';
+
 /**
  * Merge the patch into the source object recursively
+ *
+ * Reserved member names (`__proto__`, `constructor`, `prototype`) in the patch
+ * are excluded from merging at every depth to prevent prototype pollution,
+ * matching the behavior of `setValue`.
  *
  * @example
  * ```typescript
@@ -30,6 +36,7 @@ export const mergePatchRecursive = (
   if (!isPlainObject(source)) source = {};
   for (const key in patch) {
     if (!hasOwnProperty(patch, key)) continue;
+    if (isForbiddenKey(key)) continue;
     const value = patch[key];
     if (value === null) delete source[key];
     else source[key] = mergePatchRecursive(source[key], value);

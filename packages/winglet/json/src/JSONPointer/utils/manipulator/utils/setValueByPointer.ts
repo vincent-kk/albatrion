@@ -3,7 +3,7 @@ import { hasOwnProperty } from '@winglet/common-utils/lib';
 
 import type { Dictionary } from '@aileron/declare';
 
-import { isForbiddenKey } from './isForbiddenKey';
+import { isForbiddenKey } from '../../isForbiddenKey';
 
 const ADD_ITEM_ALIAS = '-';
 
