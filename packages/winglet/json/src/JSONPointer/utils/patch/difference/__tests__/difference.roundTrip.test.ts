@@ -20,6 +20,13 @@ describe('difference round-trip', () => {
     expect(mergePatch(source, patch)).toEqual(target);
   });
 
+  it('still emits additions when a forbidden key balances the key counts', () => {
+    const source = { a: 1, constructor: 123 };
+    const target = { a: 1, b: 2 };
+
+    expect(difference(source, target)).toEqual({ b: 2 });
+  });
+
   it('drops forbidden keys instead of exposing or polluting the patch', () => {
     const source = JSON.parse(
       '{"safe":1,"__proto__":{"x":1},"constructor":{"y":1},"prototype":{"z":1}}',
