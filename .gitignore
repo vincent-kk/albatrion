@@ -6,10 +6,8 @@
 # testing
 coverage
 
-.omc
-
+.plans
 .maencof-lens
-
 .filid/review/
 
 .playwright-*
