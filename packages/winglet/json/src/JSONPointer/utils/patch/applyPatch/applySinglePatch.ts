@@ -1,5 +1,9 @@
 import { isArray } from '@winglet/common-utils/filter';
-import { getDataProperty, setDataProperty } from '@winglet/common-utils/object';
+import {
+  getDataProperty,
+  isReservedName,
+  setDataProperty,
+} from '@winglet/common-utils/object';
 
 import { JSONPointer } from '@/json/JSONPointer/enum';
 import { unescapePath } from '@/json/JSONPointer/utils/escape/unescapePath';
@@ -174,7 +178,11 @@ export const applySinglePatch = (
 
     if (isArray(current)) segment = getArrayIndex(segment, current);
 
-    let next: any = getDataProperty(current, segment as string);
+    // Reserved names take the own-data path; ordinary keys keep plain access
+    const reserved = typeof segment === 'string' && isReservedName(segment);
+    let next: any = reserved
+      ? getDataProperty(current, segment as string)
+      : current[segment];
     if (
       cloned !== null &&
       next !== null &&
@@ -183,7 +191,8 @@ export const applySinglePatch = (
     ) {
       next = isArray(next) ? next.slice() : { ...next };
       cloned.add(next);
-      setDataProperty(current, segment as string, next);
+      if (reserved) setDataProperty(current, segment as string, next);
+      else current[segment] = next;
     }
     current = next;
 

@@ -94,11 +94,9 @@ describe('reserved member consistency across pointer APIs', () => {
   );
 
   it('the three APIs observe identically at nested positions', () => {
-    const bySetValue = setValue(
-      { a: { keep: 1 } },
-      '/a/__proto__',
-      { x: 1 },
-    ) as Record<string, Record<string, unknown>>;
+    const bySetValue = setValue({ a: { keep: 1 } }, '/a/__proto__', {
+      x: 1,
+    }) as Record<string, Record<string, unknown>>;
     const byApplyPatch = applyPatch<Record<string, Record<string, unknown>>>(
       { a: { keep: 1 } },
       [{ op: 'add', path: '/a/__proto__', value: { x: 1 } }],
@@ -123,6 +121,7 @@ describe('reserved member consistency across pointer APIs', () => {
       expect(getValue(withOwn, '/__proto__')).toEqual({ x: 1 });
       expect(getValue({}, '/__proto__')).toBeUndefined();
       expect(getValue({}, '/constructor')).toBeUndefined();
+      expect(getValue({}, '/prototype')).toBeUndefined();
     });
   });
 });

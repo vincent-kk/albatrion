@@ -96,9 +96,9 @@ describe('applyPatch security', () => {
     );
 
     expect(Object.getPrototypeOf(result)).toBe(Object.prototype);
-    expect(
-      Object.getOwnPropertyDescriptor(result, '__proto__')?.value,
-    ).toEqual({ x: 'v' });
+    expect(Object.getOwnPropertyDescriptor(result, '__proto__')?.value).toEqual(
+      { x: 'v' },
+    );
     expect(result.keep).toBe(1);
     expect((result as { x?: unknown }).x).toBeUndefined();
     expect(({} as Record<string, unknown>).x).toBeUndefined();

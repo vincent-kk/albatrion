@@ -3,6 +3,7 @@ import { hasOwnProperty } from '@winglet/common-utils/lib';
 import {
   deleteDataProperty,
   getDataProperty,
+  isReservedName,
   setDataProperty,
 } from '@winglet/common-utils/object';
 
@@ -41,13 +42,19 @@ export const mergePatchRecursive = (
   for (const key in patch) {
     if (!hasOwnProperty(patch, key)) continue;
     const value = patch[key];
-    if (value === null) deleteDataProperty(source, key);
-    else
-      setDataProperty(
-        source,
-        key,
-        mergePatchRecursive(getDataProperty(source, key), value),
+    // Reserved names take the own-data path; ordinary keys keep plain access
+    const reserved = isReservedName(key);
+    if (value === null) {
+      if (reserved) deleteDataProperty(source, key);
+      else delete source[key];
+    } else {
+      const merged = mergePatchRecursive(
+        reserved ? getDataProperty(source, key) : source[key],
+        value,
       );
+      if (reserved) setDataProperty(source, key, merged);
+      else source[key] = merged;
+    }
   }
   return source;
 };
