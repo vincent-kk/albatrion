@@ -65,6 +65,18 @@ describe('sortWithReference', () => {
       // Assert
       expect(result).toEqual(['a', 'a', 'b', 'x', 'x', 'y', 'y']);
     });
+
+    it('should use the last index for duplicate reference items', () => {
+      // Arrange
+      const target = ['a', 'b'];
+      const reference = ['a', 'b', 'a'];
+
+      // Act
+      const result = sortWithReference(target, reference);
+
+      // Assert
+      expect(result).toEqual(['b', 'a']);
+    });
   });
 
   describe('edge cases', () => {

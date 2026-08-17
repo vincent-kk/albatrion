@@ -19,7 +19,7 @@ Phase 0~6 를 순차 실행했다. **작업 이력·검증 결과·계획 대비
 | 4 타입               | 완료                              |
 | 5 문서·공개 표면     | 완료                              |
 | 6 벤치 확충          | 완료                              |
-| 7 성능 회수          | **진행 중 (3/5)**                 |
+| 7 성능 회수          | **진행 중 (4/5)**                 |
 
 ### 별도 작업으로 남긴 항목
 
@@ -644,19 +644,19 @@ Phase 7 (성능 회수)    ──> PROGRESS §성능 후속 작업 수집본. Ta
 
 ### @winglet/common-utils — major
 
-| 유틸                                            | 변화                                                                                                                       | 근거     |
-| ----------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- | -------- |
-| `equals` · `stableEquals`                       | omit 키를 개수 비교 **전에** 제외 → 비대칭 키셋이 이제 equal. Date/RegExp/Map/Set 는 상태 비교(이전엔 무조건 true)         | Task 3.2 |
-| `stableSerialize`                               | 출력 문자열 형식 변경(문자열 인용, `null`/`undefined` 명시, Invalid Date 표기, omit 키 정렬). 캐시 키로 쓰던 값이 달라진다 | Task 3.3 |
-| `Murmur3`                                       | MurmurHash3 x86_32 레퍼런스와 일치하도록 교정 → **모든 해시값이 달라진다**. 저장된 해시가 있으면 재계산 필요               | Task 3.5 |
-| `polynomialHash(_, length)` (length < 7)        | `slice(0, n)` → `slice(-n)` — 저비트를 보존하도록 잘라내는 쪽이 바뀜                                                       | Task 3.5 |
-| `groupBy` · `transformKeys` · `transformValues` | 반환 객체가 `Object.create(null)` 산 — 프로토타입이 없다. `result.hasOwnProperty(...)` 같은 상속 메서드 호출이 깨진다      | Task 3.4 |
-| `isEmpty`                                       | 내용이 있는 `Map`/`Set` 을 이제 non-empty 로 판정(이전엔 own key 가 없어 empty)                                            | Task 5.1 |
-| `round`                                         | 지수 표기로 밀려 잘못 반올림되던 입력이 교정됨                                                                             | Task 5.1 |
-| `merge`                                         | `__proto__` 키를 병합에서 제외 — 프로토타입 오염 차단. 그 키를 실제로 병합하던 코드가 있다면 무시된다                      | Task 2.1 |
-| `hasOwnProperty`                                | 타입 가드 `key is never` → `key is keyof Type`. 가드 내부에서 통과하던 잘못된 키 사용이 타입 에러로 드러날 수 있다         | Task 4.1 |
-| `at`                                            | 스칼라 인덱스도 `Math.trunc` 정규화 — `at(a, 1.5)` 가 배열 인자와 같은 슬롯을 읽는다                                       | Task 3.4 |
-| `getTrackableHandler`                           | 차단된 호출의 반환이 `Promise<Result \| undefined>` — 이전엔 `Result` 로 거짓 주장                                         | Task 4.1 |
+| 유틸                                            | 변화                                                                                                                           | 근거     |
+| ----------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ | -------- |
+| `equals` · `stableEquals`                       | omit 키를 개수 비교 **전에** 제외 → 비대칭 키셋이 이제 equal. Date/RegExp/Map/Set 는 상태 비교(이전엔 무조건 true)             | Task 3.2 |
+| `stableSerialize`                               | 출력 문자열 형식 변경(문자열 인용, `null`/`undefined` 명시, Invalid Date 표기, omit 키 정렬). 캐시 키로 쓰던 값이 달라진다     | Task 3.3 |
+| `Murmur3`                                       | MurmurHash3 x86_32 레퍼런스와 일치하도록 교정 → **모든 해시값이 달라진다**. 저장된 해시가 있으면 재계산 필요                   | Task 3.5 |
+| `polynomialHash(_, length)` (length < 7)        | `slice(0, n)` → `slice(-n)` — 저비트를 보존하도록 잘라내는 쪽이 바뀜                                                           | Task 3.5 |
+| `groupBy` · `transformKeys` · `transformValues` | 반환 객체가 `Object.create(null)` 산 — 프로토타입이 없다. `result.hasOwnProperty(...)` 같은 상속 메서드 호출이 깨진다          | Task 3.4 |
+| `isEmpty`                                       | 내용이 있는 `Map`/`Set` 을 이제 non-empty 로 판정(이전엔 own key 가 없어 empty)                                                | Task 5.1 |
+| `round`                                         | 지수 표기로 밀려 잘못 반올림되던 입력이 교정됨                                                                                 | Task 5.1 |
+| `merge`                                         | `__proto__` 키를 병합에서 제외 — 프로토타입 오염 차단. 그 키를 실제로 병합하던 코드가 있다면 무시된다                          | Task 2.1 |
+| `hasOwnProperty`                                | 타입 가드 `key is never` → `key is keyof Type`. 가드 내부에서 통과하던 잘못된 키 사용이 타입 에러로 드러날 수 있다             | Task 4.1 |
+| `at`                                            | 스칼라 인덱스도 `Math.trunc` 정규화 — `at(a, 1.5)` 가 배열 인자와 같은 슬롯을 읽는다                                           | Task 3.4 |
+| `getTrackableHandler`                           | 차단된 호출의 반환이 `Promise<Result \| undefined>` — 이전엔 `Result` 로 거짓 주장                                             | Task 4.1 |
 | `stableSerialize` omit                          | omit 컬렉션이 identity 로 memo 된다 — 같은 컬렉션 객체를 변형해 재사용하면 이전 정렬·해시가 재사용된다(JSDoc Limitations 명시) | Task 7.3 |
 
 ### @winglet/json — major

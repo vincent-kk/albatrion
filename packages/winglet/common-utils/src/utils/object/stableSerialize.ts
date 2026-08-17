@@ -32,9 +32,7 @@ const omitEntryCache = new WeakMap<
  * @param omit - Omit collection, treated as immutable for the lifetime of the memo
  * @returns The memoized entry for this collection
  */
-const resolveOmitEntry = (
-  omit: Set<string> | readonly string[],
-): OmitEntry => {
+const resolveOmitEntry = (omit: Set<string> | readonly string[]): OmitEntry => {
   const cached = omitEntryCache.get(omit);
   if (cached !== undefined) return cached;
   const keys = [...omit].sort();
@@ -400,7 +398,11 @@ const createHash = (
     try {
       if (isArray(input)) {
         const segments = [];
-        for (let i = 0, e = input[0], l = input.length; i < l; i++, e = input[i])
+        for (
+          let i = 0, e = input[0], l = input.length;
+          i < l;
+          i++, e = input[i]
+        )
           segments[segments.length] = createHash(e, omit, omitHash);
         result = `${omitHash}[${segments.join(',')}]`;
       } else if (isPlainObject(input)) {
