@@ -299,14 +299,14 @@ omit 경로 감소는 매 호출 키 정렬(M20 의 대가)이고, 훨씬 잦은
 
 **반영**
 
-| 파일                                                       | 변경                                                                                                                                                                   |
-| ---------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --- | ---------------------------------------------------------------------- |
-| `common-utils/.../groupBy.ts`                              | (M4) 누산기를 `Object.create(null)` 로 — `constructor`/`toString` 같은 상속 멤버가 키로 오면 `result[key].push` 가 TypeError 를 던지던 문제 제거                       |
-| `common-utils/.../transformKeys.ts` · `transformValues.ts` | (M5) 누산기를 `Object.create(null)` 로 — `__proto__` 키가 프로토타입 setter 에 흡수돼 조용히 사라지던 문제 제거                                                        |
-| `common-utils/.../at.ts`                                   | (M6) 스칼라 분기에도 배열 분기와 같은 `Math.trunc(index)                                                                                                               |     | 0`정규화 —`at(a, 1.5)`와`at(a, [1.5])` 가 다른 슬롯을 읽던 불일치 제거 |
-| `common-utils/.../sortWithReference.ts`                    | (M13) reference 생략 시에도 복사본 반환 — 한쪽 경로만 입력을 그대로 돌려주던 aliasing 제거. M12(버킷 → 정렬)는 아래 〔되돌림〕 참조                                    |
-| 각 테스트                                                  | groupBy +1, transformKeys +1, transformValues +1, at +1, sortWithReference +1                                                                                          |
-| `common-utils/bench/sortWithReference.bench.ts`            | 신규 (sparse / dense)                                                                                                                                                  |
+| 파일                                                       | 변경                                                                                                                                             |
+| ---------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ | --- | ---------------------------------------------------------------------- |
+| `common-utils/.../groupBy.ts`                              | (M4) 누산기를 `Object.create(null)` 로 — `constructor`/`toString` 같은 상속 멤버가 키로 오면 `result[key].push` 가 TypeError 를 던지던 문제 제거 |
+| `common-utils/.../transformKeys.ts` · `transformValues.ts` | (M5) 누산기를 `Object.create(null)` 로 — `__proto__` 키가 프로토타입 setter 에 흡수돼 조용히 사라지던 문제 제거                                  |
+| `common-utils/.../at.ts`                                   | (M6) 스칼라 분기에도 배열 분기와 같은 `Math.trunc(index)                                                                                         |     | 0`정규화 —`at(a, 1.5)`와`at(a, [1.5])` 가 다른 슬롯을 읽던 불일치 제거 |
+| `common-utils/.../sortWithReference.ts`                    | (M13) reference 생략 시에도 복사본 반환 — 한쪽 경로만 입력을 그대로 돌려주던 aliasing 제거. M12(버킷 → 정렬)는 아래 〔되돌림〕 참조              |
+| 각 테스트                                                  | groupBy +1, transformKeys +1, transformValues +1, at +1, sortWithReference +1                                                                    |
+| `common-utils/bench/sortWithReference.bench.ts`            | 신규 (sparse / dense)                                                                                                                            |
 
 **fail-first**: `TypeError: result[key].push is not a function`(groupBy), `expected [] to deeply equal ['__proto__']`(transformKeys), `expected ['a'] to deeply equal ['__proto__','a']`(transformValues), `expected undefined to be 2`(at), `expected [3,1,2] not to be [3,1,2]`(sortWithReference aliasing).
 
@@ -442,11 +442,11 @@ omit 경로 감소는 매 호출 키 정렬(M20 의 대가)이고, 훨씬 잦은
 
 **표면 불변 증명 (요구한 검증)**
 
-| Entry point | 런타임 전 → 후 | 선언 전 → 후 | 추가/삭제 |
-| --- | ---: | ---: | ---: |
-| common-utils root | 203 → 203 | 213 → 213 | 0 / 0 |
-| common-utils math | 25 → 25 | 25 → 25 | 0 / 0 |
-| react-utils root | 32 → 32 | 32 → 32 | 0 / 0 |
+| Entry point       | 런타임 전 → 후 | 선언 전 → 후 | 추가/삭제 |
+| ----------------- | -------------: | -----------: | --------: |
+| common-utils root |      203 → 203 |    213 → 213 |     0 / 0 |
+| common-utils math |        25 → 25 |      25 → 25 |     0 / 0 |
+| react-utils root  |        32 → 32 |      32 → 32 |     0 / 0 |
 
 정렬 후 집합이 정확히 동일했다. react-utils 는 브리핑의 "30개" 와 달리 실제 표면이 32개였고, 계약 보존을 위해 32개를 모두 명시했다.
 
@@ -456,10 +456,10 @@ omit 경로 감소는 매 호출 키 정렬(M20 의 대가)이고, 훨씬 잦은
 
 **반영**
 
-| 파일 | 변경 |
-| --- | --- |
-| 세 패키지의 `bench/**/*.ts` 15개 | 모든 `bench()` 콜백을 블록 본문으로 바꿔 `void` 를 반환하게 정정 |
-| `common-utils/tsconfig.json` · `json/tsconfig.json` | `include` 에 `bench/**/*.ts` 추가 — 이 결함이 두 패키지에서는 **타입 검사 사각이라 드러나지 않았다** |
+| 파일                                                                          | 변경                                                                                                                     |
+| ----------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| 세 패키지의 `bench/**/*.ts` 15개                                              | 모든 `bench()` 콜백을 블록 본문으로 바꿔 `void` 를 반환하게 정정                                                         |
+| `common-utils/tsconfig.json` · `json/tsconfig.json`                           | `include` 에 `bench/**/*.ts` 추가 — 이 결함이 두 패키지에서는 **타입 검사 사각이라 드러나지 않았다**                     |
 | `common-utils/tsconfig.declarations.json` · `json/tsconfig.declarations.json` | react-utils 와 동일하게 `bench/**`·`vitest.bench.config.ts` 를 제외 — 선언 빌드의 `rootDir: src` 밖이라 `TS6059` 가 났다 |
 
 **검증**: 세 패키지 벤치 실제 실행(json 13 · common-utils 37 · react-utils 27 항목), `typecheck`·`build` 전부 통과.
@@ -525,37 +525,37 @@ omit 경로 감소는 매 호출 키 정렬(M20 의 대가)이고, 훨씬 잦은
 
 ### 확인되어 고친 것
 
-| # | 지적                                                                                   | 검증 결과                                                                                                                                                                             | 조치                                                                                        |
-| - | -------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- |
-| 1 | `round` 가 지수 표기 입력에서 **반올림하지 않고 원값을 돌려준다**                       | CONFIRMED. 내가 쓴 `` +`${value}e${precision}` `` 가 `Number("1.2e-7e7")` → `NaN` 을 만들어 폴백이 원값을 반환했다. `round(1e-7, 3)` 이 `0` 대신 `1e-7`. 내 테스트 `round(1e300, 20)` 은 같은 NaN 경로를 밟아 **공허하게** 통과했다 | 기존 지수를 접는 `shiftExponent` 로 교체, 테스트 +2                                         |
-| 2 | `equals` 가 **TypedArray 를 더 이상 구조 비교하지 않는다**                              | CONFIRMED. `Object.keys(new Uint8Array([1,2,3]))` 는 `['0','1','2']` 라 이전엔 구조 비교로 통과했다. 비-`OBJECT_TAG` 전량을 `equalsBuiltin` 으로 보내면서 `false` 로 떨어졌고, 커스텀 `Symbol.toStringTag` 객체도 같이 깨졌다 | `equalsBuiltin` 반환을 `boolean \| undefined` 로 — 규칙 없는 태그는 구조 비교로 되돌린다. 테스트 +2 |
-| 3 | `applyPatch` 가 **fragment 포인터 `#/a/b` 를 거부한다**                                 | CONFIRMED. `compileSegments.ts:21` 이 `#` 을 명시적으로 받고 schema-form 문서가 `'#/properties/user'` 를 쓴다. "compilePointer 가 이미 거른다" 던 내 주석은 사실이 아니었다             | 첫 세그먼트로 `''` 와 `JSONPointer.Fragment` 를 모두 허용, 신규 `applyPatch.pathForms.test.ts` |
-| 4 | `sortWithReference` 정렬 교체가 **`undefined` 순서 계약을 깬다**                        | CONFIRMED. `Array.prototype.sort` 는 `undefined` 를 비교 함수에 넘기지 않고 끝으로 옮긴다                                                                                              | 버킷 구현으로 되돌림(Task 3.4 〔되돌림〕 참조)                                              |
-| 5 | `getTrackableHandler` — `beforeExecute` 가 던지면 `hookRunning` 이 켜진 채 남는다       | CONFIRMED. 이후 모든 publish 가 막힌다                                                                                                                                                | catch 에서 `hookRunning` 복구 + `publish()` 후 rethrow, 테스트 +1                            |
-| 6 | `stableSerialize` — 순회 중 예외가 나면 **오염된 캐시 항목이 남는다**                   | CONFIRMED (getter 가 던지는 입력으로 재현)                                                                                                                                            | 순회를 try/catch 로 감싸고 throw 시 `remove(input)`, 신규 `stableSerialize.failure.test.ts`  |
-| 7 | `withTimeout` — `fn()` 이 **동기적으로 던지면** abort 리스너가 외부 signal 에 남는다    | CONFIRMED (리스너 누수)                                                                                                                                                               | `fn()` 을 리스너 등록 **전에** 평가, 신규 `withTimeout.syncThrow.test.ts`                     |
-| 8 | `isEmpty` 의 `instanceof Map/Set` 은 cross-realm 에서 오판한다                          | 타당. 이 디렉터리의 나머지는 전부 태그 기반이다                                                                                                                                       | `isMap`/`isSet` 로 교체                                                                     |
-| 9 | `Falsy` 타입 JSDoc 이 `NaN` 을 멤버로 열거하는데 유니온에는 없다                        | 타당. `isFalsy(value: number)` 안에서 `NaN` 이 `0` 으로 좁혀지는 결과를 설명하는 문장이 없었다                                                                                        | 열거에서 `NaN` 을 빼고 `@remarks` 로 이유와 한계를 명시                                     |
+| #   | 지적                                                                                 | 검증 결과                                                                                                                                                                                                                           | 조치                                                                                                |
+| --- | ------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
+| 1   | `round` 가 지수 표기 입력에서 **반올림하지 않고 원값을 돌려준다**                    | CONFIRMED. 내가 쓴 `` +`${value}e${precision}` `` 가 `Number("1.2e-7e7")` → `NaN` 을 만들어 폴백이 원값을 반환했다. `round(1e-7, 3)` 이 `0` 대신 `1e-7`. 내 테스트 `round(1e300, 20)` 은 같은 NaN 경로를 밟아 **공허하게** 통과했다 | 기존 지수를 접는 `shiftExponent` 로 교체, 테스트 +2                                                 |
+| 2   | `equals` 가 **TypedArray 를 더 이상 구조 비교하지 않는다**                           | CONFIRMED. `Object.keys(new Uint8Array([1,2,3]))` 는 `['0','1','2']` 라 이전엔 구조 비교로 통과했다. 비-`OBJECT_TAG` 전량을 `equalsBuiltin` 으로 보내면서 `false` 로 떨어졌고, 커스텀 `Symbol.toStringTag` 객체도 같이 깨졌다       | `equalsBuiltin` 반환을 `boolean \| undefined` 로 — 규칙 없는 태그는 구조 비교로 되돌린다. 테스트 +2 |
+| 3   | `applyPatch` 가 **fragment 포인터 `#/a/b` 를 거부한다**                              | CONFIRMED. `compileSegments.ts:21` 이 `#` 을 명시적으로 받고 schema-form 문서가 `'#/properties/user'` 를 쓴다. "compilePointer 가 이미 거른다" 던 내 주석은 사실이 아니었다                                                         | 첫 세그먼트로 `''` 와 `JSONPointer.Fragment` 를 모두 허용, 신규 `applyPatch.pathForms.test.ts`      |
+| 4   | `sortWithReference` 정렬 교체가 **`undefined` 순서 계약을 깬다**                     | CONFIRMED. `Array.prototype.sort` 는 `undefined` 를 비교 함수에 넘기지 않고 끝으로 옮긴다                                                                                                                                           | 버킷 구현으로 되돌림(Task 3.4 〔되돌림〕 참조)                                                      |
+| 5   | `getTrackableHandler` — `beforeExecute` 가 던지면 `hookRunning` 이 켜진 채 남는다    | CONFIRMED. 이후 모든 publish 가 막힌다                                                                                                                                                                                              | catch 에서 `hookRunning` 복구 + `publish()` 후 rethrow, 테스트 +1                                   |
+| 6   | `stableSerialize` — 순회 중 예외가 나면 **오염된 캐시 항목이 남는다**                | CONFIRMED (getter 가 던지는 입력으로 재현)                                                                                                                                                                                          | 순회를 try/catch 로 감싸고 throw 시 `remove(input)`, 신규 `stableSerialize.failure.test.ts`         |
+| 7   | `withTimeout` — `fn()` 이 **동기적으로 던지면** abort 리스너가 외부 signal 에 남는다 | CONFIRMED (리스너 누수)                                                                                                                                                                                                             | `fn()` 을 리스너 등록 **전에** 평가, 신규 `withTimeout.syncThrow.test.ts`                           |
+| 8   | `isEmpty` 의 `instanceof Map/Set` 은 cross-realm 에서 오판한다                       | 타당. 이 디렉터리의 나머지는 전부 태그 기반이다                                                                                                                                                                                     | `isMap`/`isSet` 로 교체                                                                             |
+| 9   | `Falsy` 타입 JSDoc 이 `NaN` 을 멤버로 열거하는데 유니온에는 없다                     | 타당. `isFalsy(value: number)` 안에서 `NaN` 이 `0` 으로 좁혀지는 결과를 설명하는 문장이 없었다                                                                                                                                      | 열거에서 `NaN` 을 빼고 `@remarks` 로 이유와 한계를 명시                                             |
 
 ### 기록으로 닫은 것
 
-| #  | 지적                                                                                       | 판단                                                                                                                                                                            |
-| -- | -------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 10 | `getJSONPointer` 루트 반환 `''` 은 **falsy** 라 `if (pointer)` 로 존재를 판정하던 코드가 루트를 놓친다 | 코드 변경은 옳다(RFC 6901). 위험은 **외부 소비자** 에게 있으므로 §릴리스 기록에 breaking + 이행 방법(`!= null`)까지 적어 두었다. 저장소 내 소비처는 0(grep 무결과) |
-| 11 | `groupBy`·`transformKeys`·`transformValues` 의 프로토타입 없는 반환은 breaking                | 동의. 각 `@returns` 에 이미 명시했고, §릴리스 기록에 breaking 으로 올렸다                                                                                                       |
-| 12 | 느려진 3개 시나리오를 벤치 회귀로 방치하지 말 것                                             | 동의. 아래 §성능 후속 작업으로 모았다. 사용자가 **별도 작업** 으로 두기로 확정했다                                                                                             |
+| #   | 지적                                                                                                   | 판단                                                                                                                                                               |
+| --- | ------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 10  | `getJSONPointer` 루트 반환 `''` 은 **falsy** 라 `if (pointer)` 로 존재를 판정하던 코드가 루트를 놓친다 | 코드 변경은 옳다(RFC 6901). 위험은 **외부 소비자** 에게 있으므로 §릴리스 기록에 breaking + 이행 방법(`!= null`)까지 적어 두었다. 저장소 내 소비처는 0(grep 무결과) |
+| 11  | `groupBy`·`transformKeys`·`transformValues` 의 프로토타입 없는 반환은 breaking                         | 동의. 각 `@returns` 에 이미 명시했고, §릴리스 기록에 breaking 으로 올렸다                                                                                          |
+| 12  | 느려진 3개 시나리오를 벤치 회귀로 방치하지 말 것                                                       | 동의. 아래 §성능 후속 작업으로 모았다. 사용자가 **별도 작업** 으로 두기로 확정했다                                                                                 |
 
 **검증 (실행 결과, 2026-08-17 최종)**
 
-| 패키지                    |     test |                    typecheck · lint · build |
-| ------------------------- | -------: | ------------------------------------------: |
-| `@winglet/common-utils`   | 127 파일 / **1077** | 통과                             |
-| `@winglet/json`           |  31 파일 /  **559** | 통과                             |
-| `@winglet/react-utils`    |  30 파일 /  **183** | 통과                             |
-| `@winglet/json-schema`    |  17 파일 /  **392** | typecheck 통과                   |
-| `@canard/schema-form`     | 204 파일 / **3568** | typecheck 통과                   |
-| `@lerx/promise-modal`     |  11 파일 /  **128** | typecheck 통과                   |
-| `@winglet/data-loader`    |   2 파일 /   **48** | typecheck 통과                   |
+| 패키지                  |                test | typecheck · lint · build |
+| ----------------------- | ------------------: | -----------------------: |
+| `@winglet/common-utils` | 127 파일 / **1077** |                     통과 |
+| `@winglet/json`         |   31 파일 / **559** |                     통과 |
+| `@winglet/react-utils`  |   30 파일 / **183** |                     통과 |
+| `@winglet/json-schema`  |   17 파일 / **392** |           typecheck 통과 |
+| `@canard/schema-form`   | 204 파일 / **3568** |           typecheck 통과 |
+| `@lerx/promise-modal`   |   11 파일 / **128** |           typecheck 통과 |
+| `@winglet/data-loader`  |     2 파일 / **48** |           typecheck 통과 |
 
 합계 **422 파일 / 5955 테스트, 실패 0**.
 
@@ -567,21 +567,21 @@ omit 경로 감소는 매 호출 키 정렬(M20 의 대가)이고, 훨씬 잦은
 
 ### A — 이번 작업으로 실제 느려진 것
 
-| 유틸                | 시나리오            |        전 |        후 |      변화 | 원인                                                    |
-| ------------------- | ------------------- | --------: | --------: | --------: | ------------------------------------------------------- |
-| `stableSerialize`   | omit 있는 반복      | 3,638,113 | 3,183,716 | **-12.5%** | M20 — 매 호출 omit 키 정렬                              |
-| `stableEquals`      | 순환 구조           |    22,375 |    20,775 |  **-7.1%** | M8 — 객체 쌍마다 `getTypeTag` 2회                       |
-| `stableEquals`      | equal 트리(341노드) |    21,656 |    20,645 |  **-4.7%** | 동일                                                    |
+| 유틸              | 시나리오            |        전 |        후 |       변화 | 원인                              |
+| ----------------- | ------------------- | --------: | --------: | ---------: | --------------------------------- |
+| `stableSerialize` | omit 있는 반복      | 3,638,113 | 3,183,716 | **-12.5%** | M20 — 매 호출 omit 키 정렬        |
+| `stableEquals`    | 순환 구조           |    22,375 |    20,775 |  **-7.1%** | M8 — 객체 쌍마다 `getTypeTag` 2회 |
+| `stableEquals`    | equal 트리(341노드) |    21,656 |    20,645 |  **-4.7%** | 동일                              |
 
 셋 다 정확성과 맞바꾼 값이며, `stableEquals` 는 프로덕션 소비처가 0이고 `stableSerialize` 의 무-omit 경로는 오히려 +24.8% 다. **회수 방향**: omit 키 정렬을 호출마다가 아니라 omit 컬렉션 단위로 memo; 태그 조회를 own key 0 인 경우로 늦추되 프로퍼티가 붙은 내장 객체를 놓치지 않는 판별을 함께 마련.
 
 ### B — 구조적 낭비 (이번 작업이 만든 것이 아니라, 벤치가 드러낸 것)
 
-| 대상                 | 실측                                                     | 낭비의 정체                                                                                         |
-| -------------------- | -------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
-| `json` `difference`  | 2,712 hz vs 같은 입력 `compare` **17,419 hz (6.4배)**    | `compare` 로 패치를 만든 뒤 패치마다 `getValue`/`setValue` 를 다시 도는 2단 구조 — 경로 문자열 왕복 + `O(patches × depth)` 재탐색. 차집합 연산 자체의 비용(출력 조립)과 분리 가능한 부분이다 |
-| `json` `applyPatch`  | 패치 1건 65,311 hz / 100건 12,580 hz                     | 패치 1건에도 문서 전체 `cloneLite` — 소량 패치에서 복제가 지배한다. 부분 복제로 회수 가능           |
-| `sortWithReference`  | sparse(3/5000) 5,698 hz                                  | M12 — reference 길이만큼 빈 배열 선할당. 정렬 교체는 `undefined` 계약을 깨서 되돌렸으므로, 등장한 인덱스만 지연 생성하는 쪽으로 다시 접근해야 한다 |
+| 대상                | 실측                                                  | 낭비의 정체                                                                                                                                                                                  |
+| ------------------- | ----------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `json` `difference` | 2,712 hz vs 같은 입력 `compare` **17,419 hz (6.4배)** | `compare` 로 패치를 만든 뒤 패치마다 `getValue`/`setValue` 를 다시 도는 2단 구조 — 경로 문자열 왕복 + `O(patches × depth)` 재탐색. 차집합 연산 자체의 비용(출력 조립)과 분리 가능한 부분이다 |
+| `json` `applyPatch` | 패치 1건 65,311 hz / 100건 12,580 hz                  | 패치 1건에도 문서 전체 `cloneLite` — 소량 패치에서 복제가 지배한다. 부분 복제로 회수 가능                                                                                                    |
+| `sortWithReference` | sparse(3/5000) 5,698 hz                               | M12 — reference 길이만큼 빈 배열 선할당. 정렬 교체는 `undefined` 계약을 깨서 되돌렸으므로, 등장한 인덱스만 지연 생성하는 쪽으로 다시 접근해야 한다                                           |
 
 `difference` 6.4배는 **변경 밀도 100%(256 리프 전부 상이)** 조건의 수치다. 밀도가 낮으면 격차는 줄어든다.
 
@@ -597,3 +597,7 @@ omit 경로 감소는 매 호출 키 정렬(M20 의 대가)이고, 훨씬 잦은
 3. A-`stableSerialize` omit 정렬 memo — 회수 폭이 명확하다
 4. B-`sortWithReference` M12 재접근 — 계약을 지키는 수단이 필요하다
 5. A-`stableEquals` 태그 조회 — 소비처 0이라 우선순위 최하
+
+### 계획 확정 · 2026-08-17
+
+위 5건을 **`PLAN.md` Phase 7 (Task 7.1~7.5)** 로 계획 확정. 사용자 방향 확정 2건 — ① difference 는 1단 재귀로 재작성하며 보류 항목 json H-3(숫자키 remove 누락)을 합류 해소(동작 변화), ② applyPatch immutable 기본을 copy-on-write 로 변경("반환값 완전 분리" → "원본 불변 + 구조 공유", breaking). C 항목(isReactComponent·compare)은 측정 선행 필요로 스코프 제외. 상세 설계·게이트는 PLAN.md 가 정본.

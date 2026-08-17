@@ -10,38 +10,39 @@
 
 Phase 0~6 를 순차 실행했다. **작업 이력·검증 결과·계획 대비 편차는 `PROGRESS.md` 가 정본이다** — 이 파일은 사양, 그쪽이 이력이다.
 
-| Phase | 상태 |
-| --- | --- |
-| 0 벤치 인프라 | 완료 |
-| 1 도달 가능 HIGH | 완료 (4/4) |
-| 2 보안 HIGH | 완료 (3/3) |
+| Phase                | 상태                              |
+| -------------------- | --------------------------------- |
+| 0 벤치 인프라        | 완료                              |
+| 1 도달 가능 HIGH     | 완료 (4/4)                        |
+| 2 보안 HIGH          | 완료 (3/3)                        |
 | 3 나머지 HIGH·비효율 | 완료 (7/7, 일부 항목 보류 — 아래) |
-| 4 타입 | 완료 |
-| 5 문서·공개 표면 | 완료 |
-| 6 벤치 확충 | 완료 |
+| 4 타입               | 완료                              |
+| 5 문서·공개 표면     | 완료                              |
+| 6 벤치 확충          | 완료                              |
+| 7 성능 회수          | **계획 확정 — 미착수 (0/5)**      |
 
 ### 별도 작업으로 남긴 항목
 
 의도적으로 남겼다. 각각 "반쪽 수정이 오히려 위험" 하거나 **선행 결정이 필요한** 것들이다.
 
-| 항목 | 남긴 이유 |
-| --- | --- |
-| #12 throttle 최소 간격 | 감사의 제안(실행 시점 `previous` 갱신 + `>=`)만으로는 간격이 보장되지 않는다. 쿨다운 중 호출을 창 끝으로 미루는 스케줄링 모델 재설계가 필요하고, 타이밍 민감 유틸에 기존 동작 테스트 9건이 걸려 있다 |
-| json H-3 difference 숫자키 누락 | `getArrayBasePath` 가 경로 문자열만 보고 배열을 단정한다. target 실조회로 바꾸려면 최상위 `''` base path 처리까지 얽혀 difference 의 경로 해석을 다시 설계해야 한다 |
-| json H-8 JSONPath 방언 불일치 | `getJSONPath`(`$` 접두사·인용) 와 `convertJsonPathToPointer`(둘 다 없음) 중 **어느 표기법을 정본으로 삼을지가 먼저다** — 공개 API 두 개의 계약 결정 |
-| json M-1 RFC 6902 배열 move/copy | 삽입이 아니라 덮어쓰기이고 move 원본 제거가 splice 가 아닌 delete. RFC 정합은 breaking 이며 `isCircularMoveReference`(L-10) 과 함께 봐야 한다 |
-| json M-6 difference 가 constructor 키 유실 | `setValue` 의 `isForbiddenKey` 가 데이터 조립 경로에서 무음 유실로 작동한다. 보호 정책 통일(L-7)과 묶여야 한다 |
-| json M-8·M-10·M-12·M-13 | 방언·이름 계약 결정 선행(H-8 과 같은 묶음) |
-| react M4 ErrorBoundary 복구 경로 | `resetKeys`/`onError` 는 가산적 API 설계라 별도 판단이 낫다 |
-| react M8 withUploader prop 개명 | `onChange` → `onFileChange` 는 breaking prop 변경이라 소비처 조율이 필요하다 |
+| 항목                                       | 남긴 이유                                                                                                                                                                                            |
+| ------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| #12 throttle 최소 간격                     | 감사의 제안(실행 시점 `previous` 갱신 + `>=`)만으로는 간격이 보장되지 않는다. 쿨다운 중 호출을 창 끝으로 미루는 스케줄링 모델 재설계가 필요하고, 타이밍 민감 유틸에 기존 동작 테스트 9건이 걸려 있다 |
+| json H-3 difference 숫자키 누락            | `getArrayBasePath` 가 경로 문자열만 보고 배열을 단정한다. target 실조회로 바꾸려면 최상위 `''` base path 처리까지 얽혀 difference 의 경로 해석을 다시 설계해야 한다                                  |
+| json H-8 JSONPath 방언 불일치              | `getJSONPath`(`$` 접두사·인용) 와 `convertJsonPathToPointer`(둘 다 없음) 중 **어느 표기법을 정본으로 삼을지가 먼저다** — 공개 API 두 개의 계약 결정                                                  |
+| json M-1 RFC 6902 배열 move/copy           | 삽입이 아니라 덮어쓰기이고 move 원본 제거가 splice 가 아닌 delete. RFC 정합은 breaking 이며 `isCircularMoveReference`(L-10) 과 함께 봐야 한다                                                        |
+| json M-6 difference 가 constructor 키 유실 | `setValue` 의 `isForbiddenKey` 가 데이터 조립 경로에서 무음 유실로 작동한다. 보호 정책 통일(L-7)과 묶여야 한다                                                                                       |
+| json M-8·M-10·M-12·M-13                    | 방언·이름 계약 결정 선행(H-8 과 같은 묶음)                                                                                                                                                           |
+| react M4 ErrorBoundary 복구 경로           | `resetKeys`/`onError` 는 가산적 API 설계라 별도 판단이 낫다                                                                                                                                          |
+| react M8 withUploader prop 개명            | `onChange` → `onFileChange` 는 breaking prop 변경이라 소비처 조율이 필요하다                                                                                                                         |
 
 ### 감사 항목 중 "버그 아님" 으로 재분류
 
-| 항목 | 근거 |
-| --- | --- |
-| clone M2 maxDepth | 기존 테스트가 `maxDepth=N` → N 레벨 복제를 8개 단언으로 고정하고 코드가 그대로 구현한다. JSDoc 예제만 한 칸 어긋나 있었다 — **문서를 정정** |
-| react L13 renderComponent falsy | 기존 테스트가 `renderComponent('not a component') === null` 을 고정한다. 이 함수는 노드가 아니라 컴포넌트/엘리먼트만 렌더하므로 `0`·`''` 드롭은 일관된 동작이다 |
-| common-utils H3 serializeWithFullSortedKeys 순환 | JSDoc 이 "Will cause infinite loops (not handled)" 로 **이미 한계를 선언**하고 있었다. 계약 위반이 아니라 DoS 표면 제거를 위한 개선으로 처리 |
+| 항목                                             | 근거                                                                                                                                                            |
+| ------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| clone M2 maxDepth                                | 기존 테스트가 `maxDepth=N` → N 레벨 복제를 8개 단언으로 고정하고 코드가 그대로 구현한다. JSDoc 예제만 한 칸 어긋나 있었다 — **문서를 정정**                     |
+| react L13 renderComponent falsy                  | 기존 테스트가 `renderComponent('not a component') === null` 을 고정한다. 이 함수는 노드가 아니라 컴포넌트/엘리먼트만 렌더하므로 `0`·`''` 드롭은 일관된 동작이다 |
+| common-utils H3 serializeWithFullSortedKeys 순환 | JSDoc 이 "Will cause infinite loops (not handled)" 로 **이미 한계를 선언**하고 있었다. 계약 위반이 아니라 DoS 표면 제거를 위한 개선으로 처리                    |
 
 ---
 
@@ -369,7 +370,247 @@ Phase 3 수정의 전후 회귀 기준선. 선별 원칙(고연산만; 본문 1-
 
 ---
 
-## 실행 순서 요약 & 게이트
+## Phase 7 — 성능 회수 (PROGRESS.md §성능 후속 작업 수집본)
+
+> 근거 실측치는 `PROGRESS.md` §성능 후속 작업의 표(hz — 높을수록 빠름). 작업 순서는 그 수집본의 제안 순서(1→5)를 따른다.
+>
+> **방향 확정 (2026-08-17, 사용자)**:
+>
+> 1. `difference` 는 **1단 재귀로 재작성**하고 보류 항목 **json H-3**(숫자키 객체를 배열로 오판해 remove 가 누락되는 실버그)을 함께 해소한다 — 동작 변화(버그 수정)가 성능 작업에 합류. 모노레포 소비처 0건·숫자키 특성화 테스트 0건(grep 실측).
+> 2. `applyPatch` 의 immutable 기본 동작을 **부분 복제(copy-on-write)** 로 바꾼다 — "반환값 완전 분리(deep copy)" 계약이 "원본 불변 + 미변경 서브트리 구조 공유" 로 바뀐다. 공개 npm 기준 breaking, 모노레포 소비처 0건. 기존 테스트는 루트 분리(`result !== source`)만 고정하므로 CoW 에서도 통과한다(grep 실측).
+>
+> **스코프 제외**: 수집본 C 항목(`isReactComponent` 분기 순서, `compare` 변경 경로)은 측정 선행이 필요해 이번 Phase 에 넣지 않는다.
+
+### Phase 7 공통 절차 (모든 Task 상속)
+
+- **성능 게이트**: 수정 **전** 대상 벤치 파일을 실행해 기준 hz 를 기록 → 수정 → 같은 파일 재실행해 전후 표를 PROGRESS 에 남긴다. 대상 시나리오가 개선되지 않거나 무관 시나리오가 5% 넘게 느려지면 되돌리고 보류 사유를 기록한다.
+  - 실행: `yarn workspace @winglet/<pkg> bench bench/<대상>.bench.ts`
+- **동작 게이트**: 리팩터 Task(7.3·7.4·7.5)는 기존 테스트 **무수정 통과**(필요 시 characterization 을 먼저 추가해 현재 동작을 고정한 뒤 수정). 동작 변화 Task(7.1·7.2)는 변화 지점만 fail-first 신규 테스트로 red 관찰 후 수정하고, 나머지 기존 테스트는 무수정 통과.
+- **완료 게이트**: 해당 패키지 `test`/`typecheck`/`lint`/`build`. 7.5 는 `equals` 가 A급(소비처 31)이므로 common-utils 재빌드 후 소비 패키지 전량 test. 착지한 계약 변화는 §릴리스 기록에 즉시 추가.
+- 벤치 파일은 tsconfig 검사 대상(Task 5.3) — bench 콜백은 블록 본문(void 반환).
+
+### Task 7.1 — difference 1단 재귀 재작성 (B-1 + H-3 합류) 〔동작 변화〕
+
+기준: no-arrays **2,712 hz** vs 같은 입력 `compare` 17,419 hz. 낭비의 실체 = `compare` 가 `escapeSegment` 로 만든 경로 문자열을 `getArrayBasePath` 가 재파싱하고, `setValue`(내부 `compilePointer` 가 split + `unescapePath`)·`getValue` 가 mergePatch/target 을 **루트부터 재탐색**하는 왕복. RFC 7396 조립에는 경로 문자열이 아예 필요 없다.
+
+- [ ] `json/src/JSONPointer/utils/patch/difference/differenceObjectPatch.ts` — `compare` 경유를 버리고 source/target 을 직접 걷는 내부 재귀로 교체(공개 시그니처 불변). 스케치:
+
+  ```ts
+  export const differenceObjectPatch = (
+    source: JsonObject,
+    target: JsonObject,
+  ): JsonObject | undefined => differenceRecursive(source, target);
+
+  const differenceRecursive = (
+    source: JsonObject,
+    target: JsonObject,
+  ): JsonObject | undefined => {
+    let patch: JsonObject | undefined = undefined;
+    let hasRemoved = false;
+    const sourceKeys = Object.keys(source);
+    for (let i = 0, l = sourceKeys.length; i < l; i++) {
+      const key = sourceKeys[i];
+      const sourceValue = source[key];
+      if (hasOwnProperty(target, key)) {
+        const targetValue = target[key];
+        if (
+          sourceValue === targetValue ||
+          (sourceValue !== sourceValue && targetValue !== targetValue)
+        )
+          continue;
+        if (targetValue === undefined) {
+          (patch ??= {})[key] = null;
+          hasRemoved = true;
+        } else if (isPlainObject(sourceValue) && isPlainObject(targetValue)) {
+          const child = differenceRecursive(sourceValue, targetValue);
+          if (child !== undefined) (patch ??= {})[key] = child;
+        } else if (!equals(sourceValue, targetValue))
+          (patch ??= {})[key] = cloneLite(targetValue);
+      } else {
+        (patch ??= {})[key] = null;
+        hasRemoved = true;
+      }
+    }
+    const targetKeys = Object.keys(target);
+    if (!hasRemoved && targetKeys.length === sourceKeys.length) return patch;
+    for (let i = 0, l = targetKeys.length; i < l; i++) {
+      const key = targetKeys[i];
+      const targetValue = target[key];
+      if (hasOwnProperty(source, key) || targetValue === undefined) continue;
+      (patch ??= {})[key] = cloneLite(targetValue);
+    }
+    return patch;
+  };
+  ```
+
+- [ ] **동작 대조** — 보존: NaN 쌍 동일 취급 · target 의 undefined 값 = 제거(null) · source 에 없는 undefined 신규 키 skip · 배열/타입 불일치 leaf 는 `equals` 판정 후 `cloneLite(target)` 통째 교체(M-5 참조 분리 유지) · 변경 없음 = `undefined`. **변화(H-3)**: 숫자키 plain object 를 배열로 오판하지 않고 재귀 병합 + null 마커 생성 → remove 누락 실버그 해소. **변화(우발)**: Date leaf — 기존은 compare 의 toJSON 정규화로 ISO 문자열이 패치에 실렸으나 신규는 `equals`(equalsBuiltin) 상태 비교 + Date 클론. `JsonValue` 타입 밖 입력의 우발 동작이고 기존 테스트 0건(grep 실측) — 신규 동작을 characterization 1건으로 고정.
+- [ ] `utils/getArrayBasePath.ts` 와 `__tests__/arrayBasePath.test.ts` **삭제** (유일 소비처 소멸). `grep -rn getArrayBasePath json/src` 무결과 확인. JSDoc 의 "two-phase" 서사도 재귀 서술로 갱신(문서 선행).
+- [ ] **fail-first**: 신규 `__tests__/difference.roundTrip.test.ts` — `mergePatch(source, difference(source, target))` 가 target 과 deep-equal 인 round-trip 속성. 숫자키 케이스 `{a:{'0':'x','2':'w'}} → {a:{'0':'z'}}` 는 수정 전 결과에 `'2': 'w'` 가 잔존해 **red** 임을 관찰(H-3 증상 그대로). Date characterization 포함.
+- [ ] 기존 `difference.test.ts` 37 + `escapeHandling.test.ts` 21 **무수정 통과** — escape 키가 결과 객체에 원본 그대로 남는 것이 왕복 제거의 정당성 증명.
+- **벤치 게이트**: `bench/difference.bench.ts` — no-arrays 가 compare 단독(17,419) 이상, with-arrays 동반 개선.
+- **릴리스 기록**: json major 표에 H-3 동작 변화("숫자키 객체가 배열로 오판되지 않고 재귀 병합·null 마커 생성") 추가.
+
+### Task 7.2 — applyPatch copy-on-write (B-2) 〔breaking, 사용자 확정〕
+
+기준: 패치 1건 **65,311 hz** / 100건 12,580 hz — 1건에도 전체 `cloneLite`. CoW 는 패치가 닿는 경로의 노드만 얕은 복제하고 나머지 서브트리는 원본과 공유한다.
+
+- [ ] **JSDoc 선행**: `applyPatch.ts` 의 "Immutable mode creates a deep copy" 를 "원본 불변 + 미변경 서브트리는 반환값과 원본이 공유(구조 공유)" 로 갱신. 한계 명시: 동일 노드를 두 경로가 참조하는 입력에서는 패치가 닿은 경로만 분리된다.
+- [ ] `applyPatch.ts` — 전체 `cloneLite(source)` 를 얕은 루트 복제 + 소유 추적으로 교체:
+
+  ```ts
+  const cloned = immutable ? new WeakSet<object>() : null;
+  let result: any = source;
+  if (cloned !== null && source !== null && typeof source === "object") {
+    result = isArray(source) ? source.slice() : { ...source };
+    cloned.add(result);
+  }
+  for (let i = 0, l = patches.length; i < l; i++)
+    result = applySinglePatch(
+      result,
+      patches[i],
+      i,
+      strict,
+      protectPrototype,
+      cloned,
+    );
+  ```
+
+- [ ] `applySinglePatch.ts` — 시그니처 말미에 `cloned: WeakSet<object> | null` 추가(내부 함수). walk 하강부(`current = current[segment]`)를 소유권 확보로 교체:
+
+  ```ts
+  let next: any = current[segment];
+  if (
+    cloned !== null &&
+    next !== null &&
+    typeof next === "object" &&
+    !cloned.has(next)
+  ) {
+    next = isArray(next) ? next.slice() : { ...next };
+    cloned.add(next);
+    current[segment] = next;
+  }
+  current = next;
+  ```
+
+- [ ] **함정 — MOVE 의 from 경로 오염**: `handleObject`/`handleArray` 의 MOVE 분기는 `setValue(source, patch.from, undefined)` 로 **path walk 와 다른 from 경로를 직접 변형**한다(제거 의미론은 `delete`). from 경로가 미복제 공유 노드면 원본이 오염된다. 해결: `applySinglePatch` 의 MOVE/COPY 검증 블록에서 `patch.op === Operation.MOVE && cloned !== null` 이면 신규 헬퍼 `ensureOwnedFromPath(source, patch.from, cloned)` 를 호출해 from 경로의 중간 노드 전부를 위와 같은 방식으로 얕은 복제해 둔다(존재하지 않는 세그먼트를 만나면 조용히 중단 — 이후 기존 getValue/setValue 의 기존 에러/무시 경로 유지). 신규 파일 `applyPatch/utils/ensureOwnedFromPath.ts`(1파일 1함수). COPY 의 from 은 읽기 + `cloneLite` 라 확보 불요. `handleRootPatch` 의 from 도 `getValue` 읽기 전용이라 불요. **핸들러 3파일은 무수정.**
+- [ ] 보존 확인: root ADD/REPLACE 가 반환한 `patch.value` 는 `cloned` 에 넣지 않는다 — 기존에도 직접 변형 대상이었다. TEST op 는 걷기만 하므로 복제가 일어나도 정확성 무해(선택 최적화: op 가 TEST 면 확보 생략 — 벤치로 판단).
+- [ ] **fail-first**: 신규 `__tests__/applyPatch.copyOnWrite.test.ts` —
+  1. 공유(신규 계약): `replace /a/b` 후 `result.c === source.c` — 수정 전 전체 클론이라 **red**, 수정 후 green.
+  2. 원본 불변 가드: 닿은 경로 수정 후 source deep-equal 유지(수정 전에도 통과).
+  3. MOVE from 오염 가드: `[{op:'move', from:'/x/y', path:'/a/b'}]` 후 `source.x.y` 잔존(수정 전에도 통과 — from 확보가 빠진 미숙한 CoW 구현이면 red 가 되는 회귀 방지선).
+  4. move 된 서브트리를 후속 패치로 변형해도 원본 불변.
+- [ ] 기존 `applyPatch.test.ts` 50 + `applyPatch.security.test.ts` 5 + `applyPatch.pathForms.test.ts` **무수정 통과**(루트 분리 단언 `result !== source` 는 얕은 루트 복제로 유지된다).
+- **벤치 게이트**: `bench/applyPatch.bench.ts` — 1/10/100 패치 모두 개선, `immutable: false`(mutating) 시나리오 비회귀.
+- **릴리스 기록**: json major 표에 breaking("immutable 이 deep copy → 구조 공유. 반환값을 변형하는 소비자는 미변경 서브트리를 통해 원본을 변형하게 된다") 추가.
+
+### Task 7.3 — stableSerialize omit 정렬 memo (A-1)
+
+기준: same input with omit **3,183,716 hz** (수정 전 3,638,113 — M20 이 매 호출 복사·정렬·Set 구축·Murmur3 해시를 추가). 소비처 패턴(상수 omit 컬렉션 재사용)에서 이 비용은 컬렉션당 1회면 충분하다.
+
+- [ ] `common-utils/src/utils/object/stableSerialize.ts` — omit 컬렉션 객체를 키로 하는 WeakMap memo:
+
+  ```ts
+  type OmitEntry = { set: Set<string>; hash: string };
+  const omitEntryCache = new WeakMap<object, OmitEntry>();
+
+  const resolveOmitEntry = (
+    omit: Set<string> | readonly string[],
+  ): OmitEntry => {
+    const cached = omitEntryCache.get(omit as object);
+    if (cached !== undefined) return cached;
+    const keys = [...omit].sort();
+    const entry: OmitEntry = {
+      set: new Set(keys),
+      hash: Murmur3.hash(keys.join(",")).toString(36),
+    };
+    omitEntryCache.set(omit as object, entry);
+    return entry;
+  };
+
+  export const stableSerialize = (
+    input: unknown,
+    omit?: Set<string> | readonly string[],
+  ): string => {
+    if (!omit) return createHash(input, null, "");
+    const entry = resolveOmitEntry(omit);
+    return createHash(input, entry.set, entry.hash);
+  };
+  ```
+
+  기존 정렬·join·해시 로직을 그대로 옮긴다(결과 문자열 불변). falsy omit 은 기존과 동일하게 무-omit 취급.
+
+- [ ] **JSDoc 선행**: Limitations 의 입력 불변 전제를 omit 컬렉션까지 확장 — "omit 컬렉션도 identity 로 memo 되므로, 재사용하는 컬렉션의 내용을 변형하면 이전 정렬·해시가 재사용된다".
+- [ ] characterization +1 (`stableSerialize.contract.test.ts`, 현재 6케이스): 같은 omit 배열 참조를 변형 후 재호출하면 이전 해시가 나온다 — 문서화된 한계를 고정.
+- [ ] 기존 stableSerialize 테스트 3파일 무수정 통과(출력 문자열 불변이므로).
+- **벤치 게이트**: `bench/stableSerialize.bench.ts` — with omit 이 3,638,113(원값) 이상 회복, 무-omit 2 시나리오 비회귀.
+
+### Task 7.4 — sortWithReference sparse 회수 (B-3, M12 재접근)
+
+기준: sparse(3/5000) **5,698 hz**. 실측상 지배 비용은 5,000 엔트리 Map 구축(+빈 배열 5,000 선할당). 정렬 교체는 `undefined` 계약을 깨서 기각됐으므로(리뷰 CONFIRMED) **버킷 의미론은 유지**하고, source 멤버십으로 Map 을 축소 + 등장한 인덱스만 그룹을 지연 생성한다.
+
+- [ ] characterization 선행: `__tests__/sortWithReference.test.ts` 에 **중복 reference 항목** 케이스가 없으면 +1 — 현재 동작(같은 항목이 reference 에 두 번이면 **마지막 인덱스가 이긴다**: `referenceMap.set` 이 덮어쓰므로)을 고정한 뒤 수정에 들어간다.
+- [ ] `common-utils/src/utils/array/sortWithReference.ts`:
+
+  ```ts
+  if (!reference) return source.slice();
+  const sourceSet = new Set(source);
+  const referenceMap = new Map<Value, number>();
+  for (let i = 0, l = reference.length; i < l; i++) {
+    const entry = reference[i];
+    if (sourceSet.has(entry)) referenceMap.set(entry, i); // last-wins 유지(무가드 set)
+  }
+  const referencedGroups = new Map<number, Value[]>();
+  const unreferencedItems: Value[] = [];
+  for (let i = 0, l = source.length; i < l; i++) {
+    const item = source[i];
+    const referenceIndex = referenceMap.get(item);
+    if (referenceIndex === undefined) unreferencedItems.push(item);
+    else {
+      const group = referencedGroups.get(referenceIndex);
+      if (group === undefined) referencedGroups.set(referenceIndex, [item]);
+      else group.push(item);
+    }
+  }
+  const orderedIndices = [...referencedGroups.keys()].sort((a, b) => a - b);
+  // 이하 orderedIndices 순회로 그룹 방출 → unreferencedItems 후미
+  ```
+
+  - 동작 보존 논증: 그룹 내 순서 = source 등장 순서(순회 순서) · 그룹 간 순서 = reference 인덱스 오름차순(숫자 정렬 — 비교 함수가 원소가 아닌 **인덱스**를 받으므로 `undefined` 원소 계약과 무관) · 미등장 항목 원래 순서 후미 · 중복 reference last-wins · `undefined` 멤버십은 Set/Map 의 SameValueZero 로 기존과 동일. 기존 버킷 사유 주석은 위치를 옮겨 유지.
+
+- [ ] 기존 sortWithReference 테스트 무수정 통과.
+- **벤치 게이트**: `bench/sortWithReference.bench.ts` — sparse 5,698 hz 대비 개선(기대 수 배), dense 230,129 hz ±5% 이내. dense 가 5% 넘게 밀리면: `reference.length` 가 source 대비 작을 때 기존 선할당 경로를 유지하는 임계 분기를 실측으로 검토하고, 그래도 안 되면 되돌리고 보류 기록.
+
+### Task 7.5 — equals·stableEquals plain-pair fast-path (A-2·A-3)
+
+기준: stableEquals equal-tree **20,645 hz**(원값 21,656) · cyclic **20,775 hz**(원값 22,375). 원인 = 객체 쌍마다 `getTypeTag` 2회(`Object.prototype.toString.call`). 기각된 "own key 0 일 때만 태그 확인"(프로퍼티 붙은 Date 오탐 부활) 대신, **`Object.getPrototypeOf === Object.prototype` 쌍**이면 내장 상태가 없음이 프로토타입으로 보장되므로 태그 없이 구조 비교로 직행한다.
+
+- [ ] `common-utils/src/utils/object/equals.ts` — 배열 블록(이미 태그 앞에 있음) 뒤, 태그 조회를 fast-path 로 감싼다:
+
+  ```ts
+  const OBJECT_PROTOTYPE = Object.prototype;
+  // equalsRecursive 내부, 배열 처리 뒤:
+  if (
+    Object.getPrototypeOf(left) !== OBJECT_PROTOTYPE ||
+    Object.getPrototypeOf(right) !== OBJECT_PROTOTYPE
+  ) {
+    const tag = getTypeTag(left);
+    if (tag !== getTypeTag(right)) return false;
+    if (tag !== OBJECT_TAG) {
+      /* 기존 equalsBuiltin 위임 유지 */
+    }
+  }
+  // 이하 기존 키 비교(공통 경로)
+  ```
+
+- [ ] `common-utils/src/utils/object/stableEquals.ts` — ① 배열 블록(`leftIsArray` 비교·원소 루프)을 태그 조회 **앞**으로 이동(한쪽만 배열 → false 는 태그 불일치와 동일 결론, 둘 다 배열 → 태그가 둘 다 ARRAY_TAG 였으므로 이후 ARRAY_BUFFER/isView/builtin 분기 비적중 — 동작 동일). ② 이동 후 남은 태그 경로(ARRAY_BUFFER·isView·builtin)를 equals 와 같은 fast-path 조건으로 감싼다.
+- [ ] **동작 대조**: 정상 입력 완전 보존 — literal-proto plain 쌍은 기존에도 OBJECT_TAG 로 구조 비교였다. cross-realm plain·`Object.create(null)`·프로퍼티 붙은 내장 객체는 fast-path 미적용(프로토타입 불일치)으로 기존 태그 경로 그대로. 변화는 병적 입력뿐: own/proto `Symbol.toStringTag` 로 내장 태그를 위장한 literal-proto 객체 쌍 — 기존엔 equalsBuiltin 이 존재하지 않는 메서드를 불러 **TypeError** 를 던지던 입력이 구조 비교 값을 반환하게 된다(throw 를 고정한 기존 테스트 0건 — 무수정 통과가 판정 기준).
+- [ ] 기존 테스트 전량 무수정 통과: `equals.test.ts` 31 · `equals.contract.test.ts` 11 · `stableEquals.test.ts` 43 · `stableEquals.contract.test.ts` 6.
+- **벤치 게이트**: `bench/stableEquals.bench.ts` — equal-tree ≥ 21,656 · cyclic ≥ 22,375(원값 회복). `bench/equals.bench.ts` 전 시나리오 비회귀~개선.
+- **완료 게이트(A급)**: common-utils build 후 소비 패키지 전량 test — json · react-utils · schema-form · promise-modal · json-schema · data-loader.
+
+### Task 간 인터페이스
+
+다섯 Task 는 서로 다른 파일을 만지며 의존이 없다 — 순서는 회수 폭 순일 뿐이다. 유일한 접점: 7.1 의 신규 재귀가 `equals` 를 leaf 판정에 사용하는데, 7.5 는 동작 보존 리팩터이므로 어느 순서로 착지해도 7.1 의 결과는 같다.
 
 ```
 Phase 0 (벤치 인프라)  ──> Phase 6 이 이것을 사용
@@ -379,6 +620,7 @@ Phase 3 (HIGH/비효율)  ──> Phase 0 벤치로 성능 전후 게이트
 Phase 4 (타입)         ──> 소비 패키지 typecheck 게이트
 Phase 5 (문서/표면)
 Phase 6 (벤치 확충)
+Phase 7 (성능 회수)    ──> PROGRESS §성능 후속 작업 수집본. Task 7.1→7.5 순, 벤치 전후 게이트
 ```
 
 **각 Phase 완료 게이트**: 해당 패키지 `test` + `typecheck` + `lint` 통과. A급 계약 Task 는 소비 패키지(schema-form/json-schema/data-loader) `test`+`typecheck` 추가 통과. 완료 claim 은 실행한 검증 명령을 먼저 명시(seiri_verify).
@@ -402,32 +644,32 @@ Phase 6 (벤치 확충)
 
 ### @winglet/common-utils — major
 
-| 유틸                                          | 변화                                                                                                              | 근거      |
-| --------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- | --------- |
-| `equals` · `stableEquals`                     | omit 키를 개수 비교 **전에** 제외 → 비대칭 키셋이 이제 equal. Date/RegExp/Map/Set 는 상태 비교(이전엔 무조건 true) | Task 3.2  |
-| `stableSerialize`                             | 출력 문자열 형식 변경(문자열 인용, `null`/`undefined` 명시, Invalid Date 표기, omit 키 정렬). 캐시 키로 쓰던 값이 달라진다 | Task 3.3  |
-| `Murmur3`                                     | MurmurHash3 x86_32 레퍼런스와 일치하도록 교정 → **모든 해시값이 달라진다**. 저장된 해시가 있으면 재계산 필요       | Task 3.5  |
-| `polynomialHash(_, length)` (length < 7)      | `slice(0, n)` → `slice(-n)` — 저비트를 보존하도록 잘라내는 쪽이 바뀜                                               | Task 3.5  |
-| `groupBy` · `transformKeys` · `transformValues` | 반환 객체가 `Object.create(null)` 산 — 프로토타입이 없다. `result.hasOwnProperty(...)` 같은 상속 메서드 호출이 깨진다 | Task 3.4  |
-| `isEmpty`                                     | 내용이 있는 `Map`/`Set` 을 이제 non-empty 로 판정(이전엔 own key 가 없어 empty)                                    | Task 5.1  |
-| `round`                                       | 지수 표기로 밀려 잘못 반올림되던 입력이 교정됨                                                                    | Task 5.1  |
-| `merge`                                       | `__proto__` 키를 병합에서 제외 — 프로토타입 오염 차단. 그 키를 실제로 병합하던 코드가 있다면 무시된다              | Task 2.1  |
-| `hasOwnProperty`                              | 타입 가드 `key is never` → `key is keyof Type`. 가드 내부에서 통과하던 잘못된 키 사용이 타입 에러로 드러날 수 있다 | Task 4.1  |
-| `at`                                          | 스칼라 인덱스도 `Math.trunc` 정규화 — `at(a, 1.5)` 가 배열 인자와 같은 슬롯을 읽는다                               | Task 3.4  |
-| `getTrackableHandler`                         | 차단된 호출의 반환이 `Promise<Result \| undefined>` — 이전엔 `Result` 로 거짓 주장                                 | Task 4.1  |
+| 유틸                                            | 변화                                                                                                                       | 근거     |
+| ----------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- | -------- |
+| `equals` · `stableEquals`                       | omit 키를 개수 비교 **전에** 제외 → 비대칭 키셋이 이제 equal. Date/RegExp/Map/Set 는 상태 비교(이전엔 무조건 true)         | Task 3.2 |
+| `stableSerialize`                               | 출력 문자열 형식 변경(문자열 인용, `null`/`undefined` 명시, Invalid Date 표기, omit 키 정렬). 캐시 키로 쓰던 값이 달라진다 | Task 3.3 |
+| `Murmur3`                                       | MurmurHash3 x86_32 레퍼런스와 일치하도록 교정 → **모든 해시값이 달라진다**. 저장된 해시가 있으면 재계산 필요               | Task 3.5 |
+| `polynomialHash(_, length)` (length < 7)        | `slice(0, n)` → `slice(-n)` — 저비트를 보존하도록 잘라내는 쪽이 바뀜                                                       | Task 3.5 |
+| `groupBy` · `transformKeys` · `transformValues` | 반환 객체가 `Object.create(null)` 산 — 프로토타입이 없다. `result.hasOwnProperty(...)` 같은 상속 메서드 호출이 깨진다      | Task 3.4 |
+| `isEmpty`                                       | 내용이 있는 `Map`/`Set` 을 이제 non-empty 로 판정(이전엔 own key 가 없어 empty)                                            | Task 5.1 |
+| `round`                                         | 지수 표기로 밀려 잘못 반올림되던 입력이 교정됨                                                                             | Task 5.1 |
+| `merge`                                         | `__proto__` 키를 병합에서 제외 — 프로토타입 오염 차단. 그 키를 실제로 병합하던 코드가 있다면 무시된다                      | Task 2.1 |
+| `hasOwnProperty`                                | 타입 가드 `key is never` → `key is keyof Type`. 가드 내부에서 통과하던 잘못된 키 사용이 타입 에러로 드러날 수 있다         | Task 4.1 |
+| `at`                                            | 스칼라 인덱스도 `Math.trunc` 정규화 — `at(a, 1.5)` 가 배열 인자와 같은 슬롯을 읽는다                                       | Task 3.4 |
+| `getTrackableHandler`                           | 차단된 호출의 반환이 `Promise<Result \| undefined>` — 이전엔 `Result` 로 거짓 주장                                         | Task 4.1 |
 
 ### @winglet/json — major
 
-| 유틸                     | 변화                                                                              | 근거     |
-| ------------------------ | ----------------------------------------------------------------------------------- | -------- |
-| `getJSONPointer`         | 루트 반환 `'/'` → `''`(RFC 6901). **`''` 는 falsy 이므로 `if (pointer)` 로 존재를 판정하던 코드가 루트를 놓친다** — `!= null` 로 바꿔야 한다 | Task 3.7 |
-| `applyPatch` 배열 `move`/`copy` | 덮어쓰기 → splice 삽입, 제거는 `delete` 가 아니라 splice(구멍이 남지 않는다). RFC 6902 정합 | Task 3.7 |
-| `applyPatch` `move`/`copy` 의 `from`      | 문자열이 아니면 `JsonPatchError('PATCH_PATH_INVALID')` — 이전엔 조용히 통과했다 | Task 3.7 |
-| `compare` 배열 제거 순서 | 배열 원소 제거 패치를 역순으로 방출 — 이전 순서로는 스스로 만든 패치를 되적용할 수 없었다 | Task 3.7 |
+| 유틸                                 | 변화                                                                                                                                         | 근거     |
+| ------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------- | -------- |
+| `getJSONPointer`                     | 루트 반환 `'/'` → `''`(RFC 6901). **`''` 는 falsy 이므로 `if (pointer)` 로 존재를 판정하던 코드가 루트를 놓친다** — `!= null` 로 바꿔야 한다 | Task 3.7 |
+| `applyPatch` 배열 `move`/`copy`      | 덮어쓰기 → splice 삽입, 제거는 `delete` 가 아니라 splice(구멍이 남지 않는다). RFC 6902 정합                                                  | Task 3.7 |
+| `applyPatch` `move`/`copy` 의 `from` | 문자열이 아니면 `JsonPatchError('PATCH_PATH_INVALID')` — 이전엔 조용히 통과했다                                                              | Task 3.7 |
+| `compare` 배열 제거 순서             | 배열 원소 제거 패치를 역순으로 방출 — 이전 순서로는 스스로 만든 패치를 되적용할 수 없었다                                                    | Task 3.7 |
 
 ### @winglet/react-utils — minor
 
-| 유틸               | 변화                                                             | 근거     |
-| ------------------ | ------------------------------------------------------------------ | -------- |
-| `isReactComponent` | `forwardRef`/`lazy` 컴포넌트를 이제 컴포넌트로 인정(이전엔 탈락) | Task 4.3 |
-| `isForwardRefComponent` · `isLazyComponent` | 신규 export(추가만, 기존 표면 불변)                | Task 4.3 |
+| 유틸                                        | 변화                                                             | 근거     |
+| ------------------------------------------- | ---------------------------------------------------------------- | -------- |
+| `isReactComponent`                          | `forwardRef`/`lazy` 컴포넌트를 이제 컴포넌트로 인정(이전엔 탈락) | Task 4.3 |
+| `isForwardRefComponent` · `isLazyComponent` | 신규 export(추가만, 기존 표면 불변)                              | Task 4.3 |
