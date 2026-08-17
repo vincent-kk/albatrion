@@ -3,6 +3,8 @@ import type { Dictionary } from '@aileron/declare';
 import { isArray } from '@/common-utils/utils/filter/isArray';
 import { isPlainObject } from '@/common-utils/utils/filter/isPlainObject';
 
+import { setDataProperty } from './setDataProperty';
+
 /**
  * Creates a lightweight deep clone of simple data structures with maximum performance.
  *
@@ -171,6 +173,9 @@ import { isPlainObject } from '@/common-utils/utils/filter/isPlainObject';
  * - **Type Checking**: Only `isArray` and `isPlainObject` checks
  * - **Property Copying**: Simple for-in loop for objects, indexed loop for arrays
  * - **Sparse Array Support**: Preserves array holes via `in` operator check
+ * - **Reserved Member Safety**: An own `__proto__` key is cloned as an own
+ *   data property — the clone keeps the input's prototype instead of having
+ *   it swapped by the `__proto__` setter
  *
  * **Performance Benchmarks** (Node.js v18, typical hardware):
  * - Small objects (< 100 props): ~0.02ms (vs clone: ~0.1ms)
@@ -229,8 +234,13 @@ const replicate = <Type>(
     const keys = Object.keys(value);
     const length = keys.length;
     if (length > 0)
-      for (let i = 0, k = keys[0]; i < length; i++, k = keys[i])
-        result[k] = replicate(value[k], limit, depth);
+      for (let i = 0, k = keys[0]; i < length; i++, k = keys[i]) {
+        const cloned = replicate(value[k], limit, depth);
+        // Plain assignment of an own '__proto__' key would swap the clone's
+        // prototype instead of defining data — route it through the primitive
+        if (k === '__proto__') setDataProperty(result, k, cloned);
+        else result[k] = cloned;
+      }
     return result as Type;
   }
 

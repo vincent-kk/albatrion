@@ -1,4 +1,5 @@
 import { isArray } from '@winglet/common-utils/filter';
+import { getDataProperty, setDataProperty } from '@winglet/common-utils/object';
 
 import { JSONPointer } from '@/json/JSONPointer/enum';
 import type { JsonRoot } from '@/json/type';
@@ -31,12 +32,12 @@ export const ensureOwnedFromPath = (
     let segment: string | number = unescapePath(segments[cursor]);
     if (isArray(current)) segment = getArrayIndex(segment, current);
 
-    let next: any = current[segment];
+    let next: any = getDataProperty(current, segment as string);
     if (next === null || typeof next !== 'object') return;
     if (!cloned.has(next)) {
       next = isArray(next) ? next.slice() : { ...next };
       cloned.add(next);
-      current[segment] = next;
+      setDataProperty(current, segment as string, next);
     }
     current = next;
   }

@@ -239,9 +239,10 @@ interface CompareOptions {
 interface ApplyPatchOptions {
   strict?: boolean; // Strict application mode (default: false)
   immutable?: boolean; // Immutable mode (default: true)
-  protectPrototype?: boolean; // Prototype protection (default: true)
 }
 ```
+
+Reserved member names (`__proto__`, `constructor`, `prototype`) are always handled as opaque own data properties — no option is needed and none exists: no patch input can reach or modify the prototype chain.
 
 ---
 
@@ -287,10 +288,10 @@ const patches = [
   { op: 'replace', path: '/user/role', value: 'admin' },
 ];
 
-// Safe patch application (prevents prototype pollution)
+// Safe patch application — prototype pollution is structurally impossible:
+// reserved member names are written as own data, never through the chain
 const result = applyPatch(data, patches, {
   immutable: true, // Preserve original data
-  protectPrototype: true, // Prevent prototype pollution
   strict: true, // Strict validation
 });
 

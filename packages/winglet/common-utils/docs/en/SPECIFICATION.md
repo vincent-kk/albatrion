@@ -218,10 +218,28 @@ Full deep clone. Handles Date, RegExp, Map, Set, TypedArray, Error, circular ref
 #### cloneLite
 
 ```typescript
-cloneLite<Type>(target: Type): Type
+cloneLite<Type>(target: Type, maxDepth?: number): Type
 ```
 
-Fast deep clone for plain objects/arrays with primitive values only. No Date/Map/Set/circular reference support.
+Fast deep clone for plain objects/arrays with primitive values only. No Date/Map/Set/circular reference support. An own `__proto__` key is cloned as an own data property — the clone keeps the input's prototype.
+
+#### getDataProperty / setDataProperty / deleteDataProperty
+
+```typescript
+getDataProperty(target: Dictionary | any[], key: string): any
+setDataProperty(target: Dictionary | any[], key: string, value: any): void
+deleteDataProperty(target: Dictionary | any[], key: string): boolean
+```
+
+Property access primitives that treat the reserved member names (`__proto__`, `constructor`, `prototype`) as opaque own data: reads never walk the prototype chain (non-own reserved members read as `undefined`), writes define own data properties without triggering the `__proto__` setter, deletes keep plain `delete` semantics. Ordinary keys behave exactly like plain property access.
+
+#### isReservedName
+
+```typescript
+isReservedName(key: string): boolean
+```
+
+Shared predicate for the primitives above — `true` for exactly `__proto__`, `constructor`, and `prototype`. Hot loops branch on it so only reserved names take the special path.
 
 #### shallowClone
 

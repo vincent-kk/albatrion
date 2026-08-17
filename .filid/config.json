@@ -30,7 +30,12 @@
     "zero-peer-file": {
       "enabled": true,
       "severity": "warning",
-      "exempt": ["**/canard/schema-form/**", "**/lerx/promise-modal/**"]
+      "exempt": [
+        "**/canard/schema-form/**",
+        "**/lerx/promise-modal/**",
+        "**/winglet/common-utils/**",
+        "**/winglet/json/**"
+      ]
     }
   },
   "structure": {

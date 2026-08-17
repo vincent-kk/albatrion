@@ -219,10 +219,28 @@ const cloned = clone(obj); // 스택 오버플로우 없음
 #### cloneLite
 
 ```typescript
-cloneLite<Type>(target: Type): Type
+cloneLite<Type>(target: Type, maxDepth?: number): Type
 ```
 
-순수 객체/배열과 원시값만 있는 단순 구조에 최적화된 빠른 깊은 복제. Date/Map/Set/순환 참조 미지원.
+순수 객체/배열과 원시값만 있는 단순 구조에 최적화된 빠른 깊은 복제. Date/Map/Set/순환 참조 미지원. own `__proto__` 키는 own 데이터 속성으로 복제되며 클론은 입력의 프로토타입을 유지합니다.
+
+#### getDataProperty / setDataProperty / deleteDataProperty
+
+```typescript
+getDataProperty(target: Dictionary | any[], key: string): any
+setDataProperty(target: Dictionary | any[], key: string, value: any): void
+deleteDataProperty(target: Dictionary | any[], key: string): boolean
+```
+
+예약 멤버 이름(`__proto__`, `constructor`, `prototype`)을 불투명한 own 데이터로 취급하는 프로퍼티 접근 프리미티브. 읽기는 프로토타입 체인으로 넘어가지 않고(own이 아닌 예약 멤버는 `undefined`), 쓰기는 `__proto__` setter를 트리거하지 않는 own 데이터 속성을 만들며, 삭제는 일반 `delete` 의미론을 따릅니다. 일반 키는 평범한 프로퍼티 접근과 동일하게 동작합니다.
+
+#### isReservedName
+
+```typescript
+isReservedName(key: string): boolean
+```
+
+위 프리미티브들이 공유하는 판별자 — 정확히 `__proto__`, `constructor`, `prototype` 세 문자열에만 `true`. 핫 루프는 이 판별자로 분기해 예약 멤버일 때만 특수 경로를 탑니다.
 
 #### shallowClone
 

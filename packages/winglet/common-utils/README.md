@@ -266,19 +266,23 @@ Use transpilers like Babel to convert the code to match your target environment.
 - **[`cloneLite`](./src/utils/object/cloneLite.ts)**: Function to create high-performance deep clones of simple data structures (primitives, plain objects, and arrays)
 - **[`countKey`](./src/utils/object/countKey.ts)**: Function to count all enumerable properties including inherited ones
 - **[`countObjectKey`](./src/utils/object/countObjectKey.ts)**: Function to count only own enumerable properties of an object
+- **[`deleteDataProperty`](./src/utils/object/deleteDataProperty.ts)**: Function to delete a property with plain `delete` semantics, as the deletion counterpart of the data-property primitives
 - **[`equals`](./src/utils/object/equals.ts)**: Function to compare the equality of two objects
+- **[`getDataProperty`](./src/utils/object/getDataProperty.ts)**: Function to read a property while treating reserved member names (`__proto__`, `constructor`, `prototype`) as opaque own data
 - **[`getEmptyObject`](./src/utils/object/getEmptyObject.ts)**: Function to create a truly empty object with no prototype chain
 - **[`getFirstKey`](./src/utils/object/getFirstKey.ts)**: Function to retrieve the first enumerable property key from an object
 - **[`getJSONPointer`](./src/utils/object/getJSONPointer.ts)**: Function to get a value from an object using a JSON Pointer
 - **[`getObjectKeys`](./src/utils/object/getObjectKeys.ts)**: Function to return all keys of an object as an array
 - **[`getSymbols`](./src/utils/object/getSymbols.ts)**: Function to return all symbol properties of an object as an array
 - **[`hasUndefined`](./src/utils/object/hasUndefined.ts)**: Function to check if an object has undefined values
+- **[`isReservedName`](./src/utils/object/isReservedName.ts)**: Function to check whether a key is a reserved member name that must go through the data-property primitives
 - **[`merge`](./src/utils/object/merge.ts)**: Function to merge multiple objects
 - **[`removePrototype`](./src/utils/object/removePrototype.ts)**: Function to remove the prototype chain from an existing object
 - **[`removeUndefined`](./src/utils/object/removeUndefined.ts)**: Function to remove properties with undefined values from an object
 - **[`serializeNative`](./src/utils/object/serializeNative.ts)**: Function to serialize basic JavaScript objects to JSON strings
 - **[`serializeObject`](./src/utils/object/serializeObject.ts)**: Function to serialize objects to JSON strings
 - **[`serializeWithFullSortedKeys`](./src/utils/object/serializeWithFullSortedKeys.ts)**: Function to serialize objects to JSON strings with sorted keys
+- **[`setDataProperty`](./src/utils/object/setDataProperty.ts)**: Function to write a property while treating reserved member names as opaque own data, never triggering the `__proto__` setter
 - **[`shallowClone`](./src/utils/object/shallowClone.ts)**: Function to create shallow copies of arrays and plain objects, preserving references for nested structures
 - **[`sortObjectKeys`](./src/utils/object/sortObjectKeys.ts)**: Function to sort an object's keys alphabetically
 - **[`stableEquals`](./src/utils/object/stableEquals.ts)**: Function to compare the equality of two objects in a stable way
