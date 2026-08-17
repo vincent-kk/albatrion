@@ -435,6 +435,30 @@ omit 경로 감소는 매 호출 키 정렬(M20 의 대가)이고, 훨씬 잦은
 
 **A급 회귀 검토 결과**: `hasOwnProperty` 변경 후 6개 소비 패키지 `typecheck` 전부 통과(json 1건은 위처럼 선언부에서 해소). 테스트도 전량 통과 — common-utils 1069 · json 556 · react-utils 183 · schema-form 3568 · promise-modal 128 · json-schema 392 · data-loader 48.
 
+## Phase 6 — 벤치 대상 확충
+
+### [x] Task 6 — 고연산 경로 벤치 추가 · 2026-08-17
+
+**추가한 벤치**
+
+| 파일 | 측정 |
+| --- | --- |
+| `common-utils/bench/merge.bench.ts` | overlay(341 노드) 빈 target vs 채워진 target, flat 200키, 200 요소 배열 |
+| `common-utils/bench/murmur3.bench.ts` | 16B/1KB/64KB, 정렬 vs 비정렬(byteOffset 1), 문자열 — DataView 오프셋 수정(#2)의 회귀 기준선 |
+| `common-utils/bench/filterPredicates.bench.ts` | `isPlainObject`·`isEmpty`·`isArrayLike` 를 입력 종류별로 — schema-form·json 내부 루프에서 필드 수만큼 반복되는 경로 |
+| `json/bench/applyPatch.bench.ts` | 패치 1/10/100건 × immutable on·off |
+| `json/bench/difference.bench.ts` | `difference` vs 내부에서 돌리는 `compare`, 배열 포함 문서 |
+| `react-utils/bench/componentResolution.bench.ts` | `isReactComponent` 분기별 + `remainOnlyReactComponent` 레지스트리 필터 |
+
+**벤치가 드러낸 사실**
+
+- `difference` 2,712 hz vs 같은 입력의 `compare` 17,419 hz — **6.4배**. 감사가 지적한 "compare 후 패치마다 getValue/setValue 를 재실행하는 2단 구조" 의 비용이 정량화됐다.
+- `applyPatch` 는 패치 1건 65,311 hz, 100건 12,580 hz — 패치 1건에도 문서 전체 `cloneLite` 비용을 내므로 소량 패치에서 복제가 지배한다(부분 복제 최적화의 기대 이익 근거).
+- `isReactComponent` 는 분기 순서대로 24.1M → 22.1M → 19.0M hz 이고, 컴포넌트가 아닌 값은 모든 분기를 통과해 14.7M hz 로 가장 느리다.
+- `compare` 무변경 경로 23.0M hz vs 1% 변경 4,301 hz(1000 노드) — 조기 종료가 실제로 4 자릿수 배수를 번다.
+
+**방법론 정정**: `react-utils/bench/perRenderOverhead.bench.ts` 의 describe 제목 "200 renders" 를 실제 규모인 "20 renders x 100 instances" 로 정정했다(`RENDERS=20`, `INSTANCES=100`).
+
 ### [x] Task 3.2b — stableEquals omit·내장 객체 (H5, M8, M14) · 2026-08-17
 
 **반영**
