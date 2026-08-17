@@ -608,13 +608,13 @@ omit 경로 감소는 매 호출 키 정렬(M20 의 대가)이고, 훨씬 잦은
 
 **반영**
 
-| 파일                                             | 변경                                                                                                                                                            |
-| ------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `json/.../difference/differenceObjectPatch.ts`   | compare 경유 2단 구조 → source/target 직접 재귀. 경로 문자열·패치 배열·이스케이프 왕복 소멸. patch 지연 할당, leaf 는 `equals` 판정 후 `cloneLite` 교체(M-5 유지) |
-| `json/.../difference/difference.ts`              | 거짓이 된 JSDoc 서술 2건 제거(RFC 6901 내부 사용·compare 경유)                                                                                                   |
-| `json/.../utils/getArrayBasePath.ts`             | **삭제** (유일 소비처 소멸, grep 무결과)                                                                                                                         |
-| `json/.../__tests__/arrayBasePath.test.ts`       | **삭제** (검증 대상 삭제, 16케이스)                                                                                                                              |
-| `json/.../__tests__/difference.roundTrip.test.ts` | 신규 3케이스 — H-3 round-trip, Date leaf characterization, 금지 키 드롭 characterization                                                                         |
+| 파일                                              | 변경                                                                                                                                                              |
+| ------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `json/.../difference/differenceObjectPatch.ts`    | compare 경유 2단 구조 → source/target 직접 재귀. 경로 문자열·패치 배열·이스케이프 왕복 소멸. patch 지연 할당, leaf 는 `equals` 판정 후 `cloneLite` 교체(M-5 유지) |
+| `json/.../difference/difference.ts`               | 거짓이 된 JSDoc 서술 2건 제거(RFC 6901 내부 사용·compare 경유)                                                                                                    |
+| `json/.../utils/getArrayBasePath.ts`              | **삭제** (유일 소비처 소멸, grep 무결과)                                                                                                                          |
+| `json/.../__tests__/arrayBasePath.test.ts`        | **삭제** (검증 대상 삭제, 16케이스)                                                                                                                               |
+| `json/.../__tests__/difference.roundTrip.test.ts` | 신규 3케이스 — H-3 round-trip, Date leaf characterization, 금지 키 드롭 characterization                                                                          |
 
 **fail-first 관찰**
 
@@ -626,7 +626,7 @@ omit 경로 감소는 매 호출 키 정렬(M20 의 대가)이고, 훨씬 잦은
 | 시나리오                | 전(기준) | 후         |      변화 |
 | ----------------------- | -------: | ---------- | --------: |
 | difference, no arrays   |    2,712 | **17,611** | **+549%** |
-| compare, same input     |   17,419 | 15,252     |  (참조)   |
+| compare, same input     |   17,419 | 15,252     |    (참조) |
 | difference, with arrays |  (2,276) | 16,234     | **+613%** |
 
 같은 실행에서 difference 가 compare 보다 1.15배 빠름 — "compare 단독 이상" 게이트 충족. codex 자체 측정은 9.4~9.6배(23,796/21,773 hz)로 더 컸으며 차이는 환경 부하와 검수에서 추가한 금지 키 검사 비용.
@@ -637,3 +637,33 @@ omit 경로 감소는 매 호출 키 정렬(M20 의 대가)이고, 훨씬 잦은
 2. `difference.ts` JSDoc 정리(codex) — 구현 변경으로 거짓이 된 설명 제거, 문서성 보완.
 
 **검증 (세션 직접 실행)**: json **31 파일 / 546 테스트 통과**(기존 `difference.test.ts` 37 + `escapeHandling.test.ts` 21 **무수정** 통과), `typecheck`·`lint`·`build` 통과. 테스트 수 559→546 은 arrayBasePath 16케이스 삭제 + 신규 3케이스.
+
+### [x] Task 7.2 — applyPatch copy-on-write (B-2) · 2026-08-17 (codex 위임) 〔breaking, 사용자 확정〕
+
+**반영**
+
+| 파일                                                  | 변경                                                                                                                                                     |
+| ----------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `json/.../applyPatch/applyPatch.ts`                   | JSDoc 계약을 구조 공유로 선행 갱신(공유 한계 `@remarks` 포함). 전체 `cloneLite` → 얕은 루트 복제 + `WeakSet` 소유 추적                                   |
+| `json/.../applyPatch/applySinglePatch.ts`             | 시그니처 말미 `cloned: WeakSet<object> \| null`. walk 하강부 소유권 확보(미소유 노드 얕은 복제). MOVE 검증 블록에서 from 경로 사전 소유 확보             |
+| `json/.../applyPatch/utils/ensureOwnedFromPath.ts`    | 신규 1함수. MOVE 의 `setValue(source, from, undefined)` 가 path walk 밖 경로를 직접 변형하므로, from 중간 노드를 사전 소유화. 미존재 세그먼트에서 중단 |
+| `json/.../__tests__/applyPatch.copyOnWrite.test.ts`   | 신규 4케이스 — 공유(신규 계약)·원본 불변·MOVE from 보존·move 된 서브트리 후속 패치                                                                       |
+
+핸들러 3파일(handleObject/handleArray/handleRootPatch)은 설계 목표대로 **무수정**.
+
+**fail-first**: 케이스 1 `expected { untouched: true } to be { untouched: true } // Object.is equality` — 전체 복제라 공유가 없어 red. 가드 3건(원본 불변·MOVE from 보존·이동 서브트리 후속 패치)은 수정 전에도 green 확인.
+
+**성능 게이트 (세션 직접 측정, hz)**
+
+| 시나리오             |  전(기준) | 후            |        변화 |
+| -------------------- | --------: | ------------- | ----------: |
+| 1 patch              |    65,311 | **1,052,133** | **+1,511%** |
+| 10 patches           |  (43,248) | 109,178       |   **+152%** |
+| 100 patches          |    12,580 | 13,879        |      +10.3% |
+| 10 patches, mutating |  (46,078) | 46,807        | +1.6%(무해) |
+
+**mutating 게이트 판정**: codex 가 1차 보고의 "±5% 통과" 를 스스로 철회했다 — 7회 재실행에서 평균 +4.12%, 3회가 +5% 초과(빠른 방향), 엄격한 대칭 ±5% 밴드는 통계적으로 입증 불가. 그러나 **감속은 한 번도 관찰되지 않았고**(추가 비용은 패치당 세그먼트별 `cloned !== null` 단락 분기뿐), PLAN 게이트 문언은 "5% 넘게 **느려지면** 되돌린다" 이므로 통과로 판정한다. 세션 직접 측정도 +1.6%(빠름 방향).
+
+**얕은 복제 vs cloneLite 대조 (codex 보고, 검수 수용)**: spread 는 enumerable symbol key 를 복사(기존은 생략), Array subclass 는 `slice()` 가 `Symbol.species` 를 따를 수 있음, own `__proto__` 키는 spread 가 오히려 안전(own data key 보존), 비-plain 노드 내부로 패치가 내려가면 닿은 노드가 plain 으로 복제됨 — 전부 `JsonRoot`(plain object/array) 타입 범위 밖 특수 입력이라 수용.
+
+**검증 (세션 직접 실행)**: json **32 파일 / 550 테스트 통과**(기존 applyPatch 3스위트 무수정 통과, 루트 분리 단언 `result !== source` 포함), `typecheck`·`lint`·`build` 통과.
