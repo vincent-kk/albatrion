@@ -27,3 +27,22 @@ describe('getTrackableHandler state notification', () => {
     expect(handler.state).toEqual({ attempt: 42 });
   });
 });
+
+describe('getTrackableHandler notification when a hook throws', () => {
+  it('should notify subscribers of a state change made before beforeExecute threw', async () => {
+    const handler = getTrackableHandler(async () => 'ok', {
+      initialState: { attempt: 0 },
+      beforeExecute: (_, stateManager) => {
+        stateManager.update({ attempt: 1 });
+        throw new Error('circuit open');
+      },
+    });
+    const listener = vi.fn();
+    handler.subscribe(listener);
+
+    await expect(handler()).rejects.toThrow('circuit open');
+
+    expect(listener).toHaveBeenCalledTimes(1);
+    expect(handler.state).toEqual({ attempt: 1 });
+  });
+});

@@ -414,6 +414,12 @@ export function getTrackableHandler<
     hookRunning = true;
     try {
       beforeExecute?.(args, stateManager);
+    } catch (error) {
+      // The publish below is never reached on this path, so a state change the hook
+      // made before throwing would otherwise never reach subscribers
+      hookRunning = false;
+      publish();
+      throw error;
     } finally {
       hookRunning = false;
     }

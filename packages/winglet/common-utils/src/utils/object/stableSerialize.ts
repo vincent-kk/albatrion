@@ -11,7 +11,7 @@ import { Murmur3 } from '@/common-utils/utils/hash';
 
 import { serializeNative } from './serializeNative';
 
-const { get, set } = cacheWeakMapFactory<CacheEntry>();
+const { get, set, delete: remove } = cacheWeakMapFactory<CacheEntry>();
 const { increment } = counterFactory();
 
 /**
@@ -368,21 +368,28 @@ const createHash = (
       return cached.result;
     let result = `${omitHash}${increment()}@`;
     set(input, { omitHash, result });
-    if (isArray(input)) {
-      const segments = [];
-      for (let i = 0, e = input[0], l = input.length; i < l; i++, e = input[i])
-        segments[segments.length] = createHash(e, omit, omitHash);
-      result = `${omitHash}[${segments.join(',')}]`;
-    } else if (isPlainObject(input)) {
-      const segments = [];
-      const keys = Object.keys(input).sort();
-      let key: string;
-      while (!isUndefined((key = keys.pop() as string))) {
-        if (omit?.has(key)) continue;
-        segments[segments.length] =
-          key + ':' + createHash(input[key], omit, omitHash);
+    try {
+      if (isArray(input)) {
+        const segments = [];
+        for (let i = 0, e = input[0], l = input.length; i < l; i++, e = input[i])
+          segments[segments.length] = createHash(e, omit, omitHash);
+        result = `${omitHash}[${segments.join(',')}]`;
+      } else if (isPlainObject(input)) {
+        const segments = [];
+        const keys = Object.keys(input).sort();
+        let key: string;
+        while (!isUndefined((key = keys.pop() as string))) {
+          if (omit?.has(key)) continue;
+          segments[segments.length] =
+            key + ':' + createHash(input[key], omit, omitHash);
+        }
+        result = `${omitHash}{${segments.join('|')}}`;
       }
-      result = `${omitHash}{${segments.join('|')}}`;
+    } catch (error) {
+      // The placeholder above stands in only while the walk runs; leaving it cached
+      // would make every later call return a circular-reference marker
+      remove(input);
+      throw error;
     }
     set(input, { omitHash, result });
     return result;
