@@ -4,14 +4,6 @@
 
 `allOf` 배열을 포함한 JSON Schema를 단일 병합 스키마로 처리한다. 타입 호환성을 검증하고, 타입별 교집합(intersect) 핸들러를 사용해 모든 allOf 스키마를 기반 스키마에 순차 병합한다.
 
-## Structure
-
-- `processAllOfSchema.ts` — 공개 함수 (진입점)
-- `index.ts` — barrel export
-- `utils/getCloneDepth/` — 스키마 타입별 복제 깊이 결정
-- `utils/getMergeSchemaHandler/`(+`intersectSchema/`) — 타입별 교집합 핸들러 선택 및 구현
-- `utils/validateCompatibility/` — allOf 스키마 타입 호환성 검증
-
 ## Conventions
 
 - TypeScript strict 모드
@@ -45,4 +37,4 @@
 ## Dependencies
 
 - 외부: `@winglet/common-utils/object`(`cloneLite`)
-- 내부: `@/schema-form/errors`(`JsonSchemaError`), `@/schema-form/helpers/error`(`formatAllOfTypeRedefinitionError`, `formatAllOfIgnoredKeywordWarning`), `@/schema-form/helpers/warning`(`warnDevelopmentIssue`, `ALL_OF_KEYWORD_IGNORED_FOR_FORM`), `@/schema-form/types`(`JsonSchema`), `./utils/{getCloneDepth, getMergeSchemaHandler(+IGNORE_FIELDS), validateCompatibility}`
+- 내부: `@/schema-form/errors`(`JsonSchemaError`), `@/schema-form/helpers/error`(`formatAllOfTypeRedefinitionError`, `formatAllOfIgnoredKeywordWarning`), `@/schema-form/helpers/warning`(`warnDevelopmentIssue`, `ALL_OF_KEYWORD_IGNORED_FOR_FORM`), `@/schema-form/types`(`JsonSchema`), `./utils` 하위 `getCloneDepth`·`getMergeSchemaHandler`(+`IGNORE_FIELDS`)·`validateCompatibility`

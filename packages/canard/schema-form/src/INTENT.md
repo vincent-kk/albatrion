@@ -4,16 +4,6 @@
 
 JSON Schema 기반 폼 생성 라이브러리의 전체 소스 루트. 노드 시스템, 플러그인, 렌더링 컴포넌트, 타입 정의를 통합한다.
 
-## Structure
-
-- `app/` — 플러그인 시스템 및 앱 수준 상수 (bitmask, control, internal)
-- `core/` — 노드 트리 엔진: AbstractNode, 타입별 Node, 파서, 팩토리
-- `components/` — React 컴포넌트: Form, SchemaNode, FallbackComponents
-- `formTypeDefinitions/` — 기본 FormTypeInput 정의 (string, number, boolean, array 등)
-- `providers/` — React Context Provider들 (RootNode, FormTypeInputs, Renderer 등)
-- `types/` — 공유 타입 정의 (rolled 포함)
-- `errors/`·`helpers/` — 도메인 에러 클래스·내부 유틸리티
-
 ## Conventions
 
 - TypeScript strict 모드; barrel export는 `index.ts` 로만 수행

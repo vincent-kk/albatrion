@@ -9,8 +9,7 @@ oneOf/anyOf 스키마 배열에서 `&if` / `computed.if` 조건을 파싱하여 
 - `getConditionIndexFactory.ts` — oneOf용 단일 인덱스 팩토리 (returns `number`)
 - `getConditionIndicesFactory.ts` — anyOf용 다중 인덱스 팩토리 (returns `number[]`)
 - `index.ts` — barrel export
-- `utils/extractConditionInfo/` — 조건 표현식 추출 및 경로 변환
-- `utils/getSimpleEquality/` — 단순 등호 패턴 최적화
+- `utils/` — organ 파일: `extractConditionInfo.ts`(조건 표현식 추출·경로 변환), `getExpressionFromSchema.ts`(스키마 프로퍼티에서 표현식 추출), `getSimpleEquality.ts`(단순 등호 패턴 최적화)
 
 ## Conventions
 
@@ -19,6 +18,7 @@ oneOf/anyOf 스키마 배열에서 `&if` / `computed.if` 조건을 파싱하여 
 - `extractConditionInfo` 로 표현식 추출 → `getSimpleEquality` 로 최적화 시도 → 실패 시 `new Function` 으로 폴백
 - 반환: `DynamicFunction<number>` (단일) 또는 `DynamicFunction<number[]>` (다중)
 - 매칭 없는 경우 `-1` (단일) 또는 `[]` (다중) 반환
+- `schemaIndices`는 입력 스키마 배열의 원래 인덱스를 담고 `expressions`와 길이·순서가 대응한다
 
 ## Boundaries
 
@@ -39,9 +39,5 @@ oneOf/anyOf 스키마 배열에서 `&if` / `computed.if` 조건을 파싱하여 
 
 ## Dependencies
 
-- `utils/extractConditionInfo` — 조건 표현식 추출
-- `utils/getSimpleEquality` — 단순 등호 최적화
-- `../getPathManager` — `PathManager`
-- `../type` — `ConditionIndexName`, `DynamicFunction`
-- `@/schema-form/errors` — `JsonSchemaError`
-- `@/schema-form/helpers/error` — `formatConditionIndexError`
+- 형제 팩토리 `../getPathManager`(`PathManager`)와 CPM utils 공유 모듈(`regex`·`type`)
+- `@/schema-form/errors`(`JsonSchemaError`) · `@/schema-form/helpers/error`(`formatConditionIndexError`)

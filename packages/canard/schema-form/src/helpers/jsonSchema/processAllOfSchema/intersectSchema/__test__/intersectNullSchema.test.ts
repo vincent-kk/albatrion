@@ -7,7 +7,7 @@ import { intersectNullSchema } from '../intersectNullSchema';
 describe('intersectNullSchema', () => {
   describe('Common field handling', () => {
     describe('First-Win fields', () => {
-      const firstWinFields = [
+      describe.each([
         'title',
         'description',
         '$comment',
@@ -15,23 +15,20 @@ describe('intersectNullSchema', () => {
         'default',
         'readOnly',
         'writeOnly',
-      ] as const;
+      ] as const)('%s field', (field) => {
+        test('prioritizes base value', () => {
+          const baseValue = field === 'default' ? null : `base-${field}`;
+          const sourceValue = field === 'default' ? null : `source-${field}`;
 
-      test.each(firstWinFields)('%s field prioritizes base value', (field) => {
-        const baseValue = field === 'default' ? null : `base-${field}`;
-        const sourceValue = field === 'default' ? null : `source-${field}`;
+          const base: NullSchema = { type: 'null', [field]: baseValue } as any;
+          const source: Partial<NullSchema> = { [field]: sourceValue } as any;
 
-        const base: NullSchema = { type: 'null', [field]: baseValue } as any;
-        const source: Partial<NullSchema> = { [field]: sourceValue } as any;
+          const result = intersectNullSchema(base, source);
 
-        const result = intersectNullSchema(base, source);
+          expect(result[field]).toBe(baseValue);
+        });
 
-        expect(result[field]).toBe(baseValue);
-      });
-
-      test.each(firstWinFields)(
-        '%s field uses source value when base has no value',
-        (field) => {
+        test('uses source value when base has no value', () => {
           const sourceValue = field === 'default' ? null : `source-${field}`;
 
           const base: NullSchema = { type: 'null' };
@@ -40,8 +37,8 @@ describe('intersectNullSchema', () => {
           const result = intersectNullSchema(base, source);
 
           expect(result[field]).toBe(sourceValue);
-        },
-      );
+        });
+      });
     });
 
     describe('Overwrite fields', () => {
