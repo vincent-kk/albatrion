@@ -122,7 +122,7 @@ describe('intersectNumberSchema', () => {
     });
 
     describe('First-Win fields', () => {
-      const firstWinFields = [
+      test.each([
         'title',
         'description',
         '$comment',
@@ -131,9 +131,7 @@ describe('intersectNumberSchema', () => {
         'readOnly',
         'writeOnly',
         'format',
-      ] as const;
-
-      test.each(firstWinFields)('%s field prioritizes base value', (field) => {
+      ] as const)('%s field prioritizes base value', (field) => {
         const baseValue = field === 'default' ? 42 : `base-${field}`;
         const sourceValue = field === 'default' ? 84 : `source-${field}`;
 

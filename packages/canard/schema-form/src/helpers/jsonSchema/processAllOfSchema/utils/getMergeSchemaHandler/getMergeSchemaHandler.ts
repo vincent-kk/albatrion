@@ -10,7 +10,7 @@ import {
   intersectNumberSchema,
   intersectObjectSchema,
   intersectStringSchema,
-} from './intersectSchema';
+} from '../../intersectSchema';
 
 type MergeSchemaHandler = Fn<
   [base: JsonSchema, source: Partial<JsonSchema>],

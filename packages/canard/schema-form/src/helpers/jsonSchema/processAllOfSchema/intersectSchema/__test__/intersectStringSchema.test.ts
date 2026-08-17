@@ -109,7 +109,7 @@ describe('intersectStringSchema', () => {
 
   describe('Common field handling', () => {
     describe('First-Win fields', () => {
-      const firstWinFields = [
+      describe.each([
         'title',
         'description',
         '$comment',
@@ -117,26 +117,23 @@ describe('intersectStringSchema', () => {
         'default',
         'readOnly',
         'writeOnly',
-      ] as const;
+      ] as const)('%s field', (field) => {
+        test('prioritizes base value', () => {
+          const baseValue = `base-${field}`;
+          const sourceValue = `source-${field}`;
 
-      test.each(firstWinFields)('%s field prioritizes base value', (field) => {
-        const baseValue = `base-${field}`;
-        const sourceValue = `source-${field}`;
+          const base: StringSchema = {
+            type: 'string',
+            [field]: baseValue,
+          } as any;
+          const source: Partial<StringSchema> = { [field]: sourceValue } as any;
 
-        const base: StringSchema = {
-          type: 'string',
-          [field]: baseValue,
-        } as any;
-        const source: Partial<StringSchema> = { [field]: sourceValue } as any;
+          const result = intersectStringSchema(base, source);
 
-        const result = intersectStringSchema(base, source);
+          expect(result[field]).toBe(baseValue);
+        });
 
-        expect(result[field]).toBe(baseValue);
-      });
-
-      test.each(firstWinFields)(
-        '%s field uses source value when base has no value',
-        (field) => {
+        test('uses source value when base has no value', () => {
           const sourceValue = `source-${field}`;
 
           const base: StringSchema = { type: 'string' };
@@ -145,8 +142,8 @@ describe('intersectStringSchema', () => {
           const result = intersectStringSchema(base, source);
 
           expect(result[field]).toBe(sourceValue);
-        },
-      );
+        });
+      });
     });
 
     describe('Overwrite fields', () => {

@@ -202,7 +202,7 @@ describe('intersectObjectSchema', () => {
 
   describe('Common field handling', () => {
     describe('First-Win fields', () => {
-      const firstWinFields = [
+      test.each([
         'title',
         'description',
         '$comment',
@@ -210,9 +210,7 @@ describe('intersectObjectSchema', () => {
         'default',
         'readOnly',
         'writeOnly',
-      ] as const;
-
-      test.each(firstWinFields)('%s field prioritizes base value', (field) => {
+      ] as const)('%s field prioritizes base value', (field) => {
         const baseValue =
           field === 'default' ? { base: true } : `base-${field}`;
         const sourceValue =

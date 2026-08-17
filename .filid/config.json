@@ -34,6 +34,7 @@
     }
   },
   "structure": {
+    "maxDepth": 14,
     "additionalExcludedDirectories": ["bench"],
     "additionalAllowedPeers": [
       {

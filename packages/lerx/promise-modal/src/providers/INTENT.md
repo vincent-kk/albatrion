@@ -4,13 +4,6 @@
 
 모달 시스템의 상태와 설정을 React Context로 관리하는 Provider 모듈 모음.
 
-## Structure
-
-- `ModalManagerContext/` — 모달 매니저 상태 (열린 모달 목록, open/close 핸들러)
-- `ConfigurationContext/` — 모달 설정 (옵션, 지속시간, 배경)
-- `UserDefinedContext/` — 사용자 정의 컴포넌트 및 데이터
-- `index.ts` — 모든 Context와 훅 재export
-
 ## Conventions
 
 - 각 Context는 독립적인 관심사 분리 (Single Responsibility)

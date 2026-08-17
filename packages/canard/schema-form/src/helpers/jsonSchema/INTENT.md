@@ -4,16 +4,6 @@
 
 JSON Schema 처리를 위한 헬퍼 함수 모음. 스키마 추출, $ref 해석, 전처리(oneOf/virtual), allOf 병합, 확장 필드 제거를 담당한다.
 
-## Structure
-
-- `extractSchemaInfo/` — 스키마에서 type/nullable 정보 추출
-- `getResolveSchema/` — $ref 참조 해석 함수 생성
-- `preprocessSchema/` — oneOf 변형 및 virtual 스키마 전처리
-- `processAllOfSchema/` — allOf 배열을 단일 스키마로 병합
-- `stripSchemaExtensions/` — FormTypeInput 등 확장 필드 제거
-- `filter.ts` — `isTerminalType`, `isBranchType` 타입 가드
-- `index.ts` — 모든 공개 API의 barrel export
-
 ## Conventions
 
 - TypeScript strict 모드

@@ -7,7 +7,7 @@ import { intersectBooleanSchema } from '../intersectBooleanSchema';
 describe('intersectBooleanSchema', () => {
   describe('Common field handling', () => {
     describe('First-Win fields', () => {
-      const firstWinFields = [
+      describe.each([
         'title',
         'description',
         '$comment',
@@ -15,26 +15,25 @@ describe('intersectBooleanSchema', () => {
         'default',
         'readOnly',
         'writeOnly',
-      ] as const;
+      ] as const)('%s field', (field) => {
+        test('prioritizes base value', () => {
+          const baseValue = field === 'default' ? true : `base-${field}`;
+          const sourceValue = field === 'default' ? false : `source-${field}`;
 
-      test.each(firstWinFields)('%s field prioritizes base value', (field) => {
-        const baseValue = field === 'default' ? true : `base-${field}`;
-        const sourceValue = field === 'default' ? false : `source-${field}`;
+          const base: BooleanSchema = {
+            type: 'boolean',
+            [field]: baseValue,
+          } as any;
+          const source: Partial<BooleanSchema> = {
+            [field]: sourceValue,
+          } as any;
 
-        const base: BooleanSchema = {
-          type: 'boolean',
-          [field]: baseValue,
-        } as any;
-        const source: Partial<BooleanSchema> = { [field]: sourceValue } as any;
+          const result = intersectBooleanSchema(base, source);
 
-        const result = intersectBooleanSchema(base, source);
+          expect(result[field]).toBe(baseValue);
+        });
 
-        expect(result[field]).toBe(baseValue);
-      });
-
-      test.each(firstWinFields)(
-        '%s field uses source value when base has no value',
-        (field) => {
+        test('uses source value when base has no value', () => {
           const sourceValue = field === 'default' ? false : `source-${field}`;
 
           const base: BooleanSchema = { type: 'boolean' };
@@ -45,8 +44,8 @@ describe('intersectBooleanSchema', () => {
           const result = intersectBooleanSchema(base, source);
 
           expect(result[field]).toBe(sourceValue);
-        },
-      );
+        });
+      });
     });
 
     describe('Overwrite fields', () => {
