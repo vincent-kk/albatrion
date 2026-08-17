@@ -56,6 +56,10 @@
 - 한쪽이 비유한 값이면 다른 쪽 값이 그대로 결과가 된다.
 - 양쪽 모두 비유한 값이면 결과가 `undefined`이며, `NaN`이 아니다.
 
+## History
+
+- 2026-08-18 — `getMergeSchemaHandler` 하위에서 `processAllOfSchema` 직속 자식으로 2단계 승격 (issue #331 FIX-095/096, max-depth 10 초과 해소). 소비자는 여전히 `getMergeSchemaHandler` 하나이며 외부 직접 호출 금지 경계는 그대로다.
+
 ## Last Updated
 
 2026-08-17 — `## Acceptance Criteria` 신설. `intersectMultipleOf`가 비유한 값을 `NaN`으로 전파하지 않고 부재로 취급하도록 바뀐 계약을 `multipleOf-nonfinite`로 명문화하고, 기존에 산문으로만 있던 in-place 규약과 범위 역전 실패 규약을 검증 가능한 형태로 옮겼다.
