@@ -114,7 +114,6 @@ interface ChakraContext {
   variant?: "outline" | "filled" | "flushed" | "unstyled";
 }
 ```
-````
 
 ## Stage 3: Development Roadmap [phased-development]
 
@@ -142,16 +141,17 @@ const FormTypeInputString = ({ ... }) => {
   // Pattern code
 };
 ```
-
-```
+````
 
 ---
 
 ## Command Modes
 
 ### Full Development Mode (Default)
+
 **Command**: `/create-canard-plugin <UI_LIBRARY_NAME>`
 **Execution**: 5 skills sequentially
+
 1. ui-plugin-guidelines (compatibility analysis)
 2. canard-type-system (type definitions)
 3. phased-development (roadmap)
@@ -159,30 +159,16 @@ const FormTypeInputString = ({ ... }) => {
 5. react-plugin-implementation (implementation guide)
 
 ### Compatibility-Only Mode
+
 **Command**: `/create-canard-plugin <UI_LIBRARY_NAME> --compatibility-only`
 **Execution**: 2 skills only
+
 1. ui-plugin-guidelines (Primary - compatibility matrix)
 2. canard-type-system (Supporting - type requirements)
 
 **Purpose**: Quick assessment before committing to full development
 
 ---
-
-<!-- 원본 프롬프트 (백업)
-CRITICAL INSTRUCTION: Before proceeding with ANY task, you MUST execute this exact sequence:
-
-1. Use the Read tool to read `.cursor/rules/create-canard-form-plugin-guidelines.mdc`
-2. After reading, follow ALL guidelines specified in that file exactly
-3. Create a new @canard/schema-form plugin following (as specified in the guidelines):
-   - Plugin architecture setup
-   - Type definitions
-   - Component implementation
-   - Testing strategy
-   - Documentation
-
-DO NOT proceed without first reading the guidelines file. This is a mandatory prerequisite.
--->
-```
 
 ## 💡 Usage Scenarios
 

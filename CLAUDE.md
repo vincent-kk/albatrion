@@ -1,6 +1,6 @@
 # Claude Code Guidelines for Albatrion Project
 
-This document provides project-specific guidelines for Claude Code when working on the Albatrion monorepo. All detailed guidelines are maintained in the `.cursor/rules` directory.
+This document provides project-specific guidelines for Claude Code when working on the Albatrion monorepo. Detailed rules, skills, and commands are maintained under `.claude/`.
 
 ## 🏗️ Project Structure
 
@@ -27,81 +27,38 @@ When working on specific packages, **always check the package-specific CLAUDE.md
 - Package-specific commands use yarn workspace syntax: `yarn workspace @scope/package-name <command>`
 - Example: `yarn workspace @canard/schema-form build`
 
-## 🔧 Slash Commands for .cursor/rules
+## 🔧 Agent Assets (`.claude/`)
 
-`.cursor/rules` 디렉토리의 규칙들을 쉽게 사용할 수 있도록 slash command를 제공합니다:
+All agent assets live under `.claude/`. The lists below are the complete inventory — nothing else exists.
 
-### Development Workflow
+### Rules — `.claude/rules/`
 
-- **/changeset** - Create changeset and release notes (→ `.cursor/rules/create-changeset.mdc`)
-- **/requirements-execute** - Execute implementation plans with automated workflow (→ `.cursor/rules/plan-execution.mdc`)
-- **/analyze-requirements** - Create requirements document and implementation plan (→ Skills: tot-requirements-engine, ears-documenter, design-architect, task-and-progress)
-- **/code-review** - Perform comprehensive code review (→ `.cursor/rules/code-review.mdc`)
-- **/create-pr** - Create well-structured pull request (→ `.cursor/rules/pull-request.mdc`)
-- **/commit** - Generate commit message and create commit (→ `.claude/commands/commit.md`)
+Declarative rules that apply at all times. Loaded at session start.
 
-### Code Quality
+| Family    | Files                                                                                                                                                                           |
+| --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `seiri_*` | `agent-legible`, `code-comments`, `cognitive-discipline`, `context-efficiency`, `function-boundaries`, `naming`, `public-contract`, `reuse-first`, `structure`, `test-validity` |
+| `filid_*` | `code-placement`, `fractal-boundaries`, `module-documents`, `verification-records`                                                                                              |
 
-- **/code-style** - Apply code writing and TypeScript guidelines (→ multiple style rules)
-  - Includes: code-writing-guidelines, typescript, typescript-react, toss-frontend-rules
-- **/test** - Generate tests and analyze coverage (→ test_generator Skill)
-  - Auto-generates unit, component, integration, and E2E tests
+Precedence: repository instructions (this document, per-package CLAUDE.md) > repository conventions > the rules above.
 
-### Specialized Tasks
+### Skills — `.claude/skills/`
 
-- **/release** - Generate comprehensive release notes (→ `.cursor/rules/create-release-note.mdc`)
-- **/analyze-structure** - Analyze project structure and generate .project-structure.yaml (→ `.cursor/rules/analyze-project-structure.mdc`)
+| Skill                         | Purpose                                                                                        |
+| ----------------------------- | ---------------------------------------------------------------------------------------------- |
+| `ui-plugin-guidelines`        | Compatibility verification and structure design between a UI library and `@canard/schema-form` |
+| `react-plugin-implementation` | React-based `@canard/schema-form` plugin implementation patterns                               |
+| `release-note-generator`      | Release notes written from git change data                                                     |
+| `agents-docs-asset-wiring`    | Wire a package's `docs/agents` assets into the `@slats/agents-assets-sync` engine              |
 
-### 사용 방법
+### Commands — `.claude/commands/`
 
-각 slash command는 해당하는 `.cursor/rules` 파일을 자동으로 읽고 가이드라인을 따릅니다:
+| Command                  | Purpose                                   |
+| ------------------------ | ----------------------------------------- |
+| `/create-canard-plugin`  | Create a new `@canard/schema-form` plugin |
+| `/generate-package-docs` | Generate package documentation            |
 
-```bash
-# 예시: changeset 생성
-/changeset
-
-# 예시: 계획 실행
-/requirements-execute
-
-# 예시: 요구사항 작성
-/analyze-requirements
-
-# 예시: 코드 리뷰
-/code-review
-
-# 예시: PR 생성
-/create-pr
-
-# 예시: 커밋 메시지 생성 및 커밋
-/commit
-```
-
-## 📁 Rule Files Reference (직접 참조)
-
-필요시 `.cursor/rules` 파일을 직접 참조할 수도 있습니다:
-
-### Core Guidelines
-
-- **Project Structure**: `.cursor/rules/project-structure.mdc`
-- **Code Writing Guidelines**: `.cursor/rules/code-writing-guidelines.mdc`
-- **TypeScript Best Practices**: `.cursor/rules/typescript.mdc`
-- **React + TypeScript Rules**: `.cursor/rules/typescript-react.mdc`
-- **Testing Strategy**: `.cursor/rules/testing-strategy.mdc`
-- **Frontend Design Guidelines (Toss)**: `.cursor/rules/toss-basic-frontend-rules.mdc`
-
-### Process Guidelines
-
-- **Changeset Creation**: `.cursor/rules/create-changeset.mdc`
-- **Pull Request Guidelines**: `.cursor/rules/pull-request.mdc`
-- **Plan Execution**: `.cursor/rules/plan-execution.mdc`
-- **Requirement Driven Development**: `.cursor/rules/requirement-driven-development.mdc` (deprecated, use Skills instead)
-  - **New Approach**: Use `.claude/skills/` - tot-requirements-engine, ears-documenter, design-architect, task-and-progress
-- **Code Review**: `.cursor/rules/code-review.mdc`
-- **Release Notes**: `.cursor/rules/create-release-note.mdc`
-
-### Plugin Development
-
-- **Schema Form Plugin Guidelines**: `.cursor/rules/create-canard-form-plugin-guidelines.mdc`
+Any other slash command comes from Claude Code itself or from an installed plugin (seiri, filid, and so on); this repository does not define them.
 
 ## 🎯 Quick Reference for Claude Code
 
@@ -126,12 +83,12 @@ When working on this monorepo:
 
 ### 3. **Development Workflow**
 
-1. Read and follow all guidelines in the `.cursor/rules` directory
+1. Read and follow all rules in the `.claude/rules` directory
 2. Check the specific package's CLAUDE.md for detailed guidance
 3. Use yarn workspace commands for package-specific operations
 4. Run yarn lint, typecheck, and tests before completing tasks
 5. Follow the project structure and naming conventions
-6. Create proper changesets and pull requests according to guidelines
+6. Bump the package version in its `package.json` when releasing — this repository does not use changesets or CHANGELOG files, so the commit message is the only durable record of a behavior change
 
 ### 4. **Available Packages**
 
@@ -145,6 +102,6 @@ Major package groups include:
 
 > **Important**: This CLAUDE.md is for monorepo-level guidance. For package-specific work, always consult the individual package's CLAUDE.md first.
 >
-> All detailed guidelines are maintained in `.cursor/rules` directory to ensure consistency between Cursor and Claude Code.
+> Rules, skills, and commands live under `.claude/`. Keep this document's inventory in sync when they change — a stale pointer here misleads every agent that reads it.
 >
 > Copyright © 2025 Vincent K. Kelvin. All rights reserved.

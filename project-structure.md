@@ -33,7 +33,7 @@ albatrion/
 ├── packages/          # Monorepo packages
 ├── documents/         # Documentation workspace
 ├── scripts/           # Build and utility scripts
-├── .cursor/           # Cursor IDE rules
+├── .claude/           # Agent rules, skills, and commands
 └── .tasks/            # Development task documentation
 ```
 
