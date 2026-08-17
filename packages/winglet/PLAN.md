@@ -6,6 +6,45 @@
 > @packages/winglet/PLAN.md 의 진행 상태를 확인하고, 미완료 Phase 부터 이어서 작업해줘.
 > ```
 
+## 진행 상태 (2026-08-17)
+
+Phase 0~6 를 순차 실행했다. **작업 이력·검증 결과·계획 대비 편차는 `PROGRESS.md` 가 정본이다** — 이 파일은 사양, 그쪽이 이력이다.
+
+| Phase | 상태 |
+| --- | --- |
+| 0 벤치 인프라 | 완료 |
+| 1 도달 가능 HIGH | 완료 (4/4) |
+| 2 보안 HIGH | 완료 (3/3) |
+| 3 나머지 HIGH·비효율 | 완료 (7/7, 일부 항목 보류 — 아래) |
+| 4 타입 | 완료 |
+| 5 문서·공개 표면 | 완료 |
+| 6 벤치 확충 | 완료 |
+
+### 별도 작업으로 남긴 항목
+
+의도적으로 남겼다. 각각 "반쪽 수정이 오히려 위험" 하거나 **선행 결정이 필요한** 것들이다.
+
+| 항목 | 남긴 이유 |
+| --- | --- |
+| #12 throttle 최소 간격 | 감사의 제안(실행 시점 `previous` 갱신 + `>=`)만으로는 간격이 보장되지 않는다. 쿨다운 중 호출을 창 끝으로 미루는 스케줄링 모델 재설계가 필요하고, 타이밍 민감 유틸에 기존 동작 테스트 9건이 걸려 있다 |
+| json H-3 difference 숫자키 누락 | `getArrayBasePath` 가 경로 문자열만 보고 배열을 단정한다. target 실조회로 바꾸려면 최상위 `''` base path 처리까지 얽혀 difference 의 경로 해석을 다시 설계해야 한다 |
+| json H-8 JSONPath 방언 불일치 | `getJSONPath`(`$` 접두사·인용) 와 `convertJsonPathToPointer`(둘 다 없음) 중 **어느 표기법을 정본으로 삼을지가 먼저다** — 공개 API 두 개의 계약 결정 |
+| json M-1 RFC 6902 배열 move/copy | 삽입이 아니라 덮어쓰기이고 move 원본 제거가 splice 가 아닌 delete. RFC 정합은 breaking 이며 `isCircularMoveReference`(L-10) 과 함께 봐야 한다 |
+| json M-6 difference 가 constructor 키 유실 | `setValue` 의 `isForbiddenKey` 가 데이터 조립 경로에서 무음 유실로 작동한다. 보호 정책 통일(L-7)과 묶여야 한다 |
+| json M-8·M-10·M-12·M-13 | 방언·이름 계약 결정 선행(H-8 과 같은 묶음) |
+| react M4 ErrorBoundary 복구 경로 | `resetKeys`/`onError` 는 가산적 API 설계라 별도 판단이 낫다 |
+| react M8 withUploader prop 개명 | `onChange` → `onFileChange` 는 breaking prop 변경이라 소비처 조율이 필요하다 |
+
+### 감사 항목 중 "버그 아님" 으로 재분류
+
+| 항목 | 근거 |
+| --- | --- |
+| clone M2 maxDepth | 기존 테스트가 `maxDepth=N` → N 레벨 복제를 8개 단언으로 고정하고 코드가 그대로 구현한다. JSDoc 예제만 한 칸 어긋나 있었다 — **문서를 정정** |
+| react L13 renderComponent falsy | 기존 테스트가 `renderComponent('not a component') === null` 을 고정한다. 이 함수는 노드가 아니라 컴포넌트/엘리먼트만 렌더하므로 `0`·`''` 드롭은 일관된 동작이다 |
+| common-utils H3 serializeWithFullSortedKeys 순환 | JSDoc 이 "Will cause infinite loops (not handled)" 로 **이미 한계를 선언**하고 있었다. 계약 위반이 아니라 DoS 표면 제거를 위한 개선으로 처리 |
+
+---
+
 ## 목표
 
 `@winglet/common-utils`, `@winglet/json`, `@winglet/react-utils` 세 유틸리티 패키지를
