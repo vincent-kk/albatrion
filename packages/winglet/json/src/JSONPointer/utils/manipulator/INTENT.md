@@ -8,7 +8,7 @@ JSON Pointer로 지정된 위치의 값 조회(`getValue`)와 설정(`setValue`)
 
 ## Conventions
 
-- 쓰기 경로의 예약 멤버 세그먼트는 소유 fractal(JSONPointer)이 공유하는 `isForbiddenKey`로 판별하고, 발견 즉시 예외 없이 원본을 그대로 반환한다.
+- 쓰기 경로의 예약 멤버 세그먼트는 소유 fractal(JSONPointer)이 공유하는 `isForbiddenKey`로 판별하고, 발견 즉시 예외 없이 원본 참조를 반환한다 — 그 세그먼트와 이후 경로는 기록하지 않는다.
 - 배열 컨텍스트의 `-` 세그먼트는 RFC 6901의 append 별칭으로 해석되어 배열 길이 인덱스로 치환된다.
 - 존재하지 않는 중간 경로를 자동 생성할 때 다음 세그먼트가 배열 인덱스 형태면 배열을, 아니면 객체를 만든다.
 
@@ -26,4 +26,3 @@ JSON Pointer로 지정된 위치의 값 조회(`getValue`)와 설정(`setValue`)
 ### Never do
 
 - 예약 멤버 세그먼트를 통과시키는 쓰기 경로 추가
-- 값 조회에서 프로토타입 체인 상속 속성 반환
