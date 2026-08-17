@@ -20,7 +20,7 @@ import { RENDERS, driveRenders } from './utils/driveRenders';
 const freshHandlers = (): Array<() => void> =>
   Array.from({ length: RENDERS }, (_, index) => () => index);
 
-describe('handler-freshness hooks — 200 renders, new handler each render', () => {
+describe('handler-freshness hooks — 20 renders x 100 instances, new handler each render', () => {
   const handlers = freshHandlers();
 
   bench('useHandle', () => driveRenders(useHandle, handlers));
@@ -31,7 +31,7 @@ describe('handler-freshness hooks — 200 renders, new handler each render', () 
   );
 });
 
-describe('handler-freshness hooks — 200 renders, stable handler', () => {
+describe('handler-freshness hooks — 20 renders x 100 instances, stable handler', () => {
   const handler = () => undefined;
   const handlers = Array.from({ length: RENDERS }, () => handler);
 
