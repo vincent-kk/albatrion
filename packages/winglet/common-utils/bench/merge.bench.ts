@@ -42,13 +42,19 @@ const flatSource = createFlatObject(200);
 const arraySource = { items: Array.from({ length: 200 }, (_, i) => i) };
 
 describe('merge — settings overlay, depth 4 width 4 (341 nodes)', () => {
-  bench('into an empty target', () => merge({}, overlaySource));
-  bench('into a fully populated target', () =>
-    merge(createNestedPlainObject(4, 4), overlaySource),
-  );
+  bench('into an empty target', () => {
+    merge({}, overlaySource);
+  });
+  bench('into a fully populated target', () => {
+    merge(createNestedPlainObject(4, 4), overlaySource);
+  });
 });
 
 describe('merge — flat and array shapes', () => {
-  bench('200 flat keys', () => merge({}, flatSource));
-  bench('200 element array', () => merge({}, arraySource));
+  bench('200 flat keys', () => {
+    merge({}, flatSource);
+  });
+  bench('200 element array', () => {
+    merge({}, arraySource);
+  });
 });

@@ -24,13 +24,25 @@ const mediumUnaligned = createBytes(1024, 1);
 const text = 'a'.repeat(1024);
 
 describe('Murmur3 — byte inputs by size', () => {
-  bench('16 B', () => Murmur3.hash(short));
-  bench('1 KB', () => Murmur3.hash(medium));
-  bench('64 KB', () => Murmur3.hash(large));
+  bench('16 B', () => {
+    Murmur3.hash(short);
+  });
+  bench('1 KB', () => {
+    Murmur3.hash(medium);
+  });
+  bench('64 KB', () => {
+    Murmur3.hash(large);
+  });
 });
 
 describe('Murmur3 — alignment and input kind', () => {
-  bench('1 KB aligned', () => Murmur3.hash(medium));
-  bench('1 KB unaligned', () => Murmur3.hash(mediumUnaligned));
-  bench('1 KB string', () => Murmur3.hash(text));
+  bench('1 KB aligned', () => {
+    Murmur3.hash(medium);
+  });
+  bench('1 KB unaligned', () => {
+    Murmur3.hash(mediumUnaligned);
+  });
+  bench('1 KB string', () => {
+    Murmur3.hash(text);
+  });
 });

@@ -42,13 +42,19 @@ const tenPatches = createPatches(10);
 const hundredPatches = createPatches(100);
 
 describe('applyPatch — immutable clones the whole document per call', () => {
-  bench('1 patch', () => applyPatch(document, onePatch));
-  bench('10 patches', () => applyPatch(document, tenPatches));
-  bench('100 patches', () => applyPatch(document, hundredPatches));
+  bench('1 patch', () => {
+    applyPatch(document, onePatch);
+  });
+  bench('10 patches', () => {
+    applyPatch(document, tenPatches);
+  });
+  bench('100 patches', () => {
+    applyPatch(document, hundredPatches);
+  });
 });
 
 describe('applyPatch — immutable off', () => {
-  bench('10 patches, mutating', () =>
-    applyPatch(createDocument(4, 4), tenPatches, { immutable: false }),
-  );
+  bench('10 patches, mutating', () => {
+    applyPatch(createDocument(4, 4), tenPatches, { immutable: false });
+  });
 });

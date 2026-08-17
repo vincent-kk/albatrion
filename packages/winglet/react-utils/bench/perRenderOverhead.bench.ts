@@ -23,21 +23,31 @@ const freshHandlers = (): Array<() => void> =>
 describe('handler-freshness hooks — 20 renders x 100 instances, new handler each render', () => {
   const handlers = freshHandlers();
 
-  bench('useHandle', () => driveRenders(useHandle, handlers));
-  bench('useOnUnmount', () => driveRenders(useOnUnmount, handlers));
-  bench('useOnUnmountLayout', () => driveRenders(useOnUnmountLayout, handlers));
-  bench('useTimeout (never scheduled)', () =>
-    driveRenders((handler: () => void) => useTimeout(handler, 50), handlers),
-  );
+  bench('useHandle', () => {
+    driveRenders(useHandle, handlers);
+  });
+  bench('useOnUnmount', () => {
+    driveRenders(useOnUnmount, handlers);
+  });
+  bench('useOnUnmountLayout', () => {
+    driveRenders(useOnUnmountLayout, handlers);
+  });
+  bench('useTimeout (never scheduled)', () => {
+    driveRenders((handler: () => void) => useTimeout(handler, 50), handlers);
+  });
 });
 
 describe('handler-freshness hooks — 20 renders x 100 instances, stable handler', () => {
   const handler = () => undefined;
   const handlers = Array.from({ length: RENDERS }, () => handler);
 
-  bench('useHandle', () => driveRenders(useHandle, handlers));
-  bench('useOnUnmount', () => driveRenders(useOnUnmount, handlers));
-  bench('useTimeout (never scheduled)', () =>
-    driveRenders((each: () => void) => useTimeout(each, 50), handlers),
-  );
+  bench('useHandle', () => {
+    driveRenders(useHandle, handlers);
+  });
+  bench('useOnUnmount', () => {
+    driveRenders(useOnUnmount, handlers);
+  });
+  bench('useTimeout (never scheduled)', () => {
+    driveRenders((each: () => void) => useTimeout(each, 50), handlers);
+  });
 });

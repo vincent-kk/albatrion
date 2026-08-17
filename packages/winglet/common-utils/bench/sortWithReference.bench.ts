@@ -20,13 +20,13 @@ const sparseSource = ['entry4000', 'entry10', 'entry2500'];
 const denseSource = [...reference100].reverse();
 
 describe('sortWithReference — sparse source against a large reference', () => {
-  bench('3 items, 5000 reference entries', () =>
-    sortWithReference(sparseSource, reference5000),
-  );
+  bench('3 items, 5000 reference entries', () => {
+    sortWithReference(sparseSource, reference5000);
+  });
 });
 
 describe('sortWithReference — dense source', () => {
-  bench('100 items, 100 reference entries', () =>
-    sortWithReference(denseSource, reference100),
-  );
+  bench('100 items, 100 reference entries', () => {
+    sortWithReference(denseSource, reference100);
+  });
 });

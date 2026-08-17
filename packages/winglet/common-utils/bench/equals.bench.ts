@@ -53,21 +53,31 @@ const OMITTED = ['key0', 'key1'] as const;
 const OMITTED_SET = new Set<PropertyKey>(OMITTED);
 
 describe('equals — nested plain objects, depth 4 width 4 (341 nodes)', () => {
-  bench('fully equal trees (worst case: whole walk)', () =>
-    equals(deepLeft, deepRight),
-  );
-  bench('mismatch at the first key (best case)', () =>
-    equals(earlyMismatchLeft, earlyMismatchRight),
-  );
+  bench('fully equal trees (worst case: whole walk)', () => {
+    equals(deepLeft, deepRight);
+  });
+  bench('mismatch at the first key (best case)', () => {
+    equals(earlyMismatchLeft, earlyMismatchRight);
+  });
 });
 
 describe('equals — flat objects', () => {
-  bench('50 keys, equal', () => equals(flat50Left, flat50Right));
-  bench('500 keys, equal', () => equals(flat500Left, flat500Right));
+  bench('50 keys, equal', () => {
+    equals(flat50Left, flat50Right);
+  });
+  bench('500 keys, equal', () => {
+    equals(flat500Left, flat500Right);
+  });
 });
 
 describe('equals — omit handling on a 50 key object', () => {
-  bench('no omit', () => equals(flat50Left, flat50Right));
-  bench('omit as array', () => equals(flat50Left, flat50Right, OMITTED));
-  bench('omit as Set', () => equals(flat50Left, flat50Right, OMITTED_SET));
+  bench('no omit', () => {
+    equals(flat50Left, flat50Right);
+  });
+  bench('omit as array', () => {
+    equals(flat50Left, flat50Right, OMITTED);
+  });
+  bench('omit as Set', () => {
+    equals(flat50Left, flat50Right, OMITTED_SET);
+  });
 });

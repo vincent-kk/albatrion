@@ -1,4 +1,5 @@
 import { forwardRef, memo } from 'react';
+
 import { bench, describe } from 'vitest';
 
 import { isReactComponent } from '@/react-utils/utils/filter/isReactComponent';
@@ -25,16 +26,22 @@ const registry = {
 };
 
 describe('isReactComponent — by input kind', () => {
-  bench('function component (first branch)', () => isReactComponent(Plain));
-  bench('memo component (second branch)', () => isReactComponent(Memoized));
-  bench('forwardRef component (third branch)', () =>
-    isReactComponent(Forwarded),
-  );
-  bench('plain value (falls through every branch)', () =>
-    isReactComponent('not a component'),
-  );
+  bench('function component (first branch)', () => {
+    isReactComponent(Plain);
+  });
+  bench('memo component (second branch)', () => {
+    isReactComponent(Memoized);
+  });
+  bench('forwardRef component (third branch)', () => {
+    isReactComponent(Forwarded);
+  });
+  bench('plain value (falls through every branch)', () => {
+    isReactComponent('not a component');
+  });
 });
 
 describe('remainOnlyReactComponent — 8 entry registry', () => {
-  bench('filter a mixed registry', () => remainOnlyReactComponent(registry));
+  bench('filter a mixed registry', () => {
+    remainOnlyReactComponent(registry);
+  });
 });

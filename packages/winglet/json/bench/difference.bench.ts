@@ -40,10 +40,16 @@ const arraySource = createDocument(4, 4, true);
 const arrayTarget = createDocument(4, 4, true, 1);
 
 describe('difference — against compare, which it runs internally', () => {
-  bench('difference, no arrays', () => difference(plainSource, plainTarget));
-  bench('compare, same input', () => compare(plainSource, plainTarget));
+  bench('difference, no arrays', () => {
+    difference(plainSource, plainTarget);
+  });
+  bench('compare, same input', () => {
+    compare(plainSource, plainTarget);
+  });
 });
 
 describe('difference — array-bearing documents', () => {
-  bench('difference, with arrays', () => difference(arraySource, arrayTarget));
+  bench('difference, with arrays', () => {
+    difference(arraySource, arrayTarget);
+  });
 });

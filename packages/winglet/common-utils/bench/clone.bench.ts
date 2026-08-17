@@ -30,7 +30,13 @@ const createNestedPlainObject = (
 const deepObject = createNestedPlainObject(4, 4);
 
 describe('deep clone — depth 4, width 4 plain object (341 nodes)', () => {
-  bench('clone', () => clone(deepObject));
-  bench('cloneLite', () => cloneLite(deepObject));
-  bench('structuredClone', () => structuredClone(deepObject));
+  bench('clone', () => {
+    clone(deepObject);
+  });
+  bench('cloneLite', () => {
+    cloneLite(deepObject);
+  });
+  bench('structuredClone', () => {
+    structuredClone(deepObject);
+  });
 });

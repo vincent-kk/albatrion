@@ -20,19 +20,37 @@ const map = new Map([['a', 1]]);
 const list = [1, 2, 3];
 
 describe('isPlainObject — by input kind', () => {
-  bench('plain object', () => isPlainObject(plain));
-  bench('class instance', () => isPlainObject(instance));
-  bench('null-prototype object', () => isPlainObject(nullProto));
-  bench('Map', () => isPlainObject(map));
+  bench('plain object', () => {
+    isPlainObject(plain);
+  });
+  bench('class instance', () => {
+    isPlainObject(instance);
+  });
+  bench('null-prototype object', () => {
+    isPlainObject(nullProto);
+  });
+  bench('Map', () => {
+    isPlainObject(map);
+  });
 });
 
 describe('isEmpty — by input kind', () => {
-  bench('populated plain object', () => isEmpty(plain));
-  bench('empty plain object', () => isEmpty({}));
-  bench('populated Map', () => isEmpty(map));
+  bench('populated plain object', () => {
+    isEmpty(plain);
+  });
+  bench('empty plain object', () => {
+    isEmpty({});
+  });
+  bench('populated Map', () => {
+    isEmpty(map);
+  });
 });
 
 describe('isArrayLike — by input kind', () => {
-  bench('array', () => isArrayLike(list));
-  bench('plain object', () => isArrayLike(plain));
+  bench('array', () => {
+    isArrayLike(list);
+  });
+  bench('plain object', () => {
+    isArrayLike(plain);
+  });
 });

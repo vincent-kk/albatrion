@@ -45,10 +45,18 @@ describe('useRestProperties — narrow object (5 keys)', () => {
   const changing = changingValues(5);
   const reshaping = changingShape(5);
 
-  bench('unchanged reference', () => driveRenders(useRestProperties, stable));
-  bench('content-equal clones', () => driveRenders(useRestProperties, clones));
-  bench('changing values', () => driveRenders(useRestProperties, changing));
-  bench('changing key count', () => driveRenders(useRestProperties, reshaping));
+  bench('unchanged reference', () => {
+    driveRenders(useRestProperties, stable);
+  });
+  bench('content-equal clones', () => {
+    driveRenders(useRestProperties, clones);
+  });
+  bench('changing values', () => {
+    driveRenders(useRestProperties, changing);
+  });
+  bench('changing key count', () => {
+    driveRenders(useRestProperties, reshaping);
+  });
 });
 
 describe('useRestProperties — wide object (30 keys)', () => {
@@ -56,7 +64,13 @@ describe('useRestProperties — wide object (30 keys)', () => {
   const clones = equalClones(30);
   const changing = changingValues(30);
 
-  bench('unchanged reference', () => driveRenders(useRestProperties, stable));
-  bench('content-equal clones', () => driveRenders(useRestProperties, clones));
-  bench('changing values', () => driveRenders(useRestProperties, changing));
+  bench('unchanged reference', () => {
+    driveRenders(useRestProperties, stable);
+  });
+  bench('content-equal clones', () => {
+    driveRenders(useRestProperties, clones);
+  });
+  bench('changing values', () => {
+    driveRenders(useRestProperties, changing);
+  });
 });

@@ -55,40 +55,42 @@ describe('useSnapshotReference — no omit', () => {
   const clones = equalClones();
   const changing = changingContent();
 
-  bench('unchanged reference', () =>
-    driveRenders(useSnapshotReference, stable),
-  );
-  bench('content-equal clones', () =>
-    driveRenders(useSnapshotReference, clones),
-  );
-  bench('changing content', () => driveRenders(useSnapshotReference, changing));
+  bench('unchanged reference', () => {
+    driveRenders(useSnapshotReference, stable);
+  });
+  bench('content-equal clones', () => {
+    driveRenders(useSnapshotReference, clones);
+  });
+  bench('changing content', () => {
+    driveRenders(useSnapshotReference, changing);
+  });
 });
 
 describe('useSnapshotReference — omit as array', () => {
   const clones = equalClones();
   const volatileOnly = changingOmittedOnly();
 
-  bench('content-equal clones', () =>
+  bench('content-equal clones', () => {
     driveRenders(
       (input: Message) => useSnapshotReference(input, VOLATILE_KEYS),
       clones,
-    ),
-  );
-  bench('only omitted fields change', () =>
+    );
+  });
+  bench('only omitted fields change', () => {
     driveRenders(
       (input: Message) => useSnapshotReference(input, VOLATILE_KEYS),
       volatileOnly,
-    ),
-  );
+    );
+  });
 });
 
 describe('useSnapshotReference — omit as Set', () => {
   const clones = equalClones();
 
-  bench('content-equal clones', () =>
+  bench('content-equal clones', () => {
     driveRenders(
       (input: Message) => useSnapshotReference(input, VOLATILE_KEY_SET),
       clones,
-    ),
-  );
+    );
+  });
 });

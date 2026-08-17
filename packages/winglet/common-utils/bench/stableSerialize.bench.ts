@@ -37,9 +37,13 @@ let cursor = 0;
 const OMITTED = ['node0', 'node1'] as const;
 
 describe('stableSerialize — depth 4, width 4 plain object (341 nodes)', () => {
-  bench('same input every call', () => stableSerialize(repeatedInput));
+  bench('same input every call', () => {
+    stableSerialize(repeatedInput);
+  });
   bench('a different input every call', () => {
     stableSerialize(distinctInputs[cursor++ % distinctInputs.length]);
   });
-  bench('same input with omit', () => stableSerialize(repeatedInput, OMITTED));
+  bench('same input with omit', () => {
+    stableSerialize(repeatedInput, OMITTED);
+  });
 });

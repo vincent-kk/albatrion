@@ -36,14 +36,16 @@ cyclicLeft.self = cyclicLeft;
 cyclicRight.self = cyclicRight;
 
 describe('stableEquals — nested plain objects, depth 4 width 4 (341 nodes)', () => {
-  bench('stableEquals, fully equal trees', () =>
-    stableEquals(deepLeft, deepRight),
-  );
-  bench('equals, same input for reference', () => equals(deepLeft, deepRight));
+  bench('stableEquals, fully equal trees', () => {
+    stableEquals(deepLeft, deepRight);
+  });
+  bench('equals, same input for reference', () => {
+    equals(deepLeft, deepRight);
+  });
 });
 
 describe('stableEquals — cyclic structures', () => {
-  bench('fully equal cyclic trees', () =>
-    stableEquals(cyclicLeft, cyclicRight),
-  );
+  bench('fully equal cyclic trees', () => {
+    stableEquals(cyclicLeft, cyclicRight);
+  });
 });

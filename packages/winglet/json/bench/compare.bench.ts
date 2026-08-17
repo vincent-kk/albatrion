@@ -67,5 +67,7 @@ const scenarios = [
 
 describe('compare — document size by change density', () => {
   for (const { name, source, target } of scenarios)
-    bench(name, () => compare(source, target));
+    bench(name, () => {
+      compare(source, target);
+    });
 });
