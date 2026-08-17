@@ -1,9 +1,6 @@
 import type { Fn } from '@aileron/declare';
 
-import {
-  clearImmediate,
-  setImmediate,
-} from './MessageChannelScheduler/handler';
+import { clearImmediate, setImmediate } from './MessageChannelScheduler';
 
 /**
  * Type definition for macrotask scheduling functions
