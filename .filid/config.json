@@ -34,7 +34,18 @@
         "**/canard/schema-form/**",
         "**/lerx/promise-modal/**",
         "**/winglet/common-utils/**",
-        "**/winglet/json/**"
+        "**/winglet/json/**",
+        "**/winglet/react-utils/src/utils/filter",
+        "**/winglet/react-utils/src/utils/object",
+        "**/winglet/react-utils/src/utils/render",
+        "**/winglet/react-utils/src/components/Portal",
+        "**/winglet/react-utils/src/hoc/withErrorBoundary",
+        "**/winglet/data-loader/src",
+        "**/winglet/json-schema/src/filters",
+        "**/winglet/json-schema/src/utils/JsonSchemaScanner/sync",
+        "**/winglet/json-schema/src/utils/JsonSchemaScanner/async",
+        "**/winglet/style-utils/src/styleManager",
+        "**/winglet/style-utils/src/utils/cx"
       ]
     }
   },
