@@ -10,9 +10,9 @@ import { isMemoComponent } from './isMemoComponent';
  * Comprehensively determines whether a given value is any type of React component.
  *
  * Provides unified component detection by combining checks for all React component
- * types: functional components, class components, and memoized components.
- * This is useful when you need to identify any valid React component regardless
- * of its implementation pattern.
+ * types: functional components, memoized components, forwardRef components,
+ * lazy components, and class components. This is useful when you need to identify
+ * any valid React component regardless of its implementation pattern.
  *
  * @typeParam Props - The component props type (defaults to any)
  * @typeParam Component - The component type (union of all component types)
@@ -44,7 +44,7 @@ import { isMemoComponent } from './isMemoComponent';
  * console.log(isReactComponent(FunctionComp)); // true
  * console.log(isReactComponent(ClassComp)); // true
  * console.log(isReactComponent(MemoComp)); // true
- * console.log(isReactComponent(ForwardComp)); // false (forwardRef is not supported in the current implementation)
+ * console.log(isReactComponent(ForwardComp)); // true
  * console.log(isReactComponent('not a component')); // false
  * console.log(isReactComponent({})); // false
  * ```
@@ -92,17 +92,16 @@ import { isMemoComponent } from './isMemoComponent';
  * ```
  *
  * @remarks
- * This function combines three specific component type checks:
+ * This function combines five specific component type checks:
  * - `isFunctionComponent()`: For function-based components
  * - `isMemoComponent()`: For React.memo wrapped components
+ * - `isForwardRefComponent()`: For React.forwardRef wrapped components
+ * - `isLazyComponent()`: For React.lazy wrapped components
  * - `isClassComponent()`: For class-based components
- *
- * Note: This function currently does not detect forwardRef components
- * as they require a separate detection mechanism based on $$typeof.
  *
  * The order of checks is optimized for common usage patterns:
  * 1. Function components (most common in modern React)
- * 2. Memoized components (performance-optimized components)
+ * 2. Exotic components branded with $$typeof (memo, forwardRef, lazy)
  * 3. Class components (legacy but still supported)
  *
  * This provides a single entry point for component validation without

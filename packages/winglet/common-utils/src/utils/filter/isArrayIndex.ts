@@ -17,10 +17,10 @@
  * console.log(isArrayIndex('123')); // true
  * console.log(isArrayIndex('999')); // true
  * console.log(isArrayIndex('42')); // true
+ * console.log(isArrayIndex('01')); // true (digits only — leading zeros are not rejected)
  *
  * // Invalid array index strings
  * console.log(isArrayIndex('')); // false (empty string)
- * console.log(isArrayIndex('01')); // false (leading zero, but still digits)
  * console.log(isArrayIndex('12.5')); // false (contains decimal point)
  * console.log(isArrayIndex('abc')); // false (contains letters)
  * console.log(isArrayIndex('12a')); // false (mixed alphanumeric)

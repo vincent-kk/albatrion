@@ -79,7 +79,7 @@ The package supports granular imports through multiple entry points:
 The heart of the library is the schema traversal system located in `src/utils/JsonSchemaScanner/`:
 
 - **JsonSchemaScanner** (`sync/JsonSchemaScanner.ts`): Depth-first traversal with visitor pattern, $ref resolution, and circular reference detection
-- **JsonSchemaScannerAsync** (`async/JsonSchemaScannerAsync.ts`): Extends JsonSchemaScanner for async operations
+- **JsonSchemaScannerAsync** (`async/JsonSchemaScannerAsync.ts`): Standalone async variant (no inheritance) driving the same shared generator core as JsonSchemaScanner, awaiting async visitors and reference resolution
 - **Visitor Pattern**: Uses `enter`/`exit` callbacks for schema node processing
 - **Reference Resolution**: Handles `$ref` with configurable resolution functions
 - **Stack-based Architecture**: Prevents infinite loops with stack-based circular reference detection
