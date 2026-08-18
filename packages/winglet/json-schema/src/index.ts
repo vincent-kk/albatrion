@@ -1,7 +1,72 @@
-export * from './filters';
-export * from './utils/JsonSchemaScanner/async';
-export * from './utils/JsonSchemaScanner/sync';
-export type * from './types/jsonSchema';
-export type * from './types/value';
+export {
+  hasNullInType,
+  isArraySchema,
+  isBooleanSchema,
+  isCompatibleSchemaType,
+  isIdenticalSchemaType,
+  isNonNullableArraySchema,
+  isNonNullableBooleanSchema,
+  isNonNullableNumberSchema,
+  isNonNullableObjectSchema,
+  isNonNullableStringSchema,
+  isNullableArraySchema,
+  isNullableBooleanSchema,
+  isNullableNumberSchema,
+  isNullableObjectSchema,
+  isNullableStringSchema,
+  isNullSchema,
+  isNumberSchema,
+  isObjectSchema,
+  isStringSchema,
+} from './filters';
+export {
+  JsonSchemaScannerAsync,
+  type JsonScannerOptionsAsync,
+} from './utils/JsonSchemaScanner/async';
+export {
+  DEFAULT_KEYWORDS,
+  EXTENDED_KEYWORDS,
+  JsonSchemaScanner,
+  type JsonScannerOptions,
+  type KeywordDescriptor,
+  type KeywordKind,
+  type SchemaEntry,
+  type SchemaVisitor,
+} from './utils/JsonSchemaScanner/sync';
+export type {
+  ArraySchema,
+  BasicSchema,
+  BooleanSchema,
+  InferJsonSchema,
+  JsonSchema,
+  NonNullableArraySchema,
+  NonNullableBooleanSchema,
+  NonNullableNumberSchema,
+  NonNullableObjectSchema,
+  NonNullableStringSchema,
+  NullableArraySchema,
+  NullableBooleanSchema,
+  NullableNumberSchema,
+  NullableObjectSchema,
+  NullableStringSchema,
+  NullSchema,
+  NumberSchema,
+  ObjectSchema,
+  RefSchema,
+  StringSchema,
+  UnknownSchema,
+} from './types/jsonSchema';
+export type {
+  AllowedValue,
+  AnyValue,
+  ArrayValue,
+  BooleanValue,
+  InferValueType,
+  NullValue,
+  NumberValue,
+  ObjectValue,
+  StringValue,
+  UndefinedValue,
+} from './types/value';
 
-export * from './utils/resolveReference';
+export { resolveReference } from './utils/resolveReference';
