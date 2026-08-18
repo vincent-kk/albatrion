@@ -1,3 +1,3 @@
 export { JSONPath } from './enum';
-export * from './utils/convertJsonPathToPointer';
-export * from './utils/getJSONPath';
+export { convertJsonPathToPointer } from './utils/convertJsonPathToPointer';
+export { getJSONPath } from './utils/getJSONPath';

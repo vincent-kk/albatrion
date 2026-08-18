@@ -1,2 +1,26 @@
-export * from './JSONPath';
-export * from './JSONPointer';
+export { convertJsonPathToPointer, getJSONPath, JSONPath } from './JSONPath';
+export {
+  type AddPatch,
+  applyPatch,
+  type ApplyPatchOptions,
+  compare,
+  type CompareOptions,
+  compilePointer,
+  convertJsonPointerToPath,
+  type CopyPatch,
+  difference,
+  escapePath,
+  escapeSegment,
+  getValue,
+  JSONPointer,
+  mergePatch,
+  type MovePatch,
+  Operation,
+  type Patch,
+  type RemovePatch,
+  type ReplacePatch,
+  setValue,
+  type TestPatch,
+  unescapePath,
+  unescapeSegment,
+} from './JSONPointer';

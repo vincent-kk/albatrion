@@ -1,6 +1,26 @@
 export { JSONPointer } from './enum';
 
-export * from './utils/convertJsonPointerToPath';
-export * from './utils/escape';
-export * from './utils/manipulator';
-export * from './utils/patch';
+export { convertJsonPointerToPath } from './utils/convertJsonPointerToPath';
+export {
+  escapePath,
+  escapeSegment,
+  unescapePath,
+  unescapeSegment,
+} from './utils/escape';
+export { compilePointer, getValue, setValue } from './utils/manipulator';
+export {
+  type AddPatch,
+  applyPatch,
+  type ApplyPatchOptions,
+  compare,
+  type CompareOptions,
+  type CopyPatch,
+  difference,
+  mergePatch,
+  type MovePatch,
+  Operation,
+  type Patch,
+  type RemovePatch,
+  type ReplacePatch,
+  type TestPatch,
+} from './utils/patch';

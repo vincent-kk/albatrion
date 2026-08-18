@@ -2,7 +2,7 @@ import type { ComponentType, ReactNode } from 'react';
 
 import type { Dictionary } from '@aileron/declare';
 
-import { ErrorBoundary } from './ErrorBoundary';
+import { ErrorBoundary } from './components/ErrorBoundary';
 
 /**
  * Wraps a React component with error boundary protection to prevent application crashes.

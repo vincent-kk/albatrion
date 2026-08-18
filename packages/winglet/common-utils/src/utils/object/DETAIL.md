@@ -41,7 +41,7 @@
 
 ## Boundary Exemptions
 
-### `*.ts` (fractal root) — flat 단일 함수 컬렉션 유지
+### `*.ts` — flat 단일 함수 컬렉션 유지 (fractal root)
 
 - **Consumers**: `entry-point`
 - **Direct import**: `allowed`

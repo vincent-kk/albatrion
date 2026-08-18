@@ -8,7 +8,7 @@ import {
 
 import type { Dictionary } from '@aileron/declare';
 
-import { ErrorBoundary } from './ErrorBoundary';
+import { ErrorBoundary } from './components/ErrorBoundary';
 
 /**
  * Wraps a forwardRef component with error boundary protection while preserving ref forwarding.
