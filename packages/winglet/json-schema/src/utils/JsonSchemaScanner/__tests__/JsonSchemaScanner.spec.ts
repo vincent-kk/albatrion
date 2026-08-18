@@ -1,3 +1,4 @@
+// filid:contract scanner-sync
 import { getValue } from '@winglet/json/pointer';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
