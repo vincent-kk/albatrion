@@ -33,6 +33,15 @@ import { mergePatchRecursive } from './mergePatchRecursive';
  * @returns The result of applying the merge patch to the source value.
  *          Returns the original source if patch is undefined.
  *
+ * @remarks
+ * Reserved member names (`__proto__`, `constructor`, `prototype`) carried by the patch survive
+ * into the result as own data properties. Copy such a result with spread, `structuredClone`, or a
+ * JSON round-trip — each defines own data and keeps the key; assignment-based copies
+ * (`Object.assign`, `target[key] = value`) route through the inherited `__proto__` setter, which
+ * replaces the copy's prototype and drops the key. Test the result for plain objects with
+ * `Object.getPrototypeOf` or `instanceof`, not `value.constructor` — an own `constructor` shadows
+ * the inherited one.
+ *
  * @example
  * ```typescript
  * // Object property addition and modification

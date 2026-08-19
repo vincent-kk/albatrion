@@ -244,6 +244,23 @@ interface ApplyPatchOptions {
 
 예약 멤버 이름(`__proto__`, `constructor`, `prototype`)은 항상 불투명한 own 데이터 속성으로 처리됩니다 — 별도 옵션이 필요 없고 존재하지도 않으며, 어떤 패치 입력도 프로토타입 체인에 도달하거나 이를 변경할 수 없습니다.
 
+##### 결과를 다른 코드로 전달할 때
+
+입력에 담긴 예약 멤버 이름은 결과에 own 데이터 속성으로 남습니다. 그 결과가 이 라이브러리 밖으로 나가면 두 가지가 따라옵니다.
+
+**복사.** 스프레드(`{ ...result }`), `structuredClone`, JSON 왕복은 모두 own 데이터를 정의하므로 키가 보존됩니다. 반면 할당 기반 복사는 상속된 `__proto__` setter를 거치기 때문에, 사본의 프로토타입이 교체되고 키는 오류 없이 사라집니다:
+
+```typescript
+const result = mergePatch({}, JSON.parse('{"__proto__":{"tainted":true}}'));
+
+const safe = { ...result }; // { __proto__: { tainted: true } }, 프로토타입 유지
+const lost = Object.assign({}, result); // {} — 프로토타입 교체, 키 소실
+```
+
+키를 보존해야 하는 할당 경로를 위해 `@winglet/common-utils`가 `setDataProperty`를 제공합니다.
+
+**타입 검사.** 입력에 `constructor` 키가 있으면 결과가 이를 own 데이터로 갖고, 이 own 속성이 상속된 것을 가립니다 — 그때 `value.constructor === Object`는 `false`를 반환합니다. 대신 `Object.getPrototypeOf(value)`나 `value instanceof Object`를 사용하세요. 둘 다 프로토타입 체인을 직접 읽으므로, 입력에 어떤 예약 이름이 담겼든 정확합니다.
+
 ---
 
 ## 사용 예제

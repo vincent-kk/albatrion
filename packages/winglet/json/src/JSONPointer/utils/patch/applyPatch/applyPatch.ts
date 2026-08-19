@@ -40,6 +40,14 @@ import type { ApplyPatchOptions } from './type';
  * Immutable mode structurally shares unchanged subtrees. If the same object is referenced by
  * multiple paths, only the path touched by a patch is detached from the source.
  *
+ * Reserved member names (`__proto__`, `constructor`, `prototype`) addressed by a patch survive
+ * into the result as own data properties. Copy such a result with spread, `structuredClone`, or a
+ * JSON round-trip — each defines own data and keeps the key; assignment-based copies
+ * (`Object.assign`, `target[key] = value`) route through the inherited `__proto__` setter, which
+ * replaces the copy's prototype and drops the key. Test the result for plain objects with
+ * `Object.getPrototypeOf` or `instanceof`, not `value.constructor` — an own `constructor` shadows
+ * the inherited one.
+ *
  * @throws {JsonPatchError} When a patch operation fails due to:
  *         - Invalid path syntax or structure
  *         - Attempting to modify non-existent properties in strict mode

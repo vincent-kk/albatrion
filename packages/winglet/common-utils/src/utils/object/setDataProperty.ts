@@ -16,6 +16,14 @@ import { isReservedName } from './isReservedName';
  * @param key - Property key to write
  * @param value - Value to store as the property
  *
+ * @remarks
+ * An object holding a reserved member as own data keeps it through spread, `structuredClone`, and
+ * a JSON round-trip, each of which defines own data. Assignment-based copies (`Object.assign`,
+ * `target[key] = value`) route through the inherited `__proto__` setter instead, replacing the
+ * copy's prototype and dropping the key — copy through this function to preserve it. An own
+ * `constructor` shadows the inherited one, so test such objects for plain-object shape with
+ * `Object.getPrototypeOf` or `instanceof`.
+ *
  * @example
  * Writing `__proto__` creates data instead of swapping the prototype:
  * ```typescript

@@ -74,6 +74,15 @@ import { setValueByPointer } from './utils/setValueByPointer';
  *
  * @see https://datatracker.ietf.org/doc/html/rfc6901 - JSON Pointer specification
  *
+ * @remarks
+ * A pointer segment naming a reserved member (`__proto__`, `constructor`, `prototype`) writes an
+ * own data property, so the value stays on the object instead of reaching the prototype chain.
+ * Copy such an object with spread, `structuredClone`, or a JSON round-trip — each defines own data
+ * and keeps the key; assignment-based copies (`Object.assign`, `target[key] = value`) route through
+ * the inherited `__proto__` setter, which replaces the copy's prototype and drops the key. Test for
+ * plain objects with `Object.getPrototypeOf` or `instanceof`, not `value.constructor` — an own
+ * `constructor` shadows the inherited one.
+ *
  * @example
  * ```typescript
  * // Basic object property setting

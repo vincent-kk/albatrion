@@ -244,6 +244,23 @@ interface ApplyPatchOptions {
 
 Reserved member names (`__proto__`, `constructor`, `prototype`) are always handled as opaque own data properties — no option is needed and none exists: no patch input can reach or modify the prototype chain.
 
+##### Passing results downstream
+
+A reserved member name carried by the input survives into the result as an own data property. Two consequences follow once that result leaves this library.
+
+**Copying.** Spread (`{ ...result }`), `structuredClone`, and a JSON round-trip all define own data, so they preserve the key. Assignment-based copies go through the inherited `__proto__` setter instead — the copy's prototype is replaced and the key disappears without an error:
+
+```typescript
+const result = mergePatch({}, JSON.parse('{"__proto__":{"tainted":true}}'));
+
+const safe = { ...result }; // { __proto__: { tainted: true } }, prototype intact
+const lost = Object.assign({}, result); // {} — prototype replaced, key gone
+```
+
+`@winglet/common-utils` exposes `setDataProperty` for assignment paths that must preserve the key.
+
+**Type checks.** When the input carries a `constructor` key, the result holds it as own data, and that own property shadows the inherited one — `value.constructor === Object` then reports `false`. Use `Object.getPrototypeOf(value)` or `value instanceof Object` instead; both read the prototype chain directly and stay accurate whichever reserved name the input carried.
+
 ---
 
 ## Usage Examples
