@@ -4,13 +4,6 @@
 
 Read and write this tool's own comment-delimited blocks inside an `AGENTS.md` that other tools also append to. A rule file becomes one block, so a block's body hash is comparable to the manifest hash for that file and the copy/skip/diverged verdict stays identical to the file-copy path.
 
-## Structure
-
-- `index.ts` — barrel export
-- `markerBlock.ts` — `formatBlockId`, `parseBlocks`, `findBlockBody`, `upsertBlock`, `removeBlock`, `blockBodyMatches` + `ParsedBlock`
-- `utils/markerLine.ts` — `MARKER_PREFIX`, marker line builders, and the block-scanning pattern factory
-- `__tests__/` — this fractal's verification files
-
 ## Conventions
 
 - Marker shape is `<!-- AGENTS-ASSETS-SYNC:START:<packageName>:<relPath> -->`, mirroring the `FILID:` / `SEIRI:` markers the same file already carries.
@@ -20,16 +13,16 @@ Read and write this tool's own comment-delimited blocks inside an `AGENTS.md` th
 
 ### Always do
 
-- Carry through every byte outside this tool's own blocks — foreign blocks and hand-written prose are other owners' content
-- Replace an existing block in place; appending a second block with the same id would make the document self-contradictory
-- Match a block by comparing its captured id, never by building a regex from the id — package names carry regex metacharacters
+- 도구 소유 블록 밖의 바이트는 그대로 보존합니다. 다른 도구의 블록과 사용자가 쓴 본문은 수정하지 않습니다.
+- 같은 ID의 블록을 중복 추가하지 않고 기존 위치에서 교체합니다.
+- 패키지 이름의 정규식 메타문자가 패턴을 바꾸지 않도록 캡처한 ID를 값으로 비교합니다.
 
 ### Ask first
 
-- Changing `MARKER_PREFIX` or the marker shape — every document already written carries the old form and would be re-appended, not updated
-- Widening a block to hold more than one source file
+- MARKER_PREFIX 또는 마커 형식 변경 — 기존 문서의 블록 식별이 달라집니다.
+- 한 블록에 여러 원본 파일을 넣는 변경
 
 ### Never do
 
-- Read or write the filesystem here; this fractal transforms strings
-- Import from `agentTarget/`, `buildPlan/`, `injectDocs/`, `commands/`, or `ui/`
+- 파일시스템 읽기·쓰기 — 이 모듈은 문자열 변환만 소유합니다.
+- 목적지·계획·적용·명령·UI 계층에 역으로 의존

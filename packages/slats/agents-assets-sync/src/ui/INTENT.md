@@ -2,18 +2,11 @@
 
 ## Purpose
 
-React + Ink UI layer for the TTY path of `inject-agents-settings`. Exposes `renderInjectApp(input)` which mounts an Ink app that picks agents and scope, builds per-target plans, requests force-confirm, applies actions, and returns a final exit code. Reached only through dynamic `import('./ui/index.js')` from `commands/runCli/renderers/renderOrFallback.ts`; not a public subpath.
+TTY 실행에서 사용하는 React·Ink UI를 소유합니다. renderInjectApp은 에이전트·스코프 선택, 대상별 계획, 강제 적용 확인, 실행 결과를 하나의 화면 흐름으로 연결하고 종료 코드를 반환합니다. CLI의 renderOrFallback이 대화형 경로를 선택한 경우에만 동적으로 로드하며, 공개 패키지 서브패스로 노출하지 않습니다.
 
 ## Structure
 
-- `INTENT.md`, `DETAIL.md`, `index.ts`
-- `InjectApp/` — main Ink screen + phase state machine (fractal)
-- `components/` — Ink UI primitives (organ)
-- `hooks/` — Ink-aware React hooks including pipeline steps (organ)
-- `reducer/` — framework-free `(phase, event) => phase` reducer (organ)
-- `theme/` — colors, icons, layout tokens (organ)
-- `types/` — split into `phase`, `event`, `render`, `target` (organ)
-- `__tests__/` — this fractal's verification files
+상태 전이 규칙은 UI 프레임워크에 의존하지 않는 reducer가 소유합니다. 화면 컴포넌트와 파이프라인 훅은 그 상태를 소비하며, 렌더링 계층에 전이 규칙을 복제하지 않습니다.
 
 ## Conventions
 

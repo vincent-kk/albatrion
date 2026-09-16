@@ -2,27 +2,26 @@
 
 ## Purpose
 
-Commander action handlers. The only public entry is `runCli(argv)`, which parses `--package <name...>`, classifies each value as a scope alias or a package name, resolves every target, and dispatches one inject pass per resolved consumer. TTY invocations render through the Ink UI layer (`ui/`); non-TTY and `--json` invocations use `renderPlain` which composes `core/**` primitives directly.
+CLI 인자를 해석하고 주입 작업을 시작하는 공개 경계를 소유합니다. runCli는 패키지 이름과 스코프 별칭을 해석해 대상을 결정하고 렌더러 선택을 위임합니다. JSON 요청은 renderJson으로, 비대화형 실행은 renderPlain으로, 대화 가능한 TTY 실행은 Ink로 연결합니다.
 
-## Structure
+## Conventions
 
-- `INTENT.md`, `DETAIL.md`
-- `index.ts` — aggregates public exports (`runCli`, `DefaultFlags`)
-- `runCli/` — sole CLI surface; parses argv, resolves targets, dispatches
+- 인자·대상 해석과 실제 연산의 책임을 분리하며, 이 경계에서 핵심 주입 로직을 재구현하지 않습니다.
+- 렌더러 선택은 JSON 요청, 비대화형 환경, 대화형 TTY 순으로 판정하는 단일 분기점에 위임합니다.
 
 ## Boundaries
 
 ### Always do
 
-- Route user-facing errors through `process.exit(<code>)` with documented exit codes 0 / 1 / 2
-- Branch TTY vs plain path exactly once, via `runCli/renderers/renderOrFallback.ts`
+- 사용자에게 드러나는 실패는 문서화된 종료 코드 0 / 1 / 2 계약으로 전달합니다.
+- renderOrFallback을 통해 렌더러를 한 번만 선택합니다.
 
 ### Ask first
 
-- Adding top-level subcommands (`list`, `all`, etc.) — today the CLI is intentionally single-action even when multiple targets resolve
+- 최상위 하위 명령을 추가하는 변경 — 대상이 여럿이어도 현재 CLI는 단일 동작을 유지합니다.
 
 ### Never do
 
-- Import from `ui/` statically; only `runCli/renderers/renderOrFallback.ts` may dynamic-import it
-- Reach into a sub-fractal's internal files; always use its `index.ts`
-- Walk `node_modules` outside `runCli/targets/resolveScopeAlias.ts`. That file is the SOLE `node_modules`-enumeration exception.
+- 대화형 UI를 정적으로 import하거나 renderOrFallback 밖에서 동적으로 로드
+- 하위 프랙탈의 공개 진입점을 우회해 내부 구현에 접근
+- resolveScopeAlias 외의 코드에서 node_modules를 열거 — 스코프 별칭 해석만이 이 열거를 소유합니다.

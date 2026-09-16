@@ -4,13 +4,10 @@
 
 Main Ink screen for the inject flow. Owns the top-level `InjectApp` React component that renders each phase, and `renderInjectApp`, which mounts it via `ink.render` and surfaces the final exit code. The `Phase` union lives in `ui/types/` and its reducer in `ui/reducer/`; this fractal consumes both.
 
-## Structure
+## Conventions
 
-- `INTENT.md`, `DETAIL.md`, `index.ts`
-- `InjectApp.tsx` — eponymous React root; renders by phase
-- `utils/type.ts` — `InjectAppProps` (re-exports `Phase`/`InjectEvent`/`RenderInput`)
-- `utils/eventSelectors.ts` — phase → view-prop derivations
-- `utils/renderInjectApp.tsx` — `ink.render` wrapper → `Promise<number>`
+- useInjectSession이 제공하는 phase를 화면으로 투영하며, 전이 판단은 reducer에 남깁니다.
+- 종료 코드는 summary phase에 기록된 결과를 읽어 Ink 컴포넌트 안에서 전달합니다.
 
 ## Boundaries
 
