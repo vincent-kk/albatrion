@@ -4,13 +4,6 @@
 
 `push`/`clear`의 locked(bulk) 경로에서 반환하는 이미 resolve된 공유 Promise 상수. `applyValue`가 결과를 버리는 N개 항목 처리 시 매 항목마다 Promise 할당과 macrotask 스케줄을 생략하여 O(N) 낭비를 O(1)로 줄인다.
 
-## Structure
-
-| 파일                        | 역할                                                                         |
-| --------------------------- | ---------------------------------------------------------------------------- |
-| `sharedResolvedPromises.ts` | `RESOLVED_LENGTH: Promise<number>`, `RESOLVED_VOID: Promise<void>` 상수 정의 |
-| `index.ts`                  | barrel re-export                                                             |
-
 ## Conventions
 
 - locked 경로 전용 — 반환값은 placeholder이며 호출자가 읽지 않는다

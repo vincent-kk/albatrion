@@ -4,13 +4,6 @@
 
 자식 노드를 생성하지 않고 객체 값을 직접 관리하는 단순 전략. `additionalProperties`, 키 정렬, nullable 처리를 포함하여 단순 객체 타입을 처리한다.
 
-## Structure
-
-| 파일                  | 역할                                                                    |
-| --------------------- | ----------------------------------------------------------------------- |
-| `TerminalStrategy.ts` | `ObjectNodeStrategy` 구현 클래스 — `applyValue`, `children`, `subnodes` |
-| `index.ts`            | re-export 배럴                                                          |
-
 ## Conventions
 
 - `children`과 `subnodes` 두 getter 모두 항상 `null` 반환
@@ -37,8 +30,3 @@
 - `children`/`subnodes`를 `null` 이외의 값으로 반환
 - 원본 입력 객체를 직접 수정
 - `__emitChange__` 우회하여 `__value__` 직접 할당
-
-## Dependencies
-
-- 내부: `@/schema-form/core/nodes/ObjectNode`(`ObjectNode`), `@/schema-form/core/nodes/type`(`HandleChange`, `NodeEventType`, `SetValueOption`, `UnionSetValueOption`), `../type`(`ObjectNodeStrategy`), `@/schema-form/core/parsers`(`parseObject`), `@/schema-form/helpers/defaultValue`(`getObjectDefaultValue`), `@/schema-form/types`(`ObjectValue`)
-- 외부: `@winglet/common-utils/array`(`sortWithReference`), `@winglet/common-utils/object`(`getObjectKeys`, `sortObjectKeys`), `@aileron/declare`(`Nullish`)

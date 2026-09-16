@@ -4,13 +4,6 @@
 
 JSON Schema로부터 폼 필드의 기본값을 산출하는 헬퍼 모음. `schema.default`, 타입 기반 빈값, 객체 트리 재귀 기본값 세 가지 전략을 제공한다.
 
-## Structure
-
-- `getDefaultValue/` — `schema.default` 우선, 없으면 타입 기반 빈값 반환
-- `getEmptyValue/` — 타입 문자열(`'array'`|`'object'`)로 빈 컨테이너 반환
-- `getObjectDefaultValue/` — `JsonSchemaScanner`로 객체 트리 전체를 순회하며 중첩 기본값 수집
-- `index.ts` — 세 함수를 barrel export
-
 ## Conventions
 
 - TypeScript strict 모드, 제네릭으로 스키마 타입 보존
@@ -33,13 +26,3 @@ JSON Schema로부터 폼 필드의 기본값을 산출하는 헬퍼 모음. `sch
 
 - 이 디렉토리에서 React나 DOM API 사용
 - `getObjectDefaultValue` 내부에서 스캔 결과를 직접 캐싱하거나 외부 상태에 저장
-
-## Dependencies
-
-- `@winglet/common-utils/filter` — `isEmptyObject`
-- `@winglet/common-utils/lib` — `hasOwnProperty`
-- `@winglet/json-schema/scanner` — `JsonSchemaScanner`
-- `@winglet/json/pointer` — `setValue`
-- `@aileron/declare` — `Nullish`
-- `@/schema-form/helpers/jsonSchema` — `extractSchemaInfo`
-- `@/schema-form/types` — `JsonSchema`, `ObjectSchema`, `ObjectValue`, `ArrayValue`

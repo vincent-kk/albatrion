@@ -4,11 +4,6 @@
 
 주어진 핸들러를 macrotask(setTimeout)로 실행하는 래퍼 함수를 생성한다. 중복 호출 시 이전 태스크를 취소하고 새 태스크를 예약하여 디바운스 효과를 제공한다. 루트 노드의 `onChange` 콜백을 React Fiber 스케줄러와 충돌 없이 지연 실행하는 데 사용된다.
 
-## Structure
-
-- `afterMicrotask.ts` — 함수 본체
-- `index.ts` — barrel export
-
 ## Conventions
 
 - TypeScript strict 모드
@@ -30,8 +25,3 @@
 
 - `Promise.resolve()` / microtask 기반으로 교체 (React 렌더링 사이클과 충돌)
 - 루트 노드 `onChange` 외 용도로 사용
-
-## Dependencies
-
-- `@winglet/common-utils/scheduler` — `scheduleMacrotaskSafe`, `cancelMacrotaskSafe`
-- `@aileron/declare` — `Fn`

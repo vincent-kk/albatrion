@@ -4,13 +4,6 @@
 
 배열 스키마의 `minItems`/`maxItems` 제약을 계산하는 순수 유틸 함수. closed tuple(`prefixItems`만 있고 `items` 없음) 패턴도 자동으로 처리한다.
 
-## Structure
-
-| 파일                    | 역할                                                                      |
-| ----------------------- | ------------------------------------------------------------------------- |
-| `resolveArrayLimits.ts` | `resolveArrayLimits(jsonSchema: ArraySchema): ArrayLimits` 단일 함수 구현 |
-| `index.ts`              | `resolveArrayLimits` re-export 전용 배럴                                  |
-
 ## Conventions
 
 - 반환 타입: `interface ArrayLimits { readonly min: number; readonly max: number }` — as const 객체
@@ -36,8 +29,3 @@
 
 - 입력 `jsonSchema` 객체를 변경하거나 프로퍼티를 추가
 - `min > max` 상태를 반환
-
-## Dependencies
-
-- 외부: `@winglet/common-utils/filter` (`isArray`), `@winglet/common-utils/math` (`minLite`)
-- 내부: `@/schema-form/types` (`ArraySchema`)

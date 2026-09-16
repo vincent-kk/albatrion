@@ -4,13 +4,6 @@
 
 `FieldConditionMap`을 필드별 실행 가능한 표현식 목록(`ConditionsMap`)으로 변환한다. `if-then-else` 등 조건부 스키마에서 추출한 조건을 동적 표현식으로 컴파일한다.
 
-## Structure
-
-| 파일                  | 역할                                                 |
-| --------------------- | ---------------------------------------------------- |
-| `getConditionsMap.ts` | `FieldConditionMap` → `ConditionsMap` 변환 핵심 구현 |
-| `index.ts`            | `getConditionsMap`, `ConditionsMap` re-export        |
-
 ## Conventions
 
 - 반환 타입: `ConditionsMap` (`Map<string, string[]>`) 또는 `undefined`
@@ -37,12 +30,3 @@
 
 - 표현식을 직접 평가(eval) — 평가는 동적 표현식 헬퍼에 위임
 - `FieldConditionMap` 원본을 직접 수정
-
-## Dependencies
-
-내부:
-
-- `@/schema-form/helpers/dynamicExpression` — `convertExpression`
-- `../getFieldConditionMap` — `FieldConditionMap` 타입 (상대 임포트)
-
-외부: 없음

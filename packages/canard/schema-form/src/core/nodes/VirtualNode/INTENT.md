@@ -4,14 +4,6 @@
 
 스키마에 직접 정의되지 않은 가상 필드 노드. 여러 실제 노드에 대한 참조를 집합하여 복합 폼 필드(다중 값 제어)를 구현한다.
 
-## Structure
-
-| 파일             | 역할                                                                                                                           |
-| ---------------- | ------------------------------------------------------------------------------------------------------------------------------ |
-| `VirtualNode.ts` | 메인 클래스 — `AbstractNode<VirtualSchema, VirtualNodeValue>` 상속; `__refNodes__`, `__children__`, `__emitChange__` 핵심 구현 |
-| `filter.ts`      | `isVirtualNode(input)` 타입 가드 — `input.type === 'virtual'` 체크                                                             |
-| `index.ts`       | barrel re-export                                                                                                               |
-
 ## Conventions
 
 - `type = 'virtual'`로 고정; JSON Schema 실제 타입과 구분됨
@@ -39,8 +31,3 @@
 - `refNodes`를 생성자 외부에서 변경
 - 길이 불일치 상태의 값 배열을 `__value__`에 저장
 - `VirtualNode`를 JSON Schema의 실제 타입(`string`, `object` 등)으로 사용
-
-## Dependencies
-
-- 내부: `../AbstractNode`(`AbstractNode`, `saveUnsubscribe`, `publish`, `__initialize__`), `@/schema-form/errors`(`JsonSchemaError`), `@/schema-form/helpers/error`(`formatInvalidVirtualNodeValuesError`), `../type`(`NodeEventType`, `SetValueOption`, `ChildNode`, `SchemaNode`, `UnionSetValueOption`, `VirtualNodeConstructorProps`)
-- 외부: `@/schema-form/types`(`VirtualSchema`, `VirtualNodeValue`), `@winglet/common-utils/array`(`map`)

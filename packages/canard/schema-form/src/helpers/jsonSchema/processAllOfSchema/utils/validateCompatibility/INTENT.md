@@ -4,13 +4,6 @@
 
 allOf 병합 시 기반 스키마와 allOf 항목 간의 타입 호환성을 검증한다. 타입이 지정되지 않은 allOf 항목은 항상 호환 가능으로 처리하며, 타입이 있는 경우 `isCompatibleSchemaType`으로 정확히 일치하는지 확인한다.
 
-## Structure
-
-| 파일                       | 역할                                                                                                 |
-| -------------------------- | ---------------------------------------------------------------------------------------------------- |
-| `validateCompatibility.ts` | 단일 함수 `validateCompatibility(schema, allOfSchema): boolean` 구현 — `isCompatibleSchemaType` 위임 |
-| `index.ts`                 | barrel re-export                                                                                     |
-
 ## Conventions
 
 - TypeScript strict 모드, 순수 함수
@@ -37,8 +30,3 @@ allOf 병합 시 기반 스키마와 allOf 항목 간의 타입 호환성을 검
 - 이 함수 내부에서 스키마를 변경하거나 병합
 - `false` 반환 시 에러를 직접 throw (에러는 호출부 `processAllOfSchema`에서 처리)
 - `isCompatibleSchemaType` 없이 `schema.type` 직접 비교
-
-## Dependencies
-
-- 내부: `@/schema-form/types`(`JsonSchema`)
-- 외부: `@winglet/json-schema/filter`(`isCompatibleSchemaType`)

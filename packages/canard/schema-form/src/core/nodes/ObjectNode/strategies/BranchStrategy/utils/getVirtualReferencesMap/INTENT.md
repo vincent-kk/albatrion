@@ -4,12 +4,6 @@
 
 스키마의 `virtual` 정의에서 가상 참조 맵과 역방향 맵을 생성한다. 가상 노드가 참조하는 프로퍼티 목록을 검증하고 인덱싱한다.
 
-## Structure
-
-- `getVirtualReferencesMap.ts` — 핵심 구현
-- `index.ts` — re-export
-- `type.ts` — `VirtualReference`, `VirtualReferencesMap`, `VirtualReferenceFieldsMap` 타입
-
 ## Conventions
 
 - `virtualReferencesMap`: `Map<virtualKey, VirtualReference>`
@@ -33,9 +27,3 @@
 
 - `virtualReferences`가 `undefined`일 때 오류 발생 (빈 객체 반환)
 - 반환된 맵을 caller에서 직접 수정 (`getChildren`은 삭제 연산 수행하므로 주의)
-
-## Dependencies
-
-- `JsonSchemaError` — 유효성 오류
-- `@winglet/common-utils/filter` (`isArray`)
-- `@aileron/declare` (`Dictionary`)

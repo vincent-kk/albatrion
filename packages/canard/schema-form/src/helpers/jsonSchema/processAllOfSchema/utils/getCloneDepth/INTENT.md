@@ -4,13 +4,6 @@
 
 JSON Schema의 타입에 따라 `cloneLite` 복제에 필요한 최소 안전 깊이를 결정한다. `isObjectSchema` → 3, `isArraySchema` → 2, 그 외 primitive → 1을 반환하여 `processAllOfSchema`의 allOf 병합 전 복제 깊이를 제공한다.
 
-## Structure
-
-| 파일               | 역할                                                              |
-| ------------------ | ----------------------------------------------------------------- |
-| `getCloneDepth.ts` | `getCloneDepth(schema: JsonSchema) => 1 \| 2 \| 3` 단일 순수 함수 |
-| `index.ts`         | barrel export                                                     |
-
 ## Conventions
 
 - 반환값은 항상 `1 | 2 | 3` 리터럴 타입 (양의 정수)
@@ -35,10 +28,3 @@ JSON Schema의 타입에 따라 `cloneLite` 복제에 필요한 최소 안전 �
 
 - 이 함수 내부에서 스키마를 직접 복제하거나 변경
 - `processAllOfSchema` 외부에서 독립적으로 호출
-
-## Dependencies
-
-외부:
-
-- `@winglet/json-schema/filter` — `isObjectSchema`, `isArraySchema`
-- `@/schema-form/types` — `JsonSchema`

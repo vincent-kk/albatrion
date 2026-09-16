@@ -4,11 +4,6 @@
 
 JSON Schema에서 `type`과 `nullable` 정보를 추출하여 정규화된 형태로 반환한다. 배열 타입 표기(`['string', 'null']`)와 단일 타입 표기를 모두 처리한다.
 
-## Structure
-
-- `extractSchemaInfo.ts` — 핵심 구현
-- `index.ts` — barrel export
-
 ## Conventions
 
 - TypeScript strict 모드, 순수 함수
@@ -36,8 +31,3 @@ JSON Schema에서 `type`과 `nullable` 정보를 추출하여 정규화된 형�
 
 - 스키마 객체를 변경(mutate)하거나 복제
 - `getMergeSchemaHandler`, `preprocessSchema` 등 다른 헬퍼를 내부에서 호출
-
-## Dependencies
-
-- `@winglet/common-utils/filter` — `isArray`
-- `@/schema-form/types` — `JsonSchemaType`, `JsonSchemaWithVirtual`

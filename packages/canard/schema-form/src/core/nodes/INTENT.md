@@ -6,11 +6,7 @@ JSON Schema 타입별 노드 클래스 집합. `AbstractNode` 를 기반으로 `
 
 ## Structure
 
-- `AbstractNode/` — 모든 노드의 추상 기반 클래스 및 공유 유틸리티
-- `ArrayNode/` · `ObjectNode/` — branch 노드 (각각 Branch/Terminal 전략 보유)
-- `StringNode/` · `NumberNode/` · `BooleanNode/` · `NullNode/` — terminal 노드
-- `VirtualNode/` — 스키마 외 가상 노드 (조건부 필드, 계산 값)
-- 노드 공유 타입(`SchemaNode`, `ChildNode`, `NodeEventType` 등)은 상위 `core/types/` organ 소유
+노드 공유 타입은 개별 노드 구현의 소유가 아니라 상위 core 모듈의 계약입니다. 특정 노드 안에 공용 타입을 복제하지 않습니다.
 
 ## Conventions
 
@@ -39,11 +35,3 @@ JSON Schema 타입별 노드 클래스 집합. `AbstractNode` 를 기반으로 `
 - 노드 내부 `__method__` 를 외부에서 직접 호출
 - `organ` 디렉토리(`utils`, `types`, `strategies`) 에 INTENT.md 생성
 - `AbstractNode` 를 우회하여 이벤트 발행 또는 상태 변경
-
-## Dependencies
-
-- `AbstractNode/utils/` — ComputedPropertiesManager, EventCascadeManager 등
-- `@winglet/json/pointer` — JSONPointer 경로 처리
-- `@winglet/common-utils` — 필터, 배열, 객체 유틸
-- `@aileron/declare` — `Fn`, `Dictionary`, `Nullish` 타입
-- `@/schema-form/types` — `JsonSchemaWithVirtual`, `AllowedValue`

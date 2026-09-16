@@ -4,11 +4,6 @@
 
 JSON Schema의 `computed.watch` / `&watch` 경로 배열을 파싱하여, 의존성 배열에서 감시 경로의 현재 값들을 순서대로 추출하는 `DynamicFunction<unknown[]>` 을 생성한다.
 
-## Structure
-
-- `getObservedValuesFactory.ts` — 팩토리 함수
-- `index.ts` — barrel export
-
 ## Conventions
 
 - TypeScript strict 모드
@@ -32,12 +27,3 @@ JSON Schema의 `computed.watch` / `&watch` 경로 배열을 파싱하여, 의존
 
 - watch 경로를 `pathManager` 없이 직접 인덱스로 변환
 - 결과 배열의 순서를 watch 배열 순서와 다르게 반환
-
-## Dependencies
-
-- `../getPathManager` — `PathManager`
-- `../type` — `ALIAS`, `DynamicFunction`, `ObservedFieldName`
-- `@winglet/common-utils/filter` — `isArray`, `isString`
-- `@/schema-form/errors` — `JsonSchemaError`
-- `@/schema-form/helpers/error` — `formatObservedValuesError`
-- `@/schema-form/types` — `JsonSchemaWithVirtual`

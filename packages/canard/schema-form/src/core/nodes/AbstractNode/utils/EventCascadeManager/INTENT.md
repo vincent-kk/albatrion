@@ -4,13 +4,6 @@
 
 노드의 이벤트 발행, 구독, 배치 처리를 캡슐화하는 매니저. 마이크로태스크 배치로 재귀적 트리거를 방지하고, 동일 동기 스택의 이벤트를 하나의 배치로 병합한다. 무한 루프 감지(MAX_LOOP_COUNT=100) 기능을 포함한다. 임계값은 의도적으로 낮게 유지되며, 발산뿐 아니라 너무 약하게 감쇠하는 수렴 cycle 도 설계 결함으로 간주하여 검출한다. 전달 원장(delivery ledger)으로 타입별 단조 revision 을 제공하여, 구독 이전에 전달된 배치를 늦은 구독자가 감지(catch-up)할 수 있게 한다.
 
-## Structure
-
-- `EventCascadeManager.ts` — 클래스 본체
-- `index.ts` — barrel export
-- `utils/getEventCollection.ts` — 단일 이벤트를 `NodeEventCollection` 으로 변환
-- `utils/mergeEventEntries.ts` — 배치 내 이벤트 엔티티 병합
-
 ## Conventions
 
 - TypeScript strict 모드
@@ -39,12 +32,3 @@
 - `__listeners__` Set 을 외부에서 직접 조작
 - `cleanUp()` 없이 노드를 폐기 (메모리 누수)
 - 동일 노드에서 `dispatch()` 를 반복 호출하여 루프 생성
-
-## Dependencies
-
-- `utils/getEventCollection` — 이벤트 컬렉션 생성
-- `utils/mergeEventEntries` — 배치 이벤트 병합
-- `@winglet/common-utils/scheduler` — `scheduleMicrotask`, `scheduleMacrotaskSafe`
-- `@/schema-form/core/nodes/type` — 이벤트 타입 정의
-- `@/schema-form/errors` — `SchemaFormError`
-- `@aileron/declare` — `Fn`

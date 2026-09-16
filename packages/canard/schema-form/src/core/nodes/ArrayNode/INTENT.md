@@ -4,14 +4,6 @@
 
 JSON Schema `array` 타입을 처리하는 노드. 배열 요소 관리와 `push`/`pop`/`update`/`remove`/`clear` 조작 메서드를 제공한다.
 
-## Structure
-
-- `ArrayNode.ts` — 메인 클래스, `AbstractNode` 상속
-- `filter.ts` — 타입 가드 유틸리티
-- `validate.ts` — 배열 스키마 구조 검증 (`validateArraySchema`)
-- `strategies/` — `BranchStrategy` (중첩 노드), `TerminalStrategy` (단순 배열)
-- `utils/` — `omitEmptyArray`, `omitTrailingArray`, `resolveArrayValueFilter`, `resolveArrayLimits`
-
 ## Conventions
 
 - `group === 'terminal'`이면 `TerminalStrategy`, 아니면 `BranchStrategy` 선택
@@ -40,10 +32,3 @@ JSON Schema `array` 타입을 처리하는 노드. 배열 요소 관리와 `push
 - `__strategy__` 내부 필드에 `ArrayNode` 외부에서 직접 접근
 - `BranchStrategy`의 `__keys__` 또는 `__sourceMap__`을 전략 클래스 외부에서 조작
 - 전략 없이 배열 값을 직접 변경
-
-## Dependencies
-
-- `AbstractNode` — 기반 클래스
-- `BranchStrategy`, `TerminalStrategy` — 전략 구현체
-- `resolveArrayValueFilter`, `resolveArrayLimits` — 내부 유틸
-- `@winglet/common-utils/object` (`equals`) — 값 비교

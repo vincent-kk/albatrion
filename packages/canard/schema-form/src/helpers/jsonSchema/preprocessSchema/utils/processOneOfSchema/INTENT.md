@@ -4,11 +4,6 @@
 
 oneOf 스키마 변형 처리기. 선택된 variant 인덱스를 `ENHANCED_KEY` 상수 프로퍼티로 스키마에 주입하여 폼 시스템이 현재 활성 oneOf 옵션을 추적할 수 있게 한다.
 
-## Structure
-
-- `processOneOfSchema.ts` — 핵심 구현
-- `index.ts` — barrel export
-
 ## Conventions
 
 - TypeScript strict 모드, 순수 함수
@@ -34,9 +29,3 @@ oneOf 스키마 변형 처리기. 선택된 variant 인덱스를 `ENHANCED_KEY` 
 - 입력 `schema` 객체를 직접 변경(mutate)
 - `preprocessSchema` 외부에서 이 함수를 독립적으로 호출
 - variant 인덱스 외의 데이터를 `ENHANCED_KEY`에 저장
-
-## Dependencies
-
-- `@winglet/common-utils/object` — `merge`
-- `@/schema-form/app/constants` — `ENHANCED_KEY`
-- `@/schema-form/types` — `JsonSchema`

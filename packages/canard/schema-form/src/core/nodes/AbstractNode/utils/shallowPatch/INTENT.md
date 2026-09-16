@@ -4,11 +4,6 @@
 
 객체의 shallow 병합/패치를 수행하며, 변경이 없으면 `undefined` 를 반환하여 불필요한 리렌더링을 방지한다. `additive` 모드에서는 truthy 값만 적용하여 globalState 누적에 사용된다.
 
-## Structure
-
-- `shallowPatch.ts` — 함수 본체
-- `index.ts` — barrel export
-
 ## Conventions
 
 - TypeScript strict 모드
@@ -33,8 +28,3 @@
 
 - `null` 을 객체로 취급 (현재: null 입력은 `undefined` 반환으로 처리)
 - 반환된 객체를 in-place 변경
-
-## Dependencies
-
-- `@winglet/common-utils/filter` — `isEmptyObject`
-- `@aileron/declare` — `Dictionary`

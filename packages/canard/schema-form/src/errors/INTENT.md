@@ -4,14 +4,6 @@
 
 schema-form 도메인 에러 클래스 모음. 모든 에러는 `@winglet/common-utils/error` 의 `BaseError` 를 상속하여 일관된 에러 구조를 제공한다.
 
-## Structure
-
-- `JsonSchemaError.ts` — JSON Schema 파싱/구조 오류 (알 수 없는 타입, 잘못된 oneOf 설정 등)
-- `SchemaFormError.ts` — 폼 빌드 오류 (FormTypeInputMap 잘못된 키 패턴 등)
-- `UnhandledError.ts` — 예상치 못한 예외 래퍼 (플러그인 등록 실패 등)
-- `ValidationError.ts` — 폼 제출 시 유효성 검사 실패
-- `index.ts` — barrel export (`export * from`)
-
 ## Conventions
 
 - 각 에러 클래스는 `(code: string, message: string, details: ErrorDetails)` 생성자 패턴

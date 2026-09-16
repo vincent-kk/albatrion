@@ -4,13 +4,6 @@
 
 JSON Schema 타입 문자열을 받아 컨테이너 타입(`array`, `object`)에 한해 빈 초기값을 반환하는 최소 단위 순수 함수. 원시 타입은 `undefined` 를 반환하여 상위 계층이 직접 처리하도록 위임한다.
 
-## Structure
-
-| 파일               | 역할                                     |
-| ------------------ | ---------------------------------------- |
-| `getEmptyValue.ts` | 구현 — 3줄 조건 분기                     |
-| `index.ts`         | `getEmptyValue` named re-export (barrel) |
-
 ## Conventions
 
 - 시그니처: `(type?: string): ArrayValue | ObjectValue | undefined`

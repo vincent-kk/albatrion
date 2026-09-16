@@ -4,13 +4,6 @@
 
 빈 배열(`[]`)을 `undefined`로 변환하는 순수 유틸 함수. `ArrayNode`의 `onChange` 핸들러에서 `omitEmpty` 옵션이 활성화된 경우 적용된다.
 
-## Structure
-
-| 파일                | 역할                                                                  |
-| ------------------- | --------------------------------------------------------------------- |
-| `omitEmptyArray.ts` | `omitEmptyArray(value): ArrayValue \| Nullish \| undefined` 핵심 구현 |
-| `index.ts`          | barrel re-export                                                      |
-
 ## Conventions
 
 - 순수 함수, 부수 효과 없음
@@ -34,14 +27,3 @@
 
 - 배열 내용을 변경하거나 필터링하는 것
 - 빈 배열 판단 기준을 `isEmptyArray` 없이 인라인으로 재구현하는 것
-
-## Dependencies
-
-**외부**
-
-- `@winglet/common-utils/filter` — `isEmptyArray`
-- `@aileron/declare` — `Nullish` 타입
-
-**내부**
-
-- `@/schema-form/types` — `ArrayValue` 타입

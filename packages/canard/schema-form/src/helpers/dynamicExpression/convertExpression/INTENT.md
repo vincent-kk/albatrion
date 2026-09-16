@@ -4,13 +4,6 @@
 
 조건 딕셔너리(`{ key: value | value[] }`)를 JSONPointer 기반 JavaScript 비교 표현식 문자열로 변환한다. 배열 값은 `[...].includes(...)`, 단일 값은 `===` / `!==` 비교식으로 변환하며 `inverse: true` 시 드 모르간 법칙으로 연산자를 반전한다.
 
-## Structure
-
-| 파일                   | 역할                                                          |
-| ---------------------- | ------------------------------------------------------------- |
-| `convertExpression.ts` | 구현 + `ConditionDictionary` 타입 정의                        |
-| `index.ts`             | `convertExpression`, `ConditionDictionary` re-export (barrel) |
-
 ## Conventions
 
 - `ConditionDictionary` = `Dictionary<AllowedValue | AllowedValue[]>`
@@ -37,8 +30,3 @@
 - 생성된 표현식을 이 함수 내에서 `eval`, `Function()` 등으로 실행
 - `ConditionDictionary` 키를 JSONPointer 경로로 해석하거나 정규화
 - `isArray` 판별 없이 값 타입을 가정하여 직렬화 방식 고정
-
-## Dependencies
-
-- 내부: `@/schema-form/helpers/jsonPointer`(`JSONPointer` 별칭 `$`), `@/schema-form/types`(`AllowedValue`), `@aileron/declare`(`Dictionary`)
-- 외부: `@winglet/common-utils/filter`(`isArray`), `@winglet/common-utils/object`(`serializeNative`)

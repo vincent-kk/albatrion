@@ -4,12 +4,6 @@
 
 노드 트리를 깊이 우선(DFS) 또는 너비 우선(BFS)으로 순회하는 유틸리티 함수 모음. 전체 서브트리에 대한 상태 설정, 초기화, 계산 속성 업데이트 등에 사용된다.
 
-## Structure
-
-- `depthFirstSearch.ts` — DFS 순회 (postOrder 기본값: true)
-- `breadthFirstSearch.ts` — BFS 순회 (큐 기반)
-- `index.ts` — barrel export
-
 ## Conventions
 
 - TypeScript strict 모드
@@ -34,8 +28,3 @@
 
 - 이 함수들을 React 렌더 사이클 내에서 반복 호출 (성능 주의)
 - 순회 중 트리 구조(subnodes) 변경
-
-## Dependencies
-
-- `../../AbstractNode` — `AbstractNode` 타입
-- `@aileron/declare` — `Fn`

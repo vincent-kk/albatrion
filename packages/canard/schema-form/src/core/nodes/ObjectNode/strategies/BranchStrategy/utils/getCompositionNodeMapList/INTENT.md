@@ -4,12 +4,6 @@
 
 `oneOf`/`anyOf` 각 분기 스키마에서 자식 노드 맵 배열(`ChildNodeMap[]`)을 생성한다. 분기 간 프로퍼티 중복, 타입 재정의, 배타성 위반을 검증하여 오류를 던진다.
 
-## Structure
-
-- `getCompositionNodeMapList.ts` — 핵심 구현 (분기 순회 + 자식 노드 맵 생성)
-- `utils/` — 가드 헬퍼: `warnIfNestedComposition`(중첩 composition dev 경고), `throwIfTypeRedefinition`(분기 타입 재정의 오류)
-- `index.ts` — re-export
-
 ## Conventions
 
 - 반환 타입: `ChildNodeMap[] | undefined`
@@ -34,9 +28,3 @@
 
 - 검증 없이 중복 프로퍼티를 허용
 - `childNodeMap`(기본 프로퍼티 맵)을 직접 수정
-
-## Dependencies
-
-- 내부(핵심): `@/schema-form/core/nodes/ObjectNode`(`ObjectNode`), `@/schema-form/core/nodes/type`(`SchemaNodeFactory`, `HandleChange`), `@/schema-form/errors`(`JsonSchemaError`), `@/schema-form/helpers/error`(`formatCompositionPropertyExclusivenessError`, `formatCompositionPropertyRedefinitionError`), `@/schema-form/types`(`JsonSchema`, `ObjectSchema`, `ObjectValue`), `../../type`(`ChildNodeMap`), `./utils`(`warnIfNestedComposition`, `throwIfTypeRedefinition`)
-- `utils/` 헬퍼가 캡슐화: `formatCompositionTypeRedefinitionError`, `formatNestedCompositionIgnoredWarning`, `warnDevelopmentIssue`, `isIdenticalSchemaType`
-- 외부: `@winglet/common-utils/filter`(`isArray`, `isPlainObject`), `@aileron/declare`(`Fn`, `Nullish`)

@@ -4,13 +4,6 @@
 
 JSON Schema를 노드 트리로 변환하고 폼 상태를 관리하는 핵심 엔진. `nodeFromJsonSchema()` 팩토리로 스키마를 파싱하여 타입별 노드(StringNode, NumberNode, ObjectNode 등) 트리를 생성한다.
 
-## Structure
-
-- `nodeFromJsonSchema.ts` — 공개 팩토리 함수, JSON Schema → SchemaNode 변환 진입점
-- `nodes/` — 노드 구현체 (AbstractNode, StringNode, NumberNode, BooleanNode, ArrayNode, ObjectNode, NullNode, VirtualNode)
-- `parsers/` · `types/` — 타입별 값 파서 · 노드 공유 타입 organ (`SchemaNode`, `NodeEventType` 등)
-- `__tests__/` — 352개+ 명세 검증 테스트
-
 ## Conventions
 
 - 클래스는 Domain-First 멤버 순서: Identity → Tree → Value → Computed → State → Validation → Events → Injection → Lifecycle → Constructor
@@ -41,9 +34,3 @@ JSON Schema를 노드 트리로 변환하고 폼 상태를 관리하는 핵심 �
 - `__tests__/` 파일을 수정하지 않고 명세 동작 변경
 - 파서 함수에 JSON Schema 검증 로직 추가 (파서는 값 변환만 담당)
 - 노드 트리를 순환 참조 구조로 구성
-
-## Dependencies
-
-- `@winglet/json`·`@winglet/json-schema` — JSONPointer·resolveSchema
-- `@winglet/common-utils`·`@aileron/declare` — 필터·유틸, `Fn` 등 공통 타입
-- `@/schema-form/helpers`·`types` — 내부 헬퍼, 공유 타입

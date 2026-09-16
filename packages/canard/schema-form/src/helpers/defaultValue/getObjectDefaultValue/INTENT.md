@@ -4,11 +4,6 @@
 
 `JsonSchemaScanner`로 객체 스키마 트리를 재귀 순회하여 중첩된 모든 `default` 값을 수집하고 병합한 기본값 객체를 반환한다.
 
-## Structure
-
-- `getObjectDefaultValue.ts` — 구현 (스캐너 기반 트리 순회)
-- `index.ts` — named export
-
 ## Conventions
 
 - `inputDefault` > `jsonSchema.default` > `{}` 우선순위로 베이스 결과 초기화
@@ -32,12 +27,3 @@
 
 - 스캔 결과를 모듈 수준 변수에 캐싱
 - `ObjectSchema` 외의 스키마 타입(Array, String 등)을 직접 처리
-
-## Dependencies
-
-- `@winglet/common-utils/filter` — `isEmptyObject`
-- `@winglet/common-utils/lib` — `hasOwnProperty`
-- `@winglet/json-schema/scanner` — `JsonSchemaScanner`
-- `@winglet/json/pointer` — `setValue`
-- `@aileron/declare` — `Nullish`
-- `@/schema-form/types` — `JsonSchema`, `ObjectSchema`, `ObjectValue`

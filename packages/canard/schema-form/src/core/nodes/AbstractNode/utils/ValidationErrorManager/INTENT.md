@@ -4,11 +4,6 @@
 
 폼 노드의 에러 상태를 순수하게 관리하는 클래스. 로컬 에러(스키마 검증), 글로벌 에러(루트 전용), 외부 에러(서버 사이드)를 독립적으로 저장하고 병합한다. 이벤트 발행 및 트리 로직은 `AbstractNode` 에서 담당한다.
 
-## Structure
-
-- `ValidationErrorManager.ts` — 클래스 본체
-- `index.ts` — barrel export
-
 ## Boundaries
 
 ### Always do
@@ -33,8 +28,3 @@
 
 - 이벤트 발행을 이 클래스 내부에서 수행
 - `__globalErrors__` 를 루트 노드 외 컨텍스트에서 설정
-
-## Dependencies
-
-- `@winglet/common-utils/object` — `equals`
-- `@/schema-form/types` — `JsonSchemaError` (ValidationError 타입)

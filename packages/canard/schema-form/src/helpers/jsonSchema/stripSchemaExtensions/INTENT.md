@@ -4,11 +4,6 @@
 
 `JsonSchemaWithVirtual` 확장 필드(`FormTypeInput`, `FormTypeInputProps`, `FormTypeRendererProps`, `errorMessages`, `options`, `injectTo`)를 스키마에서 제거하여 표준 `JsonSchema`로 변환한다. 검증 라이브러리에 전달하기 전 커스텀 확장을 정리하는 데 사용된다.
 
-## Structure
-
-- `stripSchemaExtensions.ts` — 공개 함수 및 모듈 수준 mutate 핸들러
-- `index.ts` — barrel export
-
 ## Conventions
 
 - TypeScript strict 모드
@@ -35,8 +30,3 @@
 - 표준 JSON Schema 필드(`type`, `properties`, `required` 등)를 제거
 - 원본 `jsonSchema` 객체를 직접 변경(mutate)
 - 확장 필드 제거 외의 스키마 변환 로직 추가 (단일 책임 유지)
-
-## Dependencies
-
-- `@winglet/json-schema/scanner` — `JsonSchemaScanner`, `JsonScannerOptions`
-- `@/schema-form/types` — `JsonSchema`, `JsonSchemaWithVirtual`

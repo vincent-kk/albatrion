@@ -4,12 +4,6 @@
 
 개발 환경 전용 진단 경고를 일원화하는 헬퍼. 에러 시스템과 동일한 `code + formatted message + details` 구조를 사용하되 Error 인스턴스를 생성하지 않고 `printWarning`으로 방출한다. 프로덕션(`NODE_ENV === 'production'`)에서는 완전 무음.
 
-## Structure
-
-- `warnDevelopmentIssue.ts` — 구조화된 diagnostic을 받아 dev 전용 경고 출력 (중복 제거 + 패키지 프리픽스)
-- `warningCode.ts` — `SCHEMA_FORM_WARNING.*` 경고 코드 상수 (call site 간 일관성)
-- `index.ts` — barrel export
-
 ## Conventions
 
 - 패키지 내 모든 dev 전용 경고는 반드시 이 모듈을 경유 (개별 `console.warn` 직접 호출 금지)
@@ -33,9 +27,3 @@
 
 - 프로덕션 환경에서 출력되는 로그 추가
 - 사용자 데이터(폼 값)를 details에 포함
-
-## Dependencies
-
-- `@winglet/common-utils/console` — `printWarning`
-- `@winglet/common-utils/error` — `ErrorDetails`
-- `@winglet/common-utils/filter` — `isEmptyObject`

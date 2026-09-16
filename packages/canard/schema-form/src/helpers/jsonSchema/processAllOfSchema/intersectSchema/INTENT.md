@@ -4,18 +4,6 @@
 
 allOf 병합에서 타입별 스키마 교집합 로직을 구현한다. string, number, boolean, null, array, object 각 타입에 대해 제약 조건(min/max, pattern, enum, const, required 등)을 교집합 규칙으로 병합한다. 타입별 병합 규칙·유틸 상세는 `DETAIL.md` 참조.
 
-## Structure
-
-| 파일                                                   | 역할                                                               |
-| ------------------------------------------------------ | ------------------------------------------------------------------ |
-| `intersectStringSchema.ts`                             | string 교집합                                                      |
-| `intersectNumberSchema.ts`                             | number/integer 교집합                                              |
-| `intersectBooleanSchema.ts` / `intersectNullSchema.ts` | boolean·null 교집합                                                |
-| `intersectArraySchema.ts`                              | array 교집합                                                       |
-| `intersectObjectSchema.ts`                             | object 교집합 (properties 분배 포함)                               |
-| `index.ts`                                             | barrel export                                                      |
-| `utils/`                                               | 공유 교집합 유틸 (range·pattern·enum·const·required·distribute 등) |
-
 ## Conventions
 
 - 모든 intersect 함수: `(base, source) => base` (base를 직접 변경 후 반환)

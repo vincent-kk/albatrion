@@ -4,11 +4,6 @@
 
 JSON Schema의 `computed` 필드(active, visible, readOnly, disabled, pristine)에 대한 boolean 조건 함수를 생성하는 팩토리. 루트 스키마 → 노드 스키마 → `computed.*` → `&alias` 순서로 표현식을 탐색한다.
 
-## Structure
-
-- `checkComputedOptionFactory.ts` — 팩토리 함수 본체
-- `index.ts` — barrel export
-
 ## Conventions
 
 - TypeScript strict 모드
@@ -32,10 +27,3 @@ JSON Schema의 `computed` 필드(active, visible, readOnly, disabled, pristine)�
 
 - 이 팩토리를 `ComputedPropertiesManager` 외부에서 직접 호출
 - `string` 표현식을 `coerceToBoolean: false` 로 컴파일
-
-## Dependencies
-
-- `../createDynamicFunction` — JS 표현식 컴파일
-- `../getPathManager` — `PathManager` 타입
-- `../type` — `ALIAS`, `ConditionFieldName`
-- `@/schema-form/types` — `JsonSchemaWithVirtual`

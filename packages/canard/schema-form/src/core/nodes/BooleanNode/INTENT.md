@@ -4,14 +4,6 @@
 
 JSON Schema `boolean` 타입을 처리하는 단말 노드. 입력값을 boolean으로 파싱하고 `onChange` 이벤트를 발행한다.
 
-## Structure
-
-| 파일             | 역할                                                                        |
-| ---------------- | --------------------------------------------------------------------------- |
-| `BooleanNode.ts` | `BooleanNode extends AbstractNode<BooleanSchema, BooleanValue>` 클래스 구현 |
-| `filter.ts`      | `isBooleanNode(input): input is BooleanNode` 타입 가드                      |
-| `index.ts`       | `BooleanNode`, `isBooleanNode` re-export 전용 배럴                          |
-
 ## Conventions
 
 - `parseBoolean` 파서로 입력값 변환; `nullable` 스키마인 경우 `null` 허용
@@ -37,10 +29,3 @@ JSON Schema `boolean` 타입을 처리하는 단말 노드. 입력값을 boolean
 
 - `__value__` 필드에 `__emitChange__` 우회하여 직접 할당
 - 이 노드에 자식 노드 추가 (단말 노드)
-
-## Dependencies
-
-- 외부: `@aileron/declare` (`Nullish`)
-- 내부 (schema-form): `@/schema-form/types` (`BooleanSchema`, `BooleanValue`)
-- 내부 (sibling): `../../parsers` (`parseBoolean`), `../AbstractNode` (`AbstractNode`), `../type` (`NodeEventType`, `SchemaNodeConstructorProps`, `SetValueOption`, `UnionSetValueOption`)
-- filter 전용: `../filter` (`isSchemaNode`)

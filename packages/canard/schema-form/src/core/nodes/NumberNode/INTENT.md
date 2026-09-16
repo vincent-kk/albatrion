@@ -4,12 +4,6 @@
 
 JSON Schema `number`/`integer` 타입을 처리하는 단말 노드. 부동소수점 비교(`isClose`) 및 정수 강제(`integer` 타입), NaN/빈값 omit 처리를 담당한다.
 
-## Structure
-
-- `NumberNode.ts` — 메인 클래스, `AbstractNode` 상속
-- `filter.ts` — `isNumberNode` 타입 가드
-- `index.ts` — re-export
-
 ## Conventions
 
 - `schemaType === 'integer'`이면 `parseNumber`에 정수 모드 전달
@@ -35,10 +29,3 @@ JSON Schema `number`/`integer` 타입을 처리하는 단말 노드. 부동소�
 
 - `__value__`에 `NaN` 저장
 - `integer` 타입에 소수값 강제 저장
-
-## Dependencies
-
-- `AbstractNode` — 기반 클래스
-- `parseNumber` — `core/parsers`
-- `@winglet/common-utils/math` (`isClose`)
-- `NumberSchema`, `NumberValue` — `@/schema-form/types`

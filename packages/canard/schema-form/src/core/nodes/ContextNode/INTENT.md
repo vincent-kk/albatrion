@@ -4,13 +4,6 @@
 
 하위 노드들에게 공유 컨텍스트 데이터를 제공하는 특수 노드. 계산 속성 표현식에서 참조할 수 있는 공유 상태를 폼 트리에 주입한다.
 
-## Structure
-
-| 파일             | 역할                                                         |
-| ---------------- | ------------------------------------------------------------ |
-| `ContextNode.ts` | `ContextNode extends AbstractNode<ObjectSchema>` 클래스 구현 |
-| `index.ts`       | `ContextNode` re-export 전용 배럴                            |
-
 ## Conventions
 
 - `type = 'object'`로 선언되나 일반 ObjectNode와 달리 자식 노드를 관리하지 않음
@@ -35,9 +28,3 @@
 
 - 이 노드를 일반 폼 필드(사용자 입력)로 사용
 - `ObjectSchema.properties`를 통한 자식 노드 생성 로직 추가
-
-## Dependencies
-
-- 외부: 없음
-- 내부 (schema-form): `@/schema-form/types` (`ObjectSchema`)
-- 내부 (sibling): `../AbstractNode` (`AbstractNode`), `../type` (`NodeEventType`, `SchemaNodeConstructorProps`)

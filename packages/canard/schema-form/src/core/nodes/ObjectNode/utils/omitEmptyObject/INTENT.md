@@ -31,14 +31,3 @@
 
 - 객체 내용을 변경하거나 키를 필터링
 - `ObjectNode` 외부 컨텍스트에서 이 함수로 직접 값 조작
-
-## Dependencies
-
-### 내부 의존성
-
-- `ObjectValue` (타입) — `@/schema-form/types`
-
-### 외부 의존성
-
-- `isEmptyObject` — `@winglet/common-utils/filter`
-- `Nullish` (타입) — `@aileron/declare`

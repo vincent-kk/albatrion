@@ -4,11 +4,6 @@
 
 JSON 직렬화 가능한 값이 "정의된" 상태인지 확인한다. 기본값의 유효성 판단에 사용되며, `null` 은 defined, `undefined` 는 not defined, 빈 객체/배열은 not defined로 처리한다.
 
-## Structure
-
-- `checkDefinedValue.ts` — 함수 본체
-- `index.ts` — barrel export
-
 ## Conventions
 
 - TypeScript strict 모드

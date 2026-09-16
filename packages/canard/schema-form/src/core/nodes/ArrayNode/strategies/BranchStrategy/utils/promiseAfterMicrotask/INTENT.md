@@ -4,13 +4,6 @@
 
 값을 macrotask(setTimeout 0) 이후에 resolve하는 `Promise`로 래핑하는 유틸. `BranchStrategy`의 `push`/`remove`/`update` 조작 메서드가 비동기 반환값을 제공할 때 사용된다.
 
-## Structure
-
-| 파일                       | 역할                                                            |
-| -------------------------- | --------------------------------------------------------------- |
-| `promiseAfterMicrotask.ts` | `promiseAfterMicrotask<Value>(value): Promise<Value>` 핵심 구현 |
-| `index.ts`                 | barrel re-export                                                |
-
 ## Conventions
 
 - 제네릭 함수: `<Value>(value: Value): Promise<Value>` — 값 타입을 보존한다

@@ -4,11 +4,6 @@
 
 자식 노드를 생성하지 않고 배열 값을 직접 관리하는 단순 전략. 원시값 배열(`string[]`, `number[]` 등)이나 단순 객체 배열에 사용된다.
 
-## Structure
-
-- `TerminalStrategy.ts` — 메인 전략 클래스
-- `index.ts` — re-export
-
 ## Conventions
 
 - `children`는 항상 `null` 반환 (자식 노드 없음)
@@ -36,10 +31,3 @@
 
 - `__value__` 배열을 직접 변경(mutate) — 항상 새 배열 생성
 - `children`을 `null` 이외의 값으로 반환
-
-## Dependencies
-
-- `ArrayNode` — 호스트 노드
-- `resolveArrayLimits` — minItems/maxItems 계산
-- `parseArray` — 입력값 파싱
-- `getObjectDefaultValue` — prefixItems 기본값 계산
