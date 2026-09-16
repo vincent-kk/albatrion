@@ -4,11 +4,6 @@
 
 모달이 렌더링될 DOM 앵커 포인트를 제공하는 React 컴포넌트. ModalManager의 앵커 엘리먼트와 연동.
 
-## Structure
-
-- `Anchor.tsx` — Anchor 컴포넌트 구현
-- `index.ts` — Anchor 재export
-
 ## Conventions
 
 - ModalManager.anchor()가 생성한 DOM 노드에 React Portal로 모달 렌더링

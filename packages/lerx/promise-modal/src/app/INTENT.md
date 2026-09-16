@@ -4,13 +4,6 @@
 
 ModalManager 싱글톤 클래스를 통해 모달의 전역 상태, DOM 앵커링, 스타일 시트 관리를 담당하는 애플리케이션 레이어.
 
-## Structure
-
-- `ModalManager.ts` — 싱글톤 클래스: 앵커 DOM 생성, 스타일 주입, 모달 open/refresh 핸들러 관리
-- `constant.ts` — 기본 z-index/duration/backdrop 상수
-- `index.ts` — 모듈 entry point (barrel)
-- `__tests__/` — ModalManager 단위 테스트
-
 ## Conventions
 
 - 모든 상태는 static 멤버로 관리 (싱글톤 패턴)

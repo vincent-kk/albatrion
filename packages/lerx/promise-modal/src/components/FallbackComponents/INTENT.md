@@ -4,15 +4,6 @@
 
 사용자가 커스텀 컴포넌트를 제공하지 않았을 때 사용되는 기본 UI 컴포넌트 모음.
 
-## Structure
-
-- `FallbackTitle.tsx` — 기본 제목 컴포넌트
-- `FallbackSubtitle.tsx` — 기본 부제목 컴포넌트
-- `FallbackContent.tsx` — 기본 콘텐츠 컴포넌트
-- `FallbackFooter.tsx` — 기본 푸터 컴포넌트 (확인/취소 버튼)
-- `FallbackForegroundFrame.tsx` — 기본 전경 프레임 컴포넌트
-- `index.ts` — 모든 Fallback 컴포넌트 재export
-
 ## Conventions
 
 - `Fallback` 접두사로 명명하여 기본 구현임을 명시

@@ -4,13 +4,6 @@
 
 모달의 핵심 비즈니스 로직을 제공하는 레이어. handle(API 함수)과 node(모달 노드 구현)로 구성.
 
-## Structure
-
-- `handle/` — alert, confirm, prompt API 함수 및 핸들러
-- `node/` — 모달 노드 팩토리 및 구체 구현 (AlertNode, ConfirmNode, PromptNode)
-- `__tests__/` — core 로직 통합 테스트
-- `index.ts` — handle과 node를 재export
-
 ## Conventions
 
 - handle: ModalManager.open()을 호출하여 모달 노드를 생성하고 Promise를 반환

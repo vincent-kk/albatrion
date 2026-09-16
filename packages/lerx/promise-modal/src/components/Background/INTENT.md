@@ -4,11 +4,6 @@
 
 모달 배경(오버레이/백드롭) 프레임을 렌더링하는 컴포넌트. 배경 클릭 시 모달 닫기 등의 인터랙션 처리.
 
-## Structure
-
-- `Background.tsx` — BackgroundFrame 컴포넌트 구현
-- `index.ts` — Background 재export
-
 ## Conventions
 
 - `BackgroundFrame`으로 내부 구현, `Background`로 export

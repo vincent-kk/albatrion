@@ -4,13 +4,6 @@
 
 AbstractNode를 확장한 구체 모달 노드 구현체. Alert, Confirm, Prompt 세 가지 모달 타입의 상태 관리 및 Promise 해결 로직 제공.
 
-## Structure
-
-- `AlertNode.ts` — 알림 모달 노드 (resolve only)
-- `ConfirmNode.ts` — 확인 모달 노드 (boolean resolve)
-- `PromptNode.ts` — 입력 모달 노드 (값/null resolve)
-- `index.ts` — 세 노드 클래스 재export
-
 ## Conventions
 
 - 모든 노드는 AbstractNode<T, B> 제네릭 기반

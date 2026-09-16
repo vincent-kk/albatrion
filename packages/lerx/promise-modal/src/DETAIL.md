@@ -11,29 +11,28 @@
 
 ## API Contracts
 
-### Modal Functions
+- alert는 닫힐 때 void로 resolve하고, confirm은 확인 시 true·취소 시 false로 resolve합니다.
+- prompt는 확인 시 입력값, 취소 시 null로 resolve합니다. returnOnCancel이 true면 취소 시점의 현재 입력값으로 resolve합니다. 내부 openHandler 오류는 reject로 전달합니다.
+- 공개 ModalProvider는 BootstrapProvider 구현을 연결하며, 설정·배경·래퍼를 props로 받고 ref로 초기화 handle을 제공합니다.
+- Provider 마운트 전에 만든 모달 요청도 동일한 Promise 연결을 유지해야 합니다. 구독과 지연 파괴·애니메이션 관련 훅은 모달 상태 및 생명주기를 소비하는 표면입니다.
 
-- `alert<BackgroundValue>(props: AlertProps<BackgroundValue>): Promise<void>` — 알림 모달 표시, 닫힘 시 resolve
-- `confirm<BackgroundValue>(props: ConfirmProps<BackgroundValue>): Promise<boolean>` — 확인 모달 표시, 확인=true/취소=false resolve
-- `prompt<InputValue, BackgroundValue>(props: PromptProps<InputValue, BackgroundValue>): Promise<InputValue | null>` — 입력 모달 표시, 확인=입력값 resolve, 취소=`null` resolve (`returnOnCancel: true`면 취소 시점의 현재 입력값 resolve). reject는 내부 오류(openHandler throw)에서만 발생
+## Acceptance Criteria
 
-### Provider Component
+### modal-results — 모달별 완료 결과
 
-- `ModalProvider (BootstrapProvider)` — 모달 시스템 초기화 Provider
-  - Props: `BootstrapProviderProps` (설정, 배경, 래퍼 컴포넌트 등)
-  - Handle: `BootstrapProviderHandle` (ref로 접근)
+- alert를 닫으면 Promise가 void로 완료되고, confirm은 확인과 취소를 각각 true와 false로 구분합니다.
+- prompt는 확인 입력값과 취소 결과를 구분하며, returnOnCancel 설정에 따라 현재 입력값을 보존합니다.
+- 내부 openHandler가 실패하면 호출자에게 거부된 Promise로 전달합니다.
 
-### Hooks
+### initialization-lifecycle — 초기화와 요청 연결
 
-- `useModal()` — 모달 열기/닫기 인터페이스
-- `useInitializeModal()` — 모달 시스템 초기화 훅
-- `useModalOptions()` — 모달 옵션 접근
-- `useModalBackdrop()` — 배경 설정 접근
-- `useActiveModalCount()` — 활성 모달 수 조회
-- `useDestroyAfter()` — 지연 파괴 제어
-- `useModalAnimation()` — 애니메이션 상태 접근
-- `useModalDuration()` — 애니메이션 지속시간 접근
-- `useSubscribeModal()` — 모달 노드 구독
+- Provider 마운트 전에 생성한 요청은 prerender 큐를 거쳐 마운트 후에도 원래 Promise로 완료됩니다.
+- Provider 언마운트는 초기화의 역순으로 연결과 상태를 정리합니다.
+
+### presentation-customization — 사용자 UI와 상태 구독
+
+- 사용자 지정 컴포넌트로 표시 UI를 교체해도 모달 종류별 완료 결과 계약은 유지됩니다.
+- 상태 변경은 구독을 통해 소비자에게 전달되며, 모달 표시와 완료의 수명주기를 연결합니다.
 
 ## Last Updated
 

@@ -4,12 +4,6 @@
 
 모달 매니저 상태를 React Context로 제공. 열린 모달 목록 관리, 모달 open/close 핸들러 제공.
 
-## Structure
-
-- `ModalManagerContextProvider.tsx` — Context Provider 컴포넌트
-- `useModalManagerContext.ts` — useModalManagerContext, useModalManager 훅
-- `index.ts` — Provider, 훅 재export
-
 ## Conventions
 
 - useModalManagerContext: 전체 Context 값 접근

@@ -4,12 +4,6 @@
 
 모달의 전역 설정(옵션, 애니메이션 지속시간, 배경)을 React Context로 제공.
 
-## Structure
-
-- `ConfigurationContextProvider.tsx` — Context Provider 컴포넌트
-- `useConfigurationContext.ts` — 설정 접근 훅 모음
-- `index.ts` — Provider, 훅, Props 타입 재export
-
 ## Conventions
 
 - 세분화된 훅: useConfigurationOptions, useConfigurationDuration, useConfigurationBackdrop

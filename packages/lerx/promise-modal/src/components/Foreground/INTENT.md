@@ -4,12 +4,6 @@
 
 모달의 전경(콘텐츠 영역) 프레임을 렌더링하는 컴포넌트. 모달 타입별 콘텐츠, 제목, 푸터 등을 조합.
 
-## Structure
-
-- `Foreground.tsx` — ForegroundFrame 컴포넌트 구현
-- `components/` — 내부 하위 컴포넌트 (organ)
-- `index.ts` — Foreground 재export
-
 ## Conventions
 
 - `ForegroundFrame`으로 내부 구현, `Foreground`로 export
