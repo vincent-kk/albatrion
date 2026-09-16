@@ -4,6 +4,12 @@
 
 GraphQL DataLoader에서 영감을 받은 배치 수집·캐싱 클래스 `DataLoader`를 소유한다. 여러 개별 `load` 호출을 하나의 배치 함수 호출로 묶고, 키별 Promise 캐싱으로 중복 요청을 제거하며, 배치 결과의 부분 실패(개별 키가 값 대신 `Error`로 응답)를 지원한다.
 
+## Conventions
+
+- 개별 load 호출은 배치로 수집하고, 같은 캐시 키의 호출은 캐시된 Promise를 재사용합니다.
+- 키별 Error 응답과 배치 전체의 실패를 구분하며, 실패한 배치에 속한 요청도 모두 종료되도록 처리합니다.
+- prime은 기존 캐시를 덮어쓰지 않습니다.
+
 ## Boundaries
 
 ### Always do
