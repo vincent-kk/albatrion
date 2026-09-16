@@ -11,13 +11,11 @@
 
 ## API Contracts
 
-- `cacheMapFactory(defaultValue?)` → `{ getCache, set, has, get, delete, size, keys, values, entries, clear }`.
-- `cacheWeakMapFactory(defaultValue?)` → `{ getCache, has, get, set, delete }`(열거·크기 조회 없음 — `WeakMap` 자체의 제약).
-- `counterFactory(initialValue = 0)` → `{ getValue, increment, decrement, reset }`.
-- `getKeys(value)` → `string[]`.
-- `hasOwnProperty(value, key)` → `boolean`(타입가드로 `key is keyof Type` 좁히기 포함).
-- `getTypeTag(value)` → `string`(네이티브 `[[Class]]` 태그, 예: `'[object Array]'`).
-- `getRandomString(radix = 32)` → `string`, `getRandomNumber(min, max)` → `number`, `getRandomBoolean()` → `boolean`.
+- 캐시 팩토리에 기존 Map 또는 WeakMap을 넘기면 복사하지 않고 같은 인스턴스를 사용합니다. 원본 접근도 그 인스턴스를 반환합니다. WeakMap 래퍼에는 열거와 크기 조회 기능을 추가하지 않습니다.
+- 카운터는 생성 시 초기값을 기억하고, 증감 결과를 반환하며, reset은 최초 초기값으로 돌아갑니다. 상태는 클로저 내부에서 관리합니다.
+- 키 추출은 문자열 키 배열을 반환하고 own 프로퍼티 판별은 상속 프로퍼티를 제외합니다. hasOwnProperty의 타입 가드는 확인한 키를 입력 객체의 키 타입으로 좁힙니다.
+- 타입 태그는 null과 undefined를 별도로 처리하며 그 외에는 네이티브 태그 문자열을 반환합니다.
+- 난수 문자열은 지정한 진법을 사용하고 기본 진법은 32입니다. 정수 난수의 범위는 양 끝을 포함하며, 불린 난수는 true 또는 false를 반환합니다.
 
 ## Acceptance Criteria
 
