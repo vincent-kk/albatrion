@@ -12,13 +12,13 @@ import {
   warnDevelopmentIssue,
 } from '@/schema-form/helpers/warning';
 
-import { resolveVirtualizationOptions } from '../resolveVirtualizationOptions';
 import {
   type ResolvedVirtualizationOptions,
   VirtualizationBackfill,
   type VirtualizationOptions,
   type VirtualizationPlaceholderProps,
-} from '../type';
+  resolveVirtualizationOptions,
+} from '../resolveVirtualizationOptions';
 import { type IdleDeadlineLike, scheduleIdle } from './scheduleIdle';
 
 /** Maximum reveals per idle slice, bounding the size of a single React commit */

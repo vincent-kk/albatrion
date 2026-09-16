@@ -9,7 +9,6 @@ import type {
 } from '@/schema-form/core/types';
 import type { AllowedValue } from '@/schema-form/types';
 
-import type { ChildNodeMap } from '../../type';
 import type { ConditionsMap } from '../getConditionsMap';
 import type {
   VirtualReference,
@@ -32,7 +31,7 @@ import { mergeShowConditions } from '../mergeShowConditions';
 export const getChildren = (
   parentNode: ObjectNode,
   propertyKeys: string[],
-  childNodeMap: ChildNodeMap,
+  childNodeMap: Map<string, ChildNode>,
   conditionsMap: ConditionsMap | undefined,
   virtualReferencesMap: VirtualReferencesMap | undefined,
   virtualReferenceFieldsMap: VirtualReferenceFieldsMap | undefined,
@@ -86,7 +85,7 @@ export const getChildren = (
  */
 const getRefNodes = (
   reference: VirtualReference,
-  childNodeMap: ChildNodeMap,
+  childNodeMap: Map<string, ChildNode>,
 ) => {
   const refNodes: SchemaNode[] = [];
   const defaultValue: AllowedValue[] = [];

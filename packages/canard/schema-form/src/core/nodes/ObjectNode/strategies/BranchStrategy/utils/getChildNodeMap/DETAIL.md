@@ -6,6 +6,7 @@
 
 ## API Contracts
 
+- 반환 맵은 core의 ChildNode 계약을 사용하며, 소비하는 BranchStrategy의 타입 별칭에 역의존하지 않습니다.
 - properties가 없으면 빈 맵을 반환합니다. 생성은 전달받은 nodeFactory에 위임합니다.
 - 조건을 중복 제거해 병합하며 원래 스키마와 참조 맵은 변경하지 않습니다.
 

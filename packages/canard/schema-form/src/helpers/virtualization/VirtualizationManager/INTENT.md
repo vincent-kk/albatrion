@@ -33,4 +33,4 @@ Form당 하나씩 존재하는 상태형 가상화 조율자. 공유 Intersectio
 
 ## Dependencies
 
-idle callback을 제공하지 않는 환경에서도 백필을 진행할 수 있도록 취소 가능한 macrotask 폴백을 사용합니다. 옵션의 의미는 부모 모듈과 정규화기가 소유하며, 형제 프랙탈의 내부 구현을 직접 import하지 않습니다.
+idle callback을 제공하지 않는 환경에서도 백필을 진행할 수 있도록 취소 가능한 macrotask 폴백을 사용합니다. 옵션의 의미는 resolveVirtualizationOptions가 소유하며, 형제 프랙탈의 진입점을 통해 타입과 값을 소비합니다.

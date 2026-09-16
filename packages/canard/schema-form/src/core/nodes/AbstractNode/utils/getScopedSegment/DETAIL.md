@@ -6,6 +6,7 @@
 
 ## API Contracts
 
+- 부모 타입은 공통 JSON Schema 타입에서 `integer`를 제외한 계약으로 표현하며 노드 구현에 의존하지 않습니다.
 - scope가 없으면 name을 그대로 반환하고, variant가 undefined이면 인덱스를 생략합니다.
 - 조합 scope는 부모 타입에 맞는 자식 키워드를 붙이며, properties와 items는 각각 이름과 전달된 인덱스를 반영합니다.
 

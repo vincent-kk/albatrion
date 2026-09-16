@@ -6,6 +6,7 @@
 
 ## API Contracts
 
+- 옵션과 backfill 값의 계약은 resolveVirtualizationOptions 진입점에서 소비하며 부모의 집계 진입점이나 호환 타입 파일을 역참조하지 않습니다.
 - create는 비활성 또는 관찰 API 부재 시 null입니다. forBranch와 forChild는 설정에 맞는 대상일 때만 매니저를 반환합니다.
 - 노출은 등록 삭제와 unobserve 후 콜백 실행으로 이어집니다. idle backfill은 지정된 모드에서만 시작합니다.
 

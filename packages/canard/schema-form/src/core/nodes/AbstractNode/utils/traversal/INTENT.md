@@ -10,7 +10,7 @@
 - `depthFirstSearch`: `postOrder: true`(기본) → 자식 먼저 방문, `false` → 부모 먼저
 - `breadthFirstSearch`: 배열 큐로 구현, `subnodes` 기반 탐색
 - 두 함수 모두 `node.subnodes` 를 통해 모든 브랜치(inactive 포함) 탐색
-- visitor 함수: `(node: AbstractNode) => void`
+- The visitor preserves the input node type through a structural `subnodes` contract.
 
 ## Boundaries
 

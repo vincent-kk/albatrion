@@ -7,13 +7,13 @@
 ## API Contracts
 
 - 입력 기본값을 우선하고 그다음 스키마 기본값을 사용하여 탐색 결과의 기반을 만듭니다.
-- 중첩 경로 설정은 overwrite를 끄고 수행하며 빈 결과이면 원래 기본값을 반환합니다.
+- 중첩 경로 설정은 overwrite를 끄고 수행하지만 preserveNull도 끄므로 중간 null은 필요한 객체나 배열로 교체하며, 빈 결과이면 원래 기본값을 반환합니다.
 
 ## Acceptance Criteria
 
 ### get-object-default-value-contract — 관찰 가능한 동작
 
-- 하위 default가 상위에서 이미 정한 필드 값을 덮어쓰지 않습니다.
+- 하위 default는 최종 경로의 기존 값을 보존하지만, 그 경로에 도달하는 데 필요한 중간 null은 컨테이너로 교체하고 전달된 기본값 객체를 제자리에서 보강합니다.
 - 이전 호출의 스캔 결과를 캐시하여 다음 객체의 기본값에 섞지 않습니다.
 
 ## Last Updated
