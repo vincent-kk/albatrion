@@ -4,12 +4,6 @@
 
 Form당 하나씩 존재하는 상태형 가상화 조율자. 공유 IntersectionObserver, idle backfill 펌프, reveal 레지스트리를 소유하며 placeholder → 실제 컴포넌트 전환(reveal)을 조율한다. 유일한 생성 진입점은 `static create()`이며, SSR 등 IntersectionObserver 부재 환경이거나 virtualization이 비활성화된 입력이면 null을 반환한다.
 
-## Structure
-
-- `VirtualizationManager.ts` — 클래스 본체: 게이팅(`forBranch`/`forChild`), 등록 생명주기(`register`/`unregister`/`disconnect`), reveal 레지스트리(`Map<Element, Fn>`)와 리빌드-내구 reveal 기록(`WeakSet<SchemaNode>`), idle 백필 펌프
-- `scheduleIdle.ts` — `requestIdleCallback` 래퍼. 미지원 환경은 `scheduleCancelableMacrotaskSafe`로 폴백. `IdleDeadlineLike` 타입 정의
-- `index.ts` — barrel: `VirtualizationManager` 클래스만 재노출 (`scheduleIdle`/`IdleDeadlineLike`는 모듈 내부 전용)
-
 ## Conventions
 
 - 게이트 판정은 self-selecting 메서드(`forBranch`/`forChild`)로 노출 — 소비 측은 옵셔널 체이닝으로 조합하고 옵션 원값(`options`)은 비공개 유지
@@ -39,10 +33,4 @@ Form당 하나씩 존재하는 상태형 가상화 조율자. 공유 Intersectio
 
 ## Dependencies
 
-- `resolveVirtualizationOptions` (동일 부모 하위 sibling) — `create()`의 옵션 정규화에 사용
-- `../type.ts`(부모 virtualization/ 소유 peer 파일) — `VirtualizationBackfill` enum(런타임 값), `ResolvedVirtualizationOptions`/`VirtualizationOptions`/`VirtualizationPlaceholderProps` 타입
-- `@winglet/common-utils/scheduler` — `scheduleCancelableMacrotaskSafe` (idle 폴백)
-- `@/schema-form/core` — `SchemaNode` (type-only)
-- `@/schema-form/helpers/{warning,error}` — SSR 비활성 dev 경고(`warnDevelopmentIssue`+`VIRTUALIZATION_DISABLED_FOR_FORM`, `formatVirtualizationDisabledWarning`)
-- `@aileron/declare` — `Fn`
-- 형제 프랙탈은 entry point(`index.ts`) 경유 — 내부 파일 직접 import 금지
+idle callback을 제공하지 않는 환경에서도 백필을 진행할 수 있도록 취소 가능한 macrotask 폴백을 사용합니다. 옵션의 의미는 resolveVirtualizationOptions가 소유하며, 형제 프랙탈의 진입점을 통해 타입과 값을 소비합니다.

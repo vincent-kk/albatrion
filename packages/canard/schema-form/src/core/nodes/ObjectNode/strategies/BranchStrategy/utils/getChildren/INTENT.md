@@ -4,13 +4,6 @@
 
 `ChildNodeMap`과 가상 참조 맵(`VirtualReferencesMap`)으로부터 `ChildNode[]` 배열을 생성한다. `propertyKeys` 순서를 보장하면서 가상 참조가 있는 프로퍼티 앞에 `VirtualNode`를 삽입한다.
 
-## Structure
-
-| 파일             | 역할                                                 |
-| ---------------- | ---------------------------------------------------- |
-| `getChildren.ts` | 핵심 구현 — `getChildren`, `getRefNodes` (내부 헬퍼) |
-| `index.ts`       | `getChildren` re-export                              |
-
 ## Conventions
 
 - `propertyKeys` 배열 순서에 따라 자식 노드 배열을 구성
@@ -37,8 +30,3 @@
 - `propertyKeys` 순서를 무시하고 임의 순서로 자식 구성
 - 동일한 가상 참조를 중복 삽입 (`delete` 없이 재처리)
 - `VirtualNode`에 실제 `onChange` 핸들러 주입
-
-## Dependencies
-
-- 내부: `../mergeShowConditions`, `../getConditionsMap`(`ConditionsMap`), `../getVirtualReferencesMap`(`VirtualReference`, `VirtualReferenceFieldsMap`, `VirtualReferencesMap`), `../../type`(`ChildNodeMap`), `@/schema-form/core/nodes/ObjectNode`(`ObjectNode`), `@/schema-form/core/nodes/type`(`ChildNode`, `SchemaNode`, `SchemaNodeFactory`), `@/schema-form/types`(`AllowedValue`)
-- 외부: `@winglet/common-utils/constant`(`NOOP_FUNCTION`), `@winglet/common-utils/filter`(`isArray`)

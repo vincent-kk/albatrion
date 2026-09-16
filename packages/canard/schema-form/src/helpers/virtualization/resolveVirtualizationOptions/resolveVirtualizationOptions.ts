@@ -2,7 +2,7 @@ import {
   type ResolvedVirtualizationOptions,
   VirtualizationBackfill,
   type VirtualizationOptions,
-} from '../type';
+} from './type';
 
 const DEFAULT_OPTIONS = {
   threshold: 30,

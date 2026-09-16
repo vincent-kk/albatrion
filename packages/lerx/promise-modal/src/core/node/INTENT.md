@@ -4,13 +4,6 @@
 
 모달 노드 시스템의 구현 모듈. nodeFactory를 통해 모달 타입별 노드 인스턴스를 생성.
 
-## Structure
-
-- `ModalNode/` — 구체 노드 구현 (AlertNode, ConfirmNode, PromptNode)
-- `nodeFactory.ts` — ManagedModal 타입에 따른 팩토리 함수
-- `type.ts` — ModalNode, AlertNode, ConfirmNode, PromptNode 타입 export
-- `index.ts` — nodeFactory와 타입 재export
-
 ## Conventions
 
 - Factory 패턴: `modal.type`에 따라 switch 분기로 적절한 노드 생성

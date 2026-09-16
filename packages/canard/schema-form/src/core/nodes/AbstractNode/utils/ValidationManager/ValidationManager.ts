@@ -13,7 +13,7 @@ import type {
   ValidatorFactory,
 } from '@/schema-form/types';
 
-import type { AbstractNode } from '../../AbstractNode';
+import type { ValidationHost } from './type';
 import { getFallbackValidator } from './utils/getFallbackValidator';
 import { isCircularReferenceError } from './utils/isCircularReferenceError';
 import { matchesSchemaPath } from './utils/matchesSchemaPath';
@@ -46,7 +46,7 @@ import { matchesSchemaPath } from './utils/matchesSchemaPath';
  */
 export class ValidationManager {
   /** @internal Reference to the host node that owns this manager */
-  private __host__: AbstractNode;
+  private __host__: ValidationHost;
 
   /** @internal Compiled validator function from JSON Schema */
   private __validator__: ValidateFunction | undefined;
@@ -189,7 +189,7 @@ export class ValidationManager {
    * ```
    */
   constructor(
-    host: AbstractNode,
+    host: ValidationHost,
     validatorFactory: ValidatorFactory | undefined,
     validationMode: ValidationMode | undefined,
   ) {

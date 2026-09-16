@@ -4,15 +4,6 @@
 
 `ObjectNode`의 동작을 두 전략으로 분리하는 모듈. `BranchStrategy`는 자식 노드 트리와 oneOf/anyOf 조건부 스키마를, `TerminalStrategy`는 자식 없이 객체 값을 직접 관리한다.
 
-## Structure
-
-| 경로                | 역할                                                                                  |
-| ------------------- | ------------------------------------------------------------------------------------- |
-| `BranchStrategy/`   | 자식 노드 생성·oneOf/anyOf 조건 처리 전략                                             |
-| `TerminalStrategy/` | 자식 노드 없이 객체 값을 직접 처리하는 전략                                           |
-| `types/`            | `ObjectNodeStrategy` 인터페이스 organ — `value`, `children`, `subnodes`, `applyValue` |
-| `index.ts`          | `BranchStrategy`, `TerminalStrategy`, `ObjectNodeStrategy` re-export                  |
-
 ## Conventions
 
 - `ObjectNodeStrategy` 인터페이스의 모든 필드(`value`, `children`, `subnodes`, `applyValue`)를 반드시 완전 구현
@@ -37,9 +28,3 @@
 - 전략 인스턴스를 `ObjectNode` 외부에서 직접 생성
 - 두 전략 간 내부 상태 공유
 - `types/`에 인터페이스 외 구현체 코드 추가
-
-## Dependencies
-
-- `../../../../types` (내부) — `ChildNode`, `UnionSetValueOption`
-- `@aileron/declare` — `Nullish`
-- `@/schema-form/types` — `ObjectValue`

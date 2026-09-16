@@ -1,7 +1,5 @@
 import { scheduleMacrotaskSafe } from '@winglet/common-utils/scheduler';
 
-import type { AbstractNode } from '../../AbstractNode';
-
 /**
  * Manages injection guard state to prevent circular injection loops.
  * @description Tracks which node paths are currently being injected and provides
@@ -14,7 +12,7 @@ export class InjectionGuardManager {
    * Set of data paths currently being injected.
    * @description Tracks which nodes are currently being injected to prevent circular injection loops.
    */
-  private __injectedPaths__: Set<AbstractNode['path']> = new Set();
+  private __injectedPaths__: Set<string> = new Set();
 
   /**
    * Scheduled macrotask ID for clearing injected node flags.
@@ -27,7 +25,7 @@ export class InjectionGuardManager {
    * Marks a node path as currently being injected.
    * @param path - The data path of the node to mark as injected
    */
-  public add(this: InjectionGuardManager, path: AbstractNode['path']) {
+  public add(this: InjectionGuardManager, path: string) {
     this.__injectedPaths__.add(path);
   }
 
@@ -36,7 +34,7 @@ export class InjectionGuardManager {
    * @param path - The data path of the node to check
    * @returns `true` if the node is currently being injected, `false` otherwise
    */
-  public has(this: InjectionGuardManager, path: AbstractNode['path']) {
+  public has(this: InjectionGuardManager, path: string) {
     return this.__injectedPaths__.has(path);
   }
 

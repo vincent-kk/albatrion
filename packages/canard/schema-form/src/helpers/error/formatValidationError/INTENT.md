@@ -4,15 +4,6 @@
 
 JSON Schema 검증 에러를 스키마의 `errorMessages` 프로퍼티에 정의된 사용자 커스텀 메시지로 대체하고, `{field}` / `{value}` 등 플레이스홀더 패턴을 실제 값으로 치환한다.
 
-## Structure
-
-| 파일                       | 역할                                                                                    |
-| -------------------------- | --------------------------------------------------------------------------------------- |
-| `formatValidationError.ts` | `FormatError` 시그니처 구현체 — `errorMessages` 조회 후 `replacePattern` 위임           |
-| `utils/getErrorMessage.ts` | `keyword` 및 `context.locale`로 에러 메시지 조회; `errorMessages.default` fallback 처리 |
-| `utils/replacePattern.ts`  | `error.details` 키 + `{value}` 패턴을 실제 값으로 치환                                  |
-| `index.ts`                 | `formatValidationError` named export                                                    |
-
 ## Conventions
 
 - `FormatError` 시그니처: `(error, node, context) => string | undefined`
@@ -36,15 +27,3 @@ JSON Schema 검증 에러를 스키마의 `errorMessages` 프로퍼티에 정의
 
 - `formatValidationError` 내에서 에러를 throw
 - `node.jsonSchema` 외의 소스(외부 상태, 글로벌 레지스트리 등)에서 메시지 조회
-
-## Dependencies
-
-내부:
-
-- `./utils/getErrorMessage`
-- `./utils/replacePattern`
-
-외부:
-
-- `@aileron/declare` — `Dictionary` (getErrorMessage 내부)
-- `@/schema-form/types` — `FormatError`, `BasicSchema`, `PublicJsonSchemaError`

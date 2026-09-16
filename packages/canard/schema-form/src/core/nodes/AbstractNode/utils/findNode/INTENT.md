@@ -4,15 +4,6 @@
 
 JSONPointer 경로로 노드 트리를 탐색하는 함수 쌍. `findNode` 는 variant-aware 단일 노드 탐색(oneOf 브랜치 우선), `findNodes` 는 모든 매칭 노드를 중복 없이 반환한다.
 
-## Structure
-
-- `findNode.ts` — 단일 노드 탐색 (variant 필터링 적용)
-- `findNodes.ts` — 전체 노드 탐색 (모든 브랜치 포함)
-- `index.ts` — barrel export
-- `utils/detectsCandidate.ts` — variant 일치 여부 판단
-- `utils/getSegments.ts` — JSONPointer 문자열 → 세그먼트 배열 파싱
-- `utils/__tests__/` — 유닛 테스트
-
 ## Conventions
 
 - TypeScript strict 모드
@@ -37,10 +28,3 @@ JSONPointer 경로로 노드 트리를 탐색하는 함수 쌍. `findNode` 는 v
 
 - `findNode` 에서 모든 브랜치를 반환 (`findNodes` 의 역할)
 - `null` pointer를 source 반환이 아닌 다른 값으로 처리
-
-## Dependencies
-
-- `utils/detectsCandidate` — variant 후보 판단
-- `utils/getSegments` — 경로 → 세그먼트 파싱
-- `@/schema-form/core` — `SchemaNode`
-- `@/schema-form/helpers/jsonPointer` — `JSONPointer` 상수

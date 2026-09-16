@@ -4,13 +4,6 @@
 
 JSON Schema를 폼 시스템에서 사용하기 전에 전처리한다. `JsonSchemaScanner`로 스키마 트리를 순회하며 virtual 스키마 변환과 oneOf 변형을 적용한다.
 
-## Structure
-
-- `preprocessSchema.ts` — 공개 함수 및 모듈 수준 scanner 인스턴스
-- `index.ts` — barrel export
-- `utils/processOneOfSchema/` — oneOf 변형 처리 (ENHANCED_KEY 주입)
-- `utils/processVirtualSchema/` — virtual 필드 조건 변환
-
 ## Conventions
 
 - TypeScript strict 모드
@@ -39,11 +32,3 @@ JSON Schema를 폼 시스템에서 사용하기 전에 전처리한다. `JsonSch
 - 전처리 결과를 원본 스키마 객체에 직접 반영
 - scanner 인스턴스를 외부에서 재설정하거나 교체
 - `processOneOfSchema`, `processVirtualSchema`를 이 모듈 밖에서 직접 호출
-
-## Dependencies
-
-- `@winglet/json-schema/filter` — `isObjectSchema`
-- `@winglet/json-schema/scanner` — `JsonSchemaScanner`
-- `@/schema-form/types` — `JsonSchema`
-- `./utils/processOneOfSchema` — oneOf 변형
-- `./utils/processVirtualSchema` — virtual 스키마 변환

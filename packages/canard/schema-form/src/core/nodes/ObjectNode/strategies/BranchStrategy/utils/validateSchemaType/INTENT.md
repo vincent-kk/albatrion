@@ -4,13 +4,6 @@
 
 JavaScript 값이 JSON Schema 타입과 일치하는지 확인하는 순수 유틸 함수. oneOf/anyOf 분기 전환 시 이전 값을 새 분기 노드에 재사용할 수 있는지 판단하는 데 사용된다.
 
-## Structure
-
-| 파일                    | 역할                                             |
-| ----------------------- | ------------------------------------------------ |
-| `validateSchemaType.ts` | 핵심 구현 — `(value, type, nullable) => boolean` |
-| `index.ts`              | re-export 배럴                                   |
-
 ## Conventions
 
 - 시그니처: `(value: unknown, type: SchemaNode['type'], nullable: SchemaNode['nullable']) => boolean`
@@ -38,13 +31,3 @@ JavaScript 값이 JSON Schema 타입과 일치하는지 확인하는 순수 유�
 - 타입 불일치 시 예외(throw) 발생
 - `typeof null === 'object'` 기반 null 판별 사용
 - 이 함수 내에서 값 변환 또는 강제 캐스팅
-
-## Dependencies
-
-### 내부 의존성
-
-- `SchemaNode` (타입: `type`, `nullable`) — `@/schema-form/core/nodes/type`
-
-### 외부 의존성
-
-- `isArray` — `@winglet/common-utils/filter`

@@ -1,6 +1,6 @@
 import type { Fn } from '@aileron/declare';
 
-import type { AbstractNode } from '../../AbstractNode';
+import type { TraversalNode } from './type';
 
 /**
  * Traverses the node tree in depth-first order.
@@ -9,9 +9,9 @@ import type { AbstractNode } from '../../AbstractNode';
  * @param postOrder - Whether to visit the node in post-order (true) or pre-order (false). Defaults to true.
  * @returns void
  */
-export const depthFirstSearch = (
-  node: AbstractNode,
-  visitor: Fn<[node: AbstractNode]>,
+export const depthFirstSearch = <Node extends TraversalNode<Node>>(
+  node: Node,
+  visitor: Fn<[node: Node]>,
   postOrder: boolean = true,
 ) => {
   if (postOrder === false) visitor(node);

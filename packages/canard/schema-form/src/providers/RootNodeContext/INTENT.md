@@ -4,13 +4,6 @@
 
 JSON Schema로부터 루트 `SchemaNode` 트리를 생성하고 Context로 공급한다. 검증 모드·외부 에러·변경/검증/상태 콜백을 연결하며, 노드 초기화 완료 시 `onReady`로 루트 노드를 Form 컴포넌트에 전달한다.
 
-## Structure
-
-- `RootNodeContext.ts` — Context 객체 (SchemaNode 타입)
-- `RootNodeContextProvider.tsx` — Provider (nodeFromJsonSchema 호출 및 이벤트 구독)
-- `useRootNodeContext.ts` — 소비 훅
-- `index.ts` — Provider, 훅 re-export
-
 ## Conventions
 
 - TypeScript + React, Generic 타입 파라미터 (`Schema`, `Value`) 사용
@@ -41,9 +34,4 @@ JSON Schema로부터 루트 `SchemaNode` 트리를 생성하고 Context로 공�
 
 ## Dependencies
 
-- `@/schema-form/core` — `SchemaNode`, `nodeFromJsonSchema`, `contextNodeFactory`, `NodeEventType`, `ValidationMode`
-- `@/schema-form/helpers/error` — `transformErrors`
-- `@/schema-form/types` — `JsonSchemaError`, `AllowedValue`
-- `../ExternalFormContext` — `useExternalFormContext` (validationMode, validatorFactory fallback)
-- `../WorkspaceContext` — `useWorkspaceContext` (context 딕셔너리)
-- `@winglet/react-utils/hook` — `useLazyConstant` (contextNode 1회 생성 — memo가 아닌 보장)
+contextNode는 렌더 최적화용 캐시가 아니라 Provider 수명 동안 유지되는 인스턴스이므로 useLazyConstant로 한 번 생성합니다. 검증 설정의 폴백은 외부 폼 설정에서 받고, 사용자 context는 WorkspaceContext의 값을 사용합니다.

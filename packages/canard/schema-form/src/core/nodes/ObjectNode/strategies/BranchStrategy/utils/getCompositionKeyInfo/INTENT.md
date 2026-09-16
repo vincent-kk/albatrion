@@ -4,13 +4,6 @@
 
 `oneOf` 또는 `anyOf` 스키마 분기에서 프로퍼티 키 정보를 추출한다. 전체 분기의 합집합 키셋(`unionKeySet`)과 각 분기별 키셋 배열(`schemaKeySets`)을 반환하여 `BranchStrategy`의 조건부 노드 관리에 사용된다.
 
-## Structure
-
-| 파일                       | 역할                                          |
-| -------------------------- | --------------------------------------------- |
-| `getCompositionKeyInfo.ts` | 핵심 구현 — `getCompositionKeyInfo` 단일 함수 |
-| `index.ts`                 | `getCompositionKeyInfo` re-export             |
-
 ## Conventions
 
 - 반환 타입: `{ unionKeySet: Set<string>; schemaKeySets: Set<string>[] } | undefined`

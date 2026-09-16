@@ -4,16 +4,6 @@
 
 `@canard/schema-form`의 최상위 공개 컴포넌트. JSON Schema를 받아 전체 폼 트리를 초기화하고, 모든 Context Provider를 조합하여 폼 상태·검증·렌더링을 통합 관리한다.
 
-## Structure
-
-| 파일          | 역할                                                                                                |
-| ------------- | --------------------------------------------------------------------------------------------------- |
-| `Form.tsx`    | 핵심 폼 컴포넌트 (forwardRef + memo + ErrorBoundary)                                                |
-| `type.ts`     | `FormProps`, `FormHandle`, `FormChildrenProps` 타입 정의                                            |
-| `util.ts`     | `createChildren()` — 함수형 children을 `FormChildrenRenderer`로 브리지                              |
-| `index.ts`    | `Form` 네임스페이스 조립 및 public export                                                           |
-| `components/` | `FormGroup`·`FormInput`·`FormLabel`·`FormError`·`FormRender`·`FormRootProxy`·`FormChildrenRenderer` |
-
 ## Conventions
 
 - TypeScript + React 18+, Generic 타입 파라미터(`Schema`, `Value`) 사용
@@ -42,8 +32,3 @@
 - `Form` 컴포넌트 내부에서 직접 SchemaNode를 생성 (RootNodeContextProvider가 담당)
 - `children` prop 이외의 방법으로 폼 레이아웃을 하드코딩
 - Provider를 부분적으로만 렌더링하거나 순서를 변경
-
-## Dependencies
-
-- 내부: `@/schema-form/providers`(6개 Provider + `useRootNodeContext`), `@/schema-form/core`(`SchemaNode`, `NodeEventType`, `InferSchemaNode`), `@/schema-form/hooks`(`useSchemaNodeTracker`), `@/schema-form/errors`(`ValidationError`), `@/schema-form/helpers/jsonSchema`(`preprocessSchema`), `@/schema-form/helpers/error`(`formatSchemaValidationFailedError`)
-- 외부: `@winglet/react-utils/hoc`(`withErrorBoundaryForwardRef`), `@winglet/react-utils/hook`(`useHandle`·`useLazyConstant`·`useMemorize`·`useVersion`), `@winglet/common-utils/function`(`getTrackableHandler`)

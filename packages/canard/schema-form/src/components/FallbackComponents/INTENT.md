@@ -41,8 +41,3 @@ FallbackComponents/
 - 플러그인 시스템이나 PluginManager에 직접 의존
 - `FormTypeRendererProps` 외의 props 추가
 - 이 컴포넌트에 비즈니스 로직 또는 상태(state) 도입
-
-## Dependencies
-
-- `@/schema-form/types` — `FormTypeRendererProps`
-- `@winglet/json-schema/filter` — `isArraySchema` (FormGroupRenderer만 사용)

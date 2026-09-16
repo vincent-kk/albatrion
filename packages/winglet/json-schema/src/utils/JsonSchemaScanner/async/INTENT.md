@@ -4,6 +4,11 @@
 
 JSON Schema를 깊이 우선(DFS)으로 순회하되 필터링·변형(mutate)·`$ref` 해석·방문자 콜백이 프로미스를 반환해도 완료까지 기다리는 `JsonSchemaScannerAsync` 클래스를 소유한다. sync fractal의 클래스를 상속하지 않는 별도 구현이지만, 상위 organ이 소유한 동일한 순회 코어를 구동해 두 변형의 순회 순서·참조 해석 규칙을 맞춘다.
 
+## Conventions
+
+- 동기 변형과 공통 순회 코어를 공유하되 별도 드라이버로 구동합니다.
+- 콜백의 thenable 결과만 순차적으로 기다리고, 동기 결과에 불필요한 대기를 추가하지 않습니다.
+
 ## Boundaries
 
 ### Always do

@@ -4,13 +4,6 @@
 
 객체 스키마의 `properties`로부터 자식 노드 맵(`ChildNodeMap`)을 생성한다. 각 프로퍼티에 조건 표현식(`conditionsMap`)과 가상 참조 조건(`virtualReferencesMap`)을 `unique`로 병합하여 `nodeFactory`로 노드를 생성한다.
 
-## Structure
-
-| 파일                 | 역할                                                                  |
-| -------------------- | --------------------------------------------------------------------- |
-| `getChildNodeMap.ts` | 핵심 구현 — `getChildNodeMap`, `getVirtualReferenceConditions` (내부) |
-| `index.ts`           | `getChildNodeMap` re-export                                           |
-
 ## Conventions
 
 - 반환 타입: `ChildNodeMap` (`Map<string, { virtual: boolean; node: SchemaNode }>`)
@@ -36,8 +29,3 @@
 
 - `nodeFactory` 외부에서 `SchemaNode` 직접 인스턴스화
 - `virtualReferencesMap` 또는 `virtualReferenceFieldsMap` 원본 직접 수정
-
-## Dependencies
-
-- 내부: `../mergeShowConditions`, `../getConditionsMap`(`ConditionsMap`), `../getVirtualReferencesMap`(`VirtualReference`, `VirtualReferenceFieldsMap`, `VirtualReferencesMap`), `../../type`(`ChildNodeMap`), `@/schema-form/core/nodes/ObjectNode`(`ObjectNode`), `@/schema-form/core/nodes/type`(`HandleChange`, `SchemaNodeFactory`), `@/schema-form/types`(`ObjectSchema`, `ObjectValue`)
-- 외부: `@winglet/common-utils/array`(`unique`), `@aileron/declare`(`Fn`, `Nullish`)

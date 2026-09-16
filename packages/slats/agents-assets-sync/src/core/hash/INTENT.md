@@ -4,11 +4,6 @@
 
 SHA-256 기반 콘텐츠 해시 프리미티브. `hashManifest/`(빌드 타임 매니페스트)와 `buildPlan/`(런타임 비교)이 공통으로 쓰는, 긴밀히 결합된 소수의 헬퍼만 둔다.
 
-## Structure
-
-- `index.ts` — 배럴 export
-- `hash.ts` — `hashContent`, `hashFile`, `hashEquals` + `Sha256Hex`
-
 ## Conventions
 
 - 다이제스트는 소문자 hex 로 낸다. `dist/agents-hashes.json` 이 기록하는 형식과 같아야 매니페스트 해시와 직접 비교된다.
@@ -17,7 +12,7 @@ SHA-256 기반 콘텐츠 해시 프리미티브. `hashManifest/`(빌드 타임 �
 
 ## Dependencies
 
-- 없음. `core/` 의 최심 리프이며 형제 fractal 에서 import 하지 않는다. `hashManifest/`, `buildPlan/`, `markerBlock/` 이 소비한다.
+해시 계산은 형제 프랙탈을 import하지 않는 의존 그래프의 말단으로 유지합니다. 계획·매니페스트·마커 처리 계층에서 이 연산을 소비하는 방향만 허용합니다.
 
 ## Boundaries
 

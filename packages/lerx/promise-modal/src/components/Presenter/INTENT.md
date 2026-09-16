@@ -4,11 +4,6 @@
 
 개별 모달 노드를 렌더링하는 프레젠터 컴포넌트. 모달의 생명주기(마운트/언마운트)와 상태 구독을 관리.
 
-## Structure
-
-- `Presenter.tsx` — Presenter 컴포넌트 구현
-- `index.ts` — Presenter 재export
-
 ## Conventions
 
 - 각 모달 노드에 대해 하나의 Presenter 인스턴스 생성

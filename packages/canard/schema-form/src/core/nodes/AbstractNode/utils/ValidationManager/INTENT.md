@@ -4,15 +4,6 @@
 
 루트 노드의 JSON Schema 유효성 검사를 담당한다. 스키마를 컴파일하여 validator 함수를 생성하고, 검사 실행 후 에러를 data path 기준으로 자식 노드에 분배한다. 컴파일 실패는 fallback validator 로 처리한다.
 
-## Structure
-
-- `ValidationManager.ts` — 클래스 본체
-- `index.ts` — barrel export
-- `utils/getFallbackValidator.ts` — 컴파일 실패용 폴백 validator
-- `utils/isCircularReferenceError.ts` — 순환 그래프 실패 판별 (RangeError/스택 초과)
-- `utils/matchesSchemaPath.ts` — 스키마 경로 매칭 (variant 노드용)
-- `__tests__/` — 유닛 테스트
-
 ## Conventions
 
 - 루트 노드에만 인스턴스 생성; `validate()` 는 루트이고 `enabled === true` 일 때만 실행
@@ -38,12 +29,3 @@
 
 - 루트 노드 외에서 `ValidationManager` 인스턴스 생성
 - `validationMode` 가 falsy 일 때 검사 수행
-
-## Dependencies
-
-- `utils/*` — `getFallbackValidator`(실패 폴백), `isCircularReferenceError`(순환 판별), `matchesSchemaPath`(variant 경로)
-- `../../AbstractNode` — 호스트 노드 타입
-- `@/schema-form/app/plugin` — `PluginManager`
-- `@/schema-form/errors` — `JsonSchemaError`
-- `@/schema-form/helpers/error` — `formatCircularReferenceError`, `formatSchemaCompileError`, `transformErrors`
-- `@/schema-form/helpers/jsonSchema` — `stripSchemaExtensions`

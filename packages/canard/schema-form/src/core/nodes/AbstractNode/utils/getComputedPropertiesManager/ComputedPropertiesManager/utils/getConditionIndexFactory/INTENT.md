@@ -4,13 +4,6 @@
 
 oneOf/anyOf 스키마 배열에서 `&if` / `computed.if` 조건을 파싱하여 현재 활성 브랜치 인덱스를 반환하는 런타임 함수를 생성한다. 단순 등호 조건은 O(1) 딕셔너리 룩업으로 최적화한다.
 
-## Structure
-
-- `getConditionIndexFactory.ts` — oneOf용 단일 인덱스 팩토리 (returns `number`)
-- `getConditionIndicesFactory.ts` — anyOf용 다중 인덱스 팩토리 (returns `number[]`)
-- `index.ts` — barrel export
-- `utils/` — organ 파일: `extractConditionInfo.ts`(조건 표현식 추출·경로 변환), `getExpressionFromSchema.ts`(스키마 프로퍼티에서 표현식 추출), `getSimpleEquality.ts`(단순 등호 패턴 최적화)
-
 ## Conventions
 
 - TypeScript strict 모드
@@ -36,8 +29,3 @@ oneOf/anyOf 스키마 배열에서 `&if` / `computed.if` 조건을 파싱하여 
 
 - `array` / `string` 등 비객체 타입에 조건 인덱스 적용
 - `schemaIndices` 와 `expressions` 배열의 순서를 불일치하게 처리
-
-## Dependencies
-
-- 형제 팩토리 `../getPathManager`(`PathManager`)와 CPM utils 공유 모듈(`regex`·`type`)
-- `@/schema-form/errors`(`JsonSchemaError`) · `@/schema-form/helpers/error`(`formatConditionIndexError`)

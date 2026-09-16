@@ -4,13 +4,6 @@
 
 JSON Schema에서 필드의 초기값을 결정하는 단일 함수 모듈. `schema.default` 를 최우선으로 반환하고, 없으면 `virtual` 타입 분기 후 `extractSchemaInfo` + `getEmptyValue` 로 타입 기반 빈값을 반환한다.
 
-## Structure
-
-| 파일                 | 역할                                       |
-| -------------------- | ------------------------------------------ |
-| `getDefaultValue.ts` | 제네릭 함수 구현 — 3단계 우선순위 분기     |
-| `index.ts`           | `getDefaultValue` named re-export (barrel) |
-
 ## Conventions
 
 - 제네릭 `Schema extends { type?: JsonSchemaWithVirtual['type']; default?: any }` 로 호출부 타입 보존

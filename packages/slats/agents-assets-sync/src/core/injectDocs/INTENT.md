@@ -4,16 +4,6 @@
 
 Agent asset injection의 적용(apply)과 집계(summarize) 프리미티브. 계획은 `buildPlan/` 이 이미 세웠고, 여기서는 그것을 실행하고 보고서로 접는다. Ink(`ui/`)와 plain(`renderPlain`) 렌더러가 함께 소비하며, orchestrator 는 두지 않는다 — 파이프라인은 호출자가 직접 조립한다.
 
-## Structure
-
-- `index.ts` — 배럴 export
-- `type.ts` — `InjectReport`
-- `utils/partitionActions.ts` — 실행 가능한 일을 파일/문서별로 분류
-- `utils/applyAction.ts` — `file` 목적지 한 건의 파일시스템 변경
-- `utils/applyBlockActions.ts` — 공유 문서 하나를 한 번에 read-modify-write
-- `utils/summarize.ts` — `InjectPlan` → `InjectReport` 집계
-- `__tests__/` — 이 fractal 의 검증 파일
-
 ## Conventions
 
 - 파일 작업과 블록 작업은 갈라서 다룬다. 파일은 풀로 병렬 처리해도 되지만, 한 `AGENTS.md` 를 여러 writer 가 동시에 쓰면 각자 읽은 판본을 저장해 마지막 하나만 남기 때문이다. 이 순차화는 한 실행 안에서만 유효하다 — 잠금이 아니므로 동시에 도는 두 프로세스는 여전히 서로의 블록을 잃는다.
@@ -21,7 +11,7 @@ Agent asset injection의 적용(apply)과 집계(summarize) 프리미티브. 계
 
 ## Dependencies
 
-- `buildPlan/`(`Action`, `InjectPlan`)과 `markerBlock/`(블록 쓰기)을 각 `index.ts` 로 소비한다. `utils/logger.ts` 는 `applyAction` 의 unlink 실패 경고 한 줄에만 쓰이며, 이것이 `core/**` 전체의 유일한 출력이다.
+적용기는 계획과 마커 변환의 공개 계약을 소비합니다. 파일 삭제 실패를 경고하는 logger 호출만 핵심 연산 계층의 출력 예외로 유지하며, 일반 진행 보고는 렌더러가 담당합니다.
 
 ## Boundaries
 

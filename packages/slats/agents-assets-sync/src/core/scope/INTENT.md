@@ -4,13 +4,6 @@
 
 Resolve a `user | project` scope token into one absolute project root. `user` is the home directory; `project` walks up from `cwd` and reuses the first ancestor that owns any project anchor. The root is agent-neutral on purpose — every selected agent derives its own asset locations from the same root, so `claude` and `codex` never disagree about which project they are in.
 
-## Structure
-
-- `index.ts` — barrel export
-- `scope.ts` — `resolveProjectRoot`, `findNearestAnchorAncestor`, `isValidScope` + `Scope`, `ProjectRootResolution`
-- `utils/hasAnchor.ts` — anchor probe + the `PROJECT_ANCHORS` list
-- `__tests__/` — this fractal's verification files
-
 ## Conventions
 
 - An anchor is any of `.claude`, `AGENTS.md`, `.agents`, `.codex`, `.git`. Existence alone marks the root, with no directory check: a file and a directory count alike, because `AGENTS.md` is a file and `.git` is a file rather than a directory inside a worktree.
@@ -24,16 +17,16 @@ Resolve a `user | project` scope token into one absolute project root. `user` is
 
 ### Always do
 
-- Report `autoLocated` when an ancestor other than `cwd` was chosen, so renderers can say where the write lands
-- Keep the module synchronous and deterministic
+- cwd와 다른 상위 프로젝트를 선택했으면 autoLocated를 보고해 렌더러가 실제 기록 위치를 설명할 수 있게 합니다.
+- 동기적이고 결정적인 판별로 유지합니다.
 
 ### Ask first
 
-- Adding a scope token beyond `user | project`
-- Changing the anchor list — it decides where every agent writes
+- user와 project 외의 스코프를 추가하는 변경
+- 모든 에이전트의 기록 위치를 결정하는 anchor 기준을 바꾸는 변경
 
 ### Never do
 
-- Compute agent-specific paths here; that belongs to `agentTarget/`
-- Import from `agentTarget/`, `injectDocs/`, `buildPlan/`, `commands/`, or `ui/`
-- Use network or async IO
+- 에이전트별 목적지 계산을 이곳에 추가 — 그 책임은 agentTarget에 있습니다.
+- 목적지·계획·적용·명령·UI 계층에 역으로 의존
+- 네트워크 또는 비동기 IO 사용

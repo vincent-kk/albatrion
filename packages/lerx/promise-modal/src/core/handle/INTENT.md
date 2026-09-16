@@ -4,16 +4,6 @@
 
 Promise 기반 모달 API 함수(alert, confirm, prompt)를 제공하는 모듈. 각 핸들러가 ModalManager를 통해 모달을 생성하고 Promise를 반환.
 
-## Structure
-
-- `dispatchModal.ts` — 공통 배선: open/prerender 바인딩, AbortSignal, Promise settle
-- `alert.ts` — alertHandler 구현
-- `confirm.ts` — confirmHandler 구현
-- `prompt.ts` — promptHandler 구현
-- `static.ts` — 공개 API (alert, confirm, prompt 함수)
-- `type.ts` — AlertProps, ConfirmProps, PromptProps 타입 정의
-- `index.ts` — 핸들러, 정적 API, 타입 재export
-
 ## Conventions
 
 - 각 핸들러는 dispatchModal 결과 `{ modalNode, promiseHandler, cancel }`를 그대로 반환 (`cancel`은 마운트 전 큐 항목 취소용)

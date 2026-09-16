@@ -1,6 +1,6 @@
 import type { Fn } from '@aileron/declare';
 
-import type { AbstractNode } from '../../AbstractNode';
+import type { TraversalNode } from './type';
 
 /**
  * Traverses the node tree in breadth-first order.
@@ -8,11 +8,11 @@ import type { AbstractNode } from '../../AbstractNode';
  * @param visitor - The visitor function to call for each node
  * @returns void
  */
-export const breadthFirstSearch = (
-  node: AbstractNode,
-  visitor: Fn<[node: AbstractNode]>,
+export const breadthFirstSearch = <Node extends TraversalNode<Node>>(
+  node: Node,
+  visitor: Fn<[node: Node]>,
 ) => {
-  const queue: AbstractNode[] = [node];
+  const queue: Node[] = [node];
   for (let head = 0; head < queue.length; head++) {
     const current = queue[head];
     visitor(current);

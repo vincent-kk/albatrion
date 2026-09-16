@@ -11,7 +11,7 @@
 
 ## API Contracts
 
-`ArrayNodeStrategy` 구현: `value`, `normalizedValue`, `children`, `length`, `minItems`, `maxItems`, `applyValue`, `push`, `pop`, `update`, `remove`, `clear`.
+자식 노드를 만들지 않고 호스트 배열 값을 직접 관리하는 전략입니다. 변경 연산의 결과와 이벤트 규칙은 다음 계약을 따릅니다.
 
 - `normalizedValue: ArrayValue | Nullish` — `__value__` 그대로.
 - `children: null` — 고정.

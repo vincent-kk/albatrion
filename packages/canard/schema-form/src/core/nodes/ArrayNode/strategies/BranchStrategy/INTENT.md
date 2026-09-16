@@ -4,12 +4,6 @@
 
 배열 요소마다 자식 `SchemaNode`를 생성·관리하는 전략. 복잡한 객체 배열에 사용되며, 각 요소에 대한 독립적인 노드 트리를 유지한다.
 
-## Structure
-
-- `BranchStrategy.ts` — 메인 전략 클래스
-- `type.ts` — `ChildSegmentKey` 타입
-- `utils/` — `getChildSchema`, `promiseAfterMicrotask`
-
 ## Conventions
 
 - `__keys__` + `__sourceMap__`(키 → `{data: raw 상태, output: 자식 방출본, node}`)로 요소 관리; `normalizedValue`는 output 합성의 lazy 캐시(`__normalizedExpired__`)
@@ -40,10 +34,3 @@
 - `__sourceMap__`을 클래스 외부에서 직접 수정
 - `__revision__`을 재설정하거나 키 충돌 유발
 - `initialize()`를 `ArrayNode.__initialize__` 외부에서 직접 호출
-
-## Dependencies
-
-- `ArrayNode` — 호스트 노드
-- `getChildSchema`·`promiseAfterMicrotask` — 인덱스별 자식 스키마 결정·비동기 반환값 래핑
-- `resolveArrayLimits` — minItems/maxItems 계산
-- `SchemaNodeFactory` — 자식 노드 생성

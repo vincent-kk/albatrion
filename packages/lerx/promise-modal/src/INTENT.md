@@ -6,14 +6,7 @@
 
 ## Structure
 
-- `app/` — ModalManager 싱글톤 (전역 상태, DOM 앵커, 스타일 관리)
-- `core/` — handle(alert/confirm/prompt API) + node(모달 노드 팩토리/구현)
-- `bootstrap/` — BootstrapProvider (ModalProvider로 export)
-- `providers/` — Context providers (Configuration, ModalManager, UserDefined)
-- `components/` — UI 컴포넌트 (Anchor, Background, Foreground, Presenter, Fallback)
-- `hooks/` — 공용 React hooks (useModal, useActiveModalCount 등)
-- `types/` — 공유 타입 정의
-- `helpers/` — 유틸리티 함수
+공개 이름 `ModalProvider`는 내부의 `BootstrapProvider`를 가리킵니다. 초기화·해제 책임을 추적할 때는 이 내부 이름을 기준으로 확인합니다.
 
 ## Conventions
 

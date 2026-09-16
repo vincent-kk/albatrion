@@ -3,7 +3,7 @@ import type { ComponentType } from 'react';
 import type { SchemaNode } from '@/schema-form/core';
 import type { VirtualizationManager } from '@/schema-form/helpers/virtualization';
 
-import type { SchemaNodeProxyProps } from '../SchemaNodeProxy';
+import type { SchemaNodeProxyProps } from '../SchemaNodeProxyProps';
 
 export interface DeferrableNodeProxyProps
   extends Omit<SchemaNodeProxyProps, 'node'> {

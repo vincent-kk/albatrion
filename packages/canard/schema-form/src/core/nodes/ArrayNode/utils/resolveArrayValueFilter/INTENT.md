@@ -4,13 +4,6 @@
 
 `ArraySchema.options`의 `omitTrailing`/`omitEmpty`를 읽어 부모 전파(`onChange`) 값 필터 함수를 합성하는 순수 유틸 함수. `ArrayNode` 생성자에서 1회 호출된다.
 
-## Structure
-
-| 파일                         | 역할                                                                           |
-| ---------------------------- | ------------------------------------------------------------------------------ |
-| `resolveArrayValueFilter.ts` | `resolveArrayValueFilter(options): (value) => ArrayValue \| Nullish` 핵심 구현 |
-| `index.ts`                   | barrel re-export                                                               |
-
 ## Conventions
 
 - 순수 함수, 부수 효과 없음 — 옵션 판정은 호출 시점에 1회, 반환된 필터는 상태 없음
@@ -33,14 +26,3 @@
 
 - 필터 내부에서 자식 노드나 전략 상태 접근
 - 변환 로직을 위임 없이 인라인으로 재구현
-
-## Dependencies
-
-**외부**
-
-- `@aileron/declare` — `Nullish` 타입
-
-**내부**
-
-- `../omitEmptyArray`, `../omitTrailingArray` — 위임 대상 변환 함수
-- `@/schema-form/types` — `ArraySchema`, `ArrayValue` 타입

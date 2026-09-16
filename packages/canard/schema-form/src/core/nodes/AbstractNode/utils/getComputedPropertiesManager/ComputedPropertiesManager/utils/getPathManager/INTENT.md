@@ -4,11 +4,6 @@
 
 computed 표현식 파싱 중 발견된 JSONPointer 의존성 경로를 중복 없이 순서대로 수집하고, 인덱스 기반으로 참조할 수 있는 `PathManager` 객체를 생성한다.
 
-## Structure
-
-- `getPathManager.ts` — 팩토리 함수 및 `PathManager` 인터페이스
-- `index.ts` — barrel export
-
 ## Conventions
 
 - TypeScript strict 모드
@@ -32,8 +27,3 @@ computed 표현식 파싱 중 발견된 JSONPointer 의존성 경로를 중복 �
 
 - `PathManager` 없이 의존성 경로를 직접 배열에 수집
 - `get()` 으로 반환된 배열을 외부에서 직접 변경
-
-## Dependencies
-
-- `@/schema-form/helpers/jsonPointer` — `JSONPointer` (`$.Fragment`, `$.Separator`)
-- `@aileron/declare` — `Fn`

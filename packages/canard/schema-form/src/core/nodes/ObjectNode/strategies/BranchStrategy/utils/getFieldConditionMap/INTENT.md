@@ -4,14 +4,6 @@
 
 JSON Schema의 `if-then-else` 구조에서 필드별 조건 맵(`FieldConditionMap`)을 추출한다. 각 필드가 required가 되는 조건과 inverse 여부를 기록한다.
 
-## Structure
-
-| 파일/디렉토리                | 역할                                                                      |
-| ---------------------------- | ------------------------------------------------------------------------- |
-| `getFieldConditionMap.ts`    | `JsonSchema` → `FieldConditionMap` 변환 핵심 구현                         |
-| `index.ts`                   | `getFieldConditionMap`, `FieldConditionMap`, `FlattenCondition` re-export |
-| `utils/flattenConditions.ts` | `if-then-else` 중첩 구조 평탄화 (organ)                                   |
-
 ## Conventions
 
 - 반환 타입: `FieldConditionMap` (`Map<string, Array<{condition, inverse?}> | true>`) 또는 `undefined`
@@ -37,12 +29,3 @@ JSON Schema의 `if-then-else` 구조에서 필드별 조건 맵(`FieldConditionM
 
 - `flattenConditions`를 우회하여 스키마를 직접 파싱
 - `FieldConditionMap`을 외부에서 직접 수정
-
-## Dependencies
-
-내부:
-
-- `@/schema-form/types` — `JsonSchema`
-- `./utils/flattenConditions` — `FlattenCondition`, `flattenConditions`
-
-외부: 없음

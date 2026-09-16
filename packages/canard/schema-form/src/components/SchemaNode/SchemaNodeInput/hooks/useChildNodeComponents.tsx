@@ -13,7 +13,7 @@ import {
 } from '@winglet/react-utils/hook';
 
 import { DeferrableNodeProxy } from '@/schema-form/components/SchemaNode/DeferrableNodeProxy';
-import type { SchemaNodeProxyProps } from '@/schema-form/components/SchemaNode/SchemaNodeProxy';
+import type { SchemaNodeProxyProps } from '@/schema-form/components/SchemaNode/SchemaNodeProxyProps';
 import {
   NodeEventType,
   type SchemaNode,

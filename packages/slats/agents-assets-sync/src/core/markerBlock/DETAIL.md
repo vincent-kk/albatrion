@@ -16,13 +16,11 @@
 
 ## API Contracts
 
-- `formatBlockId(packageName: string, relPath: string): string` — `<packageName>:<relPath>`
-- `parseBlocks(content: string): ParsedBlock[]` — 없으면 빈 배열
-- `findBlockBody(content: string, blockId: string): string | null`
-- `upsertBlock(content: string, blockId: string, body: string): string`
-- `removeBlock(content: string, blockId: string): string` — 해당 블록이 없으면 원본 그대로
-- `blockBodyMatches(body: string, expected: Sha256Hex): boolean`
-- `MARKER_PREFIX = 'AGENTS-ASSETS-SYNC'`
+- 블록 ID는 패키지 이름과 상대 경로를 콜론으로 연결합니다. AGENTS-ASSETS-SYNC 마커로 소유 블록을 식별합니다.
+- parseBlocks는 소유 블록을 문서 순서대로 반환하며, 없으면 빈 배열을 반환합니다. 특정 블록 본문 조회는 해당 ID가 없으면 null을 반환합니다.
+- upsertBlock은 같은 ID가 있으면 제자리에서 교체하고, 없으면 문서 끝에 추가합니다. 필요한 후행 개행을 보충하되 다른 소유자의 내용을 변경하지 않습니다.
+- removeBlock은 해당 ID가 없으면 입력을 그대로 반환합니다.
+- 블록 본문 해시 비교는 원본에 없던 후행 개행 하나가 추가된 왕복 표현도 같은 내용으로 받아들입니다.
 
 ## Internal Unit Contracts
 

@@ -6,8 +6,7 @@
 
 ## Structure
 
-- `BootstrapProvider/` — 메인 프로바이더 컴포넌트 (ModalProvider로 export)
-- `index.ts` — BootstrapProvider, useBootstrap, 타입 재export
+소비자에게 제공하는 이름은 `ModalProvider`이며, 내부 구현 이름은 `BootstrapProvider`입니다. Provider의 생명주기 변경은 이 구현을 기준으로 추적합니다.
 
 ## Conventions
 

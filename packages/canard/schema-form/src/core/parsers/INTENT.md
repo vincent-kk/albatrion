@@ -4,16 +4,6 @@
 
 JSON Schema 타입별 값 파싱 순수 함수 모음. 알 수 없는 입력 타입을 각 JSON Schema 타입에 맞는 안전한 기본값으로 변환한다.
 
-## Structure
-
-- `parseString.ts` — string 및 number → string, 그 외 → `""`
-- `parseNumber.ts` — number/string → number, 그 외 → `NaN` (isInteger 옵션 지원)
-- `parseBoolean.ts` — boolean → boolean, 그 외 → `false`
-- `parseArray.ts` — array → array, 그 외 → `[]`
-- `parseObject.ts` — plain object → object, 그 외 → `{}`
-- `index.ts` — barrel export
-- `__tests__/` — 타입별 파서 단위 테스트
-
 ## Conventions
 
 - 모든 파서는 순수 함수: `(value: unknown, ...options?) => TypedValue`
@@ -41,8 +31,3 @@ JSON Schema 타입별 값 파싱 순수 함수 모음. 알 수 없는 입력 타
 - 파서에서 JSON Schema 유효성 검사 수행 (노드 레이어의 역할)
 - `parseObject` 에서 배열이나 클래스 인스턴스를 plain object로 처리
 - 파서 함수에서 예외 throw
-
-## Dependencies
-
-- `@winglet/common-utils/filter` — `isPlainObject`, `isArray`
-- `@/schema-form/types` — `ObjectValue`, `ArrayValue`

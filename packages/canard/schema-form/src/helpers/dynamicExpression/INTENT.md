@@ -4,12 +4,6 @@
 
 조건 딕셔너리를 실행 가능한 JavaScript 표현식 문자열로 변환하고, 다수의 조건을 논리 연산자로 결합하는 헬퍼 모음. 계산된 프로퍼티(`computed`)와 스키마 조건(`&if`) 생성에 사용된다.
 
-## Structure
-
-- `combineConditions/` — 문자열 조건 배열을 `&&` / `||` 로 결합
-- `convertExpression/` — 조건 딕셔너리를 JSONPointer 기반 JS 표현식으로 변환
-- `index.ts` — barrel export
-
 ## Conventions
 
 - 모든 함수는 순수 함수; 표현식 문자열만 반환하고 실행하지 않음
@@ -34,12 +28,3 @@
 
 - 이 모듈에서 표현식을 직접 실행(`eval`, `new Function`) 하는 로직 추가
 - JSONPointer 경로 유효성 검사를 이 레이어에서 수행
-
-## Dependencies
-
-- `@winglet/common-utils/array` — `map`
-- `@winglet/common-utils/filter` — `isTruthy`, `isArray`
-- `@winglet/common-utils/object` — `serializeNative`
-- `@aileron/declare` — `Nullish`, `Dictionary`
-- `@/schema-form/helpers/jsonPointer` — `JSONPointer`
-- `@/schema-form/types` — `AllowedValue`

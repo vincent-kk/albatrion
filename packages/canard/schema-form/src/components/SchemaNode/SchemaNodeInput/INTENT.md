@@ -4,16 +4,6 @@
 
 `SchemaNode`의 내부 입력 처리 레이어. 선택된 `FormTypeInput` 컴포넌트를 마운트하고, 사용자 이벤트(change·focus·blur·fileAttach)를 SchemaNode 이벤트 시스템으로 변환하며, 포커스/선택/리프레시 명령을 처리한다.
 
-## Structure
-
-- `SchemaNodeInput.tsx` — FormTypeInput 마운트 및 이벤트 핸들링
-- `SchemaNodeInputWrapper.tsx` — 클로저 기반 ChildNodeComponent 팩토리
-- `type.ts` — SchemaNodeInputProps, ChildNodeComponent, HANDLE_CHANGE_OPTION
-- `index.ts` — SchemaNodeInputWrapper, ChildNodeComponent re-export
-- `hooks/useChildNodeComponents.tsx` — 자식을 ChildNodeComponent[]로 변환 (가상화 시 DeferrableNodeProxy 게이트 bake)
-- `hooks/useFormTypeInput.ts` — 우선순위에 따라 FormTypeInput 컴포넌트 선택
-- `hooks/useFormTypeInputControl.ts` — RequestRefresh/Focus/Select 이벤트 처리
-
 ## Conventions
 
 - TypeScript + React (TSX), 내부 전용 모듈(`SchemaNodeProxy`에서만 사용); `SchemaNodeInputWrapper`는 React 컴포넌트가 아닌 팩토리 함수(클로저로 node 캡처)
@@ -40,10 +30,3 @@
 - `SchemaNodeProxy` 외부에서 이 모듈을 직접 import
 - `SchemaNodeInputWrapper`를 React 컴포넌트처럼 JSX에서 직접 사용
 - `node.setValue()`를 `onChangeRef` 우회 없이 직접 호출 (onChangeRef 체크 필수)
-
-## Dependencies
-
-- `@/schema-form/core` — `SchemaNode`, `NodeEventType`, `NodeState`, `SetValueOption`, `isTerminalNode`; `@/schema-form/app` — `PluginManager`(fallback 정의), `DISPLAY_CONTENT`
-- `@/schema-form/providers` — `useFormTypeInputsContext`, `useExternalFormContext`, `useFormTypeRendererContext`, `useInputControlContext`, `useWorkspaceContext`, `useVirtualizationContext`
-- `@/schema-form/hooks` — `useSchemaNodeSubscribe`, `useSchemaNodeTracker`
-- `@winglet/react-utils` — `isMemoComponent`, `isReactComponent`, `withErrorBoundary`, `useConstant`, `useLazyConstant`, `useMemorize`, `useReference`, `useSnapshot`, `useOnUnmount`, `useVersion`

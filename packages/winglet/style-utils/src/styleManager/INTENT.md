@@ -4,6 +4,12 @@
 
 `styleManagerFactory`와 `destroyScope` 두 flat 함수로 스코프 CSS의 추가·해제·전체 정리를 위한 공개 계약을 소유한다. 실제 싱글톤 등록·DOM 반영·배치 처리는 자식 fractal `StyleManager`가 소유하며, 이 fractal은 그 위에 얹는 커링·클린업 함수 형태의 인체공학적 API 계약만 소유한다.
 
+## Conventions
+
+- 스코프별 manager를 얻는 일과 CSS 수명 관리는 StyleManager에 위임합니다.
+- 팩토리가 반환하는 함수는 스타일을 추가하고, 같은 styleId를 제거하는 cleanup 함수를 반환합니다.
+- config와 Shadow DOM 옵션은 변형 없이 manager 생성 경계에 전달합니다.
+
 ## Boundaries
 
 ### Always do

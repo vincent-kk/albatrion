@@ -33,8 +33,3 @@
 - 원본 `schema` 객체를 직접 변경(mutate)
 - `allOf` 항목을 순서 변경하거나 건너뛰어 병합
 - `JsonSchemaError` 대신 일반 `Error` throw
-
-## Dependencies
-
-- 외부: `@winglet/common-utils/object`(`cloneLite`)
-- 내부: `@/schema-form/errors`(`JsonSchemaError`), `@/schema-form/helpers/error`(`formatAllOfTypeRedefinitionError`, `formatAllOfIgnoredKeywordWarning`), `@/schema-form/helpers/warning`(`warnDevelopmentIssue`, `ALL_OF_KEYWORD_IGNORED_FOR_FORM`), `@/schema-form/types`(`JsonSchema`), `./utils` 하위 `getCloneDepth`·`getMergeSchemaHandler`(+`IGNORE_FIELDS`)·`validateCompatibility`

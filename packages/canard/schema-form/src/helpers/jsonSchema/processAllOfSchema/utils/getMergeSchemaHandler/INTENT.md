@@ -6,9 +6,7 @@ JSON Schema의 타입을 기반으로 적절한 교집합(intersect) 병합 함�
 
 ## Structure
 
-- `getMergeSchemaHandler.ts` — 타입별 핸들러 선택 팩토리
-- `index.ts` — barrel export (핸들러 + `../../intersectSchema`의 `IGNORE_FIELDS` 상수 재노출)
-- 타입별 교집합 구현은 부모 fractal의 `../../intersectSchema`에 있다 — 깊이 한도로 승격된 위치이며, 소비자는 여전히 이 모듈 하나다
+타입별 교집합 구현은 구조 깊이 제한 때문에 부모 프랙탈의 `../../intersectSchema`에 둡니다. 이 팩토리는 그 진입점을 소비해 핸들러를 선택하며, 구현을 이 내부로 다시 복제하지 않습니다.
 
 ## Conventions
 
@@ -37,10 +35,3 @@ JSON Schema의 타입을 기반으로 적절한 교집합(intersect) 병합 함�
 - 이 함수 내부에서 직접 스키마를 병합하거나 변경
 - `extractSchemaInfo` 없이 `schema.type`을 직접 참조
 - `null` 반환 대신 기본 병합 로직을 폴백으로 실행
-
-## Dependencies
-
-- `@aileron/declare` — `Fn`
-- `@/schema-form/helpers/jsonSchema/extractSchemaInfo` — 타입 추출
-- `@/schema-form/types` — `JsonSchema`
-- `../../intersectSchema` — 타입별 교집합 구현 및 `IGNORE_FIELDS` 상수

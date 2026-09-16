@@ -38,9 +38,3 @@ FormTypeInputsContext/
 
 - 이 Context에서 직접 FormTypeInput 선택 로직 실행 (`useFormTypeInput` 훅의 책임)
 - `formTypeInputDefinitions` 배열을 정규화 없이 Context에 직접 노출
-
-## Dependencies
-
-- `@/schema-form/helpers/formTypeInputDefinition` — `normalizeFormTypeInputDefinitions`, `normalizeFormTypeInputMap`
-- `@/schema-form/components/Form` — `FormProps` (타입 참조)
-- `@winglet/react-utils/hook` — `useConstant`

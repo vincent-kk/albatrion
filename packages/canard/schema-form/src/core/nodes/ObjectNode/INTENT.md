@@ -4,14 +4,6 @@
 
 JSON Schema `object` 타입을 처리하는 브랜치 노드. 객체 프로퍼티를 자식 노드로 관리하며, `oneOf`/`anyOf`/`if-then-else` 등 복합 스키마를 처리한다.
 
-## Structure
-
-- `ObjectNode.ts` — 메인 클래스, `AbstractNode` 상속
-- `filter.ts` — `isObjectNode` 타입 가드
-- `index.ts` — re-export
-- `strategies/` — `BranchStrategy` (자식 노드), `TerminalStrategy` (단순 객체)
-- `utils/` — `omitEmptyObject`
-
 ## Conventions
 
 - `group === 'terminal'`이면 `TerminalStrategy`, 아니면 `BranchStrategy`
@@ -36,10 +28,3 @@ JSON Schema `object` 타입을 처리하는 브랜치 노드. 객체 프로퍼�
 
 - `__strategy__` 내부 필드에 외부에서 직접 접근
 - `children`과 `subnodes`를 혼용
-
-## Dependencies
-
-- `AbstractNode` — 기반 클래스
-- `BranchStrategy`, `TerminalStrategy` — 전략 구현체
-- `omitEmptyObject` — 빈 객체 처리
-- `@winglet/common-utils/object` (`equals`) — 값 비교

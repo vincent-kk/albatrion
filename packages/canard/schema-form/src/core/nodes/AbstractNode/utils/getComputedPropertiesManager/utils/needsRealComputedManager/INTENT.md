@@ -4,11 +4,6 @@
 
 노드가 실제 `ComputedPropertiesManager` 를 생성해야 하는지, 아니면 `sharedComputedSentinel` 을 공유해도 되는지 판정한다. computed surface 가 전혀 없는 평범한 노드(대다수)는 sentinel 로 대체하여 노드당 mount 할당을 제거한다.
 
-## Structure
-
-- `needsRealComputedManager.ts` — 판정 함수
-- `index.ts` — barrel export
-
 ## Conventions
 
 - PRESENCE 기준 (`!== undefined`), truthiness 아님 — `computed.disabled: false` 도 정의된 함수를 만든다
@@ -33,5 +28,4 @@
 
 ## Dependencies
 
-- `@/schema-form/types` — `JsonSchemaType`, `JsonSchemaWithVirtual`
-- `../../ComputedPropertiesManager/utils/type` — `ALIAS`, `STATE_FIELD_NAMES`, `COMPUTED_FIELD_NAMES` (단일진실 상수, 타입 `satisfies` 검증)
+실제 computed 팩토리와 판정 게이트는 같은 필드·별칭 상수를 사용합니다. 어떤 필드를 읽는지에 대한 기준이 갈라지면 필요한 manager를 생략할 수 있으므로, 이 결합을 유지합니다.

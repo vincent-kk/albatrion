@@ -4,15 +4,6 @@
 
 폼 전체의 `readOnly`와 `disabled` 상태를 Context로 공급하는 단순 제어 레이어. `SchemaNodeInput`이 이 값과 개별 노드 속성을 OR 결합하여 최종 입력 제어 상태를 결정한다.
 
-## Structure
-
-| 파일                              | 역할                                                                        |
-| --------------------------------- | --------------------------------------------------------------------------- |
-| `InputControlContext.ts`          | `InputControlContext` 인터페이스 정의 및 `createContext` 생성 (`{}` 기본값) |
-| `InputControlContextProvider.tsx` | `readOnly`, `disabled` prop 수신; `useMemo`로 안정화된 Context 값 공급      |
-| `useInputControlContext.ts`       | `useContext(InputControlContext)` 단일 라인 소비 훅                         |
-| `index.ts`                        | `InputControlContextProvider`, `useInputControlContext` re-export           |
-
 ## Conventions
 
 - `InputControlContextProvider`는 `useMemo(() => ({ readOnly, disabled }), [readOnly, disabled])`로 객체 참조를 안정화한다 — props가 바뀌지 않으면 하위 트리 리렌더 없음

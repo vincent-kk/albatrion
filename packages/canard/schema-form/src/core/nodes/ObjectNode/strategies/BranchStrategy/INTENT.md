@@ -4,12 +4,6 @@
 
 객체의 각 프로퍼티를 자식 노드로 관리하고 `oneOf`/`anyOf` 조건부 스키마 분기를 처리하는 전략. 조건 변경 시 비활성 분기 노드를 reset하고 활성 분기 노드를 복원한다.
 
-## Structure
-
-- `BranchStrategy.ts` — 메인 전략 클래스
-- `type.ts` — `ChildNodeMap` 타입
-- `utils/` — 자식 노드 생성 및 조건 처리 유틸 함수들
-
 ## Conventions
 
 - `__propertyChildren__` (기본 프로퍼티) + `__oneOfChildNodeMap__` + `__anyOfChildNodeMaps__`로 활성 자식 구성
@@ -40,10 +34,3 @@
 - `__oneOfChildNodeMapList__`의 노드를 `BranchStrategy` 외부에서 직접 조작
 - `initialize()`를 `ObjectNode.__initialize__` 외부에서 직접 호출
 - `__subnodes__`와 `__children__`을 동기화 없이 독립 수정
-
-## Dependencies
-
-- `ObjectNode` — 호스트 노드
-- BranchStrategy utils — `getChildNodeMap`, `getChildren`, `getCompositionKeyInfo` 등
-- `SchemaNodeFactory` — 자식 노드 생성
-- `NodeEventType` — 이벤트 타입
