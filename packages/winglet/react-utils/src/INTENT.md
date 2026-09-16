@@ -6,6 +6,11 @@ React 훅, DOM 위치 재배치를 위한 포털 렌더링 시스템, 오류 격
 
 패키지 매니페스트는 루트 진입점과 별개로 하위 organ·fractal마다 독립 entry(subpath export)를 선언한다 — 전체 표면이 필요한 소비자는 루트를, tree-shaking이 필요한 소비자는 해당 subpath를 사용한다.
 
+## Conventions
+
+- 루트 진입점과 하위 서브패스는 같은 소유 모듈의 공개 계약을 제공하도록 유지합니다.
+- 루트에서 훅·HOC의 동작을 덧붙이지 않으며, 구현 변경과 상세 계약은 해당 소유 모듈에서 관리합니다.
+
 ## Boundaries
 
 ### Always do

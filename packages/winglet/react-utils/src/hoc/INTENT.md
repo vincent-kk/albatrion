@@ -4,6 +4,11 @@
 
 react-utils가 공개하는 Higher-Order Component 표면을 단일 진입점으로 집계하는 재수출 경계다. 오류 경계 HOC 쌍과 파일 업로드 HOC는 각각 독립된 하위 fractal이 구현과 계약을 소유하며, 이 fractal은 그 계약을 재정의하지 않고 이름 지정 재수출만 수행한다.
 
+## Conventions
+
+- HOC의 오류 처리와 업로드 동작은 각각의 구현 모듈이 결정합니다.
+- 이 경계는 하위 진입점을 통한 이름 지정 재수출만 수행하며, 별도의 래핑이나 동작 변환을 추가하지 않습니다.
+
 ## Boundaries
 
 ### Always do

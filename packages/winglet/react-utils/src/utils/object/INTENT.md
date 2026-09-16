@@ -4,6 +4,11 @@
 
 문자열 키 딕셔너리에서 React 컴포넌트로 판별되는 값만 남겨 새 객체를 만드는 단일 유닛을 소유한다. 컴포넌트 판별 로직은 소유하지 않는다 — filter 형제 fractal의 엔트리 포인트를 경유해 재사용한다.
 
+## Conventions
+
+- 입력 객체의 own enumerable 키를 순회해 새 결과 객체를 만듭니다.
+- 컴포넌트 여부는 isReactComponent에 위임하며, 원본 딕셔너리는 수정하지 않습니다.
+
 ## Boundaries
 
 ### Always do
