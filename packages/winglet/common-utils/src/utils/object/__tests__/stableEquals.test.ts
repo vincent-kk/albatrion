@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { stableEquals } from '../stableEquals';
+import { stableEquals } from '../equals';
 
 describe('stableEquals 함수 테스트', () => {
   // 1. 원시값 비교 테스트

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { stableEquals } from '../stableEquals';
+import { stableEquals } from '../equals';
 
 /**
  * stableEquals 가 놓치던 두 지점 — omit 이 적용되는 시점과, 내부 슬롯에 상태를 담는
