@@ -252,7 +252,7 @@ This file contains links to documentation sections following the llmstxt.org sta
 - [@winglet](https://vincent-kk.github.io/docs/winglet): TypeScript utility libraries for common operations.
 - [@winglet/json](https://vincent-kk.github.io/docs/winglet/json): import PackageHeader from '@site/src/components/PackageHeader';
 - [JSONPath](https://vincent-kk.github.io/albatrion/ko/docs/winglet/json/path/JSONPath): <!-- sync-winglet-docs:auto -->
-- [convertJsonPathToPointer](https://vincent-kk.github.io/albatrion/ko/docs/winglet/json/path/convertJsonPathToPointer): <!-- sync-winglet-docs:auto -->
+- [convertJSONPathToPointer](https://vincent-kk.github.io/albatrion/ko/docs/winglet/json/path/convertJSONPathToPointer): <!-- sync-winglet-docs:auto -->
 - [getJSONPath](https://vincent-kk.github.io/albatrion/ko/docs/winglet/json/path/getJSONPath): <!-- sync-winglet-docs:auto -->
 - [AddPatch](https://vincent-kk.github.io/albatrion/ko/docs/winglet/json/pointer/AddPatch): <!-- sync-winglet-docs:auto -->
 - [CopyPatch](https://vincent-kk.github.io/albatrion/ko/docs/winglet/json/pointer/CopyPatch): <!-- sync-winglet-docs:auto -->
@@ -263,7 +263,7 @@ This file contains links to documentation sections following the llmstxt.org sta
 - [ReplacePatch](https://vincent-kk.github.io/albatrion/ko/docs/winglet/json/pointer/ReplacePatch): <!-- sync-winglet-docs:auto -->
 - [TestPatch](https://vincent-kk.github.io/albatrion/ko/docs/winglet/json/pointer/TestPatch): <!-- sync-winglet-docs:auto -->
 - [compilePointer](https://vincent-kk.github.io/albatrion/ko/docs/winglet/json/pointer/compilePointer): <!-- sync-winglet-docs:auto -->
-- [convertJsonPointerToPath](https://vincent-kk.github.io/albatrion/ko/docs/winglet/json/pointer/convertJsonPointerToPath): <!-- sync-winglet-docs:auto -->
+- [convertJSONPointerToPath](https://vincent-kk.github.io/albatrion/ko/docs/winglet/json/pointer/convertJSONPointerToPath): <!-- sync-winglet-docs:auto -->
 - [escapePath](https://vincent-kk.github.io/albatrion/ko/docs/winglet/json/pointer/escapePath): <!-- sync-winglet-docs:auto -->
 - [escapeSegment](https://vincent-kk.github.io/albatrion/ko/docs/winglet/json/pointer/escapeSegment): <!-- sync-winglet-docs:auto -->
 - [getValue](https://vincent-kk.github.io/albatrion/ko/docs/winglet/json/pointer/getValue): <!-- sync-winglet-docs:auto -->
@@ -282,8 +282,8 @@ This file contains links to documentation sections following the llmstxt.org sta
 - [RemovePatch](https://vincent-kk.github.io/albatrion/ko/docs/winglet/json/pointer-patch/RemovePatch): <!-- sync-winglet-docs:auto -->
 - [ReplacePatch](https://vincent-kk.github.io/albatrion/ko/docs/winglet/json/pointer-patch/ReplacePatch): <!-- sync-winglet-docs:auto -->
 - [TestPatch](https://vincent-kk.github.io/albatrion/ko/docs/winglet/json/pointer-patch/TestPatch): <!-- sync-winglet-docs:auto -->
-- [JsonScannerOptionsAsync](https://vincent-kk.github.io/albatrion/ko/docs/winglet/json-schema/async-scanner/JsonScannerOptionsAsync): <!-- sync-winglet-docs:auto -->
-- [JsonSchemaScannerAsync](https://vincent-kk.github.io/albatrion/ko/docs/winglet/json-schema/async-scanner/JsonSchemaScannerAsync): <!-- sync-winglet-docs:auto -->
+- [JSONScannerOptionsAsync](https://vincent-kk.github.io/albatrion/ko/docs/winglet/json-schema/async-scanner/JSONScannerOptionsAsync): <!-- sync-winglet-docs:auto -->
+- [JSONSchemaScannerAsync](https://vincent-kk.github.io/albatrion/ko/docs/winglet/json-schema/async-scanner/JSONSchemaScannerAsync): <!-- sync-winglet-docs:auto -->
 - [KeywordDescriptor](https://vincent-kk.github.io/albatrion/ko/docs/winglet/json-schema/async-scanner/KeywordDescriptor): <!-- sync-winglet-docs:auto -->
 - [KeywordKind](https://vincent-kk.github.io/albatrion/ko/docs/winglet/json-schema/async-scanner/KeywordKind): <!-- sync-winglet-docs:auto -->
 - [SchemaEntry](https://vincent-kk.github.io/albatrion/ko/docs/winglet/json-schema/async-scanner/SchemaEntry): <!-- sync-winglet-docs:auto -->
@@ -309,8 +309,8 @@ This file contains links to documentation sections following the llmstxt.org sta
 - [@winglet/json-schema](https://vincent-kk.github.io/docs/winglet/json-schema): import PackageHeader from '@site/src/components/PackageHeader';
 - [DEFAULT_KEYWORDS](https://vincent-kk.github.io/albatrion/ko/docs/winglet/json-schema/scanner/DEFAULT_KEYWORDS): <!-- sync-winglet-docs:auto -->
 - [EXTENDED_KEYWORDS](https://vincent-kk.github.io/albatrion/ko/docs/winglet/json-schema/scanner/EXTENDED_KEYWORDS): <!-- sync-winglet-docs:auto -->
-- [JsonScannerOptions](https://vincent-kk.github.io/albatrion/ko/docs/winglet/json-schema/scanner/JsonScannerOptions): <!-- sync-winglet-docs:auto -->
-- [JsonSchemaScanner](https://vincent-kk.github.io/albatrion/ko/docs/winglet/json-schema/scanner/JsonSchemaScanner): <!-- sync-winglet-docs:auto -->
+- [JSONScannerOptions](https://vincent-kk.github.io/albatrion/ko/docs/winglet/json-schema/scanner/JSONScannerOptions): <!-- sync-winglet-docs:auto -->
+- [JSONSchemaScanner](https://vincent-kk.github.io/albatrion/ko/docs/winglet/json-schema/scanner/JSONSchemaScanner): <!-- sync-winglet-docs:auto -->
 - [KeywordDescriptor](https://vincent-kk.github.io/albatrion/ko/docs/winglet/json-schema/scanner/KeywordDescriptor): <!-- sync-winglet-docs:auto -->
 - [KeywordKind](https://vincent-kk.github.io/albatrion/ko/docs/winglet/json-schema/scanner/KeywordKind): <!-- sync-winglet-docs:auto -->
 - [SchemaEntry](https://vincent-kk.github.io/albatrion/ko/docs/winglet/json-schema/scanner/SchemaEntry): <!-- sync-winglet-docs:auto -->

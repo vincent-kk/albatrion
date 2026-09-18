@@ -40,18 +40,18 @@ node tree lifecycle. Supports both controlled and uncontrolled usage via
 
 | Prop                       | Type                                                   | Default                  | Description                                                       |
 | -------------------------- | ------------------------------------------------------ | ------------------------ | ----------------------------------------------------------------- |
-| `jsonSchema`               | `JsonSchema`                                           | —                        | **Required.** JSON Schema defining the form structure             |
+| `jsonSchema`               | `JSONSchema`                                           | —                        | **Required.** JSON Schema defining the form structure             |
 | `defaultValue`             | `Value`                                                | `undefined`              | Initial form value                                                |
 | `onChange`                 | `(value: Value) => void`                               | —                        | Called when any field value changes                               |
 | `onSubmit`                 | `(value: Value) => Promise<void> \| void`              | —                        | Called on valid form submit (after validation passes)             |
-| `onValidate`               | `(errors: JsonSchemaError[]) => void`                  | —                        | Called after each validation run                                  |
+| `onValidate`               | `(errors: JSONSchemaError[]) => void`                  | —                        | Called after each validation run                                  |
 | `onStateChange`            | `(state: NodeStateFlags) => void`                      | —                        | Called when dirty/touched/validated state changes                 |
 | `showError`                | `boolean \| ShowError`                                 | `ShowError.DirtyTouched` | When to display validation errors                                 |
 | `validationMode`           | `ValidationMode`                                       | `OnChange \| OnRequest`  | When validation runs                                              |
 | `validatorFactory`         | `ValidatorFactory`                                     | plugin default           | Override validator factory per form                               |
 | `readOnly`                 | `boolean`                                              | `false`                  | Apply `readOnly` to all inputs                                    |
 | `disabled`                 | `boolean`                                              | `false`                  | Apply `disabled` to all inputs                                    |
-| `errors`                   | `JsonSchemaError[]`                                    | `undefined`              | Inject external validation errors                                 |
+| `errors`                   | `JSONSchemaError[]`                                    | `undefined`              | Inject external validation errors                                 |
 | `formTypeInputDefinitions` | `FormTypeInputDefinition[]`                            | `[]`                     | Form-level input component definitions                            |
 | `formTypeInputMap`         | `FormTypeInputMap`                                     | `{}`                     | Path-based input component overrides                              |
 | `CustomFormTypeRenderer`   | `ComponentType<FormTypeRendererProps>`                 | plugin default           | Override the entire field renderer                                |
@@ -138,8 +138,8 @@ interface FormHandle<Schema, Value> {
   getState(): NodeStateFlags;
   setState(state: NodeStateFlags): void;
   clearState(): void;
-  getErrors(): JsonSchemaError[];
-  validate(): Promise<JsonSchemaError[]>;
+  getErrors(): JSONSchemaError[];
+  validate(): Promise<JSONSchemaError[]>;
   showError(visible: boolean): void;
   focus(path: string): void; // focuses input at path
   select(path: string): void; // selects input at path
@@ -347,12 +347,12 @@ interface SchemaFormPlugin {
 ```ts
 interface ValidatorPlugin {
   bind(instance: any): void;
-  compile(jsonSchema: JsonSchema): ValidateFunction;
+  compile(jsonSchema: JSONSchema): ValidateFunction;
 }
 
 type ValidateFunction = (
   value: any,
-) => JsonSchemaError[] | null | Promise<JsonSchemaError[] | null>;
+) => JSONSchemaError[] | null | Promise<JSONSchemaError[] | null>;
 ```
 
 ## `FormTypeInputProps` Interface
@@ -363,7 +363,7 @@ All custom input components registered via `formTypeInputDefinitions` receive th
 interface FormTypeInputProps<Value, Context, WatchValues, Schema, Node> {
   jsonSchema: Schema;
   node: Node;
-  type: JsonSchemaType; // 'string' | 'number' | 'boolean' | ...
+  type: JSONSchemaType; // 'string' | 'number' | 'boolean' | ...
   name: string;
   path: string;
   required: boolean;
@@ -373,7 +373,7 @@ interface FormTypeInputProps<Value, Context, WatchValues, Schema, Node> {
   value: Value | undefined;
   defaultValue: Value | undefined;
   onChange: SetStateFnWithOptions<Value | undefined>;
-  errors: JsonSchemaError[];
+  errors: JSONSchemaError[];
   errorVisible: boolean;
   watchValues: WatchValues; // values from computed.watch paths
   onFileAttach: (file: File | File[] | undefined) => void;
@@ -392,8 +392,8 @@ interface FormTypeInputProps<Value, Context, WatchValues, Schema, Node> {
 interface SchemaNode {
   // Identity
   readonly type: string; // node type ('string', 'object', etc.)
-  readonly schemaType: JsonSchemaType;
-  readonly jsonSchema: JsonSchema;
+  readonly schemaType: JSONSchemaType;
+  readonly jsonSchema: JSONSchema;
   readonly required: boolean;
   readonly nullable: boolean;
 
@@ -421,12 +421,12 @@ interface SchemaNode {
   readonly touched: boolean;
   readonly validated: boolean;
   readonly initialized: boolean;
-  readonly errors: JsonSchemaError[];
-  readonly globalErrors: JsonSchemaError[];
+  readonly errors: JSONSchemaError[];
+  readonly globalErrors: JSONSchemaError[];
   readonly globalState: NodeStateFlags;
 
   // Validation
-  validate(): Promise<JsonSchemaError[]>;
+  validate(): Promise<JSONSchemaError[]>;
 
   // Navigation
   find(path: string): SchemaNode | undefined;
@@ -474,7 +474,7 @@ if (isArrayNode(node)) {
 
 ```ts
 import {
-  isJsonSchemaError,
+  isJSONSchemaError,
   isSchemaFormError,
   isUnhandledError,
   isValidationError,
@@ -485,7 +485,7 @@ import {
 
 ```ts
 type FormatError = (
-  error: JsonSchemaError,
+  error: JSONSchemaError,
   node: SchemaNode,
   context: Dictionary,
 ) => ReactNode;
@@ -524,13 +524,13 @@ jsonSchema:                Schema                           // required
 defaultValue?:             Value
 onChange?:                 (value: Value) => void
 onSubmit?:                 (value: Value) => Promise<void> | void
-onValidate?:               (errors: JsonSchemaError[]) => void
+onValidate?:               (errors: JSONSchemaError[]) => void
 onStateChange?:            (state: NodeStateFlags) => void
 showError?:                boolean | ShowError              // default: DirtyTouched
 validationMode?:           ValidationMode                  // default: OnChange|OnRequest
 readOnly?:                 boolean
 disabled?:                 boolean
-errors?:                   JsonSchemaError[]
+errors?:                   JSONSchemaError[]
 formTypeInputDefinitions?: FormTypeInputDefinition[]
 formTypeInputMap?:         FormTypeInputMap
 CustomFormTypeRenderer?:   ComponentType<FormTypeRendererProps>
@@ -547,8 +547,8 @@ setValue(v, opts?): void
 getState():         NodeStateFlags
 setState(s):        void
 clearState():       void
-getErrors():        JsonSchemaError[]
-validate():         Promise<JsonSchemaError[]>
+getErrors():        JSONSchemaError[]
+validate():         Promise<JSONSchemaError[]>
 showError(b):       void
 focus(path):        void
 select(path):       void
@@ -580,7 +580,7 @@ useFormSubmit(ref)                     → { submit, pending }
 useSchemaNodeTracker(node, mask?)      → version: number
 useSchemaNodeSubscribe(node, listener) → void
 useChildNodeComponentMap(node)         → Map<string, ChildNodeComponent>
-useChildNodeErrors(node)               → JsonSchemaError[]
+useChildNodeErrors(node)               → JSONSchemaError[]
 ```
 
 </ForAI>
@@ -632,7 +632,7 @@ receive an `UpdateValue` event and update their aggregated value.
 | -------------- | ------------------- | ----------------------------------- |
 | `value`        | `any`               | Current value                       |
 | `defaultValue` | `any`               | Value at initialization             |
-| `errors`       | `JsonSchemaError[]` | Validation errors for this node     |
+| `errors`       | `JSONSchemaError[]` | Validation errors for this node     |
 | `dirty`        | `boolean`           | Value changed since initialization  |
 | `touched`      | `boolean`           | User has interacted with this field |
 | `validated`    | `boolean`           | Validation has been run             |
@@ -710,11 +710,11 @@ const definition: FormTypeInputDefinition = {
 
 // Hint object available in test function:
 type Hint = {
-  type: JsonSchemaType;       // 'string' | 'number' | 'boolean' | ...
+  type: JSONSchemaType;       // 'string' | 'number' | 'boolean' | ...
   path: string;               // JSONPointer path
   required: boolean;
   nullable: boolean;
-  jsonSchema: JsonSchema;
+  jsonSchema: JSONSchema;
   format?: string;
   formType?: string;          // custom jsonSchema.formType field
 };
@@ -873,7 +873,7 @@ enum ShowError {
 ### Error Structure
 
 ```ts
-interface JsonSchemaError {
+interface JSONSchemaError {
   dataPath: string; // JSONPointer to the failing field
   keyword: string; // JSON Schema keyword (e.g., 'minLength', 'required')
   message: string;
@@ -918,7 +918,7 @@ RequestRemount; // external: force full component remount
 | `FormTypeRendererProps`                                  | Props for `FormGroup`/`FormLabel`/`FormInput`/`FormError` renderer components                              |
 | `SchemaFormPlugin`                                       | Plugin object with optional renderer components + `formTypeInputDefinitions` + `validator` + `formatError` |
 | `ValidatorPlugin`                                        | `{ bind(instance), compile(jsonSchema) → ValidateFunction }`                                               |
-| `ValidateFunction`                                       | `(value) => JsonSchemaError[] \| null \| Promise<...>`                                                     |
+| `ValidateFunction`                                       | `(value) => JSONSchemaError[] \| null \| Promise<...>`                                                     |
 | `computed` / `&computed`                                 | JSON Schema extension for reactive field properties                                                        |
 | `&if`                                                    | JSON Schema extension — expression to activate a `oneOf`/`anyOf` branch                                    |
 | `enhancedValue`                                          | Value including virtual/conditional field values — used for validation                                     |
@@ -1925,7 +1925,7 @@ Each form above is rendered with the [antd6-plugin](../schema-form-antd6-plugin/
 JSON Schema
     │
     ▼
-nodeFromJsonSchema()          ← builds a typed node tree
+nodeFromJSONSchema()          ← builds a typed node tree
     │
     ├── StringNode / NumberNode / BooleanNode / NullNode   (terminal)
     ├── ObjectNode / ArrayNode                             (branch)
@@ -2045,13 +2045,13 @@ import { SetValueOption } from '@canard/schema-form';  // Merge | Replace
 ### Type guards & error utilities
 ```ts
 import { isArrayNode, isBooleanNode, isBranchNode, isNumberNode } from '@canard/schema-form';
-import { isSchemaFormError, isJsonSchemaError, isUnhandledError, isValidationError } from '@canard/schema-form';
+import { isSchemaFormError, isJSONSchemaError, isUnhandledError, isValidationError } from '@canard/schema-form';
 import { JSONPointer } from '@canard/schema-form';
 ```
 
 ### Architecture
 - No default validator or UI — both via plugins: `registerPlugin(plugin)`
-- Node tree: JSON Schema → nodeFromJsonSchema() → typed node tree
+- Node tree: JSON Schema → nodeFromJSONSchema() → typed node tree
 - Input resolution: Direct prop > formTypeInputMap > form-level > FormProvider > plugin
 
 </ForAI>
@@ -2227,7 +2227,7 @@ registerPlugin(uiPlugin);
 
 // 3. Imperative API via ref
 formRef.current?.submit()
-formRef.current?.validate()     // Promise<JsonSchemaError[]>
+formRef.current?.validate()     // Promise<JSONSchemaError[]>
 formRef.current?.getValue()
 formRef.current?.setValue(val)
 formRef.current?.reset()
@@ -2306,7 +2306,7 @@ import Ajv from 'ajv';
 import { createValidatorFactory } from '@canard/schema-form-ajv6-plugin';
 
 const ajv = new Ajv({ allErrors: true });
-const validate = createValidatorFactory(ajv)(myJsonSchema);
+const validate = createValidatorFactory(ajv)(myJSONSchema);
 
 const errors = await validate(formData); // null | ValidationError[]
 ```
@@ -2411,7 +2411,7 @@ import Ajv from 'ajv';
 import { createValidatorFactory } from '@canard/schema-form-ajv7-plugin';
 
 const ajv = new Ajv({ allErrors: true });
-const validate = createValidatorFactory(ajv)(myJsonSchema);
+const validate = createValidatorFactory(ajv)(myJSONSchema);
 
 const errors = await validate(formData); // null | ValidationError[]
 ```
@@ -2547,7 +2547,7 @@ import Ajv from 'ajv';
 import { createValidatorFactory } from '@canard/schema-form-ajv8-plugin';
 
 const ajv = new Ajv({ allErrors: true });
-const validate = createValidatorFactory(ajv)(myJsonSchema);
+const validate = createValidatorFactory(ajv)(myJSONSchema);
 
 const errors = await validate(formData); // null | ValidationError[]
 ```
@@ -13361,7 +13361,7 @@ function processConfiguration(config: unknown) {
 ### JSON validation
 
 ```typescript
-function validateJsonObject(data: unknown): boolean {
+function validateJSONObject(data: unknown): boolean {
   // Check if it's a valid JSON-like plain object
   if (isEmptyPlainObject(data)) {
     return true; // Empty objects are valid JSON
@@ -13376,10 +13376,10 @@ function validateJsonObject(data: unknown): boolean {
 }
 
 // Usage
-console.log(validateJsonObject({})); // true
-console.log(validateJsonObject({ name: 'John' })); // true
-console.log(validateJsonObject(new Date())); // false
-console.log(validateJsonObject([])); // false
+console.log(validateJSONObject({})); // true
+console.log(validateJSONObject({ name: 'John' })); // true
+console.log(validateJSONObject(new Date())); // false
+console.log(validateJSONObject([])); // false
 ```
 
 ### Form state management
@@ -16675,7 +16675,7 @@ function deepMerge(target: any, source: any): any {
 ### JSON-like data validation
 
 ```typescript
-function isJsonLike(value: unknown): boolean {
+function isJSONLike(value: unknown): boolean {
   if (value === null || typeof value !== 'object') {
     return typeof value === 'string' ||
            typeof value === 'number' ||
@@ -16684,11 +16684,11 @@ function isJsonLike(value: unknown): boolean {
   }
 
   if (Array.isArray(value)) {
-    return value.every(isJsonLike);
+    return value.every(isJSONLike);
   }
 
   if (isPlainObject(value)) {
-    return Object.values(value).every(isJsonLike);
+    return Object.values(value).every(isJSONLike);
   }
 
   return false;
@@ -36401,10 +36401,10 @@ The CLI resolves `@winglet/json/package.json` via `createRequire`, reads its `ag
 ### Key exports
 ```
 ./path → JSONPath
-./path-common → convertJsonPathToPointer
+./path-common → convertJSONPathToPointer
                 getJSONPath
 ./pointer → JSONPointer
-./pointer-common → convertJsonPointerToPath
+./pointer-common → convertJSONPointerToPath
                    getJSONPointer
 ./pointer-escape → escapeSegment
                    escapePath
@@ -36448,22 +36448,22 @@ Special character constants used in JSONPath expressions
 const JSONPath: {
     /**
      * Root node of the data (`$`)
-     * @see https://goessner.net/articles/JsonPath/index.html#e2
+     * @see https://goessner.net/articles/JSONPath/index.html#e2
      */
     readonly Root: "$";
     /**
      * Currently processing node (`@`)
-     * @see https://goessner.net/articles/JsonPath/index.html#e2
+     * @see https://goessner.net/articles/JSONPath/index.html#e2
      */
     readonly Current: "@";
     /**
      * Child node access operator (`.`)
-     * @see https://goessner.net/articles/JsonPath/index.html#e2
+     * @see https://goessner.net/articles/JSONPath/index.html#e2
      */
     readonly Child: ".";
     /**
      * Filter condition operator (`#`)
-     * @see https://goessner.net/articles/JsonPath/index.html#e2
+     * @see https://goessner.net/articles/JSONPath/index.html#e2
      */
     readonly Filter: "#";
 }
@@ -36471,20 +36471,20 @@ const JSONPath: {
 
 ---
 
-## convertJsonPathToPointer
+## convertJSONPathToPointer
 
 <!-- sync-winglet-docs:auto -->
 
 import WingletPlayground from '@site/src/components/WingletPlayground';
 
-# convertJsonPathToPointer
+# convertJSONPathToPointer
 
 Converts AJV dataPath format to JSONPointer format.
 
 ## Signature
 
 ```typescript
-const convertJsonPathToPointer: (dataPath: string) => string
+const convertJSONPathToPointer: (dataPath: string) => string
 ```
 
 ## Parameters
@@ -36502,20 +36502,20 @@ JSONPointer format string (e.g., "/data/users/0/name")
 ### Example 1
 
 ```typescript
-convertJsonPathToPointer('data.users[0].name') // '/data/users/0/name'
-convertJsonPathToPointer('items[].id')         // '/items/-/id'
-convertJsonPathToPointer('[0].value')          // '/0/value'
-convertJsonPathToPointer('')                   // '/'
+convertJSONPathToPointer('data.users[0].name') // '/data/users/0/name'
+convertJSONPathToPointer('items[].id')         // '/items/-/id'
+convertJSONPathToPointer('[0].value')          // '/0/value'
+convertJSONPathToPointer('')                   // '/'
 ```
 
 ## Playground
 
 <WingletPlayground
   dependencies={{ "@winglet/json": "0.12.2" }}
-  code={`convertJsonPathToPointer('data.users[0].name') // '/data/users/0/name'
-convertJsonPathToPointer('items[].id')         // '/items/-/id'
-convertJsonPathToPointer('[0].value')          // '/0/value'
-convertJsonPathToPointer('')                   // '/'`}
+  code={`convertJSONPathToPointer('data.users[0].name') // '/data/users/0/name'
+convertJSONPathToPointer('items[].id')         // '/items/-/id'
+convertJSONPathToPointer('[0].value')          // '/0/value'
+convertJSONPathToPointer('')                   // '/'`}
 />
 
 ---
@@ -36735,20 +36735,20 @@ const compilePointer: (pointer: string | string[]) => string[]
 
 ---
 
-## convertJsonPointerToPath
+## convertJSONPointerToPath
 
 <!-- sync-winglet-docs:auto -->
 
 import WingletPlayground from '@site/src/components/WingletPlayground';
 
-# convertJsonPointerToPath
+# convertJSONPointerToPath
 
 Converts JSON Pointer format to AJV dataPath format.
 
 ## Signature
 
 ```typescript
-const convertJsonPointerToPath: (jsonPointer: string) => string
+const convertJSONPointerToPath: (jsonPointer: string) => string
 ```
 
 ## Parameters
@@ -36766,20 +36766,20 @@ AJV dataPath format string (e.g., ".data.users[0].name")
 ### Example 1
 
 ```typescript
-convertJsonPointerToPath('/data/users/0/name') // '.data.users[0].name'
-convertJsonPointerToPath('/items/-/id')        // '.items[].id'
-convertJsonPointerToPath('/0/value')           // '.[0].value'
-convertJsonPointerToPath('/')                  // '.'
+convertJSONPointerToPath('/data/users/0/name') // '.data.users[0].name'
+convertJSONPointerToPath('/items/-/id')        // '.items[].id'
+convertJSONPointerToPath('/0/value')           // '.[0].value'
+convertJSONPointerToPath('/')                  // '.'
 ```
 
 ## Playground
 
 <WingletPlayground
   dependencies={{ "@winglet/json": "0.12.2" }}
-  code={`convertJsonPointerToPath('/data/users/0/name') // '.data.users[0].name'
-convertJsonPointerToPath('/items/-/id')        // '.items[].id'
-convertJsonPointerToPath('/0/value')           // '.[0].value'
-convertJsonPointerToPath('/')                  // '.'`}
+  code={`convertJSONPointerToPath('/data/users/0/name') // '.data.users[0].name'
+convertJSONPointerToPath('/items/-/id')        // '.items[].id'
+convertJSONPointerToPath('/0/value')           // '.[0].value'
+convertJSONPointerToPath('/')                  // '.'`}
 />
 
 ---
@@ -37714,7 +37714,7 @@ escapePath('/special!@#$%^&*()/chars');
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/json": "0.12.2" }}
+  dependencies={{ "@winglet/json": "0.15.0" }}
   code={`// Basic segment escaping (only tildes in segments are escaped)
 escapePath('/users/john~doe/settings');
 // Returns: "/users/john~0doe/settings"
@@ -37775,10 +37775,10 @@ The escaped reference token string with special characters properly encoded. If 
 
 ```typescript
 // Basic character escaping
-escapePath('foo~bar');
+escapeSegment('foo~bar');
 // Returns: "foo~0bar"
 
-escapePath('foo/bar');
+escapeSegment('foo/bar');
 // Returns: "foo~1bar"
 ```
 
@@ -37786,10 +37786,10 @@ escapePath('foo/bar');
 
 ```typescript
 // Multiple special characters
-escapePath('path~with/both~chars');
+escapeSegment('path~with/both~chars');
 // Returns: "path~0with~1both~0chars"
 
-escapePath('~/~/~/');
+escapeSegment('~/~/~/');
 // Returns: "~0~1~0~1~0~1"
 ```
 
@@ -37797,13 +37797,13 @@ escapePath('~/~/~/');
 
 ```typescript
 // Edge cases and performance optimization
-escapePath('');
+escapeSegment('');
 // Returns: "" (empty string, no processing needed)
 
-escapePath('normal_key_123');
+escapeSegment('normal_key_123');
 // Returns: "normal_key_123" (no special chars, early exit)
 
-escapePath('user@domain.com');
+escapeSegment('user@domain.com');
 // Returns: "user@domain.com" (no special chars, early exit)
 ```
 
@@ -37812,12 +37812,12 @@ escapePath('user@domain.com');
 ```typescript
 // Real-world usage scenarios
 const objectKey = 'config/database';
-const escapedKey = escapePath(objectKey);
+const escapedKey = escapeSegment(objectKey);
 // escapedKey: "config~1database"
 // Can now be safely used in JSON Pointer: `/settings/${escapedKey}/host`
 
 const fileName = 'backup~2023-12-01.json';
-const escapedFileName = escapePath(fileName);
+const escapedFileName = escapeSegment(fileName);
 // escapedFileName: "backup~02023-12-01.json"
 // Can now be safely used in JSON Pointer: `/files/${escapedFileName}/size`
 ```
@@ -37832,8 +37832,8 @@ const data = {
 };
 
 // These keys need escaping when used in JSON Pointers
-const escapedFileKey = escapePath('files/docs');     // "files~1docs"
-const escapedConfigKey = escapePath('config~prod');  // "config~0prod"
+const escapedFileKey = escapeSegment('files/docs');     // "files~1docs"
+const escapedConfigKey = escapeSegment('config~prod');  // "config~0prod"
 
 // Now safe to use in JSON Pointer expressions
 const filePointer = `/${escapedFileKey}/size`;      // "/files~1docs/size"
@@ -37843,12 +37843,12 @@ const configPointer = `/${escapedConfigKey}/database`; // "/config~0prod/databas
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/json": "0.12.2" }}
+  dependencies={{ "@winglet/json": "0.15.0" }}
   code={`// Basic character escaping
-escapePath('foo~bar');
+escapeSegment('foo~bar');
 // Returns: "foo~0bar"
 
-escapePath('foo/bar');
+escapeSegment('foo/bar');
 // Returns: "foo~1bar"`}
 />
 
@@ -37996,7 +37996,7 @@ console.log(data[actualConfigKey].database); // "localhost"
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/json": "0.12.2" }}
+  dependencies={{ "@winglet/json": "0.15.0" }}
   code={`// Basic escape sequence unescaping
 unescapePath('foo~0bar');
 // Returns: "foo~bar"
@@ -38018,7 +38018,7 @@ import WingletPlayground from '@site/src/components/WingletPlayground';
 ## Signature
 
 ```typescript
-const compilePointer: (pointer: string | string[]) => string[]
+const compilePointer: (pointer: string | (string | number)[]) => string[]
 ```
 
 ---
@@ -38051,7 +38051,7 @@ unexpected behavior with primitive values or non-plain objects.
 ## Signature
 
 ```typescript
-const getValue: <Output extends Dictionary | Array<any> = Dictionary | Array<any>>(value: Dictionary | Array<any>, pointer: string | string[]) => Output
+const getValue: <Output extends Dictionary | Array<any> = Dictionary | Array<any>>(value: Dictionary | Array<any>, pointer: string | (string | number)[]) => Output
 ```
 
 ## Parameters
@@ -38153,7 +38153,7 @@ getValue(complex, '/api/v1/endpoints/0/methods/1');
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/json": "0.12.2" }}
+  dependencies={{ "@winglet/json": "0.15.0" }}
   code={`// Basic object property access
 const obj = {
   foo: {
@@ -38215,7 +38215,7 @@ Setting a final value to `null` is always allowed regardless of this option
 ## Signature
 
 ```typescript
-const setValue: <Output extends Dictionary | Array<any> = Dictionary | Array<any>>(value: Dictionary | Array<any>, pointer: string | string[], input: any, options?: {
+const setValue: <Output extends Dictionary | Array<any> = Dictionary | Array<any>>(value: Dictionary | Array<any>, pointer: string | (string | number)[], input: any, options?: {
     overwrite?: boolean;
     preserveNull?: boolean;
 }) => Output
@@ -38349,7 +38349,7 @@ setValue(obj, '', { completely: "new" });
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/json": "0.12.2" }}
+  dependencies={{ "@winglet/json": "0.15.0" }}
   code={`// Basic object property setting
 const obj = {
   foo: {
@@ -38363,6 +38363,16 @@ setValue(obj, '/foo/bar', 'qux');
 setValue(obj, ['foo', 'newProp'], 'value');
 // Returns: { foo: { bar: 'qux', newProp: 'value' } }`}
 />
+
+## Notes
+
+A pointer segment naming a reserved member (`__proto__`, `constructor`, `prototype`) writes an
+own data property, so the value stays on the object instead of reaching the prototype chain.
+Copy such an object with spread, `structuredClone`, or a JSON round-trip — each defines own data
+and keeps the key; assignment-based copies (`Object.assign`, `target[key] = value`) route through
+the inherited `__proto__` setter, which replaces the copy's prototype and drops the key. Test for
+plain objects with `Object.getPrototypeOf` or `instanceof`, not `value.constructor` — an own
+`constructor` shadows the inherited one.
 
 ---
 
@@ -38495,18 +38505,18 @@ interface TestPatch<Value> extends BasePatch {
 
 ---
 
-## JsonScannerOptionsAsync
+## JSONScannerOptionsAsync
 
 <!-- sync-winglet-docs:auto -->
 
 import WingletPlayground from '@site/src/components/WingletPlayground';
 
-# JsonScannerOptionsAsync
+# JSONScannerOptionsAsync
 
 ## Signature
 
 ```typescript
-interface JsonScannerOptionsAsync<Schema extends UnknownSchema = UnknownSchema, ContextType = void> extends Omit<JsonScannerOptions<Schema, ContextType>, 'filter' | 'mutate' | 'resolveReference'> {
+interface JSONScannerOptionsAsync<Schema extends UnknownSchema = UnknownSchema, ContextType = void> extends Omit<JSONScannerOptions<Schema, ContextType>, 'filter' | 'mutate' | 'resolveReference'> {
     /** Schema node filtering function (may be async) */
     filter?: Fn<[
         entry: SchemaEntry<Schema>,
@@ -38528,17 +38538,17 @@ interface JsonScannerOptionsAsync<Schema extends UnknownSchema = UnknownSchema, 
 
 ---
 
-## JsonSchemaScannerAsync
+## JSONSchemaScannerAsync
 
 <!-- sync-winglet-docs:auto -->
 
 import WingletPlayground from '@site/src/components/WingletPlayground';
 
-# JsonSchemaScannerAsync
+# JSONSchemaScannerAsync
 
 An advanced asynchronous JSON Schema traversal engine with comprehensive
 async support for remote reference resolution and async visitor operations.
-Extends the synchronous JsonSchemaScanner with full async/await support,
+Extends the synchronous JSONSchemaScanner with full async/await support,
 enabling complex scenarios like fetching remote schemas, async validation,
 database lookups during traversal, and async schema transformations.
 Maintains all the power of the sync version while supporting async workflows.
@@ -38546,7 +38556,7 @@ Maintains all the power of the sync version while supporting async workflows.
 ## Signature
 
 ```typescript
-class JsonSchemaScannerAsync
+class JSONSchemaScannerAsync
 ```
 
 ## Examples
@@ -38554,7 +38564,7 @@ class JsonSchemaScannerAsync
 ### Async schema traversal with remote reference resolution
 
 ```typescript
-import { JsonSchemaScannerAsync } from '@winglet/json-schema';
+import { JSONSchemaScannerAsync } from '@winglet/json-schema';
 
 const schemaWithRemoteRefs = {
   type: 'object',
@@ -38564,7 +38574,7 @@ const schemaWithRemoteRefs = {
   }
 };
 
-const asyncScanner = new JsonSchemaScannerAsync({
+const asyncScanner = new JSONSchemaScannerAsync({
   visitor: {
     enter: async (entry) => {
       console.log(`Processing: ${entry.path}`);
@@ -38602,7 +38612,7 @@ interface ValidationContext {
   errors: string[];
 }
 
-const validationScanner = new JsonSchemaScannerAsync<ValidationContext>({
+const validationScanner = new JSONSchemaScannerAsync<ValidationContext>({
   options: {
     context: { validatedPaths: [], errors: [] },
     filter: async (entry, context) => {
@@ -38658,7 +38668,7 @@ const distributedSchema = {
   }
 };
 
-const serviceResolver = new JsonSchemaScannerAsync({
+const serviceResolver = new JSONSchemaScannerAsync({
   options: {
     resolveReference: async (serviceRef) => {
       const [, , serviceName] = serviceRef.split('/');
@@ -38692,7 +38702,7 @@ const composedSchema = await serviceResolver.scan(distributedSchema)
 ### Progressive schema loading with batched async operations
 
 ```typescript
-const batchingScanner = new JsonSchemaScannerAsync({
+const batchingScanner = new JSONSchemaScannerAsync({
   options: {
     resolveReference: async (refPath, context) => {
       // Batch reference resolution for performance
@@ -38724,8 +38734,8 @@ const batchingScanner = new JsonSchemaScannerAsync({
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/json-schema": "0.12.3" }}
-  code={`import { JsonSchemaScannerAsync } from '@winglet/json-schema';
+  dependencies={{ "@winglet/json-schema": "0.15.1" }}
+  code={`import { JSONSchemaScannerAsync } from '@winglet/json-schema';
 
 const schemaWithRemoteRefs = {
   type: 'object',
@@ -38735,7 +38745,7 @@ const schemaWithRemoteRefs = {
   }
 };
 
-const asyncScanner = new JsonSchemaScannerAsync({
+const asyncScanner = new JSONSchemaScannerAsync({
   visitor: {
     enter: async (entry) => {
       console.log(\`Processing: \${entry.path}\`);
@@ -38946,7 +38956,7 @@ isArraySchema({ type: 'object' }); // false
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/json-schema": "0.12.3" }}
+  dependencies={{ "@winglet/json-schema": "0.15.1" }}
   code={`isArraySchema({ type: 'array', items: { type: 'string' } }); // true
 isArraySchema({ type: ['array', 'null'] }); // true
 isArraySchema({ type: 'object' }); // false`}
@@ -38995,7 +39005,7 @@ isBooleanSchema({ type: 'string' }); // false
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/json-schema": "0.12.3" }}
+  dependencies={{ "@winglet/json-schema": "0.15.1" }}
   code={`isBooleanSchema({ type: 'boolean' }); // true
 isBooleanSchema({ type: ['boolean', 'null'] }); // true
 isBooleanSchema({ type: 'string' }); // false`}
@@ -39118,7 +39128,7 @@ isNonNullableArraySchema({ type: 'object' }); // false
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/json-schema": "0.12.3" }}
+  dependencies={{ "@winglet/json-schema": "0.15.1" }}
   code={`isNonNullableArraySchema({ type: 'array', items: { type: 'string' } }); // true
 isNonNullableArraySchema({ type: ['array', 'null'] }); // false
 isNonNullableArraySchema({ type: 'object' }); // false`}
@@ -39167,7 +39177,7 @@ isNonNullableBooleanSchema({ type: 'string' }); // false
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/json-schema": "0.12.3" }}
+  dependencies={{ "@winglet/json-schema": "0.15.1" }}
   code={`isNonNullableBooleanSchema({ type: 'boolean' }); // true
 isNonNullableBooleanSchema({ type: ['boolean', 'null'] }); // false
 isNonNullableBooleanSchema({ type: 'string' }); // false`}
@@ -39217,7 +39227,7 @@ isNonNullableNumberSchema({ type: 'string' }); // false
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/json-schema": "0.12.3" }}
+  dependencies={{ "@winglet/json-schema": "0.15.1" }}
   code={`isNonNullableNumberSchema({ type: 'number' }); // true
 isNonNullableNumberSchema({ type: 'integer' }); // true
 isNonNullableNumberSchema({ type: ['number', 'null'] }); // false
@@ -39267,7 +39277,7 @@ isNonNullableObjectSchema({ type: 'array' }); // false
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/json-schema": "0.12.3" }}
+  dependencies={{ "@winglet/json-schema": "0.15.1" }}
   code={`isNonNullableObjectSchema({ type: 'object', properties: { name: { type: 'string' } } }); // true
 isNonNullableObjectSchema({ type: ['object', 'null'] }); // false
 isNonNullableObjectSchema({ type: 'array' }); // false`}
@@ -39316,7 +39326,7 @@ isNonNullableStringSchema({ type: 'number' }); // false
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/json-schema": "0.12.3" }}
+  dependencies={{ "@winglet/json-schema": "0.15.1" }}
   code={`isNonNullableStringSchema({ type: 'string' }); // true
 isNonNullableStringSchema({ type: ['string', 'null'] }); // false
 isNonNullableStringSchema({ type: 'number' }); // false`}
@@ -39425,7 +39435,7 @@ Object.entries(formFieldSchemas).forEach(([fieldName, schema]) => {
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/json-schema": "0.12.3" }}
+  dependencies={{ "@winglet/json-schema": "0.15.1" }}
   code={`import { isNullSchema } from '@winglet/json-schema';
 
 const nullSchema = {
@@ -39500,7 +39510,7 @@ isNullableArraySchema({ type: ['object', 'null'] }); // false
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/json-schema": "0.12.3" }}
+  dependencies={{ "@winglet/json-schema": "0.15.1" }}
   code={`isNullableArraySchema({ type: ['array', 'null'], items: { type: 'string' } }); // true
 isNullableArraySchema({ type: 'array' }); // false
 isNullableArraySchema({ type: ['object', 'null'] }); // false`}
@@ -39549,7 +39559,7 @@ isNullableBooleanSchema({ type: ['string', 'null'] }); // false
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/json-schema": "0.12.3" }}
+  dependencies={{ "@winglet/json-schema": "0.15.1" }}
   code={`isNullableBooleanSchema({ type: ['boolean', 'null'] }); // true
 isNullableBooleanSchema({ type: 'boolean' }); // false
 isNullableBooleanSchema({ type: ['string', 'null'] }); // false`}
@@ -39599,7 +39609,7 @@ isNullableNumberSchema({ type: ['string', 'null'] }); // false
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/json-schema": "0.12.3" }}
+  dependencies={{ "@winglet/json-schema": "0.15.1" }}
   code={`isNullableNumberSchema({ type: ['number', 'null'] }); // true
 isNullableNumberSchema({ type: ['integer', 'null'] }); // true
 isNullableNumberSchema({ type: 'number' }); // false
@@ -39649,7 +39659,7 @@ isNullableObjectSchema({ type: ['array', 'null'] }); // false
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/json-schema": "0.12.3" }}
+  dependencies={{ "@winglet/json-schema": "0.15.1" }}
   code={`isNullableObjectSchema({ type: ['object', 'null'], properties: {} }); // true
 isNullableObjectSchema({ type: 'object' }); // false
 isNullableObjectSchema({ type: ['array', 'null'] }); // false`}
@@ -39698,7 +39708,7 @@ isNullableStringSchema({ type: ['number', 'null'] }); // false
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/json-schema": "0.12.3" }}
+  dependencies={{ "@winglet/json-schema": "0.15.1" }}
   code={`isNullableStringSchema({ type: ['string', 'null'] }); // true
 isNullableStringSchema({ type: 'string' }); // false
 isNullableStringSchema({ type: ['number', 'null'] }); // false`}
@@ -39748,7 +39758,7 @@ isNumberSchema({ type: 'string' }); // false
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/json-schema": "0.12.3" }}
+  dependencies={{ "@winglet/json-schema": "0.15.1" }}
   code={`isNumberSchema({ type: 'number' }); // true
 isNumberSchema({ type: 'integer' }); // true
 isNumberSchema({ type: ['number', 'null'] }); // true
@@ -39798,7 +39808,7 @@ isObjectSchema({ type: 'array' }); // false
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/json-schema": "0.12.3" }}
+  dependencies={{ "@winglet/json-schema": "0.15.1" }}
   code={`isObjectSchema({ type: 'object', properties: { name: { type: 'string' } } }); // true
 isObjectSchema({ type: ['object', 'null'] }); // true
 isObjectSchema({ type: 'array' }); // false`}
@@ -39847,7 +39857,7 @@ isStringSchema({ type: 'number' }); // false
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/json-schema": "0.12.3" }}
+  dependencies={{ "@winglet/json-schema": "0.15.1" }}
   code={`isStringSchema({ type: 'string' }); // true
 isStringSchema({ type: ['string', 'null'] }); // true
 isStringSchema({ type: 'number' }); // false`}
@@ -39877,16 +39887,16 @@ yarn add @winglet/json-schema
 | Import path | Contents |
 |---|---|
 | `@winglet/json-schema` | All exports |
-| `@winglet/json-schema/scanner` | `JsonSchemaScanner` (synchronous) |
-| `@winglet/json-schema/async-scanner` | `JsonSchemaScannerAsync` |
+| `@winglet/json-schema/scanner` | `JSONSchemaScanner` (synchronous) |
+| `@winglet/json-schema/async-scanner` | `JSONSchemaScannerAsync` |
 | `@winglet/json-schema/filter` | Schema type-guard functions |
 
 ## Key Exports
 
 ### Schema Scanner
 
-- `JsonSchemaScanner` — depth-first traversal with `enter`/`exit` visitor callbacks
-- `JsonSchemaScannerAsync` — async variant for remote `$ref` resolution
+- `JSONSchemaScanner` — depth-first traversal with `enter`/`exit` visitor callbacks
+- `JSONSchemaScannerAsync` — async variant for remote `$ref` resolution
 
 ### Schema Filters (`/filter`)
 
@@ -39903,7 +39913,7 @@ Type-guard functions for each JSON Schema type:
 ## Usage Examples
 
 ```ts
-import { JsonSchemaScanner } from '@winglet/json-schema/scanner';
+import { JSONSchemaScanner } from '@winglet/json-schema/scanner';
 
 const schema = {
   type: 'object',
@@ -39913,7 +39923,7 @@ const schema = {
   },
 };
 
-const scanner = new JsonSchemaScanner({
+const scanner = new JSONSchemaScanner({
   visitor: {
     enter(entry) {
       console.log(entry.path, entry.schema.type);
@@ -39966,12 +39976,12 @@ The CLI resolves `@winglet/json-schema/package.json` via `createRequire`, reads 
 
 ### Key exports
 ```
-./scanner → JsonSchemaScanner
-            JsonScannerOptions (type)
+./scanner → JSONSchemaScanner
+            JSONScannerOptions (type)
             SchemaVisitor (type)
             SchemaEntry (type)
-./async-scanner → JsonSchemaScannerAsync
-                  JsonScannerOptionsAsync (type)
+./async-scanner → JSONSchemaScannerAsync
+                  JSONScannerOptionsAsync (type)
                   SchemaVisitor (type)
                   SchemaEntry (type)
 ./filter → isArraySchema
@@ -40031,7 +40041,7 @@ Additional draft 2019-09 / 2020-12 applicator keywords that the built-in
 vocabulary intentionally does NOT traverse by default (to preserve existing
 observable behaviour). Pass via `options.additionalKeywords` to opt in:
 ```ts
-new JsonSchemaScanner({ options: { additionalKeywords: EXTENDED_KEYWORDS } });
+new JSONSchemaScanner({ options: { additionalKeywords: EXTENDED_KEYWORDS } });
 ```
 `dependencies` (draft-07, whose values may be either a schema or a string[])
 is deliberately excluded because its array form is not a subschema.
@@ -40044,18 +40054,18 @@ const EXTENDED_KEYWORDS: readonly KeywordDescriptor[]
 
 ---
 
-## JsonScannerOptions
+## JSONScannerOptions
 
 <!-- sync-winglet-docs:auto -->
 
 import WingletPlayground from '@site/src/components/WingletPlayground';
 
-# JsonScannerOptions
+# JSONScannerOptions
 
 ## Signature
 
 ```typescript
-interface JsonScannerOptions<Schema extends UnknownSchema = UnknownSchema, ContextType = void> {
+interface JSONScannerOptions<Schema extends UnknownSchema = UnknownSchema, ContextType = void> {
     /** Schema node filtering function */
     filter?: Fn<[entry: SchemaEntry<Schema>, context?: ContextType], boolean>;
     /** Function to mutate schema */
@@ -40119,13 +40129,13 @@ interface JsonScannerOptions<Schema extends UnknownSchema = UnknownSchema, Conte
 
 ---
 
-## JsonSchemaScanner
+## JSONSchemaScanner
 
 <!-- sync-winglet-docs:auto -->
 
 import WingletPlayground from '@site/src/components/WingletPlayground';
 
-# JsonSchemaScanner
+# JSONSchemaScanner
 
 A powerful JSON Schema traversal engine that implements depth-first search (DFS)
 with the Visitor pattern for comprehensive schema analysis and transformation.
@@ -40137,7 +40147,7 @@ and maintains internal state for efficient processing and result caching.
 ## Signature
 
 ```typescript
-class JsonSchemaScanner
+class JSONSchemaScanner
 ```
 
 ## Examples
@@ -40145,7 +40155,7 @@ class JsonSchemaScanner
 ### Basic schema traversal with visitor pattern
 
 ```typescript
-import { JsonSchemaScanner } from '@winglet/json-schema';
+import { JSONSchemaScanner } from '@winglet/json-schema';
 
 const schema = {
   type: 'object',
@@ -40167,7 +40177,7 @@ const schema = {
   }
 };
 
-const scanner = new JsonSchemaScanner({
+const scanner = new JSONSchemaScanner({
   visitor: {
     enter: (entry) => {
       console.log(`Entering: ${entry.path} (${entry.schema.type})`);
@@ -40189,7 +40199,7 @@ const processedSchema = scanner.scan(schema).getValue();
 ```typescript
 import { isStringSchema } from '@winglet/json-schema/filter';
 
-const transformScanner = new JsonSchemaScanner({
+const transformScanner = new JSONSchemaScanner({
   options: {
     mutate: (entry) => {
       // Add default titles to string fields (handles both nullable and non-nullable)
@@ -40214,7 +40224,7 @@ const definitions = {
   '/schemas/address.json': { type: 'object', properties: { city: { type: 'string' } } }
 };
 
-const resolverScanner = new JsonSchemaScanner({
+const resolverScanner = new JSONSchemaScanner({
   options: {
     resolveReference: (refPath) => {
       return definitions[refPath];
@@ -40243,7 +40253,7 @@ interface AnalysisContext {
   objectFieldCount: number;
 }
 
-const analysisScanner = new JsonSchemaScanner<AnalysisContext>({
+const analysisScanner = new JSONSchemaScanner<AnalysisContext>({
   options: {
     filter: (entry) => {
       // Only process non-definition schemas
@@ -40288,8 +40298,8 @@ const fullyResolvedSchema = resolveReference(schemaWithInternalRefs);
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/json-schema": "0.12.3" }}
-  code={`import { JsonSchemaScanner } from '@winglet/json-schema';
+  dependencies={{ "@winglet/json-schema": "0.15.1" }}
+  code={`import { JSONSchemaScanner } from '@winglet/json-schema';
 
 const schema = {
   type: 'object',
@@ -40311,7 +40321,7 @@ const schema = {
   }
 };
 
-const scanner = new JsonSchemaScanner({
+const scanner = new JSONSchemaScanner({
   visitor: {
     enter: (entry) => {
       console.log(\`Entering: \${entry.path} (\${entry.schema.type})\`);
