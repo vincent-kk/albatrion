@@ -313,18 +313,20 @@ describe('AbstractNode.injectTo', () => {
         }),
       );
 
-      // Deprecated alias keys must reference the same schema objects as the
-      // canonical keys. Removed in 0.16.0.
       const receivedContext = injectFn.mock.calls[0][1] as Record<
         string,
         unknown
       >;
-      expect(receivedContext.parentJsonSchema).toBe(
-        receivedContext.parentJSONSchema,
-      );
-      expect(receivedContext.rootJsonSchema).toBe(
-        receivedContext.rootJSONSchema,
-      );
+      expect(Object.keys(receivedContext).sort()).toEqual([
+        'context',
+        'dataPath',
+        'jsonSchema',
+        'parentJSONSchema',
+        'parentValue',
+        'rootJSONSchema',
+        'rootValue',
+        'schemaPath',
+      ]);
     });
   });
 

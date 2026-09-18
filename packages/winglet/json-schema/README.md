@@ -263,18 +263,9 @@ type NullValue = null;
 
 ---
 
-## Migration (0.15.0)
+## Migration (0.16.0)
 
-The former `Json*` names are kept as `@deprecated` aliases of their `JSON*` counterparts. They are `Removed in 0.16.0` — migrate call sites to the new names before upgrading.
-
-| Old              | New                 |
-| ---------------- | ------------------- |
-| `JsonSchema`               | `JSONSchema`               |
-| `InferJsonSchema`          | `InferJSONSchema`          |
-| `JsonSchemaScanner`        | `JSONSchemaScanner`        |
-| `JsonSchemaScannerAsync`   | `JSONSchemaScannerAsync`   |
-| `JsonScannerOptions`       | `JSONScannerOptions`       |
-| `JsonScannerOptionsAsync`  | `JSONScannerOptionsAsync`  |
+0.16.0 removes the deprecated aliases that 0.15.0 kept for the previous mixed-case names. Use `JSONSchema`, `InferJSONSchema`, `JSONSchemaScanner`, `JSONSchemaScannerAsync`, `JSONScannerOptions` and `JSONScannerOptionsAsync`.
 
 ---
 

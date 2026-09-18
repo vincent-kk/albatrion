@@ -7,7 +7,6 @@
 - 값 정제 옵션은 **값을 바꾸되 노드 트리를 바꾸지 않는다.** 정제는 노드가 밖으로 내보내는 값(`normalizedValue`)에만 적용되고, 자식 노드·렌더된 입력·raw `value`는 그대로 유지된다. 이 분리는 사용자가 편집 중인 화면이 정제 때문에 접히지 않게 하는 계약이다.
 - 새 노드 타입은 `core/nodes/` 아래에 두고 `index.ts`에 export를 추가한다. `src/` 루트에는 소스 파일을 직접 두지 않는다.
 - 플러그인 등록은 `registerPlugin()`만을 경유한다. `PluginManager`의 static 상태를 우회 변경하지 않는다.
-- 0.15.0에서 `Json*` 이름이 `JSON*`으로 바뀌면서, 이전 이름 `JsonSchemaError` · `isJsonSchemaError` · `JsonSchema` · `InferJsonSchema`는 대응하는 `JSON*` 심볼의 `@deprecated` 별칭으로 공개 표면에 남아 있다. `Removed in 0.16.0`. `JSONSchemaError` 인스턴스는 이 별칭을 통해서도 여전히 `name === 'JSONSchemaError'`를 보고한다. `InjectHandlerContext`의 `parentJsonSchema` · `rootJsonSchema`도 각각 `parentJSONSchema` · `rootJSONSchema`와 같은 값을 담는 `@deprecated` 중복 프로퍼티로 유지되며, `Removed in 0.16.0`.
 
 ## API Contracts
 
@@ -53,8 +52,8 @@
 
 ## History
 
-- 2026-09-18 — `Json*` → `JSON*` 이름 변경에 맞춰 `JsonSchemaError` · `isJsonSchemaError` · `JsonSchema` · `InferJsonSchema`를 `@deprecated` 별칭으로 유지, `Removed in 0.16.0`.
+- 2026-09-19 — 0.16.0: 0.15.0에서 유지하던 이전 표기 공개 별칭과 `InjectHandlerContext`의 중복 키 제거(breaking).
 
 ## Last Updated
 
-2026-09-18 — 이전 `Json*` 이름을 `@deprecated` 별칭으로 유지하는 계약을 추가.
+2026-09-19 — 0.16.0 공개 별칭과 중복 context 키 제거 반영

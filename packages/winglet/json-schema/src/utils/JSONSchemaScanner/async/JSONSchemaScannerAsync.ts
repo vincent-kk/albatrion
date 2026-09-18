@@ -392,12 +392,6 @@ export class JSONSchemaScannerAsync<
   }
 }
 
-export const JsonSchemaScannerAsync = JSONSchemaScannerAsync;
-export type JsonSchemaScannerAsync<
-  Schema extends UnknownSchema = UnknownSchema,
-  ContextType = void,
-> = JSONSchemaScannerAsync<Schema, ContextType>;
-
 /** Narrow guard used by the async driver to avoid a needless microtask hop when
  * a user callback happens to be synchronous. */
 const isThenable = (value: unknown): value is PromiseLike<unknown> =>

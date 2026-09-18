@@ -2354,16 +2354,9 @@ Passing `defaultValue` infers `Value` from it as well, so an explicit type argum
 
 ---
 
-## Migration (0.15.0)
+## Migration (0.16.0)
 
-The following exports were renamed for consistent casing. The old names remain as `@deprecated` aliases and will be removed in 0.16.0 (Removed in 0.16.0).
-
-| Old                 | New                 |
-| ------------------- | ------------------- |
-| `JsonSchemaError`   | `JSONSchemaError`   |
-| `isJsonSchemaError` | `isJSONSchemaError` |
-| `JsonSchema`        | `JSONSchema`        |
-| `InferJsonSchema`   | `InferJSONSchema`   |
+0.16.0 removes the deprecated aliases that 0.15.0 kept for the previous mixed-case names. Use `JSONSchemaError`, `isJSONSchemaError`, `JSONSchema` and `InferJSONSchema`. `injectTo` handlers receive the schemas only as `parentJSONSchema` and `rootJSONSchema`.
 
 ---
 

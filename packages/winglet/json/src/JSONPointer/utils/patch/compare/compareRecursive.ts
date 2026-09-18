@@ -14,7 +14,7 @@ import { processValue } from './utils/processValue';
  * This is the internal implementation that performs the actual deep comparison logic.
  * It handles:
  * - Early return for identical references
- * - Automatic serialization of objects with toJson() method
+ * - Automatic serialization of objects with toJSON() method
  * - Recursive comparison of nested objects/arrays
  * - Generation of appropriate operations based on property changes
  * - Proper JSON Pointer path construction for nested properties
@@ -208,16 +208,12 @@ export const compareRecursive = <
 };
 
 /**
- * Reduces a self-serializing value to the form its own hook produces.
- *
- * `toJSON` is the standard hook; `toJson` is accepted as a deprecated alias —
- * Removed in 0.16.0.
+ * Reduces a self-serializing value to what its `toJSON` hook returns.
  *
  * @param value - Value to reduce
  * @returns The hook's result, or the value itself when it has no hook
  */
 const serializable = (value: any): any => {
   if (typeof value?.toJSON === 'function') return value.toJSON();
-  if (typeof value?.toJson === 'function') return value.toJson();
   return value;
 };

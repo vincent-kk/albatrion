@@ -69,8 +69,6 @@ export const convertJSONPathToPointer = (dataPath: string): string => {
   return result || JSON_POINTER_SEPARATOR;
 };
 
-export const convertJsonPathToPointer = convertJSONPathToPointer;
-
 const JSON_PATH_SEPARATOR = '.';
 const JSON_PATH_ARRAY_INDEX_PREFIX = '[';
 const JSON_PATH_ARRAY_INDEX_SUFFIX = ']';

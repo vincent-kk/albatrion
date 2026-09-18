@@ -959,10 +959,8 @@ export abstract class AbstractNode<
           jsonSchema: this.jsonSchema,
           parentValue: this.parentNode?.value || null,
           parentJSONSchema: this.parentNode?.jsonSchema || null,
-          parentJsonSchema: this.parentNode?.jsonSchema || null,
           rootValue: this.rootNode.value,
           rootJSONSchema: this.rootNode.jsonSchema,
-          rootJsonSchema: this.rootNode.jsonSchema,
           context: this.context,
         } satisfies InjectHandlerContext;
         try {

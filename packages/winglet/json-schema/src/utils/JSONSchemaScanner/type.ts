@@ -179,13 +179,3 @@ export interface JSONScannerOptionsAsync<
     Schema | Promise<Schema | undefined> | undefined
   >;
 }
-
-export type JsonScannerOptions<
-  Schema extends UnknownSchema = UnknownSchema,
-  ContextType = void,
-> = JSONScannerOptions<Schema, ContextType>;
-
-export type JsonScannerOptionsAsync<
-  Schema extends UnknownSchema = UnknownSchema,
-  ContextType = void,
-> = JSONScannerOptionsAsync<Schema, ContextType>;

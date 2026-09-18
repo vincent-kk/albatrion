@@ -382,33 +382,15 @@ describe('compare', () => {
     });
   });
 
-  describe('toJson() Method Handling', () => {
-    it('should handle objects with toJson method', () => {
+  describe('toJSON() Method Handling', () => {
+    it('should handle both objects having toJSON method', () => {
       const source = {
-        toJson() {
-          return { name: 'John', age: 30 };
-        },
-      };
-      const target = { name: 'John', age: 31 };
-
-      const result = compare(source, target);
-      expect(result).toEqual([
-        {
-          op: Operation.REPLACE,
-          path: '/age',
-          value: 31,
-        },
-      ]);
-    });
-
-    it('should handle both objects having toJson method', () => {
-      const source = {
-        toJson() {
+        toJSON() {
           return { name: 'John', age: 30 };
         },
       };
       const target = {
-        toJson() {
+        toJSON() {
           return { name: 'Jane', age: 30 };
         },
       };
@@ -441,33 +423,6 @@ describe('compare', () => {
       ]);
     });
 
-    it('should prefer toJSON over toJson when both are present', () => {
-      const source = {
-        toJSON() {
-          return { name: 'John', source: 'toJSON' };
-        },
-        toJson() {
-          return { name: 'John', source: 'toJson' };
-        },
-      };
-      const target = {
-        toJSON() {
-          return { name: 'Jane', source: 'toJSON' };
-        },
-        toJson() {
-          return { name: 'Jane', source: 'toJson' };
-        },
-      };
-
-      const result = compare(source, target);
-      expect(result).toEqual([
-        {
-          op: Operation.REPLACE,
-          path: '/name',
-          value: 'Jane',
-        },
-      ]);
-    });
   });
 
   describe('Special Characters in Keys', () => {

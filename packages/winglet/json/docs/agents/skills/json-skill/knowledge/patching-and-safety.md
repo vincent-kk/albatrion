@@ -79,7 +79,7 @@ The default `immutable: true` makes failure atomic from the caller's point of vi
 
 Only `add`, `remove`, `replace`, and — under `strict` — `test`. It never emits `move` or `copy`, even when a subtree is relocated; that shows up as a `remove` plus an `add`. `move` and `copy` are accepted by `applyPatch` but must be hand-written.
 
-Objects exposing a `toJSON()` method are serialized through it before comparison, so a domain model diffs as its JSON projection rather than by its class fields; the deprecated `toJson()` alias is still accepted (Removed in 0.16.0).
+Objects exposing a `toJSON()` method are serialized through it before comparison, so a domain model diffs as its JSON projection rather than by its class fields.
 
 ## Merge Patch replaces more than people expect
 

@@ -59,8 +59,6 @@ export const convertJSONPointerToPath = (jsonPointer: string): string => {
   return result;
 };
 
-export const convertJsonPointerToPath = convertJSONPointerToPath;
-
 /**
  * Formats a segment for JSON Path based on whether it's numeric (array index) or not.
  *

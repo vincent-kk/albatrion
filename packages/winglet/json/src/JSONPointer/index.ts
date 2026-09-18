@@ -1,10 +1,6 @@
 export { JSONPointer } from './enum';
 
-export {
-  convertJSONPointerToPath,
-  /** @deprecated Use `convertJSONPointerToPath`. Removed in 0.16.0. */
-  convertJsonPointerToPath,
-} from './utils/convertJSONPointerToPath';
+export { convertJSONPointerToPath } from './utils/convertJSONPointerToPath';
 export {
   escapePath,
   escapeSegment,

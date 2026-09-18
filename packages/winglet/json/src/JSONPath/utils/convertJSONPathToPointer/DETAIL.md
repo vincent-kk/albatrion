@@ -13,7 +13,6 @@
   - `.`는 세그먼트 경계로 처리되어 포인터 구분자로 치환된다.
   - `[n]`은 포인터 구분자와 `n`으로, 빈 대괄호는 포인터 구분자와 `-`로 치환된다.
   - 변환 결과가 비면 루트 포인터 하나만 반환한다.
-  - 이전 이름 `convertJsonPathToPointer`는 0.15.0에서 `@deprecated` 별칭으로 남아 동일하게 동작한다 — Removed in 0.16.0.
 
 ## Acceptance Criteria
 
@@ -30,8 +29,8 @@
 
 ## History
 
-- 2026-09-18 — 이름 표기 규칙 `Json` → `JSON` 통일; 구 이름 `convertJsonPathToPointer`는 0.15.0에서 `@deprecated` 별칭으로 유지, 0.16.0에서 제거.
+- 2026-09-19 — 0.16.0: 0.15.0에서 유지하던 이전 표기 별칭 제거(breaking).
 
 ## Last Updated
 
-2026-09-18 — 이름 표기 규칙 `Json` → `JSON` 통일, `@deprecated` 별칭 계약 반영
+2026-09-19 — 0.16.0 공개 별칭 제거 반영

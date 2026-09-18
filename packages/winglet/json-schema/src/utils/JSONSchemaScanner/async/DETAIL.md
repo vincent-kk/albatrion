@@ -13,7 +13,6 @@
 - `scan(schema): Promise<this>`.
 - `getValue<OutputSchema>(): OutputSchema | undefined`.
 - entry point는 순회 어휘 상수는 재수출하지 않는다 — 상수는 sync fractal에서만 재수출된다.
-- `JsonSchemaScannerAsync`(값·타입)와 `JsonScannerOptionsAsync`(타입)는 0.15.0부터 각각 `JSONSchemaScannerAsync`, `JSONScannerOptionsAsync`의 `@deprecated` 별칭으로 entry point가 재수출한다. `Removed in 0.16.0`.
 
 ## Acceptance Criteria
 
@@ -42,8 +41,8 @@
 
 ## History
 
-- 2026-09-18 — `Json` → `JSON` 명명 규칙 통일에 따라 `JsonSchemaScannerAsync`/`JsonScannerOptionsAsync`를 0.15.0에서 `@deprecated` 별칭으로 유지하고 0.16.0에서 제거하기로 결정.
+- 2026-09-19 — 0.16.0: 0.15.0에서 유지하던 이전 표기 공개 별칭 제거(breaking).
 
 ## Last Updated
 
-2026-09-18 — `Json*` 별칭 유지·제거 시점 계약 추가
+2026-09-19 — 0.16.0 공개 별칭 제거 반영

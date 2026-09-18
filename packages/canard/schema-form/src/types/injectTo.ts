@@ -160,9 +160,6 @@ export type InjectHandlerContext<
    */
   parentJSONSchema: JSONSchemaWithVirtual | null;
 
-  /** @deprecated Use `parentJSONSchema`. Removed in 0.16.0. */
-  parentJsonSchema?: JSONSchemaWithVirtual | null;
-
   /**
    * The complete value of the root form node.
    * Represents the entire form data structure.
@@ -174,9 +171,6 @@ export type InjectHandlerContext<
    * The top-level schema that defines the entire form structure.
    */
   rootJSONSchema: JSONSchemaWithVirtual;
-
-  /** @deprecated Use `rootJSONSchema`. Removed in 0.16.0. */
-  rootJsonSchema?: JSONSchemaWithVirtual;
 
   /**
    * The shared context object containing form-wide data.

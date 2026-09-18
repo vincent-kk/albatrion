@@ -495,21 +495,13 @@ async function testJSONSchemaFunctions() {
   }
 
   try {
-    const scannerModule = await import('../packages/winglet/json-schema/dist/utils/JSONSchemaScanner/sync/index.mjs');
-    const { JSONSchemaScanner } = scannerModule;
+    const { JSONSchemaScanner } = await import('../packages/winglet/json-schema/dist/utils/JSONSchemaScanner/sync/index.mjs');
 
     runTest('JSONSchemaScanner class load', () => {
       if (typeof JSONSchemaScanner !== 'function') {
         throw new Error(`Expected function, got ${typeof JSONSchemaScanner}`);
       }
       console.log(`  Type: ${typeof JSONSchemaScanner}`);
-    });
-
-    // Deprecated alias — Removed in 0.16.0 together with the alias export.
-    runTest('JsonSchemaScanner deprecated alias', () => {
-      if (scannerModule.JsonSchemaScanner !== JSONSchemaScanner) {
-        throw new Error('Expected JsonSchemaScanner to alias JSONSchemaScanner');
-      }
     });
 
   } catch (error) {

@@ -1,4 +1,1 @@
-export {
-  convertJSONPathToPointer,
-  convertJsonPathToPointer,
-} from './convertJSONPathToPointer';
+export { convertJSONPathToPointer } from './convertJSONPathToPointer';

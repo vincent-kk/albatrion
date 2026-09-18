@@ -2293,16 +2293,9 @@ const formRef = useRef<FormHandle<typeof jsonSchema, SignUpValue>>(null);
 
 ---
 
-## 마이그레이션 (0.15.0)
+## 마이그레이션 (0.16.0)
 
-아래 이름들은 표기 일관성을 위해 이름이 바뀌었습니다. 이전 이름은 `@deprecated` 별칭으로 남아 있으며 0.16.0에서 제거됩니다 (Removed in 0.16.0).
-
-| 이전                | 이후                |
-| ------------------- | ------------------- |
-| `JsonSchemaError`   | `JSONSchemaError`   |
-| `isJsonSchemaError` | `isJSONSchemaError` |
-| `JsonSchema`        | `JSONSchema`        |
-| `InferJsonSchema`   | `InferJSONSchema`   |
+0.16.0은 0.15.0이 이전 대소문자 혼용 이름을 위해 남겨 둔 deprecated 별칭을 제거합니다. `JSONSchemaError`, `isJSONSchemaError`, `JSONSchema`, `InferJSONSchema`를 사용하세요. `injectTo` 핸들러는 스키마를 `parentJSONSchema`, `rootJSONSchema`로만 받습니다.
 
 ---
 

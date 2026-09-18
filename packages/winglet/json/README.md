@@ -410,15 +410,9 @@ This repository is provided under the MIT License. See the [`LICENSE`](./LICENSE
 
 ---
 
-## Migration (0.15.0)
+## Migration (0.16.0)
 
-The following names are deprecated and will be removed in 0.16.0 (Removed in 0.16.0). Each old name remains a working alias until then.
-
-| Deprecated                    | Use instead                 |
-| ------------------------------ | ---------------------------- |
-| `convertJsonPathToPointer`     | `convertJSONPathToPointer`   |
-| `convertJsonPointerToPath`     | `convertJSONPointerToPath`   |
-| `toJson()` hook                | `toJSON()` hook              |
+0.16.0 removes the deprecated aliases that 0.15.0 kept for the previous mixed-case names. Import `convertJSONPathToPointer` and `convertJSONPointerToPath`. `compare()` now reduces values only through the standard `toJSON()` hook.
 
 ---
 

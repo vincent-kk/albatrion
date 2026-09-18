@@ -237,38 +237,7 @@ describe('compare - strict mode', () => {
     });
   });
 
-  describe('Objects with toJson() method', () => {
-    it('should include TEST operations with serialized values in strict mode', () => {
-      const source = {
-        value: {
-          toJson() {
-            return { serialized: 'source' };
-          },
-        },
-      };
-      const target = {
-        value: {
-          toJson() {
-            return { serialized: 'target' };
-          },
-        },
-      };
-
-      const result = compare(source, target, { strict: true });
-      expect(result).toEqual([
-        {
-          op: Operation.TEST,
-          path: '/value/serialized',
-          value: 'source',
-        },
-        {
-          op: Operation.REPLACE,
-          path: '/value/serialized',
-          value: 'target',
-        },
-      ]);
-    });
-
+  describe('Objects with toJSON() method', () => {
     it('should include TEST operations with serialized values in strict mode for toJSON', () => {
       const source = {
         value: {

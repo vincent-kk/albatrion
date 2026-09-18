@@ -36,5 +36,3 @@ export class JSONSchemaError extends BaseError {
  */
 export const isJSONSchemaError = (error: unknown): error is JSONSchemaError =>
   error instanceof JSONSchemaError;
-
-export const isJsonSchemaError = isJSONSchemaError;

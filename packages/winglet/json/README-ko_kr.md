@@ -400,15 +400,9 @@ try {
 
 ---
 
-## 마이그레이션 (0.15.0)
+## 마이그레이션 (0.16.0)
 
-아래 이름들은 deprecated 상태이며 0.16.0에서 제거됩니다 (Removed in 0.16.0). 그 전까지 각 옛 이름은 동작하는 별칭으로 남아 있습니다.
-
-| Deprecated                  | 대신 사용                   |
-| ---------------------------- | ---------------------------- |
-| `convertJsonPathToPointer`   | `convertJSONPathToPointer`   |
-| `convertJsonPointerToPath`   | `convertJSONPointerToPath`   |
-| `toJson()` 훅                | `toJSON()` 훅                |
+0.16.0은 0.15.0이 이전 대소문자 혼용 이름을 위해 남겨 둔 deprecated 별칭을 제거합니다. `convertJSONPathToPointer`, `convertJSONPointerToPath`를 사용하세요. `compare()`는 이제 표준 `toJSON()` 훅으로만 값을 축소합니다.
 
 ---
 

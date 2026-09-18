@@ -106,10 +106,6 @@ export type JSONSchema<Options extends Dictionary = object> =
   | NullSchema<Options>
   | RefSchema;
 
-/** @deprecated Use `JSONSchema`. Removed in 0.16.0. */
-export type JsonSchema<Options extends Dictionary = object> =
-  JSONSchema<Options>;
-
 /** Schema inference for non-nullable values */
 type InferNonNullableSchema<
   Value,
@@ -156,9 +152,3 @@ export type InferJSONSchema<
   : IsNullable<Value> extends true
     ? InferNullableSchema<Exclude<Value, null>, Options>
     : InferNonNullableSchema<Value, Options>;
-
-/** @deprecated Use `InferJSONSchema`. Removed in 0.16.0. */
-export type InferJsonSchema<
-  Value extends AllowedValue | unknown = any,
-  Options extends Dictionary = object,
-> = InferJSONSchema<Value, Options>;

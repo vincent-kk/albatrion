@@ -13,7 +13,6 @@
 - `scan(schema): this`: 동기로 순회를 완료한 뒤 `this`를 반환한다.
 - `getValue<OutputSchema>(): OutputSchema | undefined`: 처리된 최종 스키마를 반환한다.
 - entry point는 순회 어휘 상수도 이름으로 재수출한다 — 상수 값 자체는 상위 organ 소유다.
-- `JsonSchemaScanner`(값·타입)와 `JsonScannerOptions`(타입)는 0.15.0부터 각각 `JSONSchemaScanner`, `JSONScannerOptions`의 `@deprecated` 별칭으로 entry point가 재수출한다. `Removed in 0.16.0`.
 
 ## Acceptance Criteria
 
@@ -36,8 +35,8 @@
 
 ## History
 
-- 2026-09-18 — `Json` → `JSON` 명명 규칙 통일에 따라 `JsonSchemaScanner`/`JsonScannerOptions`를 0.15.0에서 `@deprecated` 별칭으로 유지하고 0.16.0에서 제거하기로 결정.
+- 2026-09-19 — 0.16.0: 0.15.0에서 유지하던 이전 표기 공개 별칭 제거(breaking).
 
 ## Last Updated
 
-2026-09-18 — `Json*` 별칭 유지·제거 시점 계약 추가
+2026-09-19 — 0.16.0 공개 별칭 제거 반영

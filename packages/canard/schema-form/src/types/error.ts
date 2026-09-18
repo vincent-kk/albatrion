@@ -301,9 +301,6 @@ export interface PublicJSONSchemaError<SourceError = unknown> {
   source?: SourceError;
 }
 
-export type PublicJsonSchemaError<SourceError = unknown> =
-  PublicJSONSchemaError<SourceError>;
-
 /**
  * JSONSchemaError extends PublicJSONSchemaError and adds `key` property.
  */

@@ -12,7 +12,6 @@
 ## API Contracts
 
 - `convertJSONPointerToPath(jsonPointer)` → JSON Pointer 문자열을 받아 dataPath 문자열을 반환한다. 빈 문자열과 루트 포인터는 점 하나로, 각 세그먼트는 숫자 여부·끝 추가 표시 여부·점 포함 여부에 따라 점 표기 또는 대괄호 표기로 변환된다. 입력이 이미 변환된 표기로 시작하면 그대로 반환한다.
-- 이전 이름 `convertJsonPointerToPath`는 0.15.0에서 `@deprecated` 별칭으로 남아 동일하게 동작한다 — Removed in 0.16.0.
 
 ## Acceptance Criteria
 
@@ -34,8 +33,8 @@
 
 ## History
 
-- 2026-09-18 — 이름 표기 규칙 `Json` → `JSON` 통일; 구 이름 `convertJsonPointerToPath`는 0.15.0에서 `@deprecated` 별칭으로 유지, 0.16.0에서 제거.
+- 2026-09-19 — 0.16.0: 0.15.0에서 유지하던 이전 표기 별칭 제거(breaking).
 
 ## Last Updated
 
-2026-09-18 — 이름 표기 규칙 `Json` → `JSON` 통일, `@deprecated` 별칭 계약 반영
+2026-09-19 — 0.16.0 공개 별칭 제거 반영

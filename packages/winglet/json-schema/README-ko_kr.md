@@ -263,18 +263,9 @@ type NullValue = null;
 
 ---
 
-## 마이그레이션 안내 (0.15.0)
+## 마이그레이션 안내 (0.16.0)
 
-이전 `Json*` 이름은 해당 `JSON*` 이름의 `@deprecated` 별칭으로 유지됩니다. 이 별칭들은 `Removed in 0.16.0`(0.16.0에서 제거)이므로, 업그레이드 전에 호출부를 새 이름으로 옮겨야 합니다.
-
-| 이전 이름                  | 새 이름                    |
-| -------------------------- | --------------------------- |
-| `JsonSchema`               | `JSONSchema`                |
-| `InferJsonSchema`          | `InferJSONSchema`           |
-| `JsonSchemaScanner`        | `JSONSchemaScanner`         |
-| `JsonSchemaScannerAsync`   | `JSONSchemaScannerAsync`    |
-| `JsonScannerOptions`       | `JSONScannerOptions`        |
-| `JsonScannerOptionsAsync`  | `JSONScannerOptionsAsync`   |
+0.16.0은 0.15.0이 이전 대소문자 혼용 이름을 위해 남겨 둔 deprecated 별칭을 제거합니다. `JSONSchema`, `InferJSONSchema`, `JSONSchemaScanner`, `JSONSchemaScannerAsync`, `JSONScannerOptions`, `JSONScannerOptionsAsync`를 사용하세요.
 
 ---
 

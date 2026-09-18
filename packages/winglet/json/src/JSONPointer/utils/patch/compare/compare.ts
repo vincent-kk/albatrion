@@ -16,7 +16,7 @@ import type { CompareOptions } from './type';
  * - Missing properties in target result in REMOVE operations
  * - New properties in target result in ADD operations
  * - Changed values result in REPLACE operations
- * - Objects with a `toJSON()` method are automatically serialized before comparison; the deprecated `toJson()` alias is still accepted (Removed in 0.16.0)
+ * - Objects with a `toJSON()` method are automatically serialized before comparison
  *
  * @template Source - The type of the source object/array, must extend Dictionary or Array<any>
  * @template Target - The type of the target object/array, must extend Dictionary or Array<any>

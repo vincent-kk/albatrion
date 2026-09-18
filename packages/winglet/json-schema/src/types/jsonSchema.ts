@@ -69,12 +69,6 @@ export type InferJSONSchema<
     ? InferNullableSchema<Exclude<Value, null>, Options, Schema>
     : InferNonNullableSchema<Value, Options, Schema>;
 
-export type InferJsonSchema<
-  Value extends AllowedValue | unknown = any,
-  Options extends Dictionary = object,
-  Schema extends UnknownSchema = JSONSchema,
-> = InferJSONSchema<Value, Options, Schema>;
-
 /** Standard JSON Schema union type */
 export type JSONSchema<Options extends Dictionary = object> =
   | NonNullableNumberSchema<Options, JSONSchema>
@@ -88,9 +82,6 @@ export type JSONSchema<Options extends Dictionary = object> =
   | NonNullableObjectSchema<Options, JSONSchema>
   | NullableObjectSchema<Options, JSONSchema>
   | NullSchema<Options, JSONSchema>;
-
-export type JsonSchema<Options extends Dictionary = object> =
-  JSONSchema<Options>;
 
 /** Number/Integer type schema */
 export type NumberSchema<

@@ -355,9 +355,3 @@ export class JSONSchemaScanner<
     }
   }
 }
-
-export const JsonSchemaScanner = JSONSchemaScanner;
-export type JsonSchemaScanner<
-  Schema extends UnknownSchema = UnknownSchema,
-  ContextType = void,
-> = JSONSchemaScanner<Schema, ContextType>;
