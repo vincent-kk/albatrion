@@ -3,13 +3,13 @@ import { bench, describe } from 'vitest';
 import { compare } from '@/json';
 
 /** A flat JSON document with one numeric value per measured node. */
-type JsonDocument = Record<string, number>;
+type JSONDocument = Record<string, number>;
 
 /** Inputs for one document-size and change-density combination. */
 interface CompareScenario {
   name: string;
-  source: JsonDocument;
-  target: JsonDocument;
+  source: JSONDocument;
+  target: JSONDocument;
 }
 
 /**
@@ -18,8 +18,8 @@ interface CompareScenario {
  * @param nodeCount - The number of properties to create
  * @returns A flat JSON document with stable keys and values
  */
-const createDocument = (nodeCount: number): JsonDocument => {
-  const document: JsonDocument = {};
+const createDocument = (nodeCount: number): JSONDocument => {
+  const document: JSONDocument = {};
   for (let index = 0; index < nodeCount; index++)
     document[`node${index}`] = index;
   return document;

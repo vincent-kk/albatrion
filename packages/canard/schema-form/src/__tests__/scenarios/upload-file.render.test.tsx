@@ -3,7 +3,7 @@ import type { FC } from 'react';
 import '@testing-library/jest-dom';
 import { describe, expect, it } from 'vitest';
 
-import type { JsonSchema } from '@winglet/json-schema';
+import type { JSONSchema } from '@winglet/json-schema';
 
 import { type FormTypeInputProps } from '@/schema-form';
 import { SetValueOption } from '@/schema-form/core';
@@ -105,7 +105,7 @@ const singleSchema = {
       FormTypeInputProps: { accept: '*/*', multiple: false },
     },
   },
-} satisfies JsonSchema;
+} satisfies JSONSchema;
 
 const multiSchema = {
   type: 'object',
@@ -118,7 +118,7 @@ const multiSchema = {
       items: fileMetaSchema,
     },
   },
-} satisfies JsonSchema;
+} satisfies JSONSchema;
 
 const oneOfSchema = {
   type: 'object',
@@ -144,7 +144,7 @@ const oneOfSchema = {
     category: { type: 'string', enum: ['movie', 'game'], default: 'movie' },
     title: { type: 'string' },
   },
-} satisfies JsonSchema;
+} satisfies JSONSchema;
 
 // ---------------------------------------------------------------------------
 // Helpers

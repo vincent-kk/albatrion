@@ -2,9 +2,9 @@ import { describe, expect, it } from 'vitest';
 
 import { delay } from '@winglet/common-utils';
 
-import type { JsonSchema } from '@/schema-form/types';
+import type { JSONSchema } from '@/schema-form/types';
 
-import { nodeFromJsonSchema } from '../nodeFromJsonSchema';
+import { nodeFromJSONSchema } from '../nodeFromJSONSchema';
 import { isArrayNode } from '../nodes';
 import type { ArrayNode } from '../nodes/ArrayNode';
 import type { ObjectNode } from '../nodes/ObjectNode';
@@ -22,14 +22,14 @@ import type { ObjectNode } from '../nodes/ObjectNode';
 describe('AbstractNode path and schemaPath structure', () => {
   describe('Basic flat structure', () => {
     it('should assign correct path and schemaPath for root node', () => {
-      const jsonSchema: JsonSchema = {
+      const jsonSchema: JSONSchema = {
         type: 'object',
         properties: {
           name: { type: 'string' },
         },
       };
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema,
         onChange: () => {},
       });
@@ -40,7 +40,7 @@ describe('AbstractNode path and schemaPath structure', () => {
     });
 
     it('should assign correct path and schemaPath for simple properties', () => {
-      const jsonSchema: JsonSchema = {
+      const jsonSchema: JSONSchema = {
         type: 'object',
         properties: {
           name: { type: 'string' },
@@ -49,7 +49,7 @@ describe('AbstractNode path and schemaPath structure', () => {
         },
       };
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema,
         onChange: () => {},
       });
@@ -71,7 +71,7 @@ describe('AbstractNode path and schemaPath structure', () => {
 
   describe('Two-level nested structure', () => {
     it('should assign correct path and schemaPath for nested object properties', () => {
-      const jsonSchema: JsonSchema = {
+      const jsonSchema: JSONSchema = {
         type: 'object',
         properties: {
           user: {
@@ -84,7 +84,7 @@ describe('AbstractNode path and schemaPath structure', () => {
         },
       };
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema,
         onChange: () => {},
       });
@@ -109,7 +109,7 @@ describe('AbstractNode path and schemaPath structure', () => {
 
   describe('Three-level nested structure', () => {
     it('should assign correct path and schemaPath for deeply nested object properties', () => {
-      const jsonSchema: JsonSchema = {
+      const jsonSchema: JSONSchema = {
         type: 'object',
         properties: {
           company: {
@@ -127,7 +127,7 @@ describe('AbstractNode path and schemaPath structure', () => {
         },
       };
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema,
         onChange: () => {},
       });
@@ -163,7 +163,7 @@ describe('AbstractNode path and schemaPath structure', () => {
 
   describe('Four-level nested structure', () => {
     it('should assign correct path and schemaPath for very deeply nested object properties', () => {
-      const jsonSchema: JsonSchema = {
+      const jsonSchema: JSONSchema = {
         type: 'object',
         properties: {
           level1: {
@@ -185,7 +185,7 @@ describe('AbstractNode path and schemaPath structure', () => {
         },
       };
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema,
         onChange: () => {},
       });
@@ -221,7 +221,7 @@ describe('AbstractNode path and schemaPath structure', () => {
 
   describe('Array structure', () => {
     it('should assign correct path and schemaPath for array and its items', async () => {
-      const jsonSchema: JsonSchema = {
+      const jsonSchema: JSONSchema = {
         type: 'object',
         properties: {
           tags: {
@@ -231,7 +231,7 @@ describe('AbstractNode path and schemaPath structure', () => {
         },
       };
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema,
         defaultValue: { tags: ['red', 'green', 'blue'] },
         onChange: () => {},
@@ -261,7 +261,7 @@ describe('AbstractNode path and schemaPath structure', () => {
     });
 
     it('should assign correct path and schemaPath for array of objects', async () => {
-      const jsonSchema: JsonSchema = {
+      const jsonSchema: JSONSchema = {
         type: 'object',
         properties: {
           users: {
@@ -277,7 +277,7 @@ describe('AbstractNode path and schemaPath structure', () => {
         },
       };
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema,
         defaultValue: {
           users: [
@@ -330,7 +330,7 @@ describe('AbstractNode path and schemaPath structure', () => {
 
   describe('Nested array structure', () => {
     it('should assign correct path and schemaPath for nested arrays', async () => {
-      const jsonSchema: JsonSchema = {
+      const jsonSchema: JSONSchema = {
         type: 'object',
         properties: {
           matrix: {
@@ -343,7 +343,7 @@ describe('AbstractNode path and schemaPath structure', () => {
         },
       };
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema,
         defaultValue: {
           matrix: [
@@ -383,7 +383,7 @@ describe('AbstractNode path and schemaPath structure', () => {
 
   describe('Mixed object and array structure', () => {
     it('should assign correct path and schemaPath for complex nested structures', async () => {
-      const jsonSchema: JsonSchema = {
+      const jsonSchema: JSONSchema = {
         type: 'object',
         properties: {
           company: {
@@ -413,7 +413,7 @@ describe('AbstractNode path and schemaPath structure', () => {
         },
       };
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema,
         defaultValue: {
           company: {
@@ -496,7 +496,7 @@ describe('AbstractNode path and schemaPath structure', () => {
 
   describe('oneOf structure with path and schemaPath', () => {
     it('should assign correct path and schemaPath for oneOf properties', async () => {
-      const jsonSchema: JsonSchema = {
+      const jsonSchema: JSONSchema = {
         type: 'object',
         properties: {
           type: {
@@ -524,7 +524,7 @@ describe('AbstractNode path and schemaPath structure', () => {
         ],
       };
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema,
         onChange: () => {},
       }) as ObjectNode;
@@ -555,7 +555,7 @@ describe('AbstractNode path and schemaPath structure', () => {
     });
 
     it('should update schemaPath when oneOf branch changes', async () => {
-      const jsonSchema: JsonSchema = {
+      const jsonSchema: JSONSchema = {
         type: 'object',
         properties: {
           category: {
@@ -580,7 +580,7 @@ describe('AbstractNode path and schemaPath structure', () => {
         ],
       };
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema,
         onChange: () => {},
       }) as ObjectNode;
@@ -610,7 +610,7 @@ describe('AbstractNode path and schemaPath structure', () => {
 
   describe('Nested oneOf structure', () => {
     it('should assign correct path and schemaPath for nested oneOf', async () => {
-      const jsonSchema: JsonSchema = {
+      const jsonSchema: JSONSchema = {
         type: 'object',
         properties: {
           wrapper: {
@@ -646,7 +646,7 @@ describe('AbstractNode path and schemaPath structure', () => {
         },
       };
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema,
         onChange: () => {},
       }) as ObjectNode;
@@ -697,7 +697,7 @@ describe('AbstractNode path and schemaPath structure', () => {
 
   describe('Array root type', () => {
     it('should assign correct path and schemaPath when root is array', async () => {
-      const jsonSchema: JsonSchema = {
+      const jsonSchema: JSONSchema = {
         type: 'array',
         items: {
           type: 'object',
@@ -708,7 +708,7 @@ describe('AbstractNode path and schemaPath structure', () => {
         },
       };
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema,
         defaultValue: [
           { id: '1', name: 'First' },
@@ -746,7 +746,7 @@ describe('AbstractNode path and schemaPath structure', () => {
 
   describe('Relative path navigation', () => {
     it('should maintain correct path and schemaPath with relative navigation', async () => {
-      const jsonSchema: JsonSchema = {
+      const jsonSchema: JSONSchema = {
         type: 'object',
         properties: {
           parent: {
@@ -763,7 +763,7 @@ describe('AbstractNode path and schemaPath structure', () => {
         },
       };
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema,
         onChange: () => {},
       });
@@ -797,7 +797,7 @@ describe('AbstractNode path and schemaPath structure', () => {
 
   describe('$ref structure', () => {
     it('should assign correct path and schemaPath for $ref schemas', async () => {
-      const jsonSchema: JsonSchema = {
+      const jsonSchema: JSONSchema = {
         type: 'object',
         properties: {
           person: {
@@ -815,7 +815,7 @@ describe('AbstractNode path and schemaPath structure', () => {
         },
       };
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema,
         onChange: () => {},
       });
@@ -835,7 +835,7 @@ describe('AbstractNode path and schemaPath structure', () => {
     });
 
     it('should handle recursive $ref schemas', async () => {
-      const jsonSchema: JsonSchema = {
+      const jsonSchema: JSONSchema = {
         type: 'object',
         properties: {
           root: {
@@ -858,7 +858,7 @@ describe('AbstractNode path and schemaPath structure', () => {
         },
       };
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema,
         defaultValue: {
           root: {
@@ -911,7 +911,7 @@ describe('AbstractNode path and schemaPath structure', () => {
 
   describe('Special characters in property names', () => {
     it('should handle property names with special characters correctly', async () => {
-      const jsonSchema: JsonSchema = {
+      const jsonSchema: JSONSchema = {
         type: 'object',
         properties: {
           'user~name': { type: 'string' },
@@ -920,7 +920,7 @@ describe('AbstractNode path and schemaPath structure', () => {
         },
       };
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema,
         onChange: () => {},
       });
@@ -942,7 +942,7 @@ describe('AbstractNode path and schemaPath structure', () => {
 
   describe('Absolute path navigation', () => {
     it('should navigate using absolute paths from any node', async () => {
-      const jsonSchema: JsonSchema = {
+      const jsonSchema: JSONSchema = {
         type: 'object',
         properties: {
           a: {
@@ -960,7 +960,7 @@ describe('AbstractNode path and schemaPath structure', () => {
         },
       };
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema,
         onChange: () => {},
       });
@@ -986,7 +986,7 @@ describe('AbstractNode path and schemaPath structure', () => {
 
   describe('anyOf structure', () => {
     it('should assign correct path and schemaPath for anyOf properties', async () => {
-      const jsonSchema: JsonSchema = {
+      const jsonSchema: JSONSchema = {
         type: 'object',
         properties: {
           contactMethod: {
@@ -1011,7 +1011,7 @@ describe('AbstractNode path and schemaPath structure', () => {
         ],
       };
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema,
         onChange: () => {},
       }) as ObjectNode;
@@ -1040,7 +1040,7 @@ describe('AbstractNode path and schemaPath structure', () => {
     });
 
     it('should assign correct path and schemaPath for anyOf with multiple active branches', async () => {
-      const jsonSchema: JsonSchema = {
+      const jsonSchema: JSONSchema = {
         type: 'object',
         anyOf: [
           {
@@ -1058,7 +1058,7 @@ describe('AbstractNode path and schemaPath structure', () => {
         ],
       };
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema,
         onChange: () => {},
       }) as ObjectNode;
@@ -1077,7 +1077,7 @@ describe('AbstractNode path and schemaPath structure', () => {
     });
 
     it('should assign correct path and schemaPath for nested anyOf', async () => {
-      const jsonSchema: JsonSchema = {
+      const jsonSchema: JSONSchema = {
         type: 'object',
         properties: {
           wrapper: {
@@ -1107,7 +1107,7 @@ describe('AbstractNode path and schemaPath structure', () => {
         },
       };
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema,
         onChange: () => {},
       }) as ObjectNode;
@@ -1149,7 +1149,7 @@ describe('AbstractNode path and schemaPath structure', () => {
     // This is because allOf represents composition (all must be true), not selection.
 
     it('should assign correct path and schemaPath for allOf merged properties', async () => {
-      const jsonSchema: JsonSchema = {
+      const jsonSchema: JSONSchema = {
         type: 'object',
         allOf: [
           {
@@ -1170,7 +1170,7 @@ describe('AbstractNode path and schemaPath structure', () => {
         ],
       };
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema,
         onChange: () => {},
       }) as ObjectNode;
@@ -1197,7 +1197,7 @@ describe('AbstractNode path and schemaPath structure', () => {
     });
 
     it('should assign correct path and schemaPath for allOf with base properties', async () => {
-      const jsonSchema: JsonSchema = {
+      const jsonSchema: JSONSchema = {
         type: 'object',
         properties: {
           id: { type: 'string' },
@@ -1217,7 +1217,7 @@ describe('AbstractNode path and schemaPath structure', () => {
         ],
       };
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema,
         onChange: () => {},
       }) as ObjectNode;
@@ -1246,7 +1246,7 @@ describe('AbstractNode path and schemaPath structure', () => {
     });
 
     it('should assign correct path and schemaPath for nested allOf', async () => {
-      const jsonSchema: JsonSchema = {
+      const jsonSchema: JSONSchema = {
         type: 'object',
         properties: {
           person: {
@@ -1274,7 +1274,7 @@ describe('AbstractNode path and schemaPath structure', () => {
         },
       };
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema,
         onChange: () => {},
       }) as ObjectNode;
@@ -1322,7 +1322,7 @@ describe('AbstractNode path and schemaPath structure', () => {
     });
 
     it('should assign correct path and schemaPath for allOf with arrays', async () => {
-      const jsonSchema: JsonSchema = {
+      const jsonSchema: JSONSchema = {
         type: 'object',
         allOf: [
           {
@@ -1344,7 +1344,7 @@ describe('AbstractNode path and schemaPath structure', () => {
         ],
       };
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema,
         defaultValue: {
           tags: ['a', 'b'],

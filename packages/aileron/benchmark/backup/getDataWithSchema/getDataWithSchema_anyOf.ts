@@ -9,7 +9,7 @@ import {
 type ObjectSchema = any;
 type ObjectValue = any;
 type ArrayValue = any;
-type JsonSchema = any;
+type JSONSchema = any;
 type RequiredBy<T, K> = T;
 type Dictionary = Record<string, any>;
 
@@ -20,7 +20,7 @@ export const isObjectAnyOfSchema = (
 
 export const getDataWithSchema = <Value>(
   value: Value | undefined,
-  schema: JsonSchema,
+  schema: JSONSchema,
   options?: { ignoreAnyOf: boolean },
 ): Value | undefined => {
   if (value == null) return value;
@@ -105,7 +105,7 @@ const handleArraySchema = (
 
 // omit 집합 생성 함수
 const getOmit = <Value extends Dictionary>(
-  jsonSchema: JsonSchema,
+  jsonSchema: JSONSchema,
   value: Value,
   options?: { ignoreAnyOf: boolean },
 ): Set<string> | null => {

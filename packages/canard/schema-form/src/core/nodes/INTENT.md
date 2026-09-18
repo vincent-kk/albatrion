@@ -10,7 +10,7 @@ JSON Schema 타입별 노드 클래스 집합. `AbstractNode` 를 기반으로 `
 
 ## Conventions
 
-- TypeScript strict 모드; 제네릭 `Schema extends JsonSchemaWithVirtual`, `Value extends AllowedValue`
+- TypeScript strict 모드; 제네릭 `Schema extends JSONSchemaWithVirtual`, `Value extends AllowedValue`
 - 클래스 멤버는 Domain-First 순서 (Identity → Tree → Value → Computed → State → Validation → Events → Lifecycle → Constructor)
 - `branch` 노드(object/array)는 children을 가질 수 있고, `terminal` 노드는 불가
 - `integer` schemaType은 내부적으로 `number` 로 정규화

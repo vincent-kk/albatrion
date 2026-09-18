@@ -2,7 +2,7 @@ import { type PropsWithChildren } from 'react';
 
 import { isReactElement } from '@winglet/react-utils';
 
-import type { JsonSchema } from '../../src';
+import type { JSONSchema } from '../../src';
 
 const StoryLayout = ({
   children,
@@ -10,7 +10,7 @@ const StoryLayout = ({
   value,
   errors,
 }: PropsWithChildren<{
-  jsonSchema: JsonSchema;
+  jsonSchema: JSONSchema;
   value?: any;
   errors?: any[];
 }>) => {

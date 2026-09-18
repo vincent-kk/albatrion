@@ -1,8 +1,8 @@
-import type { PublicJsonSchemaError } from '@/schema-form/types';
+import type { PublicJSONSchemaError } from '@/schema-form/types';
 
 export const replacePattern = (
   errorMessage: string,
-  details: PublicJsonSchemaError['details'],
+  details: PublicJSONSchemaError['details'],
   value: any,
 ): string => {
   let message = errorMessage;

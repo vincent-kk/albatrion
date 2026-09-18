@@ -1,18 +1,18 @@
 import type {
-  JsonSchemaError,
-  JsonSchemaWithVirtual,
+  JSONSchemaError,
+  JSONSchemaWithVirtual,
 } from '@/schema-form/types';
 
 interface ValidationTarget {
   readonly variant: number | undefined;
   readonly schemaPath: string;
   clearErrors(): void;
-  setErrors(errors: JsonSchemaError[]): void;
+  setErrors(errors: JSONSchemaError[]): void;
 }
 
 export interface ValidationHost {
   readonly isRoot: boolean;
-  readonly jsonSchema: JsonSchemaWithVirtual;
-  __setGlobalErrors__(errors: JsonSchemaError[]): boolean;
+  readonly jsonSchema: JSONSchemaWithVirtual;
+  __setGlobalErrors__(errors: JSONSchemaError[]): boolean;
   find(pointer?: string): ValidationTarget | null;
 }

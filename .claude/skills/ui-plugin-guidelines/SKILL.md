@@ -178,7 +178,7 @@ const FormError = ({ errorMessage }: FormTypeRendererProps) => {
 
 #### 5. formatError
 
-**역할**: JsonSchemaError → ReactNode 변환
+**역할**: JSONSchemaError → ReactNode 변환
 
 ```typescript
 const formatError: FormatError = (error, node, context) => {

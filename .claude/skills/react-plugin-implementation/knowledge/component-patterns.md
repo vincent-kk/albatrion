@@ -176,7 +176,7 @@ const FormTypeInputArray = ({
 
 ## 값 변환 패턴 (DatePicker, TimePicker 등)
 
-UI 라이브러리 컴포넌트와 JsonSchema 값 형식이 다른 경우:
+UI 라이브러리 컴포넌트와 JSONSchema 값 형식이 다른 경우:
 
 ```typescript
 const FormTypeInputDate = ({
@@ -357,7 +357,7 @@ const FormTypeInputString = ({
   errors,
   ...props
 }: FormTypeInputStringProps) => {
-  // errors는 JsonSchemaError[] 타입
+  // errors는 JSONSchemaError[] 타입
   const hasError = errors.length > 0;
   const errorMessage = hasError ? errors[0].message : '';
 

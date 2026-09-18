@@ -3,10 +3,10 @@ import React, { Suspense, lazy, startTransition, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { afterEach, describe, expect, it } from 'vitest';
 
-import type { JsonSchema } from '@winglet/json-schema';
+import type { JSONSchema } from '@winglet/json-schema';
 
 import { Form } from '@/schema-form';
-import { nodeFromJsonSchema } from '@/schema-form/core';
+import { nodeFromJSONSchema } from '@/schema-form/core';
 
 /**
  * Concurrent-mount priming of a default-selected oneOf branch.
@@ -64,7 +64,7 @@ const schema = {
       },
     },
   ],
-} satisfies JsonSchema;
+} satisfies JSONSchema;
 
 const wait = (ms: number) => new Promise<void>((r) => setTimeout(r, ms));
 
@@ -224,7 +224,7 @@ describe('composition.oneOf — concurrent mount (lazy retry / transition)', () 
  */
 describe('composition.oneOf — node.children reference stability (memo precondition)', () => {
   it('is idempotent, stable across non-structural change, fresh only on structural change', async () => {
-    const root = nodeFromJsonSchema({
+    const root = nodeFromJSONSchema({
       jsonSchema: schema,
       onChange: () => {},
     });

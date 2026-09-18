@@ -268,6 +268,37 @@ describe('compare - strict mode', () => {
         },
       ]);
     });
+
+    it('should include TEST operations with serialized values in strict mode for toJSON', () => {
+      const source = {
+        value: {
+          toJSON() {
+            return { serialized: 'source' };
+          },
+        },
+      };
+      const target = {
+        value: {
+          toJSON() {
+            return { serialized: 'target' };
+          },
+        },
+      };
+
+      const result = compare(source, target, { strict: true });
+      expect(result).toEqual([
+        {
+          op: Operation.TEST,
+          path: '/value/serialized',
+          value: 'source',
+        },
+        {
+          op: Operation.REPLACE,
+          path: '/value/serialized',
+          value: 'target',
+        },
+      ]);
+    });
   });
 
   describe('Edge Cases with TEST', () => {

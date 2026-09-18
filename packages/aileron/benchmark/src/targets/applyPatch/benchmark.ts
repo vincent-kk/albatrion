@@ -7,7 +7,7 @@ import { type Ratio, getRatio } from '@/benchmark/helpers/getRatio';
 
 import { patches } from './data';
 
-const applyPatchByJsonPath = () => {
+const applyPatchByJSONPath = () => {
   jsonPath.applyPatch(
     {
       user: {
@@ -31,7 +31,7 @@ const applyPatchByJsonPath = () => {
   );
 };
 
-const applyPatchByJsonPathFast = () => {
+const applyPatchByJSONPathFast = () => {
   jsonPath.applyPatch(
     {
       user: {
@@ -105,8 +105,8 @@ export const run = () => {
     suite
       .add('applyPatchByJSONPointer', applyPatchByJSONPointer)
       .add('applyPatchByJSONPointerFast', applyPatchByJSONPointerFast)
-      .add('applyPatchByJsonPath', applyPatchByJsonPath)
-      .add('applyPatchByJsonPathFast', applyPatchByJsonPathFast)
+      .add('applyPatchByJSONPath', applyPatchByJSONPath)
+      .add('applyPatchByJSONPathFast', applyPatchByJSONPathFast)
       .on('cycle', function (event: Benchmark.Event) {
         console.log(String(event.target));
       })

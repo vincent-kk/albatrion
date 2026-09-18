@@ -1,10 +1,10 @@
 import { describe, expect, it } from 'vitest';
 
-import type { JsonSchema } from '@/schema-form/types';
+import type { JSONSchema } from '@/schema-form/types';
 
 import { preprocessSchema } from '../preprocessSchema';
 
-describe('JsonSchemaScanner - Virtual Schema Test', () => {
+describe('JSONSchemaScanner - Virtual Schema Test', () => {
   it('should handle multiple mutations on same schema', () => {
     const originalSchema = {
       type: 'object',
@@ -66,7 +66,7 @@ describe('JsonSchemaScanner - Virtual Schema Test', () => {
           required: ['virtualField_B'],
         },
       },
-    } as JsonSchema;
+    } as JSONSchema;
 
     const trueResult = {
       type: 'object',
@@ -130,7 +130,7 @@ describe('JsonSchemaScanner - Virtual Schema Test', () => {
           virtualRequired: ['virtualField_B'],
         },
       },
-    } as JsonSchema;
+    } as JSONSchema;
 
     const result = preprocessSchema(originalSchema);
 
@@ -177,7 +177,7 @@ describe('JsonSchemaScanner - Virtual Schema Test', () => {
         },
       },
       required: ['control', 'virtualField_A'],
-    } as JsonSchema;
+    } as JSONSchema;
 
     const trueResult = {
       type: 'object',
@@ -219,7 +219,7 @@ describe('JsonSchemaScanner - Virtual Schema Test', () => {
       },
       required: ['control', 'virtualFiled_A1', 'virtualFiled_A2'],
       virtualRequired: ['virtualField_A'],
-    } as JsonSchema;
+    } as JSONSchema;
 
     const result = preprocessSchema(originalSchema);
 
@@ -227,7 +227,7 @@ describe('JsonSchemaScanner - Virtual Schema Test', () => {
   });
 
   it('should handle deeply nested if-then-else structures', () => {
-    const originalSchema: JsonSchema = {
+    const originalSchema: JSONSchema = {
       type: 'object',
       properties: {
         mode: { type: 'string', enum: ['dev', 'staging', 'prod'] },
@@ -293,7 +293,7 @@ describe('JsonSchemaScanner - Virtual Schema Test', () => {
   });
 
   it('should handle mixed virtual and non-virtual fields in required', () => {
-    const originalSchema: JsonSchema = {
+    const originalSchema: JSONSchema = {
       type: 'object',
       properties: {
         name: { type: 'string' },
@@ -327,7 +327,7 @@ describe('JsonSchemaScanner - Virtual Schema Test', () => {
   });
 
   it('should handle schemas without virtual property', () => {
-    const originalSchema: JsonSchema = {
+    const originalSchema: JSONSchema = {
       type: 'object',
       properties: {
         name: { type: 'string' },
@@ -348,7 +348,7 @@ describe('JsonSchemaScanner - Virtual Schema Test', () => {
   });
 
   it('should handle schemas without if property', () => {
-    const originalSchema: JsonSchema = {
+    const originalSchema: JSONSchema = {
       type: 'object',
       properties: {
         field1: { type: 'string' },
@@ -368,7 +368,7 @@ describe('JsonSchemaScanner - Virtual Schema Test', () => {
   });
 
   it('should handle empty virtual fields array', () => {
-    const originalSchema: JsonSchema = {
+    const originalSchema: JSONSchema = {
       type: 'object',
       properties: {
         field1: { type: 'string' },
@@ -391,7 +391,7 @@ describe('JsonSchemaScanner - Virtual Schema Test', () => {
   });
 
   it('should handle non-existent virtual keys in required', () => {
-    const originalSchema: JsonSchema = {
+    const originalSchema: JSONSchema = {
       type: 'object',
       properties: {
         field1: { type: 'string' },
@@ -420,7 +420,7 @@ describe('JsonSchemaScanner - Virtual Schema Test', () => {
   });
 
   it('should handle schemas without required arrays', () => {
-    const originalSchema: JsonSchema = {
+    const originalSchema: JSONSchema = {
       type: 'object',
       properties: {
         field1: { type: 'string' },
@@ -450,7 +450,7 @@ describe('JsonSchemaScanner - Virtual Schema Test', () => {
   });
 
   it('should handle complex nested structures with multiple virtual transformations', () => {
-    const originalSchema: JsonSchema = {
+    const originalSchema: JSONSchema = {
       type: 'object',
       properties: {
         userType: { type: 'string', enum: ['admin', 'user'] },

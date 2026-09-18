@@ -1,6 +1,6 @@
 import type { Fn } from '@aileron/declare';
 
-import type { JsonSchemaWithVirtual } from '@/schema-form/types';
+import type { JSONSchemaWithVirtual } from '@/schema-form/types';
 
 /**
  * Alias for fields specified under computed
@@ -8,7 +8,7 @@ import type { JsonSchemaWithVirtual } from '@/schema-form/types';
  */
 export const ALIAS = '&';
 
-type ComputedFieldName = keyof NonNullable<JsonSchemaWithVirtual['computed']>;
+type ComputedFieldName = keyof NonNullable<JSONSchemaWithVirtual['computed']>;
 
 export type ObservedFieldName = Extract<ComputedFieldName, 'watch'>;
 

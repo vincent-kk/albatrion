@@ -17,7 +17,7 @@ import { describe, expect, it } from 'vitest';
 
 import { delay } from '@winglet/common-utils';
 
-import { Form, type JsonSchema } from '@/schema-form';
+import { Form, type JSONSchema } from '@/schema-form';
 
 describe('If-Then-Else onChange Real React Bug', () => {
   it('should update React state correctly when toggling adult <-> none', async () => {
@@ -90,7 +90,7 @@ describe('If-Then-Else onChange Real React Bug', () => {
         },
       },
       required: ['user'],
-    } satisfies JsonSchema;
+    } satisfies JSONSchema;
 
     // Component that mimics Storybook usage exactly
     const TestComponent = () => {
@@ -266,7 +266,7 @@ describe('If-Then-Else onChange Real React Bug', () => {
           required: ['type'],
         },
       },
-    } satisfies JsonSchema;
+    } satisfies JSONSchema;
 
     const TestComponent = () => {
       const [value, setValue] = useState<any>({});

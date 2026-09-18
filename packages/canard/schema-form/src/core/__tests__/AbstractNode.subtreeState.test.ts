@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import { nodeFromJsonSchema } from '@/schema-form/core';
+import { nodeFromJSONSchema } from '@/schema-form/core';
 import type { NumberNode, ObjectNode, StringNode } from '@/schema-form/core';
 
 import { NodeEventType, NodeState } from '../types';
@@ -16,7 +16,7 @@ const wait = (delay = 5) => {
 describe('AbstractNode - subtree state management', () => {
   describe('setSubtreeState', () => {
     it('root 노드에서 호출 시 모든 자식 노드에 state가 설정되어야 함', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: {
           type: 'object',
           properties: {
@@ -45,7 +45,7 @@ describe('AbstractNode - subtree state management', () => {
     });
 
     it('중첩된 객체의 모든 자손 노드에도 state가 설정되어야 함', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: {
           type: 'object',
           properties: {
@@ -80,7 +80,7 @@ describe('AbstractNode - subtree state management', () => {
     });
 
     it('중간 노드에서 호출 시 해당 서브트리의 노드에만 state가 설정되어야 함', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: {
           type: 'object',
           properties: {
@@ -118,7 +118,7 @@ describe('AbstractNode - subtree state management', () => {
     });
 
     it('globalState도 업데이트되어야 함', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: {
           type: 'object',
           properties: {
@@ -139,7 +139,7 @@ describe('AbstractNode - subtree state management', () => {
     });
 
     it('중간 노드에서 호출 시에도 globalState가 업데이트되어야 함', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: {
           type: 'object',
           properties: {
@@ -167,7 +167,7 @@ describe('AbstractNode - subtree state management', () => {
     });
 
     it('여러 state 플래그를 동시에 설정할 수 있어야 함', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: {
           type: 'object',
           properties: {
@@ -197,7 +197,7 @@ describe('AbstractNode - subtree state management', () => {
     });
 
     it('배열 노드의 자식 노드에도 state가 설정되어야 함', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: {
           type: 'object',
           properties: {
@@ -227,7 +227,7 @@ describe('AbstractNode - subtree state management', () => {
 
   describe('clearSubtreeState', () => {
     it('root 노드에서 호출 시 모든 노드의 state가 초기화되어야 함', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: {
           type: 'object',
           properties: {
@@ -263,7 +263,7 @@ describe('AbstractNode - subtree state management', () => {
     });
 
     it('root 노드에서 호출 시 globalState도 초기화되어야 함', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: {
           type: 'object',
           properties: {
@@ -289,7 +289,7 @@ describe('AbstractNode - subtree state management', () => {
     });
 
     it('중간 노드에서 호출 시 해당 서브트리의 노드만 초기화되어야 함', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: {
           type: 'object',
           properties: {
@@ -328,7 +328,7 @@ describe('AbstractNode - subtree state management', () => {
     });
 
     it('중간 노드에서 호출 시 globalState는 유지되어야 함', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: {
           type: 'object',
           properties: {
@@ -362,7 +362,7 @@ describe('AbstractNode - subtree state management', () => {
     });
 
     it('중첩된 객체의 모든 자손 노드도 초기화되어야 함', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: {
           type: 'object',
           properties: {
@@ -408,7 +408,7 @@ describe('AbstractNode - subtree state management', () => {
 
   describe('resetSubtree', () => {
     it('서브트리의 모든 노드가 초기값으로 리셋되어야 함', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: {
           type: 'object',
           properties: {
@@ -441,7 +441,7 @@ describe('AbstractNode - subtree state management', () => {
     });
 
     it('중첩된 객체의 자손 노드도 리셋되어야 함', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: {
           type: 'object',
           properties: {
@@ -479,7 +479,7 @@ describe('AbstractNode - subtree state management', () => {
     });
 
     it('중간 노드에서 호출 시 해당 서브트리만 리셋되어야 함', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: {
           type: 'object',
           properties: {
@@ -520,7 +520,7 @@ describe('AbstractNode - subtree state management', () => {
     });
 
     it('배열 노드의 자식도 리셋되어야 함', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: {
           type: 'object',
           properties: {
@@ -559,7 +559,7 @@ describe('AbstractNode - subtree state management', () => {
     });
 
     it('리셋 후 state도 초기화되어야 함', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: {
           type: 'object',
           properties: {
@@ -592,7 +592,7 @@ describe('AbstractNode - subtree state management', () => {
 
   describe('이벤트 발생 확인', () => {
     it('setSubtreeState 호출 시 UpdateState 이벤트가 발생해야 함', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: {
           type: 'object',
           properties: {
@@ -617,7 +617,7 @@ describe('AbstractNode - subtree state management', () => {
     });
 
     it('setSubtreeState 호출 시 UpdateGlobalState 이벤트가 발생해야 함', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: {
           type: 'object',
           properties: {
@@ -641,7 +641,7 @@ describe('AbstractNode - subtree state management', () => {
     });
 
     it('clearSubtreeState 호출 시 UpdateState 이벤트가 발생해야 함', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: {
           type: 'object',
           properties: {

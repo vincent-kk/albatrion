@@ -1,4 +1,4 @@
-import type { JsonSchema } from "@canard/schema-form";
+import type { JSONSchema } from "@canard/schema-form";
 
 export const complexIfThenElseSchema = {
   type: "object",
@@ -116,4 +116,4 @@ export const complexIfThenElseSchema = {
     },
   },
   required: ["user", "settings"],
-} satisfies JsonSchema;
+} satisfies JSONSchema;

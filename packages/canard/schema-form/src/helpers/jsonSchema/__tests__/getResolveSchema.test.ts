@@ -1,13 +1,13 @@
 import { describe, expect, it } from 'vitest';
 
-import type { JsonSchema, JsonSchemaWithRef } from '@/schema-form/types';
+import type { JSONSchema, JSONSchemaWithRef } from '@/schema-form/types';
 
 import { getResolveSchema } from '../getResolveSchema';
 
 describe('getResolveSchema', () => {
   describe('when schema has no references', () => {
     it('should return null for schema without $ref', () => {
-      const schema: JsonSchema = {
+      const schema: JSONSchema = {
         type: 'object',
         properties: {
           name: { type: 'string' },
@@ -21,7 +21,7 @@ describe('getResolveSchema', () => {
     });
 
     it('should return null for empty schema', () => {
-      const schema: JsonSchema = { type: 'object' };
+      const schema: JSONSchema = { type: 'object' };
 
       const resolveSchema = getResolveSchema(schema);
 
@@ -31,7 +31,7 @@ describe('getResolveSchema', () => {
 
   describe('when schema has references', () => {
     it('should return resolve function for simple $ref schema', () => {
-      const schema: JsonSchema = {
+      const schema: JSONSchema = {
         type: 'object',
         $defs: {
           Name: {
@@ -54,7 +54,7 @@ describe('getResolveSchema', () => {
     });
 
     it('should resolve simple $ref references correctly', () => {
-      const schema: JsonSchema = {
+      const schema: JSONSchema = {
         type: 'object',
         $defs: {
           Name: {
@@ -71,7 +71,7 @@ describe('getResolveSchema', () => {
       };
 
       const resolveSchema = getResolveSchema(schema);
-      const refSchema: JsonSchemaWithRef = { $ref: '#/$defs/Name' };
+      const refSchema: JSONSchemaWithRef = { $ref: '#/$defs/Name' };
 
       const resolved = resolveSchema!(refSchema);
 
@@ -83,7 +83,7 @@ describe('getResolveSchema', () => {
     });
 
     it('should resolve nested $ref references', () => {
-      const schema: JsonSchema = {
+      const schema: JSONSchema = {
         type: 'object',
         $defs: {
           Person: {
@@ -108,7 +108,7 @@ describe('getResolveSchema', () => {
       const resolveSchema = getResolveSchema(schema);
 
       // Person 정의 resolve
-      const personRefSchema: JsonSchemaWithRef = { $ref: '#/$defs/Person' };
+      const personRefSchema: JSONSchemaWithRef = { $ref: '#/$defs/Person' };
       const resolvedPerson = resolveSchema!(personRefSchema);
 
       expect(resolvedPerson).toEqual({
@@ -132,7 +132,7 @@ describe('getResolveSchema', () => {
       });
 
       // 중첩된 Name 정의 resolve
-      const nameRefSchema: JsonSchemaWithRef = {
+      const nameRefSchema: JSONSchemaWithRef = {
         $ref: '#/$defs/Person/$defs/Name',
       };
       const resolvedName = resolveSchema!(nameRefSchema);
@@ -144,7 +144,7 @@ describe('getResolveSchema', () => {
     });
 
     it('should resolve self-referencing schemas', () => {
-      const schema: JsonSchema = {
+      const schema: JSONSchema = {
         type: 'object',
         properties: {
           id: { type: 'string' },
@@ -157,7 +157,7 @@ describe('getResolveSchema', () => {
       };
 
       const resolveSchema = getResolveSchema(schema);
-      const refSchema: JsonSchemaWithRef = { $ref: '#' };
+      const refSchema: JSONSchemaWithRef = { $ref: '#' };
 
       const resolved = resolveSchema!(refSchema);
 
@@ -165,7 +165,7 @@ describe('getResolveSchema', () => {
     });
 
     it('should resolve tree structure with recursive references', () => {
-      const schema: JsonSchema = {
+      const schema: JSONSchema = {
         title: 'Tree Schema with $defs',
         type: 'object',
         properties: {
@@ -198,7 +198,7 @@ describe('getResolveSchema', () => {
       };
 
       const resolveSchema = getResolveSchema(schema);
-      const treeNodeRef: JsonSchemaWithRef = { $ref: '#/$defs/TreeNode' };
+      const treeNodeRef: JSONSchemaWithRef = { $ref: '#/$defs/TreeNode' };
 
       const resolved = resolveSchema!(treeNodeRef);
 
@@ -224,7 +224,7 @@ describe('getResolveSchema', () => {
     });
 
     it('should resolve references with escaped characters', () => {
-      const schema: JsonSchema = {
+      const schema: JSONSchema = {
         type: 'object',
         $defs: {
           'user~profile': {
@@ -256,7 +256,7 @@ describe('getResolveSchema', () => {
       const resolveSchema = getResolveSchema(schema);
 
       // 틸드가 이스케이프된 reference
-      const userProfileRef: JsonSchemaWithRef = {
+      const userProfileRef: JSONSchemaWithRef = {
         $ref: '#/$defs/user~0profile',
       };
       const resolvedUserProfile = resolveSchema!(userProfileRef);
@@ -271,7 +271,7 @@ describe('getResolveSchema', () => {
       });
 
       // 슬래시가 이스케이프된 reference
-      const configRef: JsonSchemaWithRef = { $ref: '#/$defs/config~1settings' };
+      const configRef: JSONSchemaWithRef = { $ref: '#/$defs/config~1settings' };
       const resolvedConfig = resolveSchema!(configRef);
 
       expect(resolvedConfig).toEqual({
@@ -284,7 +284,7 @@ describe('getResolveSchema', () => {
     });
 
     it('should resolve direct sub-schema references', () => {
-      const schema: JsonSchema = {
+      const schema: JSONSchema = {
         type: 'object',
         properties: {
           user: {
@@ -319,7 +319,7 @@ describe('getResolveSchema', () => {
       const resolveSchema = getResolveSchema(schema);
 
       // user profile 참조
-      const profileRef: JsonSchemaWithRef = {
+      const profileRef: JSONSchemaWithRef = {
         $ref: '#/properties/user/properties/profile',
       };
       const resolvedProfile = resolveSchema!(profileRef);
@@ -334,7 +334,7 @@ describe('getResolveSchema', () => {
       });
 
       // user settings 참조
-      const settingsRef: JsonSchemaWithRef = {
+      const settingsRef: JSONSchemaWithRef = {
         $ref: '#/properties/user/properties/settings',
       };
       const resolvedSettings = resolveSchema!(settingsRef);
@@ -351,7 +351,7 @@ describe('getResolveSchema', () => {
 
   describe('maxDepth parameter', () => {
     it('should respect maxDepth parameter in default case', () => {
-      const schema: JsonSchema = {
+      const schema: JSONSchema = {
         type: 'object',
         $defs: {
           Name: { type: 'string' },
@@ -367,7 +367,7 @@ describe('getResolveSchema', () => {
     });
 
     it('should respect custom maxDepth parameter', () => {
-      const schema: JsonSchema = {
+      const schema: JSONSchema = {
         type: 'object',
         $defs: {
           Name: { type: 'string' },
@@ -385,7 +385,7 @@ describe('getResolveSchema', () => {
 
   describe('edge cases', () => {
     it('should handle complex schemas with multiple reference types', () => {
-      const schema: JsonSchema = {
+      const schema: JSONSchema = {
         type: 'object',
         $defs: {
           UserType: {
@@ -417,7 +417,7 @@ describe('getResolveSchema', () => {
       const resolveSchema = getResolveSchema(schema);
 
       // UserType 참조 테스트
-      const userTypeRef: JsonSchemaWithRef = { $ref: '#/$defs/UserType' };
+      const userTypeRef: JSONSchemaWithRef = { $ref: '#/$defs/UserType' };
       const resolvedUserType = resolveSchema!(userTypeRef);
 
       expect(resolvedUserType).toEqual({
@@ -426,7 +426,7 @@ describe('getResolveSchema', () => {
       });
 
       // Address 참조 테스트
-      const addressRef: JsonSchemaWithRef = { $ref: '#/$defs/Address' };
+      const addressRef: JSONSchemaWithRef = { $ref: '#/$defs/Address' };
       const resolvedAddress = resolveSchema!(addressRef);
 
       expect(resolvedAddress).toEqual({
@@ -441,7 +441,7 @@ describe('getResolveSchema', () => {
     });
 
     it('should handle non-existent references gracefully', () => {
-      const schema: JsonSchema = {
+      const schema: JSONSchema = {
         type: 'object',
         $defs: {
           ValidDef: { type: 'string' },
@@ -454,7 +454,7 @@ describe('getResolveSchema', () => {
       const resolveSchema = getResolveSchema(schema);
 
       // 존재하지 않는 reference로 테스트
-      const invalidRef: JsonSchemaWithRef = { $ref: '#/$defs/NonExistent' };
+      const invalidRef: JSONSchemaWithRef = { $ref: '#/$defs/NonExistent' };
 
       // getValue 함수가 undefined를 반환할 때의 동작 확인
       expect(() => {
@@ -463,7 +463,7 @@ describe('getResolveSchema', () => {
     });
 
     it('should handle schemas with mixed reference and non-reference properties', () => {
-      const schema: JsonSchema = {
+      const schema: JSONSchema = {
         type: 'object',
         $defs: {
           ContactInfo: {
@@ -484,7 +484,7 @@ describe('getResolveSchema', () => {
 
       const resolveSchema = getResolveSchema(schema);
 
-      const contactRef: JsonSchemaWithRef = { $ref: '#/$defs/ContactInfo' };
+      const contactRef: JSONSchemaWithRef = { $ref: '#/$defs/ContactInfo' };
       const resolvedContact = resolveSchema!(contactRef);
 
       expect(resolvedContact).toEqual({

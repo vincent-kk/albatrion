@@ -18,7 +18,7 @@ JSON Schema `array` 타입을 처리하는 노드. 배열 요소 관리와 `push
 - 전략 선택 로직은 생성자 내 `group === 'terminal'` 조건으로만 분기
 - 배열 조작 메서드(`push`, `pop`, `remove`, `clear`)는 반드시 전략 객체에 위임
 - `maxItems`/`minItems` 제약은 `resolveArrayLimits`로 계산한 값을 사용
-- 스키마 검증 오류는 `JsonSchemaError`로 던지기
+- 스키마 검증 오류는 `JSONSchemaError`로 던지기
 - `onChange` 전파 필터는 `resolveArrayValueFilter` 합성(순서: omitTrailing → omitEmpty), `normalizedValue`는 `omitTrailingArray`만 적용
 
 ### Ask first

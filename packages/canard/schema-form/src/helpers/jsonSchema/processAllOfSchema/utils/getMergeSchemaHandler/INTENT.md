@@ -12,7 +12,7 @@ JSON Schema의 타입을 기반으로 적절한 교집합(intersect) 병합 함�
 
 - TypeScript strict 모드
 - 시그니처: `getMergeSchemaHandler(schema) => MergeSchemaHandler | null`
-- `MergeSchemaHandler`: `(base: JsonSchema, source: Partial<JsonSchema>) => JsonSchema`
+- `MergeSchemaHandler`: `(base: JSONSchema, source: Partial<JSONSchema>) => JSONSchema`
 - `extractSchemaInfo`로 type 추출 후 switch 분기
 - type이 없거나 알 수 없는 타입: `null` 반환
 - `number`와 `integer` 모두 `intersectNumberSchema`로 위임

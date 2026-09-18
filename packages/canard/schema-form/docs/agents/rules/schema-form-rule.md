@@ -66,7 +66,7 @@ Each rule is a single hard requirement. Violations typically produce silent bugs
 
 ### stable-schema-reference
 
-- `jsonSchema` MUST have a stable reference. Prefer a module-level constant declared with `as const satisfies JsonSchema`. When the shape must vary, wrap in `useMemo` with a complete dependency list.
+- `jsonSchema` MUST have a stable reference. Prefer a module-level constant declared with `as const satisfies JSONSchema`. When the shape must vary, wrap in `useMemo` with a complete dependency list.
 - Why: a new reference rebuilds the node tree and drops in-progress state.
 
 ### stable-definitions

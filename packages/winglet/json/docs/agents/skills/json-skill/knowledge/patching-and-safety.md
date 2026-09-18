@@ -79,7 +79,7 @@ The default `immutable: true` makes failure atomic from the caller's point of vi
 
 Only `add`, `remove`, `replace`, and — under `strict` — `test`. It never emits `move` or `copy`, even when a subtree is relocated; that shows up as a `remove` plus an `add`. `move` and `copy` are accepted by `applyPatch` but must be hand-written.
 
-Objects exposing a `toJson()` method are serialized through it before comparison, so a domain model diffs as its JSON projection rather than by its class fields.
+Objects exposing a `toJSON()` method are serialized through it before comparison, so a domain model diffs as its JSON projection rather than by its class fields; the deprecated `toJson()` alias is still accepted (Removed in 0.16.0).
 
 ## Merge Patch replaces more than people expect
 
@@ -97,13 +97,13 @@ Inside an object body, `null` deletes the key and any other value adds or replac
 
 ## Catching what these functions throw
 
-Neither error class nor its type guard is exported, so `instanceof JsonPatchError` and `isJSONPointerError` are not available to consumers — importing them fails. Discriminate structurally instead. Both classes set a distinctive `name` (`'JsonPatch'` and `'JSONPointer'`), and both carry a namespaced `code` plus the bare code on `specific`, along with a `details` object holding the offending patch and its index:
+Neither error class nor its type guard is exported, so `instanceof JSONPatchError` and `isJSONPointerError` are not available to consumers — importing them fails. Discriminate structurally instead. Both classes set a distinctive `name` (`'JSONPatch'` and `'JSONPointer'`), and both carry a namespaced `code` plus the bare code on `specific`, along with a `details` object holding the offending patch and its index:
 
 ```typescript
 try {
   return applyPatch(doc, untrustedPatches, { strict: true });
 } catch (error) {
-  if (error instanceof Error && error.name === 'JsonPatch') {
+  if (error instanceof Error && error.name === 'JSONPatch') {
     const code = (error as Error & { specific: string }).specific;
     if (code === 'PATCH_TEST_FAILED') return retryWithFreshDocument();
     if (code === 'PATCH_PATH_INVALID_INTERMEDIATE') return reject(error);

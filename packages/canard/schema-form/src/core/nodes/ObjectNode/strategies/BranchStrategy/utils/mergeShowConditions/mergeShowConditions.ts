@@ -1,7 +1,7 @@
 import { merge } from '@winglet/common-utils/object';
 
 import { combineConditions } from '@/schema-form/helpers/dynamicExpression';
-import type { JsonSchemaWithRef } from '@/schema-form/types';
+import type { JSONSchemaWithRef } from '@/schema-form/types';
 
 /**
  * Merges JSON schema with conditions and returns a new schema.
@@ -10,7 +10,7 @@ import type { JsonSchemaWithRef } from '@/schema-form/types';
  * @returns New schema with conditions applied, or original schema if no conditions exist
  */
 export const mergeShowConditions = (
-  jsonSchema: JsonSchemaWithRef,
+  jsonSchema: JSONSchemaWithRef,
   conditions: string[] | undefined,
 ) => {
   if (conditions) {

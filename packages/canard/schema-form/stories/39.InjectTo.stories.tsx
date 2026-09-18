@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { Form, type JsonSchema } from '../src';
+import { Form, type JSONSchema } from '../src';
 import StoryLayout from './components/StoryLayout';
 
 export default {
@@ -27,7 +27,7 @@ export const BasicSiblingInjection = () => {
         title: 'Target (자동 주입됨)',
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>();
 
@@ -70,7 +70,7 @@ export const AbsolutePathInjection = () => {
         },
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>();
 
@@ -102,7 +102,7 @@ export const MultipleTargetInjection = () => {
       target2: { type: 'string', title: 'Target 2' },
       target3: { type: 'string', title: 'Target 3' },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>();
 
@@ -137,7 +137,7 @@ export const CircularReferencePreventionDirect = () => {
         }),
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>();
 
@@ -182,7 +182,7 @@ export const CircularReferencePreventionTriangular = () => {
         }),
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>();
 
@@ -223,7 +223,7 @@ export const ChainInjection = () => {
         title: 'C (체인 종점)',
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>();
 
@@ -269,7 +269,7 @@ export const ParentPathInjection = () => {
         },
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>();
 
@@ -310,7 +310,7 @@ export const ArrayItemInjection = () => {
         title: 'Summary (배열 아이템에서 주입받음)',
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>();
 
@@ -343,7 +343,7 @@ export const ConditionalInjection = () => {
         default: 'waiting...',
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>();
 
@@ -402,7 +402,7 @@ export const OneOfInternalToExternal = () => {
         },
       },
     ],
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>();
 
@@ -461,7 +461,7 @@ export const OneOfConditionChangeViaInjection = () => {
         },
       },
     ],
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>();
 
@@ -502,7 +502,7 @@ export const MultipleSourceToSameTarget = () => {
         title: 'Target (마지막 소스 값 반영)',
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>();
 

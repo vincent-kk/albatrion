@@ -1,10 +1,10 @@
 import { clone } from '@winglet/common-utils/object';
 import {
-  type JsonScannerOptions,
-  JsonSchemaScanner,
+  type JSONScannerOptions,
+  JSONSchemaScanner,
 } from '@winglet/json-schema/scanner';
 
-import type { JsonSchema, JsonSchemaWithVirtual } from '@/schema-form/types';
+import type { JSONSchema, JSONSchemaWithVirtual } from '@/schema-form/types';
 
 import { hasExtensionKeys } from './utils/hasExtensionKeys';
 
@@ -21,22 +21,22 @@ import { hasExtensionKeys } from './utils/hasExtensionKeys';
  * (Form clones the USER input; this isolates the node-tree schema from the
  * validator's strip — a different object, a different concern.)
  *
- * Why no detection pass: `JsonSchemaScanner.getValue()` returns its input BY
+ * Why no detection pass: `JSONSchemaScanner.getValue()` returns its input BY
  * REFERENCE when nothing was stripped. So `result === cloned` means "no
  * extension anywhere" and we hand back the ORIGINAL untouched (identity
  * preserved); otherwise `result` is the stripped copy.
  */
 export const stripSchemaExtensions = (
-  jsonSchema: JsonSchemaWithVirtual,
-): JsonSchema => {
+  jsonSchema: JSONSchemaWithVirtual,
+): JSONSchema => {
   const cloned = clone(jsonSchema);
-  const result = new JsonSchemaScanner({ options: { mutate } })
+  const result = new JSONSchemaScanner({ options: { mutate } })
     .scan(cloned)
     .getValue();
-  return (result === cloned ? jsonSchema : result) as JsonSchema;
+  return (result === cloned ? jsonSchema : result) as JSONSchema;
 };
 
-const mutate: JsonScannerOptions<JsonSchemaWithVirtual>['mutate'] = ({
+const mutate: JSONScannerOptions<JSONSchemaWithVirtual>['mutate'] = ({
   schema,
 }) => {
   if (schema == null || !hasExtensionKeys(schema)) return;

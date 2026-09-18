@@ -14,14 +14,14 @@ import type {
   StringSchema,
 } from '@canard/schema-form';
 
-type ArrayJsonSchema = ArraySchema & {
+type ArrayJSONSchema = ArraySchema & {
   items: StringSchema;
 };
 
 interface FormTypeInputStringEnumProps
   extends FormTypeInputPropsWithSchema<
     (string | null) | Array<string | null>,
-    StringSchema | ArrayJsonSchema,
+    StringSchema | ArrayJSONSchema,
     { size?: SizeType; enumLabels?: { [label: string]: string } }
   > {
   size?: SizeType;

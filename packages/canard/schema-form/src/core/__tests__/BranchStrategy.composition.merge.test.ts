@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import { delay } from '@winglet/common-utils';
 
-import { SetValueOption, nodeFromJsonSchema } from '@/schema-form/core';
+import { SetValueOption, nodeFromJSONSchema } from '@/schema-form/core';
 
 import type { ObjectNode } from '../nodes/ObjectNode';
 import {
@@ -19,7 +19,7 @@ describe.each([
   'BranchStrategy nested composition %s → %s - Merge',
   (outerScope, innerScope) => {
     it('preserves root fields during a nested Merge', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: createSchema(outerScope, innerScope),
         onChange: () => {},
       }) as ObjectNode;
@@ -38,7 +38,7 @@ describe.each([
     });
 
     it('preserves nested values during a selector-only Merge', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: createSchema(outerScope, innerScope),
         onChange: () => {},
       }) as ObjectNode;

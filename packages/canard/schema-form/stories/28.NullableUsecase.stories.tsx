@@ -5,8 +5,8 @@ import {
   type FormHandle,
   type FormTypeInputMap,
   type FormTypeInputProps,
-  type JsonSchema,
-  type JsonSchemaError,
+  type JSONSchema,
+  type JSONSchemaError,
   SetValueOption,
 } from '../src';
 import StoryLayout from './components/StoryLayout';
@@ -45,7 +45,7 @@ export const FormRefHandleWithNullableFields = () => {
         },
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const defaultValue = useRef({
     name: 'John Doe',
@@ -164,7 +164,7 @@ export const FormRefWithNullableArrayAndObject = () => {
         },
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const formHandle = useRef<FormHandle<typeof schema>>(null);
 
@@ -276,7 +276,7 @@ export const FormRefWithCustomNullableInputs = () => {
         },
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const formTypeMap = useMemo<FormTypeInputMap>(() => {
     return {
@@ -454,7 +454,7 @@ export const FormRefWithCustomNullableInputs = () => {
 
 export const FormRefWithNullableConditionalFields = () => {
   const [value, setValue] = useState({});
-  const [errors, setErrors] = useState<JsonSchemaError[]>([]);
+  const [errors, setErrors] = useState<JSONSchemaError[]>([]);
 
   const schema = {
     type: 'object',
@@ -513,7 +513,7 @@ export const FormRefWithNullableConditionalFields = () => {
         },
       },
     ],
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const formHandle = useRef<FormHandle<typeof schema>>(null);
 
@@ -662,7 +662,7 @@ export const FormRefWithNullableNestedStructure = () => {
         },
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const formHandle = useRef<FormHandle<typeof schema>>(null);
 
@@ -752,7 +752,7 @@ export const FormRefWithNullableNestedStructure = () => {
 
 export const FormRefWithDeepConditionalAndOneOf = () => {
   const [value, setValue] = useState({});
-  const [errors, setErrors] = useState<JsonSchemaError[]>([]);
+  const [errors, setErrors] = useState<JSONSchemaError[]>([]);
 
   const schema = {
     type: 'object',
@@ -1002,7 +1002,7 @@ export const FormRefWithDeepConditionalAndOneOf = () => {
         },
       },
     ],
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const formHandle = useRef<FormHandle<typeof schema>>(null);
 
@@ -1347,7 +1347,7 @@ export const FormRefWithNullHandling = () => {
         nullable: true,
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const defaultValue = useRef({
     nullField: null,
@@ -1463,12 +1463,12 @@ export const ConditionalSchema = () => {
         minimum: 50,
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const formHandle = useRef<FormHandle<typeof schema, any>>(null);
 
   const [value, setValue] = useState<Record<string, unknown>>();
-  const [errors, setErrors] = useState<JsonSchemaError[]>([]);
+  const [errors, setErrors] = useState<JSONSchemaError[]>([]);
   return (
     <StoryLayout jsonSchema={schema} value={value} errors={errors}>
       <button

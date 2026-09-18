@@ -1,6 +1,6 @@
 import type { RenderInput } from '../../../ui/index.js';
 import type { ConsumerPackage, DefaultFlags } from '../../../types/index.js';
-import { renderJson } from './renderJson.js';
+import { renderJSON } from './renderJSON.js';
 import { renderPlain } from './renderPlain.js';
 
 interface UiModule {
@@ -35,7 +35,7 @@ export async function renderOrFallback(
   env: RenderEnv = {},
 ): Promise<number> {
   const isTTY = env.isTTY ?? Boolean(process.stdout.isTTY);
-  if (flags.json) return renderJson(targets, flags, originCwd, notices);
+  if (flags.json) return renderJSON(targets, flags, originCwd, notices);
   if (!isTTY || flags.interactive === false) {
     return renderPlain(targets, flags, originCwd);
   }

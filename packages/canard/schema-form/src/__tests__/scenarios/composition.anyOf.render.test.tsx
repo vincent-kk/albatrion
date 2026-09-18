@@ -1,7 +1,7 @@
 import '@testing-library/jest-dom';
 import { describe, expect, it } from 'vitest';
 
-import type { JsonSchema } from '@winglet/json-schema';
+import type { JSONSchema } from '@winglet/json-schema';
 
 import { renderForm } from '../renderForm';
 
@@ -53,7 +53,7 @@ const multiBranchSchema = {
       properties: { valueC: { type: 'string', default: 'C-def' } },
     },
   ],
-} satisfies JsonSchema;
+} satisfies JSONSchema;
 
 describe('composition/anyOf render — initial active branches on mount', () => {
   // GAP-1 (resolved): the tree is primed synchronously and the DOM converges
@@ -285,7 +285,7 @@ describe('composition/anyOf render — multi-active resolution & ordering', () =
           properties: { shared: { type: 'string', default: 'from-Q' } },
         },
       ],
-    } satisfies JsonSchema;
+    } satisfies JSONSchema;
 
     const form = await renderForm(duplicateKeySchema);
 

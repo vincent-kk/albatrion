@@ -1,7 +1,7 @@
 import { bench, describe } from 'vitest';
 
-import { nodeFromJsonSchema } from '@/schema-form/core';
-import type { JsonSchema } from '@/schema-form/types';
+import { nodeFromJSONSchema } from '@/schema-form/core';
+import type { JSONSchema } from '@/schema-form/types';
 
 /**
  * findNode hot path — variant-aware traversal cost as path depth and
@@ -9,8 +9,8 @@ import type { JsonSchema } from '@/schema-form/types';
  * raised in the design review.
  */
 
-function makeDeepSchema(depth: number): JsonSchema {
-  let inner: JsonSchema = {
+function makeDeepSchema(depth: number): JSONSchema {
+  let inner: JSONSchema = {
     type: 'object',
     properties: { leaf: { type: 'string', default: 'leaf' } },
   };
@@ -18,12 +18,12 @@ function makeDeepSchema(depth: number): JsonSchema {
     inner = {
       type: 'object',
       properties: { next: inner },
-    } as JsonSchema;
+    } as JSONSchema;
   }
   return inner;
 }
 
-function makeWideSchema(fanout: number): JsonSchema {
+function makeWideSchema(fanout: number): JSONSchema {
   return {
     type: 'object',
     properties: Object.fromEntries(
@@ -37,23 +37,23 @@ function makeWideSchema(fanout: number): JsonSchema {
 
 const noop = () => {};
 
-const depth3 = nodeFromJsonSchema({
+const depth3 = nodeFromJSONSchema({
   jsonSchema: makeDeepSchema(3),
   onChange: noop,
 });
-const depth7 = nodeFromJsonSchema({
+const depth7 = nodeFromJSONSchema({
   jsonSchema: makeDeepSchema(7),
   onChange: noop,
 });
-const depth12 = nodeFromJsonSchema({
+const depth12 = nodeFromJSONSchema({
   jsonSchema: makeDeepSchema(12),
   onChange: noop,
 });
-const wide10 = nodeFromJsonSchema({
+const wide10 = nodeFromJSONSchema({
   jsonSchema: makeWideSchema(10),
   onChange: noop,
 });
-const wide50 = nodeFromJsonSchema({
+const wide50 = nodeFromJSONSchema({
   jsonSchema: makeWideSchema(50),
   onChange: noop,
 });

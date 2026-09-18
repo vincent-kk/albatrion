@@ -2,8 +2,8 @@ import { bench, describe } from 'vitest';
 
 import { ComputedPropertiesManager } from '@/schema-form/core/nodes/AbstractNode/utils/getComputedPropertiesManager/ComputedPropertiesManager';
 import type {
-  JsonSchemaType,
-  JsonSchemaWithVirtual,
+  JSONSchemaType,
+  JSONSchemaWithVirtual,
 } from '@/schema-form/types';
 
 /**
@@ -16,11 +16,11 @@ import type {
  */
 
 function makeManager(
-  type: JsonSchemaType,
-  schema: JsonSchemaWithVirtual,
+  type: JSONSchemaType,
+  schema: JSONSchemaWithVirtual,
   values: unknown[],
 ): ComputedPropertiesManager {
-  const root: JsonSchemaWithVirtual = { type: 'object', properties: {} };
+  const root: JSONSchemaWithVirtual = { type: 'object', properties: {} };
   const m = new ComputedPropertiesManager(type, schema, root);
   for (let i = 0; i < values.length && i < m.dependencies.length; i++)
     m.dependencies[i] = values[i];
@@ -77,7 +77,7 @@ const oneOfIndexSimple = makeManager(
       { '&if': '/t === "b"' },
       { '&if': '/t === "c"' },
     ],
-  } as JsonSchemaWithVirtual,
+  } as JSONSchemaWithVirtual,
   ['b'],
 );
 

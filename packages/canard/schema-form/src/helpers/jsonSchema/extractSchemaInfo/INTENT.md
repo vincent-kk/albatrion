@@ -7,7 +7,7 @@ JSON Schema에서 `type`과 `nullable` 정보를 추출하여 정규화된 형�
 ## Conventions
 
 - TypeScript strict 모드, 순수 함수
-- 반환 타입: `{ type: JsonSchemaType; nullable: boolean } | null`
+- 반환 타입: `{ type: JSONSchemaType; nullable: boolean } | null`
 - `null` 반환: schema가 undefined이거나 type이 없거나 배열 타입이 2개 초과이거나 null이 없는 경우
 - 배열 타입 처리 규칙:
   - 길이 1: `{ type: arr[0], nullable: arr[0] === 'null' }`

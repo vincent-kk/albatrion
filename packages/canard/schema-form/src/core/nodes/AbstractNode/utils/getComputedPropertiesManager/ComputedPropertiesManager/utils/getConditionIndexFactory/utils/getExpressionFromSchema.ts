@@ -10,7 +10,7 @@ import {
   convertExpression,
 } from '@/schema-form/helpers/dynamicExpression';
 import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
-import type { PartialJsonSchema } from '@/schema-form/types';
+import type { PartialJSONSchema } from '@/schema-form/types';
 
 /**
  * Extracts conditional expressions from a JSON Schema's properties
@@ -32,8 +32,8 @@ import type { PartialJsonSchema } from '@/schema-form/types';
  * // { properties: { status: { enum: ["active", "pending"] } } }
  * // Returns: "['active', 'pending'].includes(dependencies[0])"
  */
-export const getExpressionFromSchema = (schema: PartialJsonSchema) => {
-  const properties = schema.properties as Dictionary<PartialJsonSchema>;
+export const getExpressionFromSchema = (schema: PartialJSONSchema) => {
+  const properties = schema.properties as Dictionary<PartialJSONSchema>;
   if (!isPlainObject(properties)) return null;
   const condition: ConditionDictionary = getEmptyObject();
   const keys = Object.keys(properties);

@@ -139,7 +139,7 @@ export function generateCategoryMeta(categoryPath: string, packageShortName: str
 /**
  * Serialize a CategoryMeta to a JSON string for _category_.json.
  */
-export function serializeCategoryJson(meta: CategoryMeta): string {
+export function serializeCategoryJSON(meta: CategoryMeta): string {
   return JSON.stringify(meta, null, 2) + '\n';
 }
 

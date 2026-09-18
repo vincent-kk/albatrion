@@ -2,7 +2,7 @@ import { useCallback, useRef, useState } from 'react';
 
 import type { NodeStateFlags } from '@/schema-form/core/nodes';
 
-import { Form, type FormHandle, type JsonSchema, NodeState } from '../src';
+import { Form, type FormHandle, type JSONSchema, NodeState } from '../src';
 import StoryLayout from './components/StoryLayout';
 
 export default {
@@ -101,7 +101,7 @@ export const BasicPristine = () => {
         },
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>();
   const formRef = useRef<FormHandle>(null);
@@ -167,7 +167,7 @@ export const AliasSyntax = () => {
         '&pristine': '../resetTrigger === true',
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>();
 
@@ -218,7 +218,7 @@ export const ComplexCondition = () => {
         },
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>();
   const formRef = useRef<FormHandle>(null);
@@ -316,7 +316,7 @@ export const MultipleFieldsReset = () => {
         },
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>();
   const formRef = useRef<FormHandle>(null);
@@ -410,7 +410,7 @@ export const CombinedWithOtherComputed = () => {
         },
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>();
   const formRef = useRef<FormHandle>(null);
@@ -498,7 +498,7 @@ export const CombinedWithDerived = () => {
         },
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>();
   const formRef = useRef<FormHandle>(null);
@@ -591,7 +591,7 @@ export const NestedObject = () => {
         },
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>();
   const formRef = useRef<FormHandle>(null);
@@ -677,7 +677,7 @@ export const ThresholdBasedReset = () => {
         },
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>();
   const formRef = useRef<FormHandle>(null);
@@ -755,7 +755,7 @@ export const FormResetScenario = () => {
         },
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>();
   const formRef = useRef<FormHandle>(null);
@@ -842,7 +842,7 @@ export const WithActiveCondition = () => {
         },
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>();
   const formRef = useRef<FormHandle>(null);
@@ -896,7 +896,7 @@ export const WithOneOf = () => {
     Record<string, NodeStateFlags>
   >({});
 
-  const jsonSchema: JsonSchema = {
+  const jsonSchema: JSONSchema = {
     type: 'object',
     properties: {
       resetTrigger: {

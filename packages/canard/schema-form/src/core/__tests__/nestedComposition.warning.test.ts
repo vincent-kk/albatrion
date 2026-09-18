@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { nodeFromJsonSchema } from '@/schema-form/core';
-import type { JsonSchema } from '@/schema-form/types';
+import { nodeFromJSONSchema } from '@/schema-form/core';
+import type { JSONSchema } from '@/schema-form/types';
 
 import type { ObjectNode } from '../nodes/ObjectNode';
 
@@ -24,9 +24,9 @@ describe('nested composition ignored — dev warning', () => {
           properties: { other: { type: 'number' } },
         },
       ],
-    } as unknown as JsonSchema;
+    } as unknown as JSONSchema;
 
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       jsonSchema: schema as any,
       onChange: () => {},
     }) as ObjectNode;
@@ -52,9 +52,9 @@ describe('nested composition ignored — dev warning', () => {
           anyOf: [{ properties: { nested: { type: 'string' } } }],
         },
       ],
-    } as unknown as JsonSchema;
+    } as unknown as JSONSchema;
 
-    nodeFromJsonSchema({ jsonSchema: schema as any, onChange: () => {} });
+    nodeFromJSONSchema({ jsonSchema: schema as any, onChange: () => {} });
 
     expect(warn).toHaveBeenCalled();
     expect(warn.mock.calls[0][0]).toContain("'anyOf' inside 'oneOf'");
@@ -75,9 +75,9 @@ describe('nested composition ignored — dev warning', () => {
           properties: { other: { type: 'number' } },
         },
       ],
-    } as unknown as JsonSchema;
+    } as unknown as JSONSchema;
 
-    nodeFromJsonSchema({ jsonSchema: schema as any, onChange: () => {} });
+    nodeFromJSONSchema({ jsonSchema: schema as any, onChange: () => {} });
 
     expect(warn).not.toHaveBeenCalled();
   });

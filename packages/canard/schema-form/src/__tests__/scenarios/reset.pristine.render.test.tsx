@@ -1,7 +1,7 @@
 import '@testing-library/jest-dom';
 import { describe, expect, it } from 'vitest';
 
-import type { JsonSchema } from '@winglet/json-schema';
+import type { JSONSchema } from '@winglet/json-schema';
 
 import { NodeState } from '@/schema-form/core';
 
@@ -34,7 +34,7 @@ const userSchema = {
     role: { type: 'string', enum: ['admin', 'user'], default: 'user' },
     inStock: { type: 'boolean', default: true },
   },
-} satisfies JsonSchema;
+} satisfies JSONSchema;
 
 // No schema defaults; defaults arrive via the `defaultValue` prop (mirrors
 // ResetWithDefaultValueChange).
@@ -45,7 +45,7 @@ const profileSchema = {
     age: { type: 'number' },
     city: { type: 'string' },
   },
-} satisfies JsonSchema;
+} satisfies JSONSchema;
 
 const profileDefault = { name: 'John Doe', age: 25, city: 'New York' };
 
@@ -69,7 +69,7 @@ const oneOfSchema = {
       },
     },
   ],
-} satisfies JsonSchema;
+} satisfies JSONSchema;
 
 // Nested object with defaults at both levels (mirrors the advanced config in
 // ResetWithBothChanges).
@@ -85,7 +85,7 @@ const nestedSchema = {
       },
     },
   },
-} satisfies JsonSchema;
+} satisfies JSONSchema;
 
 const countPaths = (form: { renderedPaths: () => string[] }, path: string) =>
   form.renderedPaths().filter((p) => p === path).length;

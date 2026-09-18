@@ -46,16 +46,16 @@ export async function resolvePackage(
   options: ResolvePackageOptions = {},
   originCwd: string = process.cwd(),
 ): Promise<ResolvedMetadata | null> {
-  const pkgJsonPath = resolvePackageJsonPath(name, originCwd);
-  if (!pkgJsonPath) {
+  const pkgJSONPath = resolvePackageJSONPath(name, originCwd);
+  if (!pkgJSONPath) {
     logger.error(
       `cannot resolve package "${name}". Install it in the current project or pass the correct name.`,
     );
     process.exit(2);
   }
 
-  const packageRoot = dirname(pkgJsonPath);
-  const raw = await readFile(pkgJsonPath, 'utf-8');
+  const packageRoot = dirname(pkgJSONPath);
+  const raw = await readFile(pkgJSONPath, 'utf-8');
   const pkg = JSON.parse(raw) as {
     name?: unknown;
     version?: unknown;
@@ -69,7 +69,7 @@ export async function resolvePackage(
         `"${name}" package.json is missing a string "name" or "version" — skipping.`,
       );
     }
-    logger.error(`${pkgJsonPath} must define string "name" and "version".`);
+    logger.error(`${pkgJSONPath} must define string "name" and "version".`);
     process.exit(2);
   }
 
@@ -181,7 +181,7 @@ function isInside(root: string, candidate: string): boolean {
 // the host project's node_modules), then engine-rooted (so a globally
 // installed engine still resolves bundled deps). Both passes share the
 // same fallback for `ERR_PACKAGE_PATH_NOT_EXPORTED`.
-function resolvePackageJsonPath(
+function resolvePackageJSONPath(
   name: string,
   originCwd: string,
 ): string | null {

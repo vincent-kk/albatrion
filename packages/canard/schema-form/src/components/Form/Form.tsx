@@ -43,7 +43,7 @@ import type {
   AllowedValue,
   AttachedFilesMap,
   InferValueType,
-  JsonSchema,
+  JSONSchema,
 } from '@/schema-form/types';
 
 import { FormRootProxy } from './components/FormRootProxy';
@@ -51,11 +51,11 @@ import type { FormHandle, FormProps } from './type';
 import { NOT_EMITTED, createChildren } from './util';
 
 const FormInner = <
-  Schema extends JsonSchema,
+  Schema extends JSONSchema,
   Value extends AllowedValue = InferValueType<Schema>,
 >(
   {
-    jsonSchema: inputJsonSchema,
+    jsonSchema: inputJSONSchema,
     defaultValue: inputDefaultValue,
     readOnly,
     disabled,
@@ -88,7 +88,7 @@ const FormInner = <
   });
 
   const jsonSchema = useMemorize(
-    () => preprocessSchema(clone(inputJsonSchema)),
+    () => preprocessSchema(clone(inputJSONSchema)),
     [version],
   );
   const defaultValue = useMemorize(() => clone(inputDefaultValue), [version]);
@@ -311,7 +311,7 @@ const FormInner = <
 export const Form = memo(
   withErrorBoundaryForwardRef(forwardRef(FormInner)),
 ) as <
-  Schema extends JsonSchema,
+  Schema extends JSONSchema,
   Value extends AllowedValue = InferValueType<Schema>,
 >(
   props: FormProps<Schema, Value> & {

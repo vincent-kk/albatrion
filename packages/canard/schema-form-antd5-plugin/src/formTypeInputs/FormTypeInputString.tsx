@@ -11,7 +11,7 @@ import type {
   StringSchema,
 } from '@canard/schema-form';
 
-type StringJsonSchema = StringSchema & {
+type StringJSONSchema = StringSchema & {
   format?: 'password';
   formType?: 'password';
 };
@@ -19,7 +19,7 @@ type StringJsonSchema = StringSchema & {
 interface FormTypeInputStringProps
   extends FormTypeInputPropsWithSchema<
     string | null,
-    StringJsonSchema,
+    StringJSONSchema,
     { size?: SizeType }
   > {
   size?: SizeType;

@@ -1,4 +1,4 @@
-import type { JsonSchema } from '@/schema-form/types';
+import type { JSONSchema } from '@/schema-form/types';
 
 /**
  * Formats property keys preview for error messages.
@@ -6,7 +6,7 @@ import type { JsonSchema } from '@/schema-form/types';
  * @returns Formatted property keys preview string
  */
 export const formatPropertyKeysPreview = (
-  properties: Record<string, JsonSchema> = {},
+  properties: Record<string, JSONSchema> = {},
 ): string => {
   const propertyKeys = Object.keys(properties);
   const slicedPropertyKeys = propertyKeys.slice(0, 5);

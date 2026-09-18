@@ -1,8 +1,8 @@
 import { isArray, isString } from '@winglet/common-utils/filter';
 
-import { JsonSchemaError } from '@/schema-form/errors';
+import { JSONSchemaError } from '@/schema-form/errors';
 import { formatObservedValuesError } from '@/schema-form/helpers/error';
-import type { JsonSchemaWithVirtual } from '@/schema-form/types';
+import type { JSONSchemaWithVirtual } from '@/schema-form/types';
 
 import type { PathManager } from '../getPathManager';
 import { ALIAS, type DynamicFunction, type ObservedFieldName } from '../type';
@@ -15,7 +15,7 @@ type GetObservedValues = DynamicFunction<unknown[]>;
  * @returns Observed values factory function
  */
 export const getObservedValuesFactory =
-  (schema: JsonSchemaWithVirtual) =>
+  (schema: JSONSchemaWithVirtual) =>
   /**
    * Returns an observed values calculation function for the given dependency paths and field name.
    * @param dependencyPaths - Dependency path array
@@ -55,7 +55,7 @@ export const getObservedValuesFactory =
          return result;`,
       ) as GetObservedValues;
     } catch (error) {
-      throw new JsonSchemaError(
+      throw new JSONSchemaError(
         'OBSERVED_VALUES',
         formatObservedValuesError(fieldName, watch, watchValueIndexes, error),
         { fieldName, watch, watchValueIndexes, error },

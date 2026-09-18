@@ -3,7 +3,7 @@ import { describe, expect, it, vi } from 'vitest';
 
 import { delay } from '@winglet/common-utils';
 
-import { nodeFromJsonSchema } from '@/schema-form/core';
+import { nodeFromJSONSchema } from '@/schema-form/core';
 
 import { NodeEventType, ValidationMode } from '../nodes';
 import type { NumberNode } from '../nodes/NumberNode';
@@ -11,7 +11,7 @@ import { createValidatorFactory } from './utils/createValidatorFactory';
 
 describe('NumberNode nullable functionality', () => {
   it('숫자 노드가 nullable:true일 때 null 값을 허용해야 함', async () => {
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       onChange: () => {},
       jsonSchema: {
         type: 'object',
@@ -43,7 +43,7 @@ describe('NumberNode nullable functionality', () => {
   });
 
   it('숫자 노드가 nullable:false일 때 null 값을 처리해야 함', async () => {
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       onChange: () => {},
       jsonSchema: {
         type: 'object',
@@ -67,7 +67,7 @@ describe('NumberNode nullable functionality', () => {
   });
 
   it('nullable 숫자 노드의 기본값이 null일 수 있어야 함', async () => {
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       onChange: () => {},
       jsonSchema: {
         type: 'object',
@@ -86,7 +86,7 @@ describe('NumberNode nullable functionality', () => {
   });
 
   it('nullable 숫자 노드의 이벤트가 정상적으로 발생해야 함', async () => {
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       onChange: () => {},
       jsonSchema: {
         type: 'object',
@@ -135,7 +135,7 @@ describe('NumberNode nullable functionality', () => {
   it('nullable 숫자 노드의 onChange 이벤트가 정상적으로 전파되어야 함', async () => {
     const mockOnChange = vi.fn();
 
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       onChange: mockOnChange,
       jsonSchema: {
         type: 'object',
@@ -178,7 +178,7 @@ describe('NumberNode nullable functionality', () => {
       }),
     );
 
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       onChange: () => {},
       jsonSchema: {
         type: 'object',
@@ -227,7 +227,7 @@ describe('NumberNode nullable functionality', () => {
       }),
     );
 
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       onChange: () => {},
       jsonSchema: {
         type: 'object',
@@ -265,7 +265,7 @@ describe('NumberNode nullable functionality', () => {
   });
 
   it('nullable 숫자 노드의 타입 변환이 정상적으로 동작해야 함', async () => {
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       onChange: () => {},
       jsonSchema: {
         type: 'object',
@@ -298,7 +298,7 @@ describe('NumberNode nullable functionality', () => {
   });
 
   it('nullable 숫자 노드의 dirty 및 touched 상태가 정상적으로 관리되어야 함', async () => {
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       onChange: () => {},
       jsonSchema: {
         type: 'object',

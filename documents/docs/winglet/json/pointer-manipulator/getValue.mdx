@@ -28,7 +28,7 @@ unexpected behavior with primitive values or non-plain objects.
 ## Signature
 
 ```typescript
-const getValue: <Output extends Dictionary | Array<any> = Dictionary | Array<any>>(value: Dictionary | Array<any>, pointer: string | string[]) => Output
+const getValue: <Output extends Dictionary | Array<any> = Dictionary | Array<any>>(value: Dictionary | Array<any>, pointer: string | (string | number)[]) => Output
 ```
 
 ## Parameters
@@ -130,7 +130,7 @@ getValue(complex, '/api/v1/endpoints/0/methods/1');
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/json": "0.12.2" }}
+  dependencies={{ "@winglet/json": "0.15.0" }}
   code={`// Basic object property access
 const obj = {
   foo: {

@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react';
 
-import { Form, type FormTypeInputProps, type JsonSchema } from '../src';
+import { Form, type FormTypeInputProps, type JSONSchema } from '../src';
 import StoryLayout from './components/StoryLayout';
 
 export default {
@@ -150,7 +150,7 @@ class ClassStringInput extends React.Component<
 }
 
 // 1) jsonSchema.FormType에 함수형/클래스 컴포넌트를 직접 지정
-export const JsonSchema_FormType_FunctionAndClass = () => {
+export const JSONSchema_FormType_FunctionAndClass = () => {
   const jsonSchema = {
     type: 'object',
     properties: {
@@ -177,7 +177,7 @@ export const JsonSchema_FormType_FunctionAndClass = () => {
         },
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>({});
 
@@ -202,7 +202,7 @@ export const FormInputProp_FunctionAndClass = () => {
       funcField: { type: 'string' },
       classField: { type: 'string' },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>({});
 
@@ -249,7 +249,7 @@ export const FormGroupProp_FunctionAndClass = () => {
       funcField: { type: 'string' },
       classField: { type: 'string' },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>({});
   const fnRenders = useRef(0);
@@ -294,7 +294,7 @@ export const FormRenderProp_FunctionAndClass = () => {
       funcField: { type: 'string' },
       classField: { type: 'string' },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>({});
   const fnRenders = useRef(0);
@@ -352,7 +352,7 @@ export const FormInputProp_InlineArrowComponent = () => {
     properties: {
       arrowField: { type: 'string' },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>({});
 

@@ -5,7 +5,7 @@ import {
   START_OF_TEXT,
   UNIT_SEPARATOR,
 } from '@/schema-form/app/constants/control';
-import type { JsonSchema } from '@/schema-form/types';
+import type { JSONSchema } from '@/schema-form/types';
 
 import { processOneOfSchema } from '../processOneOfSchema';
 
@@ -14,7 +14,7 @@ const ENHANCED_KEY = START_OF_TEXT + UNIT_SEPARATOR + END_OF_TEXT;
 describe('processOneOfSchema', () => {
   describe('basic functionality', () => {
     it('should add ENHANCED_KEY property with variant value', () => {
-      const schema: Partial<JsonSchema> = {
+      const schema: Partial<JSONSchema> = {
         type: 'object',
         properties: {
           name: { type: 'string' },
@@ -29,9 +29,9 @@ describe('processOneOfSchema', () => {
     });
 
     it('should handle different variant values', () => {
-      const schema1: Partial<JsonSchema> = { type: 'string' };
-      const schema2: Partial<JsonSchema> = { type: 'string' };
-      const schema3: Partial<JsonSchema> = { type: 'string' };
+      const schema1: Partial<JSONSchema> = { type: 'string' };
+      const schema2: Partial<JSONSchema> = { type: 'string' };
+      const schema3: Partial<JSONSchema> = { type: 'string' };
 
       const result1 = processOneOfSchema(schema1, 0);
       const result2 = processOneOfSchema(schema2, 1);
@@ -43,7 +43,7 @@ describe('processOneOfSchema', () => {
     });
 
     it('should handle negative variant values', () => {
-      const schema: Partial<JsonSchema> = {
+      const schema: Partial<JSONSchema> = {
         type: 'object',
       };
 
@@ -55,7 +55,7 @@ describe('processOneOfSchema', () => {
 
   describe('schema merging', () => {
     it('should preserve existing properties', () => {
-      const schema: Partial<JsonSchema> = {
+      const schema: Partial<JSONSchema> = {
         type: 'object',
         properties: {
           firstName: { type: 'string' },
@@ -82,7 +82,7 @@ describe('processOneOfSchema', () => {
           name: { type: 'string' },
           [ENHANCED_KEY]: { const: 999 },
         },
-      } as Partial<JsonSchema>;
+      } as Partial<JSONSchema>;
 
       const result = processOneOfSchema(schema, 5);
 
@@ -91,7 +91,7 @@ describe('processOneOfSchema', () => {
     });
 
     it('should create properties object if not present', () => {
-      const schema: Partial<JsonSchema> = {
+      const schema: Partial<JSONSchema> = {
         type: 'object',
       };
 
@@ -102,7 +102,7 @@ describe('processOneOfSchema', () => {
     });
 
     it('should handle schema with no type', () => {
-      const schema: Partial<JsonSchema> = {};
+      const schema: Partial<JSONSchema> = {};
 
       const result = processOneOfSchema(schema, 7);
 
@@ -113,7 +113,7 @@ describe('processOneOfSchema', () => {
 
   describe('complex schemas', () => {
     it('should handle schema with nested properties', () => {
-      const schema: Partial<JsonSchema> = {
+      const schema: Partial<JSONSchema> = {
         type: 'object',
         properties: {
           user: {
@@ -141,7 +141,7 @@ describe('processOneOfSchema', () => {
     });
 
     it('should handle schema with arrays', () => {
-      const schema: Partial<JsonSchema> = {
+      const schema: Partial<JSONSchema> = {
         type: 'object',
         properties: {
           items: {
@@ -158,7 +158,7 @@ describe('processOneOfSchema', () => {
     });
 
     it('should handle schema with conditions', () => {
-      const schema: Partial<JsonSchema> = {
+      const schema: Partial<JSONSchema> = {
         type: 'object',
         properties: {
           type: { type: 'string' },
@@ -182,7 +182,7 @@ describe('processOneOfSchema', () => {
     });
 
     it('should handle schema with allOf', () => {
-      const schema: Partial<JsonSchema> = {
+      const schema: Partial<JSONSchema> = {
         allOf: [
           {
             type: 'object',
@@ -206,7 +206,7 @@ describe('processOneOfSchema', () => {
     });
 
     it('should handle schema with oneOf', () => {
-      const schema: Partial<JsonSchema> = {
+      const schema: Partial<JSONSchema> = {
         type: 'object',
         properties: {
           field: { type: 'string' },
@@ -233,7 +233,7 @@ describe('processOneOfSchema', () => {
     });
 
     it('should handle schema with anyOf', () => {
-      const schema: Partial<JsonSchema> = {
+      const schema: Partial<JSONSchema> = {
         anyOf: [{ type: 'string' }, { type: 'number' }],
       };
 
@@ -246,7 +246,7 @@ describe('processOneOfSchema', () => {
 
   describe('schema attributes preservation', () => {
     it('should preserve all schema attributes', () => {
-      const schema: Partial<JsonSchema> = {
+      const schema: Partial<JSONSchema> = {
         $id: 'test-schema',
         $schema: 'http://json-schema.org/draft-07/schema#',
         title: 'Test Schema',
@@ -280,7 +280,7 @@ describe('processOneOfSchema', () => {
     });
 
     it('should preserve custom properties', () => {
-      const schema: Partial<JsonSchema> & { customProp?: string } = {
+      const schema: Partial<JSONSchema> & { customProp?: string } = {
         type: 'object',
         properties: {
           field: { type: 'string' },
@@ -297,7 +297,7 @@ describe('processOneOfSchema', () => {
 
   describe('edge cases', () => {
     it('should handle variant value of 0', () => {
-      const schema: Partial<JsonSchema> = {
+      const schema: Partial<JSONSchema> = {
         type: 'object',
       };
 
@@ -307,7 +307,7 @@ describe('processOneOfSchema', () => {
     });
 
     it('should handle very large variant values', () => {
-      const schema: Partial<JsonSchema> = {
+      const schema: Partial<JSONSchema> = {
         type: 'object',
       };
 
@@ -319,7 +319,7 @@ describe('processOneOfSchema', () => {
     });
 
     it('should handle empty schema', () => {
-      const schema: Partial<JsonSchema> = {};
+      const schema: Partial<JSONSchema> = {};
 
       const result = processOneOfSchema(schema, 15);
 
@@ -329,7 +329,7 @@ describe('processOneOfSchema', () => {
     });
 
     it('should handle schema with null properties', () => {
-      const schema: Partial<JsonSchema> = {
+      const schema: Partial<JSONSchema> = {
         type: 'object',
         properties: null as any,
       };
@@ -341,7 +341,7 @@ describe('processOneOfSchema', () => {
     });
 
     it('should handle schema with undefined properties merging correctly', () => {
-      const schema: Partial<JsonSchema> = {
+      const schema: Partial<JSONSchema> = {
         type: 'object',
         properties: undefined,
       };
@@ -355,7 +355,7 @@ describe('processOneOfSchema', () => {
 
   describe('mutation behavior', () => {
     it('should mutate the original schema (current behavior)', () => {
-      const schema: Partial<JsonSchema> = {
+      const schema: Partial<JSONSchema> = {
         type: 'object',
         properties: {
           name: { type: 'string' },
@@ -371,7 +371,7 @@ describe('processOneOfSchema', () => {
     });
 
     it('should mutate nested properties object', () => {
-      const schema: Partial<JsonSchema> = {
+      const schema: Partial<JSONSchema> = {
         type: 'object',
         properties: {
           name: { type: 'string' },
@@ -389,14 +389,14 @@ describe('processOneOfSchema', () => {
 
   describe('integration scenarios', () => {
     it('should work with oneOf discrimination', () => {
-      const baseSchema: Partial<JsonSchema> = {
+      const baseSchema: Partial<JSONSchema> = {
         type: 'object',
         properties: {
           type: { type: 'string' },
         },
       };
 
-      const personSchema: Partial<JsonSchema> = {
+      const personSchema: Partial<JSONSchema> = {
         ...baseSchema,
         properties: {
           ...baseSchema.properties,
@@ -406,7 +406,7 @@ describe('processOneOfSchema', () => {
         required: ['name'],
       };
 
-      const companySchema: Partial<JsonSchema> = {
+      const companySchema: Partial<JSONSchema> = {
         ...baseSchema,
         properties: {
           ...baseSchema.properties,
@@ -430,7 +430,7 @@ describe('processOneOfSchema', () => {
       // Create separate schema copies for each call since merge mutates
       const results = [];
       for (let i = 0; i < 5; i++) {
-        const schemaCopy: Partial<JsonSchema> = {
+        const schemaCopy: Partial<JSONSchema> = {
           type: 'object',
           properties: {
             value: { type: 'string' },

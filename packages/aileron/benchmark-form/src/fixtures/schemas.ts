@@ -1,4 +1,4 @@
-import type { JsonSchema } from '@canard/schema-form';
+import type { JSONSchema } from '@canard/schema-form';
 
 export const sampleSchemas = [
   // 간단한 폼
@@ -330,7 +330,7 @@ export const sampleSchemas = [
       },
     },
   },
-] as JsonSchema[];
+] as JSONSchema[];
 
 export const referenceSchemas = [
   {
@@ -423,4 +423,4 @@ export const referenceSchemas = [
       },
     },
   },
-] as JsonSchema[];
+] as JSONSchema[];

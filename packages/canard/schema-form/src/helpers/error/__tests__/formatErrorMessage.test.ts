@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import type { SchemaFormPlugin } from '@/schema-form/app/plugin';
-import type { JsonSchema, JsonSchemaError } from '@/schema-form/types';
+import type { JSONSchema, JSONSchemaError } from '@/schema-form/types';
 
 import {
   formatAllOfTypeRedefinitionError,
@@ -26,7 +26,7 @@ import {
   formatObservedValuesError,
   formatRegisterPluginError,
   formatSchemaValidationFailedError,
-  formatUnknownJsonSchemaError,
+  formatUnknownJSONSchemaError,
   formatVirtualFieldsNotInPropertiesError,
   formatVirtualFieldsNotValidError,
 } from '../index';
@@ -129,14 +129,14 @@ describe('formatErrorMessage', () => {
   });
 
   describe('formatArraySchemaError', () => {
-    const mockJsonSchema = {
+    const mockJSONSchema = {
       type: 'array' as const,
       prefixItems: [{ type: 'string' as const }],
     };
 
     describe('formatItemsFalseWithoutPrefixItemsError', () => {
       it('items: false 에러 메시지를 포맷해야 합니다', () => {
-        const result = formatItemsFalseWithoutPrefixItemsError(mockJsonSchema);
+        const result = formatItemsFalseWithoutPrefixItemsError(mockJSONSchema);
 
         expect(result).toContain('items');
         expect(result).toContain('false');
@@ -147,7 +147,7 @@ describe('formatErrorMessage', () => {
 
     describe('formatMissingItemsAndPrefixItemsError', () => {
       it('items와 prefixItems 누락 에러 메시지를 포맷해야 합니다', () => {
-        const result = formatMissingItemsAndPrefixItemsError(mockJsonSchema);
+        const result = formatMissingItemsAndPrefixItemsError(mockJSONSchema);
 
         expect(result).toContain('items');
         expect(result).toContain('prefixItems');
@@ -158,7 +158,7 @@ describe('formatErrorMessage', () => {
     describe('formatMaxItemsExceedsPrefixItemsError', () => {
       it('maxItems 초과 에러 메시지를 포맷해야 합니다', () => {
         const result = formatMaxItemsExceedsPrefixItemsError(
-          mockJsonSchema,
+          mockJSONSchema,
           5,
           1,
         );
@@ -173,7 +173,7 @@ describe('formatErrorMessage', () => {
     describe('formatMinItemsExceedsPrefixItemsError', () => {
       it('minItems 초과 에러 메시지를 포맷해야 합니다', () => {
         const result = formatMinItemsExceedsPrefixItemsError(
-          mockJsonSchema,
+          mockJSONSchema,
           3,
           1,
         );
@@ -186,10 +186,10 @@ describe('formatErrorMessage', () => {
     });
   });
 
-  describe('formatUnknownJsonSchemaError', () => {
+  describe('formatUnknownJSONSchemaError', () => {
     it('알 수 없는 스키마 타입 에러 메시지를 포맷해야 합니다', () => {
-      const jsonSchema = { type: 'unknown' } as unknown as JsonSchema;
-      const result = formatUnknownJsonSchemaError('unknown', jsonSchema);
+      const jsonSchema = { type: 'unknown' } as unknown as JSONSchema;
+      const result = formatUnknownJSONSchemaError('unknown', jsonSchema);
 
       expect(result).toContain('Unknown JSON Schema type');
       expect(result).toContain('unknown');
@@ -197,8 +197,8 @@ describe('formatErrorMessage', () => {
     });
 
     it('undefined 타입도 처리해야 합니다', () => {
-      const jsonSchema = {} as JsonSchema;
-      const result = formatUnknownJsonSchemaError(undefined, jsonSchema);
+      const jsonSchema = {} as JSONSchema;
+      const result = formatUnknownJSONSchemaError(undefined, jsonSchema);
 
       expect(result).toContain('Unknown JSON Schema type');
       expect(result).toContain('undefined');
@@ -380,7 +380,7 @@ describe('formatErrorMessage', () => {
   describe('formatSchemaValidationFailedError', () => {
     it('스키마 검증 실패 에러 메시지를 포맷해야 합니다', () => {
       const value = { name: 'a' };
-      const errors: JsonSchemaError[] = [
+      const errors: JSONSchemaError[] = [
         {
           dataPath: '/email',
           message: 'is required',
@@ -445,9 +445,9 @@ describe('formatErrorMessage', () => {
         schemaPath: '/properties/source',
         jsonSchema: { type: 'string' as const },
         parentValue: { source: 'test-value', target: '' },
-        parentJsonSchema: { type: 'object' as const },
+        parentJSONSchema: { type: 'object' as const },
         rootValue: { source: 'test-value', target: '' },
-        rootJsonSchema: { type: 'object' as const },
+        rootJSONSchema: { type: 'object' as const },
         context: {},
         error: new Error('Cannot read property of undefined'),
       });
@@ -468,9 +468,9 @@ describe('formatErrorMessage', () => {
           properties: { nested: { type: 'object' as const } },
         },
         parentValue: { config: { nested: { value: 123 } } },
-        parentJsonSchema: { type: 'object' as const },
+        parentJSONSchema: { type: 'object' as const },
         rootValue: { config: { nested: { value: 123 } } },
-        rootJsonSchema: { type: 'object' as const },
+        rootJSONSchema: { type: 'object' as const },
         context: { contextData: 'some-context' },
         error: new TypeError('Invalid operation'),
       });
@@ -484,11 +484,11 @@ describe('formatErrorMessage', () => {
     it('모든 포맷터가 "How to fix" 섹션을 포함해야 합니다', () => {
       const formatters = [
         formatInfiniteLoopError('/path', ['../dep'], 100, 50),
-        // @ts-expect-error - JsonSchemaWithVirtual is not JsonSchema
+        // @ts-expect-error - JSONSchemaWithVirtual is not JSONSchema
         formatCircularReferenceError('error', {
           $ref: '#/',
           type: 'object',
-        } as JsonSchema),
+        } as JSONSchema),
         formatCreateDynamicFunctionError(
           'visible',
           'expr',
@@ -510,7 +510,7 @@ describe('formatErrorMessage', () => {
           5,
           1,
         ),
-        formatUnknownJsonSchemaError('unknown', {} as JsonSchema),
+        formatUnknownJSONSchemaError('unknown', {} as JSONSchema),
         formatAllOfTypeRedefinitionError(
           { type: 'object' },
           { type: 'string' },
@@ -545,9 +545,9 @@ describe('formatErrorMessage', () => {
           schemaPath: '/path',
           jsonSchema: { type: 'string' },
           parentValue: null,
-          parentJsonSchema: null,
+          parentJSONSchema: null,
           rootValue: {},
-          rootJsonSchema: { type: 'object' },
+          rootJSONSchema: { type: 'object' },
           context: {},
           error: new Error(),
         }),
@@ -561,12 +561,12 @@ describe('formatErrorMessage', () => {
     it('모든 포맷터가 박스 그리기 문자를 사용해야 합니다', () => {
       const formatters = [
         formatInfiniteLoopError('/path', ['../dep'], 100, 50),
-        // @ts-expect-error - JsonSchemaWithVirtual is not JsonSchema
+        // @ts-expect-error - JSONSchemaWithVirtual is not JSONSchema
         formatCircularReferenceError('error', {
           $ref: '#/',
           type: 'object',
-        } as JsonSchema),
-        formatUnknownJsonSchemaError('unknown', {} as JsonSchema),
+        } as JSONSchema),
+        formatUnknownJSONSchemaError('unknown', {} as JSONSchema),
       ];
 
       for (const message of formatters) {
@@ -707,8 +707,8 @@ describe('formatErrorMessage', () => {
       expect(result).toMatchSnapshot();
     });
 
-    it('formatUnknownJsonSchemaError 스냅샷', () => {
-      const result = formatUnknownJsonSchemaError('customType', {
+    it('formatUnknownJSONSchemaError 스냅샷', () => {
+      const result = formatUnknownJSONSchemaError('customType', {
         type: 'customType',
         title: 'Custom Field',
         properties: {
@@ -895,13 +895,13 @@ describe('formatErrorMessage', () => {
           targetField: '',
           otherField: 123,
         },
-        parentJsonSchema: { type: 'object' as const },
+        parentJSONSchema: { type: 'object' as const },
         rootValue: {
           sourceField: 'current-value',
           targetField: '',
           otherField: 123,
         },
-        rootJsonSchema: { type: 'object' as const },
+        rootJSONSchema: { type: 'object' as const },
         context: { userId: 'user-123', sessionId: 'session-456' },
         error: new TypeError(
           "Cannot read properties of undefined (reading 'map')",

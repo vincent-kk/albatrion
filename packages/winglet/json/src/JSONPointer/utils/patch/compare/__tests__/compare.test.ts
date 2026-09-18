@@ -422,6 +422,52 @@ describe('compare', () => {
         },
       ]);
     });
+
+    it('should handle objects with toJSON method', () => {
+      const source = {
+        toJSON() {
+          return { name: 'John', age: 30 };
+        },
+      };
+      const target = { name: 'John', age: 31 };
+
+      const result = compare(source, target);
+      expect(result).toEqual([
+        {
+          op: Operation.REPLACE,
+          path: '/age',
+          value: 31,
+        },
+      ]);
+    });
+
+    it('should prefer toJSON over toJson when both are present', () => {
+      const source = {
+        toJSON() {
+          return { name: 'John', source: 'toJSON' };
+        },
+        toJson() {
+          return { name: 'John', source: 'toJson' };
+        },
+      };
+      const target = {
+        toJSON() {
+          return { name: 'Jane', source: 'toJSON' };
+        },
+        toJson() {
+          return { name: 'Jane', source: 'toJson' };
+        },
+      };
+
+      const result = compare(source, target);
+      expect(result).toEqual([
+        {
+          op: Operation.REPLACE,
+          path: '/name',
+          value: 'Jane',
+        },
+      ]);
+    });
   });
 
   describe('Special Characters in Keys', () => {

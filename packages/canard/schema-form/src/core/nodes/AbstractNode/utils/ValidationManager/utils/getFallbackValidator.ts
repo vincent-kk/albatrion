@@ -1,7 +1,7 @@
 import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
 import type {
-  JsonSchemaError,
-  JsonSchemaWithVirtual,
+  JSONSchemaError,
+  JSONSchemaWithVirtual,
 } from '@/schema-form/types';
 
 /**
@@ -12,7 +12,7 @@ import type {
  * @returns Fallback validator function
  */
 export const getFallbackValidator =
-  (error: Error, jsonSchema: JsonSchemaWithVirtual) => () =>
+  (error: Error, jsonSchema: JSONSchemaWithVirtual) => () =>
     [
       {
         keyword: 'jsonSchemaCompileFailed',
@@ -23,4 +23,4 @@ export const getFallbackValidator =
           jsonSchema,
         },
       },
-    ] satisfies JsonSchemaError[];
+    ] satisfies JSONSchemaError[];

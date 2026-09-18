@@ -11,8 +11,8 @@ import { describe, expect, it, vi } from 'vitest';
 
 import { delay } from '@winglet/common-utils';
 
-import { nodeFromJsonSchema } from '@/schema-form/core';
-import type { JsonSchema } from '@/schema-form/types';
+import { nodeFromJSONSchema } from '@/schema-form/core';
+import type { JSONSchema } from '@/schema-form/types';
 
 import type { ArrayNode } from '../nodes/ArrayNode';
 import type { ObjectNode } from '../nodes/ObjectNode';
@@ -30,14 +30,14 @@ const objectSchemaWith = (options?: {
         ...(options !== undefined ? { options } : {}),
       },
     },
-  }) satisfies JsonSchema;
+  }) satisfies JSONSchema;
 
 const setup = async (options?: {
   omitTrailing?: boolean;
   omitEmpty?: boolean;
 }) => {
   const onChange = vi.fn();
-  const node = nodeFromJsonSchema({
+  const node = nodeFromJSONSchema({
     jsonSchema: objectSchemaWith(options),
     onChange,
   }) as ObjectNode;
@@ -127,12 +127,12 @@ describe('ArrayNode omitTrailing', () => {
   describe('root-level ArrayNode', () => {
     it('should emit the trimmed value through root onChange', async () => {
       const onChange = vi.fn();
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: {
           type: 'array',
           items: { type: 'number' },
           options: { omitTrailing: true },
-        } satisfies JsonSchema,
+        } satisfies JSONSchema,
         onChange,
       }) as ArrayNode;
       await delay();
@@ -144,12 +144,12 @@ describe('ArrayNode omitTrailing', () => {
 
     it('should emit a safe empty array when every item is undefined', async () => {
       const onChange = vi.fn();
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: {
           type: 'array',
           items: { type: 'number' },
           options: { omitTrailing: true },
-        } satisfies JsonSchema,
+        } satisfies JSONSchema,
         onChange,
       }) as ArrayNode;
       await delay();
@@ -163,7 +163,7 @@ describe('ArrayNode omitTrailing', () => {
   describe('nested arrays (hydration)', () => {
     it('should trim inner arrays hydrated through defaultValue', async () => {
       const onChange = vi.fn();
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: {
           type: 'array',
           items: {
@@ -172,7 +172,7 @@ describe('ArrayNode omitTrailing', () => {
             options: { omitTrailing: true },
           },
           default: [[1, undefined]],
-        } satisfies JsonSchema,
+        } satisfies JSONSchema,
         onChange,
       }) as ArrayNode;
       await delay();
@@ -183,7 +183,7 @@ describe('ArrayNode omitTrailing', () => {
 
     it('should trim inner arrays hydrated through setValue', async () => {
       const onChange = vi.fn();
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: {
           type: 'array',
           items: {
@@ -191,7 +191,7 @@ describe('ArrayNode omitTrailing', () => {
             items: { type: 'number' },
             options: { omitTrailing: true },
           },
-        } satisfies JsonSchema,
+        } satisfies JSONSchema,
         onChange,
       }) as ArrayNode;
       await delay();
@@ -204,7 +204,7 @@ describe('ArrayNode omitTrailing', () => {
   describe('terminal strategy', () => {
     it('should strip trailing undefined items from a terminal array', async () => {
       const onChange = vi.fn();
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: {
           type: 'object',
           properties: {
@@ -215,7 +215,7 @@ describe('ArrayNode omitTrailing', () => {
               options: { omitTrailing: true },
             },
           },
-        } satisfies JsonSchema,
+        } satisfies JSONSchema,
         onChange,
       }) as ObjectNode;
       await delay();

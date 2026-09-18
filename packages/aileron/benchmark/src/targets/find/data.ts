@@ -1,6 +1,6 @@
-import type { JsonSchema } from '@winglet/json-schema';
+import type { JSONSchema } from '@winglet/json-schema';
 
-import { nodeFromJsonSchema } from '@/schema-form/core';
+import { nodeFromJSONSchema } from '@/schema-form/core';
 
 const schema = {
   type: 'object',
@@ -108,9 +108,9 @@ const schema = {
       },
     },
   ],
-} satisfies JsonSchema;
+} satisfies JSONSchema;
 
-export const node = nodeFromJsonSchema({
+export const node = nodeFromJSONSchema({
   jsonSchema: schema,
   onChange: () => {},
 });

@@ -3,7 +3,7 @@
 // the E2 refactor / P2 / P3(default off) / E1(default) must reproduce it.
 import { loadScanners, getByPointer } from "./_lib.mjs";
 
-const { JsonSchemaScanner, JsonSchemaScannerAsync } = await loadScanners();
+const { JSONSchemaScanner, JSONSchemaScannerAsync } = await loadScanners();
 
 function snapshotCase(schema, options = {}) {
   const enterSeq = [];
@@ -17,7 +17,7 @@ function snapshotCase(schema, options = {}) {
       return getByPointer(schema, ref);
     };
   }
-  const scanner = new JsonSchemaScanner({
+  const scanner = new JSONSchemaScanner({
     visitor: {
       enter: (e) =>
         enterSeq.push({
@@ -52,7 +52,7 @@ async function snapshotCaseAsync(schema, options = {}) {
       return getByPointer(schema, ref);
     };
   }
-  const scanner = new JsonSchemaScannerAsync({
+  const scanner = new JSONSchemaScannerAsync({
     visitor: {
       enter: (e) =>
         enterSeq.push({

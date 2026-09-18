@@ -4,7 +4,7 @@ import '@testing-library/jest-dom';
 import { act, render } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 
-import type { JsonSchema } from '@/schema-form';
+import type { JSONSchema } from '@/schema-form';
 import {
   Form,
   type FormHandle,
@@ -42,7 +42,7 @@ const simpleRefSchema = {
   $defs: { Name: { type: 'string', minLength: 1 } },
   properties: { name: { $ref: '#/$defs/Name' } },
   required: ['name'],
-} satisfies JsonSchema;
+} satisfies JSONSchema;
 
 const nestedRefSchema = {
   type: 'object',
@@ -57,7 +57,7 @@ const nestedRefSchema = {
     },
   },
   properties: { person: { $ref: '#/$defs/Person' } },
-} satisfies JsonSchema;
+} satisfies JSONSchema;
 
 const directSubSchemaRef = {
   type: 'object',
@@ -77,7 +77,7 @@ const directSubSchemaRef = {
     },
     userProfile: { $ref: '#/properties/user/properties/profile' },
   },
-} satisfies JsonSchema;
+} satisfies JSONSchema;
 
 const recursiveRefSchema = {
   type: 'object',
@@ -86,7 +86,7 @@ const recursiveRefSchema = {
     children: { type: 'array', items: { $ref: '#' } },
   },
   required: ['id'],
-} satisfies JsonSchema;
+} satisfies JSONSchema;
 
 // ---------------------------------------------------------------------------
 // context-driven schemas (mirrored from stories/34.ContextNode)
@@ -101,19 +101,19 @@ const contextActiveSchema = {
       computed: { active: '@.userRole === "admin"' },
     },
   },
-} satisfies JsonSchema;
+} satisfies JSONSchema;
 
 const contextReadOnlySchema = {
   type: 'object',
   properties: {
     bio: { type: 'string', computed: { readOnly: '@.mode === "view"' } },
   },
-} satisfies JsonSchema;
+} satisfies JSONSchema;
 
 const contextProbeSchema = {
   type: 'object',
   properties: { greeting: { type: 'string' } },
-} satisfies JsonSchema;
+} satisfies JSONSchema;
 
 /** Custom input that surfaces `props.context` and `props.readOnly` to the DOM. */
 const ContextProbe: FC<FormTypeInputProps<any>> = (props) => (
@@ -147,7 +147,7 @@ interface ProviderHarness {
 
 const renderWithProvider = async (
   providerProps: React.ComponentProps<typeof FormProvider>,
-  jsonSchema: JsonSchema,
+  jsonSchema: JSONSchema,
   formProps: Partial<React.ComponentProps<typeof Form>> = {},
 ): Promise<ProviderHarness> => {
   const ref = createRef<FormHandle>();
@@ -385,7 +385,7 @@ describe('FormProvider supplies definitions/context to a nested Form', () => {
       name: { type: 'string' },
       number: { type: 'number', formType: 'external-input1' },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   it('renders a field via a FormProvider-supplied formTypeInputDefinition', async () => {
     const Ext1: FC<FormTypeInputProps<any>> = () => (

@@ -1,4 +1,4 @@
-import type { JsonSchema } from '@/schema-form/types';
+import type { JSONSchema } from '@/schema-form/types';
 
 import {
   type FlattenCondition,
@@ -19,7 +19,7 @@ export type FieldConditionMap = Map<
  * @returns Map<fieldName, Array<{ condition, inverse }>> | true
  */
 export const getFieldConditionMap = (
-  jsonSchema: JsonSchema,
+  jsonSchema: JSONSchema,
 ): FieldConditionMap | undefined => {
   const conditions = flattenConditions(jsonSchema);
   if (!conditions) return undefined;

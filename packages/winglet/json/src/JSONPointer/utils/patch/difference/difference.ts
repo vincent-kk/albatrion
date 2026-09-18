@@ -1,7 +1,7 @@
 import { isPlainObject, isPrimitiveType } from '@winglet/common-utils/filter';
 import { equals } from '@winglet/common-utils/object';
 
-import type { JsonValue } from '@/json/type';
+import type { JSONValue } from '@/json/type';
 
 import { differenceObjectPatch } from './differenceObjectPatch';
 
@@ -85,9 +85,9 @@ import { differenceObjectPatch } from './differenceObjectPatch';
  * ```
  */
 export const difference = (
-  source: JsonValue,
-  target: JsonValue,
-): JsonValue | undefined => {
+  source: JSONValue,
+  target: JSONValue,
+): JSONValue | undefined => {
   // If `source` and `target` are the same, return empty object (no changes)
   if (source === target) return undefined;
 

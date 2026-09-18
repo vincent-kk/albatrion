@@ -1,4 +1,4 @@
-import { Form, FormProvider, type JsonSchema } from '../src';
+import { Form, FormProvider, type JSONSchema } from '../src';
 import {
   FormErrorRenderer,
   FormInputRenderer,
@@ -17,7 +17,7 @@ const jsonSchema = {
       default: 'TEST',
     },
   },
-} satisfies JsonSchema;
+} satisfies JSONSchema;
 
 export const ShowFormLabelOnly = () => {
   return (

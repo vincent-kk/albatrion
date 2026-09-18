@@ -1,7 +1,7 @@
-import type { JsonSchemaWithVirtual } from '@/schema-form/types';
+import type { JSONSchemaWithVirtual } from '@/schema-form/types';
 
 import { createDivider } from './utils/createDivider';
-import { formatJsonPreview } from './utils/formatJsonPreview';
+import { formatJSONPreview } from './utils/formatJSONPreview';
 import { getErrorMessage } from './utils/getErrorMessage';
 
 /**
@@ -19,10 +19,10 @@ import { getErrorMessage } from './utils/getErrorMessage';
  */
 export const formatSchemaCompileError = (
   error: unknown,
-  schema: JsonSchemaWithVirtual,
+  schema: JSONSchemaWithVirtual,
 ): string => {
   const divider = createDivider();
-  const { preview: schemaPreview, truncated } = formatJsonPreview(schema);
+  const { preview: schemaPreview, truncated } = formatJSONPreview(schema);
   const message = getErrorMessage(error);
   const [headline] = message.split('\n');
   const kind = error instanceof Error ? error.name : typeof error;

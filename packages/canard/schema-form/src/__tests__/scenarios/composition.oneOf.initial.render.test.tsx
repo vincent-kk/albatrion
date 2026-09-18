@@ -1,7 +1,7 @@
 import '@testing-library/jest-dom';
 import { describe, expect, it } from 'vitest';
 
-import type { JsonSchema } from '@winglet/json-schema';
+import type { JSONSchema } from '@winglet/json-schema';
 
 import { renderForm } from '../renderForm';
 
@@ -69,7 +69,7 @@ describe('composition.oneOf — initial branch priming', () => {
             properties: { moviePrice: { type: 'number', minimum: 50 } },
           },
         ],
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
       const form = await renderForm(schema, { flushOnMount: false });
 
@@ -109,7 +109,7 @@ describe('composition.oneOf — initial branch priming', () => {
             properties: { consolePrice: { type: 'number', default: 100 } },
           },
         ],
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
       const form = await renderForm(schema, { flushOnMount: false });
 
@@ -156,7 +156,7 @@ describe('composition.oneOf — initial branch priming', () => {
             },
           },
         ],
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
       const form = await renderForm(schema, { flushOnMount: false });
 
@@ -192,7 +192,7 @@ describe('composition.oneOf — initial branch priming', () => {
             ],
           },
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
       const form = await renderForm(schema, { flushOnMount: false });
 
@@ -232,7 +232,7 @@ describe('composition.oneOf — initial branch priming', () => {
             properties: { consolePrice: { type: 'number', default: 100 } },
           },
         ],
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
       const form = await renderForm(schema, { flushOnMount: false });
 
@@ -281,7 +281,7 @@ describe('composition.oneOf — initial branch priming', () => {
             },
           },
         ],
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
       const form = await renderForm(schema, { flushOnMount: false });
 
@@ -330,7 +330,7 @@ describe('composition.oneOf — initial branch priming', () => {
             properties: { consolePrice: { type: 'number', default: 100 } },
           },
         ],
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
       // defaultValue overrides the schema default and selects the movie branch.
       const form = await renderForm(schema, {
@@ -379,7 +379,7 @@ describe('composition.oneOf — initial branch priming', () => {
             },
           },
         ],
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
       const form = await renderForm(schema, { flushOnMount: false });
 
@@ -453,7 +453,7 @@ describe('composition.oneOf — initial branch priming', () => {
             ],
           },
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
       const form = await renderForm(schema, { flushOnMount: false });
 
@@ -498,7 +498,7 @@ describe('composition.oneOf — initial branch priming', () => {
             ],
           },
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
       const form = await renderForm(schema, { flushOnMount: false });
 

@@ -16,7 +16,7 @@ export {
   formatMaxItemsExceedsPrefixItemsError,
   formatMinItemsExceedsPrefixItemsError,
 } from './formatArraySchemaError';
-export { formatUnknownJsonSchemaError } from './formatUnknownJsonSchemaError';
+export { formatUnknownJSONSchemaError } from './formatUnknownJSONSchemaError';
 export { formatAllOfTypeRedefinitionError } from './formatAllOfTypeRedefinitionError';
 export { formatInvalidVirtualNodeValuesError } from './formatInvalidVirtualNodeValuesError';
 export {

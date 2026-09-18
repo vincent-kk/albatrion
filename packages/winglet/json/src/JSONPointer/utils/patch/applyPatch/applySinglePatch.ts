@@ -7,11 +7,11 @@ import {
 
 import { JSONPointer } from '@/json/JSONPointer/enum';
 import { unescapePath } from '@/json/JSONPointer/utils/escape/unescapePath';
-import type { JsonRoot } from '@/json/type';
+import type { JSONRoot } from '@/json/type';
 
 import { Operation, type Patch } from '../../patchModel';
 import { ensureOwnedFromPath } from './utils/ensureOwnedFromPath';
-import { JsonPatchError } from './utils/error';
+import { JSONPatchError } from './utils/error';
 import { getArrayIndex } from './utils/getArrayIndex';
 import { handleArray } from './utils/handleArray';
 import { handleObject } from './utils/handleObject';
@@ -51,7 +51,7 @@ import { handleRootPatch } from './utils/handleRootPatch';
  *
  * @returns The modified source object/array with the patch operation applied
  *
- * @throws {JsonPatchError} When the patch operation fails due to:
+ * @throws {JSONPatchError} When the patch operation fails due to:
  *         - PATCH_TARGET_NOT_OBJECT: Target of operation is not an object/array when required
  *         - PATCH_PATH_INVALID_INTERMEDIATE: Invalid intermediate value during path traversal
  *         - PATCH_PATH_PROCESSING_ERROR: Unexpected error during path processing
@@ -92,13 +92,13 @@ import { handleRootPatch } from './utils/handleRootPatch';
  * const source = {};
  * const patch = { op: "add", path: "/__proto__/isAdmin", value: true };
  *
- * // Throws JsonPatchError with PATCH_PATH_INVALID_INTERMEDIATE, exactly like
+ * // Throws JSONPatchError with PATCH_PATH_INVALID_INTERMEDIATE, exactly like
  * // any other missing intermediate path; Object.prototype is never touched
  * applySinglePatch(source, patch, 0, false, null);
  * ```
  */
 export const applySinglePatch = (
-  source: JsonRoot,
+  source: JSONRoot,
   patch: Patch,
   patchIndex: number,
   strict: boolean,
@@ -113,7 +113,7 @@ export const applySinglePatch = (
   // as a TypeError thrown from somewhere deeper
   if (patch.op === Operation.MOVE || patch.op === Operation.COPY) {
     if (typeof patch.from !== 'string')
-      throw new JsonPatchError(
+      throw new JSONPatchError(
         'PATCH_PATH_INVALID',
         `Patch operation '${patch.op}' requires a string 'from' pointer`,
         { patch, index: patchIndex, operation: patch.op },
@@ -128,7 +128,7 @@ export const applySinglePatch = (
   // The walk starts at index 1, so anything else silently drops its first segment
   // and edits somewhere the caller never named
   if (segments[0] !== '' && segments[0] !== JSONPointer.Fragment)
-    throw new JsonPatchError(
+    throw new JSONPatchError(
       'PATCH_PATH_INVALID',
       `Patch path '${patch.path}' must start with '${JSONPointer.Separator}' or '${JSONPointer.Fragment}'`,
       { patch, index: patchIndex, path: patch.path, operation: patch.op },
@@ -161,7 +161,7 @@ export const applySinglePatch = (
           strict,
         );
       } else {
-        throw new JsonPatchError(
+        throw new JSONPatchError(
           'PATCH_TARGET_NOT_OBJECT',
           `Cannot apply ${patch.op} operation to non-object value. Target path points to: ${typeof current}`,
           {
@@ -198,7 +198,7 @@ export const applySinglePatch = (
 
     // 경로가 더 남았는데 현재 값이 객체가 아닌 경우
     if (!current || typeof current !== 'object') {
-      throw new JsonPatchError(
+      throw new JSONPatchError(
         'PATCH_PATH_INVALID_INTERMEDIATE',
         `Cannot traverse path '${patch.path}' - intermediate value at '${segments.slice(0, cursor + 1).join('/')}' is ${current === null ? 'null' : current === undefined ? 'undefined' : typeof current}, expected object or array`,
         {
@@ -215,7 +215,7 @@ export const applySinglePatch = (
     cursor++;
   }
 
-  throw new JsonPatchError(
+  throw new JSONPatchError(
     'PATCH_PATH_PROCESSING_ERROR',
     'Unexpected error while processing patch path - this should not happen',
     {

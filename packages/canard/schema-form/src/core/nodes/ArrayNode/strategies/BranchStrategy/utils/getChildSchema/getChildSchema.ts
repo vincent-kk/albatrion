@@ -1,4 +1,4 @@
-import type { ArraySchema, JsonSchema } from '@/schema-form/types';
+import type { ArraySchema, JSONSchema } from '@/schema-form/types';
 
 /**
  * Retrieves the appropriate JSON Schema for an array child at a given index.
@@ -15,7 +15,7 @@ import type { ArraySchema, JsonSchema } from '@/schema-form/types';
 export const getChildSchema = (
   schema: ArraySchema,
   index: number,
-): JsonSchema | null => {
+): JSONSchema | null => {
   const itemSchema = schema.items || null;
   const prefixItemSchemas = schema.prefixItems;
   if (prefixItemSchemas === undefined) return itemSchema;

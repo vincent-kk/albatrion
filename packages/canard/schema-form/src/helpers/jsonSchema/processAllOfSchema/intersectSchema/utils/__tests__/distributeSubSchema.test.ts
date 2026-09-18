@@ -2,7 +2,7 @@ import { describe, expect, test } from 'vitest';
 
 import type {
   ArraySchema,
-  JsonSchema,
+  JSONSchema,
   ObjectSchema,
 } from '@/schema-form/types';
 
@@ -68,7 +68,7 @@ describe('distributeAllOfProperties', () => {
     };
     const source: Partial<ObjectSchema> = {
       properties: {
-        name: { minLength: 3 } as JsonSchema,
+        name: { minLength: 3 } as JSONSchema,
       },
     };
 
@@ -90,7 +90,7 @@ describe('distributeAllOfProperties', () => {
     };
     const source: Partial<ObjectSchema> = {
       properties: {
-        name: { minLength: 3 } as JsonSchema,
+        name: { minLength: 3 } as JSONSchema,
         email: { type: 'string', format: 'email' },
       },
     };
@@ -150,7 +150,7 @@ describe('distributeAllOfItems', () => {
       items: { type: 'string' },
     };
     const source: Partial<ArraySchema> = {
-      items: { minLength: 3 } as JsonSchema,
+      items: { minLength: 3 } as JSONSchema,
     };
 
     distributeAllOfItems(base, source);
@@ -172,8 +172,8 @@ describe('distributeAllOfItems', () => {
       },
     };
     // A bare `{ required }` fragment carries no `type`, so it is not a whole
-    // JsonSchema — `Partial<JsonSchema>` is what distributeSchema() accepts.
-    const items: Partial<JsonSchema> = { required: ['name'] };
+    // JSONSchema — `Partial<JSONSchema>` is what distributeSchema() accepts.
+    const items: Partial<JSONSchema> = { required: ['name'] };
     const source = { items } as Partial<ArraySchema>;
 
     distributeAllOfItems(base, source);
@@ -206,8 +206,8 @@ describe('distributeAllOfItems', () => {
       items: { type: 'string' },
     };
 
-    distributeAllOfItems(base, { items: { minLength: 3 } as JsonSchema });
-    distributeAllOfItems(base, { items: { maxLength: 10 } as JsonSchema });
+    distributeAllOfItems(base, { items: { minLength: 3 } as JSONSchema });
+    distributeAllOfItems(base, { items: { maxLength: 10 } as JSONSchema });
 
     expect(base.items).toEqual({
       type: 'string',

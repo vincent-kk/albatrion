@@ -10,7 +10,7 @@ import { value1, value2 } from './data';
 const values = [value1, value2, value2, { ...value2 }, { ...value2 }, value1];
 
 let prev1 = value1;
-const compareByJsonPath = () => {
+const compareByJSONPath = () => {
   for (const value of values) {
     if (jsonPath.compare(prev1, value).length > 0) {
       prev1 = value;
@@ -43,7 +43,7 @@ export const run = () => {
     suite
       .add('compareByJSONPointer', compareByJSONPointer)
       .add('compareByJSONPointerFast', compareByJSONPointerFast)
-      .add('compareByJsonPath', compareByJsonPath)
+      .add('compareByJSONPath', compareByJSONPath)
       .on('cycle', function (event: Benchmark.Event) {
         console.log(String(event.target));
       })

@@ -72,6 +72,7 @@ function extractDeclarationInfo(
   const templates = jsdoc ? parseTemplates(jsdoc) : [];
   const examples = jsdoc ? parseExamples(jsdoc) : [];
   const remarks = jsdoc ? parseRemarks(jsdoc) : undefined;
+  const deprecated = jsdoc ? isDeprecated(jsdoc) : false;
 
   return {
     name,
@@ -83,7 +84,13 @@ function extractDeclarationInfo(
     templates,
     examples,
     remarks,
+    deprecated,
   };
+}
+
+/** Check whether a JSDoc comment block carries the deprecation tag (the literal is kept out of this comment so TypeScript does not deprecate this helper itself). */
+function isDeprecated(jsdoc: string): boolean {
+  return /@deprecated\b/.test(jsdoc);
 }
 
 /** Get the name of a declaration node. */

@@ -7,7 +7,7 @@
 ## Conventions
 
 - 배열 원소 삭제는 인덱스 역순으로 방출한다 — `applyPatch`가 배열을 앞에서부터 splice로 처리하므로, 오름차순 삭제는 뒤 인덱스가 이미 줄어든 배열을 가리키게 만든다.
-- `toJSON`(표준 훅) 또는 `toJson`(이 fractal이 받아들이는 별칭)을 가진 값은 비교 전에 그 반환값으로 축소된다.
+- `toJSON`(표준 훅) 또는 `toJson`(이 fractal이 받아들이는 deprecated 별칭 — Removed in 0.16.0)을 가진 값은 비교 전에 그 반환값으로 축소된다.
 - 순회는 own enumerable 키만 대상으로 하므로 프로토타입 체인에 닿지 않는다.
 
 ## Boundaries
@@ -19,7 +19,7 @@
 
 ### Ask first
 
-- `toJson` 별칭 지원 제거 또는 새 직렬화 훅 추가
+- deprecated `toJson` 별칭(Removed in 0.16.0) 지원 제거 또는 새 직렬화 훅 추가
 - 배열·객체 타입 불일치 시 전체 교체 대신 부분 병합으로 바꾸는 변경
 
 ### Never do

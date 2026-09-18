@@ -6,7 +6,7 @@ import { escapeSegment, setValue } from '@winglet/json/pointer';
 import type { Dictionary, Fn, Nullish } from '@aileron/declare';
 
 import { BIT_MASK_ALL, UNIT_SEPARATOR } from '@/schema-form/app/constants';
-import { JsonSchemaError } from '@/schema-form/errors';
+import { JSONSchemaError } from '@/schema-form/errors';
 import {
   getDefaultValue,
   getEmptyValue,
@@ -21,9 +21,9 @@ import {
 import type {
   AllowedValue,
   InjectHandlerContext,
-  JsonSchemaType,
-  JsonSchemaWithVirtual,
-  JsonSchemaError as ValidationError,
+  JSONSchemaType,
+  JSONSchemaWithVirtual,
+  JSONSchemaError as ValidationError,
 } from '@/schema-form/types';
 
 import {
@@ -61,7 +61,7 @@ import {
 } from './utils';
 
 export abstract class AbstractNode<
-  Schema extends JsonSchemaWithVirtual = JsonSchemaWithVirtual,
+  Schema extends JSONSchemaWithVirtual = JSONSchemaWithVirtual,
   Value extends AllowedValue = any,
 > {
   /**
@@ -74,13 +74,13 @@ export abstract class AbstractNode<
    * Node's type derived from JSON Schema.
    * @remarks Excludes `integer` as it is normalized to `number` internally.
    */
-  public abstract readonly type: Exclude<JsonSchemaType, 'integer'>;
+  public abstract readonly type: Exclude<JSONSchemaType, 'integer'>;
 
   /**
    * Original schema type as defined in JSON Schema.
    * @remarks Preserves `integer` distinction unlike `type` property.
    */
-  public readonly schemaType: JsonSchemaType;
+  public readonly schemaType: JSONSchemaType;
 
   /** Node's JSON Schema definition. */
   public readonly jsonSchema: Schema;
@@ -958,8 +958,10 @@ export abstract class AbstractNode<
           schemaPath: this.schemaPath,
           jsonSchema: this.jsonSchema,
           parentValue: this.parentNode?.value || null,
+          parentJSONSchema: this.parentNode?.jsonSchema || null,
           parentJsonSchema: this.parentNode?.jsonSchema || null,
           rootValue: this.rootNode.value,
+          rootJSONSchema: this.rootNode.jsonSchema,
           rootJsonSchema: this.rootNode.jsonSchema,
           context: this.context,
         } satisfies InjectHandlerContext;
@@ -976,7 +978,7 @@ export abstract class AbstractNode<
           }
         } catch (error) {
           const errorContext = { ...context, value, error };
-          throw new JsonSchemaError(
+          throw new JSONSchemaError(
             'INJECT_TO',
             formatInjectToError(errorContext),
             errorContext,

@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import type { JsonSchemaWithVirtual } from '@/schema-form/types';
+import type { JSONSchemaWithVirtual } from '@/schema-form/types';
 
 import { getNodeGroup } from '../getNodeGroup';
 
@@ -16,7 +16,7 @@ vi.mock('@winglet/react-utils/filter', () => ({
 
 describe('getNodeGroup', () => {
   it('should return virtual for virtual type schema', () => {
-    const schema: JsonSchemaWithVirtual = {
+    const schema: JSONSchemaWithVirtual = {
       type: 'virtual',
       default: ['computed', 'value'],
     };
@@ -26,7 +26,7 @@ describe('getNodeGroup', () => {
   });
 
   it('should return terminal when terminal property is true', () => {
-    const schema: JsonSchemaWithVirtual = {
+    const schema: JSONSchemaWithVirtual = {
       type: 'object',
       terminal: true,
       properties: {},
@@ -37,7 +37,7 @@ describe('getNodeGroup', () => {
   });
 
   it('should return branch when terminal property is false', () => {
-    const schema: JsonSchemaWithVirtual = {
+    const schema: JSONSchemaWithVirtual = {
       type: 'array',
       terminal: false,
       items: { type: 'string' },
@@ -49,7 +49,7 @@ describe('getNodeGroup', () => {
 
   it('should return terminal for array with FormTypeInput component', () => {
     const MockComponent = () => null;
-    const schema: JsonSchemaWithVirtual = {
+    const schema: JSONSchemaWithVirtual = {
       type: 'array',
       FormTypeInput: MockComponent,
       items: { type: 'number' },
@@ -61,7 +61,7 @@ describe('getNodeGroup', () => {
 
   it('should return terminal for object with FormTypeInput component', () => {
     const MockComponent = () => null;
-    const schema: JsonSchemaWithVirtual = {
+    const schema: JSONSchemaWithVirtual = {
       type: 'object',
       FormTypeInput: MockComponent,
       properties: {
@@ -74,7 +74,7 @@ describe('getNodeGroup', () => {
   });
 
   it('should return branch for array without FormTypeInput', () => {
-    const schema: JsonSchemaWithVirtual = {
+    const schema: JSONSchemaWithVirtual = {
       type: 'array',
       items: { type: 'string' },
     };
@@ -84,7 +84,7 @@ describe('getNodeGroup', () => {
   });
 
   it('should return branch for object without FormTypeInput', () => {
-    const schema: JsonSchemaWithVirtual = {
+    const schema: JSONSchemaWithVirtual = {
       type: 'object',
       properties: {
         field: { type: 'boolean' },
@@ -96,11 +96,11 @@ describe('getNodeGroup', () => {
   });
 
   it('should return branch for primitive types', () => {
-    const stringSchema: JsonSchemaWithVirtual = { type: 'string' };
-    const numberSchema: JsonSchemaWithVirtual = { type: 'number' };
-    const booleanSchema: JsonSchemaWithVirtual = { type: 'boolean' };
-    const integerSchema: JsonSchemaWithVirtual = { type: 'integer' };
-    const nullSchema: JsonSchemaWithVirtual = { type: 'null' };
+    const stringSchema: JSONSchemaWithVirtual = { type: 'string' };
+    const numberSchema: JSONSchemaWithVirtual = { type: 'number' };
+    const booleanSchema: JSONSchemaWithVirtual = { type: 'boolean' };
+    const integerSchema: JSONSchemaWithVirtual = { type: 'integer' };
+    const nullSchema: JSONSchemaWithVirtual = { type: 'null' };
 
     expect(getNodeGroup(stringSchema.type, stringSchema)).toBe('terminal');
     expect(getNodeGroup(numberSchema.type, numberSchema)).toBe('terminal');
@@ -117,7 +117,7 @@ describe('getNodeGroup', () => {
       }
     }
 
-    const schema: JsonSchemaWithVirtual = {
+    const schema: JSONSchemaWithVirtual = {
       type: 'object',
       FormTypeInput: ComponentClass as any,
       properties: {},
@@ -128,7 +128,7 @@ describe('getNodeGroup', () => {
   });
 
   it('should return branch when FormTypeInput is not a valid component', () => {
-    const schema: JsonSchemaWithVirtual = {
+    const schema: JSONSchemaWithVirtual = {
       type: 'object',
       FormTypeInput: 'not-a-component' as any,
       properties: {},
@@ -140,7 +140,7 @@ describe('getNodeGroup', () => {
 
   it('should prioritize terminal property over FormTypeInput check', () => {
     const MockComponent = () => null;
-    const schema: JsonSchemaWithVirtual = {
+    const schema: JSONSchemaWithVirtual = {
       type: 'object',
       terminal: false,
       FormTypeInput: MockComponent,
@@ -153,7 +153,7 @@ describe('getNodeGroup', () => {
 
   it('should handle schema with both terminal true and FormTypeInput', () => {
     const MockComponent = () => null;
-    const schema: JsonSchemaWithVirtual = {
+    const schema: JSONSchemaWithVirtual = {
       type: 'array',
       terminal: true,
       FormTypeInput: MockComponent,
@@ -165,7 +165,7 @@ describe('getNodeGroup', () => {
   });
 
   it('should handle complex nested schema', () => {
-    const schema: JsonSchemaWithVirtual = {
+    const schema: JSONSchemaWithVirtual = {
       type: 'object',
       properties: {
         nested: {
@@ -182,7 +182,7 @@ describe('getNodeGroup', () => {
   });
 
   it('should handle schema with oneOf', () => {
-    const schema: JsonSchemaWithVirtual = {
+    const schema: JSONSchemaWithVirtual = {
       type: 'string',
       oneOf: [{ const: 'option1' }, { const: 'option2' }],
     };
@@ -192,7 +192,7 @@ describe('getNodeGroup', () => {
   });
 
   it('should handle schema with computed properties', () => {
-    const schema: JsonSchemaWithVirtual = {
+    const schema: JSONSchemaWithVirtual = {
       type: 'string',
       computed: {
         visible: '',

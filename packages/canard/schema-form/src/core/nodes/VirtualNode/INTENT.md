@@ -8,7 +8,7 @@
 
 - `type = 'virtual'`로 고정; JSON Schema 실제 타입과 구분됨
 - `__value__`는 `refNodes` 배열과 1:1 대응하는 `VirtualNodeValue` 배열로 유지
-- `setValue(values)` 호출 시 `values.length !== refNodes.length`이면 `JsonSchemaError('INVALID_VIRTUAL_NODE_VALUES')` 즉시 throw
+- `setValue(values)` 호출 시 `values.length !== refNodes.length`이면 `JSONSchemaError('INVALID_VIRTUAL_NODE_VALUES')` 즉시 throw
 - 각 `refNode`의 `UpdateValue` 이벤트 구독을 `saveUnsubscribe(node.subscribe(...))` 패턴으로 등록 — 노드 정리 시 자동 해제
 - `children` getter는 `map(refNodes, node => ({ node }))` 결과를 반환; `__children__`은 생성자에서 단 1회 확정
 - `__initialize__()` 는 생성자 마지막에 호출 (Domain-First 멤버 순서 준수)
@@ -18,7 +18,7 @@
 ### Always do
 
 - `setValue` 시 값 배열 길이와 참조 노드 수 일치 확인
-- 불일치 시 `JsonSchemaError('INVALID_VIRTUAL_NODE_VALUES')` 던지기
+- 불일치 시 `JSONSchemaError('INVALID_VIRTUAL_NODE_VALUES')` 던지기
 - 참조 노드 구독은 `saveUnsubscribe`로 등록
 
 ### Ask first

@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from 'vitest';
 
 import { delay } from '@winglet/common-utils';
 
-import { nodeFromJsonSchema } from '@/schema-form/core';
+import { nodeFromJSONSchema } from '@/schema-form/core';
 
 import {
   NodeEventType,
@@ -14,7 +14,7 @@ import type { VirtualNode } from '../nodes/VirtualNode';
 
 describe('VirtualNode', () => {
   it('가상 노드가 정상적으로 생성되어야 함', async () => {
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       onChange: () => {},
       jsonSchema: {
         type: 'object',
@@ -49,7 +49,7 @@ describe('VirtualNode', () => {
   });
 
   it('가상 노드의 값이 참조 노드의 값에 따라 변경되어야 함', async () => {
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       onChange: () => {},
       jsonSchema: {
         type: 'object',
@@ -90,7 +90,7 @@ describe('VirtualNode', () => {
   });
 
   it('가상 노드의 값 변경 시 참조 노드의 값이 변경되어야 함', async () => {
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       onChange: () => {},
       jsonSchema: {
         type: 'object',
@@ -126,7 +126,7 @@ describe('VirtualNode', () => {
   });
 
   it('가상 노드의 이벤트가 정상적으로 발생해야 함', async () => {
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       onChange: () => {},
       jsonSchema: {
         type: 'object',
@@ -178,7 +178,7 @@ describe('VirtualNode', () => {
   });
 
   it('가상 노드의 기본값이 정상적으로 설정되어야 함', async () => {
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       onChange: () => {},
       jsonSchema: {
         type: 'object',
@@ -212,7 +212,7 @@ describe('VirtualNode', () => {
   });
 
   it('가상 노드의 자식 노드가 정상적으로 생성되어야 함', async () => {
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       onChange: () => {},
       jsonSchema: {
         type: 'object',
@@ -246,7 +246,7 @@ describe('VirtualNode', () => {
   describe('refresh behavior', () => {
     it('should publish RequestRefresh when setValue with Overwrite option', async () => {
       const events: UnionNodeEventType[] = [];
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: {
           type: 'object',
@@ -280,7 +280,7 @@ describe('VirtualNode', () => {
 
     it('should NOT publish RequestRefresh when setValue with Default option', async () => {
       const events: UnionNodeEventType[] = [];
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: {
           type: 'object',
@@ -313,7 +313,7 @@ describe('VirtualNode', () => {
     });
 
     it('should propagate value changes to reference nodes when setValue is called', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: {
           type: 'object',
@@ -356,7 +356,7 @@ describe('VirtualNode', () => {
       const startDateEvents: UnionNodeEventType[] = [];
       const endDateEvents: UnionNodeEventType[] = [];
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: {
           type: 'object',

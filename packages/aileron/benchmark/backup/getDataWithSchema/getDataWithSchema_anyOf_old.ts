@@ -1,10 +1,10 @@
-// import type { JsonSchemaWithVirtual } from '@/schema-form/types/';
+// import type { JSONSchemaWithVirtual } from '@/schema-form/types/';
 
-type JsonSchemaWithVirtual = any;
+type JSONSchemaWithVirtual = any;
 
 export const getDataWithSchema = (
   data: any,
-  schema: JsonSchemaWithVirtual,
+  schema: JSONSchemaWithVirtual,
   options?: { ignoreAnyOf: boolean },
 ): any => {
   const node = { ...schema };
@@ -44,7 +44,7 @@ export const getDataWithSchema = (
           k,
           getDataWithSchema(
             data[k],
-            v as unknown as JsonSchemaWithVirtual,
+            v as unknown as JSONSchemaWithVirtual,
             options,
           ),
         ];

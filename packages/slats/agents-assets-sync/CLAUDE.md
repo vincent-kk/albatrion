@@ -63,7 +63,7 @@ Fully unattended: `--package=<name> --agent=claude,codex --scope=project --force
 
 Repeat any variadic flag or comma-separate values. Targets are deduped by resolved package name; agents keep their listed order.
 
-`--json` selects `renderJson`, which writes exactly one JSON document to stdout and diverts every diagnostic to stderr — a single stray log line would make the stream unparseable. Non-TTY and `--no-interactive` take `renderPlain` instead. One `unit` per (package, agent) pair; flag errors arrive as `errors` with `exitCode: 2` rather than loose text.
+`--json` selects `renderJSON`, which writes exactly one JSON document to stdout and diverts every diagnostic to stderr — a single stray log line would make the stream unparseable. Non-TTY and `--no-interactive` take `renderPlain` instead. One `unit` per (package, agent) pair; flag errors arrive as `errors` with `exitCode: 2` rather than loose text.
 
 Workspace enumeration (scope alias) is confined to `src/commands/runCli/targets/resolveScopeAlias.ts`.
 
@@ -160,7 +160,7 @@ src/
 │       └── renderers/              # the three mutually exclusive output paths
 │           ├── renderOrFallback.ts # TTY vs plain branch + dynamic UI import
 │           ├── renderPlain.ts      # non-TTY / --no-interactive picocolors renderer
-│           └── renderJson.ts       # --json single-document renderer
+│           └── renderJSON.ts       # --json single-document renderer
 ├── core/
 │   ├── hash/                       # sha256 compute / compare
 │   ├── hashManifest/               # manifest IO, or hash the asset dir (--asset-path)

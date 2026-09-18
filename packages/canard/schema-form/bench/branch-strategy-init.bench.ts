@@ -1,10 +1,10 @@
 import { bench, describe } from 'vitest';
 
-import { nodeFromJsonSchema } from '@/schema-form/core';
-import type { JsonSchema } from '@/schema-form/types';
+import { nodeFromJSONSchema } from '@/schema-form/core';
+import type { JSONSchema } from '@/schema-form/types';
 
 /**
- * BranchStrategy initialization cost — measured via nodeFromJsonSchema with
+ * BranchStrategy initialization cost — measured via nodeFromJSONSchema with
  * oneOf-heavy schemas. Isolates the cost of `__primeInitialBranch__()` +
  * `__processChildren__()` (the path race-fix #318 touches) as the schema's
  * branch count / branch fan-out scales.
@@ -13,7 +13,7 @@ import type { JsonSchema } from '@/schema-form/types';
  * O(branches × children) or O(active branch only).
  */
 
-function makeOneOf(branchCount: number, childrenPerBranch: number): JsonSchema {
+function makeOneOf(branchCount: number, childrenPerBranch: number): JSONSchema {
   return {
     type: 'object',
     properties: {
@@ -35,8 +35,8 @@ function makeOneOf(branchCount: number, childrenPerBranch: number): JsonSchema {
   };
 }
 
-function makeNestedOneOf(depth: number): JsonSchema {
-  let inner: JsonSchema = {
+function makeNestedOneOf(depth: number): JSONSchema {
+  let inner: JSONSchema = {
     type: 'object',
     properties: { leaf: { type: 'string', default: 'leaf' } },
   };
@@ -56,7 +56,7 @@ function makeNestedOneOf(depth: number): JsonSchema {
           properties: { other: { type: 'string', default: 'other' } },
         },
       ],
-    } as JsonSchema;
+    } as JSONSchema;
   }
   return inner;
 }
@@ -70,28 +70,28 @@ const oneOf_10x10 = makeOneOf(10, 10);
 const nested_3 = makeNestedOneOf(3);
 const nested_5 = makeNestedOneOf(5);
 
-describe('BranchStrategy init (via nodeFromJsonSchema)', () => {
+describe('BranchStrategy init (via nodeFromJSONSchema)', () => {
   bench('oneOf 2 branches × 3 children', () => {
-    nodeFromJsonSchema({ jsonSchema: oneOf_2x3, onChange: noop });
+    nodeFromJSONSchema({ jsonSchema: oneOf_2x3, onChange: noop });
   });
 
   bench('oneOf 5 branches × 3 children', () => {
-    nodeFromJsonSchema({ jsonSchema: oneOf_5x3, onChange: noop });
+    nodeFromJSONSchema({ jsonSchema: oneOf_5x3, onChange: noop });
   });
 
   bench('oneOf 2 branches × 10 children', () => {
-    nodeFromJsonSchema({ jsonSchema: oneOf_2x10, onChange: noop });
+    nodeFromJSONSchema({ jsonSchema: oneOf_2x10, onChange: noop });
   });
 
   bench('oneOf 10 branches × 10 children (heavy)', () => {
-    nodeFromJsonSchema({ jsonSchema: oneOf_10x10, onChange: noop });
+    nodeFromJSONSchema({ jsonSchema: oneOf_10x10, onChange: noop });
   });
 
   bench('nested oneOf depth 3', () => {
-    nodeFromJsonSchema({ jsonSchema: nested_3, onChange: noop });
+    nodeFromJSONSchema({ jsonSchema: nested_3, onChange: noop });
   });
 
   bench('nested oneOf depth 5', () => {
-    nodeFromJsonSchema({ jsonSchema: nested_5, onChange: noop });
+    nodeFromJSONSchema({ jsonSchema: nested_5, onChange: noop });
   });
 });

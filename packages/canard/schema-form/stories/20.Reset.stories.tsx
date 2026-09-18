@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react';
 
 import type { FormHandle } from '../src';
-import { Form, type JsonSchema } from '../src';
+import { Form, type JSONSchema } from '../src';
 import StoryLayout from './components/StoryLayout';
 
 export default {
@@ -42,7 +42,7 @@ export const ResetWithSchemaChange = () => {
         },
       }),
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const formHandle = useRef<FormHandle<any>>(null);
 
@@ -86,7 +86,7 @@ export const ResetWithDefaultValueChange = () => {
         type: 'string',
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const defaultValues = [
     {
@@ -155,7 +155,7 @@ export const ResetWithBothChanges = () => {
           name: { type: 'string' },
           age: { type: 'number' },
         },
-      } as JsonSchema,
+      } as JSONSchema,
       defaultValue: {
         name: 'Simple User',
         age: 20,
@@ -176,7 +176,7 @@ export const ResetWithBothChanges = () => {
             },
           },
         },
-      } as JsonSchema,
+      } as JSONSchema,
       defaultValue: {
         name: 'Advanced User',
         age: 25,
@@ -213,7 +213,7 @@ export const ResetWithBothChanges = () => {
             },
           },
         },
-      } as JsonSchema,
+      } as JSONSchema,
       defaultValue: {
         name: 'Expert User',
         age: 35,
@@ -308,7 +308,7 @@ export const ResetBehaviorTest = () => {
         email: { type: 'string', format: 'email', default: 'user@example.com' },
         role: { type: 'string', enum: ['admin', 'user'], default: 'user' },
       },
-    } as JsonSchema,
+    } as JSONSchema,
     product: {
       type: 'object',
       properties: {
@@ -321,7 +321,7 @@ export const ResetBehaviorTest = () => {
         },
         inStock: { type: 'boolean', default: true },
       },
-    } as JsonSchema,
+    } as JSONSchema,
   };
 
   const formHandle = useRef<FormHandle<any>>(null);

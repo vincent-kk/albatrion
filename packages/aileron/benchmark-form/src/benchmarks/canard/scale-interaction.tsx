@@ -1,6 +1,6 @@
 import { createRoot } from 'react-dom/client';
 
-import type { JsonSchema, Form as SchemaForm } from '@canard/schema-form';
+import type { JSONSchema, Form as SchemaForm } from '@canard/schema-form';
 
 import {
   FLAT_CASES,
@@ -56,7 +56,7 @@ async function fireChanges(container: HTMLElement, count: number) {
  * Combined cost. To isolate per-change latency, subtract the matching
  * Scale Render entry's mean time.
  */
-function makeScaleInteractionRunner(schema: JsonSchema) {
+function makeScaleInteractionRunner(schema: JSONSchema) {
   return async function run(SchemaFormModule: { Form: typeof SchemaForm }) {
     const { Form } = SchemaFormModule;
     const container = document.createElement('div');

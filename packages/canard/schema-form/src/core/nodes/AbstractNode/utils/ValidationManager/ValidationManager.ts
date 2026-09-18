@@ -1,6 +1,6 @@
 import { PluginManager } from '@/schema-form/app/plugin';
 import type { ValidationMode } from '@/schema-form/core/types';
-import { JsonSchemaError } from '@/schema-form/errors';
+import { JSONSchemaError } from '@/schema-form/errors';
 import {
   formatCircularReferenceError,
   formatSchemaCompileError,
@@ -9,7 +9,7 @@ import {
 import { stripSchemaExtensions } from '@/schema-form/helpers/jsonSchema';
 import type {
   ValidateFunction,
-  JsonSchemaError as ValidationError,
+  JSONSchemaError as ValidationError,
   ValidatorFactory,
 } from '@/schema-form/types';
 
@@ -207,12 +207,12 @@ export class ValidationManager {
       // failure shares one code and carries the validator's own message as the
       // reason, since guessing a cause here would misdirect the reader.
       const jsonSchemaError = isCircularReferenceError(error)
-        ? new JsonSchemaError(
+        ? new JSONSchemaError(
             'CIRCULAR_REFERENCE',
             formatCircularReferenceError(error.message, jsonSchema),
             { error, schema: jsonSchema },
           )
-        : new JsonSchemaError(
+        : new JSONSchemaError(
             'SCHEMA_COMPILE_FAILED',
             formatSchemaCompileError(error, jsonSchema),
             { error, schema: jsonSchema },

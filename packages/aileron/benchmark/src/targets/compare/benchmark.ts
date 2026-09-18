@@ -11,7 +11,7 @@ import { getSnapshotHash } from './getSnapshotHash';
 const values = [value1, value2, value2, { ...value2 }, { ...value2 }, value1];
 
 let prev1 = value1;
-const compareByJsonPath = () => {
+const compareByJSONPath = () => {
   for (const value of values) {
     if (jsonPath.compare(prev1, value).length > 0) {
       prev1 = value;
@@ -52,7 +52,7 @@ const suite = new Benchmark.Suite();
 export const run = () => {
   return new Promise<Ratio>((resolve) => {
     suite
-      .add('compareByJsonPath', compareByJsonPath)
+      .add('compareByJSONPath', compareByJSONPath)
       .add('compareBySerializeObject', compareBySerializeObject)
       .add('compareWithEquals', compareWithEquals)
       .add('compareWithStableEquals', compareWithStableEquals)

@@ -11,7 +11,7 @@ import { flushSync } from 'react-dom';
 import {
   Form,
   type FormHandle,
-  type JsonSchema,
+  type JSONSchema,
   VirtualizationBackfill,
   type VirtualizationPlaceholderProps,
 } from '../src';
@@ -33,7 +33,7 @@ export default {
  *   rootMargin '100%'), idle backfill, or `handle.focus(path)`.
  */
 
-const flatSchema = (count: number): JsonSchema => ({
+const flatSchema = (count: number): JSONSchema => ({
   type: 'object',
   properties: Object.fromEntries(
     Array.from({ length: count }, (_, index) => [
@@ -242,7 +242,7 @@ export const MountTimeComparison = () => (
  */
 export const FocusCommandReveal = () => {
   const scrollRef = useRef<HTMLDivElement>(null);
-  const formRef = useRef<FormHandle<JsonSchema>>(null);
+  const formRef = useRef<FormHandle<JSONSchema>>(null);
   return (
     <div>
       <Guide>

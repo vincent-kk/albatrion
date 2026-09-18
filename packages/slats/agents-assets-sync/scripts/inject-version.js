@@ -17,10 +17,10 @@ const SEMVER_REGEX = /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d
  * Read and validate package.json version
  */
 function readPackageVersion() {
-  const packageJsonPath = join(__dirname, '..', 'package.json');
+  const packageJSONPath = join(__dirname, '..', 'package.json');
 
   try {
-    const content = readFileSync(packageJsonPath, 'utf-8');
+    const content = readFileSync(packageJSONPath, 'utf-8');
     const pkg = JSON.parse(content);
 
     if (!pkg.version) {
@@ -37,7 +37,7 @@ function readPackageVersion() {
     return pkg.version;
   } catch (error) {
     if (error.code === 'ENOENT') {
-      console.error('❌ Error: package.json not found at', packageJsonPath);
+      console.error('❌ Error: package.json not found at', packageJSONPath);
     } else if (error instanceof SyntaxError) {
       console.error('❌ Error: Invalid JSON in package.json');
     } else {

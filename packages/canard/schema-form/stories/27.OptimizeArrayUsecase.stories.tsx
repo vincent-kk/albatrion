@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { Form, type FormTypeInputProps, type JsonSchema } from '../src';
+import { Form, type FormTypeInputProps, type JSONSchema } from '../src';
 import StoryLayout from './components/StoryLayout';
 
 export default {
@@ -29,7 +29,7 @@ export const FormTypeInputArrayTerminal_Controlled = () => {
         },
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   return (
     <StoryLayout jsonSchema={schema} value={value}>
@@ -64,7 +64,7 @@ export const FormTypeInputArrayTerminal_Uncontrolled = () => {
         },
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   return (
     <StoryLayout jsonSchema={schema} value={value}>
@@ -97,7 +97,7 @@ export const FormTypeInputArrayNotTerminal_Controlled = () => {
         },
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   return (
     <StoryLayout jsonSchema={schema} value={value}>
@@ -133,7 +133,7 @@ export const FormTypeInputArrayNotTerminal_Uncontrolled = () => {
         },
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   return (
     <StoryLayout jsonSchema={schema} value={value}>
@@ -195,7 +195,7 @@ export const FormTypeInputArrayTerminal = () => {
         },
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   return (
     <StoryLayout jsonSchema={schema} value={value}>
@@ -256,7 +256,7 @@ export const FormTypeInputArrayNotTerminal = () => {
         },
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   return (
     <StoryLayout jsonSchema={schema} value={value}>

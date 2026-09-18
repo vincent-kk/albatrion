@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import { nodeFromJsonSchema } from '@/schema-form/core';
+import { nodeFromJSONSchema } from '@/schema-form/core';
 
 import type { AbstractNode } from '../nodes/AbstractNode';
 import { NodeEventType, NodeState, type SchemaNode } from '../types';
@@ -28,7 +28,7 @@ const wait = (delay = 5) => {
 describe('AbstractNode - globalState', () => {
   describe('globalState getter', () => {
     it('root 노드에서 globalState에 접근할 수 있어야 함', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: {
           type: 'object',
           properties: {
@@ -44,7 +44,7 @@ describe('AbstractNode - globalState', () => {
     });
 
     it('자식 노드에서 globalState는 rootNode의 globalState를 반환해야 함', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: {
           type: 'object',
           properties: {
@@ -72,7 +72,7 @@ describe('AbstractNode - globalState', () => {
     });
 
     it('초기 globalState는 빈 객체여야 함', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: {
           type: 'object',
           properties: {
@@ -89,7 +89,7 @@ describe('AbstractNode - globalState', () => {
 
   describe('setGlobalState', () => {
     it('root 노드에서 globalState를 업데이트할 수 있어야 함', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: {
           type: 'object',
           properties: {
@@ -107,7 +107,7 @@ describe('AbstractNode - globalState', () => {
     });
 
     it('자식 노드에서 setGlobalState 호출 시 rootNode에 위임되어야 함', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: {
           type: 'object',
           properties: {
@@ -142,7 +142,7 @@ describe('AbstractNode - globalState', () => {
     });
 
     it('setGlobalState 호출 시 UpdateGlobalState 이벤트가 발생해야 함', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: {
           type: 'object',
           properties: {
@@ -170,7 +170,7 @@ describe('AbstractNode - globalState', () => {
     });
 
     it('동일한 값 설정 시 이벤트가 발생하지 않아야 함', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: {
           type: 'object',
           properties: {
@@ -199,7 +199,7 @@ describe('AbstractNode - globalState', () => {
     });
 
     it('여러 키를 동시에 업데이트할 수 있어야 함', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: {
           type: 'object',
           properties: {
@@ -225,7 +225,7 @@ describe('AbstractNode - globalState', () => {
     });
 
     it('기존 globalState 값을 유지하면서 새 값을 추가해야 함', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: {
           type: 'object',
           properties: {
@@ -249,7 +249,7 @@ describe('AbstractNode - globalState', () => {
 
   describe('setState → globalState 연동', () => {
     it('setState 호출 시 globalState도 업데이트되어야 함', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: {
           type: 'object',
           properties: {
@@ -275,7 +275,7 @@ describe('AbstractNode - globalState', () => {
     });
 
     it('여러 노드의 setState가 globalState에 병합되어야 함', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: {
           type: 'object',
           properties: {
@@ -304,7 +304,7 @@ describe('AbstractNode - globalState', () => {
     });
 
     it('setState와 setGlobalState 이벤트가 모두 발생해야 함', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: {
           type: 'object',
           properties: {
@@ -344,7 +344,7 @@ describe('AbstractNode - globalState', () => {
 
   describe('globalState 누적 및 초기화', () => {
     it('하위 노드의 모든 state 변화가 globalState에 누적되어야 함', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: {
           type: 'object',
           properties: {
@@ -378,7 +378,7 @@ describe('AbstractNode - globalState', () => {
     });
 
     it('한번 true가 된 값은 false로 되돌릴 수 없어야 함', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: {
           type: 'object',
           properties: {
@@ -407,7 +407,7 @@ describe('AbstractNode - globalState', () => {
     });
 
     it('falsy 값(false, 0, "", null)으로는 기존 truthy 값을 덮어쓸 수 없어야 함', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: {
           type: 'object',
           properties: {
@@ -445,7 +445,7 @@ describe('AbstractNode - globalState', () => {
     });
 
     it('자식 노드에서 setState로 false 설정해도 globalState의 true는 유지되어야 함', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: {
           type: 'object',
           properties: {
@@ -474,7 +474,7 @@ describe('AbstractNode - globalState', () => {
     });
 
     it('setGlobalState(undefined)로 globalState를 초기화할 수 있어야 함', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: {
           type: 'object',
           properties: {
@@ -513,7 +513,7 @@ describe('AbstractNode - globalState', () => {
     });
 
     it('이미 빈 globalState에 undefined를 전달하면 이벤트가 발생하지 않아야 함', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: {
           type: 'object',
           properties: {
@@ -541,7 +541,7 @@ describe('AbstractNode - globalState', () => {
     });
 
     it('초기화 후 다시 상태를 설정할 수 있어야 함', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: {
           type: 'object',
           properties: {
@@ -569,7 +569,7 @@ describe('AbstractNode - globalState', () => {
     });
 
     it('자식 노드에서 setGlobalState(undefined) 호출 시 root의 globalState가 초기화되어야 함', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: {
           type: 'object',
           properties: {
@@ -601,7 +601,7 @@ describe('AbstractNode - globalState', () => {
 
   describe('globalState 불변성 및 이벤트 발화 조건', () => {
     it('globalState 업데이트 시 새 객체 참조를 반환해야 함', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: {
           type: 'object',
           properties: {
@@ -622,7 +622,7 @@ describe('AbstractNode - globalState', () => {
     });
 
     it('실제 변경이 있을 때만 이벤트가 발생하고, 새로운 객체 참조를 가져야 함', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: {
           type: 'object',
           properties: {
@@ -681,7 +681,7 @@ describe('AbstractNode - globalState', () => {
     });
 
     it('자식 노드에서 setFormState 호출 시에도 동일한 불변성 규칙이 적용되어야 함', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: {
           type: 'object',
           properties: {

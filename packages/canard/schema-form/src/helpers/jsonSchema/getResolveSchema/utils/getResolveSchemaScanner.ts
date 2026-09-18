@@ -1,21 +1,21 @@
 import { isEmptyObject } from '@winglet/common-utils/filter';
 import { clone, merge } from '@winglet/common-utils/object';
-import { JsonSchemaScanner } from '@winglet/json-schema/scanner';
+import { JSONSchemaScanner } from '@winglet/json-schema/scanner';
 
-import type { JsonSchema, JsonSchemaWithRef } from '@/schema-form/types';
+import type { JSONSchema, JSONSchemaWithRef } from '@/schema-form/types';
 
 /**
  * Creates a JSON Schema scanner configured for resolving $ref references
  *
  * @param referenceTable - Map containing reference keys and their resolved schemas
  * @param maxDepth - Maximum depth for reference resolution to prevent infinite recursion
- * @returns JsonSchemaScanner instance configured with reference resolution options
+ * @returns JSONSchemaScanner instance configured with reference resolution options
  */
 export const getResolveSchemaScanner = (
-  referenceTable: Map<string, JsonSchema>,
+  referenceTable: Map<string, JSONSchema>,
   maxDepth: number,
 ) =>
-  new JsonSchemaScanner<JsonSchemaWithRef>({
+  new JSONSchemaScanner<JSONSchemaWithRef>({
     options: {
       resolveReference: (path, entry) => {
         const { $ref: _, ...preferredSchema } = entry.schema;

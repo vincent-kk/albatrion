@@ -9,7 +9,7 @@ const PACKAGES_DIR = path.join(MONOREPO_ROOT, 'packages');
 /** Namespaces to include (aileron excluded) */
 const TARGET_NAMESPACES = ['canard', 'lerx', 'winglet', 'slats'];
 
-interface PkgJson {
+interface PkgJSON {
   name: string;
   version: string;
   exports?: Record<string, { types?: string } | string>;
@@ -31,14 +31,14 @@ export function discoverPackages(): PackageEntry[] {
       .map(d => d.name);
 
     for (const pkgDir of pkgDirs) {
-      const pkgJsonPath = path.join(nsDir, pkgDir, 'package.json');
-      if (!fs.existsSync(pkgJsonPath)) continue;
+      const pkgJSONPath = path.join(nsDir, pkgDir, 'package.json');
+      if (!fs.existsSync(pkgJSONPath)) continue;
 
-      const pkgJson: PkgJson = JSON.parse(fs.readFileSync(pkgJsonPath, 'utf-8'));
+      const pkgJSON: PkgJSON = JSON.parse(fs.readFileSync(pkgJSONPath, 'utf-8'));
       const pkgRoot = path.join(nsDir, pkgDir);
 
       // Find main .d.ts via exports["."].types or fallback to dist/index.d.ts
-      const mainDtsPath = resolveMainDts(pkgJson, pkgRoot);
+      const mainDtsPath = resolveMainDts(pkgJSON, pkgRoot);
       if (!mainDtsPath || !fs.existsSync(mainDtsPath)) continue;
 
       // Map to MDX doc path
@@ -46,15 +46,15 @@ export function discoverPackages(): PackageEntry[] {
       if (!fs.existsSync(mdxPath)) continue;
 
       // Collect sub-path exports
-      const subPaths = resolveSubPaths(pkgJson, pkgRoot);
+      const subPaths = resolveSubPaths(pkgJSON, pkgRoot);
 
-      const name = pkgJson.name;
+      const name = pkgJSON.name;
       const namespace = ns;
       const shortName = pkgDir;
 
       entries.push({
         name,
-        version: pkgJson.version,
+        version: pkgJSON.version,
         namespace,
         shortName,
         mainDtsPath,
@@ -67,8 +67,8 @@ export function discoverPackages(): PackageEntry[] {
   return entries.sort((a, b) => a.name.localeCompare(b.name));
 }
 
-function resolveMainDts(pkgJson: PkgJson, pkgRoot: string): string | null {
-  const exportsMap = pkgJson.exports;
+function resolveMainDts(pkgJSON: PkgJSON, pkgRoot: string): string | null {
+  const exportsMap = pkgJSON.exports;
   if (exportsMap && exportsMap['.']) {
     const rootExport = exportsMap['.'];
     if (typeof rootExport === 'object' && rootExport.types) {
@@ -79,8 +79,8 @@ function resolveMainDts(pkgJson: PkgJson, pkgRoot: string): string | null {
   return path.join(pkgRoot, 'dist', 'index.d.ts');
 }
 
-function resolveSubPaths(pkgJson: PkgJson, pkgRoot: string): SubPathEntry[] {
-  const exportsMap = pkgJson.exports;
+function resolveSubPaths(pkgJSON: PkgJSON, pkgRoot: string): SubPathEntry[] {
+  const exportsMap = pkgJSON.exports;
   if (!exportsMap) return [];
 
   const subPaths: SubPathEntry[] = [];

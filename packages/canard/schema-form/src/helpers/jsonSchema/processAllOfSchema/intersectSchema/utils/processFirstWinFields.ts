@@ -1,4 +1,4 @@
-import type { JsonSchema } from '@/schema-form/types';
+import type { JSONSchema } from '@/schema-form/types';
 
 import { FIRST_WIN_FIELDS } from './constants';
 
@@ -13,7 +13,7 @@ import { FIRST_WIN_FIELDS } from './constants';
  * @param base - The base schema to modify (first-win priority)
  * @param source - The source schema to merge from
  */
-export const processFirstWinFields = <T extends JsonSchema>(
+export const processFirstWinFields = <T extends JSONSchema>(
   base: T,
   source: Partial<T>,
 ) => {

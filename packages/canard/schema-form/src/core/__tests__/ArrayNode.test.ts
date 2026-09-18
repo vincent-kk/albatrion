@@ -3,8 +3,8 @@ import { describe, expect, it, vi } from 'vitest';
 
 import { delay } from '@winglet/common-utils';
 
-import { nodeFromJsonSchema } from '@/schema-form/core';
-import type { JsonSchema } from '@/schema-form/types';
+import { nodeFromJSONSchema } from '@/schema-form/core';
+import type { JSONSchema } from '@/schema-form/types';
 
 import { NodeEventType, ValidationMode } from '../nodes';
 import type { ArrayNode } from '../nodes/ArrayNode';
@@ -15,7 +15,7 @@ const wait = () => new Promise((resolve) => setTimeout(resolve, 5));
 describe('ArrayNode', () => {
   it('automatically add items up to minItems', async () => {
     const MIN_ITEMS = 5;
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       onChange: () => {},
       jsonSchema: {
         type: 'object',
@@ -38,7 +38,7 @@ describe('ArrayNode', () => {
   });
 
   it('add / remove / clear items', async () => {
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       onChange: () => {},
       jsonSchema: {
         type: 'object',
@@ -73,7 +73,7 @@ describe('ArrayNode', () => {
 
   it('cannot exceed maxItems', async () => {
     const MAX_ITEMS = 3;
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       onChange: () => {},
       jsonSchema: {
         type: 'object',
@@ -100,7 +100,7 @@ describe('ArrayNode', () => {
   });
 
   it('array.getValue', async () => {
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       onChange: () => {},
       jsonSchema: {
         type: 'object',
@@ -152,9 +152,9 @@ describe('ArrayNode', () => {
           minItems: 3,
         },
       },
-    } satisfies JsonSchema;
+    } satisfies JSONSchema;
 
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       jsonSchema,
       onChange: () => {},
       defaultValue: {
@@ -216,9 +216,9 @@ describe('ArrayNode', () => {
           minItems: 3,
         },
       },
-    } satisfies JsonSchema;
+    } satisfies JSONSchema;
 
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       jsonSchema,
       onChange: () => {},
     });
@@ -245,7 +245,7 @@ describe('ArrayNode', () => {
   });
 
   it('배열 노드가 정상적으로 생성되어야 함', () => {
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       onChange: () => {},
       jsonSchema: {
         type: 'object',
@@ -266,7 +266,7 @@ describe('ArrayNode', () => {
   });
 
   it('배열 노드의 값이 정상적으로 설정되어야 함', async () => {
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       onChange: () => {},
       jsonSchema: {
         type: 'object',
@@ -290,7 +290,7 @@ describe('ArrayNode', () => {
   });
 
   it('배열 노드의 기본값이 정상적으로 설정되어야 함', async () => {
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       onChange: () => {},
       jsonSchema: {
         type: 'object',
@@ -313,7 +313,7 @@ describe('ArrayNode', () => {
   });
 
   it('배열 노드의 이벤트가 정상적으로 발생해야 함', async () => {
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       onChange: () => {},
       jsonSchema: {
         type: 'object',
@@ -361,7 +361,7 @@ describe('ArrayNode', () => {
   });
 
   it('배열 노드의 아이템 추가가 정상적으로 동작해야 함', async () => {
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       onChange: () => {},
       jsonSchema: {
         type: 'object',
@@ -392,7 +392,7 @@ describe('ArrayNode', () => {
   });
 
   it('배열 노드의 아이템 삭제가 정상적으로 동작해야 함', async () => {
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       onChange: () => {},
       jsonSchema: {
         type: 'object',
@@ -423,7 +423,7 @@ describe('ArrayNode', () => {
   });
 
   it('배열 노드의 아이템 이동이 정상적으로 동작해야 함', async () => {
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       onChange: () => {},
       jsonSchema: {
         type: 'object',
@@ -454,7 +454,7 @@ describe('ArrayNode', () => {
         validateFormats: false,
       }),
     );
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       onChange: () => {},
       jsonSchema: {
         type: 'object',
@@ -514,7 +514,7 @@ describe('ArrayNode', () => {
         validateFormats: false,
       }),
     );
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       onChange: () => {},
       jsonSchema: {
         type: 'object',
@@ -553,7 +553,7 @@ describe('ArrayNode', () => {
   });
 
   it('배열 노드의 복잡한 아이템 타입이 정상적으로 처리되어야 함', async () => {
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       onChange: () => {},
       jsonSchema: {
         type: 'object',
@@ -605,7 +605,7 @@ describe('ArrayNode', () => {
   });
 
   it('잘못된 인덱스로 remove 호출 시 값을 변경하지 않고 undefined를 반환해야 함', async () => {
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       onChange: () => {},
       jsonSchema: {
         type: 'object',
@@ -632,7 +632,7 @@ describe('ArrayNode', () => {
   });
 
   it('잘못된 인덱스로 update 호출 시 값을 변경하지 않고 undefined를 반환해야 함', async () => {
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       onChange: () => {},
       jsonSchema: {
         type: 'object',

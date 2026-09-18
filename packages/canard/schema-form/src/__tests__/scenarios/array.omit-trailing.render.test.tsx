@@ -9,7 +9,7 @@
 import '@testing-library/jest-dom';
 import { describe, expect, it, vi } from 'vitest';
 
-import type { JsonSchema } from '@/schema-form/types';
+import type { JSONSchema } from '@/schema-form/types';
 
 import { renderForm } from '../renderForm';
 
@@ -24,7 +24,7 @@ const objectArraySchema = (arraySchema: Record<string, unknown> = {}) =>
         ...arraySchema,
       },
     },
-  }) as JsonSchema;
+  }) as JSONSchema;
 
 describe('array omitTrailing (render)', () => {
   it('renders every empty input while the emitted value omits them', async () => {
@@ -71,7 +71,7 @@ describe('array omitTrailing (render)', () => {
         items: { type: 'string' },
         minItems: 3,
         options: { omitTrailing: true },
-      } as JsonSchema,
+      } as JSONSchema,
       { validator: true },
     );
     await form.setValue(['a', 'b', undefined]);
@@ -85,7 +85,7 @@ describe('array omitTrailing (render)', () => {
         type: 'array',
         items: { type: 'number' },
         options: { omitTrailing: true },
-      } as JsonSchema,
+      } as JSONSchema,
       { validator: true },
     );
     await form.setValue([1, undefined, 2, undefined]);
@@ -102,7 +102,7 @@ describe('array omitTrailing (render)', () => {
         type: 'array',
         items: { type: 'number' },
         options: { omitTrailing: true },
-      } as JsonSchema,
+      } as JSONSchema,
       { onSubmit },
     );
     await form.setValue([1, 2, undefined]);
@@ -117,7 +117,7 @@ describe('array omitTrailing (render)', () => {
       type: 'array',
       items: { type: 'number' },
       options: { omitTrailing: true },
-    } as JsonSchema);
+    } as JSONSchema);
     await form.setValue([undefined, undefined]);
     expect(form.exists('/1')).toBe(true);
     expect(form.getValue()).toEqual([]);
@@ -127,14 +127,14 @@ describe('array omitTrailing (render)', () => {
     const form = await renderForm({
       type: 'array',
       items: { type: 'number' },
-    } as JsonSchema);
+    } as JSONSchema);
     await form.setValue([]);
     expect(form.getValue()).toEqual([]);
   });
 
   it('reports minItems (not a type error) for an empty plain root array', async () => {
     const form = await renderForm(
-      { type: 'array', items: { type: 'number' }, minItems: 1 } as JsonSchema,
+      { type: 'array', items: { type: 'number' }, minItems: 1 } as JSONSchema,
       { validator: true },
     );
     await form.setValue([]);
@@ -149,7 +149,7 @@ describe('array omitTrailing (render)', () => {
       items: { type: 'string' },
       minItems: 3,
       options: { omitTrailing: true },
-    } as JsonSchema);
+    } as JSONSchema);
     expect(form.changeLog()[0]).toEqual([]);
     expect(form.changeLog()).not.toContainEqual(undefined);
   });

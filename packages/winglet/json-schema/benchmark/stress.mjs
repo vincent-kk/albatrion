@@ -10,7 +10,7 @@ import {
   getByPointer,
 } from "./_lib.mjs";
 
-const { JsonSchemaScanner, JsonSchemaScannerAsync } = await loadScanners();
+const { JSONSchemaScanner, JSONSchemaScannerAsync } = await loadScanners();
 
 const cases = {};
 function run(name, fn, budgetMs = 20000) {
@@ -46,7 +46,7 @@ async function runAsync(name, fn, budgetMs = 20000) {
 run("wide-200k", () => {
   const schema = genWide(200000);
   let n = 0;
-  new JsonSchemaScanner({ visitor: { enter: () => n++ } }).scan(schema);
+  new JSONSchemaScanner({ visitor: { enter: () => n++ } }).scan(schema);
   return `visited=${n}`;
 });
 
@@ -54,7 +54,7 @@ run("wide-200k", () => {
 run("deep-20k", () => {
   const schema = genDeep(20000);
   let maxDepth = 0;
-  new JsonSchemaScanner({
+  new JSONSchemaScanner({
     visitor: { enter: (e) => (maxDepth = Math.max(maxDepth, e.depth)) },
   }).scan(schema);
   return `maxDepth=${maxDepth}`;
@@ -64,7 +64,7 @@ run("deep-20k", () => {
 run("branchy(4,9)", () => {
   const schema = genBranchy(4, 9);
   let n = 0;
-  new JsonSchemaScanner({ visitor: { enter: () => n++ } }).scan(schema);
+  new JSONSchemaScanner({ visitor: { enter: () => n++ } }).scan(schema);
   return `visited=${n}`;
 });
 
@@ -77,7 +77,7 @@ run("self-cycle-ref", () => {
       A: { type: "object", properties: { self: { $ref: "#/definitions/A" } } },
     },
   };
-  const out = new JsonSchemaScanner({
+  const out = new JSONSchemaScanner({
     options: { resolveReference: (ref) => getByPointer(schema, ref) },
   })
     .scan(schema)
@@ -96,7 +96,7 @@ run("mutual-cycle-ref", () => {
     },
   };
   let n = 0;
-  new JsonSchemaScanner({
+  new JSONSchemaScanner({
     visitor: { enter: () => n++ },
     options: { resolveReference: (ref) => getByPointer(schema, ref) },
   })
@@ -108,7 +108,7 @@ run("mutual-cycle-ref", () => {
 // 6. High ref fan-out + getValue (inlining churn)
 run("refHeavy-2k+getValue", () => {
   const schema = genRefHeavy(2000, 3, 3);
-  const s = new JsonSchemaScanner({
+  const s = new JSONSchemaScanner({
     options: { resolveReference: (ref) => getByPointer(schema, ref) },
   });
   s.scan(schema);
@@ -131,7 +131,7 @@ run("adversarial-junk", () => {
   ];
   let totalVisited = 0;
   for (const schema of schemas) {
-    new JsonSchemaScanner({ visitor: { enter: () => totalVisited++ } }).scan(
+    new JSONSchemaScanner({ visitor: { enter: () => totalVisited++ } }).scan(
       schema,
     );
   }
@@ -141,7 +141,7 @@ run("adversarial-junk", () => {
 // 8. Repeated scan on a single reused instance (state hygiene under churn)
 run("reused-instance-1000x", () => {
   const schema = genBranchy(4, 5);
-  const scanner = new JsonSchemaScanner();
+  const scanner = new JSONSchemaScanner();
   let last = 0;
   for (let i = 0; i < 1000; i++) {
     scanner.scan(schema);
@@ -154,7 +154,7 @@ run("reused-instance-1000x", () => {
 // 9. Async: deep + remote-ish resolver (must not overflow / hang)
 await runAsync("async-deep-refs", async () => {
   const schema = genRefHeavy(500, 2, 3);
-  const s = new JsonSchemaScannerAsync({
+  const s = new JSONSchemaScannerAsync({
     options: { resolveReference: async (ref) => getByPointer(schema, ref) },
   });
   await s.scan(schema);

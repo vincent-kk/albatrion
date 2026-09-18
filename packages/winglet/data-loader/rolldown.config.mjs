@@ -4,9 +4,9 @@ import { getBundleBuildOptions } from '../../aileron/script/build/rolldown.bundl
 
 const { bundleBuildOptions, clearDir } = getBundleBuildOptions(import.meta.url);
 
-const packageJson = createRequire(import.meta.url)('./package.json');
+const packageJSON = createRequire(import.meta.url)('./package.json');
 
-const mainEntry = packageJson.exports['.'];
+const mainEntry = packageJSON.exports['.'];
 
 export default async () => {
   clearDir('dist');

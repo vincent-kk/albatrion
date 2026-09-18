@@ -2,8 +2,8 @@ import { describe, expect, it } from 'vitest';
 
 import { delay } from '@winglet/common-utils';
 
-import { nodeFromJsonSchema } from '@/schema-form/core';
-import type { JsonSchema } from '@/schema-form/types';
+import { nodeFromJSONSchema } from '@/schema-form/core';
+import type { JSONSchema } from '@/schema-form/types';
 
 import type { NumberNode } from '../nodes/NumberNode';
 import type { ObjectNode } from '../nodes/ObjectNode';
@@ -11,7 +11,7 @@ import type { StringNode } from '../nodes/StringNode';
 
 type CompositionScope = 'oneOf' | 'anyOf';
 
-const createNestedSchema = (innerScope: CompositionScope): JsonSchema => ({
+const createNestedSchema = (innerScope: CompositionScope): JSONSchema => ({
   type: 'object',
   properties: {
     variant: {
@@ -59,7 +59,7 @@ describe('BranchStrategy oneOf - nested defaults', () => {
   it.each(['oneOf', 'anyOf'] as const satisfies readonly CompositionScope[])(
     'preserves defaults from a nested %s during initial activation',
     async (innerScope) => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: createNestedSchema(innerScope),
         onChange: () => {},
       }) as ObjectNode;
@@ -73,7 +73,7 @@ describe('BranchStrategy oneOf - nested defaults', () => {
   it.each(['oneOf', 'anyOf'] as const satisfies readonly CompositionScope[])(
     'restores nested %s defaults after reactivation',
     async (innerScope) => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: createNestedSchema(innerScope),
         onChange: () => {},
       }) as ObjectNode;

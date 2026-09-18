@@ -1,4 +1,4 @@
-import type { JsonSchema } from '@canard/schema-form';
+import type { JSONSchema } from '@canard/schema-form';
 
 /**
  * Scale-dial fixtures for measuring schema-form cost as a function of
@@ -15,8 +15,8 @@ import type { JsonSchema } from '@canard/schema-form';
  * sibling primitives). Defaults to string fields with a stable default
  * value so initialization is deterministic.
  */
-export function buildFlatSchema(fieldCount: number): JsonSchema {
-  const properties: Record<string, JsonSchema> = {};
+export function buildFlatSchema(fieldCount: number): JSONSchema {
+  const properties: Record<string, JSONSchema> = {};
   for (let i = 0; i < fieldCount; i++) {
     const key = `field_${String(i).padStart(3, '0')}`;
     properties[key] = { type: 'string', default: `value_${i}` };
@@ -24,7 +24,7 @@ export function buildFlatSchema(fieldCount: number): JsonSchema {
   return {
     type: 'object',
     properties,
-  } as JsonSchema;
+  } as JSONSchema;
 }
 
 /**
@@ -33,16 +33,16 @@ export function buildFlatSchema(fieldCount: number): JsonSchema {
  * Total leaf primitives ≈ fanout^depth. Use small values: depth=3 fanout=4
  * is 64 leaves; depth=5 fanout=4 is 1024 leaves (heavy).
  */
-export function buildNestedSchema(depth: number, fanout: number): JsonSchema {
-  function buildLevel(currentDepth: number): JsonSchema {
+export function buildNestedSchema(depth: number, fanout: number): JSONSchema {
+  function buildLevel(currentDepth: number): JSONSchema {
     if (currentDepth === 0) {
-      return { type: 'string', default: 'leaf' } as JsonSchema;
+      return { type: 'string', default: 'leaf' } as JSONSchema;
     }
-    const properties: Record<string, JsonSchema> = {};
+    const properties: Record<string, JSONSchema> = {};
     for (let i = 0; i < fanout; i++) {
       properties[`n${i}`] = buildLevel(currentDepth - 1);
     }
-    return { type: 'object', properties } as JsonSchema;
+    return { type: 'object', properties } as JSONSchema;
   }
   return buildLevel(depth);
 }
@@ -54,7 +54,7 @@ export function buildNestedSchema(depth: number, fanout: number): JsonSchema {
  * is a small object so the cost is dominated by ArrayNode bookkeeping
  * rather than per-leaf parsing.
  */
-export function buildArraySchema(itemCount: number): JsonSchema {
+export function buildArraySchema(itemCount: number): JSONSchema {
   const defaultItems = Array.from({ length: itemCount }, (_, i) => ({
     id: `id-${i}`,
     name: `name-${i}`,
@@ -76,15 +76,15 @@ export function buildArraySchema(itemCount: number): JsonSchema {
         },
       },
     },
-  } as JsonSchema;
+  } as JSONSchema;
 }
 
 /**
  * `branchCount` -branch oneOf with a discriminator-like `kind` field
  * and small per-branch payload. Stresses BranchStrategy.initialize.
  */
-export function buildOneOfHeavySchema(branchCount: number): JsonSchema {
-  const oneOf: JsonSchema[] = [];
+export function buildOneOfHeavySchema(branchCount: number): JSONSchema {
+  const oneOf: JSONSchema[] = [];
   for (let i = 0; i < branchCount; i++) {
     oneOf.push({
       type: 'object',
@@ -95,7 +95,7 @@ export function buildOneOfHeavySchema(branchCount: number): JsonSchema {
         [`payload_${i}_c`]: { type: 'boolean', default: i % 2 === 0 },
       },
       required: ['kind'],
-    } as JsonSchema);
+    } as JSONSchema);
   }
   return {
     type: 'object',
@@ -103,12 +103,12 @@ export function buildOneOfHeavySchema(branchCount: number): JsonSchema {
       common: { type: 'string', default: 'shared' },
     },
     oneOf,
-  } as JsonSchema;
+  } as JSONSchema;
 }
 
 export interface ScaleCase {
   label: string;
-  schema: JsonSchema;
+  schema: JSONSchema;
 }
 
 export const FLAT_CASES: ScaleCase[] = [

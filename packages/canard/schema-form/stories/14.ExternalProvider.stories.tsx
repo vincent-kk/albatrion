@@ -2,13 +2,13 @@ import { type ComponentType, useMemo, useRef, useState } from 'react';
 
 import Ajv from 'ajv';
 
-import type { JsonSchemaError } from '../src';
+import type { JSONSchemaError } from '../src';
 import {
   Form,
   FormProvider,
   type FormTypeInputDefinition,
   type FormTypeRendererProps,
-  type JsonSchema,
+  type JSONSchema,
   NodeState,
   ValidationMode,
 } from '../src';
@@ -70,7 +70,7 @@ export const ExternalFormContext = () => {
         formType: 'external-input2',
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
   const defaultValue = useRef({
     name: 'ron',
     number: 10,
@@ -114,7 +114,7 @@ export const ExternalFormContextWithUserDefinedContext = () => {
         formType: 'external-input2',
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
   const defaultValue = useRef({
     name: 'ron',
     number: 10,
@@ -181,7 +181,7 @@ export const ExternalFormContextConfig = () => {
         },
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
   const defaultValue = useRef({
     name: 'ron wizzly',
     number: 10,
@@ -191,7 +191,7 @@ export const ExternalFormContextConfig = () => {
     setValue(val);
   };
 
-  const [errors, setErrors] = useState<JsonSchemaError[]>([]);
+  const [errors, setErrors] = useState<JSONSchemaError[]>([]);
 
   return (
     <FormProvider
@@ -239,7 +239,7 @@ export const ExternalFormContextAjv = () => {
       name: { type: 'string', maxLength: 1 },
       number: { type: 'number', isEven: true, maximum: 5 },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
   const defaultValue = useRef({
     name: 'ron',
     number: 10,
@@ -249,7 +249,7 @@ export const ExternalFormContextAjv = () => {
     setValue(val);
   };
 
-  const [errors, setErrors] = useState<JsonSchemaError[]>([]);
+  const [errors, setErrors] = useState<JSONSchemaError[]>([]);
 
   const validatorFactory = useMemo(() => {
     const ajv = new Ajv({

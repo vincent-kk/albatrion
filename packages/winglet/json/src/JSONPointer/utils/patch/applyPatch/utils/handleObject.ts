@@ -8,10 +8,10 @@ import {
 
 import { getValue } from '@/json/JSONPointer/utils/manipulator/getValue';
 import { setValue } from '@/json/JSONPointer/utils/manipulator/setValue';
-import type { JsonObject, JsonRoot } from '@/json/type';
+import type { JSONObject, JSONRoot } from '@/json/type';
 
 import { Operation, type Patch } from '../../../patchModel';
-import { JsonPatchError } from './error';
+import { JSONPatchError } from './error';
 import { isCircularMoveReference } from './isCircularMoveReference';
 
 /**
@@ -25,14 +25,14 @@ import { isCircularMoveReference } from './isCircularMoveReference';
  * @param patchIndex - The index of the patch for error reporting
  * @param strict - Whether to use strict equality checking
  * @returns The modified source document
- * @throws {JsonPatchError} When operation fails or property validation fails
+ * @throws {JSONPatchError} When operation fails or property validation fails
  * @internal
  */
 export const handleObject = (
   patch: Patch,
-  object: JsonObject,
+  object: JSONObject,
   key: string,
-  source: JsonRoot,
+  source: JSONRoot,
   patchIndex: number,
   strict: boolean,
 ): any => {
@@ -43,7 +43,7 @@ export const handleObject = (
       return source;
     case Operation.REMOVE:
       if (!hasOwnProperty(object, key)) {
-        throw new JsonPatchError(
+        throw new JSONPatchError(
           'PATCH_OBJECT_PROPERTY_NOT_FOUND',
           `Cannot remove property '${key}' - property does not exist on object`,
           {
@@ -59,7 +59,7 @@ export const handleObject = (
       return source;
     case Operation.TEST:
       if (!hasOwnProperty(object, key)) {
-        throw new JsonPatchError(
+        throw new JSONPatchError(
           'PATCH_OBJECT_PROPERTY_NOT_FOUND',
           `Cannot test property '${key}' - property does not exist on object`,
           {
@@ -73,7 +73,7 @@ export const handleObject = (
         );
       }
       if (!strict || equals(object[key], patch.value)) return source;
-      throw new JsonPatchError(
+      throw new JSONPatchError(
         'PATCH_TEST_FAILED',
         `Test operation failed for property '${key}'. Expected value does not match actual value`,
         {
@@ -87,7 +87,7 @@ export const handleObject = (
       );
     case Operation.MOVE:
       if (isCircularMoveReference(patch.from, patch.path))
-        throw new JsonPatchError(
+        throw new JSONPatchError(
           'PATCH_MOVE_INTO_DESCENDANT_FORBIDDEN',
           `Cannot move location '${patch.from}' to '${patch.path}' - target location is a descendant of or identical to source location. This would create a circular reference.`,
           {
@@ -103,7 +103,7 @@ export const handleObject = (
       return source;
     case Operation.COPY:
       if (isCircularMoveReference(patch.from, patch.path))
-        throw new JsonPatchError(
+        throw new JSONPatchError(
           'PATCH_COPY_INTO_DESCENDANT_FORBIDDEN',
           `Cannot copy location '${patch.from}' to '${patch.path}' - target location is a descendant of or identical to source location. This would create a circular reference.`,
           {
@@ -119,7 +119,7 @@ export const handleObject = (
       setDataProperty(object, key, cloneLite(getValue(source, patch.from)));
       return source;
     default:
-      throw new JsonPatchError(
+      throw new JSONPatchError(
         'PATCH_OPERATION_INVALID',
         `Unsupported operation '${(patch as Patch).op}'. Valid operations are: add, remove, replace, move, copy, test`,
         {

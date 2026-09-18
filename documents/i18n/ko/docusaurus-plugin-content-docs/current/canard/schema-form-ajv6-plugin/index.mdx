@@ -66,7 +66,7 @@ import Ajv from 'ajv';
 import { createValidatorFactory } from '@canard/schema-form-ajv6-plugin';
 
 const ajv = new Ajv({ allErrors: true });
-const validate = createValidatorFactory(ajv)(myJsonSchema);
+const validate = createValidatorFactory(ajv)(myJSONSchema);
 
 const errors = await validate(formData); // null | ValidationError[]
 ```

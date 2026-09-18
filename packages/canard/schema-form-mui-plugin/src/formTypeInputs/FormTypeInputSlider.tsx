@@ -12,7 +12,7 @@ import type {
 
 import type { MuiContext } from '../type';
 
-type SliderJsonSchema = NumberSchema & {
+type SliderJSONSchema = NumberSchema & {
   formType: 'slider';
   minimum?: number;
   maximum?: number;
@@ -23,7 +23,7 @@ type SliderJsonSchema = NumberSchema & {
 interface FormTypeInputSliderProps
   extends FormTypeInputPropsWithSchema<
       number | null,
-      SliderJsonSchema,
+      SliderJSONSchema,
       MuiContext
     >,
     MuiContext {

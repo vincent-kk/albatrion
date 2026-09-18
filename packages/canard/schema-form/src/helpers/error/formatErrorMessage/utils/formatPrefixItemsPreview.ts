@@ -1,4 +1,4 @@
-import type { ArraySchema, JsonSchema } from '@/schema-form/types';
+import type { ArraySchema, JSONSchema } from '@/schema-form/types';
 
 /**
  * Formats prefix items preview for error messages.
@@ -12,7 +12,7 @@ export const formatPrefixItemsPreview = (
 ): string => {
   const items = jsonSchema.prefixItems?.slice(0, 3) ?? [];
   const preview = items
-    .map((item) => JSON.stringify((item as JsonSchema).type || item))
+    .map((item) => JSON.stringify((item as JSONSchema).type || item))
     .join(', ');
   return preview + (prefixItemsLength > 3 ? ', ...' : '');
 };

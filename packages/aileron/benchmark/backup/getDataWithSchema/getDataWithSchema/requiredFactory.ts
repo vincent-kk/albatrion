@@ -2,14 +2,14 @@ import { cacheWeakMapFactory, map } from '@winglet/common-utils';
 
 import type { Dictionary } from '@aileron/declare';
 
-import type { JsonSchema, ObjectSchema } from '@/schema-form/types';
+import type { JSONSchema, ObjectSchema } from '@/schema-form/types';
 
 type OneOfDetail = {
-  properties: Array<[string, Partial<JsonSchema>]>;
+  properties: Array<[string, Partial<JSONSchema>]>;
   requiredFields: Array<string>;
 };
 
-const { get, set } = cacheWeakMapFactory<OneOfDetail[], JsonSchema>();
+const { get, set } = cacheWeakMapFactory<OneOfDetail[], JSONSchema>();
 
 /**
  * 스키마를 분석하여 특정 값에 대해 어떤 속성을 제외해야 하는지 결정하는 함수를 반환합니다.
@@ -51,12 +51,12 @@ const getRequiredFactory = (oneOfDetails: OneOfDetail[], value: Dictionary) => {
  * @param schema 분석할 스키마
  * @returns 분석된 스키마 정보
  */
-const analyzeOneOfSchema = (schema: JsonSchema) => {
+const analyzeOneOfSchema = (schema: JSONSchema) => {
   const oneOfDetails: OneOfDetail[] = [];
   const oneOfLength = schema.oneOf?.length;
   if (!oneOfLength) return oneOfDetails;
   for (let i = 0; i < oneOfLength; i++) {
-    const oneOfItem = schema.oneOf![i] as JsonSchema;
+    const oneOfItem = schema.oneOf![i] as JSONSchema;
     if (!oneOfItem.properties) continue;
     const properties = Object.entries(
       oneOfItem.properties,

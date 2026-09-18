@@ -20,8 +20,8 @@ import { describe, expect, it, vi } from 'vitest';
 
 import { delay } from '@winglet/common-utils';
 
-import { nodeFromJsonSchema } from '@/schema-form/core';
-import type { JsonSchema } from '@/schema-form/types';
+import { nodeFromJSONSchema } from '@/schema-form/core';
+import type { JSONSchema } from '@/schema-form/types';
 
 import type { BooleanNode } from '../nodes/BooleanNode';
 import type { NumberNode } from '../nodes/NumberNode';
@@ -38,9 +38,9 @@ describe('ObjectNode Propagate Batch Protection', () => {
           age: { type: 'number' },
           email: { type: 'string' },
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: schema,
         onChange: () => {},
       });
@@ -84,9 +84,9 @@ describe('ObjectNode Propagate Batch Protection', () => {
           field2: { type: 'string' },
           field3: { type: 'string' },
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: schema,
         onChange: () => {},
       });
@@ -132,9 +132,9 @@ describe('ObjectNode Propagate Batch Protection', () => {
           d: { type: 'string' },
           e: { type: 'string' },
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: schema,
         onChange: () => {},
       });
@@ -187,9 +187,9 @@ describe('ObjectNode Propagate Batch Protection', () => {
             },
           },
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: schema,
         onChange: () => {},
       });
@@ -232,9 +232,9 @@ describe('ObjectNode Propagate Batch Protection', () => {
         properties: {
           counter: { type: 'number', default: 0 },
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: schema,
         onChange: () => {},
       });
@@ -270,9 +270,9 @@ describe('ObjectNode Propagate Batch Protection', () => {
         properties: {
           toggle: { type: 'boolean', default: false },
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: schema,
         onChange: () => {},
       });
@@ -308,9 +308,9 @@ describe('ObjectNode Propagate Batch Protection', () => {
         properties: {
           field: { type: 'string' },
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: schema,
         onChange: () => {},
       });
@@ -347,9 +347,9 @@ describe('ObjectNode Propagate Batch Protection', () => {
           name: { type: 'string' },
           status: { type: 'string' },
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: schema,
         onChange: () => {},
       });
@@ -400,9 +400,9 @@ describe('ObjectNode Propagate Batch Protection', () => {
             },
           },
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: schema,
         onChange: () => {},
       });
@@ -447,9 +447,9 @@ describe('ObjectNode Propagate Batch Protection', () => {
             },
           },
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: schema,
         onChange: () => {},
       });
@@ -497,9 +497,9 @@ describe('ObjectNode Propagate Batch Protection', () => {
           f9: { type: 'string' },
           f10: { type: 'string' },
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: schema,
         onChange: () => {},
       });

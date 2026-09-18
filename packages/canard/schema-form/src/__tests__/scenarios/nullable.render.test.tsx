@@ -1,7 +1,7 @@
 import '@testing-library/jest-dom';
 import { describe, expect, it } from 'vitest';
 
-import type { JsonSchema } from '@winglet/json-schema';
+import type { JSONSchema } from '@winglet/json-schema';
 
 import { SetValueOption } from '@/schema-form/core';
 
@@ -40,7 +40,7 @@ describe('nullable.render — type:[T,null] / nullable primitives, objects, arra
           age: { type: 'number', nullable: true },
           active: { type: 'boolean', nullable: true },
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
       const form = await renderForm(schema, {
         defaultValue: { name: null, age: null, active: null },
@@ -66,7 +66,7 @@ describe('nullable.render — type:[T,null] / nullable primitives, objects, arra
           consent: { type: ['boolean', 'null'], default: null },
           newsletter: { type: ['boolean', 'null'], default: null },
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
       const form = await renderForm(schema);
 
@@ -84,7 +84,7 @@ describe('nullable.render — type:[T,null] / nullable primitives, objects, arra
           name: { type: ['string', 'null'], default: null },
           age: { type: ['number', 'null'], default: null },
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
       const form = await renderForm(schema, { flushOnMount: false });
 
@@ -109,7 +109,7 @@ describe('nullable.render — type:[T,null] / nullable primitives, objects, arra
       const schema = {
         type: 'object',
         properties: { name: { type: 'string', nullable: true } },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
       const form = await renderForm(schema, { defaultValue: { name: 'John' } });
       expect(form.node('/name')?.value).toBe('John');
@@ -126,7 +126,7 @@ describe('nullable.render — type:[T,null] / nullable primitives, objects, arra
       const schema = {
         type: 'object',
         properties: { age: { type: ['number', 'null'] } },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
       const form = await renderForm(schema, {
         defaultValue: { age: 25 },
@@ -149,7 +149,7 @@ describe('nullable.render — type:[T,null] / nullable primitives, objects, arra
       const schema = {
         type: 'object',
         properties: { consent: { type: ['boolean', 'null'], default: true } },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
       const form = await renderForm(schema);
       expect(form.node('/consent')?.value).toBe(true);
@@ -166,7 +166,7 @@ describe('nullable.render — type:[T,null] / nullable primitives, objects, arra
       const schema = {
         type: 'object',
         properties: { name: { type: 'string', nullable: true } },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
       const form = await renderForm(schema, { defaultValue: { name: 'John' } });
 
@@ -190,7 +190,7 @@ describe('nullable.render — type:[T,null] / nullable primitives, objects, arra
             default: null,
           },
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
       const form = await renderForm(schema);
 
@@ -212,7 +212,7 @@ describe('nullable.render — type:[T,null] / nullable primitives, objects, arra
             default: null,
           },
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
       const form = await renderForm(schema);
 
@@ -239,7 +239,7 @@ describe('nullable.render — type:[T,null] / nullable primitives, objects, arra
             default: null,
           },
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
       const form = await renderForm(schema);
 
@@ -263,7 +263,7 @@ describe('nullable.render — type:[T,null] / nullable primitives, objects, arra
             default: null,
           },
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
       const form = await renderForm(schema);
 
@@ -289,7 +289,7 @@ describe('nullable.render — type:[T,null] / nullable primitives, objects, arra
             items: { type: ['number', 'null'] },
           },
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
       const form = await renderForm(schema);
       await form.setValue({ scores: [85, null, 92] });
@@ -308,7 +308,7 @@ describe('nullable.render — type:[T,null] / nullable primitives, objects, arra
       const schema = {
         type: 'object',
         properties: { nullField: { type: 'null' } },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
       const form = await renderForm(schema, {
         defaultValue: { nullField: null },
@@ -329,7 +329,7 @@ describe('nullable.render — type:[T,null] / nullable primitives, objects, arra
             default: null,
           },
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
       const form = await renderForm(schema);
 
@@ -347,7 +347,7 @@ describe('nullable.render — type:[T,null] / nullable primitives, objects, arra
         properties: {
           withDefault: { type: ['string', 'null'], default: 'seed' },
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
       const form = await renderForm(schema, { instrument: true });
       const before = form.mountOrdinal('/withDefault');

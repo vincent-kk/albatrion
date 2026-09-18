@@ -2,9 +2,9 @@ import '@testing-library/jest-dom';
 import { act } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 
-import type { JsonSchema } from '@winglet/json-schema';
+import type { JSONSchema } from '@winglet/json-schema';
 
-import type { JsonSchemaError, ValidatorFactory } from '@/schema-form';
+import type { JSONSchemaError, ValidatorFactory } from '@/schema-form';
 import { ValidationMode } from '@/schema-form/core';
 
 import { renderForm } from '../renderForm';
@@ -39,7 +39,7 @@ const racyValidatorFactory: ValidatorFactory = () =>
     return tooShort
       ? ([
           { dataPath: '/name', keyword: 'minLength', message: 'TOO_SHORT' },
-        ] as JsonSchemaError[])
+        ] as JSONSchemaError[])
       : null;
   }) as ReturnType<ValidatorFactory>;
 
@@ -48,7 +48,7 @@ const racyValidatorFactory: ValidatorFactory = () =>
 const schema = {
   type: 'object',
   properties: { name: { type: 'string', default: 'valid' } },
-} satisfies JsonSchema;
+} satisfies JSONSchema;
 
 const delay = (ms: number) => new Promise((r) => setTimeout(r, ms));
 

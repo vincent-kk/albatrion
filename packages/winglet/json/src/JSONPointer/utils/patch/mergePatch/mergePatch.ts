@@ -1,7 +1,7 @@
 import { isPlainObject } from '@winglet/common-utils/filter';
 import { cloneLite } from '@winglet/common-utils/object';
 
-import type { JsonObject, JsonValue } from '@/json/type';
+import type { JSONObject, JSONValue } from '@/json/type';
 
 import { mergePatchRecursive } from './mergePatchRecursive';
 
@@ -93,9 +93,9 @@ import { mergePatchRecursive } from './mergePatchRecursive';
  * console.log(result); // { data: "modified", new: "value" }
  * ```
  */
-export const mergePatch = <Type extends JsonValue>(
-  source: JsonValue,
-  mergePatchBody: JsonValue | undefined,
+export const mergePatch = <Type extends JSONValue>(
+  source: JSONValue,
+  mergePatchBody: JSONValue | undefined,
   immutable: boolean = true,
 ): Type => {
   // If patch is undefined, return source unchanged
@@ -111,7 +111,7 @@ export const mergePatch = <Type extends JsonValue>(
     ) as Type;
 
   // If source is not a plain object, start with an empty object
-  const target: JsonObject = isPlainObject(source)
+  const target: JSONObject = isPlainObject(source)
     ? immutable
       ? cloneLite(source)
       : source

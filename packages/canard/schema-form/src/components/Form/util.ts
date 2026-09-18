@@ -3,7 +3,7 @@ import { type ReactNode, createElement } from 'react';
 import type {
   AllowedValue,
   InferValueType,
-  JsonSchema,
+  JSONSchema,
 } from '@/schema-form/types';
 
 import { FormChildrenRenderer } from './components/FormChildrenRenderer';
@@ -13,7 +13,7 @@ import type { FormProps } from './type';
 export const NOT_EMITTED = Symbol('@canard/schema-form::not-emitted');
 
 export const createChildren = <
-  Schema extends JsonSchema,
+  Schema extends JSONSchema,
   Value extends AllowedValue = InferValueType<Schema>,
 >(
   children: FormProps<Schema, Value>['children'] | undefined,

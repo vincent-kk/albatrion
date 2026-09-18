@@ -1,6 +1,6 @@
 import { createRoot } from 'react-dom/client';
 
-import type { JsonSchema, Form as SchemaForm } from '@canard/schema-form';
+import type { JSONSchema, Form as SchemaForm } from '@canard/schema-form';
 
 import {
   ARRAY_CASES,
@@ -17,7 +17,7 @@ setupJsdom();
  * Per-op fresh-root mount of a single scale case. Mirrors the v2
  * form-rendering pattern: 1 op = setup + mount + drainTicks + unmount.
  */
-function makeScaleRenderingRunner(schema: JsonSchema) {
+function makeScaleRenderingRunner(schema: JSONSchema) {
   return async function run(SchemaFormModule: { Form: typeof SchemaForm }) {
     const { Form } = SchemaFormModule;
     const container = document.createElement('div');

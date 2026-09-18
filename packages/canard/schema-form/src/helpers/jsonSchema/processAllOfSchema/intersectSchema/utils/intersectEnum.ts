@@ -4,7 +4,7 @@ import {
 } from '@winglet/common-utils/array';
 import { equals } from '@winglet/common-utils/object';
 
-import { JsonSchemaError } from '@/schema-form/errors';
+import { JSONSchemaError } from '@/schema-form/errors';
 import { formatEmptyEnumIntersectionError } from '@/schema-form/helpers/error';
 
 /**
@@ -18,7 +18,7 @@ import { formatEmptyEnumIntersectionError } from '@/schema-form/helpers/error';
  * @param sourceEnum - The source enum array (optional)
  * @param deepEqual - Whether to use deep equality for complex values
  * @returns Intersected enum array, or undefined if both inputs are undefined
- * @throws {JsonSchemaError} When intersection results in empty array (impossible constraint)
+ * @throws {JSONSchemaError} When intersection results in empty array (impossible constraint)
  */
 export const intersectEnum = <T>(
   baseEnum?: readonly T[],
@@ -33,7 +33,7 @@ export const intersectEnum = <T>(
     ? intersectionWith(baseEnum, sourceEnum, equals)
     : intersectionLite(baseEnum, sourceEnum);
   if (intersected.length === 0)
-    throw new JsonSchemaError(
+    throw new JSONSchemaError(
       'EMPTY_ENUM_INTERSECTION',
       formatEmptyEnumIntersectionError(baseEnum, sourceEnum),
     );

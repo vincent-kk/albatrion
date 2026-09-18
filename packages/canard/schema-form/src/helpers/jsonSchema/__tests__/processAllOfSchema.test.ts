@@ -3,7 +3,7 @@ import { describe, expect, test } from 'vitest';
 import type {
   ArraySchema,
   BooleanSchema,
-  JsonSchema,
+  JSONSchema,
   NullSchema,
   NumberSchema,
   ObjectSchema,
@@ -1371,7 +1371,7 @@ describe('processAllOfSchema', () => {
             required: ['id'],
           },
         ],
-      } as JsonSchema;
+      } as JSONSchema;
 
       const result = processAllOfSchema(schema);
       expect(result.type).toEqual(['object', 'null']);

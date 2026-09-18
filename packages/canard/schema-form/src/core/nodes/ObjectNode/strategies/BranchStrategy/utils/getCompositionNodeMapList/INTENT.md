@@ -16,7 +16,7 @@
 
 ### Always do
 
-- 프로퍼티 충돌 시 `JsonSchemaError` 던지기
+- 프로퍼티 충돌 시 `JSONSchemaError` 던지기
 - `keySetList`로 허용 키 필터링
 - `excludeKeySet`으로 반대 합성 타입 키 제외
 

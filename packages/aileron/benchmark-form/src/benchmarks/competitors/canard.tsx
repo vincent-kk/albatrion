@@ -7,7 +7,7 @@ import {
   type FormHandle,
   type FormProps,
   type FormTypeRendererProps,
-  type JsonSchema,
+  type JSONSchema,
   VirtualizationBackfill,
 } from '@canard/schema-form';
 
@@ -29,7 +29,7 @@ const createCanardAdapter = (
       if (depth > 0) renders++;
       return <Input />;
     };
-    const ref = createRef<FormHandle<JsonSchema>>();
+    const ref = createRef<FormHandle<JSONSchema>>();
     const root = createRoot(container);
     root.render(
       <Form

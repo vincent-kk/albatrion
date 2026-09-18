@@ -1,9 +1,9 @@
 import { useState } from 'react';
 
-import type { JsonSchemaError } from '../src';
+import type { JSONSchemaError } from '../src';
 import {
   Form,
-  type JsonSchema,
+  type JSONSchema,
   registerPlugin,
   useChildNodeErrors,
 } from '../src';
@@ -383,10 +383,10 @@ export const ShowErrorAndShowErrorsStateTest = () => {
       },
     },
     required: ['showErrorStateGroup'],
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>();
-  const [errors, setErrors] = useState<JsonSchemaError[]>();
+  const [errors, setErrors] = useState<JSONSchemaError[]>();
 
   return (
     <StoryLayout jsonSchema={jsonSchema} value={value} errors={errors}>
@@ -724,10 +724,10 @@ export const ConditionalErrorDisplayTest = () => {
       },
     },
     required: ['conditionalGroup'],
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>();
-  const [errors, setErrors] = useState<JsonSchemaError[]>();
+  const [errors, setErrors] = useState<JSONSchemaError[]>();
 
   return (
     <StoryLayout jsonSchema={jsonSchema} value={value} errors={errors}>
@@ -1139,10 +1139,10 @@ export const AdvancedErrorDisplayPatterns = () => {
       },
     },
     required: ['registrationForm'],
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>();
-  const [errors, setErrors] = useState<JsonSchemaError[]>();
+  const [errors, setErrors] = useState<JSONSchemaError[]>();
 
   return (
     <StoryLayout jsonSchema={jsonSchema} value={value} errors={errors}>

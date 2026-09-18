@@ -1,21 +1,21 @@
 /**
  * package.json의 exports에서 entrypoints를 추출합니다.
- * @type {(packageJson: { exports?: Record<string, {source?: string}> }) => string[]}
+ * @type {(packageJSON: { exports?: Record<string, {source?: string}> }) => string[]}
  */
-export const getEntrypoints = (packageJson) => {
-  if (!packageJson) {
+export const getEntrypoints = (packageJSON) => {
+  if (!packageJSON) {
     throw new Error('package.json is required');
   }
 
-  if (!packageJson.exports) {
+  if (!packageJSON.exports) {
     throw new Error('package.json must have exports field');
   }
 
-  if (typeof packageJson.exports !== 'object') {
+  if (typeof packageJSON.exports !== 'object') {
     throw new Error('package.json exports must be an object');
   }
 
-  const entrypoints = Object.values(packageJson.exports)
+  const entrypoints = Object.values(packageJSON.exports)
     .map(({ source }) => source)
     .filter(
       (source) =>

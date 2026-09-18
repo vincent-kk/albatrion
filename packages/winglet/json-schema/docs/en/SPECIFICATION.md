@@ -10,8 +10,8 @@
 2. [Installation](#installation)
 3. [Quick Start](#quick-start)
 4. [Architecture — Visitor Pattern](#architecture--visitor-pattern)
-5. [JsonSchemaScanner API](#jsonschemaScanner-api)
-6. [JsonSchemaScannerAsync API](#jsonschemascannerasync-api)
+5. [JSONSchemaScanner API](#jsonschemaScanner-api)
+6. [JSONSchemaScannerAsync API](#jsonschemascannerasync-api)
 7. [Schema Filters](#schema-filters)
 8. [Type Definitions](#type-definitions)
 9. [resolveReference Utility](#resolvereference-utility)
@@ -48,13 +48,13 @@ npm install @winglet/json-schema
 
 ```typescript
 // All exports
-import { JsonSchemaScanner, isObjectSchema, resolveReference } from '@winglet/json-schema';
+import { JSONSchemaScanner, isObjectSchema, resolveReference } from '@winglet/json-schema';
 
 // Sync scanner only
-import { JsonSchemaScanner } from '@winglet/json-schema/scanner';
+import { JSONSchemaScanner } from '@winglet/json-schema/scanner';
 
 // Async scanner only
-import { JsonSchemaScannerAsync } from '@winglet/json-schema/async-scanner';
+import { JSONSchemaScannerAsync } from '@winglet/json-schema/async-scanner';
 
 // Type guard functions only
 import { isObjectSchema, isStringSchema, isCompatibleSchemaType } from '@winglet/json-schema/filter';
@@ -69,7 +69,7 @@ Use sub-path imports to reduce bundle size when you only need part of the librar
 ### Traverse a schema and collect field paths
 
 ```typescript
-import { JsonSchemaScanner } from '@winglet/json-schema/scanner';
+import { JSONSchemaScanner } from '@winglet/json-schema/scanner';
 
 const schema = {
   type: 'object',
@@ -89,7 +89,7 @@ const schema = {
 
 const fieldPaths: string[] = [];
 
-new JsonSchemaScanner({
+new JSONSchemaScanner({
   visitor: {
     enter: ({ keyword, dataPath }) => {
       if (keyword === 'properties') fieldPaths.push(dataPath);
@@ -122,7 +122,7 @@ if (isStringSchema(s)) {
 
 ## Architecture — Visitor Pattern
 
-`JsonSchemaScanner` implements a **non-recursive, stack-based DFS** traversal engine. Instead of calling itself recursively, it maintains an explicit `Entry[]` stack and advances each entry through a state machine with four phases.
+`JSONSchemaScanner` implements a **non-recursive, stack-based DFS** traversal engine. Instead of calling itself recursively, it maintains an explicit `Entry[]` stack and advances each entry through a state machine with four phases.
 
 ```
 Schema tree node lifecycle:
@@ -163,15 +163,15 @@ Within any schema node, children are discovered and visited in this fixed order:
 
 ---
 
-## JsonSchemaScanner API
+## JSONSchemaScanner API
 
 ### Constructor
 
 ```typescript
-new JsonSchemaScanner<Schema extends UnknownSchema = UnknownSchema, ContextType = void>(
+new JSONSchemaScanner<Schema extends UnknownSchema = UnknownSchema, ContextType = void>(
   props?: {
     visitor?: SchemaVisitor<Schema, ContextType>;
-    options?: JsonScannerOptions<Schema, ContextType>;
+    options?: JSONScannerOptions<Schema, ContextType>;
   }
 )
 ```
@@ -188,7 +188,7 @@ interface SchemaVisitor<Schema, ContextType> {
 - `enter` — called when first visiting a node, before its children are pushed
 - `exit` — called after all descendants of the node have been processed
 
-### JsonScannerOptions
+### JSONScannerOptions
 
 | Option             | Type                                            | Description                                                |
 | ------------------ | ----------------------------------------------- | ---------------------------------------------------------- |
@@ -247,22 +247,22 @@ The scanner tracks resolved `$ref` paths in a `Set<string>` per `scan()` call:
 
 ---
 
-## JsonSchemaScannerAsync API
+## JSONSchemaScannerAsync API
 
-`JsonSchemaScannerAsync` is a parallel implementation of the scanner with full async/await support. It shares the same architecture but all callbacks can return `Promise<void>` and `resolveReference` can return `Promise<Schema | undefined>`.
+`JSONSchemaScannerAsync` is a parallel implementation of the scanner with full async/await support. It shares the same architecture but all callbacks can return `Promise<void>` and `resolveReference` can return `Promise<Schema | undefined>`.
 
 ### Constructor
 
 ```typescript
-new JsonSchemaScannerAsync<Schema, ContextType>(
+new JSONSchemaScannerAsync<Schema, ContextType>(
   props?: {
     visitor?: SchemaVisitor<Schema, ContextType>;  // callbacks may be async
-    options?: JsonScannerOptionsAsync<Schema, ContextType>;
+    options?: JSONScannerOptionsAsync<Schema, ContextType>;
   }
 )
 ```
 
-`JsonScannerOptionsAsync` is identical to `JsonScannerOptions` except `resolveReference` may return a `Promise`.
+`JSONScannerOptionsAsync` is identical to `JSONScannerOptions` except `resolveReference` may return a `Promise`.
 
 ### scan(schema)
 
@@ -277,7 +277,7 @@ Returns a `Promise` that resolves to `this` after traversal completes. Must be a
 Identical to the sync scanner. Synchronous. Call after awaiting `scan()`.
 
 ```typescript
-const scanner = new JsonSchemaScannerAsync({
+const scanner = new JSONSchemaScannerAsync({
   /* ... */
 });
 const result = await scanner.scan(schema).then((s) => s.getValue());
@@ -383,7 +383,7 @@ isCompatibleSchemaType({ type: [] }, { type: [] }); // false (empty array)
 type UnknownSchema = { type?: string | Readonly<string[]>; [key: string]: any };
 
 // Full JSON Schema union
-type JsonSchema<Options = object> =
+type JSONSchema<Options = object> =
   | NonNullableNumberSchema
   | NullableNumberSchema
   | NonNullableStringSchema
@@ -408,24 +408,24 @@ interface RefSchema {
 All schema types accept two generic parameters:
 
 ```typescript
-ObjectSchema<Options extends Dictionary = object, Schema extends UnknownSchema = JsonSchema>
+ObjectSchema<Options extends Dictionary = object, Schema extends UnknownSchema = JSONSchema>
 ```
 
 - `Options` — shape of the `schema.options` extension field
 - `Schema` — recursive self-reference for nested schemas
 
-### InferJsonSchema
+### InferJSONSchema
 
 Maps a TypeScript value type to the corresponding schema interface:
 
 ```typescript
-type InferJsonSchema<Value, Options = object, Schema = JsonSchema>
+type InferJSONSchema<Value, Options = object, Schema = JSONSchema>
 
 // Examples
-InferJsonSchema<string>          // NonNullableStringSchema
-InferJsonSchema<string | null>   // NullableStringSchema
-InferJsonSchema<null>            // NullSchema
-InferJsonSchema<number[]>        // NonNullableArraySchema
+InferJSONSchema<string>          // NonNullableStringSchema
+InferJSONSchema<string | null>   // NullableStringSchema
+InferJSONSchema<null>            // NullSchema
+InferJSONSchema<number[]>        // NonNullableArraySchema
 ```
 
 ### InferValueType
@@ -461,7 +461,7 @@ Two rules govern the object result:
 - **Every key is optional, including those in `required`.** The value described by a schema may legitimately omit a key at runtime, so a required marker here would be a promise this type cannot keep. Declare the exact shape yourself when you need one.
 - **The result is intersected with `Record<string, any>`** unless the schema sets `additionalProperties: false` — open is the JSON Schema default, and it keeps keys contributed by applicators this type does not model (`oneOf`, `anyOf`, `if`/`then`/`else`, `patternProperties`, `dependentSchemas`, `$ref`) from being rejected as excess properties.
 
-Anything not modeled falls back rather than narrowing: a non-literal `properties` (e.g. `Dictionary<JsonSchema>`) yields `Record<string, any>`, a multi-type such as `['string', 'number']` yields `any`, and `items: false` yields `any[]`.
+Anything not modeled falls back rather than narrowing: a non-literal `properties` (e.g. `Dictionary<JSONSchema>`) yields `Record<string, any>`, a multi-type such as `['string', 'number']` yields `any`, and `items: false` yields `any[]`.
 
 ### Common BasicSchema Fields
 
@@ -504,10 +504,10 @@ A convenience utility for resolving all internal `$ref` pointers in a self-conta
 - You want a fully inlined schema with no `$ref` remaining
 - No custom resolution logic needed
 
-**For custom resolution**, use `JsonSchemaScanner` directly:
+**For custom resolution**, use `JSONSchemaScanner` directly:
 
 ```typescript
-const scanner = new JsonSchemaScanner({
+const scanner = new JSONSchemaScanner({
   options: {
     resolveReference: (ref, entry, context) => myCustomResolver(ref),
   },
@@ -538,7 +538,7 @@ const report: Report = {
   nullable: [],
 };
 
-new JsonSchemaScanner<UnknownSchema, Report>({
+new JSONSchemaScanner<UnknownSchema, Report>({
   options: { context: report },
   visitor: {
     enter: ({ schema, keyword, dataPath, depth }, ctx) => {
@@ -562,7 +562,7 @@ Enrich schemas with additional metadata during traversal.
 ```typescript
 import { isNumberSchema, isStringSchema } from '@winglet/json-schema/filter';
 
-const enriched = new JsonSchemaScanner({
+const enriched = new JSONSchemaScanner({
   options: {
     mutate: ({ schema, dataPath }) => {
       if (isStringSchema(schema) && !schema.title)
@@ -588,7 +588,7 @@ const registry: Record<string, UnknownSchema> = {
   },
 };
 
-const inlined = new JsonSchemaScanner({
+const inlined = new JSONSchemaScanner({
   options: {
     resolveReference: (ref) => registry[ref],
   },
@@ -602,11 +602,11 @@ const inlined = new JsonSchemaScanner({
 Build a composite schema by fetching remote schemas during traversal.
 
 ```typescript
-import { JsonSchemaScannerAsync } from '@winglet/json-schema/async-scanner';
+import { JSONSchemaScannerAsync } from '@winglet/json-schema/async-scanner';
 
 const schemaCache = new Map<string, UnknownSchema>();
 
-const scanner = new JsonSchemaScannerAsync({
+const scanner = new JSONSchemaScannerAsync({
   options: {
     resolveReference: async (ref) => {
       if (schemaCache.has(ref)) return schemaCache.get(ref)!;
@@ -625,7 +625,7 @@ const composed = await scanner.scan(rootSchema).then((s) => s.getValue());
 Use `filter` to skip entire subtrees based on schema properties.
 
 ```typescript
-const scanner = new JsonSchemaScanner({
+const scanner = new JSONSchemaScanner({
   options: {
     // Skip read-only fields and their descendants
     filter: ({ schema }) => !schema.readOnly,
@@ -638,22 +638,22 @@ const scanner = new JsonSchemaScanner({
 
 ### Pattern 6: Type-Safe Schema Building
 
-Use `InferJsonSchema` to write schemas with compile-time type checking.
+Use `InferJSONSchema` to write schemas with compile-time type checking.
 
 ```typescript
-import type { InferJsonSchema } from '@winglet/json-schema';
+import type { InferJSONSchema } from '@winglet/json-schema';
 
 interface UserFormOptions {
   placeholder?: string;
   autocomplete?: string;
 }
 
-type UserSchema = InferJsonSchema<
+type UserSchema = InferJSONSchema<
   { name: string; age: number },
   UserFormOptions
 >;
 
-const userSchema: InferJsonSchema<string, UserFormOptions> = {
+const userSchema: InferJSONSchema<string, UserFormOptions> = {
   type: 'string',
   minLength: 1,
   options: { placeholder: 'Enter name', autocomplete: 'name' },

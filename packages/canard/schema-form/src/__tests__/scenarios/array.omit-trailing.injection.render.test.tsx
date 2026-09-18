@@ -11,7 +11,7 @@ import '@testing-library/jest-dom';
 import { describe, expect, it } from 'vitest';
 
 import type { ArrayNode } from '@/schema-form/core';
-import type { JsonSchema } from '@/schema-form/types';
+import type { JSONSchema } from '@/schema-form/types';
 
 import { renderForm } from '../renderForm';
 
@@ -24,7 +24,7 @@ const objectArraySchema = {
       options: { omitTrailing: true },
     },
   },
-} as JsonSchema;
+} as JSONSchema;
 
 describe('array omitTrailing × injection and environments (render)', () => {
   it('trims a whole-form setValue injection while keeping every input mounted', async () => {
@@ -80,7 +80,7 @@ describe('array omitTrailing × injection and environments (render)', () => {
           options: { omitTrailing: true },
         },
       },
-    } as JsonSchema;
+    } as JSONSchema;
     const form = await renderForm(nullableSchema);
     await form.setValue({ arr: null });
     expect(form.getValue()?.arr).toBeNull();
@@ -93,7 +93,7 @@ describe('array omitTrailing × injection and environments (render)', () => {
       type: 'array',
       prefixItems: [{ type: 'string' }, { type: 'number' }],
       options: { omitTrailing: true },
-    } as JsonSchema);
+    } as JSONSchema);
     await form.setValue(['x', undefined]);
     expect(form.getValue()).toEqual(['x']);
     expect(form.exists('/1')).toBe(true);
@@ -110,7 +110,7 @@ describe('array omitTrailing × injection and environments (render)', () => {
           options: { omitTrailing: true },
         },
       },
-    } as JsonSchema;
+    } as JSONSchema;
     const form = await renderForm(terminalSchema);
     await form.setValue({ arr: [1, undefined] });
     expect(form.getValue()?.arr).toEqual([1]);
@@ -137,7 +137,7 @@ describe('array omitTrailing × injection and environments (render)', () => {
           },
         },
       },
-    } as JsonSchema;
+    } as JSONSchema;
     const form = await renderForm(nestedSchema);
     await form.setValue({ arr: [[1, undefined]] });
     expect(form.getValue()?.arr).toEqual([[1]]);

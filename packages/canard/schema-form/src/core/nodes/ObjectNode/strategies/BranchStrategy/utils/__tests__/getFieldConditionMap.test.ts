@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import type { JsonSchema } from '@/schema-form/types';
+import type { JSONSchema } from '@/schema-form/types';
 
 import { getFieldConditionMap } from '../getFieldConditionMap/getFieldConditionMap';
 
@@ -13,7 +13,7 @@ describe('getFieldConditionMap', () => {
         y: { type: 'string' },
       },
       required: ['x'],
-    } satisfies JsonSchema;
+    } satisfies JSONSchema;
 
     expect(getFieldConditionMap(schema)).toBeUndefined();
   });
@@ -37,7 +37,7 @@ describe('getFieldConditionMap', () => {
       else: {
         required: ['z'],
       },
-    } satisfies JsonSchema;
+    } satisfies JSONSchema;
 
     const result = getFieldConditionMap(schema);
     expect(result).toBeDefined();
@@ -79,7 +79,7 @@ describe('getFieldConditionMap', () => {
       else: {
         required: ['details'],
       },
-    } satisfies JsonSchema;
+    } satisfies JSONSchema;
 
     const result = getFieldConditionMap(schema);
     expect(result).toBeDefined();
@@ -149,7 +149,7 @@ describe('getFieldConditionMap', () => {
           },
         },
       },
-    } satisfies JsonSchema;
+    } satisfies JSONSchema;
 
     const result = getFieldConditionMap(schema);
     expect(result).toBeDefined();
@@ -195,7 +195,7 @@ describe('getFieldConditionMap', () => {
       then: {
         required: ['y'],
       },
-    } satisfies JsonSchema;
+    } satisfies JSONSchema;
 
     const result = getFieldConditionMap(schema);
     expect(result).toBeDefined();
@@ -239,7 +239,7 @@ describe('getFieldConditionMap', () => {
           required: ['guestSection'],
         },
       },
-    } satisfies JsonSchema;
+    } satisfies JSONSchema;
 
     const result = getFieldConditionMap(schema);
     expect(result).toBeDefined();

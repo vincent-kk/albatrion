@@ -1,7 +1,7 @@
 import '@testing-library/jest-dom';
 import { describe, expect, it } from 'vitest';
 
-import type { JsonSchema } from '@winglet/json-schema';
+import type { JSONSchema } from '@winglet/json-schema';
 
 import { SetValueOption } from '@/schema-form/core';
 
@@ -91,7 +91,7 @@ const nestedSchema = {
       ],
     },
   },
-} satisfies JsonSchema;
+} satisfies JSONSchema;
 
 describe('GAP-14 nested composition: object -> oneOf -> (object -> oneOf)', () => {
   describe('initial mount priming', () => {

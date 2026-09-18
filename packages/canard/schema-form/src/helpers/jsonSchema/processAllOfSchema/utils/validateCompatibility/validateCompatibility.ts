@@ -1,6 +1,6 @@
 import { isCompatibleSchemaType } from '@winglet/json-schema/filter';
 
-import type { JsonSchema } from '@/schema-form/types';
+import type { JSONSchema } from '@/schema-form/types';
 
 /**
  * Validates type compatibility between two schemas during allOf schema merging.
@@ -19,7 +19,7 @@ import type { JsonSchema } from '@/schema-form/types';
  * @returns True if types are compatible, false otherwise
  */
 export const validateCompatibility = (
-  schema: JsonSchema,
-  allOfSchema: JsonSchema,
+  schema: JSONSchema,
+  allOfSchema: JSONSchema,
 ) =>
   allOfSchema.type === undefined || isCompatibleSchemaType(schema, allOfSchema);

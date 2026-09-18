@@ -6,7 +6,7 @@
 
 ## Conventions
 
-- 반환 타입: `JsonSchemaWithRef` (원본 또는 병합된 새 객체)
+- 반환 타입: `JSONSchemaWithRef` (원본 또는 병합된 새 객체)
 - `conditions`가 없거나 `null`이면 원본 스키마 그대로 반환
 - `computed.active` 또는 레거시 `&active`가 이미 `boolean`이면 병합 건너뜀
 - 새 조건 목록은 `combineConditions(conditions, '||')`로 OR 결합 후 기존 `active`와 재결합

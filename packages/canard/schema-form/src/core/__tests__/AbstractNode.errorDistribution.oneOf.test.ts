@@ -1,7 +1,7 @@
 import Ajv from 'ajv/dist/2020';
 import { describe, expect, it, vi } from 'vitest';
 
-import { nodeFromJsonSchema } from '@/schema-form/core';
+import { nodeFromJSONSchema } from '@/schema-form/core';
 
 import type { NumberNode } from '../nodes/NumberNode';
 import type { ObjectNode } from '../nodes/ObjectNode';
@@ -37,7 +37,7 @@ describe('AbstractNode Error Distribution with oneOf/anyOf Schemas', () => {
       const validatorFactory = createValidatorFactory(createAjv());
       const onChange = vi.fn();
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: {
           type: 'object',
           properties: {
@@ -129,7 +129,7 @@ describe('AbstractNode Error Distribution with oneOf/anyOf Schemas', () => {
       const validatorFactory = createValidatorFactory(createAjv());
       const onChange = vi.fn();
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: {
           type: 'object',
           properties: {
@@ -208,7 +208,7 @@ describe('AbstractNode Error Distribution with oneOf/anyOf Schemas', () => {
       const validatorFactory = createValidatorFactory(createAjv());
       const onChange = vi.fn();
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: {
           type: 'object',
           properties: {
@@ -283,7 +283,7 @@ describe('AbstractNode Error Distribution with oneOf/anyOf Schemas', () => {
       const validatorFactory = createValidatorFactory(createAjv());
       const onChange = vi.fn();
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: {
           type: 'object',
           properties: {
@@ -354,7 +354,7 @@ describe('AbstractNode Error Distribution with oneOf/anyOf Schemas', () => {
       const onChange = vi.fn();
 
       // anyOf를 루트 레벨에서 사용하는 스키마 (contact 내부가 아닌)
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: {
           type: 'object',
           properties: {
@@ -431,7 +431,7 @@ describe('AbstractNode Error Distribution with oneOf/anyOf Schemas', () => {
       const validatorFactory = createValidatorFactory(createAjv());
       const onChange = vi.fn();
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: {
           type: 'object',
           properties: {
@@ -523,7 +523,7 @@ describe('AbstractNode Error Distribution with oneOf/anyOf Schemas', () => {
       const onChange = vi.fn();
 
       // 초기값에 유효하지 않은 값 포함 (150, 200은 maximum 100 초과)
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: {
           type: 'object',
           properties: {
@@ -595,7 +595,7 @@ describe('AbstractNode Error Distribution with oneOf/anyOf Schemas', () => {
       const validatorFactory = createValidatorFactory(ajv);
       const onChange = vi.fn();
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: {
           type: 'object',
           properties: {
@@ -660,7 +660,7 @@ describe('AbstractNode Error Distribution with oneOf/anyOf Schemas', () => {
       const validatorFactory = createValidatorFactory(ajv);
       const onChange = vi.fn();
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: {
           type: 'object',
           additionalProperties: false,
@@ -703,7 +703,7 @@ describe('AbstractNode Error Distribution with oneOf/anyOf Schemas', () => {
       const validatorFactory = createValidatorFactory(createAjv());
       const onChange = vi.fn();
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: {
           type: 'object',
           properties: {

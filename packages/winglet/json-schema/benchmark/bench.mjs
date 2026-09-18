@@ -13,7 +13,7 @@ import {
   round,
 } from "./_lib.mjs";
 
-const { JsonSchemaScanner, JsonSchemaScannerAsync } = await loadScanners();
+const { JSONSchemaScanner, JSONSchemaScannerAsync } = await loadScanners();
 
 const corpora = {
   "branchy(6,5)": genBranchy(6, 5),
@@ -26,8 +26,8 @@ const report = { sync: {}, syncNoop: {}, async: {}, refHeavy: {}, meta: {} };
 
 // pure traversal, no callbacks
 for (const [name, schema] of Object.entries(corpora)) {
-  const nodes = countVisited(JsonSchemaScanner, schema);
-  const t = timeit(() => new JsonSchemaScanner().scan(schema));
+  const nodes = countVisited(JSONSchemaScanner, schema);
+  const t = timeit(() => new JSONSchemaScanner().scan(schema));
   report.sync[name] = {
     nodes,
     median: round(t.median),
@@ -40,7 +40,7 @@ for (const [name, schema] of Object.entries(corpora)) {
 for (const [name, schema] of Object.entries(corpora)) {
   const noop = () => {};
   const t = timeit(() =>
-    new JsonSchemaScanner({ visitor: { enter: noop, exit: noop } }).scan(
+    new JSONSchemaScanner({ visitor: { enter: noop, exit: noop } }).scan(
       schema,
     ),
   );
@@ -55,7 +55,7 @@ for (const [name, schema] of Object.entries(corpora)) {
 for (const [name, schema] of Object.entries(corpora)) {
   const noop = () => {};
   const t = await timeitAsync(async () => {
-    await new JsonSchemaScannerAsync({
+    await new JSONSchemaScannerAsync({
       visitor: { enter: noop, exit: noop },
     }).scan(schema);
   });
@@ -69,10 +69,10 @@ for (const [name, schema] of Object.entries(corpora)) {
 // refHeavy: scan + getValue (reference inlining path, exercises R1 clone cost)
 {
   const schema = genRefHeavy(300, 3, 3);
-  const nodesPerDef = countVisited(JsonSchemaScanner, genBranchy(3, 3));
+  const nodesPerDef = countVisited(JSONSchemaScanner, genBranchy(3, 3));
   const t = timeit(
     () => {
-      const s = new JsonSchemaScanner({
+      const s = new JSONSchemaScanner({
         options: { resolveReference: (ref) => getByPointer(schema, ref) },
       });
       s.scan(schema);
@@ -93,7 +93,7 @@ for (const [name, schema] of Object.entries(corpora)) {
 {
   const schema = genRefHeavy(200, 2, 2);
   let calls = 0;
-  new JsonSchemaScanner({
+  new JSONSchemaScanner({
     options: {
       resolveReference: (ref) => {
         calls++;

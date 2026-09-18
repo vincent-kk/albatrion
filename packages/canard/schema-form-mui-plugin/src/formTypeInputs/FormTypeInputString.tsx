@@ -12,7 +12,7 @@ import type {
 
 import type { MuiContext } from '../type';
 
-type StringJsonSchema = StringSchema & {
+type StringJSONSchema = StringSchema & {
   format?: 'password';
   formType?: 'password';
 };
@@ -20,7 +20,7 @@ type StringJsonSchema = StringSchema & {
 interface FormTypeInputStringProps
   extends FormTypeInputPropsWithSchema<
       string | null,
-      StringJsonSchema,
+      StringJSONSchema,
       MuiContext
     >,
     MuiContext {

@@ -2,8 +2,8 @@ import { map } from '@winglet/common-utils/array';
 import { NOOP_FUNCTION } from '@winglet/common-utils/constant';
 import { isArray } from '@winglet/common-utils/filter';
 
-import { JsonSchemaError } from '@/schema-form/errors';
-import { formatUnknownJsonSchemaError } from '@/schema-form/helpers/error';
+import { JSONSchemaError } from '@/schema-form/errors';
+import { formatUnknownJSONSchemaError } from '@/schema-form/helpers/error';
 import { JSONPointer } from '@/schema-form/helpers/jsonPointer';
 import {
   type ResolveSchema,
@@ -13,9 +13,9 @@ import {
 import type {
   ArraySchema,
   BooleanSchema,
-  JsonSchema,
-  JsonSchemaWithRef,
-  JsonSchemaWithVirtual,
+  JSONSchema,
+  JSONSchemaWithRef,
+  JSONSchemaWithVirtual,
   NullSchema,
   NumberSchema,
   ObjectSchema,
@@ -66,7 +66,7 @@ export const contextNodeFactory = (defaultValue?: ObjectValue) =>
  * @returns A factory function that creates SchemaNode instances
  */
 export const createSchemaNodeFactory =
-  <Schema extends JsonSchemaWithVirtual>(
+  <Schema extends JSONSchemaWithVirtual>(
     resolveSchema: ResolveSchema | null,
   ): SchemaNodeFactory<Schema> =>
   (props: NodeFactoryProps<Schema>) => {
@@ -113,9 +113,9 @@ export const createSchemaNodeFactory =
           nodeProps as VirtualNodeConstructorProps<VirtualSchema>,
         );
     }
-    throw new JsonSchemaError(
+    throw new JSONSchemaError(
       'UNKNOWN_JSON_SCHEMA',
-      formatUnknownJsonSchemaError(
+      formatUnknownJSONSchemaError(
         nodeProps.jsonSchema.type,
         nodeProps.jsonSchema,
       ),
@@ -126,14 +126,14 @@ export const createSchemaNodeFactory =
   };
 
 const processSchema = (
-  schema: JsonSchemaWithRef,
+  schema: JSONSchemaWithRef,
   resolve: ResolveSchema | null,
 ) => {
   if (resolve) schema = resolve(schema) || schema;
-  return processAllOfSchema(schema as JsonSchema);
+  return processAllOfSchema(schema as JSONSchema);
 };
 
-const resolveReferences = <Schema extends JsonSchemaWithVirtual>(
+const resolveReferences = <Schema extends JSONSchemaWithVirtual>(
   nodeProps: NodeFactoryProps<Schema>,
   resolve: ResolveSchema | null,
 ) => {

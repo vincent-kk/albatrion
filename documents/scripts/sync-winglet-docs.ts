@@ -19,15 +19,16 @@ import * as path from 'node:path';
 import { discoverPackages } from './lib/packageRegistry';
 import { resolveSymbolFiles } from './lib/resolveSymbolFiles';
 import { parseRichJSDoc } from './lib/parseRichJSDoc';
-import { generateMdx, generateCategoryMeta, serializeCategoryJson } from './lib/mdxGenerator';
+import { collectDeprecatedExports } from './lib/collectDeprecatedExports';
+import { generateMdx, generateCategoryMeta, serializeCategoryJSON } from './lib/mdxGenerator';
 import {
   ensureDir,
   writeDocFile,
-  writeCategoryJson,
+  writeCategoryJSON,
   cleanupStaleFiles,
   createSyncResult,
 } from './lib/manageDocs';
-import type { DocSyncResult } from './lib/types';
+import type { DocSyncResult, PackageEntry } from './lib/types';
 
 const MONOREPO_ROOT = path.resolve(__dirname, '..', '..');
 const WINGLET_DOCS_DIR = path.join(MONOREPO_ROOT, 'documents', 'docs', 'winglet');
@@ -44,6 +45,38 @@ function getPackageFilter(): string | null {
 /** Normalize export key to category path (e.g., "./array" -> "array"). */
 function exportKeyToCategory(exportKey: string): string {
   return exportKey.replace(/^\.\//, '').replace(/^\./, '');
+}
+
+/**
+ * Collects the lower-cased MDX path of every non-deprecated symbol across a
+ * package's entries, so a deprecated alias can be skipped only when it
+ * collides with one of these on a case-insensitive filesystem.
+ */
+function computeCanonicalPathsLower(
+  entries: Array<{ dtsPath: string; category: string }>,
+  pkgDocsDir: string,
+  pkg: PackageEntry,
+): Set<string> {
+  const canonicalPathsLower = new Set<string>();
+  for (const entry of entries) {
+    const categoryDir = entry.category ? path.join(pkgDocsDir, entry.category) : pkgDocsDir;
+    const symbolMap = resolveSymbolFiles(entry.dtsPath);
+    const deprecatedExports = collectDeprecatedExports(entry.dtsPath);
+    const fileSymbolNames = new Map<string, string[]>();
+    for (const [symbolName, filePath] of Object.entries(symbolMap)) {
+      const existing = fileSymbolNames.get(filePath);
+      if (existing) existing.push(symbolName);
+      else fileSymbolNames.set(filePath, [symbolName]);
+    }
+    for (const [filePath] of fileSymbolNames) {
+      const parsed = parseRichJSDoc(filePath, pkg.name, pkg.version, entry.category || 'root');
+      for (const fn of parsed) {
+        if (!symbolMap[fn.name] || fn.deprecated || deprecatedExports.has(fn.name)) continue;
+        canonicalPathsLower.add(path.join(categoryDir, `${fn.name}.mdx`).toLowerCase());
+      }
+    }
+  }
+  return canonicalPathsLower;
 }
 
 function main(): void {
@@ -86,11 +119,14 @@ function main(): void {
         entries.push({ dtsPath: pkg.mainDtsPath, category: '' });
       }
 
+      const canonicalPathsLower = computeCanonicalPathsLower(entries, pkgDocsDir, pkg);
+
       for (const entry of entries) {
         const categoryDir = entry.category
           ? path.join(pkgDocsDir, entry.category)
           : pkgDocsDir;
         const symbolMap = resolveSymbolFiles(entry.dtsPath);
+        const deprecatedExports = collectDeprecatedExports(entry.dtsPath);
 
         // Track unique source files to parse (multiple symbols can share a file)
         const fileSymbolNames = new Map<string, string[]>();
@@ -115,6 +151,12 @@ function main(): void {
             const mdxPath = path.join(categoryDir, `${fn.name}.mdx`);
             expectedFiles.add(mdxPath);
 
+            // Skip only a deprecated alias whose path collides, case-insensitively,
+            // with a canonical (non-deprecated) page; the path stays "expected"
+            // either way, so cleanup never treats it as stale.
+            const isDeprecated = fn.deprecated || deprecatedExports.has(fn.name);
+            if (isDeprecated && canonicalPathsLower.has(mdxPath.toLowerCase())) continue;
+
             const mdxContent = generateMdx(fn);
             const status = writeDocFile(mdxPath, mdxContent, isCheckMode);
 
@@ -131,9 +173,9 @@ function main(): void {
         // Write _category_.json for this category (only for sub-path categories)
         if (symbolCount > 0 && entry.category) {
           const meta = generateCategoryMeta(entry.category, pkg.shortName);
-          const categoryJson = serializeCategoryJson(meta);
+          const categoryJSON = serializeCategoryJSON(meta);
           ensureDir(categoryDir);
-          const catStatus = writeCategoryJson(categoryDir, categoryJson, isCheckMode);
+          const catStatus = writeCategoryJSON(categoryDir, categoryJSON, isCheckMode);
           if (catStatus === 'created') pkgResult.created++;
           else if (catStatus === 'updated') pkgResult.updated++;
         }

@@ -3,7 +3,7 @@ import { describe, expect, it, vi } from 'vitest';
 
 import { delay } from '@winglet/common-utils';
 
-import { nodeFromJsonSchema } from '@/schema-form/core';
+import { nodeFromJSONSchema } from '@/schema-form/core';
 
 import { NodeEventType, ValidationMode } from '../nodes';
 import type { NumberNode } from '../nodes/NumberNode';
@@ -13,7 +13,7 @@ import { createValidatorFactory } from './utils/createValidatorFactory';
 
 describe('ObjectNode nullable functionality', () => {
   it('객체 노드가 nullable:true일 때 null 값을 허용해야 함', async () => {
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       onChange: () => {},
       jsonSchema: {
         type: 'object',
@@ -49,7 +49,7 @@ describe('ObjectNode nullable functionality', () => {
   });
 
   it('객체 노드가 nullable:false일 때 null 값을 처리해야 함', async () => {
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       onChange: () => {},
       jsonSchema: {
         type: 'object',
@@ -81,7 +81,7 @@ describe('ObjectNode nullable functionality', () => {
   });
 
   it('nullable 객체 노드의 자식 노드도 nullable을 지원해야 함', async () => {
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       onChange: () => {},
       jsonSchema: {
         type: 'object',
@@ -130,7 +130,7 @@ describe('ObjectNode nullable functionality', () => {
   });
 
   it('nullable 객체 노드의 기본값이 null일 수 있어야 함', async () => {
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       onChange: () => {},
       jsonSchema: {
         type: 'object',
@@ -163,7 +163,7 @@ describe('ObjectNode nullable functionality', () => {
   });
 
   it('nullable 객체 노드의 이벤트가 정상적으로 발생해야 함', async () => {
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       onChange: () => {},
       jsonSchema: {
         type: 'object',
@@ -212,7 +212,7 @@ describe('ObjectNode nullable functionality', () => {
   it('nullable 객체 노드의 onChange 이벤트가 정상적으로 전파되어야 함', async () => {
     const mockOnChange = vi.fn();
 
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       onChange: mockOnChange,
       jsonSchema: {
         type: 'object',
@@ -261,7 +261,7 @@ describe('ObjectNode nullable functionality', () => {
       }),
     );
 
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       onChange: () => {},
       jsonSchema: {
         type: 'object',
@@ -305,7 +305,7 @@ describe('ObjectNode nullable functionality', () => {
   });
 
   it('중첩된 nullable 객체 구조가 정상적으로 동작해야 함', async () => {
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       onChange: () => {},
       jsonSchema: {
         type: 'object',
@@ -381,7 +381,7 @@ describe('ObjectNode nullable functionality', () => {
 
   describe('ObjectNode 기본값 null 처리', () => {
     it('default가 null이고 하위 노드에 default가 없으면 초기값이 null이어야 함', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: {
           type: 'object',
@@ -409,7 +409,7 @@ describe('ObjectNode nullable functionality', () => {
     });
 
     it('default가 null이지만 하위 노드에 default가 있으면 초기값이 객체여야 함', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: {
           type: 'object',
@@ -439,7 +439,7 @@ describe('ObjectNode nullable functionality', () => {
     });
 
     it('중첩된 객체에서 일부만 default null을 가질 때 올바르게 처리해야 함', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: {
           type: 'object',
@@ -491,7 +491,7 @@ describe('ObjectNode nullable functionality', () => {
     });
 
     it('default가 undefined이고 하위 노드에 default가 없으면 빈 객체여야 함', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: {
           type: 'object',
@@ -516,7 +516,7 @@ describe('ObjectNode nullable functionality', () => {
     });
 
     it('default가 undefined이지만 하위 노드에 default가 있으면 채워진 객체여야 함', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: {
           type: 'object',
@@ -544,7 +544,7 @@ describe('ObjectNode nullable functionality', () => {
     });
 
     it('nullable이 명시되지 않은 경우 기본적으로 null을 허용하지 않아야 함', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: {
           type: 'object',
@@ -583,7 +583,7 @@ describe('ObjectNode nullable functionality', () => {
     });
 
     it('nullable 객체가 setValue(null)로 변경 후 다시 객체로 변경 가능해야 함', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: {
           type: 'object',
@@ -633,7 +633,7 @@ describe('ObjectNode nullable functionality', () => {
       }),
     );
 
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       onChange: () => {},
       jsonSchema: {
         type: 'object',
@@ -673,7 +673,7 @@ describe('ObjectNode nullable functionality', () => {
   });
 
   it('nullable 객체 노드의 dirty 및 touched 상태가 정상적으로 관리되어야 함', async () => {
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       onChange: () => {},
       jsonSchema: {
         type: 'object',

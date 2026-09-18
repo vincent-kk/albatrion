@@ -53,6 +53,6 @@ const customValidatorPlugin: SchemaFormPlugin = {
 };
 ```
 
-- `ValidatorFactory` is `(schema: JsonSchema) => ValidateFunction` — the factory returns the function itself, not an object wrapping one.
-- A `ValidateFunction` may be sync or async and returns `JsonSchemaError[] | null` (`null` when valid).
+- `ValidatorFactory` is `(schema: JSONSchema) => ValidateFunction` — the factory returns the function itself, not an object wrapping one.
+- A `ValidateFunction` may be sync or async and returns `JSONSchemaError[] | null` (`null` when valid).
 - `ValidatorPlugin.bind?(instance)` is a consumer-facing hook for supplying a custom validator instance (e.g. a preconfigured AJV) — call it on the plugin object before `registerPlugin()`; the core never calls it.

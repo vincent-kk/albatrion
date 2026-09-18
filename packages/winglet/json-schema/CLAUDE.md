@@ -27,7 +27,7 @@ yarn test
 yarn test --watch
 
 # Run specific test file
-yarn test src/utils/JsonSchemaScanner/__tests__/JsonSchemaScanner.test.ts
+yarn test src/utils/JSONSchemaScanner/__tests__/JSONSchemaScanner.test.ts
 ```
 
 ### Publishing & Versioning
@@ -68,18 +68,18 @@ This is a TypeScript library for JSON Schema manipulation with these core archit
 The package supports granular imports through multiple entry points:
 
 - Main exports (`@winglet/json-schema`): All utilities and types
-- Sync scanner (`@winglet/json-schema/scanner`): JsonSchemaScanner
-- Async scanner (`@winglet/json-schema/async-scanner`): JsonSchemaScannerAsync
+- Sync scanner (`@winglet/json-schema/scanner`): JSONSchemaScanner
+- Async scanner (`@winglet/json-schema/async-scanner`): JSONSchemaScannerAsync
 - Filters (`@winglet/json-schema/filter`): Schema type checking utilities
 
 ### Core Components
 
-#### JsonSchemaScanner System
+#### JSONSchemaScanner System
 
-The heart of the library is the schema traversal system located in `src/utils/JsonSchemaScanner/`:
+The heart of the library is the schema traversal system located in `src/utils/JSONSchemaScanner/`:
 
-- **JsonSchemaScanner** (`sync/JsonSchemaScanner.ts`): Depth-first traversal with visitor pattern, $ref resolution, and circular reference detection
-- **JsonSchemaScannerAsync** (`async/JsonSchemaScannerAsync.ts`): Standalone async variant (no inheritance) driving the same shared generator core as JsonSchemaScanner, awaiting async visitors and reference resolution
+- **JSONSchemaScanner** (`sync/JSONSchemaScanner.ts`): Depth-first traversal with visitor pattern, $ref resolution, and circular reference detection
+- **JSONSchemaScannerAsync** (`async/JSONSchemaScannerAsync.ts`): Standalone async variant (no inheritance) driving the same shared generator core as JSONSchemaScanner, awaiting async visitors and reference resolution
 - **Visitor Pattern**: Uses `enter`/`exit` callbacks for schema node processing
 - **Reference Resolution**: Handles `$ref` with configurable resolution functions
 - **Stack-based Architecture**: Prevents infinite loops with stack-based circular reference detection

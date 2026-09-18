@@ -9,7 +9,7 @@
 - TypeScript strict 모드
 - `allOf`가 없거나 비어있으면 원본 스키마 그대로 반환
 - 처리 전 `cloneLite(rest, depth)`로 얕은 복제 수행 (원본 보존)
-- 타입 비호환 시 `JsonSchemaError('ALL_OF_TYPE_REDEFINITION')` throw
+- 타입 비호환 시 `JSONSchemaError('ALL_OF_TYPE_REDEFINITION')` throw
 - 복제 깊이: object=3, array=2, primitive=1
 
 ## Boundaries
@@ -18,7 +18,7 @@
 
 - 병합 전 반드시 `cloneLite`로 스키마 복제하여 원본 보존
 - 각 allOf 항목 병합 전 `validateCompatibility` 호출
-- 타입 비호환 시 `JsonSchemaError` throw (에러 무시 금지)
+- 타입 비호환 시 `JSONSchemaError` throw (에러 무시 금지)
 - `getMergeSchemaHandler`가 `null`이면 병합 없이 원본 반환
 - allOf 항목에 무시되는 키워드(`IGNORE_FIELDS`)가 있으면 `warnDevelopmentIssue`로 dev 경고 방출
 
@@ -32,4 +32,4 @@
 
 - 원본 `schema` 객체를 직접 변경(mutate)
 - `allOf` 항목을 순서 변경하거나 건너뛰어 병합
-- `JsonSchemaError` 대신 일반 `Error` throw
+- `JSONSchemaError` 대신 일반 `Error` throw

@@ -1,6 +1,6 @@
 import { isArraySchema, isObjectSchema } from '@winglet/json-schema/filter';
 
-import type { JsonSchema } from '@/schema-form/types';
+import type { JSONSchema } from '@/schema-form/types';
 
 /**
  * Determines the cloning depth limit based on the JSON Schema.
@@ -10,5 +10,5 @@ import type { JsonSchema } from '@/schema-form/types';
  * @param schema - The JSON Schema
  * @returns The cloning depth limit for the given schema
  */
-export const getCloneDepth = (schema: JsonSchema) =>
+export const getCloneDepth = (schema: JSONSchema) =>
   isObjectSchema(schema) ? 3 : isArraySchema(schema) ? 2 : 1;

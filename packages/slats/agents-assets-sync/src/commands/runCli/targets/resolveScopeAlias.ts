@@ -73,11 +73,11 @@ async function collectScopeDir(
 
   for (const entry of entries) {
     if (entry.startsWith('.')) continue;
-    const pkgJsonPath = join(scopeDir, entry, 'package.json');
-    if (!existsSync(pkgJsonPath)) continue;
+    const pkgJSONPath = join(scopeDir, entry, 'package.json');
+    if (!existsSync(pkgJSONPath)) continue;
     let parsed: { name?: unknown };
     try {
-      const raw = await readFile(pkgJsonPath, 'utf-8');
+      const raw = await readFile(pkgJSONPath, 'utf-8');
       parsed = JSON.parse(raw) as { name?: unknown };
     } catch {
       continue;

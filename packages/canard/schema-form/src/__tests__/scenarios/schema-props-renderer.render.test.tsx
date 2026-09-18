@@ -3,7 +3,7 @@ import { type ReactNode } from 'react';
 import '@testing-library/jest-dom';
 import { describe, expect, it } from 'vitest';
 
-import type { JsonSchema } from '@winglet/json-schema';
+import type { JSONSchema } from '@winglet/json-schema';
 
 import type { FormTypeInputProps, FormTypeRendererProps } from '@/schema-form';
 
@@ -119,7 +119,7 @@ describe('jsonSchema.FormTypeRendererProps -> CustomFormTypeRenderer', () => {
           },
         },
       },
-    } satisfies JsonSchema;
+    } satisfies JSONSchema;
 
     const form = await renderForm(schema, {
       CustomFormTypeRenderer: TestRenderer,
@@ -163,7 +163,7 @@ describe('jsonSchema.FormTypeRendererProps -> CustomFormTypeRenderer', () => {
           },
         },
       },
-    } satisfies JsonSchema;
+    } satisfies JSONSchema;
 
     const form = await renderForm(schema, {
       CustomFormTypeRenderer: TestRenderer,
@@ -204,7 +204,7 @@ describe('jsonSchema.FormTypeInputProps -> FormTypeInput', () => {
           },
         },
       },
-    } satisfies JsonSchema;
+    } satisfies JSONSchema;
 
     const form = await renderForm(schema);
 
@@ -227,7 +227,7 @@ describe('jsonSchema.FormTypeInputProps -> FormTypeInput', () => {
           FormTypeInputProps: { prefix: 'X', placeholder: 'p' },
         },
       },
-    } satisfies JsonSchema;
+    } satisfies JSONSchema;
 
     const form = await renderForm(schema);
 
@@ -262,7 +262,7 @@ describe('ReactNode helperText / description render without corruption', () => {
           },
         },
       },
-    } satisfies JsonSchema;
+    } satisfies JSONSchema;
 
     const form = await renderForm(schema, {
       CustomFormTypeRenderer: TestRenderer,
@@ -301,7 +301,7 @@ describe('ReactNode helperText / description render without corruption', () => {
           },
         },
       },
-    } satisfies JsonSchema;
+    } satisfies JSONSchema;
 
     const form = await renderForm(schema, {
       CustomFormTypeRenderer: TestRenderer,
@@ -339,7 +339,7 @@ describe('ReactNode helperText / description render without corruption', () => {
           },
         },
       },
-    } satisfies JsonSchema;
+    } satisfies JSONSchema;
 
     const form = await renderForm(schema, {
       CustomFormTypeRenderer: TestRenderer,
@@ -377,7 +377,7 @@ describe('ReactNode helperText / description render without corruption', () => {
           },
         },
       },
-    } satisfies JsonSchema;
+    } satisfies JSONSchema;
 
     const form = await renderForm(schema, {
       CustomFormTypeRenderer: TestRenderer,
@@ -404,7 +404,7 @@ describe('options.omitEmpty controls empty-key retention', () => {
         kept: { type: 'string', options: { omitEmpty: false } },
         dropped: { type: 'string' },
       },
-    } satisfies JsonSchema;
+    } satisfies JSONSchema;
 
     const form = await renderForm(schema);
 
@@ -436,7 +436,7 @@ describe('options.omitEmpty controls empty-key retention', () => {
         keptNum: { type: 'number', options: { omitEmpty: false } },
         droppedNum: { type: 'number' },
       },
-    } satisfies JsonSchema;
+    } satisfies JSONSchema;
 
     const form = await renderForm(schema);
 
@@ -472,7 +472,7 @@ describe('default date-format inputs render the correct native input type', () =
         w: { type: 'string', format: 'week' },
         m: { type: 'string', format: 'month' },
       },
-    } satisfies JsonSchema;
+    } satisfies JSONSchema;
 
     const form = await renderForm(schema);
 
@@ -495,7 +495,7 @@ describe('default date-format inputs render the correct native input type', () =
         d: { type: 'string', format: 'date' },
         dt: { type: 'string', format: 'datetime-local' },
       },
-    } satisfies JsonSchema;
+    } satisfies JSONSchema;
 
     const form = await renderForm(schema);
 

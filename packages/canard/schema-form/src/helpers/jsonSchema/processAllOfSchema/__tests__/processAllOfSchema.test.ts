@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import type { JsonSchema } from '@/schema-form/types';
+import type { JSONSchema } from '@/schema-form/types';
 
 import { processAllOfSchema } from '../processAllOfSchema';
 
@@ -14,7 +14,7 @@ describe('processAllOfSchema', () => {
       type: 'object',
       properties: { name: { type: 'string' } },
       allOf: [{ required: ['name'] }],
-    } as unknown as JsonSchema;
+    } as unknown as JSONSchema;
     const processed = processAllOfSchema(schema);
     expect(processed.allOf).toBeUndefined();
     expect(processed.required).toEqual(['name']);
@@ -31,7 +31,7 @@ describe('processAllOfSchema', () => {
           then: { required: ['name'] },
         },
       ],
-    } as unknown as JsonSchema;
+    } as unknown as JSONSchema;
     processAllOfSchema(schema);
     expect(warn).toHaveBeenCalledTimes(2); // 'if' + 'then'
     expect(warn.mock.calls[0][0]).toContain(
@@ -46,7 +46,7 @@ describe('processAllOfSchema', () => {
       type: 'object',
       properties: { name: { type: 'string' } },
       allOf: [{ minProperties: 1 }],
-    } as unknown as JsonSchema;
+    } as unknown as JSONSchema;
     processAllOfSchema(schema);
     expect(warn).not.toHaveBeenCalled();
   });

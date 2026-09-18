@@ -1,7 +1,7 @@
 import type { InjectHandlerContext } from '@/schema-form/types';
 
 import { createDivider } from './utils/createDivider';
-import { formatJsonPreview } from './utils/formatJsonPreview';
+import { formatJSONPreview } from './utils/formatJSONPreview';
 import { formatValuePreview } from './utils/formatValuePreview';
 import { getErrorMessage } from './utils/getErrorMessage';
 
@@ -30,9 +30,9 @@ export interface FormatInjectToErrorContext extends InjectHandlerContext {
  *   schemaPath: '/properties/user/properties/name',
  *   jsonSchema: { type: 'string' },
  *   parentValue: { name: 'test' },
- *   parentJsonSchema: { type: 'object', properties: { name: { type: 'string' } } },
+ *   parentJSONSchema: { type: 'object', properties: { name: { type: 'string' } } },
  *   rootValue: { user: { name: 'test' } },
- *   rootJsonSchema: { type: 'object' },
+ *   rootJSONSchema: { type: 'object' },
  *   context: {},
  *   error: new Error('Something went wrong'),
  * });
@@ -50,7 +50,7 @@ export const formatInjectToError = ({
   const divider = createDivider();
   const errorMessage = getErrorMessage(error);
   const { preview: schemaPreview, truncated: schemaTruncated } =
-    formatJsonPreview(jsonSchema);
+    formatJSONPreview(jsonSchema);
   const valuePreview = formatValuePreview(value);
   const rootValuePreview = formatValuePreview(rootValue);
   const contextValuePreview = formatValuePreview(context);

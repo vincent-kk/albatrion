@@ -9,10 +9,11 @@
 
 ## API Contracts
 
-- `JsonSchemaScanner` / `JsonSchemaScannerAsync`: 생성자에 `visitor`(enter/exit)와 `options`를 받아 `scan(schema)` 후 `getValue()`로 최종 스키마를 얻는 두 단계 API를 제공한다. `options.cloneResolvedSchema`는 기본값 `true`로 해석된 하위 스키마를 인라인 시점에 깊은 복제하며(원본 비변형, 중복 `$ref` 별칭 공유 방지), `options.cacheResolvedReference`는 기본값 `false`로 동일 참조 문자열의 재해석 여부를 제어한다.
+- `JSONSchemaScanner` / `JSONSchemaScannerAsync`: 생성자에 `visitor`(enter/exit)와 `options`를 받아 `scan(schema)` 후 `getValue()`로 최종 스키마를 얻는 두 단계 API를 제공한다. `options.cloneResolvedSchema`는 기본값 `true`로 해석된 하위 스키마를 인라인 시점에 깊은 복제하며(원본 비변형, 중복 `$ref` 별칭 공유 방지), `options.cacheResolvedReference`는 기본값 `false`로 동일 참조 문자열의 재해석 여부를 제어한다.
 - `resolveReference(schema)`: 내부 `$ref`를 모두 인라인한 스키마를 동기로 반환하는 헬퍼다. 내부적으로 동기 스캐너를 두 번 구동한다.
 - `filters`가 재수출하는 함수들은 각각 `schema is <Type>Schema` 형태의 타입가드다.
 - 스키마 노드 타입과 값 추론 타입도 이름 그대로 재수출한다.
+- 이전 `Json*` 명명의 공개 심볼은 0.15.0부터 각 `JSON*` 대상의 `@deprecated` 별칭으로 유지되며, `Removed in 0.16.0`이다.
 
 ## Acceptance Criteria
 
@@ -31,6 +32,10 @@
 - 방문자의 `enter`/`exit`가 각각 프로미스를 반환하면 `scan()`은 각 콜백이 완료될 때까지 순서대로 기다린 뒤 다음 단계로 진행한다(호출 순서로 검증).
 - `scan()` 이전의 `getValue()`는 `undefined`를 반환하고, 참조가 없는 스키마를 스캔한 뒤의 `getValue()`는 원본 스키마와 동일한 값을 반환한다.
 
+## History
+
+- 2026-09-18 — `Json` → `JSON` 명명 규칙 통일에 따라 이전 이름을 0.15.0에서 `@deprecated` 별칭으로 유지하고 0.16.0에서 제거하기로 결정.
+
 ## Last Updated
 
-2026-08-18 — 최초 계약 작성
+2026-09-18 — 이전 `Json*` 별칭의 유지·제거 시점 계약 추가

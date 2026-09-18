@@ -3,13 +3,13 @@ import { describe, expect, it } from 'vitest';
 import type {
   ArraySchema,
   BooleanSchema,
-  JsonSchema,
+  JSONSchema,
   NumberSchema,
   ObjectSchema,
   StringSchema,
 } from '@/schema-form/types';
 
-import { nodeFromJsonSchema } from '../nodeFromJsonSchema';
+import { nodeFromJSONSchema } from '../nodeFromJSONSchema';
 import { ArrayNode } from '../nodes/ArrayNode';
 import { BooleanNode } from '../nodes/BooleanNode';
 import { NullNode } from '../nodes/NullNode';
@@ -24,7 +24,7 @@ describe('SchemaNodeFactory - Nullable Type Handling', () => {
         type: ['string', 'null'],
       } as unknown as StringSchema;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: schema,
         onChange: () => {},
       });
@@ -39,7 +39,7 @@ describe('SchemaNodeFactory - Nullable Type Handling', () => {
         type: ['number', 'null'],
       } as unknown as NumberSchema;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: schema,
         onChange: () => {},
       });
@@ -54,7 +54,7 @@ describe('SchemaNodeFactory - Nullable Type Handling', () => {
         type: ['integer', 'null'],
       } as unknown as NumberSchema;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: schema,
         onChange: () => {},
       });
@@ -69,7 +69,7 @@ describe('SchemaNodeFactory - Nullable Type Handling', () => {
         type: ['boolean', 'null'],
       } as unknown as BooleanSchema;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: schema,
         onChange: () => {},
       });
@@ -87,7 +87,7 @@ describe('SchemaNodeFactory - Nullable Type Handling', () => {
         },
       } as unknown as ObjectSchema;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: schema,
         onChange: () => {},
       });
@@ -103,7 +103,7 @@ describe('SchemaNodeFactory - Nullable Type Handling', () => {
         items: { type: 'string' },
       } as unknown as ArraySchema;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: schema,
         onChange: () => {},
       });
@@ -120,7 +120,7 @@ describe('SchemaNodeFactory - Nullable Type Handling', () => {
         type: ['null', 'string'],
       } as unknown as StringSchema;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: schema,
         onChange: () => {},
       });
@@ -135,7 +135,7 @@ describe('SchemaNodeFactory - Nullable Type Handling', () => {
         type: ['string', 'null'],
       } as unknown as StringSchema;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: schema,
         onChange: () => {},
       });
@@ -156,12 +156,12 @@ describe('SchemaNodeFactory - Nullable Type Handling', () => {
         minimum: 0,
       } as unknown as NumberSchema;
 
-      const node1 = nodeFromJsonSchema({
+      const node1 = nodeFromJSONSchema({
         jsonSchema: schema1,
         onChange: () => {},
       });
 
-      const node2 = nodeFromJsonSchema({
+      const node2 = nodeFromJSONSchema({
         jsonSchema: schema2,
         onChange: () => {},
       });
@@ -177,7 +177,7 @@ describe('SchemaNodeFactory - Nullable Type Handling', () => {
     it('should correctly identify non-nullable string type', () => {
       const schema: StringSchema = { type: 'string' };
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: schema,
         onChange: () => {},
       });
@@ -190,7 +190,7 @@ describe('SchemaNodeFactory - Nullable Type Handling', () => {
     it('should correctly identify non-nullable number type', () => {
       const schema: NumberSchema = { type: 'number' };
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: schema,
         onChange: () => {},
       });
@@ -203,7 +203,7 @@ describe('SchemaNodeFactory - Nullable Type Handling', () => {
     it('should correctly identify non-nullable boolean type', () => {
       const schema: BooleanSchema = { type: 'boolean' };
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: schema,
         onChange: () => {},
       });
@@ -221,7 +221,7 @@ describe('SchemaNodeFactory - Nullable Type Handling', () => {
         },
       };
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: schema,
         onChange: () => {},
       });
@@ -237,7 +237,7 @@ describe('SchemaNodeFactory - Nullable Type Handling', () => {
         items: { type: 'string' },
       };
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: schema,
         onChange: () => {},
       });
@@ -250,9 +250,9 @@ describe('SchemaNodeFactory - Nullable Type Handling', () => {
 
   describe('pure null type', () => {
     it('should create NullNode for pure null type', () => {
-      const schema: JsonSchema = { type: 'null' };
+      const schema: JSONSchema = { type: 'null' };
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: schema,
         onChange: () => {},
       });
@@ -263,9 +263,9 @@ describe('SchemaNodeFactory - Nullable Type Handling', () => {
     });
 
     it('should create NullNode for single-element null array', () => {
-      const schema = { type: ['null'] } as unknown as JsonSchema;
+      const schema = { type: ['null'] } as unknown as JSONSchema;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: schema,
         onChange: () => {},
       });
@@ -291,7 +291,7 @@ describe('SchemaNodeFactory - Nullable Type Handling', () => {
         required: ['name'],
       } as unknown as ObjectSchema;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: schema,
         onChange: () => {},
       });
@@ -313,7 +313,7 @@ describe('SchemaNodeFactory - Nullable Type Handling', () => {
         },
       } as unknown as ArraySchema;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: schema,
         onChange: () => {},
       });
@@ -332,7 +332,7 @@ describe('SchemaNodeFactory - Nullable Type Handling', () => {
         pattern: '^[a-z]+@[a-z]+\\.[a-z]+$',
       } as unknown as StringSchema;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: schema,
         onChange: () => {},
       });
@@ -351,7 +351,7 @@ describe('SchemaNodeFactory - Nullable Type Handling', () => {
         exclusiveMinimum: false,
       } as unknown as NumberSchema;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: schema,
         onChange: () => {},
       });
@@ -369,7 +369,7 @@ describe('SchemaNodeFactory - Nullable Type Handling', () => {
         default: null,
       } as unknown as StringSchema;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: schema,
         onChange: () => {},
       });
@@ -385,7 +385,7 @@ describe('SchemaNodeFactory - Nullable Type Handling', () => {
         default: 'default value',
       } as unknown as StringSchema;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: schema,
         onChange: () => {},
       });
@@ -401,7 +401,7 @@ describe('SchemaNodeFactory - Nullable Type Handling', () => {
         enum: ['option1', 'option2', null],
       } as unknown as StringSchema;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: schema,
         onChange: () => {},
       });
@@ -421,12 +421,12 @@ describe('SchemaNodeFactory - Nullable Type Handling', () => {
         minimum: 0,
       } as unknown as NumberSchema;
 
-      const integerNode = nodeFromJsonSchema({
+      const integerNode = nodeFromJSONSchema({
         jsonSchema: integerSchema,
         onChange: () => {},
       });
 
-      const numberNode = nodeFromJsonSchema({
+      const numberNode = nodeFromJSONSchema({
         jsonSchema: numberSchema,
         onChange: () => {},
       });
@@ -460,7 +460,7 @@ describe('SchemaNodeFactory - Nullable Type Handling', () => {
         },
       } as unknown as ObjectSchema;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: schema,
         onChange: () => {},
       });
@@ -481,7 +481,7 @@ describe('SchemaNodeFactory - Nullable Type Handling', () => {
         },
       } as unknown as ArraySchema;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: schema,
         onChange: () => {},
       });
@@ -515,7 +515,7 @@ describe('SchemaNodeFactory - Nullable Type Handling', () => {
         },
       } as unknown as ObjectSchema;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: schema,
         onChange: () => {},
       });
@@ -538,7 +538,7 @@ describe('SchemaNodeFactory - Nullable Type Handling', () => {
       ] as unknown as StringSchema[];
 
       const nodes = schemas.map((schema) =>
-        nodeFromJsonSchema({
+        nodeFromJSONSchema({
           jsonSchema: schema,
           onChange: () => {},
         }),
@@ -558,12 +558,12 @@ describe('SchemaNodeFactory - Nullable Type Handling', () => {
       } as unknown as NumberSchema;
       const nonNullableSchema: NumberSchema = { type: 'number' };
 
-      const nullableNode = nodeFromJsonSchema({
+      const nullableNode = nodeFromJSONSchema({
         jsonSchema: nullableSchema,
         onChange: () => {},
       });
 
-      const nonNullableNode = nodeFromJsonSchema({
+      const nonNullableNode = nodeFromJSONSchema({
         jsonSchema: nonNullableSchema,
         onChange: () => {},
       });

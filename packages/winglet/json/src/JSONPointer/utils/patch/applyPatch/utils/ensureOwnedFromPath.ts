@@ -2,7 +2,7 @@ import { isArray } from '@winglet/common-utils/filter';
 import { getDataProperty, setDataProperty } from '@winglet/common-utils/object';
 
 import { JSONPointer } from '@/json/JSONPointer/enum';
-import type { JsonRoot } from '@/json/type';
+import type { JSONRoot } from '@/json/type';
 
 import { unescapePath } from '../../../escape';
 import { getArrayIndex } from './getArrayIndex';
@@ -20,7 +20,7 @@ import { getArrayIndex } from './getArrayIndex';
  * @param cloned - Object references already owned by the immutable result
  */
 export const ensureOwnedFromPath = (
-  source: JsonRoot,
+  source: JSONRoot,
   from: string,
   cloned: WeakSet<object>,
 ): void => {

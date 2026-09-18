@@ -1,7 +1,7 @@
 import {
   Form,
   FormProvider,
-  type JsonSchema,
+  type JSONSchema,
   registerPlugin,
 } from '@canard/schema-form';
 import { plugin as ajv8Plugin } from '@canard/schema-form-ajv8-plugin';
@@ -26,7 +26,7 @@ const jsonSchema = {
       default: 'TEST',
     },
   },
-} satisfies JsonSchema;
+} satisfies JSONSchema;
 
 const bigSchema = {
   type: 'object',
@@ -156,7 +156,7 @@ const bigSchema = {
     },
   },
   required: ['user', 'settings'],
-} satisfies JsonSchema;
+} satisfies JSONSchema;
 export const FormErrorComponent = () => {
   return (
     <FormProvider

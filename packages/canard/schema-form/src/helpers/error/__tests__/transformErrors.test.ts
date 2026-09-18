@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import type { JsonSchemaError } from '@/schema-form/types';
+import type { JSONSchemaError } from '@/schema-form/types';
 
 import { transformErrors } from '../transformErrors';
 
@@ -8,7 +8,7 @@ import { transformErrors } from '../transformErrors';
 const createMockError = (
   keyword: string,
   message?: string,
-): JsonSchemaError => ({
+): JSONSchemaError => ({
   keyword,
   dataPath: `test.${keyword}`,
   message: message || `Test error for ${keyword}`,
@@ -20,7 +20,7 @@ describe('transformErrors', () => {
   describe('기본 동작', () => {
     it('빈 배열을 반환해야 합니다 - 입력이 빈 배열인 경우', () => {
       // Arrange
-      const errors: JsonSchemaError[] = [];
+      const errors: JSONSchemaError[] = [];
 
       // Act
       const result = transformErrors(errors);
@@ -32,7 +32,7 @@ describe('transformErrors', () => {
 
     it('입력 에러들을 그대로 반환해야 합니다 - 필터링이나 키 추가 없이', () => {
       // Arrange
-      const errors: JsonSchemaError[] = [
+      const errors: JSONSchemaError[] = [
         createMockError('required'),
         createMockError('type'),
       ];
@@ -86,7 +86,7 @@ describe('transformErrors', () => {
   describe('key 파라미터 테스트', () => {
     it('각 에러에 순차적인 키를 추가해야 합니다 - key가 true인 경우', () => {
       // Arrange
-      const errors: JsonSchemaError[] = [
+      const errors: JSONSchemaError[] = [
         createMockError('required'),
         createMockError('type'),
         createMockError('pattern'),
@@ -108,7 +108,7 @@ describe('transformErrors', () => {
 
     it('에러에 키를 추가하지 않아야 합니다 - key가 false인 경우', () => {
       // Arrange
-      const errors: JsonSchemaError[] = [
+      const errors: JSONSchemaError[] = [
         createMockError('required'),
         createMockError('type'),
       ];
@@ -124,7 +124,7 @@ describe('transformErrors', () => {
 
     it('에러에 키를 추가하지 않아야 합니다 - key가 undefined인 경우', () => {
       // Arrange
-      const errors: JsonSchemaError[] = [
+      const errors: JSONSchemaError[] = [
         createMockError('required'),
         createMockError('type'),
       ];
@@ -140,8 +140,8 @@ describe('transformErrors', () => {
 
     it('전역 시퀀스가 증가해야 합니다 - 여러 호출에서', () => {
       // Arrange
-      const errors1: JsonSchemaError[] = [createMockError('required')];
-      const errors2: JsonSchemaError[] = [createMockError('type')];
+      const errors1: JSONSchemaError[] = [createMockError('required')];
+      const errors2: JSONSchemaError[] = [createMockError('type')];
 
       // Act
       const result1 = transformErrors(errors1, true);
@@ -160,7 +160,7 @@ describe('transformErrors', () => {
     it('원본 에러 객체를 변경해야 합니다 - key 추가 시', () => {
       // Arrange
       const originalError = createMockError('required');
-      const errors: JsonSchemaError[] = [originalError];
+      const errors: JSONSchemaError[] = [originalError];
 
       // 원본에는 key가 없음을 확인
       expect(originalError.key).toBeUndefined();
@@ -178,7 +178,7 @@ describe('transformErrors', () => {
     it('원본 에러 객체를 변경하지 않아야 합니다 - key 추가하지 않을 때', () => {
       // Arrange
       const originalError = createMockError('required');
-      const errors: JsonSchemaError[] = [originalError];
+      const errors: JSONSchemaError[] = [originalError];
 
       // 원본에는 key가 없음을 확인
       expect(originalError.key).toBeUndefined();
@@ -196,7 +196,7 @@ describe('transformErrors', () => {
   describe('성능 최적화 테스트', () => {
     it('대량의 에러를 효율적으로 처리해야 합니다', () => {
       // Arrange
-      const largeErrorArray: JsonSchemaError[] = Array.from(
+      const largeErrorArray: JSONSchemaError[] = Array.from(
         { length: 1000 },
         (_, index) => createMockError(`error${index}`),
       );
@@ -223,7 +223,7 @@ describe('transformErrors', () => {
   describe('실제 사용 시나리오 테스트', () => {
     it('실제 JSON Schema 검증 에러를 처리해야 합니다', () => {
       // Arrange
-      const realWorldErrors: JsonSchemaError[] = [
+      const realWorldErrors: JSONSchemaError[] = [
         {
           keyword: 'required',
           dataPath: 'root',

@@ -2,8 +2,8 @@ import { describe, expect, it } from 'vitest';
 
 import { delay } from '@winglet/common-utils';
 
-import { nodeFromJsonSchema } from '@/schema-form/core';
-import type { JsonSchema } from '@/schema-form/types';
+import { nodeFromJSONSchema } from '@/schema-form/core';
+import type { JSONSchema } from '@/schema-form/types';
 
 import type { BooleanNode } from '../nodes/BooleanNode';
 import type { ObjectNode } from '../nodes/ObjectNode';
@@ -35,7 +35,7 @@ import type { ObjectNode } from '../nodes/ObjectNode';
  *      initialization settles, i.e. the empty-start is harmless.
  */
 
-const employmentSchema: JsonSchema = {
+const employmentSchema: JSONSchema = {
   type: 'object',
   properties: {
     employmentType: {
@@ -73,7 +73,7 @@ const childByName = (node: ObjectNode, name: string) =>
 
 describe('BranchStrategy oneOf - initial computed-property integrity', () => {
   it('SYNC: pure computed props (visible / computeManager.active) resolve synchronously after construction', () => {
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       onChange: () => {},
       jsonSchema: employmentSchema,
     }) as ObjectNode;
@@ -95,7 +95,7 @@ describe('BranchStrategy oneOf - initial computed-property integrity', () => {
   });
 
   it('SCOPED branch membership settles in the microtask, not in the synchronous prime', async () => {
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       onChange: () => {},
       jsonSchema: employmentSchema,
     }) as ObjectNode;
@@ -121,7 +121,7 @@ describe('BranchStrategy oneOf - initial computed-property integrity', () => {
   });
 
   it('HARMLESS EMPTY-START: inactive child value is excluded from node.value once settled', async () => {
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       onChange: () => {},
       jsonSchema: employmentSchema,
     }) as ObjectNode;
@@ -138,7 +138,7 @@ describe('BranchStrategy oneOf - initial computed-property integrity', () => {
   });
 
   it('reactivates the filtered child when its computed condition turns true', async () => {
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       onChange: () => {},
       jsonSchema: employmentSchema,
     }) as ObjectNode;

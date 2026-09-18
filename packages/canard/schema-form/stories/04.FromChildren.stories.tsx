@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react';
 
-import { Form, type FormTypeInputProps, type JsonSchema } from '../src';
+import { Form, type FormTypeInputProps, type JSONSchema } from '../src';
 import StoryLayout from './components/StoryLayout';
 
 export default {
@@ -26,7 +26,7 @@ export const FunctionalChildren = () => {
         enum: ['male', 'female'],
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const defaultValue = useRef<Record<string, any>>({
     allowed: false,
@@ -90,7 +90,7 @@ export const FunctionalArrayChildren = () => {
         },
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const defaultValue = useRef<Record<string, any>[]>([
     {
@@ -146,7 +146,7 @@ export const IterableChildren = () => {
         enum: ['male', 'female'],
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const defaultValue = useRef({
     allowed: false,
@@ -215,7 +215,7 @@ export const FormWithSubComponentProps = () => {
         enum: ['male', 'female'],
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const defaultValue = useRef({
     allowed: false,
@@ -306,7 +306,7 @@ export const FormWithSeparatedChildren = () => {
         enum: ['male', 'female'],
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const defaultValue = useRef({
     allowed: false,

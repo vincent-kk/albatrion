@@ -1,8 +1,8 @@
 import { isArray } from '@winglet/common-utils/filter';
 
 import type {
-  JsonSchemaType,
-  JsonSchemaWithVirtual,
+  JSONSchemaType,
+  JSONSchemaWithVirtual,
 } from '@/schema-form/types';
 
 import {
@@ -25,9 +25,9 @@ import {
  * ever used when those factories would have produced no work.
  */
 export const needsRealComputedManager = (
-  type: JsonSchemaType,
-  jsonSchema: JsonSchemaWithVirtual,
-  rootSchema: JsonSchemaWithVirtual,
+  type: JSONSchemaType,
+  jsonSchema: JSONSchemaWithVirtual,
+  rootSchema: JSONSchemaWithVirtual,
 ): boolean => {
   /** 1. any `computed.*` key present (boolean OR string both matter) */
   const computed = jsonSchema.computed;

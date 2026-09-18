@@ -21,7 +21,7 @@
 
 ### Ask first
 
-- `InferJsonSchema` 의 타입 추론 로직 변경 (nullable 처리 방식에 영향)
+- `InferJSONSchema` 의 타입 추론 로직 변경 (nullable 처리 방식에 영향)
 - 새 스키마 카테고리 추가 (NonNullable/Nullable 쌍으로 추가 필요)
 
 ### Never do

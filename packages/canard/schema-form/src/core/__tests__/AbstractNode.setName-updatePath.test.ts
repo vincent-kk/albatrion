@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from 'vitest';
 
 import { delay } from '@winglet/common-utils/promise';
 
-import { nodeFromJsonSchema } from '@/schema-form/core';
+import { nodeFromJSONSchema } from '@/schema-form/core';
 
 import type { ArrayNode } from '../nodes/ArrayNode';
 import type { ObjectNode } from '../nodes/ObjectNode';
@@ -31,7 +31,7 @@ const updatePath = (node: SchemaNode | null | undefined): boolean => {
 describe('AbstractNode - setName and updatePath', () => {
   describe('setName', () => {
     it('should update name when called by parent node', () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: {
           type: 'object',
           properties: {
@@ -58,7 +58,7 @@ describe('AbstractNode - setName and updatePath', () => {
     });
 
     it('should escape special characters in name', () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: {
           type: 'object',
           properties: {
@@ -82,7 +82,7 @@ describe('AbstractNode - setName and updatePath', () => {
     });
 
     it('should not update name when called by non-parent node', () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: {
           type: 'object',
           properties: {
@@ -103,7 +103,7 @@ describe('AbstractNode - setName and updatePath', () => {
     });
 
     it('should trigger path update when name changes', () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: {
           type: 'object',
           properties: {
@@ -135,7 +135,7 @@ describe('AbstractNode - setName and updatePath', () => {
 
   describe('updatePath', () => {
     it('should update path based on parent path and escaped name', () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: {
           type: 'object',
           properties: {
@@ -164,7 +164,7 @@ describe('AbstractNode - setName and updatePath', () => {
     });
 
     it('should update schemaPath correctly', () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: {
           type: 'object',
           properties: {
@@ -199,7 +199,7 @@ describe('AbstractNode - setName and updatePath', () => {
     });
 
     it('should handle array node paths correctly', () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: {
           type: 'object',
           properties: {
@@ -229,7 +229,7 @@ describe('AbstractNode - setName and updatePath', () => {
     });
 
     it('should emit UpdatePath event when path changes', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: {
           type: 'object',
           properties: {
@@ -265,7 +265,7 @@ describe('AbstractNode - setName and updatePath', () => {
     });
 
     it('should not emit event when path does not change', () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: {
           type: 'object',
           properties: {
@@ -287,7 +287,7 @@ describe('AbstractNode - setName and updatePath', () => {
     });
 
     it('should handle oneOf scope in schemaPath', () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: {
           type: 'object',
           oneOf: [
@@ -322,7 +322,7 @@ describe('AbstractNode - setName and updatePath', () => {
     });
 
     it('should propagate path updates to deeply nested children', () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: {
           type: 'object',
           properties: {
@@ -366,7 +366,7 @@ describe('AbstractNode - setName and updatePath', () => {
     });
 
     it('should handle complex nested structures with arrays and objects', () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: {
           type: 'object',
           properties: {
@@ -424,7 +424,7 @@ describe('AbstractNode - setName and updatePath', () => {
 
   describe('integration', () => {
     it('should maintain consistency between name, escapedName, path, and schemaPath', () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: {
           type: 'object',
           properties: {
@@ -468,7 +468,7 @@ describe('AbstractNode - setName and updatePath', () => {
     });
 
     it('should handle circular parent-child path updates', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: {
           type: 'object',
           properties: {

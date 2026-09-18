@@ -4,10 +4,10 @@ import { delay } from '@winglet/common-utils';
 
 import {
   contextNodeFactory,
-  nodeFromJsonSchema,
-} from '@/schema-form/core/nodeFromJsonSchema';
+  nodeFromJSONSchema,
+} from '@/schema-form/core/nodeFromJSONSchema';
 import { NodeEventType } from '@/schema-form/core/types';
-import type { JsonSchema } from '@/schema-form/types';
+import type { JSONSchema } from '@/schema-form/types';
 
 import type { ArrayNode } from '../nodes/ArrayNode';
 import type { NumberNode } from '../nodes/NumberNode';
@@ -34,13 +34,13 @@ describe('ContextNode', () => {
     it('node.context로 context에 접근할 수 있어야 함', async () => {
       const contextNode = contextNodeFactory({ mode: 'edit' });
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: {
           type: 'object',
           properties: {
             name: { type: 'string' },
           },
-        } satisfies JsonSchema,
+        } satisfies JSONSchema,
         onChange: () => {},
         contextNode: contextNode,
       });
@@ -53,13 +53,13 @@ describe('ContextNode', () => {
     it('node.find("@")로 context를 찾을 수 있어야 함', async () => {
       const contextNode = contextNodeFactory({ mode: 'view' });
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: {
           type: 'object',
           properties: {
             name: { type: 'string' },
           },
-        } satisfies JsonSchema,
+        } satisfies JSONSchema,
         onChange: () => {},
         contextNode: contextNode,
       });
@@ -73,7 +73,7 @@ describe('ContextNode', () => {
     it('child node에서도 동일한 context에 접근할 수 있어야 함', async () => {
       const contextNode = contextNodeFactory({ mode: 'edit' });
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: {
           type: 'object',
           properties: {
@@ -85,7 +85,7 @@ describe('ContextNode', () => {
               },
             },
           },
-        } satisfies JsonSchema,
+        } satisfies JSONSchema,
         onChange: () => {},
         contextNode: contextNode,
       });
@@ -122,12 +122,12 @@ describe('ContextNode', () => {
             },
           },
         },
-      }) satisfies JsonSchema;
+      }) satisfies JSONSchema;
 
     it('mode="view"일 때 readOnly/disabled 상태가 true여야 함', async () => {
       const contextNode = contextNodeFactory({ mode: 'view' });
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: createModeSchema(),
         onChange: () => {},
         contextNode: contextNode,
@@ -146,7 +146,7 @@ describe('ContextNode', () => {
     it('mode="edit"일 때 readOnly/disabled 상태가 false여야 함', async () => {
       const contextNode = contextNodeFactory({ mode: 'edit' });
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: createModeSchema(),
         onChange: () => {},
         contextNode: contextNode,
@@ -165,7 +165,7 @@ describe('ContextNode', () => {
     it('context 값 변경 시 computed 속성이 업데이트되어야 함', async () => {
       const contextNode = contextNodeFactory({ mode: 'view' });
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: createModeSchema(),
         onChange: () => {},
         contextNode: contextNode,
@@ -211,12 +211,12 @@ describe('ContextNode', () => {
             },
           },
         },
-      }) satisfies JsonSchema;
+      }) satisfies JSONSchema;
 
     it('userRole="admin"일 때 adminField가 visible이어야 함', async () => {
       const contextNode = contextNodeFactory({ userRole: 'admin' });
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: createUserRoleSchema(),
         onChange: () => {},
         contextNode: contextNode,
@@ -234,7 +234,7 @@ describe('ContextNode', () => {
     it('userRole="user"일 때 adminField가 hidden이어야 함', async () => {
       const contextNode = contextNodeFactory({ userRole: 'user' });
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: createUserRoleSchema(),
         onChange: () => {},
         contextNode: contextNode,
@@ -254,7 +254,7 @@ describe('ContextNode', () => {
     it('userRole="guest"일 때 guestField가 hidden이어야 함', async () => {
       const contextNode = contextNodeFactory({ userRole: 'guest' });
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: createUserRoleSchema(),
         onChange: () => {},
         contextNode: contextNode,
@@ -295,14 +295,14 @@ describe('ContextNode', () => {
             },
           },
         },
-      }) satisfies JsonSchema;
+      }) satisfies JSONSchema;
 
     it('permissions.canEdit=true일 때 readOnly가 false여야 함', async () => {
       const contextNode = contextNodeFactory({
         permissions: { canEdit: true, canDelete: false, viewOnly: false },
       });
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: createPermissionsSchema(),
         onChange: () => {},
         contextNode: contextNode,
@@ -319,7 +319,7 @@ describe('ContextNode', () => {
         permissions: { canEdit: false, canDelete: false, viewOnly: false },
       });
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: createPermissionsSchema(),
         onChange: () => {},
         contextNode: contextNode,
@@ -336,7 +336,7 @@ describe('ContextNode', () => {
         permissions: { canEdit: true, canDelete: true, viewOnly: false },
       });
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: createPermissionsSchema(),
         onChange: () => {},
         contextNode: contextNode,
@@ -353,7 +353,7 @@ describe('ContextNode', () => {
         permissions: { canEdit: true, canDelete: false, viewOnly: false },
       });
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: createPermissionsSchema(),
         onChange: () => {},
         contextNode: contextNode,
@@ -368,7 +368,7 @@ describe('ContextNode', () => {
     it('optional chaining이 정상 동작해야 함 (permissions가 undefined인 경우)', async () => {
       const contextNode = contextNodeFactory({});
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: createPermissionsSchema(),
         onChange: () => {},
         contextNode: contextNode,
@@ -418,7 +418,7 @@ describe('ContextNode', () => {
             },
           },
         },
-      }) satisfies JsonSchema;
+      }) satisfies JSONSchema;
 
     it('context 조건과 form field 조건 OR 조합이 동작해야 함', async () => {
       const contextNode = contextNodeFactory({
@@ -426,7 +426,7 @@ describe('ContextNode', () => {
         permissions: { canEdit: true, canDelete: true },
       });
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: createCombinedSchema(),
         onChange: () => {},
         contextNode: contextNode,
@@ -460,7 +460,7 @@ describe('ContextNode', () => {
         permissions: { canEdit: false, canDelete: true },
       });
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: createCombinedSchema(),
         onChange: () => {},
         contextNode: contextNode,
@@ -494,7 +494,7 @@ describe('ContextNode', () => {
         permissions: { canEdit: true, canDelete: false },
       });
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: createCombinedSchema(),
         onChange: () => {},
         contextNode: contextNode,
@@ -526,7 +526,7 @@ describe('ContextNode', () => {
     it('contextNode.setValue() 호출 시 dependent 노드가 업데이트되어야 함', async () => {
       const contextNode = contextNodeFactory({ mode: 'view', count: 0 });
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: {
           type: 'object',
           properties: {
@@ -543,7 +543,7 @@ describe('ContextNode', () => {
               },
             },
           },
-        } satisfies JsonSchema,
+        } satisfies JSONSchema,
         onChange: () => {},
         contextNode: contextNode,
       });
@@ -575,7 +575,7 @@ describe('ContextNode', () => {
     it('여러 필드가 동일한 context 속성을 참조할 때 모두 업데이트되어야 함', async () => {
       const contextNode = contextNodeFactory({ theme: 'light' });
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: {
           type: 'object',
           properties: {
@@ -598,7 +598,7 @@ describe('ContextNode', () => {
               },
             },
           },
-        } satisfies JsonSchema,
+        } satisfies JSONSchema,
         onChange: () => {},
         contextNode: contextNode,
       });
@@ -632,7 +632,7 @@ describe('ContextNode', () => {
         userRole: 'admin',
       });
 
-      const rootNode = nodeFromJsonSchema({
+      const rootNode = nodeFromJSONSchema({
         jsonSchema: {
           type: 'object',
           properties: {
@@ -654,7 +654,7 @@ describe('ContextNode', () => {
               },
             },
           },
-        } satisfies JsonSchema,
+        } satisfies JSONSchema,
         onChange: () => {},
         contextNode: contextNode,
       });
@@ -692,7 +692,7 @@ describe('ContextNode', () => {
     it('context를 여러 번 변경해도 node tree가 재생성되지 않아야 함', async () => {
       const contextNode = contextNodeFactory({ count: 0 });
 
-      const rootNode = nodeFromJsonSchema({
+      const rootNode = nodeFromJSONSchema({
         jsonSchema: {
           type: 'object',
           properties: {
@@ -703,7 +703,7 @@ describe('ContextNode', () => {
               },
             },
           },
-        } satisfies JsonSchema,
+        } satisfies JSONSchema,
         onChange: () => {},
         contextNode: contextNode,
       });
@@ -734,7 +734,7 @@ describe('ContextNode', () => {
     it('context 변경 시 rootNode 자체도 재생성되지 않아야 함', async () => {
       const contextNode = contextNodeFactory({ theme: 'light' });
 
-      const rootNode = nodeFromJsonSchema({
+      const rootNode = nodeFromJSONSchema({
         jsonSchema: {
           type: 'object',
           properties: {
@@ -745,7 +745,7 @@ describe('ContextNode', () => {
               },
             },
           },
-        } satisfies JsonSchema,
+        } satisfies JSONSchema,
         onChange: () => {},
         contextNode: contextNode,
       });
@@ -768,7 +768,7 @@ describe('ContextNode', () => {
         permissions: { canEdit: false },
       });
 
-      const rootNode = nodeFromJsonSchema({
+      const rootNode = nodeFromJSONSchema({
         jsonSchema: {
           type: 'object',
           properties: {
@@ -789,7 +789,7 @@ describe('ContextNode', () => {
               },
             },
           },
-        } satisfies JsonSchema,
+        } satisfies JSONSchema,
         onChange: () => {},
         contextNode: contextNode,
       });
@@ -819,7 +819,7 @@ describe('ContextNode', () => {
     it('context와 form value 동시 변경 시에도 node tree가 유지되어야 함', async () => {
       const contextNode = contextNodeFactory({ mode: 'view' });
 
-      const rootNode = nodeFromJsonSchema({
+      const rootNode = nodeFromJSONSchema({
         jsonSchema: {
           type: 'object',
           properties: {
@@ -835,7 +835,7 @@ describe('ContextNode', () => {
               },
             },
           },
-        } satisfies JsonSchema,
+        } satisfies JSONSchema,
         onChange: () => {},
         contextNode: contextNode,
       }) as ObjectNode;
@@ -871,7 +871,7 @@ describe('ContextNode', () => {
         },
       });
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: {
           type: 'object',
           properties: {
@@ -907,7 +907,7 @@ describe('ContextNode', () => {
               },
             },
           },
-        } satisfies JsonSchema,
+        } satisfies JSONSchema,
         onChange: () => {},
         contextNode: contextNode,
       });
@@ -944,14 +944,14 @@ describe('ContextNode', () => {
   });
 
   describe('Context가 없는 경우 처리', () => {
-    it('context 없이 nodeFromJsonSchema 호출 시 node.context는 빈 객체여야 함', async () => {
-      const node = nodeFromJsonSchema({
+    it('context 없이 nodeFromJSONSchema 호출 시 node.context는 빈 객체여야 함', async () => {
+      const node = nodeFromJSONSchema({
         jsonSchema: {
           type: 'object',
           properties: {
             name: { type: 'string' },
           },
-        } satisfies JsonSchema,
+        } satisfies JSONSchema,
         onChange: () => {},
         // context 미전달
       });
@@ -962,13 +962,13 @@ describe('ContextNode', () => {
     });
 
     it('context 없을 때 node.find("@")는 null을 반환해야 함', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: {
           type: 'object',
           properties: {
             name: { type: 'string' },
           },
-        } satisfies JsonSchema,
+        } satisfies JSONSchema,
         onChange: () => {},
       });
 
@@ -978,7 +978,7 @@ describe('ContextNode', () => {
     });
 
     it('child node에서도 context가 빈 객체여야 함', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: {
           type: 'object',
           properties: {
@@ -990,7 +990,7 @@ describe('ContextNode', () => {
               },
             },
           },
-        } satisfies JsonSchema,
+        } satisfies JSONSchema,
         onChange: () => {},
       });
 
@@ -1010,7 +1010,7 @@ describe('ContextNode', () => {
       // 에러 메시지: "Cannot read properties of undefined (reading 'mode')"
       // 이를 통해 사용자가 잘못된 설정(context 미제공)을 인지할 수 있음
       expect(() => {
-        nodeFromJsonSchema({
+        nodeFromJSONSchema({
           jsonSchema: {
             type: 'object',
             properties: {
@@ -1021,7 +1021,7 @@ describe('ContextNode', () => {
                 },
               },
             },
-          } satisfies JsonSchema,
+          } satisfies JSONSchema,
           onChange: () => {},
           // context 없음 - @.mode 접근 시 TypeError 발생
         });
@@ -1032,7 +1032,7 @@ describe('ContextNode', () => {
       // context 없이 (@).property 표현식을 사용하면 TypeError가 발생해야 함
       // 에러 메시지: "Cannot read properties of undefined (reading 'permissions')"
       expect(() => {
-        nodeFromJsonSchema({
+        nodeFromJSONSchema({
           jsonSchema: {
             type: 'object',
             properties: {
@@ -1043,7 +1043,7 @@ describe('ContextNode', () => {
                 },
               },
             },
-          } satisfies JsonSchema,
+          } satisfies JSONSchema,
           onChange: () => {},
         });
       }).toThrow(TypeError);
@@ -1053,7 +1053,7 @@ describe('ContextNode', () => {
       // 여러 computed 속성에서 @.property 사용 시 TypeError 발생
       // 에러 메시지: "Cannot read properties of undefined (reading 'show')"
       expect(() => {
-        nodeFromJsonSchema({
+        nodeFromJSONSchema({
           jsonSchema: {
             type: 'object',
             properties: {
@@ -1067,7 +1067,7 @@ describe('ContextNode', () => {
                 },
               },
             },
-          } satisfies JsonSchema,
+          } satisfies JSONSchema,
           onChange: () => {},
         });
       }).toThrow(TypeError);
@@ -1078,7 +1078,7 @@ describe('ContextNode', () => {
     it('ArrayNode 아이템에서 context에 접근할 수 있어야 함', async () => {
       const contextNode = contextNodeFactory({ mode: 'edit' });
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: {
           type: 'object',
           properties: {
@@ -1098,7 +1098,7 @@ describe('ContextNode', () => {
               default: [{ name: 'item1' }],
             },
           },
-        } satisfies JsonSchema,
+        } satisfies JSONSchema,
         onChange: () => {},
         contextNode: contextNode,
       });
@@ -1113,7 +1113,7 @@ describe('ContextNode', () => {
     it('동적으로 추가된 배열 아이템에서도 context에 접근할 수 있어야 함', async () => {
       const contextNode = contextNodeFactory({ mode: 'view' });
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: {
           type: 'object',
           properties: {
@@ -1132,7 +1132,7 @@ describe('ContextNode', () => {
               },
             },
           },
-        } satisfies JsonSchema,
+        } satisfies JSONSchema,
         onChange: () => {},
         contextNode: contextNode,
       });
@@ -1152,7 +1152,7 @@ describe('ContextNode', () => {
     it('배열 아이템 삭제 후 남은 아이템에서도 context 접근이 유지되어야 함', async () => {
       const contextNode = contextNodeFactory({ mode: 'edit' });
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: {
           type: 'object',
           properties: {
@@ -1176,7 +1176,7 @@ describe('ContextNode', () => {
               ],
             },
           },
-        } satisfies JsonSchema,
+        } satisfies JSONSchema,
         onChange: () => {},
         contextNode: contextNode,
       });
@@ -1205,7 +1205,7 @@ describe('ContextNode', () => {
     it('context 변경 시 모든 배열 아이템의 computed 속성이 업데이트되어야 함', async () => {
       const contextNode = contextNodeFactory({ mode: 'edit' });
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: {
           type: 'object',
           properties: {
@@ -1225,7 +1225,7 @@ describe('ContextNode', () => {
               default: [{ field: 'a' }, { field: 'b' }, { field: 'c' }],
             },
           },
-        } satisfies JsonSchema,
+        } satisfies JSONSchema,
         onChange: () => {},
         contextNode: contextNode,
       });
@@ -1250,7 +1250,7 @@ describe('ContextNode', () => {
     it('중첩된 배열에서도 context에 접근할 수 있어야 함', async () => {
       const contextNode = contextNodeFactory({ level: 'deep' });
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: {
           type: 'object',
           properties: {
@@ -1279,7 +1279,7 @@ describe('ContextNode', () => {
               default: [{ inner: [{ value: 'nested' }] }],
             },
           },
-        } satisfies JsonSchema,
+        } satisfies JSONSchema,
         onChange: () => {},
         contextNode: contextNode,
       });
@@ -1313,7 +1313,7 @@ describe('ContextNode', () => {
     it('context 변경 시 의존 노드가 업데이트되어야 함', async () => {
       const contextNode = contextNodeFactory({ mode: 'view' });
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: {
           type: 'object',
           properties: {
@@ -1324,7 +1324,7 @@ describe('ContextNode', () => {
               },
             },
           },
-        } satisfies JsonSchema,
+        } satisfies JSONSchema,
         onChange: () => {},
         contextNode: contextNode,
       });
@@ -1396,7 +1396,7 @@ describe('ContextNode', () => {
     it('computed.watch에 @ 경로가 포함된 경우 context 변경 시 업데이트되어야 함', async () => {
       const contextNode = contextNodeFactory({ threshold: 10 });
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: {
           type: 'object',
           properties: {
@@ -1409,7 +1409,7 @@ describe('ContextNode', () => {
               },
             },
           },
-        } satisfies JsonSchema,
+        } satisfies JSONSchema,
         onChange: () => {},
         contextNode: contextNode,
       });
@@ -1429,7 +1429,7 @@ describe('ContextNode', () => {
     it('watch 없이도 @.property 의존성이 자동 감지되어야 함', async () => {
       const contextNode = contextNodeFactory({ enabled: false });
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: {
           type: 'object',
           properties: {
@@ -1441,7 +1441,7 @@ describe('ContextNode', () => {
               },
             },
           },
-        } satisfies JsonSchema,
+        } satisfies JSONSchema,
         onChange: () => {},
         contextNode: contextNode,
       });
@@ -1460,7 +1460,7 @@ describe('ContextNode', () => {
     it('watch에 여러 context 속성과 form 필드가 혼합된 경우', async () => {
       const contextNode = contextNodeFactory({ min: 0, max: 100 });
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: {
           type: 'object',
           properties: {
@@ -1473,7 +1473,7 @@ describe('ContextNode', () => {
               },
             },
           },
-        } satisfies JsonSchema,
+        } satisfies JSONSchema,
         onChange: () => {},
         contextNode: contextNode,
       }) as ObjectNode;
@@ -1501,7 +1501,7 @@ describe('ContextNode', () => {
     it('context 속성이 undefined인 깊은 경로 접근 시 에러 없이 처리되어야 함', async () => {
       const contextNode = contextNodeFactory({}); // permissions 없음
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: {
           type: 'object',
           properties: {
@@ -1512,7 +1512,7 @@ describe('ContextNode', () => {
               },
             },
           },
-        } satisfies JsonSchema,
+        } satisfies JSONSchema,
         onChange: () => {},
         contextNode: contextNode,
       });
@@ -1526,7 +1526,7 @@ describe('ContextNode', () => {
     it('context가 빈 객체일 때도 정상 동작해야 함', async () => {
       const contextNode = contextNodeFactory({});
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: {
           type: 'object',
           properties: {
@@ -1539,7 +1539,7 @@ describe('ContextNode', () => {
               computed: { readOnly: '(@).readonly === true' },
             },
           },
-        } satisfies JsonSchema,
+        } satisfies JSONSchema,
         onChange: () => {},
         contextNode: contextNode,
       });
@@ -1556,7 +1556,7 @@ describe('ContextNode', () => {
         settings: null,
       });
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: {
           type: 'object',
           properties: {
@@ -1568,7 +1568,7 @@ describe('ContextNode', () => {
               },
             },
           },
-        } satisfies JsonSchema,
+        } satisfies JSONSchema,
         onChange: () => {},
         contextNode: contextNode,
       });
@@ -1592,7 +1592,7 @@ describe('ContextNode', () => {
         },
       });
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: {
           type: 'object',
           properties: {
@@ -1610,7 +1610,7 @@ describe('ContextNode', () => {
               },
             },
           },
-        } satisfies JsonSchema,
+        } satisfies JSONSchema,
         onChange: () => {},
         contextNode: contextNode,
       });
@@ -1624,7 +1624,7 @@ describe('ContextNode', () => {
     it('context 값을 여러 번 빠르게 변경해도 최종 상태가 올바르게 반영되어야 함', async () => {
       const contextNode = contextNodeFactory({ count: 0 });
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: {
           type: 'object',
           properties: {
@@ -1635,7 +1635,7 @@ describe('ContextNode', () => {
               },
             },
           },
-        } satisfies JsonSchema,
+        } satisfies JSONSchema,
         onChange: () => {},
         contextNode: contextNode,
       });
@@ -1663,7 +1663,7 @@ describe('ContextNode', () => {
       const contextNode = contextNodeFactory({ theme: 'light' });
 
       // 50개의 필드 생성
-      const properties: Record<string, JsonSchema> = {};
+      const properties: Record<string, JSONSchema> = {};
       for (let i = 0; i < 50; i++) {
         properties[`field${i}`] = {
           type: 'string',
@@ -1673,11 +1673,11 @@ describe('ContextNode', () => {
         };
       }
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: {
           type: 'object',
           properties,
-        } satisfies JsonSchema,
+        } satisfies JSONSchema,
         onChange: () => {},
         contextNode: contextNode,
       });
@@ -1708,7 +1708,7 @@ describe('ContextNode', () => {
       const contextNode = contextNodeFactory({ enabled: false });
 
       // 5레벨 중첩 구조 생성
-      const createNestedSchema = (depth: number): JsonSchema => {
+      const createNestedSchema = (depth: number): JSONSchema => {
         if (depth === 0) {
           return {
             type: 'string',
@@ -1725,7 +1725,7 @@ describe('ContextNode', () => {
         };
       };
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: createNestedSchema(5),
         onChange: () => {},
         contextNode: contextNode,
@@ -1753,7 +1753,7 @@ describe('ContextNode', () => {
         name: `item${i}`,
       }));
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: {
           type: 'object',
           properties: {
@@ -1773,7 +1773,7 @@ describe('ContextNode', () => {
               default: defaultItems,
             },
           },
-        } satisfies JsonSchema,
+        } satisfies JSONSchema,
         onChange: () => {},
         contextNode: contextNode,
       });

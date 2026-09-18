@@ -1,7 +1,7 @@
 import '@testing-library/jest-dom';
 import { describe, expect, it } from 'vitest';
 
-import type { JsonSchema } from '@winglet/json-schema';
+import type { JSONSchema } from '@winglet/json-schema';
 
 import { renderForm } from '../renderForm';
 
@@ -45,7 +45,7 @@ const categorySchema = {
       properties: { maker: { type: 'string', default: 'Sony' } },
     },
   ],
-} satisfies JsonSchema;
+} satisfies JSONSchema;
 
 // mode-discriminated oneOf used for instrument (remount) tests. `value` is a
 // string in the text branch (with a default) and absent in the number branch.
@@ -69,7 +69,7 @@ const modeSchema = {
       },
     },
   ],
-} satisfies JsonSchema;
+} satisfies JSONSchema;
 
 const countPaths = (form: { renderedPaths: () => string[] }, path: string) =>
   form.renderedPaths().filter((p) => p === path).length;

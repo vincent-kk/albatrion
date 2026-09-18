@@ -1,13 +1,13 @@
 import { getValue } from '@winglet/json/pointer';
 
 import type { UnknownSchema } from '@/json-schema/types/jsonSchema';
-import { JsonSchemaScanner } from '@/json-schema/utils/JsonSchemaScanner/sync';
+import { JSONSchemaScanner } from '@/json-schema/utils/JSONSchemaScanner/sync';
 
 export const resolveReference = (
   jsonSchema: UnknownSchema,
 ): UnknownSchema | undefined => {
   const definitionMap = new Map<string, UnknownSchema>();
-  new JsonSchemaScanner({
+  new JSONSchemaScanner({
     visitor: {
       exit: ({ schema, hasReference }) => {
         if (hasReference && typeof schema.$ref === 'string')
@@ -15,7 +15,7 @@ export const resolveReference = (
       },
     },
   }).scan(jsonSchema);
-  return new JsonSchemaScanner({
+  return new JSONSchemaScanner({
     options: {
       resolveReference: (path) => definitionMap.get(path),
     },

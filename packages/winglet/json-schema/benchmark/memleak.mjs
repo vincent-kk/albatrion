@@ -9,7 +9,7 @@ import {
   getByPointer,
 } from "./_lib.mjs";
 
-const { JsonSchemaScanner, JsonSchemaScannerAsync } = await loadScanners();
+const { JSONSchemaScanner, JSONSchemaScannerAsync } = await loadScanners();
 
 if (typeof globalThis.gc !== "function") {
   console.log(JSON.stringify({ error: "run with --expose-gc" }));
@@ -64,13 +64,13 @@ const results = [];
 // 1. new instance each iteration, discarded
 results.push(
   await scenario("new-instance-scan", () => {
-    new JsonSchemaScanner({ visitor: { enter: () => {} } }).scan(branchy);
+    new JSONSchemaScanner({ visitor: { enter: () => {} } }).scan(branchy);
   }),
 );
 
 // 2. reused instance
 {
-  const scanner = new JsonSchemaScanner({ visitor: { enter: () => {} } });
+  const scanner = new JSONSchemaScanner({ visitor: { enter: () => {} } });
   results.push(
     await scenario("reused-instance-scan", () => {
       scanner.scan(branchy);
@@ -83,7 +83,7 @@ results.push(
   await scenario(
     "refHeavy-scan-getValue",
     () => {
-      const s = new JsonSchemaScanner({
+      const s = new JSONSchemaScanner({
         options: { resolveReference: (ref) => getByPointer(refSchema, ref) },
       });
       s.scan(refSchema);
@@ -98,7 +98,7 @@ results.push(
   await scenario(
     "async-scan-getValue",
     async () => {
-      const s = new JsonSchemaScannerAsync({
+      const s = new JSONSchemaScannerAsync({
         options: {
           resolveReference: async (ref) => getByPointer(refSchema, ref),
         },

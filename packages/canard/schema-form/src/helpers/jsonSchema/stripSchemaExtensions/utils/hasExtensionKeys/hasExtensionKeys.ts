@@ -1,4 +1,4 @@
-import type { JsonSchemaWithVirtual } from '@/schema-form/types';
+import type { JSONSchemaWithVirtual } from '@/schema-form/types';
 
 /**
  * Returns `true` when a schema declares at least one defined schema-form
@@ -7,7 +7,7 @@ import type { JsonSchemaWithVirtual } from '@/schema-form/types';
  * `hasSchemaExtension` (tree-wide) so the key list lives in exactly one place.
  */
 export const hasExtensionKeys = (
-  schema: Partial<JsonSchemaWithVirtual>,
+  schema: Partial<JSONSchemaWithVirtual>,
 ): boolean =>
   schema.FormTypeInput !== undefined ||
   schema.FormTypeInputProps !== undefined ||

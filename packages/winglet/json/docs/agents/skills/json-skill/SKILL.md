@@ -51,7 +51,7 @@ Corrections for claims that are commonly assumed and are wrong here:
 | --------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `getValue` throws when the path is missing                | It returns `undefined`. It throws only for a non-plain-object/array input or a malformed pointer.                                                                                   |
 | `err.code === 'INVALID_INPUT'` matches                    | `.code` is namespaced: `'JSON_POINTER.INVALID_INPUT'`. The bare code is on `.specific`.                                                                                             |
-| `JSONPointerError` / `isJSONPointerError` can be imported | Neither is exported, from the main entry or any sub-path. Match on `.name` (`'JSONPointer'` / `'JsonPatch'`) or on `.code`.                                                         |
+| `JSONPointerError` / `isJSONPointerError` can be imported | Neither is exported, from the main entry or any sub-path. Match on `.name` (`'JSONPointer'` / `'JSONPatch'`) or on `.code`.                                                         |
 | `compare` emits only `add`/`remove`/`replace`             | With `strict: true` it also emits a `test` guard before each `replace` and `remove`. `add` never gets a guard.                                                                      |
 | `strict: true` on `applyPatch` rejects RFC violations     | It governs one thing: whether `test` operations compare values. `replace` on a missing path silently adds it either way.                                                            |
 | `strict: false` makes `applyPatch` lenient                | Unrelated failures throw regardless of `strict`: `remove` of a missing property, `test` on a missing property, array index out of bounds.                                           |
@@ -61,14 +61,14 @@ Corrections for claims that are commonly assumed and are wrong here:
 | `difference` result is always usable                      | It returns `undefined` when the inputs are identical — guard before passing downstream.                                                                                             |
 | `-` works wherever a path does                            | `-` (append) is valid only in `setValue` and JSON Patch `add`.                                                                                                                      |
 | `getJSONPath` cannot find primitives                      | It matches with `===`, so primitives are found; with duplicate values you get one traversal-order-dependent match, not all.                                                         |
-| `convertJsonPointerToPath` returns unescaped tokens       | It returns a **string** in dot/bracket form — `'/users/0/name'` becomes `'.users[0].name'`, unescaped. `compilePointer` is the token splitter.                                      |
-| `convertJsonPathToPointer` takes a `$`-rooted JSONPath    | It takes a bare data path and treats `$` as an ordinary key, so a `getJSONPath` result cannot be piped into it.                                                                     |
+| `convertJSONPointerToPath` returns unescaped tokens       | It returns a **string** in dot/bracket form — `'/users/0/name'` becomes `'.users[0].name'`, unescaped. `compilePointer` is the token splitter.                                      |
+| `convertJSONPathToPointer` takes a `$`-rooted JSONPath    | It takes a bare data path and treats `$` as an ordinary key, so a `getJSONPath` result cannot be piped into it.                                                                     |
 | `compare` emits `move` when a subtree relocates           | It never emits `move` or `copy`; a relocation appears as `remove` plus `add`. Those two ops are apply-only and must be hand-written.                                                |
 | `setValue(doc, ptr, undefined)` assigns `undefined`       | It **deletes** the key instead.                                                                                                                                                     |
 | `protectPrototype` guards `applyPatch` against pollution  | No such option exists. Reserved members are own data everywhere; a reserved intermediate without an own container fails as `PATCH_PATH_INVALID_INTERMEDIATE` like any missing path. |
 | `mergePatch` merges arrays element-wise                   | An array in the patch body replaces the target wholesale, at every depth. Use JSON Patch for element-level array edits.                                                             |
 
-`JSONPointerError` has exactly two codes — `INVALID_INPUT` and `INVALID_POINTER_TYPE`. There is no `INVALID_POINTER` and no `PROPERTY_NOT_FOUND`. Patch failures are a separate class, `JsonPatchError`, whose codes are prefixed `JSON_PATCH.` and include `PATCH_TEST_FAILED`, `PATCH_OBJECT_PROPERTY_NOT_FOUND`, `PATCH_ARRAY_INDEX_OUT_OF_BOUNDS`, `PATCH_ARRAY_INDEX_INVALID`, `PATCH_OPERATION_INVALID`, `PATCH_TARGET_NOT_OBJECT`, `PATCH_PATH_INVALID_INTERMEDIATE`, `PATCH_PATH_PROCESSING_ERROR`, `PATCH_MOVE_INTO_DESCENDANT_FORBIDDEN`, and `PATCH_COPY_INTO_DESCENDANT_FORBIDDEN`. There is no security-specific code — reserved-member paths fail (or succeed) exactly like ordinary paths.
+`JSONPointerError` has exactly two codes — `INVALID_INPUT` and `INVALID_POINTER_TYPE`. There is no `INVALID_POINTER` and no `PROPERTY_NOT_FOUND`. Patch failures are a separate class, `JSONPatchError`, whose codes are prefixed `JSON_PATCH.` and include `PATCH_TEST_FAILED`, `PATCH_OBJECT_PROPERTY_NOT_FOUND`, `PATCH_ARRAY_INDEX_OUT_OF_BOUNDS`, `PATCH_ARRAY_INDEX_INVALID`, `PATCH_OPERATION_INVALID`, `PATCH_TARGET_NOT_OBJECT`, `PATCH_PATH_INVALID_INTERMEDIATE`, `PATCH_PATH_PROCESSING_ERROR`, `PATCH_MOVE_INTO_DESCENDANT_FORBIDDEN`, and `PATCH_COPY_INTO_DESCENDANT_FORBIDDEN`. There is no security-specific code — reserved-member paths fail (or succeed) exactly like ordinary paths.
 
 ## Knowledge Router
 
@@ -83,15 +83,15 @@ Do not guess signatures or option names — read `node_modules/@winglet/json/dis
 // Main entry — everything below except getJSONPointer
 import { getValue, setValue, compare, applyPatch, difference, mergePatch,
          escapePath, escapeSegment, unescapePath, unescapeSegment,
-         convertJsonPointerToPath, convertJsonPathToPointer, getJSONPath,
+         convertJSONPointerToPath, convertJSONPathToPointer, getJSONPath,
          compilePointer, JSONPointer, JSONPath } from '@winglet/json';
 
 // Sub-paths (preferred in library code)
 import { getValue, setValue, compilePointer } from '@winglet/json/pointer-manipulator';
 import { compare, applyPatch, difference, mergePatch } from '@winglet/json/pointer-patch';
 import { escapePath, escapeSegment, unescapePath, unescapeSegment } from '@winglet/json/pointer-escape';
-import { convertJsonPointerToPath, getJSONPointer } from '@winglet/json/pointer-common';
-import { getJSONPath, convertJsonPathToPointer } from '@winglet/json/path-common';
+import { convertJSONPointerToPath, getJSONPointer } from '@winglet/json/pointer-common';
+import { getJSONPath, convertJSONPathToPointer } from '@winglet/json/path-common';
 ```
 
 `getJSONPointer` is reachable only from `@winglet/json/pointer-common` (or `@winglet/json/pointer`), never from the main entry. The `JSONPointer` and `JSONPath` constant objects come from the main entry or `@winglet/json/pointer` and `@winglet/json/path` — `pointer-common` does not carry them. Prefer sub-paths in library code so consumers can tree-shake; the main entry is a convenience for applications.

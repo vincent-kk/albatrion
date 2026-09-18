@@ -13,18 +13,18 @@ import type {
   StringSchema,
 } from '@canard/schema-form';
 
-type StringJsonSchema = StringSchema<{
+type StringJSONSchema = StringSchema<{
   alias?: { [label: string]: ReactNode };
 }>;
 
-type NumberJsonSchema = NumberSchema<{
+type NumberJSONSchema = NumberSchema<{
   alias?: { [label: string]: ReactNode };
 }>;
 
 interface FormTypeInputRadioGroupProps
   extends FormTypeInputPropsWithSchema<
     string | number | null,
-    StringJsonSchema | NumberJsonSchema,
+    StringJSONSchema | NumberJSONSchema,
     { size?: SizeType; radioLabels?: { [label: string]: ReactNode } }
   > {
   size?: SizeType;

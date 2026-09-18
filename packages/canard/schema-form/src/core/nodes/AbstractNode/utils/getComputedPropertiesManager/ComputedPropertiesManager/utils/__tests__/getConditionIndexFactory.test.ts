@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import type { JsonSchemaWithVirtual } from '@/schema-form/types';
+import type { JSONSchemaWithVirtual } from '@/schema-form/types';
 
 import { getConditionIndexFactory } from '../getConditionIndexFactory';
 import { getPathManager } from '../getPathManager';
@@ -10,7 +10,7 @@ describe('getConditionIndexFactory', () => {
     const pathManager = getPathManager();
 
     // type이 object가 아닌 경우
-    const schema1 = { type: 'string' } as JsonSchemaWithVirtual;
+    const schema1 = { type: 'string' } as JSONSchemaWithVirtual;
     expect(
       getConditionIndexFactory('string', schema1)(pathManager, 'oneOf', 'if'),
     ).toBeUndefined();
@@ -19,13 +19,13 @@ describe('getConditionIndexFactory', () => {
     const schema2 = {
       type: 'object',
       oneOf: 'invalid',
-    } as unknown as JsonSchemaWithVirtual;
+    } as unknown as JSONSchemaWithVirtual;
     expect(
       getConditionIndexFactory('object', schema2)(pathManager, 'oneOf', 'if'),
     ).toBeUndefined();
 
     // oneOf가 없는 경우
-    const schema3 = { type: 'object' } as JsonSchemaWithVirtual;
+    const schema3 = { type: 'object' } as JSONSchemaWithVirtual;
     expect(
       getConditionIndexFactory('object', schema3)(pathManager, 'oneOf', 'if'),
     ).toBeUndefined();
@@ -36,7 +36,7 @@ describe('getConditionIndexFactory', () => {
     const schema = {
       type: 'object',
       oneOf: [{}, { computed: {} }, { computed: { if: false } }],
-    } as unknown as JsonSchemaWithVirtual;
+    } as unknown as JSONSchemaWithVirtual;
 
     expect(
       getConditionIndexFactory('object', schema)(pathManager, 'oneOf', 'if'),
@@ -57,7 +57,7 @@ describe('getConditionIndexFactory', () => {
         { computed: { if: '/value === "option2"' } },
         { computed: { if: '/value === "option3"' } },
       ],
-    } as unknown as JsonSchemaWithVirtual;
+    } as unknown as JSONSchemaWithVirtual;
 
     const result = getConditionIndexFactory(schema.type as any, schema)(
       pathManager,
@@ -84,7 +84,7 @@ describe('getConditionIndexFactory', () => {
         { computed: { if: '../value === "option2"' } },
         { computed: { if: '../count > 10' } },
       ],
-    } as unknown as JsonSchemaWithVirtual;
+    } as unknown as JSONSchemaWithVirtual;
 
     const result = getConditionIndexFactory(schema.type as any, schema)(
       pathManager,
@@ -116,7 +116,7 @@ describe('getConditionIndexFactory', () => {
         { computed: { if: '/age >= 18' } },
         { computed: { if: '(/value).includes("test")' } },
       ],
-    } as unknown as JsonSchemaWithVirtual;
+    } as unknown as JSONSchemaWithVirtual;
 
     const result = getConditionIndexFactory(schema.type as any, schema)(
       pathManager,
@@ -152,7 +152,7 @@ describe('getConditionIndexFactory', () => {
         { type: 'object', computed: { if: '#/age >= 18 && #/age < 65' } },
         { type: 'object', computed: { if: '/age >= 65' } },
       ],
-    } as unknown as JsonSchemaWithVirtual;
+    } as unknown as JSONSchemaWithVirtual;
 
     const result = getConditionIndexFactory(schema.type as any, schema)(
       pathManager,
@@ -177,7 +177,7 @@ describe('getConditionIndexFactory', () => {
         { type: 'object', computed: { if: '#/value === "valid"' } },
         { type: 'object', '&if': undefined },
       ],
-    } as unknown as JsonSchemaWithVirtual;
+    } as unknown as JSONSchemaWithVirtual;
 
     const result = getConditionIndexFactory(schema.type as any, schema)(
       pathManager,
@@ -197,7 +197,7 @@ describe('getConditionIndexFactory', () => {
     const schema = {
       type: 'object',
       oneOf: [{ type: 'object', computed: { if: '/value === "option1";' } }],
-    } as JsonSchemaWithVirtual;
+    } as JSONSchemaWithVirtual;
 
     const result = getConditionIndexFactory(schema.type as any, schema)(
       pathManager,
@@ -217,7 +217,7 @@ describe('getConditionIndexFactory', () => {
         { type: 'object', computed: { if: true } },
         { type: 'object', computed: { if: '$.value === "option"' } },
       ],
-    } as unknown as JsonSchemaWithVirtual;
+    } as unknown as JSONSchemaWithVirtual;
 
     const result = getConditionIndexFactory(schema.type as any, schema)(
       pathManager,
@@ -245,7 +245,7 @@ describe('getConditionIndexFactory', () => {
         { type: 'object', computed: { if: true } },
         { type: 'object', computed: { if: true } },
       ],
-    } as unknown as JsonSchemaWithVirtual;
+    } as unknown as JSONSchemaWithVirtual;
 
     const result = getConditionIndexFactory(schema.type as any, schema)(
       pathManager,
@@ -270,7 +270,7 @@ describe('getConditionIndexFactory', () => {
         { type: 'object', computed: { if: false } },
         { type: 'object', computed: { if: false } },
       ],
-    } as unknown as JsonSchemaWithVirtual;
+    } as unknown as JSONSchemaWithVirtual;
 
     const result = getConditionIndexFactory(schema.type as any, schema)(
       pathManager,
@@ -290,7 +290,7 @@ describe('getConditionIndexFactory', () => {
         { type: 'object', computed: { if: false } },
         { type: 'object', computed: { if: '#/value === "test"' } },
       ],
-    } as unknown as JsonSchemaWithVirtual;
+    } as unknown as JSONSchemaWithVirtual;
 
     const result = getConditionIndexFactory(schema.type as any, schema)(
       pathManager,
@@ -312,7 +312,7 @@ describe('getConditionIndexFactory', () => {
         { type: 'object', '&if': true },
         { type: 'object', '&if': '/value === "option"' },
       ],
-    } as unknown as JsonSchemaWithVirtual;
+    } as unknown as JSONSchemaWithVirtual;
 
     const result = getConditionIndexFactory(schema.type as any, schema)(
       pathManager,
@@ -338,7 +338,7 @@ describe('getConditionIndexFactory', () => {
         { type: 'object', computed: { if: '$.value === "test"' } },
         { type: 'object', '&if': '$.value === "option"' },
       ],
-    } as unknown as JsonSchemaWithVirtual;
+    } as unknown as JSONSchemaWithVirtual;
 
     const result = getConditionIndexFactory(schema.type as any, schema)(
       pathManager,
@@ -364,7 +364,7 @@ describe('getConditionIndexFactory', () => {
         { type: 'object', '&if': '' },
         { type: 'object', computed: { if: true } },
       ],
-    } as unknown as JsonSchemaWithVirtual;
+    } as unknown as JSONSchemaWithVirtual;
 
     const result = getConditionIndexFactory(schema.type as any, schema)(
       pathManager,
@@ -381,7 +381,7 @@ describe('getConditionIndexFactory', () => {
 describe('getConditionIndexFactory custom test', () => {
   // 기본 케이스: 단순 동등성 비교 (최적화된 경로)
   it('단순 동등성 비교: 문자열 일치 케이스를 올바르게 처리해야 함', () => {
-    const schema: JsonSchemaWithVirtual = {
+    const schema: JSONSchemaWithVirtual = {
       type: 'object',
       oneOf: [
         {
@@ -421,7 +421,7 @@ describe('getConditionIndexFactory custom test', () => {
 
   // 복잡한 조건 케이스 (일반 경로)
   it('복잡한 조건: 논리 연산자를 포함한 조건을 처리해야 함', () => {
-    const schema: JsonSchemaWithVirtual = {
+    const schema: JSONSchemaWithVirtual = {
       type: 'object',
       oneOf: [
         {
@@ -456,7 +456,7 @@ describe('getConditionIndexFactory custom test', () => {
 
   // oneOf 스키마가 혼합된 형태의 조건을 가진 케이스
   it('혼합된 형태의 조건을 가진 oneOf 스키마를 처리해야 함', () => {
-    const schema: JsonSchemaWithVirtual = {
+    const schema: JSONSchemaWithVirtual = {
       type: 'object',
       oneOf: [
         {
@@ -494,7 +494,7 @@ describe('getConditionIndexFactory custom test', () => {
   // 잘못된 입력 처리 (오류 가능성)
   it('잘못된 스키마 입력을 안전하게 처리해야 함', () => {
     // type이 object가 아닌 경우
-    let schema: JsonSchemaWithVirtual = {
+    let schema: JSONSchemaWithVirtual = {
       type: 'string',
       oneOf: [],
     };
@@ -535,7 +535,7 @@ describe('getConditionIndexFactory custom test', () => {
 
   // 경계 케이스 (null 값, 빈 표현식 등)
   it('경계 케이스와 비정상적인 값을 처리해야 함', () => {
-    const schema: JsonSchemaWithVirtual = {
+    const schema: JSONSchemaWithVirtual = {
       type: 'object',
       oneOf: [
         {
@@ -572,7 +572,7 @@ describe('getConditionIndexFactory custom test', () => {
 
   // 정규식 패턴 매칭 테스트
   it('정규식 패턴이 다양한 표현식을 올바르게 매칭해야 함', () => {
-    const schema: JsonSchemaWithVirtual = {
+    const schema: JSONSchemaWithVirtual = {
       type: 'object',
       oneOf: [
         {
@@ -608,7 +608,7 @@ describe('getConditionIndexFactory custom test', () => {
 
   // 중첩 속성 경로 테스트
   it('중첩된 속성 경로를 올바르게 처리해야 함', () => {
-    const schema: JsonSchemaWithVirtual = {
+    const schema: JSONSchemaWithVirtual = {
       type: 'object',
       oneOf: [
         {
@@ -642,7 +642,7 @@ describe('getConditionIndexFactory custom test', () => {
 
   // 여러 개의 의존성 경로를 사용하는 케이스
   it('여러 의존성 경로를 사용하는 케이스를 처리해야 함', () => {
-    const schema: JsonSchemaWithVirtual = {
+    const schema: JSONSchemaWithVirtual = {
       type: 'object',
       oneOf: [
         {
@@ -684,7 +684,7 @@ describe('getConditionIndexFactory custom test', () => {
 describe('getConditionIndexFactory with schema property conditions', () => {
   it('스키마 properties의 const 값과 조건을 결합해야 함', () => {
     const pathManager = getPathManager();
-    const schema: JsonSchemaWithVirtual = {
+    const schema: JSONSchemaWithVirtual = {
       type: 'object',
       oneOf: [
         {
@@ -727,7 +727,7 @@ describe('getConditionIndexFactory with schema property conditions', () => {
 
   it('스키마 properties의 enum 값과 조건을 결합해야 함', () => {
     const pathManager = getPathManager();
-    const schema: JsonSchemaWithVirtual = {
+    const schema: JSONSchemaWithVirtual = {
       type: 'object',
       oneOf: [
         {
@@ -771,7 +771,7 @@ describe('getConditionIndexFactory with schema property conditions', () => {
 
   it('조건 없이 스키마 properties만으로 조건을 생성해야 함', () => {
     const pathManager = getPathManager();
-    const schema: JsonSchemaWithVirtual = {
+    const schema: JSONSchemaWithVirtual = {
       type: 'object',
       oneOf: [
         {
@@ -823,7 +823,7 @@ describe('getConditionIndexFactory with schema property conditions', () => {
 
   it('boolean const 값을 포함한 복합 조건을 처리해야 함', () => {
     const pathManager = getPathManager();
-    const schema: JsonSchemaWithVirtual = {
+    const schema: JSONSchemaWithVirtual = {
       type: 'object',
       oneOf: [
         {
@@ -868,7 +868,7 @@ describe('getConditionIndexFactory with schema property conditions', () => {
 
   it('단일 값 enum을 const처럼 처리해야 함', () => {
     const pathManager = getPathManager();
-    const schema: JsonSchemaWithVirtual = {
+    const schema: JSONSchemaWithVirtual = {
       type: 'object',
       oneOf: [
         {
@@ -909,7 +909,7 @@ describe('getConditionIndexFactory with schema property conditions', () => {
 
   it('null 값을 포함한 const 조건을 처리해야 함', () => {
     const pathManager = getPathManager();
-    const schema: JsonSchemaWithVirtual = {
+    const schema: JSONSchemaWithVirtual = {
       type: 'object',
       oneOf: [
         {
@@ -949,7 +949,7 @@ describe('getConditionIndexFactory with schema property conditions', () => {
 
   it('type과 $ref가 있는 속성은 무시하고 const/enum만 처리해야 함', () => {
     const pathManager = getPathManager();
-    const schema: JsonSchemaWithVirtual = {
+    const schema: JSONSchemaWithVirtual = {
       type: 'object',
       oneOf: [
         {
@@ -997,7 +997,7 @@ describe('getConditionIndexFactory with schema property conditions', () => {
 
   it('빈 enum 배열은 무시해야 함', () => {
     const pathManager = getPathManager();
-    const schema: JsonSchemaWithVirtual = {
+    const schema: JSONSchemaWithVirtual = {
       type: 'object',
       oneOf: [
         {
@@ -1029,7 +1029,7 @@ describe('getConditionIndexFactory with schema property conditions', () => {
 
   it('mixed type enum 값들을 올바르게 처리해야 함', () => {
     const pathManager = getPathManager();
-    const schema: JsonSchemaWithVirtual = {
+    const schema: JSONSchemaWithVirtual = {
       type: 'object',
       oneOf: [
         {
@@ -1072,7 +1072,7 @@ describe('getConditionIndexFactory with schema property conditions', () => {
 
   it('조건이 없고 properties만 있을 때 올바르게 처리해야 함', () => {
     const pathManager = getPathManager();
-    const schema: JsonSchemaWithVirtual = {
+    const schema: JSONSchemaWithVirtual = {
       type: 'object',
       oneOf: [
         {

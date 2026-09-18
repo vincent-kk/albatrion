@@ -1,6 +1,6 @@
 {
   "name": "@winglet/json-schema",
-  "version": "0.14.0",
+  "version": "0.15.0",
   "description": "Powerful utility library for JSON Schema manipulation featuring schema traversal, validation, reference resolution, and filtering with TypeScript support and visitor pattern implementation",
   "keywords": [
     "typescript",
@@ -31,16 +31,16 @@
       "require": "./dist/index.cjs"
     },
     "./scanner": {
-      "types": "./dist/utils/JsonSchemaScanner/sync/index.d.ts",
-      "source": "./src/utils/JsonSchemaScanner/sync/index.ts",
-      "import": "./dist/utils/JsonSchemaScanner/sync/index.mjs",
-      "require": "./dist/utils/JsonSchemaScanner/sync/index.cjs"
+      "types": "./dist/utils/JSONSchemaScanner/sync/index.d.ts",
+      "source": "./src/utils/JSONSchemaScanner/sync/index.ts",
+      "import": "./dist/utils/JSONSchemaScanner/sync/index.mjs",
+      "require": "./dist/utils/JSONSchemaScanner/sync/index.cjs"
     },
     "./async-scanner": {
-      "types": "./dist/utils/JsonSchemaScanner/async/index.d.ts",
-      "source": "./src/utils/JsonSchemaScanner/async/index.ts",
-      "import": "./dist/utils/JsonSchemaScanner/async/index.mjs",
-      "require": "./dist/utils/JsonSchemaScanner/async/index.cjs"
+      "types": "./dist/utils/JSONSchemaScanner/async/index.d.ts",
+      "source": "./src/utils/JSONSchemaScanner/async/index.ts",
+      "import": "./dist/utils/JSONSchemaScanner/async/index.mjs",
+      "require": "./dist/utils/JSONSchemaScanner/async/index.cjs"
     },
     "./filter": {
       "types": "./dist/filters/index.d.ts",

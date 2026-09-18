@@ -3,7 +3,7 @@ import {
   Form,
   SetValueOption,
   type FormHandle,
-  type JsonSchema,
+  type JSONSchema,
 } from "@canard/schema-form";
 import StoryLayout from "../components/StoryLayout";
 const schema = {
@@ -165,7 +165,7 @@ const schema = {
       },
     },
   ],
-} satisfies JsonSchema;
+} satisfies JSONSchema;
 
 const CanardForm = () => {
   const [value, setValue] = useState<Record<string, unknown>>({});

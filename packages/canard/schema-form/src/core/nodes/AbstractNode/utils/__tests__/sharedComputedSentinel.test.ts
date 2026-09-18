@@ -1,11 +1,11 @@
 import { describe, expect, it } from 'vitest';
 
-import type { JsonSchemaWithVirtual } from '@/schema-form/types';
+import type { JSONSchemaWithVirtual } from '@/schema-form/types';
 
 import { needsRealComputedManager } from '../getComputedPropertiesManager/utils/needsRealComputedManager';
 import { sharedComputedSentinel } from '../getComputedPropertiesManager/utils/sharedComputedSentinel';
 
-const EMPTY_ROOT: JsonSchemaWithVirtual = { type: 'object' };
+const EMPTY_ROOT: JSONSchemaWithVirtual = { type: 'object' };
 
 describe('needsRealComputedManager (gate)', () => {
   it('returns false for plain nodes (string/number/object) → sentinel eligible', () => {
@@ -46,14 +46,14 @@ describe('needsRealComputedManager (gate)', () => {
     expect(
       needsRealComputedManager(
         'string',
-        { type: 'string', '&visible': '../a' } as JsonSchemaWithVirtual,
+        { type: 'string', '&visible': '../a' } as JSONSchemaWithVirtual,
         EMPTY_ROOT,
       ),
     ).toBe(true);
     expect(
       needsRealComputedManager(
         'string',
-        { type: 'string', '&if': '../a === 1' } as JsonSchemaWithVirtual,
+        { type: 'string', '&if': '../a === 1' } as JSONSchemaWithVirtual,
         EMPTY_ROOT,
       ),
     ).toBe(true);
@@ -63,14 +63,14 @@ describe('needsRealComputedManager (gate)', () => {
     expect(
       needsRealComputedManager(
         'string',
-        { type: 'string', readOnly: true } as JsonSchemaWithVirtual,
+        { type: 'string', readOnly: true } as JSONSchemaWithVirtual,
         EMPTY_ROOT,
       ),
     ).toBe(true);
   });
 
   it('clause 4: root-schema state keys are inherited by EVERY node', () => {
-    const root = { type: 'object', readOnly: true } as JsonSchemaWithVirtual;
+    const root = { type: 'object', readOnly: true } as JSONSchemaWithVirtual;
     /** a deeply-plain child schema with NO computed surface of its own */
     expect(needsRealComputedManager('string', { type: 'string' }, root)).toBe(
       true,
@@ -85,7 +85,7 @@ describe('needsRealComputedManager (gate)', () => {
           type: 'object',
           properties: { kind: { type: 'string' } },
           oneOf: [{ properties: { a: { type: 'string' } } }],
-        } as JsonSchemaWithVirtual,
+        } as JSONSchemaWithVirtual,
         EMPTY_ROOT,
       ),
     ).toBe(true);
@@ -93,7 +93,7 @@ describe('needsRealComputedManager (gate)', () => {
     expect(
       needsRealComputedManager(
         'string',
-        { type: 'string', oneOf: [{ const: 'a' }] } as JsonSchemaWithVirtual,
+        { type: 'string', oneOf: [{ const: 'a' }] } as JSONSchemaWithVirtual,
         EMPTY_ROOT,
       ),
     ).toBe(false);

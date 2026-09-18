@@ -1,4 +1,4 @@
-// Shared measurement library for JsonSchemaScanner before/after evaluation.
+// Shared measurement library for JSONSchemaScanner before/after evaluation.
 // Loads the BUILT scanner via the package's own subpath exports (self-
 // reference), so this runs from a checkout without any absolute paths.
 // Run `yarn build` first so dist is current, then e.g. `node benchmark/bench.mjs`.
@@ -7,8 +7,8 @@ export async function loadScanners() {
   const sync = await import('@winglet/json-schema/scanner');
   const asyncM = await import('@winglet/json-schema/async-scanner');
   return {
-    JsonSchemaScanner: sync.JsonSchemaScanner,
-    JsonSchemaScannerAsync: asyncM.JsonSchemaScannerAsync,
+    JSONSchemaScanner: sync.JSONSchemaScanner,
+    JSONSchemaScannerAsync: asyncM.JSONSchemaScannerAsync,
   };
 }
 

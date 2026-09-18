@@ -19,7 +19,7 @@ FormTypeInputDefinition의 `test` 조건을 작성하는 방법과 우선순위 
 type OptionalString = string | undefined;
 
 type FormTypeTestObject = Partial<{
-  type: JsonSchemaType | JsonSchemaType[];  // 'string', 'number' 등
+  type: JSONSchemaType | JSONSchemaType[];  // 'string', 'number' 등
   path: string | string[];  // JSONPointer 경로
   format: OptionalString | OptionalString[];  // 'email', 'date' 등
   formType: OptionalString | OptionalString[];  // 'textarea', 'slider' 등
@@ -79,9 +79,9 @@ export const FormTypeInputUserNameDefinition = {
 
 ```typescript
 type Hint = {
-  type: JsonSchemaType;
+  type: JSONSchemaType;
   path: string;
-  jsonSchema: JsonSchemaWithVirtual;
+  jsonSchema: JSONSchemaWithVirtual;
   format?: string;
   formType?: string;
 };
@@ -221,7 +221,7 @@ const goodOrder = [
 ### 예제 1: Email 입력
 
 ```typescript
-interface EmailSchema extends JsonSchema {
+interface EmailSchema extends JSONSchema {
   type: 'string';
   format: 'email';
 }
@@ -238,7 +238,7 @@ export const FormTypeInputEmailDefinition = {
 ### 예제 2: Slider (Range 입력)
 
 ```typescript
-interface SliderSchema extends JsonSchema {
+interface SliderSchema extends JSONSchema {
   type: 'number' | 'integer';
   formType: 'slider';
   minimum: number;
@@ -262,7 +262,7 @@ export const FormTypeInputSliderDefinition = {
 ### 예제 3: Multi-Select (Array + Enum)
 
 ```typescript
-interface MultiSelectSchema extends JsonSchema {
+interface MultiSelectSchema extends JSONSchema {
   type: 'array';
   items: {
     type: 'string';
@@ -286,7 +286,7 @@ export const FormTypeInputMultiSelectDefinition = {
 ### 예제 4: Radio Group
 
 ```typescript
-interface RadioGroupSchema extends JsonSchema {
+interface RadioGroupSchema extends JSONSchema {
   type: 'string' | 'number';
   formType: 'radio';
   enum: any[];

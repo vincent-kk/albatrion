@@ -36,7 +36,7 @@ if/then/else, oneOf, computed values 등을 다루는 10개의 인터랙티브 �
 JSON Schema
     │
     ▼
-nodeFromJsonSchema()          ← builds a typed node tree
+nodeFromJSONSchema()          ← builds a typed node tree
     │
     ├── StringNode / NumberNode / BooleanNode / NullNode   (terminal)
     ├── ObjectNode / ArrayNode                             (branch)
@@ -126,13 +126,13 @@ import { SetValueOption } from '@canard/schema-form';  // Merge | Replace
 ### Type guards & error utilities
 ```ts
 import { isArrayNode, isBooleanNode, isBranchNode, isNumberNode } from '@canard/schema-form';
-import { isSchemaFormError, isJsonSchemaError, isUnhandledError, isValidationError } from '@canard/schema-form';
+import { isSchemaFormError, isJSONSchemaError, isUnhandledError, isValidationError } from '@canard/schema-form';
 import { JSONPointer } from '@canard/schema-form';
 ```
 
 ### Architecture
 - No default validator or UI — both via plugins: `registerPlugin(plugin)`
-- Node tree: JSON Schema → nodeFromJsonSchema() → typed node tree
+- Node tree: JSON Schema → nodeFromJSONSchema() → typed node tree
 - Input resolution: Direct prop > formTypeInputMap > form-level > FormProvider > plugin
 
 </ForAI>

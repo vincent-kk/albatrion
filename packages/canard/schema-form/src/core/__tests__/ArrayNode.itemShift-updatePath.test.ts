@@ -14,8 +14,8 @@ import { describe, expect, it, vi } from 'vitest';
 
 import { delay } from '@winglet/common-utils';
 
-import { nodeFromJsonSchema } from '@/schema-form/core';
-import type { JsonSchema } from '@/schema-form/types';
+import { nodeFromJSONSchema } from '@/schema-form/core';
+import type { JSONSchema } from '@/schema-form/types';
 
 import type { ArrayNode } from '../nodes/ArrayNode';
 import type { ObjectNode } from '../nodes/ObjectNode';
@@ -34,9 +34,9 @@ describe('ArrayNode - Item Shift and UpdatePath', () => {
             default: ['A', 'B', 'C'],
           },
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: schema,
         onChange: () => {},
         validationMode: ValidationMode.None,
@@ -78,9 +78,9 @@ describe('ArrayNode - Item Shift and UpdatePath', () => {
             default: ['A', 'B', 'C'],
           },
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: schema,
         onChange: () => {},
         validationMode: ValidationMode.None,
@@ -127,9 +127,9 @@ describe('ArrayNode - Item Shift and UpdatePath', () => {
             default: ['A', 'B', 'C'],
           },
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: schema,
         onChange: () => {},
         validationMode: ValidationMode.None,
@@ -179,9 +179,9 @@ describe('ArrayNode - Item Shift and UpdatePath', () => {
             default: ['A', 'B', 'C'],
           },
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: schema,
         onChange: () => {},
         validationMode: ValidationMode.None,
@@ -219,9 +219,9 @@ describe('ArrayNode - Item Shift and UpdatePath', () => {
             default: ['A', 'B', 'C', 'D', 'E'],
           },
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: schema,
         onChange: () => {},
         validationMode: ValidationMode.None,
@@ -264,9 +264,9 @@ describe('ArrayNode - Item Shift and UpdatePath', () => {
             default: ['A', 'B', 'C', 'D'],
           },
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: schema,
         onChange: () => {},
         validationMode: ValidationMode.None,
@@ -333,9 +333,9 @@ describe('ArrayNode - Item Shift and UpdatePath', () => {
             ],
           },
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: schema,
         onChange: () => {},
         validationMode: ValidationMode.None,
@@ -400,9 +400,9 @@ describe('ArrayNode - Item Shift and UpdatePath', () => {
             ],
           },
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: schema,
         onChange: () => {},
         validationMode: ValidationMode.None,

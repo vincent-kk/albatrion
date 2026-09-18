@@ -1,11 +1,11 @@
 import { isArray } from '@winglet/common-utils/filter';
 
-import { JsonSchemaError } from '@/schema-form/errors';
+import { JSONSchemaError } from '@/schema-form/errors';
 import { formatConditionIndexError } from '@/schema-form/helpers/error';
 import type {
-  JsonSchemaType,
-  JsonSchemaWithVirtual,
-  PartialJsonSchema,
+  JSONSchemaType,
+  JSONSchemaWithVirtual,
+  PartialJSONSchema,
 } from '@/schema-form/types';
 
 import type { PathManager } from '../getPathManager';
@@ -21,7 +21,7 @@ type GetConditionIndex = DynamicFunction<number>;
  * @returns Condition index factory function
  */
 export const getConditionIndexFactory =
-  (type: JsonSchemaType, jsonSchema: JsonSchemaWithVirtual) =>
+  (type: JSONSchemaType, jsonSchema: JSONSchemaWithVirtual) =>
   /**
    * Returns a condition index calculation function for the given dependency paths and field name.
    * @param dependencyPaths - Dependency path array
@@ -36,7 +36,7 @@ export const getConditionIndexFactory =
   ): GetConditionIndex | undefined => {
     if (type !== 'object') return undefined;
 
-    const conditionSchemas: PartialJsonSchema[] = jsonSchema[fieldName];
+    const conditionSchemas: PartialJSONSchema[] = jsonSchema[fieldName];
     if (!isArray(conditionSchemas)) return undefined;
 
     const { expressions, schemaIndices } = extractConditionInfo(
@@ -62,7 +62,7 @@ export const getConditionIndexFactory =
         `${lines.join('\n')}\nreturn -1;`,
       ) as GetConditionIndex;
     } catch (error) {
-      throw new JsonSchemaError(
+      throw new JSONSchemaError(
         'CONDITION_INDEX',
         formatConditionIndexError(fieldName, expressions, lines, error),
         { fieldName, expressions, lines, error },

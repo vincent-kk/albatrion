@@ -403,7 +403,7 @@ async function testCommonUtilsFunctions() {
   console.log('');
 }
 
-async function testJsonFunctions() {
+async function testJSONFunctions() {
   console.log('📦 @winglet/json Functionality Test:');
   
   try {
@@ -460,7 +460,7 @@ async function testJsonFunctions() {
   console.log('');
 }
 
-async function testJsonSchemaFunctions() {
+async function testJSONSchemaFunctions() {
   console.log('📦 @winglet/json-schema Functionality Test:');
   
   try {
@@ -491,21 +491,29 @@ async function testJsonSchemaFunctions() {
     });
     
   } catch (error) {
-    console.log(`❌ JsonSchema filter function test failed: ${error.message}`);
+    console.log(`❌ JSONSchema filter function test failed: ${error.message}`);
   }
 
   try {
-    const { JsonSchemaScanner } = await import('../packages/winglet/json-schema/dist/utils/JsonSchemaScanner/sync/index.mjs');
-    
-    runTest('JsonSchemaScanner class load', () => {
-      if (typeof JsonSchemaScanner !== 'function') {
-        throw new Error(`Expected function, got ${typeof JsonSchemaScanner}`);
+    const scannerModule = await import('../packages/winglet/json-schema/dist/utils/JSONSchemaScanner/sync/index.mjs');
+    const { JSONSchemaScanner } = scannerModule;
+
+    runTest('JSONSchemaScanner class load', () => {
+      if (typeof JSONSchemaScanner !== 'function') {
+        throw new Error(`Expected function, got ${typeof JSONSchemaScanner}`);
       }
-      console.log(`  Type: ${typeof JsonSchemaScanner}`);
+      console.log(`  Type: ${typeof JSONSchemaScanner}`);
     });
-    
+
+    // Deprecated alias — Removed in 0.16.0 together with the alias export.
+    runTest('JsonSchemaScanner deprecated alias', () => {
+      if (scannerModule.JsonSchemaScanner !== JSONSchemaScanner) {
+        throw new Error('Expected JsonSchemaScanner to alias JSONSchemaScanner');
+      }
+    });
+
   } catch (error) {
-    console.log(`❌ JsonSchemaScanner test failed: ${error.message}`);
+    console.log(`❌ JSONSchemaScanner test failed: ${error.message}`);
   }
   
   console.log('');
@@ -533,8 +541,8 @@ async function testDataLoaderFunctions() {
 
 async function runAllTests() {
   await testCommonUtilsFunctions();
-  await testJsonFunctions();
-  await testJsonSchemaFunctions();
+  await testJSONFunctions();
+  await testJSONSchemaFunctions();
   await testDataLoaderFunctions();
   
   console.log('='.repeat(50));
@@ -595,7 +603,7 @@ import { escapePath, unescapePath } from '../packages/winglet/json/dist/JSONPoin
 
 // @winglet/json-schema type test
 import { isArraySchema, isBooleanSchema } from '../packages/winglet/json-schema/dist/filters/index.mjs';
-import { JsonSchemaScanner } from '../packages/winglet/json-schema/dist/utils/JsonSchemaScanner/sync/index.mjs';
+import { JSONSchemaScanner } from '../packages/winglet/json-schema/dist/utils/JSONSchemaScanner/sync/index.mjs';
 
 // @winglet/data-loader type test
 import { DataLoader } from '../packages/winglet/data-loader/dist/index.mjs';
@@ -618,7 +626,7 @@ function testPromiseFunctions(): void {
   const delayPromise: Promise<void> = delay(100);
 }
 
-function testJsonPointerFunctions(): void {
+function testJSONPointerFunctions(): void {
   const testObj = { user: { name: 'Vincent' }, items: [1, 2, 3] };
   const name: unknown = getValue(testObj, '/user/name');
   const newObj = setValue(testObj, '/user/city', 'Seoul');
@@ -626,10 +634,10 @@ function testJsonPointerFunctions(): void {
   const unescaped: string = unescapePath(escaped);
 }
 
-function testJsonSchemaFunctions(): void {
+function testJSONSchemaFunctions(): void {
   const isArray: boolean = isArraySchema({ type: 'array' });
   const isBoolean: boolean = isBooleanSchema({ type: 'boolean' });
-  const scanner = new JsonSchemaScanner();
+  const scanner = new JSONSchemaScanner();
 }
 
 function testDataLoaderClass(): void {
@@ -642,8 +650,8 @@ function testDataLoaderClass(): void {
 testArrayFunctions();
 testObjectFunctions();
 testPromiseFunctions();
-testJsonPointerFunctions();
-testJsonSchemaFunctions();
+testJSONPointerFunctions();
+testJSONSchemaFunctions();
 testDataLoaderClass();
 
 console.log('✅ TypeScript type definition validation completed');
@@ -653,8 +661,8 @@ export {
   testArrayFunctions, 
   testObjectFunctions, 
   testPromiseFunctions, 
-  testJsonPointerFunctions, 
-  testJsonSchemaFunctions, 
+  testJSONPointerFunctions, 
+  testJSONSchemaFunctions, 
   testDataLoaderClass 
 };
 EOF

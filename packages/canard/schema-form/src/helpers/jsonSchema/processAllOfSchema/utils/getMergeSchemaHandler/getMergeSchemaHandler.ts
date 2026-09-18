@@ -1,7 +1,7 @@
 import type { Fn } from '@aileron/declare';
 
 import { extractSchemaInfo } from '@/schema-form/helpers/jsonSchema/extractSchemaInfo';
-import type { JsonSchema } from '@/schema-form/types';
+import type { JSONSchema } from '@/schema-form/types';
 
 import {
   intersectArraySchema,
@@ -13,8 +13,8 @@ import {
 } from '../../intersectSchema';
 
 type MergeSchemaHandler = Fn<
-  [base: JsonSchema, source: Partial<JsonSchema>],
-  JsonSchema
+  [base: JSONSchema, source: Partial<JSONSchema>],
+  JSONSchema
 >;
 
 /**
@@ -25,7 +25,7 @@ type MergeSchemaHandler = Fn<
  * @returns The merge function for the given schema type, or null if no merge function exists
  */
 export const getMergeSchemaHandler = (
-  schema: JsonSchema,
+  schema: JSONSchema,
 ): MergeSchemaHandler | null => {
   const schemaInfo = extractSchemaInfo(schema);
   switch (schemaInfo?.type) {

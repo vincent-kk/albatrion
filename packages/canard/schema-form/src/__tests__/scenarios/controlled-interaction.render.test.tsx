@@ -4,7 +4,7 @@ import '@testing-library/jest-dom';
 import { act } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 
-import type { JsonSchema } from '@winglet/json-schema';
+import type { JSONSchema } from '@winglet/json-schema';
 
 import type {
   FormTypeInputDefinition,
@@ -220,54 +220,54 @@ const trimControlledSchema = {
   properties: {
     text: { type: 'string', format: 'ctrl', options: { trim: true } },
   },
-} satisfies JsonSchema;
+} satisfies JSONSchema;
 
 const trimUncontrolledSchema = {
   type: 'object',
   properties: {
     text: { type: 'string', format: 'unctrl', options: { trim: true } },
   },
-} satisfies JsonSchema;
+} satisfies JSONSchema;
 
 const noTrimControlledSchema = {
   type: 'object',
   properties: { text: { type: 'string', format: 'ctrl' } },
-} satisfies JsonSchema;
+} satisfies JSONSchema;
 
 const noTrimUncontrolledSchema = {
   type: 'object',
   properties: { text: { type: 'string', format: 'unctrl' } },
-} satisfies JsonSchema;
+} satisfies JSONSchema;
 
 const cardSchema = {
   type: 'object',
   properties: { card: { type: 'string', format: 'card' } },
-} satisfies JsonSchema;
+} satisfies JSONSchema;
 
 const memoSchema = {
   type: 'object',
   properties: { memo: { type: 'string', format: 'memo' } },
-} satisfies JsonSchema;
+} satisfies JSONSchema;
 
 const focusSchema = {
   type: 'object',
   properties: { text: { type: 'string', format: 'ctrl' } },
-} satisfies JsonSchema;
+} satisfies JSONSchema;
 
 const phoneSchema = {
   type: 'object',
   properties: { phone: { type: 'string', format: 'phone' } },
-} satisfies JsonSchema;
+} satisfies JSONSchema;
 
 const buttonSchema = {
   type: 'object',
   properties: { action: { type: 'string', format: 'btn' } },
-} satisfies JsonSchema;
+} satisfies JSONSchema;
 
 const mixedSchema = {
   type: 'object',
   properties: { mixed: { type: 'string', format: 'mixed' } },
-} satisfies JsonSchema;
+} satisfies JSONSchema;
 
 // ---------------------------------------------------------------------------
 

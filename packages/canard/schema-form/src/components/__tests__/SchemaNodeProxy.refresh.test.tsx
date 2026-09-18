@@ -5,7 +5,7 @@ import '@testing-library/jest-dom';
 import { act, render, screen } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import type { JsonSchema } from '@winglet/json-schema';
+import type { JSONSchema } from '@winglet/json-schema';
 
 import { NodeEventType, SetValueOption } from '@/schema-form/core';
 import type { ArrayNode } from '@/schema-form/core/nodes/ArrayNode';
@@ -90,7 +90,7 @@ describe('SchemaNodeProxy Refresh Integration', () => {
       await act(async () => {
         render(
           <Form
-            jsonSchema={{ type: 'string' } as JsonSchema}
+            jsonSchema={{ type: 'string' } as JSONSchema}
             formTypeInputDefinitions={[
               { test: { type: 'string' }, Component: TrackingInput },
             ]}
@@ -133,7 +133,7 @@ describe('SchemaNodeProxy Refresh Integration', () => {
       await act(async () => {
         render(
           <Form
-            jsonSchema={{ type: 'string' } as JsonSchema}
+            jsonSchema={{ type: 'string' } as JSONSchema}
             formTypeInputDefinitions={[
               { test: { type: 'string' }, Component: TrackingInput },
             ]}
@@ -179,7 +179,7 @@ describe('SchemaNodeProxy Refresh Integration', () => {
       await act(async () => {
         render(
           <Form
-            jsonSchema={{ type: 'string', default: 'initial' } as JsonSchema}
+            jsonSchema={{ type: 'string', default: 'initial' } as JSONSchema}
             formTypeInputDefinitions={[
               { test: { type: 'string' }, Component: TrackingInput },
             ]}
@@ -214,7 +214,7 @@ describe('SchemaNodeProxy Refresh Integration', () => {
       await act(async () => {
         render(
           <Form
-            jsonSchema={{ type: 'string', default: 'stable' } as JsonSchema}
+            jsonSchema={{ type: 'string', default: 'stable' } as JSONSchema}
             formTypeInputDefinitions={[
               { test: { type: 'string' }, Component: TrackingInput },
             ]}
@@ -277,7 +277,7 @@ describe('SchemaNodeProxy Refresh Integration', () => {
                   name: { type: 'string' },
                   age: { type: 'number' },
                 },
-              } as JsonSchema
+              } as JSONSchema
             }
             formTypeInputDefinitions={[
               { test: { type: 'string' }, Component: NameInput },
@@ -339,7 +339,7 @@ describe('SchemaNodeProxy Refresh Integration', () => {
       await act(async () => {
         const result = render(
           <Form
-            jsonSchema={{ type: 'string' } as JsonSchema}
+            jsonSchema={{ type: 'string' } as JSONSchema}
             formTypeInputDefinitions={[
               { test: { type: 'string' }, Component: TrackingInput },
             ]}
@@ -381,7 +381,7 @@ describe('SchemaNodeProxy Refresh Integration', () => {
       await act(async () => {
         render(
           <Form
-            jsonSchema={{ type: 'string' } as JsonSchema}
+            jsonSchema={{ type: 'string' } as JSONSchema}
             formTypeInputDefinitions={[
               { test: { type: 'string' }, Component: TrackingInput },
             ]}
@@ -466,7 +466,7 @@ describe('FormHandle Advanced Feature Integration', () => {
             },
           },
         ],
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
       // Create input components with testIds
       const CategoryInput = createTestInput('category-input');
@@ -549,7 +549,7 @@ describe('FormHandle Advanced Feature Integration', () => {
             },
           },
         ],
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
       const ModeInput = createTestInput('mode-input');
       const TitleInput = createTestInput('title-input');
@@ -653,7 +653,7 @@ describe('FormHandle Advanced Feature Integration', () => {
             },
           },
         ],
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
       const ShowAInput = createTestInput('show-a-input');
       const ShowBInput = createTestInput('show-b-input');
@@ -733,7 +733,7 @@ describe('FormHandle Advanced Feature Integration', () => {
             },
           },
         ],
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
       const EnableInput = createTestInput('enable-input');
       const Setting1Input = createTestInput('setting1-input');
@@ -834,7 +834,7 @@ describe('FormHandle Advanced Feature Integration', () => {
             required: ['openingDate'],
           },
         ],
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
       const CategoryInput = createTestInput('ite-category');
       const TitleInput = createTestInput('ite-title');
@@ -934,7 +934,7 @@ describe('FormHandle Advanced Feature Integration', () => {
             properties: { fieldC: { type: 'string' } },
           },
         ],
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
       const TypeInput = createTestInput('nested-type');
       const FieldAInput = createTestInput('nested-field-a');
@@ -1030,7 +1030,7 @@ describe('FormHandle Advanced Feature Integration', () => {
           },
           target: { type: 'string' },
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
       const SourceInput = createTestInput('inject-source');
       const TargetInput = createTestInput('inject-target');
@@ -1095,7 +1095,7 @@ describe('FormHandle Advanced Feature Integration', () => {
           },
           c: { type: 'string' },
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
       const AInput = createTestInput('chain-a');
       const BInput = createTestInput('chain-b');
@@ -1162,7 +1162,7 @@ describe('FormHandle Advanced Feature Integration', () => {
           target2: { type: 'string' },
           target3: { type: 'string' },
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
       const SourceInput = createTestInput('multi-source');
       const Target1Input = createTestInput('multi-target1');
@@ -1241,7 +1241,7 @@ describe('FormHandle Advanced Feature Integration', () => {
             },
           },
         ],
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
       const TriggerInput = createTestInput('inject-trigger');
       const CategoryInput = createTestInput('inject-category');
@@ -1328,7 +1328,7 @@ describe('FormHandle Advanced Feature Integration', () => {
             },
           },
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
       const PriceInput = createTestInput('derived-price');
       const QuantityInput = createTestInput('derived-quantity');
@@ -1392,7 +1392,7 @@ describe('FormHandle Advanced Feature Integration', () => {
             },
           },
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
       const FirstNameInput = createTestInput('concat-first');
       const LastNameInput = createTestInput('concat-last');
@@ -1455,7 +1455,7 @@ describe('FormHandle Advanced Feature Integration', () => {
             },
           },
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
       const AgeInput = createTestInput('cond-age');
       const AgeGroupInput = createTestInput('cond-age-group');
@@ -1523,7 +1523,7 @@ describe('FormHandle Advanced Feature Integration', () => {
             },
           },
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
       const BasePriceInput = createTestInput('parent-base');
       const DiscountInput = createTestInput('parent-discount');
@@ -1619,7 +1619,7 @@ describe('FormHandle Advanced Feature Integration', () => {
             },
           },
         ],
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
       const CategoryInput = createTestInput('combined-category-input');
       const VoltageInput = createTestInput('combined-voltage-input');
@@ -1734,7 +1734,7 @@ describe('FormHandle Advanced Feature Integration', () => {
             },
           },
         ],
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
       const ModeInput = createTestInput('derived-oneOf-mode-input');
       const SimpleValueInput = createTestInput('derived-oneOf-value-input');
@@ -1872,7 +1872,7 @@ describe('Edge Cases', () => {
       await act(async () => {
         render(
           <Form
-            jsonSchema={{ type: 'string' } as JsonSchema}
+            jsonSchema={{ type: 'string' } as JSONSchema}
             formTypeInputDefinitions={[
               { test: { type: 'string' }, Component: TrackingInput },
             ]}
@@ -1922,7 +1922,7 @@ describe('Edge Cases', () => {
       await act(async () => {
         render(
           <Form
-            jsonSchema={{ type: 'string' } as JsonSchema}
+            jsonSchema={{ type: 'string' } as JSONSchema}
             formTypeInputDefinitions={[
               { test: { type: 'string' }, Component: TrackingInput },
             ]}
@@ -1954,7 +1954,7 @@ describe('Edge Cases', () => {
         properties: {
           name: { type: 'string' },
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
       let formHandle: { current: FormHandle<typeof schema> | null } = {
         current: null,
@@ -2007,7 +2007,7 @@ describe('Edge Cases', () => {
       await act(async () => {
         render(
           <Form
-            jsonSchema={{ type: 'string', default: 'initial' } as JsonSchema}
+            jsonSchema={{ type: 'string', default: 'initial' } as JSONSchema}
             formTypeInputDefinitions={[
               { test: { type: 'string' }, Component: TrackingInput },
             ]}
@@ -2034,7 +2034,7 @@ describe('Edge Cases', () => {
         properties: {
           nullableField: { type: ['string', 'null'] as const },
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
       let formHandle: { current: FormHandle<typeof schema> | null } = {
         current: null,
@@ -2112,7 +2112,7 @@ describe('Edge Cases', () => {
         await act(async () => {
           const result = render(
             <Form
-              jsonSchema={{ type: 'string' } as JsonSchema}
+              jsonSchema={{ type: 'string' } as JSONSchema}
               formTypeInputDefinitions={[
                 { test: { type: 'string' }, Component: TrackingInput },
               ]}
@@ -2152,7 +2152,7 @@ describe('Edge Cases', () => {
         );
       };
 
-      const schema = { type: 'string' } as JsonSchema;
+      const schema = { type: 'string' } as JSONSchema;
       const formTypeInputDefs: FormTypeInputDefinition[] = [
         { test: { type: 'string' }, Component: CountingInput },
       ];
@@ -2216,7 +2216,7 @@ describe('Edge Cases', () => {
             },
           },
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
       const DeepInput = createTestInput('deep-input');
 
@@ -2286,7 +2286,7 @@ describe('Edge Cases', () => {
             },
           },
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
       let formHandle: { current: FormHandle<typeof schema> | null } = {
         current: null,
@@ -2345,7 +2345,7 @@ describe('Edge Cases', () => {
           field2: { type: 'string' },
           field3: { type: 'string' },
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
       let formHandle: { current: FormHandle<typeof schema> | null } = {
         current: null,
@@ -2414,7 +2414,7 @@ describe('Edge Cases', () => {
             default: ['A', 'B', 'C'],
           },
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
       let formHandle: { current: FormHandle<typeof schema> | null } = {
         current: null,
@@ -2464,7 +2464,7 @@ describe('Edge Cases', () => {
             default: ['A', 'B', 'C'],
           },
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
       let formHandle: { current: FormHandle<typeof schema> | null } = {
         current: null,
@@ -2540,7 +2540,7 @@ describe('Edge Cases', () => {
             ],
           },
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
       let formHandle: { current: FormHandle<typeof schema> | null } = {
         current: null,
@@ -2612,7 +2612,7 @@ describe('Edge Cases', () => {
             default: ['A', 'B', 'C'],
           },
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
       let formHandle: { current: FormHandle<typeof schema> | null } = {
         current: null,

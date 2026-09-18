@@ -4,7 +4,7 @@ import '@testing-library/jest-dom';
 import { act } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 
-import type { JsonSchema } from '@winglet/json-schema';
+import type { JSONSchema } from '@winglet/json-schema';
 
 import type { ArrayNode, FormTypeInputProps, ObjectNode } from '@/schema-form';
 import { SetValueOption } from '@/schema-form/core';
@@ -61,7 +61,7 @@ const Box: FC<FormTypeInputProps<any>> = ({ path, value }: any) => (
 
 const boxDefs = [{ test: { formType: 'box' }, Component: Box }] as any;
 
-const render = (jsonSchema: JsonSchema) =>
+const render = (jsonSchema: JSONSchema) =>
   renderForm(jsonSchema, { formTypeInputDefinitions: boxDefs });
 
 /** Run an imperative node mutation inside act() and drain the cascade. */
@@ -87,7 +87,7 @@ const branchArraySchema = {
       default: ['x', 'y'],
     },
   },
-} satisfies JsonSchema;
+} satisfies JSONSchema;
 
 const terminalArraySeededSchema = {
   type: 'object',
@@ -100,7 +100,7 @@ const terminalArraySeededSchema = {
       default: ['a', 'b'],
     },
   },
-} satisfies JsonSchema;
+} satisfies JSONSchema;
 
 const minItemsNoDefaultSchema = {
   type: 'object',
@@ -113,7 +113,7 @@ const minItemsNoDefaultSchema = {
       minItems: 3,
     },
   },
-} satisfies JsonSchema;
+} satisfies JSONSchema;
 
 const minItemsWithDefaultSchema = {
   type: 'object',
@@ -127,7 +127,7 @@ const minItemsWithDefaultSchema = {
       minItems: 3,
     },
   },
-} satisfies JsonSchema;
+} satisfies JSONSchema;
 
 const objectItemsSchema = {
   type: 'object',
@@ -146,7 +146,7 @@ const objectItemsSchema = {
       minItems: 2,
     },
   },
-} satisfies JsonSchema;
+} satisfies JSONSchema;
 
 const terminalObjectSchema = {
   type: 'object',
@@ -168,7 +168,7 @@ const terminalObjectSchema = {
       },
     },
   },
-} satisfies JsonSchema;
+} satisfies JSONSchema;
 
 const objectMixedDefaultSchema = {
   type: 'object',
@@ -194,7 +194,7 @@ const objectMixedDefaultSchema = {
       },
     },
   },
-} satisfies JsonSchema;
+} satisfies JSONSchema;
 
 const propertyKeysSchema = {
   type: 'object',
@@ -211,7 +211,7 @@ const propertyKeysSchema = {
       },
     },
   },
-} satisfies JsonSchema;
+} satisfies JSONSchema;
 
 const nullableNullSchema = {
   type: 'object',
@@ -227,7 +227,7 @@ const nullableNullSchema = {
       },
     },
   },
-} satisfies JsonSchema;
+} satisfies JSONSchema;
 
 // ---------------------------------------------------------------------------
 // Terminal vs branch structure

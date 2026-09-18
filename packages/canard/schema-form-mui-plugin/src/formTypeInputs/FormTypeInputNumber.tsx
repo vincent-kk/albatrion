@@ -12,12 +12,12 @@ import type {
 
 import type { MuiContext } from '../type';
 
-type NumberJsonSchema = NumberSchema;
+type NumberJSONSchema = NumberSchema;
 
 interface FormTypeInputNumberProps
   extends FormTypeInputPropsWithSchema<
       number | null,
-      NumberJsonSchema,
+      NumberJSONSchema,
       MuiContext
     >,
     MuiContext {

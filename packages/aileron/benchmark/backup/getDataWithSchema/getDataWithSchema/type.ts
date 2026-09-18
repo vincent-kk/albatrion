@@ -3,13 +3,13 @@ import { isArraySchema, isObjectSchema } from '@winglet/json-schema';
 
 import type {
   ArrayValue,
-  InferJsonSchema,
+  InferJSONSchema,
   ObjectValue,
 } from '@/schema-form/types';
 
 export interface StackItem<Value = any> {
   value: Value;
-  schema: InferJsonSchema<Value>;
+  schema: InferJSONSchema<Value>;
   result: any;
   isArray?: boolean;
   arrayIndex?: number;

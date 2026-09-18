@@ -95,7 +95,7 @@ type InferDeclaredProperties<Properties> = {
  * `additionalProperties: false` is what the schema itself asks for.
  *
  * Falls back to ObjectValue when `properties` is absent or keyed by plain `string`
- * (e.g. `Dictionary<JsonSchema>`), which keeps non-literal schemas behaving as before.
+ * (e.g. `Dictionary<JSONSchema>`), which keeps non-literal schemas behaving as before.
  */
 type InferObjectValue<T> = T extends { properties: infer Properties }
   ? string extends keyof Properties

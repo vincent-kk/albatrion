@@ -61,7 +61,7 @@ import { isPlainObject } from './isPlainObject';
  * @example
  * JSON validation:
  * ```typescript
- * function validateJsonObject(data: unknown): boolean {
+ * function validateJSONObject(data: unknown): boolean {
  *   // Check if it's a valid JSON-like plain object
  *   if (isEmptyPlainObject(data)) {
  *     return true; // Empty objects are valid JSON
@@ -76,10 +76,10 @@ import { isPlainObject } from './isPlainObject';
  * }
  *
  * // Usage
- * console.log(validateJsonObject({})); // true
- * console.log(validateJsonObject({ name: 'John' })); // true
- * console.log(validateJsonObject(new Date())); // false
- * console.log(validateJsonObject([])); // false
+ * console.log(validateJSONObject({})); // true
+ * console.log(validateJSONObject({ name: 'John' })); // true
+ * console.log(validateJSONObject(new Date())); // false
+ * console.log(validateJSONObject([])); // false
  * ```
  *
  * @example

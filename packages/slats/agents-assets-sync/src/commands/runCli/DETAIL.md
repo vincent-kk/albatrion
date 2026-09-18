@@ -13,7 +13,7 @@
 - `--asset-path` 의 모양 검증은 파일시스템 IO 이전에 action 에서 한다 — 빈 값, 절대 경로, `~` 로 시작하는 값은 2로 종료한다. 경로가 packageRoot 안에 있는지와 실제로 디렉터리인지는 타깃마다 다르므로 `resolvePackage` 가 판정한다.
 - `--asset-path` 오류는 `--json` 이어도 action 에서 종료한다. `--package` 누락과 같은 계층이라 stdout 은 비고 진단은 stderr 로만 나간다.
 - `--package` 값이 하나도 없으면 2로 종료한다. 해석된 패키지가 0개면 경고만 남기고 0으로 끝난다 — 아무 일도 하지 않은 것은 실패가 아니다. 다만 `--json` 은 그 경우에도 렌더러까지 진행해 `units: []` 인 문서를 낸다. 문서가 없으면 소비자가 "성공했지만 대상이 없음" 과 파싱 실패를 구분할 수 없기 때문이다.
-- `renderOrFallback` 은 target 해석 이후 실행당 정확히 한 번 호출되며 렌더러 분기를 소유한다. 분기 순서: `--json` → `renderJson`; 비TTY 이거나 `flags.interactive === false` → `renderPlain`; 나머지 → `ui/` 동적 import. 패키지가 ESM 전용이므로 `await import()` 로 충분하다.
+- `renderOrFallback` 은 target 해석 이후 실행당 정확히 한 번 호출되며 렌더러 분기를 소유한다. 분기 순서: `--json` → `renderJSON`; 비TTY 이거나 `flags.interactive === false` → `renderPlain`; 나머지 → `ui/` 동적 import. 패키지가 ESM 전용이므로 `await import()` 로 충분하다.
 - `renderOrFallback` 의 `env.isTTY` 는 테스트를 위해 주입 가능하며, 생략 시 `process.stdout.isTTY` 를 쓴다.
 - `--json` 이 켜지면 액션 진입 즉시 `divertLogsToStderr()` 가 호출된다. 이후의 모든 진단은 — 종료 경로의 것까지 — stderr 로 간다. stdout 은 JSON 문서만의 것이다.
 - 비대화형 경로의 필수 플래그 검증은 `resolveScopeFlag` / `resolveAgentFlag` / `resolveAssetFlag` 가 맡아 실패 시 2로 종료한다. `--json` 렌더러는 대신 `parse*Flag` 를 써서 실패를 값으로 받아 자기 문서에 담는다.
@@ -70,7 +70,7 @@
   - `hashesPresent` 는 `dist/agents-hashes.json` 을 실제로 찾았을 때만 `true` 다. `'directory'` 로 정해진 target 은 그 파일을 읽지 않으므로 언제나 `false` 이며, 게이트도 이 값을 보지 않는다
 - `renderOrFallback(targets, flags, originCwd, notices?, env?): Promise<number>`
 - `renderPlain(targets, flags, originCwd): Promise<number>`
-- `renderJson(targets, flags, originCwd, notices?): Promise<number>`
+- `renderJSON(targets, flags, originCwd, notices?): Promise<number>`
   - `notices` 는 렌더러 이전 단계의 메시지다. 실행을 실패시키지 않으면서 `errors` 에 실린다
 - `resolveScopeFlag` / `resolveAgentFlag` / `resolveAssetFlag` — 실패 시 exit 2
 - `parseScopeFlag` / `parseAgentFlag` / `parseAssetFlag` — 실패를 값으로 반환
@@ -149,14 +149,14 @@
 ## History
 
 - 2026-08-06 — strict 판정이 `--package` 원시 값 개수로 세어져, 같은 패키지를 두 번 적으면(`--package=X,X`) 판정이 0으로 물러졌다. 지목한 것은 여전히 한 패키지인데 말한 횟수가 결과를 바꾼 셈이다. 중복 제거 후 세도록 고쳤고, 이 분기를 공유하는 `agents.assetPath` 부재도 함께 정정됐다 — 그쪽은 이미 배포된 동작이지만, 문서가 처음부터 "값이 정확히 하나이고 그 값이 패키지 이름이면 strict" 라고 쓰고 있었으므로 계약이 아니라 구현이 틀린 쪽이었다.
-- 2026-08-06 — 게이트에 걸린 단일 타깃에 `--json` 을 주면 문서 대신 빈 stdout 이 나가는 것을 그대로 두기로 했다. 머신 리더에게 언제나 문서를 주는 편이 renderJson 의 취지에 가깝지만, 그러려면 게이트 결과를 다시 렌더러로 실어 날라야 하고 — 방금 걷어낸 배선이다. 해석 불가 패키지와 같은 취급(렌더러 이전 실패 → 빈 stdout, 사유는 stderr, 판정은 exit code)으로 남긴다.
+- 2026-08-06 — 게이트에 걸린 단일 타깃에 `--json` 을 주면 문서 대신 빈 stdout 이 나가는 것을 그대로 두기로 했다. 머신 리더에게 언제나 문서를 주는 편이 renderJSON 의 취지에 가깝지만, 그러려면 게이트 결과를 다시 렌더러로 실어 날라야 하고 — 방금 걷어낸 배선이다. 해석 불가 패키지와 같은 취급(렌더러 이전 실패 → 빈 stdout, 사유는 stderr, 판정은 exit code)으로 남긴다.
 - 2026-08-06 — 게이트 판정이 렌더러마다 달랐다. plain 과 Ink 는 걸린 타깃을 조용히 빼고 0으로 끝냈고, `--json` 은 같은 상황에서 1을 냈다 — 같은 입력에 출력 형식만으로 CI 판정이 갈렸다. 술어(`needsBuiltManifest`)는 한 곳이었지만 **그 답으로 무엇을 할지**는 아무도 소유하지 않은 것이 원인이라, 판정을 렌더러 분기 위 action 으로 올렸다. 새 정책 대신 `agents.assetPath` 부재가 이미 쓰던 strict / soft skip 분기를 그대로 쓴다. 렌더러가 판정을 못 하게 만드는 쪽을 택한 이유는, 셋이 합의하도록 고치면 넷째 렌더러가 생길 때 같은 버그가 다시 나기 때문이다.
 - 2026-08-06 — 선언이 packageRoot 안의 파일을 가리킬 때 "resolves outside" 라고 보고하던 오분류를 고쳤다. 봉쇄 검사는 이미 통과한 지점이었으므로 그 문구는 사실이 아니었고, 사용자를 엉뚱한 수정으로 이끌었다.
 - 2026-08-06 — `resolvePackage` 의 2단 해석이 ESM 전용 패키지 앞에서 멈춘다는 것이 드러났다. 두 단계 모두 `createRequire` 를 쓰는데, `require` 조건도 `./package.json` 도 없는 패키지는 subpath 와 bare specifier 양쪽에서 `ERR_PACKAGE_PATH_NOT_EXPORTED` 로 실패한다. 구 CJS 빌드는 main 진입점 fallback 으로 해석돼 이 구멍을 가리고 있었다. 해석기를 고치는 대신 엔진 매니페스트가 `./package.json` 을 export 하도록 한 이유는 경계다 — ESM 전용 패키지에 닿는 다른 길은 `node_modules` 를 걷는 것이고, 그것은 `resolveScopeAlias.ts` 만의 몫이다.
 - 2026-08-06 — 선언된 `agents.assetPath` 가 매니페스트 없이도 동작하게 됐다. 이전에는 `--asset-path` 로 부른 실행만 디렉터리를 해싱했고, 기본 경로는 `dist/agents-hashes.json` 이 없으면 아무것도 하지 않고 "빌드부터 하라" 고만 했다 — 같은 디렉터리가 거기 있는데도. 선언은 에셋의 위치를 말할 뿐 빌드 여부를 말하지 않으므로, 부재는 오류가 아니라 다른 출처로 내려갈 신호다. 디렉터리 존재를 조건에 넣은 것은 취향이 아니라 안전 장치다 — 없는 디렉터리의 빈 매니페스트는 설치된 항목 전부를 orphan 으로 만들고 `--force` 가 그것을 삭제한다.
 - 2026-08-06 — asset 루트 봉쇄가 선언 경로까지 확대됐다. 처음에는 `--asset-path` 에만 어휘적 검사를 뒀는데, 그러면 opt-in 경로만 보호되고 기본 경로(`agents.assetPath`)는 `../` 로 자유롭게 나가는 거꾸로 된 상태가 된다. 동시에 검사를 realpath 기준으로 옮겼다 — 어휘적 검사는 심볼릭 링크된 asset 루트를 막지 못하고, 그 경로로 읽힌 파일은 에이전트가 지시문으로 되읽는 곳에 안착한다.
 - 2026-08-06 — `--asset-path` 가 추가되며 "asset 루트는 `agents.assetPath` 가 정한다" 는 전제가 깨졌다. 선언 없이 `agents/` 나 `docs/` 에 에셋만 둔 패키지를 위해서다. fallback 이 아니라 override 로 정한 이유: 플래그가 조건부로 이기면 어느 경로가 쓰였는지 실행 결과만 보고는 알 수 없다. 같은 이유로 override 는 저장된 매니페스트도 무시한다 — 그 매니페스트가 기술하는 트리가 플래그가 가리키는 트리라는 보장이 없다.
-- 2026-08-06 — `--json` 이 plain 경로를 강제한다는 계약이 폐기됐다. `renderJson` 이 독립 렌더러가 되었고, 분기에서 `--json` 이 TTY 판정보다 먼저 평가된다. 같은 변경으로 `parse*Flag` 계열이 생겼다 — JSON 렌더러는 플래그 오류에서 종료할 수 없고 그것을 자기 문서에 담아야 하기 때문이다.
+- 2026-08-06 — `--json` 이 plain 경로를 강제한다는 계약이 폐기됐다. `renderJSON` 이 독립 렌더러가 되었고, 분기에서 `--json` 이 TTY 판정보다 먼저 평가된다. 같은 변경으로 `parse*Flag` 계열이 생겼다 — JSON 렌더러는 플래그 오류에서 종료할 수 없고 그것을 자기 문서에 담아야 하기 때문이다.
 
 ## Last Updated
 

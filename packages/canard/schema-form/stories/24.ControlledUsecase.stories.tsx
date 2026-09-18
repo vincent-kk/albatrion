@@ -4,7 +4,7 @@ import {
   Form,
   type FormHandle,
   type FormTypeInputProps,
-  type JsonSchema,
+  type JSONSchema,
 } from '../src';
 import StoryLayout from './components/StoryLayout';
 
@@ -23,7 +23,7 @@ export const Common = () => {
         type: 'number',
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>();
 
@@ -44,7 +44,7 @@ export const TrimOnBlur_Uncontrolled = () => {
         options: { trim: true },
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>({});
 
@@ -73,7 +73,7 @@ export const TrimOnBlur_Controlled = () => {
         options: { trim: true },
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>({});
 
@@ -101,7 +101,7 @@ export const NoTrimOnBlur_Uncontrolled = () => {
         // options.trim is undefined -> no trimming on blur
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>({});
 
@@ -129,7 +129,7 @@ export const NoTrimOnBlur_Controlled = () => {
         // options.trim is undefined -> no trimming on blur
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>({});
 
@@ -154,7 +154,7 @@ export const FocusAndSelect_SingleControlled = () => {
     properties: {
       text: { type: 'string' },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>({});
   const formRef = useRef<FormHandle<typeof jsonSchema>>(null);
@@ -191,7 +191,7 @@ export const FocusAndSelect_MultiInputControlled = () => {
         description: '형식: 000-0000',
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>({});
   const formRef = useRef<FormHandle<typeof jsonSchema>>(null);
@@ -228,7 +228,7 @@ export const CaretPreservation_WithFormatter = () => {
         description: '신용카드 번호 ####-####-####-####',
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>({});
   const formRef = useRef<FormHandle<typeof jsonSchema>>(null);
@@ -262,7 +262,7 @@ export const MultiInput_CaretStability_Switching = () => {
     properties: {
       range: { type: 'string', description: 'start~end (두 입력으로 구성)' },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>({});
 
@@ -287,7 +287,7 @@ export const FocusAndSelect_ButtonOnlyControlled = () => {
     properties: {
       action: { type: 'string', description: 'button 요소만 존재' },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>({});
   const formRef = useRef<FormHandle<typeof jsonSchema>>(null);
@@ -321,7 +321,7 @@ export const FocusAndSelect_MixedControlled = () => {
     properties: {
       mixed: { type: 'string', description: 'input + button 혼합' },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>({});
   const formRef = useRef<FormHandle<typeof jsonSchema>>(null);
@@ -355,7 +355,7 @@ export const ComplexInput_DateTimeSegments = () => {
     properties: {
       datetime: { type: 'string', description: 'YYYY-MM-DD HH:mm' },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>({});
   const formRef = useRef<FormHandle<typeof jsonSchema>>(null);
@@ -388,7 +388,7 @@ export const ComplexInput_Currency = () => {
     properties: {
       amount: { type: 'string', description: '통화 입력: 12,345' },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>({});
   const formRef = useRef<FormHandle<typeof jsonSchema>>(null);
@@ -424,7 +424,7 @@ export const Textarea_Basic_Controlled = () => {
         description: '긴 메모 입력 (textarea, controlled)',
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>({});
   const formRef = useRef<FormHandle<typeof jsonSchema>>(null);
@@ -457,7 +457,7 @@ export const Textarea_CaretPreservation_WithFormatter = () => {
     properties: {
       memo: { type: 'string', description: '공백/탭/빈줄 정규화 포매터 적용' },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>({});
   const formRef = useRef<FormHandle<typeof jsonSchema>>(null);

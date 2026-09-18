@@ -3,8 +3,8 @@ import { describe, expect, it, vi } from 'vitest';
 
 import { delay } from '@winglet/common-utils';
 
-import { nodeFromJsonSchema } from '@/schema-form/core';
-import type { JsonSchema } from '@/schema-form/types';
+import { nodeFromJSONSchema } from '@/schema-form/core';
+import type { JSONSchema } from '@/schema-form/types';
 
 import { NodeEventType, ValidationMode } from '../nodes';
 import type { NumberNode } from '../nodes/NumberNode';
@@ -28,9 +28,9 @@ describe('AllOf Schema', () => {
           },
         },
       ],
-    } satisfies JsonSchema;
+    } satisfies JSONSchema;
 
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       onChange: () => {},
       jsonSchema,
     });
@@ -67,9 +67,9 @@ describe('AllOf Schema', () => {
           },
         },
       ],
-    } satisfies JsonSchema;
+    } satisfies JSONSchema;
 
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       onChange: () => {},
       jsonSchema,
     });
@@ -111,9 +111,9 @@ describe('AllOf Schema', () => {
           required: ['lastName'],
         },
       ],
-    } satisfies JsonSchema;
+    } satisfies JSONSchema;
 
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       onChange: () => {},
       jsonSchema,
       validationMode: ValidationMode.OnChange,
@@ -162,9 +162,9 @@ describe('AllOf Schema', () => {
           },
         },
       ],
-    } satisfies JsonSchema;
+    } satisfies JSONSchema;
 
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       onChange: () => {},
       jsonSchema,
       validationMode: ValidationMode.OnChange,
@@ -223,9 +223,9 @@ describe('AllOf Schema', () => {
           },
         },
       ],
-    } satisfies JsonSchema;
+    } satisfies JSONSchema;
 
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       onChange: () => {},
       jsonSchema,
     });
@@ -264,9 +264,9 @@ describe('AllOf Schema', () => {
           },
         },
       ],
-    } satisfies JsonSchema;
+    } satisfies JSONSchema;
 
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       onChange: () => {},
       jsonSchema,
     });
@@ -295,9 +295,9 @@ describe('AllOf Schema', () => {
           },
         },
       ],
-    } satisfies JsonSchema;
+    } satisfies JSONSchema;
 
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       onChange: () => {},
       jsonSchema,
     });
@@ -330,9 +330,9 @@ describe('AllOf Schema', () => {
           additionalProperties: false,
         },
       ],
-    } satisfies JsonSchema;
+    } satisfies JSONSchema;
 
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       onChange: () => {},
       jsonSchema,
       validationMode: ValidationMode.OnChange,
@@ -363,9 +363,9 @@ describe('AllOf Schema', () => {
           },
         },
       ],
-    } satisfies JsonSchema;
+    } satisfies JSONSchema;
 
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       onChange: () => {},
       jsonSchema,
     });
@@ -451,9 +451,9 @@ describe('AllOf Schema', () => {
           },
         },
       ],
-    } satisfies JsonSchema;
+    } satisfies JSONSchema;
 
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       onChange: () => {},
       jsonSchema,
       validationMode: ValidationMode.OnChange,
@@ -516,9 +516,9 @@ describe('AllOf Schema', () => {
           },
         },
       ],
-    } satisfies JsonSchema;
+    } satisfies JSONSchema;
 
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       onChange: () => {},
       jsonSchema,
     });

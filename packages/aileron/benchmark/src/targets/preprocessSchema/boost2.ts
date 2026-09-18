@@ -1,13 +1,13 @@
 import type { Dictionary } from '@aileron/declare';
 
-import type { JsonSchema } from '@/json-schema';
+import type { JSONSchema } from '@/json-schema';
 
 export const transformConditionalSchema = (
-  schema: Partial<JsonSchema>,
+  schema: Partial<JSONSchema>,
   virtual: Dictionary<{ fields: string[] }>,
-): Partial<JsonSchema> => {
+): Partial<JSONSchema> => {
   // 빈 객체로 시작하고 필요한 프로퍼티만 추가
-  const transformed: Partial<JsonSchema> = {};
+  const transformed: Partial<JSONSchema> = {};
 
   // Object.assign으로 then, else, required 제외한 모든 프로퍼티 한번에 복사
   Object.assign(transformed, schema);

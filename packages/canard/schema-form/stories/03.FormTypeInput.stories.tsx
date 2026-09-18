@@ -7,7 +7,7 @@ import {
   type FormTypeInputDefinition,
   type FormTypeInputMap,
   type FormTypeInputProps,
-  type JsonSchema,
+  type JSONSchema,
   SetValueOption,
 } from '../src';
 import StoryLayout from './components/StoryLayout';
@@ -41,7 +41,7 @@ export const FormTypeInputDefinitions = () => {
         minItems: 5,
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const formTypeInputDefinitions = useMemo<FormTypeInputDefinition[]>(() => {
     return [
@@ -121,7 +121,7 @@ export const FormTypeMap = () => {
         minItems: 5,
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const formTypeMap = useMemo<FormTypeInputMap>(() => {
     return {
@@ -196,7 +196,7 @@ export const FormTypeMapWithEscapedPath = () => {
         minItems: 5,
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const formTypeMap = useMemo<FormTypeInputMap>(() => {
     return {
@@ -274,7 +274,7 @@ export const FormTypeMapWithRegex = () => {
         minItems: 5,
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const formTypeMap = useMemo<FormTypeInputMap>(() => {
     return {
@@ -320,7 +320,7 @@ export const FormTypeMapWithRegex = () => {
   );
 };
 
-export const FormTypeComponentInJsonSchema = () => {
+export const FormTypeComponentInJSONSchema = () => {
   const CustomFormTypeStringInput = useCallback(
     ({ defaultValue, onChange }: FormTypeInputProps<string>) => {
       const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -378,7 +378,7 @@ export const FormTypeComponentInJsonSchema = () => {
         FormTypeInput: CustomFormTypeNumberInput,
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>();
 
@@ -448,7 +448,7 @@ export const FormTypeMapWithWildcardForAllFields = () => {
         minItems: 2,
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const formTypeMap = useMemo<FormTypeInputMap>(() => {
     return {
@@ -745,7 +745,7 @@ export const WildcardVsRegexComparison = () => {
         },
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const formTypeMap = useMemo<FormTypeInputMap>(() => {
     return {

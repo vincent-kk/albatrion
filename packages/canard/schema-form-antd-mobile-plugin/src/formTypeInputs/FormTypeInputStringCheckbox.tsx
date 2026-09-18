@@ -14,14 +14,14 @@ import type {
   StringSchema,
 } from '@canard/schema-form';
 
-type ArrayJsonSchema = ArraySchema & {
+type ArrayJSONSchema = ArraySchema & {
   items: StringSchema;
 };
 
 interface FormTypeInputStringCheckboxProps
   extends FormTypeInputPropsWithSchema<
     Array<string | null>,
-    ArrayJsonSchema,
+    ArrayJSONSchema,
     { checkboxLabels?: { [label: string]: ReactNode } }
   > {
   alias?: { [label: string]: ReactNode };

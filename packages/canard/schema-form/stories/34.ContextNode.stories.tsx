@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { Form, type JsonSchema } from '../src';
+import { Form, type JSONSchema } from '../src';
 import StoryLayout from './components/StoryLayout';
 
 export default {
@@ -51,7 +51,7 @@ export const ModeBasedControl = () => {
         },
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   return (
     <div>
@@ -129,7 +129,7 @@ export const UserRoleBasedVisibility = () => {
         },
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   return (
     <div>
@@ -214,7 +214,7 @@ export const PermissionsObject = () => {
         },
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const togglePermission = (key: keyof typeof permissions) => {
     setPermissions((prev) => ({ ...prev, [key]: !prev[key] }));
@@ -320,7 +320,7 @@ export const CombinedConditions = () => {
         },
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   return (
     <div>
@@ -431,7 +431,7 @@ export const DynamicContextChange = () => {
         },
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   return (
     <div>

@@ -8,7 +8,7 @@ import { useRootNodeContext } from '@/schema-form/providers';
 import type {
   AllowedValue,
   InferValueType,
-  JsonSchema,
+  JSONSchema,
 } from '@/schema-form/types';
 
 import type { FormChildrenProps } from '../type';
@@ -21,7 +21,7 @@ const RERENDERING_EVENT =
   NodeEventType.RequestRemount;
 
 interface FormChildrenRendererProps<
-  Schema extends JsonSchema,
+  Schema extends JSONSchema,
   Value extends AllowedValue,
 > {
   jsonSchema: Schema;
@@ -29,7 +29,7 @@ interface FormChildrenRendererProps<
 }
 
 const FormChildrenRendererInner = <
-  Schema extends JsonSchema,
+  Schema extends JSONSchema,
   Value extends AllowedValue = InferValueType<Schema>,
 >({
   jsonSchema,

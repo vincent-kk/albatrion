@@ -4,14 +4,14 @@ import type Ajv from 'ajv/dist/2020';
 import { JSONPointer as $ } from '@winglet/json/pointer';
 
 import type {
-  JsonSchema,
-  JsonSchemaError,
+  JSONSchema,
+  JSONSchemaError,
   ValidateFunction,
 } from '@/schema-form/types';
 
 export const createValidatorFactory =
   (ajv: Ajv) =>
-  (jsonSchema: JsonSchema): ValidateFunction => {
+  (jsonSchema: JSONSchema): ValidateFunction => {
     const validate = ajv.compile({
       ...jsonSchema,
       $async: true,
@@ -28,12 +28,12 @@ export const createValidatorFactory =
     };
   };
 
-const transformErrors = (errors: ErrorObject[]): JsonSchemaError[] => {
+const transformErrors = (errors: ErrorObject[]): JSONSchemaError[] => {
   if (!Array.isArray(errors)) return [];
-  const result = new Array<JsonSchemaError>(errors.length);
+  const result = new Array<JSONSchemaError>(errors.length);
   for (let index = 0; index < errors.length; index++) {
     const originalError = errors[index];
-    const transformedError: JsonSchemaError = {
+    const transformedError: JSONSchemaError = {
       dataPath: transformDataPath(originalError),
       keyword: originalError.keyword,
       message: originalError.message,

@@ -9,7 +9,7 @@ JSON Schema 처리를 위한 헬퍼 함수 모음. 스키마 추출, $ref 해석
 - TypeScript strict 모드
 - 각 기능은 독립 서브디렉토리에 위치하며 `index.ts`로 export
 - 순수 함수 형태로 구현 (부수 효과 없음)
-- `@winglet/json-schema/scanner`의 `JsonSchemaScanner`를 트리 순회에 활용
+- `@winglet/json-schema/scanner`의 `JSONSchemaScanner`를 트리 순회에 활용
 
 ## Boundaries
 

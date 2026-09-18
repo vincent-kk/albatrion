@@ -3,8 +3,8 @@ import { describe, expect, it, vi } from 'vitest';
 
 import { delay } from '@winglet/common-utils';
 
-import { nodeFromJsonSchema } from '@/schema-form/core';
-import type { JsonSchema } from '@/schema-form/types';
+import { nodeFromJSONSchema } from '@/schema-form/core';
+import type { JSONSchema } from '@/schema-form/types';
 
 import { NodeEventType, ValidationMode } from '../nodes';
 import type { ArrayNode } from '../nodes/ArrayNode';
@@ -15,7 +15,7 @@ import { createValidatorFactory } from './utils/createValidatorFactory';
 
 describe('ObjectNode', () => {
   it('객체 노드가 정상적으로 생성되어야 함', () => {
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       onChange: () => {},
       jsonSchema: {
         type: 'object',
@@ -37,7 +37,7 @@ describe('ObjectNode', () => {
   });
 
   it('객체 노드의 값이 정상적으로 설정되어야 함', async () => {
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       onChange: () => {},
       jsonSchema: {
         type: 'object',
@@ -62,7 +62,7 @@ describe('ObjectNode', () => {
   });
 
   it('객체 노드의 값이 정상적으로 설정되어야 함: terminal', async () => {
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       onChange: () => {},
       jsonSchema: {
         type: 'object',
@@ -88,7 +88,7 @@ describe('ObjectNode', () => {
   });
 
   it('객체 노드의 기본값이 정상적으로 설정되어야 함', async () => {
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       onChange: () => {},
       jsonSchema: {
         type: 'object',
@@ -111,7 +111,7 @@ describe('ObjectNode', () => {
   });
 
   it('객체 노드의 기본값이 정상적으로 설정되어야 함: terminal', async () => {
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       onChange: () => {},
       jsonSchema: {
         type: 'object',
@@ -135,7 +135,7 @@ describe('ObjectNode', () => {
   });
 
   it('객체 노드의 이벤트가 정상적으로 발생해야 함', async () => {
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       onChange: () => {},
       jsonSchema: {
         type: 'object',
@@ -187,7 +187,7 @@ describe('ObjectNode', () => {
   });
 
   it('객체 노드의 자식 노드 값이 정상적으로 설정되어야 함', async () => {
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       onChange: () => {},
       jsonSchema: {
         type: 'object',
@@ -222,7 +222,7 @@ describe('ObjectNode', () => {
   });
 
   it('객체 노드의 자식 노드 이벤트가 정상적으로 발생해야 함', async () => {
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       onChange: () => {},
       jsonSchema: {
         type: 'object',
@@ -276,7 +276,7 @@ describe('ObjectNode', () => {
         validateFormats: false,
       }),
     );
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       onChange: () => {},
       jsonSchema: {
         type: 'object',
@@ -327,7 +327,7 @@ describe('ObjectNode', () => {
   });
 
   it('객체 노드의 추가 속성이 허용되어야 함', async () => {
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       onChange: () => {},
       jsonSchema: {
         type: 'object',
@@ -366,7 +366,7 @@ describe('ObjectNode', () => {
         validateFormats: false,
       }),
     );
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       onChange: () => {},
       jsonSchema: {
         type: 'object',
@@ -406,7 +406,7 @@ describe('ObjectNode', () => {
         validateFormats: false,
       }),
     );
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       onChange: () => {},
       jsonSchema: {
         type: 'object',
@@ -508,7 +508,7 @@ describe('ObjectNode', () => {
   });
 
   it('객체 노드의 추가 속성 제한이 없으면 추가 속성이 허용되어야 함', async () => {
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       onChange: () => {},
       jsonSchema: {
         type: 'object',
@@ -566,9 +566,9 @@ describe('ObjectNode', () => {
           additionalProperties: false,
         },
       },
-    } satisfies JsonSchema;
+    } satisfies JSONSchema;
 
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       jsonSchema,
       onChange: () => {},
     });
@@ -655,10 +655,10 @@ describe('ObjectNode', () => {
         },
         title: { type: 'string' },
       },
-    } satisfies JsonSchema;
+    } satisfies JSONSchema;
 
     expect(() =>
-      nodeFromJsonSchema({
+      nodeFromJSONSchema({
         jsonSchema,
         onChange: () => {},
       }),
@@ -697,10 +697,10 @@ describe('ObjectNode', () => {
         },
         title: { type: 'string' },
       },
-    } satisfies JsonSchema;
+    } satisfies JSONSchema;
 
     expect(() =>
-      nodeFromJsonSchema({
+      nodeFromJSONSchema({
         jsonSchema,
         onChange: () => {},
       }),
@@ -709,7 +709,7 @@ describe('ObjectNode', () => {
 
   describe('극단적인 키를 사용한 ObjectNode 기능 테스트', () => {
     it('극단적인 키로 객체 노드의 값이 정상적으로 설정되어야 함', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: {
           type: 'object',
@@ -740,7 +740,7 @@ describe('ObjectNode', () => {
     });
 
     it('극단적인 키로 객체 노드의 기본값이 정상적으로 설정되어야 함', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: {
           type: 'object',
@@ -769,7 +769,7 @@ describe('ObjectNode', () => {
     });
 
     it('극단적인 키로 객체 노드의 자식 노드 값이 정상적으로 설정되어야 함', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: {
           type: 'object',
@@ -812,7 +812,7 @@ describe('ObjectNode', () => {
           validateFormats: false,
         }),
       );
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: {
           type: 'object',
@@ -868,7 +868,7 @@ describe('ObjectNode', () => {
     });
 
     it('극단적인 키로 객체 노드의 추가 속성이 허용되어야 함', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: {
           type: 'object',
@@ -903,7 +903,7 @@ describe('ObjectNode', () => {
     });
 
     it('극단적인 키로 객체 노드의 이벤트가 정상적으로 발생해야 함', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: {
           type: 'object',

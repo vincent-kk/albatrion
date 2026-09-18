@@ -17,7 +17,7 @@ import { useState } from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 
-import { Form, type JsonSchema } from '@/schema-form';
+import { Form, type JSONSchema } from '@/schema-form';
 
 describe('Nullable Form Scenarios - E2E Tests', () => {
   describe('Scenario 1: User Profile with Optional Fields', () => {
@@ -41,7 +41,7 @@ describe('Nullable Form Scenarios - E2E Tests', () => {
           },
         },
         required: ['name'],
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
       const TestComponent = () => {
         const [value, setValue] = useState<any>({});
@@ -108,7 +108,7 @@ describe('Nullable Form Scenarios - E2E Tests', () => {
           },
         },
         required: ['productName'],
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
       const TestComponent = () => {
         const [value, setValue] = useState<any>({});
@@ -165,7 +165,7 @@ describe('Nullable Form Scenarios - E2E Tests', () => {
             default: false,
           },
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
       const TestComponent = () => {
         const [value, setValue] = useState<any>({});
@@ -237,7 +237,7 @@ describe('Nullable Form Scenarios - E2E Tests', () => {
           },
         },
         required: ['user'],
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
       const TestComponent = () => {
         const [value, setValue] = useState<any>({});
@@ -287,7 +287,7 @@ describe('Nullable Form Scenarios - E2E Tests', () => {
             default: ['tag1', null, 'tag2'],
           },
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
       const TestComponent = () => {
         const [value, setValue] = useState<any>({});
@@ -337,7 +337,7 @@ describe('Nullable Form Scenarios - E2E Tests', () => {
           },
         },
         default: {},
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
       const TestComponent = () => {
         const [value, setValue] = useState<any>({});
@@ -436,7 +436,7 @@ describe('Nullable Form Scenarios - E2E Tests', () => {
             },
           },
         ],
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
       const TestComponent = () => {
         const [value, setValue] = useState<any>({});
@@ -497,7 +497,7 @@ describe('Nullable Form Scenarios - E2E Tests', () => {
           },
         },
         required: ['title', 'category'],
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
       const TestComponent = () => {
         const [value, setValue] = useState<any>({});
@@ -556,7 +556,7 @@ describe('Nullable Form Scenarios - E2E Tests', () => {
             default: null,
           },
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
       const TestComponent = () => {
         const [value, setValue] = useState<any>({});
@@ -627,7 +627,7 @@ describe('Nullable Form Scenarios - E2E Tests', () => {
             default: {},
           },
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
       const TestComponent = () => {
         const [value, setValue] = useState<any>({});
@@ -720,7 +720,7 @@ describe('Nullable Form Scenarios - E2E Tests', () => {
           },
         },
         required: ['personalInfo', 'experience'],
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
       const TestComponent = () => {
         const [value, setValue] = useState<any>({});
@@ -793,7 +793,7 @@ describe('Nullable Form Scenarios - E2E Tests', () => {
           },
         },
         default: {},
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
       const TestComponent = () => {
         const [value, setValue] = useState<any>({});

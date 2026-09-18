@@ -27,7 +27,7 @@ import { validateRange } from './utils/validateRange';
  * @param base - The base array schema to modify and return
  * @param source - The source array schema to intersect with base
  * @returns The modified base schema with intersected properties
- * @throws {JsonSchemaError} When constraints create invalid ranges or conflicting values
+ * @throws {JSONSchemaError} When constraints create invalid ranges or conflicting values
  */
 export const intersectArraySchema = (
   base: ArraySchema,

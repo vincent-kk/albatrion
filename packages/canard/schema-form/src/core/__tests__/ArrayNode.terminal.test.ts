@@ -3,7 +3,7 @@ import { describe, expect, it, vi } from 'vitest';
 
 import { delay } from '@winglet/common-utils';
 
-import { nodeFromJsonSchema } from '@/schema-form/core';
+import { nodeFromJSONSchema } from '@/schema-form/core';
 
 import { NodeEventType, ValidationMode } from '../nodes';
 import type { ArrayNode } from '../nodes/ArrayNode';
@@ -11,7 +11,7 @@ import { createValidatorFactory } from './utils/createValidatorFactory';
 
 describe('ArrayNode terminal functionality', () => {
   it('배열 터미널 노드가 자식 노드 없이 배열 값을 처리해야 함', async () => {
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       onChange: () => {},
       jsonSchema: {
         type: 'object',
@@ -46,7 +46,7 @@ describe('ArrayNode terminal functionality', () => {
   });
 
   it('터미널 배열 노드가 다양한 타입의 아이템을 처리해야 함', async () => {
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       onChange: () => {},
       jsonSchema: {
         type: 'object',
@@ -71,7 +71,7 @@ describe('ArrayNode terminal functionality', () => {
   });
 
   it('터미널 배열 노드가 불린 타입 아이템을 처리해야 함', async () => {
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       onChange: () => {},
       jsonSchema: {
         type: 'object',
@@ -96,7 +96,7 @@ describe('ArrayNode terminal functionality', () => {
   });
 
   it('터미널 배열 노드에서 자식 노드에 접근하지 않아야 함', async () => {
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       onChange: () => {},
       jsonSchema: {
         type: 'object',
@@ -123,7 +123,7 @@ describe('ArrayNode terminal functionality', () => {
   it('터미널 배열 노드의 onChange 이벤트가 정상적으로 전파되어야 함', async () => {
     const mockOnChange = vi.fn();
 
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       onChange: mockOnChange,
       jsonSchema: {
         type: 'object',
@@ -155,7 +155,7 @@ describe('ArrayNode terminal functionality', () => {
   });
 
   it('터미널 배열 노드의 이벤트가 정상적으로 발생해야 함', async () => {
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       onChange: () => {},
       jsonSchema: {
         type: 'object',
@@ -213,7 +213,7 @@ describe('ArrayNode terminal functionality', () => {
       }),
     );
 
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       onChange: () => {},
       jsonSchema: {
         type: 'object',
@@ -254,7 +254,7 @@ describe('ArrayNode terminal functionality', () => {
   });
 
   it('터미널 배열과 nullable이 함께 동작해야 함', async () => {
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       onChange: () => {},
       jsonSchema: {
         type: 'object',
@@ -290,7 +290,7 @@ describe('ArrayNode terminal functionality', () => {
   });
 
   it('터미널 배열 노드가 복잡한 아이템 타입을 처리해야 함', async () => {
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       onChange: () => {},
       jsonSchema: {
         type: 'object',
@@ -329,7 +329,7 @@ describe('ArrayNode terminal functionality', () => {
   });
 
   it('터미널 배열 노드의 기본값이 정상적으로 설정되어야 함', async () => {
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       onChange: () => {},
       jsonSchema: {
         type: 'object',
@@ -353,7 +353,7 @@ describe('ArrayNode terminal functionality', () => {
   });
 
   it('터미널 배열 노드의 dirty 및 touched 상태가 정상적으로 관리되어야 함', async () => {
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       onChange: () => {},
       jsonSchema: {
         type: 'object',
@@ -405,7 +405,7 @@ describe('ArrayNode terminal functionality', () => {
   });
 
   it('터미널 배열 노드가 동적으로 추가/제거를 처리해야 함', async () => {
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       onChange: () => {},
       jsonSchema: {
         type: 'object',
@@ -453,7 +453,7 @@ describe('ArrayNode terminal functionality', () => {
       }),
     );
 
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       onChange: () => {},
       jsonSchema: {
         type: 'object',

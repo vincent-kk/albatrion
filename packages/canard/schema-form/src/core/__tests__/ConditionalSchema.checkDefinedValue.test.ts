@@ -2,8 +2,8 @@ import { describe, expect, it } from 'vitest';
 
 import { delay } from '@winglet/common-utils';
 
-import { nodeFromJsonSchema } from '@/schema-form/core';
-import type { JsonSchema } from '@/schema-form/types';
+import { nodeFromJSONSchema } from '@/schema-form/core';
+import type { JSONSchema } from '@/schema-form/types';
 
 import { checkDefinedValue } from '../nodes/AbstractNode/utils';
 import type { ArrayNode } from '../nodes/ArrayNode';
@@ -36,7 +36,7 @@ describe('ConditionalSchema - checkDefinedValue with Reset Logic', () => {
      * Previous code: {} !== undefined → true → empty object is used as value ❌
      * Current code: checkDefinedValue({}) → false → fallbackValue is used ✅
      */
-    const createObjectSchema = (): JsonSchema => ({
+    const createObjectSchema = (): JSONSchema => ({
       type: 'object',
       properties: {
         selector: {
@@ -76,7 +76,7 @@ describe('ConditionalSchema - checkDefinedValue with Reset Logic', () => {
 
     it('should use fallbackValue when defaultValue is empty object (direct __reset__ call)', async () => {
       const schema = createObjectSchema();
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: schema,
       }) as ObjectNode;
@@ -127,7 +127,7 @@ describe('ConditionalSchema - checkDefinedValue with Reset Logic', () => {
     });
 
     it('should use defaultValue when it is explicitly defined (non-empty)', async () => {
-      const schemaWithDefault: JsonSchema = {
+      const schemaWithDefault: JSONSchema = {
         type: 'object',
         properties: {
           selector: {
@@ -165,7 +165,7 @@ describe('ConditionalSchema - checkDefinedValue with Reset Logic', () => {
         ],
       };
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: schemaWithDefault,
       }) as ObjectNode;
@@ -204,7 +204,7 @@ describe('ConditionalSchema - checkDefinedValue with Reset Logic', () => {
     });
 
     it('should use fallbackValue when defaultValue is empty array', async () => {
-      const schemaWithArray: JsonSchema = {
+      const schemaWithArray: JSONSchema = {
         type: 'object',
         properties: {
           selector: {
@@ -236,7 +236,7 @@ describe('ConditionalSchema - checkDefinedValue with Reset Logic', () => {
         ],
       };
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: schemaWithArray,
       }) as ObjectNode;
@@ -277,7 +277,7 @@ describe('ConditionalSchema - checkDefinedValue with Reset Logic', () => {
     });
 
     it('should use null defaultValue when explicitly defined (null is defined)', async () => {
-      const schemaWithNullDefault: JsonSchema = {
+      const schemaWithNullDefault: JSONSchema = {
         type: 'object',
         properties: {
           selector: {
@@ -314,7 +314,7 @@ describe('ConditionalSchema - checkDefinedValue with Reset Logic', () => {
         ],
       };
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: schemaWithNullDefault,
       }) as ObjectNode;
@@ -356,7 +356,7 @@ describe('ConditionalSchema - checkDefinedValue with Reset Logic', () => {
   describe('Contrast between empty object and explicit empty object default', () => {
     it('should handle explicit empty object default as undefined (not defined)', async () => {
       // Edge case: what if someone explicitly sets default: {}?
-      const schemaWithExplicitEmpty: JsonSchema = {
+      const schemaWithExplicitEmpty: JSONSchema = {
         type: 'object',
         properties: {
           selector: {
@@ -392,7 +392,7 @@ describe('ConditionalSchema - checkDefinedValue with Reset Logic', () => {
         ],
       };
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: schemaWithExplicitEmpty,
       }) as ObjectNode;
@@ -462,7 +462,7 @@ describe('ConditionalSchema - checkDefinedValue with Reset Logic', () => {
    * Tests various combinations of reset options
    */
   describe('__reset__ Option Combinations', () => {
-    const createTestSchema = (): JsonSchema => ({
+    const createTestSchema = (): JSONSchema => ({
       type: 'object',
       properties: {
         selector: { type: 'string', enum: ['A', 'B'], default: 'A' },
@@ -490,7 +490,7 @@ describe('ConditionalSchema - checkDefinedValue with Reset Logic', () => {
     });
 
     it('should handle preferLatest=true with checkDefaultValueFirst=false', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: createTestSchema(),
       }) as ObjectNode;
@@ -519,7 +519,7 @@ describe('ConditionalSchema - checkDefinedValue with Reset Logic', () => {
     });
 
     it('should handle preferLatest=false (always uses defaultValue regardless of other options)', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: createTestSchema(),
       }) as ObjectNode;
@@ -549,7 +549,7 @@ describe('ConditionalSchema - checkDefinedValue with Reset Logic', () => {
     });
 
     it('should handle preferLatest=false with checkDefaultValueFirst=false (still uses defaultValue)', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: createTestSchema(),
       }) as ObjectNode;
@@ -576,7 +576,7 @@ describe('ConditionalSchema - checkDefinedValue with Reset Logic', () => {
     });
 
     it('should handle all options true with defined defaultValue', async () => {
-      const schemaWithDefault: JsonSchema = {
+      const schemaWithDefault: JSONSchema = {
         type: 'object',
         properties: {
           selector: { type: 'string', default: 'A' },
@@ -604,7 +604,7 @@ describe('ConditionalSchema - checkDefinedValue with Reset Logic', () => {
         ],
       };
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: schemaWithDefault,
       }) as ObjectNode;
@@ -638,7 +638,7 @@ describe('ConditionalSchema - checkDefinedValue with Reset Logic', () => {
    */
   describe('Sequential Reset Calls', () => {
     it('should maintain state consistency after multiple reset calls with preferLatest=true', async () => {
-      const schema: JsonSchema = {
+      const schema: JSONSchema = {
         type: 'object',
         properties: {
           selector: { type: 'string', default: 'A' },
@@ -659,7 +659,7 @@ describe('ConditionalSchema - checkDefinedValue with Reset Logic', () => {
         ],
       };
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: schema,
       }) as ObjectNode;
@@ -703,14 +703,14 @@ describe('ConditionalSchema - checkDefinedValue with Reset Logic', () => {
     });
 
     it('should handle reset after setValue operations', async () => {
-      const schema: JsonSchema = {
+      const schema: JSONSchema = {
         type: 'object',
         properties: {
           data: { type: 'string', default: 'initial' },
         },
       };
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: schema,
       }) as ObjectNode;
@@ -752,7 +752,7 @@ describe('ConditionalSchema - checkDefinedValue with Reset Logic', () => {
    */
   describe('Nested Conditional Schema', () => {
     it('should handle nested oneOf reset at deepest level', async () => {
-      const nestedSchema: JsonSchema = {
+      const nestedSchema: JSONSchema = {
         type: 'object',
         properties: {
           level1: { type: 'string', enum: ['A', 'B'], default: 'A' },
@@ -773,7 +773,7 @@ describe('ConditionalSchema - checkDefinedValue with Reset Logic', () => {
         ],
       };
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: nestedSchema,
       }) as ObjectNode;
@@ -803,7 +803,7 @@ describe('ConditionalSchema - checkDefinedValue with Reset Logic', () => {
     });
 
     it('should handle parent level reset using defaultValue', async () => {
-      const schema: JsonSchema = {
+      const schema: JSONSchema = {
         type: 'object',
         properties: {
           selector: { type: 'string', default: 'A' },
@@ -832,7 +832,7 @@ describe('ConditionalSchema - checkDefinedValue with Reset Logic', () => {
         ],
       };
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: schema,
       }) as ObjectNode;
@@ -871,7 +871,7 @@ describe('ConditionalSchema - checkDefinedValue with Reset Logic', () => {
    */
   describe('anyOf Reset Behavior', () => {
     it('should handle anyOf with multiple active branches', async () => {
-      const anyOfSchema: JsonSchema = {
+      const anyOfSchema: JSONSchema = {
         type: 'object',
         properties: {
           flag1: { type: 'boolean', default: true },
@@ -893,7 +893,7 @@ describe('ConditionalSchema - checkDefinedValue with Reset Logic', () => {
         ],
       };
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: anyOfSchema,
       }) as ObjectNode;
@@ -933,7 +933,7 @@ describe('ConditionalSchema - checkDefinedValue with Reset Logic', () => {
     });
 
     it('should handle anyOf field appearing and disappearing', async () => {
-      const anyOfSchema: JsonSchema = {
+      const anyOfSchema: JSONSchema = {
         type: 'object',
         properties: {
           toggle: { type: 'boolean', default: false },
@@ -948,7 +948,7 @@ describe('ConditionalSchema - checkDefinedValue with Reset Logic', () => {
         ],
       };
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: anyOfSchema,
       }) as ObjectNode;
@@ -985,7 +985,7 @@ describe('ConditionalSchema - checkDefinedValue with Reset Logic', () => {
    */
   describe('Array Reset with checkDefinedValue', () => {
     it('should use fallbackValue for array with empty default when preferLatest=true', async () => {
-      const schema: JsonSchema = {
+      const schema: JSONSchema = {
         type: 'object',
         properties: {
           items: {
@@ -995,7 +995,7 @@ describe('ConditionalSchema - checkDefinedValue with Reset Logic', () => {
         },
       };
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: schema,
       }) as ObjectNode;
@@ -1022,7 +1022,7 @@ describe('ConditionalSchema - checkDefinedValue with Reset Logic', () => {
     });
 
     it('should use defaultValue for array with non-empty default when preferLatest=true', async () => {
-      const schema: JsonSchema = {
+      const schema: JSONSchema = {
         type: 'object',
         properties: {
           items: {
@@ -1033,7 +1033,7 @@ describe('ConditionalSchema - checkDefinedValue with Reset Logic', () => {
         },
       };
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: schema,
       }) as ObjectNode;
@@ -1059,7 +1059,7 @@ describe('ConditionalSchema - checkDefinedValue with Reset Logic', () => {
     });
 
     it('should use defaultValue when preferLatest=false (regardless of fallback)', async () => {
-      const schema: JsonSchema = {
+      const schema: JSONSchema = {
         type: 'object',
         properties: {
           items: {
@@ -1069,7 +1069,7 @@ describe('ConditionalSchema - checkDefinedValue with Reset Logic', () => {
         },
       };
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: schema,
       }) as ObjectNode;

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 
-import { Form, type FormHandle, type JsonSchema, SetValueOption } from '../src';
+import { Form, type FormHandle, type JSONSchema, SetValueOption } from '../src';
 import StoryLayout from './components/StoryLayout';
 
 export default {
@@ -33,7 +33,7 @@ export const BasicDerivedValue = () => {
         },
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>();
 
@@ -70,7 +70,7 @@ export const StringConcatenation = () => {
         },
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>();
 
@@ -101,7 +101,7 @@ export const ConditionalDerivedValue = () => {
         },
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>();
 
@@ -149,7 +149,7 @@ export const ComplexCalculation = () => {
         },
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>();
 
@@ -184,7 +184,7 @@ export const NullCoalescing = () => {
         },
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>();
 
@@ -227,7 +227,7 @@ export const ParentPathReference = () => {
         },
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>();
 
@@ -275,7 +275,7 @@ export const AbsolutePathReference = () => {
         },
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>();
 
@@ -309,7 +309,7 @@ export const AliasValueSyntax = () => {
         '&derived': '../a + ../b',
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>();
 
@@ -348,7 +348,7 @@ export const DangerSelfReference = () => {
         },
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>();
 
@@ -399,7 +399,7 @@ export const DangerCircularReference = () => {
         },
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>();
 
@@ -452,7 +452,7 @@ export const RealCircularReferenceConverging = () => {
         },
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>();
 
@@ -484,7 +484,7 @@ export const RealCircularReferenceConverging = () => {
  */
 export const RealCircularReferenceDiverging = () => {
   // 🛡️ 무한 루프 감지 메커니즘이 활성화되어 있어 안전합니다.
-  // 100회 배치 초과 시 JsonSchemaError가 발생합니다.
+  // 100회 배치 초과 시 JSONSchemaError가 발생합니다.
   const jsonSchema = {
     type: 'object',
     properties: {
@@ -505,7 +505,7 @@ export const RealCircularReferenceDiverging = () => {
         },
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>();
   const [error, setError] = useState<string | null>(null);
@@ -533,7 +533,7 @@ export const RealCircularReferenceDiverging = () => {
         이 수식은 값이 계속 증가하여 무한 루프가 발생하지만,
         <br />
         <strong>
-          100회 배치 초과 시 JsonSchemaError가 발생하여 보호됩니다.
+          100회 배치 초과 시 JSONSchemaError가 발생하여 보호됩니다.
         </strong>
         <br />
         <br />
@@ -585,7 +585,7 @@ export const SelfReferenceIdentity = () => {
         },
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>();
 
@@ -625,7 +625,7 @@ export const ArrayLengthCalculation = () => {
         },
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>();
 
@@ -667,7 +667,7 @@ export const OptionalChaining = () => {
         },
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>();
 
@@ -720,7 +720,7 @@ export const ConditionalUpdateWithSelf = () => {
         },
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>();
 
@@ -825,7 +825,7 @@ export const DerivedValueWithOneOf = () => {
         ],
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>();
 
@@ -852,7 +852,7 @@ export const DerivedValueWithOneOf = () => {
  * 각 분기에서 derivedValue가 독립적으로 계산됩니다.
  */
 export const DerivedValueWithAnyOf = () => {
-  const jsonSchema: JsonSchema = {
+  const jsonSchema: JSONSchema = {
     type: 'object',
     properties: {
       baseValue: {
@@ -956,7 +956,7 @@ export const DerivedValueWithActive = () => {
         },
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>();
 
@@ -991,7 +991,7 @@ export const DerivedValueWithActive = () => {
  * - derived는 외부 필드만 참조 (oneOf 분기 내부로의 역참조 없음)
  */
 export const SafeOneOfWithDerivedCondition = () => {
-  const jsonSchema: JsonSchema = {
+  const jsonSchema: JSONSchema = {
     type: 'object',
     properties: {
       mode: {
@@ -1079,7 +1079,7 @@ export const SafeOneOfWithDerivedCondition = () => {
  * - derived 값과 if 조건을 분리하여 직접적인 순환을 피함
  */
 export const DangerOneOfIfDependsOnDerived = () => {
-  const jsonSchema: JsonSchema = {
+  const jsonSchema: JSONSchema = {
     type: 'object',
     properties: {
       price: {
@@ -1204,7 +1204,7 @@ export const DangerOneOfIfDependsOnDerived = () => {
  * - 분기 간 상호 참조 없음
  */
 export const SafeAnyOfIndependentDerived = () => {
-  const jsonSchema: JsonSchema = {
+  const jsonSchema: JSONSchema = {
     type: 'object',
     properties: {
       baseValue: {
@@ -1307,7 +1307,7 @@ export const SafeAnyOfIndependentDerived = () => {
  * - derived는 active와 무관한 값만 참조
  */
 export const SafeActiveWithDerived = () => {
-  const jsonSchema: JsonSchema = {
+  const jsonSchema: JSONSchema = {
     type: 'object',
     properties: {
       enableFeature: {
@@ -1363,7 +1363,7 @@ export const SafeActiveWithDerived = () => {
  * 아래는 회피 방법을 보여줍니다.
  */
 export const DangerOneOfBranchAffectsDerived = () => {
-  const jsonSchema: JsonSchema = {
+  const jsonSchema: JSONSchema = {
     type: 'object',
     properties: {
       userChoice: {
@@ -1455,7 +1455,7 @@ export const DangerOneOfBranchAffectsDerived = () => {
  * 이 예시는 안전한 derived 체인을 보여줍니다.
  */
 export const SafeDerivedChainWithOneOf = () => {
-  const jsonSchema: JsonSchema = {
+  const jsonSchema: JSONSchema = {
     type: 'object',
     properties: {
       input: {
@@ -1561,12 +1561,12 @@ export const SafeDerivedChainWithOneOf = () => {
  * 🔴 실제 무한 루프 시뮬레이션 (무한 루프 감지 활성화)
  *
  * 이 케이스는 실제로 무한 루프를 발생시키는 패턴을 보여줍니다.
- * 🛡️ 100회 배치 초과 시 JsonSchemaError가 발생하여 보호됩니다.
+ * 🛡️ 100회 배치 초과 시 JSONSchemaError가 발생하여 보호됩니다.
  */
 export const DangerInfiniteLoopSimulation = () => {
   // 🛡️ 무한 루프 감지 메커니즘이 활성화되어 있어 안전합니다.
   // oneOf if가 derived를 참조하고, 분기 전환이 derived를 다시 변경하는 패턴
-  const jsonSchema: JsonSchema = {
+  const jsonSchema: JSONSchema = {
     type: 'object',
     properties: {
       // threshold는 conditional.value에 의존하는 derived
@@ -1676,7 +1676,7 @@ conditional: {
           <li>threshold≥50 → 두 번째 분기로 전환</li>
           <li>value=20 → threshold=40</li>
           <li>threshold{'<'}50 → 첫 번째 분기로 전환</li>
-          <li>무한 반복! → 100회 초과 시 JsonSchemaError 발생</li>
+          <li>무한 반복! → 100회 초과 시 JSONSchemaError 발생</li>
         </ol>
         {error && (
           <pre
@@ -1711,7 +1711,7 @@ conditional: {
  * - y + q: baseValue * 5
  */
 export const NestedOneOfWithDerived = () => {
-  const jsonSchema: JsonSchema = {
+  const jsonSchema: JSONSchema = {
     type: 'object',
     properties: {
       level1Choice: {
@@ -1912,7 +1912,7 @@ export const NestedOneOfWithDerived = () => {
  * 3. baseValue=200으로 변경: result=650, doubleResult=1300
  */
 export const OneOfNestedDerivedValueTest = () => {
-  const jsonSchema: JsonSchema = {
+  const jsonSchema: JSONSchema = {
     type: 'object',
     properties: {
       mode: {
@@ -2172,7 +2172,7 @@ export const InfiniteLoopPreventionGuide = () => {
  * 🔴 발산하는 순환 참조 테스트 (무한 루프 감지 활성화)
  *
  * A = B + 1, B = A + 1 형태의 발산하는 순환 참조입니다.
- * 🛡️ 100회 배치 초과 시 JsonSchemaError가 발생하여 보호됩니다.
+ * 🛡️ 100회 배치 초과 시 JSONSchemaError가 발생하여 보호됩니다.
  */
 export const CircularReferenceDivergingWithProtection = () => {
   // 🛡️ 무한 루프 감지 메커니즘이 활성화되어 있어 안전합니다.
@@ -2196,7 +2196,7 @@ export const CircularReferenceDivergingWithProtection = () => {
         },
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>();
   const [error, setError] = useState<string | null>(null);
@@ -2255,7 +2255,7 @@ export const CircularReferenceDivergingWithProtection = () => {
           <li>B = A + 1 = 2</li>
           <li>A = B + 1 = 3</li>
           <li>B = A + 1 = 4</li>
-          <li>... → 100회 배치 초과 시 JsonSchemaError 발생!</li>
+          <li>... → 100회 배치 초과 시 JSONSchemaError 발생!</li>
         </ol>
         {error && (
           <pre
@@ -2323,7 +2323,7 @@ export const ConcurrentDerivedUpdates = () => {
         },
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>();
 
@@ -2452,7 +2452,7 @@ export const ChainedDerivedValues = () => {
         },
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>();
 
@@ -2542,7 +2542,7 @@ final = step3 / 10 = 14`}
  * ⚡ 3노드 순환 참조 테스트 (무한 루프 감지 활성화)
  *
  * A → B → C → A 형태의 3노드 순환 참조입니다.
- * 🛡️ 100회 배치 초과 시 JsonSchemaError가 발생하여 보호됩니다.
+ * 🛡️ 100회 배치 초과 시 JSONSchemaError가 발생하여 보호됩니다.
  */
 export const ThreeNodeCircularReference = () => {
   // 🛡️ 무한 루프 감지 메커니즘이 활성화되어 있어 안전합니다.
@@ -2568,7 +2568,7 @@ export const ThreeNodeCircularReference = () => {
         computed: { derived: '(../b || 0) + 1' },
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>();
   const [error, setError] = useState<string | null>(null);
@@ -2614,7 +2614,7 @@ c = b + 1
 4. c = b + 1 = 3
 5. a = c + 1 = 4
 6. b = a + 1 = 5
-7. ... → 100회 배치 초과 시 JsonSchemaError 발생!`}
+7. ... → 100회 배치 초과 시 JSONSchemaError 발생!`}
         </pre>
         {error && (
           <pre
@@ -2689,7 +2689,7 @@ export const FormHandleSetValueWithIfThenElseAndDerived = () => {
     then: {
       required: ['openingDate'],
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const formHandle = useRef<FormHandle<typeof jsonSchema>>(null);
   const [value, setValue] = useState<Record<string, unknown>>();
@@ -2803,7 +2803,7 @@ export const FormHandleSetValueWithOneOfAndDerived = () => {
         },
       },
     ],
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const formHandle = useRef<FormHandle<typeof jsonSchema>>(null);
   const [value, setValue] = useState<Record<string, unknown>>();
@@ -2926,7 +2926,7 @@ export const FormHandleSetValueWithChainedDerived = () => {
         },
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const formHandle = useRef<FormHandle<typeof jsonSchema>>(null);
   const [value, setValue] = useState<Record<string, unknown>>();
@@ -3047,7 +3047,7 @@ export const FormHandleSetValueWithMultipleDerived = () => {
         },
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const formHandle = useRef<FormHandle<typeof jsonSchema>>(null);
   const [value, setValue] = useState<Record<string, unknown>>();

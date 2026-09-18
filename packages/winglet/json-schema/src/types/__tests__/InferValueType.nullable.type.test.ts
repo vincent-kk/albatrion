@@ -1,6 +1,6 @@
 import { describe, expectTypeOf, it } from 'vitest';
 
-import type { JsonSchema } from '../jsonSchema';
+import type { JSONSchema } from '../jsonSchema';
 import type {
   ArrayValue,
   BooleanValue,
@@ -116,7 +116,7 @@ describe('InferValueType — deprecated nullable 키워드', () => {
       >().toEqualTypeOf<StringValue>();
     });
 
-    it('satisfies JsonSchema 로 선언한 스키마에서도 nullable 이 유지된다', () => {
+    it('satisfies JSONSchema 로 선언한 스키마에서도 nullable 이 유지된다', () => {
       const _schema = {
         type: 'object',
         additionalProperties: false,
@@ -128,7 +128,7 @@ describe('InferValueType — deprecated nullable 키워드', () => {
             properties: { firstName: { type: 'string', nullable: true } },
           },
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
       expectTypeOf<InferValueType<typeof _schema>>().toEqualTypeOf<{
         personalInfo?: { firstName?: StringValue | NullValue } | NullValue;
       }>();

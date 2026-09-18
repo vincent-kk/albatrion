@@ -1,7 +1,7 @@
 import Ajv from 'ajv/dist/2020';
 import { describe, expect, it, vi } from 'vitest';
 
-import { nodeFromJsonSchema } from '@/schema-form/core';
+import { nodeFromJSONSchema } from '@/schema-form/core';
 
 import type { StringNode } from '../nodes/StringNode';
 import {
@@ -23,7 +23,7 @@ const wait = (delay = 5) => {
 
 describe('AbstractNode', () => {
   it('node.find', async () => {
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       jsonSchema: {
         type: 'object',
         properties: {
@@ -81,7 +81,7 @@ describe('AbstractNode', () => {
         validateFormats: false,
       }),
     );
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       jsonSchema: {
         type: 'object',
         properties: {
@@ -127,7 +127,7 @@ describe('AbstractNode', () => {
     });
 
     const validatorFactory = createValidatorFactory(ajv);
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       jsonSchema: {
         type: 'object',
         properties: {
@@ -153,7 +153,7 @@ describe('AbstractNode', () => {
   });
 
   it('setState, getState', async () => {
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       jsonSchema: {
         type: 'object',
         properties: {
@@ -179,7 +179,7 @@ describe('AbstractNode', () => {
 
   describe('setState - 이벤트 발생', () => {
     it('setState 호출 시 UpdateState 이벤트가 발생해야 함', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: {
           type: 'object',
           properties: {
@@ -206,7 +206,7 @@ describe('AbstractNode', () => {
     });
 
     it('동일한 값 설정 시 이벤트가 발생하지 않아야 함 (idle 최적화)', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: {
           type: 'object',
           properties: {
@@ -236,7 +236,7 @@ describe('AbstractNode', () => {
     });
 
     it('NodeState enum을 사용하여 상태를 설정할 수 있어야 함', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: {
           type: 'object',
           properties: {
@@ -262,7 +262,7 @@ describe('AbstractNode', () => {
     });
 
     it('여러 키를 동시에 업데이트할 수 있어야 함', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: {
           type: 'object',
           properties: {
@@ -299,7 +299,7 @@ describe('AbstractNode', () => {
     });
 
     it('빈 객체를 전달해도 변경이 없으면 이벤트가 발생하지 않아야 함', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: {
           type: 'object',
           properties: {
@@ -324,7 +324,7 @@ describe('AbstractNode', () => {
     });
 
     it('실제 변경이 있을 때만 이벤트가 발생하고, 새로운 객체 참조를 가져야 함', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: {
           type: 'object',
           properties: {
@@ -375,7 +375,7 @@ describe('AbstractNode', () => {
     });
 
     it('undefined로 키를 삭제할 때 실제 삭제가 있어야만 이벤트가 발생해야 함', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: {
           type: 'object',
           properties: {
@@ -417,7 +417,7 @@ describe('AbstractNode', () => {
 
   it('setValue, applyValue', async () => {
     const onChange = vi.fn();
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       jsonSchema: {
         type: 'object',
         properties: {
@@ -467,7 +467,7 @@ describe('AbstractNode', () => {
     });
 
     const validatorFactory = createValidatorFactory(ajv);
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       jsonSchema: {
         type: 'object',
         properties: {
@@ -548,7 +548,7 @@ describe('AbstractNode', () => {
     }
   });
   it('event queue for node', async () => {
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       jsonSchema: {
         type: 'object',
         properties: {

@@ -4,7 +4,7 @@
 [![Javascript](https://img.shields.io/badge/javascript-✔-yellow.svg)]()
 [![React](https://img.shields.io/badge/react-✔-61DAFB.svg)]()
 [![Material-UI](https://img.shields.io/badge/MUI-✔-007FFF.svg)]()
-[![Json Schema Form Plugin](https://img.shields.io/badge/JsonSchemaForm-plugin-pink.svg)]()
+[![JSON Schema Form Plugin](https://img.shields.io/badge/JSONSchemaForm-plugin-pink.svg)]()
 
 ---
 

@@ -2,8 +2,8 @@ import { describe, expect, it } from 'vitest';
 
 import { delay } from '@winglet/common-utils';
 
-import { contextNodeFactory, nodeFromJsonSchema } from '@/schema-form/core';
-import type { JsonSchema } from '@/schema-form/types';
+import { contextNodeFactory, nodeFromJSONSchema } from '@/schema-form/core';
+import type { JSONSchema } from '@/schema-form/types';
 
 import type { ArrayNode } from '../nodes/ArrayNode';
 import type { NumberNode } from '../nodes/NumberNode';
@@ -19,9 +19,9 @@ describe('AbstractNode.findAll', () => {
           name: { type: 'string', default: 'test' },
           age: { type: 'number', default: 25 },
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema,
         onChange: () => {},
       }) as ObjectNode;
@@ -45,9 +45,9 @@ describe('AbstractNode.findAll', () => {
         properties: {
           name: { type: 'string' },
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema,
         onChange: () => {},
       }) as ObjectNode;
@@ -75,9 +75,9 @@ describe('AbstractNode.findAll', () => {
             },
           },
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema,
         onChange: () => {},
       }) as ObjectNode;
@@ -96,9 +96,9 @@ describe('AbstractNode.findAll', () => {
         properties: {
           name: { type: 'string' },
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema,
         onChange: () => {},
       }) as ObjectNode;
@@ -120,9 +120,9 @@ describe('AbstractNode.findAll', () => {
             },
           },
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema,
         onChange: () => {},
       }) as ObjectNode;
@@ -161,9 +161,9 @@ describe('AbstractNode.findAll', () => {
             },
           },
         ],
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema,
         onChange: () => {},
       }) as ObjectNode;
@@ -210,9 +210,9 @@ describe('AbstractNode.findAll', () => {
             },
           },
         ],
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema,
         onChange: () => {},
       }) as ObjectNode;
@@ -256,9 +256,9 @@ describe('AbstractNode.findAll', () => {
             },
           },
         ],
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema,
         onChange: () => {},
       }) as ObjectNode;
@@ -314,9 +314,9 @@ describe('AbstractNode.findAll', () => {
             ],
           },
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema,
         onChange: () => {},
       }) as ObjectNode;
@@ -397,9 +397,9 @@ describe('AbstractNode.findAll', () => {
             ],
           },
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema,
         onChange: () => {},
       }) as ObjectNode;
@@ -443,9 +443,9 @@ describe('AbstractNode.findAll', () => {
           },
           sibling: { type: 'string', default: 'sibling-value' },
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema,
         onChange: () => {},
       }) as ObjectNode;
@@ -471,9 +471,9 @@ describe('AbstractNode.findAll', () => {
             },
           },
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema,
         onChange: () => {},
       }) as ObjectNode;
@@ -498,9 +498,9 @@ describe('AbstractNode.findAll', () => {
             },
           },
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema,
         onChange: () => {},
       }) as ObjectNode;
@@ -545,9 +545,9 @@ describe('AbstractNode.findAll', () => {
             },
           },
         ],
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema,
         onChange: () => {},
       }) as ObjectNode;
@@ -587,9 +587,9 @@ describe('AbstractNode.findAll', () => {
             ],
           },
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema,
         onChange: () => {},
       }) as ObjectNode;
@@ -644,9 +644,9 @@ describe('AbstractNode.findAll', () => {
             default: [{ type: 'text' }],
           },
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema,
         onChange: () => {},
       }) as ObjectNode;
@@ -692,9 +692,9 @@ describe('AbstractNode.findAll', () => {
             },
           },
         ],
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema,
         onChange: () => {},
       }) as ObjectNode;
@@ -736,9 +736,9 @@ describe('AbstractNode.findAll', () => {
             },
           },
         ],
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema,
         onChange: () => {},
       }) as ObjectNode;
@@ -805,9 +805,9 @@ describe('AbstractNode.findAll', () => {
             },
           },
         ],
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema,
         onChange: () => {},
       }) as ObjectNode;
@@ -839,9 +839,9 @@ describe('AbstractNode.findAll', () => {
         properties: {
           data: { type: 'string' },
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema,
         onChange: () => {},
         contextNode: contextNode,
@@ -860,9 +860,9 @@ describe('AbstractNode.findAll', () => {
         properties: {
           data: { type: 'string' },
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema,
         onChange: () => {},
       }) as ObjectNode;
@@ -886,9 +886,9 @@ describe('AbstractNode.findAll', () => {
             },
           },
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema,
         onChange: () => {},
       }) as ObjectNode;
@@ -908,9 +908,9 @@ describe('AbstractNode.findAll', () => {
         properties: {
           data: { type: 'string' },
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema,
         onChange: () => {},
       }) as ObjectNode;
@@ -932,9 +932,9 @@ describe('AbstractNode.findAll', () => {
           age: { type: 'number', default: 25 },
           active: { type: 'boolean', default: true },
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema,
         onChange: () => {},
       }) as ObjectNode;
@@ -967,9 +967,9 @@ describe('AbstractNode.findAll', () => {
             },
           },
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema,
         onChange: () => {},
       }) as ObjectNode;
@@ -1005,9 +1005,9 @@ describe('AbstractNode.findAll', () => {
             ],
           },
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema,
         onChange: () => {},
       }) as ObjectNode;
@@ -1066,9 +1066,9 @@ describe('AbstractNode.findAll', () => {
             },
           },
         ],
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema,
         onChange: () => {},
       }) as ObjectNode;
@@ -1121,9 +1121,9 @@ describe('AbstractNode.findAll', () => {
             },
           },
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema,
         onChange: () => {},
       }) as ObjectNode;
@@ -1175,9 +1175,9 @@ describe('AbstractNode.findAll', () => {
             },
           },
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema,
         onChange: () => {},
       }) as ObjectNode;
@@ -1216,9 +1216,9 @@ describe('AbstractNode.findAll', () => {
             },
           },
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema,
         onChange: () => {},
       }) as ObjectNode;
@@ -1249,9 +1249,9 @@ describe('AbstractNode.findAll', () => {
             default: [],
           },
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema,
         onChange: () => {},
       }) as ObjectNode;
@@ -1285,9 +1285,9 @@ describe('AbstractNode.findAll', () => {
             ],
           },
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema,
         onChange: () => {},
       }) as ObjectNode;
@@ -1345,9 +1345,9 @@ describe('AbstractNode.findAll', () => {
             },
           },
         ],
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema,
         onChange: () => {},
       }) as ObjectNode;
@@ -1405,9 +1405,9 @@ describe('AbstractNode.findAll', () => {
             },
           },
         ],
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema,
         onChange: () => {},
       }) as ObjectNode;
@@ -1448,9 +1448,9 @@ describe('AbstractNode.findAll', () => {
           'special/name': { type: 'string', default: 'escaped' },
           'another~name': { type: 'number', default: 42 },
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema,
         onChange: () => {},
       }) as ObjectNode;
@@ -1474,9 +1474,9 @@ describe('AbstractNode.findAll', () => {
           '123': { type: 'string', default: 'numeric-key' },
           '0': { type: 'number', default: 0 },
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema,
         onChange: () => {},
       }) as ObjectNode;
@@ -1496,9 +1496,9 @@ describe('AbstractNode.findAll', () => {
       const jsonSchema = {
         type: 'object',
         properties: {},
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema,
         onChange: () => {},
       }) as ObjectNode;
@@ -1534,9 +1534,9 @@ describe('AbstractNode.findAll', () => {
             },
           },
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema,
         onChange: () => {},
       }) as ObjectNode;
@@ -1570,9 +1570,9 @@ describe('AbstractNode.findAll', () => {
             },
           },
         ],
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema,
         onChange: () => {},
       }) as ObjectNode;
@@ -1618,9 +1618,9 @@ describe('AbstractNode.findAll', () => {
             },
           },
         ],
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema,
         onChange: () => {},
       }) as ObjectNode;

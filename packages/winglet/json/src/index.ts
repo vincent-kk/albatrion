@@ -1,4 +1,10 @@
-export { convertJsonPathToPointer, getJSONPath, JSONPath } from './JSONPath';
+export {
+  convertJSONPathToPointer,
+  /** @deprecated Use `convertJSONPathToPointer`. Removed in 0.16.0. */
+  convertJsonPathToPointer,
+  getJSONPath,
+  JSONPath,
+} from './JSONPath';
 export {
   type AddPatch,
   applyPatch,
@@ -6,6 +12,8 @@ export {
   compare,
   type CompareOptions,
   compilePointer,
+  convertJSONPointerToPath,
+  /** @deprecated Use `convertJSONPointerToPath`. Removed in 0.16.0. */
   convertJsonPointerToPath,
   type CopyPatch,
   difference,

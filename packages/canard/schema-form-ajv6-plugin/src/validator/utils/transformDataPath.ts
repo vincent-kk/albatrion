@@ -1,15 +1,15 @@
-import type { JsonSchemaError } from '@canard/schema-form';
-import { convertJsonPathToPointer } from '@winglet/json/path-common';
+import type { JSONSchemaError } from '@canard/schema-form';
+import { convertJSONPathToPointer } from '@winglet/json/path-common';
 import type { ErrorObject } from 'ajv';
 
 const JSON_POINTER_SEPARATOR = '/';
 
-export const transformDataPath = (errors: ErrorObject[]): JsonSchemaError[] => {
-  const result = new Array<JsonSchemaError>(errors.length);
+export const transformDataPath = (errors: ErrorObject[]): JSONSchemaError[] => {
+  const result = new Array<JSONSchemaError>(errors.length);
   for (let i = 0, l = errors.length; i < l; i++) {
     const ajvError = errors[i];
     const dataPath = ajvError.dataPath || '';
-    let convertedDataPath = convertJsonPathToPointer(dataPath);
+    let convertedDataPath = convertJSONPathToPointer(dataPath);
     if (
       ajvError.keyword === 'required' &&
       ajvError.params &&

@@ -1,7 +1,7 @@
 # @winglet/json
 
 [![TypeScript](https://img.shields.io/badge/typescript-✔-blue.svg)]()
-[![JSON Schema](https://img.shields.io/badge/JsonSchema-{}-blue.svg)]()
+[![JSON Schema](https://img.shields.io/badge/JSONSchema-{}-blue.svg)]()
 [![RFC 6901](https://img.shields.io/badge/RFC%206901-compliant-green.svg)]()
 
 ---
@@ -410,12 +410,24 @@ This repository is provided under the MIT License. See the [`LICENSE`](./LICENSE
 
 ---
 
+## Migration (0.15.0)
+
+The following names are deprecated and will be removed in 0.16.0 (Removed in 0.16.0). Each old name remains a working alias until then.
+
+| Deprecated                    | Use instead                 |
+| ------------------------------ | ---------------------------- |
+| `convertJsonPathToPointer`     | `convertJSONPathToPointer`   |
+| `convertJsonPointerToPath`     | `convertJSONPointerToPath`   |
+| `toJson()` hook                | `toJSON()` hook              |
+
+---
+
 ## Related Standards
 
 - [RFC 6901 - JavaScript Object Notation (JSON) Pointer](https://datatracker.ietf.org/doc/html/rfc6901)
 - [RFC 6902 - JavaScript Object Notation (JSON) Patch](https://datatracker.ietf.org/doc/html/rfc6902)
 - [RFC 7396 - JSON Merge Patch](https://datatracker.ietf.org/doc/html/rfc7396)
-- [JSONPath - XPath for JSON](https://goessner.net/articles/JsonPath/)
+- [JSONPath - XPath for JSON](https://goessner.net/articles/JSONPath/)
 
 ---
 

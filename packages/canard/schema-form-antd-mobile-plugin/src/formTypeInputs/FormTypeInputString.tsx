@@ -8,7 +8,7 @@ import type {
   StringSchema,
 } from '@canard/schema-form';
 
-type StringJsonSchema = StringSchema & {
+type StringJSONSchema = StringSchema & {
   format?: 'password';
   formType?: 'password';
 };
@@ -22,7 +22,7 @@ const FormTypeInputString = ({
   defaultValue,
   onChange,
   placeholder,
-}: FormTypeInputPropsWithSchema<string | null, StringJsonSchema>) => {
+}: FormTypeInputPropsWithSchema<string | null, StringJSONSchema>) => {
   const type = jsonSchema.format === 'password' ? 'password' : 'text';
   const handleChange = useHandle(onChange);
   return (

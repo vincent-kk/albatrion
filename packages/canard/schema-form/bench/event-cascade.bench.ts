@@ -4,9 +4,9 @@ import {
   type NumberNode,
   type SchemaNode,
   type StringNode,
-  nodeFromJsonSchema,
+  nodeFromJSONSchema,
 } from '@/schema-form/core';
-import type { JsonSchema } from '@/schema-form/types';
+import type { JSONSchema } from '@/schema-form/types';
 
 /**
  * Event cascade hot path — `setValue` → cascade → subscribers.
@@ -25,14 +25,14 @@ import type { JsonSchema } from '@/schema-form/types';
  * (mean - floor) / K. `derived` and `oneOf` are inherently single-op, so
  * they stay timer-floor-bound and are kept only for relative comparison.
  *
- * Nodes are built once at module load — `nodeFromJsonSchema` is NOT in the
+ * Nodes are built once at module load — `nodeFromJSONSchema` is NOT in the
  * measured path (that is `branch-strategy-init.bench.ts`'s job).
  */
 
 const FIELD_COUNT = 20;
 const BATCH = 10; // distinct fields mutated per drain
 
-const flatSchema: JsonSchema = {
+const flatSchema: JSONSchema = {
   type: 'object',
   properties: Object.fromEntries(
     Array.from({ length: FIELD_COUNT }, (_, i) => [
@@ -42,7 +42,7 @@ const flatSchema: JsonSchema = {
   ),
 };
 
-const derivedSchema: JsonSchema = {
+const derivedSchema: JSONSchema = {
   type: 'object',
   properties: {
     a: { type: 'number', default: 0 },
@@ -53,7 +53,7 @@ const derivedSchema: JsonSchema = {
   },
 };
 
-const oneOfSchema: JsonSchema = {
+const oneOfSchema: JSONSchema = {
   type: 'object',
   properties: {
     type: { type: 'string', enum: ['a', 'b'], default: 'a' },
@@ -79,15 +79,15 @@ const oneOfSchema: JsonSchema = {
 const noop = () => {};
 const drain = () => new Promise<void>((r) => setTimeout(r, 0));
 
-const flatNode: SchemaNode = nodeFromJsonSchema({
+const flatNode: SchemaNode = nodeFromJSONSchema({
   jsonSchema: flatSchema,
   onChange: noop,
 });
-const derivedNode: SchemaNode = nodeFromJsonSchema({
+const derivedNode: SchemaNode = nodeFromJSONSchema({
   jsonSchema: derivedSchema,
   onChange: noop,
 });
-const oneOfNode: SchemaNode = nodeFromJsonSchema({
+const oneOfNode: SchemaNode = nodeFromJSONSchema({
   jsonSchema: oneOfSchema,
   onChange: noop,
 });

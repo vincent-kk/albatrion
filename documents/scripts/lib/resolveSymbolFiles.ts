@@ -1,5 +1,6 @@
 import * as fs from 'node:fs';
 import * as path from 'node:path';
+import * as ts from 'typescript';
 
 /** Mapping of symbol name to absolute .d.ts file path. */
 export interface SymbolFileMap {
@@ -16,7 +17,7 @@ export function resolveSymbolFiles(barrelPath: string): SymbolFileMap {
   return result;
 }
 
-/** Recursively resolve barrel exports. */
+/** Recursively resolve barrel exports, parsed as a syntax tree so multi-line export blocks (emitted when a specifier carries JSDoc) resolve too. */
 function resolveBarrel(
   barrelPath: string,
   result: SymbolFileMap,
@@ -29,91 +30,43 @@ function resolveBarrel(
   if (!fs.existsSync(resolved)) return;
 
   const content = fs.readFileSync(resolved, 'utf-8');
-  const lines = content.split('\n');
+  const sourceFile = ts.createSourceFile(
+    resolved,
+    content,
+    ts.ScriptTarget.Latest,
+    false,
+    ts.ScriptKind.TS,
+  );
   const barrelDir = path.dirname(resolved);
 
-  for (const line of lines) {
-    const trimmed = line.trim();
-    if (!trimmed || trimmed.startsWith('//')) continue;
-
-    // Pattern 1: export { name1, name2 } from './file';
-    // Also handles: export { type Name, Name2 } from './file';
-    const namedMatch = trimmed.match(
-      /^export\s+\{([^}]+)\}\s+from\s+['"]([^'"]+)['"]\s*;?\s*$/,
+  for (const statement of sourceFile.statements) {
+    if (
+      !ts.isExportDeclaration(statement) ||
+      !statement.moduleSpecifier ||
+      !ts.isStringLiteral(statement.moduleSpecifier)
+    )
+      continue;
+    const targetPath = resolveRelativeDts(
+      barrelDir,
+      statement.moduleSpecifier.text,
     );
-    if (namedMatch) {
-      const names = namedMatch[1].split(',').map((s) => s.trim());
-      const fromPath = namedMatch[2];
-      const targetPath = resolveRelativeDts(barrelDir, fromPath);
+    if (!targetPath) continue;
 
-      for (const raw of names) {
-        if (!raw) continue;
-        // Strip "type " prefix
-        const cleaned = raw.replace(/^type\s+/, '');
-        // Handle "Name as Alias"
-        const asMatch = cleaned.match(/^(\w+)\s+as\s+(\w+)$/);
-        const name = asMatch ? asMatch[2] : cleaned.trim();
-        if (name && targetPath) {
-          result[name] = targetPath;
-        }
+    // export { a, type B, c as D } from './file'; (also `export type { ... }`)
+    if (statement.exportClause && ts.isNamedExports(statement.exportClause)) {
+      for (const specifier of statement.exportClause.elements) {
+        result[specifier.name.text] = targetPath;
       }
       continue;
     }
 
-    // Pattern 2: export type { Name1, Name2 } from './file';
-    const typeReExportMatch = trimmed.match(
-      /^export\s+type\s+\{([^}]+)\}\s+from\s+['"]([^'"]+)['"]\s*;?\s*$/,
-    );
-    if (typeReExportMatch) {
-      const names = typeReExportMatch[1].split(',').map((s) => s.trim());
-      const fromPath = typeReExportMatch[2];
-      const targetPath = resolveRelativeDts(barrelDir, fromPath);
-
-      for (const raw of names) {
-        if (!raw) continue;
-        const asMatch = raw.match(/^(\w+)\s+as\s+(\w+)$/);
-        const name = asMatch ? asMatch[2] : raw.trim();
-        if (name && targetPath) {
-          result[name] = targetPath;
-        }
+    // export * from './file'; / export type * from './file';
+    if (!statement.exportClause) {
+      if (isBarrelFile(targetPath)) {
+        resolveBarrel(targetPath, result, visited);
+      } else {
+        extractDirectExportNames(targetPath, result);
       }
-      continue;
-    }
-
-    // Pattern 3: export * from './file'; (wildcard re-export)
-    const wildcardMatch = trimmed.match(
-      /^export\s+\*\s+from\s+['"]([^'"]+)['"]\s*;?\s*$/,
-    );
-    if (wildcardMatch) {
-      const fromPath = wildcardMatch[1];
-      const targetPath = resolveRelativeDts(barrelDir, fromPath);
-      if (targetPath) {
-        // Check if target is itself a barrel (index.d.ts) or a leaf file
-        if (isBarrelFile(targetPath)) {
-          resolveBarrel(targetPath, result, visited);
-        } else {
-          // Extract symbol names from the target file directly
-          extractDirectExportNames(targetPath, result);
-        }
-      }
-      continue;
-    }
-
-    // Pattern 4: export type * from './file'; (type-only wildcard)
-    const typeWildcardMatch = trimmed.match(
-      /^export\s+type\s+\*\s+from\s+['"]([^'"]+)['"]\s*;?\s*$/,
-    );
-    if (typeWildcardMatch) {
-      const fromPath = typeWildcardMatch[1];
-      const targetPath = resolveRelativeDts(barrelDir, fromPath);
-      if (targetPath) {
-        if (isBarrelFile(targetPath)) {
-          resolveBarrel(targetPath, result, visited);
-        } else {
-          extractDirectExportNames(targetPath, result);
-        }
-      }
-      continue;
     }
   }
 }

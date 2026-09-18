@@ -11,9 +11,9 @@ import type {
 
 import type { FormTypeRendererProps } from './formTypeRenderer';
 import type {
-  InferJsonSchema,
-  JsonSchemaType,
-  JsonSchemaWithVirtual,
+  InferJSONSchema,
+  JSONSchemaType,
+  JSONSchemaWithVirtual,
 } from './jsonSchema';
 import type { AllowedValue } from './value';
 
@@ -22,18 +22,18 @@ import type { AllowedValue } from './value';
  *
  * - `Value`: Type of value assigned to FormTypeInput Component
  * - `Context`: Type of UserDefinedContext passed to Form
- * - `WatchValues`: Type of values subscribed according to watch property defined in JsonSchema
- * - `Schema`: JsonSchema type of schema node assigned to FormTypeInput Component
+ * - `WatchValues`: Type of values subscribed according to watch property defined in JSONSchema
+ * - `Schema`: JSONSchema type of schema node assigned to FormTypeInput Component
  * - `Node`: Type of schema node assigned to FormTypeInput Component
  */
 export interface FormTypeInputProps<
   Value extends AllowedValue = any,
   Context extends Dictionary = object,
   WatchValues extends Array<any> = Array<any>,
-  Schema extends JsonSchemaWithVirtual = InferJsonSchema<Value>,
+  Schema extends JSONSchemaWithVirtual = InferJSONSchema<Value>,
   Node extends SchemaNode = InferSchemaNode<Schema>,
 > {
-  /** JsonSchema of FormTypeInput Component */
+  /** JSONSchema of FormTypeInput Component */
   jsonSchema: Schema;
   /** ReadOnly state of FormTypeInput Component */
   readOnly: boolean;
@@ -55,7 +55,7 @@ export interface FormTypeInputProps<
   errors: Node['errors'];
   /** Whether to show errors for this field */
   errorVisible: boolean;
-  /** Values subscribed according to `computed.watch`(=`&watch`) property defined in JsonSchema */
+  /** Values subscribed according to `computed.watch`(=`&watch`) property defined in JSONSchema */
   watchValues: WatchValues;
   /** Default value of FormTypeInput Component */
   defaultValue: Value | undefined;
@@ -83,12 +83,12 @@ export interface FormTypeInputProps<
  * Props that FormTypeInputPropsWithSchema must satisfy
  *
  * - `Value`: Type of value assigned to FormTypeInput Component
- * - `Schema`: JsonSchema type of schema node assigned to FormTypeInput Component
+ * - `Schema`: JSONSchema type of schema node assigned to FormTypeInput Component
  * - `Context`: Type of UserDefinedContext passed to Form
  */
 export type FormTypeInputPropsWithSchema<
   Value extends AllowedValue = any,
-  Schema extends JsonSchemaWithVirtual = InferJsonSchema<Value>,
+  Schema extends JSONSchemaWithVirtual = InferJSONSchema<Value>,
   Context extends Dictionary = object,
 > = FormTypeInputProps<Value, Context, any[], Schema>;
 
@@ -96,12 +96,12 @@ export type FormTypeInputPropsWithSchema<
  * Props that FormTypeInputPropsWithSchema must satisfy
  *
  * - `Value`: Type of value assigned to FormTypeInput Component
- * - `Schema`: JsonSchema type of schema node assigned to FormTypeInput Component
+ * - `Schema`: JSONSchema type of schema node assigned to FormTypeInput Component
  * - `Node`: Type of schema node assigned to FormTypeInput Component
  */
 export type FormTypeInputPropsWithNode<
   Value extends AllowedValue = any,
-  Schema extends JsonSchemaWithVirtual = InferJsonSchema<Value>,
+  Schema extends JSONSchemaWithVirtual = InferJSONSchema<Value>,
   Node extends SchemaNode = InferSchemaNode<Schema>,
 > = FormTypeInputProps<Value, Dictionary, any[], Schema, Node>;
 
@@ -160,33 +160,33 @@ type OptionalString = string | undefined;
 
 export type FormTypeTestObject = Partial<{
   /** SchemaNode['schemaType'] | Array<SchemaNode['schemaType']> */
-  type: JsonSchemaType | JsonSchemaType[];
+  type: JSONSchemaType | JSONSchemaType[];
   /** SchemaNode['path'] | Array<SchemaNode['path']> */
   path: string | string[];
   /** SchemaNode['required'] */
   required: boolean;
   /** SchemaNode['nullable] */
   nullable: boolean;
-  /** JsonSchema['format'] | Array<JsonSchema['format']> | undefined */
+  /** JSONSchema['format'] | Array<JSONSchema['format']> | undefined */
   format: OptionalString | OptionalString[];
-  /** JsonSchema['formType'] | Array<JsonSchema['formType']> | undefined */
+  /** JSONSchema['formType'] | Array<JSONSchema['formType']> | undefined */
   formType: OptionalString | OptionalString[];
 }>;
 
 export type Hint = {
   /** SchemaNode['schemaType'] */
-  type: JsonSchemaType;
+  type: JSONSchemaType;
   /** SchemaNode['path'] */
   path: string;
   /** SchemaNode['required'] */
   required: boolean;
   /** SchemaNode['nullable] */
   nullable: boolean;
-  /** JsonSchema */
-  jsonSchema: JsonSchemaWithVirtual;
-  /** JsonSchema['format'] */
+  /** JSONSchema */
+  jsonSchema: JSONSchemaWithVirtual;
+  /** JSONSchema['format'] */
   format?: string;
-  /** JsonSchema['formType'] */
+  /** JSONSchema['formType'] */
   formType?: string;
 };
 

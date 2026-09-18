@@ -45,7 +45,7 @@ Setting a final value to `null` is always allowed regardless of this option
 ## Signature
 
 ```typescript
-const setValue: <Output extends Dictionary | Array<any> = Dictionary | Array<any>>(value: Dictionary | Array<any>, pointer: string | string[], input: any, options?: {
+const setValue: <Output extends Dictionary | Array<any> = Dictionary | Array<any>>(value: Dictionary | Array<any>, pointer: string | (string | number)[], input: any, options?: {
     overwrite?: boolean;
     preserveNull?: boolean;
 }) => Output
@@ -179,7 +179,7 @@ setValue(obj, '', { completely: "new" });
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/json": "0.12.2" }}
+  dependencies={{ "@winglet/json": "0.15.0" }}
   code={`// Basic object property setting
 const obj = {
   foo: {
@@ -193,3 +193,13 @@ setValue(obj, '/foo/bar', 'qux');
 setValue(obj, ['foo', 'newProp'], 'value');
 // Returns: { foo: { bar: 'qux', newProp: 'value' } }`}
 />
+
+## Notes
+
+A pointer segment naming a reserved member (`__proto__`, `constructor`, `prototype`) writes an
+own data property, so the value stays on the object instead of reaching the prototype chain.
+Copy such an object with spread, `structuredClone`, or a JSON round-trip — each defines own data
+and keeps the key; assignment-based copies (`Object.assign`, `target[key] = value`) route through
+the inherited `__proto__` setter, which replaces the copy's prototype and drops the key. Test for
+plain objects with `Object.getPrototypeOf` or `instanceof`, not `value.constructor` — an own
+`constructor` shadows the inherited one.

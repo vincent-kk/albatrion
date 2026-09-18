@@ -3,8 +3,8 @@ import { useRef, useState } from 'react';
 import {
   Form,
   type FormHandle,
-  type JsonSchema,
-  type JsonSchemaError,
+  type JSONSchema,
+  type JSONSchemaError,
   registerPlugin,
 } from '../src';
 import StoryLayout from './components/StoryLayout';
@@ -36,11 +36,11 @@ export const BasicAllOf = () => {
         },
       },
     ],
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const formHandle = useRef<FormHandle<typeof schema, any>>(null);
   const [value, setValue] = useState<Record<string, unknown>>({});
-  const [errors, setErrors] = useState<JsonSchemaError[]>([]);
+  const [errors, setErrors] = useState<JSONSchemaError[]>([]);
 
   return (
     <StoryLayout jsonSchema={schema} value={value} errors={errors}>
@@ -77,11 +77,11 @@ export const AllOfWithRequired = () => {
         required: ['email'],
       },
     ],
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const formHandle = useRef<FormHandle<typeof schema, any>>(null);
   const [value, setValue] = useState<Record<string, unknown>>({});
-  const [errors, setErrors] = useState<JsonSchemaError[]>([]);
+  const [errors, setErrors] = useState<JSONSchemaError[]>([]);
 
   return (
     <StoryLayout jsonSchema={schema} value={value} errors={errors}>
@@ -128,11 +128,11 @@ export const AllOfWithDefaultValues = () => {
         },
       },
     ],
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const formHandle = useRef<FormHandle<typeof schema, any>>(null);
   const [value, setValue] = useState<Record<string, unknown>>({});
-  const [errors, setErrors] = useState<JsonSchemaError[]>([]);
+  const [errors, setErrors] = useState<JSONSchemaError[]>([]);
 
   return (
     <StoryLayout jsonSchema={schema} value={value} errors={errors}>
@@ -184,11 +184,11 @@ export const AllOfWithValidation = () => {
         },
       },
     ],
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const formHandle = useRef<FormHandle<typeof schema, any>>(null);
   const [value, setValue] = useState<Record<string, unknown>>({});
-  const [errors, setErrors] = useState<JsonSchemaError[]>([]);
+  const [errors, setErrors] = useState<JSONSchemaError[]>([]);
 
   return (
     <StoryLayout jsonSchema={schema} value={value} errors={errors}>
@@ -240,11 +240,11 @@ export const NestedAllOf = () => {
         },
       },
     ],
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const formHandle = useRef<FormHandle<typeof schema, any>>(null);
   const [value, setValue] = useState<Record<string, unknown>>({});
-  const [errors, setErrors] = useState<JsonSchemaError[]>([]);
+  const [errors, setErrors] = useState<JSONSchemaError[]>([]);
 
   return (
     <StoryLayout jsonSchema={schema} value={value} errors={errors}>
@@ -293,11 +293,11 @@ export const AllOfWithBaseProperties = () => {
         },
       },
     ],
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const formHandle = useRef<FormHandle<typeof schema, any>>(null);
   const [value, setValue] = useState<Record<string, unknown>>({});
-  const [errors, setErrors] = useState<JsonSchemaError[]>([]);
+  const [errors, setErrors] = useState<JSONSchemaError[]>([]);
 
   return (
     <StoryLayout jsonSchema={schema} value={value} errors={errors}>
@@ -322,11 +322,11 @@ export const AllOfWithAdditionalProperties = () => {
         additionalProperties: false,
       },
     ],
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const formHandle = useRef<FormHandle<typeof schema, any>>(null);
   const [value, setValue] = useState<Record<string, unknown>>({});
-  const [errors, setErrors] = useState<JsonSchemaError[]>([]);
+  const [errors, setErrors] = useState<JSONSchemaError[]>([]);
 
   return (
     <StoryLayout jsonSchema={schema} value={value} errors={errors}>
@@ -367,11 +367,11 @@ export const AllOfWithComputedProperties = () => {
         },
       },
     ],
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const formHandle = useRef<FormHandle<typeof schema, any>>(null);
   const [value, setValue] = useState<Record<string, unknown>>({});
-  const [errors, setErrors] = useState<JsonSchemaError[]>([]);
+  const [errors, setErrors] = useState<JSONSchemaError[]>([]);
 
   return (
     <StoryLayout jsonSchema={schema} value={value} errors={errors}>
@@ -487,11 +487,11 @@ export const ComplexAllOfUserProfile = () => {
         },
       },
     ],
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const formHandle = useRef<FormHandle<typeof schema, any>>(null);
   const [value, setValue] = useState<Record<string, unknown>>({});
-  const [errors, setErrors] = useState<JsonSchemaError[]>([]);
+  const [errors, setErrors] = useState<JSONSchemaError[]>([]);
 
   return (
     <StoryLayout jsonSchema={schema} value={value} errors={errors}>
@@ -522,11 +522,11 @@ export const AllOfTypeConflictHandling = () => {
         },
       },
     ],
-  } as JsonSchema;
+  } as JSONSchema;
 
   const formHandle = useRef<FormHandle<typeof schema, any>>(null);
   const [value, setValue] = useState<Record<string, unknown>>({});
-  const [errors, setErrors] = useState<JsonSchemaError[]>([]);
+  const [errors, setErrors] = useState<JSONSchemaError[]>([]);
 
   return (
     <StoryLayout jsonSchema={schema} value={value} errors={errors}>
@@ -586,11 +586,11 @@ export const AllOfWithRef = () => {
         },
       },
     ],
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const formHandle = useRef<FormHandle<typeof schema, any>>(null);
   const [value, setValue] = useState<Record<string, unknown>>({});
-  const [errors, setErrors] = useState<JsonSchemaError[]>([]);
+  const [errors, setErrors] = useState<JSONSchemaError[]>([]);
 
   return (
     <StoryLayout jsonSchema={schema} value={value} errors={errors}>
@@ -733,11 +733,11 @@ export const AllOfWithComplexRef = () => {
         },
       },
     ],
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const formHandle = useRef<FormHandle<typeof schema, any>>(null);
   const [value, setValue] = useState<Record<string, unknown>>({});
-  const [errors, setErrors] = useState<JsonSchemaError[]>([]);
+  const [errors, setErrors] = useState<JSONSchemaError[]>([]);
 
   return (
     <StoryLayout jsonSchema={schema} value={value} errors={errors}>
@@ -824,11 +824,11 @@ export const AllOfWithNestedRef = () => {
         },
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const formHandle = useRef<FormHandle<typeof schema, any>>(null);
   const [value, setValue] = useState<Record<string, unknown>>({});
-  const [errors, setErrors] = useState<JsonSchemaError[]>([]);
+  const [errors, setErrors] = useState<JSONSchemaError[]>([]);
 
   return (
     <StoryLayout jsonSchema={schema} value={value} errors={errors}>

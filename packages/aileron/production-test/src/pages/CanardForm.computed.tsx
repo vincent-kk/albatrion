@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import { Form, type FormHandle, type JsonSchema } from "@canard/schema-form";
+import { Form, type FormHandle, type JSONSchema } from "@canard/schema-form";
 import StoryLayout from "../components/StoryLayout";
 
 const schema = {
@@ -27,7 +27,7 @@ const schema = {
       minimum: 50,
     },
   },
-} satisfies JsonSchema;
+} satisfies JSONSchema;
 
 const CanardForm = () => {
   const [value, setValue] = useState<Record<string, unknown>>({});

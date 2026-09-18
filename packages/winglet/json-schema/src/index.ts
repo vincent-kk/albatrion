@@ -20,24 +20,36 @@ export {
   isStringSchema,
 } from './filters';
 export {
+  JSONSchemaScannerAsync,
+  /** @deprecated Use `JSONSchemaScannerAsync`. Removed in 0.16.0. */
   JsonSchemaScannerAsync,
+  type JSONScannerOptionsAsync,
+  /** @deprecated Use `JSONScannerOptionsAsync`. Removed in 0.16.0. */
   type JsonScannerOptionsAsync,
-} from './utils/JsonSchemaScanner/async';
+} from './utils/JSONSchemaScanner/async';
 export {
   DEFAULT_KEYWORDS,
   EXTENDED_KEYWORDS,
+  JSONSchemaScanner,
+  /** @deprecated Use `JSONSchemaScanner`. Removed in 0.16.0. */
   JsonSchemaScanner,
+  type JSONScannerOptions,
+  /** @deprecated Use `JSONScannerOptions`. Removed in 0.16.0. */
   type JsonScannerOptions,
   type KeywordDescriptor,
   type KeywordKind,
   type SchemaEntry,
   type SchemaVisitor,
-} from './utils/JsonSchemaScanner/sync';
+} from './utils/JSONSchemaScanner/sync';
 export type {
   ArraySchema,
   BasicSchema,
   BooleanSchema,
+  InferJSONSchema,
+  /** @deprecated Use `InferJSONSchema`. Removed in 0.16.0. */
   InferJsonSchema,
+  JSONSchema,
+  /** @deprecated Use `JSONSchema`. Removed in 0.16.0. */
   JsonSchema,
   NonNullableArraySchema,
   NonNullableBooleanSchema,

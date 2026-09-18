@@ -4,7 +4,7 @@ import type { Dictionary, Fn } from '@aileron/declare';
 
 import type { SchemaNode } from '@/schema-form/core';
 
-import type { JsonSchemaError } from './error';
+import type { JSONSchemaError } from './error';
 import type { ChildNodeComponentProps } from './formTypeInput';
 
 /** Props that FormTypeRenderer Component must satisfy */
@@ -13,7 +13,7 @@ export interface FormTypeRendererProps extends ChildNodeComponentProps {
   isRoot: boolean;
   /** Depth of the schema node assigned to FormTypeRenderer Component */
   depth: number;
-  /** JsonSchema of the schema node assigned to FormTypeRenderer Component */
+  /** JSONSchema of the schema node assigned to FormTypeRenderer Component */
   jsonSchema: SchemaNode['jsonSchema'];
   /** Schema node assigned to FormTypeRenderer Component */
   node: SchemaNode;
@@ -44,6 +44,6 @@ export interface FormTypeRendererProps extends ChildNodeComponentProps {
 }
 
 export type FormatError = Fn<
-  [error: JsonSchemaError, node: SchemaNode, context: Dictionary],
+  [error: JSONSchemaError, node: SchemaNode, context: Dictionary],
   ReactNode
 >;

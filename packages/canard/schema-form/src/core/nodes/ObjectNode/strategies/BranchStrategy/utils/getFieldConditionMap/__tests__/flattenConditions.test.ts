@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import type { JsonSchema } from '@/schema-form/types';
+import type { JSONSchema } from '@/schema-form/types';
 
 import { flattenConditions } from '../utils/flattenConditions';
 
@@ -32,7 +32,7 @@ describe('flattenConditions', () => {
       else: {
         required: ['z'],
       },
-    } satisfies JsonSchema;
+    } satisfies JSONSchema;
 
     const expected = [
       {
@@ -76,7 +76,7 @@ describe('flattenConditions', () => {
       else: {
         required: ['else'],
       },
-    } satisfies JsonSchema;
+    } satisfies JSONSchema;
 
     const expected = [
       {
@@ -120,7 +120,7 @@ describe('flattenConditions', () => {
       else: {
         required: ['else'],
       },
-    } satisfies JsonSchema;
+    } satisfies JSONSchema;
 
     const expected = [
       {
@@ -193,7 +193,7 @@ describe('flattenConditions', () => {
           },
         },
       },
-    } satisfies JsonSchema;
+    } satisfies JSONSchema;
 
     const expected = [
       {
@@ -232,7 +232,7 @@ describe('flattenConditions', () => {
       then: {
         required: ['y'],
       },
-    } satisfies JsonSchema;
+    } satisfies JSONSchema;
 
     const expected = [
       {
@@ -263,7 +263,7 @@ describe('flattenConditions', () => {
       else: {
         required: ['x', 'y'],
       },
-    } satisfies JsonSchema;
+    } satisfies JSONSchema;
 
     const expected = [
       {
@@ -300,7 +300,7 @@ describe('flattenConditions', () => {
       else: {
         required: ['str'],
       },
-    } satisfies JsonSchema;
+    } satisfies JSONSchema;
 
     const expected = [
       {
@@ -368,7 +368,7 @@ describe('flattenConditions', () => {
           },
         },
       },
-    } satisfies JsonSchema;
+    } satisfies JSONSchema;
 
     const expected = [
       {
@@ -414,7 +414,7 @@ describe('flattenConditions', () => {
       else: {
         required: ['x'],
       },
-    } satisfies JsonSchema;
+    } satisfies JSONSchema;
 
     expect(flattenConditions(schema)).toBeUndefined();
   });
@@ -427,7 +427,7 @@ describe('flattenConditions', () => {
         y: { type: 'string' },
       },
       required: ['x'],
-    } satisfies JsonSchema;
+    } satisfies JSONSchema;
 
     expect(flattenConditions(schema)).toBeUndefined();
   });
@@ -450,7 +450,7 @@ describe('flattenConditions', () => {
       else: {
         required: ['x'],
       },
-    } satisfies JsonSchema;
+    } satisfies JSONSchema;
 
     const expected = [
       {
@@ -485,7 +485,7 @@ describe('flattenConditions', () => {
       else: {
         required: ['details'],
       },
-    } satisfies JsonSchema;
+    } satisfies JSONSchema;
 
     const expected = [
       {
@@ -522,7 +522,7 @@ describe('flattenConditions', () => {
       else: {
         required: ['value'],
       },
-    } satisfies JsonSchema;
+    } satisfies JSONSchema;
 
     const expected = [
       {
@@ -559,7 +559,7 @@ describe('flattenConditions', () => {
         else: {
           required: ['email'],
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
       const expected = [
         {
@@ -596,7 +596,7 @@ describe('flattenConditions', () => {
           required: ['advanced'],
           virtualRequired: ['extra'],
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
       const expected = [
         {
@@ -635,7 +635,7 @@ describe('flattenConditions', () => {
           required: ['field2'],
           virtualRequired: ['virtual2'],
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
       const expected = [
         {
@@ -674,7 +674,7 @@ describe('flattenConditions', () => {
         else: {
           required: ['name'],
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
       const expected = [
         {
@@ -710,7 +710,7 @@ describe('flattenConditions', () => {
         else: {
           required: ['fallback'],
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
       const expected = [
         {
@@ -756,7 +756,7 @@ describe('flattenConditions', () => {
             virtualRequired: ['virtual2'],
           },
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
       const expected = [
         {
@@ -797,7 +797,7 @@ describe('flattenConditions', () => {
           required: ['field2'],
           virtualRequired: [],
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
       const expected = [
         {
@@ -845,7 +845,7 @@ describe('flattenConditions', () => {
             virtualRequired: ['extra'],
           },
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
       const expected = [
         {

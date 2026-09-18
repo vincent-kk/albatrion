@@ -1,5 +1,5 @@
 import { extractSchemaInfo } from '@/schema-form/helpers/jsonSchema';
-import type { JsonSchemaWithVirtual } from '@/schema-form/types';
+import type { JSONSchemaWithVirtual } from '@/schema-form/types';
 
 import { getEmptyValue } from '../getEmptyValue';
 
@@ -10,7 +10,7 @@ import { getEmptyValue } from '../getEmptyValue';
  */
 export const getDefaultValue = <
   Schema extends {
-    type?: JsonSchemaWithVirtual['type'];
+    type?: JSONSchemaWithVirtual['type'];
     default?: any;
   },
 >(

@@ -2,8 +2,8 @@ import { describe, expect, it } from 'vitest';
 
 import { delay } from '@winglet/common-utils';
 
-import { nodeFromJsonSchema } from '@/schema-form/core';
-import type { JsonSchema } from '@/schema-form/types';
+import { nodeFromJSONSchema } from '@/schema-form/core';
+import type { JSONSchema } from '@/schema-form/types';
 
 import type { NumberNode } from '../nodes/NumberNode';
 import type { ObjectNode } from '../nodes/ObjectNode';
@@ -11,7 +11,7 @@ import type { StringNode } from '../nodes/StringNode';
 
 describe('ObjectNode anyOf', () => {
   it('anyOf 기본 동작 확인', async () => {
-    const schema: JsonSchema = {
+    const schema: JSONSchema = {
       type: 'object',
       properties: {
         type: {
@@ -42,7 +42,7 @@ describe('ObjectNode anyOf', () => {
       ],
     };
 
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       onChange: () => {},
       jsonSchema: schema,
     }) as ObjectNode;
@@ -64,7 +64,7 @@ describe('ObjectNode anyOf', () => {
   });
 
   it('anyOf의 기본 스키마 병합', async () => {
-    const schema: JsonSchema = {
+    const schema: JSONSchema = {
       type: 'object',
       anyOf: [
         {
@@ -82,7 +82,7 @@ describe('ObjectNode anyOf', () => {
       ],
     };
 
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       onChange: () => {},
       jsonSchema: schema,
     }) as ObjectNode;
@@ -110,7 +110,7 @@ describe('ObjectNode anyOf', () => {
   });
 
   it('anyOf와 properties 병합', async () => {
-    const schema: JsonSchema = {
+    const schema: JSONSchema = {
       type: 'object',
       properties: {
         common: { type: 'string', default: 'shared' },
@@ -129,7 +129,7 @@ describe('ObjectNode anyOf', () => {
       ],
     };
 
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       onChange: () => {},
       jsonSchema: schema,
     }) as ObjectNode;
@@ -147,7 +147,7 @@ describe('ObjectNode anyOf', () => {
 
   describe('anyOf value preservation on schema change', () => {
     it('should preserve values for nodes in __anyOfIndices__', async () => {
-      const schema: JsonSchema = {
+      const schema: JSONSchema = {
         type: 'object',
         properties: {
           category: {
@@ -181,7 +181,7 @@ describe('ObjectNode anyOf', () => {
         ],
       };
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: schema,
       }) as ObjectNode;
@@ -222,7 +222,7 @@ describe('ObjectNode anyOf', () => {
     });
 
     it('should preserve values when multiple anyOf conditions are active', async () => {
-      const schema: JsonSchema = {
+      const schema: JSONSchema = {
         type: 'object',
         properties: {
           enableFeatureA: { type: 'boolean', default: true },
@@ -256,7 +256,7 @@ describe('ObjectNode anyOf', () => {
         ],
       };
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: schema,
       }) as ObjectNode;
@@ -308,7 +308,7 @@ describe('ObjectNode anyOf', () => {
     });
 
     it('should handle nested anyOf with value preservation', async () => {
-      const schema: JsonSchema = {
+      const schema: JSONSchema = {
         type: 'object',
         properties: {
           mode: {
@@ -356,7 +356,7 @@ describe('ObjectNode anyOf', () => {
         ],
       };
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: schema,
       }) as ObjectNode;
@@ -406,7 +406,7 @@ describe('ObjectNode anyOf', () => {
     });
 
     it('should handle anyOf with array indices preservation', async () => {
-      const schema: JsonSchema = {
+      const schema: JSONSchema = {
         type: 'object',
         properties: {
           items: {
@@ -439,7 +439,7 @@ describe('ObjectNode anyOf', () => {
         },
       };
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: schema,
       }) as ObjectNode;
@@ -492,7 +492,7 @@ describe('ObjectNode anyOf', () => {
     });
 
     it('should correctly handle __anyOfIndices__ state transitions', async () => {
-      const schema: JsonSchema = {
+      const schema: JSONSchema = {
         type: 'object',
         anyOf: [
           {
@@ -513,7 +513,7 @@ describe('ObjectNode anyOf', () => {
         },
       };
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: schema,
       }) as ObjectNode;
@@ -560,7 +560,7 @@ describe('ObjectNode anyOf', () => {
 
   describe('combined anyOf and oneOf behavior', () => {
     it('should correctly manage anyOf (multiple active) and oneOf (single active) together', async () => {
-      const schema: JsonSchema = {
+      const schema: JSONSchema = {
         type: 'object',
         properties: {
           category: {
@@ -615,7 +615,7 @@ describe('ObjectNode anyOf', () => {
         ],
       };
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: schema,
       }) as ObjectNode;
@@ -735,7 +735,7 @@ describe('ObjectNode anyOf', () => {
     });
 
     it('should handle oneOf with nested anyOf correctly', async () => {
-      const schema: JsonSchema = {
+      const schema: JSONSchema = {
         type: 'object',
         properties: {
           productType: {
@@ -788,7 +788,7 @@ describe('ObjectNode anyOf', () => {
         ],
       };
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: schema,
       }) as ObjectNode;
@@ -852,7 +852,7 @@ describe('ObjectNode anyOf', () => {
     });
 
     it('should preserve anyOf fields independently when oneOf changes', async () => {
-      const schema: JsonSchema = {
+      const schema: JSONSchema = {
         type: 'object',
         properties: {
           mode: { type: 'string', enum: ['A', 'B'], default: 'A' },
@@ -882,7 +882,7 @@ describe('ObjectNode anyOf', () => {
         ],
       };
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: schema,
       }) as ObjectNode;

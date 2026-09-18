@@ -1,5 +1,5 @@
 import { extractSchemaInfo } from '@/schema-form/helpers/jsonSchema/extractSchemaInfo';
-import type { JsonSchema, JsonSchemaType } from '@/schema-form/types';
+import type { JSONSchema, JSONSchemaType } from '@/schema-form/types';
 
 /**
  * Processes schema type during allOf schema merging.
@@ -22,7 +22,7 @@ import type { JsonSchema, JsonSchemaType } from '@/schema-form/types';
  *    - Result is normalized to `type: [baseType, 'null']` array format
  *    - `nullable` property is removed to prevent duplicate representation
  *
- * @template T - JSON Schema type extending JsonSchema
+ * @template T - JSON Schema type extending JSONSchema
  * @param {T} base - The base schema to be mutated with merged type result
  * @param {Partial<T>} source - The source schema to merge type from
  * @returns {void}
@@ -47,7 +47,7 @@ import type { JsonSchema, JsonSchemaType } from '@/schema-form/types';
  * processSchemaType({ type: ['string', 'null'] }, {})
  * // Result: { type: ['string', 'null'] }
  */
-export const processSchemaType = <T extends JsonSchema>(
+export const processSchemaType = <T extends JSONSchema>(
   base: T,
   source: Partial<T>,
 ) => {
@@ -68,6 +68,6 @@ export const processSchemaType = <T extends JsonSchema>(
 };
 
 const intersectSchemaType = (
-  baseType: JsonSchemaType,
-  sourceType: JsonSchemaType,
+  baseType: JSONSchemaType,
+  sourceType: JSONSchemaType,
 ) => (baseType === 'number' && sourceType === 'integer' ? 'integer' : baseType);

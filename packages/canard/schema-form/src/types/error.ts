@@ -8,7 +8,7 @@ import {
   BIT_FLAG_04,
 } from '@/schema-form/app/constants';
 
-import type { JsonSchema } from './jsonSchema';
+import type { JSONSchema } from './jsonSchema';
 
 export enum ShowError {
   /** Always show error */
@@ -96,7 +96,7 @@ export enum ShowError {
  * ```typescript
  * const asyncValidatorFactory: ValidatorFactory = (jsonSchema) => {
  *   return async (value) => {
- *     const errors: JsonSchemaError[] = [];
+ *     const errors: JSONSchemaError[] = [];
  *
  *     // Custom validation logic
  *     if (jsonSchema.type === 'string' && jsonSchema.format === 'email') {
@@ -117,7 +117,7 @@ export enum ShowError {
  * ```
  */
 export interface ValidatorFactory {
-  (schema: JsonSchema): ValidateFunction<any>;
+  (schema: JSONSchema): ValidateFunction<any>;
 }
 
 /**
@@ -183,7 +183,7 @@ export interface ValidatorFactory {
  * Nested object validation:
  * ```typescript
  * const validateUser: ValidateFunction = (data) => {
- *   const errors: JsonSchemaError[] = [];
+ *   const errors: JSONSchemaError[] = [];
  *
  *   if (!data.email) {
  *     errors.push({
@@ -208,7 +208,7 @@ export interface ValidatorFactory {
  */
 export type ValidateFunction<Value = unknown> = Fn<
   [data: Value],
-  Promise<JsonSchemaError[] | null> | JsonSchemaError[] | null
+  Promise<JSONSchemaError[] | null> | JSONSchemaError[] | null
 >;
 
 /**
@@ -223,7 +223,7 @@ export type ValidateFunction<Value = unknown> = Fn<
  * @example
  * ```typescript
  * // AJV error transformation
- * const ajvError: JsonSchemaError<AjvErrorObject> = {
+ * const ajvError: JSONSchemaError<AjvErrorObject> = {
  *   dataPath: '/user/email',
  *   keyword: 'format',
  *   message: 'Invalid email format',
@@ -231,7 +231,7 @@ export type ValidateFunction<Value = unknown> = Fn<
  * };
  *
  * // Joi error transformation
- * const joiError: JsonSchemaError<ValidationError> = {
+ * const joiError: JSONSchemaError<ValidationError> = {
  *   dataPath: '/user/age',
  *   keyword: 'minimum',
  *   message: 'Age must be at least 18',
@@ -239,7 +239,7 @@ export type ValidateFunction<Value = unknown> = Fn<
  * };
  * ```
  */
-export interface PublicJsonSchemaError<SourceError = unknown> {
+export interface PublicJSONSchemaError<SourceError = unknown> {
   /**
    * JSON Pointer to the data property that failed validation.
    *
@@ -301,10 +301,13 @@ export interface PublicJsonSchemaError<SourceError = unknown> {
   source?: SourceError;
 }
 
+export type PublicJsonSchemaError<SourceError = unknown> =
+  PublicJSONSchemaError<SourceError>;
+
 /**
- * JsonSchemaError extends PublicJsonSchemaError and adds `key` property.
+ * JSONSchemaError extends PublicJSONSchemaError and adds `key` property.
  */
-export interface JsonSchemaError extends PublicJsonSchemaError {
+export interface JSONSchemaError extends PublicJSONSchemaError {
   /**
    * Internal management property for array item errors.
    * @note This value is automatically managed and overwritten by the system.

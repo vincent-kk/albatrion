@@ -7,7 +7,7 @@ import {
   setDataProperty,
 } from '@winglet/common-utils/object';
 
-import type { JsonObject } from '@/json/type';
+import type { JSONObject } from '@/json/type';
 
 /**
  * Merge the patch into the source object recursively
@@ -31,9 +31,9 @@ import type { JsonObject } from '@/json/type';
  * @internal
  */
 export const mergePatchRecursive = (
-  source: JsonObject | undefined = {},
-  patch: JsonObject | undefined,
-): JsonObject => {
+  source: JSONObject | undefined = {},
+  patch: JSONObject | undefined,
+): JSONObject => {
   if (patch === undefined) return source;
   if (!isPlainObject(patch)) return patch;
   // RFC 7396 replaces a non-object target with an empty object before merging; the

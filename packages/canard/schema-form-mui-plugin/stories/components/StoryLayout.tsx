@@ -1,6 +1,6 @@
 import { type PropsWithChildren } from 'react';
 
-import type { JsonSchema } from '@canard/schema-form';
+import type { JSONSchema } from '@canard/schema-form';
 
 const StoryLayout = ({
   children,
@@ -8,7 +8,7 @@ const StoryLayout = ({
   value,
   errors,
 }: PropsWithChildren<{
-  jsonSchema: JsonSchema;
+  jsonSchema: JSONSchema;
   value?: any;
   errors?: any[];
 }>) => {

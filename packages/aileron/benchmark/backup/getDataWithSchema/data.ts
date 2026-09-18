@@ -1,4 +1,4 @@
-import { type JsonSchema } from '@canard/schema-form';
+import { type JSONSchema } from '@canard/schema-form';
 
 export const schema = {
   type: 'object',
@@ -122,7 +122,7 @@ export const schema = {
     },
   },
   required: ['user', 'settings'],
-} satisfies JsonSchema;
+} satisfies JSONSchema;
 
 export const value = {
   user: {

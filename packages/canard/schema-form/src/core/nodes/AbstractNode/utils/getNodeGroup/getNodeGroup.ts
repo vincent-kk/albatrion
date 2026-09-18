@@ -3,8 +3,8 @@ import { isReactComponent } from '@winglet/react-utils/filter';
 
 import { isBranchType } from '@/schema-form/helpers/jsonSchema';
 import type {
-  JsonSchemaType,
-  JsonSchemaWithVirtual,
+  JSONSchemaType,
+  JSONSchemaWithVirtual,
 } from '@/schema-form/types';
 
 /**
@@ -14,8 +14,8 @@ import type {
  * @returns Node group: `branch` | `terminal`
  */
 export const getNodeGroup = (
-  type: JsonSchemaType,
-  schema: JsonSchemaWithVirtual,
+  type: JSONSchemaType,
+  schema: JSONSchemaWithVirtual,
 ): 'branch' | 'terminal' => {
   if (typeof schema.terminal === 'boolean')
     return schema.terminal ? 'terminal' : 'branch';
@@ -24,6 +24,6 @@ export const getNodeGroup = (
   return 'terminal';
 };
 
-const isTerminalFormTypeInput = (schema: JsonSchemaWithVirtual) =>
+const isTerminalFormTypeInput = (schema: JSONSchemaWithVirtual) =>
   hasOwnProperty(schema, 'FormTypeInput') &&
   isReactComponent(schema.FormTypeInput);

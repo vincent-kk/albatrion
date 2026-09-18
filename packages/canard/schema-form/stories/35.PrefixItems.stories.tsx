@@ -2,8 +2,8 @@ import { useState } from 'react';
 
 import {
   Form,
-  type JsonSchema,
-  type JsonSchemaError,
+  type JSONSchema,
+  type JSONSchemaError,
   registerPlugin,
 } from '../src';
 import StoryLayout from './components/StoryLayout';
@@ -53,10 +53,10 @@ export const PrefixItemsOnly_FixedLengthTuple = () => {
         minItems: 3,
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>({});
-  const [errors, setErrors] = useState<JsonSchemaError[]>([]);
+  const [errors, setErrors] = useState<JSONSchemaError[]>([]);
 
   return (
     <div>
@@ -141,10 +141,10 @@ export const PrefixItemsWithItemsFalse_ExplicitFixedTuple = () => {
         minItems: 3,
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>({});
-  const [errors, setErrors] = useState<JsonSchemaError[]>([]);
+  const [errors, setErrors] = useState<JSONSchemaError[]>([]);
 
   return (
     <div>
@@ -226,10 +226,10 @@ export const PrefixItemsWithItemsSchema_OpenTuple = () => {
         minItems: 1,
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>({});
-  const [errors, setErrors] = useState<JsonSchemaError[]>([]);
+  const [errors, setErrors] = useState<JSONSchemaError[]>([]);
 
   return (
     <div>
@@ -351,10 +351,10 @@ export const TerminalStrategyWithPrefixItems = () => {
         minItems: 3,
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>({});
-  const [errors, setErrors] = useState<JsonSchemaError[]>([]);
+  const [errors, setErrors] = useState<JSONSchemaError[]>([]);
 
   return (
     <div>
@@ -463,7 +463,7 @@ export const BranchStrategyWithPrefixItems_ObjectItems = () => {
             type: 'object',
             title: 'Response Handler',
             properties: {
-              parseJson: { type: 'boolean', default: true },
+              parseJSON: { type: 'boolean', default: true },
               throwOnError: { type: 'boolean', default: true },
             },
           },
@@ -472,10 +472,10 @@ export const BranchStrategyWithPrefixItems_ObjectItems = () => {
         minItems: 3,
       },
     },
-  } as JsonSchema;
+  } as JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>({});
-  const [errors, setErrors] = useState<JsonSchemaError[]>([]);
+  const [errors, setErrors] = useState<JSONSchemaError[]>([]);
 
   return (
     <div>
@@ -575,10 +575,10 @@ export const PrefixItemsDefaultValues = () => {
         minItems: 2,
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>({});
-  const [errors, setErrors] = useState<JsonSchemaError[]>([]);
+  const [errors, setErrors] = useState<JSONSchemaError[]>([]);
 
   return (
     <div>
@@ -685,10 +685,10 @@ export const PrefixItemsWithValidation = () => {
         minItems: 2,
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>({});
-  const [errors, setErrors] = useState<JsonSchemaError[]>([]);
+  const [errors, setErrors] = useState<JSONSchemaError[]>([]);
 
   return (
     <div>
@@ -775,10 +775,10 @@ export const PrefixItemsWithMinMaxItems = () => {
         maxItems: 2,
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>({});
-  const [errors, setErrors] = useState<JsonSchemaError[]>([]);
+  const [errors, setErrors] = useState<JSONSchemaError[]>([]);
 
   return (
     <div>
@@ -873,10 +873,10 @@ export const PrefixItemsWithRef_ReusableDefinitions = () => {
         minItems: 3,
       },
     },
-  } as JsonSchema;
+  } as JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>({});
-  const [errors, setErrors] = useState<JsonSchemaError[]>([]);
+  const [errors, setErrors] = useState<JSONSchemaError[]>([]);
 
   return (
     <div>
@@ -967,10 +967,10 @@ export const PrefixItemsWithRef_ObjectSchemas = () => {
         minItems: 3,
       },
     },
-  } as JsonSchema;
+  } as JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>({});
-  const [errors, setErrors] = useState<JsonSchemaError[]>([]);
+  const [errors, setErrors] = useState<JSONSchemaError[]>([]);
 
   return (
     <div>
@@ -1058,10 +1058,10 @@ export const PrefixItemsWithRef_OpenTuple = () => {
         minItems: 2,
       },
     },
-  } as JsonSchema;
+  } as JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>({});
-  const [errors, setErrors] = useState<JsonSchemaError[]>([]);
+  const [errors, setErrors] = useState<JSONSchemaError[]>([]);
 
   return (
     <div>
@@ -1173,10 +1173,10 @@ export const PrefixItemsWithRef_NestedReferences = () => {
         minItems: 3,
       },
     },
-  } as JsonSchema;
+  } as JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>({});
-  const [errors, setErrors] = useState<JsonSchemaError[]>([]);
+  const [errors, setErrors] = useState<JSONSchemaError[]>([]);
 
   return (
     <div>
@@ -1261,10 +1261,10 @@ export const PrefixItemsWithRef_SelfReferencing = () => {
         minItems: 2,
       },
     },
-  } as JsonSchema;
+  } as JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>({});
-  const [errors, setErrors] = useState<JsonSchemaError[]>([]);
+  const [errors, setErrors] = useState<JSONSchemaError[]>([]);
 
   return (
     <div>

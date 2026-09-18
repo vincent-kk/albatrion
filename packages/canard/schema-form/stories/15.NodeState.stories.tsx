@@ -6,7 +6,7 @@ import {
   Form,
   type FormHandle,
   type FormTypeRendererProps,
-  type JsonSchema,
+  type JSONSchema,
   NodeState,
   ShowError,
 } from '../src';
@@ -31,7 +31,7 @@ export const CheckNodeState = () => {
         type: 'string',
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const Renderer = ({
     depth,

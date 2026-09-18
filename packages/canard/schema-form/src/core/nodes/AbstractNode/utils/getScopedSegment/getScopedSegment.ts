@@ -1,5 +1,5 @@
 import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
-import type { JsonSchemaType } from '@/schema-form/types';
+import type { JSONSchemaType } from '@/schema-form/types';
 
 /**
  * Generates a JSON Schema path segment for a node based on its scope and context.
@@ -44,7 +44,7 @@ import type { JsonSchemaType } from '@/schema-form/types';
 export const getScopedSegment = (
   name: string,
   scope: string,
-  parentType?: Exclude<JsonSchemaType, 'integer'>,
+  parentType?: Exclude<JSONSchemaType, 'integer'>,
   variant?: number,
 ) => {
   if (!scope) return name;

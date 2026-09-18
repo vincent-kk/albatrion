@@ -1,4 +1,4 @@
-import type { JsonSchemaWithVirtual } from '@/schema-form/types';
+import type { JSONSchemaWithVirtual } from '@/schema-form/types';
 
 import { createDynamicFunction } from '../createDynamicFunction';
 import type { PathManager } from '../getPathManager';
@@ -7,11 +7,11 @@ import { ALIAS, type ConditionFieldName } from '../type';
 /**
  * Creates a function to check computed options in a JSON schema.
  * @param jsonSchema - Node's JSON schema
- * @param rootJsonSchema - Root node's JSON schema
+ * @param rootJSONSchema - Root node's JSON schema
  * @returns Computed option factory function
  */
 export const checkComputedOptionFactory =
-  (jsonSchema: JsonSchemaWithVirtual, rootJsonSchema: JsonSchemaWithVirtual) =>
+  (jsonSchema: JSONSchemaWithVirtual, rootJSONSchema: JSONSchemaWithVirtual) =>
   /**
    * Returns a condition check function for the given dependency paths and field name.
    * @param dependencyPaths - Dependency path array
@@ -20,7 +20,7 @@ export const checkComputedOptionFactory =
    */
   (pathManager: PathManager, fieldName: ConditionFieldName) => {
     const expression: string | boolean | undefined =
-      rootJsonSchema[fieldName] ??
+      rootJSONSchema[fieldName] ??
       jsonSchema[fieldName] ??
       jsonSchema.computed?.[fieldName] ??
       jsonSchema[ALIAS + fieldName];

@@ -1,12 +1,12 @@
 import type { Dictionary } from '@aileron/declare';
 
-import type { JsonSchema } from '@/json-schema';
+import type { JSONSchema } from '@/json-schema';
 
 export const transformConditionalSchema = (
-  schema: Partial<JsonSchema>,
+  schema: Partial<JSONSchema>,
   virtual: Dictionary<{ fields: string[] }>,
-): Partial<JsonSchema> => {
-  const transformed: Partial<JsonSchema> = Object.assign({}, schema);
+): Partial<JSONSchema> => {
+  const transformed: Partial<JSONSchema> = Object.assign({}, schema);
   if (schema.required?.length) {
     const result = transformRequiredWithVirtual(schema.required, virtual);
     transformed.required = result.required;

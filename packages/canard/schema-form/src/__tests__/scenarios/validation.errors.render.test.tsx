@@ -2,7 +2,7 @@ import '@testing-library/jest-dom';
 import { act } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 
-import type { JsonSchema } from '@winglet/json-schema';
+import type { JSONSchema } from '@winglet/json-schema';
 
 import { isValidationError } from '@/schema-form';
 import { ValidationMode } from '@/schema-form/core';
@@ -56,7 +56,7 @@ const credentialsSchema = {
     },
   },
   required: ['email'],
-} satisfies JsonSchema;
+} satisfies JSONSchema;
 
 /** number range (min/max) with explicit messages. */
 const ageSchema = {
@@ -69,7 +69,7 @@ const ageSchema = {
       errorMessages: { minimum: 'AGE_TOO_LOW', maximum: 'AGE_TOO_HIGH' },
     },
   },
-} satisfies JsonSchema;
+} satisfies JSONSchema;
 
 /** Mirrors 13.FormError NoValidate / ExternalErrors story schema. */
 const externalSchema = {
@@ -78,7 +78,7 @@ const externalSchema = {
     name: { type: 'string', maxLength: 3, default: 'exceed max length' },
     message: { type: 'string', minLength: 3, default: '1' },
   },
-} satisfies JsonSchema;
+} satisfies JSONSchema;
 
 // ---------------------------------------------------------------------------
 // ValidationMode.OnChange — errors surface in DOM and tree together

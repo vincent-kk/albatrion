@@ -3,8 +3,8 @@ import { type ReactNode, useState } from 'react';
 import {
   Form,
   type FormTypeRendererProps,
-  type JsonSchema,
-  type JsonSchemaError,
+  type JSONSchema,
+  type JSONSchemaError,
   registerPlugin,
 } from '../src';
 import StoryLayout from './components/StoryLayout';
@@ -184,10 +184,10 @@ export const BasicTextHelperDescription = () => {
       },
     },
     required: ['username', 'password'],
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>();
-  const [errors, setErrors] = useState<JsonSchemaError[]>();
+  const [errors, setErrors] = useState<JSONSchemaError[]>();
 
   return (
     <StoryLayout jsonSchema={schema} value={value} errors={errors}>
@@ -256,10 +256,10 @@ export const ReactNodeHelperDescription = () => {
       },
     },
     required: ['email'],
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>();
-  const [errors, setErrors] = useState<JsonSchemaError[]>();
+  const [errors, setErrors] = useState<JSONSchemaError[]>();
 
   return (
     <StoryLayout jsonSchema={schema} value={value} errors={errors}>
@@ -334,10 +334,10 @@ export const WithRequiredValidation = () => {
       },
     },
     required: ['name', 'age', 'email'],
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>();
-  const [errors, setErrors] = useState<JsonSchemaError[]>();
+  const [errors, setErrors] = useState<JSONSchemaError[]>();
 
   return (
     <StoryLayout jsonSchema={schema} value={value} errors={errors}>
@@ -425,10 +425,10 @@ export const NestedObjectWithReactNode = () => {
         },
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>();
-  const [errors, setErrors] = useState<JsonSchemaError[]>();
+  const [errors, setErrors] = useState<JSONSchemaError[]>();
 
   return (
     <StoryLayout jsonSchema={schema} value={value} errors={errors}>

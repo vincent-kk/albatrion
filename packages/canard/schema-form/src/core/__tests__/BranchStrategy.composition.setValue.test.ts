@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import { delay } from '@winglet/common-utils';
 
-import { nodeFromJsonSchema } from '@/schema-form/core';
+import { nodeFromJSONSchema } from '@/schema-form/core';
 
 import type { ObjectNode } from '../nodes/ObjectNode';
 import {
@@ -21,7 +21,7 @@ describe.each([
   'BranchStrategy nested composition %s → %s - setValue injection',
   (outerScope, innerScope) => {
     it('preserves explicit values injected before initial settlement', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: createSchema(outerScope, innerScope),
         onChange: () => {},
       }) as ObjectNode;
@@ -39,7 +39,7 @@ describe.each([
     });
 
     it('fills nested defaults for a partial overwrite', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: createSchema(outerScope, innerScope),
         onChange: () => {},
       }) as ObjectNode;
@@ -52,7 +52,7 @@ describe.each([
     });
 
     it('applies only the latest synchronous pre-settlement injection', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: createSchema(outerScope, innerScope),
         onChange: () => {},
       }) as ObjectNode;
@@ -74,7 +74,7 @@ describe.each([
     });
 
     it('restores the active object when an overwrite omits it', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: createSchema(outerScope, innerScope),
         onChange: () => {},
       }) as ObjectNode;
@@ -87,7 +87,7 @@ describe.each([
     });
 
     it('fills defaults for a partial non-default inner branch', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: createSchema(outerScope, innerScope),
         onChange: () => {},
       }) as ObjectNode;
@@ -100,7 +100,7 @@ describe.each([
     });
 
     it('restores defaults after external deactivation and reactivation', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: createSchema(outerScope, innerScope),
         onChange: () => {},
       }) as ObjectNode;
@@ -117,7 +117,7 @@ describe.each([
     });
 
     it('filters fields from an inactive inner branch', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: createSchema(outerScope, innerScope),
         onChange: () => {},
       }) as ObjectNode;

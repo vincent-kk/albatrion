@@ -1,11 +1,11 @@
-import type { JsonSchema, ValidateFunction } from '@canard/schema-form';
+import type { JSONSchema, ValidateFunction } from '@canard/schema-form';
 import type Ajv from 'ajv';
 
 import { transformErrors } from './utils/transformErrors';
 
 export const createValidatorFactory =
   (ajv: Ajv) =>
-  (jsonSchema: JsonSchema): ValidateFunction => {
+  (jsonSchema: JSONSchema): ValidateFunction => {
     const validate = ajv.compile({
       ...jsonSchema,
       $async: true,

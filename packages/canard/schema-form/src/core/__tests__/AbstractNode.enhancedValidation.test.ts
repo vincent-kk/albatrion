@@ -1,7 +1,7 @@
 import Ajv from 'ajv/dist/2020';
 import { describe, expect, it, vi } from 'vitest';
 
-import { nodeFromJsonSchema } from '@/schema-form/core';
+import { nodeFromJSONSchema } from '@/schema-form/core';
 
 import type { ArrayNode } from '../nodes/ArrayNode';
 import type { NumberNode } from '../nodes/NumberNode';
@@ -40,7 +40,7 @@ describe('AbstractNode Enhanced Validation', () => {
       );
       const onChange = vi.fn();
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: {
           type: 'object',
           properties: {
@@ -254,7 +254,7 @@ describe('AbstractNode Enhanced Validation', () => {
       );
       const onChange = vi.fn();
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: {
           type: 'object',
           properties: {
@@ -474,7 +474,7 @@ describe('AbstractNode Enhanced Validation', () => {
       );
       const onChange = vi.fn();
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: {
           type: 'object',
           properties: {
@@ -575,7 +575,7 @@ describe('AbstractNode Enhanced Validation', () => {
       );
       const onChange = vi.fn();
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: {
           type: 'object',
           propertyKeys: [
@@ -758,7 +758,7 @@ describe('AbstractNode Enhanced Validation', () => {
       );
       const onChange = vi.fn();
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: {
           type: 'object',
           properties: {
@@ -892,7 +892,7 @@ describe('AbstractNode Enhanced Validation', () => {
       );
       const onChange = vi.fn();
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: {
           type: 'object',
           properties: {
@@ -1102,7 +1102,7 @@ describe('AbstractNode Enhanced Validation', () => {
       );
       const onChange = vi.fn();
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: {
           type: 'object',
           properties: {
@@ -1180,7 +1180,7 @@ describe('AbstractNode Enhanced Validation', () => {
       );
       const onChange = vi.fn();
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: {
           type: 'object',
           properties: {
@@ -1278,7 +1278,7 @@ describe('AbstractNode Enhanced Validation', () => {
       );
       const onChange = vi.fn();
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: {
           type: 'object',
           properties: {
@@ -1301,7 +1301,7 @@ describe('AbstractNode Enhanced Validation', () => {
     it('should not initialize enhancer when validation is disabled', async () => {
       const onChange = vi.fn();
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: {
           type: 'object',
           properties: {
@@ -1327,7 +1327,7 @@ describe('AbstractNode Enhanced Validation', () => {
       );
       const onChange = vi.fn();
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: {
           type: 'object',
           properties: {
@@ -1427,7 +1427,7 @@ describe('AbstractNode Enhanced Validation', () => {
       );
       const onChange = vi.fn();
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: {
           type: 'object',
           properties: {
@@ -1526,7 +1526,7 @@ describe('AbstractNode Enhanced Validation', () => {
       );
       const onChange = vi.fn();
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: {
           type: 'object',
           properties: {
@@ -1653,7 +1653,7 @@ describe('AbstractNode Enhanced Validation', () => {
       );
       const onChange = vi.fn();
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: {
           type: 'object',
           properties: {
@@ -1776,7 +1776,7 @@ describe('AbstractNode Enhanced Validation', () => {
       );
       const onChange = vi.fn();
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: {
           type: 'object',
           properties: {
@@ -1975,7 +1975,7 @@ describe('AbstractNode Enhanced Validation', () => {
       );
       const onChange = vi.fn();
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: {
           type: 'object',
           properties: {
@@ -2108,7 +2108,7 @@ describe('AbstractNode Enhanced Validation', () => {
       );
       const onChange = vi.fn();
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: {
           type: 'object',
           properties: {

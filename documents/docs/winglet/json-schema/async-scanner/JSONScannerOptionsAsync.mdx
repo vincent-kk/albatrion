@@ -1,0 +1,32 @@
+---
+title: 'JSONScannerOptionsAsync'
+sidebar_label: 'JSONScannerOptionsAsync'
+---
+<!-- sync-winglet-docs:auto -->
+
+import WingletPlayground from '@site/src/components/WingletPlayground';
+
+# JSONScannerOptionsAsync
+
+## Signature
+
+```typescript
+interface JSONScannerOptionsAsync<Schema extends UnknownSchema = UnknownSchema, ContextType = void> extends Omit<JSONScannerOptions<Schema, ContextType>, 'filter' | 'mutate' | 'resolveReference'> {
+    /** Schema node filtering function (may be async) */
+    filter?: Fn<[
+        entry: SchemaEntry<Schema>,
+        context?: ContextType
+    ], boolean | Promise<boolean>>;
+    /** Function to mutate schema (may be async) */
+    mutate?: Fn<[
+        entry: SchemaEntry<Schema>,
+        context?: ContextType
+    ], Schema | void | Promise<Schema | void>>;
+    /** Function to resolve $ref references (may be async) */
+    resolveReference?: Fn<[
+        reference: string,
+        entry: SchemaEntry<Schema>,
+        context?: ContextType
+    ], Schema | Promise<Schema | undefined> | undefined>;
+}
+```

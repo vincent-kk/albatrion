@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import { Form, type FormTypeInputProps, type JsonSchema } from '../src';
+import { Form, type FormTypeInputProps, type JSONSchema } from '../src';
 import StoryLayout from './components/StoryLayout';
 
 export default {
@@ -18,7 +18,7 @@ export const Common = () => {
         type: 'number',
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>();
 
@@ -39,7 +39,7 @@ export const TrimOnBlur_Uncontrolled = () => {
         options: { trim: true },
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>({});
 
@@ -68,7 +68,7 @@ export const TrimOnBlur_Controlled = () => {
         options: { trim: true },
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>({});
 
@@ -96,7 +96,7 @@ export const NoTrimOnBlur_Uncontrolled = () => {
         // options.trim is undefined -> no trimming on blur
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>({});
 
@@ -124,7 +124,7 @@ export const NoTrimOnBlur_Controlled = () => {
         // options.trim is undefined -> no trimming on blur
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>({});
 

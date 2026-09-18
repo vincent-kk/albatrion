@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
-import { JsonSchemaError } from '@/schema-form/errors';
-import type { JsonSchemaWithVirtual } from '@/schema-form/types';
+import { JSONSchemaError } from '@/schema-form/errors';
+import type { JSONSchemaWithVirtual } from '@/schema-form/types';
 
 import { getDerivedValueFactory } from '../getDerivedValueFactory/getDerivedValueFactory';
 import { getPathManager } from '../getPathManager';
@@ -9,7 +9,7 @@ import { getPathManager } from '../getPathManager';
 describe('getDerivedValueFactory', () => {
   describe('기본 동작', () => {
     it('computed.derived 표현식을 파싱하여 함수를 반환해야 함', () => {
-      const schema: JsonSchemaWithVirtual = {
+      const schema: JSONSchemaWithVirtual = {
         type: 'string',
         computed: {
           derived: './price * 1.1',
@@ -30,7 +30,7 @@ describe('getDerivedValueFactory', () => {
     });
 
     it('&derived 별칭을 사용하여 표현식을 파싱해야 함', () => {
-      const schema: JsonSchemaWithVirtual = {
+      const schema: JSONSchemaWithVirtual = {
         type: 'string',
         '&derived': './quantity * ./unitPrice',
       };
@@ -50,7 +50,7 @@ describe('getDerivedValueFactory', () => {
     });
 
     it('computed.value가 &value보다 우선되어야 함', () => {
-      const schema: JsonSchemaWithVirtual = {
+      const schema: JSONSchemaWithVirtual = {
         type: 'string',
         computed: {
           derived: './a + ./b',
@@ -72,7 +72,7 @@ describe('getDerivedValueFactory', () => {
 
   describe('유효하지 않은 스키마 처리', () => {
     it('computed.value가 없는 경우 undefined를 반환해야 함', () => {
-      const schema: JsonSchemaWithVirtual = {
+      const schema: JSONSchemaWithVirtual = {
         type: 'string',
       };
 
@@ -86,7 +86,7 @@ describe('getDerivedValueFactory', () => {
     });
 
     it('computed 객체가 비어있는 경우 undefined를 반환해야 함', () => {
-      const schema: JsonSchemaWithVirtual = {
+      const schema: JSONSchemaWithVirtual = {
         type: 'string',
         computed: {},
       };
@@ -101,7 +101,7 @@ describe('getDerivedValueFactory', () => {
     });
 
     it('표현식이 빈 문자열인 경우 undefined를 반환해야 함', () => {
-      const schema: JsonSchemaWithVirtual = {
+      const schema: JSONSchemaWithVirtual = {
         type: 'string',
         computed: {
           derived: '',
@@ -123,7 +123,7 @@ describe('getDerivedValueFactory', () => {
         computed: {
           derived: null,
         },
-      } as unknown as JsonSchemaWithVirtual;
+      } as unknown as JSONSchemaWithVirtual;
 
       const pathManager = getPathManager();
       const getDerivedValue = getDerivedValueFactory(schema)(
@@ -140,7 +140,7 @@ describe('getDerivedValueFactory', () => {
         computed: {
           derived: 123,
         },
-      } as unknown as JsonSchemaWithVirtual;
+      } as unknown as JSONSchemaWithVirtual;
 
       const pathManager = getPathManager();
       const getDerivedValue = getDerivedValueFactory(schema)(
@@ -157,7 +157,7 @@ describe('getDerivedValueFactory', () => {
         computed: {
           derived: true,
         },
-      } as unknown as JsonSchemaWithVirtual;
+      } as unknown as JSONSchemaWithVirtual;
 
       const pathManager = getPathManager();
       const getDerivedValue = getDerivedValueFactory(schema)(
@@ -171,7 +171,7 @@ describe('getDerivedValueFactory', () => {
 
   describe('다양한 JSON Pointer 경로 형식', () => {
     it('절대 경로 (/path)를 올바르게 처리해야 함', () => {
-      const schema: JsonSchemaWithVirtual = {
+      const schema: JSONSchemaWithVirtual = {
         type: 'string',
         computed: {
           derived: '/root/derived * 2',
@@ -190,7 +190,7 @@ describe('getDerivedValueFactory', () => {
     });
 
     it('현재 경로 (./path)를 올바르게 처리해야 함', () => {
-      const schema: JsonSchemaWithVirtual = {
+      const schema: JSONSchemaWithVirtual = {
         type: 'string',
         computed: {
           derived: './current + 10',
@@ -209,7 +209,7 @@ describe('getDerivedValueFactory', () => {
     });
 
     it('부모 경로 (../path)를 올바르게 처리해야 함', () => {
-      const schema: JsonSchemaWithVirtual = {
+      const schema: JSONSchemaWithVirtual = {
         type: 'string',
         computed: {
           derived: '../sibling - 5',
@@ -228,7 +228,7 @@ describe('getDerivedValueFactory', () => {
     });
 
     it('여러 단계의 부모 경로 (../../path)를 올바르게 처리해야 함', () => {
-      const schema: JsonSchemaWithVirtual = {
+      const schema: JSONSchemaWithVirtual = {
         type: 'string',
         computed: {
           derived: '../../ancestor + 100',
@@ -247,7 +247,7 @@ describe('getDerivedValueFactory', () => {
     });
 
     it('Fragment 경로 (#/path)를 올바르게 처리해야 함', () => {
-      const schema: JsonSchemaWithVirtual = {
+      const schema: JSONSchemaWithVirtual = {
         type: 'string',
         computed: {
           derived: '#/root/data * 3',
@@ -267,7 +267,7 @@ describe('getDerivedValueFactory', () => {
     });
 
     it('컨텍스트 참조 (@)를 올바르게 처리해야 함', () => {
-      const schema: JsonSchemaWithVirtual = {
+      const schema: JSONSchemaWithVirtual = {
         type: 'string',
         computed: {
           derived: '@ ? "active" : "inactive"',
@@ -287,7 +287,7 @@ describe('getDerivedValueFactory', () => {
     });
 
     it('컨텍스트 참조와 프로퍼티 접근 (@.prop)을 올바르게 처리해야 함', () => {
-      const schema: JsonSchemaWithVirtual = {
+      const schema: JSONSchemaWithVirtual = {
         type: 'string',
         computed: {
           derived: '@.name + " - " + @.role',
@@ -308,7 +308,7 @@ describe('getDerivedValueFactory', () => {
     });
 
     it('Root 참조 (#)를 올바르게 처리해야 함', () => {
-      const schema: JsonSchemaWithVirtual = {
+      const schema: JSONSchemaWithVirtual = {
         type: 'string',
         computed: {
           derived: '# ? "has data" : "no data"',
@@ -329,7 +329,7 @@ describe('getDerivedValueFactory', () => {
 
   describe('복잡한 표현식', () => {
     it('산술 연산자를 포함한 표현식을 처리해야 함', () => {
-      const schema: JsonSchemaWithVirtual = {
+      const schema: JSONSchemaWithVirtual = {
         type: 'string',
         computed: {
           derived: '(./price * ./quantity) + ./tax - ./discount',
@@ -353,7 +353,7 @@ describe('getDerivedValueFactory', () => {
     });
 
     it('논리 연산자를 포함한 표현식을 처리해야 함', () => {
-      const schema: JsonSchemaWithVirtual = {
+      const schema: JSONSchemaWithVirtual = {
         type: 'boolean',
         computed: {
           derived: './isActive && ./hasPermission || ./isAdmin',
@@ -373,7 +373,7 @@ describe('getDerivedValueFactory', () => {
     });
 
     it('삼항 연산자를 포함한 표현식을 처리해야 함', () => {
-      const schema: JsonSchemaWithVirtual = {
+      const schema: JSONSchemaWithVirtual = {
         type: 'string',
         computed: {
           derived: './age >= 18 ? "성인" : "미성년자"',
@@ -392,7 +392,7 @@ describe('getDerivedValueFactory', () => {
     });
 
     it('문자열 연산을 포함한 표현식을 처리해야 함', () => {
-      const schema: JsonSchemaWithVirtual = {
+      const schema: JSONSchemaWithVirtual = {
         type: 'string',
         computed: {
           derived: './firstName + " " + ./lastName',
@@ -410,7 +410,7 @@ describe('getDerivedValueFactory', () => {
     });
 
     it('배열/객체 메서드를 포함한 표현식을 처리해야 함', () => {
-      const schema: JsonSchemaWithVirtual = {
+      const schema: JSONSchemaWithVirtual = {
         type: 'number',
         computed: {
           // ./items는 경로로 인식되고, .length는 JS 프로퍼티 접근으로 처리됨
@@ -430,7 +430,7 @@ describe('getDerivedValueFactory', () => {
     });
 
     it('비교 연산자를 포함한 표현식을 처리해야 함', () => {
-      const schema: JsonSchemaWithVirtual = {
+      const schema: JSONSchemaWithVirtual = {
         type: 'boolean',
         computed: {
           derived: './score >= 80 && ./score <= 100',
@@ -450,7 +450,7 @@ describe('getDerivedValueFactory', () => {
     });
 
     it('null 병합 연산자를 포함한 표현식을 처리해야 함', () => {
-      const schema: JsonSchemaWithVirtual = {
+      const schema: JSONSchemaWithVirtual = {
         type: 'string',
         computed: {
           derived: './nickname ?? ./name ?? "Anonymous"',
@@ -470,7 +470,7 @@ describe('getDerivedValueFactory', () => {
     });
 
     it('옵셔널 체이닝을 포함한 표현식을 처리해야 함', () => {
-      const schema: JsonSchemaWithVirtual = {
+      const schema: JSONSchemaWithVirtual = {
         type: 'string',
         computed: {
           // ./user는 경로로 인식되고, ?.profile?.name은 JS 표현식으로 처리됨
@@ -494,7 +494,7 @@ describe('getDerivedValueFactory', () => {
 
   describe('여러 의존성 경로', () => {
     it('동일한 경로가 여러 번 사용될 때 중복 없이 처리해야 함', () => {
-      const schema: JsonSchemaWithVirtual = {
+      const schema: JSONSchemaWithVirtual = {
         type: 'number',
         computed: {
           derived: './derived + ./derived + ./derived',
@@ -513,7 +513,7 @@ describe('getDerivedValueFactory', () => {
     });
 
     it('여러 다른 경로를 사용할 때 올바르게 처리해야 함', () => {
-      const schema: JsonSchemaWithVirtual = {
+      const schema: JSONSchemaWithVirtual = {
         type: 'string',
         computed: {
           derived: './a + ../b + /c + ../../d + ./a', // ./a가 두 번 사용됨
@@ -540,7 +540,7 @@ describe('getDerivedValueFactory', () => {
 
   describe('특수 문자 및 경계 케이스', () => {
     it('세미콜론이 포함된 표현식을 올바르게 처리해야 함', () => {
-      const schema: JsonSchemaWithVirtual = {
+      const schema: JSONSchemaWithVirtual = {
         type: 'number',
         computed: {
           derived: './derived * 2;',
@@ -558,7 +558,7 @@ describe('getDerivedValueFactory', () => {
     });
 
     it('공백이 있는 표현식을 올바르게 처리해야 함', () => {
-      const schema: JsonSchemaWithVirtual = {
+      const schema: JSONSchemaWithVirtual = {
         type: 'number',
         computed: {
           derived: '  ./derived   +   10   ',
@@ -576,7 +576,7 @@ describe('getDerivedValueFactory', () => {
     });
 
     it('중첩된 속성 경로를 올바르게 처리해야 함', () => {
-      const schema: JsonSchemaWithVirtual = {
+      const schema: JSONSchemaWithVirtual = {
         type: 'string',
         computed: {
           derived: './user/profile/settings/theme',
@@ -595,7 +595,7 @@ describe('getDerivedValueFactory', () => {
     });
 
     it('특수 문자가 포함된 값을 올바르게 처리해야 함', () => {
-      const schema: JsonSchemaWithVirtual = {
+      const schema: JSONSchemaWithVirtual = {
         type: 'string',
         computed: {
           derived: './derived === "특수문자!@#$%^&*()"',
@@ -614,7 +614,7 @@ describe('getDerivedValueFactory', () => {
     });
 
     it('null과 undefined 값을 올바르게 처리해야 함', () => {
-      const schema: JsonSchemaWithVirtual = {
+      const schema: JSONSchemaWithVirtual = {
         type: 'boolean',
         computed: {
           derived: './derived === null',
@@ -634,7 +634,7 @@ describe('getDerivedValueFactory', () => {
     });
 
     it('배열 인덱스 접근을 포함한 표현식을 처리해야 함', () => {
-      const schema: JsonSchemaWithVirtual = {
+      const schema: JSONSchemaWithVirtual = {
         type: 'string',
         computed: {
           // ./items[0]과 ./items[1]은 각각 별도의 경로로 인식됨
@@ -659,7 +659,7 @@ describe('getDerivedValueFactory', () => {
 
   describe('에러 처리', () => {
     it('잘못된 JavaScript 표현식은 에러를 발생시켜야 함', () => {
-      const schema: JsonSchemaWithVirtual = {
+      const schema: JSONSchemaWithVirtual = {
         type: 'string',
         computed: {
           derived: './derived ===== "invalid"', // 잘못된 연산자
@@ -670,11 +670,11 @@ describe('getDerivedValueFactory', () => {
 
       expect(() =>
         getDerivedValueFactory(schema)(pathManager, 'derived'),
-      ).toThrow(JsonSchemaError);
+      ).toThrow(JSONSchemaError);
     });
 
     it('불완전한 표현식은 에러를 발생시켜야 함', () => {
-      const schema: JsonSchemaWithVirtual = {
+      const schema: JSONSchemaWithVirtual = {
         type: 'string',
         computed: {
           derived: './derived +', // 불완전한 표현식
@@ -685,11 +685,11 @@ describe('getDerivedValueFactory', () => {
 
       expect(() =>
         getDerivedValueFactory(schema)(pathManager, 'derived'),
-      ).toThrow(JsonSchemaError);
+      ).toThrow(JSONSchemaError);
     });
 
     it('에러 메시지에 fieldName과 expression이 포함되어야 함', () => {
-      const schema: JsonSchemaWithVirtual = {
+      const schema: JSONSchemaWithVirtual = {
         type: 'string',
         computed: {
           derived: './invalid {{{{ syntax',
@@ -702,9 +702,9 @@ describe('getDerivedValueFactory', () => {
         getDerivedValueFactory(schema)(pathManager, 'derived');
         expect.fail('에러가 발생해야 합니다');
       } catch (error) {
-        expect(error).toBeInstanceOf(JsonSchemaError);
-        expect((error as JsonSchemaError).message).toContain('derived');
-        expect((error as JsonSchemaError).message).toContain(
+        expect(error).toBeInstanceOf(JSONSchemaError);
+        expect((error as JSONSchemaError).message).toContain('derived');
+        expect((error as JSONSchemaError).message).toContain(
           './invalid {{{{ syntax',
         );
       }
@@ -713,7 +713,7 @@ describe('getDerivedValueFactory', () => {
 
   describe('실제 사용 사례', () => {
     it('가격 계산 (가격 * 수량 + 세금)을 처리해야 함', () => {
-      const schema: JsonSchemaWithVirtual = {
+      const schema: JSONSchemaWithVirtual = {
         type: 'number',
         computed: {
           derived: './price * ./quantity * (1 + ./taxRate / 100)',
@@ -732,7 +732,7 @@ describe('getDerivedValueFactory', () => {
     });
 
     it('전체 이름 조합 (성 + 이름)을 처리해야 함', () => {
-      const schema: JsonSchemaWithVirtual = {
+      const schema: JSONSchemaWithVirtual = {
         type: 'string',
         computed: {
           derived: './lastName + ./firstName',
@@ -750,7 +750,7 @@ describe('getDerivedValueFactory', () => {
     });
 
     it('상태 문자열 생성을 처리해야 함', () => {
-      const schema: JsonSchemaWithVirtual = {
+      const schema: JSONSchemaWithVirtual = {
         type: 'string',
         computed: {
           derived:
@@ -771,7 +771,7 @@ describe('getDerivedValueFactory', () => {
     });
 
     it('조건부 표시 텍스트를 처리해야 함', () => {
-      const schema: JsonSchemaWithVirtual = {
+      const schema: JSONSchemaWithVirtual = {
         type: 'string',
         computed: {
           // 템플릿 리터럴 내에서 경로를 사용할 때는 문자열 연결을 사용
@@ -791,7 +791,7 @@ describe('getDerivedValueFactory', () => {
     });
 
     it('할인율 적용 가격 계산을 처리해야 함', () => {
-      const schema: JsonSchemaWithVirtual = {
+      const schema: JSONSchemaWithVirtual = {
         type: 'number',
         computed: {
           derived: '../originalPrice * (1 - ./discountRate / 100)',

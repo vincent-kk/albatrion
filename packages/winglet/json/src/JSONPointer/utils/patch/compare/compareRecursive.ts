@@ -3,7 +3,7 @@ import { getKeys, hasOwnProperty } from '@winglet/common-utils/lib';
 
 import { JSONPointer } from '@/json/JSONPointer/enum';
 import { escapeSegment } from '@/json/JSONPointer/utils/escape/escapeSegment';
-import type { JsonRoot } from '@/json/type';
+import type { JSONRoot } from '@/json/type';
 
 import { Operation, type Patch } from '../../patchModel';
 import { processValue } from './utils/processValue';
@@ -32,8 +32,8 @@ import { processValue } from './utils/processValue';
  * @internal This function is for internal use by the compare function
  */
 export const compareRecursive = <
-  Source extends JsonRoot,
-  Target extends JsonRoot,
+  Source extends JSONRoot,
+  Target extends JSONRoot,
 >(
   source: Source,
   target: Target,
@@ -47,17 +47,17 @@ export const compareRecursive = <
 
   // Values that serialize themselves — Date above all — expose no own keys, so a key
   // comparison would report every pair of them as identical
-  const sourceJson = serializable(source);
-  const targetJson = serializable(target);
-  if (sourceJson !== source || targetJson !== target) {
+  const sourceJSON = serializable(source);
+  const targetJSON = serializable(target);
+  if (sourceJSON !== source || targetJSON !== target) {
     // A hook that yields an object keeps the structural walk — recursed rather than
     // reassigned so the generic parameters keep describing what was actually passed in.
     // A hook that yields a scalar — Date above all — leaves nothing to walk, so the
     // node is replaced whole instead of comparing two key-less values as identical
-    if (isObject(sourceJson) && isObject(targetJson)) {
+    if (isObject(sourceJSON) && isObject(targetJSON)) {
       compareRecursive(
-        sourceJson,
-        targetJson,
+        sourceJSON,
+        targetJSON,
         patches,
         path,
         strict,
@@ -65,17 +65,17 @@ export const compareRecursive = <
       );
       return;
     }
-    if (sourceJson === targetJson) return;
+    if (sourceJSON === targetJSON) return;
     if (strict)
       patches.push({
         op: Operation.TEST,
         path,
-        value: processValue(sourceJson, immutable),
+        value: processValue(sourceJSON, immutable),
       });
     patches.push({
       op: Operation.REPLACE,
       path,
-      value: processValue(targetJson, immutable),
+      value: processValue(targetJSON, immutable),
     });
     return;
   }
@@ -210,8 +210,8 @@ export const compareRecursive = <
 /**
  * Reduces a self-serializing value to the form its own hook produces.
  *
- * `toJSON` is the standard hook every built-in and most user classes implement;
- * `toJson` is kept as the alias this module accepted before.
+ * `toJSON` is the standard hook; `toJson` is accepted as a deprecated alias —
+ * Removed in 0.16.0.
  *
  * @param value - Value to reduce
  * @returns The hook's result, or the value itself when it has no hook

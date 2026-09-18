@@ -2,8 +2,8 @@ import { describe, expect, it } from 'vitest';
 
 import { delay } from '@winglet/common-utils';
 
-import { nodeFromJsonSchema } from '@/schema-form/core';
-import type { JsonSchema } from '@/schema-form/types';
+import { nodeFromJSONSchema } from '@/schema-form/core';
+import type { JSONSchema } from '@/schema-form/types';
 
 import type { BooleanNode } from '../nodes/BooleanNode';
 import type { NumberNode } from '../nodes/NumberNode';
@@ -11,7 +11,7 @@ import type { ObjectNode } from '../nodes/ObjectNode';
 
 type CompositionScope = 'oneOf' | 'anyOf';
 
-const createNestedSchema = (innerScope: CompositionScope): JsonSchema => ({
+const createNestedSchema = (innerScope: CompositionScope): JSONSchema => ({
   type: 'object',
   properties: {
     enabled: { type: 'boolean', default: true },
@@ -49,7 +49,7 @@ describe('BranchStrategy anyOf - nested defaults', () => {
   it.each(['oneOf', 'anyOf'] as const satisfies readonly CompositionScope[])(
     'preserves defaults from a nested %s during initial activation',
     async (innerScope) => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: createNestedSchema(innerScope),
         onChange: () => {},
       }) as ObjectNode;
@@ -63,7 +63,7 @@ describe('BranchStrategy anyOf - nested defaults', () => {
   it.each(['oneOf', 'anyOf'] as const satisfies readonly CompositionScope[])(
     'restores nested %s defaults after reactivation',
     async (innerScope) => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: createNestedSchema(innerScope),
         onChange: () => {},
       }) as ObjectNode;
@@ -86,7 +86,7 @@ describe('BranchStrategy anyOf - nested defaults', () => {
   );
 
   it('preserves nested defaults for multiple initially active anyOf branches', async () => {
-    const schema: JsonSchema = {
+    const schema: JSONSchema = {
       type: 'object',
       properties: {
         shippingEnabled: { type: 'boolean', default: true },
@@ -134,7 +134,7 @@ describe('BranchStrategy anyOf - nested defaults', () => {
       ],
     };
 
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       jsonSchema: schema,
       onChange: () => {},
     }) as ObjectNode;

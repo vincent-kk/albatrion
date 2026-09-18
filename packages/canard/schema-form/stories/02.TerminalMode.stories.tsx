@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { Form, type FormTypeInputProps, type JsonSchema } from '../src';
+import { Form, type FormTypeInputProps, type JSONSchema } from '../src';
 import StoryLayout from './components/StoryLayout';
 
 export default {
@@ -47,7 +47,7 @@ export const FormTypeInputArrayTerminal = () => {
         },
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   return (
     <StoryLayout jsonSchema={schema} value={value}>
@@ -97,7 +97,7 @@ export const FormTypeInputArrayNotTerminal = () => {
         },
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   return (
     <StoryLayout jsonSchema={schema} value={value}>
@@ -155,7 +155,7 @@ export const FormTypeInputArrayTerminalWithDefaultValue = () => {
         minItems: 3,
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   return (
     <StoryLayout jsonSchema={schema} value={value}>
@@ -228,7 +228,7 @@ export const FormTypeInputArrayTerminalWithDefaultObjectValue = () => {
         minItems: 3,
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   return (
     <StoryLayout jsonSchema={schema} value={value}>
@@ -308,7 +308,7 @@ export const FormTypeInputArrayTerminalWithMixedDefaultObjectValue = () => {
         minItems: 3,
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   return (
     <StoryLayout jsonSchema={schema} value={value}>
@@ -384,7 +384,7 @@ export const FormTypeInputObjectTerminal = () => {
         },
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   return (
     <StoryLayout jsonSchema={schema} value={value}>
@@ -461,7 +461,7 @@ export const FormTypeInputObjectNotTerminal = () => {
         },
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   return (
     <StoryLayout jsonSchema={schema} value={value}>
@@ -545,7 +545,7 @@ export const FormTypeInputObjectTerminalWithDefaultValue = () => {
         },
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   return (
     <StoryLayout jsonSchema={schema} value={value}>
@@ -625,7 +625,7 @@ export const FormTypeInputObjectTerminalWithSubSchemaDefaultValue = () => {
         },
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   return (
     <StoryLayout jsonSchema={schema} value={value}>
@@ -710,7 +710,7 @@ export const FormTypeInputObjectTerminalWithMixedDefaultValue = () => {
         },
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   return (
     <StoryLayout jsonSchema={schema} value={value}>
@@ -787,7 +787,7 @@ export const FormTypeInputObjectTerminalWithPropertyKeys = () => {
         },
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   return (
     <StoryLayout jsonSchema={schema} value={value}>
@@ -837,7 +837,7 @@ export const FormTypeInputObjectNullableWithDefaultNull = () => {
         },
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   return (
     <StoryLayout jsonSchema={schema} value={value}>
@@ -887,7 +887,7 @@ export const FormTypeInputObjectNullableWithDefaultNullAndSubDefaults = () => {
         },
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   return (
     <StoryLayout jsonSchema={schema} value={value}>
@@ -976,7 +976,7 @@ export const FormTypeInputObjectNullableNestedMixedDefaults = () => {
         },
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   return (
     <StoryLayout jsonSchema={schema} value={value}>
@@ -1023,7 +1023,7 @@ export const FormTypeInputObjectNullableLifecycle = () => {
         },
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   return (
     <StoryLayout jsonSchema={schema} value={value}>
@@ -1072,7 +1072,7 @@ export const FormTypeInputObjectNullableWithoutExplicitFlag = () => {
         },
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   return (
     <StoryLayout jsonSchema={schema} value={value}>

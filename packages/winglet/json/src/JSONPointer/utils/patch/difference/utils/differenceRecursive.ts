@@ -7,7 +7,7 @@ import {
   PROTOTYPE_ASSESS_KEY,
   PROTOTYPE_KEY,
 } from '@/json/JSONPointer/constants/prototypeKey';
-import type { JsonObject } from '@/json/type';
+import type { JSONObject } from '@/json/type';
 
 /**
  * Builds the merge patch for two corresponding plain-object nodes.
@@ -23,10 +23,10 @@ import type { JsonObject } from '@/json/type';
  * @internal This function is for internal use by the differenceObjectPatch function
  */
 export const differenceRecursive = (
-  source: JsonObject,
-  target: JsonObject,
-): JsonObject | undefined => {
-  let patch: JsonObject | undefined = undefined;
+  source: JSONObject,
+  target: JSONObject,
+): JSONObject | undefined => {
+  let patch: JSONObject | undefined = undefined;
   let hasRemoved = false;
   let hasForbidden = false;
   const sourceKeys = Object.keys(source);

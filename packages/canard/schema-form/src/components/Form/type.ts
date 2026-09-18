@@ -18,26 +18,26 @@ import type {
   FormTypeInputMap,
   FormTypeRendererProps,
   InferValueType,
-  JsonSchema,
-  JsonSchemaError,
+  JSONSchema,
+  JSONSchemaError,
   SetStateFnWithOptions,
   ShowError,
   ValidatorFactory,
 } from '@/schema-form/types';
 
 export interface FormChildrenProps<
-  Schema extends JsonSchema,
+  Schema extends JSONSchema,
   Value extends AllowedValue = InferValueType<Schema>,
 > {
   node?: InferSchemaNode<Schema>;
   jsonSchema: Schema;
   defaultValue?: Value;
   value?: Value;
-  errors?: JsonSchemaError[];
+  errors?: JSONSchemaError[];
 }
 
 export interface FormProps<
-  Schema extends JsonSchema = JsonSchema,
+  Schema extends JSONSchema = JSONSchema,
   Value extends AllowedValue = InferValueType<Schema>,
 > {
   /** JSON Schema to be used within this SchemaForm */
@@ -51,7 +51,7 @@ export interface FormProps<
   /** Function called when the value of this SchemaForm changes */
   onChange?: Fn<[value: Value]>;
   /** Function called when the value of this SchemaForm is validated */
-  onValidate?: Fn<[jsonSchemaError: JsonSchemaError[]]>;
+  onValidate?: Fn<[jsonSchemaError: JSONSchemaError[]]>;
   /** Function called when the form is submitted */
   onSubmit?: Fn<[value: Value], Promise<void> | void>;
   /** Function called when the state of this SchemaForm changes */
@@ -63,7 +63,7 @@ export interface FormProps<
   /** Custom form type renderer component */
   CustomFormTypeRenderer?: ComponentType<FormTypeRendererProps>;
   /** Initial validation errors, default is undefined */
-  errors?: JsonSchemaError[];
+  errors?: JSONSchemaError[];
   /** Custom format error function */
   formatError?: FormTypeRendererProps['formatError'];
   /**
@@ -106,7 +106,7 @@ export interface FormProps<
 }
 
 export interface FormHandle<
-  Schema extends JsonSchema = JsonSchema,
+  Schema extends JSONSchema = JSONSchema,
   Value extends AllowedValue = InferValueType<Schema>,
 > {
   node?: InferSchemaNode<Schema>;
@@ -120,9 +120,9 @@ export interface FormHandle<
   clearState: Fn;
   getValue: Fn<[], Value>;
   setValue: SetStateFnWithOptions<Value>;
-  getErrors: Fn<[], JsonSchemaError[]>;
+  getErrors: Fn<[], JSONSchemaError[]>;
   getAttachedFilesMap: Fn<[], AttachedFilesMap>;
-  validate: Fn<[], Promise<JsonSchemaError[]>>;
+  validate: Fn<[], Promise<JSONSchemaError[]>>;
   showError: Fn<[visible: boolean]>;
   submit: TrackableHandlerFunction;
 }

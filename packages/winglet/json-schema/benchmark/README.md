@@ -1,7 +1,7 @@
-# JsonSchemaScanner measurement harness
+# JSONSchemaScanner measurement harness
 
 Standalone Node scripts used to measure correctness, behaviour equivalence,
-speed, stress resilience and memory of `JsonSchemaScanner` / `JsonSchemaScannerAsync`.
+speed, stress resilience and memory of `JSONSchemaScanner` / `JSONSchemaScannerAsync`.
 They load the **built** scanner through the package's own subpath exports, so
 run `yarn build` first, then invoke a script directly.
 

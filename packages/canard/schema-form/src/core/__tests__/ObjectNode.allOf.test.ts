@@ -2,15 +2,15 @@ import { describe, expect, it } from 'vitest';
 
 import { delay } from '@winglet/common-utils';
 
-import { nodeFromJsonSchema } from '@/schema-form/core';
-import type { JsonSchema } from '@/schema-form/types';
+import { nodeFromJSONSchema } from '@/schema-form/core';
+import type { JSONSchema } from '@/schema-form/types';
 
 import type { ObjectNode } from '../nodes/ObjectNode';
 import type { StringNode } from '../nodes/StringNode';
 
 describe('ObjectNode allOf', () => {
   it('allOf로 여러 스키마가 병합되어야 함', async () => {
-    const schema: JsonSchema = {
+    const schema: JSONSchema = {
       type: 'object',
       allOf: [
         {
@@ -39,7 +39,7 @@ describe('ObjectNode allOf', () => {
       ],
     };
 
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       onChange: () => {},
       jsonSchema: schema,
     }) as ObjectNode;
@@ -68,7 +68,7 @@ describe('ObjectNode allOf', () => {
   });
 
   it('allOf와 properties가 함께 사용되면 병합되어야 함', async () => {
-    const schema: JsonSchema = {
+    const schema: JSONSchema = {
       type: 'object',
       properties: {
         id: { type: 'string' },
@@ -97,7 +97,7 @@ describe('ObjectNode allOf', () => {
       ],
     };
 
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       onChange: () => {},
       jsonSchema: schema,
     }) as ObjectNode;
@@ -114,7 +114,7 @@ describe('ObjectNode allOf', () => {
   });
 
   it('allOf의 스키마에서 같은 속성이 중복되면 병합되어야 함', async () => {
-    const schema: JsonSchema = {
+    const schema: JSONSchema = {
       type: 'object',
       allOf: [
         {
@@ -136,7 +136,7 @@ describe('ObjectNode allOf', () => {
       ],
     };
 
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       onChange: () => {},
       jsonSchema: schema,
     }) as ObjectNode;
@@ -152,7 +152,7 @@ describe('ObjectNode allOf', () => {
   });
 
   it('allOf에서 속성들이 모두 병합되어야 함', async () => {
-    const schema: JsonSchema = {
+    const schema: JSONSchema = {
       type: 'object',
       allOf: [
         {
@@ -170,7 +170,7 @@ describe('ObjectNode allOf', () => {
       ],
     };
 
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       onChange: () => {},
       jsonSchema: schema,
     }) as ObjectNode;
@@ -199,7 +199,7 @@ describe('ObjectNode allOf', () => {
   });
 
   it('allOf의 default 값이 병합되어야 함', async () => {
-    const schema: JsonSchema = {
+    const schema: JSONSchema = {
       type: 'object',
       allOf: [
         {
@@ -226,7 +226,7 @@ describe('ObjectNode allOf', () => {
       ],
     };
 
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       onChange: () => {},
       jsonSchema: schema,
     }) as ObjectNode;
@@ -240,7 +240,7 @@ describe('ObjectNode allOf', () => {
   });
 
   it('allOf에서 다중 타입 스키마는 금지되어야 함', () => {
-    const schema: JsonSchema = {
+    const schema: JSONSchema = {
       type: 'object',
       allOf: [
         {
@@ -256,7 +256,7 @@ describe('ObjectNode allOf', () => {
     };
 
     expect(() => {
-      nodeFromJsonSchema({
+      nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: schema,
       });
@@ -264,7 +264,7 @@ describe('ObjectNode allOf', () => {
   });
 
   it('중첩된 allOf가 정상적으로 처리되어야 함', async () => {
-    const schema: JsonSchema = {
+    const schema: JSONSchema = {
       type: 'object',
       properties: {
         a: { type: 'string' },
@@ -273,7 +273,7 @@ describe('ObjectNode allOf', () => {
       },
     };
 
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       onChange: () => {},
       jsonSchema: schema,
     }) as ObjectNode;
@@ -288,7 +288,7 @@ describe('ObjectNode allOf', () => {
   });
 
   it('allOf와 computed 속성이 함께 동작해야 함', async () => {
-    const schema: JsonSchema = {
+    const schema: JSONSchema = {
       type: 'object',
       properties: {
         mode: {
@@ -321,7 +321,7 @@ describe('ObjectNode allOf', () => {
       ],
     };
 
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       onChange: () => {},
       jsonSchema: schema,
     }) as ObjectNode;
@@ -345,7 +345,7 @@ describe('ObjectNode allOf', () => {
   });
 
   it('allOf의 다양한 속성들이 병합되어야 함', async () => {
-    const schema: JsonSchema = {
+    const schema: JSONSchema = {
       type: 'object',
       allOf: [
         {
@@ -362,7 +362,7 @@ describe('ObjectNode allOf', () => {
       ],
     };
 
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       onChange: () => {},
       jsonSchema: schema,
     }) as ObjectNode;

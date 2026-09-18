@@ -11,14 +11,14 @@ JSON Schema의 computed 표현식 문자열을 파싱하여 JSONPointer 경로�
 - 출력: `DynamicFunction | undefined` (expression이 비어있으면 undefined)
 - `JSON_POINTER_PATH_REGEX` 로 경로 추출 → `pathManager.set(path)` 로 등록 → `dependencies[index]` 치환
 - 후행 세미콜론 제거: `.replace(/;$/, '')`
-- `new Function('dependencies', functionBody)` 로 컴파일; 실패 시 `JsonSchemaError('CREATE_DYNAMIC_FUNCTION')` throw
+- `new Function('dependencies', functionBody)` 로 컴파일; 실패 시 `JSONSchemaError('CREATE_DYNAMIC_FUNCTION')` throw
 
 ## Boundaries
 
 ### Always do
 
 - JSONPointer 경로 등록은 반드시 `pathManager.set()` 을 통해 수행
-- 컴파일 실패 시 `JsonSchemaError` 로 감싸서 throw
+- 컴파일 실패 시 `JSONSchemaError` 로 감싸서 throw
 
 ### Ask first
 

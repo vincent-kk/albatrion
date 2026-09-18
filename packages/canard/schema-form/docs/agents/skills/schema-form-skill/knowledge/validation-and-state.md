@@ -45,7 +45,7 @@ zipCode: {
 }
 ```
 
-`formatError` (prop on `<Form>`) has signature `(error: JsonSchemaError, node: SchemaNode, context: Dictionary) => ReactNode` — three arguments, and the return is a **ReactNode**, so JSX error rendering is legitimate, not just strings.
+`formatError` (prop on `<Form>`) has signature `(error: JSONSchemaError, node: SchemaNode, context: Dictionary) => ReactNode` — three arguments, and the return is a **ReactNode**, so JSX error rendering is legitimate, not just strings.
 
 ## Interaction State
 

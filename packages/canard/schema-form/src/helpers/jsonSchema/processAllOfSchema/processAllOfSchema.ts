@@ -1,6 +1,6 @@
 import { cloneLite } from '@winglet/common-utils/object';
 
-import { JsonSchemaError } from '@/schema-form/errors';
+import { JSONSchemaError } from '@/schema-form/errors';
 import {
   formatAllOfIgnoredKeywordWarning,
   formatAllOfTypeRedefinitionError,
@@ -9,7 +9,7 @@ import {
   ALL_OF_KEYWORD_IGNORED_FOR_FORM,
   warnDevelopmentIssue,
 } from '@/schema-form/helpers/warning';
-import type { JsonSchema } from '@/schema-form/types';
+import type { JSONSchema } from '@/schema-form/types';
 
 import { getCloneDepth } from './utils/getCloneDepth';
 import {
@@ -24,9 +24,9 @@ import { validateCompatibility } from './utils/validateCompatibility';
  *
  * @param schema - The JSON Schema to process that may contain an `allOf` property
  * @returns The processed schema with all `allOf` schemas merged into the base schema
- * @throws {JsonSchemaError} When allOf schema contains incompatible type redefinitions
+ * @throws {JSONSchemaError} When allOf schema contains incompatible type redefinitions
  */
-export const processAllOfSchema = (schema: JsonSchema): JsonSchema => {
+export const processAllOfSchema = (schema: JSONSchema): JSONSchema => {
   if (!schema.allOf?.length) return schema;
   const mergeHandler = getMergeSchemaHandler(schema);
   if (!mergeHandler) return schema;
@@ -43,7 +43,7 @@ export const processAllOfSchema = (schema: JsonSchema): JsonSchema => {
           details: { keyword: IGNORE_FIELDS[j], allOfSchema },
         });
     if (validateCompatibility(schema, allOfSchema) === false)
-      throw new JsonSchemaError(
+      throw new JSONSchemaError(
         'ALL_OF_TYPE_REDEFINITION',
         formatAllOfTypeRedefinitionError(schema, allOfSchema),
         { schema, allOfSchema },

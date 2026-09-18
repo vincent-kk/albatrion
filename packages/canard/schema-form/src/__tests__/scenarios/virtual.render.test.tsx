@@ -2,7 +2,7 @@ import '@testing-library/jest-dom';
 import { act } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 
-import type { JsonSchema } from '@winglet/json-schema';
+import type { JSONSchema } from '@winglet/json-schema';
 
 import { SetValueOption } from '@/schema-form/core';
 
@@ -37,7 +37,7 @@ describe('virtual node DOM presence', () => {
       endDate: { type: 'string' },
     },
     virtual: { period: { fields: ['startDate', 'endDate'] } },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   it('renders a [data-path] wrapper for the virtual node with referenced fields nested inside', async () => {
     const form = await renderForm(periodSchema);
@@ -102,7 +102,7 @@ describe('virtual node DOM presence', () => {
           ),
         },
       },
-    } satisfies JsonSchema;
+    } satisfies JSONSchema;
     const form = await renderForm(schema);
 
     // DOM: only the virtual node renders; the referenced fields are NOT given
@@ -127,7 +127,7 @@ describe('virtual aggregation reflects edits', () => {
       endDate: { type: 'string' },
     },
     virtual: { period: { fields: ['startDate', 'endDate'] } },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   it('aggregates both real fields after editing them, while object value omits the virtual key', async () => {
     const form = await renderForm(periodSchema);
@@ -212,7 +212,7 @@ describe('virtual defaultValue priming', () => {
       endDate: { type: 'string' },
     },
     virtual: { period: { fields: ['startDate', 'endDate'] } },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   it('primes the aggregation and nested DOM from defaultValue (two-phase)', async () => {
     const form = await renderForm(periodSchema, {
@@ -259,7 +259,7 @@ describe('computed active gating', () => {
         computed: { active: '../control === "A"' },
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   it('renders the active virtual wrapper and its nested fields', async () => {
     const form = await renderForm(gatedSchema);

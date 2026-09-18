@@ -3,8 +3,8 @@
 [![Typescript](https://img.shields.io/badge/typescript-✔-blue.svg)]()
 [![Javascript](https://img.shields.io/badge/javascript-✔-yellow.svg)]()
 [![React](https://img.shields.io/badge/react-✔-61DAFB.svg)]()
-[![Json Schema](https://img.shields.io/badge/JsonSchema-{}-blue.svg)]()
-[![Json Schema Form](https://img.shields.io/badge/JsonSchemaForm-form-red.svg)]()
+[![JSON Schema](https://img.shields.io/badge/JSONSchema-{}-blue.svg)]()
+[![JSON Schema Form](https://img.shields.io/badge/JSONSchemaForm-form-red.svg)]()
 
 ---
 
@@ -57,7 +57,7 @@ Babel 등의 트랜스파일러를 사용하여 타겟 환경에 맞게 변환�
 
 ```ts
 interface FormProps<
-  Schema extends JsonSchema = JsonSchema,
+  Schema extends JSONSchema = JSONSchema,
   Value extends AllowedValue = InferValueType<Schema>,
 > {
   /** 이 SchemaForm에서 사용할 JSON Schema */
@@ -71,7 +71,7 @@ interface FormProps<
   /** 이 SchemaForm의 값이 변경될 때 호출되는 함수 */
   onChange?: SetStateFn<Value>;
   /** 이 SchemaForm이 유효성 검사를 통과했을 때 호출되는 함수 */
-  onValidate?: Fn<[jsonSchemaError: JsonSchemaError[]]>;
+  onValidate?: Fn<[jsonSchemaError: JSONSchemaError[]]>;
   /** 폼이 제출될 때 호출되는 함수 (검증 통과 후 실행) */
   onSubmit?: Fn<[value: Value], Promise<void> | void>;
   /** 이 SchemaForm의 상태가 변경될 때 호출되는 함수 */
@@ -83,7 +83,7 @@ interface FormProps<
   /** 사용자 정의 형식 렌더러 컴포넌트 */
   CustomFormTypeRenderer?: ComponentType<FormTypeRendererProps>;
   /** 초기 검증 오류, 기본값은 undefined */
-  errors?: JsonSchemaError[];
+  errors?: JSONSchemaError[];
   /** 사용자 정의 오류 형식 함수 */
   formatError?: FormTypeRendererProps['formatError'];
   /**
@@ -117,7 +117,7 @@ interface FormProps<
 
 ```ts
 interface FormHandle<
-  Schema extends JsonSchema,
+  Schema extends JSONSchema,
   Value extends AllowedValue = InferValueType<Schema>,
 > {
   node?: InferSchemaNode<Schema>;
@@ -132,10 +132,10 @@ interface FormHandle<
   getValue: Fn<[], Value>;
   setValue: SetStateFnWithOptions<Value>;
   /** 폼 전역 오류를 반환합니다 */
-  getErrors: Fn<[], JsonSchemaError[]>;
+  getErrors: Fn<[], JSONSchemaError[]>;
   /** onFileAttach로 첨부된 파일 맵을 반환합니다 */
   getAttachedFilesMap: Fn<[], AttachedFilesMap>;
-  validate: Fn<[], Promise<JsonSchemaError[]>>;
+  validate: Fn<[], Promise<JSONSchemaError[]>>;
   showError: Fn<[visible: boolean]>;
   submit: TrackableHandlerFunction<[], void, { loading: boolean }>;
 }
@@ -152,14 +152,14 @@ type AttachedFilesMap = Map<string, File[]>;
 
 ```ts
 interface FormChildrenProps<
-  Schema extends JsonSchema,
+  Schema extends JSONSchema,
   Value extends AllowedValue = InferValueType<Schema>,
 > {
   node?: InferSchemaNode<Schema>;
   jsonSchema: Schema;
   defaultValue?: Value;
   value?: Value;
-  errors?: JsonSchemaError[];
+  errors?: JSONSchemaError[];
 }
 ```
 
@@ -217,12 +217,12 @@ ValidatorFactory는 JSON Schema를 받아 검증 함수를 반환하는 함수�
 
 ```ts
 interface ValidatorFactory {
-  (schema: JsonSchema): ValidateFunction<any>;
+  (schema: JSONSchema): ValidateFunction<any>;
 }
 
 type ValidateFunction<Value = unknown> = Fn<
   [data: Value],
-  Promise<JsonSchemaError[] | null> | JsonSchemaError[] | null
+  Promise<JSONSchemaError[] | null> | JSONSchemaError[] | null
 >;
 ```
 
@@ -453,7 +453,7 @@ FormTypeInput의 조건은 함수 또는 객체를 사용하여 정의할 수 �
 
 ```ts
 type Hint = {
-  jsonSchema: JsonSchema;
+  jsonSchema: JSONSchema;
   type: string;
   format: string;
   formType: string;
@@ -464,7 +464,7 @@ type FormTypeTestFn = Fn<[hint: Hint], boolean>;
 
 type FormTypeTestObject = Partial<{
   type: Array<string>;
-  jsonSchema: JsonSchema;
+  jsonSchema: JSONSchema;
   format: Array<string>;
   formType: Array<string>;
   [alt: string]: any;
@@ -483,7 +483,7 @@ interface FormTypeInputProps<
   Value extends AllowedValue = any,
   Context extends Dictionary = object,
   WatchValues extends Array<any> = Array<any>,
-  Schema extends JsonSchemaWithVirtual = InferJsonSchema<Value>,
+  Schema extends JSONSchemaWithVirtual = InferJSONSchema<Value>,
   Node extends SchemaNode = InferSchemaNode<Schema>,
 > {
   /** FormTypeInput 컴포넌트의 JSON 스키마 */
@@ -508,7 +508,7 @@ interface FormTypeInputProps<
   errors: Node['errors'];
   /** 이 필드의 에러를 표시할지 여부 */
   errorVisible: boolean;
-  /** JsonSchema에서 정의된 `computed.watch`(=`&watch`) 속성에 따라 모니터링되는 값 */
+  /** JSONSchema에서 정의된 `computed.watch`(=`&watch`) 속성에 따라 모니터링되는 값 */
   watchValues: WatchValues;
   /** FormTypeInput 컴포넌트의 기본값 */
   defaultValue: Value | undefined;
@@ -864,7 +864,7 @@ export interface ValidatorPlugin {
 }
 
 export interface ValidatorFactory {
-  (schema: JsonSchema): ValidateFunction<any>;
+  (schema: JSONSchema): ValidateFunction<any>;
 }
 ```
 
@@ -1713,7 +1713,7 @@ export const ConditionalForm = () => {
         },
       },
     ],
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   return <Form jsonSchema={jsonSchema} />;
 };
@@ -1821,9 +1821,9 @@ const handler: InjectToHandler<string> = (value, ctx) => {
   // ctx.schemaPath - 현재 노드의 스키마 경로
   // ctx.jsonSchema - 현재 노드의 JSON Schema
   // ctx.parentValue - 부모 노드의 값 (루트인 경우 null)
-  // ctx.parentJsonSchema - 부모의 JSON Schema (루트인 경우 null)
+  // ctx.parentJSONSchema - 부모의 JSON Schema (루트인 경우 null)
   // ctx.rootValue - 전체 폼 값
-  // ctx.rootJsonSchema - 루트 JSON Schema
+  // ctx.rootJSONSchema - 루트 JSON Schema
   // ctx.context - Form에 전달된 사용자 정의 컨텍스트
 
   // 부모 값에 따른 조건부 주입
@@ -1891,7 +1891,7 @@ const jsonSchema = {
 
 #### 에러 처리
 
-`injectTo` 핸들러의 에러는 캡처되어 상세한 컨텍스트와 함께 `JsonSchemaError`로 래핑됩니다:
+`injectTo` 핸들러의 에러는 캡처되어 상세한 컨텍스트와 함께 `JSONSchemaError`로 래핑됩니다:
 
 ```tsx
 injectTo: (value) => {
@@ -1947,7 +1947,7 @@ const typedHandler: InjectToHandler<
 ```tsx
 import React, { useState } from 'react';
 
-import { Form, JsonSchemaError, isValidationError } from '@canard/schema-form';
+import { Form, JSONSchemaError, isValidationError } from '@canard/schema-form';
 
 export const FormWithSubmit = () => {
   const jsonSchema = {
@@ -1959,7 +1959,7 @@ export const FormWithSubmit = () => {
     required: ['name', 'email'],
   };
 
-  const [errors, setErrors] = useState<JsonSchemaError[]>([]);
+  const [errors, setErrors] = useState<JSONSchemaError[]>([]);
 
   const handleSubmit = async (value: any) => {
     try {
@@ -2001,7 +2001,7 @@ import React, { useRef, useState } from 'react';
 import {
   Form,
   FormHandle,
-  JsonSchemaError,
+  JSONSchemaError,
   isValidationError,
   useFormSubmit,
 } from '@canard/schema-form';
@@ -2018,7 +2018,7 @@ export const AdvancedSubmitForm = () => {
   };
 
   const formRef = useRef<FormHandle<typeof jsonSchema>>(null);
-  const [errors, setErrors] = useState<JsonSchemaError[]>([]);
+  const [errors, setErrors] = useState<JSONSchemaError[]>([]);
 
   // 비동기 제출 핸들러
   const handleSubmit = async (value: any) => {
@@ -2290,6 +2290,19 @@ const formRef = useRef<FormHandle<typeof jsonSchema, SignUpValue>>(null);
 ```
 
 `defaultValue`를 넘기면 그 값으로부터도 `Value`가 추론되므로, 명시적 타입 인자가 항상 필요하지는 않습니다.
+
+---
+
+## 마이그레이션 (0.15.0)
+
+아래 이름들은 표기 일관성을 위해 이름이 바뀌었습니다. 이전 이름은 `@deprecated` 별칭으로 남아 있으며 0.16.0에서 제거됩니다 (Removed in 0.16.0).
+
+| 이전                | 이후                |
+| ------------------- | ------------------- |
+| `JsonSchemaError`   | `JSONSchemaError`   |
+| `isJsonSchemaError` | `isJSONSchemaError` |
+| `JsonSchema`        | `JSONSchema`        |
+| `InferJsonSchema`   | `InferJSONSchema`   |
 
 ---
 

@@ -6,8 +6,8 @@ import {
   type FormTypeInputDefinition,
   type FormTypeInputProps,
   type FormTypeRendererProps,
-  type JsonSchema,
-  type JsonSchemaError,
+  type JSONSchema,
+  type JSONSchemaError,
   NodeState,
   ShowError,
   ValidationMode,
@@ -36,7 +36,7 @@ export const DirtyTouched = () => {
         maxLength: 10,
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const Renderer = ({
     depth,
@@ -241,13 +241,13 @@ export const NoValidate = () => {
       name: { type: 'string', maxLength: 3, default: 'exceed max length' },
       message: { type: 'string', minLength: 3, default: '1' },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const handleChange = (val: any) => {
     setValue(val);
   };
 
-  const [errors, setErrors] = useState<JsonSchemaError[]>([]);
+  const [errors, setErrors] = useState<JSONSchemaError[]>([]);
 
   const refHandle = useRef<FormHandle<typeof schema>>(null);
 
@@ -273,13 +273,13 @@ export const ValidateOnRequest = () => {
       name: { type: 'string', maxLength: 3, default: 'exceed max length' },
       message: { type: 'string', minLength: 3, default: '1' },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const handleChange = (val: any) => {
     setValue(val);
   };
 
-  const [errors, setErrors] = useState<JsonSchemaError[]>([]);
+  const [errors, setErrors] = useState<JSONSchemaError[]>([]);
 
   const refHandle = useRef<FormHandle<typeof schema>>(null);
 
@@ -311,13 +311,13 @@ export const ExternalErrors = () => {
       name: { type: 'string', maxLength: 3, default: 'exceed max length' },
       message: { type: 'string', minLength: 3, default: '1' },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const handleChange = (val: any) => {
     setValue(val);
   };
 
-  const [errors, setErrors] = useState<JsonSchemaError[]>([
+  const [errors, setErrors] = useState<JSONSchemaError[]>([
     {
       keyword: 'maxLength',
       dataPath: '/message',
@@ -328,7 +328,7 @@ export const ExternalErrors = () => {
     },
   ]);
 
-  const [_errors, _setErrors] = useState<JsonSchemaError[]>([]);
+  const [_errors, _setErrors] = useState<JSONSchemaError[]>([]);
   const refHandle = useRef<FormHandle<typeof schema>>(null);
 
   const clearErrors = () => {
@@ -382,7 +382,7 @@ export const ErrorVisibleInCustomInput = () => {
         minLength: 5,
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [logs, setLogs] = useState<string[]>([]);
   const logsRef = useRef(logs);
@@ -640,7 +640,7 @@ export const ErrorBoundary = () => {
         type: 'number',
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const defaultValue = useRef<Record<string, any>>({
     allowed: false,

@@ -34,7 +34,7 @@ import type { ObjectNode } from './ObjectNode';
  * function addPropertyToObject(
  *   node: SchemaNode,
  *   propertyName: string,
- *   propertySchema: JsonSchema
+ *   propertySchema: JSONSchema
  * ) {
  *   if (!isObjectNode(node)) {
  *     throw new Error('Can only add properties to object nodes');

@@ -1,18 +1,18 @@
 import { describe, expect, it } from 'vitest';
 
-import type { JsonSchemaWithVirtual } from '@/schema-form/types';
+import type { JSONSchemaWithVirtual } from '@/schema-form/types';
 
 import { checkComputedOptionFactory } from '../checkComputedOptionFactory';
 import { getPathManager } from '../getPathManager';
 
 describe('checkComputedOptionFactory', () => {
   it('preferredCondition이 true일 때 항상 checkCondition을 반환', () => {
-    const jsonSchema: JsonSchemaWithVirtual = { type: 'object', visible: true };
-    const rootJsonSchema: JsonSchemaWithVirtual = { type: 'object' };
+    const jsonSchema: JSONSchemaWithVirtual = { type: 'object', visible: true };
+    const rootJSONSchema: JSONSchemaWithVirtual = { type: 'object' };
     const pathManager = getPathManager();
     const fieldName = 'visible';
 
-    const fn = checkComputedOptionFactory(jsonSchema, rootJsonSchema)(
+    const fn = checkComputedOptionFactory(jsonSchema, rootJSONSchema)(
       pathManager,
       fieldName,
     );
@@ -20,16 +20,16 @@ describe('checkComputedOptionFactory', () => {
     expect(fn && fn([])).toBe(true);
   });
 
-  it('rootJsonSchema에 checkCondition이 있을 때도 항상 checkCondition을 반환', () => {
-    const jsonSchema: JsonSchemaWithVirtual = { type: 'object' };
-    const rootJsonSchema: JsonSchemaWithVirtual = {
+  it('rootJSONSchema에 checkCondition이 있을 때도 항상 checkCondition을 반환', () => {
+    const jsonSchema: JSONSchemaWithVirtual = { type: 'object' };
+    const rootJSONSchema: JSONSchemaWithVirtual = {
       type: 'object',
       visible: false,
     };
     const pathManager = getPathManager();
     const fieldName = 'visible';
 
-    const fn = checkComputedOptionFactory(jsonSchema, rootJsonSchema)(
+    const fn = checkComputedOptionFactory(jsonSchema, rootJSONSchema)(
       pathManager,
       fieldName,
     );
@@ -38,15 +38,15 @@ describe('checkComputedOptionFactory', () => {
   });
 
   it('computed string expression이 있을 때 동적으로 평가', () => {
-    const jsonSchema: JsonSchemaWithVirtual = {
+    const jsonSchema: JSONSchemaWithVirtual = {
       type: 'object',
       computed: { visible: '/value > 10' },
     };
-    const rootJsonSchema: JsonSchemaWithVirtual = { type: 'object' };
+    const rootJSONSchema: JSONSchemaWithVirtual = { type: 'object' };
     const pathManager = getPathManager();
     const fieldName = 'visible';
 
-    const fn = checkComputedOptionFactory(jsonSchema, rootJsonSchema)(
+    const fn = checkComputedOptionFactory(jsonSchema, rootJSONSchema)(
       pathManager,
       fieldName,
     );
@@ -58,14 +58,14 @@ describe('checkComputedOptionFactory', () => {
   });
 
   it('computed가 undefined이고 &필드가 string일 때 동적으로 평가', () => {
-    const jsonSchema: JsonSchemaWithVirtual = {
+    const jsonSchema: JSONSchemaWithVirtual = {
       type: 'object',
       '&visible': '#/count === 3',
     };
-    const rootJsonSchema: JsonSchemaWithVirtual = { type: 'object' };
+    const rootJSONSchema: JSONSchemaWithVirtual = { type: 'object' };
     const pathManager = getPathManager();
     const fieldName = 'visible';
-    const fn = checkComputedOptionFactory(jsonSchema, rootJsonSchema)(
+    const fn = checkComputedOptionFactory(jsonSchema, rootJSONSchema)(
       pathManager,
       fieldName,
     );
@@ -76,14 +76,14 @@ describe('checkComputedOptionFactory', () => {
   });
 
   it('computed string이 세미콜론으로 끝나도 정상 동작', () => {
-    const jsonSchema: JsonSchemaWithVirtual = {
+    const jsonSchema: JSONSchemaWithVirtual = {
       type: 'object',
       computed: { visible: '#/value === 1;' },
     };
-    const rootJsonSchema: JsonSchemaWithVirtual = { type: 'object' };
+    const rootJSONSchema: JSONSchemaWithVirtual = { type: 'object' };
     const pathManager = getPathManager();
     const fieldName = 'visible';
-    const fn = checkComputedOptionFactory(jsonSchema, rootJsonSchema)(
+    const fn = checkComputedOptionFactory(jsonSchema, rootJSONSchema)(
       pathManager,
       fieldName,
     );
@@ -93,14 +93,14 @@ describe('checkComputedOptionFactory', () => {
   });
 
   it('computed string이 비어있으면 undefined 반환', () => {
-    const jsonSchema: JsonSchemaWithVirtual = {
+    const jsonSchema: JSONSchemaWithVirtual = {
       type: 'object',
       computed: { visible: '' },
     };
-    const rootJsonSchema: JsonSchemaWithVirtual = { type: 'object' };
+    const rootJSONSchema: JSONSchemaWithVirtual = { type: 'object' };
     const pathManager = getPathManager();
     const fieldName = 'visible';
-    const fn = checkComputedOptionFactory(jsonSchema, rootJsonSchema)(
+    const fn = checkComputedOptionFactory(jsonSchema, rootJSONSchema)(
       pathManager,
       fieldName,
     );
@@ -108,14 +108,14 @@ describe('checkComputedOptionFactory', () => {
   });
 
   it('computed가 boolean이면 preferredCondition이 아니면 undefined', () => {
-    const jsonSchema: JsonSchemaWithVirtual = {
+    const jsonSchema: JSONSchemaWithVirtual = {
       type: 'object',
       computed: { visible: false },
     };
-    const rootJsonSchema: JsonSchemaWithVirtual = { type: 'object' };
+    const rootJSONSchema: JSONSchemaWithVirtual = { type: 'object' };
     const pathManager = getPathManager();
     const fieldName = 'visible';
-    const fn = checkComputedOptionFactory(jsonSchema, rootJsonSchema)(
+    const fn = checkComputedOptionFactory(jsonSchema, rootJSONSchema)(
       pathManager,
       fieldName,
     );
@@ -123,14 +123,14 @@ describe('checkComputedOptionFactory', () => {
   });
 
   it('expression이 여러 dependencyPaths를 동적으로 추가', () => {
-    const jsonSchema: JsonSchemaWithVirtual = {
+    const jsonSchema: JSONSchemaWithVirtual = {
       type: 'object',
       computed: { visible: '#/a > 1 && #/b < 5' },
     };
-    const rootJsonSchema: JsonSchemaWithVirtual = { type: 'object' };
+    const rootJSONSchema: JSONSchemaWithVirtual = { type: 'object' };
     const pathManager = getPathManager();
     const fieldName = 'visible';
-    const fn = checkComputedOptionFactory(jsonSchema, rootJsonSchema)(
+    const fn = checkComputedOptionFactory(jsonSchema, rootJSONSchema)(
       pathManager,
       fieldName,
     );
@@ -143,14 +143,14 @@ describe('checkComputedOptionFactory', () => {
   });
 
   it('preferredCondition이 false일 때 항상 false 반환', () => {
-    const jsonSchema: JsonSchemaWithVirtual = {
+    const jsonSchema: JSONSchemaWithVirtual = {
       type: 'object',
       visible: false,
     };
-    const rootJsonSchema: JsonSchemaWithVirtual = { type: 'object' };
+    const rootJSONSchema: JSONSchemaWithVirtual = { type: 'object' };
     const pathManager = getPathManager();
     const fieldName = 'visible';
-    const fn = checkComputedOptionFactory(jsonSchema, rootJsonSchema)(
+    const fn = checkComputedOptionFactory(jsonSchema, rootJSONSchema)(
       pathManager,
       fieldName,
     );
@@ -159,46 +159,46 @@ describe('checkComputedOptionFactory', () => {
   });
 
   describe('Priority order tests', () => {
-    it('rootJsonSchema[fieldName]이 최우선 순위로 적용됨', () => {
-      const jsonSchema: JsonSchemaWithVirtual = {
+    it('rootJSONSchema[fieldName]이 최우선 순위로 적용됨', () => {
+      const jsonSchema: JSONSchemaWithVirtual = {
         type: 'object',
         visible: false,
         computed: { visible: false },
         '&visible': '/value === 1',
       };
-      const rootJsonSchema: JsonSchemaWithVirtual = {
+      const rootJSONSchema: JSONSchemaWithVirtual = {
         type: 'object',
         visible: true,
       };
       const pathManager = getPathManager();
       const fieldName = 'visible';
 
-      const fn = checkComputedOptionFactory(jsonSchema, rootJsonSchema)(
+      const fn = checkComputedOptionFactory(jsonSchema, rootJSONSchema)(
         pathManager,
         fieldName,
       );
       expect(fn).toBeDefined();
-      // rootJsonSchema.visible = true가 최우선이므로 항상 true
+      // rootJSONSchema.visible = true가 최우선이므로 항상 true
       expect(fn && fn([])).toBe(true);
       expect(fn && fn([1])).toBe(true);
       expect(fn && fn([0])).toBe(true);
     });
 
     it('jsonSchema[fieldName]이 두번째 우선순위로 적용됨', () => {
-      const jsonSchema: JsonSchemaWithVirtual = {
+      const jsonSchema: JSONSchemaWithVirtual = {
         type: 'object',
         visible: true,
         computed: { visible: '/value > 5' },
         '&visible': '/value === 1',
       };
-      const rootJsonSchema: JsonSchemaWithVirtual = {
+      const rootJSONSchema: JSONSchemaWithVirtual = {
         type: 'object',
-        // rootJsonSchema에 visible 정의 없음
+        // rootJSONSchema에 visible 정의 없음
       };
       const pathManager = getPathManager();
       const fieldName = 'visible';
 
-      const fn = checkComputedOptionFactory(jsonSchema, rootJsonSchema)(
+      const fn = checkComputedOptionFactory(jsonSchema, rootJSONSchema)(
         pathManager,
         fieldName,
       );
@@ -210,20 +210,20 @@ describe('checkComputedOptionFactory', () => {
     });
 
     it('jsonSchema.computed[fieldName]이 세번째 우선순위로 적용됨', () => {
-      const jsonSchema: JsonSchemaWithVirtual = {
+      const jsonSchema: JSONSchemaWithVirtual = {
         type: 'object',
         // visible 직접 정의 없음
         computed: { visible: '/value > 5' },
         '&visible': '/value === 1',
       };
-      const rootJsonSchema: JsonSchemaWithVirtual = {
+      const rootJSONSchema: JSONSchemaWithVirtual = {
         type: 'object',
-        // rootJsonSchema에 visible 정의 없음
+        // rootJSONSchema에 visible 정의 없음
       };
       const pathManager = getPathManager();
       const fieldName = 'visible';
 
-      const fn = checkComputedOptionFactory(jsonSchema, rootJsonSchema)(
+      const fn = checkComputedOptionFactory(jsonSchema, rootJSONSchema)(
         pathManager,
         fieldName,
       );
@@ -235,20 +235,20 @@ describe('checkComputedOptionFactory', () => {
     });
 
     it('jsonSchema[&fieldName]이 마지막 우선순위로 적용됨', () => {
-      const jsonSchema: JsonSchemaWithVirtual = {
+      const jsonSchema: JSONSchemaWithVirtual = {
         type: 'object',
         // visible 직접 정의 없음
         // computed.visible 정의 없음
         '&visible': '/count === 3',
       };
-      const rootJsonSchema: JsonSchemaWithVirtual = {
+      const rootJSONSchema: JSONSchemaWithVirtual = {
         type: 'object',
-        // rootJsonSchema에 visible 정의 없음
+        // rootJSONSchema에 visible 정의 없음
       };
       const pathManager = getPathManager();
       const fieldName = 'visible';
 
-      const fn = checkComputedOptionFactory(jsonSchema, rootJsonSchema)(
+      const fn = checkComputedOptionFactory(jsonSchema, rootJSONSchema)(
         pathManager,
         fieldName,
       );
@@ -261,14 +261,14 @@ describe('checkComputedOptionFactory', () => {
 
     it('boolean 값은 즉시 함수로 반환되고 string은 동적 함수로 변환됨', () => {
       // Case 1: boolean 값
-      const jsonSchema1: JsonSchemaWithVirtual = {
+      const jsonSchema1: JSONSchemaWithVirtual = {
         type: 'object',
         readOnly: true,
       };
-      const rootJsonSchema1: JsonSchemaWithVirtual = { type: 'object' };
+      const rootJSONSchema1: JSONSchemaWithVirtual = { type: 'object' };
       const pathManager1 = getPathManager();
 
-      const fn1 = checkComputedOptionFactory(jsonSchema1, rootJsonSchema1)(
+      const fn1 = checkComputedOptionFactory(jsonSchema1, rootJSONSchema1)(
         pathManager1,
         'readOnly',
       );
@@ -276,14 +276,14 @@ describe('checkComputedOptionFactory', () => {
       expect(fn1 && fn1([])).toBe(true);
 
       // Case 2: string 값 (동적 계산)
-      const jsonSchema2: JsonSchemaWithVirtual = {
+      const jsonSchema2: JSONSchemaWithVirtual = {
         type: 'object',
         computed: { readOnly: '/isLocked === true' },
       };
-      const rootJsonSchema2: JsonSchemaWithVirtual = { type: 'object' };
+      const rootJSONSchema2: JSONSchemaWithVirtual = { type: 'object' };
       const pathManager2 = getPathManager();
 
-      const fn2 = checkComputedOptionFactory(jsonSchema2, rootJsonSchema2)(
+      const fn2 = checkComputedOptionFactory(jsonSchema2, rootJSONSchema2)(
         pathManager2,
         'readOnly',
       );
@@ -293,7 +293,7 @@ describe('checkComputedOptionFactory', () => {
     });
 
     it('여러 필드가 복합적으로 정의되어 있을 때 각각 올바른 우선순위 적용', () => {
-      const jsonSchema: JsonSchemaWithVirtual = {
+      const jsonSchema: JSONSchemaWithVirtual = {
         type: 'object',
         visible: true, // 2순위
         readOnly: false, // 2순위
@@ -305,7 +305,7 @@ describe('checkComputedOptionFactory', () => {
         '&disabled': '/value < 0', // 무시됨 (computed.disabled가 있음)
         '&readOnly': '/protected === true', // 무시됨 (readOnly가 이미 있음)
       };
-      const rootJsonSchema: JsonSchemaWithVirtual = {
+      const rootJSONSchema: JSONSchemaWithVirtual = {
         type: 'object',
         visible: false, // 1순위, 최우선
         active: true, // 1순위, 최우선
@@ -313,21 +313,21 @@ describe('checkComputedOptionFactory', () => {
       const pathManager = getPathManager();
 
       // visible 체크
-      const visibleFn = checkComputedOptionFactory(jsonSchema, rootJsonSchema)(
+      const visibleFn = checkComputedOptionFactory(jsonSchema, rootJSONSchema)(
         pathManager,
         'visible',
       );
-      expect(visibleFn && visibleFn([])).toBe(false); // rootJsonSchema.visible = false
+      expect(visibleFn && visibleFn([])).toBe(false); // rootJSONSchema.visible = false
 
       // readOnly 체크
-      const readOnlyFn = checkComputedOptionFactory(jsonSchema, rootJsonSchema)(
+      const readOnlyFn = checkComputedOptionFactory(jsonSchema, rootJSONSchema)(
         pathManager,
         'readOnly',
       );
       expect(readOnlyFn && readOnlyFn([])).toBe(false); // jsonSchema.readOnly = false
 
       // disabled 체크
-      const disabledFn = checkComputedOptionFactory(jsonSchema, rootJsonSchema)(
+      const disabledFn = checkComputedOptionFactory(jsonSchema, rootJSONSchema)(
         pathManager,
         'disabled',
       );
@@ -335,15 +335,15 @@ describe('checkComputedOptionFactory', () => {
       expect(disabledFn && disabledFn([false])).toBe(false);
 
       // active 체크
-      const activeFn = checkComputedOptionFactory(jsonSchema, rootJsonSchema)(
+      const activeFn = checkComputedOptionFactory(jsonSchema, rootJSONSchema)(
         pathManager,
         'active',
       );
-      expect(activeFn && activeFn([])).toBe(true); // rootJsonSchema.active = true
+      expect(activeFn && activeFn([])).toBe(true); // rootJSONSchema.active = true
     });
 
     it('모든 우선순위가 정의되어 있을 때 가장 높은 우선순위만 적용', () => {
-      const jsonSchema: JsonSchemaWithVirtual = {
+      const jsonSchema: JSONSchemaWithVirtual = {
         type: 'object',
         disabled: false, // 2순위 - 무시됨
         computed: {
@@ -351,18 +351,18 @@ describe('checkComputedOptionFactory', () => {
         },
         '&disabled': '/count === 5', // 4순위 - 무시됨
       };
-      const rootJsonSchema: JsonSchemaWithVirtual = {
+      const rootJSONSchema: JSONSchemaWithVirtual = {
         type: 'object',
         disabled: true, // 1순위 - 이것만 적용됨
       };
       const pathManager = getPathManager();
 
-      const fn = checkComputedOptionFactory(jsonSchema, rootJsonSchema)(
+      const fn = checkComputedOptionFactory(jsonSchema, rootJSONSchema)(
         pathManager,
         'disabled',
       );
       expect(fn).toBeDefined();
-      // rootJsonSchema.disabled = true가 최우선이므로 항상 true
+      // rootJSONSchema.disabled = true가 최우선이므로 항상 true
       expect(fn && fn([])).toBe(true);
       expect(fn && fn([100])).toBe(true); // value > 10이지만 무시됨
       expect(fn && fn([5])).toBe(true); // count === 5이지만 무시됨

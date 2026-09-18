@@ -40,7 +40,7 @@ npx -p @slats/agents-assets-sync inject-agents-settings --package=@canard/schema
 - **Terminal Nodes**: `StringNode`, `NumberNode`, `BooleanNode`, `NullNode`
 - **Branch Nodes**: `ObjectNode`, `ArrayNode` (각각 `BranchStrategy` / `TerminalStrategy`)
 - **Special**: `VirtualNode` (조건부 필드, 계산 값)
-- 노드 생성: `nodeFromJsonSchema()`
+- 노드 생성: `nodeFromJSONSchema()`
 
 ### Plugin System (`src/app/plugin/`)
 

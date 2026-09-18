@@ -1,7 +1,7 @@
 import '@testing-library/jest-dom';
 import { describe, expect, it } from 'vitest';
 
-import type { JsonSchema } from '@winglet/json-schema';
+import type { JSONSchema } from '@winglet/json-schema';
 
 import { renderForm } from '../renderForm';
 
@@ -32,7 +32,7 @@ const singleSchema = {
     },
     target: { type: 'string' },
   },
-} satisfies JsonSchema;
+} satisfies JSONSchema;
 
 // One source fanning out to three sibling targets.
 const multiSchema = {
@@ -50,7 +50,7 @@ const multiSchema = {
     target2: { type: 'string' },
     target3: { type: 'string' },
   },
-} satisfies JsonSchema;
+} satisfies JSONSchema;
 
 // Chain: a → b → c (acyclic).
 const chainSchema = {
@@ -66,7 +66,7 @@ const chainSchema = {
     },
     c: { type: 'string' },
   },
-} satisfies JsonSchema;
+} satisfies JSONSchema;
 
 // Injection that drives a oneOf discriminator, flipping the active branch.
 const flipSchema = {
@@ -90,7 +90,7 @@ const flipSchema = {
       properties: { fieldB: { type: 'string', default: 'B-default' } },
     },
   ],
-} satisfies JsonSchema;
+} satisfies JSONSchema;
 
 // Conditional injection: returns null (skips) for short input.
 const conditionalSchema = {
@@ -103,7 +103,7 @@ const conditionalSchema = {
     },
     target: { type: 'string', default: 'waiting...' },
   },
-} satisfies JsonSchema;
+} satisfies JSONSchema;
 
 // Two sources into one target (last write wins).
 const lastWriteSchema = {
@@ -119,7 +119,7 @@ const lastWriteSchema = {
     },
     target: { type: 'string' },
   },
-} satisfies JsonSchema;
+} satisfies JSONSchema;
 
 // Absolute-path injection from a deeply nested source to a root field.
 const absoluteSchema = {
@@ -143,7 +143,7 @@ const absoluteSchema = {
       },
     },
   },
-} satisfies JsonSchema;
+} satisfies JSONSchema;
 
 // Direct circular injection (A ↔ B) — must be loop-guarded.
 const circularSchema = {
@@ -158,7 +158,7 @@ const circularSchema = {
       injectTo: (value: string) => ({ '../fieldA': `fromB: ${value}` }),
     },
   },
-} satisfies JsonSchema;
+} satisfies JSONSchema;
 
 describe('injectTo single target', () => {
   it('injects into the sibling target on programmatic setValue (tree + DOM)', async () => {

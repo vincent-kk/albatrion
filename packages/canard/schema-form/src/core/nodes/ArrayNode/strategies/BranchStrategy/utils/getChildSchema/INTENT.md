@@ -7,7 +7,7 @@
 ## Conventions
 
 - 순수 함수, 부수 효과 없음; 입력 스키마 객체를 절대 변경하지 않는다
-- 반환 타입은 항상 `JsonSchema | null` — `null`은 해당 인덱스에 적용 가능한 스키마 없음을 의미
+- 반환 타입은 항상 `JSONSchema | null` — `null`은 해당 인덱스에 적용 가능한 스키마 없음을 의미
 - 우선순위: `prefixItems[index]` → `items` → `null` 순서로 평가
 - `prefixItems`가 `undefined`이면 모든 인덱스에 `items` 스키마를 적용(또는 `null`)
 
@@ -32,4 +32,4 @@
 
 **외부**
 
-- `@/schema-form/types` — `ArraySchema`, `JsonSchema` 타입
+- `@/schema-form/types` — `ArraySchema`, `JSONSchema` 타입

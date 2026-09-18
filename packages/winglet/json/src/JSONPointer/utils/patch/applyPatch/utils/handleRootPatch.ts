@@ -1,10 +1,10 @@
 import { equals } from '@winglet/common-utils/object';
 
 import { getValue } from '@/json/JSONPointer/utils/manipulator/getValue';
-import type { JsonRoot } from '@/json/type';
+import type { JSONRoot } from '@/json/type';
 
 import { Operation, type Patch } from '../../../patchModel';
-import { JsonPatchError } from './error';
+import { JSONPatchError } from './error';
 import { isCircularMoveReference } from './isCircularMoveReference';
 
 /**
@@ -16,11 +16,11 @@ import { isCircularMoveReference } from './isCircularMoveReference';
  * @param patchIndex - The index of the patch for error reporting
  * @param strict - Whether to use strict equality checking
  * @returns The modified document or null for remove operations
- * @throws {JsonPatchError} When operation fails or is invalid
+ * @throws {JSONPatchError} When operation fails or is invalid
  * @internal
  */
 export const handleRootPatch = (
-  source: JsonRoot,
+  source: JSONRoot,
   patch: Patch,
   patchIndex: number,
   strict: boolean,
@@ -31,7 +31,7 @@ export const handleRootPatch = (
       return patch.value;
     case Operation.MOVE:
       if (isCircularMoveReference(patch.from, patch.path))
-        throw new JsonPatchError(
+        throw new JSONPatchError(
           'PATCH_MOVE_INTO_DESCENDANT_FORBIDDEN',
           `Cannot move location '${patch.from}' to '${patch.path}' - target location is a descendant of or identical to source location. This would create a circular reference.`,
           {
@@ -45,7 +45,7 @@ export const handleRootPatch = (
       return getValue(source, patch.from);
     case Operation.COPY:
       if (isCircularMoveReference(patch.from, patch.path))
-        throw new JsonPatchError(
+        throw new JSONPatchError(
           'PATCH_COPY_INTO_DESCENDANT_FORBIDDEN',
           `Cannot copy location '${patch.from}' to '${patch.path}' - target location is a descendant of or identical to source location. This would create a circular reference.`,
           {
@@ -59,7 +59,7 @@ export const handleRootPatch = (
       return getValue(source, patch.from);
     case Operation.TEST:
       if (!strict || equals(source, patch.value)) return source;
-      throw new JsonPatchError(
+      throw new JSONPatchError(
         'PATCH_TEST_FAILED',
         'Test operation failed at root level. Expected value does not match actual document value',
         {
@@ -74,7 +74,7 @@ export const handleRootPatch = (
     case Operation.REMOVE:
       return null;
     default:
-      throw new JsonPatchError(
+      throw new JSONPatchError(
         'PATCH_OPERATION_INVALID',
         `Unsupported operation '${(patch as Patch).op}'. Valid operations for JSON Patch are: add, remove, replace, move, copy, test`,
         {

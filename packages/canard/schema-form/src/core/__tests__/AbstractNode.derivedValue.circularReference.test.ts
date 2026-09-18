@@ -8,9 +8,9 @@
 import { describe, expect, it, vi } from 'vitest';
 
 import { isSchemaFormError } from '@/schema-form/errors';
-import type { JsonSchemaWithVirtual } from '@/schema-form/types';
+import type { JSONSchemaWithVirtual } from '@/schema-form/types';
 
-import { nodeFromJsonSchema } from '../nodeFromJsonSchema';
+import { nodeFromJSONSchema } from '../nodeFromJSONSchema';
 import type { NumberNode } from '../nodes/NumberNode';
 import type { ObjectNode } from '../nodes/ObjectNode';
 import type { StringNode } from '../nodes/StringNode';
@@ -61,12 +61,12 @@ describe('AbstractNode - 순환 참조 derived 테스트', () => {
             },
           },
         },
-      } satisfies JsonSchemaWithVirtual;
+      } satisfies JSONSchemaWithVirtual;
 
       let aUpdateCount = 0;
       let bUpdateCount = 0;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema,
         onChange,
       });
@@ -133,9 +133,9 @@ describe('AbstractNode - 순환 참조 derived 테스트', () => {
             },
           },
         },
-      } satisfies JsonSchemaWithVirtual;
+      } satisfies JSONSchemaWithVirtual;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema,
         onChange,
       });
@@ -190,12 +190,12 @@ describe('AbstractNode - 순환 참조 derived 테스트', () => {
             },
           },
         },
-      } satisfies JsonSchemaWithVirtual;
+      } satisfies JSONSchemaWithVirtual;
 
       let totalUpdateCount = 0;
       const MAX_UPDATES = 100;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema,
         onChange,
       });
@@ -264,9 +264,9 @@ describe('AbstractNode - 순환 참조 derived 테스트', () => {
             },
           },
         },
-      } satisfies JsonSchemaWithVirtual;
+      } satisfies JSONSchemaWithVirtual;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema,
         onChange,
       });
@@ -356,9 +356,9 @@ describe('AbstractNode - 순환 참조 derived 테스트', () => {
             },
           },
         },
-      } satisfies JsonSchemaWithVirtual;
+      } satisfies JSONSchemaWithVirtual;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema,
         onChange,
       });
@@ -436,9 +436,9 @@ describe('AbstractNode - 순환 참조 derived 테스트', () => {
             },
           },
         },
-      } satisfies JsonSchemaWithVirtual;
+      } satisfies JSONSchemaWithVirtual;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema,
         onChange,
       });
@@ -512,9 +512,9 @@ describe('AbstractNode - 순환 참조 derived 테스트', () => {
             },
           },
         },
-      } satisfies JsonSchemaWithVirtual;
+      } satisfies JSONSchemaWithVirtual;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema,
         onChange,
       });
@@ -595,9 +595,9 @@ describe('AbstractNode - 순환 참조 derived 테스트', () => {
             },
           },
         },
-      } satisfies JsonSchemaWithVirtual;
+      } satisfies JSONSchemaWithVirtual;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema,
         onChange,
       });
@@ -647,9 +647,9 @@ describe('AbstractNode - 순환 참조 derived 테스트', () => {
             },
           },
         },
-      } satisfies JsonSchemaWithVirtual;
+      } satisfies JSONSchemaWithVirtual;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema,
         onChange,
       });
@@ -702,9 +702,9 @@ describe('AbstractNode - 순환 참조 derived 테스트', () => {
             },
           },
         },
-      } satisfies JsonSchemaWithVirtual;
+      } satisfies JSONSchemaWithVirtual;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema,
         onChange,
       });
@@ -789,9 +789,9 @@ describe('AbstractNode - 순환 참조 derived 테스트', () => {
         then: {
           required: ['openingDate'],
         },
-      } satisfies JsonSchemaWithVirtual;
+      } satisfies JSONSchemaWithVirtual;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema,
         onChange,
       });
@@ -875,9 +875,9 @@ describe('AbstractNode - 순환 참조 derived 테스트', () => {
             },
           },
         ],
-      } satisfies JsonSchemaWithVirtual;
+      } satisfies JSONSchemaWithVirtual;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema,
         onChange,
       });
@@ -967,9 +967,9 @@ describe('AbstractNode - 순환 참조 derived 테스트', () => {
         then: {
           required: ['baseAmount', 'taxRate'],
         },
-      } satisfies JsonSchemaWithVirtual;
+      } satisfies JSONSchemaWithVirtual;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema,
         onChange,
       });
@@ -1064,9 +1064,9 @@ describe('AbstractNode - 순환 참조 derived 테스트', () => {
             },
           },
         },
-      } satisfies JsonSchemaWithVirtual;
+      } satisfies JSONSchemaWithVirtual;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema,
         onChange,
       });
@@ -1145,9 +1145,9 @@ describe('AbstractNode - 순환 참조 derived 테스트', () => {
             },
           },
         ],
-      } satisfies JsonSchemaWithVirtual;
+      } satisfies JSONSchemaWithVirtual;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema,
         onChange,
       });
@@ -1223,9 +1223,9 @@ describe('AbstractNode - 순환 참조 derived 테스트', () => {
         then: {
           required: ['input'],
         },
-      } satisfies JsonSchemaWithVirtual;
+      } satisfies JSONSchemaWithVirtual;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema,
         onChange,
       });
@@ -1292,9 +1292,9 @@ describe('AbstractNode - 순환 참조 derived 테스트', () => {
             },
           },
         },
-      } satisfies JsonSchemaWithVirtual;
+      } satisfies JSONSchemaWithVirtual;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema,
         onChange,
       });
@@ -1340,7 +1340,7 @@ describe('AbstractNode - 순환 참조 derived 테스트', () => {
      * 주의: 마이크로태스크 내에서 throw된 에러는 동기적 try-catch로 잡을 수 없습니다.
      * 대신 process.on('uncaughtException')을 사용하여 에러를 캡처합니다.
      */
-    it('발산하는 순환 참조 (A = B + 1, B = A + 1)에서 JsonSchemaError가 발생해야 함', async () => {
+    it('발산하는 순환 참조 (A = B + 1, B = A + 1)에서 JSONSchemaError가 발생해야 함', async () => {
       const onChange = vi.fn();
       let caughtError: unknown = null;
 
@@ -1372,9 +1372,9 @@ describe('AbstractNode - 순환 참조 derived 테스트', () => {
             },
           },
         },
-      } satisfies JsonSchemaWithVirtual;
+      } satisfies JSONSchemaWithVirtual;
 
-      nodeFromJsonSchema({
+      nodeFromJSONSchema({
         jsonSchema,
         onChange,
       });
@@ -1385,7 +1385,7 @@ describe('AbstractNode - 순환 참조 derived 테스트', () => {
       // 핸들러 제거
       process.off('uncaughtException', errorHandler);
 
-      // JsonSchemaError가 발생해야 함
+      // JSONSchemaError가 발생해야 함
       expect(caughtError).not.toBeNull();
       expect(isSchemaFormError(caughtError)).toBe(true);
 
@@ -1437,9 +1437,9 @@ describe('AbstractNode - 순환 참조 derived 테스트', () => {
             },
           },
         },
-      } satisfies JsonSchemaWithVirtual;
+      } satisfies JSONSchemaWithVirtual;
 
-      nodeFromJsonSchema({
+      nodeFromJSONSchema({
         jsonSchema,
         onChange,
       });
@@ -1480,7 +1480,7 @@ describe('AbstractNode - 순환 참조 derived 테스트', () => {
             },
           },
         },
-      } satisfies JsonSchemaWithVirtual;
+      } satisfies JSONSchemaWithVirtual;
 
       let caughtError: unknown = null;
 
@@ -1491,7 +1491,7 @@ describe('AbstractNode - 순환 참조 derived 테스트', () => {
       process.on('uncaughtException', errorHandler);
 
       try {
-        const node = nodeFromJsonSchema({
+        const node = nodeFromJSONSchema({
           jsonSchema,
           onChange,
         });
@@ -1534,12 +1534,12 @@ describe('AbstractNode - 순환 참조 derived 테스트', () => {
             },
           },
         },
-      } satisfies JsonSchemaWithVirtual;
+      } satisfies JSONSchemaWithVirtual;
 
       let caughtError: unknown = null;
 
       try {
-        const node = nodeFromJsonSchema({
+        const node = nodeFromJSONSchema({
           jsonSchema,
           onChange,
         });

@@ -5,8 +5,8 @@ import type { Dictionary, RequiredBy } from '@aileron/declare';
 
 import type {
   AllowedValue,
-  JsonSchema,
-  JsonSchemaWithVirtual,
+  JSONSchema,
+  JSONSchemaWithVirtual,
 } from '@/schema-form/types';
 
 export interface FlattenCondition {
@@ -21,7 +21,7 @@ export interface FlattenCondition {
  * @returns Flattened condition list or undefined if no conditions exist
  */
 export const flattenConditions = (
-  schema: JsonSchema,
+  schema: JSONSchema,
 ): FlattenCondition[] | undefined => {
   const conditions: FlattenCondition[] = [];
   flattenConditionsInto(schema, conditions);
@@ -35,7 +35,7 @@ export const flattenConditions = (
  * @param accumulator - Collected conditions
  */
 const flattenConditionsInto = (
-  schema: JsonSchema,
+  schema: JSONSchema,
   conditions: FlattenCondition[],
   accumulator: Dictionary<
     Array<AllowedValue | AllowedValue[]>
@@ -126,8 +126,8 @@ const extractCondition = (
  * @returns Whether it has enum property
  */
 const isValidEnum = (
-  schema: JsonSchemaWithVirtual,
-): schema is RequiredBy<JsonSchemaWithVirtual, 'enum'> => !!schema.enum?.length;
+  schema: JSONSchemaWithVirtual,
+): schema is RequiredBy<JSONSchemaWithVirtual, 'enum'> => !!schema.enum?.length;
 
 /**
  * Checks if schema has valid const property.
@@ -135,6 +135,6 @@ const isValidEnum = (
  * @returns Whether it has const property
  */
 const isValidConst = (
-  schema: JsonSchemaWithVirtual,
-): schema is RequiredBy<JsonSchemaWithVirtual, 'const'> =>
+  schema: JSONSchemaWithVirtual,
+): schema is RequiredBy<JSONSchemaWithVirtual, 'const'> =>
   schema.const !== undefined;

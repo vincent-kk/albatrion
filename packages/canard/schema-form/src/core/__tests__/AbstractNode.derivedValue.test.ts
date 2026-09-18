@@ -1,9 +1,9 @@
 import { describe, expect, it, vi } from 'vitest';
 
 import { isSchemaFormError } from '@/schema-form/errors';
-import type { JsonSchemaWithVirtual } from '@/schema-form/types';
+import type { JSONSchemaWithVirtual } from '@/schema-form/types';
 
-import { nodeFromJsonSchema } from '../nodeFromJsonSchema';
+import { nodeFromJSONSchema } from '../nodeFromJSONSchema';
 import type { AbstractNode } from '../nodes/AbstractNode';
 import type { ArrayNode } from '../nodes/ArrayNode';
 import type { BooleanNode } from '../nodes/BooleanNode';
@@ -44,9 +44,9 @@ describe('AbstractNode - derivedValue', () => {
             },
           },
         },
-      } satisfies JsonSchemaWithVirtual;
+      } satisfies JSONSchemaWithVirtual;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema,
         onChange,
       });
@@ -73,9 +73,9 @@ describe('AbstractNode - derivedValue', () => {
             },
           },
         },
-      } satisfies JsonSchemaWithVirtual;
+      } satisfies JSONSchemaWithVirtual;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema,
         onChange,
       });
@@ -110,9 +110,9 @@ describe('AbstractNode - derivedValue', () => {
             },
           },
         },
-      } satisfies JsonSchemaWithVirtual;
+      } satisfies JSONSchemaWithVirtual;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema,
         onChange,
       });
@@ -156,9 +156,9 @@ describe('AbstractNode - derivedValue', () => {
             },
           },
         },
-      } satisfies JsonSchemaWithVirtual;
+      } satisfies JSONSchemaWithVirtual;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema,
         onChange,
       });
@@ -195,9 +195,9 @@ describe('AbstractNode - derivedValue', () => {
             },
           },
         },
-      } satisfies JsonSchemaWithVirtual;
+      } satisfies JSONSchemaWithVirtual;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema,
         onChange,
       });
@@ -247,9 +247,9 @@ describe('AbstractNode - derivedValue', () => {
             },
           },
         },
-      } satisfies JsonSchemaWithVirtual;
+      } satisfies JSONSchemaWithVirtual;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema,
         onChange,
       });
@@ -287,9 +287,9 @@ describe('AbstractNode - derivedValue', () => {
             },
           },
         },
-      } satisfies JsonSchemaWithVirtual;
+      } satisfies JSONSchemaWithVirtual;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema,
         onChange,
       });
@@ -339,9 +339,9 @@ describe('AbstractNode - derivedValue', () => {
             },
           },
         },
-      } satisfies JsonSchemaWithVirtual;
+      } satisfies JSONSchemaWithVirtual;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema,
         onChange,
       });
@@ -393,9 +393,9 @@ describe('AbstractNode - derivedValue', () => {
             },
           },
         },
-      } satisfies JsonSchemaWithVirtual;
+      } satisfies JSONSchemaWithVirtual;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema,
         onChange,
       });
@@ -432,9 +432,9 @@ describe('AbstractNode - derivedValue', () => {
             '&derived': '../a + ../b',
           },
         },
-      } satisfies JsonSchemaWithVirtual;
+      } satisfies JSONSchemaWithVirtual;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema,
         onChange,
       });
@@ -471,9 +471,9 @@ describe('AbstractNode - derivedValue', () => {
             },
           },
         },
-      } satisfies JsonSchemaWithVirtual;
+      } satisfies JSONSchemaWithVirtual;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema,
         onChange,
       });
@@ -515,9 +515,9 @@ describe('AbstractNode - derivedValue', () => {
             },
           },
         },
-      } satisfies JsonSchemaWithVirtual;
+      } satisfies JSONSchemaWithVirtual;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema,
         onChange,
       });
@@ -558,9 +558,9 @@ describe('AbstractNode - derivedValue', () => {
             },
           },
         },
-      } satisfies JsonSchemaWithVirtual;
+      } satisfies JSONSchemaWithVirtual;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema,
         onChange,
       });
@@ -609,9 +609,9 @@ describe('AbstractNode - derivedValue', () => {
             },
           },
         },
-      } satisfies JsonSchemaWithVirtual;
+      } satisfies JSONSchemaWithVirtual;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema,
         onChange,
       });
@@ -656,9 +656,9 @@ describe('AbstractNode - derivedValue', () => {
             },
           },
         },
-      } satisfies JsonSchemaWithVirtual;
+      } satisfies JSONSchemaWithVirtual;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema,
         onChange,
       });
@@ -710,9 +710,9 @@ describe('AbstractNode - derivedValue', () => {
             },
           },
         },
-      } satisfies JsonSchemaWithVirtual;
+      } satisfies JSONSchemaWithVirtual;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema,
         onChange,
       });
@@ -754,9 +754,9 @@ describe('AbstractNode - derivedValue', () => {
             },
           },
         },
-      } satisfies JsonSchemaWithVirtual;
+      } satisfies JSONSchemaWithVirtual;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema,
         onChange,
       });
@@ -791,9 +791,9 @@ describe('AbstractNode - derivedValue', () => {
             default: 'test',
           },
         },
-      } satisfies JsonSchemaWithVirtual;
+      } satisfies JSONSchemaWithVirtual;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema,
         onChange,
       });
@@ -820,9 +820,9 @@ describe('AbstractNode - derivedValue', () => {
             },
           },
         },
-      } satisfies JsonSchemaWithVirtual;
+      } satisfies JSONSchemaWithVirtual;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema,
         onChange,
       });
@@ -856,9 +856,9 @@ describe('AbstractNode - derivedValue', () => {
             },
           },
         },
-      } satisfies JsonSchemaWithVirtual;
+      } satisfies JSONSchemaWithVirtual;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema,
         onChange,
       });
@@ -900,9 +900,9 @@ describe('AbstractNode - derivedValue', () => {
             },
           },
         },
-      } satisfies JsonSchemaWithVirtual;
+      } satisfies JSONSchemaWithVirtual;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema,
         onChange,
       });
@@ -938,9 +938,9 @@ describe('AbstractNode - derivedValue', () => {
             },
           },
         },
-      } satisfies JsonSchemaWithVirtual;
+      } satisfies JSONSchemaWithVirtual;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema,
         onChange,
       });
@@ -977,9 +977,9 @@ describe('AbstractNode - derivedValue', () => {
             },
           },
         },
-      } satisfies JsonSchemaWithVirtual;
+      } satisfies JSONSchemaWithVirtual;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema,
         onChange,
       });
@@ -1011,9 +1011,9 @@ describe('AbstractNode - derivedValue', () => {
             },
           },
         },
-      } satisfies JsonSchemaWithVirtual;
+      } satisfies JSONSchemaWithVirtual;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema,
         onChange,
       });
@@ -1057,9 +1057,9 @@ describe('AbstractNode - derivedValue', () => {
             },
           },
         },
-      } satisfies JsonSchemaWithVirtual;
+      } satisfies JSONSchemaWithVirtual;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema,
         onChange,
       });
@@ -1112,9 +1112,9 @@ describe('AbstractNode - derivedValue', () => {
             },
           },
         },
-      } satisfies JsonSchemaWithVirtual;
+      } satisfies JSONSchemaWithVirtual;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema,
         onChange,
       });
@@ -1141,7 +1141,7 @@ describe('AbstractNode - derivedValue', () => {
   describe('oneOf/anyOf와 derivedValue 조합', () => {
     it('oneOf 분기 전환 시 해당 분기의 derivedValue가 계산되어야 함', async () => {
       const onChange = vi.fn();
-      const jsonSchema: JsonSchemaWithVirtual = {
+      const jsonSchema: JSONSchemaWithVirtual = {
         type: 'object',
         properties: {
           calcType: {
@@ -1193,7 +1193,7 @@ describe('AbstractNode - derivedValue', () => {
         },
       };
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema,
         onChange,
       });
@@ -1215,7 +1215,7 @@ describe('AbstractNode - derivedValue', () => {
 
     it('anyOf에서 여러 분기가 동시에 활성화될 때 각각의 derivedValue가 독립적으로 계산되어야 함', async () => {
       const onChange = vi.fn();
-      const jsonSchema: JsonSchemaWithVirtual = {
+      const jsonSchema: JSONSchemaWithVirtual = {
         type: 'object',
         properties: {
           baseValue: {
@@ -1266,7 +1266,7 @@ describe('AbstractNode - derivedValue', () => {
         },
       };
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema,
         onChange,
       });
@@ -1321,9 +1321,9 @@ describe('AbstractNode - derivedValue', () => {
             },
           },
         },
-      } satisfies JsonSchemaWithVirtual;
+      } satisfies JSONSchemaWithVirtual;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema,
         onChange,
       });
@@ -1359,7 +1359,7 @@ describe('AbstractNode - derivedValue', () => {
 
     it('oneOf 분기 전환 시 이전 분기의 derivedValue 구독이 정리되어야 함', async () => {
       const onChange = vi.fn();
-      const jsonSchema: JsonSchemaWithVirtual = {
+      const jsonSchema: JSONSchemaWithVirtual = {
         type: 'object',
         properties: {
           mode: {
@@ -1399,7 +1399,7 @@ describe('AbstractNode - derivedValue', () => {
         },
       };
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema,
         onChange,
       });
@@ -1429,7 +1429,7 @@ describe('AbstractNode - derivedValue', () => {
     describe('안전한 패턴: if 조건이 사용자 입력만 참조', () => {
       it('oneOf if 조건이 사용자 입력만 참조하고, derived가 외부 필드만 참조하면 안전해야 함', async () => {
         const onChange = vi.fn();
-        const jsonSchema: JsonSchemaWithVirtual = {
+        const jsonSchema: JSONSchemaWithVirtual = {
           type: 'object',
           properties: {
             mode: {
@@ -1479,7 +1479,7 @@ describe('AbstractNode - derivedValue', () => {
           },
         };
 
-        const node = nodeFromJsonSchema({
+        const node = nodeFromJSONSchema({
           jsonSchema,
           onChange,
         });
@@ -1513,7 +1513,7 @@ describe('AbstractNode - derivedValue', () => {
 
       it('anyOf 각 분기의 derived가 독립적인 외부 값만 참조하면 안전해야 함', async () => {
         const onChange = vi.fn();
-        const jsonSchema: JsonSchemaWithVirtual = {
+        const jsonSchema: JSONSchemaWithVirtual = {
           type: 'object',
           properties: {
             baseValue: {
@@ -1564,7 +1564,7 @@ describe('AbstractNode - derivedValue', () => {
           },
         };
 
-        const node = nodeFromJsonSchema({
+        const node = nodeFromJSONSchema({
           jsonSchema,
           onChange,
         });
@@ -1601,7 +1601,7 @@ describe('AbstractNode - derivedValue', () => {
     describe('안전한 패턴: derived가 oneOf 분기 내부 값을 참조하지만 if에 영향 없음', () => {
       it('외부 derived가 oneOf 분기 내부 값을 참조하되, if 조건에 영향을 주지 않으면 안전해야 함', async () => {
         const onChange = vi.fn();
-        const jsonSchema: JsonSchemaWithVirtual = {
+        const jsonSchema: JSONSchemaWithVirtual = {
           type: 'object',
           properties: {
             userChoice: {
@@ -1653,7 +1653,7 @@ describe('AbstractNode - derivedValue', () => {
           },
         };
 
-        const node = nodeFromJsonSchema({
+        const node = nodeFromJSONSchema({
           jsonSchema,
           onChange,
         });
@@ -1682,7 +1682,7 @@ describe('AbstractNode - derivedValue', () => {
     describe('안전한 패턴: if 조건에서 원본 값으로 직접 계산', () => {
       it('if 조건에서 derived 대신 원본 값으로 동일한 계산을 하면 안전해야 함', async () => {
         const onChange = vi.fn();
-        const jsonSchema: JsonSchemaWithVirtual = {
+        const jsonSchema: JSONSchemaWithVirtual = {
           type: 'object',
           properties: {
             price: {
@@ -1740,7 +1740,7 @@ describe('AbstractNode - derivedValue', () => {
           },
         };
 
-        const node = nodeFromJsonSchema({
+        const node = nodeFromJSONSchema({
           jsonSchema,
           onChange,
         });
@@ -1771,7 +1771,7 @@ describe('AbstractNode - derivedValue', () => {
     describe('안전한 패턴: derived 체인과 oneOf 조건 분리', () => {
       it('derived 체인이 oneOf 조건과 완전히 분리되면 안전해야 함', async () => {
         const onChange = vi.fn();
-        const jsonSchema: JsonSchemaWithVirtual = {
+        const jsonSchema: JSONSchemaWithVirtual = {
           type: 'object',
           properties: {
             input: {
@@ -1840,7 +1840,7 @@ describe('AbstractNode - derivedValue', () => {
           },
         };
 
-        const node = nodeFromJsonSchema({
+        const node = nodeFromJSONSchema({
           jsonSchema,
           onChange,
         });
@@ -1873,7 +1873,7 @@ describe('AbstractNode - derivedValue', () => {
     describe('업데이트 횟수 제한 테스트', () => {
       it('oneOf 분기 전환과 derived 업데이트의 총 횟수가 합리적이어야 함', async () => {
         const onChange = vi.fn();
-        const jsonSchema: JsonSchemaWithVirtual = {
+        const jsonSchema: JSONSchemaWithVirtual = {
           type: 'object',
           properties: {
             trigger: {
@@ -1913,7 +1913,7 @@ describe('AbstractNode - derivedValue', () => {
           },
         };
 
-        const node = nodeFromJsonSchema({
+        const node = nodeFromJSONSchema({
           jsonSchema,
           onChange,
         });
@@ -1942,7 +1942,7 @@ describe('AbstractNode - derivedValue', () => {
 
       it('anyOf 다중 분기 활성화/비활성화 시 업데이트 횟수가 합리적이어야 함', async () => {
         const onChange = vi.fn();
-        const jsonSchema: JsonSchemaWithVirtual = {
+        const jsonSchema: JSONSchemaWithVirtual = {
           type: 'object',
           properties: {
             base: {
@@ -1985,7 +1985,7 @@ describe('AbstractNode - derivedValue', () => {
           },
         };
 
-        const node = nodeFromJsonSchema({
+        const node = nodeFromJSONSchema({
           jsonSchema,
           onChange,
         });
@@ -2025,7 +2025,7 @@ describe('AbstractNode - derivedValue', () => {
         process.on('uncaughtException', errorHandler);
 
         // 수렴하는 순환: a = b * 0.5, b = a + 10 → a=10, b=20
-        const jsonSchema: JsonSchemaWithVirtual = {
+        const jsonSchema: JSONSchemaWithVirtual = {
           type: 'object',
           properties: {
             a: {
@@ -2076,7 +2076,7 @@ describe('AbstractNode - derivedValue', () => {
           },
         };
 
-        const node = nodeFromJsonSchema({
+        const node = nodeFromJSONSchema({
           jsonSchema,
           onChange,
         });
@@ -2099,7 +2099,7 @@ describe('AbstractNode - derivedValue', () => {
 
       it('active=false인 노드의 derived가 oneOf 조건에 영향을 주지 않아야 함', async () => {
         const onChange = vi.fn();
-        const jsonSchema: JsonSchemaWithVirtual = {
+        const jsonSchema: JSONSchemaWithVirtual = {
           type: 'object',
           properties: {
             enableCalc: {
@@ -2151,7 +2151,7 @@ describe('AbstractNode - derivedValue', () => {
           },
         };
 
-        const node = nodeFromJsonSchema({
+        const node = nodeFromJSONSchema({
           jsonSchema,
           onChange,
         });
@@ -2190,7 +2190,7 @@ describe('AbstractNode - derivedValue', () => {
     describe('복합 시나리오 테스트', () => {
       it('중첩된 oneOf에서 각 레벨의 derived가 독립적으로 동작해야 함', async () => {
         const onChange = vi.fn();
-        const jsonSchema: JsonSchemaWithVirtual = {
+        const jsonSchema: JSONSchemaWithVirtual = {
           type: 'object',
           properties: {
             level1Choice: {
@@ -2277,7 +2277,7 @@ describe('AbstractNode - derivedValue', () => {
           },
         };
 
-        const node = nodeFromJsonSchema({
+        const node = nodeFromJSONSchema({
           jsonSchema,
           onChange,
         });
@@ -2310,7 +2310,7 @@ describe('AbstractNode - derivedValue', () => {
 
       it('anyOf 여러 분기가 동시에 활성화되어도 derived 간 간섭이 없어야 함', async () => {
         const onChange = vi.fn();
-        const jsonSchema: JsonSchemaWithVirtual = {
+        const jsonSchema: JSONSchemaWithVirtual = {
           type: 'object',
           properties: {
             input: {
@@ -2359,7 +2359,7 @@ describe('AbstractNode - derivedValue', () => {
           },
         };
 
-        const node = nodeFromJsonSchema({
+        const node = nodeFromJSONSchema({
           jsonSchema,
           onChange,
         });
@@ -2387,7 +2387,7 @@ describe('AbstractNode - derivedValue', () => {
 
       it('./를 사용한 조건부 업데이트가 oneOf와 함께 안전하게 동작해야 함', async () => {
         const onChange = vi.fn();
-        const jsonSchema: JsonSchemaWithVirtual = {
+        const jsonSchema: JSONSchemaWithVirtual = {
           type: 'object',
           properties: {
             mode: {
@@ -2432,7 +2432,7 @@ describe('AbstractNode - derivedValue', () => {
           },
         };
 
-        const node = nodeFromJsonSchema({
+        const node = nodeFromJSONSchema({
           jsonSchema,
           onChange,
         });
@@ -2472,7 +2472,7 @@ describe('AbstractNode - derivedValue', () => {
   describe('updateComputedPropertiesRecursively 메서드 테스트', () => {
     it('모든 자손 노드의 computed properties가 재귀적으로 업데이트되어야 함', async () => {
       const onChange = vi.fn();
-      const jsonSchema: JsonSchemaWithVirtual = {
+      const jsonSchema: JSONSchemaWithVirtual = {
         type: 'object',
         properties: {
           multiplier: {
@@ -2515,7 +2515,7 @@ describe('AbstractNode - derivedValue', () => {
         },
       };
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema,
         onChange,
       });
@@ -2539,7 +2539,7 @@ describe('AbstractNode - derivedValue', () => {
 
     it('oneOf 분기 전환 후 중첩된 derived value가 올바르게 계산되어야 함', async () => {
       const onChange = vi.fn();
-      const jsonSchema: JsonSchemaWithVirtual = {
+      const jsonSchema: JSONSchemaWithVirtual = {
         type: 'object',
         properties: {
           mode: {
@@ -2605,7 +2605,7 @@ describe('AbstractNode - derivedValue', () => {
         },
       };
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema,
         onChange,
       });
@@ -2635,7 +2635,7 @@ describe('AbstractNode - derivedValue', () => {
 
     it('anyOf 분기 활성화 시 모든 활성 분기의 derived가 올바르게 계산되어야 함', async () => {
       const onChange = vi.fn();
-      const jsonSchema: JsonSchemaWithVirtual = {
+      const jsonSchema: JSONSchemaWithVirtual = {
         type: 'object',
         properties: {
           base: {
@@ -2696,7 +2696,7 @@ describe('AbstractNode - derivedValue', () => {
         },
       };
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema,
         onChange,
       });
@@ -2743,7 +2743,7 @@ describe('AbstractNode - derivedValue', () => {
 
     it('updateComputedProperties(false)가 reset을 스킵해야 함', async () => {
       const onChange = vi.fn();
-      const jsonSchema: JsonSchemaWithVirtual = {
+      const jsonSchema: JSONSchemaWithVirtual = {
         type: 'object',
         properties: {
           trigger: {
@@ -2760,7 +2760,7 @@ describe('AbstractNode - derivedValue', () => {
         },
       };
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema,
         onChange,
       });
@@ -2902,9 +2902,9 @@ describe('AbstractNode - derivedValue', () => {
             },
           },
         },
-      } satisfies JsonSchemaWithVirtual;
+      } satisfies JSONSchemaWithVirtual;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema,
         onChange,
       });

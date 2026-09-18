@@ -2,7 +2,7 @@ import '@testing-library/jest-dom';
 import { act } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import type { JsonSchema } from '@winglet/json-schema';
+import type { JSONSchema } from '@winglet/json-schema';
 
 import { VirtualizationBackfill } from '@/schema-form';
 
@@ -64,7 +64,7 @@ const flushIdle = async () => {
   });
 };
 
-const flatSchema = (count: number): JsonSchema => ({
+const flatSchema = (count: number): JSONSchema => ({
   type: 'object',
   properties: Object.fromEntries(
     Array.from({ length: count }, (_, index) => [

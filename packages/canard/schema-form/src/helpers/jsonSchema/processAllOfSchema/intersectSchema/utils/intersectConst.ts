@@ -1,4 +1,4 @@
-import { JsonSchemaError } from '@/schema-form/errors';
+import { JSONSchemaError } from '@/schema-form/errors';
 import { formatConflictingConstValuesError } from '@/schema-form/helpers/error';
 
 /**
@@ -11,7 +11,7 @@ import { formatConflictingConstValuesError } from '@/schema-form/helpers/error';
  * @param baseConst - The base const value (optional)
  * @param sourceConst - The source const value (optional)
  * @returns The const value if both are undefined or equal, undefined if only one is defined
- * @throws {JsonSchemaError} When both values are defined but different
+ * @throws {JSONSchemaError} When both values are defined but different
  */
 export const intersectConst = <T>(
   baseConst?: T,
@@ -21,7 +21,7 @@ export const intersectConst = <T>(
   if (baseConst === undefined) return sourceConst;
   if (sourceConst === undefined) return baseConst;
   if (baseConst !== sourceConst)
-    throw new JsonSchemaError(
+    throw new JSONSchemaError(
       'CONFLICTING_CONST_VALUES',
       formatConflictingConstValuesError(baseConst, sourceConst),
     );

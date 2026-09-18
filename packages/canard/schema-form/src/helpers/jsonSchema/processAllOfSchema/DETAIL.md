@@ -4,19 +4,19 @@
 
 - 병합은 원본을 변경하지 않는다: `allOf`를 분리한 나머지를 `cloneLite`로 복제한 뒤에만 병합한다.
 - `allOf` 항목은 배열 순서 그대로 순차 병합한다 — 재정렬·건너뛰기 금지.
-- 타입 비호환은 `JsonSchemaError('ALL_OF_TYPE_REDEFINITION')`로 즉시 실패한다.
+- 타입 비호환은 `JSONSchemaError('ALL_OF_TYPE_REDEFINITION')`로 즉시 실패한다.
 - 폼 렌더링에 무의미한 키워드(`IGNORE_FIELDS`)는 병합에서 제외하고 dev 환경 경고를 방출한다.
 
 ## API Contracts
 
-`processAllOfSchema(schema: JsonSchema): JsonSchema`
+`processAllOfSchema(schema: JSONSchema): JSONSchema`
 
 | 입력 조건                                | 결과                                     |
 | ---------------------------------------- | ---------------------------------------- |
 | `allOf` 부재 또는 빈 배열                | 입력 스키마를 **동일 참조**로 반환       |
 | 병합 핸들러 없음 (type 부재·미지원 타입) | 입력 스키마를 **동일 참조**로 반환       |
 | 병합 수행                                | `allOf`가 제거된 **새 스키마 객체** 반환 |
-| `validateCompatibility` 실패             | `JsonSchemaError` throw                  |
+| `validateCompatibility` 실패             | `JSONSchemaError` throw                  |
 
 복제 깊이는 스키마 타입별로 다르며 `getCloneDepth`가 소유한다 — 직접 병합되는 층만 복제하고 그보다 깊은 중첩 스키마는 참조를 공유한다.
 
@@ -33,7 +33,7 @@
 
 ### type-redefinition — 타입 재정의는 실패다
 
-- `allOf` 항목의 타입이 기반 스키마와 비호환이면 `JsonSchemaError`가 throw된다.
+- `allOf` 항목의 타입이 기반 스키마와 비호환이면 `JSONSchemaError`가 throw된다.
 
 ### ignored-keyword-warning — 무시되는 키워드는 조용히 사라지지 않는다
 

@@ -6,7 +6,7 @@ import {
   Form,
   type FormTypeInputDefinition,
   type FormTypeInputProps,
-  type JsonSchema,
+  type JSONSchema,
 } from '../src';
 import StoryLayout from './components/StoryLayout';
 
@@ -33,7 +33,7 @@ export const Watch = () => {
         },
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
   const formTypes = useMemo<FormTypeInputDefinition[]>(
     () => [
       {
@@ -140,7 +140,7 @@ export const WatchWithBranchNode = () => {
         },
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
   const formTypes = useMemo<FormTypeInputDefinition[]>(
     () => [
       {

@@ -20,7 +20,7 @@ const blocker = builtBinBlocker();
 
 let scratchRoot: string;
 
-function runJson(args: readonly string[]) {
+function runJSON(args: readonly string[]) {
   return spawnSync(
     process.execPath,
     [BIN_PATH, ...args, '--json', '--dry-run', '--root', scratchRoot],
@@ -61,7 +61,7 @@ describe.skipIf(blocker !== null)(
     });
 
     it('writes one parseable document and nothing else to stdout', () => {
-      const result = runJson([
+      const result = runJSON([
         '--package',
         DECLARED,
         '--agent=claude',
@@ -80,7 +80,7 @@ describe.skipIf(blocker !== null)(
 
     it('describes one unit per (package, agent) pair', () => {
       const report = JSON.parse(
-        runJson([
+        runJSON([
           '--package',
           DECLARED,
           '--agent=claude,codex',
@@ -104,7 +104,7 @@ describe.skipIf(blocker !== null)(
 
     it('carries each action target so a reader can tell a block from a file', () => {
       const report = JSON.parse(
-        runJson(['--package', DECLARED, '--agent=codex', '--scope=project'])
+        runJSON(['--package', DECLARED, '--agent=codex', '--scope=project'])
           .stdout,
       );
       const actions = report.units[0].actions as Array<{
@@ -126,7 +126,7 @@ describe.skipIf(blocker !== null)(
     // manifest-sourced one does — no `agents-hashes.json missing` error, and a
     // real plan rather than an empty unit.
     it('plans an --asset-path target without any manifest error', () => {
-      const result = runJson([
+      const result = runJSON([
         '--package',
         UNDECLARED,
         '--agent=claude',
@@ -148,7 +148,7 @@ describe.skipIf(blocker !== null)(
     // but a reader must still get a document, or it cannot tell success from a
     // parse error. The skip reasons ride along so stderr need not be scraped.
     it('still emits a document when every target is skipped', () => {
-      const result = runJson([
+      const result = runJSON([
         '--package',
         EMPTY_SCOPE,
         '--agent=claude',
@@ -164,7 +164,7 @@ describe.skipIf(blocker !== null)(
     });
 
     it('reports a flag error as a document, not as loose text', () => {
-      const result = runJson([
+      const result = runJSON([
         '--package',
         DECLARED,
         '--agent=gemini',
@@ -180,7 +180,7 @@ describe.skipIf(blocker !== null)(
     it('keeps diagnostics off stdout when the run fails before rendering', () => {
       // An unresolvable package exits inside target resolution, upstream of the
       // renderer. stdout must still stay clean so a parser sees "no document".
-      const result = runJson([
+      const result = runJSON([
         '--package',
         '@does/not-exist',
         '--agent=claude',

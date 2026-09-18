@@ -10,7 +10,7 @@
 import '@testing-library/jest-dom';
 import { describe, expect, it } from 'vitest';
 
-import type { JsonSchema } from '@/schema-form/types';
+import type { JSONSchema } from '@/schema-form/types';
 
 import { renderForm } from '../renderForm';
 
@@ -37,7 +37,7 @@ const oneOfNestedSchema = {
       properties: { other: { type: 'string' } },
     },
   ],
-} as JsonSchema;
+} as JSONSchema;
 
 describe('array omitTrailing × composite surfaces (render)', () => {
   it('selects a oneOf branch and hydrates nested trimmed VALUES in ONE setValue', async () => {
@@ -100,7 +100,7 @@ describe('array omitTrailing × composite surfaces (render)', () => {
           properties: { note: { type: 'string' } },
         },
       ],
-    } as JsonSchema;
+    } as JSONSchema;
     const form = await renderForm(anyOfNestedSchema);
     await form.setValue({
       mode: 'list',
@@ -123,7 +123,7 @@ describe('array omitTrailing × composite surfaces (render)', () => {
       if: { properties: { category: { enum: ['movie'] } } },
       then: { required: ['matrix'] },
       else: {},
-    } as JsonSchema;
+    } as JSONSchema;
     const form = await renderForm(ifThenElseNestedSchema, { validator: true });
     await form.setValue({ category: 'movie' });
     const missingErrors = await form.validate();
@@ -162,7 +162,7 @@ describe('array omitTrailing × composite surfaces (render)', () => {
           options: { omitTrailing: true },
         },
       },
-    } as JsonSchema;
+    } as JSONSchema;
     const form = await renderForm(injectIntoSchema);
     await form.type('/source', 'x');
     expect(form.getValue()?.arr).toEqual(['x']);
@@ -183,7 +183,7 @@ describe('array omitTrailing × composite surfaces (render)', () => {
         },
         mirror: { type: 'array', items: { type: 'number' } },
       },
-    } as JsonSchema;
+    } as JSONSchema;
     const form = await renderForm(mirrorSchema);
     await form.setValue({ arr: [1, undefined, undefined] });
     expect(form.getValue()?.arr).toEqual([1]);
@@ -216,7 +216,7 @@ describe('array omitTrailing × composite surfaces (render)', () => {
           properties: { other: { type: 'string' } },
         },
       ],
-    } as JsonSchema;
+    } as JSONSchema;
     const form = await renderForm(flipAndFillSchema);
     await form.type('/trigger', 'go');
     await form.flush(10);

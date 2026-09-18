@@ -11,7 +11,7 @@ allOf 병합에서 타입별 스키마 교집합 로직을 구현한다. string,
 - pattern: 두 패턴을 `(?=pattern1)(?=pattern2)` lookahead AND로 결합
 - enum: 두 배열의 교집합 (deep equality), const: 두 값이 동일해야 유효
 - required: 합집합 (`unionRequired`)
-- 범위 불일치 시 `validateRange`에서 `JsonSchemaError` throw
+- 범위 불일치 시 `validateRange`에서 `JSONSchemaError` throw
 
 ## Boundaries
 
@@ -34,4 +34,4 @@ allOf 병합에서 타입별 스키마 교집합 로직을 구현한다. string,
 
 ## Dependencies
 
-- 내부: `@/schema-form/types`(타입별 Schema), `@/schema-form/errors`(`JsonSchemaError`), `./utils/*`(교집합 유틸)
+- 내부: `@/schema-form/types`(타입별 Schema), `@/schema-form/errors`(`JSONSchemaError`), `./utils/*`(교집합 유틸)

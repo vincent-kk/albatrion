@@ -1,8 +1,8 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import type { JsonSchemaWithVirtual } from '@/schema-form/types';
+import type { JSONSchemaWithVirtual } from '@/schema-form/types';
 
-import { nodeFromJsonSchema } from '../nodeFromJsonSchema';
+import { nodeFromJSONSchema } from '../nodeFromJSONSchema';
 import type { BooleanNode } from '../nodes/BooleanNode';
 import type { NumberNode } from '../nodes/NumberNode';
 import type { ObjectNode } from '../nodes/ObjectNode';
@@ -35,9 +35,9 @@ describe('AbstractNode - pristine', () => {
             },
           },
         },
-      } satisfies JsonSchemaWithVirtual;
+      } satisfies JSONSchemaWithVirtual;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema,
         onChange,
       });
@@ -85,9 +85,9 @@ describe('AbstractNode - pristine', () => {
             },
           },
         },
-      } satisfies JsonSchemaWithVirtual;
+      } satisfies JSONSchemaWithVirtual;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema,
         onChange,
       });
@@ -119,9 +119,9 @@ describe('AbstractNode - pristine', () => {
             },
           },
         },
-      } satisfies JsonSchemaWithVirtual;
+      } satisfies JSONSchemaWithVirtual;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema,
         onChange,
       });
@@ -159,9 +159,9 @@ describe('AbstractNode - pristine', () => {
             '&pristine': '../resetTrigger === true',
           },
         },
-      } satisfies JsonSchemaWithVirtual;
+      } satisfies JSONSchemaWithVirtual;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema,
         onChange,
       });
@@ -211,9 +211,9 @@ describe('AbstractNode - pristine', () => {
             },
           },
         },
-      } satisfies JsonSchemaWithVirtual;
+      } satisfies JSONSchemaWithVirtual;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema,
         onChange,
       });
@@ -257,9 +257,9 @@ describe('AbstractNode - pristine', () => {
             },
           },
         },
-      } satisfies JsonSchemaWithVirtual;
+      } satisfies JSONSchemaWithVirtual;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema,
         onChange,
       });
@@ -320,9 +320,9 @@ describe('AbstractNode - pristine', () => {
             },
           },
         },
-      } satisfies JsonSchemaWithVirtual;
+      } satisfies JSONSchemaWithVirtual;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema,
         onChange,
       });
@@ -379,9 +379,9 @@ describe('AbstractNode - pristine', () => {
             },
           },
         },
-      } satisfies JsonSchemaWithVirtual;
+      } satisfies JSONSchemaWithVirtual;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema,
         onChange,
       });
@@ -430,9 +430,9 @@ describe('AbstractNode - pristine', () => {
             },
           },
         },
-      } satisfies JsonSchemaWithVirtual;
+      } satisfies JSONSchemaWithVirtual;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema,
         onChange,
       });
@@ -485,9 +485,9 @@ describe('AbstractNode - pristine', () => {
             },
           },
         },
-      } satisfies JsonSchemaWithVirtual;
+      } satisfies JSONSchemaWithVirtual;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema,
         onChange,
       });
@@ -538,9 +538,9 @@ describe('AbstractNode - pristine', () => {
             },
           },
         },
-      } satisfies JsonSchemaWithVirtual;
+      } satisfies JSONSchemaWithVirtual;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema,
         onChange,
       });
@@ -585,9 +585,9 @@ describe('AbstractNode - pristine', () => {
             },
           },
         },
-      } satisfies JsonSchemaWithVirtual;
+      } satisfies JSONSchemaWithVirtual;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema,
         onChange,
       });
@@ -631,9 +631,9 @@ describe('AbstractNode - pristine', () => {
             },
           },
         },
-      } satisfies JsonSchemaWithVirtual;
+      } satisfies JSONSchemaWithVirtual;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema,
         onChange,
       });
@@ -681,9 +681,9 @@ describe('AbstractNode - pristine', () => {
             },
           },
         },
-      } satisfies JsonSchemaWithVirtual;
+      } satisfies JSONSchemaWithVirtual;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema,
         onChange,
       });
@@ -721,9 +721,9 @@ describe('AbstractNode - pristine', () => {
             },
           },
         },
-      } satisfies JsonSchemaWithVirtual;
+      } satisfies JSONSchemaWithVirtual;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema,
         onChange,
       });
@@ -762,9 +762,9 @@ describe('AbstractNode - pristine', () => {
             },
           },
         },
-      } satisfies JsonSchemaWithVirtual;
+      } satisfies JSONSchemaWithVirtual;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema,
         onChange,
       });
@@ -814,9 +814,9 @@ describe('AbstractNode - pristine', () => {
             },
           },
         },
-      } satisfies JsonSchemaWithVirtual;
+      } satisfies JSONSchemaWithVirtual;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema,
         onChange,
       });

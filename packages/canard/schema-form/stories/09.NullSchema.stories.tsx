@@ -3,8 +3,8 @@ import { useRef, useState } from 'react';
 import {
   Form,
   type FormHandle,
-  type JsonSchema,
-  type JsonSchemaError,
+  type JSONSchema,
+  type JSONSchemaError,
 } from '../src';
 import StoryLayout from './components/StoryLayout';
 
@@ -40,10 +40,10 @@ export const NullSchema = () => {
         default: null,
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>({});
-  const [errors, setErrors] = useState<JsonSchemaError[]>([]);
+  const [errors, setErrors] = useState<JSONSchemaError[]>([]);
 
   return (
     <StoryLayout jsonSchema={jsonSchema} errors={errors} value={value}>
@@ -90,7 +90,7 @@ export const StringEnumWithNull = () => {
         },
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   return (
     <div>
@@ -154,7 +154,7 @@ export const StringCheckboxWithNull = () => {
         formType: 'checkbox',
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   return (
     <div>
@@ -212,7 +212,7 @@ export const NumberWithNull = () => {
         formType: 'slider',
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   return (
     <div>
@@ -283,7 +283,7 @@ export const StringSwitchWithNull = () => {
         },
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   return (
     <div>
@@ -367,7 +367,7 @@ export const MixedNullScenarios = () => {
         formType: 'checkbox',
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   return (
     <div>
@@ -461,7 +461,7 @@ export const DefaultValuesWithNull = () => {
         },
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   return (
     <div>

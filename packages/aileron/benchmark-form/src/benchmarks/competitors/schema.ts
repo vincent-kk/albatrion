@@ -1,6 +1,6 @@
 import type { RJSFSchema } from '@rjsf/utils';
 
-import type { JsonSchema } from '@canard/schema-form';
+import type { JSONSchema } from '@canard/schema-form';
 
 import { buildFlatSchema } from '../../fixtures/scale-schemas';
 
@@ -33,4 +33,4 @@ export const flatDefaults = (fieldCount: number): Record<string, string> => {
 };
 
 /** Sanity re-export so callers can assert shape parity if needed. */
-export type FlatSchema = JsonSchema;
+export type FlatSchema = JSONSchema;

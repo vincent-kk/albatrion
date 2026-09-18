@@ -1,29 +1,29 @@
 import { describe, expect, it } from 'vitest';
 
-import type { PartialJsonSchema } from '@/schema-form/types';
+import type { PartialJSONSchema } from '@/schema-form/types';
 
 import { getExpressionFromSchema } from '../getConditionIndexFactory/utils/getExpressionFromSchema';
 
 describe('getExpressionFromSchema', () => {
   it('properties가 없으면 null을 반환해야 합니다', () => {
-    const schema: PartialJsonSchema = {};
+    const schema: PartialJSONSchema = {};
     expect(getExpressionFromSchema(schema)).toBeNull();
   });
 
   it('properties가 plain object가 아니면 null을 반환해야 합니다', () => {
-    const schema: PartialJsonSchema = {
+    const schema: PartialJSONSchema = {
       properties: 'not an object' as any,
     };
     expect(getExpressionFromSchema(schema)).toBeNull();
 
-    const schemaWithArray: PartialJsonSchema = {
+    const schemaWithArray: PartialJSONSchema = {
       properties: [] as any,
     };
     expect(getExpressionFromSchema(schemaWithArray)).toBeNull();
   });
 
   it('type이나 $ref가 있는 속성은 무시해야 합니다', () => {
-    const schema: PartialJsonSchema = {
+    const schema: PartialJSONSchema = {
       properties: {
         field1: { type: 'string' },
         field2: { $ref: '#/definitions/something' },
@@ -35,7 +35,7 @@ describe('getExpressionFromSchema', () => {
   });
 
   it('const 값을 가진 속성을 처리해야 합니다', () => {
-    const schema: PartialJsonSchema = {
+    const schema: PartialJSONSchema = {
       properties: {
         status: { const: 'active' },
       },
@@ -45,7 +45,7 @@ describe('getExpressionFromSchema', () => {
   });
 
   it('boolean const 값을 처리해야 합니다', () => {
-    const schema: PartialJsonSchema = {
+    const schema: PartialJSONSchema = {
       properties: {
         isEnabled: { const: true },
         isDisabled: { const: false },
@@ -56,7 +56,7 @@ describe('getExpressionFromSchema', () => {
   });
 
   it('number const 값을 처리해야 합니다', () => {
-    const schema: PartialJsonSchema = {
+    const schema: PartialJSONSchema = {
       properties: {
         count: { const: 42 },
       },
@@ -66,7 +66,7 @@ describe('getExpressionFromSchema', () => {
   });
 
   it('단일 값 enum을 const처럼 처리해야 합니다', () => {
-    const schema: PartialJsonSchema = {
+    const schema: PartialJSONSchema = {
       properties: {
         type: { enum: ['single'] },
       },
@@ -76,7 +76,7 @@ describe('getExpressionFromSchema', () => {
   });
 
   it('여러 값을 가진 enum을 includes로 처리해야 합니다', () => {
-    const schema: PartialJsonSchema = {
+    const schema: PartialJSONSchema = {
       properties: {
         role: { enum: ['admin', 'user', 'guest'] },
       },
@@ -86,7 +86,7 @@ describe('getExpressionFromSchema', () => {
   });
 
   it('빈 enum은 무시해야 합니다', () => {
-    const schema: PartialJsonSchema = {
+    const schema: PartialJSONSchema = {
       properties: {
         empty: { enum: [] },
       },
@@ -96,7 +96,7 @@ describe('getExpressionFromSchema', () => {
   });
 
   it('enum이 array가 아닌 경우 무시해야 합니다', () => {
-    const schema: PartialJsonSchema = {
+    const schema: PartialJSONSchema = {
       properties: {
         invalid: { enum: 'not an array' as any },
       },
@@ -106,7 +106,7 @@ describe('getExpressionFromSchema', () => {
   });
 
   it('여러 조건을 AND로 결합해야 합니다', () => {
-    const schema: PartialJsonSchema = {
+    const schema: PartialJSONSchema = {
       properties: {
         status: { const: 'active' },
         role: { enum: ['admin', 'moderator'] },
@@ -120,7 +120,7 @@ describe('getExpressionFromSchema', () => {
   });
 
   it('숫자 enum 값들을 올바르게 처리해야 합니다', () => {
-    const schema: PartialJsonSchema = {
+    const schema: PartialJSONSchema = {
       properties: {
         priority: { enum: [1, 2, 3] },
       },
@@ -130,7 +130,7 @@ describe('getExpressionFromSchema', () => {
   });
 
   it('mixed type enum 값들을 올바르게 처리해야 합니다', () => {
-    const schema: PartialJsonSchema = {
+    const schema: PartialJSONSchema = {
       properties: {
         value: { enum: ['text', 123, true, null] },
       },
@@ -140,7 +140,7 @@ describe('getExpressionFromSchema', () => {
   });
 
   it('null const 값을 처리해야 합니다', () => {
-    const schema: PartialJsonSchema = {
+    const schema: PartialJSONSchema = {
       properties: {
         nullable: { const: null },
       },
@@ -150,7 +150,7 @@ describe('getExpressionFromSchema', () => {
   });
 
   it('빈 properties 객체는 null을 반환해야 합니다', () => {
-    const schema: PartialJsonSchema = {
+    const schema: PartialJSONSchema = {
       properties: {},
     };
     const result = getExpressionFromSchema(schema);
@@ -158,7 +158,7 @@ describe('getExpressionFromSchema', () => {
   });
 
   it('모든 속성이 type이나 $ref를 가지면 null을 반환해야 합니다', () => {
-    const schema: PartialJsonSchema = {
+    const schema: PartialJSONSchema = {
       properties: {
         field1: { type: 'string' },
         field2: { type: 'number' },
@@ -170,7 +170,7 @@ describe('getExpressionFromSchema', () => {
   });
 
   it('type과 const가 함께 있는 경우 type이 있으면 무시해야 합니다', () => {
-    const schema: PartialJsonSchema = {
+    const schema: PartialJSONSchema = {
       properties: {
         field1: { type: 'string', const: 'value' } as any,
         field2: { const: 'included' },
@@ -181,7 +181,7 @@ describe('getExpressionFromSchema', () => {
   });
 
   it('$ref와 enum이 함께 있는 경우 $ref가 있으면 무시해야 합니다', () => {
-    const schema: PartialJsonSchema = {
+    const schema: PartialJSONSchema = {
       properties: {
         field1: { $ref: '#/def', enum: ['a', 'b'] } as any,
         field2: { enum: ['x', 'y'] },

@@ -12,14 +12,14 @@ import type {
 
 import type { MuiContext } from '../type';
 
-type BooleanSwitchJsonSchema = BooleanSchema & {
+type BooleanSwitchJSONSchema = BooleanSchema & {
   formType: 'switch';
 };
 
 interface FormTypeInputBooleanSwitchProps
   extends FormTypeInputPropsWithSchema<
       boolean | null,
-      BooleanSwitchJsonSchema,
+      BooleanSwitchJSONSchema,
       MuiContext
     >,
     MuiContext {

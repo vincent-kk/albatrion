@@ -1,7 +1,7 @@
 import type { ArraySchema } from '@/schema-form/types';
 
 import { createDivider } from './utils/createDivider';
-import { formatJsonPreview } from './utils/formatJsonPreview';
+import { formatJSONPreview } from './utils/formatJSONPreview';
 import { formatPrefixItemsPreview } from './utils/formatPrefixItemsPreview';
 
 /**
@@ -12,7 +12,7 @@ export const formatItemsFalseWithoutPrefixItemsError = (
   jsonSchema: ArraySchema,
 ): string => {
   const divider = createDivider();
-  const { preview: schemaPreview, truncated } = formatJsonPreview(jsonSchema);
+  const { preview: schemaPreview, truncated } = formatJSONPreview(jsonSchema);
 
   return `
 Invalid array schema: 'items: false' requires 'prefixItems' to be defined.

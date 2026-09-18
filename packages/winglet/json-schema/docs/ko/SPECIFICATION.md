@@ -10,8 +10,8 @@
 2. [설치](#설치)
 3. [빠른 시작](#빠른-시작)
 4. [아키텍처 — Visitor 패턴](#아키텍처--visitor-패턴)
-5. [JsonSchemaScanner API](#jsonschemaScanner-api)
-6. [JsonSchemaScannerAsync API](#jsonschemascannerasync-api)
+5. [JSONSchemaScanner API](#jsonschemaScanner-api)
+6. [JSONSchemaScannerAsync API](#jsonschemascannerasync-api)
 7. [스키마 필터](#스키마-필터)
 8. [타입 정의](#타입-정의)
 9. [resolveReference 유틸리티](#resolvereference-유틸리티)
@@ -48,13 +48,13 @@ npm install @winglet/json-schema
 
 ```typescript
 // 전체 내보내기
-import { JsonSchemaScanner, isObjectSchema, resolveReference } from '@winglet/json-schema';
+import { JSONSchemaScanner, isObjectSchema, resolveReference } from '@winglet/json-schema';
 
 // 동기 스캐너만
-import { JsonSchemaScanner } from '@winglet/json-schema/scanner';
+import { JSONSchemaScanner } from '@winglet/json-schema/scanner';
 
 // 비동기 스캐너만
-import { JsonSchemaScannerAsync } from '@winglet/json-schema/async-scanner';
+import { JSONSchemaScannerAsync } from '@winglet/json-schema/async-scanner';
 
 // 타입 가드 함수만
 import { isObjectSchema, isStringSchema, isCompatibleSchemaType } from '@winglet/json-schema/filter';
@@ -69,7 +69,7 @@ import { isObjectSchema, isStringSchema, isCompatibleSchemaType } from '@winglet
 ### 스키마를 순회하며 필드 경로 수집
 
 ```typescript
-import { JsonSchemaScanner } from '@winglet/json-schema/scanner';
+import { JSONSchemaScanner } from '@winglet/json-schema/scanner';
 
 const schema = {
   type: 'object',
@@ -89,7 +89,7 @@ const schema = {
 
 const fieldPaths: string[] = [];
 
-new JsonSchemaScanner({
+new JSONSchemaScanner({
   visitor: {
     enter: ({ keyword, dataPath }) => {
       if (keyword === 'properties') fieldPaths.push(dataPath);
@@ -122,7 +122,7 @@ if (isStringSchema(s)) {
 
 ## 아키텍처 — Visitor 패턴
 
-`JsonSchemaScanner`는 **비재귀 스택 기반 DFS** 순회 엔진을 구현합니다. 재귀 호출 대신 명시적인 `Entry[]` 스택을 유지하고, 각 항목을 4개 단계로 구성된 상태 머신을 통해 진행시킵니다.
+`JSONSchemaScanner`는 **비재귀 스택 기반 DFS** 순회 엔진을 구현합니다. 재귀 호출 대신 명시적인 `Entry[]` 스택을 유지하고, 각 항목을 4개 단계로 구성된 상태 머신을 통해 진행시킵니다.
 
 ```
 스키마 트리 노드 생명주기:
@@ -163,15 +163,15 @@ if (isStringSchema(s)) {
 
 ---
 
-## JsonSchemaScanner API
+## JSONSchemaScanner API
 
 ### 생성자
 
 ```typescript
-new JsonSchemaScanner<Schema extends UnknownSchema = UnknownSchema, ContextType = void>(
+new JSONSchemaScanner<Schema extends UnknownSchema = UnknownSchema, ContextType = void>(
   props?: {
     visitor?: SchemaVisitor<Schema, ContextType>;
-    options?: JsonScannerOptions<Schema, ContextType>;
+    options?: JSONScannerOptions<Schema, ContextType>;
   }
 )
 ```
@@ -188,7 +188,7 @@ interface SchemaVisitor<Schema, ContextType> {
 - `enter` — 노드를 처음 방문할 때 호출되며, 자식 노드가 스택에 추가되기 전에 실행됨
 - `exit` — 노드의 모든 자손이 처리된 후 호출됨
 
-### JsonScannerOptions
+### JSONScannerOptions
 
 | 옵션               | 타입                                            | 설명                                                |
 | ------------------ | ----------------------------------------------- | --------------------------------------------------- |
@@ -247,22 +247,22 @@ type SchemaEntry<Schema> = {
 
 ---
 
-## JsonSchemaScannerAsync API
+## JSONSchemaScannerAsync API
 
-`JsonSchemaScannerAsync`는 완전한 async/await 지원을 갖춘 스캐너의 병렬 구현입니다. 동일한 아키텍처를 공유하지만 모든 콜백이 `Promise<void>`를 반환할 수 있으며 `resolveReference`는 `Promise<Schema | undefined>`를 반환할 수 있습니다.
+`JSONSchemaScannerAsync`는 완전한 async/await 지원을 갖춘 스캐너의 병렬 구현입니다. 동일한 아키텍처를 공유하지만 모든 콜백이 `Promise<void>`를 반환할 수 있으며 `resolveReference`는 `Promise<Schema | undefined>`를 반환할 수 있습니다.
 
 ### 생성자
 
 ```typescript
-new JsonSchemaScannerAsync<Schema, ContextType>(
+new JSONSchemaScannerAsync<Schema, ContextType>(
   props?: {
     visitor?: SchemaVisitor<Schema, ContextType>;  // 콜백이 async 가능
-    options?: JsonScannerOptionsAsync<Schema, ContextType>;
+    options?: JSONScannerOptionsAsync<Schema, ContextType>;
   }
 )
 ```
 
-`JsonScannerOptionsAsync`는 `resolveReference`가 `Promise`를 반환할 수 있다는 점을 제외하면 `JsonScannerOptions`와 동일합니다.
+`JSONScannerOptionsAsync`는 `resolveReference`가 `Promise`를 반환할 수 있다는 점을 제외하면 `JSONScannerOptions`와 동일합니다.
 
 ### scan(schema)
 
@@ -277,7 +277,7 @@ async scan(schema: Schema): Promise<this>
 동기 스캐너와 동일합니다. `scan()`을 await한 후 호출하세요.
 
 ```typescript
-const scanner = new JsonSchemaScannerAsync({
+const scanner = new JSONSchemaScannerAsync({
   /* ... */
 });
 const result = await scanner.scan(schema).then((s) => s.getValue());
@@ -383,7 +383,7 @@ isCompatibleSchemaType({ type: [] }, { type: [] }); // false (빈 배열)
 type UnknownSchema = { type?: string | Readonly<string[]>; [key: string]: any };
 
 // 전체 JSON Schema 유니온
-type JsonSchema<Options = object> =
+type JSONSchema<Options = object> =
   | NonNullableNumberSchema
   | NullableNumberSchema
   | NonNullableStringSchema
@@ -408,24 +408,24 @@ interface RefSchema {
 모든 스키마 타입은 두 가지 제네릭 파라미터를 허용합니다.
 
 ```typescript
-ObjectSchema<Options extends Dictionary = object, Schema extends UnknownSchema = JsonSchema>
+ObjectSchema<Options extends Dictionary = object, Schema extends UnknownSchema = JSONSchema>
 ```
 
 - `Options` — `schema.options` 확장 필드의 형태
 - `Schema` — 중첩 스키마를 위한 재귀적 자기 참조
 
-### InferJsonSchema
+### InferJSONSchema
 
 TypeScript 값 타입을 해당 스키마 인터페이스에 매핑합니다.
 
 ```typescript
-type InferJsonSchema<Value, Options = object, Schema = JsonSchema>
+type InferJSONSchema<Value, Options = object, Schema = JSONSchema>
 
 // 예시
-InferJsonSchema<string>          // NonNullableStringSchema
-InferJsonSchema<string | null>   // NullableStringSchema
-InferJsonSchema<null>            // NullSchema
-InferJsonSchema<number[]>        // NonNullableArraySchema
+InferJSONSchema<string>          // NonNullableStringSchema
+InferJSONSchema<string | null>   // NullableStringSchema
+InferJSONSchema<null>            // NullSchema
+InferJSONSchema<number[]>        // NonNullableArraySchema
 ```
 
 ### InferValueType
@@ -461,7 +461,7 @@ InferValueType<{
 - **`required`에 있는 키를 포함해 모든 키가 optional입니다.** 스키마가 기술하는 값은 런타임에 키를 생략할 수 있으므로, 여기서 필수로 표시하는 것은 이 타입이 지킬 수 없는 약속입니다. 정확한 형태가 필요하면 직접 정의하세요.
 - **스키마가 `additionalProperties: false`를 지정하지 않는 한 `Record<string, any>`와 교차합니다.** 열린 상태가 JSON Schema의 기본값이고, 이 덕분에 이 타입이 모델링하지 않는 applicator (`oneOf`, `anyOf`, `if`/`then`/`else`, `patternProperties`, `dependentSchemas`, `$ref`)가 기여하는 키가 초과 속성으로 거부되지 않습니다.
 
-모델링하지 않은 것은 좁히지 않고 폴백합니다. 리터럴이 아닌 `properties`(예: `Dictionary<JsonSchema>`)는 `Record<string, any>`, `['string', 'number']` 같은 다중 타입은 `any`, `items: false`는 `any[]`가 됩니다.
+모델링하지 않은 것은 좁히지 않고 폴백합니다. 리터럴이 아닌 `properties`(예: `Dictionary<JSONSchema>`)는 `Record<string, any>`, `['string', 'number']` 같은 다중 타입은 `any`, `items: false`는 `any[]`가 됩니다.
 
 ### 공통 BasicSchema 필드
 
@@ -551,10 +551,10 @@ function resolveReference(jsonSchema: UnknownSchema): UnknownSchema | undefined;
 - `$ref`가 없는 완전히 인라인된 스키마가 필요한 경우
 - 커스텀 해석 로직이 필요 없는 경우
 
-**커스텀 해석이 필요한 경우** `JsonSchemaScanner`를 직접 사용하세요.
+**커스텀 해석이 필요한 경우** `JSONSchemaScanner`를 직접 사용하세요.
 
 ```typescript
-const inlined = new JsonSchemaScanner({
+const inlined = new JSONSchemaScanner({
   options: {
     resolveReference: (ref, entry, context) => myCustomResolver(ref),
   },
@@ -575,7 +575,7 @@ const inlined = new JsonSchemaScanner({
 const paths: string[] = [];
 const required: string[] = [];
 
-new JsonSchemaScanner({
+new JSONSchemaScanner({
   visitor: {
     enter: ({ keyword, dataPath, schema }) => {
       if (keyword !== 'properties') return;
@@ -593,7 +593,7 @@ new JsonSchemaScanner({
 ```typescript
 import { isNumberSchema, isStringSchema } from '@winglet/json-schema/filter';
 
-const enriched = new JsonSchemaScanner({
+const enriched = new JSONSchemaScanner({
   options: {
     mutate: ({ schema, dataPath }) => {
       if (isStringSchema(schema) && !schema.title)
@@ -619,7 +619,7 @@ const registry: Record<string, UnknownSchema> = {
   },
 };
 
-const inlined = new JsonSchemaScanner({
+const inlined = new JSONSchemaScanner({
   options: {
     resolveReference: (ref) => registry[ref],
   },
@@ -633,11 +633,11 @@ const inlined = new JsonSchemaScanner({
 순회 중 원격 스키마를 가져와 복합 스키마를 빌드합니다.
 
 ```typescript
-import { JsonSchemaScannerAsync } from '@winglet/json-schema/async-scanner';
+import { JSONSchemaScannerAsync } from '@winglet/json-schema/async-scanner';
 
 const schemaCache = new Map<string, UnknownSchema>();
 
-const scanner = new JsonSchemaScannerAsync({
+const scanner = new JSONSchemaScannerAsync({
   options: {
     resolveReference: async (ref) => {
       if (schemaCache.has(ref)) return schemaCache.get(ref)!;
@@ -656,7 +656,7 @@ const composed = await scanner.scan(rootSchema).then((s) => s.getValue());
 `filter`를 사용하여 스키마 속성에 따라 전체 서브트리를 건너뜁니다.
 
 ```typescript
-const scanner = new JsonSchemaScanner({
+const scanner = new JSONSchemaScanner({
   options: {
     // 읽기 전용 필드와 그 자손 건너뛰기
     filter: ({ schema }) => !schema.readOnly,
@@ -669,10 +669,10 @@ const scanner = new JsonSchemaScanner({
 
 ### 패턴 6: 타입 안전 스키마 빌딩
 
-`InferJsonSchema`를 사용하여 컴파일 타임 타입 검사로 스키마를 작성합니다.
+`InferJSONSchema`를 사용하여 컴파일 타임 타입 검사로 스키마를 작성합니다.
 
 ```typescript
-import type { InferJsonSchema } from '@winglet/json-schema';
+import type { InferJSONSchema } from '@winglet/json-schema';
 
 interface FormFieldOptions {
   placeholder?: string;
@@ -680,13 +680,13 @@ interface FormFieldOptions {
 }
 
 // 값 타입으로부터 스키마 타입 추론
-const nameSchema: InferJsonSchema<string, FormFieldOptions> = {
+const nameSchema: InferJSONSchema<string, FormFieldOptions> = {
   type: 'string',
   minLength: 1,
   options: { placeholder: '이름 입력', autocomplete: 'name' },
 };
 
-const ageSchema: InferJsonSchema<number | null, FormFieldOptions> = {
+const ageSchema: InferJSONSchema<number | null, FormFieldOptions> = {
   type: ['number', 'null'],
   minimum: 0,
   options: { placeholder: '나이 입력' },
@@ -698,7 +698,7 @@ const ageSchema: InferJsonSchema<number | null, FormFieldOptions> = {
 `scan()`은 각 호출 시 내부 상태를 초기화합니다. 동일한 스캐너 인스턴스를 안전하게 재사용할 수 있습니다.
 
 ```typescript
-const scanner = new JsonSchemaScanner({
+const scanner = new JSONSchemaScanner({
   visitor: myVisitor,
   options: myOptions,
 });

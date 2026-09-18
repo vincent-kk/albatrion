@@ -6,7 +6,7 @@ JSON Schema에서 필드의 초기값을 결정하는 단일 함수 모듈. `sch
 
 ## Conventions
 
-- 제네릭 `Schema extends { type?: JsonSchemaWithVirtual['type']; default?: any }` 로 호출부 타입 보존
+- 제네릭 `Schema extends { type?: JSONSchemaWithVirtual['type']; default?: any }` 로 호출부 타입 보존
 - 우선순위: `schema.default` → `virtual` 조기 반환(`[]`) → `extractSchemaInfo` → `getEmptyValue`
 - `extractSchemaInfo` 가 `null` 이면 `undefined` 반환 — 스키마 파싱 실패를 조용히 흡수
 - 순수 함수: 인자 변경 없음, 부수 효과 없음
@@ -32,4 +32,4 @@ JSON Schema에서 필드의 초기값을 결정하는 단일 함수 모듈. `sch
 
 ## Dependencies
 
-- 내부: `@/schema-form/helpers/jsonSchema`(`extractSchemaInfo`), `@/schema-form/types`(`JsonSchemaWithVirtual`), `../getEmptyValue`(`getEmptyValue`)
+- 내부: `@/schema-form/helpers/jsonSchema`(`extractSchemaInfo`), `@/schema-form/types`(`JSONSchemaWithVirtual`), `../getEmptyValue`(`getEmptyValue`)

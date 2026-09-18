@@ -4,7 +4,7 @@ import type { Patch } from '../../../patchModel';
 import { Operation } from '../../../patchModel';
 import { applyPatch } from '../applyPatch';
 import type { ApplyPatchOptions } from '../type';
-import { JsonPatchError } from '../utils/error';
+import { JSONPatchError } from '../utils/error';
 
 describe('applyPatch', () => {
   describe('기본 기능', () => {
@@ -291,21 +291,21 @@ describe('applyPatch', () => {
 
       expect(() => {
         applyPatch(source, patches, { strict: true });
-      }).toThrow(JsonPatchError);
+      }).toThrow(JSONPatchError);
 
       try {
         applyPatch(source, patches, { strict: true });
       } catch (error) {
-        expect(error).toBeInstanceOf(JsonPatchError);
-        expect((error as JsonPatchError).specific).toBe('PATCH_TEST_FAILED');
-        expect((error as JsonPatchError).message).toContain(
+        expect(error).toBeInstanceOf(JSONPatchError);
+        expect((error as JSONPatchError).specific).toBe('PATCH_TEST_FAILED');
+        expect((error as JSONPatchError).message).toContain(
           'Test operation failed for property',
         );
-        expect((error as JsonPatchError).message).toContain('name');
-        expect((error as JsonPatchError).details.actualValue).toBe('John');
-        expect((error as JsonPatchError).details.expectedValue).toBe('Jane');
-        expect((error as JsonPatchError).details.property).toBe('name');
-        expect((error as JsonPatchError).details.operation).toBe('test');
+        expect((error as JSONPatchError).message).toContain('name');
+        expect((error as JSONPatchError).details.actualValue).toBe('John');
+        expect((error as JSONPatchError).details.expectedValue).toBe('Jane');
+        expect((error as JSONPatchError).details.property).toBe('name');
+        expect((error as JSONPatchError).details.operation).toBe('test');
       }
     });
 
@@ -317,20 +317,20 @@ describe('applyPatch', () => {
 
       expect(() => {
         applyPatch(source, patches, { strict: true });
-      }).toThrow(JsonPatchError);
+      }).toThrow(JSONPatchError);
 
       try {
         applyPatch(source, patches, { strict: true });
       } catch (error) {
-        expect(error).toBeInstanceOf(JsonPatchError);
-        expect((error as JsonPatchError).specific).toBe('PATCH_TEST_FAILED');
-        expect((error as JsonPatchError).message).toContain(
+        expect(error).toBeInstanceOf(JSONPatchError);
+        expect((error as JSONPatchError).specific).toBe('PATCH_TEST_FAILED');
+        expect((error as JSONPatchError).message).toContain(
           'Test operation failed at array index',
         );
-        expect((error as JsonPatchError).details.actualValue).toBe(2);
-        expect((error as JsonPatchError).details.expectedValue).toBe(5);
-        expect((error as JsonPatchError).details.index).toBe(1);
-        expect((error as JsonPatchError).details.operation).toBe('test');
+        expect((error as JSONPatchError).details.actualValue).toBe(2);
+        expect((error as JSONPatchError).details.expectedValue).toBe(5);
+        expect((error as JSONPatchError).details.index).toBe(1);
+        expect((error as JSONPatchError).details.operation).toBe('test');
       }
     });
 
@@ -342,18 +342,18 @@ describe('applyPatch', () => {
 
       expect(() => {
         applyPatch(source, patches, { strict: true });
-      }).toThrow(JsonPatchError);
+      }).toThrow(JSONPatchError);
 
       try {
         applyPatch(source, patches, { strict: true });
       } catch (error) {
-        expect(error).toBeInstanceOf(JsonPatchError);
-        expect((error as JsonPatchError).specific).toBe('PATCH_TEST_FAILED');
-        expect((error as JsonPatchError).message).toContain(
+        expect(error).toBeInstanceOf(JSONPatchError);
+        expect((error as JSONPatchError).specific).toBe('PATCH_TEST_FAILED');
+        expect((error as JSONPatchError).message).toContain(
           'Test operation failed at root level',
         );
-        expect((error as JsonPatchError).details.path).toBe('/');
-        expect((error as JsonPatchError).details.operation).toBe('test');
+        expect((error as JSONPatchError).details.path).toBe('/');
+        expect((error as JSONPatchError).details.operation).toBe('test');
       }
     });
 
@@ -422,7 +422,7 @@ describe('applyPatch', () => {
       // own '__proto__' 컨테이너가 없으므로 일반 누락 중간 경로와 동일하게 실패한다
       expect(() => {
         applyPatch(source, patches);
-      }).toThrow(JsonPatchError);
+      }).toThrow(JSONPatchError);
 
       // 제거된 legacy protectPrototype 옵션을 넘겨도 동작은 달라지지 않는다
       const legacyOptions: ApplyPatchOptions & { protectPrototype: boolean } = {
@@ -430,7 +430,7 @@ describe('applyPatch', () => {
       };
       expect(() => {
         applyPatch(source, patches, legacyOptions);
-      }).toThrow(JsonPatchError);
+      }).toThrow(JSONPatchError);
 
       expect(({} as Record<string, unknown>).custom).toBeUndefined();
     });

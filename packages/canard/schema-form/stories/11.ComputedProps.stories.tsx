@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { Form, type JsonSchema } from '../src';
+import { Form, type JSONSchema } from '../src';
 import StoryLayout from './components/StoryLayout';
 
 export default {
@@ -40,7 +40,7 @@ export const Common = () => {
         },
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>();
 
@@ -78,7 +78,7 @@ export const GlobalReadOnly = () => {
         },
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>();
 
@@ -116,7 +116,7 @@ export const GlobalDisabled = () => {
         },
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>();
 

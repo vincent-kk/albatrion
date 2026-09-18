@@ -2,14 +2,14 @@ import { main } from './helpers/cli';
 import { run as runApplyPatch } from './targets/applyPatch/benchmark';
 import { run as runClone } from './targets/clone/benchmark';
 import { run as runCompare } from './targets/compare/benchmark';
-import { run as runCompareJsonSchemaErrors } from './targets/compareJsonSchemaErrors/benchmark';
+import { run as runCompareJSONSchemaErrors } from './targets/compareJSONSchemaErrors/benchmark';
 import { run as runComparePatch } from './targets/comparePatch/benchmark';
 import { run as runCompressCss } from './targets/compressCss/benchmark';
 import { run as runCx } from './targets/cx/benchmark';
 import { run as runDeepMerge } from './targets/deepMerge/benchmark';
 import { run as runEscapePointer } from './targets/escapePointer/benchmark';
 import { run as runFind } from './targets/find/benchmark';
-import { run as runGetJsonPaths } from './targets/getJsonPath/benchmark';
+import { run as runGetJSONPaths } from './targets/getJSONPath/benchmark';
 import { run as runGetObjectKeys } from './targets/getObjectKeys/benchmark';
 import { run as runGetter } from './targets/getter/benchmark';
 import { run as runPreprocessSchema } from './targets/preprocessSchema/benchmark';
@@ -18,13 +18,13 @@ import { run as runStringifyObject } from './targets/stringifyObject/benchmark';
 
 const benchmarks = {
   // fastest: 1162676.20, slowest: 582443.64, speedRatio: 2.00:1, timeSaved: 49.90%
-  compareJsonSchemaErrors: runCompareJsonSchemaErrors,
+  compareJSONSchemaErrors: runCompareJSONSchemaErrors,
   // fastest: 194722.56, slowest: 191773.18, speedRatio: 1.02:1, timeSaved: 1.51%
   deepMerge: runDeepMerge,
   // fastest: 1206271.38, slowest: 340044.93, speedRatio: 3.55:1, timeSaved: 71.81%
   find: runFind,
   // fastest: 594715.92, slowest: 118951.10, speedRatio: 5.00:1, timeSaved: 80.00%
-  getJsonPaths: runGetJsonPaths,
+  getJSONPaths: runGetJSONPaths,
   // fastest: 1123.40, slowest: 408.95, speedRatio: 2.75:1, timeSaved: 63.60%
   sortObjectKeys: runSortObjectKeys,
   // fastest(serialize): 64045091.33, slowest: 80672.09, speedRatio: 793.89:1, timeSaved: 99.87%

@@ -15,8 +15,8 @@ import { describe, expect, it, vi } from 'vitest';
 
 import { delay } from '@winglet/common-utils';
 
-import { nodeFromJsonSchema } from '@/schema-form/core';
-import type { JsonSchema } from '@/schema-form/types';
+import { nodeFromJSONSchema } from '@/schema-form/core';
+import type { JSONSchema } from '@/schema-form/types';
 
 import type { BooleanNode } from '../nodes/BooleanNode';
 import type { StringNode } from '../nodes/StringNode';
@@ -61,9 +61,9 @@ describe('Conditional Schema Event Stability', () => {
         else: {
           required: ['title', 'releaseDate'],
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: schema,
         onChange: () => {},
       });
@@ -141,9 +141,9 @@ describe('Conditional Schema Event Stability', () => {
             },
           },
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: schema,
         onChange: () => {},
       });
@@ -213,9 +213,9 @@ describe('Conditional Schema Event Stability', () => {
             },
           },
         ],
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: schema,
         onChange: () => {},
       });
@@ -290,9 +290,9 @@ describe('Conditional Schema Event Stability', () => {
             },
           },
         ],
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: schema,
         onChange: () => {},
       });
@@ -348,9 +348,9 @@ describe('Conditional Schema Event Stability', () => {
             },
           },
         ],
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: schema,
         onChange: () => {},
       });
@@ -428,9 +428,9 @@ describe('Conditional Schema Event Stability', () => {
             },
           },
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: schema,
         onChange: () => {},
       });
@@ -502,9 +502,9 @@ describe('Conditional Schema Event Stability', () => {
             },
           },
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: schema,
         onChange: () => {},
       });
@@ -560,9 +560,9 @@ describe('Conditional Schema Event Stability', () => {
             computed: { visible: '../trigger === "show"' },
           },
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: schema,
         onChange: () => {},
       });
@@ -593,9 +593,9 @@ describe('Conditional Schema Event Stability', () => {
             computed: { visible: 'true' },
           },
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: schema,
         onChange: () => {},
       });

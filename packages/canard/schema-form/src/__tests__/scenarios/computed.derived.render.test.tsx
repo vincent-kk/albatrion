@@ -1,7 +1,7 @@
 import '@testing-library/jest-dom';
 import { describe, expect, it } from 'vitest';
 
-import type { JsonSchema } from '@winglet/json-schema';
+import type { JSONSchema } from '@winglet/json-schema';
 
 import { renderForm } from '../renderForm';
 
@@ -43,7 +43,7 @@ const arithmeticSchema = {
       computed: { derived: '../price * ../quantity' },
     },
   },
-} satisfies JsonSchema;
+} satisfies JSONSchema;
 
 const concatSchema = {
   type: 'object',
@@ -55,7 +55,7 @@ const concatSchema = {
       computed: { derived: '../lastName + " " + ../firstName' },
     },
   },
-} satisfies JsonSchema;
+} satisfies JSONSchema;
 
 const ternarySchema = {
   type: 'object',
@@ -66,7 +66,7 @@ const ternarySchema = {
       computed: { derived: '../age >= 18 ? "adult" : "minor"' },
     },
   },
-} satisfies JsonSchema;
+} satisfies JSONSchema;
 
 /** Nested parent reference: `../../` and `../`. */
 const parentRefSchema = {
@@ -86,7 +86,7 @@ const parentRefSchema = {
       },
     },
   },
-} satisfies JsonSchema;
+} satisfies JSONSchema;
 
 /** Absolute reference: `/config/taxRate`. */
 const absoluteRefSchema = {
@@ -107,7 +107,7 @@ const absoluteRefSchema = {
       },
     },
   },
-} satisfies JsonSchema;
+} satisfies JSONSchema;
 
 const nullCoalesceSchema = {
   type: 'object',
@@ -119,7 +119,7 @@ const nullCoalesceSchema = {
       computed: { derived: '../nickname || ../name || "unknown"' },
     },
   },
-} satisfies JsonSchema;
+} satisfies JSONSchema;
 
 const optionalChainSchema = {
   type: 'object',
@@ -138,7 +138,7 @@ const optionalChainSchema = {
       computed: { derived: '(../user)?.profile?.name ?? "anon"' },
     },
   },
-} satisfies JsonSchema;
+} satisfies JSONSchema;
 
 const arrayLengthSchema = {
   type: 'object',
@@ -153,7 +153,7 @@ const arrayLengthSchema = {
       computed: { derived: '(../items)?.length ?? 0' },
     },
   },
-} satisfies JsonSchema;
+} satisfies JSONSchema;
 
 /** `&derived` alias of `computed.derived`. */
 const aliasSchema = {
@@ -163,7 +163,7 @@ const aliasSchema = {
     b: { type: 'number', default: 20 },
     sum: { type: 'number', '&derived': '../a + ../b' },
   },
-} satisfies JsonSchema;
+} satisfies JSONSchema;
 
 /** `active:false` must suppress the derived computation entirely. */
 const activeSchema = {
@@ -176,7 +176,7 @@ const activeSchema = {
       computed: { active: '../isAdvancedMode', derived: '../price * 1.5' },
     },
   },
-} satisfies JsonSchema;
+} satisfies JSONSchema;
 
 /** A→B→C→D derived chain. */
 const chainSchema = {
@@ -187,7 +187,7 @@ const chainSchema = {
     step2: { type: 'number', computed: { derived: '../step1 * 2' } },
     final: { type: 'number', computed: { derived: '../step2 + 100' } },
   },
-} satisfies JsonSchema;
+} satisfies JSONSchema;
 
 /** Converging cycle: a=b*0.5, b=a+10 → settles at a=10, b=20 (matching seeds). */
 const convergingSchema = {
@@ -196,7 +196,7 @@ const convergingSchema = {
     a: { type: 'number', default: 10, computed: { derived: '../b * 0.5' } },
     b: { type: 'number', default: 20, computed: { derived: '../a + 10' } },
   },
-} satisfies JsonSchema;
+} satisfies JSONSchema;
 
 /** Diverging cycle: a=b+1, b=a+1 → never settles → INFINITE_LOOP_DETECTED. */
 const divergingSchema = {
@@ -205,7 +205,7 @@ const divergingSchema = {
     a: { type: 'number', default: 0, computed: { derived: '(../b || 0) + 1' } },
     b: { type: 'number', default: 0, computed: { derived: '(../a || 0) + 1' } },
   },
-} satisfies JsonSchema;
+} satisfies JSONSchema;
 
 // ---------------------------------------------------------------------------
 // Helper: isolate a process-level uncaughtException/unhandledRejection window

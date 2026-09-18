@@ -3,7 +3,7 @@ import { describe, expect, it, vi } from 'vitest';
 
 import { delay } from '@winglet/common-utils';
 
-import { nodeFromJsonSchema } from '@/schema-form/core';
+import { nodeFromJSONSchema } from '@/schema-form/core';
 
 import { NodeEventType, ValidationMode } from '../nodes';
 import type { NumberNode } from '../nodes/NumberNode';
@@ -11,7 +11,7 @@ import { createValidatorFactory } from './utils/createValidatorFactory';
 
 describe('NumberNode', () => {
   it('숫자 노드가 정상적으로 생성되어야 함', () => {
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       onChange: () => {},
       jsonSchema: {
         type: 'object',
@@ -29,7 +29,7 @@ describe('NumberNode', () => {
   });
 
   it('숫자 노드의 값이 정상적으로 설정되어야 함', async () => {
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       onChange: () => {},
       jsonSchema: {
         type: 'object',
@@ -50,7 +50,7 @@ describe('NumberNode', () => {
   });
 
   it('숫자 노드의 기본값이 정상적으로 설정되어야 함', async () => {
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       onChange: () => {},
       jsonSchema: {
         type: 'object',
@@ -69,7 +69,7 @@ describe('NumberNode', () => {
   });
 
   it('숫자 노드의 이벤트가 정상적으로 발생해야 함', async () => {
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       onChange: () => {},
       jsonSchema: {
         type: 'object',
@@ -117,7 +117,7 @@ describe('NumberNode', () => {
   });
 
   it('숫자 노드의 값이 정상적으로 파싱되어야 함', async () => {
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       onChange: () => {},
       jsonSchema: {
         type: 'object',
@@ -144,7 +144,7 @@ describe('NumberNode', () => {
     expect(numberNode.value).toBe(50.5);
 
     // 정수 노드의 경우 소수점이 제거되어야 함
-    const integerNode = nodeFromJsonSchema({
+    const integerNode = nodeFromJSONSchema({
       onChange: () => {},
       jsonSchema: {
         type: 'object',
@@ -170,7 +170,7 @@ describe('NumberNode', () => {
         validateFormats: false,
       }),
     );
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       onChange: () => {},
       jsonSchema: {
         type: 'object',

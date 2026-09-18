@@ -4,7 +4,7 @@ import {
   SetValueOption,
   type FormHandle,
   type InferValueType,
-  type JsonSchema,
+  type JSONSchema,
 } from "@canard/schema-form";
 import StoryLayout from "../components/StoryLayout";
 
@@ -256,7 +256,7 @@ const schema = {
       },
     },
   ],
-} satisfies JsonSchema;
+} satisfies JSONSchema;
 
 /**
  * `defaultValue` 로 넘기는 객체 리터럴이 Form 의 `Value` 를 required 키로 추론시켜

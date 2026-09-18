@@ -6,7 +6,7 @@ import {
   makeOriginalRefResolver,
 } from "./_lib.mjs";
 
-const { JsonSchemaScanner, JsonSchemaScannerAsync } = await loadScanners();
+const { JSONSchemaScanner, JSONSchemaScannerAsync } = await loadScanners();
 
 const results = [];
 function check(id, title, fn) {
@@ -48,7 +48,7 @@ function refSchema() {
 check("V1", "original schema unchanged after scan+getValue", () => {
   const schema = refSchema();
   const before = JSON.stringify(schema);
-  const scanner = new JsonSchemaScanner({
+  const scanner = new JSONSchemaScanner({
     options: { resolveReference: makeOriginalRefResolver(() => schema) },
   });
   scanner.scan(schema).getValue();
@@ -65,7 +65,7 @@ check("V1", "original schema unchanged after scan+getValue", () => {
 // V2: output subtree must not be the same reference as original definitions.A
 check("V2", "output not aliased to original definitions subtree", () => {
   const schema = refSchema();
-  const out = new JsonSchemaScanner({
+  const out = new JSONSchemaScanner({
     options: { resolveReference: makeOriginalRefResolver(() => schema) },
   })
     .scan(schema)
@@ -82,7 +82,7 @@ check("V2", "output not aliased to original definitions subtree", () => {
 // V3: same $ref twice → outputs must not be aliased to each other
 check("V3", "multiple occurrences of same ref not aliased in output", () => {
   const schema = refSchema();
-  const out = new JsonSchemaScanner({
+  const out = new JSONSchemaScanner({
     options: { resolveReference: makeOriginalRefResolver(() => schema) },
   })
     .scan(schema)
@@ -101,7 +101,7 @@ check("V4", "definition keys escaped in visited paths", () => {
     definitions: { "a/b": { type: "string" }, "c~d": { type: "number" } },
   };
   const paths = [];
-  new JsonSchemaScanner({ visitor: { enter: (e) => paths.push(e.path) } }).scan(
+  new JSONSchemaScanner({ visitor: { enter: (e) => paths.push(e.path) } }).scan(
     schema,
   );
   const okSlash = paths.includes("#/definitions/a~1b");
@@ -117,7 +117,7 @@ check("V4", "definition keys escaped in visited paths", () => {
 check("V5a", "boolean subschemas (items:false) not visited as garbage", () => {
   const schema = { type: "array", items: false };
   const visited = [];
-  new JsonSchemaScanner({
+  new JSONSchemaScanner({
     visitor: { enter: (e) => visited.push(e.path) },
   }).scan(schema);
   // policy: only non-null object subschemas are visited; items:false → no child entry
@@ -135,7 +135,7 @@ check(
   () => {
     const schema = { type: "object", properties: "abc" };
     const visited = [];
-    new JsonSchemaScanner({
+    new JSONSchemaScanner({
       visitor: { enter: (e) => visited.push(e.path) },
     }).scan(schema);
     const garbage = visited.some((p) => p.startsWith("#/properties/"));
@@ -147,7 +147,7 @@ check(
 check("V5c", "non-object composition element guarded", () => {
   const schema = { allOf: [{ type: "string" }, false, "x"] };
   const visited = [];
-  new JsonSchemaScanner({
+  new JSONSchemaScanner({
     visitor: { enter: (e) => visited.push(e.path) },
   }).scan(schema);
   const badElem =
@@ -160,7 +160,7 @@ check("V5d", "mutate distinguishes void from falsy schema (documented)", () => {
   // Under object-only policy, false schema has no children; mutate false should
   // still be recorded in resolves so getValue reflects it.
   const schema = { type: "object", properties: { a: { type: "string" } } };
-  const out = new JsonSchemaScanner({
+  const out = new JSONSchemaScanner({
     options: {
       mutate: (e) => (e.path === "#/properties/a" ? false : undefined),
     },
@@ -179,7 +179,7 @@ check(
   "failed scan resets state (getValue undefined) and rescan works",
   () => {
     const schema = refSchema();
-    const scanner = new JsonSchemaScanner({
+    const scanner = new JSONSchemaScanner({
       options: {
         resolveReference: () => {
           throw new Error("boom");
@@ -194,7 +194,7 @@ check(
     }
     const gv = scanner.getValue();
     // rescan with a benign scanner on same instance-like flow
-    const scanner2 = new JsonSchemaScanner();
+    const scanner2 = new JSONSchemaScanner();
     const rescan = scanner2.scan({ type: "string" }).getValue();
     return {
       pass: threw && gv === undefined && !!rescan,
@@ -209,7 +209,7 @@ await checkAsync(
   "async mutate awaited (schema not a Promise)",
   async () => {
     const schema = { type: "object", properties: { a: { type: "string" } } };
-    const scanner = new JsonSchemaScannerAsync({
+    const scanner = new JSONSchemaScannerAsync({
       options: {
         mutate: async (e) => {
           if (e.path === "#/properties/a") return { ...e.schema, title: "T" };
@@ -237,7 +237,7 @@ await checkAsync("V8", "async filter awaited at runtime", async () => {
     properties: { a: { type: "string" }, b: { type: "number" } },
   };
   const visited = [];
-  const scanner = new JsonSchemaScannerAsync({
+  const scanner = new JSONSchemaScannerAsync({
     visitor: { enter: (e) => visited.push(e.path) },
     options: { filter: async (e) => e.path !== "#/properties/b" },
   });
@@ -264,7 +264,7 @@ check(
       definitions: { A: { type: "string" } },
     };
     let calls = 0;
-    new JsonSchemaScanner({
+    new JSONSchemaScanner({
       options: {
         resolveReference: (ref) => {
           calls++;

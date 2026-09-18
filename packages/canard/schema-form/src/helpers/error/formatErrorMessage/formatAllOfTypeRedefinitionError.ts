@@ -1,4 +1,4 @@
-import type { JsonSchema } from '@/schema-form/types';
+import type { JSONSchema } from '@/schema-form/types';
 
 import { createDivider } from './utils/createDivider';
 import { formatType } from './utils/formatType';
@@ -9,8 +9,8 @@ import { formatType } from './utils/formatType';
  * @param allOfSchema - The allOf schema that attempts to redefine the type
  */
 export const formatAllOfTypeRedefinitionError = (
-  schema: JsonSchema,
-  allOfSchema: JsonSchema,
+  schema: JSONSchema,
+  allOfSchema: JSONSchema,
 ): string => {
   const divider = createDivider();
   const baseType = formatType(schema.type);

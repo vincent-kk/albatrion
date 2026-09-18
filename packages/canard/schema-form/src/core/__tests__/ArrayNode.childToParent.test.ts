@@ -14,8 +14,8 @@ import { describe, expect, it, vi } from 'vitest';
 
 import { delay } from '@winglet/common-utils';
 
-import { nodeFromJsonSchema } from '@/schema-form/core';
-import type { JsonSchema } from '@/schema-form/types';
+import { nodeFromJSONSchema } from '@/schema-form/core';
+import type { JSONSchema } from '@/schema-form/types';
 
 import type { ArrayNode } from '../nodes/ArrayNode';
 import type { ObjectNode } from '../nodes/ObjectNode';
@@ -35,9 +35,9 @@ describe('ArrayNode Child-to-Parent Updates', () => {
           },
         },
         default: [{ name: 'Alice', age: 25 }],
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: schema,
         onChange: () => {},
       });
@@ -70,9 +70,9 @@ describe('ArrayNode Child-to-Parent Updates', () => {
         type: 'array',
         items: { type: 'string' },
         default: ['apple', 'banana'],
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: schema,
         onChange: () => {},
       });
@@ -98,9 +98,9 @@ describe('ArrayNode Child-to-Parent Updates', () => {
         type: 'array',
         items: { type: 'string' },
         default: ['item1'],
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: schema,
         onChange: () => {},
       });
@@ -128,9 +128,9 @@ describe('ArrayNode Child-to-Parent Updates', () => {
         type: 'array',
         items: { type: 'string' },
         default: ['item1', 'item2', 'item3'],
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: schema,
         onChange: () => {},
       });
@@ -158,9 +158,9 @@ describe('ArrayNode Child-to-Parent Updates', () => {
         type: 'array',
         items: { type: 'number' },
         default: [1, 2, 3],
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: schema,
         onChange: () => {},
       });
@@ -199,9 +199,9 @@ describe('ArrayNode Child-to-Parent Updates', () => {
           { id: 1, status: 'pending' },
           { id: 2, status: 'pending' },
         ],
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: schema,
         onChange: () => {},
       });
@@ -233,9 +233,9 @@ describe('ArrayNode Child-to-Parent Updates', () => {
         type: 'array',
         items: { type: 'string' },
         default: ['a', 'b', 'c'],
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: schema,
         onChange: () => {},
       });
@@ -275,9 +275,9 @@ describe('ArrayNode Child-to-Parent Updates', () => {
             },
           },
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: schema,
         onChange: () => {},
       });
@@ -329,9 +329,9 @@ describe('ArrayNode Child-to-Parent Updates', () => {
             },
           },
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: schema,
         onChange: () => {},
       });
@@ -363,9 +363,9 @@ describe('ArrayNode Child-to-Parent Updates', () => {
         type: 'array',
         items: { type: 'string' },
         default: ['test'],
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: schema,
         onChange: () => {},
       });
@@ -395,9 +395,9 @@ describe('ArrayNode Child-to-Parent Updates', () => {
         type: 'array',
         items: { type: 'number' },
         default: [1, 2],
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: schema,
         onChange: () => {},
       });
@@ -434,9 +434,9 @@ describe('ArrayNode Child-to-Parent Updates', () => {
             ],
           },
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: schema,
         onChange: () => {},
       });

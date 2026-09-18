@@ -17,7 +17,7 @@
 
 - `fields`가 배열인지 검증
 - 모든 `fields` 항목이 `propertyKeys`에 존재하는지 확인
-- 유효성 오류 시 `JsonSchemaError` 던지기
+- 유효성 오류 시 `JSONSchemaError` 던지기
 
 ### Ask first
 

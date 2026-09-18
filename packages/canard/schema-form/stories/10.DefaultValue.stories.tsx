@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { Form, type JsonSchema, type JsonSchemaError } from '../src';
+import { Form, type JSONSchema, type JSONSchemaError } from '../src';
 import StoryLayout from './components/StoryLayout';
 
 export default {
@@ -52,10 +52,10 @@ export const DefaultValueBySchema = () => {
         default: null,
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>({});
-  const [errors, setErrors] = useState<JsonSchemaError[]>([]);
+  const [errors, setErrors] = useState<JSONSchemaError[]>([]);
 
   return (
     <StoryLayout jsonSchema={jsonSchema} errors={errors} value={value}>
@@ -108,10 +108,10 @@ export const DefaultValueByValue = () => {
         nullable: true,
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>({});
-  const [errors, setErrors] = useState<JsonSchemaError[]>([]);
+  const [errors, setErrors] = useState<JSONSchemaError[]>([]);
 
   return (
     <StoryLayout jsonSchema={jsonSchema} errors={errors} value={value}>
@@ -152,10 +152,10 @@ export const SetDefaultValueOnParentAndChild = () => {
         },
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>({});
-  const [errors, setErrors] = useState<JsonSchemaError[]>([]);
+  const [errors, setErrors] = useState<JSONSchemaError[]>([]);
 
   return (
     <div>
@@ -230,10 +230,10 @@ export const ArrayMinItemsAutoFillBehavior = () => {
         default: [{ name: 'preset' }],
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>({});
-  const [errors, setErrors] = useState<JsonSchemaError[]>([]);
+  const [errors, setErrors] = useState<JSONSchemaError[]>([]);
 
   return (
     <div>
@@ -303,10 +303,10 @@ export const ArrayMinItemsWithDefaultValueProp = () => {
         minItems: 2,
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>({});
-  const [errors, setErrors] = useState<JsonSchemaError[]>([]);
+  const [errors, setErrors] = useState<JSONSchemaError[]>([]);
 
   return (
     <div>
@@ -388,10 +388,10 @@ export const NestedArrayDefaultValueBehavior = () => {
         default: [[1], [2, 3]],
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>({});
-  const [errors, setErrors] = useState<JsonSchemaError[]>([]);
+  const [errors, setErrors] = useState<JSONSchemaError[]>([]);
 
   return (
     <div>

@@ -7,7 +7,7 @@
 - `--scope` 는 설정을 쓸 위치를 고르는 것이지 npm scope 선택자가 아니다.
 - `--asset-path` 는 asset 루트를 실행 시점에 지정한다. 모든 target 의 `agents.assetPath` 를 덮어쓰고, 그 디렉터리가 해시의 유일한 출처가 되므로 `dist/agents-hashes.json` 이 필요 없다.
 - 렌더러 선택은 `runCli/renderers/renderOrFallback.ts` 한 곳에서, 실행당 한 번만 일어난다. 순서가 계약이다:
-  - `--json` → `renderJson` (TTY 여부와 무관하게 먼저 이긴다)
+  - `--json` → `renderJSON` (TTY 여부와 무관하게 먼저 이긴다)
   - 그 외에 비TTY 이거나 `--no-interactive` → `renderPlain`
   - 나머지 (TTY 이면서 프롬프트가 허용됨) → `ui/` 를 동적 import 하여 `renderInjectApp(input)`
 - 프롬프트가 불가능하거나 금지된 경로에서 필수 플래그가 없으면 묻지 않고 2로 종료한다. `--scope` 와 `--agent` 가 그 대상이다.
@@ -38,7 +38,7 @@
 
 ## History
 
-- 2026-08-06 — `--json` 이 plain 경로를 강제한다는 계약이 폐기됐다. 이제 `renderJson` 이라는 독립 렌더러가 있고, `renderOrFallback` 에서 `--json` 분기가 TTY 분기보다 먼저 온다.
+- 2026-08-06 — `--json` 이 plain 경로를 강제한다는 계약이 폐기됐다. 이제 `renderJSON` 이라는 독립 렌더러가 있고, `renderOrFallback` 에서 `--json` 분기가 TTY 분기보다 먼저 온다.
 
 ## Last Updated
 

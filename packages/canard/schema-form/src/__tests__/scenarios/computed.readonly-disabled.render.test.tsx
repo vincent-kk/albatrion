@@ -1,7 +1,7 @@
 import '@testing-library/jest-dom';
 import { describe, expect, it } from 'vitest';
 
-import type { JsonSchema } from '@winglet/json-schema';
+import type { JSONSchema } from '@winglet/json-schema';
 
 import { renderForm } from '../renderForm';
 
@@ -51,7 +51,7 @@ const computedSchema = {
       computed: { disabled: '(../age)===undefined||(../age)<10' },
     },
   },
-} satisfies JsonSchema;
+} satisfies JSONSchema;
 
 /** enum select whose computed.readOnly is driven by a sibling boolean. */
 const selectReadOnlySchema = {
@@ -64,7 +64,7 @@ const selectReadOnlySchema = {
       computed: { readOnly: '!(/unlock)' },
     },
   },
-} satisfies JsonSchema;
+} satisfies JSONSchema;
 
 const isReadOnly = (el: Element | null): boolean =>
   !!el && (el as HTMLInputElement).readOnly === true;

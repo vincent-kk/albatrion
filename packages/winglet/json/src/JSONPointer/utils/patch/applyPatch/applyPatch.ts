@@ -1,6 +1,6 @@
 import { isArray } from '@winglet/common-utils/filter';
 
-import type { JsonRoot } from '@/json/type';
+import type { JSONRoot } from '@/json/type';
 
 import type { Patch } from '../../patchModel';
 import { applySinglePatch } from './applySinglePatch';
@@ -48,7 +48,7 @@ import type { ApplyPatchOptions } from './type';
  * `Object.getPrototypeOf` or `instanceof`, not `value.constructor` — an own `constructor` shadows
  * the inherited one.
  *
- * @throws {JsonPatchError} When a patch operation fails due to:
+ * @throws {JSONPatchError} When a patch operation fails due to:
  *         - Invalid path syntax or structure
  *         - Attempting to modify non-existent properties in strict mode
  *         - Type mismatches between expected and actual values
@@ -85,8 +85,8 @@ import type { ApplyPatchOptions } from './type';
  * const result = applyPatch(source, patches, { strict: true, immutable: false });
  * ```
  */
-export const applyPatch = <Result extends JsonRoot = any>(
-  source: JsonRoot,
+export const applyPatch = <Result extends JSONRoot = any>(
+  source: JSONRoot,
   patches: Patch[],
   options?: ApplyPatchOptions,
 ): Result => {

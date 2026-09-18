@@ -1,7 +1,7 @@
 # @winglet/json-schema
 
 [![Typescript](https://img.shields.io/badge/typescript-✔-blue.svg)]()
-[![Json Schema](https://img.shields.io/badge/JsonSchema-{}-blue.svg)]()
+[![JSON Schema](https://img.shields.io/badge/JSONSchema-{}-blue.svg)]()
 
 ---
 
@@ -29,13 +29,13 @@ This package supports sub-path imports to enable more granular imports and optim
 
 ```typescript
 // Main exports (all utilities and type definitions)
-import { JsonSchemaScanner, isObjectSchema } from '@winglet/json-schema';
+import { JSONSchemaScanner, isObjectSchema } from '@winglet/json-schema';
 
 // Synchronous schema scanner
-import { JsonSchemaScanner } from '@winglet/json-schema/scanner';
+import { JSONSchemaScanner } from '@winglet/json-schema/scanner';
 
 // Asynchronous schema scanner
-import { JsonSchemaScannerAsync } from '@winglet/json-schema/async-scanner';
+import { JSONSchemaScannerAsync } from '@winglet/json-schema/async-scanner';
 
 // Schema type checking utilities
 import {
@@ -53,8 +53,8 @@ import {
 Based on the package.json exports configuration:
 
 - `@winglet/json-schema` - Main exports (all utilities, scanners, and type definitions)
-- `@winglet/json-schema/scanner` - Synchronous JSON Schema scanner (JsonSchemaScanner)
-- `@winglet/json-schema/async-scanner` - Asynchronous JSON Schema scanner (JsonSchemaScannerAsync)
+- `@winglet/json-schema/scanner` - Synchronous JSON Schema scanner (JSONSchemaScanner)
+- `@winglet/json-schema/async-scanner` - Asynchronous JSON Schema scanner (JSONSchemaScannerAsync)
 - `@winglet/json-schema/filter` - Schema type checking and filtering utilities (isArraySchema, isObjectSchema, etc.)
 
 ---
@@ -80,8 +80,8 @@ Please use a transpiler like Babel to transform the code for your target environ
 
 ### 1. Schema Traversal and Validation
 
-- **[`JsonSchemaScanner`](./src/utils/JsonSchemaScanner/sync/JsonSchemaScanner.ts)**: A class that traverses JSON schema using depth-first search (DFS) approach, implements the Visitor pattern, and resolves $ref references
-- **[`JsonSchemaScannerAsync`](./src/utils/JsonSchemaScanner/async/JsonSchemaScannerAsync.ts)**: An extension of JsonSchemaScanner that supports asynchronous operations
+- **[`JSONSchemaScanner`](./src/utils/JSONSchemaScanner/sync/JSONSchemaScanner.ts)**: A class that traverses JSON schema using depth-first search (DFS) approach, implements the Visitor pattern, and resolves $ref references
+- **[`JSONSchemaScannerAsync`](./src/utils/JSONSchemaScanner/async/JSONSchemaScannerAsync.ts)**: An extension of JSONSchemaScanner that supports asynchronous operations
 
 ### 2. Type Validation and Filtering
 
@@ -101,10 +101,10 @@ Please use a transpiler like Babel to transform the code for your target environ
 
 ## Usage Examples
 
-### Using JsonSchemaScanner
+### Using JSONSchemaScanner
 
 ```typescript
-import { JsonSchemaScanner } from '@winglet/json-schema';
+import { JSONSchemaScanner } from '@winglet/json-schema';
 
 // Schema definition
 const schema = {
@@ -123,7 +123,7 @@ const schema = {
 };
 
 // Using Visitor pattern to traverse schema
-const scanner = new JsonSchemaScanner({
+const scanner = new JSONSchemaScanner({
   visitor: {
     enter: (entry, context) => {
       console.log(`Enter: ${entry.path}`);
@@ -201,29 +201,29 @@ yarn jsonSchema test
 
 ### Main Classes and Functions
 
-#### JsonSchemaScanner
+#### JSONSchemaScanner
 
 A class for traversing JSON schema and resolving references.
 
 ```typescript
-class JsonSchemaScanner<ContextType = void> {
+class JSONSchemaScanner<ContextType = void> {
   constructor(props?: {
     visitor?: SchemaVisitor<ContextType>;
-    options?: JsonScannerOptions<ContextType>;
+    options?: JSONScannerOptions<ContextType>;
   });
   scan(schema: UnknownSchema): this;
   getValue<Schema extends UnknownSchema>(): Schema | undefined;
 }
 ```
 
-#### JsonSchemaScannerAsync
+#### JSONSchemaScannerAsync
 
-An extension of JsonSchemaScanner that supports asynchronous operations.
+An extension of JSONSchemaScanner that supports asynchronous operations.
 
 ```typescript
-class JsonSchemaScannerAsync<
+class JSONSchemaScannerAsync<
   ContextType = void,
-> extends JsonSchemaScanner<ContextType> {
+> extends JSONSchemaScanner<ContextType> {
   scanAsync(schema: UnknownSchema): Promise<this>;
   getValueAsync<Schema extends UnknownSchema>(): Promise<Schema | undefined>;
 }
@@ -244,13 +244,13 @@ function isNullSchema(schema: UnknownSchema): schema is NullSchema;
 
 ```typescript
 // Basic JSON Schema types
-type JsonSchema<Options extends Dictionary = object> =
-  | NumberSchema<Options, JsonSchema>
-  | StringSchema<Options, JsonSchema>
-  | BooleanSchema<Options, JsonSchema>
-  | ArraySchema<Options, JsonSchema>
-  | ObjectSchema<Options, JsonSchema>
-  | NullSchema<Options, JsonSchema>;
+type JSONSchema<Options extends Dictionary = object> =
+  | NumberSchema<Options, JSONSchema>
+  | StringSchema<Options, JSONSchema>
+  | BooleanSchema<Options, JSONSchema>
+  | ArraySchema<Options, JSONSchema>
+  | ObjectSchema<Options, JSONSchema>
+  | NullSchema<Options, JSONSchema>;
 
 // Value types
 type BooleanValue = boolean;
@@ -260,6 +260,21 @@ type ArrayValue = any[];
 type ObjectValue = Record<string, any>;
 type NullValue = null;
 ```
+
+---
+
+## Migration (0.15.0)
+
+The former `Json*` names are kept as `@deprecated` aliases of their `JSON*` counterparts. They are `Removed in 0.16.0` — migrate call sites to the new names before upgrading.
+
+| Old              | New                 |
+| ---------------- | ------------------- |
+| `JsonSchema`               | `JSONSchema`               |
+| `InferJsonSchema`          | `InferJSONSchema`          |
+| `JsonSchemaScanner`        | `JSONSchemaScanner`        |
+| `JsonSchemaScannerAsync`   | `JSONSchemaScannerAsync`   |
+| `JsonScannerOptions`       | `JSONScannerOptions`       |
+| `JsonScannerOptionsAsync`  | `JSONScannerOptionsAsync`  |
 
 ---
 

@@ -10,13 +10,13 @@ import {
   type SchemaNode,
   ValidationMode,
   contextNodeFactory,
-  nodeFromJsonSchema,
+  nodeFromJSONSchema,
 } from '@/schema-form/core';
 import { transformErrors } from '@/schema-form/helpers/error';
 import type {
   AllowedValue,
-  JsonSchema,
-  JsonSchemaError,
+  JSONSchema,
+  JSONSchemaError,
 } from '@/schema-form/types';
 
 import { useExternalFormContext } from '../ExternalFormContext';
@@ -27,7 +27,7 @@ const DEFAULT_VALIDATION_MODE =
   ValidationMode.OnChange | ValidationMode.OnRequest;
 
 interface RootNodeContextProviderProps<
-  Schema extends JsonSchema = JsonSchema,
+  Schema extends JSONSchema = JSONSchema,
   Value extends AllowedValue = any,
 > {
   /** JSON Schema to use within this SchemaForm */
@@ -57,7 +57,7 @@ interface RootNodeContextProviderProps<
 
 export const RootNodeContextProvider = <
   Value extends AllowedValue,
-  Schema extends JsonSchema,
+  Schema extends JSONSchema,
 >({
   jsonSchema,
   defaultValue,
@@ -83,7 +83,7 @@ export const RootNodeContextProvider = <
 
   const rootNode = useMemo(
     () =>
-      nodeFromJsonSchema({
+      nodeFromJSONSchema({
         jsonSchema,
         defaultValue,
         onChange,
@@ -118,14 +118,14 @@ export const RootNodeContextProvider = <
   }, [rootNode, onValidate, onStateChange, onReady]);
 
   const lastErrorDictionary = useRef<
-    Record<JsonSchemaError['dataPath'], JsonSchemaError[]>
+    Record<JSONSchemaError['dataPath'], JSONSchemaError[]>
   >({});
 
   useEffect(() => {
     if (!rootNode || !errors) return;
 
     const transformedErrors = transformErrors(errors, true);
-    const currentErrorDictionary: Record<string, JsonSchemaError[]> = {};
+    const currentErrorDictionary: Record<string, JSONSchemaError[]> = {};
 
     for (const error of transformedErrors) {
       if (!currentErrorDictionary[error.dataPath])

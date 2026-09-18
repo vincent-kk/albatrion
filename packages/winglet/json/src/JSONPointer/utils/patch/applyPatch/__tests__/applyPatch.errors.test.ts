@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 import type { Patch } from '../../../patchModel';
 import { Operation } from '../../../patchModel';
 import { applyPatch } from '../applyPatch';
-import { JsonPatchError } from '../utils/error';
+import { JSONPatchError } from '../utils/error';
 
 describe('applyPatch 에러 처리', () => {
   describe('에러 처리 - 경로 관련', () => {
@@ -15,32 +15,32 @@ describe('applyPatch 에러 처리', () => {
 
       expect(() => {
         applyPatch(source, patches);
-      }).toThrow(JsonPatchError);
+      }).toThrow(JSONPatchError);
 
       try {
         applyPatch(source, patches);
       } catch (error) {
-        expect(error).toBeInstanceOf(JsonPatchError);
-        expect((error as JsonPatchError).specific).toBe(
+        expect(error).toBeInstanceOf(JSONPatchError);
+        expect((error as JSONPatchError).specific).toBe(
           'PATCH_PATH_INVALID_INTERMEDIATE',
         );
-        expect((error as JsonPatchError).message).toContain(
+        expect((error as JSONPatchError).message).toContain(
           'Cannot traverse path',
         );
-        expect((error as JsonPatchError).message).toContain(
+        expect((error as JSONPatchError).message).toContain(
           '/user/profile/age',
         );
-        expect((error as JsonPatchError).message).toContain(
+        expect((error as JSONPatchError).message).toContain(
           "intermediate value at '/user'",
         );
-        expect((error as JsonPatchError).details.failedAtPath).toBe('/user');
-        expect((error as JsonPatchError).details.remainingPath).toBe(
+        expect((error as JSONPatchError).details.failedAtPath).toBe('/user');
+        expect((error as JSONPatchError).details.remainingPath).toBe(
           'profile/age',
         );
         expect(
-          (error as JsonPatchError).details.intermediateValue,
+          (error as JSONPatchError).details.intermediateValue,
         ).toBeUndefined();
-        expect((error as JsonPatchError).details.operation).toBe('add');
+        expect((error as JSONPatchError).details.operation).toBe('add');
       }
     });
 
@@ -52,28 +52,28 @@ describe('applyPatch 에러 처리', () => {
 
       expect(() => {
         applyPatch(source, patches);
-      }).toThrow(JsonPatchError);
+      }).toThrow(JSONPatchError);
 
       try {
         applyPatch(source, patches);
       } catch (error) {
-        expect(error).toBeInstanceOf(JsonPatchError);
-        expect((error as JsonPatchError).specific).toBe(
+        expect(error).toBeInstanceOf(JSONPatchError);
+        expect((error as JSONPatchError).specific).toBe(
           'PATCH_PATH_INVALID_INTERMEDIATE',
         );
-        expect((error as JsonPatchError).message).toContain(
+        expect((error as JSONPatchError).message).toContain(
           'Cannot traverse path',
         );
-        expect((error as JsonPatchError).message).toContain(
+        expect((error as JSONPatchError).message).toContain(
           "intermediate value at '/value' is string",
         );
-        expect((error as JsonPatchError).details.intermediateValue).toBe(
+        expect((error as JSONPatchError).details.intermediateValue).toBe(
           'string',
         );
-        expect((error as JsonPatchError).details.intermediateType).toBe(
+        expect((error as JSONPatchError).details.intermediateType).toBe(
           'string',
         );
-        expect((error as JsonPatchError).details.operation).toBe('add');
+        expect((error as JSONPatchError).details.operation).toBe('add');
       }
     });
 
@@ -85,20 +85,20 @@ describe('applyPatch 에러 처리', () => {
 
       expect(() => {
         applyPatch(source, patches);
-      }).toThrow(JsonPatchError);
+      }).toThrow(JSONPatchError);
 
       try {
         applyPatch(source, patches);
       } catch (error) {
-        expect(error).toBeInstanceOf(JsonPatchError);
-        expect((error as JsonPatchError).specific).toBe(
+        expect(error).toBeInstanceOf(JSONPatchError);
+        expect((error as JSONPatchError).specific).toBe(
           'PATCH_PATH_INVALID_INTERMEDIATE',
         );
-        expect((error as JsonPatchError).message).toContain(
+        expect((error as JSONPatchError).message).toContain(
           "intermediate value at '/data' is null",
         );
-        expect((error as JsonPatchError).details.intermediateValue).toBeNull();
-        expect((error as JsonPatchError).details.intermediateType).toBe('null');
+        expect((error as JSONPatchError).details.intermediateValue).toBeNull();
+        expect((error as JSONPatchError).details.intermediateType).toBe('null');
       }
     });
   });
@@ -112,25 +112,25 @@ describe('applyPatch 에러 처리', () => {
 
       expect(() => {
         applyPatch(source, patches);
-      }).toThrow(JsonPatchError);
+      }).toThrow(JSONPatchError);
 
       try {
         applyPatch(source, patches);
       } catch (error) {
-        expect(error).toBeInstanceOf(JsonPatchError);
-        expect((error as JsonPatchError).specific).toBe(
+        expect(error).toBeInstanceOf(JSONPatchError);
+        expect((error as JSONPatchError).specific).toBe(
           'PATCH_ARRAY_INDEX_OUT_OF_BOUNDS',
         );
-        expect((error as JsonPatchError).message).toContain(
+        expect((error as JSONPatchError).message).toContain(
           'Cannot add element at index 10',
         );
-        expect((error as JsonPatchError).message).toContain(
+        expect((error as JSONPatchError).message).toContain(
           'Index must not exceed array length 3',
         );
-        expect((error as JsonPatchError).details.requestedIndex).toBe(10);
-        expect((error as JsonPatchError).details.arrayLength).toBe(3);
-        expect((error as JsonPatchError).details.maxValidIndex).toBe(3);
-        expect((error as JsonPatchError).details.operation).toBe('add');
+        expect((error as JSONPatchError).details.requestedIndex).toBe(10);
+        expect((error as JSONPatchError).details.arrayLength).toBe(3);
+        expect((error as JSONPatchError).details.maxValidIndex).toBe(3);
+        expect((error as JSONPatchError).details.operation).toBe('add');
       }
     });
 
@@ -142,23 +142,23 @@ describe('applyPatch 에러 처리', () => {
 
       expect(() => {
         applyPatch(source, patches);
-      }).toThrow(JsonPatchError);
+      }).toThrow(JSONPatchError);
 
       try {
         applyPatch(source, patches);
       } catch (error) {
-        expect(error).toBeInstanceOf(JsonPatchError);
-        expect((error as JsonPatchError).specific).toBe(
+        expect(error).toBeInstanceOf(JSONPatchError);
+        expect((error as JSONPatchError).specific).toBe(
           'PATCH_ARRAY_INDEX_OUT_OF_BOUNDS',
         );
-        expect((error as JsonPatchError).message).toContain(
+        expect((error as JSONPatchError).message).toContain(
           'Cannot replace element at index 5',
         );
-        expect((error as JsonPatchError).message).toContain(
+        expect((error as JSONPatchError).message).toContain(
           'Index must be less than array length 3',
         );
-        expect((error as JsonPatchError).details.maxValidIndex).toBe(2);
-        expect((error as JsonPatchError).details.operation).toBe('replace');
+        expect((error as JSONPatchError).details.maxValidIndex).toBe(2);
+        expect((error as JSONPatchError).details.operation).toBe('replace');
       }
     });
 
@@ -168,19 +168,19 @@ describe('applyPatch 에러 처리', () => {
 
       expect(() => {
         applyPatch(source, patches);
-      }).toThrow(JsonPatchError);
+      }).toThrow(JSONPatchError);
 
       try {
         applyPatch(source, patches);
       } catch (error) {
-        expect(error).toBeInstanceOf(JsonPatchError);
-        expect((error as JsonPatchError).specific).toBe(
+        expect(error).toBeInstanceOf(JSONPatchError);
+        expect((error as JSONPatchError).specific).toBe(
           'PATCH_ARRAY_INDEX_OUT_OF_BOUNDS',
         );
-        expect((error as JsonPatchError).message).toContain(
+        expect((error as JSONPatchError).message).toContain(
           'Cannot remove element at index 5',
         );
-        expect((error as JsonPatchError).details.operation).toBe('remove');
+        expect((error as JSONPatchError).details.operation).toBe('remove');
       }
     });
 
@@ -192,19 +192,19 @@ describe('applyPatch 에러 처리', () => {
 
       expect(() => {
         applyPatch(source, patches, { strict: true });
-      }).toThrow(JsonPatchError);
+      }).toThrow(JSONPatchError);
 
       try {
         applyPatch(source, patches, { strict: true });
       } catch (error) {
-        expect(error).toBeInstanceOf(JsonPatchError);
-        expect((error as JsonPatchError).specific).toBe(
+        expect(error).toBeInstanceOf(JSONPatchError);
+        expect((error as JSONPatchError).specific).toBe(
           'PATCH_ARRAY_INDEX_OUT_OF_BOUNDS',
         );
-        expect((error as JsonPatchError).message).toContain(
+        expect((error as JSONPatchError).message).toContain(
           'Cannot test element at index 5',
         );
-        expect((error as JsonPatchError).details.operation).toBe('test');
+        expect((error as JSONPatchError).details.operation).toBe('test');
       }
     });
 
@@ -216,24 +216,24 @@ describe('applyPatch 에러 처리', () => {
 
       expect(() => {
         applyPatch(source, patches);
-      }).toThrow(JsonPatchError);
+      }).toThrow(JSONPatchError);
 
       try {
         applyPatch(source, patches);
       } catch (error) {
-        expect(error).toBeInstanceOf(JsonPatchError);
-        expect((error as JsonPatchError).specific).toBe(
+        expect(error).toBeInstanceOf(JSONPatchError);
+        expect((error as JSONPatchError).specific).toBe(
           'PATCH_ARRAY_INDEX_INVALID',
         );
-        expect((error as JsonPatchError).message).toContain(
+        expect((error as JSONPatchError).message).toContain(
           "Invalid array index 'abc'",
         );
-        expect((error as JsonPatchError).message).toContain(
+        expect((error as JSONPatchError).message).toContain(
           "Expected a non-negative integer or '-' for end-of-array",
         );
-        expect((error as JsonPatchError).details.providedIndex).toBe('abc');
-        expect((error as JsonPatchError).details.arrayLength).toBe(3);
-        expect((error as JsonPatchError).details.validFormat).toContain(
+        expect((error as JSONPatchError).details.providedIndex).toBe('abc');
+        expect((error as JSONPatchError).details.arrayLength).toBe(3);
+        expect((error as JSONPatchError).details.validFormat).toContain(
           'non-negative integer',
         );
       }
@@ -247,19 +247,19 @@ describe('applyPatch 에러 처리', () => {
 
       expect(() => {
         applyPatch(source, patches);
-      }).toThrow(JsonPatchError);
+      }).toThrow(JSONPatchError);
 
       try {
         applyPatch(source, patches);
       } catch (error) {
-        expect(error).toBeInstanceOf(JsonPatchError);
-        expect((error as JsonPatchError).specific).toBe(
+        expect(error).toBeInstanceOf(JSONPatchError);
+        expect((error as JSONPatchError).specific).toBe(
           'PATCH_ARRAY_INDEX_INVALID',
         );
-        expect((error as JsonPatchError).message).toContain(
+        expect((error as JSONPatchError).message).toContain(
           "Invalid array index '-5'",
         );
-        expect((error as JsonPatchError).details.providedIndex).toBe('-5');
+        expect((error as JSONPatchError).details.providedIndex).toBe('-5');
       }
     });
   });
@@ -271,27 +271,27 @@ describe('applyPatch 에러 처리', () => {
 
       expect(() => {
         applyPatch(source, patches);
-      }).toThrow(JsonPatchError);
+      }).toThrow(JSONPatchError);
 
       try {
         applyPatch(source, patches);
       } catch (error) {
-        expect(error).toBeInstanceOf(JsonPatchError);
-        expect((error as JsonPatchError).specific).toBe(
+        expect(error).toBeInstanceOf(JSONPatchError);
+        expect((error as JSONPatchError).specific).toBe(
           'PATCH_OBJECT_PROPERTY_NOT_FOUND',
         );
-        expect((error as JsonPatchError).message).toContain(
+        expect((error as JSONPatchError).message).toContain(
           "Cannot remove property 'email'",
         );
-        expect((error as JsonPatchError).message).toContain(
+        expect((error as JSONPatchError).message).toContain(
           'property does not exist on object',
         );
-        expect((error as JsonPatchError).details.missingProperty).toBe('email');
-        expect((error as JsonPatchError).details.availableProperties).toEqual([
+        expect((error as JSONPatchError).details.missingProperty).toBe('email');
+        expect((error as JSONPatchError).details.availableProperties).toEqual([
           'name',
           'age',
         ]);
-        expect((error as JsonPatchError).details.operation).toBe('remove');
+        expect((error as JSONPatchError).details.operation).toBe('remove');
       }
     });
 
@@ -303,23 +303,23 @@ describe('applyPatch 에러 처리', () => {
 
       expect(() => {
         applyPatch(source, patches, { strict: true });
-      }).toThrow(JsonPatchError);
+      }).toThrow(JSONPatchError);
 
       try {
         applyPatch(source, patches, { strict: true });
       } catch (error) {
-        expect(error).toBeInstanceOf(JsonPatchError);
-        expect((error as JsonPatchError).specific).toBe(
+        expect(error).toBeInstanceOf(JSONPatchError);
+        expect((error as JSONPatchError).specific).toBe(
           'PATCH_OBJECT_PROPERTY_NOT_FOUND',
         );
-        expect((error as JsonPatchError).message).toContain(
+        expect((error as JSONPatchError).message).toContain(
           "Cannot test property 'email'",
         );
-        expect((error as JsonPatchError).details.missingProperty).toBe('email');
-        expect((error as JsonPatchError).details.expectedValue).toBe(
+        expect((error as JSONPatchError).details.missingProperty).toBe('email');
+        expect((error as JSONPatchError).details.expectedValue).toBe(
           'test@example.com',
         );
-        expect((error as JsonPatchError).details.operation).toBe('test');
+        expect((error as JSONPatchError).details.operation).toBe('test');
       }
     });
   });
@@ -333,23 +333,23 @@ describe('applyPatch 에러 처리', () => {
 
       expect(() => {
         applyPatch(source, patches);
-      }).toThrow(JsonPatchError);
+      }).toThrow(JSONPatchError);
 
       try {
         applyPatch(source, patches);
       } catch (error) {
-        expect(error).toBeInstanceOf(JsonPatchError);
-        expect((error as JsonPatchError).specific).toBe(
+        expect(error).toBeInstanceOf(JSONPatchError);
+        expect((error as JSONPatchError).specific).toBe(
           'PATCH_MOVE_INTO_DESCENDANT_FORBIDDEN',
         );
-        expect((error as JsonPatchError).message).toContain(
+        expect((error as JSONPatchError).message).toContain(
           'identical to source location',
         );
-        expect((error as JsonPatchError).details.patch).toEqual(patches[0]);
-        expect((error as JsonPatchError).details.patchIndex).toBe(0);
-        expect((error as JsonPatchError).details.operation).toBe('move');
-        expect((error as JsonPatchError).details.from).toBe('/a/b');
-        expect((error as JsonPatchError).details.path).toBe('/a/b');
+        expect((error as JSONPatchError).details.patch).toEqual(patches[0]);
+        expect((error as JSONPatchError).details.patchIndex).toBe(0);
+        expect((error as JSONPatchError).details.operation).toBe('move');
+        expect((error as JSONPatchError).details.from).toBe('/a/b');
+        expect((error as JSONPatchError).details.path).toBe('/a/b');
       }
     });
 
@@ -361,21 +361,21 @@ describe('applyPatch 에러 처리', () => {
 
       expect(() => {
         applyPatch(source, patches);
-      }).toThrow(JsonPatchError);
+      }).toThrow(JSONPatchError);
 
       try {
         applyPatch(source, patches);
       } catch (error) {
-        expect(error).toBeInstanceOf(JsonPatchError);
-        expect((error as JsonPatchError).specific).toBe(
+        expect(error).toBeInstanceOf(JSONPatchError);
+        expect((error as JSONPatchError).specific).toBe(
           'PATCH_MOVE_INTO_DESCENDANT_FORBIDDEN',
         );
-        expect((error as JsonPatchError).message).toContain('descendant of');
-        expect((error as JsonPatchError).details.patch).toEqual(patches[0]);
-        expect((error as JsonPatchError).details.patchIndex).toBe(0);
-        expect((error as JsonPatchError).details.operation).toBe('move');
-        expect((error as JsonPatchError).details.from).toBe('/a');
-        expect((error as JsonPatchError).details.path).toBe('/a/b/newLocation');
+        expect((error as JSONPatchError).message).toContain('descendant of');
+        expect((error as JSONPatchError).details.patch).toEqual(patches[0]);
+        expect((error as JSONPatchError).details.patchIndex).toBe(0);
+        expect((error as JSONPatchError).details.operation).toBe('move');
+        expect((error as JSONPatchError).details.from).toBe('/a');
+        expect((error as JSONPatchError).details.path).toBe('/a/b/newLocation');
       }
     });
 
@@ -387,20 +387,20 @@ describe('applyPatch 에러 처리', () => {
 
       expect(() => {
         applyPatch(source, patches);
-      }).toThrow(JsonPatchError);
+      }).toThrow(JSONPatchError);
 
       try {
         applyPatch(source, patches);
       } catch (error) {
-        expect(error).toBeInstanceOf(JsonPatchError);
-        expect((error as JsonPatchError).specific).toBe(
+        expect(error).toBeInstanceOf(JSONPatchError);
+        expect((error as JSONPatchError).specific).toBe(
           'PATCH_MOVE_INTO_DESCENDANT_FORBIDDEN',
         );
-        expect((error as JsonPatchError).details.patch).toEqual(patches[0]);
-        expect((error as JsonPatchError).details.patchIndex).toBe(0);
-        expect((error as JsonPatchError).details.operation).toBe('move');
-        expect((error as JsonPatchError).details.from).toBe('');
-        expect((error as JsonPatchError).details.path).toBe('/newRoot');
+        expect((error as JSONPatchError).details.patch).toEqual(patches[0]);
+        expect((error as JSONPatchError).details.patchIndex).toBe(0);
+        expect((error as JSONPatchError).details.operation).toBe('move');
+        expect((error as JSONPatchError).details.from).toBe('');
+        expect((error as JSONPatchError).details.path).toBe('/newRoot');
       }
     });
 
@@ -440,20 +440,20 @@ describe('applyPatch 에러 처리', () => {
       // COPY는 순환 참조 제한이 없으므로 정상 처리되어야 함
       expect(() => {
         applyPatch(source, patches);
-      }).toThrow(JsonPatchError);
+      }).toThrow(JSONPatchError);
 
       try {
         applyPatch(source, patches);
       } catch (error) {
-        expect(error).toBeInstanceOf(JsonPatchError);
-        expect((error as JsonPatchError).specific).toBe(
+        expect(error).toBeInstanceOf(JSONPatchError);
+        expect((error as JSONPatchError).specific).toBe(
           'PATCH_COPY_INTO_DESCENDANT_FORBIDDEN',
         );
-        expect((error as JsonPatchError).details.patch).toEqual(patches[0]);
-        expect((error as JsonPatchError).details.patchIndex).toBe(0);
-        expect((error as JsonPatchError).details.operation).toBe('copy');
-        expect((error as JsonPatchError).details.from).toBe('/a');
-        expect((error as JsonPatchError).details.path).toBe('/a/copied');
+        expect((error as JSONPatchError).details.patch).toEqual(patches[0]);
+        expect((error as JSONPatchError).details.patchIndex).toBe(0);
+        expect((error as JSONPatchError).details.operation).toBe('copy');
+        expect((error as JSONPatchError).details.from).toBe('/a');
+        expect((error as JSONPatchError).details.path).toBe('/a/copied');
       }
     });
   });
@@ -492,25 +492,25 @@ describe('applyPatch 에러 처리', () => {
 
       expect(() => {
         applyPatch(source, patches);
-      }).toThrow(JsonPatchError);
+      }).toThrow(JSONPatchError);
 
       try {
         applyPatch(source, patches);
       } catch (error) {
-        expect(error).toBeInstanceOf(JsonPatchError);
-        expect((error as JsonPatchError).specific).toBe(
+        expect(error).toBeInstanceOf(JSONPatchError);
+        expect((error as JSONPatchError).specific).toBe(
           'PATCH_OPERATION_INVALID',
         );
-        expect((error as JsonPatchError).message).toContain(
+        expect((error as JSONPatchError).message).toContain(
           "Unsupported operation 'invalid_op'",
         );
-        expect((error as JsonPatchError).message).toContain(
+        expect((error as JSONPatchError).message).toContain(
           'Valid operations are: add, remove, replace, move, copy, test',
         );
-        expect((error as JsonPatchError).details.providedOperation).toBe(
+        expect((error as JSONPatchError).details.providedOperation).toBe(
           'invalid_op',
         );
-        expect((error as JsonPatchError).details.validOperations).toEqual([
+        expect((error as JSONPatchError).details.validOperations).toEqual([
           'add',
           'remove',
           'replace',

@@ -2,7 +2,7 @@ import { useRef, useState } from 'react';
 
 import { useRenderCount } from '@aileron/development-helper';
 
-import { Form, type FormTypeRendererProps, type JsonSchema } from '../src';
+import { Form, type FormTypeRendererProps, type JSONSchema } from '../src';
 import StoryLayout from './components/StoryLayout';
 
 export default {
@@ -27,7 +27,7 @@ export const FunctionalChildren = () => {
         enum: ['male', 'female'],
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const defaultValue = useRef<Record<string, any>>({
     allowed: false,
@@ -90,7 +90,7 @@ export const Common = () => {
         type: 'number',
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>();
   return (
@@ -118,7 +118,7 @@ export const InsertInputForm = () => {
         type: 'string',
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>();
   return (

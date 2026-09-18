@@ -10,8 +10,8 @@ import {
   type FormHandle,
   type FormTypeInputMap,
   type FormTypeInputProps,
-  type JsonSchema,
-  type JsonSchemaError,
+  type JSONSchema,
+  type JSONSchemaError,
   SetValueOption,
   registerPlugin,
 } from '../src';
@@ -43,7 +43,7 @@ const FormRefHandleComponent = () => {
         },
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
   const defaultValue = useRef({
     name: 'ron',
     number: 10,
@@ -258,7 +258,7 @@ const FormTypeInputArrayTerminalRefComponent = () => {
         },
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const formHandle = useRef<FormHandle<typeof schema>>(null);
 
@@ -406,7 +406,7 @@ export const FormTypeInputObjectTerminalRef = () => {
         },
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
   const formHandle = useRef<FormHandle<typeof schema>>(null);
 
   return (
@@ -507,7 +507,7 @@ const FormRefHandleWithIfThenElseComponent = () => {
         required: ['releaseDate', 'numOfPlayers'],
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const defaultValue = useRef({});
 
@@ -663,7 +663,7 @@ export const FormRefHandleWithIfThenElse2 = () => {
     then: {
       required: ['age'],
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const defaultValue = useRef({});
 
@@ -736,12 +736,12 @@ export const FormRefHandleWithOneOf = () => {
         default: 'game',
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const formHandle = useRef<FormHandle<typeof schema, any>>(null);
 
   const [value, setValue] = useState<Record<string, unknown>>();
-  const [errors, setErrors] = useState<JsonSchemaError[]>([]);
+  const [errors, setErrors] = useState<JSONSchemaError[]>([]);
   return (
     <div>
       <button
@@ -801,7 +801,7 @@ export const FormRefHandleWithArray = () => {
         },
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
   const defaultValue = useRef({
     users: [
       {
@@ -934,10 +934,10 @@ export const FormRefHandleWithVirtualSchema = () => {
         fields: ['startDate', 'endDate'],
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>({});
-  const [errors, setErrors] = useState<JsonSchemaError[]>([]);
+  const [errors, setErrors] = useState<JSONSchemaError[]>([]);
   const formHandle = useRef<FormHandle<typeof jsonSchema>>(null);
 
   return (
@@ -1053,7 +1053,7 @@ export const FormRefHandleWithGetData = () => {
         },
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
   const defaultValue = useRef({
     name: 'ron',
     number: 10,
@@ -1195,10 +1195,10 @@ export const SetComplexValueWithSetValue = () => {
         nullable: true,
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>({});
-  const [errors, setErrors] = useState<JsonSchemaError[]>([]);
+  const [errors, setErrors] = useState<JSONSchemaError[]>([]);
 
   const formHandle = useRef<FormHandle<typeof jsonSchema>>(null);
   return (
@@ -1821,7 +1821,7 @@ export const FormRefHandleWithBigSchema = () => {
         },
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>({});
 

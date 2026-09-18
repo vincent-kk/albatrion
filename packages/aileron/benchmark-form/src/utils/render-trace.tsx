@@ -6,7 +6,7 @@ import {
   Form,
   type FormHandle,
   type FormTypeRendererProps,
-  type JsonSchema,
+  type JSONSchema,
 } from '@canard/schema-form';
 
 import {
@@ -51,7 +51,7 @@ function total(): number {
 
 interface Scenario {
   label: string;
-  schema: JsonSchema;
+  schema: JSONSchema;
   target: string;
 }
 
@@ -60,7 +60,7 @@ async function measure({ label, schema, target }: Scenario): Promise<void> {
   const container = document.createElement('div');
   document.body.appendChild(container);
   const root = createRoot(container);
-  const ref = createRef<FormHandle<JsonSchema>>();
+  const ref = createRef<FormHandle<JSONSchema>>();
 
   try {
     root.render(
@@ -137,7 +137,7 @@ async function measureTiming({
   const container = document.createElement('div');
   document.body.appendChild(container);
   const root = createRoot(container);
-  const ref = createRef<FormHandle<JsonSchema>>();
+  const ref = createRef<FormHandle<JSONSchema>>();
 
   try {
     root.render(

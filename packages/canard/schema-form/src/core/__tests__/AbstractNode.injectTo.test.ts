@@ -1,8 +1,8 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import type { InjectHandlerContext, JsonSchema } from '@/schema-form/types';
+import type { InjectHandlerContext, JSONSchema } from '@/schema-form/types';
 
-import { contextNodeFactory, nodeFromJsonSchema } from '../nodeFromJsonSchema';
+import { contextNodeFactory, nodeFromJSONSchema } from '../nodeFromJSONSchema';
 import { NodeEventType } from '../types';
 
 const wait = (delay = 10) => {
@@ -33,9 +33,9 @@ describe('AbstractNode.injectTo', () => {
             type: 'string',
           },
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
-      const node = nodeFromJsonSchema({ jsonSchema, onChange });
+      const node = nodeFromJSONSchema({ jsonSchema, onChange });
       await wait();
 
       const sourceNode = node.find('/source');
@@ -73,9 +73,9 @@ describe('AbstractNode.injectTo', () => {
             },
           },
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
-      const node = nodeFromJsonSchema({ jsonSchema, onChange });
+      const node = nodeFromJSONSchema({ jsonSchema, onChange });
       await wait();
 
       const sourceNode = node.find('/source');
@@ -104,9 +104,9 @@ describe('AbstractNode.injectTo', () => {
           target2: { type: 'string' },
           target3: { type: 'string' },
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
-      const node = nodeFromJsonSchema({ jsonSchema, onChange });
+      const node = nodeFromJSONSchema({ jsonSchema, onChange });
       await wait();
 
       const sourceNode = node.find('/source');
@@ -138,9 +138,9 @@ describe('AbstractNode.injectTo', () => {
           target1: { type: 'string' },
           target2: { type: 'string' },
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
-      const node = nodeFromJsonSchema({ jsonSchema, onChange });
+      const node = nodeFromJSONSchema({ jsonSchema, onChange });
       await wait();
 
       const sourceNode = node.find('/source');
@@ -170,9 +170,9 @@ describe('AbstractNode.injectTo', () => {
             default: 'original',
           },
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
-      const node = nodeFromJsonSchema({ jsonSchema, onChange });
+      const node = nodeFromJSONSchema({ jsonSchema, onChange });
       await wait();
 
       const sourceNode = node.find('/source');
@@ -198,9 +198,9 @@ describe('AbstractNode.injectTo', () => {
             default: 'original',
           },
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
-      const node = nodeFromJsonSchema({ jsonSchema, onChange });
+      const node = nodeFromJSONSchema({ jsonSchema, onChange });
       await wait();
 
       const sourceNode = node.find('/source');
@@ -227,9 +227,9 @@ describe('AbstractNode.injectTo', () => {
             default: 'original',
           },
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
-      const node = nodeFromJsonSchema({ jsonSchema, onChange });
+      const node = nodeFromJSONSchema({ jsonSchema, onChange });
       await wait();
 
       const sourceNode = node.find('/source');
@@ -257,9 +257,9 @@ describe('AbstractNode.injectTo', () => {
             default: 'original',
           },
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
-      const node = nodeFromJsonSchema({ jsonSchema, onChange });
+      const node = nodeFromJSONSchema({ jsonSchema, onChange });
       await wait();
 
       const sourceNode = node.find('/source');
@@ -288,9 +288,9 @@ describe('AbstractNode.injectTo', () => {
           target: { type: 'string' },
           other: { type: 'number', default: 42 },
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
-      const node = nodeFromJsonSchema({ jsonSchema, onChange });
+      const node = nodeFromJSONSchema({ jsonSchema, onChange });
       await wait();
 
       const sourceNode = node.find('/source');
@@ -306,11 +306,24 @@ describe('AbstractNode.injectTo', () => {
           schemaPath: '#/properties/source',
           jsonSchema: expect.objectContaining({ type: 'string' }),
           rootValue: expect.objectContaining({ source: 'test', other: 42 }),
-          rootJsonSchema: expect.objectContaining({ type: 'object' }),
+          rootJSONSchema: expect.objectContaining({ type: 'object' }),
           parentValue: expect.objectContaining({ source: 'test', other: 42 }),
-          parentJsonSchema: expect.objectContaining({ type: 'object' }),
+          parentJSONSchema: expect.objectContaining({ type: 'object' }),
           context: {},
         }),
+      );
+
+      // Deprecated alias keys must reference the same schema objects as the
+      // canonical keys. Removed in 0.16.0.
+      const receivedContext = injectFn.mock.calls[0][1] as Record<
+        string,
+        unknown
+      >;
+      expect(receivedContext.parentJsonSchema).toBe(
+        receivedContext.parentJSONSchema,
+      );
+      expect(receivedContext.rootJsonSchema).toBe(
+        receivedContext.rootJSONSchema,
       );
     });
   });
@@ -350,9 +363,9 @@ describe('AbstractNode.injectTo', () => {
               },
             },
           },
-        } satisfies JsonSchema;
+        } satisfies JSONSchema;
 
-        const node = nodeFromJsonSchema({ jsonSchema, onChange });
+        const node = nodeFromJSONSchema({ jsonSchema, onChange });
         await wait();
 
         const fieldA = node.find('/fieldA');
@@ -402,9 +415,9 @@ describe('AbstractNode.injectTo', () => {
               },
             },
           },
-        } satisfies JsonSchema;
+        } satisfies JSONSchema;
 
-        const node = nodeFromJsonSchema({ jsonSchema, onChange });
+        const node = nodeFromJSONSchema({ jsonSchema, onChange });
         await wait();
 
         const fieldA = node.find('/fieldA');
@@ -441,9 +454,9 @@ describe('AbstractNode.injectTo', () => {
               },
             },
           },
-        } satisfies JsonSchema;
+        } satisfies JSONSchema;
 
-        const node = nodeFromJsonSchema({ jsonSchema, onChange });
+        const node = nodeFromJSONSchema({ jsonSchema, onChange });
         await wait();
 
         const sourceNode = node.find('/source');
@@ -472,9 +485,9 @@ describe('AbstractNode.injectTo', () => {
               },
             },
           },
-        } satisfies JsonSchema;
+        } satisfies JSONSchema;
 
-        const node = nodeFromJsonSchema({ jsonSchema, onChange });
+        const node = nodeFromJSONSchema({ jsonSchema, onChange });
         await wait();
 
         const sourceNode = node.find('/source');
@@ -526,9 +539,9 @@ describe('AbstractNode.injectTo', () => {
               },
             },
           },
-        } satisfies JsonSchema;
+        } satisfies JSONSchema;
 
-        const node = nodeFromJsonSchema({ jsonSchema, onChange });
+        const node = nodeFromJSONSchema({ jsonSchema, onChange });
         await wait();
 
         const aNode = node.find('/a');
@@ -565,9 +578,9 @@ describe('AbstractNode.injectTo', () => {
             },
             target: { type: 'string' },
           },
-        } satisfies JsonSchema;
+        } satisfies JSONSchema;
 
-        const node = nodeFromJsonSchema({ jsonSchema, onChange });
+        const node = nodeFromJSONSchema({ jsonSchema, onChange });
         await wait();
 
         const sourceNode = node.find('/source');
@@ -618,9 +631,9 @@ describe('AbstractNode.injectTo', () => {
             },
           },
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
-      const node = nodeFromJsonSchema({ jsonSchema, onChange });
+      const node = nodeFromJSONSchema({ jsonSchema, onChange });
       await wait();
 
       const sourceNode = node.find('/container/source');
@@ -655,9 +668,9 @@ describe('AbstractNode.injectTo', () => {
             },
           },
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
-      const node = nodeFromJsonSchema({ jsonSchema, onChange });
+      const node = nodeFromJSONSchema({ jsonSchema, onChange });
       await wait();
 
       const sourceNode = node.find('/parent/child/source');
@@ -697,9 +710,9 @@ describe('AbstractNode.injectTo', () => {
             },
           },
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
-      const node = nodeFromJsonSchema({ jsonSchema, onChange });
+      const node = nodeFromJSONSchema({ jsonSchema, onChange });
       await wait();
 
       const sourceNode = node.find('/level1/level2/level3/source');
@@ -739,9 +752,9 @@ describe('AbstractNode.injectTo', () => {
             },
           },
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
-      const node = nodeFromJsonSchema({ jsonSchema, onChange });
+      const node = nodeFromJSONSchema({ jsonSchema, onChange });
       await wait();
 
       const sourceNode = node.find('/source');
@@ -779,9 +792,9 @@ describe('AbstractNode.injectTo', () => {
           },
           summary: { type: 'string' },
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema,
         onChange,
         defaultValue: { items: [{ value: '' }] },
@@ -828,9 +841,9 @@ describe('AbstractNode.injectTo', () => {
             },
           },
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema,
         onChange,
         defaultValue: { container: { list: [{ nested: { source: '' } }] } },
@@ -864,9 +877,9 @@ describe('AbstractNode.injectTo', () => {
           },
           existing: { type: 'string', default: 'original' },
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
-      const node = nodeFromJsonSchema({ jsonSchema, onChange });
+      const node = nodeFromJSONSchema({ jsonSchema, onChange });
       await wait();
 
       // 에러 없이 실행되어야 함
@@ -897,9 +910,9 @@ describe('AbstractNode.injectTo', () => {
           valid1: { type: 'string' },
           valid2: { type: 'string' },
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
-      const node = nodeFromJsonSchema({ jsonSchema, onChange });
+      const node = nodeFromJSONSchema({ jsonSchema, onChange });
       await wait();
 
       const sourceNode = node.find('/source');
@@ -924,9 +937,9 @@ describe('AbstractNode.injectTo', () => {
             }),
           },
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
-      const node = nodeFromJsonSchema({ jsonSchema, onChange });
+      const node = nodeFromJSONSchema({ jsonSchema, onChange });
       await wait();
 
       // 에러 없이 실행
@@ -961,9 +974,9 @@ describe('AbstractNode.injectTo', () => {
             // c는 injectTo 없음 - 체인 종료
           },
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
-      const node = nodeFromJsonSchema({ jsonSchema, onChange });
+      const node = nodeFromJSONSchema({ jsonSchema, onChange });
       await wait();
 
       const aNode = node.find('/a');
@@ -998,9 +1011,9 @@ describe('AbstractNode.injectTo', () => {
           t4: { type: 'string' },
           t5: { type: 'string' },
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
-      const node = nodeFromJsonSchema({ jsonSchema, onChange });
+      const node = nodeFromJSONSchema({ jsonSchema, onChange });
       await wait();
 
       const sourceNode = node.find('/source');
@@ -1034,9 +1047,9 @@ describe('AbstractNode.injectTo', () => {
           },
           target: { type: 'string' },
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
-      const node = nodeFromJsonSchema({ jsonSchema, onChange });
+      const node = nodeFromJSONSchema({ jsonSchema, onChange });
       await wait();
 
       // source1 먼저 설정
@@ -1062,7 +1075,7 @@ describe('AbstractNode.injectTo', () => {
   // ============================================================================
   describe('Error Handling', () => {
     /**
-     * injectTo에서 에러가 발생하면 JsonSchemaError로 래핑되어 throw됩니다.
+     * injectTo에서 에러가 발생하면 JSONSchemaError로 래핑되어 throw됩니다.
      * 이 에러는 이벤트 루프에서 비동기로 발생하므로 unhandled rejection이 됩니다.
      * 테스트에서는 이 동작을 문서화합니다.
      */
@@ -1082,9 +1095,9 @@ describe('AbstractNode.injectTo', () => {
           },
           target: { type: 'string' },
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
-      const node = nodeFromJsonSchema({ jsonSchema, onChange });
+      const node = nodeFromJSONSchema({ jsonSchema, onChange });
       await wait();
 
       const sourceNode = node.find('/source');
@@ -1109,9 +1122,9 @@ describe('AbstractNode.injectTo', () => {
           },
           target: { type: 'string' },
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
-      const node = nodeFromJsonSchema({ jsonSchema, onChange });
+      const node = nodeFromJSONSchema({ jsonSchema, onChange });
       await wait();
 
       const sourceNode = node.find('/source');
@@ -1156,9 +1169,9 @@ describe('AbstractNode.injectTo', () => {
           },
           target: { type: 'string' },
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema,
         onChange,
         defaultValue: { source: 'initial' },
@@ -1183,9 +1196,9 @@ describe('AbstractNode.injectTo', () => {
           },
           target: { type: 'string' },
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
-      const node = nodeFromJsonSchema({ jsonSchema, onChange });
+      const node = nodeFromJSONSchema({ jsonSchema, onChange });
       await wait();
 
       // 초기화 후 setValue 호출
@@ -1222,10 +1235,10 @@ describe('AbstractNode.injectTo', () => {
           },
           target: { type: 'string' },
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
       const context = contextNodeFactory(testContext);
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema,
         onChange,
         contextNode: context,
@@ -1248,9 +1261,9 @@ describe('AbstractNode.injectTo', () => {
         schemaPath: '#/properties/source',
         jsonSchema: expect.objectContaining({ type: 'string' }),
         parentValue: expect.objectContaining({ source: 'test' }),
-        parentJsonSchema: expect.objectContaining({ type: 'object' }),
+        parentJSONSchema: expect.objectContaining({ type: 'object' }),
         rootValue: expect.objectContaining({ source: 'test' }),
-        rootJsonSchema: expect.objectContaining({ type: 'object' }),
+        rootJSONSchema: expect.objectContaining({ type: 'object' }),
         context: testContext,
       });
 
@@ -1273,9 +1286,9 @@ describe('AbstractNode.injectTo', () => {
           },
           target: { type: 'string' },
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
-      const node = nodeFromJsonSchema({ jsonSchema, onChange });
+      const node = nodeFromJSONSchema({ jsonSchema, onChange });
       await wait();
 
       const sourceNode = node.find('/source');
@@ -1308,9 +1321,9 @@ describe('AbstractNode.injectTo', () => {
           },
           'special-field': { type: 'string' },
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
-      const node = nodeFromJsonSchema({ jsonSchema, onChange });
+      const node = nodeFromJSONSchema({ jsonSchema, onChange });
       await wait();
 
       const sourceNode = node.find('/source');
@@ -1335,9 +1348,9 @@ describe('AbstractNode.injectTo', () => {
           },
           '123': { type: 'string' },
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
-      const node = nodeFromJsonSchema({ jsonSchema, onChange });
+      const node = nodeFromJSONSchema({ jsonSchema, onChange });
       await wait();
 
       const sourceNode = node.find('/source');
@@ -1353,7 +1366,7 @@ describe('AbstractNode.injectTo', () => {
       const onChange = vi.fn();
 
       // 10단계 깊이의 스키마 생성
-      const createDeepSchema = (depth: number): JsonSchema => {
+      const createDeepSchema = (depth: number): JSONSchema => {
         if (depth === 0) {
           return {
             type: 'object',
@@ -1365,7 +1378,7 @@ describe('AbstractNode.injectTo', () => {
         return {
           type: 'object',
           properties: {
-            nested: createDeepSchema(depth - 1) as JsonSchema,
+            nested: createDeepSchema(depth - 1) as JSONSchema,
           },
         };
       };
@@ -1379,11 +1392,11 @@ describe('AbstractNode.injectTo', () => {
               '/nested/nested/nested/nested/nested/nested/nested/nested/nested/nested/target': `deep:${value}`,
             }),
           },
-          nested: createDeepSchema(9) as JsonSchema,
+          nested: createDeepSchema(9) as JSONSchema,
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
-      const node = nodeFromJsonSchema({ jsonSchema, onChange });
+      const node = nodeFromJSONSchema({ jsonSchema, onChange });
       await wait();
 
       const sourceNode = node.find('/source');
@@ -1416,9 +1429,9 @@ describe('AbstractNode.injectTo', () => {
           name: { type: 'string', default: 'John' },
           age: { type: 'number', default: 30 },
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
-      const node = nodeFromJsonSchema({ jsonSchema, onChange });
+      const node = nodeFromJSONSchema({ jsonSchema, onChange });
       await wait();
 
       expect(node.find('/name')?.value).toBe('John');
@@ -1462,9 +1475,9 @@ describe('AbstractNode.injectTo', () => {
           },
           target: { type: 'string' },
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
-      const node = nodeFromJsonSchema({ jsonSchema, onChange });
+      const node = nodeFromJSONSchema({ jsonSchema, onChange });
       await wait();
 
       const sourceNode = node.find('/source');
@@ -1513,9 +1526,9 @@ describe('AbstractNode.injectTo', () => {
           },
           target: { type: 'number' },
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
-      const node = nodeFromJsonSchema({ jsonSchema, onChange });
+      const node = nodeFromJSONSchema({ jsonSchema, onChange });
       await wait();
 
       const sourceNode = node.find('/source');
@@ -1536,7 +1549,7 @@ describe('AbstractNode.injectTo', () => {
     it('should handle many injection targets (20+ fields)', async () => {
       const onChange = vi.fn();
       const targetCount = 20;
-      const targets: Record<string, JsonSchema> = {};
+      const targets: Record<string, JSONSchema> = {};
       const injectTargets: Record<string, string> = {};
 
       for (let i = 0; i < targetCount; i++) {
@@ -1553,9 +1566,9 @@ describe('AbstractNode.injectTo', () => {
           },
           ...targets,
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
-      const node = nodeFromJsonSchema({ jsonSchema, onChange });
+      const node = nodeFromJSONSchema({ jsonSchema, onChange });
       await wait();
 
       const sourceNode = node.find('/source');
@@ -1612,9 +1625,9 @@ describe('AbstractNode.injectTo', () => {
               },
             },
           ],
-        } satisfies JsonSchema;
+        } satisfies JSONSchema;
 
-        const node = nodeFromJsonSchema({ jsonSchema, onChange });
+        const node = nodeFromJSONSchema({ jsonSchema, onChange });
         await wait();
 
         // game 조건일 때 platform 필드에서 injection
@@ -1663,9 +1676,9 @@ describe('AbstractNode.injectTo', () => {
               },
             },
           ],
-        } satisfies JsonSchema;
+        } satisfies JSONSchema;
 
-        const node = nodeFromJsonSchema({ jsonSchema, onChange });
+        const node = nodeFromJSONSchema({ jsonSchema, onChange });
         await wait();
 
         // type A일 때 fieldA에서 injection
@@ -1730,9 +1743,9 @@ describe('AbstractNode.injectTo', () => {
               },
             },
           ],
-        } satisfies JsonSchema;
+        } satisfies JSONSchema;
 
-        const node = nodeFromJsonSchema({ jsonSchema, onChange });
+        const node = nodeFromJSONSchema({ jsonSchema, onChange });
         await wait();
 
         // personal 타입일 때 hobby 필드에서 injection
@@ -1777,9 +1790,9 @@ describe('AbstractNode.injectTo', () => {
               },
             },
           ],
-        } satisfies JsonSchema;
+        } satisfies JSONSchema;
 
-        const node = nodeFromJsonSchema({ jsonSchema, onChange });
+        const node = nodeFromJSONSchema({ jsonSchema, onChange });
         await wait();
 
         // 두 개의 anyOf 브랜치 모두 활성화되어 있음
@@ -1833,9 +1846,9 @@ describe('AbstractNode.injectTo', () => {
               },
             },
           ],
-        } satisfies JsonSchema;
+        } satisfies JSONSchema;
 
-        const node = nodeFromJsonSchema({ jsonSchema, onChange });
+        const node = nodeFromJSONSchema({ jsonSchema, onChange });
         await wait();
 
         // selector가 'active'이므로 conditionalField가 존재
@@ -1879,9 +1892,9 @@ describe('AbstractNode.injectTo', () => {
               },
             },
           ],
-        } satisfies JsonSchema;
+        } satisfies JSONSchema;
 
-        const node = nodeFromJsonSchema({ jsonSchema, onChange });
+        const node = nodeFromJSONSchema({ jsonSchema, onChange });
         await wait();
 
         // oneOf에서는 모든 브랜치의 필드가 생성되지만 active 상태만 다름
@@ -1935,9 +1948,9 @@ describe('AbstractNode.injectTo', () => {
               },
             },
           ],
-        } satisfies JsonSchema;
+        } satisfies JSONSchema;
 
-        const node = nodeFromJsonSchema({ jsonSchema, onChange });
+        const node = nodeFromJSONSchema({ jsonSchema, onChange });
         await wait();
 
         // 초기 상태: category='A', fieldA가 active
@@ -1989,9 +2002,9 @@ describe('AbstractNode.injectTo', () => {
               },
             },
           ],
-        } satisfies JsonSchema;
+        } satisfies JSONSchema;
 
-        const node = nodeFromJsonSchema({ jsonSchema, onChange });
+        const node = nodeFromJSONSchema({ jsonSchema, onChange });
         await wait();
 
         // 초기 상태: category='A', fieldA가 active
@@ -2051,9 +2064,9 @@ describe('AbstractNode.injectTo', () => {
               },
             },
           ],
-        } satisfies JsonSchema;
+        } satisfies JSONSchema;
 
-        const node = nodeFromJsonSchema({ jsonSchema, onChange });
+        const node = nodeFromJSONSchema({ jsonSchema, onChange });
         await wait();
 
         // selector='X'일 때 xField에서 injection
@@ -2127,9 +2140,9 @@ describe('AbstractNode.injectTo', () => {
               },
             },
           ],
-        } satisfies JsonSchema;
+        } satisfies JSONSchema;
 
-        const node = nodeFromJsonSchema({ jsonSchema, onChange });
+        const node = nodeFromJSONSchema({ jsonSchema, onChange });
         await wait();
 
         // mainType='simple'일 때 simpleField에서 injection
@@ -2199,9 +2212,9 @@ describe('AbstractNode.injectTo', () => {
               },
             },
           ],
-        } satisfies JsonSchema;
+        } satisfies JSONSchema;
 
-        const node = nodeFromJsonSchema({ jsonSchema, onChange });
+        const node = nodeFromJSONSchema({ jsonSchema, onChange });
         await wait();
 
         const fieldANode = node.find('/fieldA');
@@ -2251,9 +2264,9 @@ describe('AbstractNode.injectTo', () => {
               },
             },
           ],
-        } satisfies JsonSchema;
+        } satisfies JSONSchema;
 
-        const node = nodeFromJsonSchema({ jsonSchema, onChange });
+        const node = nodeFromJSONSchema({ jsonSchema, onChange });
         await wait();
 
         const sourceFieldNode = node.find('/sourceField');

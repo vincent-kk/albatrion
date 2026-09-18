@@ -11,7 +11,7 @@ import { useHandle } from '@winglet/react-utils';
 import {
   Form,
   type FormTypeInputProps,
-  type JsonSchema,
+  type JSONSchema,
   registerPlugin,
   useChildNodeComponentMap,
 } from '../src';
@@ -44,7 +44,7 @@ export const DynamicObjectFormType = () => {
       department: { type: 'string', default: 'Engineering' },
       team: { type: 'string', default: 'Frontend Team' },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Value>({});
 
@@ -355,7 +355,7 @@ export const ChildComponentMap = () => {
         '&disabled': '!(../email)',
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<SimpleValue>({});
 

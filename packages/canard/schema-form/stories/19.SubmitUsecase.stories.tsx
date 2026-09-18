@@ -2,10 +2,10 @@ import { useCallback, useRef, useState } from 'react';
 
 import type {
   FormHandle,
-  JsonSchemaError} from '../src';
+  JSONSchemaError} from '../src';
 import {
   Form,
-  type JsonSchema,
+  type JSONSchema,
   ValidationMode,
   isValidationError,
   registerPlugin,
@@ -43,10 +43,10 @@ export const UseSubmitHandler = () => {
       },
     },
     required: ['email', 'password'],
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>();
-  const [errors, setErrors] = useState<JsonSchemaError[]>();
+  const [errors, setErrors] = useState<JSONSchemaError[]>();
 
   const handleSubmit = useCallback((value?: Record<string, unknown>) => {
     return new Promise<void>((resolve) => {
@@ -92,7 +92,7 @@ export const UseSubmitHandler = () => {
 export const SubmitOnEnterKey = () => {
   const jsonSchema = {
     type: 'string',
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<string>();
 
@@ -132,10 +132,10 @@ export const UseSubmitHandlerWithNoValidation = () => {
       },
     },
     required: ['email', 'password'],
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>();
-  const [errors, setErrors] = useState<JsonSchemaError[]>();
+  const [errors, setErrors] = useState<JSONSchemaError[]>();
 
   const handleSubmit = useCallback((value?: Record<string, unknown>) => {
     return new Promise<void>((resolve) => {
@@ -202,10 +202,10 @@ export const UseSubmitHandlerWithOnRequestValidation = () => {
       },
     },
     required: ['email', 'password'],
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>();
-  const [errors, setErrors] = useState<JsonSchemaError[]>();
+  const [errors, setErrors] = useState<JSONSchemaError[]>();
 
   const handleSubmit = useCallback((value?: Record<string, unknown>) => {
     return new Promise<void>((resolve) => {

@@ -1,7 +1,7 @@
 import '@testing-library/jest-dom';
 import { describe, expect, it } from 'vitest';
 
-import type { JsonSchema } from '@winglet/json-schema';
+import type { JSONSchema } from '@winglet/json-schema';
 
 import { ShowError } from '@/schema-form';
 
@@ -39,7 +39,7 @@ describe('allOf schema merge rendering', () => {
           },
         },
       ],
-    } satisfies JsonSchema;
+    } satisfies JSONSchema;
 
     // GAP-1: the merged field set must already exist at the synchronous paint.
     const form = await renderForm(schema, { flushOnMount: false });
@@ -74,7 +74,7 @@ describe('allOf schema merge rendering', () => {
           },
         },
       ],
-    } satisfies JsonSchema;
+    } satisfies JSONSchema;
 
     const form = await renderForm(schema);
 
@@ -109,7 +109,7 @@ describe('allOf schema merge rendering', () => {
           },
         },
       ],
-    } satisfies JsonSchema;
+    } satisfies JSONSchema;
 
     const form = await renderForm(schema);
 
@@ -129,7 +129,7 @@ describe('allOf schema merge rendering', () => {
       allOf: [
         { properties: { age: { type: 'number', minimum: 0, maximum: 120 } } },
       ],
-    } satisfies JsonSchema;
+    } satisfies JSONSchema;
 
     const form = await renderForm(schema, {
       validator: true,
@@ -160,7 +160,7 @@ describe('allOf schema merge rendering', () => {
           properties: { email: { type: 'string', format: 'email' } },
         },
       ],
-    } satisfies JsonSchema;
+    } satisfies JSONSchema;
 
     const form = await renderForm(schema, {
       validator: true,
@@ -202,7 +202,7 @@ describe('allOf schema merge rendering', () => {
           },
         },
       ],
-    } satisfies JsonSchema;
+    } satisfies JSONSchema;
 
     const form = await renderForm(schema);
 
@@ -227,7 +227,7 @@ describe('allOf schema merge rendering', () => {
 describe('if/then/else conditional field rendering', () => {
   // Mirrors stories/06.IfThenElse: `if/then/else` drives `required`, while
   // `computed.active` drives whether a field renders at all.
-  const conditionalSchema = (): JsonSchema =>
+  const conditionalSchema = (): JSONSchema =>
     ({
       type: 'object',
       properties: {
@@ -243,7 +243,7 @@ describe('if/then/else conditional field rendering', () => {
       if: { properties: { category: { enum: ['movie'] } } },
       then: { required: ['title', 'price'] },
       else: { required: ['title'] },
-    }) satisfies JsonSchema;
+    }) satisfies JSONSchema;
 
   it('hides a computed.active field until the sibling value matches (DOM + tree)', async () => {
     const form = await renderForm(conditionalSchema());

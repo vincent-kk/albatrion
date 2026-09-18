@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import { resolveReference } from '../resolveReference';
 
-describe('JsonSchemaScanner 실제 데이터 테스트', () => {
+describe('JSONSchemaScanner 실제 데이터 테스트', () => {
   it('legacyDefinitionsSchema 대한 데이터 처리', async () => {
     const jsonSchema = legacyDefinitionsSchema;
 

@@ -1,6 +1,6 @@
 import type {
-  JsonSchemaType,
-  JsonSchemaWithVirtual,
+  JSONSchemaType,
+  JSONSchemaWithVirtual,
 } from '@/schema-form/types';
 
 import {
@@ -17,10 +17,10 @@ import { sharedComputedSentinel } from './utils/sharedComputedSentinel';
  * @remarks Gate details in `needsRealComputedManager`; see INTENT.md.
  */
 export const getComputedPropertiesManager = (
-  schemaType: JsonSchemaType,
-  jsonSchema: JsonSchemaWithVirtual,
-  rootJsonSchema: JsonSchemaWithVirtual,
+  schemaType: JSONSchemaType,
+  jsonSchema: JSONSchemaWithVirtual,
+  rootJSONSchema: JSONSchemaWithVirtual,
 ): ComputedProperties =>
-  needsRealComputedManager(schemaType, jsonSchema, rootJsonSchema)
-    ? new ComputedPropertiesManager(schemaType, jsonSchema, rootJsonSchema)
+  needsRealComputedManager(schemaType, jsonSchema, rootJSONSchema)
+    ? new ComputedPropertiesManager(schemaType, jsonSchema, rootJSONSchema)
     : sharedComputedSentinel;

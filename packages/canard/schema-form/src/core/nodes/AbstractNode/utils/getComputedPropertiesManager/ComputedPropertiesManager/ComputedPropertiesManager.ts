@@ -1,6 +1,6 @@
 import type {
-  JsonSchemaType,
-  JsonSchemaWithVirtual,
+  JSONSchemaType,
+  JSONSchemaWithVirtual,
 } from '@/schema-form/types';
 
 import type { ComputedProperties } from './type';
@@ -244,9 +244,9 @@ export class ComputedPropertiesManager implements ComputedProperties {
    * ```
    */
   constructor(
-    type: JsonSchemaType,
-    schema: JsonSchemaWithVirtual,
-    rootSchema: JsonSchemaWithVirtual,
+    type: JSONSchemaType,
+    schema: JSONSchemaWithVirtual,
+    rootSchema: JSONSchemaWithVirtual,
   ) {
     const pathManager = getPathManager();
     const checkComputedOption = checkComputedOptionFactory(schema, rootSchema);

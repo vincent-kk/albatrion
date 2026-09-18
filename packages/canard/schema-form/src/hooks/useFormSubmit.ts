@@ -13,7 +13,7 @@ import type { FormHandle } from '@/schema-form/components/Form';
 import type {
   AllowedValue,
   InferValueType,
-  JsonSchema,
+  JSONSchema,
 } from '@/schema-form/types';
 
 /**
@@ -38,7 +38,7 @@ import type {
  * @returns {boolean | undefined} pending - Submission pending state
  */
 export const useFormSubmit = <
-  Schema extends JsonSchema,
+  Schema extends JSONSchema,
   Value extends AllowedValue = InferValueType<Schema>,
 >(
   ref: RefObject<FormHandle<Schema, Value> | null>,

@@ -2,7 +2,7 @@
 
 ## Purpose
 
-CLI 인자를 해석하고 주입 작업을 시작하는 공개 경계를 소유합니다. runCli는 패키지 이름과 스코프 별칭을 해석해 대상을 결정하고 렌더러 선택을 위임합니다. JSON 요청은 renderJson으로, 비대화형 실행은 renderPlain으로, 대화 가능한 TTY 실행은 Ink로 연결합니다.
+CLI 인자를 해석하고 주입 작업을 시작하는 공개 경계를 소유합니다. runCli는 패키지 이름과 스코프 별칭을 해석해 대상을 결정하고 렌더러 선택을 위임합니다. JSON 요청은 renderJSON으로, 비대화형 실행은 renderPlain으로, 대화 가능한 TTY 실행은 Ink로 연결합니다.
 
 ## Conventions
 

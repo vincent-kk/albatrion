@@ -1,4 +1,4 @@
-import type { JsonSchema, JsonSchemaError } from '@/schema-form/types';
+import type { JSONSchema, JSONSchemaError } from '@/schema-form/types';
 
 import { createDivider } from './utils/createDivider';
 import { formatType } from './utils/formatType';
@@ -12,8 +12,8 @@ import { formatValuePreview } from './utils/formatValuePreview';
  */
 export const formatSchemaValidationFailedError = <T>(
   value: T,
-  errors: JsonSchemaError[],
-  jsonSchema: JsonSchema,
+  errors: JSONSchemaError[],
+  jsonSchema: JSONSchema,
 ): string => {
   const divider = createDivider();
   const errorCount = errors.length;

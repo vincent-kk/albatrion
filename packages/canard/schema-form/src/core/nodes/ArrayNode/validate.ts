@@ -1,4 +1,4 @@
-import { JsonSchemaError } from '@/schema-form/errors';
+import { JSONSchemaError } from '@/schema-form/errors';
 import {
   formatItemsFalseWithoutPrefixItemsError,
   formatMaxItemsExceedsPrefixItemsError,
@@ -11,7 +11,7 @@ import type { ArraySchema } from '@/schema-form/types';
  * Validates an array schema to ensure it has a valid structure for ArrayNode creation.
  *
  * @param jsonSchema - The JSON Schema to validate
- * @throws {JsonSchemaError} If the schema structure is invalid
+ * @throws {JSONSchemaError} If the schema structure is invalid
  * @returns true if the schema is valid
  */
 export const validateArraySchema = (jsonSchema: ArraySchema) => {
@@ -23,7 +23,7 @@ export const validateArraySchema = (jsonSchema: ArraySchema) => {
 
   // Case 1: items: false requires prefixItems to define the allowed tuple elements
   if (itemsSchema === false && !prefixItemsSchema)
-    throw new JsonSchemaError(
+    throw new JSONSchemaError(
       'UNEXPECTED_ARRAY_SCHEMA',
       formatItemsFalseWithoutPrefixItemsError(jsonSchema),
       {
@@ -37,7 +37,7 @@ export const validateArraySchema = (jsonSchema: ArraySchema) => {
   if (itemsSchema === undefined) {
     // Case 2-1: No prefixItems either - array has no schema for any items
     if (!prefixItemsSchema)
-      throw new JsonSchemaError(
+      throw new JSONSchemaError(
         'UNEXPECTED_ARRAY_SCHEMA',
         formatMissingItemsAndPrefixItemsError(jsonSchema),
         {
@@ -50,7 +50,7 @@ export const validateArraySchema = (jsonSchema: ArraySchema) => {
     // Case 2-2: prefixItems exists but maxItems allows more items than prefixItems defines
     // Without 'items', there's no schema for indices beyond prefixItems
     if (maxItems !== undefined && prefixItemsLength < maxItems)
-      throw new JsonSchemaError(
+      throw new JSONSchemaError(
         'UNEXPECTED_ARRAY_SCHEMA',
         formatMaxItemsExceedsPrefixItemsError(
           jsonSchema,
@@ -69,7 +69,7 @@ export const validateArraySchema = (jsonSchema: ArraySchema) => {
     // Case 2-3: prefixItems exists but minItems requires more items than prefixItems defines
     // Without 'items', there's no schema to create items beyond prefixItems
     if (minItems !== undefined && prefixItemsLength < minItems)
-      throw new JsonSchemaError(
+      throw new JSONSchemaError(
         'UNEXPECTED_ARRAY_SCHEMA',
         formatMinItemsExceedsPrefixItemsError(
           jsonSchema,

@@ -3,7 +3,7 @@
 ## Requirements
 
 - allOf 병합 시 동일 타입 스키마들의 제약을 의미 보존적으로 교집합한다.
-- 교집합이 불가능한 제약(예: `minimum > maximum`, `const` 불일치)은 `JsonSchemaError`로 명확히 실패한다.
+- 교집합이 불가능한 제약(예: `minimum > maximum`, `const` 불일치)은 `JSONSchemaError`로 명확히 실패한다.
 - 각 핸들러는 `base`를 in-place 변경하여 반환하고, 입력 복제는 상위 `processAllOfSchema`가 책임진다.
 
 ## API Contracts
@@ -27,7 +27,7 @@
 | `intersectPattern`                                                       | 패턴 AND 결합                               |
 | `intersectBooleanOr` / `intersectMultipleOf`                             | 기타 제약 결합                              |
 | `unionRequired`                                                          | `required` 배열 합집합                      |
-| `validateRange`                                                          | min/max 역전 검증 → `JsonSchemaError` throw |
+| `validateRange`                                                          | min/max 역전 검증 → `JSONSchemaError` throw |
 | `distributeSubSchema`                                                    | `properties`를 allOf로 분배                 |
 | `processFirstWinFields` / `processOverwriteFields` / `processSchemaType` | 필드 분류 병합                              |
 | `constants.ts`                                                           | 필드 분류 상수(first-win / overwrite)       |
@@ -41,8 +41,8 @@
 
 ### range-inversion — 교집합이 빈 범위면 병합이 실패한다
 
-- `minimum`이 `maximum`보다 큰 조합에서 `validateRange`가 `JsonSchemaError`를 throw한다.
-- `const`가 서로 다른 두 스키마를 병합하면 `JsonSchemaError`를 throw한다.
+- `minimum`이 `maximum`보다 큰 조합에서 `validateRange`가 `JSONSchemaError`를 throw한다.
+- `const`가 서로 다른 두 스키마를 병합하면 `JSONSchemaError`를 throw한다.
 
 ### multipleOf-lcm — multipleOf 교집합은 두 값의 최소공배수다
 

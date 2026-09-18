@@ -19,7 +19,7 @@ import {
   BIT_FLAG_15,
   BIT_FLAG_16,
 } from '@/schema-form/app/constants';
-import type { JsonSchemaError } from '@/schema-form/types';
+import type { JSONSchemaError } from '@/schema-form/types';
 
 import type { NodeStateFlags } from './state';
 import type { UnionSetValueOption } from './value';
@@ -108,8 +108,8 @@ export type NodeEventPayload = {
   [NodeEventType.UpdateValue]: any;
   [NodeEventType.UpdateState]: NodeStateFlags;
   [NodeEventType.UpdateGlobalState]: NodeStateFlags;
-  [NodeEventType.UpdateError]: JsonSchemaError[];
-  [NodeEventType.UpdateGlobalError]: JsonSchemaError[];
+  [NodeEventType.UpdateError]: JSONSchemaError[];
+  [NodeEventType.UpdateGlobalError]: JSONSchemaError[];
   [NodeEventType.UpdateChildren]: void;
   [NodeEventType.UpdateComputedProperties]: void;
   [NodeEventType.Focused]: void;

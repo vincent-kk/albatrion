@@ -11,7 +11,7 @@ import {
 } from '@/schema-form/core';
 import type {
   FormTypeInputProps,
-  JsonSchemaWithVirtual,
+  JSONSchemaWithVirtual,
 } from '@/schema-form/types';
 
 /**
@@ -23,7 +23,7 @@ type MockSchemaNodeOverrides = {
   name?: string;
   schemaType?: string;
   type?: string;
-  jsonSchema?: JsonSchemaWithVirtual;
+  jsonSchema?: JSONSchemaWithVirtual;
   value?: any;
   defaultValue?: any;
   required?: boolean;
@@ -61,7 +61,7 @@ export const createMockSchemaNode = (
     // Schema type properties
     schemaType: 'string',
     type: 'string',
-    jsonSchema: { type: 'string' } as JsonSchemaWithVirtual,
+    jsonSchema: { type: 'string' } as JSONSchemaWithVirtual,
 
     // Value properties
     value: '',

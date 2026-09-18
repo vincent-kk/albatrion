@@ -2,8 +2,8 @@ import { describe, expect, it } from 'vitest';
 
 import { delay } from '@winglet/common-utils';
 
-import { nodeFromJsonSchema } from '@/schema-form/core';
-import type { JsonSchema } from '@/schema-form/types';
+import { nodeFromJSONSchema } from '@/schema-form/core';
+import type { JSONSchema } from '@/schema-form/types';
 
 /**
  * ArrayNode Default Value Initialization Tests
@@ -20,7 +20,7 @@ describe('ArrayNode Default Value Initialization', () => {
    */
   describe('ArrayNode as root node', () => {
     it('should NOT auto-fill minItems when defaultValue is provided (empty array)', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: {
           type: 'array',
@@ -38,7 +38,7 @@ describe('ArrayNode Default Value Initialization', () => {
     });
 
     it('should NOT auto-fill minItems when defaultValue is provided (partial array)', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: {
           type: 'array',
@@ -56,7 +56,7 @@ describe('ArrayNode Default Value Initialization', () => {
     });
 
     it('should use defaultValue when it exceeds minItems', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: {
           type: 'array',
@@ -73,7 +73,7 @@ describe('ArrayNode Default Value Initialization', () => {
     });
 
     it('should NOT auto-fill minItems when schema.default is provided (empty array)', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: {
           type: 'array',
@@ -91,7 +91,7 @@ describe('ArrayNode Default Value Initialization', () => {
     });
 
     it('should NOT auto-fill minItems when schema.default is provided (partial array)', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: {
           type: 'array',
@@ -109,7 +109,7 @@ describe('ArrayNode Default Value Initialization', () => {
     });
 
     it('should auto-fill minItems when NO default is provided', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: {
           type: 'array',
@@ -126,7 +126,7 @@ describe('ArrayNode Default Value Initialization', () => {
     });
 
     it('should handle minItems=0 correctly without default', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: {
           type: 'array',
@@ -142,7 +142,7 @@ describe('ArrayNode Default Value Initialization', () => {
     });
 
     it('should handle null defaultValue correctly', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: {
           type: ['array', 'null'] as const,
@@ -164,7 +164,7 @@ describe('ArrayNode Default Value Initialization', () => {
    */
   describe('ArrayNode under ObjectNode', () => {
     it('should NOT auto-fill minItems when parent defaultValue provides array value (empty)', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: {
           type: 'object',
@@ -189,7 +189,7 @@ describe('ArrayNode Default Value Initialization', () => {
     });
 
     it('should NOT auto-fill minItems when parent defaultValue provides partial array', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: {
           type: 'object',
@@ -214,7 +214,7 @@ describe('ArrayNode Default Value Initialization', () => {
     });
 
     it('should NOT auto-fill minItems when schema.default on array is provided', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: {
           type: 'object',
@@ -237,7 +237,7 @@ describe('ArrayNode Default Value Initialization', () => {
     });
 
     it('should auto-fill minItems when NO default is provided for array', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: {
           type: 'object',
@@ -259,7 +259,7 @@ describe('ArrayNode Default Value Initialization', () => {
     });
 
     it('should handle multiple arrays with mixed default configurations', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: {
           type: 'object',
@@ -288,7 +288,7 @@ describe('ArrayNode Default Value Initialization', () => {
     });
 
     it('should handle partial parent defaultValue (only some arrays have values)', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: {
           type: 'object',
@@ -324,7 +324,7 @@ describe('ArrayNode Default Value Initialization', () => {
    */
   describe('ArrayNode under ArrayNode (nested)', () => {
     it('should NOT auto-fill inner array minItems when defaultValue is provided', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: {
           type: 'array',
@@ -348,7 +348,7 @@ describe('ArrayNode Default Value Initialization', () => {
     });
 
     it('should auto-fill both outer and inner minItems when NO default is provided', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: {
           type: 'array',
@@ -371,7 +371,7 @@ describe('ArrayNode Default Value Initialization', () => {
     });
 
     it('should handle nested array with schema.default on inner array', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: {
           type: 'array',
@@ -395,7 +395,7 @@ describe('ArrayNode Default Value Initialization', () => {
     });
 
     it('should handle 3-level deep nested arrays', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: {
           type: 'array',
@@ -424,7 +424,7 @@ describe('ArrayNode Default Value Initialization', () => {
     });
 
     it('should handle 3-level deep with mixed defaults', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: {
           type: 'array',
@@ -457,7 +457,7 @@ describe('ArrayNode Default Value Initialization', () => {
    */
   describe('ArrayNode with object items (BranchStrategy)', () => {
     it('should NOT auto-fill minItems when defaultValue is provided (empty array)', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: {
           type: 'array',
@@ -480,7 +480,7 @@ describe('ArrayNode Default Value Initialization', () => {
     });
 
     it('should NOT auto-fill minItems when defaultValue is provided (partial)', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: {
           type: 'array',
@@ -503,7 +503,7 @@ describe('ArrayNode Default Value Initialization', () => {
     });
 
     it('should auto-fill minItems with object defaults when NO default is provided', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: {
           type: 'array',
@@ -527,7 +527,7 @@ describe('ArrayNode Default Value Initialization', () => {
     });
 
     it('should use items.default for object when provided', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: {
           type: 'array',
@@ -557,7 +557,7 @@ describe('ArrayNode Default Value Initialization', () => {
    */
   describe('ArrayNode with primitive items (TerminalStrategy)', () => {
     it('should NOT auto-fill minItems when defaultValue is provided (empty array)', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: {
           type: 'array',
@@ -573,7 +573,7 @@ describe('ArrayNode Default Value Initialization', () => {
     });
 
     it('should auto-fill minItems with primitive defaults when NO default is provided', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: {
           type: 'array',
@@ -588,7 +588,7 @@ describe('ArrayNode Default Value Initialization', () => {
     });
 
     it('should handle boolean array with defaults', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: {
           type: 'array',
@@ -603,7 +603,7 @@ describe('ArrayNode Default Value Initialization', () => {
     });
 
     it('should handle boolean array with explicit defaultValue', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: {
           type: 'array',
@@ -643,9 +643,9 @@ describe('ArrayNode Default Value Initialization', () => {
             minItems: 2,
           },
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema,
       });
@@ -680,9 +680,9 @@ describe('ArrayNode Default Value Initialization', () => {
             minItems: 2,
           },
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema,
         defaultValue: {
@@ -705,7 +705,7 @@ describe('ArrayNode Default Value Initialization', () => {
    */
   describe('Edge cases', () => {
     it('should handle undefined defaultValue (auto-fill)', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: {
           type: 'array',
@@ -722,7 +722,7 @@ describe('ArrayNode Default Value Initialization', () => {
     });
 
     it('should handle items without default (auto-fill with undefined)', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: {
           type: 'array',
@@ -743,7 +743,7 @@ describe('ArrayNode Default Value Initialization', () => {
       // After commit 446a022c: minItems auto-fill uses unlimited=true,
       // so maxItems constraint is bypassed during initialization.
       // This ensures minItems requirement is always satisfied regardless of maxItems.
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: {
           type: 'array',
@@ -761,7 +761,7 @@ describe('ArrayNode Default Value Initialization', () => {
     });
 
     it('should handle schema.default taking precedence over items.default', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: {
           type: 'array',
@@ -778,7 +778,7 @@ describe('ArrayNode Default Value Initialization', () => {
     });
 
     it('should handle defaultValue taking precedence over schema.default', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: {
           type: 'array',

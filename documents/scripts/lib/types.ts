@@ -100,6 +100,8 @@ export interface ParsedFunction {
   examples: Example[];
   /** Parsed @remarks text */
   remarks: string | undefined;
+  /** Whether the JSDoc carries the deprecation tag (literal omitted so TypeScript does not deprecate this field) */
+  deprecated: boolean;
   /** Package name, e.g. "@winglet/common-utils" */
   packageName: string;
   /** Package version, e.g. "0.10.0" */

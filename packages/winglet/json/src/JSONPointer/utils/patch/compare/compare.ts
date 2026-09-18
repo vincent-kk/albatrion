@@ -1,4 +1,4 @@
-import type { JsonRoot } from '@/json/type';
+import type { JSONRoot } from '@/json/type';
 
 import type { Patch } from '../../patchModel';
 import { compareRecursive } from './compareRecursive';
@@ -16,7 +16,7 @@ import type { CompareOptions } from './type';
  * - Missing properties in target result in REMOVE operations
  * - New properties in target result in ADD operations
  * - Changed values result in REPLACE operations
- * - Objects with `toJson()` method are automatically serialized before comparison
+ * - Objects with a `toJSON()` method are automatically serialized before comparison; the deprecated `toJson()` alias is still accepted (Removed in 0.16.0)
  *
  * @template Source - The type of the source object/array, must extend Dictionary or Array<any>
  * @template Target - The type of the target object/array, must extend Dictionary or Array<any>
@@ -57,7 +57,7 @@ import type { CompareOptions } from './type';
  * // Returns operations showing index-based changes
  * ```
  */
-export const compare = <Source extends JsonRoot, Target extends JsonRoot>(
+export const compare = <Source extends JSONRoot, Target extends JSONRoot>(
   source: Source,
   target: Target,
   options?: CompareOptions,

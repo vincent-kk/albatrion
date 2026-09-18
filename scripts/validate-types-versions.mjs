@@ -15,7 +15,7 @@ import { join, resolve } from 'node:path';
 const ROOT = resolve(import.meta.dirname, '..');
 const PACKAGES_DIR = join(ROOT, 'packages');
 
-function findAllPackageJsons(baseDir) {
+function findAllPackageJSONs(baseDir) {
   const results = [];
 
   function walk(dir, depth) {
@@ -46,11 +46,11 @@ function stripDotSlash(path) {
 }
 
 function validate() {
-  const packageJsonFiles = findAllPackageJsons(PACKAGES_DIR);
+  const packageJSONFiles = findAllPackageJSONs(PACKAGES_DIR);
   let hasError = false;
   let checkedCount = 0;
 
-  for (const pkgPath of packageJsonFiles) {
+  for (const pkgPath of packageJSONFiles) {
     const pkg = JSON.parse(readFileSync(pkgPath, 'utf-8'));
     if (!pkg.exports || typeof pkg.exports !== 'object') continue;
 

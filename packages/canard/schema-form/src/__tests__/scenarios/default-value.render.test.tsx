@@ -1,7 +1,7 @@
 import '@testing-library/jest-dom';
 import { describe, expect, it } from 'vitest';
 
-import type { JsonSchema } from '@winglet/json-schema';
+import type { JSONSchema } from '@winglet/json-schema';
 
 import { renderForm } from '../renderForm';
 
@@ -58,7 +58,7 @@ const schemaDefaultShape = {
     },
     null: { type: 'null', nullable: true, default: null },
   },
-} satisfies JsonSchema;
+} satisfies JSONSchema;
 
 const noDefaultShape = {
   type: 'object',
@@ -87,7 +87,7 @@ const noDefaultShape = {
     },
     null: { type: 'null', nullable: true },
   },
-} satisfies JsonSchema;
+} satisfies JSONSchema;
 
 const parentChildDefaultSchema = {
   type: 'object',
@@ -101,7 +101,7 @@ const parentChildDefaultSchema = {
       },
     },
   },
-} satisfies JsonSchema;
+} satisfies JSONSchema;
 
 const arrayMatrixSchema = {
   type: 'object',
@@ -147,7 +147,7 @@ const arrayMatrixSchema = {
       default: [{ name: 'preset' }],
     },
   },
-} satisfies JsonSchema;
+} satisfies JSONSchema;
 
 const defaultValuePropArraySchema = {
   type: 'object',
@@ -168,7 +168,7 @@ const defaultValuePropArraySchema = {
       minItems: 2,
     },
   },
-} satisfies JsonSchema;
+} satisfies JSONSchema;
 
 const nestedArraySchema = {
   type: 'object',
@@ -203,7 +203,7 @@ const nestedArraySchema = {
       default: [[1], [2, 3]],
     },
   },
-} satisfies JsonSchema;
+} satisfies JSONSchema;
 
 // ---------------------------------------------------------------------------
 // Helpers

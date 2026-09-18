@@ -8,7 +8,7 @@ import {
   getByPointer,
 } from "./_lib.mjs";
 
-const { JsonSchemaScanner, JsonSchemaScannerAsync } = await loadScanners();
+const { JSONSchemaScanner, JSONSchemaScannerAsync } = await loadScanners();
 
 const wide = genWide(10000);
 const branchy = genBranchy(6, 5);
@@ -18,10 +18,10 @@ const noop = () => {};
 
 const ROUNDS = Number(process.argv[2] || 200);
 for (let i = 0; i < ROUNDS; i++) {
-  new JsonSchemaScanner().scan(wide);
-  new JsonSchemaScanner({ visitor: { enter: noop, exit: noop } }).scan(branchy);
-  new JsonSchemaScanner({ visitor: { enter: noop, exit: noop } }).scan(mixed);
-  const s = new JsonSchemaScanner({
+  new JSONSchemaScanner().scan(wide);
+  new JSONSchemaScanner({ visitor: { enter: noop, exit: noop } }).scan(branchy);
+  new JSONSchemaScanner({ visitor: { enter: noop, exit: noop } }).scan(mixed);
+  const s = new JSONSchemaScanner({
     options: { resolveReference: (r) => getByPointer(refHeavy, r) },
   });
   s.scan(refHeavy);

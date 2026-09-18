@@ -1,7 +1,7 @@
 import '@testing-library/jest-dom';
 import { describe, expect, it } from 'vitest';
 
-import type { JsonSchema } from '@winglet/json-schema';
+import type { JSONSchema } from '@winglet/json-schema';
 
 import { Form } from '@/schema-form';
 import type { FormTypeRendererProps } from '@/schema-form';
@@ -90,7 +90,7 @@ const twoLocations = (path: string) => (
 // ===========================================================================
 describe('GAP-16: same node rendered in two locations stays consistent', () => {
   it('initial mount: both string locations agree (two-phase: sync then flush)', async () => {
-    const schema: JsonSchema = {
+    const schema: JSONSchema = {
       type: 'object',
       properties: { name: { type: 'string', default: 'init' } },
     };
@@ -118,7 +118,7 @@ describe('GAP-16: same node rendered in two locations stays consistent', () => {
   });
 
   it('Overwrite setValue updates both string locations identically', async () => {
-    const schema: JsonSchema = {
+    const schema: JSONSchema = {
       type: 'object',
       properties: { name: { type: 'string', default: 'init' } },
     };
@@ -144,7 +144,7 @@ describe('GAP-16: same node rendered in two locations stays consistent', () => {
   });
 
   it('Overwrite setValue updates both number locations identically', async () => {
-    const schema: JsonSchema = {
+    const schema: JSONSchema = {
       type: 'object',
       properties: { count: { type: 'number', default: 5 } },
     };
@@ -167,7 +167,7 @@ describe('GAP-16: same node rendered in two locations stays consistent', () => {
   });
 
   it('nested object field is consistent in both locations after parent Overwrite', async () => {
-    const schema: JsonSchema = {
+    const schema: JSONSchema = {
       type: 'object',
       properties: {
         user: {
@@ -203,7 +203,7 @@ describe('GAP-16: same node rendered in two locations stays consistent', () => {
 // GAP-18 — one change alters both the child set AND a value/error together
 // ===========================================================================
 describe('GAP-18: coordinated child-set + value/error in a single change', () => {
-  const oneOfSchema: JsonSchema = {
+  const oneOfSchema: JSONSchema = {
     type: 'object',
     properties: {
       category: { type: 'string', enum: ['game', 'movie'], default: 'game' },
@@ -288,7 +288,7 @@ describe('GAP-18: coordinated child-set + value/error in a single change', () =>
   });
 
   it('a single Form.Render mirror updates value AND errorMessage together', async () => {
-    const schema: JsonSchema = {
+    const schema: JSONSchema = {
       type: 'object',
       properties: {
         username: { type: 'string', minLength: 5, default: 'TEST' },
@@ -333,7 +333,7 @@ describe('GAP-18: coordinated child-set + value/error in a single change', () =>
 // BugReport.01 RerenderRenderer — single-renderer isolation at DOM level
 // ===========================================================================
 describe('RerenderRenderer: isolated single-renderer re-render contract', () => {
-  const usernameSchema: JsonSchema = {
+  const usernameSchema: JSONSchema = {
     type: 'object',
     properties: {
       username: { type: 'string', minLength: 5, default: 'TEST' },

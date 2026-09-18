@@ -3,7 +3,7 @@ import { describe, expect, it, vi } from 'vitest';
 
 import { delay } from '@winglet/common-utils';
 
-import { nodeFromJsonSchema } from '@/schema-form/core';
+import { nodeFromJSONSchema } from '@/schema-form/core';
 
 import { ValidationMode } from '../nodes';
 import type { ArrayNode } from '../nodes/ArrayNode';
@@ -12,7 +12,7 @@ import { createValidatorFactory } from './utils/createValidatorFactory';
 
 describe('ArrayNode branch nullable functionality', () => {
   it('브랜치 모드 배열 노드가 nullable:true일 때 null 값을 허용해야 함', async () => {
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       onChange: () => {},
       jsonSchema: {
         type: 'object',
@@ -57,7 +57,7 @@ describe('ArrayNode branch nullable functionality', () => {
   });
 
   it('브랜치 모드 배열 노드가 nullable:false일 때 null 값을 처리해야 함', async () => {
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       onChange: () => {},
       jsonSchema: {
         type: 'object',
@@ -85,7 +85,7 @@ describe('ArrayNode branch nullable functionality', () => {
   });
 
   it('브랜치 모드 배열 노드에서 아이템 추가/제거가 nullable과 함께 작동해야 함', async () => {
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       onChange: () => {},
       jsonSchema: {
         type: 'object',
@@ -129,7 +129,7 @@ describe('ArrayNode branch nullable functionality', () => {
   });
 
   it('브랜치 모드 배열 노드에서 자식 아이템이 nullable일 때 올바르게 처리해야 함', async () => {
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       onChange: () => {},
       jsonSchema: {
         type: 'object',
@@ -163,7 +163,7 @@ describe('ArrayNode branch nullable functionality', () => {
     const ajv = new Ajv({ allErrors: true });
     const validatorFactory = createValidatorFactory(ajv);
 
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       onChange: () => {},
       jsonSchema: {
         type: 'object',
@@ -207,7 +207,7 @@ describe('ArrayNode branch nullable functionality', () => {
 
   it('브랜치 모드 배열 노드에서 nullable 이벤트가 올바르게 발생해야 함', async () => {
     const onChange = vi.fn();
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       onChange,
       jsonSchema: {
         type: 'object',
@@ -242,7 +242,7 @@ describe('ArrayNode branch nullable functionality', () => {
   });
 
   it('브랜치 모드 중첩 배열 노드에서 nullable이 올바르게 작동해야 함', async () => {
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       onChange: () => {},
       jsonSchema: {
         type: 'object',
@@ -295,7 +295,7 @@ describe('ArrayNode branch nullable functionality', () => {
   });
 
   it('브랜치 모드 배열 노드에서 nullable 상태가 올바르게 초기화되어야 함', async () => {
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       onChange: () => {},
       jsonSchema: {
         type: 'object',
@@ -321,7 +321,7 @@ describe('ArrayNode branch nullable functionality', () => {
   });
 
   it('브랜치 모드 배열 노드에서 nullable이 false일 때 초기값이 올바르게 설정되어야 함', async () => {
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       onChange: () => {},
       jsonSchema: {
         type: 'object',
@@ -350,7 +350,7 @@ describe('ArrayNode branch nullable functionality', () => {
     const ajv = new Ajv({ allErrors: true });
     const validatorFactory = createValidatorFactory(ajv);
 
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       onChange: () => {},
       jsonSchema: {
         type: 'object',
@@ -381,7 +381,7 @@ describe('ArrayNode branch nullable functionality', () => {
   });
 
   it('브랜치 모드 배열 노드에서 아이템 제거 후 null 설정이 올바르게 작동해야 함', async () => {
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       onChange: () => {},
       jsonSchema: {
         type: 'object',

@@ -11,7 +11,7 @@ import {
   type ChildNodeComponentProps,
   Form,
   type FormTypeInputProps,
-  type JsonSchema,
+  type JSONSchema,
 } from "@canard/schema-form";
 
 export default function DynamicObjectFormTypeTest() {
@@ -34,7 +34,7 @@ export default function DynamicObjectFormTypeTest() {
       department: { type: "string", default: "Engineering" },
       team: { type: "string", default: "Frontend Team" },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Value>({});
 

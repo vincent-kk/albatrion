@@ -1,6 +1,6 @@
 import type { Dictionary, Fn, Nullish } from '@aileron/declare';
 
-import type { JsonSchemaWithVirtual } from './jsonSchema';
+import type { JSONSchemaWithVirtual } from './jsonSchema';
 
 /**
  * Handler function type for the `injectTo` schema property.
@@ -53,8 +53,8 @@ import type { JsonSchemaWithVirtual } from './jsonSchema';
  * @remarks
  * - Paths can be absolute (`/foo/bar`) or relative (`../sibling`, `./child`)
  * - Circular injection is automatically prevented via injectedPaths tracking
- * - Errors during injection are wrapped in JsonSchemaError with 'INJECT_TO' code
- * - When the current node is the root, `ctx.parentValue` and `ctx.parentJsonSchema` are `null`
+ * - Errors during injection are wrapped in JSONSchemaError with 'INJECT_TO' code
+ * - When the current node is the root, `ctx.parentValue` and `ctx.parentJSONSchema` are `null`
  *
  * @see {@link InjectHandlerContext} for the context parameter details
  * @see {@link InjectOperation} for the return value format
@@ -124,7 +124,7 @@ export type InjectHandlerContext<
    * The JSON Schema definition for the current node.
    * Contains type information, validation rules, and custom extensions.
    */
-  jsonSchema: JsonSchemaWithVirtual;
+  jsonSchema: JSONSchemaWithVirtual;
 
   /**
    * The current value of the parent node.
@@ -152,13 +152,16 @@ export type InjectHandlerContext<
    * @example
    * ```typescript
    * // For a node at '/user/name' with parent at '/user'
-   * ctx.parentJsonSchema // { type: 'object', properties: { name: {...}, age: {...} } }
+   * ctx.parentJSONSchema // { type: 'object', properties: { name: {...}, age: {...} } }
    *
    * // For a root node
-   * ctx.parentJsonSchema // null
+   * ctx.parentJSONSchema // null
    * ```
    */
-  parentJsonSchema: JsonSchemaWithVirtual | null;
+  parentJSONSchema: JSONSchemaWithVirtual | null;
+
+  /** @deprecated Use `parentJSONSchema`. Removed in 0.16.0. */
+  parentJsonSchema?: JSONSchemaWithVirtual | null;
 
   /**
    * The complete value of the root form node.
@@ -170,7 +173,10 @@ export type InjectHandlerContext<
    * The JSON Schema definition of the root form node.
    * The top-level schema that defines the entire form structure.
    */
-  rootJsonSchema: JsonSchemaWithVirtual;
+  rootJSONSchema: JSONSchemaWithVirtual;
+
+  /** @deprecated Use `rootJSONSchema`. Removed in 0.16.0. */
+  rootJsonSchema?: JSONSchemaWithVirtual;
 
   /**
    * The shared context object containing form-wide data.

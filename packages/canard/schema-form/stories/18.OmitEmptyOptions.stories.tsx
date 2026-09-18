@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react';
 
 import type { FormHandle } from '../src';
-import { Form, type JsonSchema } from '../src';
+import { Form, type JSONSchema } from '../src';
 import StoryLayout from './components/StoryLayout';
 
 export default {
@@ -25,7 +25,7 @@ export const Common = () => {
         },
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>();
 
@@ -42,7 +42,7 @@ export const String = () => {
     options: {
       omitEmpty: false,
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<string>();
 
@@ -116,7 +116,7 @@ export const StringEnum = () => {
         },
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>();
 
@@ -207,7 +207,7 @@ export const Array = () => {
     options: {
       omitEmpty: false,
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>[]>([]);
   const ref = useRef<FormHandle<typeof jsonSchema, typeof value>>(null);

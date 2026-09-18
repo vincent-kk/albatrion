@@ -18,8 +18,8 @@ import {
   type FormProps,
   type FormTypeInputDefinition,
   type FormTypeInputProps,
-  type JsonSchema,
-  type JsonSchemaError,
+  type JSONSchema,
+  type JSONSchemaError,
   type SchemaNode,
   type ValidatorFactory,
   type ValidatorPlugin,
@@ -85,7 +85,7 @@ export const setupValidatorPlugin = (): void => {
     strictSchema: false,
     validateFormats: false,
   });
-  const transform = (errors: any[]): JsonSchemaError[] => {
+  const transform = (errors: any[]): JSONSchemaError[] => {
     if (!Array.isArray(errors)) return [];
     return errors.map((error) => {
       const hasMissing =
@@ -105,13 +105,13 @@ export const setupValidatorPlugin = (): void => {
         message: error.message,
         details: error.params,
         source: error,
-      } as JsonSchemaError;
+      } as JSONSchemaError;
     });
   };
   // `as ValidatorFactory` reconciles the harness's `@winglet/json-schema`
-  // JsonSchema with the library's own JsonSchema (the factory param is
+  // JSONSchema with the library's own JSONSchema (the factory param is
   // contravariant); the function body is contract-correct.
-  const compile = ((jsonSchema: JsonSchema) => {
+  const compile = ((jsonSchema: JSONSchema) => {
     const validate = ajv.compile({ ...jsonSchema, $async: true });
     return async (data: unknown) => {
       try {
@@ -258,7 +258,7 @@ export interface FormHarness {
   /** Current root value from the handle. */
   getValue: () => any;
   /** Current errors from the handle. */
-  getErrors: () => JsonSchemaError[];
+  getErrors: () => JSONSchemaError[];
   /** Attached files map (for file-upload scenarios). */
   attachedFilesMap: () => ReturnType<FormHandle['getAttachedFilesMap']>;
 
@@ -283,7 +283,7 @@ export interface FormHarness {
    */
   setValue: (value: any, option?: number) => Promise<void>;
   reset: () => Promise<void>;
-  validate: () => Promise<JsonSchemaError[]>;
+  validate: () => Promise<JSONSchemaError[]>;
 
   // ---- async draining ----
   /** Flush microtasks + a macrotask so the event cascade settles. */
@@ -311,7 +311,7 @@ const arrayScope = (container: HTMLElement, arrayPath: string): HTMLElement => {
 };
 
 export const renderForm = async (
-  jsonSchema: JsonSchema,
+  jsonSchema: JSONSchema,
   options: RenderFormOptions = {},
 ): Promise<FormHarness> => {
   const {
@@ -494,7 +494,7 @@ export const renderForm = async (
       });
     },
     validate: async () => {
-      let result: JsonSchemaError[] = [];
+      let result: JSONSchemaError[] = [];
       await act(async () => {
         result = (await ref.current?.validate()) ?? [];
       });

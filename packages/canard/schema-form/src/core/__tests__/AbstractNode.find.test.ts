@@ -2,8 +2,8 @@ import { describe, expect, it } from 'vitest';
 
 import { delay } from '@winglet/common-utils';
 
-import { nodeFromJsonSchema } from '@/schema-form/core';
-import type { JsonSchema } from '@/schema-form/types';
+import { nodeFromJSONSchema } from '@/schema-form/core';
+import type { JSONSchema } from '@/schema-form/types';
 
 import type { NumberNode } from '../nodes/NumberNode';
 import type { ObjectNode } from '../nodes/ObjectNode';
@@ -50,9 +50,9 @@ describe('Namespace with oneOf functionality', () => {
           },
         },
       ],
-    } satisfies JsonSchema;
+    } satisfies JSONSchema;
 
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       jsonSchema,
       onChange: () => {},
     }) as ObjectNode;
@@ -124,9 +124,9 @@ describe('Namespace with oneOf functionality', () => {
           },
         },
       ],
-    } satisfies JsonSchema;
+    } satisfies JSONSchema;
 
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       jsonSchema,
       onChange: () => {},
     }) as ObjectNode;
@@ -233,9 +233,9 @@ describe('Namespace with oneOf functionality', () => {
           },
         },
       },
-    } satisfies JsonSchema;
+    } satisfies JSONSchema;
 
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       jsonSchema,
       onChange: () => {},
     }) as ObjectNode;
@@ -355,9 +355,9 @@ describe('Namespace with oneOf functionality', () => {
           },
         },
       ],
-    } satisfies JsonSchema;
+    } satisfies JSONSchema;
 
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       jsonSchema,
       onChange: () => {},
     }) as ObjectNode;
@@ -482,9 +482,9 @@ describe('Namespace with oneOf functionality', () => {
           ],
         },
       },
-    } satisfies JsonSchema;
+    } satisfies JSONSchema;
 
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       jsonSchema,
       onChange: () => {},
     }) as ObjectNode;
@@ -614,9 +614,9 @@ describe('Namespace with oneOf functionality', () => {
           ],
         },
       },
-    } satisfies JsonSchema;
+    } satisfies JSONSchema;
 
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       jsonSchema,
       onChange: () => {},
     }) as ObjectNode;
@@ -763,9 +763,9 @@ describe('Namespace with oneOf functionality', () => {
           ],
         },
       },
-    } satisfies JsonSchema;
+    } satisfies JSONSchema;
 
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       jsonSchema,
       onChange: () => {},
     }) as ObjectNode;

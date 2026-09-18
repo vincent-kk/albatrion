@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import { delay } from '@winglet/common-utils';
 
-import { nodeFromJsonSchema } from '@/schema-form/core';
+import { nodeFromJSONSchema } from '@/schema-form/core';
 
 import type { ObjectNode } from '../nodes/ObjectNode';
 import {
@@ -20,7 +20,7 @@ describe.each([
   'BranchStrategy nested composition %s → %s - constructor defaultValue',
   (outerScope, innerScope) => {
     it('preserves an explicit constructor defaultValue', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: createSchema(outerScope, innerScope),
         defaultValue: {
           enabled: true,
@@ -38,7 +38,7 @@ describe.each([
     });
 
     it('fills nested defaults for a partial constructor defaultValue', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: createSchema(outerScope, innerScope),
         defaultValue: {
           enabled: true,

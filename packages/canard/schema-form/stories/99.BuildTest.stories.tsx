@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { Form, type JsonSchema } from '@canard/schema-form';
+import { Form, type JSONSchema } from '@canard/schema-form';
 
 import StoryLayout from './components/StoryLayout';
 
@@ -19,7 +19,7 @@ export const Common = () => {
         type: 'number',
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>();
 
@@ -33,7 +33,7 @@ export const Common = () => {
 export const String = () => {
   const jsonSchema = {
     type: 'string',
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<string>();
 
@@ -69,7 +69,7 @@ export const DateFormat = () => {
         format: 'week',
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>();
 
@@ -137,7 +137,7 @@ export const StringEnum = () => {
         },
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>();
 
@@ -168,7 +168,7 @@ export const ReadOnly = () => {
         active: false,
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   return (
     <StoryLayout jsonSchema={jsonSchema}>
@@ -235,7 +235,7 @@ export const IfThenElse = () => {
         required: ['title'],
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>();
 

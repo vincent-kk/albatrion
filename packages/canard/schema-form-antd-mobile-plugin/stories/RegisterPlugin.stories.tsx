@@ -7,8 +7,8 @@ import {
   type FormTypeInputDefinition,
   type FormTypeInputMap,
   type FormTypeInputProps,
-  type JsonSchema,
-  type JsonSchemaError,
+  type JSONSchema,
+  type JSONSchemaError,
   SetValueOption,
   registerPlugin,
 } from '@canard/schema-form';
@@ -37,7 +37,7 @@ export const Common = () => {
         maximum: 20,
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>();
 
@@ -51,7 +51,7 @@ export const Common = () => {
 export const String = () => {
   const jsonSchema = {
     type: 'string',
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<string>();
 
@@ -87,7 +87,7 @@ export const DateFormat = () => {
         format: 'week',
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>();
 
@@ -172,7 +172,7 @@ export const StringEnum = () => {
         },
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>();
 
@@ -199,7 +199,7 @@ export const ReadOnly = () => {
         disabled: true,
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   return (
     <StoryLayout jsonSchema={jsonSchema}>
@@ -252,7 +252,7 @@ export const OneOf = () => {
       },
       numOfPlayers: { type: 'number' },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>();
 
@@ -387,7 +387,7 @@ export const ComplexOneOf = () => {
       },
     },
     required: ['user', 'settings'],
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState({});
 
@@ -421,7 +421,7 @@ export const FunctionalChildren = () => {
         },
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const defaultValue = useRef<Record<string, any>>({
     allowed: false,
@@ -490,7 +490,7 @@ export const IterableChildren = () => {
         },
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const defaultValue = useRef({
     allowed: false,
@@ -555,7 +555,7 @@ export const Watch = () => {
         },
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
   const formTypes = useMemo<FormTypeInputDefinition[]>(
     () => [
       {
@@ -607,10 +607,10 @@ export const VirtualSchema = () => {
         fields: ['startDate', 'endDate'],
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>({});
-  const [errors, setErrors] = useState<JsonSchemaError[]>([]);
+  const [errors, setErrors] = useState<JSONSchemaError[]>([]);
 
   return (
     <StoryLayout jsonSchema={jsonSchema} errors={errors} value={value}>
@@ -648,7 +648,7 @@ export const FormRefHandle = () => {
         minItems: 3,
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
   const defaultValue = useRef({
     name: 'ron',
     number: 10,
@@ -788,7 +788,7 @@ export const ComputedProps = () => {
         },
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>();
 

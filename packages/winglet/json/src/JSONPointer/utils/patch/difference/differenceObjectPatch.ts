@@ -1,4 +1,4 @@
-import type { JsonObject } from '@/json/type';
+import type { JSONObject } from '@/json/type';
 
 import { differenceRecursive } from './utils/differenceRecursive';
 
@@ -105,6 +105,6 @@ import { differenceRecursive } from './utils/differenceRecursive';
  * ```
  */
 export const differenceObjectPatch = (
-  source: JsonObject,
-  target: JsonObject,
-): JsonObject | undefined => differenceRecursive(source, target);
+  source: JSONObject,
+  target: JSONObject,
+): JSONObject | undefined => differenceRecursive(source, target);

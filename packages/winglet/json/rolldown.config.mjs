@@ -5,13 +5,13 @@ import {
   getLibBuildOptions,
 } from '../../aileron/script/build/rolldown.transpile.mjs';
 
-const packageJson = createRequire(import.meta.url)('./package.json');
+const packageJSON = createRequire(import.meta.url)('./package.json');
 
 const { libBuildOptions, clearDir } = getLibBuildOptions(import.meta.url);
 
 export default async () => {
   clearDir('dist');
-  const entrypoints = getEntrypoints(packageJson);
+  const entrypoints = getEntrypoints(packageJSON);
   return [
     await libBuildOptions({
       format: 'esm',

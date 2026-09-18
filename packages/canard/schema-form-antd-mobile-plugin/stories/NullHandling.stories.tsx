@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react';
 
-import type { JsonSchema } from '@winglet/json-schema';
+import type { JSONSchema } from '@winglet/json-schema';
 
 import { Form, type FormHandle } from '@canard/schema-form';
 import { registerPlugin } from '@canard/schema-form';
@@ -49,7 +49,7 @@ export const NumberWithNull = () => {
         },
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   return (
     <div>
@@ -125,7 +125,7 @@ export const RadioGroupWithNull = () => {
         },
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   return (
     <div>
@@ -208,7 +208,7 @@ export const StringCheckboxWithNull = () => {
         },
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   return (
     <div>
@@ -292,7 +292,7 @@ export const StringSwitchWithNull = () => {
         },
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   return (
     <div>
@@ -367,7 +367,7 @@ export const SliderWithNull = () => {
         formType: 'slider',
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   return (
     <div>
@@ -475,7 +475,7 @@ export const ComplexNullScenarios = () => {
         formType: 'array',
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   return (
     <div>

@@ -1,7 +1,7 @@
 # @winglet/json-schema
 
 [![Typescript](https://img.shields.io/badge/typescript-✔-blue.svg)]()
-[![Json Schema](https://img.shields.io/badge/JsonSchema-{}-blue.svg)]()
+[![JSON Schema](https://img.shields.io/badge/JSONSchema-{}-blue.svg)]()
 
 ---
 
@@ -29,13 +29,13 @@ yarn add @winglet/json-schema
 
 ```typescript
 // 메인 내보내기 (모든 유틸리티 및 타입 정의)
-import { JsonSchemaScanner, isObjectSchema } from '@winglet/json-schema';
+import { JSONSchemaScanner, isObjectSchema } from '@winglet/json-schema';
 
 // 동기 스키마 스캐너
-import { JsonSchemaScanner } from '@winglet/json-schema/scanner';
+import { JSONSchemaScanner } from '@winglet/json-schema/scanner';
 
 // 비동기 스키마 스캐너
-import { JsonSchemaScannerAsync } from '@winglet/json-schema/async-scanner';
+import { JSONSchemaScannerAsync } from '@winglet/json-schema/async-scanner';
 
 // 스키마 타입 검사 유틸리티
 import {
@@ -53,8 +53,8 @@ import {
 package.json의 exports 설정을 기반으로 합니다:
 
 - `@winglet/json-schema` - 메인 내보내기 (모든 유틸리티, 스캐너, 타입 정의)
-- `@winglet/json-schema/scanner` - 동기 JSON Schema 스캐너 (JsonSchemaScanner)
-- `@winglet/json-schema/async-scanner` - 비동기 JSON Schema 스캐너 (JsonSchemaScannerAsync)
+- `@winglet/json-schema/scanner` - 동기 JSON Schema 스캐너 (JSONSchemaScanner)
+- `@winglet/json-schema/async-scanner` - 비동기 JSON Schema 스캐너 (JSONSchemaScannerAsync)
 - `@winglet/json-schema/filter` - 스키마 타입 검사 및 필터링 유틸리티 (isArraySchema, isObjectSchema 등)
 
 ---
@@ -80,8 +80,8 @@ Babel 등의 트랜스파일러를 사용하여 타겟 환경에 맞게 변환�
 
 ### 1. 스키마 탐색 및 유효성 검사
 
-- **[`JsonSchemaScanner`](./src/utils/JsonSchemaScanner/sync/JsonSchemaScanner.ts)**: JSON 스키마를 깊이 우선 탐색(DFS) 방식으로 순회하며 방문자(Visitor) 패턴을 적용하고 $ref 참조를 해결하는 클래스
-- **[`JsonSchemaScannerAsync`](./src/utils/JsonSchemaScanner/async/JsonSchemaScannerAsync.ts)**: 비동기 작업을 지원하는 JsonSchemaScanner 확장 클래스
+- **[`JSONSchemaScanner`](./src/utils/JSONSchemaScanner/sync/JSONSchemaScanner.ts)**: JSON 스키마를 깊이 우선 탐색(DFS) 방식으로 순회하며 방문자(Visitor) 패턴을 적용하고 $ref 참조를 해결하는 클래스
+- **[`JSONSchemaScannerAsync`](./src/utils/JSONSchemaScanner/async/JSONSchemaScannerAsync.ts)**: 비동기 작업을 지원하는 JSONSchemaScanner 확장 클래스
 
 ### 2. 타입 검증 및 필터링
 
@@ -101,10 +101,10 @@ Babel 등의 트랜스파일러를 사용하여 타겟 환경에 맞게 변환�
 
 ## 사용 예제
 
-### JsonSchemaScanner 사용하기
+### JSONSchemaScanner 사용하기
 
 ```typescript
-import { JsonSchemaScanner } from '@winglet/json-schema';
+import { JSONSchemaScanner } from '@winglet/json-schema';
 
 // 스키마 정의
 const schema = {
@@ -123,7 +123,7 @@ const schema = {
 };
 
 // Visitor 패턴으로 스키마 탐색
-const scanner = new JsonSchemaScanner({
+const scanner = new JSONSchemaScanner({
   visitor: {
     enter: (entry, context) => {
       console.log(`Enter: ${entry.path}`);
@@ -201,29 +201,29 @@ yarn jsonSchema test
 
 ### 주요 클래스 및 함수
 
-#### JsonSchemaScanner
+#### JSONSchemaScanner
 
 JSON 스키마를 순회하고 참조를 해결하는 클래스입니다.
 
 ```typescript
-class JsonSchemaScanner<ContextType = void> {
+class JSONSchemaScanner<ContextType = void> {
   constructor(props?: {
     visitor?: SchemaVisitor<ContextType>;
-    options?: JsonScannerOptions<ContextType>;
+    options?: JSONScannerOptions<ContextType>;
   });
   scan(schema: UnknownSchema): this;
   getValue<Schema extends UnknownSchema>(): Schema | undefined;
 }
 ```
 
-#### JsonSchemaScannerAsync
+#### JSONSchemaScannerAsync
 
-비동기 작업을 지원하는 JsonSchemaScanner 확장 클래스입니다.
+비동기 작업을 지원하는 JSONSchemaScanner 확장 클래스입니다.
 
 ```typescript
-class JsonSchemaScannerAsync<
+class JSONSchemaScannerAsync<
   ContextType = void,
-> extends JsonSchemaScanner<ContextType> {
+> extends JSONSchemaScanner<ContextType> {
   scanAsync(schema: UnknownSchema): Promise<this>;
   getValueAsync<Schema extends UnknownSchema>(): Promise<Schema | undefined>;
 }
@@ -244,13 +244,13 @@ function isNullSchema(schema: UnknownSchema): schema is NullSchema;
 
 ```typescript
 // 기본 JSON 스키마 타입
-type JsonSchema<Options extends Dictionary = object> =
-  | NumberSchema<Options, JsonSchema>
-  | StringSchema<Options, JsonSchema>
-  | BooleanSchema<Options, JsonSchema>
-  | ArraySchema<Options, JsonSchema>
-  | ObjectSchema<Options, JsonSchema>
-  | NullSchema<Options, JsonSchema>;
+type JSONSchema<Options extends Dictionary = object> =
+  | NumberSchema<Options, JSONSchema>
+  | StringSchema<Options, JSONSchema>
+  | BooleanSchema<Options, JSONSchema>
+  | ArraySchema<Options, JSONSchema>
+  | ObjectSchema<Options, JSONSchema>
+  | NullSchema<Options, JSONSchema>;
 
 // 값 타입
 type BooleanValue = boolean;
@@ -260,6 +260,21 @@ type ArrayValue = any[];
 type ObjectValue = Record<string, any>;
 type NullValue = null;
 ```
+
+---
+
+## 마이그레이션 안내 (0.15.0)
+
+이전 `Json*` 이름은 해당 `JSON*` 이름의 `@deprecated` 별칭으로 유지됩니다. 이 별칭들은 `Removed in 0.16.0`(0.16.0에서 제거)이므로, 업그레이드 전에 호출부를 새 이름으로 옮겨야 합니다.
+
+| 이전 이름                  | 새 이름                    |
+| -------------------------- | --------------------------- |
+| `JsonSchema`               | `JSONSchema`                |
+| `InferJsonSchema`          | `InferJSONSchema`           |
+| `JsonSchemaScanner`        | `JSONSchemaScanner`         |
+| `JsonSchemaScannerAsync`   | `JSONSchemaScannerAsync`    |
+| `JsonScannerOptions`       | `JSONScannerOptions`        |
+| `JsonScannerOptionsAsync`  | `JSONScannerOptionsAsync`   |
 
 ---
 

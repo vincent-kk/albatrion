@@ -313,7 +313,7 @@
 - [x] `packages/canard/schema-form/vitest.bench.config.ts` (env: node, include: bench/\*\*)
 - [x] `packages/canard/schema-form/package.json` 에 `"bench"` / `"bench:watch"` script
 - [x] 5개 시드:
-  - [x] `nodeFromJsonSchema.bench.ts` (flat/nested/oneOf/computed)
+  - [x] `nodeFromJSONSchema.bench.ts` (flat/nested/oneOf/computed)
   - [x] `branch-strategy-init.bench.ts` (oneOf 2×3 ~ 10×10, nested depth 3/5)
   - [x] `event-cascade.bench.ts` (flat 20 props × 5 setValue / derived chain / oneOf switch) — drain 비용에 묻힘, 보강 필요
   - [x] `find-node.bench.ts` (depth 3/7/12, wide fanout 10/50)
@@ -327,7 +327,7 @@
 | `recalculate`         | **32 ns/op** (deps 1~7 거의 일정) | 컴파일된 dynamic function 의 V8 인라이닝 효과. 우려 해소.             |
 | `findNode`            | depth 12 → 1.3μs, wide 50 → 0.4μs | subnodes 선형 스캔 우려 미미. 최적화 우선순위 낮음.                   |
 | `BranchStrategy init` | 2×3=46μs, 10×10=**448μs** (선형)  | **mount cost 의 주범**. 노드 수에 거의 선형.                          |
-| `nodeFromJsonSchema`  | flat 5=28μs, nested 7=50μs        | 작은 폼은 매우 빠름.                                                  |
+| `nodeFromJSONSchema`  | flat 5=28μs, nested 7=50μs        | 작은 폼은 매우 빠름.                                                  |
 | `event cascade`       | 모두 2.4ms (drain dominant)       | setTimeout(0) drain 비용에 묻힘. **보강 필요** (벤치 자체 설계 이슈). |
 
 ### 결론
@@ -394,7 +394,7 @@
    - `recalculate` 32ns/op (deps 영향 없음, 컴파일된 dynamic function 효과) — **우려 해소**
    - `findNode` 50 width 0.4μs, depth 12 1.3μs — **우려 해소**
    - `BranchStrategy init` 노드 수에 선형 (10×10 = 448μs) — **회귀 주범 확정**
-   - `nodeFromJsonSchema` flat 28μs
+   - `nodeFromJSONSchema` flat 28μs
    - `event cascade` setTimeout(0) drain 에 묻힘 — **마이크로벤치 자체 보강 필요 (follow-up)**
 
 #### 결과 파일

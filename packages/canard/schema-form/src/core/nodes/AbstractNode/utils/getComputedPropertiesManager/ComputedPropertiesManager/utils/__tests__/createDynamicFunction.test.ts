@@ -412,7 +412,7 @@ describe('createDynamicFunction', () => {
   });
 
   describe('error handling', () => {
-    it('should throw JsonSchemaError for invalid syntax', () => {
+    it('should throw JSONSchemaError for invalid syntax', () => {
       const pathManager = getPathManager();
       expect(() =>
         createDynamicFunction(pathManager, 'testField', 'return {'),

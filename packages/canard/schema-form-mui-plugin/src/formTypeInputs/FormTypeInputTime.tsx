@@ -14,7 +14,7 @@ import type {
 
 import type { MuiContext } from '../type';
 
-type TimeJsonSchema = StringSchema & {
+type TimeJSONSchema = StringSchema & {
   format: 'time';
   ampm?: boolean;
 };
@@ -22,7 +22,7 @@ type TimeJsonSchema = StringSchema & {
 interface FormTypeInputTimeProps
   extends FormTypeInputPropsWithSchema<
       string | null,
-      TimeJsonSchema,
+      TimeJSONSchema,
       MuiContext
     >,
     MuiContext {

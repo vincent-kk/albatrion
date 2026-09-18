@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { Form, type JsonSchema } from '../src';
+import { Form, type JSONSchema } from '../src';
 import StoryLayout from './components/StoryLayout';
 
 export default {
@@ -22,7 +22,7 @@ export const SimpleRefSchema = () => {
       },
     },
     required: ['name'],
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>();
 
@@ -54,7 +54,7 @@ export const NestedRefSchema = () => {
     properties: {
       person: { $ref: '#/$defs/Person' },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>();
 
@@ -76,7 +76,7 @@ export const ArrayRefSchema = () => {
       },
     },
     required: ['id'],
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>();
 
@@ -129,7 +129,7 @@ export const TreeSchema = () => {
         additionalProperties: false,
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>();
 
@@ -171,7 +171,7 @@ export const EscapedRefWithTildeAndSlash = () => {
         $ref: '#/$defs/config~1settings', // / → ~1 이스케이프
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>();
 
@@ -221,7 +221,7 @@ export const EscapedRefWithDotsAndWildcards = () => {
         $ref: '#/$defs/cache..manager', // 더블 점은 이스케이프되지 않음
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>();
 
@@ -276,7 +276,7 @@ export const EscapedRefWithComplexPaths = () => {
         $ref: '#/$defs/api~1v1~1users#endpoint/$defs/settings~0backup..config', // 틸드만 이스케이프, 더블 점은 그대로
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>();
 
@@ -336,7 +336,7 @@ export const DirectSubSchemaRef = () => {
         ],
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>();
 
@@ -388,7 +388,7 @@ export const DirectSubSchemaRefWithEscape = () => {
         $ref: '#/properties/api~1config/properties/cache*options/properties/max..size',
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>();
 
@@ -437,7 +437,7 @@ export const ArrayItemSubSchemaRef = () => {
         $ref: '#/properties/products~1list/items/properties/price~0info/properties/tax.rate',
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>();
 
@@ -505,7 +505,7 @@ export const ConditionalSubSchemaRef = () => {
         $ref: '#/properties/form~1config/allOf/1/then/properties/admin*privileges/properties/system~1control',
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>();
 

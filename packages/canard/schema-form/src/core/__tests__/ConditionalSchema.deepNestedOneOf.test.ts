@@ -2,8 +2,8 @@ import { describe, expect, it } from 'vitest';
 
 import { delay } from '@winglet/common-utils';
 
-import { nodeFromJsonSchema } from '@/schema-form/core';
-import type { JsonSchema } from '@/schema-form/types';
+import { nodeFromJSONSchema } from '@/schema-form/core';
+import type { JSONSchema } from '@/schema-form/types';
 
 import type { ObjectNode } from '../nodes/ObjectNode';
 import type { StringNode } from '../nodes/StringNode';
@@ -20,7 +20,7 @@ import type { StringNode } from '../nodes/StringNode';
  */
 describe('ConditionalSchema - Deep Nested OneOf with Reset Logic', () => {
   describe('3-level deep oneOf nesting', () => {
-    const createDeepNestedSchema = (): JsonSchema => ({
+    const createDeepNestedSchema = (): JSONSchema => ({
       type: 'object',
       properties: {
         level1Type: {
@@ -132,7 +132,7 @@ describe('ConditionalSchema - Deep Nested OneOf with Reset Logic', () => {
 
     it('should handle deep value restoration through 3 levels of oneOf', async () => {
       const schema = createDeepNestedSchema();
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: schema,
       }) as ObjectNode;
@@ -225,7 +225,7 @@ describe('ConditionalSchema - Deep Nested OneOf with Reset Logic', () => {
 
     it('should handle cross-level2 switching (A1 → A2)', async () => {
       const schema = createDeepNestedSchema();
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: schema,
       }) as ObjectNode;
@@ -283,7 +283,7 @@ describe('ConditionalSchema - Deep Nested OneOf with Reset Logic', () => {
 
     it('should handle top-level switch (A → B) and completely reset nested structure', async () => {
       const schema = createDeepNestedSchema();
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: schema,
       }) as ObjectNode;
@@ -330,7 +330,7 @@ describe('ConditionalSchema - Deep Nested OneOf with Reset Logic', () => {
   });
 
   describe('Reset logic: isolation mode vs non-isolation mode', () => {
-    const createResetTestSchema = (): JsonSchema => ({
+    const createResetTestSchema = (): JSONSchema => ({
       type: 'object',
       properties: {
         variant: {
@@ -367,7 +367,7 @@ describe('ConditionalSchema - Deep Nested OneOf with Reset Logic', () => {
 
     it('should restore same-type field value when switching back (isolation mode)', async () => {
       const schema = createResetTestSchema();
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: schema,
       }) as ObjectNode;
@@ -419,7 +419,7 @@ describe('ConditionalSchema - Deep Nested OneOf with Reset Logic', () => {
 
     it('should use initialValue when preferInitialValue=true (non-isolation, same-type alternated)', async () => {
       const schema = createResetTestSchema();
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: schema,
       }) as ObjectNode;
@@ -454,7 +454,7 @@ describe('ConditionalSchema - Deep Nested OneOf with Reset Logic', () => {
 
     it('should not restore different-type field even with same name', async () => {
       const schema = createResetTestSchema();
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: schema,
       }) as ObjectNode;
@@ -495,7 +495,7 @@ describe('ConditionalSchema - Deep Nested OneOf with Reset Logic', () => {
 
     it('should handle variant-specific fields correctly (created/destroyed on switch)', async () => {
       const schema = createResetTestSchema();
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: schema,
       }) as ObjectNode;
@@ -539,7 +539,7 @@ describe('ConditionalSchema - Deep Nested OneOf with Reset Logic', () => {
 
   describe('AlternatedNode and type matching edge cases', () => {
     it('should handle null/undefined values in alternatedNode scenario', async () => {
-      const schema: JsonSchema = {
+      const schema: JSONSchema = {
         type: 'object',
         properties: {
           mode: {
@@ -564,7 +564,7 @@ describe('ConditionalSchema - Deep Nested OneOf with Reset Logic', () => {
         ],
       };
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: schema,
       }) as ObjectNode;
@@ -597,7 +597,7 @@ describe('ConditionalSchema - Deep Nested OneOf with Reset Logic', () => {
     });
 
     it('should handle complex object type in oneOf with nested properties', async () => {
-      const schema: JsonSchema = {
+      const schema: JSONSchema = {
         type: 'object',
         properties: {
           objectType: {
@@ -634,7 +634,7 @@ describe('ConditionalSchema - Deep Nested OneOf with Reset Logic', () => {
         ],
       };
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: schema,
       }) as ObjectNode;
@@ -680,7 +680,7 @@ describe('ConditionalSchema - Deep Nested OneOf with Reset Logic', () => {
     });
 
     it('should properly handle array type fields in oneOf variants', async () => {
-      const schema: JsonSchema = {
+      const schema: JSONSchema = {
         type: 'object',
         properties: {
           arrayMode: {
@@ -711,7 +711,7 @@ describe('ConditionalSchema - Deep Nested OneOf with Reset Logic', () => {
         ],
       };
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: schema,
       }) as ObjectNode;
@@ -752,7 +752,7 @@ describe('ConditionalSchema - Deep Nested OneOf with Reset Logic', () => {
 
   describe('Non-isolation mode edge cases', () => {
     it('should handle non-terminal type (Object) alternatedNode in non-isolation mode', async () => {
-      const schema: JsonSchema = {
+      const schema: JSONSchema = {
         type: 'object',
         properties: {
           variant: {
@@ -789,7 +789,7 @@ describe('ConditionalSchema - Deep Nested OneOf with Reset Logic', () => {
         ],
       };
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: schema,
       }) as ObjectNode;
@@ -822,7 +822,7 @@ describe('ConditionalSchema - Deep Nested OneOf with Reset Logic', () => {
     });
 
     it('should handle child node setValue on oneOf internal field', async () => {
-      const schema: JsonSchema = {
+      const schema: JSONSchema = {
         type: 'object',
         properties: {
           mode: {
@@ -857,7 +857,7 @@ describe('ConditionalSchema - Deep Nested OneOf with Reset Logic', () => {
         ],
       };
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: schema,
       }) as ObjectNode;
@@ -897,7 +897,7 @@ describe('ConditionalSchema - Deep Nested OneOf with Reset Logic', () => {
     });
 
     it('should use initialValue for new field without alternatedNode in non-isolation mode', async () => {
-      const schema: JsonSchema = {
+      const schema: JSONSchema = {
         type: 'object',
         properties: {
           type: {
@@ -922,7 +922,7 @@ describe('ConditionalSchema - Deep Nested OneOf with Reset Logic', () => {
         ],
       };
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: schema,
       }) as ObjectNode;
@@ -952,7 +952,7 @@ describe('ConditionalSchema - Deep Nested OneOf with Reset Logic', () => {
     });
 
     it('should handle setValue with same variant condition (no oneOf switch)', async () => {
-      const schema: JsonSchema = {
+      const schema: JSONSchema = {
         type: 'object',
         properties: {
           category: {
@@ -978,7 +978,7 @@ describe('ConditionalSchema - Deep Nested OneOf with Reset Logic', () => {
         ],
       };
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: schema,
       }) as ObjectNode;
@@ -1019,7 +1019,7 @@ describe('ConditionalSchema - Deep Nested OneOf with Reset Logic', () => {
     });
 
     it('should handle mixed reset scenario with different field types', async () => {
-      const schema: JsonSchema = {
+      const schema: JSONSchema = {
         type: 'object',
         properties: {
           variant: {
@@ -1068,7 +1068,7 @@ describe('ConditionalSchema - Deep Nested OneOf with Reset Logic', () => {
         ],
       };
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: schema,
       }) as ObjectNode;
@@ -1119,7 +1119,7 @@ describe('ConditionalSchema - Deep Nested OneOf with Reset Logic', () => {
 
   describe('Value preservation patterns', () => {
     it('should preserve shared fields across oneOf switches when types match', async () => {
-      const schema: JsonSchema = {
+      const schema: JSONSchema = {
         type: 'object',
         properties: {
           category: {
@@ -1153,7 +1153,7 @@ describe('ConditionalSchema - Deep Nested OneOf with Reset Logic', () => {
         ],
       };
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: schema,
       }) as ObjectNode;
@@ -1210,7 +1210,7 @@ describe('ConditionalSchema - Deep Nested OneOf with Reset Logic', () => {
     });
 
     it('should handle rapid sequential switches correctly', async () => {
-      const schema: JsonSchema = {
+      const schema: JSONSchema = {
         type: 'object',
         properties: {
           state: {
@@ -1241,7 +1241,7 @@ describe('ConditionalSchema - Deep Nested OneOf with Reset Logic', () => {
         ],
       };
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: schema,
       }) as ObjectNode;

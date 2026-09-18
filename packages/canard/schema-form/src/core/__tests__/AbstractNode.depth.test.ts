@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { nodeFromJsonSchema } from '@/schema-form/core';
+import { nodeFromJSONSchema } from '@/schema-form/core';
 
 import type { ArrayNode } from '../nodes/ArrayNode';
 import type { NumberNode } from '../nodes/NumberNode';
@@ -18,7 +18,7 @@ const setName = (node: SchemaNode, name: string, actor: SchemaNode) => {
 
 describe('AbstractNode depth calculation', () => {
   it('should calculate depth correctly for root node', () => {
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       jsonSchema: {
         type: 'string',
       },
@@ -30,7 +30,7 @@ describe('AbstractNode depth calculation', () => {
   });
 
   it('should calculate depth correctly for nested object properties', () => {
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       jsonSchema: {
         type: 'object',
         properties: {
@@ -66,7 +66,7 @@ describe('AbstractNode depth calculation', () => {
   });
 
   it('should calculate depth correctly for array items', async () => {
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       jsonSchema: {
         type: 'array',
         items: {
@@ -100,7 +100,7 @@ describe('AbstractNode depth calculation', () => {
   });
 
   it('should calculate depth correctly for deeply nested mixed structures', async () => {
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       jsonSchema: {
         type: 'object',
         properties: {
@@ -171,7 +171,7 @@ describe('AbstractNode depth calculation', () => {
   });
 
   it('should update depth correctly when nodes are moved or renamed', () => {
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       jsonSchema: {
         type: 'object',
         properties: {
@@ -203,7 +203,7 @@ describe('AbstractNode depth calculation', () => {
   });
 
   it('should handle depth for nodes with special characters in names', () => {
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       jsonSchema: {
         type: 'object',
         properties: {
@@ -233,7 +233,7 @@ describe('AbstractNode depth calculation', () => {
   });
 
   it('should calculate depth correctly for terminal object nodes', () => {
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       jsonSchema: {
         type: 'object',
         properties: {
@@ -265,7 +265,7 @@ describe('AbstractNode depth calculation', () => {
   });
 
   it('should maintain correct depth after array operations', async () => {
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       jsonSchema: {
         type: 'array',
         items: {
@@ -309,7 +309,7 @@ describe('AbstractNode depth calculation', () => {
   });
 
   it('should calculate depth correctly for root array node', async () => {
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       jsonSchema: {
         type: 'array',
         items: {
@@ -328,7 +328,7 @@ describe('AbstractNode depth calculation', () => {
   });
 
   it('should verify depth matches the number of path segments', () => {
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       jsonSchema: {
         type: 'object',
         properties: {

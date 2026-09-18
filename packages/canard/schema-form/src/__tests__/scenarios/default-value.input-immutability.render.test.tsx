@@ -3,7 +3,7 @@ import { type FC } from 'react';
 import '@testing-library/jest-dom';
 import { describe, expect, it } from 'vitest';
 
-import type { JsonSchema } from '@winglet/json-schema';
+import type { JSONSchema } from '@winglet/json-schema';
 
 import type { FormTypeInputProps } from '@/schema-form';
 
@@ -49,7 +49,7 @@ describe('default value — user input immutability (BUG-2 regression)', () => {
           },
         },
       },
-    } satisfies JsonSchema;
+    } satisfies JSONSchema;
     const userDefault = { profile: { name: 'Alice' } };
     const snapshot = structuredClone(userDefault);
 
@@ -82,7 +82,7 @@ describe('default value — user input immutability (BUG-2 regression)', () => {
           },
         },
       },
-    } satisfies JsonSchema;
+    } satisfies JSONSchema;
     const frozen = { config: Object.freeze({ theme: 'dark' }) };
 
     const form = await renderForm(schema, {

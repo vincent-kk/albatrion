@@ -8,7 +8,7 @@ schema-form 도메인 에러 클래스 모음. 모든 에러는 `@winglet/common
 
 - 각 에러 클래스는 `(code: string, message: string, details: ErrorDetails)` 생성자 패턴
 - 각 에러 클래스와 함께 `is*Error(error): error is XxxError` 타입 가드 함수 제공
-- `this.name` 을 클래스명으로 명시적 설정 (`this.name = 'JsonSchemaError'` 등)
+- `this.name` 을 클래스명으로 명시적 설정 (`this.name = 'JSONSchemaError'` 등)
 - `details` 에 디버깅에 필요한 컨텍스트 정보 포함 (jsonSchema, path, plugin 등)
 
 ## Boundaries

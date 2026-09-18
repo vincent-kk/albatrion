@@ -3,9 +3,9 @@ import type { Fn } from '@aileron/declare';
 import type {
   AllowedValue,
   InferValueType,
-  JsonSchemaType,
-  JsonSchemaWithRef,
-  JsonSchemaWithVirtual,
+  JSONSchemaType,
+  JSONSchemaWithRef,
+  JSONSchemaWithVirtual,
   ValidatorFactory,
 } from '@/schema-form/types';
 
@@ -20,7 +20,7 @@ import type { HandleChange } from './value';
  * @typeParam Schema - JSON Schema type of the node to be created
  */
 export type SchemaNodeFactory<
-  Schema extends JsonSchemaWithVirtual = JsonSchemaWithVirtual,
+  Schema extends JSONSchemaWithVirtual = JSONSchemaWithVirtual,
 > = Fn<[props: NodeFactoryProps<Schema>], SchemaNode>;
 
 /**
@@ -39,14 +39,14 @@ export type SchemaNodeFactory<
  * @property required - Indicates whether the value is required by its parent
  */
 export interface SchemaNodeConstructorProps<
-  Schema extends JsonSchemaWithVirtual,
+  Schema extends JSONSchemaWithVirtual,
   Value extends AllowedValue = InferValueType<Schema>,
 > {
   name?: string;
   scope?: string;
   variant?: number;
   jsonSchema: Schema;
-  schemaType: JsonSchemaType;
+  schemaType: JSONSchemaType;
   required?: boolean;
   nullable: boolean;
   defaultValue?: Value;
@@ -63,7 +63,7 @@ export interface SchemaNodeConstructorProps<
  * @property nodeFactory - Factory used to construct child nodes
  */
 export interface BranchNodeConstructorProps<
-  Schema extends JsonSchemaWithVirtual,
+  Schema extends JSONSchemaWithVirtual,
 > extends SchemaNodeConstructorProps<Schema> {
   nodeFactory: SchemaNodeFactory;
 }
@@ -74,7 +74,7 @@ export interface BranchNodeConstructorProps<
  * @property refNodes - External nodes referenced by this virtual node
  */
 export interface VirtualNodeConstructorProps<
-  Schema extends JsonSchemaWithVirtual,
+  Schema extends JSONSchemaWithVirtual,
 > extends SchemaNodeConstructorProps<Schema> {
   refNodes?: SchemaNode[];
 }
@@ -84,13 +84,13 @@ export interface VirtualNodeConstructorProps<
  * Combines constructor options while replacing `jsonSchema` with a `$ref`-capable schema.
  * @typeParam Schema - Node's JSON Schema type
  */
-export type NodeFactoryProps<Schema extends JsonSchemaWithVirtual> = Omit<
+export type NodeFactoryProps<Schema extends JSONSchemaWithVirtual> = Omit<
   SchemaNodeConstructorProps<Schema> &
     BranchNodeConstructorProps<Schema> &
     VirtualNodeConstructorProps<Schema>,
   'jsonSchema' | 'schemaType' | 'nullable'
 > & {
-  jsonSchema: JsonSchemaWithRef;
-  schemaType?: JsonSchemaType;
+  jsonSchema: JSONSchemaWithRef;
+  schemaType?: JSONSchemaType;
   nullable?: boolean;
 };

@@ -17,18 +17,18 @@ node tree lifecycle. Supports both controlled and uncontrolled usage via
 
 | Prop                       | Type                                                   | Default                  | Description                                                       |
 | -------------------------- | ------------------------------------------------------ | ------------------------ | ----------------------------------------------------------------- |
-| `jsonSchema`               | `JsonSchema`                                           | —                        | **Required.** JSON Schema defining the form structure             |
+| `jsonSchema`               | `JSONSchema`                                           | —                        | **Required.** JSON Schema defining the form structure             |
 | `defaultValue`             | `Value`                                                | `undefined`              | Initial form value                                                |
 | `onChange`                 | `(value: Value) => void`                               | —                        | Called when any field value changes                               |
 | `onSubmit`                 | `(value: Value) => Promise<void> \| void`              | —                        | Called on valid form submit (after validation passes)             |
-| `onValidate`               | `(errors: JsonSchemaError[]) => void`                  | —                        | Called after each validation run                                  |
+| `onValidate`               | `(errors: JSONSchemaError[]) => void`                  | —                        | Called after each validation run                                  |
 | `onStateChange`            | `(state: NodeStateFlags) => void`                      | —                        | Called when dirty/touched/validated state changes                 |
 | `showError`                | `boolean \| ShowError`                                 | `ShowError.DirtyTouched` | When to display validation errors                                 |
 | `validationMode`           | `ValidationMode`                                       | `OnChange \| OnRequest`  | When validation runs                                              |
 | `validatorFactory`         | `ValidatorFactory`                                     | plugin default           | Override validator factory per form                               |
 | `readOnly`                 | `boolean`                                              | `false`                  | Apply `readOnly` to all inputs                                    |
 | `disabled`                 | `boolean`                                              | `false`                  | Apply `disabled` to all inputs                                    |
-| `errors`                   | `JsonSchemaError[]`                                    | `undefined`              | Inject external validation errors                                 |
+| `errors`                   | `JSONSchemaError[]`                                    | `undefined`              | Inject external validation errors                                 |
 | `formTypeInputDefinitions` | `FormTypeInputDefinition[]`                            | `[]`                     | Form-level input component definitions                            |
 | `formTypeInputMap`         | `FormTypeInputMap`                                     | `{}`                     | Path-based input component overrides                              |
 | `CustomFormTypeRenderer`   | `ComponentType<FormTypeRendererProps>`                 | plugin default           | Override the entire field renderer                                |
@@ -115,8 +115,8 @@ interface FormHandle<Schema, Value> {
   getState(): NodeStateFlags;
   setState(state: NodeStateFlags): void;
   clearState(): void;
-  getErrors(): JsonSchemaError[];
-  validate(): Promise<JsonSchemaError[]>;
+  getErrors(): JSONSchemaError[];
+  validate(): Promise<JSONSchemaError[]>;
   showError(visible: boolean): void;
   focus(path: string): void; // focuses input at path
   select(path: string): void; // selects input at path
@@ -324,12 +324,12 @@ interface SchemaFormPlugin {
 ```ts
 interface ValidatorPlugin {
   bind(instance: any): void;
-  compile(jsonSchema: JsonSchema): ValidateFunction;
+  compile(jsonSchema: JSONSchema): ValidateFunction;
 }
 
 type ValidateFunction = (
   value: any,
-) => JsonSchemaError[] | null | Promise<JsonSchemaError[] | null>;
+) => JSONSchemaError[] | null | Promise<JSONSchemaError[] | null>;
 ```
 
 ## `FormTypeInputProps` Interface
@@ -340,7 +340,7 @@ All custom input components registered via `formTypeInputDefinitions` receive th
 interface FormTypeInputProps<Value, Context, WatchValues, Schema, Node> {
   jsonSchema: Schema;
   node: Node;
-  type: JsonSchemaType; // 'string' | 'number' | 'boolean' | ...
+  type: JSONSchemaType; // 'string' | 'number' | 'boolean' | ...
   name: string;
   path: string;
   required: boolean;
@@ -350,7 +350,7 @@ interface FormTypeInputProps<Value, Context, WatchValues, Schema, Node> {
   value: Value | undefined;
   defaultValue: Value | undefined;
   onChange: SetStateFnWithOptions<Value | undefined>;
-  errors: JsonSchemaError[];
+  errors: JSONSchemaError[];
   errorVisible: boolean;
   watchValues: WatchValues; // values from computed.watch paths
   onFileAttach: (file: File | File[] | undefined) => void;
@@ -369,8 +369,8 @@ interface FormTypeInputProps<Value, Context, WatchValues, Schema, Node> {
 interface SchemaNode {
   // Identity
   readonly type: string; // node type ('string', 'object', etc.)
-  readonly schemaType: JsonSchemaType;
-  readonly jsonSchema: JsonSchema;
+  readonly schemaType: JSONSchemaType;
+  readonly jsonSchema: JSONSchema;
   readonly required: boolean;
   readonly nullable: boolean;
 
@@ -398,12 +398,12 @@ interface SchemaNode {
   readonly touched: boolean;
   readonly validated: boolean;
   readonly initialized: boolean;
-  readonly errors: JsonSchemaError[];
-  readonly globalErrors: JsonSchemaError[];
+  readonly errors: JSONSchemaError[];
+  readonly globalErrors: JSONSchemaError[];
   readonly globalState: NodeStateFlags;
 
   // Validation
-  validate(): Promise<JsonSchemaError[]>;
+  validate(): Promise<JSONSchemaError[]>;
 
   // Navigation
   find(path: string): SchemaNode | undefined;
@@ -451,7 +451,7 @@ if (isArrayNode(node)) {
 
 ```ts
 import {
-  isJsonSchemaError,
+  isJSONSchemaError,
   isSchemaFormError,
   isUnhandledError,
   isValidationError,
@@ -462,7 +462,7 @@ import {
 
 ```ts
 type FormatError = (
-  error: JsonSchemaError,
+  error: JSONSchemaError,
   node: SchemaNode,
   context: Dictionary,
 ) => ReactNode;
@@ -501,13 +501,13 @@ jsonSchema:                Schema                           // required
 defaultValue?:             Value
 onChange?:                 (value: Value) => void
 onSubmit?:                 (value: Value) => Promise<void> | void
-onValidate?:               (errors: JsonSchemaError[]) => void
+onValidate?:               (errors: JSONSchemaError[]) => void
 onStateChange?:            (state: NodeStateFlags) => void
 showError?:                boolean | ShowError              // default: DirtyTouched
 validationMode?:           ValidationMode                  // default: OnChange|OnRequest
 readOnly?:                 boolean
 disabled?:                 boolean
-errors?:                   JsonSchemaError[]
+errors?:                   JSONSchemaError[]
 formTypeInputDefinitions?: FormTypeInputDefinition[]
 formTypeInputMap?:         FormTypeInputMap
 CustomFormTypeRenderer?:   ComponentType<FormTypeRendererProps>
@@ -524,8 +524,8 @@ setValue(v, opts?): void
 getState():         NodeStateFlags
 setState(s):        void
 clearState():       void
-getErrors():        JsonSchemaError[]
-validate():         Promise<JsonSchemaError[]>
+getErrors():        JSONSchemaError[]
+validate():         Promise<JSONSchemaError[]>
 showError(b):       void
 focus(path):        void
 select(path):       void
@@ -557,7 +557,7 @@ useFormSubmit(ref)                     → { submit, pending }
 useSchemaNodeTracker(node, mask?)      → version: number
 useSchemaNodeSubscribe(node, listener) → void
 useChildNodeComponentMap(node)         → Map<string, ChildNodeComponent>
-useChildNodeErrors(node)               → JsonSchemaError[]
+useChildNodeErrors(node)               → JSONSchemaError[]
 ```
 
 </ForAI>

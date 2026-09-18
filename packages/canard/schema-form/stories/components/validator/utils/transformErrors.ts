@@ -1,11 +1,11 @@
-import type { JsonSchemaError } from '@canard/schema-form';
+import type { JSONSchemaError } from '@canard/schema-form';
 import type { ErrorObject } from 'ajv';
 
 import { JSONPointer as $ } from '@winglet/json/pointer';
 
-export const transformErrors = (errors: ErrorObject[]): JsonSchemaError[] => {
+export const transformErrors = (errors: ErrorObject[]): JSONSchemaError[] => {
   if (!Array.isArray(errors)) return [];
-  const result = new Array<JsonSchemaError>(errors.length);
+  const result = new Array<JSONSchemaError>(errors.length);
   for (let i = 0, l = errors.length; i < l; i++) {
     const ajvError = errors[i];
     result[i] = {

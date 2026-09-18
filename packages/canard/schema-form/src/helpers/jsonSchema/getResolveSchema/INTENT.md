@@ -2,7 +2,7 @@
 
 ## Purpose
 
-JSON Schema 내 `$ref` 참조를 해석하는 함수를 생성한다. 참조 테이블을 구축하고 `JsonSchemaScanner`를 통해 최대 깊이 제한과 함께 재귀 참조를 안전하게 해석한다.
+JSON Schema 내 `$ref` 참조를 해석하는 함수를 생성한다. 참조 테이블을 구축하고 `JSONSchemaScanner`를 통해 최대 깊이 제한과 함께 재귀 참조를 안전하게 해석한다.
 
 ## Conventions
 
@@ -10,7 +10,7 @@ JSON Schema 내 `$ref` 참조를 해석하는 함수를 생성한다. 참조 테
 - `getResolveSchema(jsonSchema, maxDepth?)` → `ResolveSchema | null`
 - `$ref`가 없는 스키마: `null` 반환 (스캐너 불필요)
 - `maxDepth` 기본값: 1 (무한 재귀 방지)
-- `ResolveSchema` 타입: `(schema: JsonSchemaWithRef) => JsonSchemaWithVirtual | undefined`
+- `ResolveSchema` 타입: `(schema: JSONSchemaWithRef) => JSONSchemaWithVirtual | undefined`
 - `preferredSchema`($ref 외 필드)가 있으면 참조 스키마와 병합하여 반환
 
 ## Boundaries

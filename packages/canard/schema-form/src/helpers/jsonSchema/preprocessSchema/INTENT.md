@@ -2,7 +2,7 @@
 
 ## Purpose
 
-JSON Schema를 폼 시스템에서 사용하기 전에 전처리한다. `JsonSchemaScanner`로 스키마 트리를 순회하며 virtual 스키마 변환과 oneOf 변형을 적용한다.
+JSON Schema를 폼 시스템에서 사용하기 전에 전처리한다. `JSONSchemaScanner`로 스키마 트리를 순회하며 virtual 스키마 변환과 oneOf 변형을 적용한다.
 
 ## Conventions
 

@@ -7,7 +7,7 @@ import {
   Form,
   type FormHandle,
   type FormTypeRendererProps,
-  type JsonSchema,
+  type JSONSchema,
   NodeEventType,
   NodeState,
   registerPlugin,
@@ -42,7 +42,7 @@ export const OnStateChangeCallback = () => {
         },
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<any>({});
   const [globalState, setGlobalState] = useState<NodeStateFlags>({});
@@ -162,7 +162,7 @@ export const ClearStateMethod = () => {
         items: { type: 'string' },
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<any>({});
   const [globalState, setGlobalState] = useState<NodeStateFlags>({});
@@ -327,7 +327,7 @@ export const GetStateMethod = () => {
         },
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<any>({});
   const [globalState, setGlobalState] = useState<NodeStateFlags>({});
@@ -503,7 +503,7 @@ export const StateWithNestedArrays = () => {
         },
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<any>({
     title: 'Shopping List',
@@ -673,7 +673,7 @@ export const SubtreeStateManagement = () => {
         },
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const defaultValue = {
     title: 'My Article',
@@ -1014,7 +1014,7 @@ export const ResetSubtreeMethod = () => {
         },
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<any>({});
   const [globalState, setGlobalState] = useState<NodeStateFlags>({});
@@ -1270,7 +1270,7 @@ export const ClearStateVsReset = () => {
       name: { type: 'string' },
       email: { type: 'string' },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const defaultValue = { name: 'John', email: 'john@example.com' };
 
@@ -1579,7 +1579,7 @@ export const FormHandleSetState = () => {
   );
 };
 
-const formHandleSetStateSchema: JsonSchema = {
+const formHandleSetStateSchema: JSONSchema = {
   type: 'object',
   required: ['profile', 'settings'],
   properties: {
@@ -1827,7 +1827,7 @@ export const ArraySubtreeState = () => {
   );
 };
 
-const arraySubtreeStateSchema: JsonSchema = {
+const arraySubtreeStateSchema: JSONSchema = {
   type: 'object',
   required: ['items'],
   properties: {
@@ -2002,7 +2002,7 @@ export const ConditionalSchemaState = () => {
   );
 };
 
-const conditionalSchemaStateSchema: JsonSchema = {
+const conditionalSchemaStateSchema: JSONSchema = {
   type: 'object',
   required: ['name', 'type'],
   properties: {

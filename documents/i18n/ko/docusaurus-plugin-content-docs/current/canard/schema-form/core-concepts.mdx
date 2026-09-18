@@ -44,7 +44,7 @@ const schema = {
 | -------------- | ------------------- | ----------------------------------- |
 | `value`        | `any`               | Current value                       |
 | `defaultValue` | `any`               | Value at initialization             |
-| `errors`       | `JsonSchemaError[]` | Validation errors for this node     |
+| `errors`       | `JSONSchemaError[]` | Validation errors for this node     |
 | `dirty`        | `boolean`           | Value changed since initialization  |
 | `touched`      | `boolean`           | User has interacted with this field |
 | `validated`    | `boolean`           | Validation has been run             |
@@ -120,11 +120,11 @@ const definition: FormTypeInputDefinition = {
 
 // Hint object available in test function:
 type Hint = {
-  type: JsonSchemaType;       // 'string' | 'number' | 'boolean' | ...
+  type: JSONSchemaType;       // 'string' | 'number' | 'boolean' | ...
   path: string;               // JSONPointer path
   required: boolean;
   nullable: boolean;
-  jsonSchema: JsonSchema;
+  jsonSchema: JSONSchema;
   format?: string;
   formType?: string;          // custom jsonSchema.formType field
 };
@@ -282,7 +282,7 @@ enum ShowError {
 ### Error Structure
 
 ```ts
-interface JsonSchemaError {
+interface JSONSchemaError {
   dataPath: string; // JSONPointer to the failing field
   keyword: string; // JSON Schema keyword (e.g., 'minLength', 'required')
   message: string;
@@ -326,7 +326,7 @@ RequestRemount; // external: force full component remount
 | `FormTypeRendererProps`                                  | Props for `FormGroup`/`FormLabel`/`FormInput`/`FormError` renderer components                              |
 | `SchemaFormPlugin`                                       | Plugin object with optional renderer components + `formTypeInputDefinitions` + `validator` + `formatError` |
 | `ValidatorPlugin`                                        | `{ bind(instance), compile(jsonSchema) → ValidateFunction }`                                               |
-| `ValidateFunction`                                       | `(value) => JsonSchemaError[] \| null \| Promise<...>`                                                     |
+| `ValidateFunction`                                       | `(value) => JSONSchemaError[] \| null \| Promise<...>`                                                     |
 | `computed` / `&computed`                                 | JSON Schema extension for reactive field properties                                                        |
 | `&if`                                                    | JSON Schema extension — expression to activate a `oneOf`/`anyOf` branch                                    |
 | `enhancedValue`                                          | Value including virtual/conditional field values — used for validation                                     |

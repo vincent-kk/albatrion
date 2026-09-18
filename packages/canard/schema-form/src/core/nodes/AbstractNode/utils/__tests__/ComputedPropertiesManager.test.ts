@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import type { JsonSchemaWithVirtual } from '@/schema-form/types';
+import type { JSONSchemaWithVirtual } from '@/schema-form/types';
 
 import { ComputedPropertiesManager } from '../getComputedPropertiesManager/ComputedPropertiesManager';
 
@@ -21,11 +21,11 @@ function setDependenciesAndRecalculate(
 
 describe('new ComputedPropertiesManager', () => {
   it('should create compute functions for basic schema', () => {
-    const schema: JsonSchemaWithVirtual = {
+    const schema: JSONSchemaWithVirtual = {
       type: 'string',
       title: 'Test Field',
     };
-    const rootSchema: JsonSchemaWithVirtual = {
+    const rootSchema: JSONSchemaWithVirtual = {
       type: 'object',
       properties: {
         test: schema,
@@ -229,7 +229,7 @@ describe('new ComputedPropertiesManager', () => {
   });
 
   it('should handle schema without computed properties', () => {
-    const schema: JsonSchemaWithVirtual = {
+    const schema: JSONSchemaWithVirtual = {
       type: 'boolean',
     };
     const rootSchema: any = { type: 'object' };
@@ -263,11 +263,11 @@ describe('new ComputedPropertiesManager', () => {
   });
 
   it('should handle boolean values directly set', () => {
-    const visibleSchema: JsonSchemaWithVirtual = {
+    const visibleSchema: JSONSchemaWithVirtual = {
       type: 'string',
       visible: false,
     };
-    const readOnlySchema: JsonSchemaWithVirtual = {
+    const readOnlySchema: JSONSchemaWithVirtual = {
       type: 'string',
       readOnly: true,
     };
@@ -783,7 +783,7 @@ describe('new ComputedPropertiesManager', () => {
     });
 
     it('should be false when schema has no computed properties', () => {
-      const schema: JsonSchemaWithVirtual = {
+      const schema: JSONSchemaWithVirtual = {
         type: 'string',
       };
       const rootSchema: any = { type: 'object' };
@@ -827,7 +827,7 @@ describe('new ComputedPropertiesManager', () => {
     });
 
     it('should return undefined when pristine is not defined', () => {
-      const schema: JsonSchemaWithVirtual = {
+      const schema: JSONSchemaWithVirtual = {
         type: 'string',
       };
       const rootSchema: any = { type: 'object' };
@@ -868,7 +868,7 @@ describe('new ComputedPropertiesManager', () => {
     });
 
     it('should return undefined when derived is not defined', () => {
-      const schema: JsonSchemaWithVirtual = {
+      const schema: JSONSchemaWithVirtual = {
         type: 'string',
       };
       const rootSchema: any = { type: 'object' };

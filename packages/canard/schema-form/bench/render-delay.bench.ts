@@ -2,8 +2,8 @@ import { bench, describe } from 'vitest';
 
 import { clone } from '@winglet/common-utils/object';
 
-import { ValidationMode, nodeFromJsonSchema } from '@/schema-form/core';
-import type { JsonSchema } from '@/schema-form/types';
+import { ValidationMode, nodeFromJSONSchema } from '@/schema-form/core';
+import type { JSONSchema } from '@/schema-form/types';
 
 /**
  * Initial render-delay regression guard.
@@ -18,7 +18,7 @@ import type { JsonSchema } from '@/schema-form/types';
  * "Render delay" here is the node-tree mount — the dominant cost of the first
  * paint (React reconciliation is over-render-free; the bottleneck is building
  * the node tree). It is measured WITHOUT JSDOM so the number is React-mount
- * independent, matching `nodeFromJsonSchema.bench.ts`.
+ * independent, matching `nodeFromJSONSchema.bench.ts`.
  *
  * Two layers are tracked so a regression points at its cause:
  *   [mount] full node-tree construction (the headline render delay)
@@ -36,7 +36,7 @@ const VALIDATION_MODE = ValidationMode.OnChange | ValidationMode.OnRequest;
 const noop = () => {};
 
 // --- small: 5 flat terminals -------------------------------------------------
-const smallSchema: JsonSchema = {
+const smallSchema: JSONSchema = {
   type: 'object',
   properties: {
     a: { type: 'string', default: 'A' },
@@ -49,11 +49,11 @@ const smallSchema: JsonSchema = {
 const smallDefault = { a: 'A', b: 1, c: true, d: 'D', e: 2 };
 
 // --- medium: nested, 25 terminals across 5 sub-objects -----------------------
-const buildMediumSchema = (): { schema: JsonSchema; value: object } => {
-  const properties: Record<string, JsonSchema> = {};
+const buildMediumSchema = (): { schema: JSONSchema; value: object } => {
+  const properties: Record<string, JSONSchema> = {};
   const value: Record<string, any> = {};
   for (let g = 0; g < 5; g++) {
-    const group: Record<string, JsonSchema> = {};
+    const group: Record<string, JSONSchema> = {};
     const groupValue: Record<string, any> = {};
     for (let f = 0; f < 5; f++) {
       group[`field${f}`] = { type: 'string', default: `g${g}f${f}` };
@@ -66,11 +66,11 @@ const buildMediumSchema = (): { schema: JsonSchema; value: object } => {
 };
 
 // --- large: 150 terminals, mixed types, 2 levels deep ------------------------
-const buildLargeSchema = (): { schema: JsonSchema; value: object } => {
-  const properties: Record<string, JsonSchema> = {};
+const buildLargeSchema = (): { schema: JSONSchema; value: object } => {
+  const properties: Record<string, JSONSchema> = {};
   const value: Record<string, any> = {};
   for (let s = 0; s < 15; s++) {
-    const section: Record<string, JsonSchema> = {};
+    const section: Record<string, JSONSchema> = {};
     const sectionValue: Record<string, any> = {};
     for (let f = 0; f < 10; f++) {
       const t = f % 3;
@@ -107,14 +107,14 @@ const cases = [
 for (const { name, schema, value } of cases) {
   describe(`render-delay: ${name}`, () => {
     // Headline render delay — node-tree mount with validation off.
-    bench('[mount] nodeFromJsonSchema (validation off)', () => {
-      nodeFromJsonSchema({ jsonSchema: schema, onChange: noop });
+    bench('[mount] nodeFromJSONSchema (validation off)', () => {
+      nodeFromJSONSchema({ jsonSchema: schema, onChange: noop });
     });
 
     // Realistic render delay — default validationMode puts the per-mount
     // validator guards (stripSchemaExtensions clone) on the hot path.
-    bench('[mount] nodeFromJsonSchema (validation on)', () => {
-      nodeFromJsonSchema({
+    bench('[mount] nodeFromJSONSchema (validation on)', () => {
+      nodeFromJSONSchema({
         jsonSchema: schema,
         onChange: noop,
         validationMode: VALIDATION_MODE,

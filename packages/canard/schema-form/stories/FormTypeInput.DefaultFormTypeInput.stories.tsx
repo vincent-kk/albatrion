@@ -2,7 +2,7 @@ import { useState } from 'react';
 
 import type { Meta, StoryFn } from '@storybook/react-vite';
 
-import { Form, type JsonSchemaError } from '../src';
+import { Form, type JSONSchemaError } from '../src';
 import { FormTypeInputArrayDefinition } from '../src/formTypeDefinitions/FormTypeInputArray';
 import { FormTypeInputBooleanDefinition } from '../src/formTypeDefinitions/FormTypeInputBoolean';
 import { FormTypeInputDateFormatDefinition } from '../src/formTypeDefinitions/FormTypeInputDateFormat';
@@ -20,7 +20,7 @@ export default {
   decorators: [
     (Story, context) => {
       const [value, setValue] = useState<any>();
-      const [errors, setErrors] = useState<JsonSchemaError[]>([]);
+      const [errors, setErrors] = useState<JSONSchemaError[]>([]);
       return (
         <StoryLayout
           jsonSchema={context.args.jsonSchema}

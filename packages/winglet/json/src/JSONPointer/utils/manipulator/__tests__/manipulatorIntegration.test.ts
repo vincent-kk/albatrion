@@ -1,12 +1,12 @@
 import { describe, expect, it } from 'vitest';
 
 import { getValue, setValue } from '@/json/JSONPointer/utils/manipulator';
-import type { JsonObject } from '@/json/type';
+import type { JSONObject } from '@/json/type';
 
 describe('JSON Pointer manipulator escape handling integration', () => {
   describe('getValue with escape characters', () => {
     it('should correctly retrieve values with forward slash in keys', () => {
-      const data: JsonObject = {
+      const data: JSONObject = {
         'path/to/file': 'file_content',
         'config/settings': { debug: true },
         'api/v1/users': [{ id: 1, name: 'Alice' }],
@@ -27,7 +27,7 @@ describe('JSON Pointer manipulator escape handling integration', () => {
     });
 
     it('should correctly retrieve values with tilde in keys', () => {
-      const data: JsonObject = {
+      const data: JSONObject = {
         'config~debug': false,
         'cache~settings': { ttl: 300 },
         'users~active': [{ status: 'online' }],
@@ -40,7 +40,7 @@ describe('JSON Pointer manipulator escape handling integration', () => {
     });
 
     it('should correctly retrieve values with both escape characters', () => {
-      const data: JsonObject = {
+      const data: JSONObject = {
         'app/config~dev': { enabled: true },
         'logs~system/errors': ['error1', 'error2'],
         'db/tables~temp': { count: 5 },
@@ -60,7 +60,7 @@ describe('JSON Pointer manipulator escape handling integration', () => {
     });
 
     it('should handle nested objects with escape characters', () => {
-      const data: JsonObject = {
+      const data: JSONObject = {
         'parent/key': {
           'child~property': {
             'deep/nested~value': 'target',
@@ -74,7 +74,7 @@ describe('JSON Pointer manipulator escape handling integration', () => {
     });
 
     it('should return undefined for non-existent paths with escape characters', () => {
-      const data: JsonObject = {
+      const data: JSONObject = {
         'existing/key': 'value',
       };
 
@@ -87,7 +87,7 @@ describe('JSON Pointer manipulator escape handling integration', () => {
 
   describe('setValue with escape characters', () => {
     it('should correctly set values with forward slash in keys', () => {
-      const data: JsonObject = {};
+      const data: JSONObject = {};
 
       setValue(data, '/path~1to~1file', 'new_content');
       setValue(data, '/config~1settings', { debug: false });
@@ -99,7 +99,7 @@ describe('JSON Pointer manipulator escape handling integration', () => {
     });
 
     it('should correctly set values with tilde in keys', () => {
-      const data: JsonObject = {};
+      const data: JSONObject = {};
 
       setValue(data, '/config~0debug', true);
       setValue(data, '/cache~0settings', { ttl: 600 });
@@ -111,7 +111,7 @@ describe('JSON Pointer manipulator escape handling integration', () => {
     });
 
     it('should correctly set values with both escape characters', () => {
-      const data: JsonObject = {};
+      const data: JSONObject = {};
 
       setValue(data, '/app~1config~0dev', { enabled: false });
       setValue(data, '/logs~0system~1errors', ['new_error']);
@@ -123,7 +123,7 @@ describe('JSON Pointer manipulator escape handling integration', () => {
     });
 
     it('should correctly set nested values with escape characters', () => {
-      const data: JsonObject = {};
+      const data: JSONObject = {};
 
       setValue(
         data,
@@ -141,7 +141,7 @@ describe('JSON Pointer manipulator escape handling integration', () => {
     });
 
     it('should correctly update existing values with escape characters', () => {
-      const data: JsonObject = {
+      const data: JSONObject = {
         'existing/key~prop': 'old_value',
         'config~/setting': { old: true },
       };
@@ -156,7 +156,7 @@ describe('JSON Pointer manipulator escape handling integration', () => {
     });
 
     it('should correctly set array values with escape character keys', () => {
-      const data: JsonObject = {};
+      const data: JSONObject = {};
 
       setValue(data, '/users~1list/0', { id: 1, name: 'Alice' });
       setValue(data, '/users~1list/1', { id: 2, name: 'Bob' });
@@ -170,7 +170,7 @@ describe('JSON Pointer manipulator escape handling integration', () => {
     });
 
     it('should handle setting null values with escape characters', () => {
-      const data: JsonObject = {
+      const data: JSONObject = {
         'to~be/removed': 'value',
         'to~remain': 'value',
       };
@@ -186,7 +186,7 @@ describe('JSON Pointer manipulator escape handling integration', () => {
 
   describe('Round-trip consistency with escape characters', () => {
     it('should maintain consistency in get/set operations', () => {
-      const originalData: JsonObject = {
+      const originalData: JSONObject = {
         'complex/path~with~escapes': {
           'nested/object~prop': ['item1', 'item2'],
           'another~key/value': 42,
@@ -208,7 +208,7 @@ describe('JSON Pointer manipulator escape handling integration', () => {
       );
 
       // Create new object and set the same values
-      const newData: JsonObject = {};
+      const newData: JSONObject = {};
       setValue(newData, '/complex~1path~0with~0escapes', nestedObject);
 
       expect(newData).toEqual(originalData);
@@ -217,7 +217,7 @@ describe('JSON Pointer manipulator escape handling integration', () => {
     });
 
     it('should handle complex real-world scenarios', () => {
-      const data: JsonObject = {};
+      const data: JSONObject = {};
 
       // Simulate file system paths
       setValue(data, '/src~1components~1Button.tsx', {
@@ -267,7 +267,7 @@ describe('JSON Pointer manipulator escape handling integration', () => {
 
   describe('Edge cases with escape handling', () => {
     it('should handle keys that are only escape characters', () => {
-      const data: JsonObject = {};
+      const data: JSONObject = {};
 
       setValue(data, '/~1', 'slash_only');
       setValue(data, '/~0', 'tilde_only');
@@ -288,7 +288,7 @@ describe('JSON Pointer manipulator escape handling integration', () => {
     });
 
     it('should handle empty string keys with escape context', () => {
-      const data: JsonObject = {};
+      const data: JSONObject = {};
 
       setValue(data, '/', 'empty_key');
       setValue(data, '/normal~1key', 'normal_with_escape');
@@ -303,7 +303,7 @@ describe('JSON Pointer manipulator escape handling integration', () => {
     });
 
     it('should handle consecutive escape sequences', () => {
-      const data: JsonObject = {};
+      const data: JSONObject = {};
 
       setValue(data, '/key~1~0~1~0name', 'consecutive_escapes');
       setValue(data, '/~1~0~1~0~1~0', 'only_escapes');

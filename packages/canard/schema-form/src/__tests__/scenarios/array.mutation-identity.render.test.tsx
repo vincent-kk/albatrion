@@ -1,7 +1,7 @@
 import '@testing-library/jest-dom';
 import { describe, expect, it } from 'vitest';
 
-import type { JsonSchema } from '@winglet/json-schema';
+import type { JSONSchema } from '@winglet/json-schema';
 
 import { renderForm } from '../renderForm';
 
@@ -29,7 +29,7 @@ const arraySchema = {
       items: { type: 'string' },
     },
   },
-} satisfies JsonSchema;
+} satisfies JSONSchema;
 
 /** All rendered item-row paths, e.g. ['/items/0', '/items/1'] in document order. */
 const itemPaths = (form: { renderedPaths: () => string[] }): string[] =>

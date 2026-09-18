@@ -34,7 +34,7 @@ export const isVirtualSchema = (schema: {
   type: string;
 }): schema is VirtualSchema => schema.type === 'virtual';
 
-export type JsonSchemaType = Extract<JsonSchemaWithVirtual['type'], string>;
+export type JSONSchemaType = Extract<JSONSchemaWithVirtual['type'], string>;
 
 /** Schema inference for non-nullable values */
 type InferNonNullableSchema<
@@ -52,7 +52,7 @@ type InferNonNullableSchema<
           ? NonNullableObjectSchema<Options>
           : Value extends VirtualNodeValue
             ? VirtualSchema<Options>
-            : JsonSchemaWithVirtual<Options>;
+            : JSONSchemaWithVirtual<Options>;
 
 /** Schema inference for nullable values (excluding VirtualSchema - cannot be nullable) */
 type InferNullableSchema<
@@ -76,7 +76,7 @@ type InferNullableSchema<
  * - For non-nullable types, returns the standard schema
  * - For pure null type, returns NullSchema
  */
-export type InferJsonSchema<
+export type InferJSONSchema<
   Value extends AllowedValue | unknown = any,
   Options extends Dictionary = object,
 > = [Value] extends [null]
@@ -86,7 +86,7 @@ export type InferJsonSchema<
     : InferNonNullableSchema<Value, Options>;
 
 /** Standard JSON Schema type union (without virtual nodes) */
-export type JsonSchema<Options extends Dictionary = object> =
+export type JSONSchema<Options extends Dictionary = object> =
   | NumberSchema<Options>
   | StringSchema<Options>
   | BooleanSchema<Options>
@@ -96,7 +96,7 @@ export type JsonSchema<Options extends Dictionary = object> =
   | RefSchema;
 
 /** JSON Schema type union including virtual nodes */
-export type JsonSchemaWithVirtual<Options extends Dictionary = object> =
+export type JSONSchemaWithVirtual<Options extends Dictionary = object> =
   | NumberSchema<Options>
   | StringSchema<Options>
   | BooleanSchema<Options>
@@ -106,13 +106,13 @@ export type JsonSchemaWithVirtual<Options extends Dictionary = object> =
   | VirtualSchema<Options>;
 
 /** JSON Schema type union with virtual nodes and $ref support */
-export type JsonSchemaWithRef<Options extends Dictionary = object> =
-  | JsonSchemaWithVirtual<Options>
+export type JSONSchemaWithRef<Options extends Dictionary = object> =
+  | JSONSchemaWithVirtual<Options>
   | RefSchema;
 
 /** Partial version of JSON Schema with virtual nodes */
-export type PartialJsonSchema<Options extends Dictionary = object> = Partial<
-  JsonSchemaWithVirtual<Options>
+export type PartialJSONSchema<Options extends Dictionary = object> = Partial<
+  JSONSchemaWithVirtual<Options>
 >;
 
 /** Number type schema (numeric or integer values) */
@@ -121,10 +121,10 @@ export type NumberSchema<Options extends Dictionary = object> =
   | NullableNumberSchema<Options>;
 /** Non-nullable number schema */
 export type NonNullableNumberSchema<Options extends Dictionary = object> =
-  BasicSchema & BaseNonNullableNumberSchema<Options, JsonSchema<Options>>;
+  BasicSchema & BaseNonNullableNumberSchema<Options, JSONSchema<Options>>;
 /** Nullable number schema (type: ['number', 'null']) */
 export type NullableNumberSchema<Options extends Dictionary = object> =
-  BasicSchema & BaseNullableNumberSchema<Options, JsonSchema<Options>>;
+  BasicSchema & BaseNullableNumberSchema<Options, JSONSchema<Options>>;
 
 /** String type schema */
 export type StringSchema<Options extends Dictionary = object> =
@@ -133,7 +133,7 @@ export type StringSchema<Options extends Dictionary = object> =
 /** Non-nullable string schema with optional trim support */
 export type NonNullableStringSchema<Options extends Dictionary = object> =
   BasicSchema &
-    BaseNonNullableStringSchema<Options, JsonSchema<Options>> & {
+    BaseNonNullableStringSchema<Options, JSONSchema<Options>> & {
       options?: {
         /** Replace the stored value with its whitespace-trimmed form when the field emits `Blurred` (default: false) */
         trim?: boolean;
@@ -142,7 +142,7 @@ export type NonNullableStringSchema<Options extends Dictionary = object> =
 /** Nullable string schema (type: ['string', 'null']) with optional trim support */
 export type NullableStringSchema<Options extends Dictionary = object> =
   BasicSchema &
-    BaseNullableStringSchema<Options, JsonSchema<Options>> & {
+    BaseNullableStringSchema<Options, JSONSchema<Options>> & {
       options?: {
         /** Replace the stored value with its whitespace-trimmed form when the field emits `Blurred` (default: false) */
         trim?: boolean;
@@ -155,10 +155,10 @@ export type BooleanSchema<Options extends Dictionary = object> =
   | NullableBooleanSchema<Options>;
 /** Non-nullable boolean schema */
 export type NonNullableBooleanSchema<Options extends Dictionary = object> =
-  BasicSchema & BaseNonNullableBooleanSchema<Options, JsonSchema<Options>>;
+  BasicSchema & BaseNonNullableBooleanSchema<Options, JSONSchema<Options>>;
 /** Nullable boolean schema (type: ['boolean', 'null']) */
 export type NullableBooleanSchema<Options extends Dictionary = object> =
-  BasicSchema & BaseNullableBooleanSchema<Options, JsonSchema<Options>>;
+  BasicSchema & BaseNullableBooleanSchema<Options, JSONSchema<Options>>;
 
 /** Array type schema */
 export type ArraySchema<Options extends Dictionary = object> =
@@ -167,7 +167,7 @@ export type ArraySchema<Options extends Dictionary = object> =
 /** Non-nullable array schema */
 export type NonNullableArraySchema<Options extends Dictionary = object> =
   BasicSchema &
-    BaseNonNullableArraySchema<Options, JsonSchema<Options>> & {
+    BaseNonNullableArraySchema<Options, JSONSchema<Options>> & {
       options?: {
         /** Remove trailing `undefined` items from the array's normalized value (parent propagation, root validation, external emission); child nodes keep the raw array (default: false) */
         omitTrailing?: boolean;
@@ -176,7 +176,7 @@ export type NonNullableArraySchema<Options extends Dictionary = object> =
 /** Nullable array schema (type: ['array', 'null']) */
 export type NullableArraySchema<Options extends Dictionary = object> =
   BasicSchema &
-    BaseNullableArraySchema<Options, JsonSchema<Options>> & {
+    BaseNullableArraySchema<Options, JSONSchema<Options>> & {
       options?: {
         /** Remove trailing `undefined` items from the array's normalized value (parent propagation, root validation, external emission); child nodes keep the raw array (default: false) */
         omitTrailing?: boolean;
@@ -190,7 +190,7 @@ export type ObjectSchema<Options extends Dictionary = object> =
 /** Non-nullable object schema with optional property ordering and virtual properties */
 export type NonNullableObjectSchema<Options extends Dictionary = object> =
   BasicSchema &
-    BaseNonNullableObjectSchema<Options, JsonSchema<Options>> & {
+    BaseNonNullableObjectSchema<Options, JSONSchema<Options>> & {
       /** Property keys order for rendering */
       propertyKeys?: readonly string[];
       /** Virtual property definitions for conditional fields */
@@ -199,7 +199,7 @@ export type NonNullableObjectSchema<Options extends Dictionary = object> =
 /** Nullable object schema (type: ['object', 'null']) with optional property ordering and virtual properties */
 export type NullableObjectSchema<Options extends Dictionary = object> =
   BasicSchema &
-    BaseNullableObjectSchema<Options, JsonSchema<Options>> & {
+    BaseNullableObjectSchema<Options, JSONSchema<Options>> & {
       /** Property keys order for rendering */
       propertyKeys?: readonly string[];
       /** Virtual property definitions for conditional fields */
@@ -217,11 +217,11 @@ export type VirtualSchema<Options extends Dictionary = object> = {
   fields?: readonly string[];
   nullable?: never;
 } & BasicSchema &
-  BaseBasicSchema<VirtualNodeValue, Options, JsonSchema<Options>>;
+  BaseBasicSchema<VirtualNodeValue, Options, JSONSchema<Options>>;
 
 /** Null type schema */
 export type NullSchema<Options extends Dictionary = object> = BasicSchema &
-  BaseNullSchema<Options, JsonSchema<Options>>;
+  BaseNullSchema<Options, JSONSchema<Options>>;
 
 /** Base schema properties for all types */
 export type BasicSchema = {

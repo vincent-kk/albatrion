@@ -2,7 +2,7 @@ import { isArray } from '@winglet/common-utils/filter';
 
 import type { Dictionary } from '@aileron/declare';
 
-import { JsonSchemaError } from '@/schema-form/errors';
+import { JSONSchemaError } from '@/schema-form/errors';
 import {
   formatVirtualFieldsNotInPropertiesError,
   formatVirtualFieldsNotValidError,
@@ -38,7 +38,7 @@ export const getVirtualReferencesMap = (
   for (let i = 0, k = keys[0], l = keys.length; i < l; i++, k = keys[i]) {
     const value = virtualReferences[k];
     if (!isArray(value.fields))
-      throw new JsonSchemaError(
+      throw new JSONSchemaError(
         'VIRTUAL_FIELDS_NOT_VALID',
         formatVirtualFieldsNotValidError(k, value, nodeName || 'root'),
         {
@@ -52,7 +52,7 @@ export const getVirtualReferencesMap = (
       (field) => !propertyKeys.includes(field),
     );
     if (notFoundFields.length)
-      throw new JsonSchemaError(
+      throw new JSONSchemaError(
         'VIRTUAL_FIELDS_NOT_IN_PROPERTIES',
         formatVirtualFieldsNotInPropertiesError(k, value, notFoundFields),
         {

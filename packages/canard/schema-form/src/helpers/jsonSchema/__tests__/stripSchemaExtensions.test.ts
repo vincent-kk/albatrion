@@ -1,13 +1,13 @@
 import { describe, expect, it } from 'vitest';
 
-import type { JsonSchemaWithVirtual } from '@/schema-form/types';
+import type { JSONSchemaWithVirtual } from '@/schema-form/types';
 
 import { stripSchemaExtensions } from '../stripSchemaExtensions';
 
 describe('stripSchemaExtensions', () => {
   describe('기본 동작', () => {
     it('확장 속성이 없는 스키마는 그대로 반환해야 한다', () => {
-      const schema: JsonSchemaWithVirtual = {
+      const schema: JSONSchemaWithVirtual = {
         type: 'string',
         title: 'Name',
         description: 'User name',
@@ -23,7 +23,7 @@ describe('stripSchemaExtensions', () => {
     });
 
     it('빈 객체 스키마도 처리할 수 있어야 한다', () => {
-      const schema = { type: 'object' } as JsonSchemaWithVirtual;
+      const schema = { type: 'object' } as JSONSchemaWithVirtual;
 
       const result = stripSchemaExtensions(schema);
 
@@ -33,7 +33,7 @@ describe('stripSchemaExtensions', () => {
 
   describe('원본 참조 유지 (제거 동작이 없는 경우)', () => {
     it('확장 속성이 없는 스키마는 원본 객체를 그대로 반환해야 한다', () => {
-      const schema: JsonSchemaWithVirtual = {
+      const schema: JSONSchemaWithVirtual = {
         type: 'string',
         title: 'Name',
       };
@@ -44,7 +44,7 @@ describe('stripSchemaExtensions', () => {
     });
 
     it('중첩된 스키마에서 확장 속성이 없으면 원본을 반환해야 한다', () => {
-      const schema: JsonSchemaWithVirtual = {
+      const schema: JSONSchemaWithVirtual = {
         type: 'object',
         properties: {
           name: { type: 'string' },
@@ -58,7 +58,7 @@ describe('stripSchemaExtensions', () => {
     });
 
     it('배열 스키마에서 확장 속성이 없으면 원본을 반환해야 한다', () => {
-      const schema: JsonSchemaWithVirtual = {
+      const schema: JSONSchemaWithVirtual = {
         type: 'array',
         items: { type: 'string' },
         minItems: 1,
@@ -70,7 +70,7 @@ describe('stripSchemaExtensions', () => {
     });
 
     it('조건부 스키마에서 확장 속성이 없으면 원본을 반환해야 한다', () => {
-      const schema: JsonSchemaWithVirtual = {
+      const schema: JSONSchemaWithVirtual = {
         type: 'object',
         oneOf: [
           { properties: { type: { type: 'string', enum: ['A'] } } },
@@ -84,7 +84,7 @@ describe('stripSchemaExtensions', () => {
     });
 
     it('undefined 확장 속성만 있는 경우에도 원본을 반환해야 한다', () => {
-      const schema: JsonSchemaWithVirtual = {
+      const schema: JSONSchemaWithVirtual = {
         type: 'string',
         FormTypeInputProps: undefined,
         FormTypeRendererProps: undefined,
@@ -100,7 +100,7 @@ describe('stripSchemaExtensions', () => {
 
   describe('FormTypeInputProps 제거', () => {
     it('FormTypeInputProps를 제거해야 한다', () => {
-      const schema: JsonSchemaWithVirtual = {
+      const schema: JSONSchemaWithVirtual = {
         type: 'string',
         FormTypeInputProps: {
           placeholder: 'Enter name',
@@ -117,7 +117,7 @@ describe('stripSchemaExtensions', () => {
 
   describe('FormTypeRendererProps 제거', () => {
     it('FormTypeRendererProps를 제거해야 한다', () => {
-      const schema: JsonSchemaWithVirtual = {
+      const schema: JSONSchemaWithVirtual = {
         type: 'number',
         FormTypeRendererProps: {
           label: 'Age',
@@ -134,7 +134,7 @@ describe('stripSchemaExtensions', () => {
 
   describe('errorMessages 제거', () => {
     it('errorMessages를 제거해야 한다', () => {
-      const schema: JsonSchemaWithVirtual = {
+      const schema: JSONSchemaWithVirtual = {
         type: 'string',
         minLength: 1,
         errorMessages: {
@@ -155,7 +155,7 @@ describe('stripSchemaExtensions', () => {
 
   describe('options 제거', () => {
     it('options를 제거해야 한다', () => {
-      const schema: JsonSchemaWithVirtual = {
+      const schema: JSONSchemaWithVirtual = {
         type: 'string',
         options: {
           trim: true,
@@ -172,7 +172,7 @@ describe('stripSchemaExtensions', () => {
 
   describe('여러 확장 속성 동시 제거', () => {
     it('모든 확장 속성을 동시에 제거해야 한다', () => {
-      const schema: JsonSchemaWithVirtual = {
+      const schema: JSONSchemaWithVirtual = {
         type: 'string',
         title: 'Email',
         format: 'email',
@@ -206,7 +206,7 @@ describe('stripSchemaExtensions', () => {
 
   describe('중첩된 스키마 처리', () => {
     it('object 스키마의 properties 내부 확장 속성을 제거해야 한다', () => {
-      const schema: JsonSchemaWithVirtual = {
+      const schema: JSONSchemaWithVirtual = {
         type: 'object',
         properties: {
           name: {
@@ -232,7 +232,7 @@ describe('stripSchemaExtensions', () => {
     });
 
     it('array 스키마의 items 내부 확장 속성을 제거해야 한다', () => {
-      const schema: JsonSchemaWithVirtual = {
+      const schema: JSONSchemaWithVirtual = {
         type: 'array',
         items: {
           type: 'string',
@@ -250,7 +250,7 @@ describe('stripSchemaExtensions', () => {
     });
 
     it('깊게 중첩된 스키마의 확장 속성을 모두 제거해야 한다', () => {
-      const schema: JsonSchemaWithVirtual = {
+      const schema: JSONSchemaWithVirtual = {
         type: 'object',
         FormTypeRendererProps: { label: 'User Form' },
         properties: {
@@ -306,7 +306,7 @@ describe('stripSchemaExtensions', () => {
 
   describe('조건부 스키마 처리', () => {
     it('oneOf 내부 스키마의 확장 속성을 제거해야 한다', () => {
-      const schema: JsonSchemaWithVirtual = {
+      const schema: JSONSchemaWithVirtual = {
         type: 'object',
         oneOf: [
           {
@@ -352,7 +352,7 @@ describe('stripSchemaExtensions', () => {
     });
 
     it('allOf 내부 스키마의 확장 속성을 제거해야 한다', () => {
-      const schema: JsonSchemaWithVirtual = {
+      const schema: JSONSchemaWithVirtual = {
         type: 'object',
         allOf: [
           {
@@ -387,7 +387,7 @@ describe('stripSchemaExtensions', () => {
     });
 
     it('anyOf 내부 스키마의 확장 속성을 제거해야 한다', () => {
-      const schema: JsonSchemaWithVirtual = {
+      const schema: JSONSchemaWithVirtual = {
         type: 'object',
         anyOf: [
           {
@@ -429,7 +429,7 @@ describe('stripSchemaExtensions', () => {
     });
 
     it('if-then-else 내부 스키마의 확장 속성을 제거해야 한다', () => {
-      const schema: JsonSchemaWithVirtual = {
+      const schema: JSONSchemaWithVirtual = {
         type: 'object',
         properties: {
           toggle: { type: 'boolean' },
@@ -485,7 +485,7 @@ describe('stripSchemaExtensions', () => {
 
   describe('표준 JSON Schema 속성 보존', () => {
     it('validation 관련 속성들을 보존해야 한다', () => {
-      const schema: JsonSchemaWithVirtual = {
+      const schema: JSONSchemaWithVirtual = {
         type: 'string',
         minLength: 1,
         maxLength: 100,
@@ -506,7 +506,7 @@ describe('stripSchemaExtensions', () => {
     });
 
     it('메타데이터 속성들을 보존해야 한다', () => {
-      const schema: JsonSchemaWithVirtual = {
+      const schema: JSONSchemaWithVirtual = {
         type: 'object',
         title: 'User',
         description: 'User object',
@@ -527,7 +527,7 @@ describe('stripSchemaExtensions', () => {
     });
 
     it('number 스키마의 제약 조건들을 보존해야 한다', () => {
-      const schema: JsonSchemaWithVirtual = {
+      const schema: JSONSchemaWithVirtual = {
         type: 'number',
         minimum: 0,
         maximum: 100,
@@ -550,7 +550,7 @@ describe('stripSchemaExtensions', () => {
     });
 
     it('array 스키마의 제약 조건들을 보존해야 한다', () => {
-      const schema: JsonSchemaWithVirtual = {
+      const schema: JSONSchemaWithVirtual = {
         type: 'array',
         items: { type: 'string' },
         minItems: 1,
@@ -571,7 +571,7 @@ describe('stripSchemaExtensions', () => {
     });
 
     it('object 스키마의 제약 조건들을 보존해야 한다', () => {
-      const schema: JsonSchemaWithVirtual = {
+      const schema: JSONSchemaWithVirtual = {
         type: 'object',
         properties: {
           name: { type: 'string' },
@@ -600,7 +600,7 @@ describe('stripSchemaExtensions', () => {
 
   describe('엣지 케이스', () => {
     it('undefined 확장 속성은 스키마에 영향을 주지 않아야 한다', () => {
-      const schema: JsonSchemaWithVirtual = {
+      const schema: JSONSchemaWithVirtual = {
         type: 'string',
         FormTypeInputProps: undefined,
         FormTypeRendererProps: undefined,
@@ -623,7 +623,7 @@ describe('stripSchemaExtensions', () => {
       const schema = {
         type: ['string', 'null'] as const,
         FormTypeInputProps: { placeholder: 'Optional' },
-      } as JsonSchemaWithVirtual;
+      } as JSONSchemaWithVirtual;
 
       const result = stripSchemaExtensions(schema);
 
@@ -633,7 +633,7 @@ describe('stripSchemaExtensions', () => {
     });
 
     it('enum과 const가 있는 스키마를 올바르게 처리해야 한다', () => {
-      const schema: JsonSchemaWithVirtual = {
+      const schema: JSONSchemaWithVirtual = {
         type: 'string',
         enum: ['option1', 'option2', 'option3'],
         FormTypeInputProps: {
@@ -654,7 +654,7 @@ describe('stripSchemaExtensions', () => {
     });
 
     it('default 값이 있는 스키마를 보존해야 한다', () => {
-      const schema: JsonSchemaWithVirtual = {
+      const schema: JSONSchemaWithVirtual = {
         type: 'string',
         default: 'default value',
         FormTypeInputProps: { placeholder: 'Enter value' },
@@ -669,7 +669,7 @@ describe('stripSchemaExtensions', () => {
     });
 
     it('additionalProperties가 스키마인 경우도 처리해야 한다', () => {
-      const schema: JsonSchemaWithVirtual = {
+      const schema: JSONSchemaWithVirtual = {
         type: 'object',
         properties: {
           name: { type: 'string' },
@@ -696,7 +696,7 @@ describe('stripSchemaExtensions', () => {
 
   describe('virtual 스키마 처리', () => {
     it('virtual 타입 스키마의 확장 속성을 제거해야 한다', () => {
-      const schema: JsonSchemaWithVirtual = {
+      const schema: JSONSchemaWithVirtual = {
         type: 'virtual',
         fields: ['./field1', './field2'],
         FormTypeInputProps: { className: 'virtual-field' },
@@ -713,7 +713,7 @@ describe('stripSchemaExtensions', () => {
 
   describe('computed 속성 처리', () => {
     it('computed 속성은 보존해야 한다 (확장 속성이 아님)', () => {
-      const schema: JsonSchemaWithVirtual = {
+      const schema: JSONSchemaWithVirtual = {
         type: 'string',
         computed: {
           visible: '../toggle === true',
@@ -734,7 +734,7 @@ describe('stripSchemaExtensions', () => {
     });
 
     it('&if, &watch 등의 별칭 속성도 보존해야 한다', () => {
-      const schema: JsonSchemaWithVirtual = {
+      const schema: JSONSchemaWithVirtual = {
         type: 'string',
         '&if': './type === "advanced"',
         '&visible': '../showAdvanced === true',
@@ -753,7 +753,7 @@ describe('stripSchemaExtensions', () => {
 
   describe('입력 비변경 (불변성)', () => {
     it('확장 제거 시 입력 스키마를 in-place로 변경하지 않아야 한다', () => {
-      const schema: JsonSchemaWithVirtual = {
+      const schema: JSONSchemaWithVirtual = {
         type: 'object',
         properties: {
           profile: {

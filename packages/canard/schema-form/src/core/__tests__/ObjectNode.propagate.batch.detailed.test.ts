@@ -8,8 +8,8 @@ import { describe, expect, it, vi } from 'vitest';
 
 import { delay } from '@winglet/common-utils';
 
-import { nodeFromJsonSchema } from '@/schema-form/core';
-import type { JsonSchema } from '@/schema-form/types';
+import { nodeFromJSONSchema } from '@/schema-form/core';
+import type { JSONSchema } from '@/schema-form/types';
 
 import type { ObjectNode } from '../nodes/ObjectNode';
 import type { StringNode } from '../nodes/StringNode';
@@ -25,9 +25,9 @@ describe('ObjectNode Propagate Batch Detailed Analysis', () => {
           age: { type: 'number' },
           email: { type: 'string' },
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: schema,
         onChange: () => {},
       });
@@ -84,9 +84,9 @@ describe('ObjectNode Propagate Batch Detailed Analysis', () => {
           age: { type: 'number' },
           email: { type: 'string' },
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: schema,
         onChange: () => {},
       });
@@ -126,10 +126,10 @@ describe('ObjectNode Propagate Batch Detailed Analysis', () => {
         properties: {
           field: { type: 'string' },
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
       // Test 1: Parent setValue
-      const node1 = nodeFromJsonSchema({
+      const node1 = nodeFromJSONSchema({
         jsonSchema: schema,
         onChange: () => {},
       });
@@ -145,7 +145,7 @@ describe('ObjectNode Propagate Batch Detailed Analysis', () => {
       const parentCallCount = listener1.mock.calls.length;
 
       // Test 2: Child setValue
-      const node2 = nodeFromJsonSchema({
+      const node2 = nodeFromJSONSchema({
         jsonSchema: schema,
         onChange: () => {},
       });
@@ -182,11 +182,11 @@ describe('ObjectNode Propagate Batch Detailed Analysis', () => {
           field1: { type: 'string' },
           field2: { type: 'string' },
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
       const onChangeSpy = vi.fn();
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: schema,
         onChange: onChangeSpy,
       });
@@ -221,11 +221,11 @@ describe('ObjectNode Propagate Batch Detailed Analysis', () => {
           b: { type: 'string' },
           c: { type: 'string' },
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
       const onChangeSpy = vi.fn();
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: schema,
         onChange: onChangeSpy,
       });
@@ -272,9 +272,9 @@ describe('ObjectNode Propagate Batch Detailed Analysis', () => {
           f4: { type: 'string' },
           f5: { type: 'string' },
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: schema,
         onChange: () => {},
       });
@@ -322,9 +322,9 @@ describe('ObjectNode Propagate Batch Detailed Analysis', () => {
         properties: {
           counter: { type: 'number', default: 0 },
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: schema,
         onChange: () => {},
       });
@@ -364,9 +364,9 @@ describe('ObjectNode Propagate Batch Detailed Analysis', () => {
         properties: {
           value: { type: 'string' },
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: schema,
         onChange: () => {},
       });
@@ -411,9 +411,9 @@ describe('ObjectNode Propagate Batch Detailed Analysis', () => {
           a: { type: 'string' },
           b: { type: 'string' },
         },
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: schema,
         onChange: () => {},
       });

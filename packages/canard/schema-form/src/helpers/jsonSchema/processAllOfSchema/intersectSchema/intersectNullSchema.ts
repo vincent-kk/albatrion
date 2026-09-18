@@ -19,7 +19,7 @@ import { unionRequired } from './utils/unionRequired';
  * @param base - The base null schema to modify and return
  * @param source - The source null schema to intersect with base
  * @returns The modified base schema with intersected properties
- * @throws {JsonSchemaError} When enum intersections are empty or const values conflict
+ * @throws {JSONSchemaError} When enum intersections are empty or const values conflict
  */
 export const intersectNullSchema = (
   base: NullSchema,

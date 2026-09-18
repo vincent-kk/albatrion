@@ -1,9 +1,9 @@
 import { useCallback, useRef, useState } from 'react';
 
-import type { FormHandle, FormatError, JsonSchemaError } from '../src';
+import type { FormHandle, FormatError, JSONSchemaError } from '../src';
 import {
   Form,
-  type JsonSchema,
+  type JSONSchema,
   registerPlugin,
   useChildNodeErrors,
 } from '../src';
@@ -60,10 +60,10 @@ export const InlineErrorMessage = () => {
       },
     },
     required: ['email', 'password'],
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>();
-  const [errors, setErrors] = useState<JsonSchemaError[]>();
+  const [errors, setErrors] = useState<JSONSchemaError[]>();
   const formatError = useCallback<FormatError>((error, node) => {
     const schema = node.jsonSchema;
     const options = schema.errorMessages;
@@ -138,10 +138,10 @@ export const UseDefaultErrorFormatter = () => {
       },
     },
     required: ['email', 'password'],
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>();
-  const [errors, setErrors] = useState<JsonSchemaError[]>();
+  const [errors, setErrors] = useState<JSONSchemaError[]>();
 
   return (
     <StoryLayout jsonSchema={jsonSchema} value={value} errors={errors}>
@@ -224,10 +224,10 @@ export const UseDefaultErrorFormatterWithLocal = () => {
       },
     },
     required: ['email', 'password'],
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>();
-  const [errors, setErrors] = useState<JsonSchemaError[]>();
+  const [errors, setErrors] = useState<JSONSchemaError[]>();
 
   return (
     <StoryLayout jsonSchema={jsonSchema} value={value} errors={errors}>
@@ -277,10 +277,10 @@ export const UseDefaultErrorFormatterDefaultKey = () => {
       },
     },
     required: ['email', 'password'],
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>();
-  const [errors, setErrors] = useState<JsonSchemaError[]>();
+  const [errors, setErrors] = useState<JSONSchemaError[]>();
 
   return (
     <StoryLayout jsonSchema={jsonSchema} value={value} errors={errors}>
@@ -343,10 +343,10 @@ export const UseVirtualNodeError = () => {
       },
     },
     required: ['name', 'email', 'address'],
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>();
-  const [errors, setErrors] = useState<JsonSchemaError[]>();
+  const [errors, setErrors] = useState<JSONSchemaError[]>();
 
   return (
     <StoryLayout jsonSchema={jsonSchema} value={value} errors={errors}>
@@ -497,10 +497,10 @@ export const UseVirtualNodeErrorWithChildNodeErrorsHook = () => {
       },
     },
     required: ['name', 'email', 'address'],
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>();
-  const [errors, setErrors] = useState<JsonSchemaError[]>();
+  const [errors, setErrors] = useState<JSONSchemaError[]>();
 
   return (
     <StoryLayout jsonSchema={jsonSchema} value={value} errors={errors}>
@@ -677,10 +677,10 @@ export const UseChildNodeErrorsWithDisabled = () => {
       },
     },
     required: ['name', 'email', 'personalInfoGroup'],
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>();
-  const [errors, setErrors] = useState<JsonSchemaError[]>();
+  const [errors, setErrors] = useState<JSONSchemaError[]>();
 
   return (
     <StoryLayout jsonSchema={jsonSchema} value={value} errors={errors}>
@@ -896,10 +896,10 @@ export const UseChildNodeErrorsWithDirectChildren = () => {
       },
     },
     required: ['directChildrenGroup'],
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>();
-  const [errors, setErrors] = useState<JsonSchemaError[]>();
+  const [errors, setErrors] = useState<JSONSchemaError[]>();
 
   return (
     <StoryLayout jsonSchema={jsonSchema} value={value} errors={errors}>
@@ -977,10 +977,10 @@ export const UseChildNodeErrorsWithEmptyChildren = () => {
       },
     },
     required: [],
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>();
-  const [errors, setErrors] = useState<JsonSchemaError[]>();
+  const [errors, setErrors] = useState<JSONSchemaError[]>();
 
   return (
     <StoryLayout jsonSchema={jsonSchema} value={value} errors={errors}>
@@ -1157,10 +1157,10 @@ export const UseChildNodeErrorsRealTimeUpdate = () => {
       },
     },
     required: ['dynamicGroup'],
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>();
-  const [errors, setErrors] = useState<JsonSchemaError[]>();
+  const [errors, setErrors] = useState<JSONSchemaError[]>();
 
   return (
     <StoryLayout jsonSchema={jsonSchema} value={value} errors={errors}>
@@ -1205,10 +1205,10 @@ export const NullableFieldValidation = () => {
       },
     },
     required: [],
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>({});
-  const [errors, setErrors] = useState<JsonSchemaError[]>();
+  const [errors, setErrors] = useState<JSONSchemaError[]>();
   const ref = useRef<FormHandle<typeof jsonSchema>>(null);
 
   return (
@@ -1272,10 +1272,10 @@ export const NullableWithDefaultValueError = () => {
       },
     },
     required: [],
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>();
-  const [errors, setErrors] = useState<JsonSchemaError[]>();
+  const [errors, setErrors] = useState<JSONSchemaError[]>();
 
   return (
     <StoryLayout jsonSchema={jsonSchema} value={value} errors={errors}>
@@ -1320,14 +1320,14 @@ export const NullableTypeCoercionError = () => {
       },
     },
     required: [],
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>({
     strictNumber: '123',
     strictBoolean: 1,
     strictArray: 'not an array',
   });
-  const [errors, setErrors] = useState<JsonSchemaError[]>();
+  const [errors, setErrors] = useState<JSONSchemaError[]>();
 
   return (
     <StoryLayout jsonSchema={jsonSchema} value={value} errors={errors}>
@@ -1369,10 +1369,10 @@ export const NullableRequiredFieldConflict = () => {
       },
     },
     required: ['requiredNullable', 'requiredNullableNumber'],
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>({});
-  const [errors, setErrors] = useState<JsonSchemaError[]>();
+  const [errors, setErrors] = useState<JSONSchemaError[]>();
 
   return (
     <StoryLayout jsonSchema={jsonSchema} value={value} errors={errors}>
@@ -1423,12 +1423,12 @@ export const NullableNestedObjectError = () => {
       },
     },
     required: [],
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>({
     nullableObject: { age: 200 },
   });
-  const [errors, setErrors] = useState<JsonSchemaError[]>();
+  const [errors, setErrors] = useState<JSONSchemaError[]>();
 
   return (
     <StoryLayout jsonSchema={jsonSchema} value={value} errors={errors}>
@@ -1480,13 +1480,13 @@ export const NullableArrayItemError = () => {
       },
     },
     required: [],
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>({
     nullableArray: ['ab', 'cd'],
     nullableNumberArray: [-10, 150, 50],
   });
-  const [errors, setErrors] = useState<JsonSchemaError[]>();
+  const [errors, setErrors] = useState<JSONSchemaError[]>();
 
   return (
     <StoryLayout jsonSchema={jsonSchema} value={value} errors={errors}>
@@ -1532,13 +1532,13 @@ export const NullableMultipleTypeError = () => {
       },
     },
     required: [],
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>({
     stringOrNumber: 5,
     arrayOrObject: [],
   });
-  const [errors, setErrors] = useState<JsonSchemaError[]>();
+  const [errors, setErrors] = useState<JSONSchemaError[]>();
 
   return (
     <StoryLayout jsonSchema={jsonSchema} value={value} errors={errors}>

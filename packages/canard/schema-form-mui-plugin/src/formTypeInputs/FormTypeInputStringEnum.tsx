@@ -12,12 +12,12 @@ import type {
 
 import type { MuiContext } from '../type';
 
-type StringEnumJsonSchema = StringSchema;
+type StringEnumJSONSchema = StringSchema;
 
 interface FormTypeInputStringEnumProps
   extends FormTypeInputPropsWithSchema<
       string | null,
-      StringEnumJsonSchema,
+      StringEnumJSONSchema,
       MuiContext
     >,
     MuiContext {

@@ -1,13 +1,13 @@
 import { describe, expect, it } from 'vitest';
 
 import { ENHANCED_KEY } from '@/schema-form/app/constants/internal';
-import type { JsonSchema } from '@/schema-form/types';
+import type { JSONSchema } from '@/schema-form/types';
 
 import { preprocessSchema } from '../preprocessSchema';
 
-describe('JsonSchemaScanner - OneOf Schema Test', () => {
+describe('JSONSchemaScanner - OneOf Schema Test', () => {
   it('should handle oneOf schema', () => {
-    const schema: JsonSchema = {
+    const schema: JSONSchema = {
       type: 'object',
       oneOf: [
         { properties: { a: { type: 'string' } } },
@@ -37,7 +37,7 @@ describe('JsonSchemaScanner - OneOf Schema Test', () => {
   });
 
   it('should handle nested oneOf schemas', () => {
-    const schema: JsonSchema = {
+    const schema: JSONSchema = {
       type: 'object',
       properties: {
         field: {
@@ -77,7 +77,7 @@ describe('JsonSchemaScanner - OneOf Schema Test', () => {
   });
 
   it('should handle oneOf with existing properties', () => {
-    const schema: JsonSchema = {
+    const schema: JSONSchema = {
       type: 'object',
       oneOf: [
         {
@@ -119,7 +119,7 @@ describe('JsonSchemaScanner - OneOf Schema Test', () => {
   });
 
   it('should handle oneOf with virtual required fields', () => {
-    const schema: JsonSchema = {
+    const schema: JSONSchema = {
       type: 'object',
       oneOf: [
         {
@@ -183,7 +183,7 @@ describe('JsonSchemaScanner - OneOf Schema Test', () => {
   });
 
   it('should handle complex oneOf with nested conditions and virtual required', () => {
-    const schema: JsonSchema = {
+    const schema: JSONSchema = {
       type: 'object',
       oneOf: [
         {
@@ -277,7 +277,7 @@ describe('JsonSchemaScanner - OneOf Schema Test', () => {
   });
 
   it('should handle oneOf with multiple levels of nesting', () => {
-    const schema: JsonSchema = {
+    const schema: JSONSchema = {
       type: 'object',
       properties: {
         payment: {
@@ -363,7 +363,7 @@ describe('JsonSchemaScanner - OneOf Schema Test', () => {
   });
 
   it('should handle oneOf with mixed virtual required and regular required', () => {
-    const schema: JsonSchema = {
+    const schema: JSONSchema = {
       type: 'object',
       oneOf: [
         {
@@ -424,7 +424,7 @@ describe('JsonSchemaScanner - OneOf Schema Test', () => {
   });
 
   it('should handle oneOf with conditional virtual required in else clause', () => {
-    const schema: JsonSchema = {
+    const schema: JSONSchema = {
       type: 'object',
       oneOf: [
         {

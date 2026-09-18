@@ -14,7 +14,7 @@
    - [setValue](#setvalue)
    - [escapePath / unescapePath](#escapepath--unescapepath)
    - [escapeSegment](#escapesegment)
-   - [convertJsonPointerToPath](#convertjsonpointertopath)
+   - [convertJSONPointerToPath](#convertjsonpointertopath)
 5. [JSON Patch](#json-patch)
    - [compare](#compare)
    - [applyPatch](#applypatch)
@@ -22,7 +22,7 @@
    - [mergePatch](#mergepatch)
 6. [JSON Path](#json-path)
    - [getJSONPath](#getjsonpath)
-   - [convertJsonPathToPointer](#convertjsonpathtopointer)
+   - [convertJSONPathToPointer](#convertjsonpathtopointer)
 7. [타입 정의](#타입-정의)
 8. [보안](#보안)
 9. [에러 처리](#에러-처리)
@@ -89,9 +89,9 @@ const updated = applyPatch(document, patches);
 | `@winglet/json/pointer-manipulator` | `getValue`, `setValue`                              |
 | `@winglet/json/pointer-patch`       | `compare`, `applyPatch`, `difference`, `mergePatch` |
 | `@winglet/json/pointer-escape`      | `escapePath`, `unescapePath`, `escapeSegment`       |
-| `@winglet/json/pointer-common`      | `JSONPointer` 상수, `convertJsonPointerToPath`      |
+| `@winglet/json/pointer-common`      | `JSONPointer` 상수, `convertJSONPointerToPath`      |
 | `@winglet/json/path`                | `JSONPath` 상수                                     |
-| `@winglet/json/path-common`         | `getJSONPath`, `convertJsonPathToPointer`           |
+| `@winglet/json/path-common`         | `getJSONPath`, `convertJSONPathToPointer`           |
 
 ```typescript
 import { escapePath, escapeSegment } from '@winglet/json/pointer-escape';
@@ -256,20 +256,20 @@ const pointer = `/${escapeSegment(key)}/status`;
 // '/api~1v1/status'
 ```
 
-### convertJsonPointerToPath
+### convertJSONPointerToPath
 
 JSON Pointer 문자열을 언이스케이프된 참조 토큰 배열로 변환합니다.
 
 ```typescript
-function convertJsonPointerToPath(pointer: string): string[];
+function convertJSONPointerToPath(pointer: string): string[];
 ```
 
 ```typescript
-import { convertJsonPointerToPath } from '@winglet/json/pointer-common';
+import { convertJSONPointerToPath } from '@winglet/json/pointer-common';
 
-convertJsonPointerToPath('/foo/bar'); // ['foo', 'bar']
-convertJsonPointerToPath('/a~1b/c~0d'); // ['a/b', 'c~d']
-convertJsonPointerToPath(''); // []
+convertJSONPointerToPath('/foo/bar'); // ['foo', 'bar']
+convertJSONPointerToPath('/a~1b/c~0d'); // ['a/b', 'c~d']
+convertJSONPointerToPath(''); // []
 ```
 
 ---
@@ -375,9 +375,9 @@ applyPatch({ status: 'draft' }, [
 
 ```typescript
 function difference(
-  source: JsonValue,
-  target: JsonValue,
-): JsonValue | undefined;
+  source: JSONValue,
+  target: JSONValue,
+): JSONValue | undefined;
 ```
 
 source와 target이 동일하면 `undefined`를 반환합니다. 객체 비교에서 `null`은 "이 키를 제거"를 의미합니다. 배열은 병합이 아닌 전체 교체로 처리됩니다.
@@ -411,8 +411,8 @@ JSON Merge Patch 문서를 소스 값에 적용합니다(RFC 7396).
 
 ```typescript
 function mergePatch<Type>(
-  source: JsonValue,
-  mergePatchBody: JsonValue | undefined,
+  source: JSONValue,
+  mergePatchBody: JSONValue | undefined,
   immutable?: boolean, // 기본값: true
 ): Type;
 ```
@@ -494,21 +494,21 @@ getJSONPath(special, special['key.with.dots']);
 // "$['key.with.dots']"
 ```
 
-### convertJsonPathToPointer
+### convertJSONPathToPointer
 
 JSONPath 문자열을 동등한 JSON Pointer 문자열로 변환합니다.
 
 ```typescript
-function convertJsonPathToPointer(jsonPath: string): string;
+function convertJSONPathToPointer(jsonPath: string): string;
 ```
 
 ```typescript
-import { convertJsonPathToPointer } from '@winglet/json/path-common';
+import { convertJSONPathToPointer } from '@winglet/json/path-common';
 
-convertJsonPathToPointer('$.foo.bar'); // '/foo/bar'
-convertJsonPathToPointer('$.users[0].name'); // '/users/0/name'
-convertJsonPathToPointer('$'); // ''
-convertJsonPathToPointer("$['a/b'].c"); // '/a~1b/c'
+convertJSONPathToPointer('$.foo.bar'); // '/foo/bar'
+convertJSONPathToPointer('$.users[0].name'); // '/users/0/name'
+convertJSONPathToPointer('$'); // ''
+convertJSONPathToPointer("$['a/b'].c"); // '/a~1b/c'
 ```
 
 ---
@@ -517,11 +517,11 @@ convertJsonPathToPointer("$['a/b'].c"); // '/a~1b/c'
 
 ```typescript
 // JSON 기본 타입
-type JsonPrimitive = string | number | boolean | null;
-type JsonArray = Array<any>;
-type JsonObject = Record<string, any>;
-type JsonValue = JsonPrimitive | JsonArray | JsonObject;
-type JsonRoot = JsonArray | JsonObject;
+type JSONPrimitive = string | number | boolean | null;
+type JSONArray = Array<any>;
+type JSONObject = Record<string, any>;
+type JSONValue = JSONPrimitive | JSONArray | JSONObject;
+type JSONRoot = JSONArray | JSONObject;
 
 // 패치 연산 타입
 type Operation = 'add' | 'replace' | 'remove' | 'move' | 'copy' | 'test';
@@ -674,4 +674,4 @@ applyPatch(source, patches, {
 - [RFC 6901 — JSON Pointer](https://datatracker.ietf.org/doc/html/rfc6901)
 - [RFC 6902 — JSON Patch](https://datatracker.ietf.org/doc/html/rfc6902)
 - [RFC 7396 — JSON Merge Patch](https://datatracker.ietf.org/doc/html/rfc7396)
-- [JSONPath — JSON을 위한 XPath](https://goessner.net/articles/JsonPath/)
+- [JSONPath — JSON을 위한 XPath](https://goessner.net/articles/JSONPath/)

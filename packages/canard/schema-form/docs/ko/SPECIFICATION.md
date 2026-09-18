@@ -141,7 +141,7 @@ export const App = () => {
 
 ```typescript
 interface FormProps<
-  Schema extends JsonSchema = JsonSchema,
+  Schema extends JSONSchema = JSONSchema,
   Value extends AllowedValue = InferValueType<Schema>,
 > {
   /** 이 SchemaForm에서 사용할 JSON Schema */
@@ -155,7 +155,7 @@ interface FormProps<
   /** 이 SchemaForm의 값이 변경될 때 호출되는 함수 */
   onChange?: SetStateFn<Value>;
   /** 이 SchemaForm이 검증될 때 호출되는 함수 */
-  onValidate?: Fn<[jsonSchemaError: JsonSchemaError[]]>;
+  onValidate?: Fn<[jsonSchemaError: JSONSchemaError[]]>;
   /** 폼이 제출될 때 호출되는 함수 */
   onSubmit?: Fn<[value: Value], Promise<void> | void>;
   /** 이 SchemaForm의 상태가 변경될 때 호출되는 함수 */
@@ -167,7 +167,7 @@ interface FormProps<
   /** 커스텀 폼 타입 렌더러 컴포넌트 */
   CustomFormTypeRenderer?: ComponentType<FormTypeRendererProps>;
   /** 초기 검증 오류, 기본값은 undefined */
-  errors?: JsonSchemaError[];
+  errors?: JSONSchemaError[];
   /** 커스텀 오류 포맷 함수 */
   formatError?: FormTypeRendererProps['formatError'];
   /**
@@ -210,7 +210,7 @@ interface FormProps<
 
 ```typescript
 interface FormHandle<
-  Schema extends JsonSchema,
+  Schema extends JSONSchema,
   Value extends AllowedValue = InferValueType<Schema>,
 > {
   /** 루트 노드 */
@@ -236,11 +236,11 @@ interface FormHandle<
   /** 값 설정 */
   setValue: SetStateFnWithOptions<Value>;
   /** 현재 오류 가져오기 */
-  getErrors: Fn<[], JsonSchemaError[]>;
+  getErrors: Fn<[], JSONSchemaError[]>;
   /** 첨부 파일 맵 가져오기 */
   getAttachedFilesMap: Fn<[], AttachedFilesMap>;
   /** 검증 실행 */
-  validate: Fn<[], Promise<JsonSchemaError[]>>;
+  validate: Fn<[], Promise<JSONSchemaError[]>>;
   /** 오류 표시 설정 */
   showError: Fn<[visible: boolean]>;
   /** 폼 제출 */
@@ -252,14 +252,14 @@ interface FormHandle<
 
 ```typescript
 interface FormChildrenProps<
-  Schema extends JsonSchema,
+  Schema extends JSONSchema,
   Value extends AllowedValue = InferValueType<Schema>,
 > {
   node?: InferSchemaNode<Schema>;
   jsonSchema: Schema;
   defaultValue?: Value;
   value?: Value;
-  errors?: JsonSchemaError[];
+  errors?: JSONSchemaError[];
 }
 ```
 
@@ -301,7 +301,7 @@ type AttachedFilesMap = Map<string, File[]>;
 ### 노드 초기화
 
 ```typescript
-const node = nodeFromJsonSchema({
+const node = nodeFromJSONSchema({
   jsonSchema: { type: 'object', properties: { name: { type: 'string' } } },
   onChange: (value) => console.log('Form value changed:', value),
 });
@@ -345,7 +345,7 @@ type FormTypeTestFn = Fn<[hint: Hint], boolean>;
 // 객체 형태
 type FormTypeTestObject = Partial<{
   type: Array<string>;
-  jsonSchema: JsonSchema;
+  jsonSchema: JSONSchema;
   format: Array<string>;
   formType: Array<string>;
   nullable: boolean;
@@ -354,7 +354,7 @@ type FormTypeTestObject = Partial<{
 
 // Hint 객체
 type Hint = {
-  jsonSchema: JsonSchema;
+  jsonSchema: JSONSchema;
   type: string;
   format: string;
   formType: string;
@@ -371,7 +371,7 @@ interface FormTypeInputProps<
   Value extends AllowedValue = any,
   Context extends Dictionary = object,
   WatchValues extends Array<any> = Array<any>,
-  Schema extends JsonSchemaWithVirtual = InferJsonSchema<Value>,
+  Schema extends JSONSchemaWithVirtual = InferJSONSchema<Value>,
   Node extends SchemaNode = InferSchemaNode<Schema>,
 > {
   jsonSchema: Schema; // FormTypeInput 컴포넌트의 JSON Schema
@@ -910,7 +910,7 @@ const handleClick = async () => {
 | prop     | 타입                      | 설명                            |
 | -------- | ------------------------- | ------------------------------- |
 | `value`  | `InferValueType<Schema>`  | 현재 폼 값                      |
-| `errors` | `JsonSchemaError[]`       | 전체 검증 에러 목록             |
+| `errors` | `JSONSchemaError[]`       | 전체 검증 에러 목록             |
 | `node`   | `InferSchemaNode<Schema>` | 루트 노드 (프로그래매틱 접근용) |
 
 ---

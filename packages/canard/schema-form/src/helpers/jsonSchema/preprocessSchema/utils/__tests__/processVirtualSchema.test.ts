@@ -1,13 +1,13 @@
 import { describe, expect, it } from 'vitest';
 
-import type { JsonSchema } from '@/schema-form/types';
+import type { JSONSchema } from '@/schema-form/types';
 
 import { processVirtualSchema } from '../processVirtualSchema';
 
 describe('processVirtualSchema', () => {
   describe('when virtual property is undefined', () => {
     it('should return null', () => {
-      const schema: Partial<JsonSchema> = {
+      const schema: Partial<JSONSchema> = {
         type: 'object',
         properties: {
           name: { type: 'string' },
@@ -22,7 +22,7 @@ describe('processVirtualSchema', () => {
   describe('when virtual property exists', () => {
     describe('with required fields', () => {
       it('should transform virtual fields in required array', () => {
-        const schema: Partial<JsonSchema> = {
+        const schema: Partial<JSONSchema> = {
           type: 'object',
           properties: {
             firstName: { type: 'string' },
@@ -44,7 +44,7 @@ describe('processVirtualSchema', () => {
       });
 
       it('should handle multiple virtual fields', () => {
-        const schema: Partial<JsonSchema> = {
+        const schema: Partial<JSONSchema> = {
           type: 'object',
           properties: {
             street: { type: 'string' },
@@ -74,7 +74,7 @@ describe('processVirtualSchema', () => {
       });
 
       it('should handle mixed virtual and non-virtual required fields', () => {
-        const schema: Partial<JsonSchema> = {
+        const schema: Partial<JSONSchema> = {
           type: 'object',
           properties: {
             id: { type: 'string' },
@@ -97,7 +97,7 @@ describe('processVirtualSchema', () => {
       });
 
       it('should avoid duplicate required fields', () => {
-        const schema: Partial<JsonSchema> = {
+        const schema: Partial<JSONSchema> = {
           type: 'object',
           properties: {
             name: { type: 'string' },
@@ -125,7 +125,7 @@ describe('processVirtualSchema', () => {
 
     describe('with conditional schemas (then/else)', () => {
       it('should transform virtual fields in then clause', () => {
-        const schema: Partial<JsonSchema> = {
+        const schema: Partial<JSONSchema> = {
           type: 'object',
           properties: {
             hasAddress: { type: 'boolean' },
@@ -156,7 +156,7 @@ describe('processVirtualSchema', () => {
       });
 
       it('should transform virtual fields in else clause', () => {
-        const schema: Partial<JsonSchema> = {
+        const schema: Partial<JSONSchema> = {
           type: 'object',
           properties: {
             hasContact: { type: 'boolean' },
@@ -187,7 +187,7 @@ describe('processVirtualSchema', () => {
       });
 
       it('should transform nested then/else with virtual fields', () => {
-        const schema: Partial<JsonSchema> = {
+        const schema: Partial<JSONSchema> = {
           type: 'object',
           properties: {
             type: { type: 'string' },
@@ -240,7 +240,7 @@ describe('processVirtualSchema', () => {
       });
 
       it('should handle both then and else clauses together', () => {
-        const schema: Partial<JsonSchema> = {
+        const schema: Partial<JSONSchema> = {
           type: 'object',
           properties: {
             isPerson: { type: 'boolean' },
@@ -285,7 +285,7 @@ describe('processVirtualSchema', () => {
 
     describe('with all conditions (required, then, else)', () => {
       it('should transform all virtual fields appropriately', () => {
-        const schema: Partial<JsonSchema> = {
+        const schema: Partial<JSONSchema> = {
           type: 'object',
           properties: {
             id: { type: 'string' },
@@ -341,7 +341,7 @@ describe('processVirtualSchema', () => {
 
     describe('edge cases', () => {
       it('should handle empty virtual fields array', () => {
-        const schema: Partial<JsonSchema> = {
+        const schema: Partial<JSONSchema> = {
           type: 'object',
           properties: {
             virtualField: { type: 'string' },
@@ -361,7 +361,7 @@ describe('processVirtualSchema', () => {
       });
 
       it('should handle virtual property without matching required field', () => {
-        const schema: Partial<JsonSchema> = {
+        const schema: Partial<JSONSchema> = {
           type: 'object',
           properties: {
             firstName: { type: 'string' },
@@ -383,7 +383,7 @@ describe('processVirtualSchema', () => {
       });
 
       it('should return null when virtual exists but no conditions are met', () => {
-        const schema: Partial<JsonSchema> = {
+        const schema: Partial<JSONSchema> = {
           type: 'object',
           properties: {
             field: { type: 'string' },
@@ -400,7 +400,7 @@ describe('processVirtualSchema', () => {
       });
 
       it('should handle schema without properties', () => {
-        const schema: Partial<JsonSchema> = {
+        const schema: Partial<JSONSchema> = {
           type: 'object',
           required: ['virtualField'],
           virtual: {
@@ -417,7 +417,7 @@ describe('processVirtualSchema', () => {
       });
 
       it('should preserve original schema properties', () => {
-        const schema: Partial<JsonSchema> = {
+        const schema: Partial<JSONSchema> = {
           type: 'object',
           title: 'Test Schema',
           description: 'A test schema',

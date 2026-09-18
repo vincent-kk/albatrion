@@ -13,12 +13,12 @@ import type {
 
 import type { MuiContext } from '../type';
 
-type RadioGroupStringJsonSchema = StringSchema & {
+type RadioGroupStringJSONSchema = StringSchema & {
   radioLabels?: string[];
   formType: 'radio';
 };
 
-type RadioGroupNumberJsonSchema = NumberSchema & {
+type RadioGroupNumberJSONSchema = NumberSchema & {
   radioLabels?: string[];
   formType: 'radio';
 };
@@ -31,7 +31,7 @@ type FormTypeInputRadioGroupProps = {
 } & MuiContext &
   FormTypeInputPropsWithSchema<
     string | number | null,
-    RadioGroupStringJsonSchema | RadioGroupNumberJsonSchema,
+    RadioGroupStringJSONSchema | RadioGroupNumberJSONSchema,
     MuiContext
   >;
 

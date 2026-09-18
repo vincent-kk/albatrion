@@ -99,7 +99,7 @@
  * @example
  * JSON-like data validation:
  * ```typescript
- * function isJsonLike(value: unknown): boolean {
+ * function isJSONLike(value: unknown): boolean {
  *   if (value === null || typeof value !== 'object') {
  *     return typeof value === 'string' ||
  *            typeof value === 'number' ||
@@ -108,11 +108,11 @@
  *   }
  *
  *   if (Array.isArray(value)) {
- *     return value.every(isJsonLike);
+ *     return value.every(isJSONLike);
  *   }
  *
  *   if (isPlainObject(value)) {
- *     return Object.values(value).every(isJsonLike);
+ *     return Object.values(value).every(isJSONLike);
  *   }
  *
  *   return false;

@@ -24,16 +24,16 @@ yarn add @winglet/json-schema
 | Import path | Contents |
 |---|---|
 | `@winglet/json-schema` | All exports |
-| `@winglet/json-schema/scanner` | `JsonSchemaScanner` (synchronous) |
-| `@winglet/json-schema/async-scanner` | `JsonSchemaScannerAsync` |
+| `@winglet/json-schema/scanner` | `JSONSchemaScanner` (synchronous) |
+| `@winglet/json-schema/async-scanner` | `JSONSchemaScannerAsync` |
 | `@winglet/json-schema/filter` | Schema type-guard functions |
 
 ## Key Exports
 
 ### Schema Scanner
 
-- `JsonSchemaScanner` — depth-first traversal with `enter`/`exit` visitor callbacks
-- `JsonSchemaScannerAsync` — async variant for remote `$ref` resolution
+- `JSONSchemaScanner` — depth-first traversal with `enter`/`exit` visitor callbacks
+- `JSONSchemaScannerAsync` — async variant for remote `$ref` resolution
 
 ### Schema Filters (`/filter`)
 
@@ -50,7 +50,7 @@ Type-guard functions for each JSON Schema type:
 ## Usage Examples
 
 ```ts
-import { JsonSchemaScanner } from '@winglet/json-schema/scanner';
+import { JSONSchemaScanner } from '@winglet/json-schema/scanner';
 
 const schema = {
   type: 'object',
@@ -60,7 +60,7 @@ const schema = {
   },
 };
 
-const scanner = new JsonSchemaScanner({
+const scanner = new JSONSchemaScanner({
   visitor: {
     enter(entry) {
       console.log(entry.path, entry.schema.type);
@@ -90,12 +90,12 @@ isArraySchema({ type: 'array', items: {} });         // true
 
 ### Key exports
 ```
-./scanner → JsonSchemaScanner
-            JsonScannerOptions (type)
+./scanner → JSONSchemaScanner
+            JSONScannerOptions (type)
             SchemaVisitor (type)
             SchemaEntry (type)
-./async-scanner → JsonSchemaScannerAsync
-                  JsonScannerOptionsAsync (type)
+./async-scanner → JSONSchemaScannerAsync
+                  JSONScannerOptionsAsync (type)
                   SchemaVisitor (type)
                   SchemaEntry (type)
 ./filter → isArraySchema

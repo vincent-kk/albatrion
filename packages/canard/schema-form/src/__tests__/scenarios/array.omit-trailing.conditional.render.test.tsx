@@ -10,7 +10,7 @@
 import '@testing-library/jest-dom';
 import { describe, expect, it } from 'vitest';
 
-import type { JsonSchema } from '@/schema-form/types';
+import type { JSONSchema } from '@/schema-form/types';
 
 import { renderForm } from '../renderForm';
 
@@ -36,7 +36,7 @@ const oneOfSchema = {
       properties: { other: { type: 'string' } },
     },
   ],
-} as JsonSchema;
+} as JSONSchema;
 
 describe('array omitTrailing × conditional schemas (render)', () => {
   it('trims the array inside an active oneOf branch', async () => {
@@ -87,7 +87,7 @@ describe('array omitTrailing × conditional schemas (render)', () => {
           properties: { note: { type: 'string' } },
         },
       ],
-    } as JsonSchema;
+    } as JSONSchema;
     const form = await renderForm(anyOfSchema);
     await form.selectOption('/mode', 'list');
     await form.type('/arr/1', 'y');
@@ -106,7 +106,7 @@ describe('array omitTrailing × conditional schemas (render)', () => {
       if: { properties: { category: { enum: ['movie'] } } },
       then: { required: ['tags'] },
       else: {},
-    } as JsonSchema;
+    } as JSONSchema;
     const form = await renderForm(ifThenElseSchema, { validator: true });
     await form.selectOption('/category', 'movie');
     const movieErrors = await form.validate();
@@ -135,7 +135,7 @@ describe('array omitTrailing × conditional schemas (render)', () => {
         enabled: { type: 'boolean' },
         arr: { ...TRIMMED_ARR, '&active': '../enabled === true' },
       },
-    } as JsonSchema;
+    } as JSONSchema;
     const form = await renderForm(activeSchema);
     await form.toggle('/enabled');
     await form.type('/arr/0', 'x');
@@ -167,7 +167,7 @@ describe('array omitTrailing × conditional schemas (render)', () => {
           },
         },
       ],
-    } as JsonSchema;
+    } as JSONSchema;
     const form = await renderForm(mixedSchema);
     await form.selectOption('/disc', 'a');
     await form.type('/arr/0', 'x');
@@ -199,7 +199,7 @@ describe('array omitTrailing × conditional schemas (render)', () => {
           properties: { other: { type: 'string' } },
         },
       ],
-    } as JsonSchema;
+    } as JSONSchema;
     const form = await renderForm(numericBranchSchema, { validator: true });
     await form.selectOption('/disc', 'a');
     await form.setValue({ disc: 'a', arr: [1, undefined, 2, undefined] });

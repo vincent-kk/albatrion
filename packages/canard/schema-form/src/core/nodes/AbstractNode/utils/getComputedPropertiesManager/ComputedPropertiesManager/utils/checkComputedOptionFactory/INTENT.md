@@ -10,7 +10,7 @@ JSON Schema의 `computed` 필드(active, visible, readOnly, disabled, pristine)�
 - 반환 타입: `DynamicFunction<boolean> | undefined`
 - `boolean` 리터럴 표현식은 상수 함수 `() => expression` 으로 최적화
 - `string` 표현식은 `createDynamicFunction(..., coerceToBoolean: true)` 로 컴파일
-- 탐색 우선순위: `rootJsonSchema[fieldName]` > `jsonSchema[fieldName]` > `jsonSchema.computed[fieldName]` > `jsonSchema[ALIAS + fieldName]`
+- 탐색 우선순위: `rootJSONSchema[fieldName]` > `jsonSchema[fieldName]` > `jsonSchema.computed[fieldName]` > `jsonSchema[ALIAS + fieldName]`
 
 ## Boundaries
 

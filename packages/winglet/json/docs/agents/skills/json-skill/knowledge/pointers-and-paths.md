@@ -85,30 +85,30 @@ Keys that would break dot notation switch to bracket-and-quote form: `getJSONPat
 
 ## Do not bridge JSONPath to a pointer by string conversion
 
-`convertJsonPathToPointer` is named for JSONPath but does **not** accept a full JSONPath expression. It consumes a bare data path and treats `$` as an ordinary character, so it neither strips the root token nor applies RFC 6901 escaping:
+`convertJSONPathToPointer` is named for JSONPath but does **not** accept a full JSONPath expression. It consumes a bare data path and treats `$` as an ordinary character, so it neither strips the root token nor applies RFC 6901 escaping:
 
 ```typescript
-convertJsonPathToPointer('users[0].name'); // '/users/0/name'  — intended input shape
-convertJsonPathToPointer('users[]'); // '/users/-'      — empty brackets become append
-convertJsonPathToPointer(''); // '/'            — not ''
-convertJsonPathToPointer('$'); // '/$'           — '$' kept as a key
-convertJsonPathToPointer('a~b.c'); // '/a~b/c'       — '~' left raw, not escaped to '~0'
-convertJsonPathToPointer("['key.with.dots']"); // "/'key.with.dots'" — quotes kept
+convertJSONPathToPointer('users[0].name'); // '/users/0/name'  — intended input shape
+convertJSONPathToPointer('users[]'); // '/users/-'      — empty brackets become append
+convertJSONPathToPointer(''); // '/'            — not ''
+convertJSONPathToPointer('$'); // '/$'           — '$' kept as a key
+convertJSONPathToPointer('a~b.c'); // '/a~b/c'       — '~' left raw, not escaped to '~0'
+convertJSONPathToPointer("['key.with.dots']"); // "/'key.with.dots'" — quotes kept
 ```
 
 Feeding a `getJSONPath` result straight in therefore produces a pointer with a phantom `$` segment, and the subsequent read silently misses:
 
 ```typescript
 const jsonPath = getJSONPath(doc, doc.users[1]); // '$.users[1]'
-getValue(doc, convertJsonPathToPointer(jsonPath)); // undefined — pointer was '/$/users/1'
+getValue(doc, convertJSONPathToPointer(jsonPath)); // undefined — pointer was '/$/users/1'
 ```
 
-What `convertJsonPathToPointer` really is, is one half of an inverse pair with `convertJsonPointerToPath`, over the leading-dot data path form — the shape a schema library or form library tends to use, not JSONPath proper. Neither half touches `$` or RFC 6901 escapes, and both pass already-converted input through unchanged, so a double call is safe:
+What `convertJSONPathToPointer` really is, is one half of an inverse pair with `convertJSONPointerToPath`, over the leading-dot data path form — the shape a schema library or form library tends to use, not JSONPath proper. Neither half touches `$` or RFC 6901 escapes, and both pass already-converted input through unchanged, so a double call is safe:
 
 ```typescript
-convertJsonPointerToPath('/users/0/name'); // '.users[0].name'  — numeric segments bracketed
-convertJsonPathToPointer('.users[0].name'); // '/users/0/name'   — round-trips
-convertJsonPointerToPath('/'); // '.'
+convertJSONPointerToPath('/users/0/name'); // '.users[0].name'  — numeric segments bracketed
+convertJSONPathToPointer('.users[0].name'); // '/users/0/name'   — round-trips
+convertJSONPointerToPath('/'); // '.'
 ```
 
 Use `getJSONPointer` when you have the object, and reserve the `convert*` pair for data paths that never carried a `$`, quoted keys, or `~`.

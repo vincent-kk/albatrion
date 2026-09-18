@@ -1,7 +1,7 @@
 import { isIdenticalSchemaType } from '@winglet/json-schema/filter';
 
 import type { ObjectNode } from '@/schema-form/core/nodes/ObjectNode';
-import { JsonSchemaError } from '@/schema-form/errors';
+import { JSONSchemaError } from '@/schema-form/errors';
 import { formatCompositionTypeRedefinitionError } from '@/schema-form/helpers/error';
 import type { ObjectSchema } from '@/schema-form/types';
 
@@ -15,7 +15,7 @@ export const throwIfTypeRedefinition = (
     subSchema.type !== undefined &&
     isIdenticalSchemaType(jsonSchema, subSchema) === false
   )
-    throw new JsonSchemaError(
+    throw new JSONSchemaError(
       'COMPOSITION_TYPE_REDEFINITION',
       formatCompositionTypeRedefinitionError(
         scope,

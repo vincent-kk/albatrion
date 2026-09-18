@@ -1,4 +1,4 @@
-import type { JsonSchema } from '@/schema-form/types';
+import type { JSONSchema } from '@/schema-form/types';
 
 import { transformCondition } from './utils/transformCondition';
 
@@ -10,7 +10,7 @@ import { transformCondition } from './utils/transformCondition';
  * @param schema - The partial JSON Schema that may contain virtual field definitions
  * @returns The transformed schema with virtual conditions applied, or null if no virtual processing was needed
  */
-export const processVirtualSchema = (schema: Partial<JsonSchema>) => {
+export const processVirtualSchema = (schema: Partial<JSONSchema>) => {
   if (schema.virtual === undefined) return null;
   let expired = false;
   if (schema.required) {

@@ -1,7 +1,7 @@
 import Ajv from 'ajv/dist/2020';
 import { describe, expect, it, vi } from 'vitest';
 
-import { nodeFromJsonSchema } from '@/schema-form/core';
+import { nodeFromJSONSchema } from '@/schema-form/core';
 
 import { ValidationMode } from '../nodes';
 import { createValidatorFactory } from './utils/createValidatorFactory';
@@ -14,7 +14,7 @@ import { createValidatorFactory } from './utils/createValidatorFactory';
  */
 const buildAndCaptureErrors = (jsonSchema: any, validatorFactory?: any) => {
   const spy = vi.spyOn(console, 'error').mockImplementation(() => {});
-  nodeFromJsonSchema({
+  nodeFromJSONSchema({
     onChange: () => {},
     jsonSchema,
     validationMode: ValidationMode.OnChange,

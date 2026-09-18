@@ -1,13 +1,13 @@
 import { describe, expect, it } from 'vitest';
 
-import type { JsonSchemaWithVirtual } from '@/schema-form/types';
+import type { JSONSchemaWithVirtual } from '@/schema-form/types';
 
 import { getFallbackValidator } from '../utils/getFallbackValidator';
 
 describe('getFallbackValidator', () => {
   it('should return a function that returns error array', () => {
     const error = new Error('Compilation failed');
-    const jsonSchema: JsonSchemaWithVirtual = {
+    const jsonSchema: JSONSchemaWithVirtual = {
       type: 'string',
       minLength: 5,
     };
@@ -23,7 +23,7 @@ describe('getFallbackValidator', () => {
 
   it('should include correct error structure', () => {
     const error = new Error('Schema validation error');
-    const jsonSchema: JsonSchemaWithVirtual = {
+    const jsonSchema: JSONSchemaWithVirtual = {
       type: 'object',
       properties: {
         name: { type: 'string' },
@@ -44,7 +44,7 @@ describe('getFallbackValidator', () => {
   it('should preserve original error message', () => {
     const errorMessage = 'Invalid schema format: missing required field';
     const error = new Error(errorMessage);
-    const jsonSchema: JsonSchemaWithVirtual = {
+    const jsonSchema: JSONSchemaWithVirtual = {
       type: 'array',
       items: { type: 'number' },
     };
@@ -58,7 +58,7 @@ describe('getFallbackValidator', () => {
   it('should include the original error as source', () => {
     const originalError = new Error('Original error');
     originalError.stack = 'Stack trace here';
-    const jsonSchema: JsonSchemaWithVirtual = {
+    const jsonSchema: JSONSchemaWithVirtual = {
       type: 'boolean',
     };
 
@@ -71,7 +71,7 @@ describe('getFallbackValidator', () => {
 
   it('should handle complex schemas', () => {
     const error = new Error('Complex schema compilation failed');
-    const complexSchema: JsonSchemaWithVirtual = {
+    const complexSchema: JSONSchemaWithVirtual = {
       type: 'object',
       properties: {
         user: {
@@ -102,7 +102,7 @@ describe('getFallbackValidator', () => {
 
   it('should handle schemas with computed properties', () => {
     const error = new Error('Computed schema error');
-    const schemaWithComputed: JsonSchemaWithVirtual = {
+    const schemaWithComputed: JSONSchemaWithVirtual = {
       type: 'string',
     };
 
@@ -114,7 +114,7 @@ describe('getFallbackValidator', () => {
 
   it('should handle virtual type schemas', () => {
     const error = new Error('Virtual type error');
-    const virtualSchema: JsonSchemaWithVirtual = {
+    const virtualSchema: JSONSchemaWithVirtual = {
       type: 'virtual',
       default: ['computed', 'value'],
     };
@@ -127,7 +127,7 @@ describe('getFallbackValidator', () => {
 
   it('should always return the same error structure for multiple calls', () => {
     const error = new Error('Consistent error');
-    const jsonSchema: JsonSchemaWithVirtual = {
+    const jsonSchema: JSONSchemaWithVirtual = {
       type: 'integer',
       minimum: 0,
       maximum: 100,
@@ -148,7 +148,7 @@ describe('getFallbackValidator', () => {
     error.code = 'SCHEMA_COMPILE_ERROR';
     error.details = { line: 42, column: 10 };
 
-    const jsonSchema: JsonSchemaWithVirtual = {
+    const jsonSchema: JSONSchemaWithVirtual = {
       type: 'string',
       pattern: '^[a-zA-Z]+$',
     };
@@ -163,7 +163,7 @@ describe('getFallbackValidator', () => {
 
   it('should handle undefined error message gracefully', () => {
     const error = new Error();
-    const jsonSchema: JsonSchemaWithVirtual = {
+    const jsonSchema: JSONSchemaWithVirtual = {
       type: 'null',
     };
 

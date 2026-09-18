@@ -1,4 +1,4 @@
-import type { JsonSchema } from '@/schema-form/types';
+import type { JSONSchema } from '@/schema-form/types';
 
 import { EXCLUDE_FIELDS } from './constants';
 
@@ -12,7 +12,7 @@ import { EXCLUDE_FIELDS } from './constants';
  * @param base - The base schema to modify
  * @param source - The source schema to copy fields from
  */
-export const processOverwriteFields = <T extends JsonSchema>(
+export const processOverwriteFields = <T extends JSONSchema>(
   base: T,
   source: Partial<T>,
 ) => {

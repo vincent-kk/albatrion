@@ -1,5 +1,5 @@
 import { combineConditions } from '@/schema-form/helpers/dynamicExpression';
-import type { PartialJsonSchema } from '@/schema-form/types';
+import type { PartialJSONSchema } from '@/schema-form/types';
 
 import type { PathManager } from '../../getPathManager';
 import { JSON_POINTER_PATH_REGEX } from '../../regex';
@@ -27,7 +27,7 @@ import { getExpressionFromSchema } from './getExpressionFromSchema';
  * // Output: { expressions: ["true"], schemaIndices: [2] }
  */
 export const extractConditionInfo = (
-  conditionSchemas: PartialJsonSchema[],
+  conditionSchemas: PartialJSONSchema[],
   conditionField: ConditionIndexName,
   pathManager: PathManager,
 ) => {

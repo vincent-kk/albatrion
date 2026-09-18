@@ -15,6 +15,8 @@ export {
 
 export {
   isSchemaFormError,
+  isJSONSchemaError,
+  /** @deprecated Use `isJSONSchemaError`. Removed in 0.16.0. */
   isJsonSchemaError,
   isUnhandledError,
   isValidationError,
@@ -71,6 +73,8 @@ export type {
   InjectToHandler,
   ValidatorFactory,
   ValidateFunction,
+  PublicJSONSchemaError as JSONSchemaError,
+  /** @deprecated Use `JSONSchemaError`. Removed in 0.16.0. */
   PublicJsonSchemaError as JsonSchemaError,
 } from './types';
 

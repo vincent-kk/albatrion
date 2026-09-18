@@ -1,7 +1,7 @@
-import type { JsonSchemaWithVirtual } from '@/schema-form/types';
+import type { JSONSchemaWithVirtual } from '@/schema-form/types';
 
 import { createDivider } from './utils/createDivider';
-import { formatJsonPreview } from './utils/formatJsonPreview';
+import { formatJSONPreview } from './utils/formatJSONPreview';
 
 /**
  * Formats a structured error message for circular reference detection in JSON Schema.
@@ -10,10 +10,10 @@ import { formatJsonPreview } from './utils/formatJsonPreview';
  */
 export const formatCircularReferenceError = (
   originalErrorMessage: string,
-  schema: JsonSchemaWithVirtual,
+  schema: JSONSchemaWithVirtual,
 ): string => {
   const divider = createDivider();
-  const { preview: schemaPreview, truncated } = formatJsonPreview(schema);
+  const { preview: schemaPreview, truncated } = formatJSONPreview(schema);
 
   return `
 Circular reference detected in JSON Schema.

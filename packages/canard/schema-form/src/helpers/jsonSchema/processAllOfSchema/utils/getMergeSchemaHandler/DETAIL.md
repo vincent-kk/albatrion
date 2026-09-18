@@ -8,9 +8,9 @@
 
 ## API Contracts
 
-`getMergeSchemaHandler(schema: JsonSchema): MergeSchemaHandler | null`
+`getMergeSchemaHandler(schema: JSONSchema): MergeSchemaHandler | null`
 
-- `MergeSchemaHandler = (base: JsonSchema, source: Partial<JsonSchema>) => JsonSchema` — 반환값은 `base` 동일 참조.
+- `MergeSchemaHandler = (base: JSONSchema, source: Partial<JSONSchema>) => JSONSchema` — 반환값은 `base` 동일 참조.
 - 타입 매핑: `array`·`boolean`·`null`·`object`·`string`은 각 타입 전용 핸들러, `number`와 `integer`는 **동일한** `intersectNumberSchema`.
 - type이 없거나 매핑 밖 타입(`virtual` 포함)이면 `null`.
 

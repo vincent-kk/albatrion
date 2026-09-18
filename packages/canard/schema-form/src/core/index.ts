@@ -1,4 +1,4 @@
-export { nodeFromJsonSchema, contextNodeFactory } from './nodeFromJsonSchema';
+export { nodeFromJSONSchema, contextNodeFactory } from './nodeFromJSONSchema';
 
 export type {
   ArrayNode,

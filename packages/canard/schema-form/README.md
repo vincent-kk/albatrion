@@ -3,8 +3,8 @@
 [![Typescript](https://img.shields.io/badge/typescript-✔-blue.svg)]()
 [![Javascript](https://img.shields.io/badge/javascript-✔-yellow.svg)]()
 [![React](https://img.shields.io/badge/react-✔-61DAFB.svg)]()
-[![Json Schema](https://img.shields.io/badge/JsonSchema-{}-blue.svg)]()
-[![Json Schema Form](https://img.shields.io/badge/JsonSchemaForm-form-red.svg)]()
+[![JSON Schema](https://img.shields.io/badge/JSONSchema-{}-blue.svg)]()
+[![JSON Schema Form](https://img.shields.io/badge/JSONSchemaForm-form-red.svg)]()
 
 ---
 
@@ -55,7 +55,7 @@ Please use a transpiler like Babel to transform the code for your target environ
 
 ```ts
 interface FormProps<
-  Schema extends JsonSchema = JsonSchema,
+  Schema extends JSONSchema = JSONSchema,
   Value extends AllowedValue = InferValueType<Schema>,
 > {
   /** JSON Schema to use in this SchemaForm */
@@ -69,7 +69,7 @@ interface FormProps<
   /** Function called when the value of this SchemaForm changes */
   onChange?: SetStateFn<Value>;
   /** Function called when this SchemaForm is validated */
-  onValidate?: Fn<[jsonSchemaError: JsonSchemaError[]]>;
+  onValidate?: Fn<[jsonSchemaError: JSONSchemaError[]]>;
   /** Function called when the form is submitted */
   onSubmit?: Fn<[value: Value], Promise<void> | void>;
   /** Function called when the state of this SchemaForm changes */
@@ -81,7 +81,7 @@ interface FormProps<
   /** Custom form type renderer component */
   CustomFormTypeRenderer?: ComponentType<FormTypeRendererProps>;
   /** Initial validation errors, default is undefined */
-  errors?: JsonSchemaError[];
+  errors?: JSONSchemaError[];
   /** Custom format error function */
   formatError?: FormTypeRendererProps['formatError'];
   /**
@@ -122,7 +122,7 @@ interface FormProps<
 
 ```ts
 interface FormHandle<
-  Schema extends JsonSchema,
+  Schema extends JSONSchema,
   Value extends AllowedValue = InferValueType<Schema>,
 > {
   node?: InferSchemaNode<Schema>;
@@ -136,9 +136,9 @@ interface FormHandle<
   clearState: Fn;
   getValue: Fn<[], Value>;
   setValue: SetStateFnWithOptions<Value>;
-  getErrors: Fn<[], JsonSchemaError[]>;
+  getErrors: Fn<[], JSONSchemaError[]>;
   getAttachedFilesMap: Fn<[], AttachedFilesMap>;
-  validate: Fn<[], Promise<JsonSchemaError[]>>;
+  validate: Fn<[], Promise<JSONSchemaError[]>>;
   showError: Fn<[visible: boolean]>;
   submit: TrackableHandlerFunction<[], void, { loading: boolean }>;
 }
@@ -155,14 +155,14 @@ type AttachedFilesMap = Map<string, File[]>;
 
 ```ts
 interface FormChildrenProps<
-  Schema extends JsonSchema,
+  Schema extends JSONSchema,
   Value extends AllowedValue = InferValueType<Schema>,
 > {
   node?: InferSchemaNode<Schema>;
   jsonSchema: Schema;
   defaultValue?: Value;
   value?: Value;
-  errors?: JsonSchemaError[];
+  errors?: JSONSchemaError[];
 }
 ```
 
@@ -220,12 +220,12 @@ ValidatorFactory is a function that takes a JSON Schema and returns a validation
 
 ```ts
 interface ValidatorFactory {
-  (schema: JsonSchema): ValidateFunction<any>;
+  (schema: JSONSchema): ValidateFunction<any>;
 }
 
 type ValidateFunction<Value = unknown> = Fn<
   [data: Value],
-  Promise<JsonSchemaError[] | null> | JsonSchemaError[] | null
+  Promise<JSONSchemaError[] | null> | JSONSchemaError[] | null
 >;
 ```
 
@@ -468,7 +468,7 @@ The conditions for a FormTypeInput can be defined using a function or an object:
 
 ```ts
 type Hint = {
-  jsonSchema: JsonSchema;
+  jsonSchema: JSONSchema;
   type: string;
   format: string;
   formType: string;
@@ -479,7 +479,7 @@ type FormTypeTestFn = Fn<[hint: Hint], boolean>;
 
 type FormTypeTestObject = Partial<{
   type: Array<string>;
-  jsonSchema: JsonSchema;
+  jsonSchema: JSONSchema;
   format: Array<string>;
   formType: Array<string>;
   [alt: string]: any;
@@ -498,7 +498,7 @@ interface FormTypeInputProps<
   Value extends AllowedValue = any,
   Context extends Dictionary = object,
   WatchValues extends Array<any> = Array<any>,
-  Schema extends JsonSchemaWithVirtual = InferJsonSchema<Value>,
+  Schema extends JSONSchemaWithVirtual = InferJSONSchema<Value>,
   Node extends SchemaNode = InferSchemaNode<Schema>,
 > {
   /** JSON Schema for the FormTypeInput Component */
@@ -523,7 +523,7 @@ interface FormTypeInputProps<
   errors: Node['errors'];
   /** Whether to show errors for this field */
   errorVisible: boolean;
-  /** Values being watched according to the `computed.watch`(=`&watch`) property defined in JsonSchema */
+  /** Values being watched according to the `computed.watch`(=`&watch`) property defined in JSONSchema */
   watchValues: WatchValues;
   /** Default value for the FormTypeInput Component */
   defaultValue: Value | undefined;
@@ -881,7 +881,7 @@ export interface ValidatorPlugin {
 }
 
 export interface ValidatorFactory {
-  (schema: JsonSchema): ValidateFunction<any>;
+  (schema: JSONSchema): ValidateFunction<any>;
 }
 ```
 
@@ -1838,9 +1838,9 @@ const handler: InjectToHandler<string> = (value, ctx) => {
   // ctx.schemaPath - Current node's schema path
   // ctx.jsonSchema - Current node's JSON Schema
   // ctx.parentValue - Parent node's value (null if root)
-  // ctx.parentJsonSchema - Parent's JSON Schema (null if root)
+  // ctx.parentJSONSchema - Parent's JSON Schema (null if root)
   // ctx.rootValue - Entire form value
-  // ctx.rootJsonSchema - Root JSON Schema
+  // ctx.rootJSONSchema - Root JSON Schema
   // ctx.context - User-defined context passed to Form
 
   // Conditional injection based on parent
@@ -1908,7 +1908,7 @@ Circular reference prevention works for any chain length (A→B→C→A, etc.) w
 
 #### Error Handling
 
-Errors in `injectTo` handlers are caught and wrapped in `JsonSchemaError` with detailed context:
+Errors in `injectTo` handlers are caught and wrapped in `JSONSchemaError` with detailed context:
 
 ```tsx
 injectTo: (value) => {
@@ -1964,7 +1964,7 @@ You can define form submission logic using the `onSubmit` prop:
 ```tsx
 import React, { useState } from 'react';
 
-import { Form, JsonSchemaError, isValidationError } from '@canard/schema-form';
+import { Form, JSONSchemaError, isValidationError } from '@canard/schema-form';
 
 export const FormWithSubmit = () => {
   const jsonSchema = {
@@ -1976,7 +1976,7 @@ export const FormWithSubmit = () => {
     required: ['name', 'email'],
   };
 
-  const [errors, setErrors] = useState<JsonSchemaError[]>([]);
+  const [errors, setErrors] = useState<JSONSchemaError[]>([]);
 
   const handleSubmit = async (value: any) => {
     try {
@@ -2018,7 +2018,7 @@ import React, { useRef, useState } from 'react';
 import {
   Form,
   FormHandle,
-  JsonSchemaError,
+  JSONSchemaError,
   isValidationError,
   useFormSubmit,
 } from '@canard/schema-form';
@@ -2035,7 +2035,7 @@ export const AdvancedSubmitForm = () => {
   };
 
   const formRef = useRef<FormHandle<typeof jsonSchema>>(null);
-  const [errors, setErrors] = useState<JsonSchemaError[]>([]);
+  const [errors, setErrors] = useState<JSONSchemaError[]>([]);
 
   // Async submission handler
   const handleSubmit = async (value: any) => {
@@ -2351,6 +2351,19 @@ const formRef = useRef<FormHandle<typeof jsonSchema, SignUpValue>>(null);
 ```
 
 Passing `defaultValue` infers `Value` from it as well, so an explicit type argument is not always necessary.
+
+---
+
+## Migration (0.15.0)
+
+The following exports were renamed for consistent casing. The old names remain as `@deprecated` aliases and will be removed in 0.16.0 (Removed in 0.16.0).
+
+| Old                 | New                 |
+| ------------------- | ------------------- |
+| `JsonSchemaError`   | `JSONSchemaError`   |
+| `isJsonSchemaError` | `isJSONSchemaError` |
+| `JsonSchema`        | `JSONSchema`        |
+| `InferJsonSchema`   | `InferJSONSchema`   |
 
 ---
 

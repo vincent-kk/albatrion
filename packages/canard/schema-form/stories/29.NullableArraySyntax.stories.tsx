@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react';
 
-import { Form, type FormHandle, type JsonSchema, SetValueOption } from '../src';
+import { Form, type FormHandle, type JSONSchema, SetValueOption } from '../src';
 import StoryLayout from './components/StoryLayout';
 
 export default {
@@ -35,7 +35,7 @@ export const BasicNullableString = () => {
         maxLength: 200,
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const formHandle = useRef<FormHandle<typeof schema>>(null);
 
@@ -127,7 +127,7 @@ export const BasicNullableNumber = () => {
         maximum: 999,
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const formHandle = useRef<FormHandle<typeof schema>>(null);
 
@@ -211,7 +211,7 @@ export const BasicNullableBoolean = () => {
         title: 'Push Notifications (null = ask later)',
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const formHandle = useRef<FormHandle<typeof schema>>(null);
 
@@ -346,7 +346,7 @@ export const ComplexNullableArray = () => {
         },
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const formHandle = useRef<FormHandle<typeof schema>>(null);
 
@@ -451,7 +451,7 @@ export const ComplexNullableObject = () => {
         additionalProperties: true,
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const formHandle = useRef<FormHandle<typeof schema>>(null);
 
@@ -586,7 +586,7 @@ export const EdgeCasesNullableTypes = () => {
         minLength: 5,
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const formHandle = useRef<FormHandle<typeof schema>>(null);
 

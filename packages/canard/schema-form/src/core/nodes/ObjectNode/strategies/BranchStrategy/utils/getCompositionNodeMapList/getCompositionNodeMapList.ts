@@ -8,13 +8,13 @@ import type {
   HandleChange,
   SchemaNodeFactory,
 } from '@/schema-form/core/types';
-import { JsonSchemaError } from '@/schema-form/errors';
+import { JSONSchemaError } from '@/schema-form/errors';
 import {
   formatCompositionPropertyExclusivenessError,
   formatCompositionPropertyRedefinitionError,
 } from '@/schema-form/helpers/error';
 import type {
-  JsonSchema,
+  JSONSchema,
   ObjectSchema,
   ObjectValue,
 } from '@/schema-form/types';
@@ -68,7 +68,7 @@ export const getCompositionNodeMapList = (
     for (let i = 0, k = keys[0], l = keys.length; i < l; i++, k = keys[i]) {
       if (keySetList && !keySetList[index].has(k)) continue;
       if (excludeKeySet?.has(k) || propertyKeySet?.has(k))
-        throw new JsonSchemaError(
+        throw new JSONSchemaError(
           'COMPOSITION_PROPERTY_EXCLUSIVENESS_REDEFINITION',
           formatCompositionPropertyExclusivenessError(
             scope,
@@ -83,7 +83,7 @@ export const getCompositionNodeMapList = (
           },
         );
       if (childNodeMap.has(k))
-        throw new JsonSchemaError(
+        throw new JSONSchemaError(
           'COMPOSITION_PROPERTY_REDEFINITION',
           formatCompositionPropertyRedefinitionError(scope, parentNode.path, k),
           {
@@ -94,7 +94,7 @@ export const getCompositionNodeMapList = (
           },
         );
 
-      const childSchema = properties[k] as JsonSchema;
+      const childSchema = properties[k] as JSONSchema;
       const inputDefault = defaultValue?.[k];
       compositionChildNodeMap.set(k, {
         node: nodeFactory({

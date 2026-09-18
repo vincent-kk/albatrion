@@ -1,0 +1,58 @@
+import type { Fn } from '@aileron/declare';
+
+import { getResolveSchema } from '@/schema-form/helpers/jsonSchema';
+import type {
+  AllowedValue,
+  JSONSchema,
+  ValidatorFactory,
+} from '@/schema-form/types';
+
+import { contextNodeFactory, createSchemaNodeFactory } from './nodes';
+import type { ContextNode } from './nodes';
+import type { InferSchemaNode, ValidationMode } from './types';
+
+/** Properties interface for creating Node from JSON Schema */
+interface NodeFromSchemaProps<
+  Schema extends JSONSchema,
+  Value extends AllowedValue,
+> {
+  jsonSchema: Schema;
+  defaultValue?: Value;
+  onChange: Fn<[value: Value]>;
+  validationMode?: ValidationMode;
+  validatorFactory?: ValidatorFactory;
+  contextNode?: ContextNode;
+}
+
+/**
+ * Creates SchemaNode from JSON Schema.
+ * @typeParam Schema - JSON Schema type
+ * @typeParam Value - Value type, defaults to type inferred from Schema
+ * @param props - Properties for Node creation
+ * @returns Created SchemaNode
+ */
+export const nodeFromJSONSchema = <
+  Schema extends JSONSchema,
+  Value extends AllowedValue,
+>({
+  jsonSchema,
+  defaultValue,
+  onChange,
+  validationMode,
+  validatorFactory,
+  contextNode,
+}: NodeFromSchemaProps<Schema, Value>) => {
+  const resolveSchema = getResolveSchema(jsonSchema);
+  const nodeFactory = createSchemaNodeFactory(resolveSchema);
+  return nodeFactory({
+    jsonSchema,
+    defaultValue,
+    nodeFactory,
+    onChange: onChange as Fn<[unknown]>,
+    validationMode,
+    validatorFactory,
+    contextNode,
+  }) as InferSchemaNode<Schema>;
+};
+
+export { contextNodeFactory };

@@ -1,4 +1,4 @@
-import type { JsonSchemaWithVirtual } from '@/schema-form/types';
+import type { JSONSchemaWithVirtual } from '@/schema-form/types';
 
 import { createDynamicFunction } from '../createDynamicFunction';
 import type { PathManager } from '../getPathManager';
@@ -10,7 +10,7 @@ import { ALIAS, type DerivedValueFieldName } from '../type';
  * @returns Derived value getter factory function
  */
 export const getDerivedValueFactory =
-  (jsonSchema: JsonSchemaWithVirtual) =>
+  (jsonSchema: JSONSchemaWithVirtual) =>
   /**
    * Returns a derived value factory function for the given dependency paths and field name.
    * @param dependencyPaths - Dependency path array

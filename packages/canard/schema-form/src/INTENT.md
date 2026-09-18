@@ -17,7 +17,7 @@ JSON Schema 기반 폼 생성 라이브러리의 전체 소스 루트. 노드 �
 
 - 새 노드 타입은 노드 구현 모듈에 두고 해당 공개 진입점에서 이름을 지정해 export
 - `FormTypeInput` 컴포넌트는 `FormTypeInputProps` 인터페이스를 구현
-- 에러 발생 시 도메인 에러 클래스 사용 (`JsonSchemaError`, `SchemaFormError` 등)
+- 에러 발생 시 도메인 에러 클래스 사용 (`JSONSchemaError`, `SchemaFormError` 등)
 - 플러그인 등록은 반드시 `registerPlugin()` API를 통해 수행
 
 ### Ask first

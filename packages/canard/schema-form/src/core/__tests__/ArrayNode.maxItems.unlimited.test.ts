@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import { delay } from '@winglet/common-utils';
 
-import { nodeFromJsonSchema } from '@/schema-form/core';
+import { nodeFromJSONSchema } from '@/schema-form/core';
 
 import type { ArrayNode } from '../nodes/ArrayNode';
 
@@ -29,7 +29,7 @@ describe('ArrayNode maxItems unlimited', () => {
    */
   describe('defaultValue initialization (unlimited=true)', () => {
     it('TerminalStrategy: should accept defaultValue exceeding maxItems', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: {
           type: 'array',
@@ -47,7 +47,7 @@ describe('ArrayNode maxItems unlimited', () => {
     });
 
     it('BranchStrategy: should accept defaultValue exceeding maxItems', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: {
           type: 'array',
@@ -80,7 +80,7 @@ describe('ArrayNode maxItems unlimited', () => {
     });
 
     it('should accept schema.default exceeding maxItems', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: {
           type: 'array',
@@ -105,7 +105,7 @@ describe('ArrayNode maxItems unlimited', () => {
    */
   describe('setValue operations (unlimited=true)', () => {
     it('TerminalStrategy: setValue should bypass maxItems constraint', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: {
           type: 'array',
@@ -126,7 +126,7 @@ describe('ArrayNode maxItems unlimited', () => {
     });
 
     it('BranchStrategy: setValue should bypass maxItems constraint', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: {
           type: 'array',
@@ -151,7 +151,7 @@ describe('ArrayNode maxItems unlimited', () => {
     });
 
     it('nested ArrayNode: setValue should bypass maxItems in parent', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: {
           type: 'object',
@@ -179,7 +179,7 @@ describe('ArrayNode maxItems unlimited', () => {
     });
 
     it('parent setValue should set array values bypassing maxItems', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: {
           type: 'object',
@@ -217,7 +217,7 @@ describe('ArrayNode maxItems unlimited', () => {
    */
   describe('minItems auto-fill (unlimited=true)', () => {
     it('TerminalStrategy: minItems auto-fill should ignore maxItems', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: {
           type: 'array',
@@ -235,7 +235,7 @@ describe('ArrayNode maxItems unlimited', () => {
     });
 
     it('BranchStrategy: minItems auto-fill should ignore maxItems', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: {
           type: 'array',
@@ -269,7 +269,7 @@ describe('ArrayNode maxItems unlimited', () => {
    */
   describe('push() respects maxItems (unlimited=undefined)', () => {
     it('TerminalStrategy: push should be blocked when maxItems reached', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: {
           type: 'array',
@@ -292,7 +292,7 @@ describe('ArrayNode maxItems unlimited', () => {
     });
 
     it('BranchStrategy: push should be blocked when maxItems reached', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: {
           type: 'array',
@@ -320,7 +320,7 @@ describe('ArrayNode maxItems unlimited', () => {
     });
 
     it('push should work when under maxItems limit', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: {
           type: 'array',
@@ -342,7 +342,7 @@ describe('ArrayNode maxItems unlimited', () => {
     });
 
     it('push should return current length when blocked', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: {
           type: 'array',
@@ -367,7 +367,7 @@ describe('ArrayNode maxItems unlimited', () => {
    */
   describe('push() with unlimited=true', () => {
     it('TerminalStrategy: push with unlimited=true should bypass maxItems', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: {
           type: 'array',
@@ -389,7 +389,7 @@ describe('ArrayNode maxItems unlimited', () => {
     });
 
     it('BranchStrategy: push with unlimited=true should bypass maxItems', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: {
           type: 'array',
@@ -416,7 +416,7 @@ describe('ArrayNode maxItems unlimited', () => {
     });
 
     it('push with unlimited=true should return new length', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: {
           type: 'array',
@@ -435,7 +435,7 @@ describe('ArrayNode maxItems unlimited', () => {
     });
 
     it('multiple pushes with unlimited=true should all succeed', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: {
           type: 'array',
@@ -464,7 +464,7 @@ describe('ArrayNode maxItems unlimited', () => {
    */
   describe('Edge cases', () => {
     it('maxItems=1 should block push when array has one item', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: {
           type: 'array',
@@ -485,7 +485,7 @@ describe('ArrayNode maxItems unlimited', () => {
     });
 
     it('maxItems=1 should allow push with unlimited=true', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: {
           type: 'array',
@@ -511,7 +511,7 @@ describe('ArrayNode maxItems unlimited', () => {
      * ensures that 0 is treated as a valid limit, not as falsy.
      */
     it('maxItems=0 prevents adding any items (correct JSON Schema behavior)', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: {
           type: 'array',
@@ -531,7 +531,7 @@ describe('ArrayNode maxItems unlimited', () => {
     });
 
     it('no maxItems defined should always allow push', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: {
           type: 'array',
@@ -552,7 +552,7 @@ describe('ArrayNode maxItems unlimited', () => {
     });
 
     it('setValue after push should fully replace value', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: {
           type: 'array',
@@ -578,7 +578,7 @@ describe('ArrayNode maxItems unlimited', () => {
     });
 
     it('clear then push should respect maxItems', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: {
           type: 'array',
@@ -612,7 +612,7 @@ describe('ArrayNode maxItems unlimited', () => {
    */
   describe('Nested arrays', () => {
     it('nested array defaultValue should bypass inner maxItems', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: {
           type: 'array',
@@ -637,7 +637,7 @@ describe('ArrayNode maxItems unlimited', () => {
     });
 
     it('object with multiple arrays should each bypass maxItems for defaultValue', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: {
           type: 'object',

@@ -1,7 +1,7 @@
 import '@testing-library/jest-dom';
 import { describe, expect, it } from 'vitest';
 
-import type { JsonSchema } from '@winglet/json-schema';
+import type { JSONSchema } from '@winglet/json-schema';
 
 import { renderForm } from '../renderForm';
 
@@ -47,7 +47,7 @@ describe('prefixItems fixed tuple — per-index typed slots', () => {
           minItems: 3,
         },
       },
-    } satisfies JsonSchema;
+    } satisfies JSONSchema;
 
     const form = await renderForm(schema);
 
@@ -83,7 +83,7 @@ describe('prefixItems fixed tuple — per-index typed slots', () => {
           minItems: 3,
         },
       },
-    } satisfies JsonSchema;
+    } satisfies JSONSchema;
 
     const form = await renderForm(schema);
 
@@ -114,7 +114,7 @@ describe('prefixItems fixed tuple — per-index typed slots', () => {
           minItems: 3,
         },
       },
-    } satisfies JsonSchema;
+    } satisfies JSONSchema;
 
     const form = await renderForm(schema);
     await form.type('/person/0', 'Zaphod');
@@ -144,7 +144,7 @@ describe('prefixItems fixed tuple — per-index typed slots', () => {
           minItems: 3,
         },
       },
-    } satisfies JsonSchema;
+    } satisfies JSONSchema;
 
     const form = await renderForm(schema);
 
@@ -175,7 +175,7 @@ describe('open tuple — prefixItems + items schema', () => {
           maxItems: 3,
         },
       },
-    } satisfies JsonSchema;
+    } satisfies JSONSchema;
 
     const form = await renderForm(schema);
 
@@ -203,7 +203,7 @@ describe('open tuple — prefixItems + items schema', () => {
           maxItems: 3,
         },
       },
-    } satisfies JsonSchema;
+    } satisfies JSONSchema;
 
     const form = await renderForm(schema);
     await form.addItem('/cmd');
@@ -230,7 +230,7 @@ describe('open tuple — prefixItems + items schema', () => {
           maxItems: 4,
         },
       },
-    } satisfies JsonSchema;
+    } satisfies JSONSchema;
 
     const form = await renderForm(schema, {
       instrument: true,
@@ -266,7 +266,7 @@ describe('open tuple — prefixItems + items schema', () => {
           maxItems: 3,
         },
       },
-    } satisfies JsonSchema;
+    } satisfies JSONSchema;
 
     const form = await renderForm(schema);
     await form.addItem('/cmd');
@@ -298,7 +298,7 @@ describe('open tuple — prefixItems + items schema', () => {
           maxItems: 4,
         },
       },
-    } satisfies JsonSchema;
+    } satisfies JSONSchema;
 
     const form = await renderForm(schema);
     await form.setValue({ cmd: ['a', 'b', 'c'] });
@@ -327,7 +327,7 @@ describe('item removal — surviving rows re-label (GAP-7)', () => {
           maxItems: 5,
         },
       },
-    } satisfies JsonSchema;
+    } satisfies JSONSchema;
 
     const form = await renderForm(schema, {
       defaultValue: { cmd: ['a', 'b', 'c'] },
@@ -359,7 +359,7 @@ describe('item removal — surviving rows re-label (GAP-7)', () => {
           maxItems: 5,
         },
       },
-    } satisfies JsonSchema;
+    } satisfies JSONSchema;
 
     const form = await renderForm(schema, {
       defaultValue: { cmd: ['a', 'b', 'c'] },
@@ -393,7 +393,7 @@ describe('terminal-mode array with prefixItems', () => {
           minItems: 3,
         },
       },
-    } satisfies JsonSchema;
+    } satisfies JSONSchema;
 
     const form = await renderForm(schema);
 
@@ -424,7 +424,7 @@ describe('terminal-mode array with prefixItems', () => {
           minItems: 3,
         },
       },
-    } satisfies JsonSchema;
+    } satisfies JSONSchema;
 
     const form = await renderForm(schema);
     await form.setValue({ nums: [100, 200, 300, 400] });
@@ -453,7 +453,7 @@ describe('prefixItems priming (two-phase)', () => {
           minItems: 3,
         },
       },
-    } satisfies JsonSchema;
+    } satisfies JSONSchema;
 
     const form = await renderForm(schema, { flushOnMount: false });
 

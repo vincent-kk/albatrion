@@ -2,7 +2,7 @@
 
 ## Purpose
 
-`JsonSchemaScanner`로 객체 스키마 트리를 재귀 순회하여 중첩된 모든 `default` 값을 수집하고 병합한 기본값 객체를 반환한다.
+`JSONSchemaScanner`로 객체 스키마 트리를 재귀 순회하여 중첩된 모든 `default` 값을 수집하고 병합한 기본값 객체를 반환한다.
 
 ## Conventions
 

@@ -10,7 +10,7 @@ JSON Schema의 `computed.watch` / `&watch` 경로 배열을 파싱하여, 의존
 - `watch` 값: 단일 string 또는 string[] 모두 처리 (내부적으로 배열로 정규화)
 - 반환 함수: `(dependencies) => dependencies[i], dependencies[j], ...` 순서 보존
 - `pathManager.set(path)` + `pathManager.findIndex(path)` 로 인덱스 수집
-- 컴파일 실패 시 `JsonSchemaError('OBSERVED_VALUES')` throw
+- 컴파일 실패 시 `JSONSchemaError('OBSERVED_VALUES')` throw
 
 ## Boundaries
 

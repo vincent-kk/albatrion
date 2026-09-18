@@ -1,6 +1,6 @@
-# Type Inference — InferValueType and InferJsonSchema
+# Type Inference — InferValueType and InferJSONSchema
 
-`InferValueType<Schema>` maps a schema definition to the runtime value type it describes; `InferJsonSchema<Value>` goes the other way, from a value type to its schema interface. The rules below are the ones that surprise people — the rest follows from the declarations in `dist/*.d.ts`.
+`InferValueType<Schema>` maps a schema definition to the runtime value type it describes; `InferJSONSchema<Value>` goes the other way, from a value type to its schema interface. The rules below are the ones that surprise people — the rest follows from the declarations in `dist/*.d.ts`.
 
 ## Recursion requires `as const`
 
@@ -18,7 +18,7 @@ Inference into `properties` and `items` needs literal types. Without `as const` 
 
 | Schema                                                                  | Inferred                        |
 | ----------------------------------------------------------------------- | ------------------------------- |
-| `properties` keyed by plain `string` (`Dictionary<JsonSchema>`)         | `Record<string, any>`           |
+| `properties` keyed by plain `string` (`Dictionary<JSONSchema>`)         | `Record<string, any>`           |
 | `items: false`                                                          | `any[]`                         |
 | no `type` at all                                                        | `any`                           |
 | `{ type: 'array' }` / `{ type: 'object' }` with no `items`/`properties` | `any[]` / `Record<string, any>` |
@@ -49,20 +49,20 @@ type J = InferValueType<{
 }>; // { id?: number }                          ← closed
 ```
 
-## The reverse direction — `InferJsonSchema`
+## The reverse direction — `InferJSONSchema`
 
-`InferJsonSchema<Value>` maps a value type to the schema interface describing it, which is what you want when typing a schema constant against a known payload type. Nullability in the value selects the nullable schema variant; object and array values map to the generic object/array interfaces rather than a shape-specific one.
+`InferJSONSchema<Value>` maps a value type to the schema interface describing it, which is what you want when typing a schema constant against a known payload type. Nullability in the value selects the nullable schema variant; object and array values map to the generic object/array interfaces rather than a shape-specific one.
 
 ```typescript
-type A = InferJsonSchema<string>; // NonNullableStringSchema
-type B = InferJsonSchema<string | null>; // NullableStringSchema
-type C = InferJsonSchema<number>; // NonNullableNumberSchema
-type D = InferJsonSchema<boolean>; // NonNullableBooleanSchema
-type E = InferJsonSchema<string[]>; // NonNullableArraySchema
-type F = InferJsonSchema<{ id: string }>; // NonNullableObjectSchema
-type G = InferJsonSchema<null>; // NullSchema
+type A = InferJSONSchema<string>; // NonNullableStringSchema
+type B = InferJSONSchema<string | null>; // NullableStringSchema
+type C = InferJSONSchema<number>; // NonNullableNumberSchema
+type D = InferJSONSchema<boolean>; // NonNullableBooleanSchema
+type E = InferJSONSchema<string[]>; // NonNullableArraySchema
+type F = InferJSONSchema<{ id: string }>; // NonNullableObjectSchema
+type G = InferJSONSchema<null>; // NullSchema
 ```
 
 ## `$ref` is structural, not a union member
 
-`RefSchema` is **not** a member of the `JsonSchema` union, so no guard narrows to it and inference does not follow it. The scanner identifies a reference node structurally, by `typeof schema.$ref === 'string'`. Check `$ref` the same way in your own code rather than testing membership in a schema type.
+`RefSchema` is **not** a member of the `JSONSchema` union, so no guard narrows to it and inference does not follow it. The scanner identifies a reference node structurally, by `typeof schema.$ref === 'string'`. Check `$ref` the same way in your own code rather than testing membership in a schema type.

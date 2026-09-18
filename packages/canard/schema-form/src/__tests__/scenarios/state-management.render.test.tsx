@@ -2,7 +2,7 @@ import '@testing-library/jest-dom';
 import { act } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 
-import type { JsonSchema } from '@winglet/json-schema';
+import type { JSONSchema } from '@winglet/json-schema';
 
 import {
   type FormTypeRendererProps,
@@ -120,7 +120,7 @@ const profileSchema = {
       },
     },
   },
-} satisfies JsonSchema;
+} satisfies JSONSchema;
 
 const validatedSchema = {
   type: 'object',
@@ -131,7 +131,7 @@ const validatedSchema = {
       errorMessages: { minLength: 'TOO_SHORT' },
     },
   },
-} satisfies JsonSchema;
+} satisfies JSONSchema;
 
 const listSchema = {
   type: 'object',
@@ -144,7 +144,7 @@ const listSchema = {
       },
     },
   },
-} satisfies JsonSchema;
+} satisfies JSONSchema;
 
 // ---------------------------------------------------------------------------
 // Dirty / Touched from interaction

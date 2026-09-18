@@ -1,4 +1,4 @@
-import { JsonSchemaError } from '@/schema-form/errors';
+import { JSONSchemaError } from '@/schema-form/errors';
 import { formatInvalidRangeError } from '@/schema-form/helpers/error';
 
 /**
@@ -11,7 +11,7 @@ import { formatInvalidRangeError } from '@/schema-form/helpers/error';
  * @param min - The minimum value (optional)
  * @param max - The maximum value (optional)
  * @param errorMessage - Custom error message prefix
- * @throws {JsonSchemaError} When min > max, creating an invalid range
+ * @throws {JSONSchemaError} When min > max, creating an invalid range
  */
 export const validateRange = (
   min?: number,
@@ -19,7 +19,7 @@ export const validateRange = (
   errorMessage: string = 'Invalid range: min > max',
 ): void => {
   if (min !== undefined && max !== undefined && min > max) {
-    throw new JsonSchemaError(
+    throw new JSONSchemaError(
       'INVALID_RANGE',
       formatInvalidRangeError(min, max, errorMessage),
     );

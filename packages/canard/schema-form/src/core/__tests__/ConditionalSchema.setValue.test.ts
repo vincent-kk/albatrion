@@ -2,8 +2,8 @@ import { describe, expect, it } from 'vitest';
 
 import { delay } from '@winglet/common-utils';
 
-import { nodeFromJsonSchema } from '@/schema-form/core';
-import type { JsonSchema } from '@/schema-form/types';
+import { nodeFromJSONSchema } from '@/schema-form/core';
+import type { JSONSchema } from '@/schema-form/types';
 
 import type { NumberNode } from '../nodes/NumberNode';
 import type { ObjectNode } from '../nodes/ObjectNode';
@@ -12,7 +12,7 @@ import type { StringNode } from '../nodes/StringNode';
 describe('Conditional Schema setValue behavior', () => {
   describe('oneOf - automatic field removal on setValue', () => {
     it('should remove fields not matching oneOf condition when setValue is called (shallow level)', async () => {
-      const schema: JsonSchema = {
+      const schema: JSONSchema = {
         type: 'object',
         properties: {
           category: {
@@ -31,7 +31,7 @@ describe('Conditional Schema setValue behavior', () => {
         ],
       };
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: schema,
       }) as ObjectNode;
@@ -76,7 +76,7 @@ describe('Conditional Schema setValue behavior', () => {
     });
 
     it('should handle multiple conditional fields at shallow level', async () => {
-      const schema: JsonSchema = {
+      const schema: JSONSchema = {
         type: 'object',
         properties: {
           category: {
@@ -110,7 +110,7 @@ describe('Conditional Schema setValue behavior', () => {
         ],
       };
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: schema,
       }) as ObjectNode;
@@ -159,7 +159,7 @@ describe('Conditional Schema setValue behavior', () => {
     });
 
     it('should remove fields not matching oneOf condition at nested level', async () => {
-      const schema: JsonSchema = {
+      const schema: JSONSchema = {
         type: 'object',
         properties: {
           product: {
@@ -191,7 +191,7 @@ describe('Conditional Schema setValue behavior', () => {
         },
       };
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: schema,
       }) as ObjectNode;
@@ -236,7 +236,7 @@ describe('Conditional Schema setValue behavior', () => {
     });
 
     it('should remove fields not matching oneOf condition at deep nested level', async () => {
-      const schema: JsonSchema = {
+      const schema: JSONSchema = {
         type: 'object',
         properties: {
           company: {
@@ -273,7 +273,7 @@ describe('Conditional Schema setValue behavior', () => {
         },
       };
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: schema,
       }) as ObjectNode;
@@ -324,7 +324,7 @@ describe('Conditional Schema setValue behavior', () => {
 
   describe('anyOf - automatic field removal on setValue', () => {
     it('should remove fields not matching anyOf condition at shallow level', async () => {
-      const schema: JsonSchema = {
+      const schema: JSONSchema = {
         type: 'object',
         properties: {
           enableFeatureA: { type: 'boolean', default: false },
@@ -348,7 +348,7 @@ describe('Conditional Schema setValue behavior', () => {
         ],
       };
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: schema,
       }) as ObjectNode;
@@ -410,7 +410,7 @@ describe('Conditional Schema setValue behavior', () => {
     });
 
     it('should remove fields not matching anyOf condition at nested level', async () => {
-      const schema: JsonSchema = {
+      const schema: JSONSchema = {
         type: 'object',
         properties: {
           settings: {
@@ -439,7 +439,7 @@ describe('Conditional Schema setValue behavior', () => {
         },
       };
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: schema,
       }) as ObjectNode;
@@ -486,7 +486,7 @@ describe('Conditional Schema setValue behavior', () => {
 
   describe('combined oneOf and anyOf - automatic field removal on setValue', () => {
     it('should handle oneOf and anyOf field removal independently', async () => {
-      const schema: JsonSchema = {
+      const schema: JSONSchema = {
         type: 'object',
         properties: {
           mode: { type: 'string', enum: ['A', 'B'], default: 'A' },
@@ -516,7 +516,7 @@ describe('Conditional Schema setValue behavior', () => {
         ],
       };
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: schema,
       }) as ObjectNode;
@@ -570,7 +570,7 @@ describe('Conditional Schema setValue behavior', () => {
 
   describe('edge cases - consistency and timing', () => {
     it('should handle child node direct modification after parent setValue', async () => {
-      const schema: JsonSchema = {
+      const schema: JSONSchema = {
         type: 'object',
         properties: {
           category: {
@@ -589,7 +589,7 @@ describe('Conditional Schema setValue behavior', () => {
         ],
       };
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: schema,
       }) as ObjectNode;
@@ -657,7 +657,7 @@ describe('Conditional Schema setValue behavior', () => {
     });
 
     it('should handle partial updates correctly (implicit field removal)', async () => {
-      const schema: JsonSchema = {
+      const schema: JSONSchema = {
         type: 'object',
         properties: {
           category: {
@@ -677,7 +677,7 @@ describe('Conditional Schema setValue behavior', () => {
         ],
       };
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: schema,
       }) as ObjectNode;
@@ -711,7 +711,7 @@ describe('Conditional Schema setValue behavior', () => {
     });
 
     it('should handle cascading removals with multi-level dependencies', async () => {
-      const schema: JsonSchema = {
+      const schema: JSONSchema = {
         type: 'object',
         properties: {
           levelA: {
@@ -741,7 +741,7 @@ describe('Conditional Schema setValue behavior', () => {
         ],
       };
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: schema,
       }) as ObjectNode;
@@ -792,7 +792,7 @@ describe('Conditional Schema setValue behavior', () => {
     });
 
     it('should handle sync/async timing correctly (immediate vs delayed reads)', async () => {
-      const schema: JsonSchema = {
+      const schema: JSONSchema = {
         type: 'object',
         properties: {
           category: {
@@ -811,7 +811,7 @@ describe('Conditional Schema setValue behavior', () => {
         ],
       };
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: schema,
       }) as ObjectNode;

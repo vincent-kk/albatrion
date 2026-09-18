@@ -18,7 +18,7 @@ oneOf/anyOf 스키마 배열에서 `&if` / `computed.if` 조건을 파싱하여 
 ### Always do
 
 - `type !== 'object'` 인 경우 `undefined` 조기 반환
-- 조건 컴파일 실패 시 `JsonSchemaError('CONDITION_INDEX')` throw
+- 조건 컴파일 실패 시 `JSONSchemaError('CONDITION_INDEX')` throw
 
 ### Ask first
 

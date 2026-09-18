@@ -6,7 +6,7 @@ JSONPointer(RFC 6901/6902/7396 정합 포인터·패치 연산)와 JSONPath(경�
 
 ## Conventions
 
-- JSONPointer는 포인터 형식을 경로 형식으로(`convertJsonPointerToPath`), JSONPath는 경로 형식을 포인터 형식으로(`convertJsonPathToPointer`) 변환한다 — 방향은 반대지만 코드로 연결되어 있지 않은 별개 계약이다.
+- JSONPointer는 포인터 형식을 경로 형식으로(`convertJSONPointerToPath`), JSONPath는 경로 형식을 포인터 형식으로(`convertJSONPathToPointer`) 변환한다 — 방향은 반대지만 코드로 연결되어 있지 않은 별개 계약이다.
 - 예약 멤버(`__proto__` 등) own 데이터 취급 계약은 JSONPointer가 전담 소유한다 — 이 fractal은 그 계약을 재정의하거나 반복하지 않는다.
 
 ## Boundaries

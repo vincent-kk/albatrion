@@ -54,7 +54,7 @@ export function writeDocFile(
 /**
  * Write or update a _category_.json file.
  */
-export function writeCategoryJson(
+export function writeCategoryJSON(
   dirPath: string,
   content: string,
   checkMode: boolean,

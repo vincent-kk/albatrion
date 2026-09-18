@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import type { ArraySchema, ObjectSchema } from '@/schema-form/types';
 
-import { nodeFromJsonSchema } from '../nodeFromJsonSchema';
+import { nodeFromJSONSchema } from '../nodeFromJSONSchema';
 import { isArrayNode, isObjectNode } from '../nodes';
 
 describe('oneOf schemaPath assignment', () => {
@@ -28,7 +28,7 @@ describe('oneOf schemaPath assignment', () => {
         ],
       };
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: schema,
         onChange: () => {},
       });
@@ -81,7 +81,7 @@ describe('oneOf schemaPath assignment', () => {
         ],
       };
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: schema,
         onChange: () => {},
       });
@@ -122,7 +122,7 @@ describe('oneOf schemaPath assignment', () => {
         ],
       };
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: schema,
         onChange: () => {},
       });
@@ -179,7 +179,7 @@ describe('oneOf schemaPath assignment', () => {
         },
       };
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: schema,
         onChange: () => {},
       });
@@ -255,7 +255,7 @@ describe('oneOf schemaPath assignment', () => {
         },
       };
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: schema,
         defaultValue: {
           items: [
@@ -333,7 +333,7 @@ describe('oneOf schemaPath assignment', () => {
         },
       };
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: schema,
         onChange: () => {},
       });
@@ -416,7 +416,7 @@ describe('oneOf schemaPath assignment', () => {
         ],
       };
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: schema,
         onChange: () => {},
       });
@@ -447,7 +447,7 @@ describe('oneOf schemaPath assignment', () => {
       };
 
       expect(() =>
-        nodeFromJsonSchema({
+        nodeFromJSONSchema({
           jsonSchema: schema,
           onChange: () => {},
         }),
@@ -471,7 +471,7 @@ describe('oneOf schemaPath assignment', () => {
       };
 
       expect(() =>
-        nodeFromJsonSchema({
+        nodeFromJSONSchema({
           jsonSchema: schema,
           onChange: () => {},
         }),
@@ -503,7 +503,7 @@ describe('oneOf schemaPath assignment', () => {
         ],
       };
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: schema,
         onChange: () => {},
       });
@@ -563,7 +563,7 @@ describe('oneOf schemaPath assignment', () => {
         ],
       };
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: schema,
         onChange: () => {},
       });
@@ -620,7 +620,7 @@ describe('oneOf schemaPath assignment', () => {
         },
       };
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: schema,
         defaultValue: [
           { type: 'user', name: 'John', email: 'john@example.com' },
@@ -721,7 +721,7 @@ describe('oneOf schemaPath assignment', () => {
         },
       };
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: schema,
         defaultValue: [
           {
@@ -809,7 +809,7 @@ describe('oneOf schemaPath assignment', () => {
         },
       };
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         jsonSchema: schema,
         defaultValue: [
           { type: 'text', content: 'Hello' },

@@ -11,7 +11,7 @@ import type {
   StringSchema,
 } from '@/schema-form/types';
 
-type StringCheckboxJsonSchema = {
+type StringCheckboxJSONSchema = {
   items: StringSchema;
 } & ArraySchema;
 
@@ -35,7 +35,7 @@ const FormTypeInputStringCheckbox = ({
   className,
 }: FormTypeInputPropsWithSchema<
   (string | null)[],
-  StringCheckboxJsonSchema,
+  StringCheckboxJSONSchema,
   CheckboxLabelsContext
 >) => {
   const checkboxOptions = useMemo(

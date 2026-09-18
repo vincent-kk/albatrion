@@ -13,7 +13,7 @@ JSON Schema 내부의 참조를 수집하고, 수집한 정의를 동기 스캐�
 
 ### Always do
 
-- 참조 수집과 인라인 두 단계 모두 동기 `JsonSchemaScanner`의 엔트리 포인트를 통해서만 사용한다
+- 참조 수집과 인라인 두 단계 모두 동기 `JSONSchemaScanner`의 엔트리 포인트를 통해서만 사용한다
 - 동작을 바꾸는 변경은 DETAIL.md를 먼저 갱신한다
 
 ### Ask first

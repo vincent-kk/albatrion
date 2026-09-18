@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import { Operation, type Patch } from '../../../patchModel';
 import { applyPatch } from '../applyPatch';
-import { JsonPatchError } from '../utils/error';
+import { JSONPatchError } from '../utils/error';
 
 /**
  * RFC 6901 은 포인터를 `/` 로 시작하는 형태와 URI fragment(`#/…`) 형태 둘 다로 쓴다.
@@ -30,6 +30,6 @@ describe('applyPatch path forms', () => {
     ];
 
     // 구조화된 패치 오류여야 한다 — 내부에서 새는 TypeError 가 아니라
-    expect(() => applyPatch({ a: 1 }, patches)).toThrow(JsonPatchError);
+    expect(() => applyPatch({ a: 1 }, patches)).toThrow(JSONPatchError);
   });
 });

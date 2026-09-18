@@ -42,8 +42,8 @@
         "**/winglet/react-utils/src/hoc/withErrorBoundary",
         "**/winglet/data-loader/src",
         "**/winglet/json-schema/src/filters",
-        "**/winglet/json-schema/src/utils/JsonSchemaScanner/sync",
-        "**/winglet/json-schema/src/utils/JsonSchemaScanner/async",
+        "**/winglet/json-schema/src/utils/JSONSchemaScanner/sync",
+        "**/winglet/json-schema/src/utils/JSONSchemaScanner/async",
         "**/winglet/style-utils/src/styleManager",
         "**/winglet/style-utils/src/utils/cx"
       ]

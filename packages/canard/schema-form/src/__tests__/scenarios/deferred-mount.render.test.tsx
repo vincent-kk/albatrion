@@ -2,7 +2,7 @@ import '@testing-library/jest-dom';
 import { act } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import type { JsonSchema } from '@winglet/json-schema';
+import type { JSONSchema } from '@winglet/json-schema';
 
 import {
   VirtualizationBackfill,
@@ -93,7 +93,7 @@ const flushIdle = async () => {
 const flatSchema = (
   count: number,
   overrides: Record<string, object> = {},
-): JsonSchema => ({
+): JSONSchema => ({
   type: 'object',
   properties: Object.fromEntries(
     Array.from({ length: count }, (_, index) => {
@@ -106,7 +106,7 @@ const flatSchema = (
   ),
 });
 
-const arraySchema: JsonSchema = {
+const arraySchema: JSONSchema = {
   type: 'object',
   properties: { items: { type: 'array', items: { type: 'string' } } },
 };
@@ -282,7 +282,7 @@ describe('deferred-mount (virtualization)', () => {
             properties: { director: { type: 'string' } },
           },
         ],
-      } satisfies JsonSchema;
+      } satisfies JSONSchema;
       const form = await renderForm(schema, {
         virtualization: { threshold: 3, eagerCount: 1, backfill: VirtualizationBackfill.None },
       });

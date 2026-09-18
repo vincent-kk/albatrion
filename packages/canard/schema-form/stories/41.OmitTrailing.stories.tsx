@@ -3,8 +3,8 @@ import { useRef, useState } from 'react';
 import {
   Form,
   type FormHandle,
-  type JsonSchema,
-  type JsonSchemaError,
+  type JSONSchema,
+  type JSONSchemaError,
   registerPlugin,
 } from '../src';
 import StoryLayout from './components/StoryLayout';
@@ -37,7 +37,7 @@ export const BasicEmptyInputsFirst = () => {
         options: { omitTrailing: true },
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
   const [value, setValue] = useState<Record<string, unknown>>();
   return (
     <StoryLayout jsonSchema={schema} value={value}>
@@ -53,7 +53,7 @@ export const RootArrayForm = () => {
     items: { type: 'number' },
     minItems: 3,
     options: { omitTrailing: true },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
   const formHandle = useRef<FormHandle<typeof schema, any>>(null);
   const [value, setValue] = useState<unknown>();
   const [snapshot, setSnapshot] = useState<string>('');
@@ -96,7 +96,7 @@ export const OneOfBranchSwitching = () => {
         properties: { other: { type: 'string' } },
       },
     ],
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
   const [value, setValue] = useState<Record<string, unknown>>();
   return (
     <StoryLayout jsonSchema={schema} value={value}>
@@ -129,7 +129,7 @@ export const AnyOfActiveBranch = () => {
         properties: { note: { type: 'string' } },
       },
     ],
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
   const [value, setValue] = useState<Record<string, unknown>>();
   return (
     <StoryLayout jsonSchema={schema} value={value}>
@@ -154,9 +154,9 @@ export const IfThenElseRequiredWithTrim = () => {
     if: { properties: { category: { enum: ['movie'] } } },
     then: { required: ['tags'] },
     else: {},
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
   const [value, setValue] = useState<Record<string, unknown>>();
-  const [errors, setErrors] = useState<JsonSchemaError[]>([]);
+  const [errors, setErrors] = useState<JSONSchemaError[]>([]);
   return (
     <StoryLayout jsonSchema={schema} value={value} errors={errors}>
       <Form jsonSchema={schema} onChange={setValue} onValidate={setErrors} />
@@ -178,7 +178,7 @@ export const ActiveToggleRestore = () => {
         '&active': '../enabled === true',
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
   const [value, setValue] = useState<Record<string, unknown>>();
   return (
     <StoryLayout jsonSchema={schema} value={value}>
@@ -198,7 +198,7 @@ export const SetValueInjection = () => {
         options: { omitTrailing: true },
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
   const formHandle = useRef<FormHandle<typeof schema, any>>(null);
   const [value, setValue] = useState<Record<string, unknown>>();
   return (
@@ -233,7 +233,7 @@ export const DefaultValueAndReset = () => {
         options: { omitTrailing: true },
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
   const formHandle = useRef<FormHandle<typeof schema, any>>(null);
   const [value, setValue] = useState<Record<string, unknown>>();
   return (
@@ -268,7 +268,7 @@ export const NullableAndNested = () => {
         },
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
   const formHandle = useRef<FormHandle<typeof schema, any>>(null);
   const [value, setValue] = useState<Record<string, unknown>>();
   return (
@@ -307,7 +307,7 @@ export const PrefixItemsAndTerminal = () => {
         options: { omitTrailing: true },
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
   const formHandle = useRef<FormHandle<typeof schema, any>>(null);
   const [value, setValue] = useState<Record<string, unknown>>();
   return (
@@ -353,7 +353,7 @@ export const SetValueCompositeBranchesNested = () => {
         properties: { other: { type: 'string' } },
       },
     ],
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
   const formHandle = useRef<FormHandle<typeof schema, any>>(null);
   const [value, setValue] = useState<Record<string, unknown>>();
   return (
@@ -398,7 +398,7 @@ export const InjectToComposite = () => {
       },
       mirror: { type: 'array', items: { type: 'string' } },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
   const [value, setValue] = useState<Record<string, unknown>>();
   return (
     <StoryLayout jsonSchema={schema} value={value}>

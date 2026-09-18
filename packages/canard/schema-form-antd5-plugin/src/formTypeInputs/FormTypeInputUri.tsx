@@ -18,7 +18,7 @@ import type {
   StringSchema,
 } from '@canard/schema-form';
 
-type StringJsonSchema = StringSchema<{
+type StringJSONSchema = StringSchema<{
   protocols?: string[];
 }> & {
   format?: 'uri';
@@ -72,7 +72,7 @@ const parseUri = (uri: string) => {
 interface FormTypeInputUriProps
   extends FormTypeInputPropsWithSchema<
     string | null,
-    StringJsonSchema,
+    StringJSONSchema,
     { size?: SizeType }
   > {
   size?: SizeType;

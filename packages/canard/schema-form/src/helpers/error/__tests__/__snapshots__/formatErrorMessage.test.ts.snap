@@ -669,7 +669,7 @@ How to fix:
   4. Use form.validate() to check errors before submission"
 `;
 
-exports[`formatErrorMessage > 에러 메시지 스냅샷 > formatUnknownJsonSchemaError 스냅샷 1`] = `
+exports[`formatErrorMessage > 에러 메시지 스냅샷 > formatUnknownJSONSchemaError 스냅샷 1`] = `
 "Unknown JSON Schema type encountered.
 
   ╭──────────────────────────────────────────────────

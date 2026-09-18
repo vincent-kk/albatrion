@@ -2,8 +2,8 @@ import { describe, expect, it } from 'vitest';
 
 import { delay } from '@winglet/common-utils';
 
-import { nodeFromJsonSchema } from '@/schema-form/core';
-import type { JsonSchema } from '@/schema-form/types';
+import { nodeFromJSONSchema } from '@/schema-form/core';
+import type { JSONSchema } from '@/schema-form/types';
 
 import type { ArrayNode } from '../nodes/ArrayNode';
 import type { ObjectNode } from '../nodes/ObjectNode';
@@ -11,7 +11,7 @@ import type { StringNode } from '../nodes/StringNode';
 
 describe('ObjectNode oneOf', () => {
   it('oneOf 기본 동작 확인', async () => {
-    const schema: JsonSchema = {
+    const schema: JSONSchema = {
       type: 'object',
       properties: {
         category: {
@@ -39,7 +39,7 @@ describe('ObjectNode oneOf', () => {
       ],
     };
 
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       onChange: () => {},
       jsonSchema: schema,
     }) as ObjectNode;
@@ -65,7 +65,7 @@ describe('ObjectNode oneOf', () => {
   });
 
   it('oneOf의 computed 속성 동작', async () => {
-    const schema: JsonSchema = {
+    const schema: JSONSchema = {
       type: 'object',
       properties: {
         type: {
@@ -107,7 +107,7 @@ describe('ObjectNode oneOf', () => {
       ],
     };
 
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       onChange: () => {},
       jsonSchema: schema,
     }) as ObjectNode;
@@ -134,7 +134,7 @@ describe('ObjectNode oneOf', () => {
   });
 
   it('oneOf에서 const를 사용한 조건 분기', async () => {
-    const schema: JsonSchema = {
+    const schema: JSONSchema = {
       type: 'object',
       properties: {
         productType: {
@@ -163,7 +163,7 @@ describe('ObjectNode oneOf', () => {
       ],
     };
 
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       onChange: () => {},
       jsonSchema: schema,
     }) as ObjectNode;
@@ -189,7 +189,7 @@ describe('ObjectNode oneOf', () => {
   });
 
   it('oneOf에서 배열 내부 동작', async () => {
-    const schema: JsonSchema = {
+    const schema: JSONSchema = {
       type: 'array',
       items: {
         type: 'object',
@@ -218,7 +218,7 @@ describe('ObjectNode oneOf', () => {
       minItems: 1,
     };
 
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       onChange: () => {},
       jsonSchema: schema,
     }) as ArrayNode;
@@ -250,7 +250,7 @@ describe('ObjectNode oneOf', () => {
   });
 
   it('oneOf와 properties 병합', async () => {
-    const schema: JsonSchema = {
+    const schema: JSONSchema = {
       type: 'object',
       properties: {
         commonField: {
@@ -279,7 +279,7 @@ describe('ObjectNode oneOf', () => {
       ],
     };
 
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       onChange: () => {},
       jsonSchema: schema,
     }) as ObjectNode;
@@ -304,7 +304,7 @@ describe('ObjectNode oneOf', () => {
 
   describe('oneOf primitive type value preservation', () => {
     it('should preserve primitive values when switching between oneOf branches with same-named fields', async () => {
-      const schema: JsonSchema = {
+      const schema: JSONSchema = {
         type: 'object',
         properties: {
           mode: {
@@ -341,7 +341,7 @@ describe('ObjectNode oneOf', () => {
         ],
       };
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: schema,
       }) as ObjectNode;
@@ -413,7 +413,7 @@ describe('ObjectNode oneOf', () => {
     });
 
     it('should preserve null values correctly with nullable fields', async () => {
-      const schema: JsonSchema = {
+      const schema: JSONSchema = {
         type: 'object',
         properties: {
           variant: {
@@ -440,7 +440,7 @@ describe('ObjectNode oneOf', () => {
         ],
       };
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: schema,
       }) as ObjectNode;
@@ -480,7 +480,7 @@ describe('ObjectNode oneOf', () => {
     });
 
     it('should handle default values correctly during oneOf transitions', async () => {
-      const schema: JsonSchema = {
+      const schema: JSONSchema = {
         type: 'object',
         properties: {
           profile: {
@@ -519,7 +519,7 @@ describe('ObjectNode oneOf', () => {
         ],
       };
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: schema,
       }) as ObjectNode;
@@ -579,7 +579,7 @@ describe('ObjectNode oneOf', () => {
     });
 
     it('should handle complex nested oneOf with primitive preservation', async () => {
-      const schema: JsonSchema = {
+      const schema: JSONSchema = {
         type: 'object',
         properties: {
           topLevel: {
@@ -635,7 +635,7 @@ describe('ObjectNode oneOf', () => {
         ],
       };
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: schema,
       }) as ObjectNode;
@@ -697,7 +697,7 @@ describe('ObjectNode oneOf', () => {
     });
 
     it('should handle arrays within oneOf with primitive preservation', async () => {
-      const schema: JsonSchema = {
+      const schema: JSONSchema = {
         type: 'object',
         properties: {
           dataType: {
@@ -741,7 +741,7 @@ describe('ObjectNode oneOf', () => {
         ],
       };
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: schema,
       }) as ObjectNode;

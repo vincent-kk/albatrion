@@ -1,4 +1,4 @@
-import type { JsonSchema } from '@/schema-form/types';
+import type { JSONSchema } from '@/schema-form/types';
 
 /** Composition keyword a branch level uses to declare its conditional subschemas. */
 export type CompositionScope = 'oneOf' | 'anyOf';
@@ -24,7 +24,7 @@ export type CompositionCase = [
 export const createSchema = (
   outerScope: CompositionScope,
   innerScope: CompositionScope,
-): JsonSchema => ({
+): JSONSchema => ({
   type: 'object',
   properties: {
     enabled: { type: 'boolean', default: true },

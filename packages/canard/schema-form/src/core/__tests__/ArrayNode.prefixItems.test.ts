@@ -3,8 +3,8 @@ import { describe, expect, it } from 'vitest';
 
 import { delay } from '@winglet/common-utils';
 
-import { nodeFromJsonSchema } from '@/schema-form/core';
-import { JsonSchemaError } from '@/schema-form/errors';
+import { nodeFromJSONSchema } from '@/schema-form/core';
+import { JSONSchemaError } from '@/schema-form/errors';
 
 import { ValidationMode } from '../nodes';
 import type { ArrayNode } from '../nodes/ArrayNode';
@@ -15,7 +15,7 @@ describe('ArrayNode prefixItems', () => {
   describe('BranchStrategy', () => {
     describe('prefixItems only (open tuple)', () => {
       it('should create child nodes with correct prefixItems schema', async () => {
-        const node = nodeFromJsonSchema({
+        const node = nodeFromJSONSchema({
           onChange: () => {},
 
           jsonSchema: {
@@ -55,7 +55,7 @@ describe('ArrayNode prefixItems', () => {
       });
 
       it('should use prefixItems schema when pushing new items', async () => {
-        const node = nodeFromJsonSchema({
+        const node = nodeFromJSONSchema({
           onChange: () => {},
 
           jsonSchema: {
@@ -115,7 +115,7 @@ describe('ArrayNode prefixItems', () => {
 
     describe('prefixItems + items=false (fixed-length tuple)', () => {
       it('should limit push to prefixItems length', async () => {
-        const node = nodeFromJsonSchema({
+        const node = nodeFromJSONSchema({
           onChange: () => {},
           jsonSchema: {
             type: 'object',
@@ -155,7 +155,7 @@ describe('ArrayNode prefixItems', () => {
       });
 
       it('should create child nodes with correct prefixItems schema for fixed tuple', async () => {
-        const node = nodeFromJsonSchema({
+        const node = nodeFromJSONSchema({
           onChange: () => {},
           jsonSchema: {
             type: 'object',
@@ -196,7 +196,7 @@ describe('ArrayNode prefixItems', () => {
 
     describe('prefixItems + items (open tuple)', () => {
       it('should use prefixItems for initial indices and items for remaining', async () => {
-        const node = nodeFromJsonSchema({
+        const node = nodeFromJSONSchema({
           onChange: () => {},
           jsonSchema: {
             type: 'object',
@@ -253,7 +253,7 @@ describe('ArrayNode prefixItems', () => {
       });
 
       it('should allow unlimited push when items is defined', async () => {
-        const node = nodeFromJsonSchema({
+        const node = nodeFromJSONSchema({
           onChange: () => {},
           jsonSchema: {
             type: 'object',
@@ -290,7 +290,7 @@ describe('ArrayNode prefixItems', () => {
   describe('TerminalStrategy', () => {
     describe('prefixItems only', () => {
       it('should use prefixItems default values when pushing', async () => {
-        const node = nodeFromJsonSchema({
+        const node = nodeFromJSONSchema({
           onChange: () => {},
 
           jsonSchema: {
@@ -329,7 +329,7 @@ describe('ArrayNode prefixItems', () => {
       });
 
       it('should auto-fill minItems with prefixItems defaults', async () => {
-        const node = nodeFromJsonSchema({
+        const node = nodeFromJSONSchema({
           onChange: () => {},
 
           jsonSchema: {
@@ -357,7 +357,7 @@ describe('ArrayNode prefixItems', () => {
 
     describe('prefixItems + items=false (fixed-length tuple)', () => {
       it('should limit push to prefixItems length', async () => {
-        const node = nodeFromJsonSchema({
+        const node = nodeFromJSONSchema({
           onChange: () => {},
           jsonSchema: {
             type: 'object',
@@ -393,7 +393,7 @@ describe('ArrayNode prefixItems', () => {
       });
 
       it('should allow setValue to bypass maxItems limit', async () => {
-        const node = nodeFromJsonSchema({
+        const node = nodeFromJSONSchema({
           onChange: () => {},
           jsonSchema: {
             type: 'object',
@@ -425,7 +425,7 @@ describe('ArrayNode prefixItems', () => {
 
     describe('prefixItems + items (open tuple)', () => {
       it('should use prefixItems defaults then items default', async () => {
-        const node = nodeFromJsonSchema({
+        const node = nodeFromJSONSchema({
           onChange: () => {},
           jsonSchema: {
             type: 'object',
@@ -458,7 +458,7 @@ describe('ArrayNode prefixItems', () => {
       });
 
       it('should allow unlimited push when items is defined', async () => {
-        const node = nodeFromJsonSchema({
+        const node = nodeFromJSONSchema({
           onChange: () => {},
           jsonSchema: {
             type: 'object',
@@ -493,7 +493,7 @@ describe('ArrayNode prefixItems', () => {
   describe('Default Value Handling', () => {
     describe('BranchStrategy default values', () => {
       it('should use prefixItems schema default when pushing', async () => {
-        const node = nodeFromJsonSchema({
+        const node = nodeFromJSONSchema({
           onChange: () => {},
 
           jsonSchema: {
@@ -539,7 +539,7 @@ describe('ArrayNode prefixItems', () => {
       });
 
       it('should respect explicit defaultValue over schema defaults', async () => {
-        const node = nodeFromJsonSchema({
+        const node = nodeFromJSONSchema({
           onChange: () => {},
 
           jsonSchema: {
@@ -573,7 +573,7 @@ describe('ArrayNode prefixItems', () => {
 
     describe('TerminalStrategy default values', () => {
       it('should use each prefixItems default value correctly', async () => {
-        const node = nodeFromJsonSchema({
+        const node = nodeFromJSONSchema({
           onChange: () => {},
 
           jsonSchema: {
@@ -600,7 +600,7 @@ describe('ArrayNode prefixItems', () => {
       });
 
       it('should handle prefixItems without default values', async () => {
-        const node = nodeFromJsonSchema({
+        const node = nodeFromJSONSchema({
           onChange: () => {},
 
           jsonSchema: {
@@ -638,7 +638,7 @@ describe('ArrayNode prefixItems', () => {
         }),
       );
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: {
           type: 'object',
@@ -689,7 +689,7 @@ describe('ArrayNode prefixItems', () => {
         }),
       );
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: {
           type: 'object',
@@ -731,7 +731,7 @@ describe('ArrayNode prefixItems', () => {
   describe('prefixItems with $ref', () => {
     describe('BranchStrategy with $ref', () => {
       it('should resolve prefixItems with primitive type $ref definitions', async () => {
-        const node = nodeFromJsonSchema({
+        const node = nodeFromJSONSchema({
           onChange: () => {},
           jsonSchema: {
             type: 'object',
@@ -777,7 +777,7 @@ describe('ArrayNode prefixItems', () => {
       });
 
       it('should resolve prefixItems with object type $ref definitions', async () => {
-        const node = nodeFromJsonSchema({
+        const node = nodeFromJSONSchema({
           onChange: () => {},
           jsonSchema: {
             type: 'object',
@@ -842,7 +842,7 @@ describe('ArrayNode prefixItems', () => {
       });
 
       it('should resolve prefixItems $ref with items $ref for open tuple', async () => {
-        const node = nodeFromJsonSchema({
+        const node = nodeFromJSONSchema({
           onChange: () => {},
           jsonSchema: {
             type: 'object',
@@ -914,7 +914,7 @@ describe('ArrayNode prefixItems', () => {
       });
 
       it('should resolve nested $ref within prefixItems object schemas', async () => {
-        const node = nodeFromJsonSchema({
+        const node = nodeFromJSONSchema({
           onChange: () => {},
           jsonSchema: {
             type: 'object',
@@ -1003,7 +1003,7 @@ describe('ArrayNode prefixItems', () => {
       });
 
       it('should resolve self-referencing $ref within prefixItems', async () => {
-        const node = nodeFromJsonSchema({
+        const node = nodeFromJSONSchema({
           onChange: () => {},
           jsonSchema: {
             type: 'object',
@@ -1087,7 +1087,7 @@ describe('ArrayNode prefixItems', () => {
       });
 
       it('should push with correct $ref schema for each prefixItems position', async () => {
-        const node = nodeFromJsonSchema({
+        const node = nodeFromJSONSchema({
           onChange: () => {},
           jsonSchema: {
             type: 'object',
@@ -1163,7 +1163,7 @@ describe('ArrayNode prefixItems', () => {
 
     describe('TerminalStrategy with $ref', () => {
       it('should resolve prefixItems with primitive type $ref for terminal array', async () => {
-        const node = nodeFromJsonSchema({
+        const node = nodeFromJSONSchema({
           onChange: () => {},
           jsonSchema: {
             type: 'object',
@@ -1205,7 +1205,7 @@ describe('ArrayNode prefixItems', () => {
       });
 
       it('should push with correct $ref default values for terminal array', async () => {
-        const node = nodeFromJsonSchema({
+        const node = nodeFromJSONSchema({
           onChange: () => {},
           jsonSchema: {
             type: 'object',
@@ -1269,7 +1269,7 @@ describe('ArrayNode prefixItems', () => {
           }),
         );
 
-        const node = nodeFromJsonSchema({
+        const node = nodeFromJSONSchema({
           onChange: () => {},
           jsonSchema: {
             type: 'object',
@@ -1323,7 +1323,7 @@ describe('ArrayNode prefixItems', () => {
           }),
         );
 
-        const node = nodeFromJsonSchema({
+        const node = nodeFromJSONSchema({
           onChange: () => {},
           jsonSchema: {
             type: 'object',
@@ -1390,7 +1390,7 @@ describe('ArrayNode prefixItems', () => {
   describe('Error Cases', () => {
     it('should throw error when items=false without prefixItems', () => {
       expect(() =>
-        nodeFromJsonSchema({
+        nodeFromJSONSchema({
           onChange: () => {},
           jsonSchema: {
             type: 'object',
@@ -1402,10 +1402,10 @@ describe('ArrayNode prefixItems', () => {
             },
           },
         }),
-      ).toThrow(JsonSchemaError);
+      ).toThrow(JSONSchemaError);
 
       expect(() =>
-        nodeFromJsonSchema({
+        nodeFromJSONSchema({
           onChange: () => {},
           jsonSchema: {
             type: 'object',
@@ -1424,7 +1424,7 @@ describe('ArrayNode prefixItems', () => {
 
     it('should throw error when neither items nor prefixItems is defined', () => {
       expect(() =>
-        nodeFromJsonSchema({
+        nodeFromJSONSchema({
           onChange: () => {},
           jsonSchema: {
             type: 'object',
@@ -1435,10 +1435,10 @@ describe('ArrayNode prefixItems', () => {
             },
           },
         }),
-      ).toThrow(JsonSchemaError);
+      ).toThrow(JSONSchemaError);
 
       expect(() =>
-        nodeFromJsonSchema({
+        nodeFromJSONSchema({
           onChange: () => {},
           jsonSchema: {
             type: 'object',

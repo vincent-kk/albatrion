@@ -2,9 +2,9 @@ import { describe, expect, it } from 'vitest';
 
 import { delay } from '@winglet/common-utils';
 
-import { nodeFromJsonSchema } from '@/schema-form/core';
-import { JsonSchemaError } from '@/schema-form/errors';
-import type { JsonSchema } from '@/schema-form/types';
+import { nodeFromJSONSchema } from '@/schema-form/core';
+import { JSONSchemaError } from '@/schema-form/errors';
+import type { JSONSchema } from '@/schema-form/types';
 
 import { validateArraySchema } from '../nodes/ArrayNode';
 
@@ -57,7 +57,7 @@ describe('ArrayNode Schema Validation', () => {
         type: 'array',
       } as const;
 
-      expect(() => validateArraySchema(schema)).toThrow(JsonSchemaError);
+      expect(() => validateArraySchema(schema)).toThrow(JSONSchemaError);
       expect(() => validateArraySchema(schema)).toThrow(
         "Invalid array schema: Array must have 'items' or 'prefixItems' defined.",
       );
@@ -69,7 +69,7 @@ describe('ArrayNode Schema Validation', () => {
         items: false,
       } as const;
 
-      expect(() => validateArraySchema(schema)).toThrow(JsonSchemaError);
+      expect(() => validateArraySchema(schema)).toThrow(JSONSchemaError);
       expect(() => validateArraySchema(schema)).toThrow(
         "Invalid array schema: 'items: false' requires 'prefixItems' to be defined.",
       );
@@ -82,7 +82,7 @@ describe('ArrayNode Schema Validation', () => {
         maxItems: 5, // prefixItems.length = 2, maxItems = 5
       } as const;
 
-      expect(() => validateArraySchema(schema)).toThrow(JsonSchemaError);
+      expect(() => validateArraySchema(schema)).toThrow(JSONSchemaError);
       expect(() => validateArraySchema(schema)).toThrow(
         "Invalid array schema: 'maxItems' exceeds 'prefixItems' length without 'items' schema.",
       );
@@ -95,7 +95,7 @@ describe('ArrayNode Schema Validation', () => {
         minItems: 4, // prefixItems.length = 2, minItems = 4
       } as const;
 
-      expect(() => validateArraySchema(schema)).toThrow(JsonSchemaError);
+      expect(() => validateArraySchema(schema)).toThrow(JSONSchemaError);
       expect(() => validateArraySchema(schema)).toThrow(
         "Invalid array schema: 'minItems' exceeds 'prefixItems' length without 'items' schema.",
       );
@@ -169,9 +169,9 @@ describe('ArrayNode Schema Validation', () => {
     });
   });
 
-  describe('nodeFromJsonSchema integration', () => {
+  describe('nodeFromJSONSchema integration', () => {
     it('should create ArrayNode with items schema', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: {
           type: 'object',
@@ -191,7 +191,7 @@ describe('ArrayNode Schema Validation', () => {
     });
 
     it('should create ArrayNode with prefixItems only', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: {
           type: 'object',
@@ -214,7 +214,7 @@ describe('ArrayNode Schema Validation', () => {
     });
 
     it('should create ArrayNode with prefixItems and items: false (fixed-length tuple)', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: {
           type: 'object',
@@ -239,7 +239,7 @@ describe('ArrayNode Schema Validation', () => {
     });
 
     it('should create ArrayNode with prefixItems and items schema (open tuple)', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: {
           type: 'object',
@@ -261,23 +261,23 @@ describe('ArrayNode Schema Validation', () => {
 
     it('should throw error when array schema has no items or prefixItems', () => {
       expect(() =>
-        nodeFromJsonSchema({
+        nodeFromJSONSchema({
           onChange: () => {},
           jsonSchema: {
             type: 'object',
             properties: {
               invalidArr: {
                 type: 'array',
-              } as JsonSchema,
+              } as JSONSchema,
             },
           },
         }),
-      ).toThrow(JsonSchemaError);
+      ).toThrow(JSONSchemaError);
     });
 
     it('should throw error when array schema has items: false without prefixItems', () => {
       expect(() =>
-        nodeFromJsonSchema({
+        nodeFromJSONSchema({
           onChange: () => {},
           jsonSchema: {
             type: 'object',
@@ -285,16 +285,16 @@ describe('ArrayNode Schema Validation', () => {
               invalidArr: {
                 type: 'array',
                 items: false,
-              } as JsonSchema,
+              } as JSONSchema,
             },
           },
         }),
-      ).toThrow(JsonSchemaError);
+      ).toThrow(JSONSchemaError);
     });
 
     it('should throw specific error message for items: false without prefixItems', () => {
       expect(() =>
-        nodeFromJsonSchema({
+        nodeFromJSONSchema({
           onChange: () => {},
           jsonSchema: {
             type: 'object',
@@ -302,7 +302,7 @@ describe('ArrayNode Schema Validation', () => {
               invalidArr: {
                 type: 'array',
                 items: false,
-              } as JsonSchema,
+              } as JSONSchema,
             },
           },
         }),
@@ -313,14 +313,14 @@ describe('ArrayNode Schema Validation', () => {
 
     it('should throw specific error message for missing items and prefixItems', () => {
       expect(() =>
-        nodeFromJsonSchema({
+        nodeFromJSONSchema({
           onChange: () => {},
           jsonSchema: {
             type: 'object',
             properties: {
               invalidArr: {
                 type: 'array',
-              } as JsonSchema,
+              } as JSONSchema,
             },
           },
         }),
@@ -332,7 +332,7 @@ describe('ArrayNode Schema Validation', () => {
 
   describe('root level array schema', () => {
     it('should create root ArrayNode with items schema', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: {
           type: 'array',
@@ -346,7 +346,7 @@ describe('ArrayNode Schema Validation', () => {
     });
 
     it('should create root ArrayNode with prefixItems only', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: {
           type: 'array',
@@ -361,31 +361,31 @@ describe('ArrayNode Schema Validation', () => {
 
     it('should throw error for root array with no items or prefixItems', () => {
       expect(() =>
-        nodeFromJsonSchema({
+        nodeFromJSONSchema({
           onChange: () => {},
           jsonSchema: {
             type: 'array',
-          } as JsonSchema,
+          } as JSONSchema,
         }),
-      ).toThrow(JsonSchemaError);
+      ).toThrow(JSONSchemaError);
     });
 
     it('should throw error for root array with items: false and no prefixItems', () => {
       expect(() =>
-        nodeFromJsonSchema({
+        nodeFromJSONSchema({
           onChange: () => {},
           jsonSchema: {
             type: 'array',
             items: false,
-          } as JsonSchema,
+          } as JSONSchema,
         }),
-      ).toThrow(JsonSchemaError);
+      ).toThrow(JSONSchemaError);
     });
   });
 
   describe('nested array schema validation', () => {
     it('should validate nested array schemas', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: {
           type: 'object',
@@ -410,7 +410,7 @@ describe('ArrayNode Schema Validation', () => {
     it('should throw error for invalid nested array schema when items is processed', async () => {
       // Note: Nested array validation happens when items schema is processed,
       // which occurs during node creation
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: {
           type: 'object',
@@ -419,7 +419,7 @@ describe('ArrayNode Schema Validation', () => {
               type: 'array',
               items: {
                 type: 'array',
-              } as JsonSchema,
+              } as JSONSchema,
             },
           },
         },
@@ -443,14 +443,14 @@ describe('ArrayNode Schema Validation', () => {
         thrownError = error as Error;
       }
 
-      expect(thrownError).toBeInstanceOf(JsonSchemaError);
+      expect(thrownError).toBeInstanceOf(JSONSchemaError);
       expect(thrownError?.message).toContain(
         "Invalid array schema: Array must have 'items' or 'prefixItems' defined.",
       );
     });
 
     it('should validate deeply nested array with prefixItems', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: {
           type: 'object',

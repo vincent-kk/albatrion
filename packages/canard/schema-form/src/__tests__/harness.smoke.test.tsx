@@ -1,7 +1,7 @@
 import '@testing-library/jest-dom';
 import { describe, expect, it } from 'vitest';
 
-import type { JsonSchema } from '@winglet/json-schema';
+import type { JSONSchema } from '@winglet/json-schema';
 
 import { renderForm } from './renderForm';
 
@@ -19,7 +19,7 @@ describe('renderForm harness — smoke', () => {
         active: { type: 'boolean', default: true },
         role: { type: 'string', enum: ['admin', 'user'], default: 'user' },
       },
-    } satisfies JsonSchema;
+    } satisfies JSONSchema;
 
     const form = await renderForm(schema);
 
@@ -50,7 +50,7 @@ describe('renderForm harness — smoke', () => {
         },
         tags: { type: 'array', items: { type: 'string' }, default: ['a'] },
       },
-    } satisfies JsonSchema;
+    } satisfies JSONSchema;
 
     const form = await renderForm(schema);
     expect(form.exists('/profile')).toBe(true);
@@ -66,7 +66,7 @@ describe('renderForm harness — smoke', () => {
     const schema = {
       type: 'object',
       properties: { name: { type: 'string', default: '' } },
-    } satisfies JsonSchema;
+    } satisfies JSONSchema;
 
     const form = await renderForm(schema);
     await form.type('/name', 'Grace');
@@ -80,7 +80,7 @@ describe('renderForm harness — smoke', () => {
     const schema = {
       type: 'object',
       properties: { name: { type: 'string', default: 'a' } },
-    } satisfies JsonSchema;
+    } satisfies JSONSchema;
 
     const form = await renderForm(schema);
     await form.setValue({ name: 'b' });
@@ -95,7 +95,7 @@ describe('renderForm harness — smoke', () => {
       properties: {
         tags: { type: 'array', items: { type: 'string' }, default: [] },
       },
-    } satisfies JsonSchema;
+    } satisfies JSONSchema;
 
     const form = await renderForm(schema);
     expect(form.exists('/tags/0')).toBe(false);
@@ -117,7 +117,7 @@ describe('renderForm harness — smoke', () => {
       type: 'object',
       properties: { email: { type: 'string', minLength: 5 } },
       required: ['email'],
-    } satisfies JsonSchema;
+    } satisfies JSONSchema;
 
     const form = await renderForm(schema, { validator: true });
     const errors = await form.validate();
@@ -130,7 +130,7 @@ describe('renderForm harness — smoke', () => {
     const schema = {
       type: 'object',
       properties: { name: { type: 'string', default: 'sync' } },
-    } satisfies JsonSchema;
+    } satisfies JSONSchema;
 
     const form = await renderForm(schema, { flushOnMount: false });
     // synchronous snapshot — field already present after the sync commit
@@ -143,7 +143,7 @@ describe('renderForm harness — smoke', () => {
     const schema = {
       type: 'object',
       properties: { name: { type: 'string', default: 'a' } },
-    } satisfies JsonSchema;
+    } satisfies JSONSchema;
 
     const form = await renderForm(schema, { instrument: true });
     const before = form.mountOrdinal('/name');
@@ -158,7 +158,7 @@ describe('renderForm harness — smoke', () => {
     const schema = {
       type: 'object',
       properties: { name: { type: 'string', default: 'x' } },
-    } satisfies JsonSchema;
+    } satisfies JSONSchema;
 
     const form = await renderForm(schema, { strictMode: true });
     expect(form.exists('/name')).toBe(true);

@@ -4,8 +4,8 @@ import {
   Form,
   type FormHandle,
   type FormTypeInputProps,
-  type JsonSchema,
-  type JsonSchemaError,
+  type JSONSchema,
+  type JSONSchemaError,
 } from '../src';
 import StoryLayout from './components/StoryLayout';
 
@@ -91,11 +91,11 @@ export const SingleFile = () => {
         },
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const formHandle = useRef<FormHandle<typeof schema, any>>(null);
   const [value, setValue] = useState<Record<string, unknown>>({});
-  const [errors, setErrors] = useState<JsonSchemaError[]>([]);
+  const [errors, setErrors] = useState<JSONSchemaError[]>([]);
 
   return (
     <div>
@@ -144,11 +144,11 @@ export const MultipleFiles = () => {
         },
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const formHandle = useRef<FormHandle<typeof schema, any>>(null);
   const [value, setValue] = useState<Record<string, unknown>>({});
-  const [errors, setErrors] = useState<JsonSchemaError[]>([]);
+  const [errors, setErrors] = useState<JSONSchemaError[]>([]);
 
   return (
     <div>
@@ -200,7 +200,7 @@ export const IfThenElseFileCleanup = () => {
     then: {
       required: ['poster'],
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const ref = useRef<FormHandle<typeof schema, any>>(null);
   const [value, setValue] = useState<Record<string, unknown>>({});
@@ -277,7 +277,7 @@ export const OneOfFileCleanup = () => {
       category: { type: 'string', enum: ['movie', 'game'], default: 'movie' },
       title: { type: 'string' },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const ref = useRef<FormHandle<typeof schema, any>>(null);
   const [value, setValue] = useState<Record<string, unknown>>({});
@@ -337,7 +337,7 @@ export const UnmountFormCleanup = () => {
         },
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [show, setShow] = useState(true);
   const [value, setValue] = useState<Record<string, unknown>>({});
@@ -413,7 +413,7 @@ export const ComprehensiveFilesMapTest = () => {
         },
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const ref = useRef<FormHandle<typeof schema, any>>(null);
   const [value, setValue] = useState<Record<string, unknown>>({});

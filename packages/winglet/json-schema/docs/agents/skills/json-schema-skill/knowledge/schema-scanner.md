@@ -1,4 +1,4 @@
-# Schema Scanner — behavior of JsonSchemaScanner & JsonSchemaScannerAsync
+# Schema Scanner — behavior of JSONSchemaScanner & JSONSchemaScannerAsync
 
 Semantics you cannot read off the type declarations. For constructor shapes and option types, read `dist/*.d.ts`.
 
@@ -13,7 +13,7 @@ Semantics you cannot read off the type declarations. For constructor shapes and 
 The list is filled by mutation _as well as_ by reference resolution, so a scan whose only effect is a `mutate` return also takes the clone path. A scan that resolves nothing and mutates nothing takes the identity path.
 
 ```typescript
-const out = new JsonSchemaScanner().scan(schema).getValue();
+const out = new JSONSchemaScanner().scan(schema).getValue();
 out === schema; // true — nothing was recorded, so nothing was cloned
 ```
 
@@ -26,7 +26,7 @@ One visit per node runs `filter` → `mutate` → `enter` → `$ref` resolution 
 The order has one consequence that costs people hours: **the reference fields are populated after `enter` returns.** During `enter`, `hasReference`, `referenceResolved`, `referencePath` and `referenceSkipped` are still unset on every entry. Read them in `exit`.
 
 ```typescript
-new JsonSchemaScanner({
+new JSONSchemaScanner({
   visitor: {
     enter: (entry) => entry.referenceResolved, // always undefined — too early
     exit: (entry) => entry.referenceResolved, // true once the $ref was inlined
@@ -39,14 +39,14 @@ new JsonSchemaScanner({
 
 ## The async scanner
 
-`JsonSchemaScannerAsync` drives the same traversal core, so every rule here holds unchanged. Three differences:
+`JSONSchemaScannerAsync` drives the same traversal core, so every rule here holds unchanged. Three differences:
 
 - `scan()` returns `Promise<this>` while `getValue()` stays synchronous, so the scan must be awaited first. `scanner.scan(s).getValue()` is a type error rather than a race.
 - **Every** callback may be async, `enter` and `exit` included — the driver awaits whatever a callback returns if it is thenable, and skips the microtask hop when it is not. The shared `SchemaVisitor` type declares `enter`/`exit` as void-returning, which still accepts an `async` function.
 - Resolution is **sequential, not parallel**: the DFS awaits each `resolveReference` before continuing, so N remote refs cost N round trips in series. For a large schema prefer a resolver backed by a prefetched map, and enable `cacheResolvedReference` when refs repeat.
 
 ```typescript
-const scanner = new JsonSchemaScannerAsync({
+const scanner = new JSONSchemaScannerAsync({
   options: { resolveReference: async (ref) => (await fetch(ref)).json() },
 });
 const result = (await scanner.scan(schema)).getValue();
@@ -103,10 +103,10 @@ The traversal vocabulary is a list of keyword descriptors, and the built-in list
 ```typescript
 import {
   EXTENDED_KEYWORDS,
-  JsonSchemaScanner,
+  JSONSchemaScanner,
 } from '@winglet/json-schema/scanner';
 
-new JsonSchemaScanner({
+new JSONSchemaScanner({
   options: { additionalKeywords: EXTENDED_KEYWORDS },
 }).scan(schema);
 ```

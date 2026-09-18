@@ -329,15 +329,15 @@ class ImportExtensionProcessor {
 
   private detectPackageName(projectRoot: string): string | null {
     try {
-      const packageJsonPath = path.join(projectRoot, "package.json");
-      const packageJson = JSON.parse(
-        require("fs").readFileSync(packageJsonPath, "utf8"),
+      const packageJSONPath = path.join(projectRoot, "package.json");
+      const packageJSON = JSON.parse(
+        require("fs").readFileSync(packageJSONPath, "utf8"),
       );
 
       // package.json의 name에서 마지막 부분 추출
       // 예: "@albatrion/common-utils" → "common-utils"
-      if (packageJson.name) {
-        const name = packageJson.name.split("/").pop() || packageJson.name;
+      if (packageJSON.name) {
+        const name = packageJSON.name.split("/").pop() || packageJSON.name;
         console.log(`   package.json에서 감지된 이름: ${name}`);
         return name;
       }

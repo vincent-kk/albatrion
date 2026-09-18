@@ -2,10 +2,10 @@ import { cloneLite, equals } from '@winglet/common-utils/object';
 
 import { getValue } from '@/json/JSONPointer/utils/manipulator/getValue';
 import { setValue } from '@/json/JSONPointer/utils/manipulator/setValue';
-import type { JsonArray, JsonRoot } from '@/json/type';
+import type { JSONArray, JSONRoot } from '@/json/type';
 
 import { Operation, type Patch } from '../../../patchModel';
-import { JsonPatchError } from './error';
+import { JSONPatchError } from './error';
 import { isCircularMoveReference } from './isCircularMoveReference';
 
 /**
@@ -19,14 +19,14 @@ import { isCircularMoveReference } from './isCircularMoveReference';
  * @param patchIndex - The index of the patch for error reporting
  * @param strict - Whether to use strict equality checking
  * @returns The modified source document
- * @throws {JsonPatchError} When operation fails or index is out of bounds
+ * @throws {JSONPatchError} When operation fails or index is out of bounds
  * @internal
  */
 export const handleArray = (
   patch: Patch,
-  array: JsonArray,
+  array: JSONArray,
   index: number,
-  source: JsonRoot,
+  source: JSONRoot,
   patchIndex: number,
   strict: boolean,
 ): any => {
@@ -36,7 +36,7 @@ export const handleArray = (
         array.splice(index, 0, patch.value);
         return source;
       }
-      throw new JsonPatchError(
+      throw new JSONPatchError(
         'PATCH_ARRAY_INDEX_OUT_OF_BOUNDS',
         `Cannot add element at index ${index}. Index must not exceed array length ${array.length}`,
         {
@@ -53,7 +53,7 @@ export const handleArray = (
         array[index] = patch.value;
         return source;
       }
-      throw new JsonPatchError(
+      throw new JSONPatchError(
         'PATCH_ARRAY_INDEX_OUT_OF_BOUNDS',
         `Cannot replace element at index ${index}. Index must be less than array length ${array.length}`,
         {
@@ -70,7 +70,7 @@ export const handleArray = (
         array.splice(index, 1);
         return source;
       }
-      throw new JsonPatchError(
+      throw new JSONPatchError(
         'PATCH_ARRAY_INDEX_OUT_OF_BOUNDS',
         `Cannot remove element at index ${index}. Index must be less than array length ${array.length}`,
         {
@@ -84,7 +84,7 @@ export const handleArray = (
       );
     case Operation.TEST:
       if (index >= array.length) {
-        throw new JsonPatchError(
+        throw new JSONPatchError(
           'PATCH_ARRAY_INDEX_OUT_OF_BOUNDS',
           `Cannot test element at index ${index}. Index must be less than array length ${array.length}`,
           {
@@ -98,7 +98,7 @@ export const handleArray = (
         );
       }
       if (!strict || equals(array[index], patch.value)) return source;
-      throw new JsonPatchError(
+      throw new JSONPatchError(
         'PATCH_TEST_FAILED',
         `Test operation failed at array index ${index}. Expected value does not match actual value`,
         {
@@ -112,7 +112,7 @@ export const handleArray = (
       );
     case Operation.MOVE:
       if (isCircularMoveReference(patch.from, patch.path))
-        throw new JsonPatchError(
+        throw new JSONPatchError(
           'PATCH_MOVE_INTO_DESCENDANT_FORBIDDEN',
           `Cannot move location '${patch.from}' to '${patch.path}' - target location is a descendant of or identical to source location. This would create a circular reference.`,
           {
@@ -124,7 +124,7 @@ export const handleArray = (
           },
         );
       if (index > array.length) {
-        throw new JsonPatchError(
+        throw new JSONPatchError(
           'PATCH_ARRAY_INDEX_OUT_OF_BOUNDS',
           `Cannot move element to index ${index}. Index must not exceed array length ${array.length}`,
           {
@@ -142,7 +142,7 @@ export const handleArray = (
       return source;
     case Operation.COPY:
       if (isCircularMoveReference(patch.from, patch.path))
-        throw new JsonPatchError(
+        throw new JSONPatchError(
           'PATCH_COPY_INTO_DESCENDANT_FORBIDDEN',
           `Cannot copy location '${patch.from}' to '${patch.path}' - target location is a descendant of or identical to source location. This would create a circular reference.`,
           {
@@ -154,7 +154,7 @@ export const handleArray = (
           },
         );
       if (index > array.length) {
-        throw new JsonPatchError(
+        throw new JSONPatchError(
           'PATCH_ARRAY_INDEX_OUT_OF_BOUNDS',
           `Cannot copy element to index ${index}. Index must not exceed array length ${array.length}`,
           {
@@ -172,7 +172,7 @@ export const handleArray = (
       array[index] = cloneLite(getValue(source, patch.from));
       return source;
     default:
-      throw new JsonPatchError(
+      throw new JSONPatchError(
         'PATCH_OPERATION_INVALID',
         `Unsupported operation '${(patch as Patch).op}'. Valid operations are: add, remove, replace, move, copy, test`,
         {

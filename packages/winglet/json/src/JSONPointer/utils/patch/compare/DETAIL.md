@@ -4,7 +4,7 @@
 
 - `source`와 `target`을 비교해 `target`으로 변환하는 RFC 6902 연산(add/remove/replace/test) 배열을 반환한다.
 - 배열 원소 삭제는 인덱스 역순으로 방출된다 — `applyPatch`가 배열을 앞에서부터 splice하므로, 오름차순 삭제는 뒤 인덱스가 이미 줄어든 배열을 가리키게 만든다.
-- `toJSON` 또는 `toJson` 메서드를 가진 값은 비교 전에 그 반환값으로 축소된다. 축소 결과가 객체·배열이면 구조 비교를 계속하고, 스칼라면 값 전체를 교체한다.
+- `toJSON` 또는 deprecated 별칭 `toJson`(Removed in 0.16.0) 메서드를 가진 값은 비교 전에 그 반환값으로 축소된다. 축소 결과가 객체·배열이면 구조 비교를 계속하고, 스칼라면 값 전체를 교체한다.
 - 특수 문자(`/`,`~`)를 포함한 키는 RFC 6901 이스케이프(`~1`,`~0`)를 거쳐 경로에 반영된다.
 
 ## API Contracts
@@ -37,7 +37,7 @@
 
 ### serialization-hook — toJSON/toJson 자동 직렬화
 
-- `toJSON` 또는 `toJson`을 가진 값은 비교 전에 그 반환값으로 대체된다.
+- `toJSON` 또는 deprecated 별칭 `toJson`(Removed in 0.16.0)을 가진 값은 비교 전에 그 반환값으로 대체된다.
 - 두 값이 모두 직렬화 훅을 가지면 각각의 반환값끼리 비교된다.
 
 ## Boundary Exemptions
@@ -48,6 +48,10 @@
 - **Direct import**: `allowed`
 - **Reason**: entry point가 재수출하지 않는 내부 전용 구현이다 — 진입점 `compare`와 재귀 코어는 한 몸의 두 파일이라 organ 재배치는 경로 깊이만 늘리고 경계를 바꾸지 못한다. flat root peer가 의도된 형태다.
 
+## History
+
+- 2026-09-18 — 이름 표기 규칙 `Json` → `JSON` 통일; `toJson` 훅은 0.15.0에서 `@deprecated` 별칭으로 유지, 0.16.0에서 제거.
+
 ## Last Updated
 
-2026-08-18 — 최초 계약 작성
+2026-09-18 — 이름 표기 규칙 `Json` → `JSON` 통일, `toJson` 훅의 `@deprecated` 별칭 계약 반영

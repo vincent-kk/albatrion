@@ -1,7 +1,7 @@
 import type {
   ArraySchema,
   BooleanSchema,
-  JsonSchemaWithVirtual,
+  JSONSchemaWithVirtual,
   NullSchema,
   NumberSchema,
   ObjectSchema,
@@ -23,7 +23,7 @@ import type { VirtualNode } from '../nodes/VirtualNode';
  * Falls back to the broad `SchemaNode` union when the schema type cannot be narrowed.
  * @typeParam Schema - JSON Schema used as the basis for node inference
  */
-export type InferSchemaNode<Schema extends JsonSchemaWithVirtual | unknown> =
+export type InferSchemaNode<Schema extends JSONSchemaWithVirtual | unknown> =
   Schema extends ArraySchema
     ? ArrayNode
     : Schema extends NumberSchema

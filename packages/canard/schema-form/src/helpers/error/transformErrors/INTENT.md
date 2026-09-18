@@ -2,7 +2,7 @@
 
 ## Purpose
 
-`JsonSchemaError` 배열에서 내부 강화 키(`ENHANCED_KEY`)를 `dataPath`에 포함하는 에러를 제거하고, 남은 에러에 모듈 수준 단조 증가 순차 키를 선택적으로 할당하여 반환한다.
+`JSONSchemaError` 배열에서 내부 강화 키(`ENHANCED_KEY`)를 `dataPath`에 포함하는 에러를 제거하고, 남은 에러에 모듈 수준 단조 증가 순차 키를 선택적으로 할당하여 반환한다.
 
 ## Conventions
 

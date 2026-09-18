@@ -8,7 +8,7 @@ import type {
   StringSchema,
 } from '@/schema-form/types';
 
-type DateFormatJsonSchema = {
+type DateFormatJSONSchema = {
   format: 'month' | 'week' | 'date' | 'date-time' | 'time';
 } & StringSchema<{ minimum?: string; maximum?: string }>;
 
@@ -22,7 +22,7 @@ const FormTypeInputDateFormat = ({
   onChange,
   style,
   className,
-}: FormTypeInputPropsWithSchema<string | null, DateFormatJsonSchema>) => {
+}: FormTypeInputPropsWithSchema<string | null, DateFormatJSONSchema>) => {
   const { type, max, min } = useMemo(
     () => ({
       type: jsonSchema.format,

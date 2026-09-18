@@ -3,8 +3,8 @@ import { useState } from 'react';
 import {
   Form,
   type FormTypeInputProps,
-  type JsonSchema,
-  type JsonSchemaError,
+  type JSONSchema,
+  type JSONSchemaError,
   SetValueOption,
 } from '../src';
 import StoryLayout from './components/StoryLayout';
@@ -32,10 +32,10 @@ export const VirtualSchema = () => {
         fields: ['startDate', 'endDate'],
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>({});
-  const [errors, setErrors] = useState<JsonSchemaError[]>([]);
+  const [errors, setErrors] = useState<JSONSchemaError[]>([]);
 
   return (
     <StoryLayout jsonSchema={jsonSchema} errors={errors} value={value}>
@@ -81,10 +81,10 @@ export const VirtualSchemaForNormalInput = () => {
         },
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>({});
-  const [errors, setErrors] = useState<JsonSchemaError[]>([]);
+  const [errors, setErrors] = useState<JSONSchemaError[]>([]);
 
   return (
     <StoryLayout jsonSchema={jsonSchema} errors={errors} value={value}>
@@ -139,10 +139,10 @@ export const VirtualSchemaRequired = () => {
     },
     // 'virtualField_A'->['virtualFiled_A1', 'virtualFiled_A2'], 'virtualFiled_A1' will be duplicated
     required: ['control', 'virtualField_A', 'virtualFiled_A1'],
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>({});
-  const [errors, setErrors] = useState<JsonSchemaError[]>([]);
+  const [errors, setErrors] = useState<JSONSchemaError[]>([]);
 
   return (
     <StoryLayout jsonSchema={jsonSchema} errors={errors} value={value}>
@@ -200,10 +200,10 @@ export const VirtualSchemaControlWithVisible = () => {
         '&active': '../control === "B"',
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>({});
-  const [errors, setErrors] = useState<JsonSchemaError[]>([]);
+  const [errors, setErrors] = useState<JSONSchemaError[]>([]);
 
   return (
     <StoryLayout jsonSchema={jsonSchema} errors={errors} value={value}>
@@ -279,10 +279,10 @@ export const VirtualSchemaControlWithIfElse = () => {
         required: ['virtualField_B'],
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>({});
-  const [errors, setErrors] = useState<JsonSchemaError[]>([]);
+  const [errors, setErrors] = useState<JSONSchemaError[]>([]);
 
   return (
     <StoryLayout jsonSchema={jsonSchema} errors={errors} value={value}>
@@ -364,10 +364,10 @@ export const VirtualSchemaControlWithIfElse2 = () => {
         virtualRequired: ['virtualField_B'],
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>({});
-  const [errors, setErrors] = useState<JsonSchemaError[]>([]);
+  const [errors, setErrors] = useState<JSONSchemaError[]>([]);
 
   return (
     <StoryLayout jsonSchema={jsonSchema} errors={errors} value={value}>
@@ -463,10 +463,10 @@ export const VirtualSchemaInline = () => {
         fields: ['startDate', 'endDate'],
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>({});
-  const [errors, setErrors] = useState<JsonSchemaError[]>([]);
+  const [errors, setErrors] = useState<JSONSchemaError[]>([]);
 
   return (
     <StoryLayout jsonSchema={jsonSchema} errors={errors} value={value}>
@@ -553,10 +553,10 @@ export const VirtualSchemaInlineWithIfElse = () => {
         fields: ['startDate', 'endDate'],
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>({});
-  const [errors, setErrors] = useState<JsonSchemaError[]>([]);
+  const [errors, setErrors] = useState<JSONSchemaError[]>([]);
 
   return (
     <StoryLayout jsonSchema={jsonSchema} errors={errors} value={value}>

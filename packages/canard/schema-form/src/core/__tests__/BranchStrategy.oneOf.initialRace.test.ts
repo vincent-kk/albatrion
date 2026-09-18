@@ -2,8 +2,8 @@ import { describe, expect, it } from 'vitest';
 
 import { delay } from '@winglet/common-utils';
 
-import { nodeFromJsonSchema } from '@/schema-form/core';
-import type { JsonSchema } from '@/schema-form/types';
+import { nodeFromJSONSchema } from '@/schema-form/core';
+import type { JSONSchema } from '@/schema-form/types';
 
 import type { ObjectNode } from '../nodes/ObjectNode';
 
@@ -11,7 +11,7 @@ import type { ObjectNode } from '../nodes/ObjectNode';
  * Regression guards for the BranchStrategy oneOf initial-render race.
  *
  * Background — what the race was:
- *   1. `nodeFromJsonSchema` is called synchronously inside `useMemo` during
+ *   1. `nodeFromJSONSchema` is called synchronously inside `useMemo` during
  *      React render.
  *   2. `host.oneOfIndex` is computed synchronously inside
  *      `super.__initialize__()`.
@@ -31,7 +31,7 @@ import type { ObjectNode } from '../nodes/ObjectNode';
  * tests guard that contract.
  */
 
-const employmentSchema: JsonSchema = {
+const employmentSchema: JSONSchema = {
   type: 'object',
   properties: {
     employmentType: {
@@ -61,7 +61,7 @@ const employmentSchema: JsonSchema = {
 
 describe('BranchStrategy oneOf - initial-render race', () => {
   it('SYNC immediately after construction: oneOf children are already wired in', () => {
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       onChange: () => {},
       jsonSchema: employmentSchema,
     }) as ObjectNode;
@@ -87,7 +87,7 @@ describe('BranchStrategy oneOf - initial-render race', () => {
   });
 
   it('AFTER microtask drain: BranchStrategy resolves children correctly', async () => {
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       onChange: () => {},
       jsonSchema: employmentSchema,
     }) as ObjectNode;
@@ -123,7 +123,7 @@ describe('BranchStrategy oneOf - initial-render race', () => {
     // attach. We then verify that the subscriber receives the event and that
     // `node.children` carries the oneOf children at that point.
 
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       onChange: () => {},
       jsonSchema: employmentSchema,
     }) as ObjectNode;
@@ -160,7 +160,7 @@ describe('BranchStrategy oneOf - initial-render race', () => {
   it('NESTED oneOf (product-catalog shape): preserves nested branch defaults', async () => {
     // Reproduces the product-catalog scenario: outer oneOf at root,
     // inner oneOf on a nested object (`shipping`).
-    const productSchema: JsonSchema = {
+    const productSchema: JSONSchema = {
       type: 'object',
       properties: {
         productType: {
@@ -215,7 +215,7 @@ describe('BranchStrategy oneOf - initial-render race', () => {
       },
     };
 
-    const node = nodeFromJsonSchema({
+    const node = nodeFromJSONSchema({
       onChange: () => {},
       jsonSchema: productSchema,
     }) as ObjectNode;

@@ -3,7 +3,7 @@ import type { FC } from 'react';
 import '@testing-library/jest-dom';
 import { describe, expect, it } from 'vitest';
 
-import type { JsonSchema } from '@winglet/json-schema';
+import type { JSONSchema } from '@winglet/json-schema';
 
 import type {
   FormTypeInputDefinition,
@@ -88,7 +88,7 @@ describe('formType-resolution — selection priority', () => {
       properties: {
         name: { type: 'string', FormTypeInput: makeInput('inline') },
       },
-    } satisfies JsonSchema;
+    } satisfies JSONSchema;
 
     const form = await renderForm(schema, {
       defaultValue: { name: 'neo' },
@@ -112,7 +112,7 @@ describe('formType-resolution — selection priority', () => {
     const schema = {
       type: 'object',
       properties: { name: { type: 'string' } },
-    } satisfies JsonSchema;
+    } satisfies JSONSchema;
 
     const form = await renderForm(schema, {
       defaultValue: { name: 'morpheus' },
@@ -132,7 +132,7 @@ describe('formType-resolution — selection priority', () => {
         name: { type: 'string' },
         email: { type: 'string' },
       },
-    } satisfies JsonSchema;
+    } satisfies JSONSchema;
 
     const form = await renderForm(schema, {
       defaultValue: { name: 'a', email: 'b' },
@@ -154,7 +154,7 @@ describe('formType-resolution — selection priority', () => {
         name: { type: 'string', FormTypeInput: null as any },
         age: { type: 'number' },
       },
-    } satisfies JsonSchema;
+    } satisfies JSONSchema;
 
     const form = await renderForm(schema, {
       defaultValue: { name: 'hidden-input', age: 7 },
@@ -189,7 +189,7 @@ describe('formType-resolution — formTypeInputMap by path', () => {
           },
         },
       },
-    } satisfies JsonSchema;
+    } satisfies JSONSchema;
 
     const form = await renderForm(schema, {
       defaultValue: { address: { city: 'Seoul', zip: '04524' } },
@@ -212,7 +212,7 @@ describe('formType-resolution — formTypeInputMap by path', () => {
       properties: {
         tags: { type: 'array', items: { type: 'string' } },
       },
-    } satisfies JsonSchema;
+    } satisfies JSONSchema;
 
     const form = await renderForm(schema, {
       defaultValue: { tags: ['alpha', 'beta'] },
@@ -242,7 +242,7 @@ describe('formType-resolution — formTypeInputMap by path', () => {
           },
         },
       },
-    } satisfies JsonSchema;
+    } satisfies JSONSchema;
 
     const form = await renderForm(schema, {
       defaultValue: { meta: { author: 'Vincent', version: '1.0.0' } },
@@ -266,7 +266,7 @@ describe('formType-resolution — CustomFormTypeRenderer (ReactNode)', () => {
     const schema = {
       type: 'object',
       properties: { username: { type: 'string' } },
-    } satisfies JsonSchema;
+    } satisfies JSONSchema;
 
     const form = await renderForm(schema, {
       defaultValue: { username: 'neo' },
@@ -296,7 +296,7 @@ describe('formType-resolution — CustomFormTypeRenderer (ReactNode)', () => {
           properties: { city: { type: 'string' } },
         },
       },
-    } satisfies JsonSchema;
+    } satisfies JSONSchema;
 
     const form = await renderForm(schema, {
       defaultValue: { address: { city: 'Seoul' } },
@@ -318,7 +318,7 @@ describe('formType-resolution — CustomFormTypeRenderer (ReactNode)', () => {
       type: 'object',
       properties: { code: { type: 'string', minLength: 3 } },
       required: ['code'],
-    } satisfies JsonSchema;
+    } satisfies JSONSchema;
 
     const form = await renderForm(schema, {
       validator: true,
@@ -347,7 +347,7 @@ describe('formType-resolution — Form.Render custom layout by JSONPointer', () 
     const schema = {
       type: 'object',
       properties: { bio: { type: 'string' } },
-    } satisfies JsonSchema;
+    } satisfies JSONSchema;
 
     const form = await renderForm(schema, {
       defaultValue: { bio: 'hi' },
@@ -384,7 +384,7 @@ describe('formType-resolution — Form.Render custom layout by JSONPointer', () 
     const schema = {
       type: 'object',
       properties: { title: { type: 'string' } },
-    } satisfies JsonSchema;
+    } satisfies JSONSchema;
 
     const form = await renderForm(schema, {
       defaultValue: { title: 'matrix' },
@@ -418,7 +418,7 @@ describe('formType-resolution — Form.Render custom layout by JSONPointer', () 
           properties: { nickname: { type: 'string' } },
         },
       },
-    } satisfies JsonSchema;
+    } satisfies JSONSchema;
 
     const form = await renderForm(schema, {
       defaultValue: { profile: { nickname: 'oracle' } },

@@ -2,7 +2,7 @@ import '@testing-library/jest-dom';
 import { act } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 
-import type { JsonSchema } from '@winglet/json-schema';
+import type { JSONSchema } from '@winglet/json-schema';
 
 import { NodeEventType } from '@/schema-form';
 import type { NumberNode, StringNode } from '@/schema-form';
@@ -30,7 +30,7 @@ describe('uncontrolled-value refresh contract', () => {
   // GAP-9 — RequestRefresh-gated uncontrolled value via external setValue
   // ---------------------------------------------------------------------------
   describe('GAP-9: external setValue refresh gating', () => {
-    const schema: JsonSchema = {
+    const schema: JSONSchema = {
       type: 'object',
       properties: {
         name: { type: 'string', default: 'initial' },
@@ -127,7 +127,7 @@ describe('uncontrolled-value refresh contract', () => {
   // GAP-9 — user typing must NOT remount (identity preserved)
   // ---------------------------------------------------------------------------
   describe('GAP-9: user typing identity', () => {
-    const schema: JsonSchema = {
+    const schema: JSONSchema = {
       type: 'object',
       properties: { name: { type: 'string', default: 'initial' } },
     };
@@ -169,7 +169,7 @@ describe('uncontrolled-value refresh contract', () => {
   // GAP-12 — default-value seeding on branch entry reaches freshly mounted DOM
   // ---------------------------------------------------------------------------
   describe('GAP-12: branch-entry default seeding', () => {
-    const branchSchema: JsonSchema = {
+    const branchSchema: JSONSchema = {
       type: 'object',
       properties: {
         category: { type: 'string', enum: ['game', 'movie'], default: 'game' },
@@ -232,7 +232,7 @@ describe('uncontrolled-value refresh contract', () => {
     });
 
     it('entering a branch seeds nested object field defaults into the DOM', async () => {
-      const nestedSchema: JsonSchema = {
+      const nestedSchema: JSONSchema = {
         type: 'object',
         properties: {
           mode: { type: 'string', enum: ['off', 'on'], default: 'off' },
@@ -276,7 +276,7 @@ describe('uncontrolled-value refresh contract', () => {
   // ---------------------------------------------------------------------------
   describe('GAP-13: RequestRemount escape hatch', () => {
     it('publishing RequestRemount remounts the subtree (Wrapper key bump)', async () => {
-      const schema: JsonSchema = {
+      const schema: JSONSchema = {
         type: 'object',
         properties: { name: { type: 'string', default: 'x' } },
       };

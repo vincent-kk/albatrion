@@ -141,7 +141,7 @@ export const App = () => {
 
 ```typescript
 interface FormProps<
-  Schema extends JsonSchema = JsonSchema,
+  Schema extends JSONSchema = JSONSchema,
   Value extends AllowedValue = InferValueType<Schema>,
 > {
   /** JSON Schema to use in this SchemaForm */
@@ -155,7 +155,7 @@ interface FormProps<
   /** Function called when the value of this SchemaForm changes */
   onChange?: SetStateFn<Value>;
   /** Function called when this SchemaForm is validated */
-  onValidate?: Fn<[jsonSchemaError: JsonSchemaError[]]>;
+  onValidate?: Fn<[jsonSchemaError: JSONSchemaError[]]>;
   /** Function called when the form is submitted */
   onSubmit?: Fn<[value: Value], Promise<void> | void>;
   /** Function called when the state of this SchemaForm changes */
@@ -167,7 +167,7 @@ interface FormProps<
   /** Custom form type renderer component */
   CustomFormTypeRenderer?: ComponentType<FormTypeRendererProps>;
   /** Initial validation errors, default is undefined */
-  errors?: JsonSchemaError[];
+  errors?: JSONSchemaError[];
   /** Custom format error function */
   formatError?: FormTypeRendererProps['formatError'];
   /**
@@ -212,7 +212,7 @@ interface FormProps<
 
 ```typescript
 interface FormHandle<
-  Schema extends JsonSchema,
+  Schema extends JSONSchema,
   Value extends AllowedValue = InferValueType<Schema>,
 > {
   /** Root node */
@@ -238,11 +238,11 @@ interface FormHandle<
   /** Set value */
   setValue: SetStateFnWithOptions<Value>;
   /** Get current errors */
-  getErrors: Fn<[], JsonSchemaError[]>;
+  getErrors: Fn<[], JSONSchemaError[]>;
   /** Get attached files map */
   getAttachedFilesMap: Fn<[], AttachedFilesMap>;
   /** Run validation */
-  validate: Fn<[], Promise<JsonSchemaError[]>>;
+  validate: Fn<[], Promise<JSONSchemaError[]>>;
   /** Set error visibility */
   showError: Fn<[visible: boolean]>;
   /** Submit form */
@@ -254,14 +254,14 @@ interface FormHandle<
 
 ```typescript
 interface FormChildrenProps<
-  Schema extends JsonSchema,
+  Schema extends JSONSchema,
   Value extends AllowedValue = InferValueType<Schema>,
 > {
   node?: InferSchemaNode<Schema>;
   jsonSchema: Schema;
   defaultValue?: Value;
   value?: Value;
-  errors?: JsonSchemaError[];
+  errors?: JSONSchemaError[];
 }
 ```
 
@@ -303,7 +303,7 @@ type AttachedFilesMap = Map<string, File[]>;
 ### Node Initialization
 
 ```typescript
-const node = nodeFromJsonSchema({
+const node = nodeFromJSONSchema({
   jsonSchema: { type: 'object', properties: { name: { type: 'string' } } },
   onChange: (value) => console.log('Form value changed:', value),
 });
@@ -347,7 +347,7 @@ type FormTypeTestFn = Fn<[hint: Hint], boolean>;
 // Object form
 type FormTypeTestObject = Partial<{
   type: Array<string>;
-  jsonSchema: JsonSchema;
+  jsonSchema: JSONSchema;
   format: Array<string>;
   formType: Array<string>;
   nullable: boolean;
@@ -356,7 +356,7 @@ type FormTypeTestObject = Partial<{
 
 // Hint object
 type Hint = {
-  jsonSchema: JsonSchema;
+  jsonSchema: JSONSchema;
   type: string;
   format: string;
   formType: string;
@@ -373,7 +373,7 @@ interface FormTypeInputProps<
   Value extends AllowedValue = any,
   Context extends Dictionary = object,
   WatchValues extends Array<any> = Array<any>,
-  Schema extends JsonSchemaWithVirtual = InferJsonSchema<Value>,
+  Schema extends JSONSchemaWithVirtual = InferJSONSchema<Value>,
   Node extends SchemaNode = InferSchemaNode<Schema>,
 > {
   jsonSchema: Schema; // JSON Schema for FormTypeInput component
@@ -912,7 +912,7 @@ Pass `children` as a function to `Form` component to access form state and node.
 | prop     | Type                      | Description                         |
 | -------- | ------------------------- | ----------------------------------- |
 | `value`  | `InferValueType<Schema>`  | Current form value                  |
-| `errors` | `JsonSchemaError[]`       | List of all validation errors       |
+| `errors` | `JSONSchemaError[]`       | List of all validation errors       |
 | `node`   | `InferSchemaNode<Schema>` | Root node (for programmatic access) |
 
 ---

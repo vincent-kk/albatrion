@@ -16,7 +16,7 @@ import {
   useFormTypeRendererContext,
   useWorkspaceContext,
 } from '@/schema-form/providers';
-import type { JsonSchemaError } from '@/schema-form/types';
+import type { JSONSchemaError } from '@/schema-form/types';
 
 import { useSchemaNodeSubscribe } from './useSchemaNodeSubscribe';
 
@@ -78,7 +78,7 @@ import { useSchemaNodeSubscribe } from './useSchemaNodeSubscribe';
  *                                    Useful for displaying a single summary error.
  * @returns {ReactNode[]} formattedErrors - Array of formatted error messages for each child,
  *                                       indexed by child position. Null entries indicate no error.
- * @returns {JsonSchemaError[][]} errorMatrix - 2D array of raw error objects for each child.
+ * @returns {JSONSchemaError[][]} errorMatrix - 2D array of raw error objects for each child.
  *                                             Useful for custom error processing or debugging.
  */
 export const useChildNodeErrors = (
@@ -90,7 +90,7 @@ export const useChildNodeErrors = (
   formattedError: ReactNode;
   showErrors: boolean[];
   formattedErrors: ReactNode[];
-  errorMatrix: JsonSchemaError[][];
+  errorMatrix: JSONSchemaError[][];
 } => {
   const { formatError, checkShowError } = useFormTypeRendererContext();
   const { context } = useWorkspaceContext();
@@ -98,7 +98,7 @@ export const useChildNodeErrors = (
   // Track current children and subscribe to structural changes
   const [children, setChildren] = useState(node.children);
 
-  const [errorMatrix, setErrorMatrix] = useState<JsonSchemaError[][]>(() =>
+  const [errorMatrix, setErrorMatrix] = useState<JSONSchemaError[][]>(() =>
     new Array(children?.length || 0).fill(null).map(() => []),
   );
   const [formattedErrors, setFormattedErrors] = useState<ReactNode[]>(() =>
@@ -181,7 +181,7 @@ export const useChildNodeErrors = (
     const applyChildErrors = (
       index: number,
       childNode: SchemaNode,
-      errors: JsonSchemaError[] | undefined,
+      errors: JSONSchemaError[] | undefined,
     ) => {
       const firstError = errors?.find(isTruthy);
       setErrorMatrix((prev) => {

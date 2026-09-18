@@ -32,7 +32,7 @@ Reach for the union variant unless you specifically need to _distinguish_ nullab
 
 ## Invariants & Gotchas
 
-1. `scan()` is synchronous and returns `this`; `JsonSchemaScannerAsync.scan()` returns `Promise<this>`. `getValue()` is synchronous in both.
+1. `scan()` is synchronous and returns `this`; `JSONSchemaScannerAsync.scan()` returns `Promise<this>`. `getValue()` is synchronous in both.
 2. `getValue()` returns `undefined` before `scan()`, applies deferred work on its first call, then caches the result.
 3. **`enter` fires BEFORE `$ref` resolution.** `referenceResolved`, `referencePath`, `hasReference` and `referenceSkipped` are all unset during `enter` — read them in `exit`. The class JSDoc's `enter: (entry) => { if (entry.referenceResolved) … }` example therefore never fires; do not copy it.
 4. Traversal order within a node is fixed by descriptor order, **not** key insertion order: `$defs` → `definitions` → `additionalProperties` → `not`/`if`/`then`/`else` → `allOf`/`anyOf`/`oneOf` → `prefixItems` → `items` → `properties`.
@@ -50,7 +50,7 @@ Reach for the union variant unless you specifically need to _distinguish_ nullab
 | Topic                                                                                | File                          |
 | ------------------------------------------------------------------------------------ | ----------------------------- |
 | Scanner behavior — options, callback timing, `getValue()`, cycles, depth, vocabulary | `knowledge/schema-scanner.md` |
-| `InferValueType` / `InferJsonSchema` — how a schema maps to a value type             | `knowledge/type-inference.md` |
+| `InferValueType` / `InferJSONSchema` — how a schema maps to a value type             | `knowledge/type-inference.md` |
 
 ## API Truth
 
@@ -58,16 +58,16 @@ Signatures, option shapes and the full schema type hierarchy are mechanically de
 
 ```typescript
 import {
-  JsonSchemaScanner, JsonSchemaScannerAsync, resolveReference, EXTENDED_KEYWORDS,
+  JSONSchemaScanner, JSONSchemaScannerAsync, resolveReference, EXTENDED_KEYWORDS,
 } from '@winglet/json-schema';
 import type {
-  JsonSchema, UnknownSchema, ObjectSchema, ArraySchema, StringSchema, NumberSchema,
-  BooleanSchema, NullSchema, RefSchema, InferJsonSchema, InferValueType,
+  JSONSchema, UnknownSchema, ObjectSchema, ArraySchema, StringSchema, NumberSchema,
+  BooleanSchema, NullSchema, RefSchema, InferJSONSchema, InferValueType,
 } from '@winglet/json-schema';
 
 // Tree-shakeable sub-paths
-import { JsonSchemaScanner, EXTENDED_KEYWORDS } from '@winglet/json-schema/scanner';
-import { JsonSchemaScannerAsync } from '@winglet/json-schema/async-scanner';
+import { JSONSchemaScanner, EXTENDED_KEYWORDS } from '@winglet/json-schema/scanner';
+import { JSONSchemaScannerAsync } from '@winglet/json-schema/async-scanner';
 import {
   isObjectSchema, isNumberSchema, hasNullInType,
   isCompatibleSchemaType, isIdenticalSchemaType,
@@ -78,7 +78,7 @@ Collecting every property path — `keyword === 'properties'` fires on each prop
 
 ```typescript
 const paths: string[] = [];
-new JsonSchemaScanner({
+new JSONSchemaScanner({
   visitor: {
     enter: (entry) => {
       if (entry.keyword === 'properties') paths.push(entry.dataPath);

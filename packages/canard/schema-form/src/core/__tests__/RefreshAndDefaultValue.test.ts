@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from 'vitest';
 
 import { delay } from '@winglet/common-utils';
 
-import { nodeFromJsonSchema } from '@/schema-form/core';
+import { nodeFromJSONSchema } from '@/schema-form/core';
 
 import {
   NodeEventType,
@@ -31,7 +31,7 @@ describe('Refresh and DefaultValue Migration Verification', () => {
   describe('1. Refresh Event System', () => {
     it('should publish RequestRefresh when SetValueOption.Overwrite is used', async () => {
       const events: UnionNodeEventType[] = [];
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: {
           type: 'object',
@@ -57,7 +57,7 @@ describe('Refresh and DefaultValue Migration Verification', () => {
 
     it('should NOT publish RequestRefresh when SetValueOption.Default is used', async () => {
       const events: UnionNodeEventType[] = [];
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: {
           type: 'object',
@@ -84,7 +84,7 @@ describe('Refresh and DefaultValue Migration Verification', () => {
 
     it('should publish RequestRefresh for StringNode with setValue()', async () => {
       const events: UnionNodeEventType[] = [];
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: { type: 'string' },
       });
@@ -104,7 +104,7 @@ describe('Refresh and DefaultValue Migration Verification', () => {
 
     it('should publish RequestRefresh for NumberNode with setValue()', async () => {
       const events: UnionNodeEventType[] = [];
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: { type: 'number' },
       }) as NumberNode;
@@ -123,7 +123,7 @@ describe('Refresh and DefaultValue Migration Verification', () => {
 
     it('should publish RequestRefresh for ObjectNode (BranchStrategy) with setValue()', async () => {
       const events: UnionNodeEventType[] = [];
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: {
           type: 'object',
@@ -148,7 +148,7 @@ describe('Refresh and DefaultValue Migration Verification', () => {
 
     it('should publish RequestRefresh for ArrayNode (BranchStrategy) with setValue()', async () => {
       const events: UnionNodeEventType[] = [];
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: {
           type: 'array',
@@ -175,7 +175,7 @@ describe('Refresh and DefaultValue Migration Verification', () => {
 
     it('should publish RequestRefresh for ArrayNode (TerminalStrategy) with setValue()', async () => {
       const events: UnionNodeEventType[] = [];
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: {
           type: 'array',
@@ -197,7 +197,7 @@ describe('Refresh and DefaultValue Migration Verification', () => {
 
     it('should batch RequestRefresh with UpdateValue in single event dispatch', async () => {
       const eventCalls: Array<{ type: UnionNodeEventType }> = [];
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: { type: 'string' },
       });
@@ -225,7 +225,7 @@ describe('Refresh and DefaultValue Migration Verification', () => {
        * This behavior ensures UI consistency and is intentional.
        */
       const events: UnionNodeEventType[] = [];
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: { type: 'string' },
       });
@@ -254,7 +254,7 @@ describe('Refresh and DefaultValue Migration Verification', () => {
 
     it('should publish RequestRefresh only once per setValue call (deduplication)', async () => {
       const refreshEventCounts: number[] = [];
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: { type: 'string' },
       });
@@ -277,7 +277,7 @@ describe('Refresh and DefaultValue Migration Verification', () => {
 
     it('should handle multiple rapid setValue calls by batching events appropriately', async () => {
       const events: UnionNodeEventType[] = [];
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: { type: 'string' },
       });
@@ -320,7 +320,7 @@ describe('Refresh and DefaultValue Migration Verification', () => {
    */
   describe('2. DefaultValue Stability', () => {
     it('should use constructor defaultValue when provided', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: { type: 'string' },
         defaultValue: 'initial',
@@ -333,7 +333,7 @@ describe('Refresh and DefaultValue Migration Verification', () => {
     });
 
     it('should use schema.default when constructor defaultValue is undefined', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: { type: 'string', default: 'schema-default' },
       });
@@ -345,7 +345,7 @@ describe('Refresh and DefaultValue Migration Verification', () => {
     });
 
     it('should NOT change defaultValue after setValue()', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: { type: 'string', default: 'original' },
       });
@@ -365,7 +365,7 @@ describe('Refresh and DefaultValue Migration Verification', () => {
     });
 
     it('should NOT change defaultValue after multiple setValue() calls', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: { type: 'number', default: 100 },
       }) as NumberNode;
@@ -387,7 +387,7 @@ describe('Refresh and DefaultValue Migration Verification', () => {
     });
 
     it('should NOT change ObjectNode defaultValue after nested setValue()', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: {
           type: 'object',
@@ -412,7 +412,7 @@ describe('Refresh and DefaultValue Migration Verification', () => {
     });
 
     it('should NOT change ArrayNode defaultValue after push/remove operations', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: {
           type: 'array',
@@ -443,7 +443,7 @@ describe('Refresh and DefaultValue Migration Verification', () => {
     });
 
     it('should maintain defaultValue during conditional schema switching', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: {
           type: 'object',
@@ -488,7 +488,7 @@ describe('Refresh and DefaultValue Migration Verification', () => {
   describe('3. __setDefaultValue__ Exclusivity', () => {
     it('should only modify defaultValue during initialization', async () => {
       const mockOnChange = vi.fn();
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: mockOnChange,
         jsonSchema: {
           type: 'object',
@@ -516,7 +516,7 @@ describe('Refresh and DefaultValue Migration Verification', () => {
     });
 
     it('should preserve defaultValue through complete node lifecycle', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: {
           type: 'object',
@@ -552,7 +552,7 @@ describe('Refresh and DefaultValue Migration Verification', () => {
    */
   describe('4. checkDefinedValue Removal Impact', () => {
     it('should preserve empty object {} as defaultValue', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: {
           type: 'object',
@@ -571,7 +571,7 @@ describe('Refresh and DefaultValue Migration Verification', () => {
     });
 
     it('should preserve empty array [] as defaultValue', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: {
           type: 'array',
@@ -590,7 +590,7 @@ describe('Refresh and DefaultValue Migration Verification', () => {
     });
 
     it('should preserve null for nullable types', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: { type: ['string', 'null'] as const },
         defaultValue: null,
@@ -603,7 +603,7 @@ describe('Refresh and DefaultValue Migration Verification', () => {
     });
 
     it('should use schema.default when defaultValue is undefined', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: { type: 'string', default: 'fallback' },
         defaultValue: undefined,
@@ -617,7 +617,7 @@ describe('Refresh and DefaultValue Migration Verification', () => {
     });
 
     it('should handle nested empty objects correctly', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: {
           type: 'object',
@@ -640,7 +640,7 @@ describe('Refresh and DefaultValue Migration Verification', () => {
     });
 
     it('should handle array with empty object items', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: {
           type: 'array',
@@ -661,7 +661,7 @@ describe('Refresh and DefaultValue Migration Verification', () => {
     });
 
     it('should preserve 0 as valid defaultValue for number', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: { type: 'number' },
         defaultValue: 0,
@@ -675,7 +675,7 @@ describe('Refresh and DefaultValue Migration Verification', () => {
     });
 
     it('should preserve empty string as valid defaultValue for string', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: { type: 'string' },
         defaultValue: '',
@@ -689,7 +689,7 @@ describe('Refresh and DefaultValue Migration Verification', () => {
     });
 
     it('should preserve false as valid defaultValue for boolean', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: { type: 'boolean' },
         defaultValue: false,
@@ -711,7 +711,7 @@ describe('Refresh and DefaultValue Migration Verification', () => {
       const events: UnionNodeEventType[] = [];
       const mockOnChange = vi.fn();
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: mockOnChange,
         jsonSchema: {
           type: 'object',
@@ -749,7 +749,7 @@ describe('Refresh and DefaultValue Migration Verification', () => {
     });
 
     it('should handle form initialization with various defaultValue types', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: {
           type: 'object',
@@ -791,7 +791,7 @@ describe('Refresh and DefaultValue Migration Verification', () => {
     });
 
     it('should maintain stability across rapid setValue calls', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: { type: 'string', default: 'stable' },
       });
@@ -821,7 +821,7 @@ describe('Refresh and DefaultValue Migration Verification', () => {
    */
   describe('6. Complex Node Type Interactions', () => {
     it('should maintain defaultValue independence in ObjectNode containing ArrayNode', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: {
           type: 'object',
@@ -863,7 +863,7 @@ describe('Refresh and DefaultValue Migration Verification', () => {
     });
 
     it('should maintain defaultValue independence in ArrayNode containing ObjectNode', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: {
           type: 'array',
@@ -906,7 +906,7 @@ describe('Refresh and DefaultValue Migration Verification', () => {
     });
 
     it('should handle deeply nested structures (3+ levels) correctly', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: {
           type: 'object',
@@ -953,7 +953,7 @@ describe('Refresh and DefaultValue Migration Verification', () => {
     });
 
     it('should handle mixed array and object nesting with independent defaults', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: {
           type: 'object',
@@ -1023,7 +1023,7 @@ describe('Refresh and DefaultValue Migration Verification', () => {
    */
   describe('7. Computed Property Interactions', () => {
     it('should not affect defaultValue when computed property changes', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: {
           type: 'object',
@@ -1060,7 +1060,7 @@ describe('Refresh and DefaultValue Migration Verification', () => {
     });
 
     it('should maintain defaultValue through computed dependency changes', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: {
           type: 'object',
@@ -1105,7 +1105,7 @@ describe('Refresh and DefaultValue Migration Verification', () => {
     });
 
     it('should preserve defaultValue with watch-based computed properties', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: {
           type: 'object',
@@ -1139,7 +1139,7 @@ describe('Refresh and DefaultValue Migration Verification', () => {
     });
 
     it('should handle multiple computed properties affecting same node without changing defaults', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: {
           type: 'object',
@@ -1189,7 +1189,7 @@ describe('Refresh and DefaultValue Migration Verification', () => {
   describe('8. Edge Cases', () => {
     it('should handle subscription added during setValue without event loss', async () => {
       const events: UnionNodeEventType[] = [];
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: { type: 'string', default: 'initial' },
       });
@@ -1219,7 +1219,7 @@ describe('Refresh and DefaultValue Migration Verification', () => {
         value: i * 10,
       }));
 
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: {
           type: 'array',
@@ -1255,7 +1255,7 @@ describe('Refresh and DefaultValue Migration Verification', () => {
     });
 
     it('should handle concurrent setValue calls on sibling nodes', async () => {
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: {
           type: 'object',
@@ -1298,7 +1298,7 @@ describe('Refresh and DefaultValue Migration Verification', () => {
 
     it('should handle setValue with SetValueOption.Default correctly (no RequestRefresh)', async () => {
       const events: UnionNodeEventType[] = [];
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: { type: 'string', default: 'initial' },
       });

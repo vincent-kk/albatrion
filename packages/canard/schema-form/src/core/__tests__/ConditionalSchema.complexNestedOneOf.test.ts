@@ -2,8 +2,8 @@ import { describe, expect, it } from 'vitest';
 
 import { delay } from '@winglet/common-utils';
 
-import { nodeFromJsonSchema } from '@/schema-form/core';
-import type { JsonSchema } from '@/schema-form/types';
+import { nodeFromJSONSchema } from '@/schema-form/core';
+import type { JSONSchema } from '@/schema-form/types';
 
 import type { ObjectNode } from '../nodes/ObjectNode';
 
@@ -17,7 +17,7 @@ import type { ObjectNode } from '../nodes/ObjectNode';
  * 3. Node.enabled status for form rendering validation
  */
 describe('ConditionalSchema - ComplexNestedOneOf story scenario', () => {
-  const createComplexNestedOneOfSchema = (): JsonSchema => ({
+  const createComplexNestedOneOfSchema = (): JSONSchema => ({
     type: 'object',
     properties: {
       productType: {
@@ -125,7 +125,7 @@ describe('ConditionalSchema - ComplexNestedOneOf story scenario', () => {
   describe('Physical Product Button scenario', () => {
     it('should properly set physical product with nested shipping oneOf', async () => {
       const schema = createComplexNestedOneOfSchema();
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: schema,
       }) as ObjectNode;
@@ -181,7 +181,7 @@ describe('ConditionalSchema - ComplexNestedOneOf story scenario', () => {
 
     it('should filter out digital/service fields when setting physical product', async () => {
       const schema = createComplexNestedOneOfSchema();
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: schema,
       }) as ObjectNode;
@@ -232,7 +232,7 @@ describe('ConditionalSchema - ComplexNestedOneOf story scenario', () => {
   describe('Digital Product Button scenario', () => {
     it('should properly set digital product and filter out physical/service fields', async () => {
       const schema = createComplexNestedOneOfSchema();
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: schema,
       }) as ObjectNode;
@@ -294,7 +294,7 @@ describe('ConditionalSchema - ComplexNestedOneOf story scenario', () => {
 
     it('should filter out physical/service fields when setting digital product with mixed data', async () => {
       const schema = createComplexNestedOneOfSchema();
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: schema,
       }) as ObjectNode;
@@ -344,7 +344,7 @@ describe('ConditionalSchema - ComplexNestedOneOf story scenario', () => {
   describe('Service Product Button scenario', () => {
     it('should properly set service product and filter out physical/digital fields', async () => {
       const schema = createComplexNestedOneOfSchema();
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: schema,
       }) as ObjectNode;
@@ -410,7 +410,7 @@ describe('ConditionalSchema - ComplexNestedOneOf story scenario', () => {
   describe('Switching between product types', () => {
     it('should properly filter fields when switching from physical to digital', async () => {
       const schema = createComplexNestedOneOfSchema();
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: schema,
       }) as ObjectNode;
@@ -461,7 +461,7 @@ describe('ConditionalSchema - ComplexNestedOneOf story scenario', () => {
 
     it('should properly filter fields when switching from digital to service', async () => {
       const schema = createComplexNestedOneOfSchema();
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: schema,
       }) as ObjectNode;
@@ -514,7 +514,7 @@ describe('ConditionalSchema - ComplexNestedOneOf story scenario', () => {
 
     it('should properly filter fields when switching from service to physical', async () => {
       const schema = createComplexNestedOneOfSchema();
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: schema,
       }) as ObjectNode;
@@ -569,7 +569,7 @@ describe('ConditionalSchema - ComplexNestedOneOf story scenario', () => {
   describe('Nested shipping oneOf within physical product', () => {
     it('should properly handle nested shipping oneOf - standard method', async () => {
       const schema = createComplexNestedOneOfSchema();
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: schema,
       }) as ObjectNode;
@@ -610,7 +610,7 @@ describe('ConditionalSchema - ComplexNestedOneOf story scenario', () => {
 
     it('should properly handle nested shipping oneOf - express method', async () => {
       const schema = createComplexNestedOneOfSchema();
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: schema,
       }) as ObjectNode;
@@ -651,7 +651,7 @@ describe('ConditionalSchema - ComplexNestedOneOf story scenario', () => {
 
     it('should filter shipping fields when switching between standard and express', async () => {
       const schema = createComplexNestedOneOfSchema();
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: schema,
       }) as ObjectNode;
@@ -694,7 +694,7 @@ describe('ConditionalSchema - ComplexNestedOneOf story scenario', () => {
 
     it('should filter nested shipping fields when setting with mixed data', async () => {
       const schema = createComplexNestedOneOfSchema();
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: schema,
       }) as ObjectNode;
@@ -754,7 +754,7 @@ describe('ConditionalSchema - ComplexNestedOneOf story scenario', () => {
   describe('Edge cases - timing and consistency', () => {
     it('should handle rapid button clicks correctly', async () => {
       const schema = createComplexNestedOneOfSchema();
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: schema,
       }) as ObjectNode;
@@ -809,7 +809,7 @@ describe('ConditionalSchema - ComplexNestedOneOf story scenario', () => {
 
     it('should maintain consistency when setting incomplete data', async () => {
       const schema = createComplexNestedOneOfSchema();
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: schema,
       }) as ObjectNode;
@@ -845,7 +845,7 @@ describe('ConditionalSchema - ComplexNestedOneOf story scenario', () => {
   describe('Error cases', () => {
     it('switching case', async () => {
       const schema = createComplexNestedOneOfSchema();
-      const node = nodeFromJsonSchema({
+      const node = nodeFromJSONSchema({
         onChange: () => {},
         jsonSchema: schema,
       }) as ObjectNode;

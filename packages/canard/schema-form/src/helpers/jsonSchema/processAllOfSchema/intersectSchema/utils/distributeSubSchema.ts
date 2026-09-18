@@ -1,6 +1,6 @@
 import { isArray } from '@winglet/common-utils/filter';
 
-import type { JsonSchema } from '@/schema-form/types';
+import type { JSONSchema } from '@/schema-form/types';
 import type { ArraySchema } from '@/schema-form/types';
 import type { ObjectSchema } from '@/schema-form/types';
 
@@ -52,9 +52,9 @@ export const distributeAllOfItems = (
   else distributeSchema(base.items, source.items);
 };
 
-const distributeSchema = <Schema extends JsonSchema>(
+const distributeSchema = <Schema extends JSONSchema>(
   base: Schema,
-  source: Partial<JsonSchema>,
+  source: Partial<JSONSchema>,
 ) => {
   if (isArray(base.allOf)) base.allOf.push(source);
   else base.allOf = [source];

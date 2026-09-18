@@ -3,8 +3,8 @@ import { useRef, useState } from 'react';
 import {
   Form,
   type FormHandle,
-  type JsonSchema,
-  type JsonSchemaError,
+  type JSONSchema,
+  type JSONSchemaError,
 } from '../src';
 import StoryLayout from './components/StoryLayout';
 
@@ -37,11 +37,11 @@ export const VisibleVsActiveComparison = () => {
         title: 'Always Visible Reference',
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const formHandle = useRef<FormHandle<typeof schema, any>>(null);
   const [value, setValue] = useState<Record<string, unknown>>();
-  const [errors, setErrors] = useState<JsonSchemaError[]>([]);
+  const [errors, setErrors] = useState<JSONSchemaError[]>([]);
 
   return (
     <StoryLayout jsonSchema={schema} value={value} errors={errors}>
@@ -115,7 +115,7 @@ export const VisibleFieldPreservesValue = () => {
         readOnly: true,
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const formHandle = useRef<FormHandle<typeof schema, any>>(null);
   const [value, setValue] = useState<Record<string, unknown>>({
@@ -124,7 +124,7 @@ export const VisibleFieldPreservesValue = () => {
     optionalVisibleField: 'Initial visible value',
     readOnlyValue: 'Initial readOnly value',
   });
-  const [errors, setErrors] = useState<JsonSchemaError[]>([]);
+  const [errors, setErrors] = useState<JSONSchemaError[]>([]);
 
   return (
     <StoryLayout jsonSchema={schema} value={value} errors={errors}>
@@ -199,7 +199,7 @@ export const ActiveFieldRemovesValue = () => {
         readOnly: true,
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const formHandle = useRef<FormHandle<typeof schema, any>>(null);
   const [value, setValue] = useState<Record<string, unknown>>({
@@ -208,7 +208,7 @@ export const ActiveFieldRemovesValue = () => {
     optionalActiveField: 'Initial active value',
     readOnlyValue: 'Initial readOnly value',
   });
-  const [errors, setErrors] = useState<JsonSchemaError[]>([]);
+  const [errors, setErrors] = useState<JSONSchemaError[]>([]);
 
   return (
     <StoryLayout jsonSchema={schema} value={value} errors={errors}>
@@ -313,14 +313,14 @@ export const ComplexFieldDependencies = () => {
         '&active': '../userType === "admin"',
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const formHandle = useRef<FormHandle<typeof schema, any>>(null);
   const [value, setValue] = useState<Record<string, unknown>>({
     userType: 'guest',
     name: '',
   });
-  const [errors, setErrors] = useState<JsonSchemaError[]>([]);
+  const [errors, setErrors] = useState<JSONSchemaError[]>([]);
 
   return (
     <StoryLayout jsonSchema={schema} value={value} errors={errors}>
@@ -452,12 +452,12 @@ export const ConditionalSchema = () => {
         minimum: 50,
       },
     },
-  } satisfies JsonSchema;
+  } satisfies JSONSchema;
 
   const formHandle = useRef<FormHandle<typeof schema, any>>(null);
 
   const [value, setValue] = useState<Record<string, unknown>>();
-  const [errors, setErrors] = useState<JsonSchemaError[]>([]);
+  const [errors, setErrors] = useState<JSONSchemaError[]>([]);
   return (
     <StoryLayout jsonSchema={schema} value={value} errors={errors}>
       <button

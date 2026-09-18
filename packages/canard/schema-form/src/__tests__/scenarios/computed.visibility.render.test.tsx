@@ -1,7 +1,7 @@
 import '@testing-library/jest-dom';
 import { describe, expect, it } from 'vitest';
 
-import type { JsonSchema } from '@winglet/json-schema';
+import type { JSONSchema } from '@winglet/json-schema';
 
 import { renderForm } from '../renderForm';
 
@@ -39,7 +39,7 @@ const visiblePreserveSchema = {
     },
     always: { type: 'string' },
   },
-} satisfies JsonSchema;
+} satisfies JSONSchema;
 
 /** enableOptional (boolean) toggles an `&active` string whose value is removed. */
 const activeRemoveSchema = {
@@ -52,7 +52,7 @@ const activeRemoveSchema = {
       '&active': '../enableOptional === true',
     },
   },
-} satisfies JsonSchema;
+} satisfies JSONSchema;
 
 /** enum discriminator switches which `&visible` date field is shown. */
 const discriminatorSchema = {
@@ -62,7 +62,7 @@ const discriminatorSchema = {
     openingDate: { type: 'string', '&visible': '../category === "game"' },
     releaseDate: { type: 'string', '&visible': '../category === "movie"' },
   },
-} satisfies JsonSchema;
+} satisfies JSONSchema;
 
 /** `computed.visible` with an explicit `watch` dependency list. */
 const watchVisibleSchema = {
@@ -78,7 +78,7 @@ const watchVisibleSchema = {
       },
     },
   },
-} satisfies JsonSchema;
+} satisfies JSONSchema;
 
 /** Side-by-side visible vs active driven by the same `mode` discriminator. */
 const visibleVsActiveSchema = {
@@ -88,7 +88,7 @@ const visibleVsActiveSchema = {
     visibleField: { type: 'string', '&visible': '../mode === "visible"' },
     activeField: { type: 'string', '&active': '../mode === "visible"' },
   },
-} satisfies JsonSchema;
+} satisfies JSONSchema;
 
 describe('GAP-10 computed.visible — value preserved when hidden by sibling', () => {
   it('renders the gated field with its default when the sibling enables it', async () => {

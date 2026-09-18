@@ -14,7 +14,7 @@
    - [setValue](#setvalue)
    - [escapePath / unescapePath](#escapepath--unescapepath)
    - [escapeSegment](#escapesegment)
-   - [convertJsonPointerToPath](#convertjsonpointertopath)
+   - [convertJSONPointerToPath](#convertjsonpointertopath)
 5. [JSON Patch](#json-patch)
    - [compare](#compare)
    - [applyPatch](#applypatch)
@@ -22,7 +22,7 @@
    - [mergePatch](#mergepatch)
 6. [JSON Path](#json-path)
    - [getJSONPath](#getjsonpath)
-   - [convertJsonPathToPointer](#convertjsonpathtopointer)
+   - [convertJSONPathToPointer](#convertjsonpathtopointer)
 7. [Type Definitions](#type-definitions)
 8. [Security](#security)
 9. [Error Handling](#error-handling)
@@ -90,9 +90,9 @@ Use sub-path imports to minimize bundle size:
 | `@winglet/json/pointer-manipulator` | `getValue`, `setValue`                              |
 | `@winglet/json/pointer-patch`       | `compare`, `applyPatch`, `difference`, `mergePatch` |
 | `@winglet/json/pointer-escape`      | `escapePath`, `unescapePath`, `escapeSegment`       |
-| `@winglet/json/pointer-common`      | `JSONPointer` constants, `convertJsonPointerToPath` |
+| `@winglet/json/pointer-common`      | `JSONPointer` constants, `convertJSONPointerToPath` |
 | `@winglet/json/path`                | `JSONPath` constants                                |
-| `@winglet/json/path-common`         | `getJSONPath`, `convertJsonPathToPointer`           |
+| `@winglet/json/path-common`         | `getJSONPath`, `convertJSONPathToPointer`           |
 
 ```typescript
 import { escapePath, escapeSegment } from '@winglet/json/pointer-escape';
@@ -262,20 +262,20 @@ const pointer = `/${escapeSegment(key)}/status`;
 // '/api~1v1/status'
 ```
 
-### convertJsonPointerToPath
+### convertJSONPointerToPath
 
 Converts a JSON Pointer string to an array of unescaped reference tokens.
 
 ```typescript
-function convertJsonPointerToPath(pointer: string): string[];
+function convertJSONPointerToPath(pointer: string): string[];
 ```
 
 ```typescript
-import { convertJsonPointerToPath } from '@winglet/json/pointer-common';
+import { convertJSONPointerToPath } from '@winglet/json/pointer-common';
 
-convertJsonPointerToPath('/foo/bar'); // ['foo', 'bar']
-convertJsonPointerToPath('/a~1b/c~0d'); // ['a/b', 'c~d']
-convertJsonPointerToPath(''); // []
+convertJSONPointerToPath('/foo/bar'); // ['foo', 'bar']
+convertJSONPointerToPath('/a~1b/c~0d'); // ['a/b', 'c~d']
+convertJSONPointerToPath(''); // []
 ```
 
 ---
@@ -381,9 +381,9 @@ Generates a JSON Merge Patch (RFC 7396) representing the differences between two
 
 ```typescript
 function difference(
-  source: JsonValue,
-  target: JsonValue,
-): JsonValue | undefined;
+  source: JSONValue,
+  target: JSONValue,
+): JSONValue | undefined;
 ```
 
 Returns `undefined` when source and target are identical. Returns `null`-annotated object for object diffs (where `null` means "remove this property"). Returns the target value directly for arrays and type mismatches.
@@ -417,8 +417,8 @@ Applies a JSON Merge Patch document to a source value (RFC 7396).
 
 ```typescript
 function mergePatch<Type>(
-  source: JsonValue,
-  mergePatchBody: JsonValue | undefined,
+  source: JSONValue,
+  mergePatchBody: JSONValue | undefined,
   immutable?: boolean, // default: true
 ): Type;
 ```
@@ -500,21 +500,21 @@ getJSONPath(special, special['key.with.dots']);
 // "$['key.with.dots']"
 ```
 
-### convertJsonPathToPointer
+### convertJSONPathToPointer
 
 Converts a JSONPath string to an equivalent JSON Pointer string.
 
 ```typescript
-function convertJsonPathToPointer(jsonPath: string): string;
+function convertJSONPathToPointer(jsonPath: string): string;
 ```
 
 ```typescript
-import { convertJsonPathToPointer } from '@winglet/json/path-common';
+import { convertJSONPathToPointer } from '@winglet/json/path-common';
 
-convertJsonPathToPointer('$.foo.bar'); // '/foo/bar'
-convertJsonPathToPointer('$.users[0].name'); // '/users/0/name'
-convertJsonPathToPointer('$'); // ''
-convertJsonPathToPointer("$['a/b'].c"); // '/a~1b/c'
+convertJSONPathToPointer('$.foo.bar'); // '/foo/bar'
+convertJSONPathToPointer('$.users[0].name'); // '/users/0/name'
+convertJSONPathToPointer('$'); // ''
+convertJSONPathToPointer("$['a/b'].c"); // '/a~1b/c'
 ```
 
 ---
@@ -523,11 +523,11 @@ convertJsonPathToPointer("$['a/b'].c"); // '/a~1b/c'
 
 ```typescript
 // Primitive JSON types
-type JsonPrimitive = string | number | boolean | null;
-type JsonArray = Array<any>;
-type JsonObject = Record<string, any>;
-type JsonValue = JsonPrimitive | JsonArray | JsonObject;
-type JsonRoot = JsonArray | JsonObject;
+type JSONPrimitive = string | number | boolean | null;
+type JSONArray = Array<any>;
+type JSONObject = Record<string, any>;
+type JSONValue = JSONPrimitive | JSONArray | JSONObject;
+type JSONRoot = JSONArray | JSONObject;
 
 // Patch operation types
 type Operation = 'add' | 'replace' | 'remove' | 'move' | 'copy' | 'test';
@@ -668,4 +668,4 @@ applyPatch(source, patches, {
 - [RFC 6901 — JSON Pointer](https://datatracker.ietf.org/doc/html/rfc6901)
 - [RFC 6902 — JSON Patch](https://datatracker.ietf.org/doc/html/rfc6902)
 - [RFC 7396 — JSON Merge Patch](https://datatracker.ietf.org/doc/html/rfc7396)
-- [JSONPath — XPath for JSON](https://goessner.net/articles/JsonPath/)
+- [JSONPath — XPath for JSON](https://goessner.net/articles/JSONPath/)
