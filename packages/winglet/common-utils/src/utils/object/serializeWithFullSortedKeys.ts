@@ -1,5 +1,6 @@
 /**
  * Serializes objects using flattened path notation with sorted keys for consistent output.
+ * @deprecated Use createSortedFingerprint. Scheduled for removal in 0.16.0 after the 0.15.0 coexistence release.
  *
  * Transforms nested object structures into a flat string representation where each
  * property path is fully qualified using dot notation. All paths are sorted alphabetically

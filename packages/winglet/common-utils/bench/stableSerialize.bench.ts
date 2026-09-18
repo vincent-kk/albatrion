@@ -28,11 +28,8 @@ const createNestedPlainObject = (
 /** Serialized repeatedly, so every call after the first can reuse prior work. */
 const repeatedInput = createNestedPlainObject(4, 4);
 
-/** A pool of distinct inputs, so no call can reuse another call's work. */
-const distinctInputs = Array.from({ length: 64 }, () =>
-  createNestedPlainObject(4, 4),
-);
-let cursor = 0;
+/** Replaced before each cold timing iteration; setup is outside measured work. */
+let coldInput = createNestedPlainObject(4, 4);
 
 const OMITTED = ['node0', 'node1'] as const;
 
@@ -40,9 +37,21 @@ describe('stableSerialize — depth 4, width 4 plain object (341 nodes)', () => 
   bench('same input every call', () => {
     stableSerialize(repeatedInput);
   });
-  bench('a different input every call', () => {
-    stableSerialize(distinctInputs[cursor++ % distinctInputs.length]);
-  });
+  bench(
+    'fresh identity every call (cold)',
+    () => {
+      stableSerialize(coldInput);
+    },
+    {
+      setup: (task) => {
+        task.opts.beforeEach = () => {
+          coldInput = createNestedPlainObject(4, 4);
+        };
+      },
+      time: 200,
+      warmupTime: 50,
+    },
+  );
   bench('same input with omit', () => {
     stableSerialize(repeatedInput, OMITTED);
   });

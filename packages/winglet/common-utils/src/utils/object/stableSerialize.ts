@@ -354,10 +354,11 @@ const resolveOmitEntry = (omit: Set<string> | readonly string[]): OmitEntry => {
  *   yields the same marker, but two structurally identical instances yield different ones
  * - **One-Way Operation**: Cannot deserialize back to original object
  * - **String Output Only**: All values converted to string representation
- * - **Function Serialization**: Functions serialized by toString(), may vary by engine
+ * - **Function Identity**: Functions use reference identity markers
  * - **Symbol Handling**: Symbols converted to string representation
  * - **Performance on Very Large Objects**: May be slower than simple JSON.stringify
  * - **Memory Usage**: Caching increases memory consumption for large objects
+ * @deprecated Use createSafeFingerprint or createFingerprintFactory. Removal: 0.16.0 after 0.15.0 coexistence. Stored keys must be invalidated.
  */
 export const stableSerialize = (
   input: unknown,

@@ -1,5 +1,6 @@
 /**
  * Native JSON serialization with standard JavaScript behavior.
+ * @deprecated Use JSON.stringify. Scheduled for removal in 0.16.0 after the 0.15.0 coexistence release.
  *
  * Direct alias for the native JSON.stringify method, providing consistent serialization
  * behavior across the application. Handles undefined values by omitting them from the

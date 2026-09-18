@@ -7,7 +7,7 @@
 ## Conventions
 
 - TypeScript, 클래스 기반 singleton 패턴 (`PluginManager` static class)
-- 플러그인은 콘텐츠 해시로 중복 등록을 방지 (`stableSerialize`)
+- 플러그인은 구조와 함수 identity를 반영한 비교 키로 중복 등록을 방지합니다.
 - 상수는 용도별로 파일 분리 (bitmask / control / internal / style)
 
 ## Boundaries

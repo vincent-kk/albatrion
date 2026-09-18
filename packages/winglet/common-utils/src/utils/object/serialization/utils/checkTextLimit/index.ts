@@ -1,0 +1,1 @@
+export { checkTextLimit } from './checkTextLimit';

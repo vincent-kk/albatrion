@@ -412,3 +412,41 @@ yarn commonUtils test
 ## 연락처
 
 이 프로젝트에 관한 질문이나 제안이 있으시면 이슈를 생성해 주세요.
+# 그래프 직렬화와 비교 키
+
+일반 JSON에는 `JSON.stringify` / `JSON.parse`를 사용합니다. 패키지 root 또는
+`/object`의 `stringifyGraph` / `parseGraph`는 순환·공유 참조, Date, Map, Set,
+BigInt, undefined, 특수 숫자, 희소 배열, RegExp를 보존합니다. 문자열은 JSON
+문법이지만 원본 복원에는 전용 `parseGraph`가 필요합니다. 함수·symbol·사용자
+클래스·binary 타입·accessor는 거부하며 getter와 toJSON을 호출하지 않습니다.
+사용자 non-enumerable 속성, descriptor, frozen 상태는 보존 범위 밖입니다.
+`omit`은 object/array 속성 이름을 재귀적으로 제외하는 의도적인 데이터 손실입니다.
+
+| 구형 API (0.15.0 공존 후 0.16.0 제거 예정) | 대체 경로 |
+| --- | --- |
+| `serializeNative` | `JSON.stringify` |
+| `serializeObject` | `createFingerprint` (빠른 shallow 키) |
+| `serializeWithFullSortedKeys` | `createSortedFingerprint` (정렬된 경로) |
+| `stableSerialize` | `createSafeFingerprint` 또는 `createFingerprintFactory({ mode: 'safe' })` |
+
+빠른 모드는 삽입 순서를 따르고 중첩 값에 native JSON을 사용합니다. 정렬 모드는
+경로를 펼치고 순환을 marker로 표시합니다. 두 모드는 기존 타입·구분자의 모호성을
+유지하며 Map/Set 내용을 비교하지 않습니다. 안전한 모드는 순환을 처리하고
+Map·Set·함수·symbol·사용자 인스턴스를 참조 identity로 비교합니다. 같은 Map/Set의
+내부 변경은 키를 바꾸지 않습니다. 안전한 모드는 기본적으로 정렬하며
+`{ sort: false }`로 정렬을 생략할 수 있습니다. 공유/복사 subtree, 배열 hole/undefined는
+같은 키일 수 있습니다. 복원 형식이나 암호학적·고정 길이 hash가 아닙니다.
+
+factory는 `{ mode: 'fast' | 'sorted' | 'safe' }`로 방식을 선택하며 기본값은 safe입니다.
+safe factory에는 `sort: false`도 지정할 수 있습니다. 기본은 mutable 입력 재계산이며
+`{ cache: 'immutable' }`은 깊은 불변성을 보장할 때만 사용합니다. omit은 sorted/safe에서
+재귀 적용하고 fast에서는 root에만 적용합니다. 일반 getter는 실행될 수 있습니다.
+opaque 키는 동일 module/factory 범위에서만 비교하며 기존 저장 키는 이전 시 무효화합니다.
+
+prefix 기본값은 `""`입니다. `createFingerprint(value, { prefix: 'app:' })`
+또는 `createFingerprintFactory({ prefix: 'app:' })`로 접두사를 지정할 수 있습니다.
+factory의 prefix는 생성 시 고정하며 반환 생성기의 호출 옵션은 omit입니다.
+
+graph v1은 UTF-8 16 MiB, node 100,000개, 총 속성/entry 1,000,000개, hole을
+포함한 누적 배열 길이 1,000,000을 제한합니다. 복원 node 할당 전에 wire를
+검증합니다. 일반 JSON은 native를 기본으로 사용하며 graph 보존에는 추가 비용이 듭니다.

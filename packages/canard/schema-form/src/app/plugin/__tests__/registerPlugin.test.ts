@@ -51,4 +51,29 @@ describe('registerPlugin', () => {
     expect(PluginManager.validator?.compile).toBeTypeOf('function');
     expect(PluginManager.validator?.bind).toBeUndefined();
   });
+
+  it('새 구조의 동일 함수는 중복이며 다른 closure는 별개다', () => {
+    const base = PluginManager.formTypeInputDefinitions.length;
+    const component = () => null;
+    const make = (Component: typeof component) => ({
+      formTypeInputDefinitions: [
+        { test: { type: 'string' as const }, Component },
+      ],
+    });
+    registerPlugin(make(component));
+    registerPlugin(make(component));
+    expect(PluginManager.formTypeInputDefinitions.length).toBe(base + 1);
+    registerPlugin(make(() => null));
+    expect(PluginManager.formTypeInputDefinitions.length).toBe(base + 2);
+  });
+
+  it('동일 플러그인의 변경된 함수 참조를 다시 반영한다', () => {
+    const first = () => null;
+    const second = () => null;
+    const mutable = { FormLabel: first };
+    registerPlugin(mutable);
+    mutable.FormLabel = second;
+    registerPlugin(mutable);
+    expect(PluginManager.FormLabel).toBe(second);
+  });
 });

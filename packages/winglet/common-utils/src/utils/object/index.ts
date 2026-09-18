@@ -14,12 +14,36 @@ export { isReservedName } from './isReservedName';
 export { merge } from './merge';
 export { removePrototype } from './removePrototype';
 export { removeUndefined } from './removeUndefined';
-export { serializeNative } from './serializeNative';
-export { serializeObject } from './serializeObject';
-export { serializeWithFullSortedKeys } from './serializeWithFullSortedKeys';
+export {
+  stringifyGraph,
+  parseGraph,
+  type SerializationOptions,
+} from './serialization';
+export {
+  createFingerprint,
+  createSortedFingerprint,
+  createSafeFingerprint,
+  createFingerprintFactory,
+  type FingerprintMode,
+  type SafeFingerprintOptions,
+  type FingerprintFactoryOptions,
+  type FingerprintOptions,
+  type FingerprintGenerator,
+} from './fingerprint';
+export {
+  /** @deprecated Use JSON.stringify. Removal: 0.16.0. */ serializeNative,
+} from './serializeNative';
+export {
+  /** @deprecated Use createFingerprint or stringifyGraph. Removal: 0.16.0. */ serializeObject,
+} from './serializeObject';
+export {
+  /** @deprecated Use createSortedFingerprint. Removal: 0.16.0. */ serializeWithFullSortedKeys,
+} from './serializeWithFullSortedKeys';
 export { setDataProperty } from './setDataProperty';
 export { shallowClone } from './shallowClone';
-export { stableSerialize } from './stableSerialize';
+export {
+  /** @deprecated Use createFingerprintFactory. Removal: 0.16.0. */ stableSerialize,
+} from './stableSerialize';
 export { sortObjectKeys } from './sortObjectKeys';
 export { transformKeys } from './transformKeys';
 export { transformValues } from './transformValues';

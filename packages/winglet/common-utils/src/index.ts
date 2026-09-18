@@ -204,12 +204,28 @@ export {
   merge,
   removePrototype,
   removeUndefined,
+  stringifyGraph,
+  parseGraph,
+  createFingerprint,
+  createSortedFingerprint,
+  createSafeFingerprint,
+  createFingerprintFactory,
+  type FingerprintMode,
+  type SafeFingerprintOptions,
+  type SerializationOptions,
+  type FingerprintFactoryOptions,
+  type FingerprintOptions,
+  type FingerprintGenerator,
+  /** @deprecated Use JSON.stringify. Removal: 0.16.0. */
   serializeNative,
+  /** @deprecated Use createFingerprint or stringifyGraph. Removal: 0.16.0. */
   serializeObject,
+  /** @deprecated Use createSortedFingerprint. Removal: 0.16.0. */
   serializeWithFullSortedKeys,
   setDataProperty,
   shallowClone,
   stableEquals,
+  /** @deprecated Use createFingerprintFactory. Removal: 0.16.0. */
   stableSerialize,
   sortObjectKeys,
   transformKeys,

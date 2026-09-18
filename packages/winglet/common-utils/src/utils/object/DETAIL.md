@@ -27,6 +27,12 @@
 
 ## Acceptance Criteria
 
+### legacy-coexistence — 직렬화 API 공존
+
+- 기존 네 serializer는 출력·캐시·공개 경로를 유지하며 deprecation으로 이전 경로와 0.16.0 제거 계획을 공지합니다.
+- serialization은 graph codec, fingerprint는 목적별 직접 키 생성을 소유하고 object/root named export로 제공합니다. 별도 package subpath는 추가하지 않습니다.
+- graph token 생성은 serialization 내부가 소유하며 새 fingerprint runtime은 graph encoder나 parser에 의존하지 않습니다. 이전 serialization/fingerprint는 삭제 전 비교 기준이며 공개 object/root 배럴에서 사용하지 않습니다.
+
 ### reserved-primitives — 예약 멤버 접근 프리미티브 (RC-7)
 
 - 예약 멤버 3종 × (읽기·쓰기·삭제) × (own 있음·없음) 전 조합에서 own 데이터 속성 의미론을 지킨다.

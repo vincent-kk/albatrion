@@ -1,5 +1,4 @@
 import { isArray } from '@winglet/common-utils/filter';
-import { serializeNative } from '@winglet/common-utils/object';
 
 import type { Dictionary } from '@aileron/declare';
 
@@ -31,7 +30,7 @@ export const convertExpression = (
     const value = condition[key];
     if (isArray(value)) {
       operations.push(
-        `${inverse ? '!' : ''}${serializeNative(value)}.includes((${source}${$.Separator}${key}))`,
+        `${inverse ? '!' : ''}${JSON.stringify(value)}.includes((${source}${$.Separator}${key}))`,
       );
     } else {
       if (typeof value === 'boolean')
@@ -40,7 +39,7 @@ export const convertExpression = (
         );
       else
         operations.push(
-          `(${source}${$.Separator}${key})${inverse ? '!==' : '==='}${serializeNative(value)}`,
+          `(${source}${$.Separator}${key})${inverse ? '!==' : '==='}${JSON.stringify(value)}`,
         );
     }
   }

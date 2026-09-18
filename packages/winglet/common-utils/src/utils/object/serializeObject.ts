@@ -3,6 +3,7 @@ import { serializeNative } from './serializeNative';
 
 /**
  * Converts objects to custom key-value serialized strings with pipe delimiters.
+ * @deprecated Use createFingerprint for keys or stringifyGraph/parseGraph for storage. Removal: 0.16.0 after 0.15.0 coexistence.
  *
  * Transforms objects into a compact string format using 'key:value' pairs separated
  * by pipe characters ('|'). Provides property exclusion capabilities and handles

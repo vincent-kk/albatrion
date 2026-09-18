@@ -421,3 +421,45 @@ This project is licensed under the MIT License. See the \*\*[`LICENSE`](./LICENS
 ## Contact
 
 For inquiries or suggestions related to the project, please create an issue.
+# Graph serialization and fingerprints
+
+Use `JSON.stringify` / `JSON.parse` for ordinary JSON. Use `stringifyGraph` /
+`parseGraph` from the package root or `/object` to preserve cycles, shared
+references, Date, Map, Set, BigInt, undefined, special numbers, sparse arrays and
+RegExp. The output is JSON syntax, but needs `parseGraph` to restore the graph.
+Functions, symbols, custom classes, binary types and accessors are rejected;
+getters and `toJSON` are never invoked. User non-enumerable properties, descriptors
+and frozen state are outside the data model. Recursive `omit` intentionally
+removes named object/array properties before reading them.
+
+| Existing API (deprecated; removal planned for 0.16.0 after 0.15.0 coexistence) | Replacement |
+| --- | --- |
+| `serializeNative` | `JSON.stringify` |
+| `serializeObject` | `createFingerprint` (fast, shallow) |
+| `serializeWithFullSortedKeys` | `createSortedFingerprint` (flattened paths) |
+| `stableSerialize` | `createSafeFingerprint` or `createFingerprintFactory({ mode: 'safe' })` |
+
+Fingerprint modes have different comparison contracts. Fast mode retains insertion
+order and uses native JSON for nested values. Sorted mode flattens sorted paths and
+marks cycles; both retain legacy type/delimiter ambiguities and do not compare Map/Set
+contents. Safe mode handles cycles and treats Map, Set, functions, symbols and custom
+instances by reference identity. Changes inside the same Map/Set do not change its key.
+Safe object keys sort by default; `{ sort: false }` skips sorting. Shared and copied
+subtrees, or array holes and undefined, may compare equally. These are comparison
+keys, not a lossless format, cryptographic hash or fixed-size digest.
+
+Use `createFingerprintFactory({ mode: 'fast' | 'sorted' | 'safe' })` to select a
+writer once; the default mode is safe. Safe factories also accept `sort: false`.
+Mutable input is recomputed by default; `{ cache: 'immutable' }` requires deeply
+immutable input. Recursive `omit` applies to sorted/safe modes; fast mode omits only
+root properties. Ordinary getters may run. Opaque keys are comparable only within
+their module/factory identity scope. Invalidate persisted keys when migrating.
+
+Prefixes default to `""`. Use `createFingerprint(value, { prefix: 'app:' })`
+or `createFingerprintFactory({ prefix: 'app:' })` to prepend your own text.
+The factory captures its prefix at creation; its generator accepts `omit`.
+
+Graph v1 limits are 16 MiB UTF-8, 100,000 nodes, 1,000,000 total properties/entries,
+and 1,000,000 cumulative array slots including holes. Invalid wire is rejected
+before restored nodes are allocated. Ordinary JSON remains the fastest baseline;
+graph preservation has additional validation and representation costs.

@@ -21,6 +21,7 @@
     "bench/**",
     "vitest.bench.config.ts",
     "**/__tests__/**",
+    "**/__bench__/**",
     "**/coverage/**",
     "**/*.test.ts",
     "**/*.test.tsx",

@@ -9,7 +9,7 @@
 - `ConditionDictionary` = `Dictionary<AllowedValue | AllowedValue[]>`
 - 기본 소스 경로: `JSONPointer.Parent`(`..`) — 부모 노드 스코프 기준
 - boolean 값은 `=== true` / `=== false` 형태로 따옴표 없이 출력
-- 비boolean 단일 값은 `serializeNative` 로 직렬화
+- 비boolean 단일 값은 `JSON.stringify` 로 직렬화
 - `inverse: true` 시: 배열 → `![...].includes(...)`, 단일 → `!==`, 다중 결합 → `||` (정방향 `&&`)
 - 결과 0개 → `null`, 1개 → 그대로, 복수 → `(...)` 래핑 후 연산자 join
 
@@ -17,12 +17,12 @@
 
 ### Always do
 
-- boolean 값 출력 시 `serializeNative` 대신 `value` 리터럴 직접 삽입하여 따옴표 방지
+- boolean 값 출력 시 `value` 리터럴을 직접 삽입합니다.
 - `inverse` 적용 시 드 모르간 법칙(`&&` ↔ `||`)을 다중 결합 연산자에 일관 적용
 
 ### Ask first
 
-- `Date`, `RegExp` 등 신규 값 타입 직렬화 지원 추가 (`serializeNative` 확장 연동)
+- `Date`, `RegExp` 등 신규 값 타입 직렬화 지원 추가
 - 기본 `source` 경로(`$.Parent`) 변경 — 호출부 계약에 광범위 영향
 
 ### Never do

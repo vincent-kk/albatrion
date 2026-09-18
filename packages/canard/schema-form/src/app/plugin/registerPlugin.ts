@@ -1,5 +1,5 @@
 import { isPlainObject } from '@winglet/common-utils/filter';
-import { stableSerialize } from '@winglet/common-utils/object';
+import { createFingerprintFactory } from '@winglet/common-utils/object';
 
 import type { SchemaFormPlugin } from '@/schema-form';
 import { UnhandledError } from '@/schema-form/errors';
@@ -8,6 +8,8 @@ import { formatRegisterPluginError } from '@/schema-form/helpers/error';
 import { PluginManager } from './PluginManager';
 
 const RegisteredPlugin = new Set<string>();
+/** Identity scope shared by plugin registrations; mutable content is recomputed. */
+const getPluginKey = createFingerprintFactory();
 
 /**
  * Registers a schema form plugin to extend or customize form functionality globally.
@@ -200,7 +202,7 @@ export const registerPlugin = (plugin: SchemaFormPlugin | null) => {
     return;
   }
   if (!isPlainObject(plugin)) return;
-  const hash = stableSerialize(plugin);
+  const hash = getPluginKey(plugin);
   if (RegisteredPlugin.has(hash)) return;
   try {
     const { formTypeInputDefinitions, validator, formatError, ...renderKit } =
