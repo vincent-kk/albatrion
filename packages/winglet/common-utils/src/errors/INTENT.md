@@ -14,6 +14,7 @@
 ### Always do
 
 - 새 오류 클래스 추가 시 `BaseError`를 확장하고 대응하는 `isX` 타입가드를 함께 export한다
+- Preserve the inherited `toJSON()` diagnostic projection and normalize details without mutating the source.
 - `group`/`code` 포맷을 바꾸는 변경은 DETAIL.md를 먼저 갱신한다
 
 ### Ask first

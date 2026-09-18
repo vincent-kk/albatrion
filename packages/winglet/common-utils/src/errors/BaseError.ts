@@ -1,3 +1,5 @@
+import { serializeErrorValue } from './utils/serializeErrorValue';
+
 export type ErrorDetails = Record<string, unknown>;
 
 export abstract class BaseError extends Error {
@@ -29,5 +31,26 @@ export abstract class BaseError extends Error {
     this.code = `${group}.${specific}`;
     this.details = details;
     Object.setPrototypeOf(this, new.target.prototype);
+  }
+
+  /**
+   * Projects diagnostic fields for direct use or automatic JSON.stringify calls.
+   * Details are copied recursively; cycles are omitted, and BigInts become strings.
+   * Getters and custom serialization hooks may throw; their errors propagate.
+   * @returns A diagnostic object with JSON-normalized details and an optional stack.
+   */
+  public toJSON(): Pick<
+    BaseError,
+    'name' | 'message' | 'stack' | 'group' | 'specific' | 'code'
+  > & { details: unknown } {
+    return {
+      name: this.name,
+      message: this.message,
+      stack: this.stack,
+      group: this.group,
+      specific: this.specific,
+      code: this.code,
+      details: serializeErrorValue(this.details, [this], 'details'),
+    };
   }
 }
