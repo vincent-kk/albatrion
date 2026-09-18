@@ -27,11 +27,11 @@
 
 ## Acceptance Criteria
 
-### legacy-coexistence — 직렬화 API 공존
+### serialization-surface — 직렬화 공개 경계
 
-- 기존 네 serializer는 출력·캐시·공개 경로를 유지하며 deprecation으로 이전 경로와 0.16.0 제거 계획을 공지합니다.
-- serialization은 graph codec, fingerprint는 목적별 직접 키 생성을 소유하고 object/root named export로 제공합니다. 별도 package subpath는 추가하지 않습니다.
-- graph token 생성은 serialization 내부가 소유하며 새 fingerprint runtime은 graph encoder나 parser에 의존하지 않습니다. 이전 serialization/fingerprint는 삭제 전 비교 기준이며 공개 object/root 배럴에서 사용하지 않습니다.
+- 일반 JSON 직렬화는 플랫폼 API를 사용하고, 패키지는 graph codec과 목적별 fingerprint 생성기만 object/root named export로 제공합니다. 별도 package subpath는 추가하지 않습니다.
+- graph token 생성은 serialization 내부가 소유하며 fingerprint runtime은 graph encoder나 parser에 의존하지 않습니다.
+- 0.16.0에서 제거한 범용 serializer 이름과 구현 helper는 공개 object/root 배럴에 노출하지 않습니다.
 
 ### reserved-primitives — 예약 멤버 접근 프리미티브 (RC-7)
 
@@ -55,8 +55,9 @@
 
 ## History
 
+- 2026-09-19 — 0.16.0: 0.15.0에서 교체 API와 공존하던 범용 serializer 네 개를 공개 경계에서 제거했다(breaking). 내부 성능 기준 구현은 공개하지 않는다.
 - 2026-08-18 — 예약 멤버 접근 프리미티브 신설 및 cloneLite own `__proto__` 보존 계약 채택. 이전 cloneLite는 own `__proto__`를 프로토타입 대입으로 처리해 형제 키를 소실시켰다(`@winglet/json` mergePatch RC-4의 원인). RFC 6901/6902/7396이 멤버 이름을 불투명 문자열로 규정하는 것과 `JSON.parse`가 own `__proto__` 데이터 속성을 만드는 플랫폼 동작에 정합시켰다.
 
 ## Last Updated
 
-2026-08-18 — 예약 멤버 접근 프리미티브(C-1)·cloneLite 정합(C-2) 계약 신설
+2026-09-19 — 0.16.0 serializer 공개 경계 정리

@@ -50,7 +50,7 @@
 
 - **Consumers**: `entry-point`
 - **Direct import**: `allowed`
-- **Reason**: 함수당 한 파일의 flat 컬렉션이 이 fractal의 정본 형태다 — 40개 판별자가 각각 독립적인 tree-shaking 단위로 남아야 한다. 이미 형제 fractal의 내부 파일(array의 `chunk.ts`, object의 `clone.ts`/`cloneLite.ts`/`merge.ts`/`removeUndefined.ts`/`shallowClone.ts`/`stableSerialize.ts`)이 진입점(`index.ts`)이 아니라 개별 판별자 파일을 직접 가져다 쓰고 있다 — 배럴을 거치면 40개 판별자 전체의 재수출 그래프가 번들에 딸려오기 때문이며, 이 직접 import는 이미 정착된 관행이다. zero-peer 승인은 `.filid` 설정의 scoped exempt(common-utils 전체)와 쌍이다.
+- **Reason**: 함수당 한 파일의 flat 컬렉션이 이 fractal의 정본 형태다 — 40개 판별자가 각각 독립적인 tree-shaking 단위로 남아야 한다. 이미 형제 fractal의 내부 파일(array의 `chunk.ts`, object의 `clone.ts`/`cloneLite.ts`/`merge.ts`/`removeUndefined.ts`/`shallowClone.ts`)이 진입점(`index.ts`)이 아니라 개별 판별자 파일을 직접 가져다 쓰고 있다 — 배럴을 거치면 40개 판별자 전체의 재수출 그래프가 번들에 딸려오기 때문이며, 이 직접 import는 이미 정착된 관행이다. zero-peer 승인은 `.filid` 설정의 scoped exempt(common-utils 전체)와 쌍이다.
 
 ## Last Updated
 

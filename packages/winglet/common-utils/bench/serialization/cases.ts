@@ -1,9 +1,5 @@
 import {
   parseGraph,
-  serializeNative,
-  serializeObject,
-  serializeWithFullSortedKeys,
-  stableSerialize,
   stringifyGraph,
 } from '../../src/utils/object';
 import {
@@ -62,18 +58,6 @@ export function createCases(fixture: string): MeasurementCase[] {
       return () => first(value);
     },
   });
-  operations.push({
-    name: 'stable-cold',
-    contract: 'legacy-key',
-    prepare: () => {
-      const fresh = createFixture(fixture);
-      return () => stableSerialize(fresh);
-    },
-  });
-  add('stable-warm', 'legacy-cache', () => stableSerialize(value));
-  add('full-sorted', 'legacy-flattened', () =>
-    serializeWithFullSortedKeys(value),
-  );
   for (const [label, omit] of [
     ['small', ['secret', 'name']],
     ['large', Array.from({ length: 128 }, (_, i) => `field${i}`)],
@@ -104,13 +88,7 @@ export function createCases(fixture: string): MeasurementCase[] {
     add('JSON.stringify', 'native-json-lossy-for-extended-values', () =>
       JSON.stringify(value),
     );
-    add('serializeNative', 'native-json-lossy-for-extended-values', () =>
-      serializeNative(value),
-    );
     add('JSON.parse', 'native-json', () => JSON.parse(json));
-    add('serializeObject', 'legacy-top-level-key', () =>
-      serializeObject(value),
-    );
     add('native-omit', 'native-recursive-replacer', () =>
       JSON.stringify(value, (key, item) =>
         key === 'secret' ? undefined : item,

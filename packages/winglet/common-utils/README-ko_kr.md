@@ -272,14 +272,10 @@ Babel 등의 트랜스파일러를 사용하여 타겟 환경에 맞게 변환�
 - **[`merge`](./src/utils/object/merge.ts)**: 여러 객체를 병합하는 함수
 - **[`removePrototype`](./src/utils/object/removePrototype.ts)**: 기존 객체에서 프로토타입 체인을 제거하는 함수
 - **[`removeUndefined`](./src/utils/object/removeUndefined.ts)**: 객체에서 undefined 값을 가진 속성을 제거하는 함수
-- **[`serializeNative`](./src/utils/object/serializeNative.ts)**: 기본 JavaScript 객체를 JSON 문자열로 직렬화하는 함수
-- **[`serializeObject`](./src/utils/object/serializeObject.ts)**: 객체를 JSON 문자열로 직렬화하는 함수
-- **[`serializeWithFullSortedKeys`](./src/utils/object/serializeWithFullSortedKeys.ts)**: 객체를 정렬된 키와 함께 JSON 문자열로 직렬화하는 함수
 - **[`setDataProperty`](./src/utils/object/setDataProperty.ts)**: 예약 멤버 이름을 불투명한 own 데이터로 취급하며 `__proto__` setter를 트리거하지 않고 속성을 쓰는 함수
 - **[`shallowClone`](./src/utils/object/shallowClone.ts)**: 배열과 일반 객체의 얕은 복사본을 생성하는 함수 (중첩 구조의 참조는 유지)
 - **[`sortObjectKeys`](./src/utils/object/sortObjectKeys.ts)**: 객체의 키를 알파벳 순으로 정렬하는 함수
 - **[`stableEquals`](./src/utils/object/stableEquals.ts)**: 안정적인 방식으로 두 객체의 동등성을 비교하는 함수
-- **[`stableSerialize`](./src/utils/object/stableSerialize.ts)**: 객체를 안정적인 방식으로 직렬화하는 함수
 - **[`transformKeys`](./src/utils/object/transformKeys.ts)**: 객체의 모든 키에 변환 함수를 적용하는 함수
 - **[`transformValues`](./src/utils/object/transformValues.ts)**: 객체의 모든 값에 변환 함수를 적용하는 함수
 
@@ -422,7 +418,11 @@ BigInt, undefined, 특수 숫자, 희소 배열, RegExp를 보존합니다. 문�
 사용자 non-enumerable 속성, descriptor, frozen 상태는 보존 범위 밖입니다.
 `omit`은 object/array 속성 이름을 재귀적으로 제외하는 의도적인 데이터 손실입니다.
 
-| 구형 API (0.15.0 공존 후 0.16.0 제거 예정) | 대체 경로 |
+## 마이그레이션 (0.16.0)
+
+0.15.0 공존 기간에 deprecated 처리한 serializer API를 0.16.0에서 제거했습니다.
+
+| 제거된 API | 대체 경로 |
 | --- | --- |
 | `serializeNative` | `JSON.stringify` |
 | `serializeObject` | `createFingerprint` (빠른 shallow 키) |

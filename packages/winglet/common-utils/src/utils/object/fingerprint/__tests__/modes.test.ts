@@ -1,21 +1,19 @@
 // filid:contract fingerprint-fast fingerprint-sorted
 import { expect, it } from 'vitest';
 
-import { serializeObject } from '../../serializeObject';
-import { serializeWithFullSortedKeys } from '../../serializeWithFullSortedKeys';
 import { createFingerprint, createSortedFingerprint } from '../index';
 
-it('matches shallow legacy output on normal inputs and keeps top-level omit', () => {
+it('keeps the shallow reverse-key format and top-level omit', () => {
   const value = { z: 1, a: { secret: 2 }, secret: 3 };
-  expect(createFingerprint(value)).toBe(serializeObject(value));
+  expect(createFingerprint(value)).toBe('secret:3|a:{"secret":2}|z:1');
   expect(createFingerprint(value, { omit: ['secret'] })).toBe(
-    serializeObject(value, ['secret']),
+    'a:{"secret":2}|z:1',
   );
   expect(createFingerprint(value, { omit: new Set(['secret']) })).toBe(
-    serializeObject(value, ['secret']),
+    'a:{"secret":2}|z:1',
   );
   expect(createFingerprint(value, { prefix: 'x:' })).toBe(
-    'x:' + serializeObject(value),
+    'x:secret:3|a:{"secret":2}|z:1',
   );
 });
 
@@ -28,21 +26,22 @@ it('retains native JSON limits while always returning a root key string', () => 
   expect(createFingerprint(new Map([['x', 1]]))).toBe('');
 });
 
-it('matches legacy exclusions when repeated lookups justify indexing', () => {
+it('indexes large exclusion lists used across repeated lookups', () => {
   const value = Object.fromEntries(
     Array.from({ length: 200 }, (_, i) => ['field' + i, i]),
   );
   const omit = Array.from({ length: 128 }, (_, i) => 'field' + i);
-  expect(createFingerprint(value, { omit })).toBe(serializeObject(value, omit));
+  expect(createFingerprint(value, { omit })).not.toContain('field127:');
+  expect(createFingerprint(value, { omit })).toContain('field199:199');
   omit.push('field199');
-  expect(createFingerprint(value, { omit })).toBe(serializeObject(value, omit));
+  expect(createFingerprint(value, { omit })).not.toContain('field199:');
 });
 
-it('matches the sorted path legacy format including cycle markers', () => {
+it('keeps the sorted path format including cycle markers', () => {
   const value: any = { z: { x: 1 }, a: [2, 3] };
   value.self = value;
   expect(createSortedFingerprint(value)).toBe(
-    serializeWithFullSortedKeys(value),
+    'self:[Circular]|z.x:1|a.0:2|a.1:3',
   );
   expect(createSortedFingerprint({ b: 2, a: 1 })).toBe(
     createSortedFingerprint({ a: 1, b: 2 }),

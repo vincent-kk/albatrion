@@ -273,9 +273,13 @@ stableEquals<L, R>(left: L, right: R): boolean
 
 Circular-reference-safe deep equality. Handles all types.
 
-#### serializeObject / serializeWithFullSortedKeys / stableSerialize
+#### stringifyGraph / parseGraph
 
-JSON serialization variants. `serializeWithFullSortedKeys` sorts keys recursively.
+Graph codec for cycles, shared references, and extended built-in values.
+
+#### createFingerprint / createSortedFingerprint / createSafeFingerprint
+
+Purpose-specific comparison keys for fast shallow, sorted path, and cycle-safe structural workloads.
 
 #### transformKeys
 

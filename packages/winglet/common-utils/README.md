@@ -279,14 +279,10 @@ Use transpilers like Babel to convert the code to match your target environment.
 - **[`merge`](./src/utils/object/merge.ts)**: Function to merge multiple objects
 - **[`removePrototype`](./src/utils/object/removePrototype.ts)**: Function to remove the prototype chain from an existing object
 - **[`removeUndefined`](./src/utils/object/removeUndefined.ts)**: Function to remove properties with undefined values from an object
-- **[`serializeNative`](./src/utils/object/serializeNative.ts)**: Function to serialize basic JavaScript objects to JSON strings
-- **[`serializeObject`](./src/utils/object/serializeObject.ts)**: Function to serialize objects to JSON strings
-- **[`serializeWithFullSortedKeys`](./src/utils/object/serializeWithFullSortedKeys.ts)**: Function to serialize objects to JSON strings with sorted keys
 - **[`setDataProperty`](./src/utils/object/setDataProperty.ts)**: Function to write a property while treating reserved member names as opaque own data, never triggering the `__proto__` setter
 - **[`shallowClone`](./src/utils/object/shallowClone.ts)**: Function to create shallow copies of arrays and plain objects, preserving references for nested structures
 - **[`sortObjectKeys`](./src/utils/object/sortObjectKeys.ts)**: Function to sort an object's keys alphabetically
 - **[`stableEquals`](./src/utils/object/stableEquals.ts)**: Function to compare the equality of two objects in a stable way
-- **[`stableSerialize`](./src/utils/object/stableSerialize.ts)**: Function to serialize objects in a stable way
 - **[`transformKeys`](./src/utils/object/transformKeys.ts)**: Function to apply a transformation function to all keys of an object
 - **[`transformValues`](./src/utils/object/transformValues.ts)**: Function to apply a transformation function to all values of an object
 
@@ -432,7 +428,11 @@ getters and `toJSON` are never invoked. User non-enumerable properties, descript
 and frozen state are outside the data model. Recursive `omit` intentionally
 removes named object/array properties before reading them.
 
-| Existing API (deprecated; removal planned for 0.16.0 after 0.15.0 coexistence) | Replacement |
+## Migration (0.16.0)
+
+The serializer APIs deprecated during the 0.15.0 coexistence period are removed in 0.16.0.
+
+| Removed API | Replacement |
 | --- | --- |
 | `serializeNative` | `JSON.stringify` |
 | `serializeObject` | `createFingerprint` (fast, shallow) |

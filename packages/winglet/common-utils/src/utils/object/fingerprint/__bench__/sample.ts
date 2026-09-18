@@ -6,9 +6,6 @@ import os from 'node:os';
 import { performance } from 'node:perf_hooks';
 
 import { createFixture } from '../../../../../bench/serialization/fixtures';
-import { serializeObject } from '../../serializeObject';
-import { serializeWithFullSortedKeys } from '../../serializeWithFullSortedKeys';
-import { stableSerialize } from '../../stableSerialize';
 import { createFingerprintFactory, createSafeFingerprint } from '../index';
 import { compact, compactFactory } from './compact';
 import { direct as directWriter } from './direct';
@@ -43,7 +40,6 @@ for (const fixture of fixtures) {
   const legacyMutable = legacyFactory();
   const legacyCached = legacyFactory(true);
   const omit = ['secret', 'name'];
-  const stableOmitValue = createFixture(fixture);
   const candidates: Candidate[] = [];
   const add = (name: string, run: () => string) =>
     candidates.push({ name, prepare: () => run });
@@ -64,14 +60,6 @@ for (const fixture of fixtures) {
   add('compact-factory', () => direct(value));
   add('current-cache-hit', () => immutable(value));
   add('compact-cache-hit', () => cached(value));
-  add('stable-warm', () => stableSerialize(value));
-  candidates.push({
-    name: 'stable-cold',
-    prepare: () => {
-      const fresh = createFixture(fixture);
-      return () => stableSerialize(fresh);
-    },
-  });
   for (const [name, encode] of [
     ['current-cold', createSafeFingerprint],
     ['legacy-shaped-cold', legacyMutable],
@@ -85,13 +73,10 @@ for (const fixture of fixtures) {
         return () => encode(fresh);
       },
     });
-  add('full-sorted', () => serializeWithFullSortedKeys(value));
   add('current-omit', () => createSafeFingerprint(value, { omit }));
   add('compact-omit', () => compact(value, { omit }));
-  add('stable-omit-warm', () => stableSerialize(stableOmitValue, omit));
   add('compact-omit-cache-hit', () => cached(value, { omit }));
   if (!['cycle', 'extended'].includes(fixture)) {
-    add('serializeObject', () => serializeObject(value));
     add('JSON.stringify', () => JSON.stringify(value));
   }
   const encoded = compact(value);

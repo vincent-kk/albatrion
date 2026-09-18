@@ -2,7 +2,7 @@ import type { FingerprintOptions } from './type';
 import { writeSortedFingerprint } from './utils/writeSortedFingerprint';
 
 /**
- * Creates a sorted flattened-path key using the legacy full-sorted format.
+ * Creates a sorted flattened-path key with cycle markers.
  * @param value Enumerable data; cycles become markers and Map/Set contents are not traversed.
  * @param options Recursive property exclusions and an optional prefix.
  * @returns A string key retaining the legacy path/type ambiguities.

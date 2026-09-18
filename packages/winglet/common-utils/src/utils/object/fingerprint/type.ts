@@ -11,7 +11,7 @@ export interface FingerprintOptions {
 
 /** Cycle-safe key options; sorting can be skipped when insertion order is meaningful. */
 export interface SafeFingerprintOptions extends FingerprintOptions {
-  /** Defaults to true, matching stableSerialize; false preserves property insertion order. */
+  /** Defaults to true; false preserves property insertion order. */
   sort?: boolean;
 }
 

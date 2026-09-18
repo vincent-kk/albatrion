@@ -90,10 +90,10 @@ const lines = [
     runs[0].metadata.cpu +
     '.',
   '',
-  '5개 독립 process × 30 batch 평균. 표의 p50/p95는 요청별 지연이 아닌 batch 평균 분포입니다. 최초 계산은 기존/신규 모두 fresh identity이며 생성 비용은 timing 밖입니다. 순서를 회전·반전하고 출력 길이 및 lookup 결과를 소비합니다. 메타데이터에 실제 측정한 source SHA-256을 보존합니다.',
+  '5개 독립 process × 30 batch 평균. 표의 p50/p95는 요청별 지연이 아닌 batch 평균 분포입니다. cold 측정은 fresh identity이며 생성 비용은 timing 밖입니다. 순서를 회전·반전하고 출력 길이 및 lookup 결과를 소비합니다. 메타데이터에 실제 측정한 source SHA-256을 보존합니다.',
   '',
-  'fast는 serializeObject, sorted는 full-sorted, safe+sort는 stableSerialize 최초 계산/캐시 적중과 각각 비교합니다. safe-no-sort는 정렬을 생략하는 다른 옵션입니다. graph-key-baseline은 삭제된 graph 기반 fingerprint의 과거 측정입니다. Map/Set은 새 safe에서 opaque identity이므로 graph 내용 비교와 동등 계약의 경쟁으로 해석하지 않습니다. 캐시 적중은 immutable 전제입니다.',
-  '캐시 적중은 이 혼합 harness의 짧은 배치만으로 함수 자체의 회귀를 판정하지 않습니다. 충분히 warm-up한 장기 배치 비교는 cacheHit.ts로 별도 실행합니다. graph-key-baseline은 구형 모듈 삭제 전 원자료에만 존재합니다.',
+  'fast, sorted, safe+sort, safe-no-sort와 factory 경로를 각각 측정합니다. Map/Set은 safe에서 opaque identity이므로 graph 내용 비교와 동등 계약의 경쟁으로 해석하지 않습니다. 캐시 적중은 immutable 전제입니다.',
+  '캐시 적중은 이 혼합 harness의 짧은 배치만으로 함수 자체의 회귀를 판정하지 않습니다. 충분히 warm-up한 장기 배치 비교는 cacheHit.ts로 별도 실행합니다.',
   '',
   '| fixture/phase/API | p50 µs | p95 µs | bytes | samples |',
   '| --- | ---: | ---: | ---: | ---: |',

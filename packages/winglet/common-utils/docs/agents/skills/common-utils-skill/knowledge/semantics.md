@@ -48,13 +48,15 @@ min([3, 1, 2]); // 1   — array argument
 minLite(3, 1); //  1   — two scalar arguments
 ```
 
-### The four serializers
+### Graph serialization and fingerprint keys
 
-None of these produce JSON except the first. Reading the name alone will mislead.
-
-| Export | Output | Use for | | ------------------------------------- | --------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- | --------------------------------- | | `serializeNative` | `JSON.stringify` — it is a direct alias | actual JSON | | `serializeObject(object, omits?)` | `key:value` pairs joined by `                                                                            |`, own keys in **reverse** insertion order, nested objects rendered with `JSON.stringify` | cheap cache key for a flat object | | `serializeWithFullSortedKeys(object)` | flattened `path.to.key:value` pairs joined by `                                                          |`, keys sorted at every level | order-independent cache key | | `stableSerialize(input, omit?)` | short structural identity string; cycles become back-references; results memoized per object in a WeakMap | comparing structures that may be circular |
-
-Only the last two are order-independent, and only `stableSerialize` survives a cycle.
+| API | Output | Use for |
+| --- | --- | --- |
+| `JSON.stringify` | ordinary JSON | standard JSON data |
+| `stringifyGraph` / `parseGraph` | graph JSON with reference tokens | cycles, shared references, and supported extended built-ins |
+| `createFingerprint` | reverse root-key pairs with native JSON for nested values | fast shallow comparison keys |
+| `createSortedFingerprint` | sorted flattened paths with cycle markers | order-independent path keys |
+| `createSafeFingerprint` | typed structural key with opaque identities | cycle-safe structural comparison keys |
 
 ### `countKey` vs `countObjectKey`
 
@@ -84,9 +86,9 @@ await waitAndReturn(fn, 500); // call fn now, resolve after 500 ms — a minimum
 
 ## Circular-reference safety matrix
 
-| Safe                                       | Unsafe — recursion, so a cycle overflows the stack | Unsafe — iterative, so a cycle spins forever  |
-| ------------------------------------------ | -------------------------------------------------- | --------------------------------------------- |
-| `clone`, `stableEquals`, `stableSerialize` | `cloneLite`, `equals`, `merge`, `removeUndefined`  | `serializeWithFullSortedKeys`, `hasUndefined` |
+| Safe | Unsafe — recursion, so a cycle overflows the stack | Unsafe — iterative, so a cycle spins forever |
+| --- | --- | --- |
+| `clone`, `stableEquals`, `stringifyGraph`, `createSortedFingerprint`, `createSafeFingerprint` | `cloneLite`, `equals`, `merge`, `removeUndefined` | `hasUndefined` |
 
 The safe implementations track visited objects in a `Map`/`WeakMap`; the rest have no guard at all. The two iterative ones are the worse failure: they consume memory in a loop instead of failing fast. When input can come from user data or a graph structure, this table picks the function.
 

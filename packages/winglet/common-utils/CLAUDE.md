@@ -45,7 +45,7 @@ import { delay, timeout } from '@winglet/common-utils/promise';
 |------|---------|
 | `array` | `chunk`, `unique`, `groupBy`, `difference`, `intersection`, `forEach*` |
 | `filter` | `isString/Number/Boolean/Object/Array/Nil/Date...` 타입 체크 |
-| `object` | `clone`, `merge`, `equals`, `serializeObject`, `transformKeys` |
+| `object` | `clone`, `merge`, `equals`, `stringifyGraph`, `createFingerprint`, `transformKeys` |
 | `function` | `debounce`, `throttle`, `getTrackableHandler` |
 | `promise` | `delay`, `timeout`, `withTimeout`, `waitAndExecute` |
 | `scheduler` | `scheduleMicrotask`, `scheduleMacrotask`, `scheduleNextTick` |

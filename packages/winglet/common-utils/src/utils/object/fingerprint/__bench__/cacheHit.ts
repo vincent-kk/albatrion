@@ -2,8 +2,8 @@ import { createHash } from 'node:crypto';
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { performance } from 'node:perf_hooks';
 
-import { stableSerialize } from '../../stableSerialize';
 import { createFingerprintFactory } from '../index';
+import { legacyFactory } from './legacy';
 
 /** Isolates warmed immutable hits; run separately from compilation and test workers. */
 const label = process.argv[2] ?? 'before';
@@ -16,8 +16,9 @@ for (const [fixture, value] of [
   ['dense', Array.from({ length: 1000 }, (_, i) => i)],
 ] as const) {
   const next = createFingerprintFactory({ cache: 'immutable' });
+  const legacy = legacyFactory(true);
   const candidates = [
-    { name: 'legacy', run: () => stableSerialize(value) },
+    { name: 'legacy', run: () => legacy(value) },
     { name: 'factory', run: () => next(value) },
   ];
   for (const candidate of candidates)

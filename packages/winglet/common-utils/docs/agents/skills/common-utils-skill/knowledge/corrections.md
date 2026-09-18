@@ -52,13 +52,11 @@ Each entry is a claim that looks right, is wrong, and often type-checks anyway. 
 
 **`polynomialHash` silently caps output at 7 characters** → the output is always exactly `length` characters, default `7`, zero-padded on the left. Requesting more than 7 is legal and returns a longer string; what caps at roughly 7 base-36 characters is the **entropy**, since the hash is a 32-bit value. Requesting fewer truncates, and discards entropy.
 
-## Serializers that are not serializers
+## Graph serialization and fingerprint keys
 
-**`serializeObject` is `JSON.stringify` with error handling** → it emits `key:value` pairs joined by `|`, over own keys in **reverse** insertion order, with nested objects rendered by `JSON.stringify`. It also takes an undocumented second argument, `omits`. The plain `JSON.stringify` alias is **`serializeNative`**.
+**Fingerprint output is JSON** → `createFingerprint`, `createSortedFingerprint`, and `createSafeFingerprint` produce comparison keys that cannot be parsed back. Use `JSON.stringify` for ordinary JSON or `stringifyGraph` with `parseGraph` when cycles, shared references, or extended built-ins must round-trip.
 
-**`serializeWithFullSortedKeys` is `JSON.stringify` with sorted keys** → it emits flattened `path.to.key:value` pairs joined by `|`. The output is not JSON and cannot be parsed back.
-
-**`stableSerialize` produces a stable JSON string** → it produces a short **structural identity string**, memoizes per object in a `WeakMap`, and represents cycles as back-references. It is a cache-key generator, not a serializer.
+**All fingerprint modes have the same contract** → fast mode uses reverse root-key order and native JSON for nested values, sorted mode flattens sorted paths, and safe mode distinguishes more value boundaries while handling cycles and opaque identities.
 
 ## Import paths
 

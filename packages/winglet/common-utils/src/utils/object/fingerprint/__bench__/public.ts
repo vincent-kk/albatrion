@@ -4,9 +4,6 @@ import os from 'node:os';
 import { performance } from 'node:perf_hooks';
 
 import { createFixture } from '../../../../../bench/serialization/fixtures';
-import { serializeObject } from '../../serializeObject';
-import { serializeWithFullSortedKeys } from '../../serializeWithFullSortedKeys';
-import { stableSerialize } from '../../stableSerialize';
 import {
   createFingerprint,
   createFingerprintFactory,
@@ -77,7 +74,6 @@ for (const fixture of [
         return () => encode(fresh);
       },
     });
-  add('legacy-sorted', () => serializeWithFullSortedKeys(value));
   add('sorted', () => createSortedFingerprint(value));
   add('factory-sorted', () => sorted(value));
   add('safe-sort', () => createSafeFingerprint(value));
@@ -85,8 +81,6 @@ for (const fixture of [
   add('factory-safe-sort', () => safeSorted(value));
   add('factory-safe-no-sort', () => safeUnsorted(value));
   add('safe-cache-hit', () => safeCached(value));
-  add('legacy-cache-hit', () => stableSerialize(value));
-  cold('legacy-safe-cold', stableSerialize);
   cold('safe-cold', createSafeFingerprint);
   cold('safe-unsorted-cold', (input) =>
     createSafeFingerprint(input, { sort: false }),
@@ -100,7 +94,6 @@ for (const fixture of [
       createFingerprintFactory({ mode }),
     );
   if (!['cycle', 'extended'].includes(fixture)) {
-    add('legacy-fast', () => serializeObject(value));
     add('fast', () => createFingerprint(value));
     add('factory-fast', () => fast(value));
     add('fast-prefix', () => createFingerprint(value, { prefix: 'app:' }));
@@ -108,7 +101,6 @@ for (const fixture of [
       ['small', omitted],
       ['large', Array.from({ length: 128 }, (_, i) => 'field' + i)],
     ] as const) {
-      add('legacy-fast-omit-' + label, () => serializeObject(value, omit));
       add('fast-omit-' + label, () => createFingerprint(value, { omit }));
     }
   }
