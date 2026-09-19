@@ -1067,6 +1067,16 @@ export abstract class AbstractNode<
   }
 
   /**
+   * Whether any ancestor currently holds `null`.
+   * @internal A branch node that absorbs an outside write as "no change" still forwards it when this is `true` — the null ancestor has to learn that a value was written into it.
+   */
+  public get __hasNullAncestor__(): boolean {
+    for (let node = this.parentNode; node; node = node.parentNode)
+      if (node.value === null) return true;
+    return false;
+  }
+
+  /**
    * Returns the node to what a form without a default value builds for it.
    * @param input - Value the parent's schema default assigns to this node; the node's own schema default when `undefined`
    * @internal A parent that became `null` calls this on its children, so the blank form it shows does not depend on how it became `null`.

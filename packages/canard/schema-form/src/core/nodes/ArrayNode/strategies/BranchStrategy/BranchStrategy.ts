@@ -212,7 +212,11 @@ export class BranchStrategy implements ArrayNodeStrategy {
       const source = this.__sourceMap__.get(key);
       if (!source) return;
       const next = source.node.value;
-      if (source.data === next && source.output === input) return;
+      if (source.data === next && source.output === input) {
+        if (!automatic && !this.__locked__ && this.__host__.__hasNullAncestor__)
+          this.__handleChange__(this.normalizedValue, batched, false);
+        return;
+      }
       source.data = next;
       source.output = input;
       this.__idle__ = false;

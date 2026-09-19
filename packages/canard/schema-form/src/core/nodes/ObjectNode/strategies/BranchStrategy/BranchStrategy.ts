@@ -154,11 +154,15 @@ export class BranchStrategy implements ObjectNodeStrategy {
       host.nullable,
     );
 
-    const automatic =
-      (option & SetValueOption.Automatic) > 0 && !this.__intended__;
+    const intended = this.__intended__;
+    const automatic = (option & SetValueOption.Automatic) > 0 && !intended;
     this.__intended__ = false;
 
-    if (current === false) return;
+    if (current === false) {
+      if (intended && host.__hasNullAncestor__)
+        this.__handleChange__(base, (option & SetValueOption.Batch) > 0, false);
+      return;
+    }
 
     this.__value__ = current;
     this.__draft__ = {};
@@ -762,13 +766,8 @@ export class BranchStrategy implements ObjectNodeStrategy {
       (input, batched, automatic) => {
         if (this.__isNull__) {
           // Locked means this strategy is driving its own children (construction,
-          // propagation, branch restore); like an automatic, valueless or unchanged write, it is recorded only.
-          if (
-            automatic ||
-            this.__locked__ ||
-            input === undefined ||
-            input === this.__blank__[property]
-          ) {
+          // propagation, branch restore); like an automatic or valueless write, it is recorded only.
+          if (automatic || this.__locked__ || input === undefined) {
             this.__blank__[property] = input;
             return;
           }

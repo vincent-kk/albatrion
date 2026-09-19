@@ -174,7 +174,7 @@ describe('ObjectNode branch nullable — automatic writes never promote null', (
     expect((node.find('target') as ObjectNode).value?.note).toBe('written');
   });
 
-  it('아무것도 바꾸지 않는 쓰기는 null을 풀지 않고, 이후의 자동 쓰기를 의도적 쓰기로 둔갑시키지도 않아야 함', async () => {
+  it('자동 쓰기와 같은 배치에 섞여 들어온 밖의 쓰기는 null을 풀어야 함', async () => {
     const node = nodeFromJSONSchema({
       onChange: () => {},
       jsonSchema: {
@@ -184,10 +184,10 @@ describe('ObjectNode branch nullable — automatic writes never promote null', (
           target: {
             type: ['object', 'null'],
             properties: {
-              reason: { type: 'string', default: 'because' },
               inner: {
                 type: 'object',
                 properties: {
+                  note: { type: 'string' },
                   total: {
                     type: 'number',
                     computed: { derived: '(../../../quantity || 0) * 10' },
@@ -202,15 +202,90 @@ describe('ObjectNode branch nullable — automatic writes never promote null', (
     });
     await delay(10);
 
-    (node.find('target/reason') as StringNode).setValue('because');
-    (node.find('target/inner/total') as NumberNode).setValue(20);
+    (node.find('quantity') as NumberNode).setValue(5);
+    (node.find('target/inner/note') as StringNode).setValue('user');
     await delay(10);
-    expect(node.value).toEqual({ quantity: 2, target: null });
+
+    expect(node.value).toEqual({
+      quantity: 5,
+      target: { inner: { note: 'user', total: 50 } },
+    });
+  });
+
+  it('boolean 자식의 derived 값도 null을 풀지 않아야 함', async () => {
+    const node = nodeFromJSONSchema({
+      onChange: () => {},
+      jsonSchema: {
+        type: 'object',
+        properties: {
+          quantity: { type: 'number', default: 2 },
+          target: {
+            type: ['object', 'null'],
+            properties: {
+              bulk: {
+                type: 'boolean',
+                computed: { derived: '(../../quantity || 0) > 3' },
+              },
+            },
+          },
+        },
+      },
+      defaultValue: { target: null },
+    });
+    await delay(10);
 
     (node.find('quantity') as NumberNode).setValue(5);
     await delay(10);
+
+    expect(node.find('target/bulk')?.value).toBe(true);
     expect(node.value).toEqual({ quantity: 5, target: null });
   });
+
+  it.each([
+    ['직계 자식', 'target/country', { country: 'KR', inner: { code: 'C' }, rows: ['S'] }],
+    ['중첩 객체의 유일한 자식', 'target/inner/code', { country: 'KR', inner: { code: 'C' }, rows: ['S'] }],
+    ['배열 아이템', 'target/rows/0', { country: 'KR', inner: { code: 'C' }, rows: ['S'] }],
+  ] as const)(
+    '%s에 이미 보이는 default와 같은 값을 써도 null이 풀려야 함',
+    async (_label, path, expected) => {
+      const jsonSchema = {
+        type: 'object',
+        properties: {
+          target: {
+            type: ['object', 'null'],
+            properties: {
+              country: { type: 'string', enum: ['KR', 'US'], default: 'KR' },
+              inner: {
+                type: 'object',
+                properties: { code: { type: 'string', default: 'C' } },
+              },
+              rows: {
+                type: 'array',
+                minItems: 1,
+                items: { type: 'string', default: 'S' },
+              },
+            },
+          },
+        },
+      } satisfies JSONSchema;
+      const values: unknown[] = [];
+      for (const defaultValue of [{ target: null }, undefined]) {
+        const node = nodeFromJSONSchema({
+          onChange: () => {},
+          jsonSchema,
+          defaultValue,
+        });
+        await delay(10);
+        const field = node.find(path) as StringNode;
+        field.setValue(field.value);
+        await delay(10);
+        values.push(node.find('target')?.value);
+      }
+
+      expect(values[0]).toEqual(expected);
+      expect(values[0]).toEqual(values[1]);
+    },
+  );
 
   it.each([
     ['중첩 객체', 'target/inner/note', 'inner', { note: 'deep' }],
