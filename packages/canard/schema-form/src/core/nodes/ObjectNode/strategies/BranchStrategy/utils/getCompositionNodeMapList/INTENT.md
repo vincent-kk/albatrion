@@ -11,6 +11,7 @@
 - `anyOf`의 경우 분기 간 중복 금지 + 기본 `properties`와의 중복 금지 (`COMPOSITION_PROPERTY_REDEFINITION`)
 - 분기는 `type`을 생략하거나 부모와 같은 타입을 선언한다. nullable 부모에서는 `object` 또는 `null`로 좁힐 수 있다. 부모를 넓히거나 다른 타입을 선언하면 `COMPOSITION_TYPE_REDEFINITION` 오류
 - `type`이 `null`인 분기는 검증 전용 — 자식 노드를 만들지 않고, 무시되는 조건·`properties`가 있으면 dev 경고(`NULL_BRANCH_IGNORED_FOR_FORM`)
+- nullable 부모의 `oneOf`에서 `null`을 받는 분기가 정확히 하나가 아니면 dev 경고(`NULLABLE_ONE_OF_NULL_UNREACHABLE`)
 - `oneOf`/`anyOf`는 `type`과 동일 위계에서만 동작 — 분기 스키마 직속의 중첩 `oneOf`/`anyOf`는 필드로 확장하지 않고 무시하되, `warnDevelopmentIssue`로 dev 경고(`NESTED_COMPOSITION_IGNORED_FOR_FORM`, 프로덕션 무음)를 방출
 
 ## Boundaries

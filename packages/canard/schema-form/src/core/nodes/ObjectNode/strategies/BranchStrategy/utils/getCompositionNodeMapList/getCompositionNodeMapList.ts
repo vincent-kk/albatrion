@@ -23,6 +23,7 @@ import type {
 import { throwIfTypeRedefinition } from './utils/throwIfTypeRedefinition';
 import { warnIfNestedComposition } from './utils/warnIfNestedComposition';
 import { warnIfNullBranchIgnored } from './utils/warnIfNullBranchIgnored';
+import { warnIfNullUnreachable } from './utils/warnIfNullUnreachable';
 
 /**
  * Generate child node maps for composition schemas (oneOf/anyOf)
@@ -51,6 +52,8 @@ export const getCompositionNodeMapList = (
 ) => {
   const compositionSchemas = jsonSchema[scope];
   if (!compositionSchemas || !isArray(compositionSchemas)) return undefined;
+
+  warnIfNullUnreachable(parentNode, scope, compositionSchemas);
 
   const propertyKeySet = scope === 'anyOf' ? new Set<string>() : null;
   const compositionLength = compositionSchemas.length;
