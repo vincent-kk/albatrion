@@ -38,51 +38,42 @@ describe('ObjectNode composition — a branch without properties', () => {
     ],
   } satisfies JSONSchema;
 
-  it.fails(
-    'oneOf: 폼이 만들어져야 함 // BUG: 분기별 자식 맵 배열의 구멍을 순회하다 TypeError',
-    () => {
-      const root = nodeFromJSONSchema({
-        onChange: () => {},
-        jsonSchema: oneOfSchema,
-      }) as ObjectNode;
+  it('oneOf: 폼이 만들어져야 함', () => {
+    const root = nodeFromJSONSchema({
+      onChange: () => {},
+      jsonSchema: oneOfSchema,
+    }) as ObjectNode;
 
-      expect(root.find('kind')).not.toBeNull();
-      expect(root.find('bValue')).not.toBeNull();
-    },
-  );
+    expect(root.find('kind')).not.toBeNull();
+    expect(root.find('bValue')).not.toBeNull();
+  });
 
-  it.fails(
-    'oneOf: properties 없는 분기로 전환했다가 돌아와도 예외가 없어야 함 // BUG: 같은 TypeError',
-    async () => {
-      const root = nodeFromJSONSchema({
-        onChange: () => {},
-        jsonSchema: oneOfSchema,
-      }) as ObjectNode;
-      await delay(10);
-      expect(root.value).toEqual({ kind: 'b', bValue: 'B' });
+  it('oneOf: properties 없는 분기로 전환했다가 돌아와도 예외가 없어야 함', async () => {
+    const root = nodeFromJSONSchema({
+      onChange: () => {},
+      jsonSchema: oneOfSchema,
+    }) as ObjectNode;
+    await delay(10);
+    expect(root.value).toEqual({ kind: 'b', bValue: 'B' });
 
-      (root.find('kind') as StringNode).setValue('a');
-      await delay(10);
-      expect(root.oneOfIndex).toBe(0);
-      expect(root.value).toEqual({ kind: 'a' });
+    (root.find('kind') as StringNode).setValue('a');
+    await delay(10);
+    expect(root.oneOfIndex).toBe(0);
+    expect(root.value).toEqual({ kind: 'a' });
 
-      (root.find('kind') as StringNode).setValue('b');
-      await delay(10);
-      expect(root.oneOfIndex).toBe(1);
-      expect(root.value).toEqual({ kind: 'b', bValue: 'B' });
-    },
-  );
+    (root.find('kind') as StringNode).setValue('b');
+    await delay(10);
+    expect(root.oneOfIndex).toBe(1);
+    expect(root.value).toEqual({ kind: 'b', bValue: 'B' });
+  });
 
-  it.fails(
-    'anyOf: 폼이 만들어져야 함 // BUG: 같은 TypeError',
-    async () => {
-      const root = nodeFromJSONSchema({
-        onChange: () => {},
-        jsonSchema: anyOfSchema,
-      }) as ObjectNode;
-      await delay(10);
+  it('anyOf: 폼이 만들어져야 함', async () => {
+    const root = nodeFromJSONSchema({
+      onChange: () => {},
+      jsonSchema: anyOfSchema,
+    }) as ObjectNode;
+    await delay(10);
 
-      expect(root.value).toEqual({ kind: 'b', bValue: 'B' });
-    },
-  );
+    expect(root.value).toEqual({ kind: 'b', bValue: 'B' });
+  });
 });

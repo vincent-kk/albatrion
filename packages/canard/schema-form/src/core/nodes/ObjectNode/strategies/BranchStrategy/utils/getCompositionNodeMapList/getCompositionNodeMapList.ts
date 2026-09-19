@@ -59,11 +59,12 @@ export const getCompositionNodeMapList = (
     warnIfNestedComposition(subSchema, scope, parentNode.path);
     throwIfTypeRedefinition(parentNode, scope, jsonSchema, subSchema);
 
+    const compositionChildNodeMap = new Map() as Map<string, ChildNode>;
+    childNodeMapList[index] = compositionChildNodeMap;
     const properties = subSchema.properties;
     if (!isPlainObject(properties)) continue;
 
     const keys = Object.keys(properties);
-    const compositionChildNodeMap = new Map() as Map<string, ChildNode>;
     const required = subSchema.required;
     for (let i = 0, k = keys[0], l = keys.length; i < l; i++, k = keys[i]) {
       if (keySetList && !keySetList[index].has(k)) continue;
@@ -112,7 +113,6 @@ export const getCompositionNodeMapList = (
       });
       propertyKeySet?.add(k);
     }
-    childNodeMapList[index] = compositionChildNodeMap;
   }
 
   return childNodeMapList;

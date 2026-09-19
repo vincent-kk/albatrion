@@ -106,7 +106,7 @@ describe('getCompositionKeyInfo', () => {
     expect(result?.unionKeySet.has('email')).toBe(true);
 
     // First item should be an empty Set since it has no properties
-    expect(result?.schemaKeySets[0]).toBeUndefined();
+    expect(result?.schemaKeySets[0]).toEqual(new Set());
 
     // Second item should have email property
     expect(result?.schemaKeySets[1].has('email')).toBe(true);
