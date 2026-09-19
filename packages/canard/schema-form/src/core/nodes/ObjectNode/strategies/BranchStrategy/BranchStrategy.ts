@@ -173,7 +173,8 @@ export class BranchStrategy implements ObjectNodeStrategy {
    * @param draft - Draft object to parse
    * @param nullable - Whether the object is nullable
    * @param replace - Whether to replace the existing value
-   * @returns {ObjectValue} Processed object
+   * @returns {ObjectValue} Processed object, or `false` when the draft changes nothing
+   * @remarks An empty draft merged into a `null` base changes nothing — only a replace (an explicit `{}`) or a child write may promote `null`.
    * @private
    */
   private __parseValue__(
@@ -185,6 +186,7 @@ export class BranchStrategy implements ObjectNodeStrategy {
   ) {
     if (draft === undefined) return undefined;
     if (draft === null) return nullable ? null : {};
+    if (!replace && base === null && isEmptyObject(draft)) return false;
     if (replace || base == null) return this.__processValue__(draft, normalize);
     if (isEmptyObject(draft) || this.__host__.__equals__(base, draft))
       return false;
