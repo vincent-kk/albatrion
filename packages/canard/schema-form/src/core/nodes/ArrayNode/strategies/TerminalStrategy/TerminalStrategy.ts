@@ -85,6 +85,8 @@ export class TerminalStrategy implements ArrayNodeStrategy {
 
     if (retain && host.__equals__(previous, current)) return;
     this.__value__ = current;
+    if ((option & SetValueOption.Automatic) === 0)
+      this.__host__.__markIntendedWrite__();
 
     if (this.__locked__) return;
     if (option & SetValueOption.EmitChange)

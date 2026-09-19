@@ -36,6 +36,7 @@ export class NullNode extends AbstractNode<NullSchema, NullValue> {
 
     if (retain && this.__equals__(previous, current)) return;
     this.__value__ = current;
+    if ((option & SetValueOption.Automatic) === 0) this.__markIntendedWrite__();
 
     if (option & SetValueOption.EmitChange)
       this.onChange(

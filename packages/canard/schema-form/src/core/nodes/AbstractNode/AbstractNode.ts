@@ -349,7 +349,6 @@ export abstract class AbstractNode<
     input: Value | Nullish | Fn<[prev: Value | Nullish], Value | Nullish>,
     option: UnionSetValueOption = SetValueOption.Overwrite,
   ): void {
-    if ((option & SetValueOption.Automatic) === 0) this.__intendedWrite__ = true;
     this.applyValue(
       typeof input === 'function' ? input(this.value) : input,
       option,
@@ -360,11 +359,11 @@ export abstract class AbstractNode<
   private __intendedWrite__: boolean = false;
 
   /**
-   * Records that a write from outside the form's own machinery reached this node.
-   * @internal Branch strategies call it for a commit their children caused, which never passes through `setValue`.
+   * Records that a write from outside the form's own machinery changed this node.
+   * @internal Called where a value is actually committed — a `setValue` that changes nothing records nothing — and ignored before initialization, when every commit is the node building itself.
    */
   public __markIntendedWrite__(this: AbstractNode) {
-    this.__intendedWrite__ = true;
+    if (this.__initialized__) this.__intendedWrite__ = true;
   }
 
   /**

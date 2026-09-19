@@ -56,6 +56,8 @@ export class TerminalStrategy implements ObjectNodeStrategy {
 
     if (retain && host.__equals__(previous, current)) return;
     this.__value__ = current;
+    if ((option & SetValueOption.Automatic) === 0)
+      this.__host__.__markIntendedWrite__();
 
     if (option & SetValueOption.EmitChange)
       this.__handleChange__(

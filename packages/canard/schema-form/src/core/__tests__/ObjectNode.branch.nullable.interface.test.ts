@@ -6,6 +6,7 @@ import { SetValueOption, nodeFromJSONSchema } from '@/schema-form/core';
 import type { JSONSchema } from '@/schema-form/types';
 
 import type { BooleanNode } from '../nodes/BooleanNode';
+import type { NumberNode } from '../nodes/NumberNode';
 import type { ObjectNode } from '../nodes/ObjectNode';
 import type { StringNode } from '../nodes/StringNode';
 import type { VirtualNode } from '../nodes/VirtualNode';
@@ -275,6 +276,102 @@ describe('ObjectNode branch nullable — the contract holds through every public
     await delay(10);
 
     expect(root.value).toEqual({ target: null });
+  });
+
+  it.each([
+    [
+      'object',
+      { type: 'object', properties: { p: { type: 'string', default: 'P' } } },
+      (value: any) => value?.p,
+    ],
+    [
+      'array',
+      { type: 'array', default: ['P'], items: { type: 'string' } },
+      (value: any) => value?.[0],
+    ],
+  ] as const)(
+    '%s source의 생성 시 커밋도 자동 쓰기이므로 그 injectTo는 null을 풀지 않아야 함',
+    async (_label, source, pick) => {
+      const root = nodeFromJSONSchema({
+        onChange: () => {},
+        jsonSchema: {
+          type: 'object',
+          properties: {
+            source: {
+              ...source,
+              injectTo: (value: unknown) => ({
+                '../target/note': `from:${pick(value)}`,
+              }),
+            },
+            target: { type: ['object', 'null'], properties: fields },
+          },
+        } as JSONSchema,
+        defaultValue: { target: null },
+      }) as ObjectNode;
+      await delay(10);
+
+      expect(root.find('target')?.value).toBeNull();
+      expect(root.find('target/note')?.value).toBe('from:P');
+    },
+  );
+
+  it('emit을 만들지 않은 setValue는 이후의 derived 주입을 의도된 쓰기로 둔갑시키지 않아야 함', async () => {
+    const root = nodeFromJSONSchema({
+      onChange: () => {},
+      jsonSchema: {
+        type: 'object',
+        properties: {
+          quantity: { type: 'number', default: 2 },
+          source: {
+            type: 'string',
+            computed: { derived: '"v" + (../quantity || 0)' },
+            injectTo: (value: string) => ({ '../target/note': `from:${value}` }),
+          },
+          target: { type: ['object', 'null'], properties: fields },
+        },
+      },
+      defaultValue: { target: null },
+    }) as ObjectNode;
+    await delay(10);
+
+    const source = root.find('source') as StringNode;
+    source.setValue(source.value, SetValueOption.Merge);
+    await delay(10);
+    (root.find('quantity') as NumberNode).setValue(5);
+    await delay(10);
+
+    expect(root.find('target/note')?.value).toBe('from:v5');
+    expect(root.find('target')?.value).toBeNull();
+  });
+
+  it('injectTo로 채워진 필드는 빈 양식의 일부가 아니므로, mount 뒤에 null이 되면 source가 다시 바뀔 때까지 비어 있음', async () => {
+    const root = nodeFromJSONSchema({
+      onChange: () => {},
+      jsonSchema: {
+        type: 'object',
+        properties: {
+          source: {
+            type: 'string',
+            default: 'seed',
+            injectTo: (value: string) => ({ '../target/note': `from:${value}` }),
+          },
+          target: { type: ['object', 'null'], properties: fields },
+        },
+      },
+    }) as ObjectNode;
+    await delay(10);
+    expect(root.find('target/note')?.value).toBe('from:seed');
+
+    (root.find('target') as ObjectNode).setValue(null);
+    await delay(10);
+    expect(root.find('target/note')?.value).toBeUndefined();
+
+    (root.find('source') as StringNode).setValue('again');
+    await delay(10);
+    expect(root.find('target')?.value).toEqual({
+      note: 'from:again',
+      reason: 'because',
+    });
   });
 
   it('비활성 필드에 쓴 값은 도착하지 않으므로 null이 유지되어야 함', async () => {

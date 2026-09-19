@@ -74,6 +74,7 @@ export class NumberNode extends AbstractNode<NumberSchema, NumberValue> {
 
     if (retain && this.__equals__(previous, current, true)) return;
     this.__value__ = current;
+    if ((option & SetValueOption.Automatic) === 0) this.__markIntendedWrite__();
 
     if (option & SetValueOption.EmitChange)
       this.onChange(
