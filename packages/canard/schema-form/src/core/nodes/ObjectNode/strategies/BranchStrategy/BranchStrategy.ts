@@ -249,6 +249,10 @@ export class BranchStrategy implements ObjectNodeStrategy {
       const node = this.__children__[i].node;
       if (node.type === 'virtual') continue;
       const name = node.name;
+      if (source === null) {
+        (node as AbstractNode).__resetToBlank__();
+        continue;
+      }
       if (replace || nullify || (name in committed && name in current)) {
         const nextValue = nullify ? null : current[name];
         if (
@@ -286,6 +290,30 @@ export class BranchStrategy implements ObjectNodeStrategy {
       (option & SetValueOption.Isolate) > 0 ||
       (!this.__isPristine__ && this.__isolated__);
     this.__emitChange__(option);
+  }
+
+  /**
+   * Rebuilds the subtree the way a form without a default value builds it.
+   * @param input - Value the parent's schema default assigns to this object, if any
+   * @remarks Mirrors the constructor: children take their slice of the base or their own schema default, and the object commits what they emit.
+   */
+  public resetToBlank(input?: ObjectValue | Nullish) {
+    const host = this.__host__;
+    const base = input !== undefined ? input : host.jsonSchema.default;
+    if (base === null) return host.setValue(null, SetValueOption.StableReset);
+    this.__value__ = undefined;
+    this.__draft__ = base ? { ...base } : {};
+    this.__locked__ = true;
+    for (let i = 0, l = this.__subnodes__.length; i < l; i++) {
+      const node = this.__subnodes__[i].node;
+      if (node.type === 'virtual') continue;
+      (node as AbstractNode).__resetToBlank__(base?.[node.name]);
+    }
+    this.__locked__ = false;
+    this.__expired__ = true;
+    this.__emitChange__(
+      SetValueOption.StableReset & ~SetValueOption.Propagate,
+    );
   }
 
   /** Array of child nodes for regular properties (non-oneOf) */

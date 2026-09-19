@@ -222,8 +222,9 @@ describe('nullable.render — type:[T,null] / nullable primitives, objects, arra
 
       await form.setValue({ profile: null });
       expect(form.node('/profile')?.value).toBeNull();
-      // Child node reset and the uncontrolled input re-mounted empty (no stale "dev").
-      expect(form.node('/profile/bio')?.value).toBe('');
+      // Child node back to its blank state (same as a form seeded null) and the
+      // uncontrolled input re-mounted empty (no stale "dev").
+      expect(form.node('/profile/bio')?.value).toBeUndefined();
       expect(form.value('/profile/bio')).toBe('');
     });
   });

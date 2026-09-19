@@ -1067,6 +1067,18 @@ export abstract class AbstractNode<
   }
 
   /**
+   * Returns the node to what a form without a default value builds for it.
+   * @param input - Value the parent's schema default assigns to this node; the node's own schema default when `undefined`
+   * @internal A parent that became `null` calls this on its children, so the blank form it shows does not depend on how it became `null`.
+   */
+  public __resetToBlank__(this: AbstractNode, input?: Value | Nullish) {
+    this.__reset__({
+      inputValue: input !== undefined ? input : getDefaultValue(this.jsonSchema),
+      applyDerivedValue: true,
+    });
+  }
+
+  /**
    * Resets this node and all descendants to their initial values.
    * @remarks Clears all state flags in the subtree before resetting values.
    */

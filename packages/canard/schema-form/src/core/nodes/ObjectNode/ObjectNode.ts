@@ -80,6 +80,15 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
     return false;
   }
 
+  /** @internal */
+  public override __resetToBlank__(
+    this: ObjectNode,
+    input?: ObjectValue | Nullish,
+  ) {
+    if (this.__strategy__.resetToBlank) this.__strategy__.resetToBlank(input);
+    else super.__resetToBlank__(input);
+  }
+
   constructor(properties: BranchNodeConstructorProps<ObjectSchema>) {
     super(properties);
     const handleChange: HandleChange<ObjectValue | Nullish> =
