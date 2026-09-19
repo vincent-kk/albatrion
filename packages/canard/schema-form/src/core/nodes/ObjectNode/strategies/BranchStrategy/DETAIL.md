@@ -36,8 +36,10 @@
 - null이 커밋되어 전파될 때 자식은 `null`을 받는 대신 `__resetToBlank__`로 재구성된다. nullable이 아닌 객체(`{}`로 커밋됨)는 자식에 `null`을 전파하는 기존 동작을 유지한다.
 - `resetToBlank(input?)`는 생성자를 그대로 따른다: `input` 또는 스키마 기본값을 `__value__`로 두고, 잠금 안에서 자식을 재구성한 뒤 Replace 없이 커밋한다. 그래서 자식이 되풀이할 뿐인 base는 생성 시와 같이 부모에 보고되지 않는다.
 - `__processCompositionValue__`는 검증 enhancer를 먼저 갱신한 뒤, null이면 값을 재합성하지 않고 반환한다. 순서가 바뀌면 null인 채 확정된 분기 안에서 객체가 될 때 oneOf 검증이 실패한다.
-- `__parseValue__`는 Replace가 아닌 커밋에서 null base에 빈 draft를 병합하는 것을 "변화 없음"으로 본다.
+- `__parseValue__`는 Replace가 아닌 커밋에서 null base에 빈 draft를 병합하는 것을 "변화 없음"으로 보고, 키가 있는 draft는 `__blank__` 위에 얹는다 — 자손 쓰기와 노드 자신에 대한 `Merge`가 같은 결과를 낸다.
+- null인 동안 자식의 기본값 출처는 노드 자신의 객체 `default`(`__blankBase__`)다. 생성 시(`defaultValue`가 `null`일 때)와 blank reset 모두 자식에게 그 조각을 넘긴다.
 - 커밋의 출처: 자식 emit이 `automatic`이 아니고 잠금 밖이면 `__intended__`를 세우고, 커밋은 옵션에 `Automatic`이 있고 `__intended__`가 없을 때만 automatic으로 부모에 전달된다. `__intended__`는 변화 없는 커밋을 포함한 모든 커밋 시도에서 소비된다.
+- 밖에서의 쓰기로 인한 커밋은 host에 `__markIntendedWrite__`로 알린다 — 자식이 일으킨 커밋은 `setValue`를 지나지 않으므로, host의 `injectTo`가 출처를 물려받으려면 이 통지가 필요하다.
 - 변화 없는 커밋이 밖에서의 쓰기를 흡수했고 조상 중 null이 있으면(`__hasNullAncestor__`) 현재 값을 부모에 다시 전달한다 — 값을 담은 쓰기는 깊이와 무관하게 null 조상에 도달해야 한다.
 
 ## API Contracts

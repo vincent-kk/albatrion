@@ -8,11 +8,12 @@
 
 - `null`은 "객체가 없음", `{}`는 "빈 객체가 있음"입니다. 둘은 서로 변환되지 않으며 `omitEmpty`는 `{}`만 다룹니다.
 - null 여부는 의도된 행위로만 바뀝니다.
-  - null이 되는 경우: `defaultValue`·스키마 `default`가 `null`, 노드 자신이나 조상에 대한 `setValue(null)`, null 기본값으로의 reset.
-  - 객체가 되는 경우: 노드 자신에 대한 객체 대입(`{}` 포함), 또는 자손에 도착한 **값을 담은 밖에서의 쓰기** — 사용자 입력, 자손 `setValue`, 배열 조작, `injectTo`. 이미 보이는 값과 같은 값을 쓰는 것도 쓰기입니다.
-  - 객체가 되지 않는 경우: 폼이 스스로 만든 값(자식 `default`, `computed.derived`, oneOf/anyOf 분기 복원, reset, computed `active`/`visible` 재평가로 인한 복원)과 값 없는 쓰기(`undefined`). 값 없는 쓰기는 기억되어 이후 객체가 될 때 반영됩니다.
-- null인 동안 출력은 스키마 형태와 진입 경로에 무관하게 `null`이고, 자식은 `defaultValue` 없이 생성한 폼과 같은 상태(각자의 스키마 `default`, derived 적용, 중첩 객체는 재귀, 배열은 생성자와 같은 채움)를 가집니다. `null`로 버린 데이터는 되살아나지 않습니다.
-- 객체가 될 때의 값은 한 번도 null이 아니었던 같은 스키마 노드에 같은 쓰기를 한 값과 같습니다.
+  - null이 되는 경우: `defaultValue`·스키마 `default`가 `null`, 노드 자신이나 조상에 대한 `setValue(null)`.
+  - 객체가 되는 경우: 노드 자신에 대한 객체 대입(`{}`, 키를 담은 `Merge` 포함), 또는 활성 자손에 도착한 **값을 담은 밖에서의 쓰기** — 사용자 입력, 자손 `setValue`, 배열 조작, 사용자가 일으킨 `injectTo`. 이미 보이는 값과 같은 값을 쓰는 것도 쓰기입니다.
+  - 객체가 되지 않는 경우: 폼이 스스로 만든 값(자식 `default`, `computed.derived`, oneOf/anyOf 분기 복원, reset 중의 자식 복원, computed `active` 재평가로 인한 복원, 그런 값만으로 구동된 `injectTo`)과 값 없는 쓰기(`undefined` — 기본 `omitEmpty`의 빈 문자열 포함, `false`·`0`·`null`은 값). 값 없는 쓰기는 기억되어 이후 객체가 될 때 반영됩니다.
+  - reset은 노드가 무엇을 갖고 있든 기본값을 복원합니다: 기본값이 `null`이면 `null`, 아니면 기본 객체.
+- null인 동안 출력은 스키마 형태와 진입 경로에 무관하게 `null`이고, 자식은 이 노드에 `defaultValue`를 주지 않은 폼과 같은 상태(노드 자신의 객체 `default`가 있으면 그 조각, 없으면 각자의 스키마 `default`, derived 적용, 중첩 객체는 재귀, 배열은 생성자와 같은 채움)를 가집니다. `null`로 버린 데이터는 되살아나지 않습니다.
+- 객체가 될 때의 값은 이 노드에 `defaultValue`를 주지 않은 같은 스키마 폼에 같은 쓰기를 한 값과 같습니다.
 - `undefined` 대입은 null과 다른 동작입니다: 서브트리를 비우며 자식 `default`를 복원하지 않습니다.
 - nullable이 아닌 객체에 `null`을 대입하면 `{}`가 됩니다.
 
@@ -34,9 +35,11 @@
 - `defaultValue: null`, 스키마 `default: null`, 노드 `setValue(null)`, 조상 경유 `setValue`, reset 중 어느 경로로 null이 되어도 출력은 `null`이고 자식 값은 서로 같습니다.
 - 자식이 배열(`minItems` 포함)·`default`·`computed.derived`·oneOf/anyOf 분기·computed `active`·virtual이어도 `null`이 유지되며, 의존값이 바뀌어도 유지됩니다.
 - `setValue(null)` 한 번에 루트 `onChange`는 한 번, payload는 `null`입니다.
-- 자손에 값을 쓰면 객체가 되고, 그 값은 null이 아니었던 같은 스키마 폼에 같은 쓰기를 한 값과 같습니다 — 직계 자식, 중첩 객체의 유일한 필드, 배열 아이템, 이미 보이는 default와 같은 값 모두.
+- 자손에 값을 쓰면 객체가 되고, 그 값은 `defaultValue` 없는 같은 스키마 폼에 같은 쓰기를 한 값과 같습니다 — 직계 자식, 중첩 객체의 유일한 필드, 배열 아이템, virtual 그룹, 이미 보이는 default와 같은 값, `false`·`0`·nullable 자식의 `null` 모두. 노드 자신이 객체 `default`를 가져도 같습니다.
+- source의 `default`나 derived 값만으로 구동된 `injectTo`는 대상 필드를 채우되 null을 유지하고, 사용자가 source를 바꿔 일어난 `injectTo`는 객체를 만듭니다.
 - 필드를 비우는 쓰기는 null을 풀지 않고, 이후 객체가 될 때 비워진 상태로 반영됩니다.
-- `setValue({})`는 `{}`를 만들고, `setValue({}, Merge)`는 아무것도 바꾸지 않습니다.
+- `setValue({})`는 `{}`를 만들고, `setValue({}, Merge)`는 아무것도 바꾸지 않으며, 키를 담은 `Merge`는 빈 양식 위에 그 키를 얹습니다.
+- 루트가 nullable이어도, 비활성 후 재활성화되어도(`null`로 복귀) 계약은 같습니다. `undefined` 대입은 서브트리를 비우고 default를 복원하지 않습니다.
 - 이 문서의 null은 노드 **값**입니다. `strategies` 문서의 "`children`이 `null`"(자식 노드가 없는 전략)과 무관합니다.
 
 ## History

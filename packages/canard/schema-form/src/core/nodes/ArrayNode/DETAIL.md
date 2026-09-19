@@ -10,7 +10,7 @@
 
 - nullable 배열은 `ObjectNode`의 null 계약을 그대로 따른다(의미·전환 조건은 `ObjectNode/DETAIL.md`). 배열에서 달라지는 점:
   - null 배열에는 아이템이 없다 — `minItems` 채움이 없고, 어느 경로로 null이 되어도 같다.
-  - 배열이 되는 쓰기는 `push`, 아이템에 도착한 값을 담은 쓰기, 자신에 대한 배열 대입(`[]` 포함)이다. `clear()`는 지울 것이 없는 값 없는 쓰기이므로 null을 유지한다.
+  - 배열이 되는 쓰기는 `push`, 아이템에 도착한 값을 담은 쓰기, 자신에 대한 배열 대입(`[]` 포함)이다. 배열에는 병합이 없으므로 `Merge` 옵션의 `[]`도 대입이다. `pop()`·`remove()`·`update()`·`clear()`는 대상 아이템이 없는 값 없는 쓰기이므로 null을 유지한다.
   - 배열이 된 값은 빈 배열에 같은 조작을 한 값과 같다. 배열 자신의 스키마 `default`와 `minItems` 채움은 되살아나지 않는다.
 - 부모 객체가 null이 되면 배열 자식은 `__resetToBlank__`로 생성자와 같은 상태가 된다: 받은 값이나 스키마 `default`가 있으면 그것, 없으면 비운 뒤 `minItems`까지 아이템 기본값으로 채우고 derived 값을 적용한다. 이 채움은 `Automatic`으로 표시된다 — branch 배열은 부모의 잠금이 풀린 뒤에 emit하기 때문이다.
 
@@ -44,17 +44,19 @@
 ### null-state — nullable 배열의 null 계약
 
 - 두 전략 모두 `defaultValue: null`과 `setValue(null)` 뒤 값은 `null`, `length`는 0이며 부모 출력에 `null`이 남는다.
-- null 배열은 의존값 변경과 `clear()`를 거쳐도 `null`이다.
-- null 배열에 `push()`하면 빈 배열에 같은 `push()`를 한 값이 되고, `setValue([])`는 `[]`를 만든다.
+- null 배열은 의존값 변경과 `pop()`·`remove()`·`update()`·`clear()`를 거쳐도 `null`이다.
+- null 배열에 `push()`하면 빈 배열에 같은 `push()`를 한 값이 되고, `setValue([])`는 옵션과 무관하게 `[]`를 만든다.
 - null이 된 객체의 `minItems` 배열 자식은 `defaultValue: null`로 생성한 폼과 같은 아이템을 가지며, 그 채움은 부모의 `null`을 풀지 않는다.
 
 ### reset-refill — minItems 재충전
 
 - Reset 플래그의 `applyValue(undefined)` 후 `children.length === minItems`.
+- 일반 `setValue(undefined)` 후에는 두 전략 모두 `length === 0`이다 — Reset 여부는 프리셋 전체 비트의 일치로 판정한다.
 - 분기 fresh 활성화와 폼 reset에서 minItems 빈 input 스켈레톤이 재구성된다.
 
 ## History
 
+- 2026-09-20 — Reset 판정을 `(option & Reset) > 0`에서 프리셋 전체 일치로 변경. 이유: 공개 기본 옵션 `Overwrite`가 `Reset`과 비트를 공유해 일반 `setValue(undefined)`가 branch 배열의 `minItems`를 재충전했고, 이 문서의 요구사항과 terminal 전략에 어긋났다.
 - 2026-09-20 — nullable 배열의 null 계약과 blank reset 추가. 이유: terminal 배열은 `defaultValue: null`을 `[]`로 시작해 키가 사라졌고, `clear()`가 null 배열을 `[]`로 만들었으며, 부모가 null이 될 때 `minItems` 배열 자식의 상태가 경로에 따라 달랐다.
 
 ## Last Updated
