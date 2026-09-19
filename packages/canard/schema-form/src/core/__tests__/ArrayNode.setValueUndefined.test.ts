@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import { delay } from '@winglet/common-utils';
 
-import { nodeFromJSONSchema } from '@/schema-form/core';
+import { SetValueOption, nodeFromJSONSchema } from '@/schema-form/core';
 
 import type { ArrayNode } from '../nodes/ArrayNode';
 import type { ObjectNode } from '../nodes/ObjectNode';
@@ -50,6 +50,18 @@ describe.each([false, true])(
       await delay(10);
 
       expect(list.value).toEqual(['S', 'S']);
+    });
+
+    it('배열을 뺀 부모 교체 쓰기는 배열을 비우고, Merge는 그대로 두어야 함', async () => {
+      const merged = await build();
+      merged.root.setValue({}, SetValueOption.Merge);
+      await delay(10);
+      expect(merged.list.length).toBe(2);
+
+      const replaced = await build();
+      replaced.root.setValue({});
+      await delay(10);
+      expect(replaced.list.length).toBe(0);
     });
   },
 );
