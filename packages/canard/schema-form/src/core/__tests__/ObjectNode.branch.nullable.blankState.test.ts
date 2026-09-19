@@ -5,6 +5,7 @@ import { delay } from '@winglet/common-utils';
 import { nodeFromJSONSchema } from '@/schema-form/core';
 import type { JSONSchema } from '@/schema-form/types';
 
+import type { BooleanNode } from '../nodes/BooleanNode';
 import type { ObjectNode } from '../nodes/ObjectNode';
 import type { StringNode } from '../nodes/StringNode';
 
@@ -170,7 +171,7 @@ describe('ObjectNode branch nullable — every way to null leaves the same blank
           (root.find('target') as ObjectNode).setValue(null);
           await delay(10);
         }
-        const blank = [
+          const blank = [
           root.find('target/rows')?.value,
           root.find('target/tags')?.value,
         ];
@@ -306,4 +307,57 @@ describe('ObjectNode branch nullable — every way to null leaves the same blank
     expect(promoted[1]).toEqual(promoted[0]);
     expect(promoted[2]).toEqual(promoted[0]);
   });
+
+  it.each([
+    ['객체 자식이 비활성', { inner: true }],
+    ['객체 자식의 필드가 비활성', { inner: false }],
+  ] as const)(
+    '두 번째 null 구간에 첫 구간의 기록이 섞여 나오지 않아야 함 (%s)',
+    async (_label, { inner }) => {
+      const active = { active: '(../../enabled) === true' };
+      const fieldActive = { active: '(../../../enabled) === true' };
+      const jsonSchema = {
+        type: 'object',
+        properties: {
+          enabled: { type: 'boolean', default: true },
+          target: {
+            type: ['object', 'null'],
+            properties: {
+              note: { type: 'string' },
+              inner: {
+                type: 'object',
+                ...(inner ? { computed: active } : {}),
+                properties: {
+                  a: {
+                    type: 'string',
+                    default: 'A',
+                    ...(inner ? {} : { computed: fieldActive }),
+                  },
+                },
+              },
+            },
+          },
+        },
+      } satisfies JSONSchema;
+
+      const root = nodeFromJSONSchema({
+        onChange: () => {},
+        jsonSchema,
+      }) as ObjectNode;
+      await delay(10);
+      const steps = [
+        () => (root.find('target') as ObjectNode).setValue(null),
+        () => (root.find('target/note') as StringNode).setValue('n1'),
+        () => (root.find('enabled') as BooleanNode).setValue(false),
+        () => (root.find('target') as ObjectNode).setValue(null),
+        () => (root.find('target/note') as StringNode).setValue('n2'),
+      ];
+      for (const step of steps) {
+        step();
+        await delay(10);
+      }
+
+      expect(root.value).toEqual({ enabled: false, target: { note: 'n2' } });
+    },
+  );
 });

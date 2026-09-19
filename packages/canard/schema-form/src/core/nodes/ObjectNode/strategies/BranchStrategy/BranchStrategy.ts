@@ -81,7 +81,7 @@ export class BranchStrategy implements ObjectNodeStrategy {
 
   /**
    * What the children hold while the object is `null` — the object it becomes on its first outside write.
-   * @remarks Meaningful only while `__isNull__`; becoming `null` resets every child, and each reset that changes the child overwrites its entry.
+   * @remarks Meaningful only while `__isNull__`; it is rebuilt each time the object becomes `null`, because a child whose blank reset changes nothing emits nothing and would keep its old entry.
    */
   private __blank__: ObjectValue = {};
 
@@ -247,6 +247,7 @@ export class BranchStrategy implements ObjectNodeStrategy {
     const current = source || {};
     const committed = target || {};
     const nullify = target === null;
+    if (nullify) this.__blank__ = {};
     const propagateOption =
       target == null ? option & ~SetValueOption.EmitChange : option;
     this.__locked__ = true;
