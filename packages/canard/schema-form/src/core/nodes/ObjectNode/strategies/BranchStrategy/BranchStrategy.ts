@@ -100,6 +100,14 @@ export class BranchStrategy implements ObjectNodeStrategy {
   /** Flag indicating whether the object value is expired */
   private __expired__: boolean = true;
 
+  /**
+   * The object this node's own schema `default` gives its children while the node is `null`.
+   * @remarks A form without a default value builds the children from it, so the blank form of a null node does too; `undefined` when the schema default is absent or `null`.
+   */
+  private get __blankBase__(): ObjectValue | undefined {
+    return this.__host__.jsonSchema.default ?? undefined;
+  }
+
   /** Whether the object is `null` with no child write pending in the draft. */
   private get __isNull__() {
     return (
@@ -259,7 +267,7 @@ export class BranchStrategy implements ObjectNodeStrategy {
       if (node.type === 'virtual') continue;
       const name = node.name;
       if (source === null) {
-        (node as AbstractNode).__resetToBlank__();
+        (node as AbstractNode).__resetToBlank__(this.__blankBase__?.[name]);
         continue;
       }
       if (replace || nullify || (name in committed && name in current)) {
@@ -804,6 +812,9 @@ export class BranchStrategy implements ObjectNodeStrategy {
       }
     });
 
+    const childDefaults =
+      host.defaultValue === null ? this.__blankBase__ : host.defaultValue;
+
     const { virtualReferencesMap, virtualReferenceFieldsMap } =
       getVirtualReferencesMap(host.name, propertyKeys, host.jsonSchema.virtual);
 
@@ -815,7 +826,7 @@ export class BranchStrategy implements ObjectNodeStrategy {
       host,
       jsonSchema,
       propertyKeys,
-      host.defaultValue,
+      childDefaults,
       conditionsMap,
       virtualReferencesMap,
       virtualReferenceFieldsMap,
@@ -837,7 +848,7 @@ export class BranchStrategy implements ObjectNodeStrategy {
       host,
       'oneOf',
       jsonSchema,
-      host.defaultValue,
+      childDefaults,
       this.__childNodeMap__,
       this.__oneOfKeySetList__,
       this.__anyOfKeySet__,
@@ -849,7 +860,7 @@ export class BranchStrategy implements ObjectNodeStrategy {
       host,
       'anyOf',
       jsonSchema,
-      host.defaultValue,
+      childDefaults,
       this.__childNodeMap__,
       this.__anyOfKeySetList__,
       this.__oneOfKeySet__,

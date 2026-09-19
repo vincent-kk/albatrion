@@ -311,6 +311,51 @@ describe('ObjectNode branch nullable — every way to null leaves the same blank
     expect(promoted[2]).toEqual(promoted[0]);
   });
 
+  it('nullable 노드 자신이 객체 default를 가지면 빈 양식은 그 default를 따라야 함', async () => {
+    const jsonSchema = {
+      type: 'object',
+      properties: {
+        target: {
+          type: ['object', 'null'],
+          default: { reason: 'preset' },
+          properties: {
+            note: { type: 'string' },
+            reason: { type: 'string', default: 'because' },
+          },
+        },
+      },
+    } satisfies JSONSchema;
+    const results: unknown[] = [];
+    for (const defaultValue of [
+      undefined,
+      { target: null },
+      { target: { note: 'typed', reason: 'edited' } },
+    ]) {
+      const root = nodeFromJSONSchema({
+        onChange: () => {},
+        jsonSchema,
+        defaultValue,
+      }) as ObjectNode;
+      await delay(10);
+      if (defaultValue?.target) {
+        (root.find('target') as ObjectNode).setValue(null);
+        await delay(10);
+      }
+      if (defaultValue) expect(root.find('target')?.value).toBeNull();
+      const blank = root.find('target/reason')?.value;
+      (root.find('target/note') as StringNode).setValue('written');
+      await delay(10);
+      results.push({ blank, promoted: root.find('target')?.value });
+    }
+
+    expect(results[0]).toEqual({
+      blank: 'preset',
+      promoted: { note: 'written', reason: 'preset' },
+    });
+    expect(results[1]).toEqual(results[0]);
+    expect(results[2]).toEqual(results[0]);
+  });
+
   it.each([
     ['아이템 default 있음', false, { type: 'string', default: 'S' }],
     ['아이템 default 없음', false, { type: 'string' }],
