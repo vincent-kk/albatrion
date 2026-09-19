@@ -225,6 +225,58 @@ describe('ObjectNode branch nullable — the contract holds through every public
     },
   );
 
+  it.each([
+    ['false', 'flag', false, { flag: false }],
+    ['0', 'count', 0, { count: 0 }],
+    ['nullable 자식의 null', 'state', null, { state: null }],
+    ["omitEmpty: false 문자열의 ''", 'kept', '', { kept: '' }],
+  ] as const)(
+    '%s은 값이므로 null을 풀어야 함',
+    async (_label, key, written, expected) => {
+      const root = nodeFromJSONSchema({
+        onChange: () => {},
+        jsonSchema: {
+          type: 'object',
+          properties: {
+            target: {
+              type: ['object', 'null'],
+              properties: {
+                flag: { type: 'boolean' },
+                count: { type: 'number' },
+                state: { type: ['string', 'null'] },
+                kept: { type: 'string', options: { omitEmpty: false } },
+              },
+            },
+          },
+        },
+        defaultValue: { target: null },
+      }) as ObjectNode;
+      await delay(10);
+
+      root.find(`target/${key}`)?.setValue(written as never);
+      await delay(10);
+
+      expect(root.find('target')?.value).toEqual(expected);
+    },
+  );
+
+  it("기본 omitEmpty에서 ''를 쓰는 것은 필드를 비우는 것이므로 null이 유지되어야 함", async () => {
+    const root = nodeFromJSONSchema({
+      onChange: () => {},
+      jsonSchema: {
+        type: 'object',
+        properties: { target: { type: ['object', 'null'], properties: fields } },
+      },
+      defaultValue: { target: null },
+    }) as ObjectNode;
+    await delay(10);
+
+    (root.find('target/note') as StringNode).setValue('');
+    await delay(10);
+
+    expect(root.value).toEqual({ target: null });
+  });
+
   it('null 조상이 없는 폼에서 같은 값을 다시 쓰는 것은 아무 변화도 알리지 않아야 함', async () => {
     const reported: unknown[] = [];
     const root = nodeFromJSONSchema({

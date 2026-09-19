@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import { delay } from '@winglet/common-utils';
 
-import { nodeFromJSONSchema } from '@/schema-form/core';
+import { SetValueOption, nodeFromJSONSchema } from '@/schema-form/core';
 import type { JSONSchema } from '@/schema-form/types';
 
 import type { ArrayNode } from '../nodes/ArrayNode';
@@ -125,6 +125,27 @@ describe.each(['branch', 'terminal'] as const)(
           const { list } = await waysToNull[way](strategy);
 
           list.setValue([]);
+          await delay(10);
+
+          expect(list.value).toEqual([]);
+        });
+
+        it('pop·remove·update는 대상 아이템이 없으므로 null을 풀지 않아야 함', async () => {
+          const { root, list } = await waysToNull[way](strategy);
+
+          await list.pop();
+          await list.remove(0);
+          await list.update(0, 'x');
+          await delay(10);
+
+          expect(list.value).toBeNull();
+          expect(root.value).toEqual({ quantity: 2, list: null });
+        });
+
+        it('배열에는 병합이 없으므로 Merge로 [] 를 주는 것도 대입이어야 함', async () => {
+          const { list } = await waysToNull[way](strategy);
+
+          list.setValue([], SetValueOption.Merge);
           await delay(10);
 
           expect(list.value).toEqual([]);
