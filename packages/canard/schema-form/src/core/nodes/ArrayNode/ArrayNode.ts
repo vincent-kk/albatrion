@@ -151,7 +151,7 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
 
   /**
    * Clears all elements from the array.
-   * @remarks Respects `minItems` constraint; may not fully clear if `minItems > 0`.
+   * @remarks Removes every item whatever `minItems` says — the constraint is left to validation, and a reset restores the fill. A `null` array stays `null`.
    */
   public clear(this: ArrayNode) {
     return this.__strategy__.clear();

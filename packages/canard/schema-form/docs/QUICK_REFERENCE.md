@@ -446,7 +446,7 @@ const arrayNode = formRef.current?.findNode('/items') as ArrayNode;
 arrayNode.push(); // 기본값으로 아이템 추가
 arrayNode.push('custom'); // 특정 값으로 추가
 arrayNode.remove(0); // 인덱스 0 삭제
-arrayNode.clear(); // 전체 삭제 (minItems 유지)
+arrayNode.clear(); // 전체 삭제 (minItems와 무관 — 채움은 reset이 복원)
 arrayNode.length; // 현재 아이템 수
 arrayNode.children; // 자식 노드 배열
 ```

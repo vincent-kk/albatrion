@@ -23,7 +23,7 @@
 | `normalizedValue`                            | getter        | 자식들의 `normalizedValue` 합성에 `omitTrailing` 트림을 적용한 출력 값 |
 | `length`·`minItems`·`maxItems`·`children`    | getter        | 전략 위임                                                              |
 | `push(data?, unlimited?)`                    | method        | `Promise<length>`; `maxItems` 준수(`unlimited`로 우회)                 |
-| `pop()`·`update(i, v)`·`remove(i)`·`clear()` | method        | 전략 위임; `clear`는 `minItems` 존중                                   |
+| `pop()`·`update(i, v)`·`remove(i)`·`clear()` | method        | 전략 위임; `clear`는 `minItems`와 무관하게 전부 제거                   |
 | `options.omitTrailing`                       | schema        | opt-in 출력 트림                                                       |
 | `options.omitEmpty`                          | schema        | opt-out 빈 배열 → `undefined` (부모 전파 전용)                         |
 
@@ -47,6 +47,10 @@
 - null 배열은 의존값 변경과 `pop()`·`remove()`·`update()`·`clear()`를 거쳐도 `null`이다.
 - null 배열에 `push()`하면 빈 배열에 같은 `push()`를 한 값이 되고, `setValue([])`는 옵션과 무관하게 `[]`를 만든다.
 - null이 된 객체의 `minItems` 배열 자식은 `defaultValue: null`로 생성한 폼과 같은 아이템을 가지며, 그 채움은 부모의 `null`을 풀지 않는다.
+
+### mutation-literal — 조작 메서드는 시킨 대로 한다
+
+- `minItems`가 있어도 `clear()` 후 `length === 0`이고(두 전략), reset이 채움을 복원한다. `minItems`는 검증 제약이자 생성·reset 시의 채움이며, 조작에 대한 가드가 아니다.
 
 ### reset-refill — minItems 재충전
 
