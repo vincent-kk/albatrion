@@ -80,7 +80,11 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
     return false;
   }
 
-  /** @internal */
+  /**
+   * Rebuilds the object the way a form without a default value builds it.
+   * @param input - Value the parent's schema default assigns to this object; its own schema default when `undefined`
+   * @internal A strategy with child nodes rebuilds its subtree; one without falls back to the node-level reset.
+   */
   public override __resetToBlank__(
     this: ObjectNode,
     input?: ObjectValue | Nullish,

@@ -13,6 +13,12 @@ export function processValueWithValidate(
   value: ObjectValue,
   validate?: Fn<[key: string], boolean>,
 ): ObjectValue;
+/**
+ * Nullish-tolerant form: a nullish value is returned as it is.
+ * @param value - Object value to filter, or a nullish value to pass through
+ * @param validate - Validation function that returns true for keys that should be included
+ * @returns The filtered object, or the nullish input unchanged
+ */
 export function processValueWithValidate(
   value: ObjectValue | Nullish,
   validate?: Fn<[key: string], boolean>,
