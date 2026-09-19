@@ -323,7 +323,7 @@ export class BranchStrategy implements ArrayNodeStrategy {
       const restore =
         input === undefined &&
         this.__minItems__ > 0 &&
-        (option & SetValueOption.Reset) > 0;
+        (option & SetValueOption.Reset) === SetValueOption.Reset;
       this.__locked__ = true;
       this.clear(option);
       if (restore)
