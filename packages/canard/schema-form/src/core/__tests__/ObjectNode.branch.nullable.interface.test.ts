@@ -277,6 +277,54 @@ describe('ObjectNode branch nullable — the contract holds through every public
     expect(root.value).toEqual({ target: null });
   });
 
+  it('비활성 필드에 쓴 값은 도착하지 않으므로 null이 유지되어야 함', async () => {
+    const root = nodeFromJSONSchema({
+      onChange: () => {},
+      jsonSchema: {
+        type: 'object',
+        properties: {
+          enabled: { type: 'boolean', default: false },
+          target: {
+            type: ['object', 'null'],
+            properties: {
+              gated: {
+                type: 'string',
+                computed: { active: '../../enabled === true' },
+              },
+            },
+          },
+        },
+      },
+      defaultValue: { target: null },
+    }) as ObjectNode;
+    await delay(10);
+
+    (root.find('target/gated') as StringNode).setValue('unseen');
+    await delay(10);
+
+    expect(root.value).toEqual({ enabled: false, target: null });
+  });
+
+  it('reset은 노드가 null이어도 기본 객체를 복원해야 함', async () => {
+    const root = nodeFromJSONSchema({
+      onChange: () => {},
+      jsonSchema: {
+        type: 'object',
+        properties: { target: { type: ['object', 'null'], properties: fields } },
+      },
+      defaultValue: { target: { note: 'seed' } },
+    }) as ObjectNode;
+    await delay(10);
+    (root.find('target') as ObjectNode).setValue(null);
+    await delay(10);
+    expect(root.value).toEqual({ target: null });
+
+    root.resetSubtree();
+    await delay(10);
+
+    expect(root.value).toEqual({ target: { note: 'seed', reason: 'because' } });
+  });
+
   it('null 조상이 없는 폼에서 같은 값을 다시 쓰는 것은 아무 변화도 알리지 않아야 함', async () => {
     const reported: unknown[] = [];
     const root = nodeFromJSONSchema({
