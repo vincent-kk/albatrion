@@ -174,6 +174,44 @@ describe('ObjectNode branch nullable — automatic writes never promote null', (
     expect((node.find('target') as ObjectNode).value?.note).toBe('written');
   });
 
+  it('아무것도 바꾸지 않는 쓰기는 null을 풀지 않고, 이후의 자동 쓰기를 의도적 쓰기로 둔갑시키지도 않아야 함', async () => {
+    const node = nodeFromJSONSchema({
+      onChange: () => {},
+      jsonSchema: {
+        type: 'object',
+        properties: {
+          quantity: { type: 'number', default: 2 },
+          target: {
+            type: ['object', 'null'],
+            properties: {
+              reason: { type: 'string', default: 'because' },
+              inner: {
+                type: 'object',
+                properties: {
+                  total: {
+                    type: 'number',
+                    computed: { derived: '(../../../quantity || 0) * 10' },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+      defaultValue: { target: null },
+    });
+    await delay(10);
+
+    (node.find('target/reason') as StringNode).setValue('because');
+    (node.find('target/inner/total') as NumberNode).setValue(20);
+    await delay(10);
+    expect(node.value).toEqual({ quantity: 2, target: null });
+
+    (node.find('quantity') as NumberNode).setValue(5);
+    await delay(10);
+    expect(node.value).toEqual({ quantity: 5, target: null });
+  });
+
   it.each([
     ['중첩 객체', 'target/inner/note', 'inner', { note: 'deep' }],
     ['배열 아이템', 'target/rows/0/label', 'rows', [{ label: 'deep' }]],
