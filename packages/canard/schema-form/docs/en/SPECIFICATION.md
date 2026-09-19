@@ -811,7 +811,7 @@ const jsonSchema = {
 - `omitEmpty` (on by default): converts an empty array to `undefined` on the parent-propagation path. Filter order is `omitTrailing → omitEmpty`, so an all-empty array collapses to `undefined` under its parent (a root-level form still emits `[]`).
 - `null` is not an empty value: neither filter touches a nullable array that is `null` — see [Nullable Objects and Arrays](#nullable-objects-and-arrays).
 - `node.value` stays raw; the refined output is exposed as `node.normalizedValue`. Validation runs against the refined value, so `minItems` counts only the filled prefix.
-- A Reset-flagged clear (form reset, branch reactivation) refills `minItems` empty items; a plain `setValue(undefined)` clears every item. An array whose default is `null` resets to `null`, with no fill.
+- A Reset-flagged clear (form reset, branch reactivation) refills `minItems` empty items; a plain `setValue(undefined)` clears every item — and so does a replace-style write on the parent that omits the array: `setValue({ other: 1 })` empties it, `SetValueOption.Merge` leaves it untouched. An array whose default is `null` resets to `null`, with no fill.
 
 ### Value Injection (injectTo)
 
@@ -1007,7 +1007,7 @@ A field is _emptied_ when its node emits `undefined`. Under the default `omitEmp
 
 A reset restores the default, whatever the node holds: back to `null` when the default is `null`, to the default object otherwise.
 
-**While it is `null`**, the emitted value is `null` whatever the schema holds — arrays, defaults, derived values, `oneOf`/`anyOf`, computed or virtual fields. An object's child fields stay rendered and show a blank form: what the form builds for them when it is given no `defaultValue` for this node — the node's own object `default` if it has one, otherwise each child's own `default`, with derived values applied and array children filled up to their `minItems`. It is identical whichever way the object became `null`, and data discarded by `null` does not come back. A nullable **array** that is itself `null` has no items and no `minItems` fill.
+**While it is `null`**, the emitted value is `null` whatever the schema holds — arrays, defaults, derived values, `oneOf`/`anyOf`, computed or virtual fields. An object's child fields stay rendered and show a blank form: what the form builds for them when it is given no `defaultValue` for this node — the node's own object `default` if it has one, otherwise each child's own `default`, with derived values applied and array children filled up to their `minItems`. It is identical whichever way the object became `null`, and data discarded by `null` does not come back. One thing is not part of the blank form: a value that reached a field through `injectTo`. A node that becomes `null` after mount loses it until its source changes again. A nullable **array** that is itself `null` has no items and no `minItems` fill.
 
 **What it becomes** is exactly what the same write produces on a form given no `defaultValue` for this node (for an array: on an empty array), so the value always matches what the fields show. An array has no merge semantics: `setValue([], SetValueOption.Merge)` is an assignment and creates `[]`.
 
@@ -1032,7 +1032,7 @@ const jsonSchema = {
 
 - A **non-nullable** object assigned `null` becomes `{}`.
 - `setValue(undefined)` is not `null`: it clears the subtree — every field, every array item — and does not restore child defaults.
-- The form never alters a value to make it validate. Whether `null` is valid is the schema's decision — note that `oneOf` branches made only of `properties` all match `null`.
+- The form never alters a value to make it validate. Whether `null` is valid is the schema's decision. `oneOf` branches made only of `properties` all match `null`, so `null` fails such a `oneOf` in any validator; and because a composition branch may not declare a `type` different from its parent's, a `{ type: 'null' }` branch cannot be added today. A nullable object that must validate as `null` should use `anyOf`, or no composition, at that level.
 
 ### Node Type Guards
 

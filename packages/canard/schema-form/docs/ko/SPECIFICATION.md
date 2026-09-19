@@ -809,7 +809,7 @@ const jsonSchema = {
 - `omitEmpty` (기본 활성): 빈 배열을 부모 전파 경로에서 `undefined`로 변환합니다. 필터 순서는 `omitTrailing → omitEmpty`라서 전부 빈 배열은 부모에서 `undefined`로 수렴합니다 (루트 폼은 `[]`를 방출).
 - `null`은 빈 값이 아닙니다: 두 필터 모두 값이 `null`인 nullable 배열을 건드리지 않습니다 — [Nullable 객체와 배열](#nullable-객체와-배열) 참고.
 - `node.value`는 raw를 유지하고, 정제된 출력은 `node.normalizedValue`로 노출됩니다. validation은 정제된 값 기준이라 `minItems`는 채워진 prefix만 셉니다.
-- Reset 계열 초기화(폼 reset, 분기 재활성화)는 `minItems`만큼 빈 항목을 재충전하고, 일반 `setValue(undefined)`는 전부 비웁니다. 기본값이 `null`인 배열은 채움 없이 `null`로 reset됩니다.
+- Reset 계열 초기화(폼 reset, 분기 재활성화)는 `minItems`만큼 빈 항목을 재충전하고, 일반 `setValue(undefined)`는 전부 비웁니다 — 배열을 빼고 부모를 교체하는 쓰기도 같습니다: `setValue({ other: 1 })`는 배열을 비우고, `SetValueOption.Merge`는 그대로 둡니다. 기본값이 `null`인 배열은 채움 없이 `null`로 reset됩니다.
 
 ### Value Injection (injectTo)
 
@@ -1005,7 +1005,7 @@ nullable 객체·배열(`type: ['object', 'null']`, `type: ['array', 'null']`)�
 
 reset은 노드가 무엇을 갖고 있든 기본값을 복원합니다: 기본값이 `null`이면 `null`로, 아니면 기본 객체로.
 
-**`null`인 동안** 출력은 스키마가 무엇을 담고 있든 — 배열, default, derived, `oneOf`/`anyOf`, computed·virtual 필드 — `null`입니다. 객체의 자식 필드는 계속 렌더되며 빈 양식을 보여 줍니다: 이 노드에 `defaultValue`를 주지 않았을 때 폼이 자식에게 만들어 주는 상태입니다 — 노드 자신의 객체 `default`가 있으면 그것, 없으면 각 자식의 `default`이며, derived 값이 적용되고 배열 자식은 `minItems`까지 채워집니다. 어떤 경로로 `null`이 되었든 같고, `null`로 버린 데이터는 되살아나지 않습니다. 자신이 `null`인 nullable **배열**에는 아이템이 없고 `minItems` 채움도 없습니다.
+**`null`인 동안** 출력은 스키마가 무엇을 담고 있든 — 배열, default, derived, `oneOf`/`anyOf`, computed·virtual 필드 — `null`입니다. 객체의 자식 필드는 계속 렌더되며 빈 양식을 보여 줍니다: 이 노드에 `defaultValue`를 주지 않았을 때 폼이 자식에게 만들어 주는 상태입니다 — 노드 자신의 객체 `default`가 있으면 그것, 없으면 각 자식의 `default`이며, derived 값이 적용되고 배열 자식은 `minItems`까지 채워집니다. 어떤 경로로 `null`이 되었든 같고, `null`로 버린 데이터는 되살아나지 않습니다. 빈 양식에 속하지 않는 것이 하나 있습니다: `injectTo`로 필드에 도착한 값입니다. mount 뒤에 `null`이 된 노드는 source가 다시 바뀔 때까지 그 값을 잃습니다. 자신이 `null`인 nullable **배열**에는 아이템이 없고 `minItems` 채움도 없습니다.
 
 **무엇이 되는가:** 이 노드에 `defaultValue`를 주지 않은 폼에서 같은 쓰기가 만드는 값과 정확히 같습니다(배열은 빈 배열 기준). 그래서 값은 항상 필드가 보여 주는 것과 일치합니다. 배열에는 병합이 없습니다: `setValue([], SetValueOption.Merge)`는 대입이며 `[]`를 만듭니다.
 
@@ -1030,7 +1030,7 @@ const jsonSchema = {
 
 - **nullable이 아닌** 객체에 `null`을 대입하면 `{}`가 됩니다.
 - `setValue(undefined)`는 `null`이 아닙니다: 서브트리를 — 모든 필드와 모든 배열 아이템을 — 비우며 자식 default를 복원하지 않습니다.
-- 폼은 검증을 통과시키려고 값을 바꾸지 않습니다. `null`의 유효성은 스키마가 결정합니다 — `properties`만으로 이루어진 `oneOf` 분기는 모두 `null`에 매치된다는 점에 유의하세요.
+- 폼은 검증을 통과시키려고 값을 바꾸지 않습니다. `null`의 유효성은 스키마가 결정합니다. `properties`만으로 이루어진 `oneOf` 분기는 모두 `null`에 매치되므로 어떤 검증기에서도 `null`은 그 `oneOf`를 통과하지 못하고, 합성 분기는 부모와 다른 `type`을 선언할 수 없어 지금은 `{ type: 'null' }` 분기를 추가할 수도 없습니다. `null`로 검증을 통과해야 하는 nullable 객체는 그 레벨에서 `anyOf`를 쓰거나 합성을 쓰지 않아야 합니다.
 
 ### 노드 타입 가드
 

@@ -33,7 +33,7 @@ A field is _emptied_ when its node emits `undefined`: under the default `omitEmp
 ## While It Is `null`
 
 - The emitted value is `null` whatever the schema holds (array children, defaults, derived values, `oneOf`/`anyOf`, computed or virtual fields), and however it became `null`.
-- An object's child fields stay rendered and show a **blank form**: what the form builds for them when it is given no `defaultValue` for this node — the node's own object `default` if it has one, otherwise each child's own `default`, derived values applied, array children filled up to `minItems`, nested objects rebuilt the same way. It does not depend on what the object held before — data discarded by `null` does not come back.
+- An object's child fields stay rendered and show a **blank form**: what the form builds for them when it is given no `defaultValue` for this node — the node's own object `default` if it has one, otherwise each child's own `default`, derived values applied, array children filled up to `minItems`, nested objects rebuilt the same way. It does not depend on what the object held before — data discarded by `null` does not come back. A value that reached a field through `injectTo` is **not** part of the blank form: a node that becomes `null` after mount loses it until its source changes again.
 - A nullable **array** that is itself `null` has no items and no `minItems` fill.
 
 ## What It Becomes
@@ -44,5 +44,5 @@ Exactly what the same write produces on a form given no `defaultValue` for this 
 
 - A **non-nullable** object assigned `null` becomes `{}`; only `type: [..., 'null']` (or deprecated `nullable: true`) keeps `null`.
 - `setValue(undefined)` is not `null`: it clears the subtree — fields and array items — without restoring child defaults.
-- The form never alters a value to make it validate. `oneOf` branches made only of `properties` all match `null`, so `null` fails such a `oneOf` in any validator — constrain the schema, not the form.
+- The form never alters a value to make it validate. `oneOf` branches made only of `properties` all match `null`, so `null` fails such a `oneOf` in any validator. A composition branch may not declare a `type` different from its parent's (`COMPOSITION_TYPE_REDEFINITION`), so a `{ type: 'null' }` branch cannot be added today — use `anyOf`, or no composition, at a level that must validate as `null`.
 - A custom `FormTypeInput` must call `onChange` to create the object; rendering a default in the blank form is not a write.
