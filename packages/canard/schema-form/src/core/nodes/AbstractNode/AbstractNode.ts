@@ -349,10 +349,22 @@ export abstract class AbstractNode<
     input: Value | Nullish | Fn<[prev: Value | Nullish], Value | Nullish>,
     option: UnionSetValueOption = SetValueOption.Overwrite,
   ): void {
+    if ((option & SetValueOption.Automatic) === 0) this.__intendedWrite__ = true;
     this.applyValue(
       typeof input === 'function' ? input(this.value) : input,
       option,
     );
+  }
+
+  /** @internal Whether a write from outside the form's own machinery reached this node since its last injection. */
+  private __intendedWrite__: boolean = false;
+
+  /**
+   * Records that a write from outside the form's own machinery reached this node.
+   * @internal Branch strategies call it for a commit their children caused, which never passes through `setValue`.
+   */
+  public __markIntendedWrite__(this: AbstractNode) {
+    this.__intendedWrite__ = true;
   }
 
   /**
@@ -943,6 +955,7 @@ export abstract class AbstractNode<
    * Sets up the `injectTo` schema property handler.
    * @internal Subscribes to value updates and propagates values to target nodes.
    *           Implements circular injection prevention using guard flags.
+   * @remarks An injection inherits the provenance of the update that triggered it: one caused only by values the form produced itself (a default, a derived value) is written as `Automatic`, so it cannot turn a `null` ancestor of the target into an object.
    */
   private __prepareInjectHandler__(this: AbstractNode) {
     if (this.__initialized__) return;
@@ -957,6 +970,8 @@ export abstract class AbstractNode<
       if (type & EventType.RequestInjection) {
         const injectionGuard = this.__injectionGuard__;
         if (injectionGuard == null) return;
+        const automatic = !this.__intendedWrite__;
+        this.__intendedWrite__ = false;
         const value = this.value;
         const dataPath = this.path;
         const context = {
@@ -978,7 +993,12 @@ export abstract class AbstractNode<
             const path = getAbsolutePath(dataPath, operations[i][0]);
             if (injectionGuard.has(path)) continue;
             injectionGuard.add(path);
-            this.find(path)?.setValue(operations[i][1]);
+            this.find(path)?.setValue(
+              operations[i][1],
+              automatic
+                ? SetValueOption.Overwrite | SetValueOption.Automatic
+                : SetValueOption.Overwrite,
+            );
           }
         } catch (error) {
           const errorContext = { ...context, value, error };

@@ -176,6 +176,7 @@ export class BranchStrategy implements ArrayNodeStrategy {
     const automatic =
       (option & SetValueOption.Automatic) > 0 && !this.__intended__;
     this.__intended__ = false;
+    if (!automatic) host.__markIntendedWrite__();
 
     const previous = [...this.__value__];
     this.__value__ = this.__toArray__();

@@ -178,6 +178,53 @@ describe('ObjectNode branch nullable — the contract holds through every public
     expect(values[0]).toEqual(values[1]);
   });
 
+  it.each([
+    ['source의 default', { type: 'string', default: 'seed' }, undefined],
+    [
+      'source의 derived 값',
+      { type: 'string', computed: { derived: '../trigger' } },
+      'changed',
+    ],
+  ] as const)(
+    '%s로 구동된 injectTo는 자동 쓰기이므로 null을 풀지 않아야 함',
+    async (_label, source, trigger) => {
+      const root = nodeFromJSONSchema({
+        onChange: () => {},
+        jsonSchema: {
+          type: 'object',
+          properties: {
+            trigger: { type: 'string', default: 'initial' },
+            source: {
+              ...source,
+              injectTo: (value: string) => ({
+                '../target/note': `from:${value}`,
+              }),
+            },
+            target: { type: ['object', 'null'], properties: fields },
+          },
+        },
+        defaultValue: { target: null },
+      }) as ObjectNode;
+      await delay(10);
+      if (trigger) {
+        (root.find('trigger') as StringNode).setValue(trigger);
+        await delay(10);
+      }
+
+      expect(root.find('target')?.value).toBeNull();
+      expect(root.find('target/note')?.value).toBe(
+        `from:${root.find('source')?.value}`,
+      );
+
+      (root.find('target/reason') as StringNode).setValue('edited');
+      await delay(10);
+      expect(root.find('target')?.value).toEqual({
+        note: `from:${root.find('source')?.value}`,
+        reason: 'edited',
+      });
+    },
+  );
+
   it('null 조상이 없는 폼에서 같은 값을 다시 쓰는 것은 아무 변화도 알리지 않아야 함', async () => {
     const reported: unknown[] = [];
     const root = nodeFromJSONSchema({
