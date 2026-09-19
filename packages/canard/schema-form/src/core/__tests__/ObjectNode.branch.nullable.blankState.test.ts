@@ -171,7 +171,8 @@ describe('ObjectNode branch nullable — every way to null leaves the same blank
           (root.find('target') as ObjectNode).setValue(null);
           await delay(10);
         }
-          const blank = [
+        if (defaultValue) expect(root.find('target')?.value).toBeNull();
+        const blank = [
           root.find('target/rows')?.value,
           root.find('target/tags')?.value,
         ];
@@ -239,6 +240,7 @@ describe('ObjectNode branch nullable — every way to null leaves the same blank
         (root.find('target') as ObjectNode).setValue(null);
         await delay(10);
       }
+      if (defaultValue) expect(root.find('target')?.value).toBeNull();
       const blank = ['series', 'preset', 'preset/a', 'optional', 'optional/b'].map(
         (path) => root.find(`target/${path}`)?.value,
       );
@@ -295,6 +297,7 @@ describe('ObjectNode branch nullable — every way to null leaves the same blank
         (root.find('target') as ObjectNode).setValue(null);
         await delay(10);
       }
+      if (defaultValue) expect(root.find('target')?.value).toBeNull();
       (root.find('target/note') as StringNode).setValue('written');
       await delay(10);
       promoted.push(root.find('target')?.value);
@@ -307,6 +310,42 @@ describe('ObjectNode branch nullable — every way to null leaves the same blank
     expect(promoted[1]).toEqual(promoted[0]);
     expect(promoted[2]).toEqual(promoted[0]);
   });
+
+  it.each([
+    ['아이템 default 있음', false, { type: 'string', default: 'S' }],
+    ['아이템 default 없음', false, { type: 'string' }],
+    ['terminal', true, { type: 'string', default: 'S' }],
+  ] as const)(
+    'minItems 배열 자식이 있어도 setValue(null)이 그대로 유지되어야 함 (%s)',
+    async (_label, terminal, items) => {
+      const reported: unknown[] = [];
+      const root = nodeFromJSONSchema({
+        onChange: (value) => reported.push(value),
+        jsonSchema: {
+          type: 'object',
+          properties: {
+            target: {
+              type: ['object', 'null'],
+              properties: {
+                note: { type: 'string' },
+                rows: { type: 'array', terminal, minItems: 1, items },
+              },
+            },
+          },
+        },
+        defaultValue: { target: { note: 'typed', rows: ['a', 'b'] } },
+      }) as ObjectNode;
+      await delay(10);
+      reported.length = 0;
+
+      (root.find('target') as ObjectNode).setValue(null);
+      await delay(50);
+
+      expect(root.find('target')?.value).toBeNull();
+      expect(root.value).toEqual({ target: null });
+      expect(reported).toEqual([{ target: null }]);
+    },
+  );
 
   it.each([
     ['객체 자식이 비활성', { inner: true }],

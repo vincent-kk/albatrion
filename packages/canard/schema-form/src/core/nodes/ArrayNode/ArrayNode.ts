@@ -5,11 +5,12 @@ import type { Nullish } from '@aileron/declare';
 import type { ArraySchema, ArrayValue } from '@/schema-form/types';
 
 import { AbstractNode } from '../AbstractNode';
-import type {
-  BranchNodeConstructorProps,
-  HandleChange,
-  SchemaNode,
-  UnionSetValueOption,
+import {
+  type BranchNodeConstructorProps,
+  type HandleChange,
+  type SchemaNode,
+  SetValueOption,
+  type UnionSetValueOption,
 } from '../../types';
 import {
   type ArrayNodeStrategy,
@@ -91,7 +92,7 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
 
   /**
    * @internal Mirrors the constructor: a given value or the schema default wins; otherwise the array is emptied and filled up to `minItems` with item defaults.
-   * @remarks The fill uses plain `push`, so call it only from a parent's locked window, where such a write is recorded instead of promoting.
+   * @remarks The fill is marked `Automatic`: a branch array emits it after the parent's lock is gone, and it must still be recorded by a `null` ancestor instead of promoting it.
    */
   public override __resetToBlank__(
     this: ArrayNode,
@@ -103,7 +104,12 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
       applyDerivedValue: true,
     });
     if (base === undefined)
-      while (this.length < this.minItems) this.push(undefined, true);
+      while (this.length < this.minItems)
+        this.__strategy__.push(
+          undefined,
+          true,
+          SetValueOption.BatchDefault | SetValueOption.Automatic,
+        );
   }
 
   /**

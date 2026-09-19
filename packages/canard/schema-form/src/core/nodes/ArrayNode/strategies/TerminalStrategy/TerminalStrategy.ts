@@ -171,12 +171,16 @@ export class TerminalStrategy implements ArrayNodeStrategy {
    * Adds a new element to the array.
    * @param input - Value to add (optional)
    */
-  public push(input?: ArrayValue[number], unlimited?: boolean) {
+  public push(
+    input?: ArrayValue[number],
+    unlimited?: boolean,
+    option?: UnionSetValueOption,
+  ) {
     if (unlimited !== true && this.__maxItems__ <= this.length)
       return Promise.resolve(this.length);
     const data = input ?? this.__defaultValue__;
     const value = this.__value__ == null ? [data] : [...this.__value__, data];
-    this.__emitChange__(value);
+    this.__emitChange__(value, option);
     return Promise.resolve(this.length);
   }
 
