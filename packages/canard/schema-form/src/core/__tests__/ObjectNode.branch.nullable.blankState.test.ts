@@ -132,4 +132,59 @@ describe('ObjectNode branch nullable — every way to null leaves the same blank
       });
     },
   );
+
+  it.each([false, true])(
+    'minItems 배열 자식도 경로와 무관하게 같은 상태여야 함 (terminal: %s)',
+    async (terminal) => {
+      const jsonSchema = {
+        type: 'object',
+        properties: {
+          target: {
+            type: ['object', 'null'],
+            properties: {
+              note: { type: 'string' },
+              rows: {
+                type: 'array',
+                terminal,
+                minItems: 2,
+                items: { type: 'string', default: 'S' },
+              },
+              tags: { type: 'array', terminal, items: { type: 'string' } },
+            },
+          },
+        },
+      } satisfies JSONSchema;
+      const results: unknown[] = [];
+      for (const defaultValue of [
+        undefined,
+        { target: null },
+        { target: { rows: ['a', 'b', 'c'], tags: ['t'] } },
+      ]) {
+        const root = nodeFromJSONSchema({
+          onChange: () => {},
+          jsonSchema,
+          defaultValue,
+        }) as ObjectNode;
+        await delay(10);
+        if (defaultValue?.target) {
+          (root.find('target') as ObjectNode).setValue(null);
+          await delay(10);
+        }
+        const blank = [
+          root.find('target/rows')?.value,
+          root.find('target/tags')?.value,
+        ];
+        (root.find('target/note') as StringNode).setValue('written');
+        await delay(10);
+        results.push({ blank, promoted: root.find('target')?.value });
+      }
+
+      expect(results[0]).toEqual({
+        blank: [['S', 'S'], []],
+        promoted: { note: 'written', rows: ['S', 'S'] },
+      });
+      expect(results[1]).toEqual(results[0]);
+      expect(results[2]).toEqual(results[0]);
+    },
+  );
 });

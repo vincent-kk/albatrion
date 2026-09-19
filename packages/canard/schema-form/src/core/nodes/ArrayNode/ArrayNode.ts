@@ -90,6 +90,19 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
   }
 
   /**
+   * @internal Mirrors the constructor: a given value or the schema default wins; otherwise the array is emptied and filled up to `minItems` with item defaults.
+   */
+  public override __resetToBlank__(
+    this: ArrayNode,
+    input?: ArrayValue | Nullish,
+  ) {
+    const base = input !== undefined ? input : this.jsonSchema.default;
+    this.__reset__({ inputValue: base !== undefined ? base : [] });
+    if (base === undefined)
+      while (this.length < this.minItems) this.push(undefined, true);
+  }
+
+  /**
    * Adds a new element to the array.
    * @param data - Value to add (optional, uses default if not provided)
    * @param unlimited - If `true`, ignores `maxItems` constraint
