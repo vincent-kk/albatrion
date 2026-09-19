@@ -10,6 +10,7 @@ JSON Schema `array` 타입을 처리하는 노드. 배열 요소 관리와 `push
 - 값 정제: `omitTrailing`(opt-in)은 부모 전파와 `normalizedValue` 양쪽에, `omitEmpty`(기본 on)는 부모 전파에만 적용 — 자식 노드와 `value` getter는 원본 유지
 - `minItems` 기본 항목 자동 생성: 생성 시 + Reset 옵션의 `undefined` 적용 시 재충전 (분기 복원에서 빈 항목 유지)
 - `push`/`remove` 등 조작 메서드는 `Promise<value>` 반환 (microtask 후 resolve)
+- nullable 배열의 `null`은 "배열 없음": 아이템이 없고, `push`·아이템 쓰기·배열 대입으로만 배열이 된다 (계약은 DETAIL)
 
 ## Boundaries
 
@@ -26,6 +27,7 @@ JSON Schema `array` 타입을 처리하는 노드. 배열 요소 관리와 `push
 - `BranchStrategy`와 `TerminalStrategy` 사이 전략 선택 조건 변경
 - 새 배열 조작 메서드 추가 (두 전략 모두 수정 필요)
 - `push` 반환 타입 변경 (현재 `Promise<number>`)
+- null 배열이 배열이 되는 조건, blank reset의 채움 규칙 변경
 
 ### Never do
 

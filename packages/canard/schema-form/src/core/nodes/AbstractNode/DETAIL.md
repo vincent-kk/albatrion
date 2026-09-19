@@ -8,6 +8,9 @@
 - 이 getter는 노드가 **밖으로 내보내는** 값의 단일 출처다. raw 상태를 봐야 하는 경로(예: `UpdateValue` 이벤트 payload)는 `value`를 계속 읽으며, 두 경로를 섞지 않는다.
 - 값 변경 통보는 `onChange(value)`로 부모에게 전달하고, 전파는 `__computeManager__.active && __scoped__`일 때만 일어난다. 이벤트 발행은 `publish(EventType.X)`를 경유한다.
 - `__initialize__`는 부모 노드가 actor로서 호출한다. 루트는 자기 자신이 호출한다.
+- **쓰기는 출처를 지닌다.** `SetValueOption.Automatic`은 폼이 스스로 만든 값(reset 계열 프리셋 전부, derived 쓰기)을 표시하고, `onChange(value, batch, automatic)`이 부모에 전달한다. null인 부모는 automatic 쓰기를 기록만 한다. 공개 옵션(`Merge`·`Overwrite`)에는 이 비트가 없으므로 밖에서의 `setValue`는 항상 의도된 쓰기다.
+- `__resetToBlank__(input?)`는 부모가 null이 될 때 자식을 "`defaultValue` 없는 폼이 만드는 상태"로 되돌린다: `input` 또는 스키마 기본값을 적용하고 derived 값을 반영한다. `ObjectNode`와 `ArrayNode`는 생성자를 따르도록 override한다.
+- `__hasNullAncestor__`는 조상 중 값이 `null`인 노드가 있는지 답한다. 변화 없는 커밋이 밖에서의 쓰기를 흡수한 branch 노드만 읽는다.
 
 ## API Contracts
 
@@ -45,6 +48,11 @@ public get normalizedValue(): Value | Nullish
 - `ArrayNode`가 아닌 노드에서 `node.normalizedValue`가 `node.value`와 동일한 값을 반환한다.
 - `value`가 `undefined` 또는 `null`인 노드에서 `normalizedValue`도 같은 nullish 값을 반환한다.
 
+### write-provenance — 자동 쓰기는 null 조상을 풀지 않는다
+
+- string·number·boolean 자식의 derived 값, reset으로 복원된 default는 null 부모를 객체로 만들지 않는다.
+- 공개 `setValue`(옵션 생략·`Merge`·`Overwrite`)로 쓴 값은 null 부모를 객체로 만든다.
+
 ### normalized-consumers — 네 소비 지점이 정제값을 읽는다
 
 - `options.omitTrailing`이 켜진 배열을 가진 폼에서 `FormHandle.getValue()`와 `onSubmit` 인자에 후행 빈 항목이 포함되지 않는다.
@@ -55,6 +63,10 @@ public get normalizedValue(): Value | Nullish
 
 - 같은 상태에서 `UpdateValue` 이벤트 payload와 `node.value`에는 후행 빈 항목이 그대로 남아 있다.
 
+## History
+
+- 2026-09-20 — 쓰기 출처(`Automatic`)와 `__resetToBlank__`·`__hasNullAncestor__` 추가. 이유: nullable branch 노드의 null 계약(`ObjectNode/DETAIL.md`)이 자동 쓰기와 의도된 쓰기의 구분을 요구했다. `__reset__`의 값 우선순위는 바뀌지 않았다.
+
 ## Last Updated
 
-2026-08-12 — 공개 `normalizedValue` getter 신설에 맞춰 기본값·override 허용 범위·네 소비 지점과 raw 채널 분리를 명문화 (신규 문서).
+2026-09-20 — 쓰기 출처·blank reset 요구사항과 `write-provenance` 추가.

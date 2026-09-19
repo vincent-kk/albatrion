@@ -26,17 +26,32 @@
 - `__locked__ = true` 구간에서는 자식→부모 재귀 업데이트를 차단한다.
 - `processValueWithValidate`로 비활성 oneOf/anyOf 분기 키를 객체 값에서 제거한다.
 
+### null 상태 요구사항
+
+`ObjectNode`의 null 계약(상위 DETAIL)을 이 전략이 구현한다.
+
+- null 판정은 `__value__ === null`이고 `__draft__`에 대기 중인 자식 쓰기가 없는 상태다.
+- null인 동안 자식 emit은 기록(`__blank__`)되거나 객체를 만든다. 기록만 하는 경우: `automatic` 표식이 있는 emit, 전략이 스스로 자식을 구동하는 `__locked__` 구간(생성·전파·분기 복원·blank reset)의 emit, 값 없는 emit(`undefined`). 그 외의 emit은 기록 전체를 draft로 옮긴 뒤 그 쓰기를 얹어 커밋한다.
+- 기록은 null이 전파될 때마다 새로 만든다 — blank reset이 아무것도 바꾸지 않는 자식은 emit하지 않으므로 이전 구간의 항목이 남는다. 분기 재합성 시에는 활성 분기 키로 가지치기한다.
+- null이 커밋되어 전파될 때 자식은 `null`을 받는 대신 `__resetToBlank__`로 재구성된다. nullable이 아닌 객체(`{}`로 커밋됨)는 자식에 `null`을 전파하는 기존 동작을 유지한다.
+- `resetToBlank(input?)`는 생성자를 그대로 따른다: `input` 또는 스키마 기본값을 `__value__`로 두고, 잠금 안에서 자식을 재구성한 뒤 Replace 없이 커밋한다. 그래서 자식이 되풀이할 뿐인 base는 생성 시와 같이 부모에 보고되지 않는다.
+- `__processCompositionValue__`는 검증 enhancer를 먼저 갱신한 뒤, null이면 값을 재합성하지 않고 반환한다. 순서가 바뀌면 null인 채 확정된 분기 안에서 객체가 될 때 oneOf 검증이 실패한다.
+- `__parseValue__`는 Replace가 아닌 커밋에서 null base에 빈 draft를 병합하는 것을 "변화 없음"으로 본다.
+- 커밋의 출처: 자식 emit이 `automatic`이 아니고 잠금 밖이면 `__intended__`를 세우고, 커밋은 옵션에 `Automatic`이 있고 `__intended__`가 없을 때만 automatic으로 부모에 전달된다. `__intended__`는 변화 없는 커밋을 포함한 모든 커밋 시도에서 소비된다.
+- 변화 없는 커밋이 밖에서의 쓰기를 흡수했고 조상 중 null이 있으면(`__hasNullAncestor__`) 현재 값을 부모에 다시 전달한다 — 값을 담은 쓰기는 깊이와 무관하게 null 조상에 도달해야 한다.
+
 ## API Contracts
 
 ### 공개 인터페이스 (`ObjectNodeStrategy` 구현)
 
-| 멤버                        | 종류   | 설명                                                                  |
-| --------------------------- | ------ | --------------------------------------------------------------------- |
-| `children`                  | getter | 현재 활성 자식 노드 배열                                              |
-| `subnodes`                  | getter | 모든 분기 포함 전체 자식 노드 배열                                    |
-| `value`                     | getter | 현재 커밋된 객체 값                                                   |
-| `applyValue(input, option)` | method | 외부에서 값 적용 (draft 갱신 → emit)                                  |
-| `initialize()`              | method | 자식 노드 활성화 및 초기 분기 확정 (`ObjectNode.__initialize__` 전용) |
+| 멤버                        | 종류   | 설명                                                                                |
+| --------------------------- | ------ | ----------------------------------------------------------------------------------- |
+| `children`                  | getter | 현재 활성 자식 노드 배열                                                            |
+| `subnodes`                  | getter | 모든 분기 포함 전체 자식 노드 배열                                                  |
+| `value`                     | getter | 현재 커밋된 객체 값                                                                 |
+| `applyValue(input, option)` | method | 외부에서 값 적용 (draft 갱신 → emit)                                                |
+| `initialize()`              | method | 자식 노드 활성화 및 초기 분기 확정 (`ObjectNode.__initialize__` 전용)               |
+| `resetToBlank(input?)`      | method | 기본값 없는 폼이 만드는 상태로 서브트리 재구성 (`ObjectNode.__resetToBlank__` 전용) |
 
 ## Acceptance Criteria
 
@@ -53,15 +68,25 @@
 - `oneOfIndex`가 변경될 때마다 이전 분기 노드는 `__reset__`되고 새 분기 노드는 복원된다. 자식이 실질 배열 상태를 이미 갖고 있으면(`__hasArrayState__` — same-batch 하이드레이션·비활성 주입) 그 raw 상태가 복원 입력이 되어 출력 필터(omitTrailing 등)가 자식 구조(빈 항목 포함)를 바꾸지 않고, 그 외 재활성화는 기본값을 복원한다.
 - `__propagate__`는 필터링 중(raw ≠ normalized)인 자식이 이미 방출 중인 값과 동일한 조각을 되적용하지 않는다.
 
+### null-preservation — null은 의도된 쓰기로만 풀린다
+
+- null 객체는 생성 중 자식 emit, oneOf/anyOf 초기 분기 확정과 재합성, computed 재평가, derived 의존값 변경, computed `active` 전환, 중첩 객체·배열의 지연 커밋을 거쳐도 `null`이다.
+- 같은 배치에 자동 쓰기와 밖에서의 쓰기가 섞이면 객체가 된다.
+- 객체가 된 값은 null이 아니었던 폼의 같은 쓰기와 같고, 활성 분기의 키만 포함한다.
+- null이 된 뒤 자식 상태는 `defaultValue: null`로 생성한 폼과 같다 — derived 배열, `minItems` 배열(두 전략), 자체 `default`를 가진 객체, `default: null` 객체, 중첩 oneOf 포함.
+- null → 쓰기 → null → 쓰기를 반복해도 앞 구간의 기록이 뒤 구간의 값에 섞이지 않는다.
+- null 조상이 없는 폼에서 같은 값을 다시 쓰는 것은 루트 `onChange`를 발생시키지 않는다.
+
 ### children-sync — 자식 목록 동기화
 
 - `__subnodes__`와 `__children__`은 항상 `BranchStrategy` 내부에서만 동기화된다.
 
 ## History
 
+- 2026-09-20 — null 상태 요구사항과 `null-preservation` 추가. 자식 값 기록(`__blank__`), 쓰기 출처 표식(`Automatic`/`__intended__`), 생성자를 따르는 `resetToBlank`를 도입. 이유: 자동 쓰기와 의도된 쓰기가 같은 `setValue` 경로로 도착해 구분할 수 없었고, derived·중첩 노드의 지연 커밋은 부모의 잠금 밖에서 도착했다. 검토 중 기각한 안: "보이는 값과 같은 쓰기는 무시" — default를 수락해 객체를 만들 방법이 없어진다. 회귀 가드: `ObjectNode.branch.nullable.*`, `nullable.object-*.render`.
 - 2026-08-12 — 분기 복원이 자식의 실질 raw 배열 상태를 우선 소비하도록 전환(`__hasArrayState__`), `__propagate__`에 필터링 자식 출력-에코 가드 추가. 이유: 복원·분배가 출력-정제된 합성값을 상태로 소비해 `options.omitTrailing` 배열의 후행 빈 항목 노드가 same-batch 하이드레이션에서 소실됐다. 왕복 재활성화의 기본값 복원 계약(`initialDefault` 스위트)은 유지. 회귀 가드: `array.omit-trailing.composite/conditional` 시나리오.
 - 2026-06-06 — 초기화 순서 불변식과 초기 computed 정합성을 명문화. 이유: 분기 노드가 computed 속성 계산 전에 복원되면 조건부 필드가 잘못된 활성 상태로 초기화됐다. 회귀 가드: `BranchStrategy.oneOf.initialComputed`.
 
 ## Last Updated
 
-2026-08-12 — 분기 복원 raw 상태 채널 요구사항·수용 기준 추가.
+2026-09-20 — null 상태 요구사항·`null-preservation` 수용 기준 추가.
