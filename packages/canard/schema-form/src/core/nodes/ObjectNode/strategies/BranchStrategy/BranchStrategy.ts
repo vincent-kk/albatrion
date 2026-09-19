@@ -79,6 +79,12 @@ export class BranchStrategy implements ObjectNodeStrategy {
   private __draft__: ObjectValue | Nullish;
 
   /**
+   * What the children hold while the object is `null` — the object it becomes on its first outside write.
+   * @remarks Meaningful only while `__isNull__`; it is rebuilt each time the object becomes `null`.
+   */
+  private __blank__: ObjectValue = {};
+
+  /**
    * Whether an activating child already carries live array state of its own.
    * @param node - Child node being restored by a branch switch
    * @returns `true` for an array child holding items — a same-batch hydration or an inactive-branch injection whose raw item nodes (incl. trailing empties) must survive the restore
@@ -235,6 +241,7 @@ export class BranchStrategy implements ObjectNodeStrategy {
     const current = source || {};
     const committed = target || {};
     const nullify = target === null;
+    if (nullify) this.__blank__ = {};
     const propagateOption =
       target == null ? option & ~SetValueOption.EmitChange : option;
     this.__locked__ = true;
@@ -545,7 +552,13 @@ export class BranchStrategy implements ObjectNodeStrategy {
         joinSegment(this.__host__.path, ENHANCED_KEY),
         this.__oneOfIndex__,
       );
-    if (this.__isNull__) return;
+    if (this.__isNull__) {
+      this.__blank__ = processValueWithValidate(
+        this.__blank__,
+        this.__validateAllowedKey__,
+      );
+      return;
+    }
     this.__draft__ = processValueWithValidate(
       this.__processValue__({ ...this.__value__, ...this.__draft__ }),
       this.__validateAllowedKey__,
@@ -718,15 +731,22 @@ export class BranchStrategy implements ObjectNodeStrategy {
     const handleChangeFactory =
       (property: string): HandleChange =>
       (input, batched, automatic) => {
-        // Locked means this strategy is driving its own children (construction,
-        // propagation, branch restore); like any automatic write, it cannot promote null.
-        if (this.__isNull__ && (automatic || this.__locked__)) return;
-        if (this.__draft__ == null) this.__draft__ = {};
-        if (
-          (input === undefined && this.__value__?.[property] === input) ||
-          (input !== undefined && this.__draft__[property] === input)
-        )
-          return;
+        if (this.__isNull__) {
+          // Locked means this strategy is driving its own children (construction,
+          // propagation, branch restore); like an automatic or valueless write, it is recorded only.
+          if (automatic || this.__locked__ || input === undefined) {
+            this.__blank__[property] = input;
+            return;
+          }
+          this.__draft__ = { ...this.__blank__ };
+        } else {
+          if (this.__draft__ == null) this.__draft__ = {};
+          if (
+            (input === undefined && this.__value__?.[property] === input) ||
+            (input !== undefined && this.__draft__[property] === input)
+          )
+            return;
+        }
         this.__draft__[property] = input;
         this.__expired__ = true;
         if (this.__isolated__ && this.__isPristine__) this.__isolated__ = false;

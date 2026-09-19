@@ -56,14 +56,18 @@ describe('nullable.object-initial-null.render — seeded null survives child con
     expect(form.value('/write/closed/stateReason')).toBe('');
   });
 
-  it('promotes a seeded null object only when the user writes a child value', async () => {
+  it('promotes a seeded null object to a fresh object carrying the user write', async () => {
     const form = await renderForm(schema, { defaultValue });
 
     await form.type('/write/closed/note', 'done');
 
-    expect(form.node('/write/closed')?.value).toEqual({ note: 'done' });
+    // Same as an object that never was null: the sibling default comes along.
+    expect(form.node('/write/closed')?.value).toEqual({
+      stateReason: null,
+      note: 'done',
+    });
     expect(form.getValue()).toEqual({
-      write: { open: null, closed: { note: 'done' } },
+      write: { open: null, closed: { stateReason: null, note: 'done' } },
     });
   });
 
@@ -134,7 +138,9 @@ describe('nullable.object-initial-null.render — seeded null survives child con
       // needs must already have been recorded while the object was still null.
       await form.type('/target/aValue', 'typed');
 
-      expect(form.getValue()).toEqual({ target: { aValue: 'typed' } });
+      expect(form.getValue()).toEqual({
+        target: { kind: 'a', aValue: 'typed' },
+      });
       expect(await form.validate()).toEqual([]);
     });
 

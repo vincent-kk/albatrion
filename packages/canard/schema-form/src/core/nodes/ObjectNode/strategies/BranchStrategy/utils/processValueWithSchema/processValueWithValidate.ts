@@ -9,10 +9,18 @@ import type { ObjectValue } from '@/schema-form/types';
  * @param validate - Validation function that returns true for keys that should be included
  * @returns Object value filtered according to validation function, or original value if no validation function provided
  */
-export const processValueWithValidate = (
+export function processValueWithValidate(
+  value: ObjectValue,
+  validate?: Fn<[key: string], boolean>,
+): ObjectValue;
+export function processValueWithValidate(
   value: ObjectValue | Nullish,
   validate?: Fn<[key: string], boolean>,
-): ObjectValue | Nullish => {
+): ObjectValue | Nullish;
+export function processValueWithValidate(
+  value: ObjectValue | Nullish,
+  validate?: Fn<[key: string], boolean>,
+): ObjectValue | Nullish {
   if (value == null || validate === undefined) return value;
   const keys = Object.keys(value);
   if (keys.length === 0) return value;
@@ -20,4 +28,4 @@ export const processValueWithValidate = (
   for (let i = 0, k = keys[0], l = keys.length; i < l; i++, k = keys[i])
     if (validate(k)) result[k] = value[k];
   return result;
-};
+}
