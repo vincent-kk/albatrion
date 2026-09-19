@@ -564,6 +564,50 @@ const jsonSchema = {
 }
 ```
 
+### oneOf / anyOf 분기의 type
+
+분기는 보통 `type`을 생략하고 부모의 타입을 따릅니다. 선언한다면 부모가 허용하는 것보다 넓게 말할 수 없습니다.
+
+| 부모 `type`                                             | 허용되는 분기 `type`                         |
+| ------------------------------------------------------- | -------------------------------------------- |
+| `'object'`                                              | 생략, `'object'`, `['object']`               |
+| `['object', 'null']` 또는 `'object'` + `nullable: true` | 생략, 부모와 같은 타입, `'object'`, `'null'` |
+
+분기 자신의 `nullable: true` 플래그는 부모와 비교하지 않으므로 `'object'` + `nullable: true`는 어떤 객체 아래에서도 허용됩니다. 그 밖의 선언 — nullable이 아닌 객체 아래의 `'null'`·`['object', 'null']` 분기, `'string'`, `'array'` — 은 `COMPOSITION_TYPE_REDEFINITION`을 던집니다.
+
+분기의 `properties` 안에서 `type`이 **있는** 항목은 필드이고, `type` 없이 `const`나 `enum`만 가진 항목은 그 분기를 고르는 조건입니다. 이런 판별자에 `type`을 붙이면 필드가 되어 부모의 같은 이름 프로퍼티와 충돌합니다(`COMPOSITION_PROPERTY_REDEFINITION`).
+
+#### null 분기 패턴
+
+`oneOf`는 정확히 한 분기가 맞아야 하고, `type`이 없는 분기는 `null`에도 맞습니다 — `properties`와 `required`는 객체에만 적용되기 때문입니다. 그래서 nullable 객체가 `oneOf` 아래에서 `null`로 검증을 통과하려면 이 null 분기 패턴이 필요합니다: `{ type: 'null' }` 분기 하나, 그리고 객체 분기마다 `type: 'object'`.
+
+```typescript
+{
+  type: ['object', 'null'],
+  properties: {
+    kind: { type: 'string', enum: ['a', 'b'], default: 'a' }
+  },
+  oneOf: [
+    { type: 'null' },
+    {
+      type: 'object',
+      '&if': "./kind === 'a'",
+      properties: { aValue: { type: 'string' } }
+    },
+    {
+      type: 'object',
+      '&if': "./kind === 'b'",
+      properties: { bValue: { type: 'string' } }
+    }
+  ]
+}
+```
+
+- null 분기는 검증기를 위한 것입니다. 필드가 없고 활성 분기가 되지 않으며, 거기에 쓴 조건이나 `properties`는 무시되고 개발 환경 경고 `NULL_BRANCH_IGNORED_FOR_FORM`이 나옵니다.
+- 객체가 `null`인지는 값이 정하고, 어떤 객체 분기가 보이는지는 분기 조건이 정합니다. 값이 `null`인 동안 자식들은 조건이 고른 분기의 빈 폼을 보여 줍니다([Nullable 객체와 배열](#nullable-객체와-배열) 참고).
+- null 분기의 위치는 상관없습니다. 사용 중인 분기의 오류는 해당 필드에 전달되고, null 분기가 낸 "must be null"은 보고되지 않습니다.
+- `oneOf`가 `null`을 검증할 수 없는 nullable 객체 — 받아 주는 분기가 없거나 여러 개인 경우 — 는 개발 환경 경고 `NULLABLE_ONE_OF_NULL_UNREACHABLE`을 냅니다. `anyOf`는 이런 주의가 필요 없습니다: null 분기 하나 또는 type 없는 분기만으로 충족됩니다.
+
 ### if-then-else
 
 ```typescript
@@ -1030,7 +1074,7 @@ const jsonSchema = {
 
 - **nullable이 아닌** 객체에 `null`을 대입하면 `{}`가 됩니다.
 - `setValue(undefined)`는 `null`이 아닙니다: 서브트리를 — 모든 필드와 모든 배열 아이템을 — 비우며 자식 default를 복원하지 않습니다.
-- 폼은 검증을 통과시키려고 값을 바꾸지 않습니다. `null`의 유효성은 스키마가 결정합니다. `properties`만으로 이루어진 `oneOf` 분기는 모두 `null`에 매치되므로 어떤 검증기에서도 `null`은 그 `oneOf`를 통과하지 못하고, 합성 분기는 부모와 다른 `type`을 선언할 수 없어 지금은 `{ type: 'null' }` 분기를 추가할 수도 없습니다. `null`로 검증을 통과해야 하는 nullable 객체는 그 레벨에서 `anyOf`를 쓰거나 합성을 쓰지 않아야 합니다.
+- 폼은 검증을 통과시키려고 값을 바꾸지 않습니다. `null`의 유효성은 스키마가 결정합니다. `type`을 선언하지 않은 `oneOf` 분기는 모두 `null`에 매치되므로 어떤 검증기에서도 `null`은 그 `oneOf`를 통과하지 못합니다. [null 분기 패턴](#null-분기-패턴) — `{ type: 'null' }` 분기와 객체 분기의 `type: 'object'` — 을 쓰거나 `anyOf`를 쓰십시오.
 
 ### 노드 타입 가드
 

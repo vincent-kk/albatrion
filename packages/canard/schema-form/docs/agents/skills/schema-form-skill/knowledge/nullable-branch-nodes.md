@@ -44,5 +44,8 @@ Exactly what the same write produces on a form given no `defaultValue` for this 
 
 - A **non-nullable** object assigned `null` becomes `{}`; only `type: [..., 'null']` (or deprecated `nullable: true`) keeps `null`.
 - `setValue(undefined)` is not `null`: it clears the subtree — fields and array items — without restoring child defaults.
-- The form never alters a value to make it validate. `oneOf` branches made only of `properties` all match `null`, so `null` fails such a `oneOf` in any validator. A composition branch may not declare a `type` different from its parent's (`COMPOSITION_TYPE_REDEFINITION`), so a `{ type: 'null' }` branch cannot be added today — use `anyOf`, or no composition, at a level that must validate as `null`.
+- The form never alters a value to make it validate. `oneOf` branches that declare no `type` all match `null`, so `null` fails such a `oneOf` in any validator. Write the null-branch pattern: `oneOf: [{ type: 'null' }, { type: 'object', '&if': …, properties: … }, …]` — one null branch, and `type: 'object'` on every object branch. `anyOf` needs neither.
+- A branch may narrow a nullable parent's type to `'object'` or `'null'`; a `'null'` branch under a non-nullable object, or any other type, throws `COMPOSITION_TYPE_REDEFINITION`.
+- The null branch is validation-only: no fields, never the active branch. A condition or `properties` on it is ignored (`NULL_BRANCH_IGNORED_FOR_FORM`). Null-ness comes from the value, the visible object branch from the branch conditions — the two are independent, so the blank form while null is the branch the conditions select.
+- A nullable object whose `oneOf` cannot validate `null` prints `NULLABLE_ONE_OF_NULL_UNREACHABLE` in development.
 - A custom `FormTypeInput` must call `onChange` to create the object; rendering a default in the blank form is not a write.
