@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import { delay } from '@winglet/common-utils';
 
-import { nodeFromJSONSchema } from '@/schema-form/core';
+import { SetValueOption, nodeFromJSONSchema } from '@/schema-form/core';
 import type { JSONSchema } from '@/schema-form/types';
 
 import type { ObjectNode } from '../nodes/ObjectNode';
@@ -83,5 +83,25 @@ describe('ObjectNode branch nullable — null survives computed-property re-eval
     await delay(10);
 
     expect(node.find('target')?.value).toEqual({});
+  });
+
+  it('null 객체에 빈 객체를 Merge 하는 것은 아무것도 바꾸지 않으므로 null이 유지되어야 함', async () => {
+    const node = nodeFromJSONSchema({
+      onChange: () => {},
+      jsonSchema: schema,
+      defaultValue: { target: null },
+    });
+    await delay(10);
+
+    (node.find('target') as ObjectNode).setValue({}, SetValueOption.Merge);
+    await delay(10);
+    expect(node.value).toEqual({ target: null });
+
+    (node.find('target') as ObjectNode).setValue(
+      { a: 'y' },
+      SetValueOption.Merge,
+    );
+    await delay(10);
+    expect(node.value).toEqual({ target: { a: 'y' } });
   });
 });
