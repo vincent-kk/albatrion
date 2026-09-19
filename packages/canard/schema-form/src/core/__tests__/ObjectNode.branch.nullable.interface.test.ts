@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import { delay } from '@winglet/common-utils';
 
-import { nodeFromJSONSchema } from '@/schema-form/core';
+import { SetValueOption, nodeFromJSONSchema } from '@/schema-form/core';
 import type { JSONSchema } from '@/schema-form/types';
 
 import type { BooleanNode } from '../nodes/BooleanNode';
@@ -150,6 +150,32 @@ describe('ObjectNode branch nullable — the contract holds through every public
       source: 's',
       target: { note: 'from:s', reason: 'because' },
     });
+  });
+
+  it('키를 담은 Merge도 빈 양식 위에 얹혀야 함', async () => {
+    const values: unknown[] = [];
+    for (const defaultValue of [{ target: null }, undefined]) {
+      const root = nodeFromJSONSchema({
+        onChange: () => {},
+        jsonSchema: {
+          type: 'object',
+          properties: {
+            target: { type: ['object', 'null'], properties: fields },
+          },
+        },
+        defaultValue,
+      }) as ObjectNode;
+      await delay(10);
+      (root.find('target') as ObjectNode).setValue(
+        { note: 'merged' },
+        SetValueOption.Merge,
+      );
+      await delay(10);
+      values.push(root.find('target')?.value);
+    }
+
+    expect(values[0]).toEqual({ note: 'merged', reason: 'because' });
+    expect(values[0]).toEqual(values[1]);
   });
 
   it('null 조상이 없는 폼에서 같은 값을 다시 쓰는 것은 아무 변화도 알리지 않아야 함', async () => {
