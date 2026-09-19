@@ -809,6 +809,7 @@ const jsonSchema = {
 
 - `omitTrailing` (opt-in): removes **trailing** consecutive `undefined` items only. Leading and middle `undefined` items are preserved so error `dataPath`s and validation indices stay aligned — `[1, undefined, 2]` is emitted as-is.
 - `omitEmpty` (on by default): converts an empty array to `undefined` on the parent-propagation path. Filter order is `omitTrailing → omitEmpty`, so an all-empty array collapses to `undefined` under its parent (a root-level form still emits `[]`).
+- `null` is not an empty value: neither filter touches a nullable array that is `null` — see [Nullable Objects and Arrays](#nullable-objects-and-arrays).
 - `node.value` stays raw; the refined output is exposed as `node.normalizedValue`. Validation runs against the refined value, so `minItems` counts only the filled prefix.
 - A Reset-flagged clear (form reset, branch reactivation) refills `minItems` empty items; a plain `setValue(undefined)` clears every item.
 
@@ -984,6 +985,49 @@ const definitions = [
   { test: { type: 'string', nullable: false }, component: RequiredInput },
 ];
 ```
+
+### Nullable Objects and Arrays
+
+A nullable object or array (`type: ['object', 'null']`, `type: ['array', 'null']`) has three distinct states, and the form never turns one into another by itself.
+
+| Value       | Meaning                         | What the parent receives                                                    |
+| ----------- | ------------------------------- | --------------------------------------------------------------------------- |
+| `null`      | the object/array does not exist | `null` — never touched by `omitEmpty`                                       |
+| `{}` / `[]` | it exists and is empty          | omitted by `omitEmpty` (default); kept with `options: { omitEmpty: false }` |
+| `undefined` | unset                           | the key is omitted                                                          |
+
+**Only intent changes `null`.**
+
+- It becomes `null` through `defaultValue` / schema `default: null`, `setValue(null)` on the node or through an ancestor, or a reset back to a `null` default.
+- It becomes an object/array when one is assigned to the node itself (`setValue({})`, `setValue([])`), or when a write **that carries a value** reaches any descendant — user input, `setValue`, array `push`, `injectTo` — including confirming the value a field already shows.
+- It stays `null` for values the form produces by itself (a child's `default`, `computed.derived`, `oneOf`/`anyOf` branch restore, reset, reactivation by `computed.active`) and for a write without a value (emptying a field, `clear()` on a null array, merging `{}`). An emptied field is remembered and honored once the node is created.
+
+**While it is `null`**, the emitted value is `null` whatever the schema holds — arrays, defaults, derived values, `oneOf`/`anyOf`, computed or virtual fields. An object's child fields stay rendered and show a blank form: each child's own schema `default`, derived values applied, identical whichever way the object became `null`. Data discarded by `null` does not come back. A null array has no items — no `minItems` fill.
+
+**What it becomes** is exactly what the same write produces on a form where the node never was `null` (for an array: on an empty array), so the value always matches what the fields show.
+
+```tsx
+const jsonSchema = {
+  type: 'object',
+  properties: {
+    closed: {
+      type: ['object', 'null'],
+      properties: {
+        reason: { type: 'string', default: 'completed' },
+        note: { type: 'string' },
+      },
+    },
+  },
+};
+// <Form jsonSchema={jsonSchema} defaultValue={{ closed: null }} />
+// getValue()                     → { closed: null }   ('completed' is shown, not emitted)
+// user types "done" into note    → { closed: { reason: 'completed', note: 'done' } }
+// setValue({ closed: null })     → { closed: null }   (the fields show the blank form again)
+```
+
+- A **non-nullable** object assigned `null` becomes `{}`.
+- `setValue(undefined)` is not `null`: it clears the subtree and does not restore child defaults.
+- The form never alters a value to make it validate. Whether `null` is valid is the schema's decision — note that `oneOf` branches made only of `properties` all match `null`.
 
 ### Node Type Guards
 

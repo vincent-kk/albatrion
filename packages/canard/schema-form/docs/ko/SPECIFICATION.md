@@ -807,6 +807,7 @@ const jsonSchema = {
 
 - `omitTrailing` (opt-in): **후행** 연속 `undefined` 항목만 제거합니다. 선행·중간 `undefined`는 보존되어 error `dataPath`와 validation index 정합이 유지됩니다 — `[1, undefined, 2]`는 그대로 방출됩니다.
 - `omitEmpty` (기본 활성): 빈 배열을 부모 전파 경로에서 `undefined`로 변환합니다. 필터 순서는 `omitTrailing → omitEmpty`라서 전부 빈 배열은 부모에서 `undefined`로 수렴합니다 (루트 폼은 `[]`를 방출).
+- `null`은 빈 값이 아닙니다: 두 필터 모두 값이 `null`인 nullable 배열을 건드리지 않습니다 — [Nullable 객체와 배열](#nullable-객체와-배열) 참고.
 - `node.value`는 raw를 유지하고, 정제된 출력은 `node.normalizedValue`로 노출됩니다. validation은 정제된 값 기준이라 `minItems`는 채워진 prefix만 셉니다.
 - Reset 계열 초기화(폼 reset, 분기 재활성화)는 `minItems`만큼 빈 항목을 재충전하고, 일반 `setValue(undefined)`는 전부 비웁니다.
 
@@ -982,6 +983,49 @@ const definitions = [
   { test: { type: 'string', nullable: false }, component: RequiredInput },
 ];
 ```
+
+### Nullable 객체와 배열
+
+nullable 객체·배열(`type: ['object', 'null']`, `type: ['array', 'null']`)은 서로 다른 세 상태를 가지며, 폼이 스스로 한 상태를 다른 상태로 바꾸지 않습니다.
+
+| 값          | 의미             | 부모가 받는 값                                                   |
+| ----------- | ---------------- | ---------------------------------------------------------------- |
+| `null`      | 객체/배열이 없음 | `null` — `omitEmpty`의 대상이 아님                               |
+| `{}` / `[]` | 있고 비어 있음   | `omitEmpty`(기본)로 생략, `options: { omitEmpty: false }`면 유지 |
+| `undefined` | 설정되지 않음    | 키가 생략됨                                                      |
+
+**`null`은 의도로만 바뀝니다.**
+
+- `defaultValue`·스키마 `default: null`, 노드 자신이나 조상을 통한 `setValue(null)`, `null` 기본값으로의 reset으로 `null`이 됩니다.
+- 노드 자신에 객체/배열을 대입하거나(`setValue({})`, `setValue([])`), **값을 담은 쓰기**가 자손에 도착하면 객체/배열이 됩니다 — 사용자 입력, `setValue`, 배열 `push`, `injectTo`. 필드가 이미 보여 주는 값을 그대로 확정하는 것도 포함됩니다.
+- 폼이 스스로 만든 값(자식의 `default`, `computed.derived`, `oneOf`/`anyOf` 분기 복원, reset, `computed.active`에 의한 재활성화)과 값 없는 쓰기(필드 비우기, null 배열의 `clear()`, `{}` 병합)로는 `null`이 유지됩니다. 비운 필드는 기억되어 이후 노드가 만들어질 때 반영됩니다.
+
+**`null`인 동안** 출력은 스키마가 무엇을 담고 있든 — 배열, default, derived, `oneOf`/`anyOf`, computed·virtual 필드 — `null`입니다. 객체의 자식 필드는 계속 렌더되며 빈 양식을 보여 줍니다: 각 자식의 스키마 `default`와 derived 값이 적용된 상태이고, 어떤 경로로 `null`이 되었든 같습니다. `null`로 버린 데이터는 되살아나지 않습니다. null 배열에는 아이템이 없습니다(`minItems` 채움 없음).
+
+**무엇이 되는가:** 한 번도 `null`이 아니었던 폼에서 같은 쓰기가 만드는 값과 정확히 같습니다(배열은 빈 배열 기준). 그래서 값은 항상 필드가 보여 주는 것과 일치합니다.
+
+```tsx
+const jsonSchema = {
+  type: 'object',
+  properties: {
+    closed: {
+      type: ['object', 'null'],
+      properties: {
+        reason: { type: 'string', default: 'completed' },
+        note: { type: 'string' },
+      },
+    },
+  },
+};
+// <Form jsonSchema={jsonSchema} defaultValue={{ closed: null }} />
+// getValue()                     → { closed: null }   ('completed'는 보이지만 방출되지 않음)
+// note에 "done" 입력             → { closed: { reason: 'completed', note: 'done' } }
+// setValue({ closed: null })     → { closed: null }   (필드는 다시 빈 양식을 보여 줌)
+```
+
+- **nullable이 아닌** 객체에 `null`을 대입하면 `{}`가 됩니다.
+- `setValue(undefined)`는 `null`이 아닙니다: 서브트리를 비우며 자식 default를 복원하지 않습니다.
+- 폼은 검증을 통과시키려고 값을 바꾸지 않습니다. `null`의 유효성은 스키마가 결정합니다 — `properties`만으로 이루어진 `oneOf` 분기는 모두 `null`에 매치된다는 점에 유의하세요.
 
 ### 노드 타입 가드
 
