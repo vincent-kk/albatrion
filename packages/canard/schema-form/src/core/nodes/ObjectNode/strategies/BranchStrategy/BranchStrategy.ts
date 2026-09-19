@@ -90,6 +90,14 @@ export class BranchStrategy implements ObjectNodeStrategy {
   /** Flag indicating whether the object value is expired */
   private __expired__: boolean = true;
 
+  /** Whether the object is `null` with no child write pending in the draft. */
+  private get __isNull__() {
+    return (
+      this.__value__ === null &&
+      (this.__draft__ === null || isEmptyObject(this.__draft__))
+    );
+  }
+
   /**
    * Determines whether to queue or immediately process value changes.
    *
@@ -516,20 +524,22 @@ export class BranchStrategy implements ObjectNodeStrategy {
    * Processes and validates the object value according to active composition branches.
    * Filters out properties that are not allowed by current oneOf/anyOf selections.
    * @param isolation - Whether the operation is in isolation mode
+   * @remarks A `null` value with no pending child write has no keys to filter; recomposing it would commit `{}` in its place, so only the enhancer is adjusted.
    * @private
    */
   private __processCompositionValue__(isolation: boolean) {
+    if (this.__host__.__validationEnabled__)
+      this.__host__.__adjustEnhancer__(
+        joinSegment(this.__host__.path, ENHANCED_KEY),
+        this.__oneOfIndex__,
+      );
+    if (this.__isNull__) return;
     this.__draft__ = processValueWithValidate(
       this.__processValue__({ ...this.__value__, ...this.__draft__ }),
       this.__validateAllowedKey__,
     );
     this.__expired__ = false;
     this.__processComputedProperties__(this.__draft__);
-    if (this.__host__.__validationEnabled__)
-      this.__host__.__adjustEnhancer__(
-        joinSegment(this.__host__.path, ENHANCED_KEY),
-        this.__oneOfIndex__,
-      );
     this.__emitChange__(
       isolation ? SetValueOption.IsolateReset : SetValueOption.Reset,
     );
@@ -694,9 +704,9 @@ export class BranchStrategy implements ObjectNodeStrategy {
     const handleChangeFactory =
       (property: string): HandleChange =>
       (input, batched) => {
-        // Children emit their defaults while this strategy is still constructing;
-        // an explicit null default outranks them, so they must not promote it.
-        if (this.__draft__ === null && !host.initialized) return;
+        // Locked means this strategy is driving its own children (construction,
+        // propagation, branch restore); their default emits must not promote null.
+        if (this.__locked__ && this.__isNull__) return;
         if (this.__draft__ == null) this.__draft__ = {};
         if (
           (input === undefined && this.__value__?.[property] === input) ||

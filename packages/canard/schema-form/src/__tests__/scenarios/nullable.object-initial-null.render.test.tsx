@@ -76,4 +76,78 @@ describe('nullable.object-initial-null.render — seeded null survives child con
     expect(form.getValue()).toEqual(defaultValue);
     expect(form.value('/write/closed/note')).toBe('');
   });
+
+  describe('with oneOf branches whose children carry defaults', () => {
+    const branchSchema = {
+      type: 'object',
+      properties: {
+        target: {
+          type: ['object', 'null'],
+          properties: {
+            kind: { type: 'string', enum: ['a', 'b'], default: 'a' },
+          },
+          oneOf: [
+            {
+              '&if': "./kind === 'a'",
+              properties: { aValue: { type: 'string', default: 'A' } },
+            },
+            {
+              '&if': "./kind === 'b'",
+              properties: { bValue: { type: 'string', default: 'B' } },
+            },
+          ],
+        },
+      },
+    } satisfies JSONSchema;
+
+    it('keeps the seeded null after the initial branch settles, with the active branch mounted', async () => {
+      const form = await renderForm(branchSchema, {
+        defaultValue: { target: null },
+      });
+
+      expect(form.node('/target')?.value).toBeNull();
+      expect(form.getValue()).toEqual({ target: null });
+      expect(form.exists('/target/aValue')).toBe(true);
+      expect(form.exists('/target/bValue')).toBe(false);
+    });
+
+    it('promotes to the selected branch when the user switches the discriminator', async () => {
+      const form = await renderForm(branchSchema, {
+        defaultValue: { target: null },
+      });
+
+      await form.selectOption('/target/kind', 'b');
+
+      expect(form.getValue()).toEqual({ target: { kind: 'b', bValue: 'B' } });
+      expect(form.exists('/target/bValue')).toBe(true);
+      expect(form.exists('/target/aValue')).toBe(false);
+    });
+
+    it('validates clean when the null object is promoted inside the branch that settled while it was null', async () => {
+      const form = await renderForm(branchSchema, {
+        defaultValue: { target: null },
+        validator: true,
+      });
+      expect(form.getValue()).toEqual({ target: null });
+
+      // The oneOf index does not change here, so the branch marker the validator
+      // needs must already have been recorded while the object was still null.
+      await form.type('/target/aValue', 'typed');
+
+      expect(form.getValue()).toEqual({ target: { aValue: 'typed' } });
+      expect(await form.validate()).toEqual([]);
+    });
+
+    it('returns to the seeded null on reset after a branch switch', async () => {
+      const form = await renderForm(branchSchema, {
+        defaultValue: { target: null },
+      });
+
+      await form.selectOption('/target/kind', 'b');
+      await form.reset();
+
+      expect(form.getValue()).toEqual({ target: null });
+      expect(form.exists('/target/aValue')).toBe(true);
+    });
+  });
 });
