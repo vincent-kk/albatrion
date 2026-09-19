@@ -809,7 +809,7 @@ const jsonSchema = {
 - `omitEmpty` (기본 활성): 빈 배열을 부모 전파 경로에서 `undefined`로 변환합니다. 필터 순서는 `omitTrailing → omitEmpty`라서 전부 빈 배열은 부모에서 `undefined`로 수렴합니다 (루트 폼은 `[]`를 방출).
 - `null`은 빈 값이 아닙니다: 두 필터 모두 값이 `null`인 nullable 배열을 건드리지 않습니다 — [Nullable 객체와 배열](#nullable-객체와-배열) 참고.
 - `node.value`는 raw를 유지하고, 정제된 출력은 `node.normalizedValue`로 노출됩니다. validation은 정제된 값 기준이라 `minItems`는 채워진 prefix만 셉니다.
-- Reset 계열 초기화(폼 reset, 분기 재활성화)는 `minItems`만큼 빈 항목을 재충전하고, 일반 `setValue(undefined)`는 전부 비웁니다.
+- Reset 계열 초기화(폼 reset, 분기 재활성화)는 `minItems`만큼 빈 항목을 재충전하고, 일반 `setValue(undefined)`는 전부 비웁니다. 기본값이 `null`인 배열은 채움 없이 `null`로 reset됩니다.
 
 ### Value Injection (injectTo)
 
@@ -996,13 +996,18 @@ nullable 객체·배열(`type: ['object', 'null']`, `type: ['array', 'null']`)�
 
 **`null`은 의도로만 바뀝니다.**
 
-- `defaultValue`·스키마 `default: null`, 노드 자신이나 조상을 통한 `setValue(null)`, `null` 기본값으로의 reset으로 `null`이 됩니다.
-- 노드 자신에 객체/배열을 대입하거나(`setValue({})`, `setValue([])`), **값을 담은 쓰기**가 자손에 도착하면 객체/배열이 됩니다 — 사용자 입력, `setValue`, 배열 `push`, `injectTo`. 필드가 이미 보여 주는 값을 그대로 확정하는 것도 포함됩니다.
-- 폼이 스스로 만든 값(자식의 `default`, `computed.derived`, `oneOf`/`anyOf` 분기 복원, reset, `computed.active`에 의한 재활성화)과 값 없는 쓰기(필드 비우기, null 배열의 `clear()`, `{}` 병합)로는 `null`이 유지됩니다. 비운 필드는 기억되어 이후 노드가 만들어질 때 반영됩니다.
+- `defaultValue`·스키마 `default: null`, 노드 자신이나 조상을 통한 `setValue(null)`로 `null`이 됩니다.
+- 노드 자신에 객체/배열을 대입하거나 — `setValue({})`, `setValue([])`, 키를 담은 `setValue({ ... }, SetValueOption.Merge)` — **값을 담은 쓰기**가 활성 자손에 도착하면 객체/배열이 됩니다: 사용자 입력, `setValue`, 배열 `push`, 사용자가 일으킨 `injectTo`. 필드가 이미 보여 주는 값을 그대로 확정하는 것도 쓰기입니다.
+- 폼이 스스로 만든 값으로는 `null`이 유지됩니다: 자식의 `default`, `computed.derived`, `oneOf`/`anyOf` 분기 복원, `computed.active`에 의한 재활성화, reset 중의 자식 복원, 그리고 그런 값만으로 구동된 `injectTo`(`default`나 derived 값만 가진 source).
+- 값 없는 쓰기로도 `null`이 유지됩니다: 필드 비우기, null 배열의 `pop()`/`remove()`/`update()`/`clear()`, `setValue({}, SetValueOption.Merge)`. 비운 필드는 기억되어 이후 노드가 만들어질 때 반영됩니다.
 
-**`null`인 동안** 출력은 스키마가 무엇을 담고 있든 — 배열, default, derived, `oneOf`/`anyOf`, computed·virtual 필드 — `null`입니다. 객체의 자식 필드는 계속 렌더되며 빈 양식을 보여 줍니다: 각 자식의 스키마 `default`와 derived 값이 적용된 상태이고, 어떤 경로로 `null`이 되었든 같습니다. `null`로 버린 데이터는 되살아나지 않습니다. null 배열에는 아이템이 없습니다(`minItems` 채움 없음).
+필드를 *비운다*는 것은 그 노드가 `undefined`를 emit한다는 뜻입니다. 기본 `omitEmpty`에서 빈 문자열은 비우기이고, `false`·`0`·`null`은 값입니다. `options: { omitEmpty: false }`이면 빈 문자열도 값입니다. 비활성 필드에 쓴 값은 누구에게도 도착하지 않습니다.
 
-**무엇이 되는가:** 한 번도 `null`이 아니었던 폼에서 같은 쓰기가 만드는 값과 정확히 같습니다(배열은 빈 배열 기준). 그래서 값은 항상 필드가 보여 주는 것과 일치합니다.
+reset은 노드가 무엇을 갖고 있든 기본값을 복원합니다: 기본값이 `null`이면 `null`로, 아니면 기본 객체로.
+
+**`null`인 동안** 출력은 스키마가 무엇을 담고 있든 — 배열, default, derived, `oneOf`/`anyOf`, computed·virtual 필드 — `null`입니다. 객체의 자식 필드는 계속 렌더되며 빈 양식을 보여 줍니다: 이 노드에 `defaultValue`를 주지 않았을 때 폼이 자식에게 만들어 주는 상태입니다 — 노드 자신의 객체 `default`가 있으면 그것, 없으면 각 자식의 `default`이며, derived 값이 적용되고 배열 자식은 `minItems`까지 채워집니다. 어떤 경로로 `null`이 되었든 같고, `null`로 버린 데이터는 되살아나지 않습니다. 자신이 `null`인 nullable **배열**에는 아이템이 없고 `minItems` 채움도 없습니다.
+
+**무엇이 되는가:** 이 노드에 `defaultValue`를 주지 않은 폼에서 같은 쓰기가 만드는 값과 정확히 같습니다(배열은 빈 배열 기준). 그래서 값은 항상 필드가 보여 주는 것과 일치합니다. 배열에는 병합이 없습니다: `setValue([], SetValueOption.Merge)`는 대입이며 `[]`를 만듭니다.
 
 ```tsx
 const jsonSchema = {
@@ -1024,7 +1029,7 @@ const jsonSchema = {
 ```
 
 - **nullable이 아닌** 객체에 `null`을 대입하면 `{}`가 됩니다.
-- `setValue(undefined)`는 `null`이 아닙니다: 서브트리를 비우며 자식 default를 복원하지 않습니다.
+- `setValue(undefined)`는 `null`이 아닙니다: 서브트리를 — 모든 필드와 모든 배열 아이템을 — 비우며 자식 default를 복원하지 않습니다.
 - 폼은 검증을 통과시키려고 값을 바꾸지 않습니다. `null`의 유효성은 스키마가 결정합니다 — `properties`만으로 이루어진 `oneOf` 분기는 모두 `null`에 매치된다는 점에 유의하세요.
 
 ### 노드 타입 가드

@@ -811,7 +811,7 @@ const jsonSchema = {
 - `omitEmpty` (on by default): converts an empty array to `undefined` on the parent-propagation path. Filter order is `omitTrailing → omitEmpty`, so an all-empty array collapses to `undefined` under its parent (a root-level form still emits `[]`).
 - `null` is not an empty value: neither filter touches a nullable array that is `null` — see [Nullable Objects and Arrays](#nullable-objects-and-arrays).
 - `node.value` stays raw; the refined output is exposed as `node.normalizedValue`. Validation runs against the refined value, so `minItems` counts only the filled prefix.
-- A Reset-flagged clear (form reset, branch reactivation) refills `minItems` empty items; a plain `setValue(undefined)` clears every item.
+- A Reset-flagged clear (form reset, branch reactivation) refills `minItems` empty items; a plain `setValue(undefined)` clears every item. An array whose default is `null` resets to `null`, with no fill.
 
 ### Value Injection (injectTo)
 
@@ -998,13 +998,18 @@ A nullable object or array (`type: ['object', 'null']`, `type: ['array', 'null']
 
 **Only intent changes `null`.**
 
-- It becomes `null` through `defaultValue` / schema `default: null`, `setValue(null)` on the node or through an ancestor, or a reset back to a `null` default.
-- It becomes an object/array when one is assigned to the node itself (`setValue({})`, `setValue([])`), or when a write **that carries a value** reaches any descendant — user input, `setValue`, array `push`, `injectTo` — including confirming the value a field already shows.
-- It stays `null` for values the form produces by itself (a child's `default`, `computed.derived`, `oneOf`/`anyOf` branch restore, reset, reactivation by `computed.active`) and for a write without a value (emptying a field, `clear()` on a null array, merging `{}`). An emptied field is remembered and honored once the node is created.
+- It becomes `null` through `defaultValue` / schema `default: null`, or `setValue(null)` on the node or through an ancestor.
+- It becomes an object/array when one is assigned to the node itself — `setValue({})`, `setValue([])`, or `setValue({ ... }, SetValueOption.Merge)` with keys — or when a write **that carries a value** reaches an active descendant: user input, `setValue`, array `push`, or an `injectTo` the user caused. Confirming the value a field already shows counts.
+- It stays `null` for values the form produces by itself: a child's `default`, `computed.derived`, `oneOf`/`anyOf` branch restore, reactivation by `computed.active`, the restore of a child during a reset, and an `injectTo` triggered only by such values (a source that merely has a `default` or a derived value).
+- It stays `null` for a write without a value: emptying a field, `pop()`/`remove()`/`update()`/`clear()` on a null array, and `setValue({}, SetValueOption.Merge)`. An emptied field is remembered and honored once the node is created.
 
-**While it is `null`**, the emitted value is `null` whatever the schema holds — arrays, defaults, derived values, `oneOf`/`anyOf`, computed or virtual fields. An object's child fields stay rendered and show a blank form: each child's own schema `default`, derived values applied, identical whichever way the object became `null`. Data discarded by `null` does not come back. A null array has no items — no `minItems` fill.
+A field is _emptied_ when its node emits `undefined`. Under the default `omitEmpty` an empty string is emptying; `false`, `0` and `null` are values. With `options: { omitEmpty: false }` an empty string is a value too. A write into an inactive field reaches nobody.
 
-**What it becomes** is exactly what the same write produces on a form where the node never was `null` (for an array: on an empty array), so the value always matches what the fields show.
+A reset restores the default, whatever the node holds: back to `null` when the default is `null`, to the default object otherwise.
+
+**While it is `null`**, the emitted value is `null` whatever the schema holds — arrays, defaults, derived values, `oneOf`/`anyOf`, computed or virtual fields. An object's child fields stay rendered and show a blank form: what the form builds for them when it is given no `defaultValue` for this node — the node's own object `default` if it has one, otherwise each child's own `default`, with derived values applied and array children filled up to their `minItems`. It is identical whichever way the object became `null`, and data discarded by `null` does not come back. A nullable **array** that is itself `null` has no items and no `minItems` fill.
+
+**What it becomes** is exactly what the same write produces on a form given no `defaultValue` for this node (for an array: on an empty array), so the value always matches what the fields show. An array has no merge semantics: `setValue([], SetValueOption.Merge)` is an assignment and creates `[]`.
 
 ```tsx
 const jsonSchema = {
@@ -1026,7 +1031,7 @@ const jsonSchema = {
 ```
 
 - A **non-nullable** object assigned `null` becomes `{}`.
-- `setValue(undefined)` is not `null`: it clears the subtree and does not restore child defaults.
+- `setValue(undefined)` is not `null`: it clears the subtree — every field, every array item — and does not restore child defaults.
 - The form never alters a value to make it validate. Whether `null` is valid is the schema's decision — note that `oneOf` branches made only of `properties` all match `null`.
 
 ### Node Type Guards

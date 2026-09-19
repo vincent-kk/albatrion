@@ -14,30 +14,35 @@ The form never converts one state into another by itself. If a consumer's schema
 
 ## What Changes `null`
 
-| Event                                                                                                         | Result                                |
-| ------------------------------------------------------------------------------------------------------------- | ------------------------------------- |
-| `defaultValue` / schema `default: null`, `setValue(null)` on the node or an ancestor, reset to a null default | becomes `null`                        |
-| `setValue({})` / `setValue([])` on the node itself                                                            | becomes `{}` / `[]`                   |
-| user input, descendant `setValue`, array `push`, `injectTo` — a write that **carries a value**                | becomes an object/array               |
-| confirming the value a field already shows (a select re-emitting its default)                                 | becomes an object/array               |
-| child `default`, `computed.derived`, `oneOf`/`anyOf` branch restore, reset, `computed.active` reactivation    | stays `null`                          |
-| emptying a field, `clear()` on a null array, `setValue({}, SetValueOption.Merge)`                             | stays `null` (emptying is remembered) |
+| Event                                                                                                                             | Result                                                                               |
+| --------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
+| `defaultValue` / schema `default: null`, `setValue(null)` on the node or an ancestor                                              | becomes `null`                                                                       |
+| `setValue({})` / `setValue([])` on the node itself                                                                                | becomes `{}` / `[]`                                                                  |
+| `setValue({ ...keys }, SetValueOption.Merge)` on the node itself                                                                  | becomes the blank form plus the keys                                                 |
+| user input, descendant `setValue`, array `push`, an `injectTo` the user caused — a write that **carries a value**                 | becomes an object/array                                                              |
+| confirming the value a field already shows (a select re-emitting its default)                                                     | becomes an object/array                                                              |
+| child `default`, `computed.derived`, `oneOf`/`anyOf` branch restore, `computed.active` reactivation, child restore during a reset | stays `null`                                                                         |
+| an `injectTo` whose source only has a `default` or a derived value                                                                | stays `null` (the target field is filled, the object is not created)                 |
+| emptying a field, `pop()`/`remove()`/`update()`/`clear()` on a null array, `setValue({}, SetValueOption.Merge)`                   | stays `null` (emptying is remembered)                                                |
+| reset                                                                                                                             | restores the default — `null` if the default is `null`, the default object otherwise |
 
 Depth does not matter: a write into a nested object's field or an array item promotes every null ancestor on the way up.
+
+A field is _emptied_ when its node emits `undefined`: under the default `omitEmpty` an empty string is emptying, while `false`, `0` and `null` are values; with `options: { omitEmpty: false }` an empty string is a value too. A write into an inactive field reaches nobody. An array has no merge semantics, so `setValue([], SetValueOption.Merge)` is an assignment and creates `[]`.
 
 ## While It Is `null`
 
 - The emitted value is `null` whatever the schema holds (array children, defaults, derived values, `oneOf`/`anyOf`, computed or virtual fields), and however it became `null`.
-- An object's child fields stay rendered and show a **blank form**: each child's own schema `default`, derived values applied, nested objects rebuilt the same way. It does not depend on what the object held before — data discarded by `null` does not come back.
-- A null array has no items: no `minItems` fill.
+- An object's child fields stay rendered and show a **blank form**: what the form builds for them when it is given no `defaultValue` for this node — the node's own object `default` if it has one, otherwise each child's own `default`, derived values applied, array children filled up to `minItems`, nested objects rebuilt the same way. It does not depend on what the object held before — data discarded by `null` does not come back.
+- A nullable **array** that is itself `null` has no items and no `minItems` fill.
 
 ## What It Becomes
 
-Exactly what the same write produces on a form where the node never was `null` (arrays: on an empty array). With `reason: { default: 'completed' }` shown in the blank form, typing `note` yields `{ reason: 'completed', note: '…' }` — the value always matches the fields.
+Exactly what the same write produces on a form given no `defaultValue` for this node (arrays: on an empty array). With `reason: { default: 'completed' }` shown in the blank form, typing `note` yields `{ reason: 'completed', note: '…' }` — the value always matches the fields.
 
 ## Gotchas
 
 - A **non-nullable** object assigned `null` becomes `{}`; only `type: [..., 'null']` (or deprecated `nullable: true`) keeps `null`.
-- `setValue(undefined)` is not `null`: it clears the subtree without restoring child defaults.
+- `setValue(undefined)` is not `null`: it clears the subtree — fields and array items — without restoring child defaults.
 - The form never alters a value to make it validate. `oneOf` branches made only of `properties` all match `null`, so `null` fails such a `oneOf` in any validator — constrain the schema, not the form.
 - A custom `FormTypeInput` must call `onChange` to create the object; rendering a default in the blank form is not a write.
