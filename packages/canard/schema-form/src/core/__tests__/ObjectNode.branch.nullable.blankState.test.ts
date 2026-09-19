@@ -356,6 +356,55 @@ describe('ObjectNode branch nullable — every way to null leaves the same blank
     expect(results[2]).toEqual(results[0]);
   });
 
+  it('노드 자신의 default가 중첩 객체에 준 조각과 properties 밖의 키도 풀린 값에 포함되어야 함', async () => {
+    const jsonSchema = {
+      type: 'object',
+      properties: {
+        target: {
+          type: ['object', 'null'],
+          default: { inner: { code: 'OUTER' }, ghost: 'G' },
+          properties: {
+            note: { type: 'string' },
+            inner: {
+              type: 'object',
+              properties: { code: { type: 'string', default: 'C' } },
+            },
+          },
+        },
+      },
+    } satisfies JSONSchema;
+    const results: unknown[] = [];
+    for (const defaultValue of [
+      undefined,
+      { target: null },
+      { target: { note: 'typed', inner: { code: 'edited' } } },
+    ]) {
+      const root = nodeFromJSONSchema({
+        onChange: () => {},
+        jsonSchema,
+        defaultValue,
+      }) as ObjectNode;
+      await delay(10);
+      if (defaultValue?.target) {
+        (root.find('target') as ObjectNode).setValue(null);
+        await delay(10);
+      }
+      if (defaultValue) expect(root.find('target')?.value).toBeNull();
+      expect(root.find('target/inner/code')?.value).toBe('OUTER');
+      (root.find('target/note') as StringNode).setValue('written');
+      await delay(10);
+      results.push(root.find('target')?.value);
+    }
+
+    expect(results[0]).toEqual({
+      note: 'written',
+      inner: { code: 'OUTER' },
+      ghost: 'G',
+    });
+    expect(results[1]).toEqual(results[0]);
+    expect(results[2]).toEqual(results[0]);
+  });
+
   it.each([
     ['아이템 default 있음', false, { type: 'string', default: 'S' }],
     ['아이템 default 없음', false, { type: 'string' }],

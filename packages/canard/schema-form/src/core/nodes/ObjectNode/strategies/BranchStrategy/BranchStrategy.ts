@@ -81,7 +81,7 @@ export class BranchStrategy implements ObjectNodeStrategy {
 
   /**
    * What the children hold while the object is `null` — the object it becomes on its first outside write.
-   * @remarks Meaningful only while `__isNull__`; it is rebuilt each time the object becomes `null`, because a child whose blank reset changes nothing emits nothing and would keep its old entry.
+   * @remarks Meaningful only while `__isNull__`. It starts from the node's own object `default` and takes child emits on top — the way the constructor merges child emits into its base — and is rebuilt each time the object becomes `null`, because a child whose blank reset changes nothing emits nothing and would keep its old entry.
    */
   private __blank__: ObjectValue = {};
 
@@ -259,7 +259,7 @@ export class BranchStrategy implements ObjectNodeStrategy {
     const current = source || {};
     const committed = target || {};
     const nullify = target === null;
-    if (nullify) this.__blank__ = {};
+    if (nullify) this.__blank__ = { ...this.__blankBase__ };
     const propagateOption =
       target == null ? option & ~SetValueOption.EmitChange : option;
     this.__locked__ = true;
@@ -313,7 +313,7 @@ export class BranchStrategy implements ObjectNodeStrategy {
   /**
    * Rebuilds the subtree the way a form without a default value builds it.
    * @param input - Value the parent's schema default assigns to this object, if any
-   * @remarks Mirrors the constructor: the base becomes the value, children take their slice of it or their own schema default, and what they emit is merged in — so a base the children merely repeat is, as at construction, not reported to the parent.
+   * @remarks Mirrors the constructor: the base becomes the value, children take their slice of it or their own schema default, and what they emit is merged in — so a base the children merely repeat is, as at construction, not reported to the parent — the parent already holds that slice in its own base.
    */
   public resetToBlank(input?: ObjectValue | Nullish) {
     const host = this.__host__;
@@ -815,6 +815,7 @@ export class BranchStrategy implements ObjectNodeStrategy {
 
     const childDefaults =
       host.defaultValue === null ? this.__blankBase__ : host.defaultValue;
+    if (host.defaultValue === null) this.__blank__ = { ...this.__blankBase__ };
 
     const { virtualReferencesMap, virtualReferenceFieldsMap } =
       getVirtualReferencesMap(host.name, propertyKeys, host.jsonSchema.virtual);
