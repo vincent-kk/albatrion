@@ -47,6 +47,9 @@ export class BranchStrategy implements ArrayNodeStrategy {
   /** Flag indicating whether the strategy is already processing a batch */
   private __batched__: boolean = false;
 
+  /** Whether an item write from outside the form's own machinery is waiting for the next commit */
+  private __intended__: boolean = false;
+
   /** Flag indicating whether the array value is not changed */
   private __idle__: boolean = false;
 
@@ -170,6 +173,10 @@ export class BranchStrategy implements ArrayNodeStrategy {
     const settled = (option & SetValueOption.Isolate) === 0;
     const inject = (option & SetValueOption.PreventInjection) === 0;
 
+    const automatic =
+      (option & SetValueOption.Automatic) > 0 && !this.__intended__;
+    this.__intended__ = false;
+
     const previous = [...this.__value__];
     this.__value__ = this.__toArray__();
     const current = this.value;
@@ -178,6 +185,7 @@ export class BranchStrategy implements ArrayNodeStrategy {
       this.__handleChange__(
         this.normalizedValue,
         (option & SetValueOption.Batch) > 0,
+        automatic,
       );
     if (option & SetValueOption.Refresh)
       host.publish(NodeEventType.RequestRefresh);
@@ -200,7 +208,7 @@ export class BranchStrategy implements ArrayNodeStrategy {
    * @private
    */
   private __handleChangeFactory__(key: ChildSegmentKey): HandleChange {
-    return (input, batched) => {
+    return (input, batched, automatic) => {
       const source = this.__sourceMap__.get(key);
       if (!source) return;
       const next = source.node.value;
@@ -210,7 +218,14 @@ export class BranchStrategy implements ArrayNodeStrategy {
       this.__idle__ = false;
       this.__nullish__ = false;
       this.__normalizedExpired__ = true;
-      this.__emitChange__(SetValueOption.Default, batched, false);
+      if (!automatic && !this.__locked__) this.__intended__ = true;
+      this.__emitChange__(
+        automatic
+          ? SetValueOption.Default | SetValueOption.Automatic
+          : SetValueOption.Default,
+        batched,
+        false,
+      );
     };
   }
 

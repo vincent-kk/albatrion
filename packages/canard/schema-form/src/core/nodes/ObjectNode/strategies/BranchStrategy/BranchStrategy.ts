@@ -66,6 +66,9 @@ export class BranchStrategy implements ObjectNodeStrategy {
   /** Flag indicating whether the strategy is already processing a batch */
   private __batched__: boolean = false;
 
+  /** Whether a child write from outside the form's own machinery is waiting for the next commit */
+  private __intended__: boolean = false;
+
   /** Flag indicating whether the strategy is locked to prevent recursive updates */
   private __locked__: boolean = true;
 
@@ -147,12 +150,19 @@ export class BranchStrategy implements ObjectNodeStrategy {
 
     if (current === false) return;
 
+    const automatic =
+      (option & SetValueOption.Automatic) > 0 && !this.__intended__;
+    this.__intended__ = false;
     this.__value__ = current;
     this.__draft__ = {};
 
     if (this.__expired__) this.__expired__ = false;
     if (option & SetValueOption.EmitChange)
-      this.__handleChange__(current, (option & SetValueOption.Batch) > 0);
+      this.__handleChange__(
+        current,
+        (option & SetValueOption.Batch) > 0,
+        automatic,
+      );
     if (option & SetValueOption.Propagate)
       this.__propagate__(current, draft, replace, option);
     if (option & SetValueOption.Refresh)
@@ -585,7 +595,9 @@ export class BranchStrategy implements ObjectNodeStrategy {
       if (type & NodeEventType.UpdateValue) {
         if (options?.[NodeEventType.UpdateValue]?.settled) return;
         if (this.__processComputedProperties__(this.__value__)) return;
-        this.__emitChange__(SetValueOption.BatchedEmitChange);
+        this.__emitChange__(
+          SetValueOption.BatchedEmitChange | SetValueOption.Automatic,
+        );
       }
     });
   }
@@ -705,10 +717,10 @@ export class BranchStrategy implements ObjectNodeStrategy {
 
     const handleChangeFactory =
       (property: string): HandleChange =>
-      (input, batched) => {
+      (input, batched, automatic) => {
         // Locked means this strategy is driving its own children (construction,
-        // propagation, branch restore); their default emits must not promote null.
-        if (this.__locked__ && this.__isNull__) return;
+        // propagation, branch restore); like any automatic write, it cannot promote null.
+        if (this.__isNull__ && (automatic || this.__locked__)) return;
         if (this.__draft__ == null) this.__draft__ = {};
         if (
           (input === undefined && this.__value__?.[property] === input) ||
@@ -718,7 +730,13 @@ export class BranchStrategy implements ObjectNodeStrategy {
         this.__draft__[property] = input;
         this.__expired__ = true;
         if (this.__isolated__ && this.__isPristine__) this.__isolated__ = false;
-        this.__emitChange__(SetValueOption.Default, batched);
+        if (!automatic && !this.__locked__) this.__intended__ = true;
+        this.__emitChange__(
+          automatic
+            ? SetValueOption.Default | SetValueOption.Automatic
+            : SetValueOption.Default,
+          batched,
+        );
       };
     host.subscribe(({ type, payload }) => {
       if (type & NodeEventType.RequestEmitChange) {

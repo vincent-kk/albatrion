@@ -389,16 +389,19 @@ export abstract class AbstractNode<
    * Notifies the parent of a value change.
    * @param input - The new value
    * @param batch - Whether to batch the change notification
+   * @param automatic - Whether the form produced this value by itself
    * @internal Only propagates if node is active and scoped.
    */
   protected onChange(
     this: AbstractNode,
     input: Value | Nullish,
     batch?: boolean,
+    automatic?: boolean,
   ): void {
     if (this.__computeManager__.active && this.__scoped__)
-      this.__handleChange__(input, batch);
-    else if (input === undefined) this.__handleChange__(undefined, batch);
+      this.__handleChange__(input, batch, automatic);
+    else if (input === undefined)
+      this.__handleChange__(undefined, batch, automatic);
   }
 
   /** @internal Manager for computed property evaluation and caching. */
@@ -522,7 +525,10 @@ export abstract class AbstractNode<
           if (manager.isDerivedDefined) {
             const derivedValue = manager.getDerivedValue();
             if (this.active && !this.__equals__(this.value, derivedValue))
-              this.setValue(derivedValue);
+              this.setValue(
+                derivedValue,
+                SetValueOption.Overwrite | SetValueOption.Automatic,
+              );
           }
           if (manager.isPristineDefined)
             if (manager.getPristine()) this.setState();

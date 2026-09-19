@@ -88,7 +88,11 @@ export class TerminalStrategy implements ArrayNodeStrategy {
 
     if (this.__locked__) return;
     if (option & SetValueOption.EmitChange)
-      this.__handleChange__(current, (option & SetValueOption.Batch) > 0);
+      this.__handleChange__(
+        current,
+        (option & SetValueOption.Batch) > 0,
+        (option & SetValueOption.Automatic) > 0,
+      );
     if (option & SetValueOption.Refresh)
       host.publish(NodeEventType.RequestRefresh);
     if (option & SetValueOption.PublishUpdateEvent)

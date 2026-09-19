@@ -10,11 +10,17 @@ import {
   BIT_FLAG_06,
   BIT_FLAG_07,
   BIT_FLAG_08,
+  BIT_FLAG_09,
   BIT_MASK_NONE,
 } from '@/schema-form/app/constants';
 
-/** Callback a node invokes to notify its parent of a value change. */
-export type HandleChange<Value = any> = Fn<[value: Value, batch?: boolean]>;
+/**
+ * Callback a node invokes to notify its parent of a value change.
+ * @remarks `automatic` marks a value the form produced by itself (see `SetValueOption.Automatic`); a parent that is `null` records it without becoming an object.
+ */
+export type HandleChange<Value = any> = Fn<
+  [value: Value, batch?: boolean, automatic?: boolean]
+>;
 
 /** Bit flags controlling how a value application behaves. */
 export enum SetValueOption {
@@ -37,6 +43,8 @@ export enum SetValueOption {
   PublishUpdateEvent = BIT_FLAG_07,
   /** Prevent the injection of the node's value */
   PreventInjection = BIT_FLAG_08,
+  /** The form wrote this value by itself (default, reset, derived) — it never turns a `null` ancestor into an object */
+  Automatic = BIT_FLAG_09,
   /** Update the value and trigger onChange with batch mode */
   BatchedEmitChange = EmitChange | Batch,
   /** Default SetValue option */
@@ -44,7 +52,7 @@ export enum SetValueOption {
   /** Default SetValue option with batch mode */
   BatchDefault = Batch | Default,
   /** Reset the node to its initial value */
-  Reset = Replace | Propagate | BatchDefault | PreventInjection,
+  Reset = Replace | Propagate | BatchDefault | PreventInjection | Automatic,
   /** Reset the node to its initial value and isolate the computed properties */
   IsolateReset = Reset | Isolate,
   /** Reset the node to its initial value and trigger a refresh */

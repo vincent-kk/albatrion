@@ -51,7 +51,11 @@ export class BooleanNode extends AbstractNode<BooleanSchema, BooleanValue> {
     this.__value__ = current;
 
     if (option & SetValueOption.EmitChange)
-      this.onChange(current, (option & SetValueOption.Batch) > 0);
+      this.onChange(
+        current,
+        (option & SetValueOption.Batch) > 0,
+        (option & SetValueOption.Automatic) > 0,
+      );
     if (option & SetValueOption.Refresh)
       this.publish(NodeEventType.RequestRefresh);
     if (option & SetValueOption.PublishUpdateEvent)

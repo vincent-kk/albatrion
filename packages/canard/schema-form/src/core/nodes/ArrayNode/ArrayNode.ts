@@ -150,8 +150,11 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
       properties.jsonSchema.default !== undefined;
     this.__omitTrailing__ = this.jsonSchema.options?.omitTrailing === true;
     const filterValue = resolveArrayValueFilter(this.jsonSchema.options);
-    const handleChange: HandleChange<ArrayValue | Nullish> = (value, batch) =>
-      super.onChange(filterValue(value), batch);
+    const handleChange: HandleChange<ArrayValue | Nullish> = (
+      value,
+      batch,
+      automatic,
+    ) => super.onChange(filterValue(value), batch, automatic);
     this.onChange = handleChange;
     this.__strategy__ =
       this.group === 'terminal'

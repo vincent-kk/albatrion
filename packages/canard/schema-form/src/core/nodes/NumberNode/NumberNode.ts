@@ -76,7 +76,11 @@ export class NumberNode extends AbstractNode<NumberSchema, NumberValue> {
     this.__value__ = current;
 
     if (option & SetValueOption.EmitChange)
-      this.onChange(current, (option & SetValueOption.Batch) > 0);
+      this.onChange(
+        current,
+        (option & SetValueOption.Batch) > 0,
+        (option & SetValueOption.Automatic) > 0,
+      );
     if (option & SetValueOption.Refresh)
       this.publish(NodeEventType.RequestRefresh);
     if (option & SetValueOption.PublishUpdateEvent)
@@ -102,16 +106,18 @@ export class NumberNode extends AbstractNode<NumberSchema, NumberValue> {
    * @internal Reflects value changes excluding empty values.
    * @param input - The value to set
    * @param batch - Whether the change should be batched
+   * @param automatic - Whether the form produced this value by itself
    */
   private __onChangeWithOmitEmpty__(
     this: NumberNode,
     input: NumberValue | Nullish,
     batch?: boolean,
+    automatic?: boolean,
   ) {
-    if (input === null) super.onChange(null, batch);
+    if (input === null) super.onChange(null, batch, automatic);
     else if (input === undefined || isNaN(input))
-      super.onChange(undefined, batch);
-    else super.onChange(input, batch);
+      super.onChange(undefined, batch, automatic);
+    else super.onChange(input, batch, automatic);
   }
 
   constructor(properties: SchemaNodeConstructorProps<NumberSchema>) {

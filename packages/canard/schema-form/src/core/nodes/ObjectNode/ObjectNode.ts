@@ -84,8 +84,9 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
     super(properties);
     const handleChange: HandleChange<ObjectValue | Nullish> =
       this.jsonSchema.options?.omitEmpty === false
-        ? (value, batch) => super.onChange(value, batch)
-        : (value, batch) => super.onChange(omitEmptyObject(value), batch);
+        ? (value, batch, automatic) => super.onChange(value, batch, automatic)
+        : (value, batch, automatic) =>
+            super.onChange(omitEmptyObject(value), batch, automatic);
     this.onChange = handleChange;
     this.__strategy__ =
       this.group === 'terminal'
