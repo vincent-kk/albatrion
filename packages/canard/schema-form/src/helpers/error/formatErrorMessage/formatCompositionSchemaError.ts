@@ -39,7 +39,8 @@ Type redefinition not allowed in '${scope}' schema.
 
 In composition schemas (oneOf/anyOf), sub-schemas cannot redefine
 the type of the parent schema. The type must either be omitted
-or match exactly.
+or match exactly. Under a nullable parent a sub-schema may also
+narrow the type to 'object' or to 'null'.
 
 How to fix:
   1. Remove the 'type' from the ${scope} sub-schema:

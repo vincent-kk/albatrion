@@ -77,35 +77,29 @@ describe('ObjectNode composition — nullable oneOf가 null을 검증할 수 없
     },
   );
 
-  it.fails(
-    'null 분기 하나와 type을 선언한 객체 분기면 경고하지 않아야 함 // LIMIT: null 분기를 작성할 수 없음',
-    () => {
-      expect(
-        warningsFor('standard', {
-          type: ['object', 'null'],
-          properties,
-          oneOf: [{ type: 'null' }, ...objectBranches],
-        }),
-      ).toBe(0);
-    },
-  );
+  it('null 분기 하나와 type을 선언한 객체 분기면 경고하지 않아야 함', () => {
+    expect(
+      warningsFor('standard', {
+        type: ['object', 'null'],
+        properties,
+        oneOf: [{ type: 'null' }, ...objectBranches],
+      }),
+    ).toBe(0);
+  });
 
-  it.fails(
-    'type 없는 분기라도 const로 null을 배제하면 null에 맞는 분기로 세지 않아야 함 // LIMIT: null 분기를 작성할 수 없음',
-    () => {
-      expect(
-        warningsFor('constExcluded', {
-          type: ['object', 'null'],
-          properties,
-          oneOf: [
-            { type: 'null' },
-            { '&if': "./kind === 'a'", const: { kind: 'a' } },
-            objectBranches[1],
-          ],
-        }),
-      ).toBe(0);
-    },
-  );
+  it('type 없는 분기라도 const로 null을 배제하면 null에 맞는 분기로 세지 않아야 함', () => {
+    expect(
+      warningsFor('constExcluded', {
+        type: ['object', 'null'],
+        properties,
+        oneOf: [
+          { type: 'null' },
+          { '&if': "./kind === 'a'", const: { kind: 'a' } },
+          objectBranches[1],
+        ],
+      }),
+    ).toBe(0);
+  });
 
   it('nullable이 아닌 객체에는 경고하지 않아야 함', () => {
     expect(

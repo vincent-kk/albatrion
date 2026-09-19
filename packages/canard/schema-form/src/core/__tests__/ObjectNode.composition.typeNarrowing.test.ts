@@ -40,8 +40,8 @@ const rejected: [string, TypeForm, TypeForm][] = [
 describe.each(['oneOf', 'anyOf'] as const)(
   'ObjectNode composition — %s 분기의 type 좁히기',
   (scope) => {
-    it.fails.each(narrowed)(
-      'nullable 부모의 type을 좁힌 분기는 만들어져야 함: %s // LIMIT: COMPOSITION_TYPE_REDEFINITION',
+    it.each(narrowed)(
+      'nullable 부모의 type을 좁힌 분기는 만들어져야 함: %s',
       (_label, parent, branch) => {
         const root = buildCompositionTarget(scope, parent, branch);
 

@@ -3,15 +3,13 @@ import { describe, expect, it } from 'vitest';
 
 import type { JSONSchema } from '@winglet/json-schema';
 
-import { nodeFromJSONSchema } from '@/schema-form/core';
-
 import { renderForm } from '../renderForm';
 
 /**
  * The form never alters a value to make it validate, so whether a preserved
  * `null` is valid is the schema's decision. These cases pin what a validator
- * says about `null` next to a composition keyword, and the authoring limit that
- * follows from composition branches not being allowed to change the `type`.
+ * says about `null` next to a composition keyword whose branches declare no
+ * `type`; `nullable.object-null-branch.render` covers the pattern that validates.
  */
 describe('nullable.object-validation.render — validity of a preserved null is the schema’s decision', () => {
   const branches = [
@@ -51,22 +49,5 @@ describe('nullable.object-validation.render — validity of a preserved null is 
 
     expect(form.getValue()).toEqual({ target: null });
     expect(await form.validate()).toEqual([]);
-  });
-
-  it('rejects a { type: "null" } branch, so the standard null-branch pattern cannot be authored', () => {
-    expect(() =>
-      nodeFromJSONSchema({
-        onChange: () => {},
-        jsonSchema: {
-          type: 'object',
-          properties: {
-            target: {
-              type: ['object', 'null'],
-              oneOf: [{ type: 'null' }, ...branches],
-            },
-          },
-        } as JSONSchema,
-      }),
-    ).toThrow(/Type redefinition not allowed/);
   });
 });

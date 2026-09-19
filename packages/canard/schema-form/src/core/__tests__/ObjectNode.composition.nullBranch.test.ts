@@ -92,14 +92,11 @@ describe('ObjectNode composition — null 분기는 검증 전용', () => {
     },
   );
 
-  it.fails(
-    '조건도 properties도 없는 null 분기에는 경고하지 않아야 함 // LIMIT: null 분기를 작성할 수 없음',
-    () => {
-      const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
-      const target = build('plain', { type: 'null' });
+  it('조건도 properties도 없는 null 분기에는 경고하지 않아야 함', () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    const target = build('plain', { type: 'null' });
 
-      expect(target.oneOfIndex).toBe(1);
-      expect(warningCount(warn)).toBe(0);
-    },
-  );
+    expect(target.oneOfIndex).toBe(1);
+    expect(warningCount(warn)).toBe(0);
+  });
 });

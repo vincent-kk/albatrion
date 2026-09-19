@@ -36,17 +36,14 @@ describe('nullable.object-null-branch.render — the standard null-branch patter
     },
   };
 
-  it.fails(
-    'builds a form from the pattern // LIMIT: a branch may not declare a type different from its parent',
-    () => {
-      const root = nodeFromJSONSchema({
-        onChange: () => {},
-        jsonSchema: schema,
-        defaultValue: { target: null },
-      });
+  it('builds a form from the pattern', () => {
+    const root = nodeFromJSONSchema({
+      onChange: () => {},
+      jsonSchema: schema,
+      defaultValue: { target: null },
+    });
 
-      expect(root.value).toEqual({ target: null });
-      expect(root.find('target/aValue')).not.toBeNull();
-    },
-  );
+    expect(root.value).toEqual({ target: null });
+    expect(root.find('target/aValue')).not.toBeNull();
+  });
 });
