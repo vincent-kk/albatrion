@@ -694,6 +694,9 @@ export class BranchStrategy implements ObjectNodeStrategy {
     const handleChangeFactory =
       (property: string): HandleChange =>
       (input, batched) => {
+        // Children emit their defaults while this strategy is still constructing;
+        // an explicit null default outranks them, so they must not promote it.
+        if (this.__draft__ === null && !host.initialized) return;
         if (this.__draft__ == null) this.__draft__ = {};
         if (
           (input === undefined && this.__value__?.[property] === input) ||
