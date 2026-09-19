@@ -1,5 +1,6 @@
 export { formatAllOfIgnoredKeywordWarning } from './formatAllOfIgnoredKeywordWarning';
 export { formatNestedCompositionIgnoredWarning } from './formatNestedCompositionIgnoredWarning';
+export { formatNullBranchIgnoredWarning } from './formatNullBranchIgnoredWarning';
 export { formatVirtualizationDisabledWarning } from './formatVirtualizationDisabledWarning';
 export { formatInfiniteLoopError } from './formatInfiniteLoopError';
 export { formatCircularReferenceError } from './formatCircularReferenceError';

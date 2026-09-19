@@ -13,6 +13,7 @@ import {
   formatCompositionPropertyExclusivenessError,
   formatCompositionPropertyRedefinitionError,
 } from '@/schema-form/helpers/error';
+import { extractSchemaInfo } from '@/schema-form/helpers/jsonSchema';
 import type {
   JSONSchema,
   ObjectSchema,
@@ -21,6 +22,7 @@ import type {
 
 import { throwIfTypeRedefinition } from './utils/throwIfTypeRedefinition';
 import { warnIfNestedComposition } from './utils/warnIfNestedComposition';
+import { warnIfNullBranchIgnored } from './utils/warnIfNullBranchIgnored';
 
 /**
  * Generate child node maps for composition schemas (oneOf/anyOf)
@@ -61,6 +63,10 @@ export const getCompositionNodeMapList = (
 
     const compositionChildNodeMap = new Map() as Map<string, ChildNode>;
     childNodeMapList[index] = compositionChildNodeMap;
+    if (extractSchemaInfo(subSchema)?.type === 'null') {
+      warnIfNullBranchIgnored(subSchema, scope, parentNode.path);
+      continue;
+    }
     const properties = subSchema.properties;
     if (!isPlainObject(properties)) continue;
 

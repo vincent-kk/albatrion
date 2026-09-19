@@ -1,3 +1,4 @@
+import { extractSchemaInfo } from '@/schema-form/helpers/jsonSchema';
 import type { ObjectSchema } from '@/schema-form/types';
 
 type CompositionKeyInfo = {
@@ -25,6 +26,7 @@ export const getCompositionKeyInfo = (
       ?.properties as ObjectSchema['properties'];
     schemaKeySets[i] = new Set();
     if (schemaProperties === undefined) continue;
+    if (extractSchemaInfo(schema[scope][i])?.type === 'null') continue;
     const keys = Object.keys(schemaProperties);
     for (let j = 0, k = keys[0], jl = keys.length; j < jl; j++, k = keys[j]) {
       const schema = schemaProperties[k];

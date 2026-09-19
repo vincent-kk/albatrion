@@ -1,5 +1,7 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
+import { delay } from '@winglet/common-utils';
+
 import { nodeFromJSONSchema } from '@/schema-form/core';
 import type { JSONSchema } from '@/schema-form/types';
 
@@ -54,43 +56,50 @@ const warningCount = (warn: ReturnType<typeof vi.spyOn>) =>
 describe('ObjectNode composition — null 분기는 검증 전용', () => {
   afterEach(() => vi.restoreAllMocks());
 
-  it.fails(
-    'null 분기의 조건은 활성 분기를 고르지 않아야 함 // LIMIT: null 분기를 작성할 수 없음',
-    () => {
-      vi.spyOn(console, 'warn').mockImplementation(() => {});
-      const target = build('conditioned', {
-        type: 'null',
-        '&if': "./kind === 'a'",
-      });
+  it('null 분기의 조건은 활성 분기를 고르지 않아야 함', () => {
+    vi.spyOn(console, 'warn').mockImplementation(() => {});
+    const target = build('conditioned', {
+      type: 'null',
+      '&if': "./kind === 'a'",
+    });
 
-      expect(target.oneOfIndex).toBe(1);
-      expect(target.find('aValue')).not.toBeNull();
-    },
-  );
+    expect(target.oneOfIndex).toBe(1);
+    expect(target.find('aValue')).not.toBeNull();
+  });
 
-  it.fails(
-    'null 분기의 properties는 필드가 되지 않아야 함 // LIMIT: null 분기를 작성할 수 없음',
-    () => {
-      vi.spyOn(console, 'warn').mockImplementation(() => {});
-      const target = build('propertied', {
-        type: 'null',
-        properties: { ghost: { type: 'string' } },
-      });
+  it('null 분기의 properties는 필드가 되지 않아야 함', () => {
+    vi.spyOn(console, 'warn').mockImplementation(() => {});
+    const target = build('propertied', {
+      type: 'null',
+      properties: { ghost: { type: 'string' } },
+    });
 
-      expect(target.find('ghost')).toBeNull();
-      expect(target.find('aValue')).not.toBeNull();
-    },
-  );
+    expect(target.find('ghost')).toBeNull();
+    expect(target.find('aValue')).not.toBeNull();
+  });
 
-  it.fails(
-    '무시되는 조건이나 properties가 있으면 개발 환경에서 경고해야 함 // LIMIT: null 분기를 작성할 수 없음',
-    () => {
-      const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
-      build('warned', { type: 'null', '&if': "./kind === 'a'" });
+  it('null 분기의 properties 키는 값에서도 분기 키로 취급되지 않아야 함', async () => {
+    vi.spyOn(console, 'warn').mockImplementation(() => {});
+    const values: unknown[] = [];
+    for (const [name, nullBranch] of [
+      ['keyed', { type: 'null', properties: { ghost: { type: 'string' } } }],
+      ['bare', { type: 'null' }],
+    ] as const) {
+      const target = build(name, nullBranch);
+      target.setValue({ kind: 'b', ghost: 'x', bValue: 'B' });
+      await delay(10);
+      values.push(target.value);
+    }
 
-      expect(warningCount(warn)).toBe(1);
-    },
-  );
+    expect(values[0]).toEqual(values[1]);
+  });
+
+  it('무시되는 조건이나 properties가 있으면 개발 환경에서 경고해야 함', () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    build('warned', { type: 'null', '&if': "./kind === 'a'" });
+
+    expect(warningCount(warn)).toBe(1);
+  });
 
   it('조건도 properties도 없는 null 분기에는 경고하지 않아야 함', () => {
     const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});

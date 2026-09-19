@@ -27,6 +27,11 @@
 - 어떤 `JSONSchemaType`도 `isTerminalType`과 `isBranchType`을 동시에 만족하지 않는다.
 - `isBranchType('virtual')`이 `true`다.
 
+### preprocess-one-of-marker — 분기 마커는 객체 분기에만 들어간다
+
+- `preprocessSchema`는 `oneOf`의 각 분기에 그 분기의 배열 인덱스를 담은 마커 프로퍼티를 넣는다.
+- `type`이 `null`인 분기는 프로퍼티를 가질 수 없으므로 그대로 둔다. 다른 분기의 마커 값은 원래 배열 인덱스를 유지한다.
+
 ### barrel-surface — 공개 표면은 barrel 재수출로 한정된다
 
 - `src/helpers/jsonSchema` 외부의 소비자 import 경로에 서브디렉토리 내부 파일이 나타나지 않는다.
