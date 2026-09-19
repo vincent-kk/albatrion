@@ -20,6 +20,7 @@ import {
   SetValueOption,
   type UnionSetValueOption,
 } from '@/schema-form/core/types';
+import { getDefaultValue } from '@/schema-form/helpers/defaultValue';
 import { joinSegment } from '@/schema-form/helpers/jsonPointer';
 import { isTerminalType } from '@/schema-form/helpers/jsonSchema';
 import type { ObjectValue } from '@/schema-form/types';
@@ -80,7 +81,7 @@ export class BranchStrategy implements ObjectNodeStrategy {
 
   /**
    * What the children hold while the object is `null` — the object it becomes on its first outside write.
-   * @remarks Meaningful only while `__isNull__`; it is rebuilt each time the object becomes `null`.
+   * @remarks Meaningful only while `__isNull__`; becoming `null` resets every child, and each reset that changes the child overwrites its entry.
    */
   private __blank__: ObjectValue = {};
 
@@ -246,7 +247,6 @@ export class BranchStrategy implements ObjectNodeStrategy {
     const current = source || {};
     const committed = target || {};
     const nullify = target === null;
-    if (nullify) this.__blank__ = {};
     const propagateOption =
       target == null ? option & ~SetValueOption.EmitChange : option;
     this.__locked__ = true;
@@ -300,14 +300,15 @@ export class BranchStrategy implements ObjectNodeStrategy {
   /**
    * Rebuilds the subtree the way a form without a default value builds it.
    * @param input - Value the parent's schema default assigns to this object, if any
-   * @remarks Mirrors the constructor: children take their slice of the base or their own schema default, and the object commits what they emit.
+   * @remarks Mirrors the constructor: the base becomes the value, children take their slice of it or their own schema default, and what they emit is merged in — so a base the children merely repeat is, as at construction, not reported to the parent.
    */
   public resetToBlank(input?: ObjectValue | Nullish) {
     const host = this.__host__;
-    const base = input !== undefined ? input : host.jsonSchema.default;
+    const base =
+      input !== undefined ? input : getDefaultValue(host.jsonSchema);
     if (base === null) return host.setValue(null, SetValueOption.StableReset);
-    this.__value__ = undefined;
-    this.__draft__ = base ? { ...base } : {};
+    this.__value__ = base;
+    this.__draft__ = {};
     this.__locked__ = true;
     for (let i = 0, l = this.__subnodes__.length; i < l; i++) {
       const node = this.__subnodes__[i].node;
@@ -317,7 +318,8 @@ export class BranchStrategy implements ObjectNodeStrategy {
     this.__locked__ = false;
     this.__expired__ = true;
     this.__emitChange__(
-      SetValueOption.StableReset & ~SetValueOption.Propagate,
+      SetValueOption.StableReset &
+        ~(SetValueOption.Propagate | SetValueOption.Replace),
     );
   }
 

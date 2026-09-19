@@ -91,13 +91,17 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
 
   /**
    * @internal Mirrors the constructor: a given value or the schema default wins; otherwise the array is emptied and filled up to `minItems` with item defaults.
+   * @remarks The fill uses plain `push`, so call it only from a parent's locked window, where such a write is recorded instead of promoting.
    */
   public override __resetToBlank__(
     this: ArrayNode,
     input?: ArrayValue | Nullish,
   ) {
     const base = input !== undefined ? input : this.jsonSchema.default;
-    this.__reset__({ inputValue: base !== undefined ? base : [] });
+    this.__reset__({
+      inputValue: base !== undefined ? base : [],
+      applyDerivedValue: true,
+    });
     if (base === undefined)
       while (this.length < this.minItems) this.push(undefined, true);
   }

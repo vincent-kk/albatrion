@@ -187,4 +187,123 @@ describe('ObjectNode branch nullable — every way to null leaves the same blank
       expect(results[2]).toEqual(results[0]);
     },
   );
+
+  it('derived 배열·자체 default를 가진 객체·null default 객체 자식도 경로와 무관하게 같은 상태여야 함', async () => {
+    const jsonSchema = {
+      type: 'object',
+      properties: {
+        quantity: { type: 'number', default: 2 },
+        target: {
+          type: ['object', 'null'],
+          properties: {
+            note: { type: 'string' },
+            series: {
+              type: 'array',
+              items: { type: 'number' },
+              computed: { derived: '[(../../quantity || 0), 9]' },
+            },
+            preset: {
+              type: 'object',
+              default: { a: 'D' },
+              properties: { a: { type: 'string', default: 'A' } },
+            },
+            optional: {
+              type: ['object', 'null'],
+              default: null,
+              properties: { b: { type: 'string', default: 'B' } },
+            },
+          },
+        },
+      },
+    } satisfies JSONSchema;
+    const results: unknown[] = [];
+    for (const defaultValue of [
+      undefined,
+      { target: null },
+      {
+        target: {
+          series: [7],
+          preset: { a: 'Z' },
+          optional: { b: 'Y' },
+        },
+      },
+    ]) {
+      const root = nodeFromJSONSchema({
+        onChange: () => {},
+        jsonSchema,
+        defaultValue,
+      }) as ObjectNode;
+      await delay(10);
+      if (defaultValue?.target) {
+        (root.find('target') as ObjectNode).setValue(null);
+        await delay(10);
+      }
+      const blank = ['series', 'preset', 'preset/a', 'optional', 'optional/b'].map(
+        (path) => root.find(`target/${path}`)?.value,
+      );
+      (root.find('target/note') as StringNode).setValue('written');
+      await delay(10);
+      results.push({ blank, promoted: root.find('target')?.value });
+    }
+
+    expect(results[1]).toEqual(results[0]);
+    expect(results[2]).toEqual(results[0]);
+  });
+
+  it('중첩 객체의 oneOf 분기도 경로와 무관하게 초기 분기로 돌아가야 함', async () => {
+    const jsonSchema = {
+      type: 'object',
+      properties: {
+        target: {
+          type: ['object', 'null'],
+          properties: {
+            note: { type: 'string' },
+            inner: {
+              type: 'object',
+              properties: {
+                kind: { type: 'string', enum: ['A', 'B'], default: 'A' },
+              },
+              oneOf: [
+                {
+                  '&if': "./kind === 'A'",
+                  properties: { a: { type: 'string', default: 'A!' } },
+                },
+                {
+                  '&if': "./kind === 'B'",
+                  properties: { b: { type: 'string', default: 'B!' } },
+                },
+              ],
+            },
+          },
+        },
+      },
+    } satisfies JSONSchema;
+    const promoted: unknown[] = [];
+    for (const defaultValue of [
+      undefined,
+      { target: null },
+      { target: { inner: { kind: 'B', b: 'edited' } } },
+    ]) {
+      const root = nodeFromJSONSchema({
+        onChange: () => {},
+        jsonSchema,
+        defaultValue,
+      }) as ObjectNode;
+      await delay(10);
+      if (defaultValue?.target) {
+        (root.find('target') as ObjectNode).setValue(null);
+        await delay(10);
+      }
+      (root.find('target/note') as StringNode).setValue('written');
+      await delay(10);
+      promoted.push(root.find('target')?.value);
+    }
+
+    expect(promoted[0]).toEqual({
+      note: 'written',
+      inner: { kind: 'A', a: 'A!' },
+    });
+    expect(promoted[1]).toEqual(promoted[0]);
+    expect(promoted[2]).toEqual(promoted[0]);
+  });
 });
