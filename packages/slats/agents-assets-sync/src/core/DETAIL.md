@@ -21,9 +21,12 @@
 ## API Contracts
 
 - `resolveProjectRoot(scope: Scope, cwd?: string): ProjectRootResolution`
-- `findNearestAnchorAncestor(start: string): string | null`
+- `findProjectRoot(start: string): string | null`
+- `findMarkerRoot(start: string): string | null`
+- `findNearestOwner(start: string, names: readonly string[]): string | null`
 - `isValidScope(value: unknown): value is Scope`
 - `PROJECT_ANCHORS: readonly ['.claude', 'AGENTS.md', '.agents', '.codex', '.git']`
+- `PROJECT_ROOT_MARKERS` — root marker 목록. 값은 `scope/DETAIL.md` 가 소유한다.
 - `resolveAgentTarget(agent: AgentType, scope: Scope, cwd?: string): AgentTarget`
 - `isValidAgent(value: unknown): value is AgentType`
 - `splitAssetKind(relPath: string): { kind: AssetKind; rest: string } | null`

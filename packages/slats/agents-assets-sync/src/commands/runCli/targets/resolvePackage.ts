@@ -4,7 +4,9 @@ import { createRequire } from 'node:module';
 import { dirname, resolve as resolvePath, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+import { findMarkerRoot } from '../../../core/index.js';
 import { logger } from '../../../utils/logger.js';
+import { findInstallRoots } from './findInstallRoots.js';
 
 export interface ResolvedMetadata {
   packageRoot: string;
@@ -18,9 +20,8 @@ export interface ResolvedMetadata {
 export interface ResolvePackageOptions {
   /**
    * When `true`, a package whose asset root cannot be established is warned
-   * and the function returns `null` instead of calling `process.exit`. Default
-   * `false` preserves the v0.3.0 strict behavior for single-target
-   * dispatcher calls.
+   * and the function returns `null` instead of calling `process.exit`. The
+   * default `false` keeps a single-target dispatcher call strict.
    */
   skipMissingAsset?: boolean;
   /**
@@ -46,7 +47,7 @@ export async function resolvePackage(
   options: ResolvePackageOptions = {},
   originCwd: string = process.cwd(),
 ): Promise<ResolvedMetadata | null> {
-  const pkgJSONPath = resolvePackageJSONPath(name, originCwd);
+  const pkgJSONPath = await resolvePackageJSONPath(name, originCwd);
   if (!pkgJSONPath) {
     logger.error(
       `cannot resolve package "${name}". Install it in the current project or pass the correct name.`,
@@ -177,21 +178,33 @@ function isInside(root: string, candidate: string): boolean {
   return candidate === root || candidate.startsWith(root + sep);
 }
 
-// Two-pass resolution: caller's cwd first (so `npx -p` invocations see
-// the host project's node_modules), then engine-rooted (so a globally
-// installed engine still resolves bundled deps). Both passes share the
-// same fallback for `ERR_PACKAGE_PATH_NOT_EXPORTED`.
-function resolvePackageJSONPath(
+// Three-pass resolution: caller's cwd first (so `npx -p` invocations see
+// the host project's node_modules), then every install root under the
+// project (so a workspace root sees what only a member installed — pnpm
+// hoists nothing to the root), then engine-rooted (so a globally installed
+// engine still resolves bundled deps). First match wins; every pass shares
+// the same fallback for `ERR_PACKAGE_PATH_NOT_EXPORTED`.
+async function resolvePackageJSONPath(
   name: string,
   originCwd: string,
-): string | null {
-  const fromCwd = tryResolveFrom(
-    name,
-    resolvePath(originCwd, '__resolve-base__'),
-  );
+): Promise<string | null> {
+  const fromCwd = tryResolveFrom(name, resolveBase(originCwd));
   if (fromCwd) return fromCwd;
 
+  // Only a marker root licenses the search: an agent anchor may be the home
+  // directory's own `.claude`, and a marker there is ignored the same way.
+  const projectRoot = findMarkerRoot(originCwd);
+  const installRoots = projectRoot ? await findInstallRoots(projectRoot) : [];
+  for (const installRoot of installRoots) {
+    const fromInstall = tryResolveFrom(name, resolveBase(installRoot));
+    if (fromInstall) return fromInstall;
+  }
+
   return tryResolveFrom(name, fileURLToPath(import.meta.url));
+}
+
+function resolveBase(dir: string): string {
+  return resolvePath(dir, '__resolve-base__');
 }
 
 // Resolve <name>/package.json relative to `baseFilename`. Modern packages

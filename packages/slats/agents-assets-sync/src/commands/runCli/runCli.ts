@@ -1,4 +1,4 @@
-import { basename } from 'node:path';
+import { basename, resolve as resolvePath } from 'node:path';
 
 import { Command } from 'commander';
 
@@ -62,7 +62,7 @@ export async function runCli(
     )
     .option(
       '--scope <scope>',
-      'Target scope: user (home) | project (nearest ancestor owning .claude, AGENTS.md, .codex or .git)',
+      'Target scope: user (home) | project (nearest ancestor owning .git, a workspace manifest or a lockfile; else the nearest owning .claude, AGENTS.md, .agents or .codex)',
     )
     .option(
       '--asset <kind...>',
@@ -99,7 +99,7 @@ export async function runCli(
         process.exit(2);
       }
       const assetPath = resolveAssetPathFlag(flags.assetPath);
-      const originCwd = flags.root ?? process.cwd();
+      const originCwd = resolvePath(flags.root ?? process.cwd());
       const { resolved, skipped, strict } = await resolveTargets(
         targets,
         originCwd,

@@ -2,12 +2,14 @@
 
 ## Purpose
 
-Resolve a `user | project` scope token into one absolute project root. `user` is the home directory; `project` walks up from `cwd` and reuses the first ancestor that owns any project anchor. The root is agent-neutral on purpose — every selected agent derives its own asset locations from the same root, so `claude` and `codex` never disagree about which project they are in.
+Resolve a `user | project` scope token into one absolute project root. `user` is the home directory; `project` walks up from `cwd` in two tiers: the nearest ancestor owning a root marker, and only when none exists the nearest ancestor owning an agent anchor. The root is agent-neutral on purpose — every selected agent derives its own asset locations from the same root, so `claude` and `codex` never disagree about which project they are in.
 
 ## Conventions
 
-- An anchor is any of `.claude`, `AGENTS.md`, `.agents`, `.codex`, `.git`. Existence alone marks the root, with no directory check: a file and a directory count alike, because `AGENTS.md` is a file and `.git` is a file rather than a directory inside a worktree.
-- Order within the list does not affect the verdict; the first match wins.
+- A root marker is any of `.git`, `pnpm-workspace.yaml`, `pnpm-lock.yaml`, `yarn.lock`, `package-lock.json`, `npm-shrinkwrap.json`, `bun.lock`, `bun.lockb` — what the repository and the package manager themselves treat as the project root, in a monorepo and a single-package repository alike. A marker owned by the home directory or an ancestor of it does not count: it belongs to the user's own configuration, not to a project underneath.
+- An agent anchor is any of `.claude`, `AGENTS.md`, `.agents`, `.codex`, `.git`. It is the weaker tier because a tool may create one in any directory, including a workspace member.
+- Existence alone decides, with no directory check: a file and a directory count alike, because `AGENTS.md` is a file and `.git` is a file rather than a directory inside a worktree.
+- Order within a list does not affect the verdict; the first match wins.
 
 ## Dependencies
 

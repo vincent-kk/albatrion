@@ -51,7 +51,10 @@ export {
 } from './markerBlock/index.js';
 export {
   PROJECT_ANCHORS,
-  findNearestAnchorAncestor,
+  PROJECT_ROOT_MARKERS,
+  findMarkerRoot,
+  findNearestOwner,
+  findProjectRoot,
   isValidScope,
   resolveProjectRoot,
   type ProjectRootResolution,

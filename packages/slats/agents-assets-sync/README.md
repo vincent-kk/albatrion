@@ -37,7 +37,7 @@ agents-build-hashes
 
 ### Agent destinations
 
-`projectRoot` is the home directory for `--scope=user`, and for `--scope=project` the nearest ancestor owning any of `.claude`, `AGENTS.md`, `.agents`, `.codex`, `.git` (falling back to cwd). Every agent shares it, so one run cannot straddle two projects.
+`projectRoot` is the home directory for `--scope=user`, and for `--scope=project` the nearest ancestor owning a root marker (`.git`, `pnpm-workspace.yaml`, or a lockfile: `pnpm-lock.yaml`, `yarn.lock`, `package-lock.json`, `npm-shrinkwrap.json`, `bun.lock`, `bun.lockb`); when no ancestor owns one, the nearest ancestor owning any of `.claude`, `AGENTS.md`, `.agents`, `.codex` (falling back to cwd). A marker outranks a nearer agent directory, so a stray `.claude` inside a workspace member never becomes the root. A marker owned by the home directory or an ancestor of it is ignored — a dotfiles repository claims no project underneath. Every agent shares it, so one run cannot straddle two projects.
 
 | Kind               | claude                       | codex                      | agents                     |
 | ------------------ | ---------------------------- | -------------------------- | -------------------------- |

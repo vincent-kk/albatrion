@@ -27,7 +27,8 @@
 - 매니페스트도 디렉터리도 없으면 출처는 `manifest` 로 남아 게이트에 걸린다. 없는 디렉터리를 해싱하면 빈 매니페스트가 나오고, 빈 매니페스트는 이미 설치된 항목 전부를 orphan 으로 만든다 — `--force` 와 만나면 그 삭제가 실제로 실행된다. 답할 수 있는 출처가 하나도 없는 것은 계획할 수 없는 것이지, 아무것도 없다고 계획할 일이 아니다.
 - 게이트 판정은 렌더러 분기 **이전**, action 에서 한 번 내린다. 해시를 댈 수 없는 타깃은 `selectInjectableTargets` 가 사유와 함께 걸러내므로 렌더러는 그런 타깃을 아예 보지 않는다. 같은 술어를 세 렌더러가 각자 해석하면 실행 판정이 출력 형식에 따라 갈리는데, 판정은 실행의 것이지 렌더러의 것이 아니다.
 - 그 실패는 `agents.assetPath` 부재와 **같은** strict / soft skip 분기를 탄다. 중복 제거한 `--package` 값이 정확히 하나이고 그것이 패키지 이름이면 2로 종료하고, 서로 다른 값이 여럿이거나 scope alias 면 사유만 남기고 나머지 배치가 계속된다. 새 정책을 만들지 않는다.
-- scope 열거는 `<cwd>/node_modules/@<scope>/*` 를 파일시스템 루트까지 거슬러 올라가며 훑는다. 디렉터리 이름은 선언된 패키지 이름과 다를 수 있으므로 권위는 `package.json` 의 `name` 필드에 있고, 중첩 설치는 nearest-wins 로 중복 제거된다.
+- scope 열거는 `<cwd>/node_modules/@<scope>/*` 를 파일시스템 루트까지 거슬러 올라가며 훑는다. 디렉터리 이름은 선언된 패키지 이름과 다를 수 있으므로 권위는 `package.json` 의 `name` 필드에 있고, 중첩 설치는 nearest-wins 로 중복 제거된다. 조상 다음에는 프로젝트의 install root 마다 같은 방식으로 훑고, 이름이 발견된 디렉터리를 그 이름의 해석 기준으로 `resolvePackage` 에 넘긴다.
+- install root 는 marker root(`core/scope` 의 `findMarkerRoot` — 홈 디렉터리보다 아래에서 root marker 를 가진 가장 가까운 조상) 아래에서 `node_modules` 를 **소유한** 디렉터리다. pnpm 은 의존성을 선언한 workspace 멤버에만 설치하고 workspace 루트로는 아무것도 hoist 하지 않으므로, 루트에서 실행된 해석은 멤버를 기준으로 삼아야 닿는다. `targets/findInstallRoots.ts` 는 소유 여부만 보며 `node_modules` 와 dot 디렉터리 안으로 내려가지 않는다 — 열거는 여전히 `resolveScopeAlias.ts` 만의 몫이다. marker root 가 없으면 걷지 않는다: agent anchor 는 홈 디렉터리의 `.claude` 일 수 있고, 홈의 marker 를 따라 걸으면 무관한 캐시의 `node_modules` 에서 타깃이 해석된다.
 - scope 열거는 `targets/resolveScopeAlias.ts` 안에만 있다. `runCli/**` 의 다른 어떤 파일도 형제 `package.json` 을 읽지 않는다.
 - `utils/` 는 없다. 부속은 파이프라인 단계별 organ 셋으로 나뉜다 — `targets/`(argv → `ConsumerPackage[]`, 파일시스템·모듈해석), `flags/`(CLI 값 하나 검증, 순수), `renderers/`(상호 배타적인 출력 경로 셋). 간선은 `runCli.ts` → `targets/`, `runCli.ts` → `renderers/`, `runCli.ts` → `flags/`, 그리고 `renderers/` → `flags/` 넷뿐이다. `targets/` 는 나머지 둘 중 어느 것도 import 하지 않으며, 이행 체인이 아니라 `runCli.ts` 를 정점으로 하는 한 방향 그래프다.
 - 해석된 target 은 렌더링 전에 `packageName` 으로 중복 제거된다.
@@ -51,12 +52,14 @@
 
 - `classifyTarget(value)` → scope | package | invalid
 - `resolvePackage(name, opts?, originCwd?): Promise<ResolvedMetadata | null>`
-  - 2단 해석: cwd 기준 require 를 먼저 (`npx -p` 로 불렸을 때 호스트 프로젝트의 `node_modules` 를 잡기 위해), 실패하면 엔진 기준 require. `originCwd` 생략 시 `process.cwd()`.
+  - 3단 해석: cwd 기준 require 를 먼저 (`npx -p` 로 불렸을 때 호스트 프로젝트의 `node_modules` 를 잡기 위해), 실패하면 install root 마다 순서대로, 그래도 실패하면 엔진 기준 require. 첫 일치가 이긴다. `originCwd` 생략 시 `process.cwd()`.
   - `opts.skipMissingAsset` — asset 누락을 종료 대신 `null` 로 돌려준다
   - `opts.skipReasons` — soft skip 사유를 여기에 덧붙인다. 채우는 것이 목적인 인자이며, 경고 출력과 별개로 값으로도 남긴다
   - `opts.assetPathOverride` — `agents.assetPath` 대신 쓸 경로. 있으면 부재 검사를 건너뛰고 대신 포함/존재 검사를 한다
 - `ResolvedMetadata` — `{ packageRoot, packageName, packageVersion, assetPath, assetPathSource }`
   - `assetPathSource: 'package' | 'flag'` — `assetPath` 가 어디서 왔는지. `toConsumerPackages` 가 이것으로 `hashSource` 를 정한다
+- `findInstallRoots(projectRoot): Promise<string[]>`
+  - 부모 먼저, 이름순. 깊이는 루트 아래 4단계까지. 마지막 원소는 존재할 때의 pnpm hoist 디렉터리 `<projectRoot>/node_modules/.pnpm` — 이름마다 임의의 한 버전만 담으므로 멤버 설치보다 뒤다.
 - `resolveScopeAlias(scope, rootCwd, assetPathOverride?, skipReasons?): Promise<ResolvedMetadata[]>`
 - `resolveTargets(targets, rootCwd, assetPathOverride?): Promise<{ resolved: ResolvedMetadata[]; skipped: string[]; strict: boolean }>`
   - `skipped` 는 soft skip 된 패키지마다의 사유. `--json` 이 `errors` 로 실어 빈 실행을 설명한다
@@ -103,6 +106,14 @@
 - 중복은 nearest-wins 로 제거되고 발견 순서(가까운 조상 우선)가 유지된다.
 - 일치가 0건이면 2로 종료한다.
 - Verified by `__tests__/resolveScopeAlias.spec.ts` (`filid:contract AC-RUNCLI-SCOPE-ALIAS`).
+
+### AC-RUNCLI-INSTALL-ROOTS — workspace 루트에서도 멤버가 설치한 패키지에 닿는다
+
+- install root 는 부모 먼저 · 이름순으로 나열되고 pnpm hoist 디렉터리가 마지막이다. `node_modules` 와 dot 디렉터리 안은 보지 않으며 루트 아래 4단계에서 멈춘다.
+- 멤버만 설치한 패키지가 workspace 루트와 다른 멤버의 cwd 에서 해석된다. hoist 디렉터리에만 있는 패키지도 해석되지만, 같은 이름이 멤버에 있으면 멤버 쪽이 이긴다.
+- root marker 를 가진 조상이 없으면 cwd 아래를 걷지 않고 기존대로 2로 종료한다.
+- scope alias 는 멤버와 hoist 디렉터리의 scope 를 함께 열거한다. hoist 디렉터리는 어떤 멤버도 직접 선언하지 않은 전이 의존성까지 담으며, 이는 yarn 의 루트 hoist 가 열거해 주던 범위와 같다.
+- Verified by `__tests__/installRoots.spec.ts` (`filid:contract AC-RUNCLI-INSTALL-ROOTS`).
 
 ### AC-RUNCLI-ASSET-PATH — `--asset-path` 는 선언을 이기고 디렉터리를 진실로 만든다
 
@@ -160,4 +171,4 @@
 
 ## Last Updated
 
-2026-08-06 — 게이트 판정을 action 으로 올리고 `AC-RUNCLI-GATE-VERDICT` 를 추가. `resolveTargets` 가 `strict` 를 값으로 돌려주고 `selectInjectableTargets` 가 걸러내므로, 렌더러는 해시를 댈 수 없는 타깃을 보지 못한다. 이전 갱신: 해석이 `createRequire` 가 보는 범위까지라는 한계를 `AC-RUNCLI-RESOLVE` 에 명시했고, 해시 출처 판정을 `resolveHashSource` 로 떼어내며 `AC-RUNCLI-HASH-SOURCE` 를 추가했다.
+2026-09-20 — install root 해석을 추가하고 `AC-RUNCLI-INSTALL-ROOTS` 를 신설. pnpm workspace 루트에서 `resolvePackage` 와 `resolveScopeAlias` 가 모두 빈손이던 문제의 수정이다. 이전 갱신: 게이트 판정을 action 으로 올리고 `AC-RUNCLI-GATE-VERDICT` 를 추가. `resolveTargets` 가 `strict` 를 값으로 돌려주고 `selectInjectableTargets` 가 걸러내므로, 렌더러는 해시를 댈 수 없는 타깃을 보지 못한다. 이전 갱신: 해석이 `createRequire` 가 보는 범위까지라는 한계를 `AC-RUNCLI-RESOLVE` 에 명시했고, 해시 출처 판정을 `resolveHashSource` 로 떼어내며 `AC-RUNCLI-HASH-SOURCE` 를 추가했다.

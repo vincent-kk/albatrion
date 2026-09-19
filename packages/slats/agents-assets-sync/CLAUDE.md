@@ -19,7 +19,7 @@ yarn dev:ui --tour   # cycle through all Ink phases with fixture data
 
 - `.` (main barrel, ESM-only)
   - `runCli(argv: string[]): Promise<void>` — dispatcher entry. Parses `--package <name...>` from argv (variadic: repeat or comma-separate). Each value is a scope alias (`@<scope>`), a scoped package (`@<scope>/<name>`), or an unscoped package (`<name>`).
-  - Core primitives re-exported: `readHashManifest`, `computeNamespacePrefixes`, `resolveProjectRoot`, `resolveAgentTarget`, `resolveDestinations`, `formatBlockId`, `parseBlocks`, `isValidScope`, `isValidAgent`, `MARKER_PREFIX`, `PROJECT_ANCHORS`, `HASH_MANIFEST_FILENAME`
+  - Core primitives re-exported: `readHashManifest`, `computeNamespacePrefixes`, `resolveProjectRoot`, `resolveAgentTarget`, `resolveDestinations`, `formatBlockId`, `parseBlocks`, `isValidScope`, `isValidAgent`, `MARKER_PREFIX`, `PROJECT_ANCHORS`, `PROJECT_ROOT_MARKERS`, `HASH_MANIFEST_FILENAME`
   - No `injectDocs` orchestrator — both renderers (Ink `ui/` and plain `renderPlain`) compose primitives directly.
 - `./buildHashes` — `buildHashes(options?)` produces `<packageRoot>/dist/agents-hashes.json`.
 - `./package.json` — the manifest itself. The dispatcher reads every target's `{ name, version, agents.assetPath }` through `createRequire(...).resolve()`, and an ESM-only package exposes nothing to `createRequire` unless it exports this subpath — so gating it would make this engine the one package its own CLI cannot inject.
@@ -67,9 +67,11 @@ Repeat any variadic flag or comma-separate values. Targets are deduped by resolv
 
 Workspace enumeration (scope alias) is confined to `src/commands/runCli/targets/resolveScopeAlias.ts`.
 
+A target is resolved from cwd first, then from every directory under the project root that owns a `node_modules` (`targets/findInstallRoots.ts`), then from the engine. pnpm installs a dependency into the workspace member that declares it and hoists nothing to the workspace root, so the second pass is what lets a run at the root find it; pnpm's `node_modules/.pnpm` hoist directory is tried last. The pass runs only under a root marker below the home directory.
+
 ## Agent Destinations
 
-`projectRoot` is the home directory for `--scope=user`, and for `--scope=project` the nearest ancestor owning any of `.claude`, `AGENTS.md`, `.agents`, `.codex`, `.git` (falling back to cwd). Every agent shares it, so one run cannot straddle two projects.
+`projectRoot` is the home directory for `--scope=user`, and for `--scope=project` the nearest ancestor owning a root marker (`.git`, `pnpm-workspace.yaml`, or a lockfile: `pnpm-lock.yaml`, `yarn.lock`, `package-lock.json`, `npm-shrinkwrap.json`, `bun.lock`, `bun.lockb`); when no ancestor owns one, the nearest ancestor owning any of `.claude`, `AGENTS.md`, `.agents`, `.codex` (falling back to cwd). A marker outranks a nearer agent directory, so a stray `.claude` inside a workspace member never becomes the root. A marker owned by the home directory or an ancestor of it is ignored — a dotfiles repository claims no project underneath. Every agent shares it, so one run cannot straddle two projects.
 
 | Kind               | claude                       | codex                               | agents                     |
 | ------------------ | ---------------------------- | ----------------------------------- | -------------------------- |
@@ -146,7 +148,8 @@ src/
 │       ├── runCli.ts               # commander root + action
 │       ├── targets/                # argv --package values → ConsumerPackage[]
 │       │   ├── classifyTarget.ts   # pure: scope | package | invalid
-│       │   ├── resolvePackage.ts   # single-target resolve
+│       │   ├── resolvePackage.ts   # single-target resolve (cwd → install roots → engine)
+│       │   ├── findInstallRoots.ts # project dirs owning a node_modules (pnpm members, hoist dir)
 │       │   ├── resolveScopeAlias.ts# scope → packages enumeration (only enumerator)
 │       │   ├── resolveTargets.ts   # classify/resolve/dedupe orchestrator
 │       │   ├── toConsumerPackages.ts # metadata → ConsumerPackage

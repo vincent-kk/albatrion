@@ -4,6 +4,7 @@ export {
   HASH_MANIFEST_FILENAME,
   MARKER_PREFIX,
   PROJECT_ANCHORS,
+  PROJECT_ROOT_MARKERS,
   computeNamespacePrefixes,
   formatBlockId,
   isValidAgent,
