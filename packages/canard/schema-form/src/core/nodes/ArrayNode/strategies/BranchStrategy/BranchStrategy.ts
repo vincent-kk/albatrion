@@ -441,9 +441,13 @@ export class BranchStrategy implements ArrayNodeStrategy {
     return this.remove(this.length - 1);
   }
 
-  /** Clears all elements to initialize the array. */
+  /**
+   * Clears all elements to initialize the array.
+   * @remarks A `null` array has no elements to clear and stays `null` — only a write that carries a value turns it into an array. The locked call is `applyValue` rebuilding the items, which sets the null state itself.
+   */
   public clear(option?: UnionSetValueOption) {
     const wants = !this.__locked__;
+    if (wants && this.__nullish__ === null) return promiseAfterMicrotask(void 0);
     for (let i = 0, l = this.__keys__.length; i < l; i++)
       this.__sourceMap__
         .get(this.__keys__[i])

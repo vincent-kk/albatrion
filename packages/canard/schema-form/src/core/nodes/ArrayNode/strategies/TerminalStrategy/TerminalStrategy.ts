@@ -216,8 +216,12 @@ export class TerminalStrategy implements ArrayNodeStrategy {
     return this.remove(this.length - 1);
   }
 
-  /** Clears all elements to initialize the array. */
+  /**
+   * Clears all elements to initialize the array.
+   * @remarks A `null` array has no elements to clear and stays `null` — only a write that carries a value turns it into an array.
+   */
   public clear() {
+    if (this.__value__ === null) return Promise.resolve(void 0);
     this.__emitChange__([]);
     return Promise.resolve(void 0);
   }
@@ -258,7 +262,8 @@ export class TerminalStrategy implements ArrayNodeStrategy {
 
     if (hasDefault) {
       const defaultValue = host.defaultValue;
-      if (defaultValue != null && defaultValue.length > 0)
+      if (defaultValue === null) this.__value__ = this.__parseValue__(null);
+      else if (defaultValue != null && defaultValue.length > 0)
         for (const value of defaultValue) this.push(value, true);
     } else while (this.length < this.__minItems__) this.push(void 0, true);
 
