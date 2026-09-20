@@ -1,9 +1,9 @@
 import { isObjectSchema } from '@winglet/json-schema/filter';
 import { JSONSchemaScanner } from '@winglet/json-schema/scanner';
 
+import { isNullBranch } from '@/schema-form/helpers/jsonSchema/isNullBranch';
 import type { JSONSchema } from '@/schema-form/types';
 
-import { isNullBranch } from '../filter';
 import { processOneOfSchema } from './utils/processOneOfSchema';
 import { processVirtualSchema } from './utils/processVirtualSchema';
 
