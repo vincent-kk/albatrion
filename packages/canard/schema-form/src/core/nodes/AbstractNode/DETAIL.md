@@ -11,7 +11,7 @@
 - **쓰기는 출처를 지닌다.** `SetValueOption.Automatic`은 폼이 스스로 만든 값(reset 계열 프리셋 전부, derived 쓰기)을 표시하고, `onChange(value, batch, automatic)`이 부모에 전달한다. null인 부모는 automatic 쓰기를 기록만 한다. 공개 옵션(`Merge`·`Overwrite`)에는 이 비트가 없으므로 밖에서의 `setValue`는 항상 의도된 쓰기다.
 - `__resetToBlank__(input?)`는 부모가 null이 될 때 자식을 "`defaultValue` 없는 폼이 만드는 상태"로 되돌린다: `input` 또는 스키마 기본값을 적용하고 derived 값을 반영한다. `ObjectNode`와 `ArrayNode`는 생성자를 따르도록 override한다.
 - **주입은 원인이 된 쓰기의 출처를 물려받는다.** 노드는 마지막 주입 이후 밖에서의 쓰기가 도착했는지 기억한다(`Automatic` 없는 `setValue`, 또는 branch 전략의 `__markIntendedWrite__`). 자동 쓰기만으로 구동된 `injectTo`는 대상에 `Automatic`으로 쓰여 대상의 null 조상을 풀지 않는다. `UpdateValue` 이벤트 payload는 이 구분을 싣지 않는다 — 공개 이벤트 형태는 그대로다.
-- `__hasNullAncestor__`는 조상 중 값이 `null`인 노드가 있는지 답한다. 밖에서의 쓰기를 "변화 없음"으로 흡수한 노드가 읽는다: 그 쓰기는 값을 바꾸지 않았어도 값을 담고 있으므로, null 조상이 있으면 `__forwardUnchangedWrite__`로 현재 값을 부모에 다시 전달한다. 조상에 null이 없으면 아무것도 알리지 않는다.
+- `__hasNullAncestor__`는 조상 중 값이 `null`인 노드가 있는지 답한다. 밖에서의 쓰기를 "변화 없음"으로 흡수한 노드가 읽는다: 그 쓰기는 값을 바꾸지 않았어도 값을 담고 있으므로, null 조상이 있으면 `__forwardUnchangedWrite__`로 현재 값을 부모에 다시 전달한다. 조상에 null이 없으면 아무것도 알리지 않는다. 이 조회는 조상의 `value`를 읽지만 읽기는 아무것도 바꾸지 않는다(`ObjectNode` `BranchStrategy` DETAIL의 `pending-read`): 조상에 보류 중인 커밋이 있어도 그 커밋의 시점·출처·`UpdateValue`는 그대로이고, 조상의 `injectTo`는 그 커밋 자신의 출처를 따른다.
 
 ## API Contracts
 
@@ -73,4 +73,4 @@ public get normalizedValue(): Value | Nullish
 
 ## Last Updated
 
-2026-09-20 — 쓰기 출처·blank reset 요구사항과 `write-provenance` 추가.
+2026-09-20 — 쓰기 출처·blank reset 요구사항과 `write-provenance` 추가, `__hasNullAncestor__`의 조상 읽기가 관찰 결과를 바꾸지 않는다는 절 추가.
