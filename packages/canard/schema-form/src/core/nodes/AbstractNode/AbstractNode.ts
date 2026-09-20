@@ -723,12 +723,12 @@ export abstract class AbstractNode<
    * @internal Value used for validation, merging actual value with enhancer.
    * @remarks An enhancer entry reaches the value only where the value holds the object it belongs to, so validation never sees a node the value leaves out.
    */
-  private get __enhancedValue__(): unknown {
+  private get __enhancedValue__(): Value | Nullish {
     const value = this.normalizedValue;
     if (this.group === 'terminal' || value == null) return value;
     const enhancer = this.__enhancer__;
     if (enhancer === undefined || isEmptyObject(enhancer)) return value;
-    return applyEnhancer(value, enhancer);
+    return applyEnhancer(value, enhancer) as Value | Nullish;
   }
 
   /**
