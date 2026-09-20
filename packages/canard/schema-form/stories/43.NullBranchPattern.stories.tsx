@@ -1,10 +1,4 @@
-import {
-  Component,
-  type PropsWithChildren,
-  type ReactNode,
-  useRef,
-  useState,
-} from 'react';
+import { type ReactNode, useRef, useState } from 'react';
 
 import {
   Form,
@@ -13,6 +7,7 @@ import {
   type JSONSchemaError,
   registerPlugin,
 } from '../src';
+import { nodeFromJSONSchema } from '../src/core';
 import StoryLayout from './components/StoryLayout';
 import { plugin as validatorPlugin } from './components/validator';
 
@@ -160,10 +155,11 @@ export const BranchMismatchIsReported = () => (
     expectation={
       <>
         aValue is shorter than 3, so the object fails its <code>oneOf</code>.
-        The error panel lists every branch that did not match: aValue&apos;s{' '}
-        <code>minLength</code>, the null branch&apos;s &quot;must be null&quot;
-        on <code>/target</code>, and the <code>oneOf</code> error. Make aValue 3
-        characters long and all three disappear.
+        Press validate() or edit aValue: the error panel lists every branch that
+        did not match: aValue&apos;s <code>minLength</code>, the null
+        branch&apos;s &quot;must be null&quot; on <code>/target</code>, and the{' '}
+        <code>oneOf</code> error. Make aValue 3 characters long and all three
+        disappear.
       </>
     }
   />
@@ -180,31 +176,29 @@ export const NullUnreachableWarning = () => (
     expectation={
       <>
         No null branch, and branches without <code>type</code>: both match{' '}
-        <code>null</code>, so <code>oneOf</code> rejects it. The error panel
-        shows the <code>oneOf</code> error for the seeded <code>null</code>, and
-        the browser console prints <code>NULLABLE_ONE_OF_NULL_UNREACHABLE</code>{' '}
-        once (development builds only).
+        <code>null</code>, so <code>oneOf</code> rejects it. Press validate():
+        the error panel shows the <code>oneOf</code> error for the seeded{' '}
+        <code>null</code>, and the browser console prints{' '}
+        <code>NULLABLE_ONE_OF_NULL_UNREACHABLE</code> once (development builds
+        only).
       </>
     }
   />
 );
 
-/** Shows the message of an error thrown while its children render, instead of a blank story. */
-class SchemaErrorBoundary extends Component<
-  PropsWithChildren,
-  { message?: string }
-> {
-  state: { message?: string } = {};
-
-  static getDerivedStateFromError(error: unknown) {
-    return { message: error instanceof Error ? error.message : String(error) };
+/**
+ * The message the node tree throws for `jsonSchema`, or `undefined` when it builds.
+ * `Form` isolates a failed build behind its own fallback text, so the story builds the tree once more to show why.
+ * @param jsonSchema - Root schema to build
+ */
+const buildFailureOf = (jsonSchema: JSONSchema) => {
+  try {
+    nodeFromJSONSchema({ jsonSchema, onChange: () => {} });
+    return undefined;
+  } catch (error) {
+    return error instanceof Error ? error.message : String(error);
   }
-
-  render() {
-    if (this.state.message === undefined) return this.props.children;
-    return <pre style={{ whiteSpace: 'pre-wrap' }}>{this.state.message}</pre>;
-  }
-}
+};
 
 // equivalent: ObjectNode.composition.typeNarrowing.test.ts — "부모를 넓히거나 다른 타입을 말하는 분기는 거부되어야 함: 'object' × 'null'"
 export const NarrowingNeedsNullableParent = () => {
@@ -217,12 +211,11 @@ export const NarrowingNeedsNullableParent = () => {
     <StoryLayout jsonSchema={jsonSchema}>
       <p>
         The parent is not nullable, so a <code>null</code> branch widens it. The
-        form is not built; the <code>COMPOSITION_TYPE_REDEFINITION</code>{' '}
-        message is shown instead.
+        form is not built — it shows its fallback text — and the{' '}
+        <code>COMPOSITION_TYPE_REDEFINITION</code> message below says why.
       </p>
-      <SchemaErrorBoundary>
-        <Form jsonSchema={jsonSchema} />
-      </SchemaErrorBoundary>
+      <Form jsonSchema={jsonSchema} />
+      <pre style={{ whiteSpace: 'pre-wrap' }}>{buildFailureOf(jsonSchema)}</pre>
     </StoryLayout>
   );
 };
