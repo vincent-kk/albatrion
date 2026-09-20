@@ -254,6 +254,11 @@ describe('ObjectNode branch nullable — null survives oneOf/anyOf recomposition
                   properties: { code: { type: 'string', default: 'C' } },
                 },
                 list: { type: 'array', items: { type: 'string' } },
+                optional: {
+                  type: ['object', 'null'],
+                  default: null,
+                  properties: { code: { type: 'string' } },
+                },
               },
             },
           ],
@@ -275,9 +280,18 @@ describe('ObjectNode branch nullable — null survives oneOf/anyOf recomposition
     };
 
     const seeded = await promoteToB({
-      target: { kind: 'b', inner: { code: 'seeded' }, list: ['seeded'] },
+      target: {
+        kind: 'b',
+        inner: { code: 'seeded' },
+        list: ['seeded'],
+        optional: { code: 'seeded' },
+      },
     });
 
     expect(seeded).toEqual(await promoteToB({ target: null }));
+    // What the blank form holds, a restored object child included: its own children's defaults.
+    expect(seeded).toEqual({
+      target: { kind: 'b', inner: { code: 'C' }, optional: null },
+    });
   });
 });

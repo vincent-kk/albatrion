@@ -320,8 +320,10 @@ export class BranchStrategy implements ObjectNodeStrategy {
   public resetToBlank(input?: ObjectValue | Nullish) {
     const host = this.__host__;
     const base = input !== undefined ? input : getDefaultValue(host.jsonSchema);
-    host.__setDefaultValue__(base);
-    if (base === null) return host.setValue(null, SetValueOption.StableReset);
+    if (base === null) {
+      host.__setDefaultValue__(null);
+      return host.setValue(null, SetValueOption.StableReset);
+    }
     this.__value__ = base;
     this.__draft__ = {};
     this.__locked__ = true;
@@ -336,6 +338,7 @@ export class BranchStrategy implements ObjectNodeStrategy {
       SetValueOption.StableReset &
         ~(SetValueOption.Propagate | SetValueOption.Replace),
     );
+    host.__setDefaultValue__(this.__value__);
   }
 
   /** Array of child nodes for regular properties (non-oneOf) */
