@@ -70,7 +70,9 @@ describe('ObjectNode branch nullable — the contract holds through every public
       onChange: () => {},
       jsonSchema: {
         type: 'object',
-        properties: { target: { type: ['object', 'null'], properties: fields } },
+        properties: {
+          target: { type: ['object', 'null'], properties: fields },
+        },
       },
       defaultValue: { target: { note: 'typed', reason: 'edited' } },
     }) as ObjectNode;
@@ -134,7 +136,9 @@ describe('ObjectNode branch nullable — the contract holds through every public
         properties: {
           source: {
             type: 'string',
-            injectTo: (value: string) => ({ '../target/note': `from:${value}` }),
+            injectTo: (value: string) => ({
+              '../target/note': `from:${value}`,
+            }),
           },
           target: { type: ['object', 'null'], properties: fields },
         },
@@ -266,7 +270,9 @@ describe('ObjectNode branch nullable — the contract holds through every public
       onChange: () => {},
       jsonSchema: {
         type: 'object',
-        properties: { target: { type: ['object', 'null'], properties: fields } },
+        properties: {
+          target: { type: ['object', 'null'], properties: fields },
+        },
       },
       defaultValue: { target: null },
     }) as ObjectNode;
@@ -325,7 +331,9 @@ describe('ObjectNode branch nullable — the contract holds through every public
           source: {
             type: 'string',
             computed: { derived: '"v" + (../quantity || 0)' },
-            injectTo: (value: string) => ({ '../target/note': `from:${value}` }),
+            injectTo: (value: string) => ({
+              '../target/note': `from:${value}`,
+            }),
           },
           target: { type: ['object', 'null'], properties: fields },
         },
@@ -353,7 +361,9 @@ describe('ObjectNode branch nullable — the contract holds through every public
           source: {
             type: 'string',
             default: 'seed',
-            injectTo: (value: string) => ({ '../target/note': `from:${value}` }),
+            injectTo: (value: string) => ({
+              '../target/note': `from:${value}`,
+            }),
           },
           target: { type: ['object', 'null'], properties: fields },
         },
@@ -407,7 +417,9 @@ describe('ObjectNode branch nullable — the contract holds through every public
       onChange: () => {},
       jsonSchema: {
         type: 'object',
-        properties: { target: { type: ['object', 'null'], properties: fields } },
+        properties: {
+          target: { type: ['object', 'null'], properties: fields },
+        },
       },
       defaultValue: { target: { note: 'seed' } },
     }) as ObjectNode;
@@ -454,5 +466,47 @@ describe('ObjectNode branch nullable — the contract holds through every public
     await delay(10);
 
     expect(reported).toEqual([]);
+  });
+
+  it('값을 바꾸지 않은 객체 쓰기는 다음 자동 injectTo를 의도한 쓰기로 만들지 않아야 함', async () => {
+    const root = nodeFromJSONSchema({
+      onChange: () => {},
+      jsonSchema: {
+        type: 'object',
+        properties: {
+          quantity: { type: 'number', default: 2 },
+          source: {
+            type: 'object',
+            properties: {
+              total: {
+                type: 'number',
+                computed: { derived: '(../../quantity || 0) * 10' },
+              },
+            },
+            injectTo: (value: { total?: number } | undefined) => ({
+              '../target/note': `total:${value?.total}`,
+            }),
+          },
+          target: {
+            type: ['object', 'null'],
+            properties: { note: { type: 'string' } },
+          },
+        },
+      },
+      defaultValue: { target: null },
+    }) as ObjectNode;
+    await delay(10);
+
+    // Writes the value `source` already holds: nothing is committed, so nothing was intended.
+    (root.find('source') as ObjectNode).setValue(
+      { total: 20 },
+      SetValueOption.Merge,
+    );
+    await delay(10);
+    (root.find('quantity') as NumberNode).setValue(5);
+    await delay(20);
+
+    expect(root.find('source')?.value).toEqual({ total: 50 });
+    expect(root.find('target')?.value).toBeNull();
   });
 });

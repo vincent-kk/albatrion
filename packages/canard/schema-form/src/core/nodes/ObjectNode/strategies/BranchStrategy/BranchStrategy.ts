@@ -166,7 +166,6 @@ export class BranchStrategy implements ObjectNodeStrategy {
     const intended = this.__intended__;
     const automatic = (option & SetValueOption.Automatic) > 0 && !intended;
     this.__intended__ = false;
-    if (!automatic) host.__markIntendedWrite__();
 
     if (current === false) {
       if (intended && host.__hasNullAncestor__)
@@ -174,6 +173,7 @@ export class BranchStrategy implements ObjectNodeStrategy {
       return;
     }
 
+    if (!automatic) host.__markIntendedWrite__();
     this.__value__ = current;
     this.__draft__ = {};
 
