@@ -1,4 +1,5 @@
 import { combineConditions } from '@/schema-form/helpers/dynamicExpression';
+import { isNullBranch } from '@/schema-form/helpers/jsonSchema';
 import type { PartialJSONSchema } from '@/schema-form/types';
 
 import type { PathManager } from '../../getPathManager';
@@ -37,6 +38,7 @@ export const extractConditionInfo = (
   for (let i = 0, l = conditionSchemas.length; i < l; i++) {
     const oneOfSchema = conditionSchemas[i];
     if (!oneOfSchema) continue;
+    if (isNullBranch(oneOfSchema)) continue;
 
     const condition: boolean | string | undefined =
       oneOfSchema.computed?.[conditionField] ??

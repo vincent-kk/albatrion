@@ -23,6 +23,7 @@ public get normalizedValue(): Value | Nullish
 
 - **기본값**: `this.value` (`AbstractNode.ts:378`).
 - **override 허용 범위**: 값 정제만. 시그니처와 `Value | Nullish` 반환 타입을 유지해야 하며, `value`가 `null`/`undefined`일 때 그 nullish 상태를 다른 값으로 바꾸지 않는다.
+- **검증 대상 값** — `__enhancedValue__`는 정제값 위에 검증 전용 항목(oneOf 분기 마커)을 얹는다. 항목은 값이 그 자리에 객체를 들고 있을 때만 얹히므로, 값에서 빠진 객체나 제거된 배열 아이템이 검증 값에만 다시 생기지 않는다 — 부모의 `required`와 배열의 `maxItems`는 실제 값을 본다.
 - **소비 지점** — 이 네 곳이 정제값을 읽는다. 새 소비 지점을 추가할 때는 raw가 아니라 이 getter를 읽는지 확인한다.
 
 | 소비 지점                        | 위치                                                                             | 읽는 이유                               |

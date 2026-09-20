@@ -13,6 +13,7 @@ import {
   formatCompositionPropertyExclusivenessError,
   formatCompositionPropertyRedefinitionError,
 } from '@/schema-form/helpers/error';
+import { isNullBranch } from '@/schema-form/helpers/jsonSchema';
 import type {
   JSONSchema,
   ObjectSchema,
@@ -21,6 +22,8 @@ import type {
 
 import { throwIfTypeRedefinition } from './utils/throwIfTypeRedefinition';
 import { warnIfNestedComposition } from './utils/warnIfNestedComposition';
+import { warnIfNullBranchIgnored } from './utils/warnIfNullBranchIgnored';
+import { warnIfNullUnreachable } from './utils/warnIfNullUnreachable';
 
 /**
  * Generate child node maps for composition schemas (oneOf/anyOf)
@@ -50,6 +53,8 @@ export const getCompositionNodeMapList = (
   const compositionSchemas = jsonSchema[scope];
   if (!compositionSchemas || !isArray(compositionSchemas)) return undefined;
 
+  warnIfNullUnreachable(parentNode, scope, compositionSchemas);
+
   const propertyKeySet = scope === 'anyOf' ? new Set<string>() : null;
   const compositionLength = compositionSchemas.length;
   const childNodeMapList = new Array<Map<string, ChildNode>>(compositionLength);
@@ -59,11 +64,16 @@ export const getCompositionNodeMapList = (
     warnIfNestedComposition(subSchema, scope, parentNode.path);
     throwIfTypeRedefinition(parentNode, scope, jsonSchema, subSchema);
 
+    const compositionChildNodeMap = new Map() as Map<string, ChildNode>;
+    childNodeMapList[index] = compositionChildNodeMap;
+    if (isNullBranch(subSchema)) {
+      warnIfNullBranchIgnored(subSchema, scope, parentNode.path);
+      continue;
+    }
     const properties = subSchema.properties;
     if (!isPlainObject(properties)) continue;
 
     const keys = Object.keys(properties);
-    const compositionChildNodeMap = new Map() as Map<string, ChildNode>;
     const required = subSchema.required;
     for (let i = 0, k = keys[0], l = keys.length; i < l; i++, k = keys[i]) {
       if (keySetList && !keySetList[index].has(k)) continue;
@@ -112,7 +122,6 @@ export const getCompositionNodeMapList = (
       });
       propertyKeySet?.add(k);
     }
-    childNodeMapList[index] = compositionChildNodeMap;
   }
 
   return childNodeMapList;

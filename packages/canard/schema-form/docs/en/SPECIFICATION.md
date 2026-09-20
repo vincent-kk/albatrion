@@ -566,6 +566,52 @@ const jsonSchema = {
 }
 ```
 
+### Branch Types in oneOf / anyOf
+
+A branch usually omits `type` and takes its parent's. When it declares one, it must not say more than the parent allows:
+
+| Parent `type`                                         | Branch `type` accepted                               |
+| ----------------------------------------------------- | ---------------------------------------------------- |
+| `'object'`                                            | omitted, `'object'`, `['object']`                    |
+| `['object', 'null']` or `'object'` + `nullable: true` | omitted, the parent's own type, `'object'`, `'null'` |
+
+A branch's own `nullable: true` flag is not compared with the parent's, so `'object'` + `nullable: true` is accepted under any object. Anything else — a `'null'` or `['object', 'null']` branch under a non-nullable object, `'string'`, `'array'` — throws `COMPOSITION_TYPE_REDEFINITION`.
+
+This rule, and the two development warnings below, run only where the object builds child nodes. An object handled as a single input — `terminal: true`, or a `FormTypeInput` component set on the object's schema — builds no branches, so its branch types are not checked and neither warning is printed; the validator still sees the schema as written.
+
+Inside a branch's `properties`, an entry **with** a `type` is a field; an entry **without** one, carrying only `const` or `enum`, is a condition that selects the branch. Giving such a discriminator a `type` turns it into a field that collides with the parent's property of the same name (`COMPOSITION_PROPERTY_REDEFINITION`).
+
+#### The null-branch pattern
+
+`oneOf` needs exactly one matching branch, and a branch without `type` matches `null` — `properties` and `required` only apply to objects. So a nullable object validates as `null` under `oneOf` only with this null-branch pattern: one `{ type: 'null' }` branch, and `type: 'object'` on the object branches.
+
+```typescript
+{
+  type: ['object', 'null'],
+  properties: {
+    kind: { type: 'string', enum: ['a', 'b'], default: 'a' }
+  },
+  oneOf: [
+    { type: 'null' },
+    {
+      type: 'object',
+      '&if': "./kind === 'a'",
+      properties: { aValue: { type: 'string' } }
+    },
+    {
+      type: 'object',
+      '&if': "./kind === 'b'",
+      properties: { bValue: { type: 'string' } }
+    }
+  ]
+}
+```
+
+- The null branch is for the validator only. It has no fields and is never the active branch; a condition or `properties` on it is ignored with the development warning `NULL_BRANCH_IGNORED_FOR_FORM`.
+- Whether the object is `null` is decided by its value, and which object branch is shown by the branch conditions. While the value is `null` the children show the blank form of the branch the conditions select (see [Nullable Objects and Arrays](#nullable-objects-and-arrays)).
+- Where the null branch sits does not matter; errors of the branch in use reach their fields. When the object value fails its `oneOf`, the null branch reports its own mismatch ("must be null") on the object like any other branch that did not match, next to the `oneOf` error.
+- A nullable object whose `oneOf` cannot validate `null` — no branch accepts it, or several do — prints the development warning `NULLABLE_ONE_OF_NULL_UNREACHABLE`. `anyOf` needs no such care: one null branch, or untyped branches, already satisfy it.
+
 ### if-then-else
 
 ```typescript
@@ -1032,7 +1078,7 @@ const jsonSchema = {
 
 - A **non-nullable** object assigned `null` becomes `{}`.
 - `setValue(undefined)` is not `null`: it clears the subtree — every field, every array item — and does not restore child defaults.
-- The form never alters a value to make it validate. Whether `null` is valid is the schema's decision. `oneOf` branches made only of `properties` all match `null`, so `null` fails such a `oneOf` in any validator; and because a composition branch may not declare a `type` different from its parent's, a `{ type: 'null' }` branch cannot be added today. A nullable object that must validate as `null` should use `anyOf`, or no composition, at that level.
+- The form never alters a value to make it validate. Whether `null` is valid is the schema's decision. `oneOf` branches that declare no `type` all match `null`, so `null` fails such a `oneOf` in any validator; write the [null-branch pattern](#the-null-branch-pattern) — a `{ type: 'null' }` branch plus `type: 'object'` on the object branches — or use `anyOf`.
 
 ### Node Type Guards
 

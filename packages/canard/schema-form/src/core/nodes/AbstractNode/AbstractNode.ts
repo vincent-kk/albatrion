@@ -1,6 +1,5 @@
 import { map } from '@winglet/common-utils/array';
 import { isArray, isEmptyObject } from '@winglet/common-utils/filter';
-import { cloneLite, merge } from '@winglet/common-utils/object';
 import { escapeSegment, setValue } from '@winglet/json/pointer';
 
 import type { Dictionary, Fn, Nullish } from '@aileron/declare';
@@ -49,6 +48,7 @@ import {
   ValidationErrorManager,
   ValidationManager,
   afterMicrotask,
+  applyEnhancer,
   checkDefinedValue,
   depthFirstSearch,
   findNode,
@@ -721,14 +721,14 @@ export abstract class AbstractNode<
 
   /**
    * @internal Value used for validation, merging actual value with enhancer.
-   * @remarks Includes virtual field values for complete schema validation.
+   * @remarks An enhancer entry reaches the value only where the value holds the object it belongs to, so validation never sees a node the value leaves out.
    */
   private get __enhancedValue__(): Value | Nullish {
     const value = this.normalizedValue;
     if (this.group === 'terminal' || value == null) return value;
     const enhancer = this.__enhancer__;
     if (enhancer === undefined || isEmptyObject(enhancer)) return value;
-    return merge(cloneLite(enhancer), value);
+    return applyEnhancer(value, enhancer) as Value | Nullish;
   }
 
   /**

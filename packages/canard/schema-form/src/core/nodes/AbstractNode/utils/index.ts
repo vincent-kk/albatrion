@@ -3,6 +3,7 @@ export * from './InjectionGuardManager';
 export * from './ValidationErrorManager';
 export * from './ValidationManager';
 export * from './afterMicrotask';
+export * from './applyEnhancer';
 export * from './checkDefinedValue';
 export * from './findNode';
 export * from './getComputedPropertiesManager';
