@@ -214,6 +214,49 @@ export const NestedDerivedFieldKeepsNull = () => (
   />
 );
 
+// equivalent: nullable.object-write-provenance.render.test.tsx — "keeps both objects null after mount, where only the schema default drives them", "creates only the injected object when the user edits the dependency"
+export const DerivedDefinesInjectToWrites = () => (
+  <Demo
+    jsonSchema={{
+      type: 'object',
+      properties: {
+        quantity: {
+          type: 'number',
+          default: 2,
+          injectTo: (value: number | undefined) => ({
+            '../pushed/total': (value || 0) * 10,
+          }),
+        },
+        pulled: {
+          type: ['object', 'null'],
+          properties: {
+            total: {
+              type: 'number',
+              computed: { derived: '(../../quantity || 0) * 10' },
+            },
+          },
+        },
+        pushed: {
+          type: ['object', 'null'],
+          properties: { total: { type: 'number' } },
+        },
+      },
+    }}
+    defaultValue={{ pulled: null, pushed: null }}
+    expectation={
+      <>
+        The same relation — total is quantity times 10 — is stated twice:
+        pulled/total derives it, and quantity injects it into pushed/total.
+        After mount both objects are <code>null</code>. Change quantity: both
+        totals show the new number, but only <code>pushed</code> becomes an
+        object. A derived value defines what a field holds; an injection is a
+        write, and only a write the user caused brings an object into existence.
+      </>
+    }
+    actions={[reset]}
+  />
+);
+
 // equivalent: nullable.object-initial-null.render.test.tsx — "with oneOf branches whose children carry defaults" #1-4
 export const SeededNullWithBranchDefaults = () => (
   <Demo
