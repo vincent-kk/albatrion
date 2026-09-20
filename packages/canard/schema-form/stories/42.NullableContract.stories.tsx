@@ -214,6 +214,43 @@ export const SeededNullWithBranchDefaults = () => (
   />
 );
 
+// equivalent: ObjectNode.branch.nullable.composition.test.ts — "null이 되면 어느 분기의 자식이든 null이 되기 전의 값을 잊어야 함"
+export const BranchChildrenForgetPreNullValues = () => (
+  <Demo
+    jsonSchema={{
+      type: 'object',
+      properties: {
+        target: {
+          type: ['object', 'null'],
+          properties: {
+            kind: { type: 'string', enum: ['a', 'b'], default: 'b' },
+          },
+          oneOf: [
+            {
+              '&if': "./kind === 'a'",
+              properties: { aValue: { type: 'string' } },
+            },
+            {
+              '&if': "./kind === 'b'",
+              properties: { bValue: { type: 'string', default: 'B' } },
+            },
+          ],
+        },
+      },
+    }}
+    defaultValue={{ target: { kind: 'b', bValue: 'seeded' } }}
+    expectation={
+      <>
+        Starts with bValue <code>seeded</code>. Press the null button: bValue
+        shows its schema default <code>B</code>, not <code>seeded</code>. Switch
+        kind to a and back to b: the value holds{' '}
+        <code>bValue: &apos;B&apos;</code> — the seeded value does not come
+        back. reset() returns to the seed.
+      </>
+    }
+  />
+);
+
 // equivalent: ObjectNode.branch.nullable.interface.test.ts (a non-nullable object assigned null)
 export const NonNullableObjectNeverHoldsNull = () => (
   <Demo
