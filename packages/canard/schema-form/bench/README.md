@@ -46,5 +46,5 @@ the ratio, so a render-delay regression shows up as a row that got slower.
   read directly and watched version-to-version.
 
 The other `*.bench.ts` files cover adjacent hot paths (node construction, branch
-init, compute recalculation, event cascade, node lookup) and are included in the
-same baseline/compare run.
+init, compute recalculation, event cascade, node lookup, object value read across
+a pending child commit) and are included in the same baseline/compare run.

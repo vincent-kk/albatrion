@@ -92,7 +92,8 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
 
   /**
    * @internal Mirrors the constructor: a given value or the schema default wins; otherwise the array is emptied and filled up to `minItems` with item defaults.
-   * @remarks The fill is marked `Automatic`: a branch array emits it after the parent's lock is gone, and it must still be recorded by a `null` ancestor instead of promoting it.
+   * @remarks The fill carries the `Reset` preset without `Replace`/`Propagate`: `Automatic` keeps a `null` ancestor recording it instead of promoting it, and `PreventInjection` keeps it from writing through another node's `injectTo`. A derived value is the final winner, so the fill is skipped whenever `derived` applies.
+   * @remarks An inactive node cannot hold `base` — `__reset__` applies `undefined` instead — so `base` is recorded as the restore value directly, and the `minItems` filler that the branch strategy's refill produced is cleared so it cannot outrank that restore value on reactivation.
    */
   public override __resetToBlank__(
     this: ArrayNode,
@@ -103,14 +104,27 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
       inputValue: base !== undefined ? base : [],
       applyDerivedValue: true,
     });
-    if (base === undefined)
+    if (
+      base === undefined &&
+      !(this.active && this.__computeManager__.isDerivedDefined)
+    )
       while (this.length < this.minItems)
         this.__strategy__.push(
           undefined,
           true,
-          SetValueOption.BatchDefault | SetValueOption.Automatic,
+          SetValueOption.Reset &
+            ~(SetValueOption.Replace | SetValueOption.Propagate),
         );
-    this.__setDefaultValue__(this.__blankValue__);
+    this.__setDefaultValue__(
+      this.__computeManager__.active || base === undefined
+        ? this.__blankValue__
+        : base,
+    );
+    if (!this.__computeManager__.active && base !== undefined && this.length)
+      this.applyValue(
+        undefined,
+        SetValueOption.BatchDefault | SetValueOption.Automatic,
+      );
   }
 
   /**

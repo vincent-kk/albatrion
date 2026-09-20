@@ -26,8 +26,17 @@ describe.each(['oneOf', 'anyOf'] as const)(
       'nullable 부모의 type을 좁힌 분기는 만들어져야 함: %s',
       (_label, parent, branch) => {
         const root = buildCompositionTarget(scope, parent, branch);
+        const branchType = (branch as { type?: unknown }).type;
+        const isNullBranch =
+          branchType === 'null' ||
+          (Array.isArray(branchType) && branchType.includes('null'));
 
         expect(root.find('target/kind')).not.toBeNull();
+        if (isNullBranch) {
+          expect(root.find('target/first')).toBeNull();
+        } else {
+          expect(root.find('target/first')).not.toBeNull();
+        }
       },
     );
 

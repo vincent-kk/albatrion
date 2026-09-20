@@ -249,6 +249,10 @@ describe('ObjectNode branch nullable — every way to null leaves the same blank
       results.push({ blank, promoted: root.find('target')?.value });
     }
 
+    expect(results[0]).toEqual({
+      blank: [[2, 9], { a: 'D' }, 'D', null, 'B'],
+      promoted: { note: 'written', series: [2, 9], optional: null },
+    });
     expect(results[1]).toEqual(results[0]);
     expect(results[2]).toEqual(results[0]);
   });

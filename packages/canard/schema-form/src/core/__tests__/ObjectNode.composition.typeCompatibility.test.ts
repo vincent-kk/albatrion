@@ -36,6 +36,7 @@ describe.each(['oneOf', 'anyOf'] as const)(
         const root = buildCompositionTarget(scope, parent, branch);
 
         expect(root.find('target/kind')).not.toBeNull();
+        expect(root.find('target/first')).not.toBeNull();
       },
     );
   },
