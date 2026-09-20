@@ -280,38 +280,15 @@ describe('transformErrors', () => {
       source: {},
     });
 
-    it('oneOf·anyOf 분기의 type이 null이라 난 오류는 제외해야 합니다', () => {
-      const kept = createMockError('oneOf');
-      const result = transformErrors([
+    it("oneOf·anyOf의 type: 'null' 분기가 낸 type 오류도 다른 분기 오류처럼 남겨야 합니다", () => {
+      const errors = [
         typeError('#/properties/target/oneOf/0/type', 'null'),
         typeError('#/properties/target/anyOf/2/type', 'null'),
-        kept,
-      ]);
-
-      expect(result).toEqual([kept]);
-    });
-
-    it("분기를 type: ['null']로 써서 기대 타입이 배열로 온 오류도 제외해야 합니다", () => {
-      const kept = typeError('#/properties/target/oneOf/1/type', [
-        'object',
-        'null',
-      ]);
-      const result = transformErrors([
         typeError('#/properties/target/oneOf/0/type', ['null']),
-        kept,
-      ]);
-
-      expect(result).toEqual([kept]);
-    });
-
-    it('분기가 아닌 곳의 type 오류와 null이 아닌 분기 type 오류는 남겨야 합니다', () => {
-      const errors = [
-        typeError('#/properties/target/type', 'null'),
         typeError('#/properties/target/oneOf/1/type', 'object'),
-        typeError('#/properties/target/oneOf/0/properties/a/type', 'null'),
       ];
 
-      expect(transformErrors(errors)).toHaveLength(3);
+      expect(transformErrors(errors)).toEqual(errors);
     });
   });
 });

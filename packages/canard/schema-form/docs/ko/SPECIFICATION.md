@@ -605,7 +605,7 @@ const jsonSchema = {
 
 - null 분기는 검증기를 위한 것입니다. 필드가 없고 활성 분기가 되지 않으며, 거기에 쓴 조건이나 `properties`는 무시되고 개발 환경 경고 `NULL_BRANCH_IGNORED_FOR_FORM`이 나옵니다.
 - 객체가 `null`인지는 값이 정하고, 어떤 객체 분기가 보이는지는 분기 조건이 정합니다. 값이 `null`인 동안 자식들은 조건이 고른 분기의 빈 폼을 보여 줍니다([Nullable 객체와 배열](#nullable-객체와-배열) 참고).
-- null 분기의 위치는 상관없습니다. 사용 중인 분기의 오류는 해당 필드에 전달되고, null 분기가 낸 "must be null"은 보고되지 않습니다.
+- null 분기의 위치는 상관없습니다. 사용 중인 분기의 오류는 해당 필드에 전달됩니다. 객체 값이 `oneOf`를 통과하지 못하면 null 분기도 맞지 않은 다른 분기처럼 자기 불일치("must be null")를 객체에 보고하며, 이 오류는 `oneOf` 오류와 함께 나옵니다.
 - `oneOf`가 `null`을 검증할 수 없는 nullable 객체 — 받아 주는 분기가 없거나 여러 개인 경우 — 는 개발 환경 경고 `NULLABLE_ONE_OF_NULL_UNREACHABLE`을 냅니다. `anyOf`는 이런 주의가 필요 없습니다: null 분기 하나 또는 type 없는 분기만으로 충족됩니다.
 
 ### if-then-else

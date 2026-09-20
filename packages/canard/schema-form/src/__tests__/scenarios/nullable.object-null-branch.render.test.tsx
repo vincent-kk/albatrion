@@ -79,18 +79,21 @@ describe('nullable.object-null-branch.render — the standard null-branch patter
         });
 
         const errors = await form.validate();
-        // Same as without a null branch: the field's own error and the `oneOf`
-        // failure, and no "must be null" from the branch that is not in use.
-        expect(errors.map((error) => [error.dataPath, error.keyword])).toEqual([
-          ['/target/aValue', 'minLength'],
-          ['/target', 'oneOf'],
+        // The null branch reports its own mismatch like any branch that did not
+        // match; where it lands in the list follows the branch order.
+        expect(
+          errors.map((error) => `${error.dataPath} ${error.keyword}`).sort(),
+        ).toEqual([
+          '/target oneOf',
+          '/target type',
+          '/target/aValue minLength',
         ]);
         expect(
           form.node('/target/aValue')?.errors.map((error) => error.keyword),
         ).toEqual(['minLength']);
         expect(
           form.node('/target')?.errors.map((error) => error.keyword),
-        ).toEqual(['oneOf']);
+        ).toEqual(['type', 'oneOf']);
       });
     },
   );

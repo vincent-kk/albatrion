@@ -607,7 +607,7 @@ Inside a branch's `properties`, an entry **with** a `type` is a field; an entry 
 
 - The null branch is for the validator only. It has no fields and is never the active branch; a condition or `properties` on it is ignored with the development warning `NULL_BRANCH_IGNORED_FOR_FORM`.
 - Whether the object is `null` is decided by its value, and which object branch is shown by the branch conditions. While the value is `null` the children show the blank form of the branch the conditions select (see [Nullable Objects and Arrays](#nullable-objects-and-arrays)).
-- Where the null branch sits does not matter; errors of the branch in use reach their fields, and the null branch's own "must be null" is not reported.
+- Where the null branch sits does not matter; errors of the branch in use reach their fields. When the object value fails its `oneOf`, the null branch reports its own mismatch ("must be null") on the object like any other branch that did not match, next to the `oneOf` error.
 - A nullable object whose `oneOf` cannot validate `null` — no branch accepts it, or several do — prints the development warning `NULLABLE_ONE_OF_NULL_UNREACHABLE`. `anyOf` needs no such care: one null branch, or untyped branches, already satisfy it.
 
 ### if-then-else
