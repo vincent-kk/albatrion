@@ -9,7 +9,7 @@ import {
   ALIAS,
   COMPUTED_FIELD_NAMES,
   STATE_FIELD_NAMES,
-} from '../../ComputedPropertiesManager/utils/type';
+} from '../../ComputedPropertiesManager';
 
 /**
  * Decides whether a node must construct a real `ComputedPropertiesManager`
