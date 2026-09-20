@@ -25,27 +25,27 @@ export type HandleChange<Value = any> = Fn<
 /** Bit flags controlling how a value application behaves. */
 export enum SetValueOption {
   None = BIT_MASK_NONE,
-  /** Replace the current value */
+  /** Replace the current value instead of merging into it — a value equal to the current one is still applied */
   Replace = BIT_FLAG_00,
-  /** Update the value and trigger onChange */
+  /** Report the new value to the parent through onChange */
   EmitChange = BIT_FLAG_01,
-  /** Update the value and publish UpdateValue event */
+  /** Propagate the update to child nodes — read by an object branch only; an array branch always rebuilds its items */
   Propagate = BIT_FLAG_02,
-  /** Propagate the update to child nodes */
+  /** Publish RequestRefresh so an uncontrolled FormTypeInput re-reads the value */
   Refresh = BIT_FLAG_03,
-  /** Update the value with batch mode */
+  /** Report to the parent in batch mode — the parent defers its commit to one batched emit */
   Batch = BIT_FLAG_04,
-  /** Ignore node tree update cycle */
+  /** Publish UpdateValue as unsettled (deferred, re-runs computed filtering) and update computed properties at once — read by branch nodes only */
   Isolate = BIT_FLAG_05,
-  /** Normalize the value that is not in the schema */
+  /** Drop the keys the schema does not declare — read by object nodes only */
   Normalize = BIT_FLAG_06,
-  /** Trigger a refresh to update the FormTypeInput */
+  /** Publish the UpdateValue event */
   PublishUpdateEvent = BIT_FLAG_07,
-  /** Prevent the injection of the node's value */
+  /** Keep the UpdateValue event from triggering the node's `injectTo` */
   PreventInjection = BIT_FLAG_08,
   /** The form wrote this value by itself (default, reset, derived) — it never turns a `null` ancestor into an object */
   Automatic = BIT_FLAG_09,
-  /** Update the value and trigger onChange with batch mode */
+  /** Report to the parent in batch mode without publishing UpdateValue */
   BatchedEmitChange = EmitChange | Batch,
   /** Default SetValue option */
   Default = EmitChange | PublishUpdateEvent,
@@ -53,13 +53,13 @@ export enum SetValueOption {
   BatchDefault = Batch | Default,
   /** Reset the node to its initial value */
   Reset = Replace | Propagate | BatchDefault | PreventInjection | Automatic,
-  /** Reset the node to its initial value and isolate the computed properties */
+  /** Reset the node to its initial value and update the computed properties at once */
   IsolateReset = Reset | Isolate,
-  /** Reset the node to its initial value and trigger a refresh */
+  /** Reset the node to its initial value, normalize it and trigger a refresh */
   StableReset = Reset | Refresh | Normalize,
-  /** Reset the node in isolation and trigger a refresh */
+  /** Reset the node in isolation, normalize it and trigger a refresh */
   IsolateStableReset = StableReset | Isolate,
-  /** Both propagate to children and trigger a refresh */
+  /** Merge into the current value, propagate to children and trigger a refresh */
   Merge = Propagate | Refresh | Isolate | BatchDefault,
   /** Replace the value and propagate the update with refresh */
   Overwrite = Replace | Merge,

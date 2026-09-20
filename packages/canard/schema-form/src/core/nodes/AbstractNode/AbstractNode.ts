@@ -338,12 +338,13 @@ export abstract class AbstractNode<
    * Sets the node's value with configurable update behavior.
    * @param input - The value to set, or a function receiving the previous value
    * @param option - Bitwise options (default: `Overwrite`)
-   *   - `Overwrite`: `Replace | Propagate | Refresh` (default)
-   *   - `Merge`: `Propagate | Refresh` (merge with existing value)
-   *   - `Replace`: Replace the current value entirely
+   *   - `Overwrite`: `Replace | Merge` — replace the current value entirely (default)
+   *   - `Merge`: `Propagate | Refresh | Isolate | BatchDefault` — merge into the existing value; an array has nothing to merge into, so it behaves as `Overwrite`
+   *   - `Replace`: Replace the current value instead of merging into it
    *   - `Propagate`: Propagate the update to child nodes
-   *   - `Refresh`: Trigger UI refresh for uncontrolled components
-   *   - `Normal`: Only update the value without side effects
+   *   - `Refresh`: Publish `RequestRefresh` so uncontrolled inputs re-read the value
+   *   - `Isolate`: Update computed properties at once and publish `UpdateValue` as unsettled
+   *   - `BatchDefault`: `Batch | EmitChange | PublishUpdateEvent` — report to the parent in batch mode and publish `UpdateValue`
    * @example
    * ```ts
    * node.setValue('new value');
