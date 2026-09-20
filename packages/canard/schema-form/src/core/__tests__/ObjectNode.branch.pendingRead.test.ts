@@ -5,6 +5,8 @@ import { delay } from '@winglet/common-utils';
 import {
   NodeEventType,
   type NumberNode,
+  type ObjectNode,
+  type SchemaNode,
   SetValueOption,
   type StringNode,
   nodeFromJSONSchema,
@@ -284,4 +286,148 @@ describe('ObjectNode branch — reading a value while a child commit is pending'
       });
     },
   );
+
+  /** Runs `act` on a settled tree and reports what nobody reading the object observes: the value, the object's `UpdateValue` count and the root `onChange` payloads. */
+  const observe = async (
+    jsonSchema: JSONSchema,
+    defaultValue: Record<string, unknown> | undefined,
+    act: (find: (path: string) => SchemaNode | null) => void,
+  ) => {
+    const changes: unknown[] = [];
+    const node = nodeFromJSONSchema({
+      onChange: (value) => changes.push(value),
+      jsonSchema,
+      defaultValue,
+    });
+    await delay(10);
+    changes.length = 0;
+    let updates = 0;
+    node.find('group')?.subscribe(({ type }) => {
+      if (type & NodeEventType.UpdateValue) updates++;
+    });
+    act((path) => node.find(path));
+    await delay(10);
+    return { value: node.value, updates, changes };
+  };
+
+  const conditional = {
+    type: 'object',
+    properties: {
+      group: {
+        type: 'object',
+        properties: {
+          kind: { type: 'string', enum: ['a', 'b'], default: 'a' },
+          aValue: { type: 'string', computed: { active: "../kind === 'a'" } },
+          bValue: { type: 'string', computed: { active: "../kind === 'b'" } },
+        },
+      },
+    },
+  } satisfies JSONSchema;
+
+  it('[baseline] a child write in the tick of an unsettled object write lands on it, and the inactive key is dropped', async () => {
+    const seen = await observe(conditional, undefined, (find) => {
+      (find('group') as ObjectNode).setValue({
+        kind: 'b',
+        aValue: 'x',
+        bValue: 'y',
+      });
+      (find('group/bValue') as StringNode).setValue('z');
+    });
+
+    expect(seen).toEqual({
+      value: { group: { kind: 'b', bValue: 'z' } },
+      updates: 2,
+      changes: [{ group: { kind: 'b', bValue: 'z' } }],
+    });
+  });
+
+  const plain = {
+    type: 'object',
+    properties: {
+      group: {
+        type: 'object',
+        properties: { a: { type: 'string' }, b: { type: 'string' } },
+      },
+    },
+  } satisfies JSONSchema;
+  const filled = { group: { a: 'a0', b: 'b0' } };
+
+  it('[baseline] a whole assignment replaces a child write still pending', async () => {
+    const seen = await observe(plain, filled, (find) => {
+      (find('group/a') as StringNode).setValue('child');
+      (find('group') as ObjectNode).setValue({ b: 'whole' });
+    });
+
+    expect(seen).toEqual({
+      value: { group: { b: 'whole' } },
+      updates: 1,
+      changes: [{ group: { b: 'whole' } }],
+    });
+  });
+
+  it('[baseline] a functional assignment builds on a child write still pending', async () => {
+    const seen = await observe(plain, filled, (find) => {
+      (find('group/a') as StringNode).setValue('child');
+      (find('group') as ObjectNode).setValue((previous) => ({
+        ...previous,
+        b: 'whole',
+      }));
+    });
+
+    expect(seen).toEqual({
+      value: { group: { a: 'child', b: 'whole' } },
+      updates: 1,
+      changes: [{ group: { a: 'child', b: 'whole' } }],
+    });
+  });
+
+  const branching = {
+    type: 'object',
+    properties: {
+      group: {
+        type: 'object',
+        properties: {
+          kind: { type: 'string', enum: ['a', 'b'], default: 'a' },
+        },
+        oneOf: [
+          {
+            '&if': "./kind === 'a'",
+            properties: { aValue: { type: 'string', default: 'A' } },
+          },
+          {
+            '&if': "./kind === 'b'",
+            properties: { bValue: { type: 'string', default: 'B' } },
+          },
+        ],
+      },
+    },
+  } satisfies JSONSchema;
+
+  it('[baseline] a whole assignment that switches the branch settles in one change', async () => {
+    const seen = await observe(branching, undefined, (find) => {
+      (find('group') as ObjectNode).setValue({ kind: 'b', bValue: 'typed' });
+    });
+
+    expect(seen).toEqual({
+      value: { group: { kind: 'b', bValue: 'typed' } },
+      updates: 2,
+      changes: [{ group: { kind: 'b', bValue: 'typed' } }],
+    });
+  });
+
+  it('[baseline] a discriminator write switches the branch back to its default in one change', async () => {
+    const seen = await observe(
+      branching,
+      { group: { kind: 'b', bValue: 'typed' } },
+      (find) => {
+        (find('group/kind') as StringNode).setValue('a');
+      },
+    );
+
+    expect(seen).toEqual({
+      value: { group: { kind: 'a', aValue: 'A' } },
+      updates: 2,
+      changes: [{ group: { kind: 'a', aValue: 'A' } }],
+    });
+  });
 });
