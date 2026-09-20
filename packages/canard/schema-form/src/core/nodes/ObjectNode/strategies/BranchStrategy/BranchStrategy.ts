@@ -248,6 +248,7 @@ export class BranchStrategy implements ObjectNodeStrategy {
    * @param replace - Whether to replace existing values
    * @param option - Setting options
    * @remarks Skips a filtering child (raw ≠ normalized) when the incoming slice equals its own normalized output — echoing it back would erase raw-only state such as trailing empty array items.
+   *          Becoming `null` blanks the children of every branch, not only the one in use: a branch restore returns a child to its default, and a child left out would bring its old value back.
    * @private
    */
   private __propagate__(
@@ -263,8 +264,9 @@ export class BranchStrategy implements ObjectNodeStrategy {
     const propagateOption =
       target == null ? option & ~SetValueOption.EmitChange : option;
     this.__locked__ = true;
-    for (let i = 0, l = this.__children__.length; i < l; i++) {
-      const node = this.__children__[i].node;
+    const nodes = source === null ? this.__subnodes__ : this.__children__;
+    for (let i = 0, l = nodes.length; i < l; i++) {
+      const node = nodes[i].node;
       if (node.type === 'virtual') continue;
       const name = node.name;
       if (source === null) {
@@ -317,9 +319,11 @@ export class BranchStrategy implements ObjectNodeStrategy {
    */
   public resetToBlank(input?: ObjectValue | Nullish) {
     const host = this.__host__;
-    const base =
-      input !== undefined ? input : getDefaultValue(host.jsonSchema);
-    if (base === null) return host.setValue(null, SetValueOption.StableReset);
+    const base = input !== undefined ? input : getDefaultValue(host.jsonSchema);
+    if (base === null) {
+      host.__setDefaultValue__(null);
+      return host.setValue(null, SetValueOption.StableReset);
+    }
     this.__value__ = base;
     this.__draft__ = {};
     this.__locked__ = true;
@@ -334,6 +338,7 @@ export class BranchStrategy implements ObjectNodeStrategy {
       SetValueOption.StableReset &
         ~(SetValueOption.Propagate | SetValueOption.Replace),
     );
+    host.__setDefaultValue__(this.__value__);
   }
 
   /** Array of child nodes for regular properties (non-oneOf) */

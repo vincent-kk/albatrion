@@ -4,7 +4,6 @@ import type { Nullish } from '@aileron/declare';
 
 import type { ArraySchema, ArrayValue } from '@/schema-form/types';
 
-import { AbstractNode } from '../AbstractNode';
 import {
   type BranchNodeConstructorProps,
   type HandleChange,
@@ -12,6 +11,7 @@ import {
   SetValueOption,
   type UnionSetValueOption,
 } from '../../types';
+import { AbstractNode } from '../AbstractNode';
 import {
   type ArrayNodeStrategy,
   BranchStrategy,
@@ -110,6 +110,17 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
           true,
           SetValueOption.BatchDefault | SetValueOption.Automatic,
         );
+    this.__setDefaultValue__(this.__blankValue__);
+  }
+
+  /**
+   * The array as it stands right after a blank reset.
+   * @internal A strategy with item nodes reports its value on the next batch, so the items are read directly.
+   */
+  private get __blankValue__(): ArrayValue | Nullish {
+    const children = this.children;
+    if (children === null || this.value == null) return this.value;
+    return children.map((child) => child.node.value);
   }
 
   /**

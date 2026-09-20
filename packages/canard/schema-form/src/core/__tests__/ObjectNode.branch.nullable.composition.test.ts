@@ -200,4 +200,154 @@ describe('ObjectNode branch nullable — null survives oneOf/anyOf recomposition
 
     expect(node.value).toEqual({ mode: 'b', target: null });
   });
+
+  it('null이 되면 어느 분기의 자식이든 null이 되기 전의 값을 잊어야 함', async () => {
+    const throughNull = async (defaultValue: Record<string, unknown>) => {
+      const node = nodeFromJSONSchema({
+        onChange: () => {},
+        jsonSchema: oneOfSchema,
+        defaultValue,
+      });
+      await delay(10);
+      (node.find('target') as ObjectNode).setValue(null);
+      await delay(10);
+      const shownWhileNull = node.find('target/aValue')?.value;
+
+      (node.find('target/kind') as StringNode).setValue('b');
+      await delay(10);
+      const promotedToB = node.value;
+      (node.find('target/kind') as StringNode).setValue('a');
+      await delay(10);
+      return { shownWhileNull, promotedToB, switchedToA: node.value };
+    };
+
+    // The seed gives a value to both branches: `bValue` to the one in use, `aValue` to the other.
+    const seeded = await throughNull({
+      target: { kind: 'b', bValue: 'x', aValue: 'stale' },
+    });
+
+    expect(seeded).toEqual(await throughNull({ target: null }));
+    expect(seeded).toEqual({
+      shownWhileNull: undefined,
+      promotedToB: { target: { kind: 'b', bValue: 'B' } },
+      switchedToA: { target: { kind: 'a' } },
+    });
+  });
+
+  it('객체·배열인 분기 자식도 null이 되기 전의 값을 잊어야 함', async () => {
+    const jsonSchema = {
+      type: 'object',
+      properties: {
+        target: {
+          type: ['object', 'null'],
+          properties: { kind: { type: 'string', enum: ['a', 'b'] } },
+          oneOf: [
+            {
+              '&if': "./kind !== 'b'",
+              properties: { aValue: { type: 'string' } },
+            },
+            {
+              '&if': "./kind === 'b'",
+              properties: {
+                inner: {
+                  type: 'object',
+                  properties: { code: { type: 'string', default: 'C' } },
+                },
+                list: { type: 'array', items: { type: 'string' } },
+                optional: {
+                  type: ['object', 'null'],
+                  default: null,
+                  properties: { code: { type: 'string' } },
+                },
+                optionalList: {
+                  type: ['array', 'null'],
+                  default: null,
+                  items: { type: 'string' },
+                },
+              },
+            },
+          ],
+        },
+      },
+    } satisfies JSONSchema;
+    const promoteToB = async (defaultValue: Record<string, unknown>) => {
+      const node = nodeFromJSONSchema({
+        onChange: () => {},
+        jsonSchema,
+        defaultValue,
+      });
+      await delay(10);
+      (node.find('target') as ObjectNode).setValue(null);
+      await delay(10);
+      (node.find('target/kind') as StringNode).setValue('b');
+      await delay(10);
+      return node.value;
+    };
+
+    const seeded = await promoteToB({
+      target: {
+        kind: 'b',
+        inner: { code: 'seeded' },
+        list: ['seeded'],
+        optional: { code: 'seeded' },
+        optionalList: ['seeded'],
+      },
+    });
+
+    expect(seeded).toEqual(await promoteToB({ target: null }));
+    // What the blank form holds, a restored object child included: its own children's defaults.
+    expect(seeded).toEqual({
+      target: {
+        kind: 'b',
+        inner: { code: 'C' },
+        optional: null,
+        optionalList: null,
+      },
+    });
+  });
+
+  it.each([false, true])(
+    'minItems를 채운 배열 분기 자식은 null을 거쳐도 채움으로 돌아가야 함 (terminal: %s)',
+    async (terminal) => {
+      const jsonSchema = {
+        type: 'object',
+        properties: {
+          target: {
+            type: ['object', 'null'],
+            properties: { kind: { type: 'string', enum: ['a', 'b'] } },
+            oneOf: [
+              {
+                '&if': "./kind !== 'b'",
+                properties: { aValue: { type: 'string' } },
+              },
+              {
+                '&if': "./kind === 'b'",
+                properties: {
+                  list: {
+                    type: 'array',
+                    terminal,
+                    minItems: 2,
+                    items: { type: 'string', default: 'S' },
+                  },
+                },
+              },
+            ],
+          },
+        },
+      } satisfies JSONSchema;
+      const node = nodeFromJSONSchema({
+        onChange: () => {},
+        jsonSchema,
+        defaultValue: { target: { kind: 'b', list: ['x', 'y', 'z'] } },
+      });
+      await delay(10);
+
+      (node.find('target') as ObjectNode).setValue(null);
+      await delay(10);
+      (node.find('target/kind') as StringNode).setValue('b');
+      await delay(10);
+
+      expect(node.value).toEqual({ target: { kind: 'b', list: ['S', 'S'] } });
+    },
+  );
 });
