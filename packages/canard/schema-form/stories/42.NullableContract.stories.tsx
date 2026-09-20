@@ -177,6 +177,43 @@ export const FormProducedValuesNeverPromote = () => (
   />
 );
 
+// equivalent: nullable.object-pending-read.render.test.tsx — "keeps a null seed over a nested derived field after mount", "keeps null when a dependency is typed", "promotes to what a never-null form holds"
+export const NestedDerivedFieldKeepsNull = () => (
+  <Demo
+    jsonSchema={{
+      type: 'object',
+      properties: {
+        quantity: { type: 'number', default: 2 },
+        target: {
+          type: ['object', 'null'],
+          properties: {
+            inner: {
+              type: 'object',
+              properties: {
+                note: { type: 'string' },
+                total: {
+                  type: 'number',
+                  computed: { derived: '(../../../quantity || 0) * 10' },
+                },
+              },
+            },
+          },
+        },
+      },
+    }}
+    defaultValue={{ target: null }}
+    expectation={
+      <>
+        total sits one object deeper than in the story above, so its derived
+        write waits in inner for a batched commit while the form renders and
+        reads inner&apos;s value. The value is <code>target: null</code> right
+        after mount and stays so when quantity changes. Type into note: the
+        object exists and carries the derived total.
+      </>
+    }
+  />
+);
+
 // equivalent: nullable.object-initial-null.render.test.tsx — "with oneOf branches whose children carry defaults" #1-4
 export const SeededNullWithBranchDefaults = () => (
   <Demo
