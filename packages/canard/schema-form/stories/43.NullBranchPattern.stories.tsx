@@ -211,8 +211,8 @@ export const NarrowingNeedsNullableParent = () => {
     <StoryLayout jsonSchema={jsonSchema}>
       <p>
         The parent is not nullable, so a <code>null</code> branch widens it. The
-        form is not built — it shows its fallback text — and the{' '}
-        <code>COMPOSITION_TYPE_REDEFINITION</code> message below says why.
+        form is not built — it shows its fallback text — and the error below
+        explains why.
       </p>
       <Form jsonSchema={jsonSchema} />
       <pre style={{ whiteSpace: 'pre-wrap' }}>{buildFailureOf(jsonSchema)}</pre>

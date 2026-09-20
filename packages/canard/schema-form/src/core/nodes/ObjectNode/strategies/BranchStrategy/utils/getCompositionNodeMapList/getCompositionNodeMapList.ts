@@ -13,7 +13,7 @@ import {
   formatCompositionPropertyExclusivenessError,
   formatCompositionPropertyRedefinitionError,
 } from '@/schema-form/helpers/error';
-import { extractSchemaInfo } from '@/schema-form/helpers/jsonSchema';
+import { isNullBranch } from '@/schema-form/helpers/jsonSchema';
 import type {
   JSONSchema,
   ObjectSchema,
@@ -66,7 +66,7 @@ export const getCompositionNodeMapList = (
 
     const compositionChildNodeMap = new Map() as Map<string, ChildNode>;
     childNodeMapList[index] = compositionChildNodeMap;
-    if (extractSchemaInfo(subSchema)?.type === 'null') {
+    if (isNullBranch(subSchema)) {
       warnIfNullBranchIgnored(subSchema, scope, parentNode.path);
       continue;
     }

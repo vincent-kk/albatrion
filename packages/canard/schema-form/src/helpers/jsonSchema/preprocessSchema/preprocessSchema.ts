@@ -3,7 +3,7 @@ import { JSONSchemaScanner } from '@winglet/json-schema/scanner';
 
 import type { JSONSchema } from '@/schema-form/types';
 
-import { extractSchemaInfo } from '../extractSchemaInfo';
+import { isNullBranch } from '../filter';
 import { processOneOfSchema } from './utils/processOneOfSchema';
 import { processVirtualSchema } from './utils/processVirtualSchema';
 
@@ -28,10 +28,7 @@ const scanner = new JSONSchemaScanner<Partial<JSONSchema>>({
         schema = processed || schema;
         if (idle) idle = processed === null;
       }
-      if (
-        entry.keyword === 'oneOf' &&
-        extractSchemaInfo(schema)?.type !== 'null'
-      ) {
+      if (entry.keyword === 'oneOf' && !isNullBranch(schema)) {
         schema = processOneOfSchema(schema, entry.variant);
         idle = false;
       }

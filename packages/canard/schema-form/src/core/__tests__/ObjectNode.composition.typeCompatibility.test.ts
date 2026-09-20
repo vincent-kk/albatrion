@@ -12,27 +12,25 @@ import {
   buildCompositionTarget,
 } from './ObjectNode.composition.fixtures';
 
-/** Branch types accepted all along; narrowing must not take any of them away. */
-const compatible: [string, TypeForm, TypeForm][] = [
-  ["'object' × (type 생략)", PLAIN, {}],
-  ["['object','null'] × (type 생략)", NULLABLE_ARRAY, {}],
-  ['nullable:true × (type 생략)', NULLABLE_FLAG, {}],
-  ["'object' × 'object'", PLAIN, { type: 'object' }],
-  ["'object' × ['object']", PLAIN, { type: ['object'] }],
-  ["'object' × {object, nullable:true}", PLAIN, NULLABLE_FLAG],
-  ["['object','null'] × ['object','null']", NULLABLE_ARRAY, NULLABLE_ARRAY],
-  [
-    "['object','null'] × {object, nullable:true}",
-    NULLABLE_ARRAY,
-    NULLABLE_FLAG,
-  ],
-  ["nullable:true × 'object'", NULLABLE_FLAG, { type: 'object' }],
-];
-
 describe.each(['oneOf', 'anyOf'] as const)(
   'ObjectNode composition — %s 분기의 type 호환',
   (scope) => {
-    it.each(compatible)(
+    /** Branch types accepted all along; narrowing must not take any of them away. */
+    it.each([
+      ["'object' × (type 생략)", PLAIN, {}],
+      ["['object','null'] × (type 생략)", NULLABLE_ARRAY, {}],
+      ['nullable:true × (type 생략)', NULLABLE_FLAG, {}],
+      ["'object' × 'object'", PLAIN, { type: 'object' }],
+      ["'object' × ['object']", PLAIN, { type: ['object'] }],
+      ["'object' × {object, nullable:true}", PLAIN, NULLABLE_FLAG],
+      ["['object','null'] × ['object','null']", NULLABLE_ARRAY, NULLABLE_ARRAY],
+      [
+        "['object','null'] × {object, nullable:true}",
+        NULLABLE_ARRAY,
+        NULLABLE_FLAG,
+      ],
+      ["nullable:true × 'object'", NULLABLE_FLAG, { type: 'object' }],
+    ] as [string, TypeForm, TypeForm][])(
       '좁히기 이전부터 만들어지던 조합은 계속 만들어져야 함: %s',
       (_label, parent, branch) => {
         const root = buildCompositionTarget(scope, parent, branch);

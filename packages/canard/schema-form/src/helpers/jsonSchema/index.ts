@@ -4,4 +4,4 @@ export { preprocessSchema } from './preprocessSchema';
 export { processAllOfSchema } from './processAllOfSchema';
 export { stripSchemaExtensions } from './stripSchemaExtensions';
 
-export { isTerminalType, isBranchType } from './filter';
+export { isTerminalType, isBranchType, isNullBranch } from './filter';
