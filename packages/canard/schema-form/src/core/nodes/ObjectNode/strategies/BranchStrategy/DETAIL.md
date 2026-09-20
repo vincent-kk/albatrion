@@ -25,7 +25,7 @@
 - `applyValue()` 호출 시 `__draft__` 갱신 → `__expired__ = true` → `__emitChange__()` 순으로 처리한다.
 - `__locked__ = true` 구간에서는 자식→부모 재귀 업데이트를 차단한다.
 - 값을 읽어도 값·이벤트·주입·출처가 바뀌지 않는다. `value` getter는 커밋하지 않고, `__value__`에 보류 중인 `__draft__`를 얹은 합성값을 돌려준다. 커밋은 원래 경로(동기 emit 또는 `RequestEmitChange` 배치)에서 원래 옵션으로 한 번 일어난다 — 그래서 모든 동작은 아무도 값을 읽지 않았을 때의 동작과 같다.
-- 합성값은 캐시한다. base·draft·`__isolated__`가 바뀌지 않는 동안 반복 읽기는 같은 참조를 돌려준다: `normalizedValue`가 `value`와 같은 getter라서, 참조가 흔들리면 `__propagate__`의 에코 가드가 객체 자식의 전파를 건너뛴다. 그 뒤 draft가 바뀌지 않은 채 getter와 같은 합성 조건(Replace·Normalize 없음)으로 커밋되면 커밋은 합성을 다시 하지 않고 그 객체를 `__value__`로 채택한다.
+- 합성값은 캐시한다. 보류 중 반복 읽기는 같은 참조를 돌려준다: `normalizedValue`가 `value`와 같은 getter라서, 참조가 흔들리면 `__propagate__`의 에코 가드가 객체 자식의 전파를 건너뛴다. 캐시는 자식 쓰기와 모든 커밋에서 비워지고, 보류 창이 기다리던 배치 커밋(`RequestEmitChange`)만 유효한 캐시를 합성 결과로 쓴다 — 그 결과가 객체면 `__value__`로 채택하고 "변화 없음"이면 조기 반환 분기를 그대로 탄다. 그 밖의 커밋은 스스로 합성한다. 잠금 중의 읽기는 커밋된 값을 그대로 돌려준다.
 - 보류 중인 자식 쓰기가 있을 때 통째 대입(`applyValue`)은 그 쓰기를 대체하고, 함수형 대입은 그 쓰기를 얹은 합성값 위에 쌓인다.
 - `processValueWithValidate`로 비활성 oneOf/anyOf 분기 키를 객체 값에서 제거한다.
 
