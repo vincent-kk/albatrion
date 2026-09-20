@@ -575,6 +575,8 @@ const jsonSchema = {
 
 분기 자신의 `nullable: true` 플래그는 부모와 비교하지 않으므로 `'object'` + `nullable: true`는 어떤 객체 아래에서도 허용됩니다. 그 밖의 선언 — nullable이 아닌 객체 아래의 `'null'`·`['object', 'null']` 분기, `'string'`, `'array'` — 은 `COMPOSITION_TYPE_REDEFINITION`을 던집니다.
 
+이 규칙과 아래 두 개발 환경 경고는 객체가 자식 노드를 만드는 경우에만 실행됩니다. 객체 전체를 하나의 입력으로 다루는 경우 — `terminal: true`이거나 객체 스키마에 `FormTypeInput` 컴포넌트를 지정한 경우 — 에는 분기를 만들지 않으므로 분기 type을 검사하지 않고 두 경고도 나오지 않습니다. 검증기는 그때도 작성된 스키마를 그대로 봅니다.
+
 분기의 `properties` 안에서 `type`이 **있는** 항목은 필드이고, `type` 없이 `const`나 `enum`만 가진 항목은 그 분기를 고르는 조건입니다. 이런 판별자에 `type`을 붙이면 필드가 되어 부모의 같은 이름 프로퍼티와 충돌합니다(`COMPOSITION_PROPERTY_REDEFINITION`).
 
 #### null 분기 패턴

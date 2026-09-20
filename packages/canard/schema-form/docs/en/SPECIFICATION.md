@@ -577,6 +577,8 @@ A branch usually omits `type` and takes its parent's. When it declares one, it m
 
 A branch's own `nullable: true` flag is not compared with the parent's, so `'object'` + `nullable: true` is accepted under any object. Anything else — a `'null'` or `['object', 'null']` branch under a non-nullable object, `'string'`, `'array'` — throws `COMPOSITION_TYPE_REDEFINITION`.
 
+This rule, and the two development warnings below, run only where the object builds child nodes. An object handled as a single input — `terminal: true`, or a `FormTypeInput` component set on the object's schema — builds no branches, so its branch types are not checked and neither warning is printed; the validator still sees the schema as written.
+
 Inside a branch's `properties`, an entry **with** a `type` is a field; an entry **without** one, carrying only `const` or `enum`, is a condition that selects the branch. Giving such a discriminator a `type` turns it into a field that collides with the parent's property of the same name (`COMPOSITION_PROPERTY_REDEFINITION`).
 
 #### The null-branch pattern
