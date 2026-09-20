@@ -304,6 +304,8 @@ export class BranchStrategy implements ObjectNodeStrategy {
    */
   public applyValue(input: ObjectValue | Nullish, option: UnionSetValueOption) {
     this.__draft__ = input;
+    if ((option & SetValueOption.Automatic) === 0 && !isEmptyObject(input))
+      this.__intended__ = true;
     this.__expired__ = true;
     // Keep a pending composition reset isolated until its event is settled.
     this.__isolated__ =

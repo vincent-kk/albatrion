@@ -11,7 +11,7 @@
 - **쓰기는 출처를 지닌다.** `SetValueOption.Automatic`은 폼이 스스로 만든 값(reset 계열 프리셋 전부, derived 쓰기)을 표시하고, `onChange(value, batch, automatic)`이 부모에 전달한다. null인 부모는 automatic 쓰기를 기록만 한다. 공개 옵션(`Merge`·`Overwrite`)에는 이 비트가 없으므로 밖에서의 `setValue`는 항상 의도된 쓰기다.
 - `__resetToBlank__(input?)`는 부모가 null이 될 때 자식을 "`defaultValue` 없는 폼이 만드는 상태"로 되돌린다: `input` 또는 스키마 기본값을 적용하고 derived 값을 반영한다. `ObjectNode`와 `ArrayNode`는 생성자를 따르도록 override한다.
 - **주입은 원인이 된 쓰기의 출처를 물려받는다.** 노드는 마지막 주입 이후 밖에서의 쓰기가 도착했는지 기억한다(`Automatic` 없는 `setValue`, 또는 branch 전략의 `__markIntendedWrite__`). 자동 쓰기만으로 구동된 `injectTo`는 대상에 `Automatic`으로 쓰여 대상의 null 조상을 풀지 않는다. `UpdateValue` 이벤트 payload는 이 구분을 싣지 않는다 — 공개 이벤트 형태는 그대로다.
-- `__hasNullAncestor__`는 조상 중 값이 `null`인 노드가 있는지 답한다. 변화 없는 커밋이 밖에서의 쓰기를 흡수한 branch 노드만 읽는다.
+- `__hasNullAncestor__`는 조상 중 값이 `null`인 노드가 있는지 답한다. 밖에서의 쓰기를 "변화 없음"으로 흡수한 노드가 읽는다: 그 쓰기는 값을 바꾸지 않았어도 값을 담고 있으므로, null 조상이 있으면 `__forwardUnchangedWrite__`로 현재 값을 부모에 다시 전달한다. 조상에 null이 없으면 아무것도 알리지 않는다.
 
 ## API Contracts
 
@@ -53,6 +53,7 @@ public get normalizedValue(): Value | Nullish
 
 - string·number·boolean 자식의 derived 값, reset으로 복원된 default는 null 부모를 객체로 만들지 않는다.
 - 공개 `setValue`(옵션 생략·`Merge`·`Overwrite`)로 쓴 값은 null 부모를 객체로 만든다.
+- 그 값이 이미 보이는 값과 같아도, 어느 노드 종류(string·number·boolean·null·object·array, 두 전략)에 어느 옵션으로 쓰든 같다. 자동 쓰기와 키 없는 객체의 `Merge`는 만들지 않는다.
 - source의 `default`·derived 값으로 구동된 `injectTo`는 null 객체 안의 대상을 채우되 객체를 만들지 않고, 사용자가 source를 바꾼 뒤의 `injectTo`는 만든다.
 
 ### normalized-consumers — 네 소비 지점이 정제값을 읽는다

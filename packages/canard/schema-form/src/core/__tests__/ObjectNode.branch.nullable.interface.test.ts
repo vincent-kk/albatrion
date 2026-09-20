@@ -468,6 +468,46 @@ describe('ObjectNode branch nullable — the contract holds through every public
     expect(reported).toEqual([]);
   });
 
+  it('같은 값의 Merge 쓰기는 null 조상이 없으면 아무것도 알리지 않아야 함', async () => {
+    const reported: unknown[] = [];
+    const root = nodeFromJSONSchema({
+      onChange: (value) => reported.push(value),
+      jsonSchema: { type: 'string', default: 'C' },
+    }) as StringNode;
+    await delay(10);
+    reported.length = 0;
+
+    root.setValue('C', SetValueOption.Merge);
+    await delay(10);
+
+    expect(reported).toEqual([]);
+  });
+
+  it('같은 값의 자동 쓰기는 Merge여도 null을 풀지 않아야 함', async () => {
+    const root = nodeFromJSONSchema({
+      onChange: () => {},
+      jsonSchema: {
+        type: 'object',
+        properties: {
+          target: {
+            type: ['object', 'null'],
+            properties: { code: { type: 'string', default: 'C' } },
+          },
+        },
+      },
+      defaultValue: { target: null },
+    }) as ObjectNode;
+    await delay(10);
+
+    (root.find('target/code') as StringNode).setValue(
+      'C',
+      SetValueOption.Merge | SetValueOption.Automatic,
+    );
+    await delay(10);
+
+    expect(root.value).toEqual({ target: null });
+  });
+
   it('값을 바꾸지 않은 객체 쓰기는 다음 자동 injectTo를 의도한 쓰기로 만들지 않아야 함', async () => {
     const root = nodeFromJSONSchema({
       onChange: () => {},

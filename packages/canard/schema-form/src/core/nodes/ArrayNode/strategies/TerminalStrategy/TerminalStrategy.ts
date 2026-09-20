@@ -5,13 +5,13 @@ import { isObjectSchema } from '@winglet/json-schema/filter';
 import type { Nullish } from '@aileron/declare';
 
 import type { ArrayNode } from '@/schema-form/core/nodes/ArrayNode';
+import { parseArray } from '@/schema-form/core/parsers';
 import {
   type HandleChange,
   NodeEventType,
   SetValueOption,
   type UnionSetValueOption,
 } from '@/schema-form/core/types';
-import { parseArray } from '@/schema-form/core/parsers';
 import { getObjectDefaultValue } from '@/schema-form/helpers/defaultValue';
 import type { AllowedValue, ArrayValue } from '@/schema-form/types';
 
@@ -83,7 +83,8 @@ export class TerminalStrategy implements ArrayNodeStrategy {
     const previous = this.__value__ ? [...this.__value__] : this.__value__;
     const current = this.__parseValue__(input);
 
-    if (retain && host.__equals__(previous, current)) return;
+    if (retain && host.__equals__(previous, current))
+      return host.__forwardUnchangedWrite__(current, option);
     this.__value__ = current;
     if ((option & SetValueOption.Automatic) === 0)
       this.__host__.__markIntendedWrite__();

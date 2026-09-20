@@ -4,13 +4,13 @@ import { getObjectKeys, sortObjectKeys } from '@winglet/common-utils/object';
 import type { Nullish } from '@aileron/declare';
 
 import type { ObjectNode } from '@/schema-form/core/nodes/ObjectNode';
+import { parseObject } from '@/schema-form/core/parsers';
 import {
   type HandleChange,
   NodeEventType,
   SetValueOption,
   type UnionSetValueOption,
 } from '@/schema-form/core/types';
-import { parseObject } from '@/schema-form/core/parsers';
 import { getObjectDefaultValue } from '@/schema-form/helpers/defaultValue';
 import type { ObjectValue } from '@/schema-form/types';
 
@@ -54,7 +54,8 @@ export class TerminalStrategy implements ObjectNodeStrategy {
     const previous = this.__value__ ? { ...this.__value__ } : this.__value__;
     const current = this.__parseValue__(input, normalize);
 
-    if (retain && host.__equals__(previous, current)) return;
+    if (retain && host.__equals__(previous, current))
+      return host.__forwardUnchangedWrite__(current, option);
     this.__value__ = current;
     if ((option & SetValueOption.Automatic) === 0)
       this.__host__.__markIntendedWrite__();
