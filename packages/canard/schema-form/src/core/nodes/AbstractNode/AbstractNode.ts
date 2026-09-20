@@ -275,31 +275,38 @@ export abstract class AbstractNode<
     return findNodes(absolute ? this.rootNode : (this as SchemaNode), pointer);
   }
 
-  /** @internal Storage for the node's default value. */
-  private __defaultValue__: Value | Nullish;
+  /** @internal What the node was built with; fixed once the node is initialized. */
+  private __initialValue__: Value | Nullish;
 
-  /** @internal Flag indicating whether the default value is explicitly defined. */
-  private __isDefinedDefaultValue__: boolean = false;
+  /**
+   * @internal What a branch restore, a re-activation or a bare reset returns the node to.
+   * @remarks Starts as the initial value; a blank reset replaces it, so data discarded by `null` does not come back, and `resetSubtree()` puts the initial value back.
+   */
+  private __restoreValue__: Value | Nullish;
+
+  /** @internal Flag indicating whether the restore value is explicitly defined. */
+  private __isDefinedRestoreValue__: boolean = false;
 
   /**
    * Node's default value from schema or initialization.
-   * @remarks Used as fallback during reset operations.
+   * @remarks It does not change after initialization; `resetSubtree()` returns the node to it.
    */
   public get defaultValue() {
-    return this.__defaultValue__;
+    return this.__initialValue__;
   }
 
   /**
-   * Sets the node's default value.
-   * @param defaultValue - The default value to set
-   * @internal For use during construction or by inherited nodes.
+   * Sets the value the node is restored to.
+   * @param defaultValue - The value to restore to
+   * @internal Until the node is initialized this is also its initial value; afterwards only the restore value moves.
    */
   public __setDefaultValue__(
     this: AbstractNode,
     defaultValue: Value | Nullish,
   ) {
-    this.__defaultValue__ = defaultValue;
-    this.__isDefinedDefaultValue__ = checkDefinedValue(defaultValue);
+    if (!this.__initialized__) this.__initialValue__ = defaultValue;
+    this.__restoreValue__ = defaultValue;
+    this.__isDefinedRestoreValue__ = checkDefinedValue(defaultValue);
   }
 
   /**
@@ -1058,16 +1065,16 @@ export abstract class AbstractNode<
     let value: Value | Nullish;
     if ('inputValue' in options) value = options.inputValue;
     else if (options.preferLatest) {
-      if (options.checkDefaultValueFirst && this.__isDefinedDefaultValue__)
-        value = this.__defaultValue__;
+      if (options.checkDefaultValueFirst && this.__isDefinedRestoreValue__)
+        value = this.__restoreValue__;
       else
         value =
           options.fallbackValue !== undefined
             ? options.fallbackValue
             : this.value !== undefined
               ? this.value
-              : this.__defaultValue__;
-    } else value = this.__defaultValue__;
+              : this.__restoreValue__;
+    } else value = this.__restoreValue__;
 
     if (
       options.applyDerivedValue &&
@@ -1114,7 +1121,7 @@ export abstract class AbstractNode<
    * Returns the node to what a form without a default value builds for it.
    * @param input - Value the parent's schema default assigns to this node; the node's own schema default when `undefined`
    * @internal A parent that became `null` calls this on its children, so the blank form it shows does not depend on how it became `null`.
-   *           The blank value also becomes the node's default, which is what a later branch restore returns the node to.
+   *           The blank value also becomes the node's restore value, which is what a later branch restore returns the node to.
    */
   public __resetToBlank__(this: AbstractNode, input?: Value | Nullish) {
     const blank =
@@ -1125,10 +1132,13 @@ export abstract class AbstractNode<
 
   /**
    * Resets this node and all descendants to their initial values.
-   * @remarks Clears all state flags in the subtree before resetting values.
+   * @remarks Clears all state flags in the subtree and returns every restore value in it to the initial one before resetting values.
    */
   public resetSubtree(this: AbstractNode) {
     this.clearSubtreeState();
+    depthFirstSearch(this, (node) =>
+      node.__setDefaultValue__(node.defaultValue),
+    );
     this.__reset__();
   }
 

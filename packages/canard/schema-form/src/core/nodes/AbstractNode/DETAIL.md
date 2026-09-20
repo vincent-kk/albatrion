@@ -10,6 +10,8 @@
 - `__initialize__`는 부모 노드가 actor로서 호출한다. 루트는 자기 자신이 호출한다.
 - **쓰기는 출처를 지닌다.** `SetValueOption.Automatic`은 폼이 스스로 만든 값(reset 계열 프리셋 전부, derived 쓰기)을 표시하고, `onChange(value, batch, automatic)`이 부모에 전달한다. null인 부모는 automatic 쓰기를 기록만 한다. 공개 옵션(`Merge`·`Overwrite`)에는 이 비트가 없으므로 밖에서의 `setValue`는 항상 의도된 쓰기다.
 - `__resetToBlank__(input?)`는 부모가 null이 될 때 자식을 "`defaultValue` 없는 폼이 만드는 상태"로 되돌린다: `input` 또는 스키마 기본값을 적용하고 derived 값을 반영한다. `ObjectNode`와 `ArrayNode`는 생성자를 따르도록 override한다.
+- 노드는 기본값을 두 자리에 둔다. **초기값**(`__initialValue__`)은 초기화가 끝나기 전에 받은 값이며 그 뒤로 바뀌지 않는다 — 공개 `defaultValue`가 돌려주는 값이다. **복원값**(`__restoreValue__`)은 분기 복원·`active` 재활성화·옵션 없는 reset이 노드를 되돌리는 값이며, 초기값에서 출발해 `__resetToBlank__`만이 blank 값으로 바꾼다 — null로 버린 데이터가 그 뒤의 복원에서 되살아나지 않게 하는 장치다. `__setDefaultValue__`는 초기화 전에는 두 자리를 함께, 초기화 뒤에는 복원값만 쓴다.
+- `resetSubtree()`는 서브트리 모든 노드(비활성 분기 포함)의 복원값을 초기값으로 되돌린 뒤 reset한다. 그래서 어느 노드에서 불러도 그 서브트리는 초기값으로 돌아가고, 그 뒤의 분기 복원·재활성화도 같은 초기값의 새 폼과 같다. 서브트리 밖의 노드는 건드리지 않는다.
 - **주입은 원인이 된 쓰기의 출처를 물려받는다.** 노드는 마지막 주입 이후 밖에서의 쓰기가 도착했는지 기억한다(`Automatic` 없는 `setValue`, 또는 branch 전략의 `__markIntendedWrite__`). 자동 쓰기만으로 구동된 `injectTo`는 대상에 `Automatic`으로 쓰여 대상의 null 조상을 풀지 않는다. `UpdateValue` 이벤트 payload는 이 구분을 싣지 않는다 — 공개 이벤트 형태는 그대로다.
 - `__hasNullAncestor__`는 조상 중 값이 `null`인 노드가 있는지 답한다. 밖에서의 쓰기를 "변화 없음"으로 흡수한 노드가 읽는다: 그 쓰기는 값을 바꾸지 않았어도 값을 담고 있으므로, null 조상이 있으면 `__forwardUnchangedWrite__`로 현재 값을 부모에 다시 전달한다. 조상에 null이 없으면 아무것도 알리지 않는다. 이 조회는 조상의 `value`를 읽지만 읽기는 아무것도 바꾸지 않는다(`ObjectNode` `BranchStrategy` DETAIL의 `pending-read`): 조상에 보류 중인 커밋이 있어도 그 커밋의 시점·출처·`UpdateValue`는 그대로이고, 조상의 `injectTo`는 그 커밋 자신의 출처를 따른다.
 
@@ -57,6 +59,13 @@ public get normalizedValue(): Value | Nullish
 - 그 값이 이미 보이는 값과 같아도, 어느 노드 종류(string·number·boolean·null·object·array, 두 전략)에 어느 옵션으로 쓰든 같다. 자동 쓰기와 키 없는 객체의 `Merge`는 만들지 않는다.
 - source의 `default`·derived 값으로 구동된 `injectTo`는 null 객체 안의 대상을 채우되 객체를 만들지 않고, 사용자가 source를 바꾼 뒤의 `injectTo`는 만든다.
 
+### default-after-null — null을 거쳐도 초기값은 남는다
+
+- 공개 `defaultValue`는 객체가 null이 되기 전과 후, 다시 객체가 된 뒤에 같다.
+- null을 거친 서브트리의 어느 노드에서 `resetSubtree()`를 불러도 그 노드와 자손은 초기값이 된다 — 조상의 초기값과 자손의 blank 값이 섞이지 않는다.
+- `resetSubtree()` 뒤의 분기 왕복·`active` 재활성화는 같은 `defaultValue`로 새로 만든 폼과 같은 값을 낸다.
+- `resetSubtree()`를 부르지 않는 한 null을 거친 서브트리의 분기 복원·재활성화는 blank 값을 낸다(null로 버린 데이터는 되살아나지 않는다).
+
 ### normalized-consumers — 네 소비 지점이 정제값을 읽는다
 
 - `options.omitTrailing`이 켜진 배열을 가진 폼에서 `FormHandle.getValue()`와 `onSubmit` 인자에 후행 빈 항목이 포함되지 않는다.
@@ -69,8 +78,9 @@ public get normalizedValue(): Value | Nullish
 
 ## History
 
+- 2026-09-20 — 초기값과 복원값을 분리하고 `resetSubtree()`가 복원값을 초기값으로 되돌리게 함. 이유: null 계약이 `__resetToBlank__`에서 기본값을 실행 중에 덮어쓰면서, 기본값을 초기화 전용으로 만든 #302 뒤로 초기값을 보관하는 자리가 없었다. 그 결과 공개 `defaultValue`가 실행 중에 바뀌었고, `resetSubtree()`가 호출 위치에 따라 초기값·blank·혼합값을 냈으며, 루트를 reset한 폼의 분기 왕복이 새 폼과 달랐다. 기각한 안: 덮어쓰기를 없애고 부모의 blank 기록을 복원에 실어 보내기 — `active` 재활성화(`__updateComputedProperties__`)는 자식이 스스로 reset하므로 실어 보낼 통로가 없다.
 - 2026-09-20 — 쓰기 출처(`Automatic`)와 `__resetToBlank__`·`__hasNullAncestor__` 추가. 이유: nullable branch 노드의 null 계약(`ObjectNode/DETAIL.md`)이 자동 쓰기와 의도된 쓰기의 구분을 요구했다. `__reset__`의 값 우선순위는 바뀌지 않았다.
 
 ## Last Updated
 
-2026-09-20 — 쓰기 출처·blank reset 요구사항과 `write-provenance` 추가, `__hasNullAncestor__`의 조상 읽기가 관찰 결과를 바꾸지 않는다는 절 추가.
+2026-09-20 — 초기값/복원값 분리와 `default-after-null` 수용 기준 추가.

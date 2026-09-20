@@ -79,7 +79,7 @@
 - null 객체는 생성 중 자식 emit, oneOf/anyOf 초기 분기 확정과 재합성, computed 재평가, derived 의존값 변경, computed `active` 전환, 중첩 객체·배열의 지연 커밋을 거쳐도 `null`이다.
 - 같은 배치에 자동 쓰기와 밖에서의 쓰기가 섞이면 객체가 된다.
 - 객체가 된 값은 null이 아니었던 폼의 같은 쓰기와 같고, 활성 분기의 키만 포함한다.
-- null이 된 뒤 자식 상태는 `defaultValue: null`로 생성한 폼과 같다 — derived 배열, `minItems` 배열(두 전략), 자체 `default`를 가진 객체, `default: null` 객체, 중첩 oneOf 포함. 어느 oneOf/anyOf 분기의 자식이든 null이 되면 생성 시점에 받은 기본값까지 빈 양식의 값으로 바뀐다: 분기 복원은 자식을 그 기본값으로 되돌리므로, null이 되기 전의 값은 null인 동안의 입력에도, 이후 어느 분기를 골라 풀린 값에도 나타나지 않는다.
+- null이 된 뒤 자식 상태는 `defaultValue: null`로 생성한 폼과 같다 — derived 배열, `minItems` 배열(두 전략), 자체 `default`를 가진 객체, `default: null` 객체, 중첩 oneOf 포함. 어느 oneOf/anyOf 분기의 자식이든 null이 되면 복원값(`AbstractNode` DETAIL)까지 빈 양식의 값으로 바뀐다: 분기 복원은 자식을 그 기본값으로 되돌리므로, null이 되기 전의 값은 null인 동안의 입력에도, 이후 어느 분기를 골라 풀린 값에도 나타나지 않는다.
 - null → 쓰기 → null → 쓰기를 반복해도 앞 구간의 기록이 뒤 구간의 값에 섞이지 않는다.
 - null 조상이 없는 폼에서 같은 값을 다시 쓰는 것은 루트 `onChange`를 발생시키지 않는다.
 
