@@ -3,7 +3,6 @@ import type { Nullish } from '@aileron/declare';
 import type { StringSchema, StringValue } from '@/schema-form/types';
 
 import { parseString } from '../../parsers';
-import { AbstractNode } from '../AbstractNode';
 import {
   type HandleChange,
   NodeEventType,
@@ -11,6 +10,7 @@ import {
   SetValueOption,
   type UnionSetValueOption,
 } from '../../types';
+import { AbstractNode } from '../AbstractNode';
 
 /**
  * Node class for handling string schemas.
@@ -48,11 +48,17 @@ export class StringNode extends AbstractNode<StringSchema, StringValue> {
     const previous = this.__value__;
     const current = this.__parseValue__(input);
 
-    if (retain && this.__equals__(previous, current)) return;
+    if (retain && this.__equals__(previous, current))
+      return this.__forwardUnchangedWrite__(current, option);
     this.__value__ = current;
+    if ((option & SetValueOption.Automatic) === 0) this.__markIntendedWrite__();
 
     if (option & SetValueOption.EmitChange)
-      this.onChange(current, (option & SetValueOption.Batch) > 0);
+      this.onChange(
+        current,
+        (option & SetValueOption.Batch) > 0,
+        (option & SetValueOption.Automatic) > 0,
+      );
     if (option & SetValueOption.Refresh)
       this.publish(NodeEventType.RequestRefresh);
     if (option & SetValueOption.PublishUpdateEvent)
@@ -68,16 +74,18 @@ export class StringNode extends AbstractNode<StringSchema, StringValue> {
    * @internal Reflects value changes excluding empty values.
    * @param input - The value to set
    * @param batch - Whether the change should be batched
+   * @param automatic - Whether the form produced this value by itself
    */
   private __onChangeWithOmitEmpty__(
     this: StringNode,
     input: StringValue | Nullish,
     batch?: boolean,
+    automatic?: boolean,
   ) {
-    if (input === null) super.onChange(null, batch);
+    if (input === null) super.onChange(null, batch, automatic);
     else if (input === undefined || input.length === 0)
-      super.onChange(undefined, batch);
-    else super.onChange(input, batch);
+      super.onChange(undefined, batch, automatic);
+    else super.onChange(input, batch, automatic);
   }
 
   protected override applyValue(

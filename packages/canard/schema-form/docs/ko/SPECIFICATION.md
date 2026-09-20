@@ -564,6 +564,52 @@ const jsonSchema = {
 }
 ```
 
+### oneOf / anyOf 분기의 type
+
+분기는 보통 `type`을 생략하고 부모의 타입을 따릅니다. 선언한다면 부모가 허용하는 것보다 넓게 말할 수 없습니다.
+
+| 부모 `type`                                             | 허용되는 분기 `type`                         |
+| ------------------------------------------------------- | -------------------------------------------- |
+| `'object'`                                              | 생략, `'object'`, `['object']`               |
+| `['object', 'null']` 또는 `'object'` + `nullable: true` | 생략, 부모와 같은 타입, `'object'`, `'null'` |
+
+분기 자신의 `nullable: true` 플래그는 부모와 비교하지 않으므로 `'object'` + `nullable: true`는 어떤 객체 아래에서도 허용됩니다. 그 밖의 선언 — nullable이 아닌 객체 아래의 `'null'`·`['object', 'null']` 분기, `'string'`, `'array'` — 은 `COMPOSITION_TYPE_REDEFINITION`을 던집니다.
+
+이 규칙과 아래 두 개발 환경 경고는 객체가 자식 노드를 만드는 경우에만 실행됩니다. 객체 전체를 하나의 입력으로 다루는 경우 — `terminal: true`이거나 객체 스키마에 `FormTypeInput` 컴포넌트를 지정한 경우 — 에는 분기를 만들지 않으므로 분기 type을 검사하지 않고 두 경고도 나오지 않습니다. 검증기는 그때도 작성된 스키마를 그대로 봅니다.
+
+분기의 `properties` 안에서 `type`이 **있는** 항목은 필드이고, `type` 없이 `const`나 `enum`만 가진 항목은 그 분기를 고르는 조건입니다. 이런 판별자에 `type`을 붙이면 필드가 되어 부모의 같은 이름 프로퍼티와 충돌합니다(`COMPOSITION_PROPERTY_REDEFINITION`).
+
+#### null 분기 패턴
+
+`oneOf`는 정확히 한 분기가 맞아야 하고, `type`이 없는 분기는 `null`에도 맞습니다 — `properties`와 `required`는 객체에만 적용되기 때문입니다. 그래서 nullable 객체가 `oneOf` 아래에서 `null`로 검증을 통과하려면 이 null 분기 패턴이 필요합니다: `{ type: 'null' }` 분기 하나, 그리고 객체 분기마다 `type: 'object'`.
+
+```typescript
+{
+  type: ['object', 'null'],
+  properties: {
+    kind: { type: 'string', enum: ['a', 'b'], default: 'a' }
+  },
+  oneOf: [
+    { type: 'null' },
+    {
+      type: 'object',
+      '&if': "./kind === 'a'",
+      properties: { aValue: { type: 'string' } }
+    },
+    {
+      type: 'object',
+      '&if': "./kind === 'b'",
+      properties: { bValue: { type: 'string' } }
+    }
+  ]
+}
+```
+
+- null 분기는 검증기를 위한 것입니다. 필드가 없고 활성 분기가 되지 않으며, 거기에 쓴 조건이나 `properties`는 무시되고 개발 환경 경고 `NULL_BRANCH_IGNORED_FOR_FORM`이 나옵니다.
+- 객체가 `null`인지는 값이 정하고, 어떤 객체 분기가 보이는지는 분기 조건이 정합니다. 값이 `null`인 동안 자식들은 조건이 고른 분기의 빈 폼을 보여 줍니다([Nullable 객체와 배열](#nullable-객체와-배열) 참고).
+- null 분기의 위치는 상관없습니다. 사용 중인 분기의 오류는 해당 필드에 전달됩니다. 객체 값이 `oneOf`를 통과하지 못하면 null 분기도 맞지 않은 다른 분기처럼 자기 불일치("must be null")를 객체에 보고하며, 이 오류는 `oneOf` 오류와 함께 나옵니다.
+- `oneOf`가 `null`을 검증할 수 없는 nullable 객체 — 받아 주는 분기가 없거나 여러 개인 경우 — 는 개발 환경 경고 `NULLABLE_ONE_OF_NULL_UNREACHABLE`을 냅니다. `anyOf`는 이런 주의가 필요 없습니다: null 분기 하나 또는 type 없는 분기만으로 충족됩니다.
+
 ### if-then-else
 
 ```typescript
@@ -807,8 +853,9 @@ const jsonSchema = {
 
 - `omitTrailing` (opt-in): **후행** 연속 `undefined` 항목만 제거합니다. 선행·중간 `undefined`는 보존되어 error `dataPath`와 validation index 정합이 유지됩니다 — `[1, undefined, 2]`는 그대로 방출됩니다.
 - `omitEmpty` (기본 활성): 빈 배열을 부모 전파 경로에서 `undefined`로 변환합니다. 필터 순서는 `omitTrailing → omitEmpty`라서 전부 빈 배열은 부모에서 `undefined`로 수렴합니다 (루트 폼은 `[]`를 방출).
+- `null`은 빈 값이 아닙니다: 두 필터 모두 값이 `null`인 nullable 배열을 건드리지 않습니다 — [Nullable 객체와 배열](#nullable-객체와-배열) 참고.
 - `node.value`는 raw를 유지하고, 정제된 출력은 `node.normalizedValue`로 노출됩니다. validation은 정제된 값 기준이라 `minItems`는 채워진 prefix만 셉니다.
-- Reset 계열 초기화(폼 reset, 분기 재활성화)는 `minItems`만큼 빈 항목을 재충전하고, 일반 `setValue(undefined)`는 전부 비웁니다.
+- Reset 계열 초기화(폼 reset, 분기 재활성화)는 `minItems`만큼 빈 항목을 재충전하고, 일반 `setValue(undefined)`는 전부 비웁니다 — 배열을 빼고 부모를 교체하는 쓰기도 같습니다: `setValue({ other: 1 })`는 배열을 비우고, `SetValueOption.Merge`는 그대로 둡니다. 기본값이 `null`인 배열은 채움 없이 `null`로 reset됩니다.
 
 ### Value Injection (injectTo)
 
@@ -982,6 +1029,54 @@ const definitions = [
   { test: { type: 'string', nullable: false }, component: RequiredInput },
 ];
 ```
+
+### Nullable 객체와 배열
+
+nullable 객체·배열(`type: ['object', 'null']`, `type: ['array', 'null']`)은 서로 다른 세 상태를 가지며, 폼이 스스로 한 상태를 다른 상태로 바꾸지 않습니다.
+
+| 값          | 의미             | 부모가 받는 값                                                   |
+| ----------- | ---------------- | ---------------------------------------------------------------- |
+| `null`      | 객체/배열이 없음 | `null` — `omitEmpty`의 대상이 아님                               |
+| `{}` / `[]` | 있고 비어 있음   | `omitEmpty`(기본)로 생략, `options: { omitEmpty: false }`면 유지 |
+| `undefined` | 설정되지 않음    | 키가 생략됨                                                      |
+
+**`null`은 의도로만 바뀝니다.**
+
+- `defaultValue`·스키마 `default: null`, 노드 자신이나 조상을 통한 `setValue(null)`로 `null`이 됩니다.
+- 노드 자신에 객체/배열을 대입하거나 — `setValue({})`, `setValue([])`, 키를 담은 `setValue({ ... }, SetValueOption.Merge)` — **값을 담은 쓰기**가 활성 자손에 도착하면 객체/배열이 됩니다: 사용자 입력, `setValue`, 배열 `push`, 사용자가 일으킨 `injectTo`. 필드가 이미 보여 주는 값을 그대로 확정하는 것도 쓰기입니다.
+- 폼이 스스로 만든 값으로는 `null`이 유지됩니다: 자식의 `default`, `computed.derived`, `oneOf`/`anyOf` 분기 복원, `computed.active`에 의한 재활성화, reset 중의 자식 복원, 그리고 그런 값만으로 구동된 `injectTo`(`default`나 derived 값만 가진 source).
+- 값 없는 쓰기로도 `null`이 유지됩니다: 필드 비우기, null 배열의 `pop()`/`remove()`/`update()`/`clear()`, `setValue({}, SetValueOption.Merge)`. 비운 필드는 기억되어 이후 노드가 만들어질 때 반영됩니다.
+
+필드를 *비운다*는 것은 그 노드가 `undefined`를 emit한다는 뜻입니다. 기본 `omitEmpty`에서 빈 문자열은 비우기이고, `false`·`0`·`null`은 값입니다. `options: { omitEmpty: false }`이면 빈 문자열도 값입니다. 비활성 필드에 쓴 값은 누구에게도 도착하지 않습니다.
+
+reset은 노드가 무엇을 갖고 있든 기본값을 복원합니다: 기본값이 `null`이면 `null`로, 아니면 기본 객체로.
+
+**`null`인 동안** 출력은 스키마가 무엇을 담고 있든 — 배열, default, derived, `oneOf`/`anyOf`, computed·virtual 필드 — `null`입니다. 객체의 자식 필드는 계속 렌더되며 빈 양식을 보여 줍니다: 이 노드에 `defaultValue`를 주지 않았을 때 폼이 자식에게 만들어 주는 상태입니다 — 노드 자신의 객체 `default`가 있으면 그것, 없으면 각 자식의 `default`이며, derived 값이 적용되고 배열 자식은 `minItems`까지 채워집니다. 어떤 경로로 `null`이 되었든 같고, `null`로 버린 데이터는 되살아나지 않습니다. 빈 양식에 속하지 않는 것이 하나 있습니다: `injectTo`로 필드에 도착한 값입니다. mount 뒤에 `null`이 된 노드는 source가 다시 바뀔 때까지 그 값을 잃습니다. 자신이 `null`인 nullable **배열**에는 아이템이 없고 `minItems` 채움도 없습니다.
+
+**무엇이 되는가:** 이 노드에 `defaultValue`를 주지 않은 폼에서 같은 쓰기가 만드는 값과 정확히 같습니다(배열은 빈 배열 기준). 그래서 값은 항상 필드가 보여 주는 것과 일치합니다. 배열에는 병합이 없습니다: `setValue([], SetValueOption.Merge)`는 대입이며 `[]`를 만듭니다.
+
+```tsx
+const jsonSchema = {
+  type: 'object',
+  properties: {
+    closed: {
+      type: ['object', 'null'],
+      properties: {
+        reason: { type: 'string', default: 'completed' },
+        note: { type: 'string' },
+      },
+    },
+  },
+};
+// <Form jsonSchema={jsonSchema} defaultValue={{ closed: null }} />
+// getValue()                     → { closed: null }   ('completed'는 보이지만 방출되지 않음)
+// note에 "done" 입력             → { closed: { reason: 'completed', note: 'done' } }
+// setValue({ closed: null })     → { closed: null }   (필드는 다시 빈 양식을 보여 줌)
+```
+
+- **nullable이 아닌** 객체에 `null`을 대입하면 `{}`가 됩니다.
+- `setValue(undefined)`는 `null`이 아닙니다: 서브트리를 — 모든 필드와 모든 배열 아이템을 — 비우며 자식 default를 복원하지 않습니다.
+- 폼은 검증을 통과시키려고 값을 바꾸지 않습니다. `null`의 유효성은 스키마가 결정합니다. `type`을 선언하지 않은 `oneOf` 분기는 모두 `null`에 매치되므로 어떤 검증기에서도 `null`은 그 `oneOf`를 통과하지 못합니다. [null 분기 패턴](#null-분기-패턴) — `{ type: 'null' }` 분기와 객체 분기의 `type: 'object'` — 을 쓰거나 `anyOf`를 쓰십시오.
 
 ### 노드 타입 가드
 

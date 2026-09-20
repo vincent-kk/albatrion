@@ -53,8 +53,14 @@ export interface ArrayNodeStrategy {
   /**
    * Adds a new element to the array.
    * @param data - Value to add (optional)
+   * @param unlimited - If `true`, ignores `maxItems` constraint
+   * @param option - Setting options for the resulting emit; pass `SetValueOption.Automatic` for an item the form adds by itself
    */
-  push(data?: ArrayValue[number], unlimited?: boolean): Promise<number>;
+  push(
+    data?: ArrayValue[number],
+    unlimited?: boolean,
+    option?: UnionSetValueOption,
+  ): Promise<number>;
 
   /**
    * Updates the value of a specific element.

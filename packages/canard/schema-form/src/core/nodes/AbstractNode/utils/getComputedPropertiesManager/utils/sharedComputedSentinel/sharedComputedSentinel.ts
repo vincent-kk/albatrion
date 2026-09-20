@@ -2,7 +2,7 @@ import { VOID_FUNCTION } from '@winglet/common-utils/constant';
 
 import type { Fn } from '@aileron/declare';
 
-import type { ComputedProperties } from '../../ComputedPropertiesManager/type';
+import type { ComputedProperties } from '../../ComputedPropertiesManager';
 
 /** Frozen, shared empty arrays for the sentinel (read-only consumers only). */
 const SENTINEL_NUMBERS = Object.freeze<number[]>([]) as number[];

@@ -9,7 +9,7 @@
 - 반환 타입: `{ unionKeySet: Set<string>; schemaKeySets: Set<string>[] } | undefined`
 - 포함 기준: 프로퍼티 스키마에 `type` 또는 `$ref` 중 하나 이상 존재해야 키셋에 추가
 - `schema[scope]`가 없거나 길이 0이면 `undefined` 반환
-- `schemaKeySets[i]`는 해당 분기에 `properties`가 없으면 초기화되지 않아 `undefined`일 수 있음
+- `schemaKeySets`는 모든 분기 인덱스가 채워져 빈 자리가 없음 — `properties`가 없거나 `type`이 `null`인 분기는 빈 `Set`에 대응
 
 ## Boundaries
 

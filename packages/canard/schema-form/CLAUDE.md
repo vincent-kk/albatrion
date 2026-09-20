@@ -2,6 +2,11 @@
 
 `@canard/schema-form` — JSON Schema 기반 React 폼 라이브러리. 노드 트리 기반 상태 관리, 플러그인 시스템, 비동기 검증 지원.
 
+## Design Values
+
+- Consistent, predictable behavior is the core value — where behavior could go either way, follow the consistency the public interface leads a caller to expect.
+- Speed first, minimal computation, and the same value read twice returns the same reference — every change states its speed and memory cost.
+
 ## Commands
 
 ```bash
@@ -94,6 +99,7 @@ computed: {
 - `src/__tests__/renderForm.tsx` — 공유 하니스. 실제 `<Form>`을 렌더하고 **두 레이어를 동시 검증**: 존재는 `[data-path]` 기반 `exists(path)`, 값은 `id={path}` 기반 `value/checked(path)`, 트리는 `node(path)/getValue()`, 가상화 placeholder는 `deferred(path)/deferredPaths()`. `flushOnMount:false`(동기 priming 단언), `instrument`(remount 감지), `strictMode`, `validator`(AJV), `caughtErrors`(수렴 가드), userEvent(`type/selectOption/toggle/addItem/removeItem`) 지원.
 - `src/__tests__/scenarios/*.render.test.tsx` — 시나리오 패밀리별 스위트(composition/array/computed/refresh/reset/validation/...). 파일당 ≤15 케이스. 신규 시나리오는 여기에 추가한다.
 - 검증된 product 버그는 `it.fails('... // BUG: ...')`로 표면화(스위트는 green 유지). src를 고쳐 통과시키지 말 것.
+- Final spec behavior is asserted through a renderForm scenario; a node-tree test accompanies it, never replaces it.
 
 ## Class Member Ordering (Domain-First)
 

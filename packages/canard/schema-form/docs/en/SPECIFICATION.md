@@ -566,6 +566,52 @@ const jsonSchema = {
 }
 ```
 
+### Branch Types in oneOf / anyOf
+
+A branch usually omits `type` and takes its parent's. When it declares one, it must not say more than the parent allows:
+
+| Parent `type`                                         | Branch `type` accepted                               |
+| ----------------------------------------------------- | ---------------------------------------------------- |
+| `'object'`                                            | omitted, `'object'`, `['object']`                    |
+| `['object', 'null']` or `'object'` + `nullable: true` | omitted, the parent's own type, `'object'`, `'null'` |
+
+A branch's own `nullable: true` flag is not compared with the parent's, so `'object'` + `nullable: true` is accepted under any object. Anything else — a `'null'` or `['object', 'null']` branch under a non-nullable object, `'string'`, `'array'` — throws `COMPOSITION_TYPE_REDEFINITION`.
+
+This rule, and the two development warnings below, run only where the object builds child nodes. An object handled as a single input — `terminal: true`, or a `FormTypeInput` component set on the object's schema — builds no branches, so its branch types are not checked and neither warning is printed; the validator still sees the schema as written.
+
+Inside a branch's `properties`, an entry **with** a `type` is a field; an entry **without** one, carrying only `const` or `enum`, is a condition that selects the branch. Giving such a discriminator a `type` turns it into a field that collides with the parent's property of the same name (`COMPOSITION_PROPERTY_REDEFINITION`).
+
+#### The null-branch pattern
+
+`oneOf` needs exactly one matching branch, and a branch without `type` matches `null` — `properties` and `required` only apply to objects. So a nullable object validates as `null` under `oneOf` only with this null-branch pattern: one `{ type: 'null' }` branch, and `type: 'object'` on the object branches.
+
+```typescript
+{
+  type: ['object', 'null'],
+  properties: {
+    kind: { type: 'string', enum: ['a', 'b'], default: 'a' }
+  },
+  oneOf: [
+    { type: 'null' },
+    {
+      type: 'object',
+      '&if': "./kind === 'a'",
+      properties: { aValue: { type: 'string' } }
+    },
+    {
+      type: 'object',
+      '&if': "./kind === 'b'",
+      properties: { bValue: { type: 'string' } }
+    }
+  ]
+}
+```
+
+- The null branch is for the validator only. It has no fields and is never the active branch; a condition or `properties` on it is ignored with the development warning `NULL_BRANCH_IGNORED_FOR_FORM`.
+- Whether the object is `null` is decided by its value, and which object branch is shown by the branch conditions. While the value is `null` the children show the blank form of the branch the conditions select (see [Nullable Objects and Arrays](#nullable-objects-and-arrays)).
+- Where the null branch sits does not matter; errors of the branch in use reach their fields. When the object value fails its `oneOf`, the null branch reports its own mismatch ("must be null") on the object like any other branch that did not match, next to the `oneOf` error.
+- A nullable object whose `oneOf` cannot validate `null` — no branch accepts it, or several do — prints the development warning `NULLABLE_ONE_OF_NULL_UNREACHABLE`. `anyOf` needs no such care: one null branch, or untyped branches, already satisfy it.
+
 ### if-then-else
 
 ```typescript
@@ -809,8 +855,9 @@ const jsonSchema = {
 
 - `omitTrailing` (opt-in): removes **trailing** consecutive `undefined` items only. Leading and middle `undefined` items are preserved so error `dataPath`s and validation indices stay aligned — `[1, undefined, 2]` is emitted as-is.
 - `omitEmpty` (on by default): converts an empty array to `undefined` on the parent-propagation path. Filter order is `omitTrailing → omitEmpty`, so an all-empty array collapses to `undefined` under its parent (a root-level form still emits `[]`).
+- `null` is not an empty value: neither filter touches a nullable array that is `null` — see [Nullable Objects and Arrays](#nullable-objects-and-arrays).
 - `node.value` stays raw; the refined output is exposed as `node.normalizedValue`. Validation runs against the refined value, so `minItems` counts only the filled prefix.
-- A Reset-flagged clear (form reset, branch reactivation) refills `minItems` empty items; a plain `setValue(undefined)` clears every item.
+- A Reset-flagged clear (form reset, branch reactivation) refills `minItems` empty items; a plain `setValue(undefined)` clears every item — and so does a replace-style write on the parent that omits the array: `setValue({ other: 1 })` empties it, `SetValueOption.Merge` leaves it untouched. An array whose default is `null` resets to `null`, with no fill.
 
 ### Value Injection (injectTo)
 
@@ -984,6 +1031,54 @@ const definitions = [
   { test: { type: 'string', nullable: false }, component: RequiredInput },
 ];
 ```
+
+### Nullable Objects and Arrays
+
+A nullable object or array (`type: ['object', 'null']`, `type: ['array', 'null']`) has three distinct states, and the form never turns one into another by itself.
+
+| Value       | Meaning                         | What the parent receives                                                    |
+| ----------- | ------------------------------- | --------------------------------------------------------------------------- |
+| `null`      | the object/array does not exist | `null` — never touched by `omitEmpty`                                       |
+| `{}` / `[]` | it exists and is empty          | omitted by `omitEmpty` (default); kept with `options: { omitEmpty: false }` |
+| `undefined` | unset                           | the key is omitted                                                          |
+
+**Only intent changes `null`.**
+
+- It becomes `null` through `defaultValue` / schema `default: null`, or `setValue(null)` on the node or through an ancestor.
+- It becomes an object/array when one is assigned to the node itself — `setValue({})`, `setValue([])`, or `setValue({ ... }, SetValueOption.Merge)` with keys — or when a write **that carries a value** reaches an active descendant: user input, `setValue`, array `push`, or an `injectTo` the user caused. Confirming the value a field already shows counts.
+- It stays `null` for values the form produces by itself: a child's `default`, `computed.derived`, `oneOf`/`anyOf` branch restore, reactivation by `computed.active`, the restore of a child during a reset, and an `injectTo` triggered only by such values (a source that merely has a `default` or a derived value).
+- It stays `null` for a write without a value: emptying a field, `pop()`/`remove()`/`update()`/`clear()` on a null array, and `setValue({}, SetValueOption.Merge)`. An emptied field is remembered and honored once the node is created.
+
+A field is _emptied_ when its node emits `undefined`. Under the default `omitEmpty` an empty string is emptying; `false`, `0` and `null` are values. With `options: { omitEmpty: false }` an empty string is a value too. A write into an inactive field reaches nobody.
+
+A reset restores the default, whatever the node holds: back to `null` when the default is `null`, to the default object otherwise.
+
+**While it is `null`**, the emitted value is `null` whatever the schema holds — arrays, defaults, derived values, `oneOf`/`anyOf`, computed or virtual fields. An object's child fields stay rendered and show a blank form: what the form builds for them when it is given no `defaultValue` for this node — the node's own object `default` if it has one, otherwise each child's own `default`, with derived values applied and array children filled up to their `minItems`. It is identical whichever way the object became `null`, and data discarded by `null` does not come back. One thing is not part of the blank form: a value that reached a field through `injectTo`. A node that becomes `null` after mount loses it until its source changes again. A nullable **array** that is itself `null` has no items and no `minItems` fill.
+
+**What it becomes** is exactly what the same write produces on a form given no `defaultValue` for this node (for an array: on an empty array), so the value always matches what the fields show. An array has no merge semantics: `setValue([], SetValueOption.Merge)` is an assignment and creates `[]`.
+
+```tsx
+const jsonSchema = {
+  type: 'object',
+  properties: {
+    closed: {
+      type: ['object', 'null'],
+      properties: {
+        reason: { type: 'string', default: 'completed' },
+        note: { type: 'string' },
+      },
+    },
+  },
+};
+// <Form jsonSchema={jsonSchema} defaultValue={{ closed: null }} />
+// getValue()                     → { closed: null }   ('completed' is shown, not emitted)
+// user types "done" into note    → { closed: { reason: 'completed', note: 'done' } }
+// setValue({ closed: null })     → { closed: null }   (the fields show the blank form again)
+```
+
+- A **non-nullable** object assigned `null` becomes `{}`.
+- `setValue(undefined)` is not `null`: it clears the subtree — every field, every array item — and does not restore child defaults.
+- The form never alters a value to make it validate. Whether `null` is valid is the schema's decision. `oneOf` branches that declare no `type` all match `null`, so `null` fails such a `oneOf` in any validator; write the [null-branch pattern](#the-null-branch-pattern) — a `{ type: 'null' }` branch plus `type: 'object'` on the object branches — or use `anyOf`.
 
 ### Node Type Guards
 

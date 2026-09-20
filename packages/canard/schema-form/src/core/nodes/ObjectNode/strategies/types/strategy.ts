@@ -40,4 +40,11 @@ export interface ObjectNodeStrategy {
 
   /** Initializes pub-sub links for child nodes. */
   initialize?(): void;
+
+  /**
+   * Rebuilds the subtree the way a form without a default value builds it.
+   * @param input - Value the parent's schema default assigns to this object, if any
+   * @remarks Absent on a strategy without child nodes — the node's own blank reset covers it.
+   */
+  resetToBlank?(this: this, input?: ObjectValue | Nullish): void;
 }

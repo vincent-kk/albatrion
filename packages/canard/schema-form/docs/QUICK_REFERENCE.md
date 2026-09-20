@@ -182,6 +182,22 @@ formTypeInputMap: {
 }
 ```
 
+### nullable 객체 + oneOf (null 분기 패턴)
+
+`type` 없는 분기는 `null`에도 맞으므로, `null`이 검증을 통과하려면 null 분기 하나와 객체 분기의 `type: 'object'`가 필요합니다. null 분기는 검증 전용이라 필드도 조건도 갖지 않습니다.
+
+```typescript
+{
+  type: ['object', 'null'],
+  properties: { kind: { type: 'string', enum: ['a', 'b'], default: 'a' } },
+  oneOf: [
+    { type: 'null' },
+    { type: 'object', '&if': "./kind === 'a'", properties: { aValue: { type: 'string' } } },
+    { type: 'object', '&if': "./kind === 'b'", properties: { bValue: { type: 'string' } } },
+  ],
+}
+```
+
 ---
 
 ## FormHandle API
@@ -446,7 +462,7 @@ const arrayNode = formRef.current?.findNode('/items') as ArrayNode;
 arrayNode.push(); // 기본값으로 아이템 추가
 arrayNode.push('custom'); // 특정 값으로 추가
 arrayNode.remove(0); // 인덱스 0 삭제
-arrayNode.clear(); // 전체 삭제 (minItems 유지)
+arrayNode.clear(); // 전체 삭제 (minItems와 무관 — 채움은 reset이 복원)
 arrayNode.length; // 현재 아이템 수
 arrayNode.children; // 자식 노드 배열
 ```

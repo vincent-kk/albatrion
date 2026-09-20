@@ -7,7 +7,7 @@
 Obtain the node via `formRef.current?.findNode('/items') as ArrayNode`, or receive it as `node` inside a `FormTypeInput`. Methods: `push`, `pop`, `update`, `remove`, `clear` (shapes in `dist/*.d.ts`). Behavior the signatures do not show:
 
 - `push(data?, unlimited?)` returns `Promise<number>` resolving to the array **length after the push** — not the new item's index. When `maxItems` is reached the push is **silently ignored** and the promise resolves with the unchanged length (no error). Pass `unlimited: true` to bypass `maxItems`.
-- `clear()` respects `minItems`: with `minItems: 2`, two items remain after clearing.
+- `clear()` removes **every** item whatever `minItems` says, like `remove`/`pop`/`setValue([])` — `minItems` is a validation constraint and a construction/reset fill, not a guard on mutations. A reset restores the fill; to stop users going below the minimum, disable the remove control in the `FormTypeInput`. On a nullable array that is `null`, `clear()` does nothing (`nullable-branch-nodes.md`).
 - `remove(index)` removes one item by index.
 
 ## Array Output Filters (omitTrailing / omitEmpty)

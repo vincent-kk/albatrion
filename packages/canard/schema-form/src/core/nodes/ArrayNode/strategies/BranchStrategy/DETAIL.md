@@ -6,6 +6,7 @@
 - `value`는 `data` 합성(완전 raw), `normalizedValue`는 `output` 합성이며 후자는 `__normalizedExpired__` 플래그로 lazy 캐시된다 (dirty 지점: `__expire__()`, factory의 output 갱신).
 - 상향 방출(`__handleChange__`)은 `normalizedValue`를 전달하고, `UpdateValue` 이벤트는 raw `value`를 전달한다.
 - Reset 옵션의 `applyValue(undefined)`는 `minItems`만큼 `push(void 0)`로 재충전한다; `null` 적용은 nullable 규약을 따르고 재충전하지 않는다.
+- 요소 emit이 두 채널을 바꾸지 않는 "변화 없음"이어도, `automatic`이 아니고 잠금 밖이며 조상 중 null이 있으면(`__hasNullAncestor__`) 현재 `normalizedValue`를 부모에 다시 전달한다 — 값을 담은 밖에서의 쓰기는 깊이와 무관하게 null 조상에 도달해야 한다. 이 분기는 출처를 `__intended__`에 쌓지 않고 곧바로 의도한 쓰기로 올려 보내므로, 객체 전략의 중복 emit과 달리 같은 틱의 자동 쓰기에 가려지지 않는다.
 - 하이드레이션(push 시점)은 `data: childNode.value`, `output: childNode.normalizedValue`로 스냅샷해 이후 상호작용 방출과 채널 정합을 유지한다.
 
 ## API Contracts
@@ -26,4 +27,4 @@
 
 ## Last Updated
 
-2026-08-12 — 2채널(`data`/`output`) 슬롯·`normalizedValue` lazy 캐시·Reset 재충전 명문화 (신규 문서).
+2026-09-20 — "변화 없음" 요소 emit의 null 조상 전달 요구사항을 명문화. 자동→의도 순의 같은 값 쓰기를 배열 아이템 경유로 측정: 배열 분기는 결함이 없고, 아이템 객체의 중복 emit 래치(`ObjectNode` `BranchStrategy`)를 고치자 `target(null)/list/0/note`가 null 조상을 풀었다(`ObjectNode.branch.pendingRead` "promotes through an array item as well").

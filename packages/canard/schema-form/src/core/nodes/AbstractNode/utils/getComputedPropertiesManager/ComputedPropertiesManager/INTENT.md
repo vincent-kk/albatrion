@@ -11,6 +11,7 @@ JSON Schema의 `computed` 속성을 파싱하여 노드의 동적 상태(active,
 - `computed.*` 필드와 `&fieldName` alias 두 가지 방식 지원
 - `getPathManager` 로 의존성 경로를 수집하고 인덱스 기반으로 참조
 - `recalculate()` 는 `dependencies` 배열이 업데이트된 후 호출
+- computed 필드 어휘(`ALIAS`, `COMPUTED_FIELD_NAMES`, `STATE_FIELD_NAMES`)의 소유자는 이 모듈이며 `index.ts` 가 이름으로 내보낸다 — 밖에서는 사본을 두지 않고 이것을 쓴다
 
 ## Boundaries
 

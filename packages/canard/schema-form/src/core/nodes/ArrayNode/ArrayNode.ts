@@ -4,13 +4,14 @@ import type { Nullish } from '@aileron/declare';
 
 import type { ArraySchema, ArrayValue } from '@/schema-form/types';
 
-import { AbstractNode } from '../AbstractNode';
-import type {
-  BranchNodeConstructorProps,
-  HandleChange,
-  SchemaNode,
-  UnionSetValueOption,
+import {
+  type BranchNodeConstructorProps,
+  type HandleChange,
+  type SchemaNode,
+  SetValueOption,
+  type UnionSetValueOption,
 } from '../../types';
+import { AbstractNode } from '../AbstractNode';
 import {
   type ArrayNodeStrategy,
   BranchStrategy,
@@ -90,6 +91,53 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
   }
 
   /**
+   * @internal Mirrors the constructor: a given value or the schema default wins; otherwise the array is emptied and filled up to `minItems` with item defaults.
+   * @remarks The fill carries the `Reset` preset without `Replace`/`Propagate`: `Automatic` keeps a `null` ancestor recording it instead of promoting it, and `PreventInjection` keeps the fill from firing this array's own `injectTo`, which would write into other nodes. A derived value is the final winner, so the fill is skipped whenever `derived` applies.
+   * @remarks An inactive node cannot hold `base` — `__reset__` applies `undefined` instead — so `base` is recorded as the restore value directly, and the `minItems` filler that the branch strategy's refill produced is cleared so it cannot outrank that restore value on reactivation.
+   */
+  public override __resetToBlank__(
+    this: ArrayNode,
+    input?: ArrayValue | Nullish,
+  ) {
+    const base = input !== undefined ? input : this.jsonSchema.default;
+    this.__reset__({
+      inputValue: base !== undefined ? base : [],
+      applyDerivedValue: true,
+    });
+    if (
+      base === undefined &&
+      !(this.active && this.__computeManager__.isDerivedDefined)
+    )
+      while (this.length < this.minItems)
+        this.__strategy__.push(
+          undefined,
+          true,
+          SetValueOption.Reset &
+            ~(SetValueOption.Replace | SetValueOption.Propagate),
+        );
+    this.__setDefaultValue__(
+      this.__computeManager__.active || base === undefined
+        ? this.__blankValue__
+        : base,
+    );
+    if (!this.__computeManager__.active && base !== undefined && this.length)
+      this.applyValue(
+        undefined,
+        SetValueOption.BatchDefault | SetValueOption.Automatic,
+      );
+  }
+
+  /**
+   * The array as it stands right after a blank reset.
+   * @internal A strategy with item nodes reports its value on the next batch, so the items are read directly.
+   */
+  private get __blankValue__(): ArrayValue | Nullish {
+    const children = this.children;
+    if (children === null || this.value == null) return this.value;
+    return children.map((child) => child.node.value);
+  }
+
+  /**
    * Adds a new element to the array.
    * @param data - Value to add (optional, uses default if not provided)
    * @param unlimited - If `true`, ignores `maxItems` constraint
@@ -128,7 +176,7 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
 
   /**
    * Clears all elements from the array.
-   * @remarks Respects `minItems` constraint; may not fully clear if `minItems > 0`.
+   * @remarks Removes every item whatever `minItems` says — the constraint is left to validation, and a reset restores the fill. A `null` array stays `null`.
    */
   public clear(this: ArrayNode) {
     return this.__strategy__.clear();
@@ -150,8 +198,11 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
       properties.jsonSchema.default !== undefined;
     this.__omitTrailing__ = this.jsonSchema.options?.omitTrailing === true;
     const filterValue = resolveArrayValueFilter(this.jsonSchema.options);
-    const handleChange: HandleChange<ArrayValue | Nullish> = (value, batch) =>
-      super.onChange(filterValue(value), batch);
+    const handleChange: HandleChange<ArrayValue | Nullish> = (
+      value,
+      batch,
+      automatic,
+    ) => super.onChange(filterValue(value), batch, automatic);
     this.onChange = handleChange;
     this.__strategy__ =
       this.group === 'terminal'

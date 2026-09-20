@@ -1,12 +1,12 @@
 import type { NullSchema, NullValue } from '@/schema-form/types';
 
-import { AbstractNode } from '../AbstractNode';
 import {
   NodeEventType,
   type SchemaNodeConstructorProps,
   SetValueOption,
   type UnionSetValueOption,
 } from '../../types';
+import { AbstractNode } from '../AbstractNode';
 
 /**
  * Node class for handling null schemas.
@@ -34,11 +34,17 @@ export class NullNode extends AbstractNode<NullSchema, NullValue> {
     const previous = this.__value__;
     const current = this.__parseValue__(input);
 
-    if (retain && this.__equals__(previous, current)) return;
+    if (retain && this.__equals__(previous, current))
+      return this.__forwardUnchangedWrite__(current, option);
     this.__value__ = current;
+    if ((option & SetValueOption.Automatic) === 0) this.__markIntendedWrite__();
 
     if (option & SetValueOption.EmitChange)
-      this.onChange(current, (option & SetValueOption.Batch) > 0);
+      this.onChange(
+        current,
+        (option & SetValueOption.Batch) > 0,
+        (option & SetValueOption.Automatic) > 0,
+      );
     if (option & SetValueOption.Refresh)
       this.publish(NodeEventType.RequestRefresh);
     if (option & SetValueOption.PublishUpdateEvent)

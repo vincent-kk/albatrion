@@ -11,12 +11,14 @@
 
 타입 분류 가드 — 노드 트리 구성이 terminal/branch를 가르는 기준:
 
-| 가드             | true인 타입                                          |
-| ---------------- | ---------------------------------------------------- |
-| `isTerminalType` | `boolean` · `number` · `integer` · `string` · `null` |
-| `isBranchType`   | `array` · `object` · **`virtual`**                   |
+| 가드             | 입력 | true인 대상                                          |
+| ---------------- | ---- | ---------------------------------------------------- |
+| `isTerminalType` | 타입 | `boolean` · `number` · `integer` · `string` · `null` |
+| `isBranchType`   | 타입 | `array` · `object` · **`virtual`**                   |
 
 표의 요점은 `virtual`이다 — JSON Schema 표준 타입이 아니지만 branch로 분류되어 자식 노드를 가질 수 있다. 두 가드는 상호 배타적이다.
+
+composition 분기가 검증 전용인지 가르는 `isNullBranch`는 입력이 타입이 아니라 분기 스키마여서 자식 fractal `isNullBranch`가 소유한다 — barrel은 이름으로 재수출만 한다.
 
 `getResolveSchema`는 스키마를 받아 `$ref` 해석 함수(`ResolveSchema`)를 반환한다 — 해석 자체가 아니라 해석기를 만든다.
 
@@ -27,10 +29,15 @@
 - 어떤 `JSONSchemaType`도 `isTerminalType`과 `isBranchType`을 동시에 만족하지 않는다.
 - `isBranchType('virtual')`이 `true`다.
 
+### preprocess-one-of-marker — 분기 마커는 객체 분기에만 들어간다
+
+- `preprocessSchema`는 `oneOf`의 각 분기에 그 분기의 배열 인덱스를 담은 마커 프로퍼티를 넣는다.
+- `type`이 `null`인 분기는 프로퍼티를 가질 수 없으므로 그대로 둔다. 다른 분기의 마커 값은 원래 배열 인덱스를 유지한다.
+
 ### barrel-surface — 공개 표면은 barrel 재수출로 한정된다
 
 - `src/helpers/jsonSchema` 외부의 소비자 import 경로에 서브디렉토리 내부 파일이 나타나지 않는다.
 
 ## Last Updated
 
-2026-08-18 — 문서 신설. 가족 수준 계약(순수성·barrel 표면·실패 모드)과 타입 분류 가드의 `virtual` 분기를 명문화 (issue #331, FIX-049).
+2026-09-21 — `isNullBranch`를 자식 fractal로 분리하고 이 문서의 가드 표를 타입 가드 2개로 좁힘. 이유: `filter.ts`는 이 fractal의 루트 파일이라, 자식 fractal `preprocessSchema`가 그것을 직접 import하면서 entry point를 우회하고 `jsonSchema → preprocessSchema → jsonSchema` 순환이 생겼다. 공개 표면은 그대로다 — barrel이 계속 `isNullBranch`를 재수출한다.

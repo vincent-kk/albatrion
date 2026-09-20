@@ -1,6 +1,7 @@
 import { isObjectSchema } from '@winglet/json-schema/filter';
 import { JSONSchemaScanner } from '@winglet/json-schema/scanner';
 
+import { isNullBranch } from '@/schema-form/helpers/jsonSchema/isNullBranch';
 import type { JSONSchema } from '@/schema-form/types';
 
 import { processOneOfSchema } from './utils/processOneOfSchema';
@@ -27,7 +28,7 @@ const scanner = new JSONSchemaScanner<Partial<JSONSchema>>({
         schema = processed || schema;
         if (idle) idle = processed === null;
       }
-      if (entry.keyword === 'oneOf') {
+      if (entry.keyword === 'oneOf' && !isNullBranch(schema)) {
         schema = processOneOfSchema(schema, entry.variant);
         idle = false;
       }

@@ -20,6 +20,7 @@ import {
   SetValueOption,
   type UnionSetValueOption,
 } from '@/schema-form/core/types';
+import { getDefaultValue } from '@/schema-form/helpers/defaultValue';
 import { joinSegment } from '@/schema-form/helpers/jsonPointer';
 import { isTerminalType } from '@/schema-form/helpers/jsonSchema';
 import type { ObjectValue } from '@/schema-form/types';
@@ -66,6 +67,9 @@ export class BranchStrategy implements ObjectNodeStrategy {
   /** Flag indicating whether the strategy is already processing a batch */
   private __batched__: boolean = false;
 
+  /** Whether a child write from outside the form's own machinery is waiting for the next commit */
+  private __intended__: boolean = false;
+
   /** Flag indicating whether the strategy is locked to prevent recursive updates */
   private __locked__: boolean = true;
 
@@ -74,6 +78,12 @@ export class BranchStrategy implements ObjectNodeStrategy {
 
   /** Draft value containing pending changes before commit */
   private __draft__: ObjectValue | Nullish;
+
+  /**
+   * What the children hold while the object is `null` — the object it becomes on its first outside write.
+   * @remarks Meaningful only while `__isNull__`. It starts from the node's own object `default` and takes child emits on top — the way the constructor merges child emits into its base — and is rebuilt each time the object becomes `null`, because a child whose blank reset changes nothing emits nothing and would keep its old entry.
+   */
+  private __blank__: ObjectValue = {};
 
   /**
    * Whether an activating child already carries live array state of its own.
@@ -89,6 +99,31 @@ export class BranchStrategy implements ObjectNodeStrategy {
 
   /** Flag indicating whether the object value is expired */
   private __expired__: boolean = true;
+
+  /**
+   * What `__parseValue__` gave the last read of a value whose commit is still pending — `false` when the draft changes nothing.
+   * @remarks Meaningful only while `__composedValid__`. Repeated reads return this one reference, and the batched commit the window was waiting for uses it instead of composing again; every other commit composes for itself.
+   */
+  private __composed__: ObjectValue | Nullish | false;
+
+  /** Whether `__composed__` still matches the pending draft: a child write and every commit clear it. */
+  private __composedValid__: boolean = false;
+
+  /**
+   * The object this node's own schema `default` gives its children while the node is `null`.
+   * @remarks A form without a default value builds the children from it, so the blank form of a null node does too; `undefined` when the schema default is absent or `null`.
+   */
+  private get __blankBase__(): ObjectValue | undefined {
+    return this.__host__.jsonSchema.default ?? undefined;
+  }
+
+  /** Whether the object is `null` with no child write pending in the draft. */
+  private get __isNull__() {
+    return (
+      this.__value__ === null &&
+      (this.__draft__ === null || isEmptyObject(this.__draft__))
+    );
+  }
 
   /**
    * Determines whether to queue or immediately process value changes.
@@ -114,10 +149,12 @@ export class BranchStrategy implements ObjectNodeStrategy {
   /**
    * Reflects value changes and publishes related events.
    * @param option - Setting options
+   * @param pending - Whether this is the batched commit a pending window was waiting for; only that commit may use what a read composed in the window
    * @private
    */
   private __handleEmitChange__(
     option: UnionSetValueOption = SetValueOption.Default,
+    pending: boolean = false,
   ) {
     if (this.__locked__) return;
     const host = this.__host__;
@@ -129,22 +166,33 @@ export class BranchStrategy implements ObjectNodeStrategy {
     const base = this.__value__;
     const draft = this.__draft__;
     const previous = base ? { ...base } : base;
-    const current = this.__parseValue__(
-      base,
-      draft,
-      replace,
-      normalize,
-      host.nullable,
-    );
+    const current =
+      pending && this.__composedValid__
+        ? this.__composed__
+        : this.__parseValue__(base, draft, replace, normalize, host.nullable);
+    this.__composedValid__ = false;
 
-    if (current === false) return;
+    const intended = this.__intended__;
+    const automatic = (option & SetValueOption.Automatic) > 0 && !intended;
+    this.__intended__ = false;
 
+    if (current === false) {
+      if (intended && host.__hasNullAncestor__)
+        this.__handleChange__(base, (option & SetValueOption.Batch) > 0, false);
+      return;
+    }
+
+    if (!automatic) host.__markIntendedWrite__();
     this.__value__ = current;
     this.__draft__ = {};
 
     if (this.__expired__) this.__expired__ = false;
     if (option & SetValueOption.EmitChange)
-      this.__handleChange__(current, (option & SetValueOption.Batch) > 0);
+      this.__handleChange__(
+        current,
+        (option & SetValueOption.Batch) > 0,
+        automatic,
+      );
     if (option & SetValueOption.Propagate)
       this.__propagate__(current, draft, replace, option);
     if (option & SetValueOption.Refresh)
@@ -165,7 +213,8 @@ export class BranchStrategy implements ObjectNodeStrategy {
    * @param draft - Draft object to parse
    * @param nullable - Whether the object is nullable
    * @param replace - Whether to replace the existing value
-   * @returns {ObjectValue} Processed object
+   * @returns {ObjectValue} Processed object, or `false` when the draft changes nothing
+   * @remarks An empty draft merged into a `null` base changes nothing — only a replace (an explicit `{}`) or a child write may promote `null`. Keys merged into a `null` base land on the blank form, as a child write does.
    * @private
    */
   private __parseValue__(
@@ -177,7 +226,11 @@ export class BranchStrategy implements ObjectNodeStrategy {
   ) {
     if (draft === undefined) return undefined;
     if (draft === null) return nullable ? null : {};
-    if (replace || base == null) return this.__processValue__(draft, normalize);
+    if (!replace && base === null && isEmptyObject(draft)) return false;
+    if (replace || base === undefined)
+      return this.__processValue__(draft, normalize);
+    if (base === null)
+      return this.__processValue__({ ...this.__blank__, ...draft }, normalize);
     if (isEmptyObject(draft) || this.__host__.__equals__(base, draft))
       return false;
     return this.__processValue__({ ...base, ...draft }, normalize);
@@ -204,6 +257,7 @@ export class BranchStrategy implements ObjectNodeStrategy {
    * @param replace - Whether to replace existing values
    * @param option - Setting options
    * @remarks Skips a filtering child (raw ≠ normalized) when the incoming slice equals its own normalized output — echoing it back would erase raw-only state such as trailing empty array items.
+   *          Becoming `null` blanks the children of every branch, not only the one in use: a branch restore returns a child to its default, and a child left out would bring its old value back.
    * @private
    */
   private __propagate__(
@@ -215,13 +269,19 @@ export class BranchStrategy implements ObjectNodeStrategy {
     const current = source || {};
     const committed = target || {};
     const nullify = target === null;
+    if (nullify) this.__blank__ = { ...this.__blankBase__ };
     const propagateOption =
       target == null ? option & ~SetValueOption.EmitChange : option;
     this.__locked__ = true;
-    for (let i = 0, l = this.__children__.length; i < l; i++) {
-      const node = this.__children__[i].node;
+    const nodes = source === null ? this.__subnodes__ : this.__children__;
+    for (let i = 0, l = nodes.length; i < l; i++) {
+      const node = nodes[i].node;
       if (node.type === 'virtual') continue;
       const name = node.name;
+      if (source === null) {
+        (node as AbstractNode).__resetToBlank__(this.__blankBase__?.[name]);
+        continue;
+      }
       if (replace || nullify || (name in committed && name in current)) {
         const nextValue = nullify ? null : current[name];
         if (
@@ -238,12 +298,22 @@ export class BranchStrategy implements ObjectNodeStrategy {
 
   /**
    * Gets the current value of the object.
-   * @returns Current value of the object node or undefined
+   * @returns The committed value, with a child write whose commit is still pending laid over it
+   * @remarks A read commits nothing: the pending commit still runs once, on its own path and with its own options. While locked the committed value is returned as it stands.
    */
   public get value() {
-    if (this.__expired__)
-      this.__handleEmitChange__(SetValueOption.BatchedEmitChange);
-    return this.__value__;
+    if (!this.__expired__ || this.__locked__) return this.__value__;
+    if (!this.__composedValid__) {
+      this.__composed__ = this.__parseValue__(
+        this.__value__,
+        this.__draft__,
+        false,
+        false,
+        this.__host__.nullable,
+      );
+      this.__composedValid__ = true;
+    }
+    return this.__composed__ === false ? this.__value__ : this.__composed__;
   }
 
   /**
@@ -253,12 +323,43 @@ export class BranchStrategy implements ObjectNodeStrategy {
    */
   public applyValue(input: ObjectValue | Nullish, option: UnionSetValueOption) {
     this.__draft__ = input;
+    if ((option & SetValueOption.Automatic) === 0 && !isEmptyObject(input))
+      this.__intended__ = true;
     this.__expired__ = true;
     // Keep a pending composition reset isolated until its event is settled.
     this.__isolated__ =
       (option & SetValueOption.Isolate) > 0 ||
       (!this.__isPristine__ && this.__isolated__);
     this.__emitChange__(option);
+  }
+
+  /**
+   * Rebuilds the subtree the way a form without a default value builds it.
+   * @param input - Value the parent's schema default assigns to this object, if any
+   * @remarks Mirrors the constructor: the base becomes the value, children take their slice of it or their own schema default, and what they emit is merged in — so a base the children merely repeat is, as at construction, not reported to the parent — the parent already holds that slice in its own base.
+   */
+  public resetToBlank(input?: ObjectValue | Nullish) {
+    const host = this.__host__;
+    const base = input !== undefined ? input : getDefaultValue(host.jsonSchema);
+    if (base === null) {
+      host.__setDefaultValue__(null);
+      return host.setValue(null, SetValueOption.StableReset);
+    }
+    this.__value__ = base;
+    this.__draft__ = {};
+    this.__locked__ = true;
+    for (let i = 0, l = this.__subnodes__.length; i < l; i++) {
+      const node = this.__subnodes__[i].node;
+      if (node.type === 'virtual') continue;
+      (node as AbstractNode).__resetToBlank__(base?.[node.name]);
+    }
+    this.__locked__ = false;
+    this.__expired__ = true;
+    this.__emitChange__(
+      SetValueOption.StableReset &
+        ~(SetValueOption.Propagate | SetValueOption.Replace),
+    );
+    host.__setDefaultValue__(this.__value__);
   }
 
   /** Array of child nodes for regular properties (non-oneOf) */
@@ -516,20 +617,28 @@ export class BranchStrategy implements ObjectNodeStrategy {
    * Processes and validates the object value according to active composition branches.
    * Filters out properties that are not allowed by current oneOf/anyOf selections.
    * @param isolation - Whether the operation is in isolation mode
+   * @remarks A `null` value with no pending child write has no keys to filter; recomposing it would commit `{}` in its place, so only the enhancer is adjusted.
    * @private
    */
   private __processCompositionValue__(isolation: boolean) {
+    if (this.__host__.__validationEnabled__)
+      this.__host__.__adjustEnhancer__(
+        joinSegment(this.__host__.path, ENHANCED_KEY),
+        this.__oneOfIndex__,
+      );
+    if (this.__isNull__) {
+      this.__blank__ = processValueWithValidate(
+        this.__blank__,
+        this.__validateAllowedKey__,
+      );
+      return;
+    }
     this.__draft__ = processValueWithValidate(
       this.__processValue__({ ...this.__value__, ...this.__draft__ }),
       this.__validateAllowedKey__,
     );
     this.__expired__ = false;
     this.__processComputedProperties__(this.__draft__);
-    if (this.__host__.__validationEnabled__)
-      this.__host__.__adjustEnhancer__(
-        joinSegment(this.__host__.path, ENHANCED_KEY),
-        this.__oneOfIndex__,
-      );
     this.__emitChange__(
       isolation ? SetValueOption.IsolateReset : SetValueOption.Reset,
     );
@@ -573,7 +682,9 @@ export class BranchStrategy implements ObjectNodeStrategy {
       if (type & NodeEventType.UpdateValue) {
         if (options?.[NodeEventType.UpdateValue]?.settled) return;
         if (this.__processComputedProperties__(this.__value__)) return;
-        this.__emitChange__(SetValueOption.BatchedEmitChange);
+        this.__emitChange__(
+          SetValueOption.BatchedEmitChange | SetValueOption.Automatic,
+        );
       }
     });
   }
@@ -693,24 +804,51 @@ export class BranchStrategy implements ObjectNodeStrategy {
 
     const handleChangeFactory =
       (property: string): HandleChange =>
-      (input, batched) => {
-        if (this.__draft__ == null) this.__draft__ = {};
-        if (
-          (input === undefined && this.__value__?.[property] === input) ||
-          (input !== undefined && this.__draft__[property] === input)
-        )
-          return;
+      (input, batched, automatic) => {
+        if (this.__isNull__) {
+          // Locked means this strategy is driving its own children (construction,
+          // propagation, branch restore); like an automatic or valueless write, it is recorded only.
+          if (automatic || this.__locked__ || input === undefined) {
+            this.__blank__[property] = input;
+            return;
+          }
+          this.__draft__ = { ...this.__blank__ };
+        } else {
+          if (this.__draft__ == null) this.__draft__ = {};
+          if (input === undefined && this.__value__?.[property] === input)
+            return;
+          if (input !== undefined && this.__draft__[property] === input) {
+            // The draft already holds this value, but an outside write of it still has to reach a null ancestor.
+            if (automatic || this.__locked__) return;
+            this.__intended__ = true;
+            return this.__emitChange__(SetValueOption.Default, batched);
+          }
+        }
         this.__draft__[property] = input;
+        this.__composedValid__ = false;
         this.__expired__ = true;
         if (this.__isolated__ && this.__isPristine__) this.__isolated__ = false;
-        this.__emitChange__(SetValueOption.Default, batched);
+        if (!automatic && !this.__locked__) this.__intended__ = true;
+        this.__emitChange__(
+          automatic
+            ? SetValueOption.Default | SetValueOption.Automatic
+            : SetValueOption.Default,
+          batched,
+        );
       };
     host.subscribe(({ type, payload }) => {
       if (type & NodeEventType.RequestEmitChange) {
-        this.__handleEmitChange__(payload?.[NodeEventType.RequestEmitChange]);
+        this.__handleEmitChange__(
+          payload?.[NodeEventType.RequestEmitChange],
+          true,
+        );
         this.__batched__ = false;
       }
     });
+
+    const childDefaults =
+      host.defaultValue === null ? this.__blankBase__ : host.defaultValue;
+    if (host.defaultValue === null) this.__blank__ = { ...this.__blankBase__ };
 
     const { virtualReferencesMap, virtualReferenceFieldsMap } =
       getVirtualReferencesMap(host.name, propertyKeys, host.jsonSchema.virtual);
@@ -723,7 +861,7 @@ export class BranchStrategy implements ObjectNodeStrategy {
       host,
       jsonSchema,
       propertyKeys,
-      host.defaultValue,
+      childDefaults,
       conditionsMap,
       virtualReferencesMap,
       virtualReferenceFieldsMap,
@@ -745,7 +883,7 @@ export class BranchStrategy implements ObjectNodeStrategy {
       host,
       'oneOf',
       jsonSchema,
-      host.defaultValue,
+      childDefaults,
       this.__childNodeMap__,
       this.__oneOfKeySetList__,
       this.__anyOfKeySet__,
@@ -757,7 +895,7 @@ export class BranchStrategy implements ObjectNodeStrategy {
       host,
       'anyOf',
       jsonSchema,
-      host.defaultValue,
+      childDefaults,
       this.__childNodeMap__,
       this.__anyOfKeySetList__,
       this.__oneOfKeySet__,

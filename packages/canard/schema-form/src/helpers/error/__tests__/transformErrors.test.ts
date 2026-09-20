@@ -267,4 +267,28 @@ describe('transformErrors', () => {
       expect(result[1].details).toEqual({ limit: 5 });
     });
   });
+  describe('null 분기의 거부 오류', () => {
+    const typeError = (
+      schemaPath: string,
+      expected: string | string[],
+    ): JSONSchemaError => ({
+      keyword: 'type',
+      dataPath: '/target',
+      schemaPath,
+      message: `must be ${expected}`,
+      details: { type: expected },
+      source: {},
+    });
+
+    it("oneOf·anyOf의 type: 'null' 분기가 낸 type 오류도 다른 분기 오류처럼 남겨야 합니다", () => {
+      const errors = [
+        typeError('#/properties/target/oneOf/0/type', 'null'),
+        typeError('#/properties/target/anyOf/2/type', 'null'),
+        typeError('#/properties/target/oneOf/0/type', ['null']),
+        typeError('#/properties/target/oneOf/1/type', 'object'),
+      ];
+
+      expect(transformErrors(errors)).toEqual(errors);
+    });
+  });
 });

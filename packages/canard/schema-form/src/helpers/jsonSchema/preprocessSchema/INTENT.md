@@ -10,7 +10,7 @@ JSON Schema를 폼 시스템에서 사용하기 전에 전처리한다. `JSONSch
 - scanner는 모듈 수준 싱글턴으로 생성 (재사용)
 - `mutate` 옵션으로 스키마 노드를 in-place 변형
 - object 스키마: `processVirtualSchema` 적용
-- oneOf 키워드 노드: `processOneOfSchema` 적용 (variant 인덱스 기록)
+- oneOf 키워드 노드: `processOneOfSchema` 적용 (variant 인덱스 기록) — 단 `isNullBranch`가 참인 `type: 'null'` 분기는 건너뛰어 추적 프로퍼티를 병합하지 않음
 - 변형이 없으면 `undefined` 반환하여 원본 유지
 
 ## Boundaries

@@ -1,6 +1,5 @@
 import { map } from '@winglet/common-utils/array';
 import { isArray, isEmptyObject } from '@winglet/common-utils/filter';
-import { cloneLite, merge } from '@winglet/common-utils/object';
 import { escapeSegment, setValue } from '@winglet/json/pointer';
 
 import type { Dictionary, Fn, Nullish } from '@aileron/declare';
@@ -49,6 +48,7 @@ import {
   ValidationErrorManager,
   ValidationManager,
   afterMicrotask,
+  applyEnhancer,
   checkDefinedValue,
   depthFirstSearch,
   findNode,
@@ -275,31 +275,38 @@ export abstract class AbstractNode<
     return findNodes(absolute ? this.rootNode : (this as SchemaNode), pointer);
   }
 
-  /** @internal Storage for the node's default value. */
-  private __defaultValue__: Value | Nullish;
+  /** @internal What the node was built with; fixed once the node is initialized. */
+  private __initialValue__: Value | Nullish;
 
-  /** @internal Flag indicating whether the default value is explicitly defined. */
-  private __isDefinedDefaultValue__: boolean = false;
+  /**
+   * @internal What a branch restore, a re-activation or a bare reset returns the node to.
+   * @remarks Starts as the initial value; a blank reset replaces it, so data discarded by `null` does not come back, and `resetSubtree()` puts the initial value back.
+   */
+  private __restoreValue__: Value | Nullish;
+
+  /** @internal Flag indicating whether the restore value is explicitly defined. */
+  private __isDefinedRestoreValue__: boolean = false;
 
   /**
    * Node's default value from schema or initialization.
-   * @remarks Used as fallback during reset operations.
+   * @remarks It does not change after initialization; `resetSubtree()` returns the node to it.
    */
   public get defaultValue() {
-    return this.__defaultValue__;
+    return this.__initialValue__;
   }
 
   /**
-   * Sets the node's default value.
-   * @param defaultValue - The default value to set
-   * @internal For use during construction or by inherited nodes.
+   * Sets the value the node is restored to.
+   * @param defaultValue - The value to restore to
+   * @internal Until the node is initialized this is also its initial value; afterwards only the restore value moves.
    */
   public __setDefaultValue__(
     this: AbstractNode,
     defaultValue: Value | Nullish,
   ) {
-    this.__defaultValue__ = defaultValue;
-    this.__isDefinedDefaultValue__ = checkDefinedValue(defaultValue);
+    if (!this.__initialized__) this.__initialValue__ = defaultValue;
+    this.__restoreValue__ = defaultValue;
+    this.__isDefinedRestoreValue__ = checkDefinedValue(defaultValue);
   }
 
   /**
@@ -331,12 +338,13 @@ export abstract class AbstractNode<
    * Sets the node's value with configurable update behavior.
    * @param input - The value to set, or a function receiving the previous value
    * @param option - Bitwise options (default: `Overwrite`)
-   *   - `Overwrite`: `Replace | Propagate | Refresh` (default)
-   *   - `Merge`: `Propagate | Refresh` (merge with existing value)
-   *   - `Replace`: Replace the current value entirely
+   *   - `Overwrite`: `Replace | Merge` — replace the current value entirely (default)
+   *   - `Merge`: `Propagate | Refresh | Isolate | BatchDefault` — merge into the existing value; an array has nothing to merge into, so it behaves as `Overwrite`
+   *   - `Replace`: Replace the current value instead of merging into it
    *   - `Propagate`: Propagate the update to child nodes
-   *   - `Refresh`: Trigger UI refresh for uncontrolled components
-   *   - `Normal`: Only update the value without side effects
+   *   - `Refresh`: Publish `RequestRefresh` so uncontrolled inputs re-read the value
+   *   - `Isolate`: Update computed properties at once and publish `UpdateValue` as unsettled
+   *   - `BatchDefault`: `Batch | EmitChange | PublishUpdateEvent` — report to the parent in batch mode and publish `UpdateValue`
    * @example
    * ```ts
    * node.setValue('new value');
@@ -353,6 +361,17 @@ export abstract class AbstractNode<
       typeof input === 'function' ? input(this.value) : input,
       option,
     );
+  }
+
+  /** @internal Whether a write from outside the form's own machinery reached this node since its last injection. */
+  private __intendedWrite__: boolean = false;
+
+  /**
+   * Records that a write from outside the form's own machinery changed this node.
+   * @internal Called where a value is actually committed — a `setValue` that changes nothing records nothing — and ignored before initialization, when every commit is the node building itself.
+   */
+  public __markIntendedWrite__(this: AbstractNode) {
+    if (this.__initialized__) this.__intendedWrite__ = true;
   }
 
   /**
@@ -389,16 +408,19 @@ export abstract class AbstractNode<
    * Notifies the parent of a value change.
    * @param input - The new value
    * @param batch - Whether to batch the change notification
+   * @param automatic - Whether the form produced this value by itself
    * @internal Only propagates if node is active and scoped.
    */
   protected onChange(
     this: AbstractNode,
     input: Value | Nullish,
     batch?: boolean,
+    automatic?: boolean,
   ): void {
     if (this.__computeManager__.active && this.__scoped__)
-      this.__handleChange__(input, batch);
-    else if (input === undefined) this.__handleChange__(undefined, batch);
+      this.__handleChange__(input, batch, automatic);
+    else if (input === undefined)
+      this.__handleChange__(undefined, batch, automatic);
   }
 
   /** @internal Manager for computed property evaluation and caching. */
@@ -522,7 +544,10 @@ export abstract class AbstractNode<
           if (manager.isDerivedDefined) {
             const derivedValue = manager.getDerivedValue();
             if (this.active && !this.__equals__(this.value, derivedValue))
-              this.setValue(derivedValue);
+              this.setValue(
+                derivedValue,
+                SetValueOption.Overwrite | SetValueOption.Automatic,
+              );
           }
           if (manager.isPristineDefined)
             if (manager.getPristine()) this.setState();
@@ -704,14 +729,14 @@ export abstract class AbstractNode<
 
   /**
    * @internal Value used for validation, merging actual value with enhancer.
-   * @remarks Includes virtual field values for complete schema validation.
+   * @remarks An enhancer entry reaches the value only where the value holds the object it belongs to, so validation never sees a node the value leaves out.
    */
   private get __enhancedValue__(): Value | Nullish {
     const value = this.normalizedValue;
     if (this.group === 'terminal' || value == null) return value;
     const enhancer = this.__enhancer__;
     if (enhancer === undefined || isEmptyObject(enhancer)) return value;
-    return merge(cloneLite(enhancer), value);
+    return applyEnhancer(value, enhancer) as Value | Nullish;
   }
 
   /**
@@ -937,6 +962,7 @@ export abstract class AbstractNode<
    * Sets up the `injectTo` schema property handler.
    * @internal Subscribes to value updates and propagates values to target nodes.
    *           Implements circular injection prevention using guard flags.
+   * @remarks An injection inherits the provenance of the update that triggered it: one caused only by values the form produced itself (a default, a derived value) is written as `Automatic`, so it cannot turn a `null` ancestor of the target into an object.
    */
   private __prepareInjectHandler__(this: AbstractNode) {
     if (this.__initialized__) return;
@@ -951,6 +977,8 @@ export abstract class AbstractNode<
       if (type & EventType.RequestInjection) {
         const injectionGuard = this.__injectionGuard__;
         if (injectionGuard == null) return;
+        const automatic = !this.__intendedWrite__;
+        this.__intendedWrite__ = false;
         const value = this.value;
         const dataPath = this.path;
         const context = {
@@ -972,7 +1000,12 @@ export abstract class AbstractNode<
             const path = getAbsolutePath(dataPath, operations[i][0]);
             if (injectionGuard.has(path)) continue;
             injectionGuard.add(path);
-            this.find(path)?.setValue(operations[i][1]);
+            this.find(path)?.setValue(
+              operations[i][1],
+              automatic
+                ? SetValueOption.Overwrite | SetValueOption.Automatic
+                : SetValueOption.Overwrite,
+            );
           }
         } catch (error) {
           const errorContext = { ...context, value, error };
@@ -1033,16 +1066,16 @@ export abstract class AbstractNode<
     let value: Value | Nullish;
     if ('inputValue' in options) value = options.inputValue;
     else if (options.preferLatest) {
-      if (options.checkDefaultValueFirst && this.__isDefinedDefaultValue__)
-        value = this.__defaultValue__;
+      if (options.checkDefaultValueFirst && this.__isDefinedRestoreValue__)
+        value = this.__restoreValue__;
       else
         value =
           options.fallbackValue !== undefined
             ? options.fallbackValue
             : this.value !== undefined
               ? this.value
-              : this.__defaultValue__;
-    } else value = this.__defaultValue__;
+              : this.__restoreValue__;
+    } else value = this.__restoreValue__;
 
     if (
       options.applyDerivedValue &&
@@ -1061,11 +1094,52 @@ export abstract class AbstractNode<
   }
 
   /**
+   * Whether any ancestor currently holds `null`.
+   * @internal A branch node that absorbs an outside write as "no change" still forwards it when this is `true` — the null ancestor has to learn that a value was written into it.
+   */
+  public get __hasNullAncestor__(): boolean {
+    for (let node = this.parentNode; node; node = node.parentNode)
+      if (node.value === null) return true;
+    return false;
+  }
+
+  /**
+   * Hands a write that changed nothing on to the parent, when an ancestor holds `null`.
+   * @param value - The value this node holds, which the write repeated
+   * @param option - Options of the absorbed write; an `Automatic` one is not forwarded
+   * @internal The write carried a value, so a `null` ancestor has to learn of it; without such an ancestor nothing is reported.
+   */
+  public __forwardUnchangedWrite__(
+    this: AbstractNode,
+    value: Value | Nullish,
+    option: UnionSetValueOption,
+  ) {
+    if (option & SetValueOption.Automatic || !this.__hasNullAncestor__) return;
+    this.onChange(value, (option & SetValueOption.Batch) > 0, false);
+  }
+
+  /**
+   * Returns the node to what a form without a default value builds for it.
+   * @param input - Value the parent's schema default assigns to this node; the node's own schema default when `undefined`
+   * @internal A parent that became `null` calls this on its children, so the blank form it shows does not depend on how it became `null`.
+   *           The blank value also becomes the node's restore value, which is what a later branch restore returns the node to.
+   */
+  public __resetToBlank__(this: AbstractNode, input?: Value | Nullish) {
+    const blank =
+      input !== undefined ? input : getDefaultValue(this.jsonSchema);
+    this.__setDefaultValue__(blank);
+    this.__reset__({ inputValue: blank, applyDerivedValue: true });
+  }
+
+  /**
    * Resets this node and all descendants to their initial values.
-   * @remarks Clears all state flags in the subtree before resetting values.
+   * @remarks Clears all state flags in the subtree and returns every restore value in it to the initial one before resetting values.
    */
   public resetSubtree(this: AbstractNode) {
     this.clearSubtreeState();
+    depthFirstSearch(this, (node) =>
+      node.__setDefaultValue__(node.defaultValue),
+    );
     this.__reset__();
   }
 

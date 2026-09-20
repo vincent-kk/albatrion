@@ -149,7 +149,8 @@ exports[`formatErrorMessage > 에러 메시지 스냅샷 > formatCompositionType
 
 In composition schemas (oneOf/anyOf), sub-schemas cannot redefine
 the type of the parent schema. The type must either be omitted
-or match exactly.
+or match exactly. Under a nullable parent a sub-schema may also
+narrow the type to 'object' or to 'null'.
 
 How to fix:
   1. Remove the 'type' from the oneOf sub-schema:

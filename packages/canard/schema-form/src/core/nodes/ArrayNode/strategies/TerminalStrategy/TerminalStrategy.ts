@@ -5,13 +5,13 @@ import { isObjectSchema } from '@winglet/json-schema/filter';
 import type { Nullish } from '@aileron/declare';
 
 import type { ArrayNode } from '@/schema-form/core/nodes/ArrayNode';
+import { parseArray } from '@/schema-form/core/parsers';
 import {
   type HandleChange,
   NodeEventType,
   SetValueOption,
   type UnionSetValueOption,
 } from '@/schema-form/core/types';
-import { parseArray } from '@/schema-form/core/parsers';
 import { getObjectDefaultValue } from '@/schema-form/helpers/defaultValue';
 import type { AllowedValue, ArrayValue } from '@/schema-form/types';
 
@@ -83,12 +83,19 @@ export class TerminalStrategy implements ArrayNodeStrategy {
     const previous = this.__value__ ? [...this.__value__] : this.__value__;
     const current = this.__parseValue__(input);
 
-    if (retain && host.__equals__(previous, current)) return;
+    if (retain && host.__equals__(previous, current))
+      return host.__forwardUnchangedWrite__(current, option);
     this.__value__ = current;
+    if ((option & SetValueOption.Automatic) === 0)
+      this.__host__.__markIntendedWrite__();
 
     if (this.__locked__) return;
     if (option & SetValueOption.EmitChange)
-      this.__handleChange__(current, (option & SetValueOption.Batch) > 0);
+      this.__handleChange__(
+        current,
+        (option & SetValueOption.Batch) > 0,
+        (option & SetValueOption.Automatic) > 0,
+      );
     if (option & SetValueOption.Refresh)
       host.publish(NodeEventType.RequestRefresh);
     if (option & SetValueOption.PublishUpdateEvent)
@@ -167,12 +174,16 @@ export class TerminalStrategy implements ArrayNodeStrategy {
    * Adds a new element to the array.
    * @param input - Value to add (optional)
    */
-  public push(input?: ArrayValue[number], unlimited?: boolean) {
+  public push(
+    input?: ArrayValue[number],
+    unlimited?: boolean,
+    option?: UnionSetValueOption,
+  ) {
     if (unlimited !== true && this.__maxItems__ <= this.length)
       return Promise.resolve(this.length);
     const data = input ?? this.__defaultValue__;
     const value = this.__value__ == null ? [data] : [...this.__value__, data];
-    this.__emitChange__(value);
+    this.__emitChange__(value, option);
     return Promise.resolve(this.length);
   }
 
@@ -212,8 +223,12 @@ export class TerminalStrategy implements ArrayNodeStrategy {
     return this.remove(this.length - 1);
   }
 
-  /** Clears all elements to initialize the array. */
+  /**
+   * Clears all elements to initialize the array.
+   * @remarks A `null` array has no elements to clear and stays `null` — only a write that carries a value turns it into an array.
+   */
   public clear() {
+    if (this.__value__ === null) return Promise.resolve(void 0);
     this.__emitChange__([]);
     return Promise.resolve(void 0);
   }
@@ -254,7 +269,8 @@ export class TerminalStrategy implements ArrayNodeStrategy {
 
     if (hasDefault) {
       const defaultValue = host.defaultValue;
-      if (defaultValue != null && defaultValue.length > 0)
+      if (defaultValue === null) this.__value__ = this.__parseValue__(null);
+      else if (defaultValue != null && defaultValue.length > 0)
         for (const value of defaultValue) this.push(value, true);
     } else while (this.length < this.__minItems__) this.push(void 0, true);
 

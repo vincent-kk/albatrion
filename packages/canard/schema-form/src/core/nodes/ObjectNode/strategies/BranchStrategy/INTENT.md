@@ -11,6 +11,7 @@
 - `UpdateComputedProperties` 이벤트 구독으로 oneOf/anyOf 인덱스 변경 감지
 - `__isolated__` 플래그: `setValue` 직접 호출 시 활성화, 조건부 필터링 적용
 - `__draft__` + `__value__` 이중 버퍼로 점진적 값 갱신
+- null인 동안 자식 값은 `__blank__`에 기록하고, 값을 담은 밖에서의 쓰기가 올 때 객체로 만든다
 - 클래스 멤버 Domain-First 순서 준수
 
 ## Boundaries
@@ -21,6 +22,7 @@
 - `processValueWithCondition`으로 조건부 필드 필터링 적용
 - `__locked__` 플래그로 자식-부모 재귀 업데이트 차단
 - `validateSchemaType`으로 이전 값 재사용 가능 여부 확인
+- null이 전파되면 자식을 `__resetToBlank__`로 재구성하고 `__blank__`를 새로 만든다
 - 분기 복원은 자식의 실질 raw 배열 상태(`__hasArrayState__`)를 우선 소비 — 정제된 합성값을 상태로 되먹이지 않되, 평범한 재활성화는 기본값 복원 유지
 
 ### Ask first
@@ -28,6 +30,7 @@
 - oneOf/anyOf 분기 전환 타이밍이나 이벤트 순서 변경
 - `__draft__`/`__value__` 이중 버퍼 패턴 변경
 - `__isolated__` 플래그 동작 변경
+- null 판정·`__blank__` 기록 조건·쓰기 출처(`__intended__`) 규칙 변경
 
 ### Never do
 

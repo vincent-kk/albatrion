@@ -39,6 +39,16 @@ Errors exist (`getErrors()` shows them) but the UI is silent:
 1. Display policy — set `showError` on `<Form>` (`boolean | ShowError` enum; never a string) or call `formRef.current?.showError(true)`. See `validation-and-state.md`.
 2. Custom inputs must render behind `errorVisible` — an input ignoring it never shows anything.
 
+## Composition (oneOf / anyOf)
+
+**`COMPOSITION_TYPE_REDEFINITION`** — a branch declared a `type` its parent does not allow. Omit the branch `type`, repeat the parent's, or — under a nullable object only — narrow it to `'object'` or `'null'`.
+
+**`COMPOSITION_PROPERTY_REDEFINITION` on a discriminator** — a `const`/`enum` entry inside a branch's `properties` was given a `type`. With a `type` it is a field and collides with the parent's property; without one it is the branch condition. Remove the `type`, or use `'&if'`.
+
+**A nullable object fails validation while `null`** (warning `NULLABLE_ONE_OF_NULL_UNREACHABLE`) — branches without `type` all match `null`, and `oneOf` wants exactly one. Add one `{ type: 'null' }` branch and `type: 'object'` on the object branches, or use `anyOf` (`nullable-branch-nodes.md`).
+
+**Warning `NULL_BRANCH_IGNORED_FOR_FORM`** — a `{ type: 'null' }` branch carries a condition or `properties`. The form reads neither; keep the null branch bare.
+
 ## Arrays
 
 **`push()` does nothing** — `maxItems` reached. The push is silently ignored and the returned promise resolves with the unchanged length. Escape hatch: `push(data, true)` bypasses `maxItems` (`arrays-and-scale.md`).
