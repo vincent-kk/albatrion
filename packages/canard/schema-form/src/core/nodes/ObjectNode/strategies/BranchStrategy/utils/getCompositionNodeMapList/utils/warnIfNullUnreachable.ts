@@ -15,7 +15,7 @@ import type { ObjectSchema } from '@/schema-form/types';
  * `oneOf` needs exactly one matching branch; a branch without `type` accepts `null`, so `null` often matches several or, once every branch is typed, none.
  * @param parentNode - Object node owning the composition; only a nullable one is judged
  * @param scope - Composition keyword; only `oneOf` is judged, since `anyOf` needs one match at least
- * @param branches - The branch schemas; a `$ref` among them leaves the question open and nothing is reported
+ * @param branches - The branch schemas; a `$ref`, or an uncounted keyword on a branch that does not already reject `null`, leaves the question open and nothing is reported
  */
 export const warnIfNullUnreachable = (
   parentNode: ObjectNode,
@@ -26,7 +26,9 @@ export const warnIfNullUnreachable = (
   let admitting = 0;
   for (const branch of branches) {
     if (branch.$ref !== undefined) return;
-    if (admitsNull(branch)) admitting++;
+    if (admitsNull(branch) === false) continue;
+    if (hasUncountedKeyword(branch)) return;
+    admitting++;
   }
   if (admitting === 1) return;
   warnDevelopmentIssue({
@@ -34,6 +36,16 @@ export const warnIfNullUnreachable = (
     message: formatNullUnreachableWarning(parentNode.path, admitting),
     details: { path: parentNode.path, admitting },
   });
+};
+
+/** Keywords that can reject `null` but that this warning does not evaluate. */
+const UNCOUNTED_KEYWORDS = ['not', 'allOf', 'anyOf', 'oneOf', 'if'] as const;
+
+/** Whether the branch carries a keyword whose verdict on `null` is not counted here. */
+const hasUncountedKeyword = (branch: Partial<ObjectSchema>) => {
+  for (const keyword of UNCOUNTED_KEYWORDS)
+    if (hasOwnProperty(branch, keyword)) return true;
+  return false;
 };
 
 /** Whether `null` satisfies the branch's own `type`, `const` and `enum`; `properties` and `required` never reject `null`. */

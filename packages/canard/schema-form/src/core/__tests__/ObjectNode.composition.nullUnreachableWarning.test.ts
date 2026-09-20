@@ -120,6 +120,48 @@ describe('ObjectNode composition — nullable oneOf가 null을 검증할 수 없
     ).toBe(0);
   });
 
+  // Through JSON, as a schema from a server arrives: these keywords reject `null` in ways the static types do not spell.
+  it.each([
+    ['not', { not: { type: 'null' } }],
+    ['allOf', { allOf: [{ type: 'object' }] }],
+    ['anyOf', { anyOf: [{ type: 'object' }] }],
+    ['oneOf', { oneOf: [{ type: 'object' }] }],
+    ['if', { if: { type: 'null' }, then: { not: {} } }],
+  ])(
+    'type 없는 분기가 %s로 null을 거부할 수 있으면 셀 수 없으므로 경고하지 않아야 함',
+    (keyword, rejection) => {
+      const branch: Branches[number] = JSON.parse(
+        JSON.stringify({ '&if': "./kind === 'a'", ...rejection }),
+      );
+
+      expect(
+        warningsFor(`unevaluated_${keyword}`, {
+          type: ['object', 'null'],
+          properties,
+          oneOf: [{ type: 'null' }, branch, objectBranches[1]],
+        }),
+      ).toBe(0);
+    },
+  );
+
+  it('type으로 이미 null을 배제한 분기는 셀 수 없는 키워드가 있어도 받아들이지 않는 분기로 세어 경고해야 함', () => {
+    const branch: Branches[number] = JSON.parse(
+      JSON.stringify({
+        type: 'object',
+        '&if': "./kind === 'a'",
+        not: { required: ['bValue'] },
+      }),
+    );
+
+    expect(
+      warningsFor('excludedBeforeUnevaluated', {
+        type: ['object', 'null'],
+        properties,
+        oneOf: [branch, objectBranches[1]],
+      }),
+    ).toBe(1);
+  });
+
   it('nullable이 아닌 객체에는 경고하지 않아야 함', () => {
     expect(
       warningsFor('notNullable', {
