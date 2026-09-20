@@ -101,6 +101,15 @@ export class BranchStrategy implements ObjectNodeStrategy {
   private __expired__: boolean = true;
 
   /**
+   * What `__parseValue__` gave the last read of a value whose commit is still pending — `false` when the draft changes nothing.
+   * @remarks Meaningful only while `__composedValid__`. Repeated reads return this one reference, and the batched commit the window was waiting for uses it instead of composing again; every other commit composes for itself.
+   */
+  private __composed__: ObjectValue | Nullish | false;
+
+  /** Whether `__composed__` still matches the pending draft: a child write and every commit clear it. */
+  private __composedValid__: boolean = false;
+
+  /**
    * The object this node's own schema `default` gives its children while the node is `null`.
    * @remarks A form without a default value builds the children from it, so the blank form of a null node does too; `undefined` when the schema default is absent or `null`.
    */
@@ -140,10 +149,12 @@ export class BranchStrategy implements ObjectNodeStrategy {
   /**
    * Reflects value changes and publishes related events.
    * @param option - Setting options
+   * @param pending - Whether this is the batched commit a pending window was waiting for; only that commit may use what a read composed in the window
    * @private
    */
   private __handleEmitChange__(
     option: UnionSetValueOption = SetValueOption.Default,
+    pending: boolean = false,
   ) {
     if (this.__locked__) return;
     const host = this.__host__;
@@ -155,13 +166,11 @@ export class BranchStrategy implements ObjectNodeStrategy {
     const base = this.__value__;
     const draft = this.__draft__;
     const previous = base ? { ...base } : base;
-    const current = this.__parseValue__(
-      base,
-      draft,
-      replace,
-      normalize,
-      host.nullable,
-    );
+    const current =
+      pending && this.__composedValid__
+        ? this.__composed__
+        : this.__parseValue__(base, draft, replace, normalize, host.nullable);
+    this.__composedValid__ = false;
 
     const intended = this.__intended__;
     const automatic = (option & SetValueOption.Automatic) > 0 && !intended;
@@ -289,12 +298,22 @@ export class BranchStrategy implements ObjectNodeStrategy {
 
   /**
    * Gets the current value of the object.
-   * @returns Current value of the object node or undefined
+   * @returns The committed value, with a child write whose commit is still pending laid over it
+   * @remarks A read commits nothing: the pending commit still runs once, on its own path and with its own options. While locked the committed value is returned as it stands.
    */
   public get value() {
-    if (this.__expired__)
-      this.__handleEmitChange__(SetValueOption.BatchedEmitChange);
-    return this.__value__;
+    if (!this.__expired__ || this.__locked__) return this.__value__;
+    if (!this.__composedValid__) {
+      this.__composed__ = this.__parseValue__(
+        this.__value__,
+        this.__draft__,
+        false,
+        false,
+        this.__host__.nullable,
+      );
+      this.__composedValid__ = true;
+    }
+    return this.__composed__ === false ? this.__value__ : this.__composed__;
   }
 
   /**
@@ -803,6 +822,7 @@ export class BranchStrategy implements ObjectNodeStrategy {
             return;
         }
         this.__draft__[property] = input;
+        this.__composedValid__ = false;
         this.__expired__ = true;
         if (this.__isolated__ && this.__isPristine__) this.__isolated__ = false;
         if (!automatic && !this.__locked__) this.__intended__ = true;
@@ -815,7 +835,10 @@ export class BranchStrategy implements ObjectNodeStrategy {
       };
     host.subscribe(({ type, payload }) => {
       if (type & NodeEventType.RequestEmitChange) {
-        this.__handleEmitChange__(payload?.[NodeEventType.RequestEmitChange]);
+        this.__handleEmitChange__(
+          payload?.[NodeEventType.RequestEmitChange],
+          true,
+        );
         this.__batched__ = false;
       }
     });

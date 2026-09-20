@@ -65,27 +65,13 @@ describe('ObjectNode branch — reading a value while a child commit is pending'
     return node.value;
   };
 
-  it('[pin] a read in the pending window turns a derived write into a promotion', async () => {
-    const promoted = { quantity: 5, target: { inner: { total: 50 } } };
+  it('[parity] a derived write under a null seed keeps null whoever reads the object', async () => {
+    const quiet = await changeDependency('none');
 
-    expect(await changeDependency('none')).toEqual({
-      quantity: 5,
-      target: null,
-    });
-    expect(await changeDependency('subscriber')).toEqual(promoted);
-    expect(await changeDependency('microtask')).toEqual(promoted);
+    expect(quiet).toEqual({ quantity: 5, target: null });
+    expect(await changeDependency('subscriber')).toEqual(quiet);
+    expect(await changeDependency('microtask')).toEqual(quiet);
   });
-
-  it.fails(
-    '[parity] a derived write under a null seed keeps null whoever reads the object // BUG: the getter commits the pending write as an intended one',
-    async () => {
-      const quiet = await changeDependency('none');
-
-      expect(quiet).toEqual({ quantity: 5, target: null });
-      expect(await changeDependency('subscriber')).toEqual(quiet);
-      expect(await changeDependency('microtask')).toEqual(quiet);
-    },
-  );
 
   const watched = {
     type: 'object',
@@ -131,27 +117,13 @@ describe('ObjectNode branch — reading a value while a child commit is pending'
     };
   };
 
-  it('[pin] a same-value write beside a pending commit drops the update of the object and leaves its watcher stale', async () => {
-    const written = await changeSeed(true);
+  it('[parity] a same-value write beside a pending commit leaves the update of the object and its watcher intact', async () => {
+    const quiet = await changeSeed(false);
 
-    expect(written.updates).toBe(0);
-    expect(written.watched).toEqual([{ note: 'u', total: 10 }]);
-    expect(written.value).toEqual({
-      seed: 2,
-      source: { note: 'u', total: 20 },
-    });
+    expect(quiet.updates).toBe(1);
+    expect(quiet.watched).toEqual([{ note: 'u', total: 20 }]);
+    expect(await changeSeed(true)).toEqual(quiet);
   });
-
-  it.fails(
-    '[parity] a same-value write beside a pending commit leaves the update of the object and its watcher intact // BUG: the ancestor walk reads the parent, and the getter commits without publishing UpdateValue',
-    async () => {
-      const quiet = await changeSeed(false);
-
-      expect(quiet.updates).toBe(1);
-      expect(quiet.watched).toEqual([{ note: 'u', total: 20 }]);
-      expect(await changeSeed(true)).toEqual(quiet);
-    },
-  );
 
   const injecting = {
     type: 'object',
@@ -195,34 +167,16 @@ describe('ObjectNode branch — reading a value while a child commit is pending'
     return { afterWrite, afterDerive: node.value };
   };
 
-  it('[pin] a read in the tick of an intended write loses its injection and hands the intent to the next derived update', async () => {
-    const read = await writeThenDerive(true);
+  it('[parity] an intended write injects in its own settle whether or not the object was read', async () => {
+    const quiet = await writeThenDerive(false);
 
-    expect(read.afterWrite).toEqual({
+    expect(quiet.afterWrite).toEqual({
       seed: 1,
       source: { note: 'user', total: 10 },
-      target: null,
+      target: { mirror: 10 },
     });
-    expect(read.afterDerive).toEqual({
-      seed: 2,
-      source: { note: 'user', total: 20 },
-      target: { mirror: 20 },
-    });
+    expect(await writeThenDerive(true)).toEqual(quiet);
   });
-
-  it.fails(
-    '[parity] an intended write injects in its own settle whether or not the object was read // BUG: the getter commits without publishing UpdateValue, which carries the injection',
-    async () => {
-      const quiet = await writeThenDerive(false);
-
-      expect(quiet.afterWrite).toEqual({
-        seed: 1,
-        source: { note: 'user', total: 10 },
-        target: { mirror: 10 },
-      });
-      expect(await writeThenDerive(true)).toEqual(quiet);
-    },
-  );
 
   it('keeps null when only a derived value drives the injection', async () => {
     const node = nodeFromJSONSchema({
@@ -351,6 +305,43 @@ describe('ObjectNode branch — reading a value while a child commit is pending'
     },
   } satisfies JSONSchema;
   const filled = { group: { a: 'a0', b: 'b0' } };
+
+  it('returns one reference for every read of a pending value, and the commit keeps it', async () => {
+    const node = nodeFromJSONSchema({
+      onChange: () => {},
+      jsonSchema: plain,
+      defaultValue: filled,
+    });
+    await delay(10);
+    const group = node.find('group') as ObjectNode;
+    const committed = group.value;
+    (node.find('group/a') as StringNode).setValue('child');
+    const pending = group.value;
+
+    expect(pending).toEqual({ a: 'child', b: 'b0' });
+    expect(pending).not.toBe(committed);
+    expect(group.value).toBe(pending);
+    await delay(10);
+    expect(group.value).toBe(pending);
+  });
+
+  it('composes again when a second child write follows a read', async () => {
+    const node = nodeFromJSONSchema({
+      onChange: () => {},
+      jsonSchema: plain,
+      defaultValue: filled,
+    });
+    await delay(10);
+    const group = node.find('group') as ObjectNode;
+    (node.find('group/a') as StringNode).setValue('child');
+    const first = group.value;
+    (node.find('group/b') as StringNode).setValue('second');
+
+    expect(group.value).toEqual({ a: 'child', b: 'second' });
+    expect(first).toEqual({ a: 'child', b: 'b0' });
+    await delay(10);
+    expect(node.value).toEqual({ group: { a: 'child', b: 'second' } });
+  });
 
   it('[baseline] a whole assignment replaces a child write still pending', async () => {
     const seen = await observe(plain, filled, (find) => {

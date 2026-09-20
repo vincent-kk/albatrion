@@ -14,9 +14,6 @@ import { renderForm } from '../renderForm';
  * injection whether or not anything — React's render included — read the
  * object in between.
  *
- * A defect still open is held twice: `[pin]` asserts the wrong value it gives
- * today, `it.fails` asserts the behavior wanted.
- *
  * Null-contract clauses (ObjectNode DETAIL) ↔ cases in this file:
  * - S1 : none — `{}` vs `null` is covered by `nullable.render.test.tsx`
  * - S2 : "keeps a null seed … after mount", "keeps null when a dependency is typed"
@@ -60,22 +57,12 @@ describe('nullable.object-pending-read.render — reading an object changes noth
   };
 
   for (const strictMode of [false, true]) {
-    it(`[pin] a null seed over a nested derived field is an object after mount (strictMode=${strictMode})`, async () => {
+    it(`keeps a null seed over a nested derived field after mount (strictMode=${strictMode})`, async () => {
       expect(await mountNullSeed(strictMode)).toEqual({
         quantity: 2,
-        target: { inner: { total: 20 } },
+        target: null,
       });
     });
-
-    it.fails(
-      `keeps a null seed over a nested derived field after mount (strictMode=${strictMode}) // BUG: a render-time read commits the derived write as an intended one`,
-      async () => {
-        expect(await mountNullSeed(strictMode)).toEqual({
-          quantity: 2,
-          target: null,
-        });
-      },
-    );
   }
 
   /** Types a new quantity under the null seed and returns the settled form value. */
@@ -89,19 +76,9 @@ describe('nullable.object-pending-read.render — reading an object changes noth
     return form.getValue();
   };
 
-  it('[pin] typing a dependency leaves an object where the seed was null', async () => {
-    expect(await typeDependency()).toEqual({
-      quantity: 5,
-      target: { inner: { total: 50 } },
-    });
+  it('keeps null when a dependency is typed', async () => {
+    expect(await typeDependency()).toEqual({ quantity: 5, target: null });
   });
-
-  it.fails(
-    'keeps null when a dependency is typed // BUG: a render-time read commits the derived write as an intended one',
-    async () => {
-      expect(await typeDependency()).toEqual({ quantity: 5, target: null });
-    },
-  );
 
   it('promotes to what a never-null form holds', async () => {
     const seeded = await renderForm(nestedDerived, {
@@ -174,24 +151,13 @@ describe('nullable.object-pending-read.render — reading an object changes noth
     };
   };
 
-  it('[pin] a read inside the pending window drops the update of the object and leaves its watcher stale', async () => {
+  it('[parity] an object-path watcher sees the latest object whether or not the object was read', async () => {
+    const quiet = await typeSeed(false);
     const read = await typeSeed(true);
 
-    expect(read.updates).toBe(0);
-    expect(read.watched).toEqual([{ note: 'u' }]);
-    expect(read.value.source).toEqual({ note: 'u', total: 20 });
+    expect(quiet.watched).toEqual([{ note: 'u', total: 20 }]);
+    expect(read).toEqual(quiet);
   });
-
-  it.fails(
-    '[parity] an object-path watcher sees the latest object whether or not the object was read // BUG: a read commits without publishing UpdateValue',
-    async () => {
-      const quiet = await typeSeed(false);
-      const read = await typeSeed(true);
-
-      expect(quiet.watched).toEqual([{ note: 'u', total: 20 }]);
-      expect(read).toEqual(quiet);
-    },
-  );
 
   const injecting = {
     type: 'object',
@@ -231,30 +197,17 @@ describe('nullable.object-pending-read.render — reading an object changes noth
     return { value: form.getValue(), errors: form.caughtErrors() };
   };
 
-  it('[pin] a read in the tick of an intended write loses its injection', async () => {
+  it('[parity] an intended write injects in its own settle whether or not the object was read', async () => {
+    const quiet = await writeIntoSource(false);
     const read = await writeIntoSource(true);
 
-    expect(read.value).toEqual({
+    expect(quiet.value).toEqual({
       seed: 1,
       source: { note: 'user', total: 10 },
-      target: null,
+      target: { mirror: 10 },
     });
+    expect(read).toEqual(quiet);
   });
-
-  it.fails(
-    '[parity] an intended write injects in its own settle whether or not the object was read // BUG: a read commits without publishing UpdateValue, which carries the injection',
-    async () => {
-      const quiet = await writeIntoSource(false);
-      const read = await writeIntoSource(true);
-
-      expect(quiet.value).toEqual({
-        seed: 1,
-        source: { note: 'user', total: 10 },
-        target: { mirror: 10 },
-      });
-      expect(read).toEqual(quiet);
-    },
-  );
 
   it('renders the null seed without a React warning', async () => {
     const form = await renderForm(nestedDerived, {
