@@ -815,11 +815,14 @@ export class BranchStrategy implements ObjectNodeStrategy {
           this.__draft__ = { ...this.__blank__ };
         } else {
           if (this.__draft__ == null) this.__draft__ = {};
-          if (
-            (input === undefined && this.__value__?.[property] === input) ||
-            (input !== undefined && this.__draft__[property] === input)
-          )
+          if (input === undefined && this.__value__?.[property] === input)
             return;
+          if (input !== undefined && this.__draft__[property] === input) {
+            // The draft already holds this value, but an outside write of it still has to reach a null ancestor.
+            if (automatic || this.__locked__) return;
+            this.__intended__ = true;
+            return this.__emitChange__(SetValueOption.Default, batched);
+          }
         }
         this.__draft__[property] = input;
         this.__composedValid__ = false;

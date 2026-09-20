@@ -17,9 +17,6 @@ import type { JSONSchema } from '@/schema-form/types';
  * Node-tree twin of `nullable.object-pending-read.render.test.tsx`: the same
  * writes give the same value, events and injection whether or not an object's
  * value was read while a child's commit was still queued.
- *
- * A defect still open is held twice: `[pin]` asserts the wrong value it gives
- * today, `it.fails` asserts the behavior wanted.
  */
 describe('ObjectNode branch — reading a value while a child commit is pending', () => {
   const nestedDerived = {
@@ -226,20 +223,58 @@ describe('ObjectNode branch — reading a value while a child commit is pending'
     return node.value;
   };
 
-  it('[pin] an intended write repeating an automatic one in the same tick leaves the ancestor null', async () => {
+  it('promotes when an intended write repeats, in one tick, the value an automatic write just gave', async () => {
     expect(await repeatAsIntended('target/inner/note')).toEqual({
-      target: null,
+      target: { inner: { note: 'same' } },
     });
   });
 
-  it.fails(
-    'promotes when an intended write repeats, in one tick, the value an automatic write just gave // BUG: the duplicate check returns before the intent is latched',
-    async () => {
-      expect(await repeatAsIntended('target/inner/note')).toEqual({
-        target: { inner: { note: 'same' } },
-      });
-    },
-  );
+  it('promotes through an array item as well', async () => {
+    const node = nodeFromJSONSchema({
+      onChange: () => {},
+      jsonSchema: {
+        type: 'object',
+        properties: {
+          target: {
+            type: ['object', 'null'],
+            properties: {
+              list: {
+                type: 'array',
+                minItems: 1,
+                items: {
+                  type: 'object',
+                  properties: { note: { type: 'string' } },
+                },
+              },
+            },
+          },
+        },
+      },
+      defaultValue: { target: null },
+    });
+    await delay(10);
+    const note = node.find('target/list/0/note') as StringNode;
+    note.setValue('same', SetValueOption.Overwrite | SetValueOption.Automatic);
+    note.setValue('same');
+    await delay(10);
+
+    expect(node.value).toEqual({ target: { list: [{ note: 'same' }] } });
+  });
+
+  it('keeps null when the repeated write is automatic too', async () => {
+    const node = nodeFromJSONSchema({
+      onChange: () => {},
+      jsonSchema: nestedNote,
+      defaultValue: { target: null },
+    });
+    await delay(10);
+    const note = node.find('target/inner/note') as StringNode;
+    note.setValue('same', SetValueOption.Overwrite | SetValueOption.Automatic);
+    note.setValue('same', SetValueOption.Overwrite | SetValueOption.Automatic);
+    await delay(10);
+
+    expect(node.value).toEqual({ target: null });
+  });
 
   /** Runs `act` on a settled tree and reports what nobody reading the object observes: the value, the object's `UpdateValue` count and the root `onChange` payloads. */
   const observe = async (
