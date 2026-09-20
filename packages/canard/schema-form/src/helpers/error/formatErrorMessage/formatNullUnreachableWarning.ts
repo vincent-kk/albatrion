@@ -36,6 +36,5 @@ How to fix:
          { type: 'object', properties: { ... } },
        ]
   2. Or use 'anyOf', which a null branch alone satisfies
-  3. Ignore this if a branch already rules null out with 'not' or 'allOf'
 `.trim();
 };
