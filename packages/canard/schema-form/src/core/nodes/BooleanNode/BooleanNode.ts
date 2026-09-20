@@ -3,13 +3,13 @@ import type { Nullish } from '@aileron/declare';
 import type { BooleanSchema, BooleanValue } from '@/schema-form/types';
 
 import { parseBoolean } from '../../parsers';
-import { AbstractNode } from '../AbstractNode';
 import {
   NodeEventType,
   type SchemaNodeConstructorProps,
   SetValueOption,
   type UnionSetValueOption,
 } from '../../types';
+import { AbstractNode } from '../AbstractNode';
 
 /**
  * Node class for handling boolean schemas.
@@ -47,7 +47,8 @@ export class BooleanNode extends AbstractNode<BooleanSchema, BooleanValue> {
     const previous = this.__value__;
     const current = this.__parseValue__(input);
 
-    if (retain && this.__equals__(previous, current)) return;
+    if (retain && this.__equals__(previous, current))
+      return this.__forwardUnchangedWrite__(current, option);
     this.__value__ = current;
     if ((option & SetValueOption.Automatic) === 0) this.__markIntendedWrite__();
 

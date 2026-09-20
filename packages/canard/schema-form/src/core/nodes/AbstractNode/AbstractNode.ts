@@ -1096,6 +1096,21 @@ export abstract class AbstractNode<
   }
 
   /**
+   * Hands a write that changed nothing on to the parent, when an ancestor holds `null`.
+   * @param value - The value this node holds, which the write repeated
+   * @param option - Options of the absorbed write; an `Automatic` one is not forwarded
+   * @internal The write carried a value, so a `null` ancestor has to learn of it; without such an ancestor nothing is reported.
+   */
+  public __forwardUnchangedWrite__(
+    this: AbstractNode,
+    value: Value | Nullish,
+    option: UnionSetValueOption,
+  ) {
+    if (option & SetValueOption.Automatic || !this.__hasNullAncestor__) return;
+    this.onChange(value, (option & SetValueOption.Batch) > 0, false);
+  }
+
+  /**
    * Returns the node to what a form without a default value builds for it.
    * @param input - Value the parent's schema default assigns to this node; the node's own schema default when `undefined`
    * @internal A parent that became `null` calls this on its children, so the blank form it shows does not depend on how it became `null`.

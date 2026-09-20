@@ -5,7 +5,6 @@ import type { Nullish } from '@aileron/declare';
 import type { NumberSchema, NumberValue } from '@/schema-form/types';
 
 import { parseNumber } from '../../parsers';
-import { AbstractNode } from '../AbstractNode';
 import {
   type HandleChange,
   NodeEventType,
@@ -13,6 +12,7 @@ import {
   SetValueOption,
   type UnionSetValueOption,
 } from '../../types';
+import { AbstractNode } from '../AbstractNode';
 
 /**
  * Node class for handling number schemas.
@@ -72,7 +72,8 @@ export class NumberNode extends AbstractNode<NumberSchema, NumberValue> {
     const previous = this.__value__;
     const current = this.__parseValue__(input);
 
-    if (retain && this.__equals__(previous, current, true)) return;
+    if (retain && this.__equals__(previous, current, true))
+      return this.__forwardUnchangedWrite__(current, option);
     this.__value__ = current;
     if ((option & SetValueOption.Automatic) === 0) this.__markIntendedWrite__();
 
