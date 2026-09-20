@@ -276,6 +276,38 @@ describe('ObjectNode branch — reading a value while a child commit is pending'
     expect(node.value).toEqual({ target: null });
   });
 
+  it('promotes when an intended write repeats a value the draft kept with no commit pending', async () => {
+    const node = nodeFromJSONSchema({
+      onChange: () => {},
+      jsonSchema: {
+        type: 'object',
+        properties: {
+          target: {
+            type: ['object', 'null'],
+            properties: {
+              inner: {
+                type: 'object',
+                properties: { kept: { type: 'string', default: 'K' } },
+              },
+            },
+          },
+        },
+      },
+      defaultValue: { target: null },
+    });
+    await delay(10);
+    const kept = node.find('target/inner/kept') as StringNode;
+    kept.setValue('x', SetValueOption.Overwrite | SetValueOption.Automatic);
+    kept.setValue('K', SetValueOption.Overwrite | SetValueOption.Automatic);
+    await delay(10);
+    const settled = node.value;
+    kept.setValue('K');
+    await delay(10);
+
+    expect(settled).toEqual({ target: null });
+    expect(node.value).toEqual({ target: { inner: { kept: 'K' } } });
+  });
+
   /** Runs `act` on a settled tree and reports what nobody reading the object observes: the value, the object's `UpdateValue` count and the root `onChange` payloads. */
   const observe = async (
     jsonSchema: JSONSchema,

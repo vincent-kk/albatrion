@@ -169,6 +169,27 @@ describe('ObjectNode branch — a remembered read never outlives the value it re
     expect(read).toEqual(quiet);
   });
 
+  it('forgets a read when null is assigned over the pending write', async () => {
+    const { quiet, read } = await withAndWithoutRead(
+      {
+        type: 'object',
+        properties: {
+          box: {
+            type: ['object', 'null'],
+            properties: { a: { type: 'string' }, b: { type: 'string' } },
+          },
+        },
+      },
+      { box: { a: 'a0', b: 'b0' } },
+      'box',
+      (find) => (find('box/a') as StringNode).setValue('child'),
+      (find) => (find('box') as ObjectNode).setValue(null),
+    );
+
+    expect(quiet).toEqual({ sync: null, settled: { box: null } });
+    expect(read).toEqual(quiet);
+  });
+
   it('forgets a read once any commit has taken the pending write', async () => {
     const updatesOf = async (read: boolean) => {
       const node = nodeFromJSONSchema({
