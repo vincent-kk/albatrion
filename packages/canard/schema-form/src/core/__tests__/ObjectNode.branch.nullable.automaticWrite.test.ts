@@ -335,7 +335,7 @@ describe('ObjectNode branch nullable — automatic writes never promote null', (
   } satisfies JSONSchema;
 
   /** Writes, with `Merge`, the value the named child of `target` already shows. */
-  const sameValueMerges: [name: string, write: (root: SchemaNode) => void][] = [
+  it.each<[name: string, write: (root: SchemaNode) => void]>([
     [
       'note',
       (root) =>
@@ -392,9 +392,7 @@ describe('ObjectNode branch nullable — automatic writes never promote null', (
           SetValueOption.Merge,
         ),
     ],
-  ];
-
-  it.each(sameValueMerges)(
+  ])(
     '%s에 이미 보이는 값과 같은 값을 Merge로 써도 null이 풀려야 함',
     async (_name, write) => {
       const values: unknown[] = [];
