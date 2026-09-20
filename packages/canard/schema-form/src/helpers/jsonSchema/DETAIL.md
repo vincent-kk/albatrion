@@ -9,14 +9,17 @@
 
 ## API Contracts
 
-타입 분류 가드 — 노드 트리 구성이 terminal/branch를 가르는 기준:
+분류 가드 — 노드 트리 구성이 terminal/branch를 가르는 기준과, composition 분기가 검증 전용인지 가르는 기준:
 
-| 가드             | true인 타입                                          |
-| ---------------- | ---------------------------------------------------- |
-| `isTerminalType` | `boolean` · `number` · `integer` · `string` · `null` |
-| `isBranchType`   | `array` · `object` · **`virtual`**                   |
+| 가드             | 입력   | true인 대상                                          |
+| ---------------- | ------ | ---------------------------------------------------- |
+| `isTerminalType` | 타입   | `boolean` · `number` · `integer` · `string` · `null` |
+| `isBranchType`   | 타입   | `array` · `object` · **`virtual`**                   |
+| `isNullBranch`   | 스키마 | `extractSchemaInfo`가 해석한 `type`이 `null`인 분기  |
 
-표의 요점은 `virtual`이다 — JSON Schema 표준 타입이 아니지만 branch로 분류되어 자식 노드를 가질 수 있다. 두 가드는 상호 배타적이다.
+표의 요점은 `virtual`이다 — JSON Schema 표준 타입이 아니지만 branch로 분류되어 자식 노드를 가질 수 있다. 앞의 두 타입 가드는 상호 배타적이다.
+
+`isNullBranch`는 입력이 타입이 아니라 `oneOf`/`anyOf` 분기 스키마다 — `type: 'null'`과 `type: ['null']`, `nullable` 표기 차이를 `extractSchemaInfo`가 흡수한다. "이 분기는 검증 전용이다"라는 판정은 이 가드 하나가 소유하며, 판정이 필요한 소비자는 인라인 비교 대신 이 가드를 호출한다 — 사본이 생기면 마커를 넣는 쪽과 노드를 건너뛰는 쪽이 어긋나 분기 인덱스가 깨진다.
 
 `getResolveSchema`는 스키마를 받아 `$ref` 해석 함수(`ResolveSchema`)를 반환한다 — 해석 자체가 아니라 해석기를 만든다.
 
@@ -38,4 +41,4 @@
 
 ## Last Updated
 
-2026-08-18 — 문서 신설. 가족 수준 계약(순수성·barrel 표면·실패 모드)과 타입 분류 가드의 `virtual` 분기를 명문화 (issue #331, FIX-049).
+2026-09-20 — composition 분기 판정 가드 `isNullBranch`를 분류 가드 계약에 편입하고, 입력이 타입이 아니라 분기 스키마라는 점과 이 판정의 단일 소유권을 명문화 (PR #339).
