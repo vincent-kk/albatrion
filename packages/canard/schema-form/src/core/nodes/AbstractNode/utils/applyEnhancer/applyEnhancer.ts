@@ -1,4 +1,5 @@
 import { isArray, isPlainObject } from '@winglet/common-utils/filter';
+import type { ArrayValue, ObjectValue } from '@winglet/json-schema';
 
 /**
  * Lays validation-only entries over a value without giving the value anything it does not hold.
@@ -17,7 +18,7 @@ export const applyEnhancer = (value: unknown, enhancer: unknown): unknown => {
 
 /** Copy of an object with each leaf entry written and each nested entry applied to the key the object holds. */
 const overlayObject = (
-  value: Record<string, unknown>,
+  value: ObjectValue,
   entries: [key: string, entry: unknown][],
 ) => {
   const result = { ...value };
@@ -29,7 +30,7 @@ const overlayObject = (
 
 /** Copy of an array with each entry applied to the item the array holds at that index. */
 const overlayArray = (
-  value: unknown[],
+  value: ArrayValue,
   entries: [key: string, entry: unknown][],
 ) => {
   const result = [...value];
