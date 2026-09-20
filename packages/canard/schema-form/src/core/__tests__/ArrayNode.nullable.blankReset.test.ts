@@ -12,9 +12,10 @@ import type { ObjectNode } from '../nodes/ObjectNode';
 import type { StringNode } from '../nodes/StringNode';
 
 /**
- * `__resetToBlank__` seen from the two edges the blank reset touches: the `minItems` fill must not
- * write through another node's `injectTo`, and an array parked behind `computed.active: false`
- * must come back holding the same value a freshly built, always-active form holds.
+ * `__resetToBlank__` seen from the edges the blank reset touches: the `minItems` fill must not
+ * fire the array's own `injectTo`, a derived value must stay the final winner over that fill, and
+ * an array parked behind `computed.active: false` must come back holding the same value a freshly
+ * built, always-active form holds.
  */
 const buildForm = (arraySchema: JSONSchema, enabled: boolean) => {
   const root = nodeFromJSONSchema({
@@ -69,6 +70,46 @@ describe('ArrayNode blank reset — injectTo on the minItems fill', () => {
     expect((root.value as ObjectValue)?.marker).toBe('written by the user');
   });
 });
+
+describe.each([false, true])(
+  'ArrayNode blank reset — a derived value shorter than minItems (terminal=%s)',
+  (terminal) => {
+    const derivedList = (): JSONSchema =>
+      ({
+        type: 'object',
+        properties: {
+          seed: { type: 'string', default: 'a' },
+          group: {
+            type: ['object', 'null'],
+            properties: {
+              list: {
+                type: 'array',
+                terminal,
+                minItems: 3,
+                items: { type: 'string', default: 'S' },
+                computed: { derived: '[../../seed]' },
+              },
+            },
+          },
+        },
+      }) as JSONSchema;
+
+    it('should hold the derived value alone, as a freshly built form does', async () => {
+      const fresh = nodeFromJSONSchema({
+        onChange: () => {},
+        jsonSchema: derivedList(),
+      }) as ObjectNode;
+      await delay(10);
+      const baseline = (fresh.find('group/list') as ArrayNode).value;
+      expect(baseline).toEqual(['a']);
+
+      (fresh.find('group') as ObjectNode).setValue(null);
+      await delay(10);
+
+      expect((fresh.find('group/list') as ArrayNode).value).toEqual(baseline);
+    });
+  },
+);
 
 const listSchemas = {
   'default only': {
