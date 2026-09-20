@@ -259,6 +259,11 @@ describe('ObjectNode branch nullable — null survives oneOf/anyOf recomposition
                   default: null,
                   properties: { code: { type: 'string' } },
                 },
+                optionalList: {
+                  type: ['array', 'null'],
+                  default: null,
+                  items: { type: 'string' },
+                },
               },
             },
           ],
@@ -285,13 +290,64 @@ describe('ObjectNode branch nullable — null survives oneOf/anyOf recomposition
         inner: { code: 'seeded' },
         list: ['seeded'],
         optional: { code: 'seeded' },
+        optionalList: ['seeded'],
       },
     });
 
     expect(seeded).toEqual(await promoteToB({ target: null }));
     // What the blank form holds, a restored object child included: its own children's defaults.
     expect(seeded).toEqual({
-      target: { kind: 'b', inner: { code: 'C' }, optional: null },
+      target: {
+        kind: 'b',
+        inner: { code: 'C' },
+        optional: null,
+        optionalList: null,
+      },
     });
   });
+
+  it.each([false, true])(
+    'minItems를 채운 배열 분기 자식은 null을 거쳐도 채움으로 돌아가야 함 (terminal: %s)',
+    async (terminal) => {
+      const jsonSchema = {
+        type: 'object',
+        properties: {
+          target: {
+            type: ['object', 'null'],
+            properties: { kind: { type: 'string', enum: ['a', 'b'] } },
+            oneOf: [
+              {
+                '&if': "./kind !== 'b'",
+                properties: { aValue: { type: 'string' } },
+              },
+              {
+                '&if': "./kind === 'b'",
+                properties: {
+                  list: {
+                    type: 'array',
+                    terminal,
+                    minItems: 2,
+                    items: { type: 'string', default: 'S' },
+                  },
+                },
+              },
+            ],
+          },
+        },
+      } satisfies JSONSchema;
+      const node = nodeFromJSONSchema({
+        onChange: () => {},
+        jsonSchema,
+        defaultValue: { target: { kind: 'b', list: ['x', 'y', 'z'] } },
+      });
+      await delay(10);
+
+      (node.find('target') as ObjectNode).setValue(null);
+      await delay(10);
+      (node.find('target/kind') as StringNode).setValue('b');
+      await delay(10);
+
+      expect(node.value).toEqual({ target: { kind: 'b', list: ['S', 'S'] } });
+    },
+  );
 });

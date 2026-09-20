@@ -99,7 +99,6 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
     input?: ArrayValue | Nullish,
   ) {
     const base = input !== undefined ? input : this.jsonSchema.default;
-    this.__setDefaultValue__(base);
     this.__reset__({
       inputValue: base !== undefined ? base : [],
       applyDerivedValue: true,
@@ -111,6 +110,17 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
           true,
           SetValueOption.BatchDefault | SetValueOption.Automatic,
         );
+    this.__setDefaultValue__(this.__blankValue__);
+  }
+
+  /**
+   * The array as it stands right after a blank reset.
+   * @internal A strategy with item nodes reports its value on the next batch, so the items are read directly.
+   */
+  private get __blankValue__(): ArrayValue | Nullish {
+    const children = this.children;
+    if (children === null || this.value == null) return this.value;
+    return children.map((child) => child.node.value);
   }
 
   /**
