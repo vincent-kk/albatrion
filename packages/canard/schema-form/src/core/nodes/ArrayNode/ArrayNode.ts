@@ -4,7 +4,6 @@ import type { Nullish } from '@aileron/declare';
 
 import type { ArraySchema, ArrayValue } from '@/schema-form/types';
 
-import { AbstractNode } from '../AbstractNode';
 import {
   type BranchNodeConstructorProps,
   type HandleChange,
@@ -12,6 +11,7 @@ import {
   SetValueOption,
   type UnionSetValueOption,
 } from '../../types';
+import { AbstractNode } from '../AbstractNode';
 import {
   type ArrayNodeStrategy,
   BranchStrategy,
@@ -99,6 +99,7 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
     input?: ArrayValue | Nullish,
   ) {
     const base = input !== undefined ? input : this.jsonSchema.default;
+    this.__setDefaultValue__(base);
     this.__reset__({
       inputValue: base !== undefined ? base : [],
       applyDerivedValue: true,
