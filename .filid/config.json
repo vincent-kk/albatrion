@@ -3,7 +3,9 @@
   "language": "ko",
   "adapters": {
     "mode": "auto",
-    "enabled": ["ecmascript"]
+    "enabled": [
+      "ecmascript"
+    ]
   },
   "rules": {
     "organ-no-intentmd": {
@@ -13,7 +15,9 @@
     "module-entry-point": {
       "enabled": true,
       "severity": "warning",
-      "exempt": ["**/canard/schema-form/src/app"]
+      "exempt": [
+        "**/canard/schema-form/src/app"
+      ]
     },
     "max-depth": {
       "enabled": true,
@@ -51,7 +55,6 @@
   },
   "structure": {
     "maxDepth": 14,
-    "additionalExcludedDirectories": ["bench"],
     "additionalAllowedPeers": [
       {
         "basename": "type.ts"
@@ -95,6 +98,9 @@
       {
         "basename": "tsconfig.declarations.json"
       }
+    ],
+    "additionalExcludedDirectories": [
+      "bench"
     ]
   }
 }
