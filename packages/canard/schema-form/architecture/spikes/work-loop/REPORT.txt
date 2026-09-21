@@ -1,0 +1,235 @@
+================================================================================
+SPIKE: Fiber-style work loop (ADR 0006/0007) vs @canard/schema-form v0.16.0
+Throwaway prototype. Nothing in the repository was modified.
+================================================================================
+
+ENVIRONMENT
+  Node v24.20.0, darwin arm64 (Darwin 25.6.0). CPU model string is unreadable
+  under the sandbox; reviews/round-1.md §2 records this machine as Apple M1 Max.
+  ajv 8.17.1 (ajv/dist/2020, allErrors:false), resolved from
+  packages/canard/schema-form-ajv8-plugin. Nothing was installed.
+  Current library driven from src/ via vite-node, alias @/schema-form -> src.
+
+METHOD (follows reviews/round-1.md §2)
+  Calibrated internal batch (~25 ms) divided by its iteration count; >=2 s
+  warm-up; 7-11 timed batches; median reported with the p25-p75 spread.
+  Inputs are cycled and every result is consumed into a checksum. EVERY case
+  runs in its OWN process. tinybench was deliberately not used (round-1 §2
+  measured it 4-6x high below 100 ns; several numbers here are in that range).
+  Confirming round-1's warning: running the prototype's self-checks in the same
+  process as the measurement read S1 as 125 us instead of 1.29 us -- ~100x, the
+  exact magnitude round-1 §2 reported. All numbers below are per-process.
+
+  Prototype correctness gate (proto/selfcheck.mjs, ALL PASSING, run before
+  measuring, in its own process): untouched siblings keep identical memo
+  references; the root memo moves iff something emitted changed; deactivate ->
+  reactivate restores the raw value; `if:{not:{required:['x']}}, then x
+  default 1` hits the 25-pass cap, throws synchronously, and leaves the
+  committed tree and the staged write untouched; a batch settles once; a guard
+  flip toggles exactly the three fields its fragment declares.
+
+LANES. The current write path is split in time, so it is reported in three:
+  WRITE = synchronous setValue, reading the written leaf back.
+  EMIT  = setValue + root.value -- where ObjectNode's lazy __composed__ actually
+          rebuilds the emitted object. This is the lane comparable to flush().
+  DRAIN = plus a macrotask drain, amortized over 100 writes as
+          bench/event-cascade.bench.ts does (one drain is ~1 ms timer-bound).
+
+--------------------------------------------------------------------------------
+S1 KEYSTROKE -- flat object, 1,000 string fields
+--------------------------------------------------------------------------------
+                                          median    spread   counters
+  prototype  write same field             1.29 us   +/-3.0%  visited 2, guards 0,
+                                                             memos 1, passes 1
+  prototype  write random fields          1.71 us   +/-3.0%
+  current    WRITE lane (setValue only)   509 ns    +/-1.1%
+  current    EMIT lane (setValue+read)  557.29 us   +/-1.7%
+  current    EMIT lane, random fields   813.10 us   +/-1.8%
+  current    DRAIN, 100 writes/1 drain  673.75 us            6.74 us per write
+  RATIO (settled keystroke)  557 us / 1.29 us = 432x in the prototype's favour
+  The compose is per SETTLE, not per write: 100 writes then one drain amortizes
+  it to 6.74 us/write, i.e. today's cost is already batch-friendly.
+
+--------------------------------------------------------------------------------
+S2 KEYSTROKE DEEP -- { items: [ {f0..f4} x 10,000 ] }, write /items/5000/f2
+--------------------------------------------------------------------------------
+  prototype  write + flush                3.23 us   +/-4.1%  visited 4, memos 3,
+                                                             shares 2, passes 1
+  current    WRITE lane                   529 ns    +/-15.7%
+  current    sync root.value              546 ns    -- STALE, see below
+  current    DRAIN, 100 writes/1 drain   53.35 ms   +/-1.7%  533.5 us per write
+  RATIO (settled keystroke)  533 us / 3.23 us = 165x
+  NOT apples-to-apples: a synchronous root.value after a write three levels deep
+  returns the OLD value in the current library (verified: leaf reads TYPED while
+  root.value still reads x1; they agree only after a drain). The prototype's
+  flush() returns with the root consistent, so only the DRAIN lane is comparable.
+
+--------------------------------------------------------------------------------
+S3 CONDITIONAL KEYSTROKE -- 200 independent root conditionals
+--------------------------------------------------------------------------------
+  NOT apples-to-apples. The redesign's independent fragments do not exist today:
+  oneOf branches are mutually exclusive, so 200 independent root conditionals are
+  not expressible as branches. The closest analogue is computed.active, which
+  needs ONE EXPRESSION PER FIELD -- 600 expressions where the prototype has 200
+  AJV guards. Prototype rows use 600 base fields so the emitted object stays
+  under the V8 cliff described below; the 1,000-base rows are above it.
+
+  (a) type into an unrelated field        median    guards evaluated
+  prototype  600 base + 200 fragments    11.98 us   400 (200 x 2 passes)
+  prototype  same + inverted index        2.42 us   0
+  prototype  1,000 base (above cliff)   195.01 us   400
+  current    600 base + 600 exprs, EMIT 627.17 us
+  RATIO  627 us / 11.98 us = 52x;  with the inverted index, 259x
+
+  (b) flip one discriminator (fragment declares 3 fields)
+  prototype  600 base + 200 fragments   106.18 us   600 guards, 3 passes
+  prototype  same + inverted index      104.33 us   400 guards
+  prototype  1,000 base (above cliff)   471.50 us
+  current    600 base + 600 exprs, EMIT 536.49 us
+  current    same + single drain          1.54 ms   (timer-floor bound)
+  RATIO  536 us / 106 us = 5x
+
+--------------------------------------------------------------------------------
+S4 BULK WRITE -- replace the whole root value
+--------------------------------------------------------------------------------
+  flat 1,000    prototype   422.86 us  (visited 1001, memos 1, passes 1)
+                current       1.82 ms  EMIT   -> 4.3x
+  10,000 x 5    prototype     5.72 ms  (visited 60002, memos 10002)
+                current     217.23 ms  drained -> 38x
+
+--------------------------------------------------------------------------------
+S5 BATCH -- 1,000 writes to distinct fields
+--------------------------------------------------------------------------------
+  one settle      prototype  351.36 us (0.35 us/write; 1 pass, 1 memo)
+                  current      1.70 ms (1.70 us/write)          -> 4.8x
+  settle each     prototype    1.70 ms (1.7 us/write; 1000 passes)
+                  current   1116.94 ms (1.12 ms/write)          -> 657x
+  The unbatched current number is the ~1 ms macrotask floor x 1000, not core
+  cost. Batching is worth 4.8x in the prototype and 657x today.
+
+--------------------------------------------------------------------------------
+S6 CONSTRUCTION
+--------------------------------------------------------------------------------
+  flat 1,000          prototype   452.75 us   current    4.63 ms   -> 10x
+  array 10,000 x 5    prototype    13.15 ms   current  216.73 ms   -> 16x
+  conditional         prototype   584.87 us   current   13.40 ms
+    + AJV compile, 200 guards, eager         22.40 ms
+    = prototype total                        ~23.0 ms   -> CURRENT IS 1.7x FASTER
+    lazy compile-on-first-evaluation         29.17 ms   -> WORSE than eager
+  Lazy compile buys nothing here: the first settle evaluates every guard, so all
+  200 compile anyway and the closure adds overhead. It only pays if the first
+  settle can skip guards entirely (inverted index seeded from the initial value).
+
+--------------------------------------------------------------------------------
+S7 READ-HEAVY -- reads after one write
+--------------------------------------------------------------------------------
+  prototype  root.value  4.4 ns | mid 7.1 ns | leaf 11.0 ns   (field access)
+  current    root.value  5.4 ns | array 3.6 ns | mid 4.6 ns | leaf 9.4 ns
+  1,000,000 prototype root reads left the reference identical.
+  Current settled reads are ALREADY field reads and already return the same
+  reference twice. What costs today is the FIRST read after a write to a direct
+  child: that read recomposes (the 557 us S1 EMIT lane). After a deeper write the
+  read is cheap because it is stale.
+
+--------------------------------------------------------------------------------
+DESIGN KNOBS -- prototype-only ablations, same shape, same process rules
+--------------------------------------------------------------------------------
+  compose strategy, flat 1,000   structural share  1.29 us | rebuild   134.09 us
+  dirty walk, 10,000 items       dirty-child list  3.23 us | flag scan  55.51 us
+  guard skipping, S3a small      inverted index    2.42 us | none        11.98 us
+  V8 fast-property cliff         1,020 keys 1.02 us | 1,021 keys 141.42 us
+                                 1,200 keys 171.41 us
+  S1 at 1,100 fields             153.18 us  (vs 1.29 us at 1,000 fields)
+
+--------------------------------------------------------------------------------
+FINDINGS
+--------------------------------------------------------------------------------
+1. The loop is clearly cheaper on the input path, by two orders of magnitude.
+   A settled keystroke is 1.29 us vs 557 us (flat 1,000) and 3.23 us vs 533 us
+   (10,000-item array). The win is not the loop's cleverness: it is that today
+   recomposes the whole emitted object on the first read after a write, while
+   the loop copies the previous memo and patches the one key that moved.
+
+2. Its cost is dominated by the emitted-value copy, not by walking or guards.
+   With the dirty-child list the walk visits 2-4 nodes per keystroke and the
+   guards cost 7.7 us per 200 (matching round-1's 7.9 us). Everything else is
+   the object/array copy. Passes matter less than feared: 1 pass when no guard
+   input moves, 2 when it does, 3 for a fragment flip.
+
+3. "Reads never compute" holds -- and it already holds today for SETTLED reads
+   (3.6-9.4 ns). The redesign's gain is not cheaper reads but removing the
+   recompose-on-first-read-after-write, and the staleness. Not a read-speed
+   win; consistency at no read cost.
+
+4. Two implementation choices decide whether the loop wins at all, and the ADR
+   text currently implies the losing one. "recompute memo from active children"
+   read literally is a full rebuild: 134 us vs 1.29 us, 104x. And a dirty FLAG
+   scanned over children is O(tree): 55.5 us vs 3.23 us on a 10,000-item array,
+   17x. The design must say: copy-and-patch the previous memo, and keep a
+   per-node dirty-CHILD list. Neither is implied by the current wording.
+
+5. What makes it lose on 10,000-item arrays: not the array copy (1.4 us for
+   10,000 slots) but per-item work. A bulk root write is 5.72 ms (60,002 nodes
+   touched); construction is 13.15 ms. Both are O(n) by nature -- ADR 0011's
+   lazy node materialisation is the only lever.
+
+6. A hard cliff nobody has costed: V8 cannot keep an object with more than 1,020
+   own properties in fast mode. At 1,020 keys a copy-and-patch is 1.02 us; at
+   1,021 it is 141 us -- 138x, a step, not a slope. S1 at 1,100 fields costs
+   153 us per keystroke. This caps ONE object's key count, not the form's size,
+   and it binds the current implementation too. Nesting stays cheap; a form with
+   >1,020 sibling top-level fields does not. Worth stating as a documented limit.
+
+7. omitEmpty has the same shape of problem. Removing a key from the emitted
+   object forces `delete`, which drops V8 to dictionary mode; restoring fast mode
+   costs a second full copy (~100 us at 800 keys). That is why the S3b flip is
+   106 us while the S3a keystroke is 12 us. Emptying or filling a field is the
+   expensive keystroke; typing inside a non-empty field is the cheap one.
+
+8. The inverted index is the only guard-skipping strategy that works, confirming
+   round-1 §2 exactly: 400 guard calls -> 0, 11.98 us -> 2.42 us. "Skip guards
+   whose host emitted reference did not change" is worthless for root-hosted
+   guards -- every write moves the root reference. Guard COMPILE, not guard
+   calls, is the real cost: 22.4 ms for 200, and lazy compile makes it worse
+   (29.2 ms) because priming evaluates every guard.
+
+9. Where the redesign is clearly MORE expensive today: construction of a
+   conditional form. 23.0 ms (585 us tree + 22.4 ms AJV compile) against 13.4 ms
+   for the current `&`-expression compiler -- 1.7x worse. ADR 0004's choice to
+   delegate guards to the validator is paid here, at form-creation time, on the
+   main thread. This is the one budget the owner should set a number for.
+
+--------------------------------------------------------------------------------
+THREATS TO VALIDITY
+--------------------------------------------------------------------------------
+- The prototype is a LOWER BOUND, not a prediction. It has no validation, no
+  events or subscribers, no React, no null contract, no schema parsing, no
+  normalizedValue/omitTrailing, no array identity, no injectTo/derived, no
+  error routing, no revision ledger. Each of these adds work to the same path.
+- S3 is not apples-to-apples in either direction: the current library cannot
+  express 200 independent root conditionals at all, and the analogue used
+  (computed.active) needs 600 expressions against 200 guards. Read S3 as
+  "different mechanisms, same user-visible feature", not as a speedup factor.
+- Equivalence used: both sides must end with a consistent emitted root. So the
+  current EMIT lane (recompose) is compared against the prototype's flush
+  (commit). The WRITE lane alone (509 ns) is NOT comparable -- after it the tree
+  has no emitted value. S2 uses the drained number because its sync read is
+  stale, and that number includes event-cascade work the prototype never does.
+  S5's unbatched current figure is timer-floor bound, not core cost.
+- Desktop arm64 only. No mobile, no low-end device, no memory measurement, no
+  React render cost. round-1's documented safe thresholds (<50 fields) were set
+  on mobile and nothing here revises them.
+- The V8 cliff and the dictionary-mode effects are V8-specific. JSC and
+  SpiderMonkey have their own thresholds, unmeasured here.
+- Guard compile time varies 70-270 us per guard across sources; 22.4 ms for 200
+  is this machine, this AJV configuration, these trivial const guards.
+
+SCRIPTS (all under this directory)
+  proto/loop.mjs        the work loop (mark/begin/complete/commit, ~470 lines)
+  proto/build.mjs       tree builders + AJV guard factory (eager and lazy)
+  proto/selfcheck.mjs   the correctness gate, run in its own process
+  harness.mjs           calibrated-batch timer, checksum, result rows
+  run-proto.mjs         prototype cases         run-all.sh
+  run-current.ts        current-library cases   run-all-current.sh
+  vite.spike.config.mjs alias config for vite-node
+  results-proto.jsonl / results-current.jsonl   raw rows
