@@ -22,10 +22,11 @@
 3. [`02-target-overview.md`](./02-target-overview.md) — 목표 구조의 전체 그림
 4. [`03-mental-model.md`](./03-mental-model.md) — 결정을 낳는 다섯 원리, 상태·쓰기·계산의 질서, 원리 → 결정 도출표. 소유자와 이해를 맞추는 문서
 5. [`04-inherited-constraints.md`](./04-inherited-constraints.md) — 현재 코드의 트러블슈팅 기록 가운데 새 설계가 지켜야 할 제약 T-1–T-23(캐럿 보존, 리마운트 금지, 가상화 명령, 순환 상한, 두 단계 하네스 …). 4라운드 수용 기준
-6. `adr/` — 결정 하나에 기록 하나
-7. [`open-questions.md`](./open-questions.md) — 아직 정하지 않은 것
-8. `reviews/` — 적대적 검토. [`round-1.md`](./reviews/round-1.md)(측정·판정·기록별 영향), [`round-2.md`](./reviews/round-2.md)(고쳐 쓴 ADR에 대한 재공격, 확인된 결함 S1–S15, 소유자 결정, 작업 루프 프로토타입 측정), [`round-3-spec.md`](./reviews/round-3-spec.md)(3라운드의 공격 대상 — 작업 루프 3차안·판별식 식별·책임 경계), [`round-3.md`](./reviews/round-3.md)(3라운드 판정 T1–T14·B1–B6·C1–C4, 소유자 결정 D-1–D-6, 살아남은 개정 E1–E19), [`round-4-spec.md`](./reviews/round-4-spec.md)(4라운드의 공격 대상 — 작업 루프 3.1판 전체 재서술, 이벤트 시스템 확정판, 계승 제약을 수용 기준으로), [`round-4.md`](./reviews/round-4.md)(4라운드 판정 U1–U19·V1–V12, 캐럿·통지 측정, 소유자 결정 D-7–D-10, 개정 F1–F32), [`round-5-decisions.md`](./reviews/round-5-decisions.md)(5라운드 — 결정 D-1–D-10의 다중 시선 검토: 이해·배경·장단점·제안·반론·결정 간 모순 C-1–C-11. 결정하지 않음), [`round-5-derivations.md`](./reviews/round-5-derivations.md)(후속 — 소유자의 원칙 P1′과 모순 11건의 원리에서의 도출·프로토타입 확인), [`round-6-coherence.md`](./reviews/round-6-coherence.md)(6라운드 — 4차 본문 전체 조망: 리뷰어 다섯·대조 검증 62묶음, 자동 쓰기의 결정성이 핵심 발견, 원리 제안 P6–P9, 소유자 결정 D-11–D-23, 단조 수정 27건). ADR 본문은 4차(2026-09-23)이며 라운드의 결과를 흡수했다. `raw-*.md`는 리뷰어 원문이다
-9. `research/` — 선행 사례 조사
+6. [`05-before-after.md`](./05-before-after.md) — 현재 구현과 새 설계의 대조: 표준 조건부 문법, `&` 문법의 운명, 공개 인터페이스, 기능의 증감, 이주 시 만나는 것, `then`/`else`의 한계
+7. `adr/` — 결정 하나에 기록 하나
+8. [`open-questions.md`](./open-questions.md) — 아직 정하지 않은 것
+9. `reviews/` — 적대적 검토. [`round-1.md`](./reviews/round-1.md)(측정·판정·기록별 영향), [`round-2.md`](./reviews/round-2.md)(고쳐 쓴 ADR에 대한 재공격, 확인된 결함 S1–S15, 소유자 결정, 작업 루프 프로토타입 측정), [`round-3-spec.md`](./reviews/round-3-spec.md)(3라운드의 공격 대상 — 작업 루프 3차안·판별식 식별·책임 경계), [`round-3.md`](./reviews/round-3.md)(3라운드 판정 T1–T14·B1–B6·C1–C4, 소유자 결정 D-1–D-6, 살아남은 개정 E1–E19), [`round-4-spec.md`](./reviews/round-4-spec.md)(4라운드의 공격 대상 — 작업 루프 3.1판 전체 재서술, 이벤트 시스템 확정판, 계승 제약을 수용 기준으로), [`round-4.md`](./reviews/round-4.md)(4라운드 판정 U1–U19·V1–V12, 캐럿·통지 측정, 소유자 결정 D-7–D-10, 개정 F1–F32), [`round-5-decisions.md`](./reviews/round-5-decisions.md)(5라운드 — 결정 D-1–D-10의 다중 시선 검토: 이해·배경·장단점·제안·반론·결정 간 모순 C-1–C-11. 결정하지 않음), [`round-5-derivations.md`](./reviews/round-5-derivations.md)(후속 — 소유자의 원칙 P1′과 모순 11건의 원리에서의 도출·프로토타입 확인), [`round-6-coherence.md`](./reviews/round-6-coherence.md)(6라운드 — 4차 본문 전체 조망: 리뷰어 다섯·대조 검증 62묶음, 자동 쓰기의 결정성이 핵심 발견, 원리 제안 P6–P9, 소유자 결정 D-11–D-23, 단조 수정 27건). ADR 본문은 4차(2026-09-23)이며 라운드의 결과를 흡수했다. `raw-*.md`는 리뷰어 원문이다
+10. `research/` — 선행 사례 조사
 
 ## ADR 목록
 
