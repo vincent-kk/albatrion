@@ -39,13 +39,17 @@
 - object의 자식 전파(`__propagate__`)·`resetToBlank`·계산 속성 처리 루프가 virtual 노드를 건너뛴다(`BranchStrategy.ts:279,353,703`). 값·required·omitEmpty 계산 자체는 아니며, virtual 노드가 값에 관여하지 않는다는 뜻이다. 표현 전용이다.
 - 보존 대상 테스트: `src/__tests__/scenarios/virtual.render.test.tsx`(12)와 `src/core/__tests__/VirtualNode.test.ts`의 refresh 동작 4개. virtual 전용 테스트 전체는 4파일 47개이며(교차검증 claude), `processVirtualSchema.test.ts`의 required 펼치기 11개는 (a)에서 사라진다.
 
+5라운드 후속 도출(`reviews/round-5-derivations.md` §3): 참조 그룹은 값을 소유하지 않으므로 P2–P4 밖이고 표현 계층의 것(P5). `required`를 고쳐 쓰는 전처리는 P1′ 위반이므로 사라진다. (a)와 (b)는 둘 다 P5와 양립하며 차이는 다른 렌더러 이식 시 바인딩의 두께뿐 — 비용 비교가 남는다. ADR 0011 4차 본문이 (a)를 전제로 쓰였다.
+
 선택지(`reviews/round-3.md` §5): (a) `&` 계열로 옮기고 core에 "참조 그룹" 노드 종류를 둔다 — 자식의 출처는 형제 참조, raw·local·emit 없음, 방출·가드·검증에 나타나지 않으며 쓰기 부채질과 `RequestRefresh`는 유지. 표준 `required`는 실제 필드만 적는다. (b) 렌더 계층으로 완전히 이동. (c) 현행 유지. **권고는 (a).** 소유자 결정 D-6.
 
-## Q6. `SetValueOption`
+## Q6. `SetValueOption` (닫힘 — ADR 0013 4차 본문, 2026-09-23)
 
 10비트 플래그 워드(`core/types/value.ts:26-47`, `None`은 0)의 대부분은 현재 라이프사이클의 사정을 실어 나른다: `EmitChange`, `Propagate`, `Batch`, `Isolate`, `PublishUpdateEvent`. 작업 루프에서 무엇이 남는가. 후보: 병합 대 치환(`Merge`/`Overwrite`), 비제어 입력의 재읽기(`Refresh`), 스키마 미선언 키의 제거(`Normalize`), 주입 방지(`PreventInjection`).
 
-3라운드(`reviews/round-3.md` D-4, E15): 쓰기의 종류는 호출자가 선언한다 — `Overwrite` = 전체 교체, `Merge` = 부분 쓰기, `Refresh` = 비제어 입력의 재읽기. 이 셋이 생존자 후보이고 `Normalize`·`PreventInjection`은 검토가 필요하다.
+3라운드(`reviews/round-3.md` D-4, E15): 쓰기의 종류는 호출자가 선언한다 — `Overwrite` = 전체 교체, `Merge` = 부분 쓰기, `Refresh` = 비제어 입력의 재읽기.
+
+결론(5라운드 후속 C-5·C-6): 비트 워드가 아니라 옵션 객체 `{ mode?: 'Overwrite' | 'Merge'; disableDefaultInjection?: boolean }`. `Refresh`는 옵션이 아니라 core가 출처로 판단한다(F7). `Normalize`는 P1′에 따라 사라진다(폼은 값을 지우지 않는다). `PreventInjection`은 `disableDefaultInjection`(이름 후보)이 됐고 `reset(options)`·마운트에도 있다. 남은 세부는 ADR 0013 미결.
 
 ## Q7. `dependentSchemas` / `dependentRequired` / `dependencies`
 
@@ -65,9 +69,11 @@ core는 React를 모른다(런타임도 타입도). 인라인 `FormTypeInput`이
 
 `if: { properties: { kind: { const: 'a' } } }`는 `kind`가 없을 때 참이다. 폼은 서버와 똑같이 동작한다(ADR 0001). 개발 모드 경고를 낼 것인가, 낸다면 어떤 형태의 `if`에 대해서인가. 경고를 내려면 `if`의 내부를 읽어야 하므로 G3와 닿는다.
 
-## Q11. 금지 조각의 의미 (3라운드 D-3)
+## Q11. 금지 조각의 의미 (3라운드 D-3 — 원리에서 도출됨, 소유자 확정 대기)
 
 `properties: {x: false}`와 단일 이름 `not: {required: ['x']}`를 (i) 비활성화와 같은 연산으로 볼 것인가(값은 방출에서 빠지고 판정은 유효해진다 — BE가 거부하려던 값을 폼이 조용히 지운다), (ii) 필드를 보이고 검증기의 에러를 붙일 것인가(방출은 그대로 — 사용자가 고칠 수 없는 필드에 에러가 뜬다). `reviews/round-3.md` §3.1 T6, §4 D-3.
+
+도출(2026-09-23, `reviews/round-5-derivations.md` §2): 소유자의 원칙 P1′(폼은 노드의 모양을 정하는 문법만 읽는다)에서 (iii) **읽지 않는다**가 나온다. 본체에 선언된 자식은 보통 필드로 보이고 검증기 에러가 붙으며, 본체에 없으면 잔여 키다(플러그인 계약 `rejectedKey`). 숨기려면 `&active`. 남는 것은 렌더 계층의 표시 규칙·문구뿐이다. ADR 0002 4차 본문에 반영.
 
 ## Q12. 검증 에러의 라우팅
 
@@ -89,4 +95,4 @@ union의 판별 값이 어느 분기와도 맞지 않으면 검증기는 `enum`�
 
 D-7 (a) + `setValue` 호출 단위의 default 억제 옵션. D-8 전제 철회 — 판별 프로퍼티에 암묵 default 없음, 빈 값은 분기 없음(현재와 같다). D-9 `RequestRemount` 유지(사용자 도구). D-10 루트 `onChange`는 최외곽 동기 진입당 1회.
 
-남은 세부: D-7의 옵션 이름과 `Overwrite`/`Merge`와의 조합 표기(Q6과 함께).
+남은 세부: D-7의 옵션 이름(후보 `disableDefaultInjection`). 조합 표기는 Q6의 옵션 객체로 답했다.
