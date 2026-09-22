@@ -1,0 +1,29 @@
+## B3-1 order sanity: write leaf f2 → delivery order
+{"preorder":["","/f0","/f1","/f2"],"delivered":["/#w1","/f2#w1"]}
+
+## 2. B3-4 ping-pong: A-listener writes B, B-listener writes A, every wave
+{"capPolicy":"deliver-last","waves":26,"listenerCalls":52,"A":27,"B":27,"C":"written-only-in-last-wave","revA":26,"revB":26,"revC":0,"settle":"wave-cap","capped":{"dropped":["","/f0","/f2","/f1"]},"thrown":null}
+{"capPolicy":"drop","waves":26,"listenerCalls":50,"A":26,"B":26,"revA":25,"revB":25,"revC":0,"settle":"ok","capped":{"dropped":["","/f1","/f0"]},"thrown":null}
+
+## 4. B3-5 detach during wave + unsubscribe during wave
+{"seen":["arr#w1","i0","arr#w2"],"trace":[["skip-detached","/arr/1"]],"i1Detached":true,"i1Rev":0,"i1Value":"b","arrValue":{"0":"a"},"waves":2}
+{"unsubscribeDuringWave":["L1"],"note":"Set iteration: L2 skipped when deleted before visit"}
+{"subscribeDuringWave":["L1","L-late"],"note":"Set iteration visits a listener added during iteration"}
+
+## 5. B4 payload chain across waves
+{"payloadMerge":"last","chain":[[null,1],[10,11]],"validChain":false,"commits":4,"waves":2}
+{"payloadMerge":"span","chain":[[null,1],[1,11]],"validChain":true,"commits":4,"waves":2}
+{"batchPayload":[[null,3]],"note":"previous = commit before the batch; intermediates 1,2 never notified"}
+
+## 6. batch() throwing midway; nested batch in listener; batch depth vs flush
+{"batchThrow":"settle","thrown":"midway","A":"a","B":"b","delivered":[["f0","a"],["f1","b"]]}
+{"batchThrow":"discard","thrown":"midway","delivered":[]}
+{"batchDepthBeforeFlush":true,"delivered":["f0=a#w1","f1=fromListener#w2","f2=fromListener#w2"],"B":"fromListener","C":"fromListener","lostMarks":0,"waves":2}
+{"batchDepthBeforeFlush":false,"delivered":["f0=a#w1"],"lostMarks":2,"waves":1}
+{"nested":["A=inner#w1","B=outer#w1","B=byListener#w2"],"commits":3}
+
+## B3-6 isolation: a throwing listener; later nodes still notified, ledger up
+{"seen":["A2","B","C"],"errors":["/f0:boom"],"revA":1}
+
+## B3-2/B5 signal-only node after value nodes; signal from inside a wave
+{"seen":["f2:4#w1","f0:1#w1","f2:1#w1","f1:12#w1"]}

@@ -233,3 +233,28 @@ SCRIPTS (all under this directory)
   run-current.ts        current-library cases   run-all-current.sh
   vite.spike.config.mjs alias config for vite-node
   results-proto.jsonl / results-current.jsonl   raw rows
+
+================================================================================
+RE-RUN 2026-09-22 (afternoon) -- same machine, Node v24.20.0, per-process
+================================================================================
+Both drivers re-run unchanged (run-all.sh, run-all-current.sh); rows are in
+results-proto.jsonl / results-current.jsonl. Medians vs the figures above:
+
+  case                     proto (v2)        current                 vs above
+  S1 keystroke flat 1000   1.45 us           EMIT 555.7 us           proto +12%, current -0.2%
+  S2 keystroke 10k array   3.16 us           DRAIN 55.9 ms/100 = 559 us/write   within 5%
+  S3a small (600+200)      11.81 us / idx 2.43 us   EMIT 592 us     within 6%
+  S3b small flip           113 us            EMIT 556 us             within 7%
+  S4 root write 10k x 5    5.72 ms           215.7 ms                within 1%
+  S5 batch 1000            368 us            1.71 ms                 within 5%
+  S5 unbatched             1.75 ms           1,352 ms                current +21% (macrotask-floor bound, timer noise)
+  S6 cond tree / lazy      616 us / 28.0 ms  13.77 ms                within 5%
+  S7 settled read          5-11 ns           4-9 ns                  same
+  cliff 1000/1020/1021/1200  1.09 us / 994 ns / 140 us / 171 us      same shape
+
+No deviation beyond 15% except S5 unbatched (timer-bound). The figures in the
+body of this report and in reviews/round-2.md §2 stand. The three post-hoc
+corrections noted after the first run remain: the current implementation's
+lazy composition returns the old value only ONE level up (not two or more);
+the batching gain is the current implementation's macrotask floor, not a
+redesign merit; Node 24 vs 26 agreed within 3%.

@@ -15,30 +15,35 @@
 
 ## 읽는 순서
 
+이어받는 세션은 [`HANDOFF.md`](./HANDOFF.md)부터 읽는다 — 현재 상태, 소유자 결정 대기 목록, 다음 라운드의 의제.
+
 1. [`00-goals.md`](./00-goals.md) — 목표 G1–G8, 채택 여부를 정해야 할 목표 후보 C1–C8, 비목표
 2. [`01-current-structure.md`](./01-current-structure.md) — 지금 구조와 그 구조가 #342를 낳은 경로 (관찰)
 3. [`02-target-overview.md`](./02-target-overview.md) — 목표 구조의 전체 그림
-4. `adr/` — 결정 하나에 기록 하나
-5. [`open-questions.md`](./open-questions.md) — 아직 정하지 않은 것
-6. [`reviews/round-1.md`](./reviews/round-1.md) — 적대적 검토 1라운드: 측정, 판정, 기록별 영향. ADR 0001·0003·0004·0006·0007·0008은 이 검토와 그 뒤의 소유자 결정을 반영해 고쳐 썼다. ADR 0002·0005·0009도 이어서 고쳐 썼다. **ADR 0011(R13·R14·R16)은 `open-questions.md` Q5가 정해진 뒤에 고쳐 쓴다.** 읽을 때 이 문서의 §8·§9를 함께 본다
-7. `research/` — 선행 사례 조사
+4. [`03-mental-model.md`](./03-mental-model.md) — 결정을 낳는 다섯 원리, 상태·쓰기·계산의 질서, 원리 → 결정 도출표. 소유자와 이해를 맞추는 문서
+5. [`04-inherited-constraints.md`](./04-inherited-constraints.md) — 현재 코드의 트러블슈팅 기록 가운데 새 설계가 지켜야 할 제약 T-1–T-9(캐럿 보존, 리마운트 금지, 가상화 명령, 순환 상한, 두 단계 하네스 …). 4라운드 수용 기준
+6. `adr/` — 결정 하나에 기록 하나
+7. [`open-questions.md`](./open-questions.md) — 아직 정하지 않은 것
+8. `reviews/` — 적대적 검토. [`round-1.md`](./reviews/round-1.md)(측정·판정·기록별 영향), [`round-2.md`](./reviews/round-2.md)(고쳐 쓴 ADR에 대한 재공격, 확인된 결함 S1–S15, 소유자 결정, 작업 루프 프로토타입 측정), [`round-3-spec.md`](./reviews/round-3-spec.md)(3라운드의 공격 대상 — 작업 루프 3차안·판별식 식별·책임 경계), [`round-3.md`](./reviews/round-3.md)(3라운드 판정 T1–T14·B1–B6·C1–C4, 소유자 결정 D-1–D-6, 살아남은 개정 E1–E19), [`round-4-spec.md`](./reviews/round-4-spec.md)(4라운드의 공격 대상 — 작업 루프 3.1판 전체 재서술, 이벤트 시스템 확정판, 계승 제약을 수용 기준으로), [`round-4.md`](./reviews/round-4.md)(4라운드 판정 U1–U19·V1–V12, 캐럿·통지 측정, 소유자 결정 D-7–D-10, 개정 F1–F32), [`round-5-decisions.md`](./reviews/round-5-decisions.md)(5라운드 — 결정 D-1–D-10의 다중 시선 검토: 이해·배경·장단점·제안·반론·결정 간 모순 C-1–C-11. 결정하지 않음), [`round-5-derivations.md`](./reviews/round-5-derivations.md)(후속 — 소유자의 원칙 P1′과 모순 11건의 원리에서의 도출·프로토타입 확인). 각 ADR 끝의 "확인된 결함" 절이 아직 본문에 반영되지 않은 지적이다. `raw-*.md`는 리뷰어 원문이다
+9. `research/` — 선행 사례 조사
 
 ## ADR 목록
 
 | 번호 | 결정 | 상태 |
 | ---- | ---- | ---- |
 | [0001](./adr/0001-validator-input-invariant.md) | 검증기 입력 불변 — 폼 판정 = `validator(작성된 스키마, 방출 값)`, 같은 설정의 검증기에 대하여 | 제안 (방향은 소유자 발의, 검증기 설정 부분은 수락). 1라운드 반영 |
-| [0002](./adr/0002-guard-fragment-model.md) | 조건부 장치를 "가드 → 조각" 단일 모델로 통합. 합성 문맥을 보존한다 | 제안. 1라운드 반영 — 개정분은 소유자 확인 대기 |
-| [0003](./adr/0003-ampersand-namespace.md) | FE 전용 키워드를 `&` 네임스페이스로 통일. 기본은 제거하지 않는다 | 제안 (방향은 소유자 발의). 1라운드 반영 |
+| [0002](./adr/0002-guard-fragment-model.md) | 조건부 장치를 "가드 → 조각" 단일 모델로 통합. 합성 문맥을 보존한다 | 제안. 1·2라운드 반영 — S2·S4·S5·S8·S14는 "확인된 결함"으로 미반영 |
+| [0003](./adr/0003-ampersand-namespace.md) | FE 전용 키워드를 `&` 네임스페이스로 통일. FE 키는 키워드 위치에서만 제거한다(컴파일 보호) | 제안 (방향은 소유자 발의). 1라운드 반영 |
 | [0004](./adr/0004-validator-plugin-compile-guard.md) | 검증기는 플러그인 유지, 동기 `compileGuard` 추가. 설정은 소비자의 책임 | 수락. 1라운드 반영 |
-| [0005](./adr/0005-blueprint-analysis-and-node-sharing.md) | 스키마 → 청사진 순수 분석 단계, 같은 이름 필드의 노드 공유 규칙, 판별식 식별 | 일부 수락. 1라운드 반영 — 개정분(정적 throw 폐지, 판별식 식별)은 **소유자 확인 대기** |
-| [0006](./adr/0006-single-value-ownership.md) | 값의 소유 — 노드 트리가 곧 상태다 (Fiber 방식) | 수락 (2차안) |
-| [0007](./adr/0007-settle-cycle.md) | 작업 루프: 표시 → 계산 → 커밋, 그 뒤에 통지와 검증 | 일부 수락 (가드가 보는 값, 순환의 처리) |
-| [0008](./adr/0008-event-system.md) | 이벤트 시스템 개편 — 통지 전용 척추, 루트 단일 디스패처 | 제안 (루트 디스패처는 소유자 발의, 검토에서 조건부 통과) |
+| [0005](./adr/0005-blueprint-analysis-and-node-sharing.md) | 스키마 → 청사진 순수 분석 단계, 같은 이름 필드의 노드 공유 규칙, 판별식 식별 | 일부 수락. 정적 throw 폐지·판별식 식별은 소유자 확인 대기 — S4·S13 미반영 |
+| [0006](./adr/0006-single-value-ownership.md) | 값의 소유 — 노드 트리가 곧 상태다 (Fiber 방식) | 수락 (2차안). S7(null 계약)·S9(로컬 메모) 미반영 — S7은 소유자 결정 필요 |
+| [0007](./adr/0007-settle-cycle.md) | 작업 루프: 표시 → 계산 → 커밋, 그 뒤에 통지와 검증 | 일부 수락. 상한·Refresh 규칙 반영 — 패스 구조(S3)는 3차안(`reviews/round-3-spec.md` A) 검토 중 |
+| [0008](./adr/0008-event-system.md) | 이벤트 시스템 개편 — 통지 전용 척추, 루트 단일 디스패처 | 제안. 루트 디스패처 6항 명세 반영 — S10 미반영 |
 | [0009](./adr/0009-performance-budget-and-benchmarks.md) | 성능 예산과 벤치마크 계획 | 제안 (수치 예산은 미결) |
 | 0010 | `oneOf`/`anyOf`의 폼 UX | 작성 대기 (외부 사례 조사 후) |
-| [0011](./adr/0011-branch-node-composition.md) | branch 노드(object·array)의 구성 전략 | 제안 초안 — 논의의 출발점 |
+| [0011](./adr/0011-branch-node-composition.md) | branch 노드(object·array)의 구성 전략 | 제안 초안 — S11 미반영. Q5(`virtual`) 뒤에 다시 쓴다 |
 | [0012](./adr/0012-fe-overlay.md) | FE 오버레이를 위한 별도의 입구를 두지 않는다 — Form은 단일 스키마를 받는다 | 수락 (`overlay` prop 제안은 철회) |
+| [0013](./adr/0013-core-does-not-rewrite-values.md) | core는 값을 고치지 않는다 — 비활성화·전체 교체·부분 쓰기의 구분 | 제안 (원칙은 소유자 발의). codex 교차검증 반영, 규칙화는 `reviews/round-3-spec.md` C |
 
 ## 기록을 고칠 때
 

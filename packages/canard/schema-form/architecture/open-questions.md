@@ -30,11 +30,22 @@
 
 ## Q5. `virtual`
 
-가상 이름이 표준 `required`에 오르고 전처리가 이를 구성 필드 이름으로 펼치는 현재 방식은 ADR 0001과 충돌한다. `virtual`을 `&` 계열로 옮기고 필수성은 구성 필드의 표준 `required`로만 표현할 것인가. `VirtualNode`의 참조 노드가 같은 부모의 실제 자식이기도 한 이중 소유(`getChildren.ts:56-75`)는 새 구조에서 어떻게 되는가.
+사실(3라운드 scout, 현재 코드):
+
+- 문법: object 스키마의 `properties` 옆 `virtual: { period: { fields: ['startDate','endDate'], FormTypeInput } }`. 다른 위치는 없다.
+- 전처리가 `required`·`then.required`·`else.required`의 가상 이름을 구성 필드로 펼친다(`processVirtualSchema.ts:13-29`, `transformCondition.ts:31-49`). ADR 0001과의 충돌은 이 한 곳이다.
+- `VirtualNode`는 값을 소유하지 않는다 — 참조 노드의 값을 튜플로 비추고(`VirtualNode.ts:112-139`) 쓰기는 참조 노드로 부채질한다(`:39-96`).
+- 이중 소유는 사실이다(`getChildren.ts:56-75`). 렌더는 구성 필드에 `virtual` 플래그를 달아 중복을 없앤다(`getChildNodeMap.ts:63-64`, `useChildNodeComponents.tsx:61`).
+- object의 자식 전파(`__propagate__`)·`resetToBlank`·계산 속성 처리 루프가 virtual 노드를 건너뛴다(`BranchStrategy.ts:279,353,703`). 값·required·omitEmpty 계산 자체는 아니며, virtual 노드가 값에 관여하지 않는다는 뜻이다. 표현 전용이다.
+- 보존 대상 테스트: `src/__tests__/scenarios/virtual.render.test.tsx`(12)와 `src/core/__tests__/VirtualNode.test.ts`의 refresh 동작 4개. virtual 전용 테스트 전체는 4파일 47개이며(교차검증 claude), `processVirtualSchema.test.ts`의 required 펼치기 11개는 (a)에서 사라진다.
+
+선택지(`reviews/round-3.md` §5): (a) `&` 계열로 옮기고 core에 "참조 그룹" 노드 종류를 둔다 — 자식의 출처는 형제 참조, raw·local·emit 없음, 방출·가드·검증에 나타나지 않으며 쓰기 부채질과 `RequestRefresh`는 유지. 표준 `required`는 실제 필드만 적는다. (b) 렌더 계층으로 완전히 이동. (c) 현행 유지. **권고는 (a).** 소유자 결정 D-6.
 
 ## Q6. `SetValueOption`
 
-11비트 플래그 워드(`core/types/value.ts:26-66`)의 대부분은 현재 라이프사이클의 사정을 실어 나른다: `EmitChange`, `Propagate`, `Batch`, `Isolate`, `PublishUpdateEvent`. 작업 루프에서 무엇이 남는가. 후보: 병합 대 치환(`Merge`/`Overwrite`), 비제어 입력의 재읽기(`Refresh`), 스키마 미선언 키의 제거(`Normalize`), 주입 방지(`PreventInjection`).
+10비트 플래그 워드(`core/types/value.ts:26-47`, `None`은 0)의 대부분은 현재 라이프사이클의 사정을 실어 나른다: `EmitChange`, `Propagate`, `Batch`, `Isolate`, `PublishUpdateEvent`. 작업 루프에서 무엇이 남는가. 후보: 병합 대 치환(`Merge`/`Overwrite`), 비제어 입력의 재읽기(`Refresh`), 스키마 미선언 키의 제거(`Normalize`), 주입 방지(`PreventInjection`).
+
+3라운드(`reviews/round-3.md` D-4, E15): 쓰기의 종류는 호출자가 선언한다 — `Overwrite` = 전체 교체, `Merge` = 부분 쓰기, `Refresh` = 비제어 입력의 재읽기. 이 셋이 생존자 후보이고 `Normalize`·`PreventInjection`은 검토가 필요하다.
 
 ## Q7. `dependentSchemas` / `dependentRequired` / `dependencies`
 
@@ -53,3 +64,29 @@ core는 React를 모른다(런타임도 타입도). 인라인 `FormTypeInput`이
 ## Q10. `if`의 공허한 참
 
 `if: { properties: { kind: { const: 'a' } } }`는 `kind`가 없을 때 참이다. 폼은 서버와 똑같이 동작한다(ADR 0001). 개발 모드 경고를 낼 것인가, 낸다면 어떤 형태의 `if`에 대해서인가. 경고를 내려면 `if`의 내부를 읽어야 하므로 G3와 닿는다.
+
+## Q11. 금지 조각의 의미 (3라운드 D-3)
+
+`properties: {x: false}`와 단일 이름 `not: {required: ['x']}`를 (i) 비활성화와 같은 연산으로 볼 것인가(값은 방출에서 빠지고 판정은 유효해진다 — BE가 거부하려던 값을 폼이 조용히 지운다), (ii) 필드를 보이고 검증기의 에러를 붙일 것인가(방출은 그대로 — 사용자가 고칠 수 없는 필드에 에러가 뜬다). `reviews/round-3.md` §3.1 T6, §4 D-3.
+
+## Q12. 검증 에러의 라우팅
+
+union의 판별 값이 어느 분기와도 맞지 않으면 검증기는 `enum`이 아니라 분기별 `const` × N + `oneOf` 에러를 낸다(`reviews/raw-redteam3-contract.md` 8). 어느 노드가 이 에러를 받는가. 제안(E17): union 호스트의 판별 노드로 모은다. 규칙은 ADR 0004에 적는다.
+
+## Q13. `contains` / `prefixItems`
+
+3차안 A3은 object 호스트에 대해 쓰였다. 배열 아이템 호스트는 dirty 목록으로 비례한다고 확인됐으나(`reviews/round-3.md` T13) `contains`와 튜플은 미정의다.
+
+## Q14. emit의 키 순서
+
+값의 동치는 이력과 무관하지만 직렬화는 첫 삽입 순서를 따른다(`reviews/round-3.md` T1-d). 스키마 선언 순서로 낼 것인가(E10), 비용은 얼마인가.
+
+## Q15. 직전 커밋의 활성 집합을 출발 가설로 쓰는 최적화
+
+출발점 고정(A4-1)은 켜진 조각 N개인 호스트에 무관한 키 입력이 와도 N개를 다시 켜며 리빌드한다(`reviews/round-4.md` U19, F13). 직전 커밋의 `active`에서 출발해 안정될 때까지 돌리면 대부분 1바퀴에 끝나지만, 가드 의존 관계에 부정을 포함한 순환이 있으면 다른 고정점에 닿을 수 있다 — 그 부류는 지원 범위 밖이므로(F3) 결과가 같다고 볼 수도 있다. 측정과 함께 정한다.
+
+## D-7 ~ D-10 (닫힘 — 2026-09-22, `reviews/round-4.md` §4)
+
+D-7 (a) + `setValue` 호출 단위의 default 억제 옵션. D-8 전제 철회 — 판별 프로퍼티에 암묵 default 없음, 빈 값은 분기 없음(현재와 같다). D-9 `RequestRemount` 유지(사용자 도구). D-10 루트 `onChange`는 최외곽 동기 진입당 1회.
+
+남은 세부: D-7의 옵션 이름과 `Overwrite`/`Merge`와의 조합 표기(Q6과 함께).

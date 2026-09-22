@@ -28,7 +28,7 @@
 | D3 | 2단계 생명주기. 생성은 아래에서 위로, 초기화는 위에서 아래로. 자식의 자기 `__initialize__()`는 의도된 no-op이다 | `core/nodes/AbstractNode/AbstractNode.ts:1041-1049` |
 | D4 | 값은 자식이 소유하고 모든 레벨이 사본을 든다. `root.value.items !== arrayNode.value` (실측). branch 노드는 `__value__`/`__draft__`/`__composed__`에 배열 슬롯의 `data`/`output`까지 최대 4벌 | `ObjectNode/.../BranchStrategy.ts:220-237, 304-317`, `ArrayNode/.../BranchStrategy.ts:76-80` |
 | D5 | 값 전파와 알림 전파가 서로 다른 두 그래프다. 상향은 클로저 콜백(동기), 이벤트는 하향·UI 알림 전용 | `ObjectNode/.../BranchStrategy.ts:805-838`, `ArrayNode/.../BranchStrategy.ts:211-235` |
-| D6 | 쓰기 의미가 11비트 플래그 워드다. `SetValueOption`을 다섯 곳에서 각자 해석한다. `Propagate`는 ObjectNode만 읽고 ArrayNode는 항상 전량 재구축한다 | `core/types/value.ts:26-66` |
+| D6 | 쓰기 의미가 10비트 플래그 워드다(`BIT_FLAG_00`–`09`, `None`은 0). `SetValueOption`을 다섯 곳에서 각자 해석한다. `Propagate`는 ObjectNode만 읽고 ArrayNode는 항상 전량 재구축한다 | `core/types/value.ts:26-66` |
 | D7 | 검증은 루트 단독이다. `normalizedValue`에 enhancer를 덮은 값 한 벌을 검증하고 `dataPath`로 오류를 역분배한다 | `AbstractNode.ts:716-741`, `.../ValidationManager/ValidationManager.ts:121-161` |
 | D8 | composition은 "값 필터 + 숨은 마커"로 구현된다. 활성 분기의 키만 통과시키고 검증 값에 활성 인덱스를 쓴다 | `ObjectNode/.../BranchStrategy.ts:623-674` |
 | D9 | "필드냐 판별식이냐"의 유일한 구분이 `type`/`$ref`의 유무다. 두 파일이 서로를 언급하지 않은 채 같은 암묵 규칙에 기댄다 | `.../getCompositionKeyInfo.ts:33`, `.../getExpressionFromSchema.ts:43` |
