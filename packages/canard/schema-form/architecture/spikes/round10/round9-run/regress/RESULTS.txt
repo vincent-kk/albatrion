@@ -1,0 +1,42 @@
+{
+  "modelRegeneration": "byte-identical",
+  "precheck": "expected failure",
+  "selfcheck": {
+    "new": {
+      "baselineFailures": 3,
+      "passed": 63,
+      "failures": 0
+    },
+    "old": {
+      "baselineFailures": 0,
+      "passed": 63,
+      "failures": 0
+    }
+  },
+  "r7": {
+    "new": {
+      "changedRows": 12
+    },
+    "old": {
+      "changedRows": 2
+    }
+  },
+  "r8": {
+    "configurations": 31,
+    "rows": 181,
+    "summaries": 41,
+    "changedSummaries": 17
+  },
+  "q8": {
+    "checks": 108,
+    "rows": 21,
+    "passed": true
+  },
+  "corrections": {
+    "checks": 52,
+    "probes": 13,
+    "failures": 0,
+    "passed": true
+  },
+  "edgeCases": 26
+}
