@@ -1,5 +1,7 @@
 # 현재 구현과 새 설계의 대조 — 문법·인터페이스·기능
 
+> 표기 주의(15라운드). 이 문서의 `&키`·`control` 표기는 `controls.키` 그룹 표기로 바뀌었고, 조각 식의 기준점은 호스트(`./x`)가 되었으며, 맨 폼 전용 키는 `options`·`presentation` 그룹으로 옮겨졌다. 이 문서는 그때의 기록이라 고치지 않는다. 살아 있는 규칙은 `03-mental-model.md`와 `08-design-a-to-z.md`, 결정은 `reviews/round-15-decisions.md`에 있다.
+
 날짜: 2026-09-23. 기준은 둘이다 — **현재**는 커밋 `01e52d0bd`의 `../src/`, **설계**는 `architecture/` 4차 본문과 6라운드(`reviews/round-6-coherence.md`)다.
 
 읽는 법. 열은 넷이다. **현재**는 오늘 코드가 하는 일, **새 설계**는 4차 본문이 적은 것, **변화**는 유지·확대·축소·이름 변경·제거·신규·미결 가운데 하나, **근거**는 `파일:줄` 또는 재료 문서의 절이다. 현재 열의 출처는 `reviews/raw-round6-current-syntax.md`, 설계 열의 주 출처는 `reviews/raw-round6-design-syntax.md`이며 보충은 본문 ADR이다.

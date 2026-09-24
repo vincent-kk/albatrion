@@ -2,9 +2,13 @@
 
 상태: 제안 3판(2026-09-24, 14라운드. 1판을 verifier가 실패로 판정해 열넷을 고쳤고(`reviews/raw-round14-error-policy-check.md`), 2판의 조건부 통과에서 새 모순 일곱을 고쳤다(`reviews/raw-round14-error-policy-check-2.md`)). 소유자의 지시("이 error 처리 기법에 대해서 확장 조사를 한번 해보세요. 질문 대부분이, 오류가 나도 form은 동작시키고 console을 낼까요, 아니면 그냥 터트릴까요로 귀결되네요. 베스트케이스와 논리적 완결성을 지닌 방법을 찾으세요", `reviews/round-14-owner-answers.md` O-5)에 답한다. 외부 조사 원문은 `reviews/raw-round14-error-policy-antigravity.md`, 오늘 코드의 사실은 `reviews/raw-round14-error-facts.md`다. 이 ADR이 확정되면 원장 §5의 분류표를 §7의 표로 바꾸고, 12라운드 답 1("프로덕션은 신호만")·10라운드 답 B-1("권고를 따릅니다": 제출 비차단)·14라운드 답 O-4("가")와 Form 속성 `throwOnBudgetExceeded`·`onListenerError`(가칭 둘)는 이 ADR로 대체된다. **소유자 확인 대기.**
 
+## 변경 이력
+
+- 2026-09-24 — 15라운드(`reviews/round-15-decisions.md`): `&` 축약을 `controls` 그룹 표기로, 조각 식의 기준점을 호스트로, 맨 폼 전용 키를 `options`·`presentation` 그룹으로 바꿨다.
+
 ## 맥락
 
-14라운드 검증에서 소유자의 판단이 필요한 열하나 가운데 넷(O-2 예산 초과 신호의 지속, O-4 `&` 식의 런타임 오류와 풀리지 않는 `&injectTo` 대상, O-5 리스너 예외의 프로덕션 출력, O-10 노드 공유 충돌)이 모두 "오류가 나도 폼을 동작시키고 로그를 낼 것인가, 터뜨릴 것인가"로 귀결되었다. 소유자의 방향은 "전반적으로 오류가 나도 동작하는 형태보다는 안 되면 오류를 터뜨려서 인지시키는 방향"(O-4), "경고만 일어나고 동작하는 것처럼 보이는 게 더 위험하다"(O-10), "예산 초과된 상태로 동작하는 건 되도록 막는 방향"(O-2)이다.
+14라운드 검증에서 소유자의 판단이 필요한 열하나 가운데 넷(O-2 예산 초과 신호의 지속, O-4 `controls`의 식의 런타임 오류와 풀리지 않는 `controls.injectTo` 대상, O-5 리스너 예외의 프로덕션 출력, O-10 노드 공유 충돌)이 모두 "오류가 나도 폼을 동작시키고 로그를 낼 것인가, 터뜨릴 것인가"로 귀결되었다. 소유자의 방향은 "전반적으로 오류가 나도 동작하는 형태보다는 안 되면 오류를 터뜨려서 인지시키는 방향"(O-4), "경고만 일어나고 동작하는 것처럼 보이는 게 더 위험하다"(O-10), "예산 초과된 상태로 동작하는 건 되도록 막는 방향"(O-2)이다.
 
 오늘 코드의 사실이 이 방향을 뒷받침한다. 오늘도 `INJECT_TO`와 `INFINITE_LOOP_DETECTED`는 프로덕션에서 React 이벤트 핸들러를 뚫고 나가는 throw이고(`AbstractNode.ts:1012`, `EventCascadeManager.ts:97`, 잡는 곳 없음), 리스너 예외도 잡지 않으며(`EventCascadeManager.ts:212`), `onError` 속성은 없다. 5차 설계의 "프로덕션은 신호만"은 오늘보다 후퇴였다. 반대로 오늘 `Form`은 자기 자신을 에러 바운더리로 감싸(`Form.tsx:311-312`) 마운트 오류를 `console.error`로만 남기고 호스트에 닿지 않게 한다 — 이것은 삼키는 것이다. 선행 사례도 같은 쪽이다. React는 훅 규칙 위반과 최대 갱신 깊이 초과를 환경 불문 throw하고, Ajv strict 모드는 알 수 없는 키워드에 기본 throw하며, Node.js는 처리되지 않은 프로미스 거부를 프로세스 종료로 다룬다. 폼 라이브러리 가운데 소비자 콜백의 예외를 삼키는 것은 없다(조사 원문 1-나, 출처 미확인 행 있음).
 
@@ -44,22 +48,22 @@
 
 Form 속성 `onError(error: unknown)`는 **관찰자**다. 사슬의 throw 직전과 `validate()`의 거부 직전에 불리고, 같은 오류 객체는 한 번만 가며, 반환값은 무시되고, 오류를 막지 못한다. 관찰자가 던지면 원래 오류와 함께 `AggregateError`로 던진다. 관찰자 안의 쓰기는 호출자 오류로 즉시 거부한다. 청사진·마운트 오류는 관찰자에게 가지 않고 throw로만 드러난다(그때 폼은 아직 없다). 외부 조사의 안 B("`onError` 하나로 보내고 없으면 throw")는 소비자가 오류를 삼킬 수 있어 완결성이 깨지므로 택하지 않는다. `throwOnBudgetExceeded`는 throw가 기본이므로 필요 없고, `onListenerError`는 `onError`에 흡수된다.
 
-### 4. `&` 식이 던질 때 — 정착은 끝까지 돈다
+### 4. `controls`의 식이 던질 때 — 정착은 끝까지 돈다
 
 식은 네 자리에서 평가된다. 던지면 그 자리마다 정의된 값으로 정착을 마치고, 사슬의 끝에서 throw한다.
 
 | 자리 | 던지면 |
 | --- | --- |
-| 게이트(`if` 게이트 함수, `&active`) | 그 게이트는 거짓이다 |
-| 상태 키(`&visible`·`&readOnly`·`&disabled`, 조각·`&children`의 `control`) | 그 선언은 없는 것이다 |
-| 파생 규칙(`&derived`·`&injectTo`·`&unsetValue`), 동적으로만 아는 `&injectTo` 대상이 없음 | 그 규칙을 그 라운드의 후보에서 빼고 에지를 소비한다 |
-| `&resetInteraction` | 그 판정은 거짓이다 |
+| 게이트(`if` 게이트 함수, `controls.active`) | 그 게이트는 거짓이다 |
+| 상태 키(`controls.visible`·`controls.readOnly`·`controls.disabled`, 조각과 `controls.children`의 `controls`) | 그 선언은 없는 것이다 |
+| 파생 규칙(`controls.derived`·`controls.injectTo`·`controls.unsetValue`), 동적으로만 아는 `controls.injectTo` 대상이 없음 | 그 규칙을 그 라운드의 후보에서 빼고 에지를 소비한다 |
+| `controls.resetInteraction` | 그 판정은 거짓이다 |
 
-정적으로 아는 `&injectTo` 대상 경로(식이 아닌 경로 문자열)가 청사진에 없거나 터미널 아래면 청사진 오류다. 형상에 없는(비활성) 노드를 가리키는 것은 오류가 아니다 — 형상에 없는 노드의 규칙은 평가하지 않고 그 노드에 쓰지도 않는다(원장 §3). 식이나 가드가 던져 거짓이 된 게이트로 나간 노드에는 나감 비움을 적용하지 않는다(작성자의 잘못으로 커밋된 값을 잃지 않는다). 어느 자리든 식이 던지면 그 커밋은 `degraded`다(§5).
+정적으로 아는 `controls.injectTo` 대상 경로(식이 아닌 경로 문자열)가 청사진에 없거나 터미널 아래면 청사진 오류다. 형상에 없는(비활성) 노드를 가리키는 것은 오류가 아니다 — 형상에 없는 노드의 규칙은 평가하지 않고 그 노드에 쓰지도 않는다(원장 §3). 식이나 가드가 던져 거짓이 된 게이트로 나간 노드에는 나감 비움을 적용하지 않는다(작성자의 잘못으로 커밋된 값을 잃지 않는다). 어느 자리든 식이 던지면 그 커밋은 `degraded`다(§5).
 
 ### 5. `diagnostics` — 마지막 로드 이후의 작업 기록
 
-`diagnostics`는 상태(`raw`·`extras`)도 계산 결과((스키마, 원본)의 함수)도 아니라 **작업의 기록**이다(원장 §2의 분류. 재계산 목록·`revision`·커밋 번호와 같은 칸). 로드(마운트, 스키마 교체, 루트 전체 교체 `setValue(V)`, `reset`)에서 초기화한다. 모양은 `{ status: 'stable' | 'degraded', cause?: 'budget' | 'expression' | 'injectTarget' | 'sharedConflict', exceededBudget?: 'hostWheel' | 'derive' | 'transition', iterations?, commit? }`이며 모든 칸은 `commit` 번호의 커밋을 기술한다. 작성자의 선언이 빠지거나 뜻대로 평가되지 못한 커밋 — 원본 B, 어느 자리든 `&` 식·가드의 throw, 동적 `&injectTo` 대상 없음, 공유 충돌 — 이 하나라도 있으면 `status = 'degraded'`이고 `commit`은 그 첫 커밋 번호다. **다음 로드까지 남는다**(O-2 답 가. O-2는 예산에 대한 답이었고 원인을 넷으로 넓힌 것은 편집자 도출이라 확인 대상). 그 동안 `<Form>`의 제출 경로(`FormHandle.submit`, `useFormSubmit`, 네이티브 submit — 모두 `async onSubmit` 하나로 모인다)는 `SchemaFormError`로 거부한다(소유자: "예산 초과된 상태로 동작하는 건 되도록 막는 방향". core는 제출을 모르므로 거부는 렌더 계층의 일이다, P5. `getValue()`는 막지 않는다). 되먹임 파동과 `onChange` 중첩의 초과는 소비자 코드의 쓰기를 거부한 것이지 작성자의 선언을 뺀 것이 아니므로 `diagnostics`에 남기지 않고 사슬의 끝에서 던지기만 한다(ADR 0008 §2 규칙 4·§8의 `exceededBudget` 다섯 값을 셋으로 줄인다). 호출자는 `onDiagnosticsChange`로 상태를 보고 로드로 되돌린다.
+`diagnostics`는 상태(`raw`·`extras`)도 계산 결과((스키마, 원본)의 함수)도 아니라 **작업의 기록**이다(원장 §2의 분류. 재계산 목록·`revision`·커밋 번호와 같은 칸). 로드(마운트, 스키마 교체, 루트 전체 교체 `setValue(V)`, `reset`)에서 초기화한다. 모양은 `{ status: 'stable' | 'degraded', cause?: 'budget' | 'expression' | 'injectTarget' | 'sharedConflict', exceededBudget?: 'hostWheel' | 'derive' | 'transition', iterations?, commit? }`이며 모든 칸은 `commit` 번호의 커밋을 기술한다. 작성자의 선언이 빠지거나 뜻대로 평가되지 못한 커밋 — 원본 B, 어느 자리든 `controls`의 식·가드의 throw, 동적 `controls.injectTo` 대상 없음, 공유 충돌 — 이 하나라도 있으면 `status = 'degraded'`이고 `commit`은 그 첫 커밋 번호다. **다음 로드까지 남는다**(O-2 답 가. O-2는 예산에 대한 답이었고 원인을 넷으로 넓힌 것은 편집자 도출이라 확인 대상). 그 동안 `<Form>`의 제출 경로(`FormHandle.submit`, `useFormSubmit`, 네이티브 submit — 모두 `async onSubmit` 하나로 모인다)는 `SchemaFormError`로 거부한다(소유자: "예산 초과된 상태로 동작하는 건 되도록 막는 방향". core는 제출을 모르므로 거부는 렌더 계층의 일이다, P5. `getValue()`는 막지 않는다). 되먹임 파동과 `onChange` 중첩의 초과는 소비자 코드의 쓰기를 거부한 것이지 작성자의 선언을 뺀 것이 아니므로 `diagnostics`에 남기지 않고 사슬의 끝에서 던지기만 한다(ADR 0008 §2 규칙 4·§8의 `exceededBudget` 다섯 값을 셋으로 줄인다). 호출자는 `onDiagnosticsChange`로 상태를 보고 로드로 되돌린다.
 
 ### 6. 검증기 — 없으면 마운트에서 안다
 
@@ -69,10 +73,10 @@ Form 속성 `onError(error: unknown)`는 **관찰자**다. 사슬의 throw 직�
 
 | 부류 | 층 | 언제 | 누구 잘못 | 드러남 | 항목 |
 | --- | --- | --- | --- | --- | --- |
-| 청사진 오류 | 오류 | 청사진 분석 | 작성자 | 즉시 throw(`JSONSchemaError`) | 지원하지 않는 `type`; 배열 형태 모순; 정적 연언의 `type` 재정의·`const` 충돌·불가능한 범위·공집합 `enum`; `virtual` 참조 오류; `&` 식의 컴파일 실패; 게이트 없는 선언끼리(본체·게이트 없는 `allOf` 항목·게이트 없는 분기) 같은 이름·다른 종류를 선언함(늘 함께 켜지므로 충돌이 확실하다, O-10); `&discriminator`의 키가 어느 분기에도 `const`·`enum`으로 없거나, 있는 분기끼리 종류가 다르거나 값이 겹침(O-1. 일부 분기에만 없는 것은 그 분기가 게이트 없음일 뿐 오류가 아니다); 정적으로 아는 `&injectTo` 대상 경로가 청사진에 없거나 터미널 아래임; 검증기 없음(모드가 `None`이 아니거나 `if` 게이트가 있을 때); `compileGuard`·전체 스키마 컴파일 실패 |
+| 청사진 오류 | 오류 | 청사진 분석 | 작성자 | 즉시 throw(`JSONSchemaError`) | 지원하지 않는 `type`; 배열 형태 모순; 정적 연언의 `type` 재정의·`const` 충돌·불가능한 범위·공집합 `enum`; `options.virtual` 참조 오류; `controls`의 식의 컴파일 실패; 게이트 없는 선언끼리(본체·게이트 없는 `allOf` 항목·게이트 없는 분기) 같은 이름·다른 종류를 선언함(늘 함께 켜지므로 충돌이 확실하다, O-10); `controls.discriminator`의 키가 어느 분기에도 `const`·`enum`으로 없거나, 있는 분기끼리 종류가 다르거나 값이 겹침(O-1. 일부 분기에만 없는 것은 그 분기가 게이트 없음일 뿐 오류가 아니다); 정적으로 아는 `controls.injectTo` 대상 경로가 청사진에 없거나 터미널 아래임; 검증기 없음(모드가 `None`이 아니거나 `if` 게이트가 있을 때); `compileGuard`·전체 스키마 컴파일 실패; `controls`·`options` 안의 모르는 키(15라운드) |
 | 마운트 정착 오류 | 오류 | 마운트의 첫 정착 | 작성자 스키마·호출자 데이터 | 청사진 오류와 같이 즉시 throw. 폼이 서지 않는다 | 첫 정착의 예산 초과, 식 실패, 공유 충돌 |
-| 청사진 경고 | 경고 | 청사진 분석 | 작성자 | 개발 모드 로그 | `oneOf`·`anyOf` 분기에 `if`는 있고 `else: false`가 없음; `null` 분기 무시; `allOf` 키워드 무시; 터미널이 아닌 객체 노드의 잠금(표준 `readOnly`, `&readOnly`·`&disabled`, `control` 잠금. 효과 없음) |
-| 정착 오류 | 오류 | 마운트 뒤 정착의 계산·파생·전이·커밋 | 작성자 스키마 | 커밋·통지 뒤 사슬의 끝에서 throw(`SchemaFormError`, 식 예외는 `cause`). `diagnostics`가 `degraded`로 남는다 | 예산 초과(호스트 바퀴·파생·전이. 원본 B 커밋); 게이트에 달린 선언이 실제로 동시에 켜짐(작성자가 선언한 노드 하나가 형상에서 빠진다, P1′. 전순서에서 앞선 종류로 커밋한 뒤 throw); 어느 자리든 `&` 식이나 `if` 게이트 함수의 런타임 throw(§4: 게이트는 거짓, 상태 키 선언은 없음, 파생 규칙은 후보 제외, `&resetInteraction`은 거짓); 동적으로만 아는 `&injectTo` 대상이 없음 |
+| 청사진 경고 | 경고 | 청사진 분석 | 작성자 | 개발 모드 로그 | `oneOf`·`anyOf` 분기에 `if`는 있고 `else: false`가 없음; `null` 분기 무시; `allOf` 키워드 무시; 터미널이 아닌 객체 노드의 잠금(표준 `readOnly`, `controls.readOnly`·`controls.disabled`. 효과 없음) |
+| 정착 오류 | 오류 | 마운트 뒤 정착의 계산·파생·전이·커밋 | 작성자 스키마 | 커밋·통지 뒤 사슬의 끝에서 throw(`SchemaFormError`, 식 예외는 `cause`). `diagnostics`가 `degraded`로 남는다 | 예산 초과(호스트 바퀴·파생·전이. 원본 B 커밋); 게이트에 달린 선언이 실제로 동시에 켜짐(작성자가 선언한 노드 하나가 형상에서 빠진다, P1′. 전순서에서 앞선 종류로 커밋한 뒤 throw); 어느 자리든 `controls`의 식이나 `if` 게이트 함수의 런타임 throw(§4: 게이트는 거짓, 상태 키 선언은 없음, 파생 규칙은 후보 제외, `controls.resetInteraction`은 거짓); 동적으로만 아는 `controls.injectTo` 대상이 없음 |
 | 정착 경고 | 경고 | 정착의 계산 | 작성자 스키마 | 개발 모드 로그 | 같은 `oneOf`에서 게이트 가진 분기가 둘 이상 켜짐(소유자 답 20). 같은 대상 규칙 둘은 경고가 아니다(13라운드 답 4). 켜진 `then`과의 런타임 교차가 공집합인 것은 경고도 오류도 아니다 — 검증기가 값을 기각한다(검증 결과) |
 | 정착 추적 | (기록) | 정착 | — | 개발 모드에서 정착마다 기록(진입, 라운드별 규칙·원천·대상·값·결과, 예산 초과 시 마지막 라운드) | 자동 쓰기 다섯의 출처(C2·P2) |
 | 되먹임·중첩 오류 | 오류 | 통지 | 소비자 코드 | 그 고리 하나를 끊고(되먹임 쓰기 거부, `onChange` 하나 생략) 사슬의 끝에서 throw. `diagnostics`에 남기지 않는다 | 리스너 되먹임 파동 25, `onChange` 중첩 25 |
@@ -82,7 +86,7 @@ Form 속성 `onError(error: unknown)`는 **관찰자**다. 사슬의 throw 직�
 | 검증기 오류 | 오류 | 검증 요청 | 플러그인·호출자 | `validate()`의 거부, `OnChange` 검증이면 core 소유 프로미스의 미처리 거부. `onError` 관찰자에게 먼저 한 번 간다 | 검증 함수의 런타임 throw, 요청 시점의 `$ref` 순환 |
 | 검증 결과 | 검증 결과 | 검증 뒤 | 사용자 입력 | 노드 `errors`(`ValidationIssue`), 제출 시 `ValidationError` | 검증기가 낸 항목 |
 
-범위 밖: 사용자 주입 컴포넌트 자신의 렌더 오류는 렌더 계층의 필드 바운더리가 격리한다(`withErrorBoundary`, 패키지 규칙). 렌더 중 쓰기는 core가 감지하지 않는다(P5). `&discriminator`의 키가 호스트 `properties`에 없는 것은 오류가 아니다(끌어올림, O-1). 오늘의 경고 `NULLABLE_ONE_OF_NULL_UNREACHABLE`은 분기 내용을 읽으므로 폐기하고, `VIRTUALIZATION_DISABLED_FOR_FORM`은 렌더 계층 경고로 옮긴다. React StrictMode의 이중 렌더에서 마운트 오류가 몇 번 던져지는지는 React의 일이며 이 ADR은 정하지 않는다.
+범위 밖: 사용자 주입 컴포넌트 자신의 렌더 오류는 렌더 계층의 필드 바운더리가 격리한다(`withErrorBoundary`, 패키지 규칙). 렌더 중 쓰기는 core가 감지하지 않는다(P5). `controls.discriminator`의 키가 호스트 `properties`에 없는 것은 오류가 아니다(끌어올림, O-1). 오늘의 경고 `NULLABLE_ONE_OF_NULL_UNREACHABLE`은 분기 내용을 읽으므로 폐기하고, `VIRTUALIZATION_DISABLED_FOR_FORM`은 렌더 계층 경고로 옮긴다. React StrictMode의 이중 렌더에서 마운트 오류가 몇 번 던져지는지는 React의 일이며 이 ADR은 정하지 않는다.
 
 ### 8. 무엇이 바뀌는가
 
@@ -91,15 +95,15 @@ Form 속성 `onError(error: unknown)`는 **관찰자**다. 사슬의 throw 직�
 | 정착 예산 초과: 개발 모드 throw, 프로덕션은 신호만(12라운드 답 1) | 환경 불문 throw(커밋·통지 뒤, 사슬의 끝). `diagnostics`는 다음 로드까지 `degraded`로 남고 제출을 막는다(10라운드 B-1의 "제출 비차단"을 뒤집는다) |
 | Form 속성 `throwOnBudgetExceeded`(가칭) | 없다. throw가 기본이며 끄는 스위치가 없다 |
 | 리스너 오류: `onListenerError`(가칭)로 보고, 없으면 개발 모드 `console.error` | 배달 뒤 사슬의 끝에서 throw. `onError` 관찰자가 먼저 본다 |
-| 노드 공유 충돌: 청사진 경고 + 프로덕션 폼 수준 경고(ADR 0005 §3 "명시 없는 생성기 union이 마운트마다 터지면 안 된다") | 확실한 충돌은 청사진 오류, 실제 동시 활성은 정착 오류(O-10). 생성기 union은 `&discriminator`를 더한다(이주) |
-| `&` 식 런타임 오류·풀리지 않는 `&injectTo` 대상: 미정. O-4 답은 "가"(개발 모드 경고) | 정적이면 청사진 오류, 동적이면 정착 오류(가를 나로 바꾼다. 소유자의 O-4 단서 "터뜨려서 인지시키는 방향"을 따른다) |
+| 노드 공유 충돌: 청사진 경고 + 프로덕션 폼 수준 경고(ADR 0005 §3 "명시 없는 생성기 union이 마운트마다 터지면 안 된다") | 확실한 충돌은 청사진 오류, 실제 동시 활성은 정착 오류(O-10). 생성기 union은 `controls.discriminator`를 더한다(이주) |
+| `controls`의 식 런타임 오류·풀리지 않는 `controls.injectTo` 대상: 미정. O-4 답은 "가"(개발 모드 경고) | 정적이면 청사진 오류, 동적이면 정착 오류(가를 나로 바꾼다. 소유자의 O-4 단서 "터뜨려서 인지시키는 방향"을 따른다) |
 | 검증기 미등록: `if` 게이트는 조각 없음, 조건부 스키마 경고(ADR 0004) | 검증 모드가 `None`이 아니거나 `if` 게이트가 있으면 청사진 오류 |
 | 검증기 오류: 노드 `errors`에 `jsonSchemaCompileFailed` + 개발 모드 로그 | 컴파일 실패는 청사진 오류, 요청 시점 실패는 `validate()`의 거부. 노드 `errors`에는 넣지 않는다(사용자의 잘못이 아니다) |
 | `Form`이 자기 바운더리로 마운트 오류를 삼킴 | 루트 바운더리는 `JSONSchemaError`·`SchemaFormError`를 다시 던진다 |
 | `diagnostics.status`: `'stable' \| 'budgetExceeded'`, 이번 정착만, `exceededBudget` 다섯 값 | `'stable' \| 'degraded'` + `cause` + `commit`, 마지막 로드 이후의 작업 기록. `exceededBudget`은 정착 예산 셋만 |
 | 가드 컴파일은 늦춘다(ADR 0004) | 청사진에서 모두 컴파일한다 |
 
-이주 항목: 검증기 없이 쓰던 폼은 검증 모드를 `None`으로 적거나 검증기를 준다. `INFINITE_LOOP_DETECTED`가 배치 도중 throw해 커밋을 남기지 않던 것이 원본 B 커밋 뒤 throw로 바뀐다. `ValidationManager.ts:221`의 `console.error`와 `jsonSchemaCompileFailed`가 사라진다. `oneOfIndex`·자동 감지 없이 같은 이름·다른 종류를 둔 생성기 union은 `&discriminator` 없이는 마운트에 실패한다.
+이주 항목: 검증기 없이 쓰던 폼은 검증 모드를 `None`으로 적거나 검증기를 준다. `INFINITE_LOOP_DETECTED`가 배치 도중 throw해 커밋을 남기지 않던 것이 원본 B 커밋 뒤 throw로 바뀐다. `ValidationManager.ts:221`의 `console.error`와 `jsonSchemaCompileFailed`가 사라진다. `oneOfIndex`·자동 감지 없이 같은 이름·다른 종류를 둔 생성기 union은 `controls.discriminator` 없이는 마운트에 실패한다.
 
 갱신할 본문(확정 뒤): 원장 §2(`diagnostics`의 정의, 작업의 기록)·§4(예산 문단의 throw 문장)·§5(분류표)·§6(되먹임 거부 표면 삭제), ADR 0004 §결정(미등록·조건부 스키마 경고 대체, "늦추고" 대체)과 :70의 열린 물음, ADR 0005 §3(충돌의 드러남), ADR 0007 §1·§2·미결, ADR 0008 §2 규칙 4·규칙 6·§3·§5·§8·미결(`onListenerError`, `diagnostics` 모양, 상한의 셈 단위), 08 §4·§5의 2·§7·§11 계약 문단·§11.3·§12·§13·§14의 22행·§17 PR-4·PR-7, 02 §2.3 비수렴 문단·§3 경고 문단·§6 표면 표의 진단 행과 `throwOnBudgetExceeded` 행·§7 비교표, 원장 §5 도출표의 비수렴 행.
 

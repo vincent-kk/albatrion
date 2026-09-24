@@ -1,9 +1,10 @@
 # ADR 0005 — 스키마 → 청사진 분석 단계와 노드 공유 규칙
 
-상태: 일부 수락(5차 본문, 2026-09-23). "같은 이름 + 같은 타입이면 노드 하나를 공유한다"는 수락. §4의 명시 판별 `&discriminator`와 §5의 병합표는 소유자가 답했다(`07-conclusions.md` §5.0의 22·7·13·16·17·18, 상태 키 행은 13라운드 답 1이 12를 개정, 표현 키 행은 13라운드 답 3, 원문은 `reviews/round-10-owner-answers.md`). 분석 단계의 분리와 청사진의 형태는 제안. §3의 "같은 종류"와 정적 throw의 폐지는 수락된 규칙의 세부를 고친 것이어서 **소유자의 확인이 필요하다.** 4차 §4의 판별식 식별(E14)은 지워졌다.
+상태: 일부 수락(5차 본문, 2026-09-23). "같은 이름 + 같은 타입이면 노드 하나를 공유한다"는 수락. §4의 명시 판별 `controls.discriminator`와 §5의 병합표는 소유자가 답했다(`07-conclusions.md` §5.0의 22·7·13·16·17·18, 상태 키 행은 13라운드 답 1이 12를 개정, `options`·`presentation` 행은 15라운드(`reviews/round-15-decisions.md`. 13라운드 답 3의 경계를 대체한다), 원문은 `reviews/round-10-owner-answers.md`). 분석 단계의 분리와 청사진의 형태는 제안. §3의 "같은 종류"와 정적 throw의 폐지는 수락된 규칙의 세부를 고친 것이어서 **소유자의 확인이 필요하다.** 4차 §4의 판별식 식별(E14)은 지워졌다.
 
 ## 변경 이력
 
+- 2026-09-24 — 15라운드(`reviews/round-15-decisions.md`): `&` 축약을 `controls` 그룹 표기로, 조각 식의 기준점을 호스트로, 맨 폼 전용 키를 `options`·`presentation` 그룹으로 바꿨다.
 - 2026-09-24 — 13라운드 소유자 답(`reviews/round-13-owner-answers.md`)을 반영했다: 코어에 글로벌 잠금 없음, 나감의 비움(선택, 기본 유지), 접두 규칙(제어 키만 `&`), 같은 종류 규칙의 문서 순서.
 - 2026-09-22 — 적대적 검토 1라운드 R11(`reviews/round-1.md`)을 반영했다. (a) "같은 타입"을 타입 표기의 동일성이 아니라 **같은 노드 종류**로 다시 정의했다 — `number`와 `integer`, `['string','null']`과 `'string'`은 배타가 아니다. (b) "배타가 구조로 보장되지 않으면 분석 단계에서 throw"를 없앴다 — 이 규칙은 ADR 0002가 필수 지원이라 한 `allOf: [{ if k=a then v:string }, { if k=b then v:number }]`를 거부했고, "같은 `oneOf`의 분기끼리는 배타"라는 가정은 런타임에 성립하지 않았다. 종류가 다른 선언의 충돌은 런타임에 드러낸다. (c) 판별식을 "기본 프로퍼티의 재선언"이 아니라 **분기 집합으로부터** 식별한다. (d) 제약의 교차가 공집합이어도 throw하지 않는다. §2의 "호스트 참조가 그대로면 건너뛴다"는 같은 검토의 측정으로 고쳤다.
 - 2026-09-22 — 2라운드(`reviews/round-2.md`)의 S4·S13을 "확인된 결함" 절에 적었다.
@@ -25,12 +26,12 @@
 작성된 스키마 ──(순수 함수, 폼 생성 시 1회)──▶ 청사진 ──▶ 노드 트리
 
 ObjectBlueprint {
-  base:      PropertyDecl[]        // properties. 노드 게이트(&active)는 그 선언이 든다
+  base:      PropertyDecl[]        // properties. 노드 게이트(controls.active)는 그 선언이 든다
   fragments: Fragment[]            // 정적으로 열거된 모든 조각
 }
 Fragment {
   id          // 작성된 스키마 안의 위치 (schemaPath). 에러 라우팅의 키
-  guard       // 게이트: if(검증기 플러그인이 컴파일) | &active(표현식) | 없음(항상 참)
+  guard       // 게이트: if(검증기 플러그인이 컴파일) | controls.active(표현식) | 없음(항상 참)
   context     // 연언 | 선언, 그리고 어느 oneOf/anyOf의 분기인가 (ADR 0002)
   declares    // 이 조각이 새로 선언하는 property
   constrains  // 기존 property에 얹는 overlay: name → 스키마
@@ -49,7 +50,7 @@ Fragment {
 
 ### 2. P1′와의 경계 — 구조는 읽고, 의미는 평가하지 않는다
 
-폼은 서브스키마가 **어디에 있고 무엇을 선언하는지**(`properties`, `items`, `prefixItems`, `if`/`then`/`else`, `allOf`/`oneOf`/`anyOf`, `$ref`, `type`)를 읽는다. 값이 스키마를 **만족하는지**는 평가하지 않는다. 그것은 언제나 `compileGuard`가 답한다. 값의 유효성 문법은 읽지 않는다(ADR 0002 "금지 조각은 없다"). 분기의 `const`·`enum` 값도 읽지 않는다. 예외는 작성자가 `&discriminator`를 명시한 union 하나다(§4).
+폼은 서브스키마가 **어디에 있고 무엇을 선언하는지**(`properties`, `items`, `prefixItems`, `if`/`then`/`else`, `allOf`/`oneOf`/`anyOf`, `$ref`, `type`)를 읽는다. 값이 스키마를 **만족하는지**는 평가하지 않는다. 그것은 언제나 `compileGuard`가 답한다. 값의 유효성 문법은 읽지 않는다(ADR 0002 "금지 조각은 없다"). 분기의 `const`·`enum` 값도 읽지 않는다. 예외는 작성자가 `controls.discriminator`를 명시한 union 하나다(§4).
 
 **게이트가 무엇을 읽는지는 기본적으로 뽑지 않는다.** 재계산 목록이 닿은 노드에 걸린 게이트를 전부 다시 평가한다. 측정에 따르면 AJV에서는 이것으로 충분하다 — 루트에 걸린 좁은 가드 200개를 키 입력마다 전부 돌려 7.9 µs다(`reviews/round-1.md` §2). "게이트가 걸린 객체의 참조가 그대로면 건너뛴다"는 루트에 걸린 게이트에 대해 효과가 없다(어떤 쓰기든 루트의 참조를 바꾼다).
 
@@ -66,26 +67,26 @@ Fragment {
 | 같은 이름 + 다른 종류가 **동시에** 활성 | 런타임 충돌이다. 앞서 선언된 종류의 노드를 살리고, 충돌을 작성자에게 드러낸다(`00-goals.md` C2) — 개발 모드에서는 경고하고(`07-conclusions.md` §4.25, 원장 §5의 경고 행, C2 — 명시 없는 생성기 union이 마운트마다 터지면 안 된다), 그 밖에서는 폼 수준의 경고를 낸다. 분석 단계에서 미리 throw하지 않는다(ADR 0014 제안 3판이 대체한다. 확정 뒤 갱신) |
 
 - "앞서"와 "나중"은 ADR 0002의 **전순서**(감싸는 조각의 순서, 키워드 순위, 배열 인덱스)로 정의한다. 2라운드 S13(순서가 JSON 키 순서에 기댄다)은 이것으로 닫힌다.
-- **게이트 없는 `oneOf`·`anyOf` 분기가 노드를 공유하면 존재만 더하고 제약은 교차하지 않는다.** 분기는 선언("또는") 문맥이다. 순수 분기 둘이 `kind`에 `{ const: 'a' }`와 `{ const: 'b' }`를 두면 교차는 공집합이 되어 검증기보다 좁은 힌트를 낸다. 켜진 게이트 조각(게이트 가진 분기 안 `if`의 `then`, 본체·`allOf`의 `then`, `&active`를 가진 분기, `&discriminator`로 변환된 분기)은 작성자가 "이 분기가 해당한다"고 선언한 것이므로 연언으로 교차한다(ADR 0002의 조각 표). 개발 모드 경고가 세는 "게이트 가진 분기"는 이보다 좁다(§4). 게이트 없는 분기 안의 `if/then`은 그 분기의 선언 문맥이므로 `then`의 제약을 교차하지 않는다(원장 §4).
+- **게이트 없는 `oneOf`·`anyOf` 분기가 노드를 공유하면 존재만 더하고 제약은 교차하지 않는다.** 분기는 선언("또는") 문맥이다. 순수 분기 둘이 `kind`에 `{ const: 'a' }`와 `{ const: 'b' }`를 두면 교차는 공집합이 되어 검증기보다 좁은 힌트를 낸다. 켜진 게이트 조각(게이트 가진 분기 안 `if`의 `then`, 본체·`allOf`의 `then`, `controls.active`를 가진 분기, `controls.discriminator`로 변환된 분기)은 작성자가 "이 분기가 해당한다"고 선언한 것이므로 연언으로 교차한다(ADR 0002의 조각 표). 개발 모드 경고가 세는 "게이트 가진 분기"는 이보다 좁다(§4). 게이트 없는 분기 안의 `if/then`은 그 분기의 선언 문맥이므로 `then`의 제약을 교차하지 않는다(원장 §4).
 - 게이트 없는 분기끼리 같은 이름·다른 종류의 필드를 두면 두 분기가 늘 함께 켜져 있으므로 위 표의 3행이 된다.
 - 게이트를 가진 분기의 `value: string` / `value: number`는 흔하고 정당한 선언이다. 게이트가 서로 배타이면 동시에 활성이 되지 않는다. 배타인지는 작성자의 스키마가 정하며 폼은 검사하지 않는다.
 - `allOf: [{ if k=a then v:string }, { if k=b then v:number }]`도 같은 방식으로 동작한다. 게이트가 동시에 참이 되는 스키마를 썼다면 그것은 작성자의 실수이고, 검증기도 그 값을 기각한다.
 - **조건에 쓰는 프로퍼티는 본체 `properties`에 선언한다.** 판별 프로퍼티도 같다. 컨벤션이며 폼은 검사하지 않는다(원장 §1.2의 축 2항(조건 프로퍼티는 `properties`에 선언한다)). 소유자: "`if` 안에 `anyOf`·`oneOf`나 더 복잡한 스키마가 올 수 있어 관여하기로 하면 끝이 없다".
 - **정적 연언(본체와 게이트 없는 `allOf`)의 교차가 공집합이면 청사진 오류로 throw하고, 켜진 `then`과의 런타임 교차가 공집합이면 throw하지 않고 검증기가 값을 기각한다(원장 §5).** 서로소인 `enum` 둘이 켜진 조각과의 연언에서 동시에 활성이면 그 필드는 "지금 고를 수 있는 값이 없는" 상태가 되고, 폼은 막지 않으며 검증기가 값을 기각한다. 필드를 비우면 값이 유효해지는 경우가 있으므로 폼 전체를 멈춰서는 안 된다(R11-e).
 
-### 4. 명시 판별 `&discriminator`
+### 4. 명시 판별 `controls.discriminator`
 
-원장 §1.2의 축 1항("`enum`·`const` 판별식은 쓰지 않는다")의 유일한 예외다. 근거는 축 1항(폼은 JSON Schema 문법을 해석하지 않는다)의 예외(소유자 동의, 10라운드)와 축 7항("JSON Schema 표현은 `&` 표현으로 대체할 수 있어야 한다")이다.
+원장 §1.2의 축 1항("`enum`·`const` 판별식은 쓰지 않는다")의 유일한 예외다. 근거는 축 1항(폼은 JSON Schema 문법을 해석하지 않는다)의 예외(소유자 동의, 10라운드)와 축 7항(JSON Schema 표현은 `controls` 표현으로 대체할 수 있어야 한다)이다.
 
-- **선언.** 작성자가 union 호스트(`oneOf`·`anyOf`를 가진 객체 스키마)에 예약 층 키 `&discriminator: '<key>'`를 적는다. 적지 않은 union의 `const`·`enum`은 읽지 않는다. OpenAPI의 `discriminator.propertyName`도 예약 층의 키가 아니므로 읽지 않는다.
-- **변환.** 청사진 단계가 각 분기에서 그 키의 `const`·`enum`을 읽어, 그 분기를 `&active: "../<key> === <value>"`를 가진 조각 객체로 다룬다. `enum`이면 값이 그 목록에 드는가를 본다. 변환된 분기는 ADR 0002 조각 표의 3행(연언)이 된다. 그 키의 분기 선언을 게이트 없는 선언으로도 취급해 끌어올린다(14라운드 답 O-1: 태그 키가 분기 안에만 있는 생성기 스키마도 그대로 받는다). 있는 분기끼리 종류가 다르거나 `const`·`enum` 값이 겹치면 청사진 오류다. 일부 분기에만 없는 것은 그 분기가 게이트 없음일 뿐이다.
-- **분기 스키마는 손대지 않는다.** `kind: { const }`와 `required`는 그대로 검증기에 간다(ADR 0001). 결과는 청사진의 `Fragment.guard`에 든 `&active` 식뿐이다. 소유자: "우리는 "&active": 을 더하는거지 스키마를 수정하는건 아니니까".
-- **청사진 단계에서 끝난다.** 상태 칸(원본과 `extras` 둘)도 작업 루프도 바꾸지 않는다. 변환된 게이트는 다른 `&active`와 같이 호스트 바퀴에서 평가된다.
-- **판별 프로퍼티는 본체에 선언한다**(§3). 폼이 소유하지 않고, 분기 값의 합집합 `enum`을 만들지도 않으며, 암묵 default도 없다. 채움의 원천은 `&default` > `default` > 없음뿐이다.
+- **선언.** 작성자가 union 호스트(`oneOf`·`anyOf`를 가진 객체 스키마)에 예약 층 키 `controls: { discriminator: '<key>' }`를 적는다. 적지 않은 union의 `const`·`enum`은 읽지 않는다. OpenAPI의 `discriminator.propertyName`도 예약 층의 키가 아니므로 읽지 않는다.
+- **변환.** 청사진 단계가 각 분기에서 그 키의 `const`·`enum`을 읽어, 그 분기를 `controls: { active: "./<key> === <value>" }`를 가진 조각 객체로 다룬다. `enum`이면 값이 그 목록에 드는가를 본다. 변환된 분기는 ADR 0002 조각 표의 3행(연언)이 된다. 그 키의 분기 선언을 게이트 없는 선언으로도 취급해 끌어올린다(14라운드 답 O-1: 태그 키가 분기 안에만 있는 생성기 스키마도 그대로 받는다). 있는 분기끼리 종류가 다르거나 `const`·`enum` 값이 겹치면 청사진 오류다. 일부 분기에만 없는 것은 그 분기가 게이트 없음일 뿐이다.
+- **분기 스키마는 손대지 않는다.** `kind: { const }`와 `required`는 그대로 검증기에 간다(ADR 0001). 결과는 청사진의 `Fragment.guard`에 든 `controls.active` 식뿐이다. 소유자: "우리는 "&active": 을 더하는거지 스키마를 수정하는건 아니니까".
+- **청사진 단계에서 끝난다.** 상태 칸(원본과 `extras` 둘)도 작업 루프도 바꾸지 않는다. 변환된 게이트는 다른 `controls.active`와 같이 호스트 바퀴에서 평가된다.
+- **판별 프로퍼티는 본체에 선언한다**(§3). 폼이 소유하지 않고, 분기 값의 합집합 `enum`을 만들지도 않으며, 암묵 default도 없다. 채움의 원천은 `controls.default` > `default` > 없음뿐이다.
 - **개발 모드 경고.** 같은 `oneOf`에서 게이트를 가진 분기(원장 §4의 정의, ADR 0002)가 둘 이상 동시에 켜지면 경고한다. 게이트의 결과만 세고 분기의 내용은 읽지 않으므로 축 1항(폼은 JSON Schema 문법을 해석하지 않는다) 안이다(C2). 소유자(20): "예 이건 jsonSchema 스팩을 존중합니다".
-- ajv의 `discriminator: true`는 pydantic 출력에도 throw하므로 플러그인이 켜지 못한다. `&discriminator`는 검증기 옵션이 아니라 폼의 예약 층이다.
+- ajv의 `discriminator: true`는 pydantic 출력에도 throw하므로 플러그인이 켜지 못한다. `controls.discriminator`는 검증기 옵션이 아니라 폼의 예약 층이다.
 
-이 규칙은 현재의 "`type`/`$ref`가 없는 `const`/`enum`이면 판별식"(`getCompositionKeyInfo.ts:33`, `getExpressionFromSchema.ts:35-51` — 두 파일이 서로를 언급하지 않은 채 같은 암묵 규칙에 기댄다)과 `COMPOSITION_PROPERTY_REDEFINITION` throw(`getCompositionNodeMapList.ts:95-105`)를 대체한다. 명시 없이 자동 감지에 기대던 스키마는 이주 안내 대상이다. 그런 스키마는 `&discriminator`를 더하거나 분기 안에 `if/then/else: false`를 쓴다(ADR 0010). `JSONSchema` 타입이 `kind: { const: 'a' }`를 받아들이게 하는 것은 `00-goals.md` C4.
+이 규칙은 현재의 "`type`/`$ref`가 없는 `const`/`enum`이면 판별식"(`getCompositionKeyInfo.ts:33`, `getExpressionFromSchema.ts:35-51` — 두 파일이 서로를 언급하지 않은 채 같은 암묵 규칙에 기댄다)과 `COMPOSITION_PROPERTY_REDEFINITION` throw(`getCompositionNodeMapList.ts:95-105`)를 대체한다. 명시 없이 자동 감지에 기대던 스키마는 이주 안내 대상이다. 그런 스키마는 `controls.discriminator`를 더하거나 분기 안에 `if/then/else: false`를 쓴다(ADR 0010). `JSONSchema` 타입이 `kind: { const: 'a' }`를 받아들이게 하는 것은 `00-goals.md` C4.
 
 ### 5. 노드의 유효 스키마 — 병합표
 
@@ -94,15 +95,16 @@ Fragment {
 | 부류 | 규칙 |
 | --- | --- |
 | 검증 키워드(`minimum`, `enum`, `required` …) | 연언 문맥에서 교차. 게이트 없는 `oneOf`·`anyOf` 분기는 존재만 더하고 제약은 교차하지 않는다(§3) |
-| 주석 키워드(`title`, `description`, `format`, `default`·`&default`) | 뒤가 앞을 덮는다. 켜진 조각이 본체를, 전순서에서 나중 조각이 앞 조각을 덮는다(소유자: "세부적인 규칙이 포괄적인 규칙을 덮는 기존 관례를 따릅니다") |
-| 상태 키(표준 `readOnly`, `&readOnly`·`&disabled`·`&visible`·`&active`, `control.readOnly`·`control.disabled`·`control.visible`·`control.active`) | 코어에는 글로벌이 없다(13라운드 답 1). 그 노드에만 걸리고 조상의 상속은 없다. 자손을 거는 길은 부모의 `&children`과 켜진 조각의 `control`뿐이다. 로컬 선언이 겹치면 잠금은 하나라도 참이면 잠기고 표시는 모두 참이어야 켜진다. 터미널이 아닌 객체 노드를 대상으로 한 잠금은 입력이 없으므로 효과가 없고, 배열 노드의 잠금은 렌더 계층이 아이템 추가·삭제·이동 입력에 적용하며, 터미널 객체·배열은 입력이 있으므로 리프와 같다. `active`·`visible`은 구조상 하위 트리를 가린다. Form 속성 `readOnly`·`disabled`는 렌더 계층이 참일 때만 거는 전체 잠금이다(P5) |
-| 형상·투영 키와 표현 키(`FormTypeInput`, `options`, 접두 없음) | 뒤가 앞을 덮되 `options`는 깊은 병합이다. 빈 객체에서 시작해 조각 순서대로 적용하며(작성자 스키마와 앞 조각의 객체를 변이하지 않는다) 객체는 재귀 병합, 함수·원시값은 나중 승, 나중 조각의 `undefined`는 앞 값을 지우지 않는다(`@winglet/common-utils`의 `merge`는 target을 제자리에서 바꾸므로 사본에 적용한다). 배열은 나중 조각의 것으로 통째 교체한다(14라운드 답 O-11. `merge`에 배열 전략 옵션을 더해 사본에 적용한다) |
-| 값·동작 키(`&derived`, `&injectTo`, `&unsetValue`, `&resetInteraction`) | 병합하지 않는다. 선언마다 규칙 하나이며 같은 대상은 파생 단계의 같은 대상 규칙이 푼다(ADR 0007) |
+| 주석 키워드(`title`, `description`, `format`, `default`·`controls.default`) | 뒤가 앞을 덮는다. 켜진 조각이 본체를, 전순서에서 나중 조각이 앞 조각을 덮는다(소유자: "세부적인 규칙이 포괄적인 규칙을 덮는 기존 관례를 따릅니다") |
+| 상태 키(표준 `readOnly`, `controls.readOnly`·`controls.disabled`·`controls.visible`·`controls.active`) | 코어에는 글로벌이 없다(13라운드 답 1). 그 노드에만 걸리고 조상의 상속은 없다. 자손을 거는 길은 부모의 `controls.children`과 켜진 조각의 `controls`뿐이다. 로컬 선언이 겹치면 잠금은 하나라도 참이면 잠기고 표시는 모두 참이어야 켜진다. 터미널이 아닌 객체 노드를 대상으로 한 잠금은 입력이 없으므로 효과가 없고, 배열 노드의 잠금은 렌더 계층이 아이템 추가·삭제·이동 입력에 적용하며, 터미널 객체·배열은 입력이 있으므로 리프와 같다. `active`·`visible`은 구조상 하위 트리를 가린다. Form 속성 `readOnly`·`disabled`는 렌더 계층이 참일 때만 거는 전체 잠금이다(P5) |
+| `options`·`presentation`의 키(그룹 단위) | 뒤가 앞을 덮되 그룹 객체(`options`, `presentation`)는 깊은 병합이다. 빈 객체에서 시작해 조각 순서대로 적용하며(작성자 스키마와 앞 조각의 객체를 변이하지 않는다) 객체는 재귀 병합, 함수·원시값은 나중 승, 나중 조각의 `undefined`는 앞 값을 지우지 않는다(`@winglet/common-utils`의 `merge`는 target을 제자리에서 바꾸므로 사본에 적용한다). 배열은 나중 조각의 것으로 통째 교체한다(14라운드 답 O-11. `merge`에 배열 전략 옵션을 더해 사본에 적용한다) |
+| 값·동작 키(`controls.derived`, `controls.injectTo`, `controls.unsetValue`, `controls.resetInteraction`) | 병합하지 않는다. 선언마다 규칙 하나이며 같은 대상은 파생 단계의 같은 대상 규칙이 푼다(ADR 0007) |
+| 선언·정책 키(`controls.children`, `controls.discriminator`, `controls.watch`, `controls.unsetOnInactive`) | 병합하지 않는다. `children`과 `unsetOnInactive`는 선언한 조각의 층에서 각각 효력을 가진다(나감 비움 규칙과 같은 대상 규칙이 층으로 푼다). `watch`는 경로의 합집합. `discriminator`는 호스트에 하나이며 둘이 다르면 청사진 오류(15라운드) |
 | `writeOnly`, `$comment`, `examples` | 주석 키워드와 같다(뒤가 앞을 덮는다) |
 
 - 게이트 없는 `oneOf`·`anyOf` 분기가 공유 노드에 둔 주석·표현·상태 키는 그 노드의 유일한 선언일 때만 쓴다(원장 §4).
 - `default`의 겹침은 노드가 생기는 순간에만 뜻이 있다. 채움은 노드가 생길 때 한 번이기 때문이다(`07-conclusions.md` §4.22).
-- `options`를 깊게 병합하는 이유는 그 안에 객체·함수·핸들러가 들기 때문이다(소유자 답 18).
+- 그룹 객체를 깊게 병합하는 이유는 그 안에 객체·함수·핸들러가 들기 때문이다(소유자 답 18. 오늘의 `options`가 15라운드에 `options`·`presentation`으로 나뉘었다).
 - **메모.** 유효 스키마는 활성 덧씌움 집합(그 노드에 얹힌 켜진 조각들의 집합)마다 메모한다. 같은 집합이면 같은 참조를 돌려준다.
 - **통지.** 유효 스키마가 바뀐 노드는 통지의 배달 집합에 든다(ADR 0008). 게이트 조각이 켜지거나 꺼지면 그 조각이 덧씌운 노드가 여기에 해당한다.
 - **이주.** 오늘 `intersectSchema`의 먼저-승 목록(`intersectSchema/utils/constants.ts:8-20`)은 주석 키워드(`title`, `description`, `$comment`, `examples`, `default`, `format`)와 함께 검증 키워드(`additionalProperties`, `patternProperties`, `prefixItems`)와 상태 키 `readOnly`를 섞어 두었다. 특수 목록(`type`, `enum`, `required` 등)은 교차하고, 나머지(`FormTypeInput`, `options`, `computed`, `&` 키)는 나중 것이 통째로 덮는다(`processOverwriteFields.ts:15-25`). 병합표로 옮기면 세 검증 키워드는 교차로, `readOnly`는 상태 키의 규칙으로, 주석 키워드는 먼저-승에서 나중-승으로, `options`는 통째 덮기에서 깊은 병합으로 바뀐다. `enum`의 교차가 공집합일 때 런타임 교차의 throw는 §3에 따라 사라지고 정적 연언의 throw만 남는다.
@@ -111,7 +113,7 @@ Fragment {
 
 - 같은 이름 + 같은 타입이면 노드 하나를 공유한다 — 소유자: "동의합니다."
 - 타입이 다르면 오류 — 소유자: "타입이 달라버리면 우리로서는 답이 없지만(이 경우엔 오류가 throw 되겠지)." 개정분은 이 오류를 **분석 단계의 throw에서 런타임의 충돌 보고로** 옮긴다. 소유자가 순환에 대해 택한 방침("돌려보고 터지는 걸 개발 단계에서 알려준다", ADR 0007)과 같은 방향이지만 이 규칙에 대한 확인은 따로 받아야 한다.
-- `&discriminator`는 예외적 허용이며 분기 스키마를 고치지 않는다 — 소유자(22): "동의합니다. 이 경우에 대한 예외적 허용을 하죠. … 우리는 "&active": 을 더하는거지 스키마를 수정하는건 아니니까".
+- `controls.discriminator`는 예외적 허용이며 분기 스키마를 고치지 않는다 — 소유자(22): "동의합니다. 이 경우에 대한 예외적 허용을 하죠. … 우리는 "&active": 을 더하는거지 스키마를 수정하는건 아니니까".
 - 병합표 — 소유자(7): "세부적인 규칙이 포괄적인 규칙을 덮는 기존 관례를 따릅니다". (16·17): 예. (18): "깊은 병합을 했으면 합니다. … 이때는 common-utils 의 merge 를 쓰죠". (12): "props 로 전달되는 글로벌 값이 개별 값을 덮도록 하는게 맞습니다. rootJSONSchema 도 props 와 동치". (13): "글로벌과 로컬만 보고, 중간단계 상태 상속은 구현을 하지 않으려고 합니다". (13라운드 1, 12를 개정): "글로벌 readOnly 나 disabled 같은 개념은 없애고 모든 control 필드는 자체 노드만 지원. children 그룹은 예외." (13라운드 3): "제어용 필드들에 대해서만 &를 붙이는 방향으로 가자."
 
 ## 결과
@@ -122,14 +124,14 @@ Fragment {
 
 ## 미결
 
-- **`&discriminator` 변환의 세부.** 분기에 그 키의 `const`·`enum`이 없을 때 그 분기를 어떻게 다루는가. 분기의 `$ref`와 `allOf` 항목 안의 `const`를 어디까지 찾는가(4차 E14의 평탄화와 null 분기 처리를 되살릴 것인가). 분기가 자기 `&active`도 가질 때 둘을 어떻게 합치는가. 회귀 표본으로는 `spikes/guard-cost/redteam3/corpus.mjs`의 14종(pydantic 2.9, OpenAPI 3.0·3.1, zod-to-json-schema 3.23, TypeBox 0.32, typescript-json-schema 0.64, 손수 쓴 `anyOf`)을 쓸 수 있다.
+- **`controls.discriminator` 변환의 세부.** 분기에 그 키의 `const`·`enum`이 없을 때 그 분기를 어떻게 다루는가. 분기의 `$ref`와 `allOf` 항목 안의 `const`를 어디까지 찾는가(4차 E14의 평탄화와 null 분기 처리를 되살릴 것인가). 분기가 자기 `controls.active`도 가질 때 둘을 어떻게 합치는가. 회귀 표본으로는 `spikes/guard-cost/redteam3/corpus.mjs`의 14종(pydantic 2.9, OpenAPI 3.0·3.1, zod-to-json-schema 3.23, TypeBox 0.32, typescript-json-schema 0.64, 손수 쓴 `anyOf`)을 쓸 수 있다.
 - **union 호스트 수준 에러의 라우팅.** `instancePath`가 union 호스트 자신이고 `schemaPath`가 union 키워드를 지나는 에러(`const` × N, `required` × N, `oneOf`)를 어디에 보이는가. 4차는 판별 노드에 모으자고 제안했으나 판별식 식별이 지워져 전제를 잃었다. 규칙은 ADR 0004에 적는다(Q12, E17).
 - **종류가 조건에 따라 바뀌는 슬롯.** `type: ['string', 'number']`, 원시 타입끼리의 `anyOf`. nullable 말고는 아직 다루지 않았다. 값 union(`oneOf: [string, object]`)도 청사진 모델 밖이다.
 - **배열.** `items`/`prefixItems` 안의 조각, 아이템 단위의 게이트 평가 — ADR 0011. `contains`와 튜플은 Q13.
 - `$ref`의 재귀 스키마에서 조각의 정적 열거가 어디서 끝나는가. 현재 `$ref` 해석 깊이의 기본값은 1이다(`getResolveSchema.ts:18-28`).
 - 따로 컴파일한 게이트가 `$id` 기저 URI와 `$dynamicRef`의 동적 범위에서 문맥 안의 평가와 같은 답을 내는가(ADR 0004).
-- 조각이 `FormTypeInput`을 더하거나 빼 터미널 전략이 바뀌는 경로 — 원장 §6.
+- 조각이 `presentation.FormTypeInput`을 더하거나 빼 터미널 전략이 바뀌는 경로 — 원장 §6.
 
 ## 되돌림 가능성
 
-청사진의 구체적 형태는 내부 구조여서 바꾸기 쉽다. 노드 공유 규칙은 값 보존 동작을 정하므로 공개 후에는 바꾸기 어렵다. `&discriminator`는 예약 층의 공개 키이므로 들이면 되돌리기 어렵다.
+청사진의 구체적 형태는 내부 구조여서 바꾸기 쉽다. 노드 공유 규칙은 값 보존 동작을 정하므로 공개 후에는 바꾸기 어렵다. `controls.discriminator`는 예약 층의 공개 키이므로 들이면 되돌리기 어렵다.
