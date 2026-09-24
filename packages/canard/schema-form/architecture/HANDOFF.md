@@ -1,10 +1,10 @@
 # 핸드오프 — 이어받는 세션이 먼저 읽는 것
 
-갱신: 2026-09-23 (소유자 답 반영, 원리 원장 5차, ADR 5차 진행 중). 브랜치 `refactor/schema-form-internal-architecture`(원격에 있음). 이 디렉터리는 npm 배포물에 들어가지 않는다.
+갱신: 2026-09-24 (소유자 답 반영, 원리 원장 5차, ADR 5차 진행 중). 브랜치 `refactor/schema-form-internal-architecture`(원격에 있음). 이 디렉터리는 npm 배포물에 들어가지 않는다.
 
 ## 1. 지금 어디에 있는가
 
-`@canard/schema-form`의 전면 재설계를 **설계 단계**에서 진행 중이다. 코드는 한 줄도 바꾸지 않았다. 설계는 열한 라운드의 검토를 거쳤고 ADR 0002·0003·0005·0006·0007·0008·0013은 5차, 나머지는 4차(5차 주 있음)다. 아직 끝나지 않았다.
+`@canard/schema-form`의 전면 재설계를 **설계 단계**에서 진행 중이다. 코드는 한 줄도 바꾸지 않았다. 설계는 열네 라운드의 검토를 거쳤고 ADR 0002·0003·0005·0006·0007·0008·0013은 5차, 나머지는 4차(5차 주 있음)다. 아직 끝나지 않았다.
 
 | 라운드 | 대상 | 결과 |
 | ------ | ---- | ---- |
@@ -21,6 +21,7 @@
 | 11 | 2026-09-23 | 소유자 답 26개의 정합성 검증(검증자 claude + antigravity 교차, 둘 다 조건부 통과), ADR 일곱 5차의 원장 대조 검증과 수정 25건 적용, `02-target-overview.md` 5차와 그 검증·수정 12건, 생성기 스키마 14종 실측(`spikes/round11-corpus`). 파일: `reviews/round-11-owner-answers-check.md`, `reviews/raw-round11-owner-answers-{claude,antigravity}.md`, `spikes/round11-corpus/REPORT.txt` |
 | 12 | 2026-09-24 | 소유자 답 정합성 검증의 확인 항목 여덟을 검토 문서로 물어 답 22개를 받음(7건 확정). 레드팀 공격 둘(루트 스키마 글로벌 잠금 제거, 나감 비움 기본)을 검증자(오늘 코드 탐침)와 antigravity에게 독립으로. 오류·경고 분류를 오늘 코드 체계로 다시 구성. `&clearValue`→`&unsetValue`. 파일: `reviews/round-12-owner-review.md`, `round-12-owner-answers.md`, `round-12-derivation.md`, `raw-round12-*.md` |
 | 13 | 2026-09-24 | 레드팀 뒤 남은 판단 넷을 물어 답을 받음: 코어에 글로벌 잠금 없음(루트 키 특수 처리 삭제, Form 속성은 렌더 계층의 전체 잠금), 나감 비움은 선택이고 기본은 유지, `&`는 제어 키에만(표현 키는 접두 없음), 규칙 충돌은 종류 순위 + 같은 종류는 문서 순서. 파일: `reviews/round-13-owner-review.md`, `round-13-owner-answers.md` |
+| 14 | 2026-09-24 | 다섯 가치(일관성·투명성·예측가능성·고속성·표현자유도)에 비춘 스웜 검증 여덟(가치 축 다섯·현행 코드 대조·코드 사실·antigravity). 원리는 그대로, 편집자 문장의 어긋남·빈틈 스물넷 묶음을 원칙으로 닫아 반영, 소유자 판단 열하나는 `reviews/round-14-owner-review.md`. a-z 설계서 `08-design-a-to-z.md`와 독립 PR 단계 계획. 파일: `reviews/round-14-values-check.md`, `raw-round14-*.md`, `reviews/round-14-owner-review.md`, `round-14-owner-answers.md`, `adr/0014-error-policy.md`(제안 3판) |
 
 수락된 큰 결정(소유자 발언 인용은 각 ADR의 "합의 근거"):
 
@@ -123,4 +124,4 @@ node architecture/spikes/work-loop/codex3/run.mjs
 
 ## 다음 세션
 
-12·13라운드에서 소유자 판단이 필요한 항목이 모두 답을 받았다. 원장 `03-mental-model.md`에 반영했고, 02·07·ADR로의 전파는 검증자의 수정 명세로 진행 중이다(HANDOFF 갱신 시점의 상태는 아래 6절 확인). 남은 소유자 결정은 둘뿐이다: 나감 정책 키의 이름(`unsetOnInactive`), Form 속성 `readOnly`·`disabled`가 렌더 계층의 전체 잠금으로 남는다는 확인. 그다음 슬라이스 1(청사진 분석)로 들어간다. 그 전에 07 §3–4의 소유자 통과가 남아 있다. 이주 항목으로 새로 확인된 것: 루트 키 다섯의 특수 처리와 README "Priority System", 로컬 순위 사슬→OR, 꺼질 때 원본 비움과 로드 값 복원, `required`의 가상 이름 재작성, `const`·`enum` 자동 감지, 맨 키 `disabled`·`visible`·`active`→`&`. 커밋은 하지 않았다.
+14라운드(다섯 가치 스웜 검증)에서 원리는 흔들리지 않았고 편집자 문장의 어긋남·빈틈은 원칙으로 닫아 반영했다(`reviews/round-14-values-check.md` §3, 게이트 두 번). 소유자 판단 열하나는 답을 받았다(`reviews/round-14-owner-answers.md`): O-1·2·3·6·7·9·11 확정 반영, O-8은 검증자 확인 뒤 규칙을 원장 §3에 적었고 소유자 확인과 남은 결정 둘이 있다. O-2·4·5·10은 소유자 지시로 오류 처리 정책을 확장 조사해 ADR 0014(제안 3판)로 묶었다 — 소유자 확인 대기. a-z 설계서 `08-design-a-to-z.md`(§16 검증 결과, §17 독립 PR 계획: 개발은 PR 아홉, 원샷은 전환 PR과 `master` 병합뿐)가 소유자 최종 검토 문서다. 다음 세션은 (1) ADR 0014와 O-8의 소유자 확인, (2) 08의 절 단위 통과, (3) PR-0(문서 최종화, 프로토타입 v7)부터 한다. 커밋은 하지 않았다.

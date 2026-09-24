@@ -53,7 +53,7 @@ ADR 0006(노드 트리가 곧 상태)과 0007(작업 루프)이 들어오면 값
 소유자는 이 방식이 난해하면 끊어도 된다고 했다(그러면 터미널로 쓰려는 사용자가 `terminal: true`를 명시한다). 제안은 끊지 않는 것이다.
 
 - **암묵 규칙 유지.** 다만 core는 `isReactComponent`를 부르지 않고 "`FormTypeInput`이 **있고 null이 아니다**"만 본다. core의 React 런타임 의존이 사라진다(`00-goals.md` C3, `open-questions.md` Q8 닫힘). 컴포넌트를 감지하는 것은 렌더러를 아는 것이므로 P5 위반이다.
-- **명시적 재정의를 양방향으로 둔다.** `terminal: false` — 꽂은 입력이 `ChildNodeComponents`를 쓴다. `terminal: true` — 컴포넌트 없이도 터미널로 쓴다. 키의 이름과 `&` 접두 여부는 ADR 0003의 미결과 함께 정한다.
+- **명시적 재정의를 양방향으로 둔다.** `terminal: false` — 꽂은 입력이 `ChildNodeComponents`를 쓴다. `terminal: true` — 컴포넌트 없이도 터미널로 쓴다. 오늘도 `terminal: true`와 `terminal: false`가 양방향으로 있다(`getNodeGroup.ts:20-21`). 유지한다.
 - **혼란스러운 경우를 드러낸다.** 터미널이 된 노드의 입력이 비어 있는 `ChildNodeComponents`를 읽으면 개발 모드에서 경고한다(`00-goals.md` C2).
 - 호출자가 넘긴 객체는 바꾸지 않는다. 터미널 노드가 참조를 들 수 있으므로 `defaultValue`는 분배 시 복사하거나 불변으로 취급한다(F24, T-19).
 
