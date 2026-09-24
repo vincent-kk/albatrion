@@ -1,6 +1,6 @@
 # 설계서 A부터 Z까지 — 소유자 최종 검토용
 
-상태: **14라운드(2026-09-24), 15라운드 반영.** 이 문서는 새 결정을 만들지 않는다. 원리 원장 [`03-mental-model.md`](./03-mental-model.md), 결정 기록 `adr/`, 목표 구조 [`02-target-overview.md`](./02-target-overview.md), 결론 [`07-conclusions.md`](./07-conclusions.md)에 흩어진 결론을 **처음부터 끝까지 한 번에 읽히도록** 다시 쓴 것이다. 이 문서와 원장이 다르면 원장이 맞다. 소유자가 이 문서를 절 단위로 통과시키면 개발 단계로 들어간다. 14라운드 검증(다섯 가치에 비춘 스웜 검증)의 판정은 §16과 [`reviews/round-14-values-check.md`](./reviews/round-14-values-check.md)에 있다.
+상태: **14라운드(2026-09-24), 15·16라운드 반영.** 이 문서는 새 결정을 만들지 않는다. 원리 원장 [`03-mental-model.md`](./03-mental-model.md), 결정 기록 `adr/`, 목표 구조 [`02-target-overview.md`](./02-target-overview.md), 결론 [`07-conclusions.md`](./07-conclusions.md)에 흩어진 결론을 **처음부터 끝까지 한 번에 읽히도록** 다시 쓴 것이다. 이 문서와 원장이 다르면 원장이 맞다. 소유자가 이 문서를 절 단위로 통과시키면 개발 단계로 들어간다. 14라운드 검증(다섯 가치에 비춘 스웜 검증)의 판정은 §16과 [`reviews/round-14-values-check.md`](./reviews/round-14-values-check.md)에 있다.
 
 ## 0. 읽는 법
 
@@ -33,7 +33,7 @@
 | 일관성 | 같은 개념은 어디서나 같은 이름·같은 규칙·같은 우선순위다. 하나의 개념에는 하나의 장치 | G4(하나의 개념에 하나의 장치), G2(층의 분리), P3(형상은 순수 함수) |
 | 투명성 | 작성자와 호출자가 "왜 이 값이 이렇게 됐는가"를 문서와 런타임에서 알 수 있다 | C2(작성자 실수의 가시성), P2(원본을 쓰는 주체는 셋뿐), 오류·경고 분류표(§11) |
 | 예측가능성 | 같은 스키마·같은 입력이면 문서만으로 결과를 미리 말할 수 있다 | G5(한 장으로 설명되는 라이프사이클), G1(판정의 동치), P1(판정은 검증기의 것) |
-| 고속성 | 입력 한 번에 드는 일이 작고 상한이 있으며 스키마 크기에 비례 이상으로 커지지 않는다 | G6(비용은 변경에 비례), G7(반응의 척추 보존), 예산 다섯(§7) |
+| 고속성 | 입력 한 번에 드는 일이 작고 상한이 있으며 스키마 크기에 비례 이상으로 커지지 않는다. 필요한 것만 만들고(최소 생성), 같은 일을 되풀이해도 메모리가 자라지 않으며(메모리 안정), 한 번 만든 것은 캐시해 다시 만들지 않는다(캐싱을 통한 속도, 재생성 방지). 목적은 모바일에서도 돌아가는 안정성과 경제성이다(16라운드 답 10) | G6(비용은 변경에 비례), G7(반응의 척추 보존), 예산 다섯(§7), 가드·사본 캐시(§11.1), 유효 스키마 메모(§4) |
 | 표현자유도 | 실제 폼 요구를 스키마와 `controls`의 명령으로 적을 수 있고 표준 JSON Schema 표현을 잃지 않는다 | G2, G8(보편 관행), 축 6·7항(`controls`는 값을 제어하는 층, JSON Schema 표현은 `controls`로 대체 가능), P4(방출은 정책) |
 
 가치끼리 부딪히는 자리에서 설계가 고른 쪽은 §16.2에 모아 적었다.
@@ -176,7 +176,7 @@ diagnostics  마지막 로드 이후의 기록 { status: 'stable' | 'degraded', 
 2. **노드 공유.** 같은 이름·같은 종류(string, number, boolean, null, object, array)면 어느 조각에서 선언했든 노드 하나다. 켜진 선언이 하나라도 있으면 존재한다. 게이트 없는 분기끼리 같은 이름·다른 종류를 선언하면 늘 함께 켜지므로 충돌이 확실하고, 게이트에 달린 선언이 실제로 동시에 켜지면 그때 충돌이다. 둘의 드러남은 ADR 0014(제안)가 정한다: 앞은 청사진 오류, 뒤는 정착 오류(5차 문서는 경고였다. 소유자 14라운드: "경고만 일어나고 동작하는 것처럼 보이는 게 더 위험합니다").
 3. **`controls.discriminator` 변환.** 작성자가 union 호스트에 적었을 때만 분기별 `controls.active`로 바꾼다. 분기에 그 키의 `const`·`enum`이 없으면 게이트 없음으로 둔다. `$ref`·`allOf` 평탄화, 분기 자체의 `controls.active`와의 결합(AND)은 슬라이스 1의 설계 항목이다.
 4. **병합표 준비.** §9의 규칙을 적용할 준비를 한다. 적용은 정착의 계산 단계에서 켜진 조각에 대해 한다.
-5. **게이트 컴파일.** `if` 서브스키마를 검증기의 `compileGuard`로 컴파일한다(동기, boolean). 컴파일은 작성된 스키마의 위치당 한 번이며 폼 인스턴스 사이에 공유한다(ADR 0004). 공유의 방식은 슬라이스 4의 설계 항목이다(ADR 0009: 가드 하나 70–270 µs, 200개면 14–54 ms).
+5. **게이트 컴파일.** `if` 서브스키마를 검증기의 `compileGuard(root, pointer)`로 컴파일한다(동기, boolean). 떼어 낸 `if`는 `$ref` 때문에 단독 컴파일이 실패하므로 사본의 루트와 위치를 넘긴다(ADR 0004의 '결정' 절, 16라운드 실행 확인). 캐시는 코어가 검증기 인스턴스마다 WeakMap<작성 루트, { 사본, 가드 표 }>로 들고 키가 작성 루트이므로, 컴파일은 작성된 스키마의 위치당 한 번이며 폼 인스턴스 사이에 공유한다(§11.1). 공유의 나머지 세부는 슬라이스 4의 설계 항목이다(ADR 0009: 가드 하나 70–270 µs, 200개면 14–54 ms).
 6. **`controls`의 식 컴파일과 역의존 표.** 식이 읽는 경로를 정적으로 뽑아 역의존 표(경로 → 그 경로를 읽는 식을 가진 노드)를 만든다. 표시 단계는 쓰기 노드의 조상과 그 역의존 노드의 조상을 재계산 목록에 넣는다. 뽑을 수 없는 식은 `controls.watch`로 작성자가 적는다(오늘의 의존 경로 구독과 같은 역할).
 7. **청사진 오류와 경고.** 형상이 정해지지 않는 모순은 throw(`JSONSchemaError`), 그 밖은 개발 모드 로그다(§11.3).
 
@@ -340,7 +340,7 @@ flowchart TD
 
 ### 11.1 계약
 
-검증기는 내장하지 않고 플러그인으로 받는다. `compile(schema)`는 전체 검증(비동기 허용), `compileGuard(schema)`는 `if` 게이트를 평가하는 동기 boolean 함수다. 둘 다 작성된 스키마(키워드 위치의 그룹 객체 셋을 지운 사본, §3.4)를 받는다. 검증기는 두 자리에서 온다: 전역 기본인 플러그인과, 그 폼만의 인스턴스를 주입하는 Form 속성 `validatorFactory`(14라운드 확정: 없애지 않고 넓힌다. 같은 계약 `compile` + `compileGuard`를 받고 플러그인보다 앞선다). 미등록 판정은 둘을 함께 본다. 둘 다 없으면서 검증 모드가 `None`이 아니거나 스키마에 `if` 게이트가 있으면 청사진 오류다(ADR 0014 제안. ADR 0004의 "미등록이면 조각 없음"을 대체하며 소유자 확인 대기). `compileGuard`의 시그니처, 인스턴스 사이 공유의 방식, `$id`·`$dynamicRef` 문맥, 컴파일 실패 정책은 슬라이스 4의 설계 항목이다.
+검증기는 내장하지 않고 플러그인으로 받는다. `compile(schema)`는 전체 검증(비동기 허용), `compileGuard(root, pointer)`는 `if` 게이트를 평가하는 동기 boolean 함수다. `compile`은 사본을, `compileGuard`는 사본의 루트와 위치를 받는다. 사본은 검증기 인스턴스와 작성 루트 객체의 쌍마다 한 번 만들어 코어가 메모한다(검증기 인스턴스마다 WeakMap<작성 루트, { 사본, 가드 표 }>). 플러그인의 `compileGuard`는 가드 캐시를 들지 않는다. 사본 루트의 등록(루트마다 한 번의 `addSchema`와 고유 키 배정)은 플러그인의 검증기 인스턴스가 든다(ajv는 같은 키의 재등록에 실패한다, 16라운드 실행 확인). 캐시와 등록의 이 소유는 16라운드 편집자 결정이며 Vincent가 확정했다(16라운드 답 10). `$id`가 있는 사본 루트는 고유 키를 주어도 `$id`로 충돌하며(ajv 8.17.1 실행 확인), 그 처리는 PR-4의 '같은 `$id` 루트의 중복 등록 처리'가 정한다. 살아 있는 트리는 자기 작성 루트 객체를 강하게 든다. 사본 루트의 등록과 가드는 그 작성 루트를 쓰는 살아 있는 트리가 있는 동안 남고, 마지막 트리가 폐기되면 크기 상한이 있는 최근 해제 목록에 두었다가 밀려날 때 푼다(참조 세기 + 최근 해제 목록). 참조 수는 커밋(효과)에서 올리고 그 정리에서 내린다. 렌더에서 만들어졌으나 커밋되지 않은 트리의 작성 루트는 참조 수 0으로 최근 해제 목록에 든다. 목록에서 밀려날 때 플러그인 등록과 함께 코어 캐시의 그 작성 루트 항목도 지운다(다음 마운트는 사본·가드·등록을 함께 다시 만든다). 같은 스키마 객체로 다시 마운트하면 다시 컴파일하지 않고(재생성 방지), 메모리 상한은 수거 시점과 무관하게 '살아 있는 작성 루트의 수 + 목록 크기'다(메모리 안정). 16라운드 답 10에서 편집자 도출이며 해제 방식은 16라운드 스웜 수렴(편집자 결정)으로 정했다(`FinalizationRegistry`는 정리 콜백의 호출이 보장되지 않아 기본 경로로 쓰지 않는다). 코어의 캐시는 WeakMap이지만 플러그인의 등록과 컴파일 결과는 강한 참조이기 때문이다. 같은 `$id`의 새 루트가 등록될 때 참조 수가 0인 옛 루트의 등록은 먼저 푼다. 목록의 크기와 해제 계약의 세부는 슬라이스 4의 설계 항목이다(09 §2.6의 여덟째). 검증기는 두 자리에서 온다: 전역 기본인 플러그인과, 그 폼만의 인스턴스를 주입하는 Form 속성 `validatorFactory`(14라운드 확정: 없애지 않고 넓힌다. 같은 계약 `compile` + `compileGuard`를 받고 플러그인보다 앞선다). 미등록 판정은 둘을 함께 본다. 둘 다 없으면서 검증 모드가 `None`이 아니거나 스키마에 `if` 게이트가 있으면 청사진 오류다(ADR 0014 제안. ADR 0004의 "미등록이면 조각 없음"을 대체하며 소유자 확인 대기). `compileGuard`의 `$id`·`$dynamicRef` 문맥과 컴파일 실패 정책은 슬라이스 4의 설계 항목이다.
 
 ### 11.2 검증
 
@@ -367,7 +367,7 @@ flowchart TD
 ## 12. 통지와 렌더 계층 (ADR 0008, 0011)
 
 - **통지는 커밋 뒤 1회, 루트 디스패처, 동기.** 렌더 계층은 정착된 상태만 본다. 동기여야 제어 입력의 캐럿이 남는다(계승 제약 T-1).
-- **`batch(fn)`.** fn 안의 쓰기를 표시만 하고 끝에서 정착 한 번·통지 한 번. 중첩은 가장 바깥이 이긴다. 정착 횟수가 바뀌므로 채움과 `controls.injectTo`의 결과가 순차 호출과 다를 수 있다(축의 귀결, 문서화 대상).
+- **`batch(fn)`.** fn 안의 쓰기를 표시만 하고 끝에서 정착 한 번·통지 한 번. 중첩은 가장 바깥이 이긴다. `fn` 안의 `reset`은 경로와 무관하게 그 로드를 곧바로 정착하고 그 커밋은 `fn` 끝의 통지 한 번에 합류한다(ADR 0008 §3, 09 §2.6의 열째, 16라운드 스웜 수렴(편집자 결정)). 정착 횟수가 바뀌므로 채움과 `controls.injectTo`의 결과가 순차 호출과 다를 수 있다(축의 귀결, 문서화 대상).
 - **루트 `onChange`는 최외곽 동기 진입당 1회.** 디바운스 없음.
 - **진단.** 루트의 `diagnostics`는 마지막 로드 이후의 작업 기록이다: `{ status: 'stable' | 'degraded', cause?: 'budget' | 'expression' | 'injectTarget' | 'sharedConflict', exceededBudget?, iterations?, commit? }`, 모든 칸은 `commit`의 커밋을 기술한다(모양과 이름은 ADR 0014 제안. 다음 로드까지의 지속은 14라운드 답 O-2). 이벤트 `UpdateDiagnostics`(바뀐 커밋에만), Form 속성 `onDiagnosticsChange`. core는 제출을 모르며, `degraded` 동안의 제출 거부는 `<Form>`의 제출 경로가 한다.
 - **core는 React를 모른다**(C3). 스키마의 컴포넌트 자리는 core에서 불투명한 값이다. 명령 `focus`·`select`·`refresh`·`remount`는 렌더러와 무관한 표현 계층의 어휘이며 원본을 쓰지 않는다. `Refresh`는 공개 쓰기 옵션이 아니며 core가 쓰기의 출처로 판단한다(자기 입력에서 온 쓰기에는 내지 않으므로 타이핑 중 리마운트가 없다).
@@ -383,7 +383,7 @@ flowchart TD
 | 렌더 계층(노드 단위) | `FormTypeInput`과 정의 목록 `formTypeInputDefinitions`. 렌더러 넷 `FormTypeGroupRenderer`·`FormTypeLabelRenderer`·`FormTypeInputRenderer`·`FormTypeErrorRenderer`(넷 모두 플러그인 키이자 같은 이름의 Form 속성. 오늘의 `FormGroup`·`FormLabel`·`FormInput`·`FormError`와 `CustomFormTypeRenderer`). 공통 props `FormTypeRendererProps`, 문맥 `FormTypeRendererContext` | 15라운드 |
 | 합성 API | `Form.Group`·`Form.Label`·`Form.Input`·`Form.Error`·`Form.Render`와 props `FormGroupProps`·`FormLabelProps`·`FormInputProps`·`FormErrorProps`·`FormRenderProps`. `path`를 받아 그 노드의 일부를 그리며 `Form.Group`·`Form.Label`·`Form.Input`·`Form.Error`는 같은 이름의 `FormTypeXRenderer`를 부르고 `Form.Render`는 소비자가 직접 그린다 | 그대로 |
 | 쓰기 옵션 | `SetValueOption.Overwrite`(기본), `Merge`, `DisableAutomaticWrites`, `EnableAutomaticWrites` | §8.2 |
-| 쓰기 | `setValue(value 또는 updater, option?)`, `reset(option?)`, 배열 `push`·`remove`·`update` | `setSelectedBranch`는 없다 |
+| 쓰기 | `setValue(value 또는 updater, option?)`, `FormHandle.reset(option?)`(억제 비트 둘만, ADR 0013), 배열 `push`·`remove`·`update` | `setSelectedBranch`는 없다 |
 | 값 읽기 | `value`(합성 값), `outputValue`(방출 값, 옛 `normalizedValue`), `getInactiveValues(path)` | `FormHandle.getValue()`는 루트의 `outputValue` |
 | 진단 | `diagnostics`, 이벤트 `UpdateDiagnostics`, Form 속성 `onDiagnosticsChange` | §12 |
 | 배치 | `batch(fn)` | §12 |
@@ -398,7 +398,7 @@ flowchart TD
 
 ## 14. 오늘과 달라지는 것 — 이주 항목
 
-완전한 파괴적 변경이며 `@canard/schema-form`과 플러그인 패키지 전부가 함께 메이저 버전으로 올라간다(C7). 릴리스 노트와 이주 프롬프트(`docs/agents` 경로)를 낸다(C8).
+완전한 파괴적 변경이며 `@canard/schema-form`과 플러그인 패키지 전부가 함께 메이저 버전급 변경으로 올라간다(C7). 판 번호는 1.0.0-beta 프리릴리스 뒤 1.0.0이다(16라운드 소유자 답, 09 §6.2의 열넷째). 릴리스 노트와 이주 프롬프트(`docs/agents` 경로)를 낸다(C8).
 
 | # | 오늘 | 새 설계 |
 | --- | --- | --- |
@@ -434,6 +434,13 @@ flowchart TD
 | 30 | 평면 `&키` 축약 | 사라진다. 제어 키는 `controls` 안에만(15라운드) |
 | 31 | 맨 키 `terminal`·`virtual`·`propertyKeys`, `formType`·`FormTypeInput`·`FormTypeInputProps`·`FormTypeRendererProps`·`errorMessages`, `options.trim`, `options`의 플러그인 자유 칸 | `options.terminal`·`options.virtual`·`options.propertyKeys`, `presentation`의 다섯 키, `presentation.trim`, 자유 칸 |
 | 32 | 플러그인 키 `FormGroup`·`FormLabel`·`FormInput`·`FormError`, Form 속성 `CustomFormTypeRenderer`, 타입 `FormTypeRenderer` | `FormTypeGroupRenderer`·`FormTypeLabelRenderer`·`FormTypeInputRenderer`·`FormTypeErrorRenderer`. Form 속성 `CustomFormTypeRenderer`는 `FormTypeGroupRenderer`가 되고 같은 이름의 Form 속성 `FormTypeLabelRenderer`·`FormTypeInputRenderer`·`FormTypeErrorRenderer`가 새로 생긴다. `FormTypeInputProps` 안의 prop `FormTypeRenderer`도 `FormTypeGroupRenderer`로 바꾼다. 합성 API `Form.*`와 그 props는 그대로 |
+| 33 | Form 속성 `validatorFactory`는 함수 하나 | `{ compile, compileGuard }` 객체. 플러그인과 같은 계약(§11) |
+| 34 | 검증기 플러그인 계약은 `compile`뿐 | `compileGuard(root, pointer)`와 `rejectedKey`가 더해진다. ajv6·7·8 플러그인이 동기 가드 경로를 구현한다 |
+| 35 | `node.jsonSchema`는 마운트 때 고정된 값 | 켜진 조각을 병합한 유효 스키마. 활성 조각 집합마다 메모되어 같은 집합이면 같은 참조, 바뀌면 통지의 배달 집합에 든다(§4·§7·§9) |
+| 36 | `FormHandle.reset`은 `<Form>` 안의 `RootNodeContextProvider` 아래를 다시 마운트하고(`showError`·첨부 파일 맵 인스턴스·provider는 남고 맵의 내용은 비운다) 그때 새 `jsonSchema`·`defaultValue` prop을 반영 | 로드다(09 §2.6, 16라운드 스웜 수렴(편집자 결정)). 같은 스키마(같은 객체이거나, JSON 부분이 키 순서까지 깊게 같고 함수·컴포넌트 칸이 참조로 같음)면 루트의 로드 한 번이고 트리·캐시·노드 참조가 남는다. 다르면 reset 호출 안에서 트리와 캐시를 새로 만들고(비용은 `<Form key>`의 재생성과 같다) 돌아오기 전에 핸들을 새 트리로 바꾼다. 값은 호출 시점에 커밋된 prop이며, 같은 처리기에서 prop을 바꾼 reset은 그 커밋에서 한 번 더 반영한다(끝에서 새 prop이 반영된다. 그 경로에서는 `onChange`가 두 번이고, `startTransition` 안에서는 첫 로드의 옛 값이 한 번 그려진다). 입력은 자식 프록시를 그리지 않는 입력만 다시 마운트하고(오늘은 provider 아래 전부), 대체된 입력의 늦은 쓰기는 버린다. 어느 경로든 `showError`는 prop 값으로 돌아가고(오늘은 유지), `onStateChange`는 상태가 바뀐 때만 내며, 검증 결과는 비운 뒤 `OnChange` 비트가 켜져 있을 때만 한 번 검증한다(오늘은 모드와 무관하게 늘). `onChange`는 방출 값의 참조가 바뀐 때만 낸다(오늘은 늘 낸다). 스키마 객체를 제자리에서 고친 뒤의 reset은 그 변경을 반영하지 않는다(오늘은 reset마다 `clone`해 다시 읽는다). 노드 참조가 reset을 넘어 이어지는 것은 같은 스키마일 때뿐이다. `FormHandle.reset(option?)`은 억제 비트 둘만 받는다 |
+| 37 | 플러그인이 `options.*`에 자유 키를 둠(`protocols`·`lazy`·`minimum`·`maximum` 등)과 맨 키(`lazy`·`radioLabels`·`switchLabels`·`ampm`·`minRows`·`maxRows`) | `presentation.*`로 옮긴다. `options`는 닫힌 다섯 키뿐이라 남겨 두면 청사진 오류 |
+| 38 | 마운트 때 검증 모드와 무관하게 한 번 검증한다(`Form.tsx:139`) | 로드(마운트·reset) 뒤의 검증은 `ValidationMode`의 `OnChange` 비트가 켜져 있을 때만 한 번이다. `OnRequest`만 켠 폼은 마운트 때 검증하지 않는다(09 §2.6의 아홉째, 16라운드 스웜 수렴(편집자 결정)) |
+| 39 | 호출자의 전체 교체 `setValue(V)`는 브랜치에도 Refresh를 내어 객체·배열 입력 아래 서브트리 전체를 다시 마운트한다 | reset과 같은 입력 판정이다. 자식 프록시를 그리지 않는 입력만 다시 마운트하고(값 전체를 스스로 그리는 사용자 브랜치 입력은 오늘처럼 다시 마운트된다), 대체된 입력의 늦은 쓰기는 버린다(09 §2.6의 열넷째, 16라운드 스웜 수렴(편집자 결정)) |
 
 ## 15. 아직 정하지 않은 것 — 슬라이스 안의 설계 항목
 
@@ -445,10 +452,12 @@ flowchart TD
 | `controls` 식 언어의 명세: 허용 문법과 전역 이름, `@` 맥락과 그 변경이 에지인지, `#`·`*` 표기, 경로가 읽는 값(원본인지 방출인지 투영인지 — 게이트는 투영 값), 비활성·없는 노드를 읽을 때의 값, `controls.injectTo`의 함수 형태와 `ctx` 인자, 배열 항목의 색인과 길이를 읽는 문법 | 1·2 전 |
 | `controls.active` 식이 다른 호스트를 읽을 때의 평가 순서, `setValue(undefined)`와 비객체 V의 `Merge`, 되먹임 거부를 호출자에게 알리는 표면 | 2 전 |
 | 프로토타입 v7: 게이트 입력의 `extras`, 같은 순위 규칙, 나감 에지, 전이 라운드 상한이 나감 비움을 포함해 실제로 보장되는지 | 2 전 |
+| 객체 호스트 `default`의 자손 분배 규칙(프로토타입에만 흔적) | 2 전 |
 | 에지의 값 동등 판정(참조인지 깊은 비교인지), `controls.derived` 의존 집합의 출처, 조각의 `controls`에 둔 식 규칙이 나감 에지에서 발화하는 세부 | 3 전 |
-| `compileGuard` 계약 세부, 인스턴스 사이 공유의 방식, `validatorFactory`와 플러그인의 계약 통일, 검증 에러 라우팅, 유효 스키마 변경 이벤트의 표면 | 4 |
+| `compileGuard` 계약 세부, 인스턴스 사이 공유의 나머지 세부(§5·§11.1이 정한 캐시 밖), 사본 루트 등록의 해제 계약 세부(§11.1: 최근 해제 목록의 크기, 참조 수의 증감 시점, 재생성 reset의 같은 `$id`), `validatorFactory`와 플러그인의 계약 통일, 검증 에러 라우팅, 유효 스키마 변경 이벤트의 표면 | 4 |
 | 배열 아이템의 생김과 채움(통째 교체의 identity, `push`가 로드인가, `contains`·`prefixItems`) | 5 |
 | `controls.children`의 대상별 식과 값 키 세부, 조각에서만 선언된 자식을 가리킬 수 있는가, 대상이 형상에 없을 때, 조각이 `presentation.FormTypeInput`을 더하거나 빼는 경로 | 6 |
+| 노드 `resetSubtree()`를 남기는가와 남길 때의 값 출처(§13에 없다. `FormHandle.reset`과는 다른 연산), 폐기된 트리의 참조를 끊는 범위(소비자가 든 옛 노드가 옛 트리를 붙잡는가), 입력 판정(자식 프록시의 마운트 여부)의 구현 확인(안 되면 소유자에게 올린다)(09 §2.6) | 7 전 |
 | 성능 예산 수치(ADR 0009 미결, **소유자 정책**). 기준선은 있다 | 착수 전 |
 
 ## 16. 14라운드 검증 — 다섯 가치에 비춘 판정
@@ -489,24 +498,26 @@ flowchart TD
 
 ### 17.1 원칙
 
-- **배포는 한 번, 개발은 나눈다.** 모든 패키지가 함께 메이저로 올라가고(C7) 호환 계층을 두지 않으므로(00-goals 비목표), `master`로의 병합은 우산 브랜치(`refactor/schema-form-internal-architecture`) 하나가 한 번에 한다. 그 안에서는 PR 아홉으로 나누며, 각 PR은 새 코드와 그 테스트만으로 독립 검증된다.
+- **배포는 한 번, 개발은 나눈다.** 모든 패키지가 함께 메이저 버전급으로 올라가고(C7) 호환 계층을 두지 않으므로(00-goals 비목표), `master`로의 병합은 우산 브랜치(`refactor/schema-form-internal-architecture`) 하나가 한 번에 한다. 그 안에서는 PR 아홉으로 나누며, 각 PR은 새 코드와 그 테스트만으로 독립 검증된다.
 - **옆에 짓는다.** 새 엔진은 옛 `core`와 나란히 새 하위 fractal로 자라며 전환 PR 전까지 `<Form>`과 `nodeFromJSONSchema`에 닿지 않는다. 옛 코드와 새 코드는 상태 소유 방식이 달라 한 트리 안에서 공존할 수 없으므로(antigravity 검토와 같은 판단) 점진 교체는 하지 않는다.
 - **문서가 코드보다 먼저 바뀐다**(filid 규칙). 각 PR은 새 fractal의 `INTENT.md`·`DETAIL.md`로 시작한다. 이름은 책임을 말하는 것으로 짓고(`blueprint`, `settle`, `dispatch`, `validation` 같은), 슬라이스 0에서 확정한다.
-- **원샷이어야 하는 것은 둘뿐이다.** 전환 PR(PR-7)과 `master` 병합(릴리스). 나머지는 독립이다. 전체를 원샷으로 진행할 필요는 없다.
+- **원샷이어야 하는 것은 둘뿐이다.** 전환 PR(PR-7)과 `master` 병합(릴리스). 나머지는 독립이다. 전체를 원샷으로 진행할 필요는 없다. 릴리스는 `master` 병합 뒤의 배포이며, 판 올림 PR을 병합하면 배포 작업 흐름이 시험 관문을 거쳐 자동으로 배포한다(09 §6.2의 일곱째, 16라운드 스웜 수렴(편집자 결정)). 판 번호는 1.0.0-beta 뒤 1.0.0이다(16라운드 소유자 답, 09 §6.2의 열넷째).
 
 ### 17.2 PR 목록
 
+16라운드에 더해진 항목의 전체 목록은 09 §7이다.
+
 | PR | 내용 | 의존 | 착수 전 닫을 것 |
 | --- | --- | --- | --- |
-| PR-0 문서 | 이 문서, 14라운드 기록, ADR 최종 상태, HANDOFF. 프로토타입 v7(게이트 입력의 `extras` 정적 규칙, 같은 순위 동점·정착 단위 순위, 나감 에지, 전이 라운드 상한, 재계산 목록만 순회) | 없음 | 소유자의 O-1 – O-11 답, 이 문서의 절 단위 통과 |
-| PR-1 청사진 | 순수 함수 `blueprint`: 조각 표와 전순서, 노드 공유, `controls.discriminator` 변환(끌어올림 포함), 유효 스키마 병합 함수(교차는 `helpers/jsonSchema`의 교차 연산 재사용), 검증기 앞 제거 규칙 하나, `controls`의 식 컴파일(`helpers/dynamicExpression` 재사용)과 역의존 표, 청사진 오류·경고. 테이블 테스트 | 없음 | `$ref` 재귀, 다중 `type`, `dependentSchemas`·`patternProperties`, 식 언어 명세(§15) |
-| PR-2 노드 트리와 정착 | 노드(리프·객체·터미널·가상), `raw`·`extras`, 표시·계산(호스트 바퀴, 노드 게이트, 투영)·전이(채움, 나감 비움 네 층)·커밋, 예산 다섯과 원본 B(되돌림 기록), `diagnostics`, `SetValueOption`, 게이트는 술어 인터페이스 뒤의 스텁. 정착 루프 테스트(프로토타입 회귀 이식) | PR-1 | `controls.active` 식의 다른 호스트 읽기 순서, 비객체 V의 `Merge`, 되먹임 거부 표면 |
+| PR-0 문서 | 이 문서, 14라운드 기록, ADR 최종 상태, HANDOFF. 프로토타입 v7(게이트 입력의 `extras` 정적 규칙, 같은 순위 동점·정착 단위 순위, 나감 에지, 전이 라운드 상한, 재계산 목록만 순회). 시나리오 패키지 `@aileron/schema-form-scenarios`의 뼈대, vitest `test.projects` 셋, addon-vitest(09 §7) | 없음 | 소유자의 O-1 – O-11 답, 이 문서의 절 단위 통과 |
+| PR-1 청사진 | 순수 함수 `blueprint`: 조각 표와 전순서, 노드 공유, `controls.discriminator` 변환(끌어올림 포함), 유효 스키마 병합 함수(§9 병합표는 새로 쓴다. 오늘의 교차 연산은 먼저 승·얕은 덮어쓰기·무조건 throw라 §9와 다르므로 잎 교차 함수 `intersectEnum`·`intersectConst`·`intersectMinimum`·`intersectMaximum`·`intersectMultipleOf`·`intersectPattern`·`validateRange`를 청사진 밖의 새 fractal로 옮겨(청사진 안에 두면 그것을 가져가는 옛 `helpers/jsonSchema`와 서로 가져오는 고리가 될 수 있다. 이름은 PR-1이 정한다) 이름으로 내보내되, `intersectEnum`·`intersectConst`·`validateRange`는 공집합·충돌에서 던지지 않고 공집합 표시를 돌려주도록 바꾼다. throw는 청사진이 정적 연언을 교차할 때만 한다(§9). 옛 `intersect*Schema`는 공집합 표시를 받으면 오늘처럼 `JSONSchemaError`를 던지도록 import와 함께 고쳐 옛 동작을 PR-7까지 지킨다(§17.1 '옆에 짓는다')), 검증기 앞 제거 규칙 하나, `controls`의 식 컴파일(오늘의 컴파일러 `createDynamicFunction`과 그 `utils`, `JSON_POINTER_PATH_REGEX`, `getPathManager`, `DynamicFunction` 형은 `AbstractNode` 조직 안에 있으므로 PR-1에서 청사진으로 통째로 옮긴다. 새 엔진에서 식을 컴파일하는 곳은 청사진 하나뿐이고(filid 배치 규칙 §1), `helpers/dynamicExpression/`의 `INTENT.md`는 표현식 직접 실행(`eval`, `new Function`)을 금한다. PR-7까지는 옛 엔진도 쓰므로 청사진 진입점이 이름으로 내보내고 그 유지 이유를 청사진의 `DETAIL.md`에 적는다. 옛 소비자는 import만 고친다. 16라운드 편집자 결정, 답 10으로 확정)과 역의존 표, 청사진 오류·경고. 테이블 테스트 | 없음 | `$ref` 재귀, 다중 `type`, `dependentSchemas`·`patternProperties`, 식 언어 명세(§15) |
+| PR-2 노드 트리와 정착 | 노드(리프·객체·터미널·가상), `raw`·`extras`, 표시·계산(호스트 바퀴, 노드 게이트, 투영)·전이(채움, 나감 비움 네 층)·커밋, 예산 다섯과 원본 B(되돌림 기록. 기록 항목은 노드, 이전 `raw`, 이전 `extras`, 배열 아이템 구조의 생성·폐기이며 중간 라운드 채움의 철회보다 먼저 적용한다), `diagnostics`, `SetValueOption`, 게이트는 술어 인터페이스 뒤의 스텁. 정착 루프 테스트(프로토타입 회귀 이식) | PR-1 | `controls.active` 식의 다른 호스트 읽기 순서, 비객체 V의 `Merge`, 되먹임 거부 표면 |
 | PR-3 파생 | `controls.derived`·`controls.injectTo`·`controls.unsetValue`, 같은 대상 규칙(종류 순위, 문서 순서, 층, 전순서, 정착 단위), 에지 소비, `DisableAutomaticWrites`, `controls.resetInteraction`, 개발 모드 정착 기록 | PR-2 | 에지의 값 동등 판정, `controls.derived` 의존 집합, 조각 `controls` 식의 나감 발화 |
-| PR-4 통지와 검증 | 루트 디스패처, `batch`, 진입당 `onChange` 1회, 진입 사슬과 사슬 끝의 throw·`onError` 관찰자(ADR 0014), `UpdateDiagnostics`, 커밋 번호 스탬프 검증과 실행 합치기, 검증기 계약(`compileGuard`, `rejectedKey`)의 플러그인·`validatorFactory` 통일과 ajv6·7·8 플러그인 구현, 에러 라우팅, 오류 클래스(`ValidationIssue`) | PR-2 (PR-3과 병렬) | `compileGuard` 계약 세부, 에러 라우팅, 유효 스키마 변경 이벤트, ADR 0014 확정 |
+| PR-4 통지와 검증 | 루트 디스패처, `batch`, 진입당 `onChange` 1회, 진입 사슬과 사슬 끝의 throw·`onError` 관찰자(ADR 0014), `UpdateDiagnostics`, 커밋 번호 스탬프 검증과 실행 합치기, 검증기 계약(`compileGuard`, `rejectedKey`)의 플러그인·`validatorFactory` 통일과 ajv6·7·8 플러그인 구현, 에러 라우팅, 오류 클래스(`ValidationIssue`), 훅 수준의 React 바인딩 시험(동기 통지와 `useSyncExternalStore`, StrictMode 이중 호출, 구독 뒤 따라잡기), 같은 `$id` 루트의 중복 등록 처리, 상태·오류·명령 사건과 검증 결과의 배달 경로(09 §2.4, 16라운드 답 3), 검증기 등록의 참조 세기와 최근 해제 목록, 재생성 reset의 같은 `$id`(09 §2.6의 여덟째, 16라운드 스웜 수렴(편집자 결정)) | PR-2 (PR-3과 병렬) | `compileGuard` 계약 세부, 에러 라우팅, 유효 스키마 변경 이벤트, ADR 0014 확정 |
 | PR-5 배열 | 배열 노드와 아이템 호스트, `items`·`prefixItems`, `push`·`remove`·`update`, 통째 교체의 identity, 아이템 채움 | PR-2 (PR-3·4와 병렬) | 배열 아이템의 생김과 채움, `contains` |
 | PR-6 상태 키와 제어 | `controls.visible`·`controls.readOnly`·`controls.disabled`·표준 `readOnly`의 결합(OR/AND), `controls.children`, 조각 `controls`, `unsetOnInactive` 층의 최종 확정(O-8) | PR-3 | `controls.children` 세부, 터미널 전략이 바뀌는 경로 |
-| PR-7 전환 | `nodeFromJSONSchema`를 새 엔진 위에 다시 짓고, React 바인딩(`providers`·`hooks`·`components`)을 새 값 채널(`value`·`outputValue`)과 통지에 연결, Form 속성(`readOnly`·`disabled` 전체 잠금, `unsetOnInactive`, `disableAutomaticWrites`, `onError`, `onDiagnosticsChange`, `validatorFactory`, 렌더러 넷 `FormTypeGroupRenderer`·`FormTypeLabelRenderer`·`FormTypeInputRenderer`·`FormTypeErrorRenderer`), 루트 바운더리의 다시 던지기와 `degraded` 동안의 제출 거부, 터미널 전략, 명령, 옛 `core/nodes`·`parsers`·매니저·전처리 삭제, 렌더 시나리오 442건의 기대값 재작성, UI 플러그인 넷의 타입과 등록 키 대응, 벤치 비교 | PR-1 – PR-6 전부 | 성능 예산 수치(소유자), 브라우저 IME 확인 |
-| PR-8 릴리스 | README·docs 재작성, ADR 0010 최종, 이주 안내와 이주 프롬프트(`docs/agents`), 릴리스 노트, 모든 패키지 버전 메이저 | PR-7 | — |
+| PR-7 전환 | `nodeFromJSONSchema`를 새 엔진 위에 다시 짓고, React 바인딩(`providers`·`hooks`·`components`)을 새 값 채널(`value`·`outputValue`)과 통지에 연결, Form 속성(`readOnly`·`disabled` 전체 잠금, `unsetOnInactive`, `disableAutomaticWrites`, `onError`, `onDiagnosticsChange`, `validatorFactory`, 렌더러 넷 `FormTypeGroupRenderer`·`FormTypeLabelRenderer`·`FormTypeInputRenderer`·`FormTypeErrorRenderer`), 루트 바운더리의 다시 던지기(ADR 0014 확정 뒤, 09 §8의 일곱째)와 `degraded` 동안의 제출 거부, 터미널 전략, 명령, 옛 `core/nodes`·`parsers`·매니저·전처리 삭제, 렌더 시나리오 438건의 처분(09 §4.3. 17파일은 단언을 이름만 바꿔 살린다, 16라운드 답 7), UI 플러그인 넷의 타입과 등록 키 대응, UI 플러그인 27파일의 `presentation.*` 이주, `SchemaNodeInput.handleChange`의 세 진입(값 쓰기·외부 오류 지움·dirty)을 `batch` 하나로 묶기, 입력 출처 표식(Refresh 판정과 폐기된 노드의 늦은 입력 쓰기 판별용 내부 통로), 마운트 로드 정착 동안 `onChange`·`onDiagnosticsChange`·`onError` 억제 계약(ADR 0014 확정 뒤, 09 §8의 일곱째), `@winglet/react-utils` ErrorBoundary의 다시 던지기 판정 인자(같은 확인 뒤), React 18 실행 시험(16라운드 답 5), `useFormTypeInput`의 메모 의존에 유효 스키마 참조 추가와 `SchemaNodeProxy`의 유효 스키마 변경 비트 구독, 배달 경로의 렌더 계층 구독(09 §2.4), `Form`의 스키마 `clone`(`preprocessSchema(clone(inputJSONSchema))`) 제거(작성 루트 객체를 가드 캐시의 키로 지킨다. `defaultValue`의 `clone`은 이 항목이 아니다), `reset`의 로드 전환(같은 스키마 판정, 커밋 재대조, 호출 안의 재생성, 입력 판정과 노드가 드는 Refresh 번호, 상호작용 초기화 번호), 로드의 검증 규칙(마운트 포함, §14의 38행), `setValue(V)`의 같은 입력 판정(§14의 39행)(09 §2.6, 16라운드 스웜 수렴(편집자 결정)), `@winglet/react-utils`의 changeset(`minor`), 벤치 비교 | PR-1 – PR-6 전부 | 성능 예산 수치(소유자), 브라우저 IME 확인, 노드 `resetSubtree`의 존치와 입력 판정의 구현 확인(§15) |
+| PR-8 릴리스 | README·docs 재작성, ADR 0010 최종, 이주 안내와 이주 프롬프트(`docs/agents`), changeset(파괴적 변경, `fixed` 무리 전체 `major`. 1.0.0-beta 프리릴리스 뒤 1.0.0, 09 §6.2의 열넷째)과 `CHANGELOG.md`, 포장된 산출물의 릴리스 테스트(09 §6.2, 16라운드 스웜 수렴(편집자 결정)), README·docs의 reset 규칙(09 §2.6의 열여섯째) | PR-7 | 릴리스 전환 PR(09 §6.2, 저장소 전체)의 병합 |
 
 ```mermaid
 flowchart LR
@@ -521,13 +532,13 @@ flowchart LR
   pr5 --> pr7
   pr6 --> pr7
   pr7 --> pr8["PR-8 릴리스"]
-  pr8 --> merge["master 병합 = 릴리스 (원샷)"]
+  pr8 --> merge["master 병합 (원샷) → 판 올림 PR 병합 = 배포"]
 ```
 
 ### 17.3 규모와 위험
 
-- **교체 규모.** `src/core` 178파일 9,884줄 가운데 `AbstractNode`(71파일 3,991줄, 계산 속성·검증 매니저·이벤트 캐스케이드)와 `ObjectNode`의 `BranchStrategy`(39파일 2,185줄), `ArrayNode` 전략(15파일 930줄), `schemaNodeFactory`가 교체 대상이다. `helpers` 134파일 6,087줄 가운데 `jsonSchema`의 교차 연산과 `dynamicExpression`, `jsonPointer`, 가상화는 재사용한다. 테스트 205파일 약 3,150건은 동작이 달라져 다시 쓴다(`renderForm` 하니스는 재사용).
-- **형제 패키지.** ajv 플러그인 셋은 `ValidatorPlugin`·`ValidateFunction`·`JSONSchema` 타입만, UI 플러그인 넷은 `FormTypeRendererProps`만 가져오며 내부 경로 침범은 없다. 그래서 ajv 플러그인은 PR-4에서 타입만, UI 플러그인은 PR-7에서 타입과 등록 키 넷(§14의 32)을 맞추면 된다.
+- **교체 규모.** `src/core` 178파일 9,884줄 가운데 `AbstractNode`(71파일 3,991줄, 계산 속성·검증 매니저·이벤트 캐스케이드)와 `ObjectNode`의 `BranchStrategy`(39파일 2,185줄), `ArrayNode` 전략(15파일 930줄), `schemaNodeFactory`가 교체 대상이다. `helpers` 134파일 6,087줄 가운데 `jsonPointer`와 가상화는 그대로 쓰고, 교차 연산은 잎 함수만 옮겨 쓰며(§17.2의 PR-1 행), 식 컴파일러는 청사진으로 통째로 옮긴다(§17.2의 PR-1 행). 테스트 234파일의 처분은 09 §4.3을 따른다(17파일은 단언을 살린다, 16라운드 답 7)(`renderForm` 하니스는 재사용).
+- **형제 패키지.** ajv 플러그인 셋은 `ValidatorPlugin`·`ValidateFunction`·`JSONSchema`·`JSONSchemaError`·`SchemaFormPlugin` 타입을 가져오며(`JSONSchemaError`는 §14의 21행에 따라 `ValidationIssue`로 바뀐다) 모두 `$async: true`로 컴파일하므로, PR-4에서 동기 `compileGuard(root, pointer)` 경로를 세 플러그인에 구현해야 한다(캐시는 코어가 든다)(타입만 맞추면 되는 것이 아니다. 16라운드 정착 검토). UI 플러그인 넷은 `FormTypeRendererProps`뿐 아니라 `FormTypeInputDefinition`(11–19회)·`FormTypeInputPropsWithSchema`(8–15회)·스키마 타입을 가져오고, 27파일이 `jsonSchema.options.*`와 맨 키(`formType`·`radioLabels`·`switchLabels`·`lazy`·`ampm`·`minRows`·`maxRows`)를 읽으며(mui 7/19, antd5 9/22, antd6 9/22, antd-mobile 2/14), 노드 표면 `push`·`remove`·`maxItems`·`length`도 쓴다. 그래서 PR-7의 UI 플러그인 이주는 타입과 등록 키 넷에 더해 스키마 읽기 27파일을 `presentation.*`로 옮기는 작업을 포함한다(§14의 31·32·37행). `@winglet/react-utils`의 ErrorBoundary에는 다시 던지기 판정 인자를 더한다(ADR 0014 확정 뒤, 09 §8의 일곱째).
 - **위험이 모이는 곳은 PR-7이다.** PR-1 – PR-6은 `<Form>`에 닿지 않으므로 사용자 관점의 동작은 PR-7에서 처음 검증된다. 완화: PR-2부터 엔진 수준의 통합 시나리오(02 §9의 상황 목록)를 각 PR에 넣고, PR-4 뒤에 차등 테스트(독립 검증기와의 판정 동치)를 돌린다.
 - **PR-7을 더 쪼갤 수 없는 이유.** 옛 엔진과 새 엔진은 값의 소유(다중 사본 대 `raw` 하나), 통지(마이크로태스크 배치 대 동기 1회), 분기(자동 감지 대 게이트)가 다르다. `<Form>`이 둘을 동시에 섬길 수 없고, 렌더 시나리오의 기대값도 한 계약에만 맞는다.
 
@@ -536,6 +547,6 @@ flowchart LR
 1. **차등 테스트.** 임의의 (스키마, 상호작용 시퀀스)에 대해 `form.validate()`의 판정이 독립 검증기(작성된 스키마, `FormHandle.getValue()`)의 판정과 같아야 한다. 독립 검증기는 폼이 쓰는 플러그인과 다른 구현이어야 하고 값은 JSON으로 직렬화한 뒤 넣는다.
 2. **청사진 테이블 테스트.** 조각 열거, 중첩, 노드 공유, `controls.discriminator` 변환을 표로 단언한다.
 3. **정착 루프 테스트.** 동기이므로 타이머 flush 없이 단언한다. 프로토타입 v5·v6의 회귀 단언(63 + 108 + 26 + 52)을 이식한다.
-4. **`renderForm` 시나리오.** 하니스는 재사용하고 기존 시나리오의 기대값은 버리되 상황 목록은 자산으로 옮긴다.
-5. **성능.** 기존 구현의 기준선(패키지 벤치 일곱, `benchmark-form`의 scale 벤치)과 비교한다. 예산 수치는 소유자 정책이다.
+4. **`renderForm` 시나리오.** 하니스는 재사용하고 기존 시나리오의 기대값은 버리되 상황 목록은 자산으로 옮긴다. 예외: 조합과 옛 키가 없는 17파일은 기대값을 이름만 바꿔 e2e의 추가 단언으로 살린다(16라운드 답 7, 09 §4.3).
+5. **성능.** 기존 구현의 기준선(패키지 벤치 일곱, `benchmark-form`의 scale 벤치)과 비교한다. 예산 수치는 소유자 정책이다. 옛 판보다 느린 것은 통제 가능하고 일정 수준 안이어야 한다(16라운드 답 6, 09 §6.1).
 6. **절대 실패하지 않는 단언을 경계한다**(이슈 #342 §4의 교훈).
