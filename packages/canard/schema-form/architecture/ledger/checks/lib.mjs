@@ -1,6 +1,10 @@
 // Shared parsing for the ledger checks: sentence splitting, ledger item parsing, source-location parsing.
 import fs from 'node:fs';
 import path from 'node:path';
+import { execFileSync } from 'node:child_process';
+
+/** Commit whose line numbers the ledger cites. A document rewritten after it (HANDOFF.md) is read from this commit when the working tree no longer holds the cited text. */
+export const BASE_COMMIT = process.env.LEDGER_BASE ?? 'ba398c330';
 
 export const ID_RE = /^### ([A-Z]+-\d{3})(?:\s+(.*))?$/;
 const FIELD_RE = /^- (결정|보충|상태|출처|닫은 사람|라운드|까닭|충돌):\s*(.*)$/;
@@ -57,6 +61,18 @@ export function docReader(root) {
   const cache = new Map();
   return (rel) => {
     if (!cache.has(rel)) { const p = path.join(root, rel); cache.set(rel, fs.existsSync(p) ? fs.readFileSync(p, 'utf8').split('\n') : null); }
+    return cache.get(rel);
+  };
+}
+
+/** Reads a document as it was at BASE_COMMIT (null when it did not exist there). */
+export function baseReader(root) {
+  const cache = new Map();
+  return (rel) => {
+    if (!cache.has(rel)) {
+      try { cache.set(rel, execFileSync('git', ['show', `${BASE_COMMIT}:./${rel}`], { cwd: root, encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }).split('\n')); }
+      catch { cache.set(rel, null); }
+    }
     return cache.get(rel);
   };
 }
