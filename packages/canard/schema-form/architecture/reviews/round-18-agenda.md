@@ -17,7 +17,7 @@
 | `controls.discriminator`의 세부(분기에 그 키의 `const`·`enum`이 없을 때, `$ref`·`allOf` 평탄화, 분기 자체 `controls.active`와의 AND) | `08-design-a-to-z.md:451`(§15), `adr/0002-guard-fragment-model.md:204`, `adr/0005-blueprint-analysis-and-node-sharing.md:127` | PR-1 | 설계 결정 |
 | 노드의 `required` 표시가 켜진 `then`을 반영하는 규칙 | `08-design-a-to-z.md:451`(§15) | PR-1 | 설계 결정 |
 | 같은 가상 이름을 다른 `fields`로 적은 `options.virtual` 항목(정해지면 청사진 오류 코드가 생길 수 있음) | `reviews/raw-round17-convergence.md:77`(R15-10), `reviews/raw-round17-onerror.md` §5의 미정 행 | PR-1 | 설계 결정 |
-| 노드 공유의 '같은 종류'. 소유자가 수락한 규칙은 '같은 이름 + 같은 타입이면 노드 하나'이고, 1라운드 R11이 이를 노드 종류로 다시 정의했다(`number`와 `integer`, `['string', 'null']`과 `'string'`은 같은 종류). ADR 0005 상태 줄이 소유자 확인을 요구하지만 어느 목록에도 오르지 않았다 | `adr/0005-blueprint-analysis-and-node-sharing.md:3`, `:9`, `08-design-a-to-z.md:176`(§5) | PR-1 | 설계 결정(소유자 확인) |
+| 노드 공유의 '같은 종류'. 소유자가 수락한 규칙은 '같은 이름 + 같은 타입이면 노드 하나'이고, 1라운드 R11이 이를 노드 종류로 다시 정의했다(`number`와 `integer`, `['string', 'null']`과 `'string'`은 같은 종류). ADR 0005 상태 줄이 소유자 확인을 요구하지만 어느 목록에도 오르지 않았다 — **답함(2026-09-26, `reviews/round-18-owner-answers.md:19`)** | `adr/0005-blueprint-analysis-and-node-sharing.md:3`, `:9`, `08-design-a-to-z.md:176`(§5) | PR-1 | 설계 결정(소유자 확인) |
 | 옮길 잎 교차 함수의 뜻. `intersectConst`는 참조로 비교해 구조가 같은 객체·배열 `const`를 충돌로 던지고, `intersectPattern`은 두 패턴을 같은 자리의 전방 탐색으로 이어 두 패턴을 모두 만족하는 문자열(`'ab'`, `'Abc123'`)을 거부하며 역참조와 같은 이름의 캡처 그룹에서 깨진다. 기존 시험이 이 결함을 단언한다. `const`의 동등 판정, `pattern` 연언의 표현(정규식 하나인가 목록인가), 레거시의 옛 `intersect*Schema`가 옛 함수를 계속 쓰는지, 09 §4.3의 '그대로 산다'에서 뺄 단언(외부 점검 codex·antigravity, 검증자 실행 확인) | `08-design-a-to-z.md:571`(§17.2), `:324`(§9), `09-landing-and-test-strategy.md:158`(§4.3), `src/helpers/jsonSchema/processAllOfSchema/intersectSchema/utils/intersectConst.ts:23`, `intersectPattern.ts:21`, `utils/__tests__/intersectPattern.test.ts:13` | PR-1 | 설계 결정 |
 | 터미널 전략 비교의 '경우'가 조각 중첩을 따르는가. 지금의 정의(그 노드를 선언한 게이트 가진 선언이 켜지고 꺼지는 조합)와 08 §9의 축약은 감싸는 조각 없이 켜질 수 없는 선언의 단독 경우까지 세어, 부모 조각의 `options.terminal: false`와 중첩 조각의 인라인 입력(가능한 경우는 모두 `branch`)을 청사진 오류로 판정한다. 17라운드 편집자 결정의 결함이며 같은 정의가 네 문서에 있다. N14와는 다른 물음이다(외부 점검 codex, 검증자 모의 실행) | `08-design-a-to-z.md:331`(§9), `02-target-overview.md:138`(§2.1), `03-mental-model.md:133`(§4), `adr/0011-branch-node-composition.md:59`(§3), `adr/0005-blueprint-analysis-and-node-sharing.md:40`(§1) | PR-1 | 설계 결정 |
 | 같은 호스트의 `oneOf`와 `anyOf` 분기의 동순위. 키워드 순위가 둘을 한 순위로 두어 `oneOf[i]`와 `anyOf[i]`의 자리가 같다. 주석 키의 나중 승, 같은 대상 규칙의 같은 층 동점, 공유 충돌의 '앞선 종류', 터미널 전략의 '나중 것', 호스트 바퀴의 평가 순서가 모두 이 순서에 기댄다(오늘은 `oneOf` 먼저)(외부 점검 codex) | `08-design-a-to-z.md:176`(§5), `02-target-overview.md:124`(§2.1), `03-mental-model.md:126`(§4), `adr/0002-guard-fragment-model.md:59`, `adr/0005-blueprint-analysis-and-node-sharing.md:70`·`:94`, `src/core/nodes/ObjectNode/strategies/BranchStrategy/BranchStrategy.ts:450-451` | PR-1, PR-2 | 설계 결정 |
@@ -64,7 +64,7 @@
 | 예산의 수치(키 입력과 마운트, 대규모 쓰기와 배치). 기준선은 있다 | `adr/0009-performance-budget-and-benchmarks.md:97`, `08-design-a-to-z.md:461`(§15) | 착수 전 | 소유자 정책 |
 | 문서화된 안전 임계(필드 50개, 배열 아이템 30개)를 올릴 것인가 | `adr/0009-performance-budget-and-benchmarks.md:98` | 착수 전 | 소유자 정책 |
 | 번들 크기 예산(현재 gzip 약 44KB) | `adr/0009-performance-budget-and-benchmarks.md:99` | 착수 전 | 소유자 정책 |
-| 인터프리터형 검증기의 지원 수준, 컴파일 예산 | `adr/0009-performance-budget-and-benchmarks.md:100`·`:102` | 착수 전 | 소유자 정책 |
+| 인터프리터형 검증기의 지원 수준, 컴파일 예산 — **지원 수준은 답함(2026-09-26, `reviews/round-18-owner-answers.md:13`), 컴파일 예산 수치는 열림** | `adr/0009-performance-budget-and-benchmarks.md:100`·`:102` | 착수 전 | 소유자 정책 |
 | 노드 구조의 벤치(섞인 종류 1만 노드의 읽기 순회, 노드당 힙 바이트, 같은 맵인지, 거대형 자리 수, 입력에서 커밋까지, 생성 시간. V8과 JavaScriptCore) | `reviews/raw-round17-node-structure.md` §7 | PR-2 | 실행 확인 |
 
 ## 6. 노드 구조의 설계 빈틈
@@ -122,3 +122,47 @@ PR-3 이후를 막는 열린 항목이다. 18라운드에서 다루지 않아도
 | 오늘 코드 위에서 PR-1·PR-2가 착지하는가(형 설계와 타입 순환 포함) | codex | 코드를 읽고 타입 검사를 돌릴 수 있다 |
 
 결과는 권고일 뿐 채택 결정이 아니다. 지적마다 검증자가 원문과 대조해 거르고, 소유자 답과 부딪치는 지적은 고치지 않고 소유자 질문으로 올린다. 검토자는 파일을 고치지 않으며, 검토 전 커밋이 기준점이다.
+
+## 11. 원장 증류가 드러낸 열린 항목 — 안건에 행이 없던 것 (2026-09-26)
+
+단일 원장(`ledger/`)을 만들며 옛 문서에는 열려 있는데 이 안건에 행이 없던 항목이다. 행마다 원장 번호를 적고, 원장 항목의 상태는 이 절의 줄을 가리킨다. 성격은 설계 결정이며, 소유자 물음은 §12에 따로 둔다.
+
+| 번호 | 항목 | 원문 위치 | 원장 |
+| --- | --- | --- | --- |
+| 11-1 | 로컬 선언끼리의 결합(잠금은 OR, 표시는 AND)에 대한 소유자 확인. 12라운드에 "좀 더 설명 필요"로 남음 | `adr/0003-group-namespace.md:144` | CONTROLS-062 |
+| 11-2 | `virtualRequired`가 `required` 재작성과 함께 사라지는지 확인 | `adr/0003-group-namespace.md:146` | CONTROLS-065 |
+| 11-3 | 리프 노드의 잠금을 누가 집행하는가. 오늘은 입력 컴포넌트 구현에 위임, 새 설계는 키의 유지만 적음 | `05-before-after.md:42` | CONTROLS-070 |
+| 11-4 | `FormTypeInputProps.alias`의 처분 | `05-before-after.md:54` | CONTROLS-071 |
+| 11-5 | `placeholder` 키가 어느 그룹에 드는가(14라운드 검토는 오늘 최상위 키가 아니라 뺐다고 적음, ADR 0003 §7은 검증기에 가는 맨 키로 적음) | `05-before-after.md:56`, `reviews/round-14-owner-review.md:55`, `adr/0003-group-namespace.md:125` | CONTROLS-072 |
+| 11-6 | 터미널 노드의 입력이 빈 `ChildNodeComponents`를 읽을 때의 개발 모드 경고 — ADR 0014 §7.2 코드 목록에 코드가 없음 | `adr/0011-branch-node-composition.md:61` | ERROR-185 |
+| 11-7 | 루트 `dataPath`가 플러그인은 `"/"`, 오늘 타입은 `""` | `adr/0002-guard-fragment-model.md:200` | FRAGMENT-040 |
+| 11-8 | 플러그인 FormTypeInput이 동기 UpdateValue나 Promise 배열 API에 기대는지 확인(물려받은 제약 T-23) | `04-inherited-constraints.md:53` | GOAL-084 |
+| 11-9 | C3 남은 세부 — 스키마 타입의 컴포넌트 자리를 core가 불투명하게 다루고 바인딩 계층이 타입을 입히는 방법 | `open-questions.md:62` | GOAL-087 |
+| 11-10 | 잔여 키의 표시 규칙과 기본 문구, `formatError`의 `false schema` 번역, 잔여 키 UI의 기본 제공 — 렌더 계층의 일 | `adr/0002-guard-fragment-model.md:199` | REACT-026 |
+| 11-11 | merge를 돕는 순수 함수(위치 불일치를 경고하는 helper)를 패키지가 제공할지 | `adr/0012-fe-overlay.md:37` | SCHEMA-020 |
+| 11-12 | 가드 컴파일의 인스턴스 사이 공유의 나머지 세부 — 슬라이스 4의 설계 항목 | `08-design-a-to-z.md:180`, `08-design-a-to-z.md:493` | VALIDATE-037 |
+| 11-13 | 검증을 입력 경로에서 떼어 내는 법(R19) — 커밋 번호 스탬프는 경합만 막음 | `adr/0007-settle-cycle.md:150` | VALIDATE-039 |
+| 11-14 | 잠복 값 열거 API `getInactiveValues(path)`의 반환 모양 | `adr/0013-core-does-not-rewrite-values.md:108` | WRITE-020 |
+| 11-15 | 상태 칸 변경(`controls.resetInteraction`이 커밋에서 판정하는 쪽)의 배달 — 16라운드 답 3은 `setState` 쪽만 답함 | `adr/0008-event-system.md:203` | EVENT-049 |
+| 11-16 | `UpdatePath` — 배열 재인덱싱 시 경로 변경 통지 | `adr/0008-event-system.md:207` | EVENT-051 |
+| 11-17 | C-10의 문서 자리 — 어느 문서가 소유하는지 | `adr/0008-event-system.md:209` | EVENT-053 |
+| 11-18 | React 이펙트를 거친 진입 간 순환이 React 자체 한도에 막히는지(06 D-17의 남는 것) | `06-conclusions.md:161` | EVENT-054 |
+| 11-19 | 살아 있는 두 트리의 같은 `$id` 사본 루트의 중복 등록 — PR-4로 넘겨졌으나 §9의 PR-4 줄에 명시 행이 없음 | `adr/0014-error-policy.md:301,338`, `adr/0004-validator-plugin-compile-guard.md:34` | ERROR-051, ERROR-165, VALIDATE-020 |
+| 11-20 | 명령 `RequestEmitChange`·`RequestInjection`과 05 §3이 든 공개 훅 셋의 거취 — 어느 문서에도 결정이 없음(원장 토큰 검사가 찾음) | `05-before-after.md:124,140,214` | LANDING-124 |
+
+## 12. 소유자 물음 — 원장 검증이 올린 것 (2026-09-26)
+
+영역별 검증자가 "원칙으로 정해지지 않고, 소유자 답이 없거나 소유자 답과 어긋나며, 사용자에게 보이는 결과가 갈린다"고 판정해 올린 물음이다. 답은 `reviews/round-18-owner-answers.md`에 원문 그대로 적고, 원장의 해당 항목을 그 답으로 닫는다.
+
+| 번호 | 물음 | 갈리는 결과 | 원장 | 원문 |
+| --- | --- | --- | --- | --- |
+| 12-1 | 자동 변환(`"123"` → `123`)을 끄는 옵션을 두는가. "늘 켜짐, 끄는 옵션 없음"은 소유자의 물음("지원하나요?")에 편집자가 반영 칸에서 답한 것이다 — **답함(2026-09-26, `reviews/round-18-owner-answers.md:11`)** | 늘 켜짐이면 수 노드의 `"12"`는 언제나 `12`. 옵션을 두면 끈 폼에서는 `"12"`가 그대로 들고 경고가 나간다 | WRITE-053 | `reviews/round-18-owner-answers.md:9` |
+| 12-2 | 포커스 아웃 `trim`이 자른 값의 쓰기가 자동 쓰기인가. 소유자가 고른 R17-3 "다"의 원문은 "자동 쓰기가 여섯이 됨"인데 반영 칸과 문서는 "자동 쓰기가 아니다"로 적었다. 함께: "자른 값이 현재 값과 같으면 쓰지 않는다"(§3 :45의 전제, 편집자 결정)를 받는가 — **답함(2026-09-26, `reviews/round-18-owner-answers.md:12`)** | 자동 쓰기면 억제를 켠 폼에서 공백이 잘리지 않고, 아니면 잘린다 | WRITE-009, WRITE-007, CONTROLS-007 | `reviews/round-17-owner-answers.md:11`, 이 안건 :45 |
+| 12-3 | 인터프리터형 검증기를 어느 수준까지 지원하고 컴파일 예산은 얼마인가(§5 :67과 같은 물음, 여기서는 원장 번호만 잇는다) — **답함(2026-09-26, `reviews/round-18-owner-answers.md:13`)** | AJV 기준 예산만 보장하면 인터프리터형은 큰 폼에서 느리다. 격차를 줄이려면 역색인이 필요해 VALIDATE-032(E13 기각)와 FRAGMENT-023(`if` 내용 불관여)을 다시 열어야 한다 | VALIDATE-027 | `adr/0009-performance-budget-and-benchmarks.md:100,102` |
+| 12-4 | 1라운드부터 미수락으로 남은 "방언 선언과 개발 모드 경고" 제안을 받는가 — **답함(2026-09-26, `reviews/round-18-owner-answers.md:14`)** | 받으면 `$schema`와 플러그인 방언이 어긋날 때 개발 콘솔 경고가 생긴다. 버리면 소비자 책임으로 남고 경고는 없다 | VALIDATE-026 | `adr/0004-validator-plugin-compile-guard.md:42`, `reviews/round-1.md:178` |
+| 12-5 | `UpdateValue` 통지에 출처(`source`) 칸을 더하지 않는 것으로 확정하는가. O-3은 소유자의 되물음이었다 — **답함(2026-09-26, `reviews/round-18-owner-answers.md:15`)** | 더하지 않으면 호스트는 프로덕션에서 자동 쓰기를 구별하지 못한다. 더하면 공개 표면이 칸 하나만큼 넓어진다 | EVENT-025 | `reviews/round-14-owner-answers.md` O-3 |
+| 12-6 | 소유자의 절 단위 통과를 08·09 대신 새 설계문서에서 하는가(`HANDOFF.md:155`의 제안). 2026-09-26의 확정 답이 이 제안까지 명시하지 않았다 — **답함(2026-09-26, `reviews/round-18-owner-answers.md:16`)** | 예면 08·09는 통과 절차 없이 백업되고 새 설계문서를 절 단위로 통과한다. 아니오면 08·09도 절 단위로 통과한 뒤 새 설계문서로 간다 | PROCESS-053, PROCESS-062 | `HANDOFF.md:155`, `08-design-a-to-z.md:3` |
+| 12-7 | 변환하지 못한 입력의 `onError` 기록 level을 편집자가 `'warning'`으로 정해도 되는가, `'error'`인가. 17라운드 게이트 R17G-3이 같은 종류의 읽기를 소유자에게 올린 선례가 있다 — **답함(2026-09-26, `reviews/round-18-owner-answers.md:17`)** | `'warning'`이면 기본 드러남은 개발 모드 콘솔뿐이고 핸들러 없는 프로덕션에는 출력이 없다. `'error'`면 모든 환경에서 기본 드러남(throw·거부·싱크)이 있어야 하고 통보 3과의 관계를 다시 정해야 한다 | ERROR-182, ERROR-184, LANDING-120 | `reviews/round-18-owner-answers.md:9` |
+| 12-8 | 값 읽기 이름(`value`는 원본, 방출 값의 이름 등, 07 §6.2 N3)에 소유자 동의 원문이 없다. ADR 0006의 "소유자 동의"는 편집자 서술이다. 이름을 확정하는가 — **답함(2026-09-26, `reviews/round-18-owner-answers.md:18`)** | 이름 표면이 확정되거나 다시 열린다 | VALUE-011, VALUE-024 | `adr/0006-single-value-ownership.md:3`, `07-conclusions.md` §6.2 |
+| 12-9 | 노드 공유의 "같은 종류" 정의를 받는가(§1 :20과 같은 물음, 원장 번호만 잇는다) — **답함(2026-09-26, `reviews/round-18-owner-answers.md:19`)** | 받으면 `number`·`integer` 분기나 `['string','null']`·`'string'` 분기가 노드 하나를 공유해 분기가 바뀌어도 값이 남는다. 받지 않으면 두 선언은 다른 노드가 되고 게이트 없는 분기끼리는 청사진 오류다 | BLUEPRINT-009 | 이 안건 :20 |
+| 12-10 | D-15: 컨벤션을 어긴 양의 순환 스키마에서 로드한 값이 알림 없이 빠지고 상태가 `stable`로 남는 것을 받아들이는가. 소유자 답 A-2("고지 의무")와 답 19("컨벤션 문서로만")가 서로 다른 쪽을 가리킨다 — **답함(2026-09-26, `reviews/round-18-owner-answers.md:20`)** | 받아들이면 TEST-061은 현행(부정 결정). 알리기로 하면 열림이 되고 경고 코드가 필요하다 | TEST-061 | `reviews/round-10-owner-answers.md` A-2, `reviews/round-9-spec.md` 답 19 |

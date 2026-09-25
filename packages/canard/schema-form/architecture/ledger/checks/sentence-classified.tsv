@@ -1,0 +1,2862 @@
+00-goals.md:100#1	HISTORY	
+00-goals.md:11#1	RESTATES	GOAL-003
+00-goals.md:11#2	RESTATES	GOAL-003
+00-goals.md:11#3	OUT	관찰
+00-goals.md:128#1	HISTORY	
+00-goals.md:128#2	RESTATES	PROCESS-031
+00-goals.md:139#1	VIEW	GOAL-003,GOAL-004,GOAL-005,GOAL-006,GOAL-009,GOAL-011,GOAL-012,GOAL-013
+00-goals.md:141#1	VIEW	GOAL-003
+00-goals.md:142#1	VIEW	GOAL-004
+00-goals.md:143#1	VIEW	GOAL-004
+00-goals.md:144#1	VIEW	GOAL-004
+00-goals.md:145#1	VIEW	GOAL-005
+00-goals.md:146#1	VIEW	GOAL-005
+00-goals.md:147#1	VIEW	GOAL-006
+00-goals.md:148#1	VIEW	GOAL-006,GOAL-009
+00-goals.md:149#1	VIEW	GOAL-009
+00-goals.md:150#1	VIEW	GOAL-011
+00-goals.md:151#1	VIEW	GOAL-012
+00-goals.md:152#1	VIEW	GOAL-013
+00-goals.md:5#1	HISTORY	
+00-goals.md:5#2	HISTORY	
+00-goals.md:9#1	HISTORY	
+00-goals.md:9#2	HISTORY	
+00-goals.md:9#3	HISTORY	
+01-current-structure.md:10#1	OUT	관찰
+01-current-structure.md:103#1	OUT	관찰
+01-current-structure.md:104#1	OUT	관찰
+01-current-structure.md:11#1	OUT	관찰
+01-current-structure.md:12#1	OUT	관찰
+01-current-structure.md:13#1	OUT	관찰
+01-current-structure.md:14#1	OUT	관찰
+01-current-structure.md:15#1	OUT	관찰
+01-current-structure.md:16#1	OUT	관찰
+01-current-structure.md:17#1	OUT	관찰
+01-current-structure.md:18#1	OUT	관찰
+01-current-structure.md:19#1	OUT	관찰
+01-current-structure.md:24#1	OUT	관찰
+01-current-structure.md:25#1	OUT	관찰
+01-current-structure.md:26#1	OUT	관찰
+01-current-structure.md:27#1	OUT	관찰
+01-current-structure.md:28#1	OUT	관찰
+01-current-structure.md:29#1	OUT	관찰
+01-current-structure.md:30#1	OUT	관찰
+01-current-structure.md:31#1	OUT	관찰
+01-current-structure.md:32#1	OUT	관찰
+01-current-structure.md:33#1	OUT	관찰
+01-current-structure.md:34#1	OUT	관찰
+01-current-structure.md:35#1	OUT	관찰
+01-current-structure.md:36#1	OUT	관찰
+01-current-structure.md:37#1	OUT	관찰
+01-current-structure.md:41#1	OUT	관찰
+01-current-structure.md:43#1	OUT	관찰
+01-current-structure.md:44#1	OUT	관찰
+01-current-structure.md:45#1	OUT	관찰
+01-current-structure.md:46#1	OUT	관찰
+01-current-structure.md:47#1	OUT	관찰
+01-current-structure.md:48#1	OUT	관찰
+01-current-structure.md:49#1	OUT	관찰
+01-current-structure.md:51#1	OUT	관찰
+01-current-structure.md:51#2	OUT	관찰
+01-current-structure.md:52#1	OUT	관찰
+01-current-structure.md:52#2	OUT	관찰
+01-current-structure.md:53#1	OUT	관찰
+01-current-structure.md:53#2	OUT	관찰
+01-current-structure.md:54#1	OUT	관찰
+01-current-structure.md:54#2	OUT	관찰
+01-current-structure.md:54#3	OUT	관찰
+01-current-structure.md:58#1	OUT	관찰
+01-current-structure.md:60#1	OUT	관찰
+01-current-structure.md:60#2	OUT	관찰
+01-current-structure.md:61#1	OUT	관찰
+01-current-structure.md:61#2	OUT	관찰
+01-current-structure.md:61#3	OUT	관찰
+01-current-structure.md:61#4	OUT	관찰
+01-current-structure.md:62#1	OUT	관찰
+01-current-structure.md:63#1	OUT	관찰
+01-current-structure.md:63#2	OUT	관찰
+01-current-structure.md:63#3	OUT	관찰
+01-current-structure.md:64#1	OUT	관찰
+01-current-structure.md:65#1	OUT	관찰
+01-current-structure.md:65#2	OUT	관찰
+01-current-structure.md:66#1	OUT	관찰
+01-current-structure.md:66#2	OUT	관찰
+01-current-structure.md:66#3	OUT	관찰
+01-current-structure.md:66#4	OUT	관찰
+01-current-structure.md:66#5	OUT	관찰
+01-current-structure.md:67#1	OUT	관찰
+01-current-structure.md:67#2	OUT	관찰
+01-current-structure.md:68#1	OUT	관찰
+01-current-structure.md:68#2	OUT	관찰
+01-current-structure.md:69#1	OUT	관찰
+01-current-structure.md:69#2	OUT	관찰
+01-current-structure.md:73#1	OUT	관찰
+01-current-structure.md:73#2	OUT	관찰
+01-current-structure.md:74#1	OUT	관찰
+01-current-structure.md:74#2	OUT	관찰
+01-current-structure.md:74#3	OUT	관찰
+01-current-structure.md:75#1	OUT	관찰
+01-current-structure.md:75#2	OUT	관찰
+01-current-structure.md:75#3	OUT	관찰
+01-current-structure.md:76#1	OUT	관찰
+01-current-structure.md:76#2	OUT	관찰
+01-current-structure.md:77#1	OUT	관찰
+01-current-structure.md:77#2	OUT	관찰
+01-current-structure.md:77#3	OUT	관찰
+01-current-structure.md:78#1	OUT	관찰
+01-current-structure.md:78#2	OUT	관찰
+01-current-structure.md:79#1	OUT	관찰
+01-current-structure.md:80#1	OUT	관찰
+01-current-structure.md:80#2	OUT	관찰
+01-current-structure.md:81#1	OUT	관찰
+01-current-structure.md:81#2	OUT	관찰
+01-current-structure.md:85#1	OUT	관찰
+01-current-structure.md:85#2	OUT	관찰
+01-current-structure.md:85#3	OUT	관찰
+01-current-structure.md:85#4	OUT	관찰
+01-current-structure.md:85#5	OUT	관찰
+01-current-structure.md:86#1	OUT	관찰
+01-current-structure.md:87#1	OUT	관찰
+01-current-structure.md:88#1	OUT	관찰
+01-current-structure.md:92#1	OUT	관찰
+01-current-structure.md:93#1	OUT	관찰
+01-current-structure.md:94#1	OUT	관찰
+01-current-structure.md:94#2	OUT	관찰
+01-current-structure.md:95#1	OUT	관찰
+01-current-structure.md:99#1	OUT	관찰
+02-target-overview.md:100#1	VIEW	BLUEPRINT-010,BLUEPRINT-017
+02-target-overview.md:101#1	VIEW	BLUEPRINT-017,BLUEPRINT-020
+02-target-overview.md:102#1	VIEW	BLUEPRINT-020,BLUEPRINT-001
+02-target-overview.md:103#1	VIEW	SETTLE-002
+02-target-overview.md:104#1	VIEW	SETTLE-002
+02-target-overview.md:105#1	VIEW	SETTLE-002,SETTLE-003
+02-target-overview.md:106#1	VIEW	SETTLE-003,SETTLE-004
+02-target-overview.md:107#1	VIEW	SETTLE-004
+02-target-overview.md:108#1	VIEW	SETTLE-004,SETTLE-005
+02-target-overview.md:109#1	VIEW	SETTLE-005
+02-target-overview.md:11#1	VIEW	SCHEMA-001,SCHEMA-015
+02-target-overview.md:110#1	VIEW	SETTLE-005,SETTLE-006
+02-target-overview.md:111#1	VIEW	SETTLE-006,SETTLE-007
+02-target-overview.md:112#1	VIEW	SETTLE-007
+02-target-overview.md:113#1	VIEW	SETTLE-007,SETTLE-008
+02-target-overview.md:114#1	VIEW	VALIDATE-017
+02-target-overview.md:115#1	VIEW	SETTLE-003,SETTLE-021
+02-target-overview.md:116#1	VIEW	SETTLE-008
+02-target-overview.md:117#1	VIEW	SURFACE-011
+02-target-overview.md:12#1	VIEW	SCHEMA-001,SCHEMA-015
+02-target-overview.md:122#1	RESTATES	BLUEPRINT-001
+02-target-overview.md:122#2	RESTATES	BLUEPRINT-001
+02-target-overview.md:124#1	RESTATES	BLUEPRINT-004
+02-target-overview.md:124#2	RESTATES	BLUEPRINT-004
+02-target-overview.md:124#3	RESTATES	BLUEPRINT-004,FRAGMENT-011
+02-target-overview.md:124#4	RESTATES	BLUEPRINT-008,FRAGMENT-011
+02-target-overview.md:124#5	RESTATES	BLUEPRINT-008,FRAGMENT-011
+02-target-overview.md:124#6	RESTATES	BLUEPRINT-008,FRAGMENT-011
+02-target-overview.md:125#1	RESTATES	BLUEPRINT-010
+02-target-overview.md:125#2	RESTATES	BLUEPRINT-010,BLUEPRINT-009
+02-target-overview.md:125#3	RESTATES	BLUEPRINT-010
+02-target-overview.md:125#4	RESTATES	BLUEPRINT-012
+02-target-overview.md:125#5	RESTATES	BLUEPRINT-012,ERROR-159
+02-target-overview.md:126#1	RESTATES	BLUEPRINT-017,FRAGMENT-008
+02-target-overview.md:126#2	RESTATES	BLUEPRINT-017,FRAGMENT-008
+02-target-overview.md:126#3	RESTATES	BLUEPRINT-017,FRAGMENT-008
+02-target-overview.md:126#4	RESTATES	BLUEPRINT-017,FRAGMENT-008
+02-target-overview.md:127#1	RESTATES	BLUEPRINT-020
+02-target-overview.md:127#2	RESTATES	BLUEPRINT-020
+02-target-overview.md:127#4	RESTATES	SCHEMA-007
+02-target-overview.md:13#1	VIEW	SCHEMA-001
+02-target-overview.md:131#1	RESTATES	SCHEMA-008
+02-target-overview.md:132#1	RESTATES	SCHEMA-009
+02-target-overview.md:133#1	RESTATES	SCHEMA-010
+02-target-overview.md:135#1	RESTATES	SCHEMA-012
+02-target-overview.md:138#1	RESTATES	SCHEMA-014
+02-target-overview.md:138#2	RESTATES	NODE-028,NODE-029
+02-target-overview.md:138#6	RESTATES	NODE-028
+02-target-overview.md:14#1	VIEW	SCHEMA-001
+02-target-overview.md:142#2	RESTATES	VALUE-002
+02-target-overview.md:144#1	VIEW	VALUE-002
+02-target-overview.md:146#1	VIEW	VALUE-002
+02-target-overview.md:147#1	VIEW	VALUE-002
+02-target-overview.md:148#1	VIEW	VALUE-002,VALUE-003
+02-target-overview.md:15#1	VIEW	SCHEMA-001,SCHEMA-014
+02-target-overview.md:150#2	RESTATES	VALUE-006
+02-target-overview.md:154#1	RESTATES	SETTLE-001
+02-target-overview.md:154#2	RESTATES	SETTLE-001
+02-target-overview.md:154#4	RESTATES	SETTLE-001
+02-target-overview.md:156#1	VIEW	SETTLE-002,SETTLE-003,SETTLE-004,SETTLE-005,SETTLE-006,SETTLE-007,SETTLE-008
+02-target-overview.md:158#1	VIEW	SETTLE-002
+02-target-overview.md:159#1	VIEW	SETTLE-003,SETTLE-018,SETTLE-021,SETTLE-022
+02-target-overview.md:16#1	VIEW	SCHEMA-002
+02-target-overview.md:160#1	VIEW	SETTLE-004
+02-target-overview.md:161#1	VIEW	SETTLE-005
+02-target-overview.md:162#1	VIEW	SETTLE-006
+02-target-overview.md:163#1	VIEW	SETTLE-007
+02-target-overview.md:164#1	VIEW	SETTLE-008
+02-target-overview.md:166#1	RESTATES	SETTLE-004
+02-target-overview.md:166#2	RESTATES	SETTLE-004
+02-target-overview.md:166#4	RESTATES	SETTLE-004
+02-target-overview.md:166#5	RESTATES	SETTLE-004
+02-target-overview.md:166#6	RESTATES	SETTLE-004
+02-target-overview.md:166#7	RESTATES	SETTLE-004
+02-target-overview.md:167#1	RESTATES	SETTLE-028
+02-target-overview.md:167#2	RESTATES	SETTLE-028
+02-target-overview.md:168#2	RESTATES	SETTLE-027
+02-target-overview.md:168#3	RESTATES	SETTLE-027,SETTLE-005
+02-target-overview.md:169#1	RESTATES	SETTLE-016
+02-target-overview.md:169#10	RESTATES	ERROR-014
+02-target-overview.md:169#3	RESTATES	SETTLE-011,SETTLE-012
+02-target-overview.md:169#4	RESTATES	SETTLE-011
+02-target-overview.md:169#8	RESTATES	SETTLE-014
+02-target-overview.md:17#1	VIEW	SCHEMA-003
+02-target-overview.md:170#1	RESTATES	SETTLE-010
+02-target-overview.md:170#2	RESTATES	SETTLE-010
+02-target-overview.md:171#1	RESTATES	SETTLE-036
+02-target-overview.md:175#1	RESTATES	VALIDATE-014
+02-target-overview.md:175#10	RESTATES	VALIDATE-041
+02-target-overview.md:175#2	RESTATES	VALIDATE-015
+02-target-overview.md:175#3	RESTATES	VALIDATE-015
+02-target-overview.md:175#4	RESTATES	VALIDATE-017
+02-target-overview.md:175#5	RESTATES	VALIDATE-001
+02-target-overview.md:175#7	RESTATES	ERROR-146,ERROR-147,ERROR-148
+02-target-overview.md:175#8	RESTATES	ERROR-155
+02-target-overview.md:175#9	RESTATES	VALIDATE-040
+02-target-overview.md:179#1	RESTATES	REACT-001
+02-target-overview.md:179#2	RESTATES	EVENT-001,REACT-006
+02-target-overview.md:179#3	RESTATES	REACT-005,WRITE-058
+02-target-overview.md:179#4	RESTATES	WRITE-016,EVENT-042
+02-target-overview.md:179#5	RESTATES	EVENT-042
+02-target-overview.md:179#6	RESTATES	EVENT-001,EVENT-037,EVENT-038
+02-target-overview.md:179#7	HISTORY	
+02-target-overview.md:18#1	VIEW	SCHEMA-006
+02-target-overview.md:183#1	VIEW	SETTLE-001
+02-target-overview.md:185#1	VIEW	SETTLE-001
+02-target-overview.md:186#1	VIEW	SETTLE-001
+02-target-overview.md:187#1	VIEW	SETTLE-001
+02-target-overview.md:188#1	VIEW	SETTLE-001
+02-target-overview.md:189#1	VIEW	SETTLE-001
+02-target-overview.md:190#1	VIEW	SETTLE-001
+02-target-overview.md:191#1	VIEW	SETTLE-001
+02-target-overview.md:192#1	VIEW	SETTLE-001
+02-target-overview.md:194#1	VIEW	SETTLE-002
+02-target-overview.md:195#1	VIEW	SETTLE-002
+02-target-overview.md:196#1	VIEW	SETTLE-002
+02-target-overview.md:197#1	VIEW	SETTLE-003,SETTLE-022
+02-target-overview.md:198#1	VIEW	SETTLE-003,SETTLE-021
+02-target-overview.md:199#1	VIEW	SETTLE-003
+02-target-overview.md:20#1	VIEW	CONTROLS-001
+02-target-overview.md:200#1	VIEW	SETTLE-003
+02-target-overview.md:202#1	VIEW	SETTLE-003
+02-target-overview.md:203#1	VIEW	SETTLE-004
+02-target-overview.md:204#1	VIEW	SETTLE-005
+02-target-overview.md:205#1	VIEW	SETTLE-006
+02-target-overview.md:206#1	VIEW	SETTLE-007
+02-target-overview.md:207#1	VIEW	SETTLE-007
+02-target-overview.md:208#1	VIEW	SETTLE-001
+02-target-overview.md:209#1	VIEW	SETTLE-008
+02-target-overview.md:21#1	VIEW	CONTROLS-021
+02-target-overview.md:210#1	VIEW	SETTLE-008
+02-target-overview.md:211#1	VIEW	SETTLE-008
+02-target-overview.md:214#1	RESTATES	VALIDATE-012,ERROR-180
+02-target-overview.md:214#2	HISTORY	
+02-target-overview.md:218#1	RESTATES	FRAGMENT-001
+02-target-overview.md:22#1	VIEW	CONTROLS-031
+02-target-overview.md:220#1	VIEW	FRAGMENT-001
+02-target-overview.md:222#1	VIEW	FRAGMENT-001
+02-target-overview.md:223#1	VIEW	FRAGMENT-001
+02-target-overview.md:225#1	VIEW	FRAGMENT-001
+02-target-overview.md:227#1	RESTATES	FRAGMENT-001
+02-target-overview.md:229#1	RESTATES	FRAGMENT-009,FRAGMENT-014
+02-target-overview.md:229#2	RESTATES	FRAGMENT-009,FRAGMENT-014
+02-target-overview.md:229#3	RESTATES	FRAGMENT-015
+02-target-overview.md:229#4	RESTATES	FRAGMENT-014
+02-target-overview.md:229#5	RESTATES	FRAGMENT-014
+02-target-overview.md:23#1	VIEW	CONTROLS-022,CONTROLS-023
+02-target-overview.md:230#1	RESTATES	FRAGMENT-005
+02-target-overview.md:230#2	RESTATES	FRAGMENT-028
+02-target-overview.md:230#3	RESTATES	FRAGMENT-005
+02-target-overview.md:230#4	RESTATES	FRAGMENT-025
+02-target-overview.md:230#5	RESTATES	FRAGMENT-025,FRAGMENT-004
+02-target-overview.md:230#6	RESTATES	FRAGMENT-028
+02-target-overview.md:231#1	RESTATES	FRAGMENT-005
+02-target-overview.md:231#2	RESTATES	FRAGMENT-008
+02-target-overview.md:231#3	RESTATES	FRAGMENT-008
+02-target-overview.md:232#1	RESTATES	FRAGMENT-022
+02-target-overview.md:232#2	RESTATES	FRAGMENT-022
+02-target-overview.md:232#3	RESTATES	FRAGMENT-022
+02-target-overview.md:232#4	RESTATES	FRAGMENT-022
+02-target-overview.md:232#5	RESTATES	FRAGMENT-023
+02-target-overview.md:232#6	HISTORY	
+02-target-overview.md:233#1	RESTATES	FRAGMENT-019
+02-target-overview.md:233#2	RESTATES	FRAGMENT-019
+02-target-overview.md:233#3	RESTATES	FRAGMENT-019
+02-target-overview.md:234#1	RESTATES	FRAGMENT-013
+02-target-overview.md:234#2	RESTATES	FRAGMENT-013
+02-target-overview.md:235#1	RESTATES	ERROR-159,ERROR-160,ERROR-161,ERROR-162,ERROR-163
+02-target-overview.md:235#10	RESTATES	FRAGMENT-023
+02-target-overview.md:235#11	RESTATES	FRAGMENT-023
+02-target-overview.md:235#12	RESTATES	FRAGMENT-030,ERROR-002
+02-target-overview.md:235#2	RESTATES	ERROR-159,ERROR-160,ERROR-161,ERROR-162,ERROR-163
+02-target-overview.md:235#3	RESTATES	ERROR-159,ERROR-160,ERROR-161,ERROR-162,ERROR-163,FRAGMENT-024,FRAGMENT-033
+02-target-overview.md:235#4	RESTATES	ERROR-159,ERROR-160,ERROR-161,ERROR-162,ERROR-163
+02-target-overview.md:235#5	RESTATES	FRAGMENT-012,ERROR-159,ERROR-160,ERROR-161,ERROR-162,ERROR-163
+02-target-overview.md:235#6	RESTATES	ERROR-159,ERROR-160,ERROR-161,ERROR-162,ERROR-163
+02-target-overview.md:235#7	RESTATES	ERROR-159,ERROR-160,ERROR-161,ERROR-162,ERROR-163
+02-target-overview.md:235#8	RESTATES	ERROR-146,ERROR-147,ERROR-148,ERROR-149,ERROR-150,ERROR-151,ERROR-155,ERROR-156,ERROR-157,ERROR-158
+02-target-overview.md:235#9	RESTATES	ERROR-001,ERROR-022
+02-target-overview.md:237#1	OUT	예시
+02-target-overview.md:24#1	VIEW	CONTROLS-025,CONTROLS-026,CONTROLS-027
+02-target-overview.md:241#1	OUT	예시
+02-target-overview.md:242#1	OUT	예시
+02-target-overview.md:243#1	OUT	예시
+02-target-overview.md:245#1	OUT	예시
+02-target-overview.md:247#1	OUT	예시
+02-target-overview.md:248#1	OUT	예시
+02-target-overview.md:249#1	OUT	예시
+02-target-overview.md:25#1	VIEW	CONTROLS-028
+02-target-overview.md:252#1	OUT	예시
+02-target-overview.md:253#1	OUT	예시
+02-target-overview.md:254#1	OUT	예시
+02-target-overview.md:257#1	OUT	예시
+02-target-overview.md:258#1	OUT	예시
+02-target-overview.md:26#1	VIEW	CONTROLS-029
+02-target-overview.md:263#1	OUT	예시
+02-target-overview.md:263#2	OUT	예시
+02-target-overview.md:263#3	OUT	예시
+02-target-overview.md:263#4	OUT	예시
+02-target-overview.md:264#1	OUT	예시
+02-target-overview.md:265#1	OUT	예시
+02-target-overview.md:265#2	OUT	예시
+02-target-overview.md:265#3	OUT	예시
+02-target-overview.md:266#1	OUT	예시
+02-target-overview.md:27#1	VIEW	CONTROLS-030
+02-target-overview.md:270#1	RESTATES	WRITE-030
+02-target-overview.md:270#2	RESTATES	WRITE-030
+02-target-overview.md:272#1	VIEW	WRITE-007,WRITE-030
+02-target-overview.md:274#1	VIEW	WRITE-007,WRITE-030
+02-target-overview.md:275#1	VIEW	WRITE-007,WRITE-030
+02-target-overview.md:276#1	VIEW	WRITE-007,WRITE-030
+02-target-overview.md:277#1	VIEW	WRITE-007,WRITE-030
+02-target-overview.md:278#1	VIEW	WRITE-007,WRITE-030
+02-target-overview.md:279#1	VIEW	WRITE-007,WRITE-030
+02-target-overview.md:280#1	VIEW	WRITE-007,WRITE-030
+02-target-overview.md:281#1	VIEW	WRITE-007,WRITE-030
+02-target-overview.md:282#1	VIEW	WRITE-007,WRITE-030
+02-target-overview.md:284#1	RESTATES	WRITE-030
+02-target-overview.md:284#2	RESTATES	WRITE-007
+02-target-overview.md:285#1	RESTATES	WRITE-015
+02-target-overview.md:285#3	RESTATES	WRITE-015
+02-target-overview.md:286#1	RESTATES	WRITE-010
+02-target-overview.md:286#2	RESTATES	WRITE-014
+02-target-overview.md:287#2	RESTATES	WRITE-007
+02-target-overview.md:29#1	VIEW	SCHEMA-006
+02-target-overview.md:291#1	RESTATES	CONTROLS-045
+02-target-overview.md:291#2	RESTATES	CONTROLS-045
+02-target-overview.md:293#1	RESTATES	CONTROLS-045
+02-target-overview.md:293#2	RESTATES	CONTROLS-045
+02-target-overview.md:295#1	RESTATES	CONTROLS-045
+02-target-overview.md:295#2	RESTATES	CONTROLS-045
+02-target-overview.md:295#3	RESTATES	CONTROLS-045
+02-target-overview.md:296#1	RESTATES	CONTROLS-045
+02-target-overview.md:296#2	RESTATES	CONTROLS-045
+02-target-overview.md:296#3	RESTATES	CONTROLS-045
+02-target-overview.md:296#5	RESTATES	CONTROLS-045
+02-target-overview.md:297#1	RESTATES	CONTROLS-044
+02-target-overview.md:297#3	RESTATES	CONTROLS-044
+02-target-overview.md:297#5	RESTATES	CONTROLS-030
+02-target-overview.md:298#1	RESTATES	CONTROLS-046
+02-target-overview.md:298#2	RESTATES	CONTROLS-046
+02-target-overview.md:298#4	RESTATES	CONTROLS-046,CONTROLS-045
+02-target-overview.md:299#1	RESTATES	CONTROLS-063,CONTROLS-064,FRAGMENT-041
+02-target-overview.md:299#2	RESTATES	CONTROLS-041,FRAGMENT-035
+02-target-overview.md:299#3	RESTATES	CONTROLS-041,CONTROLS-024
+02-target-overview.md:3#1	HISTORY	
+02-target-overview.md:3#5	HISTORY	
+02-target-overview.md:3#6	HISTORY	
+02-target-overview.md:30#1	VIEW	SCHEMA-001
+02-target-overview.md:303#1	VIEW	SURFACE-004,SURFACE-005,SURFACE-006,SURFACE-007,SURFACE-008,SURFACE-009,SURFACE-010,SURFACE-011,SURFACE-012
+02-target-overview.md:31#1	VIEW	SCHEMA-002
+02-target-overview.md:319#1	RESTATES	SURFACE-015,EVENT-048
+02-target-overview.md:319#2	RESTATES	CONTROLS-019
+02-target-overview.md:32#1	VIEW	SCHEMA-003
+02-target-overview.md:323#1	HISTORY	
+02-target-overview.md:323#2	HISTORY	
+02-target-overview.md:325#1	HISTORY	
+02-target-overview.md:327#1	VIEW	LANDING-004
+02-target-overview.md:328#1	VIEW	LANDING-005
+02-target-overview.md:329#1	VIEW	LANDING-004
+02-target-overview.md:33#1	VIEW	CONTROLS-029
+02-target-overview.md:330#1	VIEW	SETTLE-005, SETTLE-027, SETTLE-033
+02-target-overview.md:331#1	VIEW	SETTLE-001, SETTLE-003
+02-target-overview.md:332#1	VIEW	LANDING-025,LANDING-045
+02-target-overview.md:333#1	VIEW	SETTLE-004
+02-target-overview.md:334#1	VIEW	VALUE-027,VALUE-028,VALUE-002
+02-target-overview.md:335#1	VIEW	LANDING-007,LANDING-033
+02-target-overview.md:336#1	VIEW	LANDING-006
+02-target-overview.md:337#1	VIEW	LANDING-008
+02-target-overview.md:338#1	VIEW	LANDING-009
+02-target-overview.md:339#1	VIEW	LANDING-021
+02-target-overview.md:340#1	VIEW	LANDING-015
+02-target-overview.md:341#1	VIEW	SCHEMA-007,SCHEMA-008,SCHEMA-009,SCHEMA-010,SCHEMA-012,SCHEMA-013,SCHEMA-039
+02-target-overview.md:345#1	HISTORY	
+02-target-overview.md:347#1	HISTORY	
+02-target-overview.md:349#1	VIEW	BLUEPRINT-001
+02-target-overview.md:35#1	VIEW	SCHEMA-006,SCHEMA-015
+02-target-overview.md:350#1	VIEW	BLUEPRINT-004
+02-target-overview.md:351#1	VIEW	VALUE-002,VALUE-004,VALUE-016
+02-target-overview.md:352#1	VIEW	EVENT-001,EVENT-004
+02-target-overview.md:353#1	VIEW	LANDING-021
+02-target-overview.md:354#1	VIEW	LANDING-115
+02-target-overview.md:355#1	VIEW	LANDING-018
+02-target-overview.md:356#1	VIEW	LANDING-004
+02-target-overview.md:357#1	VIEW	CONTROLS-048, FRAGMENT-009
+02-target-overview.md:358#1	VIEW	FRAGMENT-001,FRAGMENT-009,FRAGMENT-008
+02-target-overview.md:359#1	VIEW	FRAGMENT-009,FRAGMENT-014
+02-target-overview.md:36#1	VIEW	SCHEMA-006
+02-target-overview.md:37#1	VIEW	SCHEMA-001
+02-target-overview.md:38#1	VIEW	SCHEMA-001,SCHEMA-014
+02-target-overview.md:39#1	VIEW	SCHEMA-002
+02-target-overview.md:394#1	RESTATES	LANDING-113
+02-target-overview.md:394#2	RESTATES	LANDING-113
+02-target-overview.md:396#1	VIEW	LANDING-113,LANDING-060,LANDING-061,LANDING-062,LANDING-063,LANDING-064,LANDING-065,LANDING-066,LANDING-067,LANDING-068
+02-target-overview.md:398#1	VIEW	LANDING-113,LANDING-060
+02-target-overview.md:399#1	VIEW	LANDING-113,LANDING-061
+02-target-overview.md:40#1	VIEW	SCHEMA-003
+02-target-overview.md:400#1	VIEW	LANDING-113,LANDING-062
+02-target-overview.md:401#1	VIEW	LANDING-113,LANDING-063
+02-target-overview.md:402#1	VIEW	LANDING-113,LANDING-064
+02-target-overview.md:403#1	VIEW	LANDING-113,LANDING-065
+02-target-overview.md:404#1	VIEW	LANDING-113,LANDING-066
+02-target-overview.md:405#1	VIEW	LANDING-113,LANDING-067
+02-target-overview.md:406#1	VIEW	LANDING-113,LANDING-068
+02-target-overview.md:41#1	VIEW	CONTROLS-031
+02-target-overview.md:42#1	VIEW	CONTROLS-021
+02-target-overview.md:43#1	VIEW	CONTROLS-022,CONTROLS-023
+02-target-overview.md:44#1	VIEW	CONTROLS-025,CONTROLS-026,CONTROLS-027
+02-target-overview.md:45#1	VIEW	CONTROLS-028
+02-target-overview.md:46#1	VIEW	CONTROLS-029
+02-target-overview.md:47#1	VIEW	CONTROLS-030
+02-target-overview.md:48#1	VIEW	CONTROLS-030
+02-target-overview.md:5#1	RESTATES	GOAL-025,GOAL-026,GOAL-028,GOAL-039
+02-target-overview.md:5#2	RESTATES	GOAL-025,GOAL-026,GOAL-028,GOAL-039
+02-target-overview.md:51#1	VIEW	SCHEMA-001,SCHEMA-006,SCHEMA-015
+02-target-overview.md:53#1	RESTATES	SCHEMA-001,SCHEMA-002,SCHEMA-003,SCHEMA-006,VALUE-008,FRAGMENT-028
+02-target-overview.md:54#1	RESTATES	CONTROLS-001,CONTROLS-009,CONTROLS-010,CONTROLS-011
+02-target-overview.md:56#1	RESTATES	CONTROLS-016
+02-target-overview.md:58#1	RESTATES	CONTROLS-019
+02-target-overview.md:58#2	RESTATES	CONTROLS-019
+02-target-overview.md:58#3	RESTATES	CONTROLS-019
+02-target-overview.md:58#4	RESTATES	CONTROLS-019
+02-target-overview.md:58#5	RESTATES	CONTROLS-019
+02-target-overview.md:59#1	RESTATES	CONTROLS-001
+02-target-overview.md:59#2	RESTATES	CONTROLS-009,CONTROLS-010
+02-target-overview.md:59#3	RESTATES	CONTROLS-011
+02-target-overview.md:59#8	RESTATES	CONTROLS-012
+02-target-overview.md:59#9	RESTATES	CONTROLS-051
+02-target-overview.md:63#1	VIEW	SETTLE-001
+02-target-overview.md:64#1	VIEW	SETTLE-001
+02-target-overview.md:65#1	VIEW	BLUEPRINT-001
+02-target-overview.md:67#1	VIEW	BLUEPRINT-001
+02-target-overview.md:68#1	VIEW	BLUEPRINT-004,BLUEPRINT-008
+02-target-overview.md:69#1	VIEW	BLUEPRINT-010
+02-target-overview.md:70#1	VIEW	BLUEPRINT-017
+02-target-overview.md:71#1	VIEW	BLUEPRINT-020
+02-target-overview.md:74#1	VIEW	VALUE-002
+02-target-overview.md:76#1	VIEW	SETTLE-001
+02-target-overview.md:77#1	VIEW	SETTLE-002
+02-target-overview.md:78#1	VIEW	SETTLE-003
+02-target-overview.md:79#1	VIEW	SETTLE-004
+02-target-overview.md:80#1	VIEW	SETTLE-005
+02-target-overview.md:81#1	VIEW	SETTLE-006
+02-target-overview.md:82#1	VIEW	SETTLE-007
+02-target-overview.md:85#1	VIEW	SETTLE-008
+02-target-overview.md:87#1	VIEW	VALIDATE-014,VALIDATE-015
+02-target-overview.md:88#1	VIEW	VALIDATE-015,VALIDATE-016
+02-target-overview.md:89#1	VIEW	VALIDATE-015
+02-target-overview.md:9#1	RESTATES	SCHEMA-001,SCHEMA-006,SCHEMA-015
+02-target-overview.md:9#2	RESTATES	SCHEMA-001,SCHEMA-006,SCHEMA-015
+02-target-overview.md:92#1	VIEW	REACT-001
+02-target-overview.md:93#1	VIEW	REACT-006
+02-target-overview.md:94#1	VIEW	REACT-005
+02-target-overview.md:95#1	VIEW	SURFACE-011
+02-target-overview.md:98#1	VIEW	BLUEPRINT-001,BLUEPRINT-004
+02-target-overview.md:99#1	VIEW	BLUEPRINT-004,BLUEPRINT-010
+03-mental-model.md:100#1	VIEW	SETTLE-003
+03-mental-model.md:100#2	VIEW	SETTLE-003
+03-mental-model.md:101#1	VIEW	SETTLE-018
+03-mental-model.md:102#1	VIEW	SETTLE-022
+03-mental-model.md:104#1	VIEW	SETTLE-021
+03-mental-model.md:105#1	VIEW	SETTLE-003
+03-mental-model.md:106#1	VIEW	SETTLE-004
+03-mental-model.md:107#1	VIEW	SETTLE-004
+03-mental-model.md:108#1	VIEW	SETTLE-005
+03-mental-model.md:110#1	VIEW	SETTLE-007
+03-mental-model.md:111#1	VIEW	SETTLE-008
+03-mental-model.md:114#1	RESTATES	SETTLE-010
+03-mental-model.md:114#2	RESTATES	SETTLE-010
+03-mental-model.md:114#3	RESTATES	SETTLE-010
+03-mental-model.md:116#1	RESTATES	SETTLE-003,SETTLE-004,SETTLE-005,SETTLE-022
+03-mental-model.md:116#10	RESTATES	EVENT-008,EVENT-021
+03-mental-model.md:116#11	RESTATES	EVENT-034,EVENT-021
+03-mental-model.md:116#5	RESTATES	SETTLE-011,SETTLE-012
+03-mental-model.md:116#7	RESTATES	SETTLE-015
+03-mental-model.md:116#9	RESTATES	SETTLE-011
+03-mental-model.md:118#2	RESTATES	SETTLE-017
+03-mental-model.md:120#1	RESTATES	FRAGMENT-013
+03-mental-model.md:120#2	RESTATES	FRAGMENT-013
+03-mental-model.md:120#3	RESTATES	FRAGMENT-013
+03-mental-model.md:120#4	RESTATES	FRAGMENT-013,FRAGMENT-012
+03-mental-model.md:122#5	OUT	예시
+03-mental-model.md:122#6	RESTATES	CONTROLS-043
+03-mental-model.md:124#1	RESTATES	SETTLE-004
+03-mental-model.md:124#2	RESTATES	SETTLE-004
+03-mental-model.md:124#3	RESTATES	SETTLE-004
+03-mental-model.md:124#4	RESTATES	SETTLE-004
+03-mental-model.md:124#7	RESTATES	SETTLE-004
+03-mental-model.md:124#9	RESTATES	SETTLE-004
+03-mental-model.md:142#1	VIEW	GOAL-025,GOAL-026,GOAL-028,GOAL-029,GOAL-030,GOAL-031
+03-mental-model.md:144#1	VIEW	VALIDATE-001,VALIDATE-004
+03-mental-model.md:145#1	VIEW	FRAGMENT-009,FRAGMENT-023
+03-mental-model.md:146#1	VIEW	FRAGMENT-016,FRAGMENT-032,FRAGMENT-007
+03-mental-model.md:147#1	VIEW	GOAL-027,FRAGMENT-010,FRAGMENT-004,BLUEPRINT-029
+03-mental-model.md:148#1	VIEW	BLUEPRINT-017,FRAGMENT-007,CONTROLS-031
+03-mental-model.md:149#1	VIEW	FRAGMENT-022, FRAGMENT-023
+03-mental-model.md:150#1	VIEW	FRAGMENT-019
+03-mental-model.md:151#1	VIEW	FRAGMENT-020
+03-mental-model.md:152#1	VIEW	WRITE-001, WRITE-061, WRITE-052, WRITE-022, WRITE-009, WRITE-008
+03-mental-model.md:153#1	VIEW	WRITE-006,WRITE-015
+03-mental-model.md:154#1	VIEW	VALUE-015,WRITE-014
+03-mental-model.md:155#1	VIEW	SETTLE-005
+03-mental-model.md:156#1	VIEW	SETTLE-005
+03-mental-model.md:157#1	VIEW	CONTROLS-027, CONTROLS-055, WRITE-008
+03-mental-model.md:158#1	VIEW	CONTROLS-026, WRITE-011
+03-mental-model.md:159#1	VIEW	CONTROLS-028
+03-mental-model.md:160#1	VIEW	SETTLE-004
+03-mental-model.md:161#1	VIEW	SETTLE-028, SETTLE-001
+03-mental-model.md:162#1	VIEW	SETTLE-029, SETTLE-018, SETTLE-022
+03-mental-model.md:163#1	VIEW	SETTLE-011, ERROR-070, ERROR-135, ERROR-138
+03-mental-model.md:164#1	VIEW	SETTLE-016
+03-mental-model.md:165#1	VIEW	SETTLE-005
+03-mental-model.md:166#1	VIEW	VALUE-006,VALUE-008
+03-mental-model.md:167#1	VIEW	VALUE-010
+03-mental-model.md:168#1	VIEW	CONTROLS-045, CONTROLS-044, CONTROLS-024
+03-mental-model.md:169#1	VIEW	CONTROLS-030
+03-mental-model.md:170#1	VIEW	EVENT-002
+03-mental-model.md:171#1	VIEW	EVENT-026
+03-mental-model.md:172#1	VIEW	EVENT-001,EVENT-037,EVENT-038
+03-mental-model.md:173#1	VIEW	WRITE-026, VALIDATE-034
+03-mental-model.md:174#1	VIEW	NODE-020,VALUE-005
+03-mental-model.md:175#1	VIEW	ERROR-002
+03-mental-model.md:176#1	VIEW	FRAGMENT-023,FRAGMENT-030
+03-mental-model.md:185#1	VIEW	ERROR-159
+03-mental-model.md:187#1	VIEW	ERROR-159
+03-mental-model.md:205#1	RESTATES	SETTLE-036
+03-mental-model.md:206#1	RESTATES	VALUE-019, WRITE-059, FRAGMENT-045
+03-mental-model.md:207#1	RESTATES	CONTROLS-063, CONTROLS-041, CONTROLS-024
+03-mental-model.md:207#2	RESTATES	FRAGMENT-041, CONTROLS-064
+03-mental-model.md:207#5	RESTATES	LANDING-032
+03-mental-model.md:208#1	RESTATES	FRAGMENT-038,FRAGMENT-007,BLUEPRINT-019
+03-mental-model.md:209#1	RESTATES	VALIDATE-012, VALIDATE-022, VALIDATE-023, EVENT-048
+03-mental-model.md:210#1	RESTATES	BLUEPRINT-024,BLUEPRINT-023,FRAGMENT-037
+03-mental-model.md:213#1	RESTATES	LANDING-068,CONTROLS-019
+03-mental-model.md:216#1	RESTATES	SCHEMA-032,SCHEMA-033
+03-mental-model.md:220#1	HISTORY	
+03-mental-model.md:222#1	VIEW	GOAL-025,GOAL-026,GOAL-028,GOAL-029,GOAL-030,GOAL-031
+03-mental-model.md:223#1	VIEW	VALUE-002
+03-mental-model.md:224#1	VIEW	SETTLE-005, SETTLE-011
+03-mental-model.md:225#1	VIEW	SETTLE-004, SETTLE-005
+03-mental-model.md:226#1	VIEW	CONTROLS-045
+03-mental-model.md:227#1	VIEW	CONTROLS-062
+03-mental-model.md:228#1	VIEW	FRAGMENT-024
+03-mental-model.md:229#1	VIEW	SETTLE-004
+03-mental-model.md:230#1	HISTORY	
+03-mental-model.md:231#1	VIEW	ERROR-153,ERROR-154
+03-mental-model.md:232#1	HISTORY	
+03-mental-model.md:233#1	VIEW	ERROR-070, ERROR-094, ERROR-147
+03-mental-model.md:234#1	HISTORY	
+03-mental-model.md:235#1	HISTORY	
+03-mental-model.md:236#1	VIEW	CONTROLS-001, CONTROLS-004, CONTROLS-011, CONTROLS-024, CONTROLS-039, CONTROLS-051, CONTROLS-052, SCHEMA-013, SCHEMA-039
+03-mental-model.md:237#1	RESTATES	PROCESS-026, PROCESS-027
+03-mental-model.md:3#1	HISTORY	
+03-mental-model.md:3#2	HISTORY	
+03-mental-model.md:5#1	HISTORY	
+03-mental-model.md:5#2	HISTORY	
+03-mental-model.md:5#3	HISTORY	
+03-mental-model.md:5#4	HISTORY	
+03-mental-model.md:5#6	HISTORY	
+03-mental-model.md:58#1	RESTATES	VALUE-002,VALUE-004
+03-mental-model.md:58#2	RESTATES	VALUE-002,VALUE-004
+03-mental-model.md:61#1	RESTATES	VALUE-002
+03-mental-model.md:62#1	RESTATES	VALUE-002
+03-mental-model.md:63#1	RESTATES	VALUE-002
+03-mental-model.md:64#1	RESTATES	VALUE-002
+03-mental-model.md:65#1	RESTATES	VALUE-002
+03-mental-model.md:66#1	RESTATES	VALUE-002
+03-mental-model.md:70#1	RESTATES	VALUE-002
+03-mental-model.md:70#2	RESTATES	VALUE-002
+03-mental-model.md:70#3	RESTATES	VALUE-002
+03-mental-model.md:70#4	RESTATES	VALUE-001,VALUE-002
+03-mental-model.md:72#2	RESTATES	VALUE-006
+03-mental-model.md:72#3	RESTATES	VALUE-006
+03-mental-model.md:88#1	RESTATES	WRITE-006,WRITE-015
+03-mental-model.md:88#2	RESTATES	WRITE-015
+03-mental-model.md:88#4	RESTATES	WRITE-015
+03-mental-model.md:88#5	RESTATES	WRITE-015
+03-mental-model.md:92#1	RESTATES	WRITE-010
+03-mental-model.md:92#3	RESTATES	WRITE-002,WRITE-037
+03-mental-model.md:92#4	RESTATES	WRITE-014
+03-mental-model.md:94#29	HISTORY	
+03-mental-model.md:99#1	VIEW	SETTLE-002
+04-inherited-constraints.md:21#1	HISTORY	
+04-inherited-constraints.md:5#1	HISTORY	
+04-inherited-constraints.md:5#2	HISTORY	
+05-before-after.md:101#1	OUT	관찰
+05-before-after.md:101#2	OUT	관찰
+05-before-after.md:101#3	RESTATES	WRITE-065
+05-before-after.md:103#1	VIEW	SURFACE-004
+05-before-after.md:105#1	VIEW	WRITE-065,SURFACE-004
+05-before-after.md:106#1	VIEW	WRITE-065,SURFACE-004
+05-before-after.md:107#1	VIEW	SURFACE-004,WRITE-015
+05-before-after.md:108#1	VIEW	SURFACE-004,WRITE-015
+05-before-after.md:109#1	VIEW	SURFACE-004,SURFACE-008,WRITE-015
+05-before-after.md:110#1	VIEW	SURFACE-004,WRITE-015
+05-before-after.md:111#1	VIEW	SURFACE-004,WRITE-015
+05-before-after.md:112#1	VIEW	WRITE-016
+05-before-after.md:113#1	VIEW	WRITE-022
+05-before-after.md:114#1	VIEW	WRITE-066
+05-before-after.md:115#1	VIEW	WRITE-008
+05-before-after.md:117#1	RESTATES	WRITE-065
+05-before-after.md:121#1	VIEW	EVENT-001,SURFACE-011
+05-before-after.md:123#1	VIEW	EVENT-001
+05-before-after.md:125#1	VIEW	EVENT-007
+05-before-after.md:126#1	VIEW	EVENT-038
+05-before-after.md:127#1	VIEW	VALIDATE-006
+05-before-after.md:128#1	VIEW	EVENT-026
+05-before-after.md:129#1	VIEW	EVENT-027
+05-before-after.md:130#1	VIEW	VALIDATE-008
+05-before-after.md:134#1	VIEW	SURFACE-006
+05-before-after.md:136#1	VIEW	SURFACE-006,VALUE-024
+05-before-after.md:137#1	VIEW	SURFACE-031
+05-before-after.md:138#1	VIEW	SURFACE-045
+05-before-after.md:139#1	VIEW	EVENT-002
+05-before-after.md:146#1	HISTORY	
+05-before-after.md:15#1	VIEW	SCHEMA-001,FRAGMENT-001
+05-before-after.md:154#1	RESTATES	LANDING-032
+05-before-after.md:155#1	RESTATES	LANDING-019
+05-before-after.md:158#1	RESTATES	LANDING-022
+05-before-after.md:159#1	RESTATES	LANDING-025,LANDING-084
+05-before-after.md:16#1	VIEW	FRAGMENT-009
+05-before-after.md:167#1	HISTORY	
+05-before-after.md:169#1	VIEW	BLUEPRINT-001,BLUEPRINT-002,BLUEPRINT-004
+05-before-after.md:17#1	VIEW	FRAGMENT-021
+05-before-after.md:170#1	VIEW	FRAGMENT-027,BLUEPRINT-004
+05-before-after.md:172#1	VIEW	EVENT-002,EVENT-004,EVENT-005
+05-before-after.md:173#1	VIEW	EVENT-001,EVENT-013
+05-before-after.md:174#1	RESTATES	LANDING-022
+05-before-after.md:175#1	VIEW	EVENT-024,VALIDATE-006
+05-before-after.md:176#1	RESTATES	LANDING-037
+05-before-after.md:177#1	VIEW	VALUE-002,VALUE-010
+05-before-after.md:179#1	VIEW	NODE-033,NODE-024
+05-before-after.md:18#1	VIEW	FRAGMENT-021
+05-before-after.md:182#1	VIEW	NODE-030
+05-before-after.md:185#1	VIEW	SURFACE-006,WRITE-019,WRITE-020
+05-before-after.md:189#1	HISTORY	
+05-before-after.md:189#2	HISTORY	
+05-before-after.md:19#1	VIEW	FRAGMENT-001,FRAGMENT-027,SCHEMA-008
+05-before-after.md:191#1	HISTORY	
+05-before-after.md:194#1	RESTATES	LANDING-027
+05-before-after.md:199#1	RESTATES	LANDING-116
+05-before-after.md:200#1	RESTATES	LANDING-117
+05-before-after.md:201#1	RESTATES	LANDING-022
+05-before-after.md:202#1	RESTATES	LANDING-019
+05-before-after.md:208#1	HISTORY	
+05-before-after.md:208#2	HISTORY	
+05-before-after.md:210#1	HISTORY	
+05-before-after.md:210#2	HISTORY	
+05-before-after.md:212#1	HISTORY	
+05-before-after.md:212#2	HISTORY	
+05-before-after.md:212#3	HISTORY	
+05-before-after.md:212#4	HISTORY	
+05-before-after.md:212#5	HISTORY	
+05-before-after.md:218#1	HISTORY	
+05-before-after.md:218#2	HISTORY	
+05-before-after.md:220#1	VIEW	SCHEMA-001,SCHEMA-006,SCHEMA-008
+05-before-after.md:222#1	VIEW	SCHEMA-006,FRAGMENT-019
+05-before-after.md:223#1	VIEW	SCHEMA-001,FRAGMENT-001,FRAGMENT-015
+05-before-after.md:224#1	VIEW	SCHEMA-008,FRAGMENT-027
+05-before-after.md:225#1	VIEW	BLUEPRINT-011,BLUEPRINT-012,ERROR-055
+05-before-after.md:226#1	VIEW	FRAGMENT-021,FRAGMENT-017
+05-before-after.md:227#1	VIEW	SCHEMA-028,SCHEMA-002,VALUE-007
+05-before-after.md:228#1	VIEW	SCHEMA-006,FRAGMENT-019
+05-before-after.md:229#1	VIEW	CONTROLS-042, CONTROLS-064
+05-before-after.md:231#1	RESTATES	FRAGMENT-009
+05-before-after.md:231#2	OUT	관찰
+05-before-after.md:231#3	RESTATES	FRAGMENT-009
+05-before-after.md:233#1	RESTATES	FRAGMENT-017,FRAGMENT-022,ERROR-055
+05-before-after.md:233#2	RESTATES	SCHEMA-006,FRAGMENT-019
+05-before-after.md:25#1	VIEW	VALIDATE-010,VALIDATE-012
+05-before-after.md:26#1	RESTATES	FRAGMENT-037
+05-before-after.md:27#1	VIEW	SCHEMA-006,FRAGMENT-019,FRAGMENT-020
+05-before-after.md:30#1	RESTATES	SCHEMA-030
+05-before-after.md:32#1	VIEW	BLUEPRINT-009
+05-before-after.md:33#1	VIEW	SETTLE-003, SETTLE-004, SETTLE-005, SETTLE-007, SETTLE-034, SETTLE-040
+05-before-after.md:41#1	VIEW	CONTROLS-022
+05-before-after.md:43#1	VIEW	CONTROLS-029, CONTROLS-051
+05-before-after.md:45#1	VIEW	WRITE-011
+05-before-after.md:46#1	VIEW	CONTROLS-016, CONTROLS-048
+05-before-after.md:47#1	RESTATES	NODE-033
+05-before-after.md:48#1	OUT	관찰
+05-before-after.md:49#1	VIEW	CONTROLS-011, CONTROLS-052, LANDING-101
+05-before-after.md:5#1	HISTORY	
+05-before-after.md:50#1	VIEW	NODE-030
+05-before-after.md:51#1	VIEW	CONTROLS-010, WRITE-002
+05-before-after.md:53#1	VIEW	WRITE-022
+05-before-after.md:55#1	VIEW	CONTROLS-027, SETTLE-028
+05-before-after.md:58#1	VIEW	SETTLE-004
+05-before-after.md:59#1	VIEW	CONTROLS-045, LANDING-015
+05-before-after.md:60#1	VIEW	VALIDATE-004,VALIDATE-005,LANDING-105
+05-before-after.md:62#1	VIEW	CONTROLS-048
+05-before-after.md:62#2	RESTATES	CONTROLS-048, CONTROLS-051, CONTROLS-010
+05-before-after.md:64#1	VIEW	CONTROLS-050, CONTROLS-051
+05-before-after.md:64#2	RESTATES	CONTROLS-049, CONTROLS-061, SCHEMA-029, WRITE-022, NODE-033
+05-before-after.md:66#1	RESTATES	WRITE-011, CONTROLS-016, CONTROLS-011, CONTROLS-066, CONTROLS-071, CONTROLS-072, CONTROLS-045
+05-before-after.md:72#1	OUT	관찰
+05-before-after.md:72#2	HISTORY	
+05-before-after.md:74#1	VIEW	SURFACE-012
+05-before-after.md:76#1	VIEW	SCHEMA-016,SCHEMA-017
+05-before-after.md:77#1	VIEW	SURFACE-005
+05-before-after.md:78#1	VIEW	EVENT-026
+05-before-after.md:79#1	VIEW	SURFACE-039,WRITE-066
+05-before-after.md:80#1	VIEW	ERROR-099
+05-before-after.md:81#1	HISTORY	
+05-before-after.md:85#1	OUT	관찰
+05-before-after.md:87#1	VIEW	SURFACE-005,SURFACE-008,SURFACE-009,SURFACE-011
+05-before-after.md:89#1	VIEW	WRITE-065,SURFACE-005
+05-before-after.md:90#1	VIEW	WRITE-065,SURFACE-005
+05-before-after.md:91#1	VIEW	SURFACE-008
+05-before-after.md:92#1	VIEW	SURFACE-011,EVENT-038
+05-before-after.md:93#1	VIEW	SURFACE-011
+05-before-after.md:94#1	VIEW	SURFACE-011,SURFACE-045
+05-before-after.md:95#1	VIEW	SURFACE-009
+05-before-after.md:96#1	VIEW	SURFACE-006
+05-before-after.md:97#1	HISTORY	
+06-conclusions.md:104#1	RESTATES	VALUE-002,VALUE-010
+06-conclusions.md:104#2	RESTATES	VALUE-002
+06-conclusions.md:104#3	RESTATES	VALUE-010
+06-conclusions.md:104#4	HISTORY	
+06-conclusions.md:106#4	HISTORY	
+06-conclusions.md:108#1	HISTORY	
+06-conclusions.md:108#2	HISTORY	
+06-conclusions.md:108#3	HISTORY	
+06-conclusions.md:114#1	HISTORY	
+06-conclusions.md:115#1	HISTORY	
+06-conclusions.md:115#2	OUT	관찰
+06-conclusions.md:116#1	RESTATES	WRITE-011
+06-conclusions.md:117#1	RESTATES	WRITE-011
+06-conclusions.md:117#2	RESTATES	WRITE-011
+06-conclusions.md:118#1	HISTORY	
+06-conclusions.md:118#2	HISTORY	
+06-conclusions.md:119#1	HISTORY	
+06-conclusions.md:119#2	HISTORY	
+06-conclusions.md:123#1	HISTORY	
+06-conclusions.md:124#1	OUT	예시
+06-conclusions.md:124#2	OUT	예시
+06-conclusions.md:124#3	OUT	예시
+06-conclusions.md:124#4	OUT	예시
+06-conclusions.md:126#1	HISTORY	
+06-conclusions.md:127#1	HISTORY	
+06-conclusions.md:127#2	HISTORY	
+06-conclusions.md:128#1	HISTORY	
+06-conclusions.md:128#2	HISTORY	
+06-conclusions.md:132#1	HISTORY	
+06-conclusions.md:133#1	RESTATES	EVENT-019
+06-conclusions.md:133#2	RESTATES	EVENT-019
+06-conclusions.md:134#1	RESTATES	EVENT-019
+06-conclusions.md:134#2	RESTATES	EVENT-019
+06-conclusions.md:134#3	RESTATES	EVENT-019
+06-conclusions.md:135#1	RESTATES	EVENT-019
+06-conclusions.md:135#2	RESTATES	EVENT-019
+06-conclusions.md:135#3	RESTATES	EVENT-019
+06-conclusions.md:135#4	RESTATES	EVENT-019
+06-conclusions.md:135#5	HISTORY	
+06-conclusions.md:136#1	HISTORY	
+06-conclusions.md:136#2	RESTATES	EVENT-019
+06-conclusions.md:137#1	HISTORY	
+06-conclusions.md:137#2	HISTORY	
+06-conclusions.md:141#1	HISTORY	
+06-conclusions.md:143#1	HISTORY	
+06-conclusions.md:143#2	HISTORY	
+06-conclusions.md:143#3	HISTORY	
+06-conclusions.md:144#1	HISTORY	
+06-conclusions.md:144#2	HISTORY	
+06-conclusions.md:145#1	HISTORY	
+06-conclusions.md:145#2	HISTORY	
+06-conclusions.md:149#1	HISTORY	
+06-conclusions.md:151#1	RESTATES	EVENT-022
+06-conclusions.md:151#2	RESTATES	EVENT-022
+06-conclusions.md:152#1	HISTORY	
+06-conclusions.md:152#2	HISTORY	
+06-conclusions.md:156#1	HISTORY	
+06-conclusions.md:157#1	RESTATES	EVENT-008
+06-conclusions.md:157#2	RESTATES	EVENT-008
+06-conclusions.md:158#1	RESTATES	EVENT-008
+06-conclusions.md:158#2	RESTATES	EVENT-008
+06-conclusions.md:159#1	RESTATES	EVENT-008
+06-conclusions.md:159#2	RESTATES	EVENT-008
+06-conclusions.md:160#1	HISTORY	
+06-conclusions.md:160#2	HISTORY	
+06-conclusions.md:161#1	HISTORY	
+06-conclusions.md:165#1	HISTORY	
+06-conclusions.md:166#1	RESTATES	WRITE-015
+06-conclusions.md:167#1	RESTATES	WRITE-015
+06-conclusions.md:168#1	HISTORY	
+06-conclusions.md:168#2	HISTORY	
+06-conclusions.md:168#3	HISTORY	
+06-conclusions.md:168#4	HISTORY	
+06-conclusions.md:172#1	HISTORY	
+06-conclusions.md:173#1	OUT	관찰
+06-conclusions.md:173#2	OUT	관찰
+06-conclusions.md:175#1	RESTATES	NODE-020
+06-conclusions.md:176#1	HISTORY	
+06-conclusions.md:176#2	RESTATES	LANDING-020
+06-conclusions.md:176#4	HISTORY	
+06-conclusions.md:177#1	HISTORY	
+06-conclusions.md:177#2	HISTORY	
+06-conclusions.md:181#1	HISTORY	
+06-conclusions.md:182#2	RESTATES	EVENT-006,EVENT-045
+06-conclusions.md:183#1	RESTATES	ERROR-179
+06-conclusions.md:184#1	HISTORY	
+06-conclusions.md:184#2	HISTORY	
+06-conclusions.md:188#1	RESTATES	VALUE-027,VALUE-028
+06-conclusions.md:189#1	HISTORY	
+06-conclusions.md:190#1	HISTORY	
+06-conclusions.md:190#2	HISTORY	
+06-conclusions.md:194#1	HISTORY	
+06-conclusions.md:195#1	HISTORY	
+06-conclusions.md:195#2	HISTORY	
+06-conclusions.md:197#1	HISTORY	
+06-conclusions.md:197#2	HISTORY	
+06-conclusions.md:197#3	HISTORY	
+06-conclusions.md:197#4	HISTORY	
+06-conclusions.md:197#5	HISTORY	
+06-conclusions.md:199#1	HISTORY	
+06-conclusions.md:199#2	HISTORY	
+06-conclusions.md:203#1	HISTORY	
+06-conclusions.md:205#1	HISTORY	
+06-conclusions.md:205#2	HISTORY	
+06-conclusions.md:205#3	HISTORY	
+06-conclusions.md:205#4	HISTORY	
+06-conclusions.md:205#5	OUT	관찰
+06-conclusions.md:205#6	HISTORY	
+06-conclusions.md:206#2	HISTORY	
+06-conclusions.md:207#1	HISTORY	
+06-conclusions.md:207#2	HISTORY	
+06-conclusions.md:21#1	RESTATES	VALUE-001
+06-conclusions.md:22#1	RESTATES	VALUE-002,VALUE-004
+06-conclusions.md:220#1	HISTORY	
+06-conclusions.md:220#2	HISTORY	
+06-conclusions.md:221#1	RESTATES	VALUE-015,WRITE-014
+06-conclusions.md:222#1	RESTATES	SETTLE-029, SETTLE-018, SETTLE-022
+06-conclusions.md:223#1	RESTATES	FRAGMENT-019
+06-conclusions.md:223#2	RESTATES	FRAGMENT-019
+06-conclusions.md:223#3	RESTATES	FRAGMENT-020
+06-conclusions.md:224#1	RESTATES	WRITE-006
+06-conclusions.md:224#2	RESTATES	WRITE-006
+06-conclusions.md:224#3	RESTATES	WRITE-006,WRITE-015
+06-conclusions.md:225#2	RESTATES	WRITE-015
+06-conclusions.md:226#1	RESTATES	NODE-033
+06-conclusions.md:226#2	RESTATES	NODE-033
+06-conclusions.md:23#1	RESTATES	VALUE-002,VALUE-027,VALUE-028
+06-conclusions.md:230#1	OUT	예시
+06-conclusions.md:230#2	OUT	예시
+06-conclusions.md:230#3	OUT	예시
+06-conclusions.md:231#3	RESTATES	LANDING-109
+06-conclusions.md:235#1	OUT	예시
+06-conclusions.md:235#2	OUT	예시
+06-conclusions.md:236#3	HISTORY	
+06-conclusions.md:24#1	RESTATES	VALUE-002,VALUE-027,VALUE-028
+06-conclusions.md:240#3	HISTORY	
+06-conclusions.md:249#3	HISTORY	
+06-conclusions.md:25#1	RESTATES	VALUE-008
+06-conclusions.md:253#2	HISTORY	
+06-conclusions.md:253#3	OUT	관찰
+06-conclusions.md:254#1	HISTORY	
+06-conclusions.md:258#2	OUT	관찰
+06-conclusions.md:26#1	VIEW	FRAGMENT-001
+06-conclusions.md:262#1	RESTATES	PROCESS-013
+06-conclusions.md:266#1	OUT	예시
+06-conclusions.md:266#2	OUT	예시
+06-conclusions.md:267#1	HISTORY	
+06-conclusions.md:269#1	HISTORY	
+06-conclusions.md:269#2	HISTORY	
+06-conclusions.md:269#3	HISTORY	
+06-conclusions.md:269#4	HISTORY	
+06-conclusions.md:269#5	HISTORY	
+06-conclusions.md:269#6	HISTORY	
+06-conclusions.md:27#1	VIEW	FRAGMENT-001,FRAGMENT-026
+06-conclusions.md:273#1	HISTORY	
+06-conclusions.md:273#2	RESTATES	WRITE-008
+06-conclusions.md:273#3	RESTATES	WRITE-008
+06-conclusions.md:273#4	HISTORY	
+06-conclusions.md:273#5	HISTORY	
+06-conclusions.md:274#1	HISTORY	
+06-conclusions.md:274#2	HISTORY	
+06-conclusions.md:278#1	OUT	예시
+06-conclusions.md:278#2	OUT	예시
+06-conclusions.md:279#1	HISTORY	
+06-conclusions.md:28#1	VIEW	FRAGMENT-002,FRAGMENT-009,BLUEPRINT-029
+06-conclusions.md:280#1	RESTATES	WRITE-007
+06-conclusions.md:280#2	RESTATES	WRITE-007
+06-conclusions.md:280#3	OUT	관찰
+06-conclusions.md:280#4	OUT	예시
+06-conclusions.md:281#1	RESTATES	WRITE-060
+06-conclusions.md:281#2	RESTATES	WRITE-060
+06-conclusions.md:283#2	HISTORY	
+06-conclusions.md:283#3	HISTORY	
+06-conclusions.md:283#4	HISTORY	
+06-conclusions.md:283#5	HISTORY	
+06-conclusions.md:283#6	HISTORY	
+06-conclusions.md:283#7	HISTORY	
+06-conclusions.md:284#1	HISTORY	
+06-conclusions.md:284#2	HISTORY	
+06-conclusions.md:284#3	HISTORY	
+06-conclusions.md:285#1	HISTORY	
+06-conclusions.md:286#1	HISTORY	
+06-conclusions.md:286#2	HISTORY	
+06-conclusions.md:29#1	VIEW	FRAGMENT-017,GOAL-029
+06-conclusions.md:290#1	OUT	예시
+06-conclusions.md:290#2	OUT	예시
+06-conclusions.md:291#1	HISTORY	
+06-conclusions.md:292#1	HISTORY	
+06-conclusions.md:292#2	HISTORY	
+06-conclusions.md:292#3	HISTORY	
+06-conclusions.md:292#4	HISTORY	
+06-conclusions.md:293#1	HISTORY	
+06-conclusions.md:293#2	HISTORY	
+06-conclusions.md:293#3	HISTORY	
+06-conclusions.md:294#2	HISTORY	
+06-conclusions.md:294#3	HISTORY	
+06-conclusions.md:294#4	HISTORY	
+06-conclusions.md:295#2	HISTORY	
+06-conclusions.md:295#3	HISTORY	
+06-conclusions.md:295#4	HISTORY	
+06-conclusions.md:295#5	HISTORY	
+06-conclusions.md:295#6	HISTORY	
+06-conclusions.md:295#7	HISTORY	
+06-conclusions.md:296#1	HISTORY	
+06-conclusions.md:296#2	HISTORY	
+06-conclusions.md:296#3	RESTATES	FRAGMENT-011
+06-conclusions.md:297#1	HISTORY	
+06-conclusions.md:297#2	HISTORY	
+06-conclusions.md:297#3	HISTORY	
+06-conclusions.md:30#1	VIEW	GOAL-029
+06-conclusions.md:301#1	HISTORY	
+06-conclusions.md:302#1	HISTORY	
+06-conclusions.md:302#2	HISTORY	
+06-conclusions.md:303#1	RESTATES	SETTLE-015
+06-conclusions.md:303#2	RESTATES	SETTLE-015
+06-conclusions.md:303#3	RESTATES	SETTLE-015
+06-conclusions.md:305#2	HISTORY	
+06-conclusions.md:305#3	HISTORY	
+06-conclusions.md:305#4	HISTORY	
+06-conclusions.md:305#5	HISTORY	
+06-conclusions.md:306#1	HISTORY	
+06-conclusions.md:306#2	HISTORY	
+06-conclusions.md:31#1	VIEW	SETTLE-001
+06-conclusions.md:310#1	OUT	예시
+06-conclusions.md:311#1	HISTORY	
+06-conclusions.md:311#2	HISTORY	
+06-conclusions.md:311#3	HISTORY	
+06-conclusions.md:311#4	HISTORY	
+06-conclusions.md:311#5	HISTORY	
+06-conclusions.md:311#6	HISTORY	
+06-conclusions.md:312#2	HISTORY	
+06-conclusions.md:312#3	HISTORY	
+06-conclusions.md:312#4	HISTORY	
+06-conclusions.md:312#5	HISTORY	
+06-conclusions.md:313#1	HISTORY	
+06-conclusions.md:313#2	HISTORY	
+06-conclusions.md:317#1	HISTORY	
+06-conclusions.md:317#2	HISTORY	
+06-conclusions.md:317#3	RESTATES	SURFACE-004
+06-conclusions.md:318#1	HISTORY	
+06-conclusions.md:318#2	RESTATES	WRITE-010
+06-conclusions.md:318#3	RESTATES	WRITE-010
+06-conclusions.md:318#4	HISTORY	
+06-conclusions.md:319#1	HISTORY	
+06-conclusions.md:320#1	HISTORY	
+06-conclusions.md:320#2	RESTATES	NODE-033
+06-conclusions.md:324#2	HISTORY	
+06-conclusions.md:324#3	HISTORY	
+06-conclusions.md:328#2	RESTATES	WRITE-006
+06-conclusions.md:328#3	RESTATES	SURFACE-024
+06-conclusions.md:33#1	VIEW	SETTLE-004, SETTLE-005, SETTLE-010
+06-conclusions.md:338#2	RESTATES	SURFACE-005
+06-conclusions.md:338#4	OUT	관찰
+06-conclusions.md:339#1	RESTATES	SURFACE-026
+06-conclusions.md:339#2	RESTATES	SURFACE-026
+06-conclusions.md:339#3	RESTATES	SURFACE-026
+06-conclusions.md:34#1	VIEW	EVENT-027,EVENT-008
+06-conclusions.md:340#1	RESTATES	SURFACE-004
+06-conclusions.md:340#2	RESTATES	SURFACE-004
+06-conclusions.md:340#3	HISTORY	
+06-conclusions.md:340#4	OUT	관찰
+06-conclusions.md:341#1	RESTATES	SURFACE-039
+06-conclusions.md:342#1	HISTORY	
+06-conclusions.md:342#2	HISTORY	
+06-conclusions.md:347#1	RESTATES	SURFACE-029
+06-conclusions.md:347#2	RESTATES	SURFACE-029
+06-conclusions.md:347#3	RESTATES	SURFACE-029
+06-conclusions.md:348#1	HISTORY	
+06-conclusions.md:348#2	HISTORY	
+06-conclusions.md:35#1	VIEW	SETTLE-006
+06-conclusions.md:36#1	RESTATES	WRITE-007
+06-conclusions.md:366#1	RESTATES	ERROR-062
+06-conclusions.md:369#1	RESTATES	ERROR-062
+06-conclusions.md:37#1	RESTATES	WRITE-007
+06-conclusions.md:373#1	RESTATES	EVENT-043,ERROR-062
+06-conclusions.md:373#2	HISTORY	
+06-conclusions.md:373#4	RESTATES	ERROR-062
+06-conclusions.md:373#5	RESTATES	ERROR-062
+06-conclusions.md:374#1	HISTORY	
+06-conclusions.md:374#3	RESTATES	ERROR-062
+06-conclusions.md:375#1	HISTORY	
+06-conclusions.md:38#1	RESTATES	WRITE-010,CONTROLS-025
+06-conclusions.md:39#1	RESTATES	SCHEMA-028,WRITE-024
+06-conclusions.md:394#1	RESTATES	SURFACE-009
+06-conclusions.md:394#2	HISTORY	
+06-conclusions.md:40#1	VIEW	SETTLE-033
+06-conclusions.md:41#1	VIEW	CONTROLS-027, CONTROLS-034
+06-conclusions.md:42#1	VIEW	CONTROLS-026, CONTROLS-034
+06-conclusions.md:425#1	HISTORY	
+06-conclusions.md:425#2	HISTORY	
+06-conclusions.md:425#3	HISTORY	
+06-conclusions.md:426#1	HISTORY	
+06-conclusions.md:426#2	HISTORY	
+06-conclusions.md:426#3	HISTORY	
+06-conclusions.md:426#4	HISTORY	
+06-conclusions.md:427#1	HISTORY	
+06-conclusions.md:427#2	HISTORY	
+06-conclusions.md:428#1	HISTORY	
+06-conclusions.md:428#2	HISTORY	
+06-conclusions.md:429#1	RESTATES	LANDING-003
+06-conclusions.md:430#1	HISTORY	
+06-conclusions.md:434#1	HISTORY	
+06-conclusions.md:436#1	HISTORY	
+06-conclusions.md:437#1	HISTORY	
+06-conclusions.md:438#1	HISTORY	
+06-conclusions.md:439#1	HISTORY	
+06-conclusions.md:44#1	VIEW	SETTLE-028
+06-conclusions.md:440#1	HISTORY	
+06-conclusions.md:441#1	HISTORY	
+06-conclusions.md:442#1	VIEW	PROCESS-029
+06-conclusions.md:45#1	VIEW	WRITE-060, SETTLE-028
+06-conclusions.md:46#1	VIEW	EVENT-013
+06-conclusions.md:47#1	VIEW	SETTLE-003, SETTLE-004, SETTLE-005, SETTLE-007, SETTLE-040
+06-conclusions.md:48#1	VIEW	EVENT-008
+06-conclusions.md:49#1	VIEW	EVENT-043
+06-conclusions.md:5#1	HISTORY	
+06-conclusions.md:5#2	HISTORY	
+06-conclusions.md:50#1	RESTATES	VALUE-002
+06-conclusions.md:53#1	VIEW	SETTLE-026
+06-conclusions.md:54#1	VIEW	SETTLE-011
+06-conclusions.md:55#1	RESTATES	SCHEMA-005,SCHEMA-009
+06-conclusions.md:56#1	VIEW	BLUEPRINT-029,FRAGMENT-006
+06-conclusions.md:57#1	HISTORY	
+06-conclusions.md:59#1	RESTATES	LANDING-003
+06-conclusions.md:64#1	HISTORY	
+06-conclusions.md:64#2	HISTORY	
+06-conclusions.md:68#1	RESTATES	GOAL-025
+06-conclusions.md:68#3	RESTATES	GOAL-025
+06-conclusions.md:68#4	RESTATES	GOAL-025
+06-conclusions.md:72#1	RESTATES	GOAL-030
+06-conclusions.md:72#3	RESTATES	GOAL-030
+06-conclusions.md:73#1	RESTATES	GOAL-031
+06-conclusions.md:73#2	RESTATES	GOAL-031
+06-conclusions.md:73#4	RESTATES	GOAL-031
+06-conclusions.md:77#1	RESTATES	GOAL-003
+06-conclusions.md:77#2	RESTATES	GOAL-003
+06-conclusions.md:78#1	RESTATES	GOAL-004
+06-conclusions.md:79#1	RESTATES	GOAL-006
+06-conclusions.md:79#2	RESTATES	GOAL-006
+06-conclusions.md:80#1	RESTATES	GOAL-009
+06-conclusions.md:81#1	RESTATES	GOAL-011
+06-conclusions.md:81#2	RESTATES	GOAL-011
+06-conclusions.md:82#1	RESTATES	GOAL-012
+06-conclusions.md:82#2	RESTATES	GOAL-012
+06-conclusions.md:83#1	RESTATES	GOAL-013
+06-conclusions.md:83#2	RESTATES	GOAL-013
+06-conclusions.md:84#1	RESTATES	GOAL-015
+06-conclusions.md:84#2	RESTATES	GOAL-015
+06-conclusions.md:84#3	RESTATES	GOAL-015
+06-conclusions.md:85#1	RESTATES	GOAL-021
+06-conclusions.md:85#2	RESTATES	GOAL-021
+06-conclusions.md:89#1	VIEW	GOAL-014,GOAL-016,GOAL-026,GOAL-031
+06-conclusions.md:93#1	HISTORY	
+06-conclusions.md:93#2	HISTORY	
+07-conclusions.md:100#1	VIEW	SETTLE-026, SETTLE-038
+07-conclusions.md:101#1	VIEW	SETTLE-033, SETTLE-005
+07-conclusions.md:102#1	VIEW	GOAL-083
+07-conclusions.md:103#1	VIEW	WRITE-073,WRITE-008,WRITE-015,SCHEMA-026,BLUEPRINT-017
+07-conclusions.md:104#1	VIEW	FRAGMENT-036,FRAGMENT-010
+07-conclusions.md:108#1	HISTORY	
+07-conclusions.md:109#1	HISTORY	
+07-conclusions.md:109#2	HISTORY	
+07-conclusions.md:110#1	RESTATES	WRITE-024,WRITE-007
+07-conclusions.md:110#4	RESTATES	WRITE-024,WRITE-007
+07-conclusions.md:110#5	RESTATES	WRITE-024,WRITE-007
+07-conclusions.md:111#1	RESTATES	WRITE-024
+07-conclusions.md:111#2	RESTATES	SETTLE-005
+07-conclusions.md:112#1	HISTORY	
+07-conclusions.md:112#2	HISTORY	
+07-conclusions.md:112#3	HISTORY	
+07-conclusions.md:113#1	HISTORY	
+07-conclusions.md:113#2	RESTATES	SCHEMA-009
+07-conclusions.md:117#1	HISTORY	
+07-conclusions.md:118#1	VIEW	CONTROLS-021,CONTROLS-022,CONTROLS-023,CONTROLS-024,CONTROLS-025,CONTROLS-026,CONTROLS-027,CONTROLS-028,CONTROLS-029,CONTROLS-030,CONTROLS-032
+07-conclusions.md:120#1	VIEW	CONTROLS-021,CONTROLS-022,CONTROLS-023,CONTROLS-024,CONTROLS-025,CONTROLS-026,CONTROLS-027,CONTROLS-028,CONTROLS-029,CONTROLS-030,CONTROLS-032
+07-conclusions.md:122#1	VIEW	CONTROLS-021,CONTROLS-030
+07-conclusions.md:123#1	VIEW	CONTROLS-022,CONTROLS-023
+07-conclusions.md:124#1	VIEW	CONTROLS-032
+07-conclusions.md:125#1	VIEW	CONTROLS-026,CONTROLS-027,CONTROLS-028
+07-conclusions.md:126#1	VIEW	CONTROLS-025
+07-conclusions.md:127#1	VIEW	CONTROLS-029
+07-conclusions.md:128#1	VIEW	CONTROLS-024
+07-conclusions.md:130#1	RESTATES	SETTLE-004
+07-conclusions.md:130#2	RESTATES	SETTLE-004
+07-conclusions.md:130#3	HISTORY	
+07-conclusions.md:130#4	HISTORY	
+07-conclusions.md:130#5	RESTATES	SETTLE-004
+07-conclusions.md:130#6	RESTATES	SETTLE-004
+07-conclusions.md:130#7	RESTATES	SETTLE-004
+07-conclusions.md:130#8	RESTATES	SETTLE-004
+07-conclusions.md:130#9	RESTATES	SETTLE-004
+07-conclusions.md:131#1	RESTATES	CONTROLS-028
+07-conclusions.md:131#2	RESTATES	CONTROLS-028,CONTROLS-029
+07-conclusions.md:131#3	RESTATES	CONTROLS-028
+07-conclusions.md:131#4	RESTATES	CONTROLS-028
+07-conclusions.md:131#5	HISTORY	
+07-conclusions.md:131#6	RESTATES	CONTROLS-028,WRITE-028
+07-conclusions.md:132#1	RESTATES	SETTLE-022
+07-conclusions.md:132#2	RESTATES	SETTLE-011
+07-conclusions.md:133#1	HISTORY	
+07-conclusions.md:133#2	HISTORY	
+07-conclusions.md:137#1	RESTATES	FRAGMENT-015
+07-conclusions.md:137#2	RESTATES	FRAGMENT-015
+07-conclusions.md:137#3	RESTATES	FRAGMENT-014
+07-conclusions.md:137#4	RESTATES	FRAGMENT-014
+07-conclusions.md:138#1	RESTATES	FRAGMENT-014
+07-conclusions.md:138#3	HISTORY	
+07-conclusions.md:142#1	RESTATES	FRAGMENT-005
+07-conclusions.md:142#2	RESTATES	FRAGMENT-025,FRAGMENT-004
+07-conclusions.md:142#3	RESTATES	FRAGMENT-010
+07-conclusions.md:142#4	RESTATES	FRAGMENT-010,BLUEPRINT-029
+07-conclusions.md:142#5	RESTATES	FRAGMENT-010
+07-conclusions.md:142#6	HISTORY	
+07-conclusions.md:142#7	RESTATES	FRAGMENT-007
+07-conclusions.md:143#1	HISTORY	
+07-conclusions.md:143#4	RESTATES	FRAGMENT-011
+07-conclusions.md:145#1	VIEW	FRAGMENT-001
+07-conclusions.md:147#1	VIEW	FRAGMENT-001
+07-conclusions.md:149#1	VIEW	FRAGMENT-001
+07-conclusions.md:150#1	VIEW	FRAGMENT-001
+07-conclusions.md:152#1	RESTATES	FRAGMENT-022
+07-conclusions.md:152#2	RESTATES	FRAGMENT-022
+07-conclusions.md:152#3	RESTATES	FRAGMENT-022
+07-conclusions.md:152#4	RESTATES	FRAGMENT-022
+07-conclusions.md:152#5	RESTATES	FRAGMENT-022
+07-conclusions.md:153#1	RESTATES	FRAGMENT-023
+07-conclusions.md:153#2	RESTATES	FRAGMENT-012
+07-conclusions.md:153#3	RESTATES	FRAGMENT-024
+07-conclusions.md:153#4	RESTATES	ERROR-159,ERROR-160,ERROR-161,ERROR-162,ERROR-163
+07-conclusions.md:153#5	RESTATES	ERROR-055
+07-conclusions.md:153#6	RESTATES	FRAGMENT-023
+07-conclusions.md:154#1	HISTORY	
+07-conclusions.md:154#2	HISTORY	
+07-conclusions.md:158#1	HISTORY	
+07-conclusions.md:158#2	HISTORY	
+07-conclusions.md:158#4	RESTATES	CONTROLS-045
+07-conclusions.md:158#5	RESTATES	CONTROLS-045
+07-conclusions.md:158#6	RESTATES	CONTROLS-045,CONTROLS-044
+07-conclusions.md:158#7	RESTATES	CONTROLS-045
+07-conclusions.md:158#8	RESTATES	CONTROLS-046
+07-conclusions.md:158#9	HISTORY	
+07-conclusions.md:160#1	RESTATES	CONTROLS-046
+07-conclusions.md:160#2	RESTATES	CONTROLS-046
+07-conclusions.md:163#1	RESTATES	CONTROLS-046
+07-conclusions.md:163#2	RESTATES	CONTROLS-046
+07-conclusions.md:163#3	RESTATES	CONTROLS-046
+07-conclusions.md:163#4	HISTORY	
+07-conclusions.md:164#1	RESTATES	CONTROLS-046
+07-conclusions.md:164#3	RESTATES	CONTROLS-046
+07-conclusions.md:164#4	RESTATES	CONTROLS-045
+07-conclusions.md:165#1	RESTATES	CONTROLS-042
+07-conclusions.md:165#2	RESTATES	CONTROLS-042
+07-conclusions.md:165#3	RESTATES	CONTROLS-042
+07-conclusions.md:166#1	HISTORY	
+07-conclusions.md:166#2	HISTORY	
+07-conclusions.md:166#3	HISTORY	
+07-conclusions.md:170#1	HISTORY	
+07-conclusions.md:170#2	RESTATES	SCHEMA-009,SCHEMA-039
+07-conclusions.md:170#3	RESTATES	SCHEMA-039
+07-conclusions.md:170#4	RESTATES	SCHEMA-010
+07-conclusions.md:170#6	HISTORY	
+07-conclusions.md:172#1	HISTORY	
+07-conclusions.md:177#1	VIEW	SCHEMA-008
+07-conclusions.md:179#1	VIEW	SCHEMA-010
+07-conclusions.md:180#1	VIEW	SCHEMA-012
+07-conclusions.md:185#1	RESTATES	EVENT-006
+07-conclusions.md:185#2	RESTATES	SCHEMA-007
+07-conclusions.md:186#1	OUT	관찰
+07-conclusions.md:186#2	OUT	관찰
+07-conclusions.md:186#3	OUT	관찰
+07-conclusions.md:187#1	HISTORY	
+07-conclusions.md:187#2	HISTORY	
+07-conclusions.md:191#1	VIEW	WRITE-007,WRITE-030
+07-conclusions.md:193#1	VIEW	WRITE-007,WRITE-030
+07-conclusions.md:194#1	VIEW	WRITE-007,WRITE-030
+07-conclusions.md:195#1	VIEW	WRITE-007,WRITE-030
+07-conclusions.md:196#1	VIEW	WRITE-007,WRITE-030
+07-conclusions.md:197#1	VIEW	WRITE-007,WRITE-030
+07-conclusions.md:198#1	VIEW	WRITE-007,WRITE-030
+07-conclusions.md:199#1	VIEW	WRITE-007,WRITE-030
+07-conclusions.md:200#1	VIEW	WRITE-007,WRITE-030
+07-conclusions.md:201#1	VIEW	WRITE-007,WRITE-030
+07-conclusions.md:203#1	RESTATES	WRITE-030
+07-conclusions.md:203#2	RESTATES	WRITE-031
+07-conclusions.md:203#3	RESTATES	WRITE-031,WRITE-037
+07-conclusions.md:203#4	RESTATES	WRITE-033
+07-conclusions.md:207#1	HISTORY	
+07-conclusions.md:208#1	RESTATES	NODE-020
+07-conclusions.md:209#1	RESTATES	NODE-020
+07-conclusions.md:209#2	OUT	관찰
+07-conclusions.md:209#3	RESTATES	NODE-020
+07-conclusions.md:209#4	HISTORY	
+07-conclusions.md:210#1	HISTORY	
+07-conclusions.md:210#2	HISTORY	
+07-conclusions.md:214#1	OUT	예시
+07-conclusions.md:214#2	OUT	예시
+07-conclusions.md:214#3	OUT	예시
+07-conclusions.md:214#4	OUT	예시
+07-conclusions.md:214#5	OUT	예시
+07-conclusions.md:215#1	RESTATES	SETTLE-004
+07-conclusions.md:215#3	RESTATES	SETTLE-004
+07-conclusions.md:215#4	HISTORY	
+07-conclusions.md:216#1	HISTORY	
+07-conclusions.md:216#2	HISTORY	
+07-conclusions.md:216#3	HISTORY	
+07-conclusions.md:217#1	HISTORY	
+07-conclusions.md:217#2	HISTORY	
+07-conclusions.md:217#3	HISTORY	
+07-conclusions.md:217#4	HISTORY	
+07-conclusions.md:218#3	HISTORY	
+07-conclusions.md:218#5	HISTORY	
+07-conclusions.md:218#6	HISTORY	
+07-conclusions.md:218#7	HISTORY	
+07-conclusions.md:22#1	RESTATES	SCHEMA-001,SCHEMA-002,SCHEMA-006,GOAL-037
+07-conclusions.md:222#1	HISTORY	
+07-conclusions.md:222#2	HISTORY	
+07-conclusions.md:222#4	HISTORY	
+07-conclusions.md:222#5	HISTORY	
+07-conclusions.md:226#1	HISTORY	
+07-conclusions.md:226#3	HISTORY	
+07-conclusions.md:226#4	HISTORY	
+07-conclusions.md:228#1	VIEW	CONTROLS-029, CONTROLS-030, CONTROLS-045, CONTROLS-055
+07-conclusions.md:23#1	VIEW	CONTROLS-061, CONTROLS-001
+07-conclusions.md:230#1	VIEW	SETTLE-005
+07-conclusions.md:231#1	VIEW	FRAGMENT-014,FRAGMENT-030
+07-conclusions.md:232#1	VIEW	GOAL-027,FRAGMENT-025,FRAGMENT-008
+07-conclusions.md:233#1	VIEW	SETTLE-004, SETTLE-016
+07-conclusions.md:234#1	VIEW	BLUEPRINT-017
+07-conclusions.md:235#1	VIEW	CONTROLS-056, CONTROLS-045
+07-conclusions.md:236#1	VIEW	ERROR-052, ERROR-070, ERROR-073
+07-conclusions.md:237#1	VIEW	WRITE-030,WRITE-010
+07-conclusions.md:238#1	VIEW	CONTROLS-030, CONTROLS-040, CONTROLS-041
+07-conclusions.md:239#1	VIEW	FRAGMENT-012
+07-conclusions.md:24#1	VIEW	CONTROLS-058, CONTROLS-016, CONTROLS-048
+07-conclusions.md:240#1	VIEW	WRITE-010
+07-conclusions.md:241#1	VIEW	CONTROLS-055, CONTROLS-027
+07-conclusions.md:242#1	VIEW	SCHEMA-009
+07-conclusions.md:243#1	VIEW	CONTROLS-030
+07-conclusions.md:244#1	VIEW	SCHEMA-009,SCHEMA-039
+07-conclusions.md:245#1	VIEW	SETTLE-004
+07-conclusions.md:246#1	VIEW	SETTLE-004
+07-conclusions.md:247#1	VIEW	CONTROLS-045, CONTROLS-057
+07-conclusions.md:248#1	VIEW	SCHEMA-009,SCHEMA-039
+07-conclusions.md:249#1	VIEW	SCHEMA-039
+07-conclusions.md:25#1	VIEW	FRAGMENT-001
+07-conclusions.md:250#1	VIEW	FRAGMENT-023
+07-conclusions.md:251#1	VIEW	CONTROLS-028
+07-conclusions.md:252#1	VIEW	FRAGMENT-023,FRAGMENT-022
+07-conclusions.md:253#1	VIEW	WRITE-026, VALIDATE-034, NODE-033
+07-conclusions.md:254#1	VIEW	CONTROLS-029, CONTROLS-051
+07-conclusions.md:258#1	HISTORY	
+07-conclusions.md:26#1	VIEW	FRAGMENT-009,GOAL-027
+07-conclusions.md:260#1	HISTORY	
+07-conclusions.md:261#1	HISTORY	
+07-conclusions.md:262#1	HISTORY	
+07-conclusions.md:266#1	HISTORY	
+07-conclusions.md:266#2	HISTORY	
+07-conclusions.md:266#3	RESTATES	PROCESS-012
+07-conclusions.md:268#1	HISTORY	
+07-conclusions.md:27#1	VIEW	SETTLE-005, SETTLE-027
+07-conclusions.md:270#1	HISTORY	
+07-conclusions.md:271#1	HISTORY	
+07-conclusions.md:272#1	HISTORY	
+07-conclusions.md:273#1	HISTORY	
+07-conclusions.md:274#1	HISTORY	
+07-conclusions.md:276#1	HISTORY	
+07-conclusions.md:276#3	RESTATES	CONTROLS-026
+07-conclusions.md:276#4	RESTATES	LANDING-014
+07-conclusions.md:276#5	HISTORY	
+07-conclusions.md:276#6	HISTORY	
+07-conclusions.md:276#7	HISTORY	
+07-conclusions.md:28#1	VIEW	SETTLE-005, SETTLE-033
+07-conclusions.md:280#1	HISTORY	
+07-conclusions.md:282#1	HISTORY	
+07-conclusions.md:283#1	HISTORY	
+07-conclusions.md:284#1	HISTORY	
+07-conclusions.md:285#1	HISTORY	
+07-conclusions.md:289#1	HISTORY	
+07-conclusions.md:29#1	RESTATES	VALUE-002,FRAGMENT-010
+07-conclusions.md:291#1	HISTORY	
+07-conclusions.md:292#1	HISTORY	
+07-conclusions.md:293#1	HISTORY	
+07-conclusions.md:294#1	HISTORY	
+07-conclusions.md:295#1	HISTORY	
+07-conclusions.md:296#1	HISTORY	
+07-conclusions.md:297#1	HISTORY	
+07-conclusions.md:298#1	HISTORY	
+07-conclusions.md:299#1	HISTORY	
+07-conclusions.md:3#5	HISTORY	
+07-conclusions.md:30#1	RESTATES	WRITE-008,WRITE-072
+07-conclusions.md:300#1	HISTORY	
+07-conclusions.md:31#1	VIEW	SETTLE-004
+07-conclusions.md:32#1	VIEW	CONTROLS-028, CONTROLS-037, CONTROLS-038
+07-conclusions.md:323#1	OUT	예시
+07-conclusions.md:325#1	OUT	예시
+07-conclusions.md:326#1	OUT	예시
+07-conclusions.md:327#1	OUT	예시
+07-conclusions.md:328#1	OUT	예시
+07-conclusions.md:329#1	OUT	예시
+07-conclusions.md:33#1	VIEW	CONTROLS-029
+07-conclusions.md:332#1	OUT	예시
+07-conclusions.md:333#1	OUT	예시
+07-conclusions.md:335#1	OUT	예시
+07-conclusions.md:336#1	OUT	예시
+07-conclusions.md:34#1	VIEW	CONTROLS-042, CONTROLS-030
+07-conclusions.md:345#1	VIEW	SURFACE-004,SURFACE-025,SURFACE-039
+07-conclusions.md:347#1	VIEW	SURFACE-006,SURFACE-030
+07-conclusions.md:348#1	VIEW	SURFACE-007,ERROR-132,ERROR-133,ERROR-135,ERROR-136,ERROR-137,ERROR-138,EVENT-058
+07-conclusions.md:35#1	VIEW	CONTROLS-045, CONTROLS-046, CONTROLS-062
+07-conclusions.md:350#1	VIEW	SURFACE-005,SURFACE-033
+07-conclusions.md:351#1	VIEW	SURFACE-009
+07-conclusions.md:37#1	RESTATES	FRAGMENT-010,SCHEMA-026,SCHEMA-028
+07-conclusions.md:393#1	VIEW	TEST-061,TEST-063,EVENT-054
+07-conclusions.md:418#1	HISTORY	
+07-conclusions.md:418#2	HISTORY	
+07-conclusions.md:419#1	HISTORY	
+07-conclusions.md:419#2	HISTORY	
+07-conclusions.md:419#3	HISTORY	
+07-conclusions.md:420#1	HISTORY	
+07-conclusions.md:421#1	HISTORY	
+07-conclusions.md:421#2	HISTORY	
+07-conclusions.md:422#1	HISTORY	
+07-conclusions.md:422#2	RESTATES	FRAGMENT-030,GOAL-027
+07-conclusions.md:422#3	RESTATES	FRAGMENT-022,FRAGMENT-004
+07-conclusions.md:423#1	RESTATES	LANDING-003
+07-conclusions.md:423#2	HISTORY	
+07-conclusions.md:423#4	RESTATES	LANDING-015,LANDING-016,LANDING-017,LANDING-018
+07-conclusions.md:423#5	RESTATES	LANDING-031
+07-conclusions.md:423#6	RESTATES	LANDING-027
+07-conclusions.md:423#7	RESTATES	LANDING-028
+07-conclusions.md:423#8	RESTATES	LANDING-008,LANDING-030
+07-conclusions.md:424#1	HISTORY	
+07-conclusions.md:428#1	HISTORY	
+07-conclusions.md:43#1	RESTATES	GOAL-025,GOAL-026,GOAL-028,GOAL-029,GOAL-030,GOAL-031
+07-conclusions.md:43#2	RESTATES	GOAL-081,GOAL-082
+07-conclusions.md:430#1	HISTORY	
+07-conclusions.md:431#1	HISTORY	
+07-conclusions.md:432#1	HISTORY	
+07-conclusions.md:433#1	HISTORY	
+07-conclusions.md:434#1	HISTORY	
+07-conclusions.md:435#1	HISTORY	
+07-conclusions.md:436#1	HISTORY	
+07-conclusions.md:437#1	HISTORY	
+07-conclusions.md:438#1	HISTORY	
+07-conclusions.md:442#1	HISTORY	
+07-conclusions.md:442#2	HISTORY	
+07-conclusions.md:442#3	HISTORY	
+07-conclusions.md:446#1	HISTORY	
+07-conclusions.md:446#2	HISTORY	
+07-conclusions.md:447#1	HISTORY	
+07-conclusions.md:447#2	HISTORY	
+07-conclusions.md:447#3	HISTORY	
+07-conclusions.md:456#1	HISTORY	
+07-conclusions.md:458#1	RESTATES	LANDING-062
+07-conclusions.md:459#1	VIEW	SETTLE-004
+07-conclusions.md:460#1	RESTATES	LANDING-065
+07-conclusions.md:461#1	RESTATES	LANDING-064
+07-conclusions.md:462#1	RESTATES	LANDING-064
+07-conclusions.md:463#1	RESTATES	LANDING-064
+07-conclusions.md:464#1	RESTATES	LANDING-066
+07-conclusions.md:465#1	RESTATES	LANDING-066
+07-conclusions.md:466#1	RESTATES	LANDING-007
+07-conclusions.md:467#1	RESTATES	LANDING-063
+07-conclusions.md:468#1	RESTATES	LANDING-067,LANDING-068
+07-conclusions.md:47#1	HISTORY	
+07-conclusions.md:472#1	HISTORY	
+07-conclusions.md:472#2	OUT	관찰
+07-conclusions.md:472#3	RESTATES	LANDING-028
+07-conclusions.md:472#4	HISTORY	
+07-conclusions.md:472#5	HISTORY	
+07-conclusions.md:472#6	HISTORY	
+07-conclusions.md:472#7	RESTATES	LANDING-004
+07-conclusions.md:473#1	HISTORY	
+07-conclusions.md:473#2	OUT	관찰
+07-conclusions.md:473#3	RESTATES	LANDING-004,LANDING-006
+07-conclusions.md:473#4	HISTORY	
+07-conclusions.md:474#1	HISTORY	
+07-conclusions.md:474#2	RESTATES	SETTLE-022
+07-conclusions.md:474#3	OUT	관찰
+07-conclusions.md:475#1	HISTORY	
+07-conclusions.md:475#2	RESTATES	LANDING-015
+07-conclusions.md:475#3	RESTATES	LANDING-015
+07-conclusions.md:475#4	RESTATES	LANDING-012,LANDING-016
+07-conclusions.md:475#5	RESTATES	LANDING-015
+07-conclusions.md:475#6	HISTORY	
+07-conclusions.md:476#1	HISTORY	
+07-conclusions.md:476#2	HISTORY	
+07-conclusions.md:476#3	RESTATES	LANDING-067
+07-conclusions.md:49#4	RESTATES	GOAL-034
+07-conclusions.md:496#2	HISTORY	
+07-conclusions.md:5#1	HISTORY	
+07-conclusions.md:500#1	HISTORY	
+07-conclusions.md:500#2	HISTORY	
+07-conclusions.md:500#3	HISTORY	
+07-conclusions.md:500#4	HISTORY	
+07-conclusions.md:500#5	HISTORY	
+07-conclusions.md:501#1	HISTORY	
+07-conclusions.md:501#2	HISTORY	
+07-conclusions.md:501#3	HISTORY	
+07-conclusions.md:502#1	HISTORY	
+07-conclusions.md:502#2	HISTORY	
+07-conclusions.md:502#3	HISTORY	
+07-conclusions.md:506#2	HISTORY	
+07-conclusions.md:506#3	HISTORY	
+07-conclusions.md:508#1	HISTORY	
+07-conclusions.md:508#2	RESTATES	GOAL-027,FRAGMENT-006,FRAGMENT-016
+07-conclusions.md:509#1	HISTORY	
+07-conclusions.md:509#2	HISTORY	
+07-conclusions.md:510#1	HISTORY	
+07-conclusions.md:510#2	HISTORY	
+07-conclusions.md:511#1	HISTORY	
+07-conclusions.md:511#2	HISTORY	
+07-conclusions.md:53#1	RESTATES	GOAL-038
+07-conclusions.md:54#1	RESTATES	GOAL-039
+07-conclusions.md:54#2	RESTATES	GOAL-039
+07-conclusions.md:55#1	RESTATES	GOAL-040
+07-conclusions.md:56#1	RESTATES	GOAL-041
+07-conclusions.md:58#1	RESTATES	GOAL-044
+07-conclusions.md:60#1	RESTATES	GOAL-044
+07-conclusions.md:60#2	RESTATES	GOAL-044
+07-conclusions.md:60#3	RESTATES	GOAL-044
+07-conclusions.md:62#1	RESTATES	GOAL-045
+07-conclusions.md:62#2	RESTATES	GOAL-045
+07-conclusions.md:62#3	RESTATES	GOAL-045
+07-conclusions.md:62#4	RESTATES	GOAL-045
+07-conclusions.md:66#3	RESTATES	GOAL-046
+07-conclusions.md:66#4	RESTATES	GOAL-046
+07-conclusions.md:67#4	RESTATES	GOAL-047
+07-conclusions.md:68#2	RESTATES	GOAL-048
+07-conclusions.md:68#3	RESTATES	GOAL-048
+07-conclusions.md:68#4	RESTATES	GOAL-048
+07-conclusions.md:72#2	HISTORY	
+07-conclusions.md:76#1	RESTATES	GOAL-082,GOAL-027
+07-conclusions.md:76#2	RESTATES	GOAL-082,GOAL-027
+07-conclusions.md:76#3	RESTATES	GOAL-082,GOAL-027
+07-conclusions.md:76#4	RESTATES	GOAL-082,GOAL-027
+07-conclusions.md:76#5	RESTATES	GOAL-082,GOAL-027
+07-conclusions.md:76#6	RESTATES	GOAL-082,GOAL-027
+07-conclusions.md:78#1	HISTORY	
+07-conclusions.md:78#2	RESTATES	SETTLE-026
+07-conclusions.md:78#3	RESTATES	SETTLE-026
+07-conclusions.md:78#4	RESTATES	FRAGMENT-014,FRAGMENT-015
+07-conclusions.md:78#5	RESTATES	FRAGMENT-014,FRAGMENT-015
+07-conclusions.md:78#6	HISTORY	
+07-conclusions.md:80#1	RESTATES	GOAL-037,GOAL-047
+07-conclusions.md:80#2	RESTATES	GOAL-037,GOAL-047
+07-conclusions.md:80#3	RESTATES	GOAL-037,GOAL-047
+07-conclusions.md:80#4	RESTATES	GOAL-037,GOAL-047
+07-conclusions.md:80#5	RESTATES	GOAL-037,GOAL-047
+07-conclusions.md:82#1	RESTATES	SCHEMA-008,SCHEMA-009
+07-conclusions.md:82#2	RESTATES	SCHEMA-008,SCHEMA-009
+07-conclusions.md:82#3	RESTATES	SCHEMA-008,SCHEMA-009,SCHEMA-039
+07-conclusions.md:88#1	HISTORY	
+07-conclusions.md:90#1	VIEW	CONTROLS-026, WRITE-011
+07-conclusions.md:91#1	VIEW	SETTLE-028
+07-conclusions.md:92#1	VIEW	EVENT-021, EVENT-022
+07-conclusions.md:93#1	VIEW	EVENT-008
+07-conclusions.md:94#1	VIEW	WRITE-015
+07-conclusions.md:95#1	VIEW	NODE-020,LANDING-020
+07-conclusions.md:96#1	VIEW	EVENT-006
+07-conclusions.md:97#1	VIEW	VALUE-027,VALUE-028
+07-conclusions.md:98#1	VIEW	SETTLE-011
+07-conclusions.md:99#1	VIEW	VALUE-010
+08-design-a-to-z.md:102#1	VIEW	CONTROLS-021,CONTROLS-022,CONTROLS-023,CONTROLS-024,CONTROLS-025,CONTROLS-026,CONTROLS-027,CONTROLS-028,CONTROLS-029,CONTROLS-030,CONTROLS-031,CONTROLS-032
+08-design-a-to-z.md:117#1	RESTATES	CONTROLS-042
+08-design-a-to-z.md:117#3	RESTATES	CONTROLS-042
+08-design-a-to-z.md:118#4	RESTATES	CONTROLS-043
+08-design-a-to-z.md:118#5	OUT	예시
+08-design-a-to-z.md:118#7	RESTATES	CONTROLS-043
+08-design-a-to-z.md:119#1	RESTATES	FRAGMENT-016
+08-design-a-to-z.md:119#2	RESTATES	FRAGMENT-016,SETTLE-021
+08-design-a-to-z.md:119#3	RESTATES	FRAGMENT-016
+08-design-a-to-z.md:119#4	RESTATES	VALUE-002
+08-design-a-to-z.md:119#5	RESTATES	VALUE-002,VALUE-017
+08-design-a-to-z.md:123#1	RESTATES	CONTROLS-010,CONTROLS-011
+08-design-a-to-z.md:123#4	RESTATES	CONTROLS-001,CONTROLS-061
+08-design-a-to-z.md:130#10	RESTATES	CONTROLS-006,NODE-007
+08-design-a-to-z.md:130#14	RESTATES	CONTROLS-008
+08-design-a-to-z.md:130#3	RESTATES	VALIDATE-034,NODE-032
+08-design-a-to-z.md:130#4	RESTATES	VALIDATE-034,NODE-032
+08-design-a-to-z.md:130#6	RESTATES	CONTROLS-004
+08-design-a-to-z.md:130#7	RESTATES	CONTROLS-004,CONTROLS-005
+08-design-a-to-z.md:130#8	RESTATES	CONTROLS-005
+08-design-a-to-z.md:134#1	OUT	예시
+08-design-a-to-z.md:135#1	OUT	예시
+08-design-a-to-z.md:136#1	OUT	예시
+08-design-a-to-z.md:137#1	OUT	예시
+08-design-a-to-z.md:138#1	OUT	예시
+08-design-a-to-z.md:140#1	OUT	예시
+08-design-a-to-z.md:141#1	OUT	예시
+08-design-a-to-z.md:152#1	RESTATES	VALUE-002,VALUE-004
+08-design-a-to-z.md:152#2	RESTATES	VALUE-002,VALUE-004
+08-design-a-to-z.md:154#1	RESTATES	VALUE-002
+08-design-a-to-z.md:155#1	RESTATES	VALUE-002
+08-design-a-to-z.md:156#1	RESTATES	VALUE-002
+08-design-a-to-z.md:157#1	RESTATES	VALUE-002
+08-design-a-to-z.md:158#1	RESTATES	VALUE-002
+08-design-a-to-z.md:159#1	RESTATES	VALUE-002
+08-design-a-to-z.md:16#1	RESTATES	VALUE-002,VALUE-004
+08-design-a-to-z.md:160#1	RESTATES	VALUE-002
+08-design-a-to-z.md:161#1	RESTATES	VALUE-002
+08-design-a-to-z.md:162#1	RESTATES	VALUE-002
+08-design-a-to-z.md:166#1	RESTATES	VALUE-002
+08-design-a-to-z.md:166#2	RESTATES	VALUE-002
+08-design-a-to-z.md:167#1	RESTATES	VALUE-006
+08-design-a-to-z.md:167#2	RESTATES	VALUE-006
+08-design-a-to-z.md:169#1	RESTATES	NODE-021,NODE-034
+08-design-a-to-z.md:169#2	RESTATES	NODE-021,NODE-028,NODE-005,NODE-034
+08-design-a-to-z.md:169#3	RESTATES	NODE-020
+08-design-a-to-z.md:17#1	VIEW	GOAL-029
+08-design-a-to-z.md:170#1	RESTATES	NODE-001
+08-design-a-to-z.md:170#2	RESTATES	NODE-001,NODE-002
+08-design-a-to-z.md:170#3	RESTATES	NODE-002
+08-design-a-to-z.md:170#4	RESTATES	NODE-002,NODE-018
+08-design-a-to-z.md:170#5	RESTATES	NODE-001
+08-design-a-to-z.md:170#6	RESTATES	NODE-002,NODE-003
+08-design-a-to-z.md:170#7	RESTATES	NODE-004
+08-design-a-to-z.md:170#8	RESTATES	NODE-006
+08-design-a-to-z.md:170#9	RESTATES	NODE-006,NODE-008
+08-design-a-to-z.md:174#2	RESTATES	BLUEPRINT-001
+08-design-a-to-z.md:176#1	RESTATES	BLUEPRINT-004
+08-design-a-to-z.md:176#2	RESTATES	BLUEPRINT-004
+08-design-a-to-z.md:176#3	RESTATES	BLUEPRINT-004,FRAGMENT-011
+08-design-a-to-z.md:176#4	RESTATES	BLUEPRINT-008,FRAGMENT-011
+08-design-a-to-z.md:176#5	RESTATES	BLUEPRINT-008,FRAGMENT-011
+08-design-a-to-z.md:177#1	RESTATES	BLUEPRINT-010
+08-design-a-to-z.md:177#2	RESTATES	BLUEPRINT-010
+08-design-a-to-z.md:177#3	RESTATES	BLUEPRINT-010
+08-design-a-to-z.md:177#4	RESTATES	BLUEPRINT-012
+08-design-a-to-z.md:178#1	RESTATES	BLUEPRINT-017
+08-design-a-to-z.md:178#2	RESTATES	BLUEPRINT-017
+08-design-a-to-z.md:178#3	RESTATES	FRAGMENT-007
+08-design-a-to-z.md:18#1	VIEW	FRAGMENT-001
+08-design-a-to-z.md:180#1	RESTATES	ERROR-041
+08-design-a-to-z.md:180#2	RESTATES	VALIDATE-015
+08-design-a-to-z.md:180#3	RESTATES	ERROR-041
+08-design-a-to-z.md:180#4	RESTATES	ERROR-041
+08-design-a-to-z.md:180#5	RESTATES	ERROR-041
+08-design-a-to-z.md:180#6	RESTATES	ERROR-041
+08-design-a-to-z.md:180#7	RESTATES	ERROR-041
+08-design-a-to-z.md:180#8	RESTATES	VALIDATE-017
+08-design-a-to-z.md:180#9	RESTATES	VALIDATE-018
+08-design-a-to-z.md:182#1	RESTATES	ERROR-159
+08-design-a-to-z.md:182#2	RESTATES	ERROR-159
+08-design-a-to-z.md:182#3	RESTATES	ERROR-123
+08-design-a-to-z.md:182#4	RESTATES	ERROR-022,ERROR-001
+08-design-a-to-z.md:182#5	RESTATES	ERROR-030
+08-design-a-to-z.md:186#1	RESTATES	FRAGMENT-001
+08-design-a-to-z.md:188#1	VIEW	FRAGMENT-001
+08-design-a-to-z.md:19#1	VIEW	FRAGMENT-009,GOAL-027
+08-design-a-to-z.md:190#1	VIEW	FRAGMENT-001
+08-design-a-to-z.md:192#1	VIEW	FRAGMENT-001
+08-design-a-to-z.md:193#1	VIEW	FRAGMENT-001
+08-design-a-to-z.md:195#1	RESTATES	FRAGMENT-014
+08-design-a-to-z.md:195#2	RESTATES	FRAGMENT-009,FRAGMENT-014
+08-design-a-to-z.md:195#3	RESTATES	FRAGMENT-014,FRAGMENT-015
+08-design-a-to-z.md:196#1	RESTATES	FRAGMENT-005
+08-design-a-to-z.md:196#2	RESTATES	FRAGMENT-028
+08-design-a-to-z.md:196#3	RESTATES	FRAGMENT-028
+08-design-a-to-z.md:197#1	RESTATES	FRAGMENT-013
+08-design-a-to-z.md:197#2	RESTATES	FRAGMENT-013
+08-design-a-to-z.md:197#3	RESTATES	FRAGMENT-013,FRAGMENT-012
+08-design-a-to-z.md:198#1	RESTATES	FRAGMENT-019
+08-design-a-to-z.md:198#2	RESTATES	FRAGMENT-019
+08-design-a-to-z.md:198#3	RESTATES	FRAGMENT-019
+08-design-a-to-z.md:199#1	RESTATES	FRAGMENT-030
+08-design-a-to-z.md:199#10	RESTATES	FRAGMENT-034
+08-design-a-to-z.md:199#2	RESTATES	FRAGMENT-022
+08-design-a-to-z.md:199#3	RESTATES	FRAGMENT-022
+08-design-a-to-z.md:199#4	RESTATES	FRAGMENT-022
+08-design-a-to-z.md:199#5	RESTATES	FRAGMENT-022
+08-design-a-to-z.md:199#6	RESTATES	FRAGMENT-031
+08-design-a-to-z.md:199#7	RESTATES	FRAGMENT-006
+08-design-a-to-z.md:199#8	RESTATES	FRAGMENT-033
+08-design-a-to-z.md:199#9	RESTATES	FRAGMENT-032
+08-design-a-to-z.md:20#1	VIEW	SETTLE-001
+08-design-a-to-z.md:201#1	OUT	예시
+08-design-a-to-z.md:201#2	OUT	예시
+08-design-a-to-z.md:205#1	OUT	예시
+08-design-a-to-z.md:206#1	OUT	예시
+08-design-a-to-z.md:207#1	OUT	예시
+08-design-a-to-z.md:208#1	OUT	예시
+08-design-a-to-z.md:209#1	OUT	예시
+08-design-a-to-z.md:21#1	RESTATES	WRITE-008
+08-design-a-to-z.md:210#1	OUT	예시
+08-design-a-to-z.md:211#1	OUT	예시
+08-design-a-to-z.md:212#1	OUT	예시
+08-design-a-to-z.md:213#1	OUT	예시
+08-design-a-to-z.md:215#1	OUT	예시
+08-design-a-to-z.md:219#1	OUT	예시
+08-design-a-to-z.md:219#2	OUT	예시
+08-design-a-to-z.md:219#3	OUT	예시
+08-design-a-to-z.md:22#1	RESTATES	VALUE-002,VALUE-027,VALUE-028,VALIDATE-001
+08-design-a-to-z.md:223#1	RESTATES	SETTLE-001
+08-design-a-to-z.md:223#2	RESTATES	SETTLE-001
+08-design-a-to-z.md:223#3	RESTATES	SETTLE-001
+08-design-a-to-z.md:225#1	VIEW	SETTLE-001
+08-design-a-to-z.md:226#1	VIEW	SETTLE-001
+08-design-a-to-z.md:227#1	VIEW	SETTLE-002
+08-design-a-to-z.md:228#1	VIEW	SETTLE-003
+08-design-a-to-z.md:228#2	VIEW	SETTLE-003
+08-design-a-to-z.md:229#1	VIEW	SETTLE-004
+08-design-a-to-z.md:23#1	VIEW	SETTLE-005
+08-design-a-to-z.md:230#1	VIEW	SETTLE-005
+08-design-a-to-z.md:231#1	VIEW	SETTLE-006
+08-design-a-to-z.md:232#1	VIEW	SETTLE-007
+08-design-a-to-z.md:233#1	VIEW	SETTLE-008
+08-design-a-to-z.md:234#1	VIEW	SETTLE-001
+08-design-a-to-z.md:235#1	VIEW	SETTLE-001
+08-design-a-to-z.md:236#1	VIEW	SETTLE-001
+08-design-a-to-z.md:237#1	VIEW	SETTLE-001
+08-design-a-to-z.md:238#1	VIEW	SETTLE-001
+08-design-a-to-z.md:243#1	VIEW	SETTLE-002
+08-design-a-to-z.md:244#1	VIEW	SETTLE-003,SETTLE-018,SETTLE-017
+08-design-a-to-z.md:245#1	VIEW	SETTLE-004,SETTLE-017
+08-design-a-to-z.md:246#1	VIEW	SETTLE-005,SETTLE-017
+08-design-a-to-z.md:247#1	VIEW	SETTLE-006
+08-design-a-to-z.md:248#1	VIEW	SETTLE-007
+08-design-a-to-z.md:249#1	VIEW	SETTLE-008
+08-design-a-to-z.md:251#1	RESTATES	SETTLE-010
+08-design-a-to-z.md:251#2	RESTATES	SETTLE-010
+08-design-a-to-z.md:252#1	RESTATES	SETTLE-028
+08-design-a-to-z.md:252#2	RESTATES	SETTLE-004
+08-design-a-to-z.md:252#3	RESTATES	SETTLE-004
+08-design-a-to-z.md:252#4	RESTATES	SETTLE-004
+08-design-a-to-z.md:253#2	RESTATES	SETTLE-027
+08-design-a-to-z.md:254#1	RESTATES	SETTLE-011
+08-design-a-to-z.md:254#10	RESTATES	SETTLE-015
+08-design-a-to-z.md:254#11	RESTATES	ERROR-077,ERROR-078,ERROR-079,ERROR-080,ERROR-081,ERROR-082,ERROR-083,ERROR-084
+08-design-a-to-z.md:254#12	RESTATES	ERROR-003,ERROR-077,ERROR-078,ERROR-079,ERROR-080,ERROR-081,ERROR-082,ERROR-083,ERROR-084
+08-design-a-to-z.md:254#15	RESTATES	SETTLE-016
+08-design-a-to-z.md:254#2	RESTATES	SETTLE-011,SETTLE-012
+08-design-a-to-z.md:254#5	RESTATES	SETTLE-016
+08-design-a-to-z.md:254#6	RESTATES	SETTLE-014
+08-design-a-to-z.md:254#8	RESTATES	SETTLE-014
+08-design-a-to-z.md:254#9	RESTATES	ERROR-070,ERROR-071,ERROR-072,ERROR-073,ERROR-074,ERROR-075,ERROR-076
+08-design-a-to-z.md:255#2	RESTATES	SETTLE-017
+08-design-a-to-z.md:255#4	RESTATES	SETTLE-017
+08-design-a-to-z.md:255#5	RESTATES	SETTLE-017
+08-design-a-to-z.md:255#6	RESTATES	SETTLE-017
+08-design-a-to-z.md:256#2	RESTATES	SETTLE-017
+08-design-a-to-z.md:264#1	RESTATES	WRITE-007
+08-design-a-to-z.md:265#1	RESTATES	WRITE-007
+08-design-a-to-z.md:266#1	RESTATES	WRITE-007
+08-design-a-to-z.md:267#1	RESTATES	WRITE-007
+08-design-a-to-z.md:268#1	RESTATES	WRITE-007
+08-design-a-to-z.md:269#1	RESTATES	WRITE-007
+08-design-a-to-z.md:27#1	RESTATES	GOAL-001
+08-design-a-to-z.md:270#1	RESTATES	WRITE-037,WRITE-033,WRITE-034
+08-design-a-to-z.md:271#1	RESTATES	WRITE-007
+08-design-a-to-z.md:272#1	RESTATES	WRITE-007
+08-design-a-to-z.md:278#1	RESTATES	WRITE-006,WRITE-015
+08-design-a-to-z.md:278#3	RESTATES	WRITE-015
+08-design-a-to-z.md:278#4	RESTATES	WRITE-015
+08-design-a-to-z.md:278#5	RESTATES	WRITE-015
+08-design-a-to-z.md:278#6	RESTATES	WRITE-015
+08-design-a-to-z.md:282#1	VIEW	WRITE-007,WRITE-030
+08-design-a-to-z.md:284#1	VIEW	WRITE-007,WRITE-030
+08-design-a-to-z.md:285#1	VIEW	WRITE-007,WRITE-030
+08-design-a-to-z.md:286#1	VIEW	WRITE-007,WRITE-030
+08-design-a-to-z.md:287#1	VIEW	WRITE-007,WRITE-030
+08-design-a-to-z.md:288#1	VIEW	WRITE-007,WRITE-030
+08-design-a-to-z.md:289#1	VIEW	WRITE-007,WRITE-030
+08-design-a-to-z.md:290#1	VIEW	WRITE-007,WRITE-030
+08-design-a-to-z.md:291#1	VIEW	WRITE-007,WRITE-030
+08-design-a-to-z.md:292#1	VIEW	WRITE-007,WRITE-030
+08-design-a-to-z.md:294#1	RESTATES	WRITE-030
+08-design-a-to-z.md:294#2	RESTATES	WRITE-010,WRITE-014
+08-design-a-to-z.md:298#3	RESTATES	WRITE-031
+08-design-a-to-z.md:299#1	RESTATES	WRITE-037
+08-design-a-to-z.md:299#2	RESTATES	WRITE-037
+08-design-a-to-z.md:299#4	RESTATES	WRITE-037
+08-design-a-to-z.md:3#1	HISTORY	
+08-design-a-to-z.md:3#2	HISTORY	
+08-design-a-to-z.md:3#3	RESTATES	PROCESS-026, EVENT-038, ERROR-050
+08-design-a-to-z.md:3#4	RESTATES	PROCESS-026
+08-design-a-to-z.md:3#9	HISTORY	
+08-design-a-to-z.md:300#1	RESTATES	WRITE-035
+08-design-a-to-z.md:300#2	RESTATES	WRITE-035
+08-design-a-to-z.md:301#1	RESTATES	WRITE-038
+08-design-a-to-z.md:301#4	RESTATES	WRITE-038
+08-design-a-to-z.md:302#1	RESTATES	WRITE-033
+08-design-a-to-z.md:302#11	RESTATES	WRITE-034
+08-design-a-to-z.md:302#12	RESTATES	WRITE-034
+08-design-a-to-z.md:302#14	RESTATES	WRITE-034
+08-design-a-to-z.md:302#15	RESTATES	WRITE-034
+08-design-a-to-z.md:302#17	HISTORY	
+08-design-a-to-z.md:302#18	HISTORY	
+08-design-a-to-z.md:302#2	RESTATES	WRITE-033
+08-design-a-to-z.md:302#7	RESTATES	WRITE-032
+08-design-a-to-z.md:302#9	RESTATES	WRITE-034
+08-design-a-to-z.md:303#1	RESTATES	WRITE-039
+08-design-a-to-z.md:309#1	RESTATES	SETTLE-004
+08-design-a-to-z.md:311#1	RESTATES	SETTLE-004
+08-design-a-to-z.md:312#1	RESTATES	SETTLE-004
+08-design-a-to-z.md:312#2	RESTATES	SETTLE-004
+08-design-a-to-z.md:312#3	RESTATES	SETTLE-004
+08-design-a-to-z.md:313#1	RESTATES	SETTLE-004
+08-design-a-to-z.md:313#2	RESTATES	SETTLE-004
+08-design-a-to-z.md:314#1	RESTATES	SETTLE-004
+08-design-a-to-z.md:314#2	RESTATES	SETTLE-004
+08-design-a-to-z.md:315#1	RESTATES	SETTLE-005
+08-design-a-to-z.md:315#2	RESTATES	SETTLE-005
+08-design-a-to-z.md:316#1	RESTATES	WRITE-007
+08-design-a-to-z.md:316#2	RESTATES	WRITE-007
+08-design-a-to-z.md:316#3	RESTATES	WRITE-028
+08-design-a-to-z.md:320#1	RESTATES	SCHEMA-007
+08-design-a-to-z.md:325#1	RESTATES	SCHEMA-009,SCHEMA-005
+08-design-a-to-z.md:326#1	RESTATES	SCHEMA-010,SCHEMA-003
+08-design-a-to-z.md:328#1	RESTATES	SCHEMA-012
+08-design-a-to-z.md:329#1	RESTATES	SCHEMA-013
+08-design-a-to-z.md:331#1	RESTATES	SCHEMA-014
+08-design-a-to-z.md:331#2	RESTATES	SCHEMA-014
+08-design-a-to-z.md:331#3	RESTATES	NODE-028
+08-design-a-to-z.md:331#9	RESTATES	NODE-028
+08-design-a-to-z.md:335#1	RESTATES	CONTROLS-045
+08-design-a-to-z.md:335#2	RESTATES	CONTROLS-045
+08-design-a-to-z.md:336#1	RESTATES	CONTROLS-045
+08-design-a-to-z.md:336#2	RESTATES	CONTROLS-045
+08-design-a-to-z.md:336#3	RESTATES	CONTROLS-045
+08-design-a-to-z.md:337#1	RESTATES	CONTROLS-044
+08-design-a-to-z.md:337#2	RESTATES	CONTROLS-044,CONTROLS-042,CONTROLS-030
+08-design-a-to-z.md:337#3	RESTATES	CONTROLS-044
+08-design-a-to-z.md:338#1	RESTATES	CONTROLS-046
+08-design-a-to-z.md:338#2	RESTATES	CONTROLS-046
+08-design-a-to-z.md:339#1	RESTATES	CONTROLS-045
+08-design-a-to-z.md:339#2	RESTATES	CONTROLS-045
+08-design-a-to-z.md:339#4	RESTATES	CONTROLS-045
+08-design-a-to-z.md:345#1	RESTATES	VALIDATE-014
+08-design-a-to-z.md:345#2	RESTATES	VALIDATE-015
+08-design-a-to-z.md:345#23	RESTATES	ERROR-153,ERROR-154
+08-design-a-to-z.md:345#24	RESTATES	ERROR-146
+08-design-a-to-z.md:345#25	RESTATES	ERROR-146
+08-design-a-to-z.md:345#26	RESTATES	ERROR-146
+08-design-a-to-z.md:345#27	RESTATES	ERROR-146,ERROR-147,ERROR-148,ERROR-150
+08-design-a-to-z.md:345#28	RESTATES	ERROR-148,ERROR-151
+08-design-a-to-z.md:345#29	RESTATES	ERROR-155
+08-design-a-to-z.md:345#30	RESTATES	ERROR-155,ERROR-156
+08-design-a-to-z.md:345#31	RESTATES	ERROR-145
+08-design-a-to-z.md:345#4	RESTATES	VALIDATE-018
+08-design-a-to-z.md:345#7	RESTATES	VALIDATE-018,VALIDATE-019
+08-design-a-to-z.md:349#1	RESTATES	VALIDATE-006
+08-design-a-to-z.md:349#2	RESTATES	EVENT-028
+08-design-a-to-z.md:349#5	RESTATES	ERROR-039
+08-design-a-to-z.md:349#6	RESTATES	ERROR-039
+08-design-a-to-z.md:349#7	RESTATES	ERROR-039
+08-design-a-to-z.md:349#8	RESTATES	VALIDATE-001
+08-design-a-to-z.md:353#1	RESTATES	ERROR-171
+08-design-a-to-z.md:353#10	RESTATES	ERROR-094
+08-design-a-to-z.md:353#11	RESTATES	ERROR-164
+08-design-a-to-z.md:353#2	RESTATES	ERROR-001
+08-design-a-to-z.md:353#3	RESTATES	ERROR-070
+08-design-a-to-z.md:353#4	RESTATES	ERROR-005
+08-design-a-to-z.md:353#5	RESTATES	ERROR-144,ERROR-146,ERROR-153
+08-design-a-to-z.md:353#6	RESTATES	ERROR-078,ERROR-080
+08-design-a-to-z.md:353#8	RESTATES	ERROR-039
+08-design-a-to-z.md:353#9	RESTATES	ERROR-041
+08-design-a-to-z.md:355#1	RESTATES	ERROR-002
+08-design-a-to-z.md:355#10	RESTATES	ERROR-007
+08-design-a-to-z.md:355#2	RESTATES	ERROR-002
+08-design-a-to-z.md:355#3	RESTATES	ERROR-072
+08-design-a-to-z.md:355#4	RESTATES	ERROR-001,ERROR-022
+08-design-a-to-z.md:355#5	RESTATES	ERROR-004
+08-design-a-to-z.md:355#6	RESTATES	ERROR-005
+08-design-a-to-z.md:355#7	RESTATES	ERROR-005
+08-design-a-to-z.md:355#8	RESTATES	ERROR-122
+08-design-a-to-z.md:355#9	RESTATES	ERROR-007
+08-design-a-to-z.md:357#1	RESTATES	ERROR-094
+08-design-a-to-z.md:357#2	RESTATES	ERROR-094
+08-design-a-to-z.md:357#3	RESTATES	ERROR-095,ERROR-088,ERROR-101
+08-design-a-to-z.md:357#4	RESTATES	ERROR-013
+08-design-a-to-z.md:358#2	RESTATES	ERROR-100,ERROR-101
+08-design-a-to-z.md:359#1	RESTATES	ERROR-017
+08-design-a-to-z.md:359#2	RESTATES	ERROR-017
+08-design-a-to-z.md:359#3	RESTATES	ERROR-017
+08-design-a-to-z.md:359#4	RESTATES	ERROR-013
+08-design-a-to-z.md:360#1	RESTATES	ERROR-096
+08-design-a-to-z.md:360#2	RESTATES	ERROR-097
+08-design-a-to-z.md:361#1	RESTATES	ERROR-019
+08-design-a-to-z.md:361#2	RESTATES	ERROR-019
+08-design-a-to-z.md:361#3	RESTATES	ERROR-020,ERROR-025
+08-design-a-to-z.md:362#1	RESTATES	ERROR-021
+08-design-a-to-z.md:362#3	RESTATES	ERROR-021
+08-design-a-to-z.md:362#4	RESTATES	ERROR-022
+08-design-a-to-z.md:363#1	RESTATES	ERROR-023,ERROR-028
+08-design-a-to-z.md:363#2	RESTATES	ERROR-023,ERROR-024
+08-design-a-to-z.md:363#3	RESTATES	ERROR-028
+08-design-a-to-z.md:363#4	RESTATES	ERROR-029
+08-design-a-to-z.md:365#1	RESTATES	ERROR-031
+08-design-a-to-z.md:365#2	RESTATES	ERROR-031
+08-design-a-to-z.md:367#2	RESTATES	ERROR-004,ERROR-099
+08-design-a-to-z.md:367#3	RESTATES	ERROR-076
+08-design-a-to-z.md:369#1	RESTATES	ERROR-070
+08-design-a-to-z.md:369#2	RESTATES	ERROR-070,ERROR-071
+08-design-a-to-z.md:369#3	RESTATES	ERROR-070,ERROR-071,ERROR-155
+08-design-a-to-z.md:369#5	RESTATES	ERROR-073
+08-design-a-to-z.md:369#7	RESTATES	ERROR-088,ERROR-089
+08-design-a-to-z.md:369#8	RESTATES	ERROR-146,ERROR-155,ERROR-039,ERROR-138,ERROR-142
+08-design-a-to-z.md:371#1	RESTATES	ERROR-077
+08-design-a-to-z.md:371#10	HISTORY	
+08-design-a-to-z.md:371#2	RESTATES	ERROR-077
+08-design-a-to-z.md:371#3	RESTATES	ERROR-078
+08-design-a-to-z.md:371#4	RESTATES	ERROR-079
+08-design-a-to-z.md:371#5	RESTATES	ERROR-080
+08-design-a-to-z.md:371#6	RESTATES	ERROR-081,ERROR-082
+08-design-a-to-z.md:371#7	RESTATES	ERROR-080,ERROR-081
+08-design-a-to-z.md:371#9	RESTATES	ERROR-084
+08-design-a-to-z.md:373#1	HISTORY	
+08-design-a-to-z.md:373#2	RESTATES	ERROR-164
+08-design-a-to-z.md:373#3	RESTATES	ERROR-014,ERROR-100
+08-design-a-to-z.md:375#1	VIEW	ERROR-159
+08-design-a-to-z.md:377#1	VIEW	ERROR-159
+08-design-a-to-z.md:378#1	VIEW	ERROR-159,ERROR-162
+08-design-a-to-z.md:379#1	VIEW	ERROR-159,ERROR-146,ERROR-148
+08-design-a-to-z.md:380#1	VIEW	ERROR-159
+08-design-a-to-z.md:381#1	VIEW	ERROR-159,ERROR-164
+08-design-a-to-z.md:382#1	VIEW	ERROR-159
+08-design-a-to-z.md:383#1	VIEW	ERROR-159,ERROR-132,ERROR-138
+08-design-a-to-z.md:384#1	VIEW	ERROR-159,ERROR-004,ERROR-005
+08-design-a-to-z.md:385#1	VIEW	ERROR-159
+08-design-a-to-z.md:386#1	VIEW	ERROR-159,ERROR-039,ERROR-155
+08-design-a-to-z.md:387#1	VIEW	ERROR-159
+08-design-a-to-z.md:388#1	VIEW	ERROR-159
+08-design-a-to-z.md:39#1	HISTORY	
+08-design-a-to-z.md:390#2	RESTATES	ERROR-159,ERROR-002
+08-design-a-to-z.md:390#3	RESTATES	ERROR-065
+08-design-a-to-z.md:394#1	RESTATES	EVENT-001,EVENT-002,EVENT-004
+08-design-a-to-z.md:394#2	RESTATES	EVENT-001
+08-design-a-to-z.md:394#3	RESTATES	EVENT-002,GOAL-052
+08-design-a-to-z.md:395#1	RESTATES	EVENT-013
+08-design-a-to-z.md:395#2	RESTATES	EVENT-013,EVENT-014
+08-design-a-to-z.md:395#3	RESTATES	EVENT-015
+08-design-a-to-z.md:395#4	RESTATES	EVENT-019
+08-design-a-to-z.md:396#1	RESTATES	EVENT-026,GOAL-060
+08-design-a-to-z.md:397#1	RESTATES	ERROR-130,ERROR-135,EVENT-043
+08-design-a-to-z.md:397#2	RESTATES	ERROR-131,ERROR-136
+08-design-a-to-z.md:397#3	RESTATES	EVENT-043,EVENT-044,ERROR-140
+08-design-a-to-z.md:397#4	RESTATES	ERROR-138,ERROR-139
+08-design-a-to-z.md:397#5	RESTATES	ERROR-141
+08-design-a-to-z.md:397#6	RESTATES	ERROR-142
+08-design-a-to-z.md:397#7	RESTATES	ERROR-142
+08-design-a-to-z.md:398#3	OUT	관찰
+08-design-a-to-z.md:398#5	RESTATES	EVENT-001
+08-design-a-to-z.md:398#6	RESTATES	WRITE-016,EVENT-042
+08-design-a-to-z.md:399#1	RESTATES	NODE-028
+08-design-a-to-z.md:399#10	RESTATES	NODE-002
+08-design-a-to-z.md:399#11	RESTATES	NODE-019
+08-design-a-to-z.md:399#2	RESTATES	NODE-028
+08-design-a-to-z.md:399#3	RESTATES	NODE-028
+08-design-a-to-z.md:399#7	RESTATES	NODE-028
+08-design-a-to-z.md:399#9	RESTATES	NODE-003
+08-design-a-to-z.md:400#1	RESTATES	ERROR-088,ERROR-089
+08-design-a-to-z.md:400#10	RESTATES	ERROR-118
+08-design-a-to-z.md:400#11	RESTATES	ERROR-117,ERROR-119
+08-design-a-to-z.md:400#12	HISTORY	
+08-design-a-to-z.md:400#13	RESTATES	ERROR-111,ERROR-112
+08-design-a-to-z.md:400#14	RESTATES	ERROR-114
+08-design-a-to-z.md:400#15	RESTATES	ERROR-113
+08-design-a-to-z.md:400#16	RESTATES	ERROR-017,ERROR-028
+08-design-a-to-z.md:400#17	RESTATES	ERROR-008
+08-design-a-to-z.md:400#19	RESTATES	ERROR-026
+08-design-a-to-z.md:400#2	RESTATES	ERROR-163,ERROR-164
+08-design-a-to-z.md:400#3	RESTATES	ERROR-090
+08-design-a-to-z.md:400#4	RESTATES	ERROR-088,ERROR-089
+08-design-a-to-z.md:400#6	RESTATES	ERROR-091
+08-design-a-to-z.md:400#8	RESTATES	ERROR-115
+08-design-a-to-z.md:400#9	RESTATES	ERROR-116
+08-design-a-to-z.md:401#3	RESTATES	NODE-007
+08-design-a-to-z.md:401#4	RESTATES	NODE-007
+08-design-a-to-z.md:401#5	RESTATES	NODE-010
+08-design-a-to-z.md:401#6	RESTATES	NODE-019
+08-design-a-to-z.md:423#1	RESTATES	SURFACE-016,SURFACE-017,SURFACE-018
+08-design-a-to-z.md:423#7	RESTATES	CONTROLS-019,CONTROLS-030
+08-design-a-to-z.md:425#1	RESTATES	NODE-011
+08-design-a-to-z.md:425#4	RESTATES	NODE-011
+08-design-a-to-z.md:425#6	RESTATES	NODE-010,NODE-007
+08-design-a-to-z.md:47#1	VIEW	GOAL-025
+08-design-a-to-z.md:48#1	VIEW	GOAL-026,GOAL-027
+08-design-a-to-z.md:483#1	HISTORY	
+08-design-a-to-z.md:483#2	RESTATES	PROCESS-026
+08-design-a-to-z.md:485#1	VIEW	LANDING-054,LANDING-060,REACT-002
+08-design-a-to-z.md:487#1	VIEW	BLUEPRINT-024,BLUEPRINT-023,FRAGMENT-037,SCHEMA-032,FRAGMENT-038,SCHEMA-033,SCHEMA-034
+08-design-a-to-z.md:488#1	VIEW	CONTROLS-068
+08-design-a-to-z.md:489#1	VIEW	SETTLE-036, FRAGMENT-039, WRITE-058
+08-design-a-to-z.md:49#1	VIEW	GOAL-028
+08-design-a-to-z.md:490#1	VIEW	LANDING-060,LANDING-092
+08-design-a-to-z.md:492#1	VIEW	SETTLE-039, VALUE-021, FRAGMENT-041
+08-design-a-to-z.md:493#1	VIEW	VALIDATE-022, VALIDATE-023
+08-design-a-to-z.md:494#1	VIEW	REACT-002,LANDING-064
+08-design-a-to-z.md:495#1	VIEW	VALUE-019, WRITE-059, FRAGMENT-045
+08-design-a-to-z.md:496#1	VIEW	CONTROLS-063
+08-design-a-to-z.md:497#1	VIEW	WRITE-050,WRITE-047,REACT-022
+08-design-a-to-z.md:498#1	VIEW	ERROR-112,ERROR-114,ERROR-117,ERROR-118
+08-design-a-to-z.md:50#1	VIEW	GOAL-029
+08-design-a-to-z.md:500#1	VIEW	NODE-019
+08-design-a-to-z.md:501#1	RESTATES	CONTROLS-008
+08-design-a-to-z.md:502#1	VIEW	LANDING-054
+08-design-a-to-z.md:506#2	HISTORY	
+08-design-a-to-z.md:51#1	VIEW	GOAL-030
+08-design-a-to-z.md:510#1	HISTORY	
+08-design-a-to-z.md:512#1	HISTORY	
+08-design-a-to-z.md:513#1	HISTORY	
+08-design-a-to-z.md:514#1	HISTORY	
+08-design-a-to-z.md:515#1	HISTORY	
+08-design-a-to-z.md:516#1	HISTORY	
+08-design-a-to-z.md:518#1	HISTORY	
+08-design-a-to-z.md:518#2	HISTORY	
+08-design-a-to-z.md:52#1	VIEW	GOAL-031
+08-design-a-to-z.md:531#1	HISTORY	
+08-design-a-to-z.md:531#2	HISTORY	
+08-design-a-to-z.md:531#3	HISTORY	
+08-design-a-to-z.md:531#4	HISTORY	
+08-design-a-to-z.md:531#5	HISTORY	
+08-design-a-to-z.md:533#1	HISTORY	
+08-design-a-to-z.md:533#2	HISTORY	
+08-design-a-to-z.md:533#3	RESTATES	PROCESS-026
+08-design-a-to-z.md:535#1	HISTORY	
+08-design-a-to-z.md:537#1	VIEW	ERROR-070,ERROR-072,ERROR-073,ERROR-123,ERROR-132,ERROR-137,ERROR-138,ERROR-141,ERROR-142,ERROR-159
+08-design-a-to-z.md:538#1	VIEW	SETTLE-005, SETTLE-017, CONTROLS-024, WRITE-041
+08-design-a-to-z.md:539#1	RESTATES	WRITE-009,WRITE-007,CONTROLS-008
+08-design-a-to-z.md:54#1	RESTATES	GOAL-032
+08-design-a-to-z.md:54#2	RESTATES	GOAL-032
+08-design-a-to-z.md:540#1	VIEW	REACT-002,REACT-003,NODE-027,NODE-028
+08-design-a-to-z.md:541#1	VIEW	CONTROLS-039, CONTROLS-024
+08-design-a-to-z.md:542#1	VIEW	ERROR-146,ERROR-147,ERROR-148,ERROR-108,ERROR-155
+08-design-a-to-z.md:543#1	VIEW	ERROR-088,ERROR-089,ERROR-093,ERROR-101,ERROR-078,ERROR-080,ERROR-118
+08-design-a-to-z.md:544#1	VIEW	ERROR-094,ERROR-096,ERROR-098,ERROR-169
+08-design-a-to-z.md:545#1	VIEW	NODE-001,NODE-002,NODE-003,NODE-004,NODE-008,NODE-011,NODE-019
+08-design-a-to-z.md:562#6	RESTATES	LANDING-002
+08-design-a-to-z.md:566#1	RESTATES	LANDING-090,LANDING-091,LANDING-092,LANDING-093,LANDING-094,LANDING-095,LANDING-096,LANDING-097
+08-design-a-to-z.md:58#2	RESTATES	GOAL-034
+08-design-a-to-z.md:58#3	RESTATES	GOAL-034
+08-design-a-to-z.md:580#1	VIEW	LANDING-060,LANDING-061,LANDING-062,LANDING-063,LANDING-064,LANDING-065,LANDING-066,LANDING-067,LANDING-068
+08-design-a-to-z.md:581#1	VIEW	LANDING-060,LANDING-061,LANDING-062,LANDING-063,LANDING-064,LANDING-065,LANDING-066,LANDING-067,LANDING-068
+08-design-a-to-z.md:582#1	VIEW	LANDING-061
+08-design-a-to-z.md:583#1	VIEW	LANDING-062
+08-design-a-to-z.md:584#1	VIEW	LANDING-063
+08-design-a-to-z.md:585#1	VIEW	LANDING-064
+08-design-a-to-z.md:586#1	VIEW	LANDING-065
+08-design-a-to-z.md:587#1	VIEW	LANDING-066
+08-design-a-to-z.md:588#1	VIEW	LANDING-067
+08-design-a-to-z.md:589#1	VIEW	LANDING-067
+08-design-a-to-z.md:59#1	RESTATES	GOAL-035
+08-design-a-to-z.md:590#1	VIEW	LANDING-067
+08-design-a-to-z.md:591#1	VIEW	LANDING-067
+08-design-a-to-z.md:592#1	VIEW	LANDING-068
+08-design-a-to-z.md:593#1	VIEW	LANDING-068,LANDING-058,LANDING-059
+08-design-a-to-z.md:61#1	RESTATES	GOAL-037
+08-design-a-to-z.md:61#2	RESTATES	GOAL-037
+08-design-a-to-z.md:62#1	RESTATES	GOAL-038
+08-design-a-to-z.md:63#2	RESTATES	GOAL-039
+08-design-a-to-z.md:65#1	RESTATES	GOAL-041
+08-design-a-to-z.md:66#1	RESTATES	GOAL-042
+08-design-a-to-z.md:66#3	RESTATES	GOAL-042
+08-design-a-to-z.md:67#1	RESTATES	GOAL-044
+08-design-a-to-z.md:67#2	RESTATES	GOAL-044
+08-design-a-to-z.md:67#3	RESTATES	GOAL-044
+08-design-a-to-z.md:67#4	RESTATES	GOAL-044
+08-design-a-to-z.md:71#2	RESTATES	GOAL-046
+08-design-a-to-z.md:72#1	RESTATES	GOAL-047
+08-design-a-to-z.md:72#2	RESTATES	GOAL-047
+08-design-a-to-z.md:73#1	RESTATES	GOAL-048
+08-design-a-to-z.md:73#2	RESTATES	GOAL-048
+08-design-a-to-z.md:93#1	RESTATES	CONTROLS-016
+08-design-a-to-z.md:93#2	RESTATES	CONTROLS-016
+08-design-a-to-z.md:93#3	RESTATES	CONTROLS-019
+08-design-a-to-z.md:98#1	RESTATES	CONTROLS-019
+09-landing-and-test-strategy.md:102#2	HISTORY	
+09-landing-and-test-strategy.md:102#3	RESTATES	NODE-019
+09-landing-and-test-strategy.md:104#10	OUT	관찰
+09-landing-and-test-strategy.md:15#1	HISTORY	
+09-landing-and-test-strategy.md:15#2	HISTORY	
+09-landing-and-test-strategy.md:235#1	RESTATES	TEST-045,TEST-046,TEST-047,TEST-048,TEST-049,TEST-050,TEST-051,TEST-052,TEST-053,TEST-054,TEST-055,TEST-056,TEST-057
+09-landing-and-test-strategy.md:235#2	RESTATES	TEST-058
+09-landing-and-test-strategy.md:270#1	RESTATES	EVENT-045,EVENT-046,LANDING-076
+09-landing-and-test-strategy.md:271#1	RESTATES	WRITE-042,LANDING-039
+09-landing-and-test-strategy.md:271#2	RESTATES	WRITE-042
+09-landing-and-test-strategy.md:271#3	RESTATES	WRITE-043,WRITE-046
+09-landing-and-test-strategy.md:271#4	RESTATES	WRITE-044
+09-landing-and-test-strategy.md:271#5	RESTATES	REACT-019,REACT-024,LANDING-039
+09-landing-and-test-strategy.md:271#6	RESTATES	VALIDATE-021
+09-landing-and-test-strategy.md:271#7	RESTATES	WRITE-015
+09-landing-and-test-strategy.md:271#8	RESTATES	REACT-025,EVENT-038,ERROR-003,ERROR-084
+09-landing-and-test-strategy.md:271#9	RESTATES	WRITE-046,ERROR-003,ERROR-164
+09-landing-and-test-strategy.md:275#1	RESTATES	REACT-007,ERROR-088,ERROR-089
+09-landing-and-test-strategy.md:275#2	RESTATES	REACT-007,ERROR-088,ERROR-089,ERROR-094,ERROR-077,ERROR-081
+09-landing-and-test-strategy.md:275#3	RESTATES	ERROR-003,ERROR-084,ERROR-007
+09-landing-and-test-strategy.md:275#4	RESTATES	ERROR-070,ERROR-071,ERROR-137,ERROR-138
+09-landing-and-test-strategy.md:275#5	RESTATES	REACT-007,REACT-009,REACT-011,REACT-012,LANDING-075
+09-landing-and-test-strategy.md:278#1	RESTATES	LANDING-002, LANDING-059
+09-landing-and-test-strategy.md:278#2	RESTATES	TEST-045, TEST-046, LANDING-097
+09-landing-and-test-strategy.md:278#3	RESTATES	TEST-051, LANDING-059
+09-landing-and-test-strategy.md:278#4	RESTATES	TEST-051, LANDING-059
+09-landing-and-test-strategy.md:278#5	RESTATES	TEST-051, LANDING-059
+09-landing-and-test-strategy.md:278#6	RESTATES	LANDING-002
+09-landing-and-test-strategy.md:278#7	RESTATES	LANDING-002
+09-landing-and-test-strategy.md:279#2	RESTATES	VALIDATE-018, VALIDATE-019
+09-landing-and-test-strategy.md:279#3	RESTATES	VALIDATE-018, VALIDATE-019
+09-landing-and-test-strategy.md:279#4	RESTATES	LANDING-074,LANDING-091
+09-landing-and-test-strategy.md:279#8	RESTATES	GOAL-050
+09-landing-and-test-strategy.md:280#1	HISTORY	
+09-landing-and-test-strategy.md:280#2	HISTORY	
+09-landing-and-test-strategy.md:280#3	HISTORY	
+09-landing-and-test-strategy.md:280#4	HISTORY	
+09-landing-and-test-strategy.md:284#1	HISTORY	
+09-landing-and-test-strategy.md:285#1	HISTORY	
+09-landing-and-test-strategy.md:286#1	HISTORY	
+09-landing-and-test-strategy.md:286#2	HISTORY	
+09-landing-and-test-strategy.md:287#1	HISTORY	
+09-landing-and-test-strategy.md:288#4	HISTORY	
+09-landing-and-test-strategy.md:288#5	HISTORY	
+09-landing-and-test-strategy.md:289#1	HISTORY	
+09-landing-and-test-strategy.md:290#1	HISTORY	
+09-landing-and-test-strategy.md:290#2	HISTORY	
+09-landing-and-test-strategy.md:291#1	HISTORY	
+09-landing-and-test-strategy.md:3#1	HISTORY	
+09-landing-and-test-strategy.md:3#2	HISTORY	
+09-landing-and-test-strategy.md:3#3	HISTORY	
+09-landing-and-test-strategy.md:3#4	HISTORY	
+09-landing-and-test-strategy.md:3#5	HISTORY	
+09-landing-and-test-strategy.md:3#6	RESTATES	LANDING-002
+09-landing-and-test-strategy.md:3#7	HISTORY	
+09-landing-and-test-strategy.md:3#8	HISTORY	
+09-landing-and-test-strategy.md:3#9	RESTATES	PROCESS-026
+09-landing-and-test-strategy.md:42#1	RESTATES	LANDING-052
+09-landing-and-test-strategy.md:42#4	RESTATES	LANDING-052
+09-landing-and-test-strategy.md:42#6	RESTATES	LANDING-054
+09-landing-and-test-strategy.md:46#2	VIEW	REACT-007,REACT-009,REACT-011,REACT-012,ERROR-089
+09-landing-and-test-strategy.md:48#10	RESTATES	ERROR-019
+09-landing-and-test-strategy.md:48#11	RESTATES	ERROR-019
+09-landing-and-test-strategy.md:48#12	RESTATES	ERROR-019
+09-landing-and-test-strategy.md:48#13	RESTATES	ERROR-023
+09-landing-and-test-strategy.md:48#14	RESTATES	ERROR-078,ERROR-079
+09-landing-and-test-strategy.md:48#15	RESTATES	ERROR-080,ERROR-081
+09-landing-and-test-strategy.md:48#16	RESTATES	ERROR-084,ERROR-025
+09-landing-and-test-strategy.md:48#17	RESTATES	ERROR-040
+09-landing-and-test-strategy.md:48#19	HISTORY	
+09-landing-and-test-strategy.md:48#20	RESTATES	ERROR-071
+09-landing-and-test-strategy.md:48#5	RESTATES	ERROR-019,ERROR-077
+09-landing-and-test-strategy.md:48#6	RESTATES	ERROR-019
+09-landing-and-test-strategy.md:48#7	RESTATES	ERROR-019
+09-landing-and-test-strategy.md:48#8	RESTATES	ERROR-026
+09-landing-and-test-strategy.md:48#9	RESTATES	ERROR-026
+09-landing-and-test-strategy.md:49#4	RESTATES	NODE-007
+09-landing-and-test-strategy.md:49#5	RESTATES	NODE-007,WRITE-009
+09-landing-and-test-strategy.md:49#7	RESTATES	ERROR-050
+09-landing-and-test-strategy.md:49#8	RESTATES	NODE-010,NODE-019
+09-landing-and-test-strategy.md:51#1	RESTATES	ERROR-088,ERROR-089
+09-landing-and-test-strategy.md:51#10	RESTATES	ERROR-094
+09-landing-and-test-strategy.md:51#11	RESTATES	ERROR-017
+09-landing-and-test-strategy.md:51#12	RESTATES	ERROR-028
+09-landing-and-test-strategy.md:51#13	RESTATES	ERROR-008
+09-landing-and-test-strategy.md:51#14	HISTORY	
+09-landing-and-test-strategy.md:51#2	RESTATES	ERROR-089
+09-landing-and-test-strategy.md:51#3	RESTATES	ERROR-090
+09-landing-and-test-strategy.md:51#4	RESTATES	ERROR-115,ERROR-116,ERROR-117,ERROR-118,ERROR-119
+09-landing-and-test-strategy.md:51#5	RESTATES	ERROR-111,ERROR-112
+09-landing-and-test-strategy.md:51#6	RESTATES	ERROR-112,ERROR-114
+09-landing-and-test-strategy.md:51#7	RESTATES	ERROR-091
+09-landing-and-test-strategy.md:51#8	RESTATES	ERROR-077
+09-landing-and-test-strategy.md:51#9	RESTATES	ERROR-086,ERROR-087
+09-landing-and-test-strategy.md:58#1	HISTORY	
+09-landing-and-test-strategy.md:73#1	RESTATES	WRITE-042
+09-landing-and-test-strategy.md:73#2	RESTATES	WRITE-042
+09-landing-and-test-strategy.md:73#3	RESTATES	WRITE-042
+09-landing-and-test-strategy.md:73#4	HISTORY	
+09-landing-and-test-strategy.md:75#1	OUT	관찰
+09-landing-and-test-strategy.md:75#2	OUT	관찰
+09-landing-and-test-strategy.md:75#3	OUT	관찰
+09-landing-and-test-strategy.md:75#4	OUT	관찰
+09-landing-and-test-strategy.md:75#5	OUT	관찰
+09-landing-and-test-strategy.md:79#1	HISTORY	
+09-landing-and-test-strategy.md:79#2	HISTORY	
+09-landing-and-test-strategy.md:79#3	HISTORY	
+09-landing-and-test-strategy.md:79#4	RESTATES	WRITE-045,WRITE-015
+09-landing-and-test-strategy.md:81#10	HISTORY	
+09-landing-and-test-strategy.md:81#11	RESTATES	WRITE-043
+09-landing-and-test-strategy.md:87#17	RESTATES	ERROR-003,ERROR-007
+09-landing-and-test-strategy.md:87#18	RESTATES	ERROR-084,ERROR-070
+09-landing-and-test-strategy.md:87#19	HISTORY	
+09-landing-and-test-strategy.md:88#1	RESTATES	VALIDATE-021
+09-landing-and-test-strategy.md:88#12	RESTATES	VALIDATE-022
+09-landing-and-test-strategy.md:88#13	HISTORY	
+09-landing-and-test-strategy.md:88#3	RESTATES	VALIDATE-021
+09-landing-and-test-strategy.md:88#8	RESTATES	VALIDATE-021
+09-landing-and-test-strategy.md:88#9	RESTATES	VALIDATE-021
+09-landing-and-test-strategy.md:89#1	RESTATES	LANDING-041,EVENT-032
+09-landing-and-test-strategy.md:89#2	RESTATES	EVENT-031,EVENT-026
+09-landing-and-test-strategy.md:89#3	RESTATES	WRITE-045,ERROR-040,EVENT-032
+09-landing-and-test-strategy.md:89#4	RESTATES	ERROR-040
+09-landing-and-test-strategy.md:89#5	RESTATES	EVENT-032,LANDING-041
+09-landing-and-test-strategy.md:89#6	RESTATES	EVENT-032,LANDING-041
+09-landing-and-test-strategy.md:89#7	RESTATES	LANDING-041
+09-landing-and-test-strategy.md:89#8	RESTATES	VALIDATE-006
+09-landing-and-test-strategy.md:9#1	HISTORY	
+09-landing-and-test-strategy.md:9#2	RESTATES	REACT-006,LANDING-075,LANDING-095
+09-landing-and-test-strategy.md:9#3	RESTATES	WRITE-061, WRITE-052
+09-landing-and-test-strategy.md:9#4	RESTATES	LANDING-073,LANDING-074,LANDING-078,LANDING-075,LANDING-076
+09-landing-and-test-strategy.md:90#1	RESTATES	EVENT-015,EVENT-030
+09-landing-and-test-strategy.md:90#12	RESTATES	EVENT-015,EVENT-030,WRITE-046,ERROR-084
+09-landing-and-test-strategy.md:90#2	RESTATES	EVENT-027
+09-landing-and-test-strategy.md:90#3	RESTATES	EVENT-015
+09-landing-and-test-strategy.md:90#4	RESTATES	EVENT-015,EVENT-024
+09-landing-and-test-strategy.md:90#5	RESTATES	EVENT-027,EVENT-033,EVENT-034,EVENT-008
+09-landing-and-test-strategy.md:90#6	RESTATES	WRITE-045,EVENT-015,EVENT-039
+09-landing-and-test-strategy.md:90#7	RESTATES	EVENT-030
+09-landing-and-test-strategy.md:90#8	RESTATES	EVENT-015,EVENT-030
+09-landing-and-test-strategy.md:93#1	RESTATES	WRITE-015
+09-landing-and-test-strategy.md:93#4	RESTATES	WRITE-015
+09-landing-and-test-strategy.md:94#1	RESTATES	LANDING-042
+09-landing-and-test-strategy.md:94#2	RESTATES	LANDING-042,REACT-019,REACT-024
+09-landing-and-test-strategy.md:94#3	RESTATES	LANDING-042,REACT-019
+09-landing-and-test-strategy.md:94#4	RESTATES	LANDING-042
+09-landing-and-test-strategy.md:95#1	RESTATES	WRITE-049
+adr/0001-validator-input-invariant.md:10#1	HISTORY
+adr/0001-validator-input-invariant.md:10#2	HISTORY
+adr/0001-validator-input-invariant.md:11#1	HISTORY
+adr/0001-validator-input-invariant.md:11#2	HISTORY
+adr/0001-validator-input-invariant.md:11#3	HISTORY
+adr/0001-validator-input-invariant.md:15#1	RESTATES	VALIDATE-001
+adr/0001-validator-input-invariant.md:15#2	OUT	관찰
+adr/0001-validator-input-invariant.md:17#1	RESTATES	VALIDATE-001
+adr/0001-validator-input-invariant.md:24#3	RESTATES	VALIDATE-004
+adr/0001-validator-input-invariant.md:3#10	RESTATES	CONTROLS-001
+adr/0001-validator-input-invariant.md:3#11	RESTATES	CONTROLS-004,CONTROLS-009,CONTROLS-010
+adr/0001-validator-input-invariant.md:3#12	RESTATES	CONTROLS-010,CONTROLS-011
+adr/0001-validator-input-invariant.md:3#17	RESTATES	CONTROLS-012
+adr/0001-validator-input-invariant.md:3#3	RESTATES	FRAGMENT-023
+adr/0001-validator-input-invariant.md:3#4	RESTATES	CONTROLS-049
+adr/0001-validator-input-invariant.md:3#8	RESTATES	VALIDATE-004
+adr/0001-validator-input-invariant.md:3#9	RESTATES	VALIDATE-004
+adr/0001-validator-input-invariant.md:42#1	RESTATES	VALIDATE-001
+adr/0001-validator-input-invariant.md:42#2	RESTATES	VALIDATE-001
+adr/0001-validator-input-invariant.md:44#1	RESTATES	VALIDATE-010
+adr/0001-validator-input-invariant.md:44#3	RESTATES	VALIDATE-009
+adr/0001-validator-input-invariant.md:44#4	OUT	관찰
+adr/0001-validator-input-invariant.md:5#1	HISTORY
+adr/0001-validator-input-invariant.md:5#2	HISTORY
+adr/0001-validator-input-invariant.md:5#3	RESTATES	VALIDATE-003
+adr/0001-validator-input-invariant.md:5#4	RESTATES	VALIDATE-003
+adr/0001-validator-input-invariant.md:52#1	RESTATES	FRAGMENT-022
+adr/0001-validator-input-invariant.md:52#2	RESTATES	FRAGMENT-022
+adr/0001-validator-input-invariant.md:52#3	RESTATES	FRAGMENT-022
+adr/0001-validator-input-invariant.md:52#4	RESTATES	FRAGMENT-023
+adr/0001-validator-input-invariant.md:52#5	RESTATES	FRAGMENT-022
+adr/0001-validator-input-invariant.md:56#1	RESTATES	VALIDATE-001
+adr/0001-validator-input-invariant.md:56#2	HISTORY
+adr/0001-validator-input-invariant.md:9#1	HISTORY
+adr/0002-guard-fragment-model.md:10#1	HISTORY	
+adr/0002-guard-fragment-model.md:101#1	RESTATES	FRAGMENT-006
+adr/0002-guard-fragment-model.md:11#1	HISTORY	
+adr/0002-guard-fragment-model.md:11#2	HISTORY	
+adr/0002-guard-fragment-model.md:11#3	HISTORY	
+adr/0002-guard-fragment-model.md:11#4	HISTORY	
+adr/0002-guard-fragment-model.md:11#5	HISTORY	
+adr/0002-guard-fragment-model.md:111#1	HISTORY	
+adr/0002-guard-fragment-model.md:111#2	HISTORY	
+adr/0002-guard-fragment-model.md:12#1	HISTORY	
+adr/0002-guard-fragment-model.md:12#2	HISTORY	
+adr/0002-guard-fragment-model.md:123#1	HISTORY	
+adr/0002-guard-fragment-model.md:123#2	HISTORY	
+adr/0002-guard-fragment-model.md:13#1	HISTORY	
+adr/0002-guard-fragment-model.md:13#2	HISTORY	
+adr/0002-guard-fragment-model.md:14#1	HISTORY	
+adr/0002-guard-fragment-model.md:14#2	HISTORY	
+adr/0002-guard-fragment-model.md:14#3	HISTORY	
+adr/0002-guard-fragment-model.md:14#4	HISTORY	
+adr/0002-guard-fragment-model.md:14#5	HISTORY	
+adr/0002-guard-fragment-model.md:14#6	HISTORY	
+adr/0002-guard-fragment-model.md:14#7	HISTORY	
+adr/0002-guard-fragment-model.md:14#8	RESTATES	FRAGMENT-023
+adr/0002-guard-fragment-model.md:144#1	OUT	관찰
+adr/0002-guard-fragment-model.md:146#1	OUT	관찰
+adr/0002-guard-fragment-model.md:146#2	OUT	관찰
+adr/0002-guard-fragment-model.md:146#3	OUT	관찰
+adr/0002-guard-fragment-model.md:146#4	OUT	관찰
+adr/0002-guard-fragment-model.md:146#5	OUT	관찰
+adr/0002-guard-fragment-model.md:146#6	OUT	관찰
+adr/0002-guard-fragment-model.md:163#4	RESTATES	FRAGMENT-023,FRAGMENT-024
+adr/0002-guard-fragment-model.md:163#5	RESTATES	FRAGMENT-024
+adr/0002-guard-fragment-model.md:163#6	HISTORY	
+adr/0002-guard-fragment-model.md:189#1	RESTATES	FRAGMENT-001
+adr/0002-guard-fragment-model.md:190#1	RESTATES	FRAGMENT-009,FRAGMENT-014
+adr/0002-guard-fragment-model.md:191#1	OUT	관찰
+adr/0002-guard-fragment-model.md:191#2	OUT	관찰
+adr/0002-guard-fragment-model.md:192#1	RESTATES	FRAGMENT-028
+adr/0002-guard-fragment-model.md:192#2	RESTATES	FRAGMENT-028
+adr/0002-guard-fragment-model.md:193#1	RESTATES	FRAGMENT-025
+adr/0002-guard-fragment-model.md:193#2	RESTATES	FRAGMENT-022,FRAGMENT-025
+adr/0002-guard-fragment-model.md:194#1	RESTATES	FRAGMENT-006
+adr/0002-guard-fragment-model.md:20#1	RESTATES	GOAL-004
+adr/0002-guard-fragment-model.md:20#2	RESTATES	GOAL-004
+adr/0002-guard-fragment-model.md:201#5	RESTATES	CONTROLS-030
+adr/0002-guard-fragment-model.md:203#1	RESTATES	NODE-029
+adr/0002-guard-fragment-model.md:25#1	OUT	관찰
+adr/0002-guard-fragment-model.md:29#1	HISTORY	
+adr/0002-guard-fragment-model.md:29#2	HISTORY	
+adr/0002-guard-fragment-model.md:3#1	HISTORY	
+adr/0002-guard-fragment-model.md:3#2	HISTORY	
+adr/0002-guard-fragment-model.md:3#3	HISTORY	
+adr/0002-guard-fragment-model.md:3#4	HISTORY	
+adr/0002-guard-fragment-model.md:31#1	RESTATES	GOAL-026
+adr/0002-guard-fragment-model.md:31#3	RESTATES	GOAL-026
+adr/0002-guard-fragment-model.md:33#1	HISTORY	
+adr/0002-guard-fragment-model.md:33#8	RESTATES	FRAGMENT-006
+adr/0002-guard-fragment-model.md:35#1	HISTORY	
+adr/0002-guard-fragment-model.md:35#2	HISTORY	
+adr/0002-guard-fragment-model.md:79#1	OUT	예시
+adr/0002-guard-fragment-model.md:80#1	OUT	예시
+adr/0002-guard-fragment-model.md:81#1	OUT	예시
+adr/0002-guard-fragment-model.md:82#1	OUT	예시
+adr/0002-guard-fragment-model.md:84#1	OUT	예시
+adr/0002-guard-fragment-model.md:85#1	OUT	예시
+adr/0002-guard-fragment-model.md:88#1	OUT	예시
+adr/0002-guard-fragment-model.md:89#1	OUT	예시
+adr/0002-guard-fragment-model.md:9#1	HISTORY	
+adr/0002-guard-fragment-model.md:95#1	OUT	예시
+adr/0002-guard-fragment-model.md:99#3	RESTATES	FRAGMENT-008
+adr/0003-group-namespace.md:10#1	HISTORY	
+adr/0003-group-namespace.md:10#2	HISTORY	
+adr/0003-group-namespace.md:10#3	HISTORY	
+adr/0003-group-namespace.md:10#4	HISTORY	
+adr/0003-group-namespace.md:10#5	HISTORY	
+adr/0003-group-namespace.md:10#6	HISTORY	
+adr/0003-group-namespace.md:10#7	HISTORY	
+adr/0003-group-namespace.md:105#1	OUT	예시
+adr/0003-group-namespace.md:106#1	OUT	예시
+adr/0003-group-namespace.md:107#1	OUT	예시
+adr/0003-group-namespace.md:11#1	HISTORY	
+adr/0003-group-namespace.md:11#2	HISTORY	
+adr/0003-group-namespace.md:119#1	RESTATES	SETTLE-004
+adr/0003-group-namespace.md:119#2	RESTATES	SETTLE-004
+adr/0003-group-namespace.md:119#3	RESTATES	SETTLE-004
+adr/0003-group-namespace.md:119#4	RESTATES	SETTLE-004
+adr/0003-group-namespace.md:119#5	RESTATES	SETTLE-005
+adr/0003-group-namespace.md:119#6	RESTATES	SETTLE-004
+adr/0003-group-namespace.md:119#7	RESTATES	SETTLE-004
+adr/0003-group-namespace.md:120#1	RESTATES	WRITE-008,WRITE-015
+adr/0003-group-namespace.md:120#3	RESTATES	WRITE-008,WRITE-015
+adr/0003-group-namespace.md:120#4	RESTATES	WRITE-008,WRITE-015
+adr/0003-group-namespace.md:120#5	RESTATES	WRITE-008,WRITE-015
+adr/0003-group-namespace.md:120#6	RESTATES	WRITE-008,WRITE-015
+adr/0003-group-namespace.md:121#1	RESTATES	SETTLE-016
+adr/0003-group-namespace.md:121#2	RESTATES	SETTLE-016
+adr/0003-group-namespace.md:121#3	RESTATES	SETTLE-016
+adr/0003-group-namespace.md:125#1	RESTATES	VALIDATE-004
+adr/0003-group-namespace.md:125#2	RESTATES	VALIDATE-004
+adr/0003-group-namespace.md:125#4	RESTATES	CONTROLS-051
+adr/0003-group-namespace.md:125#5	RESTATES	VALIDATE-004
+adr/0003-group-namespace.md:126#3	RESTATES	VALIDATE-005
+adr/0003-group-namespace.md:126#4	RESTATES	VALIDATE-005
+adr/0003-group-namespace.md:127#1	RESTATES	VALIDATE-004
+adr/0003-group-namespace.md:127#2	RESTATES	VALIDATE-004
+adr/0003-group-namespace.md:127#3	RESTATES	VALIDATE-004
+adr/0003-group-namespace.md:127#4	OUT	관찰
+adr/0003-group-namespace.md:127#5	RESTATES	VALIDATE-004,GOAL-018
+adr/0003-group-namespace.md:132#1	RESTATES	CONTROLS-012
+adr/0003-group-namespace.md:132#2	RESTATES	SURFACE-002,SURFACE-003,SURFACE-016,SURFACE-017,SURFACE-018
+adr/0003-group-namespace.md:132#3	RESTATES	SURFACE-016
+adr/0003-group-namespace.md:132#5	RESTATES	SURFACE-018,SURFACE-003
+adr/0003-group-namespace.md:132#6	RESTATES	CONTROLS-011
+adr/0003-group-namespace.md:143#3	RESTATES	FRAGMENT-041
+adr/0003-group-namespace.md:145#1	RESTATES	FRAGMENT-039,SETTLE-036
+adr/0003-group-namespace.md:147#1	OUT	관찰
+adr/0003-group-namespace.md:15#1	OUT	관찰
+adr/0003-group-namespace.md:15#2	OUT	관찰
+adr/0003-group-namespace.md:152#1	OUT	관찰
+adr/0003-group-namespace.md:152#2	OUT	관찰
+adr/0003-group-namespace.md:17#1	OUT	관찰
+adr/0003-group-namespace.md:17#2	OUT	관찰
+adr/0003-group-namespace.md:17#3	OUT	관찰
+adr/0003-group-namespace.md:17#4	OUT	관찰
+adr/0003-group-namespace.md:19#1	OUT	관찰
+adr/0003-group-namespace.md:21#1	HISTORY	
+adr/0003-group-namespace.md:21#2	HISTORY	
+adr/0003-group-namespace.md:3#1	HISTORY	
+adr/0003-group-namespace.md:3#2	VIEW	CONTROLS-001,CONTROLS-016,CONTROLS-045,CONTROLS-019,CONTROLS-043,CONTROLS-012,CONTROLS-004,CONTROLS-024,SETTLE-004
+adr/0003-group-namespace.md:3#3	RESTATES	VALIDATE-004
+adr/0003-group-namespace.md:32#1	RESTATES	CONTROLS-003
+adr/0003-group-namespace.md:56#1	OUT	예시
+adr/0003-group-namespace.md:57#1	OUT	예시
+adr/0003-group-namespace.md:58#1	OUT	예시
+adr/0003-group-namespace.md:59#1	OUT	예시
+adr/0003-group-namespace.md:60#1	OUT	예시
+adr/0003-group-namespace.md:62#1	OUT	예시
+adr/0003-group-namespace.md:63#1	OUT	예시
+adr/0003-group-namespace.md:7#1	HISTORY	
+adr/0003-group-namespace.md:7#2	HISTORY	
+adr/0003-group-namespace.md:7#3	HISTORY	
+adr/0003-group-namespace.md:7#4	HISTORY	
+adr/0003-group-namespace.md:8#1	HISTORY	
+adr/0003-group-namespace.md:8#2	HISTORY	
+adr/0003-group-namespace.md:8#3	HISTORY	
+adr/0003-group-namespace.md:8#4	HISTORY	
+adr/0003-group-namespace.md:8#5	HISTORY	
+adr/0003-group-namespace.md:8#6	HISTORY	
+adr/0003-group-namespace.md:9#1	HISTORY	
+adr/0004-validator-plugin-compile-guard.md:10#1	HISTORY
+adr/0004-validator-plugin-compile-guard.md:11#1	HISTORY
+adr/0004-validator-plugin-compile-guard.md:15#1	RESTATES	VALIDATE-014,VALIDATE-015
+adr/0004-validator-plugin-compile-guard.md:15#2	HISTORY
+adr/0004-validator-plugin-compile-guard.md:19#1	OUT	관찰
+adr/0004-validator-plugin-compile-guard.md:20#1	OUT	관찰
+adr/0004-validator-plugin-compile-guard.md:20#2	OUT	관찰
+adr/0004-validator-plugin-compile-guard.md:20#3	OUT	관찰
+adr/0004-validator-plugin-compile-guard.md:20#4	OUT	관찰
+adr/0004-validator-plugin-compile-guard.md:25#2	RESTATES	VALIDATE-015,VALIDATE-016
+adr/0004-validator-plugin-compile-guard.md:35#3	RESTATES	ERROR-146,ERROR-147,ERROR-148
+adr/0004-validator-plugin-compile-guard.md:35#4	RESTATES	ERROR-148
+adr/0004-validator-plugin-compile-guard.md:35#5	RESTATES	ERROR-151
+adr/0004-validator-plugin-compile-guard.md:35#6	RESTATES	ERROR-155
+adr/0004-validator-plugin-compile-guard.md:46#2	RESTATES	ERROR-041,VALIDATE-018
+adr/0004-validator-plugin-compile-guard.md:46#3	RESTATES	ERROR-041
+adr/0004-validator-plugin-compile-guard.md:46#4	RESTATES	ERROR-041
+adr/0004-validator-plugin-compile-guard.md:46#5	RESTATES	ERROR-041
+adr/0004-validator-plugin-compile-guard.md:46#6	RESTATES	ERROR-041
+adr/0004-validator-plugin-compile-guard.md:52#1	RESTATES	VALIDATE-003
+adr/0004-validator-plugin-compile-guard.md:52#2	RESTATES	VALIDATE-003
+adr/0004-validator-plugin-compile-guard.md:64#2	OUT	관찰
+adr/0004-validator-plugin-compile-guard.md:64#3	OUT	관찰
+adr/0004-validator-plugin-compile-guard.md:65#1	HISTORY
+adr/0004-validator-plugin-compile-guard.md:65#2	RESTATES	ERROR-041
+adr/0004-validator-plugin-compile-guard.md:65#3	RESTATES	BLUEPRINT-007
+adr/0004-validator-plugin-compile-guard.md:69#1	HISTORY
+adr/0004-validator-plugin-compile-guard.md:73#1	RESTATES	VALIDATE-017
+adr/0004-validator-plugin-compile-guard.md:73#3	RESTATES	VALIDATE-015,VALIDATE-018
+adr/0004-validator-plugin-compile-guard.md:75#1	HISTORY
+adr/0004-validator-plugin-compile-guard.md:9#1	HISTORY
+adr/0004-validator-plugin-compile-guard.md:9#2	HISTORY
+adr/0004-validator-plugin-compile-guard.md:9#3	HISTORY
+adr/0005-blueprint-analysis-and-node-sharing.md:10#1	HISTORY	
+adr/0005-blueprint-analysis-and-node-sharing.md:10#7	HISTORY	
+adr/0005-blueprint-analysis-and-node-sharing.md:100#1	RESTATES	SCHEMA-010
+adr/0005-blueprint-analysis-and-node-sharing.md:102#1	RESTATES	SCHEMA-012
+adr/0005-blueprint-analysis-and-node-sharing.md:106#1	RESTATES	SCHEMA-014
+adr/0005-blueprint-analysis-and-node-sharing.md:107#1	RESTATES	SCHEMA-009
+adr/0005-blueprint-analysis-and-node-sharing.md:107#2	RESTATES	SCHEMA-009
+adr/0005-blueprint-analysis-and-node-sharing.md:108#1	RESTATES	SCHEMA-039
+adr/0005-blueprint-analysis-and-node-sharing.md:11#1	HISTORY	
+adr/0005-blueprint-analysis-and-node-sharing.md:111#1	OUT	관찰
+adr/0005-blueprint-analysis-and-node-sharing.md:111#2	OUT	관찰
+adr/0005-blueprint-analysis-and-node-sharing.md:111#3	RESTATES	SCHEMA-008,SCHEMA-009,SCHEMA-010,SCHEMA-039
+adr/0005-blueprint-analysis-and-node-sharing.md:12#1	HISTORY	
+adr/0005-blueprint-analysis-and-node-sharing.md:12#2	HISTORY	
+adr/0005-blueprint-analysis-and-node-sharing.md:123#4	RESTATES	EVENT-048
+adr/0005-blueprint-analysis-and-node-sharing.md:129#1	RESTATES	VALIDATE-012
+adr/0005-blueprint-analysis-and-node-sharing.md:129#2	RESTATES	VALIDATE-012
+adr/0005-blueprint-analysis-and-node-sharing.md:129#3	RESTATES	VALIDATE-012
+adr/0005-blueprint-analysis-and-node-sharing.md:13#1	HISTORY	
+adr/0005-blueprint-analysis-and-node-sharing.md:13#3	HISTORY	
+adr/0005-blueprint-analysis-and-node-sharing.md:13#4	HISTORY	
+adr/0005-blueprint-analysis-and-node-sharing.md:13#5	HISTORY	
+adr/0005-blueprint-analysis-and-node-sharing.md:13#6	HISTORY	
+adr/0005-blueprint-analysis-and-node-sharing.md:131#1	RESTATES	NODE-037,FRAGMENT-045
+adr/0005-blueprint-analysis-and-node-sharing.md:133#1	RESTATES	VALIDATE-023
+adr/0005-blueprint-analysis-and-node-sharing.md:134#1	RESTATES	NODE-028,NODE-029
+adr/0005-blueprint-analysis-and-node-sharing.md:17#1	RESTATES	BLUEPRINT-004
+adr/0005-blueprint-analysis-and-node-sharing.md:18#1	RESTATES	BLUEPRINT-010
+adr/0005-blueprint-analysis-and-node-sharing.md:18#2	RESTATES	BLUEPRINT-010
+adr/0005-blueprint-analysis-and-node-sharing.md:18#3	RESTATES	BLUEPRINT-001
+adr/0005-blueprint-analysis-and-node-sharing.md:19#1	OUT	관찰
+adr/0005-blueprint-analysis-and-node-sharing.md:20#1	RESTATES	BLUEPRINT-006
+adr/0005-blueprint-analysis-and-node-sharing.md:20#2	RESTATES	FRAGMENT-005
+adr/0005-blueprint-analysis-and-node-sharing.md:20#3	RESTATES	BLUEPRINT-006
+adr/0005-blueprint-analysis-and-node-sharing.md:3#1	HISTORY	
+adr/0005-blueprint-analysis-and-node-sharing.md:3#2	RESTATES	BLUEPRINT-025,BLUEPRINT-010
+adr/0005-blueprint-analysis-and-node-sharing.md:3#4	RESTATES	BLUEPRINT-012
+adr/0005-blueprint-analysis-and-node-sharing.md:7#1	HISTORY	
+adr/0005-blueprint-analysis-and-node-sharing.md:71#5	RESTATES	FRAGMENT-013
+adr/0005-blueprint-analysis-and-node-sharing.md:75#1	RESTATES	FRAGMENT-032
+adr/0005-blueprint-analysis-and-node-sharing.md:75#2	RESTATES	FRAGMENT-032
+adr/0005-blueprint-analysis-and-node-sharing.md:75#3	RESTATES	FRAGMENT-032
+adr/0005-blueprint-analysis-and-node-sharing.md:75#4	RESTATES	FRAGMENT-032
+adr/0005-blueprint-analysis-and-node-sharing.md:8#1	HISTORY	
+adr/0005-blueprint-analysis-and-node-sharing.md:87#1	RESTATES	FRAGMENT-012,FRAGMENT-013
+adr/0005-blueprint-analysis-and-node-sharing.md:87#2	RESTATES	FRAGMENT-012,FRAGMENT-013
+adr/0005-blueprint-analysis-and-node-sharing.md:87#3	RESTATES	FRAGMENT-012,FRAGMENT-013
+adr/0005-blueprint-analysis-and-node-sharing.md:87#4	RESTATES	FRAGMENT-012,FRAGMENT-013
+adr/0005-blueprint-analysis-and-node-sharing.md:9#1	HISTORY	
+adr/0005-blueprint-analysis-and-node-sharing.md:94#1	RESTATES	SCHEMA-007
+adr/0005-blueprint-analysis-and-node-sharing.md:94#2	RESTATES	SCHEMA-007
+adr/0005-blueprint-analysis-and-node-sharing.md:94#3	RESTATES	SCHEMA-007
+adr/0005-blueprint-analysis-and-node-sharing.md:94#4	RESTATES	SCHEMA-007
+adr/0005-blueprint-analysis-and-node-sharing.md:98#1	RESTATES	SCHEMA-008
+adr/0005-blueprint-analysis-and-node-sharing.md:99#1	RESTATES	SCHEMA-009
+adr/0006-single-value-ownership.md:10#1	HISTORY	
+adr/0006-single-value-ownership.md:10#2	HISTORY	
+adr/0006-single-value-ownership.md:11#1	HISTORY	
+adr/0006-single-value-ownership.md:12#1	HISTORY	
+adr/0006-single-value-ownership.md:12#2	HISTORY	
+adr/0006-single-value-ownership.md:12#3	HISTORY	
+adr/0006-single-value-ownership.md:21#1	OUT	관찰
+adr/0006-single-value-ownership.md:21#2	OUT	관찰
+adr/0006-single-value-ownership.md:21#3	OUT	관찰
+adr/0006-single-value-ownership.md:3#1	HISTORY	
+adr/0006-single-value-ownership.md:3#2	HISTORY	
+adr/0006-single-value-ownership.md:3#3	HISTORY	
+adr/0006-single-value-ownership.md:3#4	HISTORY	
+adr/0006-single-value-ownership.md:46#5	RESTATES	NODE-020
+adr/0006-single-value-ownership.md:7#1	HISTORY	
+adr/0006-single-value-ownership.md:74#1	HISTORY
+adr/0006-single-value-ownership.md:8#1	HISTORY	
+adr/0006-single-value-ownership.md:9#1	HISTORY	
+adr/0006-single-value-ownership.md:9#2	HISTORY	
+adr/0006-single-value-ownership.md:9#3	HISTORY	
+adr/0006-single-value-ownership.md:9#4	HISTORY	
+adr/0006-single-value-ownership.md:9#5	HISTORY	
+adr/0006-single-value-ownership.md:9#6	HISTORY	
+adr/0006-single-value-ownership.md:9#7	HISTORY	
+adr/0006-single-value-ownership.md:9#8	HISTORY	
+adr/0006-single-value-ownership.md:9#9	HISTORY	
+adr/0006-single-value-ownership.md:93#1	RESTATES	SETTLE-011, SETTLE-016
+adr/0006-single-value-ownership.md:93#2	RESTATES	SETTLE-011
+adr/0006-single-value-ownership.md:97#1	RESTATES	VALUE-019
+adr/0006-single-value-ownership.md:97#2	RESTATES	NODE-037
+adr/0006-single-value-ownership.md:97#3	RESTATES	NODE-004,NODE-021,NODE-037
+adr/0006-single-value-ownership.md:97#4	RESTATES	VALUE-019,WRITE-007
+adr/0006-single-value-ownership.md:98#1	RESTATES	VALUE-017
+adr/0006-single-value-ownership.md:98#3	RESTATES	VALUE-006
+adr/0006-single-value-ownership.md:99#1	RESTATES	FRAGMENT-020
+adr/0006-single-value-ownership.md:99#2	RESTATES	FRAGMENT-020
+adr/0006-single-value-ownership.md:99#3	RESTATES	FRAGMENT-020
+adr/0006-single-value-ownership.md:99#4	RESTATES	FRAGMENT-020
+adr/0007-settle-cycle.md:10#1	HISTORY	
+adr/0007-settle-cycle.md:100#1	VIEW	WRITE-017,WRITE-014,WRITE-006,WRITE-008
+adr/0007-settle-cycle.md:102#1	VIEW	WRITE-017,WRITE-015
+adr/0007-settle-cycle.md:103#1	VIEW	EVENT-037,GOAL-069
+adr/0007-settle-cycle.md:104#1	VIEW	EVENT-026
+adr/0007-settle-cycle.md:106#1	RESTATES	EVENT-027
+adr/0007-settle-cycle.md:106#2	RESTATES	EVENT-035,EVENT-026
+adr/0007-settle-cycle.md:107#1	RESTATES	EVENT-036
+adr/0007-settle-cycle.md:107#2	RESTATES	EVENT-036
+adr/0007-settle-cycle.md:107#3	RESTATES	EVENT-036
+adr/0007-settle-cycle.md:11#1	HISTORY	
+adr/0007-settle-cycle.md:11#10	HISTORY	
+adr/0007-settle-cycle.md:11#2	HISTORY	
+adr/0007-settle-cycle.md:11#3	HISTORY	
+adr/0007-settle-cycle.md:11#4	HISTORY	
+adr/0007-settle-cycle.md:11#5	HISTORY	
+adr/0007-settle-cycle.md:11#6	HISTORY	
+adr/0007-settle-cycle.md:11#8	HISTORY	
+adr/0007-settle-cycle.md:11#9	HISTORY	
+adr/0007-settle-cycle.md:111#1	HISTORY	
+adr/0007-settle-cycle.md:111#2	HISTORY	
+adr/0007-settle-cycle.md:115#1	VIEW	WRITE-014,WRITE-027
+adr/0007-settle-cycle.md:117#1	VIEW	FRAGMENT-019
+adr/0007-settle-cycle.md:118#1	VIEW	WRITE-006,WRITE-015,WRITE-016
+adr/0007-settle-cycle.md:119#1	VIEW	WRITE-008,WRITE-015
+adr/0007-settle-cycle.md:12#1	HISTORY	
+adr/0007-settle-cycle.md:12#2	HISTORY	
+adr/0007-settle-cycle.md:120#1	VIEW	WRITE-026, VALIDATE-034
+adr/0007-settle-cycle.md:13#1	HISTORY	
+adr/0007-settle-cycle.md:13#2	HISTORY	
+adr/0007-settle-cycle.md:138#1	RESTATES	LANDING-117,LANDING-085
+adr/0007-settle-cycle.md:138#2	RESTATES	LANDING-117,LANDING-085
+adr/0007-settle-cycle.md:14#2	HISTORY	
+adr/0007-settle-cycle.md:143#1	RESTATES	WRITE-015
+adr/0007-settle-cycle.md:143#2	RESTATES	WRITE-015
+adr/0007-settle-cycle.md:144#1	RESTATES	WRITE-058
+adr/0007-settle-cycle.md:145#1	HISTORY	
+adr/0007-settle-cycle.md:146#1	RESTATES	WRITE-059
+adr/0007-settle-cycle.md:146#2	RESTATES	WRITE-007
+adr/0007-settle-cycle.md:146#3	RESTATES	WRITE-059,WRITE-058
+adr/0007-settle-cycle.md:147#1	RESTATES	WRITE-015
+adr/0007-settle-cycle.md:147#2	RESTATES	WRITE-015
+adr/0007-settle-cycle.md:148#1	RESTATES	EVENT-012
+adr/0007-settle-cycle.md:148#2	RESTATES	EVENT-012
+adr/0007-settle-cycle.md:148#3	RESTATES	CONTROLS-029,EVENT-012
+adr/0007-settle-cycle.md:149#1	RESTATES	EVENT-006,EVENT-048
+adr/0007-settle-cycle.md:149#2	RESTATES	EVENT-006,EVENT-045
+adr/0007-settle-cycle.md:149#3	RESTATES	EVENT-048
+adr/0007-settle-cycle.md:15#1	HISTORY	
+adr/0007-settle-cycle.md:15#2	HISTORY	
+adr/0007-settle-cycle.md:15#3	HISTORY	
+adr/0007-settle-cycle.md:151#1	RESTATES	SETTLE-025,SETTLE-035
+adr/0007-settle-cycle.md:26#1	OUT	관찰
+adr/0007-settle-cycle.md:26#2	OUT	관찰
+adr/0007-settle-cycle.md:26#3	OUT	관찰
+adr/0007-settle-cycle.md:3#1	HISTORY	
+adr/0007-settle-cycle.md:3#2	HISTORY	
+adr/0007-settle-cycle.md:3#3	HISTORY	
+adr/0007-settle-cycle.md:3#4	HISTORY	
+adr/0007-settle-cycle.md:3#5	HISTORY	
+adr/0007-settle-cycle.md:3#6	HISTORY	
+adr/0007-settle-cycle.md:45#3	RESTATES	GOAL-027,FRAGMENT-010
+adr/0007-settle-cycle.md:45#4	RESTATES	FRAGMENT-011,FRAGMENT-008
+adr/0007-settle-cycle.md:47#11	RESTATES	SETTLE-018
+adr/0007-settle-cycle.md:47#8	RESTATES	EVENT-008,EVENT-034
+adr/0007-settle-cycle.md:60#1	VIEW	FRAGMENT-019
+adr/0007-settle-cycle.md:64#6	RESTATES	SETTLE-005
+adr/0007-settle-cycle.md:68#1	RESTATES	WRITE-007
+adr/0007-settle-cycle.md:7#1	HISTORY	
+adr/0007-settle-cycle.md:7#2	HISTORY	
+adr/0007-settle-cycle.md:7#3	HISTORY	
+adr/0007-settle-cycle.md:7#4	HISTORY	
+adr/0007-settle-cycle.md:70#1	RESTATES	WRITE-007,WRITE-010,WRITE-015
+adr/0007-settle-cycle.md:71#1	RESTATES	WRITE-007,WRITE-014
+adr/0007-settle-cycle.md:72#1	RESTATES	WRITE-007,WRITE-012
+adr/0007-settle-cycle.md:74#1	RESTATES	WRITE-007,WRITE-028
+adr/0007-settle-cycle.md:75#1	RESTATES	WRITE-007,WRITE-031,WRITE-033,WRITE-037
+adr/0007-settle-cycle.md:77#1	RESTATES	WRITE-007,WRITE-024
+adr/0007-settle-cycle.md:79#1	RESTATES	WRITE-006,WRITE-015
+adr/0007-settle-cycle.md:79#2	RESTATES	WRITE-006
+adr/0007-settle-cycle.md:8#1	HISTORY	
+adr/0007-settle-cycle.md:82#1	RESTATES	WRITE-015
+adr/0007-settle-cycle.md:83#1	RESTATES	WRITE-015
+adr/0007-settle-cycle.md:84#1	RESTATES	WRITE-015
+adr/0007-settle-cycle.md:87#2	RESTATES	WRITE-015
+adr/0007-settle-cycle.md:87#3	RESTATES	WRITE-015
+adr/0007-settle-cycle.md:87#4	RESTATES	WRITE-015
+adr/0007-settle-cycle.md:88#4	RESTATES	WRITE-015
+adr/0007-settle-cycle.md:89#1	RESTATES	WRITE-015,WRITE-008
+adr/0007-settle-cycle.md:9#1	HISTORY	
+adr/0007-settle-cycle.md:90#1	RESTATES	WRITE-016
+adr/0007-settle-cycle.md:90#2	RESTATES	WRITE-016,EVENT-042
+adr/0007-settle-cycle.md:90#3	RESTATES	EVENT-042
+adr/0007-settle-cycle.md:91#1	RESTATES	WRITE-013
+adr/0007-settle-cycle.md:91#2	RESTATES	WRITE-013
+adr/0007-settle-cycle.md:94#1	RESTATES	WRITE-005
+adr/0007-settle-cycle.md:94#2	RESTATES	WRITE-005
+adr/0007-settle-cycle.md:94#4	RESTATES	WRITE-002,WRITE-001
+adr/0007-settle-cycle.md:98#1	HISTORY	
+adr/0007-settle-cycle.md:98#2	RESTATES	FRAGMENT-022,FRAGMENT-016,FRAGMENT-008
+adr/0008-event-system.md:10#1	HISTORY	
+adr/0008-event-system.md:100#1	RESTATES	ERROR-140
+adr/0008-event-system.md:100#2	RESTATES	ERROR-140
+adr/0008-event-system.md:100#3	RESTATES	ERROR-135,ERROR-136,ERROR-137,ERROR-138,ERROR-141
+adr/0008-event-system.md:100#4	RESTATES	ERROR-142
+adr/0008-event-system.md:106#2	RESTATES	EVENT-043
+adr/0008-event-system.md:11#1	HISTORY	
+adr/0008-event-system.md:11#2	HISTORY	
+adr/0008-event-system.md:12#1	HISTORY	
+adr/0008-event-system.md:120#1	OUT	관찰
+adr/0008-event-system.md:122#1	VIEW	EVENT-026,EVENT-027
+adr/0008-event-system.md:124#1	VIEW	EVENT-026,EVENT-027,EVENT-028
+adr/0008-event-system.md:125#1	VIEW	EVENT-013,EVENT-026
+adr/0008-event-system.md:126#1	VIEW	EVENT-008,EVENT-026
+adr/0008-event-system.md:127#1	VIEW	EVENT-026
+adr/0008-event-system.md:128#1	VIEW	EVENT-031
+adr/0008-event-system.md:13#1	HISTORY	
+adr/0008-event-system.md:13#2	HISTORY	
+adr/0008-event-system.md:13#3	HISTORY	
+adr/0008-event-system.md:13#4	HISTORY	
+adr/0008-event-system.md:13#5	HISTORY	
+adr/0008-event-system.md:130#1	OUT	관찰
+adr/0008-event-system.md:130#3	RESTATES	EVENT-019
+adr/0008-event-system.md:136#3	RESTATES	EVENT-036,SETTLE-008
+adr/0008-event-system.md:136#4	RESTATES	EVENT-028
+adr/0008-event-system.md:157#3	RESTATES	ERROR-132,ERROR-135,ERROR-137,ERROR-138
+adr/0008-event-system.md:157#4	RESTATES	ERROR-100
+adr/0008-event-system.md:161#1	RESTATES	VALUE-003
+adr/0008-event-system.md:166#2	RESTATES	ERROR-130
+adr/0008-event-system.md:169#1	RESTATES	ERROR-130
+adr/0008-event-system.md:170#1	RESTATES	ERROR-130
+adr/0008-event-system.md:171#1	RESTATES	ERROR-130
+adr/0008-event-system.md:172#1	RESTATES	ERROR-130
+adr/0008-event-system.md:173#1	RESTATES	ERROR-130
+adr/0008-event-system.md:174#1	RESTATES	ERROR-130
+adr/0008-event-system.md:186#1	VIEW	EVENT-002,EVENT-008,EVENT-010,EVENT-026
+adr/0008-event-system.md:188#1	VIEW	EVENT-002,EVENT-008,EVENT-010,EVENT-026
+adr/0008-event-system.md:190#1	VIEW	EVENT-002,EVENT-003
+adr/0008-event-system.md:191#1	VIEW	EVENT-042
+adr/0008-event-system.md:192#1	VIEW	EVENT-006,EVENT-011
+adr/0008-event-system.md:193#1	VIEW	EVENT-008,EVENT-020
+adr/0008-event-system.md:194#1	VIEW	EVENT-007,EVENT-011
+adr/0008-event-system.md:195#1	VIEW	EVENT-002
+adr/0008-event-system.md:196#1	VIEW	EVENT-010
+adr/0008-event-system.md:197#1	VIEW	EVENT-026
+adr/0008-event-system.md:201#2	RESTATES	ERROR-017,ERROR-164
+adr/0008-event-system.md:201#3	RESTATES	EVENT-044
+adr/0008-event-system.md:22#1	OUT	관찰
+adr/0008-event-system.md:22#2	OUT	관찰
+adr/0008-event-system.md:22#3	OUT	관찰
+adr/0008-event-system.md:24#1	OUT	관찰
+adr/0008-event-system.md:3#1	HISTORY	
+adr/0008-event-system.md:3#3	HISTORY	
+adr/0008-event-system.md:3#4	HISTORY	
+adr/0008-event-system.md:3#5	HISTORY	
+adr/0008-event-system.md:42#1	OUT	관찰
+adr/0008-event-system.md:44#1	VIEW	EVENT-002
+adr/0008-event-system.md:46#1	VIEW	EVENT-002
+adr/0008-event-system.md:47#1	VIEW	EVENT-002
+adr/0008-event-system.md:48#1	VIEW	EVENT-002
+adr/0008-event-system.md:49#1	VIEW	EVENT-002
+adr/0008-event-system.md:51#1	OUT	관찰
+adr/0008-event-system.md:51#2	OUT	관찰
+adr/0008-event-system.md:55#1	OUT	관찰
+adr/0008-event-system.md:55#2	OUT	관찰
+adr/0008-event-system.md:7#1	HISTORY	
+adr/0008-event-system.md:7#2	HISTORY	
+adr/0008-event-system.md:7#3	HISTORY	
+adr/0008-event-system.md:7#4	HISTORY	
+adr/0008-event-system.md:76#4	RESTATES	SETTLE-006,EVENT-001
+adr/0008-event-system.md:8#1	HISTORY	
+adr/0008-event-system.md:80#6	RESTATES	EVENT-016,EVENT-017
+adr/0008-event-system.md:9#1	HISTORY	
+adr/0008-event-system.md:97#1	RESTATES	EVENT-021
+adr/0008-event-system.md:97#5	RESTATES	ERROR-132,ERROR-133
+adr/0008-event-system.md:97#6	RESTATES	ERROR-142
+adr/0009-performance-budget-and-benchmarks.md:10#1	HISTORY	
+adr/0009-performance-budget-and-benchmarks.md:9#1	HISTORY	
+adr/0010-branch-conventions.md:15#1	RESTATES	FRAGMENT-022
+adr/0010-branch-conventions.md:16#1	RESTATES	FRAGMENT-022
+adr/0010-branch-conventions.md:16#2	RESTATES	FRAGMENT-022
+adr/0010-branch-conventions.md:16#3	RESTATES	FRAGMENT-023
+adr/0010-branch-conventions.md:19#4	RESTATES	FRAGMENT-007
+adr/0010-branch-conventions.md:27#1	OUT	예시
+adr/0010-branch-conventions.md:28#1	OUT	예시
+adr/0010-branch-conventions.md:29#1	OUT	예시
+adr/0010-branch-conventions.md:3#1	HISTORY	
+adr/0010-branch-conventions.md:3#2	HISTORY	
+adr/0010-branch-conventions.md:30#1	OUT	예시
+adr/0010-branch-conventions.md:31#1	OUT	예시
+adr/0010-branch-conventions.md:32#1	OUT	예시
+adr/0010-branch-conventions.md:37#1	OUT	예시
+adr/0010-branch-conventions.md:40#1	OUT	예시
+adr/0010-branch-conventions.md:41#1	OUT	예시
+adr/0010-branch-conventions.md:42#1	OUT	예시
+adr/0010-branch-conventions.md:43#1	OUT	예시
+adr/0010-branch-conventions.md:44#1	OUT	예시
+adr/0010-branch-conventions.md:45#1	OUT	예시
+adr/0010-branch-conventions.md:46#1	OUT	예시
+adr/0010-branch-conventions.md:52#1	RESTATES	FRAGMENT-030
+adr/0010-branch-conventions.md:53#1	RESTATES	FRAGMENT-030
+adr/0010-branch-conventions.md:53#2	RESTATES	FRAGMENT-024,FRAGMENT-030
+adr/0010-branch-conventions.md:54#1	RESTATES	FRAGMENT-006
+adr/0010-branch-conventions.md:7#1	HISTORY	
+adr/0011-branch-node-composition.md:10#1	HISTORY	
+adr/0011-branch-node-composition.md:105#1	RESTATES	NODE-033
+adr/0011-branch-node-composition.md:105#2	RESTATES	NODE-033
+adr/0011-branch-node-composition.md:11#1	HISTORY	
+adr/0011-branch-node-composition.md:12#1	HISTORY	
+adr/0011-branch-node-composition.md:12#2	HISTORY	
+adr/0011-branch-node-composition.md:16#1	OUT	관찰
+adr/0011-branch-node-composition.md:16#2	OUT	관찰
+adr/0011-branch-node-composition.md:16#3	OUT	관찰
+adr/0011-branch-node-composition.md:17#1	OUT	관찰
+adr/0011-branch-node-composition.md:17#2	OUT	관찰
+adr/0011-branch-node-composition.md:18#1	OUT	관찰
+adr/0011-branch-node-composition.md:18#2	OUT	관찰
+adr/0011-branch-node-composition.md:18#3	OUT	관찰
+adr/0011-branch-node-composition.md:19#1	OUT	관찰
+adr/0011-branch-node-composition.md:19#2	OUT	관찰
+adr/0011-branch-node-composition.md:20#1	OUT	관찰
+adr/0011-branch-node-composition.md:20#2	OUT	관찰
+adr/0011-branch-node-composition.md:21#1	OUT	관찰
+adr/0011-branch-node-composition.md:21#2	OUT	관찰
+adr/0011-branch-node-composition.md:22#1	OUT	관찰
+adr/0011-branch-node-composition.md:22#2	OUT	관찰
+adr/0011-branch-node-composition.md:3#13	RESTATES	CONTROLS-012
+adr/0011-branch-node-composition.md:3#14	HISTORY	
+adr/0011-branch-node-composition.md:3#15	RESTATES	NODE-032
+adr/0011-branch-node-composition.md:3#6	RESTATES	NODE-020
+adr/0011-branch-node-composition.md:3#7	RESTATES	CONTROLS-001
+adr/0011-branch-node-composition.md:3#8	RESTATES	CONTROLS-001, CONTROLS-006, CONTROLS-009, CONTROLS-010, CONTROLS-011, CONTROLS-052
+adr/0011-branch-node-composition.md:3#9	RESTATES	NODE-028
+adr/0011-branch-node-composition.md:5#1	HISTORY	
+adr/0011-branch-node-composition.md:5#3	RESTATES	GOAL-006
+adr/0011-branch-node-composition.md:5#4	RESTATES	GOAL-006
+adr/0011-branch-node-composition.md:53#2	RESTATES	NODE-002
+adr/0011-branch-node-composition.md:53#3	RESTATES	NODE-028
+adr/0011-branch-node-composition.md:59#13	RESTATES	CONTROLS-066
+adr/0011-branch-node-composition.md:59#14	RESTATES	NODE-028
+adr/0011-branch-node-composition.md:60#5	RESTATES	NODE-019
+adr/0011-branch-node-composition.md:62#1	RESTATES	WRITE-013
+adr/0011-branch-node-composition.md:9#1	HISTORY	
+adr/0011-branch-node-composition.md:9#2	HISTORY	
+adr/0011-branch-node-composition.md:9#3	HISTORY	
+adr/0011-branch-node-composition.md:9#4	HISTORY	
+adr/0011-branch-node-composition.md:9#5	HISTORY	
+adr/0011-branch-node-composition.md:94#1	HISTORY	
+adr/0011-branch-node-composition.md:94#2	OUT	관찰
+adr/0011-branch-node-composition.md:99#1	RESTATES	NODE-001
+adr/0011-branch-node-composition.md:99#2	RESTATES	NODE-001
+adr/0012-fe-overlay.md:10#1	HISTORY	
+adr/0012-fe-overlay.md:10#3	HISTORY	
+adr/0012-fe-overlay.md:14#1	RESTATES	SCHEMA-016
+adr/0012-fe-overlay.md:14#2	OUT	관찰
+adr/0012-fe-overlay.md:3#11	RESTATES	CONTROLS-012
+adr/0012-fe-overlay.md:3#5	RESTATES	CONTROLS-009,CONTROLS-010
+adr/0012-fe-overlay.md:3#6	RESTATES	CONTROLS-011
+adr/0012-fe-overlay.md:5#1	RESTATES	SCHEMA-016,SCHEMA-017
+adr/0012-fe-overlay.md:9#1	HISTORY	
+adr/0013-core-does-not-rewrite-values.md:10#1	HISTORY	
+adr/0013-core-does-not-rewrite-values.md:100#1	HISTORY	
+adr/0013-core-does-not-rewrite-values.md:100#2	HISTORY	
+adr/0013-core-does-not-rewrite-values.md:100#3	HISTORY	
+adr/0013-core-does-not-rewrite-values.md:104#1	RESTATES	WRITE-015
+adr/0013-core-does-not-rewrite-values.md:105#1	RESTATES	WRITE-015
+adr/0013-core-does-not-rewrite-values.md:105#2	RESTATES	WRITE-015
+adr/0013-core-does-not-rewrite-values.md:106#2	RESTATES	WRITE-007
+adr/0013-core-does-not-rewrite-values.md:106#3	RESTATES	WRITE-059
+adr/0013-core-does-not-rewrite-values.md:109#1	RESTATES	ERROR-050
+adr/0013-core-does-not-rewrite-values.md:11#1	HISTORY	
+adr/0013-core-does-not-rewrite-values.md:11#2	HISTORY	
+adr/0013-core-does-not-rewrite-values.md:12#1	HISTORY	
+adr/0013-core-does-not-rewrite-values.md:12#2	HISTORY	
+adr/0013-core-does-not-rewrite-values.md:13#1	HISTORY	
+adr/0013-core-does-not-rewrite-values.md:13#2	HISTORY	
+adr/0013-core-does-not-rewrite-values.md:13#3	HISTORY	
+adr/0013-core-does-not-rewrite-values.md:13#4	HISTORY	
+adr/0013-core-does-not-rewrite-values.md:13#5	HISTORY	
+adr/0013-core-does-not-rewrite-values.md:13#6	HISTORY	
+adr/0013-core-does-not-rewrite-values.md:13#7	HISTORY	
+adr/0013-core-does-not-rewrite-values.md:13#8	HISTORY	
+adr/0013-core-does-not-rewrite-values.md:17#1	RESTATES	WRITE-001
+adr/0013-core-does-not-rewrite-values.md:17#2	RESTATES	WRITE-001
+adr/0013-core-does-not-rewrite-values.md:17#3	RESTATES	WRITE-003
+adr/0013-core-does-not-rewrite-values.md:17#4	RESTATES	WRITE-001
+adr/0013-core-does-not-rewrite-values.md:17#5	HISTORY	
+adr/0013-core-does-not-rewrite-values.md:21#1	HISTORY	
+adr/0013-core-does-not-rewrite-values.md:23#1	RESTATES	WRITE-001
+adr/0013-core-does-not-rewrite-values.md:23#4	RESTATES	GOAL-026
+adr/0013-core-does-not-rewrite-values.md:23#5	RESTATES	GOAL-026
+adr/0013-core-does-not-rewrite-values.md:25#1	HISTORY	
+adr/0013-core-does-not-rewrite-values.md:25#2	RESTATES	FRAGMENT-019
+adr/0013-core-does-not-rewrite-values.md:3#1	HISTORY	
+adr/0013-core-does-not-rewrite-values.md:3#2	HISTORY	
+adr/0013-core-does-not-rewrite-values.md:3#3	RESTATES	WRITE-017
+adr/0013-core-does-not-rewrite-values.md:3#4	RESTATES	WRITE-008,WRITE-015
+adr/0013-core-does-not-rewrite-values.md:3#5	RESTATES	WRITE-014,WRITE-006,WRITE-015
+adr/0013-core-does-not-rewrite-values.md:49#1	RESTATES	WRITE-008
+adr/0013-core-does-not-rewrite-values.md:7#1	HISTORY	
+adr/0013-core-does-not-rewrite-values.md:7#2	HISTORY	
+adr/0013-core-does-not-rewrite-values.md:7#3	HISTORY	
+adr/0013-core-does-not-rewrite-values.md:8#1	HISTORY	
+adr/0013-core-does-not-rewrite-values.md:89#1	RESTATES	WRITE-009,WRITE-062
+adr/0013-core-does-not-rewrite-values.md:9#1	HISTORY	
+adr/0014-error-policy.md:12#1	HISTORY	
+adr/0014-error-policy.md:12#2	HISTORY	
+adr/0014-error-policy.md:14#1	HISTORY	
+adr/0014-error-policy.md:14#2	HISTORY	
+adr/0014-error-policy.md:16#1	OUT	관찰
+adr/0014-error-policy.md:16#2	OUT	관찰
+adr/0014-error-policy.md:16#3	HISTORY	
+adr/0014-error-policy.md:16#4	OUT	관찰
+adr/0014-error-policy.md:16#5	OUT	예시
+adr/0014-error-policy.md:16#6	OUT	예시
+adr/0014-error-policy.md:16#7	OUT	예시
+adr/0014-error-policy.md:18#1	HISTORY	
+adr/0014-error-policy.md:18#2	HISTORY	
+adr/0014-error-policy.md:18#3	HISTORY	
+adr/0014-error-policy.md:22#1	RESTATES	GOAL-025,GOAL-028
+adr/0014-error-policy.md:22#2	RESTATES	GOAL-025,GOAL-028
+adr/0014-error-policy.md:22#3	RESTATES	ERROR-002
+adr/0014-error-policy.md:22#4	RESTATES	ERROR-001
+adr/0014-error-policy.md:23#1	RESTATES	GOAL-015
+adr/0014-error-policy.md:23#2	RESTATES	GOAL-015
+adr/0014-error-policy.md:24#1	RESTATES	GOAL-009
+adr/0014-error-policy.md:24#2	RESTATES	ERROR-021,ERROR-071
+adr/0014-error-policy.md:24#3	RESTATES	ERROR-021,ERROR-071
+adr/0014-error-policy.md:3#1	HISTORY	
+adr/0014-error-policy.md:3#2	HISTORY	
+adr/0014-error-policy.md:333#1	HISTORY	
+adr/0014-error-policy.md:333#2	RESTATES	ERROR-165,ERROR-048
+adr/0014-error-policy.md:7#1	HISTORY	
+adr/0014-error-policy.md:7#2	RESTATES	ERROR-070,ERROR-137
+adr/0014-error-policy.md:7#3	RESTATES	ERROR-146,ERROR-108
+adr/0014-error-policy.md:7#4	RESTATES	ERROR-094
+adr/0014-error-policy.md:7#5	RESTATES	ERROR-088,ERROR-005
+adr/0014-error-policy.md:7#6	RESTATES	ERROR-073
+adr/0014-error-policy.md:8#1	HISTORY	
+open-questions.md:11#2	RESTATES	WRITE-031,WRITE-033,WRITE-037
+open-questions.md:23#2	RESTATES	FRAGMENT-016
+open-questions.md:3#4	RESTATES	PROCESS-026
+open-questions.md:33#1	OUT	관찰
+open-questions.md:35#1	OUT	관찰
+open-questions.md:36#1	OUT	관찰
+open-questions.md:36#2	OUT	관찰
+open-questions.md:37#1	OUT	관찰
+open-questions.md:38#1	OUT	관찰
+open-questions.md:38#2	OUT	관찰
+open-questions.md:39#1	OUT	관찰
+open-questions.md:39#2	OUT	관찰
+open-questions.md:40#1	RESTATES	NODE-036
+open-questions.md:42#1	RESTATES	NODE-033
+open-questions.md:42#3	RESTATES	NODE-033
+open-questions.md:42#4	HISTORY	
+open-questions.md:44#1	RESTATES	NODE-033
+open-questions.md:44#2	HISTORY	
+open-questions.md:44#3	HISTORY	
+open-questions.md:48#1	HISTORY	
+open-questions.md:50#1	RESTATES	WRITE-006
+open-questions.md:52#1	RESTATES	WRITE-065,WRITE-016
+open-questions.md:52#2	RESTATES	WRITE-022
+open-questions.md:52#4	HISTORY	
+open-questions.md:56#1	RESTATES	FRAGMENT-037
+open-questions.md:56#2	RESTATES	FRAGMENT-037
+open-questions.md:56#3	RESTATES	FRAGMENT-037
+open-questions.md:60#1	RESTATES	GOAL-016,GOAL-031
+open-questions.md:60#10	RESTATES	EVENT-001
+open-questions.md:60#2	OUT	관찰
+open-questions.md:60#3	OUT	관찰
+open-questions.md:60#4	RESTATES	NODE-027
+open-questions.md:60#5	RESTATES	NODE-028
+open-questions.md:60#6	RESTATES	NODE-028
+open-questions.md:60#7	HISTORY	
+open-questions.md:60#8	RESTATES	NODE-003
+open-questions.md:60#9	RESTATES	CONTROLS-066
+open-questions.md:66#1	RESTATES	GOAL-018,VALIDATE-002
+open-questions.md:66#2	RESTATES	SCHEMA-001,SCHEMA-004
+open-questions.md:7#1	RESTATES	FRAGMENT-015
+open-questions.md:7#2	RESTATES	FRAGMENT-015
+open-questions.md:7#3	RESTATES	FRAGMENT-015
+open-questions.md:7#4	RESTATES	FRAGMENT-014
+open-questions.md:70#1	OUT	관찰
+open-questions.md:70#2	RESTATES	FRAGMENT-028
+open-questions.md:70#3	HISTORY	
+open-questions.md:74#1	HISTORY	
+open-questions.md:74#2	HISTORY	
+open-questions.md:76#1	RESTATES	FRAGMENT-019
+open-questions.md:76#2	RESTATES	FRAGMENT-019,FRAGMENT-020
+open-questions.md:76#3	RESTATES	FRAGMENT-019
+open-questions.md:76#4	HISTORY	
+open-questions.md:88#1	RESTATES	NODE-038
+open-questions.md:88#2	RESTATES	NODE-038
+open-questions.md:96#1	RESTATES	WRITE-017,WRITE-015,SCHEMA-026,BLUEPRINT-017
+open-questions.md:96#2	RESTATES	EVENT-037
+open-questions.md:96#3	RESTATES	EVENT-026
+open-questions.md:98#1	RESTATES	WRITE-066
+open-questions.md:98#2	RESTATES	WRITE-065
