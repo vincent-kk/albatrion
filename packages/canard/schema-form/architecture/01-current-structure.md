@@ -82,7 +82,7 @@
 
 ## 6. core와 React의 경계
 
-- core의 React 런타임 의존은 한 곳이다. `core/nodes/AbstractNode/utils/getNodeGroup/getNodeGroup.ts:27-29`가 `isReactComponent(schema.FormTypeInput)`로 branch/terminal을 정한다. **렌더링 선택이 노드 트리의 형태를 결정한다.**
+- core의 React 런타임 의존은 둘이다(17라운드 게이트 B가 바로잡았다). 첫째, `core/nodes/AbstractNode/utils/getNodeGroup/getNodeGroup.ts:27-29`가 `isReactComponent(schema.FormTypeInput)`로 branch/terminal을 정한다. **렌더링 선택이 노드 트리의 형태를 결정한다.** 둘째, `core/nodes/AbstractNode/utils/ValidationManager/ValidationManager.ts:1`이 `app/plugin`의 `PluginManager`를 가져오고, `PluginManager`(`app/plugin/PluginManager.ts:3-11`)는 `@winglet/react-utils/object`, `components/FallbackComponents`의 렌더러들, `formTypeDefinitions`의 입력 구성 요소들을 가져온다. 그래서 core 모듈을 불러오면 React 구성 요소 모듈도 함께 불러온다.
 - core는 컴포넌트 참조나 ref를 들지 않지만, 렌더 계층에 대한 명령 어휘(`RequestFocus`/`RequestSelect`/`RequestRefresh`/`RequestRemount`)와 React key 규약(`AbstractNode.ts:207-213`)을 이벤트 타입 수준에서 소유한다.
 - `types/jsonSchema.ts`가 React 타입을 import하고 core의 132개 파일이 그 타입을 import한다.
 - 구독 모델: `useSchemaNodeTracker` = `useSyncExternalStore(subscribe, () => node.revision(mask))`. `revision`은 리스너 유무와 무관한 단조 원장이어서 render→commit 사이에 빠진 배달을 React가 다시 맞춘다(`hooks/useSchemaNodeTracker.ts:36-49`).

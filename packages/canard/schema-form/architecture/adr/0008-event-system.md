@@ -1,9 +1,10 @@
 # ADR 0008 — 이벤트 시스템 개편: 통지 전용 척추
 
-상태: 일부 수락 (5차 본문). 루트 단일 디스패처는 소유자 발의이며 D-9·D-10은 소유자 결정이다(2026-09-22, `reviews/round-4.md` §4). 통지 시점(동기)·`batch(fn)`·파동 상한은 4라운드 확정판으로 실행 검증을 통과한 **제안**이다(`reviews/round-4-spec.md` §B, 판정 `reviews/round-4.md` §3.2, 개정 F14–F22·F28) — 소유자는 캐럿 보존 기록의 계승을 요구했고 그 수용 기준(T-1, F14)을 충족한다. 리스너 되먹임 상한의 단위(진입 사슬), 예산 초과 시의 진행 순서, 진단 표면 `diagnostics`, 유효 스키마가 바뀐 노드의 배달은 도출로 닫혔고(`06-conclusions.md` §4.5·4.6·4.9·N4, `07-conclusions.md` §4.0·4.27·6.2), 예산 초과 시 제출을 막지 않고 신호만 낸다는 것은 소유자 결정이다(`reviews/round-10-owner-answers.md` B-1, `07-conclusions.md` §5.0의 1) — 10라운드 B-1의 제출 비차단은 14라운드 답 O-2가 뒤집었다(§8). 명령 publish를 공개 API로 여는 것(C-11)은 원리에서 도출이며(`reviews/round-5-derivations.md` §1) 소유자 확정 대기다.
+상태: 일부 수락 (5차 본문). 루트 단일 디스패처는 소유자 발의이며 D-9·D-10은 소유자 결정이다(2026-09-22, `reviews/round-4.md` §4). 통지 시점(동기)·`batch(fn)`·파동 상한은 4라운드 확정판으로 실행 검증을 통과한 **제안**이다(`reviews/round-4-spec.md` §B, 판정 `reviews/round-4.md` §3.2, 개정 F14–F22·F28) — 소유자는 캐럿 보존 기록의 계승을 요구했고 그 수용 기준(T-1, F14)을 충족한다. 리스너 되먹임 상한의 단위(진입 사슬), 예산 초과 시의 진행 순서, 진단 표면 `diagnostics`, 유효 스키마가 바뀐 노드의 배달은 도출로 닫혔고(`06-conclusions.md` §4.5·4.6·4.9·N4, `07-conclusions.md` §4.0·4.27·6.2), 예산 초과의 드러남은 17라운드 소유자 답 R17-1 나로 정해졌다: 모든 환경에서 커밋·통지 뒤 사슬 끝에서 던지고 `degraded` 동안 제출을 거부한다(10라운드 B-1과 `07-conclusions.md` §5.0의 1이 정한 '신호만, 제출 비차단'은 이 답으로 대체되었다. O-2는 지속만 답했다). 명령 publish를 공개 API로 여는 것(C-11)은 원리에서 도출이며(`reviews/round-5-derivations.md` §1) 소유자 확정 대기다.
 
 ## 변경 이력
 
+- 2026-09-25 — 17라운드(`reviews/round-17-owner-answers.md`, ADR 0014 4판): 예산 초과는 모든 환경에서 사슬 끝 throw이고 `degraded` 동안 제출을 거부한다(R17-1 나). `throwOnBudgetExceeded`는 없앴다. `diagnostics`의 모양을 `status`(`'stable'` 또는 `'degraded'`)·`cause`·`commit`으로 바꿨다. 리스너 예외의 보고는 Form 속성 `onError`로 모았다(`onListenerError` 흡수).
 - 2026-09-24 — 16라운드(`09-landing-and-test-strategy.md` §2.6, 16라운드 스웜 수렴(편집자 결정)): §3에 `fn` 안의 `reset`이 경로와 무관하게 그 로드를 곧바로 정착하고 그 커밋이 `fn` 끝의 파동에 합류한다는 규칙(쓰기 묶음 밖의 정착), §5에 재생성 경로의 진입 깊이 예외와 `reset`의 검증 요청 예외, §7의 `RequestRefresh` 행에 컨테이너 입력의 처리를 더했다.
 - 2026-09-24 — 15라운드(`reviews/round-15-decisions.md`): `&` 축약을 `controls` 그룹 표기로, 조각 식의 기준점을 호스트로, 맨 폼 전용 키를 `options`·`presentation` 그룹으로 바꿨다.
 - 2026-09-22 — 2라운드(`reviews/round-2.md`)의 S10을 "확인된 결함" 절에 적었다.
@@ -64,7 +65,7 @@
 | 3 | **원장** — `revision`은 **커밋 시 배달 집합 전체를 한 번에** 올린다 | F16. 이전 본문의 "리스너 직전에 올린다"를 뒤집는다. 노드마다 직전 bump는 리스너의 `flushSync`에서 커밋 2회·렌더 2,000회, 일괄은 커밋 1회·렌더 1,000회이고 stale은 둘 다 0이었다(V5) — 본문이 적었던 "미리 올리면 stale"은 재현되지 않았다 |
 | 4 | **파동** — 고정된 집합을 순회한다. 리스너 안의 쓰기(**리스너 되먹임**)는 즉시 동기로 정착·커밋되고 그 통지는 현재 파동이 끝난 뒤 다음 파동이다. 같은 파동의 리스너가 같은 것을 본다는 보장은 **payload에 한정**한다 — `node.value`는 현재 커밋을 돌려준다 | 상한은 **최외곽 진입의 되먹임 사슬당 25**다(06 §4.6). 사슬은 최외곽 진입 하나(§5)의 통지에서 리스너 되먹임이 이어 낸 파동들이며, 세는 것은 되먹임이 낸 파동뿐이다. 상한에 닿으면 마지막 파동을 한 번 더 배달하되 **그 파동의 리스너 되먹임만 거부**하고 `diagnostics`에 `listenerFeedback` 예산 초과를 적는다(§8). **사용자 입력과 호출자 쓰기는 결코 거부하지 않는다**(ADR 0013 결정 1, P2). 거부하므로 통지되지 않은 쓰기가 없고 트리와 DOM이 어긋나지 않는다. 그 뒤의 진행은 §3의 "예산 초과"를 따른다. 2라운드 S10의 모순은 "보장은 payload에 한정"으로 닫힌다 |
 | 5 | **분리된 노드** — 배달 전에 트리에서 떨어진 노드는 건너뛰고 대기 비트를 지운다 | 통과(V10) |
-| 6 | **격리** — 리스너 호출을 하나씩 격리한다. throw는 Form의 `onListenerError`(가칭)로 보고하고 없으면 개발 모드 `console.error`, 그리고 계속한다(ADR 0014 제안 3판이 대체한다. 확정 뒤 갱신) | F21. `subscribe`는 공개 API이므로 소비자 코드 한 줄이 폼 전체를 멈출 수 있다 |
+| 6 | **격리** — 리스너 호출을 하나씩 격리한다. 배달은 계속하고, 모은 예외는 배달을 끝낸 뒤 사슬 끝에서 던진다(하나면 원래 값 그대로, 둘 이상이면 `SchemaFormError` 하나의 `details.errors`에 발생 순서대로 담는다, 모든 환경). 기록마다 Form 속성 `onError`에 보낸다(가칭 `onListenerError`는 `onError`에 흡수되었다, ADR 0014 4판) | F21. `subscribe`는 공개 API이므로 소비자 코드 한 줄이 폼 전체를 멈출 수 있다 |
 
 **리스너 목록은 파동 시작 시점에 고정한다**(F17). 파동 중 구독한 리스너는 다음 파동부터 받고 놓친 것은 `revision`으로 따라잡으며(T-6), 파동 중 해지된 리스너는 부르지 않는다(현재 코드와 같다). 이것으로 소비자의 `flushSync`가 가상화 reveal 커밋을 파동 안으로 끌어들일 때 안쪽 컨트롤이 명령을 2회 받던 문제가 사라진다(V6).
 
@@ -79,25 +80,24 @@
 `batch(fn)`은 fn 안의 쓰기를 표시만 하고, fn이 끝날 때 정착 한 번·파동 한 번을 낸다. 중첩 `batch`는 가장 바깥이 이긴다. `fn` 안의 `reset`은 경로와 무관하게 그 로드를 곧바로 정착한다(로드는 새 수명이라 앞서 표시된 쓰기를 덮고, 재생성 경로에서는 새 루트를 세우는 정착이다). `fn`의 나머지 쓰기 묶음은 그대로 끝에서 정착 한 번이며, `reset`의 커밋은 따로 파동을 내지 않고 `fn` 끝의 파동 한 번에 합류하며(두 커밋에서 바뀐 노드의 payload는 §4의 체인을 따른다. 리스너 안의 `reset`은 §2 규칙 4대로 다음 파동에 든다), 검증 요청과 `onChange`는 바깥 최외곽 진입의 끝에서 낸다(§5의 예외, 09 §2.6의 열째, 16라운드 스웜 수렴(편집자 결정)). 경계는 둘이다(F18).
 
 - 리스너 안의 `batch`는 바깥 배치의 표시 구간이 이미 끝난 뒤이므로 **자기 배치**다 — 자기 정착 한 번과 파동 한 번을 낸다. 진입으로는 새 진입이 아니다. 리스너 안이므로 진입 깊이는 2 이상이고, 그 쓰기는 §2 규칙 4의 리스너 되먹임으로 세어진다.
-- `batch`가 throw하면 표시된 쓰기는 정착·통지되고 예외는 다시 던진다. 렌더 중 쓰기는 소비자 오류이며 core는 구별하지 않는다.
+- `batch`의 fn이 throw하면 표시된 쓰기는 정착·통지되고, 그 예외는 모아 두었다가 사슬 머리의 끝에서 던진다(안쪽 `batch`는 정상 반환한다, ADR 0014 4판 §2). 렌더 중 쓰기는 소비자 오류이며 core는 구별하지 않는다.
 
 **배치는 정착 횟수를 바꾸므로 값이 순차 호출과 다를 수 있다**(06 §4.3, 07 §4.0의 4.3). 정착이 출발할 때 예약 층 규칙의 에지 기준점은 직전 커밋이고, 채움은 노드가 생길 때 한 번이다. 그래서 순차 호출에서 첫 정착이 커밋한 값은 뒤 정착이 덮지 않지만, `batch`로 묶으면 정착이 한 번이라 중간 상태가 커밋되지 않는다. 반례 E2: 분기 A는 `x`에 `default` `'A'`, 분기 B는 `'B'`일 때, `kind`를 `a`로 쓴 뒤 `b`로 쓰면 순차는 `x = 'A'`, 같은 두 쓰기를 `batch`로 묶으면 `x = 'B'`다(노드 단위 채움에서도 같다, 실행). 채움과 `controls.injectTo`의 결과가 이렇게 갈리는 것은 결함이 아니라 축의 귀결이며, `batch`의 문서 주석에 "배치는 정착 횟수를 바꾸므로 채움과 `controls.injectTo`의 결과가 순차 호출과 다를 수 있다"를 적는다. 같게 만드는 길은 셋(배치 안에서도 쓰기마다 정착, 원본마다 출처 기록, 통지된 값의 철회)이고 모두 G7·P3·P2와 부딪친다.
 
-**예산은 다섯이며 서로 다른 것을 센다**(`03-mental-model.md` §4, 06 N4). 이름은 §8의 `exceededBudget` 값이다.
+**예산은 다섯이며 서로 다른 것을 센다**(`03-mental-model.md` §4, 06 N4). 이름은 §8의 `exceededBudget` 값이며, 17라운드에 정착의 세 예산만 남겼다(ADR 0014 4판 §5).
 
 | 예산 | 세는 것 | 상한 | `exceededBudget` |
 | ---- | ------- | ---- | ---------------- |
-| 호스트 바퀴 | 조각 집합이 안 바뀔 때까지 게이트를 다시 평가하는 횟수 | 게이트 가진 조각 수 + 노드 게이트 수 + 1 | `conditionalSchemas` |
-| 파생 라운드 | `controls.derived`·`controls.injectTo`·`controls.unsetValue`의 적용 라운드 | 25 | `derivedValues` |
-| 전이 라운드 | 생긴 노드에 채움을 넣고, 나감 정책이 참으로 정해진 나간 노드를 비우고 다시 도는 라운드 | ADR 0007이 소유한다 | `transitionDefaults` |
-| 리스너 되먹임 파동 | 최외곽 진입의 사슬에서 되먹임이 낸 파동(§2 규칙 4) | 25 | `listenerFeedback` |
-| `onChange` 중첩 | `onChange` 안의 쓰기가 연 새 진입의 중첩(§5) | 25 | `onChangeNesting` |
+| 호스트 바퀴 | 조각 집합이 안 바뀔 때까지 게이트를 다시 평가하는 횟수 | 게이트 가진 조각 수 + 노드 게이트 수 + 1 | `hostWheel` |
+| 파생 라운드 | `controls.derived`·`controls.injectTo`·`controls.unsetValue`의 적용 라운드 | 25 | `derive` |
+| 전이 라운드 | 생긴 노드에 채움을 넣고, 나감 정책이 참으로 정해진 나간 노드를 비우고 다시 도는 라운드 | ADR 0007이 소유한다 | `transition` |
+| 리스너 되먹임 파동 | 최외곽 진입의 사슬에서 되먹임이 낸 파동(§2 규칙 4) | 25 | 없음(`diagnostics`에 남기지 않는다) |
+| `onChange` 중첩 | `onChange` 안의 쓰기가 연 새 진입의 중첩(§5) | 25 | 없음(`diagnostics`에 남기지 않는다) |
 
-**예산 초과**(06 §4.5·4.11, 소유자 B-1). 어느 예산을 넘겨도 그 진입은 개발 모드와 프로덕션 모두 **커밋 → 검증 요청 → `onChange`** 순서로 진행한다. 예외는 `onChange` 중첩 예산 하나로, 넘긴 그 `onChange`만 부르지 않는다(§5, 원장 §4). 정착의 예산(호스트 바퀴·파생·전이)을 넘기면 그 정착의 자동 쓰기를 모두 뺀 원본 B를 커밋하고(ADR 0007), 리스너 되먹임 예산을 넘기면 거부된 되먹임 없이 커밋이 이어진다. 루트의 `diagnostics`는 `{ status: 'budgetExceeded', exceededBudget }`가 된다.
+**예산 초과**(06 §4.5·4.11, 소유자 B-1). 어느 예산을 넘겨도 그 진입은 개발 모드와 프로덕션 모두 **커밋 → 검증 요청 → `onChange`** 순서로 진행한다. 예외는 `onChange` 중첩 예산 하나로, 넘긴 그 `onChange`만 부르지 않는다(§5, 원장 §4). 정착의 예산(호스트 바퀴·파생·전이)을 넘기면 그 정착의 자동 쓰기를 모두 뺀 원본 B를 커밋하고(ADR 0007), 리스너 되먹임 예산을 넘기면 거부된 되먹임 없이 커밋이 이어진다. 정착의 세 예산이면 루트의 `diagnostics.status`가 `'degraded'`(`cause`는 예산)가 된다. 되먹임 파동과 `onChange` 중첩의 초과는 `diagnostics`에 남기지 않는다(ADR 0014 4판의 코드 목록).
 
-- **개발 모드**는 **최외곽 진입이 끝날 때** throw한다.(ADR 0014 제안 3판이 대체한다: 환경 불문 사슬 머리의 끝에서 throw. 확정 뒤 갱신) 소유자가 말한 "form을 터트려서(error를 throw해서) 알려주는" 기본 동작이 이것이다. throw가 그 진입의 `onChange`와 검증 요청을 건너뛰게 하지 않는다 — D-10이 없앤 것이 바로 개발 모드와 프로덕션의 관측 차이였다(06 §4.5, 6라운드 검증 #11의 처방은 기각).
-- **프로덕션**은 throw하지 않고 `diagnostics`로 **신호만** 낸다. Form 속성 `throwOnBudgetExceeded`(가칭)로 프로덕션에서도 throw하게 켤 수 있다(ADR 0014 제안 3판이 대체한다. 확정 뒤 갱신).
-- **core는 제출을 모른다.** 정착의 세 예산으로 생긴 `budgetExceeded`가 남아 있는 동안 `<Form>`의 제출 경로가 제출을 거부한다(14라운드 답 O-2, §8). 호스트는 `onDiagnosticsChange`로 상태를 보고 로드로 되돌린다.
+- **모든 환경**에서 커밋·통지 뒤 사슬 끝에서 throw한다(17라운드 소유자 답 R17-1 나: "망가진 값을 올리는게 더 위험하겠다"). 소유자가 말한 "form을 터트려서(error를 throw해서) 알려주는" 기본 동작이 이것이다. throw가 그 진입의 `onChange`와 검증 요청을 건너뛰게 하지 않는다 — D-10이 없앤 것이 바로 개발 모드와 프로덕션의 관측 차이였다(06 §4.5, 6라운드 검증 #11의 처방은 기각). 끄는 스위치는 없다(`throwOnBudgetExceeded`는 없다). 개발 모드만 던지고 프로덕션은 신호만 내던 5차 본문의 규칙(소유자 B-1)은 이 답으로 대체되었다.
+- **제출 거부는 렌더 계층의 일이다.** core는 제출을 모른다. 정착의 세 예산으로 생긴 `degraded`는 다음 로드까지 남고(지속은 14라운드 답 O-2 가) 그 동안 폼의 제출 경로가 `SchemaFormError`로 거부한다(`getValue()`는 막지 않는다, 17라운드 소유자 답 R17-1 나, §8). 호스트는 `onDiagnosticsChange`와 제출 거부의 `SchemaFormError`로 폼 수준 표시를 그리고, 로드로 되돌린다.
 
 소유자: "루프의 가능성을 제한하지는 않는다. … 그 상한값을 초과하면 적절한 error를 표시한다. 이는 react의 hook과 동일한 설계를 갖는다." 그리고 "구태여 막지 않을 뿐이지 루프를 만드는 걸 권하는 설계는 절대 아니다."
 
@@ -115,7 +115,7 @@
 
 **진입의 정의**(`spikes/work-loop/REPORT-v4c.txt` §1): 같은 루트의 다른 공개 쓰기 API가 호출 스택에 없는 상태에서 이루어진 한 번의 공개 쓰기 호출. 공개 쓰기 API는 `setValue`·`push`·`pop`·`update`·`remove`·`clear`·`batch`이고(06 N6, 07 §6.2), `reset`·`resetSubtree`·마운트는 그것을 거쳐 진입이 된다. 프로토타입 목록의 `select`(분기 선택)는 폼이 분기를 고르지 않으므로 사라졌고(07 §6.2 N2·N6), `write`는 입력의 `onChange`가 부르는 `setValue`에 흡수되며, `removeKey`는 `Merge`로 키에 `undefined`를 쓰는 것으로 대신한다(`03-mental-model.md` §3). 읽기·`subscribe`·상태 칸 쓰기(§2의 R15)는 진입이 아니다. 구현은 루트의 **진입 깊이 카운터**이며, 깊이가 1 → 0이 될 때 검증을 먼저 요청하고 그다음 `onChange`를 부른다(순서가 반대면 `onChange` 안의 쓰기가 만든 새 스탬프가 옛것에 밀린다). 검증 요청은 최외곽 진입당 1회이나 실행은 마이크로태스크에 모아 최신 커밋 번호 하나만 돌린다(14라운드 답 O-6. 늦은 결과를 버리는 스탬프 규칙과 같은 방향). 진입 깊이는 루트별이므로 한 핸들러에서 쓴 두 폼은 두 진입이다. 예외 하나: 열린 진입 안에서 재생성 경로의 `reset`이 만든 새 루트는 옛 루트의 진입 깊이와 배치의 표시 구간, 그 사슬의 되먹임 파동 수·`onChange` 중첩 수·모아 둔 오류를 이어받고, 옛 루트의 최외곽 진입이 끝날 때 새 루트의 검증 요청과 `onChange`를 낸다. 옛 루트는 폐기되므로 표시된 쓰기를 정착하지 않고 파동도 검증 요청도 `onChange`도 내지 않으며, 새 루트의 커밋은 같은 자리의 쓰기가 받을 파동(§3, §2 규칙 4)에 합류한다(09 §2.6의 열째, 16라운드 스웜 수렴(편집자 결정)). emit 참조가 바뀌지 않은 쓰기는 `onChange`도 검증 요청도 내지 않는다. 예외 하나: `reset`은 검증 결과를 비운 뒤 로드하므로 `ValidationMode`의 `OnChange` 비트가 켜져 있으면 emit 참조가 그대로여도 검증을 한 번 요청한다. `onChange`는 이 예외에 들지 않는다(09 §2.6의 아홉째, 16라운드 스웜 수렴(편집자 결정)).
 
-`onChange` 안의 쓰기는 깊이 0에서 시작하므로 **새 진입**이다. 중첩 상한은 25이며, 26번째는 쓰기를 적용하고 검증도 요청하되 `onChange`를 건너뛰고 `diagnostics`를 `{ status: 'budgetExceeded', exceededBudget: 'onChangeNesting' }`로 적으며, 개발 모드에서는 최외곽 진입 끝에서 throw한다(ADR 0014 제안 3판이 대체한다. 확정 뒤 갱신). 정착의 세 예산으로 생긴 상태는 다음 로드까지 남고 그 동안 `<Form>`의 제출은 거부된다(14라운드 답 O-2, §4). 되먹임·중첩 초과의 상태는 이번 정착만 말하며 다음 정착에서 풀리고 제출을 막지 않는다(편집자 도출: O-2는 정착 예산에 대한 답이다. ADR 0014 제안과 같은 방향). 이 예산에서 건너뛰는 `onChange`는 상한 자체가 끊는 호출이다 — 26번째를 부르면 중첩이 멈추지 않는다. 상한이 없던 프로토타입 v4에서 항상 쓰는 `onChange`는 4 GB 힙을 채우고 죽었다.
+`onChange` 안의 쓰기는 깊이 0에서 시작하므로 **새 진입**이다. 중첩 상한은 25이며, 26번째는 쓰기를 적용하고 검증도 요청하되 `onChange`를 건너뛰고 모든 환경에서 사슬 끝에서 throw한다(17라운드 소유자 답 R17-1 나). 이 초과는 `diagnostics`에 남기지 않고 제출을 막지 않는다(O-2는 정착 예산에 대한 답이다, ADR 0014 4판). 정착의 세 예산으로 생긴 `degraded`는 다음 로드까지 남고 그 동안 제출을 거부한다(§3, §8). 이 예산에서 건너뛰는 `onChange`는 상한 자체가 끊는 호출이다 — 26번째를 부르면 중첩이 멈추지 않는다. 상한이 없던 프로토타입 v4에서 항상 쓰는 `onChange`는 4 GB 힙을 채우고 죽었다.
 
 실행 결과(`spikes/work-loop/REPORT-v4c.txt` §2–3, 평면 1,000 리프, 키 입력당):
 
@@ -154,30 +154,32 @@ D-9 수락: `RequestRemount`는 공개 명령으로 남는다(F32). 소유자: "
 
 ### 8. 진단 표면 — `diagnostics` (06 N4)
 
-예산 초과를 비롯한 정착의 결과 상태는 한 칸, 한 이벤트, 한 속성으로 관측한다. `onChange`에 싣지 않는다 — emit 참조가 바뀌지 않은 쓰기는 `onChange`를 내지 않으므로 예산 초과가 보이지 않기 때문이다(06 §4.9, C2). 정착의 세 예산(호스트 바퀴·파생·전이)으로 생긴 `budgetExceeded`는 다음 로드(마운트·전체 교체·`reset`)까지 남고 그 동안 `<Form>`의 제출은 거부된다(14라운드 답 O-2. 모양과 이름은 ADR 0014 제안).
+예산 초과를 비롯한 정착의 결과 상태는 한 칸, 한 이벤트, 한 속성으로 관측한다. `onChange`에 싣지 않는다 — emit 참조가 바뀌지 않은 쓰기는 `onChange`를 내지 않으므로 예산 초과가 보이지 않기 때문이다(06 §4.9, C2). 정착 오류(예산 초과, 식·가드 실패, 동적 `controls.injectTo` 대상 없음, 공유 충돌)로 생긴 `degraded`는 다음 로드(마운트·전체 교체·`reset`)까지 남고(지속은 14라운드 답 O-2 가) 그 동안 폼의 제출 경로가 거부한다(17라운드 소유자 답 R17-1 나). `diagnostics`의 상태 변화 자체는 `onError`로 가지 않고, 원인 오류가 기록으로 간다(ADR 0014 §3).
 
 | 자리 | 이름 |
 | ---- | ---- |
 | 노드 칸 | `diagnostics` — 마지막 로드 이후의 작업 기록. 루트에서 관측한다(`03-mental-model.md` §2) |
 | 이벤트 | `UpdateDiagnostics` — `diagnostics`가 바뀐 커밋에만 낸다(§4) |
 | Form 속성 | `onDiagnosticsChange` — 호스트가 진단 상태를 관측하는 자리(§3). 제출 거부는 `<Form>`이 한다(§8) |
-| Form 속성 | `throwOnBudgetExceeded`(가칭)로 프로덕션에서도 throw하게 켤 수 있다(§3)(ADR 0014 제안 3판이 대체한다. 확정 뒤 갱신) |
+| Form 속성 | `onError` — 원인 오류의 기록을 받는 관찰자(ADR 0014 §3). 끄는 스위치 `throwOnBudgetExceeded`는 없다 |
 
-삼중 짝은 `state` / `UpdateState` / `onStateChange`와 같은 모양이다. 모양:
+삼중 짝은 `state` / `UpdateState` / `onStateChange`와 같은 모양이다. 모양은 ADR 0014 4판 §5가 정한다(17라운드):
 
 ```ts
 diagnostics: {
-  status: 'stable' | 'budgetExceeded';
-  exceededBudget?: 'conditionalSchemas' | 'derivedValues' | 'transitionDefaults' | 'listenerFeedback' | 'onChangeNesting';
-  iterations: number;
+  status: 'stable' | 'degraded';
+  cause?: 'budget' | 'expression' | 'injectTarget' | 'sharedConflict';
+  exceededBudget?: 'hostWheel' | 'derive' | 'transition';
+  iterations?: number;
+  commit?: number;
 }
 ```
 
-`iterations`는 초과한 예산이 쓴 반복 횟수(상한값)다(원장 §4). `status`가 `'stable'`일 때의 값은 정하지 않았다.
+모든 칸은 `commit` 번호의 커밋을 기술한다. 5차 본문의 `status: 'budgetExceeded'`는 `'degraded'`와 `cause`로 바뀌었고(08 §14의 이주 행), `exceededBudget`의 다섯 값은 정착의 세 예산으로 줄었다(되먹임·중첩 초과는 `diagnostics`에 남기지 않는다).
 
 4차 본문에 흩어져 있던 리터럴 셋(`budget-exceeded`, `wave-cap-exceeded`, `onchange-cap-exceeded`)과 칸 이름 `settle`이 이 한 모양으로 모인다(P7). 리터럴은 코드 관례대로 camelCase다.
 
-이름 항목 하나가 남는다. `transitionDefaults`는 5차에서 노드 생성 사건이 된 채움의 라운드를 가리키므로 `nodeCreationDefaults`로 바꿀지 정해야 한다(07 §6.2 N4). 이 ADR은 이름이 정해질 때까지 `transitionDefaults`로 적는다.
+5차의 이름 항목(`transitionDefaults`를 `nodeCreationDefaults`로 바꿀지, 07 §6.2 N4)은 ADR 0014 4판이 값을 `'transition'`으로 적어 닫혔다.
 
 ## 계승할 제약과의 대응
 
@@ -196,10 +198,10 @@ diagnostics: {
 
 ## 미결
 
-- **`onListenerError`의 채널** — 이름과 모양(Form 속성인가, 루트 노드의 구독인가), 보고 payload에 노드 경로·이벤트 타입을 싣는지. 진단을 `onDiagnosticsChange` 하나로 모으면 단일 콜백이고, 리스너 오류를 따로 두면 `onListenerError`를 더한다(06 N4의 남는 정책)(ADR 0014 제안 3판이 대체한다. 확정 뒤 갱신).
+- **`onListenerError`의 채널** — 닫힘. 리스너 오류는 Form 속성 `onError`의 기록으로 받는다(17라운드 스웜 수렴(편집자 결정), 안 B, ADR 0014 §3). 기록은 검증 결과를 뺀 폼 내부의 오류와 경고를 같은 모양으로 담으며(`level`, `code`, `message`, `path`, 원래 오류), 리스너 예외에는 부류 코드(가칭 `SCHEMA_FORM_ERROR.LISTENER_THREW`)가 붙는다. `onDiagnosticsChange`는 진단 상태의 관측으로 따로 남는다.
 - **유효 스키마 변경 통지의 표면** — §2 규칙 2가 배달하는 유효 스키마 변경을 어느 이벤트 타입과 payload로 싣는지(`03-mental-model.md` §6, `07-conclusions.md` §11.2).
 - **상태 칸 변경의 배달** — `setState`와 `controls.resetInteraction`이 바꾼 `dirty`·`touched`가 §2 규칙 2의 배달 집합에 어느 항으로 드는지 이 ADR은 적지 않는다.
-- **`exceededBudget`의 `transitionDefaults` 이름** — `nodeCreationDefaults`로 바꿀지(§8, 07 §6.2 N4).
+- **`exceededBudget`의 `transitionDefaults` 이름** — 닫힘. ADR 0014 4판 §5가 값을 `'hostWheel'`·`'derive'`·`'transition'` 셋으로 적었다(§8).
 - **실제 브라우저의 IME 확인** — 스파이크는 `fireEvent`로 조합 3단계를 흉내 냈고, jsdom은 조합 중 프로그램적 value 쓰기가 조합을 취소하는 브라우저 동작을 모델링하지 않는다(`spikes/events/REPORT-caret.txt` §4).
 - **명령 publish의 공개 API화**(C-11) — 소유자 확정 대기. `FormHandle`의 표면과 `publish`의 공개 타입을 함께 정해야 한다.
 - **`UpdatePath`** — 배열 재인덱싱 시 경로 변경 통지. 노드 identity와 경로의 대응은 새 구조에서도 남는다(ADR 0011).

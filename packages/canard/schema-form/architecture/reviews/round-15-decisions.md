@@ -59,17 +59,21 @@
 
 verifier가 결정 4행이 남긴 충돌 셋을 물었다. 편집자가 결정 4의 뜻 안에서 닫았고, 소유자가 다르게 보시면 뒤집는다.
 
-| 물음 | 결정 |
-| --- | --- |
-| 병합표에서 `options`도 깊은 병합인가 | 예. 그룹 객체(`options`, `presentation`)는 깊은 병합, `controls`의 값·동작 키는 병합하지 않는다(15라운드 논의에서 소유자가 동의한 문장 그대로) |
-| `presentation`은 "렌더 계층만 읽는다"인데 청사진이 `FormTypeInput`의 유무로 터미널 전략을 정한다 | 예외 하나를 적는다. "청사진은 `presentation.FormTypeInput`의 유무만 본다(터미널 전략)". 키는 `presentation`에 둔다(구성 요소다) |
-| `trim`은 ADR 0013이 입력 컴포넌트로 옮겼는데 `options`(청사진과 투영이 읽는다)에 들어갔다 | `trim`을 `presentation`으로 옮긴다. 입력 컴포넌트가 읽는 설정이다. `options`는 `terminal`·`virtual`·`propertyKeys`·`omitEmpty`·`omitTrailing` 다섯 |
-| "모르는 그룹 안 키는 청사진 오류"와 `presentation`의 플러그인 자유 칸이 부딪힌다 | `controls`·`options` 안의 모르는 키는 청사진 오류, `presentation`의 모르는 키는 플러그인 자유 칸(오늘의 `options.lazy`·`protocols`·`range`·`marks` 같은 키가 그리로 간다) |
-| `FormTypeInputProps` 안의 prop `FormTypeRenderer`(`src/types/formTypeInput.ts:146`) | 결정 8의 표에 빠졌다. PR-7 이주에서 `FormTypeGroupRenderer`로 함께 바꾼다(08 §14의 32에 덧붙임) |
+| 물음 | 결정 | 17라운드 결정 |
+| --- | --- | --- |
+| 병합표에서 `options`도 깊은 병합인가 | 예. 그룹 객체(`options`, `presentation`)는 깊은 병합, `controls`의 값·동작 키는 병합하지 않는다(15라운드 논의에서 소유자가 동의한 문장 그대로) | 17라운드 스웜 수렴(편집자 결정). 유지(R15-1). `controls`는 그룹째 병합하지 않고 키마다 병합표의 행을 따른다. 세부(R15-8): 재귀는 두 선언이 같은 키에 모두 원자가 아닌 plain object를 줄 때만 새 객체를 만들어 하고(쓰기 시 복사), 원자(React 요소, 자기 열거 키가 `current` 하나뿐인 ref 모양)는 나중 승, 한쪽 선언에만 있는 값은 객체라도 복사하지 않고 참조를 옮기며, 선언이 하나면 그 객체를 그대로 쓴다. `@winglet/common-utils`의 `merge`에 선택 인자(배열 교체, 원자 판정, 한쪽 값의 참조 이동)를 더한다. 인자가 없으면 오늘 동작이다(14라운드 O-11 되물음의 답) |
+| `presentation`은 "렌더 계층만 읽는다"인데 청사진이 `FormTypeInput`의 유무로 터미널 전략을 정한다 | 예외 하나를 적는다. "청사진은 `presentation.FormTypeInput`의 유무만 본다(터미널 전략)". 키는 `presentation`에 둔다(구성 요소다) | R15-2 개정: 판정을 렌더 계층으로. 청사진은 `presentation`을 읽지 않는다(결정 4의 "렌더 계층만 읽는다"). 인라인 `FormTypeInput`을 꽂은 객체·배열 노드가 터미널이 되는 암묵 규칙은 소유자가 의도된 기능이라 한 것이므로(`00-goals.md:116`, ADR 0011 §3) 유지하되, 렌더 계층(React 바인딩)이 `presentation.FormTypeInput`이 있고 `null`이 아닌지를 보는 판정 함수를 청사진에 넘긴다. 청사진은 `options.terminal`(명시, 양방향) → 넘겨받은 판정 → `type`의 순서로 정한다(선언 사이 규칙은 R15-10). 17라운드 스웜 수렴(편집자 결정), 통보(반대하시면 엽니다) |
+| `trim`은 ADR 0013이 입력 컴포넌트로 옮겼는데 `options`(청사진과 투영이 읽는다)에 들어갔다 | `trim`을 `presentation`으로 옮긴다. 입력 컴포넌트가 읽는 설정이다. `options`는 `terminal`·`virtual`·`propertyKeys`·`omitEmpty`·`omitTrailing` 다섯 | 소유자 질문 R17-3(답까지 `options`). 이 칸의 편집자 제안은 결정 4의 `options` 목록과 어긋나 소유자 질문으로 남겼다. 답까지 효력: `trim`은 결정 4대로 `options`의 닫힌 목록에 남고(청사진 오류 아님), 누가 어디서 적용하는가는 정하지 않는다(PR-7의 입력 쓰기 경로가 답을 기다린다) |
+| "모르는 그룹 안 키는 청사진 오류"와 `presentation`의 플러그인 자유 칸이 부딪힌다 | `controls`·`options` 안의 모르는 키는 청사진 오류, `presentation`의 모르는 키는 플러그인 자유 칸(오늘의 `options.lazy`·`protocols`·`range`·`marks` 같은 키가 그리로 간다) | 17라운드 스웜 수렴(편집자 결정). 유지(R15-4). 옮겨 오는 맨 키 목록에 `switchSize`를 더한다. `presentation` 안의 코어 키 대소문자 오타와 `controls`·`options` 키 이름은 렌더 계층이 개발 모드 경고로 알리며 청사진은 관여하지 않는다(R15-9) |
+| `FormTypeInputProps` 안의 prop `FormTypeRenderer`(`src/types/formTypeInput.ts:146`) | 결정 8의 표에 빠졌다. PR-7 이주에서 `FormTypeGroupRenderer`로 함께 바꾼다(08 §14의 32에 덧붙임) | 17라운드 스웜 수렴(편집자 결정). 사실과 범위 정정(R15-5): prop은 `FormTypeInputProps`가 아니라 `ChildNodeComponentProps`(`src/types/formTypeInput.ts:146`)에 있고 같은 공개 prop이 `FormGroupProps`(`src/components/Form/components/FormGroup.tsx:23`)에도 있다. 둘과 `OverridableFormTypeInputProps`의 Omit 목록을 PR-7 이주에서 함께 `FormTypeGroupRenderer`로 바꾼다. 합성 API `Form.*`의 이름과 `…Props` 형 이름은 그대로이고(`FormInputProps`·`FormRenderProps`도 `ChildNodeComponentProps`와 교차하므로 그 안의 prop이 같이 바뀐다), `SchemaNodeProxy`·`FormTypeRendererContext`의 비공개 칸은 구현이 정한다 |
 
-verifier 2차(조건부 통과)가 물은 둘도 편집자가 닫았다(소유자 확인 대기).
+verifier 2차(조건부 통과)가 물은 둘도 편집자가 닫았다(17라운드 스웜 수렴으로 닫힘. 결정은 새 칸).
 
-| 물음 | 결정 |
-| --- | --- |
-| `controls.unsetOnInactive`의 형이 부류 표("`boolean` 또는 식")와 행("불리언")에서 다르다 | 13라운드 확정대로 `boolean`만. 정책 키라 식을 받지 않는다. 부류 표에 예외로 적는다 |
-| 같은 노드가 여러 조각에서 선언될 때 `controls.children`·`discriminator`·`watch`·`unsetOnInactive`의 병합 행이 없다 | 병합하지 않는다. `children`과 `unsetOnInactive`는 선언한 조각의 층에서 각각 효력을 가진다(나감 비움 규칙과 같은 대상 규칙이 층으로 푼다), `watch`는 경로의 합집합, `discriminator`는 호스트에 하나이며 둘이 다르면 청사진 오류. 병합표에 행 하나를 더한다 |
+| 물음 | 결정 | 17라운드 결정 |
+| --- | --- | --- |
+| `controls.unsetOnInactive`의 형이 부류 표("`boolean` 또는 식")와 행("불리언")에서 다르다 | 13라운드 확정대로 `boolean`만. 정책 키라 식을 받지 않는다. 부류 표에 예외로 적는다 | 17라운드 스웜 수렴(편집자 결정), 통보(반대하시면 엽니다). R15-6: 노드·`children` 항목·조각의 `controls.unsetOnInactive`는 형용사 부류의 형 그대로 `boolean` 또는 식→`boolean`을 받으며(15라운드 결정 2) 부류 표에 예외를 적지 않는다. "13라운드 확정대로"는 사실과 달랐다(13라운드는 이름과 기본값만 정했고 형은 14라운드 가치 점검 F-6의 편집자 문장에서 처음 나온다). 어느 선언이 걸리는가도, 걸린 선언이 식일 때의 값도 직전 커밋(그 노드가 형상에 있던 마지막 커밋)의 것이다. 나가는 순간 형상 밖의 노드를 새로 평가하지 않으므로(12라운드 §9 "형상에 없는 노드의 규칙: 평가하지 않음", 소유자 "동의") 식은 나감을 일으킨 변화를 보지 못한다. 보게 하려면 12라운드 §9에 예외가 필요하다. Form 속성 `unsetOnInactive`는 `boolean`만이며 그 층은 React가 마지막으로 커밋한 속성 값으로 센다(O8-마) |
+| 같은 노드가 여러 조각에서 선언될 때 `controls.children`·`discriminator`·`watch`·`unsetOnInactive`의 병합 행이 없다 | 병합하지 않는다. `children`과 `unsetOnInactive`는 선언한 조각의 층에서 각각 효력을 가진다(나감 비움 규칙과 같은 대상 규칙이 층으로 푼다), `watch`는 경로의 합집합, `discriminator`는 호스트에 하나이며 둘이 다르면 청사진 오류. 병합표에 행 하나를 더한다 | 17라운드 스웜 수렴(편집자 결정). R15-7: 병합하지 않는다. `children`과 `unsetOnInactive`는 각 선언이 속한 층(노드 자신, `children` 항목, 조각의 `controls`)에서 그 선언을 담은 조각이 켜져 있는 동안(나감에서는 직전 커밋 기준) 각각 효력을 가진다. `discriminator`는 노드에 하나이며 선언이 여럿이면 같은 값만 허용하고 다르면 청사진 오류다(14라운드 O-1). `watch`는 의존이 모든 선언의 경로 합집합(청사진, 정적)이고 입력에 가는 공개 위치 배열 `watchValues`는 유효 스키마의 것(켜진 선언 가운데 전순서에서 나중 것)이다. 병합표에 행 하나를 더한다 |
+
+## 17라운드 스웜 수렴 (2026-09-25)
+
+위 두 표의 "17라운드 결정" 칸이 이 절의 결과다. 두 표의 "결정" 칸은 그때의 기록으로 둔다. 게이트 뒤 편집자 결정 일곱 가운데 여섯은 17라운드 스웜 수렴(편집자 결정)으로 닫혔고, `trim`의 자리는 소유자 질문 R17-3으로 남았다(답까지 `options`). `presentation` 예외 행(R15-2 개정)과 `unsetOnInactive`의 형 행(R15-6)은 소유자에게 알리는 통보(반대하시면 엽니다)다. 같은 수렴에서 새로 닫은 점은 셋이다. `merge`의 선택 인자와 원자(R15-8), `presentation` 실수의 개발 모드 경고(R15-9), 터미널 전략의 선언 사이 정적 규칙과 `options.virtual`·`options.propertyKeys`의 자리(R15-10)다. 물음 셋(R17-1·R17-2·R17-3)과 통보 넷은 `08-design-a-to-z.md` §16.3, 수렴과 두 게이트의 기록은 `reviews/raw-round17-convergence.md`에 있다.

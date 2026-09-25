@@ -1,11 +1,12 @@
 # ADR 0011 — branch 노드(object·array)의 구성 전략
 
-> **5차 주(2026-09-23).** 이 문서는 4차 본문이며 노드 종류 표는 5차 원장 §2를 따라 읽어야 한다: (1) 상태 칸은 `raw`·`extras` 둘뿐이고 `selection`은 없다. (2) 판별 프로퍼티의 소유·union 호스트의 특수 처리는 없다 — 폼은 분기를 고르지 않는다. (3) 참조 그룹 노드와 `&virtual`(D-6)은 하지 않는다 — `options.virtual`은 현행 유지(소유자 답 4), 검증기 처리는 12라운드에 닫힘: `options.virtual`은 검증기 앞 제거 목록에 들고 `required` 재작성은 버린다(원장 §1.4). (4) "dirty 목록"은 재계산 목록이다. (5) S11의 처방은 07 §4.29와 ADR 0006 §4가 닫았다. (6) 폼 전용 키는 그룹 객체 셋 안에만 있다. `controls`(값·형상을 때에 따라 바꾸는 규칙과 정책. 정착 루프가 읽는다), `options`(값·형상의 정적 설정 `terminal`·`virtual`·`propertyKeys`·`omitEmpty`·`omitTrailing`. 청사진과 투영이 읽는다), `presentation`(보이는 것 `formType`·`FormTypeInput`·`FormTypeInputProps`·`FormTypeRendererProps`·`errorMessages`·`trim`과 플러그인 자유 칸. 렌더 계층만 읽는다(청사진은 `presentation.FormTypeInput`의 유무만 본다: 터미널 전략)). 맨 키는 모두 JSON Schema의 것이고 폼은 읽지 않는다. `controls`·`options` 안의 모르는 키는 청사진 오류다. `presentation`의 모르는 키는 플러그인 자유 칸이다. 그룹 이름은 명사이고 셀 수 있는 항목의 지도는 복수, 하나의 면은 단수다(15라운드, `reviews/round-15-decisions.md`). 본문의 "키의 이름과 `&` 접두 여부는 ADR 0003의 미결과 함께 정한다"는 닫혔다(원장 §1.4, 15라운드. 13라운드 답 3의 경계와 14라운드 O-9의 닫힌 목록을 대체한다). (3)의 `options.virtual` 처리는 12라운드에 닫혔다.
+> **5차 주(2026-09-23).** 이 문서는 4차 본문이며 노드 종류 표는 5차 원장 §2를 따라 읽어야 한다: (1) 상태 칸은 `raw`·`extras` 둘뿐이고 `selection`은 없다. (2) 판별 프로퍼티의 소유·union 호스트의 특수 처리는 없다 — 폼은 분기를 고르지 않는다. (3) 참조 그룹 노드와 `&virtual`(D-6)은 하지 않는다 — `options.virtual`은 현행 유지(소유자 답 4), 검증기 처리는 12라운드에 닫힘: `options.virtual`은 검증기 앞 제거 목록에 들고 `required` 재작성은 버린다(원장 §1.4). (4) "dirty 목록"은 재계산 목록이다. (5) S11의 처방은 07 §4.29와 ADR 0006 §4가 닫았다. (6) 폼 전용 키는 그룹 객체 셋 안에만 있다. `controls`(값·형상을 때에 따라 바꾸는 규칙과 정책. 정착 루프가 읽는다), `options`(값·형상의 정적 설정 `terminal`·`virtual`·`propertyKeys`·`omitEmpty`·`omitTrailing`·`trim`. `trim`은 포커스 아웃 때 문자열 동작 행의 `finishInput` 칸이 판단한다, 17라운드 소유자 답 R17-3. 청사진과 투영이 읽는다), `presentation`(보이는 것 `formType`·`FormTypeInput`·`FormTypeInputProps`·`FormTypeRendererProps`·`errorMessages`와 플러그인 자유 칸. 렌더 계층만 읽는다(청사진은 `presentation`을 읽지 않는다. 인라인 `FormTypeInput`의 암묵 터미널은 렌더 계층이 넘기는 판정이다, §3, 17라운드 스웜 수렴(편집자 결정))). 맨 키는 모두 JSON Schema의 것이고 폼은 읽지 않는다. `controls`·`options` 안의 모르는 키는 청사진 오류다. `presentation`의 모르는 키는 플러그인 자유 칸이다. 그룹 이름은 명사이고 셀 수 있는 항목의 지도는 복수, 하나의 면은 단수다(15라운드, `reviews/round-15-decisions.md`). 본문의 "키의 이름과 `&` 접두 여부는 ADR 0003의 미결과 함께 정한다"는 닫혔다(원장 §1.4, 15라운드. 13라운드 답 3의 경계와 14라운드 O-9의 닫힌 목록을 대체한다). (3)의 `options.virtual` 처리는 12라운드에 닫혔다.
 
 상태: 제안. 근거가 채워진 제안이다 — 노드 종류의 목록은 3.1판의 상태·계산 칸에서(`reviews/round-4-spec.md` §A1·A5·A7), 참조 그룹 노드는 D-6 (a)에서 온다. D-6은 **원리에서 도출**이며(`reviews/round-5-derivations.md` §3, 권고는 `reviews/round-3.md` §5) 소유자 확정 대기다. 출발은 소유자의 요구다 — "nodeTree의 object / array node의 branch 구성 전략을 아예 다시 짜고 싶다. 더 효율적이고 직관적이고 깔끔하게. 그리고 합목적하고 정합하게." (G4)
 
 ## 변경 이력
 
+- 2026-09-25 — 17라운드 소유자 답(`reviews/round-17-owner-answers.md`): 노드 구조를 상속 없는 단일 클래스 `SchemaNode`와 종류별 동작 행(`BEHAVIORS[type][strategy]`)으로 확정했다(09 §3). 공개 `node.group`은 `node.strategy`가 된다. 미결 "전략 패턴이 필요한가"를 닫았다. 통보 1(암묵 터미널의 판정을 렌더 계층으로)은 허용되었다. §4 표의 값 행을 행 칸에 맞췄다.
 - 2026-09-24 — 15라운드(`reviews/round-15-decisions.md`): `&` 축약을 `controls` 그룹 표기로, 조각 식의 기준점을 호스트로, 맨 폼 전용 키를 `options`·`presentation` 그룹으로 바꿨다.
 - 2026-09-22 — 2라운드(`reviews/round-2.md`)의 S11을 "확인된 결함" 절에 적었고, 반증된 "참조가 그대로면 건너뛴다"를 고쳤다.
 - 2026-09-23 — 4차 본문. 노드 종류 목록을 3.1판 위에서 다시 쓰고, D-6 도출(참조 그룹 노드)과 자식 dirty 목록으로 비례하는 재계산을 넣었다. "확인된 결함" 절은 본문에 흡수하고, 남은 S11은 미결로 옮겼다.
@@ -49,12 +50,14 @@ ADR 0006(노드 트리가 곧 상태)과 0007(작업 루프)이 들어오면 값
 
 ## 3. 터미널 전략 — 암묵 규칙은 유지하고, React 의존만 뺀다
 
+청사진이 정한 전략은 노드의 공개 `strategy`(`'branch'` 또는 `'terminal'`, 옛 `group`의 새 이름이며 값은 그대로)로 읽힌다. 노드는 생성 때 `BEHAVIORS[type][strategy]`의 행 하나를 골라 필드 `behavior`로 들고, `strategy`는 그 행에서 읽는 게터다(09 §3, 17라운드 소유자 답). 아래의 판정 이관은 통보 1이며 17라운드 소유자 답으로 허용되었다.
+
 인라인 `FormTypeInput`을 꽂으면 자식 노드가 사라지는 것은 **의도된 기능**이다. 소유자: "브랜치 노드의 터미널 전략이 압도적으로 저렴해서, 사용자가 되도록 터미널 전략을 쓰게 하려고 설계한 방법. 1종 오류를 감수하고 2종 오류를 배제한 선택." 터미널 전략의 object·array는 자식 없이 값을 직접 들고(ADR 0006), 노출 표면은 branch 전략과 같다.
 
 소유자는 이 방식이 난해하면 끊어도 된다고 했다(그러면 터미널로 쓰려는 사용자가 `terminal: true`를 명시한다). 제안은 끊지 않는 것이다.
 
-- **암묵 규칙 유지.** 다만 core는 `isReactComponent`를 부르지 않고 "`FormTypeInput`이 **있고 null이 아니다**"만 본다. core의 React 런타임 의존이 사라진다(`00-goals.md` C3, `open-questions.md` Q8 닫힘). 컴포넌트를 감지하는 것은 렌더러를 아는 것이므로 P5 위반이다.
-- **명시적 재정의를 양방향으로 둔다.** `terminal: false` — 꽂은 입력이 `ChildNodeComponents`를 쓴다. `terminal: true` — 컴포넌트 없이도 터미널로 쓴다. 오늘도 `terminal: true`와 `terminal: false`가 양방향으로 있다(`getNodeGroup.ts:20-21`). 유지한다.
+- **암묵 규칙 유지, 판정은 렌더 계층으로.** 인라인 `presentation.FormTypeInput`이 **있고 `null`이 아닌지**를 보는 판정은 렌더 계층(React 바인딩)의 판정 함수가 하며, 렌더 계층이 이 함수를 청사진에 넘긴다. 판정 함수는 선언 하나를 받아 셋 가운데 하나를 돌려준다. 참(인라인 `presentation.FormTypeInput`이 있고 `null`이 아님), 거짓(그 키의 값이 `null`), 없음(그 키가 없거나 값이 `undefined`)이다. 없음은 앞 선언의 판정을 지우지 않으며(병합표의 `undefined`와 같다), 키 이름은 판정 함수만 안다. 청사진은 한 노드의 터미널 전략을 `options.terminal`(명시, 양방향) → 넘겨받은 판정 → `type`의 순서로 정한다. core는 `presentation` 안의 키를 읽지도 해석하지도 않으므로(P5) core만 쓰는 호스트에는 암묵 규칙이 없다. 한 노드의 전략은 청사진이 그 노드의 모든 선언에서 정적으로 정한다. 노드가 형상에 있는 모든 경우(그 노드를 선언한 게이트 가진 선언이 켜지고 꺼지는 조합. 게이트 없는 선언은 늘 켜져 있다)마다 그 경우에 켜진 선언들로 `options.terminal`(병합표대로 전순서에서 나중 것) → 렌더 계층 판정(없음이 아닌 결과 가운데 전순서에서 나중 것) → `type`의 순서로 전략을 정하고, 경우마다 정한 전략이 서로 다르면 청사진 오류다(14라운드 O-1과 같은 모양). 그래서 게이트 없는 선언끼리 값이 달라도 나중이 이길 뿐 오류가 아니고(12라운드 §9 "병합 불가한 … 나중이 승"), 조각에만 선언된 노드는 그 조각이 모두 꺼진 경우 형상에 없으므로 그 경우를 비교하지 않으며, 게이트 없는 선언의 `options.terminal`이 전략을 정한 노드에 게이트 가진 조각이 인라인 입력을 더해도 전략이 바뀌지 않으므로 오류가 아니다. 검사는 청사진 시점에 노드마다 그 노드의 선언 수에 비례하는 한 번이다. 판정을 렌더 계층으로 옮기므로 core가 React 구성 요소를 판정하는 자리(`getNodeGroup.ts`의 `isReactComponent`)는 사라진다. 다만 오늘 core는 `ValidationManager` → `app/plugin`의 `PluginManager`를 거쳐 React 구성 요소 모듈도 런타임에 가져오므로 core의 React 런타임 의존이 이것으로 모두 사라지지는 않으며, 그 import의 분리는 PR-4 전 설계 항목이다(`00-goals.md` C3, `open-questions.md` Q8). 컴포넌트를 감지하는 것은 렌더러를 아는 것이므로 core가 하면 P5 위반이다(17라운드 스웜 수렴(편집자 결정)).
+- **명시적 재정의를 양방향으로 둔다.** `terminal: false` — 꽂은 입력이 `ChildNodeComponents`를 쓴다. `terminal: true` — 컴포넌트 없이도 터미널로 쓴다. 오늘도 `terminal: true`와 `terminal: false`가 양방향으로 있다(`getNodeGroup.ts:20-21`). 유지한다. 표에 행이 없는 조합(잎의 `terminal: false`, 가상의 `terminal: true`와 가상에 둔 인라인 `presentation.FormTypeInput`)의 처리와 이주는 결정하지 않고 18라운드 안건 N14로 넘겼다.
 - **혼란스러운 경우를 드러낸다.** 터미널이 된 노드의 입력이 비어 있는 `ChildNodeComponents`를 읽으면 개발 모드에서 경고한다(`00-goals.md` C2).
 - 호출자가 넘긴 객체는 바꾸지 않는다. 터미널 노드가 참조를 들 수 있으므로 `defaultValue`는 분배 시 복사하거나 불변으로 취급한다(F24, T-19).
 
@@ -65,7 +68,7 @@ ADR 0006(노드 트리가 곧 상태)과 0007(작업 루프)이 들어오면 값
 | 항목 | 규칙 |
 | ---- | ---- |
 | 자식의 출처 | 형제 참조. 스키마도 값도 아니다 |
-| 값 | 없다. `raw`·`local`·`emit`이 없고 참조 노드의 값을 튜플로 비춘다(`VirtualNode.ts:112-139`) |
+| 값 | `raw`·`emit`이 없고, 행의 `assemble` 칸이 참조 노드 값의 튜플을 `local`에 둔다(`value` 게터는 `local`, 오늘의 `VirtualNode.ts:112-139`). 전략은 `branch`다(`src/helpers/jsonSchema/filter.ts:20-21`, 17라운드 노드 구조 수렴). 인라인 `presentation.FormTypeInput`이나 `options.terminal: true`로 `'terminal'`이 되는 조합(오늘 `getNodeGroup.ts:22-23`, `getNodeGroup.ts:20-21`)은 18라운드 안건 N14다 |
 | 쓰기 | 참조 노드로 부채질한다(`VirtualNode.ts:39-96`). 유지 |
 | 방출·가드·검증 | 나타나지 않는다. 표준 `required`는 실제 필드만 적는다 |
 | 명령 | `RequestRefresh`는 유지(ADR 0008 §7) |
@@ -93,7 +96,7 @@ ADR 0006(노드 트리가 곧 상태)과 0007(작업 루프)이 들어오면 값
 - **큰 배열의 지연 실체화**(R14). 남은 선택지는 ADR 0006 안에 있다 — 자식 노드가 실체화되기 전까지 array 노드가 터미널처럼 값을 들고, 접근될 때 아이템 노드를 만든다. 손잡이 노드가 `find()`를 부수효과로 만들고 `revision` 원장을 무효로 만든다는 지적이 있으므로 벤치마크로 확인한 뒤 정한다(ADR 0009).
 - **`contains`·튜플(`prefixItems`)**(Q13). 아이템 호스트는 dirty 목록으로 비례하지만 이 둘은 미정의다. 튜플은 출처가 스키마와 값에 걸쳐 있다.
 - **emit의 키 순서**(Q14). 스키마 선언 순서로 낼 것인가, 비용은 얼마인가.
-- **전략 패턴이 필요한가.** 차이가 "자식 집합의 출처" 하나로 줄면 `BranchStrategy`/`TerminalStrategy` 대신 출처만 갈아 끼우는 단일 구조가 가능하다. ObjectNode/ArrayNode 클래스를 남길지도 여기에 달려 있다.
+- **전략 패턴이 필요한가.** 닫힘(17라운드 소유자 확정: 상속 없는 단일 클래스와 종류별 동작 행). `BranchStrategy`/`TerminalStrategy`는 `src/core/behaviors/`의 종류 모듈 안 `branch/`·`terminal/`로 대체된다(`objectBehavior/`·`arrayBehavior/`, 두 전략이 함께 쓰는 보조는 그 종류의 `utils/`, 09 §3). ObjectNode/ArrayNode 클래스는 남기지 않는다.
 - **(a)와 (b)의 비용 비교.** 다른 렌더러 이식 시 바인딩의 두께 차이를 어떻게 잴 것인가.
 - **2단계 생명주기**(생성은 아래에서 위, 초기화는 위에서 아래)가 새 구조에서도 필요한가. 작업 루프의 첫 회가 초기화를 겸할 수 있다(T-20).
 
