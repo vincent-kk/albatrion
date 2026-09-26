@@ -32,13 +32,13 @@
 | REACT-024 | 늦은 쓰기의 차단 — 노드의 Refresh 번호로 대체된 입력의 늦은 `onChange`·`onFileAttach`를 버리고, 상호작용 초기화 번호로 미룬 `touched`를 버린다 | 현행 | 16라운드 스웜 수렴(편집자 결정, `09-landing-and-test-strategy.md:79`) |
 | REACT-025 | 더 강한 연산은 새 이름 없이 둘 — `<Form key>`의 전체 재생성과 노드 명령 `remount`(핸들 표면은 EVENT-063), 문서는 reset을 값 초기화의 기본으로 | 현행 | 16라운드 스웜 수렴(편집자 결정, `09-landing-and-test-strategy.md:79`) |
 | REACT-026 | 잔여 키의 표시 규칙과 기본 문구, `formatError`의 `false schema` 번역, 잔여 키 UI의 기본 제공 — 렌더 계층의 일 | 현행 | 편집자 결정(5라운드 도출, `reviews/round-5-derivations.md:34`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-77) |
-| REACT-027 | 입력 구성 요소의 계약 — 초안은 입력이 들고, 빈 칸·비우기의 값, 무효 표시, 기본 수 입력과 체크박스, PR-7 브라우저 게이트 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-40), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-92) |
+| REACT-027 | 입력 구성 요소의 계약 — 초안은 입력이 들고, 빈 칸·비우기의 값, 무효 표시, 기본 수 입력과 체크박스, PR-7 브라우저 게이트 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-40), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-92), 소유자 답(`reviews/round-18-owner-answers.md:41` 설계서 메모 4) |
 | REACT-028 | 자식 프록시의 마운트 여부로 입력을 판정한다 — 게이트 PR-7(reset 시험, StrictMode, 가상화) | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-62) |
 | REACT-029 | 바인딩은 조합 중에 입력의 DOM `value`를 프로그램으로 쓰지 않는다 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-63) |
 | REACT-030 | 저장소의 플러그인 입력은 동기 `UpdateValue`나 Promise 배열 API에 기대지 않는다 — T-1·T-7이 깨지 않음, 사용자 구현 입력은 확인 범위 밖, 배열 연산의 Promise 없음은 이주 안내에 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-75) |
 | REACT-031 | 잔여 키 오류의 표시 — 전용 UI 없이 호스트의 오류 렌더러에, `not.required`를 자식으로 옮기지 않음, 기본 문구는 오늘의 `formatError`, `false schema` 번역은 작성자 몫 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-77) |
-| REACT-032 | Hint와 입력 props의 `type`·`schemaType`·`nullable` — `type`은 `node.type`, `schemaType`은 `node.schemaType`, 같은 이름은 같은 값, 시험 객체의 키 일곱과 형, union은 `{type:'union'}`이나 함수 시험, 플러그인 시험의 고침 | 현행 | 소유자 답(`reviews/round-18-owner-answers.md:36` union O6) |
-| REACT-033 | 입력 바인딩 — 기본 union 입력(`{type:'union'}` 감싸개, 유효 목록 기준의 초안·표시·비우기), 시험 객체의 모르는 키는 대조에서 빼고 (가칭) `FORM_TYPE_TEST_INVALID`, 우선순위 그대로, 플러그인 계약 문구, PR-7 게이트 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-92) |
+| REACT-032 | Hint와 입력 props의 `type`·`schemaType`·`nullable` — `type`은 `node.type`, `schemaType`은 `node.schemaType`, 같은 이름은 같은 값, 시험 객체의 키 일곱과 형, union은 `{type:'union'}`이나 함수 시험, 플러그인 시험의 고침 | 현행 | 소유자 답(`reviews/round-18-owner-answers.md:36` union O6), 소유자 답(`reviews/round-18-owner-answers.md:41` 설계서 메모 4) |
+| REACT-033 | 입력 바인딩 — 기본 union 입력(`{type:'union'}` 감싸개, 유효 목록 기준의 초안·표시·비우기), 시험 객체의 모르는 키는 대조에서 빼고 (가칭) `FORM_TYPE_TEST_INVALID`, 우선순위 그대로, 플러그인 계약 문구, PR-7 게이트 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-92), 소유자 답(`reviews/round-18-owner-answers.md:41` 설계서 메모 4) |
 
 ## 항목
 
@@ -430,9 +430,10 @@
   > 편집자 결정(18C-92): "【추론】 목록의 한 형이 되지 않으면 보내지 않고 초안으로 들며, 흐려지면 표시를 노드 값으로 되돌린다." (`reviews/round-18-closing.md:2601`)
   > 편집자 결정(18C-92): "【추론】 유효 목록이 바뀌면 지금 초안으로 판정을 다시 돌리고, 이제 목록의 한 형이 될 때만 보낸다." (`reviews/round-18-closing.md:2602`)
   > 편집자 결정(18C-92): "【추론】 `valueTypeMismatch`가 참이면 `aria-invalid`와 무효 표지를 붙이고, 경고등이 켜진 값을 빈 칸처럼 그리지 않는다(SURFACE-052)." (`reviews/round-18-closing.md:2607`)
+  > 반영 칸(설계서 메모 4): "게터 `typeMismatch: boolean`, 경로 목록 `typeMismatches: readonly string[]`, 경고 코드 `SCHEMA_FORM_WARNING.TYPE_MISMATCH`." (`reviews/round-18-owner-answers.md:41`)
 - 상태: 현행
-- 출처: `reviews/round-18-closing.md:1104-1114,1143-1147`(정본), `reviews/round-18-closing.md:2600-2602,2607`
-- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-40), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-92)
+- 출처: `reviews/round-18-closing.md:1104-1114,1143-1147`(정본), `reviews/round-18-closing.md:2600-2602,2607`, `reviews/round-18-owner-answers.md:41`
+- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-40), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-92), 소유자 답(`reviews/round-18-owner-answers.md:41` 설계서 메모 4)
 - 라운드: 18
 - 까닭: `reviews/round-18-closing.md:1134-1141`, `reviews/round-18-closing.md:2620-2625`
 
@@ -527,11 +528,14 @@
   > mui 수 입력의 정수 판정은 `schemaType === 'integer'`로 바꾼다.
 - 보충:
   > 소유자(union O6): "네 동의합니다. 하지만, 반드시 jsonSchema 원래 type 도 전달했으면 좋겠습니다. number -> integer 이걸 둘다 알아야 처리 가능한게 있어서요" (`reviews/round-18-owner-answers.md:36`)
+  > 반영 칸(설계서 메모 4): "게터 `typeMismatch: boolean`, 경로 목록 `typeMismatches: readonly string[]`, 경고 코드 `SCHEMA_FORM_WARNING.TYPE_MISMATCH`." (`reviews/round-18-owner-answers.md:41`)
 - 상태: 현행
-- 출처: `reviews/round-18-owner-answers.md:36`(정본, 반영 칸)
-- 닫은 사람: 소유자 답(`reviews/round-18-owner-answers.md:36` union O6)
+- 출처: `reviews/round-18-owner-answers.md:36`(정본, 반영 칸), `reviews/round-18-owner-answers.md:41`
+- 닫은 사람: 소유자 답(`reviews/round-18-owner-answers.md:36` union O6), 소유자 답(`reviews/round-18-owner-answers.md:41` 설계서 메모 4)
 - 라운드: 18
 - 까닭: `reviews/round-18-owner-answers.md:36`
+- 충돌:
+  > `reviews/round-18-owner-answers.md:36`의 "`FormTypeInputProps`의 `type`·`schemaType`·`nullable`은 Hint와 같은 값이고, 여기에 `valueTypeMismatch`가 더해진다."는 소유자 답과 다르다: 이 항목의 `valueTypeMismatch`·`valueTypeMismatches`·`VALUE_TYPE_MISMATCH`는 확정 이름 `typeMismatch`·`typeMismatches`·`SCHEMA_FORM_WARNING.TYPE_MISMATCH`로 읽는다(SURFACE-061). 소유자 답이 이긴다(`reviews/round-18-owner-answers.md:41`).
 
 ### REACT-033 입력 바인딩 — 기본 union 입력(`{type:'union'}` 감싸개, 유효 목록 기준의 초안·표시·비우기), 시험 객체의 모르는 키는 대조에서 빼고 (가칭) `FORM_TYPE_TEST_INVALID`, 우선순위 그대로, 플러그인 계약 문구, PR-7 게이트
 
@@ -583,9 +587,12 @@
   > 무엇: `src/__tests__/scenarios/union.input-binding.render.test.tsx`(시험 대조의 모든 칸, 인라인 우선, `FORM_TYPE_TEST_INVALID` 1회, `{typo: undefined}`의 대조, 정수 노드 props의 `type === 'number'`와 `schemaType === 'integer'`), `union.default-input-draft.render.test.tsx`, `union.object-array.render.test.tsx`의 기본 입력 부분을 돌린다.
   > 통과: 초안·표시·비우기·무효 표시와 시험 대조가 위대로다.
   > 실패: 기본 입력이 목록 밖 값을 보내거나 초안을 쓰면 감싸개를 고치고, 규칙이 입력 사례를 하나로 정하지 못하면 이 블록을 고친다.
-- 보충: 없음
+- 보충:
+  > 반영 칸(설계서 메모 4): "게터 `typeMismatch: boolean`, 경로 목록 `typeMismatches: readonly string[]`, 경고 코드 `SCHEMA_FORM_WARNING.TYPE_MISMATCH`." (`reviews/round-18-owner-answers.md:41`)
 - 상태: 현행
-- 출처: `reviews/round-18-closing.md:2575-2580,2582-2618,2627-2630`(정본)
-- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-92)
+- 출처: `reviews/round-18-closing.md:2575-2580,2582-2618,2627-2630`(정본), `reviews/round-18-owner-answers.md:41`
+- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-92), 소유자 답(`reviews/round-18-owner-answers.md:41` 설계서 메모 4)
 - 라운드: 18
 - 까닭: `reviews/round-18-closing.md:2620-2625`
+- 충돌:
+  > `reviews/round-18-closing.md:2578`의 "【추론】 규칙 A를 미리 보는 공개 함수는 지금 내보내지 않으며, 입력은 `valueTypeMismatch`로 결과를 보고, 함수를 나중에 더하는 것은 추가 변화다."는 소유자 답과 다르다: 이 항목의 `valueTypeMismatch`·`valueTypeMismatches`·`VALUE_TYPE_MISMATCH`는 확정 이름 `typeMismatch`·`typeMismatches`·`SCHEMA_FORM_WARNING.TYPE_MISMATCH`로 읽는다(SURFACE-061). 소유자 답이 이긴다(`reviews/round-18-owner-answers.md:41`).

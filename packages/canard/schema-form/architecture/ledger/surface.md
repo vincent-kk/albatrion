@@ -15,8 +15,8 @@
 | SURFACE-007 | 진단 — `diagnostics`, 이벤트 `UpdateDiagnostics`, Form 속성 `onDiagnosticsChange` | 현행 | 편집자 결정(8라운드 N4, `06-conclusions.md:362`), 편집자 결정(9라운드 N4 그대로, `07-conclusions.md:348`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-98) |
 | SURFACE-008 | 배치 — `batch(fn)` | 현행 | 소유자 답(`00-goals.md:151` G7; 배치 유지), 편집자 결정(4라운드, `adr/0008-event-system.md:3`), 편집자 결정(9라운드, `07-conclusions.md:350` N6 나머지 그대로) |
 | SURFACE-009 | 경로 조회 — `find`·`findNodes`, 터미널 아래 경로는 노드 없음, `findAll`은 `findNodes`로 | 현행 | 원리(`06-conclusions.md:175` P2·G4; `find`), 편집자 결정(10라운드 추정 채택 규칙, `07-conclusions.md:209`; `findNodes`), 편집자 결정(17라운드, `08-design-a-to-z.md:478` 이주 행 46; `findAll`) |
-| SURFACE-010 | 노드 — 단일 클래스 `SchemaNode`, 게터 `type`·`strategy`, 가드 아홉, 겉면의 크기는 18라운드 안건 | 현행 | 소유자 답(`reviews/round-17-owner-answers.md:22` `group`의 이름), 소유자 답(`reviews/round-17-owner-answers.md:23` `kind` 필드), 소유자 답(`reviews/round-17-owner-answers.md:24` 노드 구조), 17라운드 스웜 수렴(편집자 결정, `reviews/raw-round17-node-structure.md` §6; 가드 아홉, 공개 형에서 뺀 필드, 멤버 목록), 편집자 결정(17라운드, 18라운드 안건으로 이관 `reviews/round-18-agenda.md:86-88`; 겉면의 크기), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-32·18C-02) |
-| SURFACE-011 | 명령 — `focus`, `select`, `refresh`, `remount` | 현행 | 편집자 결정(8라운드 N6 명령, `06-conclusions.md:387`), 편집자 결정(9라운드, `07-conclusions.md:350` N6 나머지 그대로), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-42) |
+| SURFACE-010 | 노드 — 단일 클래스 `SchemaNode`, 게터 `type`·`strategy`, 가드 아홉, 겉면의 크기는 18라운드 안건 | 현행 | 소유자 답(`reviews/round-17-owner-answers.md:22` `group`의 이름), 소유자 답(`reviews/round-17-owner-answers.md:23` `kind` 필드), 소유자 답(`reviews/round-17-owner-answers.md:24` 노드 구조), 17라운드 스웜 수렴(편집자 결정, `reviews/raw-round17-node-structure.md` §6; 가드 아홉, 공개 형에서 뺀 필드, 멤버 목록), 편집자 결정(17라운드, 18라운드 안건으로 이관 `reviews/round-18-agenda.md:86-88`; 겉면의 크기), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-32·18C-02), 소유자 답(`reviews/round-18-owner-answers.md:41` 설계서 메모 4) |
+| SURFACE-011 | 명령 — `focus`, `select`, `refresh`, `remount` | 현행 | 편집자 결정(8라운드 N6 명령, `06-conclusions.md:387`), 편집자 결정(9라운드, `07-conclusions.md:350` N6 나머지 그대로), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-42), 소유자 답(`reviews/round-18-owner-answers.md:40` 설계서 메모 3) |
 | SURFACE-012 | Form 속성(렌더 계층) — 전체 잠금, `unsetOnInactive`, `disableAutomaticWrites`, `onError`, `onDiagnosticsChange`, `validatorFactory` | 현행 | 소유자 답(`reviews/round-13-owner-answers.md:16` Form 속성의 자리; `readOnly`·`disabled`), 소유자 답(`reviews/round-13-owner-answers.md:17` 나감 정책 키 이름), 편집자 결정(9라운드, `reviews/round-9-spec.md:97` 세 곳의 추천을 합쳐 소유자가 동의; `disableAutomaticWrites`), 소유자 답(`reviews/round-17-owner-answers.md:15` 통보 4; `onError`), 17라운드 스웜 수렴(편집자 결정, `reviews/round-17-owner-answers.md:15` 반영 칸; `onError`), 편집자 결정(8라운드 N4, `06-conclusions.md:362`; `onDiagnosticsChange`), 소유자 답(`reviews/round-14-owner-answers.md:13` O-7; `validatorFactory`) |
 | SURFACE-013 | 검증기 플러그인 계약 — `compile`, `compileGuard`, `rejectedKey` | 현행 | 편집자 결정(16라운드, `09-landing-and-test-strategy.md:19` 조건 1; `compile`·`compileGuard`), 편집자 결정(5라운드 도출, `reviews/round-5-derivations.md:26` C-4; `rejectedKey`) |
 | SURFACE-014 | 오류 클래스 — `JSONSchemaError`, `SchemaFormError`, `ValidationError`, `UnhandledError`, `ValidationIssue`, 기록 형과 코드 형 | 현행 | 편집자 결정(17라운드, ADR 0014 4판 채택 `adr/0014-error-policy.md:3`) |
@@ -57,15 +57,16 @@
 | SURFACE-049 | 대체됨: 억제는 전체 교체가 일으킨 정착에서만 듣고, `fire`를 고르면 `injectTo`·`&derived`까지 끈다 | 대체됨(→ SURFACE-039) | 편집자 결정(8라운드 N1, `06-conclusions.md:341`) |
 | SURFACE-050 | 값 읽기 이름 확정 — `value`·`outputValue`, `FormHandle.getValue()` 유지, `submit`은 쓰지 않음, 노드는 getter | 현행 | 소유자 답(`reviews/round-18-owner-answers.md:21` 12-8 이어서) |
 | SURFACE-051 | `Overwrite`와 `Merge`는 서로 겹치지 않는 비트 — 함께 주면 `INVALID_WRITE_OPTION`, `Overwrite`는 기본값 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-16) |
-| SURFACE-052 | 정합 상태(경고등)의 공개 이름 — 노드 getter `valueTypeMismatch`(가칭)와 이를 판별자로 한 공개 합집합, `FormTypeInputProps`의 같은 이름 칸 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-40), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-89) |
+| SURFACE-052 | 정합 상태(경고등)의 공개 이름 — 노드 getter `valueTypeMismatch`(가칭)와 이를 판별자로 한 공개 합집합, `FormTypeInputProps`의 같은 이름 칸 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-40), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-89), 소유자 답(`reviews/round-18-owner-answers.md:41` 설계서 메모 4) |
 | SURFACE-053 | 루트 전용 넷(`globalState`·`globalErrors`·`setSubtreeState`·`clearSubtreeState`)은 모든 노드의 멤버 — `FormHandle`은 루트에 위임 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-41) |
 | SURFACE-054 | 노드의 공개 `schemaPath`·`key`는 두지 않는다 — 라우팅은 청사진 `id`, React key는 인스턴스 신원 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-43) |
 | SURFACE-055 | `node.context` getter와 `FormTypeInputProps.context`는 루트의 맥락 객체를 준다 — 갱신은 바인딩 전용 통로 `setContext`(가칭) | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-45) |
 | SURFACE-056 | 맨앞의 `Node`만 개명 — `NodeState`→`SchemaNodeState`, `NodeEventType`→`SchemaNodeEventType`, 종류·역할 낱말이 앞에 붙은 이름은 그대로 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-47) |
 | SURFACE-057 | 공개 이벤트 타입에 `UpdateJsonSchema`(가칭)를 더한다(minor) | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-52) |
-| SURFACE-058 | 공개 겉면의 크기 — NODE-019의 하위 가지를 닫는 블록, 겉면 멤버는 약 57개, `subnodes`·`schemaPath`·`key`·`publish`는 빠짐 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-32) |
+| SURFACE-058 | 공개 겉면의 크기 — NODE-019의 하위 가지를 닫는 블록, 겉면 멤버는 약 57개, `subnodes`·`schemaPath`·`key`·`publish`는 빠짐 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-32), 소유자 답(`reviews/round-18-owner-answers.md:40` 설계서 메모 3), 소유자 답(`reviews/round-18-owner-answers.md:41` 설계서 메모 4) |
 | SURFACE-059 | 원장이 바꾸지 않은 오늘의 공개 표면은 그대로 — `FormProps` 열아홉 칸·`FormHandle` 열여섯 멤버·`ValidationMode`·공개 이벤트 형 여섯, PR-7 이주 점검 게이트 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-87) |
 | SURFACE-060 | 안쪽 코드도 `SchemaNodeState`·`SchemaNodeEventType` 한 이름 — 공개 표면과 안쪽 코드에 함께, 한 형에 한 이름, 별칭 없음 | 현행 | 소유자 답(`reviews/round-18-owner-answers.md:25` 18C 검토 3번) |
+| SURFACE-061 | 경고등의 공개 이름 확정 — 게터 `typeMismatch: boolean`, 경로 목록 `typeMismatches: readonly string[]`, 경고 코드 `SCHEMA_FORM_WARNING.TYPE_MISMATCH`; 뜻은 VALUE-037 그대로, 주석에 `schemaType`·유효 목록 기준 한 줄, 시험 파일 이름은 그대로 | 현행 | 소유자 답(`reviews/round-18-owner-answers.md:41` 설계서 메모 4), 편집자 결정(18라운드, `reviews/round-18-owner-answers.md:41` 반영 칸; 시험 파일 이름) |
 
 ## 항목
 
@@ -235,9 +236,10 @@
   > "| 종류 읽기 | `type`, `strategy` | 노드가 든 동작 행에서 읽는 게터다. `strategy`는 `'branch'` 또는 `'terminal'`이며 옛 `node.group`의 새 이름이다(값은 그대로, 17라운드 소유자 답). 가드 `isBranchNode`·`isTerminalNode`는 이름을 유지하고 `strategy`를 본다 | 09 §3, ADR 0011 |" (`02-target-overview.md:315`)
   > 편집자 결정(18C-32): "【추론】 이 결정들을 적용하면 겉면 멤버는 확정분 약 44개(`reviews/raw-round17-node-structure.md:136`, `getInactiveValues`는 VALUE-029의 게터 `inactiveValues`로 셈)에 명령 넷, 루트 전용 넷, `defaultValue`·`resetSubtree`, `context`, 18C-40의 게터 `valueTypeMismatch`·`valueTypeMismatches`를 더한 약 57개다." (`reviews/round-18-closing.md:912`)
   > 편집자 결정(18C-32): "【추론】 `subnodes`·`schemaPath`·`key`·`publish`는 빠진다." (`reviews/round-18-closing.md:913`)
+  > 반영 칸(설계서 메모 4): "게터 `typeMismatch: boolean`, 경로 목록 `typeMismatches: readonly string[]`, 경고 코드 `SCHEMA_FORM_WARNING.TYPE_MISMATCH`." (`reviews/round-18-owner-answers.md:41`)
 - 상태: 현행
-- 출처: `08-design-a-to-z.md:416`(정본), `02-target-overview.md:315`, `reviews/round-17-owner-answers.md:22-24` (같은 규칙: NODE-001, NODE-002, NODE-003, NODE-010, NODE-015; 열린 부분: NODE-019, EVENT-038, EVENT-052, WRITE-050), `reviews/round-18-closing.md:77,912-913`
-- 닫은 사람: 소유자 답(`reviews/round-17-owner-answers.md:22` `group`의 이름), 소유자 답(`reviews/round-17-owner-answers.md:23` `kind` 필드), 소유자 답(`reviews/round-17-owner-answers.md:24` 노드 구조), 17라운드 스웜 수렴(편집자 결정, `reviews/raw-round17-node-structure.md` §6; 가드 아홉, 공개 형에서 뺀 필드, 멤버 목록), 편집자 결정(17라운드, 18라운드 안건으로 이관 `reviews/round-18-agenda.md:86-88`; 겉면의 크기), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-32·18C-02)
+- 출처: `08-design-a-to-z.md:416`(정본), `02-target-overview.md:315`, `reviews/round-17-owner-answers.md:22-24` (같은 규칙: NODE-001, NODE-002, NODE-003, NODE-010, NODE-015; 열린 부분: NODE-019, EVENT-038, EVENT-052, WRITE-050), `reviews/round-18-closing.md:77,912-913`, `reviews/round-18-owner-answers.md:41`
+- 닫은 사람: 소유자 답(`reviews/round-17-owner-answers.md:22` `group`의 이름), 소유자 답(`reviews/round-17-owner-answers.md:23` `kind` 필드), 소유자 답(`reviews/round-17-owner-answers.md:24` 노드 구조), 17라운드 스웜 수렴(편집자 결정, `reviews/raw-round17-node-structure.md` §6; 가드 아홉, 공개 형에서 뺀 필드, 멤버 목록), 편집자 결정(17라운드, 18라운드 안건으로 이관 `reviews/round-18-agenda.md:86-88`; 겉면의 크기), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-32·18C-02), 소유자 답(`reviews/round-18-owner-answers.md:41` 설계서 메모 4)
 - 라운드: 18
 - 까닭: `reviews/round-17-owner-answers.md:22-24`, `reviews/round-18-closing.md:915-915`, `reviews/round-18-closing.md:84-91`
 - 충돌:
@@ -254,11 +256,15 @@
   > "| 명령 | `focus`, `select`, `refresh`, `remount` | 렌더러와 무관한 표현 계층의 어휘이며 원본을 쓰지 않는다(D-9) | ADR 0008 |" (`02-target-overview.md:317`)
   > "`focus`, `select`(텍스트 선택), `refresh`, `remount`. `refresh`가 비용을 숨긴다는 지적이 있으나 오늘의 공개 이벤트 이름과 함께 바꿔야 하므로 유지가 1순위다." (`06-conclusions.md:387`)
   > 편집자 결정(18C-42): "【추론】 명령 넷은 공개 노드 메서드 `focus()`·`select()`·`refresh()`·`remount()`다." (`reviews/round-18-closing.md:1182`)
+  > 소유자(설계서 메모 3): "이 4개 기능을 4개로 분할해서 두지 말고 하나의 메소드에 여러 행위 타입을 파라미터로 받아서 행동하게 해줘." (`reviews/round-18-owner-answers.md:40`)
+  > 반영 칸(설계서 메모 3): "방향: 노드 겉면에 명령 메서드 넷을 따로 두지 않고, 명령 종류를 매개변수로 받는 메서드 하나로 합친다(이름 후보 `action`·`interaction`·`request`, 또는 명령 사건에 한정한 `publish` 부활)." (`reviews/round-18-owner-answers.md:40`)
 - 상태: 현행
-- 출처: `08-design-a-to-z.md:417`(정본), `02-target-overview.md:317`, `06-conclusions.md:387`, `05-before-after.md:92-94,124` (같은 규칙: EVENT-037, EVENT-039; 명령 publish의 공개와 노드 메서드로 둘지는 열림 EVENT-038, NODE-019), `reviews/round-18-closing.md:1182`
-- 닫은 사람: 편집자 결정(8라운드 N6 명령, `06-conclusions.md:387`), 편집자 결정(9라운드, `07-conclusions.md:350` N6 나머지 그대로), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-42)
+- 출처: `08-design-a-to-z.md:417`(정본), `02-target-overview.md:317`, `06-conclusions.md:387`, `05-before-after.md:92-94,124` (같은 규칙: EVENT-037, EVENT-039; 명령 publish의 공개와 노드 메서드로 둘지는 열림 EVENT-038, NODE-019), `reviews/round-18-closing.md:1182`, `reviews/round-18-owner-answers.md:40`
+- 닫은 사람: 편집자 결정(8라운드 N6 명령, `06-conclusions.md:387`), 편집자 결정(9라운드, `07-conclusions.md:350` N6 나머지 그대로), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-42), 소유자 답(`reviews/round-18-owner-answers.md:40` 설계서 메모 3)
 - 라운드: 18
 - 까닭: `06-conclusions.md:387`, `reviews/round-18-closing.md:1193-1196`
+- 충돌:
+  > `reviews/round-18-closing.md:1182`의 "명령 넷은 공개 노드 메서드 `focus()`·`select()`·`refresh()`·`remount()`다"는 소유자 답과 다르다: 명령 넷은 따로 둔 메서드 넷이 아니라 명령 종류를 매개변수로 받는 노드 메서드 하나다(EVENT-073). 소유자 답이 이긴다(`reviews/round-18-owner-answers.md:40`).
 
 ### SURFACE-012 Form 속성(렌더 계층) — 전체 잠금, `unsetOnInactive`, `disableAutomaticWrites`, `onError`, `onDiagnosticsChange`, `validatorFactory`
 
@@ -795,11 +801,14 @@
   > 편집자 결정(18C-89): "【추론】 `valueTypeMismatch`가 `true`인 멤버의 `value`는 `unknown`이다." (`reviews/round-18-closing.md:2341`)
   > 편집자 결정(18C-89): "【추론】 노드 형에는 제네릭을 두지 않으며, 목록 형으로 좁히는 것은 `FormTypeInputProps`가 맡는다." (`reviews/round-18-closing.md:2342`)
   > 편집자 결정(18C-89): "【추론】 props의 `onChange`는 목록 종류의 값, `undefined`, 그리고 nullable일 때만 `null`을 받는다." (`reviews/round-18-closing.md:2345`)
+  > 반영 칸(설계서 메모 4): "게터 `typeMismatch: boolean`, 경로 목록 `typeMismatches: readonly string[]`, 경고 코드 `SCHEMA_FORM_WARNING.TYPE_MISMATCH`." (`reviews/round-18-owner-answers.md:41`)
 - 상태: 현행
-- 출처: `reviews/round-18-closing.md:1091-1095`(정본), `reviews/round-18-closing.md:2340-2342,2345`
-- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-40), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-89)
+- 출처: `reviews/round-18-closing.md:1091-1095`(정본), `reviews/round-18-closing.md:2340-2342,2345`, `reviews/round-18-owner-answers.md:41`
+- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-40), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-89), 소유자 답(`reviews/round-18-owner-answers.md:41` 설계서 메모 4)
 - 라운드: 18
 - 까닭: `reviews/round-18-closing.md:1134-1141`, `reviews/round-18-closing.md:2367-2370`
+- 충돌:
+  > `reviews/round-18-closing.md:1091`의 "【추론】 공개 이름은 가칭으로 노드 getter `valueTypeMismatch: boolean`이다."는 소유자 답과 다르다: 이 항목의 `valueTypeMismatch`·`valueTypeMismatches`·`VALUE_TYPE_MISMATCH`는 확정 이름 `typeMismatch`·`typeMismatches`·`SCHEMA_FORM_WARNING.TYPE_MISMATCH`로 읽는다(SURFACE-061). 소유자 답이 이긴다(`reviews/round-18-owner-answers.md:41`).
 
 ### SURFACE-053 루트 전용 넷(`globalState`·`globalErrors`·`setSubtreeState`·`clearSubtreeState`)은 모든 노드의 멤버 — `FormHandle`은 루트에 위임
 
@@ -886,12 +895,16 @@
   > 【추론】 NODE-019의 하위 가지는 다음 블록이 닫는다: N2는 18C-33·18C-34, N5는 18C-35, N6는 18C-37, N14는 18C-38, 루트 전용 넷은 18C-41, 명령 넷은 18C-42, `subnodes`는 18C-33, `schemaPath`·`key`는 18C-43, `defaultValue`·`resetSubtree`는 18C-44, `ContextNode`와 `context`는 18C-45, `{@inheritDoc}`는 18C-46, 내부 통로는 18C-48이다.
   > 【추론】 이 결정들을 적용하면 겉면 멤버는 확정분 약 44개(`reviews/raw-round17-node-structure.md:136`, `getInactiveValues`는 VALUE-029의 게터 `inactiveValues`로 셈)에 명령 넷, 루트 전용 넷, `defaultValue`·`resetSubtree`, `context`, 18C-40의 게터 `valueTypeMismatch`·`valueTypeMismatches`를 더한 약 57개다.
   > 【추론】 `subnodes`·`schemaPath`·`key`·`publish`는 빠진다.
-- 보충: 없음
+- 보충:
+  > 반영 칸(설계서 메모 4): "게터 `typeMismatch: boolean`, 경로 목록 `typeMismatches: readonly string[]`, 경고 코드 `SCHEMA_FORM_WARNING.TYPE_MISMATCH`." (`reviews/round-18-owner-answers.md:41`)
+  > 반영 칸(설계서 메모 3): "SURFACE-058의 겉면 수(명령 4 → 1, 약 57 → 약 54)" (`reviews/round-18-owner-answers.md:40`)
 - 상태: 현행
-- 출처: `reviews/round-18-closing.md:911-913`(정본)
-- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-32)
+- 출처: `reviews/round-18-closing.md:911-913`(정본), `reviews/round-18-owner-answers.md:40`, `reviews/round-18-owner-answers.md:41`
+- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-32), 소유자 답(`reviews/round-18-owner-answers.md:40` 설계서 메모 3), 소유자 답(`reviews/round-18-owner-answers.md:41` 설계서 메모 4)
 - 라운드: 18
 - 까닭: `reviews/round-18-closing.md:915`
+- 충돌:
+  > `reviews/round-18-closing.md:912`의 "【추론】 이 결정들을 적용하면 겉면 멤버는 확정분 약 44개(`reviews/raw-round17-node-structure.md:136`, `getInactiveValues`는 VALUE-029의 게터 `inactiveValues`로 셈)에 명령 넷, 루트 전용 넷, `defaultValue`·`resetSubtree`, `context`, 18C-40의 게터 `valueTypeMismatch`·`valueTypeMismatches`를 더한 약 57개다."는 소유자 답과 다르다: 명령 넷이 메서드 하나로 합쳐지고(EVENT-073) 게터 이름은 `typeMismatch`·`typeMismatches`로 확정되어(SURFACE-061) 겉면 멤버는 약 54개다. 소유자 답이 이긴다(`reviews/round-18-owner-answers.md:40`, `reviews/round-18-owner-answers.md:41`).
 
 ### SURFACE-059 원장이 바꾸지 않은 오늘의 공개 표면은 그대로 — `FormProps` 열아홉 칸·`FormHandle` 열여섯 멤버·`ValidationMode`·공개 이벤트 형 여섯, PR-7 이주 점검 게이트
 
@@ -927,3 +940,20 @@
 - 닫은 사람: 소유자 답(`reviews/round-18-owner-answers.md:25` 18C 검토 3번)
 - 라운드: 18
 - 까닭: `reviews/round-18-owner-answers.md:25`
+
+### SURFACE-061 경고등의 공개 이름 확정 — 게터 `typeMismatch: boolean`, 경로 목록 `typeMismatches: readonly string[]`, 경고 코드 `SCHEMA_FORM_WARNING.TYPE_MISMATCH`; 뜻은 VALUE-037 그대로, 주석에 `schemaType`·유효 목록 기준 한 줄, 시험 파일 이름은 그대로
+
+- 결정:
+  > 게터 `typeMismatch: boolean`, 경로 목록 `typeMismatches: readonly string[]`, 경고 코드 `SCHEMA_FORM_WARNING.TYPE_MISMATCH`.
+  > `mismatch`만은 검증기의 다른 불일치와 구별되지 않아 버리고, `value` 접두는 노드 게터·props에서 군더더기라 뺐다.
+  > 뜻은 그대로다: `schemaType`(게이트가 켜진 동안은 유효 목록)과 `nullable` 기준의 값 형 불일치이며 `false`는 검증 통과가 아니다(VALUE-037).
+  > 문서 주석에 "`node.type`이 아니라 `schemaType`·유효 목록 기준"을 한 줄 적는다.
+  > 시험 파일 이름 `union.mismatch-light.test.ts`는 그대로이고, 시험이 부르는 게터·코드 이름은 확정 이름이다.
+- 보충:
+  > 소유자(설계서 메모 4): "typeMismatch 정도가 적절하지 않나 싶네. 아님 더 짧게 mismatch 같은것도 괜찮고 근데 너무 포괄적이면 또 파악하기 힘드니까.." (`reviews/round-18-owner-answers.md:41`)
+  > 소유자(설계서 메모 4, 권장에): "그래 그걸로 메모해둬" (`reviews/round-18-owner-answers.md:41`)
+- 상태: 현행
+- 출처: `reviews/round-18-owner-answers.md:41`(정본, 반영 칸)
+- 닫은 사람: 소유자 답(`reviews/round-18-owner-answers.md:41` 설계서 메모 4), 편집자 결정(18라운드, `reviews/round-18-owner-answers.md:41` 반영 칸; 시험 파일 이름)
+- 라운드: 18
+- 까닭: `reviews/round-18-owner-answers.md:41`

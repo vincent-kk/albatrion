@@ -68,7 +68,7 @@
 | EVENT-060 | `UpdateValue` 통지에 출처 칸을 둔다 — 이름과 값 목록은 편집자 | 현행 | 소유자 답(`reviews/round-18-owner-answers.md:15` 12-5), 편집자 결정(18라운드, `reviews/round-18-owner-answers.md:15` 반영 칸; 이름과 값 목록), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-100) |
 | EVENT-061 | `batch(fn)` 안의 updater는 부른 자리에서 실행되어 앞선 표시를 이어 받고(던지면 `fn`의 예외), 평범한 읽기는 직전 커밋을 돌려준다 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-20) |
 | EVENT-062 | `globalState`는 형상 안 노드에서 유도한다 — 키별 참 노드 수, 값은 `true`, 0이면 키가 빠짐, 0↔1을 넘을 때만 새 객체와 `UpdateGlobalState` | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-41) |
-| EVENT-063 | 명령 넷은 공개 노드 메서드 — `FormHandle`은 넷 모두 대칭, 공개 `publish` 없음 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-42) |
+| EVENT-063 | 명령 넷은 공개 노드 메서드 — `FormHandle`은 넷 모두 대칭, 공개 `publish` 없음 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-42), 소유자 답(`reviews/round-18-owner-answers.md:40` 설계서 메모 3) |
 | EVENT-064 | 유효 스키마 변경 통지 `UpdateJsonSchema`(가칭) — 메모 참조가 마지막 통지와 다를 때, 생성 때는 없음, payload `{ previous, current }` 참조, 출처 칸 없음, 계산 상태 비트와 분리 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-52) |
 | EVENT-065 | IME 조합의 동기 통지 확인 — 게이트 PR-7(스토리북 브라우저, 사람 확인 목록) | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-63) |
 | EVENT-066 | 배달 집합 규칙 2의 추가 항 — (이번 커밋에서 상호작용 상태가 바뀐 노드), (이번 커밋에서 경로가 바뀐 노드) | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-82·18C-83) |
@@ -78,6 +78,7 @@
 | EVENT-070 | React 이펙트를 거친 진입 간 순환은 core 예산에 넣지 않는다 — 예방은 C-10 문서, 게이트 PR-7(React 18·19 실행) | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-85) |
 | EVENT-071 | 로드가 아닌 쓰기(`setValue(V)` 포함)의 Refresh는 원본이 실제로 바뀐 노드에만(쓴 입력 제외) — "값이 같아도 낸다"는 로드의 새 수명만 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-94) |
 | EVENT-072 | `resetSubtree()`에 걸린 로드 규칙(로드 뒤 검증, `batch` 안의 즉시 정착, 한 로드에 한 번, 로드마다 다시 만듦)은 그 하위 트리에만 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-101), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-105) |
+| EVENT-073 | 명령은 노드 메서드 하나 — 명령 종류를 매개변수로 받음, 뜻은 EVENT-063 그대로, 이름·값의 형·`FormHandle` 대칭 모양은 PR-4 착수 전에 소유자가 정함, 겉면 수 약 57 → 약 54 | 현행 | 소유자 답(`reviews/round-18-owner-answers.md:40` 설계서 메모 3), 편집자 결정(18라운드, `reviews/round-18-owner-answers.md:40` 반영 칸; 결정 주체와 때) |
 
 ## 항목
 
@@ -949,12 +950,17 @@
   > 【추론】 두 명령이 버리는 것은 EVENT-039·EVENT-040의 표가 적고, README(PR-8)가 옮긴다.
   > 【추론】 노드 메서드는 PR-4(배달 경로)에서 겉면에 더하고 멤버 목록 시험과 08 §13 행을 함께 고친다.
   > 【추론】 `FormHandle`의 둘은 PR-7이다.
-- 보충: 없음
+- 보충:
+  > 소유자(설계서 메모 3): "이 4개 기능을 4개로 분할해서 두지 말고 하나의 메소드에 여러 행위 타입을 파라미터로 받아서 행동하게 해줘." (`reviews/round-18-owner-answers.md:40`)
+  > 반영 칸(설계서 메모 3): "방향: 노드 겉면에 명령 메서드 넷을 따로 두지 않고, 명령 종류를 매개변수로 받는 메서드 하나로 합친다(이름 후보 `action`·`interaction`·`request`, 또는 명령 사건에 한정한 `publish` 부활)." (`reviews/round-18-owner-answers.md:40`)
 - 상태: 현행
-- 출처: `reviews/round-18-closing.md:1182-1191`(정본)
-- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-42)
+- 출처: `reviews/round-18-closing.md:1182-1191`(정본), `reviews/round-18-owner-answers.md:40`
+- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-42), 소유자 답(`reviews/round-18-owner-answers.md:40` 설계서 메모 3)
 - 라운드: 18
 - 까닭: `reviews/round-18-closing.md:1193-1196`
+- 충돌:
+  > `reviews/round-18-closing.md:1182`의 "명령 넷은 공개 노드 메서드 `focus()`·`select()`·`refresh()`·`remount()`다"는 소유자 답과 다르다: 명령 넷은 따로 둔 메서드 넷이 아니라 명령 종류를 매개변수로 받는 노드 메서드 하나다(EVENT-073). 소유자 답이 이긴다(`reviews/round-18-owner-answers.md:40`).
+  > `reviews/round-18-closing.md:1185`의 "`FormHandle`은 오늘의 `focus(path)`·`select(path)`에 `refresh(path)`·`remount(path)`를 대칭으로 더한다"는 소유자 답과 다르다: `FormHandle` 쪽 대칭 모양(`focus(path)`·`select(path)`를 남길지 같은 모양 하나로 합칠지)은 PR-4 착수 전에 소유자가 정한다(EVENT-073). 소유자 답이 이긴다(`reviews/round-18-owner-answers.md:40`).
 
 ### EVENT-064 유효 스키마 변경 통지 `UpdateJsonSchema`(가칭) — 메모 참조가 마지막 통지와 다를 때, 생성 때는 없음, payload `{ previous, current }` 참조, 출처 칸 없음, 계산 상태 비트와 분리
 
@@ -1117,3 +1123,18 @@
 - 까닭: `reviews/round-18-closing.md:2853-2855`
 - 충돌:
   > `reviews/round-18-closing.md:2850`의 ""한 로드에 한 번"(VALIDATE-048)은 `resetSubtree()`에는 그 하위 트리에만 적용한다"는 18C-105의 결정과 다르다: `VALIDATOR_COMPILE_FAILED`는 폼 수준 기록이라 폼 수준 로드(마운트, `FormHandle.reset()`)마다 한 번 내고, `resetSubtree()`는 그 기록을 다시 내지도 초기화하지도 않으며, 그 기록이 막은 `OnChange` 검증 예약은 다음 폼 수준 로드까지 막힌 채다(WRITE-099). 18C-105의 결정이 이긴다(`reviews/round-18-closing.md:2946-2949`).
+
+### EVENT-073 명령은 노드 메서드 하나 — 명령 종류를 매개변수로 받음, 뜻은 EVENT-063 그대로, 이름·값의 형·`FormHandle` 대칭 모양은 PR-4 착수 전에 소유자가 정함, 겉면 수 약 57 → 약 54
+
+- 결정:
+  > 방향: 노드 겉면에 명령 메서드 넷을 따로 두지 않고, 명령 종류를 매개변수로 받는 메서드 하나로 합친다(이름 후보 `action`·`interaction`·`request`, 또는 명령 사건에 한정한 `publish` 부활).
+  > 명령의 뜻(요청 사건만 냄, 원본을 쓰지 않음, 실행은 렌더 계층)은 EVENT-063 그대로다.
+  > 함께 정할 것: 메서드 이름과 명령 종류 값의 형(공개 열거인지 문자열 리터럴인지), `FormHandle` 쪽 대칭 모양(`focus(path)`·`select(path)`를 남길지 같은 모양 하나로 합칠지), SURFACE-058의 겉면 수(명령 4 → 1, 약 57 → 약 54).
+  > 메서드 이름·명령 종류 값의 형·`FormHandle` 대칭 모양은 PR-4 착수 전에 편집자가 권장안을 올리고 소유자가 정한다.
+- 보충:
+  > 소유자(설계서 메모 3): "publish 가 없어진건.. 자의적으로 이벤트를 호출할 수 없어서 좀 그렇긴 한데, 이 4개 기능을 4개로 분할해서 두지 말고 하나의 메소드에 여러 행위 타입을 파라미터로 받아서 행동하게 해줘. 이전에는 publish 에 섞여있어서 메소드로 안보였는데, 이걸 별도 메소드로 빼니까 node 의 정체성이 좀 깨지는걸 action 이나 interaction 이나 뭐든.... publish 를 부활시키던가..." (`reviews/round-18-owner-answers.md:40`)
+- 상태: 현행
+- 출처: `reviews/round-18-owner-answers.md:40`(정본, 반영 칸)
+- 닫은 사람: 소유자 답(`reviews/round-18-owner-answers.md:40` 설계서 메모 3), 편집자 결정(18라운드, `reviews/round-18-owner-answers.md:40` 반영 칸; 결정 주체와 때)
+- 라운드: 18
+- 까닭: `reviews/round-18-owner-answers.md:40`

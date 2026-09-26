@@ -7,7 +7,7 @@
 | 번호 | 한 줄 요약 | 상태 | 닫은 사람 |
 | --- | --- | --- | --- |
 | BLUEPRINT-001 | 분석 단계 — 순수 함수, 폼 생성 때 1회, 작성된 스키마 불변, 노드 없이 시험 | 현행 | 편집자 결정(10라운드 5차 본문 제안, `adr/0005-blueprint-analysis-and-node-sharing.md:3` "분석 단계의 분리와 청사진의 형태는 제안"), 원리(ADR 0001 입력 불변, `adr/0005-blueprint-analysis-and-node-sharing.md:44`) |
-| BLUEPRINT-002 | 청사진의 형태 — ObjectBlueprint와 Fragment의 칸 | 현행 | 편집자 결정(5차 본문 제안, `adr/0005-blueprint-analysis-and-node-sharing.md:3` "분석 단계의 분리와 청사진의 형태는 제안") |
+| BLUEPRINT-002 | 청사진의 형태 — ObjectBlueprint와 Fragment의 칸 | 현행 | 편집자 결정(5차 본문 제안, `adr/0005-blueprint-analysis-and-node-sharing.md:3` "분석 단계의 분리와 청사진의 형태는 제안"), 소유자 답(`reviews/round-18-owner-answers.md:38` 설계서 메모 1), 소유자 답(`reviews/round-18-owner-answers.md:39` 설계서 메모 2) |
 | BLUEPRINT-003 | forbids 칸 없음 — 금지 구문은 폼이 읽지 않음 | 현행(부정 결정) | 소유자 답(`reviews/round-5-derivations.md:7` P1'; D-3의 전제), 원리(`reviews/round-5-derivations.md:28-34` D-3 도출) |
 | BLUEPRINT-004 | 조각의 정적 열거, declares 일반 경로, inherited 귀속, 무조건 allOf 항목 | 현행 | 편집자 결정(4차 본문 E3·E12, `adr/0005-blueprint-analysis-and-node-sharing.md:12`), 편집자 결정(5차 본문 병합표, `adr/0005-blueprint-analysis-and-node-sharing.md:13`) |
 | BLUEPRINT-005 | 두 철자(items 배열·prefixItems, definitions·$defs)를 모두 읽음 | 현행 | 소유자 답(`reviews/round-2.md:112` C5), 소유자 답(`00-goals.md:108` C5) |
@@ -46,11 +46,13 @@
 | BLUEPRINT-038 | 자기 `type` 없는 칸에 허용 집합이 ⊤인 분기(`const`·`enum`만 있는 분기 포함)가 있으면 `UNKNOWN_JSON_SCHEMA` — 오류에 그 분기의 schemaPath와 `type`을 적으라는 안내 | 현행 | 소유자 답(`reviews/round-18-owner-answers.md:32` union O2) |
 | BLUEPRINT-039 | 자기 `type` 없는 칸의 분기 형에 `object`·`array`가 있으면 `UNKNOWN_JSON_SCHEMA` — object variant 호스트는 건드리지 않음, 푸는 것은 뒤로(나중에 풀어도 비파괴) | 현행 | 소유자 답(`reviews/round-18-owner-answers.md:33` union O3) |
 | BLUEPRINT-040 | 규칙 A·기본 입력·경고등의 기준 목록은 `node.schemaType`(+`nullable`), 게이트가 켜진 동안은 유효 목록 — 청사진은 `schemaType`을 유효 스키마에 써 넣지 않음, `jsonSchema.type`은 켜진 선언의 교집합 | 현행 | 소유자 답(`reviews/round-18-owner-answers.md:35` union O5) |
-| BLUEPRINT-041 | 한 칸의 `type` 선언들 — 통합 원리 U1–U9: 연언이고 허용 집합은 교집합, 빈 교집합만 충돌(정적은 청사진 오류, 게이트는 켜진 동안의 정착 오류), 정적 선언이 종류·`schemaType`·`nullable`을 정하고 게이트는 유효 목록만 좁힘, 한 진입에서 쓰인 노드의 두 번 해석 | 현행 | 소유자 답(`reviews/round-18-owner-answers.md:37` union O7·O8), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-104) |
+| BLUEPRINT-041 | 한 칸의 `type` 선언들 — 통합 원리 U1–U9: 연언이고 허용 집합은 교집합, 빈 교집합만 충돌(정적은 청사진 오류, 게이트는 켜진 동안의 정착 오류), 정적 선언이 종류·`schemaType`·`nullable`을 정하고 게이트는 유효 목록만 좁힘, 한 진입에서 쓰인 노드의 두 번 해석 | 현행 | 소유자 답(`reviews/round-18-owner-answers.md:37` union O7·O8), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-104), 소유자 답(`reviews/round-18-owner-answers.md:41` 설계서 메모 4) |
 | BLUEPRINT-042 | `union` 노드의 목적·해석·기본 입력에서 그대로인 것 — 형을 고르는 기능이 아님, 받아 줄 형이 정확히 하나일 때만 변환, 선언 순서·검증기 규칙을 쓰지 않음, 기본 입력은 문자열 입력 | 현행 | 소유자 답(`reviews/round-18-owner-answers.md:24` 18C 검토 1번), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-92) |
 | BLUEPRINT-043 | 값 union에서 계속 그대로인 것 — `null`은 nullable로·`integer`는 `number`로 접음, 접은 집합이 둘 이상이면 `union`(행 `terminal`), `union`끼리는 접은 집합이 같을 때 같은 종류, 정합은 나열된 타입 가운데 하나, PR-1 인식·PR-2 행 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-02), 소유자 답(`reviews/round-18-owner-answers.md:19` 12-9; `integer`·`null` 접기), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-92), 소유자 답(`reviews/round-18-owner-answers.md:29` union 범위; 범위), 소유자 답(`reviews/round-18-owner-answers.md:35` union O5; 목록) |
 | BLUEPRINT-044 | 청사진 판정 절차 — 허용 집합 A(d)와 fold, 교집합(`integer ⊂ number`, `null`은 양쪽에 있을 때만), 단계 S0–S6, 결과 일곱, 터미널 하위 키 경고 (가칭) `TERMINAL_SUBTREE_KEY_IGNORED_FOR_FORM`, PR-1·PR-4 게이트 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-90), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-105) |
 | BLUEPRINT-045 | 청사진 판정의 예 E1–E42 — 칸마다 종류·`schemaType`·nullable·전략·오류 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-90), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-105) |
+| BLUEPRINT-046 | 청사진 내부 이름은 약어 없이 풀 네임 — `PropertyDecl`은 `PropertyDeclaration` 같은 풀 네임으로(PROCESS-023·SURFACE-023), PR-1의 청사진 `DETAIL.md`에서 적음 | 현행 | 소유자 답(`reviews/round-18-owner-answers.md:38` 설계서 메모 1) |
+| BLUEPRINT-047 | 조각의 구현 타입 이름은 `SchemaFragment` — React `Fragment`와 겹침을 피함, 개념어 "조각"과 FRAGMENT 영역 이름은 그대로 | 현행 | 소유자 답(`reviews/round-18-owner-answers.md:39` 설계서 메모 2) |
 
 ## 항목
 
@@ -88,12 +90,17 @@
   >   children    // 중첩 조각 — 감싸는 조각이 활성일 때만 순회한다 (E3)
   > }
   > ```
-- 보충: 없음
+- 보충:
+  > 소유자(설계서 메모 1): "약어 (Decl)을 쓰지말고" (`reviews/round-18-owner-answers.md:38`)
+  > 소유자(설계서 메모 2): "Fragment 는 매력적인데, React Fregment <></> 랑 충돌할거같구나. 내부명이라 괜찮을거같지만, 그래도 명칭을 바꿨으면 해. SchemaFragment 정도로." (`reviews/round-18-owner-answers.md:39`)
 - 상태: 현행
-- 출처: `adr/0005-blueprint-analysis-and-node-sharing.md:29-41`(정본)
-- 닫은 사람: 편집자 결정(5차 본문 제안, `adr/0005-blueprint-analysis-and-node-sharing.md:3` "분석 단계의 분리와 청사진의 형태는 제안")
-- 라운드: 10
+- 출처: `adr/0005-blueprint-analysis-and-node-sharing.md:29-41`(정본), `reviews/round-18-owner-answers.md:38`, `reviews/round-18-owner-answers.md:39`
+- 닫은 사람: 편집자 결정(5차 본문 제안, `adr/0005-blueprint-analysis-and-node-sharing.md:3` "분석 단계의 분리와 청사진의 형태는 제안"), 소유자 답(`reviews/round-18-owner-answers.md:38` 설계서 메모 1), 소유자 답(`reviews/round-18-owner-answers.md:39` 설계서 메모 2)
+- 라운드: 18
 - 까닭: `adr/0005-blueprint-analysis-and-node-sharing.md:138`
+- 충돌:
+  > `adr/0005-blueprint-analysis-and-node-sharing.md:30`의 "PropertyDecl[]"은 소유자 답과 다르다: 구현 이름은 약어 없는 풀 네임(예: `PropertyDeclaration`)이다(BLUEPRINT-046). 소유자 답이 이긴다(`reviews/round-18-owner-answers.md:38`).
+  > `adr/0005-blueprint-analysis-and-node-sharing.md:33`의 "Fragment {"는 소유자 답과 다르다: 구현의 타입 이름은 React `Fragment`와 겹치지 않는 `SchemaFragment`다(BLUEPRINT-047). 소유자 답이 이긴다(`reviews/round-18-owner-answers.md:39`).
 
 ### BLUEPRINT-003 청사진에 forbids 칸은 없다 — 금지 구문은 폼이 읽지 않는다
 
@@ -725,11 +732,14 @@
   > 편집자 결정(18C-104): "【추론】 전이 단계에서는 이 진입에서 쓰인 노드마다, 최종 유효 목록이 정적 목록보다 좁으면 원래 쓰인 값(쓰기 경계에서 바뀐 값이 아니라 호출자·입력이 준 값)을 최종 유효 목록으로 다시 해석해 그 결과를 원본으로 삼는다." (`reviews/round-18-closing.md:2910`)
   > 편집자 결정(18C-104): "【추론】 그래서 결과는 "쓰인 값을 최종 유효 목록으로 한 번 해석한 것"과 같고, 직전 커밋의 게이트 상태에 기대지 않는다." (`reviews/round-18-closing.md:2911`)
   > 편집자 결정(18C-104): "【추론】 로드(마운트, `FormHandle.reset()`, `resetSubtree()`)도 같은 두 단계를 따른다." (`reviews/round-18-closing.md:2914`)
+  > 반영 칸(설계서 메모 4): "게터 `typeMismatch: boolean`, 경로 목록 `typeMismatches: readonly string[]`, 경고 코드 `SCHEMA_FORM_WARNING.TYPE_MISMATCH`." (`reviews/round-18-owner-answers.md:41`)
 - 상태: 현행
-- 출처: `reviews/round-18-owner-answers.md:37`(정본, 반영 칸), `reviews/round-18-closing.md:2908-2911,2914`
-- 닫은 사람: 소유자 답(`reviews/round-18-owner-answers.md:37` union O7·O8), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-104)
+- 출처: `reviews/round-18-owner-answers.md:37`(정본, 반영 칸), `reviews/round-18-closing.md:2908-2911,2914`, `reviews/round-18-owner-answers.md:41`
+- 닫은 사람: 소유자 답(`reviews/round-18-owner-answers.md:37` union O7·O8), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-104), 소유자 답(`reviews/round-18-owner-answers.md:41` 설계서 메모 4)
 - 라운드: 18
 - 까닭: `reviews/round-18-owner-answers.md:37`
+- 충돌:
+  > `reviews/round-18-owner-answers.md:37`의 "U9: 쓰기 없이 경고등만 바뀐 노드는 유효 스키마 변경 통지로 배달되고, 게이트가 좁혀 쓰기 없이 켜진 `VALUE_TYPE_MISMATCH` 경고의 `source`는 `'gate'`이며, 기록의 `expected.effective`는 그 커밋의 유효 목록이고, 기본 입력은 유효 목록이 바뀌면 초안을 다시 판정한다."는 소유자 답과 다르다: 이 항목의 `valueTypeMismatch`·`valueTypeMismatches`·`VALUE_TYPE_MISMATCH`는 확정 이름 `typeMismatch`·`typeMismatches`·`SCHEMA_FORM_WARNING.TYPE_MISMATCH`로 읽는다(SURFACE-061). 소유자 답이 이긴다(`reviews/round-18-owner-answers.md:41`).
 
 ### BLUEPRINT-042 `union` 노드의 목적·해석·기본 입력에서 그대로인 것 — 형을 고르는 기능이 아님, 받아 줄 형이 정확히 하나일 때만 변환, 선언 순서·검증기 규칙을 쓰지 않음, 기본 입력은 문자열 입력
 
@@ -888,3 +898,29 @@
 - 까닭: `reviews/round-18-closing.md:2466-2471`
 - 충돌:
   > `reviews/round-18-closing.md:2441`의 "켜진 동안 유효 목록은 `['number']`로 `schemaType`과 같은 참조다"는 18C-105의 결정과 다르다: 좁혀지지 않은 노드의 유효 목록은 `schemaType` 그 값(스칼라면 스칼라, 배열이면 그 배열 참조)이며, E26에서 게이트가 켜진 동안의 유효 목록은 `schemaType`과 같은 `'number'`다(WRITE-099). 18C-105의 결정이 이긴다(`reviews/round-18-closing.md:2956-2957`).
+
+### BLUEPRINT-046 청사진 내부 이름은 약어 없이 풀 네임 — `PropertyDecl`은 `PropertyDeclaration` 같은 풀 네임으로(PROCESS-023·SURFACE-023), PR-1의 청사진 `DETAIL.md`에서 적음
+
+- 결정:
+  > 구현 이름은 PR-1(청사진 fractal)에서 정할 때 풀 네임으로 짓는다(예: `PropertyDeclaration`).
+  > 근거 규칙은 이미 있다: 약어 금지·처음 나올 때 풀어 씀(PROCESS-023), 이름은 줄임말이 아닌 풀 네임(SURFACE-023).
+  > BLUEPRINT-002의 결정 원문은 옛 문서 인용이므로 그대로 두고, PR-1의 청사진 `DETAIL.md`가 이 이름을 적을 때 반영한다.
+- 보충:
+  > 소유자(설계서 메모 1): "약어 (Decl)을 쓰지말고" (`reviews/round-18-owner-answers.md:38`)
+- 상태: 현행
+- 출처: `reviews/round-18-owner-answers.md:38`(정본, 반영 칸)
+- 닫은 사람: 소유자 답(`reviews/round-18-owner-answers.md:38` 설계서 메모 1)
+- 라운드: 18
+- 까닭: `reviews/round-18-owner-answers.md:38`
+
+### BLUEPRINT-047 조각의 구현 타입 이름은 `SchemaFragment` — React `Fragment`와 겹침을 피함, 개념어 "조각"과 FRAGMENT 영역 이름은 그대로
+
+- 결정:
+  > 구현의 타입 이름은 `SchemaFragment`로 짓는다(개념어 "조각"과 원장의 FRAGMENT 영역 이름은 그대로).
+- 보충:
+  > 소유자(설계서 메모 2): "Fragment 는 매력적인데, React Fregment <></> 랑 충돌할거같구나. 내부명이라 괜찮을거같지만, 그래도 명칭을 바꿨으면 해. SchemaFragment 정도로." (`reviews/round-18-owner-answers.md:39`)
+- 상태: 현행
+- 출처: `reviews/round-18-owner-answers.md:39`(정본, 반영 칸)
+- 닫은 사람: 소유자 답(`reviews/round-18-owner-answers.md:39` 설계서 메모 2)
+- 라운드: 18
+- 까닭: `reviews/round-18-owner-answers.md:39`

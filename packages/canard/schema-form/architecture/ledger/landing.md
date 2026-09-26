@@ -133,7 +133,7 @@
 | LANDING-123 | 대체됨: 작업은 `feature/schema-form-redesign` 브랜치에 모이고 그 브랜치가 우산 PR — 14라운드에 우산 브랜치는 `refactor/schema-form-internal-architecture` | 대체됨(→ LANDING-051) | 편집자 결정(14라운드, `08-design-a-to-z.md:551`) |
 | LANDING-124 | 명령 RequestEmitChange·RequestInjection과 공개 훅의 거취 — 미확인 | 현행(기록) | 편집자 결정(18라운드, 원장 토큰 검사가 찾은 미결, `reviews/round-18-agenda.md:151`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-86; 명령 둘과 훅 셋에 한정), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-87; 나머지 공개 표면과 타입별 빈 값) |
 | LANDING-125 | 이주(S1) — 파서의 강제 변환이 빠지고, 바꾸지 못한 값은 `NaN` 대신 받은 그대로 든다 | 현행 | 소유자 답(`reviews/round-18-owner-answers.md:8` S1 이어서; 뜻이 그대로인 변환만), 소유자 답(`reviews/round-18-owner-answers.md:9` S1 셋째; 받은 그대로 든다, 경고등, `onError` 전달), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-40), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-93) |
-| LANDING-126 | 이주(S1) — 변환 실패 `onError` 기록의 level은 `warning`, 가칭 `VALUE_TYPE_MISMATCH` | 현행 | 편집자 결정(18라운드, `reviews/round-18-owner-answers.md:9`; 경고의 level·가칭 코드·보내는 때), 소유자 답(`reviews/round-18-owner-answers.md:17` 12-7; level `warning`) |
+| LANDING-126 | 이주(S1) — 변환 실패 `onError` 기록의 level은 `warning`, 가칭 `VALUE_TYPE_MISMATCH` | 현행 | 편집자 결정(18라운드, `reviews/round-18-owner-answers.md:9`; 경고의 level·가칭 코드·보내는 때), 소유자 답(`reviews/round-18-owner-answers.md:17` 12-7; level `warning`), 소유자 답(`reviews/round-18-owner-answers.md:41` 설계서 메모 4) |
 | LANDING-127 | 이주(S1) — 변환 실패 기록은 검증기 유무와 무관하게 보낸다 | 현행 | 편집자 결정(18라운드, `reviews/round-18-owner-answers.md:9`; 보내는 때) |
 | LANDING-128 | 이주(18라운드) — 재귀 객체 스키마의 실패가 명시적 청사진 오류 `RECURSIVE_SHAPE_UNBOUNDED`(가칭)로 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-01) |
 | LANDING-129 | 이주(18라운드) — 원시 타입 둘 이상의 `type` 배열이 `union` 잎과 문자열 입력으로 선다 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-02), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-93) |
@@ -177,7 +177,7 @@
 | LANDING-167 | 이주(18라운드) — 인라인 입력을 둔 가상 노드 아래 경로의 `find`가 참조된 노드를 돌려준다 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-68) |
 | LANDING-168 | 이주(18라운드) — Form 속성의 잠금 동안 입력의 `onChange`는 버려진다 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-71) |
 | LANDING-169 | 이주(18라운드) — 루트 수준 검증 오류의 `dataPath`가 `'/'`에서 `''`로 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-74) |
-| LANDING-170 | 명령 `RequestEmitChange`·`RequestInjection`은 새 설계에 없음(이주 행 없음), 공개 훅 셋 `useChildNodeComponentMap`·`useChildNodeErrors`·`useFormSubmit`은 이름·시그니처 유지, `useChildNodeErrors`는 PR-7에 새 통지로 다시 구현 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-86), 소유자 답(`reviews/round-18-owner-answers.md:27` 18C 검토 5번; 제거 확인) |
+| LANDING-170 | 명령 `RequestEmitChange`·`RequestInjection`은 새 설계에 없음(이주 행 없음), 공개 훅 셋 `useChildNodeComponentMap`·`useChildNodeErrors`·`useFormSubmit`은 이름·시그니처 유지, `useChildNodeErrors`는 PR-7에 새 통지로 다시 구현 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-86), 소유자 답(`reviews/round-18-owner-answers.md:27` 18C 검토 5번; 제거 확인), 소유자 답(`reviews/round-18-owner-answers.md:40` 설계서 메모 3) |
 | LANDING-171 | 이주(18라운드) — 빈 중첩 객체·배열 노드의 `outputValue`는 `omitEmpty` 아래에서 `undefined`(오늘 `normalizedValue`는 `{}`·`[]`) | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-87) |
 | LANDING-172 | 이주(18라운드) — `['object','string']`·`['object','array']`·`['array','string']`은 터미널 강제 `union`(안쪽 `find` 없음, `{}`·`[]` 방출은 `omitEmpty: false`) | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-93) |
 | LANDING-173 | 이주(18라운드) — `type` 배열과 함께 적힌 `nullable:true`는 nullable(오늘 배열 경로가 보지 않음) | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-93) |
@@ -1881,11 +1881,14 @@
 - 보충:
   > 열린 부분(level `warning`만. 가칭 코드와 보내는 때는 같은 문장이라 함께 둔다): "변환하지 못한 입력의 `onError` 기록 level을 편집자가 `'warning'`으로 정해도 되는가, `'error'`인가." (`reviews/round-18-agenda.md:165`)
   > 소유자(12-7 답): "형변환 실패로 문제가 생기는 경우에 대한 대응은 FormType 이 하기로 했잖아. 그래서 개발단계에서는 중요한데, 리얼부터는 어쩔 수 없다고 생각하긴 해. warning 이면 되지않을까?" (`reviews/round-18-owner-answers.md:17`)
+  > 반영 칸(설계서 메모 4): "게터 `typeMismatch: boolean`, 경로 목록 `typeMismatches: readonly string[]`, 경고 코드 `SCHEMA_FORM_WARNING.TYPE_MISMATCH`." (`reviews/round-18-owner-answers.md:41`)
 - 상태: 현행
-- 출처: `reviews/round-18-owner-answers.md:9`(정본, S1 셋째의 반영 칸. 표 행이라 조각 번호로 나눌 수 없다. LANDING-120에서 분할), `reviews/round-18-owner-answers.md:17`, 같은 규칙의 원장 항목 ERROR-186
-- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-owner-answers.md:9`; 경고의 level·가칭 코드·보내는 때), 소유자 답(`reviews/round-18-owner-answers.md:17` 12-7; level `warning`)
+- 출처: `reviews/round-18-owner-answers.md:9`(정본, S1 셋째의 반영 칸. 표 행이라 조각 번호로 나눌 수 없다. LANDING-120에서 분할), `reviews/round-18-owner-answers.md:17`, 같은 규칙의 원장 항목 ERROR-186, `reviews/round-18-owner-answers.md:41`
+- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-owner-answers.md:9`; 경고의 level·가칭 코드·보내는 때), 소유자 답(`reviews/round-18-owner-answers.md:17` 12-7; level `warning`), 소유자 답(`reviews/round-18-owner-answers.md:41` 설계서 메모 4)
 - 라운드: 18
 - 까닭: `reviews/round-18-owner-answers.md:17`, `reviews/round-18-owner-answers.md:8-9`
+- 충돌:
+  > `reviews/round-18-owner-answers.md:9`의 "`onError` 기록의 level은 `warning`이고(값을 보존하므로 폼의 약속은 지켜진다. error 층은 throw·거부·싱크로 드러나야 해 통보 3과 부딪힌다), 가칭 `SCHEMA_FORM_WARNING.VALUE_TYPE_MISMATCH`를 노드의 정합 상태가 켜질 때마다 한 번 보낸다(path, 기대 형, 받은 값의 종류, 쓰기 출처)."는 소유자 답과 다르다: 이 항목의 `valueTypeMismatch`·`valueTypeMismatches`·`VALUE_TYPE_MISMATCH`는 확정 이름 `typeMismatch`·`typeMismatches`·`SCHEMA_FORM_WARNING.TYPE_MISMATCH`로 읽는다(SURFACE-061). 소유자 답이 이긴다(`reviews/round-18-owner-answers.md:41`).
 
 ### LANDING-127 이주(S1) — 변환 실패 기록은 검증기 유무와 무관하게 보낸다
 
@@ -2426,9 +2429,10 @@
   > 【추론】 같은 원문의 나머지 미확인(`Form` props 14, `FormHandle` 8, `NodeEventType` 17종의 개별 생사, `ValidationMode`, `oneOfIndex`/`anyOfIndices`, `type: 'virtual'`, root 폴백, 빈 값 경로)은 이 행의 범위가 아니며, `alias`·`placeholder`·`errorMessages`는 18C-72가 닫는다.
 - 보충:
   > 소유자(18C 검토 5번): "브레이킹 체인지를 할거라 제거되는 명령은 없애버려도 됩니다." (`reviews/round-18-owner-answers.md:27`)
+  > 소유자(설계서 메모 3): "publish 가 없어진건.. 자의적으로 이벤트를 호출할 수 없어서 좀 그렇긴 한데, 이 4개 기능을 4개로 분할해서 두지 말고 하나의 메소드에 여러 행위 타입을 파라미터로 받아서 행동하게 해줘. 이전에는 publish 에 섞여있어서 메소드로 안보였는데, 이걸 별도 메소드로 빼니까 node 의 정체성이 좀 깨지는걸 action 이나 interaction 이나 뭐든.... publish 를 부활시키던가..." (`reviews/round-18-owner-answers.md:40`)
 - 상태: 현행
-- 출처: `reviews/round-18-closing.md:2256-2265`(정본)
-- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-86), 소유자 답(`reviews/round-18-owner-answers.md:27` 18C 검토 5번; 제거 확인)
+- 출처: `reviews/round-18-closing.md:2256-2265`(정본), `reviews/round-18-owner-answers.md:40`
+- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-86), 소유자 답(`reviews/round-18-owner-answers.md:27` 18C 검토 5번; 제거 확인), 소유자 답(`reviews/round-18-owner-answers.md:40` 설계서 메모 3)
 - 라운드: 18
 - 까닭: `reviews/round-18-closing.md:2267-2268`
 

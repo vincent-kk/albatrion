@@ -84,7 +84,7 @@
 | WRITE-076 | 자동 변환은 늘 켜져 있다 — 끄는 옵션을 두지 않는다 | 현행 | 소유자 답(`reviews/round-18-owner-answers.md:11` 12-1) |
 | WRITE-077 | 자동 변환을 끄는 옵션 — 두지 않되 필요하면 `<Form>`의 prop 하나로 | 현행 | 소유자 답(`reviews/round-18-owner-answers.md:11` 12-1) |
 | WRITE-078 | 포커스 아웃 trim의 쓰기는 자동 쓰기(여섯째) — 억제 비트의 대상, 같으면 쓰지 않음 | 현행 | 소유자 답(`reviews/round-18-owner-answers.md:12` 12-2), 소유자 답(`reviews/round-17-owner-answers.md:11` R17-3 "다") |
-| WRITE-079 | 비객체 V의 `Merge`는 그 자리를 통째로 바꾼다 — 부분 쓰기라 채움은 생긴 노드에만, 로드 아닌 쓰기의 `null`은 채움을 받지 않음 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-16) |
+| WRITE-079 | 비객체 V의 `Merge`는 그 자리를 통째로 바꾼다 — 부분 쓰기라 채움은 생긴 노드에만, 로드 아닌 쓰기의 `null`은 채움을 받지 않음 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-16), 소유자 답(`reviews/round-18-owner-answers.md:41` 설계서 메모 4) |
 | WRITE-080 | 입력 `onChange`의 쓰기 종류 — 옵션 없으면 입력 쓰기(부분), `Overwrite`면 그 노드의 로드, `Merge`면 부분 쓰기 | 분할됨(→ WRITE-091, WRITE-090) | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-16), 소유자 답(`reviews/round-18-owner-answers.md:26` 18C 검토 4번; 대체) |
 | WRITE-081 | `Overwrite`는 V가 `undefined`여도 로드이며 채움을 받는다 — 채움 없이 빼는 길은 `Merge`·`DisableAutomaticWrites`·옵션 없는 입력 `onChange(undefined)` | 대체됨(→ WRITE-090) | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-17), 소유자 답(`reviews/round-18-owner-answers.md:26` 18C 검토 4번; 대체) |
 | WRITE-082 | 호스트 채움 값의 분배와 객체 호스트 '없음'의 정의(상태 둘에서 계산) — `{}`도 호스트 `default`를 막지 않음 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-18) |
@@ -98,7 +98,7 @@
 | WRITE-090 | 채움은 노드가 생길 때만 — 로드는 마운트·`reset()`·`resetSubtree()`, `setValue(V)`는 전체 교체 쓰기(`setValue(undefined)`는 채움 없이 비우고 `setValue(getValue())`는 멱등) | 현행 | 소유자 답(`reviews/round-18-owner-answers.md:26` 18C 검토 4번), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-96), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-97), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-102), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-103) |
 | WRITE-091 | 입력 `onChange`의 쓰기 종류에서 그대로인 것 — 옵션 없으면 입력 쓰기(부분, 자기 입력에 Refresh 없음), 두 번째 인자로 비트마스크, `Merge`면 부분 쓰기, 억제 비트, `handleChange`의 부수 효과는 그대로 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-16) |
 | WRITE-092 | null은 키 없는 전체 교체다(D-1) — 모든 자식의 원본이 없음, null 아래에 원본을 남기지 않음 | 현행 | 원리(D-1 원리에서 도출, `adr/0013-core-does-not-rewrite-values.md:3`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-16) |
-| WRITE-093 | `union` 행의 해석 — 기본 spec과 유효 목록, `isMember`·`convert`·`interpret`(규칙 A: 순서 무관·멱등·무할당), 노드에 드는 모든 쓰기의 경계와 한 진입의 두 번 해석, `Merge`는 통째, `trim`은 `finishInput`, PR-2·PR-4 게이트 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-91), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-104) |
+| WRITE-093 | `union` 행의 해석 — 기본 spec과 유효 목록, `isMember`·`convert`·`interpret`(규칙 A: 순서 무관·멱등·무할당), 노드에 드는 모든 쓰기의 경계와 한 진입의 두 번 해석, `Merge`는 통째, `trim`은 `finishInput`, PR-2·PR-4 게이트 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-91), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-104), 소유자 답(`reviews/round-18-owner-answers.md:41` 설계서 메모 4) |
 | WRITE-094 | `setValue(V)`는 로드가 아니지만 V에 없는 경로의 원본(잠복 원본 포함)을 없음으로 만든다 — 잠복 원본이 지워지는 길 셋, 멱등은 방출 값·채움·에지에 대해 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-96) |
 | WRITE-095 | 아이템을 만들거나 없애는 모든 쓰기는 스냅숏 배열의 자리를 맞춘다 — 새 자리는 `undefined`, 값은 싣지 않음, O(배열 길이) | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-97), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-105) |
 | WRITE-096 | null 계약의 문구 — 로드가 아닌 쓰기로 온 `null` 아래 자식은 채움 없이 없음, 로드로 온 `null`은 채움, 쓰기 종류에 호출자 전체 교체 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-100) |
@@ -1128,12 +1128,15 @@
   > 【추론】 호출자 오류로 던지지 않고 조용히 버리지도 않는다.
   > 【추론】 그래서 새 코드가 없다.
   > 【추론】 틀린 종류의 값이면 S1 규칙대로 경고등이 켜지고 `VALUE_TYPE_MISMATCH` 경고가 간다.
-- 보충: 없음
+- 보충:
+  > 반영 칸(설계서 메모 4): "게터 `typeMismatch: boolean`, 경로 목록 `typeMismatches: readonly string[]`, 경고 코드 `SCHEMA_FORM_WARNING.TYPE_MISMATCH`." (`reviews/round-18-owner-answers.md:41`)
 - 상태: 현행
-- 출처: `reviews/round-18-closing.md:463-474`(정본)
-- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-16)
+- 출처: `reviews/round-18-closing.md:463-474`(정본), `reviews/round-18-owner-answers.md:41`
+- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-16), 소유자 답(`reviews/round-18-owner-answers.md:41` 설계서 메모 4)
 - 라운드: 18
 - 까닭: `reviews/round-18-closing.md:502-510`
+- 충돌:
+  > `reviews/round-18-closing.md:474`의 "【추론】 틀린 종류의 값이면 S1 규칙대로 경고등이 켜지고 `VALUE_TYPE_MISMATCH` 경고가 간다."는 소유자 답과 다르다: 이 항목의 `valueTypeMismatch`·`valueTypeMismatches`·`VALUE_TYPE_MISMATCH`는 확정 이름 `typeMismatch`·`typeMismatches`·`SCHEMA_FORM_WARNING.TYPE_MISMATCH`로 읽는다(SURFACE-061). 소유자 답이 이긴다(`reviews/round-18-owner-answers.md:41`).
 
 ### WRITE-080 입력 `onChange`의 쓰기 종류 — 옵션 없으면 입력 쓰기(부분), `Overwrite`면 그 노드의 로드, `Merge`면 부분 쓰기
 
@@ -1466,10 +1469,11 @@
   > 무엇: `src/core/behaviors/utils/parse/__tests__/interpret.table.test.ts`·`interpret.properties.test.ts`, `src/core/behaviors/unionBehavior/__tests__/union.write-paths.test.ts`·`union.mismatch-light.test.ts`, 렌더 시나리오 `union.gated-effective-list`·`union.entry-two-step`·`union.rule-a`·`union.ambiguous`·`union.integer`·`union.object-array`·`union.non-json-value`·`union.omit-empty`·`union.default-fill`·`union.expressions`를 돌린다.
   > 통과: 변환 표의 모든 칸, 전수 실행의 12건·순서 무관·멱등·쓰기당 할당 0, 쓰기 경로마다의 사례, 경고등의 켜짐·재발송 규칙과 기록 칸이 위대로다.
   > 실패: 전수 실행에서 12건 밖의 경우나 순서 위반이 나오면 `convert` 표를 고치고, 규칙이 사례를 하나로 정하지 못하면 이 블록을 고친다.
-- 보충: 없음
+- 보충:
+  > 반영 칸(설계서 메모 4): "게터 `typeMismatch: boolean`, 경로 목록 `typeMismatches: readonly string[]`, 경고 코드 `SCHEMA_FORM_WARNING.TYPE_MISMATCH`." (`reviews/round-18-owner-answers.md:41`)
 - 상태: 현행
-- 출처: `reviews/round-18-closing.md:2482-2519,2566-2569`(정본), `reviews/round-18-closing.md:2908-2910,2914`
-- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-91), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-104)
+- 출처: `reviews/round-18-closing.md:2482-2519,2566-2569`(정본), `reviews/round-18-closing.md:2908-2910,2914`, `reviews/round-18-owner-answers.md:41`
+- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-91), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-104), 소유자 답(`reviews/round-18-owner-answers.md:41` 설계서 메모 4)
 - 라운드: 18
 - 까닭: `reviews/round-18-closing.md:2556-2564`
 - 충돌:

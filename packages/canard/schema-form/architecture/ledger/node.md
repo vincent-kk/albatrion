@@ -46,7 +46,7 @@
 | NODE-038 | `emit`의 키 순서(Q14)가 18라운드 안건으로 이관됨 | 대체됨(→ SETTLE-042) | 편집자 결정(17라운드, 18라운드 안건으로 이관, `reviews/round-18-agenda.md:79`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-39) |
 | NODE-039 | 2단계 생명주기가 새 구조에서도 필요한가 — 생성이 곧 첫 정착(GOAL-071)이 답함 | 대체됨(→ GOAL-071) | 편집자 결정(4라운드, `04-inherited-constraints.md:35` T-20; GOAL-071) |
 | NODE-040 | 가상 노드 아래 경로의 `find` 별칭 여부(S11의 남은 물음)가 18라운드 안건에 남음 | 대체됨(→ NODE-054) | 편집자 결정(17라운드, 18라운드 안건으로 이관, `reviews/round-18-agenda.md:112`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-68) |
-| NODE-041 | 공개 가드 (가칭) `isUnionNode`, 판별 합집합과 `InferSchemaNode`의 `union` 멤버, `type`은 `union`·`strategy`는 `terminal` — 가드는 열 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-02), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-89), 소유자 답(`reviews/round-18-owner-answers.md:29` union 범위; 범위) |
+| NODE-041 | 공개 가드 (가칭) `isUnionNode`, 판별 합집합과 `InferSchemaNode`의 `union` 멤버, `type`은 `union`·`strategy`는 `terminal` — 가드는 열 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-02), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-89), 소유자 답(`reviews/round-18-owner-answers.md:29` union 범위; 범위), 소유자 답(`reviews/round-18-owner-answers.md:41` 설계서 메모 4) |
 | NODE-042 | 터미널 전략의 정적 결정 — 셈에 드는 선언, 경우의 정의(조각 중첩), 축약 비교 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-09) |
 | NODE-043 | 탐색은 형상에 있는 노드만 — `structure`는 이름에서 형상 안 자식으로, `subnodes`·`variant`·`oneOfIndex` 내부 칸 폐기 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-33) |
 | NODE-044 | 형상을 떠난 노드는 떼어진다 — 읽기는 마지막 커밋으로 고정(구조 읽기는 함께 떼어진 하위 트리, `rootNode`·절대 경로·`globalState`·`globalErrors`는 살아 있는 트리), 쓰기는 루트의 (경로, 종류) 잠복 원본만, 구독은 남되 발화 없음, 명령과 상태 진입은 무동작, 다시 들면 새 인스턴스 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-34) |
@@ -63,7 +63,7 @@
 | NODE-055 | 노드 구조 벤치 B1–B6의 합격선 — PR-2에서 V8과 JavaScriptCore로, B1·B5·B6은 `guard:check`의 선 안, B2는 추정의 1.5배 이내이며 오늘보다 크지 않음, B3은 같은 맵, B4는 보고만 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-31) |
 | NODE-056 | S1 parse 함수의 자리는 `src/core/behaviors/utils/parse/` — 부르는 쪽은 동작 행의 `interpret` 칸과 기본 union 입력(쓰지 않는 호출), 오늘의 `src/core/parsers/`는 레거시로 옮기고 새 parse를 가져오지 않음 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-36), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-92) |
 | NODE-057 | 노드 필드 `type`·`nullable`·`schemaType` — `type`은 `'union'`이 더해진 단일 문자열, `nullable`은 그대로, `schemaType`은 이름을 두고 계산된 허용 형(`'integer'` 보존, `'null'`은 뺌, union이면 칸마다 하나를 얼린 배열), 새 필드 없음 | 현행 | 소유자 답(`reviews/round-18-owner-answers.md:31` union O1), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-90) |
-| NODE-058 | `union` 노드의 공개 형 — `UnionMemberType`·`UnionSchemaType`, `UnionNode`와 판별 `value`, props의 `value`·`onChange`, 종류별 `schemaType` 좁힘, 가드 `isUnionNode`, `InferSchemaNode`·`InferValueType`·`InferJSONSchema`의 사상, 참조 안정성, PR-2·PR-7 게이트 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-89) |
+| NODE-058 | `union` 노드의 공개 형 — `UnionMemberType`·`UnionSchemaType`, `UnionNode`와 판별 `value`, props의 `value`·`onChange`, 종류별 `schemaType` 좁힘, 가드 `isUnionNode`, `InferSchemaNode`·`InferValueType`·`InferJSONSchema`의 사상, 참조 안정성, PR-2·PR-7 게이트 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-89), 소유자 답(`reviews/round-18-owner-answers.md:41` 설계서 메모 4) |
 
 ## 항목
 
@@ -607,9 +607,10 @@
   > 편집자 결정(18C-89): "【추론】 `UnionNode`는 `valueTypeMismatch`를 판별자로 두 멤버로 나뉜다." (`reviews/round-18-closing.md:2339`)
   > 편집자 결정(18C-89): "【추론】 공개 가드 `isUnionNode(x) = isSchemaNode(x) && x.type === 'union'`을 더한다(이름은 `reviews/round-18-owner-answers.md:28`)." (`reviews/round-18-closing.md:2347`)
   > 편집자 결정(18C-89): "【추론】 `isTerminalNode(unionNode)`는 참이고 그 반환 형 합집합에 `UnionNode`가 들어가며, `isBranchNode(unionNode)`는 거짓이다." (`reviews/round-18-closing.md:2348`)
+  > 반영 칸(설계서 메모 4): "게터 `typeMismatch: boolean`, 경로 목록 `typeMismatches: readonly string[]`, 경고 코드 `SCHEMA_FORM_WARNING.TYPE_MISMATCH`." (`reviews/round-18-owner-answers.md:41`)
 - 상태: 현행
-- 출처: `reviews/round-18-closing.md:75-77`(정본), `reviews/round-18-closing.md:2338-2339,2347-2348`, `reviews/round-18-owner-answers.md:29`
-- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-02), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-89), 소유자 답(`reviews/round-18-owner-answers.md:29` union 범위; 범위)
+- 출처: `reviews/round-18-closing.md:75-77`(정본), `reviews/round-18-closing.md:2338-2339,2347-2348`, `reviews/round-18-owner-answers.md:29`, `reviews/round-18-owner-answers.md:41`
+- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-02), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-89), 소유자 답(`reviews/round-18-owner-answers.md:29` union 범위; 범위), 소유자 답(`reviews/round-18-owner-answers.md:41` 설계서 메모 4)
 - 라운드: 18
 - 까닭: `reviews/round-18-closing.md:84-91`, `reviews/round-18-closing.md:2367-2370`
 - 충돌:
@@ -1000,9 +1001,12 @@
   > 무엇: tsc 전용 `src/types/__tests__/union.type-test.ts`가 위 사상, `InferValueType`·`InferJSONSchema`의 형, union props의 `value`(판별)와 `onChange`(목록 형)를 단언하고, `union.schema-type-invariant.test.ts`가 같은 칸의 노드와 배열 아이템의 `schemaType` 참조가 같고 얼려 있음을 단언한다.
   > 통과: 모든 사상이 위대로이고 tsc와 시험이 통과한다.
   > 실패: 형 수준이 런타임 절차와 다른 답을 내면 그 모양을 넓은 형으로 두고, 넓혀도 어긋나면 이 블록을 고친다.
-- 보충: 없음
+- 보충:
+  > 반영 칸(설계서 메모 4): "게터 `typeMismatch: boolean`, 경로 목록 `typeMismatches: readonly string[]`, 경고 코드 `SCHEMA_FORM_WARNING.TYPE_MISMATCH`." (`reviews/round-18-owner-answers.md:41`)
 - 상태: 현행
-- 출처: `reviews/round-18-closing.md:2337-2365,2372-2375`(정본)
-- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-89)
+- 출처: `reviews/round-18-closing.md:2337-2365,2372-2375`(정본), `reviews/round-18-owner-answers.md:41`
+- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-89), 소유자 답(`reviews/round-18-owner-answers.md:41` 설계서 메모 4)
 - 라운드: 18
 - 까닭: `reviews/round-18-closing.md:2367-2370`
+- 충돌:
+  > `reviews/round-18-closing.md:2339`의 "【추론】 `UnionNode`는 `valueTypeMismatch`를 판별자로 두 멤버로 나뉜다."는 소유자 답과 다르다: 이 항목의 `valueTypeMismatch`·`valueTypeMismatches`·`VALUE_TYPE_MISMATCH`는 확정 이름 `typeMismatch`·`typeMismatches`·`SCHEMA_FORM_WARNING.TYPE_MISMATCH`로 읽는다(SURFACE-061). 소유자 답이 이긴다(`reviews/round-18-owner-answers.md:41`).

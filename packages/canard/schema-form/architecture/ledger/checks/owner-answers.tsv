@@ -229,3 +229,7 @@ reviews/round-18-owner-answers.md:34	18	union O4	검토 댓글: "추가 설명 �
 reviews/round-18-owner-answers.md:35	18	union O5	검토 댓글: "권장동의" (2026-09-26)
 reviews/round-18-owner-answers.md:36	18	union O6	검토 댓글: "네 동의합니다. 하지만, 반드시 jsonSchema 원래 type 도 전달했으면 좋겠습니다. number -> integer 이걸
 reviews/round-18-owner-answers.md:37	18	union O7·O8	검토 댓글(O7): "해당 동작이 논리적으로 정합하다면 괜찮습니다. 저는 제가 불필요한 jsonSchema 의 하위 전용 문법을 만드는걸 원치는
+reviews/round-18-owner-answers.md:38	18	설계서 메모 1	"약어 (Decl)을 쓰지말고" (2026-09-27, 설계서 검토)
+reviews/round-18-owner-answers.md:39	18	설계서 메모 2	"Fragment 는 매력적인데, React Fregment <></> 랑 충돌할거같구나. 내부명이라 괜찮을거같지만, 그래도 명칭을 바꿨으면 해. SchemaFragment 정도로." (2026-09-27, 설계서 검토)
+reviews/round-18-owner-answers.md:40	18	설계서 메모 3	"publish 가 없어진건.. 자의적으로 이벤트를 호출할 수 없어서 좀 그렇긴 한데, 이 4개 기능을 4개로 분할해서 두지 말고 하나의 메소드에 여러 행위 타입을 파라미터로 받아서 행동하게 해줘. 이전에는 publish 에 섞여있어서 메소드로 안보였는데, 이걸 별도 메소드로 빼니까 node 의 정체성이 좀 깨지는걸 action 이나 interaction 
+reviews/round-18-owner-answers.md:41	18	설계서 메모 4	"typeMismatch 정도가 적절하지 않나 싶네. 아님 더 짧게 mismatch 같은것도 괜찮고 근데 너무 포괄적이면 또 파악하기 힘드니까.." / 권장(`typeMismatch`·`typeMismatches`·`TYPE_MISMATCH`)에 "그래 그걸로 메모해둬" (2026-09-27, 설계서 검토)
