@@ -31,7 +31,7 @@
    - 출발점은 `reviews/round-18-closing.md` 전체다. 블록마다 이름·코드·번호로 원장을 grep해 같은 주제의 현행 항목과 대조하고, 끝으로 개수와 이름을 17개 파일 전체에서 훑는다.
    - 지적 양식은 한 건마다 `F<n> <높음|중간|낮음>`, 두 항목과 상태, 원문 인용(`path:line`), 왜 모순인가, 제안(어느 쪽이 이기는가, 또는 "소유자 물음")이다.
    - 원문과 판정은 `reviews/raw-round18-final-check.md`에 적는다(`reviews/raw-round18-ledger-check.md`가 선례). 검증자가 원문과 대조해 거른 뒤 고침 명세로 반영한다. 지시서 초안은 세션 scratchpad의 `brief-final-check.md`였다(저장소에 없으므로 위 다섯으로 다시 쓴다).
-2. **설계 완료를 확정한다.** 열림 0, 검사 0, 최종 검증 지적 0이 됐다. 소유자가 "실제 개발 계획(PR별 분화와 개발 범위 분리) 작성 직전"에 마지막 최종 점검을 하겠다고 했으므로, 여기서 멈춰 점검 자료(`reviews/round-18-closing-summary.md` §D, `reviews/raw-round18-final-check.md`, 봉인 뒤 계획 정련안)를 올린다. 확정 뒤 3–5로 간다.
+2. **설계 완료 확정과 개발계획 — 끝났다(2026-09-27).** 소유자가 설계서 검토 메모 넷(38–41행)을 주고 원장 반영을 지시했으며, 개발계획을 `plan/`에 썼다. 우산 구조: `1.0.0-beta` 브랜치의 우산 PR #344(`master` 기준, 빈 스캐폴드 커밋), 자식은 설계 PR(이 브랜치) → 개발 PR(원장 PR-0 코드 부분…PR-7) → 플러그인 PR → 정리·릴리스 PR(PR-8). 소유자 결정 P1–P4(`plan/README.md` §4: 플러그인 일의 자리, 레거시 삭제 시점, 인접 단계 합침, 릴리스 전환 PR 시점)가 열려 있다.
 3. **원장에서 ADR과 설계문서를 만든다.** 결정마다 원장 번호를 단다. 만든 뒤 §4의 검사를 원장 대 새 문서로 한 번 더 돌린다(새 문서의 문장이 원장 항목에 있는지). union의 설계문서는 `reviews/raw-round18-union-swarm/merged-v3.md`를 원장 번호로 바꿔 쓴다.
 4. **옛 문서를 백업 디렉토리로 옮긴다.** 소유자의 절 단위 통과는 새 설계문서에서만 한다(12-6).
 5. **PR-0**(문서 최종화, 프로토타입 v7, 시나리오 패키지 뼈대, vitest `test.projects`), 그다음 **PR-1**. PR 계획은 원장 LANDING 영역(`ledger/landing.md`)이 정본이다. 프로토타입 v7은 18C-88의 방출 규칙과 18C-91의 규칙 A(`isMember`·`convert`·`interpret`, 동점 12건)를 따른다. v6은 빈 루트를 `undefined`로 낸다.
@@ -83,6 +83,7 @@ for d in GOAL SCHEMA CONTROLS BLUEPRINT FRAGMENT VALUE WRITE SETTLE EVENT VALIDA
   node ledger/checks/sentence-check.mjs $TMPDIR/bundles/bundle-$d.md ledger/checks/sentence-classified.tsv ledger/*.md | tail -1; done
 node ledger/checks/tokens.mjs inventory $TMPDIR/inv.json 0*.md open-questions.md adr/*.md README.md HANDOFF.md
 node ledger/checks/tokens.mjs check $TMPDIR/inv.json ledger/*.md | head -1   # 잔여의 판정은 ledger/checks/token-review.md
+node ledger/checks/plan-links.mjs plan/*.md -- ledger/*.md              # 개발계획서가 인용한 ID는 모두 현행, PR 정의 항목은 모두 인용됨
 ```
 
 - **원천 묶음.** `bundle-*.md`는 `section-map.tsv`에서 언제든 다시 만든다.
@@ -102,6 +103,7 @@ node ledger/checks/tokens.mjs check $TMPDIR/inv.json ledger/*.md | head -1   # �
 | `ledger/checks/sentence-classified.tsv` | 원장에 인용되지 않은 문장의 분류(RESTATES·VIEW·HISTORY·OUT) |
 | `ledger/checks/owner-answers.tsv` | 기록된 소유자 답 목록(235) |
 | `ledger/checks/token-review.md` | 토큰 검사 잔여의 판정 |
+| `plan/README.md`, `plan/pr-*.md` | 개발계획(2026-09-27): 우산 구조(`1.0.0-beta`, PR #344), 단계별 계획서 11편(원장 PR-0…PR-8 + 플러그인 + 릴리스 전환), 독립 검증 장치, 소유자 결정 P1–P4 |
 | `reviews/round-18-closing.md` | 18라운드 편집자 결정의 정본(18C-01…105) |
 | `reviews/round-18-closing-summary.md` | 소유자 검토용 요약(원장이 인용하지 않음). §D가 검토 결과 |
 | `reviews/round-18-agenda.md` | 18라운드 안건. 행마다 닫힘 표지 |
