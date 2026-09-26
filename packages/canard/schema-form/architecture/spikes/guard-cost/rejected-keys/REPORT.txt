@@ -1,0 +1,178 @@
+Spike: rejected-key derivation from validator errors (round-5-decisions §11 row C-4, D-3 option iii)
+=====================================================================================================
+
+Question: under (iii) the form never reads prohibition fragments, so the residual-key UX (round-4-spec A8 /
+round-4 F8) must learn WHICH key the validator rejected from the validator's errors. Can a `rejectedKey`
+be derived per error, and by whom (plugin vs core)?
+
+Files in this directory
+  enumerate.mjs   runs every rejection form on ajv 8.17.1 (draft-07 / 2019-09 / 2020-12), ajv 7.2.4 (draft-07 /
+                  2019-09), ajv 6.12.6 — resolved from schema-form-ajv8-plugin, schema-form-ajv7-plugin and the
+                  repo root node_modules respectively (schema-form-ajv6-plugin has no own node_modules; it
+                  depends on ajv ^6 and resolves the root 6.12.6). Options mirror the plugins: allErrors:true,
+                  strictSchema:false (ajv8). Writes results.jsonl.
+  results.jsonl   raw rows: runtime, form, instancePath(dataPath), schemaPath, keyword, params, message.
+  rejectedKey.mjs the normalization function (≤ 60 lines) + two pointer helpers.
+  check.mjs       feeds every enumerated error through the plugin-style transform (dataPath pointer, root → '/',
+                  required → append missingProperty) and then rejectedKey(); prints derivability per form.
+
+Validator plugins found under packages/canard/schema-form-*-plugin:
+  ajv6-plugin, ajv7-plugin, ajv8-plugin (validators); antd-mobile, antd5, antd6, mui (UI only, no validator).
+
+---------------------------------------------------------------------------------------------------------
+1. Error shape per rejection form (identical across ajv 6 / 7 / 8 and all drafts unless noted)
+---------------------------------------------------------------------------------------------------------
+ip = instancePath (ajv 6/7 call it dataPath; ajv 6 emits JS-path '.x' / "['x']" which the plugin converts).
+sp = schemaPath. All examples at the root; the @host variants prefix ip with /host and sp with #/properties/host.
+
+form                              | ip      | sp                                      | keyword               | params                                   | key in error?
+----------------------------------+---------+-----------------------------------------+-----------------------+------------------------------------------+---------------------------
+properties:{x:false}              | /x      | #/properties/x/false schema             | false schema          | {}                                       | YES — ip is the key path
+patternProperties:{'^x':false}    | /x      | #/patternProperties/%5Ex/false schema   | false schema          | {}                                       | YES — ip is the key path
+additionalProperties:false        | ''      | #/additionalProperties                  | additionalProperties  | {additionalProperty:'x'}                 | YES — params (one error per extra key)
+unevaluatedProperties:false       | ''      | #/unevaluatedProperties                 | unevaluatedProperties | {unevaluatedProperty:'x'}                | YES — params (2019/2020 only; see note A)
+propertyNames:{pattern}           | ''      | #/propertyNames/pattern  AND            | pattern               | {pattern}                                | no (inner sub-error)
+                                  | ''      | #/propertyNames                         | propertyNames         | {propertyName:'x'}                       | YES — params (paired error)
+propertyNames:false               | ''      | #/propertyNames/false schema  AND       | false schema          | {}                                       | no (ip is the HOST, not the key)
+                                  | ''      | #/propertyNames                         | propertyNames         | {propertyName:'x'}                       | YES — params (paired error)
+not:{required:['x']}              | ''      | #/not                                   | not                   | {}                                       | NO — nothing in the error (see §4)
+not:{required:['x','y']}          | ''      | #/not                                   | not                   | {}                                       | NO
+dependentRequired:{x:['y']}       | ''      | #/dependentRequired                     | dependentRequired     | {property:'x',missingProperty:'y',...}   | n/a — a MISSING key, not a rejected one
+dependencies:{x:['y']}            | ''      | #/dependencies                          | dependencies          | {property:'x',missingProperty:'y',...}   | n/a — same
+if/then then:{properties:{x:false}} | /x    | #/then/properties/x/false schema  AND   | false schema          | {}                                       | YES — from the inner error
+                                  | ''      | #/if                                    | if                    | {failingKeyword:'then'}                  | no (combinator error)
+if/then then:{additionalProperties:false} | '' | #/then/additionalProperties (×key) AND | additionalProperties | {additionalProperty:'x'}                 | YES — inner error (note B)
+                                  | ''      | #/if                                    | if                    | {failingKeyword:'then'}                  | no
+oneOf:[{additionalProperties:false},…] | '' | #/oneOf/0/additionalProperties  AND    | additionalProperties  | {additionalProperty:'x'}                 | YES — branch error (note C)
+                                  | ''      | #/oneOf/1/required                      | required              | {missingProperty:'zzz'}                  | no (other branch)
+                                  | ''      | #/oneOf                                 | oneOf                 | {passingSchemas:null}                    | no (combinator error)
+anyOf:[{properties:{x:false}},…]  | /x      | #/anyOf/0/properties/x/false schema     | false schema          | {}                                       | YES — branch error
+                                  | ''      | #/anyOf                                 | anyOf                 | {}                                       | no
+
+Messages differ only by wording: ajv 8 "must NOT have additional properties", ajv 6/7 "should NOT …";
+propertyNames: ajv 8 "property name must be valid", ajv 6/7 "property name 'x' is invalid".
+
+note A  ajv 8 draft-07 instance with the plugin's strictSchema:false SILENTLY IGNORES unevaluatedProperties and
+        dependentRequired (validation passes, no error). ajv 7 draft-07 (strict default) throws at compile:
+        'strict mode: unknown keyword'. ajv 6 ignores both. Only the 2019/2020 entry points honour them.
+note B  `then:{additionalProperties:false}` also rejects `flag` because `then` has no `properties` of its own —
+        a schema-author pitfall (unevaluatedProperties is the keyword meant for this), not a derivation issue.
+note C  a branch error names a key, but whether that branch is the "intended" one is a variant question; core
+        already filters errors of variant nodes by matchesSchemaPath (ValidationManager.ts:148-158), so the
+        residual list must apply the same filter before trusting a branch-scoped rejectedKey.
+
+---------------------------------------------------------------------------------------------------------
+2. Normalization function — rejectedKey(error, schema, value): string | null   (rejectedKey.mjs)
+---------------------------------------------------------------------------------------------------------
+Input is the plugin-normalized error {dataPath (RFC 6901, '' or '/' = root), schemaPath, keyword, details};
+`schema` and `value` are read ONLY for the `not` case. Root schema/value are what compile()/validate() saw.
+
+  export function rejectedKey(error, schema, value) {
+    const { dataPath = '', schemaPath = '', keyword, details = {} } = error;
+    if (schemaPath.includes('/propertyNames/')) return null;          // inner sub-error; sibling carries the key
+    switch (keyword) {
+      case 'false schema':
+        return ROOT_POINTERS.has(dataPath) ? null : dataPath;         // dataPath IS the key path
+      case 'additionalProperties':
+        return details.additionalProperty == null ? null : joinPointer(dataPath, details.additionalProperty);
+      case 'unevaluatedProperties':
+        return details.unevaluatedProperty == null ? null : joinPointer(dataPath, details.unevaluatedProperty);
+      case 'propertyNames':
+        return details.propertyName == null ? null : joinPointer(dataPath, details.propertyName);
+      case 'not': {                                                    // schema-assisted; see §4
+        const sub = resolvePointer(schema, schemaPath);
+        if (!sub || typeof sub !== 'object') return null;
+        const keys = Object.keys(sub).filter((k) => k !== '$comment' && k !== 'description' && k !== 'title');
+        if (keys.length !== 1 || keys[0] !== 'required' || !Array.isArray(sub.required) || sub.required.length !== 1) return null;
+        const host = resolvePointer(value, dataPath);
+        if (host == null || typeof host !== 'object' || !(sub.required[0] in host)) return null;
+        return joinPointer(dataPath, sub.required[0]);
+      }
+      default:
+        return null;
+    }
+  }
+  joinPointer(base, key): RFC 6901 escape ('~'→'~0', '/'→'~1'), treating '' and '/' as root.
+  resolvePointer(root, '#/a/b' | '/a/b'): plain JSON-pointer walk; undefined for non-local ('x.json#/…') refs.
+
+Derivability (check.mjs, identical on all 6 runtimes):
+  DERIVABLE from the error alone (no schema read)
+    properties:{x:false}, patternProperties:{…:false}, items/then/anyOf/oneOf-nested `false schema`   → dataPath
+    additionalProperties:false (one error per extra key, incl. inside then/oneOf/anyOf)               → dataPath + params.additionalProperty
+    unevaluatedProperties:false (2019/2020 entry points only)                                          → dataPath + params.unevaluatedProperty
+    propertyNames (any subschema, incl. false)                                                         → dataPath + params.propertyName
+  DERIVABLE only by reading the schema at schemaPath (the `not` fragment)
+    not:{required:['x']} exactly (single name, no sibling keyword; also through a local $ref)          → dataPath + '/x'
+  NOT DERIVABLE (null)
+    not:{required:['x','y']} — the error is the same {ip:'', sp:'#/not', params:{}}; removing EITHER key satisfies
+      the schema, so there is no single rejected key, only a set.
+    not:{required:['x'], <any other keyword>} — the violation is the conjunction; x alone is not "the" reason.
+    not through an external/unresolvable $ref — schemaPath cannot be walked locally.
+    if / oneOf / anyOf combinator errors themselves (params carry failingKeyword / passingSchemas, never a key).
+    dependencies / dependentRequired — they name a MISSING key (params.missingProperty), the mirror of `required`;
+      not a rejection. If wanted, they take the existing `required` treatment (missingProperty appended to dataPath).
+    the inner sub-error under propertyNames (pattern / false schema) — its dataPath is the host.
+
+---------------------------------------------------------------------------------------------------------
+3. Current plugin contract and where `rejectedKey` would live
+---------------------------------------------------------------------------------------------------------
+Core error type — packages/canard/schema-form/src/types/error.ts
+  :242  export interface PublicJSONSchemaError<SourceError = unknown>
+  :255    dataPath: string          RFC 6901 pointer, doc says '' for root
+  :270    schemaPath?: string       '#/…'
+  :277    keyword?: string
+  :284    message?: string
+  :291    details?: Record<string, any>   ← ajv params land here verbatim (additionalProperty, propertyName, …)
+  :301    source?: SourceError            ← raw ajv ErrorObject
+  :307  export interface JSONSchemaError extends PublicJSONSchemaError { key?: number }
+  :119  export interface ValidatorFactory { (schema: JSONSchema): ValidateFunction<any> }
+  :209  export type ValidateFunction  → JSONSchemaError[] | null (sync or async)
+Plugin interface — packages/canard/schema-form/src/app/plugin/type.ts
+  :240  export interface ValidatorPlugin { bind?: …(:246); compile: ValidatorFactory (:248) }
+Plugin transforms (all three already carry instancePath→dataPath, schemaPath, keyword, params→details, source)
+  ajv8  packages/canard/schema-form-ajv8-plugin/src/validator/utils/transformErrors.ts:21-28 (object literal),
+        :42-54 transformDataPath — required → dataPath + '/' + missingProperty; root '' → '/'
+  ajv7  packages/canard/schema-form-ajv7-plugin/src/validator/utils/transformErrors.ts:21-28, :42-54 (same shape)
+  ajv6  packages/canard/schema-form-ajv6-plugin/src/validator/utils/transformDataPath.ts:11-35 (JS path → pointer, same required rule)
+  The factories hold the schema in closure: schema-form-ajv8-plugin/src/validator/createValidatorFactory.ts:18
+  (`(jsonSchema: JSONSchema)`) — transformErrors(:29) is called WITHOUT it today; the `not` case needs it passed in.
+Core consumer — packages/canard/schema-form/src/core/nodes/AbstractNode/utils/ValidationManager/ValidationManager.ts
+  :130-138 buckets errors by dataPath; :148-158 host.find(dataPath) + variant filter by schemaPath. Nothing reads
+  details today; a residual list would be a second consumer beside this one.
+
+Answer: YES, the current normalized error already carries instancePath (as dataPath), schemaPath and params
+(as details) for every plugin, so §2 is computable from PublicJSONSchemaError with no new raw data — except the
+`not` case, which additionally needs the compiled schema. Proposed placement, consistent with P1:
+  (a) error.ts:291, after `details` — new optional field on PublicJSONSchemaError:
+        /** RFC 6901 pointer of the key this error rejects, when the validator can name exactly one. */
+        rejectedKey?: string;
+      Optional keeps third-party validator plugins (Joi/Yup/custom, see type.ts examples) source-compatible.
+  (b) each ajv plugin sets it in its transform (transformErrors.ts:21-28 / transformDataPath.ts:28-35) from the raw
+      ErrorObject, and createValidatorFactory.ts:18-29 passes `jsonSchema` (and `data`) into the transform so the
+      plugin — which already owns the compiled schema and is the only party allowed to interpret it under (iii) —
+      resolves the single-name `not` case. Core never resolves schemaPath into the schema.
+  (c) core builds the residual list as: errors on the host node (dataPath === host.path) with rejectedKey set,
+      after the variant schemaPath filter of ValidationManager.ts:148-158; errors with rejectedKey undefined stay
+      as ordinary host-level errors.
+Side finding: all three plugins emit '/' for the root dataPath (ajv8 transformErrors.ts:53, ajv6
+transformDataPath.ts:19) while error.ts:247 documents '' — rejectedKey.mjs treats both as root; a residual-list
+implementation must too, or the joined pointer becomes '//x'.
+
+---------------------------------------------------------------------------------------------------------
+4. not:{required:['x']} on the HOST — is there a validator-independent attribution to x?
+---------------------------------------------------------------------------------------------------------
+From the error alone: NO, confirmed on ajv 6.12.6, 7.2.4, 8.17.1 (draft-07, 2019-09, 2020-12):
+  instancePath ''  (the host)   schemaPath '#/not'   keyword 'not'   params {}   message 'must NOT be valid'
+The name never appears: ajv discards the sub-errors produced inside `not` (the inner `required` error that would
+have carried missingProperty:'x'), and schemaPath stops at '#/not' — it does not even reach '/not/required'.
+The @host variant only shifts the prefix: instancePath '/host', schemaPath '#/properties/host/not'.
+
+From the error PLUS the schema: yes, but only by resolving schemaPath into the schema and reading the `not`
+fragment — i.e. exactly the prohibition-fragment read that option (iii) forbids the FORM (core) from doing.
+It is sound only when the fragment is exactly {required:[one]}; it holds through a local $ref
+(not-required-1@ref in check.mjs) and collapses to null for 2+ names or any sibling keyword.
+
+Consequence under (iii): the `not` error stays on the host; the residual list can name x only if the VALIDATOR
+PLUGIN performs that schema-assisted resolution (it holds the compiled schema — §3(b)), or if x is also an extra
+key caught by additionalProperties/unevaluatedProperties (then that other error names it). For
+not:{required:['x','y']} no party can name a single key; the host-level error is the only honest surface.

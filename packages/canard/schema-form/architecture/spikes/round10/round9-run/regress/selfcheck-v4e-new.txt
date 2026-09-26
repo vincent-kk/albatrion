@@ -1,0 +1,105 @@
+switches: {"FINAL_SHAPE":true,"AUTO_SCOPE":"settle","EDGE_REF":"entry","INJECT_TO_EDGE":true,"LOAD_EDGE":"fire","ORDER_HINT":false,"SELECT_RULE":"score","TIE_MODE":"first","DERIVED_MODE":"edge","EDGE_COMPARE":"value","DEFAULT_WINNER":"last","COMMIT_ON_BUDGET":"lastRound","ROUND_CAP":25,"EXTRAS_ORDER":"insertion"}
+a. round-3 counterexamples on v4
+  INFO A3-1a a-then-b: emit={"a":"x","b":"y","x":1} raw={"a":"x","b":"y","x":1}
+  INFO A3-1a b-then-a: emit={"a":"x","b":"y","x":2} raw={"a":"x","b":"y","x":2}
+  INFO A3-1a setValue: emit={"a":"x","b":"y","x":2} raw={"a":"x","b":"y","x":2}
+  PASS A3-1a: emit.x == raw.x in every order (history lives in raw, E1); full replacement picks the last active declaration (x=2) — observed: x: 1/2/2
+  PASS A3-1b: a removed x is NOT re-injected by an unrelated keystroke (transition only on off->on) — observed: load={"a":"x","x":1} remove={"a":"x"} typeZ={"a":"x","z":"q"}
+  PASS A3-1b: setValue(V) without x re-injects x (full replacement = load contract) — observed: {"a":"x","z":"q","x":1}
+  PASS A3-1c: nested-in-unconditional fragment resolves after the top-level then injected q — observed: emit={"p":"P","q":"Q","r":"R"} raw={"p":"P","q":"Q","r":"R"} active=["allOf0","allOf0/allOf0.then","then"] rounds=3 status=stable
+  PASS A3-1d: nested fragment stays off (not traversed) while its enclosing then is off — round-3 defect gone — observed: emit={"q":"Q"} raw={"q":"Q"} active=[] rounds=1 status=stable
+  PASS A3-1d: both on when p present — observed: emit={"p":"P","q":"Q","inner":"I","deep":"DEEP"} raw={"p":"P","q":"Q","inner":"I","deep":"DEEP"} active=["then","then/allOf0.then"] rounds=2 status=stable
+  PASS A3-2 forward chain (raw present): 2 sweeps, 1 round — observed: keys=31 sweeps=2 guards=60 rounds=1 status=stable
+  PASS A3-2 reverse chain (raw present): N+1=31 sweeps, 1 round — observed: keys=31 sweeps=31 guards=930 rounds=1 status=stable
+  INFO A3-2 forward chain (default-driven, E1): keys=25 rounds=25 sweeps=50 guards=1500 status=budget-exceeded injections=24
+  PASS A3-2 default-driven chain of 30 hits ROUND_CAP (each link costs a transition round) -> spec defect — observed: keys=25 rounds=25
+  INFO A3-2 reverse chain (default-driven, E1): keys=25 rounds=25 sweeps=350 guards=10500 status=budget-exceeded injections=24
+  PASS A3-2 default-driven chain of 30 hits ROUND_CAP (each link costs a transition round) -> spec defect — observed: keys=25 rounds=25
+  INFO A3-2b N=30 reverse chain, keystroke in note: sweeps=31 guards=930 composes=31 rebuilds=31 time=304us
+  INFO A3-2b N=30 forward chain, keystroke in note: sweeps=2 guards=60 composes=31 rebuilds=31 time=45us
+  INFO A3-2b N=200 reverse chain, keystroke in note: sweeps=201 guards=40200 composes=201 rebuilds=201 time=19432us
+  INFO A3-2b N=200 forward chain, keystroke in note: sweeps=2 guards=400 composes=201 rebuilds=201 time=4469us
+  PASS A3-4A/option-B: negated guard + other activation reaches the ajv-accepted fixpoint {seed,x} (open and closed) — observed: emit={"seed":true,"x":1} raw={"seed":true,"x":1} active=["allOf1.then"] rounds=3 status=stable sweeps=8
+  PASS A3-4A (redteam): then/else no longer both on; emit valid — observed: emit={"mode":"full","extra":"E"} raw={"mode":"full","extra":"E"} active=["allOf0.else","allOf1.then"] rounds=3 status=stable
+  PASS A3-4B: `if not required x then required y` — fragment on, nothing emitted, validator reports required y — observed: emit=undefined raw={} active=["allOf0.then"] rounds=1 status=stable
+  PASS A3-4C/option-cycle: self-negating schema ends budget-exceeded, observable, no throw in prod — observed: emit=undefined raw={} active=["then"] rounds=25 status=budget-exceeded sweeps=2 ajv=invalid(must have required property 'x')
+  INFO A3-4C after user removes x: emit=undefined raw={} active=["then"] rounds=1 status=stable
+  PASS A3-4C dev mode: throws after commit (tree committed) — observed: budget exceeded: rounds=25 hostExceeded=true emit=undefined
+  PASS A3-5: `a:false` declares nothing; a stays in local AND emit; validator rejects it — observed: emit={"a":"kept","b":1} raw={"a":"kept","b":1} active=["allOf0.then(a:false declares nothing)","allOf1.then"] rounds=2 status=stable ajv=invalid(boolean schema is false)
+  PASS A3-4-omit: a='' is absent for the guard (omitEmpty projected) as for the validator — fragment off, no b — observed: emit=undefined raw={"a":""} active=[] rounds=1 status=stable
+    {} -> G={"zipNote":"has zip"} active=["then"] emit={"zipNote":"has zip"} ajvGuard(emit)=true
+    {"addr":{}} -> G={"zipNote":"has zip"} active=["then"] emit={"zipNote":"has zip"} ajvGuard(emit)=true
+    {"addr":null} -> G={"addr":null,"zipNote":"has zip"} active=["then"] emit={"addr":null,"zipNote":"has zip"} ajvGuard(emit)=true
+    {"addr":{"city":"Seoul"}} -> G={"addr":{"city":"Seoul"}} active=[] emit={"addr":{"city":"Seoul"}} ajvGuard(emit)=false
+    {"addr":{"zip":"1"}} -> G={"addr":{"zip":"1"},"zipNote":"has zip"} active=["then"] emit={"addr":{"zip":"1"},"zipNote":"has zip"} ajvGuard(emit)=true
+  PASS A3-4-lift: fragment on-state equals the guard evaluated on the emit (G1) for every init, incl. {addr:null} and the vacuous {addr:{}} — observed: see rows
+  PASS A4a: cap 25, committed emit == raw (last executed round) — observed: emit={"t":24,"u":24} raw={"t":24,"u":24} active=[] rounds=25 status=budget-exceeded
+  INFO A4b load: emit=undefined raw={} active=["then"] rounds=25 status=budget-exceeded
+  FAIL A4b: the user cannot remove t — injectTo re-derives it from the inactive c (E7: declared behaviour) — observed: emit=undefined raw={} active=["then"] rounds=1 status=stable
+  FAIL A4c: injectTo 17 = full replacement of the host (a erased, b default injected under 17); a partial write un-17s the host but derive re-injects 17 in round 2 (E7 declared) — the round-3 "partial or full?" is now defined — observed: after inject: emit={"src":"go","host":17} raw={"src":"go","host":17} active=[] rounds=2 status=stable b.raw="BD"; after partial: emit={"src":"go","host":{"a":"A2","b":"BD"}} raw={"src":"go","host":{"a":"A2","b":"BD"}} active=[] rounds=1 status=stable
+  PASS A5a: k default = first branch value (E8); empty load is valid — round-3 defect gone — observed: emit={"k":"a","x":"X"} raw={"k":"a","x":"X"} active=["oneOf0"] rounds=3 status=stable
+  INFO A5b/A5c (value union, anyOf same-k select): not modeled: discriminator identification (B) is outside this prototype
+  PASS A6a/A6-C1-null: null is a full replacement — keep erased, note default injected under null, partial write un-nulls: {note:Z} — observed: null: emit=null raw=null active=[] rounds=2 status=stable; write: emit={"note":"Z"} raw={"note":"Z"} active=[] rounds=1 status=stable
+  PASS A6b: under null, G={} turns `not required a` on and d default is injected (load contract (i) under null, D-1) — observed: null: emit=null raw=null active=["allOf0.then"] rounds=2 status=stable d.raw="D"; write a: emit={"a":"A"} raw={"a":"A","d":"D"} active=[] rounds=1 status=stable
+  INFO A6c: {"addr":null} -> emit={"addr":null} ajv=valid | {"addr":{}} -> emit=undefined ajv=invalid(must have required property 'addr') | {"addr":{"zip":""}} -> emit=undefined ajv=invalid(must have required property 'addr')
+  PASS A8a/E11: zip:='' keeps the root emit reference (addr still omitted) and notifies nothing — observed: sameRef=true notified=0 addr.local={}
+  PASS C1: replacement purges the latent SECRET; extras kept in the extras slot and emitted last — observed: setValueB={"kind":"a","base":"BASE","a":"NEW","extra":1} switch={"kind":"b","base":"BASE","extra":1}
+  INFO C1 setValue({kind:a}) then getValue(): {"kind":"a","base":"BASE","a":"A0"} (defaults re-injected by the load contract; equal only with disableDefaultInjection)
+  PASS C1-write-kinds (codex): partial keeps latent b, replacement drops it, reset restores it, re-emit round-trip has no b — observed: partial={"kind":"b","base":"BASE","b":"SECRET","extra":7} replaced={"kind":"b","base":"BASE"} resetRaw.b=SECRET reemit={"kind":"b","base":"BASE","extra":7}
+  PASS C2-extra (E16): a key declared by an inactive fragment goes to the child raw, not extras; it appears when the fragment turns on, no default injected — observed: load={"kind":"a"} switch=emit={"kind":"b","e":"EXTRA"} raw={"kind":"b","e":"EXTRA"} active=["then"] rounds=1 status=stable extras=null
+  PASS C3: 17 = full replacement (extras and a erased, b default injected); partial write revives {a:A2, b:BD} — observed: load={"host":{"a":"A","b":"B","x":"EXTRA"}} after17={"host":17} ajv=invalid(must be object) b.raw=17 partial={"host":{"a":"A2","b":"BD"}}
+  PASS C3-host-type "broken": emit = input while wrong-kind; child write revives only new data — observed: wrong="broken" recovered={"note":"Z"}
+  PASS C3-host-type []: emit = input while wrong-kind; child write revives only new data — observed: wrong=[] recovered={"note":"Z"}
+    init {} -> emit={"k":"cat","meow":"M"} active=["cat"] ajv=valid
+    init {"k":"cat"} -> emit={"k":"cat","meow":"M"} active=["cat"] ajv=valid
+    init {"k":"zzz","name":"n"} -> emit={"name":"n","k":"zzz"} active=[] ajv=invalid(must be equal to constant; must be equal to constant; must match exactly one schema in oneOf)
+    init {"k":""} -> emit=undefined active=[] ajv=invalid(must have required property 'k'; must have required property 'k'; must match exactly one schema in oneOf)
+  PASS a33: {} and {k:cat} are valid (k default = first branch, meow injected); zzz preserved and rejected; cat->dog drops meow from emit, keeps raw — observed: cat->dog: emit={"k":"dog"} raw={"k":"dog","meow":"M"} active=["dog"] rounds=1 status=stable
+  PASS A3-1-select: same raw, selection slot picks the branch (initial selection: tie -> first) — observed: sel0={"a":1} sel1={"b":2} raw={"a":1,"b":2}
+  PASS A3-1-value-guards: opposing presence guards give the same emit for both write orders — observed: {"a":"x"} / {"a":"x"}
+  PASS A3-nested-activation: object default {} then token default then done — via transition rounds — observed: emit={"seed":true,"child":{"token":1},"done":true} raw={"seed":true,"child":{"token":1},"done":true} active=["allOf0.then","allOf1.then"] rounds=3 status=stable
+  PASS A3-3/A3-4-host: null and 17 hosts emit their raw, no branch on (G={}), children exist — observed: empty={"kind":"cat","meow":true} loaded={"kind":"cat","meow":true} null=null nullChildren=null scalar=17
+  FAIL A4-cap: non-cyclic 30-step injectTo stops at the cap; emit == raw == writes of 24 executed rounds (round 25 is computed, its write is not) — observed: emit={"n":0} raw={"n":0} active=[] rounds=1 status=stable
+  PASS A6-automatic: injectTo into a child of a null host is a full replacement of the leaf, not a partial write — the host stays null (A5 literal) — observed: after null: emit={"src":"a","host":null} raw={"src":"a","host":null} active=[] rounds=2 status=stable; after inject: emit={"src":"b","host":null} raw={"src":"b","host":null} active=[] rounds=2 status=stable
+    {} -> raw.n="D" emit={"n":"D","extra":42}
+    {"n":""} -> raw.n="" emit={"extra":42}
+    {"n":null} -> raw.n=null emit={"n":null,"extra":42}
+    {"n":{}} -> raw.n={} emit={"n":{},"extra":42}
+    {"n":0} -> raw.n=0 emit={"n":0,"extra":42}
+    {"n":false} -> raw.n=false emit={"n":false,"extra":42}
+  PASS C2-load: extras kept (42); '' / null / {} / 0 / false are values (no default); {} gets 'D' — observed: see rows
+  PASS C2-load omitTrailing: raw keeps [a,null,null], emit [a] — observed: emit={"tail":["a"]} raw={"tail":["a",null,null]} active=[] rounds=1 status=stable
+  PASS C1-activation-default: a partial write that turns a fragment on injects the default (transition) — observed: emit={"on":true,"child":"D"} raw={"on":true,"child":"D"} active=["then"] rounds=2 status=stable
+b. determinism (A1-1) incl. serialization (A4-7)
+  PASS identical emit AND identical JSON text (schema key order) across 4 write orders — observed: {"d,b,c,a":"{\"a\":\"va\",\"b\":\"vb\",\"c\":\"vc\",\"d\":\"vd\"}","a,c,b,d":"{\"a\":\"va\",\"b\":\"vb\",\"c\":\"vc\",\"d\":\"vd\"}","batch":"{\"a\":\"va\",\"b\":\"vb\",\"c\":\"vc\",\"d\":\"vd\"}","load":"{\"a\":\"va\",\"b\":\"vb\",\"c\":\"vc\",\"d\":\"vd\"}"}
+  PASS extras after declared keys, in insertion order — observed: {"a":"va","z":2,"y":1}
+c. null contract (#338 nullable.object-blank-state lines 31 / 42 / 148) + record swap
+  PASS line 31: after setValue({target:null}) emit {target:null}; note reads '' (absent), reason reads 'because' — observed: emit={"target":null} note.raw=undefined reason.raw="because" refreshed=["/target/note","/target/reason"]
+  PASS line 42: typing note='again' promotes to exactly the blank form plus the write — observed: {"target":{"note":"again","reason":"because"}}
+  INFO line 55 (not required by the brief): clear reason under null then type note — test expects {target:null} then {target:{note:'again'}}: after clear=undefined after type={"target":{"note":"again"}} (A5 literal: any partial write un-nulls the host; a '' write is a partial write)
+  PASS line 148: through null then branch round-trip a->b gives {kind:b, note:typed, bValue:B} (blank, not the seed) — observed: null: emit={"target":null} raw={"target":null} active=[] rounds=2 status=stable; typed: {"target":{"kind":"a","note":"typed"}}; roundTrip: {"target":{"kind":"b","note":"typed","bValue":"B"}}
+  PASS record swap: load A then load B={target:null} then type note -> no leak of A — observed: {"target":{"note":"x","reason":"because"}}
+d. chains / negated guard fixpoint / self-negating budget
+  INFO chains: see a. A3-2 rows (raw-present: forward 2 sweeps, reverse 31; default-driven: ROUND_CAP)
+  INFO negated guard + other activation: see a. A3-4A/option-B row (ajv-accepted fixpoint {seed:true,x:1})
+  INFO self-negating: see a. A3-4C row (budget-exceeded, no throw in prod, dev throws after commit)
+  PASS v3 scenario h (mutual: notX declares y, reqY declares x, raw {x:1,y:1}): NO fixpoint under option B -> budget-exceeded, A fixed at the last sweep; ajv rejects the emit while {} would pass -> A4-1 "reaches a fixpoint" is not general — observed: emit={"x":1,"y":1} raw={"x":1,"y":1} active=["notX","reqY"] rounds=1 status=budget-exceeded sweeps=3 ajv=invalid(must NOT be valid) ajv({})=valid
+e. inherited overlay (A4-6)
+  PASS lifted then declaring grandchild q: q injected and child fragment (required q) chains to r — observed: emit={"flag":"on","child":{"p":"P","r":"R","q":"Q"}} raw={"flag":"on","child":{"p":"P","r":"R","q":"Q"}} active=["allOf0.then"] rounds=4 status=stable childActive=["child.allOf0.then","allOf0.then@child"]
+  PASS parent guard off -> overlay off -> q and r disappear from emit (raw kept) — observed: emit={"child":{"p":"P"}} raw={"child":{"p":"P","r":"R","q":"Q"}} active=[] rounds=2 status=stable childActive=[]
+  PASS parent guard on again -> q and r reappear — observed: emit={"flag":"on","child":{"p":"P","r":"R","q":"Q"}} raw={"flag":"on","child":{"p":"P","r":"R","q":"Q"}} active=["allOf0.then"] rounds=2 status=stable
+f. disableDefaultInjection (A2)
+  PASS sparse load {id:101} with the flag: no status default — observed: {"id":101}
+  PASS a later user-caused activation still injects x — observed: {"id":101,"kind":"k","x":"X"}
+  PASS without the flag: status injected — observed: {"id":101,"status":"pending"}
+  PASS with the flag a later full replacement that turns a fragment on injects nothing in that settle (ii) — observed: {"id":5,"kind":"k"}
+g. notification (B)
+  PASS g1: delivery order root, mid, leaf for a leaf write and a root write — observed: leafWrite=root,mid,leaf rootWrite=root,mid,leaf
+  PASS g2: wave-1 payloads show the wave-1 commit while node value shows the new commit; mid/leaf notified again in wave 2 — observed: w1 mid payload={"x":"a2","y":"b"} value={"x":"a3","y":"b"} | w1 leaf payload="a2" value="a3" | w2 mid payload={"x":"a3","y":"b"} value={"x":"a3","y":"b"} | w2 leaf payload="a3" value="a3"
+  PASS g3: 1,000 writes in one batch -> one settle, one wave, one onChange; nested batch -> still one — observed: waves=1/1 settles=1/1 onChange=2 leafNotifications=2000
+  PASS g4: a throwing listener is isolated; later nodes notified; revision advanced — observed: order=mid,leaf rootRevision=1 errors=boom
+  PASS g5: root listener removes item 2 during wave 1 -> item 2 and its leaf are skipped — observed: delivered=[] waveLog=[{"wave":1,"path":"/"},{"wave":1,"path":"/items"},{"wave":2,"path":"/"},{"wave":2,"path":"/items"}]
+  PASS g6: writing the same value changes no emit -> no notification, no revision — observed: notified=0 rounds=1
+  PASS g7: typing 'ab' -> no Refresh on a; injectTo changing sibling b -> Refresh on b only — observed: refresh=["b"] lastSettle.refreshed=["/b"] emit={"a":"ab","b":"ab!"}
+  PASS wave cap (B3-4, literal): all 41 waves delivered, overflow recorded in settle, no throw in prod — observed: waves=41 status=wave-cap-exceeded
+3 FAILURES

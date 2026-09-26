@@ -1,0 +1,90 @@
+REPORT-v4b — "empty value never activates a select-guard branch" (round-5 C-1 / C-7, D-8 → F29)
+==========================================================================================
+
+Files (all under spikes/work-loop/proto/):
+  loop-v4b.mjs       loop-v4.mjs + the one rule change below (diff: +29 / -7 lines, 22 of them comments)
+  selfcheck-v4b.mjs  scenarios a–f for the rule; `node proto/selfcheck-v4b.mjs`
+Nothing else in the spike was touched. loop-v4.mjs and selfcheck-v4.mjs are unchanged.
+
+1. Diff summary (loop-v4.mjs → loop-v4b.mjs)
+-------------------------------------------
+  * new export `NO_SELECTION = -1`: the `selection` value of a select-guard host with no branch on.
+    `sweepOnce` already computes `v = selectionOf(node) === f.select ? 1 : 0`, so -1 turns every
+    select fragment off without any change to the sweep.
+  * makeNode: `selection / initialSelection / pendingSelection` start at NO_SELECTION (were 0).
+  * erase(): a child erased by a full replacement gets `pendingSelection = NO_SELECTION` (was 0).
+  * initialSelection(host, value): returns NO_SELECTION when `value` has no own key at all;
+    otherwise unchanged F6 ("값의 키 가운데 가장 많이 선언한 분기, 동점이면 앞", bestCount starts
+    at -1 so a 0-key tie still picks the first branch — see §5).
+  * header + declareFragments doc comment updated. Discriminated unions (guard fragments reading
+    G.kind) do not touch `selection` and are not affected by any of the above.
+  What did NOT change: `select(host, i)` (explicit selection), transition/inject (A2 OFF→ON),
+  reset() = setValue(root, initialValue), Merge (never recomputes selection — as in v4).
+
+2. X2 (raw-round5-devil.md 부록 A) before / after
+-------------------------------------------------
+  tree: object{a,b}; fragments A={select:0, declares:[a], defaults:{a:'A'}}, B={select:1, declares:[b], defaults:{b:'B'}}
+  prime(root, {})
+    loop-v4  : active=["A"]  emit={"a":"A"}   raw={"a":"A"}  selection=0   (first branch on, default injected — the C-1 counterexample)
+    loop-v4b : active=[]     emit=undefined   raw={}         selection=-1  (no branch, no injection)
+
+3. Scenario results (selfcheck-v4b.mjs — 14 PASS / 0 FAIL)
+------------------------------------------------------------
+  | # | scenario                                                        | observed (v4b)                                              | result |
+  |---|-----------------------------------------------------------------|-------------------------------------------------------------|--------|
+  | a | X2: prime({})                                                   | active=[] emit=undefined raw={} injections=0 selection=-1    | PASS   |
+  | a | prime(undefined)                                                | same as {}                                                  | PASS   |
+  | b | prime({c:'C'}), only branch 1 declares c (round-4 U9)           | active=["C"] emit={"c":"C"} injections=0                    | PASS   |
+  | b | prime({a:1,b:2}) tie                                            | active=["A"] emit={"a":1} raw={"a":1,"b":2}  (A3-1 unchanged)| PASS   |
+  | b | prime({b:'loaded'})                                             | active=["B"] emit={"b":"loaded"} injections=0               | PASS   |
+  | c | prime({}) then select(0)                                        | active=["A"] emit={"a":"A"} injections=1 (OFF→ON, A2)       | PASS   |
+  | c | then select(1)                                                  | active=["B"] emit={"b":"B"} raw={"a":"A","b":"B"} inj=2     | PASS   |
+  | c | then select(NO_SELECTION)                                       | active=[] emit=undefined raw untouched                      | PASS   |
+  | d | prime({}), select(0), reset()                                   | selection=-1 active=[] raw={} emit=undefined                | PASS   |
+  | d | prime({b:'loaded'}), select(0), reset()                         | active=["B"] emit={"b":"loaded"} (initial F6 choice restored)| PASS   |
+  | d | prime({}), select(0), setValue({})                              | selection=-1 active=[] emit=undefined (Overwrite re-decides)| PASS   |
+  | e | discriminated, kind without default: prime({})                  | active=[] emit=undefined injections=0                        | PASS   |
+  | e | discriminated: prime({kind:'cat'})                              | active=["union.cat"] emit={"kind":"cat","meow":true}         | PASS   |
+  | e | discriminated, kind default 'cat': prime({})                    | cat on, meow injected — identical to selfcheck-v4 A3-3       | PASS   |
+
+4. Regressions — selfcheck-v4.mjs (existing, 63 checks) run against loop-v4b
+----------------------------------------------------------------------------
+  0 failures. Output "all v4 scenarios passed"; the only diff against the loop-v4 run is the
+  four A3-2b timing INFO lines (us). In particular A3-1-select ("initial selection: tie -> first",
+  prime({a:1,b:2})) still passes because the host has raw keys, so F6 runs.
+  Reproduce (selfcheck-v4 imports './loop-v4.mjs' statically and guards on its own file name):
+    D=packages/canard/schema-form/architecture/spikes/work-loop/proto; mkdir -p $TMPDIR/on-v4b
+    sed -e "s#'./loop-v4.mjs'#'$PWD/$D/loop-v4b.mjs'#" -e "s#'./build-v4.mjs'#'$PWD/$D/build-v4.mjs'#" \
+        $D/selfcheck-v4.mjs > $TMPDIR/on-v4b/selfcheck-v4.mjs && node $TMPDIR/on-v4b/selfcheck-v4.mjs
+
+5. Where the rule is undefined (recorded as INFO in selfcheck-v4b scenario f; nothing asserts them)
+---------------------------------------------------------------------------------------------------
+  The prototype reads "host has at least one raw value" literally as "the replacement object has
+  ≥ 1 own key". That leaves four cases the decision text does not settle:
+
+  U-1  Only an EXTRA key: prime({zzz:1})
+       → active=["A"] emit={"a":"A","zzz":1}, injections=1. F6 finds 0 declared keys in every
+       branch, the tie picks branch 0, and its default is injected — the form makes a value
+       again, exactly the D-8 shape, just one key later. Same for prime({id:5}) where `id` is an
+       unconditional child: emit={"id":5,"a":"A"}. The alternative reading ("at least one key
+       that SOME select branch declares", i.e. require bestCount > 0) would give no branch in
+       both cases; it is a one-line change in initialSelection but contradicts F6's "동점이면 앞"
+       for a loaded value whose keys match no branch. Owner decision needed: does F6's tie rule
+       apply at count 0, or only at count ≥ 1?
+  U-2  Partial write into a branch child while no branch is on: prime({}); write(a,'typed')
+       → raw={"a":"typed"} selection=-1 emit=undefined. The typed value is stored but hidden
+       (branch A off) and not emitted. Whether a partial write may *activate* the branch that
+       declares the key (auto-select on first write) is not specified; the same holds for
+       setValue({a:'merged'}, 'Merge') (Merge never recomputes selection, as in v4). A UI that
+       shows no branch fields when nothing is selected cannot reach this state; an injectTo /
+       &derived rule targeting `a` can.
+  U-3  Non-object host: prime(null) → emit=null active=[] selection=-1 (unchanged from v4: G={}
+       so nothing is on). Fine, but "null 뒤 객체 복귀" (D-1) into a select-guard host arrives as a
+       partial write, so it lands in U-2, not in F6.
+  U-4  initialSelection after `select()` then Overwrite: setValue({}) discards the user's
+       explicit choice (scenario d, third row) — consistent with F6 "`Overwrite`는 `selection`을
+       새 값으로 다시 정한다" but it means loading `{}` cannot preserve a user-picked branch;
+       whether reset()/Overwrite with an empty value should keep an explicit selection is a UX
+       question (ADR 0010 not yet written).
+  Also noted: with no branch on, the union host emits `undefined` (omitted), not `{}` — the
+  parent therefore omits the key entirely. That is the existing v4 omit rule, not this change.

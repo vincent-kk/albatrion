@@ -1,0 +1,71 @@
+
+ RUN  v3.2.6 /Users/Vincent/Workspace/albatrion/packages/canard/schema-form/architecture/spikes/work-loop/redteam4-events
+
+stdout | react.test.tsx > 1. B2 synchronous notify inside a React event handler > 1a. listener calls flushSync mid-wave (setState of another component)
+##RESULT## 1a {"renders":{"other":1,"/f0":1,"/f1":1,"/f2":1},"midWave":[{"domF2":"","revF2":0,"valueF2":"c"}],"finalDom":["a","b","c"]}
+
+stdout | react.test.tsx > 1. B2 synchronous notify inside a React event handler > 1b. node.setValue during render and inside getSnapshot
+##RESULT## 1b-render {"trace":["write-in-render waveActive=false","f1-listener wave=1 waveActiveAtWrite=true"],"f1Dom":"from-render","renders":{"other":1,"/f0":1,"/f1":4,"/f2":1,"writer":2},"consoleErrors":["Cannot update a component (`%s`) while rendering a different component (`%s`). To locate t"]}
+##RESULT## 1b-getSnapshot {"snapCalls":3,"g1":3,"thrown":null,"consoleErrors":[]}
+
+stdout | react.test.tsx > 1. B2 synchronous notify inside a React event handler > 1c. tearing with 1,000 nodes, flushSync mid-wave, bumpAllFirst=false
+##RESULT## 1c bumpAllFirst=false {"commits":2,"leafRenders":2000,"formRenders":1,"staleDom":0,"ms":46.9}
+
+stdout | react.test.tsx > 1. B2 synchronous notify inside a React event handler > 1c. tearing with 1,000 nodes, flushSync mid-wave, bumpAllFirst=true
+##RESULT## 1c bumpAllFirst=true {"commits":1,"leafRenders":1000,"formRenders":1,"staleDom":0,"ms":24.3}
+
+stdout | react.test.tsx > 1. B2 synchronous notify inside a React event handler > 1c-plain. 1,000 nodes, no flushSync: commits per handler
+##RESULT## 1c-plain {"commits":1,"leafRenders":1000}
+
+stdout | react.test.tsx > 3. B3-1 top→down: parent renders child value before child listener ran > parent tracks root, child tracks f0; consumer flushSync on root=false
+##RESULT## 3 flushSync=false {"renders":{"parent":1,"child":1},"midWave":[],"final":{"childDom":"new","rev":"1","parentSees":"new"}}
+
+stdout | react.test.tsx > 3. B3-1 top→down: parent renders child value before child listener ran > parent tracks root, child tracks f0; consumer flushSync on root=true
+##RESULT## 3 flushSync=true {"renders":{"parent":1,"child":2},"midWave":[{"childDom":"new","childRevAttr":"0","f0Rev":0}],"final":{"childDom":"new","rev":"1","parentSees":"new"}}
+
+stdout | react.test.tsx > 7. T-3 virtualization: RequestFocus to a deferred node, re-publish on reveal > 7a. focus() from outside a React handler (act) — is the re-publish nested?
+##RESULT## 7a {"trace":["re-publish waveActive=false wave=1","inner-got-focus waveActive=true wave=1"]}
+
+stdout | react.test.tsx > 7. T-3 virtualization: RequestFocus to a deferred node, re-publish on reveal > 7b. focus() inside a React event handler
+##RESULT## 7b {"trace":["re-publish waveActive=false wave=1","inner-got-focus waveActive=true wave=1"]}
+
+stdout | react.test.tsx > 7. T-3 virtualization: RequestFocus to a deferred node, re-publish on reveal > 7c. focus() published by a listener that then flushSyncs — reveal commit inside the wave
+##RESULT## 7c {"trace":["re-publish waveActive=false wave=2","inner-got-focus waveActive=true wave=1"],"waves":1}
+
+stdout | react.test.tsx > 7. T-3 virtualization: RequestFocus to a deferred node, re-publish on reveal > 7d. consumer listener on the deferred node flushSyncs after the reveal setState — reveal commit inside the wave
+##RESULT## 7d {"trace":["consumer waveActive=true wave=1","re-publish waveActive=false wave=1","consumer waveActive=true wave=1","inner-got-focus waveActive=true wave=1"],"waves":1}
+
+stderr | react.test.tsx > 7. T-3 virtualization: RequestFocus to a deferred node, re-publish on reveal > 7d. consumer listener on the deferred node flushSyncs after the reveal setState — reveal commit inside the wave
+flushSync was called from inside a lifecycle method. React cannot flush when React is already rendering. Consider moving this call to a scheduler task or micro task.
+
+stdout | react.test.tsx > 7. T-3 virtualization: RequestFocus to a deferred node, re-publish on reveal > 7e. discrete click publishes focus; consumer flushSync mid-wave — reveal commit nests inside the wave
+##RESULT## 7e {"trace":["consumer waveActive=true wave=1","re-publish waveActive=true wave=1","inner-got-focus waveActive=true wave=1","consumer waveActive=true wave=2","inner-got-focus waveActive=true wave=2"],"waves":2,"innerMounted":true}
+
+stdout | react.test.tsx > 7. T-3 virtualization: RequestFocus to a deferred node, re-publish on reveal > 7f. wave cap vs React-mediated loops: layout effect writes back on every render
+##RESULT## 7f {"loops":200,"maxWaveCountSeen":2,"thrown":null,"consoleErrors":[],"a":201}
+
+stdout | react.test.tsx > B2-1 caret preservation: controlled input + formatter, sync vs microtask notify > microtaskNotify=false
+##RESULT## B2-1 microtaskNotify=false {"card":{"dom":"1234-5","node":"1234-5","selectionStart":6},"midText":{"dom":"abxc","node":"abxc","selectionStart":3,"expectedCaret":3}}
+
+stdout | react.test.tsx > B2-1 caret preservation: controlled input + formatter, sync vs microtask notify > microtaskNotify=true
+##RESULT## B2-1 microtaskNotify=true {"card":{"dom":"1234-5","node":"1234-5","selectionStart":6},"midText":{"dom":"abxc","node":"abxc","selectionStart":4,"expectedCaret":3}}
+
+stdout | react.test.tsx > 9. B2-2 cost: 10,000 nodes, one handler, useSyncExternalStore subscribers > model: synchronous notify
+##RESULT## 9-model {"N":10000,"commits":1,"leafRenders":10000,"handlerMs":175,"notifyOnlyMs":18.3}
+
+stdout | react.test.tsx > 2. B3-4 wave cap in React: a node written only by the last wave > C is committed but never bumped → its component never re-renders
+##RESULT## 2-react {"calls":52,"waves":26,"settle":"wave-cap","tree":{"A":27,"B":27,"C":"late"},"dom":{"A":"27","B":"27","C":""},"revC":0}
+
+ ✓ react.test.tsx (17 tests) 907ms
+   ✓ 9. B2-2 cost: 10,000 nodes, one handler, useSyncExternalStore subscribers > model: synchronous notify  513ms
+stdout | current.test.tsx > 9. current library: root.setValue with 10,000 subscribed leaves > commits and timing
+##RESULT## 9-current {"N":10000,"buildMs":82,"syncMs":127.4,"syncCommits":1,"microCommits":1,"totalCommits":1,"drainedMs":12,"treeStale":0,"domStale":0,"rootOnChangeCalls":2}
+
+ ✓ current.test.tsx (1 test) 629ms
+   ✓ 9. current library: root.setValue with 10,000 subscribed leaves > commits and timing  629ms
+
+ Test Files  2 passed (2)
+      Tests  18 passed (18)
+   Start at  19:58:48
+   Duration  3.85s (transform 1.51s, setup 0ms, collect 2.68s, tests 1.54s, environment 734ms, prepare 171ms)
+
