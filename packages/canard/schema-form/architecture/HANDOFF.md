@@ -17,7 +17,7 @@
     - 24 union 규칙 A(순서 없음, 받아 주는 형이 하나일 때만 변환), 25 안쪽 이름 통일, 26 **채움은 노드가 생길 때만(B안)** — `setValue(V)`는 로드가 아니다, 27 명령 넷, 28 용어(`union`·variant 호스트).
     - 29–37 union 설계: 객체·배열 포함 union을 터미널 한정으로 허용, 형 없는 원시 `anyOf`는 분기 형을 모음, 필드는 `type`(종류)·`schemaType`(계산된 허용 형 목록, union만 배열, `'null'` 제외)·`nullable`, 형 없는 `const`·`enum` 분기와 객체·원시 혼합 `oneOf`는 오류, 값을 바꾸는 검증기는 `bind` 거부, Hint·props의 `type`은 종류, 좁힘은 연언의 교집합(정적은 청사진에서, 게이트는 켜진 동안 유효 목록만).
   - union 설계는 스웜(렌즈 넷 → 검증 둘 → 병합 → codex·antigravity 교차 확인 → 2·3판)으로 만들었다. 작업 파일은 `reviews/raw-round18-union-swarm/`(정본 설계 `merged-v3.md`), 시험 보고는 `reviews/raw-round18-tests/`(표준 대조 둘, 원장 정합성 시험 둘, 1차 교차 확인 둘).
-- **기계 검사는 모두 문제 0이다(§4).** 소유자 답 235/235, 정확 일치 225 항목, 블록 105/105, 문장 검사 17 영역 0/0, 토큰 잔여 481(원장 반영은 잔여를 늘리지 않았고, 늘어난 것은 이 문서의 자기 서술 토큰이다 — `ledger/checks/token-review.md` 끝 절).
+- **기계 검사는 모두 문제 0이다(§4).** 소유자 답 235/235, 정확 일치 225 항목, 블록 105/105, 문장 검사 17 영역 0/0, 토큰 잔여 484(원장 반영은 잔여를 늘리지 않았고, 늘어난 것은 이 문서의 자기 서술 토큰이다 — `ledger/checks/token-review.md` 끝 절).
 - **의미 게이트(게이트 3)는 13건을 찾아 모두 고쳤다.** 원문은 `reviews/raw-round18-tests/gate3-union-fill.md`. 게이트가 "확인하지 못한 것"으로 남긴 둘(정적 선언이 없는 이름에서 게이트 없는 분기끼리 fold가 다를 때, EVENT-072의 "한 로드에 한 번"이 `VALIDATOR_COMPILE_FAILED`에서 뜻하는 것)은 §2의 최종 검증(E)에 넣는다.
 
 ## 2. 다음 할 일 — 순서대로
@@ -88,7 +88,7 @@ node ledger/checks/plan-links.mjs plan/*.md -- ledger/*.md              # 개발
 
 - **원천 묶음.** `bundle-*.md`는 `section-map.tsv`에서 언제든 다시 만든다.
 - **문장 검사.** 인용을 먼저 보고 분류 행을 본다. 그래서 인용된 문장에 남은 낡은 분류 행은 무해하다.
-- **토큰 잔여.** 지금 481이다. 원장 쪽 잔여는 HEAD 잔여의 부분집합이고, 나머지는 HANDOFF의 자기 서술 토큰이다(`ledger/checks/token-review.md`).
+- **토큰 잔여.** 지금 484이다. 원장 쪽 잔여는 HEAD 잔여의 부분집합이고, 나머지는 HANDOFF의 자기 서술 토큰이다(`ledger/checks/token-review.md`).
 - **`verbatim-check`의 한계.** 인용한 줄이 출처 파일 어딘가에 있는지만 본다. 그래서 줄 범위가 틀리거나, 줄이 빠지거나, 순서가 바뀐 것은 잡지 못한다.
   - 18라운드에서는 세션 scratchpad의 임시 스크립트 셋(`exact-check.mjs` 정확 일치, `block-check.mjs` 블록 덮개와 항목↔블록 이름, `diff-guard.mjs` 옛 항목은 자라기만 한다)으로 이것을 보았다. 저장소에는 없다. 정본 블록을 새로 반영할 때는 같은 대조를 다시 만든다(각 40–80줄).
 

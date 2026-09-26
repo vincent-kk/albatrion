@@ -400,3 +400,7 @@ node ledger/checks/tokens.mjs check <목록> ledger/*.md
 ## union 설계·채움 파생 반영과 HANDOFF 재작성 뒤의 잔여 (2026-09-26, 봉인)
 
 검사 결과 `{"total":2470,"missing":481}`(HANDOFF의 `gate3-union-fill.md` 인용까지 포함). 원장 반영 자체는 잔여를 늘리지 않았다(반영 전후 471). 늘어난 것은 HANDOFF.md를 새 상태로 다시 쓰면서 들어간 문서·절차 토큰이다: 경로(`reviews/raw-round18-union-swarm/merged-v3.md`, `reviews/raw-*/`, `reviews/round-18-owner-answers.md:24-37`, `reviews/round-18-owner-answers.md:N`, `exact-check.mjs`·`diff-guard.mjs`·`block-check.mjs`, `brief-final-check.md`), 절차 문구(`분할됨(→ 나머지 항목, 새 항목)`, `소유자 답이 이기면`), 개수(`326개`, `26행`). 모두 원장이 인용할 원천이 아닌 HANDOFF의 자기 서술이라 C다. 게이트 3 고침은 잔여를 2 줄였다(482 → 480). HANDOFF에 게이트 3 원문 경로를 적어 481이 됐다(C).
+
+## 개발계획 `plan/` 추가 뒤의 잔여 (2026-09-27)
+
+잔여 484 = 481 + 3. 새로 든 셋은 모두 HANDOFF §2·§5가 개발계획을 가리키는 경로 코드 토큰(`plan/`, `plan/pr-*.md`, `plan/README.md`)이며, 원장이 들 이유가 없는 HANDOFF의 자기 서술이다 — C. 원장 쪽 잔여는 바뀌지 않았다.
