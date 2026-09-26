@@ -1,0 +1,89 @@
+E1 transient-shape default injection (ADR 0007 §1 전이, round-4-spec A2 "주입 시점에 활성인 선언")
+  (a) if without required, kind default "b"
+    load {}          -> {"emit":{"kind":"b","x":"E"},"active":["else"],"rounds":3}
+    load {kind:"b"}  -> {"emit":{"kind":"b","x":"E"},"active":["else"],"rounds":2}
+  (b) if WITH required, kind default "a"
+    load {}          -> {"emit":{"kind":"a","x":"T"},"active":["then"],"rounds":3}
+    load {kind:"a"}  -> {"emit":{"kind":"a","x":"T"},"active":["then"],"rounds":2}
+
+E2 same writes, sequential vs batch (ADR 0008 §3 batch = mark N, settle 1)
+  sequential write(kind,a); write(kind,b) -> {"emit":{"kind":"b","x":"A"},"raw":{"kind":"b","x":"A"}}
+  batch(same two writes)                   -> {"emit":{"kind":"b","x":"B"},"raw":{"kind":"b","x":"B"}}
+
+E3 injectTo edge-firing — NATIVE (EDGE_REF=entry, LOAD_EDGE=fire)
+  load {src:x,tgt:custom}; user tgt=mine; then src y->x sequential -> {"afterLoad":{"src":"x","tgt":"f(x)"},"final":{"src":"x","tgt":"f(x)"}}
+  same, src y->x inside batch                                     -> {"afterLoad":{"src":"x","tgt":"f(x)"},"final":{"src":"x","tgt":"mine"}}
+
+E4 net-zero change: listener write-back vs batch (ADR 0008 §5 "emit 참조가 바뀌지 않은 쓰기는 onChange도 검증도 없다")
+  listener reverts bad->orig -> {"onChange":1,"validations":1,"seen":[{"prev":{"a":"orig"},"cur":{"a":"orig"}}],"final":{"a":"orig"}}
+  batch(bad, orig)           -> {"onChange":0,"validations":0,"seen":[],"final":{"a":"orig"}}
+
+E6 waves accumulated in ONE tick by un-batched writes (count only; cap applied per ADR text = inference)
+  30 writes, no listener          -> {"calls":30,"wavesInTick":30,"firstCallPastCap25":26}
+  30 writes, store listener a->b  -> {"calls":30,"wavesInTick":60,"firstCallPastCap25":13,"b":"derived:v30"}
+
+E7 Merge write containing an object and an array (03 §3 row 2 "Merge는 로드가 아니므로 default가 들어가지 않는다")
+  setValue({obj:{y:1}, items:[{y:1}]}, Merge) -> {"obj":{"y":"1"},"items":[{"x":"D","y":"1"}]}
+
+E9 negative cycle with two fixed points (ADR 0007 §2 "budget-exceeded로 표시된다", F13 order hint)
+  order F1,F2 -> {"order":12,"active":["F1"],"emit":{"a":1},"status":"stable","sweeps":2}
+  order F2,F1 -> {"order":21,"active":["F2"],"emit":{"b":2},"status":"stable","sweeps":2}
+
+E10 anyOf without discriminator, value matching both branches (ADR 0002 선택 가드 초기 선택)
+  -> {"load":{"a":1,"b":2},"emit":{"a":1},"active":["A"]}
+E12 select-guard, load {zzz:1} -> active [] emit {"zzz":1}
+E13 root {a}, user clears a to "" -> getValue() "<undefined>" raw {"a":""}
+
+==================== EXTRAS (round 7) ====================
+
+X2 E2 inside one entry: write(kind,a) whose listener writes kind=b, vs batch
+  OLD (v4c)                            -> {"topLevelSeq":{"kind":"b","x":"A"},"inEntrySeq":{"kind":"b","x":"A"},"batch":{"kind":"b","x":"B"}}
+  NEW settle-scope                     -> {"topLevelSeq":{"kind":"b","x":"A"},"inEntrySeq":{"kind":"b","x":"A"},"batch":{"kind":"b","x":"B"}}
+  NEW entry-scope                      -> {"topLevelSeq":{"kind":"b","x":"A"},"inEntrySeq":{"kind":"b","x":"B"},"batch":{"kind":"b","x":"B"}}
+  NEW settle-scope, EDGE_REF=commit    -> {"topLevelSeq":{"kind":"b","x":"A"},"inEntrySeq":{"kind":"b","x":"A"},"batch":{"kind":"b","x":"B"}}
+
+X3 E3 inside one entry: user tgt=mine; write(src,y) whose listener writes src=x, vs batch, vs top-level
+  OLD (v4c)                            -> {"topLevelSeq":{"src":"x","tgt":"f(x)"},"inEntrySeq":{"src":"x","tgt":"f(x)"},"batch":{"src":"x","tgt":"mine"}}
+  NEW settle-scope                     -> {"topLevelSeq":{"src":"x","tgt":"f(x)"},"inEntrySeq":{"src":"x","tgt":"f(y)"},"batch":{"src":"x","tgt":"mine"}}
+  NEW entry-scope                      -> {"topLevelSeq":{"src":"x","tgt":"f(x)"},"inEntrySeq":{"src":"x","tgt":"mine"},"batch":{"src":"x","tgt":"mine"}}
+  NEW settle-scope, EDGE_REF=commit    -> {"topLevelSeq":{"src":"x","tgt":"f(x)"},"inEntrySeq":{"src":"x","tgt":"f(x)"},"batch":{"src":"x","tgt":"mine"}}
+
+X3c native edge with EDGE_REF=commit (F11 text) vs r6 EMULATED wrapper on v4c derive
+  native  -> {"seq":{"afterLoad":{"src":"x","tgt":"f(x)"},"final":{"src":"x","tgt":"f(x)"}},"batch":{"afterLoad":{"src":"x","tgt":"f(x)"},"final":{"src":"x","tgt":"mine"}}}
+  emulated-> {"seq":{"afterLoad":{"src":"x","tgt":"f(x)"},"final":{"src":"x","tgt":"f(x)"}},"batch":{"afterLoad":{"src":"x","tgt":"f(x)"},"final":{"src":"x","tgt":"mine"}}}
+  identical: true
+
+X3L injectTo at mount / reset (LOAD_EDGE): map(e)=f(e)
+  LOAD_EDGE=fire -> {"loadWithTgt":{"src":"x","tgt":"f(x)"},"loadNoTgt":{"src":"x","tgt":"f(x)"},"edited":{"src":"z","tgt":"f(z)"},"afterReset":{"src":"x","tgt":"f(x)"},"resetWhereSrcUnchanged":{"src":"x","tgt":"f(x)"}}
+  LOAD_EDGE=skip -> {"loadWithTgt":{"src":"x","tgt":"custom"},"loadNoTgt":{"src":"x"},"edited":{"src":"z","tgt":"f(z)"},"afterReset":{"src":"x","tgt":"custom"},"resetWhereSrcUnchanged":{"src":"x","tgt":"custom"}}
+  LOAD_EDGE=fill -> {"loadWithTgt":{"src":"x","tgt":"custom"},"loadNoTgt":{"src":"x","tgt":"f(x)"},"edited":{"src":"z","tgt":"f(z)"},"afterReset":{"src":"x","tgt":"custom"},"resetWhereSrcUnchanged":{"src":"x","tgt":"custom"}}
+  LOAD_EDGE=ref  -> {"loadWithTgt":{"src":"x","tgt":"f(x)"},"loadNoTgt":{"src":"x","tgt":"f(x)"},"edited":{"src":"z","tgt":"f(z)"},"afterReset":{"src":"x","tgt":"f(x)"},"resetWhereSrcUnchanged":{"src":"x","tgt":"custom"}}
+
+X9h F13 ORDER_HINT: same raw {a:1,b:2} reached by two histories (fragments F1,F2 of E9)
+  ORDER_HINT=false -> {"loadAB":{"active":["F1"],"emit":{"a":1},"raw":{"a":1,"b":2}},"loadB_thenMergeA":{"active":["F1"],"emit":{"a":1},"raw":{"a":1,"b":2}}}
+  ORDER_HINT=true  -> {"loadAB":{"active":["F1"],"emit":{"a":1},"raw":{"a":1,"b":2}},"loadB_thenMergeA":{"active":["F2"],"emit":{"b":2},"raw":{"a":1,"b":2}}}
+
+X10/X12 initial selection (D-14 a): E10 tie and E12 zero keys under SELECT_RULE/TIE_MODE
+  v4c               -> {"e10":{"active":["A"],"emit":{"a":1}},"e12":{"active":["A"],"emit":{"a":"A","zzz":1}},"score2vs1":{"active":["BC"],"emit":{"b":2,"c":3}}}
+  score, TIE=first  -> {"e10":{"active":["A"],"emit":{"a":1}},"e12":{"active":[],"emit":{"zzz":1}},"score2vs1":{"active":["BC"],"emit":{"b":2,"c":3}}}
+  score, TIE=none   -> {"e10":{"active":[]},"e12":{"active":[],"emit":{"zzz":1}},"score2vs1":{"active":["BC"],"emit":{"b":2,"c":3}}}
+
+X15 injectTo from a child whose default was injected in an intermediate round and whose fragment is off at the end
+  OLD (v4c)                            -> {"emit":{"kind":"b","y":"d(X)"},"raw":{"kind":"b","x":"X","y":"d(X)"},"active":[],"rounds":3,"status":"stable"}
+  NEW settle-scope                     -> {"emit":{"kind":"b"},"raw":{"kind":"b"},"active":[],"rounds":4,"status":"stable"}
+
+X16 selfcheck A4b load: fragment "then" = if not required t, declares c default C; injectTo c -> t (from-${c})
+  OLD (v4c)                            -> {"emit":{"t":"from-C"},"raw":{"t":"from-C","c":"C"},"active":[],"rounds":3,"status":"stable","budgetWhich":"","retractions":0}
+  NEW settle-scope                     -> {"emit":"<undefined>","raw":{},"active":["then"],"rounds":25,"status":"budget-exceeded","budgetWhich":"rounds","retractions":12}
+  NEW entry-scope                      -> {"emit":"<undefined>","raw":{},"active":["then"],"rounds":25,"status":"budget-exceeded","budgetWhich":"rounds","retractions":12}
+
+XA4 selfcheck A4-cap with write(n,1) instead of write(n,0) (n committed 0): map = min(30, n+1)
+  OLD (v4c)                            -> {"writeSameValue0":{"emit":{"n":24},"rounds":25},"write1":{"emit":{"n":25},"raw":{"n":25},"rounds":25,"status":"budget-exceeded"}}
+  NEW settle-scope                     -> {"writeSameValue0":{"emit":{"n":0},"rounds":1},"write1":{"emit":{"n":25},"raw":{"n":25},"rounds":25,"status":"budget-exceeded"}}
+
+D-17 E6 re-run: 30 un-batched writes in one synchronous tick; waves counted (i) per tick, all waves (ADR 0008:62, F15)
+     and (ii) per outermost entry, feedback waves only (round-6 F-5). "reach" = first write whose waves make the count 25;
+     "reject" = first write whose listener write falls in a wave numbered >= 25 (ADR 0008 rule 4 rejects that wave's listener writes).
+  no listener         -> {"wavesPerWrite":[1],"tickTotal":30,"perTick":{"reachAtWrite":25,"firstRejectedListenerWriteAt":-1},"perEntryFeedback":{"maxFeedbackWavesInOneEntry":0,"reachAtWrite":-1}}
+  store listener a->b -> {"wavesPerWrite":[2],"tickTotal":60,"perTick":{"reachAtWrite":13,"firstRejectedListenerWriteAt":13},"perEntryFeedback":{"maxFeedbackWavesInOneEntry":1,"reachAtWrite":-1}}
+  one write whose listener re-writes a 30 times (feedback chain) -> {"wavesInEntry":31,"feedbackWaves":30,"perEntryReachAtFeedbackWave":25,"perTickReachAtWave":25,"wavesExceededFlag":true}

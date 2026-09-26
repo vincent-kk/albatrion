@@ -1,0 +1,3 @@
+exit=1 (expected)
+AssertionError: Q8 removes the selection state cell
+actual=true expected=false

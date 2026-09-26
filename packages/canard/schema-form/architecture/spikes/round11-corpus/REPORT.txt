@@ -1,0 +1,106 @@
+라운드 11 — 슬라이스 0 측정: 생성기 코퍼스를 라운드 9 프로토타입 모델에 통과시킨 결과
+==========================================================================
+
+측정 대상
+- 코퍼스: spikes/guard-cost/redteam3/corpus.mjs (스키마 14개 — pydantic, OpenAPI 3.0/3.1,
+  zod, TypeBox, typescript-json-schema, 겹치는 태그를 가진 수기 작성 스키마)
+- 모델: spikes/round9/proto/build-v5.mjs + loop-v5.mjs — import로만 참조했고 두 파일 모두
+  수정하지 않았다. round9/, round10/ 디렉터리는 이 측정 과정에서 전혀 건드리지 않았다
+  (git status로 확인 완료).
+- 실행 스크립트: corpus-run.mjs. 원본 데이터는 corpus-output.txt(스키마 14개 × 모드 3개
+  = 행 14개, 각 행에 pure/discriminator/if-rewrite 세 모드의 결과를 담음).
+
+build-v5.mjs는 `$ref`를 전혀 해석하지 못한다. 이 스크립트는 코퍼스를 그대로 넘기기 위해
+`wrapRef()`라는 지연(lazy) Proxy 래퍼를 붙였다 — `$ref`가 가리키는 대상은 build-v5.mjs가
+실제로 그 속성을 읽는 순간에만 해석된다. 이는 build-v5.mjs 자신이 배열 `items`에 이미 쓰고
+있는 지연 방식(itemFactory — 실제 데이터가 그 인덱스를 가질 때만 노드를 만든다)과 같은
+원리다. 이 덕분에 재귀 스키마(pydantic-2.9 recursive tree union, Node.children → items.anyOf
+→ Node 자기 참조)도 무한 루프 없이 실제 샘플 데이터의 중첩 깊이만큼만 유한한 트리로
+빌드되었다 — 14개 전부가 예외 없이 빌드에 성공했다.
+
+세 가지 모드
+- pure — 스키마를 그대로(`if` 없음, `&` 키 없음) 사용. build-v5.mjs의 oneOf/anyOf 처리는
+  분기마다 게이트(`guard`)를 만들되 `if`도 `&active`도 없으면 게이트가 항상 `() => true`이므로,
+  분기는 입력값과 무관하게 전부 켜진다.
+- discriminator — reviews/round-10-owner-answers.md B-22 답변에 따라, 공통 태그 키에
+  const/enum을 가진 분기마다 `&active: G => G[key] === value` (enum이면 `values.includes(G[key])`)를
+  분기 객체에 더했다. 스키마 자체(각 분기의 `properties`/`required`)는 수정하지 않았다 —
+  답변 원문의 "우리는 &active 을 더하는거지 스키마를 수정하는건 아니니까"를 그대로 따랐다.
+  공통 키가 없으면(모든 분기가 const/enum을 갖는 하나의 키를 공유하지 못하면) "적용 불가"로
+  기록했다.
+- if-rewrite — 태그를 가진 분기마다 `{ if: {properties:{key:{const}}, required:[key]},
+  then: <분기>, else: false }`로 기계적으로 감쌌다. 순수 JSON Schema만으로 몇 개나 표현
+  가능한지 측정하려는 것이지, 권장 경로로 제안하는 것이 아니다.
+
+각 스키마의 각 분기마다 "대표값"을 하나씩 골라(코퍼스가 제공하는 samples를 분기 순서에
+맞춰 사용하고, 모자라면 그 분기의 const/enum 태그로 최소값을 만들어 보충) 빌드 후
+`root.find(nodePath).fragOn`으로 그 분기가 켜졌는지 읽었다. nodePath는 pointer에서
+`properties` 세그먼트를 제거하고 첫 유니온 키워드 이전까지 자른 경로다 — oneOf/anyOf/allOf는
+새 노드를 만들지 않고 소유 호스트에 프래그먼트만 붙이기 때문이다.
+
+결과 표
+--------
+
+| schema id | source | pure: on-branches / conflicts | discriminator: 적용 여부 / on-branches | if-rewrite: possible? / on-branches |
+|---|---|---|---|---|
+| pydantic-2.9 discriminated Literal | pydantic 2.9 | 2/2 / 충돌 없음(kind 재선언, 둘 다 string) | 적용(kind, 구분값 서로 다름) / 0/2 | 가능(변환됨) / 0/2 |
+| pydantic-2.9 Optional[Union[Cat,Dog]] | pydantic 2.9 (discriminator 없음) | 3/3 / 충돌 없음(kind 재선언) | 적용 불가 — 분기 전체가 공유하는 const/enum 태그 키 없음 | 적용 불가 — 동일 사유 |
+| pydantic-2.9 Optional[discriminated] | pydantic 2.9 (anyOf 안에 중첩된 oneOf) | 2/2 / 충돌 없음(kind 재선언) | 적용(kind, 구분값 서로 다름) / 0/2 | 가능(변환됨) / 0/2 |
+| pydantic-2.x const+enum (추론) | pydantic ≤2.8 (추론) | 2/2 / 충돌 없음(kind 재선언) | 적용(kind, 구분값 서로 다름) / 0/2 | 가능(변환됨) / 0/2 |
+| OpenAPI-3.0 petstore mapping-only | OpenAPI 3.0 (discriminator.mapping만, const 없음) | 2/2 / 충돌 없음(petType·name 재선언) | 적용 불가 — 분기 전체가 공유하는 const/enum 태그 키 없음 | 적용 불가 — 동일 사유 |
+| OpenAPI-3.0 nullable branch | OpenAPI 3.0 (추론, nullable 분기) | 2/2 / 충돌 없음(petType 재선언) | 적용(petType, 구분값 서로 다름) / 0/2 | 가능(변환됨) / 0/2 |
+| OpenAPI-3.1 two-level allOf inheritance | OpenAPI 3.1 / TypeSpec (추론) | 2/2 / 충돌 없음(petType·name 재선언, allOf 2단계로 병합) | 적용(petType, 구분값 서로 다름) / 0/2 | 가능(변환됨) / 0/2 |
+| OpenAPI-3.1 type:[object,null] branch | OpenAPI 3.1 | 2/2 / 충돌 없음(kind 재선언) | 적용(kind, 구분값 서로 다름) / 0/2 | 가능(변환됨) / 0/2 |
+| zod-to-json-schema-3.23 discriminatedUnion | zod 3.23 | 2/2 / 충돌 없음(kind 재선언) | 적용(kind, 구분값 서로 다름) / 0/2 | 가능(변환됨) / 0/2 |
+| zod-to-json-schema-3.23 (z.enum tag) | zod 3.23 | 2/2 / 충돌 없음(kind 재선언) | 적용(kind, 구분값 서로 다름) / 0/2 | 가능(변환됨) / 0/2 |
+| TypeBox-0.32 Union of Object+Literal | TypeBox 0.32 | 2/2 / 충돌 없음(kind 재선언) | 적용(kind, 구분값 서로 다름) / 0/2 | 가능(변환됨) / 0/2 |
+| typescript-json-schema-0.64 두 리터럴 키 | typescript-json-schema 0.64 | 2/2 / 충돌 없음(apiVersion·kind 재선언, apiVersion은 양쪽 다 1로 동일) | 적용(kind, 구분값 서로 다름 — apiVersion 대신 선택됨) / 0/2 | 가능(변환됨) / 0/2 |
+| hand anyOf overlapping tag values | 수기 작성(겹치는 태그) | 3/3 / 충돌 없음(kind·meow 재선언) | 적용은 되나 kind 값이 구분되지 않음(cat이 두 분기에 겹침) / 0/3 | 가능(변환됨, 동일하게 구분 안 됨) / 0/3 |
+| pydantic-2.9 recursive tree union | pydantic 2.9 (재귀) | 2/2 / 충돌 없음(kind 재선언) | 적용(kind, 구분값 서로 다름) / 0/2 | 가능(변환됨) / 0/2 |
+
+("충돌"은 같은 자식 키가 형제 분기 두 곳 이상에서 서로 다른 타입(string vs number 등)으로
+선언된 경우를 말한다 — 14개 중 실제 타입 충돌은 하나도 없었다. round-9 모델 자체의
+`effectiveSchema.branchConstraintsOmitted` 플래그는 "재선언"만으로 켜진다 — 예를 들어
+pydantic-2.9 discriminated Literal의 kind 노드에서 직접 확인했다. 즉 모델의 플래그는
+타입 충돌보다 넓게 잡힌다: 14개 전부에서 재선언은 있었지만 실제 타입 충돌은 없었다는
+뜻이다.)
+
+요약
+----
+- pure 모드: 14/14 전부가 오류 없이 빌드되고, 분기가 항상 전부 켜진 채로 합리적으로
+  렌더된다(분기 수만큼 on-branches, 재귀 스키마도 유한 트리로 종료). 타입 충돌은 0건.
+- &discriminator 적용 가능: 12/14. 공통 태그 키를 찾지 못해 적용 불가한 것은 2건 —
+  OpenAPI-3.0 petstore mapping-only(discriminator.mapping만 있고 각 분기에 const가 전혀
+  없음 — mapping을 직접 해석하는 별도 로직이 있어야 함)와 pydantic-2.9
+  Optional[Union[Cat,Dog]](discriminator 래퍼 없이 그냥 anyOf라 태그 키 자체가 없음 —
+  값의 형태로 분기를 추측하는 별도 판별 로직이 있어야 함).
+- 적용 가능했던 12건 중 실제로 정확히 1개 분기만 켜지도록 "작동"한 것은 0건이다. 원인은
+  이 코퍼스의 특성이 아니라 build-v5.mjs 자체의 구조적 한계다:
+  1) 순환 게이트 의존 — 태그 키(kind/petType 등)가 오직 분기 안(discriminator 모드의
+     `&active`가 읽는 대상, if-rewrite 모드의 `then` 내용)에서만 선언되어 있으면, 그
+     키는 "조건부(conditional)" 자식이 되어 분기가 켜지기 전에는 호스트의 합성 로컬(G)에
+     나타나지 않는다. 그런데 게이트 자신이 바로 그 G를 읽어 판정하므로, 게이트가 켜지려면
+     이미 켜져 있어야 하는 순환에 빠진다 — 어떤 대표값을 넣어도 항상 0/N으로 귀결된다.
+  2) (부가 확인) 태그 키를 호스트에 무조건 선언으로 끌어올려 (1)을 우회해도 여전히
+     막힌다 — build-v5.mjs는 분기 객체를 그 분기가 선언하는 각 속성의 controlLayer로도
+     재사용하는데, 이 경로는 `&active`를 `updateControls`에서 전체 루트 스테이지 트리를
+     기준으로 다시 평가한다. 분기 게이트가 읽는 스코프(호스트 로컬, 예: `G.kind`)와
+     controlLayer가 읽는 스코프(루트 전체, `G.pet.kind`가 필요)가 다르므로, 같은 함수가
+     두 곳에서 서로 다른 인자로 두 번 호출되어 하나의 스코프에서만 참이 되는 함수로는
+     양쪽을 동시에 만족시킬 수 없다. 즉 B-22가 제안한 "분기에 &active만 추가"는
+     이 라운드 9 프로토타입 그대로는 작동하지 않으며, 다음 라운드에서 (a) 판별 키를
+     호스트 프로퍼티로 무조건 선언하고 (b) 분기 게이트와 controlLayer가 같은 스코프의
+     값을 읽도록 정리하는 작업이 필요하다.
+- if-rewrite(순수 JSON `if`/`then`/`else`)로 기계적으로 표현 가능했던 것은 12/14 —
+  즉 태그가 있는 스키마는 전부 문법적으로는 `if`/`then`/`else`로 옮겨 적을 수 있었다.
+  그러나 실제로 분기를 하나만 켜지게 만든 것은 0건이다 — 원인은 discriminator와 같은
+  1)번(순환 게이트 의존)이다. if-rewrite는 `&active`를 쓰지 않으므로 2)번 controlLayer
+  충돌은 겪지 않지만, 1)번만으로 이미 작동을 막는다. 표현 불가능했던 2건은 &discriminator와
+  동일하게 공통 태그 키가 없는 경우다.
+
+파일
+----
+- corpus-run.mjs — 측정 스크립트(읽기 전용 import, round9/round10 미수정)
+- corpus-output.txt — META 1줄 + ROW 14줄(JSON), 스키마별 pure/discriminator/if-rewrite
+  전체 결과 원본
+- REPORT.txt — 본 문서

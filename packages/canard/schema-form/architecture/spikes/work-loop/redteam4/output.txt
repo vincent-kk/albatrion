@@ -1,0 +1,136 @@
+
+=== [1a] ON→OFF→ON: two commits vs one settle (batch) — same two writes, different raw
+[batch=false] user cleared x : emit={"a":"A"} raw={"a":"A","x":"∅"} active=["root/allOf[0].then"] settle={"status":"stable","sweeps":2} rounds={"rounds":0,"capped":false}
+[batch=false] a:=∅ then a:='A': emit={"a":"A","x":1} raw={"a":"A","x":1} active=["root/allOf[0].then"] settle={"status":"stable","sweeps":2} rounds={"rounds":1,"capped":false}
+[batch=true] user cleared x : emit={"a":"A"} raw={"a":"A","x":"∅"} active=["root/allOf[0].then"] settle={"status":"stable","sweeps":2} rounds={"rounds":0,"capped":false}
+[batch=true] a:=∅ then a:='A': emit={"a":"A"} raw={"a":"A","x":"∅"} active=["root/allOf[0].then"] settle={"status":"stable","sweeps":2} rounds={"rounds":0,"capped":false}
+
+=== [1a2] flip inside ONE settle via derive rounds: F off in round 1, injectTo turns it back on — no injection; the same via two commits injects
+cleared x            : emit={"a":"A"} raw={"a":"A","src":"∅","x":"∅"} active=["root/allOf[0].then"] settle={"status":"stable","sweeps":2} rounds={"rounds":0,"capped":false}
+one settle a:=∅,src=go: emit={"a":"A","src":"go"} raw={"a":"A","src":"go","x":"∅"} active=["root/allOf[0].then"] settle={"status":"stable","sweeps":2} rounds={"rounds":1,"capped":false}
+two commits           : emit={"a":"A","src":"go","x":1} raw={"a":"A","src":"go","x":1} active=["root/allOf[0].then"] settle={"status":"stable","sweeps":2} rounds={"rounds":2,"capped":false}
+
+=== [1b] user clears x (raw ∅, key declared) while fragment stays on; sibling write re-runs settle
+after sibling write: emit={"a":"A","z":"q"} raw={"a":"A","z":"q","x":"∅"} active=["root/allOf[0].then"] settle={"status":"stable","sweeps":2} rounds={"rounds":0,"capped":false}
+Merge same object  : emit={"a":"A","z":"q"} raw={"a":"A","z":"q","x":"∅"} active=["root/allOf[0].then"] settle={"status":"stable","sweeps":2} rounds={"rounds":0,"capped":false}
+Overwrite same obj : emit={"a":"A","z":"q","x":1} raw={"a":"A","z":"q","x":1} active=["root/allOf[0].then"] settle={"status":"stable","sweeps":2} rounds={"rounds":1,"capped":false}
+
+=== [1c] two fragments declare x with defaults 1 / 2 — activation across two commits vs within one commit
+a then b   : emit={"a":"A","b":"B","x":1} raw={"a":"A","b":"B","x":1} active=["root/allOf[0].then","root/allOf[1].then"] settle={"status":"stable","sweeps":2} rounds={"rounds":0,"capped":false}
+b then a   : emit={"a":"A","b":"B","x":2} raw={"a":"A","b":"B","x":2} active=["root/allOf[0].then","root/allOf[1].then"] settle={"status":"stable","sweeps":2} rounds={"rounds":0,"capped":false}
+load {a,b} : emit={"a":"A","b":"B","x":2} raw={"a":"A","b":"B","x":2} active=["root/allOf[0].then","root/allOf[1].then"] settle={"status":"stable","sweeps":2} rounds={"rounds":1,"capped":false}
+batch a,b  : emit={"a":"A","b":"B","x":2} raw={"a":"A","b":"B","x":2} active=["root/allOf[0].then","root/allOf[1].then"] settle={"status":"stable","sweeps":2} rounds={"rounds":1,"capped":false}
+
+=== [1d] disableDefaultInjection: listener write right after the load commit; reset(); union k default
+load (flag on)          : emit={} raw={"a":"∅","t":"∅","x":"∅","kind":"∅","meow":"∅"} active=[] settle={"status":"stable","sweeps":2} rounds={"rounds":0,"capped":false}
+listener Merge → t      : emit={"t":"listener","x":1} raw={"a":"∅","t":"listener","x":1,"kind":"∅","meow":"∅"} active=["root/allOf[0].then"] settle={"status":"stable","sweeps":2} rounds={"rounds":1,"capped":false}
+reset() with flag on    : emit={"a":"A0"} raw={"a":"A0","t":"∅","x":"∅","kind":"∅","meow":"∅"} active=[] settle={"status":"stable","sweeps":2} rounds={"rounds":0,"capped":false}
+load (flag off)         : emit={"a":"A0","kind":"cat","meow":"m"} raw={"a":"A0","t":"∅","x":"∅","kind":"cat","meow":"m"} active=["root/oneOf[0]"] settle={"status":"stable","sweeps":2} rounds={"rounds":2,"capped":false}
+
+=== [1e] forward chain of conditional defaults: each level is one transition round → shares the 25-round budget
+N=24: keys=25 rounds={"rounds":24,"capped":false} guards=1200 sweeps=50 last="v24"
+N=25: keys=26 rounds={"rounds":25,"capped":false} guards=1300 sweeps=52 last="v25"
+N=26: keys=26 rounds={"rounds":25,"capped":true} guards=1352 sweeps=52 last=undefined
+N=30: keys=26 rounds={"rounds":25,"capped":true} guards=1560 sweeps=52 last=undefined
+
+=== [1f] injectTo writes undefined to a defaulted child → transition re-injects → ping-pong to the round cap
+ emit={"a":"A","x":1} raw={"a":"A","x":1} active=["root/allOf[0].then"] settle={"status":"stable","sweeps":2} rounds={"rounds":25,"capped":true}
+   rounds counter 25
+
+=== [2a] omitEmpty: a:"" is absent for the guard; ajv on the emit agrees
+a=""  : emit={} raw={"a":"","b":"∅"} active=[] settle={"status":"stable","sweeps":1} rounds={"rounds":0,"capped":false}
+   ajv(then applies?) true
+a="x" : emit={"a":"x","b":"B"} raw={"a":"x","b":"B"} active=["root/allOf[0].then"] settle={"status":"stable","sweeps":2} rounds={"rounds":1,"capped":false}
+o={s:""} → o projected to {} → omitted → `required o` false: emit={} raw={"o":{"s":""},"flag":"∅"} active=[] settle={"status":"stable","sweeps":1} rounds={"rounds":0,"capped":false}
+
+=== [2b] guard reading a nested host that is budget-exceeded — what G does the parent see?
+ emit={"both":"BOTH"} raw={"c":{"x":1,"y":1},"both":"BOTH"} active=["root/allOf[0].then"] settle={"status":"stable","sweeps":2} rounds={"rounds":1,"capped":false}
+   child settle {"status":"budget-exceeded","sweeps":4} child emit {} root settle {"status":"stable","sweeps":2}
+
+=== [2c] inherited overlay + child guard reading the overlay key: recompute count, cap
+load {a}: emit={"a":"A","c":{"r":"R","q":"Q"}} raw={"a":"A","c":{"s":"∅","r":"R","q":"Q"}} active=["root/allOf[0].then"] settle={"status":"stable","sweeps":2} rounds={"rounds":2,"capped":false}
+   counters {"guards":14,"sweeps":14,"computes":15,"rounds":2} child active ["inherited(root/allOf[0].then)","root/allOf[0].then"] child settle {"status":"stable","sweeps":2}
+   keystroke at /a → counters {"guards":5,"sweeps":5,"computes":4,"rounds":0}
+self-negating via overlay: emit={"c":{"s":"S","q":"Q"}} raw={"c":{"s":"S","q":"Q"}} active=["root/allOf[0].then"] settle={"status":"budget-exceeded","sweeps":3} rounds={"rounds":1,"capped":false}
+   counters {"guards":5,"sweeps":11,"computes":11,"rounds":1} child computes bounded by parent sweeps 3
+
+=== [3] F1: ¬y → declares x; F2: x → declares y; raw {x:1,y:1}: no fixed point, cap parity decides the emit
+gaussSeidel=true cap=4: emit={} settle={"status":"budget-exceeded","sweeps":4} ajv=true ajv(unevaluated:false)=true
+gaussSeidel=true cap=3: emit={"x":1,"y":1} settle={"status":"budget-exceeded","sweeps":3} ajv=true ajv(unevaluated:false)=false
+gaussSeidel=true cap=5: emit={"x":1,"y":1} settle={"status":"budget-exceeded","sweeps":5} ajv=true ajv(unevaluated:false)=false
+gaussSeidel=false cap=4: emit={} settle={"status":"budget-exceeded","sweeps":4} ajv=true ajv(unevaluated:false)=true
+gaussSeidel=false cap=3: emit={"y":1} settle={"status":"budget-exceeded","sweeps":3} ajv=true ajv(unevaluated:false)=false
+gaussSeidel=false cap=5: emit={"x":1} settle={"status":"budget-exceeded","sweeps":5} ajv=true ajv(unevaluated:false)=true
+   ajv on the raw data itself {x:1,y:1}: true / unevaluated:false → false
+   fixed-point search over all A: {} {F1} {F2} {F1,F2} → []:F1=true,F2=false ["x"]:F1=true,F2=true ["y"]:F1=false,F2=false ["x","y"]:F1=false,F2=true
+
+=== [4] parent P lifts q (default) into child; child C depends on q; one keystroke at the parent
+[per-toggle] keystroke: computes=4 sweeps=5 guards=5 rounds=0 parent cap=3 emit={"a":"A2","c":{"r":"R","q":"Q"}}
+[per-sweep] keystroke: computes=4 sweeps=5 guards=5 rounds=0 parent cap=3 emit={"a":"A2","c":{"r":"R","q":"Q"}}
+K=6 overlay fragments behind a reverse chain: child computes=9 (parent cap 14, parent sweeps 2) guards=24 child keys=["q5","q4","q3","q2","q1","q0"]
+
+=== [5] host raw=17: two views, extras survival, null vs all-default object
+load with extra zz   : emit={"host":{"note":"n","reason":"r","zz":"extra"}} raw={"host":{"note":"n","reason":"r"}} active=[] settle={"status":"stable","sweeps":1} rounds={"rounds":0,"capped":false}
+   extras {"zz":"extra"}
+setValue host:=17    : emit={"host":17} raw={"host":17} active=[] settle={"status":"stable","sweeps":1} rounds={"rounds":1,"capped":false}
+   getValue= {"host":17} node.find(/host/note).value= undefined reason= "because" ajv: ["/host must be object,null #/properties/host/type"]
+type note            : emit={"host":{"note":"typed","reason":"because"}} raw={"host":{"note":"typed","reason":"because"}} active=[] settle={"status":"stable","sweeps":1} rounds={"rounds":0,"capped":false}
+   extras after 17 → type: {}
+   [extras survive reading] emit= {"host":{"note":"typed","reason":"because","zz":"extra"}}
+   null host emit= {"host":null} | all-default object host emit= {"host":{"reason":"because"}} | child views equal? true
+null host, user clears reason ("" partial write): emit={} raw={"host":{"note":"∅","reason":""}} active=[] settle={"status":"stable","sweeps":1} rounds={"rounds":0,"capped":false}
+then types note: emit={"host":{"note":"again"}} raw={"host":{"note":"again","reason":""}} active=[] settle={"status":"stable","sweeps":1} rounds={"rounds":0,"capped":false}
+
+=== [6] RequestRefresh: committed raw vs reported value — formatter, NaN, object-valued inputs
+DOM "12a", formatter reported "12" → refresh targets: [] (stale DOM invisible to the rule)
+number input cleared → reports NaN → refresh(===): ["/n"] | refresh(Object.is): []
+array-valued input reports a fresh array each keystroke → raw is the same reference: ["/n"]
+injectTo writes the same value n=3 the input reported → refresh: []
+injectTo writes n=4 (input reported 3) → refresh: ["/n"]
+
+=== [7] discriminator default = first branch; error routing inputs; selection slot vs Overwrite
+empty form      : emit={"kind":"cat"} raw={"kind":"cat","meow":"∅","bark":"∅"} active=["root/oneOf[0]"] settle={"status":"stable","sweeps":2} rounds={"rounds":1,"capped":false}
+   ajv true | ajv on {} false
+flag on         : emit={} raw={"kind":"∅","meow":"∅","bark":"∅"} active=[] settle={"status":"stable","sweeps":2} rounds={"rounds":0,"capped":false}
+   ajv false
+   errors for {}      : ["required@#/oneOf/0/required","required@#/oneOf/1/required","oneOf@#/oneOf"]
+   errors for {kind:"zzz"}: ["const@#/oneOf/0/properties/kind/const","const@#/oneOf/1/properties/kind/const","oneOf@#/oneOf"]
+   selection initial for {c:"C"} = 0 emit {}
+   after user selects [1] then setValue({a,b}, Overwrite): selection= 1 emit= {} raw= {"a":"A","b":"B","c":"∅"}
+   reset() (defaultValue {c:"C"}): selection= 0 emit= {} raw= {"a":"∅","b":"∅","c":"C"}
+
+=== [8] removeKey on extras vs inactive-fragment child raw; branch-only unevaluatedProperties:false
+load {zz, x} (a absent → F off): emit={"zz":"Z"} raw={"a":"∅","x":5} active=[] settle={"status":"stable","sweeps":1} rounds={"rounds":0,"capped":false}
+   residual [{"path":"/zz","value":"Z","error":"must NOT have additional properties","from":"extras"}] x raw 5
+removeKey zz, x: emit={} raw={"a":"∅","x":"∅"} active=[] settle={"status":"stable","sweeps":1} rounds={"rounds":0,"capped":false}
+a typed → F on → x default revived: emit={"a":"A","x":1} raw={"a":"A","x":1} active=["root/allOf[0].then"] settle={"status":"stable","sweeps":2} rounds={"rounds":1,"capped":false}
+x=5 not removed, F on → x keeps 5: emit={"a":"A","x":5} raw={"a":"A","x":5} active=["root/allOf[0].then"] settle={"status":"stable","sweeps":2} rounds={"rounds":0,"capped":false}
+   branch cat: residual [{"path":"/zz","value":"Z","error":"must NOT have unevaluated properties","from":"extras"}] emit {"kind":"cat","zz":"Z"}
+   branch dog: residual [] emit {"kind":"dog","zz":"Z"}
+
+=== [9] N=200 fragments, one reverse chain: guard evaluations and ms per keystroke (ajv)
+N=30 reverse=false: keystroke at unrelated leaf → guards=60 sweeps=2 0.23 ms (chain fully ON at commit, keys=32)
+N=30 reverse=true: keystroke at unrelated leaf → guards=930 sweeps=31 0.74 ms (chain fully ON at commit, keys=32)
+N=200 reverse=false: keystroke at unrelated leaf → guards=400 sweeps=2 5.99 ms (chain fully ON at commit, keys=202)
+N=200 reverse=true: keystroke at unrelated leaf → guards=40200 sweeps=201 11.69 ms (chain fully ON at commit, keys=202)
+
+=== [A4-2] nested conditional inside a then: not traversed while the enclosing fragment is off
+raw {q} only: emit={"q":"Q"} raw={"p":"∅","q":"Q","inner":"∅","deep":"∅"} active=[] settle={"status":"stable","sweeps":1} rounds={"rounds":0,"capped":false}
+   guards evaluated 1 ajv true
+then p typed : emit={"p":"P","q":"Q","inner":"I","deep":"DEEP"} raw={"p":"P","q":"Q","inner":"I","deep":"DEEP"} active=["root.then","root.then/allOf[0].then"] settle={"status":"stable","sweeps":3} rounds={"rounds":1,"capped":false}
+   ajv true
+
+=== [A4-7] emit key order = schema declaration order, extras after in insertion order
+   keys ["a","b","c","zz","yy"]
+
+=== [A1-1] getValue → setValue(getValue(), Overwrite) is not idempotent when a defaulted child was cleared
+   before {"a":"A"} after round trip {"a":"A","x":1}
+
+=== [A3-1] derive cap: round 26 is not executed — committed raw is the last completed round
+ emit={"t":12,"u":13} raw={"t":12,"u":13} active=[] settle={"status":"stable","sweeps":1} rounds={"rounds":25,"capped":true}
+   raw t,u = [12,13] emit = F(raw)? true
+
+=== [A4-2u] empty nested union: host {} vs host null — does the k default turn a branch on?
+   init={"pet":{}} → emit={"pet":{"kind":"cat","meow":"m"}} pet.active=["root/oneOf[0]"] rounds={"rounds":2,"capped":false}
+   init={"pet":null} → emit={"pet":null} pet.active=[] rounds={"rounds":1,"capped":false}
+   init={} → emit={"pet":{"kind":"cat","meow":"m"}} pet.active=["root/oneOf[0]"] rounds={"rounds":2,"capped":false}

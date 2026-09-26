@@ -1,0 +1,14 @@
+{"probe":"a1","passed":true,"initial":"P","final":"<missing>","result":"not refilled"}
+{"probe":"a2","passed":true,"initial":"<missing>","final":"<missing>","result":"not refilled"}
+{"probe":"a3","passed":true,"initial":"U","final":"<missing>","result":"not refilled"}
+{"probe":"a4","passed":true,"initial":"B","final":"<missing>","result":"not refilled"}
+{"probe":"node-gate-shape","passed":true,"unit":"shape","load":"<missing>","activated":"E","retained":"retained"}
+{"probe":"node-gate-raw","passed":true,"unit":"raw","load":"E","activated":"<missing>","retained":"retained"}
+{"probe":"node-gate-default-and-subtree","passed":true,"value":{"show":true,"group":{"x":"D"}}}
+{"probe":"union-hint-oneOf","passed":true,"value":"b","effectiveSchema":{"branchConstraintsOmitted":true},"active":["base/oneOf/0","base/oneOf/1"]}
+{"probe":"union-hint-anyOf","passed":true,"value":"b","effectiveSchema":{"branchConstraintsOmitted":true},"active":["base/anyOf/0","base/anyOf/1"]}
+{"probe":"final-shape-after-derived","passed":true,"raw":{"seed":1,"on":0},"emit":{"seed":1,"on":0},"shapePresent":false,"births":["/","/seed","/on"],"status":"stable"}
+{"probe":"final-shape-after-fill-dependency","passed":true,"raw":{"seed":1,"on":0},"shapePresent":false,"births":["/","/seed","/on"],"status":"stable"}
+{"probe":"final-shape-preserves-caller-raw","passed":true,"raw":{"seed":1,"on":0,"x":"caller"},"emit":{"seed":1,"on":0},"shapePresent":false}
+{"probe":"final-shape-feedback-budget","passed":true,"raw":{},"status":"budget-exceeded","rounds":8,"births":[],"budgetCommit":"base"}
+{"summary":{"checks":52,"probes":13,"failures":0,"passed":true}}

@@ -1,0 +1,1515 @@
+ROUND 10 — 같은 대상 경합 및 load clear 에지 실험
+
+근거: reviews/round-10-spec.md §1.3의 항목 8·9·21 및 §2입니다.
+목적은 후보 정책별 예산 초과, 설명 없는 쓰기 손실, 순서 의존성을 측정하는 것입니다.
+정책 채택 여부는 판단하지 않습니다. 전체 결과는 r10-output.txt의 META/ROW/SUMMARY 행입니다.
+
+파일과 재현
+r10.mjs — 고정 프로브와 48조합, 관측/손실 감사/집계입니다.
+r10-output.txt — 2,904개 ROW 및 집계 SUMMARY입니다.
+proto/make-v6.mjs — round9의 loop-v5/build-v5를 읽어 정확 문자열 치환 8개로 파생합니다.
+proto/runtime-v6.inc.txt — 실험 후보 큐/경합/소비/추적의 정본입니다.
+proto/loop-v6.mjs, proto/build-v6.mjs — 위 스크립트가 생성한 파생 모델입니다.
+원본 직접 import나 byte-identical 사본이 아니라, 요청된 새 스위치를 추가한 파생본을 사용합니다.
+EXPERIMENT=false이면 원본 v5 실행 경로이며 WRITE_CONFLICT=last 등 round9 기본값을 유지합니다.
+verify.mjs, verification.txt, round9-manifest.txt — 재생성/반복/호환성/원본 보존 증거입니다.
+round9-readonly.mjs, round9-run/ — 원본 round9 하니스의 쓰기를 round10으로 보내는 preload와 실행 산출물입니다.
+compat/ — EXPERIMENT=false로 실행한 r9/r9b의 import 경로 치환 사본 및 출력입니다.
+precheck.mjs — 원본 v5의 CLEAR_PRIORITY 부재를 확인하는 예상 실패입니다.
+policy-check.mjs, policy-check-output.txt — 정책 효과를 값으로 검증하는 별도 10개 단언입니다.
+write-report.mjs, REPORT.txt, PLAN.txt — 보고서 생성기, 보고서, 범위/해석 기록입니다.
+재현: node proto/make-v6.mjs; node r10.mjs; node policy-check.mjs; node verify.mjs; node write-report.mjs
+새 의존성을 설치하지 않았습니다. Node.js v26.8.2 및 round9와 같은 설치된 AJV를 사용합니다.
+
+스위치 및 구현 위치
+| 키 | 실험값 | 위치 |
+| EXPERIMENT | false: round9 경로, matrix: true | proto/make-v6.mjs:12 |
+| CLEAR_PRIORITY | clear-wins / clear-loses | proto/runtime-v6.inc.txt:24 |
+| WRITE_CONFLICT | 기존 first/last는 비실험 경로에 보존; 실험은 inject-wins / derived-wins / declaration-order | 같은 experimentPriority |
+| LOSER_FATE | dropped / requeued | proto/runtime-v6.inc.txt:74 |
+| EDGE_CONSUMED_ON_LOSS | true / false | proto/runtime-v6.inc.txt:73 |
+| LOAD_EDGE_CLEAR | rising / held | proto/runtime-v6.inc.txt:57 |
+| 선언 전순서 | body < allOf < then/else < oneOf/anyOf, 각 종류는 소스 순서 | proto/build-v6.mjs:123 |
+
+실험 의미의 고정 조건
+- ROUND_CAP=25, COMMIT_ON_BUDGET=base, NODE_GATE_UNIT=shape, LOAD_EDGE=fire입니다.
+- 원천 값 변화로 만든 규칙별 후보를 한 번 소비합니다. 첫 후보는 v5의 entry/load 에지 검사에서 얻고, 같은 settle 안의 후속 후보는 직전 계산 라운드와의 값 변화에서 얻습니다.
+- 승자는 소비하며, 적용 후 다음 라운드에 후보가 없다는 이유로 쓰기를 철회하지 않습니다. 이는 round9의 반복 entry 후보 조정과 구분되는 실험 경로입니다.
+- dropped는 패배한 쓰기 제안을 그 라운드에서 버립니다. requeued는 같은 값 스냅샷을 다음 라운드에 다시 후보로 넣습니다.
+- EDGE_CONSUMED_ON_LOSS=false인 패배 injectTo는 에지가 남으므로 dropped여도 다음 라운드에 다시 제안합니다. 같은 규칙을 이중 큐잉하지 않습니다.
+- 새 원천 에지가 도착하면 같은 규칙의 오래된 대기 후보를 대체합니다. derived/clear 패자의 소비는 true로 고정하며, requeued는 별도로 후보를 보존합니다.
+- 경합은 매 라운드의 실제 후보 사이에서만 해결합니다. 이전 라운드의 승자보다 우선순위가 낮아도, 그 승자가 소비된 뒤 단독 재제출된 후보는 쓸 수 있습니다.
+- 같은 종류의 후보끼리는 뒤 선언이 이깁니다. category별 전위 순회이며, properties 및 예약 키의 삽입 순서, allOf/branches 배열 순서를 보존합니다. then이 else보다 앞이고 oneOf가 anyOf보다 앞입니다.
+- 프로브는 함수 표현식과 스칼라 값을 사용합니다. 중첩 schema의 일반 병합이나 비동기 에지는 측정하지 않았습니다.
+- held도 새 노드의 clearWas=false에서 시작하는 최초 true load는 지웁니다. 참을 유지한 reset/full replace에서 다시 지우지 않는 것이 rising과의 차이입니다.
+- P6은 LOAD_EDGE_CLEAR=rising인 24조합만 실행하고 load/reset/replace 모두 disableAutomaticWrites=true입니다.
+
+집계 단위
+outcome은 load 또는 사용자 작업 한 번 뒤 커밋된 settle 하나입니다. 스케줄별 독립 트리의 load도 각각 셉니다.
+silentWriteLosses는 그 outcome의 커밋 raw에 도달하지 않은 caller/author 제안 중 기록된 규칙 설명이 없는 건수입니다.
+명시적 loser drop, 새 원천 에지의 대체, 뒤 라운드의 쓰기, 작성자 예약 쓰기의 caller 값 덮기, 예산 base 복원은 설명된 손실입니다.
+중간 staged 쓰기는 커밋 도달로 세지 않습니다. 같은 값은 값 동등성으로 판정하며 함수의 외부 부수효과는 계측하지 않습니다.
+순서 비교는 같은 최종 caller 입력의 pair/c-next/idle 결과에서 raw와 status를 비교합니다. 중간 first/load에는 null을 기록합니다.
+스케줄 그룹에서 하나라도 batch와 다르면 비교 가능한 그룹의 각 outcome을 scheduleDependent로 셉니다. 쌍의 개수와 다릅니다.
+P7 pair의 동일 스케줄/반대 선언 순서를 declarationDependent로 셉니다. orderDependent는 두 지표의 합이 아니라 OR입니다.
+스위치별 표는 다른 축을 합친 주변 집계입니다. 행끼리 중복되므로 합산할 수 없으며 인과효과의 독립 추정치도 아닙니다.
+
+스위치 값별 측정
+| 스위치 | 값 | outcomes | budget | silent losses | explained losses | schedule 의존/비교 | 선언 의존/비교 | order 의존 |
+| CLEAR_PRIORITY | clear-wins | 1452 | 48 | 0 | 3552 | 432/576 | 12/144 | 432 |
+| CLEAR_PRIORITY | clear-loses | 1452 | 48 | 0 | 3552 | 432/576 | 12/144 | 432 |
+| WRITE_CONFLICT | inject-wins | 968 | 32 | 0 | 2368 | 288/384 | 0/96 | 288 |
+| WRITE_CONFLICT | derived-wins | 968 | 32 | 0 | 2368 | 288/384 | 0/96 | 288 |
+| WRITE_CONFLICT | declaration-order | 968 | 32 | 0 | 2368 | 288/384 | 24/96 | 288 |
+| LOSER_FATE | dropped | 1452 | 48 | 0 | 3528 | 432/576 | 8/144 | 432 |
+| LOSER_FATE | requeued | 1452 | 48 | 0 | 3576 | 432/576 | 16/144 | 432 |
+| EDGE_CONSUMED_ON_LOSS | true | 1452 | 48 | 0 | 3528 | 432/576 | 16/144 | 432 |
+| EDGE_CONSUMED_ON_LOSS | false | 1452 | 48 | 0 | 3576 | 432/576 | 8/144 | 432 |
+| LOAD_EDGE_CLEAR | rising | 1488 | 48 | 0 | 3576 | 432/576 | 12/144 | 432 |
+| LOAD_EDGE_CLEAR | held | 1416 | 48 | 0 | 3528 | 432/576 | 12/144 | 432 |
+
+프로브별 측정
+| 프로브 | outcomes | budget | silent losses | order 의존 |
+| P1 | 384 | 0 | 0 | 144 |
+| P2 | 384 | 0 | 0 | 144 |
+| P3 | 384 | 0 | 0 | 144 |
+| P4 | 672 | 0 | 0 | 144 |
+| P5 | 144 | 0 | 0 | 0 |
+| P6 | 72 | 0 | 0 | 0 |
+| P7 | 768 | 0 | 0 | 288 |
+| P8 | 96 | 96 | 0 | 0 |
+
+P1 — 같은 대상, 순환 없음 (각 행은 clear-wins/held의 대표 조합입니다)
+| WRITE_CONFLICT | LOSER_FATE | edge consumed | batch | a→b | b→a |
+| inject-wins | dropped | true | /t="I:2" | /t="D:2" | /t="I:2" |
+| inject-wins | dropped | false | /t="I:2" | /t="D:2" | /t="I:2" |
+| inject-wins | requeued | true | /t="D:2" | /t="D:2" | /t="I:2" |
+| inject-wins | requeued | false | /t="D:2" | /t="D:2" | /t="I:2" |
+| derived-wins | dropped | true | /t="D:2" | /t="D:2" | /t="I:2" |
+| derived-wins | dropped | false | /t="I:2" | /t="D:2" | /t="I:2" |
+| derived-wins | requeued | true | /t="I:2" | /t="D:2" | /t="I:2" |
+| derived-wins | requeued | false | /t="I:2" | /t="D:2" | /t="I:2" |
+| declaration-order | dropped | true | /t="D:2" | /t="D:2" | /t="I:2" |
+| declaration-order | dropped | false | /t="I:2" | /t="D:2" | /t="I:2" |
+| declaration-order | requeued | true | /t="I:2" | /t="D:2" | /t="I:2" |
+| declaration-order | requeued | false | /t="I:2" | /t="D:2" | /t="I:2" |
+
+P2/P3 — clear 경합의 batch 결과 (inject-wins/held 대표 조합)
+| CLEAR_PRIORITY | LOSER_FATE | edge consumed | P2 batch | P3 batch |
+| clear-wins | dropped | true | /t=missing | /t=missing |
+| clear-wins | dropped | false | /t=missing | /t="I:2" |
+| clear-wins | requeued | true | /t="D:2" | /t="I:2" |
+| clear-wins | requeued | false | /t="D:2" | /t="I:2" |
+| clear-loses | dropped | true | /t="D:2" | /t="I:2" |
+| clear-loses | dropped | false | /t="D:2" | /t="I:2" |
+| clear-loses | requeued | true | /t=missing | /t=missing |
+| clear-loses | requeued | false | /t=missing | /t=missing |
+
+P4 — 패자 재생 및 다음 c 에지 (clear-wins/inject-wins/held, batch)
+| LOSER_FATE | consumed | a,c batch | c만 다음 입력 | 무관한 note 입력 |
+| dropped | true | /t="C:2", /u="U:C:2" | /t="C:3", /u="U:C:3" | /t="C:3", /u="U:C:3" |
+| dropped | false | /t="A:2", /u="U:A:2" | /t="C:3", /u="U:C:3" | /t="C:3", /u="U:C:3" |
+| requeued | true | /t="A:2", /u="U:A:2" | /t="C:3", /u="U:C:3" | /t="C:3", /u="U:C:3" |
+| requeued | false | /t="A:2", /u="U:A:2" | /t="C:3", /u="U:C:3" | /t="C:3", /u="U:C:3" |
+
+P5/P6 — true 조건의 load/reset/full replace
+| 프로브 | LOAD_EDGE_CLEAR | load | reset | replace |
+| P5 | rising | /x=missing | /x=missing | /x=missing |
+| P5 | held | /x=missing | /x="v" | /x="v" |
+| P6 | rising | /x="v" | /x="v" | /x="v" |
+
+P7 — 경합 승자와 최종 raw의 구분
+declaration-order의 첫 라운드 승자는 forward에서 derived, reverse에서 injectTo로 모두 반전했습니다.
+inject-wins/derived-wins는 선언 순서를 바꿔도 첫 승자와 최종 raw가 유지됐습니다.
+다만 declaration-order의 batch 최종 raw가 반전하지 않는 조합은 4개입니다. 모두 dropped + EDGE_CONSUMED_ON_LOSS=false입니다.
+forward에서 진 injectTo가 다음 라운드에 재시도되어 I:2를 쓰고, reverse에서도 injectTo가 이겨 I:2를 씁니다.
+따라서 “모든 조합에서 최종 커밋 raw가 뒤집힌다”는 P7 기대는 관측상 성립하지 않습니다. 경합 승자 반전 검사만 통과한 것을 최종 raw 반전으로 보고하지 않습니다.
+C18/P7/forward/batch/pair: 첫 승자는 반대이지만 최종 /t="I:2"로 같습니다; 소비되지 않은 injectTo 패자가 재시도됩니다.
+C19/P7/forward/batch/pair: 첫 승자는 반대이지만 최종 /t="I:2"로 같습니다; 소비되지 않은 injectTo 패자가 재시도됩니다.
+C42/P7/forward/batch/pair: 첫 승자는 반대이지만 최종 /t="I:2"로 같습니다; 소비되지 않은 injectTo 패자가 재시도됩니다.
+C43/P7/forward/batch/pair: 첫 승자는 반대이지만 최종 /t="I:2"로 같습니다; 소비되지 않은 injectTo 패자가 재시도됩니다.
+
+P8 — 추가 순환 프로브
+a→t와 t→a가 각각 +1을 주입하며 t에는 flag 기반 clear가 있습니다. load와 flag=false/a=2/t=2 batch를 실행했습니다.
+96 outcome 모두 25라운드 budget-exceeded이며 base를 커밋했습니다. P1–P7에서는 예산 초과가 없었습니다.
+이 수치는 고정된 프로브와 위 이벤트 소비 모델의 결과이며, 다른 스키마의 종료성을 주장하지 않습니다.
+
+검증
+모델 재생성: true; matrix 두 실행 byte-identical: true.
+matrix 376개 단언, 선언 category 순서 12개 단언, 별도 정책 10개 단언이 통과했습니다.
+EXPERIMENT=false의 r9/r9b 출력은 round9의 기존 출력과 바이트 단위로 같습니다.
+원본 round9/regress/run.mjs를 1회 실행했습니다. exit=0.
+preload로 생성 파일 쓰기/후속 읽기를 round10/round9-run에 보냈으며 round9 31개 파일의 목록/내용 SHA-256이 실행 전후 같습니다.
+원본 회귀: v5 selfcheck 각 63 PASS, Q8 108, 정정 52, 경계 26 단언; 원본 v4e new의 기존 3 FAIL은 하니스가 기대한 비교 기준입니다.
+matrix SHA-256: 639907369a23b449cb80af6e291b01e8756277e642aabdf0aae69d1acf062dad
+
+특이 행별 이유
+다음 기준 중 하나를 만족하는 ROW를 각각 한 줄로 기록합니다: 예산 초과, 순서 의존, 패자 재시도가 최종 값을 씀, held 최초 load 지움, 설명 없는 손실.
+C00/P1/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C00/P1/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C00/P1/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C00/P2/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C00/P2/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C00/P2/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C00/P3/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C00/P3/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C00/P3/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C00/P4/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C00/P4/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C00/P4/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C00/P7/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C00/P7/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C00/P7/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C00/P7/reverse/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C00/P7/reverse/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C00/P7/reverse/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C00/P8/forward/feedback/load: P8의 값 증가 순환이 25라운드 내 멈추지 않아 caller base를 커밋했습니다.
+C00/P8/forward/feedback/feedback: P8의 값 증가 순환이 25라운드 내 멈추지 않아 caller base를 커밋했습니다.
+C01/P1/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C01/P1/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C01/P1/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C01/P2/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C01/P2/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C01/P2/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C01/P3/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C01/P3/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C01/P3/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C01/P4/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C01/P4/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C01/P4/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C01/P7/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C01/P7/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C01/P7/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C01/P7/reverse/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C01/P7/reverse/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C01/P7/reverse/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C01/P5/forward/load-reset-replace/load: 최초 clearWas=false에서 true가 되어 held도 최초 load는 지웁니다.
+C01/P8/forward/feedback/load: P8의 값 증가 순환이 25라운드 내 멈추지 않아 caller base를 커밋했습니다.
+C01/P8/forward/feedback/feedback: P8의 값 증가 순환이 25라운드 내 멈추지 않아 caller base를 커밋했습니다.
+C02/P1/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C02/P1/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C02/P1/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C02/P2/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C02/P2/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C02/P2/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C02/P3/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C02/P3/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C02/P3/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C02/P4/forward/batch/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C02/P4/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C02/P4/forward/left-right/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C02/P4/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C02/P4/forward/right-left/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C02/P4/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C02/P7/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C02/P7/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C02/P7/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C02/P7/reverse/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C02/P7/reverse/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C02/P7/reverse/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C02/P8/forward/feedback/load: P8의 값 증가 순환이 25라운드 내 멈추지 않아 caller base를 커밋했습니다.
+C02/P8/forward/feedback/feedback: P8의 값 증가 순환이 25라운드 내 멈추지 않아 caller base를 커밋했습니다.
+C03/P1/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C03/P1/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C03/P1/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C03/P2/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C03/P2/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C03/P2/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C03/P3/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C03/P3/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C03/P3/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C03/P4/forward/batch/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C03/P4/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C03/P4/forward/left-right/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C03/P4/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C03/P4/forward/right-left/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C03/P4/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C03/P7/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C03/P7/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C03/P7/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C03/P7/reverse/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C03/P7/reverse/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C03/P7/reverse/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C03/P5/forward/load-reset-replace/load: 최초 clearWas=false에서 true가 되어 held도 최초 load는 지웁니다.
+C03/P8/forward/feedback/load: P8의 값 증가 순환이 25라운드 내 멈추지 않아 caller base를 커밋했습니다.
+C03/P8/forward/feedback/feedback: P8의 값 증가 순환이 25라운드 내 멈추지 않아 caller base를 커밋했습니다.
+C04/P1/forward/batch/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C04/P1/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C04/P1/forward/left-right/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C04/P1/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C04/P1/forward/right-left/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C04/P1/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C04/P2/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C04/P2/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C04/P2/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C04/P3/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C04/P3/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C04/P3/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C04/P4/forward/batch/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C04/P4/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C04/P4/forward/left-right/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C04/P4/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C04/P4/forward/right-left/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C04/P4/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C04/P7/forward/batch/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C04/P7/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C04/P7/forward/left-right/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C04/P7/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C04/P7/forward/right-left/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C04/P7/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C04/P7/reverse/batch/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C04/P7/reverse/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C04/P7/reverse/left-right/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C04/P7/reverse/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C04/P7/reverse/right-left/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C04/P7/reverse/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C04/P8/forward/feedback/load: P8의 값 증가 순환이 25라운드 내 멈추지 않아 caller base를 커밋했습니다.
+C04/P8/forward/feedback/feedback: P8의 값 증가 순환이 25라운드 내 멈추지 않아 caller base를 커밋했습니다.
+C05/P1/forward/batch/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C05/P1/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C05/P1/forward/left-right/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C05/P1/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C05/P1/forward/right-left/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C05/P1/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C05/P2/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C05/P2/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C05/P2/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C05/P3/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C05/P3/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C05/P3/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C05/P4/forward/batch/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C05/P4/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C05/P4/forward/left-right/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C05/P4/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C05/P4/forward/right-left/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C05/P4/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C05/P7/forward/batch/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C05/P7/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C05/P7/forward/left-right/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C05/P7/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C05/P7/forward/right-left/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C05/P7/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C05/P7/reverse/batch/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C05/P7/reverse/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C05/P7/reverse/left-right/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C05/P7/reverse/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C05/P7/reverse/right-left/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C05/P7/reverse/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C05/P5/forward/load-reset-replace/load: 최초 clearWas=false에서 true가 되어 held도 최초 load는 지웁니다.
+C05/P8/forward/feedback/load: P8의 값 증가 순환이 25라운드 내 멈추지 않아 caller base를 커밋했습니다.
+C05/P8/forward/feedback/feedback: P8의 값 증가 순환이 25라운드 내 멈추지 않아 caller base를 커밋했습니다.
+C06/P1/forward/batch/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C06/P1/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C06/P1/forward/left-right/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C06/P1/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C06/P1/forward/right-left/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C06/P1/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C06/P2/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C06/P2/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C06/P2/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C06/P3/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C06/P3/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C06/P3/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C06/P4/forward/batch/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C06/P4/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C06/P4/forward/left-right/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C06/P4/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C06/P4/forward/right-left/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C06/P4/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C06/P7/forward/batch/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C06/P7/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C06/P7/forward/left-right/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C06/P7/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C06/P7/forward/right-left/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C06/P7/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C06/P7/reverse/batch/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C06/P7/reverse/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C06/P7/reverse/left-right/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C06/P7/reverse/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C06/P7/reverse/right-left/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C06/P7/reverse/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C06/P8/forward/feedback/load: P8의 값 증가 순환이 25라운드 내 멈추지 않아 caller base를 커밋했습니다.
+C06/P8/forward/feedback/feedback: P8의 값 증가 순환이 25라운드 내 멈추지 않아 caller base를 커밋했습니다.
+C07/P1/forward/batch/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C07/P1/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C07/P1/forward/left-right/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C07/P1/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C07/P1/forward/right-left/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C07/P1/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C07/P2/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C07/P2/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C07/P2/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C07/P3/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C07/P3/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C07/P3/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C07/P4/forward/batch/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C07/P4/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C07/P4/forward/left-right/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C07/P4/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C07/P4/forward/right-left/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C07/P4/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C07/P7/forward/batch/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C07/P7/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C07/P7/forward/left-right/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C07/P7/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C07/P7/forward/right-left/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C07/P7/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C07/P7/reverse/batch/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C07/P7/reverse/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C07/P7/reverse/left-right/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C07/P7/reverse/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C07/P7/reverse/right-left/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C07/P7/reverse/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C07/P5/forward/load-reset-replace/load: 최초 clearWas=false에서 true가 되어 held도 최초 load는 지웁니다.
+C07/P8/forward/feedback/load: P8의 값 증가 순환이 25라운드 내 멈추지 않아 caller base를 커밋했습니다.
+C07/P8/forward/feedback/feedback: P8의 값 증가 순환이 25라운드 내 멈추지 않아 caller base를 커밋했습니다.
+C08/P1/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C08/P1/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C08/P1/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C08/P2/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C08/P2/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C08/P2/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C08/P3/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C08/P3/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C08/P3/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C08/P4/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C08/P4/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C08/P4/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C08/P7/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C08/P7/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C08/P7/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C08/P7/reverse/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C08/P7/reverse/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C08/P7/reverse/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C08/P8/forward/feedback/load: P8의 값 증가 순환이 25라운드 내 멈추지 않아 caller base를 커밋했습니다.
+C08/P8/forward/feedback/feedback: P8의 값 증가 순환이 25라운드 내 멈추지 않아 caller base를 커밋했습니다.
+C09/P1/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C09/P1/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C09/P1/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C09/P2/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C09/P2/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C09/P2/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C09/P3/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C09/P3/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C09/P3/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C09/P4/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C09/P4/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C09/P4/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C09/P7/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C09/P7/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C09/P7/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C09/P7/reverse/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C09/P7/reverse/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C09/P7/reverse/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C09/P5/forward/load-reset-replace/load: 최초 clearWas=false에서 true가 되어 held도 최초 load는 지웁니다.
+C09/P8/forward/feedback/load: P8의 값 증가 순환이 25라운드 내 멈추지 않아 caller base를 커밋했습니다.
+C09/P8/forward/feedback/feedback: P8의 값 증가 순환이 25라운드 내 멈추지 않아 caller base를 커밋했습니다.
+C10/P1/forward/batch/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C10/P1/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C10/P1/forward/left-right/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C10/P1/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C10/P1/forward/right-left/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C10/P1/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C10/P2/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C10/P2/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C10/P2/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C10/P3/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C10/P3/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C10/P3/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C10/P4/forward/batch/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C10/P4/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C10/P4/forward/left-right/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C10/P4/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C10/P4/forward/right-left/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C10/P4/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C10/P7/forward/batch/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C10/P7/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C10/P7/forward/left-right/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C10/P7/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C10/P7/forward/right-left/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C10/P7/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C10/P7/reverse/batch/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C10/P7/reverse/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C10/P7/reverse/left-right/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C10/P7/reverse/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C10/P7/reverse/right-left/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C10/P7/reverse/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C10/P8/forward/feedback/load: P8의 값 증가 순환이 25라운드 내 멈추지 않아 caller base를 커밋했습니다.
+C10/P8/forward/feedback/feedback: P8의 값 증가 순환이 25라운드 내 멈추지 않아 caller base를 커밋했습니다.
+C11/P1/forward/batch/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C11/P1/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C11/P1/forward/left-right/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C11/P1/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C11/P1/forward/right-left/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C11/P1/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C11/P2/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C11/P2/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C11/P2/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C11/P3/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C11/P3/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C11/P3/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C11/P4/forward/batch/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C11/P4/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C11/P4/forward/left-right/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C11/P4/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C11/P4/forward/right-left/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C11/P4/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C11/P7/forward/batch/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C11/P7/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C11/P7/forward/left-right/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C11/P7/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C11/P7/forward/right-left/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C11/P7/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C11/P7/reverse/batch/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C11/P7/reverse/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C11/P7/reverse/left-right/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C11/P7/reverse/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C11/P7/reverse/right-left/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C11/P7/reverse/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C11/P5/forward/load-reset-replace/load: 최초 clearWas=false에서 true가 되어 held도 최초 load는 지웁니다.
+C11/P8/forward/feedback/load: P8의 값 증가 순환이 25라운드 내 멈추지 않아 caller base를 커밋했습니다.
+C11/P8/forward/feedback/feedback: P8의 값 증가 순환이 25라운드 내 멈추지 않아 caller base를 커밋했습니다.
+C12/P1/forward/batch/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C12/P1/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C12/P1/forward/left-right/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C12/P1/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C12/P1/forward/right-left/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C12/P1/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C12/P2/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C12/P2/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C12/P2/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C12/P3/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C12/P3/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C12/P3/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C12/P4/forward/batch/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C12/P4/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C12/P4/forward/left-right/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C12/P4/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C12/P4/forward/right-left/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C12/P4/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C12/P7/forward/batch/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C12/P7/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C12/P7/forward/left-right/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C12/P7/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C12/P7/forward/right-left/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C12/P7/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C12/P7/reverse/batch/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C12/P7/reverse/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C12/P7/reverse/left-right/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C12/P7/reverse/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C12/P7/reverse/right-left/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C12/P7/reverse/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C12/P8/forward/feedback/load: P8의 값 증가 순환이 25라운드 내 멈추지 않아 caller base를 커밋했습니다.
+C12/P8/forward/feedback/feedback: P8의 값 증가 순환이 25라운드 내 멈추지 않아 caller base를 커밋했습니다.
+C13/P1/forward/batch/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C13/P1/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C13/P1/forward/left-right/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C13/P1/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C13/P1/forward/right-left/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C13/P1/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C13/P2/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C13/P2/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C13/P2/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C13/P3/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C13/P3/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C13/P3/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C13/P4/forward/batch/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C13/P4/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C13/P4/forward/left-right/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C13/P4/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C13/P4/forward/right-left/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C13/P4/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C13/P7/forward/batch/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C13/P7/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C13/P7/forward/left-right/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C13/P7/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C13/P7/forward/right-left/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C13/P7/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C13/P7/reverse/batch/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C13/P7/reverse/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C13/P7/reverse/left-right/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C13/P7/reverse/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C13/P7/reverse/right-left/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C13/P7/reverse/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C13/P5/forward/load-reset-replace/load: 최초 clearWas=false에서 true가 되어 held도 최초 load는 지웁니다.
+C13/P8/forward/feedback/load: P8의 값 증가 순환이 25라운드 내 멈추지 않아 caller base를 커밋했습니다.
+C13/P8/forward/feedback/feedback: P8의 값 증가 순환이 25라운드 내 멈추지 않아 caller base를 커밋했습니다.
+C14/P1/forward/batch/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C14/P1/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C14/P1/forward/left-right/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C14/P1/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C14/P1/forward/right-left/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C14/P1/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C14/P2/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C14/P2/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C14/P2/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C14/P3/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C14/P3/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C14/P3/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C14/P4/forward/batch/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C14/P4/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C14/P4/forward/left-right/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C14/P4/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C14/P4/forward/right-left/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C14/P4/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C14/P7/forward/batch/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C14/P7/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C14/P7/forward/left-right/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C14/P7/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C14/P7/forward/right-left/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C14/P7/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C14/P7/reverse/batch/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C14/P7/reverse/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C14/P7/reverse/left-right/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C14/P7/reverse/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C14/P7/reverse/right-left/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C14/P7/reverse/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C14/P8/forward/feedback/load: P8의 값 증가 순환이 25라운드 내 멈추지 않아 caller base를 커밋했습니다.
+C14/P8/forward/feedback/feedback: P8의 값 증가 순환이 25라운드 내 멈추지 않아 caller base를 커밋했습니다.
+C15/P1/forward/batch/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C15/P1/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C15/P1/forward/left-right/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C15/P1/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C15/P1/forward/right-left/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C15/P1/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C15/P2/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C15/P2/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C15/P2/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C15/P3/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C15/P3/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C15/P3/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C15/P4/forward/batch/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C15/P4/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C15/P4/forward/left-right/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C15/P4/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C15/P4/forward/right-left/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C15/P4/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C15/P7/forward/batch/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C15/P7/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C15/P7/forward/left-right/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C15/P7/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C15/P7/forward/right-left/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C15/P7/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C15/P7/reverse/batch/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C15/P7/reverse/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C15/P7/reverse/left-right/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C15/P7/reverse/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C15/P7/reverse/right-left/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C15/P7/reverse/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C15/P5/forward/load-reset-replace/load: 최초 clearWas=false에서 true가 되어 held도 최초 load는 지웁니다.
+C15/P8/forward/feedback/load: P8의 값 증가 순환이 25라운드 내 멈추지 않아 caller base를 커밋했습니다.
+C15/P8/forward/feedback/feedback: P8의 값 증가 순환이 25라운드 내 멈추지 않아 caller base를 커밋했습니다.
+C16/P1/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C16/P1/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C16/P1/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C16/P2/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C16/P2/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C16/P2/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C16/P3/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C16/P3/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C16/P3/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C16/P4/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C16/P4/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C16/P4/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C16/P7/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 선언 순서가 첫 경합 및 후속 후보 처리 순서를 바꿨습니다.
+C16/P7/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C16/P7/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C16/P7/reverse/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 선언 순서가 첫 경합 및 후속 후보 처리 순서를 바꿨습니다.
+C16/P7/reverse/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C16/P7/reverse/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C16/P8/forward/feedback/load: P8의 값 증가 순환이 25라운드 내 멈추지 않아 caller base를 커밋했습니다.
+C16/P8/forward/feedback/feedback: P8의 값 증가 순환이 25라운드 내 멈추지 않아 caller base를 커밋했습니다.
+C17/P1/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C17/P1/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C17/P1/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C17/P2/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C17/P2/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C17/P2/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C17/P3/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C17/P3/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C17/P3/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C17/P4/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C17/P4/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C17/P4/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C17/P7/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 선언 순서가 첫 경합 및 후속 후보 처리 순서를 바꿨습니다.
+C17/P7/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C17/P7/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C17/P7/reverse/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 선언 순서가 첫 경합 및 후속 후보 처리 순서를 바꿨습니다.
+C17/P7/reverse/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C17/P7/reverse/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C17/P5/forward/load-reset-replace/load: 최초 clearWas=false에서 true가 되어 held도 최초 load는 지웁니다.
+C17/P8/forward/feedback/load: P8의 값 증가 순환이 25라운드 내 멈추지 않아 caller base를 커밋했습니다.
+C17/P8/forward/feedback/feedback: P8의 값 증가 순환이 25라운드 내 멈추지 않아 caller base를 커밋했습니다.
+C18/P1/forward/batch/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C18/P1/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C18/P1/forward/left-right/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C18/P1/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C18/P1/forward/right-left/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C18/P1/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C18/P2/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C18/P2/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C18/P2/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C18/P3/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C18/P3/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C18/P3/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C18/P4/forward/batch/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C18/P4/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C18/P4/forward/left-right/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C18/P4/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C18/P4/forward/right-left/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C18/P4/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C18/P7/forward/batch/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C18/P7/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C18/P7/forward/left-right/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C18/P7/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C18/P7/forward/right-left/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C18/P7/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C18/P7/reverse/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C18/P7/reverse/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C18/P7/reverse/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C18/P8/forward/feedback/load: P8의 값 증가 순환이 25라운드 내 멈추지 않아 caller base를 커밋했습니다.
+C18/P8/forward/feedback/feedback: P8의 값 증가 순환이 25라운드 내 멈추지 않아 caller base를 커밋했습니다.
+C19/P1/forward/batch/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C19/P1/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C19/P1/forward/left-right/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C19/P1/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C19/P1/forward/right-left/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C19/P1/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C19/P2/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C19/P2/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C19/P2/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C19/P3/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C19/P3/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C19/P3/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C19/P4/forward/batch/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C19/P4/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C19/P4/forward/left-right/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C19/P4/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C19/P4/forward/right-left/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C19/P4/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C19/P7/forward/batch/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C19/P7/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C19/P7/forward/left-right/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C19/P7/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C19/P7/forward/right-left/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C19/P7/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C19/P7/reverse/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C19/P7/reverse/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C19/P7/reverse/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C19/P5/forward/load-reset-replace/load: 최초 clearWas=false에서 true가 되어 held도 최초 load는 지웁니다.
+C19/P8/forward/feedback/load: P8의 값 증가 순환이 25라운드 내 멈추지 않아 caller base를 커밋했습니다.
+C19/P8/forward/feedback/feedback: P8의 값 증가 순환이 25라운드 내 멈추지 않아 caller base를 커밋했습니다.
+C20/P1/forward/batch/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C20/P1/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C20/P1/forward/left-right/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C20/P1/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C20/P1/forward/right-left/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C20/P1/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C20/P2/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C20/P2/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C20/P2/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C20/P3/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C20/P3/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C20/P3/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C20/P4/forward/batch/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C20/P4/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C20/P4/forward/left-right/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C20/P4/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C20/P4/forward/right-left/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C20/P4/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C20/P7/forward/batch/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C20/P7/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 선언 순서가 첫 경합 및 후속 후보 처리 순서를 바꿨습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C20/P7/forward/left-right/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C20/P7/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C20/P7/forward/right-left/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C20/P7/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C20/P7/reverse/batch/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C20/P7/reverse/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 선언 순서가 첫 경합 및 후속 후보 처리 순서를 바꿨습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C20/P7/reverse/left-right/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C20/P7/reverse/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C20/P7/reverse/right-left/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C20/P7/reverse/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C20/P8/forward/feedback/load: P8의 값 증가 순환이 25라운드 내 멈추지 않아 caller base를 커밋했습니다.
+C20/P8/forward/feedback/feedback: P8의 값 증가 순환이 25라운드 내 멈추지 않아 caller base를 커밋했습니다.
+C21/P1/forward/batch/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C21/P1/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C21/P1/forward/left-right/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C21/P1/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C21/P1/forward/right-left/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C21/P1/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C21/P2/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C21/P2/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C21/P2/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C21/P3/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C21/P3/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C21/P3/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C21/P4/forward/batch/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C21/P4/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C21/P4/forward/left-right/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C21/P4/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C21/P4/forward/right-left/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C21/P4/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C21/P7/forward/batch/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C21/P7/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 선언 순서가 첫 경합 및 후속 후보 처리 순서를 바꿨습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C21/P7/forward/left-right/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C21/P7/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C21/P7/forward/right-left/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C21/P7/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C21/P7/reverse/batch/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C21/P7/reverse/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 선언 순서가 첫 경합 및 후속 후보 처리 순서를 바꿨습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C21/P7/reverse/left-right/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C21/P7/reverse/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C21/P7/reverse/right-left/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C21/P7/reverse/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C21/P5/forward/load-reset-replace/load: 최초 clearWas=false에서 true가 되어 held도 최초 load는 지웁니다.
+C21/P8/forward/feedback/load: P8의 값 증가 순환이 25라운드 내 멈추지 않아 caller base를 커밋했습니다.
+C21/P8/forward/feedback/feedback: P8의 값 증가 순환이 25라운드 내 멈추지 않아 caller base를 커밋했습니다.
+C22/P1/forward/batch/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C22/P1/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C22/P1/forward/left-right/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C22/P1/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C22/P1/forward/right-left/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C22/P1/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C22/P2/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C22/P2/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C22/P2/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C22/P3/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C22/P3/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C22/P3/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C22/P4/forward/batch/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C22/P4/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C22/P4/forward/left-right/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C22/P4/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C22/P4/forward/right-left/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C22/P4/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C22/P7/forward/batch/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C22/P7/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 선언 순서가 첫 경합 및 후속 후보 처리 순서를 바꿨습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C22/P7/forward/left-right/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C22/P7/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C22/P7/forward/right-left/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C22/P7/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C22/P7/reverse/batch/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C22/P7/reverse/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 선언 순서가 첫 경합 및 후속 후보 처리 순서를 바꿨습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C22/P7/reverse/left-right/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C22/P7/reverse/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C22/P7/reverse/right-left/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C22/P7/reverse/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C22/P8/forward/feedback/load: P8의 값 증가 순환이 25라운드 내 멈추지 않아 caller base를 커밋했습니다.
+C22/P8/forward/feedback/feedback: P8의 값 증가 순환이 25라운드 내 멈추지 않아 caller base를 커밋했습니다.
+C23/P1/forward/batch/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C23/P1/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C23/P1/forward/left-right/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C23/P1/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C23/P1/forward/right-left/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C23/P1/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C23/P2/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C23/P2/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C23/P2/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C23/P3/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C23/P3/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C23/P3/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C23/P4/forward/batch/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C23/P4/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C23/P4/forward/left-right/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C23/P4/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C23/P4/forward/right-left/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C23/P4/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C23/P7/forward/batch/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C23/P7/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 선언 순서가 첫 경합 및 후속 후보 처리 순서를 바꿨습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C23/P7/forward/left-right/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C23/P7/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C23/P7/forward/right-left/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C23/P7/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C23/P7/reverse/batch/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C23/P7/reverse/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 선언 순서가 첫 경합 및 후속 후보 처리 순서를 바꿨습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C23/P7/reverse/left-right/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C23/P7/reverse/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C23/P7/reverse/right-left/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C23/P7/reverse/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C23/P5/forward/load-reset-replace/load: 최초 clearWas=false에서 true가 되어 held도 최초 load는 지웁니다.
+C23/P8/forward/feedback/load: P8의 값 증가 순환이 25라운드 내 멈추지 않아 caller base를 커밋했습니다.
+C23/P8/forward/feedback/feedback: P8의 값 증가 순환이 25라운드 내 멈추지 않아 caller base를 커밋했습니다.
+C24/P1/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C24/P1/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C24/P1/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C24/P2/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C24/P2/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C24/P2/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C24/P3/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C24/P3/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C24/P3/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C24/P4/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C24/P4/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C24/P4/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C24/P7/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C24/P7/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C24/P7/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C24/P7/reverse/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C24/P7/reverse/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C24/P7/reverse/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C24/P8/forward/feedback/load: P8의 값 증가 순환이 25라운드 내 멈추지 않아 caller base를 커밋했습니다.
+C24/P8/forward/feedback/feedback: P8의 값 증가 순환이 25라운드 내 멈추지 않아 caller base를 커밋했습니다.
+C25/P1/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C25/P1/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C25/P1/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C25/P2/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C25/P2/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C25/P2/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C25/P3/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C25/P3/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C25/P3/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C25/P4/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C25/P4/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C25/P4/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C25/P7/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C25/P7/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C25/P7/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C25/P7/reverse/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C25/P7/reverse/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C25/P7/reverse/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C25/P5/forward/load-reset-replace/load: 최초 clearWas=false에서 true가 되어 held도 최초 load는 지웁니다.
+C25/P8/forward/feedback/load: P8의 값 증가 순환이 25라운드 내 멈추지 않아 caller base를 커밋했습니다.
+C25/P8/forward/feedback/feedback: P8의 값 증가 순환이 25라운드 내 멈추지 않아 caller base를 커밋했습니다.
+C26/P1/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C26/P1/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C26/P1/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C26/P2/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C26/P2/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C26/P2/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C26/P3/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C26/P3/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C26/P3/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C26/P4/forward/batch/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C26/P4/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C26/P4/forward/left-right/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C26/P4/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C26/P4/forward/right-left/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C26/P4/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C26/P7/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C26/P7/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C26/P7/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C26/P7/reverse/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C26/P7/reverse/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C26/P7/reverse/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C26/P8/forward/feedback/load: P8의 값 증가 순환이 25라운드 내 멈추지 않아 caller base를 커밋했습니다.
+C26/P8/forward/feedback/feedback: P8의 값 증가 순환이 25라운드 내 멈추지 않아 caller base를 커밋했습니다.
+C27/P1/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C27/P1/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C27/P1/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C27/P2/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C27/P2/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C27/P2/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C27/P3/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C27/P3/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C27/P3/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C27/P4/forward/batch/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C27/P4/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C27/P4/forward/left-right/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C27/P4/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C27/P4/forward/right-left/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C27/P4/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C27/P7/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C27/P7/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C27/P7/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C27/P7/reverse/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C27/P7/reverse/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C27/P7/reverse/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C27/P5/forward/load-reset-replace/load: 최초 clearWas=false에서 true가 되어 held도 최초 load는 지웁니다.
+C27/P8/forward/feedback/load: P8의 값 증가 순환이 25라운드 내 멈추지 않아 caller base를 커밋했습니다.
+C27/P8/forward/feedback/feedback: P8의 값 증가 순환이 25라운드 내 멈추지 않아 caller base를 커밋했습니다.
+C28/P1/forward/batch/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C28/P1/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C28/P1/forward/left-right/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C28/P1/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C28/P1/forward/right-left/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C28/P1/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C28/P2/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C28/P2/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C28/P2/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C28/P3/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C28/P3/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C28/P3/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C28/P4/forward/batch/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C28/P4/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C28/P4/forward/left-right/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C28/P4/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C28/P4/forward/right-left/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C28/P4/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C28/P7/forward/batch/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C28/P7/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C28/P7/forward/left-right/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C28/P7/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C28/P7/forward/right-left/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C28/P7/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C28/P7/reverse/batch/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C28/P7/reverse/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C28/P7/reverse/left-right/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C28/P7/reverse/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C28/P7/reverse/right-left/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C28/P7/reverse/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C28/P8/forward/feedback/load: P8의 값 증가 순환이 25라운드 내 멈추지 않아 caller base를 커밋했습니다.
+C28/P8/forward/feedback/feedback: P8의 값 증가 순환이 25라운드 내 멈추지 않아 caller base를 커밋했습니다.
+C29/P1/forward/batch/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C29/P1/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C29/P1/forward/left-right/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C29/P1/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C29/P1/forward/right-left/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C29/P1/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C29/P2/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C29/P2/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C29/P2/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C29/P3/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C29/P3/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C29/P3/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C29/P4/forward/batch/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C29/P4/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C29/P4/forward/left-right/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C29/P4/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C29/P4/forward/right-left/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C29/P4/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C29/P7/forward/batch/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C29/P7/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C29/P7/forward/left-right/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C29/P7/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C29/P7/forward/right-left/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C29/P7/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C29/P7/reverse/batch/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C29/P7/reverse/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C29/P7/reverse/left-right/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C29/P7/reverse/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C29/P7/reverse/right-left/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C29/P7/reverse/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C29/P5/forward/load-reset-replace/load: 최초 clearWas=false에서 true가 되어 held도 최초 load는 지웁니다.
+C29/P8/forward/feedback/load: P8의 값 증가 순환이 25라운드 내 멈추지 않아 caller base를 커밋했습니다.
+C29/P8/forward/feedback/feedback: P8의 값 증가 순환이 25라운드 내 멈추지 않아 caller base를 커밋했습니다.
+C30/P1/forward/batch/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C30/P1/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C30/P1/forward/left-right/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C30/P1/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C30/P1/forward/right-left/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C30/P1/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C30/P2/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C30/P2/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C30/P2/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C30/P3/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C30/P3/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C30/P3/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C30/P4/forward/batch/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C30/P4/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C30/P4/forward/left-right/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C30/P4/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C30/P4/forward/right-left/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C30/P4/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C30/P7/forward/batch/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C30/P7/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C30/P7/forward/left-right/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C30/P7/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C30/P7/forward/right-left/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C30/P7/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C30/P7/reverse/batch/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C30/P7/reverse/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C30/P7/reverse/left-right/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C30/P7/reverse/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C30/P7/reverse/right-left/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C30/P7/reverse/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C30/P8/forward/feedback/load: P8의 값 증가 순환이 25라운드 내 멈추지 않아 caller base를 커밋했습니다.
+C30/P8/forward/feedback/feedback: P8의 값 증가 순환이 25라운드 내 멈추지 않아 caller base를 커밋했습니다.
+C31/P1/forward/batch/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C31/P1/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C31/P1/forward/left-right/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C31/P1/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C31/P1/forward/right-left/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C31/P1/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C31/P2/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C31/P2/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C31/P2/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C31/P3/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C31/P3/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C31/P3/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C31/P4/forward/batch/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C31/P4/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C31/P4/forward/left-right/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C31/P4/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C31/P4/forward/right-left/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C31/P4/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C31/P7/forward/batch/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C31/P7/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C31/P7/forward/left-right/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C31/P7/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C31/P7/forward/right-left/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C31/P7/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C31/P7/reverse/batch/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C31/P7/reverse/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C31/P7/reverse/left-right/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C31/P7/reverse/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C31/P7/reverse/right-left/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C31/P7/reverse/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C31/P5/forward/load-reset-replace/load: 최초 clearWas=false에서 true가 되어 held도 최초 load는 지웁니다.
+C31/P8/forward/feedback/load: P8의 값 증가 순환이 25라운드 내 멈추지 않아 caller base를 커밋했습니다.
+C31/P8/forward/feedback/feedback: P8의 값 증가 순환이 25라운드 내 멈추지 않아 caller base를 커밋했습니다.
+C32/P1/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C32/P1/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C32/P1/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C32/P2/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C32/P2/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C32/P2/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C32/P3/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C32/P3/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C32/P3/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C32/P4/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C32/P4/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C32/P4/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C32/P7/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C32/P7/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C32/P7/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C32/P7/reverse/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C32/P7/reverse/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C32/P7/reverse/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C32/P8/forward/feedback/load: P8의 값 증가 순환이 25라운드 내 멈추지 않아 caller base를 커밋했습니다.
+C32/P8/forward/feedback/feedback: P8의 값 증가 순환이 25라운드 내 멈추지 않아 caller base를 커밋했습니다.
+C33/P1/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C33/P1/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C33/P1/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C33/P2/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C33/P2/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C33/P2/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C33/P3/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C33/P3/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C33/P3/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C33/P4/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C33/P4/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C33/P4/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C33/P7/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C33/P7/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C33/P7/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C33/P7/reverse/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C33/P7/reverse/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C33/P7/reverse/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C33/P5/forward/load-reset-replace/load: 최초 clearWas=false에서 true가 되어 held도 최초 load는 지웁니다.
+C33/P8/forward/feedback/load: P8의 값 증가 순환이 25라운드 내 멈추지 않아 caller base를 커밋했습니다.
+C33/P8/forward/feedback/feedback: P8의 값 증가 순환이 25라운드 내 멈추지 않아 caller base를 커밋했습니다.
+C34/P1/forward/batch/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C34/P1/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C34/P1/forward/left-right/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C34/P1/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C34/P1/forward/right-left/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C34/P1/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C34/P2/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C34/P2/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C34/P2/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C34/P3/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C34/P3/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C34/P3/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C34/P4/forward/batch/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C34/P4/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C34/P4/forward/left-right/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C34/P4/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C34/P4/forward/right-left/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C34/P4/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C34/P7/forward/batch/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C34/P7/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C34/P7/forward/left-right/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C34/P7/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C34/P7/forward/right-left/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C34/P7/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C34/P7/reverse/batch/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C34/P7/reverse/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C34/P7/reverse/left-right/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C34/P7/reverse/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C34/P7/reverse/right-left/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C34/P7/reverse/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C34/P8/forward/feedback/load: P8의 값 증가 순환이 25라운드 내 멈추지 않아 caller base를 커밋했습니다.
+C34/P8/forward/feedback/feedback: P8의 값 증가 순환이 25라운드 내 멈추지 않아 caller base를 커밋했습니다.
+C35/P1/forward/batch/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C35/P1/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C35/P1/forward/left-right/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C35/P1/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C35/P1/forward/right-left/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C35/P1/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C35/P2/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C35/P2/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C35/P2/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C35/P3/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C35/P3/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C35/P3/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C35/P4/forward/batch/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C35/P4/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C35/P4/forward/left-right/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C35/P4/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C35/P4/forward/right-left/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C35/P4/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C35/P7/forward/batch/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C35/P7/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C35/P7/forward/left-right/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C35/P7/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C35/P7/forward/right-left/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C35/P7/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C35/P7/reverse/batch/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C35/P7/reverse/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C35/P7/reverse/left-right/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C35/P7/reverse/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C35/P7/reverse/right-left/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C35/P7/reverse/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C35/P5/forward/load-reset-replace/load: 최초 clearWas=false에서 true가 되어 held도 최초 load는 지웁니다.
+C35/P8/forward/feedback/load: P8의 값 증가 순환이 25라운드 내 멈추지 않아 caller base를 커밋했습니다.
+C35/P8/forward/feedback/feedback: P8의 값 증가 순환이 25라운드 내 멈추지 않아 caller base를 커밋했습니다.
+C36/P1/forward/batch/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C36/P1/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C36/P1/forward/left-right/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C36/P1/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C36/P1/forward/right-left/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C36/P1/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C36/P2/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C36/P2/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C36/P2/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C36/P3/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C36/P3/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C36/P3/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C36/P4/forward/batch/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C36/P4/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C36/P4/forward/left-right/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C36/P4/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C36/P4/forward/right-left/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C36/P4/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C36/P7/forward/batch/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C36/P7/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C36/P7/forward/left-right/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C36/P7/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C36/P7/forward/right-left/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C36/P7/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C36/P7/reverse/batch/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C36/P7/reverse/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C36/P7/reverse/left-right/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C36/P7/reverse/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C36/P7/reverse/right-left/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C36/P7/reverse/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C36/P8/forward/feedback/load: P8의 값 증가 순환이 25라운드 내 멈추지 않아 caller base를 커밋했습니다.
+C36/P8/forward/feedback/feedback: P8의 값 증가 순환이 25라운드 내 멈추지 않아 caller base를 커밋했습니다.
+C37/P1/forward/batch/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C37/P1/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C37/P1/forward/left-right/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C37/P1/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C37/P1/forward/right-left/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C37/P1/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C37/P2/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C37/P2/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C37/P2/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C37/P3/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C37/P3/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C37/P3/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C37/P4/forward/batch/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C37/P4/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C37/P4/forward/left-right/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C37/P4/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C37/P4/forward/right-left/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C37/P4/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C37/P7/forward/batch/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C37/P7/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C37/P7/forward/left-right/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C37/P7/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C37/P7/forward/right-left/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C37/P7/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C37/P7/reverse/batch/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C37/P7/reverse/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C37/P7/reverse/left-right/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C37/P7/reverse/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C37/P7/reverse/right-left/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C37/P7/reverse/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C37/P5/forward/load-reset-replace/load: 최초 clearWas=false에서 true가 되어 held도 최초 load는 지웁니다.
+C37/P8/forward/feedback/load: P8의 값 증가 순환이 25라운드 내 멈추지 않아 caller base를 커밋했습니다.
+C37/P8/forward/feedback/feedback: P8의 값 증가 순환이 25라운드 내 멈추지 않아 caller base를 커밋했습니다.
+C38/P1/forward/batch/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C38/P1/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C38/P1/forward/left-right/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C38/P1/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C38/P1/forward/right-left/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C38/P1/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C38/P2/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C38/P2/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C38/P2/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C38/P3/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C38/P3/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C38/P3/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C38/P4/forward/batch/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C38/P4/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C38/P4/forward/left-right/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C38/P4/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C38/P4/forward/right-left/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C38/P4/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C38/P7/forward/batch/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C38/P7/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C38/P7/forward/left-right/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C38/P7/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C38/P7/forward/right-left/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C38/P7/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C38/P7/reverse/batch/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C38/P7/reverse/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C38/P7/reverse/left-right/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C38/P7/reverse/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C38/P7/reverse/right-left/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C38/P7/reverse/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C38/P8/forward/feedback/load: P8의 값 증가 순환이 25라운드 내 멈추지 않아 caller base를 커밋했습니다.
+C38/P8/forward/feedback/feedback: P8의 값 증가 순환이 25라운드 내 멈추지 않아 caller base를 커밋했습니다.
+C39/P1/forward/batch/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C39/P1/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C39/P1/forward/left-right/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C39/P1/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C39/P1/forward/right-left/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C39/P1/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C39/P2/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C39/P2/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C39/P2/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C39/P3/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C39/P3/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C39/P3/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C39/P4/forward/batch/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C39/P4/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C39/P4/forward/left-right/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C39/P4/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C39/P4/forward/right-left/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C39/P4/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C39/P7/forward/batch/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C39/P7/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C39/P7/forward/left-right/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C39/P7/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C39/P7/forward/right-left/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C39/P7/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C39/P7/reverse/batch/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C39/P7/reverse/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C39/P7/reverse/left-right/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C39/P7/reverse/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C39/P7/reverse/right-left/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C39/P7/reverse/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C39/P5/forward/load-reset-replace/load: 최초 clearWas=false에서 true가 되어 held도 최초 load는 지웁니다.
+C39/P8/forward/feedback/load: P8의 값 증가 순환이 25라운드 내 멈추지 않아 caller base를 커밋했습니다.
+C39/P8/forward/feedback/feedback: P8의 값 증가 순환이 25라운드 내 멈추지 않아 caller base를 커밋했습니다.
+C40/P1/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C40/P1/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C40/P1/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C40/P2/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C40/P2/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C40/P2/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C40/P3/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C40/P3/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C40/P3/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C40/P4/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C40/P4/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C40/P4/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C40/P7/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 선언 순서가 첫 경합 및 후속 후보 처리 순서를 바꿨습니다.
+C40/P7/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C40/P7/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C40/P7/reverse/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 선언 순서가 첫 경합 및 후속 후보 처리 순서를 바꿨습니다.
+C40/P7/reverse/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C40/P7/reverse/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C40/P8/forward/feedback/load: P8의 값 증가 순환이 25라운드 내 멈추지 않아 caller base를 커밋했습니다.
+C40/P8/forward/feedback/feedback: P8의 값 증가 순환이 25라운드 내 멈추지 않아 caller base를 커밋했습니다.
+C41/P1/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C41/P1/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C41/P1/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C41/P2/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C41/P2/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C41/P2/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C41/P3/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C41/P3/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C41/P3/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C41/P4/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C41/P4/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C41/P4/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C41/P7/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 선언 순서가 첫 경합 및 후속 후보 처리 순서를 바꿨습니다.
+C41/P7/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C41/P7/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C41/P7/reverse/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 선언 순서가 첫 경합 및 후속 후보 처리 순서를 바꿨습니다.
+C41/P7/reverse/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C41/P7/reverse/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C41/P5/forward/load-reset-replace/load: 최초 clearWas=false에서 true가 되어 held도 최초 load는 지웁니다.
+C41/P8/forward/feedback/load: P8의 값 증가 순환이 25라운드 내 멈추지 않아 caller base를 커밋했습니다.
+C41/P8/forward/feedback/feedback: P8의 값 증가 순환이 25라운드 내 멈추지 않아 caller base를 커밋했습니다.
+C42/P1/forward/batch/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C42/P1/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C42/P1/forward/left-right/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C42/P1/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C42/P1/forward/right-left/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C42/P1/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C42/P2/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C42/P2/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C42/P2/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C42/P3/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C42/P3/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C42/P3/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C42/P4/forward/batch/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C42/P4/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C42/P4/forward/left-right/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C42/P4/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C42/P4/forward/right-left/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C42/P4/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C42/P7/forward/batch/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C42/P7/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C42/P7/forward/left-right/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C42/P7/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C42/P7/forward/right-left/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C42/P7/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C42/P7/reverse/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C42/P7/reverse/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C42/P7/reverse/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C42/P8/forward/feedback/load: P8의 값 증가 순환이 25라운드 내 멈추지 않아 caller base를 커밋했습니다.
+C42/P8/forward/feedback/feedback: P8의 값 증가 순환이 25라운드 내 멈추지 않아 caller base를 커밋했습니다.
+C43/P1/forward/batch/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C43/P1/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C43/P1/forward/left-right/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C43/P1/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C43/P1/forward/right-left/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C43/P1/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C43/P2/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C43/P2/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C43/P2/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C43/P3/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C43/P3/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C43/P3/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C43/P4/forward/batch/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C43/P4/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C43/P4/forward/left-right/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C43/P4/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C43/P4/forward/right-left/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C43/P4/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C43/P7/forward/batch/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C43/P7/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C43/P7/forward/left-right/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C43/P7/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C43/P7/forward/right-left/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C43/P7/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C43/P7/reverse/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C43/P7/reverse/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C43/P7/reverse/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C43/P5/forward/load-reset-replace/load: 최초 clearWas=false에서 true가 되어 held도 최초 load는 지웁니다.
+C43/P8/forward/feedback/load: P8의 값 증가 순환이 25라운드 내 멈추지 않아 caller base를 커밋했습니다.
+C43/P8/forward/feedback/feedback: P8의 값 증가 순환이 25라운드 내 멈추지 않아 caller base를 커밋했습니다.
+C44/P1/forward/batch/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C44/P1/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C44/P1/forward/left-right/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C44/P1/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C44/P1/forward/right-left/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C44/P1/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C44/P2/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C44/P2/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C44/P2/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C44/P3/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C44/P3/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C44/P3/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C44/P4/forward/batch/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C44/P4/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C44/P4/forward/left-right/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C44/P4/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C44/P4/forward/right-left/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C44/P4/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C44/P7/forward/batch/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C44/P7/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 선언 순서가 첫 경합 및 후속 후보 처리 순서를 바꿨습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C44/P7/forward/left-right/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C44/P7/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C44/P7/forward/right-left/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C44/P7/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C44/P7/reverse/batch/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C44/P7/reverse/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 선언 순서가 첫 경합 및 후속 후보 처리 순서를 바꿨습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C44/P7/reverse/left-right/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C44/P7/reverse/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C44/P7/reverse/right-left/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C44/P7/reverse/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C44/P8/forward/feedback/load: P8의 값 증가 순환이 25라운드 내 멈추지 않아 caller base를 커밋했습니다.
+C44/P8/forward/feedback/feedback: P8의 값 증가 순환이 25라운드 내 멈추지 않아 caller base를 커밋했습니다.
+C45/P1/forward/batch/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C45/P1/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C45/P1/forward/left-right/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C45/P1/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C45/P1/forward/right-left/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C45/P1/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C45/P2/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C45/P2/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C45/P2/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C45/P3/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C45/P3/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C45/P3/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C45/P4/forward/batch/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C45/P4/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C45/P4/forward/left-right/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C45/P4/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C45/P4/forward/right-left/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C45/P4/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C45/P7/forward/batch/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C45/P7/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 선언 순서가 첫 경합 및 후속 후보 처리 순서를 바꿨습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C45/P7/forward/left-right/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C45/P7/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C45/P7/forward/right-left/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C45/P7/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C45/P7/reverse/batch/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C45/P7/reverse/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 선언 순서가 첫 경합 및 후속 후보 처리 순서를 바꿨습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C45/P7/reverse/left-right/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C45/P7/reverse/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C45/P7/reverse/right-left/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C45/P7/reverse/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C45/P5/forward/load-reset-replace/load: 최초 clearWas=false에서 true가 되어 held도 최초 load는 지웁니다.
+C45/P8/forward/feedback/load: P8의 값 증가 순환이 25라운드 내 멈추지 않아 caller base를 커밋했습니다.
+C45/P8/forward/feedback/feedback: P8의 값 증가 순환이 25라운드 내 멈추지 않아 caller base를 커밋했습니다.
+C46/P1/forward/batch/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C46/P1/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C46/P1/forward/left-right/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C46/P1/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C46/P1/forward/right-left/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C46/P1/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C46/P2/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C46/P2/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C46/P2/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C46/P3/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C46/P3/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C46/P3/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C46/P4/forward/batch/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C46/P4/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C46/P4/forward/left-right/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C46/P4/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C46/P4/forward/right-left/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C46/P4/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C46/P7/forward/batch/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C46/P7/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 선언 순서가 첫 경합 및 후속 후보 처리 순서를 바꿨습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C46/P7/forward/left-right/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C46/P7/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C46/P7/forward/right-left/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C46/P7/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C46/P7/reverse/batch/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C46/P7/reverse/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 선언 순서가 첫 경합 및 후속 후보 처리 순서를 바꿨습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C46/P7/reverse/left-right/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C46/P7/reverse/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C46/P7/reverse/right-left/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C46/P7/reverse/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C46/P8/forward/feedback/load: P8의 값 증가 순환이 25라운드 내 멈추지 않아 caller base를 커밋했습니다.
+C46/P8/forward/feedback/feedback: P8의 값 증가 순환이 25라운드 내 멈추지 않아 caller base를 커밋했습니다.
+C47/P1/forward/batch/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C47/P1/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C47/P1/forward/left-right/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C47/P1/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C47/P1/forward/right-left/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C47/P1/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C47/P2/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C47/P2/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C47/P2/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C47/P3/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C47/P3/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C47/P3/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C47/P4/forward/batch/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C47/P4/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C47/P4/forward/left-right/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C47/P4/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C47/P4/forward/right-left/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C47/P4/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C47/P7/forward/batch/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C47/P7/forward/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 선언 순서가 첫 경합 및 후속 후보 처리 순서를 바꿨습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C47/P7/forward/left-right/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C47/P7/forward/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C47/P7/forward/right-left/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C47/P7/forward/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C47/P7/reverse/batch/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C47/P7/reverse/batch/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다; 선언 순서가 첫 경합 및 후속 후보 처리 순서를 바꿨습니다; 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C47/P7/reverse/left-right/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C47/P7/reverse/left-right/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C47/P7/reverse/right-left/load: 패자 후보가 후속 라운드에 단독으로 재제출되어 최종 값을 썼습니다.
+C47/P7/reverse/right-left/pair: batch의 같은 라운드 경합과 순차 입력의 별도 에지 처리가 다른 최종 값에 도달했습니다.
+C47/P5/forward/load-reset-replace/load: 최초 clearWas=false에서 true가 되어 held도 최초 load는 지웁니다.
+C47/P8/forward/feedback/load: P8의 값 증가 순환이 25라운드 내 멈추지 않아 caller base를 커밋했습니다.
+C47/P8/forward/feedback/feedback: P8의 값 증가 순환이 25라운드 내 멈추지 않아 caller base를 커밋했습니다.

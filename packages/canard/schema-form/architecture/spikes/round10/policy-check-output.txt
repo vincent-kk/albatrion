@@ -1,0 +1,47 @@
+{
+  "assertions": 10,
+  "cases": [
+    {
+      "priority": "inject-wins",
+      "fate": "dropped",
+      "consumed": true,
+      "expected": "I",
+      "actual": "I",
+      "passed": true
+    },
+    {
+      "priority": "inject-wins",
+      "fate": "requeued",
+      "consumed": true,
+      "expected": "D",
+      "actual": "D",
+      "passed": true
+    },
+    {
+      "priority": "derived-wins",
+      "fate": "dropped",
+      "consumed": true,
+      "expected": "D",
+      "actual": "D",
+      "passed": true
+    },
+    {
+      "priority": "derived-wins",
+      "fate": "dropped",
+      "consumed": false,
+      "expected": "I",
+      "actual": "I",
+      "passed": true
+    },
+    {
+      "priority": "clear-wins",
+      "actual": "<missing>",
+      "passed": true
+    },
+    {
+      "priority": "clear-loses",
+      "actual": "D:2",
+      "passed": true
+    }
+  ]
+}

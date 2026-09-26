@@ -1,0 +1,307 @@
+WORK LOOP v3 SPIKE — round-3-spec.md §A prototype and claim tests
+==================================================================
+
+Environment: Node v24.20.0, darwin arm64, ajv 8 resolved from
+packages/canard/schema-form-ajv8-plugin. One process per measurement case,
+harness.mjs method (calibrated batch, 2 s warm-up, 11 samples, median).
+
+Files (all under spikes/work-loop/):
+  proto/loop-v3.mjs        the v3 loop (mark -> compute -> derive rounds -> commit)
+  proto/build-v3.mjs       tree builders on loop-v3 (same shapes as build.mjs)
+  proto/selfcheck-v3.mjs   scenarios a-h (+ a reference-stability sanity), PASS/FAIL
+  run-proto-v3.mjs         measurement runner, `node run-proto-v3.mjs <case>`
+  results-proto-v3.jsonl   machine-readable rows of the final run
+Nothing outside spikes/work-loop/ was touched. No package installed.
+
+
+1. WHAT WAS IMPLEMENTED
+-----------------------
+
+Node fields: raw / pendingRaw (staged), local (pre-projection composition of
+active children's emit), emit = project(local), per-host active fragment set
+(fragOn Uint8Array), per-host list of active conditional children, dirty flag +
+dirty-child LIST (not a flag scan), next*/stamp double buffers so a settle
+computes into "next" and commit moves it over.
+
+Stages (A2):
+  mark     write()/setValue() stage a raw and push the path to the root onto
+           each parent's dirty list. write() is the partial write (C1); a
+           non-object raw on any ancestor is emptied so children live again (C3).
+           setValue(V) is the full replacement: an object is distributed to the
+           children and a child absent from V loses its raw; null / non-object
+           becomes the host's own raw and the children are left alone (A6/C3).
+  compute  ONE root-down recursion. A node completes its dirty children first,
+           then builds its own local/emit. No begin pass.
+  derive   injectTo rules read the computed tree's emit, stage writes when the
+           mapped value differs from the target raw, and compute runs again.
+           Round cap 25. At the cap the round's writes are not staged (dry
+           run), so the committed tree is exactly the last computed round;
+           flush({dev:true}) throws AFTER commit, production returns silently.
+  commit   next -> committed, active flags, raw; dirty lists cleared;
+           changed nodes collected in tree order.
+
+Host compute (A3), for an object host:
+  1. L := copy of the previous local (copy-and-patch kept from v2). Every
+     conditional child that was active is turned off and its key set to
+     `undefined` in L (AJV `required`/`properties` treat undefined as absent).
+     Dirty unconditional children are patched in. This IS the fixed start:
+     unconditional children only. The previous commit's active set is read
+     only to know which keys to reset, never to seed A.
+  2. Fragments are swept in total order (rank, then declaration index).
+     For each fragment not yet on, guard(L) is evaluated on L as composed so
+     far (pre-projection). True -> fragment on; each child it declares that
+     is not yet active becomes active; if the child's raw is undefined and it
+     has a default, the default is staged as a raw write, the child is marked
+     dirty and computed immediately (its emit lands in L before the next
+     guard). Already-on fragments are re-evaluated on repeat sweeps and the
+     result ignored (option A, monotone; counted as `reguards`).
+  3. Repeat the sweep while the set grew; cap = fragment count + 1.
+  4. Keys still `undefined` at the end are deleted (delete + one spread to
+     leave V8 dictionary mode); if nothing moved the previous local reference
+     is kept.
+  5. project: active prohibition fragments (`prohibits: [x]`) remove x from a
+     copy; an object with no keys is omitted (omitEmpty for objects, as v2);
+     otherwise emit IS local (same reference, A8). A null host emits null; a
+     wrong-kind host emits its raw and skips the sweep (C3 — implemented,
+     not exercised by a scenario).
+  Union (A5): the discriminator is an ordinary unconditional child of the
+  host; each branch is a fragment with guard {required:[k],
+  properties:{k:{const:v}}} declaring the branch fields.
+  Inverted index (`keys` per fragment, flush({index:true})): a guard's
+  previous result is reused only when every key it reads is an UNCONDITIONAL
+  child of the ROOT and none of them changed this settle — the only case
+  where the fixed start makes the previous result provably equal.
+
+Guard inputs during the sweep contain `undefined`-valued keys for children
+that were reset. For AJV `required`/`properties`/`not` this is
+indistinguishable from absence. A guard using `minProperties`,
+`propertyNames` or `additionalProperties` would see the key. Committed local
+and emit never carry undefined keys.
+
+
+2. AMBIGUITIES RESOLVED (most literal reading, and what was picked)
+--------------------------------------------------------------------
+
+R1  "L := compose(A)" per fragment (A3 step 3): composed incrementally —
+    L is patched when a fragment turns on. Equivalent to recomposing; a
+    literal recompose per fragment is O(fragments x children) per sweep.
+R2  "이미 켜진 조각의 가드도 다시 평가한다" (step 4) vs "각 바퀴는 켜진 조각의
+    가드만 다시 돈다" (A3-2): on repeat sweeps ALL guards are evaluated —
+    off ones because they can turn on, on ones because step 4 says so (result
+    ignored under option A). Both counted separately (guards / reguards).
+R3  "처음 활성이 되는 것에는 default가 주입된다": injection happens when a
+    child becomes active in the sweep while its raw is `undefined` — so a
+    key erased by setValue(V) (C1) is re-defaulted on the next activation,
+    matching C2 ("없음"에만 적용). '' / null / {} are never touched.
+R4  Null host (A6): guards see a frozen `{}`; fragments turn on/off from
+    that; default injection into a child under a null host DOES happen (a raw
+    write on the child) and the host stays null. The composed local is kept
+    under null so a later recovery has a patch base; node.value (A8) for a
+    null host is not defined by the spec — the prototype's local is the
+    composed object, its emit is null.
+R5  Wrong-kind host (C3): "local은 없고" — the prototype still keeps the
+    composed local (so recovery does not lose siblings); emit is the raw.
+R6  Prohibition fragment: modeled as a fragment with `prohibits` and no
+    declares; it is in the active set and only project() removes the name.
+R7  Empty-object emit: an object whose local has no keys is omitted
+    (MISSING -> undefined at the root). So an empty union form emits
+    `undefined`, not `{}` and not `{kind: undefined}`.
+R8  Derive cap (A4) "마지막 라운드의 트리로 고정": the 25th round is
+    computed; the writes its derive would stage are detected but not staged.
+    Dev error is thrown after the commit so the tree is consistent either way.
+R9  Key removal (A3 step 6): `undefined` during the sweep, `delete` + spread
+    at the end. Chosen for guard equivalence; costed in §4.
+R10 setValue(V) extra keys not owned by any child are dropped (C2's extra
+    preservation is not in this prototype).
+R11 Total order (S13): fragments sorted by (rank, declaration index);
+    scenario b's "reverse" is the reversed array with equal rank.
+
+
+3. SCENARIOS (node proto/selfcheck-v3.mjs)
+------------------------------------------
+
+Two "FAIL" lines are deliberate observations (key order, see D1); every
+other assertion passed. Full output is reproduced by running the file.
+
+ a  S3-b determinism (A3-1)
+    PASS  emit identical over 4 write orders (a then b, b then a, batch,
+          load): emit = undefined (both a and b prohibited -> empty object
+          omitted); local = {a:'x', b:'y'} in every order.
+    FAIL  local/emit JSON TEXT differs by write order: {"a","b"} vs {"b","a"}
+          (also without any fragment). Value-equal, order-different. -> D1
+    INFO  ajv(full schema) on emit {} -> true; on raw {a,b} -> false. -> D2
+ b  chain of 30 (A3-2)
+    PASS  forward order: resolves p1..p30 from p0=1 in 2 sweeps
+          (30 guards + 30 ignored re-guards).
+    PASS  reverse order: resolves in 31 sweeps (465 guards + 465 ignored
+          re-guards), cap = 31, not exceeded. -> D3
+ c  prohibition (A3 step 5 / S5)
+    PASS  one settle, 2 sweeps, no throw; emit excludes a (emit undefined,
+          local {a:'v'}); a.raw = 'v'; fragment on; guard saw {a:'v'}.
+    INFO  ajv on emit {} -> true; on local {a:'v'} -> false. -> D2
+ d  union-owned discriminator (A5 / S2)
+    PASS  kind node exists, unconditional; empty form emit = undefined,
+          no branch on. Load {kind:'cat', meow:1} -> emit keeps both.
+          Flip kind -> 'dog': emit {kind:'dog'}, meow.raw = 1 preserved,
+          meow inactive / bark active.
+ e  nested empty union (A3-4 / S8)
+    PASS  pet's branch guards saw {} (an object without kind); no branch on;
+          pet emits nothing; root emits undefined.
+ f  null host (A6 / S7)
+    PASS  after setValue(parent, null): root emit {parent: null}; note.raw
+          'typed' and keep.raw 'K1' survive; guards evaluated on {}.
+    INFO  under null the `not required note` fragment turned ON (L = {} does
+          not contain note although note.raw = 'typed') and flag's default
+          'F' was injected into flag.raw. -> D5
+    PASS  setValue(parent, {note:'Z'}) (full replacement, C1) -> emit
+          {parent:{note:'Z'}}, keep.raw erased (as C1 says). -> D6
+    PASS  partial write(note,'Z') under null -> host un-nulled, emit
+          {parent:{note:'Z', keep:'K1'}} (C3).
+ g  injectTo cap (A4)
+    PASS  production: no error; stopped at round 25, budgetExceeded; write
+          accepted and committed (x.raw 24, y.raw 24 — the user's 0 was
+          overwritten by the ping-pong); emit == raw (fixed to the last
+          computed round). Dev flag: error raised after commit, tree
+          consistent (x.raw 124, emit.x 124). -> D7
+ h  monotone option A with negation (A3 step 4)
+    recorded  emit {y:1, x:1}, 2 sweeps, both fragments on; f0
+          (not required x) saw {} then {y:1,x:1} — its re-evaluation is
+          false and ignored.
+    INFO  ajv on the composed schema: VALID — the validator does NOT reject
+          the option-A mismatch. A variant with else:{not:{required:['y']}}
+          is rejected. -> D4
+ ref reference stability kept from v2: identical rewrite keeps the root
+    reference; real change moves it; omitEmpty leaves no undefined key.
+
+
+4. MEASUREMENTS — v2 (results-proto.jsonl) vs v3 (results-proto-v3.jsonl)
+-------------------------------------------------------------------------
+
+case              v2 median      v3 median      v2 counts                       v3 counts
+s1-same           1.45 us        1.35 us        visited 2, 1 pass               visited 2, 0 sweeps, 1 round
+s3a               187.95 us      182.51 us      visited 4, 400 guards, 2 pass   visited 2, 200 guards, 1 sweep
+s3a-index         173.01 us      175.34 us      visited 4, 0 guards, 2 pass     visited 2, 0 guards, 1 sweep
+s3b               494.28 us      295.42 us      visited 12, 600 guards, 3 pass  on: visited 5, 399+1re guards, 2 sweeps, 3 injections / off: 200 guards, 1 sweep, 1 normalize
+s3b-index         461.83 us      278.70 us      visited 12, 400 guards, 3 pass  on: 1+1re guards, 2 sweeps / off: 1 guard, 1 normalize
+s4-items          5.72 ms        7.58 ms        visited 60002, 10001 normalizes visited 60002, 10001 copies, 0 normalizes
+s3a-small (600)   11.81 us       6.89 us        400 guards, 2 pass              200 guards, 1 sweep
+s3a-small-index   2.43 us        3.57 us        0 guards, 2 pass                0 guards, 1 sweep
+s3b-small (600)   113.10 us      88.82 us       600 guards, 3 pass              399+1re / 200 guards, 2 / 1 sweeps
+
+s3b measures the median over alternating on/off flips. Split by direction
+(scratch script, 200-flip batches, median of 15, same tree):
+                      v2 ON / OFF          v3 ON / OFF
+  600 base, no index  19.5 / 177.4 us      15.0 / 165.2 us
+  600 base, index     14.4 / 168.8 us       7.1 / 159.5 us
+  1000 base, no index 380.8 / 599.4 us    192.5 / 399.2 us
+  1000 base, index    368.8 / 591.1 us    182.5 / 389.4 us
+
+Reading:
+- Keystroke with no guard involvement (s1-same) is unchanged: one copy, one
+  patch, no sweep.
+- Unrelated keystroke with 200 root fragments: v3 evaluates each guard once
+  (one sweep, nothing turns on) where v2 evaluated all guards in two passes.
+  Below the V8 cliff that halves the cost (11.8 -> 6.9 us); above it
+  (1,200 emitted keys) both are dominated by the ~170 us copy of a
+  dictionary-mode object and the loop structure is invisible.
+- Flipping a fragment on: v3 does one copy + one sweep + the injected
+  children's compute; v2 did three passes each with a copy. Above the cliff
+  v3 is 1.7x faster (one copy vs two). Flipping off costs the same in both:
+  ~150 us for `delete` + spread on an 800-key object (dictionary-mode
+  normalize). That cost is the removal representation, not the loop.
+- s3a-small-index is slightly slower in v3 (3.6 vs 2.4 us): the fixed start
+  still copies the local and walks the 200 fragments to test the index
+  even when every guard is skipped; v2's index short-circuited begin().
+- s4-items regressed 33% (7.58 vs 5.72 ms). Leaf-only writes (v2's
+  applyValue style) give the same 7.56 ms, so setValue's host staging is not
+  the cause; it is per-host bookkeeping in computeObject/commit (double
+  buffers, active-list and fragment-array swaps, moved checks) — about
+  185 ns per host over 10,001 hosts. Not attributed line by line.
+
+Measurement pitfall found on the way (documented in loop-v3.mjs): the
+`{ ...prev }` copy measured ~85 us per copy of an 800-key object when written
+inline in computeObject, and again when the same helper site was also used
+for the post-delete normalize spread (dictionary-mode source). With the
+fast-mode copy in its own tiny function and the normalize spread at separate
+sites, the same copy measures ~1 us. Maps were identical across settles in
+both cases (checked with %HaveSameMap); the tier (--max-opt=0/1/2, --no-opt)
+and --no-allocation-site-pretenuring made no difference. The s3b rows above
+are from the fixed build; an earlier run of the same code read s3b-small at
+175-187 us for that reason alone.
+
+
+5. SPEC DEFECTS FOUND
+---------------------
+
+D1  A3-1 (emit is a function of raw) holds for the VALUE but not for the
+    serialization: key order in local/emit follows first insertion, so the
+    same raw reached by different write orders serializes differently
+    ({"a":"x","b":"y"} vs {"b":"y","a":"x"}). Copy-and-patch (which the
+    spec mandates) is what preserves history in the key order. Undefined:
+    whether key order is part of "emit". Anything that compares JSON text or
+    sends the payload sees history. [반례, scenario a]
+
+D2  Prohibition exclusion hides the invalid state from a validator that
+    validates emit: `if required a then a:false`, raw {a:'v'} -> emit {}
+    (valid), local {a:'v'} (invalid). S5's stated correct behaviour ("a를
+    보이고 검증기의 에러를 붙이는 것") only follows if validation (ADR 0004)
+    runs on local or raw, and A8 sends emit to getValue(). In scenario a both
+    a and b are prohibited and the form emits an empty, valid document for
+    user input the schema forbids. Undefined: which value validation
+    receives. [반례, scenarios a, c]
+
+D3  A3 step 4 and claim A3-2 contradict each other on what a repeat sweep
+    re-evaluates ("이미 켜진 조각의 가드도" vs "켜진 조각의 가드만"), and
+    neither is the useful set: off fragments MUST be re-evaluated (that is how
+    the reverse chain resolves), on fragments' results are ignored under
+    option A. As written the reverse chain costs 31 sweeps, 465 real guard
+    evaluations and 465 wasted ones. Also the cap "조각 수 + 1" is
+    unreachable under option A (|A| grows by >= 1 per repeated sweep) — it is
+    dead code, not a safety. [모순 + 통과]
+
+D4  Option A's stated safety valve ("어긋남은 검증기의 에러로 드러난다") is
+    false for the schema the spec's own example implies: emit {x:1, y:1} from
+    `if not required x then y default` + `if required y then x default`
+    validates. The mismatch is invisible unless the schema constrains the
+    else path. [반례, scenario h]
+
+D5  A6 "null 호스트의 가드는 L = {}로 평가한다" makes the active set under
+    null the empty-object set regardless of the children's preserved raw:
+    `not required note` turns on although note.raw is 'typed', and its
+    declared child's default is injected as a raw write under the null host.
+    The spec says auto-writes do not un-null the host but not whether they
+    happen; the prototype performs them. Undefined. [scenario f]
+
+D6  A6 ("부모가 null이 되면 자식의 raw는 유지된다") and C1 ("V에 없는 자식의
+    raw는 지워진다") compose so that the raw survives the null but not the
+    write that ends it: setValue(parent, {note:'Z'}) after null erases keep.
+    Only a partial write brings keep back. Consistent, but the brief's
+    expectation "children's raw survived" after setValue back is not what the
+    spec yields. [통과, noted]
+
+D7  A4 "값은 받아들이고": the user's write is accepted only in the sense that
+    the settle commits; the injectTo ping-pong overwrites it in the same
+    settle (x=0 ends as 24). Also, all rules of one round read the same
+    computed tree, so mutually-targeting rules interleave (x := y_old+1 while
+    y := x_new+1). The committed tree is self-consistent (emit == raw).
+    [통과]
+
+D8  A5 "항상 방출된다" cannot hold for a discriminator with no value: with
+    omitEmpty the empty union host emits nothing (undefined), and a
+    validator with required:['kind'] never sees the key. [미정의, scenario d]
+
+D9  The fixed start means every settle of a host with previously-active
+    conditional children resets them and re-derives the set, so a fragment
+    that stays on is paid for every settle (reset + re-activation) and the
+    inverted index can only reuse a guard whose keys are all unconditional
+    root children. Turning a fragment off always pays the key-removal cost
+    (~150 us at 800 keys with delete + spread). Cost model, not a defect;
+    the spec does not mention either. [측정]
+
+D10 A3 step 3 as written recomposes L per fragment; implemented
+    incrementally. If the spec intends the literal recompose the cost is
+    O(fragments x children) per sweep. [미정의]
+
+Not tested: C2 extra-key preservation, C3 wrong-kind recovery paths beyond
+null, array omitTrailing, A7 notification snapshots, B (discriminator
+identification) — outside §A.
