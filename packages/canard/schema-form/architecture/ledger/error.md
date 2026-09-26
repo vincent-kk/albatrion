@@ -29,13 +29,13 @@
 | ERROR-021 | onError의 환경 규칙과 가드 컴파일 실패의 예외 | 현행 | 17라운드 스웜 수렴(편집자 결정) |
 | ERROR-022 | 기본 출력과의 관계 — 오류·경고의 기본 드러남 | 현행 | 편집자 결정(17라운드, ADR 0014 4판 채택) |
 | ERROR-023 | 중복 막기 — 오류 | 현행 | 17라운드 스웜 수렴(편집자 결정) |
-| ERROR-024 | 중복 막기 — 경고 | 현행 | 17라운드 스웜 수렴(편집자 결정) |
+| ERROR-024 | 중복 막기 — 경고 | 현행 | 17라운드 스웜 수렴(편집자 결정), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-98) |
 | ERROR-025 | 서버에서의 onError 동작 | 현행 | 17라운드 스웜 수렴(편집자 결정) |
 | ERROR-026 | StrictMode에서의 onError 동작 | 현행 | 17라운드 스웜 수렴(편집자 결정) |
 | ERROR-027 | 바운더리 경로 구현 | 분할됨(→ ERROR-110, ERROR-111, ERROR-112, ERROR-113, ERROR-114, ERROR-115, ERROR-116, ERROR-117, ERROR-118, ERROR-119) | 17라운드 스웜 수렴(편집자 결정, `08-design-a-to-z.md:400`), 소유자 답(`reviews/round-17-owner-answers.md:34` (나), 확장 허용만) |
 | ERROR-028 | 핸들러가 던질 때의 규칙 | 현행 | 17라운드 스웜 수렴(편집자 결정) |
 | ERROR-029 | 핸들러 안의 쓰기 규칙 | 현행 | 17라운드 스웜 수렴(편집자 결정) |
-| ERROR-030 | onError의 비용 규칙 | 현행 | 17라운드 스웜 수렴(편집자 결정) |
+| ERROR-030 | onError의 비용 규칙 | 현행 | 17라운드 스웜 수렴(편집자 결정), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-98) |
 | ERROR-031 | 공개 계약과 판 규칙 | 현행 | 편집자 결정(17라운드, ADR 0014 4판 채택) |
 | ERROR-032 | 착수 조건과 PR 배치 | 현행 | 편집자 결정(17라운드, ADR 0014 4판 채택) |
 | ERROR-033 | controls의 식이 던질 때 — 자리별 값 | 분할됨(→ ERROR-120, ERROR-121, ERROR-122, ERROR-123, ERROR-124, ERROR-125, ERROR-126, ERROR-127) | 소유자 답(`reviews/round-17-owner-answers.md:9` R17-1), 편집자 결정(17라운드, ADR 0014 4판 채택; 자리별 값 표와 나감 비움 미적용은 14라운드 제안 판 `adr/0014-error-policy.md:53-58`(커밋 `d478a8503`)에서 이어짐) |
@@ -45,7 +45,7 @@
 | ERROR-037 | 조건부 스키마와 검증기 없음 | 분할됨(→ ERROR-152, ERROR-153, ERROR-154) | 소유자 답(`adr/0004-validator-plugin-compile-guard.md:54`), 17라운드 스웜 수렴(편집자 결정, `adr/0004-validator-plugin-compile-guard.md:35`) |
 | ERROR-038 | 검증 불가 — 전체 스키마 컴파일 실패 | 분할됨(→ ERROR-155, ERROR-156, ERROR-157, ERROR-158) | 소유자 답(`reviews/round-17-owner-answers.md:9` R17-1), 17라운드 스웜 수렴(편집자 결정, `reviews/raw-round17-convergence.md:84` E3; 한 로드에 오류 객체 하나, 그 로드에서 다시 예약하지 않음) |
 | ERROR-039 | 검증 실행 실패 | 현행 | 17라운드 스웜 수렴(편집자 결정) |
-| ERROR-040 | 로드 검증의 자리 | 현행 | 17라운드 스웜 수렴(편집자 결정) |
+| ERROR-040 | 로드 검증의 자리 | 현행 | 17라운드 스웜 수렴(편집자 결정), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-101) |
 | ERROR-041 | 가드 — 컴파일 시점과 실패의 처리 | 현행 | 17라운드 스웜 수렴(편집자 결정) |
 | ERROR-042 | 검증기 관련 이주 안내 | 현행 | 편집자 결정(17라운드, ADR 0014 4판 채택) |
 | ERROR-043 | §7.1 분류표 — 부류·층·언제·누구 잘못·드러남·항목 | 분할됨(→ ERROR-159, ERROR-160, ERROR-161, ERROR-162, ERROR-163) | 편집자 결정(17라운드, ADR 0014 4판 채택), 소유자 답 O-1(`reviews/round-14-owner-answers.md:7`)·O-10(`reviews/round-14-owner-answers.md:16`), 소유자 답 C-20(`reviews/round-10-owner-answers.md:17`)·13라운드 답 4(`reviews/round-13-owner-answers.md:10`), 소유자 답 E-23·E-19(`reviews/round-10-owner-answers.md:38,40`) |
@@ -53,10 +53,10 @@
 | ERROR-045 | §8 무엇이 바뀌는가 — 5차 문서·오늘 대 이 ADR 대조표 | 현행(기록) | 편집자 결정(17라운드, ADR 0014 4판 채택), 소유자 답(`reviews/round-17-owner-answers.md:9` R17-1; `adr/0014-error-policy.md:307,308,311,313,317,318`), 소유자 답(`reviews/round-14-owner-answers.md:16` O-10; `adr/0014-error-policy.md:310`), 소유자 답(`reviews/round-14-owner-answers.md:8` O-2; `adr/0014-error-policy.md:317`), 소유자 답(`reviews/round-17-owner-answers.md:14` 통보 3; `adr/0014-error-policy.md:312`), 소유자 답(`reviews/round-17-owner-answers.md:15` 통보 4; `adr/0014-error-policy.md:314`) |
 | ERROR-046 | 이주 항목 문단 | 현행(기록) | 편집자 결정(17라운드, ADR 0014 4판 채택) |
 | ERROR-047 | 합의 근거 — 소유자 답의 원문 모음 | 분할됨(→ ERROR-166, ERROR-167, ERROR-168, ERROR-169, ERROR-170) | 소유자 답(`reviews/round-10-owner-answers.md:13`, `reviews/round-14-owner-answers.md:8,10,16`, `reviews/round-17-owner-answers.md:9,14,15,33,34`; 첫째–셋째 글머리), 17라운드 스웜 수렴(편집자 결정, `reviews/raw-round17-onerror.md`; 넷째 글머리), 편집자 결정(외부 조사 판정 채택, `adr/0014-error-policy.md:329`; 다섯째 글머리) |
-| ERROR-048 | 남은 것 1 — 쓰기 의미론의 세부(C)가 18라운드 안건으로 이관됨 | 열림(→ `reviews/round-18-agenda.md` §3, :42-43) | 편집자 결정(17라운드, 18라운드 안건으로 이관) |
-| ERROR-049 | 남은 것 2 — 청사진이 읽는 스키마의 범위(A)가 18라운드 안건으로 이관됨 | 열림(→ `reviews/round-18-agenda.md` §1, :19) | 편집자 결정(17라운드, 18라운드 안건으로 이관) |
-| ERROR-050 | 남은 것 3 — trim 쓰기의 부수 효과가 18라운드 안건으로 이관됨 | 열림(→ `reviews/round-18-agenda.md` §3, :45) | 편집자 결정(17라운드, 18라운드 안건으로 이관) |
-| ERROR-051 | 남은 것 4 — PR-1·PR-2 뒤 절의 항목이 18라운드 안건으로 이관됨 | 열림(→ `reviews/round-18-agenda.md` §9, :108,110; 같은 `$id` 사본 루트의 중복 등록은 → `reviews/round-18-agenda.md:150` 11-19) | 편집자 결정(17라운드, 18라운드 안건으로 이관) |
+| ERROR-048 | 남은 것 1 — 쓰기 의미론의 세부(C)가 18라운드 안건으로 이관됨 | 분할됨(→ WRITE-079, WRITE-081, ERROR-194) | 편집자 결정(17라운드, 18라운드 안건으로 이관), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-16·18C-17) |
+| ERROR-049 | 남은 것 2 — 청사진이 읽는 스키마의 범위(A)가 18라운드 안건으로 이관됨 | 대체됨(→ ERROR-192) | 편집자 결정(17라운드, 18라운드 안건으로 이관), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-07) |
+| ERROR-050 | 남은 것 3 — trim 쓰기의 부수 효과가 18라운드 안건으로 이관됨 | 대체됨(→ WRITE-083) | 편집자 결정(17라운드, 18라운드 안건으로 이관), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-19) |
+| ERROR-051 | 남은 것 4 — PR-1·PR-2 뒤 절의 항목이 18라운드 안건으로 이관됨 | 분할됨(→ ERROR-201, CONTROLS-073) | 편집자 결정(17라운드, 18라운드 안건으로 이관), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-57·18C-12) |
 | ERROR-052 | 대체됨: 정착 예산 초과는 개발 모드 throw, 프로덕션은 신호만(12라운드 §4) | 대체됨(→ ERROR-070, ERROR-073) | 소유자 답(`reviews/round-17-owner-answers.md:9` R17-1) |
 | ERROR-053 | 대체됨: Form 속성 `throwOnBudgetExceeded`(가칭) | 대체됨(→ ERROR-072, ERROR-099) | 소유자 답(`reviews/round-17-owner-answers.md:9` R17-1) |
 | ERROR-054 | 대체됨: 리스너 오류는 `onListenerError`(가칭)로 보고, 없으면 개발 모드 `console.error` | 대체됨(→ ERROR-004, ERROR-014) | 17라운드 스웜 수렴(편집자 결정) |
@@ -72,9 +72,9 @@
 | ERROR-064 | 대체됨: 가드 컴파일은 늦춘다(ADR 0004) | 대체됨(개발 모드 부분 → ERROR-041; 프로덕션의 늦은 컴파일은 현행 → ERROR-041) | 편집자 결정(17라운드, ADR 0014 4판 채택) |
 | ERROR-065 | 오류·경고 분류의 유래(12라운드)와 이름 충돌 정리 | 현행 | 편집자 결정(12라운드 도출, 17라운드 확정 반영) |
 | ERROR-066 | 원장의 ADR 0014 4판 요지 재록 | 분할됨(→ ERROR-171, ERROR-172, ERROR-173, ERROR-174, ERROR-175, ERROR-176, ERROR-177, ERROR-178) | 편집자 결정(17라운드, ADR 0014 4판 채택) |
-| ERROR-067 | 재생성 reset의 개발 모드 경고 — 코드 없음 | 열림(→ `reviews/round-18-agenda.md` §3, :49) | 편집자 결정(18라운드 안건 이관) |
-| ERROR-068 | 배열 전용 명령을 비배열 노드에서 부른 호출자 오류 — 코드 없음 | 열림(→ `reviews/round-18-agenda.md` §3, :50) | 편집자 결정(18라운드 안건 이관) |
-| ERROR-069 | 남은 것 5 — `INVALID_VIRTUAL_NODE_VALUES`의 분류가 18라운드 안건으로 이관됨 | 열림(→ `reviews/round-18-agenda.md` §3, :48) | 편집자 결정(18라운드 안건 이관) |
+| ERROR-067 | 재생성 reset의 개발 모드 경고 — 코드 없음 | 대체됨(→ ERROR-196) | 편집자 결정(18라운드 안건 이관), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-22) |
+| ERROR-068 | 배열 전용 명령을 비배열 노드에서 부른 호출자 오류 — 코드 없음 | 대체됨(→ ERROR-197) | 편집자 결정(18라운드 안건 이관), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-23) |
+| ERROR-069 | 남은 것 5 — `INVALID_VIRTUAL_NODE_VALUES`의 분류가 18라운드 안건으로 이관됨 | 대체됨(→ ERROR-195) | 편집자 결정(18라운드 안건 이관), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-21) |
 | ERROR-070 | 정착 오류와 공유 충돌은 모든 환경에서 커밋·통지 뒤 사슬 끝에서 던진다 | 현행 | 소유자 답(`reviews/round-17-owner-answers.md:9` R17-1), 소유자 답(`reviews/round-14-owner-answers.md:16` O-10; 공유 충돌) |
 | ERROR-071 | 청사진·호출자·되먹임·리스너·검증기 오류도 모든 환경에서 같게 드러난다 | 현행 | 스웜 수렴(편집자 결정, `reviews/raw-round17-convergence.md:82,89,93` E-frame·E9·E13, 14라운드 O-5 위임 `reviews/round-14-owner-answers.md:11`), 소유자 답(`reviews/round-17-owner-answers.md:9` R17-1; 되먹임·중첩 초과, 검증 불가) |
 | ERROR-072 | 끄는 스위치는 없다(`throwOnBudgetExceeded` 없음) | 현행 | 소유자 답(`reviews/round-17-owner-answers.md:9` R17-1) |
@@ -105,7 +105,7 @@
 | ERROR-097 | 반환값은 무시되고 어떤 기본 드러남도 대신하거나 끄지 못한다 | 현행 | 스웜 수렴(편집자 결정, `reviews/round-17-owner-answers.md:15` 반영 칸) |
 | ERROR-098 | 핸들러가 없으면 비용도 없다 | 현행 | 스웜 수렴(편집자 결정, `reviews/round-17-owner-answers.md:15` 반영 칸) |
 | ERROR-099 | `onListenerError`는 `onError`에 흡수된다 | 현행 | 소유자 답(`reviews/round-17-owner-answers.md:9` R17-1; 앞 절), 스웜 수렴(편집자 결정, `reviews/raw-round17-convergence.md:93` E13; 뒤 절) |
-| ERROR-100 | `onError`가 받지 않는 것 — 검증 결과를 뺀 나머지 목록 | 현행(부정 결정) | 스웜 수렴(편집자 결정, `reviews/round-17-owner-answers.md:15` 반영 칸) |
+| ERROR-100 | `onError`가 받지 않는 것 — 검증 결과를 뺀 나머지 목록 | 현행(부정 결정) | 스웜 수렴(편집자 결정, `reviews/round-17-owner-answers.md:15` 반영 칸), 소유자 답(`reviews/round-18-owner-answers.md:34` union O4; `VALIDATOR_BIND_REFUSED`) |
 | ERROR-101 | `onError`가 받지 않는 것 — 검증 결과 전부 | 현행(부정 결정) | 소유자 답(`reviews/round-17-owner-answers.md:15` 통보 4) |
 | ERROR-102 | 층과 level(머리말) | 현행 | 스웜 수렴(편집자 결정, `reviews/raw-round17-onerror.md:47`) |
 | ERROR-103 | `level`이 `'error'`이면 오류 층이다 | 현행 | 스웜 수렴(편집자 결정, `reviews/raw-round17-onerror.md:47`) |
@@ -128,26 +128,26 @@
 | ERROR-120 | 식은 네 자리에서 평가된다 | 현행 | 편집자 결정(17라운드, `adr/0014-error-policy.md:188`) |
 | ERROR-121 | 식이 던지면 자리별 값으로 정착을 마치고 모든 환경에서 사슬 끝에서 throw한다 | 현행 | 소유자 답(`reviews/round-17-owner-answers.md:9` R17-1) |
 | ERROR-122 | 식이 던질 때의 자리별 값 표 | 현행 | 편집자 결정(17라운드, `adr/0014-error-policy.md:188`) |
-| ERROR-123 | 정적 `controls.injectTo` 대상이 청사진에 없거나 터미널 아래면 청사진 오류다 | 현행 | 소유자 답(`reviews/round-17-owner-answers.md:9` R17-1) |
-| ERROR-124 | 형상에 없는 노드를 가리키는 것은 오류가 아니다 | 현행 | 편집자 결정(17라운드, `adr/0014-error-policy.md:197`) |
+| ERROR-123 | 정적 `controls.injectTo` 대상이 청사진에 없거나 터미널 아래면 청사진 오류다 | 대체됨(→ CONTROLS-079) | 소유자 답(`reviews/round-17-owner-answers.md:9` R17-1), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-14) |
+| ERROR-124 | 형상에 없는 노드를 가리키는 것은 오류가 아니다 | 현행 | 편집자 결정(17라운드, `adr/0014-error-policy.md:197`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-14) |
 | ERROR-125 | 식·가드가 던져 거짓이 된 게이트로 나간 노드에는 나감 비움을 적용하지 않는다 | 현행 | 편집자 결정(17라운드, `adr/0014-error-policy.md:197`) |
 | ERROR-126 | 식이나 가드가 던지면 그 커밋은 `degraded`다 | 현행 | 소유자 답(`reviews/round-17-owner-answers.md:9` R17-1) |
 | ERROR-127 | 가드 실패와 동적 대상 없음의 가칭 코드 | 현행 | 편집자 결정(17라운드, `adr/0014-error-policy.md:197`) |
 | ERROR-128 | `diagnostics`는 작업의 기록이다 | 현행 | 편집자 결정(17라운드, `adr/0014-error-policy.md:201`) |
-| ERROR-129 | `diagnostics`는 로드에서 초기화한다 | 현행 | 소유자 답(`reviews/round-14-owner-answers.md:8` O-2) |
-| ERROR-130 | `diagnostics`의 모양(앞 조각) | 현행 | 소유자 답(`reviews/round-17-owner-answers.md:9` R17-1; `status` 두 값·`cause`·`commit`), 소유자 답(`reviews/round-14-owner-answers.md:8` O-2; `commit`), 편집자 결정(17라운드, `adr/0014-error-policy.md:201`) |
+| ERROR-129 | `diagnostics`는 로드에서 초기화한다 | 현행 | 소유자 답(`reviews/round-14-owner-answers.md:8` O-2), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-98) |
+| ERROR-130 | `diagnostics`의 모양(앞 조각) | 현행 | 소유자 답(`reviews/round-17-owner-answers.md:9` R17-1; `status` 두 값·`cause`·`commit`), 소유자 답(`reviews/round-14-owner-answers.md:8` O-2; `commit`), 편집자 결정(17라운드, `adr/0014-error-policy.md:201`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-01·18C-21) |
 | ERROR-131 | `diagnostics`의 모양(뒤 조각) — 모든 칸은 `commit` 번호의 커밋을 기술한다 | 현행 | 편집자 결정(17라운드, `adr/0014-error-policy.md:201`) |
-| ERROR-132 | 작성자의 선언이 빠진 커밋 넷 가운데 하나라도 있으면 `status = 'degraded'` | 현행 | 소유자 답(`reviews/round-17-owner-answers.md:9` R17-1) |
-| ERROR-133 | `cause`의 네 값 | 현행 | 소유자 답(`reviews/round-17-owner-answers.md:9` R17-1; 원인 넷), 편집자 결정(17라운드, `adr/0014-error-policy.md:201`; 값 이름) |
+| ERROR-132 | 작성자의 선언이 빠진 커밋 넷 가운데 하나라도 있으면 `status = 'degraded'` | 현행 | 소유자 답(`reviews/round-17-owner-answers.md:9` R17-1), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-01·18C-21) |
+| ERROR-133 | `cause`의 네 값 | 현행 | 소유자 답(`reviews/round-17-owner-answers.md:9` R17-1; 원인 넷), 편집자 결정(17라운드, `adr/0014-error-policy.md:201`; 값 이름), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-01·18C-21) |
 | ERROR-134 | 마운트 정착에서 난 것이면 `degraded`로 시작한다 | 현행 | 편집자 결정(17라운드, `adr/0014-error-policy.md:201`) |
-| ERROR-135 | `diagnostics`는 다음 로드까지 남는다(머리말) | 현행 | 소유자 답(`reviews/round-14-owner-answers.md:8` O-2) |
+| ERROR-135 | `diagnostics`는 다음 로드까지 남는다(머리말) | 현행 | 소유자 답(`reviews/round-14-owner-answers.md:8` O-2), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-98) |
 | ERROR-136 | 지속은 14라운드 답 O-2 가다 | 현행 | 소유자 답(`reviews/round-14-owner-answers.md:8` O-2) |
 | ERROR-137 | 원인 넷과 그 동안의 제출 거부는 R17-1 나다 | 현행 | 소유자 답(`reviews/round-17-owner-answers.md:9` R17-1) |
 | ERROR-138 | `degraded` 동안 제출 경로는 `SchemaFormError`로 거부한다 | 현행 | 소유자 답(`reviews/round-17-owner-answers.md:9` R17-1) |
 | ERROR-139 | 제출 거부가 드러나는 길 — 프로미스 거부, 네이티브 submit은 `onError` 뒤 싱크 | 현행 | 편집자 결정(17라운드, `adr/0014-error-policy.md:203`) |
 | ERROR-140 | 제출 거부는 렌더 계층의 일이다 | 현행 | 편집자 결정(17라운드, `adr/0014-error-policy.md:203`) |
 | ERROR-141 | `getValue()`는 막지 않는다 | 현행 | 소유자 답(`reviews/round-17-owner-answers.md:9` R17-1) |
-| ERROR-142 | 제출이 막힐 때 호스트가 그릴 자리, 되먹임·중첩 초과는 `diagnostics`에 남기지 않음 | 현행 | 편집자 결정(17라운드, `adr/0014-error-policy.md:205-207`) |
+| ERROR-142 | 제출이 막힐 때 호스트가 그릴 자리, 되먹임·중첩 초과는 `diagnostics`에 남기지 않음 | 현행 | 편집자 결정(17라운드, `adr/0014-error-policy.md:205-207`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-98) |
 | ERROR-143 | 검증기는 플러그인 또는 Form 속성 `validatorFactory`에서 온다 | 현행 | 소유자 답(`reviews/round-14-owner-answers.md:13` O-7) |
 | ERROR-144 | 검증기가 어느 쪽에서 오든 청사진 오류가 아니며 폼은 선다 | 현행 | 스웜 수렴(편집자 결정, `reviews/raw-round17-convergence.md:84` E3) |
 | ERROR-145 | 기본 검증 모드는 그대로 두고 암묵 기본값은 두지 않는다 | 현행 | 스웜 수렴(편집자 결정, `reviews/raw-round17-convergence.md:84` E3) |
@@ -164,20 +164,20 @@
 | ERROR-156 | 검증 불가 — 그 로드에서 `OnChange` 검증을 다시 예약하지 않는다 | 현행 | 스웜 수렴(편집자 결정, `reviews/raw-round17-convergence.md:84` E3) |
 | ERROR-157 | 검증 불가는 노드 `errors`에 넣지 않는다 | 현행 | 편집자 결정(17라운드, `adr/0014-error-policy.md:215`) |
 | ERROR-158 | 통보3의 근거는 검증기를 준 경우에 닿지 않는다 | 현행 | 편집자 결정(17라운드, `adr/0014-error-policy.md:215`) |
-| ERROR-159 | §7.1 분류표 — 표 | 현행 | 편집자 결정(17라운드, ADR 0014 4판 채택), 소유자 답 O-1(`reviews/round-14-owner-answers.md:7`)·O-10(`reviews/round-14-owner-answers.md:16`), 소유자 답 C-20(`reviews/round-10-owner-answers.md:17`)·13라운드 답 4(`reviews/round-13-owner-answers.md:10`), 소유자 답 E-23·E-19(`reviews/round-10-owner-answers.md:38,40`), 소유자 답(`reviews/round-17-owner-answers.md:9` R17-1; `adr/0014-error-policy.md:229,231,234,237,239`), 소유자 답(`reviews/round-12-owner-answers.md:14` 6 `else: false` 경고; `adr/0014-error-policy.md:230`), 소유자 답(`reviews/round-17-owner-answers.md:14` 통보 3, `reviews/round-17-owner-answers.md:33` (가); `adr/0014-error-policy.md:238`), 소유자 답(`reviews/round-17-owner-answers.md:15` 통보 4; `adr/0014-error-policy.md:240,242`), 게이트 고침(R17G-2, `reviews/raw-round17-onerror.md:150`; `adr/0014-error-policy.md:238`) |
+| ERROR-159 | §7.1 분류표 — 표 | 현행 | 편집자 결정(17라운드, ADR 0014 4판 채택), 소유자 답 O-1(`reviews/round-14-owner-answers.md:7`)·O-10(`reviews/round-14-owner-answers.md:16`), 소유자 답 C-20(`reviews/round-10-owner-answers.md:17`)·13라운드 답 4(`reviews/round-13-owner-answers.md:10`), 소유자 답 E-23·E-19(`reviews/round-10-owner-answers.md:38,40`), 소유자 답(`reviews/round-17-owner-answers.md:9` R17-1; `adr/0014-error-policy.md:229,231,234,237,239`), 소유자 답(`reviews/round-12-owner-answers.md:14` 6 `else: false` 경고; `adr/0014-error-policy.md:230`), 소유자 답(`reviews/round-17-owner-answers.md:14` 통보 3, `reviews/round-17-owner-answers.md:33` (가); `adr/0014-error-policy.md:238`), 소유자 답(`reviews/round-17-owner-answers.md:15` 통보 4; `adr/0014-error-policy.md:240,242`), 게이트 고침(R17G-2, `reviews/raw-round17-onerror.md:150`; `adr/0014-error-policy.md:238`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-03·18C-14·18C-23) |
 | ERROR-160 | 범위 밖 — 렌더 중 쓰기는 core가 감지하지 않는다 | 현행 | 원리(`03-mental-model.md:17` P5) |
 | ERROR-161 | 범위 밖 — 판별 키가 호스트 `properties`에 없는 것은 오류가 아니다 | 현행 | 소유자 답(`reviews/round-14-owner-answers.md:7` O-1) |
 | ERROR-162 | 범위 밖 — `NULLABLE_ONE_OF_NULL_UNREACHABLE` 폐기, 가상화 꺼짐 경고의 이동 | 현행 | 편집자 결정(17라운드, `adr/0014-error-policy.md:244`) |
 | ERROR-163 | 범위 밖 — 필드 바운더리는 그대로, 렌더 오류가 `onError`에 가는 것만 새롭다 | 현행 | 편집자 결정(17라운드, `adr/0014-error-policy.md:244`) |
-| ERROR-164 | §7.2 코드 목록 — 머리 문단과 정해진 행 | 현행 | 편집자 결정(17라운드, ADR 0014 4판 채택), 게이트 고침(R17G-9·R17G-2), 소유자 답(`reviews/round-17-owner-answers.md:9` R17-1; `adr/0014-error-policy.md:263,266,267-271,279,281`), 소유자 답(`reviews/round-14-owner-answers.md:7` O-1; `adr/0014-error-policy.md:260`), 소유자 답(`reviews/round-14-owner-answers.md:16` O-10; `adr/0014-error-policy.md:261,266`), 소유자 답(`reviews/round-12-owner-answers.md:14` 6 `else: false` 경고; `adr/0014-error-policy.md:290`), 소유자 답(`reviews/round-17-owner-answers.md:14` 통보 3; `adr/0014-error-policy.md:281,293`), 소유자 답(`reviews/round-17-owner-answers.md:33` (가); `adr/0014-error-policy.md:293`), 소유자 답(`reviews/round-17-owner-answers.md:15` 통보 4; `adr/0014-error-policy.md:296`), 소유자 답(`reviews/round-17-owner-answers.md:11` R17-3; `adr/0014-error-policy.md:295`) |
-| ERROR-165 | §7.2 코드 목록 — (미정) 행 | 열림(→ `reviews/round-18-agenda.md:19,42-43,108,110`; 같은 `$id` 사본 루트의 중복 등록은 → `reviews/round-18-agenda.md:150` 11-19) | 편집자 결정(17라운드, `adr/0014-error-policy.md:301`) |
+| ERROR-164 | §7.2 코드 목록 — 머리 문단과 정해진 행 | 현행 | 편집자 결정(17라운드, ADR 0014 4판 채택), 게이트 고침(R17G-9·R17G-2), 소유자 답(`reviews/round-17-owner-answers.md:9` R17-1; `adr/0014-error-policy.md:263,266,267-271,279,281`), 소유자 답(`reviews/round-14-owner-answers.md:7` O-1; `adr/0014-error-policy.md:260`), 소유자 답(`reviews/round-14-owner-answers.md:16` O-10; `adr/0014-error-policy.md:261,266`), 소유자 답(`reviews/round-12-owner-answers.md:14` 6 `else: false` 경고; `adr/0014-error-policy.md:290`), 소유자 답(`reviews/round-17-owner-answers.md:14` 통보 3; `adr/0014-error-policy.md:281,293`), 소유자 답(`reviews/round-17-owner-answers.md:33` (가); `adr/0014-error-policy.md:293`), 소유자 답(`reviews/round-17-owner-answers.md:15` 통보 4; `adr/0014-error-policy.md:296`), 소유자 답(`reviews/round-17-owner-answers.md:11` R17-3; `adr/0014-error-policy.md:295`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-14·18C-21·18C-24), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-90·18C-91·18C-92), 소유자 답(`reviews/round-18-owner-answers.md:34` union O4; `VALIDATOR_BIND_REFUSED` 행), 소유자 답(`reviews/round-18-owner-answers.md:37` union O7·O8), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-98) |
+| ERROR-165 | §7.2 코드 목록 — (미정) 행 | 대체됨(→ ERROR-198) | 편집자 결정(17라운드, `adr/0014-error-policy.md:301`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-24·18C-57) |
 | ERROR-166 | 합의 근거 — 10라운드 B-1 | 현행(기록) | 소유자 답(`reviews/round-10-owner-answers.md:13` B-1) |
 | ERROR-167 | 합의 근거 — 14라운드 O-4·O-10·O-2 | 현행(기록) | 소유자 답(`reviews/round-14-owner-answers.md:10` O-4, `reviews/round-14-owner-answers.md:16` O-10, `reviews/round-14-owner-answers.md:8` O-2) |
 | ERROR-168 | 합의 근거 — 17라운드 R17-1·통보3·통보4·(가)·(나) | 현행(기록) | 소유자 답(`reviews/round-17-owner-answers.md:9` R17-1, `reviews/round-17-owner-answers.md:14` 통보 3, `reviews/round-17-owner-answers.md:15` 통보 4, `reviews/round-17-owner-answers.md:33` (가), `reviews/round-17-owner-answers.md:34` (나)) |
 | ERROR-169 | 합의 근거 — 17라운드 4번 수렴이 안 B를 택함 | 현행(기록) | 스웜 수렴(편집자 결정, `adr/0014-error-policy.md:328`) |
 | ERROR-170 | 합의 근거 — 외부 조사 최종 판정과 사슬 끝 throw | 현행(기록) | 편집자 결정(17라운드, `adr/0014-error-policy.md:329`) |
 | ERROR-171 | 03의 재록 — ADR 0014 4판이 표를 세 층으로 다시 썼고 다르면 ADR 0014가 이긴다 | 현행 | 편집자 결정(17라운드, `03-mental-model.md:180`) |
-| ERROR-172 | 03의 재록 — 정착 오류는 모든 환경에서 던지고 `degraded` 동안 제출을 거부한다 | 현행 | 소유자 답(`reviews/round-17-owner-answers.md:9` R17-1) |
+| ERROR-172 | 03의 재록 — 정착 오류는 모든 환경에서 던지고 `degraded` 동안 제출을 거부한다 | 현행 | 소유자 답(`reviews/round-17-owner-answers.md:9` R17-1), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-98) |
 | ERROR-173 | 03의 재록 — 끄는 스위치는 없다 | 현행 | 소유자 답(`reviews/round-17-owner-answers.md:9` R17-1) |
 | ERROR-174 | 03의 재록 — `onError(record)`는 관찰자다 | 현행 | 스웜 수렴(편집자 결정, `reviews/round-17-owner-answers.md:15` 반영 칸) |
 | ERROR-175 | 03의 재록 — 핸들러는 흐름을 바꾸지 못하고 없으면 비용이 없다 | 현행 | 스웜 수렴(편집자 결정, `reviews/round-17-owner-answers.md:15` 반영 칸) |
@@ -185,15 +185,31 @@
 | ERROR-177 | 03의 재록 — `onListenerError`는 두지 않는다 | 현행 | 스웜 수렴(편집자 결정, `reviews/raw-round17-convergence.md:93` E13) |
 | ERROR-178 | 03의 재록 — 바운더리는 렌더 오류를 다시 던지지 않는다 | 현행 | 소유자 답(`reviews/round-17-owner-answers.md:15` 통보 4) |
 | ERROR-179 | 대체됨: 관측 채널의 최소 — `onChange` payload 탈락, 루트 `settle` 칸 읽기와 그 변화 이벤트 구독(6라운드 D-22) | 대체됨(→ ERROR-128, ERROR-094) | 편집자 결정(17라운드, `adr/0014-error-policy.md:201`) |
-| ERROR-180 | Q12 검증 에러의 라우팅 — 18라운드 안건(PR-4)으로 이관됨 | 열림(→ `reviews/round-18-agenda.md:108`) | 편집자 결정(18라운드 안건 이관, `reviews/round-18-agenda.md:108`) |
+| ERROR-180 | Q12 검증 에러의 라우팅 — 18라운드 안건(PR-4)으로 이관됨 | 대체됨(→ VALIDATE-043) | 편집자 결정(18라운드 안건 이관, `reviews/round-18-agenda.md:108`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-53) |
 | ERROR-181 | 변환하지 못한 입력의 변환 오류는 `onError`로 전달한다(18라운드 S1) | 분할됨(→ ERROR-183, ERROR-184) | 소유자 답(`reviews/round-18-owner-answers.md:9` S1 셋째) |
 | ERROR-182 | 변환 실패 기록은 `level: 'warning'`, 가칭 `SCHEMA_FORM_WARNING.VALUE_TYPE_MISMATCH`, 검증기 유무와 무관 | 분할됨(→ ERROR-186, ERROR-187) | 편집자 결정(18라운드, `reviews/round-18-owner-answers.md:9` 반영 칸) |
 | ERROR-183 | S1 셋째 답의 나′ 확정과 경고등 승인 — 정본은 WRITE-054 | 중복(→ WRITE-054) | 소유자 답(`reviews/round-18-owner-answers.md:9` S1 셋째) |
 | ERROR-184 | 변환에러는 `onError`로 전달한다(18라운드 S1 셋째) | 현행 | 소유자 답(`reviews/round-18-owner-answers.md:9` S1 셋째) |
-| ERROR-185 | 터미널 노드의 입력이 빈 `ChildNodeComponents`를 읽을 때의 개발 모드 경고 — 코드 없음 | 열림(→ `reviews/round-18-agenda.md:137` 11-6) | 원리(`00-goals.md:105` C2 작성자 실수의 가시성, 소유자 채택 `reviews/round-2.md:112`), 편집자 결정(ADR 0011 4차 본문, `adr/0011-branch-node-composition.md:12`) |
-| ERROR-186 | 변환 실패 기록은 `level: 'warning'`, 가칭 `SCHEMA_FORM_WARNING.VALUE_TYPE_MISMATCH`, 정합 상태가 켜질 때마다 한 번 | 현행 | 편집자 결정(18라운드, `reviews/round-18-owner-answers.md:9` 반영 칸), 소유자 답(`reviews/round-18-owner-answers.md:17` 12-7; level `warning`) |
+| ERROR-185 | 터미널 노드의 입력이 빈 `ChildNodeComponents`를 읽을 때의 개발 모드 경고 — 코드는 ERROR-202 | 현행 | 원리(`00-goals.md:105` C2 작성자 실수의 가시성, 소유자 채택 `reviews/round-2.md:112`), 편집자 결정(ADR 0011 4차 본문, `adr/0011-branch-node-composition.md:12`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-73·18C-38) |
+| ERROR-186 | 변환 실패 기록은 `level: 'warning'`, 가칭 `SCHEMA_FORM_WARNING.VALUE_TYPE_MISMATCH`, 정합 상태가 켜질 때마다 한 번 | 현행 | 편집자 결정(18라운드, `reviews/round-18-owner-answers.md:9` 반영 칸), 소유자 답(`reviews/round-18-owner-answers.md:17` 12-7; level `warning`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-91) |
 | ERROR-187 | 변환 실패 기록은 검증기 유무와 무관하게 보낸다 | 현행 | 편집자 결정(18라운드, `reviews/round-18-owner-answers.md:9` 반영 칸) |
-| ERROR-188 | 방언 불일치의 개발 모드 경고 — 코드는 가칭(편집자) | 현행 | 소유자 답(`reviews/round-18-owner-answers.md:14` 12-4), 편집자 결정(18라운드, `reviews/round-18-owner-answers.md:14` 반영 칸; 경고 코드는 가칭으로 §7.2 목록에 더함) |
+| ERROR-188 | 방언 불일치의 개발 모드 경고 — 코드는 가칭(편집자) | 현행 | 소유자 답(`reviews/round-18-owner-answers.md:14` 12-4), 편집자 결정(18라운드, `reviews/round-18-owner-answers.md:14` 반영 칸; 경고 코드는 가칭으로 §7.2 목록에 더함), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-24) |
+| ERROR-189 | (가칭) `JSON_SCHEMA_ERROR.RECURSIVE_SHAPE_UNBOUNDED` — 청사진 분석, 기록에 schemaPath와 순환 경로, 새 설계에만(§7.2 코드 행) | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-01) |
+| ERROR-190 | (가칭) `SCHEMA_FORM_ERROR.RECURSIVE_SHAPE_DIVERGED` — 정착 오류, `cause: 'budget'`, `exceededBudget: 'recursion'`(가칭), 원본 B 커밋, 사슬 끝 throw, `degraded`(§7.2 코드 행) | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-01) |
+| ERROR-191 | (가칭) `SCHEMA_FORM_WARNING.DEPENDENT_SCHEMAS_IGNORED_FOR_FORM` — 청사진 경고, 개발 모드 콘솔, 새 설계에만(§7.2 코드 행) | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-03) |
+| ERROR-192 | (가칭) `JSON_SCHEMA_ERROR.VIRTUAL_FIELDS_MISMATCH` — 청사진 분석, 기록에 schemaPath와 두 `fields`, 새 설계에만(§7.2 코드 행) | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-07) |
+| ERROR-193 | (가칭) `JSON_SCHEMA_ERROR.CHILDREN_TARGET_NOT_FOUND` — 청사진 분석, 기록에 schemaPath와 이름, 새 설계에만(§7.2 코드 행) | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-12) |
+| ERROR-194 | 되먹임 거부를 호출자에게 알리는 별도 표면은 없다 — `FEEDBACK_LIMIT_EXCEEDED`로 드러나고 새 코드는 없음 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-16) |
+| ERROR-195 | 가상 노드가 받는 값과 출처별 분류 — `SCHEMA_FORM_ERROR.INVALID_VIRTUAL_NODE_VALUES`(가칭, 무리 이동), `cause` (가칭) `'writeShape'`(§7.2 코드 행) | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-21) |
+| ERROR-196 | (가칭) `SCHEMA_FORM_WARNING.RESET_REBUILT_BY_REFERENCE` — 재생성 reset 경고의 판정 조건, 전달 시점, 핸들러 없는 프로덕션 무판정(§7.2 코드 행) | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-22), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-98) |
+| ERROR-197 | (가칭) `SCHEMA_FORM_ERROR.ARRAY_METHOD_ON_NON_ARRAY` — 배열 아닌 노드의 배열 전용 명령은 호출자 오류(§7.2 코드 행) | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-23) |
+| ERROR-198 | §7.2의 (미정) 행을 닫는 규칙 — 넷의 처분, 18라운드가 더하는 행, `if` 공허한 참 경고 없음, `INJECT_TARGET_NOT_FOUND` 빠짐 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-24) |
+| ERROR-199 | (가칭) `SCHEMA_FORM_WARNING.DIALECT_MISMATCH` — 12-4 방언 불일치 경고의 코드(§7.2 코드 행) | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-24) |
+| ERROR-200 | (가칭) `JSON_SCHEMA_ERROR.TERMINAL_OPTION_UNSUPPORTED` — 행이 하나인 종류에 다른 `options.terminal`(§7.2 코드 행) | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-38) |
+| ERROR-201 | 같은 `$id`의 두 살아 있는 루트는 코드 없음 — 등록 실패는 `VALIDATOR_COMPILE_FAILED`·`GUARD_FAILED`에 `reason: 'duplicateSchemaId'`(가칭) | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-57) |
+| ERROR-202 | (가칭) `SCHEMA_FORM_WARNING.CHILD_NODE_COMPONENTS_ON_TERMINAL` — 터미널 노드 입력이 빈 `ChildNodeComponents`를 읽을 때의 렌더 계층 경고 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-73), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-98) |
+| ERROR-203 | union 설계가 §7.2에 더하는 것 — `UNKNOWN_JSON_SCHEMA`·`ALL_OF_TYPE_REDEFINITION`·`SHARED_NODE_CONFLICT` 행의 "언제", 경고 행 넷(가칭) `TERMINAL_SUBTREE_KEY_IGNORED_FOR_FORM`·`DISCRIMINATOR_BRANCH_UNREACHABLE`·`NON_JSON_WHOLE_VALUE`·`FORM_TYPE_TEST_INVALID` | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-90·18C-91·18C-92) |
+| ERROR-204 | `diagnostics`와 경고 중복 키는 폼 수준 로드(마운트, `FormHandle.reset()`)에서만 초기화 — `setValue(V)`·`resetSubtree()`는 비우지 않음, `degraded`의 복귀는 `FormHandle.reset()` | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-98) |
 
 항목 형식은 다음과 같다. **결정**은 정본 원문을 글자 그대로 옮긴다(표는 행과 칸을 바꾸지 않는다). **보충**은 다른 출처가 더한 조건·예외·값을 원문 그대로 `path:line`과 함께 적으며, 없으면 "없음"이라고 적는다. **상태**는 색인과 같은 값이다. **출처**는 이 규칙이 적힌 모든 위치다(정본을 먼저 적는다). **닫은 사람**은 소유자 답, 원리, 편집자 결정, 스웜 수렴(편집자 결정), 게이트 고침 가운데 하나 이상이며 근거 위치를 함께 적는다. **라운드**는 마지막으로 정해진 라운드다. **까닭**은 근거가 적힌 위치만 적는다(요약하지 않는다).
 **충돌**(있을 때만)은 다른 위치가 정본과 다르게 적은 문장이 있을 때, `` `path:line`의 "<원문>"은 정본과 다르다. 정본이 이긴다(<정본 path:line>). `` 형식으로 적는다.
@@ -551,10 +567,12 @@
   > **중복 막기 — 경고.** 키는 서식 전의 구조 키다. code, 위치(`path`, 없으면 `schemaPath`, 둘 다 없으면 폼 수준), 코드마다 정한 판별 칸(예: `ALL_OF_KEYWORD_IGNORED_FOR_FORM`의 `keyword`, `PRESENTATION_KEY_SUSPECT`의 키 이름)으로 이룬다. 메시지는 이 키를 통과한 첫 번에만 서식한다. 키는 폼 인스턴스의 로드(마운트, 스키마 교체, 루트 전체 교체, reset)마다 비우며, `diagnostics`와 같은 단위다. 집합은 핸들러가 있을 때만, 처음 경고가 날 때 만든다. 청사진 경고는 청사진의 목록이 이미 발생마다 하나씩이라 따로 거르지 않는다. 검증기 없이 쓰는 폼은 트리마다 `VALIDATOR_MISSING` 하나를 받으며, 검증 모드를 `None`으로 적으면 사라진다(§6).
 - 보충: 없음
 - 상태: 현행
-- 출처: `adr/0014-error-policy.md:152`(정본)
-- 닫은 사람: 17라운드 스웜 수렴(편집자 결정)
-- 라운드: 17
-- 까닭: `adr/0014-error-policy.md:152`
+- 출처: `adr/0014-error-policy.md:152`(정본), `reviews/round-18-closing.md:2797-2798`
+- 닫은 사람: 17라운드 스웜 수렴(편집자 결정), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-98)
+- 라운드: 18
+- 까닭: `adr/0014-error-policy.md:152`, `reviews/round-18-closing.md:2801-2803`
+- 충돌:
+  > `adr/0014-error-policy.md:152`의 "로드(마운트, 스키마 교체, 루트 전체 교체, reset)"는 소유자 답·18라운드 결정과 다르다: 루트 전체 교체(`setValue(V)`)는 로드가 아니라 전체 교체 쓰기이고(WRITE-090), 경고 중복 키와 `diagnostics`는 폼 수준 로드인 마운트·`FormHandle.reset()`에서만 비우며 `setValue(V)`와 `resetSubtree()`는 비우지 않는다(ERROR-204). 18라운드 결정이 이긴다(`reviews/round-18-owner-answers.md:26`, `reviews/round-18-closing.md:2797-2798`).
 
 ### ERROR-025 서버에서의 onError 동작
 
@@ -627,10 +645,12 @@
   > - 노드 수에 비례하는 칸은 없다. 오류 객체를 새로 만들지 않고 경고는 평범한 기록이므로 스택 수집 비용도 없다. 08 §16.2의 '프로덕션 비용 없이 추적성'을 지킨다.
 - 보충:
   > "core는 트리를 만들 때 보고기(`report`, `hasConsumer`, 가칭)를 인자로 받는다. 핸들러가 없는 프로덕션은 기록, 메시지 서식, 경고 판정을 하나도 만들지 않으므로 비용이 없다(§16.2의 고속성 대 투명성 유지)." (`08-design-a-to-z.md:364`)
+  > 편집자 결정(18C-98): "【추론】 `diagnostics`와 경고 중복 키는 폼 수준 로드(마운트, `FormHandle.reset()`)에서만 초기화한다." (`reviews/round-18-closing.md:2797`)
+  > 편집자 결정(18C-98): "【추론】 `setValue(V)`와 `resetSubtree()`는 초기화하지 않는다." (`reviews/round-18-closing.md:2798`)
 - 상태: 현행
-- 출처: `adr/0014-error-policy.md:169-174`(정본), `08-design-a-to-z.md:364`
-- 닫은 사람: 17라운드 스웜 수렴(편집자 결정)
-- 라운드: 17
+- 출처: `adr/0014-error-policy.md:169-174`(정본), `08-design-a-to-z.md:364`, `reviews/round-18-closing.md:2797-2798`
+- 닫은 사람: 17라운드 스웜 수렴(편집자 결정), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-98)
+- 라운드: 18
 - 까닭: `adr/0014-error-policy.md:169`
 
 ### ERROR-031 공개 계약과 판 규칙
@@ -777,11 +797,12 @@
   > - **로드 검증의 자리.** 마운트 로드는 검증을 요청하지 않고, 렌더 계층이 준비 시점(폼이 커밋된 뒤, 오늘 `handleReady`의 자리)에 `OnChange` 비트가 켜져 있으면 한 번 요청한다. reset의 로드는 진입 끝에서 요청한다. 규칙은 '로드 뒤 `OnChange` 비트면 한 번'으로 같다. 그래서 서버 사이드 렌더링에서는 검증이 돌지 않는다. core만 쓰는 호스트(C3)는 마운트 검증을 직접 요청한다.
 - 보충:
   > "로드 뒤의 검증 요청은 규칙이 하나다: 로드 뒤 `OnChange` 비트가 켜져 있으면 한 번. 요청 자리는 마운트는 렌더 계층의 준비 시점(폼이 커밋된 뒤, 오늘 `handleReady`의 자리), reset은 진입 끝이다. 그래서 서버 사이드 렌더링에서는 검증이 돌지 않으며, core만 쓰는 호스트(C3)는 마운트 검증을 직접 요청한다(§14의 38행, 17라운드 스웜 수렴(편집자 결정))." (`08-design-a-to-z.md:349`, 문장 #3-4)
+  > 편집자 결정(18C-101): "【추론】 로드 뒤 `OnChange` 비트면 한 번 하는 검증(LANDING-041, ERROR-040, EVENT-032)은 `resetSubtree()`에는 그 하위 트리에만 적용한다." (`reviews/round-18-closing.md:2848`)
 - 상태: 현행
-- 출처: `adr/0014-error-policy.md:217`(정본), `08-design-a-to-z.md:349#3-4`(같은 줄의 나머지는 다른 항목이 담는다: #1은 VALIDATE-006, #2는 EVENT-028, #5–7은 ERROR-039, #8은 VALIDATE-001)
-- 닫은 사람: 17라운드 스웜 수렴(편집자 결정)
-- 라운드: 17
-- 까닭: `adr/0014-error-policy.md:217`
+- 출처: `adr/0014-error-policy.md:217`(정본), `08-design-a-to-z.md:349#3-4`(같은 줄의 나머지는 다른 항목이 담는다: #1은 VALIDATE-006, #2는 EVENT-028, #5–7은 ERROR-039, #8은 VALIDATE-001), `reviews/round-18-closing.md:2848`
+- 닫은 사람: 17라운드 스웜 수렴(편집자 결정), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-101)
+- 라운드: 18
+- 까닭: `adr/0014-error-policy.md:217`, `reviews/round-18-closing.md:2853-2855`
 
 ### ERROR-041 가드 — 컴파일 시점과 실패의 처리
 
@@ -986,33 +1007,33 @@
 - 결정:
   > **C(쓰기 의미론의 세부).** 되먹임 거부를 호출자에게 알리는 표면, `setValue(undefined)`와 비객체 V의 `Merge`. 정해지면 호출자 오류 또는 되먹임·중첩 오류의 코드가 생길 수 있다(§7.2의 미정 행).
 - 보충: 없음
-- 상태: 열림(→ `reviews/round-18-agenda.md` §3, :42-43)
-- 출처: `adr/0014-error-policy.md:335`(정본)
-- 닫은 사람: 편집자 결정(17라운드, 18라운드 안건으로 이관)
-- 라운드: 17
-- 까닭: `adr/0014-error-policy.md:335`
+- 상태: 분할됨(→ WRITE-079, WRITE-081, ERROR-194)
+- 출처: `adr/0014-error-policy.md:335`(정본), `reviews/round-18-closing.md:463-500,516-540`
+- 닫은 사람: 편집자 결정(17라운드, 18라운드 안건으로 이관), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-16·18C-17)
+- 라운드: 18
+- 까닭: `adr/0014-error-policy.md:335`, `reviews/round-18-closing.md:502-510`, `reviews/round-18-closing.md:542-548`
 
 ### ERROR-049 남은 것 2 — 청사진이 읽는 스키마의 범위(A)가 18라운드 안건으로 이관됨
 
 - 결정:
   > **A(청사진이 읽는 스키마의 범위).** 같은 가상 이름을 다른 `fields`로 적은 `options.virtual` 항목. 정해지면 청사진 오류의 코드가 생길 수 있다(§7.2의 미정 행).
 - 보충: 없음
-- 상태: 열림(→ `reviews/round-18-agenda.md` §1, :19)
-- 출처: `adr/0014-error-policy.md:336`(정본)
-- 닫은 사람: 편집자 결정(17라운드, 18라운드 안건으로 이관)
-- 라운드: 17
-- 까닭: `adr/0014-error-policy.md:336`
+- 상태: 대체됨(→ ERROR-192)
+- 출처: `adr/0014-error-policy.md:336`(정본), `reviews/round-18-closing.md:170-174`
+- 닫은 사람: 편집자 결정(17라운드, 18라운드 안건으로 이관), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-07)
+- 라운드: 18
+- 까닭: `adr/0014-error-policy.md:336`, `reviews/round-18-closing.md:176-180`
 
 ### ERROR-050 남은 것 3 — trim 쓰기의 부수 효과가 18라운드 안건으로 이관됨
 
 - 결정:
   > **trim 쓰기의 부수 효과(바깥 오류 지움, dirty 표시).** 포커스 아웃 때 자른 값의 쓰기가 오늘 `handleChange`처럼 바깥 오류를 지우고 dirty를 표시하는가. 바깥 오류는 검증 결과 층(`onError`가 받지 않는 것)이므로 어느 답이든 이 ADR의 층 구분은 바뀌지 않는다.
 - 보충: 없음
-- 상태: 열림(→ `reviews/round-18-agenda.md` §3, :45)
-- 출처: `adr/0014-error-policy.md:337`(정본)
-- 닫은 사람: 편집자 결정(17라운드, 18라운드 안건으로 이관)
-- 라운드: 17
-- 까닭: `adr/0014-error-policy.md:337`
+- 상태: 대체됨(→ WRITE-083)
+- 출처: `adr/0014-error-policy.md:337`(정본), `reviews/round-18-closing.md:582-597`
+- 닫은 사람: 편집자 결정(17라운드, 18라운드 안건으로 이관), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-19)
+- 라운드: 18
+- 까닭: `adr/0014-error-policy.md:337`, `reviews/round-18-closing.md:599-603`
 
 ### ERROR-051 남은 것 4 — PR-1·PR-2 뒤 절의 항목이 18라운드 안건으로 이관됨
 
@@ -1020,11 +1041,11 @@
   > **PR-1·PR-2 뒤 절의 항목.** 사본 루트 등록 계약의 세부(같은 `$id` 사본 루트의 중복 등록, PR-4), `controls.children` 대상별 세부(대상이 형상에 없을 때, PR-6). 정해지면 §7.2의 미정 행을 코드로 바꾼다.
 - 보충:
   > "`$id`가 있는 사본 루트는 고유 키를 주어도 `$id`로 충돌하며(ajv 8.17.1 실행 확인), 그 처리는 PR-4의 '같은 `$id` 루트의 중복 등록 처리'가 정한다." (`08-design-a-to-z.md:345`)
-- 상태: 열림(→ `reviews/round-18-agenda.md` §9, :108,110; 같은 `$id` 사본 루트의 중복 등록은 → `reviews/round-18-agenda.md:150` 11-19)
-- 출처: `adr/0014-error-policy.md:338`(정본), `08-design-a-to-z.md:345`, `adr/0004-validator-plugin-compile-guard.md:34`
-- 닫은 사람: 편집자 결정(17라운드, 18라운드 안건으로 이관)
-- 라운드: 17
-- 까닭: `adr/0014-error-policy.md:338`
+- 상태: 분할됨(→ ERROR-201, CONTROLS-073)
+- 출처: `adr/0014-error-policy.md:338`(정본), `08-design-a-to-z.md:345`, `adr/0004-validator-plugin-compile-guard.md:34`, `reviews/round-18-closing.md:1581-1591,1598-1606,270-297`
+- 닫은 사람: 편집자 결정(17라운드, 18라운드 안건으로 이관), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-57·18C-12)
+- 라운드: 18
+- 까닭: `adr/0014-error-policy.md:338`, `reviews/round-18-closing.md:1593-1596`, `reviews/round-18-closing.md:299-303`
 
 ### ERROR-052 대체됨: 정착 예산 초과는 개발 모드 throw, 프로덕션은 신호만(12라운드 §4)
 
@@ -1217,33 +1238,33 @@
 - 결정:
   > 개발 모드 경고: 재생성의 원인이 함수·컴포넌트 칸의 참조뿐일 때(JSON 부분은 같을 때) 한 번 알린다(그 값을 모듈 범위로 올리라는 안내). reset을 부르지 않는 인라인 스키마에는 알리지 않는다.
 - 보충: 없음
-- 상태: 열림(→ `reviews/round-18-agenda.md` §3, :49)
-- 출처: `09-landing-and-test-strategy.md:87#20-21`(정본, 원장 파일럿에서 드러난 틈), `reviews/round-18-agenda.md:49`(§3 "재생성 `reset`의 개발 모드 경고" 행)
-- 닫은 사람: 편집자 결정(18라운드 안건 이관)
+- 상태: 대체됨(→ ERROR-196)
+- 출처: `09-landing-and-test-strategy.md:87#20-21`(정본, 원장 파일럿에서 드러난 틈), `reviews/round-18-agenda.md:49`(§3 "재생성 `reset`의 개발 모드 경고" 행), `reviews/round-18-closing.md:686-699`
+- 닫은 사람: 편집자 결정(18라운드 안건 이관), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-22)
 - 라운드: 18
-- 까닭: `reviews/round-18-agenda.md:49`(§3)
+- 까닭: `reviews/round-18-agenda.md:49`(§3), `reviews/round-18-closing.md:701-703`
 
 ### ERROR-068 배열 전용 명령을 비배열 노드에서 부른 호출자 오류 — 코드 없음
 
 - 결정:
   > 비배열에서 부르면 행의 공유 칸이 `SchemaFormError`를 던지므로 겉면과 `dispatch`는 종류를 묻지 않는다. UI 플러그인이 `node.push()`를 부른다. 비배열은 `type`이 배열이 아닌 노드를 말한다.
 - 보충: 없음
-- 상태: 열림(→ `reviews/round-18-agenda.md` §3, :50)
-- 출처: `09-landing-and-test-strategy.md:112#2-4`(정본, 원장 파일럿에서 드러난 틈), `reviews/round-18-agenda.md:50`(§3 "배열 전용 명령을 배열이 아닌 노드에서 부를 때의 호출자 오류" 행) (같은 규칙: NODE-014; 던지는 규칙은 NODE-014에서 현행이고 이 항목에서 열린 것은 그 오류 코드다)
-- 닫은 사람: 편집자 결정(18라운드 안건 이관)
+- 상태: 대체됨(→ ERROR-197)
+- 출처: `09-landing-and-test-strategy.md:112#2-4`(정본, 원장 파일럿에서 드러난 틈), `reviews/round-18-agenda.md:50`(§3 "배열 전용 명령을 배열이 아닌 노드에서 부를 때의 호출자 오류" 행) (같은 규칙: NODE-014; 던지는 규칙은 NODE-014에서 현행이고 이 항목에서 열린 것은 그 오류 코드다), `reviews/round-18-closing.md:709-713`
+- 닫은 사람: 편집자 결정(18라운드 안건 이관), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-23)
 - 라운드: 18
-- 까닭: `reviews/round-18-agenda.md:50`(§3)
+- 까닭: `reviews/round-18-agenda.md:50`(§3), `reviews/round-18-closing.md:715-717`
 
 ### ERROR-069 남은 것 5 — `INVALID_VIRTUAL_NODE_VALUES`의 분류가 18라운드 안건으로 이관됨
 
 - 결정:
   > 분류는 슬라이스 1의 options.virtual 설계 항목에서 확정
 - 보충: 없음
-- 상태: 열림(→ `reviews/round-18-agenda.md` §3, :48)
-- 출처: `adr/0014-error-policy.md:257`(정본), `reviews/round-18-agenda.md:48`
-- 닫은 사람: 편집자 결정(18라운드 안건 이관)
+- 상태: 대체됨(→ ERROR-195)
+- 출처: `adr/0014-error-policy.md:257`(정본), `reviews/round-18-agenda.md:48`, `reviews/round-18-closing.md:654-673`
+- 닫은 사람: 편집자 결정(18라운드 안건 이관), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-21)
 - 라운드: 18
-- 까닭: `reviews/round-18-agenda.md:48`
+- 까닭: `reviews/round-18-agenda.md:48`, `reviews/round-18-closing.md:675-680`
 
 ### ERROR-070 정착 오류와 공유 충돌은 모든 환경에서 커밋·통지 뒤 사슬 끝에서 던진다
 
@@ -1591,11 +1612,13 @@
   > - 호스트 `onSubmit`이 던지거나 거부한 것(호스트 자신의 코드이며 제출 프로미스로 부른 쪽에 간다)
   > - 폼 인스턴스 밖의 사건: `registerPlugin`의 `UNHANDLED_ERROR.REGISTER_PLUGIN`
   > - React 자신의 경고와, core가 감지하지 않는 렌더 중 쓰기(P5)
-- 보충: 없음
+- 보충:
+  > 반영 칸(union O4, 거부 코드): "켜져 있으면 `(가칭) UNHANDLED_ERROR.VALIDATOR_BIND_REFUSED`를 부른 쪽에 즉시 던지고, 인스턴스를 붙이지 않는다." (`reviews/round-18-owner-answers.md:34`)
+  > 반영 칸(union O4, 거부 코드): "폼 인스턴스가 없으므로 `onError`는 받지 않으며, `UNHANDLED_ERROR.REGISTER_PLUGIN` 행과 같은 부류다." (`reviews/round-18-owner-answers.md:34`)
 - 상태: 현행(부정 결정)
-- 출처: `adr/0014-error-policy.md:93,96-102`(정본, ERROR-015에서 분할)
-- 닫은 사람: 스웜 수렴(편집자 결정, `reviews/round-17-owner-answers.md:15` 반영 칸)
-- 라운드: 17
+- 출처: `adr/0014-error-policy.md:93,96-102`(정본, ERROR-015에서 분할), `reviews/round-18-owner-answers.md:34`
+- 닫은 사람: 스웜 수렴(편집자 결정, `reviews/round-17-owner-answers.md:15` 반영 칸), 소유자 답(`reviews/round-18-owner-answers.md:34` union O4; `VALIDATOR_BIND_REFUSED`)
+- 라운드: 18
 - 까닭: `reviews/round-17-owner-answers.md:15`
 
 ### ERROR-101 `onError`가 받지 않는 것 — 검증 결과 전부
@@ -1850,22 +1873,25 @@
 - 결정:
   > 정적으로 아는 `controls.injectTo` 대상 경로(식이 아닌 경로 문자열)가 청사진에 없거나 터미널 아래면 청사진 오류다.
 - 보충: 없음
-- 상태: 현행
-- 출처: `adr/0014-error-policy.md:197#1`(정본, ERROR-033에서 분할)
-- 닫은 사람: 소유자 답(`reviews/round-17-owner-answers.md:9` R17-1)
-- 라운드: 17
-- 까닭: `reviews/round-17-owner-answers.md:9`, `reviews/raw-round17-convergence.md:105`
+- 상태: 대체됨(→ CONTROLS-079)
+- 출처: `adr/0014-error-policy.md:197#1`(정본, ERROR-033에서 분할), `reviews/round-18-closing.md:384-387`
+- 닫은 사람: 소유자 답(`reviews/round-17-owner-answers.md:9` R17-1), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-14)
+- 라운드: 18
+- 까닭: `reviews/round-17-owner-answers.md:9`, `reviews/raw-round17-convergence.md:105`, `reviews/round-18-closing.md:416-423`
 
 ### ERROR-124 형상에 없는 노드를 가리키는 것은 오류가 아니다
 
 - 결정:
   > 형상에 없는(비활성) 노드를 가리키는 것은 오류가 아니다 — 형상에 없는 노드의 규칙은 평가하지 않고 그 노드에 쓰지도 않는다(원장 §3).
-- 보충: 없음
+- 보충:
+  > 편집자 결정(18C-14): "【추론】 ERROR-124의 '그 노드에 쓰지도 않는다'는 형상에 없는 노드 자신의 규칙에 대한 말이며, 다른 규칙이 그 노드를 겨눈 쓰기(`controls.injectTo`)에는 적용되지 않는다." (`reviews/round-18-closing.md:404`)
 - 상태: 현행
-- 출처: `adr/0014-error-policy.md:197#2`(정본, ERROR-033에서 분할)
-- 닫은 사람: 편집자 결정(17라운드, `adr/0014-error-policy.md:197`)
-- 라운드: 17
-- 까닭: `adr/0014-error-policy.md:197`
+- 출처: `adr/0014-error-policy.md:197#2`(정본, ERROR-033에서 분할), `reviews/round-18-closing.md:404`
+- 닫은 사람: 편집자 결정(17라운드, `adr/0014-error-policy.md:197`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-14)
+- 라운드: 18
+- 까닭: `adr/0014-error-policy.md:197`, `reviews/round-18-closing.md:416-423`
+- 충돌:
+  > `adr/0014-error-policy.md:197`의 "형상에 없는 노드의 규칙은 평가하지 않고 그 노드에 쓰지도 않는다"는 18라운드 결정과 다르다: '그 노드에 쓰지도 않는다'는 형상에 없는 노드 자신의 규칙에 대한 말이며, 다른 규칙이 그 노드를 겨눈 쓰기(`controls.injectTo`)에는 적용되지 않는다(CONTROLS-053, WRITE-018과 같은 분배). 18라운드 결정이 이긴다(`reviews/round-18-closing.md:404`).
 
 ### ERROR-125 식·가드가 던져 거짓이 된 게이트로 나간 노드에는 나감 비움을 적용하지 않는다
 
@@ -1917,10 +1943,12 @@
   > 로드(마운트, 스키마 교체, 루트 전체 교체 `setValue(V)`, `reset`)에서 초기화한다.
 - 보충: 없음
 - 상태: 현행
-- 출처: `adr/0014-error-policy.md:201#2`(정본, ERROR-034에서 분할)
-- 닫은 사람: 소유자 답(`reviews/round-14-owner-answers.md:8` O-2)
-- 라운드: 14
-- 까닭: `adr/0014-error-policy.md:203`
+- 출처: `adr/0014-error-policy.md:201#2`(정본, ERROR-034에서 분할), `reviews/round-18-closing.md:2797-2798`
+- 닫은 사람: 소유자 답(`reviews/round-14-owner-answers.md:8` O-2), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-98)
+- 라운드: 18
+- 까닭: `adr/0014-error-policy.md:203`, `reviews/round-18-closing.md:2801-2803`
+- 충돌:
+  > `adr/0014-error-policy.md:201`의 "로드(마운트, 스키마 교체, 루트 전체 교체 `setValue(V)`, `reset`)"는 소유자 답·18라운드 결정과 다르다: `setValue(V)`는 로드가 아니라 전체 교체 쓰기이고(WRITE-090), `diagnostics`는 폼 수준 로드인 마운트·`FormHandle.reset()`에서만 초기화하며 `setValue(V)`와 `resetSubtree()`는 초기화하지 않는다(ERROR-204). 18라운드 결정이 이긴다(`reviews/round-18-owner-answers.md:26`, `reviews/round-18-closing.md:2797-2798`).
 
 ### ERROR-130 `diagnostics`의 모양(앞 조각)
 
@@ -1928,10 +1956,13 @@
   > 모양은 `{ status: 'stable' | 'degraded', cause?: 'budget' | 'expression' | 'injectTarget' | 'sharedConflict', exceededBudget?: 'hostWheel' | 'derive' | 'transition', iterations?, commit?
 - 보충: 없음
 - 상태: 현행
-- 출처: `adr/0014-error-policy.md:201#3`(정본, ERROR-034에서 분할)
-- 닫은 사람: 소유자 답(`reviews/round-17-owner-answers.md:9` R17-1; `status` 두 값·`cause`·`commit`), 소유자 답(`reviews/round-14-owner-answers.md:8` O-2; `commit`), 편집자 결정(17라운드, `adr/0014-error-policy.md:201`)
-- 라운드: 17
-- 까닭: `adr/0014-error-policy.md:201`
+- 출처: `adr/0014-error-policy.md:201#3`(정본, ERROR-034에서 분할), `reviews/round-18-closing.md:28,666`
+- 닫은 사람: 소유자 답(`reviews/round-17-owner-answers.md:9` R17-1; `status` 두 값·`cause`·`commit`), 소유자 답(`reviews/round-14-owner-answers.md:8` O-2; `commit`), 편집자 결정(17라운드, `adr/0014-error-policy.md:201`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-01·18C-21)
+- 라운드: 18
+- 까닭: `adr/0014-error-policy.md:201`, `reviews/round-18-closing.md:35-41`, `reviews/round-18-closing.md:675-680`
+- 충돌:
+  > `adr/0014-error-policy.md:201`의 "exceededBudget?: 'hostWheel' | 'derive' | 'transition'"는 18라운드 결정과 다르다: 재귀 펼침의 멈춤이 `exceededBudget` 값 (가칭) `'recursion'`을 더한다. 18라운드 결정이 이긴다(`reviews/round-18-closing.md:28`).
+  > `adr/0014-error-policy.md:201`의 "cause?: 'budget' | 'expression' | 'injectTarget' | 'sharedConflict'"는 18라운드 결정과 다르다: `cause`에 다섯째 값 (가칭) `'writeShape'`가 더해진다. 18라운드 결정이 이긴다(`reviews/round-18-closing.md:666`).
 
 ### ERROR-131 `diagnostics`의 모양(뒤 조각) — 모든 칸은 `commit` 번호의 커밋을 기술한다
 
@@ -1948,23 +1979,33 @@
 
 - 결정:
   > 작성자의 선언이 빠지거나 뜻대로 평가되지 못한 커밋 — 원본 B, 어느 자리든 `controls`의 식·가드의 throw, 동적 `controls.injectTo` 대상 없음, 공유 충돌 — 이 하나라도 있으면 `status = 'degraded'`이고 `commit`은 그 첫 커밋 번호다.
-- 보충: 없음
+- 보충:
+  > 편집자 결정(18C-01): "【추론】 재귀 펼침의 멈춤은 예산 부류의 정착 오류이므로 예산 초과의 기존 규칙을 그대로 따른다 — 원본 B를 커밋하고, `diagnostics`를 `cause: 'budget'`, `exceededBudget: 'recursion'`(가칭)인 `'degraded'`로 두며, 사슬 끝에서 던진다." (`reviews/round-18-closing.md:28`)
+  > 편집자 결정(18C-21): "【추론】 `degraded`를 일으키는 경우에 '가상 노드에 모양이 틀린 자동 쓰기'가 더해진다." (`reviews/round-18-closing.md:669`)
 - 상태: 현행
-- 출처: `adr/0014-error-policy.md:201#5`(정본, ERROR-034에서 분할)
-- 닫은 사람: 소유자 답(`reviews/round-17-owner-answers.md:9` R17-1)
-- 라운드: 17
-- 까닭: `adr/0014-error-policy.md:203`
+- 출처: `adr/0014-error-policy.md:201#5`(정본, ERROR-034에서 분할), `reviews/round-18-closing.md:28,669`
+- 닫은 사람: 소유자 답(`reviews/round-17-owner-answers.md:9` R17-1), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-01·18C-21)
+- 라운드: 18
+- 까닭: `adr/0014-error-policy.md:203`, `reviews/round-18-closing.md:35-41`, `reviews/round-18-closing.md:675-680`
+- 충돌:
+  > `adr/0014-error-policy.md:201`의 "원본 B, 어느 자리든 `controls`의 식·가드의 throw, 동적 `controls.injectTo` 대상 없음, 공유 충돌 — 이 하나라도 있으면 `status = 'degraded'`"는 18라운드 결정과 다르다: `degraded`를 일으키는 경우에 가상 노드에 모양이 틀린 자동 쓰기가 더해진다(ERROR-195). 18라운드 결정이 이긴다(`reviews/round-18-closing.md:669`).
 
 ### ERROR-133 `cause`의 네 값
 
 - 결정:
   > `cause`는 예산 초과면 `'budget'`, `controls`의 식이나 `if` 가드의 평가·컴파일 실패면 `'expression'`, 동적 대상 없음이면 `'injectTarget'`, 공유 충돌이면 `'sharedConflict'`다(R17-1 나가 식과 가드의 실패를 한 묶음으로 둔 것을 따른다).
-- 보충: 없음
+- 보충:
+  > 편집자 결정(18C-01): "【추론】 재귀 펼침의 멈춤은 예산 부류의 정착 오류이므로 예산 초과의 기존 규칙을 그대로 따른다 — 원본 B를 커밋하고, `diagnostics`를 `cause: 'budget'`, `exceededBudget: 'recursion'`(가칭)인 `'degraded'`로 두며, 사슬 끝에서 던진다." (`reviews/round-18-closing.md:28`)
+  > 편집자 결정(18C-21): "【추론】 `diagnostics.cause`에 다섯째 값 `(가칭) 'writeShape'`를 둔다(자동 쓰기가 대상이 받을 수 없는 모양의 값을 냄)." (`reviews/round-18-closing.md:666`)
+  > 편집자 결정(18C-21): "【추론】 `'injectTarget'`은 "동적 대상 없음"이라는 한 뜻으로 남는다." (`reviews/round-18-closing.md:667`)
+  > 편집자 결정(18C-21): "【추론】 한 값이 한 뜻을 가져야 예측할 수 있기 때문이다." (`reviews/round-18-closing.md:668`)
 - 상태: 현행
-- 출처: `adr/0014-error-policy.md:201#6`(정본, ERROR-034에서 분할)
-- 닫은 사람: 소유자 답(`reviews/round-17-owner-answers.md:9` R17-1; 원인 넷), 편집자 결정(17라운드, `adr/0014-error-policy.md:201`; 값 이름)
-- 라운드: 17
-- 까닭: `adr/0014-error-policy.md:201`
+- 출처: `adr/0014-error-policy.md:201#6`(정본, ERROR-034에서 분할), `reviews/round-18-closing.md:28,666-668`
+- 닫은 사람: 소유자 답(`reviews/round-17-owner-answers.md:9` R17-1; 원인 넷), 편집자 결정(17라운드, `adr/0014-error-policy.md:201`; 값 이름), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-01·18C-21)
+- 라운드: 18
+- 까닭: `adr/0014-error-policy.md:201`, `reviews/round-18-closing.md:35-41`, `reviews/round-18-closing.md:675-680`
+- 충돌:
+  > `adr/0014-error-policy.md:201`의 "`cause`는 예산 초과면 `'budget'`, `controls`의 식이나 `if` 가드의 평가·컴파일 실패면 `'expression'`, 동적 대상 없음이면 `'injectTarget'`, 공유 충돌이면 `'sharedConflict'`다"는 18라운드 결정과 다르다: 자동 쓰기가 대상이 받을 수 없는 모양의 값을 내면 다섯째 값 (가칭) `'writeShape'`다(ERROR-195). 18라운드 결정이 이긴다(`reviews/round-18-closing.md:666`).
 
 ### ERROR-134 마운트 정착에서 난 것이면 `degraded`로 시작한다
 
@@ -1981,11 +2022,13 @@
 
 - 결정:
   > **다음 로드까지 남는다.**
-- 보충: 없음
+- 보충:
+  > 편집자 결정(18C-98): "【추론】 `diagnostics`와 경고 중복 키는 폼 수준 로드(마운트, `FormHandle.reset()`)에서만 초기화한다." (`reviews/round-18-closing.md:2797`)
+  > 편집자 결정(18C-98): "【추론】 `setValue(V)`와 `resetSubtree()`는 초기화하지 않는다." (`reviews/round-18-closing.md:2798`)
 - 상태: 현행
-- 출처: `adr/0014-error-policy.md:203#1`(정본, ERROR-034에서 분할)
-- 닫은 사람: 소유자 답(`reviews/round-14-owner-answers.md:8` O-2)
-- 라운드: 14
+- 출처: `adr/0014-error-policy.md:203#1`(정본, ERROR-034에서 분할), `reviews/round-18-closing.md:2797-2798`
+- 닫은 사람: 소유자 답(`reviews/round-14-owner-answers.md:8` O-2), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-98)
+- 라운드: 18
 - 까닭: `reviews/round-14-owner-answers.md:8`
 
 ### ERROR-136 지속은 14라운드 답 O-2 가다
@@ -2062,10 +2105,12 @@
   > 되먹임 파동과 `onChange` 중첩의 초과는 소비자 코드의 쓰기를 거부한 것이지 작성자의 선언을 뺀 것이 아니므로 `diagnostics`에 남기지 않고 사슬의 끝에서 던지기만 한다(ADR 0008 §2 규칙 4·§8의 `exceededBudget` 다섯 값을 셋으로 줄인다).
 - 보충: 없음
 - 상태: 현행
-- 출처: `adr/0014-error-policy.md:205-207`(정본, ERROR-034에서 분할)
-- 닫은 사람: 편집자 결정(17라운드, `adr/0014-error-policy.md:205-207`)
-- 라운드: 17
-- 까닭: `reviews/round-17-owner-answers.md:9`(반영 칸), `02-target-overview.md:310`
+- 출처: `adr/0014-error-policy.md:205-207`(정본, ERROR-034에서 분할), `reviews/round-18-closing.md:2797-2799`
+- 닫은 사람: 편집자 결정(17라운드, `adr/0014-error-policy.md:205-207`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-98)
+- 라운드: 18
+- 까닭: `reviews/round-17-owner-answers.md:9`(반영 칸), `02-target-overview.md:310`, `reviews/round-18-closing.md:2801-2803`
+- 충돌:
+  > `adr/0014-error-policy.md:205`의 "호출자는 로드(스키마 교체, 루트 전체 교체 `setValue(V)`, `reset`)로 `stable`로 되돌린다"는 소유자 답·18라운드 결정과 다르다: `setValue(V)`는 로드가 아니라 전체 교체 쓰기이고(WRITE-090), `diagnostics`는 폼 수준 로드인 마운트·`FormHandle.reset()`에서만 초기화하므로 `setValue(V)`와 `resetSubtree()`로는 돌아오지 않으며, `degraded`에서 돌아오는 길은 `FormHandle.reset()`이다(ERROR-204). 18라운드 결정이 이긴다(`reviews/round-18-owner-answers.md:26`, `reviews/round-18-closing.md:2797-2799`).
 
 ### ERROR-143 검증기는 플러그인 또는 Form 속성 `validatorFactory`에서 온다
 
@@ -2283,11 +2328,14 @@
   > "공개 payload에는 출처를 더하지 않는다(14라운드: 니즈가 약하다. 필요하면 나중에 더한다)" (`08-design-a-to-z.md:382`)
   > "동적 `controls.injectTo` 대상 없음(대상 경로가 청사진에 없거나 터미널 아래임. 형상에 없는 노드를 가리키는 것은 오류가 아니다, ADR 0014 §4)" (`08-design-a-to-z.md:383`, 동적 대상 "없음"의 정의)
   > "검증 모드가 `None`이 아니면 커밋 뒤 첫 검증 요청·`validate()`·제출이 모든 환경에서 거부된다(R17-1 나, §11.1)" (`08-design-a-to-z.md:386`, `adr/0014-error-policy.md:281`에도 있음)
+  > 편집자 결정(18C-03): "【추론】 이 경고는 §7.1 청사진 경고 행의 조건 목록에 "`dependentSchemas`·`dependencies` 무시"로 더해지고, 기본 드러남은 개발 모드 콘솔이며, 새 설계에만 있다." (`reviews/round-18-closing.md:103`)
+  > 편집자 결정(18C-14): "【추론】 ERROR-123은 적용되는 경우가 없다." (`reviews/round-18-closing.md:385`)
+  > 편집자 결정(18C-23): "【추론】 §7.1 호출자 오류 행의 항목 목록과 ADR 0014 §3의 받는 것 목록에 더한다." (`reviews/round-18-closing.md:713`)
 - 상태: 현행
-- 출처: `adr/0014-error-policy.md:224-242`(정본, ERROR-043에서 분할)
-- 닫은 사람: 편집자 결정(17라운드, ADR 0014 4판 채택), 소유자 답 O-1(`reviews/round-14-owner-answers.md:7`)·O-10(`reviews/round-14-owner-answers.md:16`), 소유자 답 C-20(`reviews/round-10-owner-answers.md:17`)·13라운드 답 4(`reviews/round-13-owner-answers.md:10`), 소유자 답 E-23·E-19(`reviews/round-10-owner-answers.md:38,40`), 소유자 답(`reviews/round-17-owner-answers.md:9` R17-1; `adr/0014-error-policy.md:229,231,234,237,239`), 소유자 답(`reviews/round-12-owner-answers.md:14` 6 `else: false` 경고; `adr/0014-error-policy.md:230`), 소유자 답(`reviews/round-17-owner-answers.md:14` 통보 3, `reviews/round-17-owner-answers.md:33` (가); `adr/0014-error-policy.md:238`), 소유자 답(`reviews/round-17-owner-answers.md:15` 통보 4; `adr/0014-error-policy.md:240,242`), 게이트 고침(R17G-2, `reviews/raw-round17-onerror.md:150`; `adr/0014-error-policy.md:238`)
-- 라운드: 17
-- 까닭: `adr/0014-error-policy.md:222-244`
+- 출처: `adr/0014-error-policy.md:224-242`(정본, ERROR-043에서 분할), `reviews/round-18-closing.md:103,385,713`
+- 닫은 사람: 편집자 결정(17라운드, ADR 0014 4판 채택), 소유자 답 O-1(`reviews/round-14-owner-answers.md:7`)·O-10(`reviews/round-14-owner-answers.md:16`), 소유자 답 C-20(`reviews/round-10-owner-answers.md:17`)·13라운드 답 4(`reviews/round-13-owner-answers.md:10`), 소유자 답 E-23·E-19(`reviews/round-10-owner-answers.md:38,40`), 소유자 답(`reviews/round-17-owner-answers.md:9` R17-1; `adr/0014-error-policy.md:229,231,234,237,239`), 소유자 답(`reviews/round-12-owner-answers.md:14` 6 `else: false` 경고; `adr/0014-error-policy.md:230`), 소유자 답(`reviews/round-17-owner-answers.md:14` 통보 3, `reviews/round-17-owner-answers.md:33` (가); `adr/0014-error-policy.md:238`), 소유자 답(`reviews/round-17-owner-answers.md:15` 통보 4; `adr/0014-error-policy.md:240,242`), 게이트 고침(R17G-2, `reviews/raw-round17-onerror.md:150`; `adr/0014-error-policy.md:238`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-03·18C-14·18C-23)
+- 라운드: 18
+- 까닭: `adr/0014-error-policy.md:222-244`, `reviews/round-18-closing.md:106-110`, `reviews/round-18-closing.md:416-423`, `reviews/round-18-closing.md:715-717`
 - 충돌:
   > `08-design-a-to-z.md:383`의 "호스트 바퀴, 파생, 전이, 되먹임 파동, `onChange` 중첩의 초과"는 되먹임·중첩 초과를 "정착 오류" 부류, "정착" 시점으로 둔다. 정본과 다르다. 정본이 이긴다(`adr/0014-error-policy.md:234`, 별도 부류 "되먹임·중첩 오류", "통지" 시점, K3).
   > `08-design-a-to-z.md:385`의 "`FormTypeInputMap` 패턴, 플러그인 등록 실패(`UnhandledError`)"는 드러남이 "throw(`SchemaFormError`)"인 호출자 오류 행에 두고 렌더 오류 행을 따른다는 말이 없으며, 같은 문서 `:387`의 "| 렌더 오류 | 렌더 | 소비자 코드(사용자 주입 컴포넌트) |"에는 "호출자"도 "`formTypeInputMap` 정규화 오류"도 없다. 정본과 다르다. 정본이 이긴다(`adr/0014-error-policy.md:236,240`, K4).
@@ -2300,6 +2348,7 @@
   > `reviews/round-18-agenda.md:17`의 "`controls.discriminator`의 세부(분기에 그 키의 `const`·`enum`이 없을 때, `$ref`·`allOf` 평탄화, 분기 자체 `controls.active`와의 AND)"는 첫 경우를 열린 안건으로 둔다. 정본과 다르다. 정본이 이긴다(`adr/0014-error-policy.md:228`, K2).
   > `adr/0014-error-policy.md:233`의 "자동 쓰기 다섯의 출처(C2·P2)"는 자동 쓰기를 다섯으로 센다. 소유자 답과 다르다. 소유자 답이 이긴다(`reviews/round-18-owner-answers.md:12`, WRITE-078: 포커스 아웃 `trim`이 자른 값의 쓰기가 여섯째 자동 쓰기).
   > `08-design-a-to-z.md:382`의 "공개 payload에는 출처를 더하지 않는다(14라운드: 니즈가 약하다. 필요하면 나중에 더한다)"는 소유자 답과 다르다. 소유자 답이 이긴다(`reviews/round-18-owner-answers.md:15`, EVENT-060).
+  > `adr/0014-error-policy.md:228`의 "정적으로 아는 `controls.injectTo` 대상 경로가 청사진에 없거나 터미널 아래임"은 18라운드 결정과 다르다: 그런 대상은 없고 그 경우는 모두 정착 오류 행의 동적 대상 없음이다(CONTROLS-079). 18라운드 결정이 이긴다(`reviews/round-18-closing.md:386`).
 
 ### ERROR-160 범위 밖 — 렌더 중 쓰기는 core가 감지하지 않는다
 
@@ -2404,22 +2453,41 @@
 - 보충:
   > "입력 컴포넌트가 래퍼를 거치지 않고 `FormTypeInputProps`의 `node`로 한 쓰기도 표식이 없으므로 이 옛 노드 참조에 들며, 재생성 reset 뒤 타이머나 언마운트 정리에서 하면 던진다(문서화, 열여섯째)." (`09-landing-and-test-strategy.md:87`)
   > "입력 컴포넌트의 늦은 쓰기는 `node`가 아니라 `onChange`로 한다는 것(재생성 reset 뒤 `node`로 한 늦은 쓰기는 `SchemaFormError`)" (`09-landing-and-test-strategy.md:96`)
+  > 편집자 결정(18C-24): "【추론】 쓰기 쪽이 §7.2에 더하는 행은 `SCHEMA_FORM_ERROR.INVALID_VIRTUAL_NODE_VALUES`(무리 이동, 18C-21), `SCHEMA_FORM_WARNING.RESET_REBUILT_BY_REFERENCE`(18C-22), `SCHEMA_FORM_ERROR.ARRAY_METHOD_ON_NON_ARRAY`(18C-23)다." (`reviews/round-18-closing.md:731`)
+  > 편집자 결정(18C-24): "【추론】 청사진 쪽이 §7.2에 더하는 행은 `JSON_SCHEMA_ERROR.RECURSIVE_SHAPE_UNBOUNDED`·`SCHEMA_FORM_ERROR.RECURSIVE_SHAPE_DIVERGED`(18C-01), `SCHEMA_FORM_WARNING.DEPENDENT_SCHEMAS_IGNORED_FOR_FORM`(18C-03), `JSON_SCHEMA_ERROR.VIRTUAL_FIELDS_MISMATCH`(18C-07), `JSON_SCHEMA_ERROR.CHILDREN_TARGET_NOT_FOUND`(18C-12), `JSON_SCHEMA_ERROR.TERMINAL_OPTION_UNSUPPORTED`(18C-38)다." (`reviews/round-18-closing.md:732`)
+  > 편집자 결정(18C-24): "【추론】 렌더 계층의 빈 `ChildNodeComponents` 경고는 `SCHEMA_FORM_WARNING.CHILD_NODE_COMPONENTS_ON_TERMINAL`(18C-73)이다." (`reviews/round-18-closing.md:733`)
+  > 편집자 결정(18C-90): "【추론】 ERROR-164의 `UNKNOWN_JSON_SCHEMA` 행의 "언제"에 S0의 문법 오류, 형 없는 분기(`reviews/round-18-owner-answers.md:32`), 형 없는 칸의 빈 U와 객체·배열 분기(`:30`·`:33`)를 적는다." (`reviews/round-18-closing.md:2458`)
+  > 편집자 결정(18C-90): "【추론】 ERROR-164의 `ALL_OF_TYPE_REDEFINITION` 행은 정적 연언의 교집합이 빈 경우만이며, `{null}`은 여기에 들지 않는다." (`reviews/round-18-closing.md:2459`)
+  > 편집자 결정(18C-90): "【추론】 ERROR-164의 `SHARED_NODE_CONFLICT` 행에 "켜진 게이트 선언과 정적 허용 집합의 교집합이 빔"을 더한다." (`reviews/round-18-closing.md:2460`)
+  > 편집자 결정(18C-90): "【추론】 ERROR-164에 경고 행 `(가칭) SCHEMA_FORM_WARNING.TERMINAL_SUBTREE_KEY_IGNORED_FOR_FORM`(`warning`, 새 설계에만)을 더한다." (`reviews/round-18-closing.md:2461`)
+  > 편집자 결정(18C-91): "【추론】 ERROR-164에 경고 행 `DISCRIMINATOR_BRANCH_UNREACHABLE`과 `NON_JSON_WHOLE_VALUE`(둘 다 `warning`, 새 설계에만)를 더한다." (`reviews/round-18-closing.md:2550`)
+  > 편집자 결정(18C-92): "【추론】 ERROR-164에 경고 행 `FORM_TYPE_TEST_INVALID`(`warning`, 새 설계에만)를 더한다." (`reviews/round-18-closing.md:2581`)
+  > 반영 칸(union O4, 거부 코드): "켜져 있으면 `(가칭) UNHANDLED_ERROR.VALIDATOR_BIND_REFUSED`를 부른 쪽에 즉시 던지고, 인스턴스를 붙이지 않는다." (`reviews/round-18-owner-answers.md:34`)
+  > 반영 칸(union O4, 거부 코드): "폼 인스턴스가 없으므로 `onError`는 받지 않으며, `UNHANDLED_ERROR.REGISTER_PLUGIN` 행과 같은 부류다." (`reviews/round-18-owner-answers.md:34`)
+  > 편집자 결정(18C-98): "【추론】 `diagnostics`와 경고 중복 키는 폼 수준 로드(마운트, `FormHandle.reset()`)에서만 초기화한다." (`reviews/round-18-closing.md:2797`)
+  > 편집자 결정(18C-98): "【추론】 `setValue(V)`와 `resetSubtree()`는 초기화하지 않는다." (`reviews/round-18-closing.md:2798`)
 - 상태: 현행
-- 출처: `adr/0014-error-policy.md:248-300`(정본, ERROR-044에서 분할)
-- 닫은 사람: 편집자 결정(17라운드, ADR 0014 4판 채택), 게이트 고침(R17G-9·R17G-2), 소유자 답(`reviews/round-17-owner-answers.md:9` R17-1; `adr/0014-error-policy.md:263,266,267-271,279,281`), 소유자 답(`reviews/round-14-owner-answers.md:7` O-1; `adr/0014-error-policy.md:260`), 소유자 답(`reviews/round-14-owner-answers.md:16` O-10; `adr/0014-error-policy.md:261,266`), 소유자 답(`reviews/round-12-owner-answers.md:14` 6 `else: false` 경고; `adr/0014-error-policy.md:290`), 소유자 답(`reviews/round-17-owner-answers.md:14` 통보 3; `adr/0014-error-policy.md:281,293`), 소유자 답(`reviews/round-17-owner-answers.md:33` (가); `adr/0014-error-policy.md:293`), 소유자 답(`reviews/round-17-owner-answers.md:15` 통보 4; `adr/0014-error-policy.md:296`), 소유자 답(`reviews/round-17-owner-answers.md:11` R17-3; `adr/0014-error-policy.md:295`)
-- 라운드: 17
-- 까닭: `adr/0014-error-policy.md:248`, `reviews/round-12-owner-answers.md:14`(`IF_WITHOUT_ELSE_FALSE` 행이 가리키는 소유자 답)
+- 출처: `adr/0014-error-policy.md:248-300`(정본, ERROR-044에서 분할), `reviews/round-18-closing.md:386-387,661,670,731-733`, `reviews/round-18-closing.md:2458-2461,2550,2581`, `reviews/round-18-owner-answers.md:34`, `reviews/round-18-owner-answers.md:37`, `reviews/round-18-closing.md:2797-2798`
+- 닫은 사람: 편집자 결정(17라운드, ADR 0014 4판 채택), 게이트 고침(R17G-9·R17G-2), 소유자 답(`reviews/round-17-owner-answers.md:9` R17-1; `adr/0014-error-policy.md:263,266,267-271,279,281`), 소유자 답(`reviews/round-14-owner-answers.md:7` O-1; `adr/0014-error-policy.md:260`), 소유자 답(`reviews/round-14-owner-answers.md:16` O-10; `adr/0014-error-policy.md:261,266`), 소유자 답(`reviews/round-12-owner-answers.md:14` 6 `else: false` 경고; `adr/0014-error-policy.md:290`), 소유자 답(`reviews/round-17-owner-answers.md:14` 통보 3; `adr/0014-error-policy.md:281,293`), 소유자 답(`reviews/round-17-owner-answers.md:33` (가); `adr/0014-error-policy.md:293`), 소유자 답(`reviews/round-17-owner-answers.md:15` 통보 4; `adr/0014-error-policy.md:296`), 소유자 답(`reviews/round-17-owner-answers.md:11` R17-3; `adr/0014-error-policy.md:295`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-14·18C-21·18C-24), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-90·18C-91·18C-92), 소유자 답(`reviews/round-18-owner-answers.md:34` union O4; `VALIDATOR_BIND_REFUSED` 행), 소유자 답(`reviews/round-18-owner-answers.md:37` union O7·O8), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-98)
+- 라운드: 18
+- 까닭: `adr/0014-error-policy.md:248`, `reviews/round-12-owner-answers.md:14`(`IF_WITHOUT_ELSE_FALSE` 행이 가리키는 소유자 답), `reviews/round-18-closing.md:416-423`, `reviews/round-18-closing.md:675-680`, `reviews/round-18-closing.md:740-743`, `reviews/round-18-closing.md:2466-2471`, `reviews/round-18-closing.md:2556-2564`, `reviews/round-18-closing.md:2620-2625`, `reviews/round-18-owner-answers.md:34`
+- 충돌:
+  > `adr/0014-error-policy.md:263`의 "(가칭) `JSON_SCHEMA_ERROR.INJECT_TARGET_NOT_FOUND`"는 18라운드 결정과 다르다: 이 코드는 낼 자리가 없어 PR-4의 코드 확정에서 빠진다(CONTROLS-079). 18라운드 결정이 이긴다(`reviews/round-18-closing.md:387`).
+  > `adr/0014-error-policy.md:264`의 "정적 대상 없음은 INJECT_TARGET_NOT_FOUND"는 18라운드 결정과 다르다: 정적으로 아는 `injectTo` 대상은 없고, 대상 경로가 청사진에 없거나 터미널 아래인 경우는 모두 동적 대상 없음(`INJECT_TARGET_MISSING`)이다(CONTROLS-079). 18라운드 결정이 이긴다(`reviews/round-18-closing.md:386`).
+  > `adr/0014-error-policy.md:257`의 "`JSON_SCHEMA_ERROR.INVALID_VIRTUAL_NODE_VALUES`"는 18라운드 결정과 다르다: 코드는 오류 클래스와 무리를 옮겨 `SCHEMA_FORM_ERROR.INVALID_VIRTUAL_NODE_VALUES`(가칭)다(ERROR-195). 18라운드 결정이 이긴다(`reviews/round-18-closing.md:670`).
+  > `adr/0014-error-policy.md:257`의 "분류는 슬라이스 1의 options.virtual 설계 항목에서 확정"는 18라운드 결정과 다르다: 분류는 확정되었다 — 공개 API에서 오면 호출자 오류, 자동 쓰기에서 오면 정착 오류(`cause` (가칭) `'writeShape'`)다(ERROR-195). 18라운드 결정이 이긴다(`reviews/round-18-closing.md:661`).
+  > `adr/0014-error-policy.md:261`의 "청사진 분석: 게이트 없는 선언끼리 같은 이름·다른 종류"는 소유자 답과 다르다: 정적 선언끼리는 교집합으로 노드 하나를 정하고 비면 `ALL_OF_TYPE_REDEFINITION`이며, 이 코드는 호스트의 게이트 없는 분기의 fold가 정적 노드의 fold에 들지 않을 때다(BLUEPRINT-044). 소유자 답이 이긴다(`reviews/round-18-owner-answers.md:37`).
 
 ### ERROR-165 §7.2 코드 목록 — (미정) 행
 
 - 결정:
   > | (미정) 설계 항목에서 생길 수 있는 코드 | `error` | 같은 `$id` 사본 루트의 중복 등록(PR-4), 같은 가상 이름의 다른 `fields`(슬라이스 1), 비객체 V의 `Merge`와 되먹임 거부 표면(슬라이스 2), `controls.children` 대상이 형상에 없을 때(슬라이스 6) | 18라운드 안건(`reviews/round-18-agenda.md`) | 정해지면 적음 | 정해지면 이 표에 더하고 판 규칙(더하면 minor)을 따름 | 새 설계에만 |
 - 보충: 없음
-- 상태: 열림(→ `reviews/round-18-agenda.md:19,42-43,108,110`; 같은 `$id` 사본 루트의 중복 등록은 → `reviews/round-18-agenda.md:150` 11-19)
-- 출처: `adr/0014-error-policy.md:301`(정본, ERROR-044에서 분할)
-- 닫은 사람: 편집자 결정(17라운드, `adr/0014-error-policy.md:301`)
-- 라운드: 17
-- 까닭: `adr/0014-error-policy.md:333`
+- 상태: 대체됨(→ ERROR-198)
+- 출처: `adr/0014-error-policy.md:301`(정본, ERROR-044에서 분할), `reviews/round-18-closing.md:723-738,1581-1591,1598-1606`
+- 닫은 사람: 편집자 결정(17라운드, `adr/0014-error-policy.md:301`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-24·18C-57)
+- 라운드: 18
+- 까닭: `adr/0014-error-policy.md:333`, `reviews/round-18-closing.md:740-743`, `reviews/round-18-closing.md:1593-1596`
 
 ### ERROR-166 합의 근거 — 10라운드 B-1
 
@@ -2491,11 +2559,13 @@
 
 - 결정:
   > 작성자 스키마·호출자 데이터에서 온 정착 오류(예산 초과, `controls` 식·가드 실패, `controls.injectTo` 대상 없음)는 모든 환경에서 커밋·통지 뒤 사슬 끝에서 던지고, `degraded`가 다음 로드까지 남아 그 동안 폼의 제출 경로가 `SchemaFormError`로 거부한다(`getValue()`는 막지 않는다).
-- 보충: 없음
+- 보충:
+  > 편집자 결정(18C-98): "【추론】 `diagnostics`와 경고 중복 키는 폼 수준 로드(마운트, `FormHandle.reset()`)에서만 초기화한다." (`reviews/round-18-closing.md:2797`)
+  > 편집자 결정(18C-98): "【추론】 `setValue(V)`와 `resetSubtree()`는 초기화하지 않는다." (`reviews/round-18-closing.md:2798`)
 - 상태: 현행
-- 출처: `03-mental-model.md:180#2`(정본, ERROR-066에서 분할)
-- 닫은 사람: 소유자 답(`reviews/round-17-owner-answers.md:9` R17-1)
-- 라운드: 17
+- 출처: `03-mental-model.md:180#2`(정본, ERROR-066에서 분할), `reviews/round-18-closing.md:2797-2798`
+- 닫은 사람: 소유자 답(`reviews/round-17-owner-answers.md:9` R17-1), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-98)
+- 라운드: 18
 - 까닭: `reviews/round-17-owner-answers.md:9`
 
 ### ERROR-173 03의 재록 — 끄는 스위치는 없다
@@ -2583,11 +2653,11 @@
 - 결정:
   > union의 판별 값이 어느 분기와도 맞지 않으면 검증기는 `enum`이 아니라 분기별 `const` × N + `oneOf` 에러를 낸다(`reviews/raw-redteam3-contract.md` 8). 어느 노드가 이 에러를 받는가. 제안(E17): union 호스트의 판별 노드로 모은다. 규칙은 ADR 0004에 적는다.
 - 보충: 없음
-- 상태: 열림(→ `reviews/round-18-agenda.md:108`)
-- 출처: `open-questions.md:80`(정본), `reviews/round-18-agenda.md:108`
-- 닫은 사람: 편집자 결정(18라운드 안건 이관, `reviews/round-18-agenda.md:108`)
+- 상태: 대체됨(→ VALIDATE-043)
+- 출처: `open-questions.md:80`(정본), `reviews/round-18-agenda.md:108`, `reviews/round-18-closing.md:1471-1495,1502-1503`
+- 닫은 사람: 편집자 결정(18라운드 안건 이관, `reviews/round-18-agenda.md:108`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-53)
 - 라운드: 18
-- 까닭: `reviews/round-18-agenda.md:108`
+- 까닭: `reviews/round-18-agenda.md:108`, `reviews/round-18-closing.md:1497-1500`
 
 ### ERROR-181 변환하지 못한 입력의 변환 오류는 `onError`로 전달한다(18라운드 S1)
 
@@ -2635,16 +2705,18 @@
 - 라운드: 18
 - 까닭: `reviews/round-18-owner-answers.md:9`
 
-### ERROR-185 터미널 노드의 입력이 빈 `ChildNodeComponents`를 읽을 때의 개발 모드 경고 — 코드 없음
+### ERROR-185 터미널 노드의 입력이 빈 `ChildNodeComponents`를 읽을 때의 개발 모드 경고 — 코드는 ERROR-202
 
 - 결정:
   > 터미널이 된 노드의 입력이 비어 있는 `ChildNodeComponents`를 읽으면 개발 모드에서 경고한다(`00-goals.md` C2).
-- 보충: 없음
-- 상태: 열림(→ `reviews/round-18-agenda.md:137` 11-6)
-- 출처: `adr/0011-branch-node-composition.md:61#2`(정본, 규칙은 NODE-031. ADR 0014 §7.2 코드 목록 `adr/0014-error-policy.md:248-301`에 이 경고의 행이 없다)
-- 닫은 사람: 원리(`00-goals.md:105` C2 작성자 실수의 가시성, 소유자 채택 `reviews/round-2.md:112`), 편집자 결정(ADR 0011 4차 본문, `adr/0011-branch-node-composition.md:12`)
-- 라운드: 5(경고 자체. 코드·`level`·`onError` 전달은 정해지지 않았다)
-- 까닭: `00-goals.md:116`, `adr/0014-error-policy.md:248`
+- 보충:
+  > 편집자 결정(18C-73): "【추론】 코드는 (가칭) `SCHEMA_FORM_WARNING.CHILD_NODE_COMPONENTS_ON_TERMINAL`이고 `level`은 `warning`이다." (`reviews/round-18-closing.md:2032`)
+  > 편집자 결정(18C-38): "【추론】 가상은 `branch`이므로 ERROR-185의 경고(터미널 노드의 입력이 빈 `ChildNodeComponents`를 읽을 때의 개발 모드 경고)는 가상 노드에 적용되지 않는다." (`reviews/round-18-closing.md:1032`)
+- 상태: 현행
+- 출처: `adr/0011-branch-node-composition.md:61#2`(정본, 규칙은 NODE-031. ADR 0014 §7.2 코드 목록 `adr/0014-error-policy.md:248-301`에 이 경고의 행이 없다), `reviews/round-18-closing.md:2031-2040,2046-2047,1029-1038`
+- 닫은 사람: 원리(`00-goals.md:105` C2 작성자 실수의 가시성, 소유자 채택 `reviews/round-2.md:112`), 편집자 결정(ADR 0011 4차 본문, `adr/0011-branch-node-composition.md:12`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-73·18C-38)
+- 라운드: 18
+- 까닭: `00-goals.md:116`, `adr/0014-error-policy.md:248`, `reviews/round-18-closing.md:2042-2044`, `reviews/round-18-closing.md:1040-1047`
 
 ### ERROR-186 변환 실패 기록은 `level: 'warning'`, 가칭 `SCHEMA_FORM_WARNING.VALUE_TYPE_MISMATCH`, 정합 상태가 켜질 때마다 한 번
 
@@ -2655,11 +2727,14 @@
   > 열린 부분(level `warning`만. 가칭 코드와 보내는 때는 같은 문장이라 함께 둔다): "변환하지 못한 입력의 `onError` 기록 level을 편집자가 `'warning'`으로 정해도 되는가, `'error'`인가." (`reviews/round-18-agenda.md:165`)
   > 소유자(12-7 답): "형변환 실패로 문제가 생기는 경우에 대한 대응은 FormType 이 하기로 했잖아. 그래서 개발단계에서는 중요한데, 리얼부터는 어쩔 수 없다고 생각하긴 해. warning 이면 되지않을까?" (`reviews/round-18-owner-answers.md:17`)
   > 반영 칸(12-7, level): "가. level은 `warning`이다(개발 모드 콘솔, 프로덕션은 핸들러가 있을 때만)." (`reviews/round-18-owner-answers.md:17`)
+  > 편집자 결정(18C-91): "【추론】 `VALUE_TYPE_MISMATCH` 기록은 `{ level: 'warning', code, path, expected: { schemaType, nullable, effective }, received, reason, candidates?, source }`이다(ERROR-186, EVENT-060)." (`reviews/round-18-closing.md:2527`)
+  > 편집자 결정(18C-91): "【추론】 `expected.schemaType`은 `node.schemaType`이고, `expected.effective`는 그 커밋의 유효 목록이다." (`reviews/round-18-closing.md:2528`)
+  > 편집자 결정(18C-91): "【추론】 `source`는 EVENT-060의 쓰기 출처 값에 `'gate'`를 더한 것이다." (`reviews/round-18-closing.md:2531`)
 - 상태: 현행
-- 출처: `reviews/round-18-owner-answers.md:9`(정본, S1 셋째의 반영 칸. 표 행이라 조각 번호로 나눌 수 없다. ERROR-182에서 분할), `reviews/round-18-owner-answers.md:17`
-- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-owner-answers.md:9` 반영 칸), 소유자 답(`reviews/round-18-owner-answers.md:17` 12-7; level `warning`)
+- 출처: `reviews/round-18-owner-answers.md:9`(정본, S1 셋째의 반영 칸. 표 행이라 조각 번호로 나눌 수 없다. ERROR-182에서 분할), `reviews/round-18-owner-answers.md:17`, `reviews/round-18-closing.md:2527-2528,2531`
+- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-owner-answers.md:9` 반영 칸), 소유자 답(`reviews/round-18-owner-answers.md:17` 12-7; level `warning`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-91)
 - 라운드: 18
-- 까닭: `reviews/round-18-owner-answers.md:17`, `reviews/round-18-owner-answers.md:9`(반영 칸의 괄호), `reviews/round-17-owner-answers.md:14`(통보 3)
+- 까닭: `reviews/round-18-owner-answers.md:17`, `reviews/round-18-owner-answers.md:9`(반영 칸의 괄호), `reviews/round-17-owner-answers.md:14`(통보 3), `reviews/round-18-closing.md:2556-2564`
 
 ### ERROR-187 변환 실패 기록은 검증기 유무와 무관하게 보낸다
 
@@ -2680,8 +2755,272 @@
   > 경고 코드는 ADR 0014 §7.2 목록에 더한다(가칭, 편집자).
 - 보충:
   > 소유자(12-4 답): "경고정도는 주도록 합시다" (`reviews/round-18-owner-answers.md:14`)
+  > 편집자 결정(18C-24): "【추론】 12-4의 방언 불일치 경고(ERROR-188)의 코드는 (가칭) `SCHEMA_FORM_WARNING.DIALECT_MISMATCH`다." (`reviews/round-18-closing.md:734`)
 - 상태: 현행
-- 출처: `reviews/round-18-owner-answers.md:14`(정본, 12-4의 반영 칸. 표 행이라 조각 번호로 나눌 수 없다), `adr/0004-validator-plugin-compile-guard.md:42`(같은 제안의 원장 항목 VALIDATE-026)
-- 닫은 사람: 소유자 답(`reviews/round-18-owner-answers.md:14` 12-4), 편집자 결정(18라운드, `reviews/round-18-owner-answers.md:14` 반영 칸; 경고 코드는 가칭으로 §7.2 목록에 더함)
+- 출처: `reviews/round-18-owner-answers.md:14`(정본, 12-4의 반영 칸. 표 행이라 조각 번호로 나눌 수 없다), `adr/0004-validator-plugin-compile-guard.md:42`(같은 제안의 원장 항목 VALIDATE-026), `reviews/round-18-closing.md:734`
+- 닫은 사람: 소유자 답(`reviews/round-18-owner-answers.md:14` 12-4), 편집자 결정(18라운드, `reviews/round-18-owner-answers.md:14` 반영 칸; 경고 코드는 가칭으로 §7.2 목록에 더함), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-24)
 - 라운드: 18
-- 까닭: `reviews/round-18-owner-answers.md:14`
+- 까닭: `reviews/round-18-owner-answers.md:14`, `reviews/round-18-closing.md:740-743`
+
+### ERROR-189 (가칭) `JSON_SCHEMA_ERROR.RECURSIVE_SHAPE_UNBOUNDED` — 청사진 분석, 기록에 schemaPath와 순환 경로, 새 설계에만(§7.2 코드 행)
+
+- 결정:
+  > 【추론】 객체 프로퍼티만으로 이어진 순환에서 모든 마디가 게이트 없는 선언이고 터미널 전략인 노드가 하나도 없으면 형상이 무한하므로 청사진 오류(가칭 `JSON_SCHEMA_ERROR.RECURSIVE_SHAPE_UNBOUNDED`)다.
+  > 【추론】 청사진 오류 코드 `JSON_SCHEMA_ERROR.RECURSIVE_SHAPE_UNBOUNDED`(가칭)는 청사진 분석에서 나며, 기록에 schemaPath와 순환 경로를 싣는다.
+- 보충: 없음
+- 상태: 현행
+- 출처: `reviews/round-18-closing.md:24,31`(정본)
+- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-01)
+- 라운드: 18
+- 까닭: `reviews/round-18-closing.md:35-41`
+
+### ERROR-190 (가칭) `SCHEMA_FORM_ERROR.RECURSIVE_SHAPE_DIVERGED` — 정착 오류, `cause: 'budget'`, `exceededBudget: 'recursion'`(가칭), 원본 B 커밋, 사슬 끝 throw, `degraded`(§7.2 코드 행)
+
+- 결정:
+  > 【추론】 재귀 펼침의 멈춤은 예산 부류의 정착 오류이므로 예산 초과의 기존 규칙을 그대로 따른다 — 원본 B를 커밋하고, `diagnostics`를 `cause: 'budget'`, `exceededBudget: 'recursion'`(가칭)인 `'degraded'`로 두며, 사슬 끝에서 던진다.
+  > 【추론】 형상이 수렴하지 않아도 값은 받아들인다(WRITE-004).
+  > 【추론】 정착 오류 코드 `SCHEMA_FORM_ERROR.RECURSIVE_SHAPE_DIVERGED`(가칭)는 정착에서 나며, `cause: 'budget'`, `exceededBudget: 'recursion'`(가칭), 모든 환경의 사슬 끝 throw, `degraded`를 따른다.
+- 보충: 없음
+- 상태: 현행
+- 출처: `reviews/round-18-closing.md:28-29,32`(정본)
+- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-01)
+- 라운드: 18
+- 까닭: `reviews/round-18-closing.md:35-41`
+
+### ERROR-191 (가칭) `SCHEMA_FORM_WARNING.DEPENDENT_SCHEMAS_IGNORED_FOR_FORM` — 청사진 경고, 개발 모드 콘솔, 새 설계에만(§7.2 코드 행)
+
+- 결정:
+  > 【추론】 스키마에 `dependentSchemas`나 `dependencies` 키가 있으면 청사진 경고(가칭 `SCHEMA_FORM_WARNING.DEPENDENT_SCHEMAS_IGNORED_FOR_FORM`, 개발 모드, 키의 유무만 봄, 기록에 schemaPath와 키)를 낸다.
+  > 【추론】 이 경고는 §7.1 청사진 경고 행의 조건 목록에 "`dependentSchemas`·`dependencies` 무시"로 더해지고, 기본 드러남은 개발 모드 콘솔이며, 새 설계에만 있다.
+- 보충: 없음
+- 상태: 현행
+- 출처: `reviews/round-18-closing.md:102-103`(정본)
+- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-03)
+- 라운드: 18
+- 까닭: `reviews/round-18-closing.md:106-110`
+
+### ERROR-192 (가칭) `JSON_SCHEMA_ERROR.VIRTUAL_FIELDS_MISMATCH` — 청사진 분석, 기록에 schemaPath와 두 `fields`, 새 설계에만(§7.2 코드 행)
+
+- 결정:
+  > 【추론】 코드는 (가칭) `JSON_SCHEMA_ERROR.VIRTUAL_FIELDS_MISMATCH`이고, 청사진 분석에서 나며, 기록에 schemaPath와 두 `fields`를 싣고, 새 설계에만 있다.
+- 보충: 없음
+- 상태: 현행
+- 출처: `reviews/round-18-closing.md:174`(정본)
+- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-07)
+- 라운드: 18
+- 까닭: `reviews/round-18-closing.md:176-180`
+
+### ERROR-193 (가칭) `JSON_SCHEMA_ERROR.CHILDREN_TARGET_NOT_FOUND` — 청사진 분석, 기록에 schemaPath와 이름, 새 설계에만(§7.2 코드 행)
+
+- 결정:
+  > 【추론】 코드는 (가칭) `JSON_SCHEMA_ERROR.CHILDREN_TARGET_NOT_FOUND`이고, 청사진 분석에서 나며, 기록에 schemaPath와 이름을 싣고, 새 설계에만 있는 단독 청사진 오류 코드다.
+- 보충: 없음
+- 상태: 현행
+- 출처: `reviews/round-18-closing.md:276`(정본)
+- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-12)
+- 라운드: 18
+- 까닭: `reviews/round-18-closing.md:299-303`
+
+### ERROR-194 되먹임 거부를 호출자에게 알리는 별도 표면은 없다 — `FEEDBACK_LIMIT_EXCEEDED`로 드러나고 새 코드는 없음
+
+- 결정:
+  > 【추론】 (라) 되먹임 거부를 호출자에게 알리는 별도 표면은 두지 않는다.
+  > 【추론】 거부된 리스너 되먹임 쓰기는 안쪽 진입이므로 정상 반환한다.
+  > 【추론】 사슬 머리가 끝날 때 `FEEDBACK_LIMIT_EXCEEDED`를 던지고, 그 기록은 `onError`로 간다.
+  > 【추론】 비객체 V의 `Merge`, `setValue(undefined)`, 되먹임 거부 표면(안건 `reviews/round-18-agenda.md:42-43`)에서는 새 오류 코드가 생기지 않는다.
+- 보충: 없음
+- 상태: 현행
+- 출처: `reviews/round-18-closing.md:494-497`(정본)
+- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-16)
+- 라운드: 18
+- 까닭: `reviews/round-18-closing.md:502-510`
+
+### ERROR-195 가상 노드가 받는 값과 출처별 분류 — `SCHEMA_FORM_ERROR.INVALID_VIRTUAL_NODE_VALUES`(가칭, 무리 이동), `cause` (가칭) `'writeShape'`(§7.2 코드 행)
+
+- 결정:
+  > 【추론】 가상 노드가 받는 값은 둘뿐이다.
+  > 【추론】 하나는 `undefined`이고, 참조한 잎 모두에 그 쓰기 종류로 `undefined`를 쓴다.
+  > 【추론】 다른 하나는 길이가 참조 수와 같은 배열이다.
+  > 【추론】 배열인지를 길이보다 먼저 본다.
+  > 【추론】 그 밖의 값(`null`, 문자열을 포함한 배열 아닌 값, 길이가 다른 배열)은 거부한다.
+  > 【추론】 가상 노드의 유일한 예외이며, 까닭은 자기 원본이 없어 받은 그대로 들 자리가 없기 때문이다.
+  > 【추론】 나뉜 값은 잎마다 `interpret`를 지난다.
+  > 【추론】 분류는 출처로 가른다.
+  > 【추론】 공개 API(`setValue`, 그것을 부르는 입력의 `onChange` 포함)에서 오면 호출자 오류다.
+  > 【추론】 즉시 throw하고, throw 직전에 `onError`로 보낸다.
+  > 【추론】 자동 쓰기(`controls.injectTo` 등)에서 오면 정착 오류다.
+  > 【추론】 그 규칙을 후보에서 빼고, 사슬 끝에서 throw하며, `degraded`가 된다.
+  > 【추론】 `diagnostics.cause`에 다섯째 값 `(가칭) 'writeShape'`를 둔다(자동 쓰기가 대상이 받을 수 없는 모양의 값을 냄).
+  > 【추론】 `'injectTarget'`은 "동적 대상 없음"이라는 한 뜻으로 남는다.
+  > 【추론】 한 값이 한 뜻을 가져야 예측할 수 있기 때문이다.
+  > 【추론】 `degraded`를 일으키는 경우에 '가상 노드에 모양이 틀린 자동 쓰기'가 더해진다.
+  > 【추론】 코드는 오류 클래스와 무리를 옮겨 `SCHEMA_FORM_ERROR.INVALID_VIRTUAL_NODE_VALUES`(가칭)로 한다.
+  > 【추론】 `JSON_SCHEMA_ERROR`는 청사진 오류의 무리이고, 이 사건은 쓰기의 오류이기 때문이다.
+  > 【추론】 기록에는 `path`와 `details`(기대 길이, 받은 값)를 싣는다.
+- 보충: 없음
+- 상태: 현행
+- 출처: `reviews/round-18-closing.md:654-672`(정본)
+- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-21)
+- 라운드: 18
+- 까닭: `reviews/round-18-closing.md:675-680`
+
+### ERROR-196 (가칭) `SCHEMA_FORM_WARNING.RESET_REBUILT_BY_REFERENCE` — 재생성 reset 경고의 판정 조건, 전달 시점, 핸들러 없는 프로덕션 무판정(§7.2 코드 행)
+
+- 결정:
+  > 【추론】 코드는 `(가칭) SCHEMA_FORM_WARNING.RESET_REBUILT_BY_REFERENCE`, `level`은 `'warning'`이다.
+  > 【추론】 `reset`의 같은 스키마 판정에서 JSON 부분은 깊게 같은데 함수·구성 요소 칸의 참조가 달라 재생성 경로를 탔을 때 낸다.
+  > 【추론】 같은 스키마 판정은 처음 다른 곳에서 멈추는 비교다.
+  > 【추론】 '참조만 다르다'를 알려면 JSON 부분을 끝까지 비교해야 해서, 재생성 경로에서 순회가 한 번 더 든다.
+  > 【추론】 그래서 개발 모드이거나 `onError` 핸들러가 있을 때만 판정한다.
+  > 【추론】 핸들러가 없는 프로덕션에서는 판정하지 않는다(`MULTIPLE_GATED_BRANCHES_ACTIVE`와 같은 관례).
+  > 【추론】 기록에는 위치(폼 수준)와 `details`(참조가 달라진 칸의 `schemaPath` 목록)를 싣는다.
+  > 【추론】 드러남은 경고 층의 일반 규칙을 따른다.
+  > 【추론】 기본 출력은 개발 모드 콘솔이다.
+  > 【추론】 `onError` 핸들러가 있으면 모든 환경에서 경고 기록을 보내고, 전달 시점은 reset 사슬 끝이다(`VALIDATOR_MISSING`의 재생성 reset과 같다).
+  > 【추론】 중복 막기는 ADR 0014 §3의 경고 규칙(코드와 위치, 로드마다 비움)을 따른다.
+  > 【추론】 그래서 그런 reset마다 한 번 간다.
+  > 【추론】 reset을 부르지 않는 인라인 스키마에는 보내지 않는다.
+  > 【추론】 이 코드는 새 설계에만 있어 이주 행이 없다.
+- 보충:
+  > 편집자 결정(18C-98): "【추론】 `diagnostics`와 경고 중복 키는 폼 수준 로드(마운트, `FormHandle.reset()`)에서만 초기화한다." (`reviews/round-18-closing.md:2797`)
+  > 편집자 결정(18C-98): "【추론】 `setValue(V)`와 `resetSubtree()`는 초기화하지 않는다." (`reviews/round-18-closing.md:2798`)
+- 상태: 현행
+- 출처: `reviews/round-18-closing.md:686-699`(정본), `reviews/round-18-closing.md:2797-2798`
+- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-22), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-98)
+- 라운드: 18
+- 까닭: `reviews/round-18-closing.md:701-703`
+
+### ERROR-197 (가칭) `SCHEMA_FORM_ERROR.ARRAY_METHOD_ON_NON_ARRAY` — 배열 아닌 노드의 배열 전용 명령은 호출자 오류(§7.2 코드 행)
+
+- 결정:
+  > 【추론】 코드는 `(가칭) SCHEMA_FORM_ERROR.ARRAY_METHOD_ON_NON_ARRAY`, `level`은 `'error'`이고 호출자 오류다.
+  > 【추론】 `type`이 배열이 아닌 노드에서 `push`·`pop`·`update`·`remove`·`clear`를 부르면, 행의 공유 칸이 모든 환경에서 즉시 `SchemaFormError`를 던진다.
+  > 【추론】 throw 직전에 `onError`로 보낸다(surface `'thrown'`).
+  > 【추론】 기록에는 `path`와 `details.method`를 싣는다.
+  > 【추론】 §7.1 호출자 오류 행의 항목 목록과 ADR 0014 §3의 받는 것 목록에 더한다.
+- 보충: 없음
+- 상태: 현행
+- 출처: `reviews/round-18-closing.md:709-713`(정본)
+- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-23)
+- 라운드: 18
+- 까닭: `reviews/round-18-closing.md:715-717`
+
+### ERROR-198 §7.2의 (미정) 행을 닫는 규칙 — 넷의 처분, 18라운드가 더하는 행, `if` 공허한 참 경고 없음, `INJECT_TARGET_NOT_FOUND` 빠짐
+
+- 결정:
+  > 【추론】 '(미정)' 행은 없앤다.
+  > 【추론】 설계 항목이 정한 코드는 그 항목의 원장 번호와 함께 §7.2에 정식 행으로 더한다.
+  > 【추론】 이름은 가칭이고 PR-4에서 확정한다(ERROR-164 머리 문단).
+  > 【추론】 코드를 두지 않기로 한 항목은 행 없이 그 항목에 '코드 없음'을 적는다.
+  > 【추론】 (미정) 행의 넷 가운데 같은 `$id` 사본 루트의 중복 등록(PR-4)은 코드 없음이다(18C-57).
+  > 【추론】 같은 가상 이름의 다른 `fields`(슬라이스 1)는 청사진 오류 (가칭) `JSON_SCHEMA_ERROR.VIRTUAL_FIELDS_MISMATCH`다(18C-07).
+  > 【추론】 비객체 V의 `Merge`와 되먹임 거부 표면(슬라이스 2)은 코드 없음이며, 되먹임은 기존 `FEEDBACK_LIMIT_EXCEEDED`가 드러내고, `Overwrite`로 온 `undefined`도 코드가 생기지 않는다(18C-16, 18C-17).
+  > 【추론】 `controls.children` 대상이 형상에 없을 때(슬라이스 6)는 코드 없음이고, 청사진에 없는 이름만 청사진 오류 (가칭) `JSON_SCHEMA_ERROR.CHILDREN_TARGET_NOT_FOUND`다(18C-12).
+  > 【추론】 쓰기 쪽이 §7.2에 더하는 행은 `SCHEMA_FORM_ERROR.INVALID_VIRTUAL_NODE_VALUES`(무리 이동, 18C-21), `SCHEMA_FORM_WARNING.RESET_REBUILT_BY_REFERENCE`(18C-22), `SCHEMA_FORM_ERROR.ARRAY_METHOD_ON_NON_ARRAY`(18C-23)다.
+  > 【추론】 청사진 쪽이 §7.2에 더하는 행은 `JSON_SCHEMA_ERROR.RECURSIVE_SHAPE_UNBOUNDED`·`SCHEMA_FORM_ERROR.RECURSIVE_SHAPE_DIVERGED`(18C-01), `SCHEMA_FORM_WARNING.DEPENDENT_SCHEMAS_IGNORED_FOR_FORM`(18C-03), `JSON_SCHEMA_ERROR.VIRTUAL_FIELDS_MISMATCH`(18C-07), `JSON_SCHEMA_ERROR.CHILDREN_TARGET_NOT_FOUND`(18C-12), `JSON_SCHEMA_ERROR.TERMINAL_OPTION_UNSUPPORTED`(18C-38)다.
+  > 【추론】 렌더 계층의 빈 `ChildNodeComponents` 경고는 `SCHEMA_FORM_WARNING.CHILD_NODE_COMPONENTS_ON_TERMINAL`(18C-73)이다.
+  > 【추론】 S1 변환 실패의 `SCHEMA_FORM_WARNING.VALUE_TYPE_MISMATCH`(ERROR-186)는 이미 가칭으로 있다.
+  > 【추론】 안건 `reviews/round-18-agenda.md:108`의 `if` 공허한 참 경고(Q10)는 두지 않으며 경고 코드도 없다.
+  > 【추론】 FRAGMENT-023(현행(부정 결정), 소유자 E-23·E-19)과 ERROR-159의 충돌 칸이 그 줄을 이미 "정본과 다르다, 정본이 이긴다"로 닫아 두었다.
+  > 【추론】 `JSON_SCHEMA_ERROR.INJECT_TARGET_NOT_FOUND`는 목록에서 빠진다(18C-14).
+- 보충: 없음
+- 상태: 현행
+- 출처: `reviews/round-18-closing.md:723-733,735-738`(정본)
+- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-24)
+- 라운드: 18
+- 까닭: `reviews/round-18-closing.md:740-743`
+
+### ERROR-199 (가칭) `SCHEMA_FORM_WARNING.DIALECT_MISMATCH` — 12-4 방언 불일치 경고의 코드(§7.2 코드 행)
+
+- 결정:
+  > 【추론】 12-4의 방언 불일치 경고(ERROR-188)의 코드는 (가칭) `SCHEMA_FORM_WARNING.DIALECT_MISMATCH`다.
+- 보충: 없음
+- 상태: 현행
+- 출처: `reviews/round-18-closing.md:734`(정본), `reviews/round-18-owner-answers.md:14`(같은 경고의 원장 항목 ERROR-188)
+- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-24)
+- 라운드: 18
+- 까닭: `reviews/round-18-closing.md:740-743`
+
+### ERROR-200 (가칭) `JSON_SCHEMA_ERROR.TERMINAL_OPTION_UNSUPPORTED` — 행이 하나인 종류에 다른 `options.terminal`(§7.2 코드 행)
+
+- 결정:
+  > 【추론】 행이 하나인 종류에 그 행과 다른 `options.terminal`을 적으면 청사진 오류다(잎의 `false`, 가상의 `true`).
+  > 【추론】 코드는 (가칭) `JSON_SCHEMA_ERROR.TERMINAL_OPTION_UNSUPPORTED`이고, 청사진 분석에서 나며, 기록에 schemaPath·type·값을 싣고, 새 설계에만 있다.
+- 보충: 없음
+- 상태: 현행
+- 출처: `reviews/round-18-closing.md:1033,1036`(정본)
+- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-38)
+- 라운드: 18
+- 까닭: `reviews/round-18-closing.md:1040-1047`
+
+### ERROR-201 같은 `$id`의 두 살아 있는 루트는 코드 없음 — 등록 실패는 `VALIDATOR_COMPILE_FAILED`·`GUARD_FAILED`에 `reason: 'duplicateSchemaId'`(가칭)
+
+- 결정:
+  > 【추론】 이 경우는 오류도 경고도 아니다.
+  > 【추론】 재생성 reset은 원자적으로 성공한다.
+  > 【추론】 플러그인이 떼어 두지 못해 등록이 실패하면 새 코드 없이 있는 부류로 드러낸다.
+  > 【추론】 전체 컴파일은 `SCHEMA_FORM_ERROR.VALIDATOR_COMPILE_FAILED`, 가드는 `SCHEMA_FORM_ERROR.GUARD_FAILED`이며, `details`에 가칭 `reason: 'duplicateSchemaId'`와 `$id`를 싣는다.
+  > 【추론】 ADR 0014 §7.2 (미정) 행의 이 줄은 "코드 없음"으로 닫는다.
+- 보충: 없음
+- 상태: 현행
+- 출처: `reviews/round-18-closing.md:1587-1591`(정본)
+- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-57)
+- 라운드: 18
+- 까닭: `reviews/round-18-closing.md:1593-1596`
+
+### ERROR-202 (가칭) `SCHEMA_FORM_WARNING.CHILD_NODE_COMPONENTS_ON_TERMINAL` — 터미널 노드 입력이 빈 `ChildNodeComponents`를 읽을 때의 렌더 계층 경고
+
+- 결정:
+  > 【추론】 ADR 0014 §7.2 목록에 행 하나를 더한다.
+  > 【추론】 코드는 (가칭) `SCHEMA_FORM_WARNING.CHILD_NODE_COMPONENTS_ON_TERMINAL`이고 `level`은 `warning`이다.
+  > 【추론】 렌더 계층에서, 터미널 전략인 노드의 입력 구성 요소가 받은 빈 `ChildNodeComponents`를 처음 읽을 때(색인·`length`·순회) 낸다.
+  > 【추론】 자리는 `adr/0011-branch-node-composition.md:61`과 §7.1 렌더 계층 경고 행이며, 기록에 path를 싣는다.
+  > 【추론】 기본 드러남은 개발 모드 콘솔이고, 프로덕션 기본 출력은 없다.
+  > 【추론】 핸들러 전달은 그 필드가 커밋된 뒤의 이펙트에서 하고, 로드마다 구조 키(code, path)로 한 번이다.
+  > 【추론】 개발 모드와 핸들러가 있는 프로덕션에서는 빈 배열 대신 읽기를 감지하는 얼린 빈 배열을 넘긴다.
+  > 【추론】 핸들러가 없는 프로덕션에서는 판정하지 않고 보통의 빈 배열을 넘긴다.
+  > 【추론】 새 설계에만 있다.
+  > 【추론】 더하면 minor다(ADR 0014 판 규칙).
+  > PR: PR-7.
+  > 무엇: 감지 방식(읽기를 감지하는 얼린 빈 배열)의 비용을 PR-7 구현에서 확인한다.
+- 보충:
+  > 편집자 결정(18C-98): "【추론】 `diagnostics`와 경고 중복 키는 폼 수준 로드(마운트, `FormHandle.reset()`)에서만 초기화한다." (`reviews/round-18-closing.md:2797`)
+  > 편집자 결정(18C-98): "【추론】 `setValue(V)`와 `resetSubtree()`는 초기화하지 않는다." (`reviews/round-18-closing.md:2798`)
+- 상태: 현행
+- 출처: `reviews/round-18-closing.md:2031-2040,2046-2047`(정본), `reviews/round-18-closing.md:2797-2798`
+- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-73), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-98)
+- 라운드: 18
+- 까닭: `reviews/round-18-closing.md:2042-2044`
+
+### ERROR-203 union 설계가 §7.2에 더하는 것 — `UNKNOWN_JSON_SCHEMA`·`ALL_OF_TYPE_REDEFINITION`·`SHARED_NODE_CONFLICT` 행의 "언제", 경고 행 넷(가칭) `TERMINAL_SUBTREE_KEY_IGNORED_FOR_FORM`·`DISCRIMINATOR_BRANCH_UNREACHABLE`·`NON_JSON_WHOLE_VALUE`·`FORM_TYPE_TEST_INVALID`
+
+- 결정:
+  > 【추론】 ERROR-164의 `UNKNOWN_JSON_SCHEMA` 행의 "언제"에 S0의 문법 오류, 형 없는 분기(`reviews/round-18-owner-answers.md:32`), 형 없는 칸의 빈 U와 객체·배열 분기(`:30`·`:33`)를 적는다.
+  > 【추론】 ERROR-164의 `ALL_OF_TYPE_REDEFINITION` 행은 정적 연언의 교집합이 빈 경우만이며, `{null}`은 여기에 들지 않는다.
+  > 【추론】 ERROR-164의 `SHARED_NODE_CONFLICT` 행에 "켜진 게이트 선언과 정적 허용 집합의 교집합이 빔"을 더한다.
+  > 【추론】 ERROR-164에 경고 행 `(가칭) SCHEMA_FORM_WARNING.TERMINAL_SUBTREE_KEY_IGNORED_FOR_FORM`(`warning`, 새 설계에만)을 더한다.
+  > 【추론】 ERROR-164에 경고 행 `DISCRIMINATOR_BRANCH_UNREACHABLE`과 `NON_JSON_WHOLE_VALUE`(둘 다 `warning`, 새 설계에만)를 더한다.
+  > 【추론】 ERROR-164에 경고 행 `FORM_TYPE_TEST_INVALID`(`warning`, 새 설계에만)를 더한다.
+- 보충: 없음
+- 상태: 현행
+- 출처: `reviews/round-18-closing.md:2458-2461,2550,2581`(정본)
+- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-90·18C-91·18C-92)
+- 라운드: 18
+- 까닭: `reviews/round-18-closing.md:2466-2471`, `reviews/round-18-closing.md:2556-2564`, `reviews/round-18-closing.md:2620-2625`
+
+### ERROR-204 `diagnostics`와 경고 중복 키는 폼 수준 로드(마운트, `FormHandle.reset()`)에서만 초기화 — `setValue(V)`·`resetSubtree()`는 비우지 않음, `degraded`의 복귀는 `FormHandle.reset()`
+
+- 결정:
+  > 【추론】 `diagnostics`와 경고 중복 키는 폼 수준 로드(마운트, `FormHandle.reset()`)에서만 초기화한다.
+  > 【추론】 `setValue(V)`와 `resetSubtree()`는 초기화하지 않는다.
+  > 【추론】 `degraded`에서 돌아오는 길은 `FormHandle.reset()`이다.
+  > PR: PR-2(진단)
+  > 무엇: 한 하위 트리의 예산 초과로 `degraded`가 된 폼에서 다른 하위 트리의 `resetSubtree()`, 루트 `setValue(V)`, `FormHandle.reset()`을 차례로 부르고 `diagnostics`, 경고 중복 키, 제출 거부를 본다.
+  > 통과: 앞의 둘 뒤에는 `degraded`, 중복 키, 제출 거부가 그대로 남고, `FormHandle.reset()` 뒤에는 `stable`이며 중복 키가 비었다.
+  > 실패: 초기화하는 로드의 목록을 고친다.
+- 보충: 없음
+- 상태: 현행
+- 출처: `reviews/round-18-closing.md:2797-2799,2805-2808`(정본)
+- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-98)
+- 라운드: 18
+- 까닭: `reviews/round-18-closing.md:2801-2803`

@@ -377,3 +377,26 @@ node ledger/checks/tokens.mjs check <목록> ledger/*.md
 - `make-v4d.mjs` → C
 - `selfcheck-v4d.mjs` → C
 - `START_SET` → C
+
+## 18라운드 닫기 뒤의 잔여 (2026-09-26)
+
+잔여는 476이다.
+- HEAD(`fcab8d891`)의 잔여 486 가운데 21개가 빠졌다. 원장이 18라운드 항목으로 새로 담았거나, 옛 HANDOFF의 과정 토큰이 목록에서 사라진 것이다.
+- 새 HANDOFF의 과정 토큰 11개가 더해졌다. 모두 (C) 이력·과정이다.
+- 원장에서 새로 빠진 설계 토큰은 없다.
+
+- `F<n> <높음|중간|낮음>` → C
+- `reviews/raw-round18-final-check.md` → C
+- `reviews/round-18-closing-summary.md` → C
+- `reviews/round-6-coherence.md:107` → C
+- `대체됨(→ 소유자 답을 담은 새 항목)` → C
+- `분할됨(→ …)` → C
+- `의 "원문"은 N라운드 결정과 다르다: 새 규칙(번호). N라운드 결정이 이긴다(` → C
+- `편집자 결정(18라운드, …18C-nn)` → C
+- `23행` → C
+- `251개` → C
+- `88개` → C
+
+## union 설계·채움 파생 반영과 HANDOFF 재작성 뒤의 잔여 (2026-09-26, 봉인)
+
+검사 결과 `{"total":2470,"missing":481}`(HANDOFF의 `gate3-union-fill.md` 인용까지 포함). 원장 반영 자체는 잔여를 늘리지 않았다(반영 전후 471). 늘어난 것은 HANDOFF.md를 새 상태로 다시 쓰면서 들어간 문서·절차 토큰이다: 경로(`reviews/raw-round18-union-swarm/merged-v3.md`, `reviews/raw-*/`, `reviews/round-18-owner-answers.md:24-37`, `reviews/round-18-owner-answers.md:N`, `exact-check.mjs`·`diff-guard.mjs`·`block-check.mjs`, `brief-final-check.md`), 절차 문구(`분할됨(→ 나머지 항목, 새 항목)`, `소유자 답이 이기면`), 개수(`326개`, `26행`). 모두 원장이 인용할 원천이 아닌 HANDOFF의 자기 서술이라 C다. 게이트 3 고침은 잔여를 2 줄였다(482 → 480). HANDOFF에 게이트 3 원문 경로를 적어 481이 됐다(C).

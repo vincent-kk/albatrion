@@ -19,13 +19,13 @@
 | TEST-011 | 단계 어휘 여덟과 핸들의 DOM 등록 — playScenario(scenario, 요소) 하나 | 현행 | 편집자 결정(16라운드, `09-landing-and-test-strategy.md:151`), 소유자 답(`reviews/round-16-owner-answers.md:16` 답 10) |
 | TEST-012 | 검증 매트릭스는 스토리로 만들지 않고 정적 test.each 표로 | 현행 | 편집자 결정(16라운드, `09-landing-and-test-strategy.md:152`) |
 | TEST-013 | 기존 234파일의 처분 — 그대로 산다·표면만 고친다·버리고 새로 쓴다·미분류·새로 있어야 한다 | 현행 | 편집자 결정(16라운드, `09-landing-and-test-strategy.md:154`), 소유자 답(`reviews/round-16-owner-answers.md:13` 답 7), 소유자 답(`reviews/round-18-owner-answers.md:7` S1; `:160`의 파서 변환 시험을 대체) |
-| TEST-014 | 새로 있어야 하는 시험 PR-1 — 청사진 테이블·병합표·제거 규칙·식 컴파일러·options/presentation 병합·전략 불일치·청사진 경고 수집 | 현행 | 편집자 결정(16·17라운드, `09-landing-and-test-strategy.md:168`) |
-| TEST-015 | 새로 있어야 하는 시험 PR-2 — 정착 루프 시나리오, 예산 다섯, diagnostics, 사슬 끝 throw, 나감 비움, 노드 구조 시험, active 게터 | 열림(→ `reviews/round-18-agenda.md:57`) | 편집자 결정(16·17라운드, `09-landing-and-test-strategy.md:169`), 편집자 결정(17라운드, 18라운드 안건으로 이관, `reviews/round-18-agenda.md:57`) |
-| TEST-016 | 새로 있어야 하는 시험 PR-3 — 같은 대상 규칙, 에지 소비, DisableAutomaticWrites, 개발 모드 정착 기록 | 현행 | 편집자 결정(16라운드, `09-landing-and-test-strategy.md:170`) |
-| TEST-017 | 새로 있어야 하는 시험 PR-4 — 디스패처, 사슬 끝 throw와 onError 계약의 core 쪽, 검증기 없음·컴파일 실패, degraded, 가드, 차등 시험, 훅 수준 바인딩 시험 | 현행 | 편집자 결정(16·17라운드, `09-landing-and-test-strategy.md:171`) |
-| TEST-018 | 새로 있어야 하는 시험 PR-5 — 배열 아이템의 생김과 채움, identity, omitTrailing, 터미널 배열 행의 구조 연산 | 현행 | 편집자 결정(16라운드, `09-landing-and-test-strategy.md:172`) |
-| TEST-019 | 새로 있어야 하는 시험 PR-6 — 잠금 OR·표시 AND, controls.children, 조각 controls, unsetOnInactive 층 | 현행 | 편집자 결정(16라운드, `09-landing-and-test-strategy.md:173`) |
-| TEST-020 | 새로 있어야 하는 시험 PR-7 — e2e: 렌더 중 onChange 없음, 마운트 정착 오류, 바운더리와 싱크, onError e2e, finishInput·trim, strategy, reset, React 18 | 현행 | 편집자 결정(16·17라운드, `09-landing-and-test-strategy.md:174`), 소유자 답(`reviews/round-16-owner-answers.md:11` 답 5), 16라운드 스웜 수렴(편집자 결정, `09-landing-and-test-strategy.md:174`; reset의 시험 목록) |
+| TEST-014 | 새로 있어야 하는 시험 PR-1 — 청사진 테이블·병합표·제거 규칙·식 컴파일러·options/presentation 병합·전략 불일치·청사진 경고 수집 | 현행 | 편집자 결정(16·17라운드, `09-landing-and-test-strategy.md:168`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-11) |
+| TEST-015 | 새로 있어야 하는 시험 PR-2 — 정착 루프 시나리오, 예산 다섯, diagnostics, 사슬 끝 throw, 나감 비움, 노드 구조 시험, active 게터 | 대체됨(→ TEST-069) | 편집자 결정(16·17라운드, `09-landing-and-test-strategy.md:169`), 편집자 결정(17라운드, 18라운드 안건으로 이관, `reviews/round-18-agenda.md:57`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-25) |
+| TEST-016 | 새로 있어야 하는 시험 PR-3 — 같은 대상 규칙, 에지 소비, DisableAutomaticWrites, 개발 모드 정착 기록 | 현행 | 편집자 결정(16라운드, `09-landing-and-test-strategy.md:170`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-25) |
+| TEST-017 | 새로 있어야 하는 시험 PR-4 — 디스패처, 사슬 끝 throw와 onError 계약의 core 쪽, 검증기 없음·컴파일 실패, degraded, 가드, 차등 시험, 훅 수준 바인딩 시험 | 현행 | 편집자 결정(16·17라운드, `09-landing-and-test-strategy.md:171`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-25) |
+| TEST-018 | 새로 있어야 하는 시험 PR-5 — 배열 아이템의 생김과 채움, identity, omitTrailing, 터미널 배열 행의 구조 연산 | 현행 | 편집자 결정(16라운드, `09-landing-and-test-strategy.md:172`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-25·18C-59) |
+| TEST-019 | 새로 있어야 하는 시험 PR-6 — 잠금 OR·표시 AND, controls.children, 조각 controls, unsetOnInactive 층 | 현행 | 편집자 결정(16라운드, `09-landing-and-test-strategy.md:173`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-25) |
+| TEST-020 | 새로 있어야 하는 시험 PR-7 — e2e: 렌더 중 onChange 없음, 마운트 정착 오류, 바운더리와 싱크, onError e2e, finishInput·trim, strategy, reset, React 18 | 현행 | 편집자 결정(16·17라운드, `09-landing-and-test-strategy.md:174`), 소유자 답(`reviews/round-16-owner-answers.md:11` 답 5), 16라운드 스웜 수렴(편집자 결정, `09-landing-and-test-strategy.md:174`; reset의 시험 목록), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-25) |
 | TEST-021 | renderForm 하니스 — e2e 층의 뼈대, 고칠 것 다섯 | 현행 | 편집자 결정(16·17라운드, `09-landing-and-test-strategy.md:180`) |
 | TEST-022 | 스토리북 원칙 셋 — 스토리는 e2e의 화면 미러, 시나리오는 한 곳, 자동화는 play | 현행 | 편집자 결정(16라운드, `09-landing-and-test-strategy.md:186`), 소유자 답(`reviews/round-16-owner-answers.md:7` 답 1) |
 | TEST-023 | 스토리북 구조 — 단일 원천·코어 시나리오 시험·시나리오 스토리·자동화·e2e·사용법 스토리 | 현행 | 편집자 결정(16라운드, `09-landing-and-test-strategy.md:188`), 소유자 답(`reviews/round-16-owner-answers.md:14` 답 8), 소유자 답(`reviews/round-16-owner-answers.md:16` 답 10), 소유자 답(`reviews/round-16-owner-answers.md:7` 답 1) |
@@ -37,16 +37,16 @@
 | TEST-029 | 원칙(G6) — 비용은 바꾼 것의 크기에 비례, 성능은 주장하지 않고 측정 | 현행 | 원리(`00-goals.md:77` G6), 소유자 답(`00-goals.md:150` G6) |
 | TEST-030 | ADR 0009 5차 주 — 측정 수치는 유효, 시나리오 이름은 옛 모델, 5차 원장이 우선하는 일곱 곳 | 현행 | 편집자 결정(11라운드 5차 주, `adr/0009-performance-budget-and-benchmarks.md:3`) |
 | TEST-031 | 기존 구현이 기준선 — 재설계 시작 시점에 벤치를 돌려 커밋을 고정해 재현 가능하게 | 현행 | 편집자 결정(1라운드 ADR 0009 본문, `adr/0009-performance-budget-and-benchmarks.md:64`), 편집자 결정(16라운드, `09-landing-and-test-strategy.md:222`) |
-| TEST-032 | 벤치 시나리오 — G6의 네 상황과 새 구조 고유·메모리·14라운드 행 | 현행 | 편집자 결정(1라운드 ADR 0009 본문, `adr/0009-performance-budget-and-benchmarks.md:71`), 편집자 결정(14라운드, `adr/0009-performance-budget-and-benchmarks.md:82`) |
+| TEST-032 | 벤치 시나리오 — G6의 네 상황과 새 구조 고유·메모리·14라운드 행 | 현행 | 편집자 결정(1라운드 ADR 0009 본문, `adr/0009-performance-budget-and-benchmarks.md:71`), 편집자 결정(14라운드, `adr/0009-performance-budget-and-benchmarks.md:82`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-15·18C-67·18C-81) |
 | TEST-033 | 구조를 확정하기 전에 잰다 — 버릴 것을 전제로 한 스파이크 | 현행 | 편집자 결정(1라운드 ADR 0009 본문, `adr/0009-performance-budget-and-benchmarks.md:86`) |
 | TEST-034 | 측정 인프라 — 오늘 가진 것(패키지 벤치 일곱, benchmark-form, 모바일 성능 보고서) | 현행(기록) | 편집자 결정(1라운드 ADR 0009 본문의 관찰, `adr/0009-performance-budget-and-benchmarks.md:16`) |
 | TEST-035 | 지금 빠르게 만드는 장치와 새 구조에서의 운명 | 현행 | 편집자 결정(1라운드 ADR 0009 본문, `adr/0009-performance-budget-and-benchmarks.md:35`) |
 | TEST-036 | 1차 스파이크 측정 결과 — 가드 호출 수, 인터프리터형과 컬렉션 가드, 컴파일 비용, 복사 비용, 검증 비용 | 현행(기록) | 편집자 결정(1라운드 측정 기록, `reviews/round-1.md:19`) |
 | TEST-037 | 2라운드 측정 — 작업 루프 프로토타입 | 현행(기록) | 편집자 결정(2라운드 측정 기록, `reviews/round-2.md:18`) |
-| TEST-038 | 열림: '일정 수준'의 형태(배율인가 절대 수치인가)와 수치 | 열림(→ `reviews/round-18-agenda.md:63`) | 편집자 결정(16라운드, 답 6의 '일정 수준'을 ADR 0009 미결로 둠, `reviews/round-16-owner-answers.md:12` 반영 열), 편집자 결정(17라운드, 18라운드 안건으로 이관, `reviews/round-18-agenda.md:63`) |
-| TEST-039 | 열림: 예산의 수치 — 키 입력과 마운트, 대규모 쓰기와 배치 | 열림(→ `reviews/round-18-agenda.md:64`) | 편집자 결정(17라운드, 18라운드 안건으로 이관, `reviews/round-18-agenda.md:64`) |
-| TEST-040 | 열림: 문서화된 안전 임계를 올릴 것인가 | 열림(→ `reviews/round-18-agenda.md:65`) | 편집자 결정(17라운드, 18라운드 안건으로 이관, `reviews/round-18-agenda.md:65`) |
-| TEST-041 | 열림: 번들 크기 예산(현재 gzip 약 44KB) | 열림(→ `reviews/round-18-agenda.md:66`) | 편집자 결정(17라운드, 18라운드 안건으로 이관, `reviews/round-18-agenda.md:66`) |
+| TEST-038 | 열림: '일정 수준'의 형태(배율인가 절대 수치인가)와 수치 | 대체됨(→ TEST-072) | 편집자 결정(16라운드, 답 6의 '일정 수준'을 ADR 0009 미결로 둠, `reviews/round-16-owner-answers.md:12` 반영 열), 편집자 결정(17라운드, 18라운드 안건으로 이관, `reviews/round-18-agenda.md:63`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-26) |
+| TEST-039 | 열림: 예산의 수치 — 키 입력과 마운트, 대규모 쓰기와 배치 | 대체됨(→ TEST-073) | 편집자 결정(17라운드, 18라운드 안건으로 이관, `reviews/round-18-agenda.md:64`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-27) |
+| TEST-040 | 열림: 문서화된 안전 임계를 올릴 것인가 | 대체됨(→ TEST-074) | 편집자 결정(17라운드, 18라운드 안건으로 이관, `reviews/round-18-agenda.md:65`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-28) |
+| TEST-041 | 열림: 번들 크기 예산(현재 gzip 약 44KB) | 대체됨(→ TEST-075) | 편집자 결정(17라운드, 18라운드 안건으로 이관, `reviews/round-18-agenda.md:66`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-29) |
 | TEST-042 | 인터프리터형 검증기의 지원 수준과 컴파일 예산 | 분할됨(→ TEST-065, TEST-066) | 편집자 결정(17라운드, 18라운드 안건으로 이관, `reviews/round-18-agenda.md:67`) |
 | TEST-043 | 대체됨: const/enum 판별식의 직접 비교는 넣지 않는다 | 대체됨(→ CONTROLS-031) | 편집자 결정(11라운드 5차 주, `adr/0009-performance-budget-and-benchmarks.md:3`) |
 | TEST-044 | 릴리스 — 오늘(조사): 워크플로 둘, 손으로 올리는 판, 쓰이지 않는 changesets, 릴리스 전 점검 없음 | 현행(기록) | 편집자 결정(16라운드 조사, `09-landing-and-test-strategy.md:227`) |
@@ -68,10 +68,22 @@
 | TEST-060 | 프로토타입 v5(`spikes/round9/proto/loop-v5.mjs`) — 회귀·프로브 결과, 교차 검증이 찾은 어긋남과 고친 뒤의 기대 | 현행(기록) | 편집자 결정(9라운드 프로토타입 기록, `07-conclusions.md:371`) |
 | TEST-061 | D-15 순환 스키마의 출발점 실험 — 명세는 남기고 우선순위를 낮춤 | 현행(부정 결정) | 편집자 결정(9라운드, `07-conclusions.md:395`), 소유자 답(`reviews/round-18-owner-answers.md:20` 12-10) |
 | TEST-062 | 확인이 필요한 관찰 — oneOf 마운트 비용의 기록(benchmark-form/PLAN.md)과 구조 추적의 전수 생성 | 현행(기록) | 편집자 결정(1라운드 ADR 0009 본문의 관찰, `adr/0009-performance-budget-and-benchmarks.md:104`) |
-| TEST-063 | D-33 값 비교 비용 실험 — 객체 원천의 깊은 비교 비용, G6 예산 안이면 값 비교 채택 | 열림(→ `reviews/round-18-agenda.md:107`) | 편집자 결정(8라운드 D-33 편집자 판정, `06-conclusions.md:251`), 편집자 결정(17라운드, 18라운드 안건으로 이관, `reviews/round-18-agenda.md:107`) |
+| TEST-063 | D-33 값 비교 비용 실험 — 객체 원천의 깊은 비교 비용, G6 예산 안이면 값 비교 채택 | 대체됨(→ TEST-071, SETTLE-043) | 편집자 결정(8라운드 D-33 편집자 판정, `06-conclusions.md:251`), 편집자 결정(17라운드, 18라운드 안건으로 이관, `reviews/round-18-agenda.md:107`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-50) |
 | TEST-064 | ADR 0007의 비용 표 — 3.1판 측정, 조건부 폼 생성은 재설계가 지는 유일한 지점(1.7배, 가드 컴파일 22.4 ms) | 현행(기록) | 편집자 결정(5라운드 ADR 0007 4차 본문의 비용 표, `adr/0007-settle-cycle.md:122`) |
 | TEST-065 | 인터프리터형 검증기의 지원 수준 — 폼은 장치를 더하지 않고 성능은 플러그인의 몫 | 현행 | 소유자 답(`reviews/round-18-owner-answers.md:13` 12-3), 편집자 결정(17라운드, 18라운드 안건으로 이관, `reviews/round-18-agenda.md:67`) |
-| TEST-066 | 열림: 컴파일 예산 — 폼 생성 시점의 동기 컴파일 허용량 | 열림(→ `reviews/round-18-agenda.md:67`) | 편집자 결정(17라운드, 18라운드 안건으로 이관, `reviews/round-18-agenda.md:67`) |
+| TEST-066 | 열림: 컴파일 예산 — 폼 생성 시점의 동기 컴파일 허용량 | 대체됨(→ TEST-076) | 편집자 결정(17라운드, 18라운드 안건으로 이관, `reviews/round-18-agenda.md:67`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-30) |
+| TEST-067 | `$ref` 재귀 게이트(PR-1·PR-2) — 스캐너 확인, 코퍼스 14종, 무한 형상 표본과 `if/then` 정착 오류 표본, 청사진 1회 비용 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-01) |
+| TEST-068 | 잎 교차 시험의 처분 — `intersectConst.test.ts:40-58`은 깊은 비교로 새로 쓰고, `intersectPattern.test.ts:6-14`는 레거시와 함께, 새 병합 시험 사례 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-08) |
+| TEST-069 | PR-2 독립 검증 경계 — 자기 기제만 시험, 게이트 술어 대역 하나, 미룬 사례의 PR 배분, 프로토타입 회귀 배분 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-25), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-98) |
+| TEST-070 | PR-2 게이트 — 실제 공개 형으로 `tsc --strict`를 단언 없이 통과, `children`은 저장 배열과 같은 참조, 실패 시 소유자 물음 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-37) |
+| TEST-071 | PR-3 벤치 회귀 — 객체 원천 `injectTo` 1만 원소에서 한 원소 쓰기의 비교 비용이 값 크기와 무관, 통째 교체는 선형 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-50) |
+| TEST-072 | '일정 수준'은 같은 실행에서 옛 판에 견주어 잰다 — 선은 기존 `guard:check`, 절대 수치와 배율 상한은 두지 않음, 선을 넘으면 이유를 적고 Vincent가 받아들여야 병합 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-26) |
+| TEST-073 | 예산의 수치는 기존 `guard:check` — 처리량 평균이 15% 넘게 떨어지고 Welch p<0.05면 회귀, 표본 100회 이상, 키 입력·마운트·대규모 쓰기·배치에 똑같이 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-27) |
+| TEST-074 | 안전 임계를 목표 배율로 올려 적지 않는다 — 문서는 잰 사실만, PR-7 뒤 같은 모바일 조건으로 다시 재어 적음, 병합 게이트 아님 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-28) |
+| TEST-075 | 번들 크기 예산 — 측정 방법 고정(ESM 진입을 esbuild로 minify, gzip -9, 의존성 외부), 기준 v0.16.0의 37,023 B, 늘면 이유를 적고 Vincent가 받아들여야 병합 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-29) |
+| TEST-076 | 컴파일 예산 — 따로 수치를 두지 않고 마운트 벤치에서 폼 몫과 검증기 몫으로 나눠 보고, TEST-072의 선으로 판정, 가드 200개 조건부 폼 생성은 PR-4의 수용 필요 항목 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-30) |
+| TEST-077 | union 설계의 시험 목록 — 청사진 판정(PR-1), 행과 `interpret`(PR-2), 렌더 시나리오와 입력 바인딩(PR-7), 검증기 플러그인(PR-4), tsc 전용 형 시험 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-93), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-104) |
+| TEST-078 | union 설계의 비용 — 청사진 판정, 유효 목록, 두 번 해석, 새 경고 넷, `interpret`, 경고등, 방출·채움, Hint·props, 기본 union 입력, 검증기, 공개 형, 플러그인 이주 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-93), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-104) |
 
 ## 항목
 
@@ -275,6 +287,7 @@
   > `09-landing-and-test-strategy.md:160`의 "마이크로태스크 타이밍, 파서 변환)이나 삭제될 내부를 단언한다"는 18라운드 소유자 답 S1이 대체한 자리다(파서 변환을 단언하는 시험을 버림. 노드마다 타입에 맞는 parse를 두고 뜻이 그대로인 변환만 남긴다, WRITE-052). 소유자 답이 이긴다(`reviews/round-18-owner-answers.md:7`).
   > `02-target-overview.md:363`의 "기존 테스트는 동작이 달라져 회귀 오라클로 쓸 수 없다"는 정본과 다르다(뒤 라운드의 정본은 기존 234파일 가운데 그대로 사는 약 30파일과 표면만 고치는 약 25파일의 단언을 남기고, 17파일의 단언 유지는 소유자 답이다(`reviews/round-16-owner-answers.md:13` 답 7)). 정본이 이긴다(`09-landing-and-test-strategy.md:158-159`).
   > `adr/0009-performance-budget-and-benchmarks.md:66`의 "기존 테스트는 동작이 달라져 회귀 오라클이 못 되지만"은 정본과 다르다(같은 까닭). 정본이 이긴다(`09-landing-and-test-strategy.md:158-159`).
+  > `09-landing-and-test-strategy.md:158`의 "잎 교차 시험(먼저 승 관련과 `intersectEnum`·`intersectConst`·`validateRange`의 throw 단언 제외."는 18라운드 결정과 다르다: `intersectConst.test.ts:40-58`의 참조 비교 단언과 `intersectPattern.test.ts:6-14`의 전방 탐색 단언도 '그대로 산다'에서 빠진다(TEST-068). 18라운드 결정이 이긴다(`reviews/round-18-closing.md:197`).
 
 ### TEST-014 새로 있어야 하는 시험 PR-1 — 청사진 테이블·병합표·제거 규칙·식 컴파일러·options/presentation 병합·전략 불일치·청사진 경고 수집
 
@@ -282,12 +295,13 @@
   > | PR | 시험 |
   > | --- | --- |
   > | PR-1 | 청사진 테이블 시험(조각 열거, 전순서, 노드 공유, `controls.discriminator` 변환과 끌어올림, `extras` 정적 집합, 역의존 표, 청사진 오류·경고), 병합표 시험, 제거 규칙 시험(키워드 위치만), 식 컴파일러 시험(옮긴 9파일 + 기준점 호스트. `regex.test.ts`의 `SIMPLE_EQUALITY_REGEX` 묶음은 그 상수와 함께 옛 엔진에 남긴다), `options`·`presentation` 병합의 원자(React 요소, ref 모양)·한쪽 값의 참조 이동·양쪽 객체의 쓰기 시 복사(작성자 객체를 변이하지 않음, `@winglet/common-utils`의 `merge` 선택 인자 포함), 선언 사이 `options.terminal`·렌더 계층 판정의 불일치(노드가 형상에 있는 경우마다 순서대로 정한 전략이 다르면 청사진 오류. 게이트 없는 선언끼리는 나중 승, 조각에만 선언된 노드는 조각이 모두 꺼진 경우를 비교하지 않음(조각 하나에만 선언된 노드의 인라인 `presentation.FormTypeInput`·`options.terminal`은 오류가 아님, 두 조각이 같은 노드에 서로 다른 전략을 주면 청사진 오류), 게이트 없는 선언의 `options.terminal`이 정한 노드에 조각이 인라인 입력을 더해도 오류가 아님, 판정의 없음은 앞 판정을 지우지 않음), 청사진 경고의 데이터 수집(수집기 인자, 코드·`schemaPath`·판별 칸, 소비자가 없으면 모으지 않음, 캐시 청사진의 늦은 수집이 작성 루트마다 한 번), 정적으로 아는 `controls.injectTo` 대상 없음의 청사진 오류 |
-- 보충: 없음
+- 보충:
+  > 편집자 결정(18C-11): "【추론】 PR-1 병합표 시험(`09-landing-and-test-strategy.md:168`)이 이 표현을 단언한다." (`reviews/round-18-closing.md:259`)
 - 상태: 현행
-- 출처: `09-landing-and-test-strategy.md:166-168`(정본), `reviews/round-16-owner-review.md:27`
-- 닫은 사람: 편집자 결정(16·17라운드, `09-landing-and-test-strategy.md:168`)
-- 라운드: 17
-- 까닭: `09-landing-and-test-strategy.md:162`
+- 출처: `09-landing-and-test-strategy.md:166-168`(정본), `reviews/round-16-owner-review.md:27`, `reviews/round-18-closing.md:259`
+- 닫은 사람: 편집자 결정(16·17라운드, `09-landing-and-test-strategy.md:168`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-11)
+- 라운드: 18
+- 까닭: `09-landing-and-test-strategy.md:162`, `reviews/round-18-closing.md:261-264`
 
 ### TEST-015 새로 있어야 하는 시험 PR-2 — 정착 루프 시나리오, 예산 다섯, diagnostics, 사슬 끝 throw, 나감 비움, 노드 구조 시험, active 게터
 
@@ -297,11 +311,11 @@
   > | PR-2 | 정착 루프 시나리오(프로토타입 v5·v6 회귀 63+108+26+52와 v7 회귀 이식), 예산 다섯과 원본 B, `diagnostics`(`'degraded'`와 `cause`, 다음 로드까지), 정착 오류의 사슬 끝 throw(모든 환경), `SetValueOption` 넷, 로드는 새 수명, 나감 비움 네 층과 하위 트리 규칙(R17-2 ㄴ: 나가는 객체·분기의 정책이 내려감, 자손의 `false`가 이김, 선언의 나감, 잠복 자손의 비움, 선언의 나감에서 `extras`를 건드리지 않음), 노드 구조 시험(행 칸 순서 시험: 모든 행의 칸 키와 순서가 같음. 겉면 멤버 목록 시험: 프로토타입 멤버 이름과 `SchemaNode/`의 `DETAIL.md` 목록의 일치. 공개 index 키 목록: 내부 통로가 `src/index.ts`에 없음. 행 고르기 함수의 조합 전수. 공개 형의 키 목록 타입 시험. `isTerminalNode`가 터미널 객체도 좁힘), `SchemaNode` 클래스 파일에 거는 린트 설정, `active` 게터 |
 - 보충:
   > 18라운드 안건(열림, 설계 결정): "PR-2가 시험하는 것, 시험 대역으로 시험하는 것(대역의 계약), 뒤로 미루는 것을 가르고, 이식할 프로토타입 회귀를 기능별로 PR-2·PR-3·PR-4에 나눈다." (`reviews/round-18-agenda.md:57`)
-- 상태: 열림(→ `reviews/round-18-agenda.md:57`)
-- 출처: `09-landing-and-test-strategy.md:166-167,169`(정본), `reviews/round-16-owner-review.md:27`
-- 닫은 사람: 편집자 결정(16·17라운드, `09-landing-and-test-strategy.md:169`), 편집자 결정(17라운드, 18라운드 안건으로 이관, `reviews/round-18-agenda.md:57`)
-- 라운드: 17
-- 까닭: `09-landing-and-test-strategy.md:162`
+- 상태: 대체됨(→ TEST-069)
+- 출처: `09-landing-and-test-strategy.md:166-167,169`(정본), `reviews/round-16-owner-review.md:27`, `reviews/round-18-closing.md:751-780`
+- 닫은 사람: 편집자 결정(16·17라운드, `09-landing-and-test-strategy.md:169`), 편집자 결정(17라운드, 18라운드 안건으로 이관, `reviews/round-18-agenda.md:57`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-25)
+- 라운드: 18
+- 까닭: `09-landing-and-test-strategy.md:162`, `reviews/round-18-closing.md:782-786`
 
 ### TEST-016 새로 있어야 하는 시험 PR-3 — 같은 대상 규칙, 에지 소비, DisableAutomaticWrites, 개발 모드 정착 기록
 
@@ -309,12 +323,13 @@
   > | PR | 시험 |
   > | --- | --- |
   > | PR-3 | 같은 대상 규칙(종류·문서 순서·층·전순서·정착 단위), 에지 소비, `DisableAutomaticWrites`, 개발 모드 정착 기록 |
-- 보충: 없음
+- 보충:
+  > 편집자 결정(18C-25): "【추론】 (다) 파생 라운드 예산과 그 `degraded`, `DisableAutomaticWrites`의 파생·`injectTo` 억제는 PR-3으로 미룬다." (`reviews/round-18-closing.md:769`)
 - 상태: 현행
-- 출처: `09-landing-and-test-strategy.md:166-167,170`(정본), `reviews/round-16-owner-review.md:27`
-- 닫은 사람: 편집자 결정(16라운드, `09-landing-and-test-strategy.md:170`)
-- 라운드: 16
-- 까닭: `09-landing-and-test-strategy.md:162`
+- 출처: `09-landing-and-test-strategy.md:166-167,170`(정본), `reviews/round-16-owner-review.md:27`, `reviews/round-18-closing.md:769`
+- 닫은 사람: 편집자 결정(16라운드, `09-landing-and-test-strategy.md:170`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-25)
+- 라운드: 18
+- 까닭: `09-landing-and-test-strategy.md:162`, `reviews/round-18-closing.md:782-786`
 
 ### TEST-017 새로 있어야 하는 시험 PR-4 — 디스패처, 사슬 끝 throw와 onError 계약의 core 쪽, 검증기 없음·컴파일 실패, degraded, 가드, 차등 시험, 훅 수준 바인딩 시험
 
@@ -324,11 +339,12 @@
   > | PR-4 | 디스패처(진입당 1회, 되먹임 상한, 구독 뒤 따라잡기), 사슬 끝 throw와 `onError`, `onError` 계약의 core 쪽 시험(사슬 끝의 기록마다 발생 순서 전달과 경고 포함, 묶음의 `aggregate`와 구성 기록, 핸들러가 던질 때의 묶음(원래 드러날 값을 펼치지 않고 `details.errors`의 앞에), 핸들러 안 쓰기의 즉시 거부와 비전달, `validate()` 허용, 경고 구조 키 중복 억제(같은 노드의 다른 `allOf` 키워드는 따로), 핸들러 없는 프로덕션에서 기록·서식·정착 경고 판정 없음(할당 계측), 마운트 뒤 핸들러를 단 폼은 그 뒤 사건만 받음, 원시값 예외의 전달, 검증기 실행 실패의 기록과 `ValidationError`의 비기록), 검증기 없음의 경고(거부하지 않음, 트리마다 한 번, 같은 스키마 reset과 `setValue(V)`에서는 다시 보내지 않음)와 전체 스키마 컴파일 실패의 거부(모든 환경), `degraded` 동안 제출 경로의 거부와 `getValue()`의 허용, 커밋 스탬프와 실행 합치기, (루트, 위치) 가드와 같은 `$id` 재등록, ajv6·7·8 동기 가드, 차등 시험(독립 검증기와의 판정 동치), **훅 수준 바인딩 시험**(동기 통지와 `useSyncExternalStore`, StrictMode 이중 호출) |
 - 보충:
   > "`hooks/`에는 오늘 시험이 하나도 없다. PR-4의 훅 시험이 처음이다." (`09-landing-and-test-strategy.md:176`)
+  > 편집자 결정(18C-25): "【추론】 되먹임 파동과 `onChange` 중첩 예산, 진입 사슬의 사슬 끝 throw(중첩 진입, 통지·`onChange`와의 순서, `details.errors` 묶음)는 PR-4로 미룬다." (`reviews/round-18-closing.md:770`)
 - 상태: 현행
-- 출처: `09-landing-and-test-strategy.md:166-167,171`(정본), `reviews/round-16-owner-review.md:27`
-- 닫은 사람: 편집자 결정(16·17라운드, `09-landing-and-test-strategy.md:171`)
-- 라운드: 17
-- 까닭: `09-landing-and-test-strategy.md:162`
+- 출처: `09-landing-and-test-strategy.md:166-167,171`(정본), `reviews/round-16-owner-review.md:27`, `reviews/round-18-closing.md:770`
+- 닫은 사람: 편집자 결정(16·17라운드, `09-landing-and-test-strategy.md:171`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-25)
+- 라운드: 18
+- 까닭: `09-landing-and-test-strategy.md:162`, `reviews/round-18-closing.md:782-786`
 
 ### TEST-018 새로 있어야 하는 시험 PR-5 — 배열 아이템의 생김과 채움, identity, omitTrailing, 터미널 배열 행의 구조 연산
 
@@ -336,12 +352,14 @@
   > | PR | 시험 |
   > | --- | --- |
   > | PR-5 | 배열 아이템의 생김과 채움, `push`·`remove`·`update`의 identity, `omitTrailing`, 터미널 배열 행의 구조 연산(원본 사본 위의 `push`·`pop`·`update`·`remove`·`clear`), `resolveArrayLimits`의 청사진 이동과 옮긴 시험 |
-- 보충: 없음
+- 보충:
+  > 편집자 결정(18C-25): "【추론】 원본 B의 배열 아이템 구조 기록은 PR-5로 미룬다(TEST의 PR-5 행에 더함)." (`reviews/round-18-closing.md:771`)
+  > 편집자 결정(18C-59): "PR-5 시험(TEST-018)에 위치 재조정(키 유지와, 위치를 따라가는 `dirty`·`touched`·바깥 오류·가상화 기록·노드 참조), 청사진 없는 자리의 `extras` 보존, 구조 연산에서 값이 노드와 `extras` 사이를 옮기는 것을 더한다." (`reviews/round-18-closing.md:1682`)
 - 상태: 현행
-- 출처: `09-landing-and-test-strategy.md:166-167,172`(정본), `reviews/round-16-owner-review.md:27`
-- 닫은 사람: 편집자 결정(16라운드, `09-landing-and-test-strategy.md:172`)
-- 라운드: 16
-- 까닭: `09-landing-and-test-strategy.md:162`
+- 출처: `09-landing-and-test-strategy.md:166-167,172`(정본), `reviews/round-16-owner-review.md:27`, `reviews/round-18-closing.md:771,1682`
+- 닫은 사람: 편집자 결정(16라운드, `09-landing-and-test-strategy.md:172`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-25·18C-59)
+- 라운드: 18
+- 까닭: `09-landing-and-test-strategy.md:162`, `reviews/round-18-closing.md:782-786`, `reviews/round-18-closing.md:1686-1690`
 
 ### TEST-019 새로 있어야 하는 시험 PR-6 — 잠금 OR·표시 AND, controls.children, 조각 controls, unsetOnInactive 층
 
@@ -349,12 +367,13 @@
   > | PR | 시험 |
   > | --- | --- |
   > | PR-6 | 잠금 OR·표시 AND, `controls.children`, 조각 `controls`, `unsetOnInactive` 층 |
-- 보충: 없음
+- 보충:
+  > 편집자 결정(18C-25): "【추론】 나감 비움의 `children` 항목 층, 조각 `controls` 층, 식 값(직전 커밋)은 PR-6으로 미룬다(TEST의 PR-6 행 "`unsetOnInactive` 층"에 명시)." (`reviews/round-18-closing.md:772`)
 - 상태: 현행
-- 출처: `09-landing-and-test-strategy.md:166-167,173`(정본), `reviews/round-16-owner-review.md:27`
-- 닫은 사람: 편집자 결정(16라운드, `09-landing-and-test-strategy.md:173`)
-- 라운드: 16
-- 까닭: `09-landing-and-test-strategy.md:162`
+- 출처: `09-landing-and-test-strategy.md:166-167,173`(정본), `reviews/round-16-owner-review.md:27`, `reviews/round-18-closing.md:772`
+- 닫은 사람: 편집자 결정(16라운드, `09-landing-and-test-strategy.md:173`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-25)
+- 라운드: 18
+- 까닭: `09-landing-and-test-strategy.md:162`, `reviews/round-18-closing.md:782-786`
 
 ### TEST-020 새로 있어야 하는 시험 PR-7 — e2e: 렌더 중 onChange 없음, 마운트 정착 오류, 바운더리와 싱크, onError e2e, finishInput·trim, strategy, reset, React 18
 
@@ -365,11 +384,12 @@
 - 보충:
   > 소유자(16라운드 답 5): "React 18 계속 지원 | "예" | 확정" (`reviews/round-16-owner-answers.md:11`)
   > "PR-7의 시험(§4.4): 터미널 입력의 다시 마운트(`reset.pristine:267-309`의 단언 유지), 값 전체를 그리는 브랜치 입력과 빈 배열 입력은 다시 마운트되고 자식을 그리고 있는 기본 객체·배열 입력은 아님, 대체된 입력의 늦은 `onChange`·`onFileAttach` 폐기, 재생성 reset 뒤 옛 입력(컨테이너 입력 포함)의 언마운트 flush와 늦은 `onFileAttach`, 흐림 뒤 미룬 `touched`와 컨테이너 입력의 늦은 `onChange`(그 `dirty` 표시와 외부 오류 지움 포함)는 조용히 버려지고 옛 노드 참조로 한 쓰기는 `SchemaFormError`, 흐림 직후 reset과 `clearState`의 `touched`, 같은 처리기의 prop 갱신 뒤 reset(`startTransition` 안 포함), 인라인이지만 같은 스키마의 로드(노드 identity 유지)와 함수 칸 차이의 재생성·경고, `properties` 순서만 바꾼 스키마의 reset은 재생성, `batch` 안의 두 경로(reset 뒤의 읽기와 부분 쓰기의 결과가 경로와 무관함), 검증 모드 비트별 마운트·reset 검증, `onStateChange`는 바뀐 때만, `showError` 복귀, `reset(option?)`의 억제 비트 두 방향(Form 속성 `disableAutomaticWrites`와의 우선순위, 둘 다 주면 억제)과 재대조가 원래 호출의 억제 비트를 쓰는 것, `diagnostics` 재기록(로드가 `degraded`와 제출 거부를 푼다, R17-1 나), 가설 H1–H5(`reviews/raw-round16-reset.md` §4)의 실행 확인." (`09-landing-and-test-strategy.md:96`)
+  > 편집자 결정(18C-25): "【추론】 `degraded` 동안의 제출 거부는 PR-7로 미룬다." (`reviews/round-18-closing.md:773`)
 - 상태: 현행
-- 출처: `09-landing-and-test-strategy.md:166-167,174`(정본), `reviews/round-16-owner-review.md:27`, `reviews/round-16-owner-answers.md:11`, `reviews/round-16-owner-review.md:56`
-- 닫은 사람: 편집자 결정(16·17라운드, `09-landing-and-test-strategy.md:174`), 소유자 답(`reviews/round-16-owner-answers.md:11` 답 5), 16라운드 스웜 수렴(편집자 결정, `09-landing-and-test-strategy.md:174`; reset의 시험 목록)
-- 라운드: 17
-- 까닭: `09-landing-and-test-strategy.md:162`
+- 출처: `09-landing-and-test-strategy.md:166-167,174`(정본), `reviews/round-16-owner-review.md:27`, `reviews/round-16-owner-answers.md:11`, `reviews/round-16-owner-review.md:56`, `reviews/round-18-closing.md:773`
+- 닫은 사람: 편집자 결정(16·17라운드, `09-landing-and-test-strategy.md:174`), 소유자 답(`reviews/round-16-owner-answers.md:11` 답 5), 16라운드 스웜 수렴(편집자 결정, `09-landing-and-test-strategy.md:174`; reset의 시험 목록), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-25)
+- 라운드: 18
+- 까닭: `09-landing-and-test-strategy.md:162`, `reviews/round-18-closing.md:782-786`
 
 ### TEST-021 renderForm 하니스 — e2e 층의 뼈대, 고칠 것 다섯
 
@@ -481,6 +501,8 @@
 - 닫은 사람: 소유자 답(`reviews/round-16-owner-answers.md:12` 답 6), 편집자 결정(16라운드 도출, '통제 가능'의 뜻, `09-landing-and-test-strategy.md:223`)
 - 라운드: 16
 - 까닭: `reviews/round-16-owner-answers.md:12`
+- 충돌:
+  > `09-landing-and-test-strategy.md:223`의 "상한의 형태(옛 판 대비 배율인가 절대 수치인가)와 수치는 ADR 0009의 미결이며 기준선을 잰 뒤 Vincent가 정한다(18라운드 안건)."는 18라운드 결정과 다르다: 형태와 선은 TEST-072가 정했고(같은 실행의 옛 판 대비, `guard:check`의 선), Vincent는 선을 넘은 항목을 병합 때 받아들인다. 18라운드 결정이 이긴다(`reviews/round-18-closing.md:796-798`).
 
 ### TEST-028 벤치마크를 설계에 넣는 것은 소유자의 요구, 수치 예산은 아직 정해지지 않음
 
@@ -492,6 +514,8 @@
 - 닫은 사람: 소유자 답(`00-goals.md:150` G6)
 - 라운드: 1(ADR 0009 본문)
 - 까닭: `00-goals.md:150`
+- 충돌:
+  > `adr/0009-performance-budget-and-benchmarks.md:5`의 "아래의 수치 예산은 아직 정해지지 않았다."는 18라운드 결정과 다르다: 예산의 수치는 기존 `guard:check`의 선이다(TEST-073). 18라운드 결정이 이긴다(`reviews/round-18-closing.md:816`).
 
 ### TEST-029 원칙(G6) — 비용은 바꾼 것의 크기에 비례, 성능은 주장하지 않고 측정
 
@@ -537,6 +561,7 @@
 - 까닭: `adr/0009-performance-budget-and-benchmarks.md:66`
 - 충돌:
   > `adr/0009-performance-budget-and-benchmarks.md:66`의 "기존 테스트는 동작이 달라져 회귀 오라클이 못 되지만"은 뒤 라운드의 기존 시험 처분과 다르다(약 55파일의 단언을 남긴다, TEST-013). 정본이 이긴다(`09-landing-and-test-strategy.md:158-159`).
+  > `02-target-overview.md:369`의 "수치 예산은 ADR 0009의 미결이며 소유자 정책이다."는 18라운드 결정과 다르다: 예산의 수치는 기존 `guard:check`의 선이다(TEST-073). 18라운드 결정이 이긴다(`reviews/round-18-closing.md:816`).
 
 ### TEST-032 벤치 시나리오 — G6의 네 상황과 새 구조 고유·메모리·14라운드 행
 
@@ -555,11 +580,15 @@
   > | (14라운드) | — | 배치 없는 연속 `setValue` M회의 검증 횟수와 시간 |
 - 보충:
   > "측정 수치는 유효하나 시나리오 이름은 옛 모델의 것이다." (`adr/0009-performance-budget-and-benchmarks.md:3`)
+  > 편집자 결정(18C-15): "벤치: 루트로 옮긴 게이트가 N개일 때 키 입력 한 번의 비용을 잰다." (`reviews/round-18-closing.md:453`)
+  > 편집자 결정(18C-67): "PR: PR-2 벤치(TEST-027·TEST-032)에 "켜진 조각 N개 호스트의 무관한 키 입력" 행을 더한다." (`reviews/round-18-closing.md:1889`)
+  > 편집자 결정(18C-81): "PR: PR-2 벤치." (`reviews/round-18-closing.md:2188`)
+  > 편집자 결정(18C-81): "무엇: 커밋 때 조상 경로 메모를 갱신하는 비용을 잰다." (`reviews/round-18-closing.md:2189`)
 - 상태: 현행
-- 출처: `adr/0009-performance-budget-and-benchmarks.md:73-84`(정본)
-- 닫은 사람: 편집자 결정(1라운드 ADR 0009 본문, `adr/0009-performance-budget-and-benchmarks.md:71`), 편집자 결정(14라운드, `adr/0009-performance-budget-and-benchmarks.md:82`)
-- 라운드: 14
-- 까닭: `adr/0009-performance-budget-and-benchmarks.md:71`
+- 출처: `adr/0009-performance-budget-and-benchmarks.md:73-84`(정본), `reviews/round-18-closing.md:453,1889,2188-2189`
+- 닫은 사람: 편집자 결정(1라운드 ADR 0009 본문, `adr/0009-performance-budget-and-benchmarks.md:71`), 편집자 결정(14라운드, `adr/0009-performance-budget-and-benchmarks.md:82`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-15·18C-67·18C-81)
+- 라운드: 18
+- 까닭: `adr/0009-performance-budget-and-benchmarks.md:71`, `reviews/round-18-closing.md:444-447`, `reviews/round-18-closing.md:1885-1887`, `reviews/round-18-closing.md:2184-2186`
 - 충돌:
   > `adr/0009-performance-budget-and-benchmarks.md:78`의 "조각 전환(가드가 뒤집힐 때의 begin/complete), 선택 가드의 분기 전환"은 5차 주의 "(1) begin/complete 두 패스와 선택 가드는 사라졌다"와 다르다(옛 모델의 시나리오 이름). 5차 주가 이긴다(`adr/0009-performance-budget-and-benchmarks.md:3`).
 
@@ -654,11 +683,13 @@
 - 결정:
   > - **'일정 수준'의 형태와 수치(16라운드 답 6).** 옛 판보다 느린 것이 넘지 않을 상한의 형태(옛 판 대비 배율인가 절대 수치인가)와 수치. 아래 '예산의 수치'와 함께 기준선을 잰 뒤 정한다.
 - 보충: 없음
-- 상태: 열림(→ `reviews/round-18-agenda.md:63`)
-- 출처: `adr/0009-performance-budget-and-benchmarks.md:96`(정본), `09-landing-and-test-strategy.md:223`, `reviews/round-18-agenda.md:63`
-- 닫은 사람: 편집자 결정(16라운드, 답 6의 '일정 수준'을 ADR 0009 미결로 둠, `reviews/round-16-owner-answers.md:12` 반영 열), 편집자 결정(17라운드, 18라운드 안건으로 이관, `reviews/round-18-agenda.md:63`)
-- 라운드: 17
-- 까닭: 없음
+- 상태: 대체됨(→ TEST-072)
+- 출처: `adr/0009-performance-budget-and-benchmarks.md:96`(정본), `09-landing-and-test-strategy.md:223`, `reviews/round-18-agenda.md:63`, `reviews/round-18-closing.md:794-805`
+- 닫은 사람: 편집자 결정(16라운드, 답 6의 '일정 수준'을 ADR 0009 미결로 둠, `reviews/round-16-owner-answers.md:12` 반영 열), 편집자 결정(17라운드, 18라운드 안건으로 이관, `reviews/round-18-agenda.md:63`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-26)
+- 라운드: 18
+- 까닭: `reviews/round-18-closing.md:807-810`
+- 충돌:
+  > `adr/0009-performance-budget-and-benchmarks.md:94`의 "미결 — 소유자가 정할 것"는 18라운드 결정으로 닫혔다(편집자 결정, 18라운드). 18라운드 결정이 이긴다(`reviews/round-18-closing.md:796`).
 
 ### TEST-039 열림: 예산의 수치 — 키 입력과 마운트, 대규모 쓰기와 배치
 
@@ -669,22 +700,28 @@
   > "수치를 정하는 것은 소유자 정책이다(18라운드 안건)." (`03-mental-model.md:214`)
   > "성능 예산 수치는 소유자 정책이다." (`08-design-a-to-z.md:483`)
   > "| 성능 예산 수치(ADR 0009 미결, **소유자 정책**)와 '일정 수준'의 형태·수치, 번들 예산. 기준선은 있다 | 착수 전(18라운드 안건 E) |" (`08-design-a-to-z.md:499`)
-- 상태: 열림(→ `reviews/round-18-agenda.md:64`)
-- 출처: `adr/0009-performance-budget-and-benchmarks.md:97`(정본), `02-target-overview.md:369`, `08-design-a-to-z.md:609`, `reviews/round-18-agenda.md:64`
-- 닫은 사람: 편집자 결정(17라운드, 18라운드 안건으로 이관, `reviews/round-18-agenda.md:64`)
-- 라운드: 17
-- 까닭: 없음
+- 상태: 대체됨(→ TEST-073)
+- 출처: `adr/0009-performance-budget-and-benchmarks.md:97`(정본), `02-target-overview.md:369`, `08-design-a-to-z.md:609`, `reviews/round-18-agenda.md:64`, `reviews/round-18-closing.md:816-827`
+- 닫은 사람: 편집자 결정(17라운드, 18라운드 안건으로 이관, `reviews/round-18-agenda.md:64`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-27)
+- 라운드: 18
+- 까닭: `reviews/round-18-closing.md:829-832`
+- 충돌:
+  > `03-mental-model.md:214`의 "수치를 정하는 것은 소유자 정책이다(18라운드 안건)."는 18라운드 결정으로 닫혔다(편집자 결정, 18라운드): 예산의 수치는 기존 `guard:check`의 선이다. 18라운드 결정이 이긴다(`reviews/round-18-closing.md:816`).
+  > `08-design-a-to-z.md:483`의 "성능 예산 수치는 소유자 정책이다."는 18라운드 결정으로 닫혔다(편집자 결정, 18라운드): 예산의 수치는 기존 `guard:check`의 선이다. 18라운드 결정이 이긴다(`reviews/round-18-closing.md:816`).
+  > `08-design-a-to-z.md:499`의 "성능 예산 수치(ADR 0009 미결, **소유자 정책**)"는 18라운드 결정으로 닫혔다(편집자 결정, 18라운드): 예산의 수치는 기존 `guard:check`의 선이다. 18라운드 결정이 이긴다(`reviews/round-18-closing.md:816`).
 
 ### TEST-040 열림: 문서화된 안전 임계를 올릴 것인가
 
 - 결정:
   > - **문서화된 안전 임계를 올릴 것인가.** 현재는 "필드 50개 미만 안전, 배열 아이템 30개 미만 안전"이다. 재설계의 목표를 이 임계를 몇 배로 올리는 것으로 둘 것인가.
 - 보충: 없음
-- 상태: 열림(→ `reviews/round-18-agenda.md:65`)
-- 출처: `adr/0009-performance-budget-and-benchmarks.md:98`(정본), `adr/0009-performance-budget-and-benchmarks.md:33`, `reviews/round-18-agenda.md:65`
-- 닫은 사람: 편집자 결정(17라운드, 18라운드 안건으로 이관, `reviews/round-18-agenda.md:65`)
-- 라운드: 17
-- 까닭: 없음
+- 상태: 대체됨(→ TEST-074)
+- 출처: `adr/0009-performance-budget-and-benchmarks.md:98`(정본), `adr/0009-performance-budget-and-benchmarks.md:33`, `reviews/round-18-agenda.md:65`, `reviews/round-18-closing.md:838-843`
+- 닫은 사람: 편집자 결정(17라운드, 18라운드 안건으로 이관, `reviews/round-18-agenda.md:65`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-28)
+- 라운드: 18
+- 까닭: `reviews/round-18-closing.md:845-847`
+- 충돌:
+  > `adr/0009-performance-budget-and-benchmarks.md:94`의 "미결 — 소유자가 정할 것"는 18라운드 결정으로 닫혔다(편집자 결정, 18라운드). 18라운드 결정이 이긴다(`reviews/round-18-closing.md:838`).
 
 ### TEST-041 열림: 번들 크기 예산(현재 gzip 약 44KB)
 
@@ -692,13 +729,16 @@
   > - **번들 크기 예산.** 현재 gzip 약 44KB. 검증기를 내장하지 않으므로(ADR 0004) 늘 이유는 적지만, 분석 단계와 분기 선택기가 더해진다.
 - 보충:
   > "- 번들 크기도 예산이다(현재 gzip 약 44KB)." (`00-goals.md:82`)
-- 상태: 열림(→ `reviews/round-18-agenda.md:66`)
-- 출처: `adr/0009-performance-budget-and-benchmarks.md:99`(정본), `00-goals.md:82`, `reviews/round-18-agenda.md:66`
-- 닫은 사람: 편집자 결정(17라운드, 18라운드 안건으로 이관, `reviews/round-18-agenda.md:66`)
-- 라운드: 17
-- 까닭: 없음
+- 상태: 대체됨(→ TEST-075)
+- 출처: `adr/0009-performance-budget-and-benchmarks.md:99`(정본), `00-goals.md:82`, `reviews/round-18-agenda.md:66`, `reviews/round-18-closing.md:853-860`
+- 닫은 사람: 편집자 결정(17라운드, 18라운드 안건으로 이관, `reviews/round-18-agenda.md:66`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-29)
+- 라운드: 18
+- 까닭: `reviews/round-18-closing.md:862-864`
 - 충돌:
   > `adr/0009-performance-budget-and-benchmarks.md:99`의 "분석 단계와 분기 선택기가 더해진다"는 5차 주의 "(2) 분기 선택기와 `selection` 칸은 없다"와 다르다. 5차 주가 이긴다(`adr/0009-performance-budget-and-benchmarks.md:3`).
+  > `adr/0009-performance-budget-and-benchmarks.md:99`의 "현재 gzip 약 44KB"는 측정 방법이 적히지 않은 수치라 18라운드 결정과 다르다: 기준은 v0.16.0의 37,023 B(ESM 진입 minify + gzip -9, 의존성 외부)다. 18라운드 결정이 이긴다(`reviews/round-18-closing.md:855`).
+  > `00-goals.md:82`의 "현재 gzip 약 44KB"는 측정 방법이 적히지 않은 수치라 18라운드 결정과 다르다: 기준은 v0.16.0의 37,023 B(ESM 진입 minify + gzip -9, 의존성 외부)다. 18라운드 결정이 이긴다(`reviews/round-18-closing.md:855`).
+  > `adr/0009-performance-budget-and-benchmarks.md:94`의 "미결 — 소유자가 정할 것"는 18라운드 결정으로 닫혔다(편집자 결정, 18라운드). 18라운드 결정이 이긴다(`reviews/round-18-closing.md:853`).
 
 ### TEST-042 인터프리터형 검증기의 지원 수준과 컴파일 예산
 
@@ -981,11 +1021,11 @@
   > "객체 원천의 깊은 비교 비용은 7절." (`06-conclusions.md:254`)
   > "| D-33 값 비교 비용(객체 원천의 깊은 비교) | 그대로 |" (`07-conclusions.md:396`)
   > 18라운드 안건(열림, PR-3 전): "에지의 값 동등 판정(참조인지 깊은 비교인지)" (`reviews/round-18-agenda.md:107`)
-- 상태: 열림(→ `reviews/round-18-agenda.md:107`)
-- 출처: `06-conclusions.md:398-399,401`(정본), `06-conclusions.md:254`, `07-conclusions.md:396`, `reviews/round-18-agenda.md:107`
-- 닫은 사람: 편집자 결정(8라운드 D-33 편집자 판정, `06-conclusions.md:251`), 편집자 결정(17라운드, 18라운드 안건으로 이관, `reviews/round-18-agenda.md:107`)
-- 라운드: 17
-- 까닭: `06-conclusions.md:254`
+- 상태: 대체됨(→ TEST-071, SETTLE-043)
+- 출처: `06-conclusions.md:398-399,401`(정본), `06-conclusions.md:254`, `07-conclusions.md:396`, `reviews/round-18-agenda.md:107`, `reviews/round-18-closing.md:1376-1403,1413-1415`
+- 닫은 사람: 편집자 결정(8라운드 D-33 편집자 판정, `06-conclusions.md:251`), 편집자 결정(17라운드, 18라운드 안건으로 이관, `reviews/round-18-agenda.md:107`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-50)
+- 라운드: 18
+- 까닭: `06-conclusions.md:254`, `reviews/round-18-closing.md:1405-1411`
 
 ### TEST-064 ADR 0007의 비용 표 — 3.1판 측정, 조건부 폼 생성은 재설계가 지는 유일한 지점(1.7배, 가드 컴파일 22.4 ms)
 
@@ -1026,8 +1066,278 @@
   > - **컴파일 예산.** 폼 생성 시점의 동기 컴파일을 얼마까지 허용하는가.
 - 보충:
   > "예산 수치가 있어야 판정할 수 있다." (`07-conclusions.md:474`)
-- 상태: 열림(→ `reviews/round-18-agenda.md:67`)
-- 출처: `adr/0009-performance-budget-and-benchmarks.md:102`(정본, TEST-042에서 분할), `reviews/round-18-agenda.md:67`
-- 닫은 사람: 편집자 결정(17라운드, 18라운드 안건으로 이관, `reviews/round-18-agenda.md:67`)
-- 라운드: 17
-- 까닭: 없음
+- 상태: 대체됨(→ TEST-076)
+- 출처: `adr/0009-performance-budget-and-benchmarks.md:102`(정본, TEST-042에서 분할), `reviews/round-18-agenda.md:67`, `reviews/round-18-closing.md:870-879`
+- 닫은 사람: 편집자 결정(17라운드, 18라운드 안건으로 이관, `reviews/round-18-agenda.md:67`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-30)
+- 라운드: 18
+- 까닭: `reviews/round-18-closing.md:881-884`
+- 충돌:
+  > `07-conclusions.md:474`의 "예산 수치가 있어야 판정할 수 있다."는 18라운드 결정과 다르다: 컴파일은 따로 수치를 두지 않고, TEST-072의 선과 ADR 0009 §4의 기록·수용으로 판정한다. 18라운드 결정이 이긴다(`reviews/round-18-closing.md:870`).
+  > `adr/0009-performance-budget-and-benchmarks.md:94`의 "미결 — 소유자가 정할 것"는 18라운드 결정으로 닫혔다(편집자 결정, 18라운드). 18라운드 결정이 이긴다(`reviews/round-18-closing.md:870`).
+
+### TEST-067 `$ref` 재귀 게이트(PR-1·PR-2) — 스캐너 확인, 코퍼스 14종, 무한 형상 표본과 `if/then` 정착 오류 표본, 청사진 1회 비용
+
+- 결정:
+  > PR: PR-1·PR-2(표본 (c′)는 PR-2).
+  > (a) `@winglet/json-schema` 스캐너가 `$ref`의 대상 위치를 주는지, 순환을 `referenceSkipped: 'cycle'`로 알리는지 확인한다.
+  > (b) 코퍼스 14종(재귀 pydantic 트리 포함)이 모두 선다.
+  > (c) 무한 형상 표본 셋(자기 참조 객체 프로퍼티, nullable 자기 참조, A↔B 상호 참조)은 청사진 오류가 나고, 배열·게이트·터미널로 끊은 표본은 선다.
+  > (c′) 표본 "`required` 없는 `if/then`으로만 끊긴 재귀 → 정착 오류"를 PR-2에서 확인한다(예: `Node = { properties:{hasChild:{}}, if:{properties:{hasChild:{const:true}}}, then:{properties:{child:{$ref:Node}}} }`에 값 `{hasChild:true}`).
+  > (d) `$ref`가 많은 스키마에서 청사진 1회 비용을 잰다(TEST-032의 벤치 행).
+  > 통과: (b)와 (c)가 성립한다.
+  > 실패: 스캐너가 (a)를 못 주면 오늘의 `getReferenceTable`로 청사진이 스스로 푼다(편집자 선에서 처리).
+  > 실패: (b)나 (c)가 실패하면 소유자에게 올린다.
+- 보충: 없음
+- 상태: 현행
+- 출처: `reviews/round-18-closing.md:43-51`(정본)
+- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-01)
+- 라운드: 18
+- 까닭: `reviews/round-18-closing.md:35-41`
+
+### TEST-068 잎 교차 시험의 처분 — `intersectConst.test.ts:40-58`은 깊은 비교로 새로 쓰고, `intersectPattern.test.ts:6-14`는 레거시와 함께, 새 병합 시험 사례
+
+- 결정:
+  > 【추론】 (4) 09 §4.3의 '그대로 산다'에서 뺄 것은 둘이다.
+  > 【추론】 하나는 `utils/__tests__/intersectConst.test.ts:40-58`의 참조 비교 단언으로, '버리고 새로 쓴다'로 옮겨 깊은 비교를 단언한다.
+  > 【추론】 다른 하나는 `utils/__tests__/intersectPattern.test.ts:6-14`의 전방 탐색 문자열 단언으로, 레거시와 함께 가며 새 병합 시험은 `'ab'`·`'Abc123'`·역참조·같은 이름 캡처 그룹 사례로 목록 표현을 단언한다.
+- 보충: 없음
+- 상태: 현행
+- 출처: `reviews/round-18-closing.md:197-199`(정본)
+- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-08)
+- 라운드: 18
+- 까닭: `reviews/round-18-closing.md:203-207`
+
+### TEST-069 PR-2 독립 검증 경계 — 자기 기제만 시험, 게이트 술어 대역 하나, 미룬 사례의 PR 배분, 프로토타입 회귀 배분
+
+- 결정:
+  > 【추론】 "각 PR은 새 코드와 그 시험만으로 독립 검증된다"(§17.1)는 각 PR이 자기가 들여오는 기제를 검증한다로 읽는다.
+  > 【추론】 뒤 PR의 기제가 있어야 하는 사례는 그 기제를 들여오는 PR의 시험으로 넘기며, 잃지 않도록 PR-0의 처분 목록이 사례마다 PR 번호를 단다.
+  > 【추론】 (가) PR-2는 예산 다섯 가운데 호스트 바퀴와 전이 라운드를 실제 코드로 시험한다: 초과 시 원본 B 커밋, `diagnostics`의 `'degraded'`·`cause: 'budget'`·`exceededBudget`(`'hostWheel'`·`'transition'`), 다음 로드까지의 지속.
+  > 【추론】 PR-2는 원본 B의 되돌림 기록 가운데 노드·이전 `raw`·이전 `extras`와 객체 자식의 생김·빠짐을 시험한다.
+  > 【추론】 PR-2는 정착 오류의 throw를 시험한다.
+  > 【추론】 PR-2에서 사슬은 `settle` 호출 하나다(`setValue`가 `settle` 쓰기로 직접 위임, `reviews/raw-round17-node-structure.md:74`).
+  > 【추론】 커밋과 `diagnostics` 뒤 그 호출의 끝에서 던지는 것을 시험한다.
+  > 【추론】 PR-2는 식·가드 실패의 자리별 값과 `cause: 'expression'`을 시험하며, 식은 PR-1의 실제 컴파일러를 쓴다.
+  > 【추론】 PR-2는 `SetValueOption` 넷(억제 비트는 PR-2에 있는 자동 쓰기인 채움에 대해)과 로드의 새 수명을 시험한다.
+  > 【추론】 PR-2는 나감 비움 가운데 노드 자신의 층과 Form 속성 층을 시험한다.
+  > 【추론】 그 값은 참·거짓 리터럴이고, 하위 트리로 내려감, 자손의 `false`가 이김, 선언의 나감, 잠복 자손 비움, `extras` 불변을 포함한다.
+  > 【추론】 PR-2는 노드 구조 시험 전부, 린트 설정, `active` 게터, 18C-39의 키 순서(직렬화 단언 포함), 18C-37의 형 게이트를 시험한다.
+  > 【추론】 (나) 시험 대역은 게이트 술어 하나다(`08-design-a-to-z.md:572`의 "게이트는 술어 인터페이스 뒤의 스텁").
+  > 【추론】 대역의 계약은 PR-4의 `compileGuard`가 돌려주는 술어와 같은 모양이다: 게이트 입력 값 하나를 받아 참·거짓을 돌려주고, 동기이며, 순수하다(같은 입력에 같은 답).
+  > 【추론】 던지는 대역으로 가드 평가 실패(정착 오류)를 시험한다.
+  > 【추론】 PR-4는 같은 시나리오를 실제 가드로 다시 돌린다.
+  > 【추론】 그 밖의 대역은 두지 않는다.
+  > 【추론】 시험만을 위한 주입 자리(파생 단계, 디스패처)를 새로 만들지 않는다(seiri `public-contract` §3).
+  > 【추론】 (다) 파생 라운드 예산과 그 `degraded`, `DisableAutomaticWrites`의 파생·`injectTo` 억제는 PR-3으로 미룬다.
+  > 【추론】 되먹임 파동과 `onChange` 중첩 예산, 진입 사슬의 사슬 끝 throw(중첩 진입, 통지·`onChange`와의 순서, `details.errors` 묶음)는 PR-4로 미룬다.
+  > 【추론】 원본 B의 배열 아이템 구조 기록은 PR-5로 미룬다(TEST의 PR-5 행에 더함).
+  > 【추론】 나감 비움의 `children` 항목 층, 조각 `controls` 층, 식 값(직전 커밋)은 PR-6으로 미룬다(TEST의 PR-6 행 "`unsetOnInactive` 층"에 명시).
+  > 【추론】 `degraded` 동안의 제출 거부는 PR-7로 미룬다.
+  > 【추론】 (라) 프로토타입 회귀의 배분: 한 사례는 그것이 건드리는 기제가 모두 있는 가장 이른 PR로 간다.
+  > 【추론】 `selfcheck-v5`(63)는 a·b·c·d·e → PR-2(c 가운데 주입을 쓰는 단언은 PR-3), f(`disableAutomaticWrites`) → PR-3, g(통지) → PR-4로 간다.
+  > 【추론】 `r8-port`(q8 108, 예산·원본 B 행렬)는 호스트 바퀴·전이만 쓰는 행 → PR-2, `derived`·`injectTo`를 쓰는 행 → PR-3으로 간다.
+  > 【추론】 `r7-port`(52, E1–E13·X*)는 에지 발화 파생·`injectTo` → PR-3, X2·X3의 한 진입 묶음과 D-17 파동 세기 → PR-4로 간다.
+  > 【추론】 `edge-cases`(26, `spikes/round9/regress/edge-cases.mjs`)는 조각 생김·채움·덧씌움 기본값·`allOf` else → PR-2, `clearValue`·`injectTo`·단계 순서·파생 예산 → PR-3, 잠금 결합 → PR-6으로 간다.
+  > 【추론】 v7 회귀는 게이트 입력 `extras`·전이 상한·재계산 목록 순회·나감 비움(노드 자신·Form 속성 층) → PR-2, 같은 순위 동점·정착 단위 순위 → PR-3, 나감 에지 → PR-3(조각 `controls` 층의 사례는 PR-6)으로 간다.
+  > 【추론】 안건 `reviews/round-18-agenda.md:56`의 실행 확인(게이트 입력 `extras` 정적 규칙, 같은 순위 규칙, 나감 에지, 전이 라운드 상한이 나감 비움을 포함해 실제로 보장되는지)은 위 v7 회귀를 배분받은 PR의 시험으로 한다.
+- 보충:
+  > 편집자 결정(18C-15): "(a) 사촌 하위 트리를 읽는 노드 게이트를 단언한다." (`reviews/round-18-closing.md:450`)
+  > 편집자 결정(18C-15): "(b) `#`를 읽는 게이트를 단언한다." (`reviews/round-18-closing.md:451`)
+  > 편집자 결정(18C-15): "(c) 서로를 읽는 두 호스트의 양의 순환이 이력과 무관하게 같은 원본에서 같은 형상을 내는지 단언한다." (`reviews/round-18-closing.md:452`)
+  > "노드 구조 시험(행 칸 순서 시험: 모든 행의 칸 키와 순서가 같음. 겉면 멤버 목록 시험: 프로토타입 멤버 이름과 `SchemaNode/`의 `DETAIL.md` 목록의 일치. 공개 index 키 목록: 내부 통로가 `src/index.ts`에 없음. 행 고르기 함수의 조합 전수. 공개 형의 키 목록 타입 시험. `isTerminalNode`가 터미널 객체도 좁힘), `SchemaNode` 클래스 파일에 거는 린트 설정, `active` 게터" (`09-landing-and-test-strategy.md:169`)
+  > 편집자 결정(18C-98): "【추론】 `diagnostics`와 경고 중복 키는 폼 수준 로드(마운트, `FormHandle.reset()`)에서만 초기화한다." (`reviews/round-18-closing.md:2797`)
+  > 편집자 결정(18C-98): "【추론】 `setValue(V)`와 `resetSubtree()`는 초기화하지 않는다." (`reviews/round-18-closing.md:2798`)
+- 상태: 현행
+- 출처: `reviews/round-18-closing.md:751-780`(정본), `reviews/round-18-closing.md:2797-2798`
+- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-25), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-98)
+- 라운드: 18
+- 까닭: `reviews/round-18-closing.md:782-786`
+
+### TEST-070 PR-2 게이트 — 실제 공개 형으로 `tsc --strict`를 단언 없이 통과, `children`은 저장 배열과 같은 참조, 실패 시 소유자 물음
+
+- 결정:
+  > PR: PR-2.
+  > 무엇: 실제 공개 형(`InferSchemaNode` 사상, 배열 멤버, S1 정합 상태 판별자)으로 새 fractal이 `tsc --strict`를 `as`·`any` 없이 통과하는지, `node.children`이 저장 배열과 같은 참조인지(시험) 본다.
+  > 통과: 둘 다 참이다.
+  > 실패: 두 선택지(가: 한 함수에 가둔 단언 하나를 승인, 나: 단언 없이 목록 읽기마다 원소 검사·복사)를 그대로 소유자에게 올린다.
+  > 실패: 그때 오늘 `src/core/nodeFromJSONSchema.ts:55`의 `as InferSchemaNode<Schema>`도 같은 물음의 대상으로 적는다.
+- 보충: 없음
+- 상태: 현행
+- 출처: `reviews/round-18-closing.md:1019-1023`(정본)
+- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-37)
+- 라운드: 18
+- 까닭: `reviews/round-18-closing.md:1015-1017`
+
+### TEST-071 PR-3 벤치 회귀 — 객체 원천 `injectTo` 1만 원소에서 한 원소 쓰기의 비교 비용이 값 크기와 무관, 통째 교체는 선형
+
+- 결정:
+  > 【추론】 TEST-063은 결정 관문에서 PR-3 벤치의 회귀 항목으로 바뀐다.
+  > PR: PR-3 벤치(회귀 항목).
+  > 무엇: 객체 원천 `injectTo`(1만 원소의 터미널 객체·배열)에서 한 원소 쓰기의 비교 비용이 값 크기와 무관한지, 통째 교체가 선형인지 잰다.
+  > 실패: 값 비교를 되돌리지 않고 지름길 구현을 고친다.
+- 보충: 없음
+- 상태: 현행
+- 출처: `reviews/round-18-closing.md:1394,1413-1415`(정본)
+- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-50)
+- 라운드: 18
+- 까닭: `reviews/round-18-closing.md:1405-1411`
+
+### TEST-072 '일정 수준'은 같은 실행에서 옛 판에 견주어 잰다 — 선은 기존 `guard:check`, 절대 수치와 배율 상한은 두지 않음, 선을 넘으면 이유를 적고 Vincent가 받아들여야 병합
+
+- 결정:
+  > 【추론】 안건 §5의 성능 물음은 한 규칙에서 닫는다: 옛 판보다 느린 항목은 이유를 적고 Vincent가 병합 때 받아들인다(ADR 0009 §4, `adr/0009-performance-budget-and-benchmarks.md:92`).
+  > 【추론】 이 규칙이 느림을 항목마다 통제하므로 새 수치를 지어내지 않는다.
+  > 【추론】 '일정 수준'은 같은 실행에서 옛 판에 견주어 잰다(TEST-026의 하니스, 같은 폼의 쌍).
+  > 【추론】 절대 수치는 두지 않는다.
+  > 【추론】 선은 기존 `guard:check`의 규칙이다.
+  > 【추론】 옛 판의 표본을 기준으로 넣고, 새 판의 처리량(초당 횟수) 평균이 15% 넘게 떨어지고 Welch p<0.05면 선을 넘는다(`packages/aileron/benchmark-form/src/utils/stat-regression.ts:81-112`, 기본값 `threshold` 15, `alpha` 0.05).
+  > 【추론】 선을 넘은 항목은 ADR 0009 §4를 따른다.
+  > 【추론】 이유를 적고 Vincent가 받아들여야 병합한다.
+  > 【추론】 이것이 '통제 가능하고 일정 수준 안'을 지키는 절차다.
+  > 【추론】 1.5배·2배 같은 배율 상한은 따로 두지 않는다.
+  > 예: 가드 200개인 조건부 폼 생성은 새 판 23.0 ms(트리 585 µs + AJV 컴파일 22.4 ms) 대 오늘 13.4 ms, 1.7배(처리량 −42%)라 선을 넘는다.
+  > 이 항목은 18C-30대로 PR-4의 수용 필요 항목으로 미리 적혀 있다.
+- 보충: 없음
+- 상태: 현행
+- 출처: `reviews/round-18-closing.md:794-805`(정본)
+- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-26)
+- 라운드: 18
+- 까닭: `reviews/round-18-closing.md:807-810`
+
+### TEST-073 예산의 수치는 기존 `guard:check` — 처리량 평균이 15% 넘게 떨어지고 Welch p<0.05면 회귀, 표본 100회 이상, 키 입력·마운트·대규모 쓰기·배치에 똑같이
+
+- 결정:
+  > 【추론】 예산의 수치는 기존 `guard:check`를 그대로 쓴다.
+  > 【추론】 처리량 평균이 15% 넘게 떨어지고 Welch p<0.05면 회귀다(`stat-regression.ts:81-112`).
+  > 【추론】 표본은 TEST-026대로 100회 이상이다.
+  > 【추론】 키 입력, 마운트, 대규모 쓰기(루트 통째 쓰기), 배치에 똑같이 적용한다.
+  > 【추론】 회귀는 ADR 0009 §4 절차를 따른다(이유를 적고 Vincent가 받아들여야 병합).
+  > 【추론】 스파이크의 기대 이득은 기대값으로 적으며, 게이트가 아니다.
+  > 【추론】 18C-15의 벤치 게이트와 18C-31의 B1·B5·B6 합격선이 이 선을 쓴다.
+  > 기대값: 루트 통째 쓰기(10k×5) 5.72 ms 대 215.7 ms, 배치 1000 368 µs 대 1.71 ms(`spikes/work-loop/REPORT.txt:245-249`), 트리 생성 flat 1,000 452.75 µs 대 4.63 ms, 트리 생성 array 10,000×5 13.15 ms 대 216.73 ms(`:113-114`).
+  > 예: 기준선 `Scale Interact Flat flat-50`은 14.1 ms(처리량 70.8회/초)다.
+  > 15.0 ms(+6.4%, 처리량 −5.9%)가 되면 선 안이라 통과한다.
+  > 17.0 ms(처리량 −16.9%)가 되고 Welch p<0.05면 회귀다.
+  > 선은 처리량 기준 15%이므로, 시간으로는 약 16.6 ms(+17.6%)가 경계다.
+- 보충: 없음
+- 상태: 현행
+- 출처: `reviews/round-18-closing.md:816-827`(정본)
+- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-27)
+- 라운드: 18
+- 까닭: `reviews/round-18-closing.md:829-832`
+
+### TEST-074 안전 임계를 목표 배율로 올려 적지 않는다 — 문서는 잰 사실만, PR-7 뒤 같은 모바일 조건으로 다시 재어 적음, 병합 게이트 아님
+
+- 결정:
+  > 【추론】 안전 임계를 목표 배율로 올려 적지 않는다.
+  > 【추론】 문서는 잰 사실만 적는다.
+  > 【추론】 PR-7 뒤 `MOBILE_PERFORMANCE_REPORT.md`(v0.10.6)와 같은 모바일 조건으로 다시 재고, 잰 임계를 문서에 적는다.
+  > 【추론】 병합 게이트가 아니다.
+  > 오늘 문서의 임계는 필드 50개 미만, 배열 아이템 30개 미만이다(`adr/0009-performance-budget-and-benchmarks.md:33`).
+  > 참고 수치(문서의 임계는 아니다): 데스크톱 기준선 `baseline.json`(5회)에서 flat-500 마운트 약 112 ms, array-100 마운트 약 103 ms로 배열이 가장 약하고, 스파이크의 core 구성은 array 10k×5에서 13 ms 대 217 ms다(`spikes/work-loop/REPORT.txt:114`).
+- 보충: 없음
+- 상태: 현행
+- 출처: `reviews/round-18-closing.md:838-843`(정본)
+- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-28)
+- 라운드: 18
+- 까닭: `reviews/round-18-closing.md:845-847`
+
+### TEST-075 번들 크기 예산 — 측정 방법 고정(ESM 진입을 esbuild로 minify, gzip -9, 의존성 외부), 기준 v0.16.0의 37,023 B, 늘면 이유를 적고 Vincent가 받아들여야 병합
+
+- 결정:
+  > 【추론】 측정 방법을 고정한다.
+  > 【추론】 ESM 진입(`dist/index.mjs`)을 esbuild로 minify하고 gzip -9 하며, 의존성은 외부로 둔다.
+  > 【추론】 기준은 v0.16.0(2026-09-21 빌드)의 37,023 B다.
+  > 【추론】 배포되는 minify 없는 gzip(51,632 B)도 함께 보고한다.
+  > 【추론】 기준보다 늘면 ADR 0009 §4와 같은 기록·수용 규칙을 따른다.
+  > 【추론】 이유를 적고 Vincent가 받아들여야 병합한다.
+  > 【추론】 비율 상한은 따로 두지 않는다.
+  > 【추론】 "현재 gzip 약 44KB"(`00-goals.md:82`)는 측정 방법이 적히지 않은 기록이라 기준으로 쓰지 않는다.
+- 보충: 없음
+- 상태: 현행
+- 출처: `reviews/round-18-closing.md:853-860`(정본)
+- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-29)
+- 라운드: 18
+- 까닭: `reviews/round-18-closing.md:862-864`
+
+### TEST-076 컴파일 예산 — 따로 수치를 두지 않고 마운트 벤치에서 폼 몫과 검증기 몫으로 나눠 보고, TEST-072의 선으로 판정, 가드 200개 조건부 폼 생성은 PR-4의 수용 필요 항목
+
+- 결정:
+  > 【추론】 컴파일에는 따로 수치 예산을 두지 않는다.
+  > 【추론】 기준 플러그인(AJV)으로 재는 마운트 벤치는 가드 컴파일을 포함한다.
+  > 【추론】 그 컴파일은 따로 한 줄로 보고하고, 그 줄을 폼의 몫(청사진 분석·트리 생성·식 컴파일)과 검증기의 컴파일 몫(`compileGuard`)으로 나눈다.
+  > 【추론】 판정은 18C-26의 선과 ADR 0009 §4를 따른다.
+  > 【추론】 선을 넘으면 이유를 적고 Vincent가 받아들여야 병합한다.
+  > 【추론】 알려진 느림은 미리 적는다.
+  > 【추론】 가드 200개인 조건부 폼 생성은 새 판 23.0 ms(트리 585 µs + AJV 컴파일 22.4 ms) 대 오늘 13.4 ms로 1.7배다(`spikes/work-loop/REPORT.txt:113-118`, `:196-200`).
+  > 【추론】 이 항목을 PR-4(동기 `compileGuard`를 구현하는 PR)의 수용 필요 항목으로 미리 적고, 이유는 "검증기 컴파일"이다.
+  > 【추론】 미리 적는 것이지 미리 받아들이는 것이 아니다.
+  > 【추론】 수치는 PR-4의 실측으로 바꾼다.
+- 보충: 없음
+- 상태: 현행
+- 출처: `reviews/round-18-closing.md:870-879`(정본)
+- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-30)
+- 라운드: 18
+- 까닭: `reviews/round-18-closing.md:881-884`
+
+### TEST-077 union 설계의 시험 목록 — 청사진 판정(PR-1), 행과 `interpret`(PR-2), 렌더 시나리오와 입력 바인딩(PR-7), 검증기 플러그인(PR-4), tsc 전용 형 시험
+
+- 결정:
+  > 【추론】 시험 `src/core/blueprint/__tests__/union.kind-procedure.test.ts`: 예 E1–E42(18C-90)의 종류·`schemaType`·nullable·전략·오류가 모두 표대로다.
+  > 【추론】 시험 같은 곳 `union.null-only.test.ts`: E30·E32·E33은 null 노드이고 nullable이며 오류가 없고, E34·E35·E38은 nullable이며, 모든 선언이 `'null'`만인 정적 연언도 null 노드다.
+  > 【추론】 시험 같은 곳 `union.static-intersection.test.ts`: 모든 선언 쌍 X·Y에서 `{allOf:[X,Y]}`와 `{allOf:[Y,X]}`의 결과(원소 순서 제외)가 같고(E39), E18·E24·E31·E38은 교집합이며, E23만 `ALL_OF_TYPE_REDEFINITION`이다.
+  > 【추론】 시험 같은 곳 `union.schema-type-invariant.test.ts`: 모든 코퍼스 칸에서 `Array.isArray(schemaType) === (type === 'union')`이고, 같은 칸의 노드와 배열 아이템이 같은 `schemaType` 참조를 가지며, 그 참조는 `Object.isFrozen`이다.
+  > 【추론】 시험 같은 곳 `union.gated-narrowing.test.ts`: E25·E26·E41에서 게이트 전후로 `schemaType` 참조가 같고, 켜진 동안 유효 목록은 `['number']`·`['number']`(`schemaType`과 같은 참조)·`['integer']`이며, E40은 둘 다 켜지면 `SHARED_NODE_CONFLICT`이고, E42의 유효 목록은 `schemaType`과 같은 참조다.
+  > 【추론】 시험 같은 곳 `union.terminal-subtree-warning.test.ts`: `['object','string']` 칸 `properties` 안의 `controls`가 경고를 한 번 내고, `$ref` 대상에서는 경고가 없으며, `options.terminal:false`는 ERROR-200이다.
+  > 【추론】 시험 `src/core/behaviors/utils/parse/__tests__/interpret.table.test.ts`: 변환 표(18C-91)의 모든 칸과 `"1.0"`·`"1e2"`·`"1e16"`·`"9007199254740993"`·`"01"`·`" true"`, `NaN`·`±Infinity`·`2**60`·`-0`·bigint·`Date`(object 멤버)·`Object.create(null)`.
+  > 【추론】 시험 같은 곳 `interpret.properties.test.ts`: `d-rule-a.mjs`의 전수 실행으로 순서 무관, 멱등, 변환 결과 ∈ 목록, 경우 집합이 정확히 12건, 원소 하나인 목록 = 단일 노드 행, 쓰기당 할당 0.
+  > 【추론】 시험 `src/core/behaviors/unionBehavior/__tests__/union.write-paths.test.ts`: 쓰기 경로마다 한 사례이고, `Merge` 객체 V는 통째 교체이며, `trim`은 문자열 값에서만 돈다.
+  > 【추론】 시험 같은 곳 `union.mismatch-light.test.ts`: 켜짐→켜짐이면 경고 0회, 꺼짐→켜짐이면 1회, 로드하면 다시 1회이고, `expected`는 `{schemaType, nullable, effective}`이며, `'ambiguous'`이면 `candidates`가 있다.
+  > 【추론】 시험 `src/__tests__/scenarios/union.gated-effective-list.render.test.tsx`: E25에서 게이트가 켜진 뒤 친 `"42"`는 `42`로 저장되고, 켜기 전에 저장된 `"abc"`는 게이트가 켜지면 쓰기 없이 경고등이 켜지며 `source:'gate'` 경고가 1회 나고 `UpdateJsonSchema`로 배달되며, 게이트가 꺼지면 경고등이 꺼지고 값은 그대로이고, 입력 구성 요소는 바뀌지 않으며, E41에서 `1.5`는 켜진 동안 경고등이 켜진다.
+  > 【추론】 시험 `union.entry-two-step.render.test.tsx`: 게이트 `kind==='num'`이면 `a:number`인 스키마에서 직전 `kind`가 `'text'`일 때와 `'num'`일 때 각각 `setValue({kind:'num', a:'42'})`를 부르면 둘 다 `a === 42`이고, 마운트·`reset()`도 같으며, 쓰이지 않은 형제 노드는 다시 해석되지 않는다.
+  > 【추론】 시험 `union.rule-a.render.test.tsx`: 규칙 A의 사례와 `['integer','number','boolean']`의 `"2"`→`2`.
+  > 【추론】 시험 `union.ambiguous.render.test.tsx`: `['string','boolean']`의 `1`·`0`은 값이 유지되고, 경고등이 켜지며, `reason:'ambiguous'`다.
+  > 【추론】 시험 `union.integer.render.test.tsx`: `['integer','string']`의 `12.5`→`"12.5"`, `['integer','boolean']`의 `12.5`는 경고등이 켜짐, E4는 number 규칙.
+  > 【추론】 시험 `union.object-array.render.test.tsx`: 멤버십, 변환 없음, 참조 유지, `find('/f/k') === null`, `./f/k` 식, 문자열 값에서 `./f/length`는 `undefined`, 기본 입력의 읽기 전용 JSON과 비우기, `['object','array']` 빈 상자.
+  > 【추론】 시험 `union.non-json-value.render.test.tsx`: `{a: undefined}`를 든 union과 터미널 객체에서 개발 모드 `NON_JSON_WHOLE_VALUE`가 1회 나고 값은 바뀌지 않으며, 프로덕션에서는 검사하지 않는다.
+  > 【추론】 시험 `union.default-input-draft.render.test.tsx`: `['number','boolean']`에서 `"4"`→`4`, `"42."`는 초안(쓰기·경고 0)이고 흐려지면 되돌림, `"true"`→`true`, 빈 칸은 `undefined`, nullable 비우기는 `null`이며, `['number','string']`에서 `"42"`는 문자열이고, 치는 도중 유효 목록이 넓어지면 초안을 다시 판정해 이제 맞는 글만 보낸다.
+  > 【추론】 시험 `union.omit-empty.render.test.tsx`: `''`·`{}`·`[]`는 방출하지 않고 `omitEmpty:false`이면 방출하며, 아이템 자리는 `null`이고 값 없는 루트는 `undefined`다.
+  > 【추론】 시험 `union.default-fill.render.test.tsx`: `default`는 값 전체로 들어가고, 로드된 `{}`는 덮지 않으며(객체 호스트와 대조), `['string','boolean']`+`default:0`이면 마운트 때 경고가 1회 나고, `setValue(undefined)` 뒤에는 다시 채우지 않는다.
+  > 【추론】 시험 `union.expressions.render.test.tsx`: `if`+`const`에서 `"1"`과 `1`을 가르고, 판별 키 union의 분기가 켜지며, 목록 밖 리터럴이면 `DISCRIMINATOR_BRANCH_UNREACHABLE`이 한 번 난다.
+  > 【추론】 시험 `union.migration-shapes.render.test.tsx`: TypeBox `anyOf[string,number]`, pydantic `anyOf[string,null]`, ts-json-schema-generator `type` 배열, OAS `nullable:true`+`type`, 그리고 LANDING-173–LANDING-180의 모양.
+  > 【추론】 시험 `union.input-binding.render.test.tsx`: 시험 대조(18C-92)의 모든 칸, 인라인 `FormTypeInput` 우선, `FORM_TYPE_TEST_INVALID`(모르는 키, `type:'integer'`) 1회, `{typo: undefined}` 시험은 모르는 키를 빼고 대조, 정수 노드 props의 `type === 'number'`와 `schemaType === 'integer'`.
+  > 【추론】 시험 `schema-form-ajv{6,7,8}-plugin/src/**/__tests__/bind-refusal.test.ts`: `coerceTypes`·`useDefaults`·`removeAdditional` 가운데 하나라도 켠 인스턴스의 `bind`는 `VALIDATOR_BIND_REFUSED`를 던지고 이전 인스턴스가 그대로 남으며, 세 옵션이 꺼진 인스턴스와 기본 인스턴스는 받는다.
+  > 【추론】 시험 `schema-form-ajv8-plugin/src/**/__tests__/union-types.test.ts`: `{type:['string','number']}`를 컴파일할 때 `console.warn`이 0회이고, `{type:[..], nullable:true}` 컴파일 뒤에도 작성 스키마의 `type` 배열이 그대로다.
+  > 【추론】 시험 `src/types/__tests__/union.type-test.ts`(tsc 전용): 형 사상(18C-89), `InferValueType`·`InferJSONSchema`의 형, union props의 `value`(판별)와 `onChange`(목록 형), `NumberNode` props의 `type === 'integer'`가 TS2367.
+- 보충:
+  > 편집자 결정(18C-104): "무엇: 렌더 시나리오 `union.entry-two-step`에 위 예의 폼을 더해, 직전 `kind`가 `'text'`일 때와 `'flag'`일 때 각각 `setValue({kind:'flag', a:0})`를 부르고, `defaultValue`가 `{kind:'flag', a:0}`인 마운트와, `kind`를 `'text'`로 바꾼 뒤 두 필드를 담은 객체 노드의 `resetSubtree()`를 돌린다." (`reviews/round-18-closing.md:2926`)
+  > 편집자 결정(18C-104): "통과: 모든 경우에 `a === false`이고 경고등이 꺼져 있으며, 쓰이지 않은 형제 노드는 다시 해석되지 않는다." (`reviews/round-18-closing.md:2927`)
+- 상태: 현행
+- 출처: `reviews/round-18-closing.md:2672-2697`(정본), `reviews/round-18-closing.md:2926-2927`
+- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-93), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-104)
+- 라운드: 18
+- 까닭: `reviews/round-18-closing.md:2711-2715`
+
+### TEST-078 union 설계의 비용 — 청사진 판정, 유효 목록, 두 번 해석, 새 경고 넷, `interpret`, 경고등, 방출·채움, Hint·props, 기본 union 입력, 검증기, 공개 형, 플러그인 이주
+
+- 결정:
+  > 【추론】 비용 — 청사진 판정: 로드마다 한 번이며, 비 union 칸에도 드는 로드 비용은 선언마다 `type` 파싱 O(원소 ≤ 7)과 마스크 교집합 O(1)이고, 분기 합치기는 O(분기 × 정적 연언 깊이)다; 메모리는 union 칸마다 얼린 배열 하나와 기본 spec 하나, 노드마다 0이다; 구현은 허용 집합 도우미 약 60줄(`extractSchemaInfo`와 `processSchemaType`의 형 부분 대체), 분기 합치기 약 50줄, 조각 공유 확장 약 40줄이다.
+  > 【추론】 비용 — 유효 목록: 좁히는 게이트가 없으면 0(같은 참조)이고, 게이트 선언을 가진 노드는 유효 스키마 메모가 바뀔 때 O(k)의 교집합 한 번, 경고등 재계산은 O(1)이다; 메모리는 좁혀진 메모 항목마다 작은 배열 하나와 spec 하나다; 구현은 약 40줄(병합표 `type` 행 포함)이다.
+  > 【추론】 비용 — 두 번 해석: 한 진입에서 쓰였고 같은 정착에서 유효 목록이 바뀐 노드마다 `interpret` 한 번 더이며, 그 밖은 멱등이라 결과가 같다; 메모리 0; 전이 단계 약 20줄이다.
+  > 【추론】 비용 — 새 경고 넷(`TERMINAL_SUBTREE_KEY_IGNORED_FOR_FORM`, `NON_JSON_WHOLE_VALUE`, `DISCRIMINATOR_BRANCH_UNREACHABLE`, `FORM_TYPE_TEST_INVALID`): 개발 모드나 핸들러가 있을 때만 돌며, 비용은 터미널 하위 스키마 크기, 통째 값 크기(참조가 바뀐 커밋마다), 등록 때의 키 수에 비례한다; 메모리는 중복 억제 키이고; 각 30–40줄이다.
+  > 【추론】 비용 — 쓰기(`interpret`): 멤버이면 `classBits` 한 번과 AND 한 번으로 O(1)이고, 문자열 해석은 정규식 한 번과 `Number` 한 번이며, 후보를 세기만 하는 무할당 구현이 조건이다; 메모리 0; `parse/` 약 80–100줄, `unionBehavior/` 행 약 40줄이다.
+  > 【추론】 비용 — 경고등: 원본이나 유효 스키마가 바뀐 노드만 커밋 때 O(1)이고 경고는 켜질 때만 보낸다; 메모리는 얼린 빈 배열 공유; 게터 두 개다.
+  > 【추론】 비용 — 방출·채움: 추가 비교와 복사가 없고, 메모리와 구현이 0이다.
+  > 【추론】 비용 — Hint·props: `useMemo` 안에서 필드 하나를 더 읽고(비 union에도 듦), 시험은 정의 수에 선형(오늘과 같음)이다; 메모리 0; 형 셋과 `getHint` 한 줄이다.
+  > 【추론】 비용 — 기본 union 입력: 키 입력마다 O(k ≤ 6)이고, 유효 목록은 `jsonSchema` 참조가 바뀔 때만 O(k), `JSON.stringify`는 값 참조가 바뀔 때만 O(값 크기)다; 메모리는 `useState` 하나와 표시 중인 객체 값마다 출력 문자열 크기의 메모다; 감싸개 약 60–80줄이다.
+  > 【추론】 비용 — 검증기: 기본 경로 0, `bind` 때 옵션 셋 검사 O(1)이다; 메모리는 스키마 깊은 사본을 (인스턴스, 루트)마다 한 번이다; 플러그인마다 약 10줄, ajv8 설정 세 줄이다.
+  > 【추론】 비용 — 공개 형: 컴파일 시간은 재지 않았다(모름); `value.ts`·`jsonSchema.ts`·노드 형·props 형 약 90줄과 가드 하나다.
+  > 【추론】 비용 — 플러그인 이주: 객체 시험 일곱 곳(코어 포함), 함수 시험 여섯 곳, mui 수 입력(빈 칸·초안·정수), 플러그인마다 union 항목 하나(권장)다.
+- 보충: 없음
+- 상태: 현행
+- 출처: `reviews/round-18-closing.md:2698-2709`(정본), `reviews/round-18-closing.md:2915`
+- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-93), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-104)
+- 라운드: 18
+- 까닭: `reviews/round-18-closing.md:2711-2715`
+- 충돌:
+  > `reviews/round-18-closing.md:2700`의 "한 진입에서 쓰였고 같은 정착에서 유효 목록이 바뀐 노드마다 `interpret` 한 번 더이며, 그 밖은 멱등이라 결과가 같다; 메모리 0"은 18C-104의 결정과 다르다: 비용은 쓰인 노드 가운데 유효 목록이 정적 목록보다 좁은 노드에 한해 `interpret` 한 번과 쓰인 값의 참조 보관이다(WRITE-098). 18C-104의 결정이 이긴다(`reviews/round-18-closing.md:2915`).

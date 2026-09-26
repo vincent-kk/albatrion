@@ -13,14 +13,14 @@
 | EVENT-005 | 디스패처 규칙 1 — 순서 | 현행 | 편집자 결정(4라운드, `reviews/round-4.md:90` V10) |
 | EVENT-006 | 디스패처 규칙 2 — 배달 집합 | 현행 | 편집자 결정(4라운드, `reviews/round-4.md:141` F20), 편집자 결정(10라운드 5차 본문, `07-conclusions.md:96`·`adr/0008-event-system.md:13`) |
 | EVENT-007 | 디스패처 규칙 3 — revision 원장은 커밋 시 배달 집합 전체를 한 번에 올림 | 현행 | 편집자 결정(4라운드, `reviews/round-4.md:137` F16·`reviews/round-4.md:85` V5) |
-| EVENT-008 | 디스패처 규칙 4 — 파동, 리스너 되먹임의 판별, 되먹임 상한과 그 초기화 | 현행 | 원리(`reviews/round-10-owner-answers.md:10` A-4, 상한을 두고 넘으면 오류로 알린다는 원칙), 편집자 결정(4라운드, `reviews/round-4.md:136` F15, 마지막 파동을 한 번 더 배달하고 되먹임만 거부), 편집자 결정(06 도출 D-17, `06-conclusions.md:158`; 10라운드 5차 본문 `adr/0008-event-system.md:13`·`07-conclusions.md:93`) |
+| EVENT-008 | 디스패처 규칙 4 — 파동, 리스너 되먹임의 판별, 되먹임 상한과 그 초기화 | 현행 | 원리(`reviews/round-10-owner-answers.md:10` A-4, 상한을 두고 넘으면 오류로 알린다는 원칙), 편집자 결정(4라운드, `reviews/round-4.md:136` F15, 마지막 파동을 한 번 더 배달하고 되먹임만 거부), 편집자 결정(06 도출 D-17, `06-conclusions.md:158`; 10라운드 5차 본문 `adr/0008-event-system.md:13`·`07-conclusions.md:93`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-14) |
 | EVENT-009 | 디스패처 규칙 5 — 분리된 노드 | 현행 | 편집자 결정(4라운드, `reviews/round-4.md:90` V10) |
 | EVENT-010 | 디스패처 규칙 6 — 리스너 격리, 모은 예외는 사슬 끝에서, 기록은 onError로 | 현행 | 편집자 결정(4라운드, `reviews/round-4.md:142` F21·`reviews/round-4.md:90` V10), 편집자 결정(14라운드 O-5 위임, `reviews/round-14-owner-answers.md:11`), 17라운드 스웜 수렴(편집자 결정, `adr/0008-event-system.md:201`) |
 | EVENT-011 | 리스너 목록은 파동 시작 시점에 고정 | 현행 | 편집자 결정(4라운드, `reviews/round-4.md:138` F17·`reviews/round-4.md:86` V6) |
 | EVENT-012 | 상태 칸의 쓰기는 원본 쓰기가 아니다 | 현행 | 편집자 결정(1라운드 R15, `reviews/round-1.md:79`), 편집자 결정(10라운드 5차 본문, `adr/0008-event-system.md:13`) |
-| EVENT-013 | batch(fn) — 쓰기를 표시하고 fn 끝에서 정착 한 번·파동 한 번 | 현행 | 편집자 결정(4라운드, 실행 검증을 통과한 제안, `adr/0008-event-system.md:3`) |
+| EVENT-013 | batch(fn) — 쓰기를 표시하고 fn 끝에서 정착 한 번·파동 한 번 | 현행 | 편집자 결정(4라운드, 실행 검증을 통과한 제안, `adr/0008-event-system.md:3`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-20) |
 | EVENT-014 | 중첩 batch는 가장 바깥이 이긴다 | 현행 | 편집자 결정(4라운드, 실행 검증을 통과한 제안, `adr/0008-event-system.md:3`) |
-| EVENT-015 | fn 안의 reset — 곧바로 정착하고 그 커밋은 fn 끝의 파동에 합류 | 현행 | 16라운드 스웜 수렴(편집자 결정, `09-landing-and-test-strategy.md:79,90`) |
+| EVENT-015 | fn 안의 reset — 곧바로 정착하고 그 커밋은 fn 끝의 파동에 합류 | 현행 | 16라운드 스웜 수렴(편집자 결정, `09-landing-and-test-strategy.md:79,90`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-101) |
 | EVENT-016 | 리스너 안의 batch는 자기 배치이며 리스너 되먹임으로 센다 | 현행 | 편집자 결정(4라운드, `reviews/round-4.md:139` F18), 편집자 결정(06 도출 D-17, 10라운드 5차 본문 `adr/0008-event-system.md:13`) |
 | EVENT-017 | batch의 fn이 던질 때 — 표시된 쓰기는 정착·통지, 예외는 사슬 머리 끝에서 | 현행 | 편집자 결정(14라운드 O-5 위임, `reviews/round-14-owner-answers.md:11`), 편집자 결정(17라운드, ADR 0014 4판 채택) |
 | EVENT-018 | 렌더 중 쓰기는 소비자 오류이며 core는 구별하지 않음 | 현행 | 편집자 결정(4라운드, `reviews/round-4.md:139` F18) |
@@ -36,14 +36,14 @@
 | EVENT-028 | 검증 요청은 진입당 1회, 실행은 마이크로태스크에 모아 최신 커밋 번호 하나만 | 현행 | 소유자 답(`reviews/round-14-owner-answers.md:12` O-6) |
 | EVENT-029 | 진입 깊이는 루트별 | 현행 | 편집자 결정(5라운드 도출 C-9, `reviews/round-5-derivations.md:24`), 편집자 결정(10라운드 5차 본문, `adr/0008-event-system.md:13`) |
 | EVENT-030 | 열린 진입 안의 재생성 reset — 새 루트가 옛 루트의 진입을 이어받음 | 현행 | 16라운드 스웜 수렴(편집자 결정, `09-landing-and-test-strategy.md:79,90`) |
-| EVENT-031 | emit 참조가 바뀌지 않은 쓰기는 onChange도 검증 요청도 내지 않는다 | 현행 | 편집자 결정(10라운드 5차 본문, `adr/0008-event-system.md:13`) |
-| EVENT-032 | reset의 검증 요청 예외 — emit 참조가 그대로여도 OnChange 비트면 한 번 | 현행 | 16라운드 스웜 수렴(편집자 결정, `09-landing-and-test-strategy.md:79,89`) |
+| EVENT-031 | emit 참조가 바뀌지 않은 쓰기는 onChange도 검증 요청도 내지 않는다 | 현행 | 편집자 결정(10라운드 5차 본문, `adr/0008-event-system.md:13`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-50) |
+| EVENT-032 | reset의 검증 요청 예외 — emit 참조가 그대로여도 OnChange 비트면 한 번 | 현행 | 16라운드 스웜 수렴(편집자 결정, `09-landing-and-test-strategy.md:79,89`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-101) |
 | EVENT-033 | onChange 안의 쓰기는 새 진입 | 현행 | 편집자 결정(5라운드 도출 C-9, `reviews/round-5-derivations.md:24`), 편집자 결정(10라운드 5차 본문, `adr/0008-event-system.md:13`) |
 | EVENT-034 | onChange 중첩 상한 25 — 26번째는 적용·검증 요청하되 onChange를 건너뛰고 사슬 끝에서 throw | 현행 | 소유자 답(`reviews/round-17-owner-answers.md:9` R17-1), 편집자 결정(17라운드, ADR 0014 4판 채택) |
 | EVENT-035 | 형제 진입을 합치는 것은 batch(fn)뿐이며 답은 배치 API의 공개와 문서 | 현행 | 편집자 결정(5라운드 도출 C-8, `reviews/round-5-derivations.md:23`) |
 | EVENT-036 | React 이펙트의 쓰기는 새 진입이며 core가 아니라 문서화로 답한다 | 현행 | 편집자 결정(5라운드 도출 C-10, `reviews/round-5-derivations.md:25`) |
 | EVENT-037 | RequestRemount는 공개 명령으로 남는다 | 현행 | 소유자 답(`reviews/round-4.md:115` D-9) |
-| EVENT-038 | 명령 publish를 공개 API로 연다(C-11) — 소유자 확정 대기 | 열림(→ `reviews/round-18-agenda.md:87` §7) | 편집자 결정(5라운드 도출 C-11, 소유자 확정 대기, `reviews/round-5-derivations.md:22`) |
+| EVENT-038 | 명령 publish를 공개 API로 연다(C-11) — 소유자 확정 대기 | 대체됨(→ EVENT-063) | 편집자 결정(5라운드 도출 C-11, 소유자 확정 대기, `reviews/round-5-derivations.md:22`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-42) |
 | EVENT-039 | 명령 표 — RequestRefresh가 하는 일, 버리는 것, 범위 | 현행 | 편집자 결정(5라운드 도출 C-11, `reviews/round-5-derivations.md:22`), 16라운드 스웜 수렴(편집자 결정, `09-landing-and-test-strategy.md:79,85`) |
 | EVENT-040 | 명령 표 — RequestRemount가 하는 일, 버리는 것, 범위 | 현행 | 소유자 답(`reviews/round-4.md:115` D-9), 편집자 결정(5라운드 도출 C-11, `reviews/round-5-derivations.md:22`) |
 | EVENT-041 | Refresh는 범위가 좁은 리마운트 — 명시 호출이 캐럿을 날리는 것은 귀결로 문서화 | 현행 | 편집자 결정(5라운드 도출 C-11, `reviews/round-5-derivations.md:22`) |
@@ -53,19 +53,31 @@
 | EVENT-045 | 배달 경로 — 정착을 거치지 않는 사건과 유효 스키마 변경 | 현행 | 소유자 답(`reviews/round-16-owner-answers.md:9` 3) |
 | EVENT-046 | 배달 경로 — 검증 결과는 스탬프를 검사한 뒤 자기 파동으로 | 현행 | 소유자 답(`reviews/round-16-owner-answers.md:9` 3), 17라운드 스웜 수렴(편집자 결정, `09-landing-and-test-strategy.md:63`, 이 파동의 리스너 예외의 드러남) |
 | EVENT-047 | 되돌림 가능성 — 중간, 소비자에게 보이는 변화 | 현행(기록) | 편집자 결정(10라운드 5차 본문, `adr/0008-event-system.md:13`) |
-| EVENT-048 | 유효 스키마 변경 통지의 표면 | 열림(→ `reviews/round-18-agenda.md:108` §9) | 편집자 결정(17라운드, 18라운드 안건으로 이관) |
-| EVENT-049 | 상태 칸 변경의 배달 — ADR 0008이 적지 않은 것 | 열림(→ `reviews/round-18-agenda.md:146` 11-15) | 편집자 결정(10라운드 5차 본문의 미결, `adr/0008-event-system.md:203`) |
-| EVENT-050 | 실제 브라우저의 IME 확인 | 열림(→ `reviews/round-18-agenda.md:111` §9) | 편집자 결정(17라운드, 18라운드 안건으로 이관) |
-| EVENT-051 | UpdatePath — 배열 재인덱싱 시 경로 변경 통지 | 열림(→ `reviews/round-18-agenda.md:147` 11-16) | 편집자 결정(10라운드 5차 본문의 미결, `adr/0008-event-system.md:207`) |
-| EVENT-052 | globalState — OR 누적을 이번 개편에서 고칠지 | 열림(→ `reviews/round-18-agenda.md:86` §7) | 편집자 결정(17라운드, 18라운드 안건으로 이관) |
-| EVENT-053 | C-10의 문서 자리 — 어느 문서가 소유하는지 | 열림(→ `reviews/round-18-agenda.md:148` 11-17) | 편집자 결정(10라운드 5차 본문의 미결, `adr/0008-event-system.md:209`) |
-| EVENT-054 | React 이펙트를 거친 진입 간 순환이 React 자체 한도에 막히는지 | 열림(→ `reviews/round-18-agenda.md:149` 11-18) | 편집자 결정(06 도출 D-17의 남는 것, `06-conclusions.md:161`) |
+| EVENT-048 | 유효 스키마 변경 통지의 표면 | 대체됨(→ EVENT-064) | 편집자 결정(17라운드, 18라운드 안건으로 이관), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-52) |
+| EVENT-049 | 상태 칸 변경의 배달 — ADR 0008이 적지 않은 것 | 분할됨(→ EVENT-066, EVENT-067) | 편집자 결정(10라운드 5차 본문의 미결, `adr/0008-event-system.md:203`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-82) |
+| EVENT-050 | 실제 브라우저의 IME 확인 | 대체됨(→ EVENT-065) | 편집자 결정(17라운드, 18라운드 안건으로 이관), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-63) |
+| EVENT-051 | UpdatePath — 배열 재인덱싱 시 경로 변경 통지 | 분할됨(→ EVENT-066, EVENT-068) | 편집자 결정(10라운드 5차 본문의 미결, `adr/0008-event-system.md:207`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-83) |
+| EVENT-052 | globalState — OR 누적을 이번 개편에서 고칠지 | 대체됨(→ EVENT-062) | 편집자 결정(17라운드, 18라운드 안건으로 이관), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-41) |
+| EVENT-053 | C-10의 문서 자리 — 어느 문서가 소유하는지 | 대체됨(→ EVENT-069) | 편집자 결정(10라운드 5차 본문의 미결, `adr/0008-event-system.md:209`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-84) |
+| EVENT-054 | React 이펙트를 거친 진입 간 순환이 React 자체 한도에 막히는지 | 대체됨(→ EVENT-070) | 편집자 결정(06 도출 D-17의 남는 것, `06-conclusions.md:161`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-85; PR-7 게이트 조건부) |
 | EVENT-055 | 대체됨: 예산 초과 시 개발 모드의 throw는 최외곽 진입 끝에서 | 대체됨(→ EVENT-021, ERROR-070, ERROR-071) | 소유자 답(`reviews/round-17-owner-answers.md:9` R17-1) |
 | EVENT-056 | 대체됨: 루트 onChange는 파동마다 한 번, 디바운스는 Form 옵션(F22) | 대체됨(→ EVENT-026) | 소유자 답(`reviews/round-4.md:116` D-10) |
 | EVENT-057 | 대체됨: 파동 상한은 틱당, 상한에서 개발 모드 throw·프로덕션은 무시(F15) | 대체됨(→ EVENT-008, ERROR-071, ERROR-142) | 편집자 결정(06 도출 D-17, `06-conclusions.md:158`; 10라운드 5차 본문 `adr/0008-event-system.md:13`), 소유자 답(`reviews/round-17-owner-answers.md:9` R17-1) |
 | EVENT-058 | exceededBudget의 전이 값 이름은 'transition' — transitionDefaults·nodeCreationDefaults 이름 항목은 닫힘 | 현행 | 편집자 결정(17라운드, ADR 0014 4판 채택) |
 | EVENT-059 | reset의 문서화 대상 셋 — 렌더 중 reset, 언마운트된 Form의 reset, 재대조 reset의 진입 | 현행 | 16라운드 스웜 수렴(편집자 결정, `09-landing-and-test-strategy.md:79,90`) |
-| EVENT-060 | `UpdateValue` 통지에 출처 칸을 둔다 — 이름과 값 목록은 편집자 | 현행 | 소유자 답(`reviews/round-18-owner-answers.md:15` 12-5), 편집자 결정(18라운드, `reviews/round-18-owner-answers.md:15` 반영 칸; 이름과 값 목록) |
+| EVENT-060 | `UpdateValue` 통지에 출처 칸을 둔다 — 이름과 값 목록은 편집자 | 현행 | 소유자 답(`reviews/round-18-owner-answers.md:15` 12-5), 편집자 결정(18라운드, `reviews/round-18-owner-answers.md:15` 반영 칸; 이름과 값 목록), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-100) |
+| EVENT-061 | `batch(fn)` 안의 updater는 부른 자리에서 실행되어 앞선 표시를 이어 받고(던지면 `fn`의 예외), 평범한 읽기는 직전 커밋을 돌려준다 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-20) |
+| EVENT-062 | `globalState`는 형상 안 노드에서 유도한다 — 키별 참 노드 수, 값은 `true`, 0이면 키가 빠짐, 0↔1을 넘을 때만 새 객체와 `UpdateGlobalState` | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-41) |
+| EVENT-063 | 명령 넷은 공개 노드 메서드 — `FormHandle`은 넷 모두 대칭, 공개 `publish` 없음 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-42) |
+| EVENT-064 | 유효 스키마 변경 통지 `UpdateJsonSchema`(가칭) — 메모 참조가 마지막 통지와 다를 때, 생성 때는 없음, payload `{ previous, current }` 참조, 출처 칸 없음, 계산 상태 비트와 분리 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-52) |
+| EVENT-065 | IME 조합의 동기 통지 확인 — 게이트 PR-7(스토리북 브라우저, 사람 확인 목록) | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-63) |
+| EVENT-066 | 배달 집합 규칙 2의 추가 항 — (이번 커밋에서 상호작용 상태가 바뀐 노드), (이번 커밋에서 경로가 바뀐 노드) | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-82·18C-83) |
+| EVENT-067 | `setState`의 상태 칸 변경은 정착 밖 사건 — 최외곽 진입 끝에 한 번, 비트 `UpdateState`, 같은 노드는 합쳐 한 번, `onStateChange` 한 번 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-82) |
+| EVENT-068 | `UpdatePath` — payload `{ previous, current }`, 재인덱싱된 아이템의 자손 포함, 공개 이벤트 형 밖, 렌더 계층이 입력을 다시 그림 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-83) |
+| EVENT-069 | C-10의 사용 규칙은 README가 소유 — 이주 안내에는 README를 가리키는 한 줄, 작성은 PR-8 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-84) |
+| EVENT-070 | React 이펙트를 거친 진입 간 순환은 core 예산에 넣지 않는다 — 예방은 C-10 문서, 게이트 PR-7(React 18·19 실행) | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-85) |
+| EVENT-071 | 로드가 아닌 쓰기(`setValue(V)` 포함)의 Refresh는 원본이 실제로 바뀐 노드에만(쓴 입력 제외) — "값이 같아도 낸다"는 로드의 새 수명만 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-94) |
+| EVENT-072 | `resetSubtree()`에 걸린 로드 규칙(로드 뒤 검증, `batch` 안의 즉시 정착, 한 로드에 한 번, 로드마다 다시 만듦)은 그 하위 트리에만 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-101) |
 
 ## 항목
 
@@ -151,6 +163,8 @@
 - 닫은 사람: 편집자 결정(4라운드, `reviews/round-4.md:141` F20), 편집자 결정(10라운드 5차 본문, `07-conclusions.md:96`·`adr/0008-event-system.md:13`)
 - 라운드: 10
 - 까닭: `adr/0008-event-system.md:64`
+- 충돌:
+  > `adr/0008-event-system.md:64`의 "(이번 커밋에서 `local`·`emit`·`diagnostics`가 바뀐 노드) ∪ (시그널 비트가 대기 중인 노드) ∪ (**활성 여부가 바뀐 노드**, 값이 같아도) ∪ (**유효 스키마가 바뀐 노드**, 값이 같아도)"는 18라운드 결정과 다르다: 배달 집합에 (이번 커밋에서 상호작용 상태가 바뀐 노드)와 (이번 커밋에서 경로가 바뀐 노드)가 더해진다(EVENT-066). 18라운드 결정이 이긴다(`reviews/round-18-closing.md:2198,2211`).
 
 ### EVENT-007 디스패처 규칙 3 — revision 원장은 커밋 시 배달 집합 전체를 한 번에 올림
 
@@ -179,11 +193,19 @@
   > 소유자(10라운드 A-4): "루프의 가능성을 제한하지는 않는다. 이때문에 순환된 값이 진동하거나 발산할 수 있으며, 이를 막기 위한 상한값이 있고, 그 상한값을 초과하면 적절한 error 를 표시한다. 이는 react 의 hook 과 동일한 설계를 갖는다." (`reviews/round-10-owner-answers.md:10`)
   > "소유자: "루프의 가능성을 제한하지는 않는다. … 그 상한값을 초과하면 적절한 error를 표시한다. 이는 react의 hook과 동일한 설계를 갖는다." 그리고 "구태여 막지 않을 뿐이지 루프를 만드는 걸 권하는 설계는 절대 아니다."" (`adr/0008-event-system.md:102`)
   > 소유자(2라운드, 상한에 걸렸을 때): ""상한 초과가 되면 쓰기가 막히나? 값은 들어가고 유효성 검증 오류가 나는 것 아닌가."" (`reviews/round-2.md:116`)
+  > 편집자 결정(18C-14): "【추론】 함수 안의 쓰기: 다른 노드에 쓰는 정해진 길은 반환이다." (`reviews/round-18-closing.md:405`)
+  > 편집자 결정(18C-14): "【추론】 함수 안에서 폼의 공개 쓰기 API(`setValue`·`push`·`pop`·`update`·`remove`·`clear`·`batch`, EVENT-027)를 부르면 리스너 되먹임 쓰기와 같게 다룬다." (`reviews/round-18-closing.md:406`)
+  > 편집자 결정(18C-14): "【추론】 그 쓰기를 오류로 막지 않는다." (`reviews/round-18-closing.md:407`)
+  > 편집자 결정(18C-14): "【추론】 바깥 쓰기가 호출 스택에 있으므로 새 진입이 아니라 안쪽 진입이다(EVENT-027)." (`reviews/round-18-closing.md:408`)
+  > 편집자 결정(18C-14): "【추론】 그 쓰기는 지금 파동이 끝난 뒤에 돈다." (`reviews/round-18-closing.md:409`)
+  > 편집자 결정(18C-14): "【추론】 리스너 되먹임과 같은 되먹임 예산(최외곽 진입의 되먹임 사슬당 25, EVENT-008)에 든다." (`reviews/round-18-closing.md:410`)
+  > 편집자 결정(18C-14): "【추론】 넘으면 되먹임 초과와 같게 사슬 끝에서 던진다((가칭) `SCHEMA_FORM_ERROR.FEEDBACK_LIMIT_EXCEEDED`, `adr/0014-error-policy.md:271`)." (`reviews/round-18-closing.md:411`)
+  > 편집자 결정(18C-14): "【추론】 정착 중에 사용자 코드가 쓰는 장치는 이것 하나다(G4)." (`reviews/round-18-closing.md:412`)
 - 상태: 현행
-- 출처: `adr/0008-event-system.md:61-62,66,72,74`(정본), `06-conclusions.md:154-161`, `07-conclusions.md:93`, `08-design-a-to-z.md:248`, `reviews/round-4.md:136`
-- 닫은 사람: 원리(`reviews/round-10-owner-answers.md:10` A-4, 상한을 두고 넘으면 오류로 알린다는 원칙), 편집자 결정(4라운드, `reviews/round-4.md:136` F15, 마지막 파동을 한 번 더 배달하고 되먹임만 거부), 편집자 결정(06 도출 D-17, `06-conclusions.md:158`; 10라운드 5차 본문 `adr/0008-event-system.md:13`·`07-conclusions.md:93`)
-- 라운드: 10
-- 까닭: `06-conclusions.md:157-159`, `adr/0008-event-system.md:74`
+- 출처: `adr/0008-event-system.md:61-62,66,72,74`(정본), `06-conclusions.md:154-161`, `07-conclusions.md:93`, `08-design-a-to-z.md:248`, `reviews/round-4.md:136`, `reviews/round-18-closing.md:405-412`
+- 닫은 사람: 원리(`reviews/round-10-owner-answers.md:10` A-4, 상한을 두고 넘으면 오류로 알린다는 원칙), 편집자 결정(4라운드, `reviews/round-4.md:136` F15, 마지막 파동을 한 번 더 배달하고 되먹임만 거부), 편집자 결정(06 도출 D-17, `06-conclusions.md:158`; 10라운드 5차 본문 `adr/0008-event-system.md:13`·`07-conclusions.md:93`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-14)
+- 라운드: 18
+- 까닭: `06-conclusions.md:157-159`, `adr/0008-event-system.md:74`, `reviews/round-18-closing.md:416-423`
 - 충돌:
   > `adr/0008-event-system.md:66`의 "`diagnostics`에 `listenerFeedback` 예산 초과를 적는다(§8)"는 되먹임 파동의 초과를 `diagnostics`에 남긴다. 17라운드 규칙과 다르다. 17라운드 규칙이 이긴다(`adr/0008-event-system.md:97`의 "되먹임 파동과 `onChange` 중첩의 초과는 `diagnostics`에 남기지 않는다(ADR 0014 4판의 코드 목록)", `adr/0008-event-system.md:178`, `adr/0014-error-policy.md:207`).
   > `adr/0008-event-system.md:193`의 "리스너 되먹임만 거부하고 신호"는 되먹임 초과의 신호를 남기던 5차 규칙이다. 17라운드 규칙이 이긴다(`adr/0014-error-policy.md:207`).
@@ -243,12 +265,14 @@
 
 - 결정:
   > `batch(fn)`은 fn 안의 쓰기를 표시만 하고, fn이 끝날 때 정착 한 번·파동 한 번을 낸다.
-- 보충: 없음
+- 보충:
+  > 편집자 결정(18C-20): "【추론】 updater의 `prev`는 직전 커밋에, 이 배치에서 앞서 표시된 쓰기 가운데 그 노드의 서브트리에 닿은 것을 순서대로 얹은 값이다." (`reviews/round-18-closing.md:612`)
+  > 편집자 결정(18C-20): "【추론】 `fn` 안의 평범한 읽기(`value`, `outputValue`, `inactiveValues`, `FormHandle.getValue()`)는 여전히 직전 커밋을 돌려준다." (`reviews/round-18-closing.md:623`)
 - 상태: 현행
-- 출처: `adr/0008-event-system.md:80#1`(정본), `adr/0008-event-system.md:36`
-- 닫은 사람: 편집자 결정(4라운드, 실행 검증을 통과한 제안, `adr/0008-event-system.md:3`)
-- 라운드: 4
-- 까닭: `adr/0008-event-system.md:36`
+- 출처: `adr/0008-event-system.md:80#1`(정본), `adr/0008-event-system.md:36`, `reviews/round-18-closing.md:612,623`
+- 닫은 사람: 편집자 결정(4라운드, 실행 검증을 통과한 제안, `adr/0008-event-system.md:3`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-20)
+- 라운드: 18
+- 까닭: `adr/0008-event-system.md:36`, `reviews/round-18-closing.md:642-648`
 
 ### EVENT-014 중첩 batch는 가장 바깥이 이긴다
 
@@ -267,11 +291,12 @@
   > `fn` 안의 `reset`은 경로와 무관하게 그 로드를 곧바로 정착한다(로드는 새 수명이라 앞서 표시된 쓰기를 덮고, 재생성 경로에서는 새 루트를 세우는 정착이다). `fn`의 나머지 쓰기 묶음은 그대로 끝에서 정착 한 번이며, `reset`의 커밋은 따로 파동을 내지 않고 `fn` 끝의 파동 한 번에 합류하며(두 커밋에서 바뀐 노드의 payload는 §4의 체인을 따른다. 리스너 안의 `reset`은 §2 규칙 4대로 다음 파동에 든다), 검증 요청과 `onChange`는 바깥 최외곽 진입의 끝에서 낸다(§5의 예외, 09 §2.6의 열째, 16라운드 스웜 수렴(편집자 결정)).
 - 보충:
   > "`batch(fn)`·`onChange`·리스너 안의 reset은 경로와 무관하게 그 로드를 호출 안에서 곧바로 정착한다(로드는 새 수명이라 앞서 표시된 쓰기를 덮는다)" (`09-landing-and-test-strategy.md:90`)
+  > 편집자 결정(18C-101): "【추론】 `batch` 안의 로드를 곧바로 정착하는 규칙(EVENT-015)은 `resetSubtree()`에는 그 하위 트리에만 적용한다." (`reviews/round-18-closing.md:2849`)
 - 상태: 현행
-- 출처: `adr/0008-event-system.md:80#3-5`(정본), `adr/0008-event-system.md:8`, `09-landing-and-test-strategy.md:90`
-- 닫은 사람: 16라운드 스웜 수렴(편집자 결정, `09-landing-and-test-strategy.md:79,90`)
-- 라운드: 16
-- 까닭: `09-landing-and-test-strategy.md:90`
+- 출처: `adr/0008-event-system.md:80#3-5`(정본), `adr/0008-event-system.md:8`, `09-landing-and-test-strategy.md:90`, `reviews/round-18-closing.md:2849`
+- 닫은 사람: 16라운드 스웜 수렴(편집자 결정, `09-landing-and-test-strategy.md:79,90`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-101)
+- 라운드: 18
+- 까닭: `09-landing-and-test-strategy.md:90`, `reviews/round-18-closing.md:2853-2855`
 
 ### EVENT-016 리스너 안의 batch는 자기 배치이며 리스너 되먹임으로 센다
 
@@ -335,6 +360,8 @@
 - 닫은 사람: 편집자 결정(06 N4, 10라운드 5차 본문 `adr/0008-event-system.md:13`), 편집자 결정(17라운드, ADR 0014 4판 채택)
 - 라운드: 17
 - 까닭: `adr/0008-event-system.md:87`
+- 충돌:
+  > `adr/0008-event-system.md:87`의 "17라운드에 정착의 세 예산만 남겼다"는 18라운드 결정과 다르다: 재귀 펼침의 멈춤이 `exceededBudget` 값 (가칭) `'recursion'`을 더한다(ERROR-190). 18라운드 결정이 이긴다(`reviews/round-18-closing.md:28`).
 
 ### EVENT-021 예산 초과 시의 진행 — 커밋 → 검증 요청 → onChange, 예외는 onChange 중첩 하나
 
@@ -460,23 +487,27 @@
 
 - 결정:
   > emit 참조가 바뀌지 않은 쓰기는 `onChange`도 검증 요청도 내지 않는다.
-- 보충: 없음
+- 보충:
+  > 편집자 결정(18C-50): "【추론】 새로 만든 것이 직전 커밋의 것과 키 목록(순서 포함)도 같고 키마다의 자식 `emit` 참조도 같으면 직전 참조를 둔다(얕은 비교, 재계산 목록의 호스트만)." (`reviews/round-18-closing.md:1386`)
+  > 편집자 결정(18C-50): "【추론】 그래서 EVENT-031·EVENT-006의 "emit 참조가 바뀜"은 "방출 값이 바뀜"과 같아진다." (`reviews/round-18-closing.md:1387`)
+  > 편집자 결정(18C-50): "【추론】 `onChange`·배달·검증 요청은 참조 비교만으로 값 비교를 따른다." (`reviews/round-18-closing.md:1388`)
 - 상태: 현행
-- 출처: `adr/0008-event-system.md:116#9`(정본), `adr/0008-event-system.md:128,157`
-- 닫은 사람: 편집자 결정(10라운드 5차 본문, `adr/0008-event-system.md:13`)
-- 라운드: 10
-- 까닭: `adr/0008-event-system.md:157`
+- 출처: `adr/0008-event-system.md:116#9`(정본), `adr/0008-event-system.md:128,157`, `reviews/round-18-closing.md:1386-1388`
+- 닫은 사람: 편집자 결정(10라운드 5차 본문, `adr/0008-event-system.md:13`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-50)
+- 라운드: 18
+- 까닭: `adr/0008-event-system.md:157`, `reviews/round-18-closing.md:1405-1411`
 
 ### EVENT-032 reset의 검증 요청 예외 — emit 참조가 그대로여도 OnChange 비트면 한 번
 
 - 결정:
   > 예외 하나: `reset`은 검증 결과를 비운 뒤 로드하므로 `ValidationMode`의 `OnChange` 비트가 켜져 있으면 emit 참조가 그대로여도 검증을 한 번 요청한다. `onChange`는 이 예외에 들지 않는다(09 §2.6의 아홉째, 16라운드 스웜 수렴(편집자 결정)).
-- 보충: 없음
+- 보충:
+  > 편집자 결정(18C-101): "【추론】 로드 뒤 `OnChange` 비트면 한 번 하는 검증(LANDING-041, ERROR-040, EVENT-032)은 `resetSubtree()`에는 그 하위 트리에만 적용한다." (`reviews/round-18-closing.md:2848`)
 - 상태: 현행
-- 출처: `adr/0008-event-system.md:116#10-11`(정본), `adr/0008-event-system.md:8`, `09-landing-and-test-strategy.md:89`
-- 닫은 사람: 16라운드 스웜 수렴(편집자 결정, `09-landing-and-test-strategy.md:79,89`)
-- 라운드: 16
-- 까닭: `09-landing-and-test-strategy.md:89`
+- 출처: `adr/0008-event-system.md:116#10-11`(정본), `adr/0008-event-system.md:8`, `09-landing-and-test-strategy.md:89`, `reviews/round-18-closing.md:2848`
+- 닫은 사람: 16라운드 스웜 수렴(편집자 결정, `09-landing-and-test-strategy.md:79,89`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-101)
+- 라운드: 18
+- 까닭: `09-landing-and-test-strategy.md:89`, `reviews/round-18-closing.md:2853-2855`
 
 ### EVENT-033 onChange 안의 쓰기는 새 진입
 
@@ -548,11 +579,11 @@
   > "**명령 publish의 공개 API화**(C-11) — 소유자 확정 대기. `FormHandle`의 표면과 `publish`의 공개 타입을 함께 정해야 한다." (`adr/0008-event-system.md:206`)
   > "오늘의 사실(검증자 실측, `reviews/round-5-derivations.md` §1 C-11): 소비자는 `Refresh`도 `Remount`도 타입상 publish하지 못한다 — `AbstractNode.ts:891`의 `publish`가 내부 타입만 받고 사내 테스트조차 `as any`로 우회한다." (`adr/0008-event-system.md:144`)
   > ""Refresh는 비공개, Remount만 공개"라는 전제는 절반이 틀렸다." (`adr/0008-event-system.md:144`)
-- 상태: 열림(→ `reviews/round-18-agenda.md:87` §7)
-- 출처: `adr/0008-event-system.md:146`(정본), `adr/0008-event-system.md:3,206`, `reviews/round-5-derivations.md:22`, `03-mental-model.md:172`
-- 닫은 사람: 편집자 결정(5라운드 도출 C-11, 소유자 확정 대기, `reviews/round-5-derivations.md:22`)
-- 라운드: 5
-- 까닭: `adr/0008-event-system.md:144`
+- 상태: 대체됨(→ EVENT-063)
+- 출처: `adr/0008-event-system.md:146`(정본), `adr/0008-event-system.md:3,206`, `reviews/round-5-derivations.md:22`, `03-mental-model.md:172`, `reviews/round-18-closing.md:1182-1191`
+- 닫은 사람: 편집자 결정(5라운드 도출 C-11, 소유자 확정 대기, `reviews/round-5-derivations.md:22`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-42)
+- 라운드: 18
+- 까닭: `adr/0008-event-system.md:144`, `reviews/round-18-closing.md:1193-1196`
 - 충돌:
   > `03-mental-model.md:172`의 "명령(`focus`·`select`·`refresh`·`remount`)은 공개 API (D-9)"는 `refresh`·`remount`의 publish까지 공개 API로 적는다. D-9는 `RequestRemount`를 공개 명령으로 남긴 답이고, 명령 publish의 공개 API화는 소유자 확정 대기다. 정본이 이긴다(`adr/0008-event-system.md:146`).
 
@@ -568,6 +599,8 @@
 - 닫은 사람: 편집자 결정(5라운드 도출 C-11, `reviews/round-5-derivations.md:22`), 16라운드 스웜 수렴(편집자 결정, `09-landing-and-test-strategy.md:79,85`)
 - 라운드: 16
 - 까닭: `reviews/round-5-derivations.md:22`
+- 충돌:
+  > `adr/0008-event-system.md:150`의 "로드(`reset`, `setValue(V)`)"는 소유자 답과 다르다: `setValue(V)`는 로드가 아니라 전체 교체 쓰기이고, 로드는 마운트·`FormHandle.reset()`·`resetSubtree()`뿐이다(WRITE-090). 소유자 답이 이긴다(`reviews/round-18-owner-answers.md:26`).
 
 ### EVENT-040 명령 표 — RequestRemount가 하는 일, 버리는 것, 범위
 
@@ -654,6 +687,8 @@
 - 닫은 사람: 소유자 답(`reviews/round-16-owner-answers.md:9` 3)
 - 라운드: 16
 - 까닭: `09-landing-and-test-strategy.md:58`
+- 충돌:
+  > `09-landing-and-test-strategy.md:64`의 "비트는 슬라이스 4에서 정한다"는 18라운드 결정과 다르다: 유효 스키마 변경의 비트는 `UpdateJsonSchema`(가칭)다(EVENT-064). 18라운드 결정이 이긴다(`reviews/round-18-closing.md:1442-1446`).
 
 ### EVENT-046 배달 경로 — 검증 결과는 스탬프를 검사한 뒤 자기 파동으로
 
@@ -686,11 +721,11 @@
 - 결정:
   > - **유효 스키마 변경 통지의 표면** — §2 규칙 2가 배달하는 유효 스키마 변경을 어느 이벤트 타입과 payload로 싣는지(`03-mental-model.md` §6, `07-conclusions.md` §11.2).
 - 보충: 없음
-- 상태: 열림(→ `reviews/round-18-agenda.md:108` §9)
-- 출처: `adr/0008-event-system.md:202`(정본), `reviews/round-18-agenda.md:108`
-- 닫은 사람: 편집자 결정(17라운드, 18라운드 안건으로 이관)
-- 라운드: 17
-- 까닭: `adr/0008-event-system.md:202`
+- 상태: 대체됨(→ EVENT-064)
+- 출처: `adr/0008-event-system.md:202`(정본), `reviews/round-18-agenda.md:108`, `reviews/round-18-closing.md:1442-1460`
+- 닫은 사람: 편집자 결정(17라운드, 18라운드 안건으로 이관), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-52)
+- 라운드: 18
+- 까닭: `adr/0008-event-system.md:202`, `reviews/round-18-closing.md:1462-1465`
 
 ### EVENT-049 상태 칸 변경의 배달 — ADR 0008이 적지 않은 것
 
@@ -699,55 +734,55 @@
 - 보충:
   > "정착을 거치지 않는 사건이다. 같은 루트 디스패처가 **같은 진입 규칙**으로 배달한다. 최외곽 진입의 끝에서 한 번" (`09-landing-and-test-strategy.md:62`)
   > "예약 층의 `controls.resetInteraction`(옛 `&pristine`)은 원본이 아니라 상태 칸을 초기화하며, 그 판정은 정착의 **커밋**에서 한다(`03-mental-model.md` §4)." (`adr/0008-event-system.md:76`)
-- 상태: 열림(→ `reviews/round-18-agenda.md:146` 11-15)
-- 출처: `adr/0008-event-system.md:203`(정본), `09-landing-and-test-strategy.md:62`
-- 닫은 사람: 편집자 결정(10라운드 5차 본문의 미결, `adr/0008-event-system.md:203`)
-- 라운드: 10
-- 까닭: `adr/0008-event-system.md:203`
+- 상태: 분할됨(→ EVENT-066, EVENT-067)
+- 출처: `adr/0008-event-system.md:203`(정본), `09-landing-and-test-strategy.md:62`, `reviews/round-18-closing.md:2195-2201`
+- 닫은 사람: 편집자 결정(10라운드 5차 본문의 미결, `adr/0008-event-system.md:203`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-82)
+- 라운드: 18
+- 까닭: `adr/0008-event-system.md:203`, `reviews/round-18-closing.md:2203-2205`
 
 ### EVENT-050 실제 브라우저의 IME 확인
 
 - 결정:
   > - **실제 브라우저의 IME 확인** — 스파이크는 `fireEvent`로 조합 3단계를 흉내 냈고, jsdom은 조합 중 프로그램적 value 쓰기가 조합을 취소하는 브라우저 동작을 모델링하지 않는다(`spikes/events/REPORT-caret.txt` §4).
 - 보충: 없음
-- 상태: 열림(→ `reviews/round-18-agenda.md:111` §9)
-- 출처: `adr/0008-event-system.md:205`(정본), `reviews/round-18-agenda.md:111`
-- 닫은 사람: 편집자 결정(17라운드, 18라운드 안건으로 이관)
-- 라운드: 17
-- 까닭: `adr/0008-event-system.md:205`
+- 상태: 대체됨(→ EVENT-065)
+- 출처: `adr/0008-event-system.md:205`(정본), `reviews/round-18-agenda.md:111`, `reviews/round-18-closing.md:1768-1772,1778-1787`
+- 닫은 사람: 편집자 결정(17라운드, 18라운드 안건으로 이관), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-63)
+- 라운드: 18
+- 까닭: `adr/0008-event-system.md:205`, `reviews/round-18-closing.md:1774-1776`
 
 ### EVENT-051 UpdatePath — 배열 재인덱싱 시 경로 변경 통지
 
 - 결정:
   > - **`UpdatePath`** — 배열 재인덱싱 시 경로 변경 통지. 노드 identity와 경로의 대응은 새 구조에서도 남는다(ADR 0011).
 - 보충: 없음
-- 상태: 열림(→ `reviews/round-18-agenda.md:147` 11-16)
-- 출처: `adr/0008-event-system.md:207`(정본)
-- 닫은 사람: 편집자 결정(10라운드 5차 본문의 미결, `adr/0008-event-system.md:207`)
-- 라운드: 10
-- 까닭: `adr/0008-event-system.md:207`
+- 상태: 분할됨(→ EVENT-066, EVENT-068)
+- 출처: `adr/0008-event-system.md:207`(정본), `reviews/round-18-closing.md:2211-2216`
+- 닫은 사람: 편집자 결정(10라운드 5차 본문의 미결, `adr/0008-event-system.md:207`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-83)
+- 라운드: 18
+- 까닭: `adr/0008-event-system.md:207`, `reviews/round-18-closing.md:2218-2220`
 
 ### EVENT-052 globalState — OR 누적을 이번 개편에서 고칠지
 
 - 결정:
   > - **`globalState`** — 현재는 OR 누적이어서 내릴 수 없고 출처를 알 수 없다. 이번 개편에서 함께 고칠지.
 - 보충: 없음
-- 상태: 열림(→ `reviews/round-18-agenda.md:86` §7)
-- 출처: `adr/0008-event-system.md:208`(정본), `reviews/round-18-agenda.md:86`, `01-current-structure.md:80`
-- 닫은 사람: 편집자 결정(17라운드, 18라운드 안건으로 이관)
-- 라운드: 17
-- 까닭: `01-current-structure.md:80`
+- 상태: 대체됨(→ EVENT-062)
+- 출처: `adr/0008-event-system.md:208`(정본), `reviews/round-18-agenda.md:86`, `01-current-structure.md:80`, `reviews/round-18-closing.md:1155-1171`
+- 닫은 사람: 편집자 결정(17라운드, 18라운드 안건으로 이관), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-41)
+- 라운드: 18
+- 까닭: `01-current-structure.md:80`, `reviews/round-18-closing.md:1173-1176`
 
 ### EVENT-053 C-10의 문서 자리 — 어느 문서가 소유하는지
 
 - 결정:
   > - **C-10의 문서 자리** — "파생 값은 이펙트가 아니라 `controls.derived`/`controls.injectTo`/스토어 리스너로 쓴다"를 어느 문서가 소유하는지(README인가 마이그레이션 안내인가).
 - 보충: 없음
-- 상태: 열림(→ `reviews/round-18-agenda.md:148` 11-17)
-- 출처: `adr/0008-event-system.md:209`(정본)
-- 닫은 사람: 편집자 결정(10라운드 5차 본문의 미결, `adr/0008-event-system.md:209`)
-- 라운드: 10
-- 까닭: `adr/0008-event-system.md:138`
+- 상태: 대체됨(→ EVENT-069)
+- 출처: `adr/0008-event-system.md:209`(정본), `reviews/round-18-closing.md:2226-2229`
+- 닫은 사람: 편집자 결정(10라운드 5차 본문의 미결, `adr/0008-event-system.md:209`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-84)
+- 라운드: 18
+- 까닭: `adr/0008-event-system.md:138`, `reviews/round-18-closing.md:2231-2231`
 
 ### EVENT-054 React 이펙트를 거친 진입 간 순환이 React 자체 한도에 막히는지
 
@@ -756,11 +791,11 @@
 - 보충:
   > "| D-17 React 이펙트 순환이 React 자체 한도에 막히는가 | 그대로 |" (`07-conclusions.md:397`)
   > "| D-17 React 이펙트 순환 | 4.6에서 진입 사슬 단위로 바꾼 뒤, React 이펙트를 거친 진입 간 순환이 React 자체 한도에 막히는가 | 이벤트 스파이크에 이펙트 되먹임 사례 추가 | 막히면 코어 예산에서 제외 |" (`06-conclusions.md:402`)
-- 상태: 열림(→ `reviews/round-18-agenda.md:149` 11-18)
-- 출처: `06-conclusions.md:161#2`(정본), `06-conclusions.md:402`, `07-conclusions.md:397`
-- 닫은 사람: 편집자 결정(06 도출 D-17의 남는 것, `06-conclusions.md:161`)
-- 라운드: 9
-- 까닭: `06-conclusions.md:161`
+- 상태: 대체됨(→ EVENT-070)
+- 출처: `06-conclusions.md:161#2`(정본), `06-conclusions.md:402`, `07-conclusions.md:397`, `reviews/round-18-closing.md:2237-2239,2244-2250`
+- 닫은 사람: 편집자 결정(06 도출 D-17의 남는 것, `06-conclusions.md:161`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-85; PR-7 게이트 조건부)
+- 라운드: 18
+- 까닭: `06-conclusions.md:161`, `reviews/round-18-closing.md:2241-2242`
 
 ### EVENT-055 대체됨: 예산 초과 시 개발 모드의 throw는 최외곽 진입 끝에서
 
@@ -831,12 +866,252 @@
   > 나. 출처 칸을 둔다. 이름과 값 목록은 편집자가 정한다(통지는 사실만 싣는다: 쓰기 종류의 출처 — 입력·자동 쓰기(derived·injectTo·default 채움·trim)·로드). 소유자가 든 쓰임은 derived가 발화한 입력을 다르게 표시하는 것이다.
 - 보충:
   > 소유자(12-5 답): "source 를 저장하는건 문제 없습니다. 다만, 사용자가 이걸 쓸 일이 있을지는 모르겠군요. 오히려 dirved 가 발화된 경우, input에 다른 표시를 하거나 하는 등에는 쓸 수 있겠습니다만. 아무튼 이 통지에 옵션을 추가하는건 문제 없습니다" (`reviews/round-18-owner-answers.md:15`)
+  > 편집자 결정(18C-100): "【추론】 쓰기 종류의 목록(VALUE-032)과 `UpdateValue` 출처 칸의 값(EVENT-060)에 '호출자 전체 교체'(`setValue(V)`)를 더한다." (`reviews/round-18-closing.md:2834`)
 - 상태: 현행
-- 출처: `reviews/round-18-owner-answers.md:15`(정본, 12-5의 반영 칸. 표 행이라 조각 번호로 나눌 수 없다)
-- 닫은 사람: 소유자 답(`reviews/round-18-owner-answers.md:15` 12-5), 편집자 결정(18라운드, `reviews/round-18-owner-answers.md:15` 반영 칸; 이름과 값 목록)
+- 출처: `reviews/round-18-owner-answers.md:15`(정본, 12-5의 반영 칸. 표 행이라 조각 번호로 나눌 수 없다), `reviews/round-18-closing.md:2834`
+- 닫은 사람: 소유자 답(`reviews/round-18-owner-answers.md:15` 12-5), 편집자 결정(18라운드, `reviews/round-18-owner-answers.md:15` 반영 칸; 이름과 값 목록), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-100)
 - 라운드: 18
-- 까닭: `reviews/round-18-owner-answers.md:15`
+- 까닭: `reviews/round-18-owner-answers.md:15`, `reviews/round-18-closing.md:2836-2837`
 - 충돌:
   > `08-design-a-to-z.md:531`의 "O-3(출처 필드는 더하지 않음)"은 소유자 답과 다르다. 소유자 답이 이긴다(`reviews/round-18-owner-answers.md:15`).
   > `08-design-a-to-z.md:382`의 "공개 payload에는 출처를 더하지 않는다(14라운드: 니즈가 약하다. 필요하면 나중에 더한다)"는 소유자 답과 다르다. 소유자 답이 이긴다(`reviews/round-18-owner-answers.md:15`).
   > `reviews/round-14-values-check.md:108`의 "O-3은 출처 필드를 더하지 않음"은 소유자 답과 다르다. 소유자 답이 이긴다(`reviews/round-18-owner-answers.md:15`).
+
+### EVENT-061 `batch(fn)` 안의 updater는 부른 자리에서 실행되어 앞선 표시를 이어 받고(던지면 `fn`의 예외), 평범한 읽기는 직전 커밋을 돌려준다
+
+- 결정:
+  > 【추론】 `batch(fn)` 안에서 updater는 이어진다.
+  > 【추론】 같은 노드에 `setValue(p => p + 1)`을 두 번 부르면 2가 더해진다.
+  > 【추론】 updater 꼴이 호출자에게 기대하게 하는 결과다.
+  > 【추론】 updater의 `prev`는 직전 커밋에, 이 배치에서 앞서 표시된 쓰기 가운데 그 노드의 서브트리에 닿은 것을 순서대로 얹은 값이다.
+  > 【추론】 잎의 `prev`는 이 배치에서 그 노드에 마지막으로 표시된 원본(`interpret`를 지난 값)이다.
+  > 【추론】 표시가 없으면 직전 커밋이다.
+  > 【추론】 가지의 `prev`는 커밋된 값에 그 서브트리의 표시들을 경로별로 덮어 얹은 값이다.
+  > 【추론】 정착의 의미는 적용하지 않는다.
+  > 【추론】 채움, `derived`, 투영은 `prev`에 들지 않고, `fn`이 끝난 뒤 정착에서 한 번 적용된다.
+  > 【추론】 updater는 부른 자리에서, 그 쓰기를 표시하는 동안 실행된다.
+  > 【추론】 정착 때 실행하지 않는다.
+  > 【추론】 updater가 던지면 그것은 `fn`의 예외다.
+  > 【추론】 ADR 0014의 진입 규칙대로 모아 두었다가 사슬 머리가 끝날 때 던진다(`adr/0014-error-policy.md:49`).
+  > 【추론】 정착 오류가 되지 않는다.
+  > 【추론】 `fn` 안의 평범한 읽기(`value`, `outputValue`, `inactiveValues`, `FormHandle.getValue()`)는 여전히 직전 커밋을 돌려준다.
+  > 【추론】 읽기는 계산하지 않기 때문이다(VALUE-013).
+  > 【추론】 가지의 덮어 얹기는 updater라는 쓰기의 일부이며 읽기가 아니다.
+  > 【추론】 `batch` 밖에서는 두 규칙이 겹친다.
+  > 【추론】 쓰기마다 정착하므로 `prev`는 직전 커밋, 곧 `value`다.
+  > 【추론】 그래서 SURFACE-031의 "`prev`는 `value`다"는 `batch` 밖에서 그대로 맞고, `batch(fn)` 안에서는 이 블록의 규칙이 이긴다.
+  > 【추론】 `fn` 안에서 `reset`을 부르면 그 로드는 호출 안에서 곧바로 정착하고, 앞서 표시된 쓰기를 덮는다(`09-landing-and-test-strategy.md:90`).
+  > 【추론】 그래서 그 뒤의 읽기와 updater의 기준은 reset의 커밋이다.
+  > 【추론】 비용은 `batch` 안에서 updater를 부를 때만 든다.
+  > 【추론】 잎은 원본 하나를 읽는다.
+  > 【추론】 가지는 그 서브트리에 앞서 표시된 경로 수에 비례하는 조립이 든다.
+  > 【추론】 평범한 읽기와 `batch` 밖의 쓰기에는 새 비용이 없다.
+  > 【추론】 `batch` 문서 주석에 다음을 적는다: "fn 안의 쓰기는 표시만 되고 fn이 끝날 때 한 번 정착한다. fn 안의 updater `setValue(prev => …)`는 부른 자리에서 실행되고, 앞선 쓰기를 반영한 `prev`를 받아 이어진다(같은 노드에 +1을 두 번 하면 +2). updater가 던지면 fn의 예외로 다뤄진다. 그 밖의 읽기(`value`·`outputValue`·`inactiveValues`·`getValue()`)는 직전 커밋을 돌려준다. 채움·`derived`·투영은 정착에서 적용되므로 `prev`에 들지 않는다. 채움과 `injectTo` 때문에 배치의 결과는 순차 호출과 다를 수 있다."
+- 보충: 없음
+- 상태: 현행
+- 출처: `reviews/round-18-closing.md:609-635`(정본)
+- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-20)
+- 라운드: 18
+- 까닭: `reviews/round-18-closing.md:642-648`
+- 충돌:
+  > `06-conclusions.md:358`의 "`setValue(updater)`는 유지하고 `prev`는 `value`다."는 `batch(fn)` 안에서는 18라운드 결정과 다르다: 그 안에서 `prev`는 직전 커밋에 앞선 표시를 얹은 값이다. `batch` 밖에서는 그대로 맞는다. 18라운드 결정이 이긴다(`reviews/round-18-closing.md:628`).
+
+### EVENT-062 `globalState`는 형상 안 노드에서 유도한다 — 키별 참 노드 수, 값은 `true`, 0이면 키가 빠짐, 0↔1을 넘을 때만 새 객체와 `UpdateGlobalState`
+
+- 결정:
+  > 【추론】 `globalState`는 누적하지 않고 트리에서 유도한다.
+  > 【추론】 키 k가 참인 것은 형상에 있는 노드 가운데 하나라도 `state[k]`가 참인 때뿐이다.
+  > 【추론】 `globalState`는 참인 노드가 하나 이상인 키만 담고 값은 `true`다.
+  > 【추론】 수가 0이면 키가 빠진다.
+  > 【추론】 런타임은 키마다 참인 노드의 수를 든다.
+  > 【추론】 수는 노드 상태가 바뀔 때와 노드가 형상에 들고 날 때 O(1)로 고친다.
+  > 【추론】 어느 키의 수가 0과 1 사이를 넘을 때만 `globalState` 객체를 새로 짓고 `UpdateGlobalState`를 낸다.
+  > 【추론】 그 밖에는 같은 참조를 돌려준다.
+  > 【추론】 결과로 `dirty`가 내려간다.
+  > 【추론】 모든 노드의 `dirty`가 풀리거나 비루트 노드에서 `clearSubtreeState()`를 불러도 내려간다.
+- 보충: 없음
+- 상태: 현행
+- 출처: `reviews/round-18-closing.md:1160-1169`(정본)
+- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-41)
+- 라운드: 18
+- 까닭: `reviews/round-18-closing.md:1173-1176`
+
+### EVENT-063 명령 넷은 공개 노드 메서드 — `FormHandle`은 넷 모두 대칭, 공개 `publish` 없음
+
+- 결정:
+  > 【추론】 명령 넷은 공개 노드 메서드 `focus()`·`select()`·`refresh()`·`remount()`다.
+  > 【추론】 각 메서드는 그 노드에 요청 사건을 내는 문장 하나이고, 원본을 쓰지 않는다.
+  > 【추론】 배달은 EVENT-045·LANDING-076이다.
+  > 【추론】 `FormHandle`은 오늘의 `focus(path)`·`select(path)`에 `refresh(path)`·`remount(path)`를 대칭으로 더한다.
+  > 【추론】 넷 모두 `find(path)`한 노드의 메서드를 부르고, 노드가 없으면 아무것도 하지 않는다(오늘 `Form.tsx:147-150`과 같음).
+  > 【추론】 노드의 공개 `publish`와 publish용 공개 사건 형은 두지 않는다.
+  > 【추론】 명령이 대신한다.
+  > 【추론】 두 명령이 버리는 것은 EVENT-039·EVENT-040의 표가 적고, README(PR-8)가 옮긴다.
+  > 【추론】 노드 메서드는 PR-4(배달 경로)에서 겉면에 더하고 멤버 목록 시험과 08 §13 행을 함께 고친다.
+  > 【추론】 `FormHandle`의 둘은 PR-7이다.
+- 보충: 없음
+- 상태: 현행
+- 출처: `reviews/round-18-closing.md:1182-1191`(정본)
+- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-42)
+- 라운드: 18
+- 까닭: `reviews/round-18-closing.md:1193-1196`
+
+### EVENT-064 유효 스키마 변경 통지 `UpdateJsonSchema`(가칭) — 메모 참조가 마지막 통지와 다를 때, 생성 때는 없음, payload `{ previous, current }` 참조, 출처 칸 없음, 계산 상태 비트와 분리
+
+- 결정:
+  > 【추론】 유효 스키마 변경은 이벤트 타입 하나로 싣는다.
+  > 【추론】 가칭은 `UpdateJsonSchema`다(`UpdateValue`↔`value`처럼 공개 읽기 `node.jsonSchema`를 따른 이름).
+  > 【추론】 커밋에서 노드의 메모된 유효 스키마 참조가 그 노드에 마지막으로 통지한 것과 다를 때 켜진다.
+  > 【추론】 같은 덧씌움 집합이면 같은 참조이므로 참조 비교로 충분하다.
+  > 【추론】 EVENT-006 배달 집합의 "유효 스키마가 바뀐 노드" 항이 이 비트다.
+  > 【추론】 트리 생성(마운트·재생성)에서는 통지하지 않는다.
+  > 【추론】 같은 스키마의 reset·`setValue` 로드에서 바뀌면 통지한다.
+  > 【추론】 payload는 `{ previous, current }`이며 둘 다 유효 스키마 참조이고 복사하지 않는다.
+  > 【추론】 `previous`는 마지막으로 통지한 것이다(EVENT-024).
+  > 【추론】 개발 모드 `Object.freeze`는 payload 객체에만 한다.
+  > 【추론】 유효 스키마는 작성자 객체를 참조로 옮겨 쓸 수 있기 때문이다.
+  > 【추론】 출처 칸은 없다.
+  > 【추론】 12-5의 출처는 `UpdateValue`의 쓰기 출처이고, 유효 스키마 변경은 쓰기가 아니다.
+  > 【추론】 렌더 계층은 `SchemaNodeProxy`의 재렌더 마스크에 이 비트를 더한다.
+  > 【추론】 계산 상태(`active`·`visible`·`readOnly`·`disabled`·`watchValues`)의 비트와는 따로 둔다.
+  > 【추론】 오늘의 내부 `UpdateComputedProperties`(`src/core/types/event.ts:63`)가 계산 상태 쪽 비트다.
+- 보충: 없음
+- 상태: 현행
+- 출처: `reviews/round-18-closing.md:1442-1454,1458-1460`(정본)
+- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-52)
+- 라운드: 18
+- 까닭: `reviews/round-18-closing.md:1462-1465`
+- 충돌:
+  > `reviews/round-18-closing.md:1448`의 "같은 스키마의 reset·`setValue` 로드"는 소유자 답과 다르다: `setValue`는 로드가 아니라 전체 교체 쓰기이고, 로드는 마운트·`FormHandle.reset()`·`resetSubtree()`뿐이다(WRITE-090). 소유자 답이 이긴다(`reviews/round-18-owner-answers.md:26`).
+
+### EVENT-065 IME 조합의 동기 통지 확인 — 게이트 PR-7(스토리북 브라우저, 사람 확인 목록)
+
+- 결정:
+  > 통지는 입력 처리기 안에서 동기다(ADR 0008, 기존 규칙).
+  > PR: PR-7, 스토리북 브라우저 프로젝트(Chromium, TEST-024).
+  > 후보 방법은 CDP `Input.imeSetComposition`/`Input.insertText`로 한국어 조합 ㄱ→가→각을 내는 것이다.
+  > 대상: (a) 노드에 묶인 평범한 제어 입력, (b) 캐럿 기록을 하는 포매터 입력, (c) 조합 중에 Refresh가 도착한 입력.
+  > 사람이 한 번 확인하는 목록에 macOS Safari·Chrome의 한국어 IME를 둔다.
+  > 통과: 조합 단계마다 DOM 값이 IME 글과 같다.
+  > 통과: 조합 중 `value` 세터 호출이 0회다.
+  > 통과: `compositionend`가 한 번 오고, 그 뒤 노드 값이 최종 글이다.
+  > 통과: (c)에서는 조합 중인 글이 늦은 쓰기로 노드에 닿지 않는다(REACT-024).
+  > 실패: 먼저 바인딩 계층에서 고친다(조합 중에는 복원·Refresh로 인한 DOM 쓰기를 미룸).
+  > 실패: core의 통지 시점(ADR 0008 §1의 동기 통지)을 바꿔야만 풀리면 소유자에게 올린다.
+- 보충: 없음
+- 상태: 현행
+- 출처: `reviews/round-18-closing.md:1768,1778-1787`(정본)
+- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-63)
+- 라운드: 18
+- 까닭: `reviews/round-18-closing.md:1774-1776`
+
+### EVENT-066 배달 집합 규칙 2의 추가 항 — (이번 커밋에서 상호작용 상태가 바뀐 노드), (이번 커밋에서 경로가 바뀐 노드)
+
+- 결정:
+  > 【추론】 `controls.resetInteraction`이 커밋에서 바꾼 `dirty`·`touched`는 그 정착 파동의 배달 집합에 든다.
+  > 【추론】 ADR 0008 §2 규칙 2에 항 하나를 더하는 것이다: "(이번 커밋에서 상호작용 상태가 바뀐 노드)".
+  > 【추론】 커밋에서 경로가 바뀐 노드는 그 정착 파동의 배달 집합에 든다(규칙 2에 항 "(이번 커밋에서 경로가 바뀐 노드)"를 더한다).
+- 보충: 없음
+- 상태: 현행
+- 출처: `reviews/round-18-closing.md:2197-2198,2211`(정본)
+- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-82·18C-83)
+- 라운드: 18
+- 까닭: `reviews/round-18-closing.md:2203-2205`, `reviews/round-18-closing.md:2218-2220`
+
+### EVENT-067 `setState`의 상태 칸 변경은 정착 밖 사건 — 최외곽 진입 끝에 한 번, 비트 `UpdateState`, 같은 노드는 합쳐 한 번, `onStateChange` 한 번
+
+- 결정:
+  > 【추론】 `setState`가 바꾼 `dirty`·`touched`는 EVENT-045(16라운드 답 3)대로 정착을 거치지 않는 사건이다.
+  > 【추론】 같은 루트 디스패처가 같은 진입 규칙으로, 최외곽 진입의 끝에서 한 번 배달한다.
+  > 【추론】 비트는 오늘과 같은 `UpdateState`다.
+  > 【추론】 한 진입 안에서 두 경로가 같은 노드를 바꾸면 비트는 합쳐져 그 노드에 한 번 배달된다.
+  > 【추론】 `onStateChange`는 최외곽 진입의 끝에서 한 번 부른다.
+- 보충: 없음
+- 상태: 현행
+- 출처: `reviews/round-18-closing.md:2195-2196,2199-2201`(정본)
+- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-82)
+- 라운드: 18
+- 까닭: `reviews/round-18-closing.md:2203-2205`
+
+### EVENT-068 `UpdatePath` — payload `{ previous, current }`, 재인덱싱된 아이템의 자손 포함, 공개 이벤트 형 밖, 렌더 계층이 입력을 다시 그림
+
+- 결정:
+  > 【추론】 비트는 `UpdatePath`, payload는 오늘처럼 `{ previous, current }`다.
+  > 【추론】 재인덱싱된 아이템의 자손도 포함한다(오늘 `__updatePath__`의 재귀와 같다).
+  > 【추론】 오늘처럼 공개 이벤트 형(오늘 `NodeEventType`, 곧 `PublicNodeEventType` 여섯)에는 넣지 않는다.
+  > 【추론】 렌더 계층은 입력을 다시 그리는 사건 집합에 이 비트를 더한다.
+  > 【추론】 입력의 `path`·`name` prop과, 경로를 키로 쓰는 맵(첨부 파일 맵, `useChildNodeErrors`의 상태 맵)이 새 경로를 따라가게 하기 위해서다.
+- 보충: 없음
+- 상태: 현행
+- 출처: `reviews/round-18-closing.md:2212-2216`(정본)
+- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-83)
+- 라운드: 18
+- 까닭: `reviews/round-18-closing.md:2218-2220`
+
+### EVENT-069 C-10의 사용 규칙은 README가 소유 — 이주 안내에는 README를 가리키는 한 줄, 작성은 PR-8
+
+- 결정:
+  > 【추론】 "파생 값은 이펙트가 아니라 `controls.derived`/`controls.injectTo`/스토어 리스너로 쓴다"는 판과 무관한 사용 규칙이므로 README(와 `docs/QUICK_REFERENCE.md`·`docs/agents`의 `validation-and-state.md`)가 소유한다.
+  > 【추론】 이주 안내에는 한 줄만 두고 README를 가리킨다.
+  > 【추론】 그 한 줄은, 오늘 매크로태스크 디바운스가 가리던 "이펙트 쓰기면 키 입력당 `onChange` 2회"가 새 설계에서 드러난다는 점이다(LANDING-022 이주 19와 짝).
+  > 【추론】 작성은 PR-8이다.
+- 보충: 없음
+- 상태: 현행
+- 출처: `reviews/round-18-closing.md:2226-2229`(정본)
+- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-84)
+- 라운드: 18
+- 까닭: `reviews/round-18-closing.md:2231`
+
+### EVENT-070 React 이펙트를 거친 진입 간 순환은 core 예산에 넣지 않는다 — 예방은 C-10 문서, 게이트 PR-7(React 18·19 실행)
+
+- 결정:
+  > 【추론】 규칙은 지금 정한다.
+  > 【추론】 core의 예산은 진입 사슬 단위이고(EVENT-008), React 이펙트를 거친 순환은 매번 새 진입이라 core 예산에 넣지 않는다.
+  > 【추론】 예방은 C-10의 문서(18C-84)가 맡는다.
+  > PR: PR-7(React 18 실행 시험을 두는 PR, REACT-017).
+  > 무엇: 이벤트 스파이크(`spikes/events/`)에 이펙트 되먹임 사례를 더한다.
+  > 무엇: `useLayoutEffect`와 `useEffect`에서 `node.setValue`로 서로를 되쓰는 두 필드를 만들고, React 18과 19에서 각각 실행한다.
+  > 통과: 두 이펙트 모두에서 React가 순환을 끊는다(throw나 중단).
+  > 통과: 그러면 이 규칙을 그대로 둔다.
+  > 실패(특히 패시브 이펙트 순환이 개발 모드 경고만 내고 계속 도는 경우): core가 진입 간 순환 감지를 더할지 소유자에게 올린다.
+  > 실패: 이것은 core 예산의 단위를 바꾸는 일이라 편집자가 정하지 않는다.
+- 보충: 없음
+- 상태: 현행
+- 출처: `reviews/round-18-closing.md:2237-2239,2244-2250`(정본)
+- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-85)
+- 라운드: 18
+- 까닭: `reviews/round-18-closing.md:2241-2242`
+
+### EVENT-071 로드가 아닌 쓰기(`setValue(V)` 포함)의 Refresh는 원본이 실제로 바뀐 노드에만(쓴 입력 제외) — "값이 같아도 낸다"는 로드의 새 수명만
+
+- 결정:
+  > 【추론】 로드가 아닌 쓰기(`setValue(V)` 포함)는 ADR 0007 §3대로 원본이 실제로 바뀐 노드에만 Refresh를 내고, 쓴 입력 자신은 제외한다.
+  > 【추론】 "값이 같아도 낸다"는 로드의 새 수명에만 해당한다.
+  > PR: PR-2(정착의 Refresh 대상)·PR-7(입력의 다시 마운트)
+  > 무엇: 입력 중에 리스너가 `setValue(getValue())`를 부르는 장면과, 잎 하나만 바꾼 `setValue(V)`에서 `RequestRefresh`를 받는 노드를 센다.
+  > 통과: 앞 장면은 0회, 뒤 장면은 바뀐 잎만 1회이며, 캐럿과 IME 상태가 남는다.
+  > 실패: 원본이 바뀌지 않은 노드가 Refresh를 받으면 정착의 Refresh 대상을 고친다.
+- 보충: 없음
+- 상태: 현행
+- 출처: `reviews/round-18-closing.md:2730-2731,2738-2741`(정본)
+- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-94)
+- 라운드: 18
+- 까닭: `reviews/round-18-closing.md:2734-2736`
+
+### EVENT-072 `resetSubtree()`에 걸린 로드 규칙(로드 뒤 검증, `batch` 안의 즉시 정착, 한 로드에 한 번, 로드마다 다시 만듦)은 그 하위 트리에만
+
+- 결정:
+  > 【추론】 로드 뒤 `OnChange` 비트면 한 번 하는 검증(LANDING-041, ERROR-040, EVENT-032)은 `resetSubtree()`에는 그 하위 트리에만 적용한다.
+  > 【추론】 `batch` 안의 로드를 곧바로 정착하는 규칙(EVENT-015)은 `resetSubtree()`에는 그 하위 트리에만 적용한다.
+  > 【추론】 "한 로드에 한 번"(VALIDATE-048)은 `resetSubtree()`에는 그 하위 트리에만 적용한다.
+  > 【추론】 "로드마다 다시 만든다"(VALUE-030)는 `resetSubtree()`에는 그 하위 트리에만 적용한다.
+  > PR: PR-2(정착)·PR-4(검증)
+  > 무엇: `OnChange` 폼에서 `batch` 안과 밖에서 `resetSubtree()`를 부르고, 정착 시점, 검증 요청 수, 검증 불가 기록, 경고등 경로 집합을 본다.
+  > 통과: 로드 규칙이 그 하위 트리에만 적용되고, 하위 트리 밖의 기록과 경로는 그대로다.
+  > 실패: 이 블록을 고친다.
+- 보충: 없음
+- 상태: 현행
+- 출처: `reviews/round-18-closing.md:2848-2851,2857-2860`(정본)
+- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-101)
+- 라운드: 18
+- 까닭: `reviews/round-18-closing.md:2853-2855`

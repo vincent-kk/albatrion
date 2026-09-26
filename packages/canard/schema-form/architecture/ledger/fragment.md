@@ -12,7 +12,7 @@
 | FRAGMENT-004 | oneOf·anyOf는 형상 선언이 아니라 검증 조건 — 순수 분기는 작성자가 controls로 제어 | 현행 | 소유자 답(`reviews/round-9-spec.md:42` 읽기1), 소유자 답(`reviews/round-9-spec.md:44` 읽기1(이어서)) |
 | FRAGMENT-005 | 분기 문장 — 폼은 게이트 없이 분기를 고르지 않고, 게이트는 if와 controls.active 둘뿐 | 중복(→ GOAL-027) | 소유자 답(`reviews/round-10-owner-answers.md:9` A-3), 소유자 답(`reviews/round-10-owner-answers.md:11` B-22) |
 | FRAGMENT-006 | controls.discriminator는 명시해야 동작 — 명시 없는 union은 모든 분기가 켜지고 const·enum 자동 감지는 사라짐 | 현행 | 소유자 답(`reviews/round-12-owner-answers.md:9` 2 &discriminator) |
-| FRAGMENT-007 | controls.discriminator 키의 분기 선언 끌어올림과 청사진 오류 | 현행 | 소유자 답(`reviews/round-14-owner-answers.md:7` O-1) |
+| FRAGMENT-007 | controls.discriminator 키의 분기 선언 끌어올림과 청사진 오류 | 현행 | 소유자 답(`reviews/round-14-owner-answers.md:7` O-1), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-91) |
 | FRAGMENT-008 | 명시 판별의 변환 — 청사진이 const·enum을 읽어 controls.active 조각 객체처럼 다루고 분기 스키마는 손대지 않음 | 현행 | 소유자 답(`reviews/round-10-owner-answers.md:11` B-22), 소유자 답(`reviews/round-9-spec.md:20` 축2) |
 | FRAGMENT-009 | 게이트의 두 종류 — if 게이트(compileGuard 동기 평가)와 controls.active 게이트 | 현행 | 소유자 답(`reviews/round-9-spec.md:19` 축1), 편집자 결정(10라운드 5차 본문, `adr/0002-guard-fragment-model.md:14`) |
 | FRAGMENT-010 | 선택 가드·selection 칸·setSelectedBranch·초기 분기 추론은 없다 | 현행(부정 결정) | 소유자 답(`reviews/round-10-owner-answers.md:9` A-3), 편집자 결정(10라운드, `07-conclusions.md:142`) |
@@ -42,16 +42,25 @@
 | FRAGMENT-034 | 약속 7 — 양방향 주입은 식이 undefined를 돌려주어 멈춘다 | 현행 | 소유자 답(`reviews/round-12-owner-answers.md:20` §9 undefined 반환), 소유자 답(`reviews/round-1.md:179` 순환을 분석 단계에서 금지하는가) |
 | FRAGMENT-035 | 분기가 꺼질 때 이전 분기의 값 — 닫힘: 기본은 원본을 두고 방출에서 빼며, 비움은 unsetOnInactive와 세부가 포괄을 덮는 순서 | 현행 | 소유자 답(`reviews/round-13-owner-answers.md:8` 2 나감 비움 기본값), 소유자 답(`reviews/round-13-owner-answers.md:17` 나감 정책 키 이름), 원리(`reviews/round-10-owner-answers.md:20` D-7 세부 규칙이 포괄 규칙을 덮는 관례, `03-mental-model.md:131`), 편집자 결정(13라운드, `reviews/round-13-owner-review.md:66` 네 층의 순서), 소유자 답(`reviews/round-13-owner-answers.md:16` Form 속성의 자리) |
 | FRAGMENT-036 | 대체됨: 초기 분기 선택에서 required를 읽지 않고 선언된 키 수와 선언 순서만 쓴다(06 §4.4 D-14) | 대체됨(→ FRAGMENT-010) | 소유자 답(`reviews/round-10-owner-answers.md:9` A-3), 편집자 결정(10라운드, `07-conclusions.md:142`) |
-| FRAGMENT-037 | 열림: dependentSchemas·dependentRequired·dependencies를 게이트와 조각의 모델로 환원할지(Q7) | 열림(→ `reviews/round-18-agenda.md` §1, :15) | 편집자 결정(18라운드 안건 이관, `reviews/round-18-agenda.md:15`) |
-| FRAGMENT-038 | 열림: controls.discriminator 변환의 세부 | 열림(→ `reviews/round-18-agenda.md` §1, :17) | 편집자 결정(18라운드 안건 이관, `reviews/round-18-agenda.md:17`) |
-| FRAGMENT-039 | 열림: controls.active 표현식이 다른 호스트를 읽을 때의 평가 순서 | 열림(→ `reviews/round-18-agenda.md` §2, :36) | 편집자 결정(18라운드 안건 이관, `reviews/round-18-agenda.md:36`) |
-| FRAGMENT-040 | 열림: 루트 dataPath가 플러그인은 "/", 오늘 타입은 "" | 열림(→ `reviews/round-18-agenda.md:138` 11-7) | 편집자 결정(4차 본문 미결, `adr/0002-guard-fragment-model.md:200`) |
-| FRAGMENT-041 | 열림: 조각의 controls에 둔 식 규칙이 나감 에지에서 발화하는 세부 | 열림(→ `reviews/round-18-agenda.md` §9, :107) | 편집자 결정(18라운드 안건 이관, `reviews/round-18-agenda.md:107`) |
-| FRAGMENT-042 | 열림: controls.children의 대상별 식과 값 키 세부, 조각에서만 선언된 자식을 가리킬 수 있는가 | 열림(→ `reviews/round-18-agenda.md` §1, :25; §9, :110) | 편집자 결정(18라운드 안건 이관, `reviews/round-18-agenda.md:110`) |
-| FRAGMENT-043 | 열림: Q1의 남은 세부 — 잠복 원본의 실제 파기 시점, 복원값 대 초기값, 공유 노드의 서로소 enum, 비활성 경로 쓰기, 로드 왕복 | 열림(→ `reviews/round-18-agenda.md` §9, :112) | 편집자 결정(18라운드 안건 이관, `reviews/round-18-agenda.md:112`) |
-| FRAGMENT-044 | 열림: 표준 키워드 밖의 FE 전용 조건부 필드(Q4) | 열림(→ `reviews/round-18-agenda.md` §9, :112) | 편집자 결정(18라운드 안건 이관, `reviews/round-18-agenda.md:112`) |
-| FRAGMENT-045 | 열림: contains와 prefixItems(Q13) | 열림(→ `reviews/round-18-agenda.md` §9, :109) | 편집자 결정(18라운드 안건 이관, `reviews/round-18-agenda.md:109`) |
+| FRAGMENT-037 | 열림: dependentSchemas·dependentRequired·dependencies를 게이트와 조각의 모델로 환원할지(Q7) | 대체됨(→ FRAGMENT-047) | 편집자 결정(18라운드 안건 이관, `reviews/round-18-agenda.md:15`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-03) |
+| FRAGMENT-038 | 열림: controls.discriminator 변환의 세부 | 대체됨(→ FRAGMENT-048) | 편집자 결정(18라운드 안건 이관, `reviews/round-18-agenda.md:17`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-05) |
+| FRAGMENT-039 | 열림: controls.active 표현식이 다른 호스트를 읽을 때의 평가 순서 | 중복(→ SETTLE-036) | 편집자 결정(18라운드 안건 이관, `reviews/round-18-agenda.md:36`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-15) |
+| FRAGMENT-040 | 열림: 루트 dataPath가 플러그인은 "/", 오늘 타입은 "" | 대체됨(→ FRAGMENT-053) | 편집자 결정(4차 본문 미결, `adr/0002-guard-fragment-model.md:200`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-74) |
+| FRAGMENT-041 | 열림: 조각의 controls에 둔 식 규칙이 나감 에지에서 발화하는 세부 | 대체됨(→ FRAGMENT-050) | 편집자 결정(18라운드 안건 이관, `reviews/round-18-agenda.md:107`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-51) |
+| FRAGMENT-042 | 열림: controls.children의 대상별 식과 값 키 세부, 조각에서만 선언된 자식을 가리킬 수 있는가 | 대체됨(→ CONTROLS-073) | 편집자 결정(18라운드 안건 이관, `reviews/round-18-agenda.md:110`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-12) |
+| FRAGMENT-043 | 열림: Q1의 남은 세부 — 잠복 원본의 실제 파기 시점, 복원값 대 초기값, 공유 노드의 서로소 enum, 비활성 경로 쓰기, 로드 왕복 | 분할됨(→ VALUE-031, FRAGMENT-054) | 편집자 결정(18라운드 안건 이관, `reviews/round-18-agenda.md:112`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-64) |
+| FRAGMENT-044 | 열림: 표준 키워드 밖의 FE 전용 조건부 필드(Q4) | 대체됨(→ FRAGMENT-052) | 편집자 결정(18라운드 안건 이관, `reviews/round-18-agenda.md:112`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-66) |
+| FRAGMENT-045 | 열림: contains와 prefixItems(Q13) | 대체됨(→ FRAGMENT-051, NODE-052) | 편집자 결정(18라운드 안건 이관, `reviews/round-18-agenda.md:109`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-59) |
 | FRAGMENT-046 | default만으로 자기 게이트를 켜는 조각은 켜지지 않는다 — 원본은 상태, default 주입은 사건(06 §3.6) | 현행 | 편집자 결정(8라운드, `06-conclusions.md:106` 3.6), 편집자 결정(7–8라운드 수렴 D-25, `06-conclusions.md:236`), 편집자 결정(9라운드, `07-conclusions.md:72` 3.6 그대로) |
+| FRAGMENT-047 | `dependentSchemas`·`dependentRequired`·`dependencies`는 읽지 않는다 — 검증기로, `extras`, `if/then`으로 적기 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-03) |
+| FRAGMENT-048 | `controls.discriminator` — 정적 연언에서 판별 선언 모으기(`$ref`·게이트 없는 `allOf`), null 분기 제외, 분기 자체 게이트와 AND | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-05) |
+| FRAGMENT-049 | 전순서의 키워드 순위 — `oneOf` 분기 < `anyOf` 분기 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-10) |
+| FRAGMENT-050 | 조각 `controls`의 에지 규칙은 켜진 동안만 후보 — 나감은 에지가 아님(`unsetOnInactive`만), 새로 들인 노드는 거짓→참, 남은 공유 노드는 기준점만, 라운드 단위, `default`는 채움 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-51) |
+| FRAGMENT-051 | `contains`(`minContains`·`maxContains`)는 폼이 읽지 않는다 | 현행(부정 결정) | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-59) |
+| FRAGMENT-052 | FE 전용 조건부 필드는 표준 `properties` merge와 `controls.active`로 — 예약 층 선언 문법은 두지 않는다 | 현행(부정 결정) | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-66) |
+| FRAGMENT-053 | 루트의 정규 `dataPath`는 `''` — core가 `'/'`를 별칭으로 받아 정규화, 잔여 목록은 정규화된 값에 이음, 플러그인 셋과 폴백 검증기는 PR-4에서 `''` | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-74) |
+| FRAGMENT-054 | 다시 켜진 값은 꺼지기 전의 원본, 초기값은 `reset`·`resetSubtree` — 공유 노드의 서로소 `enum`은 값이 남고 검증기가 기각 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-64), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-103) |
+| FRAGMENT-055 | 판별 키가 `union`이어도 분기 규칙은 그대로 — 목록·nullable 밖 리터럴의 분기는 개발 모드 경고 (가칭) `DISCRIMINATOR_BRANCH_UNREACHABLE` | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-91) |
 
 항목 형식은 `ledger/README.md` §3을 따른다. **결정**은 정본 원문을 글자 그대로 옮기고(표는 행과 칸을 바꾸지 않는다), 한 줄의 일부만 옮긴 항목은 출처에 문장 번호를 적는다. **보충**은 다른 출처가 더한 조건·예외·값의 원문이며 없으면 "없음"이다. **충돌**은 다른 위치가 정본과 다르게 적었을 때만 둔다.
 
@@ -140,11 +149,13 @@
   > 소유자(14라운드 O-1): "가 로 하죠. 다만, discriminator 를 서로 다르게 선언했거나 discriminator 이 분기마다 다른 타입이나 성질을 가지면 오류로 알려줘야 합니다." (`reviews/round-14-owner-answers.md:7`)
   > "`controls.discriminator`의 키가 어느 분기에도 `const`·`enum`으로 없거나, 있는 분기끼리 종류가 다르거나 값이 겹침(O-1. 일부 분기에만 없는 것은 그 분기가 게이트 없음일 뿐 오류가 아니다)" (`adr/0014-error-policy.md:228`)
   > "청사진 분석: controls.discriminator 키가 어느 분기에도 없거나, 분기끼리 종류가 다르거나 값이 겹치거나, 선언 사이 값이 다름" (`adr/0014-error-policy.md:260`)
+  > 편집자 결정(18C-91): "【추론】 판별 키가 union이어도 FRAGMENT-007의 분기 규칙은 그대로다(BLUEPRINT-017)." (`reviews/round-18-closing.md:2548`)
+  > 편집자 결정(18C-91): "【추론】 분기의 `const`·`enum` 리터럴의 JSON 종류가 판별 키의 목록(`schemaType`, 원소 하나인 경우 포함)과 nullable 어디에도 없으면, 청사진이 개발 모드 경고 `(가칭) SCHEMA_FORM_WARNING.DISCRIMINATOR_BRANCH_UNREACHABLE`을 낸다." (`reviews/round-18-closing.md:2549`)
 - 상태: 현행
-- 출처: `adr/0010-branch-conventions.md:18#4-6`(정본), `02-target-overview.md:231`, `07-conclusions.md:142`, `adr/0010-branch-conventions.md:19`
-- 닫은 사람: 소유자 답(`reviews/round-14-owner-answers.md:7` O-1)
-- 라운드: 14
-- 까닭: `reviews/round-14-owner-answers.md:7`
+- 출처: `adr/0010-branch-conventions.md:18#4-6`(정본), `02-target-overview.md:231`, `07-conclusions.md:142`, `adr/0010-branch-conventions.md:19`, `reviews/round-18-closing.md:2548-2549`
+- 닫은 사람: 소유자 답(`reviews/round-14-owner-answers.md:7` O-1), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-91)
+- 라운드: 18
+- 까닭: `reviews/round-14-owner-answers.md:7`, `reviews/round-18-closing.md:2556-2564`
 
 ### FRAGMENT-008 명시 판별의 변환 — 청사진이 const·enum을 읽어 controls.active 조각 객체처럼 다루고 분기 스키마는 손대지 않음
 
@@ -205,6 +216,8 @@
 - 닫은 사람: 편집자 결정(4차 본문 E3, `adr/0002-guard-fragment-model.md:13`), 편집자 결정(10라운드, `07-conclusions.md:143` 전순서 정의)
 - 라운드: 10
 - 까닭: `adr/0002-guard-fragment-model.md:59`, `adr/0002-guard-fragment-model.md:61`
+- 충돌:
+  > `adr/0002-guard-fragment-model.md:59`의 "키워드 순위 `properties` < `allOf[i]` < `if`/`then`/`else` < `oneOf`/`anyOf`"는 18라운드 결정과 다르다: 같은 호스트의 `oneOf` 분기는 모든 `anyOf` 분기보다 앞이다(FRAGMENT-049). 18라운드 결정이 이긴다(`reviews/round-18-closing.md:238-239`).
 
 ### FRAGMENT-012 같은 oneOf에서 게이트 가진 분기가 둘 이상 켜짐 — 막지 않고 연언으로 적용, 개발 모드 경고
 
@@ -544,11 +557,11 @@
 - 결정:
   > - `dependentSchemas`/`dependentRequired`/`dependencies`를 같은 모델로 환원할지 — Q7. 환원한다면 `dependentSchemas: { k: S }`의 게이트는 `{ required: ['k'] }`다.
 - 보충: 없음
-- 상태: 열림(→ `reviews/round-18-agenda.md` §1, :15)
-- 출처: `adr/0002-guard-fragment-model.md:198`(정본), `open-questions.md:56`
-- 닫은 사람: 편집자 결정(18라운드 안건 이관, `reviews/round-18-agenda.md:15`)
+- 상태: 대체됨(→ FRAGMENT-047)
+- 출처: `adr/0002-guard-fragment-model.md:198`(정본), `open-questions.md:56`, `reviews/round-18-closing.md:97-104`
+- 닫은 사람: 편집자 결정(18라운드 안건 이관, `reviews/round-18-agenda.md:15`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-03)
 - 라운드: 18
-- 까닭: `reviews/round-18-agenda.md:15`
+- 까닭: `reviews/round-18-agenda.md:15`, `reviews/round-18-closing.md:106-110`
 
 ### FRAGMENT-038 열림: controls.discriminator 변환의 세부
 
@@ -556,11 +569,11 @@
   > - `controls.discriminator` 변환의 세부(분기에 그 키의 `const`·`enum`이 없을 때, `$ref`·`allOf` 평탄화, 분기가 자기 `controls.active`도 가질 때) — ADR 0005 §4의 미결.
 - 보충:
   > "`$ref`·`allOf` 평탄화, 분기 자체의 `controls.active`와의 결합(AND)은 슬라이스 1의 설계 항목이다." (`08-design-a-to-z.md:178`)
-- 상태: 열림(→ `reviews/round-18-agenda.md` §1, :17)
-- 출처: `adr/0002-guard-fragment-model.md:204`(정본), `02-target-overview.md:231`, `adr/0005-blueprint-analysis-and-node-sharing.md:128`(BLUEPRINT-019, 중복), `adr/0005-blueprint-analysis-and-node-sharing.md:83`, `08-design-a-to-z.md:178`
-- 닫은 사람: 편집자 결정(18라운드 안건 이관, `reviews/round-18-agenda.md:17`)
+- 상태: 대체됨(→ FRAGMENT-048)
+- 출처: `adr/0002-guard-fragment-model.md:204`(정본), `02-target-overview.md:231`, `adr/0005-blueprint-analysis-and-node-sharing.md:128`(BLUEPRINT-019, 중복), `adr/0005-blueprint-analysis-and-node-sharing.md:83`, `08-design-a-to-z.md:178`, `reviews/round-18-closing.md:130-140`
+- 닫은 사람: 편집자 결정(18라운드 안건 이관, `reviews/round-18-agenda.md:17`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-05)
 - 라운드: 18
-- 까닭: `reviews/round-18-agenda.md:17`
+- 까닭: `reviews/round-18-agenda.md:17`, `reviews/round-18-closing.md:142-146`
 - 충돌:
   > `adr/0002-guard-fragment-model.md:204`의 "분기에 그 키의 `const`·`enum`이 없을 때"는 뒤 결정과 다르다. 일부 분기에만 없으면 그 분기가 게이트 없음이고(FRAGMENT-007, `adr/0010-branch-conventions.md:18`), 어느 분기에도 없으면 청사진 오류다. 채택된 ADR 0014 4판이 이긴다(`adr/0014-error-policy.md:228`). 남은 열림은 `$ref`·`allOf` 평탄화와 분기가 자기 `controls.active`도 가질 때다.
   > `reviews/round-18-agenda.md:17`의 "`controls.discriminator`의 세부(분기에 그 키의 `const`·`enum`이 없을 때, `$ref`·`allOf` 평탄화, 분기 자체 `controls.active`와의 AND)"는 첫 경우를 열린 안건으로 둔다. 정본과 다르다. 정본이 이긴다(`adr/0014-error-policy.md:228`, `adr/0010-branch-conventions.md:18`).
@@ -571,44 +584,44 @@
 - 결정:
   > - `controls.active` 표현식이 다른 호스트를 읽을 때의 평가 순서 — 원장 §6, 코어 루프 슬라이스 전.
 - 보충: 없음
-- 상태: 열림(→ `reviews/round-18-agenda.md` §2, :36)
-- 출처: `adr/0002-guard-fragment-model.md:202`(정본)
-- 닫은 사람: 편집자 결정(18라운드 안건 이관, `reviews/round-18-agenda.md:36`)
+- 상태: 중복(→ SETTLE-036)
+- 출처: `adr/0002-guard-fragment-model.md:202`(정본), `reviews/round-18-closing.md:429-442,449-455`
+- 닫은 사람: 편집자 결정(18라운드 안건 이관, `reviews/round-18-agenda.md:36`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-15)
 - 라운드: 18
-- 까닭: `reviews/round-18-agenda.md:36`
+- 까닭: `reviews/round-18-agenda.md:36`, `reviews/round-18-closing.md:444-447`
 
 ### FRAGMENT-040 열림: 루트 dataPath가 플러그인은 "/", 오늘 타입은 ""
 
 - 결정:
   > - 플러그인 세 개가 루트 `dataPath`로 `'/'`를 내는데 `src/types/error.ts:247`은 `''`로 적는다. 잔여 목록이 포인터를 이으려면 어느 쪽인지 정해야 한다(`spikes/guard-cost/rejected-keys/REPORT.txt` §3).
 - 보충: 없음
-- 상태: 열림(→ `reviews/round-18-agenda.md:138` 11-7)
-- 출처: `adr/0002-guard-fragment-model.md:200`(정본)
-- 닫은 사람: 편집자 결정(4차 본문 미결, `adr/0002-guard-fragment-model.md:200`)
-- 라운드: 5
-- 까닭: `adr/0002-guard-fragment-model.md:200`
+- 상태: 대체됨(→ FRAGMENT-053)
+- 출처: `adr/0002-guard-fragment-model.md:200`(정본), `reviews/round-18-closing.md:2053-2057`
+- 닫은 사람: 편집자 결정(4차 본문 미결, `adr/0002-guard-fragment-model.md:200`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-74)
+- 라운드: 18
+- 까닭: `adr/0002-guard-fragment-model.md:200`, `reviews/round-18-closing.md:2059-2062`
 
 ### FRAGMENT-041 열림: 조각의 controls에 둔 식 규칙이 나감 에지에서 발화하는 세부
 
 - 결정:
   > 남은 것은 조각의 `controls`에 둔 식 규칙이 나감 에지에서 발화하는 세부다(원장 §6).
 - 보충: 없음
-- 상태: 열림(→ `reviews/round-18-agenda.md` §9, :107)
-- 출처: `adr/0002-guard-fragment-model.md:201#4`(정본)
-- 닫은 사람: 편집자 결정(18라운드 안건 이관, `reviews/round-18-agenda.md:107`)
+- 상태: 대체됨(→ FRAGMENT-050)
+- 출처: `adr/0002-guard-fragment-model.md:201#4`(정본), `reviews/round-18-closing.md:1421-1432`
+- 닫은 사람: 편집자 결정(18라운드 안건 이관, `reviews/round-18-agenda.md:107`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-51)
 - 라운드: 18
-- 까닭: `reviews/round-18-agenda.md:107`
+- 까닭: `reviews/round-18-agenda.md:107`, `reviews/round-18-closing.md:1434-1436`
 
 ### FRAGMENT-042 열림: controls.children의 대상별 식과 값 키 세부, 조각에서만 선언된 자식을 가리킬 수 있는가
 
 - 결정:
   > 대상별 식과 값 키의 세부, 조각에서만 선언된 자식을 가리킬 수 있는가는 원장 §6의 설계 항목이며 ADR 0010과 함께 정한다.
 - 보충: 없음
-- 상태: 열림(→ `reviews/round-18-agenda.md` §1, :25; §9, :110)
-- 출처: `adr/0002-guard-fragment-model.md:201#6`(정본)
-- 닫은 사람: 편집자 결정(18라운드 안건 이관, `reviews/round-18-agenda.md:110`)
+- 상태: 대체됨(→ CONTROLS-073)
+- 출처: `adr/0002-guard-fragment-model.md:201#6`(정본), `reviews/round-18-closing.md:270-297`
+- 닫은 사람: 편집자 결정(18라운드 안건 이관, `reviews/round-18-agenda.md:110`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-12)
 - 라운드: 18
-- 까닭: `reviews/round-18-agenda.md:110`
+- 까닭: `reviews/round-18-agenda.md:110`, `reviews/round-18-closing.md:299-303`
 
 ### FRAGMENT-043 열림: Q1의 남은 세부 — 잠복 원본의 실제 파기 시점, 복원값 대 초기값, 공유 노드의 서로소 enum, 비활성 경로 쓰기, 로드 왕복
 
@@ -620,33 +633,33 @@
   > - **비활성 경로에 쓰면 무슨 일이 일어나는가** — 거부, 원본에만 반영, 에러. 순차 쓰기와 배치 쓰기의 결과가 같아지려면 "원본에만 반영"이어야 한다.
   > 비활성화가 방출에서의 제외가 되면서 원본은 보존되지만, 아무것도 고치지 않고 저장했을 때 방출 값이 로드한 값과 같은지는 별개의 문제다(`reviews/round-1.md` §7-3).
 - 보충: 없음
-- 상태: 열림(→ `reviews/round-18-agenda.md` §9, :112)
-- 출처: `open-questions.md:11-14`(정본; 11은 문장 #1, #3–#5), `open-questions.md:15#2`, `adr/0006-single-value-ownership.md:98#4`(VALUE-018의 정본, 잠복 원본의 파기 시점)
-- 닫은 사람: 편집자 결정(18라운드 안건 이관, `reviews/round-18-agenda.md:112`)
+- 상태: 분할됨(→ VALUE-031, FRAGMENT-054)
+- 출처: `open-questions.md:11-14`(정본; 11은 문장 #1, #3–#5), `open-questions.md:15#2`, `adr/0006-single-value-ownership.md:98#4`(VALUE-018의 정본, 잠복 원본의 파기 시점), `reviews/round-18-closing.md:1793-1820`
+- 닫은 사람: 편집자 결정(18라운드 안건 이관, `reviews/round-18-agenda.md:112`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-64)
 - 라운드: 18
-- 까닭: `reviews/round-18-agenda.md:112`
+- 까닭: `reviews/round-18-agenda.md:112`, `reviews/round-18-closing.md:1822-1826`
 
 ### FRAGMENT-044 열림: 표준 키워드 밖의 FE 전용 조건부 필드(Q4)
 
 - 결정:
   > `&` 표현식으로 켜고 끄는, 스키마의 표준 부분이 모르는 필드를 선언하는 문법을 둘 것인가. 그런 필드의 값은 방출 값에 들어가지만 서버의 검증 대상이 아니다(`additionalProperties`가 열려 있을 때만 통과한다). G2(표현력)과 계약의 단순함 사이의 선택이다.
 - 보충: 없음
-- 상태: 열림(→ `reviews/round-18-agenda.md` §9, :112)
-- 출처: `open-questions.md:29`(정본)
-- 닫은 사람: 편집자 결정(18라운드 안건 이관, `reviews/round-18-agenda.md:112`)
+- 상태: 대체됨(→ FRAGMENT-052)
+- 출처: `open-questions.md:29`(정본), `reviews/round-18-closing.md:1861-1868`
+- 닫은 사람: 편집자 결정(18라운드 안건 이관, `reviews/round-18-agenda.md:112`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-66)
 - 라운드: 18
-- 까닭: `reviews/round-18-agenda.md:112`
+- 까닭: `reviews/round-18-agenda.md:112`, `reviews/round-18-closing.md:1870-1871`
 
 ### FRAGMENT-045 열림: contains와 prefixItems(Q13)
 
 - 결정:
   > 3차안 A3은 object 호스트에 대해 쓰였다. 배열 아이템 호스트는 dirty 목록으로 비례한다고 확인됐으나(`reviews/round-3.md` T13) `contains`와 튜플은 미정의다.
 - 보충: 없음
-- 상태: 열림(→ `reviews/round-18-agenda.md` §9, :109)
-- 출처: `open-questions.md:84`(정본)
-- 닫은 사람: 편집자 결정(18라운드 안건 이관, `reviews/round-18-agenda.md:109`)
+- 상태: 대체됨(→ FRAGMENT-051, NODE-052)
+- 출처: `open-questions.md:84`(정본), `reviews/round-18-closing.md:1638-1684,1692-1698`
+- 닫은 사람: 편집자 결정(18라운드 안건 이관, `reviews/round-18-agenda.md:109`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-59)
 - 라운드: 18
-- 까닭: `reviews/round-18-agenda.md:109`
+- 까닭: `reviews/round-18-agenda.md:109`, `reviews/round-18-closing.md:1686-1690`
 
 ### FRAGMENT-046 default만으로 자기 게이트를 켜는 조각은 켜지지 않는다 — 원본은 상태, default 주입은 사건(06 §3.6)
 
@@ -660,3 +673,158 @@
 - 닫은 사람: 편집자 결정(8라운드, `06-conclusions.md:106` 3.6), 편집자 결정(7–8라운드 수렴 D-25, `06-conclusions.md:236`), 편집자 결정(9라운드, `07-conclusions.md:72` 3.6 그대로)
 - 라운드: 9
 - 까닭: `06-conclusions.md:236`
+
+### FRAGMENT-047 `dependentSchemas`·`dependentRequired`·`dependencies`는 읽지 않는다 — 검증기로, `extras`, `if/then`으로 적기
+
+- 결정:
+  > 【추론】 폼은 `dependentSchemas`·`dependentRequired`·`dependencies`를 게이트·조각 모델로 옮기지 않고 읽지 않는다.
+  > 【추론】 셋은 검증기에 그대로 간다.
+  > 【추론】 그 안에만 선언된 프로퍼티는 노드가 되지 않고, 값이 오면 `extras`로 남는다.
+  > 【추론】 조건부 필드를 보이려는 작성자는 `allOf: [{ "if": { "required": ["k"] }, "then": S }]`로 적는다(ADR 0010의 분기 관행).
+  > 【추론】 두 철자 규칙(C5)에서 `dependencies`·`dependentSchemas` 쌍은 들지 않는다.
+- 보충: 없음
+- 상태: 현행
+- 출처: `reviews/round-18-closing.md:97-101`(정본)
+- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-03)
+- 라운드: 18
+- 까닭: `reviews/round-18-closing.md:106-110`
+
+### FRAGMENT-048 `controls.discriminator` — 정적 연언에서 판별 선언 모으기(`$ref`·게이트 없는 `allOf`), null 분기 제외, 분기 자체 게이트와 AND
+
+- 결정:
+  > 【추론】 분기에서 판별 키의 `const`·`enum`을 찾는 범위는 그 분기의 정적 연언이다.
+  > 【추론】 곧 분기 본체, 게이트 없는 `allOf` 항목, 그리고 이것들이 `$ref`로 가리키는 대상이다(재귀, 18C-01의 순환 절단을 따름).
+  > 【추론】 그 키 프로퍼티 스키마도 같은 정적 연언(자기 `$ref`, 게이트 없는 `allOf`)에서 모은다.
+  > 【추론】 `if/then`, 게이트 가진 `allOf` 항목, 중첩 `oneOf`·`anyOf`는 보지 않는다.
+  > 【추론】 한 분기에서 모은 `const`·`enum`은 정적 연언의 교차로 합친다.
+  > 【추론】 교차가 공집합이면 정적 연언의 청사진 오류다.
+  > 【추론】 끌어올림(O-1)도 이렇게 모은 선언을 쓴다.
+  > 【추론】 null 분기(`isNullBranch`)는 노드의 nullable 플래그이므로 판별 대상 분기로 세지 않는다.
+  > 【추론】 null 분기에 판별 키가 없는 것은 키 없음도 오류도 아니다.
+  > 【추론】 분기가 자기 `controls.active`도 가지면 그 분기의 게이트는 `(변환식) && (분기 식)` 하나다(`08-design-a-to-z.md:178`).
+  > 【추론】 판별 키가 없는 분기가 자기 `controls.active`를 가지면 그 식만이 게이트다.
+- 보충: 없음
+- 상태: 현행
+- 출처: `reviews/round-18-closing.md:130-140`(정본)
+- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-05)
+- 라운드: 18
+- 까닭: `reviews/round-18-closing.md:142-146`
+
+### FRAGMENT-049 전순서의 키워드 순위 — `oneOf` 분기 < `anyOf` 분기
+
+- 결정:
+  > 【추론】 키워드 순위를 본체 `properties` < `allOf` 항목 < `if/then/else` < `oneOf` 분기 < `anyOf` 분기로 가른다.
+  > 【추론】 같은 호스트에서 `oneOf[i]`는 모든 `anyOf[j]`보다 앞이다.
+  > 【추론】 주석 키의 나중 승, 같은 대상 규칙의 같은 층 동점, 공유 충돌의 '앞선 종류', 터미널 전략의 '나중 것', 호스트 바퀴의 평가 순서가 모두 이 순서를 쓴다.
+  > 【추론】 JSON 키 순서는 여전히 쓰지 않는다.
+- 보충: 없음
+- 상태: 현행
+- 출처: `reviews/round-18-closing.md:238-241`(정본)
+- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-10)
+- 라운드: 18
+- 까닭: `reviews/round-18-closing.md:243-245`
+- 충돌:
+  > `02-target-overview.md:124`의 "`if/then/else` < `oneOf`·`anyOf` 분기"는 18라운드 결정과 다르다: `oneOf` 분기와 `anyOf` 분기는 동순위가 아니다. 18라운드 결정이 이긴다(`reviews/round-18-closing.md:238`).
+  > `03-mental-model.md:126`의 "`if/then/else` < `oneOf`·`anyOf` 분기"는 18라운드 결정과 다르다: `oneOf` 분기와 `anyOf` 분기는 동순위가 아니다. 18라운드 결정이 이긴다(`reviews/round-18-closing.md:238`).
+  > `adr/0005-blueprint-analysis-and-node-sharing.md:94`의 "`if/then/else` < `oneOf`·`anyOf` 분기"는 18라운드 결정과 다르다: `oneOf` 분기와 `anyOf` 분기는 동순위가 아니다. 18라운드 결정이 이긴다(`reviews/round-18-closing.md:238`).
+
+### FRAGMENT-050 조각 `controls`의 에지 규칙은 켜진 동안만 후보 — 나감은 에지가 아님(`unsetOnInactive`만), 새로 들인 노드는 거짓→참, 남은 공유 노드는 기준점만, 라운드 단위, `default`는 채움
+
+- 결정:
+  > 【추론】 조각의 `controls`에 둔 에지 규칙(`unsetValue`·`derived`·`resetInteraction`·`injectTo`)은 그 조각이 켜져 있는 동안만 후보다.
+  > 【추론】 (1) 나감은 이 규칙들의 에지가 아니다.
+  > 【추론】 조각이 꺼지는 정착에서 그 규칙은 평가하지도 발화하지도 않는다.
+  > 【추론】 꺼짐이 값에 닿는 장치는 나감 정책 `unsetOnInactive` 하나다.
+  > 【추론】 그 정책은 조각 층의 값으로, 직전 커밋의 값을 쓴다.
+  > 【추론】 (2) 조각이 켜지는 정착에서 그 조각이 새로 들인 노드의 규칙 에지는 거짓→참이다(WRITE-029).
+  > 【추론】 그래서 `unsetValue`·`resetInteraction`은 식이 참이면 발화하고, `derived`·`injectTo`는 발화한다.
+  > 【추론】 형상에 남아 있던 공유 노드는 그 규칙의 기준점만 그 정착의 값으로 잡고 발화하지 않는다(CONTROLS-026, VALUE-025).
+  > 【추론】 (3) 후보 여부는 그 라운드의 완성된 트리에서 조각이 켜져 있는지로 정한다.
+  > 【추론】 앞 라운드에 적용된 파생 쓰기는 뒤 라운드에서 조각이 꺼져도 되돌리지 않는다.
+  > 【추론】 철회는 채움만 한다.
+  > 【추론】 (4) 조각의 `controls.default`는 에지 규칙이 아니라 채움이며, 노드가 생길 때만 쓴다.
+- 보충: 없음
+- 상태: 현행
+- 출처: `reviews/round-18-closing.md:1421-1432`(정본)
+- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-51)
+- 라운드: 18
+- 까닭: `reviews/round-18-closing.md:1434-1436`
+
+### FRAGMENT-051 `contains`(`minContains`·`maxContains`)는 폼이 읽지 않는다
+
+- 결정:
+  > ㄷ `contains`(`minContains`·`maxContains` 포함)는 폼이 읽지 않는다.
+  > 이 키는 값의 유효성 문법이므로 검증기가 판정한다.
+  > `if` 안의 `contains`는 `compileGuard`가 답하는 게이트일 뿐이다.
+  > 그 비용은 BLUEPRINT-007의 "컬렉션을 훑는 게이트"로 벤치가 다룬다.
+- 보충: 없음
+- 상태: 현행(부정 결정)
+- 출처: `reviews/round-18-closing.md:1658-1661`(정본)
+- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-59)
+- 라운드: 18
+- 까닭: `reviews/round-18-closing.md:1686-1690`
+
+### FRAGMENT-052 FE 전용 조건부 필드는 표준 `properties` merge와 `controls.active`로 — 예약 층 선언 문법은 두지 않는다
+
+- 결정:
+  > 【추론】 예약 층에서 표준 부분이 모르는 필드를 선언하는 문법은 두지 않는다.
+  > 【추론】 FE 전용 조건부 필드는 소비자가 단일 스키마에 표준 `properties`로 merge하고, 노드 게이트 `controls.active`로 켜고 끈다.
+  > 【추론】 결과는 Q4가 그린 것과 같다.
+  > 【추론】 켜진 동안 방출에 든다.
+  > 【추론】 서버의 스키마에 없으면 서버 판정은 서버의 `additionalProperties`를 따른다.
+  > 【추론】 여기에 더해 FE 검증기도 그 필드를 본다.
+  > 【추론】 조건 표현력(G2)은 노드 게이트로 이미 채워진다.
+  > 【추론】 merge 안내 문서(SCHEMA-018)에 이 쓰임을 예로 더한다.
+- 보충: 없음
+- 상태: 현행(부정 결정)
+- 출처: `reviews/round-18-closing.md:1861-1868`(정본)
+- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-66)
+- 라운드: 18
+- 까닭: `reviews/round-18-closing.md:1870-1871`
+
+### FRAGMENT-053 루트의 정규 `dataPath`는 `''` — core가 `'/'`를 별칭으로 받아 정규화, 잔여 목록은 정규화된 값에 이음, 플러그인 셋과 폴백 검증기는 PR-4에서 `''`
+
+- 결정:
+  > 【추론】 루트의 정규 `dataPath`는 `''`다(RFC 6901).
+  > 【추론】 core는 검증 결과를 받아들이는 자리에서 `'/'`를 루트의 별칭으로 받아 `''`로 정규화한 뒤 `ValidationIssue.dataPath`에 담는다.
+  > 【추론】 잔여 목록은 정규화된 값에 키를 이어 포인터를 만든다.
+  > 【추론】 저장소의 ajv 플러그인 셋과 core의 폴백 검증기(`src/core/nodes/AbstractNode/utils/ValidationManager/utils/getFallbackValidator.ts:19`)는 PR-4(동기 `compileGuard`를 구현하는 그 PR)에서 함께 루트에 `''`를 내도록 고친다.
+- 보충: 없음
+- 상태: 현행
+- 출처: `reviews/round-18-closing.md:2053-2056`(정본)
+- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-74)
+- 라운드: 18
+- 까닭: `reviews/round-18-closing.md:2059-2062`
+
+### FRAGMENT-054 다시 켜진 값은 꺼지기 전의 원본, 초기값은 `reset`·`resetSubtree` — 공유 노드의 서로소 `enum`은 값이 남고 검증기가 기각
+
+- 결정:
+  > ㄴ 다시 켜진 노드의 값은 꺼지기 전의 원본이다(VALUE-025).
+  > #338의 "null로 버린 데이터는 되살아나지 않는다"와 부딪히지 않는다.
+  > `setValue(null)`은 키 없는 전체 교체라 자식 원본을 없음으로 만들고, 숨겨 둔 원본이 없기 때문이다(VALUE-015·WRITE-014).
+  > 초기값을 되살리는 연산은 `FormHandle.reset`(커밋된 prop의 로드, WRITE-044)과 `resetSubtree`가 맡는다.
+  > `resetSubtree`는 유지하며, 루트가 든 로드 스냅숏에서 그 경로의 값을 서브트리에 로드한다(18C-44).
+  > ㄷ 공유 노드의 서로소 `enum`에서 값은 그대로 남는다.
+  > 새 조각이 켜져도 공유 노드는 새로 생기지 않으므로 다시 채우지 않는다.
+  > 검증기가 기각하고, 폼은 막지 않는다.
+  > 비우고 싶은 작성자는 조각 범위 `controls.unsetValue`(18C-60)를 쓰거나 이름을 가른다.
+- 보충: 없음
+- 상태: 현행
+- 출처: `reviews/round-18-closing.md:1804-1812`(정본), `reviews/round-18-closing.md:2885`
+- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-64), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-103)
+- 라운드: 18
+- 까닭: `reviews/round-18-closing.md:1822-1826`, `reviews/round-18-closing.md:2891-2893`
+- 충돌:
+  > `reviews/round-18-closing.md:1806`의 "(VALUE-015·WRITE-014)"는 18라운드 결정과 다르다: 그 가리킴은 VALUE-036과 WRITE-092다(WRITE-097). 18라운드 결정이 이긴다(`reviews/round-18-closing.md:2885`).
+
+### FRAGMENT-055 판별 키가 `union`이어도 분기 규칙은 그대로 — 목록·nullable 밖 리터럴의 분기는 개발 모드 경고 (가칭) `DISCRIMINATOR_BRANCH_UNREACHABLE`
+
+- 결정:
+  > 【추론】 판별 키가 union이어도 FRAGMENT-007의 분기 규칙은 그대로다(BLUEPRINT-017).
+  > 【추론】 분기의 `const`·`enum` 리터럴의 JSON 종류가 판별 키의 목록(`schemaType`, 원소 하나인 경우 포함)과 nullable 어디에도 없으면, 청사진이 개발 모드 경고 `(가칭) SCHEMA_FORM_WARNING.DISCRIMINATOR_BRANCH_UNREACHABLE`을 낸다.
+- 보충: 없음
+- 상태: 현행
+- 출처: `reviews/round-18-closing.md:2548-2549`(정본)
+- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-91)
+- 라운드: 18
+- 까닭: `reviews/round-18-closing.md:2556-2564`

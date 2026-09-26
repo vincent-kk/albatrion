@@ -78,10 +78,10 @@
 | GOAL-070 | T-19 defaultValue와 jsonSchema의 deep clone — 호출자의 객체를 바꾸지 않는 계약 | 현행 | 편집자 결정(4라운드, `04-inherited-constraints.md:5` 수용 기준 검토) |
 | GOAL-071 | T-20 초기화 순서 — 생성이 곧 첫 정착 | 현행 | 편집자 결정(4라운드, `04-inherited-constraints.md:5` 수용 기준 검토) |
 | GOAL-072 | 대체됨: T-21 reset()의 key=version 전체 리마운트 — 16라운드에 reset은 로드, 입력 단위 다시 마운트로 바뀜 | 대체됨(→ LANDING-039, WRITE-042, EVENT-039, REACT-019) | 편집자 결정(4라운드, `04-inherited-constraints.md:5` 수용 기준 검토) |
-| GOAL-073 | T-22 배열 아이템의 React key는 생성 순서의 nonce | 현행 | 편집자 결정(4라운드, `04-inherited-constraints.md:5` 수용 기준 검토) |
+| GOAL-073 | T-22 배열 아이템의 React key는 생성 순서의 nonce | 현행 | 편집자 결정(4라운드, `04-inherited-constraints.md:5` 수용 기준 검토), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-59) |
 | GOAL-074 | T-23 분기 복원은 원본 배열 상태 우선 — 구조로 흡수 | 현행 | 편집자 결정(4라운드, `04-inherited-constraints.md:5` 수용 기준 검토) |
 | GOAL-075 | 새 설계에서 사라지는 장치와 그 이유 | 현행(부정 결정) | 편집자 결정(4라운드, `04-inherited-constraints.md:48-49` F23·F27) |
-| GOAL-076 | 실제 브라우저의 IME 조합 중 쓰기 확인 | 열림(→ `reviews/round-18-agenda.md:111`) | 편집자 결정(18라운드 안건 이관, `reviews/round-18-agenda.md:111`) |
+| GOAL-076 | 실제 브라우저의 IME 조합 중 쓰기 확인 | 대체됨(→ EVENT-065) | 편집자 결정(18라운드 안건 이관, `reviews/round-18-agenda.md:111`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-63) |
 | GOAL-077 | 대체됨: P1′의 6차 문구(다중 타입, oneOf·anyOf 분기, & 명령뿐) | 대체됨(→ GOAL-026) | 소유자 답(`reviews/round-5-derivations.md:7` P1′) |
 | GOAL-078 | 대체됨: P2의 6차 문구(쓰는 주체 넷) | 대체됨(→ GOAL-028) | 편집자 결정(8라운드, `06-conclusions.md:70`) |
 | GOAL-079 | 대체됨: P3의 6차 문구(선택 상태를 입력으로 둠) | 대체됨(→ GOAL-029) | 편집자 결정(8라운드, `06-conclusions.md:71`) |
@@ -89,10 +89,11 @@
 | GOAL-081 | 대체됨: 07 §3.2 P2의 문구(&default·&derived·&injectTo·&unsetValue) | 대체됨(→ GOAL-028) | 편집자 결정(9라운드, `07-conclusions.md:74`) |
 | GOAL-082 | 대체됨: 06 §3.4 판별식 식별의 const·enum 읽기를 형상 읽기에 넣는 괄호 | 대체됨(→ GOAL-034, GOAL-027) | 소유자 답(`reviews/round-6-coherence.md:144` 소유자 인용), 편집자 결정(8라운드, `06-conclusions.md:102`) |
 | GOAL-083 | 원리 제안 P6–P9의 처리 — 새 원리로 두지 않음 | 현행(기록) | 스웜 수렴(편집자 결정, `06-conclusions.md:209-216`), 소유자 답(`HANDOFF.md:17` 7라운드 소유자 지시) |
-| GOAL-084 | 플러그인 FormTypeInput이 동기 UpdateValue나 Promise 배열 API에 기대는지 확인 | 열림(→ `reviews/round-18-agenda.md:139` 11-8) | 편집자 결정(4라운드, `04-inherited-constraints.md:51` 아직 확인하지 않은 것) |
+| GOAL-084 | 플러그인 FormTypeInput이 동기 UpdateValue나 Promise 배열 API에 기대는지 확인 | 현행(기록) | 편집자 결정(4라운드, `04-inherited-constraints.md:51` 아직 확인하지 않은 것), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-75; 사실 확인) |
 | GOAL-085 | 용어 — 쓰는 주체 셋(작성자·호출자·사용자)의 뜻 | 현행 | 편집자 결정(14라운드, `08-design-a-to-z.md:9` 용어), 편집자 결정(15라운드, `08-design-a-to-z.md:13` 그룹 객체 셋 표기) |
 | GOAL-086 | 가치끼리 부딪히는 자리에서 설계가 고른 쪽 — 충돌 넷 | 현행 | 스웜 수렴(편집자 결정, `reviews/raw-round14-antigravity.md:26-31`; 앞 세 행), 편집자 결정(14라운드 가치 검토, `08-design-a-to-z.md:520`), 편집자 결정(15라운드, `08-design-a-to-z.md:527` 그룹 셋 대체 표기) |
-| GOAL-087 | C3 남은 세부 — 스키마 타입의 컴포넌트 자리를 core가 불투명하게 다루고 바인딩 계층이 타입을 입히는 방법 | 열림(→ `reviews/round-18-agenda.md:140` 11-9) | 편집자 결정(2라운드, `open-questions.md:58` Q8) |
+| GOAL-087 | C3 남은 세부 — 스키마 타입의 컴포넌트 자리를 core가 불투명하게 다루고 바인딩 계층이 타입을 입히는 방법 | 대체됨(→ GOAL-088) | 편집자 결정(2라운드, `open-questions.md:58` Q8), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-76) |
+| GOAL-088 | C3 남은 세부의 답 — core 스키마 타입은 `presentation`을 형 매개변수로만, 바인딩이 모양을 정의해 같은 이름 `JSONSchema`로 내보냄, 전역 모듈 확장 없음, 적용과 타입 검사 비용 확인은 PR-7 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-76) |
 
 ## 항목
 
@@ -247,6 +248,8 @@
 - 닫은 사람: 소유자 답(`00-goals.md:150` G6), 편집자 결정(2라운드, `00-goals.md:5` 소유자 발언의 재구성)
 - 라운드: 2
 - 까닭: `00-goals.md:150`
+- 충돌:
+  > `00-goals.md:82`의 "현재 gzip 약 44KB"는 측정 방법이 적히지 않은 수치라 18라운드 결정과 다르다: 번들 기준은 v0.16.0의 37,023 B(ESM 진입 minify + gzip -9, 의존성 외부)다(TEST-075). "번들 크기도 예산이다"는 그대로다. 18라운드 결정이 이긴다(`reviews/round-18-closing.md:855`).
 
 ### GOAL-012 G7 반응의 척추를 보존한다
 
@@ -341,6 +344,8 @@
 - 닫은 사람: 소유자 답(`reviews/round-2.md:112` 목표 후보 C1–C8), 소유자 답(`00-goals.md:108` C5)
 - 라운드: 2
 - 까닭: `00-goals.md:100`
+- 충돌:
+  > `00-goals.md:108`의 "(Q7을 채택하면) `dependencies`와 `dependentSchemas`"는 Q7은 채택하지 않았으므로 18라운드 결정과 다르다: 두 철자 규칙에서 `dependencies`·`dependentSchemas` 쌍은 들지 않는다(FRAGMENT-047). 18라운드 결정이 이긴다(`reviews/round-18-closing.md:101`).
 
 ### GOAL-019 C6 편집 중 상태의 보존과 격리 — 채택, 현행 유지
 
@@ -1045,11 +1050,16 @@
   > | T-22 | 배열 아이템의 React key는 생성 순서의 nonce다 | `ArrayNode/…/BranchStrategy.ts:70, 381`, `useChildNodeComponents.tsx:62` | append 시 기존 행이 리마운트되어 포커스를 잃는다 | ADR 0011 identity(R13): 인덱스와 독립적인 단조 키 유지. 통째 쓰기의 대응 규칙은 미결 |
 - 보충:
   > "배열 아이템의 생김과 채움(통째 교체의 identity, `push`가 로드인가), `contains`·`prefixItems`(Q13), 큰 배열의 지연 실체화(벤치 뒤)(`08-design-a-to-z.md:458`, `adr/0011-branch-node-composition.md:92-94`)." (`reviews/round-18-agenda.md:109`)
+  > 편집자 결정(18C-59): "【추론】 ㄱ 통째 쓰기의 identity는 위치로 재조정한다." (`reviews/round-18-closing.md:1638`)
+  > 편집자 결정(18C-59): "【추론】 새 값의 i번째 아이템은 쓰기 시점 identity 목록의 i번째 노드와 그 키(`#n`)를 이어 받고, 그 노드의 원본을 새 값으로 쓴다." (`reviews/round-18-closing.md:1641`)
+  > 편집자 결정(18C-59): "【추론】 그래서 포커스를 지키는 이득(T-22)은 로드가 아닌 통째 쓰기에만 있다." (`reviews/round-18-closing.md:1653`)
 - 상태: 현행
-- 출처: `04-inherited-constraints.md:37`(정본)
-- 닫은 사람: 편집자 결정(4라운드, `04-inherited-constraints.md:5` 수용 기준 검토)
-- 라운드: 4
-- 까닭: `04-inherited-constraints.md:37`(막는 문제 칸), `04-inherited-constraints.md:3`
+- 출처: `04-inherited-constraints.md:37`(정본), `reviews/round-18-closing.md:1638,1641,1653`
+- 닫은 사람: 편집자 결정(4라운드, `04-inherited-constraints.md:5` 수용 기준 검토), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-59)
+- 라운드: 18
+- 까닭: `04-inherited-constraints.md:37`(막는 문제 칸), `04-inherited-constraints.md:3`, `reviews/round-18-closing.md:1686-1690`
+- 충돌:
+  > `04-inherited-constraints.md:37`의 "통째 쓰기의 대응 규칙은 미결"은 18라운드 결정과 다르다: 통째 쓰기의 identity는 위치로 재조정한다(NODE-051). 18라운드 결정이 이긴다(`reviews/round-18-closing.md:1638`).
 
 ### GOAL-074 T-23 분기 복원은 원본 배열 상태 우선 — 구조로 흡수
 
@@ -1089,11 +1099,11 @@
 - 결정:
   > - IME 조합 중의 쓰기: 캐럿 스파이크가 compositionstart → 입력 → compositionend 흐름을 fireEvent로 흉내 내 동기 통지에서 통과, 마이크로태스크에서 한 단계 지연을 확인했다(`spikes/events/REPORT-caret.txt`). jsdom은 조합 중 value 쓰기가 조합을 취소하는 브라우저 동작을 모델링하지 않으므로 실제 브라우저 확인이 남아 있다.
 - 보충: 없음
-- 상태: 열림(→ `reviews/round-18-agenda.md:111`)
-- 출처: `04-inherited-constraints.md:54`(정본), `reviews/round-18-agenda.md:111`
-- 닫은 사람: 편집자 결정(18라운드 안건 이관, `reviews/round-18-agenda.md:111`)
+- 상태: 대체됨(→ EVENT-065)
+- 출처: `04-inherited-constraints.md:54`(정본), `reviews/round-18-agenda.md:111`, `reviews/round-18-closing.md:1768-1772,1778-1787`
+- 닫은 사람: 편집자 결정(18라운드 안건 이관, `reviews/round-18-agenda.md:111`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-63)
 - 라운드: 18
-- 까닭: `04-inherited-constraints.md:54`
+- 까닭: `04-inherited-constraints.md:54`, `reviews/round-18-closing.md:1774-1776`
 
 ### GOAL-077 대체됨: P1′의 6차 문구(다중 타입, oneOf·anyOf 분기, & 명령뿐)
 
@@ -1181,12 +1191,23 @@
 
 - 결정:
   > - 플러그인이 제공하는 `FormTypeInput`들(`packages/canard/schema-form-*-plugin`) 가운데 동기 `UpdateValue`나 Promise 배열 API에 기대는 것이 있는가.
-- 보충: 없음
-- 상태: 열림(→ `reviews/round-18-agenda.md:139` 11-8)
-- 출처: `04-inherited-constraints.md:53`(정본)
-- 닫은 사람: 편집자 결정(4라운드, `04-inherited-constraints.md:51` 아직 확인하지 않은 것)
-- 라운드: 4
-- 까닭: `04-inherited-constraints.md:53`
+- 보충:
+  > 편집자 결정(18C-75): "【추론】 기대는 것이 없다." (`reviews/round-18-closing.md:2068`)
+  > 편집자 결정(18C-75): "UI 플러그인 넷(antd5·antd6·antd-mobile·mui)과 패키지의 기본 정의(`src/formTypeDefinitions`)를 읽었다." (`reviews/round-18-closing.md:2069`)
+  > 편집자 결정(18C-75): "배열 입력은 모두 `node.push()`·`node.remove(index)`를 반환값을 버린 채 부른다." (`reviews/round-18-closing.md:2070`)
+  > 편집자 결정(18C-75): "`await`·`.then`은 한 곳도 없다(예: `schema-form-antd5-plugin/src/formTypeInputs/FormTypeInputArray.tsx:29-34`, `src/formTypeDefinitions/FormTypeInputArray.tsx:18,22`)." (`reviews/round-18-closing.md:2071`)
+  > 편집자 결정(18C-75): "`UpdateValue` 구독, `NodeEventType`, `useSchemaNodeSubscribe`·`useSchemaNodeTracker`를 쓰는 플러그인 입력도 없다." (`reviews/round-18-closing.md:2072`)
+  > 편집자 결정(18C-75): "입력은 `value`/`onChange`로 제어하거나 `defaultValue`로 비제어한다." (`reviews/round-18-closing.md:2073`)
+  > 편집자 결정(18C-75): "이펙트는 Uri 입력의 프로토콜 초기화 하나뿐이며 통지 시점에 기대지 않는다(`FormTypeInputUri.tsx:132`)." (`reviews/round-18-closing.md:2074`)
+  > 편집자 결정(18C-75): "【추론】 그러므로 T-7(배열 연산의 동기화, 파괴적 변경)과 T-1(통지는 늘 동기)은 저장소의 플러그인을 깨지 않는다." (`reviews/round-18-closing.md:2075`)
+  > 편집자 결정(18C-75): "【추론】 사용자가 직접 구현한 FormTypeInput은 이 확인 범위 밖이다." (`reviews/round-18-closing.md:2076`)
+  > 편집자 결정(18C-75): "【추론】 배열 연산이 Promise를 돌려주지 않는다는 점은 이주 안내에 남긴다(T-7의 파괴적 변경 행과 같다)." (`reviews/round-18-closing.md:2077`)
+  > 편집자 결정(18C-75): "【추론】 안건 11-8의 "T-23" 표기는 T-1·T-7로 읽는다(T-23은 분기 복원)." (`reviews/round-18-closing.md:2078`)
+- 상태: 현행(기록)
+- 출처: `04-inherited-constraints.md:53`(정본), `reviews/round-18-closing.md:2068-2078`
+- 닫은 사람: 편집자 결정(4라운드, `04-inherited-constraints.md:51` 아직 확인하지 않은 것), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-75; 사실 확인)
+- 라운드: 18
+- 까닭: `04-inherited-constraints.md:53`, `reviews/round-18-closing.md:2080-2082`
 
 ### GOAL-085 용어 — 쓰는 주체 셋(작성자·호출자·사용자)의 뜻
 
@@ -1218,14 +1239,37 @@
 - 닫은 사람: 스웜 수렴(편집자 결정, `reviews/raw-round14-antigravity.md:26-31`; 앞 세 행), 편집자 결정(14라운드 가치 검토, `08-design-a-to-z.md:520`), 편집자 결정(15라운드, `08-design-a-to-z.md:527` 그룹 셋 대체 표기)
 - 라운드: 15
 - 까닭: `reviews/raw-round14-antigravity.md:29-31`, `reviews/round-14-values-check.md:3`
+- 충돌:
+  > `08-design-a-to-z.md:524`의 "`setValue(getValue())`의 재채움(로드는 새 수명)"은 소유자 답과 다르다: `setValue(V)`는 로드가 아니라 전체 교체 쓰기라 이미 형상에 있던 노드를 다시 채우지 않고, `setValue(getValue())`는 멱등이다(WRITE-090). 소유자 답이 이긴다(`reviews/round-18-owner-answers.md:26`).
 
 ### GOAL-087 C3 남은 세부 — 스키마 타입의 컴포넌트 자리를 core가 불투명하게 다루고 바인딩 계층이 타입을 입히는 방법
 
 - 결정:
   > 남은 세부: 스키마 타입에서 컴포넌트 자리를 core가 어떻게 불투명하게 다루고 바인딩 계층이 어떻게 타입을 입히는가.
 - 보충: 없음
-- 상태: 열림(→ `reviews/round-18-agenda.md:140` 11-9)
-- 출처: `open-questions.md:62`(정본)
-- 닫은 사람: 편집자 결정(2라운드, `open-questions.md:58` Q8)
-- 라운드: 2
-- 까닭: `00-goals.md:115`(C3 세부 1)
+- 상태: 대체됨(→ GOAL-088)
+- 출처: `open-questions.md:62`(정본), `reviews/round-18-closing.md:2088-2096,2101-2102`
+- 닫은 사람: 편집자 결정(2라운드, `open-questions.md:58` Q8), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-76)
+- 라운드: 18
+- 까닭: `00-goals.md:115`(C3 세부 1), `reviews/round-18-closing.md:2098-2099`
+
+### GOAL-088 C3 남은 세부의 답 — core 스키마 타입은 `presentation`을 형 매개변수로만, 바인딩이 모양을 정의해 같은 이름 `JSONSchema`로 내보냄, 전역 모듈 확장 없음, 적용과 타입 검사 비용 확인은 PR-7
+
+- 결정:
+  > 【추론】 core의 스키마 타입은 `presentation`을 형 매개변수로만 둔다.
+  > 【추론】 모양은 `JSONSchema<Options, Presentation extends object = { [key: string]: unknown }>`이며, 오늘 이미 쓰는 `Options` 형 매개변수와 같은 방식이다.
+  > 【추론】 core의 타입 파일은 React를 import하지 않는다.
+  > 【추론】 React 바인딩(렌더 계층)은 `presentation`의 모양을 정의한다: `formType`, `FormTypeInput?: ComponentType<…> | null`, `FormTypeInputProps`(`placeholder`·`alias`·`className`·`style`, 자유 키), `FormTypeRendererProps`, `errorMessages`, 플러그인 자유 칸.
+  > 【추론】 그 모양을 넣은 `JSONSchema`를 패키지 진입점(`@canard/schema-form`의 '.')에서 오늘과 같은 이름으로 내보낸다.
+  > 【추론】 전역 모듈 확장(declaration merging)은 쓰지 않는다.
+  > 【추론】 한 프로그램에 바인딩이 둘이면 서로 부딪치고, 확장이 어디서 오는지 글로 따라갈 수 없기 때문이다.
+  > 【추론】 런타임에서 core가 `presentation`을 읽지 않는다는 것은 이미 정해졌다(CONTROLS-011, REACT-003).
+  > 【추론】 적용은 PR-7(`types/jsonSchema`의 맨 키 전환, LANDING-087)이다.
+  > PR: PR-7.
+  > 무엇: 재귀 스키마 타입에 매개변수를 하나 더 실을 때의 타입 검사 비용을 `yarn typecheck`로 확인한다.
+- 보충: 없음
+- 상태: 현행
+- 출처: `reviews/round-18-closing.md:2088-2096,2101-2102`(정본)
+- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-76)
+- 라운드: 18
+- 까닭: `reviews/round-18-closing.md:2098-2099`

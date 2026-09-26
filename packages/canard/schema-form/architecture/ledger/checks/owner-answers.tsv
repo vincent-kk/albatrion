@@ -214,3 +214,18 @@ reviews/round-18-owner-answers.md:19	18	12-9	"같은 종류 맞습니다." (2026
 reviews/round-18-owner-answers.md:20	18	12-10	"받아들입니다" (2026-09-26)
 reviews/round-18-owner-answers.md:21	18	12-8 이어서	"일단 첫번째로 form 외부 입장에서는 이게 outputValue 인거랑 value 를 구분할 필요가 없을거같아. node 의 공개표면 이름은
 reviews/round-18-owner-answers.md:22	18	12-8 셋째	"폼 핸들이 오히려 쓸대가 없을거같은데. root node 에 핸들로 추가하고, 개별 노드는 rootNode 의 기능을 경유해서 node.ina
+reviews/round-18-owner-answers.md:23	18	닫기 방식	첫 말: "이게 계속 답변을 하고있는데, 계속 답변요청이 나오고있거든? 근데 대부분 보면 깊은 추론을 하면 충분히 유
+reviews/round-18-owner-answers.md:24	18	18C 검토 1번	검토 댓글: "이제 서로 다른 type 노드는 사용하는 동작이 다를 뿐, 노드 클래스 자체가 다르지 않아서 이게 가능한건가? 근데 jsonSch
+reviews/round-18-owner-answers.md:25	18	18C 검토 3번	검토 댓글: "이게 좀 애매하다. SchemaNode 내부에서는 NodeState 를 써도 되지 않을까 싶긴 한데... 공개 표면으로 나가는거는
+reviews/round-18-owner-answers.md:26	18	18C 검토 4번	검토 댓글: "잠깐. default 나 defaultValue 가 영향을 주는건 "최초 로드시" 와 "브랜치가 꺼졌다 켜졌을때 값이 없는 경우"
+reviews/round-18-owner-answers.md:27	18	18C 검토 5번	검토 댓글: "브레이킹 체인지를 할거라 제거되는 명령은 없애버려도 됩니다." / "그런데 setSubtreeState·clearSubtreeSt
+reviews/round-18-owner-answers.md:28	18	18C 검토 6번	검토 댓글: "기존 용어를 바꿔도 됩니다." / "업계통상용어를 차용하고싶습니다" / 이어서: "6번, 권장안 수용" (2026-09-26)
+reviews/round-18-owner-answers.md:29	18	union 범위	대화: "그리고 나머지 이야기는 대충 이해가 됩니다. 브랜치 노드의 자동 노드 변환이나 멀티타입은 너무 위험하겠네요. 그 점에 대해선 이해하고,
+reviews/round-18-owner-answers.md:30	18	union 형 없는 분기	검토 댓글: "나 로 할 수 있었으면 좋겠습니다" (2026-09-26)
+reviews/round-18-owner-answers.md:31	18	union O1	대화: "아 그건 또 곤란합니다. 기존 사용자가 깨지는건 어차피 감수해야됩니다. 스키마에 쓴 배열 타입을 그대로 출력하는 필드와 node 의 현
+reviews/round-18-owner-answers.md:32	18	union O2	검토 댓글: "권장안 수용" (2026-09-26)
+reviews/round-18-owner-answers.md:33	18	union O3	검토 댓글: "이거 좀 더 설명을. oneOf /anyOf 는 자식으로 브랜치를 가질 수 없나요? 그럼 깊은 object 객체의 중간 노드가 o
+reviews/round-18-owner-answers.md:34	18	union O4	검토 댓글: "추가 설명 필요. ajv 플러그인에 대한 이야기입니까? ajv 의 값변경 옵션에 대해서? 이건 의도적으로 금지해도 됩니다. 저희가
+reviews/round-18-owner-answers.md:35	18	union O5	검토 댓글: "권장동의" (2026-09-26)
+reviews/round-18-owner-answers.md:36	18	union O6	검토 댓글: "네 동의합니다. 하지만, 반드시 jsonSchema 원래 type 도 전달했으면 좋겠습니다. number -> integer 이걸
+reviews/round-18-owner-answers.md:37	18	union O7·O8	검토 댓글(O7): "해당 동작이 논리적으로 정합하다면 괜찮습니다. 저는 제가 불필요한 jsonSchema 의 하위 전용 문법을 만드는걸 원치는

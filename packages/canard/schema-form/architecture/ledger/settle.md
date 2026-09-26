@@ -10,7 +10,7 @@
 | SETTLE-002 | 표시 단계 | 현행 | 편집자 결정(3–5라운드 반영 4차 본문, `adr/0007-settle-cycle.md:12`), 편집자 결정(10라운드 5차 본문, 표시 대상에서 `selection`을 지움(4.25), `adr/0007-settle-cycle.md:11`) |
 | SETTLE-003 | 계산 단계 — 호스트 바퀴, 게이트 둘, 끝에서 잠금·보임 결정, 원본을 읽기만 함 | 현행 | 편집자 결정(3–5라운드 반영 4차 본문, `adr/0007-settle-cycle.md:12`), 소유자 답(`reviews/round-10-owner-answers.md:8` A-2, 노드 게이트는 조각 게이트와 같은 장치), 소유자 답(`reviews/round-13-owner-answers.md:7` 13라운드 답 1, 코어에 글로벌 없음) |
 | SETTLE-004 | 파생 단계 — 같은 대상 규칙, 순위, 진 쓰기와 에지 소비, 재발화 금지 | 현행 | 소유자 답(`reviews/round-10-owner-answers.md:23,24` E-8·E-9, 순위), 소유자 답(`reviews/round-10-owner-answers.md:20,22,26` D-7·D-17·E-16, 뒤가 앞을 덮는다), 소유자 답(`reviews/round-12-owner-answers.md:17` §9 같은 순위끼리), 소유자 답(`reviews/round-12-owner-answers.md:25` §9 `&derived`·`&injectTo` 충돌; 경고 없음 쪽만, 종류 순위는 13라운드 답 4가 정함), 소유자 답(`reviews/round-13-owner-answers.md:10` 13라운드 답 4, 같은 순위의 문서 순서와 경고 없음), 소유자 답(`reviews/round-10-owner-answers.md:10` A-4, 진짜 순환은 예산이 잡음), 편집자 결정(10라운드, 정착 안 에지 소비와 진 쓰기의 에지 소비, `07-conclusions.md:233`) |
-| SETTLE-005 | 전이 단계 — 생긴 노드의 채움, 나감의 비움, 전이 라운드 상한 | 현행 | 소유자 답(`reviews/round-10-owner-answers.md:7` A-1, 채움은 노드가 생길 때 한 번), 소유자 답(`reviews/round-9-spec.md:52` 읽기2 채우기 원천), 소유자 답(`reviews/round-9-spec.md:56` 읽기2 시점(A/B)), 소유자 답(`reviews/round-13-owner-answers.md:8` 13라운드 답 2, 나감의 비움), 소유자 답(`reviews/round-17-owner-answers.md:10` R17-2 ㄴ), 편집자 결정(10라운드, `07-conclusions.md:106` 4.22) |
+| SETTLE-005 | 전이 단계 — 생긴 노드의 채움, 나감의 비움, 전이 라운드 상한 | 현행 | 소유자 답(`reviews/round-10-owner-answers.md:7` A-1, 채움은 노드가 생길 때 한 번), 소유자 답(`reviews/round-9-spec.md:52` 읽기2 채우기 원천), 소유자 답(`reviews/round-9-spec.md:56` 읽기2 시점(A/B)), 소유자 답(`reviews/round-13-owner-answers.md:8` 13라운드 답 2, 나감의 비움), 소유자 답(`reviews/round-17-owner-answers.md:10` R17-2 ㄴ), 편집자 결정(10라운드, `07-conclusions.md:106` 4.22), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-91), 소유자 답(`reviews/round-18-owner-answers.md:37` union O7·O8; U7 두 번 해석), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-104) |
 | SETTLE-006 | 커밋 단계 — revision 일괄, 커밋 번호, controls.resetInteraction 판정 | 현행 | 편집자 결정(3–5라운드 반영 4차 본문, `adr/0007-settle-cycle.md:12`), 소유자 답(`reviews/round-10-owner-answers.md:32` E-5, `&resetInteraction` 이름), 소유자 답(`reviews/round-12-owner-answers.md:13` §5, resetInteraction 동작은 clearValue와 같음) |
 | SETTLE-007 | 통지 단계 — 루트 디스패처 1회, 유효 스키마가 바뀐 노드도 배달 | 현행 | 편집자 결정(3–5라운드 반영 4차 본문, `adr/0007-settle-cycle.md:12`), 편집자 결정(10라운드, 유효 스키마가 바뀐 노드를 배달 집합에, `07-conclusions.md:96`) |
 | SETTLE-008 | 검증 단계 — 커밋 번호 스탬프, 마이크로태스크 합치기 | 현행 | 소유자 답(`reviews/round-14-owner-answers.md:12` O-6), 편집자 결정(3–5라운드 반영 4차 본문, `adr/0007-settle-cycle.md:12`) |
@@ -22,7 +22,7 @@
 | SETTLE-014 | 비수렴의 throw — 모든 환경, 커밋·통지 뒤 사슬 끝, 끄는 스위치 없음 | 중복(→ ERROR-070, ERROR-072) | 소유자 답(`reviews/round-17-owner-answers.md:9` R17-1) |
 | SETTLE-015 | degraded의 지속과 제출 거부 — getValue는 막지 않음 | 중복(→ ERROR-135, ERROR-138, ERROR-141) | 소유자 답(`reviews/round-14-owner-answers.md:8` O-2, 지속), 소유자 답(`reviews/round-17-owner-answers.md:9` R17-1, 제출 거부) |
 | SETTLE-016 | 상한은 루프를 잇는 고리 하나만 끊음 — 루프를 막지도 권하지도 않음 | 현행 | 소유자 답(`reviews/round-10-owner-answers.md:10` A-4), 소유자 답(`reviews/round-10-owner-answers.md:13` B-1, 끝 문장), 소유자 답(`reviews/round-1.md:179` 순환), 소유자 답(`reviews/round-2.md:116` 상한에 걸렸을 때, 쓰기를 막지 않음), 편집자 결정(7–8라운드 수렴 D-17·D-31, 고리의 자리, `06-conclusions.md:158,196`) |
-| SETTLE-017 | 비용의 상한(G6) — 순회 범위, 되돌림 기록, 역의존 표, 라운드 합산, 컴파일 공유 | 현행 | 원리(G6, `00-goals.md:150`), 편집자 결정(14라운드 F-11, `reviews/round-14-values-check.md:74`), 소유자 답(`reviews/round-17-owner-answers.md:10` R17-2 ㄴ, 나감 비움 순회의 범위) |
+| SETTLE-017 | 비용의 상한(G6) — 순회 범위, 되돌림 기록, 역의존 표, 라운드 합산, 컴파일 공유 | 현행 | 원리(G6, `00-goals.md:150`), 편집자 결정(14라운드 F-11, `reviews/round-14-values-check.md:74`), 소유자 답(`reviews/round-17-owner-answers.md:10` R17-2 ㄴ, 나감 비움 순회의 범위), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-13), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-95) |
 | SETTLE-018 | 호스트 — 출발점 고정 | 현행 | 편집자 결정(3–5라운드 반영 4차 본문, `adr/0007-settle-cycle.md:12`), 소유자 답(`reviews/round-10-owner-answers.md:8` A-2, 노드 게이트), 편집자 결정(14라운드 F-12 (b), 노드 게이트의 출발 상태, `reviews/round-14-values-check.md:76`) |
 | SETTLE-019 | 호스트 — 조각은 트리, 전순서, 노드 게이트의 자리 | 현행 | 편집자 결정(3–5라운드 반영 4차 본문, `adr/0007-settle-cycle.md:12`), 편집자 결정(14라운드 F-12 (b)·(d), 노드 게이트의 전순서 자리와 전순서의 정의, `reviews/round-14-values-check.md:76`) |
 | SETTLE-020 | 호스트 — 매 바퀴 모든 게이트 평가(가우스-자이델) | 현행 | 편집자 결정(3–5라운드 반영 4차 본문, `adr/0007-settle-cycle.md:12`), 소유자 답(`reviews/round-10-owner-answers.md:8` A-2, 노드 게이트) |
@@ -30,9 +30,9 @@
 | SETTLE-022 | 호스트 — 비단조 재평가와 호스트 바퀴 상한 | 현행 | 편집자 결정(3–5라운드 반영 4차 본문, `adr/0007-settle-cycle.md:12`), 편집자 결정(10라운드, 상한에 노드 게이트 수를 더함, `07-conclusions.md:115` 4.23) |
 | SETTLE-023 | 호스트 — 상한 초과 | 현행 | 소유자 답(`reviews/round-17-owner-answers.md:9` R17-1), 편집자 결정(7–8라운드 수렴 D-31, `06-conclusions.md:196`) |
 | SETTLE-024 | 호스트 — 상속 overlay | 현행 | 편집자 결정(3–5라운드 반영 4차 본문, `adr/0007-settle-cycle.md:12`), 편집자 결정(10라운드 5차 본문, 메모 키에서 `selection`을 지움(4.25), `adr/0007-settle-cycle.md:11`) |
-| SETTLE-025 | 호스트 — 합성(local, emit)과 emit의 키 순서 | 열림(→ `reviews/round-18-agenda.md:79`) | 편집자 결정(18라운드 안건 이관, `reviews/round-18-agenda.md:79`; 합성 규칙은 4차 본문, emit의 키 순서 Q14가 열림) |
+| SETTLE-025 | 호스트 — 합성(local, emit)과 emit의 키 순서 | 현행 | 편집자 결정(18라운드 안건 이관, `reviews/round-18-agenda.md:79`; 합성 규칙은 4차 본문, emit의 키 순서 Q14가 열림), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-39) |
 | SETTLE-026 | 고정점이 없는 스키마는 지원 범위 밖 — 결정성과 기본으로 남는 원본 | 현행 | 원리(D-2, `reviews/round-5-derivations.md:41`), 편집자 결정(7–8라운드 수렴 D-24–D-26, `06-conclusions.md:231,236,240`), 편집자 결정(10라운드, 4.15–4.21 그대로, `07-conclusions.md:100`), 편집자 결정(17라운드, 관측 이름 `degraded`, ADR 0014 4판 채택, `adr/0014-error-policy.md:201`) |
-| SETTLE-027 | 로드는 새 수명 — 전체 교체가 에지와 생김의 기준을 비움, 로드 때의 발화 | 현행 | 소유자 답(`reviews/round-10-owner-answers.md:19` D-6, 로드 시 injectTo 발화), 소유자 답(`reviews/round-10-owner-answers.md:29,39` E-21, 로드의 unsetValue), 편집자 결정(10라운드, 21의 최초 로드를 모든 로드로 읽음, `07-conclusions.md:251`), 소유자 답(`reviews/round-12-owner-answers.md:13` §5 (a) 모든 로드에서 로드된 값으로 평가), 소유자 답(`reviews/round-12-owner-answers.md:19` §9 로드에서 `&derived`), 편집자 결정(3–5라운드 반영 4차 본문, `adr/0007-settle-cycle.md:12`) |
+| SETTLE-027 | 로드는 새 수명 — 전체 교체가 에지와 생김의 기준을 비움, 로드 때의 발화 | 분할됨(→ SETTLE-046, WRITE-090) | 소유자 답(`reviews/round-10-owner-answers.md:19` D-6, 로드 시 injectTo 발화), 소유자 답(`reviews/round-10-owner-answers.md:29,39` E-21, 로드의 unsetValue), 편집자 결정(10라운드, 21의 최초 로드를 모든 로드로 읽음, `07-conclusions.md:251`), 소유자 답(`reviews/round-12-owner-answers.md:13` §5 (a) 모든 로드에서 로드된 값으로 평가), 소유자 답(`reviews/round-12-owner-answers.md:19` §9 로드에서 `&derived`), 편집자 결정(3–5라운드 반영 4차 본문, `adr/0007-settle-cycle.md:12`), 소유자 답(`reviews/round-18-owner-answers.md:26` 18C 검토 4번; 대체) |
 | SETTLE-028 | 런타임 에지 — 에지에서만 쓰고 부분 쓰기를 되돌리지 않음 | 현행 | 소유자 답(`reviews/round-10-owner-answers.md:39` E-21, 런타임은 경계에서만), 편집자 결정(10라운드, 에지 기준점은 직전 커밋, `07-conclusions.md:91`), 편집자 결정(10라운드, 참→거짓은 무동작으로 읽음, `07-conclusions.md:251`), 소유자 답(`reviews/round-12-owner-answers.md:13` §5 (b) 참→거짓은 무동작) |
 | SETTLE-029 | D-2 — 형상은 상태의 순수 함수, 출발점 고정과 비단조 재평가 | 현행 | 원리(P3, `reviews/round-5-derivations.md:41` D-2), 편집자 결정(17라운드, 관측 이름 `degraded`, ADR 0014 4판 채택, `adr/0014-error-policy.md:201`) |
 | SETTLE-030 | 결과와 되돌림 가능성 | 현행(기록) | 편집자 결정(3–5라운드 반영 4차 본문, `adr/0007-settle-cycle.md:12`) |
@@ -40,12 +40,20 @@
 | SETTLE-032 | 예산 초과 때 제출 차단에서 지워진 선택지 | 현행(부정 결정) | 원리(P1·G1·P5, `06-conclusions.md:304-305`), 소유자 답(`reviews/round-17-owner-answers.md:9` R17-1, 폼의 제출 경로가 거부) |
 | SETTLE-033 | 대체됨: 전이 주입은 최종 활성 집합 기준, 승자는 최종 형상의 default(06 4.2, D-12) | 대체됨(→ SETTLE-005) | 소유자 답(`reviews/round-10-owner-answers.md:7` A-1), 편집자 결정(10라운드, 4.2를 4.22로 다시 씀, `07-conclusions.md:101`) |
 | SETTLE-034 | 대체됨: 상한에 걸리면 값은 받고 형상만 직전 커밋의 활성 집합으로 고정, 에러는 개발 모드 한정(2라운드) | 대체됨(→ SETTLE-011, SETTLE-014) | 소유자 답(`reviews/round-2.md:116` 상한에 걸렸을 때), 편집자 결정(7–8라운드 수렴 D-31, `06-conclusions.md:196`), 소유자 답(`reviews/round-17-owner-answers.md:9` R17-1) |
-| SETTLE-035 | 열림: Q15 직전 커밋의 활성 집합을 출발 가설로 쓰는 최적화 | 열림(→ `reviews/round-18-agenda.md:112`) | 편집자 결정(18라운드 안건 이관, `reviews/round-18-agenda.md:112`) |
-| SETTLE-036 | 열림: controls.active 식이 다른 호스트를 읽을 때의 평가 순서와 재순회 | 열림(→ `reviews/round-18-agenda.md:36`) | 편집자 결정(18라운드 안건 이관, `reviews/round-18-agenda.md:36`) |
-| SETTLE-037 | 열림: 호스트 바퀴·전이 예산 식이 controls.children 항목 게이트와 조각 범위 제어 게이트를 세는가 | 열림(→ `reviews/round-18-agenda.md:25`) | 편집자 결정(18라운드 안건 이관, `reviews/round-18-agenda.md:25`) |
+| SETTLE-035 | 열림: Q15 직전 커밋의 활성 집합을 출발 가설로 쓰는 최적화 | 대체됨(→ SETTLE-044) | 편집자 결정(18라운드 안건 이관, `reviews/round-18-agenda.md:112`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-67) |
+| SETTLE-036 | 열림: controls.active 식이 다른 호스트를 읽을 때의 평가 순서와 재순회 | 대체됨(→ SETTLE-045) | 편집자 결정(18라운드 안건 이관, `reviews/round-18-agenda.md:36`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-15; 정본(FRAGMENT-039는 중복)) |
+| SETTLE-037 | 열림: 호스트 바퀴·전이 예산 식이 controls.children 항목 게이트와 조각 범위 제어 게이트를 세는가 | 대체됨(→ SETTLE-041) | 편집자 결정(18라운드 안건 이관, `reviews/round-18-agenda.md:25`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-12) |
 | SETTLE-038 | 자동 쓰기 되돌림 로그의 수명은 정착 하나 — 진입 범위가 아님(06 4.19, D-30) | 현행 | 편집자 결정(7–8라운드 수렴 D-30, `06-conclusions.md:247`), 편집자 결정(10라운드, 4.15–4.21 그대로, `07-conclusions.md:100`) |
-| SETTLE-039 | 열림: 에지의 값 동등 판정과 controls.derived 의존 집합의 출처 | 열림(→ `reviews/round-18-agenda.md:107`) | 편집자 결정(18라운드 안건 이관, `reviews/round-18-agenda.md:107`) |
+| SETTLE-039 | 열림: 에지의 값 동등 판정과 controls.derived 의존 집합의 출처 | 대체됨(→ SETTLE-043) | 편집자 결정(18라운드 안건 이관, `reviews/round-18-agenda.md:107`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-50) |
 | SETTLE-040 | 대체됨: 호스트 바퀴 상한은 조건부 조각 수 + 1(06 용어) | 대체됨(→ SETTLE-022) | 편집자 결정(7–8라운드 수렴, `06-conclusions.md:32` 용어), 편집자 결정(10라운드, 상한에 노드 게이트 수를 더함, `07-conclusions.md:132`) |
+| SETTLE-041 | 예산 셈 — `controls.active`를 가진 `children` 항목은 항목마다 노드 게이트 하나, 조각의 `controls.active`는 '게이트 가진 조각 수'에 이미 듦 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-12) |
+| SETTLE-042 | branch 객체 `local`·`emit`의 키 순서 — `propertyKeys`, 첫 선언의 전순서, `extras` 삽입 순서; 키 집합이 같으면 패치, 바뀌면 O(키 수)로 다시 짓기 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-39) |
+| SETTLE-043 | 값 동등 `sameValue`(가칭) — SameValueZero, 배열·평범한 객체는 구조(키 순서 포함), 그 밖은 참조; 커밋·emit 참조 되살림; `derived` 의존 집합은 식 경로 ∪ `controls.watch` | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-50) |
+| SETTLE-044 | 직전 커밋의 활성 집합에서 출발하는 최적화는 채택하지 않는다 — 출발점 고정, PR-2 벤치 게이트 | 현행(부정 결정) | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-67) |
+| SETTLE-045 | 하위 트리 밖을 읽는 `controls.active` 게이트는 가장 낮은 공통 조상 L에서 평가 — L 전순서의 자리, 경로 재계산은 호스트 바퀴 예산, 재순회 없음 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-15) |
+| SETTLE-046 | 로드 때의 채움과 발화 — 최종 형상의 노드가 모두 생긴 노드로서 채움, `controls.injectTo`는 발화, `controls.unsetValue`는 로드된 값으로 평가 | 현행 | 소유자 답(`reviews/round-10-owner-answers.md:19` D-6, 로드 시 injectTo 발화), 소유자 답(`reviews/round-10-owner-answers.md:29,39` E-21, 로드의 unsetValue), 편집자 결정(10라운드, 21의 최초 로드를 모든 로드로 읽음, `07-conclusions.md:251`), 소유자 답(`reviews/round-12-owner-answers.md:13` §5 (a) 모든 로드에서 로드된 값으로 평가), 소유자 답(`reviews/round-12-owner-answers.md:19` §9 로드에서 `&derived`), 편집자 결정(3–5라운드 반영 4차 본문, `adr/0007-settle-cycle.md:12`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-102) |
+| SETTLE-047 | 트리 전체 순회의 예산 — 로드와, 쓰기가 닿은 하위 트리를 도는 전체 교체 쓰기에서만 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-95) |
+| SETTLE-048 | 에지와 생김의 기준 — 로드는 비우고, 로드가 아닌 쓰기(`setValue(V)` 포함)는 직전 커밋 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-102) |
 
 항목 형식은 `ledger/README.md` §3을 따른다. 정본 줄의 일부 문장만 옮긴 항목은 출처에 `#n`(한 문장) 또는 `#a-b`(이어진 문장들)를 적는다. 이어지지 않은 문장들을 옮긴 항목은 줄 전체를 출처로 두고 `(정본, #a–#b·#n)`로 적는다. 표의 행을 옮긴 항목은 그 표의 머리 두 줄을 함께 옮긴다.
 
@@ -119,11 +127,17 @@
   > "채움이나 나감의 비움이 다음 라운드를 부르는 것은 그 쓰기가 게이트를 뒤집어 아직 생기지 않은 노드를 내거나 아직 나가지 않은 노드를 내보낼 때뿐이고, 노드마다 정착 안에서 채움 한 번·비움 한 번뿐이라 같은 게이트가 다시 뒤집혀도 새 라운드를 낳지 않는다." (`03-mental-model.md:116`)
   > "같은 정착 안에서 닫혔다 다시 열린 게이트의 노드는 이미 생긴 노드라 채움이 없다), 리스너 되먹임 파동, `onChange` 중첩의 다섯. 상한은 루프를 잇는 고리 하나만 끊는다." (`03-mental-model.md:116`)
   > "채움은 전이 단계에 있지만 순위는 단계를 가로지른다: 생긴 노드의 `controls.unsetValue`가 참이면 채우지 않는다(안 그러면 로드에서 지운 값이 바로 다시 채워진다)." (`03-mental-model.md:124`)
+  > 편집자 결정(18C-91): "【추론】 한 진입에서 쓰인 값의 두 번 해석(`reviews/round-18-owner-answers.md:37`의 U7)에서 첫째 해석의 목록은 직전 커밋의 유효 목록이고, 마운트·`reset()`이면 `schemaType`이다." (`reviews/round-18-closing.md:2513`)
+  > 편집자 결정(18C-91): "【추론】 둘째 해석은 그 진입의 전이 단계에서 커밋 전에 하며, 목록이 바뀐 노드에서만 결과를 바꾼다(`interpret`가 멱등)." (`reviews/round-18-closing.md:2514`)
+  > 반영 칸(union O7·O8, U7): "U7: 한 진입에서 쓰인 노드(입력 쓰기·`setValue`·로드·채움)는 그 진입의 전이 단계에서 최종 유효 목록으로 한 번 더 해석하며, 쓰이지 않은 노드는 다시 해석하지 않는다." (`reviews/round-18-owner-answers.md:37`)
 - 상태: 현행
-- 출처: `adr/0007-settle-cycle.md:39`(정본), `02-target-overview.md:161`, `08-design-a-to-z.md:246`, `03-mental-model.md:108,116`
-- 닫은 사람: 소유자 답(`reviews/round-10-owner-answers.md:7` A-1, 채움은 노드가 생길 때 한 번), 소유자 답(`reviews/round-9-spec.md:52` 읽기2 채우기 원천), 소유자 답(`reviews/round-9-spec.md:56` 읽기2 시점(A/B)), 소유자 답(`reviews/round-13-owner-answers.md:8` 13라운드 답 2, 나감의 비움), 소유자 답(`reviews/round-17-owner-answers.md:10` R17-2 ㄴ), 편집자 결정(10라운드, `07-conclusions.md:106` 4.22)
-- 라운드: 17
-- 까닭: `07-conclusions.md:106`
+- 출처: `adr/0007-settle-cycle.md:39`(정본), `02-target-overview.md:161`, `08-design-a-to-z.md:246`, `03-mental-model.md:108,116`, `reviews/round-18-closing.md:2513-2514`, `reviews/round-18-owner-answers.md:37`, `reviews/round-18-closing.md:2908-2910,2914`
+- 닫은 사람: 소유자 답(`reviews/round-10-owner-answers.md:7` A-1, 채움은 노드가 생길 때 한 번), 소유자 답(`reviews/round-9-spec.md:52` 읽기2 채우기 원천), 소유자 답(`reviews/round-9-spec.md:56` 읽기2 시점(A/B)), 소유자 답(`reviews/round-13-owner-answers.md:8` 13라운드 답 2, 나감의 비움), 소유자 답(`reviews/round-17-owner-answers.md:10` R17-2 ㄴ), 편집자 결정(10라운드, `07-conclusions.md:106` 4.22), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-91), 소유자 답(`reviews/round-18-owner-answers.md:37` union O7·O8; U7 두 번 해석), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-104)
+- 라운드: 18
+- 까닭: `07-conclusions.md:106`, `reviews/round-18-closing.md:2556-2564`, `reviews/round-18-owner-answers.md:37`
+- 충돌:
+  > `reviews/round-18-closing.md:2513`의 "첫째 해석의 목록은 직전 커밋의 유효 목록이고, 마운트·`reset()`이면 `schemaType`이다"는 18C-104의 결정과 다르다: 쓰기 경계에서는 게이트와 무관한 정적 목록(`schemaType`, `nullable`)으로 해석하며, 로드(마운트, `FormHandle.reset()`, `resetSubtree()`)도 같다(WRITE-098). 18C-104의 결정이 이긴다(`reviews/round-18-closing.md:2908-2909,2914`).
+  > `reviews/round-18-closing.md:2514`의 "목록이 바뀐 노드에서만 결과를 바꾼다(`interpret`가 멱등)"는 18C-104의 결정과 다르다: 전이 단계에서는 최종 유효 목록이 정적 목록보다 좁은 노드만, 첫째 해석의 결과가 아니라 원래 쓰인 값을 최종 유효 목록으로 다시 해석해 원본으로 삼는다(WRITE-098). 18C-104의 결정이 이긴다(`reviews/round-18-closing.md:2910`).
 
 ### SETTLE-006 커밋 단계 — revision 일괄, 커밋 번호, controls.resetInteraction 판정
 
@@ -203,6 +217,7 @@
 - 까닭: `06-conclusions.md:197`
 - 충돌:
   > `06-conclusions.md:196`의 "원본 B, 곧 그 정착의 자동 쓰기를 모두 뺀 원본과 그 형상을 커밋하고 `settle.status`를 예산 초과로 표시한다."은 정본과 다르다(`settle.status`). 정본이 이긴다(`adr/0007-settle-cycle.md:47`).
+  > `adr/0007-settle-cycle.md:47`의 "정착의 세 예산(호스트 바퀴, 파생 라운드, 전이 라운드) 가운데 하나라도 상한을 넘기면"은 18라운드 결정과 다르다: 재귀 펼침의 멈춤도 예산 부류의 정착 오류로 원본 B를 커밋한다(`exceededBudget: 'recursion'`(가칭), ERROR-190). 18라운드 결정이 이긴다(`reviews/round-18-closing.md:28`).
 
 ### SETTLE-012 비수렴의 표시 — diagnostics.status degraded, cause는 예산
 
@@ -271,11 +286,15 @@
 - 보충:
   > "나감의 비움은 나간 하위 트리(꺼진 조각이 선언한 하위 트리와 잠복 하위 트리를 포함한다)를 위에서 아래로 한 번 순회하며 조상의 정책을 인자로 내려보낸다(노드당 상수, 위로 거슬러 오르지 않는다). 청사진이 '하위 트리에 정책 선언 없음'을 표시하면 Form 속성이 꺼져 있을 때 순회를 건너뛴다." (`03-mental-model.md:118`)
   > "토글 없는 키 입력 한 번의 검증기 호출은 조상 경로의 `if` 게이트 수에 묶인다(14라운드 고속성 검증의 어림, `reviews/raw-round14-speed.md`)." (`08-design-a-to-z.md:255`)
+  > 편집자 결정(18C-13): "【추론】 합성 노드를 읽는 식은 그 하위 트리 전체에 기댄다." (`reviews/round-18-closing.md:344`)
+  > 편집자 결정(18C-13): "【추론】 따라서 역의존 조회(SETTLE-017)는 값이 바뀐 노드의 경로와 그 조상·자손 경로를 읽는 식을 모두 찾는다." (`reviews/round-18-closing.md:345`)
 - 상태: 현행
-- 출처: `adr/0007-settle-cycle.md:48`(정본), `03-mental-model.md:118`, `08-design-a-to-z.md:255-256`
-- 닫은 사람: 원리(G6, `00-goals.md:150`), 편집자 결정(14라운드 F-11, `reviews/round-14-values-check.md:74`), 소유자 답(`reviews/round-17-owner-answers.md:10` R17-2 ㄴ, 나감 비움 순회의 범위)
-- 라운드: 17
-- 까닭: `reviews/round-14-values-check.md:12`
+- 출처: `adr/0007-settle-cycle.md:48`(정본), `03-mental-model.md:118`, `08-design-a-to-z.md:255-256`, `reviews/round-18-closing.md:344-345`, `reviews/round-18-closing.md:2747`
+- 닫은 사람: 원리(G6, `00-goals.md:150`), 편집자 결정(14라운드 F-11, `reviews/round-14-values-check.md:74`), 소유자 답(`reviews/round-17-owner-answers.md:10` R17-2 ㄴ, 나감 비움 순회의 범위), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-13), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-95)
+- 라운드: 18
+- 까닭: `reviews/round-14-values-check.md:12`, `reviews/round-18-closing.md:370-376`, `reviews/round-18-closing.md:2749-2750`
+- 충돌:
+  > `adr/0007-settle-cycle.md:48`의 "트리 전체 순회는 로드에서만 허용한다"는 18라운드 결정과 다르다: 트리 전체 순회는 로드와, 쓰기가 닿은 하위 트리를 도는 전체 교체 쓰기에서만 허용한다(SETTLE-047). 18라운드 결정이 이긴다(`reviews/round-18-closing.md:2747`).
 
 ### SETTLE-018 호스트 — 출발점 고정
 
@@ -302,6 +321,8 @@
 - 닫은 사람: 편집자 결정(3–5라운드 반영 4차 본문, `adr/0007-settle-cycle.md:12`), 편집자 결정(14라운드 F-12 (b)·(d), 노드 게이트의 전순서 자리와 전순서의 정의, `reviews/round-14-values-check.md:76`)
 - 라운드: 14
 - 까닭: `adr/0007-settle-cycle.md:55`(E3)
+- 충돌:
+  > `adr/0007-settle-cycle.md:55`의 "키워드 순위는 본체 `properties` < `allOf` 항목 < `if/then/else` < `oneOf`·`anyOf` 분기"는 18라운드 결정과 다르다: 같은 호스트의 `oneOf` 분기는 모든 `anyOf` 분기보다 앞이다(FRAGMENT-049). 18라운드 결정이 이긴다(`reviews/round-18-closing.md:238-239`).
 
 ### SETTLE-020 호스트 — 매 바퀴 모든 게이트 평가(가우스-자이델)
 
@@ -374,12 +395,22 @@
   > | 규칙 | 내용 | 근거 |
   > | ---- | ---- | ---- |
   > | 합성 | `local := compose(A)`, `emit := project(local)`. `delete` 없이 조각이 선언한 키만 패치한다(F13). `emit`의 키 순서는 스키마 선언 순서, `extras`는 뒤에 받은 순서 | E10, F13, 4.12 |
-- 보충: 없음
-- 상태: 열림(→ `reviews/round-18-agenda.md:79`)
-- 출처: `adr/0007-settle-cycle.md:62`(정본), `adr/0007-settle-cycle.md:151`
-- 닫은 사람: 편집자 결정(18라운드 안건 이관, `reviews/round-18-agenda.md:79`; 합성 규칙은 4차 본문, emit의 키 순서 Q14가 열림)
-- 라운드: 18(안건)
-- 까닭: `adr/0007-settle-cycle.md:62`(E10·F13·4.12)
+- 보충:
+  > 편집자 결정(18C-39): "【추론】 branch 객체 노드의 `local`과 `emit`의 키 순서는 결정적이다." (`reviews/round-18-closing.md:1053`)
+  > 편집자 결정(18C-39): "【추론】 쓰기의 순서나 이력과 무관하다." (`reviews/round-18-closing.md:1054`)
+  > 편집자 결정(18C-39): "【추론】 첫째, 그 호스트의 유효 스키마 `options.propertyKeys`에 적힌 키가 그 순서로 먼저 온다." (`reviews/round-18-closing.md:1055`)
+  > 편집자 결정(18C-39): "【추론】 둘째, 나머지 선언된 자식 키는 청사진 전순서(ADR 0002)에서 그 이름의 첫 선언 자리 순이다." (`reviews/round-18-closing.md:1056`)
+  > 편집자 결정(18C-39): "【추론】 조각에서만 선언된 키와 공유 노드의 키도 같다." (`reviews/round-18-closing.md:1057`)
+  > 편집자 결정(18C-39): "【추론】 셋째, `extras`는 그 뒤에 원본에 들어온 순서(삽입 순서)로 온다." (`reviews/round-18-closing.md:1058`)
+  > 편집자 결정(18C-39): "【추론】 형상에 없는 키는 없다." (`reviews/round-18-closing.md:1059`)
+  > 편집자 결정(18C-39): "【추론】 F13의 "조각이 선언한 키만 패치"는 다시 계산하는 키의 범위로 읽는다." (`reviews/round-18-closing.md:1065`)
+- 상태: 현행
+- 출처: `adr/0007-settle-cycle.md:62`(정본), `adr/0007-settle-cycle.md:151`, `reviews/round-18-closing.md:1053-1070,1076-1078`
+- 닫은 사람: 편집자 결정(18라운드 안건 이관, `reviews/round-18-agenda.md:79`; 합성 규칙은 4차 본문, emit의 키 순서 Q14가 열림), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-39)
+- 라운드: 18
+- 까닭: `adr/0007-settle-cycle.md:62`(E10·F13·4.12), `reviews/round-18-closing.md:1072-1074`
+- 충돌:
+  > `adr/0007-settle-cycle.md:62`의 "`delete` 없이 조각이 선언한 키만 패치한다(F13)"는 18라운드 결정과 다르다: 다시 계산하는 키는 그 조각이 선언한 키뿐이고, 키 집합이 바뀌면 그 호스트의 `local`을 선언 순서로 O(키 수) 새로 지으며 `delete`는 없다(SETTLE-042). 18라운드 결정이 이긴다(`reviews/round-18-closing.md:1063-1066`).
 
 ### SETTLE-026 고정점이 없는 스키마는 지원 범위 밖 — 결정성과 기본으로 남는 원본
 
@@ -401,10 +432,10 @@
   > 전체 교체는 **에지와 생김의 기준(직전 커밋)을 비운다**(F4). 그래서 로드에서는 최종 형상의 노드가 모두 생긴 노드로서 채움을 받는다. `controls.injectTo`는 직전 값이 없으므로 발화한다(`fire`, 소유자 동의). `controls.unsetValue`는 로드된 값으로 평가해 참이면 지우고 거짓이면 둔다(소유자 답 21).
 - 보충:
   > "없음인 값은 모두 채움을 받고, `controls.injectTo`·`controls.derived`는 발화하며, `controls.unsetValue`는 로드된 값으로 평가해 참이면 지운다." (`08-design-a-to-z.md:253`)
-- 상태: 현행
+- 상태: 분할됨(→ SETTLE-046, WRITE-090)
 - 출처: `adr/0007-settle-cycle.md:92#1-4`(정본), `02-target-overview.md:168`, `08-design-a-to-z.md:253`
-- 닫은 사람: 소유자 답(`reviews/round-10-owner-answers.md:19` D-6, 로드 시 injectTo 발화), 소유자 답(`reviews/round-10-owner-answers.md:29,39` E-21, 로드의 unsetValue), 편집자 결정(10라운드, 21의 최초 로드를 모든 로드로 읽음, `07-conclusions.md:251`), 소유자 답(`reviews/round-12-owner-answers.md:13` §5 (a) 모든 로드에서 로드된 값으로 평가), 소유자 답(`reviews/round-12-owner-answers.md:19` §9 로드에서 `&derived`), 편집자 결정(3–5라운드 반영 4차 본문, `adr/0007-settle-cycle.md:12`)
-- 라운드: 12
+- 닫은 사람: 소유자 답(`reviews/round-10-owner-answers.md:19` D-6, 로드 시 injectTo 발화), 소유자 답(`reviews/round-10-owner-answers.md:29,39` E-21, 로드의 unsetValue), 편집자 결정(10라운드, 21의 최초 로드를 모든 로드로 읽음, `07-conclusions.md:251`), 소유자 답(`reviews/round-12-owner-answers.md:13` §5 (a) 모든 로드에서 로드된 값으로 평가), 소유자 답(`reviews/round-12-owner-answers.md:19` §9 로드에서 `&derived`), 편집자 결정(3–5라운드 반영 4차 본문, `adr/0007-settle-cycle.md:12`), 소유자 답(`reviews/round-18-owner-answers.md:26` 18C 검토 4번; 대체)
+- 라운드: 18
 - 까닭: `07-conclusions.md:251`, `adr/0007-settle-cycle.md:92`(F4)
 
 ### SETTLE-028 런타임 에지 — 에지에서만 쓰고 부분 쓰기를 되돌리지 않음
@@ -499,22 +530,22 @@
 - 결정:
   > 출발점 고정(A4-1)은 켜진 조각 N개인 호스트에 무관한 키 입력이 와도 N개를 다시 켜며 리빌드한다(`reviews/round-4.md` U19, F13). 직전 커밋의 `active`에서 출발해 안정될 때까지 돌리면 대부분 1바퀴에 끝나지만, 가드 의존 관계에 부정을 포함한 순환이 있으면 다른 고정점에 닿을 수 있다 — 그 부류는 지원 범위 밖이므로(F3) 결과가 같다고 볼 수도 있다. 측정과 함께 정한다.
 - 보충: 없음
-- 상태: 열림(→ `reviews/round-18-agenda.md:112`)
-- 출처: `open-questions.md:92`(정본), `adr/0007-settle-cycle.md:151`
-- 닫은 사람: 편집자 결정(18라운드 안건 이관, `reviews/round-18-agenda.md:112`)
-- 라운드: 18(안건)
-- 까닭: `open-questions.md:92`
+- 상태: 대체됨(→ SETTLE-044)
+- 출처: `open-questions.md:92`(정본), `adr/0007-settle-cycle.md:151`, `reviews/round-18-closing.md:1877-1883,1889-1891`
+- 닫은 사람: 편집자 결정(18라운드 안건 이관, `reviews/round-18-agenda.md:112`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-67)
+- 라운드: 18
+- 까닭: `open-questions.md:92`, `reviews/round-18-closing.md:1885-1887`
 
 ### SETTLE-036 열림: controls.active 식이 다른 호스트를 읽을 때의 평가 순서와 재순회
 
 - 결정:
   > **`controls.active` 식이 다른 호스트를 읽을 때**의 평가 순서와 재순회 규칙은 슬라이스 2 전의 설계 항목이다(§15).
 - 보충: 없음
-- 상태: 열림(→ `reviews/round-18-agenda.md:36`)
-- 출처: `08-design-a-to-z.md:256#1`(정본), `02-target-overview.md:171`
-- 닫은 사람: 편집자 결정(18라운드 안건 이관, `reviews/round-18-agenda.md:36`)
-- 라운드: 18(안건)
-- 까닭: `08-design-a-to-z.md:256`
+- 상태: 대체됨(→ SETTLE-045)
+- 출처: `08-design-a-to-z.md:256#1`(정본), `02-target-overview.md:171`, `reviews/round-18-closing.md:429-442,449-455`
+- 닫은 사람: 편집자 결정(18라운드 안건 이관, `reviews/round-18-agenda.md:36`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-15; 정본(FRAGMENT-039는 중복))
+- 라운드: 18
+- 까닭: `08-design-a-to-z.md:256`, `reviews/round-18-closing.md:444-447`
 
 ### SETTLE-037 열림: 호스트 바퀴·전이 예산 식이 controls.children 항목 게이트와 조각 범위 제어 게이트를 세는가
 
@@ -523,11 +554,11 @@
   > | --- | --- | --- | --- |
   > | `controls.children` 가운데 PR-1·PR-2가 쓰는 부분. 대상 해석(조각에서만 선언된 자식을 가리킬 수 있는가, 청사진에 없는 이름이 청사진 오류인가), 항목 `controls.active`의 전순서 자리, 호스트 바퀴·전이 예산 식('게이트 가진 조각 수 + 노드 게이트 수 + 1')이 `children` 항목 게이트와 조각 범위 제어 게이트를 세는가. §9의 'PR-6 전'에는 대상별 식과 값 키만 남는다(외부 점검 codex, 검증자) | `08-design-a-to-z.md:299`·`:302`(§8.4), `:244`·`:246`(§7), `:496`(§15), `02-target-overview.md:159`(§2.3), `adr/0008-event-system.md:91`, `adr/0014-error-policy.md:259`(§7.2) | PR-1, PR-2 | 설계 결정 |
 - 보충: 없음
-- 상태: 열림(→ `reviews/round-18-agenda.md:25`)
-- 출처: `reviews/round-18-agenda.md:25`(정본), `reviews/raw-round18-early-check.md:197`, `adr/0007-settle-cycle.md:37,39,58`
-- 닫은 사람: 편집자 결정(18라운드 안건 이관, `reviews/round-18-agenda.md:25`)
-- 라운드: 18(안건)
-- 까닭: `reviews/raw-round18-early-check.md:197`
+- 상태: 대체됨(→ SETTLE-041)
+- 출처: `reviews/round-18-agenda.md:25`(정본), `reviews/raw-round18-early-check.md:197`, `adr/0007-settle-cycle.md:37,39,58`, `reviews/round-18-closing.md:270-297`
+- 닫은 사람: 편집자 결정(18라운드 안건 이관, `reviews/round-18-agenda.md:25`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-12)
+- 라운드: 18
+- 까닭: `reviews/raw-round18-early-check.md:197`, `reviews/round-18-closing.md:299-303`
 
 ### SETTLE-038 자동 쓰기 되돌림 로그의 수명은 정착 하나 — 진입 범위가 아님(06 4.19, D-30)
 
@@ -547,11 +578,11 @@
   > 에지의 값 동등 판정(참조인지 깊은 비교인지)과 `controls.derived` 의존 집합의 출처(슬라이스 3 전).
 - 보충:
   > "에지의 값 동등 판정(참조인지 깊은 비교인지), `controls.derived` 의존 집합의 출처, 조각의 `controls`에 둔 식 규칙이 나감 에지에서 발화하는 세부(`08-design-a-to-z.md:456`)." (`reviews/round-18-agenda.md:107`)
-- 상태: 열림(→ `reviews/round-18-agenda.md:107`)
-- 출처: `03-mental-model.md:211`(정본), `08-design-a-to-z.md:492`, `reviews/round-18-agenda.md:107`, `06-conclusions.md:253#1`(VALUE-021의 정본)
-- 닫은 사람: 편집자 결정(18라운드 안건 이관, `reviews/round-18-agenda.md:107`)
-- 라운드: 18(안건)
-- 까닭: `reviews/round-18-agenda.md:107`
+- 상태: 대체됨(→ SETTLE-043)
+- 출처: `03-mental-model.md:211`(정본), `08-design-a-to-z.md:492`, `reviews/round-18-agenda.md:107`, `06-conclusions.md:253#1`(VALUE-021의 정본), `reviews/round-18-closing.md:1376-1403,1413-1415`
+- 닫은 사람: 편집자 결정(18라운드 안건 이관, `reviews/round-18-agenda.md:107`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-50)
+- 라운드: 18
+- 까닭: `reviews/round-18-agenda.md:107`, `reviews/round-18-closing.md:1405-1411`
 
 ### SETTLE-040 대체됨: 호스트 바퀴 상한은 조건부 조각 수 + 1(06 용어)
 
@@ -566,3 +597,178 @@
 - 닫은 사람: 편집자 결정(7–8라운드 수렴, `06-conclusions.md:32` 용어), 편집자 결정(10라운드, 상한에 노드 게이트 수를 더함, `07-conclusions.md:132`)
 - 라운드: 10
 - 까닭: `07-conclusions.md:132`
+
+### SETTLE-041 예산 셈 — `controls.active`를 가진 `children` 항목은 항목마다 노드 게이트 하나, 조각의 `controls.active`는 '게이트 가진 조각 수'에 이미 듦
+
+- 결정:
+  > 【추론】 (5) 예산 셈: 호스트 바퀴와 전이 라운드 식의 '노드 게이트 수'는 `controls.active`를 가진 `children` 항목을 대상 수와 무관하게 항목마다 하나로 센다.
+  > 【추론】 식 하나가 호스트 기준으로 한 번 평가되어 모든 대상에 같은 값으로 걸리기 때문이다.
+  > 【추론】 조각의 `controls.active`는 그 조각의 게이트라 '게이트 가진 조각 수'에 이미 들어 있으므로 따로 세지 않는다.
+  > 【추론】 조각 범위 제어의 다른 키는 게이트가 아니다.
+  > 【추론】 판별 변환과 분기 식의 AND(18C-05)는 게이트 하나다.
+- 보충: 없음
+- 상태: 현행
+- 출처: `reviews/round-18-closing.md:283-287`(정본)
+- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-12)
+- 라운드: 18
+- 까닭: `reviews/round-18-closing.md:299-303`
+
+### SETTLE-042 branch 객체 `local`·`emit`의 키 순서 — `propertyKeys`, 첫 선언의 전순서, `extras` 삽입 순서; 키 집합이 같으면 패치, 바뀌면 O(키 수)로 다시 짓기
+
+- 결정:
+  > 【추론】 branch 객체 노드의 `local`과 `emit`의 키 순서는 결정적이다.
+  > 【추론】 쓰기의 순서나 이력과 무관하다.
+  > 【추론】 첫째, 그 호스트의 유효 스키마 `options.propertyKeys`에 적힌 키가 그 순서로 먼저 온다.
+  > 【추론】 둘째, 나머지 선언된 자식 키는 청사진 전순서(ADR 0002)에서 그 이름의 첫 선언 자리 순이다.
+  > 【추론】 조각에서만 선언된 키와 공유 노드의 키도 같다.
+  > 【추론】 셋째, `extras`는 그 뒤에 원본에 들어온 순서(삽입 순서)로 온다.
+  > 【추론】 형상에 없는 키는 없다.
+  > 【추론】 순서표는 호스트의 유효 스키마 메모가 바뀔 때 한 번 계산해 메모와 함께 둔다.
+  > 【추론】 키 집합이 같은 커밋(값만 바뀐 쓰기, 키 입력)은 바뀐 자식만 직전 `local`의 사본에 같은 자리로 패치한다.
+  > 【추론】 그 비용은 O(재계산 목록)이고 순서가 유지된다.
+  > 【추론】 키 집합이 바뀌는 커밋(조각이나 노드 게이트의 토글, 자식이 생기거나 빠짐, `extras` 추가, `propertyKeys` 변경)은 그 호스트의 `local`을 위 순서로 새로 짓는다.
+  > 【추론】 그 비용은 O(그 호스트의 키 수)이고 `delete`는 없다.
+  > 【추론】 F13의 "조각이 선언한 키만 패치"는 다시 계산하는 키의 범위로 읽는다.
+  > 【추론】 토글 때 다시 계산하는 것은 그 조각이 선언한 키뿐이고, 나머지 값은 직전 `local`에서 옮겨 선언 순서로 새 객체를 짓는다.
+  > 【추론】 `emit := project(local)`은 순서를 그대로 둔다.
+  > 【추론】 터미널 객체와 비객체 원본은 받은 값을 그대로 든다(순서를 바꾸지 않음).
+  > 【추론】 배열은 인덱스 순이다.
+  > 【추론】 오늘의 선언 순서 정렬(`BranchStrategy.ts:246,777-803`, `sortWithReference`: 참조 목록의 키가 먼저, 나머지는 원래 순서)과 같은 결과를 내므로 이주 행은 두지 않는다.
+  > PR: PR-2 시험.
+  > 무엇: 조각 키의 자리가 오늘의 `oneOf`/`anyOf` 키 합집합 순서와 어긋나는 스키마가 있는지 본다.
+  > 실패: 어긋나면 이주 행을 더한다.
+- 보충: 없음
+- 상태: 현행
+- 출처: `reviews/round-18-closing.md:1053-1070,1076-1078`(정본)
+- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-39)
+- 라운드: 18
+- 까닭: `reviews/round-18-closing.md:1072-1074`
+
+### SETTLE-043 값 동등 `sameValue`(가칭) — SameValueZero, 배열·평범한 객체는 구조(키 순서 포함), 그 밖은 참조; 커밋·emit 참조 되살림; `derived` 의존 집합은 식 경로 ∪ `controls.watch`
+
+- 결정:
+  > 【추론】 (가) "값이 바뀌었다"는 하나의 판정(가칭 `sameValue`, 내부)으로 본다.
+  > 【추론】 원시 값은 SameValueZero로 본다.
+  > 【추론】 `NaN`은 `NaN`과 같고 `-0`은 `0`과 같다.
+  > 【추론】 배열은 길이와 차례대로의 원소를 본다.
+  > 【추론】 평범한 객체는 자기 열거 키의 목록(순서 포함)과 키마다의 값을 본다.
+  > 【추론】 그 밖의 객체(함수, `Date`, 클래스 인스턴스, `File` 등)는 참조로 본다.
+  > 【추론】 두 값의 참조가 같으면 더 내려가지 않는다(지름길).
+  > 【추론】 (나) 커밋 단계에서, 이번 정착에 쓰인 잎의 `raw`·`extras`가 직전 커밋의 것과 (가)로 같으면 직전 참조를 둔다.
+  > 【추론】 쓰기 경계에서 지금 값과 같으면 쓰지 않는 것은 오늘과 같다.
+  > 【추론】 호스트의 `emit`은 VALUE-012대로 만든다.
+  > 【추론】 새로 만든 것이 직전 커밋의 것과 키 목록(순서 포함)도 같고 키마다의 자식 `emit` 참조도 같으면 직전 참조를 둔다(얕은 비교, 재계산 목록의 호스트만).
+  > 【추론】 그래서 EVENT-031·EVENT-006의 "emit 참조가 바뀜"은 "방출 값이 바뀜"과 같아진다.
+  > 【추론】 `onChange`·배달·검증 요청은 참조 비교만으로 값 비교를 따른다.
+  > 【추론】 에지는 원천이나 의존의 값을 기준점(SETTLE-004·SETTLE-028)과 (가)로 견준다.
+  > 【추론】 대상은 `injectTo`의 원천 방출 값, `derived`의 의존 값, `unsetValue`·`resetInteraction`의 식 값이다.
+  > 【추론】 (다) 지름길 때문에 비교는 이번 정착에서 새로 만들어진 부분에만 내려간다.
+  > 【추론】 그래서 비용은 쓰기가 바꾼 크기에 비례한다(G6).
+  > 【추론】 12-3은 검증기 성능에 관한 답이므로 폼 자신의 이 비용에는 닿지 않는다.
+  > 【추론】 (라) `controls.derived` 규칙의 의존 집합은 두 경로의 합집합이다: 청사진이 그 식에서 정적으로 뽑은 경로, 그리고 그 노드의 `controls.watch` 경로(모든 선언의 합집합).
+  > 【추론】 역의존 표와 같은 표에서 나온다.
+  > 【추론】 같은 노드의 다른 식(`active`·`visible`·`readOnly`·`disabled`·`unsetValue`)이 읽는 경로는 들지 않는다.
+  > 【추론】 에지는 이 집합의 값 튜플이 기준점과 (가)로 다를 때다.
+  > 【추론】 경로가 읽는 값의 종류, 그리고 `@` 맥락의 변경이 에지인지는 18C-13이 정한다.
+- 보충: 없음
+- 상태: 현행
+- 출처: `reviews/round-18-closing.md:1376-1393,1395-1399`(정본)
+- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-50)
+- 라운드: 18
+- 까닭: `reviews/round-18-closing.md:1405-1411`
+
+### SETTLE-044 직전 커밋의 활성 집합에서 출발하는 최적화는 채택하지 않는다 — 출발점 고정, PR-2 벤치 게이트
+
+- 결정:
+  > 【추론】 정착의 출발점은 고정이다(SETTLE-018).
+  > 【추론】 직전 커밋의 `active`에서 출발하는 최적화는 채택하지 않는다.
+  > 【추론】 까닭 하나: 양의 순환에서 결과가 달라진다.
+  > 【추론】 소유자가 받아들인 최소 고정점 동작(12-10)이 이력에 의존하게 바뀌어 P3·D-2(형상은 상태의 순수 함수)를 깬다.
+  > 【추론】 예: 조각 C가 켜진 동안 서로를 켜 준 A·B가 있을 때, C가 꺼지면 고정 출발에서는 A·B도 꺼지지만 이어 출발에서는 켜진 채 남는다.
+  > 【추론】 까닭 둘: 같은 결과를 보장하려면 가드 사이의 의존을 알아야 하는데, 폼은 `if`의 내용을 읽지 않는다.
+  > 【추론】 U19 비용(켜진 조각 N개인 호스트의 무관한 키 입력)은 기존 최적화 (a)(b)(c)(BLUEPRINT-007, F13 키 패치)로 다룬다.
+  > PR: PR-2 벤치(TEST-027·TEST-032)에 "켜진 조각 N개 호스트의 무관한 키 입력" 행을 더한다.
+  > 통과: TEST-027 게이트(옛 판 대비, Vincent의 수용).
+  > 실패: P3 대 속도의 맞바꿈이므로 소유자에게 올린다.
+- 보충: 없음
+- 상태: 현행(부정 결정)
+- 출처: `reviews/round-18-closing.md:1877-1883,1889-1891`(정본)
+- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-67)
+- 라운드: 18
+- 까닭: `reviews/round-18-closing.md:1885-1887`
+
+### SETTLE-045 하위 트리 밖을 읽는 `controls.active` 게이트는 가장 낮은 공통 조상 L에서 평가 — L 전순서의 자리, 경로 재계산은 호스트 바퀴 예산, 재순회 없음
+
+- 결정:
+  > 【추론】 `controls.active` 게이트(노드 게이트, 조각 게이트, 18C-12의 `controls.children` 항목 게이트)가 선언한 호스트의 하위 트리 밖을 읽으면, 청사진이 그 게이트의 평가 자리를 L로 옮긴다.
+  > 【추론】 L은 선언한 호스트와, 식이 읽는 모든 경로의 자리를 함께 덮는 가장 낮은 공통 조상 호스트다.
+  > 【추론】 `#` 단독과 `(/)`(루트 값 전체)는 루트로 셈하고, `/p`·`#/p`는 `p`의 자리로 셈한다.
+  > 【추론】 `@`는 노드가 아니라 공통 조상 계산에 들지 않는다.
+  > 【추론】 옮긴 게이트는 L의 바퀴에서 다른 게이트와 같은 절차로 평가한다.
+  > 【추론】 꺼진 채 출발하고, 매 바퀴 모두 평가하며, 가우스-자이델로 즉시 반영한다.
+  > 【추론】 L의 전순서에서, 옮긴 게이트는 선언한 호스트로 이어지는 L의 자식을 선언한 조각의 바로 뒤, 그 조각의 노드 게이트들 뒤에 든다.
+  > 【추론】 옮긴 게이트끼리는 문서 순서를 따른다.
+  > 【추론】 옮긴 게이트의 값이 바뀌면 L은 바퀴 안에서 L부터 선언한 호스트까지의 경로를 재계산한다.
+  > 【추론】 메모는 상속 overlay와 같게 한다.
+  > 【추론】 이 재계산은 호스트 바퀴 예산에 함께 센다.
+  > 【추론】 재순회는 없다.
+  > 【추론】 두 번째 하강이 없으므로 계산은 여전히 루트에서 한 번 내려간다.
+  > 【추론】 다른 키는 순서 문제가 없다: 상태 키는 계산 끝의 최종 트리에서, 파생 규칙은 완성된 트리에서 평가한다(SETTLE-003, SETTLE-004).
+  > PR: PR-2 정착 시나리오(18C-25의 PR-2 시험)와 PR-2 벤치.
+  > (a) 사촌 하위 트리를 읽는 노드 게이트를 단언한다.
+  > (b) `#`를 읽는 게이트를 단언한다.
+  > (c) 서로를 읽는 두 호스트의 양의 순환이 이력과 무관하게 같은 원본에서 같은 형상을 내는지 단언한다.
+  > 벤치: 루트로 옮긴 게이트가 N개일 때 키 입력 한 번의 비용을 잰다.
+  > 통과: 18C-27의 선(`guard:check`) 안이다.
+  > 실패: ADR 0009 §4 절차(이유를 적고 Vincent가 받아들여야 병합)를 따른다.
+- 보충: 없음
+- 상태: 현행
+- 출처: `reviews/round-18-closing.md:429-442,449-455`(정본)
+- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-15)
+- 라운드: 18
+- 까닭: `reviews/round-18-closing.md:444-447`
+
+### SETTLE-046 로드 때의 채움과 발화 — 최종 형상의 노드가 모두 생긴 노드로서 채움, `controls.injectTo`는 발화, `controls.unsetValue`는 로드된 값으로 평가
+
+- 결정:
+  > 그래서 로드에서는 최종 형상의 노드가 모두 생긴 노드로서 채움을 받는다. `controls.injectTo`는 직전 값이 없으므로 발화한다(`fire`, 소유자 동의). `controls.unsetValue`는 로드된 값으로 평가해 참이면 지우고 거짓이면 둔다(소유자 답 21).
+- 보충:
+  > "없음인 값은 모두 채움을 받고, `controls.injectTo`·`controls.derived`는 발화하며, `controls.unsetValue`는 로드된 값으로 평가해 참이면 지운다." (`08-design-a-to-z.md:253`)
+  > 편집자 결정(18C-102): "【추론】 로드는 에지와 생김의 기준을 비운다." (`reviews/round-18-closing.md:2866`)
+  > 편집자 결정(18C-102): "【추론】 로드가 아닌 쓰기(`setValue(V)` 포함)는 직전 커밋을 기준으로 한다." (`reviews/round-18-closing.md:2867`)
+- 상태: 현행
+- 출처: `adr/0007-settle-cycle.md:92#2-4`(정본. SETTLE-027에서 분할), `02-target-overview.md:168`, `08-design-a-to-z.md:253`, `reviews/round-18-closing.md:2866-2867`
+- 닫은 사람: 소유자 답(`reviews/round-10-owner-answers.md:19` D-6, 로드 시 injectTo 발화), 소유자 답(`reviews/round-10-owner-answers.md:29,39` E-21, 로드의 unsetValue), 편집자 결정(10라운드, 21의 최초 로드를 모든 로드로 읽음, `07-conclusions.md:251`), 소유자 답(`reviews/round-12-owner-answers.md:13` §5 (a) 모든 로드에서 로드된 값으로 평가), 소유자 답(`reviews/round-12-owner-answers.md:19` §9 로드에서 `&derived`), 편집자 결정(3–5라운드 반영 4차 본문, `adr/0007-settle-cycle.md:12`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-102)
+- 라운드: 18
+- 까닭: `07-conclusions.md:251`, `adr/0007-settle-cycle.md:92`(F4), `reviews/round-18-closing.md:2869-2870`
+
+### SETTLE-047 트리 전체 순회의 예산 — 로드와, 쓰기가 닿은 하위 트리를 도는 전체 교체 쓰기에서만
+
+- 결정:
+  > 【추론】 트리 전체 순회는 로드와, 쓰기가 닿은 하위 트리를 도는 전체 교체 쓰기에서만 허용한다.
+  > PR: PR-2(정착)
+  > 무엇: 잎 하나의 입력 쓰기, 하위 트리의 `setValue(V)`, 루트 `setValue(V)`에서 정착이 방문하는 노드를 센다.
+  > 통과: 입력 쓰기는 재계산 목록과 자동 쓰기 기록만 돌고, `setValue(V)`는 쓰기가 닿은 하위 트리를 한 번 돈다.
+  > 실패: 순회가 이 범위를 넘으면 정착의 순회 범위를 고친다.
+- 보충: 없음
+- 상태: 현행
+- 출처: `reviews/round-18-closing.md:2747,2752-2755`(정본)
+- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-95)
+- 라운드: 18
+- 까닭: `reviews/round-18-closing.md:2749-2750`
+
+### SETTLE-048 에지와 생김의 기준 — 로드는 비우고, 로드가 아닌 쓰기(`setValue(V)` 포함)는 직전 커밋
+
+- 결정:
+  > 【추론】 로드는 에지와 생김의 기준을 비운다.
+  > 【추론】 로드가 아닌 쓰기(`setValue(V)` 포함)는 직전 커밋을 기준으로 한다.
+  > PR: PR-2(정착)
+  > 무엇: `controls.derived`·`controls.injectTo`를 가진 폼에서 `setValue(getValue())`와 `FormHandle.reset()`을 부른다.
+  > 통과: `setValue(getValue())`는 에지가 없어 발화하지 않고, `FormHandle.reset()`은 발화한다(SETTLE-046).
+  > 실패: 에지의 기준을 고친다.
+- 보충: 없음
+- 상태: 현행
+- 출처: `reviews/round-18-closing.md:2866-2867,2872-2875`(정본)
+- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-102)
+- 라운드: 18
+- 까닭: `reviews/round-18-closing.md:2869-2870`

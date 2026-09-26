@@ -7,28 +7,28 @@
 | 번호 | 한 줄 요약 | 상태 | 닫은 사람 |
 | --- | --- | --- | --- |
 | VALIDATE-001 | 판정 불변식 — 폼의 판정은 검증기(작성된 스키마, 방출 값), FE 추가 검사는 AND로만 | 현행 | 소유자 답(`00-goals.md:141` G1, 방향), 원리(`03-mental-model.md:13` P1) |
-| VALIDATE-002 | 계약의 읽기 — 같은 설정의 검증기 | 현행 | 소유자 답(`reviews/round-1.md:178` 계약을 검증기 프로필로 한정하는가 (R1)), 소유자 답(`reviews/round-2.md:112` C5) |
-| VALIDATE-003 | 검증기 설정은 소비자의 책임 — `bind(instance)`, 기본값 불변, format은 의지적으로 | 현행 | 소유자 답(`reviews/round-1.md:178` 계약을 검증기 프로필로 한정하는가 (R1)) |
-| VALIDATE-004 | 검증기 앞 제거 — 키워드 위치의 그룹 객체 셋을 사본에서만 | 현행 | 소유자 답(`reviews/round-15-decisions.md:12` 4), 소유자 답(`reviews/round-15-decisions.md:13` 5), 편집자 결정(2라운드, `adr/0001-validator-input-invariant.md:10` S1) |
+| VALIDATE-002 | 계약의 읽기 — 같은 설정의 검증기 | 현행 | 소유자 답(`reviews/round-1.md:178` 계약을 검증기 프로필로 한정하는가 (R1)), 소유자 답(`reviews/round-2.md:112` C5), 소유자 답(`reviews/round-18-owner-answers.md:34` union O4; 세 옵션은 `bind`가 강제) |
+| VALIDATE-003 | 검증기 설정은 소비자의 책임 — `bind(instance)`, 기본값 불변, format은 의지적으로 | 현행 | 소유자 답(`reviews/round-1.md:178` 계약을 검증기 프로필로 한정하는가 (R1)), 소유자 답(`reviews/round-18-owner-answers.md:34` union O4; `bind`의 거부), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-90) |
+| VALIDATE-004 | 검증기 앞 제거 — 키워드 위치의 그룹 객체 셋을 사본에서만 | 현행 | 소유자 답(`reviews/round-15-decisions.md:12` 4), 소유자 답(`reviews/round-15-decisions.md:13` 5), 편집자 결정(2라운드, `adr/0001-validator-input-invariant.md:10` S1), 소유자 답(`reviews/round-18-owner-answers.md:34` union O4; 깊은 사본) |
 | VALIDATE-005 | 소비자의 커스텀 키는 지우지 않음 — strict 모드는 기본이 아님 | 현행 | 소유자 답(`reviews/round-1.md:178` 계약을 검증기 프로필로 한정하는가 (R1)) |
 | VALIDATE-006 | 판정은 커밋 번호에 묶임 — 늦은 결과 버림, `isValid`, 제출은 보내는 스냅숏을 검증 | 현행 | 편집자 결정(1라운드, `reviews/round-1.md:181` 판정의 revision 채택), 편집자 결정(11라운드, `adr/0001-validator-input-invariant.md:3` 5차 주 (3)) |
-| VALIDATE-007 | 방출 값은 JSON 직렬화 뒤와 같은 값 | 현행 | 편집자 결정(1라운드, `adr/0001-validator-input-invariant.md:11`) |
+| VALIDATE-007 | 방출 값은 JSON 직렬화 뒤와 같은 값 | 현행 | 편집자 결정(1라운드, `adr/0001-validator-input-invariant.md:11`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-91), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-98) |
 | VALIDATE-008 | `ValidationMode.None`은 판정을 제공하지 않음(통과가 아님) | 현행 | 편집자 결정(1라운드, `adr/0001-validator-input-invariant.md:11`) |
 | VALIDATE-009 | 에러 라우팅은 판정을 바꾸지 않음 | 현행 | 편집자 결정(1라운드, `adr/0001-validator-input-invariant.md:38`) |
 | VALIDATE-010 | 마커 장치가 모두 사라지고 두 경로가 같은 계약을 가짐 | 현행 | 원리(`03-mental-model.md:13` P1) |
 | VALIDATE-011 | 주인 없는 검증 에러를 모으는 폼 수준 sink | 현행 | 원리(`03-mental-model.md:13` P1), 소유자 답(`00-goals.md:105` C2), 소유자 답(`reviews/round-2.md:112` 목표 후보 C1–C8) |
-| VALIDATE-012 | 활성 조각 아래의 에러만 노드에 — 에러 라우팅이 18라운드 안건으로 이관됨 | 열림(→ `reviews/round-18-agenda.md:108`) | 편집자 결정(11라운드, `adr/0001-validator-input-invariant.md:3` 5차 주 (5)), 편집자 결정(18라운드 안건 이관, `reviews/round-18-agenda.md:108`) |
+| VALIDATE-012 | 활성 조각 아래의 에러만 노드에 — 에러 라우팅이 18라운드 안건으로 이관됨 | 대체됨(→ VALIDATE-043) | 편집자 결정(11라운드, `adr/0001-validator-input-invariant.md:3` 5차 주 (5)), 편집자 결정(18라운드 안건 이관, `reviews/round-18-agenda.md:108`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-53) |
 | VALIDATE-013 | 잔여 키의 표시는 플러그인 계약 `rejectedKey` | 중복(→ FRAGMENT-020) | 원리(`03-mental-model.md:151` P1), 편집자 결정(5라운드 도출, `reviews/round-5-derivations.md:26` C-4) |
 | VALIDATE-014 | 검증기를 내장하지 않음 | 현행 | 소유자 답(`00-goals.md:146` G3) |
 | VALIDATE-015 | 플러그인 계약 — `compile(schema)`와 `compileGuard(root, pointer)`의 모양 | 현행 | 편집자 결정(16라운드, `09-landing-and-test-strategy.md:19` 조건 1) |
 | VALIDATE-016 | 가드는 동기 전용 | 현행 | 소유자 답(`adr/0004-validator-plugin-compile-guard.md:55` 가드는 동기 전용) |
 | VALIDATE-017 | 가드는 사본의 루트와 위치를 받아 루트 문맥에서 컴파일 | 현행 | 편집자 결정(16라운드, `09-landing-and-test-strategy.md:19` 조건 1) |
-| VALIDATE-018 | 사본·가드 캐시는 코어가 검증기 인스턴스마다 작성 루트 기준으로 듦 | 현행 | 편집자 결정(16라운드, `09-landing-and-test-strategy.md:19` 조건 1), 소유자 답(`reviews/round-16-owner-answers.md:16` 10) |
+| VALIDATE-018 | 사본·가드 캐시는 코어가 검증기 인스턴스마다 작성 루트 기준으로 듦 | 현행 | 편집자 결정(16라운드, `09-landing-and-test-strategy.md:19` 조건 1), 소유자 답(`reviews/round-16-owner-answers.md:16` 10), 소유자 답(`reviews/round-18-owner-answers.md:34` union O4; 깊은 사본) |
 | VALIDATE-019 | 플러그인의 `compileGuard`는 가드 캐시를 들지 않고 사본 루트의 등록은 플러그인의 검증기 인스턴스가 듦 | 현행 | 편집자 결정(16라운드, `09-landing-and-test-strategy.md:19` 조건 1), 소유자 답(`reviews/round-16-owner-answers.md:16` 10) |
-| VALIDATE-020 | 같은 `$id` 사본 루트의 충돌 처리 — PR-4가 정함 | 열림(→ `reviews/round-18-agenda.md:108`) | 편집자 결정(16라운드, `09-landing-and-test-strategy.md:88` 여덟째), 편집자 결정(18라운드 안건 이관, `reviews/round-18-agenda.md:108`) |
+| VALIDATE-020 | 같은 `$id` 사본 루트의 충돌 처리 — PR-4가 정함 | 대체됨(→ VALIDATE-046) | 편집자 결정(16라운드, `09-landing-and-test-strategy.md:88` 여덟째), 편집자 결정(18라운드 안건 이관, `reviews/round-18-agenda.md:108`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-57) |
 | VALIDATE-021 | 검증기 등록의 수명 — 참조 세기 + 최근 해제 목록 | 현행 | 스웜 수렴(편집자 결정, `09-landing-and-test-strategy.md:88`), 원리(`08-design-a-to-z.md:36` 고속성) |
-| VALIDATE-022 | 최근 해제 목록의 크기와 해제 계약의 세부가 18라운드 안건으로 이관됨 | 열림(→ `reviews/round-18-agenda.md:108`) | 편집자 결정(18라운드 안건 이관, `reviews/round-18-agenda.md:108`) |
-| VALIDATE-023 | `compileGuard`의 `$id`·`$dynamicRef` 문맥이 18라운드 안건으로 이관됨 | 열림(→ `reviews/round-18-agenda.md:108`) | 편집자 결정(18라운드 안건 이관, `reviews/round-18-agenda.md:108`) |
+| VALIDATE-022 | 최근 해제 목록의 크기와 해제 계약의 세부가 18라운드 안건으로 이관됨 | 대체됨(→ VALIDATE-045) | 편집자 결정(18라운드 안건 이관, `reviews/round-18-agenda.md:108`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-56) |
+| VALIDATE-023 | `compileGuard`의 `$id`·`$dynamicRef` 문맥이 18라운드 안건으로 이관됨 | 대체됨(→ VALIDATE-047) | 편집자 결정(18라운드 안건 이관, `reviews/round-18-agenda.md:108`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-58) |
 | VALIDATE-024 | Form 속성 `validatorFactory` — 유지하고 넓힘, 같은 계약, 플러그인보다 앞섬 | 분할됨(→ VALIDATE-040, VALIDATE-041, VALIDATE-042) | 소유자 답(`reviews/round-14-owner-answers.md:13` O-7) |
 | VALIDATE-025 | 플러그인 패키지가 변경 범위에 듦 | 현행 | 소유자 답(`adr/0004-validator-plugin-compile-guard.md:54`) |
 | VALIDATE-026 | 플러그인의 방언 선언과 개발 모드 경고 — 받음(12-4) | 현행 | 편집자 결정(1라운드, `reviews/round-1.md:178` 반영 칸), 소유자 답(`reviews/round-18-owner-answers.md:14` 12-4) |
@@ -42,12 +42,21 @@
 | VALIDATE-034 | `options.virtual`은 제거 목록에 들고 `required` 재작성은 버림 | 현행 | 소유자 답(`reviews/round-12-owner-answers.md:16` 8 `virtual`), 소유자 답(`reviews/round-10-owner-answers.md:31` E-4) |
 | VALIDATE-035 | 대체됨: `options.virtual`의 `required` 재작성은 이 결정과 충돌(Q5) | 대체됨(→ VALIDATE-034) | 소유자 답(`reviews/round-12-owner-answers.md:16` 8 `virtual`) |
 | VALIDATE-036 | `&if`만으로 분기를 구분한 기존 스키마는 폼에서도 invalid — 의도된 파괴적 변경 | 현행 | 원리(`03-mental-model.md:13` P1) |
-| VALIDATE-037 | 가드 컴파일의 인스턴스 사이 공유의 나머지 세부 — 슬라이스 4의 설계 항목 | 열림(→ `reviews/round-18-agenda.md:143` 11-12) | 편집자 결정(16라운드, `08-design-a-to-z.md:180`) |
-| VALIDATE-038 | 잔여 키의 표시는 렌더 계층의 몫 — Q12와 함께 정함 | 열림(→ `reviews/round-18-agenda.md:108`) | 편집자 결정(5라운드 4차 본문, `adr/0006-single-value-ownership.md:99`), 편집자 결정(18라운드 안건 이관(Q12), `reviews/round-18-agenda.md:108`) |
-| VALIDATE-039 | 검증을 입력 경로에서 떼어 내는 법(R19) — 커밋 번호 스탬프는 경합만 막음 | 열림(→ `reviews/round-18-agenda.md:144` 11-13) | 편집자 결정(5라운드 4차 본문, `adr/0007-settle-cycle.md:150`) |
+| VALIDATE-037 | 가드 컴파일의 인스턴스 사이 공유의 나머지 세부 — 슬라이스 4의 설계 항목 | 대체됨(→ VALIDATE-048) | 편집자 결정(16라운드, `08-design-a-to-z.md:180`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-79) |
+| VALIDATE-038 | 잔여 키의 표시는 렌더 계층의 몫 — Q12와 함께 정함 | 대체됨(→ VALIDATE-043) | 편집자 결정(5라운드 4차 본문, `adr/0006-single-value-ownership.md:99`), 편집자 결정(18라운드 안건 이관(Q12), `reviews/round-18-agenda.md:108`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-53) |
+| VALIDATE-039 | 검증을 입력 경로에서 떼어 내는 법(R19) — 커밋 번호 스탬프는 경합만 막음 | 분할됨(→ VALIDATE-049, VALIDATE-006) | 편집자 결정(5라운드 4차 본문, `adr/0007-settle-cycle.md:150`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-80; 소유자 답 O-6·D-10·12-3을 엮음) |
 | VALIDATE-040 | Form 속성 `validatorFactory`는 유지하고 넓힘 | 현행 | 소유자 답(`reviews/round-14-owner-answers.md:13` O-7) |
-| VALIDATE-041 | 플러그인은 전역 기본, 속성은 그 폼의 인스턴스 — 같은 계약, 플러그인보다 앞섬(계약 통일은 18라운드 안건) | 열림(→ `reviews/round-18-agenda.md:108`) | 소유자 답(`reviews/round-14-owner-answers.md:13` O-7), 편집자 결정(18라운드 안건 이관, `reviews/round-18-agenda.md:108`) |
+| VALIDATE-041 | 플러그인은 전역 기본, 속성은 그 폼의 인스턴스 — 같은 계약, 플러그인보다 앞섬(계약 통일은 VALIDATE-044) | 현행 | 소유자 답(`reviews/round-14-owner-answers.md:13` O-7), 편집자 결정(18라운드 안건 이관, `reviews/round-18-agenda.md:108`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-54) |
 | VALIDATE-042 | 미등록 판정은 플러그인과 `validatorFactory`를 함께 봄 | 현행 | 소유자 답(`reviews/round-14-owner-answers.md:13` O-7) |
+| VALIDATE-043 | 검증 에러 라우팅 — 판정 불변, 폼 수준 목록, `dataPath` 배정, 잔여 키는 호스트, 터미널 아래는 터미널, 꺼진 union 분기만 표시에서 거름, union 호스트 에러는 호스트 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-53) |
+| VALIDATE-044 | 검증기 계약 형 `Validator`(가칭) 하나 — `compile`·`compileGuard`·선택 `release`·방언, 고르는 순서 Form > `FormProvider` > 플러그인, 참조가 바뀌면 재생성, 가드는 동기 boolean | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-54), 소유자 답(`reviews/round-18-owner-answers.md:34` union O4; 계약 문장) |
+| VALIDATE-045 | 최근 해제 목록 크기 8(검증기 인스턴스마다, 내부) — 밀려날 때와 같은 `$id` 재등록 직전에만 `release(root)`, 상한 '살아 있는 루트 + 8' | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-56) |
+| VALIDATE-046 | 같은 `$id`의 두 살아 있는 루트는 저마다 판정 — 떼어 두기는 플러그인 계약, PR-4 게이트 넷(오류·경고 아님은 ERROR-201) | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-57) |
+| VALIDATE-047 | 따로 컴파일한 가드는 전체 검증의 `if`와 같은 boolean — `$id`·동적 범위 포함, 플러그인 계약, PR-4 게이트 넷 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-58) |
+| VALIDATE-048 | 가드 컴파일의 공유 단위는 (검증기 인스턴스, 작성 루트 identity) — 전체 검증 함수도 같은 캐시 항목, 수명은 가드와 같음 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-79), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-101) |
+| VALIDATE-049 | 폼은 검증을 입력 경로에서 떼어 내는 장치를 두지 않음 — 진입당 요청 1회와 마이크로태스크 합치기, 빈도 조절은 `OnRequest`, 제출은 새로 검증 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-80) |
+| VALIDATE-050 | 값을 바꾸는 검증기 옵션 — `Validator` 문서 주석의 계약 문장, ajv 플러그인 셋의 `bind`는 `coerceTypes`·`useDefaults`·`removeAdditional`을 켠 인스턴스를 거부(가칭 `VALIDATOR_BIND_REFUSED`), 사용자 정의 변경 키워드는 소비자 책임, 스키마 사본은 깊은 복사 한 번 | 현행 | 소유자 답(`reviews/round-18-owner-answers.md:34` union O4) |
+| VALIDATE-051 | union과 검증기 — ajv8 기본 설정에 `allowUnionTypes: true`(판정 불변, 로그만 없앰), core는 검증에 넘기는 값을 복사하지 않음, 어긋난 union 값과 통째 값 안쪽의 에러는 union 노드가 받음, 규칙 A·경고등은 검증기를 쓰지 않음 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-90·18C-91) |
 
 항목 형식은 `ledger/README.md` §3을 따른다.
 
@@ -77,22 +86,26 @@
   > - **같은 설정**은 방언, format을 검사하는지, 커스텀 키워드·포맷, 값을 바꾸는 옵션(`coerceTypes` 등)을 쓰지 않는 것을 뜻한다. 기본 ajv8 플러그인은 draft-07 엔트리에 `validateFormats: false`다(`schema-form-ajv8-plugin/src/default/validatorPlugin.ts:15-19`). 이 기본값에서 `$schema` 없는 2020-12 스키마의 `dependentRequired`·`unevaluatedProperties`는 조용히 무시되고 `format`은 항상 통과한다. 서버와 설정을 맞추는 것은 소비자의 책임이고 수단은 이미 있다 — 플러그인의 `bind(instance)`로 Ajv 인스턴스를 주입한다. 기본값은 바꾸지 않는다(ADR 0004).
 - 보충:
   > 소유자(2라운드): "C5는 질문이 부정확했음(검증의 방언은 플러그인의 영역, 폼은 두 철자를 모두 읽는다)" (`reviews/round-2.md:112`)
+  > 반영 칸(union O4, 같은 설정): "VALIDATE-002의 "같은 설정"은 값을 바꾸는 옵션을 쓰지 않는 것을 포함하며, 이 가운데 세 옵션은 이제 `bind`가 강제한다." (`reviews/round-18-owner-answers.md:34`)
 - 상태: 현행
-- 출처: `adr/0001-validator-input-invariant.md:30-34`(정본), `adr/0001-validator-input-invariant.md:5,11`, `adr/0004-validator-plugin-compile-guard.md:41`, `00-goals.md:108`, `reviews/round-2.md:112`
-- 닫은 사람: 소유자 답(`reviews/round-1.md:178` 계약을 검증기 프로필로 한정하는가 (R1)), 소유자 답(`reviews/round-2.md:112` C5)
-- 라운드: 2
-- 까닭: `reviews/round-1.md:178`
+- 출처: `adr/0001-validator-input-invariant.md:30-34`(정본), `adr/0001-validator-input-invariant.md:5,11`, `adr/0004-validator-plugin-compile-guard.md:41`, `00-goals.md:108`, `reviews/round-2.md:112`, `reviews/round-18-owner-answers.md:34`
+- 닫은 사람: 소유자 답(`reviews/round-1.md:178` 계약을 검증기 프로필로 한정하는가 (R1)), 소유자 답(`reviews/round-2.md:112` C5), 소유자 답(`reviews/round-18-owner-answers.md:34` union O4; 세 옵션은 `bind`가 강제)
+- 라운드: 18
+- 까닭: `reviews/round-1.md:178`, `reviews/round-18-owner-answers.md:34`
 
 ### VALIDATE-003 검증기 설정은 소비자의 책임 — `bind(instance)`, 기본값 불변, format은 의지적으로
 
 - 결정:
   > - 서버와 검증기 설정(방언, format 검사, 커스텀 키워드)을 맞추는 것은 소비자의 책임이다. 수단은 이미 있는 `bind(instance)`다. 기본값(`allErrors`, `strictSchema: false`, `validateFormats: false`)은 바꾸지 않는다. format 검사는 소비자가 의지적으로 켠다.
-- 보충: 없음
+- 보충:
+  > 반영 칸(union O4, `bind`의 거부): "ajv 플러그인 셋(ajv6·7·8)의 `bind(instance)`는 `coerceTypes`·`useDefaults`·`removeAdditional` 가운데 하나라도 켜진 인스턴스를 거부하며, 옵션은 ajv7·8이면 `instance.opts`, ajv6이면 `instance._opts`에서 읽는다." (`reviews/round-18-owner-answers.md:34`)
+  > 편집자 결정(18C-90): "【추론】 ajv8 플러그인의 세 진입점(`default`·`2019`·`2020`) 기본 설정에 `allowUnionTypes: true`를 더한다." (`reviews/round-18-closing.md:2462`)
+  > 편집자 결정(18C-90): "【추론】 `allowUnionTypes`는 판정을 바꾸지 않고, `strictTypes`의 기본값 `"log"`가 union `type`마다 내는 `console.warn`만 없앤다." (`reviews/round-18-closing.md:2463`)
 - 상태: 현행
-- 출처: `adr/0004-validator-plugin-compile-guard.md:41`(정본), `adr/0004-validator-plugin-compile-guard.md:52`, `adr/0001-validator-input-invariant.md:5,34`, `reviews/round-1.md:178`
-- 닫은 사람: 소유자 답(`reviews/round-1.md:178` 계약을 검증기 프로필로 한정하는가 (R1))
-- 라운드: 1
-- 까닭: `reviews/round-1.md:178`
+- 출처: `adr/0004-validator-plugin-compile-guard.md:41`(정본), `adr/0004-validator-plugin-compile-guard.md:52`, `adr/0001-validator-input-invariant.md:5,34`, `reviews/round-1.md:178`, `reviews/round-18-owner-answers.md:34`, `reviews/round-18-closing.md:2462-2463`
+- 닫은 사람: 소유자 답(`reviews/round-1.md:178` 계약을 검증기 프로필로 한정하는가 (R1)), 소유자 답(`reviews/round-18-owner-answers.md:34` union O4; `bind`의 거부), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-90)
+- 라운드: 18
+- 까닭: `reviews/round-1.md:178`, `reviews/round-18-owner-answers.md:34`, `reviews/round-18-closing.md:2466-2471`
 
 ### VALIDATE-004 검증기 앞 제거 — 키워드 위치의 그룹 객체 셋을 사본에서만
 
@@ -102,11 +115,12 @@
   > "**허용되는 스키마 변형은 하나다 — 폼 전용 키를 키워드 위치에서만 제거하는 것.**" (`adr/0001-validator-input-invariant.md:24`)
   > "현재 `stripSchemaExtensions`가 하는 일이고(`JSONSchemaScanner`로 위치를 구분한다) 그대로 둔다(목록은 그룹 객체 셋으로 닫힌다, ADR 0003 §7)." (`adr/0001-validator-input-invariant.md:24`)
   > "제거가 필요한 이유는 판정이 아니라 **검증기의 컴파일**이다: 폼 전용 키의 값에 순환하거나 깊은 객체가 있으면(`presentation.FormTypeInputProps`의 자기 참조, 개발 빌드의 React 엘리먼트) `ajv.compile`이 스택 초과로 죽는다(`reviews/round-2.md` S1, 실행)." (`adr/0001-validator-input-invariant.md:24`)
+  > 반영 칸(union O4, 스키마 사본): "검증기에 넘기는 스키마 사본은 (검증기 인스턴스, 작성 루트)마다 한 번 깊이 복사한다." (`reviews/round-18-owner-answers.md:34`)
 - 상태: 현행
-- 출처: `08-design-a-to-z.md:147`(정본), `adr/0001-validator-input-invariant.md:3,24`, `adr/0003-group-namespace.md:125,127`
-- 닫은 사람: 소유자 답(`reviews/round-15-decisions.md:12` 4), 소유자 답(`reviews/round-15-decisions.md:13` 5), 편집자 결정(2라운드, `adr/0001-validator-input-invariant.md:10` S1)
-- 라운드: 15
-- 까닭: `reviews/round-2.md:82`, `00-goals.md:144`
+- 출처: `08-design-a-to-z.md:147`(정본), `adr/0001-validator-input-invariant.md:3,24`, `adr/0003-group-namespace.md:125,127`, `reviews/round-18-owner-answers.md:34`
+- 닫은 사람: 소유자 답(`reviews/round-15-decisions.md:12` 4), 소유자 답(`reviews/round-15-decisions.md:13` 5), 편집자 결정(2라운드, `adr/0001-validator-input-invariant.md:10` S1), 소유자 답(`reviews/round-18-owner-answers.md:34` union O4; 깊은 사본)
+- 라운드: 18
+- 까닭: `reviews/round-2.md:82`, `00-goals.md:144`, `reviews/round-18-owner-answers.md:34`
 - 충돌:
   > `open-questions.md:66`의 "`&` 키는 기본으로 제거하지 않으므로(ADR 0003) 키워드 위치의 표가 방언마다 다르다는 문제는 선택 사항인 제거 유틸리티에만 남는다."는 `&` 키를 검증기 앞에서 지우지 않던 15라운드 전의 전제에 선다. 15라운드부터 그룹 셋은 검증기에 넘길 사본에서 늘 지우므로, 키워드 위치가 방언마다 다른 문제는 기본 제거에 걸린다(Q9). 정본이 이긴다(`adr/0003-group-namespace.md:127`).
 
@@ -139,12 +153,18 @@
 
 - 결정:
   > - **방출 값은 JSON으로 직렬화했을 때와 같은 값이어야 한다.** 값이 `undefined`인 키, 배열 중간의 `undefined`는 메모리에서의 판정과 전송 후의 판정을 갈라놓는다(`{minProperties:3}`에 `{a:1,b:2,c:undefined}`).
-- 보충: 없음
+- 보충:
+  > 편집자 결정(18C-91): "【추론】 터미널 object·array 노드와, 객체·배열을 받는 union이 통째로 든 값의 안쪽은 폼이 정규화하지 않는다." (`reviews/round-18-closing.md:2538`)
+  > 편집자 결정(18C-91): "【추론】 그 안쪽의 JSON 부정합(`undefined`인 키, 배열 중간의 `undefined`·빈 자리, 비유한 수, `Date`·함수·bigint)은 VALIDATE-007을 어길 수 있다(예: `{type:['object','string'], minProperties:1}`의 `{a: undefined}`는 메모리 판정을 통과하고 직렬화 뒤 판정에서 실패한다)." (`reviews/round-18-closing.md:2539`)
+  > 편집자 결정(18C-91): "【추론】 개발 모드에서는 그런 값의 참조가 바뀐 커밋마다 깊이 점검하고, 부정합이 있으면 `(가칭) SCHEMA_FORM_WARNING.NON_JSON_WHOLE_VALUE`를 `(code, path)`로 로드마다 한 번 내며, 기록은 `{ path, innerPaths }`(앞의 N개)다." (`reviews/round-18-closing.md:2540`)
+  > 편집자 결정(18C-91): "【추론】 멤버십은 얕게만 보며, 통째로 든 값 안의 JSON 부정합은 `NON_JSON_WHOLE_VALUE` 개발 모드 경고로만 드러내고 폼은 값을 정규화하지 않는다(VALIDATE-007)." (`reviews/round-18-closing.md:2554`)
 - 상태: 현행
-- 출처: `adr/0001-validator-input-invariant.md:36`(정본), `adr/0001-validator-input-invariant.md:11`, `08-design-a-to-z.md:605`
-- 닫은 사람: 편집자 결정(1라운드, `adr/0001-validator-input-invariant.md:11`)
-- 라운드: 1
-- 까닭: `adr/0001-validator-input-invariant.md:36`
+- 출처: `adr/0001-validator-input-invariant.md:36`(정본), `adr/0001-validator-input-invariant.md:11`, `08-design-a-to-z.md:605`, `reviews/round-18-closing.md:2538-2540,2554`, `reviews/round-18-closing.md:2797-2798`
+- 닫은 사람: 편집자 결정(1라운드, `adr/0001-validator-input-invariant.md:11`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-91), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-98)
+- 라운드: 18
+- 까닭: `adr/0001-validator-input-invariant.md:36`, `reviews/round-18-closing.md:2556-2564`
+- 충돌:
+  > `reviews/round-18-closing.md:2540`의 "`(code, path)`로 로드마다 한 번 내며"는 18C-98의 결정과 다르다: 경고 중복 키는 폼 수준 로드(마운트, `FormHandle.reset()`)에서만 비우므로 `NON_JSON_WHOLE_VALUE`는 폼 수준 로드 사이에 `(code, path)`마다 한 번이고, `setValue(V)`와 `resetSubtree()` 뒤에는 다시 내지 않는다(ERROR-204). 18C-98의 결정이 이긴다(`reviews/round-18-closing.md:2797-2798`).
 
 ### VALIDATE-008 `ValidationMode.None`은 판정을 제공하지 않음(통과가 아님)
 
@@ -200,11 +220,11 @@
   > "(5) "활성 조각 아래의 에러만 노드에"는 게이트 없는 분기가 모두 활성이므로 원장 §6에서 다시 정한다." (`adr/0001-validator-input-invariant.md:3`)
   > "검증 결과를 노드로 나누는 규칙(에러 라우팅)은 슬라이스 4의 설계 항목이다." (`08-design-a-to-z.md:349`)
   > "검증 에러 라우팅(Q12)과 union 호스트 수준 에러의 라우팅" (`reviews/round-18-agenda.md:108`)
-- 상태: 열림(→ `reviews/round-18-agenda.md:108`)
-- 출처: `adr/0001-validator-input-invariant.md:44#2`(정본), `adr/0001-validator-input-invariant.md:3`, `08-design-a-to-z.md:349`, `03-mental-model.md:209`, `reviews/round-18-agenda.md:108`
-- 닫은 사람: 편집자 결정(11라운드, `adr/0001-validator-input-invariant.md:3` 5차 주 (5)), 편집자 결정(18라운드 안건 이관, `reviews/round-18-agenda.md:108`)
+- 상태: 대체됨(→ VALIDATE-043)
+- 출처: `adr/0001-validator-input-invariant.md:44#2`(정본), `adr/0001-validator-input-invariant.md:3`, `08-design-a-to-z.md:349`, `03-mental-model.md:209`, `reviews/round-18-agenda.md:108`, `reviews/round-18-closing.md:1471-1495,1502-1503`
+- 닫은 사람: 편집자 결정(11라운드, `adr/0001-validator-input-invariant.md:3` 5차 주 (5)), 편집자 결정(18라운드 안건 이관, `reviews/round-18-agenda.md:108`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-53)
 - 라운드: 18
-- 까닭: `adr/0001-validator-input-invariant.md:3`
+- 까닭: `adr/0001-validator-input-invariant.md:3`, `reviews/round-18-closing.md:1497-1500`
 
 ### VALIDATE-013 잔여 키의 표시는 플러그인 계약 `rejectedKey`
 
@@ -274,11 +294,12 @@
   > 캐시는 코어가 검증기 인스턴스마다 WeakMap<작성 루트, { 사본, 가드 표 }>로 든다(16라운드 편집자 결정, 답 10으로 확정).
 - 보충:
   > "캐시의 키가 작성 루트이므로 같은 검증기 인스턴스를 쓰고 같은 스키마 객체로 만든 폼 인스턴스들이 컴파일을 공유한다(`validatorFactory`로 폼마다 다른 인스턴스를 주면 공유하지 않는다)." (`adr/0004-validator-plugin-compile-guard.md:34`)
+  > 반영 칸(union O4, 스키마 사본): "검증기에 넘기는 스키마 사본은 (검증기 인스턴스, 작성 루트)마다 한 번 깊이 복사한다." (`reviews/round-18-owner-answers.md:34`)
 - 상태: 현행
-- 출처: `adr/0004-validator-plugin-compile-guard.md:34#1`(정본), `adr/0004-validator-plugin-compile-guard.md:10,34,46,73`, `08-design-a-to-z.md:345`, `09-landing-and-test-strategy.md:19,279`
-- 닫은 사람: 편집자 결정(16라운드, `09-landing-and-test-strategy.md:19` 조건 1), 소유자 답(`reviews/round-16-owner-answers.md:16` 10)
-- 라운드: 16
-- 까닭: `09-landing-and-test-strategy.md:19`
+- 출처: `adr/0004-validator-plugin-compile-guard.md:34#1`(정본), `adr/0004-validator-plugin-compile-guard.md:10,34,46,73`, `08-design-a-to-z.md:345`, `09-landing-and-test-strategy.md:19,279`, `reviews/round-18-owner-answers.md:34`
+- 닫은 사람: 편집자 결정(16라운드, `09-landing-and-test-strategy.md:19` 조건 1), 소유자 답(`reviews/round-16-owner-answers.md:16` 10), 소유자 답(`reviews/round-18-owner-answers.md:34` union O4; 깊은 사본)
+- 라운드: 18
+- 까닭: `09-landing-and-test-strategy.md:19`, `reviews/round-18-owner-answers.md:34`
 
 ### VALIDATE-019 플러그인의 `compileGuard`는 가드 캐시를 들지 않고 사본 루트의 등록은 플러그인의 검증기 인스턴스가 듦
 
@@ -299,11 +320,11 @@
   > "살아 있는 두 트리의 같은 `$id` 충돌은 PR-4의 '같은 `$id` 루트의 중복 등록 처리'가 정하며 재생성 reset 시나리오를 그 시험에 넣는다(`reviews/raw-round16-reset.md` §4의 H3)." (`09-landing-and-test-strategy.md:88`)
   > "사본 루트 등록의 해제 계약 세부(§11.1: 최근 해제 목록의 크기, 참조 수의 증감 시점, 재생성 reset의 같은 `$id`)" (`08-design-a-to-z.md:493`)
   > "사본 루트 등록의 해제 계약 세부" (`reviews/round-18-agenda.md:108`)
-- 상태: 열림(→ `reviews/round-18-agenda.md:108`)
-- 출처: `adr/0004-validator-plugin-compile-guard.md:34#4`(정본), `08-design-a-to-z.md:345,493`, `09-landing-and-test-strategy.md:19,88,259`, `adr/0014-error-policy.md:338`, `reviews/round-18-agenda.md:108`
-- 닫은 사람: 편집자 결정(16라운드, `09-landing-and-test-strategy.md:88` 여덟째), 편집자 결정(18라운드 안건 이관, `reviews/round-18-agenda.md:108`)
+- 상태: 대체됨(→ VALIDATE-046)
+- 출처: `adr/0004-validator-plugin-compile-guard.md:34#4`(정본), `08-design-a-to-z.md:345,493`, `09-landing-and-test-strategy.md:19,88,259`, `adr/0014-error-policy.md:338`, `reviews/round-18-agenda.md:108`, `reviews/round-18-closing.md:1581-1591,1598-1606`
+- 닫은 사람: 편집자 결정(16라운드, `09-landing-and-test-strategy.md:88` 여덟째), 편집자 결정(18라운드 안건 이관, `reviews/round-18-agenda.md:108`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-57)
 - 라운드: 18
-- 까닭: `09-landing-and-test-strategy.md:19`
+- 까닭: `09-landing-and-test-strategy.md:19`, `reviews/round-18-closing.md:1593-1596`
 
 ### VALIDATE-021 검증기 등록의 수명 — 참조 세기 + 최근 해제 목록
 
@@ -326,11 +347,11 @@
   > 목록의 크기와 해제 계약의 세부는 슬라이스 4의 설계 항목이다(09 §2.6의 여덟째).
 - 보충:
   > "사본 루트 등록의 해제 계약 세부" (`reviews/round-18-agenda.md:108`)
-- 상태: 열림(→ `reviews/round-18-agenda.md:108`)
-- 출처: `08-design-a-to-z.md:345#18`(정본), `09-landing-and-test-strategy.md:88`, `08-design-a-to-z.md:493`, `reviews/round-18-agenda.md:108`
-- 닫은 사람: 편집자 결정(18라운드 안건 이관, `reviews/round-18-agenda.md:108`)
+- 상태: 대체됨(→ VALIDATE-045)
+- 출처: `08-design-a-to-z.md:345#18`(정본), `09-landing-and-test-strategy.md:88`, `08-design-a-to-z.md:493`, `reviews/round-18-agenda.md:108`, `reviews/round-18-closing.md:1554-1568,1574-1575`
+- 닫은 사람: 편집자 결정(18라운드 안건 이관, `reviews/round-18-agenda.md:108`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-56)
 - 라운드: 18
-- 까닭: `09-landing-and-test-strategy.md:88`
+- 까닭: `09-landing-and-test-strategy.md:88`, `reviews/round-18-closing.md:1570-1572`
 
 ### VALIDATE-023 `compileGuard`의 `$id`·`$dynamicRef` 문맥이 18라운드 안건으로 이관됨
 
@@ -340,11 +361,11 @@
   > "인스턴스 사이 공유의 나머지 세부, `$id`·`$dynamicRef` 문맥은 미정(07 11.2)이다." (`02-target-overview.md:175`)
   > "`$id` 기저 URI와 `$dynamicRef`에서 따로 컴파일한 게이트가 문맥 평가와 같은 답을 내는지" (`reviews/round-18-agenda.md:108`)
   > "17라운드에 닫혔다: 가드 컴파일의 실패는 폼 생성의 실패가 아니라 그 게이트의 가드 실패(정착 오류)이고, 전체 스키마 컴파일의 실패는 검증 불가다(위 결정 절, ADR 0014 4판)." (`adr/0004-validator-plugin-compile-guard.md:78`)
-- 상태: 열림(→ `reviews/round-18-agenda.md:108`)
-- 출처: `08-design-a-to-z.md:345#33`(정본), `02-target-overview.md:175`, `adr/0004-validator-plugin-compile-guard.md:46`, `08-design-a-to-z.md:493`, `reviews/round-18-agenda.md:108`
-- 닫은 사람: 편집자 결정(18라운드 안건 이관, `reviews/round-18-agenda.md:108`)
+- 상태: 대체됨(→ VALIDATE-047)
+- 출처: `08-design-a-to-z.md:345#33`(정본), `02-target-overview.md:175`, `adr/0004-validator-plugin-compile-guard.md:46`, `08-design-a-to-z.md:493`, `reviews/round-18-agenda.md:108`, `reviews/round-18-closing.md:1612-1616,1622-1632`
+- 닫은 사람: 편집자 결정(18라운드 안건 이관, `reviews/round-18-agenda.md:108`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-58)
 - 라운드: 18
-- 까닭: `adr/0004-validator-plugin-compile-guard.md:46`
+- 까닭: `adr/0004-validator-plugin-compile-guard.md:46`, `reviews/round-18-closing.md:1618-1620`
 
 ### VALIDATE-024 Form 속성 `validatorFactory` — 유지하고 넓힘, 같은 계약, 플러그인보다 앞섬
 
@@ -512,11 +533,11 @@
 - 보충:
   > "인스턴스 사이 공유의 나머지 세부(§5·§11.1이 정한 캐시 밖)" (`08-design-a-to-z.md:493`)
   > "인스턴스 사이 공유의 나머지 세부, `$id`·`$dynamicRef` 문맥은 미정(07 11.2)이다." (`02-target-overview.md:175`)
-- 상태: 열림(→ `reviews/round-18-agenda.md:143` 11-12)
-- 출처: `08-design-a-to-z.md:180#10`(정본), `08-design-a-to-z.md:493`, `02-target-overview.md:175`
-- 닫은 사람: 편집자 결정(16라운드, `08-design-a-to-z.md:180`)
-- 라운드: 16
-- 까닭: `08-design-a-to-z.md:180`
+- 상태: 대체됨(→ VALIDATE-048)
+- 출처: `08-design-a-to-z.md:180#10`(정본), `08-design-a-to-z.md:493`, `02-target-overview.md:175`, `reviews/round-18-closing.md:2136-2145`
+- 닫은 사람: 편집자 결정(16라운드, `08-design-a-to-z.md:180`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-79)
+- 라운드: 18
+- 까닭: `08-design-a-to-z.md:180`, `reviews/round-18-closing.md:2147-2148`
 
 ### VALIDATE-038 잔여 키의 표시는 렌더 계층의 몫 — Q12와 함께 정함
 
@@ -524,11 +545,11 @@
   > 표시는 렌더 계층의 몫이고 Q12와 함께 정한다.
 - 보충:
   > "검증 에러 라우팅(Q12)과 union 호스트 수준 에러의 라우팅" (`reviews/round-18-agenda.md:108`)
-- 상태: 열림(→ `reviews/round-18-agenda.md:108`)
-- 출처: `adr/0006-single-value-ownership.md:99#5`(정본), `reviews/round-18-agenda.md:108`
-- 닫은 사람: 편집자 결정(5라운드 4차 본문, `adr/0006-single-value-ownership.md:99`), 편집자 결정(18라운드 안건 이관(Q12), `reviews/round-18-agenda.md:108`)
+- 상태: 대체됨(→ VALIDATE-043)
+- 출처: `adr/0006-single-value-ownership.md:99#5`(정본), `reviews/round-18-agenda.md:108`, `reviews/round-18-closing.md:1471-1495,1502-1503`
+- 닫은 사람: 편집자 결정(5라운드 4차 본문, `adr/0006-single-value-ownership.md:99`), 편집자 결정(18라운드 안건 이관(Q12), `reviews/round-18-agenda.md:108`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-53)
 - 라운드: 18
-- 까닭: `adr/0006-single-value-ownership.md:99`
+- 까닭: `adr/0006-single-value-ownership.md:99`, `reviews/round-18-closing.md:1497-1500`
 
 ### VALIDATE-039 검증을 입력 경로에서 떼어 내는 법(R19) — 커밋 번호 스탬프는 경합만 막음
 
@@ -538,11 +559,11 @@
   > "Validate는 정의상 폼 전체 크기에 비례한다." (`reviews/round-1.md:83`)
   > "입력 경로에서 떼어 내고(디바운스·유휴·워커) 제출 시에는 반드시 새로 검증한다" (`reviews/round-1.md:83`)
   > "R19 검증은 폼 전체 크기에 비례한다 | 안 닫힘" (`reviews/round-2.md:72`)
-- 상태: 열림(→ `reviews/round-18-agenda.md:144` 11-13)
-- 출처: `adr/0007-settle-cycle.md:150`(정본), `reviews/round-1.md:83`, `reviews/round-2.md:72`, `HANDOFF.md:91`
-- 닫은 사람: 편집자 결정(5라운드 4차 본문, `adr/0007-settle-cycle.md:150`)
-- 라운드: 5
-- 까닭: `reviews/round-1.md:83`
+- 상태: 분할됨(→ VALIDATE-049, VALIDATE-006)
+- 출처: `adr/0007-settle-cycle.md:150`(정본), `reviews/round-1.md:83`, `reviews/round-2.md:72`, `HANDOFF.md:91`, `reviews/round-18-closing.md:2154-2160`
+- 닫은 사람: 편집자 결정(5라운드 4차 본문, `adr/0007-settle-cycle.md:150`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-80; 소유자 답 O-6·D-10·12-3을 엮음)
+- 라운드: 18
+- 까닭: `reviews/round-1.md:83`, `reviews/round-18-closing.md:2162-2165`, `reviews/round-14-owner-answers.md:12`, `reviews/round-4.md:116`, `reviews/round-18-owner-answers.md:13`
 
 ### VALIDATE-040 Form 속성 `validatorFactory`는 유지하고 넓힘
 
@@ -556,18 +577,19 @@
 - 라운드: 14
 - 까닭: `reviews/round-14-owner-answers.md:13`
 
-### VALIDATE-041 플러그인은 전역 기본, 속성은 그 폼의 인스턴스 — 같은 계약, 플러그인보다 앞섬(계약 통일은 18라운드 안건)
+### VALIDATE-041 플러그인은 전역 기본, 속성은 그 폼의 인스턴스 — 같은 계약, 플러그인보다 앞섬(계약 통일은 VALIDATE-044)
 
 - 결정:
   > 플러그인은 전역 기본이고 속성은 그 폼의 검증기 인스턴스이며, 같은 계약(`compile` + `compileGuard`)을 받고 플러그인보다 앞선다.
 - 보충:
   > "`validatorFactory`와 플러그인의 계약 통일" (`reviews/round-18-agenda.md:108`)
   > "`validatorFactory`와 플러그인의 계약 통일" (`08-design-a-to-z.md:493`)
-- 상태: 열림(→ `reviews/round-18-agenda.md:108`)
-- 출처: `adr/0004-validator-plugin-compile-guard.md:37#2`(정본, VALIDATE-024에서 분할), `08-design-a-to-z.md:345,493`, `02-target-overview.md:175`, `reviews/round-18-agenda.md:108`
-- 닫은 사람: 소유자 답(`reviews/round-14-owner-answers.md:13` O-7), 편집자 결정(18라운드 안건 이관, `reviews/round-18-agenda.md:108`)
+  > 편집자 결정(18C-54): "【추론】 (1) 계약 형은 하나다(가칭 `Validator`)." (`reviews/round-18-closing.md:1509`)
+- 상태: 현행
+- 출처: `adr/0004-validator-plugin-compile-guard.md:37#2`(정본, VALIDATE-024에서 분할), `08-design-a-to-z.md:345,493`, `02-target-overview.md:175`, `reviews/round-18-agenda.md:108`, `reviews/round-18-closing.md:1509-1523`
+- 닫은 사람: 소유자 답(`reviews/round-14-owner-answers.md:13` O-7), 편집자 결정(18라운드 안건 이관, `reviews/round-18-agenda.md:108`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-54)
 - 라운드: 18
-- 까닭: `reviews/round-14-owner-answers.md:13`
+- 까닭: `reviews/round-14-owner-answers.md:13`, `reviews/round-18-closing.md:1525-1527`
 
 ### VALIDATE-042 미등록 판정은 플러그인과 `validatorFactory`를 함께 봄
 
@@ -579,3 +601,218 @@
 - 닫은 사람: 소유자 답(`reviews/round-14-owner-answers.md:13` O-7)
 - 라운드: 14
 - 까닭: `reviews/round-14-owner-answers.md:13`
+
+### VALIDATE-043 검증 에러 라우팅 — 판정 불변, 폼 수준 목록, `dataPath` 배정, 잔여 키는 호스트, 터미널 아래는 터미널, 꺼진 union 분기만 표시에서 거름, union 호스트 에러는 호스트
+
+- 결정:
+  > 【추론】 (1) 라우팅은 판정을 바꾸지 않는다.
+  > 【추론】 모든 에러는 순서대로 폼 수준 목록에 남는다.
+  > 【추론】 폼 수준 목록은 루트의 `globalErrors`다(18C-41).
+  > 【추론】 아래 규칙으로 어느 노드에도 싣지 않은 에러가 주인 없는 에러다.
+  > 【추론】 (2) 배정은 플러그인이 정규화한 `dataPath`로 한다.
+  > 【추론】 `required`는 빠진 자식의 경로다(오늘 ajv 플러그인과 같음, `schema-form-ajv8-plugin/src/validator/utils/transformErrors.ts:42-53`).
+  > 【추론】 (3) `rejectedKey`가 있는 에러는 그 키를 든 호스트 노드(형상 안)의 `errors`에 그대로 싣는다.
+  > 【추론】 잔여 키의 목록·문구·UI는 렌더 계층의 일이다(REACT-026, 18C-77).
+  > 【추론】 (4) `dataPath`와 경로가 같은 형상 안의 노드가 받는다.
+  > 【추론】 그 경로가 터미널 노드 아래면 그 터미널 노드가 받고, `dataPath`는 그대로 둔다.
+  > 【추론】 형상 안에 그런 노드가 없으면 노드에 싣지 않는다(꺼진 조각에만 선언된 필드 등).
+  > 【추론】 (5) 꺼진 분기 거르기(표시 필터): `schemaPath`가 `oneOf`·`anyOf`의 한 분기 안으로 풀리고, 그 분기가 꺼져 있고, 같은 union에 켜진 분기가 있으면 그 에러는 노드에 싣지 않고 폼 수준 목록에만 남는다.
+  > 【추론】 켜진 분기가 없거나 귀속을 가를 수 없으면 거르지 않는다(`$ref`로 여러 분기가 같은 위치를 쓰는 경우, 원격 `$id`).
+  > 【추론】 게이트 없는 분기는 늘 켜져 있으므로 걸리지 않는다.
+  > 【추론】 `allOf` 항목·`if`/`then`/`else`·`controls.active` 조각은 거르지 않는다.
+  > 【추론】 그 에러는 저마다 판정을 막기 때문이다.
+  > 【추론】 귀속은 청사진의 조각 표(분기 위치와 `$ref` 대상)로 한다.
+  > 【추론】 `if`의 내용은 읽지 않는다.
+  > 【추론】 (6) `oneOf`·`anyOf` 자체의 에러는 (4)대로 호스트 노드가 받는다.
+  > 【추론】 판별 노드로 옮기는 특례는 두지 않는다.
+  > 【추론】 판별 값이 어느 분기와도 맞지 않으면 켜진 분기가 없어 (5)가 거르지 않는다.
+  > 【추론】 그래서 분기별 `const` × N과 판별 키의 `required`는 `dataPath`대로 판별 노드가 받는다.
+  > 【추론】 판별 노드는 `controls.discriminator`가 끌어올려 늘 형상에 있다.
+  > 【추론】 같은 문구의 중복 표시와 번역은 렌더 계층(`formatError`)의 몫이다.
+  > 【추론】 새 코드는 없다(검증 결과는 `onError` 밖).
+  > PR: PR-4 시험.
+  > 무엇: 규칙 (5)의 귀속이 플러그인마다 다른 `$ref` 아래 `schemaPath` 모양에서 맞는지 ajv6·7·8 사례로 본다.
+- 보충: 없음
+- 상태: 현행
+- 출처: `reviews/round-18-closing.md:1471-1495,1502-1503`(정본)
+- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-53)
+- 라운드: 18
+- 까닭: `reviews/round-18-closing.md:1497-1500`
+
+### VALIDATE-044 검증기 계약 형 `Validator`(가칭) 하나 — `compile`·`compileGuard`·선택 `release`·방언, 고르는 순서 Form > `FormProvider` > 플러그인, 참조가 바뀌면 재생성, 가드는 동기 boolean
+
+- 결정:
+  > 【추론】 (1) 계약 형은 하나다(가칭 `Validator`).
+  > 【추론】 `Validator`는 `compile(copy)`, `compileGuard(root, pointer)`, 선택 `release(root)`(18C-56), 선택 방언 선언(VALIDATE-026), 그리고 `compile` 결과 함수의 에러 정규화(`dataPath`, 루트 경로 표기, `rejectedKey`)를 담는다.
+  > 【추론】 플러그인은 여기에 소비자 훅 `bind?`만 더 가진다.
+  > 【추론】 core는 `bind`를 부르지 않는다.
+  > 【추론】 `<Form validatorFactory>`(이름 유지, O-7)와 오늘의 `FormProvider` 속성 `validatorFactory`는 이 형을 그대로 받는다.
+  > 【추론】 (2) 고르는 순서는 Form 속성 > `FormProvider` > 등록한 플러그인이다.
+  > 【추론】 오늘의 순서다(`RootNodeContextProvider.tsx:94`, `ValidationManager.ts:203`).
+  > 【추론】 바인딩 계층이 트리를 만들 때 한 번 고르고, 그 결과나 없음을 core에 인자로 넘긴다(18C-55).
+  > 【추론】 미등록 판정은 고른 결과가 없음인 것이다(VALIDATE-042와 같은 뜻).
+  > 【추론】 (3) 고른 검증기의 참조가 트리 생성 뒤 바뀌면 다른 스키마와 같이 재생성한다.
+  > 【추론】 캐시와 등록이 검증기 인스턴스마다이기 때문이다.
+  > 【추론】 오늘도 `useMemo` 의존으로 트리를 다시 만든다(`RootNodeContextProvider.tsx:85-104`).
+  > 【추론】 매 렌더 새 객체를 주지 말라고 문서화한다.
+  > 【추론】 (4) 가드 함수는 같은 값에 같은 boolean을 동기로 돌려준다.
+  > 【추론】 던지거나 boolean이 아닌 값(비동기 스키마의 Promise 등)을 내면 그 평가는 가드 실패(`GUARD_FAILED`, 정착 오류)다.
+- 보충:
+  > 반영 칸(union O4, 계약 문장): "나. `Validator` 문서 주석에 계약 문장을 넣는다: "core는 `compile` 결과와 가드에 방출 트리를 참조로 넘긴다. 검증기와 가드는 받은 값과 받은 스키마를 바꾸지 않는다. 값을 바꾸는 사용자 정의 키워드(ajv `modifying: true` 등)를 쓰지 않는 것은 소비자의 책임이다."" (`reviews/round-18-owner-answers.md:34`)
+- 상태: 현행
+- 출처: `reviews/round-18-closing.md:1509-1523`(정본), `reviews/round-18-owner-answers.md:34`
+- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-54), 소유자 답(`reviews/round-18-owner-answers.md:34` union O4; 계약 문장)
+- 라운드: 18
+- 까닭: `reviews/round-18-closing.md:1525-1527`, `reviews/round-18-owner-answers.md:34`
+
+### VALIDATE-045 최근 해제 목록 크기 8(검증기 인스턴스마다, 내부) — 밀려날 때와 같은 `$id` 재등록 직전에만 `release(root)`, 상한 '살아 있는 루트 + 8'
+
+- 결정:
+  > 【추론】 최근 해제 목록은 검증기 인스턴스마다 하나이고, 크기는 8이다(내부 상수, 공개 옵션 아님).
+  > 【추론】 가득 차면 가장 먼저 해제된 루트부터 밀려난다.
+  > 【추론】 목록 안의 루트가 다시 커밋되면 목록에서 빠지고 다시 컴파일하지 않는다.
+  > 【추론】 푸는 때는 둘뿐이다: 목록에서 밀려날 때, 그리고 같은 루트 `$id`의 새 루트를 등록하기 직전의 목록 안(참조 수 0) 옛 루트(VALIDATE-021)다.
+  > 【추론】 참조 수가 1 이상인 루트는 풀지 않는다.
+  > 【추론】 core는 플러그인의 `release(root)`를 루트마다 한 번 부른다.
+  > 【추론】 플러그인은 등록(ajv `removeSchema(key)`)과 컴파일 결과를 버린다.
+  > 【추론】 이어 core는 자기 캐시의 그 작성 루트 항목을 지운다.
+  > 【추론】 `release`가 없으면 core 캐시만 지운다.
+  > 【추론】 이 저장소의 ajv 플러그인 셋은 `release`를 구현한다.
+  > 【추론】 플러그인 계약에 선택 `release`를 더하는 것은 minor다.
+  > 【추론】 메모리 상한은 검증기 인스턴스마다 '살아 있는 루트 수 + 8'이다.
+  > 【추론】 목록이 흡수할 것은 StrictMode의 흉내 언마운트, 커밋되지 않은 렌더, 몇 개 스키마를 오가는 화면이다.
+  > 【추론】 서버에서는 효과가 돌지 않아 모든 트리가 참조 수 0으로 목록에 든다.
+  > 【추론】 목록이 작아야 서버 메모리가 묶인다.
+  > PR: PR-4 시험.
+  > 무엇: 서로 다른 스키마로 1,000번 마운트·언마운트한 뒤 등록 수가 '살아 있는 루트 + 8' 이하인지, 같은 객체를 다시 마운트하면 컴파일이 0번인지 본다.
+- 보충: 없음
+- 상태: 현행
+- 출처: `reviews/round-18-closing.md:1554-1568,1574-1575`(정본)
+- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-56)
+- 라운드: 18
+- 까닭: `reviews/round-18-closing.md:1570-1572`
+
+### VALIDATE-046 같은 `$id`의 두 살아 있는 루트는 저마다 판정 — 떼어 두기는 플러그인 계약, PR-4 게이트 넷(오류·경고 아님은 ERROR-201)
+
+- 결정:
+  > 【추론】 서로 다른 작성 루트 객체가 같은 `$id`(루트나 안쪽 자원)를 가진 채 동시에 살아 있을 수 있다.
+  > 【추론】 같은 화면의 두 폼이 그렇고, 재생성 reset에서 옛 트리가 아직 살아 있을 때도 그렇다.
+  > 【추론】 이때 두 트리는 저마다 자기 루트로 판정한다(G1).
+  > 【추론】 루트마다 등록을 떼어 두는 것은 플러그인 계약이다.
+  > 【추론】 한 인스턴스에 둘 수 없으면 같은 설정의 다른 인스턴스에 등록한다.
+  > 【추론】 core는 `$id`를 고치지 않는다.
+  > PR: PR-4.
+  > 대상: ajv6·7·8 플러그인 각각, 기본 인스턴스와 `bind(instance)`로 받은 소비자 인스턴스 둘 다.
+  > (i) 같은 루트 `$id`의 두 루트를 동시에 살렸을 때 `compile`·`compileGuard`가 저마다 독립 ajv와 같은 판정을 내는가.
+  > (ii) 안쪽 `$id`가 겹치는 경우와, 절대 URI로 자기를 가리키는 `$ref`.
+  > (iii) 재생성 reset의 원자성(H3, `reviews/raw-round16-reset.md:42`).
+  > (iv) 한쪽을 `release`한 뒤에도 다른 쪽의 늦은 가드 컴파일이 맞는가.
+  > 통과: 넷 모두 판정이 같고 오류 기록이 없다.
+  > 실패(특히 `bind` 인스턴스를 같은 설정으로 복제할 수 없을 때): 소유자에게 올린다.
+  > 실패의 선택지: (가) 소비자 인스턴스의 같은 `$id` 동시 사용을 지원 밖으로 문서화하고 위의 오류로 드러냄, (나) `bind`가 인스턴스 대신 인스턴스를 만드는 함수를 받게 함.
+- 보충: 없음
+- 상태: 현행
+- 출처: `reviews/round-18-closing.md:1581-1586,1598-1606`(정본)
+- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-57)
+- 라운드: 18
+- 까닭: `reviews/round-18-closing.md:1593-1596`
+
+### VALIDATE-047 따로 컴파일한 가드는 전체 검증의 `if`와 같은 boolean — `$id`·동적 범위 포함, 플러그인 계약, PR-4 게이트 넷
+
+- 결정:
+  > 【추론】 `compileGuard(root, pointer)`의 함수는 같은 호스트 값에 대해, 전체 검증이 그 위치의 `if`를 평가할 때와 같은 boolean을 내야 한다.
+  > 【추론】 `$id` 기저 URI와 `$dynamicRef`/`$recursiveRef`의 동적 범위를 포함한다.
+  > 【추론】 이것은 플러그인 계약이며, 폼은 `if`의 내용을 읽지 않는다.
+  > 【추론】 위치마다 가드는 하나다.
+  > 【추론】 컴파일 실패는 가드 실패다(현행).
+  > PR: PR-4, 대상 ajv7·8(ajv6은 (i)만).
+  > 사례 (i): 안쪽 `$id` 자원 안의 `if`와 상대 `$ref`.
+  > 사례 (ii): 2020-12 `$dynamicRef`/`$dynamicAnchor` 확장 패턴을 지나는 `if`.
+  > 사례 (iii): 2019-09 `$recursiveRef`.
+  > 사례 (iv): 한 `$defs` 위치를 동적 범위가 다른 두 경로가 쓰는 경우.
+  > 통과: 가드의 답이 전체 검증에서 관측한 `if`의 답과 모든 사례에서 같다.
+  > 관측은 then/else 에러 유무로 판별하는 짝 스키마로 한다.
+  > 실패 — (iv)만 어긋나면: "한 위치를 여러 동적 범위에서 쓰는 가드"를 지원 범위 밖으로 문서화하는 권고와 함께 소유자에게 올린다.
+  > `if` 안을 읽는 경고는 E-19·E-23과 부딪히므로 두지 않는다.
+  > 실패 — (i)–(iii)이 어긋나면: 가드 컴파일 방식을 PR-4가 고친다.
+  > 못 고치면 소유자에게 올린다.
+- 보충: 없음
+- 상태: 현행
+- 출처: `reviews/round-18-closing.md:1612-1616,1622-1632`(정본)
+- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-58)
+- 라운드: 18
+- 까닭: `reviews/round-18-closing.md:1618-1620`
+
+### VALIDATE-048 가드 컴파일의 공유 단위는 (검증기 인스턴스, 작성 루트 identity) — 전체 검증 함수도 같은 캐시 항목, 수명은 가드와 같음
+
+- 결정:
+  > 【추론】 공유 단위는 (검증기 인스턴스, 작성 루트 객체의 identity) 하나다.
+  > 【추론】 구조가 같은 다른 객체는 공유하지 않는다.
+  > 【추론】 해시나 직렬화 비교를 하지 않는다.
+  > 【추론】 같은 캐시 항목에 전체 검증 함수(`compile(사본)`의 결과, 실패했으면 그 실패)도 담는다.
+  > 【추론】 그러면 같은 인스턴스·같은 작성 루트로 만든 폼들은 전체 컴파일도 한 번만 한다.
+  > 【추론】 검증 불가 기록은 여전히 폼의 로드마다 한 번씩 낸다(ERROR 영역의 `VALIDATOR_COMPILE_FAILED` 행).
+  > 【추론】 개발 모드의 "모든 가드를 한 번 컴파일해 보기"도 캐시 항목마다 한 번이다.
+  > 【추론】 이 항목의 수명과 해제는 가드와 같다(VALIDATE-021).
+  > 【추론】 `validatorFactory`가 폼마다 새 인스턴스를 주면 공유하지 않는다는 점은 문서에 적는다(VALIDATE-018 보충과 같다).
+  > 【추론】 같은 `$id` 충돌, 최근 해제 목록의 크기, `$id`·`$dynamicRef` 문맥은 이 항목이 아니다(18C-56, 18C-57, 18C-58).
+- 보충:
+  > 편집자 결정(18C-101): "【추론】 "한 로드에 한 번"(VALIDATE-048)은 `resetSubtree()`에는 그 하위 트리에만 적용한다." (`reviews/round-18-closing.md:2850`)
+- 상태: 현행
+- 출처: `reviews/round-18-closing.md:2136-2145`(정본), `reviews/round-18-closing.md:2850`
+- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-79), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-101)
+- 라운드: 18
+- 까닭: `reviews/round-18-closing.md:2147-2148`, `reviews/round-18-closing.md:2853-2855`
+
+### VALIDATE-049 폼은 검증을 입력 경로에서 떼어 내는 장치를 두지 않음 — 진입당 요청 1회와 마이크로태스크 합치기, 빈도 조절은 `OnRequest`, 제출은 새로 검증
+
+- 결정:
+  > 【추론】 폼은 검증을 입력 경로에서 떼어 내는 장치를 따로 두지 않는다.
+  > 【추론】 진입당 요청 1회와 마이크로태스크 합치기(O-6, EVENT-028)로 빈도만 줄이며, 큰 폼의 키 입력당 검증 비용은 남는다.
+  > 【추론】 디바운스·유휴·워커는 폼에 두지 않는다(D-10, 12-3).
+  > 【추론】 요청은 최외곽 진입당 한 번 하고, 실행은 마이크로태스크에 모아 최신 커밋 번호 하나만 돌린다(EVENT-028).
+  > 【추론】 워커나 인터프리터 쪽 최적화는 검증기 플러그인의 몫이며, `compile`은 비동기 검증 함수를 돌려줄 수 있다.
+  > 【추론】 검증 빈도를 줄이려는 호스트는 `ValidationMode`의 `OnRequest`를 쓴다.
+  > 【추론】 제출은 캐시된 판정이 아니라 보내는 스냅숏을 새로 검증한다.
+- 보충: 없음
+- 상태: 현행
+- 출처: `reviews/round-18-closing.md:2154-2160`(정본)
+- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-80)
+- 라운드: 18
+- 까닭: `reviews/round-18-closing.md:2162-2165`
+
+### VALIDATE-050 값을 바꾸는 검증기 옵션 — `Validator` 문서 주석의 계약 문장, ajv 플러그인 셋의 `bind`는 `coerceTypes`·`useDefaults`·`removeAdditional`을 켠 인스턴스를 거부(가칭 `VALIDATOR_BIND_REFUSED`), 사용자 정의 변경 키워드는 소비자 책임, 스키마 사본은 깊은 복사 한 번
+
+- 결정:
+  > 나. `Validator` 문서 주석에 계약 문장을 넣는다: "core는 `compile` 결과와 가드에 방출 트리를 참조로 넘긴다. 검증기와 가드는 받은 값과 받은 스키마를 바꾸지 않는다. 값을 바꾸는 사용자 정의 키워드(ajv `modifying: true` 등)를 쓰지 않는 것은 소비자의 책임이다."
+  > ajv 플러그인 셋(ajv6·7·8)의 `bind(instance)`는 `coerceTypes`·`useDefaults`·`removeAdditional` 가운데 하나라도 켜진 인스턴스를 거부하며, 옵션은 ajv7·8이면 `instance.opts`, ajv6이면 `instance._opts`에서 읽는다.
+  > 켜져 있으면 `(가칭) UNHANDLED_ERROR.VALIDATOR_BIND_REFUSED`를 부른 쪽에 즉시 던지고, 인스턴스를 붙이지 않는다.
+  > 폼 인스턴스가 없으므로 `onError`는 받지 않으며, `UNHANDLED_ERROR.REGISTER_PLUGIN` 행과 같은 부류다.
+  > 사본 경로는 두지 않는다.
+  > 사용자 정의 키워드의 `modifying`은 옵션으로 알아낼 수 없으므로 판별하지 않고, 런타임 감지도 약속하지 않으며, 소비자 책임으로 둔다.
+  > VALIDATE-002의 "같은 설정"은 값을 바꾸는 옵션을 쓰지 않는 것을 포함하며, 이 가운데 세 옵션은 이제 `bind`가 강제한다.
+  > 검증기에 넘기는 스키마 사본은 (검증기 인스턴스, 작성 루트)마다 한 번 깊이 복사한다.
+- 보충:
+  > 소유자(union O4): "추가 설명 필요. ajv 플러그인에 대한 이야기입니까? ajv 의 값변경 옵션에 대해서? 이건 의도적으로 금지해도 됩니다. 저희가 제어할 수 없는거니까" (`reviews/round-18-owner-answers.md:34`)
+- 상태: 현행
+- 출처: `reviews/round-18-owner-answers.md:34`(정본, 반영 칸)
+- 닫은 사람: 소유자 답(`reviews/round-18-owner-answers.md:34` union O4)
+- 라운드: 18
+- 까닭: `reviews/round-18-owner-answers.md:34`
+
+### VALIDATE-051 union과 검증기 — ajv8 기본 설정에 `allowUnionTypes: true`(판정 불변, 로그만 없앰), core는 검증에 넘기는 값을 복사하지 않음, 어긋난 union 값과 통째 값 안쪽의 에러는 union 노드가 받음, 규칙 A·경고등은 검증기를 쓰지 않음
+
+- 결정:
+  > 【추론】 ajv8 플러그인의 세 진입점(`default`·`2019`·`2020`) 기본 설정에 `allowUnionTypes: true`를 더한다.
+  > 【추론】 `allowUnionTypes`는 판정을 바꾸지 않고, `strictTypes`의 기본값 `"log"`가 union `type`마다 내는 `console.warn`만 없앤다.
+  > 【추론】 ajv7은 이미 `strict: false`이고, ajv6에는 strict 모드가 없으므로 둘은 바꾸지 않는다.
+  > 【추론】 core는 검증에 넘기는 값을 복사하지 않는다(VALIDATE-049).
+  > 【추론】 어긋난 union 값의 형 에러와 union 객체·배열 값 안쪽의 에러는 union 노드가 받고, `dataPath`는 그대로 둔다(VALIDATE-043 (4)).
+  > 【추론】 규칙 A와 경고등은 검증기를 쓰지 않으며, 형 밖의 제약(`enum`, `properties`·`items`, 그 밖의 키워드)과 게이트가 뺀 `null`은 검증기가 판정한다(BLUEPRINT-033, P1′).
+  > 【추론】 멤버십은 얕게만 보며, 통째로 든 값 안의 JSON 부정합은 `NON_JSON_WHOLE_VALUE` 개발 모드 경고로만 드러내고 폼은 값을 정규화하지 않는다(VALIDATE-007).
+- 보충: 없음
+- 상태: 현행
+- 출처: `reviews/round-18-closing.md:2462-2464,2551-2554`(정본)
+- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-90·18C-91)
+- 라운드: 18
+- 까닭: `reviews/round-18-closing.md:2466-2471`, `reviews/round-18-closing.md:2556-2564`

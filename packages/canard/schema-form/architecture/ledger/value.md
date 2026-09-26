@@ -7,26 +7,26 @@
 | 번호 | 한 줄 요약 | 상태 | 닫은 사람 |
 | --- | --- | --- | --- |
 | VALUE-001 | 별도의 데이터 모델을 두지 않는다 — 노드 트리가 곧 상태 | 현행 | 소유자 답(`reviews/round-1.md:176` §5의 전환을 받는가) |
-| VALUE-002 | 노드가 드는 칸과 그 종류 — 상태는 raw와 extras 둘뿐 | 현행 | 소유자 답(`reviews/round-10-owner-answers.md:9` A-3, 상태가 둘뿐인 것은 그 귀결 `adr/0006-single-value-ownership.md:3`), 원리(`03-mental-model.md:55-72` §2, 칸 목록 `adr/0006-single-value-ownership.md:3`) |
-| VALUE-003 | diagnostics 칸 — 작업의 기록, 다음 로드까지 지속, 루트에서 관측 | 현행 | 소유자 답(`reviews/round-14-owner-answers.md:8` O-2), 소유자 답(`reviews/round-17-owner-answers.md:9` R17-1) |
+| VALUE-002 | 노드가 드는 칸과 그 종류 — 상태는 raw와 extras 둘뿐 | 현행 | 소유자 답(`reviews/round-10-owner-answers.md:9` A-3, 상태가 둘뿐인 것은 그 귀결 `adr/0006-single-value-ownership.md:3`), 원리(`03-mental-model.md:55-72` §2, 칸 목록 `adr/0006-single-value-ownership.md:3`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-40·18C-59) |
+| VALUE-003 | diagnostics 칸 — 작업의 기록, 다음 로드까지 지속, 루트에서 관측 | 현행 | 소유자 답(`reviews/round-14-owner-answers.md:8` O-2), 소유자 답(`reviews/round-17-owner-answers.md:9` R17-1), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-98) |
 | VALUE-004 | 저장되는 값은 자식 노드가 없는 노드에만 있다 | 현행 | 소유자 답(`reviews/round-1.md:176` §5의 전환을 받는가) |
 | VALUE-005 | 노출 표면은 전략과 무관하게 같다 — 경로 조회도 같다 | 현행 | 소유자 답(`reviews/round-1.md:176` §5의 전환을 받는가) |
 | VALUE-006 | 노드는 형상에 있거나 없다 — 형상에 없는 노드의 원본과 나감 | 현행 | 원리(`03-mental-model.md:72` P4), 소유자 답(`reviews/round-13-owner-answers.md:8` 2 나감 비움 기본값), 소유자 답(`reviews/round-13-owner-answers.md:17` 나감 정책 키 이름), 소유자 답(`reviews/round-17-owner-answers.md:10` R17-2, 보충의 하위 트리 문장), 소유자 답(`reviews/round-13-owner-answers.md:16` Form 속성의 자리) |
-| VALUE-007 | 노드가 생긴다는 것 — 채움은 이 사건에만 | 현행 | 소유자 답(`reviews/round-9-spec.md:56` 읽기2 시점(A/B)), 원리(`03-mental-model.md:90` 로드는 새 수명) |
+| VALUE-007 | 노드가 생긴다는 것 — 채움은 이 사건에만 | 분할됨(→ VALUE-035, WRITE-090) | 소유자 답(`reviews/round-9-spec.md:56` 읽기2 시점(A/B)), 원리(`03-mental-model.md:90` 로드는 새 수명), 소유자 답(`reviews/round-18-owner-answers.md:26` 18C 검토 4번; 대체) |
 | VALUE-008 | 형상에서 빠지는 것은 쓰기가 아니다 — null을 포함한 전체 교체는 V에 없는 원본을 지운다 | 현행 | 소유자 답(`reviews/round-9-spec.md:22` 축4), 원리(`03-mental-model.md:92` P4) |
 | VALUE-009 | 불변식은 emit에만 있다 | 현행 | 원리(`adr/0006-single-value-ownership.md:3` emit 불변식은 원리에서 도출, `03-mental-model.md:16` P4) |
 | VALUE-010 | extras의 방출 순서는 받은 순서다 | 현행 | 편집자 결정(8라운드 D-32, `06-conclusions.md:201-207`), 편집자 결정(9라운드 그대로, `07-conclusions.md:99`) |
 | VALUE-011 | 값 읽기는 셋이다 — value, outputValue, getInactiveValues | 분할됨(→ VALUE-027, VALUE-028) | 편집자 결정(8라운드 D-23, `06-conclusions.md:186-190`), 편집자 결정(9라운드 N3 그대로, `07-conclusions.md:347`) |
-| VALUE-012 | emit의 참조 규칙 | 현행 | 편집자 결정(4차 본문, 3·4·5라운드 반영 F9, `adr/0006-single-value-ownership.md:10`) |
+| VALUE-012 | emit의 참조 규칙 | 현행 | 편집자 결정(4차 본문, 3·4·5라운드 반영 F9, `adr/0006-single-value-ownership.md:10`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-50) |
 | VALUE-013 | 읽기는 계산하지 않는다 — 메모는 커밋 단계에서만 | 현행 | 편집자 결정(1라운드 반영, `reviews/round-1.md:176` 반영 칸), 편집자 결정(4차 본문, 3·4·5라운드 반영, `adr/0006-single-value-ownership.md:10`) |
 | VALUE-014 | 읽기가 쓰기보다 잦은 구조에서의 비용 표 | 현행 | 편집자 결정(1라운드 반영, `reviews/round-1.md:176` 반영 칸), 편집자 결정(4차 본문 E13, `adr/0006-single-value-ownership.md:10`, 역색인 행) |
-| VALUE-015 | null 계약 D-1 — setValue(null)은 키가 없는 전체 교체 | 현행 | 원리(`reviews/round-5-derivations.md:40` D-1) |
+| VALUE-015 | null 계약 D-1 — setValue(null)은 키가 없는 전체 교체 | 분할됨(→ VALUE-036, WRITE-090) | 원리(`reviews/round-5-derivations.md:40` D-1), 소유자 답(`reviews/round-18-owner-answers.md:26` 18C 검토 4번; 대체) |
 | VALUE-016 | 결과 — 레벨마다의 사본과 잠금이 필요 없어진다 | 현행 | 소유자 답(`reviews/round-1.md:176` §5의 전환을 받는가) |
 | VALUE-017 | 형상에 없는 노드의 원본은 설계상 잠복이다 | 현행 | 원리(`03-mental-model.md:59` P1·P4) |
-| VALUE-018 | 잠복 원본의 실제 파기 시점이 18라운드 안건으로 이관됨 | 열림(→ `reviews/round-18-agenda.md:112`) | 편집자 결정(17라운드, 18라운드 안건으로 이관, `reviews/round-18-agenda.md:112`) |
-| VALUE-019 | 배열 아이템의 생김과 채움이 18라운드 안건으로 이관됨 | 열림(→ `reviews/round-18-agenda.md:109`) | 편집자 결정(17라운드, 18라운드 안건으로 이관, `reviews/round-18-agenda.md:109`) |
-| VALUE-020 | Q2 — null 계약의 장치를 새 구조에서 표현하는 방법이 18라운드 안건으로 이관됨 | 열림(→ `reviews/round-18-agenda.md:112`) | 편집자 결정(17라운드, 18라운드 안건으로 이관, `reviews/round-18-agenda.md:112`) |
-| VALUE-021 | "값이 바뀌었다"는 값 비교다 — 에지의 값 동등 판정이 18라운드 안건으로 이관됨 | 열림(→ `reviews/round-18-agenda.md:107`) | 편집자 결정(8라운드 D-33 편집자 판정, `06-conclusions.md:251`), 편집자 결정(17라운드, 18라운드 안건으로 이관, `reviews/round-18-agenda.md:107`) |
+| VALUE-018 | 잠복 원본의 실제 파기 시점이 18라운드 안건으로 이관됨 | 대체됨(→ VALUE-031) | 편집자 결정(17라운드, 18라운드 안건으로 이관, `reviews/round-18-agenda.md:112`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-64) |
+| VALUE-019 | 배열 아이템의 생김과 채움이 18라운드 안건으로 이관됨 | 대체됨(→ NODE-051, NODE-052, FRAGMENT-051) | 편집자 결정(17라운드, 18라운드 안건으로 이관, `reviews/round-18-agenda.md:109`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-59) |
+| VALUE-020 | Q2 — null 계약의 장치를 새 구조에서 표현하는 방법이 18라운드 안건으로 이관됨 | 대체됨(→ VALUE-032) | 편집자 결정(17라운드, 18라운드 안건으로 이관, `reviews/round-18-agenda.md:112`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-65) |
+| VALUE-021 | "값이 바뀌었다"는 값 비교다 — 에지의 값 동등 판정이 18라운드 안건으로 이관됨 | 현행 | 편집자 결정(8라운드 D-33 편집자 판정, `06-conclusions.md:251`), 편집자 결정(17라운드, 18라운드 안건으로 이관, `reviews/round-18-agenda.md:107`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-50) |
 | VALUE-022 | 상호작용 상태 dirty·touched는 현행 유지 | 현행 | 소유자 답(`reviews/round-2.md:112` 목표 후보 C1–C8), 소유자 답(`00-goals.md:109` C6) |
 | VALUE-023 | 버린 대안 — 루트의 JSON 값 트리, 셀 테이블, 노드별 사본 동기화 | 현행(부정 결정) | 소유자 답(`reviews/round-1.md:176` §5의 전환을 받는가), 편집자 결정(1차안 대체, 적대적 검토 R12, `adr/0006-single-value-ownership.md:12`) |
 | VALUE-024 | 대체됨: node.value는 원본, normalizedValue는 방출 값이라는 구분의 유지 | 대체됨(→ VALUE-027) | 편집자 결정(8라운드 D-23, `06-conclusions.md:186-190`), 편집자 결정(9라운드 N3 그대로, `07-conclusions.md:347`), 편집자 결정(18라운드, 소유자 물음으로 올림, `reviews/round-18-agenda.md:166`), 소유자 답(`reviews/round-18-owner-answers.md:18` 12-8; VALUE-027의 이름으로 대체) |
@@ -34,7 +34,15 @@
 | VALUE-026 | 대체됨: 상태 칸은 raw·selection·extras 셋이라는 06 용어표의 정의 | 대체됨(→ VALUE-002) | 소유자 답(`reviews/round-10-owner-answers.md:9` A-3), 편집자 결정(10라운드, `07-conclusions.md:29`) |
 | VALUE-027 | 값 읽기는 셋이다 — value, outputValue, getInactiveValues의 이름 | 현행 | 편집자 결정(8라운드 D-23, `06-conclusions.md:186-190`), 편집자 결정(9라운드 N3 그대로, `07-conclusions.md:347`), 소유자 답(`reviews/round-18-owner-answers.md:18` 12-8) |
 | VALUE-028 | 구조 공유는 `emit` 사이에서만 말한다 | 현행 | 편집자 결정(8라운드 D-23, `06-conclusions.md:186-190`), 편집자 결정(9라운드 N3 그대로, `07-conclusions.md:347`) |
-| VALUE-029 | 잠복 원본 열거 — 루트 노드의 함수, 노드마다 getter `inactiveValues` | 현행 | 소유자 답(`reviews/round-18-owner-answers.md:22` 12-8 셋째) |
+| VALUE-029 | 잠복 원본 열거 — 루트 노드의 함수, 노드마다 getter `inactiveValues` | 현행 | 소유자 답(`reviews/round-18-owner-answers.md:22` 12-8 셋째), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-81; 반환 모양) |
+| VALUE-030 | 정합 상태(경고등)는 계산 칸 — 켜지는 값, 쓰기마다 `interpret`가 정함, 루트의 경로 집합과 `valueTypeMismatches`(가칭) | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-40), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-91), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-101) |
+| VALUE-031 | 잠복 원본의 수명(지워지는 길 둘, 제출 후 파기 없음), 로드 왕복의 차이 다섯, 비활성 경로에 닿는 쓰기 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-64), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-96) |
+| VALUE-032 | null 계약은 쓰기 종류로 표현한다 — `injectTo`는 언제나 자동 쓰기라 null 조상을 객체로 만들지 않음, 소유자 통보 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-65), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-100) |
+| VALUE-033 | nullable이 아닌 노드의 `null`은 바꾸지 않고 방출 — 경고등·경고, 검증기가 있으면 형 에러로 제출 막힘, 해법은 스키마에 nullable, 이주 항목과 PR-8 문서에 적음 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-40) |
+| VALUE-034 | 빈 호스트와 루트의 방출 — 빈 `local`은 `{}`·`[]`, `omitEmpty`는 빈 `local`을 방출하지 않음, 루트는 루트 종류의 빈 그릇, 배열 아이템의 빈자리는 `{}`·`[]`·`null` | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-88) |
+| VALUE-035 | 노드가 생긴다는 것 — 채움은 이 사건에만, 이미 두고 있던 노드는 새 조각이 켜져도 생기지 않음, `controls.visible` 전환은 생성이 아님 | 현행 | 소유자 답(`reviews/round-9-spec.md:56` 읽기2 시점(A/B)), 원리(`03-mental-model.md:90` 로드는 새 수명) |
+| VALUE-036 | null 계약 D-1 — setValue(null)은 키가 없는 전체 교체, 셋째 칸도 특수 장치도 없음, 비객체 호스트의 자식은 존재하고 렌더됨 | 현행 | 원리(`reviews/round-5-derivations.md:40` D-1), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-100) |
+| VALUE-037 | `union`의 경고등과 방출·채움 — `valueTypeMismatch`는 원본과 현재 spec의 함수, 켜질 때마다 한 번과 다시 보내는 때, (가칭) `UpdateJsonSchema` 배달, `VALUE_TYPE_MISMATCH` 기록의 칸, 방출은 원본 참조, 통째 값의 JSON 부정합 경고 (가칭) `NON_JSON_WHOLE_VALUE`, 채움은 원본이 `undefined`일 때만 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-91), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-98) |
 
 ## 항목
 
@@ -71,11 +79,14 @@
   > "extras       호스트가 받은, 청사진 어디에도 선언되지 않은 키와 그 순서(정적. if 안에만 적힌 키도 여기)" (`08-design-a-to-z.md:153`)
   > "같은 조각 집합이면 같은 참조" (`08-design-a-to-z.md:158`)
   > "active     이번 커밋의 활성 조각·노드 집합 — 계산 결과, 상태가 아니다 (P3)" (`03-mental-model.md:60`)
+  > 편집자 결정(18C-40): "【추론】 (1) 경고등은 VALUE-002의 분류로 '계산' 칸이다." (`reviews/round-18-closing.md:1084`)
+  > 편집자 결정(18C-59): "【추론】 배열 호스트의 `extras`는 아이템 청사진이 없는 자리의 값이다." (`reviews/round-18-closing.md:1668`)
+  > 편집자 결정(18C-59): "【추론】 자리 순서로 들고, 선언된 아이템 뒤에 방출한다(VALUE-002 보충)." (`reviews/round-18-closing.md:1669`)
 - 상태: 현행
-- 출처: `adr/0006-single-value-ownership.md:27-42`(정본), `adr/0006-single-value-ownership.md:3,9`, `02-target-overview.md:142-148`, `03-mental-model.md:57-70`, `08-design-a-to-z.md:151-166`
-- 닫은 사람: 소유자 답(`reviews/round-10-owner-answers.md:9` A-3, 상태가 둘뿐인 것은 그 귀결 `adr/0006-single-value-ownership.md:3`), 원리(`03-mental-model.md:55-72` §2, 칸 목록 `adr/0006-single-value-ownership.md:3`)
-- 라운드: 10
-- 까닭: `adr/0006-single-value-ownership.md:42`
+- 출처: `adr/0006-single-value-ownership.md:27-42`(정본), `adr/0006-single-value-ownership.md:3,9`, `02-target-overview.md:142-148`, `03-mental-model.md:57-70`, `08-design-a-to-z.md:151-166`, `reviews/round-18-closing.md:1084,1668-1669`
+- 닫은 사람: 소유자 답(`reviews/round-10-owner-answers.md:9` A-3, 상태가 둘뿐인 것은 그 귀결 `adr/0006-single-value-ownership.md:3`), 원리(`03-mental-model.md:55-72` §2, 칸 목록 `adr/0006-single-value-ownership.md:3`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-40·18C-59)
+- 라운드: 18
+- 까닭: `adr/0006-single-value-ownership.md:42`, `reviews/round-18-closing.md:1134-1141`, `reviews/round-18-closing.md:1686-1690`
 - 충돌:
   > `reviews/round-18-owner-answers.md:9`의 "노드는 정합 상태(경고등)를 들고, 이것이 공개 형의 판별자다(이름과 모양은 18라운드 §7)."는 이 표에 없는 칸을 더한다. 18라운드 소유자 답이 뒤이므로 "칸은 열"의 수는 낡았다. 경고등이 상태인지 계산인지는 아직 적히지 않았다(→ WRITE-054).
 
@@ -87,10 +98,12 @@
 - 보충:
   > "diagnostics 마지막 로드 이후의 기록('stable' 또는 'degraded', cause(예산·식·대상·공유 충돌), exceededBudget, iterations, commit. 다음 로드까지 남고 그 동안 제출 경로가 거부한다. ADR 0014 4판 §5) — 작업의 기록, 루트에서 관측" (`03-mental-model.md:67`)
   > "diagnostics  마지막 로드 이후의 기록 { status: 'stable' | 'degraded', cause?, exceededBudget?, iterations?, commit? } (모양은 ADR 0014 §5. 다음 로드까지 남고(14라운드 답 O-2) 그 동안 폼의 제출 경로가 거부한다(17라운드 소유자 답 R17-1 나))" (`08-design-a-to-z.md:163`)
+  > 편집자 결정(18C-98): "【추론】 `diagnostics`와 경고 중복 키는 폼 수준 로드(마운트, `FormHandle.reset()`)에서만 초기화한다." (`reviews/round-18-closing.md:2797`)
+  > 편집자 결정(18C-98): "【추론】 `setValue(V)`와 `resetSubtree()`는 초기화하지 않는다." (`reviews/round-18-closing.md:2798`)
 - 상태: 현행
-- 출처: `adr/0006-single-value-ownership.md:37`(정본), `02-target-overview.md:148`, `03-mental-model.md:67`, `08-design-a-to-z.md:163`, `07-conclusions.md:348`(모양과 제출 거부의 정본은 `adr/0014-error-policy.md` §5)
-- 닫은 사람: 소유자 답(`reviews/round-14-owner-answers.md:8` O-2), 소유자 답(`reviews/round-17-owner-answers.md:9` R17-1)
-- 라운드: 17
+- 출처: `adr/0006-single-value-ownership.md:37`(정본), `02-target-overview.md:148`, `03-mental-model.md:67`, `08-design-a-to-z.md:163`, `07-conclusions.md:348`(모양과 제출 거부의 정본은 `adr/0014-error-policy.md` §5), `reviews/round-18-closing.md:2797-2798`
+- 닫은 사람: 소유자 답(`reviews/round-14-owner-answers.md:8` O-2), 소유자 답(`reviews/round-17-owner-answers.md:9` R17-1), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-98)
+- 라운드: 18
 - 까닭: `adr/0006-single-value-ownership.md:37`
 
 ### VALUE-004 저장되는 값은 자식 노드가 없는 노드에만 있다
@@ -138,10 +151,10 @@
 - 결정:
   > - 노드가 **생긴다**는 것은 그 노드가 직전 커밋의 형상에 없고 이번 정착의 최종 형상에 있다는 뜻이다. 채움(`controls.default` > `default`)은 이 사건에만 일어난다(ADR 0007, ADR 0013). 전체 교체(로드)는 트리를 새로 만든 것으로 보아 형상에 있는 모든 노드를 생긴 노드로 친다(원장 §3의 "로드는 새 수명"). 본체나 다른 켜진 조각이 이미 두고 있던 노드는 새 조각이 켜져도 생기지 않는다. `controls.visible`의 전환은 생성이 아니다.
 - 보충: 없음
-- 상태: 현행
+- 상태: 분할됨(→ VALUE-035, WRITE-090)
 - 출처: `adr/0006-single-value-ownership.md:52`(정본), `07-conclusions.md:67`
-- 닫은 사람: 소유자 답(`reviews/round-9-spec.md:56` 읽기2 시점(A/B)), 원리(`03-mental-model.md:90` 로드는 새 수명)
-- 라운드: 9
+- 닫은 사람: 소유자 답(`reviews/round-9-spec.md:56` 읽기2 시점(A/B)), 원리(`03-mental-model.md:90` 로드는 새 수명), 소유자 답(`reviews/round-18-owner-answers.md:26` 18C 검토 4번; 대체)
+- 라운드: 18
 - 까닭: `reviews/round-9-spec.md:56`
 
 ### VALUE-008 형상에서 빠지는 것은 쓰기가 아니다 — null을 포함한 전체 교체는 V에 없는 원본을 지운다
@@ -198,12 +211,16 @@
 ### VALUE-012 emit의 참조 규칙
 - 결정:
   > **9. `emit`의 참조**는 (자식 `emit` 참조 ∪ `extras` ∪ 호스트 `raw` ∪ 활성 키 집합) 가운데 하나라도 바뀌면 새로 만들고, 아니면 이전 참조를 그대로 둔다(F9). "같은 값을 두 번 읽으면 같은 참조"가 이것으로 성립한다.
-- 보충: 없음
+- 보충:
+  > 편집자 결정(18C-50): "【추론】 (나) 커밋 단계에서, 이번 정착에 쓰인 잎의 `raw`·`extras`가 직전 커밋의 것과 (가)로 같으면 직전 참조를 둔다." (`reviews/round-18-closing.md:1383`)
+  > 편집자 결정(18C-50): "【추론】 쓰기 경계에서 지금 값과 같으면 쓰지 않는 것은 오늘과 같다." (`reviews/round-18-closing.md:1384`)
+  > 편집자 결정(18C-50): "【추론】 호스트의 `emit`은 VALUE-012대로 만든다." (`reviews/round-18-closing.md:1385`)
+  > 편집자 결정(18C-50): "【추론】 새로 만든 것이 직전 커밋의 것과 키 목록(순서 포함)도 같고 키마다의 자식 `emit` 참조도 같으면 직전 참조를 둔다(얕은 비교, 재계산 목록의 호스트만)." (`reviews/round-18-closing.md:1386`)
 - 상태: 현행
-- 출처: `adr/0006-single-value-ownership.md:68`(정본)
-- 닫은 사람: 편집자 결정(4차 본문, 3·4·5라운드 반영 F9, `adr/0006-single-value-ownership.md:10`)
-- 라운드: 5
-- 까닭: `adr/0006-single-value-ownership.md:68`
+- 출처: `adr/0006-single-value-ownership.md:68`(정본), `reviews/round-18-closing.md:1383-1386`
+- 닫은 사람: 편집자 결정(4차 본문, 3·4·5라운드 반영 F9, `adr/0006-single-value-ownership.md:10`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-50)
+- 라운드: 18
+- 까닭: `adr/0006-single-value-ownership.md:68`, `reviews/round-18-closing.md:1405-1411`
 
 ### VALUE-013 읽기는 계산하지 않는다 — 메모는 커밋 단계에서만
 - 결정:
@@ -237,10 +254,10 @@
 - 결정:
   > `setValue(null)`은 키가 없는 전체 교체이므로 자식 원본이 없음이 된다. 원본 칸 하나로 족하며 셋째 칸도 특수 장치도 없다 — 2라운드 S7(#338 S4와 "null 아래도 원본 유지"의 충돌)은 이렇게 닫힌다. 3라운드 E9의 "비객체 V는 자식 raw를 건드리지 않는다"와 E18("비객체 호스트의 자식은 비활성")은 **삭제**한다: 비객체 호스트의 자식은 **존재하고 렌더되며** 빈 상태를 보인다. 로드는 새 수명이므로 그 자식들은 생긴 노드로서 채움을 받고, `setValue(null)` 뒤 다시 객체가 로드되어도 채움을 받는다(원장 §3). 실수로 누른 null의 되돌리기는 입력 컴포넌트의 몫이다.
 - 보충: 없음
-- 상태: 현행
+- 상태: 분할됨(→ VALUE-036, WRITE-090)
 - 출처: `adr/0006-single-value-ownership.md:76`(정본), `adr/0006-single-value-ownership.md:74`, `reviews/round-5-derivations.md:40`, `adr/0007-settle-cycle.md:115`, `adr/0013-core-does-not-rewrite-values.md:53`(WRITE-014의 정본), `03-mental-model.md:90`
-- 닫은 사람: 원리(`reviews/round-5-derivations.md:40` D-1)
-- 라운드: 5
+- 닫은 사람: 원리(`reviews/round-5-derivations.md:40` D-1), 소유자 답(`reviews/round-18-owner-answers.md:26` 18C 검토 4번; 대체)
+- 라운드: 18
 - 까닭: `reviews/round-5-derivations.md:40`
 
 ### VALUE-016 결과 — 레벨마다의 사본과 잠금이 필요 없어진다
@@ -267,11 +284,11 @@
 - 결정:
   > core는 읽기 전용 `getInactiveValues(path)`로 열거만 하고(F26), 실제 파기 시점(reset·제출 후)은 `open-questions.md` Q1.
 - 보충: 없음
-- 상태: 열림(→ `reviews/round-18-agenda.md:112`)
-- 출처: `adr/0006-single-value-ownership.md:98#4`(정본), `open-questions.md:11`(FRAGMENT-043의 정본, Q1 전체), `reviews/round-18-agenda.md:112`
-- 닫은 사람: 편집자 결정(17라운드, 18라운드 안건으로 이관, `reviews/round-18-agenda.md:112`)
-- 라운드: 17
-- 까닭: `reviews/round-18-agenda.md:112`
+- 상태: 대체됨(→ VALUE-031)
+- 출처: `adr/0006-single-value-ownership.md:98#4`(정본), `open-questions.md:11`(FRAGMENT-043의 정본, Q1 전체), `reviews/round-18-agenda.md:112`, `reviews/round-18-closing.md:1793-1820`
+- 닫은 사람: 편집자 결정(17라운드, 18라운드 안건으로 이관, `reviews/round-18-agenda.md:112`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-64)
+- 라운드: 18
+- 까닭: `reviews/round-18-agenda.md:112`, `reviews/round-18-closing.md:1822-1826`
 - 충돌:
   > `adr/0006-single-value-ownership.md:98`의 "core는 읽기 전용 `getInactiveValues(path)`로 열거만 하고(F26)"는 잠복 원본 열거를 `getInactiveValues`라는 읽기로 적는다. 소유자 답과 다르다. 소유자 답이 이긴다(`reviews/round-18-owner-answers.md:22`, VALUE-029: 잠복 원본 열거는 루트 노드의 함수이고 노드마다 getter `inactiveValues`).
 
@@ -279,31 +296,32 @@
 - 결정:
   > 그 밖의 배열 아이템의 생김과 채움(`contains`·`prefixItems`, identity)은 `03-mental-model.md` §6의 설계 항목이다.
 - 보충: 없음
-- 상태: 열림(→ `reviews/round-18-agenda.md:109`)
-- 출처: `adr/0006-single-value-ownership.md:97#5`(정본), `03-mental-model.md:206`, `08-design-a-to-z.md:495`, `reviews/round-18-agenda.md:109`
-- 닫은 사람: 편집자 결정(17라운드, 18라운드 안건으로 이관, `reviews/round-18-agenda.md:109`)
-- 라운드: 17
-- 까닭: `reviews/round-18-agenda.md:109`
+- 상태: 대체됨(→ NODE-051, NODE-052, FRAGMENT-051)
+- 출처: `adr/0006-single-value-ownership.md:97#5`(정본), `03-mental-model.md:206`, `08-design-a-to-z.md:495`, `reviews/round-18-agenda.md:109`, `reviews/round-18-closing.md:1638-1684,1692-1698`
+- 닫은 사람: 편집자 결정(17라운드, 18라운드 안건으로 이관, `reviews/round-18-agenda.md:109`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-59)
+- 라운드: 18
+- 까닭: `reviews/round-18-agenda.md:109`, `reviews/round-18-closing.md:1686-1690`
 
 ### VALUE-020 Q2 — null 계약의 장치를 새 구조에서 표현하는 방법이 18라운드 안건으로 이관됨
 - 결정:
   > "자동 쓰기는 null 조상을 객체로 만들지 않는다"는 요구는 남는다. 출처 비트(`Automatic`)를 쓰기마다 실어 나르는 대신 작업 루프의 단계로 구분할 수 있는가 — 표시는 의도된 쓰기, begin의 기본값 주입과 complete의 `&derived`는 자동 쓰기. **검토 결과 이 가설은 자동 쓰기에 대해서만 성립한다**(`reviews/round-1.md` R12): 같은 값을 다시 쓰는 의도된 쓰기(S6)는 값만 봐서는 드러나지 않으므로 쓰기 의도를 따로 기록해야 한다. `injectTo`는 원인이 된 쓰기의 출처를 물려받아야 한다는 S2 규칙(`core/nodes/ObjectNode/DETAIL.md`)이 이 구분으로 표현되는지 확인이 필요하다.
 - 보충: 없음
-- 상태: 열림(→ `reviews/round-18-agenda.md:112`)
-- 출처: `open-questions.md:19`(정본), `reviews/round-18-agenda.md:112`
-- 닫은 사람: 편집자 결정(17라운드, 18라운드 안건으로 이관, `reviews/round-18-agenda.md:112`)
-- 라운드: 17
-- 까닭: `reviews/round-18-agenda.md:112`
+- 상태: 대체됨(→ VALUE-032)
+- 출처: `open-questions.md:19`(정본), `reviews/round-18-agenda.md:112`, `reviews/round-18-closing.md:1832-1848`
+- 닫은 사람: 편집자 결정(17라운드, 18라운드 안건으로 이관, `reviews/round-18-agenda.md:112`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-65)
+- 라운드: 18
+- 까닭: `reviews/round-18-agenda.md:112`, `reviews/round-18-closing.md:1850-1855`
 
 ### VALUE-021 "값이 바뀌었다"는 값 비교다 — 에지의 값 동등 판정이 18라운드 안건으로 이관됨
 - 결정:
   > `injectTo`의 에지와 `onChange`의 "같은 값이면 통지 없음"은 한 장치이고(G4), 참조 비교가 아니라 값 비교다.
-- 보충: 없음
-- 상태: 열림(→ `reviews/round-18-agenda.md:107`)
-- 출처: `06-conclusions.md:253#1`(정본), `07-conclusions.md:100,396`, `reviews/round-18-agenda.md:107`, `03-mental-model.md:211`(SETTLE-039의 정본), `08-design-a-to-z.md:492`
-- 닫은 사람: 편집자 결정(8라운드 D-33 편집자 판정, `06-conclusions.md:251`), 편집자 결정(17라운드, 18라운드 안건으로 이관, `reviews/round-18-agenda.md:107`)
-- 라운드: 17
-- 까닭: `06-conclusions.md:253`
+- 보충:
+  > 편집자 결정(18C-50): "【추론】 (가) "값이 바뀌었다"는 하나의 판정(가칭 `sameValue`, 내부)으로 본다." (`reviews/round-18-closing.md:1376`)
+- 상태: 현행
+- 출처: `06-conclusions.md:253#1`(정본), `07-conclusions.md:100,396`, `reviews/round-18-agenda.md:107`, `03-mental-model.md:211`(SETTLE-039의 정본), `08-design-a-to-z.md:492`, `reviews/round-18-closing.md:1376-1403,1413-1415`
+- 닫은 사람: 편집자 결정(8라운드 D-33 편집자 판정, `06-conclusions.md:251`), 편집자 결정(17라운드, 18라운드 안건으로 이관, `reviews/round-18-agenda.md:107`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-50)
+- 라운드: 18
+- 까닭: `06-conclusions.md:253`, `reviews/round-18-closing.md:1405-1411`
 
 ### VALUE-022 상호작용 상태 dirty·touched는 현행 유지
 - 결정:
@@ -404,9 +422,10 @@
 - 보충:
   > 소유자(12-8 셋째 답): "폼 핸들이 오히려 쓸대가 없을거같은데. root node 에 핸들로 추가하고, 개별 노드는 rootNode 의 기능을 경유해서 node.inactiveValues 를 구현하면 어떨까 싶다." (`reviews/round-18-owner-answers.md:22`)
   > 반영 칸(12-8 셋째, 반환 모양): "반환 모양(WRITE-020, 안건 11-14)은 그대로 열림이다." (`reviews/round-18-owner-answers.md:22`)
+  > 편집자 결정(18C-81): "【추론】 `node.inactiveValues`(와 그것이 부르는 루트 노드의 함수)는 읽기 전용 배열 `ReadonlyArray<{ readonly path: string; readonly value: unknown }>`을 돌려준다." (`reviews/round-18-closing.md:2171`)
 - 상태: 현행
-- 출처: `reviews/round-18-owner-answers.md:22`(정본, 12-8 셋째의 반영 칸. 표 행이라 조각 번호로 나눌 수 없다), `06-conclusions.md:388`, `02-target-overview.md:309`, `adr/0006-single-value-ownership.md:64`, `adr/0013-core-does-not-rewrite-values.md:108` (이름의 관례: SURFACE-050; 반환 모양은 열림 WRITE-020)
-- 닫은 사람: 소유자 답(`reviews/round-18-owner-answers.md:22` 12-8 셋째)
+- 출처: `reviews/round-18-owner-answers.md:22`(정본, 12-8 셋째의 반영 칸. 표 행이라 조각 번호로 나눌 수 없다), `06-conclusions.md:388`, `02-target-overview.md:309`, `adr/0006-single-value-ownership.md:64`, `adr/0013-core-does-not-rewrite-values.md:108` (이름의 관례: SURFACE-050; 반환 모양은 열림 WRITE-020), `reviews/round-18-closing.md:2171`
+- 닫은 사람: 소유자 답(`reviews/round-18-owner-answers.md:22` 12-8 셋째), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-81; 반환 모양)
 - 라운드: 18
 - 까닭: `reviews/round-18-owner-answers.md:22`
 - 충돌:
@@ -414,3 +433,197 @@
   > `02-target-overview.md:309`의 "| | `getInactiveValues(path)` | 형상에 없는 노드의 원본을 읽기 전용으로 열거한다 | ADR 0006 |"는 잠복 원본 열거를 `getInactiveValues(path)`라는 읽기로 적는다. 소유자 답과 다르다. 소유자 답이 이긴다(`reviews/round-18-owner-answers.md:22`).
   > `adr/0006-single-value-ownership.md:64`의 "| 형상에 없는 노드의 `raw` | `getInactiveValues(path)` | 형상에 없는 노드의 원본을 열거한다 |"는 잠복 원본 열거를 `getInactiveValues(path)`라는 읽기로 적는다. 소유자 답과 다르다. 소유자 답이 이긴다(`reviews/round-18-owner-answers.md:22`).
   > `adr/0013-core-does-not-rewrite-values.md:108`의 "잠복 값 열거 API `getInactiveValues(path)`(F26, ADR 0006)의 반환 모양."은 잠복 원본 열거를 `getInactiveValues(path)`라는 읽기로 적는다. 소유자 답과 다르다. 소유자 답이 이긴다(`reviews/round-18-owner-answers.md:22`).
+  > `reviews/round-18-owner-answers.md:22`의 "반환 모양(WRITE-020, 안건 11-14)은 그대로 열림이다."는 18라운드 결정과 다르다: 반환 모양은 읽기 전용 배열 `ReadonlyArray<{ readonly path: string; readonly value: unknown }>`이다(WRITE-087). 18라운드 결정이 이긴다(`reviews/round-18-closing.md:2171`).
+
+### VALUE-030 정합 상태(경고등)는 계산 칸 — 켜지는 값, 쓰기마다 `interpret`가 정함, 루트의 경로 집합과 `valueTypeMismatches`(가칭)
+
+- 결정:
+  > 【추론】 (1) 경고등은 VALUE-002의 분류로 '계산' 칸이다.
+  > 【추론】 원본과 노드의 형(`type`, nullable)만의 함수이므로 '상태는 `raw`와 `extras` 둘뿐'(P3)을 지킨다.
+  > 【추론】 소유자가 말한 '상태'는 사용자에게 보이는 뜻이다.
+  > 【추론】 쓰기마다 `interpret`가 한 번 정한다.
+  > 【추론】 켜지는 값은 자기 형이 아니고, 없음도 아니고, nullable 노드의 `null`도 아닌 값이다.
+  > 【추론】 수 노드의 `NaN`·`±Infinity`, 정수 노드의 정수 아닌 수, 잘못된 종류를 든 가지 노드도 켜진다.
+  > 【추론】 가상 노드는 켜지지 않는다(18C-21에서 거부한다).
+  > 【추론】 루트 노드가 켜진 노드의 경로 집합을 든다.
+  > 【추론】 쓰기 때 더하고 빼며, 로드마다 다시 만든다.
+  > 【추론】 모든 노드는 getter `valueTypeMismatches: readonly string[]`로 자기 경로 아래의 켜진 경로를 돌려준다.
+  > 【추론】 루트에서 읽으면 트리 전체다.
+  > 【추론】 커밋 번호로 메모해 같은 커밋에서는 같은 참조를 돌려준다.
+  > 【추론】 형상에 없는 노드는 넣지 않는다.
+  > 【추론】 새 이벤트는 없다(바뀌면 `UpdateValue`가 알린다).
+  > 【추론】 `FormHandle`에는 더하지 않는다.
+- 보충:
+  > 편집자 결정(18C-91): "【추론】 `valueTypeMismatch = raw !== undefined && !(raw === null && nullable) && !isMemberOfEffectiveList(raw)`이며, 원본과 노드의 현재 spec만의 함수다." (`reviews/round-18-closing.md:2520`)
+  > 편집자 결정(18C-91): "【추론】 경고등은 커밋 때 원본이 바뀐 노드와, 같은 정착에서 유효 스키마가 바뀐 노드에서 다시 계산한다." (`reviews/round-18-closing.md:2521`)
+  > 편집자 결정(18C-101): "【추론】 "로드마다 다시 만든다"(VALUE-030)는 `resetSubtree()`에는 그 하위 트리에만 적용한다." (`reviews/round-18-closing.md:2851`)
+- 상태: 현행
+- 출처: `reviews/round-18-closing.md:1084-1090,1096-1103`(정본), `reviews/round-18-closing.md:2520-2521,2526`, `reviews/round-18-closing.md:2851`
+- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-40), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-91), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-101)
+- 라운드: 18
+- 까닭: `reviews/round-18-closing.md:1134-1141`, `reviews/round-18-closing.md:2556-2564`, `reviews/round-18-closing.md:2853-2855`
+- 충돌:
+  > `reviews/round-18-closing.md:1102`의 "바뀌면 `UpdateValue`가 알린다"는 18C-91의 결정과 다르다: 값이나 유효 스키마가 바뀌면 그 통지(`UpdateValue`·`UpdateJsonSchema`)가 알린다(VALUE-037). 18C-91의 결정이 이긴다(`reviews/round-18-closing.md:2526`).
+  > `reviews/round-18-closing.md:1085`의 "원본과 노드의 형(`type`, nullable)만의 함수"는 18C-91의 결정과 다르다: 경고등은 원본과 노드의 현재 spec(게이트가 켜진 동안의 유효 목록)만의 함수다(VALUE-037). 18C-91의 결정이 이긴다(`reviews/round-18-closing.md:2520`).
+  > `reviews/round-18-closing.md:1087`의 "쓰기마다 `interpret`가 한 번 정한다"는 18C-91의 결정과 다르다: 경고등은 커밋 때 원본이 바뀐 노드와, 같은 정착에서 유효 스키마가 바뀐 노드에서 다시 계산한다(VALUE-037). 18C-91의 결정이 이긴다(`reviews/round-18-closing.md:2521`).
+
+### VALUE-031 잠복 원본의 수명(지워지는 길 둘, 제출 후 파기 없음), 로드 왕복의 차이 다섯, 비활성 경로에 닿는 쓰기
+
+- 결정:
+  > 【추론】 ㄱ core가 스스로 잠복 원본을 파기하는 시점은 더하지 않는다.
+  > 【추론】 잠복 원본이 지워지는 길은 둘이다: 나감 정책 `unsetOnInactive`(작성자나 호출자가 켬), 그리고 모든 로드(`reset`, `setValue(V)`, 마운트).
+  > 【추론】 로드에서는 V에 없는 원본이 없음이 되므로, 잠복 원본도 V의 값으로 바뀌거나 지워진다.
+  > 【추론】 이 밖에는 ㅁ의 쓰기가 그 경로에 없음을 쓸 때뿐이다.
+  > 【추론】 형상에 없는 노드의 규칙은 평가하지 않으므로 `controls.unsetValue`는 잠복 원본을 지우지 못한다.
+  > 【추론】 제출 후 파기는 두지 않는다.
+  > 【추론】 core는 제출을 모르고, 파기는 폼이 스스로 값을 지우는 일이 되기 때문이다.
+  > 【추론】 민감한 값을 남기지 않는 기본 권고는 나감 정책 `unsetOnInactive`를 켜는 것이다.
+  > 【추론】 호출자가 한 번에 비우려면 `setValue(form.getValue(), SetValueOption.DisableAutomaticWrites)`를 쓴다.
+  > 【추론】 이때 투영으로 빠진 값도 없음이 된다.
+  > 【추론】 열거는 루트 노드의 함수와 getter `node.inactiveValues`다(VALUE-029).
+  > ㄹ 손대지 않고 저장한 방출 값은 로드 값과 다를 수 있다.
+  > 그 차이는 다섯으로 닫힌다: (a) 형상에 없는 노드의 값(잠복으로 남고 `inactiveValues`로 열거된다), (b) 작성자가 켠 투영(`omitEmpty`·`omitTrailing`), (c) S1의 형 정규화, (d) 로드의 자동 쓰기(없음인 키의 채움, 로드 때 발화하는 `injectTo`·`derived`, 로드된 값으로 평가한 `unsetValue`), (e) 키 순서(미선언 키는 `extras`로 보존되지만 선언 키 뒤에 온다, Q14).
+  > 따로 알리는 경고는 두지 않는다.
+  > 【추론】 ㅁ 비활성 경로에 닿는 쓰기는 거부도 오류도 아니다.
+  > 【추론】 그 쓰기는 루트가 드는 그 경로의 잠복 원본에 반영된다.
+  > 【추론】 노드는 만들지 않고, 규칙도 평가하지 않으며, 방출되지 않는다.
+  > 【추론】 이런 쓰기가 닿는 길은 넷이다: 조상의 `Merge`나 로드가 그 경로를 담을 때(WRITE-018의 분배), 형상에 없는 대상을 가리킨 `controls.injectTo`(18C-14), `batch`에서 표시할 때는 형상에 있었으나 정착 뒤 떠난 노드에 표시된 쓰기, 형상을 떠나기 전에 얻은 노드 참조로 한 쓰기.
+  > 【추론】 형상을 떠난 노드와 그 옛 참조의 읽기·쓰기·재진입은 18C-34가 정하며, 그래서 순차 쓰기와 배치 쓰기가 같은 원본에 닿는다.
+- 보충: 없음
+- 상태: 현행
+- 출처: `reviews/round-18-closing.md:1793-1803,1813-1820`(정본), `reviews/round-18-closing.md:2761-2762`
+- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-64), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-96)
+- 라운드: 18
+- 까닭: `reviews/round-18-closing.md:1822-1826`, `reviews/round-18-closing.md:2766-2768`
+- 충돌:
+  > `reviews/round-18-closing.md:1794`의 "그리고 모든 로드(`reset`, `setValue(V)`, 마운트)"는 18라운드 결정과 다르다: `setValue(V)`는 로드가 아니지만 전체 교체 쓰기로서 V에 없는 경로의 원본(잠복 원본 포함)을 없음으로 만들고, 잠복 원본이 지워지는 길은 나감 정책, 로드(마운트·`FormHandle.reset()`·`resetSubtree()`), V가 그 경로를 담지 않은 전체 교체 쓰기다(WRITE-090, WRITE-094). 18라운드 결정이 이긴다(`reviews/round-18-owner-answers.md:26`, `reviews/round-18-closing.md:2761-2762`).
+  > `reviews/round-18-closing.md:1819`의 "조상의 `Merge`나 로드가 그 경로를 담을 때"는 18C-96의 결정과 다르다: `setValue(V)`와 `Overwrite`를 준 입력 쓰기는 로드가 아니라 전체 교체 쓰기이며, V가 그 경로를 담으면 이 쓰기도 WRITE-018의 분배로 그 경로의 잠복 원본에 닿는다(WRITE-090, WRITE-094). 18C-96의 결정이 이긴다(`reviews/round-18-owner-answers.md:26`, `reviews/round-18-closing.md:2761`).
+
+### VALUE-032 null 계약은 쓰기 종류로 표현한다 — `injectTo`는 언제나 자동 쓰기라 null 조상을 객체로 만들지 않음, 소유자 통보
+
+- 결정:
+  > 【추론】 null 계약은 작업 루프의 단계가 아니라 쓰기 종류로 표현한다.
+  > 【추론】 쓰기 종류는 쓰기마다 진입에서 정해진다.
+  > 【추론】 종류는 입력, 호출자(부분 쓰기·배열 연산), 로드, 자동 쓰기다.
+  > 【추론】 표시 단계가 재계산 목록과 함께 그 종류를 기록한다.
+  > 【추론】 같은 기록이 두 곳에 쓰인다: WRITE-013의 판정과 `UpdateValue`의 출처 칸(EVENT-060).
+  > 【추론】 비객체 호스트의 원본을 비우는 것은 입력·호출자의 부분 쓰기뿐이고, 그 자식의 투영된 방출이 생길 때만 비운다.
+  > 【추론】 판정이 값의 변화가 아니라 종류를 보므로, 같은 값을 다시 쓴 의도된 쓰기(S6)도 객체를 만든다.
+  > 【추론】 단계만으로는 모자라다.
+  > 【추론】 자동 쓰기인 `trim`은 정착 단계가 아니라 입력 마침 신호로 들어오기 때문이다(WRITE-078).
+  > 【추론】 `controls.injectTo`는 원인과 무관하게 언제나 자동 쓰기이며 조상의 원본을 바꾸지 않는다.
+  > 【추론】 오늘의 S2 규칙은 옮기지 않는다.
+  > 【추론】 그 규칙은 `injectTo`가 원인 쓰기의 출처를 물려받게 해서, 사용자가 일으킨 `injectTo`면 null 조상을 객체로 만든다.
+  > 【추론】 사용자에게 보이는 변화: 사용자가 일으킨 `injectTo`의 값이 null 조상 아래에 그려지지만 방출되지 않는다.
+  > 【추론】 소유자가 뒤집기를 원하면, 12-5의 출처 칸 덕분에 원인의 출처를 물려주는 구현 비용은 작다.
+  > 【추론】 이 동작 변화는 소유자 통보 목록에 올린다.
+- 보충:
+  > 편집자 결정(18C-100): "【추론】 쓰기 종류의 목록(VALUE-032)과 `UpdateValue` 출처 칸의 값(EVENT-060)에 '호출자 전체 교체'(`setValue(V)`)를 더한다." (`reviews/round-18-closing.md:2834`)
+- 상태: 현행
+- 출처: `reviews/round-18-closing.md:1832-1846`(정본), `reviews/round-18-closing.md:2834`
+- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-65), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-100)
+- 라운드: 18
+- 까닭: `reviews/round-18-closing.md:1850-1855`, `reviews/round-18-closing.md:2836-2837`
+
+### VALUE-033 nullable이 아닌 노드의 `null`은 바꾸지 않고 방출 — 경고등·경고, 검증기가 있으면 형 에러로 제출 막힘, 해법은 스키마에 nullable, 이주 항목과 PR-8 문서에 적음
+
+- 결정:
+  > 【추론】 (4) nullable이 아닌 노드의 `null`은 바꾸지 않고 받은 그대로 방출된다.
+  > 【추론】 경고등이 켜지고 경고가 가며, 검증기가 있으면 형 에러로 제출이 막힌다.
+  > 【추론】 이 사용성 변화를 이주 항목(F27 확장, LANDING-125)과 PR-8 문서에 적는다.
+  > 【추론】 해법은 스키마에 nullable을 적는 것이다.
+  > 【추론】 값 규칙은 이미 닫혀 있고 문서화만 남았다.
+- 보충: 없음
+- 상태: 현행
+- 출처: `reviews/round-18-closing.md:1123-1127`(정본)
+- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-40)
+- 라운드: 18
+- 까닭: `reviews/round-18-closing.md:1134-1141`
+
+### VALUE-034 빈 호스트와 루트의 방출 — 빈 `local`은 `{}`·`[]`, `omitEmpty`는 빈 `local`을 방출하지 않음, 루트는 루트 종류의 빈 그릇, 배열 아이템의 빈자리는 `{}`·`[]`·`null`
+
+- 결정:
+  > 【추론】 객체 호스트의 `local`은 늘 객체다: 방출이 있는 활성 자식의 합성이고, 그런 자식이 없으면 `{}`다(FRAGMENT-016의 "자기 `{}`"와 같다).
+  > 【추론】 배열 호스트의 `local`은 아이템 방출의 배열이고, 아이템이 없으면 `[]`다.
+  > 【추론】 `omitEmpty`(기본 켜짐)의 투영은 빈 `local` — `''`, 키가 없는 `{}`, 아이템이 없는 `[]` — 을 방출하지 않으며, 부모의 합성은 방출이 없는 자식의 키를 두지 않는다.
+  > 【추론】 `omitEmpty`를 끈 호스트는 `{}`·`[]`를 방출한다.
+  > 【추론】 루트는 방출이 없을 때 루트 종류의 빈 그릇을 `outputValue`로 준다: 객체 루트는 `{}`, 배열 루트는 `[]`, 그 밖의 루트는 `undefined`다.
+  > 【추론】 그래서 빈 폼의 `FormHandle.getValue()`와 마지막 칸을 비운 뒤 루트 `onChange`가 받는 값은 오늘처럼 `{}`다.
+  > 【추론】 배열 아이템은 자리가 색인이므로 빠지지 않는다: 방출이 없는 객체 아이템은 `{}`, 배열 아이템은 `[]`, 잎 아이템은 `null`로 그 자리를 채운다(VALIDATE-007: 방출은 JSON 왕복과 같고 배열 중간의 `undefined`는 없다).
+  > 【추론】 `omitTrailing`은 배열 꼬리에서 이렇게 채운 자리를 자른다.
+  > 【추론】 이 투영은 원본과 상태를 바꾸지 않는다(P3, P4).
+  > PR: PR-2(객체 호스트)·PR-5(배열)
+  > 무엇: 위 오늘 스위트의 단언과 `items.default` 없는 `push()`를 새 구현으로 돌린다.
+  > 통과: 이 블록의 규칙대로 나오고, 오늘과 다른 곳은 LANDING-171과 이주 행이 모두 적고 있다.
+  > 실패: 오늘과 다른데 이주 행이 없으면 행을 더하고, 규칙의 결함이면 이 블록을 고친다.
+- 보충: 없음
+- 상태: 현행
+- 출처: `reviews/round-18-closing.md:2307-2315,2324-2327`(정본)
+- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-88)
+- 라운드: 18
+- 까닭: `reviews/round-18-closing.md:2317-2322`
+
+### VALUE-035 노드가 생긴다는 것 — 채움은 이 사건에만, 이미 두고 있던 노드는 새 조각이 켜져도 생기지 않음, `controls.visible` 전환은 생성이 아님
+
+- 결정:
+  > 노드가 **생긴다**는 것은 그 노드가 직전 커밋의 형상에 없고 이번 정착의 최종 형상에 있다는 뜻이다. 채움(`controls.default` > `default`)은 이 사건에만 일어난다(ADR 0007, ADR 0013).
+  > 본체나 다른 켜진 조각이 이미 두고 있던 노드는 새 조각이 켜져도 생기지 않는다. `controls.visible`의 전환은 생성이 아니다.
+- 보충: 없음
+- 상태: 현행
+- 출처: `adr/0006-single-value-ownership.md:52`(정본, #1–#2·#4–#5. VALUE-007에서 분할), `adr/0006-single-value-ownership.md:52#1-2`, `adr/0006-single-value-ownership.md:52#4-5`, `07-conclusions.md:67`
+- 닫은 사람: 소유자 답(`reviews/round-9-spec.md:56` 읽기2 시점(A/B)), 원리(`03-mental-model.md:90` 로드는 새 수명)
+- 라운드: 9
+- 까닭: `reviews/round-9-spec.md:56`
+
+### VALUE-036 null 계약 D-1 — setValue(null)은 키가 없는 전체 교체, 셋째 칸도 특수 장치도 없음, 비객체 호스트의 자식은 존재하고 렌더됨
+
+- 결정:
+  > `setValue(null)`은 키가 없는 전체 교체이므로 자식 원본이 없음이 된다. 원본 칸 하나로 족하며 셋째 칸도 특수 장치도 없다 — 2라운드 S7(#338 S4와 "null 아래도 원본 유지"의 충돌)은 이렇게 닫힌다. 3라운드 E9의 "비객체 V는 자식 raw를 건드리지 않는다"와 E18("비객체 호스트의 자식은 비활성")은 **삭제**한다: 비객체 호스트의 자식은 **존재하고 렌더되며** 빈 상태를 보인다.
+  > 실수로 누른 null의 되돌리기는 입력 컴포넌트의 몫이다.
+- 보충:
+  > 편집자 결정(18C-100): "【추론】 로드가 아닌 쓰기로 온 `null` 아래 자식은 채움 없이 없음이다(WRITE-090, WRITE-092)." (`reviews/round-18-closing.md:2831`)
+  > 편집자 결정(18C-100): "【추론】 로드로 온 `null` 아래 자식은 로드의 새 수명이라 채움을 받는다." (`reviews/round-18-closing.md:2832`)
+  > 편집자 결정(18C-100): "【추론】 그래서 VALUE-036의 "빈 상태"는 로드로 온 `null` 아래에서는 채운 상태이고, 로드가 아닌 쓰기로 온 `null` 아래에서는 없음이다." (`reviews/round-18-closing.md:2833`)
+- 상태: 현행
+- 출처: `adr/0006-single-value-ownership.md:76`(정본, #1–#3·#5. VALUE-015에서 분할), `adr/0006-single-value-ownership.md:76#1-3`, `adr/0006-single-value-ownership.md:76#5`, `adr/0006-single-value-ownership.md:74`, `reviews/round-5-derivations.md:40`, `adr/0007-settle-cycle.md:115`, `adr/0013-core-does-not-rewrite-values.md:53`(WRITE-092의 정본), `reviews/round-18-closing.md:2831-2833`
+- 닫은 사람: 원리(`reviews/round-5-derivations.md:40` D-1), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-100)
+- 라운드: 18
+- 까닭: `reviews/round-5-derivations.md:40`, `reviews/round-18-closing.md:2836-2837`
+
+### VALUE-037 `union`의 경고등과 방출·채움 — `valueTypeMismatch`는 원본과 현재 spec의 함수, 켜질 때마다 한 번과 다시 보내는 때, (가칭) `UpdateJsonSchema` 배달, `VALUE_TYPE_MISMATCH` 기록의 칸, 방출은 원본 참조, 통째 값의 JSON 부정합 경고 (가칭) `NON_JSON_WHOLE_VALUE`, 채움은 원본이 `undefined`일 때만
+
+- 결정:
+  > 【추론】 `valueTypeMismatch = raw !== undefined && !(raw === null && nullable) && !isMemberOfEffectiveList(raw)`이며, 원본과 노드의 현재 spec만의 함수다.
+  > 【추론】 경고등은 커밋 때 원본이 바뀐 노드와, 같은 정착에서 유효 스키마가 바뀐 노드에서 다시 계산한다.
+  > 【추론】 경고등은 그 노드의 경로가 루트의 경로 집합에 들어가는 커밋에 켜진다(ERROR-186).
+  > 【추론】 `VALUE_TYPE_MISMATCH`는 경고등이 켜질 때마다 한 번 보내고, 켜진 채 다른 어긋난 값이 와도 다시 보내지 않는다.
+  > 【추론】 경고등이 꺼졌다 켜지거나, 노드가 형상을 나갔다 들어오거나, 로드로 경로 집합을 다시 만들거나, 게이트가 좁혀 켜지면 다시 보낸다.
+  > 【추론】 쓰기 없이 경고등만 바뀐 노드를 배달하는 통지는 유효 스키마 변경 통지 `UpdateJsonSchema`(가칭, EVENT-064)다(SETTLE-007, EVENT-045).
+  > 【추론】 VALUE-030의 "바뀌면 `UpdateValue`가 알린다"는 "값이나 유효 스키마가 바뀌면 그 통지(`UpdateValue`·`UpdateJsonSchema`)가 알린다"로 고친다.
+  > 【추론】 `VALUE_TYPE_MISMATCH` 기록은 `{ level: 'warning', code, path, expected: { schemaType, nullable, effective }, received, reason, candidates?, source }`이다(ERROR-186, EVENT-060).
+  > 【추론】 `expected.schemaType`은 `node.schemaType`이고, `expected.effective`는 그 커밋의 유효 목록이다.
+  > 【추론】 `received`는 `'string'|'number'|'integer'|'nonFinite'|'boolean'|'null'|'object'|'array'|'other'` 가운데 하나다.
+  > 【추론】 `reason`은 받아 줄 형이 없으면 `'unconvertible'`, 둘 이상이면 `'ambiguous'`이고, `candidates`는 `'ambiguous'`일 때만 `['string','boolean']`으로 싣는다.
+  > 【추론】 `source`는 EVENT-060의 쓰기 출처 값에 `'gate'`를 더한 것이다.
+  > 【추론】 `valueTypeMismatches`는 켜졌으면 `[path]`, 아니면 공유하는 얼린 빈 배열이며, 커밋 번호로 메모하고 객체·배열 값의 안쪽 경로는 넣지 않는다.
+  > 【추론】 `valueTypeMismatch === false`는 값이 이 노드 유효 목록의 형이거나, 없거나, 노드가 nullable일 때 `null`이라는 뜻일 뿐 검증 통과를 뜻하지 않으며, 이 문구를 `FormTypeInputProps`와 게터의 주석에 같이 적는다(SURFACE-052).
+  > 【추론】 게이트가 `null`을 빼는 것은 검증 전용이다.
+  > 【추론】 union은 잎이므로 방출이 없을 때의 자리는 VALUE-034 그대로이며, 루트는 `undefined`이고 배열 아이템 자리는 `null`이다.
+  > 【추론】 그래서 `omitEmpty`가 켜진 union 아이템이 `{}`를 들면 `null`이 방출되고, `{}`를 남기려면 작성자가 `omitEmpty: false`를 적는다.
+  > 【추론】 방출은 원본을 참조 그대로 내며, 객체·배열을 복사하지 않는다(VALUE-012, WRITE-013).
+  > 【추론】 터미널 object·array 노드와, 객체·배열을 받는 union이 통째로 든 값의 안쪽은 폼이 정규화하지 않는다.
+  > 【추론】 그 안쪽의 JSON 부정합(`undefined`인 키, 배열 중간의 `undefined`·빈 자리, 비유한 수, `Date`·함수·bigint)은 VALIDATE-007을 어길 수 있다(예: `{type:['object','string'], minProperties:1}`의 `{a: undefined}`는 메모리 판정을 통과하고 직렬화 뒤 판정에서 실패한다).
+  > 【추론】 개발 모드에서는 그런 값의 참조가 바뀐 커밋마다 깊이 점검하고, 부정합이 있으면 `(가칭) SCHEMA_FORM_WARNING.NON_JSON_WHOLE_VALUE`를 `(code, path)`로 로드마다 한 번 내며, 기록은 `{ path, innerPaths }`(앞의 N개)다.
+  > 【추론】 프로덕션에서는 그 점검을 하지 않으며, 이 한계를 문서에 적는다.
+  > 【추론】 채움 값(`reviews/round-18-owner-answers.md:29`)은 노드가 생길 때 원본이 `undefined`인 경우에만 한 번 들어가며, `interpret`(두 번 해석 포함)를 지난다.
+  > 【추론】 그래서 로드된 `{}`는 이미 있는 값이며 `default`로 덮이지 않고, 이는 객체 호스트가 `{}`도 채움을 받는 것(WRITE-082)과 다르다.
+  > 【추론】 목록 밖 `default`(예: `['string','boolean']`에 `default: 0`)는 마운트 때 경고등을 켜고, `source: 'fill'`, `reason: 'ambiguous'`로 경고를 한 번 보낸다.
+  > 【추론】 `default`의 객체·배열은 복사하지 않고 불변으로 다룬다(WRITE-071).
+- 보충: 없음
+- 상태: 현행
+- 출처: `reviews/round-18-closing.md:2520-2545`(정본), `reviews/round-18-closing.md:2797-2798`
+- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-91), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-98)
+- 라운드: 18
+- 까닭: `reviews/round-18-closing.md:2556-2564`
+- 충돌:
+  > `reviews/round-18-closing.md:2540`의 "`(code, path)`로 로드마다 한 번 내며"는 18C-98의 결정과 다르다: 경고 중복 키는 폼 수준 로드(마운트, `FormHandle.reset()`)에서만 비우므로 `NON_JSON_WHOLE_VALUE`는 폼 수준 로드 사이에 `(code, path)`마다 한 번이고, `setValue(V)`와 `resetSubtree()` 뒤에는 다시 내지 않는다(ERROR-204). 18C-98의 결정이 이긴다(`reviews/round-18-closing.md:2797-2798`).

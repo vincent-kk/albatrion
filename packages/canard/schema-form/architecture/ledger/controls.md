@@ -11,9 +11,9 @@
 | CONTROLS-003 | 그룹을 가르는 기준 — 값·형상을 바꾸는가, 때에 따라 바뀌는가 | 현행 | 편집자 결정(15라운드, ADR 0003 6차 본문 `adr/0003-group-namespace.md:8`), 소유자 답(`reviews/round-15-decisions.md:12` 4) |
 | CONTROLS-004 | `trim`은 `options`의 닫힌 목록에 둔다 | 현행 | 소유자 답(`reviews/round-15-decisions.md:12` 4), 소유자 답(`reviews/round-17-owner-answers.md:11` R17-3) |
 | CONTROLS-005 | `trim`은 포커스 아웃 때 저장값을 자르고 입력마다 자르지 않는다 | 현행 | 소유자 답(`reviews/round-17-owner-answers.md:11` R17-3) |
-| CONTROLS-006 | `trim`의 판단은 문자열 동작 행의 `finishInput` 칸, 어댑터는 신호만 | 현행 | 소유자 답(`reviews/round-17-owner-answers.md:11` R17-3), 소유자 답(`reviews/round-17-owner-answers.md:43` 9 입력 마침 칸), 소유자 답(`reviews/round-17-owner-answers.md:54` 9번 확인) |
+| CONTROLS-006 | `trim`의 판단은 문자열 동작 행의 `finishInput` 칸, 어댑터는 신호만 | 현행 | 소유자 답(`reviews/round-17-owner-answers.md:11` R17-3), 소유자 답(`reviews/round-17-owner-answers.md:43` 9 입력 마침 칸), 소유자 답(`reviews/round-17-owner-answers.md:54` 9번 확인), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-91) |
 | CONTROLS-007 | 자른 값은 입력 출처 쓰기이며 자동 쓰기가 아니고, 같으면 쓰지 않는다 | 대체됨(→ WRITE-078) | 소유자 답(`reviews/round-17-owner-answers.md:11` R17-3), 편집자 결정(17라운드, 현재 값과 같으면 쓰지 않는다 `adr/0013-core-does-not-rewrite-values.md:89`), 편집자 결정(18라운드, 소유자 물음으로 올림, `reviews/round-18-agenda.md:160`), 소유자 답(`reviews/round-18-owner-answers.md:12` 12-2; 대체) |
-| CONTROLS-008 | `trim` 쓰기가 바깥 오류를 지우고 dirty를 표시하는지 — 18라운드 안건 | 열림(→ `reviews/round-18-agenda.md` §3, :45) | 편집자 결정(17라운드, 18라운드 안건으로 이관) |
+| CONTROLS-008 | `trim` 쓰기가 바깥 오류를 지우고 dirty를 표시하는지 — 18라운드 안건 | 대체됨(→ WRITE-083) | 편집자 결정(17라운드, 18라운드 안건으로 이관), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-19) |
 | CONTROLS-009 | 그룹 표 — `controls`: 때에 따라 바꾸는 규칙과 정책, 정착 루프가 읽음 | 현행 | 소유자 답(`reviews/round-15-decisions.md:12` 4), 소유자 답(`reviews/round-15-decisions.md:14` 6) |
 | CONTROLS-010 | 그룹 표 — `options`: 정적 설정, 청사진과 투영이 읽음 | 현행 | 소유자 답(`reviews/round-15-decisions.md:12` 4), 소유자 답(`reviews/round-17-owner-answers.md:11` R17-3) |
 | CONTROLS-011 | 그룹 표 — `presentation`: 보이는 것, 렌더 계층만 읽음 | 현행 | 소유자 답(`reviews/round-15-decisions.md:15` 7), 소유자 답(`reviews/round-17-owner-answers.md:12` 통보 1), 편집자 결정(17라운드, ADR 0014 4판 채택; `PRESENTATION_KEY_SUSPECT`(가칭)) |
@@ -51,33 +51,46 @@
 | CONTROLS-043 | 식의 기준점 — 선언한 노드(호스트), `.`·`..`는 폼의 확장 표기 | 현행 | 소유자 답(`reviews/round-15-decisions.md:9` 1), 소유자 답(`reviews/round-12-owner-answers.md:21` §9 조각 식의 경로 기준) |
 | CONTROLS-044 | 조각 범위 제어와 `children`은 상속이 아니라 명시한 대상에 거는 제어 | 현행 | 소유자 답(`reviews/round-13-owner-answers.md:7` 1 잠금 규칙), 소유자 답(`reviews/round-9-spec.md:108` 자식 집합 제어) |
 | CONTROLS-045 | 상태 키는 그 노드에만 — 코어에 글로벌 없음, 조상 상속 없음, 전체 잠금은 렌더 계층 | 현행 | 소유자 답(`reviews/round-13-owner-answers.md:7` 1 잠금 규칙), 소유자 답(`reviews/round-10-owner-answers.md:25` E-13), 소유자 답(`reviews/round-13-owner-answers.md:16` Form 속성의 자리), 소유자 답(`reviews/round-12-owner-answers.md:7` 1 Form 속성 `false`) |
-| CONTROLS-046 | 로컬 층 안의 결합 — 잠금은 OR, 표시는 AND | 현행 | 편집자 결정(13라운드, 원장 §7 `03-mental-model.md:227`) |
+| CONTROLS-046 | 로컬 층 안의 결합 — 잠금은 OR, 표시는 AND | 현행 | 편집자 결정(13라운드, 원장 §7 `03-mental-model.md:227`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-69; CONTROLS-082로 확정) |
 | CONTROLS-047 | BE가 같은 스키마를 자기 검증기에 넣을 때 | 현행 | 편집자 결정(15라운드, ADR 0003 6차 본문 `adr/0003-group-namespace.md:8`) |
 | CONTROLS-048 | 남는 것 — `controls` 식 시스템 전체, `computed`는 `controls`로 | 현행 | 소유자 답(`reviews/round-9-spec.md:24` 축6), 소유자 답(`00-goals.md:143` G2), 소유자 답(`reviews/round-15-decisions.md:13` 5) |
 | CONTROLS-049 | 흡수되는 것 — `&if`·`computed.if`는 조각 범위의 `controls.active`로 | 현행 | 편집자 결정(10라운드, ADR 0003 5차 본문 `adr/0003-group-namespace.md:10`), 소유자 답(`reviews/round-15-decisions.md:9` 1) |
 | CONTROLS-050 | 사라지는 것 — 평면 `&키` 축약, 판별식 자동 감지 | 현행 | 소유자 답(`reviews/round-15-decisions.md:13` 5), 소유자 답(`reviews/round-12-owner-answers.md:9` 2 `&discriminator`), 소유자 답(`reviews/round-10-owner-answers.md:9` A-3) |
 | CONTROLS-051 | 이주 항목 — 예약 층의 키와 렌더 계층 이름 | 현행 | 소유자 답(`reviews/round-15-decisions.md:13` 5), 소유자 답(`reviews/round-15-decisions.md:21` 8), 소유자 답(`reviews/round-10-owner-answers.md:32` E-5), 소유자 답(`reviews/round-13-owner-answers.md:7` 1 잠금 규칙), 소유자 답(`reviews/round-17-owner-answers.md:11` R17-3) |
 | CONTROLS-052 | 인라인 `FormTypeInput`의 암묵 터미널은 렌더 계층의 판정 함수로 | 현행 | 17라운드 스웜 수렴(편집자 결정, `adr/0003-group-namespace.md:147`), 소유자 답(`reviews/round-17-owner-answers.md:12` 통보 1), 소유자 답(`reviews/round-2.md:114` C3), 소유자 답(`00-goals.md:116` 터미널 전략) |
-| CONTROLS-053 | 비활성 대상에도 `injectTo`가 쓴다(잠복 원본), 대상이 켜져도 재발화하지 않음(D-28) | 현행 | 편집자 결정(8라운드 D-28 편집자 판정, `06-conclusions.md:242`) |
+| CONTROLS-053 | 비활성 대상에도 `injectTo`가 쓴다(잠복 원본), 대상이 켜져도 재발화하지 않음(D-28) | 현행 | 편집자 결정(8라운드 D-28 편집자 판정, `06-conclusions.md:242`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-14) |
 | CONTROLS-054 | 원천이 비활성이면 `injectTo`는 없음을 읽는다(D-34) | 현행 | 편집자 결정(8라운드 D-34 편집자 판정, `06-conclusions.md:256`) |
-| CONTROLS-055 | 로드에서의 `injectTo` — `fire`(작성자가 위)를 고르고 `fill`·`skip`을 버림(D-27) | 현행 | 소유자 답(`reviews/round-10-owner-answers.md:19` D-6) |
+| CONTROLS-055 | 로드에서의 `injectTo` — `fire`(작성자가 위)를 고르고 `fill`·`skip`을 버림(D-27) | 분할됨(→ CONTROLS-084, WRITE-090) | 소유자 답(`reviews/round-10-owner-answers.md:19` D-6), 소유자 답(`reviews/round-18-owner-answers.md:26` 18C 검토 4번; 대체) |
 | CONTROLS-056 | 대체됨: 글로벌 > 로컬, 루트 스키마 키는 정의되면 `false`여도 덮음(10라운드 답 12) | 대체됨(→ CONTROLS-045) | 소유자 답(`reviews/round-13-owner-answers.md:7` 1 잠금 규칙) |
 | CONTROLS-057 | 대체됨: 결합식에 조상들과 Form 속성이 든다(9라운드 4.26) | 대체됨(→ CONTROLS-045, CONTROLS-046) | 소유자 답(`reviews/round-13-owner-answers.md:7` 1 잠금 규칙), 소유자 답(`reviews/round-10-owner-answers.md:25` E-13) |
 | CONTROLS-058 | 대체됨: `&readOnly`와 `control.readOnly`는 한 선언의 두 철자이고 `control`이 이김 | 대체됨(→ CONTROLS-016) | 소유자 답(`reviews/round-15-decisions.md:13` 5) |
 | CONTROLS-059 | 대체됨: `computed`와 `&`의 동시 제공을 선호(축 9항) | 대체됨(→ CONTROLS-016) | 소유자 답(`reviews/round-15-decisions.md:13` 5) |
 | CONTROLS-060 | 대체됨: 글로벌 설정식과 로컬 설정식의 동시 제공과 경합(축 10항) | 대체됨(→ CONTROLS-045) | 소유자 답(`reviews/round-13-owner-answers.md:7` 1 잠금 규칙) |
 | CONTROLS-061 | 대체됨: 제어용 필드에만 `&`를 붙이고 나머지는 접두 없는 닫힌 목록(13라운드 답 3, 14라운드 O-9) | 대체됨(→ CONTROLS-009, CONTROLS-010, CONTROLS-011, CONTROLS-016) | 소유자 답(`reviews/round-15-decisions.md:12` 4), 소유자 답(`reviews/round-15-decisions.md:13` 5) |
-| CONTROLS-062 | 로컬 선언끼리의 결합에 대한 소유자 확인 | 열림(→ `reviews/round-18-agenda.md:132` 11-1) | 편집자 결정(13라운드, 소유자 확인 대상으로 남김 `adr/0003-group-namespace.md:144`) |
-| CONTROLS-063 | `controls.children`의 대상별 식과 값 키의 세부, 조각에서만 선언된 자식을 가리킬 수 있는가 | 열림(→ `reviews/round-18-agenda.md` §1, :25; §9, :110) | 편집자 결정(17라운드, 18라운드 안건으로 이관) |
-| CONTROLS-064 | 조각 객체에 값 키를 둘 때의 세부 | 열림(→ `reviews/round-18-agenda.md` §9, :110; 조각 객체의 값 키는 안건에 명시 행 없음) | 편집자 결정(17라운드, 18라운드 안건으로 이관) |
-| CONTROLS-065 | `virtualRequired`가 `required` 재작성과 함께 사라지는지 확인 | 열림(→ `reviews/round-18-agenda.md:133` 11-2) | 편집자 결정(15라운드, ADR 0003 6차 본문 미결 `adr/0003-group-namespace.md:146`) |
-| CONTROLS-066 | 스키마를 직렬화할 수 없다는 점과 core→`PluginManager`의 React 모듈 import 분리 | 열림(→ `reviews/round-18-agenda.md` §9, :108; 직렬화는 안건에 명시 행 없음) | 편집자 결정(17라운드, 18라운드 안건으로 이관) |
-| CONTROLS-067 | `controls.injectTo` 함수의 `ctx` 인자와 반환 모양 | 열림(→ `reviews/round-18-agenda.md` §2, :34) | 편집자 결정(17라운드, 18라운드 안건으로 이관) |
-| CONTROLS-068 | `controls` 식 언어의 명세 — 문법, 전역 이름, `@` 맥락, 경로가 읽는 값, 배열 색인 | 열림(→ `reviews/round-18-agenda.md` §2, :32-35) | 편집자 결정(17라운드, 18라운드 안건으로 이관) |
+| CONTROLS-062 | 로컬 선언끼리의 결합에 대한 소유자 확인 | 대체됨(→ CONTROLS-082) | 편집자 결정(13라운드, 소유자 확인 대상으로 남김 `adr/0003-group-namespace.md:144`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-69) |
+| CONTROLS-063 | `controls.children`의 대상별 식과 값 키의 세부, 조각에서만 선언된 자식을 가리킬 수 있는가 | 대체됨(→ CONTROLS-073) | 편집자 결정(17라운드, 18라운드 안건으로 이관), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-12) |
+| CONTROLS-064 | 조각 객체에 값 키를 둘 때의 세부 | 대체됨(→ CONTROLS-077) | 편집자 결정(17라운드, 18라운드 안건으로 이관), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-60) |
+| CONTROLS-065 | `virtualRequired`가 `required` 재작성과 함께 사라지는지 확인 | 대체됨(→ CONTROLS-078) | 편집자 결정(15라운드, ADR 0003 6차 본문 미결 `adr/0003-group-namespace.md:146`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-70) |
+| CONTROLS-066 | 스키마를 직렬화할 수 없다는 점과 core→`PluginManager`의 React 모듈 import 분리 | 분할됨(→ CONTROLS-075, CONTROLS-076) | 편집자 결정(17라운드, 18라운드 안건으로 이관), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-55) |
+| CONTROLS-067 | `controls.injectTo` 함수의 `ctx` 인자와 반환 모양 | 대체됨(→ CONTROLS-079) | 편집자 결정(17라운드, 18라운드 안건으로 이관), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-14), 소유자 답(`reviews/round-12-owner-answers.md:20` 12라운드 §9; 반환 `null`·`undefined`) |
+| CONTROLS-068 | `controls` 식 언어의 명세 — 문법, 전역 이름, `@` 맥락, 경로가 읽는 값, 배열 색인 | 분할됨(→ CONTROLS-080, CONTROLS-079) | 편집자 결정(17라운드, 18라운드 안건으로 이관), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-13) |
 | CONTROLS-069 | 대체됨: `&active`는 값을 빼는 유일한 작성자 명령(6라운드 대조표) | 대체됨(→ CONTROLS-021, CONTROLS-035) | 소유자 답(`reviews/round-9-spec.md:48` 읽기2), 편집자 결정(10라운드, ADR 0003 5차 본문 `adr/0003-group-namespace.md:10`) |
-| CONTROLS-070 | 리프 노드의 잠금을 누가 집행하는가 — 오늘은 입력 컴포넌트 구현에 위임, 새 설계는 키의 유지만 적음 | 열림(→ `reviews/round-18-agenda.md:134` 11-3) | 편집자 결정(6라운드, 새 설계 칸은 4차 본문이 적은 것 `05-before-after.md:7`) |
-| CONTROLS-071 | `FormTypeInputProps.alias`의 처분 | 열림(→ `reviews/round-18-agenda.md:135` 11-4) | 편집자 결정(6라운드, 미확인으로 남김 `05-before-after.md:9`) |
-| CONTROLS-072 | `placeholder` 키가 어느 그룹에 드는가 | 열림(→ `reviews/round-18-agenda.md:136` 11-5) | 편집자 결정(6라운드, 미확인으로 남김 `05-before-after.md:9`), 편집자 결정(14라운드, O-9 닫힌 목록에서 뺌 `reviews/round-14-owner-review.md:55`) |
+| CONTROLS-070 | 리프 노드의 잠금을 누가 집행하는가 — 오늘은 입력 컴포넌트 구현에 위임, 새 설계는 키의 유지만 적음 | 현행 | 편집자 결정(6라운드, 새 설계 칸은 4차 본문이 적은 것 `05-before-after.md:7`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-71) |
+| CONTROLS-071 | `FormTypeInputProps.alias`의 처분 | 대체됨(→ CONTROLS-081) | 편집자 결정(6라운드, 미확인으로 남김 `05-before-after.md:9`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-72) |
+| CONTROLS-072 | `placeholder` 키가 어느 그룹에 드는가 | 대체됨(→ CONTROLS-081) | 편집자 결정(6라운드, 미확인으로 남김 `05-before-after.md:9`), 편집자 결정(14라운드, O-9 닫힌 목록에서 뺌 `reviews/round-14-owner-review.md:55`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-72; `errorMessages` 절반은 CONTROLS-051) |
+| CONTROLS-073 | `controls.children` 항목 — 대상 해석, 청사진 오류, 형상 밖 대상, 항목 게이트 자리, 대상별 식, 값 키의 층, 상태 키는 로컬 결합 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-12) |
+| CONTROLS-074 | 틀린 형의 값을 게이트와 식이 볼 때 — 폼은 값을 가르지 않고, 식이 던지면 식 실패 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-40) |
+| CONTROLS-075 | core는 `app/plugin`을 가져오지 않는다 — 검증기는 바인딩이 골라 인자로, PR-4 경계 린트는 새 fractal, PR-7에 `src/core/**` 전체 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-55) |
+| CONTROLS-076 | 인라인 구성 요소를 담은 스키마의 직렬화 장치는 두지 않는다 | 현행(부정 결정) | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-55) |
+| CONTROLS-077 | 조각 `controls`의 허용 키는 `children` 항목 목록과 같다 — 값 키는 조각이 선언한 직계 자식마다 조각 층으로 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-60) |
+| CONTROLS-078 | `virtualRequired`는 새 설계에 없고 대체도 없다 — `options` 닫힌 목록 밖, 맨 키는 모르는 키로 검증기에 | 현행(부정 결정) | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-70) |
+| CONTROLS-079 | `controls.injectTo`는 함수 `(value, ctx)` 하나 — 청사진이 정적으로 아는 대상 없음, `ctx` 여덟 칸, 반환 키는 원천 기준 경로, 항목은 전체 교체, `undefined` 항목과 `null`·`undefined` 반환은 쓰지 않음, 비활성 대상은 잠복 원본, 함수 안의 쓰기는 되먹임 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-14) |
+| CONTROLS-080 | `controls` 식 언어 명세 — 문법·컴파일, 전역 이름, 경로 토큰, `*` 없음, 경로는 방출 트리를 읽음, 형상 밖은 `undefined`, 배열 색인·길이, `@` 맥락 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-13), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-91) |
+| CONTROLS-081 | `alias`·`placeholder`는 그룹 키가 아니다 — `presentation.FormTypeInputProps` 안의 키로 입력 prop에 펼침, 맨 `placeholder`는 모르는 키로 검증기에, `errorMessages`는 `presentation` | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-72) |
+| CONTROLS-082 | 로컬 선언끼리의 결합 확정 — 겹치는 자리 넷, 잠금은 OR·표시는 AND, 순서와 자리에 무관, 값을 쓰는 규칙은 층에서 세부가 이김, D-7과 어긋나지 않음 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-69) |
+| CONTROLS-083 | 잠금은 세 층이 나눠 맡는다 — core는 잠금 상태만 계산하고 쓰기를 거부하지 않음, 렌더 계층은 실효 잠금을 prop으로 넘기고 입력 쓰기를 버림, 잠긴 모양은 입력 구성 요소 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-71) |
+| CONTROLS-084 | 로드에서의 `injectTo` — `fire`(작성자가 위)를 고르고 `skip`을 버림, 원리가 말하는 것(D-27) | 현행 | 소유자 답(`reviews/round-10-owner-answers.md:19` D-6) |
+| CONTROLS-085 | `union` 값과 식·게이트 — 어긋난 값도 거르거나 변환하지 않고 봄, 식의 경로는 객체의 자기 키와 배열의 색인으로만 내려감(원시 값 아래는 `undefined`) | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-91) |
 
 항목 형식은 `ledger/README.md` §3을 따른다. **결정**은 정본 원문을 글자 그대로 옮기고, **보충**은 다른 출처가 더한 조건·예외·값을 원문 그대로 `path:line`과 함께 적는다. **출처**의 첫 위치가 정본이다. **충돌**은 다른 위치가 정본과 다르게 적었을 때만 둔다.
 
@@ -153,11 +166,12 @@
   > 판단은 문자열 동작 행의 `finishInput` 칸에 두고, 어댑터는 타입을 모르는 입력 마침 신호(`finishInput`)만 보낸다.
 - 보충:
   > "그래서 React 어댑터에 문자열 전용 논리가 들어가지 않는다." (`08-design-a-to-z.md:130`)
+  > 편집자 결정(18C-91): "【추론】 `trim`은 union 행의 `finishInput`이 맡으며, 현재 값이 문자열이면 자르고 그 결과를 `interpret`에 넘기고, 문자열이 아니면 아무것도 하지 않으며, 경고는 없다(CONTROLS-006)." (`reviews/round-18-closing.md:2519`)
 - 상태: 현행
-- 출처: `adr/0003-group-namespace.md:32#5`(정본), `08-design-a-to-z.md:130`
-- 닫은 사람: 소유자 답(`reviews/round-17-owner-answers.md:11` R17-3), 소유자 답(`reviews/round-17-owner-answers.md:43` 9 입력 마침 칸), 소유자 답(`reviews/round-17-owner-answers.md:54` 9번 확인)
-- 라운드: 17
-- 까닭: `reviews/round-17-owner-answers.md:11`
+- 출처: `adr/0003-group-namespace.md:32#5`(정본), `08-design-a-to-z.md:130`, `reviews/round-18-closing.md:2519`
+- 닫은 사람: 소유자 답(`reviews/round-17-owner-answers.md:11` R17-3), 소유자 답(`reviews/round-17-owner-answers.md:43` 9 입력 마침 칸), 소유자 답(`reviews/round-17-owner-answers.md:54` 9번 확인), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-91)
+- 라운드: 18
+- 까닭: `reviews/round-17-owner-answers.md:11`, `reviews/round-18-closing.md:2556-2564`
 
 ### CONTROLS-007 자른 값은 입력 출처 쓰기이며 자동 쓰기가 아니고, 같으면 쓰지 않는다
 
@@ -179,11 +193,11 @@
 - 결정:
   > 이 쓰기가 바깥 오류를 지우고 dirty를 표시하는지는 18라운드 안건이다.
 - 보충: 없음
-- 상태: 열림(→ `reviews/round-18-agenda.md` §3, :45)
-- 출처: `adr/0003-group-namespace.md:32#7`(정본), `08-design-a-to-z.md:130`, `reviews/round-18-agenda.md:45`
-- 닫은 사람: 편집자 결정(17라운드, 18라운드 안건으로 이관)
-- 라운드: 17
-- 까닭: `reviews/round-18-agenda.md:45`
+- 상태: 대체됨(→ WRITE-083)
+- 출처: `adr/0003-group-namespace.md:32#7`(정본), `08-design-a-to-z.md:130`, `reviews/round-18-agenda.md:45`, `reviews/round-18-closing.md:582-597`
+- 닫은 사람: 편집자 결정(17라운드, 18라운드 안건으로 이관), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-19)
+- 라운드: 18
+- 까닭: `reviews/round-18-agenda.md:45`, `reviews/round-18-closing.md:599-603`
 
 ### CONTROLS-009 그룹 표 — `controls`: 때에 따라 바꾸는 규칙과 정책, 정착 루프가 읽음
 
@@ -667,10 +681,13 @@
   > "코어에 글로벌은 없고, Form 속성의 전체 잠금은 렌더 계층이 그 결과 위에 OR한다(소유자 13라운드)." (`03-mental-model.md:138`)
   > "편집자 판정이며 소유자 확인을 기다린다(원장 §4·§7)." (`02-target-overview.md:298`)
 - 상태: 현행
-- 출처: `03-mental-model.md:138#4`(정본), `adr/0003-group-namespace.md:144`, `02-target-overview.md:298`, `08-design-a-to-z.md:338`, `07-conclusions.md:158`, `07-conclusions.md:160`, `07-conclusions.md:164`, `reviews/round-12-owner-answers.md:11`, `reviews/round-12-owner-answers.md:23`
-- 닫은 사람: 편집자 결정(13라운드, 원장 §7 `03-mental-model.md:227`)
-- 라운드: 13
-- 까닭: `07-conclusions.md:163`
+- 출처: `03-mental-model.md:138#4`(정본), `adr/0003-group-namespace.md:144`, `02-target-overview.md:298`, `08-design-a-to-z.md:338`, `07-conclusions.md:158`, `07-conclusions.md:160`, `07-conclusions.md:164`, `reviews/round-12-owner-answers.md:11`, `reviews/round-12-owner-answers.md:23`, `reviews/round-18-closing.md:1924`
+- 닫은 사람: 편집자 결정(13라운드, 원장 §7 `03-mental-model.md:227`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-69; CONTROLS-082로 확정)
+- 라운드: 18
+- 까닭: `07-conclusions.md:163`, `reviews/round-18-closing.md:1970-1976`
+- 충돌:
+  > `02-target-overview.md:298`의 "편집자 판정이며 소유자 확인을 기다린다(원장 §4·§7)."는 18라운드 결정과 다르다: 이 결합은 18C-69의 편집자 결정(18라운드)으로 확정되어 소유자 확인을 기다리지 않는다. 18라운드 결정이 이긴다(`reviews/round-18-closing.md:1924`).
+  > `adr/0003-group-namespace.md:144`의 "편집자 판정이며 소유자 확인 대상이다(원장 §7)."는 18라운드 결정과 다르다: 이 결합은 18C-69의 편집자 결정(18라운드)으로 확정되어 소유자 확인을 기다리지 않는다(CONTROLS-082). 18라운드 결정이 이긴다(`reviews/round-18-closing.md:1924`).
 
 ### CONTROLS-047 BE가 같은 스키마를 자기 검증기에 넣을 때
 
@@ -747,12 +764,14 @@
 - 결정:
   > - **결론.** 쓴다(잠복 원본). 대상이 나중에 켜져도 원천이 바뀐 것이 아니므로 재발화하지 않는다.
   > - **왜.** `injectTo`는 호출자의 전체 교체와 같고(`03-mental-model.md` 43행), 전체 교체는 꺼진 조각의 노드까지 분배된다(ADR 0013 63행). 비활성화는 쓰기가 아니다. 이 규칙이면 독립 모델 N6의 네 경로가 모두 같은 값이 된다.
-- 보충: 없음
+- 보충:
+  > 편집자 결정(18C-14): "【추론】 형상에 없는(비활성) 대상은 오류가 아니며(ERROR-124) 잠복 원본에 쓴다(CONTROLS-053, WRITE-018과 같은 분배)." (`reviews/round-18-closing.md:402`)
+  > 편집자 결정(18C-14): "【추론】 대상이 나중에 켜져도 다시 발화하지 않는다(CONTROLS-053은 현행이다)." (`reviews/round-18-closing.md:403`)
 - 상태: 현행
-- 출처: `06-conclusions.md:244-245`(정본)
-- 닫은 사람: 편집자 결정(8라운드 D-28 편집자 판정, `06-conclusions.md:242`)
-- 라운드: 8
-- 까닭: `06-conclusions.md:245`
+- 출처: `06-conclusions.md:244-245`(정본), `reviews/round-18-closing.md:402-403`
+- 닫은 사람: 편집자 결정(8라운드 D-28 편집자 판정, `06-conclusions.md:242`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-14)
+- 라운드: 18
+- 까닭: `06-conclusions.md:245`, `reviews/round-18-closing.md:416-423`
 
 ### CONTROLS-054 원천이 비활성이면 `injectTo`는 없음을 읽는다(D-34)
 
@@ -773,10 +792,10 @@
   > - **원리가 말하는 것.** P2는 작성자를 정당한 쓰기 주체로 인정하므로 `fire`를 허용한다. "있는 값을 고치지 않는다"(`03-mental-model.md` 82행)는 코어 자신의 `default`에 대한 문장이지 작성자의 규칙에 대한 문장이 아니다. 그러나 허용과 선호는 다르다. 이것은 "스키마의 규칙이 진실인가, 받은 데이터가 진실인가"라는 제품의 가치다.
   > - **멱등성은 기준이 아니다.** `setValue(getValue())`가 모든 상태에서 멱등인 것은 `skip`뿐인데, 소유자가 이미 D-7에서 멱등을 버렸고(`default` 로드 계약도 같은 모양으로 비멱등이다), `skip`은 위에서 지워졌다.
 - 보충: 없음
-- 상태: 현행
+- 상태: 분할됨(→ CONTROLS-084, WRITE-090)
 - 출처: `06-conclusions.md:268,270-272`(정본), `07-conclusions.md:245`
-- 닫은 사람: 소유자 답(`reviews/round-10-owner-answers.md:19` D-6)
-- 라운드: 10
+- 닫은 사람: 소유자 답(`reviews/round-10-owner-answers.md:19` D-6), 소유자 답(`reviews/round-18-owner-answers.md:26` 18C 검토 4번; 대체)
+- 라운드: 18
 - 까닭: `06-conclusions.md:271`
 
 ### CONTROLS-056 대체됨: 글로벌 > 로컬, 루트 스키마 키는 정의되면 `false`여도 덮음(10라운드 답 12)
@@ -850,78 +869,94 @@
 
 - 결정:
   > - 로컬 선언끼리의 결합의 소유자 확인. 원장 §4는 노드 자신의 표준 `readOnly`, `controls.readOnly`, 켜진 조각의 범위 제어, 부모의 `controls.children` 항목이 겹치면 잠금(`readOnly`·`disabled`)은 하나라도 참이면 잠기고 표시(`active`·`visible`)는 모두 참이어야 켜진다고 정했다. 코어에 글로벌은 없고, Form 속성의 전체 잠금은 렌더 계층이 그 결과 위에 OR한다(13라운드 답 1). 편집자 판정이며 소유자 확인 대상이다(원장 §7).
-- 보충: 없음
-- 상태: 열림(→ `reviews/round-18-agenda.md:132` 11-1)
-- 출처: `adr/0003-group-namespace.md:144`(정본), `02-target-overview.md:298`, `03-mental-model.md:227`, `reviews/round-12-owner-answers.md:23`
-- 닫은 사람: 편집자 결정(13라운드, 소유자 확인 대상으로 남김 `adr/0003-group-namespace.md:144`)
-- 라운드: 13
-- 까닭: `03-mental-model.md:227`
+- 보충:
+  > 소유자(12라운드 §3 답, 두 문장 전문): "해당 조건은 중복 선언시(부모선언 + 자식노드 자체 선언) 이를 병합하는게 아니라 덮어쓰는걸 고려했다. 하지만 이를 or 조건이나 체인으로 엮을 수 있나? 말한대로 루프가 발생하면 form 을 터트리고 오류를 보여주면 된다. 이 기능은 설계를 요한다." (`reviews/round-12-owner-answers.md:11`)
+  > 편집자 결정(18C-69): "그때 소유자의 답은 "좀 더 설명 필요. 이것만으론 이해가 잘 안된다. 글로벌이 덮을 수 있는건 readOnly / disabled 뿐이고, 나머지는 글로벌 선언과 무관하게 각자의 스콥에서만 동작하지 않나?"였다(`reviews/round-12-owner-answers.md:23`)." (`reviews/round-18-closing.md:1938`)
+  > 편집자 결정(18C-69): "| `edit` | `true` | `false` OR `false` → 고칠 수 있다 | `true` AND `true` → 보인다 |" (`reviews/round-18-closing.md:1956`)
+  > 편집자 결정(18C-69): "| `view` | `true` | `false` OR `true` → 잠긴다 | `true` AND `true` → 보인다 |" (`reviews/round-18-closing.md:1957`)
+  > 편집자 결정(18C-69): "| `hidden` | `true` | `false` OR `false` | `true` AND `false` → 숨는다 |" (`reviews/round-18-closing.md:1958`)
+  > 편집자 결정(18C-69): "| `edit` | `false` | `false` OR `false` | `false` AND `true` → 숨는다 |" (`reviews/round-18-closing.md:1959`)
+  > 편집자 결정(18C-69): "자기 `readOnly: false`는 `view`의 잠금을 풀지 않는다." (`reviews/round-18-closing.md:1961`)
+  > 편집자 결정(18C-69): "오늘은 순위 사슬이라 노드의 `readOnly: false`가 이긴다(`reviews/round-13-owner-review.md:26`)." (`reviews/round-18-closing.md:1962`)
+  > 편집자 결정(18C-69): "이 변화의 이주 행은 이미 있다(LANDING-016 이주 13)." (`reviews/round-18-closing.md:1963`)
+  > 편집자 결정(18C-69): "`<Form readOnly>`를 주면 렌더 계층이 위 결과에 OR하므로 모든 행이 잠긴다." (`reviews/round-18-closing.md:1964`)
+  > 편집자 결정(18C-69): "앞의 두 문장은 둘 다 설계에 남는다." (`reviews/round-18-closing.md:1966`)
+  > 편집자 결정(18C-69): "덮어쓰기(첫 문장)는 값을 쓰는 규칙에 남는다: 한 노드에는 값을 하나만 쓸 수 있으므로, 부모 선언과 자식 자신의 선언이 겹치면 세부가 이긴다(SETTLE-004, 나감 정책은 CONTROLS-040)." (`reviews/round-18-closing.md:1967`)
+  > 편집자 결정(18C-69): "or로 엮기(둘째 문장)는 참인 동안 성립하는 상태 키에 남는다: 잠금은 OR로, 표시는 AND로 엮는다." (`reviews/round-18-closing.md:1968`)
+- 상태: 대체됨(→ CONTROLS-082)
+- 출처: `adr/0003-group-namespace.md:144`(정본), `02-target-overview.md:298`, `03-mental-model.md:227`, `reviews/round-12-owner-answers.md:23`, `reviews/round-18-closing.md:1922-1936`
+- 닫은 사람: 편집자 결정(13라운드, 소유자 확인 대상으로 남김 `adr/0003-group-namespace.md:144`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-69)
+- 라운드: 18
+- 까닭: `03-mental-model.md:227`, `reviews/round-18-closing.md:1970-1976`
+- 충돌:
+  > `adr/0003-group-namespace.md:144`의 "편집자 판정이며 소유자 확인 대상이다(원장 §7)."는 18라운드 결정과 다르다: 18C-69의 편집자 결정(18라운드)으로 확정되어 소유자 확인을 기다리지 않는다. 18라운드 결정이 이긴다(`reviews/round-18-closing.md:1924`).
 
 ### CONTROLS-063 `controls.children`의 대상별 식과 값 키의 세부, 조각에서만 선언된 자식을 가리킬 수 있는가
 
 - 결정:
   > `controls.children`의 대상별 식과 값 키의 세부, 조각에서만 선언된 자식을 `targets`로 가리킬 수 있는지(`03-mental-model.md` §6).
 - 보충: 없음
-- 상태: 열림(→ `reviews/round-18-agenda.md` §1, :25; §9, :110)
-- 출처: `adr/0003-group-namespace.md:143#1`(정본), `02-target-overview.md:299`, `reviews/round-18-agenda.md:25`, `reviews/round-18-agenda.md:110`
-- 닫은 사람: 편집자 결정(17라운드, 18라운드 안건으로 이관)
-- 라운드: 17
-- 까닭: `reviews/round-18-agenda.md:25`
+- 상태: 대체됨(→ CONTROLS-073)
+- 출처: `adr/0003-group-namespace.md:143#1`(정본), `02-target-overview.md:299`, `reviews/round-18-agenda.md:25`, `reviews/round-18-agenda.md:110`, `reviews/round-18-closing.md:270-297`
+- 닫은 사람: 편집자 결정(17라운드, 18라운드 안건으로 이관), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-12)
+- 라운드: 18
+- 까닭: `reviews/round-18-agenda.md:25`, `reviews/round-18-closing.md:299-303`
 
 ### CONTROLS-064 조각 객체에 값 키를 둘 때의 세부
 
 - 결정:
   > 조각 객체에 값 키(`unsetValue`, `default`, `resetInteraction`)를 둘 때의 세부도 같이 정한다.
 - 보충: 없음
-- 상태: 열림(→ `reviews/round-18-agenda.md` §9, :110; 조각 객체의 값 키는 안건에 명시 행 없음)
-- 출처: `adr/0003-group-namespace.md:143#2`(정본), `02-target-overview.md:299`, `reviews/round-18-agenda.md:110`
-- 닫은 사람: 편집자 결정(17라운드, 18라운드 안건으로 이관)
-- 라운드: 17
-- 까닭: `reviews/round-18-agenda.md:110`
+- 상태: 대체됨(→ CONTROLS-077)
+- 출처: `adr/0003-group-namespace.md:143#2`(정본), `02-target-overview.md:299`, `reviews/round-18-agenda.md:110`, `reviews/round-18-closing.md:1704-1720`
+- 닫은 사람: 편집자 결정(17라운드, 18라운드 안건으로 이관), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-60)
+- 라운드: 18
+- 까닭: `reviews/round-18-agenda.md:110`, `reviews/round-18-closing.md:1722-1724`
 
 ### CONTROLS-065 `virtualRequired`가 `required` 재작성과 함께 사라지는지 확인
 
 - 결정:
   > - `virtualRequired`는 `options`의 키 목록에 없어 그룹 안에 둘 수 없다. 오늘 `required` 재작성이 만드는 키이므로(`transformCondition.ts:40-52`) 재작성을 버리면 함께 사라지는지 확인한다.
 - 보충: 없음
-- 상태: 열림(→ `reviews/round-18-agenda.md:133` 11-2)
-- 출처: `adr/0003-group-namespace.md:146`(정본), `reviews/round-12-owner-answers.md:16`
-- 닫은 사람: 편집자 결정(15라운드, ADR 0003 6차 본문 미결 `adr/0003-group-namespace.md:146`)
-- 라운드: 15
-- 까닭: `reviews/round-12-owner-answers.md:16`
+- 상태: 대체됨(→ CONTROLS-078)
+- 출처: `adr/0003-group-namespace.md:146`(정본), `reviews/round-12-owner-answers.md:16`, `reviews/round-18-closing.md:1982-1986`
+- 닫은 사람: 편집자 결정(15라운드, ADR 0003 6차 본문 미결 `adr/0003-group-namespace.md:146`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-70)
+- 라운드: 18
+- 까닭: `reviews/round-12-owner-answers.md:16`, `reviews/round-18-closing.md:1988-1989`
 
 ### CONTROLS-066 스키마를 직렬화할 수 없다는 점과 core→`PluginManager`의 React 모듈 import 분리
 
 - 결정:
   > 남는 것은 스키마를 직렬화할 수 없다는 점과, 오늘 core가 `ValidationManager` → `app/plugin`의 `PluginManager`를 거쳐 React 구성 요소 모듈을 런타임에 가져오는 import의 분리다(PR-4 전 설계 항목, `01-current-structure.md` §6) — `open-questions.md` Q8.
 - 보충: 없음
-- 상태: 열림(→ `reviews/round-18-agenda.md` §9, :108; 직렬화는 안건에 명시 행 없음)
-- 출처: `adr/0003-group-namespace.md:147#3`(정본), `reviews/round-18-agenda.md:108`
-- 닫은 사람: 편집자 결정(17라운드, 18라운드 안건으로 이관)
-- 라운드: 17
-- 까닭: `reviews/round-18-agenda.md:108`
+- 상태: 분할됨(→ CONTROLS-075, CONTROLS-076)
+- 출처: `adr/0003-group-namespace.md:147#3`(정본), `reviews/round-18-agenda.md:108`, `reviews/round-18-closing.md:1533-1544`
+- 닫은 사람: 편집자 결정(17라운드, 18라운드 안건으로 이관), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-55)
+- 라운드: 18
+- 까닭: `reviews/round-18-agenda.md:108`, `reviews/round-18-closing.md:1546-1548`
 
 ### CONTROLS-067 `controls.injectTo` 함수의 `ctx` 인자와 반환 모양
 
 - 결정:
   > - `controls.injectTo` 함수의 `ctx` 인자와 반환 모양의 세부는 식 언어 명세(원장 §6)에 걸려 있다.
-- 보충: 없음
-- 상태: 열림(→ `reviews/round-18-agenda.md` §2, :34)
-- 출처: `adr/0003-group-namespace.md:148`(정본), `reviews/round-18-agenda.md:34`, `03-mental-model.md:215`
-- 닫은 사람: 편집자 결정(17라운드, 18라운드 안건으로 이관)
-- 라운드: 17
-- 까닭: `reviews/round-18-agenda.md:34`
+- 보충:
+  > 소유자(12라운드 §9 답): "동의. 이는 자칫 ealry return 과 혼동이 발생해서 문제가 있었다" (`reviews/round-12-owner-answers.md:20`)
+- 상태: 대체됨(→ CONTROLS-079)
+- 출처: `adr/0003-group-namespace.md:148`(정본), `reviews/round-18-agenda.md:34`, `03-mental-model.md:215`, `reviews/round-18-closing.md:382-414`
+- 닫은 사람: 편집자 결정(17라운드, 18라운드 안건으로 이관), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-14), 소유자 답(`reviews/round-12-owner-answers.md:20` 12라운드 §9; 반환 `null`·`undefined`)
+- 라운드: 18
+- 까닭: `reviews/round-18-agenda.md:34`, `reviews/round-18-closing.md:416-423`
 
 ### CONTROLS-068 `controls` 식 언어의 명세 — 문법, 전역 이름, `@` 맥락, 경로가 읽는 값, 배열 색인
 
 - 결정:
   > - `controls` 식 언어의 명세(슬라이스 1·2 전): 허용 문법과 전역 이름, `@` 맥락과 그 변경이 에지인지, `#`·`*` 표기, 경로가 읽는 값(원본인지 방출 값인지 투영 값인지 — 게이트는 투영 값), 비활성·없는 노드를 읽을 때의 값, `controls.injectTo`의 함수 형태와 `ctx` 인자, 배열 항목의 색인과 길이를 읽는 문법.
 - 보충: 없음
-- 상태: 열림(→ `reviews/round-18-agenda.md` §2, :32-35)
-- 출처: `03-mental-model.md:215`(정본), `08-design-a-to-z.md:488`, `08-design-a-to-z.md:489`, `reviews/round-18-agenda.md:32-35`
-- 닫은 사람: 편집자 결정(17라운드, 18라운드 안건으로 이관)
-- 라운드: 17
-- 까닭: `reviews/round-18-agenda.md:32-35`
+- 상태: 분할됨(→ CONTROLS-080, CONTROLS-079)
+- 출처: `03-mental-model.md:215`(정본), `08-design-a-to-z.md:488`, `08-design-a-to-z.md:489`, `reviews/round-18-agenda.md:32-35`, `reviews/round-18-closing.md:311-368`
+- 닫은 사람: 편집자 결정(17라운드, 18라운드 안건으로 이관), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-13)
+- 라운드: 18
+- 까닭: `reviews/round-18-agenda.md:32-35`, `reviews/round-18-closing.md:370-376`
 
 ### CONTROLS-069 대체됨: `&active`는 값을 빼는 유일한 작성자 명령(6라운드 대조표)
 
@@ -942,12 +977,21 @@
   > | 키워드 | 현재 | 새 설계 | 변화 | 근거 |
   > | ------ | ---- | ------- | ---- | ---- |
   > | `&readOnly`·`&disabled` | FormTypeInput 구현에 위임한다 | 유지 | 유지 | 동일 / `adr/0003:25` |
-- 보충: 없음
-- 상태: 열림(→ `reviews/round-18-agenda.md:134` 11-3)
-- 출처: `05-before-after.md:37-38,42`(정본)
-- 닫은 사람: 편집자 결정(6라운드, 새 설계 칸은 4차 본문이 적은 것 `05-before-after.md:7`)
-- 라운드: 6
-- 까닭: `05-before-after.md:7`, `adr/0003-group-namespace.md:84`, `adr/0003-group-namespace.md:115`
+- 보충:
+  > 편집자 결정(18C-71): "【추론】 잠금은 세 층이 나눠 맡는다." (`reviews/round-18-closing.md:1995`)
+  > 편집자 결정(18C-71): "【추론】 (1) core는 노드의 잠금 상태만 계산한다." (`reviews/round-18-closing.md:1996`)
+  > 편집자 결정(18C-71): "【추론】 쓰기를 거부하지 않으므로 공개 `setValue`와 자동 쓰기(`derived`·`injectTo`·채움)는 잠긴 노드에도 적용된다." (`reviews/round-18-closing.md:1997`)
+  > 편집자 결정(18C-71): "【추론】 잠금은 값·형상·방출을 바꾸지 않는다." (`reviews/round-18-closing.md:1998`)
+  > 편집자 결정(18C-71): "【추론】 (2) 렌더 계층은 실효 잠금(core의 잠금 OR Form 속성의 전체 잠금)을 입력 구성 요소의 `readOnly`·`disabled` prop으로 넘긴다." (`reviews/round-18-closing.md:1999`)
+  > 편집자 결정(18C-71): "【추론】 실효 잠금이 켜진 동안에는 `handleChange`가 입력 쓰기를 버린다." (`reviews/round-18-closing.md:2000`)
+  > 편집자 결정(18C-71): "【추론】 오늘은 노드의 잠금만 보고 버리므로(`src/components/SchemaNode/SchemaNodeInput/SchemaNodeInput.tsx:51`) 이 판단에 Form 속성의 잠금을 더한다." (`reviews/round-18-closing.md:2001`)
+  > 편집자 결정(18C-71): "【추론】 (3) 잠긴 모양을 그리고 입력을 막는 것은 입력 구성 요소(`FormTypeInput`) 구현의 몫이다." (`reviews/round-18-closing.md:2002`)
+  > 편집자 결정(18C-71): "【추론】 오늘과 같다." (`reviews/round-18-closing.md:2003`)
+- 상태: 현행
+- 출처: `05-before-after.md:37-38,42`(정본), `reviews/round-18-closing.md:1995-2004`
+- 닫은 사람: 편집자 결정(6라운드, 새 설계 칸은 4차 본문이 적은 것 `05-before-after.md:7`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-71)
+- 라운드: 18
+- 까닭: `05-before-after.md:7`, `adr/0003-group-namespace.md:84`, `adr/0003-group-namespace.md:115`, `reviews/round-18-closing.md:2006-2008`
 
 ### CONTROLS-071 `FormTypeInputProps.alias`의 처분
 
@@ -956,11 +1000,11 @@
   > | ------ | ---- | ------- | ---- | ---- |
   > | `FormTypeInputProps.alias` | 타입만 선언돼 있고 패키지 안에 소비처가 없다 — 외부 구현체용 패스스루 | 언급 없음 | **미확인** | `jsonSchema.ts:235` |
 - 보충: 없음
-- 상태: 열림(→ `reviews/round-18-agenda.md:135` 11-4)
-- 출처: `05-before-after.md:37-38,54`(정본), `05-before-after.md:66`, `05-before-after.md:214`
-- 닫은 사람: 편집자 결정(6라운드, 미확인으로 남김 `05-before-after.md:9`)
-- 라운드: 6
-- 까닭: `05-before-after.md:9`
+- 상태: 대체됨(→ CONTROLS-081)
+- 출처: `05-before-after.md:37-38,54`(정본), `05-before-after.md:66`, `05-before-after.md:214`, `reviews/round-18-closing.md:2014-2021`
+- 닫은 사람: 편집자 결정(6라운드, 미확인으로 남김 `05-before-after.md:9`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-72)
+- 라운드: 18
+- 까닭: `05-before-after.md:9`, `reviews/round-18-closing.md:2023-2025`
 
 ### CONTROLS-072 `placeholder` 키가 어느 그룹에 드는가
 
@@ -970,10 +1014,331 @@
   > | `placeholder`·`errorMessages` | `errorMessages`는 검증기에 넘기기 전 제거 대상이다. `placeholder`는 `types/jsonSchema.ts:233`에 선언돼 입력 컴포넌트가 소비한다 | 언급 없음 | **미확인** | `stripSchemaExtensions.ts:29-53` |
 - 보충:
   > "`placeholder`는 오늘 최상위 키가 아니라 뺐습니다." (`reviews/round-14-owner-review.md:55`)
-- 상태: 열림(→ `reviews/round-18-agenda.md:136` 11-5)
-- 출처: `05-before-after.md:37-38,56`(정본), `05-before-after.md:66`, `05-before-after.md:214`, `reviews/round-14-owner-review.md:55`, `adr/0003-group-namespace.md:125`
-- 닫은 사람: 편집자 결정(6라운드, 미확인으로 남김 `05-before-after.md:9`), 편집자 결정(14라운드, O-9 닫힌 목록에서 뺌 `reviews/round-14-owner-review.md:55`)
-- 라운드: 14
-- 까닭: `05-before-after.md:9`, `reviews/round-14-owner-review.md:55`
+- 상태: 대체됨(→ CONTROLS-081)
+- 출처: `05-before-after.md:37-38,56`(정본), `05-before-after.md:66`, `05-before-after.md:214`, `reviews/round-14-owner-review.md:55`, `adr/0003-group-namespace.md:125`, `reviews/round-18-closing.md:2014-2021`
+- 닫은 사람: 편집자 결정(6라운드, 미확인으로 남김 `05-before-after.md:9`), 편집자 결정(14라운드, O-9 닫힌 목록에서 뺌 `reviews/round-14-owner-review.md:55`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-72; `errorMessages` 절반은 CONTROLS-051)
+- 라운드: 18
+- 까닭: `05-before-after.md:9`, `reviews/round-14-owner-review.md:55`, `reviews/round-18-closing.md:2023-2025`
 - 충돌:
   > `adr/0003-group-namespace.md:125`의 "오늘 `stripSchemaExtensions`가 지우는 키는 `FormTypeInput`·`FormTypeInputProps`·`FormTypeRendererProps`·`errorMessages`·`options`·`injectTo` 여섯뿐이고 `&` 키·`computed`·`virtual`·`formType`·`terminal`·`placeholder`·`propertyKeys`는 검증기에 간다."는 `placeholder`를 맨 키로 적어 `reviews/round-14-owner-review.md:55`("오늘 최상위 키가 아니라")와 다르다. 오늘의 타입 선언은 `placeholder`를 `FormTypeInputProps` 안에 둔다(`05-before-after.md:56`의 `types/jsonSchema.ts:233`). 어느 쪽도 새 그룹 자리를 정하지 않았으므로 이 항목은 열림이다.
+
+### CONTROLS-073 `controls.children` 항목 — 대상 해석, 청사진 오류, 형상 밖 대상, 항목 게이트 자리, 대상별 식, 값 키의 층, 상태 키는 로컬 결합
+
+- 결정:
+  > 【추론】 PR-1·PR-2가 쓰는 부분은 (1)–(5)이고, PR-6이 쓰는 부분은 (6)–(7)이다.
+  > 【추론】 (1) 대상 해석: `targets`의 이름은 그 `children` 선언을 가진 호스트 청사진의 직계 자식 이름으로 푼다.
+  > 【추론】 자식 이름은 본체와 모든 조각 선언의 합집합이고, 끌어올린 판별 키와 가상 이름을 포함한다.
+  > 【추론】 조각에서만 선언된 자식도 가리킬 수 있다.
+  > 【추론】 같은 이름에 종류가 다른 노드가 여럿이면 모두에 걸린다.
+  > 【추론】 (2) 청사진 오류: 청사진에 없는 이름이거나, 호스트의 전략이 터미널이라 자식 노드가 없으면 청사진 오류다.
+  > 【추론】 (3) 형상에 없는 대상: 청사진에 있으나 지금 형상에 없는 대상은 오류가 아니다.
+  > 【추론】 그 항목은 대상이 형상에 있는 동안만 효력을 가진다.
+  > 【추론】 항목 자신의 `controls.active`는 (4)의 게이트로서 호스트에서 평가되어 대상의 존재를 정하며, 이 문장의 대상이 아니다.
+  > 【추론】 그래서 `controls.children` 대상이 형상에 없을 때의 코드는 생기지 않는다.
+  > 【추론】 (4) 항목 게이트의 전순서 자리: 항목의 `controls.active`는 노드 게이트와 같은 장치이므로 노드 게이트의 자리 규칙을 따른다.
+  > 【추론】 곧 그 `children` 선언을 담은 조각(본체면 본체) 바로 뒤, 그 조각의 노드 게이트들 다음에 항목 순서대로 든다.
+  > 【추론】 (6) 대상별 식: 항목 `controls`의 식은 기준점이 호스트이고 항목마다 한 번 평가되어 모든 대상에 같은 값으로 걸린다.
+  > 【추론】 대상마다 다른 식은 항목을 나눠 적는다.
+  > 【추론】 (7) 값 키: 값 키(`default`, `derived`, `unsetValue`, `resetInteraction`, `unsetOnInactive`)는 각 대상 노드에 그 키를 적은 것처럼 동작하되 층은 `children` 항목 층이다.
+  > 【추론】 같은 대상에서는 조각의 `controls` < `children` 항목 < 노드 자신이다.
+  > 【추론】 같은 층이면 전순서에서 나중이 이기고 한 배열 안이면 뒤 항목이 이긴다.
+  > 【추론】 다만 `unsetOnInactive`는 CONTROLS-040대로 같은 층에 여럿이면 하나라도 유지면 유지한다.
+  > 【추론】 `derived`는 대상마다 같은 값을 쓴다.
+  > 【추론】 상태 키는 층 순서가 아니라 로컬 결합을 따른다.
+  > 【추론】 잠금(`readOnly`·`disabled`)은 하나라도 참이면 잠기고(OR), 표시(`active`·`visible`)는 모두 참이어야 켜진다(AND).
+  > 【추론】 CONTROLS-046이 그대로다(18C-69).
+- 보충: 없음
+- 상태: 현행
+- 출처: `reviews/round-18-closing.md:270-275,277-282,288-297`(정본)
+- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-12)
+- 라운드: 18
+- 까닭: `reviews/round-18-closing.md:299-303`
+
+### CONTROLS-074 틀린 형의 값을 게이트와 식이 볼 때 — 폼은 값을 가르지 않고, 식이 던지면 식 실패
+
+- 결정:
+  > 【추론】 (3) 틀린 형을 게이트와 식이 볼 때, 폼은 값을 가르지 않는다.
+  > 【추론】 게이트와 식은 형이 틀린 값을 거르지 않은 방출 트리 하나를 읽되(18C-13 (5)), 객체가 아닌 원본을 든 객체 호스트 자신의 게이트 입력은 FRAGMENT-016대로 `{}`다.
+  > 【추론】 `if` 게이트의 판정(수 아닌 값에 `minimum`이 참)은 검증기의 JSON Schema 의미이며 폼이 바꾸지 않는다.
+  > 【추론】 작성자 안내에 "`if` 서브스키마에 `type`을 함께 적는다"를 넣는다.
+  > 【추론】 `controls` 식이 틀린 형에서 던지면 이미 정한 대로 `EXPRESSION_THREW`, `degraded`, 제출 거부가 된다.
+  > 【추론】 검증기 유무와 무관하다(R17-1).
+  > 【추론】 식 언어 명세(18C-13)에 "식은 형이 틀린 값을 만날 수 있고, 던지면 식 실패다. `typeof`로 지킨다"를 적는다.
+- 보충: 없음
+- 상태: 현행
+- 출처: `reviews/round-18-closing.md:1116-1122`(정본)
+- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-40)
+- 라운드: 18
+- 까닭: `reviews/round-18-closing.md:1134-1141`
+
+### CONTROLS-075 core는 `app/plugin`을 가져오지 않는다 — 검증기는 바인딩이 골라 인자로, PR-4 경계 린트는 새 fractal, PR-7에 `src/core/**` 전체
+
+- 결정:
+  > 【추론】 (1) core는 `app/plugin`을 가져오지 않는다.
+  > 【추론】 검증기는 18C-54의 순서로 바인딩 계층이 골라 트리 생성 인자로 넘긴다.
+  > 【추론】 보고기·터미널 판정 함수가 이미 쓰는 통로와 같다.
+  > 【추론】 core만 쓰는 호스트는 `nodeFromJSONSchema`의 선택 인자로 직접 넘긴다(오늘도 있다, `src/core/nodeFromJSONSchema.ts:23`).
+  > 【추론】 `PluginManager`의 검증기 칸은 바인딩 계층이 읽는 등록소로 남는다.
+  > 【추론】 PR-4의 경계 린트는 새 fractal(`src/core/{blueprint,record,behaviors,navigation,settle,dispatch,validation,SchemaNode}/**`)에 건다.
+  > 【추론】 `src/core/**` 전체로 넓히는 것은 PR-7이다.
+  > 【추론】 타입 쪽 의존은 GOAL-088(18C-76)에서 다룬다.
+- 보충: 없음
+- 상태: 현행
+- 출처: `reviews/round-18-closing.md:1533-1540`(정본)
+- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-55)
+- 라운드: 18
+- 까닭: `reviews/round-18-closing.md:1546-1548`
+
+### CONTROLS-076 인라인 구성 요소를 담은 스키마의 직렬화 장치는 두지 않는다
+
+- 결정:
+  > 【추론】 (2) 인라인 구성 요소를 담은 스키마는 직렬화할 수 없고, 이를 풀 장치를 두지 않는다.
+  > 【추론】 직렬화할 수 있는 길은 `presentation.formType`과 `formTypeInputMap`·`formTypeInputDefinitions`다.
+  > 【추론】 core는 스키마를 직렬화하지 않는다.
+  > 【추론】 사본은 `presentation`을 지우고(VALIDATE-004), 같은 스키마 비교는 JSON 밖 칸을 참조로 본다(LANDING-039).
+- 보충: 없음
+- 상태: 현행(부정 결정)
+- 출처: `reviews/round-18-closing.md:1541-1544`(정본)
+- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-55)
+- 라운드: 18
+- 까닭: `reviews/round-18-closing.md:1546-1548`
+
+### CONTROLS-077 조각 `controls`의 허용 키는 `children` 항목 목록과 같다 — 값 키는 조각이 선언한 직계 자식마다 조각 층으로
+
+- 결정:
+  > 【추론】 조각 객체(`allOf` 항목, 분기, `then`/`else`)의 `controls`에 둘 수 있는 키는 `controls.children` 항목의 닫힌 목록과 같다: `active` `visible` `readOnly` `disabled` `default` `derived` `unsetValue` `resetInteraction` `unsetOnInactive`.
+  > 【추론】 `active`는 조각 게이트이고, 나머지는 조각 범위 제어다.
+  > 【추론】 `children`·`injectTo`·`discriminator`·`watch`는 청사진 오류다.
+  > 【추론】 값 키는 조각이 켜져 있는 동안, 그 조각이 직접 선언한 호스트의 직계 자식마다 따로 걸린다.
+  > 【추론】 각 대상에게는 조각 층의 선언으로 작용하며, 같은 값이나 같은 식이 대상 모두에 쓰인다.
+  > 【추론】 식의 기준점은 호스트다.
+  > 【추론】 `default`는 켜진 조각의 대상 노드가 생길 때 채움 원천이 된다.
+  > 【추론】 그 순위는 노드 자신의 `controls.default` > `children` 항목 > 조각의 `controls.default` > 표준 `default`(유효 스키마) > 없음이다.
+  > 【추론】 같은 층이면 조각 전순서에서 나중이 이긴다.
+  > 【추론】 대상마다 다른 기본값은 조각 안의 자식 선언에 적는다.
+  > 【추론】 `unsetValue`는 식 하나가 거짓→참이 되는 에지에서 대상 모두를 없음으로 만든다.
+  > 【추론】 로드에서는 로드된 값으로 평가한다.
+  > 【추론】 생긴 대상 노드에서 참이면 채우지 않는다.
+  > 【추론】 `resetInteraction`은 식이 참이 되면 대상 모두의 `dirty`·`touched`를 비운다(커밋 단계).
+  > 【추론】 같은 대상에 여러 자동 쓰기가 겹치면 ADR 0003 §6의 순위와 층을 그대로 따른다.
+  > 【추론】 조각이 켜지고 꺼지는 순간의 에지 기준은 18C-51을 따른다.
+  > 【추론】 새 오류 코드는 없다(기존 청사진 오류의 모르는 키 부류).
+- 보충: 없음
+- 상태: 현행
+- 출처: `reviews/round-18-closing.md:1704-1720`(정본)
+- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-60)
+- 라운드: 18
+- 까닭: `reviews/round-18-closing.md:1722-1724`
+
+### CONTROLS-078 `virtualRequired`는 새 설계에 없고 대체도 없다 — `options` 닫힌 목록 밖, 맨 키는 모르는 키로 검증기에
+
+- 결정:
+  > 【추론】 `virtualRequired`는 새 설계에 없고, 대체도 없다.
+  > 【추론】 이 키를 만드는 곳은 `processVirtualSchema`의 `required` 재작성뿐이고(`src/helpers/jsonSchema/preprocessSchema/utils/processVirtualSchema/utils/transformCondition.ts:40-52`), 읽는 곳은 `BranchStrategy/utils`의 조건 사전뿐이다(`src/core/nodes/ObjectNode/strategies/BranchStrategy/utils/getFieldConditionMap/utils/flattenConditions.ts:55,87`).
+  > 【추론】 새 설계는 재작성을 하지 않고(LANDING-019), 만드는 쪽과 읽는 쪽을 모두 PR-1에서 걷어 낸다(LANDING-081).
+  > 【추론】 따라서 `options`의 닫힌 목록에 넣지 않는다.
+  > 【추론】 작성자가 맨 키로 적은 `virtualRequired`는 JSON Schema 층의 모르는 키로 검증기에 가며, 폼은 읽지 않는다(CONTROLS-001).
+- 보충: 없음
+- 상태: 현행(부정 결정)
+- 출처: `reviews/round-18-closing.md:1982-1986`(정본)
+- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-70)
+- 라운드: 18
+- 까닭: `reviews/round-18-closing.md:1988-1989`
+
+### CONTROLS-079 `controls.injectTo`는 함수 `(value, ctx)` 하나 — 청사진이 정적으로 아는 대상 없음, `ctx` 여덟 칸, 반환 키는 원천 기준 경로, 항목은 전체 교체, `undefined` 항목과 `null`·`undefined` 반환은 쓰지 않음, 비활성 대상은 잠복 원본, 함수 안의 쓰기는 되먹임
+
+- 결정:
+  > 【추론】 형태는 `controls.injectTo: (value, ctx) => { [경로]: 값 } | Array<[경로, 값]> | null | undefined`다.
+  > 【추론】 오늘의 `InjectToHandler` 그대로이며, 문자열 식 형태는 두지 않는다.
+  > 【추론】 `controls.injectTo`는 함수 형태 하나이고(CONTROLS-019, `reviews/round-15-decisions.md:10`) 반환 경로는 실행해야 알 수 있으므로 청사진이 정적으로 아는 대상은 없다.
+  > 【추론】 ERROR-123은 적용되는 경우가 없다.
+  > 【추론】 대상 경로가 청사진에 없거나 터미널 아래인 경우는 모두 ERROR-122·ERROR-127의 동적 대상 없음(`SCHEMA_FORM_ERROR.INJECT_TARGET_MISSING`: 그 규칙을 후보에서 빼고 커밋, 모든 환경에서 사슬 끝 throw, `degraded`, 제출 거부)이며, 이는 R17-1 나의 효과를 그대로 지킨다.
+  > 【추론】 (가칭) `JSON_SCHEMA_ERROR.INJECT_TARGET_NOT_FOUND`는 낼 자리가 없으므로 PR-4의 코드 확정에서 뺀다.
+  > 【추론】 `value`는 원천의 방출 값이다.
+  > 【추론】 `ctx`는 오늘의 여덟 칸을 이름 그대로 둔다: `dataPath`, `schemaPath`, `jsonSchema`, `parentValue`, `parentJSONSchema`, `rootValue`, `rootJSONSchema`, `context`.
+  > 【추론】 값 칸은 모두 이번 파생 라운드 트리의 방출 값이다(18C-13 (5)).
+  > 【추론】 `jsonSchema`는 원천 노드의 유효 스키마다.
+  > 【추론】 `context`는 `@`와 같은 객체다.
+  > 【추론】 루트에서는 `parent…` 두 칸이 `null`이다.
+  > 【추론】 칸을 더하지 않는다.
+  > 【추론】 반환의 키는 원천 노드를 기준으로 한 경로다.
+  > 【추론】 각 항목은 대상에 대한 전체 교체이고, 파생 단계의 후보로서 SETTLE-004의 순위를 따른다.
+  > 【추론】 값이 `undefined`인 항목은 쓰지 않는다.
+  > 【추론】 한 반환 안에서 같은 대상이 둘이면 뒤의 것이 이긴다.
+  > 【추론】 객체는 키 삽입 순서, 배열은 차례를 따른다.
+  > 【추론】 `null`이나 `undefined`를 반환하면 이번 에지에서는 아무것도 쓰지 않고, 에지는 소비한다.
+  > 【추론】 `@`는 대상이 아니다.
+  > 【추론】 형상에 없는(비활성) 대상은 오류가 아니며(ERROR-124) 잠복 원본에 쓴다(CONTROLS-053, WRITE-018과 같은 분배).
+  > 【추론】 대상이 나중에 켜져도 다시 발화하지 않는다(CONTROLS-053은 현행이다).
+  > 【추론】 ERROR-124의 '그 노드에 쓰지도 않는다'는 형상에 없는 노드 자신의 규칙에 대한 말이며, 다른 규칙이 그 노드를 겨눈 쓰기(`controls.injectTo`)에는 적용되지 않는다.
+  > 【추론】 함수 안의 쓰기: 다른 노드에 쓰는 정해진 길은 반환이다.
+  > 【추론】 함수 안에서 폼의 공개 쓰기 API(`setValue`·`push`·`pop`·`update`·`remove`·`clear`·`batch`, EVENT-027)를 부르면 리스너 되먹임 쓰기와 같게 다룬다.
+  > 【추론】 그 쓰기를 오류로 막지 않는다.
+  > 【추론】 바깥 쓰기가 호출 스택에 있으므로 새 진입이 아니라 안쪽 진입이다(EVENT-027).
+  > 【추론】 그 쓰기는 지금 파동이 끝난 뒤에 돈다.
+  > 【추론】 리스너 되먹임과 같은 되먹임 예산(최외곽 진입의 되먹임 사슬당 25, EVENT-008)에 든다.
+  > 【추론】 넘으면 되먹임 초과와 같게 사슬 끝에서 던진다((가칭) `SCHEMA_FORM_ERROR.FEEDBACK_LIMIT_EXCEEDED`, `adr/0014-error-policy.md:271`).
+  > 【추론】 정착 중에 사용자 코드가 쓰는 장치는 이것 하나다(G4).
+  > 【추론】 새 코드는 없다.
+- 보충:
+  > 소유자(12라운드 §9 답): "동의. 이는 자칫 ealry return 과 혼동이 발생해서 문제가 있었다" (`reviews/round-12-owner-answers.md:20`)
+- 상태: 현행
+- 출처: `reviews/round-18-closing.md:382-413`(정본), `reviews/round-12-owner-answers.md:20`
+- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-14)
+- 라운드: 18
+- 까닭: `reviews/round-18-closing.md:416-423`
+
+### CONTROLS-080 `controls` 식 언어 명세 — 문법·컴파일, 전역 이름, 경로 토큰, `*` 없음, 경로는 방출 트리를 읽음, 형상 밖은 `undefined`, 배열 색인·길이, `@` 맥락
+
+- 결정:
+  > 【추론】 (1) 문법: 식은 JavaScript 식 하나이거나 `{ … }`로 감싼 문장 몸통(값은 `return`으로 낸다)이다.
+  > 【추론】 청사진이 경로 토큰을 뽑아 인자 배열 참조로 바꾸고 `new Function`으로 컴파일한다.
+  > 【추론】 오늘의 토크나이저 `JSON_POINTER_PATH_REGEX`와 `getFunctionBody`를 그대로 옮긴다.
+  > 【추론】 형용사·동사 키의 식은 `!!`로 불리언이 된다.
+  > 【추론】 식은 작성된 스키마 위치마다 한 번 컴파일하고, 그 위치의 모든 노드(배열 아이템 포함)가 결과를 공유한다.
+  > 【추론】 컴파일 실패는 이미 정한 대로 청사진 오류다.
+  > 【추론】 문자열 상수와 식의 구분은 CONTROLS-018대로다.
+  > 【추론】 (2) 전역 이름: 허용 목록도 차단 목록도 두지 않는다.
+  > 【추론】 식 몸통은 오늘처럼 JS 전역 스코프를 본다.
+  > 【추론】 계약상 식의 입력은 경로 토큰과 `@`뿐이다.
+  > 【추론】 시간·난수·바깥 가변 상태를 읽는 식은 결정적이지 않아 지원 범위 밖이며, 폼은 이를 막지 않는다.
+  > 【추론】 스키마 안의 식은 코드이므로 신뢰할 수 없는 출처의 스키마는 오늘처럼 지원 범위 밖이다.
+  > 【추론】 (3) 토큰: 경로 토큰은 오늘 그대로 `./p`, `../p`(되풀이할 수 있다), `/p`다.
+  > 【추론】 `#/p`는 `/p`와 같다(RFC 6901의 URI 조각 표기).
+  > 【추론】 `#` 단독과 `(/)`는 루트의 값이다.
+  > 【추론】 `@`는 맥락이다.
+  > 【추론】 `@/p`는 경로가 아니다.
+  > 【추론】 맥락 안의 값은 `@.x`나 `@['x']`처럼 JS로 읽는다.
+  > 【추론】 기준점은 CONTROLS-043대로다.
+  > 【추론】 경로 조각 안의 `[n]`은 색인이 아니라 이름의 일부다.
+  > 【추론】 (4) `*`: 식과 `controls.watch`의 경로에서 `*` 조각은 지원하지 않는다.
+  > 【추론】 쓰면 청사진 오류(식 컴파일 실패와 같은 분류)다.
+  > 【추론】 `*`는 `findNodes`와 `formTypeInputMap` 키의 표기로만 남는다.
+  > 【추론】 같은 표현은 배열 전체를 읽어서 한다(예: `(../items).some(i => i.price > 0)`).
+  > 【추론】 (5) 경로가 읽는 값: 경로는 방출 트리의 값을 읽는다.
+  > 【추론】 루트의 방출 값(`outputValue`)에서 그 절대 경로를 따라 JSON Pointer처럼 내려간 값이며, 조상의 투영이 뺀 키는 `undefined`다.
+  > 【추론】 계산 단계의 게이트에게 방출 트리는 이번 계산의 현재 상태이고, 바퀴 안이면 그 바퀴의 G다(FRAGMENT-016).
+  > 【추론】 게이트, 상태 키, `derived`, `unsetValue`, `resetInteraction`, `watch`의 `watchValues`가 모두 이 규칙 하나를 따른다.
+  > 【추론】 `controls.unsetOnInactive`의 식은 직전 커밋의 방출 트리를 읽는다(CONTROLS-024, WRITE-038, 17라운드 통보 2).
+  > 【추론】 원본과 잠복 원본은 식이 읽지 못한다.
+  > 【추론】 잠복 원본은 `node.inactiveValues`로만 읽는다.
+  > 【추론】 노드가 없는 곳도 값 수준으로 읽힌다.
+  > 【추론】 `extras`의 키, 터미널 노드 안(`./tags/0`)이 그렇다.
+  > 【추론】 합성 노드를 읽는 식은 그 하위 트리 전체에 기댄다.
+  > 【추론】 따라서 역의존 조회(SETTLE-017)는 값이 바뀐 노드의 경로와 그 조상·자손 경로를 읽는 식을 모두 찾는다.
+  > 【추론】 (6) 비활성·없는 노드: 형상에 없는 노드(게이트가 거짓인 노드, 꺼진 분기의 노드)는 방출이 없으므로 `undefined`로 읽힌다.
+  > 【추론】 청사진에 자리가 없는 경로도 오류나 경고 없이 (5)의 규칙으로 읽는다.
+  > 【추론】 선언되지 않은 키면 `extras`의 값, 아니면 `undefined`다.
+  > 【추론】 (7) 배열: 색인은 `/n` 조각으로 읽는다(`../items/0/price`, 아이템 안에서 형제는 `../1`).
+  > 【추론】 길이는 배열의 방출 값에 JS로 `(../items).length`를 쓴다.
+  > 【추론】 방출 값이므로 `omitTrailing`이 뺀 꼬리 아이템은 길이에 들지 않는다.
+  > 【추론】 RFC 6901의 `-`와 음수 색인은 없다(`(../items).at(-1)`을 쓴다).
+  > 【추론】 아이템이 자기 색인을 읽는 문법은 두지 않는다.
+  > 【추론】 (8) `@` 맥락: `@`의 값은 폼의 맥락 객체다.
+  > 【추론】 `FormProvider`의 맥락과 Form 속성 `context`를 얕게 병합하고 같은 키는 Form 속성이 이긴다.
+  > 【추론】 둘 다 없으면 `{}`다.
+  > 【추론】 식에게는 읽기 전용이고 `controls.injectTo`의 대상이 될 수 없다.
+  > 【추론】 맥락이 바뀌는 것은 입력이 바뀌는 것이다.
+  > 【추론】 바인딩이 바뀐 맥락을 루트에 전하면 정착 하나가 돈다.
+  > 【추론】 원본은 표시하지 않고, 역의존 표의 `@` 항목이 가리키는 노드와 그 조상을 재계산 목록에 넣는다.
+  > 【추론】 바뀜의 기준은 오늘처럼 스냅숏이라, 깊이 같은 값은 같은 참조로 본다.
+  > 【추론】 `@`를 읽는 `derived`·`unsetValue`·`resetInteraction`에게 이 변경은 에지다.
+  > 【추론】 기준점은 SETTLE-004대로 따르고, 같음 판정은 18C-50을 따른다.
+  > 【추론】 `injectTo`는 자기 방출 값의 에지에만 발화하므로 맥락 변경으로는 발화하지 않는다.
+  > 【추론】 로드 때는 로드 시점의 맥락으로 평가한다.
+- 보충:
+  > 편집자 결정(18C-91): "【추론】 CONTROLS-080 (5)에 식의 경로가 객체의 자기 키와 배열의 색인으로만 내려가고 원시 값 아래는 `undefined`라는 것(`reviews/round-18-owner-answers.md:29`)을 보충하며, 그래서 union 값이 `"abc"`일 때 `./slot/length`는 `undefined`다." (`reviews/round-18-closing.md:2547`)
+- 상태: 현행
+- 출처: `reviews/round-18-closing.md:311-365`(정본), `reviews/round-18-closing.md:2547`
+- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-13), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-91)
+- 라운드: 18
+- 까닭: `reviews/round-18-closing.md:370-376`, `reviews/round-18-closing.md:2556-2564`
+
+### CONTROLS-081 `alias`·`placeholder`는 그룹 키가 아니다 — `presentation.FormTypeInputProps` 안의 키로 입력 prop에 펼침, 맨 `placeholder`는 모르는 키로 검증기에, `errorMessages`는 `presentation`
+
+- 결정:
+  > 【추론】 `alias`·`placeholder`는 그룹 키가 아니다.
+  > 【추론】 둘 다 오늘처럼 `FormTypeInputProps` 안의 키이며, `FormTypeInputProps`가 `presentation`으로 옮겨 가므로(CONTROLS-051) `presentation.FormTypeInputProps.alias`·`presentation.FormTypeInputProps.placeholder`가 된다.
+  > 【추론】 렌더 계층은 이 둘을 해석하지 않고 오늘처럼 입력 구성 요소의 prop으로 펼쳐 넘긴다.
+  > 【추론】 `presentation`의 스키마 타입에는 `className`·`style`과 함께 문서화된 선택 키로 남긴다(선택 키가 하나도 없는 타입은 GOAL-088을 따른다).
+  > 【추론】 맨 키 `placeholder`는 폼 키가 아니다.
+  > 【추론】 맨 키 `placeholder`는 JSON Schema 층의 모르는 키로 검증기에 가고 폼은 읽지 않는다.
+  > 【추론】 그래서 `placeholder`가 검증기에 간다고 적은 `adr/0003-group-namespace.md:125`는 맨 키로 적었을 때의 사실로 읽으며, `reviews/round-14-owner-review.md:55`와 어긋나지 않는다.
+  > 【추론】 `errorMessages`는 이미 `presentation.errorMessages`로 정해졌고(CONTROLS-051), `presentation`은 통째로 검증기 앞에서 지워진다(LANDING-031).
+- 보충: 없음
+- 상태: 현행
+- 출처: `reviews/round-18-closing.md:2014-2021`(정본)
+- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-72)
+- 라운드: 18
+- 까닭: `reviews/round-18-closing.md:2023-2025`
+
+### CONTROLS-082 로컬 선언끼리의 결합 확정 — 겹치는 자리 넷, 잠금은 OR·표시는 AND, 순서와 자리에 무관, 값을 쓰는 규칙은 층에서 세부가 이김, D-7과 어긋나지 않음
+
+- 결정:
+  > 【추론】 한 노드 위에서 로컬 선언이 겹칠 수 있는 자리는 넷이다: 노드 자신의 표준 `readOnly`, 자기 `controls.readOnly`·`controls.disabled`, 켜진 조각의 범위 제어, 부모의 `controls.children` 항목.
+  > 【추론】 이것들이 겹치면 잠금(`readOnly`·`disabled`)은 하나라도 참이면 잠기고, 표시(`active`·`visible`)는 모두 참이어야 켜진다.
+  > 【추론】 CONTROLS-046을 그대로 확정한다.
+  > 【추론】 어느 자리의 `false`도 다른 자리의 잠금을 풀지 않는다.
+  > 【추론】 어느 자리의 참도 다른 자리가 끈 표시를 되살리지 않는다.
+  > 【추론】 결과는 선언의 순서와 자리에 따라 달라지지 않는다.
+  > 【추론】 코어에 글로벌은 없다.
+  > 【추론】 Form 속성의 전체 잠금은 렌더 계층이 이 결과 위에 OR한다(CONTROLS-045, 13라운드 답 1).
+  > 【추론】 이 결합은 잠금 키와 표시 키에만 적용한다.
+  > 【추론】 값을 쓰는 규칙(`derived`·`injectTo`·`unsetValue`)이 한 노드에 겹치면, 값은 하나만 쓸 수 있으므로 층에서 세부가 이긴다(SETTLE-004).
+  > 【추론】 `unsetOnInactive`는 CONTROLS-040을 따른다.
+  > 【추론】 D-7(`reviews/round-10-owner-answers.md:20`, "조각의 주석이 본체를 덮음"에 대한 답)은 주석 키에 대한 답이다.
+  > 【추론】 원장은 표준 `readOnly`를 주석이 아니라 상태 키, 곧 노드의 잠금으로 읽는다.
+  > 【추론】 SCHEMA-003(13라운드 소유자 답 1로 닫힘)이 그렇게 적고, 병합표는 상태 키를 주석과 따로 적는다(SCHEMA-010).
+  > 【추론】 그래서 D-7은 잠금에 닿지 않고, 이 결합은 소유자 답과 어긋나지 않는다.
+- 보충: 없음
+- 상태: 현행
+- 출처: `reviews/round-18-closing.md:1922-1936`(정본)
+- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-69)
+- 라운드: 18
+- 까닭: `reviews/round-18-closing.md:1970-1976`
+
+### CONTROLS-083 잠금은 세 층이 나눠 맡는다 — core는 잠금 상태만 계산하고 쓰기를 거부하지 않음, 렌더 계층은 실효 잠금을 prop으로 넘기고 입력 쓰기를 버림, 잠긴 모양은 입력 구성 요소
+
+- 결정:
+  > 【추론】 잠금은 세 층이 나눠 맡는다.
+  > 【추론】 (1) core는 노드의 잠금 상태만 계산한다.
+  > 【추론】 쓰기를 거부하지 않으므로 공개 `setValue`와 자동 쓰기(`derived`·`injectTo`·채움)는 잠긴 노드에도 적용된다.
+  > 【추론】 잠금은 값·형상·방출을 바꾸지 않는다.
+  > 【추론】 (2) 렌더 계층은 실효 잠금(core의 잠금 OR Form 속성의 전체 잠금)을 입력 구성 요소의 `readOnly`·`disabled` prop으로 넘긴다.
+  > 【추론】 실효 잠금이 켜진 동안에는 `handleChange`가 입력 쓰기를 버린다.
+  > 【추론】 오늘은 노드의 잠금만 보고 버리므로(`src/components/SchemaNode/SchemaNodeInput/SchemaNodeInput.tsx:51`) 이 판단에 Form 속성의 잠금을 더한다.
+  > 【추론】 (3) 잠긴 모양을 그리고 입력을 막는 것은 입력 구성 요소(`FormTypeInput`) 구현의 몫이다.
+  > 【추론】 오늘과 같다.
+- 보충: 없음
+- 상태: 현행
+- 출처: `reviews/round-18-closing.md:1995-2003`(정본)
+- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-71)
+- 라운드: 18
+- 까닭: `reviews/round-18-closing.md:2006-2008`
+
+### CONTROLS-084 로드에서의 `injectTo` — `fire`(작성자가 위)를 고르고 `skip`을 버림, 원리가 말하는 것(D-27)
+
+- 결정:
+  > - **`fire` (작성자가 위).** 전체 교체는 모든 원천을 "없음에서 바뀐 것"으로 만들므로 `injectTo`가 모두 발화하고 `total`은 100이 된다. 서버가 준 90은 사라진다. 스키마가 진실이다. 초안 원리 아래의 도출이다. 4.3의 직전 커밋 규칙을 마운트에 문자 그대로 적용하면 이것이 나오고, 4라운드 명세 34행 "`reset()`은 `injectTo`를 일으킨다"와 현재 코드의 마운트 동작과 같다.
+  > - **지워진 선택지.** `skip`(로드 때는 발화하지 않음)은 `{ source: 'A' }`만 로드했을 때 초기 복사조차 없어 원천이 다시 바뀔 때까지 대상이 빈다. 공개 문서가 `injectTo`의 용도를 "Initial copy, default seeding"이라 적고 오늘 코드도 마운트에서 원천의 `default`로 대상을 채우므로 G2(표현력은 줄지 않는다)에 걸린다. 이 탈락은 `injectTo`를 G2의 '동적 표현식 시스템'에 드는 것으로 읽는다는 전제에 선다. 리셋 전 이력과 비교하는 안은 P3에 걸린다. 마운트·노드 reset·`FormHandle.reset`에 서로 다른 규칙(현재 코드)은 G4에 걸린다.
+  > - **원리가 말하는 것.** P2는 작성자를 정당한 쓰기 주체로 인정하므로 `fire`를 허용한다. "있는 값을 고치지 않는다"(`03-mental-model.md` 82행)는 코어 자신의 `default`에 대한 문장이지 작성자의 규칙에 대한 문장이 아니다. 그러나 허용과 선호는 다르다. 이것은 "스키마의 규칙이 진실인가, 받은 데이터가 진실인가"라는 제품의 가치다.
+- 보충: 없음
+- 상태: 현행
+- 출처: `06-conclusions.md:268,270-271`(정본. CONTROLS-055에서 분할), `07-conclusions.md:245`
+- 닫은 사람: 소유자 답(`reviews/round-10-owner-answers.md:19` D-6)
+- 라운드: 10
+- 까닭: `06-conclusions.md:271`
+- 충돌:
+  > `06-conclusions.md:268`의 "전체 교체는 모든 원천을 "없음에서 바뀐 것"으로 만들므로"는 소유자 답과 다르다: 새 수명은 로드(마운트·`FormHandle.reset()`·`resetSubtree()`)뿐이고 `setValue(V)`는 로드가 아니라 전체 교체 쓰기다(WRITE-090). 소유자 답이 이긴다(`reviews/round-18-owner-answers.md:26`).
+
+### CONTROLS-085 `union` 값과 식·게이트 — 어긋난 값도 거르거나 변환하지 않고 봄, 식의 경로는 객체의 자기 키와 배열의 색인으로만 내려감(원시 값 아래는 `undefined`)
+
+- 결정:
+  > 【추론】 게이트와 식은 어긋난 값도 거르거나 변환하지 않고 보므로, `['number','string']` 판별 키에 기본 입력으로 친 `"1"`은 `const: 1` 분기를 켜지 않는다(CONTROLS-074, FRAGMENT-008).
+  > 【추론】 CONTROLS-080 (5)에 식의 경로가 객체의 자기 키와 배열의 색인으로만 내려가고 원시 값 아래는 `undefined`라는 것(`reviews/round-18-owner-answers.md:29`)을 보충하며, 그래서 union 값이 `"abc"`일 때 `./slot/length`는 `undefined`다.
+- 보충: 없음
+- 상태: 현행
+- 출처: `reviews/round-18-closing.md:2546-2547`(정본)
+- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-91)
+- 라운드: 18
+- 까닭: `reviews/round-18-closing.md:2556-2564`

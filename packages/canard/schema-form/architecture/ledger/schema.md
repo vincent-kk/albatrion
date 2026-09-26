@@ -13,19 +13,19 @@
 | SCHEMA-005 | 주석 키워드 — 유효 스키마에 병합해 렌더 계층에 건넨다 | 현행 | 소유자 답(`reviews/round-9-spec.md:23` 축5), 소유자 답(`reviews/round-10-owner-answers.md:20` D-7) |
 | SCHEMA-006 | 폼이 읽지 않는 키 — 값의 유효성 문법은 검증기에 그대로 간다 | 현행 | 원리(`reviews/round-5-derivations.md:28-34` D-3), 소유자 답(`reviews/round-9-spec.md:19` 축1), 소유자 답(`reviews/round-10-owner-answers.md:11` B-22; `const`·`enum` 판별의 예외 허용), 소유자 답(`reviews/round-12-owner-answers.md:9` 2 `&discriminator`; `controls.discriminator` 아래의 예외) |
 | SCHEMA-007 | 유효 스키마의 정의 — 켜진 조각을 전순서로 합친 것, 렌더 계층의 힌트, 덧씌움 집합마다 메모 | 현행 | 소유자 답(`reviews/round-9-spec.md:23` 축5), 편집자 결정(10라운드, `07-conclusions.md:143` 전순서 정의) |
-| SCHEMA-008 | 병합표 — 검증 키워드는 연언 문맥에서 교차, 게이트 없는 분기는 존재만 | 현행 | 원리(`07-conclusions.md:82` 3.9 5항의 읽기, 유효성 키워드의 교차는 도출), 소유자 답(`reviews/round-9-spec.md:23` 축5), 편집자 결정(ADR 0005 §3, `adr/0005-blueprint-analysis-and-node-sharing.md:76`; 정적 연언의 공집합은 청사진 오류) |
+| SCHEMA-008 | 병합표 — 검증 키워드는 연언 문맥에서 교차, 게이트 없는 분기는 존재만 | 현행 | 원리(`07-conclusions.md:82` 3.9 5항의 읽기, 유효성 키워드의 교차는 도출), 소유자 답(`reviews/round-9-spec.md:23` 축5), 편집자 결정(ADR 0005 §3, `adr/0005-blueprint-analysis-and-node-sharing.md:76`; 정적 연언의 공집합은 청사진 오류), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-90), 소유자 답(`reviews/round-18-owner-answers.md:37` union O7·O8; `type` 행은 교집합) |
 | SCHEMA-009 | 병합표 — 주석 키워드는 뒤가 앞을 덮는다 | 현행 | 소유자 답(`reviews/round-10-owner-answers.md:20` D-7), 소유자 답(`reviews/round-10-owner-answers.md:22` D-17), 소유자 답(`reviews/round-10-owner-answers.md:26` E-16) |
 | SCHEMA-010 | 병합표 — 상태 키는 그 노드에만, 로컬 선언이 겹치면 잠금 OR·표시 AND | 현행 | 소유자 답(`reviews/round-13-owner-answers.md:7` 1 잠금 규칙), 소유자 답(`reviews/round-12-owner-answers.md:7` 1 Form 속성 `false`), 소유자 답(`reviews/round-13-owner-answers.md:16` Form 속성의 자리), 편집자 결정(13라운드, `07-conclusions.md:158`; 로컬 선언끼리 잠금 OR·표시 AND) |
 | SCHEMA-011 | 병합표 — `options`·`presentation`은 그룹 단위 깊은 병합, 원자·배열·`undefined`의 규칙 | 분할됨(→ SCHEMA-039, NODE-029) | 소유자 답(`reviews/round-10-owner-answers.md:27` E-18), 소유자 답(`reviews/round-12-owner-answers.md:24` §9 `&options`), 소유자 답(`reviews/round-14-owner-answers.md:17` O-11), 17라운드 스웜 수렴(편집자 결정, `08-design-a-to-z.md:327`) |
 | SCHEMA-012 | 병합표 — 값·동작 키는 병합하지 않는다 | 현행 | 편집자 결정(10라운드, `07-conclusions.md:180`), 소유자 답(`reviews/round-13-owner-answers.md:10` 4 규칙 충돌 순위) |
 | SCHEMA-013 | 병합표 — 선언·정책 키는 병합하지 않는다(층별 효력, `watch` 합집합, `discriminator`는 하나) | 현행 | 소유자 답(`reviews/round-14-owner-answers.md:7` O-1), 편집자 결정(15라운드 게이트 뒤, `reviews/round-15-decisions.md:75`), 17라운드 스웜 수렴(편집자 결정, `03-mental-model.md:135`) |
-| SCHEMA-014 | 게이트 없는 분기의 선언 — 공유 노드에서는 유일한 선언일 때만, 분기 안 `then`은 교차하지 않음 | 현행 | 편집자 결정(12라운드, `reviews/round-12-derivation.md:21`; 소유자의 물음 `reviews/round-12-owner-answers.md:22`에 대화로 답함), 편집자 결정(10라운드, `07-conclusions.md:178`; 유일한 선언일 때만) |
+| SCHEMA-014 | 게이트 없는 분기의 선언 — 공유 노드에서는 유일한 선언일 때만, 분기 안 `then`은 교차하지 않음 | 대체됨(→ SCHEMA-044) | 편집자 결정(12라운드, `reviews/round-12-derivation.md:21`; 소유자의 물음 `reviews/round-12-owner-answers.md:22`에 대화로 답함), 편집자 결정(10라운드, `07-conclusions.md:178`; 유일한 선언일 때만), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-09) |
 | SCHEMA-015 | FE가 서버 스키마에 얹는 키는 그룹 객체 셋 안에만 — 셋 다 검증기 앞에서 지운다 | 현행 | 소유자 답(`reviews/round-15-decisions.md:12` 4), 소유자 답(`reviews/round-15-decisions.md:13` 5) |
 | SCHEMA-016 | Form은 단일 `jsonSchema`를 받는다 — FE 오버레이의 별도 입구를 두지 않음 | 현행 | 소유자 답(`reviews/round-2.md:113` C1), 소유자 답(`00-goals.md:104` C1) |
 | SCHEMA-017 | `overlay` prop을 철회한 이유 — 주겠다던 세 이점이 성립하지 않음 | 현행(부정 결정) | 소유자 답(`reviews/round-2.md:113` C1), 소유자 답(`00-goals.md:104` C1) |
-| SCHEMA-018 | ADR 0012의 결과 — C1은 새 장치 없이 충족, merge 방법의 문서, 판정 동일, `$ref` 정의의 merge | 현행 | 소유자 답(`reviews/round-2.md:113` C1), 소유자 답(`00-goals.md:111` C8), 편집자 결정(2라운드 ADR 0012 3판, `adr/0012-fe-overlay.md:31-32`; 판정 동일과 `$ref` 정의의 merge) |
+| SCHEMA-018 | ADR 0012의 결과 — C1은 새 장치 없이 충족, merge 방법의 문서, 판정 동일, `$ref` 정의의 merge | 현행 | 소유자 답(`reviews/round-2.md:113` C1), 소유자 답(`00-goals.md:111` C8), 편집자 결정(2라운드 ADR 0012 3판, `adr/0012-fe-overlay.md:31-32`; 판정 동일과 `$ref` 정의의 merge), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-66) |
 | SCHEMA-019 | 대체 가능성 — JSON Schema 층의 표현은 예약 층으로 옮길 수 있어야 한다 | 중복(→ CONTROLS-014, CONTROLS-017) | 소유자 답(`reviews/round-9-spec.md:25` 축7), 소유자 답(`reviews/round-15-decisions.md:13` 5) |
-| SCHEMA-020 | 열림: merge를 돕는 순수 함수(위치 불일치를 경고하는 helper)를 패키지가 제공할지 | 열림(→ `reviews/round-18-agenda.md:142` 11-11) | 편집자 결정(ADR 0012 3판 미결, `adr/0012-fe-overlay.md:37`) |
+| SCHEMA-020 | 열림: merge를 돕는 순수 함수(위치 불일치를 경고하는 helper)를 패키지가 제공할지 | 대체됨(→ SCHEMA-046) | 편집자 결정(ADR 0012 3판 미결, `adr/0012-fe-overlay.md:37`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-78; 소유자 발언 `adr/0012-fe-overlay.md:10`에 기댐) |
 | SCHEMA-021 | 대체됨: FE가 고칠 수 없는 BE 스키마에서 판별식을 찾지 못할 때의 대응(ADR 0012 남는 것) | 대체됨(→ FRAGMENT-006) | 소유자 답(`reviews/round-12-owner-answers.md:9` 2 `&discriminator`) |
 | SCHEMA-022 | 대체됨: 표현 키는 접두 없이 쓴다(07 §4.27, 13라운드 답 3) | 대체됨(→ SCHEMA-015) | 소유자 답(`reviews/round-15-decisions.md:12` 4) |
 | SCHEMA-023 | 대체됨: `options`의 배열은 `merge`에 배열 전략 옵션을 더해 사본에 적용(07 §4.27) | 대체됨(→ SCHEMA-039) | 17라운드 스웜 수렴(편집자 결정, `08-design-a-to-z.md:327`) |
@@ -35,16 +35,23 @@
 | SCHEMA-027 | 대체됨: 같은 union의 분기는 둘 이상 활성이 될 수 없다(5차 `anyOf` 다중 활성) | 대체됨(→ FRAGMENT-012) | 소유자 답(`reviews/round-10-owner-answers.md:17` C-20) |
 | SCHEMA-028 | 대체됨: `default`는 로드 계약이며 core의 유일한 자동 쓰기(5차) | 대체됨(→ SCHEMA-002, VALUE-007) | 소유자 답(`reviews/round-9-spec.md:56` 읽기2 시점(A/B)), 소유자 답(`reviews/round-10-owner-answers.md:7` A-1) |
 | SCHEMA-029 | 대체됨: `options.trim`은 제거하고 입력 컴포넌트로(5차) | 대체됨(→ NODE-007) | 소유자 답(`reviews/round-17-owner-answers.md:11` R17-3) |
-| SCHEMA-030 | 열림: `$ref` 재귀에서 조각의 정적 열거가 끝나는 규칙 | 중복(→ BLUEPRINT-024) | 편집자 결정(17라운드, 18라운드 안건으로 이관, `reviews/round-18-agenda.md:3`) |
-| SCHEMA-031 | 열림: 값 union과 다중 `type` 슬롯 | 중복(→ BLUEPRINT-023) | 편집자 결정(17라운드, 18라운드 안건으로 이관, `reviews/round-18-agenda.md:3`) |
-| SCHEMA-032 | 열림: `patternProperties`와 스키마 값 `additionalProperties`(동적 키의 노드화 여부) | 열림(→ `reviews/round-18-agenda.md` §1, :16) | 편집자 결정(17라운드, 18라운드 안건으로 이관, `reviews/round-18-agenda.md:3`) |
-| SCHEMA-033 | 열림: 노드의 `required` 표시가 켜진 `then`을 반영하는 규칙 | 열림(→ `reviews/round-18-agenda.md` §1, :18) | 편집자 결정(17라운드, 18라운드 안건으로 이관, `reviews/round-18-agenda.md:3`) |
-| SCHEMA-034 | 열림: 같은 가상 이름을 다른 `fields`로 적은 `options.virtual` 항목 | 열림(→ `reviews/round-18-agenda.md` §1, :19) | 편집자 결정(17라운드, 18라운드 안건으로 이관, `reviews/round-18-agenda.md:3`) |
-| SCHEMA-035 | 열림: 옮길 잎 교차 함수(`intersectConst`·`intersectPattern`)의 뜻 | 열림(→ `reviews/round-18-agenda.md` §1, :21) | 편집자 결정(18라운드 안건, 외부 점검 반영 `reviews/round-18-agenda.md:7`) |
-| SCHEMA-036 | 열림: 같은 호스트의 `oneOf`와 `anyOf` 분기의 동순위 | 열림(→ `reviews/round-18-agenda.md` §1, :23) | 편집자 결정(18라운드 안건, 외부 점검 반영 `reviews/round-18-agenda.md:7`) |
-| SCHEMA-037 | 열림: 게이트 없는 분기의 선언이 터미널 전략과 `options` 병합에 드는가 | 열림(→ `reviews/round-18-agenda.md` §1, :24) | 편집자 결정(18라운드 안건, 외부 점검 반영 `reviews/round-18-agenda.md:7`) |
-| SCHEMA-038 | 열림: 켜진 조각과의 런타임 교차가 공집합일 때 공개 `node.jsonSchema`가 싣는 것 | 열림(→ `reviews/round-18-agenda.md` §1, :26) | 편집자 결정(18라운드 안건, 외부 점검 반영 `reviews/round-18-agenda.md:7`) |
+| SCHEMA-030 | 열림: `$ref` 재귀에서 조각의 정적 열거가 끝나는 규칙 | 중복(→ BLUEPRINT-030) | 편집자 결정(17라운드, 18라운드 안건으로 이관, `reviews/round-18-agenda.md:3`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-01) |
+| SCHEMA-031 | 열림: 값 union과 다중 `type` 슬롯 | 중복(→ BLUEPRINT-031) | 편집자 결정(17라운드, 18라운드 안건으로 이관, `reviews/round-18-agenda.md:3`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-02) |
+| SCHEMA-032 | 열림: `patternProperties`와 스키마 값 `additionalProperties`(동적 키의 노드화 여부) | 대체됨(→ SCHEMA-040) | 편집자 결정(17라운드, 18라운드 안건으로 이관, `reviews/round-18-agenda.md:3`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-04) |
+| SCHEMA-033 | 열림: 노드의 `required` 표시가 켜진 `then`을 반영하는 규칙 | 대체됨(→ SCHEMA-041) | 편집자 결정(17라운드, 18라운드 안건으로 이관, `reviews/round-18-agenda.md:3`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-06) |
+| SCHEMA-034 | 열림: 같은 가상 이름을 다른 `fields`로 적은 `options.virtual` 항목 | 대체됨(→ SCHEMA-042) | 편집자 결정(17라운드, 18라운드 안건으로 이관, `reviews/round-18-agenda.md:3`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-07) |
+| SCHEMA-035 | 열림: 옮길 잎 교차 함수(`intersectConst`·`intersectPattern`)의 뜻 | 대체됨(→ SCHEMA-043, TEST-068) | 편집자 결정(18라운드 안건, 외부 점검 반영 `reviews/round-18-agenda.md:7`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-08) |
+| SCHEMA-036 | 열림: 같은 호스트의 `oneOf`와 `anyOf` 분기의 동순위 | 대체됨(→ FRAGMENT-049) | 편집자 결정(18라운드 안건, 외부 점검 반영 `reviews/round-18-agenda.md:7`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-10) |
+| SCHEMA-037 | 열림: 게이트 없는 분기의 선언이 터미널 전략과 `options` 병합에 드는가 | 대체됨(→ NODE-042, SCHEMA-044) | 편집자 결정(18라운드 안건, 외부 점검 반영 `reviews/round-18-agenda.md:7`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-09) |
+| SCHEMA-038 | 열림: 켜진 조각과의 런타임 교차가 공집합일 때 공개 `node.jsonSchema`가 싣는 것 | 대체됨(→ SCHEMA-045) | 편집자 결정(18라운드 안건, 외부 점검 반영 `reviews/round-18-agenda.md:7`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-11) |
 | SCHEMA-039 | 병합표 — `options`·`presentation`은 그룹 단위 깊은 병합(터미널 전략 문장이 없는 08 §9 행) | 현행 | 소유자 답(`reviews/round-10-owner-answers.md:27` E-18), 소유자 답(`reviews/round-12-owner-answers.md:24` §9 `&options`), 소유자 답(`reviews/round-14-owner-answers.md:17` O-11), 17라운드 스웜 수렴(편집자 결정, `08-design-a-to-z.md:327`) |
+| SCHEMA-040 | 동적 키(`patternProperties`·스키마 값 `additionalProperties`)는 노드가 되지 않는다 — `extras`로 남고 맵 편집은 터미널 입력으로 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-04) |
+| SCHEMA-041 | `required` 표시는 부모 유효 스키마의 `required`(연언 문맥의 켜진 조각 합집합) — 표시만 하고 배달 집합에 듦 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-06) |
+| SCHEMA-042 | 같은 가상 이름의 선언은 `fields`가 순서까지 같아야 한다 — 다르면 게이트와 무관하게 청사진 오류 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-07) |
+| SCHEMA-043 | 잎 교차 함수의 뜻 — `const`는 깊은 비교, `pattern`은 첫 패턴 + `allOf` 목록, `intersectPattern`은 옮기지 않음, 레거시의 `const`도 깊은 비교 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-08) |
+| SCHEMA-044 | 게이트 없는 분기가 공유 노드에 둔 주석·표현·상태 키·`options`는 유일한 선언일 때만 — 분기 안 `then`은 교차하지 않음 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-09) |
+| SCHEMA-045 | 런타임 교차 공집합의 표현 — `enum: []`로 통일, 범위 역전은 그대로, 같은 활성 집합이면 같은 참조 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-11) |
+| SCHEMA-046 | merge를 돕는 순수 함수와 위치 불일치 경고 helper는 제공하지 않는다 — merge는 소비자가, 방법은 이주 안내와 배포 문서(PR-8) | 현행(부정 결정) | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-78) |
 
 ## 항목
 
@@ -95,6 +102,8 @@
 - 닫은 사람: 편집자 결정(11라운드 실측, `08-design-a-to-z.md:86`), 소유자 답(`reviews/round-2.md:112` C5; `$defs`·`definitions` 두 철자)
 - 라운드: 11
 - 까닭: `08-design-a-to-z.md:86`
+- 충돌:
+  > `08-design-a-to-z.md:86`의 "재귀는 지연 해석으로 유한 트리"는 18라운드 결정과 다르다: 객체 프로퍼티만의 순환은 청사진 오류, 원본 없는 사슬의 게이트 순환은 정착 오류로 한정한다(BLUEPRINT-030). 18라운드 결정이 이긴다(`reviews/round-18-closing.md:24`).
 
 ### SCHEMA-005 주석 키워드 — 유효 스키마에 병합해 렌더 계층에 건넨다
 
@@ -119,6 +128,8 @@
 - 닫은 사람: 원리(`reviews/round-5-derivations.md:28-34` D-3), 소유자 답(`reviews/round-9-spec.md:19` 축1), 소유자 답(`reviews/round-10-owner-answers.md:11` B-22; `const`·`enum` 판별의 예외 허용), 소유자 답(`reviews/round-12-owner-answers.md:9` 2 `&discriminator`; `controls.discriminator` 아래의 예외)
 - 라운드: 12
 - 까닭: `reviews/round-5-derivations.md:28-34`
+- 충돌:
+  > `08-design-a-to-z.md:89`의 "`dependentSchemas`(슬라이스 1 전 설계 항목)"는 18라운드 결정과 다르다: 읽지 않고 청사진 경고를 낸다(FRAGMENT-047, ERROR-191). 18라운드 결정이 이긴다(`reviews/round-18-closing.md:97`).
 
 ### SCHEMA-007 유효 스키마의 정의 — 켜진 조각을 전순서로 합친 것, 렌더 계층의 힌트, 덧씌움 집합마다 메모
 
@@ -132,6 +143,8 @@
 - 닫은 사람: 소유자 답(`reviews/round-9-spec.md:23` 축5), 편집자 결정(10라운드, `07-conclusions.md:143` 전순서 정의)
 - 라운드: 10
 - 까닭: `reviews/round-9-spec.md:23`
+- 충돌:
+  > `03-mental-model.md:126`의 "키워드 순위는 본체 `properties` < `allOf` 항목 < `if/then/else` < `oneOf`·`anyOf` 분기"는 18라운드 결정과 다르다: 같은 호스트의 `oneOf` 분기는 모든 `anyOf` 분기보다 앞이다(FRAGMENT-049). 18라운드 결정이 이긴다(`reviews/round-18-closing.md:238-239`).
 
 ### SCHEMA-008 병합표 — 검증 키워드는 연언 문맥에서 교차, 게이트 없는 분기는 존재만
 
@@ -142,11 +155,14 @@
 - 보충:
   > "| 검증 키워드(`minimum`, `enum`, `required` …) | 연언 문맥에서 교차한다. 게이트 없는 `oneOf`·`anyOf` 분기는 존재만 더하고 제약은 교차하지 않는다. 정적 연언(본체와 게이트 없는 `allOf`)의 교차가 공집합이면 청사진 오류(throw), 켜진 `then`과의 런타임 교차가 공집합이면 검증기가 값을 기각한다 |" (`08-design-a-to-z.md:324`)
   > "**왜 게이트 없는 분기의 제약을 교차하지 않는가.** 분기는 "또는" 문맥이다. 순수 분기 둘이 `kind`에 `const: 'a'`와 `const: 'b'`를 두면 교차는 공집합이 되어 검증기보다 좁은 힌트를 낸다. 게이트가 켜진 조각은 작성자가 "이 분기가 해당한다"고 선언한 것이므로 연언으로 적용한다." (`07-conclusions.md:183`)
+  > 편집자 결정(18C-90): "【추론】 두 허용 집합의 교집합은 원소마다 취한다: `integer ⊂ number`이므로 `number` ∩ `integer` = `integer`이고, `'null'`은 양쪽에 있을 때만 남으며, 순서는 앞 집합의 순서를 따른다." (`reviews/round-18-closing.md:2389`)
+  > 편집자 결정(18C-90): "【추론】 호스트의 게이트 없는 분기의 `type`은 "또는" 문맥이라 존재만 더하고 교차하지 않는다(SCHEMA-008, SCHEMA-044)." (`reviews/round-18-closing.md:2403`)
+  > 반영 칸(union O7·O8, U5): "U5: 유효 목록은 노드마다 유효 스키마 메모에서 파생하고, 좁히지 않으면 `schemaType`과 같은 참조이며, 병합표의 `type` 행은 교집합이다." (`reviews/round-18-owner-answers.md:37`)
 - 상태: 현행
-- 출처: `03-mental-model.md:128-130`(정본), `08-design-a-to-z.md:322-324`, `07-conclusions.md:175-177,183`, `adr/0005-blueprint-analysis-and-node-sharing.md:76`, `05-before-after.md:19,224`, `adr/0005-blueprint-analysis-and-node-sharing.md:96-98,111`, `02-target-overview.md:129-131`
-- 닫은 사람: 원리(`07-conclusions.md:82` 3.9 5항의 읽기, 유효성 키워드의 교차는 도출), 소유자 답(`reviews/round-9-spec.md:23` 축5), 편집자 결정(ADR 0005 §3, `adr/0005-blueprint-analysis-and-node-sharing.md:76`; 정적 연언의 공집합은 청사진 오류)
-- 라운드: 10
-- 까닭: `07-conclusions.md:82`, `07-conclusions.md:183`
+- 출처: `03-mental-model.md:128-130`(정본), `08-design-a-to-z.md:322-324`, `07-conclusions.md:175-177,183`, `adr/0005-blueprint-analysis-and-node-sharing.md:76`, `05-before-after.md:19,224`, `adr/0005-blueprint-analysis-and-node-sharing.md:96-98,111`, `02-target-overview.md:129-131`, `reviews/round-18-closing.md:2389,2403`, `reviews/round-18-owner-answers.md:37`
+- 닫은 사람: 원리(`07-conclusions.md:82` 3.9 5항의 읽기, 유효성 키워드의 교차는 도출), 소유자 답(`reviews/round-9-spec.md:23` 축5), 편집자 결정(ADR 0005 §3, `adr/0005-blueprint-analysis-and-node-sharing.md:76`; 정적 연언의 공집합은 청사진 오류), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-90), 소유자 답(`reviews/round-18-owner-answers.md:37` union O7·O8; `type` 행은 교집합)
+- 라운드: 18
+- 까닭: `07-conclusions.md:82`, `07-conclusions.md:183`, `reviews/round-18-closing.md:2466-2471`, `reviews/round-18-owner-answers.md:37`
 
 ### SCHEMA-009 병합표 — 주석 키워드는 뒤가 앞을 덮는다
 
@@ -224,11 +240,11 @@
 - 결정:
   > 게이트 없는 `oneOf`·`anyOf` 분기는 존재만 더하므로, 그 분기가 공유 노드에 둔 주석·표현·상태 키는 그 노드의 유일한 선언일 때만 쓴다(모두 켜져 있으므로 "뒤가 앞을 덮는다"를 적용하면 값과 무관한 분기의 `title`이 보인다). 게이트 없는 분기 안의 `if/then`도 그 분기의 선언 문맥이므로 `then`의 제약을 본체와 교차하지 않는다. 교차하는 것은 게이트 가진 분기(또는 본체·`allOf`)의 켜진 `then`뿐이다.
 - 보충: 없음
-- 상태: 현행
-- 출처: `03-mental-model.md:138#1-3`(정본), `08-design-a-to-z.md:331`, `adr/0005-blueprint-analysis-and-node-sharing.md:71`, `07-conclusions.md:178`, `reviews/round-12-owner-review.md:252`, `adr/0005-blueprint-analysis-and-node-sharing.md:106`
-- 닫은 사람: 편집자 결정(12라운드, `reviews/round-12-derivation.md:21`; 소유자의 물음 `reviews/round-12-owner-answers.md:22`에 대화로 답함), 편집자 결정(10라운드, `07-conclusions.md:178`; 유일한 선언일 때만)
-- 라운드: 12
-- 까닭: `reviews/round-12-derivation.md:21`
+- 상태: 대체됨(→ SCHEMA-044)
+- 출처: `03-mental-model.md:138#1-3`(정본), `08-design-a-to-z.md:331`, `adr/0005-blueprint-analysis-and-node-sharing.md:71`, `07-conclusions.md:178`, `reviews/round-12-owner-review.md:252`, `adr/0005-blueprint-analysis-and-node-sharing.md:106`, `reviews/round-18-closing.md:213-226`
+- 닫은 사람: 편집자 결정(12라운드, `reviews/round-12-derivation.md:21`; 소유자의 물음 `reviews/round-12-owner-answers.md:22`에 대화로 답함), 편집자 결정(10라운드, `07-conclusions.md:178`; 유일한 선언일 때만), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-09)
+- 라운드: 18
+- 까닭: `reviews/round-12-derivation.md:21`, `reviews/round-18-closing.md:228-232`
 
 ### SCHEMA-015 FE가 서버 스키마에 얹는 키는 그룹 객체 셋 안에만 — 셋 다 검증기 앞에서 지운다
 
@@ -274,12 +290,13 @@
   > - C1은 새 장치 없이 충족된다. 필요한 것은 문서다 — "서버 스키마에 제어 키를 merge하는 방법, 컴포넌트를 `formTypeInputMap`으로 꽂는 방법"을 이행 문서와 배포 문서에 적는다(`00-goals.md` C8).
   > - merge본은 서버의 스키마와 바이트 단위로 같지는 않지만 판정은 같다(같은 설정의 검증기, ADR 0001).
   > - `$ref`로 재사용되는 정의에 merge한 설정은 그 정의가 쓰이는 모든 곳에 적용된다. 위치마다 다르게 주려면 `formTypeInputMap`처럼 데이터 경로로 매칭하는 기존 통로를 쓴다.
-- 보충: 없음
+- 보충:
+  > 편집자 결정(18C-66): "【추론】 merge 안내 문서(SCHEMA-018)에 이 쓰임을 예로 더한다." (`reviews/round-18-closing.md:1868`)
 - 상태: 현행
-- 출처: `adr/0012-fe-overlay.md:30-32`(정본), `00-goals.md:104,111`
-- 닫은 사람: 소유자 답(`reviews/round-2.md:113` C1), 소유자 답(`00-goals.md:111` C8), 편집자 결정(2라운드 ADR 0012 3판, `adr/0012-fe-overlay.md:31-32`; 판정 동일과 `$ref` 정의의 merge)
-- 라운드: 2
-- 까닭: `adr/0012-fe-overlay.md:30`
+- 출처: `adr/0012-fe-overlay.md:30-32`(정본), `00-goals.md:104,111`, `reviews/round-18-closing.md:1868`
+- 닫은 사람: 소유자 답(`reviews/round-2.md:113` C1), 소유자 답(`00-goals.md:111` C8), 편집자 결정(2라운드 ADR 0012 3판, `adr/0012-fe-overlay.md:31-32`; 판정 동일과 `$ref` 정의의 merge), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-66)
+- 라운드: 18
+- 까닭: `adr/0012-fe-overlay.md:30`, `reviews/round-18-closing.md:1870-1871`
 
 ### SCHEMA-019 대체 가능성 — JSON Schema 층의 표현은 예약 층으로 옮길 수 있어야 한다
 
@@ -298,11 +315,11 @@
 - 결정:
   > - merge를 돕는 순수 함수(위치 불일치를 경고하는 helper)를 패키지가 제공할지. Form의 입구와는 무관한 편의다.
 - 보충: 없음
-- 상태: 열림(→ `reviews/round-18-agenda.md:142` 11-11)
-- 출처: `adr/0012-fe-overlay.md:37`(정본)
-- 닫은 사람: 편집자 결정(ADR 0012 3판 미결, `adr/0012-fe-overlay.md:37`)
-- 라운드: 2
-- 까닭: `adr/0012-fe-overlay.md:37`
+- 상태: 대체됨(→ SCHEMA-046)
+- 출처: `adr/0012-fe-overlay.md:37`(정본), `reviews/round-18-closing.md:2124-2127`
+- 닫은 사람: 편집자 결정(ADR 0012 3판 미결, `adr/0012-fe-overlay.md:37`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-78; 소유자 발언 `adr/0012-fe-overlay.md:10`에 기댐)
+- 라운드: 18
+- 까닭: `adr/0012-fe-overlay.md:37`, `reviews/round-18-closing.md:2129-2130`
 
 ### SCHEMA-021 대체됨: FE가 고칠 수 없는 BE 스키마에서 판별식을 찾지 못할 때의 대응(ADR 0012 남는 것)
 
@@ -427,99 +444,99 @@
 - 결정:
   > | `$ref` 재귀에서 조각의 정적 열거가 끝나는 규칙(오늘 `$ref` 해석 깊이의 기본값은 1) | `08-design-a-to-z.md:451`(§15), `adr/0005-blueprint-analysis-and-node-sharing.md:131` | PR-1 | 실행 확인 |
 - 보충: 없음
-- 상태: 중복(→ BLUEPRINT-024)
-- 출처: `reviews/round-18-agenda.md:13`(정본), `05-before-after.md:30`
-- 닫은 사람: 편집자 결정(17라운드, 18라운드 안건으로 이관, `reviews/round-18-agenda.md:3`)
-- 라운드: 17
-- 까닭: `reviews/round-18-agenda.md:13`
+- 상태: 중복(→ BLUEPRINT-030)
+- 출처: `reviews/round-18-agenda.md:13`(정본), `05-before-after.md:30`, `reviews/round-18-closing.md:15-33,43-51`
+- 닫은 사람: 편집자 결정(17라운드, 18라운드 안건으로 이관, `reviews/round-18-agenda.md:3`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-01)
+- 라운드: 18
+- 까닭: `reviews/round-18-agenda.md:13`, `reviews/round-18-closing.md:35-41`
 
 ### SCHEMA-031 열림: 값 union과 다중 `type` 슬롯
 
 - 결정:
   > | 값 union과 다중 `type` 슬롯(`type: ['string', 'number']`, 원시 타입끼리의 `anyOf`, `oneOf: [string, object]`) | `08-design-a-to-z.md:451`(§15), `adr/0005-blueprint-analysis-and-node-sharing.md:129` | PR-1 | 설계 결정 |
 - 보충: 없음
-- 상태: 중복(→ BLUEPRINT-023)
-- 출처: `reviews/round-18-agenda.md:14`(정본), `08-design-a-to-z.md:81`
-- 닫은 사람: 편집자 결정(17라운드, 18라운드 안건으로 이관, `reviews/round-18-agenda.md:3`)
-- 라운드: 17
-- 까닭: `reviews/round-18-agenda.md:14`
+- 상태: 중복(→ BLUEPRINT-031)
+- 출처: `reviews/round-18-agenda.md:14`(정본), `08-design-a-to-z.md:81`, `reviews/round-18-closing.md:57-82`
+- 닫은 사람: 편집자 결정(17라운드, 18라운드 안건으로 이관, `reviews/round-18-agenda.md:3`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-02)
+- 라운드: 18
+- 까닭: `reviews/round-18-agenda.md:14`, `reviews/round-18-closing.md:84-91`
 
 ### SCHEMA-032 열림: `patternProperties`와 스키마 값 `additionalProperties`(동적 키의 노드화 여부)
 
 - 결정:
   > | `patternProperties`와 스키마 값 `additionalProperties`(동적 키의 노드화 여부) | `08-design-a-to-z.md:451`(§15) | PR-1 | 설계 결정 |
 - 보충: 없음
-- 상태: 열림(→ `reviews/round-18-agenda.md` §1, :16)
-- 출처: `reviews/round-18-agenda.md:16`(정본), `08-design-a-to-z.md:89`
-- 닫은 사람: 편집자 결정(17라운드, 18라운드 안건으로 이관, `reviews/round-18-agenda.md:3`)
-- 라운드: 17
-- 까닭: `reviews/round-18-agenda.md:16`
+- 상태: 대체됨(→ SCHEMA-040)
+- 출처: `reviews/round-18-agenda.md:16`(정본), `08-design-a-to-z.md:89`, `reviews/round-18-closing.md:116-120`
+- 닫은 사람: 편집자 결정(17라운드, 18라운드 안건으로 이관, `reviews/round-18-agenda.md:3`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-04)
+- 라운드: 18
+- 까닭: `reviews/round-18-agenda.md:16`, `reviews/round-18-closing.md:122-124`
 
 ### SCHEMA-033 열림: 노드의 `required` 표시가 켜진 `then`을 반영하는 규칙
 
 - 결정:
   > | 노드의 `required` 표시가 켜진 `then`을 반영하는 규칙 | `08-design-a-to-z.md:451`(§15) | PR-1 | 설계 결정 |
 - 보충: 없음
-- 상태: 열림(→ `reviews/round-18-agenda.md` §1, :18)
-- 출처: `reviews/round-18-agenda.md:18`(정본)
-- 닫은 사람: 편집자 결정(17라운드, 18라운드 안건으로 이관, `reviews/round-18-agenda.md:3`)
-- 라운드: 17
-- 까닭: `reviews/round-18-agenda.md:18`
+- 상태: 대체됨(→ SCHEMA-041)
+- 출처: `reviews/round-18-agenda.md:18`(정본), `reviews/round-18-closing.md:152-159`
+- 닫은 사람: 편집자 결정(17라운드, 18라운드 안건으로 이관, `reviews/round-18-agenda.md:3`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-06)
+- 라운드: 18
+- 까닭: `reviews/round-18-agenda.md:18`, `reviews/round-18-closing.md:161-164`
 
 ### SCHEMA-034 열림: 같은 가상 이름을 다른 `fields`로 적은 `options.virtual` 항목
 
 - 결정:
   > | 같은 가상 이름을 다른 `fields`로 적은 `options.virtual` 항목(정해지면 청사진 오류 코드가 생길 수 있음) | `reviews/raw-round17-convergence.md:77`(R15-10), `reviews/raw-round17-onerror.md` §5의 미정 행 | PR-1 | 설계 결정 |
 - 보충: 없음
-- 상태: 열림(→ `reviews/round-18-agenda.md` §1, :19)
-- 출처: `reviews/round-18-agenda.md:19`(정본), `08-design-a-to-z.md:331#10`
-- 닫은 사람: 편집자 결정(17라운드, 18라운드 안건으로 이관, `reviews/round-18-agenda.md:3`)
-- 라운드: 17
-- 까닭: `reviews/round-18-agenda.md:19`
+- 상태: 대체됨(→ SCHEMA-042)
+- 출처: `reviews/round-18-agenda.md:19`(정본), `08-design-a-to-z.md:331#10`, `reviews/round-18-closing.md:170-174`
+- 닫은 사람: 편집자 결정(17라운드, 18라운드 안건으로 이관, `reviews/round-18-agenda.md:3`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-07)
+- 라운드: 18
+- 까닭: `reviews/round-18-agenda.md:19`, `reviews/round-18-closing.md:176-180`
 
 ### SCHEMA-035 열림: 옮길 잎 교차 함수(`intersectConst`·`intersectPattern`)의 뜻
 
 - 결정:
   > | 옮길 잎 교차 함수의 뜻. `intersectConst`는 참조로 비교해 구조가 같은 객체·배열 `const`를 충돌로 던지고, `intersectPattern`은 두 패턴을 같은 자리의 전방 탐색으로 이어 두 패턴을 모두 만족하는 문자열(`'ab'`, `'Abc123'`)을 거부하며 역참조와 같은 이름의 캡처 그룹에서 깨진다. 기존 시험이 이 결함을 단언한다. `const`의 동등 판정, `pattern` 연언의 표현(정규식 하나인가 목록인가), 레거시의 옛 `intersect*Schema`가 옛 함수를 계속 쓰는지, 09 §4.3의 '그대로 산다'에서 뺄 단언(외부 점검 codex·antigravity, 검증자 실행 확인) | `08-design-a-to-z.md:571`(§17.2), `:324`(§9), `09-landing-and-test-strategy.md:158`(§4.3), `src/helpers/jsonSchema/processAllOfSchema/intersectSchema/utils/intersectConst.ts:23`, `intersectPattern.ts:21`, `utils/__tests__/intersectPattern.test.ts:13` | PR-1 | 설계 결정 |
 - 보충: 없음
-- 상태: 열림(→ `reviews/round-18-agenda.md` §1, :21)
-- 출처: `reviews/round-18-agenda.md:21`(정본), `08-design-a-to-z.md:324`
-- 닫은 사람: 편집자 결정(18라운드 안건, 외부 점검 반영 `reviews/round-18-agenda.md:7`)
+- 상태: 대체됨(→ SCHEMA-043, TEST-068)
+- 출처: `reviews/round-18-agenda.md:21`(정본), `08-design-a-to-z.md:324`, `reviews/round-18-closing.md:186-201`
+- 닫은 사람: 편집자 결정(18라운드 안건, 외부 점검 반영 `reviews/round-18-agenda.md:7`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-08)
 - 라운드: 18
-- 까닭: `reviews/round-18-agenda.md:21`
+- 까닭: `reviews/round-18-agenda.md:21`, `reviews/round-18-closing.md:203-207`
 
 ### SCHEMA-036 열림: 같은 호스트의 `oneOf`와 `anyOf` 분기의 동순위
 
 - 결정:
   > | 같은 호스트의 `oneOf`와 `anyOf` 분기의 동순위. 키워드 순위가 둘을 한 순위로 두어 `oneOf[i]`와 `anyOf[i]`의 자리가 같다. 주석 키의 나중 승, 같은 대상 규칙의 같은 층 동점, 공유 충돌의 '앞선 종류', 터미널 전략의 '나중 것', 호스트 바퀴의 평가 순서가 모두 이 순서에 기댄다(오늘은 `oneOf` 먼저)(외부 점검 codex) | `08-design-a-to-z.md:176`(§5), `02-target-overview.md:124`(§2.1), `03-mental-model.md:126`(§4), `adr/0002-guard-fragment-model.md:59`, `adr/0005-blueprint-analysis-and-node-sharing.md:70`·`:94`, `src/core/nodes/ObjectNode/strategies/BranchStrategy/BranchStrategy.ts:450-451` | PR-1, PR-2 | 설계 결정 |
 - 보충: 없음
-- 상태: 열림(→ `reviews/round-18-agenda.md` §1, :23)
-- 출처: `reviews/round-18-agenda.md:23`(정본), `03-mental-model.md:126`
-- 닫은 사람: 편집자 결정(18라운드 안건, 외부 점검 반영 `reviews/round-18-agenda.md:7`)
+- 상태: 대체됨(→ FRAGMENT-049)
+- 출처: `reviews/round-18-agenda.md:23`(정본), `03-mental-model.md:126`, `reviews/round-18-closing.md:238-241`
+- 닫은 사람: 편집자 결정(18라운드 안건, 외부 점검 반영 `reviews/round-18-agenda.md:7`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-10)
 - 라운드: 18
-- 까닭: `reviews/round-18-agenda.md:23`
+- 까닭: `reviews/round-18-agenda.md:23`, `reviews/round-18-closing.md:243-245`
 
 ### SCHEMA-037 열림: 게이트 없는 분기의 선언이 터미널 전략과 `options` 병합에 드는가
 
 - 결정:
   > | 게이트 없는 분기의 선언이 터미널 전략과 `options` 병합에 드는가. 표현 키는 유일한 선언일 때만 쓰는데 터미널 판정은 켜진 선언을 모두 센다. 본체와 게이트 없는 `oneOf` 분기가 같은 객체를 선언하고 분기에만 인라인 입력이 있으면 노드는 터미널로 정해지는데 유효 스키마에는 그 입력이 없다(외부 점검의 검증자, 개연) | `08-design-a-to-z.md:331`(§9), `:193`(§6), `02-target-overview.md:138`(§2.1), `adr/0002-guard-fragment-model.md:61` | PR-1 | 설계 결정 |
 - 보충: 없음
-- 상태: 열림(→ `reviews/round-18-agenda.md` §1, :24)
-- 출처: `reviews/round-18-agenda.md:24`(정본), `08-design-a-to-z.md:331`
-- 닫은 사람: 편집자 결정(18라운드 안건, 외부 점검 반영 `reviews/round-18-agenda.md:7`)
+- 상태: 대체됨(→ NODE-042, SCHEMA-044)
+- 출처: `reviews/round-18-agenda.md:24`(정본), `08-design-a-to-z.md:331`, `reviews/round-18-closing.md:213-226`
+- 닫은 사람: 편집자 결정(18라운드 안건, 외부 점검 반영 `reviews/round-18-agenda.md:7`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-09)
 - 라운드: 18
-- 까닭: `reviews/round-18-agenda.md:24`
+- 까닭: `reviews/round-18-agenda.md:24`, `reviews/round-18-closing.md:228-232`
 
 ### SCHEMA-038 열림: 켜진 조각과의 런타임 교차가 공집합일 때 공개 `node.jsonSchema`가 싣는 것
 
 - 결정:
   > | 켜진 조각과의 런타임 교차가 공집합일 때 공개 `node.jsonSchema`가 싣는 것(`enum`은 빈 배열인가, `const` 충돌의 표현, 범위의 역전). PR-1의 병합표 시험이 이 결과를 단언한다(외부 점검의 검증자, 개연) | `adr/0005-blueprint-analysis-and-node-sharing.md:76`(§3), `08-design-a-to-z.md:324`(§9), `09-landing-and-test-strategy.md:168`(§4.4) | PR-1 | 설계 결정 |
 - 보충: 없음
-- 상태: 열림(→ `reviews/round-18-agenda.md` §1, :26)
-- 출처: `reviews/round-18-agenda.md:26`(정본), `08-design-a-to-z.md:324`
-- 닫은 사람: 편집자 결정(18라운드 안건, 외부 점검 반영 `reviews/round-18-agenda.md:7`)
+- 상태: 대체됨(→ SCHEMA-045)
+- 출처: `reviews/round-18-agenda.md:26`(정본), `08-design-a-to-z.md:324`, `reviews/round-18-closing.md:251-259`
+- 닫은 사람: 편집자 결정(18라운드 안건, 외부 점검 반영 `reviews/round-18-agenda.md:7`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-11)
 - 라운드: 18
-- 까닭: `reviews/round-18-agenda.md:26`
+- 까닭: `reviews/round-18-agenda.md:26`, `reviews/round-18-closing.md:261-264`
 
 ### SCHEMA-039 병합표 — `options`·`presentation`은 그룹 단위 깊은 병합(터미널 전략 문장이 없는 08 §9 행)
 
@@ -536,3 +553,119 @@
 - 닫은 사람: 소유자 답(`reviews/round-10-owner-answers.md:27` E-18), 소유자 답(`reviews/round-12-owner-answers.md:24` §9 `&options`), 소유자 답(`reviews/round-14-owner-answers.md:17` O-11), 17라운드 스웜 수렴(편집자 결정, `08-design-a-to-z.md:327`)
 - 라운드: 17
 - 까닭: `reviews/round-10-owner-answers.md:27`, `reviews/round-14-owner-answers.md:17`
+- 충돌:
+  > `08-design-a-to-z.md:331`의 "같은 가상 이름을 다른 `fields`로 적은 경우는 슬라이스 1 전 설계 항목이다"는 18라운드 결정과 다르다: `fields`가 순서까지 같아야 하고 다르면 게이트와 무관하게 청사진 오류다(SCHEMA-042, ERROR-192). 18라운드 결정이 이긴다(`reviews/round-18-closing.md:170-171`).
+
+### SCHEMA-040 동적 키(`patternProperties`·스키마 값 `additionalProperties`)는 노드가 되지 않는다 — `extras`로 남고 맵 편집은 터미널 입력으로
+
+- 결정:
+  > 【추론】 동적 키는 노드가 되지 않는다.
+  > 【추론】 두 키워드(`patternProperties`, 스키마 값 `additionalProperties`)는 검증기에만 간다.
+  > 【추론】 선언되지 않은 키의 값은 호스트의 `extras`에 받은 순서대로 남아 방출된다.
+  > 【추론】 입력은 그려지지 않는다.
+  > 【추론】 맵을 편집하려면 작성자가 그 객체를 터미널로 두고(`options.terminal: true` 또는 인라인 입력) 값 전체를 편집하는 입력을 쓴다.
+- 보충: 없음
+- 상태: 현행
+- 출처: `reviews/round-18-closing.md:116-120`(정본)
+- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-04)
+- 라운드: 18
+- 까닭: `reviews/round-18-closing.md:122-124`
+
+### SCHEMA-041 `required` 표시는 부모 유효 스키마의 `required`(연언 문맥의 켜진 조각 합집합) — 표시만 하고 배달 집합에 듦
+
+- 결정:
+  > 【추론】 노드의 `required` 표시는 부모 호스트의 유효 스키마 `required`에 그 이름이 드는가로 정한다.
+  > 【추론】 호스트의 유효 스키마 `required`는 병합표의 검증 키워드 규칙대로, 연언 문맥의 켜진 조각이 가진 `required`의 합집합이다.
+  > 【추론】 연언 문맥은 본체, 게이트 없는 `allOf` 항목, 켜진 게이트 조각(`then`·`else`, `controls.active` 조각, 변환된 분기)이다.
+  > 【추론】 게이트 없는 `oneOf`·`anyOf` 분기와 그 안의 `then`은 더하지 않는다.
+  > 【추론】 표시만 할 뿐 형상(`active`)과 검증을 바꾸지 않는다.
+  > 【추론】 `then.required`로 필드를 켜지 않는다(이주 24행).
+  > 【추론】 부모의 유효 스키마가 바뀌어 표시가 뒤집힌 자식은 유효 스키마가 바뀐 노드와 같이 배달 집합에 든다.
+- 보충: 없음
+- 상태: 현행
+- 출처: `reviews/round-18-closing.md:152-158`(정본)
+- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-06)
+- 라운드: 18
+- 까닭: `reviews/round-18-closing.md:161-164`
+
+### SCHEMA-042 같은 가상 이름의 선언은 `fields`가 순서까지 같아야 한다 — 다르면 게이트와 무관하게 청사진 오류
+
+- 결정:
+  > 【추론】 한 호스트에서 같은 가상 이름의 선언이 여럿이면(본체·조각 어디든) `fields`가 순서까지 같아야 한다.
+  > 【추론】 다르면 게이트와 무관하게 청사진 오류다.
+  > 【추론】 가상 노드의 신원은 이름이고 값은 `fields` 순서의 튜플이라, 조각 집합에 따라 자식과 튜플 모양이 바뀌는 노드를 두지 않는다.
+  > 【추론】 항목의 나머지 키(주석·`options`·`presentation`)는 그 가상 노드의 선언으로서 공유 노드와 같은 병합표를 따른다.
+- 보충: 없음
+- 상태: 현행
+- 출처: `reviews/round-18-closing.md:170-173`(정본)
+- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-07)
+- 라운드: 18
+- 까닭: `reviews/round-18-closing.md:176-180`
+
+### SCHEMA-043 잎 교차 함수의 뜻 — `const`는 깊은 비교, `pattern`은 첫 패턴 + `allOf` 목록, `intersectPattern`은 옮기지 않음, 레거시의 `const`도 깊은 비교
+
+- 결정:
+  > 【추론】 (1) `const`의 동등은 깊은 구조 비교(JSON 값 동등)다.
+  > 【추론】 같은 계열 `intersectEnum`의 깊은 경로처럼 `@winglet/common-utils/object`의 `equals`를 쓴다.
+  > 【추론】 원시값은 `===`다.
+  > 【추론】 (2) `pattern`은 정규식 하나로 합치지 않는다.
+  > 【추론】 같은 문자열은 하나로 줄인다.
+  > 【추론】 서로 다른 패턴이 둘 이상이면 전순서의 첫 패턴을 `pattern`에 두고, 나머지는 순서대로 유효 스키마의 `allOf`에 `{ "pattern": p }` 항목으로 싣는다(표준 JSON Schema의 연언, 뜻이 정확함).
+  > 【추론】 패턴의 공집합은 판정하지 않으므로 청사진 오류가 생기지 않는다.
+  > 【추론】 새 fractal에는 `intersectPattern`을 옮기지 않는다.
+  > 【추론】 (3) 레거시의 옛 `intersect*Schema`는 옮긴 `intersectConst`(깊은 비교)를 쓰고, 옛 `intersectPattern`은 레거시에 남겨 그대로 쓴다.
+  > 【추론】 레거시는 PR-7에서 지워진다.
+  > 【추론】 그래서 레거시의 `const` 비교는 깊은 비교로 바뀌며(결함 수정), 이는 옛 `intersect*Schema`가 옛 동작을 PR-7까지 지킨다는 규칙(LANDING-061)의 예외다.
+- 보충: 없음
+- 상태: 현행
+- 출처: `reviews/round-18-closing.md:186-196`(정본)
+- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-08)
+- 라운드: 18
+- 까닭: `reviews/round-18-closing.md:203-207`
+
+### SCHEMA-044 게이트 없는 분기가 공유 노드에 둔 주석·표현·상태 키·`options`는 유일한 선언일 때만 — 분기 안 `then`은 교차하지 않음
+
+- 결정:
+  > 【추론】 (5) 병합도 같은 선언 집합: 같은 까닭으로, 게이트 없는 분기가 공유 노드에 둔 주석·표현·상태 키와 `options`는 그 노드의 유일한 선언일 때만 유효 스키마에 쓴다.
+  > 게이트 없는 분기 안의 `if/then`도 그 분기의 선언 문맥이므로 `then`의 제약을 본체와 교차하지 않는다(SCHEMA-014 그대로).
+  > 【추론】 전략과 유효 스키마가 같은 선언 집합을 본다.
+  > 【추론】 `options.virtual`의 항목은 선언이므로 존재를 더한다.
+- 보충: 없음
+- 상태: 현행
+- 출처: `reviews/round-18-closing.md:223-226`(정본), `03-mental-model.md:138`(SCHEMA-014의 정본)
+- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-09)
+- 라운드: 18
+- 까닭: `reviews/round-18-closing.md:228-232`
+
+### SCHEMA-045 런타임 교차 공집합의 표현 — `enum: []`로 통일, 범위 역전은 그대로, 같은 활성 집합이면 같은 참조
+
+- 결정:
+  > 【추론】 런타임 교차의 공집합은 던지지 않고 표준 JSON Schema로 적는다.
+  > 【추론】 `enum`끼리의 공집합은 `enum: []`로 적는다.
+  > 【추론】 서로 다른 `const`의 충돌은 `const`를 빼고 `enum: []`로 적는다.
+  > 【추론】 선택할 값이 없음을 `enum` 하나로 통일한다.
+  > 【추론】 범위의 역전(`minimum` > `maximum` 등)은 교차한 값 그대로 둔다.
+  > 【추론】 `const`와 `enum` 사이처럼 다른 키워드끼리의 공집합은 판정하지 않는다(각 키워드를 따로 교차).
+  > 【추론】 잎 함수의 공집합 표시는 정적 연언에서는 청사진 오류로, 런타임에서는 위 표현으로 바뀐다.
+  > 【추론】 같은 활성 집합이면 같은 참조를 돌려준다(메모).
+  > 【추론】 PR-1 병합표 시험(`09-landing-and-test-strategy.md:168`)이 이 표현을 단언한다.
+- 보충: 없음
+- 상태: 현행
+- 출처: `reviews/round-18-closing.md:251-259`(정본)
+- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-11)
+- 라운드: 18
+- 까닭: `reviews/round-18-closing.md:261-264`
+
+### SCHEMA-046 merge를 돕는 순수 함수와 위치 불일치 경고 helper는 제공하지 않는다 — merge는 소비자가, 방법은 이주 안내와 배포 문서(PR-8)
+
+- 결정:
+  > 【추론】 제공하지 않는다.
+  > 【추론】 서버 스키마에 예약 층 키를 얹는 merge는 소비자가 자기 방식으로 한다.
+  > 【추론】 패키지는 그 방법을 이주 안내와 배포 문서에 적는 것까지만 한다(PR-8).
+  > 【추론】 위치 불일치 경고용 helper도 두지 않는다.
+- 보충: 없음
+- 상태: 현행(부정 결정)
+- 출처: `reviews/round-18-closing.md:2124-2127`(정본)
+- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-78)
+- 라운드: 18
+- 까닭: `reviews/round-18-closing.md:2129-2130`
