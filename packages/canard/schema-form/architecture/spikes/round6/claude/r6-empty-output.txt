@@ -1,0 +1,3 @@
+E12 select-guard, load {zzz:1} -> active ["A"] emit {"a":"A","zzz":1}
+E13 root {a}, user clears a to "" -> getValue() "<undefined>" raw {"a":""}
+E14 {kind:cat, meow:loud}, user clears kind -> emit "<undefined>" raw {"kind":"","meow":"loud"}
