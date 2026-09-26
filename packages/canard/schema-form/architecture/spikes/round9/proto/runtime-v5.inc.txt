@@ -1,0 +1,97 @@
+
+// Canonical extension source; make-v5.mjs appends this to the generated module.
+/** Visit allocated nodes in document order. */
+function visitNodes(node, fn) {
+  fn(node);
+  for (const child of node.children ?? []) visitNodes(child, fn);
+}
+
+/** Staged raw view for reserved expressions; JSON Schema guards use projected G. */
+function stagedTree(node) {
+  if (node.kind === 'leaf' || rawOf(node) !== undefined) return rawOf(node);
+  if (node.kind === 'array') return node.children.map(stagedTree);
+  const value = {};
+  for (const child of node.children) {
+    const v = stagedTree(child);
+    if (v !== undefined) value[child.name] = v;
+  }
+  return Object.assign(value, extrasOf(node));
+}
+const expressionView = root => stagedTree(root);
+const evalExpression = (expression, value) => typeof expression === 'function' ? expression(value) : expression;
+const controlKeys = ['active', 'visible', 'readOnly', 'disabled'];
+
+/** Fragment gates and, in shape mode, node controls gate the entire subtree. */
+function existsInShape(node) {
+  for (let n = node; n !== null; n = n.parent) {
+    if (n.conditional && !n.actNext) return false;
+    if (SWITCHES.NODE_GATE_UNIT === 'shape' && n.controlNext?.active === false) return false;
+  }
+  return true;
+}
+
+/** Caller loads start a new lifetime; runtime writes compare the previous commit. */
+function wasInShape(node) {
+  for (let n = node; n !== null; n = n.parent) if (isLoaded(n)) return false;
+  return node.shapePresent;
+}
+
+/** Clearing an object consumes fill for its descendants in the same settle. */
+function clearedInTree(root, node) {
+  for (let n = node; n !== null; n = n.parent) if (root.cleared.has(n)) return true;
+  return false;
+}
+
+/** control.foo wins over &foo on the same declaration. */
+export function controlOption(schema, key) {
+  return schema?.control && Object.hasOwn(schema.control, key) ? schema.control[key] : schema?.[`&${key}`];
+}
+
+/** Omitted keys do not override inherited values. */
+function combineControls(layers, value) {
+  const result = { active: true, visible: true, readOnly: false, disabled: false };
+  for (const layer of layers) {
+    for (const key of controlKeys) {
+      const expr = controlOption(layer, key) ?? layer?.[key];
+      if (expr === undefined) continue;
+      const v = !!evalExpression(expr, value);
+      result[key] = SWITCHES.CONTROL_COMBINE === 'nearest' ? v :
+        key === 'active' || key === 'visible' ? result[key] && v : result[key] || v;
+    }
+  }
+  return result;
+}
+
+/** Compute scope controls without writing values. */
+function updateControls(root) {
+  const value = expressionView(root);
+  const walk = (node, inherited) => {
+    const layers = [...inherited];
+    for (const scope of node.controlLayers) if (scope.when(value)) layers.push(scope.schema);
+    if (node.parent) {
+      const children = controlOption(node.parent.schema, 'children');
+      if (children?.[node.name]) layers.push(children[node.name]);
+    }
+    layers.push(node.schema);
+    node.controlNext = combineControls(layers, value);
+    for (const child of node.children ?? []) walk(child, layers);
+  };
+  walk(root, [root.options.form ?? {}]);
+}
+
+/** Schema-mode full traversal: this spike does not build a dependency index. */
+function markAllFresh(node) {
+  node.dirty = true;
+  if (!node.children) return;
+  node.dirtyKids = node.children.slice();
+  for (const child of node.children) markAllFresh(child);
+}
+
+/** Configure schema-mode bookkeeping before loading values. */
+export function configureSchema(root, schema, options = {}) {
+  ensureRoot(root);
+  root.schemaMode = true;
+  root.schema = schema;
+  Object.assign(root.options, options);
+  return root;
+}

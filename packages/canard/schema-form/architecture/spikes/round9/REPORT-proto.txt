@@ -1,0 +1,387 @@
+ROUND 9 — Q8 실행 프로토타입 loop-v5
+
+범위: reviews/round-9-spec.md §3, §4 Q8 및 §7의 항목 1·2·6 정정입니다.
+기준: round8/proto/loop-v4e.mjs, make-v4e.mjs, r8.mjs, regress/,
+03-mental-model.md §2–§4, adr/0007-settle-cycle.md입니다.
+이 보고서는 구현 선택과 관측 결과를 기록합니다. 설계 채택 여부는 판정하지 않습니다.
+기존 round9/REPORT.txt, oneof-if.mjs, oneof-if-output.txt는 수정하지 않았습니다.
+
+파일 (아래 경로는 모두 spikes/round9/ 기준입니다)
+  PLAN.txt                         범위, 계획, 절차 조정 기록입니다.
+  REPORT-proto.txt                 이 보고서입니다.
+  proto/make-v5.mjs                v4e 원문에 59개 검증된 치환을 적용합니다.
+  proto/runtime-v5.inc.txt         make-v5가 붙이는 제어/표현식 보조 코드의 정본입니다.
+  proto/loop-v5.mjs                생성된 독립 ES module입니다.
+  proto/build-v5.mjs               JSON Schema 조각 및 예약 키를 실행 트리로 연결합니다.
+  r9.mjs                          Q8의 7개 프로브군, 21개 관측행, 108개 실행 단언입니다.
+  r9-output.txt                   JSON Lines 실행 결과입니다.
+  r9b.mjs                         §7 정정 프로브 13개, 실행 단언 52개입니다.
+  r9b-output.txt                  정정 프로브의 JSON Lines 실행 결과입니다.
+  regress/make-port.mjs            이전 하니스의 경로·삭제 API·기대값 변경을 명시합니다.
+  regress/selfcheck-v5.mjs         기존 63개 실행 단언을 이식한 하니스입니다.
+  regress/r7-port.mjs              round8/regress/r7-port.mjs의 v5 이식본입니다.
+  regress/r8-port.mjs              추가 비교를 위해 r8.mjs 전체를 이식했습니다.
+  regress/precheck.mjs             v4e의 selection 부재 단언입니다. 의도적으로 실패합니다.
+  regress/precheck-output.txt      위 단언의 예상 실패 기록입니다.
+  regress/edge-cases.mjs           추가 경계 단언 26개입니다.
+  regress/edge-cases-output.txt    추가 경계 단언 결과입니다.
+  regress/run.mjs                  구문·재생성·원본 대조·이식 회귀를 실행합니다.
+  regress/selfcheck-v4e-new.txt    원본 기본 모드: 60 PASS, 기존 3 FAIL입니다.
+  regress/selfcheck-v4e-old.txt    원본 비교 모드: 63 PASS입니다.
+  regress/selfcheck-v5-new.txt     이식 기본 모드: 63 PASS입니다.
+  regress/selfcheck-v5-old.txt     이식 비교 모드: 63 PASS입니다.
+  regress/r7port-new-output.txt   r7 이식 기본 모드의 출력입니다.
+  regress/r7port-old-output.txt   r7 이식 비교 모드의 출력입니다.
+  regress/r8port-output.txt        31개 구성의 R8 181행 및 SUMMARY 41행입니다.
+  regress/CHANGES.txt              바뀐 단언·관측행마다 이유를 기록합니다.
+  regress/RESULTS.txt              전체 검증 결과의 JSON입니다.
+
+재현 (작업 디렉터리: spikes/round9/)
+  node proto/make-v5.mjs
+  node r9.mjs
+  node r9b.mjs
+  node regress/run.mjs
+
+환경: Node.js v26.8.2, 기존 schema-form-ajv8-plugin에서 해석한 AJV 8.17.1입니다.
+새 의존성을 설치하지 않았습니다. 파일 I/O, 프로세스, 단언에는 Node 내장 모듈을 씁니다.
+AJV 연결은 round8의 build-v4e.mjs와 같은 Ajv2020 및 strict:false 설정입니다.
+검증은 수정한 Node spike를 실행합니다. 제품 소스 빌드·React 렌더 테스트·배포는
+실행하지 않았습니다. 계획/검증 원장은 사용자 범위 및 .md 금지에 맞춰 .txt에 두었습니다.
+
+================================================================================
+1. 구현 (LV5 = proto/loop-v5.mjs, B5 = proto/build-v5.mjs)
+================================================================================
+
+파생 방식
+  문서화된 수동 사본이 아니라 정확 문자열 치환 스크립트 방식입니다.
+  각 치환 대상은 정확히 한 번 나타나야 합니다. 구간 치환도 경계로 얻은 원문을
+  동일한 유일 일치 검사로 치환합니다. 마지막에 runtime-v5.inc.txt를 붙입니다.
+  regress/run.mjs는 실행 전 파일과 재생성 파일의 바이트 일치를 단언합니다.
+  정본은 make-v5.mjs와 runtime-v5.inc.txt입니다. loop-v5.mjs 직접 수정은 없습니다.
+
+| 항목 | 구현 위치 | 구현한 동작 |
+| 상태 칸 | LV5:138 | raw/extras만 남겼습니다. selection 필드·API·점수·동점 코드가 없습니다. |
+| 조각 | LV5:382, B5:33 | guard 없는 조각은 참입니다. if는 AJV에 넘기고 &active는 함수/상수로 평가합니다. |
+| union 경고 | B5:63 | dev 모드에서 oneOf/anyOf 분기의 if 및 else:false 유무만 검사합니다. 원문은 바꾸지 않습니다. |
+| 예약 키 연결 | B5:98 | derived는 from 경로의 emit edge로 자기 노드를 쓰고, injectTo는 자기 emit edge로 to 경로를 씁니다. |
+| 채움 원천 | LV5:1119 | 활성 선언의 &default/control.default가 표준 default보다 우선합니다. 반환값이 undefined여도 표준 default로 되돌아가지 않습니다. |
+| 채움 사건 | LV5:1333,1403,1605,1762 | 파생 안정 후 후보를 계획하고 shape 밖 후보를 철회합니다. 공동 수렴 후 최종 born을 한 번 확정합니다. 호출자 load는 새 수명입니다. |
+| 에지 기준 | LV5:1193 | 기본값은 v4e의 entry 기준, 값 비교, LOAD_EDGE=fire입니다. |
+| 파생 순서/경합 | LV5:1352 | 후보를 계산 완료 스냅샷에서 모은 뒤 대상별 승자를 하나만 적용합니다. |
+| load 억제 | LV5:675,1550 | 로드별 disableAutomaticWrites가 fill/derived/injectTo/clearValue를 모두 억제합니다. |
+| 예산/커밋 | LV5:1550,1469 | cap 라운드는 계산·쓰기 필요성 확인만 합니다. base면 호출자 쓰기 직후 스냅샷을 복원·재계산합니다. |
+| 제어 결합 | LV5:1779,1794 | Form → root/조상 → 조각 범위 → 부모 children의 이름별 선언 → 노드 자신 순으로 명시된 값을 결합합니다. |
+
+스위치 (LV5:19)
+| 스위치 | 기본값 | 비교값 |
+| DERIVE_ORDER | ['derived','injectTo','clearValue'] | 세 단계의 다른 순서 |
+| WRITE_CONFLICT | last | first |
+| CONTROL_COMBINE | and-or | nearest |
+| NODE_GATE_UNIT | shape | raw (정정 전 노드 게이트의 채움 동작) |
+| COMMIT_ON_BUDGET | base | lastRound |
+| ROUND_CAP | 25 | 프로브에서는 5, 6도 실행합니다. |
+| DEFAULT_WINNER | last | first; 표현식/표준 키 우선순위는 유지합니다. |
+
+  v4e 회귀를 비교하기 위한 FINAL_SHAPE, AUTO_SCOPE, EDGE_REF, INJECT_TO_EDGE,
+  LOAD_EDGE, ORDER_HINT, DERIVED_MODE, EDGE_COMPARE, EXTRAS_ORDER도 남아 있습니다.
+  OLD_SWITCHES는 과거 쓰기 모드의 비교값입니다. selection 및 v4e의 default 철회를
+  복원하지 않으므로 old 출력이 과거 모델 전체와 동일하다는 뜻은 아닙니다.
+
+예약 표현식/스코프 표기
+  &default 및 &clearValue: 함수(rootRaw) 또는 상수입니다.
+  &derived: { from:'/dependency', map:value=>result }입니다.
+  &injectTo: { to:'/target', map:value=>result } 또는 그 배열입니다.
+  &children: { childName: { '&readOnly': expression, ... } }입니다.
+  control.foo는 같은 선언 객체의 &foo보다 우선합니다.
+  노드 제어/default/clear 함수는 staged root raw를 읽습니다. 조각의 &active 함수와
+  JSON Schema if 검증기는 해당 호스트의 투영된 G를 읽습니다.
+  조각 범위 제어의 적용 여부를 찾는 보조 predicate는 raw view를 사용합니다.
+  이름별 children 선언은 직접 자식에 붙고, object 자식의 상태 제어는 조상 제어로
+  그 아래에 전달됩니다. 스키마 조각 게이트 자체는 nearest로 다시 켤 수 없습니다.
+
+정착 순서
+  표시 → 계산 → 파생 후보/경합/쓰기 → 전이 채움 → 필요하면 반복 → 커밋 → 통지 → 검증 요청입니다.
+  파생 후보끼리는 같은 라운드의 앞선 쓰기를 읽지 않습니다. 다음 라운드에 관측합니다.
+  같은 종류 안에서는 선언 순서입니다. 동일 대상은 first/last로 하나만 선택합니다.
+  clearValue는 false→true 사건이며, 자기 삭제로 조건이 거짓이 되어도 삭제를 철회하지 않습니다.
+  clearValue가 승리한 노드와 그 하위는 같은 정착에서 채우지 않습니다.
+  채움 후보의 값은 같은 정착 중 다시 평가한 default로 교체하지 않습니다.
+  후보를 만든 정착 안에서 노드가 shape에서 빠지면 해당 후보를 철회합니다.
+  직전 커밋에 이미 있던 raw 및 호출자 입력은 비활성화만으로 철회하지 않습니다.
+  원래 존재하던 노드를 자동 overwrite한 사건은 별도 caller load로 보지 않습니다.
+  unconditional 노드는 overlay가 켜져도 새로 생긴 것으로 보지 않습니다.
+  load 억제는 해당 정착에서 소비됩니다. 나중 사용자 입력에 따른 자동 쓰기는 다시 가능합니다.
+  clear 조건이 true인 채 reset되어도 이 구현에는 새 false→true 에지가 없습니다.
+
+================================================================================
+2. Q8 프로브 결과 (r9-output.txt, 21행 + summary)
+================================================================================
+
+P1 — 채움 (r9.mjs:17)
+| 시점 | 측정한 raw |
+| load, base.default='D' 및 &default=>'E' | base='E' |
+| fragment off인 load | added 없음, fallback='F' |
+| fragment on | added='A', 꺼진 fallback raw='F' 유지 |
+| added 삭제 후 다른 필드 입력 | added 없음 유지 |
+| fragment off→on 재생성 | added='A' |
+| 명시된 '', null, 0, false | 모두 그대로 보존합니다. ''의 emit 제외는 기존 투영입니다. |
+
+P2 — clearValue (r9.mjs:44)
+| 사건 | 관측 |
+| clear false→true | x raw 없음, active=true, visible=true |
+| 무관한 입력 | x 없음 유지 |
+| clear=true 유지 중 x='typed' 입력 | typed 유지 |
+| clear false→true 재발생 | x 없음 |
+| 생성 시 clear=true와 default 동시 존재 | x 없음; default를 채우지 않습니다. |
+
+P3 — union 가드/경고 (r9.mjs:67)
+검증 입력 순서는 올바른 값 {kind:'a',a:'A'}, 누락 {kind:'a'}, 미일치 {kind:'z'}입니다.
+| 키워드 | else:false | emit | dev 경고 수 | AJV 판정 |
+| oneOf | 있음 | {kind:'a',a:'A'} | 0 | true,false,false |
+| oneOf | 없음 | {kind:'a',a:'A'} | 2 | false,true,false |
+| anyOf | 있음 | {kind:'a',a:'A'} | 0 | true,false,false |
+| anyOf | 없음 | {kind:'a',a:'A'} | 2 | true,true,true |
+| 순수 oneOf | 게이트 없음 | {a:'A',b:'B'} | 0 | 폼은 const/enum으로 선택하지 않습니다. |
+| 순수 anyOf | 게이트 없음 | {a:'A',b:'B'} | 0 | 두 선언이 모두 켜집니다. |
+
+P4 — 자식 집합 제어 (r9.mjs:91)
+root readOnly=true, Form disabled=true, fragment visible=false/readOnly=true,
+children.x 잠금/숨김, x 자신의 잠금=false/visible=true를 함께 적용했습니다.
+| CONTROL_COMBINE | x visible/readOnly/disabled | y active | nested readOnly |
+| and-or | false / true / true | false | true |
+| nearest | true / false / false | true | false |
+  두 모드 모두 visible=false인 z의 값 'Z'는 방출됩니다.
+  and-or의 y는 active=false인 load에서 채워지지 않습니다. nearest의 y는 raw='Y'입니다.
+  fragment off 후 x/z는 방출되지 않고 raw는 남습니다.
+  추가 단언에서는 root disabled와 Form readOnly의 반대 배치도 확인했습니다.
+
+P5 — 동일 대상 derived/injectTo (r9.mjs:119)
+derived는 dep=1에서 'D:1', injectTo는 src=2에서 'I:2'를 target에 씁니다.
+| 순서 | last | first |
+| derived → injectTo → clearValue | I:2 | D:1 |
+| injectTo → derived → clearValue | D:1 | I:2 |
+  네 구성 모두 stable입니다. target='manual' 뒤 dep=1 재기록은 manual을 보존하고,
+  dep=3 변경은 D:3으로 바꿉니다. clearValue 순서 변경도 추가 단언에서 확인했습니다.
+
+P6 — disableAutomaticWrites (r9.mjs:139)
+| 항목 | 억제한 load | 후속 동작 |
+| default / &default | 둘 다 없음 | 나중 enable reset에서 D / E |
+| derived / injectTo | 호출자가 준 90 / 80 | src=3 입력 후 6 / 30 |
+| clearValue | 호출자가 준 'loaded' 유지 | true 유지 reset에는 새 에지가 없어 그대로 유지 |
+| active=false 노드 | raw='raw', emit에서 제외 | 억제 대상이 아닌 투영입니다. |
+| 이후 fragment activation | load 때 없음 | later='L' 채움 |
+  per-load false는 Form 기본 disableAutomaticWrites=true를 덮습니다.
+
+P7 — 비수렴 쌍 (r9.mjs:169)
+a는 b+1로 derived, a는 b에 a+1을 injectTo합니다. 시작 raw는 {a:0,b:0}입니다.
+| cap | base 커밋 raw | lastRound 커밋 raw | 상태 |
+| 5 | {a:0,b:0} | {a:4,b:4} | budget-exceeded |
+| 6 | {a:0,b:0} | {a:5,b:5} | budget-exceeded |
+| 25 | {a:0,b:0} | {a:24,b:24} | budget-exceeded |
+  모든 행에서 emit과 커밋 raw가 같습니다. autoAtCommit은 base에서 0건,
+  lastRound에서 2건입니다. dev 모드는 base를 커밋한 뒤 예외를 던집니다.
+
+================================================================================
+3. 회귀와 추가 경계 검사
+================================================================================
+| 하니스 | 실행 결과 |
+| v4e selfcheck new | 60 PASS, 3 FAIL: A4b/A4c/A4-cap; 이전 REPORT.txt와 같습니다. |
+| v4e selfcheck old | 63 PASS |
+| v5 selfcheck new | 63 PASS, 0 FAIL |
+| v5 selfcheck old | 63 PASS, 0 FAIL |
+| Q8 | 108개 단언, 21개 관측행 |
+| §7 정정 | 52개 단언, 13개 프로브, 0 FAIL |
+| 추가 edge-cases | 26개 단언 |
+| r7 port | new 관측행 12개, old 관측행 2개가 바뀌었습니다. |
+| 추가 r8 port | 31개 구성, R8 181행, SUMMARY 41행 중 round8 대비 17행이 바뀌었습니다. |
+| 재생성 | loop-v5 바이트 동일 |
+| 구문 | round9의 모든 .mjs에 node --check 성공 |
+
+변경 단언과 한 줄 이유
+| 기존 단언 | 변경 | 이유 |
+| A3-1-select | 두 분기 모두 유지 | selection 및 선택 API를 제거했습니다. |
+| A3-2 forward default chain | base에서 키 25개 → 1개 | 예산 초과 시 호출자 seed만 커밋합니다. |
+| A3-2 reverse default chain | base에서 키 25개 → 1개 | 같은 base 정책입니다. |
+| A4b | new: emit undefined, c 없음; old: t=from-undefined, c 없음 | 중간 c 채움을 확정하지 않습니다. new의 피드백은 예산 초과 후 빈 base를 커밋합니다. |
+| A4c | host 부분 쓰기 유지 | 원천 값이 같아 재주입하지 않습니다. v4e new의 기존 실패를 갱신했습니다. |
+| A4-cap | 동일 값 쓰기 25 → 1라운드 | 값 변화가 없습니다. v4e new의 기존 실패를 갱신했습니다. |
+
+  disableDefaultInjection 이름은 disableAutomaticWrites로 이식했습니다. 네 기존 채움 억제
+  단언의 결과는 같습니다. 순수 분기의 select 메타데이터는 제거했습니다.
+  r7의 X10/X12 세 행은 과거 입력 행을 보존하지만 SELECT_RULE/TIE_MODE를 설정하지 않습니다.
+  r7과 r8은 원래 관측 출력 하니스입니다. 변경된 모든 관측행의 전후 값 또는 변경 필드와
+  한 줄 이유는 CHANGES.txt에 있습니다. 관측행 수를 테스트 단언 수로 세지 않았습니다.
+
+주요 관측 차이
+  E1: load {}에서 처음 채운 T/E가 뒤 라운드의 E/T로 교체되지 않습니다(3 → 2라운드).
+  X2 entry-scope: listener가 조각을 바꿔도 x='A'가 유지됩니다.
+  X15: 최종 shape 밖의 x 후보와 그 원천에서 나온 y 주입을 철회하며 5라운드에 수렴합니다.
+  X16: edge 두 구성은 25라운드 budget-exceeded 및 빈 base, level 구성은
+       t='from-undefined'에서 2라운드 stable입니다.
+  XA4: write(n,1)의 예산 초과 커밋 값이 25에서 base의 1로 바뀝니다.
+  r8 P3: 기존 최종 조각 default oracle과 생성 시 한 번인 v5 결과가 달라집니다.
+
+추가로 실패를 먼저 재현한 경계
+  - 꺼진 조각의 object 하위 노드에 조기 채움이 일어났습니다. 조상 존재/생성 검사를 추가했습니다.
+  - loaded 값에 대한 자기 의존 clear가 삭제를 철회하며 비수렴했습니다. clear 사건은 철회하지 않습니다.
+  - object clear의 빈 자식 합성이 반복 쓰기로 판정됐습니다. absent 판정과 하위 채움 억제를 적용했습니다.
+  - 부모 object default보다 자식 default가 먼저 들어갔습니다. 전이를 부모 먼저 순회합니다.
+  - 활성 overlay의 &default보다 본체 default가 먼저 선택됐습니다. 활성 선언별 표현식 원천을 수집합니다.
+  같은 재현 단언이 현재 edge-cases.mjs에서 통과합니다.
+
+================================================================================
+4. 측정 범위와 미결
+================================================================================
+  - 표현식 문자열 파서/의존성 추적기는 없습니다. 함수와 단일 from 경로가 표현식 스텁입니다.
+  - JSON Schema의 const/enum/required는 AJV가 해석합니다. 폼 코드에는 판별 프로퍼티 식별이 없습니다.
+  - 입력은 controls와 조각 활성 상태로만 모형화했습니다. DOM, 입력 컴포넌트 잠금, 렌더링은 없습니다.
+  - Q4 전체 유효 스키마 병합, 같은 이름·다른 종류의 노드 충돌 경고, pristine는 구현하지 않았습니다.
+  - schema adapter는 같은 object를 여러 조각이 재선언하며 내부 properties를 추가하는 일반 병합을
+    구현하지 않았습니다. 이전 low-level inherited overlay 회귀는 별도 API로 그대로 실행합니다.
+  - 동적 array item 생성 후 reserved 규칙 재등록은 구현하지 않았습니다. 이전 배열 쓰기/통지 회귀는 실행했습니다.
+  - reserved raw view와 JSON Schema의 projected G는 입력 표면이 다릅니다. 그 차이의 모든 상호작용은
+    측정하지 않았습니다. 특히 raw로 찾는 조각 제어 범위와 projected gate가 갈리는 경우가 남아 있습니다.
+  - 비활성 자식 노드 자체의 emit을 원천으로 사용하는 v4e 주입 방식은 남아 있습니다.
+    이번 정착의 채움 후보를 철회하면 원천도 다시 계산합니다.
+  - 같은 대상의 경합을 측정했습니다. 조상 대상과 자손 대상의 동시 쓰기는 독립 경합군으로 검증하지 않았습니다.
+  - schema mode는 매 라운드 전체 노드를 방문하고, base용 스냅샷은 매 정착 전체 트리를 보존합니다.
+    최적화·처리시간·힙 사용량 벤치마크는 수행하지 않았습니다.
+  - 예산 초과 시 제출 차단, 비동기 검증 응답 관리 및 제품 API 통합은 이 실행의 범위 밖입니다.
+
+검토 인계
+  검토 대상은 위 파일 목록입니다. 요구사항은 round-9-spec.md §3/§4 Q8/§7 및 PLAN.txt입니다.
+  재검증 명령은 node regress/run.mjs입니다. 보고한 통과는 이 spike의 실행 단언에 한정합니다.
+  별도 리뷰 에이전트를 호출하거나 commit/merge/publish하지 않았습니다.
+
+================================================================================
+5. 검증 뒤 수정
+================================================================================
+근거: round-9-spec.md §7 항목 1·2·6 및 raw-round9-verification.md
+§2.4, §2.5, §3 (iv), §4입니다. 아래 첫 표부터 Q4 범위 문단까지는 1차 정정 당시
+줄 번호와 실행 기록입니다. 최신 최종 shape 수정과 측정은 그 뒤 후속 수정에 기록합니다.
+
+| 변경 | 정본 위치 | 생성본 위치 | 구현 사실 |
+| 노드 존재 메모 | proto/make-v5.mjs:43,210 | proto/loop-v5.mjs:159,1600 | 커밋 후 전체 노드의 shapePresent를 기록하며 통지 전에 완료합니다. |
+| 채움 단위 | proto/make-v5.mjs:119 | proto/loop-v5.mjs:1333 | born은 !wasInShape(child) && existsInShape(child)입니다. 조각 추가 자체는 생성 사건이 아닙니다. |
+| 이전 존재/로드 | proto/runtime-v5.inc.txt:34 | proto/loop-v5.mjs:1749 | 직전 커밋 메모를 읽습니다. 호출자가 load한 노드 또는 그 하위는 새 수명으로 취급합니다. |
+| 노드 게이트 스위치 | proto/make-v5.mjs:24, runtime-v5.inc.txt:25 | proto/loop-v5.mjs:25,1740 | shape가 기본입니다. 자기 또는 조상의 결합 active=false이면 존재하지 않습니다. raw는 이 제어를 존재 판정에서 제외합니다. |
+| union 힌트 | proto/build-v5.mjs:18,23,43,70 | 해당 파일 직접 실행 | 같은 union 집합의 게이트 없는 분기 둘 이상이 공유한 노드에 effectiveSchema={branchConstraintsOmitted:true}를 기록합니다. |
+| 기존 Q8 단언 | r9.mjs:110 | 해당 파일 직접 실행 | P4의 and-or에서 비활성 y가 load 때 missing인 것으로 갱신했습니다. |
+| 정정 프로브 | r9b.mjs:18,33,50,73,86 | 해당 파일 직접 실행 | a1–a4, shape/raw 게이트, 비활성 조상, oneOf/anyOf 힌트를 검사합니다. |
+| 회귀 연결 | regress/run.mjs:28,99,100,117 | 해당 파일 직접 실행 | r9b 실행, r8 변경 수 및 공유 노드 6행 단언, 결과 원장을 추가했습니다. |
+
+shapePresent와 effectiveSchema는 계산 메모/힌트입니다. 상태 칸은 여전히 raw/extras입니다.
+이미 존재하던 노드의 값을 지운 뒤 다른 선언이 켜져도 다시 채우지 않습니다.
+존재하지 않던 노드가 게이트 활성화로 생겼을 때만 missing 값을 채웁니다.
+비활성화는 raw를 삭제하지 않으며 rawTree로 읽을 수 있습니다.
+raw 비교 스위치는 노드 게이트의 채움 차이만 복원하며, 조각별 재채움 버그는 복원하지 않습니다.
+
+수정 전 재현은 node r9b.mjs --check-only로 실행했습니다. 9개 프로브 중 a1, a3,
+node-gate-shape, node-gate-default-and-subtree, union-hint-oneOf, union-hint-anyOf가
+요구값과 달라 실패했습니다. a2, a4 및 node-gate-raw는 통과했습니다.
+
+수정 후 프로브 (r9b-output.txt: 36개 단언, 9개 프로브, 실패 0)
+| 프로브 | 초기 값/조건 | 후속 측정 | 결과 |
+| a1 | a=1, x=P | x 삭제 후 b=1, x missing | not refilled |
+| a2 | 본체 x 선언, default 없음 | then 활성화 후 x missing | not refilled; 기존 기대 유지 |
+| a3 | 게이트 없는 allOf의 x=U | x 삭제 후 then 활성화, x missing | not refilled |
+| a4 | 본체 x=B | x 삭제 후 then 활성화, x missing | not refilled; 기존 기대 유지 |
+| node-gate-shape | gate=false load: x missing | gate=true: x=E (&default), 이후 raw retained 보존 | 기본 동작 통과 |
+| node-gate-raw | gate=false load: x=E | x 삭제 후 gate=true: missing | 비교 동작 통과 |
+| node-gate-default-and-subtree | 부모 gate=false: 자식 missing | 부모 활성화: D; 삭제·off→on: D | 새 수명에서 표준 default 채움 |
+| union-hint-oneOf | kind=b, 두 분기 활성 | effectiveSchema={branchConstraintsOmitted:true}, const 없음 | 통과 |
+| union-hint-anyOf | kind=b, 두 분기 활성 | effectiveSchema={branchConstraintsOmitted:true}, const 없음 | 통과 |
+
+정정으로 변경된 기존 단언/관측과 한 줄 이유
+| 대상 | 변경 | 이유 |
+| r9 P4 and-or 단언 및 출력 | y.raw Y → missing | active=false인 노드는 load에서 생성·채움 대상이 아닙니다. |
+| regress/run.mjs SUMMARY 개수 단언 | 26 → 28 | OLD/first, OLD/last의 P3도 기존 노드의 재채움을 금지하여 round8과 달라졌습니다. |
+| r8 P3 N7_extra_Bon_xMissing_then_a, NEW/first | x A → missing, equalsOracle true → false | B가 이미 보유한 노드에 A가 추가되어도 생성이 아닙니다. |
+| 같은 사례, NEW/last | x B → missing, equalsOracle true → false | 같은 노드 존재 판정을 적용합니다. |
+| 같은 사례, NEW+ORDER_HINT/first | x A → missing, equalsOracle true → false | 순서 힌트는 노드의 새 생성 여부를 바꾸지 않습니다. |
+| 같은 사례, NEW+ORDER_HINT/last | x B → missing, equalsOracle true → false | 같은 노드 존재 판정을 적용합니다. |
+| 같은 사례, OLD/first | x A → missing, equalsOracle true → false | 과거 쓰기 비교 모드에도 노드 단위 채움을 적용합니다. |
+| 같은 사례, OLD/last | x B → missing, equalsOracle true → false | 같은 노드 존재 판정을 적용합니다. |
+
+위 r8 6개 관측은 loadX=B, 최종 x missing, equalsOracle=false, rounds=1을
+새 단언으로 고정했습니다. 6개 SUMMARY에서도 해당 equalsOracle만 바뀌었습니다.
+selfcheck의 기존 63개 단언 결과는 두 모드 모두 그대로입니다. r7 출력도 그대로입니다.
+시간값만 변한 v4e selfcheck 출력 둘은 원래 바이트로 복원했습니다. v5 selfcheck 출력 둘은
+NODE_GATE_UNIT 스위치 표시를 반영하고 실행 시간값은 이전 기록을 유지했습니다.
+시간값은 이번 정정의 벤치마크 결과가 아닙니다.
+
+1차 정정 검증: node regress/run.mjs exit=0입니다. loop-v5 재생성은 바이트 동일하며
+57개 치환 검사를 통과했습니다. 모든 .mjs의 node --check, Q8 108개 단언,
+정정 36개 단언, 추가 경계 26개 단언, v5 selfcheck new/old 각 63 PASS를 확인했습니다.
+v4e new의 기존 3개 실패는 비교 기준으로 그대로 확인했으며 v5의 실패는 없습니다.
+
+유효 스키마 범위: 공유 union 노드의 effectiveSchema 힌트에서 분기 제약을 생략했습니다.
+원문 선언(node.schema 및 입력 schema)은 보존합니다. Q4 전체 유효 스키마 병합은
+구현하지 않았으며 이번 정정의 범위 밖입니다. 예약 키 결합이나 일반 중첩 병합을
+이 힌트가 대신하지 않습니다.
+
+최종 shape 확정 후속 수정
+--------------------------------------------------------------------------------
+사용자 재현 {seed:1,on:1}에서 derived가 on=0으로 바꾸면, 기존 코드는
+최종 shape에 없는 x의 raw에 P를 남겼습니다. 추가한 두 프로브는 수정 전에
+P !== undefined로 실패했고, 원인은 파생 쓰기와 같은 라운드의 채움을 곧바로
+유효한 생성으로 취급한 것과 그 채움을 나중에 철회하지 않은 것이었습니다.
+
+최종 born과 채움 확정은 커밋 직전 한 번 수행합니다. 계산 중에는 후보를 staged
+영역에 두고 의존 계산에 사용합니다. 후보값도 derived/guard의 입력이므로, 후보를
+전혀 계산하지 않은 shape만으로 최종 형태를 결정하지 않습니다. 후보와 shape의
+공동 수렴을 검사한 뒤 raw/extras를 커밋하고 통지합니다. 중간 후보는 커밋하지 않습니다.
+
+| 수정 | 정본 위치 | 생성본 위치 | 동작 |
+| 생성 후보/확정 구분 | proto/make-v5.mjs:123,224 | proto/loop-v5.mjs:1337,1605 | 중간 판정은 candidate입니다. 수렴 후 born 목록을 birthsAtCommit에 한 번 기록합니다. |
+| 파생 안정 후 채움 계획 | proto/make-v5.mjs:212 | proto/loop-v5.mjs:1580 | derived/injectTo/clearValue의 쓰기가 남아 있으면 먼저 다음 라운드로 갑니다. |
+| 후보 철회 | proto/make-v5.mjs:193 | proto/loop-v5.mjs:1408 | 이번 정착의 default 후보가 현재 shape에서 빠졌으면 snapshot으로 철회하고 재계산합니다. |
+| 전체 host 검사 | proto/make-v5.mjs:190 | proto/loop-v5.mjs:1404 | 이전 라운드에 계산된 clean host도 검사하여 지연한 채움 후보를 누락하지 않습니다. |
+| 직전 커밋/입력 보존 | proto/make-v5.mjs:196 | proto/loop-v5.mjs:1409 | 이번 fillValues에 없는 로그와 default가 아닌 쓰기는 이 철회 대상으로 삼지 않습니다. |
+| 새 회귀 | r9b.mjs:102,115,127,137 | 직접 실행 | transient derived, fill 의존성, caller raw 보존, 모순 피드백 예산을 검사합니다. |
+| 기존 단언 이식 | regress/make-port.mjs:19,27 | regress/selfcheck-v5.mjs:285 | A4b에서 최종 shape에 없는 중간 c의 보존을 기대하지 않습니다. |
+| 관측 차이 원장 | regress/run.mjs:100,108 | 직접 실행 | SUMMARY 차이 17 및 A4b/X15/X16/P1 변경 이유를 기록합니다. |
+
+| 새 프로브 | 결과 | 커밋된 관찰값 |
+| final-shape-after-derived | PASS | raw/emit={seed:1,on:0}, x missing, x.shapePresent=false, birthsAtCommit에 /x 없음, stable |
+| final-shape-after-fill-dependency | PASS | seed의 default=1이 derived를 발화한 뒤 raw={seed:1,on:0}, x missing, /x 생성 확정 없음, stable |
+| final-shape-preserves-caller-raw | PASS | raw.x=caller 유지, emit.x 없음, x.shapePresent=false |
+| final-shape-feedback-budget | PASS | 8라운드 budget-exceeded, base raw={}, c/t 모두 missing, birthsAtCommit=[] |
+
+기존 a1/a2/a3/a4의 not refilled, NODE_GATE_UNIT shape/raw의 두 동작,
+node-gate-default-and-subtree, oneOf/anyOf의 union-hint는 모두 기존 기대대로 통과했습니다.
+r9b는 기존 36개 단언을 유지하고 16개를 추가하여 총 52개 단언/13개 프로브입니다.
+JSON 출력에서는 undefined 프로퍼티를 생략합니다. 프로브는 x.raw===undefined도 직접 단언합니다.
+
+직전 round9 대비 변경된 회귀 기대/관측
+| 대상 | 변경 | 한 줄 이유 |
+| A4b new | emit {c:C} → undefined; c raw 없음 | 생성 후보 c가 자기 주입으로 shape에서 빠지는 피드백은 예산 초과 후 빈 base를 커밋합니다. |
+| A4b old | t=from-C → from-undefined; c raw 없음 | level 파생이 채움 전에 undefined에서 t를 쓰므로 c가 최종 shape에 없습니다. |
+| r8 SUMMARY 개수 단언 | round8과의 차이 28 → 17 | P1과 X16에서 중간 채움 보존을 제거하여 round8과의 일치 여부가 달라졌습니다. |
+| r7 new X15, 2행 | x=X/y=d(X) 제거, 3 → 5라운드 | 최종 shape 밖 후보 및 의존 주입을 철회합니다. |
+| r7 new X16, level 1행 | t=from-C/c=C → t=from-undefined, 3 → 2라운드 | 파생을 먼저 안정화하여 사라질 c를 채우지 않습니다. |
+| r7 new X16, edge 2행 | stable → budget-exceeded, raw={} 및 25라운드 | 채움/주입/shape 사이 모순을 중간 raw 보존으로 숨기지 않습니다. |
+| r8 P1, 12 SUMMARY | iv_rawA1의 y=Y → missing | 파생 안정 전 else 조각의 채움을 확정하지 않습니다. |
+| r8 P4 X16, edge 4 SUMMARY | stable → budget-exceeded | base 두 구성은 raw={}, lastRound는 cap25 raw={}, cap24 raw={t:from-C}입니다. |
+| r8 P4 X16, level 1 SUMMARY | t=from-C/c=C → t=from-undefined | c가 없는 상태에서 파생이 안정됩니다. |
+
+단언을 없애지 않았습니다. A4b의 기대값을 명세 정정에 맞추고 c raw 없음도 함께
+확인합니다. 그 외 기존 selfcheck 단언은 그대로 통과했습니다. 과거 잘못된 중간 채움을
+기대했던 관측까지 동일하다는 뜻으로 '회귀 없음'을 사용하지 않습니다.
+
+최종 실행: node regress/run.mjs exit=0.
+| 검사 | 결과 |
+| make-v5 | 59 checked edits, 재생성 byte-identical |
+| 모든 .mjs | node --check 성공 |
+| r9 | 108 단언/21 관측행 PASS |
+| r9b | 52 단언/13 프로브 PASS |
+| edge-cases | 26 단언 PASS |
+| selfcheck-v5 new/old | 각각 63 PASS, 0 FAIL |
+| selfcheck-v4e 비교 | new의 기존 3 FAIL 유지, old 63 PASS |
+| r7 | round8 대비 관측 차이 new 12행/old 2행 |
+| r8 | 31구성, R8 181행, SUMMARY 41행 중 round8 대비 차이 17행 |
+
+비수렴에는 안정된 최종 shape가 없으므로 birthsAtCommit을 확정하지 않습니다.
+기본 base 정책은 호출자 쓰기 직후 상태를 커밋합니다. 비교용 lastRound는 기존처럼
+마지막 계산 상태를 커밋하는 예산 초과 정책이며 정상 수렴 결과로 표시하지 않습니다.
+실행 환경으로 막힌 부분은 없습니다. Q4 전체 병합은 계속 범위 밖입니다.

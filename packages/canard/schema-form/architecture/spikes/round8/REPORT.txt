@@ -1,0 +1,220 @@
+ROUND 8 (claude) — 프로토타입 loop-v4e: 소유자 질문 D-11′, D-27, D-29, D-31, D-32의 실행 증거. 결정하지 않습니다. 구현·실행 결과·판정·미결만 적습니다.
+대상: reviews/round-7-convergence.md §3·§6, reviews/raw-round7-verification.md §3.1·§3.2·§3.8·§4, spikes/round7/codex/review.txt §4(N5·N6·N7·N9).
+v4d, round7 산출물, ADR은 고치지 않았습니다.
+
+약어: LV4E = round8/proto/loop-v4e.mjs 의 줄, R8 = round8/r8.mjs 의 줄.
+NEW = v4d 기본 스위치(P6), OLD = OLD_SWITCHES(= v4c 동작). 표의 "없음"은 키가 방출·원본에 없다는 뜻입니다.
+
+파일 (모두 spikes/round8/ 아래)
+  proto/make-v4e.mjs      v4d → v4e 파생 스크립트(정확 문자열 치환 20건, 각 치환은 한 번만 일치해야 함). 차이 전부가 이 파일입니다.
+  proto/loop-v4e.mjs      프로토타입. 재생성: cp ../round7/proto/loop-v4d.mjs proto/loop-v4e.mjs && node proto/make-v4e.mjs proto/loop-v4e.mjs
+  proto/build-v4e.mjs     build-v4d.mjs 에서 import 경로만 바꾼 사본
+  proto/selfcheck-v4e.mjs selfcheck-v4d.mjs 에서 import 경로 2줄과 진입 파일명 2줄만 바꾼 사본. 검사 본문과 단언은 그대로입니다.
+  r8.mjs                  프로브. `node r8.mjs` 가 드라이버이고 (프로브, 구성)마다 새 node 프로세스를 띄웁니다(31개). 결과 → r8-output.txt
+  r8-output.txt           R8 줄 181개(자식 프로세스의 JSON, 기계 판독용) + SUMMARY 줄 41개(드라이버가 구성 간 비교로 만든 것)
+  regress/                selfcheck-v4e 출력(new/old), r7.mjs 를 v4e 에 돌린 사본(r7-port.mjs)과 출력
+
+====================================================================================================
+1. 구현 (LV4E 줄 참조)
+====================================================================================================
+스위치: SWITCHES(LV4E:112), OLD_SWITCHES(LV4E:144). 새 필드 6개이며 기본값은 모두 v4d 동작입니다(§3에서 실행으로 확인).
+스위치는 자식 프로세스가 트리를 만들기 전에 한 번 정하고, 그 프로세스 안에서는 바꾸지 않았습니다(R8:426 runChild).
+
+(a) &derived — DERIVED_MODE 'edge' | 'level'
+  - declareDerived(LV4E:605): injectTo 규칙 뒤에 derived:true 로 붙습니다. 원천 하나, 대상 하나, 사상 map 입니다.
+  - edgeGated(LV4E:614): derived 규칙은 DERIVED_MODE 로, injectTo 규칙은 INJECT_TO_EDGE 로 에지 검사 여부를 정합니다.
+    적용 지점 derive(LV4E:1328), reconcileDerive(LV4E:1704).
+  - 'edge' = injectTo 와 같은 에지 검사(fires): 원천 emit 이 기준과 다를 때만, 로드면 LOAD_EDGE 규칙. 구현상 injectTo 와 차이가 없습니다.
+  - 'level' = 매 라운드 발화: map(원천)이 대상 원본과 다르면 자동 쓰기. 사용자가 대상을 쓰면 원본에 들어간 뒤 같은 정착에서 덮이고,
+    입력이 보고한 값과 원본이 달라 대상에 Refresh 신호가 갑니다. 입력을 읽기 전용으로 막는 것은 모형화하지 않았습니다(OPEN-1).
+(b) EDGE_COMPARE 'value' | 'write' (D-33 과의 교호용)
+  - 'write' = 호출자가 이번 정착에 원천을 썼으면 값이 같아도 발화합니다(현재 코드의 "같은 값을 다시 써도 발화" 모형).
+  - 표시 markSourceWritten(LV4E:1446): erase(LV4E:684), applyValue(LV4E:753), write(LV4E:897). 정착 안의 자동 쓰기는 표시하지 않습니다.
+    원천 커밋 때 해제(LV4E:1845). 검사 fires(LV4E:1507). 로드 규칙(LOAD_EDGE)이 이 검사보다 앞섭니다.
+(c) DEFAULT_WINNER 'last' | 'first' (D-29)
+  - resolveDefault(LV4E:1346, 분기 LV4E:1357). 켜진 선언을 전순서(rank, 그다음 배열 index)로 훑어 마지막/처음을 고릅니다.
+    properties 의 default 는 두 규칙 모두 바닥입니다(OPEN-4).
+(d) COMMIT_ON_BUDGET 'lastRound' | 'base', ROUND_CAP (D-31)
+  - 예산 검사 LV4E:1917 이 SWITCHES.ROUND_CAP(기본 25)을 읽습니다. 홀짝 의존을 보려고 넣은 스위치이며 지시서에 없는 추가입니다.
+  - LV4E:1934-1936: 라운드 예산을 넘으면 budgetCommit 을 적고, 'base' 면 commitBase(LV4E:1785)가 로그의 자동 쓰기를 모두 철회해
+    원본을 호출자 쓰기만 남은 B로 되돌린 뒤 compute 를 한 번 더 돌려(파생·전이 없음) B의 형상을 커밋합니다. FINAL_SHAPE 일 때만 동작합니다.
+  - 출처 기록: autoEntries(LV4E:1796)가 커밋 직전 로그를 lastSettle.autoAtCommit 으로 남깁니다. 판정기 provenance(R8:329)가 이것으로
+    "커밋된 형상이 원하지 않는 자동 쓰기"를 셉니다. default 는 그 값을 default 로 가진 조각이 하나도 켜져 있지 않을 때, injectTo 는 커밋된
+    원천 emit 이 없거나 사상값이 다를 때입니다.
+(e) EXTRAS_ORDER 'insertion' | 'sorted' (D-32)
+  - extrasKeys(LV4E:617), 적용 compose(LV4E:1215). 'insertion' = JS 속성 열거 순서(v4d), 'sorted' = Object.keys().sort()(UTF-16 코드 단위).
+
+====================================================================================================
+2. 프로브 결과 (r8-output.txt)
+====================================================================================================
+공통: 에지 기준 EDGE_REF='entry', 로그 수명 AUTO_SCOPE='settle' (둘 다 NEW 기본).
+
+----------------------------------------------------------------------------------------------------
+P1 — D-11′ 파생: edge 대 level  (R8:44 probeP1, 구성 14개 = DERIVED_MODE 2 x LOAD_EDGE 3 x EDGE_COMPARE 2 + FINAL_SHAPE 끔 2)
+----------------------------------------------------------------------------------------------------
+스키마: 리프 a, 파생 d = f(a) (map v => `f(${v})`). (iv)에만 조각 E(가드 d 없음 → y default "Y"), F(가드 d = "f(1)" → x default "X").
+
+| 사례 | edge, value | edge, write | level (LOAD_EDGE·EDGE_COMPARE 무관) |
+| (i) 로드 {a:1} 직후 d | fire·fill: f(1) / skip: 없음 | 같음 | f(1) |
+| (i) 사용자 d='mine' 직후 | mine, Refresh 없음 | 같음 | f(1), d 에 Refresh |
+| (i) 그 뒤 a=2 | f(2) | f(2) | f(2) |
+| (ii) 사용자 d='mine' 뒤 a=1 다시 씀(같은 값) | mine (발화 없음) | f(1) (덮임) | f(1) |
+| (iii) 순차 a=2; d='mine' | mine | mine | f(2) |
+| (iii) batch(a=2; d='mine') | f(2) | f(2) | f(2) |
+| (iii) 순차 d='mine'; a=2 | f(2) | f(2) | f(2) |
+| (iii) batch(d='mine'; a=2) | f(2) | f(2) | f(2) |
+| (fn) H1 d='mine' → a=2 / H2 a=2 → d='mine' | f(2) / mine — 다름 | 같음 | f(2) / f(2) — 같음 |
+| (idem) 로드 {a:1}, d='mine', setValue(getValue()) | fire: d→f(1) 비멱등 / skip·fill: 멱등 | 같음 | 멱등 |
+
+(iv) 가드가 d 를 읽는 조각. rounds = 그 정착의 라운드 수.
+| 로드 | edge fire | edge fill | edge skip | level (LOAD_EDGE 셋 모두) |
+| {a:1} | [F], raw {a:1,d:f(1),x:X}, rounds 3, y 주입 후 철회 1회 | fire 와 같음 | [E], raw {a:1,y:Y}, rounds 2 | [F], fire 와 같음 |
+| {a:1,d:'mine'} | [F], d 는 f(1) 로 덮임 | [], d=mine | [], d=mine | [F], d=f(1) |
+| {a:1}, FINAL_SHAPE 끔 | [F] 이나 raw 에 숨은 y:"Y" | — | — | [F] 이나 raw 에 숨은 y:"Y" |
+
+판정
+  - (schema, 호출자가 쓴 비파생 원본)만의 함수인 커밋 트리를 내는 것은 level 입니다. level 6개 구성 모두 (fn) 두 이력이 같고 (iii) batch = 순차입니다.
+    edge 6개 구성은 모두 (fn) 두 이력이 다르고 (iii) 순차 mine 대 batch f(2) 로 갈립니다. 이 갈림은 codex N4 와 같은 모양입니다.
+  - level 은 LOAD_EDGE 선택과 무관합니다(세 값에서 결과가 같음). edge 는 LOAD_EDGE 에 따라 (iv)의 활성 집합까지 달라집니다
+    (fire·fill [F] 대 skip [E]; d 가 로드에 있으면 fire [F] 대 fill·skip []). "D-11′ 과 D-27 은 한 규칙"의 실행 근거입니다.
+  - (ii) D-33 교호: 사용자 편집이 같은 값 재쓰기를 견디는 것은 edge + 값 비교뿐입니다. 쓰기 비교(현재 코드 모형)는 같은 값 재쓰기로 편집을 덮어
+    "의존 값이 바뀔 때만 다시 쓴다"는 에지 약속과 다르게 동작합니다.
+  - (iv) "level 은 파생을 호스트 라운드 안에서 평가해야 하는가": FINAL_SHAPE 아래에서는 아닙니다. 라운드 사이 파생으로도 같은 커밋 트리가 나오고,
+    전이 형상에서 켜졌던 E 의 y 는 철회됩니다. 대가는 라운드 1개와 철회 1회입니다. FINAL_SHAPE 가 없으면(v4c 전이) 두 모드 모두 숨은 y 가 남으므로,
+    그때는 호스트 라운드 안 평가나 P6 중 하나가 필요합니다. edge·fire 도 같은 답입니다. 라운드 안 평가로 라운드 1개를 아낄 수 있는지는 측정하지 않았습니다.
+  - (idem) edge 에서 setValue(getValue()) 멱등성은 D-27 선택이 정합니다(fire 비멱등, skip·fill 멱등). level 은 편집이 남지 않으므로 늘 멱등입니다.
+
+----------------------------------------------------------------------------------------------------
+P2 — D-27 마운트·reset·전체 교체의 injectTo  (R8:128 probeP2, 구성 4개 = LOAD_EDGE fire/skip/fill/ref)
+----------------------------------------------------------------------------------------------------
+스키마: E3 의 src → tgt, map e => `f(${e})`. X3L 은 round7 과 같은 코드이고, 네 규칙 모두 round7 r7-new-output.txt 의 X3L 줄과 같습니다.
+전체 교체 사례의 직전 상태는 로드 {src:x,tgt:custom} 뒤 사용자 tgt='mine' 입니다.
+
+| 규칙 | 마운트 {src:x,tgt:custom} | 마운트 {src:x} | reset (src 를 z 로 바꾼 뒤) | reset (src 안 바꿈) | setValue {src:w,tgt:given} | {src:x,tgt:given} | {src:w} | {src:x} |
+| fire | f(x) | f(x) | f(x) | f(x) | f(w) | f(x) | f(w) | f(x) |
+| skip | custom | 없음 | custom | custom | given | given | 없음 | 없음 |
+| fill | custom | f(x) | custom | custom | given | given | f(w) | f(x) |
+| ref | f(x) | f(x) | f(x) | custom | f(w) | given | f(w) | 없음 |
+
+setValue(getValue()) (D-7). 칸 = 멱등 여부 (바뀐 값). 모든 규칙에서 두 번째 적용은 멱등이고, onChange 는 값이 바뀐 경우에만 1회입니다.
+| 규칙 | 로드 직후 | tgt 편집(mine) | tgt 지움 | src=z 뒤 tgt 편집 |
+| fire | 예 | 아니오 (mine → f(x)) | 아니오 (없음 → f(x)) | 아니오 (mine → f(z)) |
+| skip | 예 | 예 | 예 | 예 |
+| fill | 예 | 예 | 아니오 (없음 → f(x)) | 예 |
+| ref | 예 | 예 | 예 | 예 |
+비교(injectTo 무관): x default "D", 로드 뒤 사용자가 x 를 지우고 setValue(getValue()) → x:"D" 로 돌아옵니다(네 구성 모두). default 로드 계약도 비멱등입니다.
+
+판정
+  - 모든 상태에서 setValue(getValue()) 가 멱등인 것은 skip 입니다. ref 도 이 네 상태에서는 멱등이지만 X3L 에서 reset 결과가 이력에 달리므로 이미 지워진 선택지입니다.
+  - fire 는 대상이 map(원천)과 다른 모든 상태에서 비멱등입니다. 원천 값을 바꾸지 않은 전체 교체({src:x,tgt:given})도 대상을 덮습니다.
+  - fill 은 대상이 없음인 상태에서만 비멱등이며, 이는 default 로드 계약의 비멱등(지운 default 가 돌아옴)과 같은 모양입니다.
+  - skip 은 원천을 바꾸는 전체 교체({src:w})에서도 대상을 채우지 않아, 그 뒤 tgt 는 원천이 다시 바뀔 때까지 없음입니다.
+
+----------------------------------------------------------------------------------------------------
+P3 — D-29 default 승자  (R8:244 probeP3, 구성 6개 = {NEW, NEW+ORDER_HINT, OLD} x {first, last})
+----------------------------------------------------------------------------------------------------
+오라클(R8:206 winnerOracle): 커밋된 활성 조각을 소스 선언 순서(declareFragments 에 준 배열 순서)로 교집합했을 때의 default(규칙 = 그 구성의 DEFAULT_WINNER).
+칸 = 커밋된 x (오라클과 같으면 O, 다르면 X와 오라클 값). N7 스키마: A(a=true → x default A), B(b=true → x default B), 소스 순서 A,B, 시작 {a:false,b:false}.
+
+| 사례 | NEW first | NEW last | OLD first | OLD last |
+| N7 a=true; b=true 순차 | A O | A X(B) | A O | A X(B) |
+| N7 같은 쓰기 batch | A O | B O | A O | B O |
+| N7 b=true; a=true 순차 (승자가 뒤 정착에서 켜짐 — first 기준) | B X(A) | B O | B X(A) | B O |
+| N7 같은 쓰기 batch | A O | B O | A O | B O |
+| codex 추가: 시작 {a:false,b:true}, x 지움, a=true | A O | B O | A O | B O |
+| rank: 소스 A,B 이나 rank 로 전순서 B,A, batch(a,b) | B X(A) | A X(B) | B X(A) | A X(B) |
+| 한 정착 안 뒤 라운드: 소스 A,B, A 는 B 가 넣은 y 로 한 라운드 늦게 켜짐, write(b,true) | A O | B O | B X(A) | B O |
+| 같은 스키마, 소스 B,A | B O | A O | B O | B X(A) |
+NEW+ORDER_HINT 두 구성은 모든 칸이 NEW 와 같습니다(가드 평가 순서는 승자에 영향 없음; resolveDefault 는 전순서로 고름).
+codex N7 기대값(last 순차 A / batch B, first batch A, 추가 사례 last B)을 NEW·OLD 모두 재현합니다.
+
+판정 — 두 규칙 모두 오라클과 다른 값을 냅니다.
+  - 순차: 그 규칙의 패자가 앞선 정착에서 켜져 값을 커밋하면 뒤에 켜진 승자는 "없음"이 아닌 x 를 만나 주입하지 않습니다. first 는 b→a, last 는 a→b 에서 틀리며 대칭입니다.
+    batch 는 두 규칙 모두 맞습니다. D-29 의 어느 선택도 배치 ≠ 순차를 없애지 못합니다(codex N7 재확인).
+  - rank 로 전순서가 소스 순서와 다르면 두 규칙 모두 소스 순서 오라클과 다릅니다. 프로토타입은 전순서로 고릅니다. "선언 순서"가 전순서인지 소스 순서인지 정해야 합니다(OPEN-4).
+  - 승자가 같은 정착의 뒤 라운드에서 켜지면: FINAL_SHAPE(NEW)는 로그된 default 를 새 승자 값으로 재적용해 두 규칙·두 소스 순서 모두 맞고,
+    v4c 전이(OLD)는 승자가 늦게 켜지는 쪽(first/A,B, last/B,A)에서 틀립니다.
+
+----------------------------------------------------------------------------------------------------
+P4 — D-31 비수렴 시 커밋  (R8:355 probeP4, 구성 5개 = COMMIT_ON_BUDGET 2 x ROUND_CAP {25, 24} + OLD 참고 1)
+----------------------------------------------------------------------------------------------------
+스키마: X16 = selfcheck A4b 로드(조각 then: t 없음이면 c 선언·default C, injectTo c → t `from-${c}`; prime {} 뒤 규칙 선언, setValue {}).
+codex N1·N9 는 x 를 기저 자식으로 두려고 늘 켜진 조각 BASE 가 x 를 선언하고, 나머지 조각은 x 에 default 만 더합니다(프로토타입에서 조각이 선언한 자식은 조건부가 되기 때문).
+  N1: F(x ≠ 1) → default 1.   N9: zero(x = 1) → 0, one(x 없음 또는 0) → 1, two(x = 2) → 2.
+"원치 않는 자동 쓰기" = 커밋된 형상이 원하지 않는 자동 쓰기(§1(d) 판정기). "원하나 없음" = 켜진 조각의 default 인데 원본에 없는 자식.
+"무-default 와 같음" = 같은 스키마에서 default 만 뺀 결과와 raw·active·emit 이 같음. 모든 NEW 칸의 settle.status 는 budget-exceeded, budgetWhich 'rounds' 입니다.
+
+| 스키마 | 구성 | 커밋 raw | active | emit | 원치 않는 자동 쓰기 | 원하나 없음 | 무-default 와 같음 |
+| X16 | lastRound cap25 | {} | [then] | 없음 | — | then:c | 같음 |
+| X16 | lastRound cap24 | {t:"from-C"} | [] | {t:"from-C"} | t="from-C" (원천 c 없음) | — | 다름 |
+| X16 | base cap25·cap24 | {} | [then] | 없음 | — | then:c | 같음 (injectTo 까지 뺀 스키마와도 같음) |
+| X16 | OLD | {t:"from-C", c:"C"} | [] | {t:"from-C"} | (stable) | — | 다름 |
+| N1 | lastRound cap25 | {} | [BASE,F] | 없음 | — | F:x | 같음 |
+| N1 | lastRound cap24 | {x:1} | [BASE] | {x:1} | x=1 (F 꺼짐) | — | 다름 |
+| N1 | base cap25·cap24 | {} | [BASE,F] | 없음 | — | F:x | 같음 |
+| N1 | OLD | {x:1} | [BASE] | {x:1} | (stable) | — | 다름 |
+| N9 | lastRound cap25 | {x:0} | [BASE,one] | {x:0} | x=0 (zero 꺼짐) | — | 다름 |
+| N9 | lastRound cap24 | {x:1} | [BASE,zero] | {x:1} | x=1 (one 꺼짐) | — | 다름 |
+| N9 | base cap25·cap24 | {} | [BASE,one] | 없음 | — | one:x | 같음 |
+| N9 | OLD | {x:1} | [BASE,zero] | {x:1} | (stable) | — | 다름 |
+철회 횟수(lastRound): X16 12(cap25)·11(cap24), N1 12·11, N9 0. N9 는 철회가 아니라 재적용(x 1 → 0 → 1)으로 순환합니다.
+
+판정
+  - lastRound 의 커밋은 ROUND_CAP 의 홀짝에 달립니다. 세 스키마 모두 cap25 와 cap24 의 결과가 다릅니다. 즉 커밋 상태가 구현 상수의 함수입니다.
+  - lastRound 는 6칸 중 4칸에서 꺼진 조각의 default 나 사라진 원천의 injectTo 값을 커밋합니다("자동 쓰기는 최종 형상의 함수" 위반).
+    위반이 없는 2칸(X16·N1 cap25)은 마지막 라운드가 자동 쓰기를 모두 철회한 경우이며, base 와 결과가 같습니다.
+  - base 는 예산값과 무관하고 자동 쓰기가 0개입니다. 세 스키마 모두 "스키마에 default 가 없을 때 사용자가 볼 상태"와 같습니다(3/3).
+    X16 은 injectTo 까지 뺀 스키마와도 같습니다.
+  - 두 규칙 모두 고정점이 아닌 상태를 커밋하며, 어긋남의 방향이 다릅니다. lastRound 는 원치 않는 쓰기가 남고, base 는 형상이 원하는 default 가 없습니다
+    (then:c, F:x, one:x). base 커밋 뒤 아무 쓰기나 들어오면 같은 순환에 다시 들어갑니다(추론, 실행하지 않음).
+  - base 에서 emit 은 세 스키마 모두 없음입니다. OLD(v4c)는 세 스키마 모두 stable 이며, X16 은 raw 에 숨은 c:"C" 를 커밋합니다.
+
+----------------------------------------------------------------------------------------------------
+P5 — D-32 extras 방출 순서  (R8:380 probeP5, 구성 2개 = EXTRAS_ORDER insertion/sorted)
+----------------------------------------------------------------------------------------------------
+스키마: 선언 키 a 하나. 칸 = Object.keys(getValue()).
+
+| 단계 | insertion | sorted |
+| (i) 로드 {z:1, a:2, m:3} | a, z, m | a, m, z |
+| (ii) 그 뒤 Merge {q:4} | a, z, m, q | a, m, q, z |
+| (iii) 그 뒤 Merge {z:9} (있는 여분 키 재기록) | a, z, m, q (z 제자리) | a, m, q, z |
+| 같은 쓰기 열을 새 트리에 두 번 | 같음 | 같음 |
+| 같은 raw 로 끝나는 두 쓰기 열 — Merge 순서: load{a:2}; {z:1}; {m:3} 대 load{a:2}; {m:3}; {z:1} | a,z,m 대 a,m,z (다름) | 같음 |
+| 같은 raw — removeKey z 뒤 {z:1} 재추가 대 로드 그대로 | a,z,m 대 a,m,z (다름) | 같음 |
+| 같은 raw — 호출자 객체의 키 순서: 로드 {z,a,m} 대 {m,a,z} | a,z,m 대 a,m,z (다름) | 같음 |
+| 정수 모양 키: 로드 {k:1, a:2, '10':1, '2':1} | 2, 10, a, k | 2, 10, a, k |
+
+판정
+  - insertion 은 쓰기 열의 순수 함수입니다(구성상 그렇고, 같은 열 두 번이 같은 순서). 그러나 raw 의 함수는 아닙니다. 같은 raw 로 끝나는 서로 다른 쓰기 열을
+    세 가지로 만들었고 셋 모두 방출 순서가 다릅니다. sorted 는 세 쌍 모두 같습니다.
+  - 있는 여분 키의 재기록은 insertion 에서 자리를 유지하고, removeKey 뒤 재추가는 끝으로 갑니다.
+  - 두 모드 모두 정수 모양 키는 JS 속성 열거 규칙에 따라 오름차순으로 맨 앞에 오며 선언 키 a 보다도 앞섭니다. compose 문서의 "선언 키 다음 extras"가
+    정수 모양 여분 키에서는 성립하지 않고, 'sorted' 도 이것을 고치지 못합니다(OPEN-6).
+
+====================================================================================================
+3. 회귀
+====================================================================================================
+  selfcheck-v4e (기본 스위치) : 3 FAILURES — A4b, A4c, A4-cap. round7 이 예상한 세 실패와 같고 새 실패는 없습니다. PASS 60.
+  selfcheck-v4e old           : all v4 scenarios passed (PASS 63).
+  출력 대조: selfcheck-v4d 와 selfcheck-v4e 의 출력이 new·old 모두 한 줄도 다르지 않습니다(switches 줄 제외, INFO 18줄은 시간 필드를 뺀 뒤 동일).
+  r7.mjs 를 v4e 에 돌린 사본(regress/r7-port.mjs, import 경로·출력 파일명·round6 상대 경로만 바꿈):
+    old 37줄, new 89줄이 round7 의 r7-old-output.txt·r7-new-output.txt 와 바이트 단위로 같고, PORT CHECK 는 28/28 입니다.
+  따라서 새 스위치의 기본값은 v4d 동작을 바꾸지 않습니다. P2 의 X3L 도 네 규칙 모두 round7 기록과 같습니다.
+  재현: cd spikes/round8 && node proto/selfcheck-v4e.mjs; node proto/selfcheck-v4e.mjs old; (cd regress && node r7-port.mjs old && node r7-port.mjs new); node r8.mjs
+
+====================================================================================================
+4. OPEN (스펙이 모호해 가장 가까운 쪽으로 구현하고 표시한 것)
+====================================================================================================
+OPEN-1 level 파생의 모형: 사용자 쓰기를 받아 같은 정착에서 덮고 Refresh 를 보냅니다. 입력을 읽기 전용으로 막는 경로(`expressions.md:47` 의 약속과
+       T-2)는 모형화하지 않았습니다. 두 경로의 커밋 값은 같고 통지·Refresh 만 다를 것으로 추론합니다.
+OPEN-2 파생은 원천 하나만 구현했습니다. 식이 여러 필드를 읽는 파생의 에지 검사("어느 원천이든 달라짐")와 원천이 비활성일 때(D-34)는 실행하지 않았습니다.
+OPEN-3 EDGE_COMPARE 'write' 는 호출자 쓰기가 원천 노드나 그 조상을 거칠 때 표시합니다. 호스트 원천, 리스너 쓰기, AUTO_SCOPE 'entry' 와의 조합은 실행하지 않았습니다.
+OPEN-4 D-29 의 "선언 순서": 프로토타입은 전순서(rank → index)로, 오라클은 소스 순서로 골라 rank 사례에서 두 규칙 모두 어긋납니다. 어느 순서인지 정해야 합니다.
+       또 v4e 는 properties default 를 두 규칙 모두 바닥으로 둡니다. 현재 코드의 먼저-승(intersectSchema)은 기저 스키마가 교집합의 앞에 오므로 기저 default 가
+       조각 default 를 이길 수 있습니다. N7 에는 기저 default 가 없어 이 차이를 실행하지 않았습니다.
+OPEN-5 base 커밋은 B 의 형상을 한 번 계산해 커밋할 뿐, 그 형상이 원하는 default 는 넣지 않습니다. AUTO_SCOPE 'entry' 에서는 같은 진입의 앞 정착이 남긴
+       로그도 철회하게 되는데, 이 조합은 실행하지 않았습니다. 상태 이름(P7)은 v4d 처럼 lastSettle.budgetWhich·budgetCommit 로만 구분합니다.
+OPEN-6 정수 모양 키: JS 객체로 방출하는 한 두 모드 모두 순서를 통제하지 못합니다. D-32 를 정하려면 이 키들의 순서(와 선언 키보다 앞서는 문제)를
+       함께 정해야 합니다. 'sorted' 의 비용(G6)은 측정하지 않았습니다.
+OPEN-7 P4 의 N1·N9 는 "기저 x + 조각 default" 를 늘 켜진 조각 BASE 로 모형화했습니다. codex 모델의 기저 키와 가드 입력 G 가 같다는 것은 코드로 확인했지만
+       (x 는 BASE 로 늘 활성), 전용 "기저 자식에 조각 default 만 더함" 장치가 있을 때의 결과는 실행하지 않았습니다.
