@@ -37,9 +37,9 @@
 | BLUEPRINT-029 | 대체됨: 판별식 식별(E14)·판별 프로퍼티의 union 호스트 소유(E8) | 대체됨(→ BLUEPRINT-017) | 소유자 답(`reviews/round-10-owner-answers.md:11` B-22) |
 | BLUEPRINT-030 | `$ref` 재귀의 정적 열거와 무한 형상 — 위치마다 한 번, 조각 안 순환 절단, 객체 프로퍼티만의 순환은 청사진 오류, 원본 없는 사슬의 되풀이는 정착 오류 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-01) |
 | BLUEPRINT-031 | 값 union — 원시 타입만의 `type` 배열은 (가칭) `union` 잎 하나, `interpret`는 선언 순서의 S1 변환, 기본 문자열 입력, 섞인 union과 `type` 없는 원시 `anyOf`·`oneOf`는 청사진 오류, PR-1 인식·PR-2 행 | 분할됨(→ BLUEPRINT-034, BLUEPRINT-033) | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-02), 소유자 답(`reviews/round-18-owner-answers.md:19` 12-9; `integer`·`null` 접기), 소유자 답(`reviews/round-18-owner-answers.md:24` 18C 검토 1번; 대체) |
-| BLUEPRINT-032 | 노드의 종류 — 일곱(string·number(`integer` 포함)·boolean·null·object·array·(가칭) `union`), nullable은 플래그, type 없는 overlay는 어느 종류와도 맞음 | 현행 | 소유자 답(`reviews/round-18-owner-answers.md:19` 12-9; 같은 종류 접기), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-02; 종류의 수), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-90), 소유자 답(`reviews/round-18-owner-answers.md:29` union 범위; 범위) |
-| BLUEPRINT-033 | `union` 노드의 목적·해석·입력 계약·기본 입력 — 형을 고르는 기능이 아님, 받아 줄 형이 정확히 하나일 때만 변환, 선언 순서·검증기 규칙을 쓰지 않음, 기본 입력은 문자열 입력 그대로 | 분할됨(→ BLUEPRINT-042, BLUEPRINT-040) | 소유자 답(`reviews/round-18-owner-answers.md:24` 18C 검토 1번), 소유자 답(`reviews/round-18-owner-answers.md:35` union O5; 대체), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-92) |
-| BLUEPRINT-034 | 값 union에서 그대로인 것 — 원시 타입만의 `type` 배열은 `union` 잎 하나, 정합은 나열된 타입 가운데 하나, 기본 문자열 입력, 섞인 union과 `type` 없는 원시 `anyOf`·`oneOf`는 청사진 오류, PR-1 인식·PR-2 행 | 분할됨(→ BLUEPRINT-043, BLUEPRINT-036, BLUEPRINT-037, BLUEPRINT-039, BLUEPRINT-044, REACT-032, REACT-033) | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-02), 소유자 답(`reviews/round-18-owner-answers.md:19` 12-9; `integer`·`null` 접기), 소유자 답(`reviews/round-18-owner-answers.md:29` union 범위; 대체), 소유자 답(`reviews/round-18-owner-answers.md:30` union 형 없는 분기; 대체), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-90), 소유자 답(`reviews/round-18-owner-answers.md:36` union O6; 대체), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-92) |
+| BLUEPRINT-032 | 노드의 종류 — 일곱(string·number(`integer` 포함)·boolean·null·object·array·(가칭) `union`), nullable은 플래그, type 없는 overlay는 어느 종류와도 맞음 | 현행 | 소유자 답(`reviews/round-18-owner-answers.md:19` 12-9; 같은 종류 접기), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-02; 종류의 수), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-90), 소유자 답(`reviews/round-18-owner-answers.md:29` union 범위; 범위), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-105), 소유자 답(`reviews/round-18-owner-answers.md:31` union O1; 종류의 수) |
+| BLUEPRINT-033 | `union` 노드의 목적·해석·입력 계약·기본 입력 — 형을 고르는 기능이 아님, 받아 줄 형이 정확히 하나일 때만 변환, 선언 순서·검증기 규칙을 쓰지 않음, 기본 입력은 문자열 입력 그대로 | 분할됨(→ BLUEPRINT-042, BLUEPRINT-040, WRITE-099) | 소유자 답(`reviews/round-18-owner-answers.md:24` 18C 검토 1번), 소유자 답(`reviews/round-18-owner-answers.md:35` union O5; 대체), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-92), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-105) |
+| BLUEPRINT-034 | 값 union에서 그대로인 것 — 원시 타입만의 `type` 배열은 `union` 잎 하나, 정합은 나열된 타입 가운데 하나, 기본 문자열 입력, 섞인 union과 `type` 없는 원시 `anyOf`·`oneOf`는 청사진 오류, PR-1 인식·PR-2 행 | 분할됨(→ BLUEPRINT-043, BLUEPRINT-036, BLUEPRINT-037, BLUEPRINT-039, BLUEPRINT-044, REACT-032, BLUEPRINT-042) | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-02), 소유자 답(`reviews/round-18-owner-answers.md:19` 12-9; `integer`·`null` 접기), 소유자 답(`reviews/round-18-owner-answers.md:29` union 범위; 대체), 소유자 답(`reviews/round-18-owner-answers.md:30` union 형 없는 분기; 대체), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-90), 소유자 답(`reviews/round-18-owner-answers.md:36` union O6; 대체), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-92) |
 | BLUEPRINT-035 | 용어 — `union` 확정(가칭 풂, `isUnionNode`·`unionBehavior/`), `oneOf`·`anyOf` 분기를 가진 호스트는 variant 호스트, 분기 하나는 variant | 현행 | 소유자 답(`reviews/round-18-owner-answers.md:28` 18C 검토 6번), 소유자 답(`reviews/round-18-owner-answers.md:29` union 범위; 범위) |
 | BLUEPRINT-036 | `union`의 범위 — `type`에 원시·객체·배열 가운데 둘 이상의 종류가 적힌 칸의 터미널 잎, `object`·`array`가 든 `union`은 터미널 강제, 안쪽 키는 자식 없는 검증 전용, 객체·배열로의 변환 없음, `omitEmpty`·채움은 값 전체, 기본 입력은 객체·배열을 읽기 전용 JSON으로 | 현행 | 소유자 답(`reviews/round-18-owner-answers.md:29` union 범위) |
 | BLUEPRINT-037 | 자기 `type` 없는 칸의 원시 `oneOf`·`anyOf` — 분기 허용 집합의 합집합 U(`oneOf`와 `anyOf`가 함께면 교집합)가 원시 잎·`union` 잎·null 종류를 정함, 빈 U와 분기 없음은 `UNKNOWN_JSON_SCHEMA`, 형 없는 칸의 `nullable`은 효과 없음 | 현행 | 소유자 답(`reviews/round-18-owner-answers.md:30` union 형 없는 분기) |
@@ -49,8 +49,8 @@
 | BLUEPRINT-041 | 한 칸의 `type` 선언들 — 통합 원리 U1–U9: 연언이고 허용 집합은 교집합, 빈 교집합만 충돌(정적은 청사진 오류, 게이트는 켜진 동안의 정착 오류), 정적 선언이 종류·`schemaType`·`nullable`을 정하고 게이트는 유효 목록만 좁힘, 한 진입에서 쓰인 노드의 두 번 해석 | 현행 | 소유자 답(`reviews/round-18-owner-answers.md:37` union O7·O8), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-104) |
 | BLUEPRINT-042 | `union` 노드의 목적·해석·기본 입력에서 그대로인 것 — 형을 고르는 기능이 아님, 받아 줄 형이 정확히 하나일 때만 변환, 선언 순서·검증기 규칙을 쓰지 않음, 기본 입력은 문자열 입력 | 현행 | 소유자 답(`reviews/round-18-owner-answers.md:24` 18C 검토 1번), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-92) |
 | BLUEPRINT-043 | 값 union에서 계속 그대로인 것 — `null`은 nullable로·`integer`는 `number`로 접음, 접은 집합이 둘 이상이면 `union`(행 `terminal`), `union`끼리는 접은 집합이 같을 때 같은 종류, 정합은 나열된 타입 가운데 하나, PR-1 인식·PR-2 행 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-02), 소유자 답(`reviews/round-18-owner-answers.md:19` 12-9; `integer`·`null` 접기), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-92), 소유자 답(`reviews/round-18-owner-answers.md:29` union 범위; 범위), 소유자 답(`reviews/round-18-owner-answers.md:35` union O5; 목록) |
-| BLUEPRINT-044 | 청사진 판정 절차 — 허용 집합 A(d)와 fold, 교집합(`integer ⊂ number`, `null`은 양쪽에 있을 때만), 단계 S0–S6, 결과 일곱, 터미널 하위 키 경고 (가칭) `TERMINAL_SUBTREE_KEY_IGNORED_FOR_FORM`, PR-1·PR-4 게이트 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-90) |
-| BLUEPRINT-045 | 청사진 판정의 예 E1–E42 — 칸마다 종류·`schemaType`·nullable·전략·오류 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-90) |
+| BLUEPRINT-044 | 청사진 판정 절차 — 허용 집합 A(d)와 fold, 교집합(`integer ⊂ number`, `null`은 양쪽에 있을 때만), 단계 S0–S6, 결과 일곱, 터미널 하위 키 경고 (가칭) `TERMINAL_SUBTREE_KEY_IGNORED_FOR_FORM`, PR-1·PR-4 게이트 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-90), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-105) |
+| BLUEPRINT-045 | 청사진 판정의 예 E1–E42 — 칸마다 종류·`schemaType`·nullable·전략·오류 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-90), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-105) |
 
 ## 항목
 
@@ -528,8 +528,8 @@
   > 편집자 결정(18C-90): "【추론】 nullable은 `'null'` ∈ A와 같다." (`reviews/round-18-closing.md:2387`)
   > 편집자 결정(18C-90): "【추론】 형 있는 칸의 null 분기는 nullable을 켜지 않고, 유효 목록을 좁히지 않는다." (`reviews/round-18-closing.md:2399`)
 - 상태: 현행
-- 출처: `reviews/round-18-closing.md:61-63`(정본), `reviews/round-18-owner-answers.md:19`, `reviews/round-18-closing.md:2382,2385,2387,2399`, `reviews/round-18-owner-answers.md:29`
-- 닫은 사람: 소유자 답(`reviews/round-18-owner-answers.md:19` 12-9; 같은 종류 접기), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-02; 종류의 수), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-90), 소유자 답(`reviews/round-18-owner-answers.md:29` union 범위; 범위)
+- 출처: `reviews/round-18-closing.md:61-63`(정본), `reviews/round-18-owner-answers.md:19`, `reviews/round-18-closing.md:2382,2385,2387,2399`, `reviews/round-18-owner-answers.md:29`, `reviews/round-18-closing.md:2951`, `reviews/round-18-owner-answers.md:31`
+- 닫은 사람: 소유자 답(`reviews/round-18-owner-answers.md:19` 12-9; 같은 종류 접기), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-02; 종류의 수), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-90), 소유자 답(`reviews/round-18-owner-answers.md:29` union 범위; 범위), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-105), 소유자 답(`reviews/round-18-owner-answers.md:31` union O1; 종류의 수)
 - 라운드: 18
 - 까닭: `reviews/round-18-closing.md:84-91`, `reviews/round-18-closing.md:2466-2471`
 - 충돌:
@@ -537,6 +537,7 @@
   > `08-design-a-to-z.md:177`의 "같은 이름·같은 종류(string, number, boolean, null, object, array)면"는 18라운드 결정과 다르다: 종류 목록에 (가칭) `union`이 든다(BLUEPRINT-032). 18라운드 결정이 이긴다(`reviews/round-18-closing.md:61`).
   > `02-target-overview.md:125`의 "같은 이름과 같은 종류(string, number, boolean, null, object, array)이면"는 18라운드 결정과 다르다: 종류 목록에 (가칭) `union`이 든다(BLUEPRINT-032). 18라운드 결정이 이긴다(`reviews/round-18-closing.md:61`).
   > `reviews/round-18-owner-answers.md:28`의 "원시 타입만의 다중 `type` 잎"은 소유자 답과 다르다: `union`은 `type`에 원시·객체·배열 가운데 둘 이상의 종류가 적힌 칸의 터미널 잎이다(BLUEPRINT-036). 소유자 답이 이긴다(`reviews/round-18-owner-answers.md:29`).
+  > `reviews/round-18-closing.md:61`의 "그래서 노드의 종류는 일곱이다"는 소유자 답과 다르다: `node.type`의 값은 `virtual`을 포함해 여덟이고(NODE-057), 18C-02의 "일곱"은 스키마에서 오는 종류만 센 것이다(WRITE-099). 소유자 답이 이긴다(`reviews/round-18-owner-answers.md:31`).
 
 ### BLUEPRINT-033 `union` 노드의 목적·해석·입력 계약·기본 입력 — 형을 고르는 기능이 아님, 받아 줄 형이 정확히 하나일 때만 변환, 선언 순서·검증기 규칙을 쓰지 않음, 기본 입력은 문자열 입력 그대로
 
@@ -555,9 +556,9 @@
   > 소유자(18C 검토 1번): "그리고 오해한게 있는데 formTypeDefininitions 는 ui가 없는 경우를 위한 최소구현이야. 그러니까 여기에 구현을 해봤자 실제 사용자에게 이게 노출될 가능성은 높지 않다." (`reviews/round-18-owner-answers.md:24`)
   > 소유자(18C 검토 1번): "그리고 ui에서 선택하게 하는건 우리 목적과 달라. 그런 니즈라면 if-then-else 나 control.active 를 써야지. 지금 말한건 오버스팩같구나." (`reviews/round-18-owner-answers.md:24`)
   > 소유자(18C 검토 1번): "정련안으로 확정. 기록하고 반영해." (`reviews/round-18-owner-answers.md:24`)
-- 상태: 분할됨(→ BLUEPRINT-042, BLUEPRINT-040)
-- 출처: `reviews/round-18-owner-answers.md:24`(정본, 반영 칸)
-- 닫은 사람: 소유자 답(`reviews/round-18-owner-answers.md:24` 18C 검토 1번), 소유자 답(`reviews/round-18-owner-answers.md:35` union O5; 대체), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-92)
+- 상태: 분할됨(→ BLUEPRINT-042, BLUEPRINT-040, WRITE-099)
+- 출처: `reviews/round-18-owner-answers.md:24`(정본, 반영 칸), `reviews/round-18-closing.md:2952`
+- 닫은 사람: 소유자 답(`reviews/round-18-owner-answers.md:24` 18C 검토 1번), 소유자 답(`reviews/round-18-owner-answers.md:35` union O5; 대체), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-92), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-105)
 - 라운드: 18
 - 까닭: `reviews/round-18-owner-answers.md:24`
 
@@ -581,7 +582,7 @@
   > 【추론】 종류 모듈 목록에는 (가칭) `unionBehavior/`가 더해진다.
 - 보충:
   > 소유자(12-9 답): "같은 종류 맞습니다." (`reviews/round-18-owner-answers.md:19`)
-- 상태: 분할됨(→ BLUEPRINT-043, BLUEPRINT-036, BLUEPRINT-037, BLUEPRINT-039, BLUEPRINT-044, REACT-032, REACT-033)
+- 상태: 분할됨(→ BLUEPRINT-043, BLUEPRINT-036, BLUEPRINT-037, BLUEPRINT-039, BLUEPRINT-044, REACT-032, BLUEPRINT-042)
 - 출처: `reviews/round-18-closing.md:57-60,64-66,69-70,72-74,78-80`(정본), `reviews/round-18-owner-answers.md:19`
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-02), 소유자 답(`reviews/round-18-owner-answers.md:19` 12-9; `integer`·`null` 접기), 소유자 답(`reviews/round-18-owner-answers.md:29` union 범위; 대체), 소유자 답(`reviews/round-18-owner-answers.md:30` union 형 없는 분기; 대체), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-90), 소유자 답(`reviews/round-18-owner-answers.md:36` union O6; 대체), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-92)
 - 라운드: 18
@@ -825,10 +826,11 @@
   > 무엇: `src/core/blueprint/__tests__/`의 `union.kind-procedure.test.ts`(E1–E42), `union.null-only.test.ts`, `union.static-intersection.test.ts`, `union.schema-type-invariant.test.ts`, `union.gated-narrowing.test.ts`, `union.terminal-subtree-warning.test.ts`와 `schema-form-ajv8-plugin/src/**/__tests__/union-types.test.ts`를 돌린다.
   > 통과: 예마다 종류·`schemaType`·nullable·전략·오류가 위대로이고, `allOf` 항목의 순서를 바꿔도 결과(원소 순서 제외)가 같으며, ajv8 컴파일에서 `console.warn`이 0회다.
   > 실패: 예와 다르면 절차를 고치고, 절차가 예를 하나로 정하지 못하면 이 블록을 고친다.
-- 보충: 없음
+- 보충:
+  > 편집자 결정(18C-105): "【추론】 정적 선언이 없는 이름에서 게이트 없는 분기끼리 fold가 다르면 게이트 없는 선언끼리의 다른 종류이므로 `SHARED_NODE_KIND_CONFLICT` 청사진 오류다(BLUEPRINT-012, 소유자 O-10)." (`reviews/round-18-closing.md:2950`)
 - 상태: 현행
-- 출처: `reviews/round-18-closing.md:2381-2414,2473-2476`(정본)
-- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-90)
+- 출처: `reviews/round-18-closing.md:2381-2414,2473-2476`(정본), `reviews/round-18-closing.md:2950`
+- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-90), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-105)
 - 라운드: 18
 - 까닭: `reviews/round-18-closing.md:2466-2471`
 
@@ -880,7 +882,9 @@
   > 【추론】 E42: 본체 `a:['string','number']` + 호스트의 게이트 없는 `oneOf` 분기 `a:{type:'string'}`는 union / `['string','number']` / false / terminal이고, 분기는 유효 목록을 좁히지 않는다.
 - 보충: 없음
 - 상태: 현행
-- 출처: `reviews/round-18-closing.md:2415-2457`(정본)
-- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-90)
+- 출처: `reviews/round-18-closing.md:2415-2457`(정본), `reviews/round-18-closing.md:2956-2957`
+- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-90), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-105)
 - 라운드: 18
 - 까닭: `reviews/round-18-closing.md:2466-2471`
+- 충돌:
+  > `reviews/round-18-closing.md:2441`의 "켜진 동안 유효 목록은 `['number']`로 `schemaType`과 같은 참조다"는 18C-105의 결정과 다르다: 좁혀지지 않은 노드의 유효 목록은 `schemaType` 그 값(스칼라면 스칼라, 배열이면 그 배열 참조)이며, E26에서 게이트가 켜진 동안의 유효 목록은 `schemaType`과 같은 `'number'`다(WRITE-099). 18C-105의 결정이 이긴다(`reviews/round-18-closing.md:2956-2957`).

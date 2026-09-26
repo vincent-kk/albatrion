@@ -42,7 +42,7 @@
 | VALUE-034 | 빈 호스트와 루트의 방출 — 빈 `local`은 `{}`·`[]`, `omitEmpty`는 빈 `local`을 방출하지 않음, 루트는 루트 종류의 빈 그릇, 배열 아이템의 빈자리는 `{}`·`[]`·`null` | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-88) |
 | VALUE-035 | 노드가 생긴다는 것 — 채움은 이 사건에만, 이미 두고 있던 노드는 새 조각이 켜져도 생기지 않음, `controls.visible` 전환은 생성이 아님 | 현행 | 소유자 답(`reviews/round-9-spec.md:56` 읽기2 시점(A/B)), 원리(`03-mental-model.md:90` 로드는 새 수명) |
 | VALUE-036 | null 계약 D-1 — setValue(null)은 키가 없는 전체 교체, 셋째 칸도 특수 장치도 없음, 비객체 호스트의 자식은 존재하고 렌더됨 | 현행 | 원리(`reviews/round-5-derivations.md:40` D-1), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-100) |
-| VALUE-037 | `union`의 경고등과 방출·채움 — `valueTypeMismatch`는 원본과 현재 spec의 함수, 켜질 때마다 한 번과 다시 보내는 때, (가칭) `UpdateJsonSchema` 배달, `VALUE_TYPE_MISMATCH` 기록의 칸, 방출은 원본 참조, 통째 값의 JSON 부정합 경고 (가칭) `NON_JSON_WHOLE_VALUE`, 채움은 원본이 `undefined`일 때만 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-91), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-98) |
+| VALUE-037 | `union`의 경고등과 방출·채움 — `valueTypeMismatch`는 원본과 현재 spec의 함수, 켜질 때마다 한 번과 다시 보내는 때, (가칭) `UpdateJsonSchema` 배달, `VALUE_TYPE_MISMATCH` 기록의 칸, 방출은 원본 참조, 통째 값의 JSON 부정합 경고 (가칭) `NON_JSON_WHOLE_VALUE`, 채움은 원본이 `undefined`일 때만 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-91), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-98), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-105) |
 
 ## 항목
 
@@ -621,9 +621,10 @@
   > 【추론】 `default`의 객체·배열은 복사하지 않고 불변으로 다룬다(WRITE-071).
 - 보충: 없음
 - 상태: 현행
-- 출처: `reviews/round-18-closing.md:2520-2545`(정본), `reviews/round-18-closing.md:2797-2798`
-- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-91), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-98)
+- 출처: `reviews/round-18-closing.md:2520-2545`(정본), `reviews/round-18-closing.md:2797-2798`, `reviews/round-18-closing.md:2953`
+- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-91), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-98), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-105)
 - 라운드: 18
 - 까닭: `reviews/round-18-closing.md:2556-2564`
 - 충돌:
   > `reviews/round-18-closing.md:2540`의 "`(code, path)`로 로드마다 한 번 내며"는 18C-98의 결정과 다르다: 경고 중복 키는 폼 수준 로드(마운트, `FormHandle.reset()`)에서만 비우므로 `NON_JSON_WHOLE_VALUE`는 폼 수준 로드 사이에 `(code, path)`마다 한 번이고, `setValue(V)`와 `resetSubtree()` 뒤에는 다시 내지 않는다(ERROR-204). 18C-98의 결정이 이긴다(`reviews/round-18-closing.md:2797-2798`).
+  > `reviews/round-18-closing.md:2544`의 "목록 밖 `default`(예: `['string','boolean']`에 `default: 0`)는 마운트 때 경고등을 켜고"는 18C-105의 결정과 다르다: 목록 밖 `default`의 경고등·경고는 마운트만이 아니라 노드가 생길 때마다(WRITE-090의 채움 시점) 켜고 보낸다(WRITE-099). 18C-105의 결정이 이긴다(`reviews/round-18-closing.md:2953`).

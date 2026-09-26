@@ -90,7 +90,7 @@
 | WRITE-082 | 호스트 채움 값의 분배와 객체 호스트 '없음'의 정의(상태 둘에서 계산) — `{}`도 호스트 `default`를 막지 않음 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-18) |
 | WRITE-083 | 포커스 아웃 `trim`은 자동 쓰기 — 원본만 쓰고, 바깥 오류와 dirty는 건드리지 않으며, 같은 값이면 쓰지 않음 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-19) |
 | WRITE-084 | `interpret` 칸의 계약 — 순수, 던지지 않음, 모든 입력에 값, 멱등, 바꾸지 못하면 항등 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-40) |
-| WRITE-085 | 노드 되돌림의 출처는 루트의 로드 스냅숏 — 로드마다 `setIn`, `defaultValue`는 `getIn(snapshot, path)`, `resetSubtree()`는 상태 비움 뒤 로드, 배열 아이템은 구조 연산을 따라 자기 값 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-44), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-97), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-103) |
+| WRITE-085 | 노드 되돌림의 출처는 루트의 로드 스냅숏 — 로드마다 `setIn`, `defaultValue`는 `getIn(snapshot, path)`, `resetSubtree()`는 상태 비움 뒤 로드, 배열 아이템은 구조 연산을 따라 자기 값 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-44), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-97), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-103), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-105) |
 | WRITE-086 | 재생성 reset의 폐기는 참조를 끊지 않는다 — 폐기의 네 일, 옛 노드의 읽기와 쓰기, 트리를 붙잡는 비용의 문서화 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-61) |
 | WRITE-087 | 잠복 원본 열거의 반환 모양 — 읽기 전용 `{ path, value }` 배열, 전순서, 얼린 빈 배열 공유, 커밋 단계 메모 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-81) |
 | WRITE-088 | `push`는 로드가 아니라 구조 연산 — 만든 아이템은 생긴 노드로서 채움을 받고, `push(v)`면 없음인 자손에만 채움 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-59) |
@@ -100,10 +100,11 @@
 | WRITE-092 | null은 키 없는 전체 교체다(D-1) — 모든 자식의 원본이 없음, null 아래에 원본을 남기지 않음 | 현행 | 원리(D-1 원리에서 도출, `adr/0013-core-does-not-rewrite-values.md:3`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-16) |
 | WRITE-093 | `union` 행의 해석 — 기본 spec과 유효 목록, `isMember`·`convert`·`interpret`(규칙 A: 순서 무관·멱등·무할당), 노드에 드는 모든 쓰기의 경계와 한 진입의 두 번 해석, `Merge`는 통째, `trim`은 `finishInput`, PR-2·PR-4 게이트 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-91), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-104) |
 | WRITE-094 | `setValue(V)`는 로드가 아니지만 V에 없는 경로의 원본(잠복 원본 포함)을 없음으로 만든다 — 잠복 원본이 지워지는 길 셋, 멱등은 방출 값·채움·에지에 대해 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-96) |
-| WRITE-095 | 아이템을 만들거나 없애는 모든 쓰기는 스냅숏 배열의 자리를 맞춘다 — 새 자리는 `undefined`, 값은 싣지 않음, O(배열 길이) | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-97) |
+| WRITE-095 | 아이템을 만들거나 없애는 모든 쓰기는 스냅숏 배열의 자리를 맞춘다 — 새 자리는 `undefined`, 값은 싣지 않음, O(배열 길이) | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-97), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-105) |
 | WRITE-096 | null 계약의 문구 — 로드가 아닌 쓰기로 온 `null` 아래 자식은 채움 없이 없음, 로드로 온 `null`은 채움, 쓰기 종류에 호출자 전체 교체 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-100) |
 | WRITE-097 | 정리 — 억제 비트의 범위(로드·전체 교체 쓰기·`Merge`), 낡은 근거와 가리킴, LANDING-118, `setValue(undefined)`와 노드 게이트의 채움 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-103) |
-| WRITE-098 | U7 정련 — 쓰기 경계는 정적 목록(`schemaType`, `nullable`)으로 한 번, 전이 단계는 최종 유효 목록이 좁은 노드만 원래 쓰인 값을 다시 해석, 로드도 같음, 유효 목록의 정의, PR-2 게이트 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-104) |
+| WRITE-098 | U7 정련 — 쓰기 경계는 정적 목록(`schemaType`, `nullable`)으로 한 번, 전이 단계는 최종 유효 목록이 좁은 노드만 원래 쓰인 값을 다시 해석, 로드도 같음, 유효 목록의 정의, PR-2 게이트 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-104), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-105) |
+| WRITE-099 | U7 정련 2 — 전이 단계의 재해석은 전이 쓰기(다음 라운드, 한 라운드에 한 번, 상한이면 원본 B에는 쓰기 경계의 해석만), `VALIDATOR_COMPILE_FAILED`는 폼 수준 기록, 정적 선언 없는 이름의 게이트 없는 분기끼리 fold가 다르면 청사진 오류, `node.type`은 여덟, `union` 입력이 보내는 값, 목록 밖 `default`는 노드가 생길 때마다, `push(v)`의 스냅숏은 생성 값, `NON_JSON_WHOLE_VALUE`는 개발 모드에서만, 좁혀지지 않은 유효 목록은 `schemaType` 그 값, PR-2·PR-4·PR-1 게이트 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-105), 소유자 답(`reviews/round-18-owner-answers.md:24` 18C 검토 1번; 입력이 보내는 값) |
 
 ## 항목
 
@@ -1271,9 +1272,10 @@
   > 반영 칸(18C 검토 4번, 로드 스냅숏): "`setValue`는 로드가 아니므로 `defaultValue` 게터와 `resetSubtree()`의 로드 스냅숏을 바꾸지 않는다(배열의 구조 연산이 스냅숏을 고치는 18C-44의 규칙은 그대로다)." (`reviews/round-18-owner-answers.md:26`)
   > 편집자 결정(18C-97): "【추론】 아이템을 만들거나 없애는 모든 쓰기는 구조 연산처럼 그 경로의 스냅숏 배열의 자리를 맞춘다." (`reviews/round-18-closing.md:2779`)
   > 편집자 결정(18C-97): "【추론】 없어진 아이템의 자리는 잘라 내고, 새 아이템의 자리에는 `undefined`를 넣으며, 값은 싣지 않는다." (`reviews/round-18-closing.md:2780`)
+  > 편집자 결정(18C-105): "【추론】 구조 연산(`push(v)`·삽입)은 WRITE-085대로 생성 값 `v`를 스냅숏 자리에 넣고, 아이템을 만드는 비구조 쓰기만 `undefined`를 넣는다." (`reviews/round-18-closing.md:2954`)
 - 상태: 현행
-- 출처: `reviews/round-18-closing.md:1220-1236`(정본), `reviews/round-18-closing.md:2779-2780,2883-2884`
-- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-44), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-97), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-103)
+- 출처: `reviews/round-18-closing.md:1220-1236`(정본), `reviews/round-18-closing.md:2779-2780,2883-2884`, `reviews/round-18-closing.md:2954`
+- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-44), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-97), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-103), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-105)
 - 라운드: 18
 - 까닭: `reviews/round-18-closing.md:1240-1247`, `reviews/round-18-closing.md:2784-2786`, `reviews/round-18-closing.md:2891-2893`
 - 충돌:
@@ -1505,10 +1507,12 @@
   > 실패: 스냅숏 배열이 신원과 어긋나면 자리 맞춤을 고친다.
 - 보충: 없음
 - 상태: 현행
-- 출처: `reviews/round-18-closing.md:2779-2782,2788-2791`(정본)
-- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-97)
+- 출처: `reviews/round-18-closing.md:2779-2782,2788-2791`(정본), `reviews/round-18-closing.md:2954`
+- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-97), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-105)
 - 라운드: 18
 - 까닭: `reviews/round-18-closing.md:2784-2786`
+- 충돌:
+  > `reviews/round-18-closing.md:2780`의 "새 아이템의 자리에는 `undefined`를 넣으며"는 18C-105의 결정과 다르다: 구조 연산(`push(v)`·삽입)은 WRITE-085대로 생성 값 `v`를 스냅숏 자리에 넣고, 아이템을 만드는 비구조 쓰기만 `undefined`를 넣는다(WRITE-099). 18C-105의 결정이 이긴다(`reviews/round-18-closing.md:2954`).
 
 ### WRITE-096 null 계약의 문구 — 로드가 아닌 쓰기로 온 `null` 아래 자식은 채움 없이 없음, 로드로 온 `null`은 채움, 쓰기 종류에 호출자 전체 교체
 
@@ -1569,9 +1573,62 @@
   > 무엇: 렌더 시나리오 `union.entry-two-step`에 위 예의 폼을 더해, 직전 `kind`가 `'text'`일 때와 `'flag'`일 때 각각 `setValue({kind:'flag', a:0})`를 부르고, `defaultValue`가 `{kind:'flag', a:0}`인 마운트와, `kind`를 `'text'`로 바꾼 뒤 두 필드를 담은 객체 노드의 `resetSubtree()`를 돌린다.
   > 통과: 모든 경우에 `a === false`이고 경고등이 꺼져 있으며, 쓰이지 않은 형제 노드는 다시 해석되지 않는다.
   > 실패: 결과가 직전 상태에 따라 갈리면 두 단계의 목록과 다시 해석하는 값을 고친다.
-- 보충: 없음
+- 보충:
+  > 편집자 결정(18C-105): "【추론】 전이 단계의 재해석은 전이 쓰기다." (`reviews/round-18-closing.md:2938`)
+  > 편집자 결정(18C-105): "【추론】 그 결과가 원본을 바꾸고 게이트를 뒤집으면 채움·비움과 같은 규칙으로 다음 라운드를 부르며, 라운드 상한(게이트 가진 조각 수 + 노드 게이트 수 + 1, SETTLE-005)은 그대로다." (`reviews/round-18-closing.md:2939`)
+  > 편집자 결정(18C-105): "【추론】 한 노드는 한 라운드에 한 번만 다시 해석한다." (`reviews/round-18-closing.md:2940`)
+  > 편집자 결정(18C-105): "【추론】 상한을 넘기면 SETTLE-011대로 원본 B를 커밋하고, 원본 B에는 쓰기 경계의 해석(정적 목록)만 남는다." (`reviews/round-18-closing.md:2942`)
+  > 편집자 결정(18C-105): "【추론】 전이 단계의 재해석은 게이트 상태가 최종이 아니므로 원본 B에서 버린다." (`reviews/round-18-closing.md:2943`)
+  > 편집자 결정(18C-105): "【추론】 원본 B에 남은 값이 좁혀진 유효 목록 밖이면 경고등이 켜진다." (`reviews/round-18-closing.md:2944`)
+  > 편집자 결정(18C-105): "【추론】 비용: 라운드마다, 유효 목록이 바뀐 쓰인 노드에 한해 `interpret` 한 번이다." (`reviews/round-18-closing.md:2945`)
 - 상태: 현행
-- 출처: `reviews/round-18-closing.md:2908-2918,2925-2928`(정본)
-- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-104)
+- 출처: `reviews/round-18-closing.md:2908-2918,2925-2928`(정본), `reviews/round-18-closing.md:2938-2940,2942-2945`
+- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-104), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-105)
 - 라운드: 18
 - 까닭: `reviews/round-18-closing.md:2920-2923`
+
+### WRITE-099 U7 정련 2 — 전이 단계의 재해석은 전이 쓰기(다음 라운드, 한 라운드에 한 번, 상한이면 원본 B에는 쓰기 경계의 해석만), `VALIDATOR_COMPILE_FAILED`는 폼 수준 기록, 정적 선언 없는 이름의 게이트 없는 분기끼리 fold가 다르면 청사진 오류, `node.type`은 여덟, `union` 입력이 보내는 값, 목록 밖 `default`는 노드가 생길 때마다, `push(v)`의 스냅숏은 생성 값, `NON_JSON_WHOLE_VALUE`는 개발 모드에서만, 좁혀지지 않은 유효 목록은 `schemaType` 그 값, PR-2·PR-4·PR-1 게이트
+
+- 결정:
+  > 【추론】 전이 단계의 재해석은 전이 쓰기다.
+  > 【추론】 그 결과가 원본을 바꾸고 게이트를 뒤집으면 채움·비움과 같은 규칙으로 다음 라운드를 부르며, 라운드 상한(게이트 가진 조각 수 + 노드 게이트 수 + 1, SETTLE-005)은 그대로다.
+  > 【추론】 한 노드는 한 라운드에 한 번만 다시 해석한다.
+  > 【추론】 예: 본체 `a:{type:['string','boolean']}`에 `a`가 수이면 `boolean`으로, 아니면 `string`으로 좁히는 게이트가 있을 때, `setValue({a:0})`는 쓰기 경계에서 `0`(받아 줄 형이 둘이라 그대로)이고, 첫 라운드의 재해석에서 `false`가 되어 게이트가 `string`으로 뒤집히며, 다음 라운드의 재해석에서 `"0"`이 되고 게이트가 더 뒤집히지 않으므로 `a = "0"`이 커밋된다.
+  > 【추론】 상한을 넘기면 SETTLE-011대로 원본 B를 커밋하고, 원본 B에는 쓰기 경계의 해석(정적 목록)만 남는다.
+  > 【추론】 전이 단계의 재해석은 게이트 상태가 최종이 아니므로 원본 B에서 버린다.
+  > 【추론】 원본 B에 남은 값이 좁혀진 유효 목록 밖이면 경고등이 켜진다.
+  > 【추론】 비용: 라운드마다, 유효 목록이 바뀐 쓰인 노드에 한해 `interpret` 한 번이다.
+  > 【추론】 `VALIDATOR_COMPILE_FAILED`는 폼 수준 기록이다.
+  > 【추론】 그 기록은 폼 수준 로드(마운트, `FormHandle.reset()`)마다 한 번 낸다.
+  > 【추론】 `resetSubtree()`는 그 기록을 다시 내지도 초기화하지도 않으며, 그 기록이 막은 `OnChange` 검증 예약은 다음 폼 수준 로드까지 막힌 채다.
+  > 【추론】 그래서 18C-101의 "한 로드에 한 번"(VALIDATE-048)을 `resetSubtree()`의 하위 트리에 적용한다는 문장은 이 블록이 대체한다.
+  > 【추론】 정적 선언이 없는 이름에서 게이트 없는 분기끼리 fold가 다르면 게이트 없는 선언끼리의 다른 종류이므로 `SHARED_NODE_KIND_CONFLICT` 청사진 오류다(BLUEPRINT-012, 소유자 O-10).
+  > 【추론】 `node.type`의 값은 여덟(`virtual` 포함)이고, 18C-02의 "일곱"은 스키마에서 오는 종류만 센 것이다.
+  > 【추론】 `union` 노드의 입력은 목록의 한 형의 값이나 없음을 보내며, 어떤 형을 보낼지는 입력 구현(UI 플러그인)이 정한다(`reviews/round-18-owner-answers.md:24`의 반영 칸 다섯째 문장, 목록을 읽는 자리는 BLUEPRINT-040).
+  > 【추론】 목록 밖 `default`의 경고등·경고는 마운트만이 아니라 노드가 생길 때마다(WRITE-090의 채움 시점) 켜고 보낸다.
+  > 【추론】 구조 연산(`push(v)`·삽입)은 WRITE-085대로 생성 값 `v`를 스냅숏 자리에 넣고, 아이템을 만드는 비구조 쓰기만 `undefined`를 넣는다.
+  > 【추론】 `NON_JSON_WHOLE_VALUE`의 깊이 점검은 VALUE-037대로 개발 모드에서만 돌며, 핸들러가 있어도 프로덕션에서는 돌지 않는다.
+  > 【추론】 좁혀지지 않은 노드의 유효 목록은 `schemaType` 그 값(스칼라면 스칼라, 배열이면 그 배열 참조)이며 "같은 참조"는 이것을 뜻한다.
+  > 【추론】 그래서 E26(18C-90)에서 게이트가 켜진 동안의 유효 목록은 `schemaType`과 같은 `'number'`다.
+  > PR: PR-2(전이 라운드)
+  > 무엇: 렌더 시나리오 `union.entry-two-step`에 위 예의 폼과, `a`가 문자열이면 `boolean`으로 아니면 `string`으로 좁히는 폼(되먹임이 멈추지 않는 반례)을 더해 각각 `setValue({a:0})`를 부른다.
+  > 통과: 첫 폼은 `a === "0"`이고 경고등이 꺼져 있으며, 둘째 폼은 전이 라운드 상한을 넘겨 원본 B로 `a === 0`을 커밋하고 경고등이 켜지며 `diagnostics.status`가 `'degraded'`다.
+  > 실패: 재해석이 라운드를 부르는 규칙이나 원본 B에 남는 값을 고친다.
+  > PR: PR-2(스냅숏·유효 목록)
+  > 무엇: 배열에 `push('x')`와 삽입을 한 뒤 새 아이템의 `defaultValue`와 `resetSubtree()`를 보고, E26 폼에서 게이트를 켠 뒤 `a`의 유효 목록을 본다.
+  > 통과: 새 아이템의 `defaultValue`는 생성 값이고 `resetSubtree()`가 그 값으로 되돌리며, E26의 유효 목록은 `node.schemaType`과 같은 `'number'`다.
+  > 실패: 스냅숏 자리 맞춤이나 유효 목록의 표현을 고친다.
+  > PR: PR-4(검증 불가 기록)
+  > 무엇: 전체 스키마 컴파일이 실패하는 `OnChange` 폼을 마운트하고 값을 쓴 뒤, 자식의 `resetSubtree()`를 부르고 값을 쓰며, 이어 `FormHandle.reset()`을 부르고 값을 쓴다.
+  > 통과: `VALIDATOR_COMPILE_FAILED`는 마운트 뒤와 `FormHandle.reset()` 뒤에 한 번씩 나고, `resetSubtree()` 뒤에는 다시 나지 않으며 그 뒤의 쓰기도 `OnChange` 검증을 예약하지 않는다.
+  > 실패: 기록의 단위를 고친다.
+  > PR: PR-1(청사진 판정)
+  > 무엇: `union.kind-procedure.test.ts`에 정적 선언 없이 호스트의 게이트 없는 `oneOf` 분기 둘이 같은 이름을 `string`과 `number`로 적은 칸을 더하고, `virtual` 노드를 가진 코퍼스에서 `node.type`의 값을 모으며, `union.type-test.ts`에서 union props의 `onChange` 형을 본다.
+  > 통과: 그 칸은 `SHARED_NODE_KIND_CONFLICT` 청사진 오류이고, 모은 값은 모두 여덟 값 가운데 하나이며, union props의 `onChange`는 목록의 형의 값과 없음만 받는다.
+  > 실패: 절차나 종류 목록이나 props의 형을 고친다.
+- 보충: 없음
+- 상태: 현행
+- 출처: `reviews/round-18-closing.md:2938-2957,2969-2984`(정본), `reviews/round-18-owner-answers.md:24`
+- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-105), 소유자 답(`reviews/round-18-owner-answers.md:24` 18C 검토 1번; 입력이 보내는 값)
+- 라운드: 18
+- 까닭: `reviews/round-18-closing.md:2959-2967`

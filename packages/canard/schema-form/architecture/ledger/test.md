@@ -82,8 +82,8 @@
 | TEST-074 | 안전 임계를 목표 배율로 올려 적지 않는다 — 문서는 잰 사실만, PR-7 뒤 같은 모바일 조건으로 다시 재어 적음, 병합 게이트 아님 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-28) |
 | TEST-075 | 번들 크기 예산 — 측정 방법 고정(ESM 진입을 esbuild로 minify, gzip -9, 의존성 외부), 기준 v0.16.0의 37,023 B, 늘면 이유를 적고 Vincent가 받아들여야 병합 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-29) |
 | TEST-076 | 컴파일 예산 — 따로 수치를 두지 않고 마운트 벤치에서 폼 몫과 검증기 몫으로 나눠 보고, TEST-072의 선으로 판정, 가드 200개 조건부 폼 생성은 PR-4의 수용 필요 항목 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-30) |
-| TEST-077 | union 설계의 시험 목록 — 청사진 판정(PR-1), 행과 `interpret`(PR-2), 렌더 시나리오와 입력 바인딩(PR-7), 검증기 플러그인(PR-4), tsc 전용 형 시험 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-93), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-104) |
-| TEST-078 | union 설계의 비용 — 청사진 판정, 유효 목록, 두 번 해석, 새 경고 넷, `interpret`, 경고등, 방출·채움, Hint·props, 기본 union 입력, 검증기, 공개 형, 플러그인 이주 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-93), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-104) |
+| TEST-077 | union 설계의 시험 목록 — 청사진 판정(PR-1), 행과 `interpret`(PR-2), 렌더 시나리오와 입력 바인딩(PR-7), 검증기 플러그인(PR-4), tsc 전용 형 시험 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-93), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-104), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-105) |
+| TEST-078 | union 설계의 비용 — 청사진 판정, 유효 목록, 두 번 해석, 새 경고 넷, `interpret`, 경고등, 방출·채움, Hint·props, 기본 union 입력, 검증기, 공개 형, 플러그인 이주 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-93), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-104), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-105) |
 
 ## 항목
 
@@ -1312,11 +1312,15 @@
 - 보충:
   > 편집자 결정(18C-104): "무엇: 렌더 시나리오 `union.entry-two-step`에 위 예의 폼을 더해, 직전 `kind`가 `'text'`일 때와 `'flag'`일 때 각각 `setValue({kind:'flag', a:0})`를 부르고, `defaultValue`가 `{kind:'flag', a:0}`인 마운트와, `kind`를 `'text'`로 바꾼 뒤 두 필드를 담은 객체 노드의 `resetSubtree()`를 돌린다." (`reviews/round-18-closing.md:2926`)
   > 편집자 결정(18C-104): "통과: 모든 경우에 `a === false`이고 경고등이 꺼져 있으며, 쓰이지 않은 형제 노드는 다시 해석되지 않는다." (`reviews/round-18-closing.md:2927`)
+  > 편집자 결정(18C-105): "무엇: 렌더 시나리오 `union.entry-two-step`에 위 예의 폼과, `a`가 문자열이면 `boolean`으로 아니면 `string`으로 좁히는 폼(되먹임이 멈추지 않는 반례)을 더해 각각 `setValue({a:0})`를 부른다." (`reviews/round-18-closing.md:2970`)
+  > 편집자 결정(18C-105): "통과: 첫 폼은 `a === "0"`이고 경고등이 꺼져 있으며, 둘째 폼은 전이 라운드 상한을 넘겨 원본 B로 `a === 0`을 커밋하고 경고등이 켜지며 `diagnostics.status`가 `'degraded'`다." (`reviews/round-18-closing.md:2971`)
 - 상태: 현행
-- 출처: `reviews/round-18-closing.md:2672-2697`(정본), `reviews/round-18-closing.md:2926-2927`
-- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-93), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-104)
+- 출처: `reviews/round-18-closing.md:2672-2697`(정본), `reviews/round-18-closing.md:2926-2927`, `reviews/round-18-closing.md:2956-2957,2970-2971`
+- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-93), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-104), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-105)
 - 라운드: 18
 - 까닭: `reviews/round-18-closing.md:2711-2715`
+- 충돌:
+  > `reviews/round-18-closing.md:2676`의 "`['number']`·`['number']`(`schemaType`과 같은 참조)·`['integer']`"는 18C-105의 결정과 다르다: 좁혀지지 않은 노드의 유효 목록은 `schemaType` 그 값(스칼라면 스칼라, 배열이면 그 배열 참조)이며, E26에서 게이트가 켜진 동안의 유효 목록은 `schemaType`과 같은 `'number'`다(WRITE-099). 18C-105의 결정이 이긴다(`reviews/round-18-closing.md:2956-2957`).
 
 ### TEST-078 union 설계의 비용 — 청사진 판정, 유효 목록, 두 번 해석, 새 경고 넷, `interpret`, 경고등, 방출·채움, Hint·props, 기본 union 입력, 검증기, 공개 형, 플러그인 이주
 
@@ -1335,9 +1339,10 @@
   > 【추론】 비용 — 플러그인 이주: 객체 시험 일곱 곳(코어 포함), 함수 시험 여섯 곳, mui 수 입력(빈 칸·초안·정수), 플러그인마다 union 항목 하나(권장)다.
 - 보충: 없음
 - 상태: 현행
-- 출처: `reviews/round-18-closing.md:2698-2709`(정본), `reviews/round-18-closing.md:2915`
-- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-93), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-104)
+- 출처: `reviews/round-18-closing.md:2698-2709`(정본), `reviews/round-18-closing.md:2915`, `reviews/round-18-closing.md:2955`
+- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-93), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-104), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-105)
 - 라운드: 18
 - 까닭: `reviews/round-18-closing.md:2711-2715`
 - 충돌:
   > `reviews/round-18-closing.md:2700`의 "한 진입에서 쓰였고 같은 정착에서 유효 목록이 바뀐 노드마다 `interpret` 한 번 더이며, 그 밖은 멱등이라 결과가 같다; 메모리 0"은 18C-104의 결정과 다르다: 비용은 쓰인 노드 가운데 유효 목록이 정적 목록보다 좁은 노드에 한해 `interpret` 한 번과 쓰인 값의 참조 보관이다(WRITE-098). 18C-104의 결정이 이긴다(`reviews/round-18-closing.md:2915`).
+  > `reviews/round-18-closing.md:2701`의 "개발 모드나 핸들러가 있을 때만 돌며"는 18C-105의 결정과 다르다: `NON_JSON_WHOLE_VALUE`의 깊이 점검은 VALUE-037대로 개발 모드에서만 돌며, 핸들러가 있어도 프로덕션에서는 돌지 않는다(WRITE-099). 18C-105의 결정이 이긴다(`reviews/round-18-closing.md:2955`).

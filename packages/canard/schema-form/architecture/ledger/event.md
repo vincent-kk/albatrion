@@ -77,7 +77,7 @@
 | EVENT-069 | C-10의 사용 규칙은 README가 소유 — 이주 안내에는 README를 가리키는 한 줄, 작성은 PR-8 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-84) |
 | EVENT-070 | React 이펙트를 거친 진입 간 순환은 core 예산에 넣지 않는다 — 예방은 C-10 문서, 게이트 PR-7(React 18·19 실행) | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-85) |
 | EVENT-071 | 로드가 아닌 쓰기(`setValue(V)` 포함)의 Refresh는 원본이 실제로 바뀐 노드에만(쓴 입력 제외) — "값이 같아도 낸다"는 로드의 새 수명만 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-94) |
-| EVENT-072 | `resetSubtree()`에 걸린 로드 규칙(로드 뒤 검증, `batch` 안의 즉시 정착, 한 로드에 한 번, 로드마다 다시 만듦)은 그 하위 트리에만 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-101) |
+| EVENT-072 | `resetSubtree()`에 걸린 로드 규칙(로드 뒤 검증, `batch` 안의 즉시 정착, 한 로드에 한 번, 로드마다 다시 만듦)은 그 하위 트리에만 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-101), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-105) |
 
 ## 항목
 
@@ -1111,7 +1111,9 @@
   > 실패: 이 블록을 고친다.
 - 보충: 없음
 - 상태: 현행
-- 출처: `reviews/round-18-closing.md:2848-2851,2857-2860`(정본)
-- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-101)
+- 출처: `reviews/round-18-closing.md:2848-2851,2857-2860`(정본), `reviews/round-18-closing.md:2946-2949`
+- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-101), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-105)
 - 라운드: 18
 - 까닭: `reviews/round-18-closing.md:2853-2855`
+- 충돌:
+  > `reviews/round-18-closing.md:2850`의 ""한 로드에 한 번"(VALIDATE-048)은 `resetSubtree()`에는 그 하위 트리에만 적용한다"는 18C-105의 결정과 다르다: `VALIDATOR_COMPILE_FAILED`는 폼 수준 기록이라 폼 수준 로드(마운트, `FormHandle.reset()`)마다 한 번 내고, `resetSubtree()`는 그 기록을 다시 내지도 초기화하지도 않으며, 그 기록이 막은 `OnChange` 검증 예약은 다음 폼 수준 로드까지 막힌 채다(WRITE-099). 18C-105의 결정이 이긴다(`reviews/round-18-closing.md:2946-2949`).

@@ -161,7 +161,7 @@
 - 라운드: 17
 - 까닭: `reviews/round-17-owner-answers.md:26`, `reviews/round-17-owner-answers.md:45`
 - 충돌:
-  > `09-landing-and-test-strategy.md:107`의 "종류 모듈 `stringBehavior/`·`numberBehavior/`·`booleanBehavior/`·`nullBehavior/`·`virtualBehavior/`"는 18라운드 결정과 다르다: 종류 모듈에 (가칭) `unionBehavior/`가 더해진다(BLUEPRINT-031). 18라운드 결정이 이긴다(`reviews/round-18-closing.md:80`).
+  > `09-landing-and-test-strategy.md:107`의 "종류 모듈 `stringBehavior/`·`numberBehavior/`·`booleanBehavior/`·`nullBehavior/`·`virtualBehavior/`"는 18라운드 결정과 다르다: 종류 모듈에 (가칭) `unionBehavior/`가 더해진다(BLUEPRINT-043). 18라운드 결정이 이긴다(`reviews/round-18-closing.md:80`).
 
 ### NODE-009 behaviors 규칙 — 종류마다 fractal, 보조의 자리, 가져오기 금지
 
@@ -289,8 +289,8 @@
 - 라운드: 18
 - 까닭: `reviews/raw-round17-node-structure.md:142-144`, `reviews/round-18-closing.md:898-899`
 - 충돌:
-  > `09-landing-and-test-strategy.md:115`의 "행은 종류마다 하나를 모든 노드가 공유하므로 프로세스 전체에 아홉이다."는 18라운드 결정과 다르다: (가칭) `union` 잎의 `terminal` 행이 더해져 행은 열이다(BLUEPRINT-031). 18라운드 결정이 이긴다(`reviews/round-18-closing.md:59`).
-  > `09-landing-and-test-strategy.md:115`의 "B3(아홉 종류 인스턴스와 행이 같은 맵인지)"는 18라운드 결정과 다르다: B3이 보는 종류 인스턴스와 행은 `union`을 더해 열이다(BLUEPRINT-031). 18라운드 결정이 이긴다(`reviews/round-18-closing.md:59`).
+  > `09-landing-and-test-strategy.md:115`의 "행은 종류마다 하나를 모든 노드가 공유하므로 프로세스 전체에 아홉이다."는 18라운드 결정과 다르다: (가칭) `union` 잎의 `terminal` 행이 더해져 행은 열이다(BLUEPRINT-043). 18라운드 결정이 이긴다(`reviews/round-18-closing.md:59`).
+  > `09-landing-and-test-strategy.md:115`의 "B3(아홉 종류 인스턴스와 행이 같은 맵인지)"는 18라운드 결정과 다르다: B3이 보는 종류 인스턴스와 행은 `union`을 더해 열이다(BLUEPRINT-043). 18라운드 결정이 이긴다(`reviews/round-18-closing.md:59`).
 
 ### NODE-019 노드 구조에서 결정하지 않은 것(N2·N5·N6·N14, 공개 표면의 크기, `ContextNode`, 문서 주석 관례, 내부 통로)
 

@@ -2926,3 +2926,59 @@
   - 무엇: 렌더 시나리오 `union.entry-two-step`에 위 예의 폼을 더해, 직전 `kind`가 `'text'`일 때와 `'flag'`일 때 각각 `setValue({kind:'flag', a:0})`를 부르고, `defaultValue`가 `{kind:'flag', a:0}`인 마운트와, `kind`를 `'text'`로 바꾼 뒤 두 필드를 담은 객체 노드의 `resetSubtree()`를 돌린다.
   - 통과: 모든 경우에 `a === false`이고 경고등이 꺼져 있으며, 쓰이지 않은 형제 노드는 다시 해석되지 않는다.
   - 실패: 결과가 직전 상태에 따라 갈리면 두 단계의 목록과 다시 해석하는 값을 고친다.
+
+## 최종 정합성 점검이 드러낸 항목
+
+2026-09-27. 봉인(커밋 `9f6d21306`) 뒤 codex와 antigravity에 같은 지시서로 맡긴 최종 정합성 점검(`reviews/raw-round18-final-check.md`)이 찾은 어긋남 가운데 검증자가 확인한 것을 닫는다. 아래 블록은 편집자 결정이다.
+
+### 18C-105 U7 정련 2 — 전이 라운드와 원본 B
+
+- 닫는 항목: WRITE-098(보충), SETTLE-005(보충), SETTLE-011(보충), TEST-077(보충·충돌), EVENT-072(충돌), VALIDATE-048(보충), BLUEPRINT-044(보충), BLUEPRINT-032(충돌), BLUEPRINT-033(분할됨), VALUE-037(충돌), WRITE-085(보충), WRITE-095(충돌), TEST-078(충돌), BLUEPRINT-045(충돌), 새 항목 WRITE-099(결정)
+- 결정:
+  - 【추론】 전이 단계의 재해석은 전이 쓰기다.
+  - 【추론】 그 결과가 원본을 바꾸고 게이트를 뒤집으면 채움·비움과 같은 규칙으로 다음 라운드를 부르며, 라운드 상한(게이트 가진 조각 수 + 노드 게이트 수 + 1, SETTLE-005)은 그대로다.
+  - 【추론】 한 노드는 한 라운드에 한 번만 다시 해석한다.
+  - 【추론】 예: 본체 `a:{type:['string','boolean']}`에 `a`가 수이면 `boolean`으로, 아니면 `string`으로 좁히는 게이트가 있을 때, `setValue({a:0})`는 쓰기 경계에서 `0`(받아 줄 형이 둘이라 그대로)이고, 첫 라운드의 재해석에서 `false`가 되어 게이트가 `string`으로 뒤집히며, 다음 라운드의 재해석에서 `"0"`이 되고 게이트가 더 뒤집히지 않으므로 `a = "0"`이 커밋된다.
+  - 【추론】 상한을 넘기면 SETTLE-011대로 원본 B를 커밋하고, 원본 B에는 쓰기 경계의 해석(정적 목록)만 남는다.
+  - 【추론】 전이 단계의 재해석은 게이트 상태가 최종이 아니므로 원본 B에서 버린다.
+  - 【추론】 원본 B에 남은 값이 좁혀진 유효 목록 밖이면 경고등이 켜진다.
+  - 【추론】 비용: 라운드마다, 유효 목록이 바뀐 쓰인 노드에 한해 `interpret` 한 번이다.
+  - 【추론】 `VALIDATOR_COMPILE_FAILED`는 폼 수준 기록이다.
+  - 【추론】 그 기록은 폼 수준 로드(마운트, `FormHandle.reset()`)마다 한 번 낸다.
+  - 【추론】 `resetSubtree()`는 그 기록을 다시 내지도 초기화하지도 않으며, 그 기록이 막은 `OnChange` 검증 예약은 다음 폼 수준 로드까지 막힌 채다.
+  - 【추론】 그래서 18C-101의 "한 로드에 한 번"(VALIDATE-048)을 `resetSubtree()`의 하위 트리에 적용한다는 문장은 이 블록이 대체한다.
+  - 【추론】 정적 선언이 없는 이름에서 게이트 없는 분기끼리 fold가 다르면 게이트 없는 선언끼리의 다른 종류이므로 `SHARED_NODE_KIND_CONFLICT` 청사진 오류다(BLUEPRINT-012, 소유자 O-10).
+  - 【추론】 `node.type`의 값은 여덟(`virtual` 포함)이고, 18C-02의 "일곱"은 스키마에서 오는 종류만 센 것이다.
+  - 【추론】 `union` 노드의 입력은 목록의 한 형의 값이나 없음을 보내며, 어떤 형을 보낼지는 입력 구현(UI 플러그인)이 정한다(`reviews/round-18-owner-answers.md:24`의 반영 칸 다섯째 문장, 목록을 읽는 자리는 BLUEPRINT-040).
+  - 【추론】 목록 밖 `default`의 경고등·경고는 마운트만이 아니라 노드가 생길 때마다(WRITE-090의 채움 시점) 켜고 보낸다.
+  - 【추론】 구조 연산(`push(v)`·삽입)은 WRITE-085대로 생성 값 `v`를 스냅숏 자리에 넣고, 아이템을 만드는 비구조 쓰기만 `undefined`를 넣는다.
+  - 【추론】 `NON_JSON_WHOLE_VALUE`의 깊이 점검은 VALUE-037대로 개발 모드에서만 돌며, 핸들러가 있어도 프로덕션에서는 돌지 않는다.
+  - 【추론】 좁혀지지 않은 노드의 유효 목록은 `schemaType` 그 값(스칼라면 스칼라, 배열이면 그 배열 참조)이며 "같은 참조"는 이것을 뜻한다.
+  - 【추론】 그래서 E26(18C-90)에서 게이트가 켜진 동안의 유효 목록은 `schemaType`과 같은 `'number'`다.
+- 근거:
+  - 최종 점검 codex F1(`reviews/raw-round18-final-check.md:12-17`, 판정 `:78`)과 antigravity F7(`:152-157`, 판정 `:216`): WRITE-098의 재해석은 한 번뿐이라 재해석이 게이트를 뒤집는 되먹임을 다루지 못하고(반례: `['string','boolean']`에 `a`가 수이면 `boolean`), 상한에서 커밋하는 원본 B에 재해석 결과가 드는지 적혀 있지 않다.
+  - codex F5(`reviews/raw-round18-final-check.md:40-45`, 판정 `:82`)와 antigravity F1(`:98-103`, 판정 `:210`): 폼 단위인 `VALIDATOR_COMPILE_FAILED`에 18C-101이 하위 트리의 로드를 적용해, `resetSubtree()`가 그 기록을 다시 내는지와 `OnChange` 예약의 억제가 풀리는지 알 수 없다(ERROR-204는 진단과 경고 중복 키만 다룬다).
+  - antigravity F2(`reviews/raw-round18-final-check.md:107-112`, 판정 `:211`): BLUEPRINT-044는 정적 선언이 없는 이름에서 게이트 없는 분기끼리 fold가 다를 때를 정하지 않는다.
+  - codex F6(`reviews/raw-round18-final-check.md:47-52`, 판정 `:83`)과 antigravity F3(`:116-121`, 판정 `:212`): BLUEPRINT-032의 "일곱"과 NODE-057의 `node.type` 여덟 값(`reviews/round-18-owner-answers.md:31`)이 다르다.
+  - antigravity F4(`reviews/raw-round18-final-check.md:125-130`, 판정 `:213`): 반영 칸 다섯째 문장의 앞부분은 분할된 BLUEPRINT-033의 결정과 BLUEPRINT-040의 보충에만 있다.
+  - antigravity F6(`reviews/raw-round18-final-check.md:143-148`, 판정 `:215`): VALUE-037은 목록 밖 `default`의 경고를 마운트 때로만 적지만, 채움은 노드가 생길 때마다 일어난다(WRITE-090).
+  - codex F2(`reviews/raw-round18-final-check.md:19-24`, 판정 `:79`): WRITE-095의 `undefined`가 WRITE-085의 `push(v)` 생성 값과 갈리며, 반영 칸은 구조 연산의 규칙을 그대로 둔다(`reviews/round-18-owner-answers.md:26`).
+  - codex F3(`reviews/raw-round18-final-check.md:26-31`, 판정 `:80`): TEST-078의 "개발 모드나 핸들러가 있을 때만"은 VALUE-037의 "프로덕션에서는 그 점검을 하지 않으며"와 다르다.
+  - codex F4(`reviews/raw-round18-final-check.md:33-38`, 판정 `:81`): E26의 `['number']`는 스칼라 `schemaType` `'number'`(`reviews/round-18-owner-answers.md:31`)와 같은 참조일 수 없다.
+- 게이트:
+  - PR: PR-2(전이 라운드)
+  - 무엇: 렌더 시나리오 `union.entry-two-step`에 위 예의 폼과, `a`가 문자열이면 `boolean`으로 아니면 `string`으로 좁히는 폼(되먹임이 멈추지 않는 반례)을 더해 각각 `setValue({a:0})`를 부른다.
+  - 통과: 첫 폼은 `a === "0"`이고 경고등이 꺼져 있으며, 둘째 폼은 전이 라운드 상한을 넘겨 원본 B로 `a === 0`을 커밋하고 경고등이 켜지며 `diagnostics.status`가 `'degraded'`다.
+  - 실패: 재해석이 라운드를 부르는 규칙이나 원본 B에 남는 값을 고친다.
+  - PR: PR-2(스냅숏·유효 목록)
+  - 무엇: 배열에 `push('x')`와 삽입을 한 뒤 새 아이템의 `defaultValue`와 `resetSubtree()`를 보고, E26 폼에서 게이트를 켠 뒤 `a`의 유효 목록을 본다.
+  - 통과: 새 아이템의 `defaultValue`는 생성 값이고 `resetSubtree()`가 그 값으로 되돌리며, E26의 유효 목록은 `node.schemaType`과 같은 `'number'`다.
+  - 실패: 스냅숏 자리 맞춤이나 유효 목록의 표현을 고친다.
+  - PR: PR-4(검증 불가 기록)
+  - 무엇: 전체 스키마 컴파일이 실패하는 `OnChange` 폼을 마운트하고 값을 쓴 뒤, 자식의 `resetSubtree()`를 부르고 값을 쓰며, 이어 `FormHandle.reset()`을 부르고 값을 쓴다.
+  - 통과: `VALIDATOR_COMPILE_FAILED`는 마운트 뒤와 `FormHandle.reset()` 뒤에 한 번씩 나고, `resetSubtree()` 뒤에는 다시 나지 않으며 그 뒤의 쓰기도 `OnChange` 검증을 예약하지 않는다.
+  - 실패: 기록의 단위를 고친다.
+  - PR: PR-1(청사진 판정)
+  - 무엇: `union.kind-procedure.test.ts`에 정적 선언 없이 호스트의 게이트 없는 `oneOf` 분기 둘이 같은 이름을 `string`과 `number`로 적은 칸을 더하고, `virtual` 노드를 가진 코퍼스에서 `node.type`의 값을 모으며, `union.type-test.ts`에서 union props의 `onChange` 형을 본다.
+  - 통과: 그 칸은 `SHARED_NODE_KIND_CONFLICT` 청사진 오류이고, 모은 값은 모두 여덟 값 가운데 하나이며, union props의 `onChange`는 목록의 형의 값과 없음만 받는다.
+  - 실패: 절차나 종류 목록이나 props의 형을 고친다.

@@ -53,7 +53,7 @@
 | VALIDATE-045 | 최근 해제 목록 크기 8(검증기 인스턴스마다, 내부) — 밀려날 때와 같은 `$id` 재등록 직전에만 `release(root)`, 상한 '살아 있는 루트 + 8' | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-56) |
 | VALIDATE-046 | 같은 `$id`의 두 살아 있는 루트는 저마다 판정 — 떼어 두기는 플러그인 계약, PR-4 게이트 넷(오류·경고 아님은 ERROR-201) | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-57) |
 | VALIDATE-047 | 따로 컴파일한 가드는 전체 검증의 `if`와 같은 boolean — `$id`·동적 범위 포함, 플러그인 계약, PR-4 게이트 넷 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-58) |
-| VALIDATE-048 | 가드 컴파일의 공유 단위는 (검증기 인스턴스, 작성 루트 identity) — 전체 검증 함수도 같은 캐시 항목, 수명은 가드와 같음 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-79), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-101) |
+| VALIDATE-048 | 가드 컴파일의 공유 단위는 (검증기 인스턴스, 작성 루트 identity) — 전체 검증 함수도 같은 캐시 항목, 수명은 가드와 같음 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-79), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-101), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-105) |
 | VALIDATE-049 | 폼은 검증을 입력 경로에서 떼어 내는 장치를 두지 않음 — 진입당 요청 1회와 마이크로태스크 합치기, 빈도 조절은 `OnRequest`, 제출은 새로 검증 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-80) |
 | VALIDATE-050 | 값을 바꾸는 검증기 옵션 — `Validator` 문서 주석의 계약 문장, ajv 플러그인 셋의 `bind`는 `coerceTypes`·`useDefaults`·`removeAdditional`을 켠 인스턴스를 거부(가칭 `VALIDATOR_BIND_REFUSED`), 사용자 정의 변경 키워드는 소비자 책임, 스키마 사본은 깊은 복사 한 번 | 현행 | 소유자 답(`reviews/round-18-owner-answers.md:34` union O4) |
 | VALIDATE-051 | union과 검증기 — ajv8 기본 설정에 `allowUnionTypes: true`(판정 불변, 로그만 없앰), core는 검증에 넘기는 값을 복사하지 않음, 어긋난 union 값과 통째 값 안쪽의 에러는 union 노드가 받음, 규칙 A·경고등은 검증기를 쓰지 않음 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-90·18C-91) |
@@ -758,9 +758,12 @@
   > 【추론】 같은 `$id` 충돌, 최근 해제 목록의 크기, `$id`·`$dynamicRef` 문맥은 이 항목이 아니다(18C-56, 18C-57, 18C-58).
 - 보충:
   > 편집자 결정(18C-101): "【추론】 "한 로드에 한 번"(VALIDATE-048)은 `resetSubtree()`에는 그 하위 트리에만 적용한다." (`reviews/round-18-closing.md:2850`)
+  > 편집자 결정(18C-105): "【추론】 `VALIDATOR_COMPILE_FAILED`는 폼 수준 기록이다." (`reviews/round-18-closing.md:2946`)
+  > 편집자 결정(18C-105): "【추론】 그 기록은 폼 수준 로드(마운트, `FormHandle.reset()`)마다 한 번 낸다." (`reviews/round-18-closing.md:2947`)
+  > 편집자 결정(18C-105): "【추론】 `resetSubtree()`는 그 기록을 다시 내지도 초기화하지도 않으며, 그 기록이 막은 `OnChange` 검증 예약은 다음 폼 수준 로드까지 막힌 채다." (`reviews/round-18-closing.md:2948`)
 - 상태: 현행
-- 출처: `reviews/round-18-closing.md:2136-2145`(정본), `reviews/round-18-closing.md:2850`
-- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-79), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-101)
+- 출처: `reviews/round-18-closing.md:2136-2145`(정본), `reviews/round-18-closing.md:2850`, `reviews/round-18-closing.md:2946-2948`
+- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-79), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-101), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-105)
 - 라운드: 18
 - 까닭: `reviews/round-18-closing.md:2147-2148`, `reviews/round-18-closing.md:2853-2855`
 
