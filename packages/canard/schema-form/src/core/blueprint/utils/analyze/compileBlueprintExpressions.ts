@@ -1,8 +1,9 @@
-import type { BlueprintExpression, PropertyDeclaration } from '../../type';
+import type { BlueprintExpression } from '../../type';
 import { BlueprintErrorCode } from '../diagnostics/constant';
 import { throwBlueprintError } from '../diagnostics/throwBlueprintError';
 import { createDynamicFunction } from '../expressions/createDynamicFunction';
 import { getPathManager } from '../expressions/getPathManager';
+import { registerBlueprintDependency } from './compileBlueprintExpressions/utils/registerBlueprintDependency';
 import { readSchemaObject } from './readSchemaObject';
 import type { AnalysisContext } from './type';
 
@@ -16,27 +17,6 @@ export const compileBlueprintExpressions = (
 ): readonly BlueprintExpression[] => {
   const expressions: BlueprintExpression[] = [];
   const visited = new Set<number>();
-  const register = (
-    path: unknown,
-    declaration: PropertyDeclaration,
-    schemaPath: string,
-  ): void => {
-    if (typeof path !== 'string' || path.split('/').includes('*'))
-      throwBlueprintError(
-        BlueprintErrorCode.ObservedValues,
-        schemaPath,
-        {
-          path,
-          guidance:
-            'Dependencies must be strings without wildcard path segments.',
-        },
-        context.options,
-      );
-    const ids =
-      context.dependencies[path as string] ??
-      (context.dependencies[path as string] = []);
-    if (!ids.includes(declaration.id)) ids.push(declaration.id);
-  };
   for (const node of context.nodes)
     for (const declaration of node.declarations) {
       if (visited.has(declaration.id) || declaration.validationOnly) continue;
@@ -58,7 +38,12 @@ export const compileBlueprintExpressions = (
         if (watch !== undefined) {
           const paths = Array.isArray(watch) ? watch : [watch];
           for (const path of paths)
-            register(path, declaration, `${group.schemaPath}/watch`);
+            registerBlueprintDependency(
+              context,
+              path,
+              declaration,
+              `${group.schemaPath}/watch`,
+            );
         }
         for (const key of [
           'active',
@@ -91,7 +76,7 @@ export const compileBlueprintExpressions = (
           if (!evaluate) continue;
           const dependencies = Object.freeze([...manager.get()]);
           for (const path of dependencies)
-            register(path, declaration, schemaPath);
+            registerBlueprintDependency(context, path, declaration, schemaPath);
           expressions.push(
             Object.freeze({
               declarationId: declaration.id,
