@@ -1,8 +1,8 @@
 # Merge and Schema Intersection Worker Evidence
 
 - Scope: common-utils optional merge policies and the schemaIntersection module. No legacy imports or consumers changed by this worker.
-- Contracts preceded implementation in coordinator commits `2cc88718` and `39d939ca`.
-- common-utils version changed from 0.15.0 to 0.16.0 as the approved substitute for a changeset before release transition.
+- Contracts preceded implementation in coordinator commits `e468dcc56` and `c815947b8`.
+- common-utils remains at 0.15.0. The owner directed deferring the version change; `.changeset/common-utils-merge-policies.md` records the pending minor release.
 
 ## Fail-first evidence
 
