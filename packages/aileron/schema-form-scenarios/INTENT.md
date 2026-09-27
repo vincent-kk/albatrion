@@ -2,8 +2,8 @@
 
 ## Purpose
 
-Own reusable form scenario data and the adapters that execute the same scenario
-against an injected core or a rendered form. This private workspace supports
+Own reusable form scenario data and the screen adapter for a rendered form.
+This private workspace supports
 schema-form verification without depending on the schema-form package.
 
 ## Conventions
@@ -14,8 +14,8 @@ schema-form verification without depending on the schema-form package.
 
 ## Boundaries
 
-The package owns scenario vocabulary, ordered execution, observable assertions,
-DOM handle registration, and the form wrapper. The consumer owns the engine,
+The package owns scenario vocabulary, screen execution, DOM handle registration,
+and the form wrapper. The consumer owns core scenario execution, the engine,
 form implementation, rendering lifecycle, and assertion runtime.
 
 ## Always do

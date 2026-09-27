@@ -23,9 +23,8 @@ and ordered steps. A step uses one of `setValue`, `clear`, `push`, `remove`,
 optional observable expectations. Shape expectations use JSON Pointer paths;
 value and error expectations describe observations after that step settles.
 
-The core runner receives its engine adapter as an argument. It executes steps
-in order, awaits the adapter's completion boundary, and delegates assertions to
-the injected observer. It does not import or construct schema-form nodes.
+The core runner belongs to schema-form's core verification owner, as TEST-023
+requires. This package exports no core runner and executes no engine scenarios.
 
 `playScenario(scenario, element)` uses the supplied element as its lookup scope.
 The rendered wrapper registers its structural handle and screen adapter on its
@@ -53,10 +52,10 @@ registration and adapter failures never silently skip a step or expectation.
 - The action vocabulary contains exactly the eight ledger actions.
 - Union, fill, and narrowing families exist and initially contain no scenarios.
 
-### scenario-runner — Injected ordered execution
+### scenario-screen-order — Ordered screen execution
 
 - An empty scenario runs zero actions and succeeds.
-- A supplied adapter receives each step once, in order, with completion awaited.
+- The registered screen adapter receives each step once, in order, with completion awaited.
 - Expectations are delegated after completion and failures propagate.
 
 ### scenario-registration — Scoped DOM handoff
