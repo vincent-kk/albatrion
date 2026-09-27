@@ -71,9 +71,18 @@ describe('NODE-059 public value inference', () => {
         oneOf: [{ type: 'object' }, { type: 'object' }];
       }>
     >().toBeAny();
-    expectTypeOf<InferValueType<{ const: { id: 1 } }>>().toBeAny();
+  });
+
+  it('keeps statically rejected literal and mixed container values unknown', () => {
+    expectTypeOf<InferValueType<{ const: { id: 1 } }>>().toBeUnknown();
+    expectTypeOf<InferValueType<{ const: [] }>>().toBeUnknown();
     expectTypeOf<
       InferValueType<{ enum: readonly ['cat', 1] }>
-    >().toBeAny();
+    >().toBeUnknown();
+    expectTypeOf<
+      InferValueType<{
+        oneOf: [{ type: 'object' }, { type: 'array' }];
+      }>
+    >().toBeUnknown();
   });
 });

@@ -71,4 +71,17 @@ describe('NODE-059 public node inference', () => {
     >().toEqualTypeOf<StringNode>();
     expectTypeOf<InferSchemaNode<{ const: null }>>().toEqualTypeOf<NullNode>();
   });
+
+  it('marks statically rejected literals and mixed container branches as invalid', () => {
+    expectTypeOf<InferSchemaNode<{ const: { id: 1 } }>>().toBeNever();
+    expectTypeOf<InferSchemaNode<{ const: [] }>>().toBeNever();
+    expectTypeOf<
+      InferSchemaNode<{ enum: readonly ['cat', 1] }>
+    >().toBeNever();
+    expectTypeOf<
+      InferSchemaNode<{
+        oneOf: [{ type: 'object' }, { type: 'array' }];
+      }>
+    >().toBeNever();
+  });
 });

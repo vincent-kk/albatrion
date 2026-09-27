@@ -44,7 +44,14 @@ type HasSingleLiteralKind<Value> = [
         : false;
 
 /** Classifies only an explicitly authored inline branch type. */
-type InlineTypeKind<Type> = Type extends 'object' | 'array' | 'null'
+type InlineTypeKind<Type> = Type extends
+  | 'object'
+  | 'array'
+  | 'null'
+  | 'string'
+  | 'number'
+  | 'integer'
+  | 'boolean'
   ? Type
   : Type extends readonly string[]
     ? [Type[number]] extends [never]
@@ -69,10 +76,25 @@ type InlineBranchKind<Branch> = Branch extends { $ref: unknown }
       ? InlineTypeKind<Type>
       : 'unsupported';
 
+/** Identifies a statically invalid object/array mixture without guessing refs. */
+type HasMixedContainer<Kind> = 'unsupported' extends Kind
+  ? false
+  : 'object' extends Kind
+    ? [Exclude<Kind, 'object' | 'null'>] extends [never]
+      ? false
+      : true
+    : 'array' extends Kind
+      ? [Exclude<Kind, 'array' | 'null'>] extends [never]
+        ? false
+        : true
+      : false;
+
 /** Only a nonempty homogeneous inline branch tuple is statically narrowed. */
 type InlineHostValue<Branches> = Branches extends readonly [unknown, ...unknown[]]
   ? InlineBranchKind<Branches[number]> extends infer Kind
-    ? [Kind] extends ['object' | 'null']
+    ? HasMixedContainer<Kind> extends true
+      ? unknown
+      : [Kind] extends ['object' | 'null']
       ? 'object' extends Kind
         ? InferValueType<Branches[number]>
         : null
@@ -86,15 +108,19 @@ type InlineHostValue<Branches> = Branches extends readonly [unknown, ...unknown[
 
 /** `const` wins over enum for a branch-free literal-only schema. */
 type LiteralValue<Schema> = Schema extends { const: infer Value }
-  ? HasSingleLiteralKind<Value> extends true
+  ? 'unsupported' extends LiteralKind<Value>
+    ? unknown
+    : HasSingleLiteralKind<Value> extends true
     ? Value
     : BroadValue
   : Schema extends { enum: infer Values }
     ? Values extends readonly [unknown, ...unknown[]]
       ? HasSingleLiteralKind<Values[number]> extends true
         ? Values[number]
+        : unknown
+      : Values extends readonly []
+        ? unknown
         : BroadValue
-      : BroadValue
     : BroadValue;
 
 /** Infer authored typed values, inline variants and branch-free literal fields. */

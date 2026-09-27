@@ -18,7 +18,14 @@ import type { StringNode } from '../nodes/StringNode';
 import type { VirtualNode } from '../nodes/VirtualNode';
 
 /** Classifies only an explicitly authored inline branch type. */
-type InlineTypeKind<Type> = Type extends 'object' | 'array' | 'null'
+type InlineTypeKind<Type> = Type extends
+  | 'object'
+  | 'array'
+  | 'null'
+  | 'string'
+  | 'number'
+  | 'integer'
+  | 'boolean'
   ? Type
   : Type extends readonly string[]
     ? [Type[number]] extends [never]
@@ -43,10 +50,25 @@ type InlineBranchKind<Branch> = Branch extends { $ref: unknown }
       ? InlineTypeKind<Type>
       : 'unsupported';
 
+/** Identifies a statically invalid object/array mixture without guessing refs. */
+type HasMixedContainer<Kind> = 'unsupported' extends Kind
+  ? false
+  : 'object' extends Kind
+    ? [Exclude<Kind, 'object' | 'null'>] extends [never]
+      ? false
+      : true
+    : 'array' extends Kind
+      ? [Exclude<Kind, 'array' | 'null'>] extends [never]
+        ? false
+        : true
+      : false;
+
 /** Requires a nonempty inline branch tuple before narrowing the host node. */
 type InlineHostNode<Branches> = Branches extends readonly [unknown, ...unknown[]]
   ? InlineBranchKind<Branches[number]> extends infer Kind
-    ? [Kind] extends ['object' | 'null']
+    ? HasMixedContainer<Kind> extends true
+      ? never
+      : [Kind] extends ['object' | 'null']
       ? 'object' extends Kind
         ? ObjectNode
         : NullNode
@@ -58,36 +80,39 @@ type InlineHostNode<Branches> = Branches extends readonly [unknown, ...unknown[]
     : SchemaNode
   : SchemaNode;
 
-/** Maps a branch-free primitive literal to the corresponding node. */
-type LiteralNode<Value> = Value extends string
-  ? StringNode
+/** Maps literal values to JSON kinds, retaining invalid object/array values. */
+type LiteralKind<Value> = Value extends string
+  ? 'string'
   : Value extends number
-    ? NumberNode
+    ? 'number'
     : Value extends boolean
-      ? BooleanNode
+      ? 'boolean'
       : Value extends null
-        ? NullNode
-        : SchemaNode;
+        ? 'null'
+        : 'unsupported';
+
+/** Resolves one primitive kind; enum mixtures are invalid, const unions unknown. */
+type LiteralNodeForKinds<Kinds, Mixed> = 'unsupported' extends Kinds
+  ? never
+  : [Exclude<Kinds, 'null'>] extends [never]
+    ? NullNode
+    : [Exclude<Kinds, 'null'>] extends ['string']
+      ? StringNode
+      : [Exclude<Kinds, 'null'>] extends ['number']
+        ? NumberNode
+        : [Exclude<Kinds, 'null'>] extends ['boolean']
+          ? BooleanNode
+          : Mixed;
 
 /** Keeps literal inference narrow only when all enum values have one JSON kind. */
 type LiteralSchemaNode<Schema> = Schema extends { const: infer Value }
-  ? LiteralNode<Value>
+  ? LiteralNodeForKinds<LiteralKind<Value>, SchemaNode>
   : Schema extends { enum: infer Values }
     ? Values extends readonly [unknown, ...unknown[]]
-      ? LiteralNode<Values[number]> extends infer Node
-        ? Exclude<Node, NullNode> extends infer NonNullNode
-          ? [NonNullNode] extends [never]
-            ? NullNode
-            : [NonNullNode] extends [StringNode]
-              ? StringNode
-              : [NonNullNode] extends [NumberNode]
-                ? NumberNode
-                : [NonNullNode] extends [BooleanNode]
-                  ? BooleanNode
-                  : SchemaNode
-          : SchemaNode
+      ? LiteralNodeForKinds<LiteralKind<Values[number]>, never>
+      : Values extends readonly []
+        ? never
         : SchemaNode
-      : SchemaNode
     : SchemaNode;
 
 /**
