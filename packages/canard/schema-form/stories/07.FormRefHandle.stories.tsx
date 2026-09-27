@@ -233,7 +233,7 @@ const FormTypeInputArrayTerminalRefComponent = () => {
           return (
             <div>
               i am array item: {node.group}
-              <div>{value?.join(',')}</div>
+              <div data-array-value={JSON.stringify(value)}>{value?.join(',')}</div>
               <div>
                 <button
                   onClick={() =>
@@ -312,10 +312,11 @@ export const FormTypeInputArrayTerminalRef: Story = {
       await userEvent.click(setValueButton);
 
       await waitFor(() => {
-        expect(canvas.getByText(/"arr":/)).toBeInTheDocument();
-        expect(canvas.getByText(/1/)).toBeInTheDocument();
-        expect(canvas.getByText(/2/)).toBeInTheDocument();
-        expect(canvas.getByText(/3/)).toBeInTheDocument();
+        const output = within(canvas.getByRole('group', { name: 'Value' }));
+        expect(output.getByText(/"arr":/)).toBeInTheDocument();
+        expect(output.getByText(/1/)).toBeInTheDocument();
+        expect(output.getByText(/2/)).toBeInTheDocument();
+        expect(output.getByText(/3/)).toBeInTheDocument();
       });
     });
 
@@ -324,16 +325,27 @@ export const FormTypeInputArrayTerminalRef: Story = {
       await userEvent.click(pushButton);
 
       await waitFor(() => {
-        expect(canvas.getByText(/NEW ITEM/)).toBeInTheDocument();
+        const output = within(canvas.getByRole('group', { name: 'Value' }));
+        expect(output.getByText(/NEW ITEM/)).toBeInTheDocument();
       });
     });
 
     await step('clear 버튼 → 배열 비우기', async () => {
-      const clearButton = canvas.getByRole('button', { name: 'clear' });
+      const clearButton = canvas
+        .getAllByRole('button', { name: 'clear' })
+        .find((button) => !button.closest('form'));
+      if (!clearButton) throw new Error('The handle clear button is missing.');
       await userEvent.click(clearButton);
 
       await waitFor(() => {
-        expect(canvas.getByText(/"arr": \[\]/)).toBeInTheDocument();
+        const output = within(canvas.getByRole('group', { name: 'Value' }));
+        expect(output.getByText('{}', { exact: true })).toBeInTheDocument();
+        const input = canvasElement.querySelector('[data-path="/arr"]');
+        expect(input).toBeInTheDocument();
+        expect(input?.querySelector('[data-array-value]')).toHaveAttribute(
+          'data-array-value',
+          '[]',
+        );
       });
     });
   },

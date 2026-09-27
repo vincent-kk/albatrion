@@ -94,12 +94,33 @@ computed: {
 
 ## Render-Level Test Harness (`src/__tests__/`)
 
-버그 다수는 **node tree는 맞는데 렌더된 DOM이 어긋나는** 구간(초기 마운트 priming, 가지 전환, 배열 identity, Refresh-gated 비제어 입력)에서 발생한다. node-tree 전용 단위 테스트는 이를 못 잡는다.
+Vitest uses three projects: `unit` runs TypeScript core tests in Node, `render`
+runs React tests and DOM-dependent TypeScript tests in jsdom, and `storybook`
+runs portable stories through addon-vitest in headless Chromium. Source globs
+include `src/__legacy__/**`; architecture spike tests remain outside these
+product projects. Run `yarn test --run --project <name>` to select a project.
 
-- `src/__tests__/renderForm.tsx` — 공유 하니스. 실제 `<Form>`을 렌더하고 **두 레이어를 동시 검증**: 존재는 `[data-path]` 기반 `exists(path)`, 값은 `id={path}` 기반 `value/checked(path)`, 트리는 `node(path)/getValue()`, 가상화 placeholder는 `deferred(path)/deferredPaths()`. `flushOnMount:false`(동기 priming 단언), `instrument`(remount 감지), `strictMode`, `validator`(AJV), `caughtErrors`(수렴 가드), userEvent(`type/selectOption/toggle/addItem/removeItem`) 지원.
-- `src/__tests__/scenarios/*.render.test.tsx` — 시나리오 패밀리별 스위트(composition/array/computed/refresh/reset/validation/...). 파일당 ≤15 케이스. 신규 시나리오는 여기에 추가한다.
-- 검증된 product 버그는 `it.fails('... // BUG: ...')`로 표면화(스위트는 green 유지). src를 고쳐 통과시키지 말 것.
-- Final spec behavior is asserted through a renderForm scenario; a node-tree test accompanies it, never replaces it.
+- `src/__tests__/renderForm.tsx` remains the legacy Form regression harness.
+  It observes both DOM (`data-path`, input values, deferred placeholders) and
+  node state, with StrictMode, validators, caught errors, and user interactions.
+- Existing render scenarios keep their location and assertions until the engine
+  switch. Known legacy defects retain their explicit `it.fails` records.
+- New shared scenarios belong to private `@aileron/schema-form-scenarios` as pure
+  data. The package cannot import schema-form, including types; inject forms,
+  handles, and adapters through structural contracts.
+- Core scenario runners consume the shared families. New Form e2e runners belong
+  to `src/__tests__/e2e/<family>.test.tsx`, with at most 15 cases per file.
+  A scenario needing consumer-only spies or boundary assertions gets its own
+  file. Shared screen steps run through `playScenario(scenario, element)`.
+- The renderer registers its handle on the wrapper root or render container.
+  `playScenario` searches the received element and descendants, so story and
+  render contexts share the same call shape.
+- Scenario stories mirror the same data and call `playScenario` from `play`;
+  usage stories are documentation-only. New-engine stories begin at the engine
+  switch; the current stories keep rendering the legacy public entry point.
+- Final observable behavior needs a render scenario; a core test alone does not
+  verify DOM behavior. Harness skeleton tests and empty families claim no engine
+  behavior coverage.
 
 ## Class Member Ordering (Domain-First)
 

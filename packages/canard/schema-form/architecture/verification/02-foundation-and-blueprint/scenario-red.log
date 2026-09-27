@@ -1,0 +1,31 @@
+
+ RUN  v3.2.6 /Users/Vincent/Workspace/albatrion/packages/aileron/schema-form-scenarios
+
+
+⎯⎯⎯⎯⎯⎯ Failed Suites 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/utils/__tests__/runScenario.test.ts [ src/utils/__tests__/runScenario.test.ts ]
+Error: Failed to resolve import "../runScenario" from "src/utils/__tests__/runScenario.test.ts". Does the file exist?
+  Plugin: vite:import-analysis
+  File: /Users/Vincent/Workspace/albatrion/packages/aileron/schema-form-scenarios/src/utils/__tests__/runScenario.test.ts:4:28
+  1  |  import { describe, expect, it } from "vitest";
+  2  |  import { runScenario } from "../runScenario";
+     |                               ^
+  3  |  describe("runScenario", () => {
+  4  |    it("executes an empty scenario without calling the adapter", async () => {
+ ❯ TransformPluginContext._formatLog ../../../node_modules/vite/dist/node/chunks/config.js:29079:43
+ ❯ TransformPluginContext.error ../../../node_modules/vite/dist/node/chunks/config.js:29076:14
+ ❯ normalizeUrl ../../../node_modules/vite/dist/node/chunks/config.js:27199:18
+ ❯ ../../../node_modules/vite/dist/node/chunks/config.js:27257:32
+ ❯ TransformPluginContext.transform ../../../node_modules/vite/dist/node/chunks/config.js:27225:4
+ ❯ EnvironmentPluginContainer.transform ../../../node_modules/vite/dist/node/chunks/config.js:28877:14
+ ❯ loadAndTransform ../../../node_modules/vite/dist/node/chunks/config.js:22746:26
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  no tests
+   Start at  10:14:10
+   Duration  713ms (transform 9ms, setup 0ms, collect 0ms, tests 0ms, environment 407ms, prepare 83ms)
+

@@ -1,0 +1,26 @@
+{
+  "name": "@aileron/schema-form-scenarios",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    ".": "./index.ts"
+  },
+  "scripts": {
+    "test": "vitest run --config vite.config.ts",
+    "typecheck": "tsc --noEmit --strict --composite false -p tsconfig.json",
+    "lint": "yarn run -T eslint index.ts \"src/**/*.{ts,tsx}\""
+  },
+  "devDependencies": {
+    "@types/react": "19.2.14",
+    "@types/react-dom": "19.1.7",
+    "react": "19.2.6",
+    "react-dom": "19.2.6",
+    "typescript": "5.9.2",
+    "vitest": "3.2.6"
+  },
+  "peerDependencies": {
+    "react": ">=18 <20"
+  }
+}
