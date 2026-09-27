@@ -1,19 +1,24 @@
 import { isArray } from '@/common-utils/utils/filter/isArray';
 import { isPlainObject } from '@/common-utils/utils/filter/isPlainObject';
 
+import type { MergeOptions } from './merge/type';
+import { mergeWithOptions } from './merge/utils/mergeWithOptions';
+
 /**
  * Performs deep recursive merging of two objects with intelligent type handling.
  *
  * Recursively combines properties from source and target objects, with source
  * properties taking precedence. Handles nested objects, arrays, and mixed structures
  * intelligently by merging compatible types and replacing incompatible ones. Mutates
- * the target object in-place for performance while preserving type safety.
+ * the target object in-place by default. Optional policies select immutable
+ * merging, array replacement, opaque values, and one-sided reference retention.
  *
  * @template Target - Target object type extending Record<PropertyKey, any>
  * @template Source - Source object type extending Record<PropertyKey, any>
- * @param target - Target object to merge into (mutated in-place)
+ * @param target - Earlier object, mutated unless immutable is selected
  * @param source - Source object to merge from (not modified)
- * @returns The mutated target object with merged properties (Target & Source)
+ * @param options - Optional policies; omission preserves index-wise mutable merging
+ * @returns The merged target, or a copied result when immutable is selected
  *
  * @example
  * Basic object merging:
@@ -233,11 +238,15 @@ import { isPlainObject } from '@/common-utils/utils/filter/isPlainObject';
  * - **Space Complexity**: O(1) additional space (in-place mutation)
  * - **Optimization**: Direct property assignment with minimal overhead
  *
- * **Mutation Behavior:**
- * - **Target Object**: Modified in-place and returned
- * - **Source Object**: Never modified, read-only access
- * - **Nested Objects**: New objects created only when merging arrays with objects
- * - **Reference Safety**: Maintains object references where possible
+ * **Optional Policies:**
+ * - `immutable`: Copy overlapping containers instead of mutating the target
+ * - `preserveReferences`: Retain one-sided container references instead of copying
+ * - `arrayStrategy: 'replace'`: Retain the entire later array instead of merging indices
+ * - `isAtomic`: Matching values are opaque leaves; the later value wins
+ * - Policies propagate recursively; later undefined never erases a defined value
+ * - The option path handles reserved own keys through safe data-property access
+ * - Without options, target mutation, recursive copying and index merging remain
+ * - Source objects are never modified in either mode
  *
  * **Circular Reference Handling:**
  * ```typescript
@@ -315,7 +324,9 @@ export const merge = <
 >(
   target: Target,
   source: Source,
+  options?: MergeOptions,
 ): Target & Source => {
+  if (options) return mergeWithOptions(target, source, options);
   const keys = Object.keys(source) as Array<keyof Source>;
   for (let i = 0, k = keys[0], l = keys.length; i < l; i++, k = keys[i]) {
     if (k === PROTOTYPE_POLLUTION_KEY) continue;

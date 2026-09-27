@@ -12,6 +12,7 @@ export { getSymbols } from './getSymbols';
 export { hasUndefined } from './hasUndefined';
 export { isReservedName } from './isReservedName';
 export { merge } from './merge';
+export type { MergeOptions } from './merge/type';
 export { removePrototype } from './removePrototype';
 export { removeUndefined } from './removeUndefined';
 export {
