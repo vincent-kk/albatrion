@@ -1,5 +1,7 @@
 # Merge Module Restructure Verification
 
+Rebase reproducibility note: historical `f7eef9ed9` corresponds to `b4083009a207ce028c315c2e77de8353a189663e`. The retained historical JSON identifiers remain unchanged; the executable old benchmark now pins the reachable rebased commit. The subsequent actual pre-options-baseline investigation and strict dependency-graph measurements are recorded in [merge-default-investigation.md](./merge-default-investigation.md).
+
 ## Scope and source identity
 
 The public `merge` now selects default or option-aware recursion once. Each internal implementation recurses into itself. The wrapper also computes `replaceArrays` once from `options.arrayStrategy`; all option recursion receives that same boolean. Public package import paths and `MergeOptions` remain unchanged.

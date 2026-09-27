@@ -1,0 +1,10 @@
+{"repetition":5,"seed":1369956359,"order":"after-before","formats":["cjs","esm"],"environment":{"node":"v24.20.0","v8":"13.6.233.17-node.53","execPath":"/Users/Vincent/.nvm/versions/node/v24.20.0/bin/node","platform":"darwin","architecture":"arm64","osRelease":"25.6.0","cpu":"Apple M1 Max","cpuCount":10,"memoryBytes":68719476736,"rolldown":"1.2.0","tinybench":"2.9.0"}}
+{"repetition":5,"format":"cjs","fixture":"medium-32-keys","ratio":0.9976169180383694}
+{"repetition":5,"format":"cjs","fixture":"small-2-keys","ratio":0.9991186962083589}
+{"repetition":5,"format":"cjs","fixture":"array-200-elements","ratio":0.9980130111230969}
+{"repetition":5,"format":"cjs","fixture":"nested-settings-arrays","ratio":1.0066667194966252}
+{"repetition":5,"format":"esm","fixture":"medium-32-keys","ratio":1.050296320636756}
+{"repetition":5,"format":"esm","fixture":"small-2-keys","ratio":1.0318798126229485}
+{"repetition":5,"format":"esm","fixture":"array-200-elements","ratio":1.0021016136066805}
+{"repetition":5,"format":"esm","fixture":"nested-settings-arrays","ratio":1.0021390641790455}
+{"repetition":5,"complete":true,"sink":901149696}
