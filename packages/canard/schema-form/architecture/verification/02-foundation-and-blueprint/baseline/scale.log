@@ -1,0 +1,39 @@
+🚀 v2 bench | versions: latest | repeat: 1 | minSamples=30 maxTime=5s | gc: on | categories: Scale Render Flat flat-50, Scale Render Flat flat-100, Scale Render Flat flat-500, Scale Render Nested nested-d3-f4, Scale Render Nested nested-d5-f4, Scale Render Array array-100, Scale Render Array array-500, Scale Render Array array-1000, Scale Render OneOf oneOf-5, Scale Render OneOf oneOf-10, Scale Render OneOf oneOf-20, Scale Interact Flat flat-50, Scale Interact Flat flat-100, Scale Interact Flat flat-500, Scale Interact Nested nested-d3-f4, Scale Interact Nested nested-d5-f4
+
+--- sweep 1/1 ---
+  @canard/schema-form@latest - Scale Render Flat flat-50: 97.39 hz | mean=10.27ms | dev=±52.17%
+  @canard/schema-form@latest - Scale Render Flat flat-100: 56.43 hz | mean=17.72ms | dev=±22.92%
+  @canard/schema-form@latest - Scale Render Flat flat-500: 10.82 hz | mean=92.44ms | dev=±23.19%
+  @canard/schema-form@latest - Scale Render Nested nested-d3-f4: 67.57 hz | mean=14.80ms | dev=±21.88%
+  @canard/schema-form@latest - Scale Render Nested nested-d5-f4: 3.74 hz | mean=267.19ms | dev=±14.04%
+  @canard/schema-form@latest - Scale Render Array array-100: 11.63 hz | mean=85.98ms | dev=±22.13%
+  @canard/schema-form@latest - Scale Render Array array-500: 2.07 hz | mean=483.24ms | dev=±11.03%
+  @canard/schema-form@latest - Scale Render Array array-1000: 1.02 hz | mean=984.36ms | dev=±8.17%
+  @canard/schema-form@latest - Scale Render OneOf oneOf-5: 735.64 hz | mean=1.36ms | dev=±16.75%
+  @canard/schema-form@latest - Scale Render OneOf oneOf-10: 727.85 hz | mean=1.37ms | dev=±19.45%
+  @canard/schema-form@latest - Scale Render OneOf oneOf-20: 706.13 hz | mean=1.42ms | dev=±12.67%
+  @canard/schema-form@latest - Scale Interact Flat flat-50: 81.74 hz | mean=12.23ms | dev=±28.80%
+  @canard/schema-form@latest - Scale Interact Flat flat-100: 43.08 hz | mean=23.21ms | dev=±27.23%
+  @canard/schema-form@latest - Scale Interact Flat flat-500: 7.84 hz | mean=127.53ms | dev=±20.51%
+  @canard/schema-form@latest - Scale Interact Nested nested-d3-f4: 50.05 hz | mean=19.98ms | dev=±26.08%
+  @canard/schema-form@latest - Scale Interact Nested nested-d5-f4: 2.87 hz | mean=347.84ms | dev=±11.84%
+
+📊 Aggregate (mean ± std across sweeps):
+  @canard/schema-form@latest - Scale Render Flat flat-50: 97.39 hz ± 0.00% (n=1, std=0.00)
+  @canard/schema-form@latest - Scale Render Flat flat-100: 56.43 hz ± 0.00% (n=1, std=0.00)
+  @canard/schema-form@latest - Scale Render Flat flat-500: 10.82 hz ± 0.00% (n=1, std=0.00)
+  @canard/schema-form@latest - Scale Render Nested nested-d3-f4: 67.57 hz ± 0.00% (n=1, std=0.00)
+  @canard/schema-form@latest - Scale Render Nested nested-d5-f4: 3.74 hz ± 0.00% (n=1, std=0.00)
+  @canard/schema-form@latest - Scale Render Array array-100: 11.63 hz ± 0.00% (n=1, std=0.00)
+  @canard/schema-form@latest - Scale Render Array array-500: 2.07 hz ± 0.00% (n=1, std=0.00)
+  @canard/schema-form@latest - Scale Render Array array-1000: 1.02 hz ± 0.00% (n=1, std=0.00)
+  @canard/schema-form@latest - Scale Render OneOf oneOf-5: 735.64 hz ± 0.00% (n=1, std=0.00)
+  @canard/schema-form@latest - Scale Render OneOf oneOf-10: 727.85 hz ± 0.00% (n=1, std=0.00)
+  @canard/schema-form@latest - Scale Render OneOf oneOf-20: 706.13 hz ± 0.00% (n=1, std=0.00)
+  @canard/schema-form@latest - Scale Interact Flat flat-50: 81.74 hz ± 0.00% (n=1, std=0.00)
+  @canard/schema-form@latest - Scale Interact Flat flat-100: 43.08 hz ± 0.00% (n=1, std=0.00)
+  @canard/schema-form@latest - Scale Interact Flat flat-500: 7.84 hz ± 0.00% (n=1, std=0.00)
+  @canard/schema-form@latest - Scale Interact Nested nested-d3-f4: 50.05 hz ± 0.00% (n=1, std=0.00)
+  @canard/schema-form@latest - Scale Interact Nested nested-d5-f4: 2.87 hz ± 0.00% (n=1, std=0.00)
+
+💾 Saved: /Users/Vincent/Workspace/albatrion/packages/canard/schema-form/architecture/verification/02-foundation-and-blueprint/baseline/scale.json
