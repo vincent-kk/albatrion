@@ -17,7 +17,7 @@
 | 시나리오 어댑터 | `yarn workspace @aileron/schema-form-scenarios test` | 4파일·10시험 통과, exit 0 — `integration-scenarios-test.log` |
 | 시나리오 strict | `yarn workspace @aileron/schema-form-scenarios typecheck` | exit 0 — `integration-scenarios-typecheck.log` |
 | 시나리오 lint | `yarn workspace @aileron/schema-form-scenarios lint` | exit 0 — `integration-scenarios-lint.log` |
-| common-utils | 패키지 test·lint·typecheck·build | merge 보고서의 1,166시험 및 exit 0 증거 재사용 대상 |
+| common-utils | 패키지 test·lint·typecheck·build | 로컬 별칭 제거 후 145파일·1,166시험, lint·strict·build exit 0. 최종 ESM·CJS 산출물 382개 해시가 배포 성능 측정 스냅샷과 일치 |
 | v7 | REPORT-v7.md의 Node 회귀 명령 | 기존 35시험 증거 재사용 대상 |
 | filid | 루트 조정자가 PR 경계에서 1회 수행 | 검증자가 별도 실행하지 않음 |
 
@@ -47,8 +47,8 @@ TEST-023의 코어 러너 배치는 `b4d7a552`에서 교정했습니다. 제품 
 | TEST-067(a) | scanner-corpus.md는 exit 방문자에서 referencePath/referenceResolved와 cycle 신호를 확인합니다. 원본 코퍼스 스캔 종료는 청사진 수용과 별개입니다. |
 | TEST-067(b) | `85fa44d49`에서도 원본 14종의 청사진 수용과 BLUEPRINT-039·BLUEPRINT-045 E16의 형 없는 객체/배열 분기 금지가 충돌합니다. 아래 독립 재대조 결과에 따라 초록으로 표시하지 않습니다. |
 | TEST-067(c)·(d) | 무한 형상 셋의 오류 및 배열·게이트·터미널 절단, 청사진 1회 비용은 최종 청사진 결과 확인 대기입니다. (c′)는 03입니다. |
-| merge 성능 | 초기 네 번째 측정 기본 경로 -3.38%는 비회귀 증거로 쓰지 않습니다. 실제 옵션 도입 전 베이스와 독립 프로세스 8회 비교한 후속 조사 및 최종 판정을 foundation 보고서에서 대조합니다. |
-| 교차 확인·PR | codex·antigravity 결과, seiri 최종 대조, filid 결과와 발견 기록은 아직 필요합니다. |
+| merge 성능 | 소스 CJS 변환의 getter 비용은 배포 성능 증거에서 제외했습니다. 실제 ESM·CJS 산출물의 독립 프로세스 8회 비교에서 7행 관측 개선, CJS 배열 200개는 -0.0112%였습니다. 신뢰구간 미확정과 미세 차이를 소유자가 2026-09-27 “측정 불확실성으로 수용”하여 성능 게이트를 닫았습니다. 통계적 비퇴행 증명과 구별합니다. |
+| 교차 확인·PR | 소유자가 원장 충돌 해소 후 Antigravity 전달을 승인하고, 비활성 외부 Codex 대신 별도 내부 Codex 검토자를 선택했습니다. 두 교차 확인과 최종 filid 스캔은 원장 정정 뒤 진행합니다. 전체 스캔은 아직 실행하지 않았습니다. |
 
 ## 읽기 감사
 
