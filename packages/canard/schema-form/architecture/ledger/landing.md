@@ -52,10 +52,10 @@
 | LANDING-042 | 이주 39 — 호출자의 전체 교체 `setValue(V)`는 reset과 같은 입력 판정 | 현행 | 16라운드 스웜 수렴(편집자 결정, `09-landing-and-test-strategy.md:71` §2.6의 열넷째), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-94) |
 | LANDING-043 | 이주 40 — 공개 `node.group`은 `node.strategy` | 현행 | 소유자 답(`reviews/round-17-owner-answers.md:22` `group`의 이름) |
 | LANDING-044 | 이주 41 — Form 속성 `onError` 신설, 오류·경고 코드 목록이 공개 계약 | 현행 | 소유자 답(`reviews/round-17-owner-answers.md:15` 통보 4), 17라운드 스웜 수렴(편집자 결정, 안 B) |
-| LANDING-045 | 이주 42 — `diagnostics`는 `'stable'`·`'degraded'`, 다음 로드까지 남고 그 동안 제출 거부 | 현행 | 소유자 답(`reviews/round-14-owner-answers.md:8` O-2), 소유자 답(`reviews/round-17-owner-answers.md:9` R17-1), 편집자 결정(17라운드, `exceededBudget`을 정착 예산 셋으로), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-98) |
+| LANDING-045 | 이주 42 — `diagnostics`는 `'stable'`·`'degraded'`, 다음 로드까지 남고 그 동안 제출 거부 | 현행 | 소유자 답(`reviews/round-14-owner-answers.md:8` O-2), 소유자 답(`reviews/round-17-owner-answers.md:9` R17-1), 편집자 결정(17라운드, `exceededBudget`을 정착 예산 셋으로), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-98), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-01·18C-21; `recursion`·`writeShape` 값 추가) |
 | LANDING-046 | 이주 43 — 바운더리는 가두고 대체 화면을 그린 뒤 다시 던지지 않고 보고 | 현행 | 소유자 답(`reviews/round-17-owner-answers.md:15` 통보 4), 소유자 답(`reviews/round-17-owner-answers.md:34` (나)) |
 | LANDING-047 | 이주 44 — `trim`은 포커스 아웃 때 `finishInput` 칸이 자르고 입력 출처 쓰기로 다룸 | 대체됨(→ LANDING-145) | 소유자 답(`reviews/round-17-owner-answers.md:11` R17-3), 소유자 답(`reviews/round-17-owner-answers.md:43` 9 입력 마침 칸), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-19) |
-| LANDING-048 | 이주 45 — `isTerminalNode`는 `node.strategy`로 판정하고 형 좁히기를 바로잡음 | 현행 | 소유자 답(`reviews/round-17-owner-answers.md:22` `group`의 이름), 17라운드 스웜 수렴(편집자 결정, 노드 구조) |
+| LANDING-048 | 이주 45 — `isTerminalNode`는 `node.strategy`로 판정하고 형 좁히기를 바로잡음 | 현행 | 소유자 답(`reviews/round-17-owner-answers.md:22` `group`의 이름), 17라운드 스웜 수렴(편집자 결정, 노드 구조), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-38·18C-89; `UnionNode` 포함, 가상 제외) |
 | LANDING-049 | 이주 46 — 노드 메서드 `findAll`은 `findNodes` | 현행 | 17라운드 스웜 수렴(편집자 결정, 노드 구조) |
 | LANDING-050 | 이주 47 — 행이 없는 조합(잎 `terminal: false`, 가상 `terminal: true`, 인라인 입력)의 처리와 이주 | 대체됨(→ LANDING-149) | 편집자 결정(17라운드, 18라운드 안건 N14로 이관), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-38) |
 | LANDING-051 | 배포는 한 번, 개발은 우산 브랜치 안의 PR 아홉으로 나눔 | 현행 | 소유자 답(`00-goals.md:110` C7), 편집자 결정(14라운드, `08-design-a-to-z.md:551`) |
@@ -65,45 +65,45 @@
 | LANDING-055 | 문서가 코드보다 먼저 바뀜 — 각 PR은 새 fractal의 INTENT·DETAIL로 시작, 이름은 책임으로 | 현행 | 원리(filid 규칙, 저장소 `.claude/rules/filid_code-placement.md` §5), 소유자 답(`reviews/round-17-owner-answers.md:26` `tree`의 이름, 책임별로 나눔) |
 | LANDING-056 | 새 core의 자리와 이름 — `blueprint`·`record`·`behaviors`·`navigation`·`settle`·`dispatch`·`validation`·`SchemaNode`와 행의 칸 | 현행 | 소유자 답(`reviews/round-17-owner-answers.md:21` 종류별 동작 표의 이름), 소유자 답(`reviews/round-17-owner-answers.md:24` 노드 구조), 소유자 답(`reviews/round-17-owner-answers.md:26` `tree`의 이름), 17라운드 스웜 수렴(편집자 결정, `reviews/round-17-owner-answers.md:38`·`reviews/raw-round17-node-structure.md:154`; 소유자 이견 없이 권고대로 확정된 칸), 소유자 답(`reviews/round-17-owner-answers.md:42-46` 4·9·10·12·15·14), 소유자 답(`reviews/round-17-owner-answers.md:53` `Node` 이름 규칙) |
 | LANDING-057 | 겉면 규칙과 behaviors 규칙 | 현행 | 17라운드 스웜 수렴(편집자 결정, 노드 구조 스웜 정련; `reviews/round-17-owner-answers.md:25` 반영 칸) |
-| LANDING-058 | 원샷이어야 하는 것은 전환 PR(PR-7)과 `master` 병합 둘뿐 | 현행 | 편집자 결정(14라운드, `08-design-a-to-z.md:562`) |
+| LANDING-058 | 원샷이어야 하는 것은 전환 PR(PR-7)과 `master` 병합 둘뿐 | 현행 | 편집자 결정(14라운드, `08-design-a-to-z.md:562`), 소유자 답(`reviews/round-18-owner-answers.md:44` 개발계획 P3·P4) |
 | LANDING-059 | 릴리스는 `master` 병합 뒤의 배포이며 판 올림 PR 병합이 시험 관문을 거쳐 자동 배포 | 현행 | 소유자 답(`reviews/round-16-owner-answers.md:15` 9), 16라운드 스웜 수렴(편집자 결정, `09-landing-and-test-strategy.md:225` §6.2의 일곱째) |
-| LANDING-060 | PR-0 문서 — 이 문서·기록·HANDOFF·프로토타입 v7·시나리오 패키지 뼈대 | 현행 | 편집자 결정(14라운드 PR 계획, `08-design-a-to-z.md:570`), 소유자 답(`reviews/round-16-owner-answers.md:14` 8 시나리오 모듈은 비공개 패키지), 편집자 결정(17라운드, 18라운드 정련을 착수 조건에 더함), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-49) |
-| LANDING-061 | PR-1 청사진 — 조각 표·노드 공유·병합 함수·잎 교차 함수 이동·식 컴파일러 이동·청사진 오류의 데이터화 | 현행 | 편집자 결정(16라운드, 답 10으로 확정 `reviews/round-16-owner-answers.md:16`), 소유자 답(`reviews/round-14-owner-answers.md:17` O-11 `merge` 선택 인자), 소유자 답(`reviews/round-17-owner-answers.md:9` R17-1), 소유자 답(`reviews/round-17-owner-answers.md:12` 통보 1), 17라운드 스웜 수렴(편집자 결정, 터미널 전략·병합의 원자·데이터화), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-02·18C-08·18C-49) |
-| LANDING-062 | PR-2 노드 트리와 정착 — 단일 클래스 `SchemaNode`와 동작 행, 정착 루프, 예산 다섯과 원본 B, `diagnostics` | 현행 | 소유자 답(`reviews/round-17-owner-answers.md:24` 노드 구조), 소유자 답(`reviews/round-17-owner-answers.md:42` 4 종류 모듈), 소유자 답(`reviews/round-17-owner-answers.md:9` R17-1), 소유자 답(`reviews/round-17-owner-answers.md:10` R17-2), 편집자 결정(16라운드 정착 검토 조건 5, `09-landing-and-test-strategy.md:23`) |
-| LANDING-063 | PR-3 파생 — `controls.derived`·`injectTo`·`unsetValue`, 같은 대상 규칙, 에지 소비 | 현행 | 편집자 결정(14라운드 PR 계획, `08-design-a-to-z.md:573`), 소유자 답(`reviews/round-15-decisions.md:13` 5, `controls` 표기) |
-| LANDING-064 | PR-4 통지와 검증 — 디스패처·`batch`·진입 사슬·`onError`의 core 쪽·`compileGuard`·배달 경로 | 현행 | 소유자 답(`reviews/round-16-owner-answers.md:9` 3 배달 경로), 소유자 답(`reviews/round-16-owner-answers.md:16` 10 가드 캐시와 등록의 소유), 16라운드 스웜 수렴(편집자 결정, 재생성 reset의 같은 `$id`), 17라운드 스웜 수렴(편집자 결정, `onError` core 쪽과 가드 컴파일) |
-| LANDING-065 | PR-5 배열 — 배열·터미널 배열 행, 아이템 호스트, 통째 교체의 identity | 현행 | 소유자 답(`reviews/round-17-owner-answers.md:42` 4 종류 모듈), 편집자 결정(14라운드 PR 계획, `08-design-a-to-z.md:575`) |
-| LANDING-066 | PR-6 상태 키와 제어 — 결합(OR/AND)·`controls.children`·조각 `controls`·`unsetOnInactive`의 정책 | 현행 | 소유자 답(`reviews/round-17-owner-answers.md:10` R17-2), 소유자 답(`reviews/round-13-owner-answers.md:7` 1 잠금 규칙), 17라운드 스웜 수렴(편집자 결정, 터미널 전략은 선언 사이 정적) |
-| LANDING-067 | PR-7 전환 — `nodeFromJSONSchema` 재구축, React 바인딩 연결, Form 속성, 바운더리, 옛 코드 삭제, UI 플러그인 이주 | 현행 | 소유자 답(`reviews/round-17-owner-answers.md:9` R17-1), 소유자 답(`reviews/round-17-owner-answers.md:11` R17-3), 소유자 답(`reviews/round-17-owner-answers.md:15` 통보 4), 소유자 답(`reviews/round-17-owner-answers.md:22` `group`의 이름), 소유자 답(`reviews/round-17-owner-answers.md:34` (나)), 소유자 답(`reviews/round-16-owner-answers.md:11,13` 5·7), 16라운드 스웜 수렴(편집자 결정, reset·로드·`setValue(V)`), 17라운드 스웜 수렴(편집자 결정, 바운더리·마운트 계약), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-49), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-94) |
-| LANDING-068 | PR-8 릴리스 — README·docs, ADR 0010 최종, 이주 안내와 프롬프트, changeset과 `CHANGELOG.md`, 릴리스 테스트 | 현행 | 소유자 답(`00-goals.md:111` C8), 소유자 답(`reviews/round-16-owner-answers.md:15` 9), 소유자 답(`reviews/round-16-owner-answers.md:22` PR-8의 판 번호), 16라운드 스웜 수렴(편집자 결정, `09-landing-and-test-strategy.md:225` §6.2) |
+| LANDING-060 | PR-0 문서 — 이 문서·기록·HANDOFF·프로토타입 v7·시나리오 패키지 뼈대 | 현행 | 편집자 결정(14라운드 PR 계획, `08-design-a-to-z.md:570`), 소유자 답(`reviews/round-16-owner-answers.md:14` 8 시나리오 모듈은 비공개 패키지), 편집자 결정(17라운드, 18라운드 정련을 착수 조건에 더함), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-49), 소유자 답(`reviews/round-18-owner-answers.md:44` 개발계획 P3·P4), 소유자 답(`reviews/round-18-owner-answers.md:45` 개발계획 1-가), 소유자 답(`reviews/round-18-owner-answers.md:16` 12-6) |
+| LANDING-061 | PR-1 청사진 — 조각 표·노드 공유·병합 함수·잎 교차 함수 이동·식 컴파일러 이동·청사진 오류의 데이터화 | 현행 | 편집자 결정(16라운드, 답 10으로 확정 `reviews/round-16-owner-answers.md:16`), 소유자 답(`reviews/round-14-owner-answers.md:17` O-11 `merge` 선택 인자), 소유자 답(`reviews/round-17-owner-answers.md:9` R17-1), 소유자 답(`reviews/round-17-owner-answers.md:12` 통보 1), 17라운드 스웜 수렴(편집자 결정, 터미널 전략·병합의 원자·데이터화), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-02·18C-08·18C-49), 소유자 답(`reviews/round-18-owner-answers.md:44` 개발계획 P3·P4), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-14; 정적 `injectTo` 오류 없음) |
+| LANDING-062 | PR-2 노드 트리와 정착 — 단일 클래스 `SchemaNode`와 동작 행, 정착 루프, 예산 다섯과 원본 B, `diagnostics` | 현행 | 소유자 답(`reviews/round-17-owner-answers.md:24` 노드 구조), 소유자 답(`reviews/round-17-owner-answers.md:42` 4 종류 모듈), 소유자 답(`reviews/round-17-owner-answers.md:9` R17-1), 소유자 답(`reviews/round-17-owner-answers.md:10` R17-2), 편집자 결정(16라운드 정착 검토 조건 5, `09-landing-and-test-strategy.md:23`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-25; 예산·배열 기록의 PR 배분) |
+| LANDING-063 | PR-3 파생 — `controls.derived`·`injectTo`·`unsetValue`, 같은 대상 규칙, 에지 소비 | 현행 | 편집자 결정(14라운드 PR 계획, `08-design-a-to-z.md:573`), 소유자 답(`reviews/round-15-decisions.md:13` 5, `controls` 표기), 소유자 답(`reviews/round-18-owner-answers.md:44` 개발계획 P3·P4) |
+| LANDING-064 | PR-4 통지와 검증 — 디스패처·`batch`·진입 사슬·`onError`의 core 쪽·`compileGuard`·배달 경로 | 현행 | 소유자 답(`reviews/round-16-owner-answers.md:9` 3 배달 경로), 소유자 답(`reviews/round-16-owner-answers.md:16` 10 가드 캐시와 등록의 소유), 16라운드 스웜 수렴(편집자 결정, 재생성 reset의 같은 `$id`), 17라운드 스웜 수렴(편집자 결정, `onError` core 쪽과 가드 컴파일), 소유자 답(`reviews/round-18-owner-answers.md:42` 개발계획 P1) |
+| LANDING-065 | PR-5 배열 — 배열·터미널 배열 행, 아이템 호스트, 통째 교체의 identity | 현행 | 소유자 답(`reviews/round-17-owner-answers.md:42` 4 종류 모듈), 편집자 결정(14라운드 PR 계획, `08-design-a-to-z.md:575`), 편집자 결정(18라운드, SURFACE-005; 배열 쓰기는 다섯) |
+| LANDING-066 | PR-6 상태 키와 제어 — 결합(OR/AND)·`controls.children`·조각 `controls`·`unsetOnInactive`의 정책 | 현행 | 소유자 답(`reviews/round-17-owner-answers.md:10` R17-2), 소유자 답(`reviews/round-13-owner-answers.md:7` 1 잠금 규칙), 17라운드 스웜 수렴(편집자 결정, 터미널 전략은 선언 사이 정적), 소유자 답(`reviews/round-18-owner-answers.md:44` 개발계획 P3·P4), 편집자 결정(18라운드, LANDING-092; 하위 트리 규칙은 PR-2) |
+| LANDING-067 | PR-7 전환 — `nodeFromJSONSchema` 재구축, React 바인딩 연결, Form 속성, 바운더리, 옛 코드 삭제, UI 플러그인 이주 | 현행 | 소유자 답(`reviews/round-17-owner-answers.md:9` R17-1), 소유자 답(`reviews/round-17-owner-answers.md:11` R17-3), 소유자 답(`reviews/round-17-owner-answers.md:15` 통보 4), 소유자 답(`reviews/round-17-owner-answers.md:22` `group`의 이름), 소유자 답(`reviews/round-17-owner-answers.md:34` (나)), 소유자 답(`reviews/round-16-owner-answers.md:11,13` 5·7), 16라운드 스웜 수렴(편집자 결정, reset·로드·`setValue(V)`), 17라운드 스웜 수렴(편집자 결정, 바운더리·마운트 계약), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-49), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-94), 소유자 답(`reviews/round-18-owner-answers.md:43` 개발계획 P2), 소유자 답(`reviews/round-18-owner-answers.md:42` 개발계획 P1) |
+| LANDING-068 | PR-8 릴리스 — README·docs, ADR 0010 최종, 이주 안내와 프롬프트, changeset과 `CHANGELOG.md`, 릴리스 테스트 | 현행 | 소유자 답(`00-goals.md:111` C8), 소유자 답(`reviews/round-16-owner-answers.md:15` 9), 소유자 답(`reviews/round-16-owner-answers.md:22` PR-8의 판 번호), 16라운드 스웜 수렴(편집자 결정, `09-landing-and-test-strategy.md:225` §6.2), 소유자 답(`reviews/round-18-owner-answers.md:43` 개발계획 P2), 편집자 결정(18라운드, TEST-045; `CHANGELOG.md`는 action이 만듦) |
 | LANDING-069 | 교체 규모 — 교체 대상, 그대로 쓰는 것, 옮기는 것, 테스트 234파일의 처분 | 현행 | 편집자 결정(16라운드 정착 검토 조건 2, `09-landing-and-test-strategy.md:20`), 소유자 답(`reviews/round-17-owner-answers.md:45` 12·15 생성 함수), 소유자 답(`reviews/round-16-owner-answers.md:13` 7) |
 | LANDING-070 | 형제 패키지 — ajv 셋의 동기 `compileGuard`, UI 플러그인 27파일의 `presentation.*` 이주, `@winglet/react-utils` 선택 인자 | 현행 | 편집자 결정(16라운드 정착 검토 조건 1·6, `09-landing-and-test-strategy.md:19,24`), 소유자 답(`reviews/round-17-owner-answers.md:34` (나)), 17라운드 스웜 수렴(편집자 결정) |
 | LANDING-071 | 위험이 모이는 곳은 PR-7 — 완화는 엔진 수준 통합 시나리오와 차등 테스트 | 현행 | 편집자 결정(14라운드, `08-design-a-to-z.md:600`) |
 | LANDING-072 | PR-7을 더 쪼갤 수 없는 이유 | 현행 | 편집자 결정(14라운드, `08-design-a-to-z.md:601`) |
 | LANDING-073 | 정착 조건 1 — 가드 계약 `compileGuard(root, pointer)`, ajv 셋의 동기 경로, 코어의 작성 루트 기준 캐시 | 현행 | 편집자 결정(16라운드 정착 검토), 소유자 답(`reviews/round-16-owner-answers.md:16` 10) |
-| LANDING-074 | 정착 조건 2 — 재사용 두 문장을 사실대로: 잎 교차 함수만 재사용, 식 컴파일러는 청사진으로 통째 이동 | 현행 | 편집자 결정(16라운드 정착 검토), 소유자 답(`reviews/round-16-owner-answers.md:16` 10) |
+| LANDING-074 | 정착 조건 2 — 재사용 두 문장을 사실대로: 잎 교차 함수만 재사용, 식 컴파일러는 청사진으로 통째 이동 | 현행 | 편집자 결정(16라운드 정착 검토), 소유자 답(`reviews/round-16-owner-answers.md:16` 10), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-08; 레거시 `const` 깊은 비교) |
 | LANDING-075 | 정착 조건 3 — 바인딩 계약 넷(다섯째는 편집자가 더함) | 현행 | 17라운드 스웜 수렴(편집자 결정, 첫째·넷째), 소유자 답(`reviews/round-17-owner-answers.md:15` 통보 4, 다시 던지지 않음), 편집자 결정(16라운드, 다섯째) |
 | LANDING-076 | 정착 조건 4 — 상태·오류·명령 사건과 검증 결과의 배달 경로 | 현행 | 소유자 답(`reviews/round-16-owner-answers.md:9` 3) |
 | LANDING-077 | 정착 조건 5 — 되돌림 기록에 `extras`와 배열 구조 | 현행 | 편집자 결정(16라운드 정착 검토) |
-| LANDING-078 | 정착 조건 6 — UI 플러그인 규모와 `options` 닫힌 목록의 충돌은 PR-7의 `presentation.*` 이주로 | 현행 | 편집자 결정(16라운드 정착 검토) |
+| LANDING-078 | 정착 조건 6 — UI 플러그인 규모와 `options` 닫힌 목록의 충돌은 PR-7의 `presentation.*` 이주로 | 현행 | 편집자 결정(16라운드 정착 검토), 소유자 답(`reviews/round-18-owner-answers.md:42` 개발계획 P1) |
 | LANDING-079 | 정착 조건 7 — 공개 노드 타입·가드는 단일 클래스 겉면과 판별 인터페이스로 | 현행 | 소유자 답(`reviews/round-17-owner-answers.md:24` 노드 구조), 소유자 답(`reviews/round-17-owner-answers.md:22` `group`의 이름), 17라운드 스웜 수렴(편집자 결정, 노드 구조 수렴) |
 | LANDING-080 | 정착 조건 8 — 훅·바인딩 시험과 React 18 실행 | 현행 | 소유자 답(`reviews/round-16-owner-answers.md:11` 5), 편집자 결정(16라운드 정착 검토) |
-| LANDING-081 | 정착 지도 PR-1 — 부딪히는 코드, 그대로 쓰는 것, 새 fractal `src/core/blueprint/` | 현행 | 편집자 결정(16라운드 정착 검토) |
-| LANDING-082 | 정착 지도 PR-2 — 부딪히는 코드, 그대로 쓰는 것과 옮길 자리, 새 fractal 다섯 | 현행 | 편집자 결정(16라운드 정착 검토), 17라운드 스웜 수렴(편집자 결정, `reviews/round-17-owner-answers.md:38`·`reviews/raw-round17-node-structure.md:154`; 소유자 이견 없이 권고대로 확정된 칸), 소유자 답(`reviews/round-17-owner-answers.md:42` 4 종류 모듈), 소유자 답(`reviews/round-18-owner-answers.md:7` S1; 파서를 가져온다), 소유자 답(`reviews/round-18-owner-answers.md:8` S1 이어서; 뜻이 그대로인 변환만), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-49·18C-36) |
+| LANDING-081 | 정착 지도 PR-1 — 부딪히는 코드, 그대로 쓰는 것, 새 fractal `src/core/blueprint/` | 현행 | 편집자 결정(16라운드 정착 검토), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-08; 잎 교차 함수의 뜻 변경) |
+| LANDING-082 | 정착 지도 PR-2 — 부딪히는 코드, 그대로 쓰는 것과 옮길 자리, 새 fractal 다섯 | 현행 | 편집자 결정(16라운드 정착 검토), 17라운드 스웜 수렴(편집자 결정, `reviews/round-17-owner-answers.md:38`·`reviews/raw-round17-node-structure.md:154`; 소유자 이견 없이 권고대로 확정된 칸), 소유자 답(`reviews/round-17-owner-answers.md:42` 4 종류 모듈), 소유자 답(`reviews/round-18-owner-answers.md:7` S1; 파서를 가져온다), 소유자 답(`reviews/round-18-owner-answers.md:8` S1 이어서; 뜻이 그대로인 변환만), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-49·18C-36), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-01·18C-33·18C-93; 형 판정·탐색 멤버 대체) |
 | LANDING-083 | 정착 지도 PR-3 — 부딪히는 코드, `createDynamicFunction`의 의존 주입 형태, `settle/derive/` | 현행 | 편집자 결정(16라운드 정착 검토) |
 | LANDING-084 | 정착 지도 PR-4 — `EventCascadeManager`·`ValidationManager` 교체, `dispatch/`·`validation/`, 진입 사슬의 소유 | 현행 | 편집자 결정(16라운드 정착 검토), 17라운드 스웜 수렴(편집자 결정, 진입 사슬은 `dispatch`가 소유) |
 | LANDING-085 | 정착 지도 PR-5 — `ArrayNode` 전략·비동기 `push` 교체, `arrayBehavior/` | 현행 | 편집자 결정(16라운드 정착 검토), 소유자 답(`reviews/round-17-owner-answers.md:42` 4 종류 모듈) |
 | LANDING-086 | 정착 지도 PR-6 — 루트 스키마 전역 상속·`checkComputedOptionFactory` 교체, `settle/`의 계산 끝 | 현행 | 편집자 결정(16라운드 정착 검토) |
-| LANDING-087 | 정착 지도 PR-7 — 렌더 계층 교체, 그대로 쓰는 것, `core/index.ts` 수출의 전환 | 현행 | 편집자 결정(16라운드 정착 검토), 17라운드 스웜 수렴(편집자 결정, `core/index.ts`의 진입점과 `core/types` 정리) |
+| LANDING-087 | 정착 지도 PR-7 — 렌더 계층 교체, 그대로 쓰는 것, `core/index.ts` 수출의 전환 | 현행 | 편집자 결정(16라운드 정착 검토), 17라운드 스웜 수렴(편집자 결정, `core/index.ts`의 진입점과 `core/types` 정리), 소유자 답(`reviews/round-18-owner-answers.md:42` 개발계획 P1) |
 | LANDING-088 | `core/INTENT.md`의 상속 문장은 PR-1에서 먼저 고침 | 현행 | 편집자 결정(16라운드 정착 검토), 원리(filid 규칙, 문서가 코드보다 먼저) |
 | LANDING-089 | 정착 지도의 '그대로 쓰는 것'은 레거시에서 가져오는 코드의 목록 | 현행 | 소유자 답(`reviews/round-17-owner-answers.md:52` 전환 방식), 편집자 결정(17라운드, `09-landing-and-test-strategy.md:42`) |
 | LANDING-090 | 보정 PR-0 — 시나리오 형과 러너 뼈대, vitest 셋, addon-vitest, 옛 스토리 처분 목록, 비공개 시나리오 패키지 | 현행 | 편집자 결정(16라운드, 테스트 전략), 소유자 답(`reviews/round-16-owner-answers.md:14` 8), 소유자 답(`reviews/round-16-owner-answers.md:10` 4) |
-| LANDING-091 | 보정 PR-1 — 식 컴파일러 통째 이동, 잎 교차 함수 이동, `core/INTENT.md` 개정, `merge` 선택 인자와 changeset | 현행 | 편집자 결정(16라운드, 답 10으로 확정 `reviews/round-16-owner-answers.md:16`), 소유자 답(`reviews/round-14-owner-answers.md:17` O-11) |
-| LANDING-092 | 보정 PR-2 — 되돌림 기록 항목 확정, 노드 구조, `active` 게터, 나감 비움의 하위 트리 규칙 | 현행 | 편집자 결정(16라운드 정착 검토 조건 5), 소유자 답(`reviews/round-17-owner-answers.md:24` 노드 구조), 소유자 답(`reviews/round-17-owner-answers.md:10` R17-2) |
-| LANDING-093 | 보정 PR-4 — ajv 셋의 동기 `compileGuard`, 사본·가드 캐시, 재생성 reset의 같은 `$id`, `onError`의 core 쪽 | 현행 | 소유자 답(`reviews/round-16-owner-answers.md:16` 10), 16라운드 스웜 수렴(편집자 결정, 재생성 reset의 같은 `$id`), 17라운드 스웜 수렴(편집자 결정, `onError` core 쪽), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-30·18C-74) |
+| LANDING-091 | 보정 PR-1 — 식 컴파일러 통째 이동, 잎 교차 함수 이동, `core/INTENT.md` 개정, `merge` 선택 인자와 changeset | 현행 | 편집자 결정(16라운드, 답 10으로 확정 `reviews/round-16-owner-answers.md:16`), 소유자 답(`reviews/round-14-owner-answers.md:17` O-11), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-08; 레거시 `const` 깊은 비교) |
+| LANDING-092 | 보정 PR-2 — 되돌림 기록 항목 확정, 노드 구조, `active` 게터, 나감 비움의 하위 트리 규칙 | 현행 | 편집자 결정(16라운드 정착 검토 조건 5), 소유자 답(`reviews/round-17-owner-answers.md:24` 노드 구조), 소유자 답(`reviews/round-17-owner-answers.md:10` R17-2), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-02; PR-2에 `union` 행) |
+| LANDING-093 | 보정 PR-4 — ajv 셋의 동기 `compileGuard`, 사본·가드 캐시, 재생성 reset의 같은 `$id`, `onError`의 core 쪽 | 현행 | 소유자 답(`reviews/round-16-owner-answers.md:16` 10), 16라운드 스웜 수렴(편집자 결정, 재생성 reset의 같은 `$id`), 17라운드 스웜 수렴(편집자 결정, `onError` core 쪽), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-30·18C-74), 소유자 답(`reviews/round-18-owner-answers.md:42` 개발계획 P1) |
 | LANDING-094 | 보정 PR-5 — 배열·터미널 배열 행, `resolveArrayLimits`의 청사진 이동 | 현행 | 소유자 답(`reviews/round-17-owner-answers.md:42` 4 종류 모듈), 편집자 결정(16라운드 정착 검토) |
-| LANDING-095 | 보정 PR-7 — 바인딩 계약 다섯, `onError` 렌더 계층, `finishInput`, e2e·스토리·스파이크 이식, `reset`의 로드 전환 | 현행 | 소유자 답(`reviews/round-17-owner-answers.md:9` R17-1), 소유자 답(`reviews/round-17-owner-answers.md:11` R17-3), 소유자 답(`reviews/round-17-owner-answers.md:22` `group`의 이름), 소유자 답(`reviews/round-16-owner-answers.md:10,11` 4·5), 16라운드 스웜 수렴(편집자 결정, reset·로드), 17라운드 스웜 수렴(편집자 결정, 바인딩 계약 첫째·넷째), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-94) |
-| LANDING-096 | 보정 PR-8 — 릴리스 전 벤치 재실행, changeset과 판 번호, 릴리스 테스트, reset 규칙 문서, 스토리북 문서 | 현행 | 소유자 답(`reviews/round-16-owner-answers.md:22` PR-8의 판 번호), 소유자 답(`reviews/round-16-owner-answers.md:15` 9), 16라운드 스웜 수렴(편집자 결정, `09-landing-and-test-strategy.md:225` §6.2) |
+| LANDING-095 | 보정 PR-7 — 바인딩 계약 다섯, `onError` 렌더 계층, `finishInput`, e2e·스토리·스파이크 이식, `reset`의 로드 전환 | 현행 | 소유자 답(`reviews/round-17-owner-answers.md:9` R17-1), 소유자 답(`reviews/round-17-owner-answers.md:11` R17-3), 소유자 답(`reviews/round-17-owner-answers.md:22` `group`의 이름), 소유자 답(`reviews/round-16-owner-answers.md:10,11` 4·5), 16라운드 스웜 수렴(편집자 결정, reset·로드), 17라운드 스웜 수렴(편집자 결정, 바인딩 계약 첫째·넷째), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-94), 소유자 답(`reviews/round-18-owner-answers.md:42` 개발계획 P1) |
+| LANDING-096 | 보정 PR-8 — 릴리스 전 벤치 재실행, changeset과 판 번호, 릴리스 테스트, reset 규칙 문서, 스토리북 문서 | 현행 | 소유자 답(`reviews/round-16-owner-answers.md:22` PR-8의 판 번호), 소유자 답(`reviews/round-16-owner-answers.md:15` 9), 16라운드 스웜 수렴(편집자 결정, `09-landing-and-test-strategy.md:225` §6.2), 소유자 답(`reviews/round-18-owner-answers.md:43` 개발계획 P2) |
 | LANDING-097 | 릴리스 전환(별도 PR) — changesets 가동과 CI·배포 작업 흐름 정리, PR-8 전에 병합 | 현행 | 소유자 답(`reviews/round-16-owner-answers.md:15` 9), 16라운드 스웜 수렴(편집자 결정, `09-landing-and-test-strategy.md:225` §6.2) |
 | LANDING-098 | 05의 이주 행 가운데 08 §14에 행이 없는 것 — `ENHANCED_KEY`, `minItems`·`maxItems`, `Normalize`, `null`→`{}`, 배열 Promise, `setValue(getValue())`, `useEffect` 파생 쓰기 | 분할됨(→ LANDING-115, LANDING-116, LANDING-117, LANDING-118, LANDING-119) | 편집자 결정(6라운드 대조, `05-before-after.md:5`) |
 | LANDING-099 | 대체됨 — 폼이 분기를 고르던 05의 행(값 가드·선택 가드·`selection` 칸·분기 하나만 활성) | 대체됨(→ LANDING-004, LANDING-005, LANDING-006, LANDING-028) | 편집자 결정(9라운드 세 도출 일치, `07-conclusions.md:142` 4.25), 소유자 답(`reviews/round-9-spec.md:42,44` 읽기1) |
@@ -158,7 +158,7 @@
 | LANDING-148 | 이주(18라운드) — `find`는 꺼진 `oneOf` 변형의 노드를 돌려주지 않는다(`null`) | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-33) |
 | LANDING-149 | 이주 47(18라운드 판) — 잎 `terminal: false`·가상 `terminal: true`는 청사진 오류, 가상의 인라인 입력은 `branch`로 `ChildNodeComponents`를 받음 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-38) |
 | LANDING-150 | 착수 항목(18라운드) — parse 문서는 새 자리의 문서로 PR-2, `src/types/formTypeInput.ts:60-65`의 문서 주석은 PR-7 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-40) |
-| LANDING-151 | 착수 항목(18라운드) — 자사 플러그인 수정 목록은 PR-7 이주 항목 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-40), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-93) |
+| LANDING-151 | 착수 항목(18라운드) — 자사 플러그인 수정 목록은 PR-7 이주 항목 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-40), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-93), 소유자 답(`reviews/round-18-owner-answers.md:42` 개발계획 P1) |
 | LANDING-152 | 이주(18라운드) — `globalState`의 키는 참인 노드가 없으면 내려간다 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-41) |
 | LANDING-153 | 이주(18라운드) — `globalState`의 값은 `true` | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-41) |
 | LANDING-154 | 이주(18라운드) — 노드의 `key`·`schemaPath`가 없어진다 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-43) |
@@ -166,7 +166,7 @@
 | LANDING-156 | 이주(18라운드) — `find('@')`·`findAll('@')`는 맥락 노드를 돌려주지 않는다 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-45) |
 | LANDING-157 | 이주(18라운드) — `NodeState` → `SchemaNodeState` | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-47) |
 | LANDING-158 | 이주(18라운드) — `NodeEventType` → `SchemaNodeEventType` | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-47) |
-| LANDING-159 | 레거시는 `src/__legacy__/` — 상대 경로 유지, PR마다 옮김, 새 fractal의 가져오기 금지, PR-7 통째 삭제, 시험 글롭 포함, filid 깊이 점검, 스토리북·벤치 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-49) |
+| LANDING-159 | 레거시는 `src/__legacy__/` — 상대 경로 유지, PR마다 옮김, 새 fractal의 가져오기 금지, PR-7 통째 삭제, 시험 글롭 포함, filid 깊이 점검, 스토리북·벤치 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-49), 소유자 답(`reviews/round-18-owner-answers.md:43` 개발계획 P2), 편집자 결정(18라운드, 개발계획 07; 레거시 시험은 PR-7 뒤 글롭에서 뺌) |
 | LANDING-160 | 이주(18라운드) — 수 노드의 근사 같음 비교가 정확한 비교로 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-50) |
 | LANDING-161 | 이주(18라운드) — 객체 같음 비교가 키 순서를 본다 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-50) |
 | LANDING-162 | 이주(18라운드) — 내장 객체·클래스 인스턴스는 참조로 비교 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-50) |
@@ -205,12 +205,15 @@
 | LANDING-195 | 이주(18라운드) — 터미널 아래 경로의 검증 에러는 터미널(union) 노드가 받음(오늘 버려짐) | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-93) |
 | LANDING-196 | 이주(18라운드) — 기본 입력의 빈 칸은 `undefined`, 해석할 수 없는 초안은 흐려질 때 되돌림 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-93) |
 | LANDING-197 | 이주(18라운드) — 터미널 object·array 값 안의 JSON 부정합에 개발 모드 경고 (가칭) `NON_JSON_WHOLE_VALUE` | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-93) |
-| LANDING-198 | union 설계의 이주 점검 — PR-7 이주 목록에 LANDING-181–LANDING-186과 자사 플러그인마다 `union` 항목(권장), 바뀌지 않는 것, 이주 행마다 오늘과 새 동작을 시험으로 대조 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-93) |
+| LANDING-198 | union 설계의 이주 점검 — PR-7 이주 목록에 LANDING-181–LANDING-186과 자사 플러그인마다 `union` 항목(권장), 바뀌지 않는 것, 이주 행마다 오늘과 새 동작을 시험으로 대조 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-93), 소유자 답(`reviews/round-18-owner-answers.md:42` 개발계획 P1) |
 | LANDING-199 | 이주(18라운드) — 호출자의 `setValue(V)`는 하위 트리 전체가 아니라 원본이 바뀐 노드만 다시 마운트 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-94) |
 | LANDING-200 | 이주(18라운드) — 호출자의 `setValue(null)` 뒤 자식 쓰기로 객체가 돌아와도 자식 기본값을 채우지 않는다 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-99) |
 | LANDING-201 | 이주(18라운드) — 입력의 `onChange(v, Overwrite)`는 자기 입력을 다시 마운트하지 않는다 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-99) |
 | LANDING-202 | 이주(18라운드) — 배열 통째 `setValue`는 남은 아이템을 채우지 않고 뒤쪽의 새 아이템만 채운다 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-99) |
 | LANDING-203 | 채움 시점 이주 행 셋(LANDING-200–LANDING-202)의 점검 — 세 장면을 오늘 코드와 새 구현에서 돌린다 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-99) |
+| LANDING-204 | 우산 `1.0.0-beta`와 개발 PR 여섯 — 기반+청사진, 노드 트리·정착, 파생+상태 키·제어, 통지·검증, 배열, 전환; 자식 PR은 설계·설계문서 → 개발 여섯 → 플러그인 → 정리·릴리스, 단계 정의는 그대로 | 현행 | 소유자 답(`reviews/round-18-owner-answers.md:44` 개발계획 P3·P4), 소유자 답(`reviews/round-18-owner-answers.md:45` 개발계획 1-가) |
+| LANDING-205 | `src/__legacy__/`는 정리·릴리스 PR(PR-8)까지 참고용으로 보존 — PR-7은 진입점 전환과 레거시 import 0 점검만, 삭제는 PR-8, 우산에 딸린 무관한 파일은 정리하지 않음 | 현행 | 소유자 답(`reviews/round-18-owner-answers.md:43` 개발계획 P2) |
+| LANDING-206 | UI 플러그인 넷의 이주는 플러그인 PR(우산 순서 N+1) — `presentation.*` 이주·자사 플러그인 수정 목록·union 항목, PR-7은 기본 입력으로 검증, ajv 셋은 원장대로 PR-4, 이주 표와 이주 점검은 PR-7에 남음 | 현행 | 소유자 답(`reviews/round-18-owner-answers.md:42` 개발계획 P1) |
 
 ## 항목
 
@@ -807,10 +810,12 @@
   > 편집자 결정(18C-98): "【추론】 `diagnostics`와 경고 중복 키는 폼 수준 로드(마운트, `FormHandle.reset()`)에서만 초기화한다." (`reviews/round-18-closing.md:2797`)
   > 편집자 결정(18C-98): "【추론】 `setValue(V)`와 `resetSubtree()`는 초기화하지 않는다." (`reviews/round-18-closing.md:2798`)
 - 상태: 현행
-- 출처: `08-design-a-to-z.md:474`(정본), `02-target-overview.md:332`, `reviews/round-18-closing.md:2797-2798`
-- 닫은 사람: 소유자 답(`reviews/round-14-owner-answers.md:8` O-2), 소유자 답(`reviews/round-17-owner-answers.md:9` R17-1), 편집자 결정(17라운드, `exceededBudget`을 정착 예산 셋으로), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-98)
+- 출처: `08-design-a-to-z.md:474`(정본), `02-target-overview.md:332`, `reviews/round-18-closing.md:2797-2798`, `reviews/round-18-closing.md:28,666`
+- 닫은 사람: 소유자 답(`reviews/round-14-owner-answers.md:8` O-2), 소유자 답(`reviews/round-17-owner-answers.md:9` R17-1), 편집자 결정(17라운드, `exceededBudget`을 정착 예산 셋으로), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-98), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-01·18C-21; `recursion`·`writeShape` 값 추가)
 - 라운드: 18
 - 까닭: `reviews/round-17-owner-answers.md:9`
+- 충돌:
+  > `08-design-a-to-z.md:474`의 "원인 `cause`(예산, 식, 대상, 공유 충돌), `exceededBudget`은 정착 예산 셋"는 18라운드 결정과 다르다: `cause`에 다섯째 값 (가칭) `'writeShape'`가 더해지고(ERROR-195), `exceededBudget`에 재귀 펼침의 멈춤을 뜻하는 (가칭) `'recursion'`이 더해져 값이 넷이다(ERROR-190). 18라운드 결정이 이긴다(`reviews/round-18-closing.md:28`, `reviews/round-18-closing.md:666`).
 
 ### LANDING-046 이주 43 — 바운더리는 가두고 대체 화면을 그린 뒤 다시 던지지 않고 보고
 
@@ -848,10 +853,12 @@
 - 보충:
   > "이름 규칙을 오늘의 공개 이름에 적용할지. 공개 index가 내보내는 `Node`로 줄인 이름(형 `ArrayNode` 등 일곱, `NodeState`, `NodeEventType`, 가드 `is…Node`)을 `SchemaNode` 접두로 바꿀지와 08 §14의 이주 행" (`reviews/round-18-agenda.md:91`)
 - 상태: 현행
-- 출처: `08-design-a-to-z.md:477`(정본)
-- 닫은 사람: 소유자 답(`reviews/round-17-owner-answers.md:22` `group`의 이름), 17라운드 스웜 수렴(편집자 결정, 노드 구조)
-- 라운드: 17
+- 출처: `08-design-a-to-z.md:477`(정본), `reviews/round-18-closing.md:1038,2348`
+- 닫은 사람: 소유자 답(`reviews/round-17-owner-answers.md:22` `group`의 이름), 17라운드 스웜 수렴(편집자 결정, 노드 구조), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-38·18C-89; `UnionNode` 포함, 가상 제외)
+- 라운드: 18
 - 까닭: `reviews/round-17-owner-answers.md:22`
+- 충돌:
+  > `08-design-a-to-z.md:477`의 "형의 좁히기를 터미널 객체·배열까지 포함하도록 바로잡는다"는 18라운드 결정과 다르다: `isTerminalNode`의 반환 형 합집합에 `UnionNode`가 들어가고(LANDING-188), 가상 노드는 전략이 `branch`라 `isTerminalNode(가상)`은 거짓이다(LANDING-149). 18라운드 결정이 이긴다(`reviews/round-18-closing.md:2348`).
 
 ### LANDING-049 이주 46 — 노드 메서드 `findAll`은 `findNodes`
 
@@ -974,11 +981,12 @@
 
 - 결정:
   > **원샷이어야 하는 것은 둘뿐이다.** 전환 PR(PR-7)과 `master` 병합(릴리스). 나머지는 독립이다. 전체를 원샷으로 진행할 필요는 없다.
-- 보충: 없음
+- 보충:
+  > 반영 칸(개발계획 P3·P4): "우산 PR(`1.0.0-beta`, #344)의 자식은 설계 PR·설계문서 PR → 개발 PR 여섯 → 플러그인 PR → 정리·릴리스 PR(PR-8)이며 모두 `1.0.0-beta`를 base로 열고 merge commit으로 들어온다." (`reviews/round-18-owner-answers.md:44`)
 - 상태: 현행
-- 출처: `08-design-a-to-z.md:562`(정본, 첫째–넷째 문장), `08-design-a-to-z.md:593`
-- 닫은 사람: 편집자 결정(14라운드, `08-design-a-to-z.md:562`)
-- 라운드: 14
+- 출처: `08-design-a-to-z.md:562`(정본, 첫째–넷째 문장), `08-design-a-to-z.md:593`, `reviews/round-18-owner-answers.md:44`
+- 닫은 사람: 편집자 결정(14라운드, `08-design-a-to-z.md:562`), 소유자 답(`reviews/round-18-owner-answers.md:44` 개발계획 P3·P4)
+- 라운드: 18
 - 까닭: `08-design-a-to-z.md:601`
 
 ### LANDING-059 릴리스는 `master` 병합 뒤의 배포이며 판 올림 PR 병합이 시험 관문을 거쳐 자동 배포
@@ -1001,11 +1009,16 @@
   > | PR-0 문서 | 이 문서, 14라운드 기록, ADR 최종 상태, HANDOFF. 프로토타입 v7(게이트 입력의 `extras` 정적 규칙, 같은 순위 동점·정착 단위 순위, 나감 에지, 전이 라운드 상한, 재계산 목록만 순회). 시나리오 패키지 `@aileron/schema-form-scenarios`의 뼈대, vitest `test.projects` 셋, addon-vitest(09 §7) | 없음 | 소유자의 O-1 – O-11 답, 이 문서의 절 단위 통과, 18라운드 정련(`reviews/round-18-agenda.md`) |
 - 보충:
   > 편집자 결정(18C-49): "【추론】 PR-0의 세 프로젝트 글롭(`unit`·`render`·`storybook`)이 `src/__legacy__/**`를 포함한다." (`reviews/round-18-closing.md:1359`)
+  > 반영 칸(개발계획 P3·P4): "인접 단계 합침 둘을 채택한다: 기반(PR-0의 코드 부분)과 청사진(PR-1)은 한 PR, 파생(PR-3)과 상태 키·제어(PR-6)는 한 PR." (`reviews/round-18-owner-answers.md:44`)
+  > 반영 칸(개발계획 1-가): "설계문서 8편·ADR 재작성·역검사 `doc-coverage`·옛 문서의 `_archive/` 이동·소유자 절 단위 통과는 별도 설계문서 PR로 `1.0.0-beta`에 연다." (`reviews/round-18-owner-answers.md:45`)
+  > 반영 칸(개발계획 1-가): "기반 PR과 병렬이며 코드 PR을 막지 않는다." (`reviews/round-18-owner-answers.md:45`)
 - 상태: 현행
-- 출처: `08-design-a-to-z.md:570`(정본), `09-landing-and-test-strategy.md:256`, `reviews/round-18-closing.md:1359`
-- 닫은 사람: 편집자 결정(14라운드 PR 계획, `08-design-a-to-z.md:570`), 소유자 답(`reviews/round-16-owner-answers.md:14` 8 시나리오 모듈은 비공개 패키지), 편집자 결정(17라운드, 18라운드 정련을 착수 조건에 더함), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-49)
+- 출처: `08-design-a-to-z.md:570`(정본), `09-landing-and-test-strategy.md:256`, `reviews/round-18-closing.md:1359`, `reviews/round-18-owner-answers.md:44`, `reviews/round-18-owner-answers.md:45`, `reviews/round-18-owner-answers.md:16`
+- 닫은 사람: 편집자 결정(14라운드 PR 계획, `08-design-a-to-z.md:570`), 소유자 답(`reviews/round-16-owner-answers.md:14` 8 시나리오 모듈은 비공개 패키지), 편집자 결정(17라운드, 18라운드 정련을 착수 조건에 더함), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-49), 소유자 답(`reviews/round-18-owner-answers.md:44` 개발계획 P3·P4), 소유자 답(`reviews/round-18-owner-answers.md:45` 개발계획 1-가), 소유자 답(`reviews/round-18-owner-answers.md:16` 12-6)
 - 라운드: 18
 - 까닭: `08-design-a-to-z.md:570`, `reviews/round-18-closing.md:1365-1368`
+- 충돌:
+  > `08-design-a-to-z.md:570`의 "이 문서의 절 단위 통과"는 소유자 답과 다르다: 절 단위 통과는 새 설계문서에서만 하고 08·09는 통과 절차 없이 백업으로 간다(PROCESS-062). 소유자 답이 이긴다(`reviews/round-18-owner-answers.md:16`).
 
 ### LANDING-061 PR-1 청사진 — 조각 표·노드 공유·병합 함수·잎 교차 함수 이동·식 컴파일러 이동·청사진 오류의 데이터화
 
@@ -1018,14 +1031,16 @@
   > 편집자 결정(18C-49): "【추론】 규칙 1은 파일 한정 ESLint `no-restricted-imports`로 막고 PR-1에서 건다." (`reviews/round-18-closing.md:1338`)
   > 편집자 결정(18C-49): "【추론】 규칙 2: 레거시 → 새 코드는 08 §17.2가 이미 적은 곳만 허용한다(예: 옛 `intersect*Schema`가 새 잎 교차 함수를, 옛 소비자가 청사진으로 옮긴 식 컴파일러를 가져온다)." (`reviews/round-18-closing.md:1339`)
   > 편집자 결정(18C-49): "【추론】 PR-1 점검에 "filid `max-depth` 통과. 실패하면 `src/__legacy__/**`를 예외로 두는 설정 변경을 같은 PR에서 한다"를 둔다." (`reviews/round-18-closing.md:1352`)
+  > 반영 칸(개발계획 P3·P4): "인접 단계 합침 둘을 채택한다: 기반(PR-0의 코드 부분)과 청사진(PR-1)은 한 PR, 파생(PR-3)과 상태 키·제어(PR-6)는 한 PR." (`reviews/round-18-owner-answers.md:44`)
 - 상태: 현행
-- 출처: `08-design-a-to-z.md:571`(정본), `09-landing-and-test-strategy.md:20,32,257`, `adr/0014-error-policy.md:178-184`, `reviews/round-18-closing.md:78,193,196,1338-1339,1352`
-- 닫은 사람: 편집자 결정(16라운드, 답 10으로 확정 `reviews/round-16-owner-answers.md:16`), 소유자 답(`reviews/round-14-owner-answers.md:17` O-11 `merge` 선택 인자), 소유자 답(`reviews/round-17-owner-answers.md:9` R17-1), 소유자 답(`reviews/round-17-owner-answers.md:12` 통보 1), 17라운드 스웜 수렴(편집자 결정, 터미널 전략·병합의 원자·데이터화), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-02·18C-08·18C-49)
+- 출처: `08-design-a-to-z.md:571`(정본), `09-landing-and-test-strategy.md:20,32,257`, `adr/0014-error-policy.md:178-184`, `reviews/round-18-closing.md:78,193,196,1338-1339,1352`, `reviews/round-18-owner-answers.md:44`, `reviews/round-18-closing.md:387`
+- 닫은 사람: 편집자 결정(16라운드, 답 10으로 확정 `reviews/round-16-owner-answers.md:16`), 소유자 답(`reviews/round-14-owner-answers.md:17` O-11 `merge` 선택 인자), 소유자 답(`reviews/round-17-owner-answers.md:9` R17-1), 소유자 답(`reviews/round-17-owner-answers.md:12` 통보 1), 17라운드 스웜 수렴(편집자 결정, 터미널 전략·병합의 원자·데이터화), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-02·18C-08·18C-49), 소유자 답(`reviews/round-18-owner-answers.md:44` 개발계획 P3·P4), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-14; 정적 `injectTo` 오류 없음)
 - 라운드: 18
 - 까닭: `09-landing-and-test-strategy.md:20`, `reviews/round-18-closing.md:84-91`, `reviews/round-18-closing.md:203-207`, `reviews/round-18-closing.md:1365-1368`
 - 충돌:
   > `08-design-a-to-z.md:571`의 "옛 `intersect*Schema`는 공집합 표시를 받으면 오늘처럼 `JSONSchemaError`를 던지도록 import와 함께 고쳐 옛 동작을 PR-7까지 지킨다"는 18라운드 결정과 다르다: 레거시의 `const` 비교는 깊은 비교로 바뀌며(결함 수정), 이것이 옛 동작을 PR-7까지 지킨다는 규칙의 예외다. 18라운드 결정이 이긴다(`reviews/round-18-closing.md:196`).
   > `08-design-a-to-z.md:571`의 "`intersectEnum`·`intersectConst`·`intersectMinimum`·`intersectMaximum`·`intersectMultipleOf`·`intersectPattern`·`validateRange`를 청사진 밖의 새 fractal로 옮겨"는 18라운드 결정과 다르다: `intersectPattern`은 새 fractal로 옮기지 않는다. 18라운드 결정이 이긴다(`reviews/round-18-closing.md:193`).
+  > `08-design-a-to-z.md:571`의 "정적 `controls.injectTo` 대상 없음의 청사진 오류(R17-1 나)"는 18라운드 결정과 다르다: `controls.injectTo`는 함수 형태 하나라 청사진이 정적으로 아는 대상이 없고, 그 오류 코드 `INJECT_TARGET_NOT_FOUND`는 낼 자리가 없어 PR-4의 코드 확정에서 빠지며, 대상 없음은 모두 동적 대상 없음 `INJECT_TARGET_MISSING`이다(CONTROLS-079, ERROR-164). 18라운드 결정이 이긴다(`reviews/round-18-closing.md:387`).
 
 ### LANDING-062 PR-2 노드 트리와 정착 — 단일 클래스 `SchemaNode`와 동작 행, 정착 루프, 예산 다섯과 원본 B, `diagnostics`
 
@@ -1035,12 +1050,13 @@
   > | PR-2 노드 트리와 정착 | 노드: 상속 없는 단일 클래스 `SchemaNode`(`src/core/SchemaNode/`)와 `BEHAVIORS[type][strategy]`의 동작 행(잎 넷·객체·터미널 객체·가상. 터미널 배열은 PR-5), `src/core/record/`·`src/core/behaviors/`·`src/core/navigation/`, 공개 `type`·`strategy` 게터와 `active` 게터(노드 게이트), 겉면 규칙의 기계 검사(파일 한정 린트, 멤버 목록 시험, 행 칸 순서 시험). `raw`·`extras`, 표시·계산(호스트 바퀴, 노드 게이트, 투영)·전이(채움, 나감 비움 네 층과 하위 트리·잠복 자손으로 내려가는 정책, R17-2 ㄴ)·커밋, 예산 다섯과 원본 B(되돌림 기록. 기록 항목은 노드, 이전 `raw`, 이전 `extras`, 배열 아이템 구조의 생성·폐기이며 중간 라운드 채움의 철회보다 먼저 적용한다), `diagnostics`(`'stable'` 또는 `'degraded'`, `cause`, `commit`, R17-1 나), `SetValueOption`, 게이트는 술어 인터페이스 뒤의 스텁. 정착 루프 테스트(프로토타입 회귀 이식) | PR-1 | 18라운드 안건 B·C·D(`controls.active` 식의 다른 호스트 읽기 순서, 비객체 V의 `Merge`, 되먹임 거부 표면, 프로토타입 v7)와 노드 구조(N2, N5, N6, N14, 공개 표면의 크기, `ContextNode`의 자리)(§15) |
 - 보충: 없음
 - 상태: 현행
-- 출처: `08-design-a-to-z.md:572`(정본), `09-landing-and-test-strategy.md:23,33,258`
-- 닫은 사람: 소유자 답(`reviews/round-17-owner-answers.md:24` 노드 구조), 소유자 답(`reviews/round-17-owner-answers.md:42` 4 종류 모듈), 소유자 답(`reviews/round-17-owner-answers.md:9` R17-1), 소유자 답(`reviews/round-17-owner-answers.md:10` R17-2), 편집자 결정(16라운드 정착 검토 조건 5, `09-landing-and-test-strategy.md:23`)
-- 라운드: 17
+- 출처: `08-design-a-to-z.md:572`(정본), `09-landing-and-test-strategy.md:23,33,258`, `reviews/round-18-closing.md:751,753,769-771`
+- 닫은 사람: 소유자 답(`reviews/round-17-owner-answers.md:24` 노드 구조), 소유자 답(`reviews/round-17-owner-answers.md:42` 4 종류 모듈), 소유자 답(`reviews/round-17-owner-answers.md:9` R17-1), 소유자 답(`reviews/round-17-owner-answers.md:10` R17-2), 편집자 결정(16라운드 정착 검토 조건 5, `09-landing-and-test-strategy.md:23`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-25; 예산·배열 기록의 PR 배분)
+- 라운드: 18
 - 까닭: `09-landing-and-test-strategy.md:23`
 - 충돌:
   > `08-design-a-to-z.md:572`의 "잎 넷·객체·터미널 객체·가상"는 18라운드 결정과 다르다: PR-2의 동작 행에 (가칭) `union` 행이 다른 잎 행과 함께 든다. 18라운드 결정이 이긴다(`reviews/round-18-closing.md:79`).
+  > `08-design-a-to-z.md:572`의 "예산 다섯과 원본 B(되돌림 기록. 기록 항목은 노드, 이전 `raw`, 이전 `extras`, 배열 아이템 구조의 생성·폐기"는 18라운드 결정과 다르다: 각 PR은 자기가 들여오는 기제를 검증하므로 PR-2가 실제 코드로 시험하는 예산은 호스트 바퀴와 전이 라운드이고, 파생 라운드 예산은 PR-3, 되먹임 파동과 `onChange` 중첩 예산은 PR-4, 원본 B의 배열 아이템 구조 기록은 PR-5가 맡는다(TEST-069). 18라운드 결정이 이긴다(`reviews/round-18-closing.md:753`).
 
 ### LANDING-063 PR-3 파생 — `controls.derived`·`injectTo`·`unsetValue`, 같은 대상 규칙, 에지 소비
 
@@ -1048,11 +1064,12 @@
   > | PR | 내용 | 의존 | 착수 전 닫을 것 |
   > | --- | --- | --- | --- |
   > | PR-3 파생 | `controls.derived`·`controls.injectTo`·`controls.unsetValue`, 같은 대상 규칙(종류 순위, 문서 순서, 층, 전순서, 정착 단위), 에지 소비, `DisableAutomaticWrites`, `controls.resetInteraction`, 개발 모드 정착 기록 | PR-2 | 에지의 값 동등 판정, `controls.derived` 의존 집합, 조각 `controls` 식의 나감 발화 |
-- 보충: 없음
+- 보충:
+  > 반영 칸(개발계획 P3·P4): "인접 단계 합침 둘을 채택한다: 기반(PR-0의 코드 부분)과 청사진(PR-1)은 한 PR, 파생(PR-3)과 상태 키·제어(PR-6)는 한 PR." (`reviews/round-18-owner-answers.md:44`)
 - 상태: 현행
-- 출처: `08-design-a-to-z.md:573`(정본), `09-landing-and-test-strategy.md:34`
-- 닫은 사람: 편집자 결정(14라운드 PR 계획, `08-design-a-to-z.md:573`), 소유자 답(`reviews/round-15-decisions.md:13` 5, `controls` 표기)
-- 라운드: 15
+- 출처: `08-design-a-to-z.md:573`(정본), `09-landing-and-test-strategy.md:34`, `reviews/round-18-owner-answers.md:44`
+- 닫은 사람: 편집자 결정(14라운드 PR 계획, `08-design-a-to-z.md:573`), 소유자 답(`reviews/round-15-decisions.md:13` 5, `controls` 표기), 소유자 답(`reviews/round-18-owner-answers.md:44` 개발계획 P3·P4)
+- 라운드: 18
 - 까닭: `08-design-a-to-z.md:573`
 
 ### LANDING-064 PR-4 통지와 검증 — 디스패처·`batch`·진입 사슬·`onError`의 core 쪽·`compileGuard`·배달 경로
@@ -1061,11 +1078,12 @@
   > | PR | 내용 | 의존 | 착수 전 닫을 것 |
   > | --- | --- | --- | --- |
   > | PR-4 통지와 검증 | 루트 디스패처, `batch`, 진입당 `onChange` 1회, 진입 사슬과 사슬 끝의 throw, `onError` 로깅 채널의 core 쪽(기록 형 `FormErrorRecord`와 코드 형 `FormErrorCode`(가칭), core가 인자로 받는 보고기(`report`, `hasConsumer`), 사슬 끝 기록마다 전달, 핸들러 예외의 묶음 규칙, 전달 중 쓰기 거부, 경고의 구조 키 중복 억제, 정착 경고 판정의 소비자 조건, `ValidateFunction` 문서 주석 "판정은 돌려주고 던지지 않는다". `ValidationIssue` 개명이 `onError`의 공개보다 먼저 선다, 17라운드 스웜 수렴(편집자 결정)), 진입 사슬의 소유는 `dispatch`(쓰기 동사마다 진입 함수)이며 겉면의 쓰기 위임을 `dispatch` 진입으로 옮김, `SchemaFormError`의 집계 오류(`details.errors`), 주인 없는 오류 싱크, 검증 실행 실패와 검증 불가의 드러남, 가드의 늦은 컴파일(프로덕션)과 개발 모드 일괄 컴파일(어느 환경이든 실패는 그 게이트의 가드 실패)(ADR 0014, 17라운드 스웜 수렴(편집자 결정)), `UpdateDiagnostics`, 커밋 번호 스탬프 검증과 실행 합치기, 검증기 계약(`compileGuard`, `rejectedKey`)의 플러그인·`validatorFactory` 통일과 ajv6·7·8 플러그인 구현, 에러 라우팅, 오류 클래스(`ValidationIssue`), 훅 수준의 React 바인딩 시험(동기 통지와 `useSyncExternalStore`, StrictMode 이중 호출, 구독 뒤 따라잡기), 같은 `$id` 루트의 중복 등록 처리, 상태·오류·명령 사건과 검증 결과의 배달 경로(09 §2.4, 16라운드 답 3), 검증기 등록의 참조 세기와 최근 해제 목록, 재생성 reset의 같은 `$id`(09 §2.6의 여덟째, 16라운드 스웜 수렴(편집자 결정)) | PR-2 (PR-3과 병렬) | `compileGuard` 계약 세부, 에러 라우팅, 유효 스키마 변경 이벤트, core가 `ValidationManager` → `app/plugin`의 `PluginManager`를 거쳐 React 구성 요소 모듈을 가져오는 import의 분리(검증기 주입 경로, §15) |
-- 보충: 없음
+- 보충:
+  > 반영 칸(개발계획 P1): "ajv6·ajv7·ajv8의 `compileGuard`·`rejectedKey`·같은 `$id` 처리는 원장대로 PR-4에서 셋 다 구현한다(LANDING-064·093 그대로)." (`reviews/round-18-owner-answers.md:42`)
 - 상태: 현행
-- 출처: `08-design-a-to-z.md:574`(정본), `09-landing-and-test-strategy.md:19,22,35,259`, `adr/0014-error-policy.md:178-184`
-- 닫은 사람: 소유자 답(`reviews/round-16-owner-answers.md:9` 3 배달 경로), 소유자 답(`reviews/round-16-owner-answers.md:16` 10 가드 캐시와 등록의 소유), 16라운드 스웜 수렴(편집자 결정, 재생성 reset의 같은 `$id`), 17라운드 스웜 수렴(편집자 결정, `onError` core 쪽과 가드 컴파일)
-- 라운드: 17
+- 출처: `08-design-a-to-z.md:574`(정본), `09-landing-and-test-strategy.md:19,22,35,259`, `adr/0014-error-policy.md:178-184`, `reviews/round-18-owner-answers.md:42`
+- 닫은 사람: 소유자 답(`reviews/round-16-owner-answers.md:9` 3 배달 경로), 소유자 답(`reviews/round-16-owner-answers.md:16` 10 가드 캐시와 등록의 소유), 16라운드 스웜 수렴(편집자 결정, 재생성 reset의 같은 `$id`), 17라운드 스웜 수렴(편집자 결정, `onError` core 쪽과 가드 컴파일), 소유자 답(`reviews/round-18-owner-answers.md:42` 개발계획 P1)
+- 라운드: 18
 - 까닭: `09-landing-and-test-strategy.md:19`
 
 ### LANDING-065 PR-5 배열 — 배열·터미널 배열 행, 아이템 호스트, 통째 교체의 identity
@@ -1076,10 +1094,12 @@
   > | PR-5 배열 | 배열·터미널 배열 행(`arrayBehavior/`의 `branch/`·`terminal/`), 겉면 배열 멤버, 배열 노드와 아이템 호스트, `items`·`prefixItems`, `push`·`remove`·`update`, 통째 교체의 identity, 아이템 채움 | PR-2 (PR-3·4와 병렬) | 배열 아이템의 생김과 채움, `contains` |
 - 보충: 없음
 - 상태: 현행
-- 출처: `08-design-a-to-z.md:575`(정본), `09-landing-and-test-strategy.md:36,260`
-- 닫은 사람: 소유자 답(`reviews/round-17-owner-answers.md:42` 4 종류 모듈), 편집자 결정(14라운드 PR 계획, `08-design-a-to-z.md:575`)
-- 라운드: 17
+- 출처: `08-design-a-to-z.md:575`(정본), `09-landing-and-test-strategy.md:36,260`, `08-design-a-to-z.md:411`
+- 닫은 사람: 소유자 답(`reviews/round-17-owner-answers.md:42` 4 종류 모듈), 편집자 결정(14라운드 PR 계획, `08-design-a-to-z.md:575`), 편집자 결정(18라운드, SURFACE-005; 배열 쓰기는 다섯)
+- 라운드: 18
 - 까닭: `08-design-a-to-z.md:575`
+- 충돌:
+  > `08-design-a-to-z.md:575`의 "`push`·`remove`·`update`"는 SURFACE-005와 다르다: 배열 쓰기는 `push`·`pop`·`update`·`remove`·`clear` 다섯이다(SURFACE-005). SURFACE-005가 이긴다(`08-design-a-to-z.md:411`).
 
 ### LANDING-066 PR-6 상태 키와 제어 — 결합(OR/AND)·`controls.children`·조각 `controls`·`unsetOnInactive`의 정책
 
@@ -1087,12 +1107,15 @@
   > | PR | 내용 | 의존 | 착수 전 닫을 것 |
   > | --- | --- | --- | --- |
   > | PR-6 상태 키와 제어 | `controls.visible`·`controls.readOnly`·`controls.disabled`·표준 `readOnly`의 결합(OR/AND), `controls.children`, 조각 `controls`, `unsetOnInactive`의 층·식의 값(직전 커밋)·하위 트리로 내려가는 정책(R17-2 ㄴ), 겉면의 계산 게터(`visible`·`enabled`·`readOnly`·`disabled`) | PR-3 | `controls.children` 세부. 조각에 따라 터미널 전략이 바뀌는 경로는 17라운드 스웜 수렴(편집자 결정)으로 닫혔다(선언 사이 정적, §9) |
-- 보충: 없음
+- 보충:
+  > 반영 칸(개발계획 P3·P4): "인접 단계 합침 둘을 채택한다: 기반(PR-0의 코드 부분)과 청사진(PR-1)은 한 PR, 파생(PR-3)과 상태 키·제어(PR-6)는 한 PR." (`reviews/round-18-owner-answers.md:44`)
 - 상태: 현행
-- 출처: `08-design-a-to-z.md:576`(정본), `09-landing-and-test-strategy.md:37`
-- 닫은 사람: 소유자 답(`reviews/round-17-owner-answers.md:10` R17-2), 소유자 답(`reviews/round-13-owner-answers.md:7` 1 잠금 규칙), 17라운드 스웜 수렴(편집자 결정, 터미널 전략은 선언 사이 정적)
-- 라운드: 17
+- 출처: `08-design-a-to-z.md:576`(정본), `09-landing-and-test-strategy.md:37`, `reviews/round-18-owner-answers.md:44`, `09-landing-and-test-strategy.md:258`
+- 닫은 사람: 소유자 답(`reviews/round-17-owner-answers.md:10` R17-2), 소유자 답(`reviews/round-13-owner-answers.md:7` 1 잠금 규칙), 17라운드 스웜 수렴(편집자 결정, 터미널 전략은 선언 사이 정적), 소유자 답(`reviews/round-18-owner-answers.md:44` 개발계획 P3·P4), 편집자 결정(18라운드, LANDING-092; 하위 트리 규칙은 PR-2)
+- 라운드: 18
 - 까닭: `08-design-a-to-z.md:576`
+- 충돌:
+  > `08-design-a-to-z.md:576`의 "`unsetOnInactive`의 층·식의 값(직전 커밋)·하위 트리로 내려가는 정책(R17-2 ㄴ)"는 LANDING-092와 다르다: 나감 비움의 하위 트리 규칙은 PR-2가 세우고, PR-6은 `children` 항목 층·조각 `controls` 층·식 값(직전 커밋)을 더한다(LANDING-092, TEST-069). LANDING-092가 이긴다(`09-landing-and-test-strategy.md:258`).
 
 ### LANDING-067 PR-7 전환 — `nodeFromJSONSchema` 재구축, React 바인딩 연결, Form 속성, 바운더리, 옛 코드 삭제, UI 플러그인 이주
 
@@ -1103,13 +1126,17 @@
 - 보충:
   > 편집자 결정(18C-49): "【추론】 규칙 4: PR-7은 진입점을 새 엔진으로 바꾸고 `src/__legacy__/`를 통째로 지운다." (`reviews/round-18-closing.md:1342`)
   > 편집자 결정(18C-49): "【추론】 그 점검은 그 디렉토리와 그것을 가리키는 import가 하나도 없는 것이다." (`reviews/round-18-closing.md:1343`)
+  > 반영 칸(개발계획 P2): "`src/__legacy__/`는 PR-7이 지우지 않고 정리·릴리스 PR(PR-8)까지 참고용으로 보존한다." (`reviews/round-18-owner-answers.md:43`)
+  > 반영 칸(개발계획 P1): "UI 플러그인 넷(antd5·antd6·antd-mobile·mui)의 `presentation.*` 이주, 자사 플러그인 수정 목록, 플러그인마다의 union 항목은 PR-7이 아니라 플러그인 PR(우산 순서 N+1, PR-7 뒤)이 한다." (`reviews/round-18-owner-answers.md:42`)
 - 상태: 현행
-- 출처: `08-design-a-to-z.md:577`(정본), `09-landing-and-test-strategy.md:21,24,26,38,261`, `adr/0014-error-policy.md:178-184`, `reviews/round-18-closing.md:1342-1343`, `reviews/round-18-closing.md:2730-2731`
-- 닫은 사람: 소유자 답(`reviews/round-17-owner-answers.md:9` R17-1), 소유자 답(`reviews/round-17-owner-answers.md:11` R17-3), 소유자 답(`reviews/round-17-owner-answers.md:15` 통보 4), 소유자 답(`reviews/round-17-owner-answers.md:22` `group`의 이름), 소유자 답(`reviews/round-17-owner-answers.md:34` (나)), 소유자 답(`reviews/round-16-owner-answers.md:11,13` 5·7), 16라운드 스웜 수렴(편집자 결정, reset·로드·`setValue(V)`), 17라운드 스웜 수렴(편집자 결정, 바운더리·마운트 계약), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-49), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-94)
+- 출처: `08-design-a-to-z.md:577`(정본), `09-landing-and-test-strategy.md:21,24,26,38,261`, `adr/0014-error-policy.md:178-184`, `reviews/round-18-closing.md:1342-1343`, `reviews/round-18-closing.md:2730-2731`, `reviews/round-18-owner-answers.md:43`, `reviews/round-18-owner-answers.md:42`
+- 닫은 사람: 소유자 답(`reviews/round-17-owner-answers.md:9` R17-1), 소유자 답(`reviews/round-17-owner-answers.md:11` R17-3), 소유자 답(`reviews/round-17-owner-answers.md:15` 통보 4), 소유자 답(`reviews/round-17-owner-answers.md:22` `group`의 이름), 소유자 답(`reviews/round-17-owner-answers.md:34` (나)), 소유자 답(`reviews/round-16-owner-answers.md:11,13` 5·7), 16라운드 스웜 수렴(편집자 결정, reset·로드·`setValue(V)`), 17라운드 스웜 수렴(편집자 결정, 바운더리·마운트 계약), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-49), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-94), 소유자 답(`reviews/round-18-owner-answers.md:43` 개발계획 P2), 소유자 답(`reviews/round-18-owner-answers.md:42` 개발계획 P1)
 - 라운드: 18
 - 까닭: `08-design-a-to-z.md:600-601`, `reviews/round-18-closing.md:1365-1368`
 - 충돌:
   > `08-design-a-to-z.md:577`의 "`setValue(V)`의 같은 입력 판정(§14의 39행)"은 18라운드 결정과 다르다: 로드가 아닌 쓰기(`setValue(V)` 포함)는 원본이 실제로 바뀐 노드에만 Refresh를 내고 쓴 입력 자신은 제외하며, "값이 같아도 낸다"는 로드의 새 수명에만 해당한다(EVENT-071, LANDING-199). 18라운드 결정이 이긴다(`reviews/round-18-closing.md:2730-2731`).
+  > `08-design-a-to-z.md:577`의 "레거시로 옮긴 옛 `core/nodes`·`parsers`·매니저·전처리 삭제"는 소유자 답과 다르다: 레거시 디렉토리는 PR-8까지 보존하고 PR-7은 레거시 import 0만 점검한다(LANDING-205). 소유자 답이 이긴다(`reviews/round-18-owner-answers.md:43`).
+  > `08-design-a-to-z.md:577`의 "UI 플러그인 27파일의 `presentation.*` 이주"는 소유자 답과 다르다: UI 플러그인 넷의 이주는 PR-7 뒤의 플러그인 PR이 하고 PR-7은 기본 입력으로 검증한다(LANDING-206). 소유자 답이 이긴다(`reviews/round-18-owner-answers.md:42`).
 
 ### LANDING-068 PR-8 릴리스 — README·docs, ADR 0010 최종, 이주 안내와 프롬프트, changeset과 `CHANGELOG.md`, 릴리스 테스트
 
@@ -1117,12 +1144,15 @@
   > | PR | 내용 | 의존 | 착수 전 닫을 것 |
   > | --- | --- | --- | --- |
   > | PR-8 릴리스 | README·docs 재작성, ADR 0010 최종, 이주 안내와 이주 프롬프트(`docs/agents`), changeset(파괴적 변경, `fixed` 무리 전체 `major`. 1.0.0-beta 프리릴리스 뒤 1.0.0, 09 §6.2의 열넷째)과 `CHANGELOG.md`, 포장된 산출물의 릴리스 테스트(09 §6.2, 16라운드 스웜 수렴(편집자 결정)), README·docs의 reset 규칙(09 §2.6의 열여섯째), README·docs의 `onError` 코드 표(코드, level, 부류, 언제, 누구 잘못, 기본 드러남)와 판 규칙 | PR-7 | 릴리스 전환 PR(09 §6.2, 저장소 전체)의 병합 |
-- 보충: 없음
+- 보충:
+  > 반영 칸(개발계획 P2): "디렉토리 삭제는 PR-8이 한다." (`reviews/round-18-owner-answers.md:43`)
 - 상태: 현행
-- 출처: `08-design-a-to-z.md:578`(정본), `09-landing-and-test-strategy.md:262`
-- 닫은 사람: 소유자 답(`00-goals.md:111` C8), 소유자 답(`reviews/round-16-owner-answers.md:15` 9), 소유자 답(`reviews/round-16-owner-answers.md:22` PR-8의 판 번호), 16라운드 스웜 수렴(편집자 결정, `09-landing-and-test-strategy.md:225` §6.2)
-- 라운드: 17
+- 출처: `08-design-a-to-z.md:578`(정본), `09-landing-and-test-strategy.md:262`, `reviews/round-18-owner-answers.md:43`, `09-landing-and-test-strategy.md:237`
+- 닫은 사람: 소유자 답(`00-goals.md:111` C8), 소유자 답(`reviews/round-16-owner-answers.md:15` 9), 소유자 답(`reviews/round-16-owner-answers.md:22` PR-8의 판 번호), 16라운드 스웜 수렴(편집자 결정, `09-landing-and-test-strategy.md:225` §6.2), 소유자 답(`reviews/round-18-owner-answers.md:43` 개발계획 P2), 편집자 결정(18라운드, TEST-045; `CHANGELOG.md`는 action이 만듦)
+- 라운드: 18
 - 까닭: `09-landing-and-test-strategy.md:225`
+- 충돌:
+  > `08-design-a-to-z.md:578`의 "1.0.0-beta 프리릴리스 뒤 1.0.0, 09 §6.2의 열넷째)과 `CHANGELOG.md`"는 TEST-045와 다르다: `changeset version`은 `changesets/action` 안에서만 돌므로 `CHANGELOG.md`는 병합 뒤 그 작업 흐름의 판 올림 PR이 만들고 PR-8은 changeset만 쓴다(TEST-045). TEST-045가 이긴다(`09-landing-and-test-strategy.md:237`).
 
 ### LANDING-069 교체 규모 — 교체 대상, 그대로 쓰는 것, 옮기는 것, 테스트 234파일의 처분
 
@@ -1189,10 +1219,12 @@
   > | 2 "재사용" 두 문장을 사실대로 | **08 §17에 반영.** 교차 연산은 잎 함수만 재사용하고 병합표는 새로 쓴다(오늘은 먼저 승·얕은 덮어쓰기·무조건 throw). 식 컴파일러는 `AbstractNode` 조직 안에 있으므로 PR-1에서 청사진(`src/core/blueprint/`)으로 통째로 옮긴다. 새 엔진에서 식을 컴파일하는 곳은 청사진 하나뿐이고, `helpers/dynamicExpression/`의 `INTENT.md`는 표현식 직접 실행을 금하기 때문이다(편집자 결정, 16라운드 답 10으로 확정). 잎 함수 `intersectEnum`·`intersectConst`·`validateRange`는 공집합·충돌에서 던지지 않고 공집합 표시를 돌려주도록 바꾼다. 옛 `intersect*Schema`는 공집합 표시를 받으면 오늘처럼 던지도록 고쳐 옛 동작을 PR-7까지 지킨다(방법은 18라운드 안건 '전환 방식의 세부') |
 - 보충: 없음
 - 상태: 현행
-- 출처: `09-landing-and-test-strategy.md:20`(정본), `08-design-a-to-z.md:571,598`
-- 닫은 사람: 편집자 결정(16라운드 정착 검토), 소유자 답(`reviews/round-16-owner-answers.md:16` 10)
-- 라운드: 17
+- 출처: `09-landing-and-test-strategy.md:20`(정본), `08-design-a-to-z.md:571,598`, `reviews/round-18-closing.md:196`
+- 닫은 사람: 편집자 결정(16라운드 정착 검토), 소유자 답(`reviews/round-16-owner-answers.md:16` 10), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-08; 레거시 `const` 깊은 비교)
+- 라운드: 18
 - 까닭: `09-landing-and-test-strategy.md:20`
+- 충돌:
+  > `09-landing-and-test-strategy.md:20`의 "옛 `intersect*Schema`는 공집합 표시를 받으면 오늘처럼 던지도록 고쳐 옛 동작을 PR-7까지 지킨다"는 18라운드 결정과 다르다: 레거시의 `const` 비교는 깊은 비교로 바뀌며(결함 수정), 이것이 옛 동작을 PR-7까지 지킨다는 규칙의 예외다(SCHEMA-043). 18라운드 결정이 이긴다(`reviews/round-18-closing.md:196`).
 
 ### LANDING-075 정착 조건 3 — 바인딩 계약 넷(다섯째는 편집자가 더함)
 
@@ -1239,12 +1271,15 @@
   > | 조건 | 처분 |
   > | --- | --- |
   > | 6 UI 플러그인 규모와 `options` 닫힌 목록의 충돌 | **08 §17.3·§14에 반영.** 27파일이 `options.*`·맨 키를 읽으므로 PR-7이 `presentation.*`로 옮긴다 |
-- 보충: 없음
+- 보충:
+  > 반영 칸(개발계획 P1): "UI 플러그인 넷(antd5·antd6·antd-mobile·mui)의 `presentation.*` 이주, 자사 플러그인 수정 목록, 플러그인마다의 union 항목은 PR-7이 아니라 플러그인 PR(우산 순서 N+1, PR-7 뒤)이 한다." (`reviews/round-18-owner-answers.md:42`)
 - 상태: 현행
-- 출처: `09-landing-and-test-strategy.md:24`(정본), `08-design-a-to-z.md:469,599`
-- 닫은 사람: 편집자 결정(16라운드 정착 검토)
-- 라운드: 16
+- 출처: `09-landing-and-test-strategy.md:24`(정본), `08-design-a-to-z.md:469,599`, `reviews/round-18-owner-answers.md:42`
+- 닫은 사람: 편집자 결정(16라운드 정착 검토), 소유자 답(`reviews/round-18-owner-answers.md:42` 개발계획 P1)
+- 라운드: 18
 - 까닭: `09-landing-and-test-strategy.md:24`
+- 충돌:
+  > `09-landing-and-test-strategy.md:24`의 "27파일이 `options.*`·맨 키를 읽으므로 PR-7이 `presentation.*`로 옮긴다"는 소유자 답과 다르다: 옮기는 것은 PR-7 뒤의 플러그인 PR이다(LANDING-206). 소유자 답이 이긴다(`reviews/round-18-owner-answers.md:42`).
 
 ### LANDING-079 정착 조건 7 — 공개 노드 타입·가드는 단일 클래스 겉면과 판별 인터페이스로
 
@@ -1280,10 +1315,12 @@
   > | PR-1 청사진 | `preprocessSchema`(`oneOf` 자동 감지·`virtual` `required` 재작성), `processAllOfSchema`(정적 평탄화, `if/then/else` 무시), `schemaNodeFactory`의 스키마 변이, `BranchStrategy/utils`의 조건 사전 | `stripSchemaExtensions`의 스캐너 틀(키 목록만 그룹 셋으로), 잎 교차 함수, `jsonPointer`, 옮긴 식 컴파일러 | `src/core/blueprint/`(옮긴 식 컴파일러 포함) |
 - 보충: 없음
 - 상태: 현행
-- 출처: `09-landing-and-test-strategy.md:32`(정본), `08-design-a-to-z.md:571`
-- 닫은 사람: 편집자 결정(16라운드 정착 검토)
-- 라운드: 16
+- 출처: `09-landing-and-test-strategy.md:32`(정본), `08-design-a-to-z.md:571`, `reviews/round-18-closing.md:186,193`
+- 닫은 사람: 편집자 결정(16라운드 정착 검토), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-08; 잎 교차 함수의 뜻 변경)
+- 라운드: 18
 - 까닭: `09-landing-and-test-strategy.md:20`
+- 충돌:
+  > `09-landing-and-test-strategy.md:32`의 "잎 교차 함수, `jsonPointer`"는 18라운드 결정과 다르다: 잎 교차 함수 가운데 `intersectConst`는 깊은 비교로 뜻이 바뀌고 `intersectPattern`은 새 fractal로 옮기지 않는다(SCHEMA-043). 18라운드 결정이 이긴다(`reviews/round-18-closing.md:193`).
 
 ### LANDING-082 정착 지도 PR-2 — 부딪히는 코드, 그대로 쓰는 것과 옮길 자리, 새 fractal 다섯
 
@@ -1299,14 +1336,16 @@
   > 편집자 결정(18C-36): "【추론】 PR-2는 이 자리에 S1 변환(`reviews/round-18-owner-answers.md:9`의 변환 목록, WRITE-052)만 하는 parse를 새로 둔다." (`reviews/round-18-closing.md:993`)
   > 편집자 결정(18C-36): "【추론】 오늘의 `src/core/parsers/`는 그것을 가져오는 옛 노드와 함께 `src/__legacy__/core/parsers/`로 옮긴다(18C-49)." (`reviews/round-18-closing.md:994`)
 - 상태: 현행
-- 출처: `09-landing-and-test-strategy.md:33`(정본), `08-design-a-to-z.md:572`, `reviews/round-18-owner-answers.md:7-8`, `09-landing-and-test-strategy.md:9`, `reviews/round-18-closing.md:988,993-994,1334`
-- 닫은 사람: 편집자 결정(16라운드 정착 검토), 17라운드 스웜 수렴(편집자 결정, `reviews/round-17-owner-answers.md:38`·`reviews/raw-round17-node-structure.md:154`; 소유자 이견 없이 권고대로 확정된 칸), 소유자 답(`reviews/round-17-owner-answers.md:42` 4 종류 모듈), 소유자 답(`reviews/round-18-owner-answers.md:7` S1; 파서를 가져온다), 소유자 답(`reviews/round-18-owner-answers.md:8` S1 이어서; 뜻이 그대로인 변환만), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-49·18C-36)
+- 출처: `09-landing-and-test-strategy.md:33`(정본), `08-design-a-to-z.md:572`, `reviews/round-18-owner-answers.md:7-8`, `09-landing-and-test-strategy.md:9`, `reviews/round-18-closing.md:988,993-994,1334`, `reviews/round-18-closing.md:17,927,931,2698`
+- 닫은 사람: 편집자 결정(16라운드 정착 검토), 17라운드 스웜 수렴(편집자 결정, `reviews/round-17-owner-answers.md:38`·`reviews/raw-round17-node-structure.md:154`; 소유자 이견 없이 권고대로 확정된 칸), 소유자 답(`reviews/round-17-owner-answers.md:42` 4 종류 모듈), 소유자 답(`reviews/round-18-owner-answers.md:7` S1; 파서를 가져온다), 소유자 답(`reviews/round-18-owner-answers.md:8` S1 이어서; 뜻이 그대로인 변환만), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-49·18C-36), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-01·18C-33·18C-93; 형 판정·탐색 멤버 대체)
 - 라운드: 18
 - 까닭: `09-landing-and-test-strategy.md:100`, `reviews/round-18-closing.md:1365-1368`, `reviews/round-18-closing.md:997-999`
 - 충돌:
   > `09-landing-and-test-strategy.md:33`의 "`core/parsers/*`(ADR 0013 충돌)"는 18라운드 소유자 답과 다르다. 18라운드 소유자 답이 이긴다(`reviews/round-18-owner-answers.md:7-8`, WRITE-052).
   > `09-landing-and-test-strategy.md:9`의 "옛 엔진의 내부(분기 자동 감지, 마이크로태스크 배칭, 파서 변환, 전역 상속)"는 파서 변환을 교체 대상에 넣은 점에서 18라운드 소유자 답과 다르다. 18라운드 소유자 답이 이긴다(`reviews/round-18-owner-answers.md:7-8`, WRITE-052).
   > `09-landing-and-test-strategy.md:33`의 "`src/core/behaviors/`(잎 넷"은 18라운드 결정과 다르다: PR-2의 동작 행에 (가칭) `union` 행이 다른 잎 행과 함께 든다 (BLUEPRINT-043). 18라운드 결정이 이긴다(`reviews/round-18-closing.md:79`).
+  > `09-landing-and-test-strategy.md:33`의 "`getResolveSchema`($ref 깊이 1 지연), `extractSchemaInfo`"는 18라운드 결정과 다르다: 청사진은 `$ref`를 대상 위치마다 한 번 분석해 그 분석을 가리키고(BLUEPRINT-030), 형 판정은 `extractSchemaInfo`의 형 부분을 대신하는 허용 집합 도우미가 PR-1 청사진에서 맡는다(BLUEPRINT-044). 18라운드 결정이 이긴다(`reviews/round-18-closing.md:2698`).
+  > `09-landing-and-test-strategy.md:33`의 "기대는 멤버의 존폐는 18라운드 안건 N2"는 18라운드 결정과 다르다: `find`는 형상에 있는 노드만 돌려주고, `detectsCandidate`와 첫 후보로 물러나는 규칙, 내부 칸 `variant`·`scope`·`oneOfIndex`·`anyOfIndices`는 폐기한다(NODE-043). 18라운드 결정이 이긴다(`reviews/round-18-closing.md:931`).
 
 ### LANDING-083 정착 지도 PR-3 — 부딪히는 코드, `createDynamicFunction`의 의존 주입 형태, `settle/derive/`
 
@@ -1368,10 +1407,12 @@
   > | PR-7 전환 | `RootNodeContextProvider`, `Form`, `SchemaNodeProxy`, `SchemaNodeInput`, `useFormTypeInput`, `PluginManager`의 렌더 키트, `types/jsonSchema`의 맨 키, UI 플러그인 27파일 | 가상화(WeakSet identity), `renderForm`, `providers` 대부분, `useSchemaNodeTracker`·`useSchemaNodeSubscribe` | 기존 자리. `core/index.ts`의 수출만 새 fractal로 돌려 import 경로를 지킨다(`core/index.ts`는 `SchemaNode/`의 진입점을 가리키고 바인딩 전용 내부 통로를 이름으로 다시 내보낸다). `core/types`의 event·state·value는 남고 node·constructor는 지운다 |
 - 보충: 없음
 - 상태: 현행
-- 출처: `09-landing-and-test-strategy.md:38`(정본), `08-design-a-to-z.md:577`
-- 닫은 사람: 편집자 결정(16라운드 정착 검토), 17라운드 스웜 수렴(편집자 결정, `core/index.ts`의 진입점과 `core/types` 정리)
-- 라운드: 17
+- 출처: `09-landing-and-test-strategy.md:38`(정본), `08-design-a-to-z.md:577`, `reviews/round-18-owner-answers.md:42`
+- 닫은 사람: 편집자 결정(16라운드 정착 검토), 17라운드 스웜 수렴(편집자 결정, `core/index.ts`의 진입점과 `core/types` 정리), 소유자 답(`reviews/round-18-owner-answers.md:42` 개발계획 P1)
+- 라운드: 18
 - 까닭: `09-landing-and-test-strategy.md:38`
+- 충돌:
+  > `09-landing-and-test-strategy.md:38`의 "UI 플러그인 27파일"는 소유자 답과 다르다: UI 플러그인 넷(antd5·antd6·antd-mobile·mui)의 `presentation.*` 이주, 자사 플러그인 수정 목록, 플러그인마다의 union 항목은 PR-7이 아니라 플러그인 PR(우산 순서 N+1, PR-7 뒤)이 한다(LANDING-206). 소유자 답이 이긴다(`reviews/round-18-owner-answers.md:42`).
 
 ### LANDING-088 `core/INTENT.md`의 상속 문장은 PR-1에서 먼저 고침
 
@@ -1416,10 +1457,12 @@
   > | PR-1 | 식 컴파일러(`createDynamicFunction`과 그 `utils`, `JSON_POINTER_PATH_REGEX`, `getPathManager`, `DynamicFunction` 형)를 `src/core/blueprint/`로 통째로 옮김(PR-7까지는 옛 엔진도 쓰므로 청사진 진입점이 이름으로 내보내고 그 유지 이유를 청사진의 `DETAIL.md`에 적는다. 옛 소비자는 import만 고침), 잎 교차 함수를 새 fractal로 옮김(옛 `intersect*Schema`는 공집합 표시를 받으면 오늘처럼 던지도록 고쳐 옛 동작을 PR-7까지 지킨다(방법은 18라운드 안건 '전환 방식의 세부')), `core/INTENT.md` 개정, `@winglet/common-utils`의 `merge` 선택 인자와 그 changeset(`minor`, §6.2의 열한째) |
 - 보충: 없음
 - 상태: 현행
-- 출처: `09-landing-and-test-strategy.md:257`(정본), `08-design-a-to-z.md:571`
-- 닫은 사람: 편집자 결정(16라운드, 답 10으로 확정 `reviews/round-16-owner-answers.md:16`), 소유자 답(`reviews/round-14-owner-answers.md:17` O-11)
-- 라운드: 17
+- 출처: `09-landing-and-test-strategy.md:257`(정본), `08-design-a-to-z.md:571`, `reviews/round-18-closing.md:193,196`
+- 닫은 사람: 편집자 결정(16라운드, 답 10으로 확정 `reviews/round-16-owner-answers.md:16`), 소유자 답(`reviews/round-14-owner-answers.md:17` O-11), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-08; 레거시 `const` 깊은 비교)
+- 라운드: 18
 - 까닭: `09-landing-and-test-strategy.md:20`
+- 충돌:
+  > `09-landing-and-test-strategy.md:257`의 "옛 `intersect*Schema`는 공집합 표시를 받으면 오늘처럼 던지도록 고쳐 옛 동작을 PR-7까지 지킨다"는 18라운드 결정과 다르다: 레거시의 `const` 비교는 깊은 비교로 바뀌며(결함 수정) 이것이 그 규칙의 예외이고, `intersectPattern`은 새 fractal로 옮기지 않고 레거시에 남는다(SCHEMA-043). 18라운드 결정이 이긴다(`reviews/round-18-closing.md:196`).
 
 ### LANDING-092 보정 PR-2 — 되돌림 기록 항목 확정, 노드 구조, `active` 게터, 나감 비움의 하위 트리 규칙
 
@@ -1429,10 +1472,12 @@
   > | PR-2 | 되돌림 기록 항목 확정(§2.1의 조건 5), 노드 구조(§3: `record/`·`behaviors/`·`navigation/`·`SchemaNode/`, 행은 잎 넷·객체 둘(터미널 객체까지)·가상. 터미널 배열은 PR-5), `active` 게터, 나감 비움의 하위 트리 규칙(R17-2 ㄴ) |
 - 보충: 없음
 - 상태: 현행
-- 출처: `09-landing-and-test-strategy.md:258`(정본), `08-design-a-to-z.md:572`
-- 닫은 사람: 편집자 결정(16라운드 정착 검토 조건 5), 소유자 답(`reviews/round-17-owner-answers.md:24` 노드 구조), 소유자 답(`reviews/round-17-owner-answers.md:10` R17-2)
-- 라운드: 17
+- 출처: `09-landing-and-test-strategy.md:258`(정본), `08-design-a-to-z.md:572`, `reviews/round-18-closing.md:79`
+- 닫은 사람: 편집자 결정(16라운드 정착 검토 조건 5), 소유자 답(`reviews/round-17-owner-answers.md:24` 노드 구조), 소유자 답(`reviews/round-17-owner-answers.md:10` R17-2), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-02; PR-2에 `union` 행)
+- 라운드: 18
 - 까닭: `09-landing-and-test-strategy.md:23`
+- 충돌:
+  > `09-landing-and-test-strategy.md:258`의 "행은 잎 넷·객체 둘(터미널 객체까지)·가상"는 18라운드 결정과 다르다: PR-2의 동작 행에 (가칭) `union` 행이 다른 잎 행과 함께 든다(BLUEPRINT-043). 18라운드 결정이 이긴다(`reviews/round-18-closing.md:79`).
 
 ### LANDING-093 보정 PR-4 — ajv 셋의 동기 `compileGuard`, 사본·가드 캐시, 재생성 reset의 같은 `$id`, `onError`의 core 쪽
 
@@ -1445,9 +1490,10 @@
   > 편집자 결정(18C-30): "【추론】 이 항목을 PR-4(동기 `compileGuard`를 구현하는 PR)의 수용 필요 항목으로 미리 적고, 이유는 "검증기 컴파일"이다." (`reviews/round-18-closing.md:877`)
   > 편집자 결정(18C-30): "【추론】 미리 적는 것이지 미리 받아들이는 것이 아니다." (`reviews/round-18-closing.md:878`)
   > 편집자 결정(18C-74): "【추론】 저장소의 ajv 플러그인 셋과 core의 폴백 검증기(`src/core/nodes/AbstractNode/utils/ValidationManager/utils/getFallbackValidator.ts:19`)는 PR-4(동기 `compileGuard`를 구현하는 그 PR)에서 함께 루트에 `''`를 내도록 고친다." (`reviews/round-18-closing.md:2056`)
+  > 반영 칸(개발계획 P1): "ajv6·ajv7·ajv8의 `compileGuard`·`rejectedKey`·같은 `$id` 처리는 원장대로 PR-4에서 셋 다 구현한다(LANDING-064·093 그대로)." (`reviews/round-18-owner-answers.md:42`)
 - 상태: 현행
-- 출처: `09-landing-and-test-strategy.md:259`(정본), `08-design-a-to-z.md:574`, `reviews/round-18-closing.md:876-878,2056`
-- 닫은 사람: 소유자 답(`reviews/round-16-owner-answers.md:16` 10), 16라운드 스웜 수렴(편집자 결정, 재생성 reset의 같은 `$id`), 17라운드 스웜 수렴(편집자 결정, `onError` core 쪽), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-30·18C-74)
+- 출처: `09-landing-and-test-strategy.md:259`(정본), `08-design-a-to-z.md:574`, `reviews/round-18-closing.md:876-878,2056`, `reviews/round-18-owner-answers.md:42`
+- 닫은 사람: 소유자 답(`reviews/round-16-owner-answers.md:16` 10), 16라운드 스웜 수렴(편집자 결정, 재생성 reset의 같은 `$id`), 17라운드 스웜 수렴(편집자 결정, `onError` core 쪽), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-30·18C-74), 소유자 답(`reviews/round-18-owner-answers.md:42` 개발계획 P1)
 - 라운드: 18
 - 까닭: `09-landing-and-test-strategy.md:19`, `reviews/round-18-closing.md:881-884`, `reviews/round-18-closing.md:2059-2062`
 
@@ -1472,12 +1518,13 @@
   > | PR-7 | 바인딩 계약 다섯(§2.3. 첫째·넷째는 17라운드 스웜 수렴(편집자 결정)으로 닫힘. 드러남과 제출 거부는 모든 환경에서 같다, R17-1 나), Form 속성 `onError`와 바깥 감싸개·인스턴스 보고기, 입력 마침 신호 `finishInput`(trim), `node.group` → `node.strategy`의 소비자 이주, UI 플러그인 27파일의 `presentation.*` 이주, `renderForm` 다섯(§4.5), 부류별 e2e 실행기, React 18 실행, 배달 경로의 렌더 계층 구독(§2.4), 시나리오 스토리와 `playScenario`, 옛 스토리 49파일 전체 정리, `architecture/spikes/**` 가운데 제품 동작에 남는 상황의 e2e 이식(§5.3), `Form`의 스키마 `clone` 제거, `reset`의 로드 전환(같은 스키마 판정, 커밋 재대조, 호출 안의 재생성, 자식 프록시 마운트 여부로 가르는 입력 판정, 노드가 드는 Refresh 번호와 상호작용 초기화 번호), 로드의 검증 규칙(마운트 포함), `setValue(V)`의 같은 입력 판정(§2.6, 16라운드 스웜 수렴(편집자 결정)), `@winglet/react-utils`의 changeset(`minor`, §6.2의 열한째) |
 - 보충: 없음
 - 상태: 현행
-- 출처: `09-landing-and-test-strategy.md:261`(정본), `08-design-a-to-z.md:577`, `reviews/round-18-closing.md:2730-2731`
-- 닫은 사람: 소유자 답(`reviews/round-17-owner-answers.md:9` R17-1), 소유자 답(`reviews/round-17-owner-answers.md:11` R17-3), 소유자 답(`reviews/round-17-owner-answers.md:22` `group`의 이름), 소유자 답(`reviews/round-16-owner-answers.md:10,11` 4·5), 16라운드 스웜 수렴(편집자 결정, reset·로드), 17라운드 스웜 수렴(편집자 결정, 바인딩 계약 첫째·넷째), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-94)
+- 출처: `09-landing-and-test-strategy.md:261`(정본), `08-design-a-to-z.md:577`, `reviews/round-18-closing.md:2730-2731`, `reviews/round-18-owner-answers.md:42`
+- 닫은 사람: 소유자 답(`reviews/round-17-owner-answers.md:9` R17-1), 소유자 답(`reviews/round-17-owner-answers.md:11` R17-3), 소유자 답(`reviews/round-17-owner-answers.md:22` `group`의 이름), 소유자 답(`reviews/round-16-owner-answers.md:10,11` 4·5), 16라운드 스웜 수렴(편집자 결정, reset·로드), 17라운드 스웜 수렴(편집자 결정, 바인딩 계약 첫째·넷째), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-94), 소유자 답(`reviews/round-18-owner-answers.md:42` 개발계획 P1)
 - 라운드: 18
 - 까닭: `09-landing-and-test-strategy.md:44`, `reviews/round-18-closing.md:2734-2736`
 - 충돌:
   > `09-landing-and-test-strategy.md:261`의 "`setValue(V)`의 같은 입력 판정"은 18라운드 결정과 다르다: 로드가 아닌 쓰기(`setValue(V)` 포함)는 원본이 실제로 바뀐 노드에만 Refresh를 내고 쓴 입력 자신은 제외하며, "값이 같아도 낸다"는 로드의 새 수명에만 해당한다(EVENT-071, LANDING-199). 18라운드 결정이 이긴다(`reviews/round-18-closing.md:2730-2731`).
+  > `09-landing-and-test-strategy.md:261`의 "UI 플러그인 27파일의 `presentation.*` 이주"는 소유자 답과 다르다: UI 플러그인 넷의 `presentation.*` 이주, 자사 플러그인 수정 목록, 플러그인마다의 union 항목은 PR-7이 아니라 플러그인 PR(우산 순서 N+1, PR-7 뒤)이 한다(LANDING-206). 소유자 답이 이긴다(`reviews/round-18-owner-answers.md:42`).
 
 ### LANDING-096 보정 PR-8 — 릴리스 전 벤치 재실행, changeset과 판 번호, 릴리스 테스트, reset 규칙 문서, 스토리북 문서
 
@@ -1485,11 +1532,12 @@
   > | PR | 더해진 것 |
   > | --- | --- |
   > | PR-8 | 릴리스 전 벤치 재실행, changeset(파괴적 변경, `fixed` 무리 전체 `major`. 1.0.0-beta 프리릴리스 뒤 1.0.0, §6.2의 열넷째)과 `CHANGELOG.md`, 포장된 산출물의 릴리스 테스트(§6.2, 16라운드 스웜 수렴(편집자 결정)), README·`docs/QUICK_REFERENCE.md`·`docs/agents`의 reset 규칙(§2.6의 열여섯째), 스토리북 문서 |
-- 보충: 없음
+- 보충:
+  > 반영 칸(개발계획 P2): "디렉토리 삭제는 PR-8이 한다." (`reviews/round-18-owner-answers.md:43`)
 - 상태: 현행
-- 출처: `09-landing-and-test-strategy.md:262`(정본), `08-design-a-to-z.md:578`
-- 닫은 사람: 소유자 답(`reviews/round-16-owner-answers.md:22` PR-8의 판 번호), 소유자 답(`reviews/round-16-owner-answers.md:15` 9), 16라운드 스웜 수렴(편집자 결정, `09-landing-and-test-strategy.md:225` §6.2)
-- 라운드: 16
+- 출처: `09-landing-and-test-strategy.md:262`(정본), `08-design-a-to-z.md:578`, `reviews/round-18-owner-answers.md:43`
+- 닫은 사람: 소유자 답(`reviews/round-16-owner-answers.md:22` PR-8의 판 번호), 소유자 답(`reviews/round-16-owner-answers.md:15` 9), 16라운드 스웜 수렴(편집자 결정, `09-landing-and-test-strategy.md:225` §6.2), 소유자 답(`reviews/round-18-owner-answers.md:43` 개발계획 P2)
+- 라운드: 18
 - 까닭: `09-landing-and-test-strategy.md:225`
 
 ### LANDING-097 릴리스 전환(별도 PR) — changesets 가동과 CI·배포 작업 흐름 정리, PR-8 전에 병합
@@ -2174,11 +2222,14 @@
   > 자사 플러그인 수정 목록은 PR-7 이주 항목이다: antd·mui 수 입력의 비우기 값과 부분 해석, 스위치의 무효 표지, 문자열 체크박스와 범위 입력의 `Array.isArray` 막기(LANDING-151).
 - 보충:
   > 편집자 결정(18C-93): "【추론】 LANDING-151의 PR-7 이주 목록에 LANDING-181–LANDING-186을 더하고, 자사 플러그인마다 union 항목(권장)을 둔다." (`reviews/round-18-closing.md:2665`)
+  > 반영 칸(개발계획 P1): "UI 플러그인 넷(antd5·antd6·antd-mobile·mui)의 `presentation.*` 이주, 자사 플러그인 수정 목록, 플러그인마다의 union 항목은 PR-7이 아니라 플러그인 PR(우산 순서 N+1, PR-7 뒤)이 한다." (`reviews/round-18-owner-answers.md:42`)
 - 상태: 현행
-- 출처: `reviews/round-18-closing.md:1115`(정본), `reviews/round-18-closing.md:2665`
-- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-40), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-93)
+- 출처: `reviews/round-18-closing.md:1115`(정본), `reviews/round-18-closing.md:2665`, `reviews/round-18-owner-answers.md:42`
+- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-40), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-93), 소유자 답(`reviews/round-18-owner-answers.md:42` 개발계획 P1)
 - 라운드: 18
 - 까닭: `reviews/round-18-closing.md:1134-1141`, `reviews/round-18-closing.md:2711-2715`
+- 충돌:
+  > `reviews/round-18-closing.md:1115`의 "자사 플러그인 수정 목록은 PR-7 이주 항목이다: antd·mui 수 입력의 비우기 값과 부분 해석, 스위치의 무효 표지, 문자열 체크박스와 범위 입력의 `Array.isArray` 막기(LANDING-151)."는 소유자 답과 다르다: 자사 플러그인 수정 목록은 PR-7 뒤의 플러그인 PR이 한다(LANDING-206). 소유자 답이 이긴다(`reviews/round-18-owner-answers.md:42`).
 
 ### LANDING-152 이주(18라운드) — `globalState`의 키는 참인 노드가 없으면 내려간다
 
@@ -2296,12 +2347,18 @@
   > 【추론】 새 문법의 시나리오 스토리는 `<Form>`이 새 엔진을 쓰는 PR-7부터 그릴 수 있다.
   > 【추론】 PR-7이 09 §5.4대로 옛 스토리를 정리한다(16라운드 답 4 "전체 정리 허용").
   > 【추론】 옛 엔진의 마지막 벤치 기준선(`bench:baseline`)은 PR-2가 `core/nodes`를 옮기기 전에 잰다.
-- 보충: 없음
+- 보충:
+  > 반영 칸(개발계획 P2): "`src/__legacy__/`는 PR-7이 지우지 않고 정리·릴리스 PR(PR-8)까지 참고용으로 보존한다." (`reviews/round-18-owner-answers.md:43`)
+  > 편집자 결정(18C-49에 LANDING-205를 적용): "【추론】 옛 코드와 함께 사는 `__tests__`는 코드와 함께 옮겨지고, PR-7까지 그대로 돈다." (`reviews/round-18-closing.md:1353`) — LANDING-205 뒤에는 PR-7이 진입점을 새 엔진으로 바꾼 뒤 레거시 안의 옛 단위 시험을 시험 글롭에서 빼 두고(옛 엔진은 더 `<Form>`에 닿지 않는다), 디렉토리와 함께 PR-8이 지운다.
 - 상태: 현행
-- 출처: `reviews/round-18-closing.md:1330-1363`(정본)
-- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-49)
+- 출처: `reviews/round-18-closing.md:1330-1363`(정본), `reviews/round-18-owner-answers.md:43`
+- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-49), 소유자 답(`reviews/round-18-owner-answers.md:43` 개발계획 P2), 편집자 결정(18라운드, 개발계획 07; 레거시 시험은 PR-7 뒤 글롭에서 뺌)
 - 라운드: 18
 - 까닭: `reviews/round-18-closing.md:1365-1368`
+- 충돌:
+  > `reviews/round-18-closing.md:1342`의 "【추론】 규칙 4: PR-7은 진입점을 새 엔진으로 바꾸고 `src/__legacy__/`를 통째로 지운다."는 소유자 답과 다르다: `src/__legacy__/`는 PR-8까지 참고용으로 보존하고, PR-7은 진입점 전환과 레거시 import 0 점검만 하며, 삭제는 PR-8이 한다(LANDING-205). 소유자 답이 이긴다(`reviews/round-18-owner-answers.md:43`).
+  > `reviews/round-18-closing.md:1346`의 "【추론】 그 사이의 산출물은 옛 엔진이고, 우산 브랜치는 PR-8 전에 배포하지 않으며, PR-7이 디렉토리를 지운다."는 소유자 답과 다르다: 디렉토리는 PR-8이 지운다(LANDING-205). 소유자 답이 이긴다(`reviews/round-18-owner-answers.md:43`).
+  > `reviews/round-18-closing.md:1357`의 "PR-7에서 디렉토리와 함께 지운다"는 소유자 답과 다르다: `src/__legacy__/`는 PR-7이 지우지 않고 정리·릴리스 PR(PR-8)까지 참고용으로 보존하며 디렉토리 삭제는 PR-8이 한다(LANDING-205). 소유자 답이 이긴다(`reviews/round-18-owner-answers.md:43`).
 
 ### LANDING-160 이주(18라운드) — 수 노드의 근사 같음 비교가 정확한 비교로
 
@@ -2748,12 +2805,15 @@
   > 무엇: 이주 행마다 오늘 동작과 새 동작을 시험으로 대조하고, 자사 플러그인(antd5·antd6·antd-mobile·mui·ajv6·7·8)의 수정 목록을 LANDING-151과 대조한다.
   > 통과: 오늘과 다른 곳마다 이주 행이 있고, 시험 목록의 모든 줄이 통과한다.
   > 실패: 빠진 이주 행을 더하고, 시험이 규칙과 어긋나면 해당 블록(18C-89–18C-92)을 고친다.
-- 보충: 없음
+- 보충:
+  > 반영 칸(개발계획 P1): "UI 플러그인 넷(antd5·antd6·antd-mobile·mui)의 `presentation.*` 이주, 자사 플러그인 수정 목록, 플러그인마다의 union 항목은 PR-7이 아니라 플러그인 PR(우산 순서 N+1, PR-7 뒤)이 한다." (`reviews/round-18-owner-answers.md:42`)
 - 상태: 현행
-- 출처: `reviews/round-18-closing.md:2665-2671,2717-2720`(정본)
-- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-93)
+- 출처: `reviews/round-18-closing.md:2665-2671,2717-2720`(정본), `reviews/round-18-owner-answers.md:42`
+- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-93), 소유자 답(`reviews/round-18-owner-answers.md:42` 개발계획 P1)
 - 라운드: 18
 - 까닭: `reviews/round-18-closing.md:2711-2715`
+- 충돌:
+  > `reviews/round-18-closing.md:2665`의 "【추론】 LANDING-151의 PR-7 이주 목록에 LANDING-181–LANDING-186을 더하고, 자사 플러그인마다 union 항목(권장)을 둔다."는 소유자 답과 다르다: 이주 표의 행 LANDING-181–LANDING-186과 이주 점검은 PR-7에 남고, 자사 플러그인마다의 union 항목은 플러그인 PR이 한다(LANDING-206). 소유자 답이 이긴다(`reviews/round-18-owner-answers.md:42`).
 
 ### LANDING-199 이주(18라운드) — 호출자의 `setValue(V)`는 하위 트리 전체가 아니라 원본이 바뀐 노드만 다시 마운트
 
@@ -2812,3 +2872,52 @@
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-99)
 - 라운드: 18
 - 까닭: `reviews/round-18-closing.md:2818-2820`
+
+### LANDING-204 우산 `1.0.0-beta`와 개발 PR 여섯 — 기반+청사진, 노드 트리·정착, 파생+상태 키·제어, 통지·검증, 배열, 전환; 자식 PR은 설계·설계문서 → 개발 여섯 → 플러그인 → 정리·릴리스, 단계 정의는 그대로
+
+- 결정:
+  > 인접 단계 합침 둘을 채택한다: 기반(PR-0의 코드 부분)과 청사진(PR-1)은 한 PR, 파생(PR-3)과 상태 키·제어(PR-6)는 한 PR.
+  > 개발 PR은 여섯이다: 기반+청사진, 노드 트리·정착(PR-2), 파생+상태 키·제어, 통지·검증(PR-4), 배열(PR-5), 전환(PR-7).
+  > 우산 PR(`1.0.0-beta`, #344)의 자식은 설계 PR·설계문서 PR → 개발 PR 여섯 → 플러그인 PR → 정리·릴리스 PR(PR-8)이며 모두 `1.0.0-beta`를 base로 열고 merge commit으로 들어온다.
+  > 원장의 단계 정의(LANDING-060–068)는 바뀌지 않는다.
+  > 릴리스 전환 PR(LANDING-097)의 시점은 소유자가 정한다.
+- 보충:
+  > 소유자(개발계획 P3·P4): "이외 권장대로." (`reviews/round-18-owner-answers.md:44`)
+  > 소유자(개발계획 1-가): "1-가" (`reviews/round-18-owner-answers.md:45`)
+  > 반영 칸(개발계획 1-가): "기반 PR과 병렬이며 코드 PR을 막지 않는다." (`reviews/round-18-owner-answers.md:45`) — 자식 순서의 "설계 PR·설계문서 PR → 개발 PR 여섯"에서 설계문서 PR은 순차가 아니라 병렬이다.
+- 상태: 현행
+- 출처: `reviews/round-18-owner-answers.md:44`(정본, 반영 칸), `reviews/round-18-owner-answers.md:45`
+- 닫은 사람: 소유자 답(`reviews/round-18-owner-answers.md:44` 개발계획 P3·P4), 소유자 답(`reviews/round-18-owner-answers.md:45` 개발계획 1-가)
+- 라운드: 18
+- 까닭: `reviews/round-18-owner-answers.md:44`, `reviews/round-18-owner-answers.md:45`
+
+### LANDING-205 `src/__legacy__/`는 정리·릴리스 PR(PR-8)까지 참고용으로 보존 — PR-7은 진입점 전환과 레거시 import 0 점검만, 삭제는 PR-8, 우산에 딸린 무관한 파일은 정리하지 않음
+
+- 결정:
+  > `src/__legacy__/`는 PR-7이 지우지 않고 정리·릴리스 PR(PR-8)까지 참고용으로 보존한다.
+  > PR-7은 진입점을 새 엔진으로 바꾸고 새 코드가 레거시를 가리키는 import가 0임을 점검한다.
+  > 디렉토리 삭제는 PR-8이 한다.
+  > 우산 브랜치에 딸려 들어온 무관한 파일(`.seiri/.gitignore`, 벤치 결과)은 정리하지 않는다.
+- 보충:
+  > 소유자(개발계획 P2): "레거시는 마지막까지 보존. 참고용." (`reviews/round-18-owner-answers.md:43`)
+  > 소유자(개발계획 P2): "무관한 커밋을 굳이 정리할 필욘 없어." (`reviews/round-18-owner-answers.md:43`)
+- 상태: 현행
+- 출처: `reviews/round-18-owner-answers.md:43`(정본, 반영 칸)
+- 닫은 사람: 소유자 답(`reviews/round-18-owner-answers.md:43` 개발계획 P2)
+- 라운드: 18
+- 까닭: `reviews/round-18-owner-answers.md:43`
+
+### LANDING-206 UI 플러그인 넷의 이주는 플러그인 PR(우산 순서 N+1) — `presentation.*` 이주·자사 플러그인 수정 목록·union 항목, PR-7은 기본 입력으로 검증, ajv 셋은 원장대로 PR-4, 이주 표와 이주 점검은 PR-7에 남음
+
+- 결정:
+  > ajv6·ajv7·ajv8의 `compileGuard`·`rejectedKey`·같은 `$id` 처리는 원장대로 PR-4에서 셋 다 구현한다(LANDING-064·093 그대로).
+  > UI 플러그인 넷(antd5·antd6·antd-mobile·mui)의 `presentation.*` 이주, 자사 플러그인 수정 목록, 플러그인마다의 union 항목은 PR-7이 아니라 플러그인 PR(우산 순서 N+1, PR-7 뒤)이 한다.
+  > PR-7은 기본 입력으로 검증한다.
+  > 이주 표의 행(LANDING-181–LANDING-186)과 이주 점검은 PR-7에 남는다.
+- 보충:
+  > 소유자(개발계획 P1): "0에서 ajv 플러그인은 먼저 전부 수정하고 가자. 별로 크게 달라질건 없잖아?" (`reviews/round-18-owner-answers.md:42`)
+- 상태: 현행
+- 출처: `reviews/round-18-owner-answers.md:42`(정본, 반영 칸)
+- 닫은 사람: 소유자 답(`reviews/round-18-owner-answers.md:42` 개발계획 P1)
+- 라운드: 18
+- 까닭: `reviews/round-18-owner-answers.md:42`
