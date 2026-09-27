@@ -1,5 +1,11 @@
 import { wrapReturnStatements } from './wrapReturnStatements';
 
+/**
+ * Build a function body without evaluating the expression.
+ * @param expression - Processed expression with dependency references.
+ * @param coerceToBoolean - Whether returned values require boolean coercion.
+ * @returns Body for a dependency-array function.
+ */
 export const getFunctionBody = (
   expression: string,
   coerceToBoolean: boolean,

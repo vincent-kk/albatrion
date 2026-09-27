@@ -3,8 +3,7 @@ import { formatCreateDynamicFunctionError } from '@/schema-form/helpers/error';
 
 import type { PathManager } from '../getPathManager';
 import { JSON_POINTER_PATH_REGEX } from '../regex';
-import type { DynamicFunction } from '../type';
-import type { CreateDynamicFunction } from './type';
+import type { CreateDynamicFunction, DynamicFunction } from './type';
 import { getFunctionBody } from './utils/getFunctionBody';
 
 /**
@@ -13,7 +12,8 @@ import { getFunctionBody } from './utils/getFunctionBody';
  * @param fieldName - Field name to create the function for
  * @param expression - Expression to evaluate, can be a JSON pointer path
  * @param coerceToBoolean - Must be true for boolean return type
- * @returns Function that takes dependency array and returns boolean, or undefined
+ * @returns Compiled value or boolean function, or undefined for an empty expression
+ * @throws JSONSchemaError when the generated function body has invalid syntax
  */
 export const createDynamicFunction: CreateDynamicFunction = (
   pathManager: PathManager,
@@ -21,10 +21,8 @@ export const createDynamicFunction: CreateDynamicFunction = (
   expression: string | undefined,
   coerceToBoolean: boolean = false,
 ) => {
-  // Cannot process non-string expressions
   if (typeof expression !== 'string') return;
 
-  // Transform JSON paths to dependency array references
   const processedExpression = expression
     .replace(JSON_POINTER_PATH_REGEX, (path) => {
       pathManager.set(path);
@@ -33,7 +31,6 @@ export const createDynamicFunction: CreateDynamicFunction = (
     .trim()
     .replace(/;$/, '');
 
-  // Cannot create function if expression is empty after transformation
   if (processedExpression.length === 0) return;
 
   const functionBody = getFunctionBody(processedExpression, coerceToBoolean);

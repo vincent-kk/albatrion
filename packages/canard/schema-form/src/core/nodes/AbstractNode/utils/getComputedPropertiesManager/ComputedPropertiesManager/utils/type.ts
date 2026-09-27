@@ -1,5 +1,3 @@
-import type { Fn } from '@aileron/declare';
-
 import type { JSONSchemaWithVirtual } from '@/schema-form/types';
 
 /**
@@ -19,11 +17,6 @@ export type DerivedValueFieldName = Extract<ComputedFieldName, 'derived'>;
 export type ConditionFieldName = Exclude<
   ComputedFieldName,
   ObservedFieldName | ConditionIndexName | DerivedValueFieldName
->;
-
-export type DynamicFunction<ReturnType = any> = Fn<
-  [dependencies: unknown[]],
-  ReturnType
 >;
 
 /**
