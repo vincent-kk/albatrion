@@ -26,6 +26,8 @@
 
 ### 값 채널
 
+읽기 전용 `type` 튜플의 리터럴 원소는 `InferValueType` 정규화 과정에서 보존합니다. 그 결과를 사용하는 `FormTypeInputProps`의 `onChange`는 선언한 종류의 값과 기존 undefined·함수 갱신 표면만 허용합니다. 이 형 추론 보정은 공개 Form의 런타임 엔진을 전환하지 않습니다.
+
 | 표면                                                      | 채널                     |
 | --------------------------------------------------------- | ------------------------ |
 | `FormHandle.getValue()` · `submit` · 루트 `onChange` 방출 | 정제 (`normalizedValue`) |
@@ -49,6 +51,11 @@
 ### trim-replaces — trim은 저장 값을 바꾼다
 
 - `trim`이 켜진 문자열 필드에서 `Blurred` 이후 `node.value`가 트림된 값으로 바뀐다 — `omitTrailing`과 달리 raw 채널에도 반영된다.
+
+### union-input-types — 읽기 전용 종류 튜플은 값 합집합을 보존한다
+
+- 실제 공개 `InferValueType`과 `FormTypeInputProps`를 사용한 시험에서 선언한 종류의 값은 허용하고 목록 밖 값은 타입 오류로 거부합니다.
+- 정규화는 튜플 원소와 원래 type 프로퍼티의 필수·선택 여부를 보존합니다.
 
 ## History
 
