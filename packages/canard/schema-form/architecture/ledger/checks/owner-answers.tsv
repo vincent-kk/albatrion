@@ -233,3 +233,8 @@ reviews/round-18-owner-answers.md:38	18	설계서 메모 1	"약어 (Decl)을 쓰
 reviews/round-18-owner-answers.md:39	18	설계서 메모 2	"Fragment 는 매력적인데, React Fregment <></> 랑 충돌할거같구나. 내부명이라 괜찮을거같지만, 그래도 명칭을 바꿨으면 해. SchemaFragment 정도로." (2026-09-27, 설계서 검토)
 reviews/round-18-owner-answers.md:40	18	설계서 메모 3	"publish 가 없어진건.. 자의적으로 이벤트를 호출할 수 없어서 좀 그렇긴 한데, 이 4개 기능을 4개로 분할해서 두지 말고 하나의 메소드에 여러 행위 타입을 파라미터로 받아서 행동하게 해줘. 이전에는 publish 에 섞여있어서 메소드로 안보였는데, 이걸 별도 메소드로 빼니까 node 의 정체성이 좀 깨지는걸 action 이나 interaction 
 reviews/round-18-owner-answers.md:41	18	설계서 메모 4	"typeMismatch 정도가 적절하지 않나 싶네. 아님 더 짧게 mismatch 같은것도 괜찮고 근데 너무 포괄적이면 또 파악하기 힘드니까.." / 권장(`typeMismatch`·`typeMismatches`·`TYPE_MISMATCH`)에 "그래 그걸로 메모해둬" (2026-09-27, 설계서 검토)
+reviews/round-18-owner-answers.md:42	18	개발계획 P1	"0에서 ajv 플러그인은 먼저 전부 수정하고 가자. 별로 크게 달라질건 없잖아?" / "이외 권장대로." (2026-09-27, 개발계획 검토)
+reviews/round-18-owner-answers.md:43	18	개발계획 P2	"레거시는 마지막까지 보존. 참고용." / "무관한 커밋을 굳이 정리할 필욘 없어." (2026-09-27, 개발계획 검토)
+reviews/round-18-owner-answers.md:44	18	개발계획 P3·P4	"이외 권장대로." / "나머지 권장대로." (2026-09-27, 개발계획 검토)
+reviews/round-18-owner-answers.md:45	18	개발계획 1-가	"1-가" (2026-09-27, 개발계획 검토)
+reviews/round-18-owner-answers.md:46	18	개발계획 계획서 형식	"개발단계를 독립된 PR로 나눠서 검증할 수 있었으면 하긴 해. 규모가 상당히 크니까. 각각의 PR 단계를 위한 계획서만 작성했으면 해. 각 PR은 1. 개발요청서(설계원장링크 포함) 2. 해당 PR 검증 구성요건 3. ADR 과 핵심 축 이렇게 작성해두고, 개별 PR 단계별로 이 디렉토리를 참고해서 개발하길 바라. 개발 절차는 seiri 와 filid 로
