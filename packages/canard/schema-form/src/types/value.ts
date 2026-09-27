@@ -7,12 +7,14 @@ export type VirtualNodeValue = any[];
 
 export type AllowedValue = BaseAllowedValue | VirtualNodeValue;
 
-/** Normalize readonly string[] to string[] for BaseInferValueType compatibility */
-type NormalizeType<T> = T extends { type?: infer U }
-  ? U extends readonly string[]
-    ? { type?: string[] } & Omit<T, 'type'>
-    : T
-  : T;
+/** Preserve type literals and property modifiers while removing tuple readonly. */
+type NormalizeType<T> = {
+  [Key in keyof T]: Key extends 'type'
+    ? T[Key] extends readonly string[]
+      ? [...T[Key]]
+      : T[Key]
+    : T[Key];
+};
 
 export type InferValueType<
   T extends { type?: string | readonly string[] | string[] },
