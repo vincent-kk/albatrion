@@ -1,76 +1,52 @@
-# Schema Form Scenario Contracts
+# Schema Form Scenarios contract
 
 ## Requirements
 
-TEST-008, TEST-010, TEST-011, TEST-022, TEST-023, TEST-024, TEST-077, and
-LANDING-090 govern this private verification package. Its initial delivery is a
-harness skeleton: it establishes data and adapter contracts while engine
-scenarios are introduced by their owning implementation stages.
+TEST-008, TEST-010, TEST-011, TEST-022, TEST-023, TEST-024, TEST-077 및 LANDING-090이 이 비공개 검증 패키지의 범위를 정한다. 현재 전달물은 데이터와 어댑터 계약을 세우는 하네스 골격이며, 엔진 시나리오는 해당 구현 단계에서 추가한다.
 
-Scenario data is independent of React, a test runner, and any form engine.
-Adapters may use runtime-specific dependencies, but the package never imports
-`@canard/schema-form`, even for types. This removes the dependency cycle created
-when schema-form tests consume the shared scenarios.
+시나리오 데이터는 React, 테스트 러너, 폼 엔진과 독립적이다. 어댑터는 실행 환경별 의존성을 사용할 수 있지만, 이 패키지는 타입 전용으로도 `@canard/schema-form`을 가져오지 않는다. 그래야 schema-form 테스트가 공유 시나리오를 소비할 때 의존성 순환이 생기지 않는다.
 
-The initial union, fill, and narrowing families are empty. Empty execution
-succeeds with zero executed steps and is reported as scaffolding, not coverage.
+초기 union, fill, narrowing 계열은 비어 있다. 빈 시나리오 실행은 수행한 단계가 0인 채 성공하며, 엔진 동작의 검증 범위로 보고하지 않는다.
 
 ## API Contracts
 
-`FormScenario` describes a name, a structural schema, an optional initial value,
-and ordered steps. A step uses one of `setValue`, `clear`, `push`, `remove`,
-`update`, `submit`, `reset`, and `batch`, with its action-specific inputs and
-optional observable expectations. Shape expectations use JSON Pointer paths;
-value and error expectations describe observations after that step settles.
+`FormScenario`는 이름, 구조적 스키마, 선택적 초기 값, 순서 있는 단계를 기술한다. 단계는 `setValue`, `clear`, `push`, `remove`, `update`, `submit`, `reset`, `batch` 중 하나이며 동작별 입력과 선택적 관찰 기대값을 가진다. 형태 기대값은 JSON Pointer 경로를 사용하고, 값과 오류 기대값은 단계가 완료된 뒤의 관찰을 기술한다.
 
-The core runner belongs to schema-form's core verification owner, as TEST-023
-requires. This package exports no core runner and executes no engine scenarios.
+코어 실행기는 TEST-023에 따라 schema-form의 코어 검증 소유자가 맡는다. 이 패키지는 코어 실행기를 공개하지 않으며 엔진 시나리오를 실행하지 않는다.
 
-`playScenario(scenario, element)` uses the supplied element as its lookup scope.
-The rendered wrapper registers its structural handle and screen adapter on its
-own root element; render tests may register them directly on their container.
-Lookup checks the supplied element first, then its descendants. Missing or
-ambiguous registrations fail explicitly. Registration returns a cleanup that
-removes only the registration it created.
+`playScenario(scenario, element)`는 받은 요소를 탐색 범위로 사용한다. 렌더된 래퍼는 구조적 핸들과 화면 어댑터를 자신의 루트 요소에 등록하며, 렌더 테스트는 컨테이너에 직접 등록할 수 있다. 탐색은 받은 요소를 먼저 검사한 뒤 하위 요소를 검사한다. 등록이 없거나 후보가 여러 개면 명시적으로 실패한다. 등록 해제 함수는 자신이 만든 등록만 제거한다.
 
-The screen adapter performs supported leaf input interactions through user
-events and locates fields by `data-path`. Steps that cannot be expressed as
-screen input use the registered handle, including `batch`, `reset`, `submit`,
-`update`, and non-leaf `setValue`. The initial skeleton delegates these actions
-to injected adapters rather than guessing widget or engine semantics.
+이 패키지는 `ScenarioAdapter`의 실행·정착·검증 인터페이스를 정의하고 각 단계를 등록된 어댑터에 순서대로 위임한다. 화면 입력의 user event 처리, `data-path` 필드 탐색, 핸들 전용 동작의 경로 선택은 소비자가 주입하는 어댑터의 책임이다. `batch`, `reset`, `submit`, `update`, 비말단 `setValue`처럼 화면 입력으로 표현하기 어려운 단계의 핸들 사용도 주입 어댑터가 결정한다. 패키지는 위젯이나 엔진 의미론을 추측해 실행하지 않는다.
 
-The scenario wrapper receives the form component as an input and binds its
-handle to its root DOM registration. Form rendering and handle lifetime remain
-owned by the consumer. Scenario execution errors propagate to the caller;
-registration and adapter failures never silently skip a step or expectation.
+시나리오 래퍼는 폼 컴포넌트를 입력받아 그 핸들을 루트 DOM 등록에 연결한다. 폼 렌더링과 핸들 수명은 소비자가 소유한다. 시나리오 실행 오류는 호출자에게 전파되며, 등록·어댑터 실패로 단계나 기대값을 조용히 건너뛰지 않는다.
 
 ## Acceptance Criteria
 
-### scenario-data — Pure shared descriptions
+### scenario-data — 순수 공유 기술
 
-- Scenario modules have no runtime execution or engine dependency.
-- The action vocabulary contains exactly the eight ledger actions.
-- Union, fill, and narrowing families exist and initially contain no scenarios.
+- 시나리오 모듈에는 런타임 실행이나 엔진 의존성이 없다.
+- 동작 어휘는 계약의 여덟 동작만 허용한다.
+- union, fill, narrowing 계열은 존재하며 초기에는 시나리오가 없다.
 
-### scenario-screen-order — Ordered screen execution
+### scenario-screen-order — 순서 있는 화면 실행
 
-- An empty scenario runs zero actions and succeeds.
-- The registered screen adapter receives each step once, in order, with completion awaited.
-- Expectations are delegated after completion and failures propagate.
+- 빈 시나리오는 동작을 실행하지 않고 성공한다.
+- 등록된 화면 어댑터는 각 단계를 순서대로 한 번씩 받고 완료까지 기다린다.
+- 완료 후 기대값을 어댑터에 위임하며 실패를 전파한다.
 
-### scenario-registration — Scoped DOM handoff
+### scenario-registration — 범위가 있는 DOM 전달
 
-- A registration can be found on the received element or a descendant.
-- Cleanup does not remove a newer registration for the same element.
-- Missing and ambiguous handles fail explicitly.
-- The wrapper can receive a structurally compatible form without an engine import.
+- 받은 요소 또는 그 하위 요소에서 등록을 찾는다.
+- 등록 해제는 같은 요소의 더 새로운 등록을 제거하지 않는다.
+- 핸들이 없거나 모호하면 명시적으로 실패한다.
+- 래퍼는 엔진 import 없이 구조적으로 호환되는 폼을 받을 수 있다.
 
-### scenario-screen — Shared screen entry point
+### scenario-screen — 공유 화면 진입점
 
-- The public screen call takes only the scenario and scope element.
-- The registered adapter owns user events and handle-only action routing.
-- Story and render callers can share the same scenario without duplicating steps.
+- 공개 화면 호출은 시나리오와 범위 요소만 받는다.
+- 주입된 어댑터가 user event와 핸들 전용 동작의 경로 선택을 소유한다.
+- Storybook과 렌더 테스트는 단계를 복제하지 않고 같은 시나리오를 사용할 수 있다.
 
 ## Last Updated
 
-2026-09-27
+2026-09-27 — 화면 동작의 소유자를 주입된 어댑터로 명확히 함

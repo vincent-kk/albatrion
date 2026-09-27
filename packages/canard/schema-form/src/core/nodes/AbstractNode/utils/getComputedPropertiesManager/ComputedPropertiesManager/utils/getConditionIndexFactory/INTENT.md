@@ -1,31 +1,29 @@
-# getConditionIndexFactory
+# getConditionIndexFactory — 조건 분기 선택 규칙
 
 ## Purpose
 
-oneOf/anyOf 스키마 배열에서 `&if` / `computed.if` 조건을 파싱하여 현재 활성 브랜치 인덱스를 반환하는 런타임 함수를 생성한다. 단순 등호 조건은 O(1) 딕셔너리 룩업으로 최적화한다.
+객체 스키마의 oneOf·anyOf 조건을 원래 분기 인덱스에 연결하는 계산 함수를 만듭니다. 비객체 노드의 분기 선택이나 분기 스키마 검증은 맡지 않습니다.
 
 ## Conventions
 
-- TypeScript strict 모드
-- `object` 타입 스키마에만 적용 (비객체는 `undefined` 반환)
-- `extractConditionInfo` 로 표현식 추출 → `getSimpleEquality` 로 최적화 시도 → 실패 시 `new Function` 으로 폴백
-- 반환: `DynamicFunction<number>` (단일) 또는 `DynamicFunction<number[]>` (다중)
-- 매칭 없는 경우 `-1` (단일) 또는 `[]` (다중) 반환
-- `schemaIndices`는 입력 스키마 배열의 원래 인덱스를 담고 `expressions`와 길이·순서가 대응한다
+- 조건이 없는 항목과 null 분기를 제외해도 원래 스키마 인덱스를 유지합니다. 결과가 작성된 분기를 가리켜야 하기 때문입니다.
+- 단일 선택은 첫 일치 인덱스 또는 `-1`, 다중 선택은 일치 인덱스 배열 또는 `[]`를 반환합니다.
+- 모든 조건이 하나의 의존성에 대한 단순 문자열 등호일 때만 사전 조회로 최적화합니다. 그 밖에는 표현식 순서대로 평가해 선택 의미를 보존합니다.
+- `true` 조건은 원래 위치의 상시 일치 후보로 남기며, 이 경우 단순 등호 최적화를 적용하지 않습니다.
 
 ## Boundaries
 
 ### Always do
 
-- `type !== 'object'` 인 경우 `undefined` 조기 반환
-- 조건 컴파일 실패 시 `JSONSchemaError('CONDITION_INDEX')` throw
+- `type !== 'object'`이면 계산 함수를 만들지 않습니다.
+- 컴파일 실패는 단일 선택에서 `CONDITION_INDEX`, 다중 선택에서 `CONDITION_INDICES`로 구분해 전달합니다.
 
 ### Ask first
 
-- `boolean true` 조건 처리 방식 변경 (현재: `expressions.push('true')`)
-- 단순 등호 최적화(`getSimpleEquality`) 기준 변경
+- `true` 조건의 상시 일치 의미 변경
+- 단순 등호 최적화의 적용 기준 변경
 
 ### Never do
 
-- `array` / `string` 등 비객체 타입에 조건 인덱스 적용
-- `schemaIndices` 와 `expressions` 배열의 순서를 불일치하게 처리
+- 비객체 타입에 조건 인덱스를 적용하지 않습니다.
+- 원본 인덱스와 표현식의 대응 순서를 바꾸지 않습니다.

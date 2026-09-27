@@ -1,29 +1,27 @@
-# getObservedValuesFactory
+# getObservedValuesFactory — watch 값의 순서 보존
 
 ## Purpose
 
-JSON Schema의 `computed.watch` / `&watch` 경로 배열을 파싱하여, 의존성 배열에서 감시 경로의 현재 값들을 순서대로 추출하는 `DynamicFunction<unknown[]>` 을 생성한다.
+`computed.watch` 또는 `&watch`가 요청한 값들을 의존성 배열에서 작성 순서대로 읽는 함수를 만듭니다. 경로의 실제 노드 조회나 의존성 값 갱신은 맡지 않습니다.
 
 ## Conventions
 
-- TypeScript strict 모드
-- `watch` 값: 단일 string 또는 string[] 모두 처리 (내부적으로 배열로 정규화)
-- 반환 함수: `(dependencies) => dependencies[i], dependencies[j], ...` 순서 보존
-- `pathManager.set(path)` + `pathManager.findIndex(path)` 로 인덱스 수집
-- 컴파일 실패 시 `JSONSchemaError('OBSERVED_VALUES')` throw
+- 단일 문자열과 배열을 같은 순서 있는 watch 목록으로 처리합니다. 결과 배열은 중복 경로를 포함해 작성 순서를 유지합니다.
+- 각 경로를 등록한 뒤 `PathManager.findIndex()`로 인덱스를 얻습니다. 다른 계산식이 먼저 등록한 경로도 같은 의존성 슬롯을 읽어야 합니다.
+- 인덱스가 하나도 없으면 함수를 만들지 않고, 함수 생성 실패는 `OBSERVED_VALUES` 오류로 전달합니다.
 
 ## Boundaries
 
 ### Always do
 
-- `watchValueIndexes.length === 0` 이면 `undefined` 반환
-- 경로 등록은 `pathManager.set()` 을 통해 수행
+- 사용할 인덱스가 없으면 `undefined`를 반환합니다.
+- 경로 등록은 `PathManager.set()`을 통해 수행합니다.
 
 ### Ask first
 
-- `watch` 가 string 단일값일 때의 처리 방식 변경
+- 단일 문자열 watch의 배열 정규화 방식 변경
 
 ### Never do
 
-- watch 경로를 `pathManager` 없이 직접 인덱스로 변환
-- 결과 배열의 순서를 watch 배열 순서와 다르게 반환
+- watch 경로를 `pathManager` 없이 직접 인덱스로 변환하지 않습니다.
+- 결과 배열의 순서를 watch 입력 순서와 다르게 반환하지 않습니다.

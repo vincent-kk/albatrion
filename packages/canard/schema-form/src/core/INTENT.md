@@ -1,36 +1,32 @@
-# schema-form/src/core
+# core — 레거시 노드 엔진 경계
 
 ## Purpose
 
-JSON Schema를 노드 트리로 변환하고 폼 상태를 관리하는 핵심 엔진. `nodeFromJSONSchema()` 팩토리로 스키마를 파싱하여 타입별 노드(StringNode, NumberNode, ObjectNode 등) 트리를 생성한다.
+공개 팩토리가 JSON Schema를 현재 런타임 노드 트리로 만들고 폼 상태를 관리하는 계약을 소유합니다. 재설계 청사진의 선언 분석을 레거시 노드 상속 계약에 묶지 않습니다.
 
 ## Conventions
 
-- 클래스는 Domain-First 멤버 순서: Identity → Tree → Value → Computed → State → Validation → Events → Injection → Lifecycle → Constructor
-- 내부 필드/메서드는 `__name__` 이중 언더스코어
-- 이벤트는 `EventCascade` 를 통해 마이크로태스크 배칭
-- `UpdateValue` 는 즉시(synchronous) 발행, 나머지는 배칭
-- 노드 타입 가드: `isStringNode`, `isArrayNode`, `isObjectNode` 등
+- 편집 중 값은 raw `value`로 보존하고, 폼 밖으로 내보낼 때만 `normalizedValue`를 읽습니다. 정제 과정에서 자식 노드를 제거하지 않습니다.
+- 이벤트는 `EventCascade`로 마이크로태스크에 모으되 `UpdateValue`는 즉시 발행합니다. 값 관측과 나머지 상태 알림의 시점을 구별합니다.
+- 파서는 값 변환만 맡고 스키마의 타당성 판정은 노드 생성·검증 경계에 남깁니다.
 
 ## Boundaries
 
 ### Always do
 
-- Keep the legacy inheritance model within the existing engine; the redesigned engine uses its own blueprint and node contracts without requiring AbstractNode inheritance.
-- 노드 값 변경은 반드시 `setValue()` 공개 API 사용
-- 파서 함수는 순수 함수로 유지 (사이드 이펙트 없음)
-- 노드 상태 변경 시 관련 이벤트 발행
+- 기존 엔진에는 현재의 상속 모델을 유지하되 재설계 엔진에는 `AbstractNode` 상속을 요구하지 않습니다.
+- 노드 값은 `setValue()`로 변경하고 상태 변화에 맞는 이벤트를 발행합니다.
+- 파서 함수는 부수 효과 없는 값 변환으로 유지합니다.
 
 ### Ask first
 
-- `EventCascade` 배칭 메커니즘 변경 (이벤트 타이밍 회귀 위험)
+- 이벤트 시점을 바꾸는 `EventCascade` 배칭 변경
 - `SetValueOption` 비트 플래그 추가 또는 변경
-- `AbstractNode` 에 새 공개 메서드 추가 (모든 노드 타입에 영향)
-- `BranchStrategy` / `TerminalStrategy` 분기 조건 수정
+- 모든 기존 노드에 영향을 주는 `AbstractNode` 공개 메서드 추가
+- `BranchStrategy` / `TerminalStrategy` 분기 조건 변경
 
 ### Never do
 
-- 노드의 `__value__` 등 private 필드에 외부에서 직접 접근
-- `__tests__/` 파일을 수정하지 않고 명세 동작 변경
-- 파서 함수에 JSON Schema 검증 로직 추가 (파서는 값 변환만 담당)
-- 노드 트리를 순환 참조 구조로 구성
+- 외부에서 노드의 `__value__` 같은 private 필드에 직접 접근하지 않습니다.
+- 검증 기록을 갱신하지 않은 채 명세 동작을 바꾸지 않습니다.
+- 파서에 JSON Schema 검증을 넣거나 노드 트리를 순환 참조로 만들지 않습니다.
