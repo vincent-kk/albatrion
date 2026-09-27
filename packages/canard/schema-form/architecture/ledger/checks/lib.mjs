@@ -9,6 +9,14 @@ export const BASE_COMMIT = process.env.LEDGER_BASE ?? 'ba398c330';
 export const ID_RE = /^### ([A-Z]+-\d{3})(?:\s+(.*))?$/;
 const FIELD_RE = /^- (결정|보충|상태|출처|닫은 사람|라운드|까닭|충돌):\s*(.*)$/;
 
+/** Matches normative tokens for ledger coverage checks. Each entry is [kind, global RegExp] with the token in capture group 1; read with matchAll, never test/exec (shared lastIndex). */
+export const TOKEN_PATTERNS = [
+  ['code', /`([^`\n]+)`/g],
+  ['errorCode', /\b(SCHEMA_FORM_[A-Z_]+(?:\.[A-Z_]+)?)\b/g],
+  ['id', /(?<![A-Za-z0-9_`-])((?:T|G|C|Q|S|E|R|N|O|D|B|L)-?\d+(?:G?-\d+)?[A-Z]?)(?![A-Za-z0-9_])/g],
+  ['number', /(?<![\w.])(\d+(?:\.\d+)?\s?(?:ms|KB|MB|kB|%|회|개|번|배|줄|파일|케이스|초|행|칸|단계))/g],
+];
+
 /** Splits one document line into sentences. The same function serves the coverage check and the fragment provenance check. SENTENCE_MIN (default 8) drops shorter pieces; the final gate runs once with SENTENCE_MIN=3. */
 export function splitSentences(line) {
   const body = line.trim();
