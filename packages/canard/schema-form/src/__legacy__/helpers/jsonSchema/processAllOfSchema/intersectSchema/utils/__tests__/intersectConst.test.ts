@@ -38,24 +38,28 @@ describe('intersectConst', () => {
     expect(intersectConst(undefined, undefined)).toBeUndefined();
   });
 
-  test('object value comparison (reference equality)', () => {
+  test('LANDING-061 compares object const values structurally', () => {
     const obj1 = { id: 1 };
     const obj2 = { id: 1 };
 
-    expect(intersectConst(obj1, obj1)).toBe(obj1); // same reference
-    expect(() => intersectConst(obj1, obj2)).toThrow(
-      'Conflicting const values',
-    ); // different reference
+    expect(intersectConst(obj1, obj1)).toBe(obj1);
+    expect(intersectConst(obj1, obj2)).toBe(obj1);
   });
 
-  test('array value comparison', () => {
+  test('LANDING-061 compares array const values structurally', () => {
     const arr1 = [1, 2, 3];
     const arr2 = [1, 2, 3];
 
-    expect(intersectConst(arr1, arr1)).toBe(arr1); // same reference
-    expect(() => intersectConst(arr1, arr2)).toThrow(
+    expect(intersectConst(arr1, arr1)).toBe(arr1);
+    expect(intersectConst(arr1, arr2)).toBe(arr1);
+  });
+
+  test('nested const equality preserves the base reference and rejects unequal leaves', () => {
+    const base = { nested: [{ value: 1 }] };
+    expect(intersectConst(base, { nested: [{ value: 1 }] })).toBe(base);
+    expect(() => intersectConst(base, { nested: [{ value: 2 }] })).toThrow(
       'Conflicting const values',
-    ); // different reference
+    );
   });
 
   test('falsy values like 0 and false', () => {

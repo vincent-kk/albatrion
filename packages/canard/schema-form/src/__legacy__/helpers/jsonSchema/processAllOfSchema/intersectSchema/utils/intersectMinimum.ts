@@ -1,4 +1,4 @@
-import { maxLite } from '@winglet/common-utils/math';
+import { intersectMinimum as intersect } from '@/schema-form/helpers/schemaIntersection';
 
 /**
  * Intersects minimum constraints by selecting the larger (more restrictive) value.
@@ -13,9 +13,4 @@ import { maxLite } from '@winglet/common-utils/math';
 export const intersectMinimum = (
   baseMin?: number,
   sourceMin?: number,
-): number | undefined => {
-  if (baseMin === undefined && sourceMin === undefined) return undefined;
-  if (baseMin === undefined) return sourceMin;
-  if (sourceMin === undefined) return baseMin;
-  return maxLite(baseMin, sourceMin);
-};
+): number | undefined => intersect(baseMin, sourceMin);

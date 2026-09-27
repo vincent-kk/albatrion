@@ -1,11 +1,9 @@
-import {
-  intersectionLite,
-  intersectionWith,
-} from '@winglet/common-utils/array';
-import { equals } from '@winglet/common-utils/object';
-
 import { JSONSchemaError } from '@/schema-form/errors';
 import { formatEmptyEnumIntersectionError } from '@/schema-form/helpers/error';
+import {
+  EMPTY_INTERSECTION,
+  intersectEnum as intersect,
+} from '@/schema-form/helpers/schemaIntersection';
 
 /**
  * Intersects two enum arrays, returning only values that exist in both arrays.
@@ -25,17 +23,13 @@ export const intersectEnum = <T>(
   sourceEnum?: readonly T[],
   deepEqual?: boolean,
 ): readonly T[] | undefined => {
-  if (!baseEnum && !sourceEnum) return undefined;
   if (!baseEnum) return sourceEnum;
   if (!sourceEnum) return baseEnum;
-
-  const intersected = deepEqual
-    ? intersectionWith(baseEnum, sourceEnum, equals)
-    : intersectionLite(baseEnum, sourceEnum);
-  if (intersected.length === 0)
+  const result = intersect(baseEnum, sourceEnum, deepEqual);
+  if (result === EMPTY_INTERSECTION)
     throw new JSONSchemaError(
       'EMPTY_ENUM_INTERSECTION',
       formatEmptyEnumIntersectionError(baseEnum, sourceEnum),
     );
-  return intersected;
+  return result;
 };

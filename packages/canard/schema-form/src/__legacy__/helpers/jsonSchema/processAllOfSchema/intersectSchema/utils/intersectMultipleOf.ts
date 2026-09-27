@@ -1,4 +1,4 @@
-import { lcm } from '@winglet/common-utils/math';
+import { intersectMultipleOf as intersect } from '@/schema-form/helpers/schemaIntersection';
 
 /**
  * Intersects multipleOf constraints by calculating their least common multiple (LCM).
@@ -18,11 +18,4 @@ import { lcm } from '@winglet/common-utils/math';
 export const intersectMultipleOf = (
   baseMultiple?: number,
   sourceMultiple?: number,
-): number | undefined => {
-  const base = Number.isFinite(baseMultiple) ? baseMultiple : undefined;
-  const source = Number.isFinite(sourceMultiple) ? sourceMultiple : undefined;
-  if (base === undefined && source === undefined) return undefined;
-  if (base === undefined) return source;
-  if (source === undefined) return base;
-  return lcm(base, source);
-};
+): number | undefined => intersect(baseMultiple, sourceMultiple);

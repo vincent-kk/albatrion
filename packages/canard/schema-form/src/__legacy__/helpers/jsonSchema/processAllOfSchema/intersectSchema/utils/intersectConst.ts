@@ -1,8 +1,12 @@
 import { JSONSchemaError } from '@/schema-form/errors';
 import { formatConflictingConstValuesError } from '@/schema-form/helpers/error';
+import {
+  EMPTY_INTERSECTION,
+  intersectConst as intersect,
+} from '@/schema-form/helpers/schemaIntersection';
 
 /**
- * Intersects two optional const values, ensuring they are identical or throwing an error.
+ * Intersects two optional const values, ensuring they are structurally equal or throwing an error.
  *
  * This function handles the intersection of const values in JSON Schema.
  * Since const values represent exact matches, two different const values
@@ -10,20 +14,18 @@ import { formatConflictingConstValuesError } from '@/schema-form/helpers/error';
  *
  * @param baseConst - The base const value (optional)
  * @param sourceConst - The source const value (optional)
- * @returns The const value if both are undefined or equal, undefined if only one is defined
+ * @returns The earlier equal reference, the sole defined value, or undefined if neither exists
  * @throws {JSONSchemaError} When both values are defined but different
  */
 export const intersectConst = <T>(
   baseConst?: T,
   sourceConst?: T,
 ): T | undefined => {
-  if (baseConst === undefined && sourceConst === undefined) return undefined;
-  if (baseConst === undefined) return sourceConst;
-  if (sourceConst === undefined) return baseConst;
-  if (baseConst !== sourceConst)
+  const result = intersect(baseConst, sourceConst);
+  if (result === EMPTY_INTERSECTION)
     throw new JSONSchemaError(
       'CONFLICTING_CONST_VALUES',
       formatConflictingConstValuesError(baseConst, sourceConst),
     );
-  return baseConst;
+  return result;
 };
