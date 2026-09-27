@@ -33,7 +33,7 @@
 
 ### 노드 타입 추가
 
-새 노드 타입은 `AbstractNode`를 상속하고 `nodes/index.ts`에 export를 추가한다. `type`, `value` getter/setter, `applyValue`는 필수 구현이고 `normalizedValue`는 정제가 필요할 때만 override한다.
+기존 엔진의 노드 타입은 AbstractNode 상속 계약을 유지합니다. 재설계 엔진에는 이 상속 의무를 적용하지 않으며, 청사진이 정한 종류와 후속 단일 노드 계약을 따릅니다. 전환 전 공개 팩토리는 기존 엔진을 계속 사용합니다.
 
 ## Acceptance Criteria
 

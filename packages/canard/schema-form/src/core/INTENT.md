@@ -16,7 +16,7 @@ JSON Schema를 노드 트리로 변환하고 폼 상태를 관리하는 핵심 �
 
 ### Always do
 
-- 새 노드 타입 추가 시 `AbstractNode` 상속 및 `nodes/index.ts` export 포함
+- Keep the legacy inheritance model within the existing engine; the redesigned engine uses its own blueprint and node contracts without requiring AbstractNode inheritance.
 - 노드 값 변경은 반드시 `setValue()` 공개 API 사용
 - 파서 함수는 순수 함수로 유지 (사이드 이펙트 없음)
 - 노드 상태 변경 시 관련 이벤트 발행
