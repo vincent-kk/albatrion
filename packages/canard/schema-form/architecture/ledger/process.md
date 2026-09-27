@@ -28,7 +28,7 @@
 | PROCESS-020 | 02의 지위 — 새 결정을 만들지 않고 맞물림만 보이며, 원장과 다르면 원장이 맞음 | 현행 | 편집자 결정(11라운드, `02-target-overview.md:3`) |
 | PROCESS-021 | 02 §10 어디에 무엇이 있는가 — 부분별 주인 문서 표 | 현행(기록) | 편집자 결정(17라운드, `02-target-overview.md:375-392`) |
 | PROCESS-022 | 08의 지위 — 새 결정을 만들지 않고, 원장과 다르면 원장이 맞음 | 현행 | 편집자 결정(14라운드, `08-design-a-to-z.md:3`) |
-| PROCESS-023 | 약어는 쓰지 않는다 — 원리·목표·축은 처음 나올 때 풀어 쓰고 근거는 괄호에 | 현행 | 편집자 결정(14라운드, `08-design-a-to-z.md:8`) |
+| PROCESS-023 | 약어는 쓰지 않는다 — 원리·목표·축은 처음 나올 때 풀어 쓰고 근거는 괄호에 | 현행 | 편집자 결정(14라운드, `08-design-a-to-z.md:8`), 편집자 결정(20라운드, `reviews/round-20-closing.md` 20C-01) |
 | PROCESS-024 | 06·07은 그때의 기록이라 고치지 않으며 살아 있는 규칙은 03과 08 | 현행 | 편집자 결정(15라운드, `06-conclusions.md:3`) |
 | PROCESS-025 | 09의 읽는 법과 답 번호 | 현행 | 편집자 결정(16라운드, `09-landing-and-test-strategy.md:5`) |
 | PROCESS-026 | PR-1 전에 정련할 항목은 18라운드 안건이 모은다 | 현행 | 편집자 결정(17라운드, `03-mental-model.md:203`) |
@@ -73,6 +73,7 @@
 | PROCESS-065 | 05의 읽는 법 — 열 넷과 그 출처, 상태 표기(미결·미확인·불일치), 침묵을 "제거"로 적지 않음 | 현행 | 편집자 결정(6라운드, `05-before-after.md:7,9`) |
 | PROCESS-066 | 18라운드 닫기 방식 — 유도할 수 있는 것은 편집자가 추론으로 닫고 `reviews/round-18-closing.md`에 적는다 | 현행 | 소유자 답(`reviews/round-18-owner-answers.md:23` 닫기 방식) |
 | PROCESS-067 | 개발 PR마다 계획서 셋 — `request.md`(개발요청서, 원장 링크)·`verification.md`(검증 구성요건)·`adr-and-axes.md`(ADR과 핵심 축), 그 디렉토리만 보고 개발하고 단독으로 검증, 절차는 seiri와 filid | 현행 | 소유자 답(`reviews/round-18-owner-answers.md:46` 개발계획 계획서 형식) |
+| PROCESS-068 | 새 설계문서와 ADR의 근거 표기 — 문장 끝 괄호 안에 원장 ID, 옛 표기("원장 §n", "ADR 00nn", "07 n.n")는 옛 문서의 것, 약어 금지와 풀어 쓰기는 그대로 | 현행 | 편집자 결정(20라운드, `reviews/round-20-closing.md` 20C-01) |
 
 ## 항목
 
@@ -373,12 +374,16 @@
 
 - 결정:
   > **약어는 쓰지 않는다.** 원리 `P1`–`P5`, 목표 `G1`–`G8`, 소유자의 축 열 항목은 처음 나올 때 풀어 쓴다. 근거는 괄호 안에 "원장 §n", "ADR 00nn", "07 n.n"으로 적는다.
-- 보충: 없음
+- 보충:
+  > 편집자 결정(20C-01): "【추론】 "원장 §n", "ADR 00nn", "07 n.n" 표기는 옛 문서(00–09, 옛 ADR)의 근거 표기이며 새 설계문서와 ADR에서는 쓰지 않는다." (`reviews/round-20-closing.md:10`)
+  > 편집자 결정(20C-01): "【추론】 약어를 쓰지 않고 원리·목표·소유자의 축 항목을 처음 나올 때 풀어 쓰는 규칙(PROCESS-023의 앞 두 문장)은 새 설계문서와 ADR에 그대로 적용된다." (`reviews/round-20-closing.md:11`)
 - 상태: 현행
-- 출처: `08-design-a-to-z.md:8`(정본), `06-conclusions.md:11`, `07-conclusions.md:13`
-- 닫은 사람: 편집자 결정(14라운드, `08-design-a-to-z.md:8`)
-- 라운드: 14
-- 까닭: 없음
+- 출처: `08-design-a-to-z.md:8`(정본), `06-conclusions.md:11`, `07-conclusions.md:13`, `reviews/round-20-closing.md:10-11`
+- 닫은 사람: 편집자 결정(14라운드, `08-design-a-to-z.md:8`), 편집자 결정(20라운드, `reviews/round-20-closing.md` 20C-01)
+- 라운드: 20
+- 까닭: `reviews/round-20-closing.md:12`
+- 충돌:
+  > `08-design-a-to-z.md:8`의 "근거는 괄호 안에 "원장 §n", "ADR 00nn", "07 n.n"으로 적는다."는 20라운드 결정과 다르다: 원장에서 만드는 설계문서와 ADR은 근거를 문장 끝 괄호 안에 원장 ID로 적고, 옛 표기는 옛 문서의 것이다(PROCESS-068). 20라운드 결정이 이긴다(`reviews/round-20-closing.md:9`).
 
 ### PROCESS-024 06·07은 그때의 기록이라 고치지 않으며 살아 있는 규칙은 03과 08
 
@@ -937,3 +942,16 @@
 - 닫은 사람: 소유자 답(`reviews/round-18-owner-answers.md:46` 개발계획 계획서 형식)
 - 라운드: 18
 - 까닭: `reviews/round-18-owner-answers.md:46`
+
+### PROCESS-068 새 설계문서와 ADR의 근거 표기 — 문장 끝 괄호 안에 원장 ID, 옛 표기("원장 §n", "ADR 00nn", "07 n.n")는 옛 문서의 것, 약어 금지와 풀어 쓰기는 그대로
+
+- 결정:
+  > 【추론】 원장에서 만드는 설계문서와 ADR은 근거를 문장 끝 괄호 안에 원장 ID로 적는다(`…한다(NODE-002).`, 여럿이면 `(NODE-002, WRITE-090)`).
+  > 【추론】 "원장 §n", "ADR 00nn", "07 n.n" 표기는 옛 문서(00–09, 옛 ADR)의 근거 표기이며 새 설계문서와 ADR에서는 쓰지 않는다.
+  > 【추론】 약어를 쓰지 않고 원리·목표·소유자의 축 항목을 처음 나올 때 풀어 쓰는 규칙(PROCESS-023의 앞 두 문장)은 새 설계문서와 ADR에 그대로 적용된다.
+- 보충: 없음
+- 상태: 현행
+- 출처: `reviews/round-20-closing.md:9-11`(정본)
+- 닫은 사람: 편집자 결정(20라운드, `reviews/round-20-closing.md` 20C-01)
+- 라운드: 20
+- 까닭: `reviews/round-20-closing.md:12`

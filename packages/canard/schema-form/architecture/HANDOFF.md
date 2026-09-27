@@ -4,8 +4,9 @@
 
 ## 1. 지금 어디인가 (2026-09-26, 18라운드 닫힘 + 소유자 검토 + union 설계 봉인)
 
+- **20라운드(2026-09-28, 설계문서 PR 01 진행 중에 열고 닫음).** 01의 형식 명세를 검증하던 중 PROCESS-023의 근거 표기("원장 §n", "ADR 00nn", "07 n.n")가 옛 문서의 것이라 새 설계문서·ADR이 원장 ID로 근거를 달면 문서가 원장을 앞선다는 지적이 나왔다. 원장이 정본이고 옛 문서는 백업으로 가므로(PROCESS-050·061·062) 편집자 결정으로 닫았다: 새 설계문서와 ADR은 문장 끝 괄호 안에 원장 ID(PROCESS-068 새 항목, PROCESS-023 보충·충돌). 정본은 `reviews/round-20-closing.md` 20C-01. 소유자 답은 없다.
 - **19라운드(2026-09-27, PR 02 진행 중에 열고 닫음).** 02의 통합 검증이 원장 안의 충돌을 찾았다: TEST-067(b)의 코퍼스 14종은 모두 호스트에 `type`이 없는 객체 분기 `oneOf`·`anyOf`인데 BLUEPRINT-039·045 E16이 그 칸을 오류로 정했고, "14종이 빌드됐다"는 근거는 라운드 9 프로토타입 위의 측정이었다. 소유자가 "접은 분기 형이 객체만·배열만이면 variant 호스트로 추정"을 정했고(`reviews/round-19-owner-answers.md:7`), 편집자 초안을 verifier·codex·antigravity가 대조해 결함 다섯(게이트 분기 셈, `'null'` 순서, `{object,array}`, 순환 절단, 형 수준의 `$ref` 예외)을 고친 뒤 채택했다. 검증이 찾은 둘째 물음(`type` 없이 `const`만 있는 태그 프로퍼티, 14종 중 2종)은 소유자가 리터럴 종류의 잎으로 받기로 답했다(`:8`). 정본은 `reviews/round-19-closing.md`의 19C-01·19C-02, 원문은 `reviews/raw-round19-typeless-object-host/`. 새 항목 BLUEPRINT-048~051, NODE-059, LANDING-207·208, TEST-079이고 BLUEPRINT-037·039는 분할됨이다. 남은 일은 PR 02의 TEST-079 게이트 구현이다.
-- **설계의 정본은 단일 원장 `ledger/`다.** 영역 17개, 항목 1,344개(19라운드 뒤; 현행 1,072(부정 결정·기록 포함), 대체됨 199, 분할됨 49, 중복 24, 열림 0). 형식과 규칙은 `ledger/README.md`.
+- **설계의 정본은 단일 원장 `ledger/`다.** 영역 17개, 항목 1,345개(20라운드 뒤; 현행 1,073(부정 결정·기록 포함), 대체됨 199, 분할됨 49, 중복 24, 열림 0). 형식과 규칙은 `ledger/README.md`.
 - **옛 설계 문서(`00`–`09`, `adr/`, `open-questions.md`)는 동결됐다.** 더 고치지 않는다. 어긋남은 원장의 충돌 칸에 적는다. 원장이 인용하는 옛 문서의 `path:line`은 모두 커밋 `ba398c330` 기준 줄 번호다(그 뒤 옛 문서는 바뀌지 않았다).
 - **18라운드가 닫혔고, 소유자가 검토했고, 결정은 봉인됐다.**
   - 편집자 결정의 정본은 `reviews/round-18-closing.md`의 블록 `18C-01`…`18C-105`이다. 모든 결정에 【추론】 표지가 있다.
@@ -112,6 +113,7 @@ node ledger/checks/plan-links.mjs plan/README.md plan/*/*.md -- ledger/*.md   # 
 | `reviews/round-18-owner-answers.md` | 18라운드 소유자 답(원문). 23행은 닫기 방식, 24–37행은 검토 결과와 union 설계, 38–41행은 설계서 검토 메모, 42–46행은 개발계획 결정(2026-09-27, 원장 반영됨) |
 | `reviews/round-19-closing.md` | 19라운드 편집자 결정의 정본(19C-01 형 없는 객체·배열 분기 호스트, 19C-02 `const`만 있는 칸). 표지 없는 줄은 소유자 답이 정한 규칙 |
 | `reviews/round-19-owner-answers.md` | 19라운드 소유자 답(원문). 7행 형 없는 객체 호스트, 8행 `const`만 있는 프로퍼티(X1) |
+| `reviews/round-20-closing.md` | 20라운드 편집자 결정의 정본(20C-01 새 설계문서와 ADR의 근거 표기는 문장 끝 괄호 안에 원장 ID). 소유자 답 없음 |
 | `reviews/raw-round19-typeless-object-host/` | 19라운드 작업 파일: 지시서와 초안(`brief.md`), 검증 셋(`verifier.md`·`codex.md`·`antigravity.md`), 판정과 고친 결정문(`merged-v1.md`), X1 초안, 원장 반영 계획(`ledger-plan.md`) |
 | `reviews/raw-round18-union-swarm/` | union 설계 스웜: 공통 브리프, 렌즈 넷의 제안, 검증 둘, 판정 셋, 교차 확인 둘, O7·O8 검증, 정본 설계 `merged-v3.md`, 규칙 A 전수 실행 스크립트 |
 | `reviews/raw-round18-tests/` | 표준 대조(명세·생성기·검증기·폼 라이브러리, 브랜치 노드), 원장 정합성 시험(union, 채움 시점), 1차 교차 확인(codex·antigravity), 게이트 3 원문 |
