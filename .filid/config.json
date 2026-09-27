@@ -2,7 +2,6 @@
   "version": "3.0",
   "language": "ko",
   "ignore": [
-    "**/bench",
     "**/architecture",
     "**/legacy",
     "**/__legacy__",
@@ -15,7 +14,9 @@
     "**/__bench__",
     "**/benchmarks",
     "**/__benchmarks__",
-    "**/benchmarks"
+    "**/benchmark-form/results",
+    "**/.storybook",
+    "**/stories"
   ],
   "adapters": {
     "mode": "auto",
