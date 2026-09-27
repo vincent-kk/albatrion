@@ -12,7 +12,7 @@
 - v7 현행 규범과 역사적 회귀의 구별, 시나리오 패키지/코어 러너 배치, vitest 세 프로젝트, 식 컴파일러 이동과 레거시 보존·금지 경계.
 - 새 소유 경계, 기존 시험 보존, strict 타입 추론 및 검증 증거의 정직성.
 
-증거는 `architecture/verification/02-foundation-and-blueprint/`와 `architecture/spikes/round18/proto/REPORT-v7.md`에 있습니다. 보고서에 남은 미완료를 완료라고 가정하지 말고 실제 코드와 원문으로 판단하십시오. 이미 알려진 TEST-067/BLUEPRINT-039/E16 코퍼스 충돌은 별도 보고서와 소유자 결정을 확인하십시오. 파일명의 legacy나 prototype만으로 현행 규칙을 면제하지 마십시오.
+증거는 `architecture/verification/02-foundation-and-blueprint/`와 `architecture/spikes/round18/proto/REPORT-v7.md`에 있습니다. 보고서에 남은 미완료를 완료라고 가정하지 말고 실제 코드와 원문으로 판단하십시오. 과거 TEST-067/BLUEPRINT-039/E16 충돌은 19C-01·19C-02에서 해소되었습니다. BLUEPRINT-048·049·050·051, NODE-059, LANDING-207·208, TEST-079의 현행 원장을 직접 대조하고 원본 코퍼스 14종 수용 증거를 확인하십시오. 파일명의 legacy나 prototype만으로 현행 규칙을 면제하지 마십시오.
 
 응답은 확인된 문제마다 심각도, 구현 경로·행, 위배된 원장 ID·원문, 재현 입력 또는 시험, 최소 수정안을 제시하십시오. 가능성만 있는 지적은 확인된 결함과 구별하십시오. 문제를 찾지 못했다면 실제 확인 범위와 검증하지 못한 범위를 명시하십시오. 사용자 이름은 Vincent만 사용하십시오.
 
