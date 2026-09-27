@@ -1,0 +1,151 @@
+{
+  "node": "v24.20.0",
+  "corpus": [
+    {
+      "id": "pydantic-2.9 discriminated Literal",
+      "accepted": false,
+      "code": "UNKNOWN_JSON_SCHEMA",
+      "message": "UNKNOWN_JSON_SCHEMA at #/properties/pet/oneOf/0; Specify type explicitly; untyped branches require explicit primitive types.",
+      "milliseconds": 2.0142499999999472
+    },
+    {
+      "id": "pydantic-2.9 Optional[Union[Cat,Dog]]",
+      "accepted": false,
+      "code": "UNKNOWN_JSON_SCHEMA",
+      "message": "UNKNOWN_JSON_SCHEMA at #/properties/pet/anyOf/0; Specify type explicitly; untyped branches require explicit primitive types.",
+      "milliseconds": 0.23170900000002348
+    },
+    {
+      "id": "pydantic-2.9 Optional[discriminated]",
+      "accepted": false,
+      "code": "UNKNOWN_JSON_SCHEMA",
+      "message": "UNKNOWN_JSON_SCHEMA at #/properties/pet/anyOf/0/oneOf/0; Specify type explicitly; untyped branches require explicit primitive types.",
+      "milliseconds": 0.14037499999994907
+    },
+    {
+      "id": "pydantic-2.x const+enum (추론)",
+      "accepted": false,
+      "code": "UNKNOWN_JSON_SCHEMA",
+      "message": "UNKNOWN_JSON_SCHEMA at #/properties/pet/oneOf/0; Specify type explicitly; untyped branches require explicit primitive types.",
+      "milliseconds": 0.11962499999992815
+    },
+    {
+      "id": "OpenAPI-3.0 petstore mapping-only",
+      "accepted": false,
+      "code": "UNKNOWN_JSON_SCHEMA",
+      "message": "UNKNOWN_JSON_SCHEMA at #/properties/pet/oneOf/0; Specify type explicitly; untyped branches require explicit primitive types.",
+      "milliseconds": 0.15754200000003493
+    },
+    {
+      "id": "OpenAPI-3.0 nullable branch",
+      "accepted": false,
+      "code": "UNKNOWN_JSON_SCHEMA",
+      "message": "UNKNOWN_JSON_SCHEMA at #/properties/pet/oneOf/0; Specify type explicitly; untyped branches require explicit primitive types.",
+      "milliseconds": 0.08370800000000145
+    },
+    {
+      "id": "OpenAPI-3.1 two-level allOf inheritance (TypeSpec style, 추론)",
+      "accepted": false,
+      "code": "UNKNOWN_JSON_SCHEMA",
+      "message": "UNKNOWN_JSON_SCHEMA at #/properties/pet/oneOf/0; Specify type explicitly; untyped branches require explicit primitive types.",
+      "milliseconds": 0.137958000000026
+    },
+    {
+      "id": "OpenAPI-3.1 type:[object,null] branch",
+      "accepted": false,
+      "code": "UNKNOWN_JSON_SCHEMA",
+      "message": "UNKNOWN_JSON_SCHEMA at #/properties/pet/oneOf/0; Specify type explicitly; untyped branches require explicit primitive types.",
+      "milliseconds": 0.08345900000006168
+    },
+    {
+      "id": "zod-to-json-schema-3.23 discriminatedUnion",
+      "accepted": false,
+      "code": "UNKNOWN_JSON_SCHEMA",
+      "message": "UNKNOWN_JSON_SCHEMA at #/properties/pet/anyOf/0; Specify type explicitly; untyped branches require explicit primitive types.",
+      "milliseconds": 0.08354199999996581
+    },
+    {
+      "id": "zod-to-json-schema-3.23 discriminatedUnion with z.enum tag",
+      "accepted": false,
+      "code": "UNKNOWN_JSON_SCHEMA",
+      "message": "UNKNOWN_JSON_SCHEMA at #/properties/pet/anyOf/0; Specify type explicitly; untyped branches require explicit primitive types.",
+      "milliseconds": 0.08491600000002109
+    },
+    {
+      "id": "TypeBox-0.32 Union of Object+Literal",
+      "accepted": false,
+      "code": "UNKNOWN_JSON_SCHEMA",
+      "message": "UNKNOWN_JSON_SCHEMA at #/properties/pet/anyOf/0; Specify type explicitly; untyped branches require explicit primitive types.",
+      "milliseconds": 0.06616699999995035
+    },
+    {
+      "id": "typescript-json-schema-0.64 two literal keys per member",
+      "accepted": false,
+      "code": "UNKNOWN_JSON_SCHEMA",
+      "message": "UNKNOWN_JSON_SCHEMA at #/properties/shape/anyOf/0; Specify type explicitly; untyped branches require explicit primitive types.",
+      "milliseconds": 0.05591699999990851
+    },
+    {
+      "id": "hand anyOf overlapping tag values",
+      "accepted": false,
+      "code": "UNKNOWN_JSON_SCHEMA",
+      "message": "UNKNOWN_JSON_SCHEMA at #/properties/pet/anyOf/0; Specify type explicitly; untyped branches require explicit primitive types.",
+      "milliseconds": 0.0532500000000482
+    },
+    {
+      "id": "pydantic-2.9 recursive tree union",
+      "accepted": false,
+      "code": "UNKNOWN_JSON_SCHEMA",
+      "message": "UNKNOWN_JSON_SCHEMA at #/anyOf/0; Specify type explicitly; untyped branches require explicit primitive types.",
+      "milliseconds": 0.0432500000000573
+    }
+  ],
+  "rows": [
+    {
+      "references": 100,
+      "nodes": 3,
+      "samplesMilliseconds": [
+        0.9965419999999767,
+        0.46220800000003237,
+        0.42025000000001,
+        0.3891670000000431,
+        0.39224999999999,
+        0.4986670000000686,
+        0.43487500000003365
+      ],
+      "medianMilliseconds": 0.43487500000003365,
+      "cache": false
+    },
+    {
+      "references": 1000,
+      "nodes": 3,
+      "samplesMilliseconds": [
+        2.6453749999999445,
+        2.650874999999928,
+        1.8180830000000014,
+        1.7584590000000162,
+        1.8678330000000187,
+        2.417542000000026,
+        2.011875000000032
+      ],
+      "medianMilliseconds": 2.011875000000032,
+      "cache": false
+    },
+    {
+      "references": 5000,
+      "nodes": 3,
+      "samplesMilliseconds": [
+        12.262458000000038,
+        12.600374999999985,
+        12.071416999999997,
+        12.666707999999971,
+        10.999459000000002,
+        12.318208000000027,
+        11.958250000000021
+      ],
+      "medianMilliseconds": 12.262458000000038,
+      "cache": false
+    }
+  ]
+}
+

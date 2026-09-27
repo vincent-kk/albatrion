@@ -47,7 +47,7 @@
 | 우산 | `1.0.0-beta` → `master` | 진행 | [#344](https://github.com/vincent-kk/albatrion/pull/344) | 초안. 09 머지 뒤 `master`로 |
 | 00 | 설계 원장·개발계획 | 머지 | [#345](https://github.com/vincent-kk/albatrion/pull/345), [#346](https://github.com/vincent-kk/albatrion/pull/346) | 원장 1,336항목·검사 0, 계획서 디렉토리 열 개 |
 | 01 | 설계문서 | 대기 | — | 02와 병렬. `design/` 8편·ADR·`doc-coverage`·`_archive/`·절 단위 통과 |
-| 02 | 기반 + 청사진 | 대기 | — | 첫 개발 PR. 착수 전 확인 없음 |
+| 02 | 기반 + 청사진 | 리뷰 | [#347](https://github.com/vincent-kk/albatrion/pull/347) | 전체 4,437시험·lint·strict·빌드 통과. 19라운드 원장 해소와 TEST-079 반영, 내부 Codex 대조 완료. Filid 잔여 발견은 기록했고 Antigravity 외부 확인은 자동 승인 검토가 거절함 |
 | 03 | 노드 트리·정착 | 대기 | — | 02 뒤 |
 | 04 | 파생 + 상태 키·제어 | 대기 | — | 03 뒤, 05·06과 병렬 |
 | 05 | 통지·검증 | 대기 | — | 03 뒤. **착수 전 소유자 결정**: 명령 메서드 이름·명령 종류 값의 형·`FormHandle` 대칭(EVENT-073) |
@@ -66,7 +66,7 @@
 
 ## 4. 다음 할 일
 
-1. **02 기반 + 청사진 착수** — `1.0.0-beta`에서 `feat/schema-form-foundation-blueprint`. 첫 일은 옛 엔진 벤치 기준선 고정과 vitest `test.projects` 셋, 그다음 시나리오 패키지 뼈대와 프로토타입 v7, 그다음 `src/core/blueprint/`의 INTENT·DETAIL.
+1. **02 기반 + 청사진 PR #347 리뷰** — 19라운드 원장 반영·검증 결과와 Filid 발견을 독립 검증한다. Antigravity 외부 교차 확인은 자동 승인 검토가 두 차례 거절해 미수행이다. 리뷰가 끝나면 merge commit으로 병합하고 §3·§4·§5를 갱신한다.
 2. **01 설계문서 착수(02와 병렬)** — `docs/schema-form-design-docs`. `design/02-node-and-value.md`부터(의존이 큰 것부터: 02 → 01 → 03 → 05 → 04 → 06 → 07 → 00).
 3. **D-1 권장안** — 05 착수 전에 올린다. 권장은 `request(kind, payload?)` 하나에 명령 종류를 문자열 리터럴 합집합 `'focus' | 'select' | 'refresh' | 'remount'`로, `FormHandle`은 같은 모양 `request(path, kind, payload?)` 하나로 합치는 것(겉면 수 약 57 → 약 54). 소유자가 정한다.
 4. 02 머지 뒤 03. 03 머지 뒤 04·05·06 병렬.
@@ -84,3 +84,9 @@
 | 2026-09-27 | 02 첫 실행이 찾은 어긋남 셋 고침 — LANDING-061에 정적 `injectTo` 오류 없음의 충돌 줄, 02 계획서의 빈 루트 방출·changeset 문구, 검증 명령을 패키지 단위로 | `1.0.0-beta` |
 | 2026-09-27 | 계획서 32편을 원장과 전수 대조(검증자 셋)하고 원장 내부의 18라운드 충돌 줄 누락을 감사. 계획서의 요약이 원장을 잃은 문장을 원장 원문 인용으로 바꾸고, 원장 항목 스물 남짓에 충돌·보충 줄을 더함. §2에 "계획서는 안내, 원장이 명세" 규칙 추가, 07·08의 이름 이주 배정을 원장(LANDING-067·206)대로 | `1.0.0-beta` |
 | 2026-09-27 | 오케스트레이터·단계 실행 프롬프트 둘을 `plan/prompts.md`에 둠 — codex·antigravity 위임, 어긋남은 원장 조회로 해소하고 멈추지 않음 | `1.0.0-beta` |
+| 2026-09-27 | 02 기반 + 청사진 착수 승인. 옛 엔진 기준선 고정부터 시작하며 문서 선행 커밋·worker 구현·verifier 대조로 진행 | `feat/schema-form-foundation-blueprint` |
+| 2026-09-27 | 소유자 교정: merge를 독립 FCA·두 재귀·배열 전략 일회 판정으로 재구성. common-utils는 0.15.0으로 복구하고 changeset에 기록. 진단 상수의 내부 이름을 PascalCase로 통일한 뒤 02 완료까지 재개 승인 | `f09033cf`, `071cc8bf`, `3a9dd775` |
+| 2026-09-27 | 19라운드 — 02 검증이 찾은 원장 충돌(TEST-067(b) 대 BLUEPRINT-039·045 E16)을 소유자 답 둘로 닫음: 형 없는 객체·배열 분기는 variant 호스트로 추정, `type` 없이 `const`·`enum`만 있는 칸은 리터럴 종류의 잎. 초안을 verifier·codex·antigravity가 대조해 결함을 고친 뒤 채택. 새 항목 BLUEPRINT-048~051, NODE-059, LANDING-207·208, TEST-079 | `feat/schema-form-foundation-blueprint`, `reviews/round-19-closing.md`, `reviews/round-19-owner-answers.md`, `reviews/raw-round19-typeless-object-host/` |
+| 2026-09-27 | 02 전체 4,393시험·lint·strict·빌드 통과 및 seiri 보조 함수 보완. merge의 벤치 전용 getter 최적화를 철회하고 실제 ESM·CJS 산출물 8회 비교로 교정. CJS 배열 -0.0112%와 신뢰구간 미확정은 소유자가 측정 불확실성으로 수용 | `verification/02-foundation-and-blueprint/` |
+| 2026-09-27 | 소유자가 원장 충돌 해소를 확인 중. 해소 후 Antigravity로 설계·변경 소스·검증 자료 전달 승인, 비활성 외부 Codex는 별도 내부 Codex 검토자로 대체 승인 | `verification/02-foundation-and-blueprint/cross-review.md` |
+| 2026-09-27 | 02의 19라운드 TEST-079와 원본 코퍼스 14종 수용을 확인하고 전체 4,437시험·lint·strict·빌드·벤치·내부 Codex 대조를 마침. Filid 스캔 발견과 Antigravity 자동 승인 거절을 첨부하여 PR #347을 엶 | [#347](https://github.com/vincent-kk/albatrion/pull/347), `verification/02-foundation-and-blueprint/` |

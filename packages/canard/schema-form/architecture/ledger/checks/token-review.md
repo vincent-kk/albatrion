@@ -412,3 +412,7 @@ node ledger/checks/tokens.mjs check <목록> ledger/*.md
 ## PLAN.md 추가 뒤의 잔여 (2026-09-27)
 
 잔여 484 = 483 + 1. 새로 든 것은 HANDOFF가 진입점 문서를 가리키는 경로 코드 토큰(`PLAN.md`) 하나이며 자기 서술이다 — C.
+
+## 19라운드(형 없는 객체·배열 호스트, `const` 칸) 반영 뒤의 잔여 (2026-09-27)
+
+잔여 488 = 484 − 2 + 6. 원장 쪽 잔여는 482로 줄었다(19라운드 항목이 옛 문서의 토큰 둘을 새로 든다). 새로 든 여섯은 모두 HANDOFF §1·§5가 19라운드 작업 파일을 가리키는 경로 코드 토큰(`reviews/raw-round19-typeless-object-host/`, `brief.md`, `verifier.md`, `codex.md`, `merged-v1.md`, `ledger-plan.md`)이며, 원장이 들 이유가 없는 HANDOFF의 자기 서술이다 — C.

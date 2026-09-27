@@ -1,12 +1,12 @@
 import { describe, expect, test } from 'vitest';
 
+import { getPathManager } from '@/schema-form/core/blueprint';
 import { JSONSchemaError } from '@/schema-form/errors';
 import type { JSONSchemaWithVirtual } from '@/schema-form/types';
 
 import { checkComputedOptionFactory } from '../checkComputedOptionFactory';
 import { getConditionIndexFactory } from '../getConditionIndexFactory';
 import { getObservedValuesFactory } from '../getObservedValuesFactory';
-import { getPathManager } from '../getPathManager';
 
 describe('Error Handling in Dynamic Function Creation', () => {
   describe('checkComputedOptionFactory', () => {

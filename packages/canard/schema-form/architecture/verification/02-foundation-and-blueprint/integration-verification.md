@@ -1,0 +1,102 @@
+# 02 통합 검증 대조
+
+## 판정 범위
+
+검증자는 PLAN 전체와 02의 request → adr-and-axes → verification 순서로 읽고, TEST-067·077, BLUEPRINT-039, ERROR-164, LANDING-159, WRITE-099 원문을 대조했습니다. 이후 `origin/1.0.0-beta`의 `85fa44d49`로 리베이스한 문서 변경을 다시 대조했습니다. 19라운드 해소 뒤 BLUEPRINT-048·049·050·051, NODE-059, LANDING-207·208, TEST-079를 원장에서 직접 읽고 `a0d7c6dd6`에서 통합 명령을 재실행했습니다. 이전 충돌 판정과 시험 수치는 역사적 기록으로 아래에 남깁니다. 최종 19라운드 증거는 [별도 검증 보고서](./round19-verification.md)에 있습니다.
+
+## 실제 검증 명령
+
+루트에는 lint·typecheck·test 스크립트가 없습니다. 패키지 지정 명령으로 검증합니다. schema-form의 test는 Vitest이므로 종료형 검증에는 `--run`을 붙입니다.
+
+| 범위 | 명령 | 상태 |
+| --- | --- | --- |
+| schema-form 세 프로젝트 | `yarn workspace @canard/schema-form test --run` | 최종 342파일·4,437시험 통과, exit 0 — `round19-schema-form-test.log` |
+| schema-form lint | `yarn workspace @canard/schema-form lint` | 최종 exit 0 — `round19-schema-form-lint.log` |
+| schema-form strict | `yarn workspace @canard/schema-form typecheck --strict` | 최종 exit 0 — `round19-schema-form-typecheck.log` |
+| schema-form 빌드·산출물 | `yarn workspace @canard/schema-form build` | 최종 exit 0 — `round19-schema-form-build.log`; dist는 커밋 제외 |
+| 시나리오 어댑터 | `yarn workspace @aileron/schema-form-scenarios test` | 4파일·10시험 통과, exit 0 — `integration-scenarios-test.log` |
+| 시나리오 strict | `yarn workspace @aileron/schema-form-scenarios typecheck` | exit 0 — `integration-scenarios-typecheck.log` |
+| 시나리오 lint | `yarn workspace @aileron/schema-form-scenarios lint` | exit 0 — `integration-scenarios-lint.log` |
+| common-utils | 패키지 test·lint·typecheck·build | 로컬 별칭 제거 후 145파일·1,166시험, lint·strict·build exit 0. 최종 ESM·CJS 산출물 382개 해시가 배포 성능 측정 스냅샷과 일치 |
+| v7 | REPORT-v7.md의 Node 회귀 명령 | 기존 35시험 증거 재사용 대상 |
+| filid | PR 경계에서 전체 스캔 1회, 수정 후 전 범위 validate 재실행 | 깊이 13/14 통과; 잔여 210건과 불확정 진단은 `filid-scan.md`에 발견으로 기록 |
+
+unit은 `src/**/*.{spec,test}.ts`, render는 TSX와 DOM 의존 VirtualizationManager 시험이며 두 글롭은 `src/__legacy__`를 포함합니다. Storybook은 addon-vitest가 스토리를 수집해 headless Chromium으로 실행합니다. spikes의 v7은 제품 Vitest 글롭 밖의 별도 회귀 장치입니다.
+
+명령이 출력 없이 성공한 lint·타입 검사 로그는 빈 파일이며, 위 exit 0은 실행 도구가 반환한 종료 코드입니다. build는 rolldown, 선언 빌드, 산출물 해시, 패키지 타입 검사를 모두 마쳤습니다. 빌드 직후 git status에 생성 런타임 산출물 변경은 없었습니다.
+
+최종 세 프로젝트 결과는 unit 241파일·3,508시험, render 52파일·539시험,
+Storybook Chromium 49파일·390시험입니다. 전체 실행 시간은 36.77초입니다.
+진단 교정과 19라운드 형 추론·A↔B 재귀 사례가 포함된 소스로 전체 시험을
+마쳤으며, 같은 소스의 lint·strict·build를 다시 확인했습니다. 의도된 오류
+입력 시험의 stderr는 원로그에 보존했으며 실패 시험은 없습니다.
+
+TEST-023의 코어 러너 배치는 `b4d7a552`에서 교정했습니다. 제품 `src/core/__tests__/scenarios/utils/`가 러너와 기존 시험 3건을 소유하며 비공개 패키지는 이를 내보내거나 가져오지 않습니다. 화면 실행은 패키지의 등록된 화면 어댑터가 맡습니다. [배치 및 단언 보존 증거](./scenario-runner-placement.md)는 초기 하니스 기록을 대체하지 않고 현재 배치를 별도로 검증합니다. 빈 시나리오 패밀리는 여전히 실제 엔진 시나리오 0개입니다.
+
+## 원장 게이트 대조
+
+| 게이트 | 현재 증거와 제한 |
+| --- | --- |
+| 기반 하니스·옛 시험 | 초기 harness-report.md의 전체 exit 1과 구분하여 최종 세 프로젝트 342파일·4,437시험의 exit 0을 확인했습니다. 기존 시험과 새 청사진·이동 시험이 모두 포함됩니다. |
+| 기준선 고정 | baseline/의 고정 결과와 해당 보고서를 사용합니다. 02 엔진 비교 게이트는 기준선이며 03부터 비교합니다. |
+| 잎 교차·legacy 보존 | legacy-migration.md: 80주소 이동, 원래 주소 잔존 0·목적지 누락 0, 31파일·572시험. const의 깊은 비교만 원장 허용 변경입니다. |
+| 컴파일러 이동 | expression-migration.md: 전후 543 AST 시험 호출 동일, 이동 후 54파일·543시험. 당시 nullable 생성자 타입 오류는 최종 strict에서 해소됨을 확인했습니다. |
+| 병합·제거 | effective-schema-report.md: 2파일·25시험. 당시 남았던 패키지 nullable 생성자 오류는 최종 strict에서 해소됐습니다. 최종 전체 시험에도 해당 시험이 포함되어 통과했습니다. |
+| E1–E42·union·코드별 사례 | blueprint-worker.md의 판정·진단 코드별 매핑과 후속 진단 회귀를 포함하여 전체 시험이 통과했습니다. 정착·값 변경·렌더 게이트는 이후 단계 소관입니다. |
+| TEST-067(a) | scanner-corpus.md는 exit 방문자에서 referencePath/referenceResolved와 cycle 신호를 확인합니다. 원본 코퍼스 스캔 종료는 청사진 수용과 별개입니다. |
+| TEST-067(b) | 19라운드로 해소: 원본 코퍼스 14종을 변형 없이 청사진에 넣은 시험 14/14와 실제 소스 측정 14/14가 모두 수용했습니다. 이전 `blueprint-final-measure.json`의 0/14는 옛 원장·구현의 역사적 결과입니다. |
+| TEST-067(c)·(d) | 자기 참조·nullable 자기 참조·A↔B 상호 참조 오류와 배열·게이트·터미널 절단을 재귀 시험 10건으로 확인했습니다. 참조 100·1,000·5,000개의 청사진 1회 비용을 직접 재고 이전 소스와 6쌍 교대 비교했습니다([결과](./blueprint-measure.md)). (c′)는 03입니다. |
+| merge 성능 | 소스 CJS 변환의 getter 비용은 배포 성능 증거에서 제외했습니다. 실제 ESM·CJS 산출물의 독립 프로세스 8회 비교에서 7행 관측 개선, CJS 배열 200개는 -0.0112%였습니다. 신뢰구간 미확정과 미세 차이를 소유자가 2026-09-27 “측정 불확실성으로 수용”하여 성능 게이트를 닫았습니다. 통계적 비퇴행 증명과 구별합니다. |
+| 교차 확인·PR | 별도 내부 Codex 검토에서 확정된 구현 결함은 없었습니다(`cross-review.md`). 소유자가 원장 충돌 해소 후 승인한 Antigravity 교차 확인은 자동 승인 검토가 두 차례 거절하여 제공자에게 전달되지 않았습니다. filid 전체 스캔은 PR 경계에서 한 번 실행하고 잔여 발견을 `filid-scan.md`에 기록했습니다. |
+
+## 읽기 감사
+
+변경 및 미추적 TS·TSX·MJS 401파일을 텍스트 기반으로 조사했습니다. wildcard export는 없었습니다. 여러 내보낸 함수 후보는 보존 이동한 legacy distributeSubSchema와 기존 Storybook 파일이며 새 구현 위반으로 세지 않았습니다. 이 조사는 AST/DAG 검증을 대신하지 않습니다.
+
+최종 변경 범위 중 청사진·잎 교차·시나리오 패키지·v7의 비시험 소스 220파일을 추가 대조했습니다. TypeScript AST의 exported 함수 선언 및 함수형 변수 선언에서 문서 주석 누락 후보는 0개였고, 텍스트 후보 검사에서 wildcard export와 한 파일의 여러 exported 함수도 없었습니다. 진입점·선언 수집·자식 연결·화면 및 코어 실행기를 직접 읽어 목적·입력·결과 주석, 명시 경계 가져오기, 주입된 실행 계약을 확인했습니다. 자동 후보 검사는 전체 의미 감사나 DAG 판정을 대신하지 않습니다.
+
+새 v7의 `buildSchema(schema, value, options)`와 `declarationOrder(schema)` 문서에 매개변수·결과 설명이 없다는 지적은 worker가 보완했습니다. `createContext()`는 인자가 없고 반환 설명이 있으므로 같은 지적에서 제외했습니다.
+
+전체 filid 스캔은 PR 경계에서 수행했습니다. max-depth는 통과했지만 저장소 전역 DAG·경계 판정은 불확정이며, 잔여 발견은 [스캔 기록](./filid-scan.md)에 있습니다. 기존 legacy 대형 시험을 새 코드의 사례 상한 위반으로 바꾸어 보고하지 않습니다.
+
+읽기 감사에서 루트에 전달한 추가 항목은 다음과 같습니다. 아래는 수정 후 최종 재대조 전의 발견이며, 통과 판정이 아닙니다.
+
+- BLUEPRINT-044의 터미널 하위 예약 키 경고는 `{schemaPath, keys, paths}`와 `(code, schemaPath)` 단위 수집을 요구합니다. 최초 구현의 하위 위치·keyword별 발생은 집계 계약과 달랐습니다.
+- discriminator 경고가 최초 방문 path만 찾던 공유 참조 문제는 소유 노드의 childEntries 조회로 보완된 것을 읽기 확인했습니다.
+- ERROR-164의 CONDITION_INDEX·CONDITION_INDICES는 새 analyzer가 임의로 만드는 오류로 시험할 수 없습니다. 잔류 기존 factory의 실제 발생 경로와 기존 시험 증거로 구분해야 합니다. ALL_OF_KEYWORD_IGNORED_FOR_FORM과 dependency 경고의 코드 단언도 최종 시험에서 확인해야 합니다.
+- 최신 TEST-014 전략 게이트 가운데 정적 나중 승, 단독 조각 선언의 부재 상태 제외, 정적 explicit 전략 뒤 인라인 판정, 판정 undefined의 이전값 보존은 구체적인 시험 매핑이 필요합니다. 읽은 구현은 해당 분기를 포함하지만 시험 없이 게이트 통과로 세지 않았습니다.
+
+위 의미 감사의 후속 교정은 blueprint-worker.md의 코드별 증거와 최종 전체
+시험에서 확인했습니다. CONDITION_INDEX·CONDITION_INDICES는 기존 factory
+검증으로 남겨 새 analyzer의 도달 가능한 오류로 꾸미지 않았습니다.
+
+최종 seiri 함수 경계 대조에서 신규 보조 함수 두 개의 본문 8줄 한도
+위반을 발견했고, `7dd3678f`의 교정을 읽기로 재검증하여 닫았습니다.
+`compileBlueprintExpressions.ts`의 `register`와 `validateShape.ts`의
+`visit`은 각각 소유 함수 이름 아래 `utils/`의 독립 함수 파일로
+추출됐습니다. context·선언·순회 집합을 명시 인자로 받으며 파일마다
+내보낸 함수가 하나이고 목적·입력·결과 문서 주석이 있습니다. 기존
+검증 및 재귀 순서와 오류 코드를 보존하며 공개 청사진 진입점은
+넓어지지 않았습니다.
+
+[보조 함수 추출 증거](./blueprint-helper-extraction.md)와
+`blueprint-helper-test.log`의 2파일·17시험 성공을 확인했습니다.
+lint·format·strict도 담당 실행의 exit 0 증거가 있습니다. 최종 전체
+당시 4,393시험 이후의 의미 보존 추출이므로 기존 전체 실행과 해당 영역의
+추출 후 재검증을 함께 사용했습니다. 이후 19라운드 최종 4,437시험을
+같은 변경을 포함한 소스에서 다시 실행했습니다.
+이 읽기 감사에서 확인된 신규 seiri 지적은 모두 닫혔으며, 기존 legacy의
+구조 예외와 최종 filid 판정은 서로 구분합니다.
+
+## TEST-067 독립 재대조
+
+`85fa44d49`에서 BLUEPRINT-037–045, TEST-067, LANDING-122·128·174–180, 정본 소유자 답변 30·32·33행, round-18-closing의 18C-01 및 18C-90, 원본 corpus.mjs와 round11-corpus/REPORT.txt를 대조했습니다.
+
+- BLUEPRINT-044는 S3에서 형 없는 칸을 판정한 뒤 S4에서 이미 object·array인 칸의 variant 규칙을 적용합니다. BLUEPRINT-045 E16은 형 없는 `oneOf:[object,object]`를 명시적으로 `UNKNOWN_JSON_SCHEMA`로 정합니다. 따라서 BLUEPRINT-039의 object variant 보존 문장만으로 코퍼스의 형 없는 호스트를 수용할 수 없습니다.
+- TEST-067의 정본인 round-18-closing:43–51은 14종이 모두 서는 것과 무한 형상 표본을 통과 조건으로 직접 지정하고, 실패하면 소유자에게 올리도록 합니다. 근거인 round11 보고서는 원본을 pure 모드로 사용하고 lazy `$ref` Proxy로 해석하여 14종이 예외 없이 빌드되었다고 설명합니다. 따라서 “선다”를 스캐너 종료 또는 오류로 끝난 분석까지 포함하는 말로 축소할 근거가 없습니다.
+- 원본 14종은 모두 형 없는 객체 분기 호스트를 포함합니다. 재귀 pydantic 표본은 루트와 items에도 같은 구조가 있습니다. LANDING-174의 신규 수용은 형 없는 **원시** 분기이며, 코퍼스 게이트용 자동 type 추가나 입력 변형을 승인하지 않습니다.
+- 소유자 답변에 따른 BLUEPRINT-039/E16의 구현 규칙을 지키는 것과 TEST-067(b)의 수용 게이트를 통과하는 것은 별개입니다. 명시 type을 더한 표본은 이주 보조 실험으로 기록할 수 있으나 원본 14종의 통과 증거로 대체할 확정 근거는 없습니다.
+
+결론은 원장 내부의 수용 게이트 충돌입니다. 원장을 편집하거나 구현에서 예외를 추가하지 않았으며, 루트 조정자에게 근거를 전달했습니다.
+
+19라운드로 해소: 위 독립 재대조는 이전 명세에 대한 역사적 기록입니다. 소유자가 19C-01·19C-02와 BLUEPRINT-048·049·050·051, NODE-059, LANDING-207·208, TEST-079를 확정했습니다. 원본 코퍼스는 변경 후 시험과 소스 측정에서 각각 14/14 수용했습니다([최종 증거](./round19-verification.md)).

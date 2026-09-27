@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest';
 
+import { getPathManager } from '@/schema-form/core/blueprint';
 import type { JSONSchemaWithVirtual } from '@/schema-form/types';
 
 import { getConditionIndicesFactory } from '../getConditionIndexFactory/getConditionIndicesFactory';
-import { getPathManager } from '../getPathManager';
 
 describe('getConditionIndicesFactory', () => {
   it('유효하지 않은 스키마에 대해 undefined를 반환해야 함', () => {

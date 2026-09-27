@@ -1,0 +1,9 @@
+src/core/nodes/schemaNodeFactory.ts(77,11): error TS2345: Argument of type 'SchemaNodeConstructorProps<BooleanSchema, boolean | null>' is not assignable to parameter of type 'SchemaNodeConstructorProps<BooleanSchema, boolean>'.
+  Type 'boolean | null' is not assignable to type 'boolean'.
+    Type 'null' is not assignable to type 'boolean'.
+src/core/nodes/schemaNodeFactory.ts(82,11): error TS2345: Argument of type 'SchemaNodeConstructorProps<NumberSchema, number | null>' is not assignable to parameter of type 'SchemaNodeConstructorProps<NumberSchema, number>'.
+  Type 'number | null' is not assignable to type 'number'.
+    Type 'null' is not assignable to type 'number'.
+src/core/nodes/schemaNodeFactory.ts(86,11): error TS2345: Argument of type 'SchemaNodeConstructorProps<StringSchema, string | null>' is not assignable to parameter of type 'SchemaNodeConstructorProps<StringSchema, string>'.
+  Type 'string | null' is not assignable to type 'string'.
+    Type 'null' is not assignable to type 'string'.
