@@ -54,6 +54,18 @@
 - **Direct import**: `allowed`
 - **Reason**: 함수당 한 파일의 flat 컬렉션이 이 fractal의 정본 형태다 — 하위 organ 재배치는 배럴 깊이만 늘리고 tree-shaking 단위를 바꾸지 못한다. 배럴 경유 시 재수출 그래프가 번들에 딸려오므로, 개별 파일이 필요한 소비자의 직접 import도 같은 이유로 허용된다.
 
+### `getDataProperty.ts` — merge 내부의 안전한 읽기
+
+- **Consumers**: `merge/utils/mergeWithOptions.ts`, `merge/__tests__/merge-restructure/createMergeImplementation.ts`
+- **Direct import**: `allowed`
+- **Reason**: object 진입점은 merge를 재수출하므로 merge 재귀 구현이 그 진입점을 가져오면 순환 의존이 생깁니다. 측정 로더도 같은 함수 참조를 주입해야 하므로 직접 읽습니다.
+
+### `setDataProperty.ts` — merge 내부의 안전한 쓰기
+
+- **Consumers**: `merge/utils/mergeWithOptions.ts`, `merge/__tests__/merge-restructure/createMergeImplementation.ts`
+- **Direct import**: `allowed`
+- **Reason**: object 진입점은 merge를 재수출하므로 merge 재귀 구현이 그 진입점을 가져오면 순환 의존이 생깁니다. 측정 로더도 같은 함수 참조를 주입해야 하므로 직접 읽습니다.
+
 ## History
 
 - 2026-09-19 — 0.16.0: 0.15.0에서 교체 API와 공존하던 범용 serializer 네 개를 공개 경계에서 제거했다(breaking). 내부 성능 기준 구현은 공개하지 않는다.
