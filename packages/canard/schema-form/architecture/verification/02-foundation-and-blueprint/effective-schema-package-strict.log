@@ -1,0 +1,33 @@
+src/__legacy__/helpers/jsonSchema/processAllOfSchema/intersectSchema/utils/intersectEnum.ts(27,40): error TS2345: Argument of type 'readonly T[] | undefined' is not assignable to parameter of type 'readonly T[]'.
+  Type 'undefined' is not assignable to type 'readonly T[]'.
+src/__legacy__/helpers/jsonSchema/processAllOfSchema/intersectSchema/utils/validateRange.ts(26,31): error TS2345: Argument of type 'number | undefined' is not assignable to parameter of type 'number'.
+  Type 'undefined' is not assignable to type 'number'.
+src/core/blueprint/blueprint.ts(34,28): error TS2345: Argument of type 'Readonly<{ schema: BlueprintSchema; root: MutableNode; nodes: readonly MutableNode[]; fragments: readonly MutableFragment[]; dependencies: Readonly<Record<string, number[]>>; }>' is not assignable to parameter of type 'Blueprint'.
+  Property 'expressions' is missing in type 'Readonly<{ schema: BlueprintSchema; root: MutableNode; nodes: readonly MutableNode[]; fragments: readonly MutableFragment[]; dependencies: Readonly<Record<string, number[]>>; }>' but required in type 'Blueprint'.
+src/core/blueprint/blueprint.ts(37,31): error TS2345: Argument of type '{ blueprint: Readonly<{ schema: BlueprintSchema; root: MutableNode; nodes: readonly MutableNode[]; fragments: readonly MutableFragment[]; dependencies: Readonly<...>; }>; isTerminal: ((schema: BlueprintSchema) => boolean | undefined) | undefined; isAtomic: ((value: unknown) => boolean) | undefined; warningsCollected...' is not assignable to parameter of type 'BlueprintCacheEntry'.
+  Types of property 'blueprint' are incompatible.
+    Property 'expressions' is missing in type 'Readonly<{ schema: BlueprintSchema; root: MutableNode; nodes: readonly MutableNode[]; fragments: readonly MutableFragment[]; dependencies: Readonly<Record<string, number[]>>; }>' but required in type 'Blueprint'.
+src/core/blueprint/blueprint.ts(37,71): error TS2322: Type '{ blueprint: Readonly<{ schema: BlueprintSchema; root: MutableNode; nodes: readonly MutableNode[]; fragments: readonly MutableFragment[]; dependencies: Readonly<...>; }>; isTerminal: ((schema: BlueprintSchema) => boolean | undefined) | undefined; isAtomic: ((value: unknown) => boolean) | undefined; warningsCollected...' is not assignable to type 'BlueprintCacheEntry'.
+  Types of property 'blueprint' are incompatible.
+    Property 'expressions' is missing in type 'Readonly<{ schema: BlueprintSchema; root: MutableNode; nodes: readonly MutableNode[]; fragments: readonly MutableFragment[]; dependencies: Readonly<Record<string, number[]>>; }>' but required in type 'Blueprint'.
+src/core/blueprint/blueprint.ts(39,3): error TS2741: Property 'expressions' is missing in type 'Readonly<{ schema: BlueprintSchema; root: MutableNode; nodes: readonly MutableNode[]; fragments: readonly MutableFragment[]; dependencies: Readonly<Record<string, number[]>>; }>' but required in type 'Blueprint'.
+src/core/nodes/ArrayNode/ArrayNode.ts(195,11): error TS2345: Argument of type 'BranchNodeConstructorProps<ArraySchema>' is not assignable to parameter of type 'SchemaNodeConstructorProps<ArraySchema, ArrayValue>'.
+  Types of property 'defaultValue' are incompatible.
+    Type 'ArrayValue | null | undefined' is not assignable to type 'ArrayValue | undefined'.
+      Type 'null' is not assignable to type 'ArrayValue | undefined'.
+src/core/nodes/BooleanNode/BooleanNode.ts(90,11): error TS2345: Argument of type 'SchemaNodeConstructorProps<BooleanSchema, boolean | null>' is not assignable to parameter of type 'SchemaNodeConstructorProps<BooleanSchema, boolean>'.
+  Types of property 'defaultValue' are incompatible.
+    Type 'boolean | null | undefined' is not assignable to type 'boolean | undefined'.
+      Type 'null' is not assignable to type 'boolean | undefined'.
+src/core/nodes/NumberNode/NumberNode.ts(126,11): error TS2345: Argument of type 'SchemaNodeConstructorProps<NumberSchema, number | null>' is not assignable to parameter of type 'SchemaNodeConstructorProps<NumberSchema, number>'.
+  Types of property 'defaultValue' are incompatible.
+    Type 'number | null | undefined' is not assignable to type 'number | undefined'.
+      Type 'null' is not assignable to type 'number | undefined'.
+src/core/nodes/ObjectNode/ObjectNode.ts(97,11): error TS2345: Argument of type 'BranchNodeConstructorProps<ObjectSchema>' is not assignable to parameter of type 'SchemaNodeConstructorProps<ObjectSchema, ObjectValue>'.
+  Types of property 'defaultValue' are incompatible.
+    Type 'ObjectValue | null | undefined' is not assignable to type 'ObjectValue | undefined'.
+      Type 'null' is not assignable to type 'ObjectValue | undefined'.
+src/core/nodes/StringNode/StringNode.ts(112,11): error TS2345: Argument of type 'SchemaNodeConstructorProps<StringSchema, string | null>' is not assignable to parameter of type 'SchemaNodeConstructorProps<StringSchema, string>'.
+  Types of property 'defaultValue' are incompatible.
+    Type 'string | null | undefined' is not assignable to type 'string | undefined'.
+      Type 'null' is not assignable to type 'string | undefined'.
