@@ -10,7 +10,12 @@
     "**/__fixtures__",
     "**/mock",
     "**/mocks",
-    "**/__mocks__"
+    "**/__mocks__",
+    "**/bench",
+    "**/__bench__",
+    "**/benchmarks",
+    "**/__benchmarks__",
+    "**/benchmarks"
   ],
   "adapters": {
     "mode": "auto",
