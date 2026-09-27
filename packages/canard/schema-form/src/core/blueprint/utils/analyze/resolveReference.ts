@@ -27,11 +27,25 @@ export const resolveReference = (
       },
       context.options,
     );
-  const pointer = decodeURIComponent(reference.slice(1));
-  const schema = getValue(
-    context.schema as Record<string, unknown>,
-    pointer,
-  ) as BlueprintSchema | undefined;
+  let pointer: string;
+  let schema: BlueprintSchema | undefined;
+  try {
+    pointer = decodeURIComponent(reference.slice(1));
+    schema = getValue(context.schema as Record<string, unknown>, pointer) as
+      | BlueprintSchema
+      | undefined;
+  } catch (cause) {
+    return throwBlueprintError(
+      BlueprintErrorCode.UnknownJsonSchema,
+      schemaPath,
+      {
+        reference,
+        cause,
+        guidance: 'The reference must be a valid local schema pointer.',
+      },
+      context.options,
+    );
+  }
   if (
     schema === undefined ||
     (typeof schema !== 'boolean' &&

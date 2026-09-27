@@ -98,4 +98,35 @@ describe('blueprint expression compilation', () => {
       }),
     );
   });
+
+  it('preserves arbitrary watch strings that match object prototype names', () => {
+    const result = blueprint({
+      type: 'number',
+      controls: { watch: ['__proto__', 'constructor', 'toString'] },
+    });
+    expect(Object.getPrototypeOf(result.dependencies)).toBeNull();
+    expect(Object.keys(result.dependencies)).toEqual([
+      '__proto__',
+      'constructor',
+      'toString',
+    ]);
+    expect(result.dependencies.__proto__).toEqual([
+      result.root.declarations[0].id,
+    ]);
+    expect(result.dependencies.constructor).toEqual([
+      result.root.declarations[0].id,
+    ]);
+  });
+
+  it('allows literal stars inside property names in watches and expressions', () => {
+    const result = blueprint({
+      type: 'number',
+      controls: { watch: ['/price*rate'], derived: './tax*rate' },
+    });
+    expect(Object.keys(result.dependencies)).toEqual([
+      '/price*rate',
+      './tax*rate',
+    ]);
+    expect(result.expressions[0].evaluate([3])).toBe(3);
+  });
 });

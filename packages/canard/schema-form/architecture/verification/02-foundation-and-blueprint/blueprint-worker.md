@@ -11,7 +11,7 @@
 
 | 명령/범위 | 결과 |
 | --- | --- |
-| `yarn workspace @canard/schema-form test run src/core/blueprint/__tests__ src/types/__tests__/formTypeInput.union.test.ts` | 13파일 125건 통과, exit 0 |
+| `yarn workspace @canard/schema-form test run src/core/blueprint/__tests__ src/types/__tests__/formTypeInput.union.test.ts` | 13파일 129건 통과, exit 0; `/tmp/blueprint-path-reference-final-test.log` |
 | 수정한 파일 `yarn workspace @canard/schema-form exec eslint <paths>` | 후속 교정 포함 exit 0; root cwd 직접 eslint는 패키지 alias를 못 찾아 제외 |
 | 수정한 파일 `yarn prettier --write <paths>` | 후속 교정 포함 exit 0 |
 | 전체 패키지 strict 최종 게이트 | 루트 오케스트레이터가 병합된 변경으로 수행 |
@@ -28,6 +28,8 @@
 - FRAGMENT-048의 정적 태그 탐색이 nested oneOf를 형 추론하여 UNKNOWN_JSON_SCHEMA로 거절하던 회귀를 확인했습니다. 분기 null 판정도 정적 연언의 명시 type만 읽도록 교정했습니다.
 - 선언 문맥 overlay가 terminal 전략에 영향을 주는 회귀 2건은 각각 잘못된 terminal과 TERMINAL_STRATEGY_MISMATCH로 실패했습니다. SCHEMA-044대로 effective schema와 같은 기여 선언만 선택한 뒤 통과했습니다.
 - TEST-014의 무게이트 나중 승, sole gated declaration의 terminal 허용, static explicit 우선, 뒤의 undefined 판정이 앞을 지우지 않는 4사례도 통과했습니다.
+- CONTROLS-080의 독립 `*` 조각만 거부하고 watch 문자열 문법은 좁히지 않습니다. 프로토타입 이름 watch의 TypeError와 이름 내부 별표의 잘못된 거부를 수정 전 확인한 뒤, null-prototype 의존 사전과 조각 검사로 교정했습니다(`/tmp/blueprint-path-reference-red.log`).
+- 참조 URI 디코딩·JSON Pointer 해석의 원래 예외 누수를 각각 재현한 뒤 작성 schemaPath·reference·cause를 보존한 UNKNOWN_JSON_SCHEMA로 감쌌습니다(`/tmp/blueprint-reference-red-corrected.log`). 최초 getter fixture는 참조 전 스키마 분석에서 실패하여 제외하고 실제 잘못된 pointer로 원인을 검증했습니다. 수정 후 4사례를 포함한 전체 소유 범위가 통과했고 수정5파일 lint·format은 exit 0입니다(`/tmp/blueprint-path-reference-lint.log`, `/tmp/blueprint-path-reference-format.log`).
 
 ## Diagnostic coverage
 

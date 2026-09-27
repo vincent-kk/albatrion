@@ -86,4 +86,36 @@ describe('blueprint finite reference and shape graph', () => {
     ).toBe(true);
     expect(child.childEntries.map((edge) => edge.name)).toEqual(['value']);
   });
+
+  it('reports malformed reference URI decoding with the authored path and cause', () => {
+    expect(() =>
+      blueprint({ type: 'object', properties: { value: { $ref: '#/%' } } }),
+    ).toThrow(
+      expect.objectContaining({
+        specific: BlueprintErrorCode.UnknownJsonSchema,
+        details: expect.objectContaining({
+          schemaPath: '#/properties/value',
+          reference: '#/%',
+          cause: expect.any(URIError),
+        }),
+      }),
+    );
+  });
+
+  it('reports reference pointer failures without leaking the underlying exception', () => {
+    const schema = {
+      type: 'object',
+      properties: { value: { $ref: '#invalid' } },
+    };
+    expect(() => blueprint(schema)).toThrow(
+      expect.objectContaining({
+        specific: BlueprintErrorCode.UnknownJsonSchema,
+        details: expect.objectContaining({
+          schemaPath: '#/properties/value',
+          reference: '#invalid',
+          cause: expect.objectContaining({ specific: 'INVALID_POINTER_TYPE' }),
+        }),
+      }),
+    );
+  });
 });

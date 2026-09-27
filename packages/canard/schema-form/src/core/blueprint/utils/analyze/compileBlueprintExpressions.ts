@@ -21,14 +21,14 @@ export const compileBlueprintExpressions = (
     declaration: PropertyDeclaration,
     schemaPath: string,
   ): void => {
-    if (typeof path !== 'string' || path.includes('*'))
+    if (typeof path !== 'string' || path.split('/').includes('*'))
       throwBlueprintError(
         BlueprintErrorCode.ObservedValues,
         schemaPath,
         {
           path,
           guidance:
-            'Dependencies must be concrete JSON Pointer paths without wildcards.',
+            'Dependencies must be strings without wildcard path segments.',
         },
         context.options,
       );
