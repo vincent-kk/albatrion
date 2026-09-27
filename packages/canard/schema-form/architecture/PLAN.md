@@ -47,7 +47,7 @@
 | 우산 | `1.0.0-beta` → `master` | 진행 | [#344](https://github.com/vincent-kk/albatrion/pull/344) | 초안. 09 머지 뒤 `master`로 |
 | 00 | 설계 원장·개발계획 | 머지 | [#345](https://github.com/vincent-kk/albatrion/pull/345), [#346](https://github.com/vincent-kk/albatrion/pull/346) | 원장 1,336항목·검사 0, 계획서 디렉토리 열 개 |
 | 01 | 설계문서 | 대기 | — | 02와 병렬. `design/` 8편·ADR·`doc-coverage`·`_archive/`·절 단위 통과 |
-| 02 | 기반 + 청사진 | 진행 | — | `feat/schema-form-foundation-blueprint`. 전체 4,393시험·strict·빌드 통과. 원장 충돌 해소 후 교차검증·PR 경계 감사 |
+| 02 | 기반 + 청사진 | 진행 | — | `feat/schema-form-foundation-blueprint`. 전체 4,393시험·strict·빌드 통과. 원장 충돌은 19라운드로 해소됨(BLUEPRINT-048·050) — TEST-079 게이트 구현, 그다음 교차검증·PR 경계 감사 |
 | 03 | 노드 트리·정착 | 대기 | — | 02 뒤 |
 | 04 | 파생 + 상태 키·제어 | 대기 | — | 03 뒤, 05·06과 병렬 |
 | 05 | 통지·검증 | 대기 | — | 03 뒤. **착수 전 소유자 결정**: 명령 메서드 이름·명령 종류 값의 형·`FormHandle` 대칭(EVENT-073) |
@@ -86,5 +86,6 @@
 | 2026-09-27 | 오케스트레이터·단계 실행 프롬프트 둘을 `plan/prompts.md`에 둠 — codex·antigravity 위임, 어긋남은 원장 조회로 해소하고 멈추지 않음 | `1.0.0-beta` |
 | 2026-09-27 | 02 기반 + 청사진 착수 승인. 옛 엔진 기준선 고정부터 시작하며 문서 선행 커밋·worker 구현·verifier 대조로 진행 | `feat/schema-form-foundation-blueprint` |
 | 2026-09-27 | 소유자 교정: merge를 독립 FCA·두 재귀·배열 전략 일회 판정으로 재구성. common-utils는 0.15.0으로 복구하고 changeset에 기록. 진단 상수의 내부 이름을 PascalCase로 통일한 뒤 02 완료까지 재개 승인 | `f09033cf`, `071cc8bf`, `3a9dd775` |
+| 2026-09-27 | 19라운드 — 02 검증이 찾은 원장 충돌(TEST-067(b) 대 BLUEPRINT-039·045 E16)을 소유자 답 둘로 닫음: 형 없는 객체·배열 분기는 variant 호스트로 추정, `type` 없이 `const`·`enum`만 있는 칸은 리터럴 종류의 잎. 초안을 verifier·codex·antigravity가 대조해 결함을 고친 뒤 채택. 새 항목 BLUEPRINT-048~051, NODE-059, LANDING-207·208, TEST-079 | `feat/schema-form-foundation-blueprint`, `reviews/round-19-closing.md`, `reviews/round-19-owner-answers.md`, `reviews/raw-round19-typeless-object-host/` |
 | 2026-09-27 | 02 전체 4,393시험·lint·strict·빌드 통과 및 seiri 보조 함수 보완. merge의 벤치 전용 getter 최적화를 철회하고 실제 ESM·CJS 산출물 8회 비교로 교정. CJS 배열 -0.0112%와 신뢰구간 미확정은 소유자가 측정 불확실성으로 수용 | `verification/02-foundation-and-blueprint/` |
 | 2026-09-27 | 소유자가 원장 충돌 해소를 확인 중. 해소 후 Antigravity로 설계·변경 소스·검증 자료 전달 승인, 비활성 외부 Codex는 별도 내부 Codex 검토자로 대체 승인 | `verification/02-foundation-and-blueprint/cross-review.md` |
