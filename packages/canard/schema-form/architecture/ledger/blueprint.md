@@ -46,7 +46,7 @@
 | BLUEPRINT-038 | 자기 `type` 없는 칸에 허용 집합이 ⊤인 분기(`const`·`enum`만 있는 분기 포함)가 있으면 `UNKNOWN_JSON_SCHEMA` — 오류에 그 분기의 schemaPath와 `type`을 적으라는 안내 | 현행 | 소유자 답(`reviews/round-18-owner-answers.md:32` union O2) |
 | BLUEPRINT-039 | 자기 `type` 없는 칸의 분기 형에 `object`·`array`가 있으면 `UNKNOWN_JSON_SCHEMA` — object variant 호스트는 건드리지 않음, 푸는 것은 뒤로(나중에 풀어도 비파괴) | 현행 | 소유자 답(`reviews/round-18-owner-answers.md:33` union O3) |
 | BLUEPRINT-040 | 규칙 A·기본 입력·경고등의 기준 목록은 `node.schemaType`(+`nullable`), 게이트가 켜진 동안은 유효 목록 — 청사진은 `schemaType`을 유효 스키마에 써 넣지 않음, `jsonSchema.type`은 켜진 선언의 교집합 | 현행 | 소유자 답(`reviews/round-18-owner-answers.md:35` union O5) |
-| BLUEPRINT-041 | 한 칸의 `type` 선언들 — 통합 원리 U1–U9: 연언이고 허용 집합은 교집합, 빈 교집합만 충돌(정적은 청사진 오류, 게이트는 켜진 동안의 정착 오류), 정적 선언이 종류·`schemaType`·`nullable`을 정하고 게이트는 유효 목록만 좁힘, 한 진입에서 쓰인 노드의 두 번 해석 | 현행 | 소유자 답(`reviews/round-18-owner-answers.md:37` union O7·O8), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-104), 소유자 답(`reviews/round-18-owner-answers.md:41` 설계서 메모 4) |
+| BLUEPRINT-041 | 한 칸의 `type` 선언들 — 통합 원리 U1–U9: 연언이고 허용 집합은 교집합, 빈 교집합만 충돌(정적은 청사진 오류, 게이트는 켜진 동안의 정착 오류), 정적 선언이 종류·`schemaType`·`nullable`을 정하고 게이트는 유효 목록만 좁힘, 한 진입에서 쓰인 노드의 두 번 해석 | 현행 | 소유자 답(`reviews/round-18-owner-answers.md:37` union O7·O8), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-104), 소유자 답(`reviews/round-18-owner-answers.md:41` 설계서 메모 4), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-105; U7 재해석은 라운드마다) |
 | BLUEPRINT-042 | `union` 노드의 목적·해석·기본 입력에서 그대로인 것 — 형을 고르는 기능이 아님, 받아 줄 형이 정확히 하나일 때만 변환, 선언 순서·검증기 규칙을 쓰지 않음, 기본 입력은 문자열 입력 | 현행 | 소유자 답(`reviews/round-18-owner-answers.md:24` 18C 검토 1번), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-92) |
 | BLUEPRINT-043 | 값 union에서 계속 그대로인 것 — `null`은 nullable로·`integer`는 `number`로 접음, 접은 집합이 둘 이상이면 `union`(행 `terminal`), `union`끼리는 접은 집합이 같을 때 같은 종류, 정합은 나열된 타입 가운데 하나, PR-1 인식·PR-2 행 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-02), 소유자 답(`reviews/round-18-owner-answers.md:19` 12-9; `integer`·`null` 접기), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-92), 소유자 답(`reviews/round-18-owner-answers.md:29` union 범위; 범위), 소유자 답(`reviews/round-18-owner-answers.md:35` union O5; 목록) |
 | BLUEPRINT-044 | 청사진 판정 절차 — 허용 집합 A(d)와 fold, 교집합(`integer ⊂ number`, `null`은 양쪽에 있을 때만), 단계 S0–S6, 결과 일곱, 터미널 하위 키 경고 (가칭) `TERMINAL_SUBTREE_KEY_IGNORED_FOR_FORM`, PR-1·PR-4 게이트 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-90), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-105) |
@@ -733,9 +733,10 @@
   > 편집자 결정(18C-104): "【추론】 그래서 결과는 "쓰인 값을 최종 유효 목록으로 한 번 해석한 것"과 같고, 직전 커밋의 게이트 상태에 기대지 않는다." (`reviews/round-18-closing.md:2911`)
   > 편집자 결정(18C-104): "【추론】 로드(마운트, `FormHandle.reset()`, `resetSubtree()`)도 같은 두 단계를 따른다." (`reviews/round-18-closing.md:2914`)
   > 반영 칸(설계서 메모 4): "게터 `typeMismatch: boolean`, 경로 목록 `typeMismatches: readonly string[]`, 경고 코드 `SCHEMA_FORM_WARNING.TYPE_MISMATCH`." (`reviews/round-18-owner-answers.md:41`)
+  > 편집자 결정(18C-105): "【추론】 전이 단계의 재해석은 전이 쓰기다." (`reviews/round-18-closing.md:2938`) — U7의 "한 번 더"는 라운드마다이며, 한 노드는 한 라운드에 한 번만 다시 해석하고 상한을 넘기면 원본 B에는 쓰기 경계의 해석(정적 목록)만 남는다(WRITE-099).
 - 상태: 현행
-- 출처: `reviews/round-18-owner-answers.md:37`(정본, 반영 칸), `reviews/round-18-closing.md:2908-2911,2914`, `reviews/round-18-owner-answers.md:41`
-- 닫은 사람: 소유자 답(`reviews/round-18-owner-answers.md:37` union O7·O8), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-104), 소유자 답(`reviews/round-18-owner-answers.md:41` 설계서 메모 4)
+- 출처: `reviews/round-18-owner-answers.md:37`(정본, 반영 칸), `reviews/round-18-closing.md:2908-2911,2914`, `reviews/round-18-owner-answers.md:41`, `reviews/round-18-closing.md:2938`
+- 닫은 사람: 소유자 답(`reviews/round-18-owner-answers.md:37` union O7·O8), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-104), 소유자 답(`reviews/round-18-owner-answers.md:41` 설계서 메모 4), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-105; U7 재해석은 라운드마다)
 - 라운드: 18
 - 까닭: `reviews/round-18-owner-answers.md:37`
 - 충돌:

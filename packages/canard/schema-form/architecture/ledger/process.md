@@ -72,6 +72,7 @@
 | PROCESS-064 | 대체됨: 기록은 결정 하나에 문서 하나로 쪼갠다 | 대체됨(→ PROCESS-050, PROCESS-052) | 편집자 결정(1라운드, `00-goals.md:128`) |
 | PROCESS-065 | 05의 읽는 법 — 열 넷과 그 출처, 상태 표기(미결·미확인·불일치), 침묵을 "제거"로 적지 않음 | 현행 | 편집자 결정(6라운드, `05-before-after.md:7,9`) |
 | PROCESS-066 | 18라운드 닫기 방식 — 유도할 수 있는 것은 편집자가 추론으로 닫고 `reviews/round-18-closing.md`에 적는다 | 현행 | 소유자 답(`reviews/round-18-owner-answers.md:23` 닫기 방식) |
+| PROCESS-067 | 개발 PR마다 계획서 셋 — `request.md`(개발요청서, 원장 링크)·`verification.md`(검증 구성요건)·`adr-and-axes.md`(ADR과 핵심 축), 그 디렉토리만 보고 개발하고 단독으로 검증, 절차는 seiri와 filid | 현행 | 소유자 답(`reviews/round-18-owner-answers.md:46` 개발계획 계획서 형식) |
 
 ## 항목
 
@@ -922,3 +923,17 @@
 - 닫은 사람: 소유자 답(`reviews/round-18-owner-answers.md:23` 닫기 방식)
 - 라운드: 18
 - 까닭: `reviews/round-18-owner-answers.md:23`
+
+### PROCESS-067 개발 PR마다 계획서 셋 — `request.md`(개발요청서, 원장 링크)·`verification.md`(검증 구성요건)·`adr-and-axes.md`(ADR과 핵심 축), 그 디렉토리만 보고 개발하고 단독으로 검증, 절차는 seiri와 filid
+
+- 결정:
+  > 개발 PR마다 `architecture/plan/<순서>-<이름>/`에 문서 셋을 둔다: `request.md`(개발요청서, 범위와 원장 항목 링크), `verification.md`(그 PR의 검증 구성요건), `adr-and-axes.md`(ADR과 핵심 축).
+  > 각 PR은 그 디렉토리만 보고 개발하고 단독으로 검증되어야 한다.
+  > 개발 절차는 seiri(코드 규칙과 PR 경계의 게이트)와 filid(fractal 경계, 문서가 코드보다 먼저, PR 경계의 스캔)로 한다.
+- 보충:
+  > 소유자(개발계획 계획서 형식): "각 PR은 1. 개발요청서(설계원장링크 포함) 2. 해당 PR 검증 구성요건 3. ADR 과 핵심 축 이렇게 작성해두고, 개별 PR 단계별로 이 디렉토리를 참고해서 개발하길 바라. 개발 절차는 seiri 와 filid 로 진행할거야" (`reviews/round-18-owner-answers.md:46`)
+- 상태: 현행
+- 출처: `reviews/round-18-owner-answers.md:46`(정본, 반영 칸)
+- 닫은 사람: 소유자 답(`reviews/round-18-owner-answers.md:46` 개발계획 계획서 형식)
+- 라운드: 18
+- 까닭: `reviews/round-18-owner-answers.md:46`

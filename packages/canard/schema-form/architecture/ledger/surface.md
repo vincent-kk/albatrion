@@ -44,7 +44,7 @@
 | SURFACE-036 | 대체됨: `computed`를 대신할 컨테이너 `control`(`&키`와 `control.키`는 두 철자) | 대체됨(→ SURFACE-001, SURFACE-022, CONTROLS-016) | 소유자 답(`reviews/round-9-spec.md:27` 축9), 편집자 결정(9라운드, `reviews/round-9-spec.md:97` 세 곳의 추천을 합쳐 소유자가 동의) |
 | SURFACE-037 | 대체됨(철자): 값 지우기 `&unsetValue` — 이름 낱말은 `controls.unsetValue`로 현행 | 대체됨(→ SURFACE-022, CONTROLS-016, CONTROLS-028) | 소유자 답(`reviews/round-9-spec.md:68` pristine 정정), 소유자 답(`reviews/round-12-owner-answers.md:13` 5) |
 | SURFACE-038 | 대체됨(철자): `dirty`·`touched` 초기화 `&resetInteraction`(옛 `&pristine`) — 이름 낱말은 `controls.resetInteraction`로 현행 | 대체됨(→ SURFACE-022, CONTROLS-016, CONTROLS-029) | 소유자 답(`reviews/round-10-owner-answers.md:32` E-5) |
-| SURFACE-039 | 로드 시 예약 층의 자동 쓰기 억제 — `DisableAutomaticWrites`·`EnableAutomaticWrites`, Form 속성 `disableAutomaticWrites` | 현행 | 편집자 결정(9라운드, `reviews/round-9-spec.md:97` 세 곳의 추천을 합쳐 소유자가 동의; 이름), 소유자 답(`reviews/round-13-owner-answers.md:8` 2 나감 비움 기본값; 나감 비움은 정책이 참인 노드만), 편집자 결정(13라운드, `07-conclusions.md:311`; 억제 범위에 나감 비움을 넣음), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-103) |
+| SURFACE-039 | 로드 시 예약 층의 자동 쓰기 억제 — `DisableAutomaticWrites`·`EnableAutomaticWrites`, Form 속성 `disableAutomaticWrites` | 현행 | 편집자 결정(9라운드, `reviews/round-9-spec.md:97` 세 곳의 추천을 합쳐 소유자가 동의; 이름), 소유자 답(`reviews/round-13-owner-answers.md:8` 2 나감 비움 기본값; 나감 비움은 정책이 참인 노드만), 편집자 결정(13라운드, `07-conclusions.md:311`; 억제 범위에 나감 비움을 넣음), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-103), 편집자 결정(18라운드, WRITE-078; trim도 억제 비트 대상) |
 | SURFACE-040 | 대체됨(철자): 조각 게이트는 `&active`로 통합, `&if` 은퇴 — 뜻은 `controls.active`로 현행 | 대체됨(→ SURFACE-022, CONTROLS-016, CONTROLS-021, CONTROLS-049) | 소유자 답(`reviews/round-10-owner-answers.md:8` A-2), 편집자 결정(9라운드, `07-conclusions.md:135` 4.24 노드 게이트) |
 | SURFACE-041 | 대체됨: 없음인 키 채우기 `&default`(표준 키워드의 표현식 판) — 이름은 `controls.default`, 식이 아니라 값 | 대체됨(→ SURFACE-022, CONTROLS-016, CONTROLS-025, CONTROLS-018) | 소유자 답(`reviews/round-9-spec.md:52` 읽기2 채우기 원천), 편집자 결정(9라운드, `reviews/round-9-spec.md:97` 세 곳의 추천을 합쳐 소유자가 동의) |
 | SURFACE-042 | 대체됨(철자): 다른 노드 쓰기 `&injectTo`를 예약 층에 편입 — 이름 낱말은 `controls.injectTo`로 현행 | 대체됨(→ SURFACE-022, CONTROLS-016, CONTROLS-027) | 소유자 답(`reviews/round-9-spec.md:32` 요약 발언), 소유자 답(`reviews/round-9-spec.md:26` 축8) |
@@ -619,13 +619,14 @@
   > "`DisableAutomaticWrites`의 범위는 **그 호출이 일으킨 자동 쓰기 전부**(채움, `controls.derived`, `controls.injectTo`, `controls.unsetValue`, 나감의 비움)이며 로드 값 자체는 막지 않는다." (`08-design-a-to-z.md:278`)
   > "이 범위는 문서 주석에 적는다." (`06-conclusions.md:341`)
 - 상태: 현행
-- 출처: `07-conclusions.md:311`(정본), `07-conclusions.md:345`, `reviews/round-9-spec.md:104`, `08-design-a-to-z.md:278`, `06-conclusions.md:341` (같은 규칙: WRITE-008, WRITE-015), `reviews/round-18-closing.md:2881`
-- 닫은 사람: 편집자 결정(9라운드, `reviews/round-9-spec.md:97` 세 곳의 추천을 합쳐 소유자가 동의; 이름), 소유자 답(`reviews/round-13-owner-answers.md:8` 2 나감 비움 기본값; 나감 비움은 정책이 참인 노드만), 편집자 결정(13라운드, `07-conclusions.md:311`; 억제 범위에 나감 비움을 넣음), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-103)
+- 출처: `07-conclusions.md:311`(정본), `07-conclusions.md:345`, `reviews/round-9-spec.md:104`, `08-design-a-to-z.md:278`, `06-conclusions.md:341` (같은 규칙: WRITE-008, WRITE-015), `reviews/round-18-closing.md:2881`, `reviews/round-18-owner-answers.md:12`
+- 닫은 사람: 편집자 결정(9라운드, `reviews/round-9-spec.md:97` 세 곳의 추천을 합쳐 소유자가 동의; 이름), 소유자 답(`reviews/round-13-owner-answers.md:8` 2 나감 비움 기본값; 나감 비움은 정책이 참인 노드만), 편집자 결정(13라운드, `07-conclusions.md:311`; 억제 범위에 나감 비움을 넣음), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-103), 편집자 결정(18라운드, WRITE-078; trim도 억제 비트 대상)
 - 라운드: 18
 - 까닭: `reviews/round-9-spec.md:104`, `reviews/round-18-closing.md:2891-2893`
 - 충돌:
   > `07-conclusions.md:311`의 "`&derived`, `&injectTo`, `&unsetValue`"는 15라운드 뒤의 표기(`controls.derived`·`controls.injectTo`·`controls.unsetValue`)와 다르다. 뒤 라운드가 이긴다(`08-design-a-to-z.md:278`, `02-target-overview.md:319`).
   > `07-conclusions.md:311`의 "(로드와 `Merge`)"는 18라운드 결정과 다르다: `setValue(V)`는 로드가 아니라 전체 교체 쓰기이며(WRITE-090), 억제 비트의 범위는 그 호출(로드와 전체 교체 쓰기, `Merge`)이 일으킨 예약 층의 쓰기 전부다(WRITE-097). 18라운드 결정이 이긴다(`reviews/round-18-closing.md:2881`).
+  > `08-design-a-to-z.md:278`의 "`DisableAutomaticWrites`의 범위는 **그 호출이 일으킨 자동 쓰기 전부**(채움, `controls.derived`, `controls.injectTo`, `controls.unsetValue`, 나감의 비움)이며"는 소유자 답과 다르다: 포커스 아웃 `trim`이 자른 값의 쓰기도 자동 쓰기이고 억제 비트의 대상이다(WRITE-078). 소유자 답이 이긴다(`reviews/round-18-owner-answers.md:12`).
 
 ### SURFACE-040 대체됨(철자): 조각 게이트는 `&active`로 통합, `&if` 은퇴 — 뜻은 `controls.active`로 현행
 

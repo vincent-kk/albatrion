@@ -12,7 +12,7 @@
 | NODE-004 | 공통 필드와 `structure`·`runtime`, 노드 인스턴스가 곧 레코드, `settle`의 자유 함수 | 현행 | 소유자 답(`reviews/round-17-owner-answers.md:46` 14 트리마다 하나인 공용 칸), 17라운드 스웜 수렴(편집자 결정, `reviews/raw-round17-node-structure.md` §2; 칸의 내용과 `settle`의 자유 함수), 17라운드 스웜 수렴(편집자 결정, `reviews/round-17-owner-answers.md:38`·`reviews/raw-round17-node-structure.md:154`; 소유자 이견 없이 권고대로 확정된 칸 `structure`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-33) |
 | NODE-005 | 터미널 객체·배열의 행 — 값을 통째로 드는 칸 함수, 원본 배열 위의 배열 연산 | 현행 | 17라운드 스웜 수렴(편집자 결정, `reviews/raw-round17-node-structure.md` §5) |
 | NODE-006 | 행의 칸과 행 계약 `Behavior` — 행은 계산만 한다, 같은 순서, 공유 칸, 정적 선택의 메모 | 현행 | 소유자 답(`reviews/round-17-owner-answers.md:43` 9 입력 마침 칸), 17라운드 스웜 수렴(편집자 결정, `reviews/round-17-owner-answers.md:38`·`reviews/raw-round17-node-structure.md:154`; 소유자 이견 없이 권고대로 확정된 칸 `interpret`·`assemble`·`project`와 형 `Behavior`), 편집자 결정(17라운드, `reviews/round-17-owner-answers.md:44`; 소유자가 물음으로 낸 이름 `declareChildren`을 반대 없이 채택하고 칸의 일을 이름에 맞춤), 17라운드 스웜 수렴(편집자 결정, `reviews/raw-round17-node-structure.md` §5; 같은 순서, 공유 칸, 정적 선택의 메모) |
-| NODE-007 | `trim`과 입력 마침 — 문자열 행의 `finishInput` 칸, 어댑터는 신호만 | 현행 | 소유자 답(`reviews/round-17-owner-answers.md:11` R17-3), 소유자 답(`reviews/round-17-owner-answers.md:43` 9 입력 마침 칸), 소유자 답(`reviews/round-17-owner-answers.md:54` 9번 확인) |
+| NODE-007 | `trim`과 입력 마침 — 문자열 행의 `finishInput` 칸, 어댑터는 신호만 | 현행 | 소유자 답(`reviews/round-17-owner-answers.md:11` R17-3), 소유자 답(`reviews/round-17-owner-answers.md:43` 9 입력 마침 칸), 소유자 답(`reviews/round-17-owner-answers.md:54` 9번 확인), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-19; `trim`은 자동 쓰기) |
 | NODE-008 | 책임별 fractal과 트리마다 하나인 생성 함수 `schemaNodeFactory` | 현행 | 소유자 답(`reviews/round-17-owner-answers.md:26` `tree`의 이름; 책임별로 나눔), 소유자 답(`reviews/round-17-owner-answers.md:42` 4 종류 모듈), 소유자 답(`reviews/round-17-owner-answers.md:45` 12·15 생성 함수와 그 형), 17라운드 스웜 수렴(편집자 결정, `reviews/round-17-owner-answers.md:38`·`reviews/raw-round17-node-structure.md:154`; 소유자 이견 없이 권고대로 확정된 칸 `record`·`navigation`·`SchemaNode/`), 17라운드 스웜 수렴(편집자 결정, `reviews/raw-round17-node-structure.md:171`; 공장은 트리마다 하나) |
 | NODE-009 | behaviors 규칙 — 종류마다 fractal, 보조의 자리, 가져오기 금지 | 현행 | 소유자 답(`reviews/round-17-owner-answers.md:42` 4 종류 모듈; 전략이 아니라 종류마다 모듈 하나), 17라운드 스웜 수렴(편집자 결정, `reviews/raw-round17-node-structure.md` §5; 소유자 지시 `reviews/round-17-owner-answers.md:25`) |
 | NODE-010 | 겉면 규칙 — `SchemaNode` 클래스 파일, 멤버 목록 시험, 내부 통로 | 현행 | 17라운드 스웜 수렴(편집자 결정, `reviews/raw-round17-node-structure.md` §6; 소유자 지시 `reviews/round-17-owner-answers.md:25`) |
@@ -145,10 +145,12 @@
 - 보충:
   > "`trim`은 포커스 아웃 때 문자열 동작 행의 `finishInput` 칸이 판단한다" (`adr/0011-branch-node-composition.md:3`)
 - 상태: 현행
-- 출처: `09-landing-and-test-strategy.md:106`(정본), `adr/0011-branch-node-composition.md:3`
-- 닫은 사람: 소유자 답(`reviews/round-17-owner-answers.md:11` R17-3), 소유자 답(`reviews/round-17-owner-answers.md:43` 9 입력 마침 칸), 소유자 답(`reviews/round-17-owner-answers.md:54` 9번 확인)
-- 라운드: 17
+- 출처: `09-landing-and-test-strategy.md:106`(정본), `adr/0011-branch-node-composition.md:3`, `reviews/round-18-closing.md:582-589`
+- 닫은 사람: 소유자 답(`reviews/round-17-owner-answers.md:11` R17-3), 소유자 답(`reviews/round-17-owner-answers.md:43` 9 입력 마침 칸), 소유자 답(`reviews/round-17-owner-answers.md:54` 9번 확인), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-19; `trim`은 자동 쓰기)
+- 라운드: 18
 - 까닭: `reviews/round-17-owner-answers.md:11`
+- 충돌:
+  > `09-landing-and-test-strategy.md:106`의 "쓰기는 `dispatch`의 진입이 사용자 입력과 같은 쓰기(입력 출처)로 한다"는 18라운드 결정과 다르다: 포커스 아웃 때 자른 값을 쓰는 것은 자동 쓰기로, 원본만 쓰고 바깥 오류를 지우거나 dirty를 표시하지 않으며, 그 노드의 입력은 Refresh를 받는다(WRITE-083). 18라운드 결정이 이긴다(`reviews/round-18-closing.md:582`).
 
 ### NODE-008 책임별 fractal과 트리마다 하나인 생성 함수 `schemaNodeFactory`
 

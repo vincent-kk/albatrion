@@ -56,7 +56,7 @@
 | WRITE-048 | `reset`이 로드하는 배열의 아이템 identity — `reset`만의 예외를 두지 않는다 | 현행 | 16라운드 스웜 수렴(편집자 결정, `09-landing-and-test-strategy.md:79`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-103) |
 | WRITE-049 | `FormHandle.reset`의 값 출처 규칙을 노드 `resetSubtree()`에 옮기지 않는다 | 현행 | 16라운드 스웜 수렴(편집자 결정, `09-landing-and-test-strategy.md:79`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-44) |
 | WRITE-050 | `resetSubtree`를 남길지와 남길 때의 값 출처 | 대체됨(→ WRITE-085) | 편집자 결정(17라운드, 18라운드 안건으로 이관 `reviews/round-18-agenda.md:88`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-44) |
-| WRITE-051 | `reset`의 비용 | 현행 | 16라운드 스웜 수렴(편집자 결정, `09-landing-and-test-strategy.md:79`), 소유자 답(`reviews/round-16-owner-answers.md:16` 10) |
+| WRITE-051 | `reset`의 비용 | 현행 | 16라운드 스웜 수렴(편집자 결정, `09-landing-and-test-strategy.md:79`), 소유자 답(`reviews/round-16-owner-answers.md:16` 10), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-95; 전체 교체 쓰기도 순회) |
 | WRITE-052 | 노드마다 타입에 맞는 parse — 뜻이 그대로인 변환만(형 정규화, ADR 0013 결정 1의 이름 붙은 예외) | 현행 | 소유자 답(`reviews/round-18-owner-answers.md:7` S1), 소유자 답(`reviews/round-18-owner-answers.md:8` S1 이어서), 편집자 결정(18라운드, `reviews/round-18-owner-answers.md:8`; 이름 붙은 예외(형 정규화)의 표기) |
 | WRITE-053 | 변환 목록 — ajv `coerceTypes`의 부분집합, 자동 변환은 늘 켜져 있다 | 분할됨(→ WRITE-075, WRITE-076) | 소유자 답(`reviews/round-18-owner-answers.md:8` S1 이어서; ajv 규칙 수준), 18라운드 스웜 수렴(편집자 결정, `reviews/raw-round18-s1-unconvertible-review.md:81`; 변환 목록), 편집자 결정(18라운드, `reviews/round-18-owner-answers.md:9`; 늘 켜짐) |
 | WRITE-054 | 바꾸지 못한 값은 받은 그대로 든다 — 정합 상태(경고등)가 공개 형의 판별자 | 현행 | 소유자 답(`reviews/round-18-owner-answers.md:9` S1 셋째) |
@@ -104,7 +104,7 @@
 | WRITE-096 | null 계약의 문구 — 로드가 아닌 쓰기로 온 `null` 아래 자식은 채움 없이 없음, 로드로 온 `null`은 채움, 쓰기 종류에 호출자 전체 교체 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-100) |
 | WRITE-097 | 정리 — 억제 비트의 범위(로드·전체 교체 쓰기·`Merge`), 낡은 근거와 가리킴, LANDING-118, `setValue(undefined)`와 노드 게이트의 채움 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-103) |
 | WRITE-098 | U7 정련 — 쓰기 경계는 정적 목록(`schemaType`, `nullable`)으로 한 번, 전이 단계는 최종 유효 목록이 좁은 노드만 원래 쓰인 값을 다시 해석, 로드도 같음, 유효 목록의 정의, PR-2 게이트 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-104), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-105) |
-| WRITE-099 | U7 정련 2 — 전이 단계의 재해석은 전이 쓰기(다음 라운드, 한 라운드에 한 번, 상한이면 원본 B에는 쓰기 경계의 해석만), `VALIDATOR_COMPILE_FAILED`는 폼 수준 기록, 정적 선언 없는 이름의 게이트 없는 분기끼리 fold가 다르면 청사진 오류, `node.type`은 여덟, `union` 입력이 보내는 값, 목록 밖 `default`는 노드가 생길 때마다, `push(v)`의 스냅숏은 생성 값, `NON_JSON_WHOLE_VALUE`는 개발 모드에서만, 좁혀지지 않은 유효 목록은 `schemaType` 그 값, PR-2·PR-4·PR-1 게이트 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-105), 소유자 답(`reviews/round-18-owner-answers.md:24` 18C 검토 1번; 입력이 보내는 값) |
+| WRITE-099 | U7 정련 2 — 전이 단계의 재해석은 전이 쓰기(다음 라운드, 한 라운드에 한 번, 상한이면 원본 B에는 쓰기 경계의 해석만), `VALIDATOR_COMPILE_FAILED`는 폼 수준 기록, 정적 선언 없는 이름의 게이트 없는 분기끼리 fold가 다르면 청사진 오류, `node.type`은 여덟, `union` 입력이 보내는 값, 목록 밖 `default`는 노드가 생길 때마다, `push(v)`의 스냅숏은 생성 값, `NON_JSON_WHOLE_VALUE`는 개발 모드에서만, 좁혀지지 않은 유효 목록은 `schemaType` 그 값, PR-2·PR-4·PR-1 게이트 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-105), 소유자 답(`reviews/round-18-owner-answers.md:24` 18C 검토 1번; 입력이 보내는 값), 편집자 결정(18라운드, LANDING-065; 배열 스냅숏 시험은 PR-5) |
 
 ## 항목
 
@@ -761,11 +761,12 @@
 
 - 결정:
   > 같은 스키마의 reset 한 번은 트리 전체 순회 한 번(로드에만 허용, 08 §7)과 자식 프록시를 그리지 않는 마운트된 입력 수만큼의 입력 다시 마운트다. 참조가 다른 같은 스키마는 스키마 크기에 비례하는 비교 한 번이 더해진다. 전처리, 검증기 재컴파일, `new Function`, 노드 재생성, 가상화 재지연이 없어진다. 같은 처리기에서 prop을 바꾼 reset은 로드가 한 번 더 든다(`defaultValue`가 깊게 같으면 건너뛴다). 검증기 등록의 메모리는 '살아 있는 작성 루트의 수 + 최근 해제 목록 크기'로 묶인다. 답 10의 고속성(최소 생성, 메모리 안정, 재생성 방지)과 같은 방향이다. 스키마가 실제로 바뀐 reset은 오늘과 같은 비용이다.
-- 보충: 없음
+- 보충:
+  > 편집자 결정(18C-95): "【추론】 트리 전체 순회는 로드와, 쓰기가 닿은 하위 트리를 도는 전체 교체 쓰기에서만 허용한다." (`reviews/round-18-closing.md:2747`)
 - 상태: 현행
-- 출처: `09-landing-and-test-strategy.md:98`(정본)
-- 닫은 사람: 16라운드 스웜 수렴(편집자 결정, `09-landing-and-test-strategy.md:79`), 소유자 답(`reviews/round-16-owner-answers.md:16` 10)
-- 라운드: 16
+- 출처: `09-landing-and-test-strategy.md:98`(정본), `reviews/round-18-closing.md:2747`
+- 닫은 사람: 16라운드 스웜 수렴(편집자 결정, `09-landing-and-test-strategy.md:79`), 소유자 답(`reviews/round-16-owner-answers.md:16` 10), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-95; 전체 교체 쓰기도 순회)
+- 라운드: 18
 - 까닭: `09-landing-and-test-strategy.md:98`
 
 ### WRITE-052 노드마다 타입에 맞는 parse — 뜻이 그대로인 변환만(형 정규화, ADR 0013 결정 1의 이름 붙은 예외)
@@ -1630,9 +1631,10 @@
   > 무엇: `union.kind-procedure.test.ts`에 정적 선언 없이 호스트의 게이트 없는 `oneOf` 분기 둘이 같은 이름을 `string`과 `number`로 적은 칸을 더하고, `virtual` 노드를 가진 코퍼스에서 `node.type`의 값을 모으며, `union.type-test.ts`에서 union props의 `onChange` 형을 본다.
   > 통과: 그 칸은 `SHARED_NODE_KIND_CONFLICT` 청사진 오류이고, 모은 값은 모두 여덟 값 가운데 하나이며, union props의 `onChange`는 목록의 형의 값과 없음만 받는다.
   > 실패: 절차나 종류 목록이나 props의 형을 고친다.
-- 보충: 없음
+- 보충:
+  > 편집자 결정(LANDING-065): "배열·터미널 배열 행(`arrayBehavior/`의 `branch/`·`terminal/`)" (`08-design-a-to-z.md:575`) — `push(v)`와 삽입의 스냅숏 시험은 배열 행을 들여오는 PR-5가 하고, PR-2(스냅숏·유효 목록)의 게이트에는 유효 목록 시험만 남는다(LANDING-065).
 - 상태: 현행
-- 출처: `reviews/round-18-closing.md:2938-2957,2969-2984`(정본), `reviews/round-18-owner-answers.md:24`
-- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-105), 소유자 답(`reviews/round-18-owner-answers.md:24` 18C 검토 1번; 입력이 보내는 값)
+- 출처: `reviews/round-18-closing.md:2938-2957,2969-2984`(정본), `reviews/round-18-owner-answers.md:24`, `08-design-a-to-z.md:575`
+- 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-105), 소유자 답(`reviews/round-18-owner-answers.md:24` 18C 검토 1번; 입력이 보내는 값), 편집자 결정(18라운드, LANDING-065; 배열 스냅숏 시험은 PR-5)
 - 라운드: 18
 - 까닭: `reviews/round-18-closing.md:2959-2967`
