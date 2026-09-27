@@ -41,7 +41,12 @@ export const inferLiteralTypes = (
   const types: SchemaTypeName[] = [];
   for (const value of values) {
     const type = value === null ? 'null' : typeof value;
-    if (type === 'object' || !['string', 'number', 'boolean', 'null'].includes(type))
+    if (
+      type !== 'string' &&
+      type !== 'number' &&
+      type !== 'boolean' &&
+      type !== 'null'
+    )
       return throwBlueprintError(
         BlueprintErrorCode.UnknownJsonSchema,
         schemaPath,

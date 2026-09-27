@@ -9,6 +9,9 @@ import { intersectAllowedTypes } from './intersectAllowedTypes';
 import { readAllowedTypes } from './readAllowedTypes';
 import { unionAllowedTypes } from './unionAllowedTypes';
 
+/** Authored disjunctions examined in S3 order without per-call allocation. */
+const BRANCH_KEYWORDS = ['oneOf', 'anyOf'] as const;
+
 /**
  * Resolve S0-S3 for one authored slot without evaluating branch guards.
  * @param context - Root-local reference resolver and error collector
@@ -28,8 +31,13 @@ export const inferAllowedTypes = (
   isBranch = false,
 ): readonly SchemaTypeName[] | undefined => {
   if (visiting.includes(schemaPath)) return [];
-  const parts = collectStaticSchemas(context, schema, schemaPath);
-  if (parts.some((part) => visiting.includes(part.schemaPath))) return [];
+  const cycle = isBranch ? { found: false } : undefined;
+  const parts = collectStaticSchemas(context, schema, schemaPath, [], cycle);
+  if (
+    (isBranch && cycle?.found) ||
+    parts.some((part) => visiting.includes(part.schemaPath))
+  )
+    return [];
   const stack = [...visiting, ...parts.map((part) => part.schemaPath)];
   let allowed: readonly SchemaTypeName[] | undefined;
   for (const part of parts) {
@@ -48,7 +56,7 @@ export const inferAllowedTypes = (
   if (allowed) return allowed;
   let inferred: readonly SchemaTypeName[] | undefined;
   let hasUngatedBranch = false;
-  for (const keyword of ['oneOf', 'anyOf'] as const) {
+  for (const keyword of BRANCH_KEYWORDS) {
     const groups: (readonly SchemaTypeName[])[] = [];
     let hasKeywordBranch = false;
     for (const part of parts) {

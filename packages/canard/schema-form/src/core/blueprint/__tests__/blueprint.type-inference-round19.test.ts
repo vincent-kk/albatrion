@@ -99,6 +99,15 @@ describe('round 19 untyped host inference', () => {
     ).toMatchObject({ kind: 'object', schemaType: 'object' });
   });
 
+  it('cuts a branch whose typed reference target re-enters itself', () => {
+    expect(
+      blueprint({
+        $defs: { loop: { type: 'array', $ref: '#/$defs/loop' } },
+        anyOf: [{ $ref: '#/$defs/loop' }, { type: 'object' }],
+      }).root,
+    ).toMatchObject({ kind: 'object', schemaType: 'object' });
+  });
+
   it('reports an empty union after cutting its only recursive branch', () => {
     expect(() => blueprint({ anyOf: [{ $ref: '#' }] })).toThrow(
       expect.objectContaining({ specific: BlueprintErrorCode.UnknownJsonSchema }),
