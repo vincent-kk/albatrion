@@ -1,13 +1,15 @@
 // Loaded by vitest.bench.config.ts; owner-local *.bench.ts files select performance suites.
+// Historical source-loader diagnostic; actual distribution comparison uses bench:merge-distribution.
 import { bench, describe } from 'vitest';
 
 import { merge } from '../merge';
 import type { MergeOptions } from '../type';
-
 import { createMergeImplementation } from './merge-restructure/createMergeImplementation';
 
 /** Pre-refactor code is loaded from its immutable source commit, not a hand copy. */
-const baseline = createMergeImplementation('f7eef9ed9');
+const baseline = createMergeImplementation(
+  'b4083009a207ce028c315c2e77de8353a189663e',
+);
 /** The candidate uses the baseline's compiler and module-loading path. */
 const candidate = createMergeImplementation('workspace');
 /** Fixed nested fixture reused by both implementations in the same process. */
@@ -61,7 +63,7 @@ for (const policy of [undefined, options, indexOptions]) {
 
 describe('merge restructure — nested default', () => {
   bench(
-    'before f7eef9ed9',
+    'before b4083009',
     () => {
       baseline(createTarget(), source);
     },
@@ -78,7 +80,7 @@ describe('merge restructure — nested default', () => {
 
 describe('merge restructure — nested explicit policies', () => {
   bench(
-    'before f7eef9ed9',
+    'before b4083009',
     () => {
       baseline(createTarget(), source, options);
     },
@@ -95,7 +97,7 @@ describe('merge restructure — nested explicit policies', () => {
 
 describe('merge restructure — nested explicit index policy', () => {
   bench(
-    'before f7eef9ed9',
+    'before b4083009',
     () => {
       baseline(createTarget(), source, indexOptions);
     },

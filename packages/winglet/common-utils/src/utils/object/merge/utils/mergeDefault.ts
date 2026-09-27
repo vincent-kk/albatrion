@@ -6,13 +6,10 @@ import { isArray, isPlainObject } from '@/common-utils/utils/filter';
  * @param source - Unmodified source; own __proto__ is excluded for compatibility
  * @returns The original target after recursive object and array-index merging
  */
-export const mergeDefault = <
+export function mergeDefault<
   Target extends Record<PropertyKey, any>,
   Source extends Record<PropertyKey, any>,
->(
-  target: Target,
-  source: Source,
-): Target & Source => {
+>(target: Target, source: Source): Target & Source {
   const keys = Object.keys(source) as Array<keyof Source>;
   for (let i = 0, k = keys[0], l = keys.length; i < l; i++, k = keys[i]) {
     if (k === PROTOTYPE_POLLUTION_KEY) continue;
@@ -30,7 +27,7 @@ export const mergeDefault = <
       target[k] = sourceValue;
   }
   return target;
-};
+}
 
 /** Accessor key skipped by the optionless compatibility path. */
 const PROTOTYPE_POLLUTION_KEY = '__proto__';

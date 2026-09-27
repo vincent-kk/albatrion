@@ -12,7 +12,7 @@ import type { MergeOptions } from '../type';
  * @param replaceArrays - Array policy resolved once by the public wrapper
  * @returns The target or a shallow target copy containing recursively merged values
  */
-export const mergeWithOptions = <
+export function mergeWithOptions<
   Target extends Record<PropertyKey, any>,
   Source extends Record<PropertyKey, any>,
 >(
@@ -20,7 +20,7 @@ export const mergeWithOptions = <
   source: Source,
   options: MergeOptions,
   replaceArrays: boolean,
-): Target & Source => {
+): Target & Source {
   if (options.isAtomic?.(source) || options.isAtomic?.(target))
     return source as unknown as Target & Source;
   if (Array.isArray(source) && replaceArrays)
@@ -53,4 +53,4 @@ export const mergeWithOptions = <
     setDataProperty(result, key, value);
   }
   return result as Target & Source;
-};
+}
