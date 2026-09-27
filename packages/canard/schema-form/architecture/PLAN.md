@@ -47,7 +47,7 @@
 | 우산 | `1.0.0-beta` → `master` | 진행 | [#344](https://github.com/vincent-kk/albatrion/pull/344) | 초안. 09 머지 뒤 `master`로 |
 | 00 | 설계 원장·개발계획 | 머지 | [#345](https://github.com/vincent-kk/albatrion/pull/345), [#346](https://github.com/vincent-kk/albatrion/pull/346) | 원장 1,336항목·검사 0, 계획서 디렉토리 열 개 |
 | 01 | 설계문서 | 대기 | — | 02와 병렬. `design/` 8편·ADR·`doc-coverage`·`_archive/`·절 단위 통과 |
-| 02 | 기반 + 청사진 | 진행 | — | `feat/schema-form-foundation-blueprint`. 소유자 착수 승인, 패키지별 검사·minor 판 올림 적용 |
+| 02 | 기반 + 청사진 | 진행 | — | `feat/schema-form-foundation-blueprint`. 패키지별 검사, 버전 유지·changeset 기록. 구현·검증 재개 |
 | 03 | 노드 트리·정착 | 대기 | — | 02 뒤 |
 | 04 | 파생 + 상태 키·제어 | 대기 | — | 03 뒤, 05·06과 병렬 |
 | 05 | 통지·검증 | 대기 | — | 03 뒤. **착수 전 소유자 결정**: 명령 메서드 이름·명령 종류 값의 형·`FormHandle` 대칭(EVENT-073) |
@@ -85,3 +85,4 @@
 | 2026-09-27 | 계획서 32편을 원장과 전수 대조(검증자 셋)하고 원장 내부의 18라운드 충돌 줄 누락을 감사. 계획서의 요약이 원장을 잃은 문장을 원장 원문 인용으로 바꾸고, 원장 항목 스물 남짓에 충돌·보충 줄을 더함. §2에 "계획서는 안내, 원장이 명세" 규칙 추가, 07·08의 이름 이주 배정을 원장(LANDING-067·206)대로 | `1.0.0-beta` |
 | 2026-09-27 | 오케스트레이터·단계 실행 프롬프트 둘을 `plan/prompts.md`에 둠 — codex·antigravity 위임, 어긋남은 원장 조회로 해소하고 멈추지 않음 | `1.0.0-beta` |
 | 2026-09-27 | 02 기반 + 청사진 착수 승인. 옛 엔진 기준선 고정부터 시작하며 문서 선행 커밋·worker 구현·verifier 대조로 진행 | `feat/schema-form-foundation-blueprint` |
+| 2026-09-27 | 소유자 교정: merge를 독립 FCA·두 재귀·배열 전략 일회 판정으로 재구성. common-utils는 0.15.0으로 복구하고 changeset에 기록. 진단 상수의 내부 이름을 PascalCase로 통일한 뒤 02 완료까지 재개 승인 | `f09033cf`, `071cc8bf`, `3a9dd775` |
