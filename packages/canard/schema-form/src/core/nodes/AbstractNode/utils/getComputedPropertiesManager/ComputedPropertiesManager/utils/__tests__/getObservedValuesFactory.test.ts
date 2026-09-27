@@ -1,7 +1,8 @@
 import { describe, expect, it } from 'vitest';
 
+import { getPathManager } from '@/schema-form/core/blueprint';
+
 import { getObservedValuesFactory } from '../getObservedValuesFactory';
-import { getPathManager } from '../getPathManager';
 
 describe('getObservedValuesFactory', () => {
   it('should return undefined when there is no watch', () => {

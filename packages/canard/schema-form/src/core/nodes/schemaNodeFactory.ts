@@ -2,36 +2,31 @@ import { map } from '@winglet/common-utils/array';
 import { NOOP_FUNCTION } from '@winglet/common-utils/constant';
 import { isArray } from '@winglet/common-utils/filter';
 
+import { processAllOfSchema } from '@/schema-form/__legacy__/helpers/jsonSchema/processAllOfSchema';
 import { JSONSchemaError } from '@/schema-form/errors';
 import { formatUnknownJSONSchemaError } from '@/schema-form/helpers/error';
 import { JSONPointer } from '@/schema-form/helpers/jsonPointer';
 import {
   type ResolveSchema,
   extractSchemaInfo,
-  processAllOfSchema,
 } from '@/schema-form/helpers/jsonSchema';
 import type {
   ArraySchema,
   BooleanSchema,
+  BooleanValue,
   JSONSchema,
   JSONSchemaWithRef,
   JSONSchemaWithVirtual,
   NullSchema,
   NumberSchema,
+  NumberValue,
   ObjectSchema,
   ObjectValue,
   StringSchema,
+  StringValue,
   VirtualSchema,
 } from '@/schema-form/types';
 
-import { ArrayNode, validateArraySchema } from './ArrayNode';
-import { BooleanNode } from './BooleanNode';
-import { ContextNode } from './ContextNode';
-import { NullNode } from './NullNode';
-import { NumberNode } from './NumberNode';
-import { ObjectNode } from './ObjectNode';
-import { StringNode } from './StringNode';
-import { VirtualNode } from './VirtualNode';
 import {
   type BranchNodeConstructorProps,
   type NodeFactoryProps,
@@ -40,6 +35,14 @@ import {
   ValidationMode,
   type VirtualNodeConstructorProps,
 } from '../types';
+import { ArrayNode, validateArraySchema } from './ArrayNode';
+import { BooleanNode } from './BooleanNode';
+import { ContextNode } from './ContextNode';
+import { NullNode } from './NullNode';
+import { NumberNode } from './NumberNode';
+import { ObjectNode } from './ObjectNode';
+import { StringNode } from './StringNode';
+import { VirtualNode } from './VirtualNode';
 
 /**
  * Creates a context ObjectNode for sharing form-wide data across all nodes.
@@ -74,16 +77,16 @@ export const createSchemaNodeFactory =
     switch (nodeProps.schemaType) {
       case 'boolean':
         return new BooleanNode(
-          nodeProps as SchemaNodeConstructorProps<BooleanSchema>,
+          nodeProps as SchemaNodeConstructorProps<BooleanSchema, BooleanValue>,
         );
       case 'number':
       case 'integer':
         return new NumberNode(
-          nodeProps as SchemaNodeConstructorProps<NumberSchema>,
+          nodeProps as SchemaNodeConstructorProps<NumberSchema, NumberValue>,
         );
       case 'string':
         return new StringNode(
-          nodeProps as SchemaNodeConstructorProps<StringSchema>,
+          nodeProps as SchemaNodeConstructorProps<StringSchema, StringValue>,
         );
       case 'array':
         if (nodeProps.jsonSchema.items)

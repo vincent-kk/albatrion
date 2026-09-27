@@ -122,7 +122,9 @@ export class NumberNode extends AbstractNode<NumberSchema, NumberValue> {
     else super.onChange(input, batch, automatic);
   }
 
-  constructor(properties: SchemaNodeConstructorProps<NumberSchema>) {
+  constructor(
+    properties: SchemaNodeConstructorProps<NumberSchema, NumberValue>,
+  ) {
     super(properties);
     this.onChange =
       this.jsonSchema.options?.omitEmpty !== false

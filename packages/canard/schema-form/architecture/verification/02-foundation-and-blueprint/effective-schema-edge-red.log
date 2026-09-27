@@ -1,0 +1,121 @@
+(node:94329) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+│
+▲  No story files found for the specified pattern:
+│  stories/**/*.story.@(js|jsx|mjs|ts|tsx)
+│
+▲  No story files found for the specified pattern: src/**/*.mdx
+│
+▲  No story files found for the specified pattern:
+│  src/**/*.story.@(js|jsx|mjs|ts|tsx)
+│
+▲  No story files found for the specified pattern:
+│  src/**/*.stories.@(js|jsx|mjs|ts|tsx)
+│ ┌────────────────────────────────────────────────────────────────────────────┐
+│ │  Info: Found a setup file with "setProjectAnnotations".                    │
+│ │  Skipping automatic provisioning of preview annotations to avoid           │
+│ │  conflicts. Since Storybook 10.3, "@storybook/addon-vitest" applies these  │
+│ │   automatically.                                                           │
+│ │  You can safely remove the "setProjectAnnotations" call from your setup    │
+│ │  file, or remove the file entirely if you don't have custom code there.    │
+│ └────────────────────────────────────────────────────────────────────────────┘
+
+ RUN  v3.2.6 /Users/Vincent/Workspace/albatrion/packages/canard/schema-form
+
+ ❯ |unit| src/core/blueprint/__tests__/mergeEffectiveSchema.test.ts (15 tests | 1 failed) 13ms
+   ✓ mergeEffectiveSchema > selects gates and sorts contributions, ignoring shared declaration-only branches 2ms
+   ✓ mergeEffectiveSchema > intersects numeric, length, item and property bounds with multipleOf 0ms
+   ✓ mergeEffectiveSchema > unions required, overwrites annotations, and combines standard readOnly locally 0ms
+   ✓ mergeEffectiveSchema > intersects enum and const by deep equality without conflating keywords 0ms
+   ✓ mergeEffectiveSchema > reports static enum, const and range failures at the contributing schema path 1ms
+   ✓ mergeEffectiveSchema > keeps runtime impossibility as enum empty or inverted ranges, with const removed 1ms
+   ✓ mergeEffectiveSchema > preserves the first pattern and appends other distinct patterns as allOf 0ms
+   ✓ mergeEffectiveSchema > merges groups without mutation, moving unshared references and replacing arrays 0ms
+   ✓ mergeEffectiveSchema > leaves behavioral, state and virtual declarations intact outside effective hints 0ms
+   ✓ mergeEffectiveSchema > narrows integer subsets and preserves scalar or shared static type identity 0ms
+   ✓ mergeEffectiveSchema > represents runtime gated type conflict without throwing or creating type empty 0ms
+   ✓ mergeEffectiveSchema > memoizes normalized active sets and separates static from runtime checks 0ms
+   ✓ mergeEffectiveSchema > separates memo contexts by atomic predicate and accepts a caller-owned memo 0ms
+   ✓ mergeEffectiveSchema > keeps boolean false schemas and ignores boolean true overlays 0ms
+   × mergeEffectiveSchema > preserves draft-04 boolean exclusivity with its authored bound in allOf 6ms
+     → expected { minimum: 2, type: 'string' } to match object { minimum: 2, …(1) }
+(1 matching property omitted from actual)
+ ❯ |unit| src/core/blueprint/__tests__/stripSchema.test.ts (9 tests | 1 failed) 9ms
+   ✓ stripSchema > preserves boolean schemas and identity when no form groups exist 1ms
+   ✓ stripSchema > removes the three reserved groups from nested schema positions 1ms
+   ✓ stripSchema > preserves identical names inside literal data and unknown extension data 0ms
+   ✓ stripSchema > strips modern applicators through the scanner vocabulary 0ms
+   ✓ stripSchema > does not mutate frozen authored schemas or inline referenced definitions 0ms
+   ✓ stripSchema > preserves property names equal to reserved group names 0ms
+   ✓ stripSchema > removes present undefined groups without stripping unknown top-level keys 0ms
+   ✓ stripSchema > visits reference siblings and nested definitions without expanding recursive refs 0ms
+   × stripSchema > preserves shared authored siblings and literal aliases while stripping schema occurrences 5ms
+     → expected { Object (type, properties) } to deeply equal { Object (type, properties) }
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  |unit| src/core/blueprint/__tests__/mergeEffectiveSchema.test.ts > mergeEffectiveSchema > preserves draft-04 boolean exclusivity with its authored bound in allOf
+AssertionError: expected { minimum: 2, type: 'string' } to match object { minimum: 2, …(1) }
+(1 matching property omitted from actual)
+
+- Expected
++ Received
+
+  {
+-   "allOf": [
+-     {
+-       "exclusiveMinimum": true,
+-       "minimum": 1,
+-     },
+-     {
+-       "exclusiveMinimum": false,
+-       "minimum": 2,
+-     },
+-   ],
+    "minimum": 2,
+  }
+
+ ❯ src/core/blueprint/__tests__/mergeEffectiveSchema.test.ts:141:21
+    139|       { minimum: 1, exclusiveMinimum: true }, { minimum: 2, exclusiveM…
+    140|     ]), []) as Record<string, unknown>;
+    141|     expect(relaxed).toMatchObject({ minimum: 2, allOf: [
+       |                     ^
+    142|       { minimum: 1, exclusiveMinimum: true }, { minimum: 2, exclusiveM…
+    143|     ] });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  |unit| src/core/blueprint/__tests__/stripSchema.test.ts > stripSchema > preserves shared authored siblings and literal aliases while stripping schema occurrences
+AssertionError: expected { Object (type, properties) } to deeply equal { Object (type, properties) }
+
+- Expected
++ Received
+
+  {
+    "properties": {
+      "leaf": {
+-       "controls": {
+-         "active": true,
+-       },
+        "type": "string",
+      },
+    },
+    "type": "object",
+  }
+
+ ❯ src/core/blueprint/__tests__/stripSchema.test.ts:63:28
+     61|     expect(result.properties.a).toEqual({ type: 'object', properties: …
+     62|     expect(result.properties.b).toEqual(result.properties.a);
+     63|     expect(result.default).toEqual(shared);
+       |                            ^
+     64|     expect(schema.properties.a).toBe(schema.properties.b);
+     65|     expect(shared.properties.leaf.controls).toEqual({ active: true });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  2 failed (2)
+      Tests  2 failed | 22 passed (24)
+   Start at  11:10:32
+   Duration  551ms (transform 227ms, setup 0ms, collect 505ms, tests 22ms, environment 0ms, prepare 109ms)
+

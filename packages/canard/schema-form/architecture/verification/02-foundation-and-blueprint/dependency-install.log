@@ -1,0 +1,22 @@
+➤ YN0000: · Yarn 4.12.0
+➤ YN0000: ┌ Resolution step
+➤ YN0000: └ Completed
+➤ YN0000: ┌ Post-resolution validation
+➤ YN0060: │ react is listed by your project with version 19.2.6 (p5397e9), which doesn't satisfy what antd-mobile and other dependencies request (but they have non-overlapping ranges!).
+➤ YN0060: │ react is listed by your project with version 19.2.6 (pddf7b2), which doesn't satisfy what antd-mobile and other dependencies request (but they have non-overlapping ranges!).
+➤ YN0060: │ react-dom is listed by your project with version 19.2.6 (p4e0c90), which doesn't satisfy what antd-mobile and other dependencies request (^18.0.0).
+➤ YN0060: │ react-dom is listed by your project with version 19.2.6 (pf9e5ce), which doesn't satisfy what antd-mobile and other dependencies request (^18.0.0).
+➤ YN0002: │ @albatrion/documents@workspace:documents doesn't provide @docusaurus/theme-common (p4d91c2), requested by @easyops-cn/docusaurus-search-local.
+➤ YN0002: │ @albatrion/documents@workspace:documents doesn't provide @mui/system (p8f9e9d), requested by @mui/x-date-pickers.
+➤ YN0002: │ @canard/schema-form-mui-plugin@workspace:packages/canard/schema-form-mui-plugin doesn't provide @mui/system (p2cc917), requested by @mui/x-date-pickers.
+➤ YN0002: │ albatrion@workspace:. doesn't provide @types/react (p7af96f), requested by @storybook/addon-docs and other dependencies.
+➤ YN0002: │ albatrion@workspace:. doesn't provide react (pebfbc2), requested by @storybook/react-vite and other dependencies.
+➤ YN0002: │ albatrion@workspace:. doesn't provide react-dom (p74e5c3), requested by @storybook/react-vite and other dependencies.
+➤ YN0086: │ Some peer dependencies are incorrectly met by your project; run yarn explain peer-requirements <hash> for details, where <hash> is the six-letter p-prefixed code.
+➤ YN0086: │ Some peer dependencies are incorrectly met by dependencies; run yarn explain peer-requirements for details.
+➤ YN0000: └ Completed
+➤ YN0000: ┌ Fetch step
+➤ YN0000: └ Completed in 0s 768ms
+➤ YN0000: ┌ Link step
+➤ YN0000: └ Completed in 0s 351ms
+➤ YN0000: · Done with warnings in 1s 506ms

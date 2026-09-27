@@ -2479,6 +2479,7 @@
   > `adr/0014-error-policy.md:257`의 "`JSON_SCHEMA_ERROR.INVALID_VIRTUAL_NODE_VALUES`"는 18라운드 결정과 다르다: 코드는 오류 클래스와 무리를 옮겨 `SCHEMA_FORM_ERROR.INVALID_VIRTUAL_NODE_VALUES`(가칭)다(ERROR-195). 18라운드 결정이 이긴다(`reviews/round-18-closing.md:670`).
   > `adr/0014-error-policy.md:257`의 "분류는 슬라이스 1의 options.virtual 설계 항목에서 확정"는 18라운드 결정과 다르다: 분류는 확정되었다 — 공개 API에서 오면 호출자 오류, 자동 쓰기에서 오면 정착 오류(`cause` (가칭) `'writeShape'`)다(ERROR-195). 18라운드 결정이 이긴다(`reviews/round-18-closing.md:661`).
   > `adr/0014-error-policy.md:261`의 "청사진 분석: 게이트 없는 선언끼리 같은 이름·다른 종류"는 소유자 답과 다르다: 정적 선언끼리는 교집합으로 노드 하나를 정하고 비면 `ALL_OF_TYPE_REDEFINITION`이며, 이 코드는 호스트의 게이트 없는 분기의 fold가 정적 노드의 fold에 들지 않을 때다(BLUEPRINT-044). 소유자 답이 이긴다(`reviews/round-18-owner-answers.md:37`).
+  > `reviews/round-18-closing.md:2458`의 "형 없는 칸의 빈 U와 객체·배열 분기(`:30`·`:33`)"는 19라운드 결정과 다르다: "형 없는 칸의 빈 U와 객체·배열이 다른 종류와 섞인 분기"로 읽고, "분기도 `const`·`enum`도 없는 형 없는 칸"과 "리터럴의 종류가 섞이거나 객체·배열인 `const`·`enum`"을 더한다(BLUEPRINT-048, BLUEPRINT-050). 19라운드 결정이 이긴다(`reviews/round-19-closing.md:22,43`).
 
 ### ERROR-165 §7.2 코드 목록 — (미정) 행
 
@@ -3015,6 +3016,8 @@
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-90·18C-91·18C-92)
 - 라운드: 18
 - 까닭: `reviews/round-18-closing.md:2466-2471`, `reviews/round-18-closing.md:2556-2564`, `reviews/round-18-closing.md:2620-2625`
+- 충돌:
+  > `reviews/round-18-closing.md:2458`의 "형 없는 칸의 빈 U와 객체·배열 분기(`:30`·`:33`)"는 19라운드 결정과 다르다: "형 없는 칸의 빈 U와 객체·배열이 다른 종류와 섞인 분기"로 읽고, "분기도 `const`·`enum`도 없는 형 없는 칸"과 "리터럴의 종류가 섞이거나 객체·배열인 `const`·`enum`"을 더한다(BLUEPRINT-048, BLUEPRINT-050). 19라운드 결정이 이긴다(`reviews/round-19-closing.md:22,43`).
 
 ### ERROR-204 `diagnostics`와 경고 중복 키는 폼 수준 로드(마운트, `FormHandle.reset()`)에서만 초기화 — `setValue(V)`·`resetSubtree()`는 비우지 않음, `degraded`의 복귀는 `FormHandle.reset()`
 

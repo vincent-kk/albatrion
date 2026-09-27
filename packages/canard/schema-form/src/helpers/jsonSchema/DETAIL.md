@@ -4,8 +4,7 @@
 
 - 외부 소비자는 `index.ts`가 이름으로 재수출한 심볼만 사용한다 — 서브디렉토리 내부 파일 직접 import 금지.
 - 모든 헬퍼는 순수 함수를 유지한다: 결과는 입력만으로 결정되고 전역 상태를 읽거나 쓰지 않는다.
-- allOf 병합 실패는 `JSONSchemaError`로 표면화한다 — 일반 `Error`로 흡수하지 않는다 (`processAllOfSchema` 소유).
-- 타입별 병합·전처리 세부 규칙은 각 자식 fractal의 문서가 소유한다 — 이 문서는 가족 수준 계약만 기록한다.
+- 레거시 전처리·allOf 병합의 소비자는 해당 레거시 모듈의 진입점을 사용합니다. 살아 있는 헬퍼의 배럴에서 레거시를 재수출하지 않아 새 청사진이 간접적으로 옛 구현을 가져오지 않도록 합니다.
 
 ## API Contracts
 
@@ -28,11 +27,6 @@ composition 분기가 검증 전용인지 가르는 `isNullBranch`는 입력이 
 
 - 어떤 `JSONSchemaType`도 `isTerminalType`과 `isBranchType`을 동시에 만족하지 않는다.
 - `isBranchType('virtual')`이 `true`다.
-
-### preprocess-one-of-marker — 분기 마커는 객체 분기에만 들어간다
-
-- `preprocessSchema`는 `oneOf`의 각 분기에 그 분기의 배열 인덱스를 담은 마커 프로퍼티를 넣는다.
-- `type`이 `null`인 분기는 프로퍼티를 가질 수 없으므로 그대로 둔다. 다른 분기의 마커 값은 원래 배열 인덱스를 유지한다.
 
 ### barrel-surface — 공개 표면은 barrel 재수출로 한정된다
 

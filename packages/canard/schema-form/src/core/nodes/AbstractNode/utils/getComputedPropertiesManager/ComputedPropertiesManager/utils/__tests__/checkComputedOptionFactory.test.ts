@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest';
 
+import { getPathManager } from '@/schema-form/core/blueprint';
 import type { JSONSchemaWithVirtual } from '@/schema-form/types';
 
 import { checkComputedOptionFactory } from '../checkComputedOptionFactory';
-import { getPathManager } from '../getPathManager';
 
 describe('checkComputedOptionFactory', () => {
   it('preferredCondition이 true일 때 항상 checkCondition을 반환', () => {

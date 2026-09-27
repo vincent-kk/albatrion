@@ -4,7 +4,8 @@
 
 ## 1. 지금 어디인가 (2026-09-26, 18라운드 닫힘 + 소유자 검토 + union 설계 봉인)
 
-- **설계의 정본은 단일 원장 `ledger/`다.** 영역 17개, 항목 1,336개(현행 1,066(부정 결정·기록 포함), 대체됨 199, 분할됨 47, 중복 24, 열림 0). 형식과 규칙은 `ledger/README.md`.
+- **19라운드(2026-09-27, PR 02 진행 중에 열고 닫음).** 02의 통합 검증이 원장 안의 충돌을 찾았다: TEST-067(b)의 코퍼스 14종은 모두 호스트에 `type`이 없는 객체 분기 `oneOf`·`anyOf`인데 BLUEPRINT-039·045 E16이 그 칸을 오류로 정했고, "14종이 빌드됐다"는 근거는 라운드 9 프로토타입 위의 측정이었다. 소유자가 "접은 분기 형이 객체만·배열만이면 variant 호스트로 추정"을 정했고(`reviews/round-19-owner-answers.md:7`), 편집자 초안을 verifier·codex·antigravity가 대조해 결함 다섯(게이트 분기 셈, `'null'` 순서, `{object,array}`, 순환 절단, 형 수준의 `$ref` 예외)을 고친 뒤 채택했다. 검증이 찾은 둘째 물음(`type` 없이 `const`만 있는 태그 프로퍼티, 14종 중 2종)은 소유자가 리터럴 종류의 잎으로 받기로 답했다(`:8`). 정본은 `reviews/round-19-closing.md`의 19C-01·19C-02, 원문은 `reviews/raw-round19-typeless-object-host/`. 새 항목 BLUEPRINT-048~051, NODE-059, LANDING-207·208, TEST-079이고 BLUEPRINT-037·039는 분할됨이다. 남은 일은 PR 02의 TEST-079 게이트 구현이다.
+- **설계의 정본은 단일 원장 `ledger/`다.** 영역 17개, 항목 1,344개(19라운드 뒤; 현행 1,072(부정 결정·기록 포함), 대체됨 199, 분할됨 49, 중복 24, 열림 0). 형식과 규칙은 `ledger/README.md`.
 - **옛 설계 문서(`00`–`09`, `adr/`, `open-questions.md`)는 동결됐다.** 더 고치지 않는다. 어긋남은 원장의 충돌 칸에 적는다. 원장이 인용하는 옛 문서의 `path:line`은 모두 커밋 `ba398c330` 기준 줄 번호다(그 뒤 옛 문서는 바뀌지 않았다).
 - **18라운드가 닫혔고, 소유자가 검토했고, 결정은 봉인됐다.**
   - 편집자 결정의 정본은 `reviews/round-18-closing.md`의 블록 `18C-01`…`18C-105`이다. 모든 결정에 【추론】 표지가 있다.
@@ -13,11 +14,11 @@
     - 94–103: 채움 시점(WRITE-090)이 드러낸 파생(Refresh 범위, 순회 예산, 잠복 원본, 스냅숏 자리, 진단 초기화, 이주 행 셋, null 계약, `resetSubtree()` 범위, 에지 기준, 정리).
     - 104: 게이트 3이 찾은 U7의 반례를 닫은 정련(쓰기 경계는 정적 목록, 전이 단계는 원래 쓰인 값을 최종 유효 목록으로). 게이트 3 원문은 `reviews/raw-round18-tests/gate3-union-fill.md`.
     - 105: 최종 정합성 검증(codex·antigravity, `reviews/raw-round18-final-check.md`)이 찾은 13건을 닫은 블록 — U7의 게이트 되먹임은 전이 라운드 상한 안에서 다음 라운드를 부르고 원본 B에는 쓰기 경계의 해석만 남음, `VALIDATOR_COMPILE_FAILED`는 폼 수준 기록, 정적 선언 없는 이름의 분기 fold 불일치는 청사진 오류, `node.type`은 여덟, `push(v)`의 스냅숏 생성 값, 유효 목록의 "같은 참조" 뜻, 목록 밖 `default`는 노드가 생길 때마다.
-  - 소유자 답은 `reviews/round-18-owner-answers.md:24-46`이다(`ledger/checks/owner-answers.tsv` 240건, 모두 인용됨). 요약은 `reviews/round-18-closing-summary.md` §D(24–37행). 38–41행은 설계서 검토 메모, 42–46행은 개발계획 결정(2026-09-27)이며 모두 원장에 반영됐다.
+  - 소유자 답은 `reviews/round-18-owner-answers.md:24-46`이다(`ledger/checks/owner-answers.tsv` 242건(19라운드 둘 포함), 모두 인용됨). 요약은 `reviews/round-18-closing-summary.md` §D(24–37행). 38–41행은 설계서 검토 메모, 42–46행은 개발계획 결정(2026-09-27)이며 모두 원장에 반영됐다.
     - 24 union 규칙 A(순서 없음, 받아 주는 형이 하나일 때만 변환), 25 안쪽 이름 통일, 26 **채움은 노드가 생길 때만(B안)** — `setValue(V)`는 로드가 아니다, 27 명령 넷, 28 용어(`union`·variant 호스트).
     - 29–37 union 설계: 객체·배열 포함 union을 터미널 한정으로 허용, 형 없는 원시 `anyOf`는 분기 형을 모음, 필드는 `type`(종류)·`schemaType`(계산된 허용 형 목록, union만 배열, `'null'` 제외)·`nullable`, 형 없는 `const`·`enum` 분기와 객체·원시 혼합 `oneOf`는 오류, 값을 바꾸는 검증기는 `bind` 거부, Hint·props의 `type`은 종류, 좁힘은 연언의 교집합(정적은 청사진에서, 게이트는 켜진 동안 유효 목록만).
   - union 설계는 스웜(렌즈 넷 → 검증 둘 → 병합 → codex·antigravity 교차 확인 → 2·3판)으로 만들었다. 작업 파일은 `reviews/raw-round18-union-swarm/`(정본 설계 `merged-v3.md`), 시험 보고는 `reviews/raw-round18-tests/`(표준 대조 둘, 원장 정합성 시험 둘, 1차 교차 확인 둘).
-- **기계 검사는 모두 문제 0이다(§4).** 소유자 답 240/240, 정확 일치 225 항목, 블록 105/105, 문장 검사 17 영역 0/0, 토큰 잔여 484(원장 반영은 잔여를 늘리지 않았고, 늘어난 것은 이 문서의 자기 서술 토큰이다 — `ledger/checks/token-review.md` 끝 절).
+- **기계 검사는 모두 문제 0이다(§4).** 소유자 답 242/242, 정확 일치 225 항목, 블록 105/105, 문장 검사 17 영역 0/0, 토큰 잔여 488(19라운드 뒤; 원장 쪽 잔여는 482로 줄었고, 늘어난 것은 이 문서가 19라운드 파일을 가리키는 자기 서술 토큰이다 — `ledger/checks/token-review.md` 끝 절).
 - **의미 게이트(게이트 3)는 13건을 찾아 모두 고쳤다.** 원문은 `reviews/raw-round18-tests/gate3-union-fill.md`. 게이트가 "확인하지 못한 것"으로 남긴 둘(정적 선언이 없는 이름에서 게이트 없는 분기끼리 fold가 다를 때, EVENT-072의 "한 로드에 한 번"이 `VALIDATOR_COMPILE_FAILED`에서 뜻하는 것)은 §2의 최종 검증(E)에 넣는다.
 
 ## 2. 다음 할 일 — 순서대로
@@ -88,7 +89,7 @@ node ledger/checks/plan-links.mjs plan/README.md plan/*/*.md -- ledger/*.md   # 
 
 - **원천 묶음.** `bundle-*.md`는 `section-map.tsv`에서 언제든 다시 만든다.
 - **문장 검사.** 인용을 먼저 보고 분류 행을 본다. 그래서 인용된 문장에 남은 낡은 분류 행은 무해하다.
-- **토큰 잔여.** 지금 484이다. 원장 쪽 잔여는 HEAD 잔여의 부분집합이고, 나머지는 HANDOFF의 자기 서술 토큰이다(`ledger/checks/token-review.md`).
+- **토큰 잔여.** 지금 488이다(19라운드 뒤). 원장 쪽 잔여는 HEAD 잔여의 부분집합이고, 나머지는 HANDOFF의 자기 서술 토큰이다(`ledger/checks/token-review.md`).
 - **`verbatim-check`의 한계.** 인용한 줄이 출처 파일 어딘가에 있는지만 본다. 그래서 줄 범위가 틀리거나, 줄이 빠지거나, 순서가 바뀐 것은 잡지 못한다.
   - 18라운드에서는 세션 scratchpad의 임시 스크립트 셋(`exact-check.mjs` 정확 일치, `block-check.mjs` 블록 덮개와 항목↔블록 이름, `diff-guard.mjs` 옛 항목은 자라기만 한다)으로 이것을 보았다. 저장소에는 없다. 정본 블록을 새로 반영할 때는 같은 대조를 다시 만든다(각 40–80줄).
 
@@ -102,13 +103,16 @@ node ledger/checks/plan-links.mjs plan/README.md plan/*/*.md -- ledger/*.md   # 
 | `ledger/checks/*.mjs` | 검사 도구(`lib.mjs`의 문장 분할이 조각 출처 `path:line#n`의 기준) |
 | `ledger/checks/section-map.tsv` | 옛 문서를 절 단위로 영역에 배정한 표(421절) |
 | `ledger/checks/sentence-classified.tsv` | 원장에 인용되지 않은 문장의 분류(RESTATES·VIEW·HISTORY·OUT) |
-| `ledger/checks/owner-answers.tsv` | 기록된 소유자 답 목록(240) |
+| `ledger/checks/owner-answers.tsv` | 기록된 소유자 답 목록(242) |
 | `ledger/checks/token-review.md` | 토큰 검사 잔여의 판정 |
 | `plan/README.md`, `plan/<순서>-<이름>/` | 개발계획(2026-09-27): 우산 구조(`1.0.0-beta`, PR #344)와 순서, PR 디렉토리 열 개(01 설계문서 … 09 정리·릴리스, 릴리스 전환)마다 문서 셋 — `request.md`(개발요청서, 원장 링크), `verification.md`(검증 구성요건), `adr-and-axes.md`(ADR과 핵심 축). 형식은 PROCESS-067. 계획서는 안내이고 원장 항목이 명세다 — 2026-09-27의 전수 대조가 원장을 잃은 요약 문장을 원장 원문 인용으로 바꿨고, 계획서와 원장이 다르면 원장대로 가며 멈추지 않는다(`PLAN.md` §2 1항) |
 | `reviews/round-18-closing.md` | 18라운드 편집자 결정의 정본(18C-01…105) |
 | `reviews/round-18-closing-summary.md` | 소유자 검토용 요약(원장이 인용하지 않음). §D가 검토 결과 |
 | `reviews/round-18-agenda.md` | 18라운드 안건. 행마다 닫힘 표지 |
 | `reviews/round-18-owner-answers.md` | 18라운드 소유자 답(원문). 23행은 닫기 방식, 24–37행은 검토 결과와 union 설계, 38–41행은 설계서 검토 메모, 42–46행은 개발계획 결정(2026-09-27, 원장 반영됨) |
+| `reviews/round-19-closing.md` | 19라운드 편집자 결정의 정본(19C-01 형 없는 객체·배열 분기 호스트, 19C-02 `const`만 있는 칸). 표지 없는 줄은 소유자 답이 정한 규칙 |
+| `reviews/round-19-owner-answers.md` | 19라운드 소유자 답(원문). 7행 형 없는 객체 호스트, 8행 `const`만 있는 프로퍼티(X1) |
+| `reviews/raw-round19-typeless-object-host/` | 19라운드 작업 파일: 지시서와 초안(`brief.md`), 검증 셋(`verifier.md`·`codex.md`·`antigravity.md`), 판정과 고친 결정문(`merged-v1.md`), X1 초안, 원장 반영 계획(`ledger-plan.md`) |
 | `reviews/raw-round18-union-swarm/` | union 설계 스웜: 공통 브리프, 렌즈 넷의 제안, 검증 둘, 판정 셋, 교차 확인 둘, O7·O8 검증, 정본 설계 `merged-v3.md`, 규칙 A 전수 실행 스크립트 |
 | `reviews/raw-round18-tests/` | 표준 대조(명세·생성기·검증기·폼 라이브러리, 브랜치 노드), 원장 정합성 시험(union, 채움 시점), 1차 교차 확인(codex·antigravity), 게이트 3 원문 |
 | `reviews/raw-round18-ledger-check.md` | 원장 총검증(codex·antigravity) 원문과 판정 |

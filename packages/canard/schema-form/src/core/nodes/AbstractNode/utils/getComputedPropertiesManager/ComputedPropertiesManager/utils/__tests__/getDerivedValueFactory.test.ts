@@ -1,10 +1,10 @@
 import { describe, expect, it } from 'vitest';
 
+import { getPathManager } from '@/schema-form/core/blueprint';
 import { JSONSchemaError } from '@/schema-form/errors';
 import type { JSONSchemaWithVirtual } from '@/schema-form/types';
 
 import { getDerivedValueFactory } from '../getDerivedValueFactory/getDerivedValueFactory';
-import { getPathManager } from '../getPathManager';
 
 describe('getDerivedValueFactory', () => {
   describe('기본 동작', () => {

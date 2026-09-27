@@ -214,6 +214,8 @@
 | LANDING-204 | 우산 `1.0.0-beta`와 개발 PR 여섯 — 기반+청사진, 노드 트리·정착, 파생+상태 키·제어, 통지·검증, 배열, 전환; 자식 PR은 설계·설계문서 → 개발 여섯 → 플러그인 → 정리·릴리스, 단계 정의는 그대로 | 현행 | 소유자 답(`reviews/round-18-owner-answers.md:44` 개발계획 P3·P4), 소유자 답(`reviews/round-18-owner-answers.md:45` 개발계획 1-가) |
 | LANDING-205 | `src/__legacy__/`는 정리·릴리스 PR(PR-8)까지 참고용으로 보존 — PR-7은 진입점 전환과 레거시 import 0 점검만, 삭제는 PR-8, 우산에 딸린 무관한 파일은 정리하지 않음 | 현행 | 소유자 답(`reviews/round-18-owner-answers.md:43` 개발계획 P2) |
 | LANDING-206 | UI 플러그인 넷의 이주는 플러그인 PR(우산 순서 N+1) — `presentation.*` 이주·자사 플러그인 수정 목록·union 항목, PR-7은 기본 입력으로 검증, ajv 셋은 원장대로 PR-4, 이주 표와 이주 점검은 PR-7에 남음 | 현행 | 소유자 답(`reviews/round-18-owner-answers.md:42` 개발계획 P1) |
+| LANDING-207 | 이주(19라운드) — 형 없는 객체 분기 `oneOf`·`anyOf`(pydantic·zod·OpenAPI·TypeBox)는 object variant 호스트, `Optional[Self]`는 `RECURSIVE_SHAPE_UNBOUNDED` | 현행 | 편집자 결정(19라운드, `reviews/round-19-closing.md` 19C-01) |
+| LANDING-208 | 이주(19라운드) — `type` 없이 `const`·`enum`만 있는 프로퍼티(OpenAPI 3.1·JSON Schema 2020-12 관용구, 수기 태그)는 리터럴 종류의 원시 잎 | 현행 | 편집자 결정(19라운드, `reviews/round-19-closing.md` 19C-02) |
 
 ## 항목
 
@@ -1953,7 +1955,8 @@
 
 - 결정:
   > 이주(LANDING-128): 재귀 객체 스키마의 실패 모양이 오늘의 `UNKNOWN_JSON_SCHEMA` 또는 스택 넘침에서 청사진 오류 `JSON_SCHEMA_ERROR.RECURSIVE_SHAPE_UNBOUNDED`(가칭)로 바뀐다(서지 않는 것은 같고, 명시적 코드가 생긴다).
-- 보충: 없음
+- 보충:
+  > 편집자 결정(19C-01): "【추론】 pydantic `Optional[Self]`처럼 그 호스트가 게이트 없는 객체 프로퍼티 순환을 이루면 실패 코드가 `UNKNOWN_JSON_SCHEMA`에서 `RECURSIVE_SHAPE_UNBOUNDED`로 바뀐다." (`reviews/round-19-closing.md:27`)
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:33`(정본)
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-01)
@@ -2921,3 +2924,26 @@
 - 닫은 사람: 소유자 답(`reviews/round-18-owner-answers.md:42` 개발계획 P1)
 - 라운드: 18
 - 까닭: `reviews/round-18-owner-answers.md:42`
+
+### LANDING-207 이주(19라운드) — 형 없는 객체 분기 `oneOf`·`anyOf`(pydantic·zod·OpenAPI·TypeBox)는 object variant 호스트, `Optional[Self]`는 `RECURSIVE_SHAPE_UNBOUNDED`
+
+- 결정:
+  > 【추론】 이주(LANDING-207): 형 없는 객체 분기 `oneOf`·`anyOf`(pydantic·zod·OpenAPI·TypeBox)는 오늘 `UNKNOWN_JSON_SCHEMA`이고(`extractSchemaInfo.ts:23`), 새 설계에서는 object variant 호스트다.
+  > 【추론】 pydantic `Optional[Self]`처럼 그 호스트가 게이트 없는 객체 프로퍼티 순환을 이루면 실패 코드가 `UNKNOWN_JSON_SCHEMA`에서 `RECURSIVE_SHAPE_UNBOUNDED`로 바뀐다.
+- 보충: 없음
+- 상태: 현행
+- 출처: `reviews/round-19-closing.md:26-27`(정본)
+- 닫은 사람: 편집자 결정(19라운드, `reviews/round-19-closing.md` 19C-01)
+- 라운드: 19
+- 까닭: `reviews/round-19-closing.md:31`
+
+### LANDING-208 이주(19라운드) — `type` 없이 `const`·`enum`만 있는 프로퍼티(OpenAPI 3.1·JSON Schema 2020-12 관용구, 수기 태그)는 리터럴 종류의 원시 잎
+
+- 결정:
+  > 【추론】 이주(LANDING-208): `type` 없이 `const`·`enum`만 있는 프로퍼티(OpenAPI 3.1·JSON Schema 2020-12 관용구, 수기 태그)는 오늘 `UNKNOWN_JSON_SCHEMA`이고(`extractSchemaInfo.ts:23`), 새 설계에서는 리터럴 종류의 원시 잎이다.
+- 보충: 없음
+- 상태: 현행
+- 출처: `reviews/round-19-closing.md:45`(정본)
+- 닫은 사람: 편집자 결정(19라운드, `reviews/round-19-closing.md` 19C-02)
+- 라운드: 19
+- 까닭: `reviews/round-19-closing.md:48`

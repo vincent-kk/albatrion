@@ -1,0 +1,7 @@
+🧹 Clean slate: dist directory cleared
+<DIR>/index.mjs  chunk │ size: 261.37 kB
+<DIR>/index.cjs  chunk │ size: 271.97 kB
+
+✔ rolldown v1.2.0 Finished in 48.13 ms
+Fixed 777 imports in 375 .d.ts files.
+✓ agents-hashes.json written: 14 file(s) → /Users/Vincent/Workspace/albatrion/packages/canard/schema-form/dist/agents-hashes.json
