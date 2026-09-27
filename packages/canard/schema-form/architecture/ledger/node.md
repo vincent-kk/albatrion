@@ -248,6 +248,8 @@
 - 까닭: `reviews/raw-round17-node-structure.md:133`, `09-landing-and-test-strategy.md:113`(아홉째 문장)
 - 충돌:
   > `09-landing-and-test-strategy.md:113`의 "가드 아홉은 이름을 유지한다."는 18라운드 결정과 다르다: (가칭) `isUnionNode`가 더해져 공개 가드는 열이다(NODE-041). 이름을 유지하는 규칙은 그대로다. 18라운드 결정이 이긴다(`reviews/round-18-closing.md:77`).
+  > `09-landing-and-test-strategy.md:113`의 "나머지 여덟 가운데 여섯"은 18라운드 결정과 다르다: `isUnionNode`도 `isSchemaNode(x) && x.type === 'union'`이므로 나머지 아홉 가운데 일곱이 `type`으로, `isBranchNode`·`isTerminalNode`가 `strategy`로 판정한다(NODE-041). 18라운드 결정이 이긴다(`reviews/round-18-closing.md:2347-2348`).
+  > `09-landing-and-test-strategy.md:113`의 "공개 가드 아홉"은 18라운드 결정과 다르다: 공개 가드는 열이다(NODE-041). 18라운드 결정이 이긴다(`reviews/round-18-closing.md:77`).
 
 ### NODE-016 의존 방향 — fractal의 전순서와 조건 셋
 
@@ -794,7 +796,9 @@
   > 【추론】 core만 쓰는 호스트(예: 코어 시나리오 러너)는 포커스 개념이 없다.
   > 【추론】 자른 값이 필요하면 `setValue`로 쓴다.
   > 【추론】 뒤에 공개 core 진입점(하위 경로 수출)을 두게 되면, 그때 통로를 그 진입점의 계약으로 이름 붙여 여는 것이 계약 변경이다.
-- 보충: 없음
+- 보충:
+  > 편집자 결정(18C-48, 물음의 제목): "내부 통로를 core만 쓰는 호스트에 열지" (`reviews/round-18-closing.md:1308`)
+  > 편집자 결정(18C-48, 닫는 항목): "NODE-019(내부 통로)" (`reviews/round-18-closing.md:1310`)
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:1312-1320`(정본)
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-48)

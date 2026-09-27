@@ -166,6 +166,8 @@
 - 닫은 사람: 원리(P2, `03-mental-model.md:74`), 소유자 답(`reviews/round-13-owner-answers.md:8` 2 나감 비움 기본값; 나감의 비움)
 - 라운드: 13
 - 까닭: `adr/0013-core-does-not-rewrite-values.md:36`
+- 충돌:
+  > `adr/0013-core-does-not-rewrite-values.md:36`의 "규칙은 노드가 생길 때의 채움과 그 원천 `controls.default`·`default`, 예약 층의 `controls.derived`·`controls.injectTo`·`controls.unsetValue`, 그리고 정책이 참으로 정해진 노드의 나감 비움이다."는 소유자 답과 다르다: 포커스 아웃 `trim`이 자른 값의 쓰기도 core의 자동 쓰기(여섯째)이며 작성자가 선언한 `options.trim`의 규칙이다(WRITE-078). 소유자 답이 이긴다(`reviews/round-18-owner-answers.md:12`).
 
 ### WRITE-006 쓰기의 종류는 호출자가 선언한다 — core는 추론하지 않는다(D-4)
 
@@ -333,6 +335,7 @@
 - 까닭: `06-conclusions.md:167`, `reviews/round-18-closing.md:1686-1690`
 - 충돌:
   > `adr/0013-core-does-not-rewrite-values.md:65`의 "로드(전체 교체, `reset`, 마운트)뿐 아니라"는 소유자 답과 다르다: 전체 교체(`setValue(V)`)는 로드가 아니라 전체 교체 쓰기이고, 로드는 마운트·`FormHandle.reset()`·`resetSubtree()`뿐이며, `DisableAutomaticWrites`는 그 쓰기로 새로 생긴 노드의 채움과 다른 자동 쓰기를 끈다(WRITE-090). 소유자 답이 이긴다(`reviews/round-18-owner-answers.md:26`).
+  > `adr/0013-core-does-not-rewrite-values.md:65`의 "억제는 그 호출이 일으킨 예약 층의 자동 쓰기 전부를 막는다 — 채움, `controls.derived`, `controls.injectTo`, `controls.unsetValue`, 나감의 비움"은 소유자 답과 다르다: 포커스 아웃 `trim`이 자른 값의 쓰기도 자동 쓰기(여섯째)이자 억제 비트의 대상이라 억제를 켠 폼에서는 포커스 아웃 때 자르지 않는다(WRITE-078). 소유자 답이 이긴다(`reviews/round-18-owner-answers.md:12`).
 
 ### WRITE-016 `Refresh`는 옵션이 아니라 core가 출처로 판단한다
 
@@ -768,6 +771,8 @@
 - 닫은 사람: 16라운드 스웜 수렴(편집자 결정, `09-landing-and-test-strategy.md:79`), 소유자 답(`reviews/round-16-owner-answers.md:16` 10), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-95; 전체 교체 쓰기도 순회)
 - 라운드: 18
 - 까닭: `09-landing-and-test-strategy.md:98`
+- 충돌:
+  > `09-landing-and-test-strategy.md:98`의 "트리 전체 순회 한 번(로드에만 허용, 08 §7)"는 18C-95의 결정과 다르다: 트리 전체 순회는 로드와, 쓰기가 닿은 하위 트리를 도는 전체 교체 쓰기에서만 허용한다(SETTLE-047). 18C-95의 결정이 이긴다(`reviews/round-18-closing.md:2747`).
 
 ### WRITE-052 노드마다 타입에 맞는 parse — 뜻이 그대로인 변환만(형 정규화, ADR 0013 결정 1의 이름 붙은 예외)
 
@@ -847,6 +852,8 @@
 - 까닭: `reviews/round-18-owner-answers.md:7`, `reviews/round-18-closing.md:997-999`
 - 충돌:
   > `reviews/round-18-closing.md:990`의 "`type`에 적힌 순서로 부르므로"는 소유자 답과 다르다: `union` 노드의 해석은 `type`의 선언 순서도 검증기 플러그인의 규칙도 쓰지 않고, 변환 목록(WRITE-075)으로 받아 줄 형이 정확히 하나일 때만 그 형으로 바꾼다(BLUEPRINT-042). 소유자 답이 이긴다(`reviews/round-18-owner-answers.md:24`).
+  > `reviews/round-18-owner-answers.md:7`의 "parse는 각 동작 행의 `interpret`(입력 해석) 칸이 부르고"는 18C-92의 결정과 다르다: 기본 union 입력도 같은 내부 함수를 쓰지 않는 호출로 부른다(REACT-033, NODE-056). 18C-92의 결정이 이긴다(`reviews/round-18-closing.md:2577`).
+  > `reviews/round-18-closing.md:989`의 "부르는 쪽은 동작 행의 `interpret` 칸뿐이다"는 18C-92의 결정과 다르다: 기본 union 입력도 같은 내부 함수를 쓰지 않는 호출로 부른다(REACT-033). 18C-92의 결정이 이긴다(`reviews/round-18-closing.md:2577`).
 
 ### WRITE-057 S1 결정의 후속 세부
 
