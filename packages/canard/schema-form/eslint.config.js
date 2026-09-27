@@ -9,6 +9,31 @@ const __dirname = path.dirname(__filename);
 
 export default [
   ...createESLintConfig(path.resolve(__dirname, './tsconfig.json')),
+  {
+    files: [
+      'src/core/blueprint/**/*.{ts,tsx}',
+      'src/helpers/schemaIntersection/**/*.{ts,tsx}',
+    ],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              group: [
+                '@/schema-form/__legacy__',
+                '@/schema-form/__legacy__/**',
+                '**/__legacy__',
+                '**/__legacy__/**',
+              ],
+              message:
+                'New engine modules must not import the preserved legacy implementation (LANDING-159).',
+            },
+          ],
+        },
+      ],
+    },
+  },
   // Friend-zone boundary for internal node members.
   // `__member__` APIs on nodes are `public @internal` (stripped from public
   // d.ts via stripInternal) so the strategy/manager friend zone (src/core,

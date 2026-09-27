@@ -1,0 +1,407 @@
+{
+  "stage": "02-foundation-and-blueprint",
+  "sourceBase": "src/",
+  "targetBase": "src/__legacy__/",
+  "files": [
+    {
+      "source": "src/helpers/jsonSchema/preprocessSchema/DETAIL.md",
+      "target": "src/__legacy__/helpers/jsonSchema/preprocessSchema/DETAIL.md",
+      "kind": "contract"
+    },
+    {
+      "source": "src/helpers/jsonSchema/preprocessSchema/INTENT.md",
+      "target": "src/__legacy__/helpers/jsonSchema/preprocessSchema/INTENT.md",
+      "kind": "contract"
+    },
+    {
+      "source": "src/helpers/jsonSchema/preprocessSchema/index.ts",
+      "target": "src/__legacy__/helpers/jsonSchema/preprocessSchema/index.ts",
+      "kind": "source-or-test"
+    },
+    {
+      "source": "src/helpers/jsonSchema/preprocessSchema/preprocessSchema.ts",
+      "target": "src/__legacy__/helpers/jsonSchema/preprocessSchema/preprocessSchema.ts",
+      "kind": "source-or-test"
+    },
+    {
+      "source": "src/helpers/jsonSchema/preprocessSchema/utils/__tests__/processOneOfSchema.test.ts",
+      "target": "src/__legacy__/helpers/jsonSchema/preprocessSchema/utils/__tests__/processOneOfSchema.test.ts",
+      "kind": "source-or-test"
+    },
+    {
+      "source": "src/helpers/jsonSchema/preprocessSchema/utils/__tests__/processVirtualSchema.test.ts",
+      "target": "src/__legacy__/helpers/jsonSchema/preprocessSchema/utils/__tests__/processVirtualSchema.test.ts",
+      "kind": "source-or-test"
+    },
+    {
+      "source": "src/helpers/jsonSchema/preprocessSchema/utils/processOneOfSchema/DETAIL.md",
+      "target": "src/__legacy__/helpers/jsonSchema/preprocessSchema/utils/processOneOfSchema/DETAIL.md",
+      "kind": "contract"
+    },
+    {
+      "source": "src/helpers/jsonSchema/preprocessSchema/utils/processOneOfSchema/INTENT.md",
+      "target": "src/__legacy__/helpers/jsonSchema/preprocessSchema/utils/processOneOfSchema/INTENT.md",
+      "kind": "contract"
+    },
+    {
+      "source": "src/helpers/jsonSchema/preprocessSchema/utils/processOneOfSchema/index.ts",
+      "target": "src/__legacy__/helpers/jsonSchema/preprocessSchema/utils/processOneOfSchema/index.ts",
+      "kind": "source-or-test"
+    },
+    {
+      "source": "src/helpers/jsonSchema/preprocessSchema/utils/processOneOfSchema/processOneOfSchema.ts",
+      "target": "src/__legacy__/helpers/jsonSchema/preprocessSchema/utils/processOneOfSchema/processOneOfSchema.ts",
+      "kind": "source-or-test"
+    },
+    {
+      "source": "src/helpers/jsonSchema/preprocessSchema/utils/processVirtualSchema/DETAIL.md",
+      "target": "src/__legacy__/helpers/jsonSchema/preprocessSchema/utils/processVirtualSchema/DETAIL.md",
+      "kind": "contract"
+    },
+    {
+      "source": "src/helpers/jsonSchema/preprocessSchema/utils/processVirtualSchema/INTENT.md",
+      "target": "src/__legacy__/helpers/jsonSchema/preprocessSchema/utils/processVirtualSchema/INTENT.md",
+      "kind": "contract"
+    },
+    {
+      "source": "src/helpers/jsonSchema/preprocessSchema/utils/processVirtualSchema/index.ts",
+      "target": "src/__legacy__/helpers/jsonSchema/preprocessSchema/utils/processVirtualSchema/index.ts",
+      "kind": "source-or-test"
+    },
+    {
+      "source": "src/helpers/jsonSchema/preprocessSchema/utils/processVirtualSchema/processVirtualSchema.ts",
+      "target": "src/__legacy__/helpers/jsonSchema/preprocessSchema/utils/processVirtualSchema/processVirtualSchema.ts",
+      "kind": "source-or-test"
+    },
+    {
+      "source": "src/helpers/jsonSchema/preprocessSchema/utils/processVirtualSchema/utils/transformCondition.ts",
+      "target": "src/__legacy__/helpers/jsonSchema/preprocessSchema/utils/processVirtualSchema/utils/transformCondition.ts",
+      "kind": "source-or-test"
+    },
+    {
+      "source": "src/helpers/jsonSchema/processAllOfSchema/DETAIL.md",
+      "target": "src/__legacy__/helpers/jsonSchema/processAllOfSchema/DETAIL.md",
+      "kind": "contract"
+    },
+    {
+      "source": "src/helpers/jsonSchema/processAllOfSchema/INTENT.md",
+      "target": "src/__legacy__/helpers/jsonSchema/processAllOfSchema/INTENT.md",
+      "kind": "contract"
+    },
+    {
+      "source": "src/helpers/jsonSchema/processAllOfSchema/__tests__/processAllOfSchema.test.ts",
+      "target": "src/__legacy__/helpers/jsonSchema/processAllOfSchema/__tests__/processAllOfSchema.test.ts",
+      "kind": "source-or-test"
+    },
+    {
+      "source": "src/helpers/jsonSchema/processAllOfSchema/index.ts",
+      "target": "src/__legacy__/helpers/jsonSchema/processAllOfSchema/index.ts",
+      "kind": "source-or-test"
+    },
+    {
+      "source": "src/helpers/jsonSchema/processAllOfSchema/intersectSchema/DETAIL.md",
+      "target": "src/__legacy__/helpers/jsonSchema/processAllOfSchema/intersectSchema/DETAIL.md",
+      "kind": "contract"
+    },
+    {
+      "source": "src/helpers/jsonSchema/processAllOfSchema/intersectSchema/INTENT.md",
+      "target": "src/__legacy__/helpers/jsonSchema/processAllOfSchema/intersectSchema/INTENT.md",
+      "kind": "contract"
+    },
+    {
+      "source": "src/helpers/jsonSchema/processAllOfSchema/intersectSchema/__test__/intersectArraySchema.test.ts",
+      "target": "src/__legacy__/helpers/jsonSchema/processAllOfSchema/intersectSchema/__test__/intersectArraySchema.test.ts",
+      "kind": "source-or-test"
+    },
+    {
+      "source": "src/helpers/jsonSchema/processAllOfSchema/intersectSchema/__test__/intersectBooleanSchema.test.ts",
+      "target": "src/__legacy__/helpers/jsonSchema/processAllOfSchema/intersectSchema/__test__/intersectBooleanSchema.test.ts",
+      "kind": "source-or-test"
+    },
+    {
+      "source": "src/helpers/jsonSchema/processAllOfSchema/intersectSchema/__test__/intersectNullSchema.test.ts",
+      "target": "src/__legacy__/helpers/jsonSchema/processAllOfSchema/intersectSchema/__test__/intersectNullSchema.test.ts",
+      "kind": "source-or-test"
+    },
+    {
+      "source": "src/helpers/jsonSchema/processAllOfSchema/intersectSchema/__test__/intersectNumberSchema.test.ts",
+      "target": "src/__legacy__/helpers/jsonSchema/processAllOfSchema/intersectSchema/__test__/intersectNumberSchema.test.ts",
+      "kind": "source-or-test"
+    },
+    {
+      "source": "src/helpers/jsonSchema/processAllOfSchema/intersectSchema/__test__/intersectObjectSchema.test.ts",
+      "target": "src/__legacy__/helpers/jsonSchema/processAllOfSchema/intersectSchema/__test__/intersectObjectSchema.test.ts",
+      "kind": "source-or-test"
+    },
+    {
+      "source": "src/helpers/jsonSchema/processAllOfSchema/intersectSchema/__test__/intersectStringSchema.test.ts",
+      "target": "src/__legacy__/helpers/jsonSchema/processAllOfSchema/intersectSchema/__test__/intersectStringSchema.test.ts",
+      "kind": "source-or-test"
+    },
+    {
+      "source": "src/helpers/jsonSchema/processAllOfSchema/intersectSchema/index.ts",
+      "target": "src/__legacy__/helpers/jsonSchema/processAllOfSchema/intersectSchema/index.ts",
+      "kind": "source-or-test"
+    },
+    {
+      "source": "src/helpers/jsonSchema/processAllOfSchema/intersectSchema/intersectArraySchema.ts",
+      "target": "src/__legacy__/helpers/jsonSchema/processAllOfSchema/intersectSchema/intersectArraySchema.ts",
+      "kind": "source-or-test"
+    },
+    {
+      "source": "src/helpers/jsonSchema/processAllOfSchema/intersectSchema/intersectBooleanSchema.ts",
+      "target": "src/__legacy__/helpers/jsonSchema/processAllOfSchema/intersectSchema/intersectBooleanSchema.ts",
+      "kind": "source-or-test"
+    },
+    {
+      "source": "src/helpers/jsonSchema/processAllOfSchema/intersectSchema/intersectNullSchema.ts",
+      "target": "src/__legacy__/helpers/jsonSchema/processAllOfSchema/intersectSchema/intersectNullSchema.ts",
+      "kind": "source-or-test"
+    },
+    {
+      "source": "src/helpers/jsonSchema/processAllOfSchema/intersectSchema/intersectNumberSchema.ts",
+      "target": "src/__legacy__/helpers/jsonSchema/processAllOfSchema/intersectSchema/intersectNumberSchema.ts",
+      "kind": "source-or-test"
+    },
+    {
+      "source": "src/helpers/jsonSchema/processAllOfSchema/intersectSchema/intersectObjectSchema.ts",
+      "target": "src/__legacy__/helpers/jsonSchema/processAllOfSchema/intersectSchema/intersectObjectSchema.ts",
+      "kind": "source-or-test"
+    },
+    {
+      "source": "src/helpers/jsonSchema/processAllOfSchema/intersectSchema/intersectStringSchema.ts",
+      "target": "src/__legacy__/helpers/jsonSchema/processAllOfSchema/intersectSchema/intersectStringSchema.ts",
+      "kind": "source-or-test"
+    },
+    {
+      "source": "src/helpers/jsonSchema/processAllOfSchema/intersectSchema/utils/__tests__/distributeSubSchema.test.ts",
+      "target": "src/__legacy__/helpers/jsonSchema/processAllOfSchema/intersectSchema/utils/__tests__/distributeSubSchema.test.ts",
+      "kind": "source-or-test"
+    },
+    {
+      "source": "src/helpers/jsonSchema/processAllOfSchema/intersectSchema/utils/__tests__/intersectBooleanOr.test.ts",
+      "target": "src/__legacy__/helpers/jsonSchema/processAllOfSchema/intersectSchema/utils/__tests__/intersectBooleanOr.test.ts",
+      "kind": "source-or-test"
+    },
+    {
+      "source": "src/helpers/jsonSchema/processAllOfSchema/intersectSchema/utils/__tests__/intersectConst.test.ts",
+      "target": "src/__legacy__/helpers/jsonSchema/processAllOfSchema/intersectSchema/utils/__tests__/intersectConst.test.ts",
+      "kind": "source-or-test"
+    },
+    {
+      "source": "src/helpers/jsonSchema/processAllOfSchema/intersectSchema/utils/__tests__/intersectEnum.test.ts",
+      "target": "src/__legacy__/helpers/jsonSchema/processAllOfSchema/intersectSchema/utils/__tests__/intersectEnum.test.ts",
+      "kind": "source-or-test"
+    },
+    {
+      "source": "src/helpers/jsonSchema/processAllOfSchema/intersectSchema/utils/__tests__/intersectMaximum.test.ts",
+      "target": "src/__legacy__/helpers/jsonSchema/processAllOfSchema/intersectSchema/utils/__tests__/intersectMaximum.test.ts",
+      "kind": "source-or-test"
+    },
+    {
+      "source": "src/helpers/jsonSchema/processAllOfSchema/intersectSchema/utils/__tests__/intersectMinimum.test.ts",
+      "target": "src/__legacy__/helpers/jsonSchema/processAllOfSchema/intersectSchema/utils/__tests__/intersectMinimum.test.ts",
+      "kind": "source-or-test"
+    },
+    {
+      "source": "src/helpers/jsonSchema/processAllOfSchema/intersectSchema/utils/__tests__/intersectMultipleOf.test.ts",
+      "target": "src/__legacy__/helpers/jsonSchema/processAllOfSchema/intersectSchema/utils/__tests__/intersectMultipleOf.test.ts",
+      "kind": "source-or-test"
+    },
+    {
+      "source": "src/helpers/jsonSchema/processAllOfSchema/intersectSchema/utils/__tests__/intersectPattern.test.ts",
+      "target": "src/__legacy__/helpers/jsonSchema/processAllOfSchema/intersectSchema/utils/__tests__/intersectPattern.test.ts",
+      "kind": "source-or-test"
+    },
+    {
+      "source": "src/helpers/jsonSchema/processAllOfSchema/intersectSchema/utils/__tests__/processFirstWinFields.test.ts",
+      "target": "src/__legacy__/helpers/jsonSchema/processAllOfSchema/intersectSchema/utils/__tests__/processFirstWinFields.test.ts",
+      "kind": "source-or-test"
+    },
+    {
+      "source": "src/helpers/jsonSchema/processAllOfSchema/intersectSchema/utils/__tests__/processOverwriteFields.test.ts",
+      "target": "src/__legacy__/helpers/jsonSchema/processAllOfSchema/intersectSchema/utils/__tests__/processOverwriteFields.test.ts",
+      "kind": "source-or-test"
+    },
+    {
+      "source": "src/helpers/jsonSchema/processAllOfSchema/intersectSchema/utils/__tests__/processSchemaType.test.ts",
+      "target": "src/__legacy__/helpers/jsonSchema/processAllOfSchema/intersectSchema/utils/__tests__/processSchemaType.test.ts",
+      "kind": "source-or-test"
+    },
+    {
+      "source": "src/helpers/jsonSchema/processAllOfSchema/intersectSchema/utils/__tests__/unionRequired.test.ts",
+      "target": "src/__legacy__/helpers/jsonSchema/processAllOfSchema/intersectSchema/utils/__tests__/unionRequired.test.ts",
+      "kind": "source-or-test"
+    },
+    {
+      "source": "src/helpers/jsonSchema/processAllOfSchema/intersectSchema/utils/__tests__/validateRange.test.ts",
+      "target": "src/__legacy__/helpers/jsonSchema/processAllOfSchema/intersectSchema/utils/__tests__/validateRange.test.ts",
+      "kind": "source-or-test"
+    },
+    {
+      "source": "src/helpers/jsonSchema/processAllOfSchema/intersectSchema/utils/constants.ts",
+      "target": "src/__legacy__/helpers/jsonSchema/processAllOfSchema/intersectSchema/utils/constants.ts",
+      "kind": "source-or-test"
+    },
+    {
+      "source": "src/helpers/jsonSchema/processAllOfSchema/intersectSchema/utils/distributeSubSchema.ts",
+      "target": "src/__legacy__/helpers/jsonSchema/processAllOfSchema/intersectSchema/utils/distributeSubSchema.ts",
+      "kind": "source-or-test"
+    },
+    {
+      "source": "src/helpers/jsonSchema/processAllOfSchema/intersectSchema/utils/intersectBooleanOr.ts",
+      "target": "src/__legacy__/helpers/jsonSchema/processAllOfSchema/intersectSchema/utils/intersectBooleanOr.ts",
+      "kind": "source-or-test"
+    },
+    {
+      "source": "src/helpers/jsonSchema/processAllOfSchema/intersectSchema/utils/intersectConst.ts",
+      "target": "src/__legacy__/helpers/jsonSchema/processAllOfSchema/intersectSchema/utils/intersectConst.ts",
+      "kind": "source-or-test"
+    },
+    {
+      "source": "src/helpers/jsonSchema/processAllOfSchema/intersectSchema/utils/intersectEnum.ts",
+      "target": "src/__legacy__/helpers/jsonSchema/processAllOfSchema/intersectSchema/utils/intersectEnum.ts",
+      "kind": "source-or-test"
+    },
+    {
+      "source": "src/helpers/jsonSchema/processAllOfSchema/intersectSchema/utils/intersectMaximum.ts",
+      "target": "src/__legacy__/helpers/jsonSchema/processAllOfSchema/intersectSchema/utils/intersectMaximum.ts",
+      "kind": "source-or-test"
+    },
+    {
+      "source": "src/helpers/jsonSchema/processAllOfSchema/intersectSchema/utils/intersectMinimum.ts",
+      "target": "src/__legacy__/helpers/jsonSchema/processAllOfSchema/intersectSchema/utils/intersectMinimum.ts",
+      "kind": "source-or-test"
+    },
+    {
+      "source": "src/helpers/jsonSchema/processAllOfSchema/intersectSchema/utils/intersectMultipleOf.ts",
+      "target": "src/__legacy__/helpers/jsonSchema/processAllOfSchema/intersectSchema/utils/intersectMultipleOf.ts",
+      "kind": "source-or-test"
+    },
+    {
+      "source": "src/helpers/jsonSchema/processAllOfSchema/intersectSchema/utils/intersectPattern.ts",
+      "target": "src/__legacy__/helpers/jsonSchema/processAllOfSchema/intersectSchema/utils/intersectPattern.ts",
+      "kind": "source-or-test"
+    },
+    {
+      "source": "src/helpers/jsonSchema/processAllOfSchema/intersectSchema/utils/processFirstWinFields.ts",
+      "target": "src/__legacy__/helpers/jsonSchema/processAllOfSchema/intersectSchema/utils/processFirstWinFields.ts",
+      "kind": "source-or-test"
+    },
+    {
+      "source": "src/helpers/jsonSchema/processAllOfSchema/intersectSchema/utils/processOverwriteFields.ts",
+      "target": "src/__legacy__/helpers/jsonSchema/processAllOfSchema/intersectSchema/utils/processOverwriteFields.ts",
+      "kind": "source-or-test"
+    },
+    {
+      "source": "src/helpers/jsonSchema/processAllOfSchema/intersectSchema/utils/processSchemaType.ts",
+      "target": "src/__legacy__/helpers/jsonSchema/processAllOfSchema/intersectSchema/utils/processSchemaType.ts",
+      "kind": "source-or-test"
+    },
+    {
+      "source": "src/helpers/jsonSchema/processAllOfSchema/intersectSchema/utils/unionRequired.ts",
+      "target": "src/__legacy__/helpers/jsonSchema/processAllOfSchema/intersectSchema/utils/unionRequired.ts",
+      "kind": "source-or-test"
+    },
+    {
+      "source": "src/helpers/jsonSchema/processAllOfSchema/intersectSchema/utils/validateRange.ts",
+      "target": "src/__legacy__/helpers/jsonSchema/processAllOfSchema/intersectSchema/utils/validateRange.ts",
+      "kind": "source-or-test"
+    },
+    {
+      "source": "src/helpers/jsonSchema/processAllOfSchema/processAllOfSchema.ts",
+      "target": "src/__legacy__/helpers/jsonSchema/processAllOfSchema/processAllOfSchema.ts",
+      "kind": "source-or-test"
+    },
+    {
+      "source": "src/helpers/jsonSchema/processAllOfSchema/utils/__tests__/validateCompatibility.test.ts",
+      "target": "src/__legacy__/helpers/jsonSchema/processAllOfSchema/utils/__tests__/validateCompatibility.test.ts",
+      "kind": "source-or-test"
+    },
+    {
+      "source": "src/helpers/jsonSchema/processAllOfSchema/utils/getCloneDepth/DETAIL.md",
+      "target": "src/__legacy__/helpers/jsonSchema/processAllOfSchema/utils/getCloneDepth/DETAIL.md",
+      "kind": "contract"
+    },
+    {
+      "source": "src/helpers/jsonSchema/processAllOfSchema/utils/getCloneDepth/INTENT.md",
+      "target": "src/__legacy__/helpers/jsonSchema/processAllOfSchema/utils/getCloneDepth/INTENT.md",
+      "kind": "contract"
+    },
+    {
+      "source": "src/helpers/jsonSchema/processAllOfSchema/utils/getCloneDepth/getCloneDepth.ts",
+      "target": "src/__legacy__/helpers/jsonSchema/processAllOfSchema/utils/getCloneDepth/getCloneDepth.ts",
+      "kind": "source-or-test"
+    },
+    {
+      "source": "src/helpers/jsonSchema/processAllOfSchema/utils/getCloneDepth/index.ts",
+      "target": "src/__legacy__/helpers/jsonSchema/processAllOfSchema/utils/getCloneDepth/index.ts",
+      "kind": "source-or-test"
+    },
+    {
+      "source": "src/helpers/jsonSchema/processAllOfSchema/utils/getMergeSchemaHandler/DETAIL.md",
+      "target": "src/__legacy__/helpers/jsonSchema/processAllOfSchema/utils/getMergeSchemaHandler/DETAIL.md",
+      "kind": "contract"
+    },
+    {
+      "source": "src/helpers/jsonSchema/processAllOfSchema/utils/getMergeSchemaHandler/INTENT.md",
+      "target": "src/__legacy__/helpers/jsonSchema/processAllOfSchema/utils/getMergeSchemaHandler/INTENT.md",
+      "kind": "contract"
+    },
+    {
+      "source": "src/helpers/jsonSchema/processAllOfSchema/utils/getMergeSchemaHandler/getMergeSchemaHandler.ts",
+      "target": "src/__legacy__/helpers/jsonSchema/processAllOfSchema/utils/getMergeSchemaHandler/getMergeSchemaHandler.ts",
+      "kind": "source-or-test"
+    },
+    {
+      "source": "src/helpers/jsonSchema/processAllOfSchema/utils/getMergeSchemaHandler/index.ts",
+      "target": "src/__legacy__/helpers/jsonSchema/processAllOfSchema/utils/getMergeSchemaHandler/index.ts",
+      "kind": "source-or-test"
+    },
+    {
+      "source": "src/helpers/jsonSchema/processAllOfSchema/utils/validateCompatibility/DETAIL.md",
+      "target": "src/__legacy__/helpers/jsonSchema/processAllOfSchema/utils/validateCompatibility/DETAIL.md",
+      "kind": "contract"
+    },
+    {
+      "source": "src/helpers/jsonSchema/processAllOfSchema/utils/validateCompatibility/INTENT.md",
+      "target": "src/__legacy__/helpers/jsonSchema/processAllOfSchema/utils/validateCompatibility/INTENT.md",
+      "kind": "contract"
+    },
+    {
+      "source": "src/helpers/jsonSchema/processAllOfSchema/utils/validateCompatibility/index.ts",
+      "target": "src/__legacy__/helpers/jsonSchema/processAllOfSchema/utils/validateCompatibility/index.ts",
+      "kind": "source-or-test"
+    },
+    {
+      "source": "src/helpers/jsonSchema/processAllOfSchema/utils/validateCompatibility/validateCompatibility.ts",
+      "target": "src/__legacy__/helpers/jsonSchema/processAllOfSchema/utils/validateCompatibility/validateCompatibility.ts",
+      "kind": "source-or-test"
+    },
+    {
+      "source": "src/helpers/jsonSchema/__tests__/preprocessSchema.nullBranch.test.ts",
+      "target": "src/__legacy__/helpers/jsonSchema/__tests__/preprocessSchema.nullBranch.test.ts",
+      "kind": "source-or-test"
+    },
+    {
+      "source": "src/helpers/jsonSchema/__tests__/preprocessSchema.oneOf.test.ts",
+      "target": "src/__legacy__/helpers/jsonSchema/__tests__/preprocessSchema.oneOf.test.ts",
+      "kind": "source-or-test"
+    },
+    {
+      "source": "src/helpers/jsonSchema/__tests__/preprocessSchema.virtaul.test.ts",
+      "target": "src/__legacy__/helpers/jsonSchema/__tests__/preprocessSchema.virtaul.test.ts",
+      "kind": "source-or-test"
+    },
+    {
+      "source": "src/helpers/jsonSchema/__tests__/processAllOfSchema.maxDepth.test.ts",
+      "target": "src/__legacy__/helpers/jsonSchema/__tests__/processAllOfSchema.maxDepth.test.ts",
+      "kind": "source-or-test"
+    },
+    {
+      "source": "src/helpers/jsonSchema/__tests__/processAllOfSchema.test.ts",
+      "target": "src/__legacy__/helpers/jsonSchema/__tests__/processAllOfSchema.test.ts",
+      "kind": "source-or-test"
+    }
+  ]
+}

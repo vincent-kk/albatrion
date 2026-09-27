@@ -1,0 +1,42 @@
+│
+▲  No story files found for the specified pattern:
+│  stories/**/*.story.@(js|jsx|mjs|ts|tsx)
+│
+▲  No story files found for the specified pattern:
+│  src/**/*.story.@(js|jsx|mjs|ts|tsx)
+│
+▲  No story files found for the specified pattern: src/**/*.mdx
+│
+▲  No story files found for the specified pattern:
+│  src/**/*.stories.@(js|jsx|mjs|ts|tsx)
+│ ┌────────────────────────────────────────────────────────────────────────────┐
+│ │  Info: Found a setup file with "setProjectAnnotations".                    │
+│ │  Skipping automatic provisioning of preview annotations to avoid           │
+│ │  conflicts. Since Storybook 10.3, "@storybook/addon-vitest" applies these  │
+│ │   automatically.                                                           │
+│ │  You can safely remove the "setProjectAnnotations" call from your setup    │
+│ │  file, or remove the file entirely if you don't have custom code there.    │
+│ └────────────────────────────────────────────────────────────────────────────┘
+
+ RUN  v3.2.6 /Users/Vincent/Workspace/albatrion/packages/canard/schema-form
+
+ ✓ |unit| src/core/blueprint/__tests__/mergeEffectiveSchema.test.ts (15 tests) 7ms
+ ✓ |unit| src/core/blueprint/__tests__/blueprint.recursion.test.ts (9 tests) 8ms
+ ✓ |unit| src/core/blueprint/__tests__/blueprint.type-syntax.test.ts (11 tests) 5ms
+ ✓ |unit| src/core/blueprint/__tests__/blueprint.expressions.test.ts (8 tests) 9ms
+ ✓ |unit| src/core/blueprint/__tests__/blueprint.fragments.test.ts (15 tests) 9ms
+ ✓ |unit| src/core/blueprint/__tests__/blueprint.strategy-regression.test.ts (2 tests) 5ms
+ ✓ |unit| src/core/blueprint/__tests__/blueprint.type-gated-declarations.test.ts (8 tests) 9ms
+ ✓ |unit| src/core/blueprint/__tests__/blueprint.discriminator.test.ts (9 tests) 11ms
+ ✓ |unit| src/core/blueprint/__tests__/blueprint.type-static-intersection.test.ts (13 tests) 10ms
+ ✓ |unit| src/core/blueprint/__tests__/blueprint.diagnostics.test.ts (15 tests) 13ms
+ ✓ |unit| src/types/__tests__/formTypeInput.union.test.ts (2 tests) 1ms
+ ✓ |unit| src/core/blueprint/__tests__/stripSchema.test.ts (10 tests) 4ms
+ ✓ |unit| src/core/blueprint/__tests__/blueprint.type-inference.test.ts (12 tests) 7ms
+
+ Test Files  13 passed (13)
+      Tests  129 passed (129)
+   Start at  11:53:52
+   Duration  1.52s (transform 616ms, setup 0ms, collect 7.73s, tests 99ms, environment 14ms, prepare 1.16s)
+
+

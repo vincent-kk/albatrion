@@ -1,0 +1,59 @@
+import { isPlainObject as filterIsPlainObject } from '@/common-utils/utils/filter';
+
+import { getDataProperty } from '../../getDataProperty';
+import { setDataProperty } from '../../setDataProperty';
+import type { MergeOptions } from '../type';
+
+/** Retain the immutable filter export once for this recursive implementation. */
+const isPlainObject = filterIsPlainObject;
+
+/**
+ * Merge containers under explicit mutation and reference policies.
+ * @param target - Earlier object or array; mutated unless immutable is selected
+ * @param source - Later object or array, never mutated
+ * @param options - Policies propagated through all nested containers
+ * @param replaceArrays - Array policy resolved once by the public wrapper
+ * @returns The target or a shallow target copy containing recursively merged values
+ */
+export function mergeWithOptions<
+  Target extends Record<PropertyKey, any>,
+  Source extends Record<PropertyKey, any>,
+>(
+  target: Target,
+  source: Source,
+  options: MergeOptions,
+  replaceArrays: boolean,
+): Target & Source {
+  if (options.isAtomic?.(source) || options.isAtomic?.(target))
+    return source as unknown as Target & Source;
+  if (Array.isArray(source) && replaceArrays)
+    return source as unknown as Target & Source;
+  const result: Record<PropertyKey, any> = options.immutable
+    ? Array.isArray(target)
+      ? target.slice()
+      : { ...target }
+    : target;
+  for (const key of Object.keys(source)) {
+    const sourceValue = getDataProperty(source, key);
+    const targetValue = getDataProperty(target, key);
+    if (sourceValue === undefined && targetValue !== undefined) continue;
+    let value = sourceValue;
+    if (!options.isAtomic?.(sourceValue) && !options.isAtomic?.(targetValue)) {
+      if (Array.isArray(sourceValue)) {
+        if (!replaceArrays)
+          value = Array.isArray(targetValue)
+            ? mergeWithOptions(targetValue, sourceValue, options, replaceArrays)
+            : options.preserveReferences
+              ? sourceValue
+              : mergeWithOptions([], sourceValue, options, replaceArrays);
+      } else if (isPlainObject(sourceValue))
+        value = isPlainObject(targetValue)
+          ? mergeWithOptions(targetValue, sourceValue, options, replaceArrays)
+          : options.preserveReferences
+            ? sourceValue
+            : mergeWithOptions({}, sourceValue, options, replaceArrays);
+    }
+    setDataProperty(result, key, value);
+  }
+  return result as Target & Source;
+}

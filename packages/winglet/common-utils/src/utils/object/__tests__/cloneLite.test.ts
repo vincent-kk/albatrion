@@ -71,6 +71,25 @@ describe('cloneLite', () => {
       expect(cloned.b).not.toBe(original.b);
     });
 
+    it('should preserve null prototypes for top-level and nested objects', () => {
+      const original = Object.create(null);
+      const nested = Object.create(null);
+      nested.value = 'deep';
+      original.key = 1;
+      original.nested = nested;
+
+      const cloned = cloneLite(original);
+
+      expect(Object.getPrototypeOf(cloned)).toBeNull();
+      expect(Object.getPrototypeOf(cloned.nested)).toBeNull();
+      expect(Object.keys(cloned)).toEqual(['key', 'nested']);
+      expect(cloned.key).toBe(1);
+      expect(Object.keys(cloned.nested)).toEqual(['value']);
+      expect(cloned.nested.value).toBe('deep');
+      expect(cloned).not.toBe(original);
+      expect(cloned.nested).not.toBe(nested);
+    });
+
     it('should handle nested plain objects', () => {
       const original = {
         level1: {

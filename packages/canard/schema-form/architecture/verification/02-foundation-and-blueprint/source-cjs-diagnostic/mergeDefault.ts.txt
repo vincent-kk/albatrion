@@ -1,0 +1,41 @@
+import {
+  isArray as filterIsArray,
+  isPlainObject as filterIsPlainObject,
+} from '@/common-utils/utils/filter';
+
+/** Retain immutable filter exports once instead of reading CJS barrel getters per key. */
+const isArray = filterIsArray;
+/** Keep plain-object detection on the same immutable local-call path. */
+const isPlainObject = filterIsPlainObject;
+
+/**
+ * Mutate a target through the established optionless deep-merge rules.
+ * @param target - Mutable object or array receiving own source properties
+ * @param source - Unmodified source; own __proto__ is excluded for compatibility
+ * @returns The original target after recursive object and array-index merging
+ */
+export function mergeDefault<
+  Target extends Record<PropertyKey, any>,
+  Source extends Record<PropertyKey, any>,
+>(target: Target, source: Source): Target & Source {
+  const keys = Object.keys(source) as Array<keyof Source>;
+  for (let i = 0, k = keys[0], l = keys.length; i < l; i++, k = keys[i]) {
+    if (k === PROTOTYPE_POLLUTION_KEY) continue;
+    const sourceValue = source[k];
+    const targetValue = target[k];
+    if (isArray(sourceValue))
+      target[k] = isArray(targetValue)
+        ? mergeDefault(targetValue, sourceValue)
+        : mergeDefault([], sourceValue);
+    else if (isPlainObject(sourceValue))
+      target[k] = isPlainObject(targetValue)
+        ? mergeDefault(targetValue, sourceValue)
+        : mergeDefault({}, sourceValue);
+    else if (targetValue === undefined || sourceValue !== undefined)
+      target[k] = sourceValue;
+  }
+  return target;
+}
+
+/** Accessor key skipped by the optionless compatibility path. */
+const PROTOTYPE_POLLUTION_KEY = '__proto__';

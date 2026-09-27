@@ -1,0 +1,133 @@
+Benchmarking is an experimental feature.
+Breaking changes might not follow SemVer, please pin Vitest's version when using it.
+
+ RUN  v3.2.6 /Users/Vincent/Workspace/albatrion/packages/canard/schema-form
+
+
+ ✓ bench/compute-recalculate.bench.ts > ComputedPropertiesManager.recalculate 32009ms
+     name                                  hz     min     max    mean     p75     p99    p995    p999     rme   samples
+   · visible only (1 dep)       39,132,723.06  0.0000  0.1829  0.0000  0.0000  0.0000  0.0000  0.0001  ±0.17%  19566362
+   · visible + active (2 deps)  38,730,011.99  0.0000  1.2965  0.0000  0.0000  0.0000  0.0000  0.0001  ±0.62%  19365007
+   · derived simple (2 deps)    40,330,624.87  0.0000  0.2849  0.0000  0.0000  0.0000  0.0000  0.0001  ±0.17%  20165313
+   · derived heavy (7 deps)     40,184,074.15  0.0000  0.1945  0.0000  0.0000  0.0000  0.0000  0.0001  ±0.16%  20092038
+   · watch 5 deps               29,048,893.65  0.0000  0.3801  0.0000  0.0000  0.0000  0.0000  0.0001  ±0.83%  14524447
+   · oneOfIndex 3 branches      29,769,978.15  0.0000  0.5256  0.0000  0.0000  0.0000  0.0000  0.0001  ±0.46%  14884990
+
+ ✓ bench/object-pending-read.bench.ts > object pending read 8791ms
+     name                                                       hz     min      max    mean     p75     p99    p995     p999     rme  samples
+   · 1000 × (child write + 1 parent value read) + drain     442.33  1.0588   4.1635  2.2607  2.3564  3.2736  3.5626   4.1635  ±1.13%      664
+   · 1000 × (child write + 3 parent value reads) + drain    392.78  1.0797  20.9769  2.5459  2.4467  8.0195  9.8218  20.9769  ±4.14%      590
+   · 1000 × child write, no read + drain                    596.86  0.5014   4.4978  1.6754  1.7364  2.8858  2.9664   4.4978  ±1.47%      896
+   · 1000 × same-value write at depth 2 + drain             613.32  0.4743   3.6223  1.6305  1.7188  2.2281  2.2860   3.6223  ±1.54%      614
+   · 1000 × same-value write at depth 8 + drain             580.99  0.4863   7.7819  1.7212  1.7562  4.2437  6.6041   7.7819  ±2.90%      581
+   · 1000 × same-value write at depth 16 + drain            610.87  0.4882   3.7837  1.6370  1.7029  2.4720  2.6693   3.7837  ±1.44%      611
+   · create a 50-field form                               5,690.19  0.1222   7.0511  0.1757  0.1413  0.5184  3.4280   5.6602  ±7.35%     2859
+
+ ✓ bench/render-delay.bench.ts > render-delay: small (5 terminals) 2993ms
+     name                                                   hz     min      max    mean     p75     p99    p995    p999      rme  samples
+   · [mount] nodeFromJSONSchema (validation off)     36,653.41  0.0169  36.7352  0.0273  0.0199  0.0682  0.1056  1.0443  ±18.25%    18327
+   · [mount] nodeFromJSONSchema (validation on)      34,301.74  0.0217   9.0218  0.0292  0.0244  0.0835  0.1122  0.9473   ±6.50%    17151
+   · [guard] clone(schema)                          439,552.27  0.0020   5.5971  0.0023  0.0022  0.0027  0.0058  0.0103   ±2.66%   219777
+   · [guard] clone(defaultValue)                  2,202,891.98  0.0003   0.5147  0.0005  0.0005  0.0005  0.0006  0.0010   ±0.62%  1101446
+
+ ✓ bench/render-delay.bench.ts > render-delay: medium (25 terminals) 2667ms
+     name                                                 hz     min      max    mean     p75     p99    p995    p999     rme  samples
+   · [mount] nodeFromJSONSchema (validation off)    8,677.08  0.0862  13.5777  0.1152  0.0947  0.2291  0.5340  3.4095  ±7.80%     4339
+   · [mount] nodeFromJSONSchema (validation on)     7,647.83  0.1066   3.6851  0.1308  0.1159  0.2389  0.4225  3.2373  ±4.86%     3824
+   · [guard] clone(schema)                         82,769.32  0.0111   0.6156  0.0121  0.0120  0.0165  0.0247  0.0581  ±0.75%    41385
+   · [guard] clone(defaultValue)                  384,831.10  0.0022   1.7323  0.0026  0.0025  0.0066  0.0067  0.0200  ±1.40%   192416
+
+ ✓ bench/render-delay.bench.ts > render-delay: large (150 terminals) 2562ms
+     name                                                hz     min      max    mean     p75     p99    p995    p999     rme  samples
+   · [mount] nodeFromJSONSchema (validation off)   1,743.73  0.4582   4.9960  0.5735  0.5007  4.1275  4.2553  4.9960  ±6.12%      872
+   · [mount] nodeFromJSONSchema (validation on)    1,271.76  0.5763   8.8319  0.7863  0.6697  5.0475  5.1841  8.8319  ±7.20%      636
+   · [guard] clone(schema)                        12,929.46  0.0618  10.1810  0.0773  0.0663  0.1764  0.3305  2.6940  ±6.97%     6465
+   · [guard] clone(defaultValue)                  91,471.94  0.0095   2.8897  0.0109  0.0101  0.0273  0.0367  0.1649  ±2.15%    45736
+
+ ✓ bench/find-node.bench.ts > findNode 5557ms
+     name                                    hz     min      max    mean     p75     p99    p995    p999     rme  samples
+   · depth 3 (4 segments)          1,894,869.38  0.0004   2.3732  0.0005  0.0005  0.0006  0.0012  0.0027  ±1.35%   947435
+   · depth 7 (8 segments)          1,163,956.58  0.0007   1.4709  0.0009  0.0008  0.0010  0.0025  0.0033  ±0.87%   581979
+   · depth 12 (13 segments)          804,588.21  0.0011   0.9866  0.0012  0.0012  0.0014  0.0015  0.0068  ±0.51%   402295
+   · wide fanout 10 → last child   3,385,568.17  0.0002  15.4468  0.0003  0.0003  0.0004  0.0004  0.0009  ±7.49%  1692785
+   · wide fanout 50 → last child   2,941,016.88  0.0002   0.8788  0.0003  0.0003  0.0005  0.0005  0.0011  ±0.60%  1470509
+   · wide fanout 50 → first child  3,799,812.95  0.0001   0.4096  0.0003  0.0003  0.0004  0.0004  0.0009  ±0.44%  1899907
+
+ ✓ bench/branch-strategy-init.bench.ts > BranchStrategy init (via nodeFromJSONSchema) 5342ms
+     name                                            hz     min      max    mean     p75     p99    p995    p999      rme  samples
+   · oneOf 2 branches × 3 children            20,697.50  0.0283  35.7153  0.0483  0.0332  0.1520  0.2594  3.7833  ±16.24%    10384
+   · oneOf 5 branches × 3 children            13,444.93  0.0513  18.3025  0.0744  0.0577  0.2361  0.5148  3.1654   ±9.07%     6723
+   · oneOf 2 branches × 10 children           13,053.92  0.0592   4.6520  0.0766  0.0661  0.1712  0.2258  3.2697   ±5.16%     6527
+   · oneOf 10 branches × 10 children (heavy)   3,302.85  0.2467   4.4410  0.3028  0.2724  2.8178  3.1150  4.2714   ±4.98%     1652
+   · nested oneOf depth 3                     14,249.13  0.0533   4.7240  0.0702  0.0602  0.1704  0.2192  2.9455   ±5.26%     7151
+   · nested oneOf depth 5                      8,850.78  0.0821   6.8831  0.1130  0.0924  0.2470  0.6086  3.8828   ±6.68%     4439
+
+ ✓ bench/event-cascade.bench.ts > event cascade (macrotask drain) 3813ms
+     name                                                       hz     min      max    mean     p75     p99    p995     p999     rme  samples
+   · flat batch: 10 setValue on distinct fields + 1 drain   858.22  0.0370   2.8052  1.1652  1.2275  1.5517  1.7192   2.0958  ±1.19%     1288
+   · derived chain (a→sum→twice→label): 1 setValue + drain  834.00  0.0310   7.3270  1.1990  1.2617  2.2425  3.3063   7.3270  ±2.67%      834
+   · oneOf branch switch (a↔b): 1 setValue + drain          859.99  0.0310  10.7965  1.1628  1.2290  1.9130  2.2791  10.7965  ±2.64%      861
+
+ ✓ bench/nodeFromJSONSchema.bench.ts > nodeFromJSONSchema 2932ms
+     name                                        hz     min      max    mean     p75     p99    p995    p999      rme  samples
+   · flat (5 props, terminal only)        40,899.20  0.0163  47.8673  0.0245  0.0192  0.0570  0.0790  0.2410  ±19.55%    20450
+   · nested (2 sub-objects, 7 terminals)  23,715.99  0.0294   6.6594  0.0422  0.0328  0.1280  0.2075  3.4647   ±7.10%    11865
+   · oneOf (single branch active)         30,984.85  0.0245   3.7112  0.0323  0.0286  0.0695  0.1063  2.8323   ±4.97%    15493
+   · computed (visible + derived deps)    28,863.89  0.0228  26.5682  0.0346  0.0261  0.0928  0.1317  3.1541  ±13.22%    14432
+
+ BENCH  Summary
+
+  oneOf 2 branches × 3 children - bench/branch-strategy-init.bench.ts > BranchStrategy init (via nodeFromJSONSchema)
+    1.45x faster than nested oneOf depth 3
+    1.54x faster than oneOf 5 branches × 3 children
+    1.59x faster than oneOf 2 branches × 10 children
+    2.34x faster than nested oneOf depth 5
+    6.27x faster than oneOf 10 branches × 10 children (heavy)
+
+  derived simple (2 deps) - bench/compute-recalculate.bench.ts > ComputedPropertiesManager.recalculate
+    1.00x faster than derived heavy (7 deps)
+    1.03x faster than visible only (1 dep)
+    1.04x faster than visible + active (2 deps)
+    1.35x faster than oneOfIndex 3 branches
+    1.39x faster than watch 5 deps
+
+  oneOf branch switch (a↔b): 1 setValue + drain - bench/event-cascade.bench.ts > event cascade (macrotask drain)
+    1.00x faster than flat batch: 10 setValue on distinct fields + 1 drain
+    1.03x faster than derived chain (a→sum→twice→label): 1 setValue + drain
+
+  wide fanout 50 → first child - bench/find-node.bench.ts > findNode
+    1.12x faster than wide fanout 10 → last child
+    1.29x faster than wide fanout 50 → last child
+    2.01x faster than depth 3 (4 segments)
+    3.26x faster than depth 7 (8 segments)
+    4.72x faster than depth 12 (13 segments)
+
+  flat (5 props, terminal only) - bench/nodeFromJSONSchema.bench.ts > nodeFromJSONSchema
+    1.32x faster than oneOf (single branch active)
+    1.42x faster than computed (visible + derived deps)
+    1.72x faster than nested (2 sub-objects, 7 terminals)
+
+  create a 50-field form - bench/object-pending-read.bench.ts > object pending read
+    9.28x faster than 1000 × same-value write at depth 2 + drain
+    9.31x faster than 1000 × same-value write at depth 16 + drain
+    9.53x faster than 1000 × child write, no read + drain
+    9.79x faster than 1000 × same-value write at depth 8 + drain
+    12.86x faster than 1000 × (child write + 1 parent value read) + drain
+    14.49x faster than 1000 × (child write + 3 parent value reads) + drain
+
+  [guard] clone(defaultValue) - bench/render-delay.bench.ts > render-delay: small (5 terminals)
+    5.01x faster than [guard] clone(schema)
+    60.10x faster than [mount] nodeFromJSONSchema (validation off)
+    64.22x faster than [mount] nodeFromJSONSchema (validation on)
+
+  [guard] clone(defaultValue) - bench/render-delay.bench.ts > render-delay: medium (25 terminals)
+    4.65x faster than [guard] clone(schema)
+    44.35x faster than [mount] nodeFromJSONSchema (validation off)
+    50.32x faster than [mount] nodeFromJSONSchema (validation on)
+
+  [guard] clone(defaultValue) - bench/render-delay.bench.ts > render-delay: large (150 terminals)
+    7.07x faster than [guard] clone(schema)
+    52.46x faster than [mount] nodeFromJSONSchema (validation off)
+    71.93x faster than [mount] nodeFromJSONSchema (validation on)
+
+Benchmark report written to /Users/Vincent/Workspace/albatrion/packages/canard/schema-form/bench/.results/baseline.json

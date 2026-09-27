@@ -64,6 +64,7 @@
 | NODE-056 | S1 parse 함수의 자리는 `src/core/behaviors/utils/parse/` — 부르는 쪽은 동작 행의 `interpret` 칸과 기본 union 입력(쓰지 않는 호출), 오늘의 `src/core/parsers/`는 레거시로 옮기고 새 parse를 가져오지 않음 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-36), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-92) |
 | NODE-057 | 노드 필드 `type`·`nullable`·`schemaType` — `type`은 `'union'`이 더해진 단일 문자열, `nullable`은 그대로, `schemaType`은 이름을 두고 계산된 허용 형(`'integer'` 보존, `'null'`은 뺌, union이면 칸마다 하나를 얼린 배열), 새 필드 없음 | 현행 | 소유자 답(`reviews/round-18-owner-answers.md:31` union O1), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-90) |
 | NODE-058 | `union` 노드의 공개 형 — `UnionMemberType`·`UnionSchemaType`, `UnionNode`와 판별 `value`, props의 `value`·`onChange`, 종류별 `schemaType` 좁힘, 가드 `isUnionNode`, `InferSchemaNode`·`InferValueType`·`InferJSONSchema`의 사상, 참조 안정성, PR-2·PR-7 게이트 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-89), 소유자 답(`reviews/round-18-owner-answers.md:41` 설계서 메모 4) |
+| NODE-059 | 형 없는 객체·배열 분기 호스트와 `const`만 있는 칸의 공개 형 — 분기가 모두 인라인 객체(또는 배열)면 `ObjectNode`·`ArrayNode`와 분기 값 형의 합, `$ref`·게이트 분기·두 키워드·`allOf`는 넓은 형 그대로, `const`·`enum` 칸은 리터럴 형 | 현행 | 편집자 결정(19라운드, `reviews/round-19-closing.md` 19C-01·19C-02) |
 
 ## 항목
 
@@ -1012,3 +1013,17 @@
 - 까닭: `reviews/round-18-closing.md:2367-2370`
 - 충돌:
   > `reviews/round-18-closing.md:2339`의 "【추론】 `UnionNode`는 `valueTypeMismatch`를 판별자로 두 멤버로 나뉜다."는 소유자 답과 다르다: 이 항목의 `valueTypeMismatch`·`valueTypeMismatches`·`VALUE_TYPE_MISMATCH`는 확정 이름 `typeMismatch`·`typeMismatches`·`SCHEMA_FORM_WARNING.TYPE_MISMATCH`로 읽는다(SURFACE-061). 소유자 답이 이긴다(`reviews/round-18-owner-answers.md:41`).
+  > `reviews/round-18-closing.md:2357`의 "【추론】 형 없는 분기(`const`·`enum`만 있는 것 포함), 객체·원시 혼합 분기, 모든 분기가 객체(또는 배열)인 형 없는 칸은 `never`와 `unknown`이다."는 19라운드 결정과 다르다: 모든 분기가 인라인 객체(또는 배열)인 형 없는 칸은 `ObjectNode`(또는 `ArrayNode`)와 분기 값 형의 합이고, 분기 없는 `const`·`enum` 칸은 리터럴 형이며, 형 없는 분기와 혼합 분기는 그대로다(NODE-059). 19라운드 결정이 이긴다(`reviews/round-19-closing.md:24-25,44`).
+
+### NODE-059 형 없는 객체·배열 분기 호스트와 `const`만 있는 칸의 공개 형 — 분기가 모두 인라인 객체(또는 배열)면 `ObjectNode`·`ArrayNode`와 분기 값 형의 합, `$ref`·게이트 분기·두 키워드·`allOf`는 넓은 형 그대로, `const`·`enum` 칸은 리터럴 형
+
+- 결정:
+  > 【추론】 `InferSchemaNode`·`InferValueType`은 분기가 모두 인라인 객체(또는 배열) 스키마인 형 없는 `oneOf`·`anyOf`를 `ObjectNode`(또는 `ArrayNode`)로 두고, 값 형은 분기 값 형의 합(null 분기가 있으면 `| null`)이다.
+  > 【추론】 NODE-058의 "`$ref`, 게이트 가진 분기, `oneOf`와 `anyOf`가 함께 있는 칸, 본체에 붙은 `allOf`는 넓은 `SchemaNode`와 오늘 규칙의 값 형이다"는 그대로다.
+  > 【추론】 `InferValueType`은 이 칸을 `const`의 리터럴 형이나 `enum` 원소의 합(null 리터럴이 있으면 `| null`)으로 좁히고, `InferSchemaNode`는 U가 정한 종류의 노드다.
+- 보충: 없음
+- 상태: 현행
+- 출처: `reviews/round-19-closing.md:24-25,44`(정본)
+- 닫은 사람: 편집자 결정(19라운드, `reviews/round-19-closing.md` 19C-01·19C-02)
+- 라운드: 19
+- 까닭: `reviews/round-19-closing.md:31,48`

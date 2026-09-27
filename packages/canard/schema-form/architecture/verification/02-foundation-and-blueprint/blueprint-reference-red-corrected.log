@@ -1,0 +1,105 @@
+│
+▲  No story files found for the specified pattern:
+│  stories/**/*.story.@(js|jsx|mjs|ts|tsx)
+│
+▲  No story files found for the specified pattern:
+│  src/**/*.story.@(js|jsx|mjs|ts|tsx)
+│
+▲  No story files found for the specified pattern: src/**/*.mdx
+│
+▲  No story files found for the specified pattern:
+│  src/**/*.stories.@(js|jsx|mjs|ts|tsx)
+│ ┌────────────────────────────────────────────────────────────────────────────┐
+│ │  Info: Found a setup file with "setProjectAnnotations".                    │
+│ │  Skipping automatic provisioning of preview annotations to avoid           │
+│ │  conflicts. Since Storybook 10.3, "@storybook/addon-vitest" applies these  │
+│ │   automatically.                                                           │
+│ │  You can safely remove the "setProjectAnnotations" call from your setup    │
+│ │  file, or remove the file entirely if you don't have custom code there.    │
+│ └────────────────────────────────────────────────────────────────────────────┘
+
+ RUN  v3.2.6 /Users/Vincent/Workspace/albatrion/packages/canard/schema-form
+
+ ❯ |unit| src/core/blueprint/__tests__/blueprint.recursion.test.ts (9 tests | 2 failed) 13ms
+   ✓ blueprint finite reference and shape graph > rejects required eager object shape, including nullable recursion 3ms
+   ✓ blueprint finite reference and shape graph > shares an array item back-reference without expanding shape 1ms
+   ✓ blueprint finite reference and shape graph > cuts conditional property recursion with a finite graph 1ms
+   ✓ blueprint finite reference and shape graph > cuts terminal object recursion before making children 0ms
+   ✓ blueprint finite reference and shape graph > cuts fragment reference cycles without treating them as shape 0ms
+   ✓ blueprint finite reference and shape graph > preserves conditional children rule application separately from its active condition 1ms
+   ✓ blueprint finite reference and shape graph > retains referenced overlays and child shape for a gated-only property 0ms
+   × blueprint finite reference and shape graph > reports malformed reference URI decoding with the authored path and cause 4ms
+     → expected error to match asymmetric matcher
+   × blueprint finite reference and shape graph > reports reference pointer failures without leaking the underlying exception 1ms
+     → expected error to match asymmetric matcher
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  |unit| src/core/blueprint/__tests__/blueprint.recursion.test.ts > blueprint finite reference and shape graph > reports malformed reference URI decoding with the authored path and cause
+AssertionError: expected error to match asymmetric matcher
+
+- Expected
++ Received
+
+- ObjectContaining {
+-   "details": ObjectContaining {
+-     "cause": Any<URIError>,
+-     "reference": "#/%",
+-     "schemaPath": "#/properties/value",
+-   },
+-   "specific": "UNKNOWN_JSON_SCHEMA",
++ URIError {
++   "message": "URI malformed",
+  }
+
+ ❯ src/core/blueprint/__tests__/blueprint.recursion.test.ts:91:89
+     89| 
+     90|   it('reports malformed reference URI decoding with the authored path …
+     91|     expect(() => blueprint({ type: 'object', properties: { value: { $r…
+       |                                                                                         ^
+     92|       specific: BlueprintErrorCode.UnknownJsonSchema,
+     93|       details: expect.objectContaining({ schemaPath: '#/properties/val…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  |unit| src/core/blueprint/__tests__/blueprint.recursion.test.ts > blueprint finite reference and shape graph > reports reference pointer failures without leaking the underlying exception
+AssertionError: expected error to match asymmetric matcher
+
+- Expected
++ Received
+
+- ObjectContaining {
+-   "details": ObjectContaining {
+-     "cause": ObjectContaining {
++ JSONPointer {
++   "message": "JSON pointer must start with # or /.",
++   "group": "JSON_POINTER",
+    "specific": "INVALID_POINTER_TYPE",
+-     },
+-     "reference": "#invalid",
+-     "schemaPath": "#/properties/value",
++   "code": "JSON_POINTER.INVALID_POINTER_TYPE",
++   "details": {
++     "pointer": "invalid",
+    },
+-   "specific": "UNKNOWN_JSON_SCHEMA",
++   "name": "JSONPointer",
+  }
+
+ ❯ src/core/blueprint/__tests__/blueprint.recursion.test.ts:99:37
+     97|   it('reports reference pointer failures without leaking the underlyin…
+     98|     const schema = { type: 'object', properties: { value: { $ref: '#in…
+     99|     expect(() => blueprint(schema)).toThrow(expect.objectContaining({
+       |                                     ^
+    100|       specific: BlueprintErrorCode.UnknownJsonSchema,
+    101|       details: expect.objectContaining({ schemaPath: '#/properties/val…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 7 passed (9)
+   Start at  11:53:25
+   Duration  1.02s (transform 366ms, setup 0ms, collect 753ms, tests 13ms, environment 0ms, prepare 68ms)
+
+

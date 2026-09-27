@@ -1,4 +1,4 @@
-import type { Fn } from '@aileron/declare';
+import type { Fn, Nullish } from '@aileron/declare';
 
 import type {
   AllowedValue,
@@ -49,7 +49,7 @@ export interface SchemaNodeConstructorProps<
   schemaType: JSONSchemaType;
   required?: boolean;
   nullable: boolean;
-  defaultValue?: Value;
+  defaultValue?: Value | Nullish;
   onChange: HandleChange<Value>;
   parentNode?: SchemaNode;
   validationMode?: ValidationMode;

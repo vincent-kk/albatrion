@@ -73,6 +73,7 @@
   },
   "devDependencies": {
     "@aileron/development-helper": "workspace:*",
+    "@aileron/schema-form-scenarios": "workspace:*",
     "@slats/agents-assets-sync": "workspace:^",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",

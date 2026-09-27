@@ -1,3 +1,5 @@
+import { getPathManager } from '@/schema-form/core/blueprint';
+import type { DynamicFunction } from '@/schema-form/core/blueprint';
 import type {
   JSONSchemaType,
   JSONSchemaWithVirtual,
@@ -11,8 +13,6 @@ import {
 } from './utils/getConditionIndexFactory';
 import { getDerivedValueFactory } from './utils/getDerivedValueFactory';
 import { getObservedValuesFactory } from './utils/getObservedValuesFactory';
-import { getPathManager } from './utils/getPathManager';
-import type { DynamicFunction } from './utils/type';
 
 /**
  * Manages dynamic properties based on the `computed` attribute of JSON Schema.

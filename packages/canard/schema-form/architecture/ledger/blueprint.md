@@ -42,9 +42,9 @@
 | BLUEPRINT-034 | 값 union에서 그대로인 것 — 원시 타입만의 `type` 배열은 `union` 잎 하나, 정합은 나열된 타입 가운데 하나, 기본 문자열 입력, 섞인 union과 `type` 없는 원시 `anyOf`·`oneOf`는 청사진 오류, PR-1 인식·PR-2 행 | 분할됨(→ BLUEPRINT-043, BLUEPRINT-036, BLUEPRINT-037, BLUEPRINT-039, BLUEPRINT-044, REACT-032, BLUEPRINT-042) | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-02), 소유자 답(`reviews/round-18-owner-answers.md:19` 12-9; `integer`·`null` 접기), 소유자 답(`reviews/round-18-owner-answers.md:29` union 범위; 대체), 소유자 답(`reviews/round-18-owner-answers.md:30` union 형 없는 분기; 대체), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-90), 소유자 답(`reviews/round-18-owner-answers.md:36` union O6; 대체), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-92) |
 | BLUEPRINT-035 | 용어 — `union` 확정(가칭 풂, `isUnionNode`·`unionBehavior/`), `oneOf`·`anyOf` 분기를 가진 호스트는 variant 호스트, 분기 하나는 variant | 현행 | 소유자 답(`reviews/round-18-owner-answers.md:28` 18C 검토 6번), 소유자 답(`reviews/round-18-owner-answers.md:29` union 범위; 범위) |
 | BLUEPRINT-036 | `union`의 범위 — `type`에 원시·객체·배열 가운데 둘 이상의 종류가 적힌 칸의 터미널 잎, `object`·`array`가 든 `union`은 터미널 강제, 안쪽 키는 자식 없는 검증 전용, 객체·배열로의 변환 없음, `omitEmpty`·채움은 값 전체, 기본 입력은 객체·배열을 읽기 전용 JSON으로 | 현행 | 소유자 답(`reviews/round-18-owner-answers.md:29` union 범위) |
-| BLUEPRINT-037 | 자기 `type` 없는 칸의 원시 `oneOf`·`anyOf` — 분기 허용 집합의 합집합 U(`oneOf`와 `anyOf`가 함께면 교집합)가 원시 잎·`union` 잎·null 종류를 정함, 빈 U와 분기 없음은 `UNKNOWN_JSON_SCHEMA`, 형 없는 칸의 `nullable`은 효과 없음 | 현행 | 소유자 답(`reviews/round-18-owner-answers.md:30` union 형 없는 분기) |
+| BLUEPRINT-037 | 자기 `type` 없는 칸의 원시 `oneOf`·`anyOf` — 분기 허용 집합의 합집합 U(`oneOf`와 `anyOf`가 함께면 교집합)가 원시 잎·`union` 잎·null 종류를 정함, 빈 U와 분기 없음은 `UNKNOWN_JSON_SCHEMA`, 형 없는 칸의 `nullable`은 효과 없음 | 분할됨(→ BLUEPRINT-051, BLUEPRINT-050) | 소유자 답(`reviews/round-18-owner-answers.md:30` union 형 없는 분기) |
 | BLUEPRINT-038 | 자기 `type` 없는 칸에 허용 집합이 ⊤인 분기(`const`·`enum`만 있는 분기 포함)가 있으면 `UNKNOWN_JSON_SCHEMA` — 오류에 그 분기의 schemaPath와 `type`을 적으라는 안내 | 현행 | 소유자 답(`reviews/round-18-owner-answers.md:32` union O2) |
-| BLUEPRINT-039 | 자기 `type` 없는 칸의 분기 형에 `object`·`array`가 있으면 `UNKNOWN_JSON_SCHEMA` — object variant 호스트는 건드리지 않음, 푸는 것은 뒤로(나중에 풀어도 비파괴) | 현행 | 소유자 답(`reviews/round-18-owner-answers.md:33` union O3) |
+| BLUEPRINT-039 | 자기 `type` 없는 칸의 분기 형에 `object`·`array`가 있으면 `UNKNOWN_JSON_SCHEMA` — object variant 호스트는 건드리지 않음, 푸는 것은 뒤로(나중에 풀어도 비파괴) | 분할됨(→ BLUEPRINT-049, BLUEPRINT-048) | 소유자 답(`reviews/round-18-owner-answers.md:33` union O3) |
 | BLUEPRINT-040 | 규칙 A·기본 입력·경고등의 기준 목록은 `node.schemaType`(+`nullable`), 게이트가 켜진 동안은 유효 목록 — 청사진은 `schemaType`을 유효 스키마에 써 넣지 않음, `jsonSchema.type`은 켜진 선언의 교집합 | 현행 | 소유자 답(`reviews/round-18-owner-answers.md:35` union O5) |
 | BLUEPRINT-041 | 한 칸의 `type` 선언들 — 통합 원리 U1–U9: 연언이고 허용 집합은 교집합, 빈 교집합만 충돌(정적은 청사진 오류, 게이트는 켜진 동안의 정착 오류), 정적 선언이 종류·`schemaType`·`nullable`을 정하고 게이트는 유효 목록만 좁힘, 한 진입에서 쓰인 노드의 두 번 해석 | 현행 | 소유자 답(`reviews/round-18-owner-answers.md:37` union O7·O8), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-104), 소유자 답(`reviews/round-18-owner-answers.md:41` 설계서 메모 4), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-105; U7 재해석은 라운드마다) |
 | BLUEPRINT-042 | `union` 노드의 목적·해석·기본 입력에서 그대로인 것 — 형을 고르는 기능이 아님, 받아 줄 형이 정확히 하나일 때만 변환, 선언 순서·검증기 규칙을 쓰지 않음, 기본 입력은 문자열 입력 | 현행 | 소유자 답(`reviews/round-18-owner-answers.md:24` 18C 검토 1번), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-92) |
@@ -53,6 +53,10 @@
 | BLUEPRINT-045 | 청사진 판정의 예 E1–E42 — 칸마다 종류·`schemaType`·nullable·전략·오류 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-90), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-105) |
 | BLUEPRINT-046 | 청사진 내부 이름은 약어 없이 풀 네임 — `PropertyDecl`은 `PropertyDeclaration` 같은 풀 네임으로(PROCESS-023·SURFACE-023), PR-1의 청사진 `DETAIL.md`에서 적음 | 현행 | 소유자 답(`reviews/round-18-owner-answers.md:38` 설계서 메모 1) |
 | BLUEPRINT-047 | 조각의 구현 타입 이름은 `SchemaFragment` — React `Fragment`와 겹침을 피함, 개념어 "조각"과 FRAGMENT 영역 이름은 그대로 | 현행 | 소유자 답(`reviews/round-18-owner-answers.md:39` 설계서 메모 2) |
+| BLUEPRINT-048 | 자기 `type` 없는 칸의 객체·배열 분기 — 접은 집합 F가 `{object}`·`{array}`면 variant 호스트로 추정, U 절차와 게이트 분기 제외, nullable은 `'null'` ∈ U, `items`는 명시 호스트와 같은 규칙, S4·S6 자리, 혼합은 `UNKNOWN_JSON_SCHEMA`, ⊤ 분기, 재귀와 순환 절단, 대체 범위, E16 | 현행 | 소유자 답(`reviews/round-19-owner-answers.md:7` 형 없는 객체 호스트), 편집자 결정(19라운드, `reviews/round-19-closing.md` 19C-01) |
+| BLUEPRINT-049 | object variant 호스트는 건드리지 않음 — 소유자 답 33행은 object·array와 원시를 섞는 경우만 다루며, 그 칸을 푸는 것은 뒤로(나중에 풀어도 비파괴) | 현행 | 소유자 답(`reviews/round-18-owner-answers.md:33` union O3) |
+| BLUEPRINT-050 | `type` 없이 `const`·`enum`만 있는 분기 없는 칸 — 리터럴의 JSON 종류로 원시 잎·null 잎, 종류 혼합·객체 리터럴은 `UNKNOWN_JSON_SCHEMA`, 분기 안의 `const`는 그대로 오류, 소유자 답 30행 첫 문장 대체, ERROR-164 "언제" | 현행 | 소유자 답(`reviews/round-19-owner-answers.md:8` `const`만 있는 프로퍼티(X1)), 편집자 결정(19라운드, `reviews/round-19-closing.md` 19C-02) |
+| BLUEPRINT-051 | 자기 `type` 없는 칸의 원시 `oneOf`·`anyOf` — 분기 허용 집합 A(b), 합집합 U(`oneOf`와 `anyOf`가 함께면 교집합), `'null'`은 뒤에 뗌, 빈 U는 `UNKNOWN_JSON_SCHEMA`, `{null}`은 null 종류, 게이트 분기 제외, 형 없는 칸의 `nullable`은 효과 없음 | 현행 | 소유자 답(`reviews/round-18-owner-answers.md:30` union 형 없는 분기) |
 
 ## 항목
 
@@ -655,7 +659,7 @@
   > `nullable: true`는 같은 객체에 `type`이 있을 때만 `'null'`을 더하므로, 형 없는 칸의 `nullable`은 효과가 없다.
 - 보충:
   > 소유자(union 형 없는 분기): "나 로 할 수 있었으면 좋겠습니다" (`reviews/round-18-owner-answers.md:30`)
-- 상태: 현행
+- 상태: 분할됨(→ BLUEPRINT-051, BLUEPRINT-050)
 - 출처: `reviews/round-18-owner-answers.md:30`(정본, 반영 칸)
 - 닫은 사람: 소유자 답(`reviews/round-18-owner-answers.md:30` union 형 없는 분기)
 - 라운드: 18
@@ -668,6 +672,8 @@
   > 오류에 그 분기의 schemaPath와 "`type`을 적으라"는 안내를 싣는다.
 - 보충:
   > 소유자(union O2): "권장안 수용" (`reviews/round-18-owner-answers.md:32`)
+  > 편집자 결정(19C-02): "이 규칙은 분기가 없는 칸에만 적용되며, 분기 안의 `const`·`enum`만 있는 분기(소유자 답 32행, E14)는 그대로 `UNKNOWN_JSON_SCHEMA`다." (`reviews/round-19-closing.md:39`)
+  > 편집자 결정(19C-02): "【추론】 19C-01의 재귀가 분기 b를 볼 때 b의 정적 연언에 `type`도 분기도 없으면 b의 허용 집합은 소유자 답 32행대로 ⊤이다." (`reviews/round-19-closing.md:41`)
 - 상태: 현행
 - 출처: `reviews/round-18-owner-answers.md:32`(정본, 반영 칸)
 - 닫은 사람: 소유자 답(`reviews/round-18-owner-answers.md:32` union O2)
@@ -684,7 +690,7 @@
 - 보충:
   > 소유자(union O3): "이거 좀 더 설명을. oneOf /anyOf 는 자식으로 브랜치를 가질 수 없나요? 그럼 깊은 object 객체의 중간 노드가 oneOf 로 분기 서브트리를 가질 수 없습니까? 그건 안되는데요 / union 인 경우만입니까?" (`reviews/round-18-owner-answers.md:33`)
   > 소유자(union O3): "좋다. 지금까지 내용은 논러적으로 무결하며, 합리적이라고 보겠다." (`reviews/round-18-owner-answers.md:33`)
-- 상태: 현행
+- 상태: 분할됨(→ BLUEPRINT-049, BLUEPRINT-048)
 - 출처: `reviews/round-18-owner-answers.md:33`(정본, 반영 칸)
 - 닫은 사람: 소유자 답(`reviews/round-18-owner-answers.md:33` union O3)
 - 라운드: 18
@@ -844,6 +850,9 @@
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-90), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-105)
 - 라운드: 18
 - 까닭: `reviews/round-18-closing.md:2466-2471`
+- 충돌:
+  > `reviews/round-18-closing.md:2397`의 "【추론】 S3(C에 `type`이 없는 칸)은 `reviews/round-18-owner-answers.md:30`·`:32`·`:33`을 따른다."는 19라운드 결정과 다르다: S3는 그 셋과 19C-01·19C-02도 따른다(BLUEPRINT-048, BLUEPRINT-050). 19라운드 결정이 이긴다(`reviews/round-19-closing.md:9-23,37-43`).
+  > `reviews/round-18-closing.md:2383`의 "【추론】 `type`이 없는 선언은 A = ⊤이며 어느 종류와도 맞는다."는 19라운드 결정과 다르다: 형 없는 칸의 분기 b는 정적 연언에 `type`이 없고 분기가 있으면 A(b)가 b에 S3를 재귀 적용한 U이며, `type`도 분기도 없을 때만 ⊤이다(BLUEPRINT-048, BLUEPRINT-050). 19라운드 결정이 이긴다(`reviews/round-19-closing.md:18-19,41`).
 
 ### BLUEPRINT-045 청사진 판정의 예 E1–E42 — 칸마다 종류·`schemaType`·nullable·전략·오류
 
@@ -899,6 +908,7 @@
 - 까닭: `reviews/round-18-closing.md:2466-2471`
 - 충돌:
   > `reviews/round-18-closing.md:2441`의 "켜진 동안 유효 목록은 `['number']`로 `schemaType`과 같은 참조다"는 18C-105의 결정과 다르다: 좁혀지지 않은 노드의 유효 목록은 `schemaType` 그 값(스칼라면 스칼라, 배열이면 그 배열 참조)이며, E26에서 게이트가 켜진 동안의 유효 목록은 `schemaType`과 같은 `'number'`다(WRITE-099). 18C-105의 결정이 이긴다(`reviews/round-18-closing.md:2956-2957`).
+  > `reviews/round-18-closing.md:2431`의 "【추론】 E16: 자기 형 없는 `{oneOf:[{type:'object',…},{type:'object',…}]}`는 `UNKNOWN_JSON_SCHEMA`(오늘과 같음)."는 19라운드 결정과 다르다: E16은 object / `'object'` / false / NODE-028 순서(variant 호스트)다(BLUEPRINT-048). 19라운드 결정이 이긴다(`reviews/round-19-closing.md:23`).
 
 ### BLUEPRINT-046 청사진 내부 이름은 약어 없이 풀 네임 — `PropertyDecl`은 `PropertyDeclaration` 같은 풀 네임으로(PROCESS-023·SURFACE-023), PR-1의 청사진 `DETAIL.md`에서 적음
 
@@ -925,3 +935,85 @@
 - 닫은 사람: 소유자 답(`reviews/round-18-owner-answers.md:39` 설계서 메모 2)
 - 라운드: 18
 - 까닭: `reviews/round-18-owner-answers.md:39`
+
+### BLUEPRINT-048 자기 `type` 없는 칸의 객체·배열 분기 — 접은 집합 F가 `{object}`·`{array}`면 variant 호스트로 추정, U 절차와 게이트 분기 제외, nullable은 `'null'` ∈ U, `items`는 명시 호스트와 같은 규칙, S4·S6 자리, 혼합은 `UNKNOWN_JSON_SCHEMA`, ⊤ 분기, 재귀와 순환 절단, 대체 범위, E16
+
+- 결정:
+  > 자기 `type` 없는 칸의 게이트 없는 `oneOf`·`anyOf` 분기 형을 접은 집합 F가 `{object}`이면 칸은 object 종류이고 `schemaType`은 `'object'`이며, F가 `{array}`이면 array 종류이고 `schemaType`은 `'array'`다.
+  > 【추론】 S3(정적 연언 C에 `type`이 없는 칸)는 소유자 답 30행의 절차 그대로 칸의 게이트 없는 `oneOf`·`anyOf` 분기의 허용 집합 A(b)를 합쳐 키워드마다 U를 만들고(`'null'` 포함), `oneOf`와 `anyOf`가 함께 있으면 두 U를 교집합한 것을 U로 하며, 그 뒤에야 `'null'`을 떼어 F = fold(U \ {null})를 만든다.
+  > 【추론】 게이트 가진 분기(분기 안의 `controls.active`, `controls.discriminator`로 변환된 분기)는 소유자 답 30행과 37행의 U4대로 U에 넣지 않고 게이트 선언의 규칙을 따르며, 게이트 없는 분기가 없으면 19C-02를 따르고(C에 `const`·`enum`도 없으면 `UNKNOWN_JSON_SCHEMA`), U가 빈 집합이면 `UNKNOWN_JSON_SCHEMA`다.
+  > 【추론】 F가 `{object}`나 `{array}`인 칸의 nullable은 `'null'` ∈ U와 같다.
+  > 【추론】 F가 `{array}`인 칸에서 분기의 `items`·`prefixItems`는 자기 `type:'array'`를 명시한 호스트와 같은 규칙(게이트 없는 분기끼리 fold가 같으면 노드 하나, 다르면 `SHARED_NODE_KIND_CONFLICT`)을 따른다.
+  > 【추론】 종류가 정해진 칸은 그 뒤 S4의 variant 규칙과 S6의 순서(`options.terminal` → 판정 → `type`)를 자기 `type`을 명시한 칸과 똑같이 따르되, S6의 `type` 단계는 저자 스키마가 아니라 F가 정한 종류를 읽고, S4의 "형 있는 칸의 null 분기는 nullable을 켜지 않는다"는 이 칸에 적용하지 않는다.
+  > 【추론】 F의 원소가 둘 이상이고 그 가운데 `object`나 `array`가 있으면 `UNKNOWN_JSON_SCHEMA`다(`object`와 `array`만 섞인 경우 포함, 소유자 답 33행의 혼합 규칙과 E15는 그대로다).
+  > 【추론】 F에 `object`나 `array`가 없으면 소유자 답 30행의 원시 접기를 그대로 적용한다(U가 `{null}`이면 null 종류, 그 밖에는 원시 잎이나 `union` 잎).
+  > 【추론】 셈에 드는 게이트 없는 분기 가운데 허용 집합이 ⊤인 분기(`const`·`enum`만 있는 분기 포함)가 있으면 F를 만들기 전에 소유자 답 32행대로 그 분기의 schemaPath와 `type`을 적으라는 안내를 담은 `UNKNOWN_JSON_SCHEMA`다.
+  > 【추론】 분기 b의 A(b)는 b의 정적 연언(b 본체, 게이트 없는 `allOf`, `$ref` 대상)에 S2를 적용한 결과이고, b의 정적 연언에 `type`이 없으면 b에 S3를 재귀 적용해 얻은 U(`'null'`을 떼기 전)이며, 재귀에서 난 오류는 그대로 낸다.
+  > 【추론】 재귀가 지금 펼치는 경로에 이미 있는 스키마 위치(분기 위치나 그 `$ref` 대상)에 다시 닿으면 그 분기는 더 펼치지 않고 U에 아무것도 더하지 않으며(BLUEPRINT-030의 조각 안 순환 절단과 같다), 그 결과 U가 비면 `UNKNOWN_JSON_SCHEMA`다.
+  > 【추론】 이 재귀는 `properties`·`items`·`prefixItems`를 건너지 않으므로 `RECURSIVE_SHAPE_UNBOUNDED`의 판정과 겹치지 않는다.
+  > 【추론】 이 결정은 소유자 답 33행의 "객체만·배열만인 경우(오늘과 같음)가 모두 여기에 든다"와 BLUEPRINT-045 E16, NODE-058의 "모든 분기가 객체(또는 배열)인 형 없는 칸은 `never`와 `unknown`이다"를 대체하고, 같은 답의 "object variant 호스트는 건드리지 않는다"와 혼합 금지는 그대로다.
+  > 【추론】 ERROR-164의 `UNKNOWN_JSON_SCHEMA` 행의 "언제"에 적힌 "형 없는 칸의 빈 U와 객체·배열 분기"는 "형 없는 칸의 빈 U와 객체·배열이 다른 종류와 섞인 분기"로 읽는다.
+  > 【추론】 E16은 "자기 형 없는 `{oneOf:[{type:'object',…},{type:'object',…}]}`는 object / `'object'` / false / NODE-028 순서(variant 호스트)"로 바뀐다.
+- 보충:
+  > 소유자(형 없는 객체 호스트): "좋습니다. 두번째 길로 가보죠. $ref 로 정의된 스키마도, 해당 노드를 생성하는 시점에 $ref 가 아닌 실제 노드로 풀어낼거고, 그럼 최소한 그 노드들에 대해서는 일반 jsonSchema 와 동치일테니까, 그럼 그 스키마에 대해서 접은 분기 형이 객체만이거나 배열만이면, 30행이 원시 분기에 한 것처럼 형을 모아서 object variant 호스트로 추정하는 방향으로요. 다만, 이 방향이 위험한지 아닌지는 지금 검토가 가능합니까?" (`reviews/round-19-owner-answers.md:7`)
+  > 소유자(형 없는 객체 호스트): "그래 진행하라" (`reviews/round-19-owner-answers.md:7`)
+- 상태: 현행
+- 출처: `reviews/round-19-closing.md:9-23`(정본), `reviews/round-19-owner-answers.md:7`
+- 닫은 사람: 소유자 답(`reviews/round-19-owner-answers.md:7` 형 없는 객체 호스트), 편집자 결정(19라운드, `reviews/round-19-closing.md` 19C-01)
+- 라운드: 19
+- 까닭: `reviews/round-19-closing.md:31`
+
+### BLUEPRINT-049 object variant 호스트는 건드리지 않음 — 소유자 답 33행은 object·array와 원시를 섞는 경우만 다루며, 그 칸을 푸는 것은 뒤로(나중에 풀어도 비파괴)
+
+- 결정:
+  > object variant 호스트(분기가 객체 스키마인 `oneOf`·`anyOf`, 깊이와 상관없는 자식 하위 트리 포함)는 이 설계가 건드리지 않는다.
+  > 이 답은 자기 `type` 없는 칸의 분기가 object·array와 원시를 섞는 경우만 다루며, 지금 `UNKNOWN_JSON_SCHEMA`가 되는 것은 그 칸뿐이다.
+  > 그 칸을 받아들이도록 푸는 것은 뒤로 미루며, 나중에 풀어도 파괴적 변화가 아니다.
+- 보충:
+  > 소유자(union O3): "이거 좀 더 설명을. oneOf /anyOf 는 자식으로 브랜치를 가질 수 없나요? 그럼 깊은 object 객체의 중간 노드가 oneOf 로 분기 서브트리를 가질 수 없습니까? 그건 안되는데요 / union 인 경우만입니까?" (`reviews/round-18-owner-answers.md:33`)
+  > 소유자(union O3): "좋다. 지금까지 내용은 논러적으로 무결하며, 합리적이라고 보겠다." (`reviews/round-18-owner-answers.md:33`)
+- 상태: 현행
+- 출처: `reviews/round-18-owner-answers.md:33`(정본, 반영 칸의 2–4번째 문장. 표 행이라 조각 번호로 나눌 수 없다. BLUEPRINT-039에서 분할)
+- 닫은 사람: 소유자 답(`reviews/round-18-owner-answers.md:33` union O3)
+- 라운드: 18
+- 까닭: `reviews/round-18-owner-answers.md:33`
+- 충돌:
+  > `reviews/round-18-owner-answers.md:33`의 "지금 `UNKNOWN_JSON_SCHEMA`가 되는 것은 그 칸뿐이다"는 19라운드 결정과 다르다: `object`와 `array`만 섞인 칸도 `UNKNOWN_JSON_SCHEMA`다(BLUEPRINT-048). 19라운드 결정이 이긴다(`reviews/round-19-closing.md:15`, 절차·범위를 19C-01에 맡긴 소유자 답 `reviews/round-19-owner-answers.md:7`).
+
+### BLUEPRINT-050 `type` 없이 `const`·`enum`만 있는 분기 없는 칸 — 리터럴의 JSON 종류로 원시 잎·null 잎, 종류 혼합·객체 리터럴은 `UNKNOWN_JSON_SCHEMA`, 분기 안의 `const`는 그대로 오류, 소유자 답 30행 첫 문장 대체, ERROR-164 "언제"
+
+- 결정:
+  > 가. 정적 연언 C에 `type`이 없고 게이트 없는 `oneOf`·`anyOf` 분기도 없는 칸에 C의 `const`나 `enum`이 있으면, 그 리터럴들의 JSON 종류(string·number·boolean·null, 정수 리터럴은 number)를 모아 U를 만들고 소유자 답 30행의 접기(`'null'`은 떼어 nullable로)를 적용해 원시 잎이나 null 잎으로 정한다.
+  > `'null'`을 뗀 리터럴의 종류가 둘 이상이거나 리터럴에 객체·배열이 있으면 `UNKNOWN_JSON_SCHEMA`다.
+  > 이 규칙은 분기가 없는 칸에만 적용되며, 분기 안의 `const`·`enum`만 있는 분기(소유자 답 32행, E14)는 그대로 `UNKNOWN_JSON_SCHEMA`다.
+  > 【추론】 그 오류에는 그 칸의 schemaPath와 `type`을 적으라는 안내를 싣는다.
+  > 【추론】 19C-01의 재귀가 분기 b를 볼 때 b의 정적 연언에 `type`도 분기도 없으면 b의 허용 집합은 소유자 답 32행대로 ⊤이다.
+  > 【추론】 소유자 답 30행 첫 문장의 "정적 연언에 `type`을 가진 선언이 없는 칸은 칸의 게이트 없는 `oneOf`·`anyOf` 분기를 보며, 분기가 없으면 `UNKNOWN_JSON_SCHEMA`이다"는 "정적 연언에 `type`을 가진 선언이 없는 칸은 칸의 게이트 없는 `oneOf`·`anyOf` 분기를 보며, 분기도 `const`·`enum`도 없으면 `UNKNOWN_JSON_SCHEMA`이다"로 대체된다.
+  > 【추론】 ERROR-164의 `UNKNOWN_JSON_SCHEMA` 행의 "언제"에 "분기도 `const`·`enum`도 없는 형 없는 칸"과 "리터럴의 종류가 섞이거나 객체·배열인 `const`·`enum`"을 적는다.
+- 보충:
+  > 소유자(`const`만 있는 프로퍼티(X1)): "좋습니다. 가. 수용합니다. 원장을 이 브랜치에서 바로 수정하고, 답변할 내용 만들어주세요" (`reviews/round-19-owner-answers.md:8`)
+- 상태: 현행
+- 출처: `reviews/round-19-closing.md:37-43`(정본), `reviews/round-19-owner-answers.md:8`
+- 닫은 사람: 소유자 답(`reviews/round-19-owner-answers.md:8` `const`만 있는 프로퍼티(X1)), 편집자 결정(19라운드, `reviews/round-19-closing.md` 19C-02)
+- 라운드: 19
+- 까닭: `reviews/round-19-closing.md:48`
+
+### BLUEPRINT-051 자기 `type` 없는 칸의 원시 `oneOf`·`anyOf` — 분기 허용 집합 A(b), 합집합 U(`oneOf`와 `anyOf`가 함께면 교집합), `'null'`은 뒤에 뗌, 빈 U는 `UNKNOWN_JSON_SCHEMA`, `{null}`은 null 종류, 게이트 분기 제외, 형 없는 칸의 `nullable`은 효과 없음
+
+- 결정:
+  > 분기 b의 허용 집합 A(b)는 b 자신의 정적 연언에 정적 교집합 규칙을 적용한 결과이며, 거기서 난 오류는 그대로 낸다.
+  > 한 키워드의 허용 집합 U는 분기 A(b)의 합집합이며 `'null'`을 포함하고, 순서는 분기 순서에서 처음 나온 순서다.
+  > `oneOf`와 `anyOf`가 함께 있으면 둘은 연언이므로, 두 키워드의 U를 교집합한 것이 U이며(`'null'` 포함) 순서는 `oneOf` 쪽을 따른다.
+  > `'null'`은 합치고 교집합한 뒤에야 떼어 낸다.
+  > U가 빈 집합이면 `UNKNOWN_JSON_SCHEMA`이다.
+  > U가 `{null}`이면 null 종류이고 `nullable: true`이다.
+  > 그 밖에는 U가 원시 잎이나 `union` 잎을 정하고, 분기의 제약은 검증 전용이다.
+  > 게이트 가진 분기(분기 안의 `controls.active`, `controls.discriminator`로 변환된 분기)는 이 합치기에 넣지 않고 게이트 선언의 규칙을 따른다.
+  > `nullable: true`는 같은 객체에 `type`이 있을 때만 `'null'`을 더하므로, 형 없는 칸의 `nullable`은 효과가 없다.
+- 보충:
+  > 소유자(union 형 없는 분기): "나 로 할 수 있었으면 좋겠습니다" (`reviews/round-18-owner-answers.md:30`)
+- 상태: 현행
+- 출처: `reviews/round-18-owner-answers.md:30`(정본, 반영 칸의 2–10번째 문장. 표 행이라 조각 번호로 나눌 수 없다. BLUEPRINT-037에서 분할)
+- 닫은 사람: 소유자 답(`reviews/round-18-owner-answers.md:30` union 형 없는 분기)
+- 라운드: 18
+- 까닭: `reviews/round-18-owner-answers.md:30`

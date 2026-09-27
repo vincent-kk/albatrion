@@ -1,0 +1,141 @@
+│
+▲  No story files found for the specified pattern:
+│  stories/**/*.story.@(js|jsx|mjs|ts|tsx)
+│
+▲  No story files found for the specified pattern: src/**/*.mdx
+│
+▲  No story files found for the specified pattern:
+│  src/**/*.story.@(js|jsx|mjs|ts|tsx)
+│
+▲  No story files found for the specified pattern:
+│  src/**/*.stories.@(js|jsx|mjs|ts|tsx)
+│ ┌────────────────────────────────────────────────────────────────────────────┐
+│ │  Info: Found a setup file with "setProjectAnnotations".                    │
+│ │  Skipping automatic provisioning of preview annotations to avoid           │
+│ │  conflicts. Since Storybook 10.3, "@storybook/addon-vitest" applies these  │
+│ │   automatically.                                                           │
+│ │  You can safely remove the "setProjectAnnotations" call from your setup    │
+│ │  file, or remove the file entirely if you don't have custom code there.    │
+│ └────────────────────────────────────────────────────────────────────────────┘
+
+ RUN  v3.2.6 /Users/Vincent/Workspace/albatrion/packages/canard/schema-form
+
+ ❯ |unit| src/core/blueprint/__tests__/blueprint.recursion.test.ts (9 tests | 2 failed) 12ms
+   ✓ blueprint finite reference and shape graph > rejects required eager object shape, including nullable recursion 3ms
+   ✓ blueprint finite reference and shape graph > shares an array item back-reference without expanding shape 1ms
+   ✓ blueprint finite reference and shape graph > cuts conditional property recursion with a finite graph 1ms
+   ✓ blueprint finite reference and shape graph > cuts terminal object recursion before making children 0ms
+   ✓ blueprint finite reference and shape graph > cuts fragment reference cycles without treating them as shape 0ms
+   ✓ blueprint finite reference and shape graph > preserves conditional children rule application separately from its active condition 1ms
+   ✓ blueprint finite reference and shape graph > retains referenced overlays and child shape for a gated-only property 0ms
+   × blueprint finite reference and shape graph > reports malformed reference URI decoding with the authored path and cause 4ms
+     → expected error to match asymmetric matcher
+   × blueprint finite reference and shape graph > reports reference traversal failures without leaking the underlying exception 1ms
+     → expected error to match asymmetric matcher
+ ❯ |unit| src/core/blueprint/__tests__/blueprint.expressions.test.ts (8 tests | 2 failed) 12ms
+   ✓ blueprint expression compilation > compiles but does not execute authored expressions 3ms
+   ✓ blueprint expression compilation > unions watches and expression paths from every gated declaration 1ms
+   ✓ blueprint expression compilation > keeps fragment and children expression origins on the host 1ms
+   ✓ blueprint expression compilation > preserves relative dependencies across shared reference hosts 1ms
+   ✓ blueprint expression compilation > rejects wildcard dependencies and non-path watch values 1ms
+   ✓ blueprint expression compilation > adds the authored location to compile errors 1ms
+   × blueprint expression compilation > preserves arbitrary watch strings that match object prototype names 3ms
+     → ids.includes is not a function
+   × blueprint expression compilation > allows literal stars inside property names in watches and expressions 1ms
+     → OBSERVED_VALUES at #/controls/watch; Dependencies must be concrete JSON Pointer paths without wildcards.
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  |unit| src/core/blueprint/__tests__/blueprint.expressions.test.ts > blueprint expression compilation > preserves arbitrary watch strings that match object prototype names
+TypeError: ids.includes is not a function
+ ❯ register src/core/blueprint/utils/analyze/compileBlueprintExpressions.ts:38:14
+     36|       context.dependencies[path as string] ??
+     37|       (context.dependencies[path as string] = []);
+     38|     if (!ids.includes(declaration.id)) ids.push(declaration.id);
+       |              ^
+     39|   };
+     40|   for (const node of context.nodes)
+ ❯ compileBlueprintExpressions src/core/blueprint/utils/analyze/compileBlueprintExpressions.ts:61:13
+ ❯ blueprint src/core/blueprint/blueprint.ts:62:23
+ ❯ src/core/blueprint/__tests__/blueprint.expressions.test.ts:103:20
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/4]⎯
+
+ FAIL  |unit| src/core/blueprint/__tests__/blueprint.expressions.test.ts > blueprint expression compilation > allows literal stars inside property names in watches and expressions
+JSONSchemaError: OBSERVED_VALUES at #/controls/watch; Dependencies must be concrete JSON Pointer paths without wildcards.
+ ❯ throwBlueprintError src/core/blueprint/utils/diagnostics/throwBlueprintError.ts:21:9
+     19| ): never => {
+     20|   options?.collect?.({ code, level: 'error', schemaPath, details });
+     21|   throw new JSONSchemaError(
+       |         ^
+     22|     code,
+     23|     `${code} at ${schemaPath || '#'}; ${details.guidance ?? 'check the…
+ ❯ register src/core/blueprint/utils/analyze/compileBlueprintExpressions.ts:25:7
+ ❯ compileBlueprintExpressions src/core/blueprint/utils/analyze/compileBlueprintExpressions.ts:61:13
+ ❯ blueprint src/core/blueprint/blueprint.ts:62:23
+ ❯ src/core/blueprint/__tests__/blueprint.expressions.test.ts:111:20
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/4]⎯
+
+ FAIL  |unit| src/core/blueprint/__tests__/blueprint.recursion.test.ts > blueprint finite reference and shape graph > reports malformed reference URI decoding with the authored path and cause
+AssertionError: expected error to match asymmetric matcher
+
+- Expected
++ Received
+
+- ObjectContaining {
+-   "details": ObjectContaining {
+-     "cause": Any<URIError>,
+-     "reference": "#/%",
+-     "schemaPath": "#/properties/value",
+-   },
+-   "specific": "UNKNOWN_JSON_SCHEMA",
++ URIError {
++   "message": "URI malformed",
+  }
+
+ ❯ src/core/blueprint/__tests__/blueprint.recursion.test.ts:91:89
+     89| 
+     90|   it('reports malformed reference URI decoding with the authored path …
+     91|     expect(() => blueprint({ type: 'object', properties: { value: { $r…
+       |                                                                                         ^
+     92|       specific: BlueprintErrorCode.UnknownJsonSchema,
+     93|       details: expect.objectContaining({ schemaPath: '#/properties/val…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/4]⎯
+
+ FAIL  |unit| src/core/blueprint/__tests__/blueprint.recursion.test.ts > blueprint finite reference and shape graph > reports reference traversal failures without leaking the underlying exception
+AssertionError: expected error to match asymmetric matcher
+
+- Expected
++ Received
+
+- ObjectContaining {
+-   "details": ObjectContaining {
+-     "cause": Error {
++ Error {
+    "message": "reference lookup failed",
+-     },
+-     "reference": "#/$defs/value",
+-     "schemaPath": "#/properties/value",
+-   },
+-   "specific": "UNKNOWN_JSON_SCHEMA",
+  }
+
+ ❯ src/core/blueprint/__tests__/blueprint.recursion.test.ts:100:37
+     98|     const cause = new Error('reference lookup failed');
+     99|     const schema = { type: 'object', properties: { value: { $ref: '#/$…
+    100|     expect(() => blueprint(schema)).toThrow(expect.objectContaining({
+       |                                     ^
+    101|       specific: BlueprintErrorCode.UnknownJsonSchema,
+    102|       details: expect.objectContaining({ schemaPath: '#/properties/val…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/4]⎯
+
+
+ Test Files  2 failed (2)
+      Tests  4 failed | 13 passed (17)
+   Start at  11:52:12
+   Duration  930ms (transform 389ms, setup 0ms, collect 1.31s, tests 24ms, environment 0ms, prepare 115ms)
+
+

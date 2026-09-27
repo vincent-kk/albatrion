@@ -84,6 +84,7 @@
 | TEST-076 | 컴파일 예산 — 따로 수치를 두지 않고 마운트 벤치에서 폼 몫과 검증기 몫으로 나눠 보고, TEST-072의 선으로 판정, 가드 200개 조건부 폼 생성은 PR-4의 수용 필요 항목 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-30) |
 | TEST-077 | union 설계의 시험 목록 — 청사진 판정(PR-1), 행과 `interpret`(PR-2), 렌더 시나리오와 입력 바인딩(PR-7), 검증기 플러그인(PR-4), tsc 전용 형 시험 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-93), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-104), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-105), 소유자 답(`reviews/round-18-owner-answers.md:41` 설계서 메모 4) |
 | TEST-078 | union 설계의 비용 — 청사진 판정, 유효 목록, 두 번 해석, 새 경고 넷, `interpret`, 경고등, 방출·채움, Hint·props, 기본 union 입력, 검증기, 공개 형, 플러그인 이주 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-93), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-104), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-105) |
+| TEST-079 | 19라운드 게이트(PR 02) — E16 새 기대와 형 없는 호스트 사례(게이트 분기만·`{object,array}`·⊤ 분기·순환 절단과 빈 U), 순환 절단 구현, 코퍼스 14종 원본 그대로, `const` 칸 사례, `union.migration-shapes`에 LANDING-207·208 | 현행 | 편집자 결정(19라운드, `reviews/round-19-closing.md` 19C-01·19C-02) |
 
 ## 항목
 
@@ -1092,7 +1093,8 @@
   > 통과: (b)와 (c)가 성립한다.
   > 실패: 스캐너가 (a)를 못 주면 오늘의 `getReferenceTable`로 청사진이 스스로 푼다(편집자 선에서 처리).
   > 실패: (b)나 (c)가 실패하면 소유자에게 올린다.
-- 보충: 없음
+- 보충:
+  > 편집자 결정(19C-01): "【추론】 게이트(PR 02): TEST-067(b)는 코퍼스 14종을 시험 파일로 돌려 원본 그대로 서야 하며, 통과하지 못하는 표본은 소유자에게 올린다." (`reviews/round-19-closing.md:30`)
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:43-51`(정본)
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-01)
@@ -1321,6 +1323,8 @@
   > 편집자 결정(18C-105): "통과: 첫 폼은 `a === "0"`이고 경고등이 꺼져 있으며, 둘째 폼은 전이 라운드 상한을 넘겨 원본 B로 `a === 0`을 커밋하고 경고등이 켜지며 `diagnostics.status`가 `'degraded'`다." (`reviews/round-18-closing.md:2971`)
   > 반영 칸(설계서 메모 4): "게터 `typeMismatch: boolean`, 경로 목록 `typeMismatches: readonly string[]`, 경고 코드 `SCHEMA_FORM_WARNING.TYPE_MISMATCH`." (`reviews/round-18-owner-answers.md:41`)
   > 반영 칸(설계서 메모 4): "시험 파일 이름 `union.mismatch-light.test.ts`는 그대로이고, 시험이 부르는 게터·코드 이름은 확정 이름이다." (`reviews/round-18-owner-answers.md:41`)
+  > 편집자 결정(19C-01): "【추론】 시험 `union.migration-shapes.render.test.tsx`에 LANDING-207의 모양을 더한다." (`reviews/round-19-closing.md:28`)
+  > 편집자 결정(19C-02): "【추론】 시험 `union.migration-shapes.render.test.tsx`에 LANDING-208의 모양을 더한다." (`reviews/round-19-closing.md:46`)
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:2672-2697`(정본), `reviews/round-18-closing.md:2926-2927`, `reviews/round-18-closing.md:2956-2957,2970-2971`, `reviews/round-18-owner-answers.md:41`
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-93), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-104), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-105), 소유자 답(`reviews/round-18-owner-answers.md:41` 설계서 메모 4)
@@ -1328,6 +1332,7 @@
 - 까닭: `reviews/round-18-closing.md:2711-2715`
 - 충돌:
   > `reviews/round-18-closing.md:2676`의 "`['number']`·`['number']`(`schemaType`과 같은 참조)·`['integer']`"는 18C-105의 결정과 다르다: 좁혀지지 않은 노드의 유효 목록은 `schemaType` 그 값(스칼라면 스칼라, 배열이면 그 배열 참조)이며, E26에서 게이트가 켜진 동안의 유효 목록은 `schemaType`과 같은 `'number'`다(WRITE-099). 18C-105의 결정이 이긴다(`reviews/round-18-closing.md:2956-2957`).
+  > `reviews/round-18-closing.md:2672`의 "예 E1–E42(18C-90)의 종류·`schemaType`·nullable·전략·오류가 모두 표대로다"는 19라운드 결정과 다르다: E16은 19C-01의 새 기대를 단언한다(BLUEPRINT-048, TEST-079). 19라운드 결정이 이긴다(`reviews/round-19-closing.md:23`).
 
 ### TEST-078 union 설계의 비용 — 청사진 판정, 유효 목록, 두 번 해석, 새 경고 넷, `interpret`, 경고등, 방출·채움, Hint·props, 기본 union 입력, 검증기, 공개 형, 플러그인 이주
 
@@ -1353,3 +1358,18 @@
 - 충돌:
   > `reviews/round-18-closing.md:2700`의 "한 진입에서 쓰였고 같은 정착에서 유효 목록이 바뀐 노드마다 `interpret` 한 번 더이며, 그 밖은 멱등이라 결과가 같다; 메모리 0"은 18C-104의 결정과 다르다: 비용은 쓰인 노드 가운데 유효 목록이 정적 목록보다 좁은 노드에 한해 `interpret` 한 번과 쓰인 값의 참조 보관이다(WRITE-098). 18C-104의 결정이 이긴다(`reviews/round-18-closing.md:2915`).
   > `reviews/round-18-closing.md:2701`의 "개발 모드나 핸들러가 있을 때만 돌며"는 18C-105의 결정과 다르다: `NON_JSON_WHOLE_VALUE`의 깊이 점검은 VALUE-037대로 개발 모드에서만 돌며, 핸들러가 있어도 프로덕션에서는 돌지 않는다(WRITE-099). 18C-105의 결정이 이긴다(`reviews/round-18-closing.md:2955`).
+
+### TEST-079 19라운드 게이트(PR 02) — E16 새 기대와 형 없는 호스트 사례(게이트 분기만·`{object,array}`·⊤ 분기·순환 절단과 빈 U), 순환 절단 구현, 코퍼스 14종 원본 그대로, `const` 칸 사례, `union.migration-shapes`에 LANDING-207·208
+
+- 결정:
+  > 【추론】 게이트(PR 02): E16의 새 기대와 게이트 분기만인 호스트·`{object,array}`·⊤ 분기·순환 절단과 빈 U의 사례가 `src/core/blueprint/__tests__/`에 한 건씩 있고, 순환 절단이 구현되어 형 없는 `$ref` 순환이 스택 넘침 없이 끝난다.
+  > 【추론】 게이트(PR 02): TEST-067(b)는 코퍼스 14종을 시험 파일로 돌려 원본 그대로 서야 하며, 통과하지 못하는 표본은 소유자에게 올린다.
+  > 【추론】 시험 `union.migration-shapes.render.test.tsx`에 LANDING-207의 모양을 더한다.
+  > 【추론】 시험 `union.migration-shapes.render.test.tsx`에 LANDING-208의 모양을 더한다.
+  > 【추론】 게이트(PR 02): 단일 종류(null 포함)·종류 혼합·객체 리터럴·분기 안의 `const`(그대로 오류)의 사례가 `src/core/blueprint/__tests__/`에 한 건씩 있다.
+- 보충: 없음
+- 상태: 현행
+- 출처: `reviews/round-19-closing.md:28-30,46-47`(정본)
+- 닫은 사람: 편집자 결정(19라운드, `reviews/round-19-closing.md` 19C-01·19C-02)
+- 라운드: 19
+- 까닭: `reviews/round-19-closing.md:31,48`

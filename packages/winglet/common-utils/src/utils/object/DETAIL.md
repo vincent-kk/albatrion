@@ -6,6 +6,7 @@
 - 어떤 프리미티브 호출에서도 대상 객체의 프로토타입과 상속 객체(`Object.prototype` 포함)는 변경되지 않는다.
 - 예약 멤버가 아닌 키에 대해서는 일반 프로퍼티 접근과 동일하게 동작하고, 배열 인덱스 접근을 방해하지 않는다.
 - `cloneLite`는 own `__proto__` 키를 가진 입력의 클론에서 모든 own 키를 보존하고, 클론의 프로토타입은 입력의 프로토타입과 동일하다.
+- 재귀 병합은 merge 자식 모듈이 소유합니다. 부모는 공개 병합 API를 재수출하고 안전한 속성 프리미티브를 제공하며, 병합의 세부 계약은 자식 DETAIL을 따릅니다.
 
 ## API Contracts
 
@@ -52,6 +53,18 @@
 - **Consumers**: `entry-point`
 - **Direct import**: `allowed`
 - **Reason**: 함수당 한 파일의 flat 컬렉션이 이 fractal의 정본 형태다 — 하위 organ 재배치는 배럴 깊이만 늘리고 tree-shaking 단위를 바꾸지 못한다. 배럴 경유 시 재수출 그래프가 번들에 딸려오므로, 개별 파일이 필요한 소비자의 직접 import도 같은 이유로 허용된다.
+
+### `getDataProperty.ts` — merge 내부의 안전한 읽기
+
+- **Consumers**: `**/packages/winglet/common-utils/src/utils/object/merge/utils/mergeWithOptions.ts`, `**/packages/winglet/common-utils/src/utils/object/merge/__benchmarks__/merge-restructure/createMergeImplementation.ts`
+- **Direct import**: `allowed`
+- **Reason**: object 진입점은 merge를 재수출하므로 merge 재귀 구현이 그 진입점을 가져오면 순환 의존이 생깁니다. 측정 로더도 같은 함수 참조를 주입해야 하므로 직접 읽습니다.
+
+### `setDataProperty.ts` — merge 내부의 안전한 쓰기
+
+- **Consumers**: `**/packages/winglet/common-utils/src/utils/object/merge/utils/mergeWithOptions.ts`, `**/packages/winglet/common-utils/src/utils/object/merge/__benchmarks__/merge-restructure/createMergeImplementation.ts`
+- **Direct import**: `allowed`
+- **Reason**: object 진입점은 merge를 재수출하므로 merge 재귀 구현이 그 진입점을 가져오면 순환 의존이 생깁니다. 측정 로더도 같은 함수 참조를 주입해야 하므로 직접 읽습니다.
 
 ## History
 
