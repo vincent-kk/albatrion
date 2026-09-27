@@ -15,6 +15,26 @@ describe('blueprint finite reference and shape graph', () => {
         }),
       );
   });
+  it('rejects an unbounded A-to-B-to-A object property cycle', () => {
+    const schema = {
+      $defs: {
+        A: {
+          type: 'object',
+          properties: { b: { $ref: '#/$defs/B' } },
+        },
+        B: {
+          type: 'object',
+          properties: { a: { $ref: '#/$defs/A' } },
+        },
+      },
+      $ref: '#/$defs/A',
+    };
+    expect(() => blueprint(schema)).toThrow(
+      expect.objectContaining({
+        specific: BlueprintErrorCode.RecursiveShapeUnbounded,
+      }),
+    );
+  });
   it('shares an array item back-reference without expanding shape', () => {
     const result = blueprint({
       type: 'object',
