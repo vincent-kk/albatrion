@@ -46,7 +46,7 @@
 | --- | --- | --- | --- | --- |
 | 우산 | `1.0.0-beta` → `master` | 진행 | [#344](https://github.com/vincent-kk/albatrion/pull/344) | 초안. 09 머지 뒤 `master`로 |
 | 00 | 설계 원장·개발계획 | 머지 | [#345](https://github.com/vincent-kk/albatrion/pull/345), [#346](https://github.com/vincent-kk/albatrion/pull/346) | 원장 1,336항목·검사 0, 계획서 디렉토리 열 개 |
-| 01 | 설계문서 | 진행 | — | 브랜치 `docs/schema-form-design-docs`. `design/` 8편·ADR·`doc-coverage`·`_archive/`·절 단위 통과. 실행 계획과 기록은 [log](plan/01-design-docs/log.md) |
+| 01 | 설계문서 | 진행 | — | 브랜치 `docs/schema-form-design-docs`(push 안 함). 2026-09-28 소유자 지시로 U2 중간에 일시 정지 — `doc-coverage` 도구와 검증 전 `design/02` 초안까지. 재개 메모는 [log](plan/01-design-docs/log.md) |
 | 02 | 기반 + 청사진 | 머지 | [#347](https://github.com/vincent-kk/albatrion/pull/347) | 전체 4,437시험·lint·strict·빌드 통과. 19라운드 원장 해소와 TEST-079 반영, 내부 Codex 대조 완료. Filid 잔여 발견은 기록했고 Antigravity 외부 확인은 자동 승인 검토가 거절함 |
 | 03 | 노드 트리·정착 | 대기 | — | 02 뒤 |
 | 04 | 파생 + 상태 키·제어 | 대기 | — | 03 뒤, 05·06과 병렬 |

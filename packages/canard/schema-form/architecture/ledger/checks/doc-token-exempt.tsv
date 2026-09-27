@@ -1,0 +1,21 @@
+NODE-034	presentation.FormTypeInput	이긴 충돌 NODE-047: 값 칸의 18라운드 안건 N14 문장을 "가상은 늘 branch이고 options.terminal: true는 청사진 오류다"로 바꿈
+NODE-034	'terminal'	이긴 충돌 NODE-047: 값 칸의 18라운드 안건 N14 문장을 NODE-047의 규칙 문장으로 바꿈
+NODE-034	getNodeGroup.ts:22-23	이긴 충돌 NODE-047: 값 칸의 18라운드 안건 N14 문장을 NODE-047의 규칙 문장으로 바꿈
+NODE-034	getNodeGroup.ts:20-21	이긴 충돌 NODE-047: 값 칸의 18라운드 안건 N14 문장을 NODE-047의 규칙 문장으로 바꿈
+NODE-034	N14	이긴 충돌 NODE-047: 값 칸의 18라운드 안건 N14 문장을 NODE-047의 규칙 문장으로 바꿈
+VALUE-006	getInactiveValues(path)	이긴 충돌 VALUE-029(소유자 답 12-8 셋째: 잠복 원본 열거는 루트 노드의 함수이고 노드마다 getter inactiveValues)
+VALUE-027	getInactiveValues(path)	이긴 충돌 VALUE-029(소유자 답 12-8 셋째: 잠복 원본 열거는 루트 노드의 함수이고 노드마다 getter inactiveValues)
+VALUE-027	N3	가리킴 바꿈 07-conclusions.md §6.2 N3 → SURFACE-050(값 읽기 이름 확정)
+VALUE-030	valueTypeMismatches: readonly string[]	이긴 충돌 SURFACE-061(확정 이름 typeMismatches: readonly string[])
+VALUE-037	valueTypeMismatch = raw !== undefined && !(raw === null && nullable) && !isMemberOfEffectiveList(raw)	이긴 충돌 SURFACE-061(확정 이름 typeMismatch로 읽음)
+VALUE-037	valueTypeMismatch === false	이긴 충돌 SURFACE-061(확정 이름 typeMismatch로 읽음)
+WRITE-010	''	이긴 충돌 WRITE-082: 첫 문장("없음"과 ''·null·{}은 다르다)을 충돌 줄의 규칙 문장으로 바꿈
+WRITE-015	N1	가리킴 바꿈 07-conclusions 6.1·6.2의 N1 → SURFACE-004, SURFACE-039
+WRITE-019	getInactiveValues(path)	이긴 충돌 VALUE-029: 잠복 원본 열거 문장을 충돌 줄의 규칙 문장으로 바꿈
+WRITE-079	S1	이긴 충돌 SURFACE-061: 마지막 문장을 확정 이름 규칙 문장으로 바꿈
+WRITE-097	D-7	정비 문장 WRITE-085 가리킴 문장(→ WRITE-090, SETTLE-046)을 옮기지 않음
+WRITE-097	대체됨(→ WRITE-090)	정비 문장 LANDING-118 상태 문장을 옮기지 않음
+WRITE-085	D-7	가리킴 바꿈 (D-7, WRITE 017) → WRITE-090(규칙 4 표, WRITE-097이 푼 가리킴)
+WRITE-085	update(i, v)	이긴 충돌 WRITE-095(구조 연산이 아닌 쓰기는 스냅숏을 건드리지 않는다는 글을 WRITE-095의 자리 맞춤 규칙으로 바꿈)
+WRITE-011	4.1 행	가리킴 바꿈 `07-conclusions.md` 4.0의 4.1 행은 WRITE-011 자신의 규칙이라 가리킴을 지움
+WRITE-041	getInactiveValues	이긴 충돌 VALUE-029: 잠복 원본 열거는 루트 노드의 함수이고 노드마다 getter inactiveValues

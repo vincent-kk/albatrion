@@ -98,7 +98,8 @@ Planning method: 저장소 지침 — `PLAN.md` §2와 `plan/prompts.md`의 단�
 - (ㄱ) 인용 누락: 범위 안의 현행 항목마다 어느 문서의 본문이 그 ID를 인용해야 한다. `uncited <ID> <제목>`.
 - (ㄴ) 인용 ID: 문서 전체(머리와 코드 블록 포함)의 ID가 원장에 있고 현행이어야 한다. `<doc>:<줄> <ID> does not exist` 또는 `is not in force (<상태>)`.
 - (ㄷ) 토큰: 범위 안의 현행 항목마다 결정 칸의 토큰(`TOKEN_PATTERNS`의 `code`·`errorCode`·`id`·`number`)이, 그 ID를 인용하는 모든 절을 합친 글 어딘가에 그대로 있어야 한다. 인용하는 절이 없는 항목은 (ㄱ)에서만 세고 (ㄷ)에서는 세지 않는다. `code` 가운데 `^(0\d-[^`]*\.md|open-questions\.md|adr/\d{4}-[^`]*|reviews/[^`]*|HANDOFF\.md|README\.md)(:[\d,#-]+)?$` 또는 `^:\d[\d,#-]*$`에 맞는 옛 문서 가리킴만 뺀다. 예외 파일의 열은 ID, 토큰, 까닭이며 까닭은 `이긴 충돌 …`, `가리킴 바꿈 …`, 또는 `정비 문장 …`(규칙 4 표의 첫째·둘째 행 항목만)으로 시작한다. verifier가 예외 행마다 그 까닭이 원장과 규칙 4 표에 맞는지 대조한다. 범위 안의 예외 행이 빠지지 않은 쌍을 적으면 `stale exemption`, 범위 밖 행은 무시한다. `missing token <ID> <kind> <token>`.
-- (ㄹ) 문장 ID: 본문에서 제목 줄, 빈 줄, 코드 블록 안을 빼고, 인라인 코드를 가린 뒤 `splitSentences`로 나눈 문장마다 ID가 하나 이상 있어야 한다. 표의 행은 그 행에 ID가 있거나, 표 앞에서 가장 가까운 비어 있지 않은 표 밖 줄에 ID가 있으면 통과한다. `<doc>:<줄> untagged: <앞 60자>`.
+- (ㄹ) 문장 ID: 본문에서 제목 줄, 빈 줄, 코드 블록 안을 빼고, 인라인 코드와 큰따옴표 인용("…", “…”)을 가린 뒤 `splitSentences`로 나눈 문장마다 ID가 하나 이상 있어야 한다(인용 안의 `?`·`!`에서 문장이 갈리지 않게 한다; 공용 `splitSentences`는 바꾸지 않는다). 표의 행은 그 행에 ID가 있거나, 표 앞에서 가장 가까운 비어 있지 않은 표 밖 줄에 ID가 있으면 통과한다. 표의 머리 행과 구분 행은 그 표의 본문 행이 모두 ID를 가지면 통과한다(ADR `## 상태` 표). 굵은 표지 문장은 ID를 빈칸 없이 붙인다: `**진입 사슬.**(ERROR-001)`. `<doc>:<줄> untagged: <앞 60자>`.
+- 보강(U1 검증에서): 코드 블록 안의 `## `·`### ` 줄은 절 경계가 아니다. `--areas`에 원장에 없는 영역 접두어가 있으면 usage 오류(exit 2)다. 예외 행의 ID가 원장에 없거나 현행이 아니면, 또는 까닭이 세 접두어 다음에 빈칸이나 줄 끝이 오지 않으면 `bad exemption`으로 센다. 새 픽스처 `edge.md`가 이 경우들과 인용·표 머리·굵은 표지를 덮는다(게이트 G37).
 - 토큰 패턴은 `tokens.mjs`에서 `lib.mjs`의 `export const TOKEN_PATTERNS`로 옮기고 `tokens.mjs`가 그것을 가져온다. `tokens.mjs`의 출력은 바뀌지 않아야 한다(20라운드 뒤 기준 2509·488).
 - 픽스처(`ledger/checks/fixtures/doc-coverage/`에 커밋해 게이트 G5·G6이 어느 세션에서나 다시 돌게 한다; 아래에서 항목은 접두어 `FIXT`와 번호로 부르며 실제 파일에는 하이픈 꼴 ID로 적는다): 원장 `ledger.md`에 FIXT 001(현행, 결정 "`alpha` 값은 3회 쓴다."), FIXT 002(현행, 결정 "`beta`를 쓴다."), FIXT 003(대체됨, → FIXT 001). 문서 `bad.md`의 본문 절 하나가 FIXT 001을 인용하되 `alpha`와 `3회`가 없고, 한 문장이 FIXT 003을 인용하고, 한 문장은 ID가 없으며, FIXT 002는 인용하지 않는다. `--exempt absent.tsv`(없는 파일)로 돌린 기대: `uncited 1, bad ids 1, missing tokens 2, untagged sentences 1, stale exemptions 0, problems 5`. 고친 `good.md`는 `problems 0`. `good.md`에서 빠지지 않은 쌍 하나를 적은 `stale.tsv`를 `--exempt`로 주면 `stale exemptions 1, problems 1`.
 
@@ -108,7 +109,7 @@ Planning method: 저장소 지침 — `PLAN.md` §2와 `plan/prompts.md`의 단�
 
 ## 3. 작업 단위
 
-**게이트.** 단위의 끝은 게이트로만 말한다. 게이트 원장은 저장소 루트의 `.seiri/tasks/schema-form-01-design-docs/gates.md`(G1–G36, git이 무시하는 경로)이며, 게이트마다 결과 문장, 저장소 루트에서 도는 `CHECK`, 성공할 때만 찍히는 `EXPECT`가 있다. 단위별로 U0 G1–G3, U1 G4–G8, U2 G9–G12, U3 G13–G15, U4 G16–G18, U5 G19–G22, U6 G23–G25, U7 G26–G27, U8 G28–G31, 마지막 G32–G36이다. 사람이나 verifier가 판정하는 게이트(G8·G10·G12·G14·G17·G21·G24·G27·G36)는 판정 결과를 증거로 적는다. 72시간 동안 손대지 않으면 원장이 지워지므로 게이트의 결과는 §5에도 적는다. codex·opus·worker의 브리프에는 그 단위의 게이트를 `CHECK`·`EXPECT` 그대로 넣고, "게이트를 고치지 말고, 끝났다는 말은 `CHECK`를 돌려 `EXPECT`가 찍힌 출력으로만 하라"를 넣는다.
+**게이트.** 단위의 끝은 게이트로만 말한다. 게이트 원장은 저장소 루트의 `.seiri/tasks/schema-form-01-design-docs/gates.md`(G1–G37, git이 무시하는 경로)이며, 게이트마다 결과 문장, 저장소 루트에서 도는 `CHECK`, 성공할 때만 찍히는 `EXPECT`가 있다. 단위별로 U0 G1–G3, U1 G4–G8, U1b G37, U2 G9–G12, U3 G13–G15, U4 G16–G18, U5 G19–G22, U6 G23–G25, U7 G26–G27, U8 G28–G31, 마지막 G32–G36이다. 사람이나 verifier가 판정하는 게이트(G8·G10·G12·G14·G17·G21·G24·G27·G36)는 판정 결과를 증거로 적는다. 72시간 동안 손대지 않으면 원장이 지워지므로 게이트의 결과는 §5에도 적는다. codex·opus·worker의 브리프에는 그 단위의 게이트를 `CHECK`·`EXPECT` 그대로 넣고, "게이트를 고치지 말고, 끝났다는 말은 `CHECK`를 돌려 `EXPECT`가 찍힌 출력으로만 하라"를 넣는다.
 
 | 단위 | 산출물 | 검증 | 위험 | 원장 ID | 실행 |
 | --- | --- | --- | --- | --- | --- |
@@ -134,7 +135,7 @@ Planning method: 저장소 지침 — `PLAN.md` §2와 `plan/prompts.md`의 단�
 
 1. codex 브리프: §2.5 명세와 픽스처, 형제 스크립트(`plan-links.mjs`, `tokens.mjs`, `lib.mjs`)의 모양을 따를 것, 게이트 G4–G6의 `CHECK`를 돌려 `EXPECT`가 찍힌 출력으로 끝을 보고할 것, 게이트를 고치지 말 것, 커밋하지 말 것, 결정이 필요하면 멈추고 보고할 것.
 2. 기대 결과(`architecture/`에서):
-   - `node ledger/checks/tokens.mjs inventory $TMPDIR/inv.json 0*.md open-questions.md adr/*.md README.md HANDOFF.md` → `{"distinctTokens":2509,"byKind":{"code":2091,"id":211,"number":176,"errorCode":31}}`(20라운드 뒤), 이어서 `node ledger/checks/tokens.mjs check $TMPDIR/inv.json ledger/*.md | head -1` → `{"total":2508,"missing":488}`.
+   - `node ledger/checks/tokens.mjs inventory $TMPDIR/inv.json 0*.md open-questions.md adr/*.md README.md HANDOFF.md` → `{"distinctTokens":2509,"byKind":{"code":2091,"id":211,"number":176,"errorCode":31}}`(20라운드 뒤), 이어서 `node ledger/checks/tokens.mjs check $TMPDIR/inv.json ledger/*.md | head -1` → `{"total":2509,"missing":488}`.
    - §2.5의 픽스처 기대값 셋.
    - HANDOFF §4의 기존 명령 전부 0.
 3. verifier가 명세 대조와 위 결과를 재현한다. 커밋 `feat(schema-form): add the doc-coverage reverse check`. HANDOFF §4의 검사 줄은 백업 이동 뒤(U8)에 넣는다. 그 전에는 옛 `adr/`가 있어 0이 될 수 없다.
@@ -198,7 +199,19 @@ Planning method: 저장소 지침 — `PLAN.md` §2와 `plan/prompts.md`의 단�
 | 2026-09-28 | — | 2차 확인(verifier `rework-required` N1–N5, 원장 관리 세션: 규칙 4의 24쌍 풀이, 이긴 쪽 다섯과 §6 줄 번호 맞음) | 규칙 2·4·6, §2.3, (ㄷ), U7, U8, §6의 4·7에 반영 |
 | 2026-09-28 | — | 3차 확인(verifier: 정비 문장 예외 두 줄), 게이트 원장 작성(G1–G36, 소유자 지시) | 계획 `cleared` |
 | 2026-09-28 | — | 원장 관리 세션이 20라운드(PROCESS-068, 20C-01)를 커밋 `cd7f60c67`로 이 브랜치에 넣음(원장 파일 셋). 같은 작업 트리를 쓰므로, 이 뒤로 원장 관리 세션은 파일을 고치기 전에 알린다. 토큰 기준은 2509·488로 바뀌어 G4를 고쳤다 | 검사 전부 기준값 |
-| 2026-09-28 | U1 | codex에 역검사 도구 위임(G4–G6을 브리프에 그대로) | 진행 중 |
+| 2026-09-28 | U1 | codex에 역검사 도구 위임(G4–G6을 브리프에 그대로) | codex 보고 뒤 이 세션이 G4–G6 재실행 |
+| 2026-09-28 | U1 | verifier 1차 조건부 통과(명세 빈칸 둘: ADR 상태 표의 머리 행, 인용 안의 `?`·`!`; 낮음: 펜스 안 제목, 영역 오타, 예외 행 검사) → §2.5 보강과 G37 추가 → codex 고침 → verifier 재검증 PASS | G4·G5·G6·G37·G8·G7 충족, 커밋 `9938567e2` |
+| 2026-09-28 | U2 | 개요(opus, 25절·6조각, `outline ok`) → 조각 작성 여섯(opus 병렬) → 조립(895줄) → 예외 21행을 `ledger/checks/doc-token-exempt.tsv`로 | G9 `DOC02_OK`; 조각 verifier 여섯 진행, 원장 물음 아홉을 원장 관리 세션에 |
+| 2026-09-28 | — | **일시 정지(소유자 지시).** 소유자의 의도는 03이었고 이 세션은 규칙대로 01을 골랐다. 소유자가 새로 시작하기로 해 여기서 멈춘다. `design/02` 초안은 검증을 마치지 않은 채 커밋해 보존한다 | 아래 재개 메모 |
+
+### 재개 메모 (2026-09-28, U2 중간)
+
+- 상태: G1–G9·G37 충족, G10(조각 verifier) 미완. 조각 01·03은 FAIL(고침 여섯, 아래), 조각 02·04·05·06의 verifier는 중지돼 결과가 없다. 원장 충돌 줄 여섯 자리 추가(WRITE-056 둘, WRITE-051, WRITE-005, WRITE-015, NODE-015 둘, VALUE-002 꼬리)는 원장 관리 세션이 이 세션의 신호를 기다리며 보류 중이었다.
+- 조각 01 고침: NODE-050 "내부 통로는 core만 쓰는 호스트에 열지 않는다" → "열지 않는다"(제목에서 가져온 글); NODE-015 "이름을 유지하는 규칙은 그대로다"의 NODE-041 인용 제거; NODE-008 둘째 문장에 지어 넣은 "나눈 fractal은 … 다" 틀 제거.
+- 조각 03 고침: VALUE-014 셀 "2.7 µs" 뒤 지워진 측정 출처를 (TEST-036)으로; "열린 물음 Q14(`emit`의 키 순서)" → "Q14"(Q14는 SETTLE-042가 닫음); VALUE-037의 원장 정비 문장("VALUE-030의 … 로 고친다") 제거.
+- 원장 관리 세션 답(물음 아홉): 규칙 6의 부분 적용은 맞는 읽기(뒤집는 범위는 충돌 줄의 콜론 뒤). 단 VALUE-031 첫째 충돌은 목록 전체라 "길은 셋"으로(VALUE-031, WRITE-090, WRITE-094). 문서 고침: WRITE-056 부르는 쪽에 기본 union 입력(REACT-033), WRITE-051 "로드와 전체 교체 쓰기에서만"(SETTLE-047), WRITE-005·WRITE-015 목록에 포커스 아웃 `trim` 쓰기(WRITE-078), NODE-015 "나머지 아홉 가운데 일곱"·"공개 가드 열"(NODE-041), NODE-031 문장에 ERROR-185 함께, VALUE-002 표에 경고등 계산 행과 "칸은 열하나"(VALUE-030, WRITE-054, SURFACE-061), WRITE-010 뒤에 WRITE-082, NODE-056 셋째 문장의 근거를 BLUEPRINT-042로.
+- 새 원장 물음(미전송): VALUE-027 반영 칸의 `getInactiveValues(path)`에 충돌 줄 없음; VALUE-037의 정비 문장 분류; NODE-050 결정의 목적어가 제목에만 있음; NODE-018 "행은 종류마다 하나"(object·array는 행이 둘).
+- 재개 순서: 위 고침 적용 → 조각 02·04·05·06 verifier(두 방향) → 고침 → G10 → 커밋(G11) → 소유자에게 절 구성 확인(G12). 작업 보조(개요 TSV, 조각 원고, 브리프, 부록 도구)는 이 세션 scratchpad에만 있었으므로 필요하면 §2.3대로 다시 만든다.
 
 ## 6. 어긋남
 
