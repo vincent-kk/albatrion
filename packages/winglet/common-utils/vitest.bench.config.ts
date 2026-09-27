@@ -6,7 +6,7 @@ import { defineConfig } from 'vitest/config';
  *
  * - `environment: 'node'` because this package contains pure utilities that do not
  *   require a DOM.
- * - `include` scoped to `bench/**` so test files are not picked up.
+ * - Only *.bench.ts files are selected, including verification within owning modules.
  */
 export default defineConfig({
   resolve: {
@@ -17,9 +17,9 @@ export default defineConfig({
   test: {
     globals: false,
     environment: 'node',
-    include: ['bench/**/*.bench.ts'],
+    include: ['bench/**/*.bench.ts', 'src/**/__tests__/**/*.bench.ts'],
     benchmark: {
-      include: ['bench/**/*.bench.ts'],
+      include: ['bench/**/*.bench.ts', 'src/**/__tests__/**/*.bench.ts'],
       outputJson: 'bench/.results/latest.json',
     },
   },

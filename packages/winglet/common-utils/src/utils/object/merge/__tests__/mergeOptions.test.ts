@@ -1,9 +1,27 @@
 import { describe, expect, it } from 'vitest';
 
-import { merge } from '../merge';
+import { merge } from '../index';
 
-// filid:contract merge-options
+// filid:contract explicit-policies
 describe('merge options', () => {
+  it('reads the array policy once for a deeply nested merge', () => {
+    let reads = 0;
+    const options = {
+      immutable: true,
+      get arrayStrategy() {
+        reads++;
+        return 'merge' as const;
+      },
+    };
+    const target = { items: [[{ values: [1, 2] }]] };
+    const source = { items: [[{ values: [3] }]] };
+    expect(merge(target, source, options)).toEqual({
+      items: [[{ values: [3, 2] }]],
+    });
+    expect(reads).toBe(1);
+    expect(target.items[0][0].values).toEqual([1, 2]);
+  });
+
   it('copies overlapping objects without changing either input', () => {
     const left = { nested: { a: 1 }, untouched: { stable: true } };
     const right = { nested: { b: 2 }, added: { stable: true } };

@@ -9,6 +9,7 @@ import type { MergeOptions } from '../type';
  * @param target - Earlier object or array; mutated unless immutable is selected
  * @param source - Later object or array, never mutated
  * @param options - Policies propagated through all nested containers
+ * @param replaceArrays - Array policy resolved once by the public wrapper
  * @returns The target or a shallow target copy containing recursively merged values
  */
 export const mergeWithOptions = <
@@ -18,10 +19,11 @@ export const mergeWithOptions = <
   target: Target,
   source: Source,
   options: MergeOptions,
+  replaceArrays: boolean,
 ): Target & Source => {
   if (options.isAtomic?.(source) || options.isAtomic?.(target))
     return source as unknown as Target & Source;
-  if (Array.isArray(source) && options.arrayStrategy === 'replace')
+  if (Array.isArray(source) && replaceArrays)
     return source as unknown as Target & Source;
   const result: Record<PropertyKey, any> = options.immutable
     ? Array.isArray(target)
@@ -35,18 +37,18 @@ export const mergeWithOptions = <
     let value = sourceValue;
     if (!options.isAtomic?.(sourceValue) && !options.isAtomic?.(targetValue)) {
       if (Array.isArray(sourceValue)) {
-        if (options.arrayStrategy !== 'replace')
+        if (!replaceArrays)
           value = Array.isArray(targetValue)
-            ? mergeWithOptions(targetValue, sourceValue, options)
+            ? mergeWithOptions(targetValue, sourceValue, options, replaceArrays)
             : options.preserveReferences
               ? sourceValue
-              : mergeWithOptions([], sourceValue, options);
+              : mergeWithOptions([], sourceValue, options, replaceArrays);
       } else if (isPlainObject(sourceValue))
         value = isPlainObject(targetValue)
-          ? mergeWithOptions(targetValue, sourceValue, options)
+          ? mergeWithOptions(targetValue, sourceValue, options, replaceArrays)
           : options.preserveReferences
             ? sourceValue
-            : mergeWithOptions({}, sourceValue, options);
+            : mergeWithOptions({}, sourceValue, options, replaceArrays);
     }
     setDataProperty(result, key, value);
   }
