@@ -13,10 +13,10 @@
 
 ## 범위 — 원장이 정한 내용
 
-- README·docs 재작성, ADR 0010 최종, 이주 안내와 이주 프롬프트(`docs/agents`), reset 규칙(LANDING-121: 같은 스키마의 판정, prop을 읽는 때, 노드 참조가 이어지는 조건, 늦은 쓰기는 `onChange`로, `dirty`), `onError` 코드 표(코드, level, 부류, 언제, 누구 잘못, 기본 드러남)와 판 규칙(LANDING-068). 스토리북 문서(LANDING-096). C-10 사용 규칙은 README가 소유(EVENT-069). `merge` 방법은 이주 안내에(SCHEMA-046). nullable 아닌 노드의 `null` 안내(VALUE-033).
-- changeset(파괴적 변경, `fixed` 무리 전체 `major`; 1.0.0-beta 프리릴리스 뒤 1.0.0, LANDING-002)과 `CHANGELOG.md`, 포장된 산출물의 릴리스 테스트(LANDING-068·096, TEST-053·055·058).
+- README·docs 재작성, ADR 0010 최종, 이주 안내와 이주 프롬프트(`docs/agents`), reset 규칙(LANDING-121: "같은 스키마의 판정(첫째), prop을 읽는 때와 재대조(둘째), 노드 참조가 이어지는 조건(로드 경로뿐), 제자리 변경 비반영, `key`가 버리는 것, 포커스, 입력 컴포넌트의 늦은 쓰기는 `node`가 아니라 `onChange`로 한다는 것", reset 직후의 `dirty` — "`dirty`는 C6대로 현행 유지라 값이 같아도 선다"), `onError` 코드 표(코드, level, 부류, 언제, 누구 잘못, 기본 드러남)와 판 규칙(LANDING-068). 스토리북 문서(LANDING-096). C-10 사용 규칙은 README가 소유(EVENT-069). `merge` 방법은 이주 안내에(SCHEMA-046). nullable 아닌 노드의 `null` 안내(VALUE-033).
+- changeset(파괴적 변경, `fixed` 무리 전체 `major`; 1.0.0-beta 프리릴리스 뒤 1.0.0, LANDING-002), 포장된 산출물의 릴리스 테스트(LANDING-068·096, TEST-053·055·058). `CHANGELOG.md`는 병합 뒤 판 올림 PR이 만든다(TEST-045).
 - 릴리스 전 벤치 재실행(LANDING-096): 옛 판 기준선(TEST-031) 대 새 판(TEST-026), 느린 항목은 이유와 소유자 수용(TEST-027). 모바일 안전 임계는 같은 조건으로 다시 재어 잰 사실만(TEST-074).
-- **레거시 삭제**(LANDING-205): `src/__legacy__/`와 그것을 가리키는 것이 하나도 없음을 확인하고 디렉토리를 지운다. 옛 스토리 처분표의 잔여, 스파이크 가운데 e2e로 이식되지 않은 것의 처분, 벤치 결과 파일 정리, 패키지 `CLAUDE.md`와 루트 `CLAUDE.md`의 인벤토리 동기화.
+- **레거시 삭제**(LANDING-205): `src/__legacy__/`와 그것을 가리키는 것이 하나도 없음을 확인하고 디렉토리를 지운다. 옛 스토리 처분표의 잔여, 스파이크 가운데 e2e로 이식되지 않은 것의 처분, 패키지 `CLAUDE.md`와 루트 `CLAUDE.md`의 인벤토리 동기화. "우산 브랜치에 딸려 들어온 무관한 파일(`.seiri/.gitignore`, 벤치 결과)은 정리하지 않는다."(LANDING-205)
 
 ## 부딪히는 코드 · 그대로 쓰는 것 · 새 fractal
 
@@ -34,7 +34,7 @@
 ## 산출물과 완료 기준
 
 - [ ] README·docs·`docs/agents`·스토리북 문서, reset 규칙, 코드 표
-- [ ] changeset·`CHANGELOG.md`·릴리스 테스트
+- [ ] changeset·릴리스 테스트(`CHANGELOG.md`는 `changesets/action`이 만든다, TEST-045)
 - [ ] 벤치 재실행 보고와 소유자 수용
 - [ ] `src/__legacy__/` 삭제, 정리 목록 처분, `CLAUDE.md` 인벤토리 동기화
 - [ ] 우산 PR `master` 병합 준비, `verification.md`의 게이트 전부 통과

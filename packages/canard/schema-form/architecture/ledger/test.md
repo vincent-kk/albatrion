@@ -19,13 +19,13 @@
 | TEST-011 | 단계 어휘 여덟과 핸들의 DOM 등록 — playScenario(scenario, 요소) 하나 | 현행 | 편집자 결정(16라운드, `09-landing-and-test-strategy.md:151`), 소유자 답(`reviews/round-16-owner-answers.md:16` 답 10) |
 | TEST-012 | 검증 매트릭스는 스토리로 만들지 않고 정적 test.each 표로 | 현행 | 편집자 결정(16라운드, `09-landing-and-test-strategy.md:152`) |
 | TEST-013 | 기존 234파일의 처분 — 그대로 산다·표면만 고친다·버리고 새로 쓴다·미분류·새로 있어야 한다 | 현행 | 편집자 결정(16라운드, `09-landing-and-test-strategy.md:154`), 소유자 답(`reviews/round-16-owner-answers.md:13` 답 7), 소유자 답(`reviews/round-18-owner-answers.md:7` S1; `:160`의 파서 변환 시험을 대체) |
-| TEST-014 | 새로 있어야 하는 시험 PR-1 — 청사진 테이블·병합표·제거 규칙·식 컴파일러·options/presentation 병합·전략 불일치·청사진 경고 수집 | 현행 | 편집자 결정(16·17라운드, `09-landing-and-test-strategy.md:168`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-11) |
+| TEST-014 | 새로 있어야 하는 시험 PR-1 — 청사진 테이블·병합표·제거 규칙·식 컴파일러·options/presentation 병합·전략 불일치·청사진 경고 수집 | 현행 | 편집자 결정(16·17라운드, `09-landing-and-test-strategy.md:168`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-11), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-14; 정적 `injectTo` 오류 없음) |
 | TEST-015 | 새로 있어야 하는 시험 PR-2 — 정착 루프 시나리오, 예산 다섯, diagnostics, 사슬 끝 throw, 나감 비움, 노드 구조 시험, active 게터 | 대체됨(→ TEST-069) | 편집자 결정(16·17라운드, `09-landing-and-test-strategy.md:169`), 편집자 결정(17라운드, 18라운드 안건으로 이관, `reviews/round-18-agenda.md:57`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-25) |
 | TEST-016 | 새로 있어야 하는 시험 PR-3 — 같은 대상 규칙, 에지 소비, DisableAutomaticWrites, 개발 모드 정착 기록 | 현행 | 편집자 결정(16라운드, `09-landing-and-test-strategy.md:170`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-25) |
 | TEST-017 | 새로 있어야 하는 시험 PR-4 — 디스패처, 사슬 끝 throw와 onError 계약의 core 쪽, 검증기 없음·컴파일 실패, degraded, 가드, 차등 시험, 훅 수준 바인딩 시험 | 현행 | 편집자 결정(16·17라운드, `09-landing-and-test-strategy.md:171`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-25) |
 | TEST-018 | 새로 있어야 하는 시험 PR-5 — 배열 아이템의 생김과 채움, identity, omitTrailing, 터미널 배열 행의 구조 연산 | 현행 | 편집자 결정(16라운드, `09-landing-and-test-strategy.md:172`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-25·18C-59) |
 | TEST-019 | 새로 있어야 하는 시험 PR-6 — 잠금 OR·표시 AND, controls.children, 조각 controls, unsetOnInactive 층 | 현행 | 편집자 결정(16라운드, `09-landing-and-test-strategy.md:173`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-25) |
-| TEST-020 | 새로 있어야 하는 시험 PR-7 — e2e: 렌더 중 onChange 없음, 마운트 정착 오류, 바운더리와 싱크, onError e2e, finishInput·trim, strategy, reset, React 18 | 현행 | 편집자 결정(16·17라운드, `09-landing-and-test-strategy.md:174`), 소유자 답(`reviews/round-16-owner-answers.md:11` 답 5), 16라운드 스웜 수렴(편집자 결정, `09-landing-and-test-strategy.md:174`; reset의 시험 목록), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-25) |
+| TEST-020 | 새로 있어야 하는 시험 PR-7 — e2e: 렌더 중 onChange 없음, 마운트 정착 오류, 바운더리와 싱크, onError e2e, finishInput·trim, strategy, reset, React 18 | 현행 | 편집자 결정(16·17라운드, `09-landing-and-test-strategy.md:174`), 소유자 답(`reviews/round-16-owner-answers.md:11` 답 5), 16라운드 스웜 수렴(편집자 결정, `09-landing-and-test-strategy.md:174`; reset의 시험 목록), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-25), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-19; `trim`은 자동 쓰기) |
 | TEST-021 | renderForm 하니스 — e2e 층의 뼈대, 고칠 것 다섯 | 현행 | 편집자 결정(16·17라운드, `09-landing-and-test-strategy.md:180`) |
 | TEST-022 | 스토리북 원칙 셋 — 스토리는 e2e의 화면 미러, 시나리오는 한 곳, 자동화는 play | 현행 | 편집자 결정(16라운드, `09-landing-and-test-strategy.md:186`), 소유자 답(`reviews/round-16-owner-answers.md:7` 답 1) |
 | TEST-023 | 스토리북 구조 — 단일 원천·코어 시나리오 시험·시나리오 스토리·자동화·e2e·사용법 스토리 | 현행 | 편집자 결정(16라운드, `09-landing-and-test-strategy.md:188`), 소유자 답(`reviews/round-16-owner-answers.md:14` 답 8), 소유자 답(`reviews/round-16-owner-answers.md:16` 답 10), 소유자 답(`reviews/round-16-owner-answers.md:7` 답 1) |
@@ -55,7 +55,7 @@
 | TEST-047 | 릴리스 3 — 작업 흐름은 publish-npm-packages.yml 한 파일 — 작업 다섯 | 현행 | 16라운드 스웜 수렴(편집자 결정, `09-landing-and-test-strategy.md:235`) |
 | TEST-048 | 릴리스 4 — 토큰은 기본 GITHUB_TOKEN | 현행 | 16라운드 스웜 수렴(편집자 결정, `09-landing-and-test-strategy.md:235`) |
 | TEST-049 | 릴리스 5 — 지속 통합 시험 작업 흐름 test.yml을 새로 둔다 | 현행 | 16라운드 스웜 수렴(편집자 결정, `09-landing-and-test-strategy.md:235`) |
-| TEST-050 | 릴리스 6 — 릴리스 테스트를 다시 쓴다 — 포장된 산출물을 검사 | 현행 | 소유자 답(`reviews/round-16-owner-answers.md:15` 답 9), 16라운드 스웜 수렴(편집자 결정, `09-landing-and-test-strategy.md:235`), 소유자 답(`reviews/round-16-owner-answers.md:11` 답 5) |
+| TEST-050 | 릴리스 6 — 릴리스 테스트를 다시 쓴다 — 포장된 산출물을 검사 | 현행 | 소유자 답(`reviews/round-16-owner-answers.md:15` 답 9), 16라운드 스웜 수렴(편집자 결정, `09-landing-and-test-strategy.md:235`), 소유자 답(`reviews/round-16-owner-answers.md:11` 답 5), 편집자 결정(18라운드, 개발계획 별도 PR; 첫 가동은 시나리오 그리기 없이) |
 | TEST-051 | 릴리스 7 — 배포 시점 — 판 올림 PR을 병합하면 자동 배포 | 현행 | 16라운드 스웜 수렴(편집자 결정, `09-landing-and-test-strategy.md:235`) |
 | TEST-052 | 릴리스 8 — 병합 뒤 시험 실패의 복구 — 다음 판으로 | 현행 | 16라운드 스웜 수렴(편집자 결정, `09-landing-and-test-strategy.md:235`) |
 | TEST-053 | 릴리스 9 — changeset 존재 검사와 changedFilePatterns | 현행 | 16라운드 스웜 수렴(편집자 결정, `09-landing-and-test-strategy.md:235`) |
@@ -298,10 +298,12 @@
 - 보충:
   > 편집자 결정(18C-11): "【추론】 PR-1 병합표 시험(`09-landing-and-test-strategy.md:168`)이 이 표현을 단언한다." (`reviews/round-18-closing.md:259`)
 - 상태: 현행
-- 출처: `09-landing-and-test-strategy.md:166-168`(정본), `reviews/round-16-owner-review.md:27`, `reviews/round-18-closing.md:259`
-- 닫은 사람: 편집자 결정(16·17라운드, `09-landing-and-test-strategy.md:168`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-11)
+- 출처: `09-landing-and-test-strategy.md:166-168`(정본), `reviews/round-16-owner-review.md:27`, `reviews/round-18-closing.md:259`, `reviews/round-18-closing.md:384`
+- 닫은 사람: 편집자 결정(16·17라운드, `09-landing-and-test-strategy.md:168`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-11), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-14; 정적 `injectTo` 오류 없음)
 - 라운드: 18
 - 까닭: `09-landing-and-test-strategy.md:162`, `reviews/round-18-closing.md:261-264`
+- 충돌:
+  > `09-landing-and-test-strategy.md:168`의 "정적으로 아는 `controls.injectTo` 대상 없음의 청사진 오류"는 18라운드 결정과 다르다: `controls.injectTo`는 함수 형태 하나라 청사진이 정적으로 아는 대상이 없으므로 PR-1 시험에 이 청사진 오류가 없고, 대상 경로가 청사진에 없거나 터미널 아래인 경우는 동적 대상 없음 `INJECT_TARGET_MISSING`이다(CONTROLS-079, ERROR-198). 18라운드 결정이 이긴다(`reviews/round-18-closing.md:384`).
 
 ### TEST-015 새로 있어야 하는 시험 PR-2 — 정착 루프 시나리오, 예산 다섯, diagnostics, 사슬 끝 throw, 나감 비움, 노드 구조 시험, active 게터
 
@@ -386,10 +388,12 @@
   > "PR-7의 시험(§4.4): 터미널 입력의 다시 마운트(`reset.pristine:267-309`의 단언 유지), 값 전체를 그리는 브랜치 입력과 빈 배열 입력은 다시 마운트되고 자식을 그리고 있는 기본 객체·배열 입력은 아님, 대체된 입력의 늦은 `onChange`·`onFileAttach` 폐기, 재생성 reset 뒤 옛 입력(컨테이너 입력 포함)의 언마운트 flush와 늦은 `onFileAttach`, 흐림 뒤 미룬 `touched`와 컨테이너 입력의 늦은 `onChange`(그 `dirty` 표시와 외부 오류 지움 포함)는 조용히 버려지고 옛 노드 참조로 한 쓰기는 `SchemaFormError`, 흐림 직후 reset과 `clearState`의 `touched`, 같은 처리기의 prop 갱신 뒤 reset(`startTransition` 안 포함), 인라인이지만 같은 스키마의 로드(노드 identity 유지)와 함수 칸 차이의 재생성·경고, `properties` 순서만 바꾼 스키마의 reset은 재생성, `batch` 안의 두 경로(reset 뒤의 읽기와 부분 쓰기의 결과가 경로와 무관함), 검증 모드 비트별 마운트·reset 검증, `onStateChange`는 바뀐 때만, `showError` 복귀, `reset(option?)`의 억제 비트 두 방향(Form 속성 `disableAutomaticWrites`와의 우선순위, 둘 다 주면 억제)과 재대조가 원래 호출의 억제 비트를 쓰는 것, `diagnostics` 재기록(로드가 `degraded`와 제출 거부를 푼다, R17-1 나), 가설 H1–H5(`reviews/raw-round16-reset.md` §4)의 실행 확인." (`09-landing-and-test-strategy.md:96`)
   > 편집자 결정(18C-25): "【추론】 `degraded` 동안의 제출 거부는 PR-7로 미룬다." (`reviews/round-18-closing.md:773`)
 - 상태: 현행
-- 출처: `09-landing-and-test-strategy.md:166-167,174`(정본), `reviews/round-16-owner-review.md:27`, `reviews/round-16-owner-answers.md:11`, `reviews/round-16-owner-review.md:56`, `reviews/round-18-closing.md:773`
-- 닫은 사람: 편집자 결정(16·17라운드, `09-landing-and-test-strategy.md:174`), 소유자 답(`reviews/round-16-owner-answers.md:11` 답 5), 16라운드 스웜 수렴(편집자 결정, `09-landing-and-test-strategy.md:174`; reset의 시험 목록), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-25)
+- 출처: `09-landing-and-test-strategy.md:166-167,174`(정본), `reviews/round-16-owner-review.md:27`, `reviews/round-16-owner-answers.md:11`, `reviews/round-16-owner-review.md:56`, `reviews/round-18-closing.md:773`, `reviews/round-18-closing.md:582-589`
+- 닫은 사람: 편집자 결정(16·17라운드, `09-landing-and-test-strategy.md:174`), 소유자 답(`reviews/round-16-owner-answers.md:11` 답 5), 16라운드 스웜 수렴(편집자 결정, `09-landing-and-test-strategy.md:174`; reset의 시험 목록), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-25), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-19; `trim`은 자동 쓰기)
 - 라운드: 18
 - 까닭: `09-landing-and-test-strategy.md:162`, `reviews/round-18-closing.md:782-786`
+- 충돌:
+  > `09-landing-and-test-strategy.md:174`의 "`trim`(포커스 아웃 때만 자름, 입력 중에는 자르지 않음, 같은 값이면 쓰지 않음, 입력 출처 쓰기)"는 18라운드 결정과 다르다: `trim` 쓰기는 입력 출처 쓰기가 아니라 자동 쓰기이므로 PR-7 시험은 바깥 오류와 dirty가 그대로이고 그 노드의 입력이 Refresh를 받는 것을 단언한다(WRITE-083, LANDING-145). 18라운드 결정이 이긴다(`reviews/round-18-closing.md:582`).
 
 ### TEST-021 renderForm 하니스 — e2e 층의 뼈대, 고칠 것 다섯
 
@@ -844,11 +848,12 @@
 
 - 결정:
   > 6. **릴리스 테스트를 다시 쓴다 — 포장된 산출물을 검사한다.** (1) 포장: 판 가드 없이 공개 패키지 전부를 `yarn pack`하는 `scripts/pack-packages.sh`를 `publish-packages.sh`에서 떼어 내고 둘이 함께 쓴다(오늘은 판 가드가 `yarn pack`보다 앞이라 레지스트리에 있는 판은 포장되지 않는다). 비공개 `@aileron/schema-form-scenarios`도 포장한다. (2) 설치: `@aileron/production-testbed`를 저장소 밖 임시 폴더로 복사하고(워크스페이스 안에서는 `workspace:^`가 원본으로 풀린다), 공개 워크스페이스 전부(`@winglet/*`, `@lerx/promise-modal` 포함, 배포되지 않은 의존의 폐포)를 포장 파일로 강제하며(overrides), 플러그인 의존을 더하고, 제3자 의존의 판은 루트 `yarn.lock`의 판으로 고정한다(방법은 전환 PR이 정한다). React 18과 19는 설치 단계의 판 덮어쓰기로 고른다(답 5). (3) 검사: `skipLibCheck: false`인 별도 tsconfig로 배포된 `.d.ts`의 형 검사, 설치된 패키지 이름으로 ESM `import`와 CJS `require`(오늘의 가져오기 시험 스크립트를 옮겨 쓴다), testbed 빌드, 대표 시나리오 그리기(감싸개에 포장된 `Form`을 주입, §8의 아홉째). 조합은 쌍으로 덮는다: UI 플러그인 넷을 각각 ajv8과, ajv6·ajv7을 각각 UI 하나와 짝지어 React 판마다 여섯, 모두 열둘(UI 플러그인과 검증기 플러그인은 서로를 가져오지 않고 코어 계약으로만 만난다. 코어를 거치지 않는 경로가 나오면 곱으로 되돌린다). (4) 시점: 변경이 대기 중인 `master` 푸시(판 올림 PR이 갱신될 때)에 셋째의 `release-test` 작업으로 한 번, 셋째의 `publish` 작업 안에서 빌드 뒤·올리기 전에 같은 빌드로 한 번.
-- 보충: 없음
+- 보충:
+  > 편집자 결정(릴리스 전환 PR의 첫 가동): "대표 시나리오 그리기(감싸개에 포장된 `Form`을 주입, §8의 아홉째)" (`09-landing-and-test-strategy.md:242`) — 릴리스 전환 PR은 `master`에 시나리오 패키지가 없으므로 릴리스 테스트를 오늘 배포된 패키지로 시나리오 그리기 없이 돌리고, 조합 열둘의 시나리오 실행은 PR-8의 게이트다(LANDING-097은 전환 PR이 재설계와 독립이라고만 정한다).
 - 상태: 현행
 - 출처: `09-landing-and-test-strategy.md:242`(정본), `09-landing-and-test-strategy.md:278`, `reviews/round-16-owner-answers.md:15`, `reviews/round-16-owner-answers.md:11`
-- 닫은 사람: 소유자 답(`reviews/round-16-owner-answers.md:15` 답 9), 16라운드 스웜 수렴(편집자 결정, `09-landing-and-test-strategy.md:235`), 소유자 답(`reviews/round-16-owner-answers.md:11` 답 5)
-- 라운드: 16
+- 닫은 사람: 소유자 답(`reviews/round-16-owner-answers.md:15` 답 9), 16라운드 스웜 수렴(편집자 결정, `09-landing-and-test-strategy.md:235`), 소유자 답(`reviews/round-16-owner-answers.md:11` 답 5), 편집자 결정(18라운드, 개발계획 별도 PR; 첫 가동은 시나리오 그리기 없이)
+- 라운드: 18
 - 까닭: `reviews/round-16-owner-answers.md:15`
 
 ### TEST-051 릴리스 7 — 배포 시점 — 판 올림 PR을 병합하면 자동 배포

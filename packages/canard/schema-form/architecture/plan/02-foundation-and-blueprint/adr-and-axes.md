@@ -13,9 +13,9 @@
 | 축 2 조건에 쓰는 프로퍼티는 `properties`에 선언 — 컨벤션, 검사하지 않음 | GOAL-035 | 청사진 오류로 만들지 않는다 |
 | 축 3 `then`·`oneOf`·`allOf`·`anyOf` 블록에서 프로퍼티 노드를 선언할 수 있음 | GOAL-036 | 조각 표의 `declares` |
 | 축 5 노드의 현재 제약을 최신화해 제공할 의무는 폼이 짐 | GOAL-038 | 유효 스키마 병합 함수와 병합표 |
-| 축 9 폼 전용 키는 `controls`·`options`·`presentation` 안에만 | GOAL-042 | 닫힌 목록과 모르는 키의 청사진 오류·경고. 청사진은 `presentation`을 읽지 않는다 |
+| 축 9 폼 전용 키는 `controls`·`options`·`presentation` 안에만 | GOAL-042 | 닫힌 목록과 모르는 키의 청사진 오류·경고. 터미널 전략을 정할 때 "청사진은 `presentation`을 읽지 않는다"(LANDING-061). 다만 "전략이 `terminal`인 모든 노드의 인라인 하위 스키마(깊이 1 이상, `$ref`는 따라가지 않음)에 예약 층 키 `controls`·`options`·`presentation`이 나오면, 청사진이 경고 `(가칭) SCHEMA_FORM_WARNING.TERMINAL_SUBTREE_KEY_IGNORED_FOR_FORM`을 낸다"(BLUEPRINT-044) |
 | G4 하나의 개념에는 하나의 장치 | GOAL-006 | 조건부로 형상을 바꾸는 모든 구문이 같은 조각 장치를 탄다 |
-| G4를 좁힘 — 트리의 형태는 렌더링 런타임에 좌우되지 않는다 | GOAL-008 | 터미널 전략은 `options.terminal` → 렌더 계층이 넘긴 판정 함수 → `type`의 순서이며, 청사진은 판정 함수를 인자로만 받는다 |
+| G4를 좁힘 — 트리의 형태는 렌더링 런타임에 좌우되지 않는다 | GOAL-008 | "종류가 object·array인 칸은 nullable을 포함해(`['object','null']`) 오늘 순서 `options.terminal` → 판정 → `type`을 따른다"(BLUEPRINT-044 S6). "`BEHAVIORS[type]`의 행이 하나인 종류는 전략을 그 행에서 정하고 렌더 계층 판정을 묻지 않는다", "잎(string·number·boolean·null과 18C-02의 (가칭) `union`)은 `terminal`, 가상은 `branch`다", "행이 하나인 종류에 그 행과 다른 `options.terminal`을 적으면 청사진 오류다(잎의 `false`, 가상의 `true`)"(NODE-047). 청사진은 판정 함수를 인자로만 받는다 |
 | P5 core는 렌더러를 모른다 | GOAL-031 | 청사진 fractal은 React를 가져오지 않는다 |
 | P3 형상은 상태의 순수 함수다 | GOAL-029 | `blueprint(schema) → 청사진`은 순수 함수이고 캐시 가능하다 |
 | 교집합 원리 U1–U9의 정적 부분 | BLUEPRINT-041·044 | 정적 선언의 `type` 교집합이 종류·`schemaType`·`nullable`을 정한다. 빈 교집합만 충돌 |
@@ -25,7 +25,7 @@
 | ADR | 이 PR과의 관계 | 정본 항목 |
 | --- | --- | --- |
 | 0002 조건부 장치를 "가드 → 조각" 단일 모델로 통합 | 조각 표·전순서·노드 게이트의 통합. 이 PR의 본문 | FRAGMENT 영역, BLUEPRINT-017 |
-| 0005 스키마 → 청사진 분석 단계와 노드 공유 규칙 | 분석 단계의 분리, 노드 공유("같은 이름 + 같은 타입이면 노드 하나"), 명시 판별, 병합표 | BLUEPRINT-001…032, SCHEMA-007…013 |
+| 0005 스키마 → 청사진 분석 단계와 노드 공유 규칙 | 분석 단계의 분리, 노드 공유 — 같은 이름 + 같은 종류 (어느 조각이든)는 "노드 하나를 공유한다."(BLUEPRINT-010의 표), "두 선언은 fold가 같을 때 같은 종류이며, 구현은 7비트 마스크 비교 한 번이다"(BLUEPRINT-044), 명시 판별, 병합표 | BLUEPRINT-001…047의 현행 항목(대체됨·분할됨은 가리키는 항목으로), SCHEMA-007…013, SCHEMA-039 |
 | 0003 예약 층: 그룹 객체 셋 | `controls`·`options`·`presentation`의 닫힌 목록과 식 언어 | CONTROLS 영역 |
 | 0010 작성자의 약속: 분기 관행과 폼이 검사하지 않는 것 | 청사진이 검사하지 않는 것(축 2) | FRAGMENT-006·007·022…034 |
 | 0012 FE 오버레이를 위한 별도의 입구를 두지 않는다 | 스키마 병합은 소비자가 한다(`merge` 선택 인자만 제공) | SCHEMA-015…018·046 |

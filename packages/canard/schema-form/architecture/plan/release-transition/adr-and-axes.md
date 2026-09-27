@@ -7,7 +7,7 @@
 | 축 | 원장·규칙 | 이 PR에서의 뜻 |
 | --- | --- | --- |
 | C7·C8 — 메이저 버전급 변경과 이행 경로 | GOAL-020·021 | changesets가 `fixed` 무리와 프리릴리스를 표현할 수 있어야 한다(LANDING-002) |
-| 릴리스 항목 9·10·11 | TEST-053·054·055 | changeset 존재 검사와 `changedFilePatterns`, 자리와 저장소 정리, 무리 밖 패키지의 자기 changeset |
+| 릴리스 항목 1–13 | TEST-045–057 | changesets 가동(1), 배포는 오늘의 스크립트와 `changeset tag`(2), 작업 흐름 한 파일(3), 기본 토큰(4), 시험 작업 흐름(5), 릴리스 테스트 재작성(6), 배포 시점(7), 병합 뒤 복구(8), changeset 존재 검사와 `changedFilePatterns`(9), 자리와 저장소 정리(10), 무리 밖 패키지의 자기 changeset(11), 액션 커밋 해시 고정(12), 태그마다 Release(13) |
 | 저장소 규칙 — 판은 `package.json`에서 올리고 changeset·CHANGELOG는 쓰지 않음(오늘) | 루트 `CLAUDE.md` | 이 PR이 그 규칙을 바꾸므로 루트 `CLAUDE.md`·`scripts/PUBLISHING.md`를 같은 PR에서 고친다(문서가 코드와 같은 커밋) |
 | 보이지 않는 배선은 밝힌다 | seiri `agent-legible` §1 | 작업 흐름 파일 머리에 무엇이 그것을 부르는지 한 줄 |
 

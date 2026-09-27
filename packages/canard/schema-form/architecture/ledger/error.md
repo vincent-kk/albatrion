@@ -147,7 +147,7 @@
 | ERROR-139 | 제출 거부가 드러나는 길 — 프로미스 거부, 네이티브 submit은 `onError` 뒤 싱크 | 현행 | 편집자 결정(17라운드, `adr/0014-error-policy.md:203`) |
 | ERROR-140 | 제출 거부는 렌더 계층의 일이다 | 현행 | 편집자 결정(17라운드, `adr/0014-error-policy.md:203`) |
 | ERROR-141 | `getValue()`는 막지 않는다 | 현행 | 소유자 답(`reviews/round-17-owner-answers.md:9` R17-1) |
-| ERROR-142 | 제출이 막힐 때 호스트가 그릴 자리, 되먹임·중첩 초과는 `diagnostics`에 남기지 않음 | 현행 | 편집자 결정(17라운드, `adr/0014-error-policy.md:205-207`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-98) |
+| ERROR-142 | 제출이 막힐 때 호스트가 그릴 자리, 되먹임·중첩 초과는 `diagnostics`에 남기지 않음 | 현행 | 편집자 결정(17라운드, `adr/0014-error-policy.md:205-207`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-98), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-01; `exceededBudget`에 `recursion` 추가) |
 | ERROR-143 | 검증기는 플러그인 또는 Form 속성 `validatorFactory`에서 온다 | 현행 | 소유자 답(`reviews/round-14-owner-answers.md:13` O-7) |
 | ERROR-144 | 검증기가 어느 쪽에서 오든 청사진 오류가 아니며 폼은 선다 | 현행 | 스웜 수렴(편집자 결정, `reviews/raw-round17-convergence.md:84` E3) |
 | ERROR-145 | 기본 검증 모드는 그대로 두고 암묵 기본값은 두지 않는다 | 현행 | 스웜 수렴(편집자 결정, `reviews/raw-round17-convergence.md:84` E3) |
@@ -2105,12 +2105,13 @@
   > 되먹임 파동과 `onChange` 중첩의 초과는 소비자 코드의 쓰기를 거부한 것이지 작성자의 선언을 뺀 것이 아니므로 `diagnostics`에 남기지 않고 사슬의 끝에서 던지기만 한다(ADR 0008 §2 규칙 4·§8의 `exceededBudget` 다섯 값을 셋으로 줄인다).
 - 보충: 없음
 - 상태: 현행
-- 출처: `adr/0014-error-policy.md:205-207`(정본, ERROR-034에서 분할), `reviews/round-18-closing.md:2797-2799`
-- 닫은 사람: 편집자 결정(17라운드, `adr/0014-error-policy.md:205-207`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-98)
+- 출처: `adr/0014-error-policy.md:205-207`(정본, ERROR-034에서 분할), `reviews/round-18-closing.md:2797-2799`, `reviews/round-18-closing.md:28`
+- 닫은 사람: 편집자 결정(17라운드, `adr/0014-error-policy.md:205-207`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-98), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-01; `exceededBudget`에 `recursion` 추가)
 - 라운드: 18
 - 까닭: `reviews/round-17-owner-answers.md:9`(반영 칸), `02-target-overview.md:310`, `reviews/round-18-closing.md:2801-2803`
 - 충돌:
   > `adr/0014-error-policy.md:205`의 "호출자는 로드(스키마 교체, 루트 전체 교체 `setValue(V)`, `reset`)로 `stable`로 되돌린다"는 소유자 답·18라운드 결정과 다르다: `setValue(V)`는 로드가 아니라 전체 교체 쓰기이고(WRITE-090), `diagnostics`는 폼 수준 로드인 마운트·`FormHandle.reset()`에서만 초기화하므로 `setValue(V)`와 `resetSubtree()`로는 돌아오지 않으며, `degraded`에서 돌아오는 길은 `FormHandle.reset()`이다(ERROR-204). 18라운드 결정이 이긴다(`reviews/round-18-owner-answers.md:26`, `reviews/round-18-closing.md:2797-2799`).
+  > `adr/0014-error-policy.md:207`의 "`exceededBudget` 다섯 값을 셋으로 줄인다"는 18라운드 결정과 다르다: 재귀 펼침의 멈춤이 (가칭) `'recursion'`을 더해 `exceededBudget`의 값은 넷이다(ERROR-190). 18라운드 결정이 이긴다(`reviews/round-18-closing.md:28`).
 
 ### ERROR-143 검증기는 플러그인 또는 Form 속성 `validatorFactory`에서 온다
 

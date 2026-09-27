@@ -23,8 +23,8 @@
 | --- | --- | --- |
 | 0003 예약 층: 그룹 객체 셋 `controls`·`options`·`presentation` | `controls`의 키 목록·식 언어·`children`·상태 키·`injectTo`·`derived`·`unsetValue` | CONTROLS 영역 |
 | 0007 작업 루프 | 파생 단계의 자리, 같은 대상 규칙, 에지 소비, 라운드 | SETTLE 영역 |
-| 0013 core는 값을 고치지 않는다 | 자동 쓰기 다섯과 억제 비트, 나감 비움의 층과 기본 유지 | WRITE-007·031…041·078 |
-| 0002 가드 → 조각 | 조각 `controls`와 나감 발화 | FRAGMENT 영역 |
+| 0013 core는 값을 고치지 않는다 | 자동 쓰기 여섯(포커스 아웃 trim 포함, WRITE-078)과 억제 비트, 나감 비움의 층과 기본 유지 | WRITE-007·031…041·078 |
+| 0002 가드 → 조각 | 조각 `controls`의 에지 규칙은 켜진 동안만 후보이고 "나감은 이 규칙들의 에지가 아니다"(FRAGMENT-050); 꺼짐이 값에 닿는 장치는 `unsetOnInactive` 하나 | FRAGMENT-050, FRAGMENT 영역 |
 
 ## 설계 가치
 

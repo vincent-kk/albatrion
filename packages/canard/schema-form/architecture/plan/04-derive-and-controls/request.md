@@ -9,18 +9,18 @@
 
 ## 목적
 
-정착 루프의 계산 단계를 완결한다. (1) **파생** `settle/derive/`: `controls.derived`·`controls.injectTo`·`controls.unsetValue`, 같은 대상 규칙, 에지 소비. (2) **상태 키·제어**: 상태 키의 결합, `controls.children`, 조각 `controls`, `unsetOnInactive`의 정책, 겉면의 계산 게터. 이 PR이 끝나면 03의 게이트 스텁이 실제 술어로 바뀔 준비가 된다.
+정착 루프의 계산 단계를 완결한다. (1) **파생** `settle/derive/`: `controls.derived`·`controls.injectTo`·`controls.unsetValue`, 같은 대상 규칙, 에지 소비. (2) **상태 키·제어**: 상태 키의 결합, `controls.children`, 조각 `controls`, `unsetOnInactive`의 정책, 겉면의 계산 게터.
 
 ## 범위 A — 파생 (원장이 정한 내용)
 
 - `controls.derived`(원본을 쓴다, WRITE-011)·`controls.injectTo`(작성자가 선언한 전체 교체, 런타임은 에지, 로드에서 발화, WRITE-012)·`controls.unsetValue`(WRITE-028), 같은 대상 규칙(종류 순위, 문서 순서, 층, 전순서, 정착 단위), 에지 소비, `DisableAutomaticWrites`(WRITE-078), `controls.resetInteraction`, 개발 모드 정착 기록(LANDING-063).
-- 에지의 값 동등 판정과 `controls.derived` 의존 집합(18C-50), 조각 `controls` 식의 나감 발화, 에지와 생김의 기준(로드는 비우고 로드가 아닌 쓰기는 직전 커밋, 18C-102).
+- 에지의 값 동등 판정과 `controls.derived` 의존 집합(18C-50, SETTLE-043), 조각 `controls`의 에지 규칙은 그 조각이 켜져 있는 동안만 후보이고 나감은 이 규칙들의 에지가 아니다(FRAGMENT-050), 03이 세운 에지와 생김의 기준(SETTLE-048)의 파생 쪽 소비.
 - 식 실행은 청사진이 컴파일한 함수를 `createDynamicFunction`의 의존 주입 형태로 부른다(LANDING-083).
 
 ## 범위 B — 상태 키·제어 (원장이 정한 내용)
 
 - `controls.visible`·`controls.readOnly`·`controls.disabled`·표준 `readOnly`의 결합(OR/AND), `controls.children`(CONTROLS-073), 조각 `controls`, `unsetOnInactive`의 층·식의 값(직전 커밋)·하위 트리로 내려가는 정책(R17-2 ㄴ), 겉면의 계산 게터(`visible`·`enabled`·`readOnly`·`disabled`)(LANDING-066).
-- 나감 정책 키의 네 층과 같은 층의 유지 우선(WRITE-031), 나감의 시점은 직전 커밋의 값(WRITE-038), 노드 게이트 `controls.active: false`도 같은 장치이고 `controls.visible`은 언제나 보존(WRITE-039), 하위 트리·잠복 자손으로 내려가는 정책(WRITE-033·034).
+- 나감 정책 키의 네 층과 같은 층의 유지 우선(WRITE-031), 나감의 시점은 직전 커밋의 값(WRITE-038), 노드 게이트 `controls.active: false`도 같은 장치이고 `controls.visible`은 언제나 보존(WRITE-039), 하위 트리·잠복 자손으로 내려가는 정책(WRITE-033·034)은 03이 노드 자신·Form 속성 층으로 세웠고, 이 PR은 `children` 항목 층·조각 `controls` 층·식 값(직전 커밋)을 더한다(LANDING-092, TEST-069).
 - 조각에 따라 터미널 전략이 바뀌는 경로는 없다(선언 사이 정적, LANDING-066).
 
 ## 부딪히는 코드 · 그대로 쓰는 것 · 새 fractal (LANDING-083·086)
@@ -35,8 +35,8 @@
 
 ## 착수 전 확인
 
-- LANDING-063의 셋은 18C-50·102가 닫았다. `controls.children` 세부는 CONTROLS-073.
-- 03의 게이트 스텁 인터페이스를 그대로 쓰고, 이 PR에서 실제 술어로 바꾸는 것은 상태 키 부분까지다. `if` 게이트의 가드 컴파일은 05.
+- LANDING-063의 셋은 18C-50(SETTLE-043)·18C-51(FRAGMENT-050)이 닫았다. `controls.children` 세부는 CONTROLS-073.
+- 게이트는 03의 술어 대역을 그대로 쓴다. 같은 시나리오를 실제 가드로 다시 돌리는 것과 `if` 게이트의 가드 컴파일은 05다(TEST-069 (나)).
 
 ## 산출물과 완료 기준
 

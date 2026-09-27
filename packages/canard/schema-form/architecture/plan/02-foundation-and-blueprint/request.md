@@ -14,18 +14,18 @@
 ## 범위 A — 기반 (원장이 정한 내용)
 
 - **프로토타입 v7** `architecture/spikes/round18/proto/loop-v7.mjs`: v6에 게이트 입력의 `extras` 정적 규칙, 같은 순위 동점·정착 단위 순위, 나감 에지, 전이 라운드 상한, 재계산 목록만 순회를 더한다(LANDING-060). 18라운드가 더한 것: 빈 호스트·루트의 방출(VALUE-034), 규칙 A의 세 함수 `isMember`·`convert`·`interpret`와 동점 12건(WRITE-093), 게이트 유효 목록과 U7의 두 단계·전이 라운드(WRITE-098·099). v6은 빈 루트를 `undefined`로 내지만 VALUE-034는 객체 루트 `{}`·배열 루트 `[]`·그 밖의 루트 `undefined`이므로 v7이 고친다.
-- **시나리오 패키지** 비공개 `@aileron/schema-form-scenarios`: 시나리오 데이터 모듈의 형 `FormScenario`, 코어 러너와 화면 어댑터 `playScenario`의 뼈대(시나리오 감싸개와 핸들 등록 포함)(LANDING-090). 시나리오는 실행기 없는 순수 데이터 모듈(TEST-008). 패밀리 폴더와 빈 스위트에 union·fill·narrowing을 미리 둔다(TEST-077).
+- **시나리오 패키지** 비공개 `@aileron/schema-form-scenarios`(`packages/aileron/schema-form-scenarios/`): "같은 패키지에 `FormScenario` 형, 화면 어댑터 `playScenario`, 시나리오 감싸개를 둔다. 비공개 패키지라 배포되지 않으며 `@canard/schema-form`을 가져오지 않는다"(TEST-023). 패키지가 돌리는 것은 "없음"(TEST-023)이고, "시나리오를 실행기 없는 순수 데이터로 둔다"(TEST-008). 코어 러너(LANDING-090)의 자리는 패키지가 아니라 "`src/core/__tests__/scenarios/<부류>.spec.ts`"(TEST-023)다.
 - **vitest `test.projects` 셋**(`unit`·`render`·`storybook`)과 addon-vitest, 세 글롭이 `src/__legacy__/**`를 포함(LANDING-090·159). 릴리스 전환 PR이 먼저 들어왔다면 `test.yml`에 vitest 세 프로젝트와 playwright chromium 단계.
 - **옛 스토리의 처분 목록**, 패키지 `CLAUDE.md`의 'Render-Level Test Harness' 절 개정(LANDING-090).
 - **벤치 기준선**: 옛 엔진의 마지막 `bench:baseline`을 03이 `core/nodes`를 옮기기 전에 재고 커밋을 고정한다(LANDING-159, TEST-031).
 
 ## 범위 B — 청사진 (원장이 정한 내용)
 
-- 조각 표와 전순서, 노드 공유, `controls.discriminator` 변환(끌어올림 포함), 유효 스키마 병합 함수(LANDING-061). 병합의 원자·참조 이동은 `@winglet/common-utils` `merge`의 선택 인자로(LANDING-091의 changeset `minor`; 릴리스 전환 PR이 changesets를 가동하기 전이면 저장소 관례대로 `package.json`의 minor 판을 올린다).
-- 잎 교차 함수 `intersectEnum`·`intersectConst`·`intersectMinimum`·`intersectMaximum`·`intersectMultipleOf`·`validateRange`를 청사진 밖의 새 fractal로 옮기고 공집합 표시를 돌려주게 바꾼다. `intersectPattern`은 옮기지 않고, 레거시의 `const` 비교는 깊은 비교로 바뀐다(LANDING-061의 충돌 줄).
-- 식 컴파일러(`createDynamicFunction`과 `utils`, `JSON_POINTER_PATH_REGEX`, `getPathManager`, `DynamicFunction`)를 청사진으로 통째로 옮기고 이름으로 내보낸다. 유지 이유는 청사진 `DETAIL.md`에(LANDING-091). 역의존 표, `controls.watch` 의존의 합집합.
+- 조각 표와 전순서, 노드 공유, `controls.discriminator` 변환(끌어올림 포함), 유효 스키마 병합 함수, "검증기 앞 제거 규칙 하나"(LANDING-061). 병합의 원자·참조 이동은 `@winglet/common-utils` `merge`의 선택 인자로(LANDING-091의 changeset `minor`; 릴리스 전환 PR이 changesets를 가동하기 전이면 저장소 관례대로 `package.json`의 minor 판을 올린다).
+- 잎 교차 함수 `intersectEnum`·`intersectConst`·`intersectMinimum`·`intersectMaximum`·`intersectMultipleOf`·`validateRange`를 청사진 밖의 새 fractal로 옮겨 이름으로 내보낸다. 반환을 바꾸는 것은 셋뿐이다: "`intersectEnum`·`intersectConst`·`validateRange`는 공집합·충돌에서 던지지 않고 공집합 표시를 돌려주도록 바꾼다"(LANDING-061). "잎 함수의 공집합 표시는 정적 연언에서는 청사진 오류로, 런타임에서는 위 표현으로 바뀐다"(SCHEMA-045)이며, "범위의 역전(`minimum` > `maximum` 등)은 교차한 값 그대로 둔다"(SCHEMA-045). `intersectPattern`은 옮기지 않고, 레거시의 `const` 비교는 깊은 비교로 바뀐다(LANDING-061의 충돌 줄).
+- 식 컴파일러(`createDynamicFunction`과 `utils`, `JSON_POINTER_PATH_REGEX`, `getPathManager`, `DynamicFunction`)를 청사진으로 통째로 옮기고 이름으로 내보낸다. 유지 이유는 청사진 `DETAIL.md`에(LANDING-091). 옮기지 않는 것: "`regex.test.ts`의 `SIMPLE_EQUALITY_REGEX` 묶음은 그 상수와 함께 옛 엔진에 남긴다"(TEST-014). 두 상수 `JSON_POINTER_PATH_REGEX`·`SIMPLE_EQUALITY_REGEX`는 오늘 같은 파일 `ComputedPropertiesManager/utils/regex.ts`에 있다. 역의존 표, `controls.watch` 의존의 합집합.
 - 청사진 오류·경고의 데이터화(수집기 인자, 소비자 없으면 모으지 않음), `controls`·`options`의 닫힌 목록(`trim` 포함)(LANDING-061; 코드 표 ERROR-164). 정적 `controls.injectTo` 대상 없음의 청사진 오류는 없다 — `injectTo`는 함수 형태 하나라 청사진이 정적으로 아는 대상이 없고 대상 없음은 모두 동적 `INJECT_TARGET_MISSING`이다(CONTROLS-079, LANDING-061의 충돌 줄).
-- **union 판정 절차**: 허용 집합 A(d)와 fold, 교집합(`integer ⊂ number`, `null`은 양쪽에 있을 때만), 단계 S0–S6, 결과 일곱, 터미널 하위 키 경고(BLUEPRINT-044), 예 E1–E42(BLUEPRINT-045), 형 없는 칸의 원시 `oneOf`·`anyOf` 합집합(BLUEPRINT-037·038), 교집합 원리 U1–U9의 정적 부분(BLUEPRINT-041), 정적 선언 없는 이름의 게이트 없는 분기 fold 충돌(WRITE-099).
+- **union 판정 절차**: 허용 집합 A(d)와 fold, 교집합(`integer ⊂ number`, `null`은 양쪽에 있을 때만), 단계 S0–S6, 결과 일곱, 터미널 하위 키 경고(BLUEPRINT-044), 예 E1–E42(BLUEPRINT-045), 형 없는 칸 — "한 키워드의 허용 집합 U는 분기 A(b)의 합집합이며 `'null'`을 포함하고, 순서는 분기 순서에서 처음 나온 순서다", "`oneOf`와 `anyOf`가 함께 있으면 둘은 연언이므로, 두 키워드의 U를 교집합한 것이 U이며(`'null'` 포함) 순서는 `oneOf` 쪽을 따른다"(BLUEPRINT-037), "자기 `type` 없는 칸에서 허용 집합이 ⊤인 분기가 하나라도 있으면(`const`·`enum`만 있는 분기 포함) `UNKNOWN_JSON_SCHEMA`이다"(BLUEPRINT-038), "자기 `type` 없는 칸에서 `'null'`을 뗀 분기 형을 접은 집합에 `object`나 `array`가 있으면 `UNKNOWN_JSON_SCHEMA`이며"(BLUEPRINT-039), 교집합 원리 U1–U9의 정적 부분(BLUEPRINT-041), 정적 선언 없는 이름의 게이트 없는 분기 fold 충돌(WRITE-099).
 - 내부 이름: 약어 없는 풀 네임(`PropertyDeclaration`, BLUEPRINT-046), 조각 타입 `SchemaFragment`(BLUEPRINT-047). 청사진 `DETAIL.md`·`type.ts`가 적는다.
 - `core/INTENT.md`의 "새 노드는 `AbstractNode`를 상속한다"를 먼저 고친다(LANDING-088).
 - `$ref` 재귀: 정적 열거가 끝나는 곳과 무한 형상, 스캐너 확인, 코퍼스 14종(TEST-067).
@@ -44,7 +44,7 @@
 
 ## 착수 전 확인
 
-- LANDING-061의 넷(18라운드 안건 A·B, 전환 방식의 세부, N14)은 닫혔다: A는 BLUEPRINT-036–045, B는 CONTROLS 영역의 식 언어 항목, 전환 방식은 LANDING-159, N14는 18C-38.
+- LANDING-061의 넷(18라운드 안건 A·B, 전환 방식의 세부, N14)은 닫혔다. A의 `$ref` 재귀는 BLUEPRINT-030·TEST-067, 다중 `type`은 BLUEPRINT-036–045, `dependentSchemas`는 FRAGMENT-047·ERROR-191, `patternProperties`는 SCHEMA-040이다. B는 CONTROLS 영역의 식 언어 항목, 전환 방식은 LANDING-159, N14는 NODE-047·LANDING-149(18C-38)이다.
 - 잎 교차 fractal의 이름을 이 PR이 정한다(`DETAIL.md`에 이유).
 
 ## 산출물과 완료 기준

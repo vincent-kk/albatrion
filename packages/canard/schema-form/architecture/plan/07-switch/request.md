@@ -17,7 +17,8 @@
 
 - **엔진 전환**: `nodeFromJSONSchema`를 새 엔진 위에 다시 짓고, React 바인딩(`providers`·`hooks`·`components`)을 새 값 채널(`value`·`outputValue`)과 통지에 연결, `core/index.ts`의 수출을 `src/core/SchemaNode/` 진입점으로(LANDING-067·087). `core/types`의 event·state·value는 남고 node·constructor는 지운다.
 - **Form 속성**: `readOnly`·`disabled` 전체 잠금, `unsetOnInactive`, `disableAutomaticWrites`, `onError`, `onDiagnosticsChange`, `validatorFactory`, 렌더러 넷(LANDING-067). 원장이 바꾸지 않은 공개 표면은 그대로(SURFACE-059).
-- **바인딩 계약 다섯**(LANDING-095): 마운트 로드 정착 동안 `onChange`·`onDiagnosticsChange`는 버리고 `onError`는 커밋 뒤 한 번, 마운트 로드의 검증 요청은 준비 시점에, 루트·필드 바운더리의 가두고 보고하기, `degraded` 동안의 제출 거부(네이티브 submit은 `onError`와 싱크로), 청사진 오류의 대체 화면.
+- **바인딩 계약 다섯**(LANDING-095, LANDING-075): 첫째 "마운트 정착 동안 `onChange`·`onDiagnosticsChange`는 버리고 `onError`는 커밋 뒤로 미룬다."(REACT-007), 둘째 "공개 `SetValueOption`은 비트 넷뿐이라 Refresh 판정에 필요한 "사용자 입력에서 왔다"는 표식은 렌더 계층이 내부 통로로 넘긴다."(REACT-009), 셋째 `handleChange`의 진입 셋을 "`batch` 하나로 묶는다."(REACT-011), 넷째 루트·필드 바운더리 "마운트 동안 `onError`는 커밋 뒤로 미루고 바운더리는 다시 던지지 않고 가두고 보고한다"(LANDING-075), 다섯째 "`useFormTypeInput`의 메모 의존에 노드의 유효 스키마 참조를 더하고, `SchemaNodeProxy`는 유효 스키마 변경 비트를 구독한다"(REACT-012). "드러남과 제출 거부는 모든 환경에서 같다"(LANDING-095).
+- **계약과 함께 드는 렌더 계층의 일**(LANDING-067): "마운트 로드의 검증 요청을 준비 시점에 내는 것", "`degraded` 동안의 제출 거부(네이티브 submit은 `onError`와 싱크로)와 검증 불가의 거부(R17-1 나)", "청사진 오류의 생성 자리 포착과 대체 화면, 마운트 정착 오류의 원인별 처리(§11.3)".
 - **입력**: `SchemaNodeInput`의 `Blurred` → `finishInput`(`options.trim`은 문자열 행의 `finishInput` 칸), 세 진입을 `batch` 하나로, 입력 출처 표식, 자식 프록시의 마운트 여부로 입력 판정(REACT-028), 입력 구성 요소의 계약(REACT-027), 기본 union 입력(`{type:'union'}` 감싸개, 유효 목록 기준의 초안·표시·비우기, 시험 객체의 모르는 키, REACT-033), Hint·props의 `type`·`schemaType`·`nullable`·`typeMismatch`(REACT-032, SURFACE-061), `UnionNode`의 공개 수출(NODE-058).
 - **`reset`의 로드 전환**: 같은 스키마 판정, 커밋 재대조, 호출 안의 재생성, Refresh 번호와 상호작용 초기화 번호, 로드의 검증 규칙(마운트 포함); 로드가 아닌 쓰기는 원본이 실제로 바뀐 노드에만 Refresh(LANDING-067·095의 충돌 줄, EVENT-071). `Form`의 스키마 `clone` 제거.
 - **`onError`의 렌더 계층**: 바깥 감싸개와 인스턴스 보고기 문맥, 준비 이펙트·대체 화면 이펙트 전달, 바운더리의 `componentStack`, `@winglet/react-utils` ErrorBoundary의 선택 인자와 changeset(`minor`)(LANDING-067·095).
@@ -25,6 +26,9 @@
 - **시험·스토리**: 렌더 시나리오 438건의 처분(17파일은 단언을 이름만 바꿔 살림, TEST-005), `renderForm` 다섯, 부류별 e2e 실행기, React 18 실행 시험(REACT-017), 시나리오 스토리와 `playScenario`, 옛 스토리 49파일 정리, 스파이크 가운데 제품 동작에 남는 상황의 e2e 이식(LANDING-095), 배달 경로의 렌더 계층 구독.
 - **이주 점검**(LANDING-198·170, 18C-87): 이주 표의 행마다 오늘 동작과 새 동작을 시험으로 대조, union 이주 행 LANDING-181–186, 채움 시점 이주 행 셋(18C-99), 명령·훅의 거취, 공개 표면 잔여의 거취. 자사 플러그인의 수정 목록·union 항목은 08.
 - `src/types/formTypeInput.ts:60-65`의 문서 주석(LANDING-150).
+- **본체의 이름 이주**: "`node.group` → `node.strategy`의 소비자 이주"(LANDING-095), "`ChildNodeComponentProps`·`FormGroupProps`의 prop `FormTypeRenderer` → `FormTypeGroupRenderer`"(LANDING-067), "UI 플러그인 넷의 타입과 등록 키 대응"(LANDING-067). 플러그인 패키지 쪽의 `node.group`·`FormTypeRenderer` 소비 고침도 이 셋에 들어 07이 한다(LANDING-067; LANDING-206이 08로 옮긴 것은 `presentation.*` 이주·자사 플러그인 수정 목록·플러그인마다의 union 항목 셋뿐).
+- **`FormHandle`의 명령**: "`FormHandle`의 둘은 PR-7이다."(EVENT-063) 모양은 "메서드 이름·명령 종류 값의 형·`FormHandle` 대칭 모양은 PR-4 착수 전에 편집자가 권장안을 올리고 소유자가 정한다."(EVENT-073)의 결정을 따른다.
+- **터미널 판정**: "터미널 전략과 병합의 원자(렌더 계층의 터미널 판정 함수와 원자 판정 함수를 청사진에 넘김, §9·§12)"(LANDING-067).
 
 ## 부딪히는 코드 · 그대로 쓰는 것 · 새 fractal (LANDING-087)
 
@@ -34,12 +38,12 @@
 
 ## 레거시 (LANDING-159·205)
 
-- 옮기지도 지우지도 않는다. `src/core/index.ts`·`src/index.ts`가 새 엔진을 가리키고, 새 코드에서 `__legacy__`를 가리키는 import가 0이다(린트 규칙 1 + 검색). 옛 시험 가운데 `<Form>`을 시험하던 것은 처분표대로 이름을 바꿔 살리거나 시나리오로 옮기고, 레거시 안의 옛 단위 시험은 시험 글롭에서 빼 둔다(09가 디렉토리와 함께 지운다).
+- 옮기지도 지우지도 않는다. `src/core/index.ts`·`src/index.ts`가 새 엔진을 가리키고, 새 코드에서 `__legacy__`를 가리키는 import가 0이다(린트 규칙 1 + 검색). 옛 시험 가운데 `<Form>`을 시험하던 것은 처분표대로 이름을 바꿔 살리거나 시나리오로 옮기고, 레거시 안의 옛 단위 시험은 시험 글롭에서 빼 둔다(LANDING-159의 보충 줄; 09가 디렉토리와 함께 지운다, LANDING-205).
 - 옛 스토리는 여기서 정리한다(16라운드 답 4).
 
 ## 착수 전 확인
 
-- LANDING-067의 여섯 가운데 성능 예산 수치·IME·`resetSubtree` 존치·`trim` 부수 효과·선택 인자 모양은 닫혔다(18C-40·62·63·72·85, TEST-072·074). 네이티브 submit 경로의 `ValidationError` 처리는 ERROR 영역의 현행 항목이 든다.
+- LANDING-067의 착수 전 닫을 것 여섯 가운데 성능 예산 수치(TEST-072·073)·`resetSubtree` 존치(WRITE-085, 18C-44)·`trim` 쓰기의 부수 효과(WRITE-083, 18C-19)는 닫혔다. 브라우저 IME 확인(EVENT-065, 18C-63)과 입력 판정의 구현 확인(REACT-028, 18C-62)은 이 PR의 게이트다(`verification.md`). 선택 인자의 모양은 이 PR이 고른다: "인자의 모양(ErrorBoundary 보고 콜백 속성과 그 공개, 또는 감싸개의 보고기 읽기 인자)은 PR-7에서 고른다."(ERROR-117) 네이티브 submit 경로의 `ValidationError` 처리는 ERROR 영역의 현행 항목이 든다.
 - 02–06 전부 `1.0.0-beta`에 들어와 있다.
 
 ## 산출물과 완료 기준

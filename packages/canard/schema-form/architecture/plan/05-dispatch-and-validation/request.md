@@ -16,9 +16,9 @@
 - **디스패치**: 루트 디스패처, `batch`, 진입당 `onChange` 1회, 진입 사슬과 사슬 끝의 throw, 진입 사슬의 소유는 `dispatch`(쓰기 동사마다 진입 함수), 겉면의 쓰기 위임을 `dispatch` 진입으로(LANDING-064·084). 상태·오류·명령 사건과 검증 결과의 배달 경로(LANDING-064).
 - **명령**: 명령 종류를 매개변수로 받는 노드 메서드 하나(EVENT-073). 메서드 이름·명령 종류 값의 형·`FormHandle` 대칭 모양은 **이 PR 착수 전에** 편집자가 권장안을 올리고 소유자가 정한다(EVENT-073). 명령의 뜻은 EVENT-063 그대로(요청 사건만 냄, 원본을 쓰지 않음, 실행은 렌더 계층).
 - **`onError`의 core 쪽**: 기록 형 `FormErrorRecord`와 코드 형, 보고기(`report`, `hasConsumer`), 사슬 끝 기록마다 전달, 핸들러 예외의 묶음 규칙, 전달 중 쓰기 거부, 경고의 구조 키 중복 억제와 폼 수준 로드에서만의 초기화(ERROR-204), 정착 경고 판정의 소비자 조건(LANDING-064·093). 코드 표는 ERROR-164; 경고 코드 `TYPE_MISMATCH`(SURFACE-061).
-- **검증기 계약**: `compileGuard(root, pointer)`(동기), 사본·가드 캐시, 가드의 늦은 컴파일(프로덕션)과 개발 모드 일괄 컴파일, `rejectedKey`, `validatorFactory` 통일, 같은 `$id` 루트의 중복 등록·참조 세기·최근 해제 목록, 재생성 reset의 같은 `$id`(LANDING-064·093, VALIDATE-045·046·047). **`bind` 거부**: 값을 바꾸는 검증기 옵션(`coerceTypes`·`useDefaults`·`removeAdditional`)이 켜져 있으면 `UNHANDLED_ERROR.VALIDATOR_BIND_REFUSED`(가칭)를 즉시 던지고 인스턴스를 붙이지 않으며, 스키마는 컴파일 때 깊은 복사한다(VALIDATE-050·051). `VALIDATOR_COMPILE_FAILED`는 폼 수준 기록(WRITE-099).
-- **ajv6·ajv7·ajv8 플러그인**: 동기 `compileGuard`, `rejectedKey`, 같은 `$id` 처리를 셋 다 이 PR에서 구현한다(LANDING-206, LANDING-093). ajv6은 가드 게이트의 (i)만(18C-58). `bind` 거부 규칙을 플러그인 문서에 적는다.
-- 검증 실행 실패와 검증 불가의 드러남, `UpdateDiagnostics`, 커밋 번호 스탬프 검증, 에러 라우팅(union 호스트 수준 에러와 잔여 키, 18C-53), 오류 클래스 `ValidationIssue`, `SchemaFormError`의 집계 오류(LANDING-064).
+- **검증기 계약**: `compileGuard(root, pointer)`(동기), 사본·가드 캐시, 가드의 늦은 컴파일(프로덕션)과 개발 모드 일괄 컴파일, `rejectedKey`, `validatorFactory` 통일, 같은 `$id` 루트의 중복 등록·참조 세기·최근 해제 목록, 재생성 reset의 같은 `$id`(LANDING-064·093, VALIDATE-045·046·047). **`bind` 거부**: 값을 바꾸는 검증기 옵션(`coerceTypes`·`useDefaults`·`removeAdditional`)이 켜져 있으면 `UNHANDLED_ERROR.VALIDATOR_BIND_REFUSED`(가칭)를 즉시 던지고 인스턴스를 붙이지 않으며, 검증기에 넘기는 스키마 사본은 (검증기 인스턴스, 작성 루트)마다 한 번 깊이 복사한다(VALIDATE-050). `VALIDATOR_COMPILE_FAILED`는 폼 수준 기록(WRITE-099).
+- **ajv6·ajv7·ajv8 플러그인**: 동기 `compileGuard`, `rejectedKey`, 같은 `$id` 처리를 셋 다 이 PR에서 구현한다(LANDING-206, LANDING-093). ajv6은 가드 게이트의 (i)만(18C-58). `bind` 거부 규칙을 플러그인 문서에 적는다. ajv8 플러그인의 세 진입점(`default`·`2019`·`2020`) 기본 설정에 `allowUnionTypes: true`를 더한다(VALIDATE-051). 플러그인 셋은 선택 `release(root)`를 구현한다(VALIDATE-045). 플러그인 셋과 core의 폴백 검증기는 루트에 `''`를 내고, core는 `'/'`를 루트의 별칭으로 받아 `''`로 정규화한다(FRAGMENT-053).
+- 검증 실행 실패와 검증 불가의 드러남, `UpdateDiagnostics`, 커밋 번호 스탬프 검증과 실행 합치기, 주인 없는 오류 싱크, `ValidateFunction` 문서 주석 "판정은 돌려주고 던지지 않는다", 에러 라우팅(VALIDATE-043, 18C-53), 오류 클래스 `ValidationIssue`, `SchemaFormError`의 집계 오류(LANDING-064).
 - 훅 수준의 React 바인딩 시험(동기 통지와 `useSyncExternalStore`, StrictMode 이중 호출, 구독 뒤 따라잡기)(LANDING-064·093).
 
 ## 부딪히는 코드 · 그대로 쓰는 것 · 새 fractal (LANDING-084)
@@ -33,20 +33,20 @@
 
 ## 착수 전 확인
 
-- LANDING-064의 넷(`compileGuard` 계약 세부, 에러 라우팅, 유효 스키마 변경 이벤트, import 분리)은 18C-53·56·57·58과 EVENT-064·VALIDATE-045–047이 닫았다.
+- LANDING-064의 넷(`compileGuard` 계약 세부, 에러 라우팅, 유효 스키마 변경 이벤트, import 분리)은 18C-52·53·55·56·57·58(EVENT-064, VALIDATE-043, CONTROLS-075, VALIDATE-045–047)이 닫았다.
 - **소유자 결정 필요**: 명령 메서드의 이름(`action`·`interaction`·`request` 또는 명령 한정 `publish`), 명령 종류 값의 형(공개 열거 또는 문자열 리터럴), `FormHandle` 대칭 모양(EVENT-073). 착수 전에 권장안을 올린다.
 
 ## 산출물과 완료 기준
 
 - [ ] `src/core/dispatch/`·`src/core/validation/`과 문서, `app/plugin/type.ts` 개정
-- [ ] 명령 메서드 하나(소유자가 정한 이름·형), `FormHandle` 대칭
+- [ ] 명령 메서드 하나(소유자가 정한 이름·형)와 멤버 목록 시험(`FormHandle` 쪽 구현은 07)
 - [ ] `onError` core 쪽과 코드 표 상수(ERROR-164), `TYPE_MISMATCH`
 - [ ] 검증기 계약과 ajv6·7·8 구현, `bind` 거부
 - [ ] 차등 테스트와 훅 수준 바인딩 시험 초록, `verification.md`의 게이트 전부 통과
 
 ## 절차 (seiri·filid)
 
-- filid: `dispatch/`·`validation/`의 INTENT·DETAIL 먼저. 검증기 주입 경로의 import 분리는 `core/INTENT.md`의 경계 문장으로 적는다. 플러그인 패키지는 자기 `CLAUDE.md`·INTENT를 따른다.
+- filid: `dispatch/`·`validation/`의 INTENT·DETAIL 먼저. core는 `app/plugin`을 가져오지 않는다: 검증기는 바인딩 계층이 골라 트리 생성 인자로 넘기고, 경계 린트를 새 fractal(`src/core/{blueprint,record,behaviors,navigation,settle,dispatch,validation,SchemaNode}/**`)에 건다. `src/core/**` 전체로 넓히는 것은 07이다(CONTROLS-075). 플러그인 패키지는 자기 `CLAUDE.md`·INTENT를 따른다.
 - seiri: 진입 함수는 쓰기 동사마다 한 파일, 오류 코드 상수는 코드 표(ERROR-164)의 순서를 따르며 문서 주석에 level·부류·언제.
 
 ## 원장 항목 색인 (결정·보충에 PR-4를 든 현행 항목, 기계 추출)

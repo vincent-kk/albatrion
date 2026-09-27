@@ -1,6 +1,6 @@
 # 01 설계문서 PR — 개발요청서
 
-> 원장 정본: LANDING-060(PR-0 문서 부분)과 그 보충(설계문서 PR 분리, `reviews/round-18-owner-answers.md:45`), PROCESS-050·061·062(문서 생성 절차와 세 겹 검사). 어긋나면 원장이 이긴다.
+> 원장 정본: LANDING-060(PR-0 문서 부분)과 그 보충(설계문서 PR 분리, `reviews/round-18-owner-answers.md:45`), PROCESS-050·061·062(문서 생성 절차), PROCESS-051(세 겹 검사). 어긋나면 원장이 이긴다.
 
 ## 우산 안의 자리
 
@@ -14,11 +14,11 @@
 
 ## 범위 — 원장이 정한 내용
 
-- **설계문서 8편** `architecture/design/`: 원장 17영역을 묶는다. `00-goals-and-values`(GOAL·PROCESS의 방법), `01-schema-to-blueprint`(SCHEMA·BLUEPRINT·FRAGMENT), `02-node-and-value`(NODE·VALUE·WRITE), `03-settle-and-events`(SETTLE·EVENT), `04-controls`(CONTROLS), `05-validation-and-errors`(VALIDATE·ERROR), `06-react-and-surface`(REACT·SURFACE), `07-landing-and-tests`(LANDING·TEST). 결정문은 원장의 결정 칸을 산문으로 잇되 요약하지 않고, 표는 표로 두며, 문장마다 원장 ID를 단다(PROCESS-061·062의 세 겹 검사 (가)). union의 설계문서는 `reviews/raw-round18-union-swarm/merged-v3.md`를 원장 번호로 바꿔 쓴다(HANDOFF §2).
-- **ADR 재작성**: 채택된 옛 ADR 0001…0014는 백업으로 가고, 새 ADR은 옛 주제 단위를 유지하되 본문을 원장의 현행 결정으로 바꾼다. 18라운드의 큰 결정은 새 번호(0015 union 잎, 0016 채움 시점과 전체 교체 쓰기, 0017 좁힘의 교집합 원리). ADR도 문장마다 원장 ID.
+- **설계문서 8편** `architecture/design/`: 원장 17영역을 묶는다(계획서가 정함; 원장은 8편만 정한다, LANDING-060 보충). `00-goals-and-values`(GOAL·PROCESS의 방법), `01-schema-to-blueprint`(SCHEMA·BLUEPRINT·FRAGMENT), `02-node-and-value`(NODE·VALUE·WRITE), `03-settle-and-events`(SETTLE·EVENT), `04-controls`(CONTROLS), `05-validation-and-errors`(VALIDATE·ERROR), `06-react-and-surface`(REACT·SURFACE), `07-landing-and-tests`(LANDING·TEST). 결정문은 원장의 결정 칸을 산문으로 잇되 요약하지 않고, 표는 표로 두며, 문장마다 원장 ID를 단다(PROCESS-051의 세 겹 검사 (가): "원문 보존: 규칙, 값, 표는 요약하지 않고 옮기며 요약은 따로 칸을 둔다."). union의 설계문서는 `reviews/raw-round18-union-swarm/merged-v3.md`를 원장 번호로 바꿔 쓴다(HANDOFF §2).
+- **ADR 재작성**: 채택된 옛 ADR 0001…0014는 백업으로 가고, 새 ADR은 옛 주제 단위를 유지하되 본문을 원장의 현행 결정으로 바꾼다. 18라운드의 큰 결정은 새 번호(0015 union 잎, 0016 채움 시점과 전체 교체 쓰기, 0017 좁힘의 교집합 원리)(번호는 계획서가 정함; 원장은 ADR 재작성만 정한다, LANDING-060 보충). ADR도 문장마다 원장 ID.
 - **역검사** `ledger/checks/doc-coverage.mjs`: (ㄱ) 현행 항목마다 인용하는 문서가 있는가(인용 0은 누락), (ㄴ) 문서의 ID가 모두 현행인가, (ㄷ) 결정문의 수·코드·이름 토큰이 문서에 그대로 있는가(`tokens.mjs`를 원장→문서 방향으로).
 - **백업**: 옛 설계문서 10편(`00-*.md`…`09-*.md`), `adr/`, `open-questions.md`를 `architecture/_archive/<날짜>/`로 옮긴다. `reviews/`는 그대로 둔다. 원장의 `path:line` 인용은 커밋 `ba398c330` 기준이므로 검사 스크립트(`lib.mjs`의 `docReader`)의 원천 루트에 백업 경로를 더한다. 백업 README에 "동결됐다. 정본은 `ledger/`, 읽는 표면은 `design/`, 인용은 커밋 `ba398c330`의 줄 번호"를 적는다.
-- **절 단위 통과**: 소유자의 통과는 새 설계문서에서만 한다(12-6, LANDING-060). 문서 하나가 끝날 때마다 검사 → 통과. 순서는 02 → 01 → 03 → 05 → 04 → 06 → 07 → 00(의존이 큰 것부터).
+- **절 단위 통과**: 소유자의 통과는 새 설계문서에서만 한다(12-6, PROCESS-062, LANDING-060의 충돌 줄). 문서 하나가 끝날 때마다 검사 → 통과. 순서는 02 → 01 → 03 → 05 → 04 → 06 → 07 → 00(의존이 큰 것부터).
 - HANDOFF §5 파일 지도 갱신.
 
 ## 부딪히는 코드 · 그대로 쓰는 것 · 새 fractal

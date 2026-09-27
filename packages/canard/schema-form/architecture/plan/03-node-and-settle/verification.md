@@ -2,23 +2,29 @@
 
 ## 검증 원칙
 
-**독립 검증 경계**(TEST-069): 자기 기제만 시험하고 게이트는 술어 대역 하나로 세운다. 미룬 사례는 받는 PR을 적는다(파생 04, 검증 05, 배열 06, 렌더 07). 정착 루프 시험은 타이머 없이 단언하고 프로토타입 v7 회귀를 이식한다(TEST-003). `<Form>`에 닿지 않으므로 옛 시험 전체가 회귀 신호다.
+**독립 검증 경계**(TEST-069): 자기 기제만 시험하고 게이트는 술어 대역 하나로 세운다. 미룬 사례는 받는 PR을 적는다(파생 04, 검증 05, 배열 06, 렌더 07). 정착 루프 시험은 "동기이므로 타이머 flush 없이 단언한다"(TEST-003). 프로토타입 회귀는 "한 사례는 그것이 건드리는 기제가 모두 있는 가장 이른 PR로 간다"(TEST-069)에 따라 PR-2 몫만 이식한다. `<Form>`에 닿지 않으므로 옛 시험 전체가 회귀 신호다.
 
 ## 시험 구성
 
 | 프로젝트 | 무엇을 더하는가 |
 | --- | --- |
-| `unit` | 동작 행·`interpret`·정착 루프·예산·원본 B·diagnostics 단위 시험(`src/core/**/__tests__/`), 겉면 기계 검사 셋, `tsc --strict` 형 시험 |
-| 시나리오 패키지 | 02 §9 상황 목록 가운데 값·정착·채움·나감·union 상황(LANDING-071); union 패밀리의 `union.mismatch-light.test.ts` 등(TEST-077) |
+| `unit` | 동작 행·`interpret`·정착 루프·예산·원본 B·diagnostics 단위 시험(`src/core/**/__tests__/`), 겉면 기계 검사 셋, `tsc --strict` 형 시험; union 행 시험 "`src/core/behaviors/utils/parse/__tests__/interpret.table.test.ts`·`interpret.properties.test.ts`, `src/core/behaviors/unionBehavior/__tests__/union.write-paths.test.ts`·`union.mismatch-light.test.ts`"(WRITE-093) |
+| 코어 시나리오 시험 | "`src/core/__tests__/scenarios/<부류>.spec.ts`"에서 "데이터 모듈을 노드 트리에서 해석"(TEST-023): 02 §9 상황 목록 가운데 값·정착·채움·나감·union 상황(LANDING-071). 이 자리는 "이것으로 새 `src/core/__tests__/scenarios/` 자리가 빈다"(LANDING-159) |
 | `render` | 옛 렌더 시험 그대로(레거시 이동 뒤 초록) |
 
 ## 게이트 — 이 PR이 단독으로 통과해야 하는 것
 
-- **정착 루프**: 프로토타입 v7 회귀 전부 이식(TEST-003). 표본 (c′) "`required` 없는 `if/then`으로만 끊긴 재귀 → 정착 오류"(TEST-067).
+- **정착 루프**: 프로토타입 회귀 가운데 PR-2 몫만 이식한다(TEST-069; PR-3·PR-6 몫은 04, PR-4 몫은 05로 넘긴다).
+  - "`selfcheck-v5`(63)는 a·b·c·d·e → PR-2(c 가운데 주입을 쓰는 단언은 PR-3), f(`disableAutomaticWrites`) → PR-3, g(통지) → PR-4로 간다."(TEST-069)
+  - "`r8-port`(q8 108, 예산·원본 B 행렬)는 호스트 바퀴·전이만 쓰는 행 → PR-2, `derived`·`injectTo`를 쓰는 행 → PR-3으로 간다."(TEST-069)
+  - "`r7-port`(52, E1–E13·X*)는 에지 발화 파생·`injectTo` → PR-3, X2·X3의 한 진입 묶음과 D-17 파동 세기 → PR-4로 간다."(TEST-069)
+  - "`edge-cases`(26, `spikes/round9/regress/edge-cases.mjs`)는 조각 생김·채움·덧씌움 기본값·`allOf` else → PR-2, `clearValue`·`injectTo`·단계 순서·파생 예산 → PR-3, 잠금 결합 → PR-6으로 간다."(TEST-069)
+  - "v7 회귀는 게이트 입력 `extras`·전이 상한·재계산 목록 순회·나감 비움(노드 자신·Form 속성 층) → PR-2, 같은 순위 동점·정착 단위 순위 → PR-3, 나감 에지 → PR-3(조각 `controls` 층의 사례는 PR-6)으로 간다."(TEST-069)
+  - 표본 (c′) "`required` 없는 `if/then`으로만 끊긴 재귀 → 정착 오류"(TEST-067).
 - **union 행**(TEST-077, HANDOFF §2): 규칙 A 표 전체와 동점 12건, `integer` 멤버십, 게이트 전이에서 경고등만 바뀌고 값은 그대로, `setValue({kind:'num', a:'42'})`가 직전 상태와 무관하게 `a = 42`(U7), 서로소 게이트 둘의 충돌, 되먹임 반례의 라운드 상한(WRITE-099), 경고 1회·재발송 조건.
 - **공개 형**(TEST-070): 실제 공개 형으로 `tsc --strict`를 단언 없이 통과, `children`은 저장 배열과 같은 참조. 실패하면 소유자 물음.
-- **겉면**: 멤버 목록 시험(약 54개, 명령 자리 제외), 행 칸 순서 시험, 파일 한정 린트.
-- **쓰기**: 전체 교체 쓰기의 잠복 원본 비움과 멱등(WRITE-096), null 계약(WRITE-097), 비객체 V의 `Merge`(WRITE-079), Refresh 대상(EVENT-071), 로드 규칙의 범위(EVENT-072), 진단 초기화(ERROR-204).
+- **겉면**: 멤버 목록 시험 — "명령 넷이 메서드 하나로 합쳐지고(EVENT-073) 게터 이름은 `typeMismatch`·`typeMismatches`로 확정되어(SURFACE-061) 겉면 멤버는 약 54개다"(SURFACE-058의 충돌 줄). 이 PR은 명령 메서드 하나를 뺀 목록을 단언한다. 행 칸 순서 시험, 파일 한정 린트.
+- **쓰기**: 전체 교체 쓰기의 잠복 원본 비움과 멱등(WRITE-094), null 계약(WRITE-096), 채움 사건 — "이미 있던 노드는 채우지 않고 비우며, 게이트가 뒤집혀 새로 생기거나 켜진 노드는 채움을 받는다"(WRITE-097), 비객체 V의 `Merge`(WRITE-079), Refresh 대상(EVENT-071), 로드 규칙의 범위(EVENT-072), 진단 초기화(ERROR-204).
 - **방출**: 빈 호스트·루트의 투영(VALUE-034), 원본 참조 동일성(VALUE-037).
 
 ## 벤치 (TEST-027·032)
@@ -33,7 +39,7 @@
 ## 리뷰 체크리스트 (PR 본문에 옮긴다)
 
 - [ ] fractal 다섯의 INTENT·DETAIL이 코드보다 먼저 커밋됨
-- [ ] v7 회귀 이식 목록과 결과
+- [ ] PR-2 몫 프로토타입 회귀(v5·v6·v7)의 이식 목록과 결과(TEST-069)
 - [ ] union 행 시험 여섯 묶음 초록
 - [ ] `tsc --strict` 형 시험, 겉면 기계 검사 셋
 - [ ] 레거시 이동 목록과 옛 시험 초록

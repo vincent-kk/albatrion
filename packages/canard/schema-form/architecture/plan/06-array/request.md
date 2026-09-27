@@ -8,11 +8,13 @@
 
 ## 목적
 
-배열·터미널 배열의 동작 행 `arrayBehavior/`와 아이템 호스트, 구조 연산(`push`·`remove`·`update`), 통째 교체의 identity, 아이템 채움을 세운다.
+배열·터미널 배열의 동작 행 `arrayBehavior/`와 아이템 호스트, 구조 연산(`push`·`pop`·`update`·`remove`·`clear`, SURFACE-005), 통째 교체의 identity, 아이템 채움을 세운다.
 
 ## 범위 — 원장이 정한 내용
 
-- 배열·터미널 배열 행(`behaviors/arrayBehavior/`의 `branch/`·`terminal/`), 겉면 배열 멤버, 배열 노드와 아이템 호스트, `items`·`prefixItems`, `push`·`remove`·`update`, 통째 교체의 identity, 아이템 채움(LANDING-065·094). 아이템 노드는 모두 실체화한다(NODE-053).
+- 배열·터미널 배열 행(`behaviors/arrayBehavior/`의 `branch/`·`terminal/`), 겉면 배열 멤버, 배열 노드와 아이템 호스트, `items`·`prefixItems`, `push`·`pop`·`update`·`remove`·`clear`(SURFACE-005), 통째 교체의 identity, 아이템 채움(LANDING-065·094). 아이템 노드는 모두 실체화한다(NODE-053).
+- 통째 쓰기는 아이템 노드를 다시 만들지 않고 위치로 잇는다: 새 값의 i번째 아이템은 쓰기 시점 identity 목록의 i번째 노드와 그 키(`#n`)를 이어 받고, 더 길면 뒤의 아이템은 새 키로 생기며, 키를 바꾸는 것은 구조 연산뿐이다(NODE-051).
+- 튜플의 자리 i는 `prefixItems[i]`, 아니면 `items`(옛 배열 철자이면 `additionalItems`)이고, 청사진이 없는 자리의 아이템은 노드를 만들지 않으며 그 값은 배열 호스트의 `extras`다(NODE-052).
 - 배열 아이템의 생김과 채움(18C-59), 스냅숏 자리 맞춤(WRITE-095): 구조 연산 `push(v)`는 생성 값 `v`를 스냅숏 자리에 넣고, 아이템을 만드는 비구조 쓰기만 `undefined`를 넣는다(WRITE-099). 빈 배열 호스트의 방출과 아이템 자리(VALUE-034).
 - `reset`이 로드하는 배열의 아이템 identity에 `reset`만의 예외를 두지 않는다(WRITE-048).
 - `resolveArrayLimits`는 청사진으로, `omitTrailingArray`·`omitEmptyArray`는 `arrayBehavior/utils/`로, `resolveArrayValueFilter`는 투영 칸의 비트 분기로 다시 쓴다(LANDING-085).
@@ -30,7 +32,7 @@
 
 ## 착수 전 확인
 
-- LANDING-065의 둘(배열 아이템의 생김과 채움, `contains`)은 18C-59·97이 닫았다.
+- LANDING-065의 둘은 18C-59가 닫았다: 생김과 채움은 NODE-051과 WRITE-007 보충, `contains`(`minContains`·`maxContains`)는 폼이 읽지 않는다(FRAGMENT-051).
 
 ## 산출물과 완료 기준
 
