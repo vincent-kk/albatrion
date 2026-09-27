@@ -6,6 +6,7 @@
 
 - Consistent, predictable behavior is the core value — where behavior could go either way, follow the consistency the public interface leads a caller to expect.
 - Speed first, minimal computation, and the same value read twice returns the same reference — every change states its speed and memory cost.
+- For a small, fixed set of checks known at build time, use direct `&&` or `||` conditions. Hoist a constant key array when iteration is clearer; never allocate the same fixed list on every call.
 
 ## Commands
 
