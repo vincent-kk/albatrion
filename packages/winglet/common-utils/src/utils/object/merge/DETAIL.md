@@ -13,9 +13,9 @@
 - `MergeOptions.arrayStrategy`의 기본값은 인덱스별 병합이며 replace는 뒤 배열 전체를 사용합니다.
 - `MergeOptions.isAtomic`에 해당하는 값은 내부를 읽지 않고 뒤 값으로 대체합니다. 원자 여부는 호출자가 정의합니다.
 - `MergeOptions.preserveReferences`가 참이면 한쪽에만 있는 컨테이너 참조를 유지합니다.
-- `MergeOptions.immutable`이 참이면 겹치는 컨테이너를 새로 만들고 입력 객체를 변이하지 않습니다. 두 plain object가 같은 키에 겹칠 때만 재귀 병합합니다.
+- `MergeOptions.immutable`이 참이면 겹치는 컨테이너를 새로 만들고 입력 객체를 변이하지 않습니다. preserveReferences도 참이면 한쪽에만 있는 객체를 복사하지 않고, 객체 병합의 재귀는 양쪽 plain object가 겹칠 때만 수행합니다. 배열은 별도의 arrayStrategy를 따르므로 기본 인덱스별 병합에서는 재귀합니다.
 - 뒤의 undefined는 정의된 앞 값을 지우지 않습니다. 기본 모드는 기존 __proto__ 제외를 유지하고, 옵션 모드는 부모의 안전한 own 데이터 속성 프리미티브로 예약 키를 처리합니다.
-- 기본 모드의 임시 공간은 재귀 깊이에 비례합니다. immutable 모드는 복사한 컨테이너의 공간이 추가됩니다. 어느 모드도 순환 입력에 대한 새 지원을 추가하지 않습니다.
+- 비용은 방문한 키, 각 호출의 키 배열, 재귀 스택과 생성한 컨테이너에 따릅니다. immutable은 겹치는 컨테이너 복사 비용을 더하고 preserveReferences는 한쪽 컨테이너의 복사를 줄입니다. 어느 모드도 순환 입력에 대한 새 지원을 추가하지 않습니다.
 
 ## Acceptance Criteria
 
