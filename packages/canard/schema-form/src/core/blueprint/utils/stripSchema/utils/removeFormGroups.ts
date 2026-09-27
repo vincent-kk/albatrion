@@ -11,9 +11,9 @@ export const removeFormGroups: NonNullable<JSONScannerOptions['mutate']> = ({
 }) => {
   if (!schema || typeof schema !== 'object') return;
   if (
-    !['controls', 'options', 'presentation'].some((key) =>
-      hasOwnProperty(schema, key),
-    )
+    !hasOwnProperty(schema, 'controls') &&
+    !hasOwnProperty(schema, 'options') &&
+    !hasOwnProperty(schema, 'presentation')
   )
     return;
   const { controls, options, presentation, ...stripped } = schema;

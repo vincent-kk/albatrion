@@ -110,6 +110,7 @@ Major package groups include:
 # Repository Requirements
 
 - For arrays with fewer than 5,000 elements, prefer direct array operations for one-off work. Avoid constructing a `Set` only to inspect its size or perform a single lookup. Use a `Set` when repeated membership operations reuse the index enough to amortize construction. Verify performance-sensitive choices with measurements.
+- For a small, fixed set of checks known at build time, prefer direct `&&` or `||` conditions. If iteration makes the code clearer, hoist the keys into a constant array; do not allocate a new array on each call.
 - Exclude build outputs from commits. Run the designated builds and artifact checks, but stage source changes separately from generated runtime bundles and compiled assets.
 
 <!-- FILID:START:filid_fractal-boundaries.md -->
