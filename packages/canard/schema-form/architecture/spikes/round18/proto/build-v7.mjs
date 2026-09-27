@@ -13,7 +13,14 @@ export const ajv = new Ajv2020({ allErrors: false, strict: false });
 const evaluate = (expr, value) => typeof expr === 'function' ? expr(value) : expr;
 const at = (value, path) => path.reduce((v, key) => v?.[key], value) ?? {};
 
-/** Build declarations without examining const/enum or choosing union branches. */
+/**
+ * Build and prime a regression tree without selecting branches from const/enum.
+ * @param {object} schema Prototype schema whose reserved expressions are functions.
+ * @param {*} value Initial caller value passed through the model's load boundary.
+ * @param {object} options Development warnings and load policy forwarded to the model.
+ * @returns {object} Settled root with path lookup, declarations, diagnostics, and raw state.
+ * @throws {Error} If a rule names an absent dependency/target or a guard cannot compile.
+ */
 export function buildSchema(schema, value, options = {}) {
   const pending = [];
   const order = declarationOrder(schema);

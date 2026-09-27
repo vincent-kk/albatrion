@@ -1,4 +1,8 @@
-/** Body, allOf, then/else, branches; within each category preserve source order. */
+/**
+ * Index historical rules by body, allOf, then/else, and branch source order.
+ * @param {object} schema Prototype schema containing rule objects and nested declarations.
+ * @returns {WeakMap<object, number | {clearValue: number}>} Rule positions and owner-local unset positions.
+ */
 export function declarationOrder(schema) {
   const order = new WeakMap();
   let next = 0;
