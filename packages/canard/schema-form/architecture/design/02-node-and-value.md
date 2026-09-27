@@ -65,7 +65,7 @@ Vincent의 요건: 상속 구조를 그대로 두는 것, 공유 로직을 타�
 
 **클래스를 없애지는 않는다.**(NODE-013) `setValue`·`find`·`subscribe`·`push`·`remove`는 공개 계약이다(NODE-013). 노드마다 클로저를 달면 노드 수만큼 메모리가 들고, 프로토타입 메서드를 가진 단일 클래스가 가장 싸며 모든 노드가 같은 숨은 클래스가 된다(NODE-013).
 
-**클래스 하나, 행 하나.**(NODE-002) 하위 클래스 없이 단일 클래스 `SchemaNode` 하나를 둔다(NODE-002). 종류별 동작은 표 `BEHAVIORS[type][strategy]`의 두 단계에 둔다(잎은 `terminal` 하나, 객체·배열은 `branch`·`terminal` 둘, 가상은 하나)(NODE-002). 노드는 생성 때 고른 행 하나를 필드 `behavior`로 들고(`kind` 필드는 없다), 공개 `type`·`strategy`는 행에서 읽는 게터다(NODE-002). 【추론】 접은 집합의 원소가 둘 이상이면 새 종류 (가칭) `union`의 노드이고 행은 `terminal` 하나다(`BEHAVIORS.union.terminal`)(NODE-002, BLUEPRINT-043).
+**클래스 하나, 행 하나.**(NODE-002) 하위 클래스 없이 단일 클래스 `SchemaNode` 하나를 둔다(NODE-002). 종류별 동작은 표 `BEHAVIORS[type][strategy]`의 두 단계에 둔다(잎은 `terminal` 하나, 객체·배열은 `branch`·`terminal` 둘, 가상은 하나)(NODE-002). 노드는 생성 때 고른 행 하나를 필드 `behavior`로 들고(`kind` 필드는 없다), 공개 `type`·`strategy`는 행에서 읽는 게터다(NODE-002). 【추론】 접은 집합의 원소가 둘 이상이면 새 종류 `union`의 노드이고 행은 `terminal` 하나다(`BEHAVIORS.union.terminal`)(NODE-002, BLUEPRINT-043, BLUEPRINT-035).
 
 공개 `node.group`은 `node.strategy`로 바뀐다(값 `'branch'` 또는 `'terminal'`은 그대로, 17라운드 소유자 답)(NODE-003). 청사진이 정한 전략은 노드의 공개 `strategy`(`'branch'` 또는 `'terminal'`, 옛 `group`의 새 이름이며 값은 그대로)로 읽힌다(NODE-003).
 
@@ -81,7 +81,7 @@ Vincent의 요건: 상속 구조를 그대로 두는 것, 공유 로직을 타�
 
 **배열 메서드**는 클래스에 두되 타입은 `ArrayNode` 인터페이스에만 준다(NODE-014). 비배열에서 부르면 행의 공유 칸이 `SchemaFormError`를 던지므로 겉면과 `dispatch`는 종류를 묻지 않는다(NODE-014). UI 플러그인이 `node.push()`를 부른다(NODE-014). 비배열은 `type`이 배열이 아닌 노드를 말한다(NODE-014).
 
-**비용(추정, 벤치로 확인).**(NODE-018) 노드마다 객체 하나이고, 행은 종류마다 하나를 모든 노드가 공유한다(NODE-018). (가칭) `union` 잎의 `terminal` 행이 더해져 행은 열이다(NODE-018, BLUEPRINT-043). 노드마다의 매니저·클로저·전략 객체·구독은 없다(규칙과 린트로 금한다)(NODE-018). 모든 노드가 한 클래스이고 필드를 같은 순서로 넣으면 한 숨은 클래스를 가져, 여러 종류를 도는 `settle`·`dispatch`의 필드 읽기가 단형 인라인 캐시로 남을 것으로 본다(Vincent가 말한 "상속 클래스에 의한 캐싱 비효율")(NODE-018). 남는 비용도 적는다: 칸 함수의 호출은 간접 호출으로 남고, `type`이 게터가 되어 읽기가 한 단계 늘며, iOS의 JavaScriptCore에서는 같은 결론이 보장되지 않는다(NODE-018). 메모리는 필드 24–30개일 때 노드 하나가 약 110–140바이트(포인터 압축 엔진) 또는 약 210–260바이트(압축 없는 엔진)로 추정한다(NODE-018). 벤치 여섯을 TEST-026의 기준선과 비교한다: B1(섞인 종류 1만 노드의 `value`·`type` 읽기, V8과 JavaScriptCore), B2(노드당 힙 바이트), B3(종류 인스턴스와 행이 같은 맵인지), B4(정착 뜨거운 루프의 거대형 자리 수), B5(입력에서 커밋까지의 지연), B6(노드 1만 개 생성 시간)(NODE-018). B3이 보는 종류 인스턴스와 행은 `union`을 더해 열이다(NODE-018, BLUEPRINT-043). 오늘의 주된 비용이 노드마다의 할당인지 인라인 캐시인지는 재지 않았으므로 크기는 벤치가 정한다(NODE-018).
+**비용(추정, 벤치로 확인).**(NODE-018) 노드마다 객체 하나이고, 행은 모든 노드가 공유하므로 `union` 잎의 `terminal` 행이 더해져 프로세스 전체에 열이다(NODE-018, BLUEPRINT-043, BLUEPRINT-035). 노드마다의 매니저·클로저·전략 객체·구독은 없다(규칙과 린트로 금한다)(NODE-018). 모든 노드가 한 클래스이고 필드를 같은 순서로 넣으면 한 숨은 클래스를 가져, 여러 종류를 도는 `settle`·`dispatch`의 필드 읽기가 단형 인라인 캐시로 남을 것으로 본다(Vincent가 말한 "상속 클래스에 의한 캐싱 비효율")(NODE-018). 남는 비용도 적는다: 칸 함수의 호출은 간접 호출으로 남고, `type`이 게터가 되어 읽기가 한 단계 늘며, iOS의 JavaScriptCore에서는 같은 결론이 보장되지 않는다(NODE-018). 메모리는 필드 24–30개일 때 노드 하나가 약 110–140바이트(포인터 압축 엔진) 또는 약 210–260바이트(압축 없는 엔진)로 추정한다(NODE-018). 벤치 여섯을 TEST-026의 기준선과 비교한다: B1(섞인 종류 1만 노드의 `value`·`type` 읽기, V8과 JavaScriptCore), B2(노드당 힙 바이트), B3(종류 인스턴스와 행이 같은 맵인지), B4(정착 뜨거운 루프의 거대형 자리 수), B5(입력에서 커밋까지의 지연), B6(노드 1만 개 생성 시간)(NODE-018). B3이 보는 종류 인스턴스와 행은 `union`을 더해 열이다(NODE-018, BLUEPRINT-043). 오늘의 주된 비용이 노드마다의 할당인지 인라인 캐시인지는 재지 않았으므로 크기는 벤치가 정한다(NODE-018).
 
 【추론】 NODE-018(현행)이 B1–B6을 기준선과 비교한다고 적으나 합격선이 없으므로 여기서 둔다(NODE-055). 【추론】 PR-2에서 B1–B6을 V8(node)과 JavaScriptCore(bun, 또는 `benchmark-form/browser-bench`의 Safari)에서 돌린다(NODE-055). 【추론】 B1·B5·B6의 합격선은 TEST-073의 선(`guard:check`) 안이다(NODE-055). 【추론】 B2의 합격선은 NODE-018의 추정(110–140바이트, 포인터 압축 엔진)의 1.5배 이내이고, 같은 엔진에서 잰 오늘 노드 인스턴스와 부속 객체의 합을 나란히 적어 그보다 크지 않은 것이다(NODE-055). 【추론】 B3의 합격선은 같은 맵이 참인 것이다(NODE-055). 【추론】 B4는 보고만 한다(NODE-055). 【추론】 합격선을 넘으면 TEST-027의 절차(이유를 적고 Vincent가 받아들임)로 올린다(NODE-055).
 
@@ -91,7 +91,7 @@ Vincent의 요건: 상속 구조를 그대로 두는 것, 공유 로직을 타�
 
 ### 1.4 책임별 fractal과 의존 방향
 
-**책임별 fractal.**(NODE-008) 16라운드에 레코드·종류 표·탐색을 한 fractal에 두던 제안을 책임별로 나눴다(17라운드 소유자 답, `reviews/round-17-owner-answers.md:26`)(NODE-008). 나눈 fractal은 `src/core/blueprint/`(PR-1), `src/core/record/`(레코드: `SchemaNodeRecord` 형, 행 계약 `Behavior`, `SchemaNodeFactory` 형, `SchemaNodeRuntime` 형, 이름·경로 갱신과 상호작용 상태 패치), `src/core/behaviors/`(`BEHAVIORS`; 종류 모듈 `stringBehavior/`·`numberBehavior/`·`booleanBehavior/`·`nullBehavior/`·`virtualBehavior/`, `objectBehavior/`와 `arrayBehavior/`는 안에 `branch/`·`terminal/`·`utils/`), `src/core/navigation/`(`find`·`findNodes`와 트리 걷기), `src/core/settle/`(+`settle/derive/`), `src/core/dispatch/`, `src/core/validation/`, `src/core/SchemaNode/`(공개 겉면, 클래스 `SchemaNode`)다(NODE-008). 종류 모듈에 (가칭) `unionBehavior/`가 더해진다(NODE-008, BLUEPRINT-043). 모듈 수준 생성 함수는 `schemaNodeFactory`이며, 오늘과 달리 공장은 노드마다가 아니라 트리마다 하나다(NODE-008).
+**책임별 fractal.**(NODE-008) 16라운드에 레코드·종류 표·탐색을 한 fractal에 두던 제안을 책임별로 나눴다(17라운드 소유자 답, `reviews/round-17-owner-answers.md:26`)(NODE-008). `src/core/blueprint/`(PR-1), `src/core/record/`(레코드: `SchemaNodeRecord` 형, 행 계약 `Behavior`, `SchemaNodeFactory` 형, `SchemaNodeRuntime` 형, 이름·경로 갱신과 상호작용 상태 패치), `src/core/behaviors/`(`BEHAVIORS`; 종류 모듈 `stringBehavior/`·`numberBehavior/`·`booleanBehavior/`·`nullBehavior/`·`virtualBehavior/`, `objectBehavior/`와 `arrayBehavior/`는 안에 `branch/`·`terminal/`·`utils/`), `src/core/navigation/`(`find`·`findNodes`와 트리 걷기), `src/core/settle/`(+`settle/derive/`), `src/core/dispatch/`, `src/core/validation/`, `src/core/SchemaNode/`(공개 겉면, 클래스 `SchemaNode`)(NODE-008). 종류 모듈에 `unionBehavior/`가 더해진다(NODE-008, BLUEPRINT-043, BLUEPRINT-035). 모듈 수준 생성 함수는 `schemaNodeFactory`이며, 오늘과 달리 공장은 노드마다가 아니라 트리마다 하나다(NODE-008).
 
 **behaviors 규칙.**(NODE-009) 종류마다 fractal 하나(`INTENT.md`·`DETAIL.md`·진입점·같은 이름의 행 파일)를 둔다(NODE-009). 여덟 줄을 넘는 칸과 그 종류만의 보조는 그 종류의 `utils/`, 두 전략이 함께 쓰는 것은 그 종류의 `utils/`, 두 종류 이상이 쓰는 것은 `behaviors/utils/`에 둔다(NODE-009). behaviors 밖에서도 쓰는 것은 behaviors의 것이 아니다(예: `resolveArrayLimits`는 `blueprint/`로)(NODE-009). 행은 칸을 모두 같은 순서로 갖는다(NODE-009). 종류 모듈은 behaviors 뿌리와 `settle`·`dispatch`·`validation`·공개 겉면을 가져오지 않는다(NODE-009).
 
@@ -99,7 +99,7 @@ Vincent의 요건: 상속 구조를 그대로 두는 것, 공유 로직을 타�
 
 【추론】 의존 역전으로 끊는다(NODE-045). 【추론】 `record/`가 `SchemaNodeRuntime`의 칸(통지 대기열, 검증기, 진단, 진입 깊이와 예산, `nodeFactory`, `onError` 보고기)의 형을 그 칸을 부르는 쪽이 쓰는 최소 인터페이스로 선언한다(NODE-045). 【추론】 `dispatch`·`validation`과 트리를 만드는 자리가 그 인터페이스를 만족하는 구현을 넣는다(NODE-045). 【추론】 `record/`는 `dispatch`·`validation`·`app/plugin`을 가져오지 않는다(NODE-045). 【추론】 `import type`도 금지다(NODE-045). 【추론】 검증기 칸은 플러그인 형이 아니라 `record/`의 검증 요청 인터페이스이고, 플러그인의 검증기는 트리를 만드는 자리에서 이 칸에 맞춰 넣는다(NODE-045). 【추론】 칸을 하나 더하면 `record/`의 선언을 고친다(NODE-045). 【추론】 그 대가를 레코드 `DETAIL.md`에 적는다(`Behavior`와 같은 방식)(NODE-045). 【추론】 PR-2의 병합 점검에 `import type`까지 센 순환 검사를 둔다(NODE-045). 【추론】 도구는 PR-2가 고른다(NODE-045).
 
-【추론】 S1 parse 함수(소유자 답 S1의 노드마다 타입에 맞는 parse, WRITE-052)는 `src/core/behaviors/utils/parse/`에 둔다(NODE-056). 【추론】 부르는 쪽은 동작 행의 `interpret` 칸이다(WRITE-056)(NODE-056). 기본 union 입력도 같은 내부 함수를 쓰지 않는 호출로 부른다(NODE-056, REACT-033). `union` 노드의 해석은 `type`의 선언 순서도 검증기 플러그인의 규칙도 쓰지 않고, 변환 목록(WRITE-075)으로 받아 줄 형이 정확히 하나일 때만 그 형으로 바꾼다(NODE-056, BLUEPRINT-042). 【추론】 BLUEPRINT-043의 `union` 행이 수·문자열·불리언 변환을 부르므로 이 변환들은 두 종류 이상이 쓴다(NODE-056). 【추론】 그래서 NODE-009대로 `behaviors/utils/` 아래, 주제 디렉토리 `parse/`에 둔다(NODE-056). 【추론】 NODE-009와 어긋나지 않는다(NODE-056). 【추론】 PR-2는 이 자리에 S1 변환(WRITE-075의 변환 목록, WRITE-052)만 하는 parse를 새로 둔다(NODE-056). 【추론】 오늘의 `src/core/parsers/`는 그것을 가져오는 옛 노드와 함께 `src/__legacy__/core/parsers/`로 옮긴다(LANDING-159)(NODE-056). 【추론】 레거시는 새 parse를 가져오지 않는다(NODE-056).
+【추론】 S1 parse 함수(소유자 답 S1의 노드마다 타입에 맞는 parse, WRITE-052)는 `src/core/behaviors/utils/parse/`에 둔다(NODE-056). 【추론】 부르는 쪽은 동작 행의 `interpret` 칸이다(WRITE-056, NODE-056). 기본 union 입력도 같은 내부 함수를 쓰지 않는 호출로 부른다(NODE-056, REACT-033). `union` 노드의 해석은 `type`의 선언 순서도 검증기 플러그인의 규칙도 쓰지 않고, 변환 목록(WRITE-075)으로 받아 줄 형이 정확히 하나일 때만 그 형으로 바꾼다(NODE-056, BLUEPRINT-042). 【추론】 `union` 행이 수·문자열·불리언 변환을 변환 목록(WRITE-075)으로 부르므로 이 변환들은 두 종류 이상이 쓴다(NODE-056, BLUEPRINT-042). 【추론】 그래서 NODE-009대로 `behaviors/utils/` 아래, 주제 디렉토리 `parse/`에 둔다(NODE-056). 【추론】 NODE-009와 어긋나지 않는다(NODE-056). 【추론】 PR-2는 이 자리에 S1 변환(WRITE-075의 변환 목록, WRITE-052)만 하는 parse를 새로 둔다(NODE-056). 【추론】 오늘의 `src/core/parsers/`는 그것을 가져오는 옛 노드와 함께 `src/__legacy__/core/parsers/`로 옮긴다(LANDING-159)(NODE-056). 【추론】 레거시는 새 parse를 가져오지 않는다(NODE-056).
 
 ### 1.5 겉면 규칙, 공개 타입과 이름 규칙
 
@@ -107,7 +107,7 @@ Vincent의 요건: 상속 구조를 그대로 두는 것, 공유 로직을 타�
 
 【추론】 내부 통로는 core만 쓰는 호스트에 열지 않는다(NODE-050). 【추론】 내부 통로는 NODE-010대로 바인딩 전용이다(NODE-050). 【추론】 `SchemaNode/` 진입점이 이름으로 내보내고, `core/index.ts`가 다시 내보내며, `src/index.ts`에는 없다(NODE-050). 【추론】 패키지의 공개 진입점은 `.` 하나뿐이고 트리를 직접 만드는 공개 경로가 없다(NODE-050). 【추론】 `nodeFromJSONSchema`는 `src/index.ts`가 내보내지 않는다(`src/index.ts:33-54`, `src/core/index.ts:1`)(NODE-050). 【추론】 그러니 공개 호스트는 모두 바인딩을 거치며, 통로를 열면 소비자 없는 공개 계약이 생긴다(NODE-050). 【추론】 core만 쓰는 호스트(예: 코어 시나리오 러너)는 포커스 개념이 없다(NODE-050). 【추론】 자른 값이 필요하면 `setValue`로 쓴다(NODE-050). 【추론】 뒤에 공개 core 진입점(하위 경로 수출)을 두게 되면, 그때 통로를 그 진입점의 계약으로 이름 붙여 여는 것이 계약 변경이다(NODE-050).
 
-**공개 타입과 가드는 유지한다.**(NODE-015) `SchemaNode`는 판별 합집합 인터페이스가 되고 `InferSchemaNode` 사상은 그대로다(NODE-015). 공개 진입점이 노드 타입을 `type`으로만 내보내므로 클래스를 인터페이스로 바꿔도 소비자는 깨지지 않는다(NODE-015). 공개 판별 합집합에는 레코드 필드와 `behavior`를 싣지 않는다(NODE-015). (가칭) `isUnionNode`가 더해져 공개 가드는 열이다(NODE-015, NODE-041). 이름을 유지하는 규칙은 그대로다(NODE-015, NODE-041). `isSchemaNode`는 오늘 `instanceof AbstractNode`인데 단일 클래스 `instanceof`로 바꾼다(`Symbol.for` 상표는 라이브러리 사본 둘이 서로의 노드를 참으로 판정하는 동작 변경이라 쓰지 않는다)(NODE-015). 나머지 여덟 가운데 여섯은 `isSchemaNode(x) && x.type === …`로, `isBranchNode`·`isTerminalNode`는 `x.strategy`로 둔다(NODE-015). `isTerminalNode`의 좁히기는 바로잡는다: 오늘은 잎 넷으로 좁히지만 터미널 객체·배열도 `'terminal'`이다(`src/core/nodes/filter.ts:195-198`)(NODE-015). 유지해야 하는 이유는 공개 가드 아홉, `InferSchemaNode`로 `push`가 타입 검사를 통과하는 것, 가상화의 WeakSet 키, `useChildNodeComponents`의 `isTerminalNode`다(NODE-015). 오늘 `node.group`을 읽는 소비자 다섯(`FallbackComponents/FormGroupRenderer.tsx:18`, antd5·antd6·antd-mobile·mui의 `FormGroup.tsx`)은 PR-7에서 `node.strategy`로 옮긴다(LANDING-043의 이주 행)(NODE-015).
+**공개 타입과 가드는 유지한다.**(NODE-015) `SchemaNode`는 판별 합집합 인터페이스가 되고 `InferSchemaNode` 사상은 그대로다(NODE-015). 공개 진입점이 노드 타입을 `type`으로만 내보내므로 클래스를 인터페이스로 바꿔도 소비자는 깨지지 않는다(NODE-015). 공개 판별 합집합에는 레코드 필드와 `behavior`를 싣지 않는다(NODE-015). `isUnionNode`가 더해져 공개 가드는 열이다(NODE-015, NODE-041, BLUEPRINT-035). 이름을 유지하는 규칙은 그대로다(NODE-015). `isSchemaNode`는 오늘 `instanceof AbstractNode`인데 단일 클래스 `instanceof`로 바꾼다(`Symbol.for` 상표는 라이브러리 사본 둘이 서로의 노드를 참으로 판정하는 동작 변경이라 쓰지 않는다)(NODE-015). 나머지 아홉 가운데 일곱은 `isSchemaNode(x) && x.type === …`로, `isBranchNode`·`isTerminalNode`는 `x.strategy`로 둔다(NODE-015, NODE-041). `isTerminalNode`의 좁히기는 바로잡는다: 오늘은 잎 넷으로 좁히지만 터미널 객체·배열도 `'terminal'`이다(`src/core/nodes/filter.ts:195-198`)(NODE-015). 유지해야 하는 이유는 공개 가드 열, `InferSchemaNode`로 `push`가 타입 검사를 통과하는 것, 가상화의 WeakSet 키, `useChildNodeComponents`의 `isTerminalNode`다(NODE-015, NODE-041). 오늘 `node.group`을 읽는 소비자 다섯(`FallbackComponents/FormGroupRenderer.tsx:18`, antd5·antd6·antd-mobile·mui의 `FormGroup.tsx`)은 PR-7에서 `node.strategy`로 옮긴다(LANDING-043의 이주 행)(NODE-015).
 
 【추론】 레코드 형에서 공개 판별 합집합으로의 변환에 형 단언을 쓰지 않는다(NODE-046). 【추론】 형은 선언 자리에서 맞춘다(NODE-046). 【추론】 `record/`의 `SchemaNodeRecord`는 자기 형을 매개변수로 받고(`SchemaNodeRecord<Self>`), `navigation/`의 `find`·`findNodes`는 `Self`에 대해 제네릭이다(NODE-046). 【추론】 클래스 `SchemaNode`는 종류 매개변수 `T`를 갖고 `type`·`value` 게터를 `T`로 좁힌다(NODE-046). 【추론】 `parent`·`structure`는 종류별 인스턴스 형의 합집합(`AnyNode`)으로 선언해 `SchemaNodeRecord<AnyNode>`를 구현한다(NODE-046). 【추론】 그래서 종류별 인스턴스 형이 공개 합집합의 구성원에 구조적으로 대입된다(NODE-046). 【추론】 레코드를 넘겨받는 공개 메서드는 `this: AnyNode` 매개변수로 선언한다(NODE-046). 【추론】 생성은 종류별 생성 표가 `AnyNode`를 돌려준다(NODE-046). 【추론】 `InferSchemaNode<Schema>`로의 좁힘은 overload 선언으로 한다(NODE-046).
 
@@ -123,11 +123,11 @@ Vincent의 요건: 상속 구조를 그대로 두는 것, 공유 로직을 타�
 
 양방향 재정의는 객체·배열에서만 뜻이 있고, 잎의 `false`·가상의 `true`는 청사진 오류다(NODE-030, NODE-047). `terminal: false` — 꽂은 입력이 `ChildNodeComponents`를 쓴다(NODE-030). `terminal: true` — 컴포넌트 없이도 터미널로 쓴다(NODE-030). 오늘도 `terminal: true`와 `terminal: false`가 양방향으로 있다(`getNodeGroup.ts:20-21`)(NODE-030).
 
-**혼란스러운 경우를 드러낸다.**(NODE-031) 터미널이 된 노드의 입력이 비어 있는 `ChildNodeComponents`를 읽으면 개발 모드에서 경고한다(목표 C2(작성자 실수의 가시성), GOAL-015)(NODE-031).
+**혼란스러운 경우를 드러낸다.**(NODE-031) 터미널이 된 노드의 입력이 비어 있는 `ChildNodeComponents`를 읽으면 개발 모드에서 경고한다(목표 C2(작성자 실수의 가시성), GOAL-015)(NODE-031, ERROR-185).
 
 【추론】 (1) 청사진이 정적으로 정한다: 한 노드의 전략은 청사진이 그 노드의 선언에서 정적으로 정한다(NODE-042). 【추론】 (2) 셈에 드는 선언: 게이트 없는 선언(본체, 게이트 없는 `allOf` 항목)과 게이트 가진 선언이다(NODE-042). 【추론】 게이트 없는 `oneOf`·`anyOf` 분기의 선언은 그 노드의 유일한 선언일 때만 든다(NODE-042). 【추론】 (3) 경우의 정의: 경우는 조각 중첩을 지키는 켜짐 조합이다(NODE-042). 【추론】 게이트 없는 선언은 늘 켜지고, 중첩 조각 안의 선언은 그것을 감싸는 게이트 가진 조각이 모두 켜져야 켜진다(NODE-042). 【추론】 각 경우에 켜진 선언들로 `options.terminal`(전순서에서 나중 것) → 렌더 계층 판정(없음이 아닌 결과 가운데 나중 것) → `type`의 순서로 전략을 정하고, 경우마다 다르면 청사진 오류(`TERMINAL_STRATEGY_MISMATCH`)다(NODE-042). 【추론】 (4) 축약 비교: 경우를 모두 열거하지 않는다(NODE-042). 【추론】 게이트 없는 선언이 있으면 그것만 켜진 경우 하나를 두고, 게이트 가진 선언 d마다 '게이트 없는 선언 ∪ d를 감싸는 게이트 가진 조각들이 이 노드에 둔 선언 ∪ d'가 켜진 경우를 둔다(NODE-042). 【추론】 이것들을 비교하면 가능한 모든 경우를 비교한 것과 같다(NODE-042). 【추론】 검사 비용은 노드마다 선언 수와 중첩 깊이의 곱을 넘지 않는다(NODE-042).
 
-【추론】 `BEHAVIORS[type]`의 행이 하나인 종류는 전략을 그 행에서 정하고 렌더 계층 판정을 묻지 않는다(NODE-047). 【추론】 잎(string·number·boolean·null과 BLUEPRINT-043의 (가칭) `union`)은 `terminal`, 가상은 `branch`다(NODE-047). 【추론】 그래서 가상에 둔 인라인 `presentation.FormTypeInput`은 그 입력으로 그려지되 전략은 `branch`이고, 입력은 참조 노드의 `ChildNodeComponents`를 받는다(쓰지 않아도 된다)(NODE-047). 【추론】 가상은 `branch`이므로 ERROR-185의 경고(터미널 노드의 입력이 빈 `ChildNodeComponents`를 읽을 때의 개발 모드 경고)는 가상 노드에 적용되지 않는다(NODE-047). 【추론】 행이 하나인 종류에 그 행과 다른 `options.terminal`을 적으면 청사진 오류다(잎의 `false`, 가상의 `true`)(NODE-047). 【추론】 같은 값(잎의 `true`, 가상의 `false`)은 오류가 아니다(NODE-047). 【추론】 `options.terminal`의 양방향(NODE-030)과 NODE-028의 판정 순서는 두 행을 가진 종류(object·array)에만 뜻이 있다(NODE-047).
+【추론】 `BEHAVIORS[type]`의 행이 하나인 종류는 전략을 그 행에서 정하고 렌더 계층 판정을 묻지 않는다(NODE-047). 【추론】 잎(string·number·boolean·null과 BLUEPRINT-043의 `union`)은 `terminal`, 가상은 `branch`다(NODE-047, BLUEPRINT-035). 【추론】 그래서 가상에 둔 인라인 `presentation.FormTypeInput`은 그 입력으로 그려지되 전략은 `branch`이고, 입력은 참조 노드의 `ChildNodeComponents`를 받는다(쓰지 않아도 된다)(NODE-047). 【추론】 가상은 `branch`이므로 ERROR-185의 경고(터미널 노드의 입력이 빈 `ChildNodeComponents`를 읽을 때의 개발 모드 경고)는 가상 노드에 적용되지 않는다(NODE-047). 【추론】 행이 하나인 종류에 그 행과 다른 `options.terminal`을 적으면 청사진 오류다(잎의 `false`, 가상의 `true`)(NODE-047). 【추론】 같은 값(잎의 `true`, 가상의 `false`)은 오류가 아니다(NODE-047). 【추론】 `options.terminal`의 양방향(NODE-030)과 NODE-028의 판정 순서는 두 행을 가진 종류(object·array)에만 뜻이 있다(NODE-047).
 
 ### 1.7 가상 노드
 
@@ -209,13 +209,13 @@ Vincent의 요건: 상속 구조를 그대로 두는 것, 공유 로직을 타�
 
 union이 아닌 노드의 `schemaType`은 오늘과 같은 스칼라이며, number 노드는 `'integer'`를 보존하고 null 노드는 `'null'`이다(NODE-057). union 노드의 `schemaType`은 계산한 목록을 얼린 읽기 전용 배열이다(NODE-057). 그 순서는 앵커 선언에 저자가 쓴 순서이고, `'null'`은 union에서도 빠지며, 중복 원소는 청사진 오류이므로 생기지 않는다(NODE-057). 불변식은 `Array.isArray(node.schemaType) === (node.type === 'union')`이다(NODE-057). `type`·`strategy`·`nullable`·`schemaType`은 노드가 사는 동안 같은 참조이며, `schemaType` 배열은 청사진 칸마다 하나를 얼려 그 칸의 모든 노드(배열 아이템 포함)와 기본 spec이 공유한다(NODE-057). BLUEPRINT-043의 "`integer`는 `number`로 접는다"는 종류를 정할 때의 접기이고, `schemaType`은 `'integer'`를 보존한다(NODE-057).
 
-【추론】 (6) 공개 표면: 공개 가드 (가칭) `isUnionNode`(`isSchemaNode(x) && x.type === 'union'`)를 더하고, 공개 판별 합집합과 `InferSchemaNode`에 `union` 멤버를 더한다(NODE-041). `union`은 `type`에 원시·객체·배열 가운데 둘 이상의 종류가 적힌 칸의 터미널 잎이며, 그 종류 이름은 `union`으로 확정하고 가칭을 푼다(가드 `isUnionNode`, 동작 모듈 `unionBehavior/`)(NODE-041, BLUEPRINT-036). 【추론】 `node.type`은 `'union'`, `node.strategy`는 `'terminal'`이다(NODE-041). 【추론】 그래서 공개 가드는 아홉에서 열이 된다(NODE-041).
+【추론】 (6) 공개 표면: 공개 가드 `isUnionNode`(`isSchemaNode(x) && x.type === 'union'`)를 더하고, 공개 판별 합집합과 `InferSchemaNode`에 `union` 멤버를 더한다(NODE-041, BLUEPRINT-035). `union`은 `type`에 원시·객체·배열 가운데 둘 이상의 종류가 적힌 칸의 터미널 잎이며, 그 종류 이름은 `union`으로 확정하고 가칭을 푼다(가드 `isUnionNode`, 동작 모듈 `unionBehavior/`)(NODE-041, BLUEPRINT-036). 【추론】 `node.type`은 `'union'`, `node.strategy`는 `'terminal'`이다(NODE-041). 【추론】 그래서 공개 가드는 아홉에서 열이 된다(NODE-041).
 
-【추론】 형 정의는 `UnionMemberType = 'string'|'number'|'integer'|'boolean'|'object'|'array'`와 `UnionSchemaType = readonly [UnionMemberType, UnionMemberType, ...UnionMemberType[]]`이다(원소 범위는 BLUEPRINT-036)(NODE-058). 【추론】 `UnionNode`의 모양은 `type: 'union'`, `strategy: 'terminal'`, `schemaType: UnionSchemaType`, `nullable: boolean`, `children: null`에 공통 멤버를 더한 것이다(NODE-058, NODE-041, SURFACE-058). 이 항목의 `valueTypeMismatch`·`valueTypeMismatches`·`VALUE_TYPE_MISMATCH`는 확정 이름 `typeMismatch`·`typeMismatches`·`SCHEMA_FORM_WARNING.TYPE_MISMATCH`로 읽는다(NODE-058, SURFACE-061). 그 확정 이름은 게터 `typeMismatch: boolean`, 경로 목록 `typeMismatches: readonly string[]`, 경고 코드 `SCHEMA_FORM_WARNING.TYPE_MISMATCH`다(NODE-041, NODE-058).
+【추론】 형 정의는 `UnionMemberType = 'string'|'number'|'integer'|'boolean'|'object'|'array'`와 `UnionSchemaType = readonly [UnionMemberType, UnionMemberType, ...UnionMemberType[]]`이다(원소 범위는 BLUEPRINT-036)(NODE-058). 【추론】 `UnionNode`의 모양은 `type: 'union'`, `strategy: 'terminal'`, `schemaType: UnionSchemaType`, `nullable: boolean`, `children: null`에 공통 멤버를 더한 것이다(NODE-058, NODE-041, SURFACE-058). 【추론】 `UnionNode`는 `typeMismatch`를 판별자로 두 멤버로 나뉜다(NODE-058, SURFACE-061). 확정 이름은 게터 `typeMismatch: boolean`, 경로 목록 `typeMismatches: readonly string[]`, 경고 코드 `SCHEMA_FORM_WARNING.TYPE_MISMATCH`다(NODE-041, NODE-058).
 
-【추론】 `valueTypeMismatch`가 `false`인 멤버의 `value`는 `string | number | boolean | ObjectValue | ArrayValue | undefined`이고, nullable이면 `| null`이 붙는다(NODE-058). 【추론】 `valueTypeMismatch`가 `true`인 멤버의 `value`는 `unknown`이다(NODE-058). 【추론】 노드 형에는 제네릭을 두지 않으며, 목록 형으로 좁히는 것은 `FormTypeInputProps`가 맡는다(NODE-058).
+【추론】 `typeMismatch`가 `false`인 멤버의 `value`는 `string | number | boolean | ObjectValue | ArrayValue | undefined`이고, nullable이면 `| null`이 붙는다(NODE-058, SURFACE-061). 【추론】 `typeMismatch`가 `true`인 멤버의 `value`는 `unknown`이다(NODE-058, SURFACE-061). 【추론】 노드 형에는 제네릭을 두지 않으며, 목록 형으로 좁히는 것은 `FormTypeInputProps`가 맡는다(NODE-058).
 
-【추론】 union 노드의 `FormTypeInputProps`에서 `value`와 `onChange`는 일부러 다른 형이다(NODE-058). 【추론】 props의 `value`는 `UnionNode.value`와 같은 판별 모양이다: `valueTypeMismatch === false`이면 목록 종류의 값, `undefined`, (nullable이면) `null`이고, `true`이면 `unknown`이다(NODE-058). 【추론】 props의 `onChange`는 목록 종류의 값, `undefined`, 그리고 nullable일 때만 `null`을 받는다(NODE-058).
+【추론】 union 노드의 `FormTypeInputProps`에서 `value`와 `onChange`는 일부러 다른 형이다(NODE-058). 【추론】 props의 `value`는 `UnionNode.value`와 같은 판별 모양이다: `typeMismatch === false`이면 목록 종류의 값, `undefined`, (nullable이면) `null`이고, `true`이면 `unknown`이다(NODE-058, SURFACE-061). 【추론】 props의 `onChange`는 목록 종류의 값, `undefined`, 그리고 nullable일 때만 `null`을 받는다(NODE-058).
 
 【추론】 종류별 공개 형은 `schemaType`을 좁힌다: `StringNode`는 `'string'`, `NumberNode`는 `'number'|'integer'`, `BooleanNode`는 `'boolean'`, `NullNode`는 `'null'`, `ObjectNode`는 `'object'`, `ArrayNode`는 `'array'`, `VirtualNode`는 `'virtual'`, `UnionNode`는 `UnionSchemaType`이다(NODE-058, NODE-015, NODE-046). 【추론】 공개 가드 `isUnionNode(x) = isSchemaNode(x) && x.type === 'union'`을 더한다(이름은 NODE-041)(NODE-058). 【추론】 `isTerminalNode(unionNode)`는 참이고 그 반환 형 합집합에 `UnionNode`가 들어가며, `isBranchNode(unionNode)`는 거짓이다(NODE-058, NODE-041). 【추론】 새 설계에서 두 가드는 `strategy`를 본다(NODE-058). 【추론】 "목록에 X가 있는가"를 묻는 공개 가드는 두지 않는다: `isUnionNode(n) && n.schemaType.includes('integer')`로 충분하다(seiri public-contract §1)(NODE-058).
 
@@ -227,7 +227,7 @@ union이 아닌 노드의 `schemaType`은 오늘과 같은 스칼라이며, numb
 
 【추론】 `src/types/value.ts`의 `NormalizeType`을 지우고 winglet의 `InferValueType`에 스키마를 그대로 넘긴다(NODE-058). 【추론】 union 칸에 `enum`이 있으면 `InferValueType`은 목록 종류들의 값 형과 enum 리터럴 형의 교집합이며, 리터럴의 JSON 종류가 목록(+nullable)에 있는 것만 남는다(예: `['number','string']` + `enum:[1,'a',true]`는 `1 | 'a'`)(NODE-058). 【추론】 `InferJSONSchema<Value>`가 분배되지 않게 고쳐, 값의 null이 아닌 범주(string·number·boolean·object·array, 리터럴 합은 한 범주)가 둘 이상이면 `UnionSchema`로 사상한다(NODE-058). 【추론】 그래서 `FormTypeInputProps<string|number>`의 `node`는 `UnionNode`다(NODE-058).
 
-【추론】 유효 목록은 노드마다 유효 스키마 메모가 같은 동안 같은 참조이고, 좁히는 게이트가 없으면 `schemaType`과 같은 참조다(NODE-058). 【추론】 `jsonSchema`는 켜진 덧씌움 집합이 같은 동안 같은 참조다(NODE-058). 【추론】 `value`와 `valueTypeMismatch`는 커밋 사이에 같은 참조이며, 객체·배열 값은 변환하지 않으므로 참조가 그대로이고, 같은 원본이면 방출도 같은 참조다(NODE-058, VALUE-012, VALUE-030).
+【추론】 유효 목록은 노드마다 유효 스키마 메모가 같은 동안 같은 참조이고, 좁히는 게이트가 없으면 `schemaType`과 같은 참조다(NODE-058). 【추론】 `jsonSchema`는 켜진 덧씌움 집합이 같은 동안 같은 참조다(NODE-058). 【추론】 `value`와 `typeMismatch`는 커밋 사이에 같은 참조이며, 객체·배열 값은 변환하지 않으므로 참조가 그대로이고, 같은 원본이면 방출도 같은 참조다(NODE-058, VALUE-012, VALUE-030, SURFACE-061).
 
 - PR: PR-2(노드 형)·PR-7(공개 수출)(NODE-058).
 - 무엇: tsc 전용 `src/types/__tests__/union.type-test.ts`가 위 사상, `InferValueType`·`InferJSONSchema`의 형, union props의 `value`(판별)와 `onChange`(목록 형)를 단언하고, `union.schema-type-invariant.test.ts`가 같은 칸의 노드와 배열 아이템의 `schemaType` 참조가 같고 얼려 있음을 단언한다(NODE-058).
@@ -244,9 +244,9 @@ union이 아닌 노드의 `schemaType`은 오늘과 같은 스칼라이며, numb
 
 소유자 답: "중앙에 값을 두는 걸 허용. 단, 데이터모델을 따로 두는 건 안 돼. react 파이버처럼 node가 동작하도록 했으면 해. 최적화와 라이프사이클 관점에서의 단일화는 동의해."(VALUE-001)
 
-**2. 노드가 드는 칸은 열이고, 그 가운데 상태는 둘뿐이다(VALUE-002).**
+**2. 노드가 드는 칸은 열하나이고, 그 가운데 상태는 둘뿐이다(VALUE-002, WRITE-054).**
 
-(VALUE-002, VALUE-003)
+(VALUE-002, VALUE-003, VALUE-030, VALUE-037, WRITE-054, SURFACE-061)
 
 | 칸 | 종류 | 내용 |
 | -- | ---- | ---- |
@@ -260,6 +260,7 @@ union이 아닌 노드의 `schemaType`은 오늘과 같은 스칼라이며, numb
 | `revision` | 원장 | 통지 원장. 커밋 때 일괄 갱신한다(F16) |
 | 커밋 번호 | 원장 | 검증 결과의 스탬프. 오래된 결과를 버린다(F28) |
 | `diagnostics` | 작업 | 마지막 로드 이후의 작업 기록(ERROR-130. 지속은 14라운드 답 O-2 가). `status`는 `'stable'` 또는 `'degraded'`이고 `cause`를 든다. `degraded` 동안 폼의 제출 경로가 거부한다(17라운드 소유자 답 R17-1 나). 루트에서 관측한다 |
+| 경고등(`typeMismatch`) | 계산 | 원본과 노드의 현재 spec(게이트가 켜진 동안의 유효 목록)만의 함수, 공개 형의 판별자 |
 
 **상태는 `raw`와 `extras` 둘뿐이다**(원리 P3(형상은 상태의 순수 함수다), VALUE-002). 나머지는 상태에서 계산되거나 작업의 기록이다(VALUE-002). "노드 트리가 곧 상태"는 이 둘을 노드가 소유한다는 뜻이다(VALUE-002). 폼은 `oneOf`·`anyOf`로 분기를 고르지 않으므로(원리 P1′(폼이 스키마에서 읽는 것은 노드 트리의 모양을 정하는 문법뿐)) 수동 분기 선택을 담을 칸이 없다(VALUE-002).
 
@@ -314,7 +315,7 @@ union이 아닌 노드의 `schemaType`은 오늘과 같은 스칼라이며, numb
 | 동작 | 비용 |
 | ---- | ---- |
 | `node.value` 등 모든 읽기 | 필드 접근. 계산 없음 |
-| 쓰기 1회 | 경로의 각 레벨에서 얕은 복사 한 번. 실측: 키 1,000개 객체 1.1 µs, 아이템 10,000개 배열 2.7 µs. 형제 서브트리는 참조를 재사용한다 |
+| 쓰기 1회 | 경로의 각 레벨에서 얕은 복사 한 번. 실측: 키 1,000개 객체 1.1 µs, 아이템 10,000개 배열 2.7 µs (TEST-036). 형제 서브트리는 참조를 재사용한다 |
 | 재계산 목록에 없는 서브트리 | 통째로 건너뛴다 |
 | 쓰기 N회의 배치 | 표시 N번, 작업 루프 1번 |
 | 가드와 `controls`의 식 | **변경 키 역색인은 쓰지 않는다**(E13) — 출발점 고정에서 무효다. 유효한 최적화는 (a) 무조건 루트 키만 읽는 가드의 건너뛰기, (b) 조각 끄기의 키 제거를 `delete` 없이 하는 것, (c) 조각이 선언한 키만 패치하는 합성(F13) |
@@ -346,7 +347,7 @@ union이 아닌 노드의 `schemaType`은 오늘과 같은 스칼라이며, numb
 
 잠복 원본 열거는 **루트 노드의 함수**다(루트가 형상에 없는 노드의 원본을 들고 있으므로 저장 자리와 같다, VALUE-029). 모든 노드는 getter `node.inactiveValues`를 두고, 자기 경로로 루트의 함수를 불러 그 아래의 잠복 원본을 돌려준다(VALUE-029). `FormHandle`에는 더하지 않는다(VALUE-029). 【추론】 `node.inactiveValues`(와 그것이 부르는 루트 노드의 함수)는 읽기 전용 배열 `ReadonlyArray<{ readonly path: string; readonly value: unknown }>`을 돌려준다(VALUE-029, WRITE-087).
 
-【추론】 ㄱ core가 스스로 잠복 원본을 파기하는 시점은 더하지 않는다(VALUE-031). `setValue(V)`는 로드가 아니지만 전체 교체 쓰기로서 V에 없는 경로의 원본(잠복 원본 포함)을 없음으로 만든다(VALUE-031, WRITE-094). 잠복 원본이 지워지는 길은 나감 정책 `unsetOnInactive`(작성자나 호출자가 켬), 로드(마운트·`FormHandle.reset()`·`resetSubtree()`), V가 그 경로를 담지 않은 전체 교체 쓰기다(VALUE-031, WRITE-090, WRITE-094). 【추론】 로드에서는 V에 없는 원본이 없음이 되므로, 잠복 원본도 V의 값으로 바뀌거나 지워진다(VALUE-031). 【추론】 이 밖에는 ㅁ의 쓰기가 그 경로에 없음을 쓸 때뿐이다(VALUE-031). 【추론】 형상에 없는 노드의 규칙은 평가하지 않으므로 `controls.unsetValue`는 잠복 원본을 지우지 못한다(VALUE-031).
+【추론】 ㄱ core가 스스로 잠복 원본을 파기하는 시점은 더하지 않는다(VALUE-031). `setValue(V)`는 로드가 아니지만 전체 교체 쓰기로서 V에 없는 경로의 원본(잠복 원본 포함)을 없음으로 만든다(VALUE-031, WRITE-094). 잠복 원본이 지워지는 길은 나감 정책, 로드(마운트·`FormHandle.reset()`·`resetSubtree()`), V가 그 경로를 담지 않은 전체 교체 쓰기다(VALUE-031, WRITE-090, WRITE-094). 【추론】 로드와 전체 교체 쓰기에서는 V에 없는 원본이 없음이 되므로, 잠복 원본도 V의 값으로 바뀌거나 지워진다(VALUE-031, WRITE-090, WRITE-094). 【추론】 이 밖에는 ㅁ의 쓰기가 그 경로에 없음을 쓸 때뿐이다(VALUE-031). 【추론】 형상에 없는 노드의 규칙은 평가하지 않으므로 `controls.unsetValue`는 잠복 원본을 지우지 못한다(VALUE-031).
 
 【추론】 제출 후 파기는 두지 않는다(VALUE-031). 【추론】 core는 제출을 모르고, 파기는 폼이 스스로 값을 지우는 일이 되기 때문이다(VALUE-031). 【추론】 민감한 값을 남기지 않는 기본 권고는 나감 정책 `unsetOnInactive`를 켜는 것이다(VALUE-031). 【추론】 호출자가 한 번에 비우려면 `setValue(form.getValue(), SetValueOption.DisableAutomaticWrites)`를 쓴다(VALUE-031). 【추론】 이때 투영으로 빠진 값도 없음이 된다(VALUE-031). 【추론】 열거는 루트 노드의 함수와 getter `node.inactiveValues`다(VALUE-029, VALUE-031).
 
@@ -356,11 +357,11 @@ union이 아닌 노드의 `schemaType`은 오늘과 같은 스칼라이며, numb
 - (b) 작성자가 켠 투영(`omitEmpty`·`omitTrailing`, VALUE-031)
 - (c) S1의 형 정규화(VALUE-031)
 - (d) 로드의 자동 쓰기(없음인 키의 채움, 로드 때 발화하는 `injectTo`·`derived`, 로드된 값으로 평가한 `unsetValue`, VALUE-031)
-- (e) 키 순서(미선언 키는 `extras`로 보존되지만 선언 키 뒤에 온다, 열린 물음 Q14(`emit`의 키 순서), VALUE-031)
+- (e) 키 순서(미선언 키는 `extras`로 보존되지만 선언 키 뒤에 온다, Q14, VALUE-031)
 
 따로 알리는 경고는 두지 않는다(VALUE-031).
 
-【추론】 ㅁ 비활성 경로에 닿는 쓰기는 거부도 오류도 아니다(VALUE-031). 【추론】 그 쓰기는 루트가 드는 그 경로의 잠복 원본에 반영된다(VALUE-031). 【추론】 노드는 만들지 않고, 규칙도 평가하지 않으며, 방출되지 않는다(VALUE-031). 【추론】 이런 쓰기가 닿는 길은 넷이다: 조상의 `Merge`나 로드가 그 경로를 담을 때(WRITE-018의 분배), 형상에 없는 대상을 가리킨 `controls.injectTo`(CONTROLS-053), `batch`에서 표시할 때는 형상에 있었으나 정착 뒤 떠난 노드에 표시된 쓰기, 형상을 떠나기 전에 얻은 노드 참조로 한 쓰기(VALUE-031). `setValue(V)`와 `Overwrite`를 준 입력 쓰기는 로드가 아니라 전체 교체 쓰기이며, V가 그 경로를 담으면 이 쓰기도 WRITE-018의 분배로 그 경로의 잠복 원본에 닿는다(VALUE-031, WRITE-090, WRITE-094). 【추론】 형상을 떠난 노드와 그 옛 참조의 읽기·쓰기·재진입은 NODE-044가 정하며, 그래서 순차 쓰기와 배치 쓰기가 같은 원본에 닿는다(VALUE-031).
+【추론】 ㅁ 비활성 경로에 닿는 쓰기는 거부도 오류도 아니다(VALUE-031). 【추론】 그 쓰기는 루트가 드는 그 경로의 잠복 원본에 반영된다(VALUE-031). 【추론】 노드는 만들지 않고, 규칙도 평가하지 않으며, 방출되지 않는다(VALUE-031). 【추론】 이런 쓰기가 닿는 길은 넷이다: 조상의 `Merge`·전체 교체 쓰기·로드가 그 경로를 담을 때(WRITE-018의 분배), 형상에 없는 대상을 가리킨 `controls.injectTo`(CONTROLS-053), `batch`에서 표시할 때는 형상에 있었으나 정착 뒤 떠난 노드에 표시된 쓰기, 형상을 떠나기 전에 얻은 노드 참조로 한 쓰기(VALUE-031, WRITE-090, WRITE-094). `setValue(V)`와 `Overwrite`를 준 입력 쓰기는 로드가 아니라 전체 교체 쓰기이며, V가 그 경로를 담으면 이 쓰기도 WRITE-018의 분배로 그 경로의 잠복 원본에 닿는다(VALUE-031, WRITE-090, WRITE-094). 【추론】 형상을 떠난 노드와 그 옛 참조의 읽기·쓰기·재진입은 NODE-044가 정하며, 그래서 순차 쓰기와 배치 쓰기가 같은 원본에 닿는다(VALUE-031).
 
 ### 2.4 null 계약과 정합 상태(경고등)
 
@@ -372,11 +373,11 @@ union이 아닌 노드의 `schemaType`은 오늘과 같은 스칼라이며, numb
 
 【추론】 (1) 경고등은 VALUE-002의 분류로 '계산' 칸이다(VALUE-030). 【추론】 경고등은 원본과 노드의 현재 spec(게이트가 켜진 동안의 유효 목록)만의 함수이므로 '상태는 `raw`와 `extras` 둘뿐'(P3)을 지킨다(VALUE-030, VALUE-037). 【추론】 소유자가 말한 '상태'는 사용자에게 보이는 뜻이다(VALUE-030). 경고등은 커밋 때 원본이 바뀐 노드와, 같은 정착에서 유효 스키마가 바뀐 노드에서 다시 계산한다(VALUE-030, VALUE-037). 【추론】 켜지는 값은 자기 형이 아니고, 없음도 아니고, nullable 노드의 `null`도 아닌 값이다(VALUE-030). 【추론】 수 노드의 `NaN`·`±Infinity`, 정수 노드의 정수 아닌 수, 잘못된 종류를 든 가지 노드도 켜진다(VALUE-030). 【추론】 가상 노드는 켜지지 않는다(ERROR-195에서 거부한다, VALUE-030).
 
-【추론】 루트 노드가 켜진 노드의 경로 집합을 든다(VALUE-030). 【추론】 쓰기 때 더하고 빼며, 로드마다 다시 만든다(VALUE-030). 【추론】 "로드마다 다시 만든다"(VALUE-030)는 `resetSubtree()`에는 그 하위 트리에만 적용한다(VALUE-030). 소유자 답(설계서 메모 4)으로 이름은 게터 `typeMismatch: boolean`, 경로 목록 `typeMismatches: readonly string[]`, 경고 코드 `SCHEMA_FORM_WARNING.TYPE_MISMATCH`다(VALUE-030, VALUE-037). 그래서 `valueTypeMismatch`·`valueTypeMismatches`·`VALUE_TYPE_MISMATCH`는 확정 이름 `typeMismatch`·`typeMismatches`·`SCHEMA_FORM_WARNING.TYPE_MISMATCH`로 읽는다(VALUE-030, VALUE-037, SURFACE-061). 【추론】 모든 노드는 getter `typeMismatches: readonly string[]`로 자기 경로 아래의 켜진 경로를 돌려준다(VALUE-030, SURFACE-061). 【추론】 루트에서 읽으면 트리 전체다(VALUE-030). 【추론】 커밋 번호로 메모해 같은 커밋에서는 같은 참조를 돌려준다(VALUE-030). 【추론】 형상에 없는 노드는 넣지 않는다(VALUE-030). 【추론】 새 이벤트는 없다(VALUE-030). 값이나 유효 스키마가 바뀌면 그 통지(`UpdateValue`·`UpdateJsonSchema`)가 알린다(VALUE-030, VALUE-037). 【추론】 `FormHandle`에는 더하지 않는다(VALUE-030).
+【추론】 루트 노드가 켜진 노드의 경로 집합을 든다(VALUE-030). 【추론】 쓰기 때 더하고 빼며, 로드마다 다시 만든다(VALUE-030). 【추론】 "로드마다 다시 만든다"(VALUE-030)는 `resetSubtree()`에는 그 하위 트리에만 적용한다(VALUE-030). 소유자 답(설계서 메모 4)으로 이름은 게터 `typeMismatch: boolean`, 경로 목록 `typeMismatches: readonly string[]`, 경고 코드 `SCHEMA_FORM_WARNING.TYPE_MISMATCH`다(VALUE-030, VALUE-037). 【추론】 모든 노드는 getter `typeMismatches: readonly string[]`로 자기 경로 아래의 켜진 경로를 돌려준다(VALUE-030, SURFACE-061). 【추론】 루트에서 읽으면 트리 전체다(VALUE-030). 【추론】 커밋 번호로 메모해 같은 커밋에서는 같은 참조를 돌려준다(VALUE-030). 【추론】 형상에 없는 노드는 넣지 않는다(VALUE-030). 【추론】 새 이벤트는 없다(VALUE-030). 값이나 유효 스키마가 바뀌면 그 통지(`UpdateValue`·`UpdateJsonSchema`)가 알린다(VALUE-030, VALUE-037). 【추론】 `FormHandle`에는 더하지 않는다(VALUE-030).
 
 【추론】 (4) nullable이 아닌 노드의 `null`은 바꾸지 않고 받은 그대로 방출된다(VALUE-033). 【추론】 경고등이 켜지고 경고가 가며, 검증기가 있으면 형 에러로 제출이 막힌다(VALUE-033). 【추론】 이 사용성 변화를 이주 항목(F27 확장, LANDING-125)과 PR-8 문서에 적는다(VALUE-033). 【추론】 해법은 스키마에 nullable을 적는 것이다(VALUE-033). 【추론】 값 규칙은 이미 닫혀 있고 문서화만 남았다(VALUE-033).
 
-【추론】 `typeMismatch = raw !== undefined && !(raw === null && nullable) && !isMemberOfEffectiveList(raw)`이며, 원본과 노드의 현재 spec만의 함수다(VALUE-037, SURFACE-061). 【추론】 경고등은 커밋 때 원본이 바뀐 노드와, 같은 정착에서 유효 스키마가 바뀐 노드에서 다시 계산한다(VALUE-037). 【추론】 경고등은 그 노드의 경로가 루트의 경로 집합에 들어가는 커밋에 켜진다(ERROR-186, VALUE-037). 【추론】 `SCHEMA_FORM_WARNING.TYPE_MISMATCH`는 경고등이 켜질 때마다 한 번 보내고, 켜진 채 다른 어긋난 값이 와도 다시 보내지 않는다(VALUE-037, SURFACE-061). 【추론】 경고등이 꺼졌다 켜지거나, 노드가 형상을 나갔다 들어오거나, 로드로 경로 집합을 다시 만들거나, 게이트가 좁혀 켜지면 다시 보낸다(VALUE-037). 【추론】 쓰기 없이 경고등만 바뀐 노드를 배달하는 통지는 유효 스키마 변경 통지 `UpdateJsonSchema`(가칭, EVENT-064)다(SETTLE-007, EVENT-045, VALUE-037). 【추론】 VALUE-030의 "바뀌면 `UpdateValue`가 알린다"는 "값이나 유효 스키마가 바뀌면 그 통지(`UpdateValue`·`UpdateJsonSchema`)가 알린다"로 고친다(VALUE-037).
+【추론】 `typeMismatch = raw !== undefined && !(raw === null && nullable) && !isMemberOfEffectiveList(raw)`이며, 원본과 노드의 현재 spec만의 함수다(VALUE-037, SURFACE-061). 【추론】 경고등은 커밋 때 원본이 바뀐 노드와, 같은 정착에서 유효 스키마가 바뀐 노드에서 다시 계산한다(VALUE-037). 【추론】 경고등은 그 노드의 경로가 루트의 경로 집합에 들어가는 커밋에 켜진다(ERROR-186, VALUE-037). 【추론】 `SCHEMA_FORM_WARNING.TYPE_MISMATCH`는 경고등이 켜질 때마다 한 번 보내고, 켜진 채 다른 어긋난 값이 와도 다시 보내지 않는다(VALUE-037, SURFACE-061). 【추론】 경고등이 꺼졌다 켜지거나, 노드가 형상을 나갔다 들어오거나, 로드로 경로 집합을 다시 만들거나, 게이트가 좁혀 켜지면 다시 보낸다(VALUE-037). 【추론】 쓰기 없이 경고등만 바뀐 노드를 배달하는 통지는 유효 스키마 변경 통지 `UpdateJsonSchema`(가칭, EVENT-064)다(SETTLE-007, EVENT-045, VALUE-037).
 
 【추론】 `SCHEMA_FORM_WARNING.TYPE_MISMATCH` 기록은 `{ level: 'warning', code, path, expected: { schemaType, nullable, effective }, received, reason, candidates?, source }`이다(ERROR-186, EVENT-060, VALUE-037, SURFACE-061). 【추론】 `expected.schemaType`은 `node.schemaType`이고, `expected.effective`는 그 커밋의 유효 목록이다(VALUE-037). 【추론】 `received`는 `'string'|'number'|'integer'|'nonFinite'|'boolean'|'null'|'object'|'array'|'other'` 가운데 하나다(VALUE-037). 【추론】 `reason`은 받아 줄 형이 없으면 `'unconvertible'`, 둘 이상이면 `'ambiguous'`이고, `candidates`는 `'ambiguous'`일 때만 `['string','boolean']`으로 싣는다(VALUE-037). 【추론】 `source`는 EVENT-060의 쓰기 출처 값에 `'gate'`를 더한 것이다(VALUE-037). 【추론】 `typeMismatches`는 켜졌으면 `[path]`, 아니면 공유하는 얼린 빈 배열이며, 커밋 번호로 메모하고 객체·배열 값의 안쪽 경로는 넣지 않는다(VALUE-037, SURFACE-061). 【추론】 `typeMismatch === false`는 값이 이 노드 유효 목록의 형이거나, 없거나, 노드가 nullable일 때 `null`이라는 뜻일 뿐 검증 통과를 뜻하지 않으며, 이 문구를 `FormTypeInputProps`와 게터의 주석에 같이 적는다(SURFACE-052, VALUE-037, SURFACE-061). 【추론】 게이트가 `null`을 빼는 것은 검증 전용이다(VALUE-037).
 
@@ -392,7 +393,7 @@ union이 아닌 노드의 `schemaType`은 오늘과 같은 스칼라이며, numb
 
 소유자(2026-09-23, 합의 근거; WRITE-001): "그걸 바랐다면 ajv autofix 같은 걸 쓰지 않았을까. 나는 form이 값을 바꾸도록 이전에 설계했고, 이 방식이 사용자에게 혼란을 준다는 걸 느껴서, 값 수정은 안 하고 에러만 보여주는 걸 기본 동작으로 하려고 했다. 빼거나 지우는 건 모두 `&`로 시작하는 명령으로 조작해야 한다."(WRITE-001)
 
-18라운드 물음 S1(다른 종류의 값을 보존할 때 잎 노드의 공개 값 형) 반영: WRITE-001에는 이름 붙은 예외(형 정규화)로 적는다(WRITE-001). 18라운드 물음 S1 반영: 이것은 값의 교정이 아니라 JSON·JS 자동 형변환을 통제할 수 있게 구현한 것이므로 WRITE-001의 대상이 아니다(WRITE-001).
+18라운드 S1 반영: WRITE-001에는 이름 붙은 예외(형 정규화)로 적는다(WRITE-001). 18라운드 S1 반영: 이것은 값의 교정이 아니라 JSON·JS 자동 형변환을 통제할 수 있게 구현한 것이므로 WRITE-001의 대상이 아니다(WRITE-001).
 
 **예외는 방출 정책뿐이다 — 비활성 노드의 값은 방출에서 빠지고, `omitEmpty`·`omitTrailing`이 방출을 줄인다.**(WRITE-002) 원본을 지우는 것이 아니라 방출을 계산할 때의 투영이다(GOAL-030, 원리 P4(방출은 정책이다), WRITE-002). 비활성 노드의 원본을 지우는 것은 작성자나 호출자(Form 속성)가 나감 정책 키를 켰을 때뿐이며, 그것은 core의 교정이 아니라 그들이 선언한 자동 쓰기다(원리 P2(원본은 호출자와 작성자만 쓴다), 소유자 답(`reviews/round-13-owner-answers.md:8` 2 나감 비움 기본값), WRITE-002).
 
@@ -402,9 +403,9 @@ union이 아닌 노드의 `schemaType`은 오늘과 같은 스칼라이며, numb
 
 형상 계산이 수렴하지 않을 때도 값은 받아들인다(SETTLE-011, WRITE-004).
 
-원본에 쓰는 주체는 사용자 입력, 호출자의 `setValue`·`reset`, 그리고 작성자가 선언한 규칙뿐이다(WRITE-005). 규칙은 노드가 생길 때의 채움과 그 원천 `controls.default`·`default`, 예약 층의 `controls.derived`·`controls.injectTo`·`controls.unsetValue`, 그리고 정책이 참으로 정해진 노드의 나감 비움이다(WRITE-005). core가 스스로 원본을 "고치는" 일은 없다(WRITE-005).
+원본에 쓰는 주체는 사용자 입력, 호출자의 `setValue`·`reset`, 그리고 작성자가 선언한 규칙뿐이다(WRITE-005). 규칙은 노드가 생길 때의 채움과 그 원천 `controls.default`·`default`, 예약 층의 `controls.derived`·`controls.injectTo`·`controls.unsetValue`, 정책이 참으로 정해진 노드의 나감 비움, 그리고 포커스 아웃 `trim`이 자른 값의 쓰기다(WRITE-005, WRITE-078). 포커스 아웃 `trim`이 자른 값의 쓰기도 core의 자동 쓰기(여섯째)이며 작성자가 선언한 `options.trim`의 규칙이다(WRITE-005, WRITE-078). core가 스스로 원본을 "고치는" 일은 없다(WRITE-005).
 
-쓰기의 종류는 **호출자가 선언한다.**(WRITE-006) core는 추론하지 않는다(도출 D-4(쓰기 종류는 호출자 선언), WRITE-006).
+쓰기의 종류는 **호출자가 선언한다.**(WRITE-006) core는 추론하지 않는다(도출 D-4, WRITE-006).
 
 ### 3.2 쓰기 표, 쓰기 종류와 쓰기 옵션
 
@@ -421,6 +422,8 @@ union이 아닌 노드의 `schemaType`은 오늘과 같은 스칼라이며, numb
 | 배열 `push`/`remove`/`update` | 구조 연산 | 그 아이템만. `push`로 생긴 아이템은 생긴 노드이므로 채움을 받는다 |
 | 채움 | 노드 생성 사건, 작성자 선언 | 노드가 **생길 때** **없음**이면 `controls.default` > `default` > 없음. 이미 있던 노드는 다시 채우지 않고 지운 값도 다시 채우지 않는다 |
 
+소유자(12-2 답; WRITE-007): "자동 쓰기 아닙니까? 그리고 trim 전후 값이 같으면 쓰지 않아도 됩니다. 효율적이게."(WRITE-007, WRITE-078)
+
 (WRITE-007)
 
 | 사건 | 종류 | 누가 | 자식 원본에 미치는 것 |
@@ -432,11 +435,11 @@ union이 아닌 노드의 `schemaType`은 오늘과 같은 스칼라이며, numb
 
 생김은 노드 단위다(WRITE-007). 직전 커밋의 형상에 없고 이번 정착의 최종 형상에 있는 노드만 생긴 것이고, 본체·게이트 없는 `allOf` 항목·이미 켜져 있던 다른 조각이 두고 있던 노드는 새 조각이 켜져도 생기지 않는다(WRITE-007).
 
-객체 호스트의 없음은 호스트와 모든 자손의 `raw`·`extras`가 없음인 것이라, 로드한 V가 그 자리에 `{}`를 주어도 호스트는 `controls.default` > `default`를 받는다(WRITE-010, WRITE-082). 리프에 `undefined`를 쓰면 없음이 된다(WRITE-010). 입력 컴포넌트가 `onChange(undefined)`를 보내도 값이 없음이 된다(소유자 답(`reviews/round-10-owner-answers.md:15` C-11), WRITE-010). `Merge`로 키에 `undefined`를 쓰면 그 키는 없음이 된다(WRITE-010). `extras`의 키도 같고, 따로 `removeKey`를 두지 않는다(소유자 답(`reviews/round-10-owner-answers.md:18` C-2), WRITE-010).
+"없음"과 `''`·`null`·`{}`은 다르다(WRITE-010). 객체 호스트의 없음은 호스트와 모든 자손의 `raw`·`extras`가 없음인 것이라, 로드한 V가 그 자리에 `{}`를 주어도 호스트는 `controls.default` > `default`를 받는다(WRITE-010, WRITE-082). 리프에 `undefined`를 쓰면 없음이 된다(WRITE-010). 입력 컴포넌트가 `onChange(undefined)`를 보내도 값이 없음이 된다(소유자 답(`reviews/round-10-owner-answers.md:15` C-11), WRITE-010). `Merge`로 키에 `undefined`를 쓰면 그 키는 없음이 된다(WRITE-010). `extras`의 키도 같고, 따로 `removeKey`를 두지 않는다(소유자 답(`reviews/round-10-owner-answers.md:18` C-2), WRITE-010).
 
 공개 옵션은 비트마스크다 — `SetValueOption.Overwrite | Merge | DisableAutomaticWrites | EnableAutomaticWrites`, Form 속성은 `disableAutomaticWrites`(SURFACE-004, SURFACE-039, WRITE-015).
 
-(WRITE-015, WRITE-090)
+(WRITE-015, WRITE-090, WRITE-078, WRITE-100)
 
 | 규칙 | 내용 |
 | ---- | ---- |
@@ -444,7 +447,7 @@ union이 아닌 노드의 `schemaType`은 오늘과 같은 스칼라이며, numb
 | 자리 | `setValue(V, option)`뿐 아니라 **`reset(option)`과 마운트**에도 둔다. 마운트는 `defaultValue`가 로드이므로 Form 속성이 그 자리다 |
 | 우선순위 | **호출 옵션 > Form 속성**, 양방향이다. 속성이 켜 둔 억제를 호출이 끌 수 있고 그 반대도 된다. 억제 비트가 둘(`DisableAutomaticWrites`·`EnableAutomaticWrites`)인 이유가 이것이다 — 상속·끄기·켜기 세 상태. 호출에 둘 다 없으면 Form 속성을 따르고, 둘 다 주면 억제가 이긴다 |
 | 배치 | 한 배치 안에 서로 다른 억제 값이 섞이면 **억제가 이긴다**(보수적. `fn` 안의 `reset`의 로드는 묶음 밖이다, EVENT-015) |
-| 범위 | 억제는 그 호출이 일으킨 예약 층의 자동 쓰기 전부를 막는다 — 채움, `controls.derived`, `controls.injectTo`, `controls.unsetValue`, 나감의 비움. 전체 교체(`setValue(V)`)는 로드가 아니라 전체 교체 쓰기이고, 로드는 마운트·`FormHandle.reset()`·`resetSubtree()`뿐이며, `DisableAutomaticWrites`는 그 쓰기로 새로 생긴 노드의 채움과 다른 자동 쓰기를 끈다. `Merge`에 주면 `Merge`가 통째로 준 배열의 아이템 채움과 그 `Merge`가 촉발한 `controls.derived`도 막는다. 로드된 값 자체는 막지 않는다. `controls.active`의 방출 제외는 쓰기가 아니라 투영이므로 범위 밖이고, 정책이 참으로 정해진 노드의 나감 비움은 범위 안이다. 뒤이은 사용자 입력·리스너가 일으킨 정착은 다른 호출이므로 억제가 듣지 않는다(4라운드 명세 F25(억제는 그 호출이 일으킨 정착에만 든다)). |
+| 범위 | 억제는 그 호출이 일으킨 예약 층의 자동 쓰기 전부를 막는다 — 채움, `controls.derived`, `controls.injectTo`, `controls.unsetValue`, 나감의 비움, 포커스 아웃 `trim`이 자른 값의 쓰기. 포커스 아웃 `trim`이 자른 값의 쓰기도 자동 쓰기(여섯째)이자 억제 비트의 대상이라 억제를 켠 폼에서는 포커스 아웃 때 자르지 않는다. 전체 교체(`setValue(V)`)는 로드가 아니라 전체 교체 쓰기이고, 로드는 마운트·`FormHandle.reset()`·`resetSubtree()`뿐이며, `DisableAutomaticWrites`는 그 쓰기로 새로 생긴 노드의 채움과 다른 자동 쓰기를 끈다. `Merge`에 주면 `Merge`가 통째로 준 배열의 아이템 채움과 그 `Merge`가 촉발한 `controls.derived`도 막는다. 로드된 값 자체는 막지 않는다. `controls.active`의 방출 제외는 쓰기가 아니라 투영이므로 범위 밖이고, 정책이 참으로 정해진 노드의 나감 비움은 범위 안이다. 뒤이은 사용자 입력·리스너가 일으킨 정착은 다른 호출이므로 억제가 듣지 않는다(4라운드 명세 F25). |
 | `Merge` | `Merge`는 V에 없는 키를 로드하지 않는다. V가 통째로 준 배열은 통째 교체다. 그 아이템 가운데 직전 커밋의 형상에 없던 노드는 생긴 노드로서 채움을 받으며, 어떤 아이템이 생긴 것인지는 NODE-051이다. `Merge`에 준 억제 비트는 그 호출이 일으킨 자동 쓰기에 적용되므로 이 채움도 막는다 |
 
 `FormHandle.reset(option?)`은 `DisableAutomaticWrites`·`EnableAutomaticWrites` 두 비트만 받는다(SURFACE-005, WRITE-015). `Overwrite`·`Merge`는 받지 않는다(WRITE-015). `fn` 안의 `reset`의 억제 비트는 그 로드에만 들며, 로드가 `fn`의 쓰기 묶음에 들지 않으므로 배치 규칙('섞이면 억제가 이긴다')은 묶음의 쓰기끼리만 합산한다(WRITE-015).
@@ -479,13 +482,13 @@ JSDoc이 "로드"를 정의한다(WRITE-074). 어느 것이든 JSDoc에 "로드"
 【추론】 로드가 아닌 쓰기로 온 `null`·비객체 값도 그 자리의 자식 원본을 없음으로 만들지만 새 수명이 아니므로 채움을 받지 않는다(WRITE-090의 '빈 상태' 채움은 로드에만 해당)(WRITE-079).
 【추론】 호출자 오류로 던지지 않고 조용히 버리지도 않는다(WRITE-079).
 【추론】 그래서 새 코드가 없다(WRITE-079).
-이 항목의 `valueTypeMismatch`·`valueTypeMismatches`·`VALUE_TYPE_MISMATCH`는 확정 이름 `typeMismatch`·`typeMismatches`·`SCHEMA_FORM_WARNING.TYPE_MISMATCH`로 읽는다(WRITE-079, SURFACE-061).
+【추론】 틀린 종류의 값이면 S1 규칙대로 경고등이 켜지고 `SCHEMA_FORM_WARNING.TYPE_MISMATCH` 경고가 간다(WRITE-079, SURFACE-061).
 
 반영 칸(설계서 메모 4): "게터 `typeMismatch: boolean`, 경로 목록 `typeMismatches: readonly string[]`, 경고 코드 `SCHEMA_FORM_WARNING.TYPE_MISMATCH`."(WRITE-079)
 
-자동 쓰기는 비객체 호스트의 원본을 건드리지 않고(4라운드 명세 F10(비객체 호스트의 `raw`를 비우는 것은 사용자·호출자의 부분 쓰기뿐), 계승 제약 T-12(자동 쓰기는 null 조상을 객체로 만들지 않는다)), core는 호출자가 넘긴 객체를 바꾸지 않는다(4라운드 명세 F24, 계승 제약 T-19(`defaultValue`와 `jsonSchema`는 마운트 시 deep clone한다), WRITE-013).
+자동 쓰기는 비객체 호스트의 원본을 건드리지 않고(4라운드 명세 F10, 계승 제약 T-12(자동 쓰기는 null 조상을 객체로 만들지 않는다)), core는 호출자가 넘긴 객체를 바꾸지 않는다(4라운드 명세 F24, 계승 제약 T-19(`defaultValue`와 `jsonSchema`는 마운트 시 deep clone한다), WRITE-013).
 
-호스트의 원본이 `null`·`17` 같은 잘못된 종류의 값일 때 그 자식은 존재하고 렌더되며 빈 상태를 보인다(WRITE-013). 호스트의 그 원본을 비우는 것은 사용자·호출자의 부분 쓰기뿐이고 **그 자식의 투영된 방출이 존재하게 될 때만** 비운다(WRITE-013). 로드가 아닌 쓰기로 온 `null` 아래 자식은 채움 없이 없음이며(WRITE-090, WRITE-092), 채움 값을 드는 것은 로드로 온 `null` 아래 자식이다(WRITE-096, WRITE-013).
+호스트의 원본이 `null`·`17` 같은 잘못된 종류의 값일 때 그 자식은 존재하고 렌더되며 빈 상태를 보인다(WRITE-013). 호스트의 그 원본을 비우는 것은 사용자·호출자의 부분 쓰기뿐이고 **그 자식의 투영된 방출이 존재하게 될 때만** 비운다(WRITE-013). 로드가 아닌 쓰기로 온 `null` 아래 자식은 채움 없이 없음이며(WRITE-090, WRITE-092), 채움 값을 드는 것은 로드로 온 `null` 아래 자식이다(WRITE-096, WRITE-013). `setValue({ user: null })` 뒤 사용자가 `name`에 입력하면 `user`가 객체가 되어 방출된다(4라운드 명세 F1, 4라운드 명세 F10, WRITE-013).
 
 터미널 노드가 참조를 들 수 있으므로 `defaultValue`는 분배 시 복사하거나 불변으로 취급한다(4라운드 명세 F24, 계승 제약 T-19, WRITE-071).
 
@@ -526,7 +529,7 @@ JSDoc이 "로드"를 정의한다(WRITE-074). 어느 것이든 JSDoc에 "로드"
 
 ㄴ `push`는 로드가 아니다(WRITE-088). `push`는 구조 연산이다(WRITE-088). 만든 아이템은 생긴 노드로서 채움을 받는다(`controls.default` > `default` > 없음)(WRITE-088). `push(v)`면 원본은 `v`이고, 없음인 자손에만 채움이 간다(WRITE-088).
 
-주입된 값은 꺼진 조각의 노드와 노드 게이트(`controls.active`)가 거짓인 노드까지 포함해 모든 노드의 원본으로 분배되고, 형상은 그 값으로 수렴한다(ADR 0002, WRITE-018). 노드 게이트는 조각 게이트와 같은 장치이므로 두 경우가 같게 동작한다(SETTLE-003, WRITE-018).
+주입된 값은 꺼진 조각의 노드와 노드 게이트(`controls.active`)가 거짓인 노드까지 포함해 모든 노드의 원본으로 분배되고, 형상은 그 값으로 수렴한다(WRITE-018, SETTLE-029). 노드 게이트는 조각 게이트와 같은 장치이므로 두 경우가 같게 동작한다(SETTLE-003, WRITE-018).
 꺼진 조각의 값과 게이트가 거짓인 노드의 값은 **방출에서** 빠진다(WRITE-018). 기본은 원본을 지우지 않는다(원리 P4, WRITE-018). 로드에는 나감이 없으므로 나감 정책 키를 켜도 주입된 값은 지워지지 않는다(WRITE-037, WRITE-018). `controls.visible: false`로 숨긴 필드와 스키마가 선언하지 않은 키는 방출된다(WRITE-018). 스키마가 선언하지 않은 키는 `extras`에 받은 순서로 방출된다(WRITE-018). 숨김은 렌더링에만 닿는다(WRITE-018).
 나머지는 검증이 에러로 알린다(WRITE-018).
 
@@ -544,7 +547,7 @@ JSDoc이 "로드"를 정의한다(WRITE-074). 어느 것이든 JSDoc에 "로드"
 - 통과: 첫 호출에서 두 원본이 없음이 되어 `inactiveValues`에서 빠지고 방출 값·채움·에지는 그대로이며, 둘째 호출은 원본을 바꾸지 않고 `UpdateValue`를 내지 않는다(WRITE-094).
 - 실패: 결과가 다르면 이 블록이나 WRITE-090의 보충을 고친다(WRITE-094).
 
-2라운드의 "절대 제거하지 않는다"가 남긴 결함 — 레코드 A 뒤에 레코드 B를 로드하면 A의 잠복 값이 분기 전환에서 되살아난다 — 은 **전체 교체가 V에 없는 키를 없음으로 만들면서** 사라진다(WRITE-019). 비활성화(원본 보존)와 전체 교체(원본에도 적용)를 구분한 것이 답이었다(WRITE-019). 남는 잠복은 하나다: 비활성 조각이 선언한 자식의 원본은 방출되지 않으므로 검증기가 기각하지도 잔여 목록에 오르지도 않는다 — 설계상 잠복이다(원리 P4, WRITE-019). 잠복 원본 열거는 루트 노드의 함수이고 노드마다 getter `inactiveValues`다(WRITE-019, VALUE-029).
+2라운드의 "절대 제거하지 않는다"가 남긴 결함 — 레코드 A 뒤에 레코드 B를 로드하면 A의 잠복 값이 분기 전환에서 되살아난다 — 은 **전체 교체가 V에 없는 키를 없음으로 만들면서** 사라진다(WRITE-019). 비활성화(원본 보존)와 전체 교체(원본에도 적용)를 구분한 것이 답이었다(WRITE-019). 남는 잠복은 하나다: 비활성 조각이 선언한 자식의 원본은 방출되지 않으므로 검증기가 기각하지도 잔여 목록에 오르지도 않는다 — 설계상 잠복이다(원리 P4, WRITE-019). core는 이를 열거하는 읽기 전용 API를 두어 렌더 계층이 보여 주거나 지울 수 있게 하며, 잠복 원본 열거는 루트 노드의 함수이고 노드마다 getter `inactiveValues`다(4라운드 명세 F26, WRITE-019, VALUE-029).
 
 【추론】 `node.inactiveValues`(와 그것이 부르는 루트 노드의 함수)는 읽기 전용 배열 `ReadonlyArray<{ readonly path: string; readonly value: unknown }>`을 돌려준다(WRITE-087).
 【추론】 항목은 그 노드 아래에서 형상에 없고 원본을 든 노드(잎·터미널, 그리고 잘못된 종류의 값을 든 노드)마다 하나다(WRITE-087).
@@ -563,7 +566,7 @@ JSDoc이 "로드"를 정의한다(WRITE-074). 어느 것이든 JSDoc에 "로드"
 - 무엇: 커밋 때 조상 경로 메모를 갱신하는 비용을 잰다(WRITE-087).
 
 **null은 키 없는 전체 교체다**(도출 D-1, WRITE-092). 키가 없으므로 모든 자식의 원본이 없음이 된다(WRITE-092).
-"null 아래에 원본을 남긴다"는 호출자가 "없다"고 쓴 것을 숨겨 두는 것이므로 원리 P2에 어긋난다(WRITE-092).
+"null 아래에 원본을 남긴다"는 호출자가 "없다"고 쓴 것을 숨겨 두는 것이므로 원리 P2에 어긋난다(WRITE-092). 실수로 누른 `null`의 되돌리기는 입력 컴포넌트의 몫이다(도출 D-1, WRITE-092). 표준 예제로 남긴다(WRITE-092).
 
 【추론】 로드가 아닌 쓰기로 온 `null` 아래 자식은 채움 없이 없음이다(WRITE-090, WRITE-092, WRITE-096).
 【추론】 로드로 온 `null` 아래 자식은 로드의 새 수명이라 채움을 받는다(WRITE-096).
@@ -643,14 +646,13 @@ REACT-024의 검사를 받지 않는 컨테이너 입력의 늦은 `onChange`는
 【추론】 소비자가 옛 노드 하나를 들고 있으면 그 옛 트리 전체가 수거되지 않고 남는다(WRITE-086).
 【추론】 이를 문서화하고, 수명을 이어 가려면 새 핸들에서 다시 찾으라고 안내한다(WRITE-086).
 
-같은 스키마의 reset 한 번은 트리 전체 순회 한 번(로드에만 허용, SETTLE-047)과 자식 프록시를 그리지 않는 마운트된 입력 수만큼의 입력 다시 마운트다(WRITE-051).
+같은 스키마의 reset 한 번은 트리 전체 순회 한 번(로드와, 쓰기가 닿은 하위 트리를 도는 전체 교체 쓰기에서만 허용, SETTLE-047)과 자식 프록시를 그리지 않는 마운트된 입력 수만큼의 입력 다시 마운트다(WRITE-051).
 참조가 다른 같은 스키마는 스키마 크기에 비례하는 비교 한 번이 더해진다(WRITE-051).
 전처리, 검증기 재컴파일, `new Function`, 노드 재생성, 가상화 재지연이 없어진다(WRITE-051).
 같은 처리기에서 prop을 바꾼 reset은 로드가 한 번 더 든다(`defaultValue`가 깊게 같으면 건너뛴다)(WRITE-051).
 검증기 등록의 메모리는 '살아 있는 작성 루트의 수 + 최근 해제 목록 크기'로 묶인다(WRITE-051).
 답 10의 고속성(최소 생성, 메모리 안정, 재생성 방지)과 같은 방향이다(WRITE-051).
 스키마가 실제로 바뀐 reset은 오늘과 같은 비용이다(WRITE-051).
-【추론】 트리 전체 순회는 로드와, 쓰기가 닿은 하위 트리를 도는 전체 교체 쓰기에서만 허용한다(WRITE-051, SETTLE-047).
 
 ### 3.6 노드 되돌림과 로드 스냅숏
 
@@ -679,14 +681,15 @@ identity가 끊겨 새로 생긴 아이템은 가상화 기록이 없어 다시 
 【추론】 `remove(i)`·`pop`은 그 자리를 잘라 내고, `push(v)`·삽입은 새 아이템의 생성 값(`v`, 없으면 `undefined`라 되돌림이 채움을 받는다)을 넣는다(WRITE-085).
 【추론】 이 비용은 스냅숏 배열에서 O(배열 길이)이며, 그 연산이 이미 하는 재색인과 같은 차수다(WRITE-085).
 【추론】 아이템을 만들거나 없애는 모든 쓰기는 구조 연산처럼 그 경로의 스냅숏 배열의 자리를 맞추고 값은 싣지 않는다(WRITE-085, WRITE-095).
-【추론】 "배열 통째 로드"는 로드(마운트·`FormHandle.reset()`·`resetSubtree()`)가 싣는 배열이며, 로드는 위의 규칙을 그대로 따른다(WRITE-085, WRITE-097).
-로드가 아닌 배열 통째 쓰기의 스냅숏은 WRITE-095가 정한다(WRITE-085, WRITE-097).
+【추론】 배열 통째 로드는 그 경로의 스냅숏을 바꾸며, 로드는 위의 규칙을 그대로 따른다(WRITE-085).
+"배열 통째 로드"는 로드(마운트·`FormHandle.reset()`·`resetSubtree()`)가 싣는 배열이며, 로드가 아닌 배열 통째 쓰기의 스냅숏은 WRITE-095가 정한다(WRITE-085, WRITE-097).
 `setValue`는 로드가 아니므로 `defaultValue` 게터와 `resetSubtree()`의 로드 스냅숏을 바꾸지 않는다(WRITE-085, WRITE-090).
 
 【추론】 아이템을 만들거나 없애는 모든 쓰기는 구조 연산처럼 그 경로의 스냅숏 배열의 자리를 맞춘다(WRITE-095).
-【추론】 없어진 아이템의 자리는 잘라 내고, 구조 연산(`push(v)`·삽입)은 WRITE-085대로 생성 값 `v`를 스냅숏 자리에 넣고, 아이템을 만드는 비구조 쓰기만 `undefined`를 넣으며, 값은 싣지 않는다(WRITE-095, WRITE-099).
+【추론】 없어진 아이템의 자리는 잘라 내고, 구조 연산(`push(v)`·삽입)은 WRITE-085대로 생성 값 `v`를 스냅숏 자리에 넣고, 아이템을 만드는 비구조 쓰기만 `undefined`를 넣으며, 값은 싣지 않는다(WRITE-095, WRITE-085, WRITE-099).
 【추론】 WRITE-090의 "`setValue`는 로드가 아니므로 `defaultValue` 게터와 `resetSubtree()`의 로드 스냅숏을 바꾸지 않는다"는 스냅숏의 값에 대한 말이다(WRITE-095).
 【추론】 비용은 구조 연산과 같은 O(배열 길이)다(WRITE-095).
+실패 장면: `defaultValue={items:['a','b']}`에서 `setValue({items:['x']})` 뒤 `setValue({items:['x','z']})`를 부르면 새 키 `#2`의 `defaultValue`가 사라진 `#1`의 값 `'b'`가 되고 `resetSubtree()`도 `'b'`로 되돌린다(WRITE-095).
 
 - PR: PR-5(배열)(WRITE-095).
 - 무엇: 위 실패 장면과, 입력 쓰기·`Merge`로 아이템 수를 바꾼 뒤 각 아이템의 `defaultValue`와 `resetSubtree()`를 본다(WRITE-095).
@@ -708,7 +711,7 @@ identity가 끊겨 새로 생긴 아이템은 가상화 기록이 없어 다시 
 
 `controls.derived`는 원본을 쓴다(WRITE-011).
 
-`controls.derived`의 덮어쓰기는 레벨과 혼합안으로 하지 않고 에지로 한다(WRITE-060).
+`controls.derived`의 덮어쓰기는 레벨과 혼합안으로 하지 않는다(WRITE-060).
 입력을 열어 둔 채 매번 덮어쓰는 레벨은 사용자 편집마다 입력을 리마운트하므로 계승 제약 T-2 "타이핑은 입력을 리마운트하지 않는다"에 걸린다(실행으로 확인)(WRITE-060).
 쓴 주체에 따라 방아쇠를 가르는 혼합안은 G4 "특수 경로가 없다"에 걸린다(WRITE-060).
 `injectTo`와 로드 규칙이 다른 에지는 G4에 걸린다(WRITE-060).
@@ -729,7 +732,7 @@ D-11′(사용자가 파생 필드를 덮어쓸 수 있는가)는 에지다(WRIT
 
 ### 3.8 나감의 비움
 
-(WRITE-037)
+(WRITE-037, WRITE-078)
 
 | 사건 | 종류 | 누가 | 자식 원본에 미치는 것 |
 | ---- | ---- | ---- | -------------------- |
@@ -754,12 +757,12 @@ Form 속성 층은 네 층의 가장 아래(포괄) 층이며 참일 때 로컬�
 나가는 객체·분기에 켠 `unsetOnInactive`는 함께 나가는 하위 트리로 내려간다(17라운드 소유자 답 R17-2 ㄴ: "해당 브랜치가 꺼질떄, 하위 트리노드가 모두 꺼진다고 봐야할거같아". 13라운드 답 1의 둘째 예외)(WRITE-033).
 이것은 13라운드 답 1("모든 control 필드는 자체 노드만 지원. children 그룹은 예외")에 둔 둘째 예외다(WRITE-033).
 나가는 노드의 비움 여부는 그 노드와 그 위의 **나가는** 조상들을 가까운 순서로 보아, 직전 커밋의 위 층 가운데 하나라도 명시된 첫 마디가 정하고(한 마디의 같은 층에 여럿이면 하나라도 유지면 유지), 끝까지 없으면 Form 속성이 정한다(WRITE-033).
-직전 커밋에서 보는 층은 세 층(노드 자신 > 그 노드를 가리키는 `controls.children` 항목의 `controls` > 그 노드를 직접 선언한 조각의 `controls`)이다(WRITE-033).
+나가는 노드의 비움 여부는 그 노드와 그 위의 **나가는** 조상들을 가까운 순서로 보아, 직전 커밋에서 세 층(노드 자신 > 그 노드를 가리키는 `controls.children` 항목의 `controls` > 그 노드를 직접 선언한 조각의 `controls`) 가운데 하나라도 명시된 첫 마디가 정하고(한 마디의 같은 층에 여럿이면 하나라도 유지면 유지), 끝까지 없으면 Form 속성이 정한다(WRITE-033).
 그래서 자손이 스스로 적은 선언이 가까운 순서로 이긴다(자손의 `false`는 남긴다)(WRITE-033).
 나가지 않는 조상의 정책은 내려가지 않는다(WRITE-033).
 나가지 않는 조상과 나가지 않는 선언의 정책은 내려가지 않는다(WRITE-033).
 
-나감 사슬의 세부 셋은 다음과 같다(WRITE-034).
+세부 셋은 다음과 같다(WRITE-034).
 
 - (가) 노드는 남고 그 노드를 선언한 조각만 꺼지는 "선언의 나감"(판별 union의 공유 객체 `addr` 아래 A 분기에만 있는 `zip`)도 사슬의 한 마디로 센다(WRITE-034). 그 층은 나가는 선언 안의 자기 키 > 나가는 선언 또는 나가는 노드의 부모 선언에 속한 `children` 항목 > 그 선언을 호스트의 직계 자식으로 적은 조각이며, 나가지 않는 선언의 층은 세지 않는다(WRITE-034).
 - (나) 앞서 자기 게이트로 나가 원본을 든 채 잠복한 자손도 조상이 비움으로 나가는 순간 같은 사슬로 정해 비운다(WRITE-034). 잠복 자손 자신의 층은 직전 커밋에 효력이 있던 선언만 세므로 명시한 유지는 이긴다(WRITE-034). 앞선 호출에서 `DisableAutomaticWrites`로 억제된 잠복 원본도 뒤의 다른 호출에서는 비운다(WRITE-034).
@@ -791,7 +794,7 @@ Form 속성 층은 네 층의 가장 아래(포괄) 층이며 참일 때 로컬�
 | 배열을 `minItems`까지 채우기, `maxItems` 초과 `push` 차단 | **입력 컴포넌트로.** core는 제약을 유효 스키마로 노출하고 위반은 검증이 알린다 |
 | nullable이 아닌 객체의 `null`을 `{}`로 바꾸기(S7), 비객체 값 버리기 | **폐기.** 보존·방출하고 type 에러를 낸다. 동작 변화로 기록한다(F27, GOAL-075) |
 | `Normalize`의 미선언 키 제거 | **폐기.** 미선언 키는 `extras` 칸에 보존하고 받은 순서로 방출한다(E16) |
-| 분기 전환·`active` 전이의 reset — 오늘의 동작(12·14라운드 탐침): 꺼지면 원본을 지우고, 다시 켜지면 노드가 생성될 때의 값(없으면 `default`)으로 되돌린다. 뒤의 전체 교체는 이 복원 값을 바꾸지 않는다. `oneOf` 전환에서 둘 다 없으면 앞 분기의 같은 이름·같은 타입 터미널 값을 잇는다 | **기본은 폐기.** 원본을 두고 방출에서만 뺀다. 같은 종류의 노드를 공유하므로 값이 남는다(BLUEPRINT-010). 원본까지 지우려면 작성자가 나감 정책 키를 켠다. 그때도 로드 값으로 복원하지 않고, 다시 생긴 노드는 채움(`controls.default` > `default`)을 받는다(WRITE-002, SETTLE-005) |
+| 분기 전환·`active` 전이의 reset — 오늘의 동작(12·14라운드 탐침): 꺼지면 원본을 지우고, 다시 켜지면 노드가 생성될 때의 값(없으면 `default`)으로 되돌린다. 뒤의 전체 교체는 이 복원 값을 바꾸지 않는다. `oneOf` 전환에서 둘 다 없으면 앞 분기의 같은 이름·같은 타입 터미널 값을 잇는다 | **기본은 폐기.** 원본을 두고 방출에서만 뺀다. 같은 종류의 노드를 공유하므로 값이 남는다(BLUEPRINT-010). 원본까지 지우려면 작성자가 나감 정책 키를 켠다. 그때도 로드 값으로 복원하지 않고, 다시 생긴 노드는 채움(`controls.default` > `default`)을 받는다(WRITE-002, WRITE-090, SETTLE-005) |
 | 조각이 켜질 때의 `default` 주입 | **채움으로 바뀐다.** 노드가 생길 때 한 번, 노드 단위, 원천은 `controls.default` > `default`(SETTLE-005) |
 | `computed.derived`, `injectTo` | **남는다.** 예약 층의 `controls.derived`·`controls.injectTo`가 되며, 작성자가 명시한 쓰기이므로 이 원칙의 대상이 아니다. `controls.unsetValue`가 같은 부류로 더해진다 |
 | 참조 그룹(`options.virtual`) | **현행 유지**(`options.virtual`로 유지하되 `required` 재작성은 버리고 `options` 그룹째 검증기 앞에서 지워진다, VALIDATE-034). 소유자: "virtual 은 스키마로 선언되는건 아니니까 그냥 둡시다. 유효성검증도 영향 없고." 참조 그룹 노드로의 전환(D-6)은 하지 않는다 |
@@ -802,17 +805,24 @@ Form 속성 층은 네 층의 가장 아래(포괄) 층이며 참일 때 로컬�
 
 확정. 노드마다 타입에 맞는 parse 함수를 둔다(WRITE-052). 이것은 값의 교정이 아니라 JSON·JS 자동 형변환을 통제할 수 있게 구현한 것이므로 결정 WRITE-001의 대상이 아니다(WRITE-052). 확정(나)이며, parse는 뜻이 그대로인 변환만 한다(ajv 규칙 수준)(WRITE-052). 오늘 파서의 문자 제거, 정수 자르기, 빈 값 치환(`""`, `[]`, `{}`), 불리언의 진릿값 변환은 parse에서 뺀다(WRITE-052). 결정 WRITE-001에는 이름 붙은 예외(형 정규화)로 적는다(WRITE-052).
 
-편집자가 닫을 세부: parse는 각 동작 행의 `interpret`(입력 해석) 칸이 부르고, 적용 범위는 '지금처럼'을 따라 노드에 드는 모든 쓰기다(WRITE-056). `parsers`의 새 자리는 NODE-056이 정한다(WRITE-056).
+편집자가 닫을 세부: parse는 각 동작 행의 `interpret`(입력 해석) 칸이 부르고, 적용 범위는 '지금처럼'을 따라 노드에 드는 모든 쓰기다(WRITE-056). 부르는 쪽은 동작 행의 `interpret` 칸과, 같은 내부 함수를 쓰지 않는 호출로 부르는 기본 union 입력이다(WRITE-056, NODE-056, REACT-033). `parsers`의 새 자리는 NODE-056이 정한다(WRITE-056).
 
 【추론】 `interpret` 칸의 계약은 순수, 던지지 않음, 모든 입력에 값을 돌려줌, 멱등, 바꾸지 못하면 항등이다(WRITE-084).
 
-변환 목록(ajv `coerceTypes`의 부분집합): 수 노드는 앞뒤 공백을 뺀 전체가 수 표기인 문자열을 유한한 수로 바꾸고(정수 노드는 결과가 안전한 정수일 때만, 이미 수인 값은 자르지 않는다), 문자열 노드는 유한한 수와 불리언을, 불리언 노드는 정확히 `"true"`·`"false"`와 수 1·0을 바꾼다(WRITE-075). `null`은 어느 노드에서도 바꾸지 않는다(WRITE-075). 이미 자기 타입인 값은 그대로 둔다(WRITE-075). 수 노드가 바꾸는 문자열의 조건은 다음과 같다: "수 노드: 문자열이고, 앞뒤 공백을 뺀 나머지가 비어 있지 않은 JSON 수 표기(부호 `-`, 10진 정수부, 소수부와 지수부는 있어도 되고 없어도 됨)일 때 수로 바꿉니다. 결과가 유한해야 합니다. 소수부와 지수부가 없는 정수 표기라면 결과가 안전한 정수 범위 안에 있어야 합니다."(WRITE-075).
+변환 목록(ajv `coerceTypes`의 부분집합): 수 노드는 앞뒤 공백을 뺀 전체가 수 표기인 문자열을 유한한 수로 바꾸고(정수 노드는 결과가 안전한 정수일 때만, 이미 수인 값은 자르지 않는다), 문자열 노드는 유한한 수와 불리언을, 불리언 노드는 정확히 `"true"`·`"false"`와 수 1·0을 바꾼다(WRITE-075). `null`은 어느 노드에서도 바꾸지 않는다(WRITE-075). 이미 자기 타입인 값은 그대로 둔다(WRITE-075). "수 노드: 문자열이고, 앞뒤 공백을 뺀 나머지가 비어 있지 않은 JSON 수 표기(부호 `-`, 10진 정수부, 소수부와 지수부는 있어도 되고 없어도 됨)일 때 수로 바꿉니다. 결과가 유한해야 합니다. 소수부와 지수부가 없는 정수 표기라면 결과가 안전한 정수 범위 안에 있어야 합니다."(WRITE-075).
 
 자동 변환(`"123"`을 123으로)은 18라운드 소유자 답 S1의 parse 자체이며 지금처럼 늘 켜져 있다(끄는 옵션을 두지 않는다)(WRITE-076). 끄는 옵션은 두지 않는다(WRITE-077). 필요가 생기면 노드나 스키마 단위가 아니라 `<Form>`의 prop 하나로 더한다(설계 예약: 폼 단위, 이름은 그때 정함)(WRITE-077).
 
-확정(나′, 경고등, `onError` 전달)(WRITE-054). 바꾸지 못한 값은 받은 그대로 들고 `value`·방출·제출이 모두 그 값이다(비우기·대체·거부 없음)(WRITE-054). 노드는 정합 상태(경고등)를 들고, 이것이 공개 형의 판별자다(이름과 모양은 SURFACE-061)(WRITE-054). 소유자(S1 셋째 답): "나 로 확정합니다. 경고등 추가도 승인합니다. 변환에러는 onError 로 전달하죠."(WRITE-054). 소유자(S1 셋째 답의 넷째 말): "그럼 이건 어때? Node 가 자신 타입에 맞는 값을 제공한다는걸 보장하진 못하지만, 현재 Node 의 값이 '정합한지' 여부는 상태로 둘 수 있을거같아. error 와 별개로, 이 상태를 보고 현재 값의 건전성을 판단하도록 하는건 어떤가?"(WRITE-054).
+확정(나′, 경고등, `onError` 전달)(WRITE-054). 바꾸지 못한 값은 받은 그대로 들고 `value`·방출·제출이 모두 그 값이다(비우기·대체·거부 없음)(WRITE-054). 노드는 정합 상태(경고등)를 들고, 이것이 공개 형의 판별자다(이름과 모양은 SURFACE-061)(WRITE-054). 소유자(S1 셋째 답): "나 로 확정합니다. 경고등 추가도 승인합니다. 변환에러는 onError 로 전달하죠."(WRITE-054). 소유자(S1 셋째 답의 넷째 말): "그럼 이건 어때? Node 가 자신 타입에 맞는 값을 제공한다는걸 보장하진 못하지만, 현재 Node 의 값이 "정합한지" 여부는 상태로 둘 수 있을거같아. error 와 별개로, 이 상태를 보고 현재 값의 건전성을 판단하도록 하는건 어떤가?"(WRITE-054).
 
 자른 값의 쓰기는 core의 **자동 쓰기**다(17라운드 소유자 답 R17-3 선택지 "다"의 원문 "자동 쓰기가 여섯이 됨"이 맞고, 17라운드 반영 칸의 "자동 쓰기가 아니다"는 편집자의 오독이었다)(WRITE-078). 따라서 자동 쓰기는 여섯이고 억제 비트(`DisableAutomaticWrites`)의 대상이며, 억제를 켠 폼에서는 포커스 아웃 때 자르지 않는다(WRITE-078). 자른 값이 현재 값과 같으면 쓰지 않는다(소유자 확정)(WRITE-078).
+
+【추론】 호출 옵션의 억제 비트(`DisableAutomaticWrites`·`EnableAutomaticWrites`)는 그 호출이 일으킨 자동 쓰기에만 들며, 뒤이은 포커스 아웃이 일으키는 `options.trim`의 자동 쓰기는 그 호출이 일으킨 것이 아니므로 듣지 않는다(WRITE-100, WRITE-015, WRITE-078). 【추론】 포커스 아웃은 호출 옵션을 받는 자리가 없으므로, 포커스 아웃 `trim`의 쓰기를 억제하는 자리는 Form 속성 `disableAutomaticWrites`뿐이다(WRITE-100, WRITE-015, WRITE-078). 【추론】 예: Form 속성이 없는 폼에서 `onChange(' a ', DisableAutomaticWrites)` 뒤의 포커스 아웃은 `'a'`를 쓰고, `disableAutomaticWrites`를 켠 폼에서는 자르지 않아 `' a '`가 남는다(WRITE-100). 【추론】 자른 값이 현재 값과 같으면 쓰지 않는다는 규칙(WRITE-078)과 `finishInput` 칸이 자른다는 자리(LANDING-145)는 그대로다(WRITE-100).
+
+- PR: `finishInput` 칸의 `trim`을 들여오는 PR(LANDING-145의 배치)(WRITE-100).
+- 무엇: `options.trim`을 켠 문자열 입력에 `onChange(' a ', DisableAutomaticWrites)`를 부른 뒤 포커스 아웃을 일으킨다(WRITE-100). Form 속성이 없는 폼과 `disableAutomaticWrites`를 켠 폼에서 각각 한다(WRITE-100).
+- 통과: 앞 폼의 원본은 `'a'`이고 뒤 폼의 원본은 `' a '`다(WRITE-100).
+- 실패: 억제 비트의 범위나 포커스 아웃 쓰기의 억제 자리를 고친다(WRITE-100).
 
 【추론】 포커스 아웃 때 자른 값을 쓰는 것은 자동 쓰기다(WRITE-083). 【추론】 다른 자동 쓰기(채움, `derived`, `injectTo`, `unsetValue`, 나감의 비움)처럼 원본만 쓴다(WRITE-083). 【추론】 바깥 오류를 지우지 않고 dirty를 표시하지 않는다(오늘 `trim`과 같다)(WRITE-083). 【추론】 값 쓰기, 바깥 오류 지움, dirty 표시를 `batch` 하나로 묶자는 스웜의 권고(`reviews/round-18-agenda.md:45`)는 버린다(WRITE-083). 【추론】 그 세 가지 묶음은 사용자 입력의 `handleChange`에만 있는 것이다(WRITE-083). 【추론】 자른 값이 현재 값과 같으면 쓰지 않는다(WRITE-083, WRITE-078). 【추론】 억제를 켠 폼에서는 자르지 않는다(WRITE-083). 【추론】 자동 쓰기이므로 그 노드의 입력은 Refresh를 받는다(WRITE-083). 【추론】 이미 포커스를 잃은 뒤라 치던 글자를 잃지 않는다(WRITE-083). 【추론】 `UpdateValue`의 출처 칸 값은 자동 쓰기(trim)다(WRITE-083, EVENT-060). 【추론】 바깥 오류는 검증 결과 층이다(WRITE-083). 【추론】 그래서 ERROR-001의 층 구분은 바뀌지 않는다(WRITE-083).
 
@@ -848,7 +858,7 @@ Form 속성 층은 네 층의 가장 아래(포괄) 층이며 참일 때 로컬�
 
 【추론】 한 진입에서 쓰인 값의 두 번 해석(BLUEPRINT-041의 통합 원리 U7)에서, 쓰기 경계에서는 게이트와 무관한 정적 목록(`schemaType`, `nullable`)으로 해석하며, 로드(마운트, `FormHandle.reset()`, `resetSubtree()`)도 같다(WRITE-093, WRITE-098). 【추론】 둘째 해석은 그 진입의 전이 단계에서 커밋 전에 하며, 전이 단계에서는 최종 유효 목록이 정적 목록보다 좁은 노드만, 첫째 해석의 결과가 아니라 원래 쓰인 값을 최종 유효 목록으로 다시 해석해 원본으로 삼는다(WRITE-093, WRITE-098). 【추론】 그래서 `setValue({kind:'num', a:'42'})`는 직전 상태와 상관없이 `a = 42`이다(WRITE-093).
 
-【추론】 union 노드에 대한 `Merge` 쓰기는 늘 값 전체를 바꾼다: union은 객체 호스트가 아니다(WRITE-093, WRITE-079). 【추론】 union 값 안(`/slot/key`)을 가리키는 `controls.injectTo` 대상은 동적 대상 없음 `SCHEMA_FORM_ERROR.INJECT_TARGET_MISSING`이다(WRITE-093, CONTROLS-079). 【추론】 어긋난 값을 로드하면 바꾸지 않고 그대로 들고, 경고등을 켜며, 받은 그대로 방출한다(WRITE-093, WRITE-054, VALUE-033). 【추론】 `trim`은 union 행의 `finishInput`이 맡으며, 현재 값이 문자열이면 자르고 그 결과를 `interpret`에 넘기고, 문자열이 아니면 아무것도 하지 않으며, 경고는 없다(WRITE-093, CONTROLS-006). 반영 칸(설계서 메모 4)이 정한 경고등의 이름은 게터 `typeMismatch: boolean`, 경로 목록 `typeMismatches: readonly string[]`, 경고 코드 `SCHEMA_FORM_WARNING.TYPE_MISMATCH`다(WRITE-093, SURFACE-061).
+【추론】 union 노드에 대한 `Merge` 쓰기는 늘 값 전체를 바꾼다: union은 객체 호스트가 아니다(WRITE-093, WRITE-079). 【추론】 union 값 안(`/slot/key`)을 가리키는 `controls.injectTo` 대상은 동적 대상 없음 `SCHEMA_FORM_ERROR.INJECT_TARGET_MISSING`이다(WRITE-093, CONTROLS-079). 【추론】 어긋난 값을 로드하면 바꾸지 않고 그대로 들고, 경고등을 켜며, 받은 그대로 방출한다(WRITE-093, WRITE-054, VALUE-033). 【추론】 `trim`은 union 행의 `finishInput`이 맡으며, 현재 값이 문자열이면 자르고 그 결과를 `interpret`에 넘기고, 문자열이 아니면 아무것도 하지 않으며, 경고는 없다(WRITE-093, CONTROLS-006). 반영 칸(설계서 메모 4): "게터 `typeMismatch: boolean`, 경로 목록 `typeMismatches: readonly string[]`, 경고 코드 `SCHEMA_FORM_WARNING.TYPE_MISMATCH`."(WRITE-093, SURFACE-061)
 
 - PR: PR-2(행·`interpret`·경고등·두 번 해석·방출)·PR-4(검증 에러의 귀속과 경고 코드 확정)(WRITE-093).
 - 무엇: `src/core/behaviors/utils/parse/__tests__/interpret.table.test.ts`·`interpret.properties.test.ts`, `src/core/behaviors/unionBehavior/__tests__/union.write-paths.test.ts`·`union.mismatch-light.test.ts`, 렌더 시나리오 `union.gated-effective-list`·`union.entry-two-step`·`union.rule-a`·`union.ambiguous`·`union.integer`·`union.object-array`·`union.non-json-value`·`union.omit-empty`·`union.default-fill`·`union.expressions`를 돌린다(WRITE-093).
@@ -874,7 +884,7 @@ Form 속성 층은 네 층의 가장 아래(포괄) 층이며 참일 때 로컬�
 
 【추론】 정적 선언이 없는 이름에서 게이트 없는 분기끼리 fold가 다르면 게이트 없는 선언끼리의 다른 종류이므로 `SHARED_NODE_KIND_CONFLICT` 청사진 오류다(BLUEPRINT-012, 소유자 O-10)(WRITE-099). 【추론】 `node.type`의 값은 여덟(`virtual` 포함)이고, BLUEPRINT-032의 "일곱"은 스키마에서 오는 종류만 센 것이다(WRITE-099). 【추론】 `union` 노드의 입력은 목록의 한 형의 값이나 없음을 보내며, 어떤 형을 보낼지는 입력 구현(UI 플러그인)이 정한다(BLUEPRINT-040의 반영 칸, 목록을 읽는 자리는 BLUEPRINT-040)(WRITE-099). 【추론】 목록 밖 `default`의 경고등·경고는 마운트만이 아니라 노드가 생길 때마다(WRITE-090의 채움 시점) 켜고 보낸다(WRITE-099).
 
-【추론】 구조 연산(`push(v)`·삽입)은 WRITE-085대로 생성 값 `v`를 스냅숏 자리에 넣고, 아이템을 만드는 비구조 쓰기만 `undefined`를 넣는다(WRITE-099). 【추론】 `NON_JSON_WHOLE_VALUE`의 깊이 점검은 VALUE-037대로 개발 모드에서만 돌며, 핸들러가 있어도 프로덕션에서는 돌지 않는다(WRITE-099). 【추론】 좁혀지지 않은 노드의 유효 목록은 `schemaType` 그 값(스칼라면 스칼라, 배열이면 그 배열 참조)이며 "같은 참조"는 이것을 뜻한다(WRITE-099). 【추론】 그래서 청사진 판정의 예 E26(BLUEPRINT-045)에서 게이트가 켜진 동안의 유효 목록은 `schemaType`과 같은 `'number'`다(WRITE-099).
+【추론】 구조 연산(`push(v)`·삽입)은 WRITE-085대로 생성 값 `v`를 스냅숏 자리에 넣고, 아이템을 만드는 비구조 쓰기만 `undefined`를 넣는다(WRITE-099). 【추론】 `NON_JSON_WHOLE_VALUE`의 깊이 점검은 VALUE-037대로 개발 모드에서만 돌며, 핸들러가 있어도 프로덕션에서는 돌지 않는다(WRITE-099). 【추론】 좁혀지지 않은 노드의 유효 목록은 `schemaType` 그 값(스칼라면 스칼라, 배열이면 그 배열 참조)이며 "같은 참조"는 이것을 뜻한다(WRITE-099). 【추론】 그래서 E26(BLUEPRINT-045)에서 게이트가 켜진 동안의 유효 목록은 `schemaType`과 같은 `'number'`다(WRITE-099).
 
 - PR: PR-2(전이 라운드)(WRITE-099).
 - 무엇: 렌더 시나리오 `union.entry-two-step`에 위 예의 폼과, `a`가 문자열이면 `boolean`으로 아니면 `string`으로 좁히는 폼(되먹임이 멈추지 않는 반례)을 더해 각각 `setValue({a:0})`를 부른다(WRITE-099).
