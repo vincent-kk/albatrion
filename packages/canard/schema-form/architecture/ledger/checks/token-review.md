@@ -416,3 +416,7 @@ node ledger/checks/tokens.mjs check <목록> ledger/*.md
 ## 19라운드(형 없는 객체·배열 호스트, `const` 칸) 반영 뒤의 잔여 (2026-09-27)
 
 잔여 488 = 484 − 2 + 6. 원장 쪽 잔여는 482로 줄었다(19라운드 항목이 옛 문서의 토큰 둘을 새로 든다). 새로 든 여섯은 모두 HANDOFF §1·§5가 19라운드 작업 파일을 가리키는 경로 코드 토큰(`reviews/raw-round19-typeless-object-host/`, `brief.md`, `verifier.md`, `codex.md`, `merged-v1.md`, `ledger-plan.md`)이며, 원장이 들 이유가 없는 HANDOFF의 자기 서술이다 — C.
+
+## 21라운드(호출 수준 억제 비트와 포커스 아웃 `trim`) 반영 뒤의 잔여 (2026-09-28)
+
+잔여 488 그대로다. HANDOFF §1의 21라운드 문단이 든 코드 토큰(`onChange(' a ', DisableAutomaticWrites)`, `disableAutomaticWrites`)은 WRITE-100이 그대로 들고 있어 잔여에 더해지지 않았다. 20라운드 반영도 잔여를 바꾸지 않았다(경로 `reviews/round-20-closing.md`는 토큰 규칙에 들지 않는다).

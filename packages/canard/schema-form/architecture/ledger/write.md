@@ -105,6 +105,7 @@
 | WRITE-097 | 정리 — 억제 비트의 범위(로드·전체 교체 쓰기·`Merge`), 낡은 근거와 가리킴, LANDING-118, `setValue(undefined)`와 노드 게이트의 채움 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-103) |
 | WRITE-098 | U7 정련 — 쓰기 경계는 정적 목록(`schemaType`, `nullable`)으로 한 번, 전이 단계는 최종 유효 목록이 좁은 노드만 원래 쓰인 값을 다시 해석, 로드도 같음, 유효 목록의 정의, PR-2 게이트 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-104), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-105) |
 | WRITE-099 | U7 정련 2 — 전이 단계의 재해석은 전이 쓰기(다음 라운드, 한 라운드에 한 번, 상한이면 원본 B에는 쓰기 경계의 해석만), `VALIDATOR_COMPILE_FAILED`는 폼 수준 기록, 정적 선언 없는 이름의 게이트 없는 분기끼리 fold가 다르면 청사진 오류, `node.type`은 여덟, `union` 입력이 보내는 값, 목록 밖 `default`는 노드가 생길 때마다, `push(v)`의 스냅숏은 생성 값, `NON_JSON_WHOLE_VALUE`는 개발 모드에서만, 좁혀지지 않은 유효 목록은 `schemaType` 그 값, PR-2·PR-4·PR-1 게이트 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-105), 소유자 답(`reviews/round-18-owner-answers.md:24` 18C 검토 1번; 입력이 보내는 값), 편집자 결정(18라운드, LANDING-065; 배열 스냅숏 시험은 PR-5) |
+| WRITE-100 | 호출 수준 억제 비트는 뒤이은 포커스 아웃 `trim`에 듣지 않는다 — 포커스 아웃의 자름을 억제하는 자리는 Form 속성 `disableAutomaticWrites`뿐, 게이트 | 현행 | 편집자 결정(21라운드, `reviews/round-21-closing.md` 21C-01) |
 
 ## 항목
 
@@ -328,6 +329,7 @@
   > 편집자 결정(18C-59): "【추론】 로드가 아닌 통째 쓰기(`Merge`의 배열, 입력 쓰기 등)에서는 직전 커밋의 형상에 없던 키만 생긴 노드로서 채움을 받는다." (`reviews/round-18-closing.md:1647`)
   > 편집자 결정(18C-59): "【추론】 곧 새로 만든 뒤쪽 아이템이다." (`reviews/round-18-closing.md:1648`)
   > 편집자 결정(18C-59): "【추론】 이것이 WRITE-015 `Merge` 행이 미룬 "어떤 아이템이 생긴 것인가"의 답이다." (`reviews/round-18-closing.md:1649`)
+  > 편집자 결정(21C-01): "【추론】 호출 옵션의 억제 비트(`DisableAutomaticWrites`·`EnableAutomaticWrites`)는 그 호출이 일으킨 자동 쓰기에만 들며, 뒤이은 포커스 아웃이 일으키는 `options.trim`의 자동 쓰기는 그 호출이 일으킨 것이 아니므로 듣지 않는다." (`reviews/round-21-closing.md:9`)
 - 상태: 현행
 - 출처: `adr/0013-core-does-not-rewrite-values.md:57`(정본), `adr/0013-core-does-not-rewrite-values.md:59-66,104,105`, `03-mental-model.md:88`, `08-design-a-to-z.md:278`, `02-target-overview.md:285`, `09-landing-and-test-strategy.md:90,93`, `06-conclusions.md:165-167`, `adr/0007-settle-cycle.md:88,89`, `reviews/round-18-closing.md:1647-1649`
 - 닫은 사람: 소유자 답(`reviews/round-4.md:113` D-7; 호출 단위 비트), 원리(D-5 원리에서 도출, `adr/0013-core-does-not-rewrite-values.md:3`; 범위), 편집자 결정(9라운드, `07-conclusions.md:304` 6.1 소유자가 동의한 이름), 편집자 결정(6라운드 D-19, `06-conclusions.md:163`; `Merge`의 배열 통째 교체), 16라운드 스웜 수렴(편집자 결정, `adr/0013-core-does-not-rewrite-values.md:8`; 배치 행의 `fn` 안 `reset`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-59)
@@ -1110,6 +1112,7 @@
   > 자른 값의 쓰기는 core의 **자동 쓰기**다(R17-3 선택지 "다"의 원문 "자동 쓰기가 여섯이 됨"이 맞고, 17라운드 반영 칸의 "자동 쓰기가 아니다"는 편집자의 오독이었다). 따라서 자동 쓰기는 여섯이고 억제 비트(`DisableAutomaticWrites`)의 대상이며, 억제를 켠 폼에서는 포커스 아웃 때 자르지 않는다. 자른 값이 현재 값과 같으면 쓰지 않는다(소유자 확정).
 - 보충:
   > 소유자(12-2 답): "자동 쓰기 아닙니까? 그리고 trim 전후 값이 같으면 쓰지 않아도 됩니다. 효율적이게." (`reviews/round-18-owner-answers.md:12`)
+  > 편집자 결정(21C-01): "【추론】 포커스 아웃은 호출 옵션을 받는 자리가 없으므로, 포커스 아웃 `trim`의 쓰기를 억제하는 자리는 Form 속성 `disableAutomaticWrites`뿐이다." (`reviews/round-21-closing.md:10`)
 - 상태: 현행
 - 출처: `reviews/round-18-owner-answers.md:12`(정본, 12-2의 반영 칸. 표 행이라 조각 번호로 나눌 수 없다), `reviews/round-17-owner-answers.md:11`
 - 닫은 사람: 소유자 답(`reviews/round-18-owner-answers.md:12` 12-2), 소유자 답(`reviews/round-17-owner-answers.md:11` R17-3 "다")
@@ -1517,7 +1520,8 @@
   > 무엇: 위 실패 장면과, 입력 쓰기·`Merge`로 아이템 수를 바꾼 뒤 각 아이템의 `defaultValue`와 `resetSubtree()`를 본다.
   > 통과: 남은 아이템은 자기 되돌림 값을 지키고, 새 아이템의 `defaultValue`는 `undefined`라 `resetSubtree()`가 채움을 준다.
   > 실패: 스냅숏 배열이 신원과 어긋나면 자리 맞춤을 고친다.
-- 보충: 없음
+- 보충:
+  > 편집자 결정(18C-97, 근거의 실패 장면): "실패 장면: `defaultValue={items:['a','b']}`에서 `setValue({items:['x']})` 뒤 `setValue({items:['x','z']})`를 부르면 새 키 `#2`의 `defaultValue`가 사라진 `#1`의 값 `'b'`가 되고 `resetSubtree()`도 `'b'`로 되돌린다." (`reviews/round-18-closing.md:2785`)
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:2779-2782,2788-2791`(정본), `reviews/round-18-closing.md:2954`
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-97), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-105)
@@ -1645,3 +1649,21 @@
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-105), 소유자 답(`reviews/round-18-owner-answers.md:24` 18C 검토 1번; 입력이 보내는 값), 편집자 결정(18라운드, LANDING-065; 배열 스냅숏 시험은 PR-5)
 - 라운드: 18
 - 까닭: `reviews/round-18-closing.md:2959-2967`
+
+### WRITE-100 호출 수준 억제 비트는 뒤이은 포커스 아웃 `trim`에 듣지 않는다 — 포커스 아웃의 자름을 억제하는 자리는 Form 속성 `disableAutomaticWrites`뿐, 게이트
+
+- 결정:
+  > 【추론】 호출 옵션의 억제 비트(`DisableAutomaticWrites`·`EnableAutomaticWrites`)는 그 호출이 일으킨 자동 쓰기에만 들며, 뒤이은 포커스 아웃이 일으키는 `options.trim`의 자동 쓰기는 그 호출이 일으킨 것이 아니므로 듣지 않는다.
+  > 【추론】 포커스 아웃은 호출 옵션을 받는 자리가 없으므로, 포커스 아웃 `trim`의 쓰기를 억제하는 자리는 Form 속성 `disableAutomaticWrites`뿐이다.
+  > 【추론】 예: Form 속성이 없는 폼에서 `onChange(' a ', DisableAutomaticWrites)` 뒤의 포커스 아웃은 `'a'`를 쓰고, `disableAutomaticWrites`를 켠 폼에서는 자르지 않아 `' a '`가 남는다.
+  > 【추론】 자른 값이 현재 값과 같으면 쓰지 않는다는 규칙(WRITE-078)과 `finishInput` 칸이 자른다는 자리(LANDING-145)는 그대로다.
+  > PR: `finishInput` 칸의 `trim`을 들여오는 PR(LANDING-145의 배치)
+  > 무엇: `options.trim`을 켠 문자열 입력에 `onChange(' a ', DisableAutomaticWrites)`를 부른 뒤 포커스 아웃을 일으킨다. Form 속성이 없는 폼과 `disableAutomaticWrites`를 켠 폼에서 각각 한다.
+  > 통과: 앞 폼의 원본은 `'a'`이고 뒤 폼의 원본은 `' a '`다.
+  > 실패: 억제 비트의 범위나 포커스 아웃 쓰기의 억제 자리를 고친다.
+- 보충: 없음
+- 상태: 현행
+- 출처: `reviews/round-21-closing.md:9-16`(정본)
+- 닫은 사람: 편집자 결정(21라운드, `reviews/round-21-closing.md` 21C-01)
+- 라운드: 21
+- 까닭: `reviews/round-21-closing.md:17`

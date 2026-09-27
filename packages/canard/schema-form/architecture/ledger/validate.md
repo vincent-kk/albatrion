@@ -766,6 +766,8 @@
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-79), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-101), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-105)
 - 라운드: 18
 - 까닭: `reviews/round-18-closing.md:2147-2148`, `reviews/round-18-closing.md:2853-2855`
+- 충돌:
+  > `reviews/round-18-closing.md:2850`의 ""한 로드에 한 번"(VALIDATE-048)은 `resetSubtree()`에는 그 하위 트리에만 적용한다"는 18C-105의 결정과 다르다: `VALIDATOR_COMPILE_FAILED`는 폼 수준 기록이라 폼 수준 로드(마운트, `FormHandle.reset()`)마다 한 번 내고, `resetSubtree()`는 그 기록을 다시 내지도 초기화하지도 않으며, 그 기록이 막은 `OnChange` 검증 예약은 다음 폼 수준 로드까지 막힌 채다(WRITE-099). 18C-105의 결정이 이긴다(`reviews/round-18-closing.md:2946-2949`).
 
 ### VALIDATE-049 폼은 검증을 입력 경로에서 떼어 내는 장치를 두지 않음 — 진입당 요청 1회와 마이크로태스크 합치기, 빈도 조절은 `OnRequest`, 제출은 새로 검증
 

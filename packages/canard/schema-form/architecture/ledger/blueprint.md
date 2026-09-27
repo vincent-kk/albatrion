@@ -547,6 +547,7 @@
   > `adr/0005-blueprint-analysis-and-node-sharing.md:62`의 "노드의 **종류**는 여섯이다: string, number(`integer` 포함), boolean, null, object, array."는 18라운드 결정과 다르다: (가칭) `union`이 더해져 종류는 일곱이다(BLUEPRINT-032). 18라운드 결정이 이긴다(`reviews/round-18-closing.md:61`).
   > `08-design-a-to-z.md:177`의 "같은 이름·같은 종류(string, number, boolean, null, object, array)면"는 18라운드 결정과 다르다: 종류 목록에 (가칭) `union`이 든다(BLUEPRINT-032). 18라운드 결정이 이긴다(`reviews/round-18-closing.md:61`).
   > `02-target-overview.md:125`의 "같은 이름과 같은 종류(string, number, boolean, null, object, array)이면"는 18라운드 결정과 다르다: 종류 목록에 (가칭) `union`이 든다(BLUEPRINT-032). 18라운드 결정이 이긴다(`reviews/round-18-closing.md:61`).
+  > `reviews/round-18-closing.md:61`의 "(가칭) `union`"은 소유자 답과 다르다: 종류 이름 `union`은 확정이고 가칭이 아니다(BLUEPRINT-035). 소유자 답이 이긴다(`reviews/round-18-owner-answers.md:28`).
   > `reviews/round-18-owner-answers.md:28`의 "원시 타입만의 다중 `type` 잎"은 소유자 답과 다르다: `union`은 `type`에 원시·객체·배열 가운데 둘 이상의 종류가 적힌 칸의 터미널 잎이다(BLUEPRINT-036). 소유자 답이 이긴다(`reviews/round-18-owner-answers.md:29`).
   > `reviews/round-18-closing.md:61`의 "그래서 노드의 종류는 일곱이다"는 소유자 답과 다르다: `node.type`의 값은 `virtual`을 포함해 여덟이고(NODE-057), 18C-02의 "일곱"은 스키마에서 오는 종류만 센 것이다(WRITE-099). 소유자 답이 이긴다(`reviews/round-18-owner-answers.md:31`).
 
@@ -801,6 +802,8 @@
   > `reviews/round-18-closing.md:60`의 "원소가 하나면 그 원시 종류다"는 소유자 답과 다르다: 접은 집합의 원소가 하나면 그 종류이며 `object`·`array`일 수 있다(BLUEPRINT-044, BLUEPRINT-045 E8). 소유자 답이 이긴다(`reviews/round-18-owner-answers.md:29`).
   > `reviews/round-18-closing.md:66`의 "값이 나열된 타입 가운데 하나에 맞으면"은 소유자 답과 다르다: 목록은 `node.schemaType`(+`nullable`)이고 게이트가 켜진 동안에는 유효 목록이다(BLUEPRINT-040). 소유자 답이 이긴다(`reviews/round-18-owner-answers.md:35`).
   > `reviews/round-18-closing.md:69`의 "정합은 값이 나열된 타입 가운데 하나라는 뜻이다"는 소유자 답과 다르다: 목록은 `node.schemaType`(+`nullable`)이고 게이트가 켜진 동안에는 유효 목록이다(BLUEPRINT-040). 소유자 답이 이긴다(`reviews/round-18-owner-answers.md:35`).
+  > `reviews/round-18-closing.md:59`의 "(가칭) `union`"은 소유자 답과 다르다: 종류 이름 `union`은 확정이고 가칭이 아니다(BLUEPRINT-035). 소유자 답이 이긴다(`reviews/round-18-owner-answers.md:28`).
+  > `reviews/round-18-closing.md:80`의 "(가칭) `unionBehavior/`"는 소유자 답과 다르다: 동작 모듈 이름 `unionBehavior/`는 확정이고 가칭이 아니다(BLUEPRINT-035). 소유자 답이 이긴다(`reviews/round-18-owner-answers.md:28`).
 
 ### BLUEPRINT-044 청사진 판정 절차 — 허용 집합 A(d)와 fold, 교집합(`integer ⊂ number`, `null`은 양쪽에 있을 때만), 단계 S0–S6, 결과 일곱, 터미널 하위 키 경고 (가칭) `TERMINAL_SUBTREE_KEY_IGNORED_FOR_FORM`, PR-1·PR-4 게이트
 

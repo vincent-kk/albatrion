@@ -620,6 +620,8 @@
 - 까닭: `reviews/round-18-closing.md:84-91`, `reviews/round-18-closing.md:2367-2370`
 - 충돌:
   > `reviews/round-18-owner-answers.md:28`의 "원시 타입만의 다중 `type` 잎"은 소유자 답과 다르다: `union`은 `type`에 원시·객체·배열 가운데 둘 이상의 종류가 적힌 칸의 터미널 잎이다(BLUEPRINT-036). 소유자 답이 이긴다(`reviews/round-18-owner-answers.md:29`).
+  > `reviews/round-18-closing.md:75`의 "(가칭) `isUnionNode`"는 소유자 답과 다르다: 종류 이름 `union`과 가드 `isUnionNode`, 동작 모듈 `unionBehavior/`는 확정이고 가칭이 아니다(BLUEPRINT-035). 소유자 답이 이긴다(`reviews/round-18-owner-answers.md:28`).
+  > `reviews/round-18-closing.md:2339`의 "【추론】 `UnionNode`는 `valueTypeMismatch`를 판별자로 두 멤버로 나뉜다."는 소유자 답과 다르다: 이 항목의 `valueTypeMismatch`·`valueTypeMismatches`·`VALUE_TYPE_MISMATCH`는 확정 이름 `typeMismatch`·`typeMismatches`·`SCHEMA_FORM_WARNING.TYPE_MISMATCH`로 읽는다(SURFACE-061). 소유자 답이 이긴다(`reviews/round-18-owner-answers.md:41`).
 
 ### NODE-042 터미널 전략의 정적 결정 — 셈에 드는 선언, 경우의 정의(조각 중첩), 축약 비교
 

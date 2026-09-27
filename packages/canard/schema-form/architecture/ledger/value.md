@@ -88,7 +88,7 @@
 - 라운드: 18
 - 까닭: `adr/0006-single-value-ownership.md:42`, `reviews/round-18-closing.md:1134-1141`, `reviews/round-18-closing.md:1686-1690`
 - 충돌:
-  > `reviews/round-18-owner-answers.md:9`의 "노드는 정합 상태(경고등)를 들고, 이것이 공개 형의 판별자다(이름과 모양은 18라운드 §7)."는 이 표에 없는 칸을 더한다. 18라운드 소유자 답이 뒤이므로 "칸은 열"의 수는 낡았다. 경고등이 상태인지 계산인지는 아직 적히지 않았다(→ WRITE-054). 경고등이 상태인지 계산인지는 18C-40이 '계산' 칸으로 닫았다(VALUE-030, `reviews/round-18-closing.md:1084`).
+  > `reviews/round-18-owner-answers.md:9`의 "노드는 정합 상태(경고등)를 들고, 이것이 공개 형의 판별자다(이름과 모양은 18라운드 §7)."는 이 표에 없는 칸을 더한다. 18라운드 소유자 답이 뒤이므로 "칸은 열"의 수는 낡았다. 경고등이 상태인지 계산인지는 아직 적히지 않았다(→ WRITE-054). 경고등이 상태인지 계산인지는 18C-40이 '계산' 칸으로 닫았다(VALUE-030, `reviews/round-18-closing.md:1084`). 칸을 더한 것은 소유자 답이 이긴다(`reviews/round-18-owner-answers.md:9`); 그 칸의 분류는 18C-40의 결정이 이긴다(`reviews/round-18-closing.md:1084`).
 
 ### VALUE-003 diagnostics 칸 — 작업의 기록, 다음 로드까지 지속, 루트에서 관측
 - 결정:
