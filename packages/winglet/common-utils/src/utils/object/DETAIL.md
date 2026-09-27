@@ -56,13 +56,13 @@
 
 ### `getDataProperty.ts` — merge 내부의 안전한 읽기
 
-- **Consumers**: `merge/utils/mergeWithOptions.ts`, `merge/__tests__/merge-restructure/createMergeImplementation.ts`
+- **Consumers**: `**/packages/winglet/common-utils/src/utils/object/merge/utils/mergeWithOptions.ts`, `**/packages/winglet/common-utils/src/utils/object/merge/__tests__/merge-restructure/createMergeImplementation.ts`
 - **Direct import**: `allowed`
 - **Reason**: object 진입점은 merge를 재수출하므로 merge 재귀 구현이 그 진입점을 가져오면 순환 의존이 생깁니다. 측정 로더도 같은 함수 참조를 주입해야 하므로 직접 읽습니다.
 
 ### `setDataProperty.ts` — merge 내부의 안전한 쓰기
 
-- **Consumers**: `merge/utils/mergeWithOptions.ts`, `merge/__tests__/merge-restructure/createMergeImplementation.ts`
+- **Consumers**: `**/packages/winglet/common-utils/src/utils/object/merge/utils/mergeWithOptions.ts`, `**/packages/winglet/common-utils/src/utils/object/merge/__tests__/merge-restructure/createMergeImplementation.ts`
 - **Direct import**: `allowed`
 - **Reason**: object 진입점은 merge를 재수출하므로 merge 재귀 구현이 그 진입점을 가져오면 순환 의존이 생깁니다. 측정 로더도 같은 함수 참조를 주입해야 하므로 직접 읽습니다.
 
