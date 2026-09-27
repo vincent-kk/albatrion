@@ -23,10 +23,21 @@
 
 ## Acceptance Criteria
 
-### type-procedure — 정적 종류와 union
+### type-syntax — 명시한 형과 전략
 
-- BLUEPRINT-045 E1–E42 및 WRITE-099 보충의 종류·schemaType·nullable·전략·오류가 일치합니다. 순서는 앵커의 원소 순서만 바꾸며 의미는 바꾸지 않습니다.
-- E26의 좁혀지지 않은 유효 목록은 배열이 아닌 scalar schemaType 그 값입니다. TEST-077의 청사진 행과 union 입력 형 계약을 만족합니다.
+- BLUEPRINT-045 E1–E10·E28의 종류·schemaType·nullable·전략·오류가 일치합니다. TEST-077의 명시 union과 union 입력 형 계약을 만족합니다.
+
+### type-inference — 형 없는 칸의 원시 분기
+
+- BLUEPRINT-045 E11–E17·E29·E32–E35의 합집합·교집합·형 없음 오류와 nullable 규칙을 만족합니다.
+
+### type-static-intersection — 정적 연언
+
+- BLUEPRINT-045 E18–E24·E30·E31·E36–E39를 만족합니다. 정적 선언 순서는 앵커 원소의 순서만 바꾸며 의미는 바꾸지 않습니다.
+
+### type-gated-declarations — 게이트와 선언 문맥
+
+- BLUEPRINT-045 E25–E27·E40–E42 및 WRITE-099 보충을 만족합니다. E26의 좁혀지지 않은 유효 목록은 배열이 아닌 scalar schemaType 그 값입니다. 정적 선언이 없는 이름의 무게이트 분기 fold 충돌을 검증합니다.
 
 ### fragment-declarations — 조각과 공유
 
