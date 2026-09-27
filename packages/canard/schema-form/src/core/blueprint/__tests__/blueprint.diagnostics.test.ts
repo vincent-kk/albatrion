@@ -130,6 +130,13 @@ describe('blueprint diagnostic data and late collection', () => {
     expect(diagnostics.map((diagnostic) => diagnostic.details.keyword)).toEqual(
       ['dependentSchemas', 'dependencies'],
     );
+    expect(
+      diagnostics.every(
+        (diagnostic) =>
+          diagnostic.code ===
+          BlueprintWarningCode.DependentSchemasIgnoredForForm,
+      ),
+    ).toBe(true);
   });
   it('warns about branch if without false else and ignored null properties', () => {
     const collect = vi.fn();
@@ -176,7 +183,17 @@ describe('blueprint diagnostic data and late collection', () => {
             type: 'object',
             options: { terminal: true },
             properties: {
-              inline: { type: 'string', controls: { visible: true } },
+              inline: {
+                type: 'object',
+                controls: { visible: true },
+                properties: {
+                  deep: {
+                    type: 'string',
+                    presentation: { FormTypeInput: 'inline' },
+                  },
+                },
+              },
+              other: { type: 'string', options: { trim: true } },
               ref: { $ref: '#/$defs/target' },
             },
             default: { controls: true },
@@ -192,8 +209,18 @@ describe('blueprint diagnostic data and late collection', () => {
           diagnostic.code ===
           BlueprintWarningCode.TerminalSubtreeKeyIgnoredForForm,
       );
-    expect(warnings.map((diagnostic) => diagnostic.schemaPath)).toEqual([
-      '#/properties/value/properties/inline',
+    expect(warnings).toEqual([
+      expect.objectContaining({
+        schemaPath: '#/properties/value',
+        details: {
+          keys: ['controls', 'options', 'presentation'],
+          paths: [
+            '#/properties/value/properties/inline',
+            '#/properties/value/properties/inline/properties/deep',
+            '#/properties/value/properties/other',
+          ],
+        },
+      }),
     ]);
   });
   it('defers warning scans and collects once when a cached root gains a collector', () => {
@@ -239,6 +266,44 @@ describe('blueprint diagnostic data and late collection', () => {
         code: BlueprintWarningCode.DiscriminatorBranchUnreachable,
       }),
     );
+  });
+
+  it('resolves discriminator tags through child edges with escaped names and reference sharing', () => {
+    const collect = vi.fn();
+    blueprint(
+      {
+        type: 'object',
+        $defs: {
+          tag: { type: 'string', const: 4 },
+          host: {
+            type: 'object',
+            controls: { discriminator: 'kind/name' },
+            oneOf: [
+              {
+                properties: {
+                  'kind/name': { $ref: '#/$defs/tag' },
+                  value: { type: 'number' },
+                },
+              },
+            ],
+          },
+        },
+        properties: {
+          a: { $ref: '#/$defs/host' },
+          b: { $ref: '#/$defs/host' },
+        },
+      },
+      { collect },
+    );
+    const warnings = collect.mock.calls
+      .map(([diagnostic]) => diagnostic)
+      .filter(
+        (diagnostic) =>
+          diagnostic.code ===
+          BlueprintWarningCode.DiscriminatorBranchUnreachable,
+      );
+    expect(warnings).toHaveLength(1);
+    expect(warnings[0].details.propertyName).toBe('kind/name');
   });
 
   it('warns only about ignored allOf keywords while nested composition is analyzed', () => {

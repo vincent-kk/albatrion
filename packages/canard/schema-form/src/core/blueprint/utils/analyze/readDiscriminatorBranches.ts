@@ -11,6 +11,8 @@ import { BlueprintErrorCode } from '../diagnostics/constant';
 import { throwBlueprintError } from '../diagnostics/throwBlueprintError';
 import { foldAllowedTypes } from '../types/foldAllowedTypes';
 import { inferAllowedTypes } from '../types/inferAllowedTypes';
+import { intersectAllowedTypes } from '../types/intersectAllowedTypes';
+import { readAllowedTypes } from '../types/readAllowedTypes';
 import { collectStaticSchemas } from './collectStaticSchemas';
 import { readSchemaObject } from './readSchemaObject';
 import type { AnalysisContext } from './type';
@@ -48,11 +50,17 @@ export const readDiscriminatorBranches = (
     for (let index = 0; index < host[keyword].length; index++) {
       const branch = host[keyword][index];
       const branchPath = `${schemaPath}/${keyword}/${index}`;
-      const branchTypes = inferAllowedTypes(context, branch, branchPath, true);
+      const parts = collectStaticSchemas(context, branch, branchPath);
+      let branchTypes: ReturnType<typeof readAllowedTypes>;
+      for (const part of parts)
+        branchTypes = intersectAllowedTypes(
+          branchTypes,
+          readAllowedTypes(part.schema, part.schemaPath, context.options),
+        );
       if (branchTypes?.every((type) => type === 'null')) continue;
       let values: readonly unknown[] | undefined;
       let mask: number | undefined;
-      for (const part of collectStaticSchemas(context, branch, branchPath)) {
+      for (const part of parts) {
         const property = readSchemaObject(part.schema).properties?.[
           propertyName
         ];

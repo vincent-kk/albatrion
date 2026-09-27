@@ -26,6 +26,7 @@ export const collectBlueprintWarnings = (
     collect(Object.freeze(diagnostic));
   };
   for (const node of blueprint.nodes) {
+    if (node.strategy === 'terminal') collectInlineTerminalWarnings(node, emit);
     for (const declaration of node.declarations) {
       const schema = readSchemaObject(declaration.schema);
       const warning = (
@@ -78,22 +79,15 @@ export const collectBlueprintWarnings = (
         )
           warning(BlueprintWarningCode.NullBranchIgnoredForForm);
       }
-      if (node.strategy === 'terminal')
-        collectInlineTerminalWarnings(
-          declaration.schema,
-          declaration.schemaPath,
-          emit,
-        );
       for (const gate of declaration.gates) {
         if (gate.kind !== 'discriminator') continue;
         const descriptor = gate.condition as {
           propertyName: string;
           values: readonly unknown[];
         };
-        const tag = blueprint.nodes.find(
-          (candidate) =>
-            candidate.path === `${gate.hostPath}/${descriptor.propertyName}`,
-        );
+        const tag = node.childEntries.find(
+          (entry) => entry.name === descriptor.propertyName,
+        )?.node;
         if (!tag) continue;
         const allowed = Array.isArray(tag.schemaType)
           ? tag.schemaType

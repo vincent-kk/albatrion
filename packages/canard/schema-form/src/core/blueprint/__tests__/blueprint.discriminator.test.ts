@@ -114,6 +114,23 @@ describe('blueprint explicit discriminators', () => {
       }),
     );
   });
+
+  it('does not infer a branch type from nested compositions during static tag reading', () => {
+    const result = blueprint({
+      type: 'object',
+      controls: { discriminator: 'kind' },
+      oneOf: [
+        {
+          properties: { kind: { type: 'string', const: 'a' } },
+          oneOf: [{ properties: { child: { type: 'number' } } }],
+        },
+      ],
+    });
+    expect(result.root.childEntries.map((edge) => edge.name)).toEqual([
+      'kind',
+      'child',
+    ]);
+  });
   it('rejects a discriminator without any statically readable tag', () => {
     expect(() =>
       blueprint({

@@ -1,38 +1,48 @@
 import { escapeSegment } from '@winglet/json/pointer';
 
-import type { BlueprintDiagnostic, BlueprintSchema } from '../../type';
+import type {
+  BlueprintDiagnostic,
+  BlueprintNode,
+  BlueprintSchema,
+} from '../../type';
 import { readSchemaObject } from '../analyze/readSchemaObject';
 import { BlueprintWarningCode } from './constant';
 
 /**
  * Find ignored form groups below a terminal without following reference targets.
- * @param schema - Terminal's authored schema
- * @param schemaPath - Terminal's original location
+ * @param node - Terminal node whose authored contributions are inspected
  * @param emit - Root-local diagnostic consumer with duplicate suppression
  * @returns Nothing; visits schema positions only, leaving literal data opaque
  */
 export const collectInlineTerminalWarnings = (
-  schema: BlueprintSchema,
-  schemaPath: string,
+  node: BlueprintNode,
   emit: (diagnostic: BlueprintDiagnostic) => void,
 ): void => {
-  const pending = [{ schema, schemaPath, root: true }];
-  const visited = new Set<object>();
+  const pending = node.declarations
+    .filter((declaration) => declaration.role === 'declaration')
+    .map(({ schema, schemaPath }) => ({
+      schema,
+      schemaPath,
+      root: true,
+      ancestors: [] as object[],
+    }));
+  const keys: string[] = [];
+  const paths: string[] = [];
   while (pending.length) {
     const entry = pending.pop()!;
-    if (typeof entry.schema === 'boolean' || visited.has(entry.schema))
+    if (
+      typeof entry.schema === 'boolean' ||
+      entry.ancestors.includes(entry.schema)
+    )
       continue;
-    visited.add(entry.schema);
+    const ancestors = [...entry.ancestors, entry.schema];
     const record = readSchemaObject(entry.schema);
     if (!entry.root)
       for (const keyword of ['controls', 'options', 'presentation'])
-        if (record[keyword] !== undefined)
-          emit({
-            code: BlueprintWarningCode.TerminalSubtreeKeyIgnoredForForm,
-            level: 'warning',
-            schemaPath: entry.schemaPath,
-            details: { keyword },
-          });
+        if (record[keyword] !== undefined) {
+          if (!keys.includes(keyword)) keys.push(keyword);
+          if (!paths.includes(entry.schemaPath)) paths.push(entry.schemaPath);
+        }
     for (const keyword of [
       'properties',
       'patternProperties',
@@ -46,6 +56,7 @@ export const collectInlineTerminalWarnings = (
             schema: child as BlueprintSchema,
             schemaPath: `${entry.schemaPath}/${keyword}/${escapeSegment(name)}`,
             root: false,
+            ancestors,
           });
     for (const keyword of ['allOf', 'oneOf', 'anyOf', 'prefixItems'])
       if (Array.isArray(record[keyword]))
@@ -54,6 +65,7 @@ export const collectInlineTerminalWarnings = (
             schema: child,
             schemaPath: `${entry.schemaPath}/${keyword}/${index}`,
             root: false,
+            ancestors,
           }),
         );
     for (const keyword of [
@@ -75,6 +87,7 @@ export const collectInlineTerminalWarnings = (
             schema: item,
             schemaPath: `${entry.schemaPath}/${keyword}/${index}`,
             root: false,
+            ancestors,
           }),
         );
       else if (
@@ -85,7 +98,18 @@ export const collectInlineTerminalWarnings = (
           schema: child,
           schemaPath: `${entry.schemaPath}/${keyword}`,
           root: false,
+          ancestors,
         });
     }
   }
+  if (keys.length)
+    emit({
+      code: BlueprintWarningCode.TerminalSubtreeKeyIgnoredForForm,
+      level: 'warning',
+      schemaPath: node.schemaPath,
+      details: {
+        keys: Object.freeze(keys.sort()),
+        paths: Object.freeze(paths.sort()),
+      },
+    });
 };

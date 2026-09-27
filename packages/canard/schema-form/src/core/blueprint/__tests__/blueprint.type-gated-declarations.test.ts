@@ -34,8 +34,14 @@ describe('blueprint gated and declaration-only types', () => {
           .map((declaration) => declaration.id),
       );
       expect(typeof effective === 'object' && effective.type).toEqual(
-        _id === 'E41' ? 'integer' : 'number',
+        _id === 'E26' ? 'number' : [_id === 'E41' ? 'integer' : 'number'],
       );
+      if (typeof effective === 'object' && Array.isArray(effective.type))
+        expect(Object.isFrozen(effective.type)).toBe(true);
+      if (_id === 'E26')
+        expect(typeof effective === 'object' && effective.type).toBe(
+          node.schemaType,
+        );
     },
   );
 

@@ -197,4 +197,66 @@ describe('blueprint fragment ownership and strategies', () => {
     );
     expect(root.childEntries[0].node.declarations[0].scope).toBe('node');
   });
+
+  it('lets the later ungated strategy declaration win', () => {
+    const root = blueprint({
+      type: 'object',
+      options: { terminal: false },
+      allOf: [{ options: { terminal: true } }],
+    }).root;
+    expect(root.strategy).toBe('terminal');
+  });
+
+  it('allows a sole gated declaration to select an inline or explicit terminal strategy', () => {
+    for (const schema of [
+      { type: 'object', presentation: { FormTypeInput: 'inline' } },
+      { type: 'object', options: { terminal: true } },
+    ]) {
+      const root = blueprint(
+        { type: 'object', if: {}, then: { properties: { only: schema } } },
+        {
+          isTerminal: (schema) =>
+            typeof schema === 'object' && schema.presentation
+              ? true
+              : undefined,
+        },
+      ).root;
+      expect(root.childEntries[0].node.strategy).toBe('terminal');
+    }
+  });
+
+  it('retains a static explicit strategy when a gated declaration adds an inline input', () => {
+    const root = blueprint(
+      {
+        type: 'object',
+        properties: { a: { type: 'object', options: { terminal: false } } },
+        if: {},
+        then: {
+          properties: {
+            a: { type: 'object', presentation: { FormTypeInput: 'inline' } },
+          },
+        },
+      },
+      {
+        isTerminal: (schema) =>
+          typeof schema === 'object' && schema.presentation ? true : undefined,
+      },
+    ).root;
+    expect(root.childEntries[0].node.strategy).toBe('branch');
+  });
+
+  it('keeps an earlier renderer decision when a later predicate result is undefined', () => {
+    const root = blueprint(
+      {
+        type: 'object',
+        presentation: { FormTypeInput: 'inline' },
+        allOf: [{ title: 'later' }],
+      },
+      {
+        isTerminal: (schema) =>
+          typeof schema === 'object' && schema.presentation ? true : undefined,
+      },
+    ).root;
+    expect(root.strategy).toBe('terminal');
+  });
 });

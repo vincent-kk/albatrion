@@ -1,8 +1,4 @@
-import type {
-  BlueprintNode,
-  BlueprintSchema,
-  SchemaTypeName,
-} from '../../../type';
+import type { BlueprintNode, BlueprintSchema } from '../../../type';
 import type { EffectiveSchemaState } from './type';
 
 /**
@@ -36,9 +32,7 @@ export const finalizeEffectiveSchema = (
       ? node.schemaType
       : types?.length === 0
         ? 'null'
-        : node.kind === 'union'
-          ? Object.freeze(types)
-          : ((types?.[0] ?? 'null') as SchemaTypeName);
+        : Object.freeze(types);
   if (node.nullable || state.allowedTypes?.includes('null'))
     schema.nullable = state.allowedTypes?.includes('null') ?? node.nullable;
   if (state.conflictingType || state.conflictingConst) schema.enum = [];

@@ -21,9 +21,9 @@ export const resolveNodeStrategy = (
   ).length;
   const relevant = declarations.filter(
     (declaration) =>
-      declaration.context === 'conjunction' ||
-      declaration.gates.length > 0 ||
-      count === 1,
+      !declaration.validationOnly &&
+      (declaration.context === 'conjunction' ||
+        (count === 1 && declaration.role === 'declaration')),
   );
   if (kind !== 'object' && kind !== 'array') {
     const terminal = kind !== 'virtual';
