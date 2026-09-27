@@ -11,7 +11,7 @@
 | 릴리스 테스트 | `dist/`를 소비자처럼 설치해 시나리오 한 벌(TEST-053·055·058의 릴리스 항목) |
 | 문서 대조 | `onError` 코드 표 ↔ ERROR-164의 현행 행, reset 문서 ↔ LANDING-121 목록(기계 대조) |
 | 벤치 | 옛 판 기준선 대 새 판 재실행, 모바일 재측정 |
-| 저장소 전체 | `yarn lint`·`typecheck`·`test`, 레거시 삭제 뒤 |
+| 저장소 전체 | 패키지 검사(`yarn workspace @canard/schema-form lint`·`test`와 타입 검사; 루트의 `lint`·`typecheck`·`test` 스크립트는 릴리스 전환 PR이 만들고 그 뒤에는 저장소 전체로), 레거시 삭제 뒤 |
 
 ## 게이트 — 이 PR이 단독으로 통과해야 하는 것
 

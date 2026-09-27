@@ -57,6 +57,8 @@ flowchart LR
 3. **자기 기제만 시험한다.** 다른 PR의 기제는 술어 인터페이스 뒤의 대역 하나로 세우고, 미룬 사례는 받는 PR을 적는다(TEST-069). 정착 루프 시험은 타이머 없이 단언한다(TEST-003).
 4. **엔진 수준 시나리오가 PR마다 자란다.** 시나리오는 실행기 없는 순수 데이터 모듈이고(TEST-008) 코어 러너가 React 없이 돌린다(LANDING-090). 03부터 각 PR이 자기 상황 목록을 넣고, 05 뒤에는 독립 검증기와의 차등 테스트를 돌린다(LANDING-071, TEST-001).
 
+오늘 루트 `package.json`에는 `lint`·`typecheck`·`test` 스크립트와 `.changeset`이 없다(루트 `CLAUDE.md`의 명령 목록과 다르다). 릴리스 전환 PR(LANDING-097)이 만들기 전까지 검사는 패키지 단위(`yarn workspace <패키지> …`)로 돌리고, changeset은 저장소 관례대로 `package.json` 판 올림으로 대신한다.
+
 그 위에 PR마다 게이트가 있다: 벤치 행(느린 항목은 이유를 적고 소유자가 받아들여야 병합, TEST-027), 공개 형의 `tsc --strict`(TEST-070), 18라운드 닫기 블록이 배정한 확인 항목(각 `verification.md`).
 
 ## 4. 개발 절차 — seiri와 filid (PROCESS-067)

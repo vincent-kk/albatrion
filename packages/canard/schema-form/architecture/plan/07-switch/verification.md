@@ -24,7 +24,7 @@
 - **공개 형**: `tsc --strict`로 `UnionNode`·`InferSchemaNode`·`InferValueType`·가드(NODE-058), 공개 표면 잔여(SURFACE-059).
 - **바인딩 계약 다섯**(LANDING-095)과 `reset` 로드 전환(같은 스키마 판정·커밋 재대조·재생성·Refresh 번호·상호작용 초기화 번호), 로드가 아닌 쓰기의 Refresh 범위(EVENT-071, 18C-94).
 - **벤치 비교**(TEST-026·027): 옛 판 기준선 대 새 판, 코어와 렌더, 벤치 일곱. 느린 항목은 이유를 적고 소유자가 받아들여야 병합. 모바일 안전 임계는 잰 사실만 적는다(TEST-074).
-- **레거시**: 새 코드에서 `__legacy__`를 가리키는 import 0(린트 + 검색), 레거시 시험은 글롭에서 제외, `yarn lint`·`typecheck`·`test` 저장소 전체 초록.
+- **레거시**: 새 코드에서 `__legacy__`를 가리키는 import 0(린트 + 검색), 레거시 시험은 글롭에서 제외, 패키지 검사(`yarn workspace @canard/schema-form lint`·`test`와 타입 검사; 루트의 `lint`·`typecheck`·`test` 스크립트는 릴리스 전환 PR이 만들고 그 뒤에는 저장소 전체로) 초록.
 
 ## 합격 판정과 실패 처리
 

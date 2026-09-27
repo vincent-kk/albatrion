@@ -25,7 +25,7 @@
 
 ## 합격 판정과 실패 처리
 
-- 게이트 전부 통과 + 옛 시험 초록 + 저장소 `lint`·`typecheck`·`test` + filid 스캔 순환 0.
+- 게이트 전부 통과 + 옛 시험 초록 + 패키지 검사(`yarn workspace @canard/schema-form lint`·`test`와 타입 검사; 루트의 `lint`·`typecheck`·`test` 스크립트는 릴리스 전환 PR이 만들고 그 뒤에는 저장소 전체로) + filid 스캔 순환 0.
 - 같은 대상 규칙의 순위가 원장과 어긋나면 SETTLE 영역의 항목을 다시 읽고 코드를 맞춘다.
 
 ## 리뷰 체크리스트 (PR 본문에 옮긴다)
