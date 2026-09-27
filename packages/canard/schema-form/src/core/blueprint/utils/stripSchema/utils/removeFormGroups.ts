@@ -1,3 +1,4 @@
+import { hasOwnProperty } from '@winglet/common-utils/lib';
 import type { JSONScannerOptions } from '@winglet/json-schema/scanner';
 
 /**
@@ -11,7 +12,7 @@ export const removeFormGroups: NonNullable<JSONScannerOptions['mutate']> = ({
   if (!schema || typeof schema !== 'object') return;
   if (
     !['controls', 'options', 'presentation'].some((key) =>
-      Object.prototype.hasOwnProperty.call(schema, key),
+      hasOwnProperty(schema, key),
     )
   )
     return;

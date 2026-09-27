@@ -1,3 +1,4 @@
+import { hasOwnProperty } from '@winglet/common-utils/lib';
 import { merge } from '@winglet/common-utils/object';
 
 /**
@@ -18,7 +19,7 @@ export const mergeHintGroup = (
     omitVirtual &&
     later &&
     typeof later === 'object' &&
-    Object.prototype.hasOwnProperty.call(later, 'virtual')
+    hasOwnProperty(later, 'virtual')
       ? Object.fromEntries(
           Object.entries(later).filter(([key]) => key !== 'virtual'),
         )

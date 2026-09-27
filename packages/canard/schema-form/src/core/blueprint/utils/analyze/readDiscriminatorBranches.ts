@@ -1,3 +1,4 @@
+import { hasOwnProperty } from '@winglet/common-utils/lib';
 import { equals } from '@winglet/common-utils/object';
 import { escapeSegment } from '@winglet/json/pointer';
 
@@ -76,7 +77,7 @@ export const readDiscriminatorBranches = (
           const record = readSchemaObject(tag.schema);
           const restrictions = [
             record.enum,
-            Object.prototype.hasOwnProperty.call(record, 'const')
+            hasOwnProperty(record, 'const')
               ? [record.const]
               : undefined,
           ];
