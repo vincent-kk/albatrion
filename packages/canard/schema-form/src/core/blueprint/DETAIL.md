@@ -6,7 +6,7 @@
 - 작성 위치별 분석은 한 번이며 참조 그래프는 유한합니다. 객체 프로퍼티만으로 이어지는 무게이트·비터미널 순환은 오류이고, nullable은 순환을 끊지 않습니다. 배열 아이템·게이트·터미널은 형상 확장의 경계입니다.
 - 조각 순서는 properties, allOf, if/then/else, oneOf, anyOf이며 배열 인덱스와 중첩 경로로 전순서를 정합니다. 조각 문맥은 연언과 선언을 구별하고 상속 overlay의 호스트 귀속을 보존합니다.
 - 정적 허용 형 집합은 교집합입니다. integer는 number의 부분집합이고 null은 양쪽에 있을 때만 남습니다. 종류 비교에서 integer를 number로 접지만 schemaType에는 정수 제한을 보존합니다.
-- 형 없는 칸의 원시 oneOf·anyOf는 BLUEPRINT-037–039대로 판정합니다. union은 터미널이며 object·array를 포함할 수 있습니다. 가상 노드를 포함한 종류는 여덟입니다.
+- 형 없는 칸은 BLUEPRINT-048·050·051대로 게이트 없는 oneOf·anyOf의 허용 집합을 먼저 합치고, 두 키워드가 함께 있으면 교차한 U에서 null을 뗀 F로 종류를 정합니다. F가 `{object}`·`{array}`면 variant 호스트이고, 다른 종류와 섞이면 오류입니다. 게이트 분기는 U에서 제외하며 재귀 분기·참조는 현재 경로 재진입에서 절단합니다. 분기 없는 `const`·`enum` 칸은 단일 JSON 종류의 원시 리터럴 잎이며 분기 안의 리터럴 전용 칸은 여전히 ⊤입니다. union은 터미널이고 가상 노드를 포함한 종류는 여덟입니다.
 - 게이트 없는 분기는 존재만 더합니다. 공유 노드의 제약·주석·상태·options·presentation은 그 분기가 유일한 선언일 때만 기여합니다. 정적 선언이 없는 이름을 서로 다른 fold의 무게이트 분기가 선언하면 오류입니다.
 - 명시 discriminator만 정적 const·enum을 읽습니다. 정적 allOf·참조를 따라 태그를 교차하고, 끌어올린 선언과 자기 active의 결합을 보존하며 작성 스키마는 바꾸지 않습니다.
 - controls·options와 children 항목의 허용 키는 닫힌 목록입니다. injectTo는 함수만 허용하고 정적 대상 분석은 하지 않습니다. presentation은 불투명 병합 데이터로만 취급합니다.
@@ -14,7 +14,7 @@
 ## API Contracts
 
 - `blueprint(schema, options?)`는 작성 루트와 분석 옵션으로 청사진을 만듭니다. 옵션은 터미널 판정·원자 판정·진단 수집기를 주입합니다. 캐시를 사용하는 호출은 호출자가 소유한 캐시를 명시적으로 전달하고, 동일 스키마와 동일 판정 조건에서 결과 참조를 재사용합니다. 캐시는 진단 소비자가 나중에 붙어도 루트당 경고를 한 번 수집할 수 있어야 합니다.
-- 청사진은 `PropertyDeclaration`, `SchemaFragment` 및 노드별 선언·종류·schemaType·nullable·전략을 노출합니다. 조각은 schemaPath, 게이트 기술, 선언 문맥, 선언·제약·상속 overlay와 자식 조각을 보존합니다. 게이트 기술에는 실제 평가 결과를 저장하지 않습니다.
+- 청사진은 `PropertyDeclaration`, `SchemaFragment` 및 노드별 선언·종류·schemaType·nullable·전략을 노출합니다. 형 없는 variant의 schemaType은 추정한 `'object'`·`'array'`이고 nullable은 null을 포함한 U에서 정합니다. 조각은 schemaPath, 게이트 기술, 선언 문맥, 선언·제약·상속 overlay와 자식 조각을 보존합니다. 게이트 기술에는 실제 평가 결과를 저장하지 않습니다.
 - 자식 연결은 이름·참조 템플릿·해당 호스트의 선언과 게이트를 보존합니다. 같은 참조 대상이라도 호스트별 덧씌움이나 선언 문맥이 다르면 유효 스키마의 선언 집합을 공유하지 않습니다. 재귀 참조는 분석 중인 템플릿을 다시 가리켜 유한하게 유지하며, 최초 방문 경로를 이후 연결의 호스트 경로로 오인하지 않습니다.
 - 유효 스키마 병합은 활성 선언을 전순서로 받습니다. 정적 연언 공집합은 경로가 있는 JSONSchemaError이며, 런타임 enum·const 공집합은 enum 빈 배열로 표시하고 충돌한 const를 제거합니다. 역전 범위는 그대로 둡니다. 서로 다른 키워드 사이의 모순은 판정하지 않습니다.
 - options·presentation은 주입된 원자 판정과 common-utils merge의 선택 인자로 병합합니다. 한쪽 값은 참조 이동, 양쪽 plain object는 쓰기 시 복사, 배열은 교체, 뒤의 undefined는 앞을 지우지 않습니다. 활성 집합이 같으면 유효 스키마 참조도 같습니다.
@@ -35,9 +35,10 @@
 
 - BLUEPRINT-045 E1–E10·E28의 종류·schemaType·nullable·전략·오류가 일치합니다. TEST-077의 명시 union과 union 입력 형 계약을 만족합니다.
 
-### type-inference — 형 없는 칸의 원시 분기
+### type-inference — 형 없는 칸의 분기와 리터럴
 
-- BLUEPRINT-045 E11–E17·E29·E32–E35의 합집합·교집합·형 없음 오류와 nullable 규칙을 만족합니다.
+- BLUEPRINT-045 E11–E17·E29·E32–E35의 합집합·교집합·형 없음 오류와 nullable 규칙을 만족합니다. E16은 BLUEPRINT-048의 object variant 호스트로 받습니다.
+- TEST-079의 게이트 분기만, `{object,array}` 혼합, ⊤ 분기, 참조 순환 절단과 빈 U, 분기 없는 `const`·`enum`의 단일 종류·혼합·객체 리터럴, 분기 안의 `const`(계속 오류)를 각각 검증합니다.
 
 ### type-static-intersection — 정적 연언
 
@@ -69,7 +70,7 @@
 
 ### recursion — 유한 분석과 형상
 
-- TEST-067의 스캐너 신호·코퍼스 14종·무한 형상 표본·절단 표본을 통과하고 참조가 많은 스키마의 분석 1회 비용을 기록합니다. 정착 표본 (c′)는 후속 노드 엔진 단계입니다.
+- TEST-067의 스캐너 신호·원본 코퍼스 14종 수용·무한 형상 표본·절단 표본을 통과하고 참조가 많은 스키마의 분석 1회 비용을 기록합니다. 정착 표본 (c′)는 후속 노드 엔진 단계입니다.
 
 ### validator-schema — 제거 위치
 
