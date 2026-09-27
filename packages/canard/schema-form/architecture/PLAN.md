@@ -47,7 +47,7 @@
 | 우산 | `1.0.0-beta` → `master` | 진행 | [#344](https://github.com/vincent-kk/albatrion/pull/344) | 초안. 09 머지 뒤 `master`로 |
 | 00 | 설계 원장·개발계획 | 머지 | [#345](https://github.com/vincent-kk/albatrion/pull/345), [#346](https://github.com/vincent-kk/albatrion/pull/346) | 원장 1,336항목·검사 0, 계획서 디렉토리 열 개 |
 | 01 | 설계문서 | 대기 | — | 02와 병렬. `design/` 8편·ADR·`doc-coverage`·`_archive/`·절 단위 통과 |
-| 02 | 기반 + 청사진 | 리뷰 | [#347](https://github.com/vincent-kk/albatrion/pull/347) | 전체 4,437시험·lint·strict·빌드 통과. 19라운드 원장 해소와 TEST-079 반영, 내부 Codex 대조 완료. Filid 잔여 발견은 기록했고 Antigravity 외부 확인은 자동 승인 검토가 거절함 |
+| 02 | 기반 + 청사진 | 머지 | [#347](https://github.com/vincent-kk/albatrion/pull/347) | 전체 4,437시험·lint·strict·빌드 통과. 19라운드 원장 해소와 TEST-079 반영, 내부 Codex 대조 완료. Filid 잔여 발견은 기록했고 Antigravity 외부 확인은 자동 승인 검토가 거절함 |
 | 03 | 노드 트리·정착 | 대기 | — | 02 뒤 |
 | 04 | 파생 + 상태 키·제어 | 대기 | — | 03 뒤, 05·06과 병렬 |
 | 05 | 통지·검증 | 대기 | — | 03 뒤. **착수 전 소유자 결정**: 명령 메서드 이름·명령 종류 값의 형·`FormHandle` 대칭(EVENT-073) |
@@ -66,10 +66,9 @@
 
 ## 4. 다음 할 일
 
-1. **02 기반 + 청사진 PR #347 리뷰** — 19라운드 원장 반영·검증 결과와 Filid 발견을 독립 검증한다. Antigravity 외부 교차 확인은 자동 승인 검토가 두 차례 거절해 미수행이다. 리뷰가 끝나면 merge commit으로 병합하고 §3·§4·§5를 갱신한다.
-2. **01 설계문서 착수(02와 병렬)** — `docs/schema-form-design-docs`. `design/02-node-and-value.md`부터(의존이 큰 것부터: 02 → 01 → 03 → 05 → 04 → 06 → 07 → 00).
-3. **D-1 권장안** — 05 착수 전에 올린다. 권장은 `request(kind, payload?)` 하나에 명령 종류를 문자열 리터럴 합집합 `'focus' | 'select' | 'refresh' | 'remount'`로, `FormHandle`은 같은 모양 `request(path, kind, payload?)` 하나로 합치는 것(겉면 수 약 57 → 약 54). 소유자가 정한다.
-4. 02 머지 뒤 03. 03 머지 뒤 04·05·06 병렬.
+1. **01 설계문서 착수(03과 병렬)** — `docs/schema-form-design-docs`. `design/02-node-and-value.md`부터(의존이 큰 것부터: 02 → 01 → 03 → 05 → 04 → 06 → 07 → 00).
+2. **D-1 권장안** — 05 착수 전에 올린다. 권장은 `request(kind, payload?)` 하나에 명령 종류를 문자열 리터럴 합집합 `'focus' | 'select' | 'refresh' | 'remount'`로, `FormHandle`은 같은 모양 `request(path, kind, payload?)` 하나로 합치는 것(겉면 수 약 57 → 약 54). 소유자가 정한다.
+3. **03 노드 트리·정착 착수** — 02가 머지되어 의존이 풀렸다. 03 머지 뒤 04·05·06 병렬.
 
 ## 5. 기록
 
@@ -90,3 +89,4 @@
 | 2026-09-27 | 02 전체 4,393시험·lint·strict·빌드 통과 및 seiri 보조 함수 보완. merge의 벤치 전용 getter 최적화를 철회하고 실제 ESM·CJS 산출물 8회 비교로 교정. CJS 배열 -0.0112%와 신뢰구간 미확정은 소유자가 측정 불확실성으로 수용 | `verification/02-foundation-and-blueprint/` |
 | 2026-09-27 | 소유자가 원장 충돌 해소를 확인 중. 해소 후 Antigravity로 설계·변경 소스·검증 자료 전달 승인, 비활성 외부 Codex는 별도 내부 Codex 검토자로 대체 승인 | `verification/02-foundation-and-blueprint/cross-review.md` |
 | 2026-09-27 | 02의 19라운드 TEST-079와 원본 코퍼스 14종 수용을 확인하고 전체 4,437시험·lint·strict·빌드·벤치·내부 Codex 대조를 마침. Filid 스캔 발견과 Antigravity 자동 승인 거절을 첨부하여 PR #347을 엶 | [#347](https://github.com/vincent-kk/albatrion/pull/347), `verification/02-foundation-and-blueprint/` |
+| 2026-09-27 | 02 PR #347 머지 확인. 03의 의존이 풀림 | `3d94a046f` |
