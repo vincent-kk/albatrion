@@ -19,4 +19,4 @@ BLUEPRINT-037–039·044·045, LANDING-174, TEST-067 및 정본 출처를 대조
 
 ## 19라운드로 해소
 
-위 판정은 당시 원장을 기준으로 한 역사적 기록입니다. 소유자가 `architecture/reviews/round-19-closing.md`의 19C-01·19C-02를 확정하고 BLUEPRINT-048·049·050·051, NODE-059, LANDING-207·208, TEST-079를 이 브랜치에서 고쳤습니다. 이제 형 없는 칸의 무게이트 분기를 U로 합친 뒤 F가 `{object}` 또는 `{array}`면 variant 호스트로 받아들이며, E16도 object variant 성공입니다. TEST-067(b)의 원본 14종 수용 요구는 그대로 유지됩니다. 실제 수용 여부는 19라운드 구현 후 원본 코퍼스 통합 재검증으로 판정합니다.
+위 판정은 당시 원장을 기준으로 한 역사적 기록입니다. 소유자가 `architecture/reviews/round-19-closing.md`의 19C-01·19C-02를 확정하고 BLUEPRINT-048·049·050·051, NODE-059, LANDING-207·208, TEST-079를 이 브랜치에서 고쳤습니다. 이제 형 없는 칸의 무게이트 분기를 U로 합친 뒤 F가 `{object}` 또는 `{array}`면 variant 호스트로 받아들이며, E16도 object variant 성공입니다. TEST-067(b)의 원본 14종 수용 요구는 그대로 유지됩니다. 19라운드 구현 뒤 `blueprint.corpus.test.ts`가 원본 `corpus.mjs`의 각 표본을 수정 없이 청사진에 넣어 14/14로 통과했고, 최종 전체 시험 342파일·4,436건에도 포함됐습니다. 이전 `blueprint-final-measure.json`은 거절 14건의 역사적 측정이라 현재 수용 증거로 쓰지 않습니다.
