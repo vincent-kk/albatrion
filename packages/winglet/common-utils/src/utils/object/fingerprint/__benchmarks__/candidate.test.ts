@@ -6,10 +6,10 @@ import {
   fixtureNames,
 } from '../../../../../bench/serialization/fixtures';
 import { encodeGraph } from '../../serialization/utils/encodeGraph';
-import { compact, compactFactory } from '../__bench__/compact';
-import { direct } from '../__bench__/direct';
-import { hash32 } from '../__bench__/hash';
-import { legacyFactory, legacyFingerprint } from '../__bench__/legacy';
+import { compact, compactFactory } from './compact';
+import { direct } from './direct';
+import { hash32 } from './hash';
+import { legacyFactory, legacyFingerprint } from './legacy';
 
 it('keeps supported fixture identity-independent keys and sorted properties', () => {
   for (const name of fixtureNames)

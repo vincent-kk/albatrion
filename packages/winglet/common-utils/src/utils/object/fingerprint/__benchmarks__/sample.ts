@@ -151,7 +151,7 @@ const metadata = {
         createHash('sha256')
           .update(
             readFileSync(
-              'packages/winglet/common-utils/src/utils/object/fingerprint/__bench__/' +
+              'packages/winglet/common-utils/src/utils/object/fingerprint/__benchmarks__/' +
                 name,
             ),
           )

@@ -51,7 +51,7 @@ raw process별 결과, source SHA-256, 신뢰구간과 전체 표는 저장소 �
 
 ```sh
 for fingerprint_process in 0 1 2 3 4; do
-  TSX_TSCONFIG_PATH=packages/winglet/common-utils/tsconfig.json yarn exec node --expose-gc --import tsx packages/winglet/common-utils/src/utils/object/fingerprint/__bench__/sample.ts "$fingerprint_process" || break
+  TSX_TSCONFIG_PATH=packages/winglet/common-utils/tsconfig.json yarn exec node --expose-gc --import tsx packages/winglet/common-utils/src/utils/object/fingerprint/__benchmarks__/sample.ts "$fingerprint_process" || break
 done
-yarn exec tsx packages/winglet/common-utils/src/utils/object/fingerprint/__bench__/report.ts
+yarn exec tsx packages/winglet/common-utils/src/utils/object/fingerprint/__benchmarks__/report.ts
 ```

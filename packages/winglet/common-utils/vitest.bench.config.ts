@@ -17,9 +17,9 @@ export default defineConfig({
   test: {
     globals: false,
     environment: 'node',
-    include: ['bench/**/*.bench.ts', 'src/**/__tests__/**/*.bench.ts'],
+    include: ['bench/**/*.bench.ts', 'src/**/__benchmarks__/**/*.bench.ts'],
     benchmark: {
-      include: ['bench/**/*.bench.ts', 'src/**/__tests__/**/*.bench.ts'],
+      include: ['bench/**/*.bench.ts', 'src/**/__benchmarks__/**/*.bench.ts'],
       outputJson: 'bench/.results/latest.json',
     },
   },

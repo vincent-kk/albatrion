@@ -29,7 +29,7 @@ Node v24.20.0, 독립 프로세스 5개에서 각 후보 100,000회 warm-up 후 
 
 ```sh
 for fingerprint_process in 0 1 2 3 4; do
-  TSX_TSCONFIG_PATH=packages/winglet/common-utils/tsconfig.json yarn exec tsx packages/winglet/common-utils/src/utils/object/fingerprint/__bench__/cacheHit.ts before "$fingerprint_process"
+  TSX_TSCONFIG_PATH=packages/winglet/common-utils/tsconfig.json yarn exec tsx packages/winglet/common-utils/src/utils/object/fingerprint/__benchmarks__/cacheHit.ts before "$fingerprint_process"
 done
 ```
 
