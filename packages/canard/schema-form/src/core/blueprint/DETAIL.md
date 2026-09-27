@@ -38,6 +38,9 @@
 ### type-inference — 형 없는 칸의 분기와 리터럴
 
 - BLUEPRINT-045 E11–E17·E29·E32–E35의 합집합·교집합·형 없음 오류와 nullable 규칙을 만족합니다. E16은 BLUEPRINT-048의 object variant 호스트로 받습니다.
+
+### type-inference-round19 — 형 없는 칸의 경계 사례
+
 - TEST-079의 게이트 분기만, `{object,array}` 혼합, ⊤ 분기, 참조 순환 절단과 빈 U, 분기 없는 `const`·`enum`의 단일 종류·혼합·객체 리터럴, 분기 안의 `const`(계속 오류)를 각각 검증합니다.
 
 ### type-static-intersection — 정적 연언
