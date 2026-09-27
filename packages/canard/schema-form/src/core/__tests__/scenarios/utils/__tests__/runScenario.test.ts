@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import type { FormScenario } from '../../types';
+import type { FormScenario } from '@aileron/schema-form-scenarios';
 import { runScenario } from '../runScenario';
 
 // filid:contract scenario-runner

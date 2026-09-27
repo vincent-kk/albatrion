@@ -1,6 +1,5 @@
 import type { FormScenario, ScenarioResult } from '../types';
 import { findScenarioHandle } from './findScenarioHandle';
-import { runScenario } from './runScenario';
 
 /**
  * Run shared screen steps using the registration attached by the renderer.
@@ -12,5 +11,15 @@ export function playScenario(
   scenario: FormScenario,
   element: Element,
 ): Promise<ScenarioResult> {
-  return runScenario(scenario, findScenarioHandle(element).adapter);
+  const { adapter } = findScenarioHandle(element);
+  return (async () => {
+    let executedSteps = 0;
+    for (const step of scenario.steps) {
+      await adapter.execute(step);
+      await adapter.settle?.();
+      if (step.expect) await adapter.assert(step.expect);
+      executedSteps += 1;
+    }
+    return { executedSteps };
+  })();
 }
