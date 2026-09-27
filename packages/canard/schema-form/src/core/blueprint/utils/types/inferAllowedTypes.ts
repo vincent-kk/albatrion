@@ -3,6 +3,8 @@ import { collectStaticSchemas } from '../analyze/collectStaticSchemas';
 import type { AnalysisContext } from '../analyze/type';
 import { BlueprintErrorCode } from '../diagnostics/constant';
 import { throwBlueprintError } from '../diagnostics/throwBlueprintError';
+import { foldAllowedTypes } from './foldAllowedTypes';
+import { inferLiteralTypes } from './inferLiteralTypes';
 import { intersectAllowedTypes } from './intersectAllowedTypes';
 import { readAllowedTypes } from './readAllowedTypes';
 import { unionAllowedTypes } from './unionAllowedTypes';
@@ -13,15 +15,22 @@ import { unionAllowedTypes } from './unionAllowedTypes';
  * @param schema - Slot declaration, possibly untyped
  * @param schemaPath - Original schema location for diagnostics
  * @param allowTop - Permit a constraint-only declaration to remain unconstrained
- * @returns Ordered allowed types, or top for an untyped overlay when permitted
+ * @param visiting - Schema locations on this branch-inference path
+ * @param isBranch - Preserve top for a branch without type or nested branches
+ * @returns Ordered allowed types, top for an unconstrained overlay, or empty for a cut recursive branch
  */
 export const inferAllowedTypes = (
   context: AnalysisContext,
   schema: BlueprintSchema,
   schemaPath: string,
   allowTop = false,
+  visiting: readonly string[] = [],
+  isBranch = false,
 ): readonly SchemaTypeName[] | undefined => {
+  if (visiting.includes(schemaPath)) return [];
   const parts = collectStaticSchemas(context, schema, schemaPath);
+  if (parts.some((part) => visiting.includes(part.schemaPath))) return [];
+  const stack = [...visiting, ...parts.map((part) => part.schemaPath)];
   let allowed: readonly SchemaTypeName[] | undefined;
   for (const part of parts) {
     allowed = intersectAllowedTypes(
@@ -38,40 +47,66 @@ export const inferAllowedTypes = (
   }
   if (allowed) return allowed;
   let inferred: readonly SchemaTypeName[] | undefined;
+  let hasUngatedBranch = false;
   for (const keyword of ['oneOf', 'anyOf'] as const) {
     const groups: (readonly SchemaTypeName[])[] = [];
+    let hasKeywordBranch = false;
     for (const part of parts) {
       if (typeof part.schema === 'boolean') continue;
       const branches = part.schema[keyword];
       if (!Array.isArray(branches)) continue;
       branches.forEach((branch, index) => {
-        if (branch?.controls?.active !== undefined) return;
         const path = `${part.schemaPath}/${keyword}/${index}`;
-        const types = inferAllowedTypes(context, branch, path, true);
-        if (!types || types.includes('object') || types.includes('array'))
+        if (
+          branch?.controls?.active !== undefined ||
+          context.discriminatorBranches?.has(path)
+        )
+          return;
+        hasKeywordBranch = true;
+        const types = inferAllowedTypes(context, branch, path, true, stack, true);
+        if (!types)
           return throwBlueprintError(
             BlueprintErrorCode.UnknownJsonSchema,
             path,
             {
               guidance:
-                'Specify type explicitly; untyped branches require explicit primitive types.',
+                'Specify type explicitly for an unconstrained branch.',
             },
             context.options,
           );
-        groups.push(types);
+        if (types.length) groups.push(types);
       });
     }
-    if (groups.length)
+    if (hasKeywordBranch) {
+      hasUngatedBranch = true;
       inferred = intersectAllowedTypes(inferred, unionAllowedTypes(groups));
+    }
   }
-  if (inferred?.length) return inferred;
+  if (inferred?.length) {
+    const kindMask = foldAllowedTypes(inferred);
+    if ((kindMask & 24) !== 0 && kindMask !== 8 && kindMask !== 16)
+      return throwBlueprintError(
+        BlueprintErrorCode.UnknownJsonSchema,
+        schemaPath,
+        {
+          guidance:
+            'Specify type explicitly for object or array branches mixed with another kind.',
+        },
+        context.options,
+      );
+    return inferred;
+  }
+  if (!hasUngatedBranch && !isBranch) {
+    const literals = inferLiteralTypes(context, parts, schemaPath);
+    if (literals) return literals;
+  }
   if (allowTop && inferred === undefined) return undefined;
   return throwBlueprintError(
     BlueprintErrorCode.UnknownJsonSchema,
     schemaPath,
     {
       guidance:
-        'Specify type explicitly; no nonempty primitive branch union determines this slot.',
+        'Specify type explicitly; no nonempty branch union or primitive literal determines this slot.',
     },
     context.options,
   );

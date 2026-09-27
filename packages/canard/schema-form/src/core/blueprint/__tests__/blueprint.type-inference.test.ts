@@ -72,19 +72,25 @@ describe('blueprint untyped primitive branches', () => {
       ['string', 'number'],
       true,
     ],
+    [
+      'E16',
+      { oneOf: [{ type: 'object' }, { type: 'object' }] },
+      'object',
+      'object',
+      false,
+    ],
   ] as const)('%s', (_id, schema, kind, schemaType, nullable) => {
     expect(blueprint(schema).root).toMatchObject({
       kind,
       schemaType,
       nullable,
-      strategy: 'terminal',
+      strategy: kind === 'object' ? 'branch' : 'terminal',
     });
   });
 
   it.each([
     ['E14', { anyOf: [{ const: 'a' }, { type: 'number' }] }],
     ['E15', { anyOf: [{ type: 'object' }, { type: 'string' }] }],
-    ['E16', { oneOf: [{ type: 'object' }, { type: 'object' }] }],
   ] as const)('%s requires explicit type guidance', (_id, schema) => {
     expect(() => blueprint(schema)).toThrow(
       expect.objectContaining({

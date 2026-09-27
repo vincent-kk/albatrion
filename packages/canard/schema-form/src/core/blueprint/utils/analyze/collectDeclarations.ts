@@ -89,6 +89,11 @@ export const collectDeclarations = (
     input.schema,
     input.schemaPath,
   );
+  if (discriminators.size) {
+    context.discriminatorBranches ??= new Set<string>();
+    for (const branchPath of discriminators.keys())
+      context.discriminatorBranches.add(branchPath);
+  }
   const stack = [...visiting, input.schemaPath];
   if (typeof schema.$ref === 'string') {
     const target = resolveReference(context, schema.$ref, input.schemaPath);

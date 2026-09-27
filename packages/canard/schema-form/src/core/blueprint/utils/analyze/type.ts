@@ -44,5 +44,7 @@ export interface AnalysisContext {
   declarationOwners: Map<number, number>;
   templates: Map<string, MutableNode[]>;
   constructing: Map<string, MutableNode[]>;
+  /** Authored branch locations converted into explicit discriminator gates. */
+  discriminatorBranches?: Set<string>;
   dependencies: Record<string, number[]>;
 }
