@@ -15,6 +15,7 @@ Planning method: 저장소 지침 — `PLAN.md` §2와 `plan/prompts.md`의 단�
   1. 원장 검사 전부 0 — **닫힘**. `HANDOFF.md` §4의 명령 전부: `verbatim` 0, `sup` 0, `ref` 0, 소유자 답 242/242, 분할 포인터 0, 문장 검사 17영역 모두 missing 0·bad 0, 토큰 잔여 488(기준과 같음), `plan-links` 0.
   2. 설계문서의 절 구성에 소유자 이견이 없는지 — 첫 문서 `design/02`의 개요와 초안으로 확인한다. **U2가 끝나면 멈추고 묻는다.**
 - 소유자 결정(2026-09-27): 대상 단계 01. 문서는 opus 에이전트가 쓰고, 검사 도구는 codex가 짜고, 외부 해상도 대조는 codex·antigravity 둘. 절 단위 통과는 02만 U2 뒤에 멈춰 받고, 나머지 일곱은 PR 리뷰에서 받는다.
+- 소유자 결정(2026-09-28, 착수 전 확인 2 닫힘): `design/02`의 절 구성과 형식대로 잇는다. PR까지 묻지 않고 진행한다. 분담은 "단순 실행은 sonnet·antigravity, 복잡한 구성은 opus·codex"다. U3부터 개요와 조각 작성은 codex가 맡는다. 조각마다의 두 방향 대조는 antigravity가 전수로 하고, opus verifier가 그 지적을 거르며 위험 자리와 범위 전체를 직접 읽어 판정한다. 고침은 sonnet worker가 적용한다. codex·antigravity가 세션 scratchpad를 읽지 못하므로 작업 파일(개요, 조각 원고, 브리프, 대조 기록)은 git이 무시하는 `.seiri/tasks/schema-form-01-design-docs/work/`에 둔다.
 
 ## 1. 목표와 완료 기준
 
@@ -117,7 +118,7 @@ Planning method: 저장소 지침 — `PLAN.md` §2와 `plan/prompts.md`의 단�
 | U0 | `PLAN.md` §3 01 `진행`, §5 한 줄, 이 `log.md` | `plan-links` 0 | 이 기록이 현행 아닌 ID를 인용 | PROCESS-067 | 이 세션 |
 | U1 | `doc-coverage.mjs`, `lib.mjs`의 `TOKEN_PATTERNS`, `tokens.mjs` 가져오기 | 픽스처 기대값, `tokens.mjs` 출력 불변, 기존 검사 0 | 명세의 빈칸 | PROCESS-051, LANDING-060 | codex → verifier |
 | U2 | `design/02-node-and-value.md` | 개요 `outline ok`, `--areas NODE,VALUE,WRITE` 0, 조각마다 verifier PASS, **소유자의 절 구성 확인** | WRITE 46k자 | NODE, VALUE, WRITE 영역, PROCESS-007, PROCESS-023 | opus(개요 하나 + 조각 다섯 남짓) → verifier |
-| U3 | `design/01-schema-to-blueprint.md`, `design/03-settle-and-events.md` | 같음 | union 절의 묶음 | SCHEMA, BLUEPRINT, FRAGMENT, SETTLE, EVENT 영역 | 같음 |
+| U3 | `design/01-schema-to-blueprint.md`, `design/03-settle-and-events.md` | 같음 | union 절의 묶음 | SCHEMA, BLUEPRINT, FRAGMENT, SETTLE, EVENT 영역 | codex(개요·조각) → antigravity(전수 대조) → verifier(판정) → worker(고침) |
 | U4 | `design/05-validation-and-errors.md`, `design/04-controls.md` | 같음 | ERROR 65k자 | VALIDATE, ERROR, CONTROLS 영역 | 같음 |
 | U5 | `design/06-react-and-surface.md`, `design/07-landing-and-tests.md`, `design/00-goals-and-values.md` | 같음, 끝에 `design/*.md` 전체 0 | LANDING 61k·TEST 58k자, EVENT-073 이름 | REACT, SURFACE, LANDING, TEST, GOAL, PROCESS 영역 | 같음 |
 | U6 | `adr-next/` 아래 새 ADR 0001–0017 | `design/*.md adr-next/*.md` 0, verifier PASS | 소속 목록 | PROCESS-061, LANDING-068 | opus 넷 → verifier |
@@ -208,6 +209,8 @@ Planning method: 저장소 지침 — `PLAN.md` §2와 `plan/prompts.md`의 단�
 | 2026-09-28 | U2 | 고침 1차(opus: 조각 01·03 FAIL 여섯, 원장 판정 아홉) → 조각 verifier 2차 다섯(02·04·05 FAIL, 06 조건부, 01·03 재확인 FAIL) → 고침 2차(worker, 약 스물다섯) → 원장 관리 세션 판정 열다섯과 21라운드(WRITE-100) → 고침 3차(이 세션) → 재확인 verifier PASS | G9 `DOC02_OK`(149항목), G10 충족 |
 | 2026-09-28 | U2 | WRITE-100의 게이트 줄은 원장 관리 세션이 "시험 문서 몫"이라 했으나 `design/02`에 싣는다: 게이트 줄은 결정이고(`HANDOFF.md` §3), 규칙 2는 결정 문장을 모두 옮기며, 같은 문서의 게이트를 가진 다른 열두 항목도 실었다 | 원장 관리 세션에 알림 |
 | 2026-09-28 | U2 | **멈춤(착수 전 확인 2, G12).** 소유자에게 묻는 것: (1) `design/02`의 절 구성(3장 25절)과 형식(문장 끝 원장 ID, 규칙 6 부분 적용, 게이트 줄 수록, 통과 표는 `###` 절마다), (2) U3부터의 분담을 codex 작성·antigravity 전수 대조·opus verifier 판정으로 바꾸는 안 | 답을 기다림 |
+| 2026-09-28 | U2 | 소유자 답: 절 구성과 형식을 그대로 잇고, 분담을 바꿔 PR까지 묻지 않고 진행한다(§0) | G12 충족 |
+| 2026-09-28 | U3·U4 | 작업 폴더 `.seiri/tasks/schema-form-01-design-docs/work/`(브리프 넷: 개요·작성·대조·판정, 고침 하나), codex 넷이 개요 01·03·05·04를 병렬로 씀. 원장 관리 세션이 분담과 WRITE-100 게이트 줄 수록에 동의 | 개요 진행 |
 
 ### 재개 메모 (2026-09-28, U2 중간)
 
