@@ -1,23 +1,21 @@
-# getDerivedValueFactory
+# getDerivedValueFactory — 파생 값의 타입 보존
 
 ## Purpose
 
-JSON Schema의 `computed.derived` / `&derived` 표현식을 파싱하여 의존성 값 배열로부터 파생 값을 계산하는 `DynamicFunction` 을 생성한다. 활성 노드에서 값을 자동으로 덮어쓰는 데 사용된다.
+`computed.derived` 또는 `&derived`를 의존성 값에서 파생 값을 얻는 함수로 만듭니다. 노드 값에 적용하는 시점은 `AbstractNode`가 결정하며 이 팩토리는 값을 적용하지 않습니다.
 
 ## Conventions
 
-- TypeScript strict 모드
-- 반환 타입: `DynamicFunction<any> | undefined`
-- `computed.derived` 우선, `&derived` alias 폴백
-- `createDynamicFunction` 에 `coerceToBoolean: false` 로 위임 (값 타입 보존)
-- `AbstractNode` 에서 `isDerivedDefined` 체크 후 `getDerivedValue()` 호출
+- 명시적 `computed.derived`가 있으면 `&derived`보다 먼저 사용합니다. 앞선 설정이 없을 때만 별칭을 읽습니다.
+- 파생 값은 boolean 상태가 아니므로 `createDynamicFunction`의 boolean 강제 변환을 끕니다. 숫자·문자열·객체 결과를 원래 타입으로 유지합니다.
+- 표현식이 없으면 함수를 만들지 않습니다. 노드는 정의 여부를 확인한 뒤 현재 의존성으로 `getDerivedValue()`를 평가합니다.
 
 ## Boundaries
 
 ### Always do
 
-- `coerceToBoolean: false` 를 유지 (derived는 boolean이 아닌 임의 타입 반환)
-- undefined expression 은 `undefined` 반환 (createDynamicFunction에 위임)
+- derived 컴파일에서 boolean 강제 변환을 끕니다.
+- 표현식이 없으면 `undefined`를 반환합니다.
 
 ### Ask first
 
@@ -25,5 +23,5 @@ JSON Schema의 `computed.derived` / `&derived` 표현식을 파싱하여 의존�
 
 ### Never do
 
-- `coerceToBoolean: true` 로 컴파일 (derived 표현식 값 손실)
-- `ComputedPropertiesManager` 외부에서 직접 호출
+- derived 표현식을 boolean으로 강제 변환하지 않습니다.
+- `ComputedPropertiesManager` 외부에서 이 팩토리를 직접 호출하지 않습니다.

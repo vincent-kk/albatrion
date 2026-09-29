@@ -1,5 +1,7 @@
 import { isArray } from '@winglet/common-utils/filter';
 
+import type { PathManager } from '@/schema-form/core/blueprint';
+import type { DynamicFunction } from '@/schema-form/core/blueprint';
 import { JSONSchemaError } from '@/schema-form/errors';
 import { formatConditionIndicesError } from '@/schema-form/helpers/error';
 import type {
@@ -8,8 +10,7 @@ import type {
   PartialJSONSchema,
 } from '@/schema-form/types';
 
-import type { PathManager } from '../getPathManager';
-import type { ConditionIndexName, DynamicFunction } from '../type';
+import type { ConditionIndexName } from '../type';
 import { extractConditionInfo } from './utils/extractConditionInfo';
 
 type GetConditionIndices = DynamicFunction<number[]>;

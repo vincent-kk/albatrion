@@ -1,7 +1,7 @@
+import { createDynamicFunction } from '@/schema-form/core/blueprint';
+import type { PathManager } from '@/schema-form/core/blueprint';
 import type { JSONSchemaWithVirtual } from '@/schema-form/types';
 
-import { createDynamicFunction } from '../createDynamicFunction';
-import type { PathManager } from '../getPathManager';
 import { ALIAS, type ConditionFieldName } from '../type';
 
 /**

@@ -108,7 +108,9 @@ export class StringNode extends AbstractNode<StringSchema, StringValue> {
     this.setValue(input);
   }
 
-  constructor(properties: SchemaNodeConstructorProps<StringSchema>) {
+  constructor(
+    properties: SchemaNodeConstructorProps<StringSchema, StringValue>,
+  ) {
     super(properties);
     this.onChange =
       this.jsonSchema.options?.omitEmpty !== false

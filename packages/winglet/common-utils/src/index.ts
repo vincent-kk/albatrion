@@ -1,3 +1,5 @@
+export type { MergeOptions } from './utils/object';
+
 export {
   VOID_FUNCTION,
   NULL_FUNCTION,

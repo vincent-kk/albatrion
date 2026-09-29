@@ -86,7 +86,9 @@ export class BooleanNode extends AbstractNode<BooleanSchema, BooleanValue> {
     this.setValue(input);
   }
 
-  constructor(properties: SchemaNodeConstructorProps<BooleanSchema>) {
+  constructor(
+    properties: SchemaNodeConstructorProps<BooleanSchema, BooleanValue>,
+  ) {
     super(properties);
     if (this.defaultValue !== undefined) this.__emitChange__(this.defaultValue);
     this.__initialize__();

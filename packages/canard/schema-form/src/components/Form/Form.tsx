@@ -23,6 +23,7 @@ import {
 
 import type { Fn, Parameter } from '@aileron/declare';
 
+import { preprocessSchema } from '@/schema-form/__legacy__/helpers/jsonSchema/preprocessSchema';
 import {
   type InferSchemaNode,
   NodeEventType,
@@ -30,7 +31,6 @@ import {
 } from '@/schema-form/core';
 import { ValidationError } from '@/schema-form/errors';
 import { formatSchemaValidationFailedError } from '@/schema-form/helpers/error';
-import { preprocessSchema } from '@/schema-form/helpers/jsonSchema';
 import {
   FormTypeInputsContextProvider,
   FormTypeRendererContextProvider,
