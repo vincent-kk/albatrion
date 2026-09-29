@@ -46,7 +46,7 @@
 | --- | --- | --- | --- | --- |
 | 우산 | `1.0.0-beta` → `master` | 진행 | [#344](https://github.com/vincent-kk/albatrion/pull/344) | 초안. 09 머지 뒤 `master`로 |
 | 00 | 설계 원장·개발계획 | 머지 | [#345](https://github.com/vincent-kk/albatrion/pull/345), [#346](https://github.com/vincent-kk/albatrion/pull/346) | 원장 1,336항목·검사 0, 계획서 디렉토리 열 개 |
-| 01 | 설계문서 | 진행 | — | 브랜치 `docs/schema-form-design-docs`(push 안 함). 2026-09-28 재개. `design/02` 커밋, 소유자가 절 구성과 형식을 확인(2026-09-28). U3–U5 진행. 실행 계획과 기록은 [log](plan/01-design-docs/log.md) |
+| 01 | 설계문서 | 리뷰 | [#348](https://github.com/vincent-kk/albatrion/pull/348) | 설계문서 8편(`design/`)과 ADR 0001–0017(`adr/`), 옛 문서는 `_archive/2026-09-29/`. HANDOFF §4 검사 전부 0, 해상도 대조 거른 새 지적 0. 소유자 절 단위 통과 대기(문서 머리의 표). 실행 계획과 기록은 [log](plan/01-design-docs/log.md) |
 | 02 | 기반 + 청사진 | 머지 | [#347](https://github.com/vincent-kk/albatrion/pull/347) | 전체 4,437시험·lint·strict·빌드 통과. 19라운드 원장 해소와 TEST-079 반영, 내부 Codex 대조 완료. Filid 잔여 발견은 기록했고 Antigravity 외부 확인은 자동 승인 검토가 거절함 |
 | 03 | 노드 트리·정착 | 대기 | — | 02 뒤 |
 | 04 | 파생 + 상태 키·제어 | 대기 | — | 03 뒤, 05·06과 병렬 |
@@ -66,7 +66,7 @@
 
 ## 4. 다음 할 일
 
-1. **01 설계문서 착수(03과 병렬)** — `docs/schema-form-design-docs`. `design/02-node-and-value.md`부터(의존이 큰 것부터: 02 → 01 → 03 → 05 → 04 → 06 → 07 → 00).
+1. **01 설계문서 리뷰** — PR [#348](https://github.com/vincent-kk/albatrion/pull/348). 소유자가 여덟 편을 절 단위로 통과시키고 문서 머리의 표에 날짜를 적는다. 통과 중 나온 새 결정은 원장에 새 라운드 항목으로 먼저 들어가고 문서가 따라간다(`plan/01-design-docs/verification.md`).
 2. **D-1 권장안** — 05 착수 전에 올린다. 권장은 `request(kind, payload?)` 하나에 명령 종류를 문자열 리터럴 합집합 `'focus' | 'select' | 'refresh' | 'remount'`로, `FormHandle`은 같은 모양 `request(path, kind, payload?)` 하나로 합치는 것(겉면 수 약 57 → 약 54). 소유자가 정한다.
 3. **03 노드 트리·정착 착수** — 02가 머지되어 의존이 풀렸다. 03 머지 뒤 04·05·06 병렬.
 
@@ -92,3 +92,4 @@
 | 2026-09-27 | 02 PR #347 머지 확인. 03의 의존이 풀림 | `3d94a046f` |
 | 2026-09-28 | 01 설계문서 착수. 소유자 결정: 문서는 opus, 검사 도구는 codex, 외부 대조는 codex·antigravity, 절 통과는 02만 멈춰 받고 나머지는 PR 리뷰에서. 실행 계획은 verifier·원장 관리 세션의 계획 검증을 거쳐 `cleared` | `docs/schema-form-design-docs`, `plan/01-design-docs/log.md` |
 | 2026-09-28 | 20라운드 — 01 형식 검증이 찾은 표기 빈틈(PROCESS-023의 옛 근거 표기 대 새 문서의 원장 ID)을 편집자 결정으로 닫음: 새 설계문서·ADR은 문장 끝 괄호 안에 원장 ID(PROCESS-068). 소유자 답 없음 | `reviews/round-20-closing.md` |
+| 2026-09-29 | 01 설계문서 PR을 엶: 설계문서 8편과 ADR 0001–0017을 원장에서 옮기고(21·22·23라운드는 작성 중의 원장 물음), 해상도 대조 두 차례(거른 새 지적 0), 옛 문서를 `_archive/2026-09-29/`로 옮김. 어긋남 15건은 log §6 | [#348](https://github.com/vincent-kk/albatrion/pull/348), `plan/01-design-docs/log.md` |
