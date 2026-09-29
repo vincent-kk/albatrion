@@ -139,6 +139,8 @@
   > "형상에 없는 노드의 규칙(`controls.derived` 등)은 평가하지 않는다." (`08-design-a-to-z.md:167`)
   > "나가는 객체·분기에 켠 정책은 함께 나가는 하위 트리로 내려가고, 자손이 스스로 적은 선언이 가까운 순서로 이긴다(17라운드 소유자 답 R17-2 ㄴ, 원장 §3)." (`02-target-overview.md:150`)
   > 소유자(13라운드 답 2): "onChange 로 넘어가는 값(방출 표현값)에서 지워지는게 기본값이면 된다." (`reviews/round-13-owner-answers.md:8`)
+  > 편집자 결정(26C-08): "【추론】 `active` 게터는 그 노드가 형상에 있는가(선언한 조각이 켜져 있고 노드 자신의 `controls.active`가 거짓이 아님, VALUE-006)를 읽는 멤버이므로, 살아 있는(형상 안) 노드에서는 늘 참이다." (`reviews/round-26-closing.md:87`)
+  > 편집자 결정(26C-08): "【추론】 떼어진 노드의 `active`는 거짓이다: 떼어짐은 형상을 떠난 것이고, 이 멤버는 `rootNode`·`globalState`·`globalErrors`처럼 살아 있는 트리의 사실을 읽는 NODE-044 고정 규칙의 예외다." (`reviews/round-26-closing.md:88`)
 - 상태: 현행
 - 출처: `adr/0006-single-value-ownership.md:48-51`(정본), `02-target-overview.md:150`, `03-mental-model.md:72`, `08-design-a-to-z.md:167`, `adr/0002-guard-fragment-model.md:68`, `adr/0003-group-namespace.md:82`
 - 닫은 사람: 원리(`03-mental-model.md:72` P4), 소유자 답(`reviews/round-13-owner-answers.md:8` 2 나감 비움 기본값), 소유자 답(`reviews/round-13-owner-answers.md:17` 나감 정책 키 이름), 소유자 답(`reviews/round-17-owner-answers.md:10` R17-2, 보충의 하위 트리 문장), 소유자 답(`reviews/round-13-owner-answers.md:16` Form 속성의 자리)

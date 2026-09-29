@@ -698,7 +698,10 @@
   > 【추론】 노드가 다시 형상에 들면 새 인스턴스를 만든다("재탄생은 새 삶", `08-design-a-to-z.md:316`).
   > 【추론】 옛 참조는 떼어진 채로 남는다.
   > 【추론】 `SCHEMA_FORM_ERROR.DISPOSED_NODE_WRITE`(가칭)는 재생성 `reset`이 버린 트리의 노드에 대한 쓰기에만 남긴다.
-- 보충: 없음
+- 보충:
+  > 편집자 결정(26C-08): "【추론】 `active` 게터는 그 노드가 형상에 있는가(선언한 조각이 켜져 있고 노드 자신의 `controls.active`가 거짓이 아님, VALUE-006)를 읽는 멤버이므로, 살아 있는(형상 안) 노드에서는 늘 참이다." (`reviews/round-26-closing.md:87`)
+  > 편집자 결정(26C-08): "【추론】 떼어진 노드의 `active`는 거짓이다: 떼어짐은 형상을 떠난 것이고, 이 멤버는 `rootNode`·`globalState`·`globalErrors`처럼 살아 있는 트리의 사실을 읽는 NODE-044 고정 규칙의 예외다." (`reviews/round-26-closing.md:88`)
+  > 편집자 결정(26C-08): "【추론】 조각 게이트가 꺼져 떼어진 경우도 같으며(노드 게이트 값이 아니라 형상 여부를 읽는다), 노드가 다시 형상에 들어도 옛 참조의 `active`는 거짓인 채다(새 인스턴스가 참이다)." (`reviews/round-26-closing.md:89`)
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:943-959`(정본)
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-34)
