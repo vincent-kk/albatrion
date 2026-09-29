@@ -22,8 +22,6 @@ const CONSTRAINT_KEYS = [
   'maxItems',
   'minProperties',
   'maxProperties',
-  'minContains',
-  'maxContains',
 ];
 
 /**

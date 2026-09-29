@@ -128,32 +128,28 @@ const TYPE_CELLS: readonly (readonly [string, BlueprintSchema])[] = [
   ],
 ];
 
+const expectInvariant = (label: string, schema: BlueprintSchema) => {
+  for (const node of blueprint(schema).nodes) {
+    expect(
+      Array.isArray(node.schemaType),
+      `${label} ${node.schemaPath}`,
+    ).toBe(node.kind === 'union');
+    if (Array.isArray(node.schemaType))
+      expect(
+        Object.isFrozen(node.schemaType),
+        `${label} ${node.schemaPath} frozen`,
+      ).toBe(true);
+  }
+};
+
 // filid:contract type-schema-type-invariant
 describe('blueprint schemaType invariant on every corpus cell', () => {
-  const expectInvariant = (label: string, schema: BlueprintSchema) => {
-    for (const node of blueprint(schema).nodes) {
-      const isUnion = node.kind === 'union';
-      expect(
-        Array.isArray(node.schemaType),
-        `${label} ${node.schemaPath}`,
-      ).toBe(isUnion);
-      if (Array.isArray(node.schemaType))
-        expect(Object.isFrozen(node.schemaType), label).toBe(true);
-    }
-  };
+  it('holds array schemaType only for union, and frozen, on every E1–E42 cell', () => {
+    for (const [id, schema] of TYPE_CELLS) expectInvariant(id, schema);
+  });
 
-  it.each(TYPE_CELLS)(
-    '%s: array schemaType only for union, and frozen',
-    (id, schema) => {
-      expectInvariant(id, schema);
-    },
-  );
-
-  it.each([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13])(
-    'generator corpus sample %i: array schemaType only for union, and frozen',
-    (index) => {
-      expect(corpus).toHaveLength(14);
-      expectInvariant(corpus[index].id, corpus[index].root);
-    },
-  );
+  it('holds array schemaType only for union, and frozen, on every generator corpus schema', () => {
+    expect(corpus).toHaveLength(14);
+    for (const sample of corpus) expectInvariant(sample.id, sample.root);
+  });
 });

@@ -52,6 +52,10 @@
 
 - BLUEPRINT-045 E25–E27·E40–E42 및 WRITE-099 보충을 만족합니다. E26의 좁혀지지 않은 유효 목록은 배열이 아닌 scalar schemaType 그 값입니다. 정적 선언이 없는 이름의 무게이트 분기 fold 충돌을 검증합니다.
 
+### type-schema-type-invariant — schemaType 불변식
+
+- TEST-077에 따라 E1–E42 중 구성되는 모든 칸과 TEST-067(b) 코퍼스 14종의 모든 청사진 노드에서 `Array.isArray(schemaType)`은 union일 때만 참이고 배열 schemaType은 동결임을 검증합니다. 노드와 배열 아이템의 같은 참조는 노드 엔진 단계의 몫입니다.
+
 ### fragment-declarations — 조각과 공유
 
 - 선언·연언 문맥, 모든 키워드 전순서, 노드 공유, 상속 overlay 귀속과 가상 fields 순서 일치를 검증합니다.

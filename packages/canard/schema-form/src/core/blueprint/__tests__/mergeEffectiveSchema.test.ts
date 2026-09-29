@@ -498,6 +498,15 @@ describe('mergeEffectiveSchema', () => {
         ).not.toThrow();
     });
 
+    it('passes minContains/maxContains through to the merged schema unchanged', () => {
+      const schema = mergeEffectiveSchema(
+        createEffectiveSchemaNode([{ minContains: 5, maxContains: 2 }]),
+        [],
+        staticMode,
+      ).schema;
+      expect(schema).toMatchObject({ minContains: 5, maxContains: 2 });
+    });
+
     it('still rejects an empty intersection of two enum contributions', () => {
       for (const pair of [
         [{ enum: [1] }, { enum: [2] }],

@@ -181,7 +181,8 @@ describe('blueprint gated and declaration-only types', () => {
         .map((declaration) => declaration.id);
       mergeEffectiveSchema(node, gated);
       expect(node.schemaType).toBe(before);
-      expect((mergeEffectiveSchema(node, []).schema as any).type).toBe(before);
+      const schema = mergeEffectiveSchema(node, []).schema;
+      expect(typeof schema === 'object' && schema.type).toBe(before);
     },
   );
 
@@ -191,9 +192,8 @@ describe('blueprint gated and declaration-only types', () => {
       properties: { a: { type: ['string', 'number'] } },
       oneOf: [{ properties: { a: { type: 'string' } } }],
     }).root.childEntries[0].node;
-    expect((mergeEffectiveSchema(node, []).schema as any).type).toBe(
-      node.schemaType,
-    );
+    const schema = mergeEffectiveSchema(node, []).schema;
+    expect(typeof schema === 'object' && schema.type).toBe(node.schemaType);
     expect(node).toMatchObject({ kind: 'union', strategy: 'terminal' });
   });
 
