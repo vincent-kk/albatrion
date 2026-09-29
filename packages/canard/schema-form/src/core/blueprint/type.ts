@@ -29,8 +29,10 @@ export interface BlueprintGate {
   readonly kind: 'if' | 'active' | 'discriminator';
   /** Authored location of the condition. */
   readonly schemaPath: string;
-  /** Data host from which relative expressions are evaluated. */
+  /** First template host; settlement rebinds it for each live occurrence. */
   readonly hostPath: string;
+  /** Absolute read paths or relative parent-climb counts; context reads are excluded. */
+  readonly evaluationReads: readonly (string | number)[];
   /** Original schema, expression, or discriminator descriptor. */
   readonly condition: unknown;
   /** Select the complementary if branch without executing it. */

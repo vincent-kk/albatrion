@@ -1,5 +1,6 @@
 import type {
   BlueprintChildEntry,
+  Blueprint,
   BlueprintGate,
   BlueprintNode,
   BlueprintNodeKind,
@@ -122,8 +123,35 @@ interface SchemaNodeRootRuntimeState {
   inactiveValuesMemo: Map<string, readonly { path: string; value: unknown }[]>;
 }
 
+/** Structured warning emitted when a committed raw value misses its effective type. */
+export interface TypeMismatchRecord {
+  readonly level: 'warning';
+  readonly code: string;
+  readonly path: string;
+  readonly expected: {
+    readonly schemaType: BlueprintSchemaType;
+    readonly nullable: boolean;
+    readonly effective: BlueprintSchemaType;
+  };
+  readonly received: 'string' | 'number' | 'integer' | 'nonFinite' | 'boolean' |
+    'null' | 'object' | 'array' | 'other';
+  readonly reason: 'unconvertible' | 'ambiguous';
+  readonly candidates?: readonly string[];
+  readonly source: string;
+}
+
 /** Minimal per-tree slots consumed by the first settlement engine. */
 export interface SchemaNodeRuntime<Self> extends SchemaNodeRootRuntimeState {
+  /** Required real analysis shared by this tree and its settlement engine. */
+  blueprint: Blueprint;
+  /** Number of completed synchronous settlement calls. */
+  commitNumber?: number;
+  /** Last non-load write's refresh paths, committed as one batch. */
+  refreshTargets?: Set<string>;
+  /** Newly lit mismatch records in the last committed batch. */
+  typeMismatchRecords?: readonly TypeMismatchRecord[];
+  /** Commit-scoped subtree mismatch path lists. */
+  typeMismatchesMemo?: Map<string, { commit: number; paths: readonly string[] }>;
   /** Synchronous predicates for authored if gates. */
   ifPredicates: ReadonlyMap<BlueprintGate, (gateInput: unknown) => boolean>;
   /** Settlement health retained until a form-level load. */

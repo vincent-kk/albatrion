@@ -18,7 +18,8 @@ interface PathNode {
 
 /** Build a plain record with all required slots and no engine implementation. */
 const makeRecord = (): SchemaNodeRecord<PathNode> => {
-  const blueprintNode = blueprint({ type: 'object' }).root;
+  const analysis = blueprint({ type: 'object' });
+  const blueprintNode = analysis.root;
   return {
     behavior: {
       interpret: (input) => input,
@@ -30,6 +31,7 @@ const makeRecord = (): SchemaNodeRecord<PathNode> => {
       strategy: 'branch',
     },
     runtime: {
+      blueprint: analysis,
       ifPredicates: new Map(),
       diagnostics: { status: 'stable' },
       budgets: { hostWheel: 1, transition: 1 },

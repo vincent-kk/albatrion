@@ -59,6 +59,9 @@ Planning method: 저장소 지침 — `PLAN.md` §2와 `plan/prompts.md`의 단�
 | 2026-09-29 | U2 | G5 1차(antigravity) FAIL: 차단 둘(런타임 `entryDepth`는 PR-4 기제, 런타임 칸 다섯의 원장 근거), 비차단 하나(objectBehavior DETAIL의 배열 행 문장 오기). 조율 판정: `entryDepth`·런타임 `rootNode` 삭제, 배열 행 문장 삭제를 받아들임. 나머지 넷(`loadSnapshot`·`latentRaw`·`typeMismatchPaths`·`inactiveValuesMemo`)은 원장 관리자 질의 → 26C-06으로 런타임 칸 확정(루트 전용 레코드 필드 없음). 문서 수정은 U3 codex가 코드보다 먼저 함 | 원장 `6330c8854` (`reviews/round-26-closing.md:61-70`) |
 | 2026-09-29 | U3 | codex(세션 `103916e7`)가 record·navigation·레거시 import 금지 설정을 씀. 편차 둘을 조율 세션이 받아들이고 DETAIL을 먼저 맞춤(navigation `origin: Self`, `updateSchemaNodeNameAndPath`의 `Self` 제약). 조율 세션이 navigation 뿌리의 구현 셋을 `utils/query/`·`utils/walk/`로 옮김(filid 뿌리 규칙). G6(15시험)·G30·tsc·eslint 통과(조율 세션 재실행). G5 재대조 antigravity PASS | `9a1cbfb92`, `fde2bc543` |
 | 2026-09-29 | U4 | codex(세션 `258b196e`)가 parse(규칙 A)와 행 여덟·`BEHAVIORS`를 씀. 중간 질의: objectBehavior DETAIL의 "활성 자식 선언만"은 NODE-006 "자식 선언 목록만"보다 나감 → 조율 판정 (a) 선언 전부를 돌려주고 게이트 거르기는 settle(D3). 할당 0 시험은 쓰기 경로의 명시적 생성 부재만 봄(실행 힙 측정 아님). G7(17시험)·tsc·eslint 통과(조율 세션 재실행) | `e89acea25`, 이 커밋 |
+| 2026-09-29 | U5 | 소유자 지시: PR 작성까지 이번 단계를 끝낸다. 견고·무결을 우선하고 핵심 가치 다섯(GOAL-049 일관성·투명성·예측가능성·표현자유도, GOAL-050 고속성)을 보장하며 원장에서 벗어나지 않는다. 조율 세션의 운용: U5부터 단위마다 antigravity가 코드를 원장·다섯 가치와 대조하고, 조율 세션이 게이트를 다시 돌린 뒤 커밋한다. 원장 모호는 원장 관리자에게 묻는다. PR 전 독립 verifier 판정을 한 번 더 받는다 | 이 기록 |
+| 2026-09-29 | U3·U4 | antigravity 코드 대조 `CODE-U3U4: PASS`(차단 0). 비차단 하나(포인터 생략 시 throw)를 옛 `find(pointer?)` 호출 모양 계승으로 받아들여 DETAIL 먼저 고침 | `fcfd22df8` |
+| 2026-09-29 | U5 | codex(세션 `6a71468e`)가 청사진 L·if 대역·정착 ①·WRITE-099 E26 시나리오를 씀. 조율 세션 재실행 G8·G9·G24·G28 통과, core 74파일·620시험 초록. 열린 문제: 유한 재귀 템플릿의 게이트는 발생마다 L이 다름 → 원장 관리자 질의 → 26C-07: 청사진은 읽는 경로 목록(절대 그대로, 상대는 오르는 단 수)만 정적으로 들고, 발생별 L은 settle이 노드 생성 때 한 번 계산해 메모. 이에 따라 codex의 템플릿 연결별 재생성(BLUEPRINT-030 "위치마다 한 번")은 되돌린다 | 원장 `8c510d226` (`reviews/round-26-closing.md:72-82`) |
 
 ## 3. 다음 행동
 

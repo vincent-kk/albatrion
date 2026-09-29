@@ -3,6 +3,7 @@ import { escapeSegment } from '@winglet/json/pointer';
 import type { BlueprintChildEntry } from '../../type';
 import { BlueprintErrorCode } from '../diagnostics/constant';
 import { throwBlueprintError } from '../diagnostics/throwBlueprintError';
+import { createBlueprintGate } from './createBlueprintGate';
 import { populateVirtualNodes } from './populateVirtualNodes';
 import { readSchemaObject } from './readSchemaObject';
 import type { AnalysisContext, MutableNode, SchemaInput } from './type';
@@ -36,7 +37,7 @@ export const populateNodeChildren = (
         gate:
           entry.controls?.active === undefined
             ? undefined
-            : Object.freeze({
+            : createBlueprintGate({
                 kind: 'active' as const,
                 schemaPath: `${owner.schemaPath}/controls/children/${index}/controls/active`,
                 hostPath: node.path,
@@ -153,7 +154,7 @@ export const populateNodeChildren = (
           gates: Object.freeze(
             declaration.gates.map((gate) =>
               gate.hostPath === child.path
-                ? Object.freeze({ ...gate, hostPath: path })
+                ? createBlueprintGate({ ...gate, hostPath: path })
                 : gate,
             ),
           ),

@@ -4,6 +4,7 @@ export type {
   UnionSpec,
   SchemaNodeFactory,
   SchemaNodeRuntime,
+  TypeMismatchRecord,
 } from './type';
 export { updateSchemaNodeNameAndPath } from './utils/updateSchemaNodeNameAndPath';
 export { patchSchemaNodeInteractionState } from './utils/patchSchemaNodeInteractionState';

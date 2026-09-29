@@ -1,6 +1,7 @@
 import type { BlueprintGate, PropertyDeclaration } from '../../type';
 import { validateControlGroups } from '../diagnostics/validateControlGroups';
 import { readAllowedTypes } from '../types/readAllowedTypes';
+import { createBlueprintGate } from './createBlueprintGate';
 import { readDiscriminatorBranches } from './readDiscriminatorBranches';
 import { readSchemaObject } from './readSchemaObject';
 import { resolveReference } from './resolveReference';
@@ -39,7 +40,7 @@ export const collectDeclarations = (
     )
   )
     gates.push(
-      Object.freeze({
+      createBlueprintGate({
         kind: 'active',
         schemaPath: `${input.schemaPath}/controls/active`,
         hostPath: path,
@@ -135,7 +136,7 @@ export const collectDeclarations = (
       const discriminator = discriminators.get(childPath);
       if (discriminator)
         nestedGates.push(
-          Object.freeze({
+          createBlueprintGate({
             kind: 'discriminator',
             schemaPath: childPath,
             hostPath: path,
@@ -144,7 +145,7 @@ export const collectDeclarations = (
         );
       if (keyword === 'then' || keyword === 'else')
         nestedGates.push(
-          Object.freeze({
+          createBlueprintGate({
             kind: 'if',
             schemaPath: `${input.schemaPath}/if`,
             hostPath: path,

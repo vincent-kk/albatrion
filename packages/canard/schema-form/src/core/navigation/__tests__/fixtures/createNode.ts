@@ -5,7 +5,9 @@ import type { SchemaNodeRecord, SchemaNodeRuntime } from '../../../record';
 export interface TestNode extends SchemaNodeRecord<TestNode> {}
 
 /** Immutable analysis template shared by navigation-only records. */
-const template = blueprint({ type: 'object' }).root;
+const analysis = blueprint({ type: 'object' });
+/** Root template owned by the fixture's real analysis. */
+const template = analysis.root;
 
 /** Create a directly linked current-shape record for navigation tests. */
 export const createNode = (
@@ -16,6 +18,7 @@ export const createNode = (
 ): TestNode => {
   const runtime: SchemaNodeRuntime<TestNode> = suppliedRuntime ??
     parent?.runtime ?? {
+      blueprint: analysis,
       ifPredicates: new Map(),
       diagnostics: { status: 'stable' },
       budgets: { hostWheel: 1, transition: 1 },

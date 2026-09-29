@@ -13,10 +13,12 @@ import { getStaticChoices } from '../utils/options/getStaticChoices';
 import { virtualBehavior } from '../virtualBehavior';
 
 /** Stable analyzed object template for calculation-only row fixtures. */
-const OBJECT_TEMPLATE = blueprint({
+const OBJECT_ANALYSIS = blueprint({
   type: 'object',
   properties: { first: { type: 'string' }, second: { type: 'string' } },
-}).root;
+});
+/** Object template of the row fixture's real analysis. */
+const OBJECT_TEMPLATE = OBJECT_ANALYSIS.root;
 
 /** Build a complete record with no engine instance or settlement mutation. */
 const makeRecord = (
@@ -27,6 +29,7 @@ const makeRecord = (
 ): SchemaNodeRecord<unknown> => ({
   behavior,
   runtime: {
+    blueprint: OBJECT_ANALYSIS,
     ifPredicates: new Map(),
     diagnostics: { status: 'stable' },
     budgets: { hostWheel: 1, transition: 1 },
