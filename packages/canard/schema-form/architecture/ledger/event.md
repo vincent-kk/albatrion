@@ -961,6 +961,10 @@
 - 충돌:
   > `reviews/round-18-closing.md:1182`의 "명령 넷은 공개 노드 메서드 `focus()`·`select()`·`refresh()`·`remount()`다"는 소유자 답과 다르다: 명령 넷은 따로 둔 메서드 넷이 아니라 명령 종류를 매개변수로 받는 노드 메서드 하나다(EVENT-073). 소유자 답이 이긴다(`reviews/round-18-owner-answers.md:40`).
   > `reviews/round-18-closing.md:1185`의 "`FormHandle`은 오늘의 `focus(path)`·`select(path)`에 `refresh(path)`·`remount(path)`를 대칭으로 더한다"는 소유자 답과 다르다: `FormHandle` 쪽 대칭 모양(`focus(path)`·`select(path)`를 남길지 같은 모양 하나로 합칠지)은 PR-4 착수 전에 소유자가 정한다(EVENT-073). 소유자 답이 이긴다(`reviews/round-18-owner-answers.md:40`).
+  > `reviews/round-18-closing.md:1183`의 "각 메서드는 그 노드에 요청 사건을 내는 문장 하나이고"는 소유자 답과 다르다: 메서드는 하나이고 명령 종류마다 그 노드에 요청 사건 하나를 내며 원본을 쓰지 않는다(EVENT-073, 뜻은 그대로). 소유자 답이 이긴다(`reviews/round-18-owner-answers.md:40`).
+  > `reviews/round-18-closing.md:1186`의 "넷 모두 `find(path)`한 노드의 메서드를 부르고"는 소유자 답과 다르다: `FormHandle` 쪽 모양은 PR-4 착수 전에 소유자가 정하되, 어느 모양이든 `find(path)`한 노드의 명령 메서드를 부르고 노드가 없으면 아무것도 하지 않는다(EVENT-073). 소유자 답이 이긴다(`reviews/round-18-owner-answers.md:40`).
+  > `reviews/round-18-closing.md:1187`의 "노드의 공개 `publish`와 publish용 공개 사건 형은 두지 않는다"는 소유자 답과 다르다: 임의 사건을 내는 공개 `publish`는 두지 않되, 명령 종류를 매개변수로 받는 메서드 하나의 이름 후보에 명령 사건에 한정한 `publish` 부활이 들고 이름은 PR-4 착수 전에 소유자가 정한다(EVENT-073). 소유자 답이 이긴다(`reviews/round-18-owner-answers.md:40`).
+  > `reviews/round-18-closing.md:1191`의 "`FormHandle`의 둘은 PR-7이다"는 소유자 답과 다르다: `FormHandle`에 더하는 명령 겉면은 모양이 무엇이든 PR-7이며, 그 모양은 PR-4 착수 전에 소유자가 정한다(EVENT-073). 소유자 답이 이긴다(`reviews/round-18-owner-answers.md:40`).
 
 ### EVENT-064 유효 스키마 변경 통지 `UpdateJsonSchema`(가칭) — 메모 참조가 마지막 통지와 다를 때, 생성 때는 없음, payload `{ previous, current }` 참조, 출처 칸 없음, 계산 상태 비트와 분리
 

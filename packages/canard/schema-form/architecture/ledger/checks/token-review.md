@@ -420,3 +420,7 @@ node ledger/checks/tokens.mjs check <목록> ledger/*.md
 ## 21라운드(호출 수준 억제 비트와 포커스 아웃 `trim`) 반영 뒤의 잔여 (2026-09-28)
 
 잔여 488 그대로다. HANDOFF §1의 21라운드 문단이 든 코드 토큰(`onChange(' a ', DisableAutomaticWrites)`, `disableAutomaticWrites`)은 WRITE-100이 그대로 들고 있어 잔여에 더해지지 않았다. 20라운드 반영도 잔여를 바꾸지 않았다(경로 `reviews/round-20-closing.md`는 토큰 규칙에 들지 않는다).
+
+## 22라운드(`resetSubtree()`의 `injectTo` 발화·채움 범위) 반영 뒤의 잔여 (2026-09-29)
+
+잔여 488 그대로다. HANDOFF §1의 22라운드 문단이 든 코드 토큰(`resetSubtree()`, `injectTo`)은 원장이 이미 들고 있다.
