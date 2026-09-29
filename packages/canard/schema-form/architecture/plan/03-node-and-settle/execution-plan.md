@@ -93,7 +93,7 @@ codex는 저장소 작업 트리에 쓴다(`workspace-write`). U4의 행 계약 
 - 옮기는 것(`git mv`, 상대 경로 그대로):
   - `PKG/src/core/nodes` → `PKG/src/__legacy__/core/nodes/`
   - `PKG/src/core/parsers` → `PKG/src/__legacy__/core/parsers/`
-  - `PKG/src/core/__tests__`의 옛 시험과 그 보조(`utils/createValidatorFactory.ts`, `*.fixtures.ts`) → `PKG/src/__legacy__/core/__tests__/`
+  - `PKG/src/core/__tests__`의 옛 시험과 그 보조(`*.fixtures.ts`, 그리고 디렉토리째 `utils/`) → `PKG/src/__legacy__/core/__tests__/`. `utils/`는 디렉토리 단위로 `git mv`해 빈 디렉토리가 남지 않게 한다(G2)
 - 남기는 것: 02의 새 하네스 `PKG/src/core/__tests__/scenarios/`. `src/core/types/*`, `nodeFromJSONSchema.ts`, `index.ts`는 자리를 두고 import만 레거시로 돌린다.
 - 문서 선행: 이동 전에 `src/core/DETAIL.md`에서 `parsers/`의 현재 자리와 레거시 경계·새 fractal의 자리를 먼저 고치고 별도 문서 커밋으로 기록한다(L7). 02의 새 시나리오 하네스는 이동 목록에서 제외한다.
 - 이름으로 새 import를 쓰는 곳은 다음과 같다(2026-09-29 확인). 옛 주소 shim은 두지 않는다(02 선례, `verification/02-foundation-and-blueprint/legacy-migration.md`).
@@ -375,3 +375,4 @@ codex는 저장소 작업 트리에 쓴다(`workspace-write`). U4의 행 계약 
 | 날짜 | 리뷰 | 판정 | 반영 |
 | --- | --- | --- | --- |
 | 2026-09-29 | 1차 독립 검토(`plan-review.md`) | `rework-required` | H1·H2·M1–M8·L1–L9와 고침 명세 1–11을 26C-01–05 기준으로 이 계획·ADR·기록·게이트에 반영. 재리뷰 대기 |
+| 2026-09-29 | 2차 범위 한정 재검토(antigravity, `f65cb79a8` 기준, 세션 `a50af48e`) | `rework-required` → 조율 세션 판정 `cleared` | 1차 지적 19건 모두 고쳐짐을 확인. 새 결함 셋은 조율 세션이 반영: 높음 G4 — U2 시점에 코드 커밋이 없으면 `$c`가 비어 통과할 수 없음 → 리뷰어가 낸 식 그대로 "코드가 있으면 문서가 먼저"로 고침(G4는 U10에서 다시 돌려 전 fractal을 확인). 중간 G2 — `utils/`를 디렉토리 단위로 옮겨 빈 디렉토리를 남기지 않음. 낮음 G11 — 한 줄 일치를 규칙 이름·값의 개별 검사로 나눔. 남은 차단 지적 0 |

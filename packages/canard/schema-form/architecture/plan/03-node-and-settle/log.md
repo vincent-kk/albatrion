@@ -53,6 +53,7 @@ Planning method: 저장소 지침 — `PLAN.md` §2와 `plan/prompts.md`의 단�
 - Q6(맞음, 26C-05): `EffectiveSchema { schema, typeConflict }`가 최종 모양이다.
   - `cause:'sharedConflict'`(ERROR-133), 사슬 끝·모든 환경(ERROR-070), `degraded`는 폼 수준 로드까지.
   - 주의: 정적 선언 없는 이름에서 fold가 다른 게이트 선언이 동시에 켜지는 경우(BLUEPRINT-044)는 `typeConflict`가 나르지 않는다. 정착이 켜진 선언 집합에서 따로 판정해 같은 코드로 낸다(26C-05).
+| 2026-09-29 | U0 | codex 계획 수정(세션 `25d18ed4`, `f65cb79a8`), 원장 `64160dcaa`의 경고등 게터 둘을 겉면 목록에 더함, antigravity 2차 재검토와 조율 세션 판정 `cleared`(실행 계획 §9) | 이 커밋 |
 
 ## 3. 다음 행동
 
