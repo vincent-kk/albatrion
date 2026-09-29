@@ -48,8 +48,9 @@ export const markWrite = <Self extends SchemaNodeRecord<Self>>(
   const source = isPlain(interpreted) ? interpreted : undefined;
   const previousExtras = node.extras;
   if (rawChanged && source) {
+    const declaredNames = new Set(node.blueprintNode.childEntries.map((entry) => entry.name));
     const extras = Object.fromEntries(Object.entries(source).filter(([name]) =>
-      !node.blueprintNode.childEntries.some((entry) => entry.name === name)));
+      !declaredNames.has(name)));
     node.extras = Object.keys(extras).length ? extras : undefined;
   } else if (rawChanged) node.extras = undefined;
   if (context.automatic && !Object.is(previousExtras, node.extras))

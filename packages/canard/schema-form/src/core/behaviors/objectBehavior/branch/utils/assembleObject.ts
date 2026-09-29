@@ -16,22 +16,34 @@ export const assembleObject: Behavior['assemble'] = (node, children) => {
     ? extra
     : undefined;
   const names: string[] = [];
+  const seen = new Set<string>();
   const preferred = getStaticChoices(node.schema).propertyKeys;
 
   for (const name of preferred) {
     if (childValues.has(name)) {
-      if (childValues.get(name) !== undefined && !names.includes(name)) names.push(name);
-    } else if (extras && hasOwnProperty(extras, name) && !names.includes(name))
+      if (childValues.get(name) !== undefined && !seen.has(name)) {
+        names.push(name);
+        seen.add(name);
+      }
+    } else if (extras && hasOwnProperty(extras, name) && !seen.has(name)) {
       names.push(name);
+      seen.add(name);
+    }
   }
   for (const entry of node.blueprintNode.childEntries) {
     const name = entry.name;
     if (childValues.has(name) && childValues.get(name) !== undefined &&
-      !names.includes(name)) names.push(name);
+      !seen.has(name)) {
+      names.push(name);
+      seen.add(name);
+    }
   }
   if (extras)
     for (const name of Object.keys(extras))
-      if (!childValues.has(name) && !names.includes(name)) names.push(name);
+      if (!childValues.has(name) && !seen.has(name)) {
+        names.push(name);
+        seen.add(name);
+      }
 
   const previous = node.local;
   if (previous !== null && typeof previous === 'object' && !Array.isArray(previous)) {
