@@ -22,6 +22,11 @@ VALUE-037	VALUE_TYPE_MISMATCH	이긴 충돌 SURFACE-061(확정 이름 SCHEMA_FOR
 VALUE-037	valueTypeMismatches	이긴 충돌 SURFACE-061(확정 이름 typeMismatches로 읽음)
 NODE-058	valueTypeMismatch	이긴 충돌 SURFACE-061(확정 이름 typeMismatch로 읽음)
 NODE-058	valueTypeMismatch === false	이긴 충돌 SURFACE-061(확정 이름 typeMismatch로 읽음)
+CONTROLS-021	getInactiveValues	이긴 충돌 VALUE-029의 node.inactiveValues
+CONTROLS-053	63행	가리킴 바꿈 WRITE-018
+CONTROLS-054	79행	가리킴 바꿈 CONTROLS-027
+CONTROLS-084	34행	가리킴 바꿈 CONTROLS-027
+CONTROLS-084	82행	가리킴 바꿈 WRITE-090
 SETTLE-011	4.11 행	가리킴 바꿈 4.0의 4.11 행을 SETTLE-011로 바꿈
 EVENT-008	listenerFeedback	이긴 충돌 ERROR-142의 되먹임 진단 미기록
 EVENT-020	N4	가리킴 바꿈 EVENT-020으로 옮긴 06 N4
@@ -36,6 +41,10 @@ FRAGMENT-015	getInactiveValues	이긴 충돌 VALUE-029의 `node.inactiveValues`�
 BLUEPRINT-048	37행	가리킴 바꿈 소유자 답 37행의 U4를 BLUEPRINT-041로 변경
 FRAGMENT-017	Q15	가리킴 바꿈 SETTLE-044의 최적화 부정 결정
 FRAGMENT-022	spikes/round9/REPORT.txt	가리킴 바꿈 실측 근거 TEST-059
+ERROR-186	SCHEMA_FORM_WARNING.VALUE_TYPE_MISMATCH	이긴 충돌 SURFACE-061의 확정 이름 SCHEMA_FORM_WARNING.TYPE_MISMATCH로 읽음
+ERROR-198	SCHEMA_FORM_WARNING.VALUE_TYPE_MISMATCH	이긴 충돌 SURFACE-061: 확정 이름 SCHEMA_FORM_WARNING.TYPE_MISMATCH로 읽음
+CONTROLS-070	adr/0003:25	가리킴 바꿈 CONTROLS-048
+CONTROLS-053	43행	가리킴 바꿈 WRITE-007
 BLUEPRINT-048	30행	가리킴 바꿈 소유자 답 30행을 BLUEPRINT-051로 변경
 BLUEPRINT-048	32행	가리킴 바꿈 소유자 답 32행을 BLUEPRINT-038로 변경
 BLUEPRINT-048	33행	가리킴 바꿈 소유자 답 33행의 혼합 규칙은 BLUEPRINT-048 자신이라 "그대로다" 꼬리에서 지움
@@ -45,4 +54,8 @@ FRAGMENT-014	D-2	가리킴 바꿈 ADR 0002 D-2의 3(호스트 바퀴 상한)을 
 EVENT-027	N2	가리킴 바꿈 SURFACE-045로 옮긴 07 N2
 EVENT-058	N4	가리킴 바꿈 SURFACE-007로 옮긴 07 N4
 EVENT-063	13 행	가리킴 바꿈 SURFACE-011 명령 행
+ERROR-142	stable	이긴 충돌 ERROR-204: 호출자의 복귀 문장을 충돌 줄의 규칙 문장으로 바꿈
+ERROR-164	JSON_SCHEMA_ERROR.INVALID_VIRTUAL_NODE_VALUES	이긴 충돌 ERROR-195: 코드는 오류 클래스와 무리를 옮겨 SCHEMA_FORM_ERROR.INVALID_VIRTUAL_NODE_VALUES(가칭)
 BLUEPRINT-046	DETAIL.md	정비 문장 BLUEPRINT-046 셋째 문장, 원장 자신에 대한 지시(원장 관리 세션 판정 묶음 2)
+ERROR-198	E-23	정비 문장 ERROR-198 "FRAGMENT-023(…E-23·E-19)과 ERROR-159의 충돌 칸이 … 닫아 두었다", 원장 자신에 대한 문장이라 옮기지 않음(원장 관리 세션 판정 묶음 3)
+ERROR-198	E-19	정비 문장 ERROR-198 "FRAGMENT-023(…E-23·E-19)과 ERROR-159의 충돌 칸이 … 닫아 두었다", 원장 자신에 대한 문장이라 옮기지 않음(원장 관리 세션 판정 묶음 3)
