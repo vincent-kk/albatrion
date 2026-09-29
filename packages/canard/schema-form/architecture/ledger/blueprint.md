@@ -105,6 +105,7 @@
 - 충돌:
   > `adr/0005-blueprint-analysis-and-node-sharing.md:30`의 "PropertyDecl[]"은 소유자 답과 다르다: 구현 이름은 약어 없는 풀 네임(예: `PropertyDeclaration`)이다(BLUEPRINT-046). 소유자 답이 이긴다(`reviews/round-18-owner-answers.md:38`).
   > `adr/0005-blueprint-analysis-and-node-sharing.md:33`의 "Fragment {"는 소유자 답과 다르다: 구현의 타입 이름은 React `Fragment`와 겹치지 않는 `SchemaFragment`다(BLUEPRINT-047). 소유자 답이 이긴다(`reviews/round-18-owner-answers.md:39`).
+  > `adr/0005-blueprint-analysis-and-node-sharing.md:31`의 "fragments: Fragment[]"는 소유자 답과 다르다: 구현의 타입 이름은 React `Fragment`와 겹치지 않는 `SchemaFragment`다(BLUEPRINT-047). 소유자 답이 이긴다(`reviews/round-18-owner-answers.md:39`).
 
 ### BLUEPRINT-003 청사진에 forbids 칸은 없다 — 금지 구문은 폼이 읽지 않는다
 
@@ -180,6 +181,7 @@
 - 까닭: `adr/0005-blueprint-analysis-and-node-sharing.md:70`
 - 충돌:
   > `08-design-a-to-z.md:176`의 "키워드 순위는 본체 `properties` < `allOf` 항목 < `if/then/else` < `oneOf`·`anyOf` 분기이며 JSON 키 순서에 기대지 않는다."는 18라운드 결정과 다르다: 같은 호스트의 `oneOf` 분기는 모든 `anyOf` 분기보다 앞이다(FRAGMENT-049). 18라운드 결정이 이긴다(`reviews/round-18-closing.md:238-239`).
+  > `reviews/round-18-agenda.md:23`의 "같은 호스트의 `oneOf`와 `anyOf` 분기의 동순위"는 18라운드 결정과 다르다: 같은 호스트의 `oneOf` 분기는 모든 `anyOf` 분기보다 앞이다(FRAGMENT-049). 18라운드 결정이 이긴다(`reviews/round-18-closing.md:238-239`).
 
 ### BLUEPRINT-009 노드의 종류 — 여섯 종류, nullable은 플래그, type 없는 overlay는 어느 종류와도 맞음(소유자 확인 12-9)
 
@@ -253,6 +255,7 @@
 - 충돌:
   > `adr/0005-blueprint-analysis-and-node-sharing.md:68`의 "게이트 없는 선언끼리는 늘 함께 켜지므로 청사진 오류다"는 소유자 답과 다르다: 정적 선언(호스트 본체, 게이트 없는 `allOf`, `$ref`)끼리는 교집합으로 노드 하나를 정하고 교집합이 빌 때만 `ALL_OF_TYPE_REDEFINITION`이며, 호스트의 게이트 없는 분기는 fold가 정적 노드의 fold에 들지 않을 때만 `SHARED_NODE_KIND_CONFLICT`다(BLUEPRINT-044). 소유자 답이 이긴다(`reviews/round-18-owner-answers.md:37`).
   > `adr/0005-blueprint-analysis-and-node-sharing.md:68`의 "게이트에 달린 선언이 실제로 동시에 켜지면 정착 오류다"는 소유자 답과 다르다: 정적 노드가 있는 칸에서는 켜진 게이트 선언과 정적 허용 집합의 교집합이 빌 때만 정착 오류다(BLUEPRINT-041 U2·U4). 소유자 답이 이긴다(`reviews/round-18-owner-answers.md:37`).
+  > `adr/0005-blueprint-analysis-and-node-sharing.md:68`의 "같은 이름 + 다른 종류가 **동시에** 활성 | 충돌이다"는 소유자 답과 다르다: 종류가 다른 선언이 함께 켜져도 정적 선언끼리는 허용 집합의 교집합이 비지 않으면, 호스트의 게이트 없는 분기는 fold가 정적 노드의 fold에 들면, 켜진 게이트 선언은 정적 허용 집합과의 교집합이 비지 않으면 노드 하나이고 충돌이 아니다(BLUEPRINT-044, BLUEPRINT-041). 소유자 답이 이긴다(`reviews/round-18-owner-answers.md:37`).
 
 ### BLUEPRINT-013 게이트의 배타는 작성자의 스키마가 정하고 폼은 검사하지 않는다
 
@@ -321,6 +324,8 @@
 - 닫은 사람: 소유자 답(`reviews/round-10-owner-answers.md:11` B-22), 소유자 답(`reviews/round-12-owner-answers.md:9` 2 `&discriminator`), 소유자 답(`reviews/round-9-spec.md:20` 축2; 판별 프로퍼티는 본체), 소유자 답(`reviews/round-15-decisions.md:13` 5; `controls` 그룹 표기), 소유자 답(`reviews/round-15-decisions.md:9` 1; 식의 기준점 `./`)
 - 라운드: 15
 - 까닭: `adr/0005-blueprint-analysis-and-node-sharing.md:117`
+- 충돌:
+  > `adr/0005-blueprint-analysis-and-node-sharing.md:84`의 "결과는 청사진의 `Fragment.guard`에 든 `controls.active` 식뿐이다"는 소유자 답과 다르다: 구현의 타입 이름은 React `Fragment`와 겹치지 않는 `SchemaFragment`다(BLUEPRINT-047). 소유자 답이 이긴다(`reviews/round-18-owner-answers.md:39`).
 
 ### BLUEPRINT-018 controls.discriminator는 검증기 옵션이 아니라 예약 층 — 오늘의 자동 감지와 재선언 throw를 대체하고 이주 안내
 
@@ -547,6 +552,7 @@
   > `adr/0005-blueprint-analysis-and-node-sharing.md:62`의 "노드의 **종류**는 여섯이다: string, number(`integer` 포함), boolean, null, object, array."는 18라운드 결정과 다르다: (가칭) `union`이 더해져 종류는 일곱이다(BLUEPRINT-032). 18라운드 결정이 이긴다(`reviews/round-18-closing.md:61`).
   > `08-design-a-to-z.md:177`의 "같은 이름·같은 종류(string, number, boolean, null, object, array)면"는 18라운드 결정과 다르다: 종류 목록에 (가칭) `union`이 든다(BLUEPRINT-032). 18라운드 결정이 이긴다(`reviews/round-18-closing.md:61`).
   > `02-target-overview.md:125`의 "같은 이름과 같은 종류(string, number, boolean, null, object, array)이면"는 18라운드 결정과 다르다: 종류 목록에 (가칭) `union`이 든다(BLUEPRINT-032). 18라운드 결정이 이긴다(`reviews/round-18-closing.md:61`).
+  > `reviews/round-18-closing.md:61`의 "(가칭) `union`"은 소유자 답과 다르다: 종류 이름 `union`은 확정이고 가칭이 아니다(BLUEPRINT-035). 소유자 답이 이긴다(`reviews/round-18-owner-answers.md:28`).
   > `reviews/round-18-owner-answers.md:28`의 "원시 타입만의 다중 `type` 잎"은 소유자 답과 다르다: `union`은 `type`에 원시·객체·배열 가운데 둘 이상의 종류가 적힌 칸의 터미널 잎이다(BLUEPRINT-036). 소유자 답이 이긴다(`reviews/round-18-owner-answers.md:29`).
   > `reviews/round-18-closing.md:61`의 "그래서 노드의 종류는 일곱이다"는 소유자 답과 다르다: `node.type`의 값은 `virtual`을 포함해 여덟이고(NODE-057), 18C-02의 "일곱"은 스키마에서 오는 종류만 센 것이다(WRITE-099). 소유자 답이 이긴다(`reviews/round-18-owner-answers.md:31`).
 
@@ -801,6 +807,8 @@
   > `reviews/round-18-closing.md:60`의 "원소가 하나면 그 원시 종류다"는 소유자 답과 다르다: 접은 집합의 원소가 하나면 그 종류이며 `object`·`array`일 수 있다(BLUEPRINT-044, BLUEPRINT-045 E8). 소유자 답이 이긴다(`reviews/round-18-owner-answers.md:29`).
   > `reviews/round-18-closing.md:66`의 "값이 나열된 타입 가운데 하나에 맞으면"은 소유자 답과 다르다: 목록은 `node.schemaType`(+`nullable`)이고 게이트가 켜진 동안에는 유효 목록이다(BLUEPRINT-040). 소유자 답이 이긴다(`reviews/round-18-owner-answers.md:35`).
   > `reviews/round-18-closing.md:69`의 "정합은 값이 나열된 타입 가운데 하나라는 뜻이다"는 소유자 답과 다르다: 목록은 `node.schemaType`(+`nullable`)이고 게이트가 켜진 동안에는 유효 목록이다(BLUEPRINT-040). 소유자 답이 이긴다(`reviews/round-18-owner-answers.md:35`).
+  > `reviews/round-18-closing.md:59`의 "(가칭) `union`"은 소유자 답과 다르다: 종류 이름 `union`은 확정이고 가칭이 아니다(BLUEPRINT-035). 소유자 답이 이긴다(`reviews/round-18-owner-answers.md:28`).
+  > `reviews/round-18-closing.md:80`의 "(가칭) `unionBehavior/`"는 소유자 답과 다르다: 동작 모듈 이름 `unionBehavior/`는 확정이고 가칭이 아니다(BLUEPRINT-035). 소유자 답이 이긴다(`reviews/round-18-owner-answers.md:28`).
 
 ### BLUEPRINT-044 청사진 판정 절차 — 허용 집합 A(d)와 fold, 교집합(`integer ⊂ number`, `null`은 양쪽에 있을 때만), 단계 S0–S6, 결과 일곱, 터미널 하위 키 경고 (가칭) `TERMINAL_SUBTREE_KEY_IGNORED_FOR_FORM`, PR-1·PR-4 게이트
 
@@ -979,6 +987,7 @@
 - 까닭: `reviews/round-18-owner-answers.md:33`
 - 충돌:
   > `reviews/round-18-owner-answers.md:33`의 "지금 `UNKNOWN_JSON_SCHEMA`가 되는 것은 그 칸뿐이다"는 19라운드 결정과 다르다: `object`와 `array`만 섞인 칸도 `UNKNOWN_JSON_SCHEMA`다(BLUEPRINT-048). 19라운드 결정이 이긴다(`reviews/round-19-closing.md:15`, 절차·범위를 19C-01에 맡긴 소유자 답 `reviews/round-19-owner-answers.md:7`).
+  > `reviews/round-18-owner-answers.md:33`의 "객체만·배열만인 경우(오늘과 같음)가 모두 여기에 든다"는 19라운드 결정과 다르다: 접은 집합 F가 `{object}`나 `{array}`인 칸은 variant 호스트로 추정하고, `object`나 `array`가 다른 종류와 섞인 경우만 `UNKNOWN_JSON_SCHEMA`다(BLUEPRINT-048). 19라운드 결정이 이긴다(`reviews/round-19-closing.md:9,15,21`, 소유자 답 `reviews/round-19-owner-answers.md:7`).
 
 ### BLUEPRINT-050 `type` 없이 `const`·`enum`만 있는 분기 없는 칸 — 리터럴의 JSON 종류로 원시 잎·null 잎, 종류 혼합·객체 리터럴은 `UNKNOWN_JSON_SCHEMA`, 분기 안의 `const`는 그대로 오류, 소유자 답 30행 첫 문장 대체, ERROR-164 "언제"
 

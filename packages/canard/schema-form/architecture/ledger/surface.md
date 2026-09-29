@@ -195,6 +195,7 @@
 - 까닭: `06-conclusions.md:362`, `reviews/round-18-closing.md:2801-2803`
 - 충돌:
   > `02-target-overview.md:310`의 "다음 로드(마운트·전체 교체·`reset`)"는 소유자 답·18라운드 결정과 다르다: 전체 교체(`setValue(V)`)는 로드가 아니라 전체 교체 쓰기이고(WRITE-090), `degraded`를 비우는 다음 로드는 폼 수준 로드인 마운트·`FormHandle.reset()`이며 `setValue(V)`와 `resetSubtree()`는 비우지 않고, `degraded`에서 돌아오는 길은 `FormHandle.reset()`이다(ERROR-204). 18라운드 결정이 이긴다(`reviews/round-18-owner-answers.md:26`, `reviews/round-18-closing.md:2797-2799`).
+  > `02-target-overview.md:310`의 "마지막 로드 이후의 기록"은 18라운드 결정과 다르다: `diagnostics`는 폼 수준 로드(마운트, `FormHandle.reset()`)에서만 초기화하므로 마지막 폼 수준 로드 이후의 기록이며, `resetSubtree()`와 `setValue(V)`는 초기화하지 않는다(ERROR-204). 18라운드 결정이 이긴다(`reviews/round-18-closing.md:2797-2798`).
 
 ### SURFACE-008 배치 — `batch(fn)`
 
@@ -244,7 +245,8 @@
 - 까닭: `reviews/round-17-owner-answers.md:22-24`, `reviews/round-18-closing.md:915-915`, `reviews/round-18-closing.md:84-91`
 - 충돌:
   > `08-design-a-to-z.md:416`의 "가드 아홉(`isBranchNode`·`isTerminalNode`는 `strategy`를 보며 이름을 유지한다)"는 18라운드 결정과 다르다: (가칭) `isUnionNode`가 더해져 가드는 열이다(NODE-041). 18라운드 결정이 이긴다(`reviews/round-18-closing.md:77`).
-  > `08-design-a-to-z.md:416`의 "겉면의 크기(루트 전용 넷, 명령 넷을 노드 메서드로 둘지, `subnodes`·`defaultValue`·`resetSubtree`·`schemaPath`·`key`의 존폐)는 18라운드 안건이다"는 18라운드 결정과 다르다: 루트 전용 넷·명령 넷·`defaultValue`·`resetSubtree`·`context`는 남고 `subnodes`·`schemaPath`·`key`·`publish`는 빠진다(SURFACE-058, SURFACE-053, EVENT-063, WRITE-085, SURFACE-055, NODE-043, SURFACE-054). 18라운드 결정이 이긴다(`reviews/round-18-closing.md:911-913`).
+  > `08-design-a-to-z.md:416`의 "겉면의 크기(루트 전용 넷, 명령 넷을 노드 메서드로 둘지, `subnodes`·`defaultValue`·`resetSubtree`·`schemaPath`·`key`의 존폐)는 18라운드 안건이다"는 18라운드 결정과 다르다: 루트 전용 넷·명령 넷·`defaultValue`·`resetSubtree`·`context`는 남고 `subnodes`·`schemaPath`·`key`·`publish`는 빠진다(SURFACE-058, SURFACE-053, EVENT-063, WRITE-085, SURFACE-055, NODE-043, SURFACE-054). 18라운드 결정이 이긴다(`reviews/round-18-closing.md:911-913`). 이 가운데 명령 넷과 `publish`는 다시 소유자 답에 진다: 명령은 종류를 매개변수로 받는 메서드 하나이고, 임의 사건을 내는 공개 `publish`는 빠지되 그 메서드의 이름 후보에 명령 사건에 한정한 `publish` 부활이 들며 이름은 PR-4 착수 전에 소유자가 정한다(EVENT-073). 소유자 답이 이긴다(`reviews/round-18-owner-answers.md:40`).
+  > `reviews/round-18-closing.md:912`의 "약 57개다"는 소유자 답과 다르다: 명령 넷이 메서드 하나로 합쳐지고(EVENT-073) 게터 이름은 `typeMismatch`·`typeMismatches`로 확정되어(SURFACE-061) 겉면 멤버는 약 54개다(SURFACE-058의 충돌 줄). 소유자 답이 이긴다(`reviews/round-18-owner-answers.md:40`, `reviews/round-18-owner-answers.md:41`).
 
 ### SURFACE-011 명령 — `focus`, `select`, `refresh`, `remount`
 
@@ -627,6 +629,8 @@
   > `07-conclusions.md:311`의 "`&derived`, `&injectTo`, `&unsetValue`"는 15라운드 뒤의 표기(`controls.derived`·`controls.injectTo`·`controls.unsetValue`)와 다르다. 뒤 라운드가 이긴다(`08-design-a-to-z.md:278`, `02-target-overview.md:319`).
   > `07-conclusions.md:311`의 "(로드와 `Merge`)"는 18라운드 결정과 다르다: `setValue(V)`는 로드가 아니라 전체 교체 쓰기이며(WRITE-090), 억제 비트의 범위는 그 호출(로드와 전체 교체 쓰기, `Merge`)이 일으킨 예약 층의 쓰기 전부다(WRITE-097). 18라운드 결정이 이긴다(`reviews/round-18-closing.md:2881`).
   > `08-design-a-to-z.md:278`의 "`DisableAutomaticWrites`의 범위는 **그 호출이 일으킨 자동 쓰기 전부**(채움, `controls.derived`, `controls.injectTo`, `controls.unsetValue`, 나감의 비움)이며"는 소유자 답과 다르다: 포커스 아웃 `trim`이 자른 값의 쓰기도 자동 쓰기이고 억제 비트의 대상이다(WRITE-078). 소유자 답이 이긴다(`reviews/round-18-owner-answers.md:12`).
+  > `07-conclusions.md:311`의 "`&active`"는 15라운드 뒤의 표기(`controls.active`)와 다르다. 뒤 라운드가 이긴다(`08-design-a-to-z.md:278`, WRITE-015).
+  > `07-conclusions.md:311`의 "(채움, `&derived`, `&injectTo`, `&unsetValue`, 나감의 비움)"은 소유자 답과 다르다: 포커스 아웃 `trim`이 자른 값의 쓰기도 자동 쓰기(여섯째)이고 억제 비트의 대상이다(WRITE-078). 소유자 답이 이긴다(`reviews/round-18-owner-answers.md:12`). 다만 이 셀의 목록은 그 호출이 일으킨 쓰기이고, 뒤이은 포커스 아웃의 `trim`은 그 호출이 일으킨 것이 아니어서 호출 수준 비트에는 들지 않으며 Form 속성 `disableAutomaticWrites`에만 든다(WRITE-100).
 
 ### SURFACE-040 대체됨(철자): 조각 게이트는 `&active`로 통합, `&if` 은퇴 — 뜻은 `controls.active`로 현행
 
@@ -883,7 +887,8 @@
   > 【추론】 공개 이벤트 타입(오늘 `PublicNodeEventType`의 자리, 공개 이름 `SchemaNodeEventType`, 18C-47)에 넣어 `node.subscribe`로 받는다.
   > 【추론】 공개 소비자는 `node.subscribe`·`useSchemaNodeSubscribe`(`src/index.ts:80`)로 `node.jsonSchema`를 읽는 입력 작성자다.
   > 【추론】 더하는 것이므로 minor다.
-- 보충: 없음
+- 보충:
+  > 편집자 결정(18C-52, 물음의 제목): "유효 스키마 변경 통지의 표면" (`reviews/round-18-closing.md:1438`) — 첫 문장이 넣는 것은 유효 스키마 변경 통지 `UpdateJsonSchema`(가칭, EVENT-064)다.
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:1455-1457`(정본)
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-52)
@@ -906,6 +911,7 @@
 - 까닭: `reviews/round-18-closing.md:915`
 - 충돌:
   > `reviews/round-18-closing.md:912`의 "【추론】 이 결정들을 적용하면 겉면 멤버는 확정분 약 44개(`reviews/raw-round17-node-structure.md:136`, `getInactiveValues`는 VALUE-029의 게터 `inactiveValues`로 셈)에 명령 넷, 루트 전용 넷, `defaultValue`·`resetSubtree`, `context`, 18C-40의 게터 `valueTypeMismatch`·`valueTypeMismatches`를 더한 약 57개다."는 소유자 답과 다르다: 명령 넷이 메서드 하나로 합쳐지고(EVENT-073) 게터 이름은 `typeMismatch`·`typeMismatches`로 확정되어(SURFACE-061) 겉면 멤버는 약 54개다. 소유자 답이 이긴다(`reviews/round-18-owner-answers.md:40`, `reviews/round-18-owner-answers.md:41`).
+  > `reviews/round-18-closing.md:913`의 "`subnodes`·`schemaPath`·`key`·`publish`는 빠진다"는 소유자 답과 다르다: 임의 사건을 내는 공개 `publish`는 빠지되, 명령 종류를 매개변수로 받는 메서드 하나의 이름 후보에 명령 사건에 한정한 `publish` 부활이 들고 이름은 PR-4 착수 전에 소유자가 정한다(EVENT-073). 소유자 답이 이긴다(`reviews/round-18-owner-answers.md:40`).
 
 ### SURFACE-059 원장이 바꾸지 않은 오늘의 공개 표면은 그대로 — `FormProps` 열아홉 칸·`FormHandle` 열여섯 멤버·`ValidationMode`·공개 이벤트 형 여섯, PR-7 이주 점검 게이트
 
