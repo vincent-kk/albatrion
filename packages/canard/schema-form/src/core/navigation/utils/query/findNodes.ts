@@ -6,7 +6,7 @@ import { getSchemaNodePath } from './utils/getSchemaNodePath';
 /** Resolve every current-shape match in path order, retaining each instance once. */
 export const findNodes = <Self extends SchemaNodeRecord<Self>>(
   origin: Self,
-  pointer: string | readonly string[] | null,
+  pointer?: string | readonly string[] | null,
 ): readonly Self[] => {
   const path = getSchemaNodePath(pointer);
   let cursors: Self[] = [path.absolute ? origin.rootNode : origin];

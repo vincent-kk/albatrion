@@ -5,11 +5,13 @@ import { createNode, type TestNode } from './fixtures/createNode';
 
 // filid:contract navigation-shape
 describe('navigation over the committed shape', () => {
-  it('returns the starting node for an empty or null relative pointer', () => {
+  it('returns the starting node for an empty, null or omitted relative pointer', () => {
     const root = createNode('');
     const child = createNode('child', root);
     expect(find(child, '')).toBe(child);
     expect(findNodes(child, null)).toEqual([child]);
+    expect(find(child)).toBe(child);
+    expect(findNodes(child)).toEqual([child]);
     expect(find(child, '#')).toBe(root);
   });
 
