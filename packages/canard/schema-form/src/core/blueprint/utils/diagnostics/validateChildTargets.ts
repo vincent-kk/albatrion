@@ -21,7 +21,11 @@ export const validateChildTargets = (context: AnalysisContext): void => {
           throwBlueprintError(
             BlueprintErrorCode.DiscriminatorMismatch,
             declaration.schemaPath,
-            { discriminator, other: controls.discriminator },
+            {
+              propertyName: discriminator,
+              other: controls.discriminator,
+              reason: 'key',
+            },
             context.options,
           );
         discriminator = controls.discriminator;

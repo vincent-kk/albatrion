@@ -92,6 +92,31 @@ describe('blueprint gated and declaration-only types', () => {
     expect(effective.schema).not.toHaveProperty('enum');
   });
 
+  it('E40 keeps static nullable when the gated type intersection conflicts', () => {
+    const node = blueprint({
+      type: 'object',
+      properties: { a: { type: ['string', 'number', 'boolean', 'null'] } },
+      allOf: [
+        {
+          if: { required: ['x'] },
+          then: { properties: { a: { type: 'string' } } },
+        },
+        {
+          if: { required: ['y'] },
+          then: { properties: { a: { type: 'boolean' } } },
+        },
+      ],
+    }).root.childEntries[0].node;
+    const effective = mergeEffectiveSchema(
+      node,
+      node.declarations
+        .filter((declaration) => declaration.gates.length)
+        .map((declaration) => declaration.id),
+    );
+    expect(effective.typeConflict).toBe(true);
+    expect(effective.schema).toMatchObject({ nullable: true });
+    expect(effective.schema).not.toHaveProperty('enum');
+  });
   it('E42 keeps an ungated oneOf declaration from narrowing the shared node', () => {
     const node = blueprint({
       type: 'object',
