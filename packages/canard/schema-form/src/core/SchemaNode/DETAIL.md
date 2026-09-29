@@ -32,7 +32,7 @@
 | `value` | getter | 계산된 `local` | VALUE-027 |
 | `outputValue` | getter | 계산된 `emit` | VALUE-027·034 |
 | `inactiveValues` | getter | 루트 잠복 원본 메모의 자기 경로 조회 | VALUE-029, WRITE-087 |
-| `active` | getter | 최종 노드 게이트 계산 칸 | LANDING-062, 26C-04 |
+| `active` | getter | 형상에 있는가. 살아 있는 노드는 늘 참, 떼어진 옛 참조는 거짓이며 다시 들어도 거짓(재탄생은 새 인스턴스). NODE-044의 마지막 커밋 고정에서 빠지는 살아 있는 트리의 사실 | LANDING-062, 26C-04, 26C-08 |
 | `typeMismatch` | getter | 현재 유효 목록의 경고등 | VALUE-030·037, SURFACE-061 |
 | `typeMismatches` | getter | 루트 경로 집합의 하위 목록 메모 | VALUE-030·037, SURFACE-061 |
 | `diagnostics` | getter | 트리 런타임의 진단 | ERROR-130·204, 26C-01 |
