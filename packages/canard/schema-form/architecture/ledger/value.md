@@ -459,6 +459,7 @@
   > 편집자 결정(18C-91): "【추론】 경고등은 커밋 때 원본이 바뀐 노드와, 같은 정착에서 유효 스키마가 바뀐 노드에서 다시 계산한다." (`reviews/round-18-closing.md:2521`)
   > 편집자 결정(18C-101): "【추론】 "로드마다 다시 만든다"(VALUE-030)는 `resetSubtree()`에는 그 하위 트리에만 적용한다." (`reviews/round-18-closing.md:2851`)
   > 반영 칸(설계서 메모 4): "게터 `typeMismatch: boolean`, 경로 목록 `typeMismatches: readonly string[]`, 경고 코드 `SCHEMA_FORM_WARNING.TYPE_MISMATCH`." (`reviews/round-18-owner-answers.md:41`)
+  > 편집자 결정(26C-06): "【추론】 원장이 "루트가 든다"고 적은 트리 전체 자료(로드 스냅숏, 잠복 원본, 경고등 경로 집합, 잠복 원본 열거의 메모)의 저장 자리는 트리마다 하나인 `SchemaNodeRuntime`의 칸이며, 루트는 자기 `runtime` 필드를 통해 그것을 든다." (`reviews/round-26-closing.md:66`)
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:1084-1090,1096-1103`(정본), `reviews/round-18-closing.md:2520-2521,2526`, `reviews/round-18-closing.md:2851`, `reviews/round-18-owner-answers.md:41`
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-40), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-91), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-101), 소유자 답(`reviews/round-18-owner-answers.md:41` 설계서 메모 4)

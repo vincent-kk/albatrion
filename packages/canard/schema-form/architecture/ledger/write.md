@@ -1287,6 +1287,7 @@
   > 편집자 결정(18C-97): "【추론】 아이템을 만들거나 없애는 모든 쓰기는 구조 연산처럼 그 경로의 스냅숏 배열의 자리를 맞춘다." (`reviews/round-18-closing.md:2779`)
   > 편집자 결정(18C-97): "【추론】 없어진 아이템의 자리는 잘라 내고, 새 아이템의 자리에는 `undefined`를 넣으며, 값은 싣지 않는다." (`reviews/round-18-closing.md:2780`)
   > 편집자 결정(18C-105): "【추론】 구조 연산(`push(v)`·삽입)은 WRITE-085대로 생성 값 `v`를 스냅숏 자리에 넣고, 아이템을 만드는 비구조 쓰기만 `undefined`를 넣는다." (`reviews/round-18-closing.md:2954`)
+  > 편집자 결정(26C-06): "【추론】 원장이 "루트가 든다"고 적은 트리 전체 자료(로드 스냅숏, 잠복 원본, 경고등 경로 집합, 잠복 원본 열거의 메모)의 저장 자리는 트리마다 하나인 `SchemaNodeRuntime`의 칸이며, 루트는 자기 `runtime` 필드를 통해 그것을 든다." (`reviews/round-26-closing.md:66`)
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:1220-1236`(정본), `reviews/round-18-closing.md:2779-2780,2883-2884`, `reviews/round-18-closing.md:2954`
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-44), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-97), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-103), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-105)

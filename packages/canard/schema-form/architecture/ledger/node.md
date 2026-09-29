@@ -111,6 +111,9 @@
   > 공통 필드는 고정 배치하고 종류별 데이터는 한 칸 `structure`(객체의 키별 자식 맵, 배열의 아이템 목록과 키 번호, 가상의 참조)에 담는다. 노드 필드 `runtime`은 트리마다 하나인 `SchemaNodeRuntime`(통지 대기열, 검증기, 진단, 진입 깊이와 예산, `nodeFactory`, `onError` 보고기)을 가리킨다. 노드 인스턴스가 곧 레코드다(노드마다 객체 하나). 정착 알고리즘은 `settle`의 자유 함수가 레코드 위에서 돌린다.
 - 보충:
   > 편집자 결정(18C-33): "【추론】 branch 객체의 `structure`는 이름에서 그 커밋의 형상에 있는 자식 노드로 가는 맵이다." (`reviews/round-18-closing.md:924`)
+  > 편집자 결정(26C-06): "【추론】 원장이 "루트가 든다"고 적은 트리 전체 자료(로드 스냅숏, 잠복 원본, 경고등 경로 집합, 잠복 원본 열거의 메모)의 저장 자리는 트리마다 하나인 `SchemaNodeRuntime`의 칸이며, 루트는 자기 `runtime` 필드를 통해 그것을 든다." (`reviews/round-26-closing.md:66`)
+  > 편집자 결정(26C-06): "【추론】 NODE-004의 런타임 열거(통지 대기열, 검증기, 진단, 진입 깊이와 예산, `nodeFactory`, `onError` 보고기)는 닫힌 목록이 아니며, 칸을 더할 때는 NODE-045대로 `record/`의 선언을 고치고 그 대가를 레코드 `DETAIL.md`에 적는다." (`reviews/round-26-closing.md:67`)
+  > 편집자 결정(26C-06): "【추론】 레코드에 루트 전용 필드를 두지 않는다: 공통 필드는 고정 배치다(NODE-004)." (`reviews/round-26-closing.md:68`)
 - 상태: 현행
 - 출처: `09-landing-and-test-strategy.md:104#6-9`(정본), `reviews/round-17-owner-answers.md:38`, `reviews/round-17-owner-answers.md:46`, `reviews/round-18-closing.md:924`
 - 닫은 사람: 소유자 답(`reviews/round-17-owner-answers.md:46` 14 트리마다 하나인 공용 칸), 17라운드 스웜 수렴(편집자 결정, `reviews/raw-round17-node-structure.md` §2; 칸의 내용과 `settle`의 자유 함수), 17라운드 스웜 수렴(편집자 결정, `reviews/round-17-owner-answers.md:38`·`reviews/raw-round17-node-structure.md:154`; 소유자 이견 없이 권고대로 확정된 칸 `structure`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-33)
@@ -667,7 +670,8 @@
   > 【추론】 터미널 아래 경로와 같은 규칙이다.
   > 【추론】 비활성 자식까지 담는 `subnodes`는 레코드에도 공개 겉면에도 두지 않는다.
   > 【추론】 `detectsCandidate`와 그 시험, 첫 후보로 물러나는 규칙, 내부 칸 `variant`·`scope`·`oneOfIndex`·`anyOfIndices`는 모두 폐기한다.
-- 보충: 없음
+- 보충:
+  > 편집자 결정(26C-06): "【추론】 원장이 "루트가 든다"고 적은 트리 전체 자료(로드 스냅숏, 잠복 원본, 경고등 경로 집합, 잠복 원본 열거의 메모)의 저장 자리는 트리마다 하나인 `SchemaNodeRuntime`의 칸이며, 루트는 자기 `runtime` 필드를 통해 그것을 든다." (`reviews/round-26-closing.md:66`)
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:921-931`(정본)
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-33)
@@ -714,7 +718,10 @@
   > 【추론】 그 대가를 레코드 `DETAIL.md`에 적는다(`Behavior`와 같은 방식).
   > 【추론】 PR-2의 병합 점검에 `import type`까지 센 순환 검사를 둔다.
   > 【추론】 도구는 PR-2가 고른다.
-- 보충: 없음
+- 보충:
+  > 편집자 결정(26C-06): "【추론】 원장이 "루트가 든다"고 적은 트리 전체 자료(로드 스냅숏, 잠복 원본, 경고등 경로 집합, 잠복 원본 열거의 메모)의 저장 자리는 트리마다 하나인 `SchemaNodeRuntime`의 칸이며, 루트는 자기 `runtime` 필드를 통해 그것을 든다." (`reviews/round-26-closing.md:66`)
+  > 편집자 결정(26C-06): "【추론】 NODE-004의 런타임 열거(통지 대기열, 검증기, 진단, 진입 깊이와 예산, `nodeFactory`, `onError` 보고기)는 닫힌 목록이 아니며, 칸을 더할 때는 NODE-045대로 `record/`의 선언을 고치고 그 대가를 레코드 `DETAIL.md`에 적는다." (`reviews/round-26-closing.md:67`)
+  > 편집자 결정(26C-06): "【추론】 진입 깊이와 예산 가운데 중첩 진입의 칸은 그 기제를 들여오는 PR-4가 더하고(26C-01, TEST-069), 런타임은 루트 참조를 따로 들지 않는다(레코드 필드로 닿는다)." (`reviews/round-26-closing.md:69`)
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:969-978`(정본)
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-35)
