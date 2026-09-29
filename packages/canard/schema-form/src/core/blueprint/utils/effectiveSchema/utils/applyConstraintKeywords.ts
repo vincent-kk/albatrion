@@ -20,7 +20,6 @@ const RANGES = [
   ['minLength', 'maxLength'],
   ['minItems', 'maxItems'],
   ['minProperties', 'maxProperties'],
-  ['minContains', 'maxContains'],
 ] as const;
 
 /**
@@ -28,7 +27,8 @@ const RANGES = [
  * @param state - Fresh effective schema state, never an authored schema.
  * @param source - Current contribution's keyword values.
  * @param schemaPath - Current authored location for static failures.
- * @param options - Runtime leaves invalid constraints for the validator; static throws.
+ * @param options - Runtime leaves invalid constraints for the validator; static throws only
+ * when this contribution crosses an earlier one on the same keyword.
  * @returns Nothing; updates keyword constraints and sticky const conflict state.
  */
 export const applyConstraintKeywords = (
@@ -53,6 +53,10 @@ export const applyConstraintKeywords = (
     ];
   }
   for (const [lower, upper] of RANGES) {
+    const crossing =
+      (numberValue(source[lower]) !== undefined ||
+        numberValue(source[upper]) !== undefined) &&
+      (target[lower] !== undefined || target[upper] !== undefined);
     const minimum = intersectMinimum(
       numberValue(target[lower]),
       numberValue(source[lower]),
@@ -65,6 +69,7 @@ export const applyConstraintKeywords = (
     if (maximum !== undefined) target[upper] = maximum;
     if (
       options.mode === 'static' &&
+      crossing &&
       validateRange(minimum, maximum) === EMPTY_INTERSECTION
     )
       throwBlueprintError(
@@ -84,10 +89,7 @@ export const applyConstraintKeywords = (
     Array.isArray(source.enum) ? source.enum : undefined,
     true,
   );
-  if (
-    enumeration === EMPTY_INTERSECTION ||
-    (Array.isArray(enumeration) && enumeration.length === 0)
-  ) {
+  if (enumeration === EMPTY_INTERSECTION) {
     if (options.mode === 'static')
       throwBlueprintError(
         BlueprintErrorCode.EmptyEnumIntersection,

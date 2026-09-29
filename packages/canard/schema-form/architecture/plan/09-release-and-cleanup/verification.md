@@ -19,7 +19,7 @@
 - 문서의 코드 표가 ERROR-164의 현행 행과 일치, reset 규칙이 LANDING-121의 목록을 모두 든다.
 - changeset·판 번호가 `fixed` 무리 전체에 걸림(1.0.0-beta 프리릴리스). `CHANGELOG.md`는 병합 뒤 `changesets/action`의 판 올림 PR이 만든다(TEST-045, LANDING-068의 충돌 줄).
 - 벤치 재실행 보고와 소유자 수용(TEST-027), 모바일 임계는 잰 사실만(TEST-074).
-- **번들 크기**(TEST-075): "ESM 진입(`dist/index.mjs`)을 esbuild로 minify하고 gzip -9 하며, 의존성은 외부로 둔다." "기준은 v0.16.0(2026-09-21 빌드)의 37,023 B다." "배포되는 minify 없는 gzip(51,632 B)도 함께 보고한다." "기준보다 늘면 ADR 0009 §4와 같은 기록·수용 규칙을 따른다." "이유를 적고 Vincent가 받아들여야 병합한다."
+- **번들 크기**(TEST-075): "ESM 진입(`dist/index.mjs`)을 esbuild로 minify하고 gzip -9 하며, 의존성은 외부로 둔다." "기준은 v0.16.0(2026-09-21 빌드)의 37,023 B다." "배포되는 minify 없는 gzip(51,632 B)도 함께 보고한다." "기준보다 늘면 ADR 0009 §4와 같은 기록·수용 규칙을 따른다." (→ TEST-027) "이유를 적고 Vincent가 받아들여야 병합한다."
 - `src/__legacy__/` 삭제 뒤 검색 0, filid 스캔 organ 발견 0, 시험 글롭에서 레거시 제거.
 
 ## 합격 판정과 실패 처리

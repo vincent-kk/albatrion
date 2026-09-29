@@ -51,6 +51,14 @@
 - filid: fractal 다섯의 `INTENT.md`·`DETAIL.md`를 코드보다 먼저. `record/`·`navigation/`·`behaviors/`·`settle/`이 `SchemaNode/`와 어떤 방향으로 의존하는지(DAG)를 `DETAIL.md`에 적고, 스캔이 순환 0임을 PR 경계에서 확인한다. 옛 코드가 새 `navigation/`을 가져오는 일은 없다(레거시 → 새 코드 허용 목록은 02의 둘뿐).
 - seiri: 클래스 멤버 순서는 패키지 `CLAUDE.md`의 도메인 우선 순서, 동작 행의 칸 순서는 기계 검사로 고정, 동작 함수는 한 파일에 하나.
 
+## 02·01 보정에서 넘어온 것
+
+- PR 03은 `mergeEffectiveSchema`가 돌려주는 `EffectiveSchema.typeConflict`를 읽고, 그 게이트들이 켜진 동안의 정착 오류 `SHARED_NODE_CONFLICT`를 던진다. 신호의 최종 모양은 PR 03이 정한다(25C-04, BLUEPRINT-016, BLUEPRINT-041, BLUEPRINT-044).
+- 형 충돌 중에도 유효 스키마의 `type`과 `nullable`은 정적 선언의 값이다. 보정 PR이 `finalizeEffectiveSchema`를 그렇게 맞췄으므로 PR 03이 신호의 모양을 바꿀 때도 이 둘은 정적 값을 유지한다(BLUEPRINT-041, 25C-04).
+- PR 03은 판별 게이트 `{ kind: 'discriminator', condition: { propertyName, values } }`를 "`./<propertyName>`의 값이 `values`에 드는가"로 평가하고, 분기 자신의 `controls.active`와 AND 하나로 합쳐 다른 게이트와 같이 호스트 바퀴에서 평가한다. 02는 조건을 기록만 한다(25C-06, FRAGMENT-048, BLUEPRINT-017).
+- `@aileron/schema-form-scenarios`의 `ScenarioExpectation.diagnostics`는 PR 03이 더한다(25C-08, TEST-009, TEST-011).
+- 25C-11이 PR 03으로 넘긴 넷: 같은 칸의 노드와 배열 아이템이 같은 `schemaType` 참조를 갖는지, virtual 코퍼스에서 모은 `node.type`이 여덟 값 안인지, `onChange` 형 검사, 유효 목록 좁힘(25C-11, TEST-077).
+
 ## 원장 항목 색인 (결정·보충에 PR-2를 든 현행 항목, 기계 추출)
 
 - BLUEPRINT-043 값 union에서 계속 그대로인 것 — `null`은 nullable로·`integer`는 `number`로 접음, 접은 집합이 둘 이상이면 `union`(행 `terminal`), `union`끼리는 접은 집합이 같을 때 같은 종류, 정합은 나열된 타입 가운데 하나, PR-1 인식·PR-2 행
@@ -89,7 +97,7 @@
 - TEST-069 PR-2 독립 검증 경계 — 자기 기제만 시험, 게이트 술어 대역 하나, 미룬 사례의 PR 배분, 프로토타입 회귀 배분
 - TEST-070 PR-2 게이트 — 실제 공개 형으로 `tsc --strict`를 단언 없이 통과, `children`은 저장 배열과 같은 참조, 실패 시 소유자 물음
 - VALUE-034 빈 호스트와 루트의 방출 — 빈 `local`은 `{}`·`[]`, `omitEmpty`는 빈 `local`을 방출하지 않음, 루트는 루트 종류의 빈 그릇, 배열 아이템의 빈자리는 `{}`·`[]`·`null`
-- WRITE-052 노드마다 타입에 맞는 parse — 뜻이 그대로인 변환만(형 정규화, ADR 0013 결정 1의 이름 붙은 예외)
+- WRITE-052 노드마다 타입에 맞는 parse — 뜻이 그대로인 변환만(형 정규화, ADR 0013 결정 1의 이름 붙은 예외 (→ WRITE-001, WRITE-052))
 - WRITE-056 parse를 부르는 자리와 적용 범위
 - WRITE-087 잠복 원본 열거의 반환 모양 — 읽기 전용 `{ path, value }` 배열, 전순서, 얼린 빈 배열 공유, 커밋 단계 메모
 - WRITE-093 `union` 행의 해석 — 기본 spec과 유효 목록, `isMember`·`convert`·`interpret`(규칙 A: 순서 무관·멱등·무할당), 노드에 드는 모든 쓰기의 경계와 한 진입의 두 번 해석, `Merge`는 통째, `trim`은 `finishInput`, PR-2·PR-4 게이트
