@@ -43,8 +43,59 @@ FRAGMENT-017	Q15	가리킴 바꿈 SETTLE-044의 최적화 부정 결정
 FRAGMENT-022	spikes/round9/REPORT.txt	가리킴 바꿈 실측 근거 TEST-059
 ERROR-186	SCHEMA_FORM_WARNING.VALUE_TYPE_MISMATCH	이긴 충돌 SURFACE-061의 확정 이름 SCHEMA_FORM_WARNING.TYPE_MISMATCH로 읽음
 ERROR-198	SCHEMA_FORM_WARNING.VALUE_TYPE_MISMATCH	이긴 충돌 SURFACE-061: 확정 이름 SCHEMA_FORM_WARNING.TYPE_MISMATCH로 읽음
+REACT-012	35행	가리킴 바꿈 08 §14의 35행 → LANDING-038
+REACT-025	FormHandle.remount(path)	이긴 충돌 EVENT-063(→ EVENT-073): FormHandle에 더하는 명령 겉면은 모양이 무엇이든 PR-7이며, 그 모양은 PR-4 착수 전에 소유자가 정한다
+REACT-025	C-11	이긴 충돌 EVENT-063(→ EVENT-073): C-11(소유자 확정 대기)에 딸린다는 문장을 FormHandle 명령 겉면 규칙으로 바꿈
+REACT-032	valueTypeMismatch	이긴 충돌 SURFACE-061: 이 항목의 valueTypeMismatch는 확정 이름 typeMismatch로 읽음
+REACT-033	valueTypeMismatch	이긴 충돌 SURFACE-061: 이 항목의 valueTypeMismatch는 확정 이름 typeMismatch로 읽음
+REACT-033	valueTypeMismatch === false	이긴 충돌 SURFACE-061: 확정 이름 typeMismatch로 읽음
+SURFACE-006	getInactiveValues(path)	이긴 충돌 VALUE-029 잠복 원본 열거는 루트 노드의 함수이고 노드마다 getter inactiveValues
+SURFACE-039	&derived	이긴 충돌 SURFACE-039 첫째 충돌 줄(뒤 라운드 표기 controls.derived)
+SURFACE-039	&injectTo	이긴 충돌 SURFACE-039 첫째 충돌 줄(뒤 라운드 표기 controls.injectTo)
+SURFACE-039	&unsetValue	이긴 충돌 SURFACE-039 첫째 충돌 줄(뒤 라운드 표기 controls.unsetValue)
+SURFACE-052	valueTypeMismatch: boolean	이긴 충돌 SURFACE-061 확정 이름 typeMismatch
+SURFACE-052	VALUE_TYPE_MISMATCH	이긴 충돌 SURFACE-061 확정 이름 SCHEMA_FORM_WARNING.TYPE_MISMATCH
+SURFACE-058	{@inheritDoc}	정비 문장 NODE-019의 하위 가지를 닫는 문장(규칙 4 표 SURFACE-058(NODE 019)), 옮기지 않음
+SURFACE-058	valueTypeMismatch	이긴 충돌 SURFACE-061 확정 이름 typeMismatch
+SURFACE-058	valueTypeMismatches	이긴 충돌 SURFACE-061 확정 이름 typeMismatches
+SURFACE-058	57개	이긴 충돌 EVENT-073·SURFACE-061 명령 넷이 메서드 하나로 합쳐져 겉면 멤버 약 54개
 CONTROLS-070	adr/0003:25	가리킴 바꿈 CONTROLS-048
 CONTROLS-053	43행	가리킴 바꿈 WRITE-007
+GOAL-008	59행	가리킴 바꿈 `00-goals.md` 59행은 GOAL-007(대체됨 → GOAL-008 자신)의 자리라 가리킴을 지움
+GOAL-008	114행	가리킴 바꿈 `00-goals.md` 114행(소유자 발언, C3 세부) → GOAL-016
+GOAL-010	adr/0008:72	가리킴 바꿈 `adr/0008:72` → EVENT-013(batch(fn)은 호출자가 선언한 쓰기 단위)
+GOAL-018	Q7	이긴 충돌 FRAGMENT-047: "(Q7을 채택하면)" 쌍을 두 철자 규칙에서 뺌
+GOAL-083	90행	가리킴 바꿈 `open-questions.md` 90행(Q15) → SETTLE-044
+GOAL-055	E7	이긴 충돌 SETTLE-011 (상한 초과 문장을 원본 B 커밋 문장으로 바꿈)
+GOAL-054	0008 배	가리킴 바꿈 ADR 0008 배달 집합 2항 → EVENT-006
+LANDING-034	44행	가리킴 바꿈 08 §14의 44행(이주 44, LANDING-047 대체됨)을 LANDING-145로 바꿈
+LANDING-109	N3	가리킴 바꿈 06 N3을 LANDING-023으로 바꿈
+LANDING-109	N6	가리킴 바꿈 06 N6을 SURFACE-005로 바꿈
+LANDING-109	N5	이긴 충돌 06 N5 항목은 LANDING-007, LANDING-033(08:436,462 정본)이 이김
+LANDING-109	computed.*	이긴 충돌 06 N5 항목은 LANDING-007, LANDING-033(08:436,462 정본)이 이김
+LANDING-109	&*	이긴 충돌 06 N5 항목은 LANDING-007, LANDING-033(08:436,462 정본)이 이김
+LANDING-110	&active	이긴 충돌 `&if`→`&active`는 LANDING-006(08:435 정본)이 이김
+LANDING-126	SCHEMA_FORM_WARNING.VALUE_TYPE_MISMATCH	이긴 충돌 SURFACE-061의 확정 이름 SCHEMA_FORM_WARNING.TYPE_MISMATCH로 바꿈
+LANDING-124	adr/0008:24-28	가리킴 바꿈 명령 어휘 행의 근거 칸 adr/0008:24-28 → EVENT-001
+LANDING-124	adr/0008:26	가리킴 바꿈 공개 훅 행의 근거 칸 adr/0008:26 → EVENT-001
+LANDING-149	47행	가리킴 바꿈 08 §14 47행은 대체된 LANDING-050의 행이고 그 대상이 LANDING-149 자신이라 가리킴을 지움
+LANDING-170	21행	가리킴 바꿈 §14의 21행 → LANDING-024
+LANDING-070	21행	가리킴 바꿈 §14의 21행 → LANDING-024
+LANDING-070	37행	가리킴 바꿈 §14의 31·32·37행 → LANDING-034, LANDING-035, LANDING-040
+LANDING-069	1 행	가리킴 바꿈 §17.2의 PR-1 행 → LANDING-061
+LANDING-066	unsetOnInactive	이긴 충돌 unsetOnInactive의 층·식의 값·하위 트리 정책은 LANDING-092, TEST-069의 규칙 문장으로 바뀜
+LANDING-066	R17-2	이긴 충돌 unsetOnInactive의 층·식의 값·하위 트리 정책(R17-2 ㄴ)은 LANDING-092, TEST-069의 규칙 문장으로 바뀜
+LANDING-082	getResolveSchema	이긴 충돌 그대로 쓰는 것의 getResolveSchema·extractSchemaInfo는 BLUEPRINT-030, BLUEPRINT-044의 규칙 문장으로 바뀜
+LANDING-067	core/nodes	이긴 충돌 LANDING-205(레거시 디렉토리는 PR-8까지 보존하고 PR-7은 레거시 import 0만 점검)
+LANDING-067	parsers	이긴 충돌 LANDING-205(레거시 디렉토리는 PR-8까지 보존하고 PR-7은 레거시 import 0만 점검)
+LANDING-067	39행	이긴 충돌 EVENT-071, LANDING-199(`setValue(V)`의 같은 입력 판정(§14의 39행)을 이긴 규칙으로 바꿈)
+LANDING-067	40행	가리킴 바꿈 §14의 40행 → LANDING-043
+LANDING-067	38행	가리킴 바꿈 §14의 38행 → LANDING-041
+TEST-013	17행	가리킴 바꿈 08 §14의 17행 → LANDING-020
+TEST-061	D-2	가리킴 바꿈 출발점(D-2)을 SETTLE-029(D-2 행)로 바꿈
+TEST-061	N4	가리킴 바꿈 06 N4(진단의 상태 값)를 SURFACE-007로 바꿈
+TEST-061	63행	가리킴 바꿈 ADR 0013 63행(전체 교체의 분배, 06:245)을 WRITE-018로 바꿈
+TEST-061	57행	가리킴 바꿈 ADR 0007 57행(고정점이 없는 스키마는 지원 범위 밖)을 SETTLE-026으로 바꿈
 BLUEPRINT-048	30행	가리킴 바꿈 소유자 답 30행을 BLUEPRINT-051로 변경
 BLUEPRINT-048	32행	가리킴 바꿈 소유자 답 32행을 BLUEPRINT-038로 변경
 BLUEPRINT-048	33행	가리킴 바꿈 소유자 답 33행의 혼합 규칙은 BLUEPRINT-048 자신이라 "그대로다" 꼬리에서 지움
@@ -57,5 +108,10 @@ EVENT-063	13 행	가리킴 바꿈 SURFACE-011 명령 행
 ERROR-142	stable	이긴 충돌 ERROR-204: 호출자의 복귀 문장을 충돌 줄의 규칙 문장으로 바꿈
 ERROR-164	JSON_SCHEMA_ERROR.INVALID_VIRTUAL_NODE_VALUES	이긴 충돌 ERROR-195: 코드는 오류 클래스와 무리를 옮겨 SCHEMA_FORM_ERROR.INVALID_VIRTUAL_NODE_VALUES(가칭)
 BLUEPRINT-046	DETAIL.md	정비 문장 BLUEPRINT-046 셋째 문장, 원장 자신에 대한 지시(원장 관리 세션 판정 묶음 2)
+REACT-030	T-23	정비 문장 REACT-030 마지막 문장("T-23" 표기는 T-1·T-7로 읽는다), 옮기지 않음(원장 관리 세션 판정 묶음 3)
+SURFACE-039	&active	이긴 충돌 WRITE-015: 뒤 라운드 표기 controls.active로 바꿈(원장 관리 세션 판정 묶음 3)
 ERROR-198	E-23	정비 문장 ERROR-198 "FRAGMENT-023(…E-23·E-19)과 ERROR-159의 충돌 칸이 … 닫아 두었다", 원장 자신에 대한 문장이라 옮기지 않음(원장 관리 세션 판정 묶음 3)
 ERROR-198	E-19	정비 문장 ERROR-198 "FRAGMENT-023(…E-23·E-19)과 ERROR-159의 충돌 칸이 … 닫아 두었다", 원장 자신에 대한 문장이라 옮기지 않음(원장 관리 세션 판정 묶음 3)
+GOAL-083	13행	이긴 충돌 GOAL-031: P8의 옛 문서(`03-mental-model.md` 13행) 고침 제안을 "화면의 명령도 모른다"의 읽기로 바꿈(원장 관리 세션 판정 묶음 4)
+LANDING-051	refactor/schema-form-internal-architecture	이긴 충돌 LANDING-204: 우산 브랜치는 1.0.0-beta(원장 관리 세션 판정 묶음 4)
+LANDING-110	&unsetValue	이긴 충돌 LANDING-009, LANDING-033: 신설 키 이름은 controls.unsetValue, 평면 &키 축약은 사라짐(원장 관리 세션 판정 묶음 4)
