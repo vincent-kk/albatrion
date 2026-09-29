@@ -70,6 +70,16 @@ Planning method: 저장소 지침 — `PLAN.md` §2(한 PR의 순서)와 `plan/p
 
 ## 4. 작업 단위
 
+**담당 배정(소유자 지시, 2026-09-29: "codex와 agy를 활발하게 사용하면서 claude 자체 토큰 소비량을 억제하렴. 멀티에이전트 관리를 해주길 바라.").** 이 지시는 붙여 넣은 실행 프롬프트의 "외부 제공자 위임을 호출하지 마세요"보다 뒤이고, 소유자 본인의 말이라 이긴다. 위임은 cennad 경유로만 한다.
+
+| 역할 | 담당 | 무엇 |
+| --- | --- | --- |
+| 구현 | codex(cennad, `high`, 기계적 이동은 `mid`) | U1–U9의 코드·시험·문서 초안. 단위마다 한 세션이고, 이어지는 고침은 같은 세션을 잇는다 |
+| 대조·리뷰 | antigravity(cennad) | 원장 대 문서·코드의 대량 대조, 게이트 추적표 대조, 단위 검토, 회귀 분류 확인 |
+| 조율과 판정 | 이 세션(Claude) | 브리프 작성, 지적 거르기, 원장 해석 판단, 커밋·push·PR, 기록. 최종 게이트(G22)와 계획 리뷰에만 Claude 검증자를 쓴다 |
+
+codex는 저장소 작업 트리에 쓴다(`workspace-write`). 같은 파일을 두 세션이 동시에 쓰지 않도록 병렬 위임은 파일 범위가 겹치지 않는 단위(U3 ∥ U4)만 한다. 커밋은 조율 세션이 단위마다 한다.
+
 단위마다 한 작성자가 쓰고, 다른 에이전트가 검증한다. 구현 단위는 `seiri:implement`로 하고, 새 동작은 고치기 전에 붉은 시험을 먼저 기록한다. 공유 기록(`log.md`), 통합, 커밋, push, PR은 조율 세션이 맡는다. 명령은 모두 저장소 루트에서 돈다.
 
 ### U0 착수 — 이 계획, ADR, 게이트 원장
@@ -93,7 +103,7 @@ Planning method: 저장소 지침 — `PLAN.md` §2(한 PR의 순서)와 `plan/p
 - 이동 전: 02 기준선 파일(`ARCH/verification/02-foundation-and-blueprint/baseline/REPORT.md`, `core.json`, `scale.json`)이 있고 원천 커밋이 `55ed75504`임을 확인해 log에 적는다. 그다음 unit·render의 파일 수와 시험 수를 잰다.
 - 이동 목록은 `ARCH/verification/03-node-and-settle/legacy-migration-files.json`(옛·새 쌍)과 `legacy-migration.md`에 둔다.
 - 완료: 옛 주소에 파일 0. 이동 전후 unit·render 시험 수가 같다. lint·typecheck 통과(G1–G3).
-- 담당: worker(기계적 이동). 이동 대상 판단이 목록 밖으로 번지면 멈추고 보고한다.
+- 담당: codex(`mid`, 기계적 이동). 이동 대상 판단이 목록 밖으로 번지면 멈추고 보고한다.
 
 ### U2 문서 선행 — 새 fractal의 INTENT·DETAIL
 
@@ -114,8 +124,8 @@ Planning method: 저장소 지침 — `PLAN.md` §2(한 PR의 순서)와 `plan/p
 - 이름 함정 경고를 `SchemaNode/INTENT.md` 첫 줄에 둔다(NODE-010).
 - 완료:
   - 문서만 든 커밋. 새 fractal 각각의 첫 코드 커밋이 이 커밋보다 뒤다(G4).
-  - verifier가 원장 대조 PASS(G5, 수동).
-- 담당: 설계 에이전트(general-purpose, opus)가 쓴다. verifier가 원장과 대조하고, 조율 세션이 검토한다. 여기서 정한 서명이 U3–U8의 인터페이스다. 이후 서명을 바꾸면 DETAIL을 먼저 고친다.
+  - antigravity 원장 대조의 차단 지적 0(G5, 수동).
+- 담당: codex(`high`)가 쓴다. antigravity가 원장과 대조하고, 조율 세션이 지적을 걸러 판정한다. 여기서 정한 서명이 U3–U8의 인터페이스다. 이후 서명을 바꾸면 DETAIL을 먼저 고친다.
 
 ### U3 record와 navigation
 

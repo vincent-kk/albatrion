@@ -32,6 +32,8 @@ Planning method: 저장소 지침 — `PLAN.md` §2와 `plan/prompts.md`의 단�
 | 2026-09-29 | U0 | scout 둘로 02 코드 계약(청사진 수출·형, 레거시 이동 선례, 하네스, 벤치, filid 설정)과 프로토타입 회귀 묶음을 조사. 실행 계획·구조 결정·게이트 원장 초안 | [execution-plan](execution-plan.md), [execution-adr](execution-adr.md) |
 | 2026-09-29 | U0 | 원장 관리 세션 `albatrion-f8`에 해석 확인 Q1–Q6 송신(겉면 스텁, 동사 진입, 렌더 시나리오 게이트, 뒤 PR 기제를 쓰는 게이트, 게이트 평가와 L, 형 충돌 신호) | 회신 대기 |
 
+| 2026-09-29 | U0 | 소유자 지시: "codex와 agy를 활발하게 사용하면서 claude 자체 토큰 소비량을 억제하렴. 멀티에이전트 관리를 해주길 바라." 구현은 codex, 대조·리뷰는 antigravity, 조율·판정은 이 세션으로 배정(실행 계획 §4 머리) | 이 커밋 |
+
 ## 3. 다음 행동
 
 - 독립 리뷰(seiri review-plan) → 원장 관리 세션 회신 반영과 재리뷰 → `cleared` 뒤 U1.
