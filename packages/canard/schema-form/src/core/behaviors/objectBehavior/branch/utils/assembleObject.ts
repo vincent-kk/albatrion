@@ -1,0 +1,59 @@
+import { hasOwnProperty } from '@winglet/common-utils/lib';
+
+import type { Behavior } from '../../../../record';
+import { getStaticChoices } from '../../../utils/options/getStaticChoices';
+import { writeObjectKey } from '../../utils/keys/writeObjectKey';
+
+/** Combine live child projections and undeclared input in stable host order. */
+export const assembleObject: Behavior['assemble'] = (node, children) => {
+  const childValues = new Map<string, unknown>();
+  for (const child of children)
+    if (child !== null && typeof child === 'object' &&
+      'name' in child && typeof child.name === 'string' && 'emit' in child)
+      childValues.set(child.name, child.emit);
+  const extra = node.extras;
+  const extras = extra !== null && typeof extra === 'object' && !Array.isArray(extra)
+    ? extra
+    : undefined;
+  const names: string[] = [];
+  const preferred = getStaticChoices(node.schema).propertyKeys;
+
+  for (const name of preferred) {
+    if (childValues.has(name)) {
+      if (childValues.get(name) !== undefined && !names.includes(name)) names.push(name);
+    } else if (extras && hasOwnProperty(extras, name) && !names.includes(name))
+      names.push(name);
+  }
+  for (const entry of node.blueprintNode.childEntries) {
+    const name = entry.name;
+    if (childValues.has(name) && childValues.get(name) !== undefined &&
+      !names.includes(name)) names.push(name);
+  }
+  if (extras)
+    for (const name of Object.keys(extras))
+      if (!childValues.has(name) && !names.includes(name)) names.push(name);
+
+  const previous = node.local;
+  if (previous !== null && typeof previous === 'object' && !Array.isArray(previous)) {
+    const oldNames = Object.keys(previous);
+    if (names.length === oldNames.length && names.every((name, index) => name === oldNames[index])) {
+      let patch: Record<string, unknown> | undefined;
+      for (const name of names) {
+        const value = childValues.has(name)
+          ? childValues.get(name)
+          : extras ? Reflect.get(extras, name) : undefined;
+        if (value !== Reflect.get(previous, name)) {
+          if (!patch) patch = { ...previous };
+          writeObjectKey(patch, name, value);
+        }
+      }
+      return patch ?? previous;
+    }
+  }
+  const result: Record<string, unknown> = {};
+  for (const name of names)
+    writeObjectKey(result, name, childValues.has(name)
+      ? childValues.get(name)
+      : extras ? Reflect.get(extras, name) : undefined);
+  return result;
+};

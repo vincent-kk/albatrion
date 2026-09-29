@@ -57,10 +57,12 @@ Planning method: 저장소 지침 — `PLAN.md` §2와 `plan/prompts.md`의 단�
 | 2026-09-29 | U1 | 옛 엔진 최종 벤치 기준선을 이동 전에 조율 세션이 단독 호출로 잼(`yarn workspace @canard/schema-form bench:baseline`, `e5a6c8061`, 결과 `verification/03-node-and-settle/baseline/core-legacy-final.json`). codex(세션 `e986c241`)가 `src/core/DETAIL.md`를 먼저 고치고 407파일을 `__legacy__`로 옮기며 import를 수선함. unit 242파일·3,542시험, render 52파일·539시험이 이동 전후 같음. G2·G3·G23·G32 통과(조율 세션 재실행) | `8fa6b3f74`, `abc2a0c72`, `verification/03-node-and-settle/legacy-migration.md` |
 | 2026-09-29 | U2 | codex(세션 `522bb905`)가 새 fractal 다섯과 종류 fractal 일곱의 INTENT·DETAIL, 청사진 DETAIL의 평가 자리 L 절(`BlueprintGate.evaluationHostPath`)을 먼저 씀. 코드 없음(`.md` 25파일만 확인). 칸 이름 `evaluationHostPath`는 조율 세션이 받아들임(SETTLE-045·26C-04, 형은 U5). G4 통과(조율 세션 실행). G5는 antigravity 대조 진행 중 | `3ee7e09f6` |
 | 2026-09-29 | U2 | G5 1차(antigravity) FAIL: 차단 둘(런타임 `entryDepth`는 PR-4 기제, 런타임 칸 다섯의 원장 근거), 비차단 하나(objectBehavior DETAIL의 배열 행 문장 오기). 조율 판정: `entryDepth`·런타임 `rootNode` 삭제, 배열 행 문장 삭제를 받아들임. 나머지 넷(`loadSnapshot`·`latentRaw`·`typeMismatchPaths`·`inactiveValuesMemo`)은 원장 관리자 질의 → 26C-06으로 런타임 칸 확정(루트 전용 레코드 필드 없음). 문서 수정은 U3 codex가 코드보다 먼저 함 | 원장 `6330c8854` (`reviews/round-26-closing.md:61-70`) |
+| 2026-09-29 | U3 | codex(세션 `103916e7`)가 record·navigation·레거시 import 금지 설정을 씀. 편차 둘을 조율 세션이 받아들이고 DETAIL을 먼저 맞춤(navigation `origin: Self`, `updateSchemaNodeNameAndPath`의 `Self` 제약). 조율 세션이 navigation 뿌리의 구현 셋을 `utils/query/`·`utils/walk/`로 옮김(filid 뿌리 규칙). G6(15시험)·G30·tsc·eslint 통과(조율 세션 재실행). G5 재대조 antigravity PASS | `9a1cbfb92`, `fde2bc543` |
+| 2026-09-29 | U4 | codex(세션 `258b196e`)가 parse(규칙 A)와 행 여덟·`BEHAVIORS`를 씀. 중간 질의: objectBehavior DETAIL의 "활성 자식 선언만"은 NODE-006 "자식 선언 목록만"보다 나감 → 조율 판정 (a) 선언 전부를 돌려주고 게이트 거르기는 settle(D3). 할당 0 시험은 쓰기 경로의 명시적 생성 부재만 봄(실행 힙 측정 아님). G7(17시험)·tsc·eslint 통과(조율 세션 재실행) | `e89acea25`, 이 커밋 |
 
 ## 3. 다음 행동
 
-- U2 문서의 원장 대조(G5, antigravity) 판정 → 지적 반영. 병행으로 U3(codex, `record`·`navigation`·레거시 import 금지) 진행 → 검사 뒤 커밋 → U4.
+- U5(정착 ①: 표시·계산·커밋, 청사진 L) codex 진행 → 검사 뒤 커밋 → U6.
 - 이 세션의 커밋은 경로를 지정한 `git add`만 쓴다(원장 세션의 미커밋 변경과 섞지 않음).
 
 ## 4. 원장·계획서 어긋남
