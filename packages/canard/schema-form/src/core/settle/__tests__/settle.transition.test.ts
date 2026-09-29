@@ -67,8 +67,18 @@ describe('settle transitions and loads', () => {
     loadSchemaNodeAtMount(root, {}, SetValueOption.Overwrite |
       SetValueOption.EnableAutomaticWrites);
     expect(root.structure?.name?.raw).toBe('filled');
-    resetSchemaNodeForm(root, {}, SetValueOption.Overwrite |
-      SetValueOption.DisableAutomaticWrites | SetValueOption.EnableAutomaticWrites);
+  });
+
+  it('WRITE-015 suppression wins when a call sets both automatic-write bits', () => {
+    const { root } = createTestTree({ type: 'object', properties: {
+      name: { type: 'string', default: 'filled' },
+    } });
+    const both = SetValueOption.Overwrite |
+      SetValueOption.DisableAutomaticWrites | SetValueOption.EnableAutomaticWrites;
+    loadSchemaNodeAtMount(root, {}, both);
+    expect(root.structure?.name?.raw).toBeUndefined();
+    root.runtime.disableAutomaticWrites = true;
+    resetSchemaNodeForm(root, {}, both);
     expect(root.structure?.name?.raw).toBeUndefined();
   });
 
