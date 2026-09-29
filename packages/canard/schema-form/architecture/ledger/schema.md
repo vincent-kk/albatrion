@@ -122,7 +122,8 @@
 
 - 결정:
   > 읽지 않는 것: `required`, `false`, `not`, `additionalProperties`, `patternProperties`, `dependentSchemas`(슬라이스 1 전 설계 항목), 범위·패턴·`enum`·`const`(`controls.discriminator` 아래만 예외). 이것들은 검증기에 그대로 간다.
-- 보충: 없음
+- 보충:
+  > 편집자 결정(25C-03): "【추론】 기여 하나만 적은 `{ minimum: 5, maximum: 3 }`나 `{ enum: [] }`는 교차가 아니므로 그대로 두고 검증기가 기각한다. 범위의 하한·상한 쌍(`minimum`/`maximum`, `exclusiveMinimum`/`exclusiveMaximum`, `minLength`/`maxLength`, `minItems`/`maxItems`, `minProperties`/`maxProperties`)은 쌍마다 한 키워드로 보아, 그 기여가 그 쌍의 경계를 하나라도 적고, 그 기여 전에 target에 그 쌍의 경계가 하나라도 있으며, 합친 결과가 역전일 때만 `INVALID_RANGE`다." (`reviews/round-25-closing.md:33`)
 - 상태: 현행
 - 출처: `08-design-a-to-z.md:89`(정본), `02-target-overview.md:53`, `03-mental-model.md:52`, `05-before-after.md:27,222,228`
 - 닫은 사람: 원리(`reviews/round-5-derivations.md:28-34` D-3), 소유자 답(`reviews/round-9-spec.md:19` 축1), 소유자 답(`reviews/round-10-owner-answers.md:11` B-22; `const`·`enum` 판별의 예외 허용), 소유자 답(`reviews/round-12-owner-answers.md:9` 2 `&discriminator`; `controls.discriminator` 아래의 예외)
@@ -651,7 +652,12 @@
   > 【추론】 잎 함수의 공집합 표시는 정적 연언에서는 청사진 오류로, 런타임에서는 위 표현으로 바뀐다.
   > 【추론】 같은 활성 집합이면 같은 참조를 돌려준다(메모).
   > 【추론】 PR-1 병합표 시험(`09-landing-and-test-strategy.md:168`)이 이 표현을 단언한다.
-- 보충: 없음
+- 보충:
+  > 편집자 결정(25C-03): "【추론】 청사진 오류 `INVALID_RANGE`·`EMPTY_ENUM_INTERSECTION`·`CONFLICTING_CONST_VALUES`는 정적 연언에서 둘 이상의 기여가 같은 키워드를 적어 교차한 결과가 공집합일 때만 난다." (`reviews/round-25-closing.md:32`)
+  > 편집자 결정(25C-03): "【추론】 기여 하나만 적은 `{ minimum: 5, maximum: 3 }`나 `{ enum: [] }`는 교차가 아니므로 그대로 두고 검증기가 기각한다. 범위의 하한·상한 쌍(`minimum`/`maximum`, `exclusiveMinimum`/`exclusiveMaximum`, `minLength`/`maxLength`, `minItems`/`maxItems`, `minProperties`/`maxProperties`)은 쌍마다 한 키워드로 보아, 그 기여가 그 쌍의 경계를 하나라도 적고, 그 기여 전에 target에 그 쌍의 경계가 하나라도 있으며, 합친 결과가 역전일 때만 `INVALID_RANGE`다." (`reviews/round-25-closing.md:33`)
+  > 편집자 결정(25C-03): "【추론】 리터럴 `enum: []`는 공집합 표시가 아니며, 공집합은 잎 함수가 `EMPTY_INTERSECTION`을 돌려준 경우만이다. 이 셋은 유효 스키마의 키워드 교차에만 걸리고, 판별 키의 `const`·`enum` 모으기는 FRAGMENT-048대로 키워드를 가리지 않고 교차하며, 기여 하나의 값이 이미 비어도(`{ enum: [] }`, `{ const: 'a', enum: ['b'] }`) `EMPTY_ENUM_INTERSECTION`이다(25C-01)." (`reviews/round-25-closing.md:34`)
+  > 편집자 결정(25C-04): "【추론】 SCHEMA-045의 `enum: []` 표현은 `enum`·`const`의 런타임 공집합에만 쓴다." (`reviews/round-25-closing.md:41`)
+  > 편집자 결정(25C-04): "【추론】 켜진 게이트 선언의 `type`과 정적 허용 집합의 교집합이 비면 유효 스키마는 `enum: []`을 적지 않고 형 충돌을 결과에 드러내며, 그 게이트들이 켜진 동안의 정착 오류 `SHARED_NODE_CONFLICT`는 PR 03(정착)이 던진다." (`reviews/round-25-closing.md:42`)
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:251-259`(정본)
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-11)

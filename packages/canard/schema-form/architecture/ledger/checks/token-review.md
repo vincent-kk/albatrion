@@ -445,3 +445,7 @@ node ledger/checks/tokens.mjs check <목록> ledger/*.md
 ## 24라운드(소유자의 PR #348 편집자 결정 검토) 반영 뒤의 잔여 (2026-09-29)
 
 잔여 485 그대로다(`{"total":2483,"missing":485}`). HANDOFF §1의 24라운드 문단이 든 코드 토큰(`/preview`, `reviews/round-24-owner-answers.md:7`)은 원장이 함께 들거나 토큰 규칙에 들지 않는다. 새 항목은 없고, 닫은 사람 칸에 소유자 답이 더해졌을 뿐이다.
+
+## 25라운드(02·01 어긋남 16건) 반영 뒤의 잔여 (2026-09-29)
+
+잔여 484(`{"total":2488,"missing":484}`) = 485 − 1. 줄어든 하나는 `_archive/2026-09-29/`로, 25C-10을 따라 `ledger/README.md` 기준 커밋 절에 들어갔다. HANDOFF §1의 25라운드 문단이 새로 든 코드 토큰(`fix/schema-form-realign-01-02`, `INVALID_CONTROL_SHAPE`)은 같은 라운드의 보충 줄이 원장에 함께 들었다. 새 항목은 없고 보충 줄 52개만 더했다.

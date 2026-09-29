@@ -1644,6 +1644,7 @@
   > 실패: 절차나 종류 목록이나 props의 형을 고친다.
 - 보충:
   > 편집자 결정(LANDING-065): "배열·터미널 배열 행(`arrayBehavior/`의 `branch/`·`terminal/`)" (`08-design-a-to-z.md:575`) — `push(v)`와 삽입의 스냅숏 시험은 배열 행을 들여오는 PR-5가 하고, PR-2(스냅숏·유효 목록)의 게이트에는 유효 목록 시험만 남는다(LANDING-065).
+  > 편집자 결정(25C-11): "【추론】 `union.kind-procedure.test.ts`의 단언은 위 네 파일의 표 행과 `blueprint.type-gated-declarations.test.ts`의 정적 소유자 없는 분기 접기 충돌 사례에, `union.null-only.test.ts`는 위 표 행에, `union.static-intersection.test.ts`는 `blueprint.type-static-intersection.test.ts`에, `union.schema-type-invariant.test.ts`는 `blueprint.type-syntax.test.ts`의 E1–E9 불변식에, `union.gated-narrowing.test.ts`는 `blueprint.type-gated-declarations.test.ts`에, `union.terminal-subtree-warning.test.ts`는 `blueprint.diagnostics.test.ts`와 `blueprint.type-syntax.test.ts`의 E28에 있다." (`reviews/round-25-closing.md:104`)
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:2938-2957,2969-2984`(정본), `reviews/round-18-owner-answers.md:24`, `08-design-a-to-z.md:575`
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-105), 소유자 답(`reviews/round-18-owner-answers.md:24` 18C 검토 1번; 입력이 보내는 값), 편집자 결정(18라운드, LANDING-065; 배열 스냅숏 시험은 PR-5)
