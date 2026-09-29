@@ -158,6 +158,7 @@ Planning method: 저장소 지침 — `PLAN.md` §2의 한 PR 순서와 `plan/01
 | 2026-09-29 | Final | storybook 49파일 390건 초록(소유자 실행). G15는 사유와 함께 ABANDON. 소유자 결정: 이 세션의 시험 검증은 vitest unit·render로 갈음하고, 스토리 화면은 개발 완료 뒤 소유자가 하나씩 실사한다 | G15 처리 |
 | 2026-09-29 | Final | G18 filid 스캔 INDETERMINATE(발견 178: 새것 1, 02 기준선 2, 이 브랜치 밖의 기존 175). 새것은 불변식 시험의 `it.each`가 파일당 시험 기록 상한 32를 넘는 것(51건). G19 verifier FAIL: 높음 1(`validateChildTargets.ts`가 선언 사이 판별 키 불일치에 네 번째 `DISCRIMINATOR_MISMATCH`를 냄, 25C-01은 셋만, 원장 관리 세션에 판정 요청), 중간 1(불변식 시험 표지의 DETAIL 그룹 없음), 낮음 2(시험의 `as any` 둘, `minContains`/`maxContains`가 `CONSTRAINT_KEYS`에 남아 조용히 빠짐), 참고 1(형 충돌 중 `nullable`). 변이 13종 모두 빨강, 설계문서 옮김 43/44 글자 그대로, ADR 일치 | 고침 진행 |
 | 2026-09-29 | Final | 청사진 네 건 고침(`f139cad4a`): 불변식 시험 51 → 2건, DETAIL 그룹, `as any` 둘 제거, `minContains`/`maxContains` 통과. 원장 관리 세션 판정 25C-12: 선언 사이 판별 키 다름은 SCHEMA-013이 이미 정한 사건이며 `DISCRIMINATOR_MISMATCH`는 넷(`reason: 'key'`, details `{ propertyName, other, reason }`). 형 충돌 중 `nullable`은 BLUEPRINT-041대로 정적 값 — 이 브랜치가 `enum: []`을 걷어 드러낸 것이라 여기서 고치고 `plan/03`에는 유지 조건만 적음 | 25C-12 반영 진행 |
+| 2026-09-29 | Final | 25C-12 반영: 설계문서(`de3c0cebf`, "넷이다"를 25C-01의 "셋만이다" 바로 뒤로), 코드(`4e0034577`, details `{ propertyName, other, reason: 'key' }`, 형 충돌 중 정적 `nullable`, 고치기 전 빨강 확인). filid 2차: 이 브랜치 파일의 발견 0(G18). verifier 범위 한정 재확인 PASS(G19). unit·render 294파일 4,081건, 청사진 62파일 562건. 게이트 19 가운데 충족 18, ABANDON 1(G15) | 모든 게이트 닫힘 |
 
 ## 6. 어긋남
 
