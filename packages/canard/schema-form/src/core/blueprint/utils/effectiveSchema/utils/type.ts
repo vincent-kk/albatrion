@@ -10,6 +10,6 @@ export interface EffectiveSchemaState {
   allowedTypes: readonly SchemaTypeName[] | undefined;
   /** A conflicting const stays impossible even when later constants are added. */
   conflictingConst: boolean;
-  /** Empty type intersections belong to settlement; enum empty is only a hint. */
+  /** Empty type intersections belong to settlement and surface as `typeConflict`. */
   conflictingType: boolean;
 }

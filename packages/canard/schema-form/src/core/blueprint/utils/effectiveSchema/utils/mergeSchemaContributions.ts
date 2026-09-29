@@ -1,6 +1,6 @@
 import type {
   BlueprintNode,
-  BlueprintSchema,
+  EffectiveSchema,
   EffectiveSchemaOptions,
   PropertyDeclaration,
   SchemaTypeName,
@@ -9,18 +9,24 @@ import { applySchemaContribution } from './applySchemaContribution';
 import { finalizeEffectiveSchema } from './finalizeEffectiveSchema';
 import type { EffectiveSchemaState } from './type';
 
+/** Shared result of a contributing `false` schema, so the early return allocates nothing. */
+const FALSE_EFFECTIVE_SCHEMA: EffectiveSchema = Object.freeze({
+  schema: false,
+  typeConflict: false,
+});
+
 /**
  * Fold a selected authored sequence into a fresh renderer-hint object.
  * @param node - Stable static type and nullable metadata.
  * @param declarations - Applicable contributions already in total order.
  * @param options - Error collection and atomic group-merge policy.
- * @returns Frozen outer hints, or false when a contributing boolean schema forbids values.
+ * @returns Frozen result record; its schema is false when a contributing boolean schema forbids values.
  */
 export const mergeSchemaContributions = (
   node: BlueprintNode,
   declarations: readonly PropertyDeclaration[],
   options: EffectiveSchemaOptions,
-): BlueprintSchema => {
+): EffectiveSchema => {
   const staticTypes =
     node.schemaType === 'virtual'
       ? undefined
@@ -38,7 +44,7 @@ export const mergeSchemaContributions = (
         : staticTypes,
   };
   for (const declaration of declarations) {
-    if (declaration.schema === false) return false;
+    if (declaration.schema === false) return FALSE_EFFECTIVE_SCHEMA;
     if (declaration.schema === true) continue;
     applySchemaContribution(state, declaration, options);
   }

@@ -30,9 +30,9 @@ export const validateControlGroups = (
           : CONTROL_KEYS;
     if (!value || typeof value !== 'object' || Array.isArray(value))
       throwBlueprintError(
-        BlueprintErrorCode.UnknownGroupKey,
+        BlueprintErrorCode.InvalidControlShape,
         `${schemaPath}/${group}`,
-        { group, key: group },
+        { group, key: group, expected: 'object' },
         context.options,
       );
     for (const key of Object.keys(value))
@@ -50,17 +50,17 @@ export const validateControlGroups = (
     typeof controls.injectTo !== 'function'
   )
     throwBlueprintError(
-      BlueprintErrorCode.UnknownGroupKey,
+      BlueprintErrorCode.InvalidControlShape,
       `${schemaPath}/controls/injectTo`,
-      { key: 'injectTo', expected: 'function' },
+      { group: 'controls', key: 'injectTo', expected: 'function' },
       context.options,
     );
   if (controls?.children !== undefined) {
     if (!Array.isArray(controls.children))
       throwBlueprintError(
-        BlueprintErrorCode.UnknownGroupKey,
+        BlueprintErrorCode.InvalidControlShape,
         `${schemaPath}/controls/children`,
-        { key: 'children', expected: 'array' },
+        { group: 'controls', key: 'children', expected: 'array' },
         context.options,
       );
     controls.children.forEach((entry: any, index: number) => {
@@ -75,9 +75,13 @@ export const validateControlGroups = (
         entry.targets.some((name: unknown) => typeof name !== 'string')
       )
         throwBlueprintError(
-          BlueprintErrorCode.UnknownGroupKey,
+          BlueprintErrorCode.InvalidControlShape,
           path,
-          { key: 'children', entry },
+          {
+            group: 'controls',
+            key: 'children',
+            expected: '{ targets: string[], controls? }',
+          },
           context.options,
         );
       validateControlGroups(context, { controls: entry.controls }, path, true);

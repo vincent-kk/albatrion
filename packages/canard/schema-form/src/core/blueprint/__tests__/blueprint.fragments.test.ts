@@ -192,7 +192,7 @@ describe('blueprint fragment ownership and strategies', () => {
       ],
     }).root;
     expect(root.declarations[1].scope).toBe('fragment');
-    expect(mergeEffectiveSchema(root, [])).not.toHaveProperty(
+    expect(mergeEffectiveSchema(root, []).schema).not.toHaveProperty(
       'controls.default',
     );
     expect(root.childEntries[0].node.declarations[0].scope).toBe('node');
@@ -258,5 +258,60 @@ describe('blueprint fragment ownership and strategies', () => {
       },
     ).root;
     expect(root.strategy).toBe('terminal');
+  });
+  it('gathers names declared only in active, oneOf, anyOf, discriminator and then/else branches as host children', () => {
+    const names = (schema: Record<string, unknown>) =>
+      blueprint(schema).root.childEntries.map((edge) => edge.name);
+    expect(
+      names({
+        type: 'object',
+        properties: { base: { type: 'string' } },
+        if: { properties: { probe: { const: 1 } } },
+        then: { properties: { fromThen: { type: 'string' } } },
+        else: { properties: { fromElse: { type: 'string' } } },
+        oneOf: [
+          {
+            controls: { active: './base' },
+            properties: { fromActive: { type: 'string' } },
+          },
+          { properties: { fromOneOf: { type: 'string' } } },
+        ],
+        anyOf: [{ properties: { fromAnyOf: { type: 'string' } } }],
+      }),
+    ).toEqual(
+      expect.arrayContaining([
+        'base',
+        'fromThen',
+        'fromElse',
+        'fromActive',
+        'fromOneOf',
+        'fromAnyOf',
+      ]),
+    );
+    expect(
+      names({
+        type: 'object',
+        controls: { discriminator: 'kind' },
+        oneOf: [
+          {
+            properties: {
+              kind: { type: 'string', const: 'a' },
+              onlyA: { type: 'string' },
+            },
+          },
+        ],
+      }),
+    ).toEqual(expect.arrayContaining(['kind', 'onlyA']));
+  });
+
+  it('does not gather names written only inside an if schema', () => {
+    const names = blueprint({
+      type: 'object',
+      properties: { base: { type: 'string' } },
+      if: { properties: { probe: { const: 1 } } },
+      then: { properties: { fromThen: { type: 'string' } } },
+    }).root.childEntries.map((edge) => edge.name);
+    expect(names).not.toContain('probe');
+    expect(names).toContain('fromThen');
   });
 });

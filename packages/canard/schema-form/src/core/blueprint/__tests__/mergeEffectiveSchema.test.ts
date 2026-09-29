@@ -34,8 +34,12 @@ describe('mergeEffectiveSchema', () => {
         { context: 'declaration', order: [4] },
       ],
     );
-    expect(mergeEffectiveSchema(node, [])).toMatchObject({ title: 'later' });
-    expect(mergeEffectiveSchema(node, [2])).toMatchObject({ title: 'gated' });
+    expect(mergeEffectiveSchema(node, []).schema).toMatchObject({
+      title: 'later',
+    });
+    expect(mergeEffectiveSchema(node, [2]).schema).toMatchObject({
+      title: 'gated',
+    });
     const sole = createEffectiveSchemaNode(
       [
         { title: 'branch' },
@@ -49,7 +53,7 @@ describe('mergeEffectiveSchema', () => {
         { role: 'overlay', context: 'declaration', fragmentId: 0 },
       ],
     );
-    expect(mergeEffectiveSchema(sole, [])).toMatchObject({
+    expect(mergeEffectiveSchema(sole, []).schema).toMatchObject({
       title: 'branch',
       description: 'overlay',
     });
@@ -62,7 +66,9 @@ describe('mergeEffectiveSchema', () => {
         { role: 'overlay', context: 'declaration' },
       ],
     );
-    expect(mergeEffectiveSchema(host, [], { mode: 'static' })).toMatchObject({
+    expect(
+      mergeEffectiveSchema(host, [], { mode: 'static' }).schema,
+    ).toMatchObject({
       title: 'host',
       type: ['string', 'number'],
     });
@@ -72,7 +78,7 @@ describe('mergeEffectiveSchema', () => {
       [{}, { role: 'overlay', validationOnly: true }],
     );
     expect(
-      mergeEffectiveSchema(validationOnly, [], { mode: 'static' }),
+      mergeEffectiveSchema(validationOnly, [], { mode: 'static' }).schema,
     ).toMatchObject({ title: 'host', type: 'string' });
   });
 
@@ -101,7 +107,7 @@ describe('mergeEffectiveSchema', () => {
         multipleOf: 3,
       },
     ]);
-    expect(mergeEffectiveSchema(node, [])).toMatchObject({
+    expect(mergeEffectiveSchema(node, []).schema).toMatchObject({
       minimum: 4,
       maximum: 12,
       minLength: 3,
@@ -119,7 +125,7 @@ describe('mergeEffectiveSchema', () => {
       { required: ['a'], title: 'first', readOnly: true },
       { required: ['a', 'b'], title: 'last', default: 3, readOnly: false },
     ]);
-    expect(mergeEffectiveSchema(node, [])).toMatchObject({
+    expect(mergeEffectiveSchema(node, []).schema).toMatchObject({
       required: ['a', 'b'],
       title: 'last',
       default: 3,
@@ -133,7 +139,10 @@ describe('mergeEffectiveSchema', () => {
       { enum: [value, { x: 2 }], const: value },
       { enum: [{ x: 1 }], const: { x: 1 } },
     ]);
-    const result = mergeEffectiveSchema(node, []) as Record<string, unknown>;
+    const result = mergeEffectiveSchema(node, []).schema as Record<
+      string,
+      unknown
+    >;
     expect(result.enum).toEqual([value]);
     expect(result.const).toBe(value);
     expect(
@@ -141,7 +150,7 @@ describe('mergeEffectiveSchema', () => {
         createEffectiveSchemaNode([{ const: 1 }, { enum: [2] }]),
         [],
         { mode: 'static' },
-      ),
+      ).schema,
     ).toMatchObject({ const: 1, enum: [2] });
   });
 
@@ -153,11 +162,12 @@ describe('mergeEffectiveSchema', () => {
     ];
     for (const [left, right, code] of cases) {
       const diagnostics: unknown[] = [];
-      expect(() =>
-        mergeEffectiveSchema(createEffectiveSchemaNode([left, right]), [], {
-          mode: 'static',
-          collect: (d) => diagnostics.push(d),
-        }),
+      expect(
+        () =>
+          mergeEffectiveSchema(createEffectiveSchemaNode([left, right]), [], {
+            mode: 'static',
+            collect: (d) => diagnostics.push(d),
+          }).schema,
       ).toThrow(code);
       expect(diagnostics).toContainEqual(
         expect.objectContaining({ code, schemaPath: '#/allOf/1' }),
@@ -170,19 +180,19 @@ describe('mergeEffectiveSchema', () => {
       mergeEffectiveSchema(
         createEffectiveSchemaNode([{ enum: [1] }, { enum: [2] }]),
         [],
-      ),
+      ).schema,
     ).toMatchObject({ enum: [] });
     const result = mergeEffectiveSchema(
       createEffectiveSchemaNode([{ const: 1 }, { const: 2 }, { const: 3 }]),
       [],
-    ) as Record<string, unknown>;
+    ).schema as Record<string, unknown>;
     expect(result.enum).toEqual([]);
     expect(result).not.toHaveProperty('const');
     expect(
       mergeEffectiveSchema(
         createEffectiveSchemaNode([{ minimum: 5 }, { maximum: 2 }]),
         [],
-      ),
+      ).schema,
     ).toMatchObject({ minimum: 5, maximum: 2 });
   });
 
@@ -192,7 +202,7 @@ describe('mergeEffectiveSchema', () => {
       { pattern: 'z$' },
       { pattern: '^a' },
     ]);
-    expect(mergeEffectiveSchema(node, [])).toMatchObject({
+    expect(mergeEffectiveSchema(node, []).schema).toMatchObject({
       pattern: '^a',
       allOf: [{ format: 'opaque' }, { pattern: 'z$' }],
     });
@@ -206,7 +216,7 @@ describe('mergeEffectiveSchema', () => {
       { options },
       { options: { nested: { second: 2 }, shared: undefined, list } },
     ]);
-    const result = mergeEffectiveSchema(node, []) as Record<string, any>;
+    const result = mergeEffectiveSchema(node, []).schema as Record<string, any>;
     expect(result.options).toEqual({
       nested: { first: 1, second: 2 },
       shared,
@@ -217,10 +227,8 @@ describe('mergeEffectiveSchema', () => {
     expect(options).toEqual({ nested: { first: 1 }, shared, list: [1] });
     expect(
       (
-        mergeEffectiveSchema(
-          createEffectiveSchemaNode([{ options }]),
-          [],
-        ) as Record<string, unknown>
+        mergeEffectiveSchema(createEffectiveSchemaNode([{ options }]), [])
+          .schema as Record<string, unknown>
       ).options,
     ).toBe(options);
   });
@@ -239,19 +247,19 @@ describe('mergeEffectiveSchema', () => {
       { controls, options: { virtual, omitEmpty: true } },
       { controls: { watch: ['./b'], default: 2 } },
     ]);
-    expect(mergeEffectiveSchema(node, [])).toMatchObject({
+    expect(mergeEffectiveSchema(node, []).schema).toMatchObject({
       controls: { watch: ['./b'], default: 2 },
       options: { omitEmpty: true },
     });
     expect(
-      (mergeEffectiveSchema(node, []) as Record<string, any>).controls,
+      (mergeEffectiveSchema(node, []).schema as Record<string, any>).controls,
     ).not.toHaveProperty('derived');
     expect(node.declarations[0].schema).toEqual({
       controls,
       options: { virtual, omitEmpty: true },
     });
     expect(
-      (mergeEffectiveSchema(node, []) as Record<string, any>).options,
+      (mergeEffectiveSchema(node, []).schema as Record<string, any>).options,
     ).not.toHaveProperty('virtual');
     const fragment = createEffectiveSchemaNode(
       [
@@ -261,7 +269,7 @@ describe('mergeEffectiveSchema', () => {
       {},
       [{}, { role: 'overlay', scope: 'fragment' }],
     );
-    expect(mergeEffectiveSchema(fragment, [])).toMatchObject({
+    expect(mergeEffectiveSchema(fragment, []).schema).toMatchObject({
       controls: { watch: ['./node'], default: 1 },
     });
   });
@@ -274,9 +282,9 @@ describe('mergeEffectiveSchema', () => {
       [{}, { gates: [gate] }],
     );
     expect(
-      (mergeEffectiveSchema(node, []) as Record<string, unknown>).type,
+      (mergeEffectiveSchema(node, []).schema as Record<string, unknown>).type,
     ).toBe(schemaType);
-    expect(mergeEffectiveSchema(node, [1])).toMatchObject({
+    expect(mergeEffectiveSchema(node, [1]).schema).toMatchObject({
       type: ['integer'],
     });
     const scalar = createEffectiveSchemaNode(
@@ -284,12 +292,14 @@ describe('mergeEffectiveSchema', () => {
       { kind: 'number', schemaType: 'number' },
       [{}, { gates: [gate] }],
     );
-    expect(mergeEffectiveSchema(scalar, [1])).toMatchObject({ type: 'number' });
+    expect(mergeEffectiveSchema(scalar, [1]).schema).toMatchObject({
+      type: 'number',
+    });
     const nullable = createEffectiveSchemaNode(
       [{ type: ['number', 'null'] }, { type: 'number' }],
       { kind: 'number', schemaType: 'number', nullable: true },
     );
-    expect(mergeEffectiveSchema(nullable, [])).toMatchObject({
+    expect(mergeEffectiveSchema(nullable, []).schema).toMatchObject({
       type: 'number',
       nullable: false,
     });
@@ -297,7 +307,7 @@ describe('mergeEffectiveSchema', () => {
       [{ type: ['number', 'null'] }, { type: 'null' }],
       { kind: 'number', schemaType: 'number', nullable: true },
     );
-    expect(mergeEffectiveSchema(nullOnly, [])).toMatchObject({
+    expect(mergeEffectiveSchema(nullOnly, []).schema).toMatchObject({
       type: 'null',
       nullable: true,
     });
@@ -309,14 +319,14 @@ describe('mergeEffectiveSchema', () => {
       {},
       [{}, { gates: [gate] }],
     );
-    expect(mergeEffectiveSchema(node, [1])).toMatchObject({
-      type: 'string',
-      enum: [],
-    });
+    const conflicted = mergeEffectiveSchema(node, [1]);
+    expect(conflicted.typeConflict).toBe(true);
+    expect(conflicted.schema).toMatchObject({ type: 'string' });
+    expect(conflicted.schema).not.toHaveProperty('enum');
     expect(node.declarations[1].schema).toEqual({ type: 'number' });
-    expect(() => mergeEffectiveSchema(node, [1], { mode: 'static' })).toThrow(
-      'ALL_OF_TYPE_REDEFINITION',
-    );
+    expect(
+      () => mergeEffectiveSchema(node, [1], { mode: 'static' }).schema,
+    ).toThrow('ALL_OF_TYPE_REDEFINITION');
   });
 
   it('memoizes normalized active sets and separates static from runtime checks', () => {
@@ -324,12 +334,12 @@ describe('mergeEffectiveSchema', () => {
       {},
       { gates: [gate] },
     ]);
-    const first = mergeEffectiveSchema(node, [1]);
-    expect(mergeEffectiveSchema(node, [1, 1, 0])).toBe(first);
-    expect(mergeEffectiveSchema(node, [])).not.toBe(first);
-    expect(() => mergeEffectiveSchema(node, [1], { mode: 'static' })).toThrow(
-      'CONFLICTING_CONST_VALUES',
-    );
+    const first = mergeEffectiveSchema(node, [1]).schema;
+    expect(mergeEffectiveSchema(node, [1, 1, 0]).schema).toBe(first);
+    expect(mergeEffectiveSchema(node, []).schema).not.toBe(first);
+    expect(
+      () => mergeEffectiveSchema(node, [1], { mode: 'static' }).schema,
+    ).toThrow('CONFLICTING_CONST_VALUES');
   });
 
   it('separates memo contexts by atomic predicate and accepts a caller-owned memo', () => {
@@ -342,27 +352,27 @@ describe('mergeEffectiveSchema', () => {
     const isAtomic = (value: unknown) =>
       typeof value === 'object' && value !== null && 'opaque' in value;
     const memo: EffectiveSchemaMemo = new WeakMap();
-    const atomic = mergeEffectiveSchema(node, [], { isAtomic }, memo) as Record<
-      string,
-      any
-    >;
+    const atomic = mergeEffectiveSchema(node, [], { isAtomic }, memo)
+      .schema as Record<string, any>;
     expect(atomic.presentation.input).toBe(later);
-    expect(mergeEffectiveSchema(node, [], { isAtomic }, memo)).toBe(atomic);
+    expect(mergeEffectiveSchema(node, [], { isAtomic }, memo).schema).toBe(
+      atomic,
+    );
     expect(
-      (mergeEffectiveSchema(node, [], {}, memo) as Record<string, any>)
+      (mergeEffectiveSchema(node, [], {}, memo).schema as Record<string, any>)
         .presentation.input,
     ).toEqual({ opaque: true, a: 1, b: 2 });
   });
 
   it('keeps boolean false schemas and ignores boolean true overlays', () => {
-    expect(mergeEffectiveSchema(createEffectiveSchemaNode([false]), [])).toBe(
-      false,
-    );
+    expect(
+      mergeEffectiveSchema(createEffectiveSchemaNode([false]), []).schema,
+    ).toBe(false);
     expect(
       mergeEffectiveSchema(
         createEffectiveSchemaNode([true, { title: 'hint' }]),
         [],
-      ),
+      ).schema,
     ).toMatchObject({ title: 'hint' });
   });
 
@@ -373,7 +383,7 @@ describe('mergeEffectiveSchema', () => {
         { minimum: 2, exclusiveMinimum: false },
       ]),
       [],
-    ) as Record<string, unknown>;
+    ).schema as Record<string, unknown>;
     expect(relaxed).toMatchObject({
       minimum: 2,
       allOf: [
@@ -388,7 +398,7 @@ describe('mergeEffectiveSchema', () => {
         { minimum: 2, exclusiveMinimum: false },
       ]),
       [],
-    ) as Record<string, unknown>;
+    ).schema as Record<string, unknown>;
     expect(strict).toMatchObject({
       minimum: 2,
       allOf: [
@@ -397,5 +407,150 @@ describe('mergeEffectiveSchema', () => {
       ],
     });
     expect(strict).not.toHaveProperty('exclusiveMinimum');
+  });
+  describe('empty-set judgement needs two contributions', () => {
+    const staticMode = { mode: 'static' } as const;
+
+    it('leaves a single contribution inverted range and literal empty enum to the validator', () => {
+      expect(() =>
+        mergeEffectiveSchema(
+          createEffectiveSchemaNode([{ minimum: 5, maximum: 3 }]),
+          [],
+          staticMode,
+        ),
+      ).not.toThrow();
+      expect(
+        mergeEffectiveSchema(
+          createEffectiveSchemaNode([{ minimum: 5, maximum: 3 }]),
+          [],
+          staticMode,
+        ).schema,
+      ).toMatchObject({ minimum: 5, maximum: 3 });
+      expect(() =>
+        mergeEffectiveSchema(
+          createEffectiveSchemaNode([{ enum: [] }]),
+          [],
+          staticMode,
+        ),
+      ).not.toThrow();
+      expect(
+        mergeEffectiveSchema(
+          createEffectiveSchemaNode([{ enum: [] }]),
+          [],
+          staticMode,
+        ).schema,
+      ).toMatchObject({ enum: [] });
+    });
+
+    it('throws only when the contribution writes the pair after the target already held one', () => {
+      expect(() =>
+        mergeEffectiveSchema(
+          createEffectiveSchemaNode([
+            { minimum: 5, maximum: 3 },
+            { description: 'x' },
+          ]),
+          [],
+          staticMode,
+        ),
+      ).not.toThrow();
+      expect(() =>
+        mergeEffectiveSchema(
+          createEffectiveSchemaNode([
+            { minimum: 5, maximum: 3 },
+            { minimum: 1 },
+          ]),
+          [],
+          staticMode,
+        ),
+      ).toThrow('INVALID_RANGE');
+    });
+
+    it.each([
+      ['minimum', 'maximum'],
+      ['exclusiveMinimum', 'exclusiveMaximum'],
+      ['minLength', 'maxLength'],
+      ['minItems', 'maxItems'],
+      ['minProperties', 'maxProperties'],
+    ] as const)('judges the %s/%s pair on its own', (lower, upper) => {
+      expect(() =>
+        mergeEffectiveSchema(
+          createEffectiveSchemaNode([{ [lower]: 5 }, { [upper]: 2 }]),
+          [],
+          staticMode,
+        ),
+      ).toThrow('INVALID_RANGE');
+      expect(() =>
+        mergeEffectiveSchema(
+          createEffectiveSchemaNode([{ [lower]: 5, [upper]: 2 }]),
+          [],
+          staticMode,
+        ),
+      ).not.toThrow();
+    });
+
+    it('does not compare inclusive with exclusive bounds or read minContains/maxContains', () => {
+      for (const pair of [
+        [{ minimum: 5 }, { exclusiveMaximum: 2 }],
+        [{ minContains: 5 }, { maxContains: 2 }],
+      ])
+        expect(() =>
+          mergeEffectiveSchema(createEffectiveSchemaNode(pair), [], staticMode),
+        ).not.toThrow();
+    });
+
+    it('still rejects an empty intersection of two enum contributions', () => {
+      for (const pair of [
+        [{ enum: [1] }, { enum: [2] }],
+        [{ enum: [] }, { enum: ['a'] }],
+      ])
+        expect(() =>
+          mergeEffectiveSchema(createEffectiveSchemaNode(pair), [], staticMode),
+        ).toThrow('EMPTY_ENUM_INTERSECTION');
+    });
+  });
+
+  describe('result record', () => {
+    it('signals a gated type conflict without writing enum empty', () => {
+      const node = createEffectiveSchemaNode(
+        [{ type: 'string' }, { type: 'number' }],
+        {},
+        [{}, { gates: [gate] }],
+      );
+      const conflicted = mergeEffectiveSchema(node, [1]);
+      expect(conflicted.typeConflict).toBe(true);
+      expect(conflicted.schema).toMatchObject({ type: 'string' });
+      expect(conflicted.schema).not.toHaveProperty('enum');
+      expect(mergeEffectiveSchema(node, []).typeConflict).toBe(false);
+    });
+
+    it('keeps const conflicts as enum empty without a type conflict', () => {
+      const node = createEffectiveSchemaNode([{ const: 1 }, { const: 2 }], {}, [
+        {},
+        { gates: [gate] },
+      ]);
+      const result = mergeEffectiveSchema(node, [1]);
+      expect(result.typeConflict).toBe(false);
+      expect(result.schema).toMatchObject({ enum: [] });
+    });
+
+    it('returns the same frozen record for the same active set, including false schemas', () => {
+      const node = createEffectiveSchemaNode(
+        [{ type: 'string' }, { type: 'number' }],
+        {},
+        [{}, { gates: [gate] }],
+      );
+      const first = mergeEffectiveSchema(node, [1]);
+      expect(mergeEffectiveSchema(node, [1, 1, 0])).toBe(first);
+      expect(Object.isFrozen(first)).toBe(true);
+      expect(Object.isFrozen(first.schema)).toBe(true);
+      const forbidden = mergeEffectiveSchema(
+        createEffectiveSchemaNode([false]),
+        [],
+      );
+      expect(forbidden).toEqual({ schema: false, typeConflict: false });
+      expect(
+        mergeEffectiveSchema(createEffectiveSchemaNode([false, {}]), []),
+      ).toBe(forbidden);
+    });
   });
 });

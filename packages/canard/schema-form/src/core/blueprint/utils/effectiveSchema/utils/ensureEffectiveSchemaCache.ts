@@ -1,6 +1,6 @@
 import type {
   BlueprintNode,
-  BlueprintSchema,
+  EffectiveSchema,
   EffectiveSchemaMemo,
   EffectiveSchemaOptions,
 } from '../../../type';
@@ -16,14 +16,14 @@ export const ensureEffectiveSchemaCache = (
   memo: EffectiveSchemaMemo,
   node: BlueprintNode,
   options: EffectiveSchemaOptions,
-): Map<string, BlueprintSchema> => {
+): Map<string, EffectiveSchema> => {
   const mode = options.mode ?? 'runtime';
   const entries = memo.get(node) ?? [];
   const found = entries.find(
     (entry) => entry.mode === mode && entry.isAtomic === options.isAtomic,
   );
   if (found) return found.schemas;
-  const schemas = new Map<string, BlueprintSchema>();
+  const schemas = new Map<string, EffectiveSchema>();
   entries.push({ mode, isAtomic: options.isAtomic, schemas });
   memo.set(node, entries);
   return schemas;
