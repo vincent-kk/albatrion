@@ -55,6 +55,7 @@ export const writeSchemaNode = <Self extends SchemaNodeRecord<Self>>(
     latentAutomaticLog: new Map(),
     automatic: false,
     automaticChanged: false,
+    transitionShapeChanged: false,
     dirtyPaths: new Set(),
     shapeDirtyPaths: new Set(),
     changedRaw: new Set(),

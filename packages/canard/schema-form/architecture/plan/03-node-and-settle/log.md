@@ -68,6 +68,8 @@ Planning method: 저장소 지침 — `PLAN.md` §2와 `plan/prompts.md`의 단�
 | 2026-09-30 | U7 | codex(세션 `bbba3c93`)가 `SchemaNode` 클래스(프로토타입 멤버 28 = DETAIL 표 28)·공개 형·가드 10·`schemaNodeFactory`, 클래스 파일 전용 NODE-010 린트, 새 fractal 비시험 파일의 형 단언·`any` 금지, 의존 방향 순환 시험을 씀. 형 단언 1건(`getDependencyIndex.ts`)은 선언 자리에서 형을 고쳐 없앰, TEST-070 중단 사유 없음. 조율 세션이 fractal 뿌리의 구현 둘(`guards.ts`·`schemaNodeFactory.ts`)을 `utils/`로 옮김(filid 뿌리 규칙, 가드 묶음은 옛 `filter.ts` 관례). 재실행 G11·G12·G26, tsc, eslint, unit 260파일·3,659시험 통과 | 이 커밋 |
 | 2026-09-30 | U7 | antigravity 코드 대조 `CODE-U7: PASS`(멤버 28 모두 PR-2 근거, 뒤 PR 멤버·스텁 없음). 비차단 둘: 순환 시험의 파일 수집 단언이 약함 → 중첩 파일 포함 단언을 더함. 떼어진 `target.active`를 거짓으로 단언하라는 제안은 NODE-044 문언과 부딪혀 원장 관리자 질의 → 26C-08: `active`는 형상 소속을 읽는 멤버라 떼어진 옛 참조는 거짓(살아 있는 트리의 사실, NODE-044 고정의 예외), 구현 유지. DETAIL 먼저 고치고 세 단언(살아 있는 노드 참, 옛 참조 거짓, 다시 들어도 옛 참조 거짓·새 인스턴스 참)과 값 고정 단언을 더함 | `ab5f5daf8`, `0ad9e4015`, `e1c734566`, 원장 `02ff97841` (`reviews/round-26-closing.md:83-91`) |
 | 2026-09-30 | U8 | U8-A(codex `3fa3910e`): SCN 다섯 부류·`diagnostics` 기대·코어 부류 러너, 빈 부류 단언 제거. 조율 세션 재실행 G14·G25, 코어 시나리오 8파일·25시험 통과. 결함 하나: union `omitEmpty` 미적용(VALUE-034). U8-B(codex `b4dd43b5`): 회귀 75/101·union 시험 13(`todo` 4는 04·06·07 몫). 미이식 26 중 뒤 PR 기제 12(§4), 나머지는 엔진 결함 후보 → codex 결함 라운드에서 원장 대조로 A(엔진 결함)·B(프로토타입이 원장과 다름)·C(PR-2 관측값 없음)로 분류 | `e28af11f7`, `892c6873d`, `e554f4922`, `d639840f0` |
+| 2026-09-30 | U8 | 결함 라운드(codex `83290c4c`): A 고침 — 비객체 원본 호스트 아래 자식 쓰기의 호스트 승격(:399·:571·:599), 비로드 `null` 채움(:485, WRITE-096), `Merge` 위임(r8-port:392, WRITE-079), union 경고등 재확장 해제(TEST-077), union `omitEmpty` 공유 투영(VALUE-034). A 단언만 — :211, :623. antigravity 대조 `CODE-DEFECTS: PASS`. B·C 판정은 원장 관리자 확인: :157(옛 상한 25, SETTLE-005)·:308·:430(BLUEPRINT-017)·:399의 `b`(WRITE-079)·:459(NODE-044)·:485의 루트 `null`(VALUE-034)은 B 맞음, :150은 C 맞음(SETTLE-013). 단 :220·:227은 codex의 "수렴" 판정이 틀림 → 26C-09: 존재 여부로 진동하므로 전이 라운드 초과, 원본 B 커밋·`degraded`·던짐 → codex 수정 중 | `41dea976e`, `86930e010`, 원장 `dfa648075` (`reviews/round-26-closing.md:93-101`) |
+| 2026-09-30 | U8 | 26C-09 수정(codex `83290c4c`): 쓰기 없이 형상만 바뀐 라운드를 수렴으로 보던 결함(`transitionSettlement.ts`) — 형상 변경을 기록해 전이 상한에 세고, 중간 채움 회수는 안정된 최종 형상까지 미룸. settle DETAIL의 "실제 쓰기를 낸 라운드만 센다"를 먼저 고침. :220·:227 이식(원본 B `{}` 커밋·`degraded/budget/transition/iterations 2`·던짐). 이식 수 selfcheck 37·r9 20·r8-port 7·r9b 9·edge 9·rootOutput 2 = 84 (§4의 뒤 PR 몫 12, B 5, C 2를 뺀 수). 조율 세션 재실행 unit 277파일·3,775시험, render 52·539, tsc·eslint 통과 | 이 커밋 |
 
 ## 3. 다음 행동
 
@@ -77,6 +79,7 @@ Planning method: 저장소 지침 — `PLAN.md` §2와 `plan/prompts.md`의 단�
 ## 4. 원장·계획서 어긋남
 
 - 계획서 §6.1의 PR-2 회귀 배분에 뒤 PR 기제가 필요한 사례가 들어 있다: `r9.mjs:76`(경고 수 4건)·`:80`(검증기 결과 4건)은 PR-4의 경고 기록·검증기, `selfcheck-v5.mjs:348`(통지)은 PR-4, `:519`(배열 `omitTrailing`)은 PR-5. 26C-03에 따라 그 PR로 넘기고 G27의 기대 수를 그만큼 줄인다.
+- 프로토타입 기대가 현행 원장과 달라(원장 관리자 확인) 이식하지 않는 `selfcheck-v5.mjs` 사례: `:157`×2(옛 상한 25 — SETTLE-005의 셈이 이김), `:308`·`:430`(BLUEPRINT-017 — 판별식 없는 `const`는 읽지 않음), `:459`(NODE-044 — 떠난 옛 참조 쓰기는 내지 않음). PR-2 겉면에 관측값이 없는 `:150`×2(SETTLE-013). 그래서 G27의 기대 수는 selfcheck 37(46−2−5−2), r9 20(28−8)이다.
 
 - 계획서 U6 "배치에서 억제 우선"(WRITE-015 배치 행)은 PR-2에서 단언하지 않는다. `batch`는 PR-4의 기제(LANDING-064)이고 26C-03이 뒤 PR 기제를 쓰는 단언을 그 PR로 나누게 하므로 05(PR-4)가 단언한다.
 

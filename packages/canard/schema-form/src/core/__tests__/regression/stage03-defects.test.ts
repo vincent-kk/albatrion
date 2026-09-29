@@ -1,10 +1,37 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 import { SetValueOption } from '../../SchemaNode';
 import { makeSchemaNodeTree } from '../makeSchemaNodeTree';
 
 // filid:contract factory-single-path
 describe('stage 03 ledger adjudication regressions', () => {
+  const selfNegatingGate = () => makeSchemaNodeTree({ type: 'object',
+    if: { not: { required: ['x'] } }, then: { properties: {
+      x: { type: 'number', default: 1 },
+    }, required: ['x'] },
+  }, { ifPredicate: () => input => input !== null && typeof input === 'object' &&
+    !('x' in input) }).root;
+
+  const expectSelfNegatingBudget = () => {
+    const root = selfNegatingGate();
+    expect(() => root.setValue({})).toThrow();
+    expect(root.raw).toEqual({});
+    expect(root.outputValue).toEqual({});
+    expect(root.find('/x')?.raw).toBeUndefined();
+    expect(root.diagnostics).toMatchObject({ status: 'degraded', cause: 'budget',
+      exceededBudget: 'transition', iterations: 2, commit: expect.any(Number) });
+  };
+
+  it('selfcheck-v5.mjs:220 commits Source B after a self-negating shape cycle in production', () => {
+    vi.stubEnv('NODE_ENV', 'production');
+    try { expectSelfNegatingBudget(); } finally { vi.unstubAllEnvs(); }
+  });
+
+  it('selfcheck-v5.mjs:227 throws after that commit in development', () => {
+    vi.stubEnv('NODE_ENV', 'development');
+    try { expectSelfNegatingBudget(); } finally { vi.unstubAllEnvs(); }
+  });
+
   it('selfcheck-v5.mjs:399 revives only the edited child after a wrong-kind host write', () => {
     const { root } = makeSchemaNodeTree({ type: 'object', properties: {
       host: { type: 'object', properties: {

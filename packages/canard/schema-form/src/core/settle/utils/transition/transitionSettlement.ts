@@ -27,6 +27,7 @@ export const transitionSettlement = <Self extends SchemaNodeRecord<Self>>(
   const filled = new Set<string>();
   const cleared = new Set<Self>();
   let rounds = 0;
+  let shapeChanged = false;
   while (true) {
     context.automaticChanged = false;
     applyExitClearing(context, cleared);
@@ -52,7 +53,7 @@ export const transitionSettlement = <Self extends SchemaNodeRecord<Self>>(
       markWrite(node, original, context, staticSpec(effective, node.nullable));
       context.automatic = false;
     }
-    if (!context.automaticChanged) {
+    if (!context.automaticChanged && !shapeChanged) {
       withdrawDetachedFills(context);
       context.inTransition = false;
       return;
@@ -68,13 +69,19 @@ export const transitionSettlement = <Self extends SchemaNodeRecord<Self>>(
       context.inTransition = false;
       return;
     }
+    if (shapeChanged) {
+      context.dirtyPaths.add(context.root.path);
+      context.shapeDirtyPaths.add(context.root.path);
+    }
     registerRecalculation(context);
+    context.transitionShapeChanged = false;
+    context.hostWheelExceeded = undefined;
     computeNode(context.root, context);
     if (context.failure) {
       context.inTransition = false;
       return;
     }
-    withdrawDetachedFills(context);
+    shapeChanged = context.transitionShapeChanged || context.hostWheelExceeded !== undefined;
   }
 };
 
