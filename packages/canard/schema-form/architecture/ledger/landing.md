@@ -2869,7 +2869,9 @@
   > 무엇: 세 장면을 오늘 코드와 새 구현에서 돌린다.
   > 통과: 오늘 결과가 T1-B의 탐침과 같고 새 결과가 이주 행대로다.
   > 실패: 다르면 이주 행을 고친다.
-- 보충: 없음
+- 보충:
+  > 편집자 결정(18C-99, 물음의 제목): "채움 시점의 이주 행 셋 — `setValue(null)` 뒤 자식 쓰기, 입력의 `Overwrite`, 배열 통째 `setValue`" (`reviews/round-18-closing.md:2810`) — "세 장면"은 LANDING-200·LANDING-201·LANDING-202의 이주 행이다.
+  > 편집자 결정(18C-99, 근거): "T1-B #6(`reviews/raw-round18-tests/t1b-fill-consistency.md:116-133`): 셋 모두 오늘 코드를 실행해 확인했다." (`reviews/round-18-closing.md:2818`)
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:2822-2825`(정본)
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-99)

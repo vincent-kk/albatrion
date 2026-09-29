@@ -67,6 +67,9 @@
 - 닫은 사람: 소유자 답(`reviews/round-17-owner-answers.md:12` 통보 1; 판정을 렌더 계층으로), 편집자 결정(17라운드 게이트 B의 사실 정정, `01-current-structure.md:85`)
 - 라운드: 17
 - 까닭: `01-current-structure.md:85`
+- 충돌:
+  > `08-design-a-to-z.md:398`의 "뒤의 import 분리는 PR-4 전 설계 항목이다"는 18라운드 결정과 다르다: 닫혔다 — core는 `app/plugin`을 가져오지 않고 검증기는 바인딩 계층이 골라 트리 생성 인자로 넘긴다(CONTROLS-075). 18라운드 결정이 이긴다(`reviews/round-18-closing.md:1533-1534`).
+  > `reviews/round-18-agenda.md:75`의 "의존 역전(`record/`가 칸 타입을 인터페이스로 선언)으로 끊을지, 검증기 칸의 타입을 오늘 `app/plugin`에서 떼는 import 분리와 함께 정할지"는 18라운드 결정과 다르다: 닫혔다 — 의존 역전으로 끊고 `record/`가 `SchemaNodeRuntime` 칸의 형을 최소 인터페이스로 선언한다(NODE-045). 18라운드 결정이 이긴다(`reviews/round-18-closing.md:969-970`).
 
 ### REACT-003 렌더 계층이 터미널 판정 함수와 병합의 원자 판정 함수를 청사진에 넘긴다 — core만 쓰는 호스트에는 없다
 
@@ -213,7 +216,8 @@
 - 결정:
   > 참고로 plugin 은 그냥 샘플이고, 보통 용법은 사용자가 formTypeInput 을 구현해서 붙이는거긴 해. 만들기도 적용하기도 비교적 쉬우니까. 그럼 결국 올바르지 않은 타입의 표현은 FormTypeInput 구현에 위임되는거구나.
   > 나 로 확정합니다.
-- 보충: 없음
+- 보충:
+  > 물음 칸(S1 셋째): "세 갈래 독립 검토(Claude 스웜 일곱, codex, antigravity)가 모두 '나′'(받은 그대로 든다)를 권했다" (`reviews/round-18-owner-answers.md:9`) — 결정의 "나"는 이 선택지 나′(변환하지 못한 값을 받은 그대로 든다)다.
 - 상태: 현행
 - 출처: `reviews/round-18-owner-answers.md:9`(정본)
 - 닫은 사람: 소유자 답(`reviews/round-18-owner-answers.md:9` S1 셋째)
@@ -384,7 +388,7 @@
 - 라운드: 16
 - 까닭: `09-landing-and-test-strategy.md:91`
 - 충돌:
-  > `09-landing-and-test-strategy.md:91`의 "그 핸들 표면(`FormHandle.remount(path)`)은 ADR 0008의 C-11(소유자 확정 대기)에 딸린다(§8의 셋째)."는 18라운드 결정과 다르다: `FormHandle`에 `refresh(path)`·`remount(path)`를 대칭으로 더하고 PR-7에서 넣는다(EVENT-063). 18라운드 결정이 이긴다(`reviews/round-18-closing.md:1185`).
+  > `09-landing-and-test-strategy.md:91`의 "그 핸들 표면(`FormHandle.remount(path)`)은 ADR 0008의 C-11(소유자 확정 대기)에 딸린다(§8의 셋째)."는 18라운드 결정과 다르다: `FormHandle`에 `refresh(path)`·`remount(path)`를 대칭으로 더하고 PR-7에서 넣는다(EVENT-063). 18라운드 결정이 이긴다(`reviews/round-18-closing.md:1185`). 이 이긴 글은 다시 소유자 답에 진다: `FormHandle`에 더하는 명령 겉면은 모양이 무엇이든 PR-7이며, 그 모양(`focus(path)`·`select(path)`를 남길지 같은 모양 하나로 합칠지)은 PR-4 착수 전에 소유자가 정한다(EVENT-073). 소유자 답이 이긴다(`reviews/round-18-owner-answers.md:40`).
 
 ### REACT-026 잔여 키의 표시 규칙과 기본 문구, `formatError`의 `false schema` 번역, 잔여 키 UI의 기본 제공 — 렌더 계층의 일
 
@@ -436,6 +440,8 @@
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-40), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-92), 소유자 답(`reviews/round-18-owner-answers.md:41` 설계서 메모 4)
 - 라운드: 18
 - 까닭: `reviews/round-18-closing.md:1134-1141`, `reviews/round-18-closing.md:2620-2625`
+- 충돌:
+  > `reviews/round-18-closing.md:2607`의 "【추론】 `valueTypeMismatch`가 참이면 `aria-invalid`와 무효 표지를 붙이고, 경고등이 켜진 값을 빈 칸처럼 그리지 않는다(SURFACE-052)."는 소유자 답과 다르다: 이 항목의 `valueTypeMismatch`·`valueTypeMismatches`·`VALUE_TYPE_MISMATCH`는 확정 이름 `typeMismatch`·`typeMismatches`·`SCHEMA_FORM_WARNING.TYPE_MISMATCH`로 읽는다(SURFACE-061). 소유자 답이 이긴다(`reviews/round-18-owner-answers.md:41`).
 
 ### REACT-028 자식 프록시의 마운트 여부로 입력을 판정한다 — 게이트 PR-7(reset 시험, StrictMode, 가상화)
 
