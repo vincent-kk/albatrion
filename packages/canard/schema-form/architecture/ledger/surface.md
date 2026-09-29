@@ -630,7 +630,7 @@
   > `07-conclusions.md:311`의 "(로드와 `Merge`)"는 18라운드 결정과 다르다: `setValue(V)`는 로드가 아니라 전체 교체 쓰기이며(WRITE-090), 억제 비트의 범위는 그 호출(로드와 전체 교체 쓰기, `Merge`)이 일으킨 예약 층의 쓰기 전부다(WRITE-097). 18라운드 결정이 이긴다(`reviews/round-18-closing.md:2881`).
   > `08-design-a-to-z.md:278`의 "`DisableAutomaticWrites`의 범위는 **그 호출이 일으킨 자동 쓰기 전부**(채움, `controls.derived`, `controls.injectTo`, `controls.unsetValue`, 나감의 비움)이며"는 소유자 답과 다르다: 포커스 아웃 `trim`이 자른 값의 쓰기도 자동 쓰기이고 억제 비트의 대상이다(WRITE-078). 소유자 답이 이긴다(`reviews/round-18-owner-answers.md:12`).
   > `07-conclusions.md:311`의 "`&active`"는 15라운드 뒤의 표기(`controls.active`)와 다르다. 뒤 라운드가 이긴다(`08-design-a-to-z.md:278`, WRITE-015).
-  > `07-conclusions.md:311`의 "(채움, `&derived`, `&injectTo`, `&unsetValue`, 나감의 비움)"은 소유자 답과 다르다: 포커스 아웃 `trim`이 자른 값의 쓰기도 자동 쓰기(여섯째)이고 억제 비트의 대상이다(WRITE-078). 소유자 답이 이긴다(`reviews/round-18-owner-answers.md:12`).
+  > `07-conclusions.md:311`의 "(채움, `&derived`, `&injectTo`, `&unsetValue`, 나감의 비움)"은 소유자 답과 다르다: 포커스 아웃 `trim`이 자른 값의 쓰기도 자동 쓰기(여섯째)이고 억제 비트의 대상이다(WRITE-078). 소유자 답이 이긴다(`reviews/round-18-owner-answers.md:12`). 다만 이 셀의 목록은 그 호출이 일으킨 쓰기이고, 뒤이은 포커스 아웃의 `trim`은 그 호출이 일으킨 것이 아니어서 호출 수준 비트에는 들지 않으며 Form 속성 `disableAutomaticWrites`에만 든다(WRITE-100).
 
 ### SURFACE-040 대체됨(철자): 조각 게이트는 `&active`로 통합, `&if` 은퇴 — 뜻은 `controls.active`로 현행
 
