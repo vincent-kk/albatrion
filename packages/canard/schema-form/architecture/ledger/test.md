@@ -442,6 +442,8 @@
 - 보충:
   > "**16라운드 편집자 결정 여섯 — 확정(답 10).**" (`09-landing-and-test-strategy.md:279`)
   > "e2e는 부류마다 실행기 하나가 돌린다(§5.2)." (`09-landing-and-test-strategy.md:279`)
+  > 편집자 결정(26C-02): "【추론】 PR-2에 배정된 "렌더 시나리오" 게이트는 시나리오를 `@aileron/schema-form-scenarios`의 순수 데이터로 두고, 코어 시나리오 시험(`src/core/__tests__/scenarios/<부류>.spec.ts`)이 새 노드 트리에서 돌리는 것으로 통과를 잰다." (`reviews/round-26-closing.md:22`)
+  > 편집자 결정(26C-02): "【추론】 같은 데이터를 `<Form>`으로 그리는 시나리오 스토리와 e2e 실행기는 `<Form>`이 새 엔진을 쓰는 PR-7부터 돈다." (`reviews/round-26-closing.md:23`)
 - 상태: 현행
 - 출처: `09-landing-and-test-strategy.md:190-197,199`(정본), `reviews/round-16-owner-answers.md:7,14,16`, `reviews/round-16-owner-review.md:61`
 - 닫은 사람: 편집자 결정(16라운드, `09-landing-and-test-strategy.md:188`), 소유자 답(`reviews/round-16-owner-answers.md:14` 답 8), 소유자 답(`reviews/round-16-owner-answers.md:16` 답 10), 소유자 답(`reviews/round-16-owner-answers.md:7` 답 1)
@@ -1165,6 +1167,11 @@
   > 편집자 결정(18C-98): "【추론】 `diagnostics`와 경고 중복 키는 폼 수준 로드(마운트, `FormHandle.reset()`)에서만 초기화한다." (`reviews/round-18-closing.md:2797`)
   > 편집자 결정(18C-98): "【추론】 `setValue(V)`와 `resetSubtree()`는 초기화하지 않는다." (`reviews/round-18-closing.md:2798`)
   > 편집자 결정(18C-15, 게이트의 PR 줄): "PR: PR-2 정착 시나리오(18C-25의 PR-2 시험)와 PR-2 벤치." (`reviews/round-18-closing.md:449`) — (a)–(c)의 세 단언은 이 PR 줄에 딸린다(SETTLE-045).
+  > 편집자 결정(26C-01): "【추론】 뒤 PR의 멤버를 PR-2 클래스에 무해한 구현(스텁)이나 `SchemaNodeRuntime` 칸으로의 위임으로 미리 두지 않는다: PR-2의 시험 대역은 `if` 게이트 술어 하나뿐이고 시험만을 위한 주입 자리를 새로 만들지 않는다(TEST-069 (나)); LANDING-062의 "게이트는 술어 인터페이스 뒤의 스텁"은 이 술어 하나를 말한다." (`reviews/round-26-closing.md:13`)
+  > 편집자 결정(26C-03): "【추론】 게이트에 "PR: PR-2"라 적혀도 그 단언이 뒤 PR의 기제(`controls.derived`·`controls.injectTo`는 PR-3, 통지·사건 배달은 PR-4)를 요구하면, 그 단언은 그 기제가 모두 있는 가장 이른 PR에서 하고 PR-2는 자기 기제로 관찰할 수 있는 신호를 단언한다(TEST-069 (라))." (`reviews/round-26-closing.md:32`)
+  > 편집자 결정(26C-03): "【추론】 미룬 단언은 PR-2의 `log.md`와 PR 본문에 사례마다 PR 번호를 단다(TEST-069가 처분 목록에 정한 방식)." (`reviews/round-26-closing.md:37`)
+  > 편집자 결정(26C-04): "【추론】 `controls.active` 게이트(노드 게이트·조각 게이트)는 PR-2가 청사진이 컴파일한 식(`BlueprintExpression.evaluate`)으로 호스트 바퀴에서 실제로 평가하며, 술어 인터페이스 뒤의 대역으로 두지 않는다." (`reviews/round-26-closing.md:45`)
+  > 편집자 결정(26C-04): "【추론】 `if` 게이트만 `record/`가 선언한 술어 인터페이스 뒤에 두고 시험은 대역 하나를 쓰며, 실제 술어는 PR-4의 `compileGuard`가 넣는다." (`reviews/round-26-closing.md:46`)
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:751-780`(정본), `reviews/round-18-closing.md:2797-2798`
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-25), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-98)
@@ -1179,7 +1186,8 @@
   > 통과: 둘 다 참이다.
   > 실패: 두 선택지(가: 한 함수에 가둔 단언 하나를 승인, 나: 단언 없이 목록 읽기마다 원소 검사·복사)를 그대로 소유자에게 올린다.
   > 실패: 그때 오늘 `src/core/nodeFromJSONSchema.ts:55`의 `as InferSchemaNode<Schema>`도 같은 물음의 대상으로 적는다.
-- 보충: 없음
+- 보충:
+  > 편집자 결정(26C-01): "【추론】 TEST-070의 "배열 멤버"는 배열 멤버를 들여오는 PR-5가 같은 조건(`tsc --strict`, `as`·`any` 없음)으로 단언하고, PR-2는 PR-2 공개 형으로 나머지를 단언한다(TEST-069 (라))." (`reviews/round-26-closing.md:15`)
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:1019-1023`(정본)
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-37)

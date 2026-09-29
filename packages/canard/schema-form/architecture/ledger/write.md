@@ -1482,6 +1482,8 @@
   > 실패: 전수 실행에서 12건 밖의 경우나 순서 위반이 나오면 `convert` 표를 고치고, 규칙이 사례를 하나로 정하지 못하면 이 블록을 고친다.
 - 보충:
   > 반영 칸(설계서 메모 4): "게터 `typeMismatch: boolean`, 경로 목록 `typeMismatches: readonly string[]`, 경고 코드 `SCHEMA_FORM_WARNING.TYPE_MISMATCH`." (`reviews/round-18-owner-answers.md:41`)
+  > 편집자 결정(26C-02): "【추론】 PR-2에 배정된 "렌더 시나리오" 게이트는 시나리오를 `@aileron/schema-form-scenarios`의 순수 데이터로 두고, 코어 시나리오 시험(`src/core/__tests__/scenarios/<부류>.spec.ts`)이 새 노드 트리에서 돌리는 것으로 통과를 잰다." (`reviews/round-26-closing.md:22`)
+  > 편집자 결정(26C-02): "【추론】 같은 데이터를 `<Form>`으로 그리는 시나리오 스토리와 e2e 실행기는 `<Form>`이 새 엔진을 쓰는 PR-7부터 돈다." (`reviews/round-26-closing.md:23`)
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:2482-2519,2566-2569`(정본), `reviews/round-18-closing.md:2908-2910,2914`, `reviews/round-18-owner-answers.md:41`
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-91), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-104), 소유자 답(`reviews/round-18-owner-answers.md:41` 설계서 메모 4)
@@ -1541,7 +1543,9 @@
   > 무엇: `name`에 `default`가 있는 폼에서 `setValue({ user: null })` 뒤와 `{ user: null }`을 로드한 `FormHandle.reset()` 뒤의 `name`의 원본과 방출, 그리고 `setValue(V)`가 낸 `UpdateValue`의 출처 칸을 본다.
   > 통과: `setValue` 뒤 `name`은 없음이고, 로드 뒤 `name`은 채움 값을 들되 방출에 나타나지 않으며, 출처 칸은 호출자 전체 교체다.
   > 실패: 이 블록을 고친다.
-- 보충: 없음
+- 보충:
+  > 편집자 결정(26C-03): "【추론】 게이트에 "PR: PR-2"라 적혀도 그 단언이 뒤 PR의 기제(`controls.derived`·`controls.injectTo`는 PR-3, 통지·사건 배달은 PR-4)를 요구하면, 그 단언은 그 기제가 모두 있는 가장 이른 PR에서 하고 PR-2는 자기 기제로 관찰할 수 있는 신호를 단언한다(TEST-069 (라))." (`reviews/round-26-closing.md:32`)
+  > 편집자 결정(26C-03): "【추론】 WRITE-096: PR-2는 표시 단계가 기록하는 쓰기 종류('호출자 전체 교체')를 표시 단계의 기록(VALUE-032)으로 단언하고, `UpdateValue`의 출처 칸은 PR-4가 단언한다." (`reviews/round-26-closing.md:36`)
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:2831-2834,2839-2842`(정본)
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-100)
@@ -1597,6 +1601,8 @@
   > 편집자 결정(18C-105): "【추론】 전이 단계의 재해석은 게이트 상태가 최종이 아니므로 원본 B에서 버린다." (`reviews/round-18-closing.md:2943`)
   > 편집자 결정(18C-105): "【추론】 원본 B에 남은 값이 좁혀진 유효 목록 밖이면 경고등이 켜진다." (`reviews/round-18-closing.md:2944`)
   > 편집자 결정(18C-105): "【추론】 비용: 라운드마다, 유효 목록이 바뀐 쓰인 노드에 한해 `interpret` 한 번이다." (`reviews/round-18-closing.md:2945`)
+  > 편집자 결정(26C-02): "【추론】 PR-2에 배정된 "렌더 시나리오" 게이트는 시나리오를 `@aileron/schema-form-scenarios`의 순수 데이터로 두고, 코어 시나리오 시험(`src/core/__tests__/scenarios/<부류>.spec.ts`)이 새 노드 트리에서 돌리는 것으로 통과를 잰다." (`reviews/round-26-closing.md:22`)
+  > 편집자 결정(26C-02): "【추론】 게이트 문장의 `FormHandle.reset()`은 코어에서 루트 노드의 폼 수준 로드(마운트와 같은 초기화 범위, 로드 스냅숏 갱신)로 읽고, `resetSubtree()`는 그 노드의 로드로 읽는다." (`reviews/round-26-closing.md:24`)
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:2908-2918,2925-2928`(정본), `reviews/round-18-closing.md:2938-2940,2942-2945`
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-104), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-105)
@@ -1646,6 +1652,8 @@
   > 편집자 결정(LANDING-065): "배열·터미널 배열 행(`arrayBehavior/`의 `branch/`·`terminal/`)" (`08-design-a-to-z.md:575`) — `push(v)`와 삽입의 스냅숏 시험은 배열 행을 들여오는 PR-5가 하고, PR-2(스냅숏·유효 목록)의 게이트에는 유효 목록 시험만 남는다(LANDING-065).
   > 편집자 결정(25C-11): "【추론】 E1–E42는 `src/core/blueprint/__tests__/`의 네 파일에 있다: `blueprint.type-syntax.test.ts`(E1–E10, E28), `blueprint.type-inference.test.ts`(E11–E17, E29, E32–E35), `blueprint.type-static-intersection.test.ts`(E18–E24, E30, E31, E36–E39), `blueprint.type-gated-declarations.test.ts`(E25–E27, E40–E42)." (`reviews/round-25-closing.md:103`)
   > 편집자 결정(25C-11): "【추론】 `union.kind-procedure.test.ts`의 단언은 위 네 파일의 표 행과 `blueprint.type-gated-declarations.test.ts`의 정적 소유자 없는 분기 접기 충돌 사례에, `union.null-only.test.ts`는 위 표 행에, `union.static-intersection.test.ts`는 `blueprint.type-static-intersection.test.ts`에, `union.schema-type-invariant.test.ts`는 `blueprint.type-syntax.test.ts`의 E1–E9 불변식에, `union.gated-narrowing.test.ts`는 `blueprint.type-gated-declarations.test.ts`에, `union.terminal-subtree-warning.test.ts`는 `blueprint.diagnostics.test.ts`와 `blueprint.type-syntax.test.ts`의 E28에 있다." (`reviews/round-25-closing.md:104`)
+  > 편집자 결정(26C-02): "【추론】 PR-2에 배정된 "렌더 시나리오" 게이트는 시나리오를 `@aileron/schema-form-scenarios`의 순수 데이터로 두고, 코어 시나리오 시험(`src/core/__tests__/scenarios/<부류>.spec.ts`)이 새 노드 트리에서 돌리는 것으로 통과를 잰다." (`reviews/round-26-closing.md:22`)
+  > 편집자 결정(26C-02): "【추론】 게이트 문장의 `FormHandle.reset()`은 코어에서 루트 노드의 폼 수준 로드(마운트와 같은 초기화 범위, 로드 스냅숏 갱신)로 읽고, `resetSubtree()`는 그 노드의 로드로 읽는다." (`reviews/round-26-closing.md:24`)
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:2938-2957,2969-2984`(정본), `reviews/round-18-owner-answers.md:24`, `08-design-a-to-z.md:575`
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-105), 소유자 답(`reviews/round-18-owner-answers.md:24` 18C 검토 1번; 입력이 보내는 값), 편집자 결정(18라운드, LANDING-065; 배열 스냅숏 시험은 PR-5)

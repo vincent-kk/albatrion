@@ -755,6 +755,8 @@
   > 편집자 결정(18C-105): "【추론】 전이 단계의 재해석은 전이 쓰기다." (`reviews/round-18-closing.md:2938`) — U7의 "한 번 더"는 라운드마다이며, 한 노드는 한 라운드에 한 번만 다시 해석하고 상한을 넘기면 원본 B에는 쓰기 경계의 해석(정적 목록)만 남는다(WRITE-099).
   > 편집자 결정(25C-04): "【추론】 켜진 게이트 선언의 `type`과 정적 허용 집합의 교집합이 비면 유효 스키마는 `enum: []`을 적지 않고 형 충돌을 결과에 드러내며, 그 게이트들이 켜진 동안의 정착 오류 `SHARED_NODE_CONFLICT`는 PR 03(정착)이 던진다." (`reviews/round-25-closing.md:42`)
   > 편집자 결정(25C-04): "【추론】 보정 PR은 그 신호를 `mergeEffectiveSchema`의 반환 `{ schema, typeConflict }`로 드러내고(형 충돌이면 `typeConflict: true`, `schema.type`은 정적 `schemaType`, `enum`은 적지 않음, 같은 활성 집합이면 같은 참조), 최종 모양은 PR 03이 정한다." (`reviews/round-25-closing.md:43`)
+  > 편집자 결정(26C-05): "【추론】 25C-04의 "최종 모양은 PR 03이 정한다"를 닫는다: 형 충돌 신호의 최종 모양은 `EffectiveSchema { schema, typeConflict }` 그대로이며(`src/core/blueprint/type.ts:229`), PR-2는 그 모양을 바꾸지 않는다." (`reviews/round-26-closing.md:56`)
+  > 편집자 결정(26C-05): "【추론】 정착은 활성 집합의 유효 스키마를 계산한 뒤 `typeConflict`가 참인 노드마다 정착 오류 `SHARED_NODE_CONFLICT`를 내고, `diagnostics.cause`는 `'sharedConflict'`이며, 드러남은 정착 오류 규칙대로 모든 환경에서 커밋·통지 뒤 사슬 끝이다(PR-2에서 사슬은 `settle` 호출 하나)." (`reviews/round-26-closing.md:57`)
 - 상태: 현행
 - 출처: `reviews/round-18-owner-answers.md:37`(정본, 반영 칸), `reviews/round-18-closing.md:2908-2911,2914`, `reviews/round-18-owner-answers.md:41`, `reviews/round-18-closing.md:2938`
 - 닫은 사람: 소유자 답(`reviews/round-18-owner-answers.md:37` union O7·O8), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-104), 소유자 답(`reviews/round-18-owner-answers.md:41` 설계서 메모 4), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-105; U7 재해석은 라운드마다)
@@ -865,6 +867,7 @@
   > 편집자 결정(25C-02): "【추론】 BLUEPRINT-044와 TEST-077이 든 `union.*.test.ts` 여섯 이름은 단언의 주소이며 규범이 아니다. 단언이 게이트다." (`reviews/round-25-closing.md:19`)
   > 편집자 결정(25C-11): "【추론】 E1–E42는 `src/core/blueprint/__tests__/`의 네 파일에 있다: `blueprint.type-syntax.test.ts`(E1–E10, E28), `blueprint.type-inference.test.ts`(E11–E17, E29, E32–E35), `blueprint.type-static-intersection.test.ts`(E18–E24, E30, E31, E36–E39), `blueprint.type-gated-declarations.test.ts`(E25–E27, E40–E42)." (`reviews/round-25-closing.md:103`)
   > 편집자 결정(25C-11): "【추론】 `union.kind-procedure.test.ts`의 단언은 위 네 파일의 표 행과 `blueprint.type-gated-declarations.test.ts`의 정적 소유자 없는 분기 접기 충돌 사례에, `union.null-only.test.ts`는 위 표 행에, `union.static-intersection.test.ts`는 `blueprint.type-static-intersection.test.ts`에, `union.schema-type-invariant.test.ts`는 `blueprint.type-syntax.test.ts`의 E1–E9 불변식에, `union.gated-narrowing.test.ts`는 `blueprint.type-gated-declarations.test.ts`에, `union.terminal-subtree-warning.test.ts`는 `blueprint.diagnostics.test.ts`와 `blueprint.type-syntax.test.ts`의 E28에 있다." (`reviews/round-25-closing.md:104`)
+  > 편집자 결정(26C-05): "【추론】 BLUEPRINT-044 S5의 다른 조건(정적 선언이 없는 이름에서 fold가 다른 게이트 선언이 동시에 켜짐)은 유효 스키마의 신호가 아니며, 정착이 켜진 선언 집합에서 판정해 같은 코드 `SHARED_NODE_CONFLICT`와 `cause: 'sharedConflict'`로 낸다." (`reviews/round-26-closing.md:59`)
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:2381-2414,2473-2476`(정본), `reviews/round-18-closing.md:2950`
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-90), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-105)

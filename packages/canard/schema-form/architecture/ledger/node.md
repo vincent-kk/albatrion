@@ -181,7 +181,12 @@
 
 - 결정:
   > **겉면 규칙.** `SchemaNode` 클래스 파일에는 필드·게터·문장 하나짜리 위임만 둔다. 분기·반복·종류 비교를 금하고(예외는 가드), 생성자는 선언 순서대로 대입만 하며, 노드마다 할당을 만들지 않는다(생성자와 필드 초기화식에 객체·배열 리터럴, 함수, `new`를 두지 않는다). 필드 집합은 고정한다. 멤버 목록은 공개 계약 목록과 같아야 하며, `SchemaNode/`의 `DETAIL.md` 목록과 프로토타입 멤버 이름을 맞대는 멤버 목록 시험으로 지킨다. 여러 단계를 잇는 조율(쓰기 → 커밋 → 통지 → 검증 요청, 하위 트리 상태 쓰기, `validate`, 로드)은 `dispatch`의 동사별 진입이 맡는다. 기계 검사는 그 클래스 파일에만 거는 ESLint 설정이다. 내부 통로(입력 마침 신호 `finishInput`, 입력 출처 표식이 붙은 쓰기)는 클래스 멤버가 아니며 `SchemaNode/` 진입점이 바인딩 전용으로 이름을 붙여 내보낸다. `core/index.ts`는 이들을 이름으로 다시 내보내고 `src/index.ts`는 내보내지 않는다(공개 index의 키 목록 시험). 겉면의 `INTENT.md` 첫 줄에 이름 함정 경고를 둔다(렌더 디렉토리 `src/components/SchemaNode`, 공개 판별 합집합 형 `SchemaNode`와 이름이 같다).
-- 보충: 없음
+- 보충:
+  > 편집자 결정(26C-01): "【추론】 `SchemaNode` 겉면의 멤버는 그 멤버가 드러내는 기제를 들여오는 PR에서 겉면에 들고, 그 PR이 `SchemaNode/`의 `DETAIL.md` 목록·멤버 목록 시험·공개 형 `SchemaNode`를 함께 고친다(EVENT-063이 명령 메서드에 정한 방식)." (`reviews/round-26-closing.md:9`)
+  > 편집자 결정(26C-01): "【추론】 명령 메서드 하나와 통지·검증 멤버(`subscribe`, `validate`, 오류 읽기와 외부 오류 설정)는 PR-4(EVENT-063·EVENT-073, LANDING-064), 배열 메서드는 PR-5(NODE-014, LANDING-065), 계산 게터 `visible`·`enabled`·`readOnly`·`disabled`는 PR-6(LANDING-066)에서 겉면에 든다." (`reviews/round-26-closing.md:11`)
+  > 편집자 결정(26C-01): "【추론】 원장이 PR을 적지 않은 멤버는 같은 규칙으로 그 기제를 들여오는 PR에 들며, 하위 트리 상태 쓰기와 `validate`처럼 여러 단계를 잇는 조율은 `dispatch`의 것이므로(NODE-010) PR-4다." (`reviews/round-26-closing.md:12`)
+  > 편집자 결정(26C-01): "【추론】 뒤 PR의 멤버를 PR-2 클래스에 무해한 구현(스텁)이나 `SchemaNodeRuntime` 칸으로의 위임으로 미리 두지 않는다: PR-2의 시험 대역은 `if` 게이트 술어 하나뿐이고 시험만을 위한 주입 자리를 새로 만들지 않는다(TEST-069 (나)); LANDING-062의 "게이트는 술어 인터페이스 뒤의 스텁"은 이 술어 하나를 말한다." (`reviews/round-26-closing.md:13`)
+  > 편집자 결정(18C-25): "【추론】 PR-2에서 사슬은 `settle` 호출 하나다(`setValue`가 `settle` 쓰기로 직접 위임, `reviews/raw-round17-node-structure.md:74`)." (`reviews/round-18-closing.md:756`)
 - 상태: 현행
 - 출처: `09-landing-and-test-strategy.md:109`(정본)
 - 닫은 사람: 17라운드 스웜 수렴(편집자 결정, `reviews/raw-round17-node-structure.md` §6; 소유자 지시 `reviews/round-17-owner-answers.md:25`)

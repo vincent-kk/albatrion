@@ -737,7 +737,9 @@
   > 벤치: 루트로 옮긴 게이트가 N개일 때 키 입력 한 번의 비용을 잰다.
   > 통과: 18C-27의 선(`guard:check`) 안이다.
   > 실패: ADR 0009 §4 절차(이유를 적고 Vincent가 받아들여야 병합)를 따른다.
-- 보충: 없음
+- 보충:
+  > 편집자 결정(26C-04): "【추론】 SETTLE-045의 평가 자리 L은 청사진의 일이지만 02의 `BlueprintGate`(`src/core/blueprint/type.ts:27-40`)에는 그 칸이 없으므로, PR-2가 청사진에 L의 계산과 그 칸을 더한다: 청사진 구조체는 내부 구조이고(BLUEPRINT-026, 25C-06), SETTLE-045의 (a)–(c)는 PR-2의 게이트이며(TEST-069 보충), 뒤 PR이 청사진을 고치는 선례는 PR-5의 `resolveArrayLimits` 이동이다(LANDING-094)." (`reviews/round-26-closing.md:48`)
+  > 편집자 결정(26C-04): "【추론】 그 변경은 `src/core/blueprint/__tests__/`에 L 계산의 세 규칙(`#` 단독과 `(/)`는 루트, `/p`·`#/p`는 `p`의 자리, `@`는 셈하지 않음)의 사례를 더한다." (`reviews/round-26-closing.md:49`)
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:429-442,449-455`(정본)
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-15)
@@ -783,7 +785,9 @@
   > 무엇: `controls.derived`·`controls.injectTo`를 가진 폼에서 `setValue(getValue())`와 `FormHandle.reset()`을 부른다.
   > 통과: `setValue(getValue())`는 에지가 없어 발화하지 않고, `FormHandle.reset()`은 발화한다(SETTLE-046).
   > 실패: 에지의 기준을 고친다.
-- 보충: 없음
+- 보충:
+  > 편집자 결정(26C-03): "【추론】 게이트에 "PR: PR-2"라 적혀도 그 단언이 뒤 PR의 기제(`controls.derived`·`controls.injectTo`는 PR-3, 통지·사건 배달은 PR-4)를 요구하면, 그 단언은 그 기제가 모두 있는 가장 이른 PR에서 하고 PR-2는 자기 기제로 관찰할 수 있는 신호를 단언한다(TEST-069 (라))." (`reviews/round-26-closing.md:32`)
+  > 편집자 결정(26C-03): "【추론】 SETTLE-048: PR-2는 로드가 에지·생김의 기준을 비우고 로드가 아닌 쓰기(`setValue(V)` 포함)가 직전 커밋을 기준으로 삼는 것을 생김과 채움으로 단언하고, `derived`·`injectTo`의 발화 유무는 PR-3이 같은 시나리오로 단언한다." (`reviews/round-26-closing.md:33`)
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:2866-2867,2872-2875`(정본)
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-102)
@@ -803,6 +807,8 @@
   > 실패: 이 블록을 고친다.
 - 보충:
   > 소유자(24라운드, PR #348 검토): "기본적으론 판단에 동의합니다" (`reviews/round-24-owner-answers.md:7`) — 게이트 줄(무엇·통과·실패)이 소유자가 말한 엣지케이스 테스트 후보다.
+  > 편집자 결정(26C-03): "【추론】 게이트에 "PR: PR-2"라 적혀도 그 단언이 뒤 PR의 기제(`controls.derived`·`controls.injectTo`는 PR-3, 통지·사건 배달은 PR-4)를 요구하면, 그 단언은 그 기제가 모두 있는 가장 이른 PR에서 하고 PR-2는 자기 기제로 관찰할 수 있는 신호를 단언한다(TEST-069 (라))." (`reviews/round-26-closing.md:32`)
+  > 편집자 결정(26C-03): "【추론】 SETTLE-049: PR-2는 `resetSubtree()`의 채움과 비움의 범위가 그 하위 트리임을 단언하고, `injectTo` 발화의 범위와 대상 값은 PR-3이 단언한다." (`reviews/round-26-closing.md:34`)
 - 상태: 현행
 - 출처: `reviews/round-22-closing.md:9-16`(정본)
 - 닫은 사람: 편집자 결정(22라운드, `reviews/round-22-closing.md` 22C-01), 소유자 답(`reviews/round-24-owner-answers.md:7` PR #348 검토; 편집자 결정에 동의)

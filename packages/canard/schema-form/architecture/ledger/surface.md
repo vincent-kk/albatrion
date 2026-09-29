@@ -904,6 +904,8 @@
 - 보충:
   > 반영 칸(설계서 메모 4): "게터 `typeMismatch: boolean`, 경로 목록 `typeMismatches: readonly string[]`, 경고 코드 `SCHEMA_FORM_WARNING.TYPE_MISMATCH`." (`reviews/round-18-owner-answers.md:41`)
   > 반영 칸(설계서 메모 3): "SURFACE-058의 겉면 수(명령 4 → 1, 약 57 → 약 54)" (`reviews/round-18-owner-answers.md:40`)
+  > 편집자 결정(26C-01): "【추론】 `SchemaNode` 겉면의 멤버는 그 멤버가 드러내는 기제를 들여오는 PR에서 겉면에 들고, 그 PR이 `SchemaNode/`의 `DETAIL.md` 목록·멤버 목록 시험·공개 형 `SchemaNode`를 함께 고친다(EVENT-063이 명령 메서드에 정한 방식)." (`reviews/round-26-closing.md:9`)
+  > 편집자 결정(26C-01): "【추론】 그래서 PR-2의 멤버 목록 시험은 PR-2 겉면의 목록을 단언하고, SURFACE-058의 약 54개는 PR-7 전환 시점의 수다; `plan/03-node-and-settle/verification.md:26`의 "이 PR은 명령 메서드 하나를 뺀 목록을 단언한다"는 이 블록으로 바꿔 읽는다." (`reviews/round-26-closing.md:14`)
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:911-913`(정본), `reviews/round-18-owner-answers.md:40`, `reviews/round-18-owner-answers.md:41`
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-32), 소유자 답(`reviews/round-18-owner-answers.md:40` 설계서 메모 3), 소유자 답(`reviews/round-18-owner-answers.md:41` 설계서 메모 4)
