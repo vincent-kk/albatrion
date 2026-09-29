@@ -65,10 +65,21 @@ export function parseLocations(text) {
   return out;
 }
 
+/** Where stage 01 froze the pre-ledger documents; ledger citations of them still use their old root-relative paths. */
+export const ARCHIVE_ROOT = '_archive/2026-09-29';
+
+/** Root-relative paths that name a frozen document; `adr/` also holds the new ADRs under the same file names. */
+const ARCHIVED_PATH_RE = /^(0\d-[^/]+\.md|open-questions\.md|adr\/.+)$/;
+
+/** Reads a document by its root-relative path, preferring the archived copy for a frozen path (null when neither exists). */
 export function docReader(root) {
   const cache = new Map();
   return (rel) => {
-    if (!cache.has(rel)) { const p = path.join(root, rel); cache.set(rel, fs.existsSync(p) ? fs.readFileSync(p, 'utf8').split('\n') : null); }
+    if (!cache.has(rel)) {
+      const archived = ARCHIVED_PATH_RE.test(rel) ? path.join(root, ARCHIVE_ROOT, rel) : null;
+      const p = archived && fs.existsSync(archived) ? archived : path.join(root, rel);
+      cache.set(rel, fs.existsSync(p) ? fs.readFileSync(p, 'utf8').split('\n') : null);
+    }
     return cache.get(rel);
   };
 }
