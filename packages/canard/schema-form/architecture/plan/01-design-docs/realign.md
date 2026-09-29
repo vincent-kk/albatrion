@@ -155,6 +155,9 @@ Planning method: 저장소 지침 — `PLAN.md` §2의 한 PR 순서와 `plan/01
 | 2026-09-29 | U4·U5 | U4 계획서 참조(`85528aa44`, G12), U5 상태판(`27c45e0ee`, G13·G14). U4 worker의 새 절 용어("관문", "settle 오류", "가지")를 원장 용어(게이트, 정착 오류, 분기)로 고침 | 끝 |
 | 2026-09-29 | U3 | worker가 25C 인용 32건을 옮기고 ADR 재생성(G9–G11). verifier 대조 FAIL 다섯(ERROR-159에 없는 규칙을 ERROR-159로 인용, 같은 인용의 두 번 옮김, 새 표 행 칸의 지어낸 글, `design/07`의 TEST-077 보충 순서, 원장의 "위 네 파일" 가리킴 끊김) → 넷은 worker가 명세대로 고침, 다섯째는 원장 관리 세션이 `701b3c5cd`로 앞 문장을 더해 닫고 이 세션이 `design/01`·`design/02`에 옮김 | G9·G10·G11 다시 충족 |
 | 2026-09-29 | Final | G16 lint·typecheck 통과. G15: sandbox 안의 headless Chromium이 mach port 등록을 거부당해(`Permission denied (1100)`) storybook 프로젝트가 뜨지 않음. unit·render 두 프로젝트는 294파일 4,127건 초록. storybook은 소유자가 sandbox 밖에서 돌림 | storybook 대기 |
+| 2026-09-29 | Final | storybook 49파일 390건 초록(소유자 실행). G15는 사유와 함께 ABANDON. 소유자 결정: 이 세션의 시험 검증은 vitest unit·render로 갈음하고, 스토리 화면은 개발 완료 뒤 소유자가 하나씩 실사한다 | G15 처리 |
+| 2026-09-29 | Final | G18 filid 스캔 INDETERMINATE(발견 178: 새것 1, 02 기준선 2, 이 브랜치 밖의 기존 175). 새것은 불변식 시험의 `it.each`가 파일당 시험 기록 상한 32를 넘는 것(51건). G19 verifier FAIL: 높음 1(`validateChildTargets.ts`가 선언 사이 판별 키 불일치에 네 번째 `DISCRIMINATOR_MISMATCH`를 냄, 25C-01은 셋만, 원장 관리 세션에 판정 요청), 중간 1(불변식 시험 표지의 DETAIL 그룹 없음), 낮음 2(시험의 `as any` 둘, `minContains`/`maxContains`가 `CONSTRAINT_KEYS`에 남아 조용히 빠짐), 참고 1(형 충돌 중 `nullable`). 변이 13종 모두 빨강, 설계문서 옮김 43/44 글자 그대로, ADR 일치 | 고침 진행 |
+| 2026-09-29 | Final | 청사진 네 건 고침(`f139cad4a`): 불변식 시험 51 → 2건, DETAIL 그룹, `as any` 둘 제거, `minContains`/`maxContains` 통과. 원장 관리 세션 판정 25C-12: 선언 사이 판별 키 다름은 SCHEMA-013이 이미 정한 사건이며 `DISCRIMINATOR_MISMATCH`는 넷(`reason: 'key'`, details `{ propertyName, other, reason }`). 형 충돌 중 `nullable`은 BLUEPRINT-041대로 정적 값 — 이 브랜치가 `enum: []`을 걷어 드러낸 것이라 여기서 고치고 `plan/03`에는 유지 조건만 적음 | 25C-12 반영 진행 |
 
 ## 6. 어긋남
 
