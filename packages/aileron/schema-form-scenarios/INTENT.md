@@ -10,7 +10,7 @@ schema-form verification without depending on the schema-form package.
 
 - Scenario modules contain pure data; execution belongs to adapters.
 - Use structural contracts for schemas, nodes, handles, and injected forms.
-- Families name behavior, including union, fill, and narrowing.
+- Families name value, settle, fill, exit, and union behavior.
 
 ## Boundaries
 
