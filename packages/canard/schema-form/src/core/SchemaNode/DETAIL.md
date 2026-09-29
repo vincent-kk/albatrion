@@ -8,7 +8,7 @@
 
 ## API Contracts
 
-- 진입점은 클래스 이름과 겹치는 런타임 생성자를 내보내지 않고 공개 판별 합집합 `SchemaNode` 타입, 종류별 노드 타입, 가드 열, `InferSchemaNode`, 공개 옵션 `SetValueOption`, `schemaNodeFactory`를 이름으로 내보냅니다. `schemaNodeFactory(schema: Blueprint, runtime: SchemaNodeRuntime<AnyNode>): AnyNode`는 트리마다 하나인 `SchemaNodeFactory`를 런타임에 결합하고 청사진 `kind`·`strategy`로 `BEHAVIORS[type][strategy]`를 골라 같은 클래스의 인스턴스를 만듭니다(NODE-008·010·046, WRITE-015).
+- 진입점은 클래스 이름과 겹치는 런타임 생성자를 내보내지 않고 공개 판별 합집합 `SchemaNode` 타입, 종류별 노드 타입, 가드 열, `InferSchemaNode`, 공개 옵션 `SetValueOption`, `schemaNodeFactory`를 이름으로 내보냅니다. `schemaNodeFactory(schema: Blueprint, runtimeSeed: SchemaNodeRuntimeSeed): SchemaNode`는 아직 존재하지 않는 `nodeFactory`·`blueprint` 칸을 제외한 트리 입력을 받고, 트리마다 한 번 완성한 런타임에 실제 생성 함수를 결합합니다. 청사진 `kind`·`strategy`로 `BEHAVIORS[type][strategy]`를 골라 같은 클래스의 인스턴스를 만듭니다(NODE-008·010·046, WRITE-015). 빈 생성 함수 스텁을 호출자에게 요구하지 않습니다.
 - 아래 표의 `getter`는 필드 또는 계산 메모 읽기이며 `method`는 문장 하나의 위임입니다. 타입의 `this: AnyNode`로 레코드를 받는 메서드를 선언하고 종류별 생성 표·`InferSchemaNode` overload로 단언 없이 좁힙니다(NODE-046).
 
 | PR-2 멤버 | 종류 | 위임·읽기 대상 | 원장 |
@@ -42,7 +42,7 @@
 | `setValue(value, option?)` | method | `settle.writeSchemaNode`의 호출자 전체 교체 | NODE-010, WRITE-096, 26C-01 |
 | `resetSubtree(option?)` | method | `settle.resetSchemaNodeSubtree` | WRITE-085, SETTLE-049 |
 
-- 클래스 파일에는 위 멤버의 필드 선언, 상수 읽기 게터, 한 문장 위임만 둡니다. 생성자는 고정 선언 순서의 대입만 하고 필드 초기화식과 생성자에 객체·배열 리터럴·함수·`new`를 두지 않습니다. `type`·`strategy` 분기는 가드 외에는 행에서만 합니다. 공개 인터페이스가 멤버 주석의 정본이고 클래스는 `{@inheritDoc}`로 가리킵니다(NODE-010·049).
+- 클래스 파일에는 레코드 순서의 저장 필드, 상수 읽기 게터, 한 문장 위임만 둡니다. 정착이 쓰는 공개 레코드 칸은 같은 이름의 게터와 한 문장 저장 세터를 짝지어 프로토타입 이름을 유지합니다. 생성자는 고정 선언 순서의 대입만 하고 필드 초기화식과 생성자에 객체·배열 리터럴·함수·`new`를 두지 않습니다. `type`·`strategy` 분기는 가드 외에는 행에서만 합니다. 공개 인터페이스가 멤버 주석의 정본이고 클래스는 `{@inheritDoc}`로 가리킵니다(NODE-010·049).
 - 공개 `SchemaNode`는 `type`으로 판별하는 `StringNode | NumberNode | BooleanNode | NullNode | ObjectNode | ArrayNode | VirtualNode | UnionNode`입니다. `schemaType`은 차례로 `'string'`, `'number' | 'integer'`, `'boolean'`, `'null'`, `'object'`, `'array'`, `'virtual'`, `UnionSchemaType`으로 좁힙니다. `UnionMemberType = 'string' | 'number' | 'integer' | 'boolean' | 'object' | 'array'`이고 `UnionSchemaType = readonly [UnionMemberType, UnionMemberType, ...UnionMemberType[]]`입니다(NODE-057·058).
 - `UnionNode`는 `type: 'union'`, `strategy: 'terminal'`, `children: null`이고 `typeMismatch: false`일 때 `value`는 허용 종류의 값·`undefined`·nullable일 때 `null`, `typeMismatch: true`일 때 `value: unknown`인 두 구성원으로 나뉩니다. `typeMismatch`는 `node.type`이 아니라 현재 `schemaType`·유효 목록과 `nullable` 기준이며 `false`는 검증 통과가 아닙니다(NODE-058, VALUE-037, SURFACE-061).
 - union 입력의 `FormTypeInputProps`는 `value`에 같은 판별 결과를 보여 주고 `onChange`는 목록 종류의 값과 `undefined`, nullable일 때만 `null`을 받습니다. `typeMismatch: true`의 `value: unknown`을 그대로 `onChange`의 허용 범위로 넓히지 않습니다. `ObjectValue`·`ArrayValue`를 포함한 객체·배열 원본 참조는 변환하지 않습니다(NODE-058, VALUE-037).
@@ -63,4 +63,4 @@
 
 ## Last Updated
 
-2026-09-29
+2026-09-30
