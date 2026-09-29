@@ -40,7 +40,9 @@ describe('blueprint diagnostic data and late collection', () => {
     expect(() =>
       blueprint({ type: 'string', controls: { injectTo: { '/missing': 1 } } }),
     ).toThrow(
-      expect.objectContaining({ specific: BlueprintErrorCode.UnknownGroupKey }),
+      expect.objectContaining({
+        specific: BlueprintErrorCode.InvalidControlShape,
+      }),
     );
   });
   it('validates children targets after gathering conditional and virtual names', () => {
@@ -329,6 +331,103 @@ describe('blueprint diagnostic data and late collection', () => {
       );
     expect(warnings.map((diagnostic) => diagnostic.details.keyword)).toEqual([
       'not',
+    ]);
+  });
+  it.each([
+    [
+      'a group that is not an object',
+      { type: 'string', controls: 'x' },
+      '#/controls',
+      { group: 'controls', key: 'controls', expected: 'object' },
+    ],
+    [
+      'an injectTo that is not a function',
+      { type: 'string', controls: { injectTo: { '/missing': 1 } } },
+      '#/controls/injectTo',
+      { group: 'controls', key: 'injectTo', expected: 'function' },
+    ],
+    [
+      'children that is not an array',
+      { type: 'object', controls: { children: {} } },
+      '#/controls/children',
+      { group: 'controls', key: 'children', expected: 'array' },
+    ],
+    [
+      'a children entry with the wrong shape',
+      { type: 'object', controls: { children: [{ targets: 'a' }] } },
+      '#/controls/children/0',
+      {
+        group: 'controls',
+        key: 'children',
+        expected: '{ targets: string[], controls? }',
+      },
+    ],
+    [
+      'a discriminator that is not a non-empty string',
+      { type: 'object', controls: { discriminator: 3 }, oneOf: [{}] },
+      '#/controls/discriminator',
+      { group: 'controls', key: 'discriminator', expected: 'string' },
+    ],
+  ])(
+    'reports %s as INVALID_CONTROL_SHAPE',
+    (_name, schema, schemaPath, details) => {
+      const collect = vi.fn();
+      expect(() => blueprint(schema, { collect })).toThrow(
+        expect.objectContaining({
+          specific: BlueprintErrorCode.InvalidControlShape,
+        }),
+      );
+      expect(collect).toHaveBeenCalledWith({
+        code: BlueprintErrorCode.InvalidControlShape,
+        level: 'error',
+        schemaPath,
+        details,
+      });
+    },
+  );
+  it('reports a key outside the closed list as UNKNOWN_GROUP_KEY with group and key', () => {
+    const collect = vi.fn();
+    expect(() =>
+      blueprint({ type: 'string', options: { unknown: true } }, { collect }),
+    ).toThrow(
+      expect.objectContaining({ specific: BlueprintErrorCode.UnknownGroupKey }),
+    );
+    expect(collect).toHaveBeenCalledWith({
+      code: BlueprintErrorCode.UnknownGroupKey,
+      level: 'error',
+      schemaPath: '#/options/unknown',
+      details: { group: 'options', key: 'unknown' },
+    });
+  });
+  it('warns once for a union host whose inline subtree carries reserved keys, never through a reference', () => {
+    const collect = vi.fn();
+    blueprint(
+      {
+        type: 'object',
+        $defs: { target: { type: 'string', controls: { visible: true } } },
+        properties: {
+          value: {
+            type: ['object', 'string'],
+            properties: {
+              inline: { type: 'string', controls: { visible: true } },
+              ref: { $ref: '#/$defs/target' },
+            },
+          },
+        },
+      },
+      { collect },
+    );
+    const warnings = collect.mock.calls
+      .map(([diagnostic]) => diagnostic)
+      .filter(
+        (diagnostic) =>
+          diagnostic.code ===
+          BlueprintWarningCode.TerminalSubtreeKeyIgnoredForForm,
+      );
+    expect(warnings).toHaveLength(1);
+    expect(warnings[0].schemaPath).toBe('#/properties/value');
+    expect(warnings[0].details.paths).toEqual([
+      '#/properties/value/properties/inline',
     ]);
   });
 });

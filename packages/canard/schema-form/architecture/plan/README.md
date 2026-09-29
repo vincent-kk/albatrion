@@ -21,7 +21,7 @@
 ```mermaid
 flowchart LR
   M[master] --- U["1.0.0-beta (우산 PR #344)"]
-  U --> D["01 설계 PR (머지됨) · 설계문서 PR"]
+  U --> D["01 설계 PR (머지됨) · 설계문서 PR (머지됨)"]
   U --> A["02 기반+청사진 (PR-0 코드 + PR-1)"]
   A --> C["03 노드 트리·정착 (PR-2)"]
   C --> E["04 파생+상태 키·제어 (PR-3 + PR-6)"]
@@ -37,7 +37,7 @@ flowchart LR
 
 | 순서 | 디렉토리 | 원장 단계 | 의존 | 병렬 |
 | --- | --- | --- | --- | --- |
-| 01 | [01-design-docs/](01-design-docs/) | PR-0의 문서 부분(LANDING-060) — 설계 PR #345는 머지됨, 남은 설계문서 PR | 없음 | 02와 병렬 |
+| 01 | [01-design-docs/](01-design-docs/) | PR-0의 문서 부분(LANDING-060) — 설계 PR #345와 설계문서 PR #348 모두 머지됨 | 없음 | 02와 병렬 |
 | 02 | [02-foundation-and-blueprint/](02-foundation-and-blueprint/) | PR-0의 코드 부분 + PR-1(LANDING-060·090·061·081·091) | 없음 | 01과 병렬 |
 | 03 | [03-node-and-settle/](03-node-and-settle/) | PR-2(LANDING-062·082·092) | 02 | — |
 | 04 | [04-derive-and-controls/](04-derive-and-controls/) | PR-3 + PR-6(LANDING-063·083·066·086) | 03 | 05·06과 병렬 |
@@ -49,6 +49,8 @@ flowchart LR
 | 별도 | [release-transition/](release-transition/) | LANDING-097 | 없음 | 언제든, 09 전 |
 
 자식 PR은 모두 `1.0.0-beta`를 base로 열고 merge commit으로 들어온다(LANDING-204). 원샷이어야 하는 것은 전환 PR과 `master` 병합 둘뿐이다(LANDING-058). 우산 브랜치는 PR-8 전에 배포하지 않는다(LANDING-159).
+
+01과 02는 병렬이었고 02(#347, 2026-09-27)가 01(#348, 2026-09-29)보다 먼저 머지되었다. 문서가 코드를 보지 않고 쓰여 생긴 틈 16건은 25라운드와 보정 PR `fix/schema-form-realign-01-02`가 닫는다(LANDING-060 보충, 25C-10). 계획과 기록은 [01-design-docs/realign.md](01-design-docs/realign.md).
 
 ## 3. 단계마다 독립적으로 검증되는 까닭
 

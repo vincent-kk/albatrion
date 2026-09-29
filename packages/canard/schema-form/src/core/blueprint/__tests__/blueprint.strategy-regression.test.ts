@@ -9,7 +9,7 @@ describe('declaration-only strategy regression', () => {
       oneOf: [{ options: { terminal: true } }],
     }).root;
     expect(node.strategy).toBe('branch');
-    expect(mergeEffectiveSchema(node, [])).not.toHaveProperty(
+    expect(mergeEffectiveSchema(node, []).schema).not.toHaveProperty(
       'options.terminal',
     );
   });
@@ -34,7 +34,7 @@ describe('declaration-only strategy regression', () => {
       mergeEffectiveSchema(
         node,
         node.declarations.map((declaration) => declaration.id),
-      ),
+      ).schema,
     ).not.toHaveProperty('options.terminal');
   });
 });

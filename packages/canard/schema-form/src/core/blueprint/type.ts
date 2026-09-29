@@ -221,12 +221,20 @@ export type EffectiveSchemaMemo = WeakMap<
   EffectiveSchemaCacheEntry[]
 >;
 
+/** Immutable merge result: renderer hints plus the signal settlement reads. */
+export interface EffectiveSchema {
+  /** Frozen hints for this active set; false when a contributing schema forbids every value. */
+  readonly schema: BlueprintSchema;
+  /** True when the active gated types share nothing with the static accepted set. */
+  readonly typeConflict: boolean;
+}
+
 /** Separate memo contexts prevent runtime conflicts from bypassing static validation. */
 export interface EffectiveSchemaCacheEntry {
   /** Error behavior belonging to this memo context. */
   readonly mode: 'static' | 'runtime';
   /** Renderer atomicity predicate identity belonging to this context. */
   readonly isAtomic: BlueprintOptions['isAtomic'];
-  /** Normalized active declaration sets mapped to immutable effective schemas. */
-  readonly schemas: Map<string, BlueprintSchema>;
+  /** Normalized active declaration sets mapped to immutable result records. */
+  readonly schemas: Map<string, EffectiveSchema>;
 }

@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 import { blueprint } from '../index';
 import { BlueprintErrorCode } from '../utils/diagnostics/constant';
@@ -143,6 +143,47 @@ describe('blueprint explicit discriminators', () => {
         specific: BlueprintErrorCode.DiscriminatorMismatch,
       }),
     );
+  });
+  it('rejects declarations of one node that name different discriminator keys', () => {
+    const collect = vi.fn();
+    expect(() =>
+      blueprint(
+        {
+          type: 'object',
+          properties: {
+            a: {
+              type: 'object',
+              controls: { discriminator: 'k' },
+              oneOf: [{ properties: { k: { type: 'string', const: 'x' } } }],
+            },
+          },
+          oneOf: [
+            {
+              properties: {
+                a: {
+                  type: 'object',
+                  controls: { discriminator: 'j' },
+                  oneOf: [
+                    { properties: { j: { type: 'string', const: 'y' } } },
+                  ],
+                },
+              },
+            },
+          ],
+        },
+        { collect },
+      ),
+    ).toThrow(
+      expect.objectContaining({
+        specific: BlueprintErrorCode.DiscriminatorMismatch,
+      }),
+    );
+    expect(collect).toHaveBeenCalledWith({
+      code: BlueprintErrorCode.DiscriminatorMismatch,
+      level: 'error',
+      schemaPath: '#/oneOf/0/properties/a',
+      details: { propertyName: 'k', other: 'j', reason: 'key' },
+    });
   });
   it('rejects different tag kinds and empty static tag intersections', () => {
     expect(() =>

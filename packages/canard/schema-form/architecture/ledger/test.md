@@ -207,6 +207,7 @@
   > ```
 - 보충:
   > "비공개 워크스페이스 패키지 `@aileron/schema-form-scenarios`(`packages/aileron/schema-form-scenarios/`)." (`09-landing-and-test-strategy.md:277`)
+  > 편집자 결정(25C-08): "【추론】 시나리오 데이터 모듈의 자리는 `packages/aileron/schema-form-scenarios/src/<부류>/<이름>.scenario.ts`이며 TEST-023의 `src/**/*.scenario.ts` 안이다." (`reviews/round-25-closing.md:76`)
 - 상태: 현행
 - 출처: `09-landing-and-test-strategy.md:132,134-147`(정본), `09-landing-and-test-strategy.md:277`, `reviews/round-16-owner-review.md:35`, `reviews/round-16-owner-answers.md:14`
 - 닫은 사람: 편집자 결정(16라운드, `09-landing-and-test-strategy.md:132`), 소유자 답(`reviews/round-16-owner-answers.md:14` 답 8)
@@ -235,6 +236,8 @@
   > "그 패키지는 `@canard/schema-form`을 값으로도 형으로도 가져오지 않는다(가져오면 schema-form의 시험과 서로 가져오는 고리가 된다)." (`09-landing-and-test-strategy.md:277`)
   > "그래서 `Form`·`FormHandle`·`FormScenario.schema`는 구조적 형으로 적고, 시나리오 감싸개는 `Form`을 주입받는다." (`09-landing-and-test-strategy.md:277`)
   > "가능한지는 PR-0이 확인한다." (`09-landing-and-test-strategy.md:277`)
+  > 편집자 결정(25C-08): "【추론】 시나리오 감싸개는 `ScenarioForm`, 핸들 등록은 `registerScenarioHandle`, 핸들 찾기는 `findScenarioHandle`이다." (`reviews/round-25-closing.md:77`)
+  > 편집자 결정(25C-08): "【추론】 `ScenarioExpectation`은 `shape`·`outputValue`·`values`·`errors` 넷으로 시작하고, `diagnostics`는 코어 러너(TEST-009)를 만드는 PR 03이 더한다." (`reviews/round-25-closing.md:78`)
 - 상태: 현행
 - 출처: `09-landing-and-test-strategy.md:150`(정본), `09-landing-and-test-strategy.md:192,277`, `reviews/round-16-owner-answers.md:14`, `reviews/round-16-owner-review.md:59`
 - 닫은 사람: 소유자 답(`reviews/round-16-owner-answers.md:14` 답 8), 편집자 결정(16라운드, `09-landing-and-test-strategy.md:150`)
@@ -248,6 +251,7 @@
 - 보충:
   > "`FormHandle`은 그린 쪽이 DOM에 등록하고 `playScenario`가 찾는다(3차 게이트 뒤)." (`reviews/round-16-owner-review.md:61`)
   > "`FormHandle`은 그린 쪽이 DOM에 등록하고 `playScenario`가 찾는다(§4.2)." (`09-landing-and-test-strategy.md:279`)
+  > 편집자 결정(25C-08): "【추론】 `ScenarioExpectation`은 `shape`·`outputValue`·`values`·`errors` 넷으로 시작하고, `diagnostics`는 코어 러너(TEST-009)를 만드는 PR 03이 더한다." (`reviews/round-25-closing.md:78`)
 - 상태: 현행
 - 출처: `09-landing-and-test-strategy.md:151`(정본), `09-landing-and-test-strategy.md:278`, `reviews/round-16-owner-answers.md:16`, `reviews/round-16-owner-review.md:35,61`
 - 닫은 사람: 편집자 결정(16라운드, `09-landing-and-test-strategy.md:151`), 소유자 답(`reviews/round-16-owner-answers.md:16` 답 10)
@@ -1334,6 +1338,13 @@
   > 편집자 결정(19C-02): "【추론】 시험 `union.migration-shapes.render.test.tsx`에 LANDING-208의 모양을 더한다." (`reviews/round-19-closing.md:46`)
   > 편집자 결정(18C-104, 위 예의 폼): "【추론】 예: 본체 `a:{type:['string','boolean']}`에 `kind`가 `'text'`면 `a`를 `string`으로, `'flag'`면 `boolean`으로 좁히는 게이트가 있을 때, `setValue({kind:'flag', a:0})`는 직전 `kind`가 무엇이든 `a = false`다." (`reviews/round-18-closing.md:2912`) — WRITE-098의 예다.
   > 편집자 결정(18C-105, 위 예의 폼): "【추론】 예: 본체 `a:{type:['string','boolean']}`에 `a`가 수이면 `boolean`으로, 아니면 `string`으로 좁히는 게이트가 있을 때, `setValue({a:0})`는 쓰기 경계에서 `0`(받아 줄 형이 둘이라 그대로)이고, 첫 라운드의 재해석에서 `false`가 되어 게이트가 `string`으로 뒤집히며, 다음 라운드의 재해석에서 `"0"`이 되고 게이트가 더 뒤집히지 않으므로 `a = "0"`이 커밋된다." (`reviews/round-18-closing.md:2941`) — WRITE-099의 예다.
+  > 편집자 결정(25C-02): "【추론】 BLUEPRINT-044와 TEST-077이 든 `union.*.test.ts` 여섯 이름은 단언의 주소이며 규범이 아니다. 단언이 게이트다." (`reviews/round-25-closing.md:19`)
+  > 편집자 결정(25C-02): "【추론】 02의 `src/core/blueprint/__tests__/blueprint.type-*.test.ts` 이름은 그대로 두고, 여섯 이름과 실제 파일의 대응은 25C-11에 적는다." (`reviews/round-25-closing.md:20`)
+  > 편집자 결정(25C-02): "【추론】 TEST-077의 "모든 코퍼스 칸에서 `Array.isArray(schemaType) === (type === 'union')`이고, 같은 칸의 노드와 배열 아이템이 같은 `schemaType` 참조를 가지며, 그 참조는 `Object.isFrozen`이다"는 게이트이며, 칸의 범위는 E1–E42 전 칸과 TEST-067(b) 코퍼스 14종의 전 칸이다." (`reviews/round-25-closing.md:21`)
+  > 편집자 결정(25C-11): "【추론】 E1–E42는 `src/core/blueprint/__tests__/`의 네 파일에 있다: `blueprint.type-syntax.test.ts`(E1–E10, E28), `blueprint.type-inference.test.ts`(E11–E17, E29, E32–E35), `blueprint.type-static-intersection.test.ts`(E18–E24, E30, E31, E36–E39), `blueprint.type-gated-declarations.test.ts`(E25–E27, E40–E42)." (`reviews/round-25-closing.md:103`)
+  > 편집자 결정(25C-11): "【추론】 `union.kind-procedure.test.ts`의 단언은 위 네 파일의 표 행과 `blueprint.type-gated-declarations.test.ts`의 정적 소유자 없는 분기 접기 충돌 사례에, `union.null-only.test.ts`는 위 표 행에, `union.static-intersection.test.ts`는 `blueprint.type-static-intersection.test.ts`에, `union.schema-type-invariant.test.ts`는 `blueprint.type-syntax.test.ts`의 E1–E9 불변식에, `union.gated-narrowing.test.ts`는 `blueprint.type-gated-declarations.test.ts`에, `union.terminal-subtree-warning.test.ts`는 `blueprint.diagnostics.test.ts`와 `blueprint.type-syntax.test.ts`의 E28에 있다." (`reviews/round-25-closing.md:104`)
+  > 편집자 결정(25C-11): "【추론】 여섯 모두 부분 충족이며, 보정 PR(`fix/schema-form-realign-01-02`)이 채우는 것: 모두 `'null'`인 정적 연언이 null 노드인 사례, 모든 선언 쌍의 순서 무관 전수 교집합, 코퍼스 전 칸의 `Array.isArray(schemaType) === (kind === 'union')`과 동결, 게이트 전후 `schemaType` 참조 동일성, E40의 형 충돌 신호(25C-04), E42의 참조 동일성, `['object','string']` union 호스트의 터미널 경고 1회와 `$ref` 대상 무경고, E27·E40·E42의 종류와 전략 전부 단언." (`reviews/round-25-closing.md:105`)
+  > 편집자 결정(25C-11): "【추론】 PR 03으로 넘기는 것: virtual 코퍼스의 `node.type` 여덟 값 수집, `onChange` 형 검사, 노드와 배열 아이템의 `schemaType` 참조 동일성, 유효 목록 좁힘의 단언 — 모두 노드 트리가 있어야 잰다." (`reviews/round-25-closing.md:106`)
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:2672-2697`(정본), `reviews/round-18-closing.md:2926-2927`, `reviews/round-18-closing.md:2956-2957,2970-2971`, `reviews/round-18-owner-answers.md:41`
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-93), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-104), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-105), 소유자 답(`reviews/round-18-owner-answers.md:41` 설계서 메모 4)
