@@ -348,6 +348,8 @@
 - 닫은 사람: 편집자 결정(16·17라운드, `09-landing-and-test-strategy.md:171`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-25)
 - 라운드: 18
 - 까닭: `09-landing-and-test-strategy.md:162`, `reviews/round-18-closing.md:782-786`
+- 충돌:
+  > `09-landing-and-test-strategy.md:171`의 "`degraded` 동안 제출 경로의 거부와 `getValue()`의 허용"은 18라운드 결정과 다르다: `degraded` 동안의 제출 거부 시험은 PR-4가 아니라 PR-7로 미룬다(TEST-020의 18C-25 보충). 18라운드 결정이 이긴다(`reviews/round-18-closing.md:773`).
 
 ### TEST-018 새로 있어야 하는 시험 PR-5 — 배열 아이템의 생김과 채움, identity, omitTrailing, 터미널 배열 행의 구조 연산
 
@@ -395,6 +397,7 @@
 - 까닭: `09-landing-and-test-strategy.md:162`, `reviews/round-18-closing.md:782-786`
 - 충돌:
   > `09-landing-and-test-strategy.md:174`의 "`trim`(포커스 아웃 때만 자름, 입력 중에는 자르지 않음, 같은 값이면 쓰지 않음, 입력 출처 쓰기)"는 18라운드 결정과 다르다: `trim` 쓰기는 입력 출처 쓰기가 아니라 자동 쓰기이므로 PR-7 시험은 바깥 오류와 dirty가 그대로이고 그 노드의 입력이 Refresh를 받는 것을 단언한다(WRITE-083, LANDING-145). 18라운드 결정이 이긴다(`reviews/round-18-closing.md:582`).
+  > `09-landing-and-test-strategy.md:174`의 "`node.strategy`로 옮긴 `FormGroupRenderer`와 UI 플러그인 넷"은 소유자 답과 다르다: UI 플러그인 넷의 이주와 시험은 PR-7이 아니라 플러그인 PR이 하고 PR-7은 기본 입력으로 검증한다(LANDING-206). 소유자 답이 이긴다(`reviews/round-18-owner-answers.md:42`).
 
 ### TEST-021 renderForm 하니스 — e2e 층의 뼈대, 고칠 것 다섯
 
@@ -565,7 +568,7 @@
 - 라운드: 16
 - 까닭: `adr/0009-performance-budget-and-benchmarks.md:66`
 - 충돌:
-  > `adr/0009-performance-budget-and-benchmarks.md:66`의 "기존 테스트는 동작이 달라져 회귀 오라클이 못 되지만"은 뒤 라운드의 기존 시험 처분과 다르다(약 55파일의 단언을 남긴다, TEST-013). 정본이 이긴다(`09-landing-and-test-strategy.md:158-159`).
+  > `adr/0009-performance-budget-and-benchmarks.md:66`의 "기존 테스트는 동작이 달라져 회귀 오라클이 못 되지만"은 뒤 라운드의 기존 시험 처분과 다르다(약 55파일의 단언을 남긴다, TEST-013). 정본이 이긴다(`09-landing-and-test-strategy.md:158-159`). TEST-013이 이긴다: 기존 234파일 가운데 그대로 사는 약 30파일과 표면만 고치는 약 25파일의 단언을 남긴다.
   > `02-target-overview.md:369`의 "수치 예산은 ADR 0009의 미결이며 소유자 정책이다."는 18라운드 결정과 다르다: 예산의 수치는 기존 `guard:check`의 선이다(TEST-073). 18라운드 결정이 이긴다(`reviews/round-18-closing.md:816`).
 
 ### TEST-032 벤치 시나리오 — G6의 네 상황과 새 구조 고유·메모리·14라운드 행
@@ -595,7 +598,7 @@
 - 라운드: 18
 - 까닭: `adr/0009-performance-budget-and-benchmarks.md:71`, `reviews/round-18-closing.md:444-447`, `reviews/round-18-closing.md:1885-1887`, `reviews/round-18-closing.md:2184-2186`
 - 충돌:
-  > `adr/0009-performance-budget-and-benchmarks.md:78`의 "조각 전환(가드가 뒤집힐 때의 begin/complete), 선택 가드의 분기 전환"은 5차 주의 "(1) begin/complete 두 패스와 선택 가드는 사라졌다"와 다르다(옛 모델의 시나리오 이름). 5차 주가 이긴다(`adr/0009-performance-budget-and-benchmarks.md:3`).
+  > `adr/0009-performance-budget-and-benchmarks.md:78`의 "조각 전환(가드가 뒤집힐 때의 begin/complete), 선택 가드의 분기 전환"은 5차 주의 "(1) begin/complete 두 패스와 선택 가드는 사라졌다"와 다르다(옛 모델의 시나리오 이름). 5차 주가 이긴다(`adr/0009-performance-budget-and-benchmarks.md:3`). TEST-030이 이긴다: 5차 주의 그 항이 규칙이다.
 
 ### TEST-033 구조를 확정하기 전에 잰다 — 버릴 것을 전제로 한 스파이크
 
@@ -652,7 +655,8 @@
 - 라운드: 1
 - 까닭: `adr/0009-performance-budget-and-benchmarks.md:35`
 - 충돌:
-  > `adr/0009-performance-budget-and-benchmarks.md:39`의 "`controls`의 식이 없는 노드는 complete 단계에서 표현식 비용이 0이어야 한다"는 5차 주의 "(1) begin/complete 두 패스와 선택 가드는 사라졌다"와 다르다(complete 단계는 없다). 5차 주가 이긴다(`adr/0009-performance-budget-and-benchmarks.md:3`).
+  > `adr/0009-performance-budget-and-benchmarks.md:39`의 "`controls`의 식이 없는 노드는 complete 단계에서 표현식 비용이 0이어야 한다"는 5차 주의 "(1) begin/complete 두 패스와 선택 가드는 사라졌다"와 다르다(complete 단계는 없다). 5차 주가 이긴다(`adr/0009-performance-budget-and-benchmarks.md:3`). TEST-030이 이긴다: 5차 주의 그 항이 규칙이다.
+  > `adr/0009-performance-budget-and-benchmarks.md:45`의 "에러 라우팅이 `schemaPath`에 더 의존하게 된다"는 18라운드 결정과 다르다: 에러 배정은 `dataPath`로 하고 `schemaPath`는 꺼진 union 분기를 표시에서 거르는 필터에서만 쓴다(VALIDATE-043). 18라운드 결정이 이긴다(`reviews/round-18-closing.md:1471-1495,1502-1503`).
 
 ### TEST-036 1차 스파이크 측정 결과 — 가드 호출 수, 인터프리터형과 컬렉션 가드, 컴파일 비용, 복사 비용, 검증 비용
 
@@ -671,6 +675,8 @@
 - 닫은 사람: 편집자 결정(1라운드 측정 기록, `reviews/round-1.md:19`)
 - 라운드: 1
 - 까닭: 없음
+- 충돌:
+  > `adr/0009-performance-budget-and-benchmarks.md:58`의 "입력 경로에서 떼어 낸다(ADR 0007)"는 18라운드 결정과 다르다: 폼은 검증을 입력 경로에서 떼어 내는 장치를 따로 두지 않고 진입당 요청 1회와 마이크로태스크 합치기로 하며, 빈도 조절은 `OnRequest`다(VALIDATE-049). 18라운드 결정이 이긴다(`reviews/round-18-closing.md:2154-2160`).
 
 ### TEST-037 2라운드 측정 — 작업 루프 프로토타입
 
@@ -740,7 +746,7 @@
 - 라운드: 18
 - 까닭: `reviews/round-18-closing.md:862-864`
 - 충돌:
-  > `adr/0009-performance-budget-and-benchmarks.md:99`의 "분석 단계와 분기 선택기가 더해진다"는 5차 주의 "(2) 분기 선택기와 `selection` 칸은 없다"와 다르다. 5차 주가 이긴다(`adr/0009-performance-budget-and-benchmarks.md:3`).
+  > `adr/0009-performance-budget-and-benchmarks.md:99`의 "분석 단계와 분기 선택기가 더해진다"는 5차 주의 "(2) 분기 선택기와 `selection` 칸은 없다"와 다르다. 5차 주가 이긴다(`adr/0009-performance-budget-and-benchmarks.md:3`). TEST-030이 이긴다: 5차 주의 그 항이 규칙이다.
   > `adr/0009-performance-budget-and-benchmarks.md:99`의 "현재 gzip 약 44KB"는 측정 방법이 적히지 않은 수치라 18라운드 결정과 다르다: 기준은 v0.16.0의 37,023 B(ESM 진입 minify + gzip -9, 의존성 외부)다. 18라운드 결정이 이긴다(`reviews/round-18-closing.md:855`).
   > `00-goals.md:82`의 "현재 gzip 약 44KB"는 측정 방법이 적히지 않은 수치라 18라운드 결정과 다르다: 기준은 v0.16.0의 37,023 B(ESM 진입 minify + gzip -9, 의존성 외부)다. 18라운드 결정이 이긴다(`reviews/round-18-closing.md:855`).
   > `adr/0009-performance-budget-and-benchmarks.md:94`의 "미결 — 소유자가 정할 것"는 18라운드 결정으로 닫혔다(편집자 결정, 18라운드). 18라운드 결정이 이긴다(`reviews/round-18-closing.md:853`).
@@ -758,7 +764,7 @@
 - 라운드: 17
 - 까닭: 없음
 - 충돌:
-  > `adr/0009-performance-budget-and-benchmarks.md:100`의 "역색인(ADR 0005 §2)을 넣으면 격차가 줄지만 폼이 `if`의 프로퍼티 이름을 읽어야 한다"는 5차 주의 "(3) 역색인은 기각되었다"와 다르다. 5차 주가 이긴다(`adr/0009-performance-budget-and-benchmarks.md:3`).
+  > `adr/0009-performance-budget-and-benchmarks.md:100`의 "역색인(ADR 0005 §2)을 넣으면 격차가 줄지만 폼이 `if`의 프로퍼티 이름을 읽어야 한다"는 5차 주의 "(3) 역색인은 기각되었다"와 다르다. 5차 주가 이긴다(`adr/0009-performance-budget-and-benchmarks.md:3`). TEST-030이 이긴다: 5차 주의 그 항이 규칙이다.
 
 ### TEST-043 대체됨: const/enum 판별식의 직접 비교는 넣지 않는다
 
@@ -1064,7 +1070,7 @@
 - 라운드: 18
 - 까닭: `reviews/round-18-owner-answers.md:13`
 - 충돌:
-  > `adr/0009-performance-budget-and-benchmarks.md:100`의 "역색인(ADR 0005 §2)을 넣으면 격차가 줄지만 폼이 `if`의 프로퍼티 이름을 읽어야 한다"는 5차 주의 "(3) 역색인은 기각되었다"와 다르다. 5차 주가 이긴다(`adr/0009-performance-budget-and-benchmarks.md:3`).
+  > `adr/0009-performance-budget-and-benchmarks.md:100`의 "역색인(ADR 0005 §2)을 넣으면 격차가 줄지만 폼이 `if`의 프로퍼티 이름을 읽어야 한다"는 5차 주의 "(3) 역색인은 기각되었다"와 다르다. 5차 주가 이긴다(`adr/0009-performance-budget-and-benchmarks.md:3`). TEST-030이 이긴다: 5차 주의 그 항이 규칙이다.
 
 ### TEST-066 열림: 컴파일 예산 — 폼 생성 시점의 동기 컴파일 허용량
 
@@ -1154,6 +1160,7 @@
   > "노드 구조 시험(행 칸 순서 시험: 모든 행의 칸 키와 순서가 같음. 겉면 멤버 목록 시험: 프로토타입 멤버 이름과 `SchemaNode/`의 `DETAIL.md` 목록의 일치. 공개 index 키 목록: 내부 통로가 `src/index.ts`에 없음. 행 고르기 함수의 조합 전수. 공개 형의 키 목록 타입 시험. `isTerminalNode`가 터미널 객체도 좁힘), `SchemaNode` 클래스 파일에 거는 린트 설정, `active` 게터" (`09-landing-and-test-strategy.md:169`)
   > 편집자 결정(18C-98): "【추론】 `diagnostics`와 경고 중복 키는 폼 수준 로드(마운트, `FormHandle.reset()`)에서만 초기화한다." (`reviews/round-18-closing.md:2797`)
   > 편집자 결정(18C-98): "【추론】 `setValue(V)`와 `resetSubtree()`는 초기화하지 않는다." (`reviews/round-18-closing.md:2798`)
+  > 편집자 결정(18C-15, 게이트의 PR 줄): "PR: PR-2 정착 시나리오(18C-25의 PR-2 시험)와 PR-2 벤치." (`reviews/round-18-closing.md:449`) — (a)–(c)의 세 단언은 이 PR 줄에 딸린다(SETTLE-045).
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:751-780`(정본), `reviews/round-18-closing.md:2797-2798`
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-25), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-98)
@@ -1325,6 +1332,8 @@
   > 반영 칸(설계서 메모 4): "시험 파일 이름 `union.mismatch-light.test.ts`는 그대로이고, 시험이 부르는 게터·코드 이름은 확정 이름이다." (`reviews/round-18-owner-answers.md:41`)
   > 편집자 결정(19C-01): "【추론】 시험 `union.migration-shapes.render.test.tsx`에 LANDING-207의 모양을 더한다." (`reviews/round-19-closing.md:28`)
   > 편집자 결정(19C-02): "【추론】 시험 `union.migration-shapes.render.test.tsx`에 LANDING-208의 모양을 더한다." (`reviews/round-19-closing.md:46`)
+  > 편집자 결정(18C-104, 위 예의 폼): "【추론】 예: 본체 `a:{type:['string','boolean']}`에 `kind`가 `'text'`면 `a`를 `string`으로, `'flag'`면 `boolean`으로 좁히는 게이트가 있을 때, `setValue({kind:'flag', a:0})`는 직전 `kind`가 무엇이든 `a = false`다." (`reviews/round-18-closing.md:2912`) — WRITE-098의 예다.
+  > 편집자 결정(18C-105, 위 예의 폼): "【추론】 예: 본체 `a:{type:['string','boolean']}`에 `a`가 수이면 `boolean`으로, 아니면 `string`으로 좁히는 게이트가 있을 때, `setValue({a:0})`는 쓰기 경계에서 `0`(받아 줄 형이 둘이라 그대로)이고, 첫 라운드의 재해석에서 `false`가 되어 게이트가 `string`으로 뒤집히며, 다음 라운드의 재해석에서 `"0"`이 되고 게이트가 더 뒤집히지 않으므로 `a = "0"`이 커밋된다." (`reviews/round-18-closing.md:2941`) — WRITE-099의 예다.
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:2672-2697`(정본), `reviews/round-18-closing.md:2926-2927`, `reviews/round-18-closing.md:2956-2957,2970-2971`, `reviews/round-18-owner-answers.md:41`
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-93), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-104), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-105), 소유자 답(`reviews/round-18-owner-answers.md:41` 설계서 메모 4)

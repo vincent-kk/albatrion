@@ -2,20 +2,14 @@
 // inventory: node tokens.mjs inventory <out.json> <files...>  — every normative token with its source lines
 // check:     node tokens.mjs check <inventory.json> <targetFiles...> — tokens absent from all targets
 import fs from 'node:fs';
-
-const PATTERNS = [
-  ['code', /`([^`\n]+)`/g],
-  ['errorCode', /\b(SCHEMA_FORM_[A-Z_]+(?:\.[A-Z_]+)?)\b/g],
-  ['id', /(?<![A-Za-z0-9_`-])((?:T|G|C|Q|S|E|R|N|O|D|B|L)-?\d+(?:G?-\d+)?[A-Z]?)(?![A-Za-z0-9_])/g],
-  ['number', /(?<![\w.])(\d+(?:\.\d+)?\s?(?:ms|KB|MB|kB|%|회|개|번|배|줄|파일|케이스|초|행|칸|단계))/g],
-];
+import { TOKEN_PATTERNS } from './lib.mjs';
 
 const [mode, first, ...rest] = process.argv.slice(2);
 if (mode === 'inventory') {
   const inv = {};
   for (const file of rest) {
     fs.readFileSync(file, 'utf8').split('\n').forEach((line, i) => {
-      for (const [kind, re] of PATTERNS) {
+      for (const [kind, re] of TOKEN_PATTERNS) {
         for (const m of line.matchAll(re)) {
           const key = `${kind}\u0000${m[1]}`;
           (inv[key] ??= []).push(`${file}:${i + 1}`);

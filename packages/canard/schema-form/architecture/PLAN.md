@@ -46,8 +46,8 @@
 | --- | --- | --- | --- | --- |
 | 우산 | `1.0.0-beta` → `master` | 진행 | [#344](https://github.com/vincent-kk/albatrion/pull/344) | 초안. 09 머지 뒤 `master`로 |
 | 00 | 설계 원장·개발계획 | 머지 | [#345](https://github.com/vincent-kk/albatrion/pull/345), [#346](https://github.com/vincent-kk/albatrion/pull/346) | 원장 1,336항목·검사 0, 계획서 디렉토리 열 개 |
-| 01 | 설계문서 | 대기 | — | 02와 병렬. `design/` 8편·ADR·`doc-coverage`·`_archive/`·절 단위 통과 |
-| 02 | 기반 + 청사진 | 리뷰 | [#347](https://github.com/vincent-kk/albatrion/pull/347) | 전체 4,437시험·lint·strict·빌드 통과. 19라운드 원장 해소와 TEST-079 반영, 내부 Codex 대조 완료. Filid 잔여 발견은 기록했고 Antigravity 외부 확인은 자동 승인 검토가 거절함 |
+| 01 | 설계문서 | 리뷰 | [#348](https://github.com/vincent-kk/albatrion/pull/348) | 설계문서 8편(`design/`)과 ADR 0001–0017(`adr/`), 옛 문서는 `_archive/2026-09-29/`. HANDOFF §4 검사 전부 0, 해상도 대조 거른 새 지적 0. 소유자 절 단위 통과 대기(문서 머리의 표). 실행 계획과 기록은 [log](plan/01-design-docs/log.md) |
+| 02 | 기반 + 청사진 | 머지 | [#347](https://github.com/vincent-kk/albatrion/pull/347) | 전체 4,437시험·lint·strict·빌드 통과. 19라운드 원장 해소와 TEST-079 반영, 내부 Codex 대조 완료. Filid 잔여 발견은 기록했고 Antigravity 외부 확인은 자동 승인 검토가 거절함 |
 | 03 | 노드 트리·정착 | 대기 | — | 02 뒤 |
 | 04 | 파생 + 상태 키·제어 | 대기 | — | 03 뒤, 05·06과 병렬 |
 | 05 | 통지·검증 | 대기 | — | 03 뒤. **착수 전 소유자 결정**: 명령 메서드 이름·명령 종류 값의 형·`FormHandle` 대칭(EVENT-073) |
@@ -66,10 +66,9 @@
 
 ## 4. 다음 할 일
 
-1. **02 기반 + 청사진 PR #347 리뷰** — 19라운드 원장 반영·검증 결과와 Filid 발견을 독립 검증한다. Antigravity 외부 교차 확인은 자동 승인 검토가 두 차례 거절해 미수행이다. 리뷰가 끝나면 merge commit으로 병합하고 §3·§4·§5를 갱신한다.
-2. **01 설계문서 착수(02와 병렬)** — `docs/schema-form-design-docs`. `design/02-node-and-value.md`부터(의존이 큰 것부터: 02 → 01 → 03 → 05 → 04 → 06 → 07 → 00).
-3. **D-1 권장안** — 05 착수 전에 올린다. 권장은 `request(kind, payload?)` 하나에 명령 종류를 문자열 리터럴 합집합 `'focus' | 'select' | 'refresh' | 'remount'`로, `FormHandle`은 같은 모양 `request(path, kind, payload?)` 하나로 합치는 것(겉면 수 약 57 → 약 54). 소유자가 정한다.
-4. 02 머지 뒤 03. 03 머지 뒤 04·05·06 병렬.
+1. **01 설계문서 리뷰** — PR [#348](https://github.com/vincent-kk/albatrion/pull/348). 소유자가 여덟 편을 절 단위로 통과시키고 문서 머리의 표에 날짜를 적는다. 통과 중 나온 새 결정은 원장에 새 라운드 항목으로 먼저 들어가고 문서가 따라간다(`plan/01-design-docs/verification.md`).
+2. **D-1 권장안** — 05 착수 전에 올린다. 권장은 `request(kind, payload?)` 하나에 명령 종류를 문자열 리터럴 합집합 `'focus' | 'select' | 'refresh' | 'remount'`로, `FormHandle`은 같은 모양 `request(path, kind, payload?)` 하나로 합치는 것(겉면 수 약 57 → 약 54). 소유자가 정한다.
+3. **03 노드 트리·정착 착수** — 02가 머지되어 의존이 풀렸다. 03 머지 뒤 04·05·06 병렬.
 
 ## 5. 기록
 
@@ -90,3 +89,7 @@
 | 2026-09-27 | 02 전체 4,393시험·lint·strict·빌드 통과 및 seiri 보조 함수 보완. merge의 벤치 전용 getter 최적화를 철회하고 실제 ESM·CJS 산출물 8회 비교로 교정. CJS 배열 -0.0112%와 신뢰구간 미확정은 소유자가 측정 불확실성으로 수용 | `verification/02-foundation-and-blueprint/` |
 | 2026-09-27 | 소유자가 원장 충돌 해소를 확인 중. 해소 후 Antigravity로 설계·변경 소스·검증 자료 전달 승인, 비활성 외부 Codex는 별도 내부 Codex 검토자로 대체 승인 | `verification/02-foundation-and-blueprint/cross-review.md` |
 | 2026-09-27 | 02의 19라운드 TEST-079와 원본 코퍼스 14종 수용을 확인하고 전체 4,437시험·lint·strict·빌드·벤치·내부 Codex 대조를 마침. Filid 스캔 발견과 Antigravity 자동 승인 거절을 첨부하여 PR #347을 엶 | [#347](https://github.com/vincent-kk/albatrion/pull/347), `verification/02-foundation-and-blueprint/` |
+| 2026-09-27 | 02 PR #347 머지 확인. 03의 의존이 풀림 | `3d94a046f` |
+| 2026-09-28 | 01 설계문서 착수. 소유자 결정: 문서는 opus, 검사 도구는 codex, 외부 대조는 codex·antigravity, 절 통과는 02만 멈춰 받고 나머지는 PR 리뷰에서. 실행 계획은 verifier·원장 관리 세션의 계획 검증을 거쳐 `cleared` | `docs/schema-form-design-docs`, `plan/01-design-docs/log.md` |
+| 2026-09-28 | 20라운드 — 01 형식 검증이 찾은 표기 빈틈(PROCESS-023의 옛 근거 표기 대 새 문서의 원장 ID)을 편집자 결정으로 닫음: 새 설계문서·ADR은 문장 끝 괄호 안에 원장 ID(PROCESS-068). 소유자 답 없음 | `reviews/round-20-closing.md` |
+| 2026-09-29 | 01 설계문서 PR을 엶: 설계문서 8편과 ADR 0001–0017을 원장에서 옮기고(21·22·23라운드는 작성 중의 원장 물음), 해상도 대조 두 차례(거른 새 지적 0), 옛 문서를 `_archive/2026-09-29/`로 옮김. 어긋남 15건은 log §6 | [#348](https://github.com/vincent-kk/albatrion/pull/348), `plan/01-design-docs/log.md` |

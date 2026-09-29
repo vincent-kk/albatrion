@@ -4,8 +4,13 @@
 
 ## 1. 지금 어디인가 (2026-09-26, 18라운드 닫힘 + 소유자 검토 + union 설계 봉인)
 
+- **24라운드(2026-09-29, 설계문서 PR 01 #348이 열린 뒤).** 원장 관리자가 이 PR에 든 편집자 결정(21·22·23라운드, 충돌 줄 해석 셋, 소유자 보류, 문서에 싣지 않은 문장 범주)만 모아 `/preview` 한 장으로 소유자에게 올렸고, 소유자가 "원장과 원칙을 기반으로 유도한 내용이라 문제가 없다 … 기본적으론 판단에 동의한다"고 답했다(`reviews/round-24-owner-answers.md:7`). WRITE-100·SETTLE-049·SETTLE-050·LANDING-109의 닫은 사람에 소유자 답을 더했다. 소유자가 말한 엣지케이스 테스트 후보는 세 블록의 게이트 줄이다. 새 항목은 없다.
+- **23라운드(2026-09-29, 설계문서 PR 01 진행 중에 열고 닫음).** design/01의 검증자가 FRAGMENT-017·SETTLE-018의 "평가 순서 힌트(F13)"와 GOAL-083·PROCESS-048의 "힌트 제거" 기록이 어느 쪽에도 충돌 줄 없이 맞선다고 물었다. P3·SETTLE-026·SETTLE-029와 8라운드의 실행 확인에서 유도되므로 원장 관리자가 편집자 결정으로 닫았다: 직전 커밋의 활성 집합은 전이 판정에만 쓰고 평가 순서 힌트로 쓰지 않으며 바퀴의 평가 순서는 청사진 전순서다(SETTLE-050 새 항목, FRAGMENT-017·SETTLE-018 충돌, GOAL-083 보충). 정본은 `reviews/round-23-closing.md` 23C-01. 소유자 답은 없다. 24라운드에서 소유자가 동의했다(`reviews/round-24-owner-answers.md:7`).
+- **22라운드(2026-09-29, 설계문서 PR 01 진행 중에 열고 닫음).** design/04의 검증자가 CONTROLS-084의 충돌 줄이 로드에 `resetSubtree()`를 넣으면서 "모든 원천 … `injectTo`가 모두 발화"가 폼 전체로 읽힌다고 물었다. WRITE-090·18C-101 근거·18C-102에서 유도되므로 원장 관리자가 편집자 결정으로 닫았다: `resetSubtree()`의 로드에서 `injectTo` 발화와 채움은 그 하위 트리에만(SETTLE-049 새 항목, CONTROLS-084·SETTLE-046 보충). 정본은 `reviews/round-22-closing.md` 22C-01. 소유자 답은 없다. 24라운드에서 소유자가 동의했다(`reviews/round-24-owner-answers.md:7`).
+- **21라운드(2026-09-28, 설계문서 PR 01 진행 중에 열고 닫음).** design/02의 검증자가 입력 쓰기에 준 억제 비트(`onChange(' a ', DisableAutomaticWrites)`)가 뒤이은 포커스 아웃 `trim` 쓰기도 막는지 원장에 없다고 물었다. WRITE-015의 범위 행("그 호출이 일으킨 자동 쓰기", "뒤이은 사용자 입력은 다른 호출")과 WRITE-078에서 유도되므로 원장 관리자가 편집자 결정으로 닫았다: 호출 수준 억제 비트는 뒤이은 포커스 아웃 `trim`에 듣지 않고, 포커스 아웃의 자름을 억제하는 자리는 Form 속성 `disableAutomaticWrites`뿐(WRITE-100 새 항목, WRITE-015·WRITE-078 보충). 정본은 `reviews/round-21-closing.md` 21C-01. 소유자 답은 없다. 24라운드에서 소유자가 동의했다(`reviews/round-24-owner-answers.md:7`).
+- **20라운드(2026-09-28, 설계문서 PR 01 진행 중에 열고 닫음).** 01의 형식 명세를 검증하던 중 PROCESS-023의 근거 표기("원장 §n", "ADR 00nn", "07 n.n")가 옛 문서의 것이라 새 설계문서·ADR이 원장 ID로 근거를 달면 문서가 원장을 앞선다는 지적이 나왔다. 원장이 정본이고 옛 문서는 백업으로 가므로(PROCESS-050·061·062) 편집자 결정으로 닫았다: 새 설계문서와 ADR은 문장 끝 괄호 안에 원장 ID(PROCESS-068 새 항목, PROCESS-023 보충·충돌). 정본은 `reviews/round-20-closing.md` 20C-01. 소유자 답은 없다.
 - **19라운드(2026-09-27, PR 02 진행 중에 열고 닫음).** 02의 통합 검증이 원장 안의 충돌을 찾았다: TEST-067(b)의 코퍼스 14종은 모두 호스트에 `type`이 없는 객체 분기 `oneOf`·`anyOf`인데 BLUEPRINT-039·045 E16이 그 칸을 오류로 정했고, "14종이 빌드됐다"는 근거는 라운드 9 프로토타입 위의 측정이었다. 소유자가 "접은 분기 형이 객체만·배열만이면 variant 호스트로 추정"을 정했고(`reviews/round-19-owner-answers.md:7`), 편집자 초안을 verifier·codex·antigravity가 대조해 결함 다섯(게이트 분기 셈, `'null'` 순서, `{object,array}`, 순환 절단, 형 수준의 `$ref` 예외)을 고친 뒤 채택했다. 검증이 찾은 둘째 물음(`type` 없이 `const`만 있는 태그 프로퍼티, 14종 중 2종)은 소유자가 리터럴 종류의 잎으로 받기로 답했다(`:8`). 정본은 `reviews/round-19-closing.md`의 19C-01·19C-02, 원문은 `reviews/raw-round19-typeless-object-host/`. 새 항목 BLUEPRINT-048~051, NODE-059, LANDING-207·208, TEST-079이고 BLUEPRINT-037·039는 분할됨이다. 남은 일은 PR 02의 TEST-079 게이트 구현이다.
-- **설계의 정본은 단일 원장 `ledger/`다.** 영역 17개, 항목 1,344개(19라운드 뒤; 현행 1,072(부정 결정·기록 포함), 대체됨 199, 분할됨 49, 중복 24, 열림 0). 형식과 규칙은 `ledger/README.md`.
+- **설계의 정본은 단일 원장 `ledger/`다.** 영역 17개, 항목 1,348개(24라운드 뒤; 현행 1,076(부정 결정·기록 포함), 대체됨 199, 분할됨 49, 중복 24, 열림 0). 형식과 규칙은 `ledger/README.md`.
 - **옛 설계 문서(`00`–`09`, `adr/`, `open-questions.md`)는 동결됐다.** 더 고치지 않는다. 어긋남은 원장의 충돌 칸에 적는다. 원장이 인용하는 옛 문서의 `path:line`은 모두 커밋 `ba398c330` 기준 줄 번호다(그 뒤 옛 문서는 바뀌지 않았다).
 - **18라운드가 닫혔고, 소유자가 검토했고, 결정은 봉인됐다.**
   - 편집자 결정의 정본은 `reviews/round-18-closing.md`의 블록 `18C-01`…`18C-105`이다. 모든 결정에 【추론】 표지가 있다.
@@ -18,7 +23,7 @@
     - 24 union 규칙 A(순서 없음, 받아 주는 형이 하나일 때만 변환), 25 안쪽 이름 통일, 26 **채움은 노드가 생길 때만(B안)** — `setValue(V)`는 로드가 아니다, 27 명령 넷, 28 용어(`union`·variant 호스트).
     - 29–37 union 설계: 객체·배열 포함 union을 터미널 한정으로 허용, 형 없는 원시 `anyOf`는 분기 형을 모음, 필드는 `type`(종류)·`schemaType`(계산된 허용 형 목록, union만 배열, `'null'` 제외)·`nullable`, 형 없는 `const`·`enum` 분기와 객체·원시 혼합 `oneOf`는 오류, 값을 바꾸는 검증기는 `bind` 거부, Hint·props의 `type`은 종류, 좁힘은 연언의 교집합(정적은 청사진에서, 게이트는 켜진 동안 유효 목록만).
   - union 설계는 스웜(렌즈 넷 → 검증 둘 → 병합 → codex·antigravity 교차 확인 → 2·3판)으로 만들었다. 작업 파일은 `reviews/raw-round18-union-swarm/`(정본 설계 `merged-v3.md`), 시험 보고는 `reviews/raw-round18-tests/`(표준 대조 둘, 원장 정합성 시험 둘, 1차 교차 확인 둘).
-- **기계 검사는 모두 문제 0이다(§4).** 소유자 답 242/242, 정확 일치 225 항목, 블록 105/105, 문장 검사 17 영역 0/0, 토큰 잔여 488(19라운드 뒤; 원장 쪽 잔여는 482로 줄었고, 늘어난 것은 이 문서가 19라운드 파일을 가리키는 자기 서술 토큰이다 — `ledger/checks/token-review.md` 끝 절).
+- **기계 검사는 모두 문제 0이다(§4).** 소유자 답 243/243(24라운드 뒤), 정확 일치 225 항목, 블록 105/105, 문장 검사 17 영역 0/0, 토큰 잔여 485(옛 문서를 `_archive/2026-09-29/`로 옮기고 README·HANDOFF를 다시 쓴 뒤; 옛 문서에 원천이 있는 잔여 419는 이동 전후 같고, 나머지 66은 README·HANDOFF의 자기 서술 토큰이다 — `ledger/checks/token-review.md` 끝 절).
 - **의미 게이트(게이트 3)는 13건을 찾아 모두 고쳤다.** 원문은 `reviews/raw-round18-tests/gate3-union-fill.md`. 게이트가 "확인하지 못한 것"으로 남긴 둘(정적 선언이 없는 이름에서 게이트 없는 분기끼리 fold가 다를 때, EVENT-072의 "한 로드에 한 번"이 `VALIDATOR_COMPILE_FAILED`에서 뜻하는 것)은 §2의 최종 검증(E)에 넣는다.
 
 ## 2. 다음 할 일 — 순서대로
@@ -33,8 +38,8 @@
    - 지적 양식은 한 건마다 `F<n> <높음|중간|낮음>`, 두 항목과 상태, 원문 인용(`path:line`), 왜 모순인가, 제안(어느 쪽이 이기는가, 또는 "소유자 물음")이다.
    - 원문과 판정은 `reviews/raw-round18-final-check.md`에 적는다(`reviews/raw-round18-ledger-check.md`가 선례). 검증자가 원문과 대조해 거른 뒤 고침 명세로 반영한다. 지시서 초안은 세션 scratchpad의 `brief-final-check.md`였다(저장소에 없으므로 위 다섯으로 다시 쓴다).
 2. **설계 완료 확정과 개발계획 — 끝났다(2026-09-27).** 설계 PR #345는 `1.0.0-beta`에 머지됐다. 소유자의 개발계획 결정(`reviews/round-18-owner-answers.md:42-46`)은 원장에 반영됐다: LANDING-204(우산 구조와 개발 PR 여섯 — 기반+청사진, 노드 트리·정착, 파생+상태 키·제어, 통지·검증, 배열, 전환), LANDING-205(`src/__legacy__/`는 PR-8까지 참고용 보존, 삭제는 PR-8), LANDING-206(ajv 셋은 PR-4, UI 플러그인 넷은 플러그인 PR), PROCESS-067(PR 디렉토리마다 문서 셋, 절차는 seiri·filid), LANDING-060 보충(설계문서는 별도 PR). 계획서는 `plan/<순서>-<이름>/`에 있다. 개발 PR은 그 디렉토리만 보고 진행하고, 착수 전 남은 소유자 결정은 05의 명령 메서드 이름·형·`FormHandle` 대칭(EVENT-073)이다.
-3. **원장에서 ADR과 설계문서를 만든다.** 결정마다 원장 번호를 단다. 만든 뒤 §4의 검사를 원장 대 새 문서로 한 번 더 돌린다(새 문서의 문장이 원장 항목에 있는지). union의 설계문서는 `reviews/raw-round18-union-swarm/merged-v3.md`를 원장 번호로 바꿔 쓴다.
-4. **옛 문서를 백업 디렉토리로 옮긴다.** 소유자의 절 단위 통과는 새 설계문서에서만 한다(12-6).
+3. **원장에서 ADR과 설계문서를 만든다 — 끝났다(2026-09-29, 단계 01).** 결정마다 원장 번호를 단다. 설계문서 여덟은 `design/`, ADR 열일곱은 `adr/`에 있다. 만든 뒤 §4의 검사를 원장 대 새 문서로 한 번 더 돌렸다(`doc-coverage.mjs`: 현행 항목의 인용, 틀린 ID, 결정 토큰, 문장마다의 ID 표지). 문장이 원장과 같은 뜻인지는 조각마다의 두 방향 대조와 해상도 대조가 보았다. union의 설계문서는 `reviews/raw-round18-union-swarm/merged-v3.md`의 묶음과 순서만 참고하고, 문장은 원장 결정 칸에서 옮긴다(PROCESS-050·051). 과정의 기록은 `plan/01-design-docs/log.md`, 해상도 대조는 `reviews/raw-design-docs-check.md`.
+4. **옛 문서를 백업 디렉토리로 옮긴다 — 끝났다(2026-09-29).** 옛 문서(00–09, `open-questions.md`, 옛 ADR 0001–0014)는 `_archive/2026-09-29/`에 동결됐다. 원장이 인용한 옛 경로는 `ledger/checks/lib.mjs`의 `ARCHIVE_ROOT`가 백업본으로 읽는다. 소유자의 절 단위 통과는 새 설계문서에서만 한다(12-6).
 5. **PR-0**(문서 최종화, 프로토타입 v7, 시나리오 패키지 뼈대, vitest `test.projects`), 그다음 **PR-1**. PR 계획은 원장 LANDING 영역(`ledger/landing.md`)이 정본이다. 프로토타입 v7은 18C-88의 방출 규칙과 18C-91의 규칙 A(`isMember`·`convert`·`interpret`, 동점 12건)를 따른다. v6은 빈 루트를 `undefined`로 낸다.
    - **소유자 메모(2026-09-27, 설계서 검토, `reviews/round-18-owner-answers.md` 38–41행) — 반영됨(2026-09-27, 소유자 지시)**: (38) 청사진 내부 이름은 약어 없이(`PropertyDecl` → `PropertyDeclaration` 같은 풀 네임) → BLUEPRINT-046, BLUEPRINT-002에 보충·충돌. (39) 조각의 구현 타입 이름은 `SchemaFragment`(개념어 "조각"과 FRAGMENT 영역 이름은 그대로) → BLUEPRINT-047, BLUEPRINT-002에 보충·충돌. 둘은 PR-1의 청사진 `DETAIL.md`·`type.ts`가 적는다. (40) 명령 넷(`focus`·`select`·`refresh`·`remount`)은 메서드 넷이 아니라 명령 종류를 매개변수로 받는 노드 메서드 하나(`action`·`interaction`·`request` 또는 명령 한정 `publish`) → EVENT-073; 메서드 이름·값의 형·`FormHandle` 대칭 모양은 PR-4 착수 전에 편집자가 권장안을 올리고 소유자가 정한다. EVENT-063·SURFACE-011·SURFACE-058·LANDING-170에 보충·충돌(겉면 수 약 57 → 약 54). (41) 경고등 공개 이름 확정: 게터 `typeMismatch`·목록 `typeMismatches`·코드 `SCHEMA_FORM_WARNING.TYPE_MISMATCH` → SURFACE-061; 가칭을 결정문에 든 현행 항목 열둘(BLUEPRINT-041, ERROR-186, ERROR-198, LANDING-126, NODE-058, REACT-032, REACT-033, SURFACE-052, SURFACE-058, VALUE-030, VALUE-037, WRITE-079)에 보충·충돌, 보충만 든 항목 6개(ERROR-164, NODE-041, REACT-027, SURFACE-010, TEST-077, WRITE-093)에 보충. 시험 파일 이름 `union.mismatch-light.test.ts`는 그대로다. LANDING-127은 가칭을 들지 않아 손대지 않았다. 네 행은 `ledger/checks/owner-answers.tsv`에 더했고(235건), `reviews/round-18-closing-summary.md` §D에는 넣지 않았다.
    - PR-2 게이트에 반드시 넣을 시험: 규칙 A 표 전체와 동점 12건, `integer` 멤버십, 게이트 켜짐·꺼짐 전이에서 경고등만 바뀌고 값은 바뀌지 않음, `setValue({kind:'num', a:'42'})`가 직전 상태와 무관하게 `a = 42`(U7), 서로소 게이트 둘의 충돌(TEST-077).
@@ -82,14 +87,15 @@ node ledger/checks/owner-cited.mjs ledger/checks/owner-answers.tsv ledger/*.md
 node ledger/checks/bundle.mjs . ledger/checks/section-map.tsv $TMPDIR/bundles
 for d in GOAL SCHEMA CONTROLS BLUEPRINT FRAGMENT VALUE WRITE SETTLE EVENT VALIDATE ERROR NODE REACT SURFACE LANDING TEST PROCESS; do
   node ledger/checks/sentence-check.mjs $TMPDIR/bundles/bundle-$d.md ledger/checks/sentence-classified.tsv ledger/*.md | tail -1; done
-node ledger/checks/tokens.mjs inventory $TMPDIR/inv.json 0*.md open-questions.md adr/*.md README.md HANDOFF.md
+node ledger/checks/tokens.mjs inventory $TMPDIR/inv.json _archive/2026-09-29/0*.md _archive/2026-09-29/open-questions.md _archive/2026-09-29/adr/*.md README.md HANDOFF.md
 node ledger/checks/tokens.mjs check $TMPDIR/inv.json ledger/*.md | head -1   # 잔여의 판정은 ledger/checks/token-review.md
 node ledger/checks/plan-links.mjs plan/README.md plan/*/*.md -- ledger/*.md   # 개발계획서가 인용한 ID는 모두 현행, PR 정의 항목은 모두 인용됨
+node ledger/checks/doc-coverage.mjs design/*.md adr/*.md -- ledger/*.md   # 설계문서·ADR 역검사: 현행 항목 모두 인용, 틀린 ID 없음, 결정 토큰, 꼬리표 없는 문장 없음
 ```
 
 - **원천 묶음.** `bundle-*.md`는 `section-map.tsv`에서 언제든 다시 만든다.
 - **문장 검사.** 인용을 먼저 보고 분류 행을 본다. 그래서 인용된 문장에 남은 낡은 분류 행은 무해하다.
-- **토큰 잔여.** 지금 488이다(19라운드 뒤). 원장 쪽 잔여는 HEAD 잔여의 부분집합이고, 나머지는 HANDOFF의 자기 서술 토큰이다(`ledger/checks/token-review.md`).
+- **토큰 잔여.** 지금 485이다(옛 문서 이동과 README·HANDOFF 재작성 뒤). 옛 문서에 원천이 있는 잔여(419)는 HEAD 잔여의 부분집합이고, 나머지(66)는 README·HANDOFF의 자기 서술 토큰이다(`ledger/checks/token-review.md`).
 - **`verbatim-check`의 한계.** 인용한 줄이 출처 파일 어딘가에 있는지만 본다. 그래서 줄 범위가 틀리거나, 줄이 빠지거나, 순서가 바뀐 것은 잡지 못한다.
   - 18라운드에서는 세션 scratchpad의 임시 스크립트 셋(`exact-check.mjs` 정확 일치, `block-check.mjs` 블록 덮개와 항목↔블록 이름, `diff-guard.mjs` 옛 항목은 자라기만 한다)으로 이것을 보았다. 저장소에는 없다. 정본 블록을 새로 반영할 때는 같은 대조를 다시 만든다(각 40–80줄).
 
@@ -105,6 +111,11 @@ node ledger/checks/plan-links.mjs plan/README.md plan/*/*.md -- ledger/*.md   # 
 | `ledger/checks/sentence-classified.tsv` | 원장에 인용되지 않은 문장의 분류(RESTATES·VIEW·HISTORY·OUT) |
 | `ledger/checks/owner-answers.tsv` | 기록된 소유자 답 목록(242) |
 | `ledger/checks/token-review.md` | 토큰 검사 잔여의 판정 |
+| `ledger/checks/doc-coverage.mjs` | 설계문서·ADR 역검사(원장 → 문서). 영역을 좁힐 때는 `--areas`, 픽스처는 `ledger/checks/fixtures/doc-coverage/` |
+| `ledger/checks/doc-token-exempt.tsv` | `doc-coverage`의 토큰 예외(이긴 충돌·가리킴 바꿈·정비 문장만, 행마다 까닭) |
+| `design/*.md` ×8 | 설계문서. 원장을 읽는 표면이며 문장 끝 괄호의 ID가 근거다(단계 01, 2026-09-29) |
+| `adr/*.md` ×17 | ADR 0001–0017. 본문은 설계문서의 같은 절을 글자 그대로 모은 것이다 |
+| `_archive/2026-09-29/` | 동결한 옛 문서(00–09, `open-questions.md`, 옛 ADR 0001–0014). 원장의 옛 줄 인용은 커밋 `ba398c330` 기준 |
 | `plan/README.md`, `plan/<순서>-<이름>/` | 개발계획(2026-09-27): 우산 구조(`1.0.0-beta`, PR #344)와 순서, PR 디렉토리 열 개(01 설계문서 … 09 정리·릴리스, 릴리스 전환)마다 문서 셋 — `request.md`(개발요청서, 원장 링크), `verification.md`(검증 구성요건), `adr-and-axes.md`(ADR과 핵심 축). 형식은 PROCESS-067. 계획서는 안내이고 원장 항목이 명세다 — 2026-09-27의 전수 대조가 원장을 잃은 요약 문장을 원장 원문 인용으로 바꿨고, 계획서와 원장이 다르면 원장대로 가며 멈추지 않는다(`PLAN.md` §2 1항) |
 | `reviews/round-18-closing.md` | 18라운드 편집자 결정의 정본(18C-01…105) |
 | `reviews/round-18-closing-summary.md` | 소유자 검토용 요약(원장이 인용하지 않음). §D가 검토 결과 |
@@ -112,6 +123,11 @@ node ledger/checks/plan-links.mjs plan/README.md plan/*/*.md -- ledger/*.md   # 
 | `reviews/round-18-owner-answers.md` | 18라운드 소유자 답(원문). 23행은 닫기 방식, 24–37행은 검토 결과와 union 설계, 38–41행은 설계서 검토 메모, 42–46행은 개발계획 결정(2026-09-27, 원장 반영됨) |
 | `reviews/round-19-closing.md` | 19라운드 편집자 결정의 정본(19C-01 형 없는 객체·배열 분기 호스트, 19C-02 `const`만 있는 칸). 표지 없는 줄은 소유자 답이 정한 규칙 |
 | `reviews/round-19-owner-answers.md` | 19라운드 소유자 답(원문). 7행 형 없는 객체 호스트, 8행 `const`만 있는 프로퍼티(X1) |
+| `reviews/round-20-closing.md` | 20라운드 편집자 결정의 정본(20C-01 새 설계문서와 ADR의 근거 표기는 문장 끝 괄호 안에 원장 ID). 소유자 답 없음 |
+| `reviews/round-21-closing.md` | 21라운드 편집자 결정의 정본(21C-01 호출 수준 억제 비트는 뒤이은 포커스 아웃 `trim`에 듣지 않음, 억제 자리는 Form 속성뿐). 소유자 답 없음 |
+| `reviews/round-22-closing.md` | 22라운드 편집자 결정의 정본(22C-01 `resetSubtree()`의 로드에서 `injectTo` 발화와 채움은 그 하위 트리에만). 소유자 답 없음 |
+| `reviews/round-23-closing.md` | 23라운드 편집자 결정의 정본(23C-01 직전 커밋의 활성 집합은 전이 판정에만, 평가 순서 힌트(F13) 폐기). 소유자 답 없음 |
+| `reviews/round-24-owner-answers.md` | 24라운드 소유자 답(원문). 7행 PR #348의 편집자 결정(21·22·23라운드, 충돌 줄 해석) 검토 — 동의 |
 | `reviews/raw-round19-typeless-object-host/` | 19라운드 작업 파일: 지시서와 초안(`brief.md`), 검증 셋(`verifier.md`·`codex.md`·`antigravity.md`), 판정과 고친 결정문(`merged-v1.md`), X1 초안, 원장 반영 계획(`ledger-plan.md`) |
 | `reviews/raw-round18-union-swarm/` | union 설계 스웜: 공통 브리프, 렌즈 넷의 제안, 검증 둘, 판정 셋, 교차 확인 둘, O7·O8 검증, 정본 설계 `merged-v3.md`, 규칙 A 전수 실행 스크립트 |
 | `reviews/raw-round18-tests/` | 표준 대조(명세·생성기·검증기·폼 라이브러리, 브랜치 노드), 원장 정합성 시험(union, 채움 시점), 1차 교차 확인(codex·antigravity), 게이트 3 원문 |
