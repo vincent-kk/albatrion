@@ -58,6 +58,12 @@ describe('SchemaNode PR-2 surface', () => {
     expect(surface.isSchemaNode(target)).toBe(true);
     root.find('/flag')?.setValue(false);
     expect(root.find('/target')).toBeNull();
+    expect(target?.active).toBe(false);
+    expect(target?.value).toBe('shown');
+    root.find('/flag')?.setValue(true);
+    expect(root.find('/target')).not.toBe(target);
+    expect(root.find('/target')?.active).toBe(true);
+    expect(target?.active).toBe(false);
   });
 
   it('children returns the exact stored array reference', () => {
