@@ -55,10 +55,12 @@ Planning method: 저장소 지침 — `PLAN.md` §2와 `plan/prompts.md`의 단�
   - 주의: 정적 선언 없는 이름에서 fold가 다른 게이트 선언이 동시에 켜지는 경우(BLUEPRINT-044)는 `typeConflict`가 나르지 않는다. 정착이 켜진 선언 집합에서 따로 판정해 같은 코드로 낸다(26C-05).
 | 2026-09-29 | U0 | codex 계획 수정(세션 `25d18ed4`, `f65cb79a8`), 원장 `64160dcaa`의 경고등 게터 둘을 겉면 목록에 더함, antigravity 2차 재검토와 조율 세션 판정 `cleared`(실행 계획 §9) | 이 커밋 |
 | 2026-09-29 | U1 | 옛 엔진 최종 벤치 기준선을 이동 전에 조율 세션이 단독 호출로 잼(`yarn workspace @canard/schema-form bench:baseline`, `e5a6c8061`, 결과 `verification/03-node-and-settle/baseline/core-legacy-final.json`). codex(세션 `e986c241`)가 `src/core/DETAIL.md`를 먼저 고치고 407파일을 `__legacy__`로 옮기며 import를 수선함. unit 242파일·3,542시험, render 52파일·539시험이 이동 전후 같음. G2·G3·G23·G32 통과(조율 세션 재실행) | `8fa6b3f74`, `abc2a0c72`, `verification/03-node-and-settle/legacy-migration.md` |
+| 2026-09-29 | U2 | codex(세션 `522bb905`)가 새 fractal 다섯과 종류 fractal 일곱의 INTENT·DETAIL, 청사진 DETAIL의 평가 자리 L 절(`BlueprintGate.evaluationHostPath`)을 먼저 씀. 코드 없음(`.md` 25파일만 확인). 칸 이름 `evaluationHostPath`는 조율 세션이 받아들임(SETTLE-045·26C-04, 형은 U5). G4 통과(조율 세션 실행). G5는 antigravity 대조 진행 중 | `3ee7e09f6` |
+| 2026-09-29 | U2 | G5 1차(antigravity) FAIL: 차단 둘(런타임 `entryDepth`는 PR-4 기제, 런타임 칸 다섯의 원장 근거), 비차단 하나(objectBehavior DETAIL의 배열 행 문장 오기). 조율 판정: `entryDepth`·런타임 `rootNode` 삭제, 배열 행 문장 삭제를 받아들임. 나머지 넷(`loadSnapshot`·`latentRaw`·`typeMismatchPaths`·`inactiveValuesMemo`)은 원장 관리자 질의 → 26C-06으로 런타임 칸 확정(루트 전용 레코드 필드 없음). 문서 수정은 U3 codex가 코드보다 먼저 함 | 원장 `6330c8854` (`reviews/round-26-closing.md:61-70`) |
 
 ## 3. 다음 행동
 
-- 재작업된 계획·ADR·게이트를 antigravity가 범위 한정 재리뷰 → 조율 세션 판정 → `cleared` 뒤 U1.
+- U2 문서의 원장 대조(G5, antigravity) 판정 → 지적 반영. 병행으로 U3(codex, `record`·`navigation`·레거시 import 금지) 진행 → 검사 뒤 커밋 → U4.
 - 이 세션의 커밋은 경로를 지정한 `git add`만 쓴다(원장 세션의 미커밋 변경과 섞지 않음).
 
 ## 4. 원장·계획서 어긋남

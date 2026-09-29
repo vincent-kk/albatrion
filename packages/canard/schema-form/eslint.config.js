@@ -12,6 +12,11 @@ export default [
   {
     files: [
       'src/core/blueprint/**/*.{ts,tsx}',
+      'src/core/record/**/*.{ts,tsx}',
+      'src/core/behaviors/**/*.{ts,tsx}',
+      'src/core/navigation/**/*.{ts,tsx}',
+      'src/core/settle/**/*.{ts,tsx}',
+      'src/core/SchemaNode/**/*.{ts,tsx}',
       'src/helpers/schemaIntersection/**/*.{ts,tsx}',
     ],
     rules: {
