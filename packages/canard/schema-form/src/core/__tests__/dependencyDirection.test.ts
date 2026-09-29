@@ -77,6 +77,13 @@ describe('NODE-016 and NODE-045 dependency direction', () => {
   it('reads every non-test TypeScript file in the five fractals and blueprint', () => {
     for (const name of FRACTALS)
       expect(files.some((file) => owner(file) === name)).toBe(true);
+    for (const nested of [
+      'record/type.ts',
+      'SchemaNode/utils/guards.ts',
+      'settle/utils/write/writeSchemaNode.ts',
+      'behaviors/utils/parse/utils/number/parseNumber.ts',
+    ])
+      expect(files).toContain(join(CORE, ...nested.split('/')));
     expect(files).not.toContainEqual(expect.stringContaining('__tests__'));
   });
 
