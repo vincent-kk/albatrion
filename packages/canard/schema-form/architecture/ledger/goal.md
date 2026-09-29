@@ -317,6 +317,8 @@
 - 닫은 사람: 소유자 답(`reviews/round-2.md:114` C3), 소유자 답(`00-goals.md:106` C3, `00-goals.md:116`, `00-goals.md:117`)
 - 라운드: 2
 - 까닭: `00-goals.md:116-117`
+- 충돌:
+  > `00-goals.md:116`의 "끊어도 되고, 그러면 터미널로 쓰려는 사용자는 명시적으로 `terminal: true`를 준다"는 뒤 라운드의 결정과 다르다: 암묵 터미널은 끊지 않고 렌더 계층의 판정 함수로 옮기며(NODE-027, CONTROLS-052), 명시 키는 맨 `terminal`이 아니라 `options.terminal`이다(NODE-028, LANDING-034). 뒤 라운드가 이긴다(`adr/0003-group-namespace.md:147`, `adr/0011-branch-node-composition.md:59`).
 
 ### GOAL-017 C4 표준 스키마의 타입 수용과 추론 — 채택
 
@@ -578,6 +580,8 @@
 - 닫은 사람: 소유자 답(`reviews/round-9-spec.md:21` 축3)
 - 라운드: 9
 - 까닭: `reviews/round-9-spec.md:21`
+- 충돌:
+  > `07-conclusions.md:51`의 "제약은 2항뿐이다."는 정본과 다르다: 축 2항은 컨벤션이며 폼은 검사하지 않는다(GOAL-035, FRAGMENT-023). 정본이 이긴다(`03-mental-model.md:30`, 소유자 답 `reviews/round-10-owner-answers.md:40` E-19).
 
 ### GOAL-037 축 4 JSON Schema 설정에 의한 변환은 값을 조작하지 않음과 그 읽기
 
@@ -702,6 +706,8 @@
 - 닫은 사람: 소유자 답(`reviews/round-9-spec.md:48` 읽기2, `reviews/round-9-spec.md:52` 읽기2 채우기 원천, `reviews/round-9-spec.md:56` 읽기2 시점(A/B))
 - 라운드: 9
 - 까닭: `reviews/round-9-spec.md:56`
+- 충돌:
+  > `07-conclusions.md:67`의 "`&derived`·`injectTo`"는 15라운드 뒤의 표기(`controls.derived`·`controls.injectTo`)와 다르다. 뒤 라운드가 이긴다(`03-mental-model.md:40`, GOAL-042).
 
 ### GOAL-048 소유자의 답 읽기 3 — 코어의 상태 키는 그 노드에만, 나감 비움 정책은 하위 트리로
 
@@ -784,6 +790,7 @@
 - 까닭: `04-inherited-constraints.md:10`(막는 문제 칸), `04-inherited-constraints.md:3`
 - 충돌:
   > `04-inherited-constraints.md:10`의 "ADR 0007의 규칙: 커밋된 원본이 그 노드의 입력이 방금 보고한 값과 다른 노드에만 `RequestRefresh`."는 뒤의 결정과 다르다. 채택된 ADR이 이긴다(`adr/0007-settle-cycle.md:90` F7, EVENT-042).
+  > `04-inherited-constraints.md:10`의 "타이핑은 같으므로 보내지 않는다"는 뒤의 결정과 다르다: 값의 동치 비교(F7이 버림)가 아니라, 쓴 입력 자신에게는 Refresh를 내지 않고 로드가 아닌 쓰기는 원본이 실제로 바뀐 노드에만 낸다(EVENT-042, EVENT-071). 채택된 ADR이 이긴다(`adr/0007-settle-cycle.md:90` F7).
 
 ### GOAL-054 T-3 가상화된 노드는 포커스·선택 명령으로 즉시 드러난다
 
@@ -812,9 +819,9 @@
 - 까닭: `04-inherited-constraints.md:12`(막는 문제 칸), `04-inherited-constraints.md:3`
 - 충돌:
   > `04-inherited-constraints.md:12`의 "정착 루프의 세 예산 — 조각 바퀴(조건부 조각 수 + 1), 파생 라운드(25), 전이(조각 수)(F2·F3)."는 뒤 라운드의 결정과 다르다. 뒤 라운드가 이긴다(`03-mental-model.md:116` 호스트 바퀴(게이트 가진 조각 수 + 노드 게이트 수 + 1), 전이 라운드는 호스트 바퀴와 같은 식).
-  > `04-inherited-constraints.md:12`의 "상한을 넘기는 라운드는 실행하지 않고 마지막 완료 라운드로 고정한다(E7)."는 뒤 라운드의 결정과 다르다. 뒤 라운드가 이긴다(`adr/0007-settle-cycle.md:47` 원본 B 커밋).
-  > `04-inherited-constraints.md:12`의 "이벤트 쪽에는 틱당 파동 25와 `onChange` 중첩 25가 따로 있다(ADR 0008)."는 뒤 라운드의 결정과 다르다. 뒤 라운드가 이긴다(`adr/0008-event-system.md:66` 최외곽 진입의 되먹임 사슬당 25).
-  > `04-inherited-constraints.md:12`의 "파동 상한은 현재처럼 **틱당**이며 상한에 닿으면 리스너 쓰기를 거부한다(4라운드 F15)"는 뒤 라운드의 결정과 다르다. 뒤 라운드가 이긴다(`adr/0008-event-system.md:74` 최외곽 진입이 끝날 때 초기화, 틱 단위는 G5에 어긋남).
+  > `04-inherited-constraints.md:12`의 "상한을 넘기는 라운드는 실행하지 않고 마지막 완료 라운드로 고정한다(E7)."는 뒤 라운드의 결정과 다르다. 뒤 라운드가 이긴다(`adr/0007-settle-cycle.md:47` 원본 B 커밋). SETTLE-011이 이긴다: 정착의 세 예산 가운데 하나라도 상한을 넘기면 그 정착의 자동 쓰기를 모두 뺀 원본 B를 커밋한다.
+  > `04-inherited-constraints.md:12`의 "이벤트 쪽에는 틱당 파동 25와 `onChange` 중첩 25가 따로 있다(ADR 0008)."는 뒤 라운드의 결정과 다르다. 뒤 라운드가 이긴다(`adr/0008-event-system.md:66` 최외곽 진입의 되먹임 사슬당 25). EVENT-008이 이긴다: 되먹임 상한은 최외곽 진입의 되먹임 사슬당 25이고 `onChange` 중첩 상한은 사슬마다 25다(ERROR-004).
+  > `04-inherited-constraints.md:12`의 "파동 상한은 현재처럼 **틱당**이며 상한에 닿으면 리스너 쓰기를 거부한다(4라운드 F15)"는 뒤 라운드의 결정과 다르다. 뒤 라운드가 이긴다(`adr/0008-event-system.md:74` 최외곽 진입이 끝날 때 초기화, 틱 단위는 G5에 어긋남). EVENT-008이 이긴다: 상한은 최외곽 진입이 끝날 때(깊이 1 → 0) 초기화하며 상한에 닿으면 마지막 파동을 한 번 더 배달하되 그 파동의 리스너 되먹임만 거부한다.
   > `04-inherited-constraints.md:12`의 "상한은 틱마다 초기화된다"는 뒤 라운드의 결정과 다르다: 상한은 최외곽 진입이 끝날 때(깊이 1 → 0) 초기화하며 틱 단위는 G5에 어긋난다(EVENT-008). 뒤 라운드가 이긴다(`adr/0008-event-system.md:74`).
 
 ### GOAL-056 T-5 두 단계 단언 — 새 설계는 단일 단계로 다시 씀
@@ -936,6 +943,8 @@
 - 닫은 사람: 편집자 결정(4라운드, `04-inherited-constraints.md:5` 수용 기준 검토)
 - 라운드: 4
 - 까닭: `04-inherited-constraints.md:28`(막는 문제 칸), `04-inherited-constraints.md:3`
+- 충돌:
+  > `04-inherited-constraints.md:28`의 "ADR 0004·0007: revision 스탬프. 같은 장치"는 뒤 라운드의 결정과 다르다: 검증 스탬프는 `revision`과 별개의 단조 커밋 번호다 — 같은 `revision`으로 찍힌 서로 다른 커밋을 비동기 검증이 식별하지 못하던 반례(V13)의 처방이다(EVENT-024, SETTLE-008). 뒤 라운드가 이긴다(`adr/0007-settle-cycle.md:90`, EVENT-024).
 
 ### GOAL-065 T-14 같은 틱 재진입 injectTo 가드 — 파생 라운드 상한으로 대체
 
@@ -1188,6 +1197,8 @@
 - 닫은 사람: 스웜 수렴(편집자 결정, `06-conclusions.md:209-216`), 소유자 답(`HANDOFF.md:17` 7라운드 소유자 지시)
 - 라운드: 7
 - 까닭: `HANDOFF.md:17`
+- 충돌:
+  > `06-conclusions.md:215`의 "`03-mental-model.md` 13행의 "화면의 명령도 모른다"는 소유자가 명령 어휘를 코어에 두기로 한 C3 세부 3과 맞게 고친다(소유자 확인)"는 옛 문서를 고치자는 제안이며 정본과 다르다: 옛 문서는 고치지 않고, "화면의 명령도 모른다"는 명령이 화면에서 하는 일을 core가 모른다는 뜻으로 읽는다(GOAL-031). 정본이 이긴다(`03-mental-model.md:17`, GOAL-031의 충돌 줄).
 
 ### GOAL-084 플러그인 FormTypeInput이 동기 UpdateValue나 Promise 배열 API에 기대는지 확인
 
