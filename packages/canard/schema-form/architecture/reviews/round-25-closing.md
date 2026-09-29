@@ -105,3 +105,12 @@
   - 【추론】 여섯 모두 부분 충족이며, 보정 PR(`fix/schema-form-realign-01-02`)이 채우는 것: 모두 `'null'`인 정적 연언이 null 노드인 사례, 모든 선언 쌍의 순서 무관 전수 교집합, 코퍼스 전 칸의 `Array.isArray(schemaType) === (kind === 'union')`과 동결, 게이트 전후 `schemaType` 참조 동일성, E40의 형 충돌 신호(25C-04), E42의 참조 동일성, `['object','string']` union 호스트의 터미널 경고 1회와 `$ref` 대상 무경고, E27·E40·E42의 종류와 전략 전부 단언.
   - 【추론】 PR 03으로 넘기는 것: virtual 코퍼스의 `node.type` 여덟 값 수집, `onChange` 형 검사, 노드와 배열 아이템의 `schemaType` 참조 동일성, 유효 목록 좁힘의 단언 — 모두 노드 트리가 있어야 잰다.
 - 근거: 25C-02(이름은 주소). 배분의 기준은 잴 대상이 청사진만으로 있는가다 — 청사진 노드의 종류·`schemaType`·동결·경고·형 충돌 신호는 지금 있고, 런타임 노드의 `type`, `onChange` 형, 노드·아이템 참조, 유효 목록은 PR 03의 노드 트리가 만든다(NODE-058 "유효 목록", TEST-077의 렌더 시험 줄).
+
+### 25C-12 같은 노드의 선언 사이에 판별 키가 다름 — `DISCRIMINATOR_MISMATCH`의 넷째 경우, 25C-01의 둘째·셋째 문장을 고쳐 읽는다
+
+- 닫는 항목: ERROR-164(보충), ERROR-159(보충), SCHEMA-013(보충)
+- 결정:
+  - 【추론】 한 노드에 모인 선언들이 서로 다른 `controls.discriminator` 키를 적으면 SCHEMA-013대로 청사진 오류이고 코드는 `DISCRIMINATOR_MISMATCH`이며, ERROR-164 그 행의 "선언 사이 값이 다름"은 바로 이 경우를 뜻한다.
+  - 【추론】 그래서 `DISCRIMINATOR_MISMATCH`는 넷이다: 키가 어느 분기에도 없음(`reason: 'missing'`), 분기끼리 종류가 다름(`reason: 'kind'`), 분기 사이 값이 겹침(`reason: 'overlap'`), 같은 노드의 선언 사이 판별 키가 다름(`reason: 'key'`, details `{ propertyName, other, reason }`); 25C-01의 둘째·셋째 문장은 이 넷으로 바꿔 읽는다.
+  - 【추론】 한 분기의 정적 연언 안 판별 값의 공집합이 `EMPTY_ENUM_INTERSECTION`인 것(25C-01 첫 문장)은 그대로다.
+- 근거: SCHEMA-013 병합표 행 "`discriminator`는 호스트에 하나이며 선언이 여럿이면 같은 값만 허용하고 다르면 청사진 오류(14라운드 O-1, 15라운드, 17라운드 스웜 수렴(편집자 결정))"; 그 원천 `reviews/round-15-decisions.md:75` "`discriminator`는 호스트에 하나이며 둘이 다르면 청사진 오류. 병합표에 행 하나를 더한다" — ERROR-164 행의 "선언 사이 값이 다름"(R15-7)은 이 행과 같은 라운드의 같은 사건이다. 01의 충돌 줄(ERROR-043·ERROR-159)과 25C-01이 이 구절을 분기 안 교차로 읽은 것은 원천을 보지 않은 것이며, 그 읽기의 코드 결론(분기 안 공집합은 `EMPTY_ENUM_INTERSECTION`)만 남긴다. 구현 `src/core/blueprint/utils/diagnostics/validateChildTargets.ts:17-26`이 이 경우를 `DISCRIMINATOR_MISMATCH`로 던지고 있으며 details만 `{ discriminator, other }`에서 위 모양으로 바꾼다. 보정 PR의 검증자가 물었다.

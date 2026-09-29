@@ -229,7 +229,8 @@
   > | 부류 | 규칙 |
   > | --- | --- |
   > | 선언·정책 키(`controls.children`, `controls.discriminator`, `controls.watch`, `controls.unsetOnInactive`) | 병합하지 않는다. `children`과 `unsetOnInactive`는 각 선언이 속한 층에서 그 선언을 담은 조각이 켜져 있는 동안(나감에서는 직전 커밋 기준) 각각 효력을 가진다(나감 비움 규칙과 같은 대상 규칙이 층으로 푼다). `watch`는 의존이 모든 선언의 경로 합집합(청사진, 정적)이고 입력에 가는 `watchValues`는 유효 스키마의 것(켜진 선언 가운데 전순서에서 나중 것)이다. `discriminator`는 호스트에 하나이며 선언이 여럿이면 같은 값만 허용하고 다르면 청사진 오류(14라운드 O-1, 15라운드, 17라운드 스웜 수렴(편집자 결정)) |
-- 보충: 없음
+- 보충:
+  > 편집자 결정(25C-12): "【추론】 한 노드에 모인 선언들이 서로 다른 `controls.discriminator` 키를 적으면 SCHEMA-013대로 청사진 오류이고 코드는 `DISCRIMINATOR_MISMATCH`이며, ERROR-164 그 행의 "선언 사이 값이 다름"은 바로 이 경우를 뜻한다." (`reviews/round-25-closing.md:113`)
 - 상태: 현행
 - 출처: `03-mental-model.md:128-129,135`(정본), `08-design-a-to-z.md:329`, `adr/0005-blueprint-analysis-and-node-sharing.md:103`, `02-target-overview.md:136`, `reviews/round-15-decisions.md:75`
 - 닫은 사람: 소유자 답(`reviews/round-14-owner-answers.md:7` O-1), 편집자 결정(15라운드 게이트 뒤, `reviews/round-15-decisions.md:75`), 17라운드 스웜 수렴(편집자 결정, `03-mental-model.md:135`)

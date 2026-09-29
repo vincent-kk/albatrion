@@ -95,4 +95,4 @@
 | 2026-09-28 | 01 설계문서 착수. 소유자 결정: 문서는 opus, 검사 도구는 codex, 외부 대조는 codex·antigravity, 절 통과는 02만 멈춰 받고 나머지는 PR 리뷰에서. 실행 계획은 verifier·원장 관리 세션의 계획 검증을 거쳐 `cleared` | `docs/schema-form-design-docs`, `plan/01-design-docs/log.md` |
 | 2026-09-28 | 20라운드 — 01 형식 검증이 찾은 표기 빈틈(PROCESS-023의 옛 근거 표기 대 새 문서의 원장 ID)을 편집자 결정으로 닫음: 새 설계문서·ADR은 문장 끝 괄호 안에 원장 ID(PROCESS-068). 소유자 답 없음 | `reviews/round-20-closing.md` |
 | 2026-09-29 | 01 설계문서 PR을 엶: 설계문서 8편과 ADR 0001–0017을 원장에서 옮기고(21·22·23라운드는 작성 중의 원장 물음), 해상도 대조 두 차례(거른 새 지적 0), 옛 문서를 `_archive/2026-09-29/`로 옮김. 어긋남 15건은 log §6 | [#348](https://github.com/vincent-kk/albatrion/pull/348), `plan/01-design-docs/log.md` |
-| 2026-09-29 | 25라운드: 02(#347)와 01(#348) 사이의 어긋남 16건을 원장 관리자가 편집자 결정으로 닫음(25C-01~11, 보충 줄만 추가). 01의 상태는 머지(절 통과 대기). 보정 PR `fix/schema-form-realign-01-02`가 코드·문서를 따라감 | `reviews/round-25-closing.md` |
+| 2026-09-29 | 25라운드: 02(#347)와 01(#348) 사이의 어긋남 16건을 원장 관리자가 편집자 결정으로 닫음(25C-01~12, 보충 줄만 추가). 01의 상태는 머지(절 통과 대기). 보정 PR `fix/schema-form-realign-01-02`가 코드·문서를 따라감 | `reviews/round-25-closing.md` |
