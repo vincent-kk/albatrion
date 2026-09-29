@@ -34,9 +34,32 @@ Planning method: 저장소 지침 — `PLAN.md` §2와 `plan/prompts.md`의 단�
 
 | 2026-09-29 | U0 | 소유자 지시: "codex와 agy를 활발하게 사용하면서 claude 자체 토큰 소비량을 억제하렴. 멀티에이전트 관리를 해주길 바라." 구현은 codex, 대조·리뷰는 antigravity, 조율·판정은 이 세션으로 배정(실행 계획 §4 머리) | 이 커밋 |
 
+| 2026-09-29 | U0 | 계획 리뷰 1차(verifier, `1bd021cb1` 기준) `rework-required`. 높음 둘: H1 겉면 스텁이 TEST-069 (나)·EVENT-073·raw-round17:74와 어긋남, H2 `controls.active` 스텁이 TEST-069 (가)·(나)·LANDING-062·25C-06과 어긋남. 중간 여덟(M1 U1 import 목록 불완전 — 상대 import 37+8+1곳, 별칭 9파일, `stories`·`bench` 4파일; M2 TEST-069 (가) 의무 누락; M3 청사진 L의 담당·시험 없음; M4 벤치 실행 불가와 옛 엔진 기준선 시점; M5 U3∥U4 의존; M6 게이트·추적표 불일치; M7 §6.1 배분 오류; M8 원장 세션과 같은 체크아웃). 낮음 아홉. 리뷰어가 원장 관리 세션이 작업 트리에 쓰는 26라운드(26C-01~05, Q1–Q6의 답)를 확인함 | 이 기록 |
+
+| 2026-09-29 | U0 | 원장 관리 세션 회신과 26라운드 커밋(`a6af7f8a3`, `reviews/round-26-closing.md` 26C-01~05, 보충 줄 48, 검사 전부 0). 판정은 아래 줄마다 적는다 | `a6af7f8a3` |
+
+- Q1(틀림, 26C-01): 멤버는 그 기제를 들여오는 PR에서 겉면에 들고, 그 PR이 DETAIL 목록·멤버 목록 시험·공개 형을 함께 고친다.
+  - 이기는 원장: EVENT-063, LANDING-064·066, TEST-069 (나).
+  - PR-2 겉면: `raw-round17-node-structure.md:74`의 PR-2 목록(식별·값 게터, `active`, `find`·`findNodes`, 가드, 생성, settle로 직접 위임하는 `setValue`)에 `raw`·`extras`·`diagnostics`·`SetValueOption`·`defaultValue`·`resetSubtree`를 더한 것.
+  - 뒤 PR의 멤버: 명령 메서드·`subscribe`·`validate`·오류 읽기·외부 오류 설정은 PR-4, 배열 메서드는 PR-5, 계산 게터는 PR-6.
+  - TEST-070의 "배열 멤버" 형 검사는 PR-5.
+  - `verification.md:26`을 26C-01로 고친다.
+- Q2(맞음): TEST-069 "PR-2에서 사슬은 settle 호출 하나다", LANDING-064. NODE-010 보충에 정본 줄을 붙임.
+- Q3(맞음, 26C-02): 코어 러너로 잰다.
+  - `FormHandle.reset()`은 루트의 폼 수준 로드, `resetSubtree()`는 그 노드의 로드다. 제출 거부는 TEST-069 (다)로 PR-7.
+  - 고침: ERROR-204의 경고 중복 키 단언은 PR-4다(ERROR-032, LANDING-064). PR-2는 `diagnostics` 초기화만 단언한다.
+- Q4(맞음, 26C-03): 제안대로 나눈다. 미룬 단언은 log와 PR 본문에 사례마다 PR 번호를 단다.
+- Q5(판별·`if` 맞음, `controls.active` 틀림, 26C-04):
+  - 노드·조각 게이트의 `controls.active` 식은 PR-2가 `BlueprintExpression.evaluate`로 호스트 바퀴에서 실제로 평가한다(TEST-069 (가), LANDING-062, WRITE-099).
+  - L은 PR-2가 청사진에 계산과 칸을 더한다. 청사진 시험에 세 규칙 사례를 둔다: `#`·`(/)`는 루트, `/p`·`#/p`는 p의 자리, `@`는 세지 않음.
+- Q6(맞음, 26C-05): `EffectiveSchema { schema, typeConflict }`가 최종 모양이다.
+  - `cause:'sharedConflict'`(ERROR-133), 사슬 끝·모든 환경(ERROR-070), `degraded`는 폼 수준 로드까지.
+  - 주의: 정적 선언 없는 이름에서 fold가 다른 게이트 선언이 동시에 켜지는 경우(BLUEPRINT-044)는 `typeConflict`가 나르지 않는다. 정착이 켜진 선언 집합에서 따로 판정해 같은 코드로 낸다(26C-05).
+
 ## 3. 다음 행동
 
-- 독립 리뷰(seiri review-plan) → 원장 관리 세션 회신 반영과 재리뷰 → `cleared` 뒤 U1.
+- 1차 리뷰 고침 명세(`plan-review.md`)와 26C를 codex가 계획에 반영 → antigravity 범위 한정 재리뷰 → 조율 세션 판정 → `cleared` 뒤 U1.
+- 이 세션의 커밋은 경로를 지정한 `git add`만 쓴다(원장 세션의 미커밋 변경과 섞지 않음).
 
 ## 4. 원장·계획서 어긋남
 
