@@ -39,7 +39,7 @@
 | `defaultValue` | getter | 루트 로드 스냅숏의 자기 경로 | WRITE-085 |
 | `find(pointer)` | method | `navigation.find` | NODE-043·046·054 |
 | `findNodes(pointer)` | method | `navigation.findNodes` | NODE-043·046·054 |
-| `setValue(value, option?)` | method | `settle.writeSchemaNode`의 호출자 전체 교체 | NODE-010, WRITE-096, 26C-01 |
+| `setValue(value, option?)` | method | `settle.writeSchemaNode`의 호출자 전체 교체 또는 `Merge` 부분 쓰기 | NODE-010, WRITE-079·096, 26C-01 |
 | `resetSubtree(option?)` | method | `settle.resetSchemaNodeSubtree` | WRITE-085, SETTLE-049 |
 
 - 클래스 파일에는 레코드 순서의 저장 필드, 상수 읽기 게터, 한 문장 위임만 둡니다. 정착이 쓰는 공개 레코드 칸은 같은 이름의 게터와 한 문장 저장 세터를 짝지어 프로토타입 이름을 유지합니다. 생성자는 고정 선언 순서의 대입만 하고 필드 초기화식과 생성자에 객체·배열 리터럴·함수·`new`를 두지 않습니다. `type`·`strategy` 분기는 가드 외에는 행에서만 합니다. 공개 인터페이스가 멤버 주석의 정본이고 클래스는 `{@inheritDoc}`로 가리킵니다(NODE-010·049).
