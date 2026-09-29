@@ -9,11 +9,11 @@
 이어받는 세션은 [`HANDOFF.md`](./HANDOFF.md)부터 읽는다 — 현재 상태, 다음 할 일, 검사 명령.
 
 1. [`PLAN.md`](./PLAN.md) — 개발의 단일 진입점: 계획 링크, 수행 방법, 단계별 진행 상황, 다음 할 일
-2. [`ledger/`](./ledger/README.md) — 원장. 결정의 정본이다(영역 열일곱, 항목마다 결정·보충·충돌·상태)
+2. [`ledger/`](./ledger/README.md) — 원장. 결정의 정본이다(영역 열일곱, 항목마다 결정과 상태, 있을 때 보충과 충돌)
 3. [`design/`](./design/) — 원장을 읽는 표면인 설계문서 여덟. 문장 끝 괄호의 ID가 근거이고, 어긋나면 원장이 이긴다
    - [`00-goals-and-values.md`](./design/00-goals-and-values.md) 목표와 가치 · [`01-schema-to-blueprint.md`](./design/01-schema-to-blueprint.md) 스키마에서 청사진까지 · [`02-node-and-value.md`](./design/02-node-and-value.md) 노드와 값 · [`03-settle-and-events.md`](./design/03-settle-and-events.md) 정착과 통지
    - [`04-controls.md`](./design/04-controls.md) 제어 · [`05-validation-and-errors.md`](./design/05-validation-and-errors.md) 검증과 오류 · [`06-react-and-surface.md`](./design/06-react-and-surface.md) React와 공개 표면 · [`07-landing-and-tests.md`](./design/07-landing-and-tests.md) 이주·착수와 시험
-4. [`adr/`](./adr/) — 결정 하나에 기록 하나(0001–0017). 본문은 설계문서의 같은 절을 글자 그대로 모은 것이다
+4. [`adr/`](./adr/) — 주제별 결정 기록 17편(0001–0017, 0001–0014는 옛 번호의 주제를 잇는다). 본문은 설계문서의 같은 절을 글자 그대로 모은 것이다
 5. [`plan/`](./plan/README.md) — 개발계획: PR 디렉토리마다 개발요청서, 검증 구성요건, ADR과 핵심 축
 6. `reviews/` — 라운드마다의 적대적 검토, 편집자 결정의 정본(`round-N-closing.md`), 소유자 답 원문
 7. [`_archive/2026-09-29/`](./_archive/2026-09-29/README.md) — 원장 이전의 설계 문서(00–09, `open-questions.md`, 옛 ADR 0001–0014). 동결됐다
