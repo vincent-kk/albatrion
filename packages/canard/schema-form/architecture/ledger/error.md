@@ -274,6 +274,7 @@
 - 까닭: `adr/0008-event-system.md:64-68`
 - 충돌:
   > `04-inherited-constraints.md:12`의 "파동 상한은 현재처럼 **틱당**이며"는 되먹임 상한을 틱마다 센다. 정본과 다르다. 정본이 이긴다(`adr/0014-error-policy.md:49`, "되먹임 상한(파동 25)은 진입마다, `onChange` 중첩 상한(25)은 사슬마다 센다", K12).
+  > `adr/0014-error-policy.md:49`의 "(P5: 커밋된 것은 반드시 통지된다)"는 원리 표와 다르다: P5는 "core는 렌더러를 모른다"(GOAL-031)이고, "커밋된 것은 반드시 통지된다"는 번호 붙은 원리가 아니라 이 항목과 SETTLE-016 보충의 규칙 문장이다. 원리 표가 이긴다(`03-mental-model.md:17`).
 
 ### ERROR-005 오류 묶음 — SchemaFormError와 details.errors
 
@@ -652,6 +653,8 @@
 - 닫은 사람: 17라운드 스웜 수렴(편집자 결정), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-98)
 - 라운드: 18
 - 까닭: `adr/0014-error-policy.md:169`
+- 충돌:
+  > `adr/0014-error-policy.md:173`의 "경고 집합은 서로 다른 경고 수 이하이고 로드마다 비운다"는 18라운드 결정과 다르다: 경고 중복 키는 폼 수준 로드(마운트, `FormHandle.reset()`)에서만 비우며 `setValue(V)`와 `resetSubtree()`는 비우지 않는다(ERROR-204). 18라운드 결정이 이긴다(`reviews/round-18-closing.md:2797-2798`).
 
 ### ERROR-031 공개 계약과 판 규칙
 
@@ -879,7 +882,7 @@
   > `08-design-a-to-z.md:381`의 "렌더 계층 경고 | 렌더 | 작성자 |"는 누구 잘못을 작성자로만 둔다. 정본과 다르다. 정본이 이긴다(`adr/0014-error-policy.md:241`, "작성자·호출자", K5).
   > `08-design-a-to-z.md:380`의 "정착 경고 | 계산·파생 |"는 언제를 "계산·파생"으로 둔다. 정본과 다르다. 정본이 이긴다(`adr/0014-error-policy.md:232`, "정착의 계산", K6).
   > `08-design-a-to-z.md:377`의 "게이트 없는 분기끼리 같은 이름·다른 종류의 선언(ADR 0014)"은 범위를 게이트 없는 분기끼리로 좁히고 정적 `controls.injectTo`의 "터미널 아래"를 뺀다. 정본과 다르다. 정본이 이긴다(`adr/0014-error-policy.md:228`, 본체·`allOf` 항목까지 포함, K7).
-  > `adr/0014-error-policy.md:228`의 "`controls.discriminator`의 키가 어느 분기에도 `const`·`enum`으로 없거나, 있는 분기끼리 종류가 다르거나 값이 겹침(O-1. 일부 분기에만 없는 것은 그 분기가 게이트 없음일 뿐 오류가 아니다)"는 O-1이 요구한 '선언 사이 값이 다름'을 적지 않는다. 정본과 다르다. 정본이 이긴다(`adr/0014-error-policy.md:260`, §7.2 `DISCRIMINATOR_MISMATCH` 행의 "선언 사이 값이 다름", K10).
+  > `adr/0014-error-policy.md:228`의 "`controls.discriminator`의 키가 어느 분기에도 `const`·`enum`으로 없거나, 있는 분기끼리 종류가 다르거나 값이 겹침(O-1. 일부 분기에만 없는 것은 그 분기가 게이트 없음일 뿐 오류가 아니다)"는 O-1이 요구한 '선언 사이 값이 다름'을 적지 않는다. 정본과 다르다. 정본이 이긴다(`adr/0014-error-policy.md:260`, §7.2 `DISCRIMINATOR_MISMATCH` 행의 "선언 사이 값이 다름", K10). 이긴 글의 집은 ERROR-164의 `DISCRIMINATOR_MISMATCH` 행이며, "선언 사이 값이 다름"은 한 분기의 정적 연언 안 판별 선언들의 교차가 공집합일 때로 읽는다(FRAGMENT-048, FRAGMENT-007의 충돌 줄). ERROR-164와 FRAGMENT-048이 이긴다(`reviews/round-18-closing.md:135`).
   > `02-target-overview.md:231`의 "분기에 그 키의 `const`·`enum`이 없을 때, `$ref`·`allOf` 평탄화, 분기가 자기 `controls.active`도 가질 때의 세부는 미정(07 11.2, ADR 0005 §4)이다."은 첫 경우를 미정으로 둔다. 정본과 다르다. 정본이 이긴다(`adr/0014-error-policy.md:228`, K2).
   > `reviews/round-18-agenda.md:108`의 "`if`의 공허한 참 경고(Q10, `open-questions.md:68`)."는 이를 열린 안건으로 둔다. 정본과 다르다. 정본이 이긴다(`reviews/round-10-owner-answers.md:38,40`, E-23·E-19).
   > `reviews/round-18-agenda.md:17`의 "`controls.discriminator`의 세부(분기에 그 키의 `const`·`enum`이 없을 때, `$ref`·`allOf` 평탄화, 분기 자체 `controls.active`와의 AND)"는 첫 경우를 열린 안건으로 둔다. 정본과 다르다. 정본이 이긴다(`adr/0014-error-policy.md:228`, K2).
@@ -974,6 +977,9 @@
 - 닫은 사람: 편집자 결정(17라운드, ADR 0014 4판 채택), 소유자 답(`reviews/round-17-owner-answers.md:9` R17-1; `adr/0014-error-policy.md:307,308,311,313,317,318`), 소유자 답(`reviews/round-14-owner-answers.md:16` O-10; `adr/0014-error-policy.md:310`), 소유자 답(`reviews/round-14-owner-answers.md:8` O-2; `adr/0014-error-policy.md:317`), 소유자 답(`reviews/round-17-owner-answers.md:14` 통보 3; `adr/0014-error-policy.md:312`), 소유자 답(`reviews/round-17-owner-answers.md:15` 통보 4; `adr/0014-error-policy.md:314`)
 - 라운드: 17
 - 까닭: `adr/0014-error-policy.md:303`
+- 충돌:
+  > `adr/0014-error-policy.md:317`의 "`exceededBudget`은 정착 예산 셋만"은 18라운드 결정과 다르다: 재귀 펼침의 멈춤을 뜻하는 (가칭) `'recursion'`이 더해져 값이 넷이다(ERROR-190). 18라운드 결정이 이긴다(`reviews/round-18-closing.md:28`).
+  > `adr/0014-error-policy.md:311`의 "정적이면 청사진 오류, 동적이면 정착 오류(R17-1 나)"는 18라운드 결정과 다르다: 정적으로 아는 `injectTo` 대상은 없고, 대상 경로가 청사진에 없거나 터미널 아래인 경우는 모두 동적 대상 없음(`INJECT_TARGET_MISSING`)이다(CONTROLS-079). 18라운드 결정이 이긴다(`reviews/round-18-closing.md:386`).
 
 ### ERROR-046 이주 항목 문단
 
@@ -1549,7 +1555,8 @@
 
 - 결정:
   > 소유자의 "validate error 가 걸러진 에러 로깅용 전용 채널").
-- 보충: 없음
+- 보충:
+  > "Form 속성 `onError(record)`는 검증 결과를 뺀 폼 내부의 오류와 경고를 같은 모양의 기록으로 받는 **관찰자**다(17라운드 4번 수렴의 안 B, 17라운드 스웜 수렴(편집자 결정). 소유자의 "validate error 가 걸러진 에러 로깅용 전용 채널")." (`adr/0014-error-policy.md:70`) — ERROR-094와 이 항목은 이 한 문장을 괄호 안의 마침표에서 나눈 것이며, 소유자 발언은 ERROR-094 괄호 안의 출처다.
 - 상태: 현행
 - 출처: `adr/0014-error-policy.md:70#2`(정본, ERROR-011에서 분할)
 - 닫은 사람: 소유자 답(`reviews/round-17-owner-answers.md:15` 통보 4)
@@ -2343,13 +2350,15 @@
   > `08-design-a-to-z.md:381`의 "렌더 계층 경고 | 렌더 | 작성자 |"는 누구 잘못을 작성자로만 둔다. 정본과 다르다. 정본이 이긴다(`adr/0014-error-policy.md:241`, "작성자·호출자", K5).
   > `08-design-a-to-z.md:380`의 "정착 경고 | 계산·파생 |"는 언제를 "계산·파생"으로 둔다. 정본과 다르다. 정본이 이긴다(`adr/0014-error-policy.md:232`, "정착의 계산", K6).
   > `08-design-a-to-z.md:377`의 "게이트 없는 분기끼리 같은 이름·다른 종류의 선언(ADR 0014)"은 범위를 게이트 없는 분기끼리로 좁히고 정적 `controls.injectTo`의 "터미널 아래"를 뺀다. 정본과 다르다. 정본이 이긴다(`adr/0014-error-policy.md:228`, 본체·`allOf` 항목까지 포함, K7).
-  > `adr/0014-error-policy.md:228`의 "`controls.discriminator`의 키가 어느 분기에도 `const`·`enum`으로 없거나, 있는 분기끼리 종류가 다르거나 값이 겹침(O-1. 일부 분기에만 없는 것은 그 분기가 게이트 없음일 뿐 오류가 아니다)"는 O-1이 요구한 '선언 사이 값이 다름'을 적지 않는다. 정본과 다르다. 정본이 이긴다(`adr/0014-error-policy.md:260`, §7.2 `DISCRIMINATOR_MISMATCH` 행의 "선언 사이 값이 다름", K10).
+  > `adr/0014-error-policy.md:228`의 "`controls.discriminator`의 키가 어느 분기에도 `const`·`enum`으로 없거나, 있는 분기끼리 종류가 다르거나 값이 겹침(O-1. 일부 분기에만 없는 것은 그 분기가 게이트 없음일 뿐 오류가 아니다)"는 O-1이 요구한 '선언 사이 값이 다름'을 적지 않는다. 정본과 다르다. 정본이 이긴다(`adr/0014-error-policy.md:260`, §7.2 `DISCRIMINATOR_MISMATCH` 행의 "선언 사이 값이 다름", K10). 이긴 글의 집은 ERROR-164의 `DISCRIMINATOR_MISMATCH` 행이며, "선언 사이 값이 다름"은 한 분기의 정적 연언 안 판별 선언들의 교차가 공집합일 때로 읽는다(FRAGMENT-048, FRAGMENT-007의 충돌 줄). ERROR-164와 FRAGMENT-048이 이긴다(`reviews/round-18-closing.md:135`).
   > `02-target-overview.md:231`의 "분기에 그 키의 `const`·`enum`이 없을 때, `$ref`·`allOf` 평탄화, 분기가 자기 `controls.active`도 가질 때의 세부는 미정(07 11.2, ADR 0005 §4)이다."은 첫 경우를 미정으로 둔다. 정본과 다르다. 정본이 이긴다(`adr/0014-error-policy.md:228`, K2).
   > `reviews/round-18-agenda.md:108`의 "`if`의 공허한 참 경고(Q10, `open-questions.md:68`)."는 이를 열린 안건으로 둔다. 정본과 다르다. 정본이 이긴다(`reviews/round-10-owner-answers.md:38,40`, E-23·E-19).
   > `reviews/round-18-agenda.md:17`의 "`controls.discriminator`의 세부(분기에 그 키의 `const`·`enum`이 없을 때, `$ref`·`allOf` 평탄화, 분기 자체 `controls.active`와의 AND)"는 첫 경우를 열린 안건으로 둔다. 정본과 다르다. 정본이 이긴다(`adr/0014-error-policy.md:228`, K2).
   > `adr/0014-error-policy.md:233`의 "자동 쓰기 다섯의 출처(C2·P2)"는 자동 쓰기를 다섯으로 센다. 소유자 답과 다르다. 소유자 답이 이긴다(`reviews/round-18-owner-answers.md:12`, WRITE-078: 포커스 아웃 `trim`이 자른 값의 쓰기가 여섯째 자동 쓰기).
   > `08-design-a-to-z.md:382`의 "공개 payload에는 출처를 더하지 않는다(14라운드: 니즈가 약하다. 필요하면 나중에 더한다)"는 소유자 답과 다르다. 소유자 답이 이긴다(`reviews/round-18-owner-answers.md:15`, EVENT-060).
   > `adr/0014-error-policy.md:228`의 "정적으로 아는 `controls.injectTo` 대상 경로가 청사진에 없거나 터미널 아래임"은 18라운드 결정과 다르다: 그런 대상은 없고 그 경우는 모두 정착 오류 행의 동적 대상 없음이다(CONTROLS-079). 18라운드 결정이 이긴다(`reviews/round-18-closing.md:386`).
+  > `adr/0014-error-policy.md:230`의 "`allOf` 키워드 무시"는 18라운드 결정과 다르다: 청사진 경고 행의 조건 목록은 여기서 끝나지 않고 "`dependentSchemas`·`dependencies` 무시"가 더해진다(ERROR-191). 18라운드 결정이 이긴다(`reviews/round-18-closing.md:103`).
+  > `adr/0014-error-policy.md:236`의 "`onError` 관찰자 안의 쓰기(`onError`에 가지 않음)"는 18라운드 결정과 다르다: 호출자 오류 행의 항목 목록은 여기서 끝나지 않고 배열 아닌 노드의 배열 전용 명령(`ARRAY_METHOD_ON_NON_ARRAY`)이 더해진다(ERROR-197). 18라운드 결정이 이긴다(`reviews/round-18-closing.md:713`).
 
 ### ERROR-160 범위 밖 — 렌더 중 쓰기는 core가 감지하지 않는다
 
@@ -2480,6 +2489,8 @@
   > `adr/0014-error-policy.md:257`의 "분류는 슬라이스 1의 options.virtual 설계 항목에서 확정"는 18라운드 결정과 다르다: 분류는 확정되었다 — 공개 API에서 오면 호출자 오류, 자동 쓰기에서 오면 정착 오류(`cause` (가칭) `'writeShape'`)다(ERROR-195). 18라운드 결정이 이긴다(`reviews/round-18-closing.md:661`).
   > `adr/0014-error-policy.md:261`의 "청사진 분석: 게이트 없는 선언끼리 같은 이름·다른 종류"는 소유자 답과 다르다: 정적 선언끼리는 교집합으로 노드 하나를 정하고 비면 `ALL_OF_TYPE_REDEFINITION`이며, 이 코드는 호스트의 게이트 없는 분기의 fold가 정적 노드의 fold에 들지 않을 때다(BLUEPRINT-044). 소유자 답이 이긴다(`reviews/round-18-owner-answers.md:37`).
   > `reviews/round-18-closing.md:2458`의 "형 없는 칸의 빈 U와 객체·배열 분기(`:30`·`:33`)"는 19라운드 결정과 다르다: "형 없는 칸의 빈 U와 객체·배열이 다른 종류와 섞인 분기"로 읽고, "분기도 `const`·`enum`도 없는 형 없는 칸"과 "리터럴의 종류가 섞이거나 객체·배열인 `const`·`enum`"을 더한다(BLUEPRINT-048, BLUEPRINT-050). 19라운드 결정이 이긴다(`reviews/round-19-closing.md:22,43`).
+  > `adr/0014-error-policy.md:257`의 "오늘에만 명시. 새 설계 분류표에 자리가 없어 이 표에 더함"은 18라운드 결정과 다르다: 새 설계에도 있으며 코드는 `SCHEMA_FORM_ERROR.INVALID_VIRTUAL_NODE_VALUES`(가칭)이고, 공개 API에서 오면 호출자 오류, 자동 쓰기에서 오면 정착 오류(`cause` (가칭) `'writeShape'`)다(ERROR-195). 18라운드 결정이 이긴다(`reviews/round-18-closing.md:661,670`).
+  > `adr/0014-error-policy.md:264`의 "새 설계에서 셋으로 나뉨"은 18라운드 결정과 다르다: 정적 대상 없음(`INJECT_TARGET_NOT_FOUND`)은 낼 자리가 없어 빠지므로 둘(동적 대상 없음 `INJECT_TARGET_MISSING`, 식 예외 `EXPRESSION_THREW`)로 나뉜다(CONTROLS-079). 18라운드 결정이 이긴다(`reviews/round-18-closing.md:386-387`).
 
 ### ERROR-165 §7.2 코드 목록 — (미정) 행
 
