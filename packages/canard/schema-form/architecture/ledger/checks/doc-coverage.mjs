@@ -8,6 +8,8 @@ const inlineCodePattern = /`[^`\n]*`/g;
 const quotedSpanPattern = /"[^"\n]*"|“[^”\n]*”/g;
 const fencePattern = /^\s*```/;
 const sectionHeadingPattern = /^#{2,3} /;
+// An ADR `## 상태` section lists closers and rounds for every member; it counts as a citation, never as a token carrier.
+const statusSectionPattern = /^## 상태\s*$/;
 const markdownHeadingPattern = /^#{1,6} /;
 const tableSeparatorPattern = /^\|(?:\s*:?-{3,}:?\s*\|)+\s*$/;
 const oldReferencePattern = /^(0\d-[^`]*\.md|open-questions\.md|adr\/\d{4}-[^`]*|reviews\/[^`]*|HANDOFF\.md|README\.md)(:[\d,#-]+)?$/;
@@ -152,6 +154,7 @@ for (const docPath of docPaths) {
   flushTable();
   for (const currentSection of sections) {
     currentSection.text = currentSection.lines.join('\n');
+    currentSection.isStatus = statusSectionPattern.test(currentSection.lines[0]);
     const ids = new Set([...currentSection.text.matchAll(idPattern)].map((match) => match[1]));
     for (const id of ids) {
       const citedSections = sectionsById.get(id) ?? [];
@@ -187,11 +190,12 @@ if (fs.existsSync(exemptPath)) {
   });
 }
 
+const tokenSections = (id) => (sectionsById.get(id) ?? []).filter((citedSection) => !citedSection.isStatus);
 const missingPairs = new Set();
 let missingTokens = 0;
 for (const item of scopedItems) {
-  const sections = sectionsById.get(item.id);
-  if (!sections?.length) continue;
+  const sections = tokenSections(item.id);
+  if (!sections.length) continue;
   const citedText = sections.map((citedSection) => citedSection.text).join('\n');
   const tokens = new Map();
   for (const line of item.결정) {
@@ -214,7 +218,7 @@ for (const item of scopedItems) {
 }
 for (const { id, token, line } of exemptions) {
   const item = byId.get(id);
-  if (!item || !inScope(item) || !sectionsById.has(id) || missingPairs.has(`${id}\u0000${token}`)) continue;
+  if (!item || !inScope(item) || !tokenSections(id).length || missingPairs.has(`${id}\u0000${token}`)) continue;
   console.log(`stale exemption ${exemptPath}:${line} ${id} ${token}`);
   staleExemptions++;
 }
