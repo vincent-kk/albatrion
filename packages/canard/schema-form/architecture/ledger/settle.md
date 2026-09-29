@@ -54,8 +54,8 @@
 | SETTLE-046 | 로드 때의 채움과 발화 — 최종 형상의 노드가 모두 생긴 노드로서 채움, `controls.injectTo`는 발화, `controls.unsetValue`는 로드된 값으로 평가 | 현행 | 소유자 답(`reviews/round-10-owner-answers.md:19` D-6, 로드 시 injectTo 발화), 소유자 답(`reviews/round-10-owner-answers.md:29,39` E-21, 로드의 unsetValue), 편집자 결정(10라운드, 21의 최초 로드를 모든 로드로 읽음, `07-conclusions.md:251`), 소유자 답(`reviews/round-12-owner-answers.md:13` §5 (a) 모든 로드에서 로드된 값으로 평가), 소유자 답(`reviews/round-12-owner-answers.md:19` §9 로드에서 `&derived`), 편집자 결정(3–5라운드 반영 4차 본문, `adr/0007-settle-cycle.md:12`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-102) |
 | SETTLE-047 | 트리 전체 순회의 예산 — 로드와, 쓰기가 닿은 하위 트리를 도는 전체 교체 쓰기에서만 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-95) |
 | SETTLE-048 | 에지와 생김의 기준 — 로드는 비우고, 로드가 아닌 쓰기(`setValue(V)` 포함)는 직전 커밋 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-102) |
-| SETTLE-049 | `resetSubtree()`의 로드에서 `injectTo` 발화와 채움은 그 하위 트리에만 — 원천이 하위 트리 안인 `injectTo`만 발화, 대상의 자리는 그대로, 게이트 | 현행 | 편집자 결정(22라운드, `reviews/round-22-closing.md` 22C-01) |
-| SETTLE-050 | 직전 커밋의 활성 집합은 전이 판정에만 — 평가 순서 힌트(F13)로 쓰지 않음, 바퀴의 평가 순서는 청사진 전순서, 게이트 | 현행 | 편집자 결정(23라운드, `reviews/round-23-closing.md` 23C-01) |
+| SETTLE-049 | `resetSubtree()`의 로드에서 `injectTo` 발화와 채움은 그 하위 트리에만 — 원천이 하위 트리 안인 `injectTo`만 발화, 대상의 자리는 그대로, 게이트 | 현행 | 편집자 결정(22라운드, `reviews/round-22-closing.md` 22C-01), 소유자 답(`reviews/round-24-owner-answers.md:7` PR #348 검토; 편집자 결정에 동의) |
+| SETTLE-050 | 직전 커밋의 활성 집합은 전이 판정에만 — 평가 순서 힌트(F13)로 쓰지 않음, 바퀴의 평가 순서는 청사진 전순서, 게이트 | 현행 | 편집자 결정(23라운드, `reviews/round-23-closing.md` 23C-01), 소유자 답(`reviews/round-24-owner-answers.md:7` PR #348 검토; 편집자 결정에 동의) |
 
 항목 형식은 `ledger/README.md` §3을 따른다. 정본 줄의 일부 문장만 옮긴 항목은 출처에 `#n`(한 문장) 또는 `#a-b`(이어진 문장들)를 적는다. 이어지지 않은 문장들을 옮긴 항목은 줄 전체를 출처로 두고 `(정본, #a–#b·#n)`로 적는다. 표의 행을 옮긴 항목은 그 표의 머리 두 줄을 함께 옮긴다.
 
@@ -801,11 +801,12 @@
   > 무엇: `injectTo` 원천이 되돌리는 하위 트리 안에 있는 폼과 밖에 있는 폼에서 각각 `resetSubtree()`를 부르고, 대상 값과 하위 트리 밖 노드의 채움을 본다.
   > 통과: 원천이 안이면 대상이 다시 주입되고, 밖이면 대상과 하위 트리 밖 노드의 값이 직전 커밋 그대로다.
   > 실패: 이 블록을 고친다.
-- 보충: 없음
+- 보충:
+  > 소유자(24라운드, PR #348 검토): "기본적으론 판단에 동의합니다" (`reviews/round-24-owner-answers.md:7`) — 게이트 줄(무엇·통과·실패)이 소유자가 말한 엣지케이스 테스트 후보다.
 - 상태: 현행
 - 출처: `reviews/round-22-closing.md:9-16`(정본)
-- 닫은 사람: 편집자 결정(22라운드, `reviews/round-22-closing.md` 22C-01)
-- 라운드: 22
+- 닫은 사람: 편집자 결정(22라운드, `reviews/round-22-closing.md` 22C-01), 소유자 답(`reviews/round-24-owner-answers.md:7` PR #348 검토; 편집자 결정에 동의)
+- 라운드: 24
 - 까닭: `reviews/round-22-closing.md:17`
 
 ### SETTLE-050 직전 커밋의 활성 집합은 전이 판정에만 — 평가 순서 힌트(F13)로 쓰지 않음, 바퀴의 평가 순서는 청사진 전순서, 게이트
@@ -820,8 +821,9 @@
   > 실패: 이 블록을 고친다.
 - 보충:
   > 편집자 결정(8라운드, GOAL-083): "**F13 순서 힌트(직전 커밋의 활성 집합을 가드 평가 순서로 쓰는 것)는 단서 복원이 아니라 제거한다.**" (`06-conclusions.md:212`)
+  > > 소유자(24라운드, PR #348 검토): "기본적으론 판단에 동의합니다" (`reviews/round-24-owner-answers.md:7`) — 게이트 줄(무엇·통과·실패)이 소유자가 말한 엣지케이스 테스트 후보다.
 - 상태: 현행
 - 출처: `reviews/round-23-closing.md:9-15`(정본), `06-conclusions.md:212`
-- 닫은 사람: 편집자 결정(23라운드, `reviews/round-23-closing.md` 23C-01)
-- 라운드: 23
+- 닫은 사람: 편집자 결정(23라운드, `reviews/round-23-closing.md` 23C-01), 소유자 답(`reviews/round-24-owner-answers.md:7` PR #348 검토; 편집자 결정에 동의)
+- 라운드: 24
 - 까닭: `reviews/round-23-closing.md:16`

@@ -105,7 +105,7 @@
 | WRITE-097 | 정리 — 억제 비트의 범위(로드·전체 교체 쓰기·`Merge`), 낡은 근거와 가리킴, LANDING-118, `setValue(undefined)`와 노드 게이트의 채움 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-103) |
 | WRITE-098 | U7 정련 — 쓰기 경계는 정적 목록(`schemaType`, `nullable`)으로 한 번, 전이 단계는 최종 유효 목록이 좁은 노드만 원래 쓰인 값을 다시 해석, 로드도 같음, 유효 목록의 정의, PR-2 게이트 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-104), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-105) |
 | WRITE-099 | U7 정련 2 — 전이 단계의 재해석은 전이 쓰기(다음 라운드, 한 라운드에 한 번, 상한이면 원본 B에는 쓰기 경계의 해석만), `VALIDATOR_COMPILE_FAILED`는 폼 수준 기록, 정적 선언 없는 이름의 게이트 없는 분기끼리 fold가 다르면 청사진 오류, `node.type`은 여덟, `union` 입력이 보내는 값, 목록 밖 `default`는 노드가 생길 때마다, `push(v)`의 스냅숏은 생성 값, `NON_JSON_WHOLE_VALUE`는 개발 모드에서만, 좁혀지지 않은 유효 목록은 `schemaType` 그 값, PR-2·PR-4·PR-1 게이트 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-105), 소유자 답(`reviews/round-18-owner-answers.md:24` 18C 검토 1번; 입력이 보내는 값), 편집자 결정(18라운드, LANDING-065; 배열 스냅숏 시험은 PR-5) |
-| WRITE-100 | 호출 수준 억제 비트는 뒤이은 포커스 아웃 `trim`에 듣지 않는다 — 포커스 아웃의 자름을 억제하는 자리는 Form 속성 `disableAutomaticWrites`뿐, 게이트 | 현행 | 편집자 결정(21라운드, `reviews/round-21-closing.md` 21C-01) |
+| WRITE-100 | 호출 수준 억제 비트는 뒤이은 포커스 아웃 `trim`에 듣지 않는다 — 포커스 아웃의 자름을 억제하는 자리는 Form 속성 `disableAutomaticWrites`뿐, 게이트 | 현행 | 편집자 결정(21라운드, `reviews/round-21-closing.md` 21C-01), 소유자 답(`reviews/round-24-owner-answers.md:7` PR #348 검토; 편집자 결정에 동의) |
 
 ## 항목
 
@@ -1661,9 +1661,10 @@
   > 무엇: `options.trim`을 켠 문자열 입력에 `onChange(' a ', DisableAutomaticWrites)`를 부른 뒤 포커스 아웃을 일으킨다. Form 속성이 없는 폼과 `disableAutomaticWrites`를 켠 폼에서 각각 한다.
   > 통과: 앞 폼의 원본은 `'a'`이고 뒤 폼의 원본은 `' a '`다.
   > 실패: 억제 비트의 범위나 포커스 아웃 쓰기의 억제 자리를 고친다.
-- 보충: 없음
+- 보충:
+  > 소유자(24라운드, PR #348 검토): "기본적으론 판단에 동의합니다" (`reviews/round-24-owner-answers.md:7`) — 게이트 줄(무엇·통과·실패)이 소유자가 말한 엣지케이스 테스트 후보다.
 - 상태: 현행
 - 출처: `reviews/round-21-closing.md:9-16`(정본)
-- 닫은 사람: 편집자 결정(21라운드, `reviews/round-21-closing.md` 21C-01)
-- 라운드: 21
+- 닫은 사람: 편집자 결정(21라운드, `reviews/round-21-closing.md` 21C-01), 소유자 답(`reviews/round-24-owner-answers.md:7` PR #348 검토; 편집자 결정에 동의)
+- 라운드: 24
 - 까닭: `reviews/round-21-closing.md:17`

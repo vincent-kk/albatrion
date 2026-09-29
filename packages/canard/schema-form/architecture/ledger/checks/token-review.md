@@ -441,3 +441,7 @@ node ledger/checks/tokens.mjs check <목록> ledger/*.md
 - 새로 든 22는 모두 새 README·HANDOFF가 설계문서 여덟(`00-goals-and-values.md`…`07-landing-and-tests.md`, `design/`, `design/*.md`), 보관 위치(`_archive/2026-09-29/`, `ARCHIVE_ROOT`, `ledger/checks/lib.mjs`), 역검사 도구(`doc-coverage.mjs`, `ledger/checks/doc-coverage.mjs`, `--areas`, `ledger/checks/fixtures/doc-coverage/`, `ledger/checks/doc-token-exempt.tsv`, `adr/*.md`), 과정 기록(`plan/01-design-docs/log.md`, `reviews/raw-design-docs-check.md`, `round-N-closing.md`)을 가리키는 경로·절차 토큰이다. 모두 원장이 인용할 원천이 아닌 문서의 자기 서술이다 — C.
 - 원장 쪽 잔여는 바뀌지 않았다. 잔여 가운데 README·HANDOFF 밖(옛 문서·옛 ADR)에 원천이 있는 토큰은 이동 전후 모두 419이고, 나머지 66(HANDOFF에만 53, README에만 11, 둘에만 2)은 자기 서술 토큰이다. 앞 절들이 적어 온 "원장 쪽 잔여 481"은 절마다 더하고 뺀 누적치였고, 이 절부터는 위처럼 원천의 위치로 직접 센 값(419)을 기준으로 삼는다.
 - 옛 ADR 0001–0014의 원장 인용(`adr/00nn.md:line`)은 `ledger/checks/lib.mjs`의 `docReader`가 `_archive/2026-09-29/adr/`에서 읽으므로 verbatim·sup 검사는 이동 뒤에도 0이다. 새 `adr/0001–0017`은 이 인용의 대상이 아니다.
+
+## 24라운드(소유자의 PR #348 편집자 결정 검토) 반영 뒤의 잔여 (2026-09-29)
+
+잔여 485 그대로다(`{"total":2483,"missing":485}`). HANDOFF §1의 24라운드 문단이 든 코드 토큰(`/preview`, `reviews/round-24-owner-answers.md:7`)은 원장이 함께 들거나 토큰 규칙에 들지 않는다. 새 항목은 없고, 닫은 사람 칸에 소유자 답이 더해졌을 뿐이다.
