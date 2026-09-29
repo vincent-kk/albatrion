@@ -8,7 +8,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { JSONSchema } from '@winglet/json-schema';
 
 import { NodeEventType, SetValueOption } from '@/schema-form/core';
-import type { ArrayNode } from '@/schema-form/core/nodes/ArrayNode';
+import type { ArrayNode } from '@/schema-form/__legacy__/core/nodes/ArrayNode';
 import { useSchemaNode } from '@/schema-form/hooks/useSchemaNode';
 import type {
   FormTypeInputDefinition,

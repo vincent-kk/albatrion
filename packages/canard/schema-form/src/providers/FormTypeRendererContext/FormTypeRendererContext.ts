@@ -2,7 +2,7 @@ import { type ComponentType, createContext } from 'react';
 
 import type { Fn } from '@aileron/declare';
 
-import type { NodeStateFlags } from '@/schema-form/core/nodes';
+import type { NodeStateFlags } from '@/schema-form/__legacy__/core/nodes';
 import type { FormTypeRendererProps } from '@/schema-form/types';
 
 export interface FormTypeRendererContext {

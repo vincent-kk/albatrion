@@ -9,13 +9,13 @@ import type {
   VirtualSchema,
 } from '@/schema-form/types';
 
-import type { ArrayNode } from '../nodes/ArrayNode';
-import type { BooleanNode } from '../nodes/BooleanNode';
-import type { NullNode } from '../nodes/NullNode';
-import type { NumberNode } from '../nodes/NumberNode';
-import type { ObjectNode } from '../nodes/ObjectNode';
-import type { StringNode } from '../nodes/StringNode';
-import type { VirtualNode } from '../nodes/VirtualNode';
+import type { ArrayNode } from '../../__legacy__/core/nodes/ArrayNode';
+import type { BooleanNode } from '../../__legacy__/core/nodes/BooleanNode';
+import type { NullNode } from '../../__legacy__/core/nodes/NullNode';
+import type { NumberNode } from '../../__legacy__/core/nodes/NumberNode';
+import type { ObjectNode } from '../../__legacy__/core/nodes/ObjectNode';
+import type { StringNode } from '../../__legacy__/core/nodes/StringNode';
+import type { VirtualNode } from '../../__legacy__/core/nodes/VirtualNode';
 
 /** Classifies only an explicitly authored inline branch type. */
 type InlineTypeKind<Type> = Type extends
