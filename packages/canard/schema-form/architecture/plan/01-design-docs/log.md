@@ -226,6 +226,7 @@ Planning method: 저장소 지침 — `PLAN.md` §2와 `plan/prompts.md`의 단�
 | 2026-09-29 | U5·U6 | U5 커밋 `662cd02e8`(G19–G22). U6: 생성기 `build-adr.mjs`(작업 폴더)로 `adr-next/` 17편, 소속 수 §2.4와 같음. 역검사에 ADR `## 상태` 절 보강(§2.5, 픽스처 `status.md`). verifier가 따로 짠 스크립트로 17편 대조 PASS | G23·G24 충족 |
 | 2026-09-29 | U7 | **멈춤(사용 한도).** U6 커밋 `7d41d6ca1`(G25). U7 1차 대조를 antigravity 넷에 보냈으나 모두 사용 한도(약 3시간 뒤 초기화), cennad claude 넷도 세션 한도(16시 초기화)로 실패. 재개 순서: 지시서 `work/brief-u7.md`로 네 묶음({00,07},{01,04},{02,03},{05,06}) 대조 → verifier가 거름 → worker 고침 → `build-adr.mjs`로 ADR 재생성(G27) → `reviews/raw-design-docs-check.md` 기록(G26) → U8 | 재개 대기 |
 | 2026-09-29 | U7 | 재개. 1차: codex·antigravity 네 묶음씩, 지적 13(codex 12, antigravity 1). verifier 한 명이 지적마다 인용한 두 자리만 읽고 거름: 확인 1(ERROR-159 보충, design/05), 부분 1(LANDING-124 보충 표 행, design/07), 기각 10, 원장 물음 0. 고침은 판정의 고침 목록을 스크립트로 적용, `build-adr.mjs`로 ADR 재생성(`0014`만 바뀜), `verify-adr` FAILS 0. 2차: 고친 두 곳만 codex, 지적 0(어긋남 15). 기록 `reviews/raw-design-docs-check.md` | G26·G27 충족 |
+| 2026-09-29 | — | PR #348 머지. 02(#347)가 먼저 머지되어 생긴 틈 16건을 점검이 찾았고, 25라운드(`reviews/round-25-closing.md`)와 보정 PR `fix/schema-form-realign-01-02`가 닫는다. 01의 상태는 "머지(절 통과 대기)"(25C-09). 계획과 기록은 [realign.md](realign.md) | 보정 진행 |
 
 ### 재개 메모 (2026-09-28, U2 중간)
 

@@ -97,6 +97,7 @@
 - 보충:
   > 소유자(설계서 메모 1): "약어 (Decl)을 쓰지말고" (`reviews/round-18-owner-answers.md:38`)
   > 소유자(설계서 메모 2): "Fragment 는 매력적인데, React Fregment <></> 랑 충돌할거같구나. 내부명이라 괜찮을거같지만, 그래도 명칭을 바꿨으면 해. SchemaFragment 정도로." (`reviews/round-18-owner-answers.md:39`)
+  > 편집자 결정(25C-06): "【추론】 BLUEPRINT-002의 스케치(`guard`·`constrains`·`inherited`)와 BLUEPRINT-017의 "`SchemaFragment.guard`에 든 `controls.active` 식"은 뜻의 서술이며, 02의 `src/core/blueprint/type.ts`(`SchemaFragment`의 `gates`·`overlays`·`inheritedOverlays`, 숫자 `id`, 게이트 `{ kind: 'if' | 'active' | 'discriminator', condition }`)가 그 구현이다(BLUEPRINT-026)." (`reviews/round-25-closing.md:58`)
 - 상태: 현행
 - 출처: `adr/0005-blueprint-analysis-and-node-sharing.md:29-41`(정본), `reviews/round-18-owner-answers.md:38`, `reviews/round-18-owner-answers.md:39`
 - 닫은 사람: 편집자 결정(5차 본문 제안, `adr/0005-blueprint-analysis-and-node-sharing.md:3` "분석 단계의 분리와 청사진의 형태는 제안"), 소유자 답(`reviews/round-18-owner-answers.md:38` 설계서 메모 1), 소유자 답(`reviews/round-18-owner-answers.md:39` 설계서 메모 2)
@@ -300,6 +301,8 @@
 - 보충:
   > "`enum`의 교차가 공집합일 때 런타임 교차의 throw는 §3에 따라 사라지고 정적 연언의 throw만 남는다." (`adr/0005-blueprint-analysis-and-node-sharing.md:111`)
   > "켜진 조각과의 런타임 교차가 공집합일 때 공개 `node.jsonSchema`가 싣는 것(`enum`은 빈 배열인가, `const` 충돌의 표현, 범위의 역전)" (`reviews/round-18-agenda.md:26`)
+  > 편집자 결정(25C-03): "【추론】 청사진 오류 `INVALID_RANGE`·`EMPTY_ENUM_INTERSECTION`·`CONFLICTING_CONST_VALUES`는 정적 연언에서 둘 이상의 기여가 같은 키워드를 적어 교차한 결과가 공집합일 때만 난다." (`reviews/round-25-closing.md:32`)
+  > 편집자 결정(25C-03): "【추론】 리터럴 `enum: []`는 공집합 표시가 아니며, 공집합은 잎 함수가 `EMPTY_INTERSECTION`을 돌려준 경우만이다. 이 셋은 유효 스키마의 키워드 교차에만 걸리고, 판별 키의 `const`·`enum` 모으기는 FRAGMENT-048대로 키워드를 가리지 않고 교차하며, 기여 하나의 값이 이미 비어도(`{ enum: [] }`, `{ const: 'a', enum: ['b'] }`) `EMPTY_ENUM_INTERSECTION`이다(25C-01)." (`reviews/round-25-closing.md:34`)
 - 상태: 현행
 - 출처: `adr/0005-blueprint-analysis-and-node-sharing.md:76`(정본), `adr/0005-blueprint-analysis-and-node-sharing.md:111`, `reviews/round-18-owner-answers.md:37`
 - 닫은 사람: 편집자 결정(10라운드 5차 본문, `adr/0005-blueprint-analysis-and-node-sharing.md:76` 원장 §5), 소유자 답(`reviews/round-18-owner-answers.md:37` union O7·O8; `type`의 빈 교집합)
@@ -318,7 +321,10 @@
   > - **분기 스키마는 손대지 않는다.** `kind: { const }`와 `required`는 그대로 검증기에 간다(ADR 0001). 결과는 청사진의 `Fragment.guard`에 든 `controls.active` 식뿐이다. 소유자: "우리는 "&active": 을 더하는거지 스키마를 수정하는건 아니니까".
   > - **청사진 단계에서 끝난다.** 상태 칸(원본과 `extras` 둘)도 작업 루프도 바꾸지 않는다. 변환된 게이트는 다른 `controls.active`와 같이 호스트 바퀴에서 평가된다.
   > - **판별 프로퍼티는 본체에 선언한다**(§3). 폼이 소유하지 않고, 분기 값의 합집합 `enum`을 만들지도 않으며, 암묵 default도 없다. 채움의 원천은 `controls.default` > `default` > 없음뿐이다.
-- 보충: 없음
+- 보충:
+  > 편집자 결정(25C-06): "【추론】 BLUEPRINT-002의 스케치(`guard`·`constrains`·`inherited`)와 BLUEPRINT-017의 "`SchemaFragment.guard`에 든 `controls.active` 식"은 뜻의 서술이며, 02의 `src/core/blueprint/type.ts`(`SchemaFragment`의 `gates`·`overlays`·`inheritedOverlays`, 숫자 `id`, 게이트 `{ kind: 'if' | 'active' | 'discriminator', condition }`)가 그 구현이다(BLUEPRINT-026)." (`reviews/round-25-closing.md:58`)
+  > 편집자 결정(25C-06): "【추론】 받는 조건은 뜻이 같은 것이다: 판별 게이트는 `./<key>`의 값이 `values`에 드는가로 평가되고, 분기 자신의 `controls.active`와 AND 하나로 합쳐지며, 다른 `controls.active` 게이트와 같이 호스트 바퀴에서 평가된다." (`reviews/round-25-closing.md:59`)
+  > 편집자 결정(25C-06): "【추론】 02에는 게이트 평가기가 없고 조건을 기록만 하므로(`type.ts`의 `BlueprintGate`, `gates`는 모두 성립해야 하는 조건의 목록), 평가는 PR 03이 이 뜻대로 한다." (`reviews/round-25-closing.md:60`)
 - 상태: 현행
 - 출처: `adr/0005-blueprint-analysis-and-node-sharing.md:80,82,84-86`(정본), `adr/0005-blueprint-analysis-and-node-sharing.md:83#1-3`(정본), `adr/0005-blueprint-analysis-and-node-sharing.md:54`, `02-target-overview.md:126`, `08-design-a-to-z.md:178`, `adr/0002-guard-fragment-model.md:75,97-100`(FRAGMENT-008과 일부 겹침)
 - 닫은 사람: 소유자 답(`reviews/round-10-owner-answers.md:11` B-22), 소유자 답(`reviews/round-12-owner-answers.md:9` 2 `&discriminator`), 소유자 답(`reviews/round-9-spec.md:20` 축2; 판별 프로퍼티는 본체), 소유자 답(`reviews/round-15-decisions.md:13` 5; `controls` 그룹 표기), 소유자 답(`reviews/round-15-decisions.md:9` 1; 식의 기준점 `./`)
@@ -431,7 +437,8 @@
 
 - 결정:
   > 청사진의 구체적 형태는 내부 구조여서 바꾸기 쉽다. 노드 공유 규칙은 값 보존 동작을 정하므로 공개 후에는 바꾸기 어렵다. `controls.discriminator`는 예약 층의 공개 키이므로 들이면 되돌리기 어렵다.
-- 보충: 없음
+- 보충:
+  > 편집자 결정(25C-06): "【추론】 BLUEPRINT-002의 스케치(`guard`·`constrains`·`inherited`)와 BLUEPRINT-017의 "`SchemaFragment.guard`에 든 `controls.active` 식"은 뜻의 서술이며, 02의 `src/core/blueprint/type.ts`(`SchemaFragment`의 `gates`·`overlays`·`inheritedOverlays`, 숫자 `id`, 게이트 `{ kind: 'if' | 'active' | 'discriminator', condition }`)가 그 구현이다(BLUEPRINT-026)." (`reviews/round-25-closing.md:58`)
 - 상태: 현행(기록)
 - 출처: `adr/0005-blueprint-analysis-and-node-sharing.md:138`(정본)
 - 닫은 사람: 편집자 결정(`adr/0005-blueprint-analysis-and-node-sharing.md:138`), 소유자 답(`reviews/round-15-decisions.md:13` 5; `controls` 표기)
@@ -746,6 +753,8 @@
   > 편집자 결정(18C-104): "【추론】 로드(마운트, `FormHandle.reset()`, `resetSubtree()`)도 같은 두 단계를 따른다." (`reviews/round-18-closing.md:2914`)
   > 반영 칸(설계서 메모 4): "게터 `typeMismatch: boolean`, 경로 목록 `typeMismatches: readonly string[]`, 경고 코드 `SCHEMA_FORM_WARNING.TYPE_MISMATCH`." (`reviews/round-18-owner-answers.md:41`)
   > 편집자 결정(18C-105): "【추론】 전이 단계의 재해석은 전이 쓰기다." (`reviews/round-18-closing.md:2938`) — U7의 "한 번 더"는 라운드마다이며, 한 노드는 한 라운드에 한 번만 다시 해석하고 상한을 넘기면 원본 B에는 쓰기 경계의 해석(정적 목록)만 남는다(WRITE-099).
+  > 편집자 결정(25C-04): "【추론】 켜진 게이트 선언의 `type`과 정적 허용 집합의 교집합이 비면 유효 스키마는 `enum: []`을 적지 않고 형 충돌을 결과에 드러내며, 그 게이트들이 켜진 동안의 정착 오류 `SHARED_NODE_CONFLICT`는 PR 03(정착)이 던진다." (`reviews/round-25-closing.md:42`)
+  > 편집자 결정(25C-04): "【추론】 보정 PR은 그 신호를 `mergeEffectiveSchema`의 반환 `{ schema, typeConflict }`로 드러내고(형 충돌이면 `typeConflict: true`, `schema.type`은 정적 `schemaType`, `enum`은 적지 않음, 같은 활성 집합이면 같은 참조), 최종 모양은 PR 03이 정한다." (`reviews/round-25-closing.md:43`)
 - 상태: 현행
 - 출처: `reviews/round-18-owner-answers.md:37`(정본, 반영 칸), `reviews/round-18-closing.md:2908-2911,2914`, `reviews/round-18-owner-answers.md:41`, `reviews/round-18-closing.md:2938`
 - 닫은 사람: 소유자 답(`reviews/round-18-owner-answers.md:37` union O7·O8), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-104), 소유자 답(`reviews/round-18-owner-answers.md:41` 설계서 메모 4), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-105; U7 재해석은 라운드마다)
@@ -853,6 +862,9 @@
   > 실패: 예와 다르면 절차를 고치고, 절차가 예를 하나로 정하지 못하면 이 블록을 고친다.
 - 보충:
   > 편집자 결정(18C-105): "【추론】 정적 선언이 없는 이름에서 게이트 없는 분기끼리 fold가 다르면 게이트 없는 선언끼리의 다른 종류이므로 `SHARED_NODE_KIND_CONFLICT` 청사진 오류다(BLUEPRINT-012, 소유자 O-10)." (`reviews/round-18-closing.md:2950`)
+  > 편집자 결정(25C-02): "【추론】 BLUEPRINT-044와 TEST-077이 든 `union.*.test.ts` 여섯 이름은 단언의 주소이며 규범이 아니다. 단언이 게이트다." (`reviews/round-25-closing.md:19`)
+  > 편집자 결정(25C-11): "【추론】 E1–E42는 `src/core/blueprint/__tests__/`의 네 파일에 있다: `blueprint.type-syntax.test.ts`(E1–E10, E28), `blueprint.type-inference.test.ts`(E11–E17, E29, E32–E35), `blueprint.type-static-intersection.test.ts`(E18–E24, E30, E31, E36–E39), `blueprint.type-gated-declarations.test.ts`(E25–E27, E40–E42)." (`reviews/round-25-closing.md:103`)
+  > 편집자 결정(25C-11): "【추론】 `union.kind-procedure.test.ts`의 단언은 위 네 파일의 표 행과 `blueprint.type-gated-declarations.test.ts`의 정적 소유자 없는 분기 접기 충돌 사례에, `union.null-only.test.ts`는 위 표 행에, `union.static-intersection.test.ts`는 `blueprint.type-static-intersection.test.ts`에, `union.schema-type-invariant.test.ts`는 `blueprint.type-syntax.test.ts`의 E1–E9 불변식에, `union.gated-narrowing.test.ts`는 `blueprint.type-gated-declarations.test.ts`에, `union.terminal-subtree-warning.test.ts`는 `blueprint.diagnostics.test.ts`와 `blueprint.type-syntax.test.ts`의 E28에 있다." (`reviews/round-25-closing.md:104`)
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:2381-2414,2473-2476`(정본), `reviews/round-18-closing.md:2950`
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-90), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-105)

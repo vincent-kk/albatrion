@@ -115,4 +115,55 @@ describe('blueprint static type conjunction', () => {
         strategy: 'terminal',
       });
   });
+  it('treats an all-null static conjunction as a null node', () => {
+    expect(
+      blueprint({ type: 'null', allOf: [{ type: 'null' }] }).root,
+    ).toMatchObject({
+      kind: 'null',
+      schemaType: 'null',
+      nullable: true,
+      strategy: 'terminal',
+    });
+  });
+
+  it('gives every declaration pair the same result in both orders', () => {
+    const pairs: readonly [string, unknown, unknown][] = [
+      ['E18', ['string', 'number'], 'string'],
+      ['E19', ['number', 'string'], ['integer', 'string']],
+      ['E20', 'number', 'integer'],
+      ['E21', ['string', 'null'], 'string'],
+      ['E23', 'string', 'number'],
+      ['E24', 'number', ['number', 'string']],
+      ['E30', ['string', 'null'], ['number', 'null']],
+      ['E31', ['string', 'number'], ['string', 'boolean']],
+      ['E36', 'integer', 'number'],
+      ['E37', 'string', ['string', 'null']],
+      ['E38', ['string', 'number', 'null'], ['string', 'boolean', 'null']],
+    ];
+    const outcome = (left: unknown, right: unknown) => {
+      try {
+        const { kind, schemaType, nullable } = blueprint({
+          allOf: [{ type: left }, { type: right }],
+        }).root;
+        return {
+          kind,
+          nullable,
+          schemaType: Array.isArray(schemaType)
+            ? [...schemaType].sort()
+            : schemaType,
+        };
+      } catch (error: any) {
+        return { error: error.specific };
+      }
+    };
+    for (const [id, left, right] of pairs) {
+      const forward = outcome(left, right);
+      expect(outcome(right, left), id).toEqual(forward);
+      if (id === 'E23')
+        expect(forward).toEqual({
+          error: BlueprintErrorCode.AllOfTypeRedefinition,
+        });
+      else expect(forward, id).not.toHaveProperty('error');
+    }
+  });
 });

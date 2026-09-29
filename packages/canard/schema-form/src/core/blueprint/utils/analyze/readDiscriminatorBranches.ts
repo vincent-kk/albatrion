@@ -39,9 +39,9 @@ export const readDiscriminatorBranches = (
   if (propertyName === undefined) return result;
   if (typeof propertyName !== 'string' || !propertyName.length)
     return throwBlueprintError(
-      BlueprintErrorCode.DiscriminatorMismatch,
-      schemaPath,
-      { propertyName },
+      BlueprintErrorCode.InvalidControlShape,
+      `${schemaPath}/controls/discriminator`,
+      { group: 'controls', key: 'discriminator', expected: 'string' },
       context.options,
     );
   for (const keyword of ['oneOf', 'anyOf'] as const) {

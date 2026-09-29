@@ -21,6 +21,7 @@ export type {
   PropertyDeclaration,
   SchemaFragment,
   SchemaTypeName,
+  EffectiveSchema,
   EffectiveSchemaOptions,
   EffectiveSchemaMemo,
   EffectiveSchemaCacheEntry,

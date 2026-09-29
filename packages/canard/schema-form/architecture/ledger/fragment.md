@@ -709,7 +709,9 @@
   > 【추론】 null 분기에 판별 키가 없는 것은 키 없음도 오류도 아니다.
   > 【추론】 분기가 자기 `controls.active`도 가지면 그 분기의 게이트는 `(변환식) && (분기 식)` 하나다(`08-design-a-to-z.md:178`).
   > 【추론】 판별 키가 없는 분기가 자기 `controls.active`를 가지면 그 식만이 게이트다.
-- 보충: 없음
+- 보충:
+  > 편집자 결정(25C-01): "【추론】 한 분기의 정적 연언 안에서 판별 키의 `const`·`enum` 교차가 공집합이면 오류 코드는 ERROR-164의 정적 연언 행(`EMPTY_ENUM_INTERSECTION`)이며 `DISCRIMINATOR_MISMATCH`가 아니다." (`reviews/round-25-closing.md:9`)
+  > 편집자 결정(25C-03): "【추론】 리터럴 `enum: []`는 공집합 표시가 아니며, 공집합은 잎 함수가 `EMPTY_INTERSECTION`을 돌려준 경우만이다. 이 셋은 유효 스키마의 키워드 교차에만 걸리고, 판별 키의 `const`·`enum` 모으기는 FRAGMENT-048대로 키워드를 가리지 않고 교차하며, 기여 하나의 값이 이미 비어도(`{ enum: [] }`, `{ const: 'a', enum: ['b'] }`) `EMPTY_ENUM_INTERSECTION`이다(25C-01)." (`reviews/round-25-closing.md:34`)
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:130-140`(정본)
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-05)

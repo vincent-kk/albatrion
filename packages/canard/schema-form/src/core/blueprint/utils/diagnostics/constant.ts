@@ -13,6 +13,7 @@ export const BlueprintErrorCode = {
   ConditionIndex: 'CONDITION_INDEX',
   ConditionIndices: 'CONDITION_INDICES',
   UnknownGroupKey: 'UNKNOWN_GROUP_KEY',
+  InvalidControlShape: 'INVALID_CONTROL_SHAPE',
   DiscriminatorMismatch: 'DISCRIMINATOR_MISMATCH',
   SharedNodeKindConflict: 'SHARED_NODE_KIND_CONFLICT',
   TerminalStrategyMismatch: 'TERMINAL_STRATEGY_MISMATCH',

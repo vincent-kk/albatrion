@@ -24,7 +24,7 @@
 - **공개 형**: `tsc --strict`로 `UnionNode`·`InferSchemaNode`·`InferValueType`·가드(NODE-058), 공개 표면 잔여(SURFACE-059). 스키마 타입의 컴포넌트 자리(GOAL-088, 18C-76): "재귀 스키마 타입에 매개변수를 하나 더 실을 때의 타입 검사 비용을 `yarn typecheck`로 확인한다." 루트 `typecheck` 스크립트가 생기기 전에는 `yarn workspace @canard/schema-form typecheck`로 잰다.
 - **바인딩 계약 다섯**(LANDING-095: REACT-007·009·011, LANDING-075 넷째, REACT-012), 계약과 함께 드는 렌더 계층의 일(검증 요청의 준비 시점, `degraded` 제출 거부와 검증 불가의 거부, 청사진 오류의 대체 화면, 마운트 정착 오류의 원인별 처리, LANDING-067)과 `reset` 로드 전환(같은 스키마 판정·커밋 재대조·재생성·Refresh 번호·상호작용 초기화 번호), 로드가 아닌 쓰기의 Refresh 범위(EVENT-071, 18C-94).
 - **벤치 비교**(TEST-026·027): 옛 판 기준선 대 새 판, 코어와 렌더, 벤치 일곱. 느린 항목은 이유를 적고 소유자가 받아들여야 병합. 모바일 안전 임계는 잰 사실만 적는다(TEST-074).
-- **번들 크기**(TEST-075): "ESM 진입(`dist/index.mjs`)을 esbuild로 minify하고 gzip -9 하며, 의존성은 외부로 둔다." "기준은 v0.16.0(2026-09-21 빌드)의 37,023 B다." "배포되는 minify 없는 gzip(51,632 B)도 함께 보고한다." "기준보다 늘면 ADR 0009 §4와 같은 기록·수용 규칙을 따른다." "이유를 적고 Vincent가 받아들여야 병합한다."
+- **번들 크기**(TEST-075): "ESM 진입(`dist/index.mjs`)을 esbuild로 minify하고 gzip -9 하며, 의존성은 외부로 둔다." "기준은 v0.16.0(2026-09-21 빌드)의 37,023 B다." "배포되는 minify 없는 gzip(51,632 B)도 함께 보고한다." "기준보다 늘면 ADR 0009 §4와 같은 기록·수용 규칙을 따른다." (→ TEST-027) "이유를 적고 Vincent가 받아들여야 병합한다."
 - **본체 이름 이주와 명령**(LANDING-095·067, EVENT-063·073): `packages/canard/schema-form/src`(`__legacy__` 제외)와 UI 플러그인 넷의 `src`에서 `node.group` 0, `ChildNodeComponentProps`·`FormGroupProps`에 `FormTypeRenderer` 칸 0(`FormTypeRendererProps`는 남는다, GOAL-088). UI 플러그인 넷의 `build`(타입 검사 포함)가 초록(LANDING-067). `FormHandle`의 명령은 EVENT-073에 기록된 소유자 결정의 모양과 같다.
 - **레거시**: 새 코드에서 `__legacy__`를 가리키는 import 0(린트 + 검색), 레거시 시험은 글롭에서 제외, 패키지 검사(`yarn workspace @canard/schema-form lint`·`test`와 타입 검사; 루트의 `lint`·`typecheck`·`test` 스크립트는 릴리스 전환 PR이 만들고 그 뒤에는 저장소 전체로) 초록.
 
