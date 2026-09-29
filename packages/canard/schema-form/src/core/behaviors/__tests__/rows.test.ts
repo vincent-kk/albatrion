@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { blueprint } from '../../blueprint';
 import type { BlueprintNode } from '../../blueprint';
 import type { Behavior, SchemaNodeRecord, UnionSpec } from '../../record';
+import { BEHAVIORS } from '../index';
 import { booleanBehavior } from '../booleanBehavior';
 import { nullBehavior } from '../nullBehavior';
 import { numberBehavior } from '../numberBehavior';
@@ -70,6 +71,24 @@ const spec = (kinds: UnionSpec['kinds']): UnionSpec => ({
 });
 
 describe('behavior rows', () => {
+  it('TEST-069 row combinations covers every kind and strategy choice', () => {
+    const types = ['string', 'number', 'boolean', 'null', 'object',
+      'array', 'virtual', 'union'];
+    const strategies = ['branch', 'terminal'];
+    const present: string[] = [];
+    for (const type of types)
+      for (const strategy of strategies) {
+        const row = Object.entries(BEHAVIORS).find(([kind]) => kind === type)?.[1];
+        const selected = strategy === 'branch' ? row?.branch : row?.terminal;
+        if (selected) present.push(`${type}.${strategy}`);
+      }
+    expect(present).toEqual([
+      'string.terminal', 'number.terminal', 'boolean.terminal',
+      'null.terminal', 'object.branch', 'object.terminal',
+      'virtual.branch', 'union.terminal',
+    ]);
+  });
+
   it('shares scalar interpretation and unchanged terminal slots', () => {
     expect(stringBehavior.interpret).toBe(numberBehavior.interpret);
     expect(numberBehavior.interpret).toBe(booleanBehavior.interpret);

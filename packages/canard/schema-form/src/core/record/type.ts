@@ -77,13 +77,13 @@ export interface Behavior<Self = unknown> {
   /** Interpret caller input under the current allowed types. */
   interpret(input: unknown, spec: UnionSpec): unknown;
   /** Assemble the current child values without committing them. */
-  assemble(node: SchemaNodeRecord<Self>, children: readonly Self[]): unknown;
+  assemble<Node extends Self>(node: SchemaNodeRecord<Node>, children: readonly Node[]): unknown;
   /** Project a local value into the outgoing value. */
-  project(node: SchemaNodeRecord<Self>, local: unknown): unknown;
+  project<Node extends Self>(node: SchemaNodeRecord<Node>, local: unknown): unknown;
   /** Return a completed input string, or undefined when there is no write. */
-  finishInput(node: SchemaNodeRecord<Self>): string | undefined;
+  finishInput<Node extends Self>(node: SchemaNodeRecord<Node>): string | undefined;
   /** Describe children to be created by the caller. */
-  declareChildren(node: SchemaNodeRecord<Self>): readonly BlueprintChildEntry[];
+  declareChildren<Node extends Self>(node: SchemaNodeRecord<Node>): readonly BlueprintChildEntry[];
   /** Stable dispatch kind of this row. */
   readonly type: BlueprintNodeKind;
   /** Fixed branch or terminal shape of this row. */

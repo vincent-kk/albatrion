@@ -65,10 +65,11 @@ Planning method: 저장소 지침 — `PLAN.md` §2와 `plan/prompts.md`의 단�
 | 2026-09-29 | U5 | antigravity 코드 대조 1차 `CODE-U5: FAIL`(차단: E26 시험이 E26을 안 봄, 입력 쓰기가 선언 자식 전수 순회 — SETTLE-047·NODE-026 위반, 템플릿 캐시 변경의 문서 누락; 비차단 넷) + 조율 세션 발견(`in`의 프로토타입 키). codex가 26C-07과 함께 8항목 수정: 50자식 입력 쓰기 계산 방문 2·선택 방문 0, 재귀 템플릿 둘째 발생 L `/next`, 캐시 원복. 조율 세션 재실행 G8·G9·G24·G28, core 74파일·627시험, tsc·eslint 통과, 새 형 단언 없음. 재대조 `CODE-U5-FIX: PASS`(antigravity, 패키지 전체 355파일·4,542시험 초록 보고) | `134045f99`, `89b835695` |
 | 2026-09-30 | U6 | codex(세션 `29761afa`)가 전이·예산·원본 B·로드·쓰기 옵션을 씀(새 시험 25, WRITE-098·099 시나리오 3). 뒤 PR 몫은 26C-02·03대로 나눠 둠(PR-3 `derived`·`injectTo`·`unsetValue`, PR-4 배달·경고 중복 키·`UpdateValue`, PR-5 배열 복원·로드 인덱스, PR-6 `controls.children`·조각 나감 정책, PR-7 제출 거부·렌더). 조율 판정: (1) WRITE-015 배치 행은 `batch`가 PR-4 기제(LANDING-064)이므로 PR-4로 미룸(§4 기록). (2) 새 억제 비트를 패키지 공개 `PublicSetValueOption`에 넣은 것은 되돌림 — 07까지 `<Form>`은 옛 엔진이 섬기고 옛 엔진은 이 비트를 무시하므로 공개하면 예측가능성을 해침(D5, LANDING-159 규칙 3). 내부 `SetValueOption`에만 둠. codex의 `yarn build`로 생긴 낡은 `dist`가 stories의 tsc를 깨뜨려 다시 빌드함. 조율 세션 재실행 G10·G29, tsc·eslint, unit 257파일·3,641시험, render 52파일·539시험 통과 | 이 커밋 |
 | 2026-09-30 | U6 | antigravity 코드 대조 `CODE-U6: PASS`(차단 0; 호출마다 판정이 PASS→FAIL→PASS로 흔들려 조율 세션이 직접 판정). 유일한 지적 — 양 비트 동시 지정의 억제 우선 단언이 Enable 시험 끝에 접혀 있음 — 을 받아들여 독립 시험 `WRITE-015 suppression wins …`로 떼고 Form 기본 상태에서도 단언(Enable 우선이면 채워지므로 판별함). settle 59시험 초록 | 이 커밋 |
+| 2026-09-30 | U7 | codex(세션 `bbba3c93`)가 `SchemaNode` 클래스(프로토타입 멤버 28 = DETAIL 표 28)·공개 형·가드 10·`schemaNodeFactory`, 클래스 파일 전용 NODE-010 린트, 새 fractal 비시험 파일의 형 단언·`any` 금지, 의존 방향 순환 시험을 씀. 형 단언 1건(`getDependencyIndex.ts`)은 선언 자리에서 형을 고쳐 없앰, TEST-070 중단 사유 없음. 조율 세션이 fractal 뿌리의 구현 둘(`guards.ts`·`schemaNodeFactory.ts`)을 `utils/`로 옮김(filid 뿌리 규칙, 가드 묶음은 옛 `filter.ts` 관례). 재실행 G11·G12·G26, tsc, eslint, unit 260파일·3,659시험 통과 | 이 커밋 |
 
 ## 3. 다음 행동
 
-- U6(정착 ②: 전이·예산·원본 B·로드·쓰기 옵션) codex 진행 → antigravity 코드 대조 → 커밋 → U7.
+- U7 antigravity 코드 대조 → U8(시나리오·회귀 이식·union 시험·SCN) → U9(벤치) → U10(최종 게이트·PR).
 - 이 세션의 커밋은 경로를 지정한 `git add`만 쓴다(원장 세션의 미커밋 변경과 섞지 않음).
 
 ## 4. 원장·계획서 어긋남

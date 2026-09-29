@@ -1,4 +1,4 @@
-import type { Blueprint } from '../../../blueprint';
+import type { Blueprint, PropertyDeclaration } from '../../../blueprint';
 import { resolveDependencyPath } from '../paths/resolveDependencyPath';
 
 /** One absolute watch prefix and declarations registered exactly here. */
@@ -16,8 +16,9 @@ class DependencyIndex {
 
   /** Build absolute watch paths from authored reverse dependency IDs. */
   constructor(blueprint: Blueprint) {
-    const declarations = new Map(blueprint.nodes.flatMap((node) =>
-      node.declarations.map((declaration) => [declaration.id, declaration] as const)));
+    const declarations = new Map<number, PropertyDeclaration>(blueprint.nodes.flatMap((node) =>
+      node.declarations.map((declaration): [number, PropertyDeclaration] =>
+        [declaration.id, declaration])));
     for (const [dependency, ids] of Object.entries(blueprint.dependencies))
       for (const id of ids) {
         const declaration = declarations.get(id);

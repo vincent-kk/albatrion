@@ -1,0 +1,52 @@
+import { mergeEffectiveSchema } from '../../blueprint';
+import type { Blueprint, BlueprintChildEntry, BlueprintNode,
+  BlueprintSchema } from '../../blueprint';
+import { BEHAVIORS } from '../../behaviors';
+import type { Behavior, SchemaNodeRuntime } from '../../record';
+import { SchemaNode as RuntimeSchemaNode } from '../SchemaNode';
+import type { InferSchemaNode, SchemaNode } from '../type';
+
+/** Tree inputs before the factory attaches its analysis and real creator. */
+export type SchemaNodeRuntimeSeed = Omit<SchemaNodeRuntime<unknown>,
+  'blueprint' | 'nodeFactory'>;
+
+/** Create one record from a bound child or the root template. */
+const createSchemaNode = (
+  entry: BlueprintChildEntry | BlueprintNode,
+  parent: RuntimeSchemaNode | null,
+  runtime: SchemaNodeRuntime<RuntimeSchemaNode>,
+): RuntimeSchemaNode => {
+  const template = 'node' in entry ? entry.node : entry;
+  const name = 'node' in entry ? entry.name : '';
+  const escapedName = name.replace(/~/g, '~0').replace(/\//g, '~1');
+  const path = parent ? `${parent.path}/${escapedName}` : '';
+  const depth = parent ? parent.depth + 1 : 0;
+  const row = BEHAVIORS[template.kind]?.[template.strategy];
+  if (!row) throw new Error(`Missing behavior for ${template.kind}/${template.strategy}`);
+  const behavior: Behavior<RuntimeSchemaNode> = row;
+  return new RuntimeSchemaNode(
+    behavior, runtime, template, parent, name, escapedName, path, depth,
+    template.strategy === 'branch' ? {} : null,
+    template.strategy === 'branch' ? [] : null,
+    mergeEffectiveSchema(template, [], { mode: 'runtime' }), {},
+  );
+};
+
+/** Bind the one per-tree runtime creator and instantiate its root record. */
+export function schemaNodeFactory<Schema extends BlueprintSchema>(
+  analysis: Blueprint & { readonly schema: Schema },
+  runtimeSeed: SchemaNodeRuntimeSeed,
+): InferSchemaNode<Schema>;
+export function schemaNodeFactory(
+  analysis: Blueprint, runtimeSeed: SchemaNodeRuntimeSeed,
+): SchemaNode;
+export function schemaNodeFactory(
+  analysis: Blueprint, runtimeSeed: SchemaNodeRuntimeSeed,
+): unknown {
+  const runtime: SchemaNodeRuntime<RuntimeSchemaNode> = {
+    ...runtimeSeed,
+    blueprint: analysis,
+    nodeFactory: createSchemaNode,
+  };
+  return createSchemaNode(analysis.root, null, runtime);
+}
