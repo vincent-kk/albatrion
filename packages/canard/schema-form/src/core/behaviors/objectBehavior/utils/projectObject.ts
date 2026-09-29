@@ -2,6 +2,9 @@ import type { Behavior } from '../../../record';
 import { getStaticChoices } from '../../utils/options/getStaticChoices';
 import { omitEmptyObject } from './omitEmptyObject';
 
-/** Apply the memoized empty-host policy without changing its local object. */
-export const projectObject: Behavior['project'] = (node, local) =>
-  getStaticChoices(node.schema).omitEmpty ? omitEmptyObject(local) : local;
+/** Hide children beneath non-object raw, then apply the empty-host projection. */
+export const projectObject: Behavior['project'] = (node, local) => {
+  if (node.raw !== undefined && (node.raw === null ||
+    typeof node.raw !== 'object' || Array.isArray(node.raw))) return undefined;
+  return getStaticChoices(node.schema).omitEmpty ? omitEmptyObject(local) : local;
+};

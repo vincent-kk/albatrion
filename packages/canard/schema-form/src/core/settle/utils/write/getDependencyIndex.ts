@@ -25,6 +25,17 @@ class DependencyIndex {
         const watched = resolveDependencyPath(declaration.path, dependency);
         if (watched !== '@') this.add(watched, declaration.path);
       }
+    for (const node of blueprint.nodes)
+      for (const declaration of node.declarations)
+        for (const gate of declaration.gates) {
+          const expression = blueprint.expressions.find((candidate) =>
+            candidate.schemaPath === gate.schemaPath && candidate.key === 'active');
+          if (!expression) continue;
+          for (const dependency of expression.dependencies) {
+            const watched = resolveDependencyPath(gate.hostPath, dependency);
+            if (watched !== '@') this.add(watched, declaration.path);
+          }
+        }
   }
 
   /** Return owners whose reads intersect a changed path in either direction. */

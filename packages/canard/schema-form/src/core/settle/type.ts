@@ -18,6 +18,30 @@ export interface SettlementContext<Self extends SchemaNodeRecord<Self>> {
   target: Self;
   /** Entry origin retained for later transition rules. */
   kind: SchemaNodeWriteKind;
+  /** Call-local suppression after explicit bits override the form default. */
+  suppressAutomaticWrites: boolean;
+  /** Load boundary whose current shape begins a new appearance lifetime. */
+  loadScope?: Self;
+  /** Nodes newly present after calculation or reset by this load. */
+  entered: Set<Self>;
+  /** Nodes detached from the previous shape during this call. */
+  exited: Set<Self>;
+  /** Active declaration choices published only after this call commits. */
+  selectedDeclarationIds: Map<Self, readonly number[]>;
+  /** Original inputs retained for effective-list interpretation. */
+  writtenInputs: Map<Self, unknown>;
+  /** Previous state for each automatic write, restored in reverse order. */
+  automaticLog: { node: Self; previousRaw: unknown; previousExtras: unknown }[];
+  /** Nodes whose missing input received a default during this call. */
+  filledNodes: Set<Self>;
+  /** Whether shape updates belong to reversible automatic transition work. */
+  inTransition: boolean;
+  /** Previous latent entries changed during transition, indexed once per key. */
+  latentAutomaticLog: Map<string, { present: boolean; value: unknown }>;
+  /** Whether marking is currently applying a transition write. */
+  automatic: boolean;
+  /** True when the current transition round changed either state channel. */
+  automaticChanged: boolean;
   /** Paths scheduled by the write and the blueprint dependency index. */
   dirtyPaths: Set<string>;
   /** Hosts whose declarations or children require a new gate/shape selection. */
@@ -34,4 +58,8 @@ export interface SettlementContext<Self extends SchemaNodeRecord<Self>> {
   cause?: 'expression' | 'sharedConflict' | 'budget';
   /** Exhausted host rounds handed to the later budget phase. */
   hostWheelExceeded?: number;
+  /** The exhausted transition or recursion budget, when applicable. */
+  exceededBudget?: 'hostWheel' | 'transition' | 'recursion';
+  /** Number of rounds spent at the exhausted budget. */
+  iterations?: number;
 }

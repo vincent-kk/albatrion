@@ -4,6 +4,7 @@ import type { SettlementContext } from '../../type';
 import { markWrite } from '../write/markWrite';
 import { getGateRegistry } from '../gates/getGateRegistry';
 import { hasOwnProperty } from '@winglet/common-utils/lib';
+import { escapeSegment } from '@winglet/json/pointer';
 
 /**
  * Start a gate wheel with only ungated children and their static overlays.
@@ -27,9 +28,15 @@ export const primeHost = <Self extends SchemaNodeRecord<Self>>(
       context.root.runtime.nodeFactory(entry, node, context.root.runtime);
     getGateRegistry(child.runtime).register(child);
     if (!priorChild) {
+      context.entered.add(child);
       const source = node.raw;
-      const input = source !== null && typeof source === 'object' &&
+      const sourceInput = source !== null && typeof source === 'object' &&
         hasOwnProperty(source, entry.name) ? Reflect.get(source, entry.name) : undefined;
+      const latentKey = JSON.stringify([
+        `${node.path}/${escapeSegment(entry.name)}`, entry.node.kind,
+      ]);
+      const input = node.runtime.latentRaw.has(latentKey)
+        ? node.runtime.latentRaw.get(latentKey) : sourceInput;
       markWrite(child, input, context);
       if (child.behavior.strategy === 'branch')
         context.shapeDirtyPaths.add(child.path);

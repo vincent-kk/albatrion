@@ -10,6 +10,9 @@ import { markWrite } from '../write/markWrite';
 import { getGateRegistry } from '../gates/getGateRegistry';
 import { hasSharedConflict } from './hasSharedConflict';
 import { updateOutput } from './updateOutput';
+import { hasRecursiveExpansion } from './hasRecursiveExpansion';
+import { RECURSIVE_SHAPE_DIVERGED } from '../errors/settleErrorCode';
+import { writeLatentRaw } from '../transition/writeLatentRaw';
 
 /**
  * Select all declared direct children in authored order for one host round.
@@ -39,7 +42,7 @@ export const selectChildren = <Self extends SchemaNodeRecord<Self>>(
         gate.schemaPath === `${declaration.schemaPath}/controls/active`
           ? entry.name : undefined)));
     if (active.length === 0) {
-      if (context.changedRaw.has(node.path) || next[entry.name]) {
+      if (context.kind === 'load' || context.changedRaw.has(node.path) || next[entry.name]) {
         const source = node.raw;
         const ownsRaw = source !== null && typeof source === 'object' &&
           hasOwnProperty(source, entry.name);
@@ -47,9 +50,8 @@ export const selectChildren = <Self extends SchemaNodeRecord<Self>>(
           const key = JSON.stringify([
             `${node.path}/${escapeSegment(entry.name)}`, entry.node.kind,
           ]);
-          if (ownsRaw)
-            context.root.runtime.latentRaw.set(key, Reflect.get(source, entry.name));
-          else context.root.runtime.latentRaw.delete(key);
+          writeLatentRaw(context, key, ownsRaw,
+            ownsRaw ? Reflect.get(source, entry.name) : undefined);
         }
       }
       if (next[entry.name] && !seen.has(entry.name)) {
@@ -73,14 +75,31 @@ export const selectChildren = <Self extends SchemaNodeRecord<Self>>(
     }
     seen.add(entry.name);
     const priorChild = hasOwnProperty(prior, entry.name) ? prior[entry.name] : undefined;
+    const source = node.raw;
+    const sourceInput = source !== null && typeof source === 'object' &&
+      hasOwnProperty(source, entry.name) ? Reflect.get(source, entry.name) : undefined;
+    const latentKey = JSON.stringify([
+      `${node.path}/${escapeSegment(entry.name)}`, entry.node.kind,
+    ]);
+    const input = context.root.runtime.latentRaw.has(latentKey) && !priorChild
+      ? context.root.runtime.latentRaw.get(latentKey) : sourceInput;
+    if (!priorChild && !next[entry.name] &&
+      hasRecursiveExpansion(node, entry.node, input)) {
+      if (!context.failure) {
+        context.failure = new SchemaFormError(RECURSIVE_SHAPE_DIVERGED,
+          `Recursive shape diverged at ${node.path}/${entry.name}`,
+          { path: `${node.path}/${entry.name}` });
+        context.cause = 'budget';
+        context.exceededBudget = 'recursion';
+      }
+      continue;
+    }
     const child = next[entry.name] ?? priorChild ??
       context.root.runtime.nodeFactory(entry, node, context.root.runtime);
     getGateRegistry(child.runtime).register(child);
     let entryChanged = false;
     if (!priorChild && !next[entry.name]) {
-      const source = node.raw;
-      const input = source !== null && typeof source === 'object' &&
-        hasOwnProperty(source, entry.name) ? Reflect.get(source, entry.name) : undefined;
+      context.entered.add(child);
       markWrite(child, input, context);
       if (child.behavior.strategy === 'branch')
         context.shapeDirtyPaths.add(child.path);
@@ -88,12 +107,15 @@ export const selectChildren = <Self extends SchemaNodeRecord<Self>>(
       entryChanged = true;
     }
     const ids = active.map((declaration) => declaration.id);
+    context.selectedDeclarationIds.set(child, ids);
     const effective = mergeEffectiveSchema(child.blueprintNode, ids, { mode: 'runtime' });
     if (child.schema !== effective) {
       if (!context.originalSchemas.has(child.path))
         context.originalSchemas.set(child.path, child.schema);
       child.schema = effective;
       context.dirtyPaths.add(child.path);
+      if (child.behavior.strategy === 'branch')
+        context.shapeDirtyPaths.add(child.path);
       context.changedNodes.add(child);
       changed = true;
       entryChanged = true;
@@ -106,8 +128,8 @@ export const selectChildren = <Self extends SchemaNodeRecord<Self>>(
     child.active = true;
     child.detached = false;
     if (!priorChild && context.root.runtime.latentRaw.size > 0)
-      context.root.runtime.latentRaw.delete(
-      JSON.stringify([child.path, child.blueprintNode.kind]));
+      writeLatentRaw(context,
+        JSON.stringify([child.path, child.blueprintNode.kind]), false, undefined);
     if (next[entry.name] !== child) {
       changed = true;
       entryChanged = true;
@@ -124,19 +146,17 @@ export const selectChildren = <Self extends SchemaNodeRecord<Self>>(
   }
   for (const [name, child] of Object.entries(prior))
     if (!next[name]) {
+      context.exited.add(child);
       child.detached = true;
       child.active = false;
       getGateRegistry(child.runtime).remove(child);
       const key = JSON.stringify([child.path, child.blueprintNode.kind]);
       const source = node.raw;
-      if (source !== null && typeof source === 'object' &&
-        hasOwnProperty(source, name))
-        context.root.runtime.latentRaw.set(key, child.raw);
-      else context.root.runtime.latentRaw.delete(key);
+      writeLatentRaw(context, key, source !== null &&
+        typeof source === 'object' && hasOwnProperty(source, name), child.raw);
       for (const path of [...context.root.runtime.typeMismatchPaths])
         if (path === child.path || path.startsWith(`${child.path}/`))
           context.root.runtime.typeMismatchPaths.delete(path);
-      changed = true;
     }
   const nextChildren = Object.values(next);
   if (nextChildren.length !== before.length ||

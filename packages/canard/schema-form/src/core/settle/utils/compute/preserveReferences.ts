@@ -33,6 +33,7 @@ export const preserveReferences = <Self extends SchemaNodeRecord<Self>>(
   if (node.local === previous.local && node.emit === previous.emit &&
     node.children === previous.children &&
     node.schema === (context.originalSchemas.get(node.path) ?? previous.schema) &&
-    node.active === previous.active && !context.changedRaw.has(node.path))
+    node.active === previous.active && !context.changedRaw.has(node.path) &&
+    !context.entered.has(node))
     context.changedNodes.delete(node);
 };

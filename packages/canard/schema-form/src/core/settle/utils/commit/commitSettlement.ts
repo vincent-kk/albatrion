@@ -23,6 +23,11 @@ export const commitSettlement = <Self extends SchemaNodeRecord<Self>>(
   const runtime = context.root.runtime;
   const commit = (runtime.commitNumber ?? 0) + 1;
   runtime.commitNumber = commit;
+  const declarations = runtime.committedDeclarationIds ?? new Map();
+  runtime.committedDeclarationIds = declarations;
+  for (const [node, ids] of context.selectedDeclarationIds)
+    if (!node.detached)
+      declarations.set(JSON.stringify([node.path, node.blueprintNode.kind]), ids);
   const warnings: TypeMismatchRecord[] = [];
   for (const node of context.changedNodes) {
     node.revision++;
@@ -41,7 +46,8 @@ export const commitSettlement = <Self extends SchemaNodeRecord<Self>>(
         received: receivedType(node.raw),
         reason: ambiguous ? 'ambiguous' : 'unconvertible',
         ...(ambiguous ? { candidates } : {}),
-        source: context.changedRaw.has(node.path) ? context.kind : 'gate',
+        source: context.kind === 'load' && context.entered.has(node) ? 'load' :
+          context.changedRaw.has(node.path) ? context.kind : 'gate',
       };
       warnings.push(warning);
       warnDevelopmentIssue({ code: TYPE_MISMATCH,
@@ -100,6 +106,7 @@ export const commitSettlement = <Self extends SchemaNodeRecord<Self>>(
       entry.path === host || entry.path.startsWith(`${host}/`))));
   if (context.failure && runtime.diagnostics.status !== 'degraded')
     runtime.diagnostics = { status: 'degraded', cause: context.cause,
-      ...(context.cause === 'budget' ? { exceededBudget: 'hostWheel' as const } : {}),
+      ...(context.cause === 'budget' ? { exceededBudget: context.exceededBudget,
+        iterations: context.iterations } : {}),
       commit };
 };

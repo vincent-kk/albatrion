@@ -1,7 +1,11 @@
-import type { SchemaNodeRecord } from '../../../record';
+import type { SchemaNodeRecord, UnionSpec } from '../../../record';
 import type { SettlementContext } from '../../type';
 import { staticSpec } from './staticSpec';
 import { hasOwnProperty } from '@winglet/common-utils/lib';
+
+/** Whether a value can merge by named keys without changing the host kind. */
+const isPlain = (value: unknown): value is Record<string, unknown> =>
+  value !== null && typeof value === 'object' && !Array.isArray(value);
 
 /**
  * Store the original write and static interpretation before gate calculation.
@@ -14,10 +18,21 @@ export const markWrite = <Self extends SchemaNodeRecord<Self>>(
   node: Self,
   input: unknown,
   context: SettlementContext<Self>,
+  spec: UnionSpec = staticSpec(node.schemaType, node.nullable),
 ): void => {
+  if (context.loadScope) context.entered.add(node);
+  if (context.kind === 'load') context.changedNodes.add(node);
+  if (context.kind === 'load' && node.behavior.strategy === 'branch')
+    context.shapeDirtyPaths.add(node.path);
+  const isMerge = context.kind === 'callerPartial' && !context.automatic;
+  const sourceInput = isMerge && isPlain(input) && isPlain(node.raw) &&
+    node.behavior.strategy === 'branch' ? { ...node.raw, ...input } : input;
+  if (!context.automatic) context.writtenInputs.set(node, input);
+  else context.automaticLog.push({ node, previousRaw: node.raw,
+    previousExtras: node.extras });
   const interpreted = node.behavior.interpret(
-    input,
-    staticSpec(node.schemaType, node.nullable),
+    sourceInput,
+    spec,
   );
   const rawChanged = !Object.is(node.raw, interpreted);
   if (rawChanged) {
@@ -27,18 +42,22 @@ export const markWrite = <Self extends SchemaNodeRecord<Self>>(
     if (node.behavior.strategy === 'branch')
       context.shapeDirtyPaths.add(node.path);
   }
+  if (context.automatic && rawChanged) context.automaticChanged = true;
   context.dirtyPaths.add(node.path);
   if (node.behavior.strategy !== 'branch' || node.structure === null) return;
-  const source = interpreted !== null && typeof interpreted === 'object' &&
-    !Array.isArray(interpreted) ? interpreted : undefined;
+  const source = isPlain(interpreted) ? interpreted : undefined;
+  const previousExtras = node.extras;
   if (rawChanged && source) {
     const extras = Object.fromEntries(Object.entries(source).filter(([name]) =>
       !node.blueprintNode.childEntries.some((entry) => entry.name === name)));
     node.extras = Object.keys(extras).length ? extras : undefined;
   } else if (rawChanged) node.extras = undefined;
+  if (context.automatic && !Object.is(previousExtras, node.extras))
+    context.automaticChanged = true;
   const names = Object.keys(node.structure);
-  if (context.kind !== 'callerReplace' && context.kind !== 'load') return;
+  if (context.kind === 'input' && !context.automatic) return;
   for (const name of names)
-    markWrite(node.structure[name], source && hasOwnProperty(source, name) ?
-      Reflect.get(source, name) : undefined, context);
+    if (!isMerge || !source || hasOwnProperty(input, name))
+      markWrite(node.structure[name], source && hasOwnProperty(source, name) ?
+        Reflect.get(source, name) : undefined, context);
 };

@@ -142,6 +142,12 @@ export interface TypeMismatchRecord {
 
 /** Minimal per-tree slots consumed by the first settlement engine. */
 export interface SchemaNodeRuntime<Self> extends SchemaNodeRootRuntimeState {
+  /** Form default for automatic writes, overridden by a call's explicit bits. */
+  disableAutomaticWrites?: boolean;
+  /** Form default for clearing raw when a node leaves the shape. */
+  unsetOnInactive?: boolean;
+  /** Last committed active declarations keyed by the occurrence path and kind. */
+  committedDeclarationIds?: Map<string, readonly number[]>;
   /** Required real analysis shared by this tree and its settlement engine. */
   blueprint: Blueprint;
   /** Number of completed synchronous settlement calls. */

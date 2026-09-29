@@ -17,6 +17,7 @@ export const selectNodeSchema = <Self extends SchemaNodeRecord<Self>>(
 ): boolean => {
   const active = node.blueprintNode.declarations.filter((declaration) =>
     declaration.gates.every((gate) => evaluateGate(gate, context, node)));
+  context.selectedDeclarationIds.set(node, active.map((declaration) => declaration.id));
   const effective = mergeEffectiveSchema(node.blueprintNode,
     active.map((declaration) => declaration.id), { mode: 'runtime' });
   if (effective.typeConflict && !context.failure) {
