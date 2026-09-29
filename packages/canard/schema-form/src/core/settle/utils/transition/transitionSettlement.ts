@@ -34,6 +34,7 @@ export const transitionSettlement = <Self extends SchemaNodeRecord<Self>>(
       const key = JSON.stringify([node.path, node.blueprintNode.kind]);
       if (node.detached || filled.has(key)) continue;
       filled.add(key);
+      if (context.kind !== 'load' && hasWrongKindObjectAncestor(node)) continue;
       if (!isMissingRaw(node)) continue;
       const value = readDefault(node);
       if (value === undefined) continue;
@@ -75,4 +76,18 @@ export const transitionSettlement = <Self extends SchemaNodeRecord<Self>>(
     }
     withdrawDetachedFills(context);
   }
+};
+
+/** Non-load writes do not fill children hidden beneath a wrong-kind object host. */
+const hasWrongKindObjectAncestor = <Self extends SchemaNodeRecord<Self>>(
+  node: Self,
+): boolean => {
+  let parent = node.parent;
+  while (parent) {
+    if (parent.behavior.type === 'object' && parent.behavior.strategy === 'branch' &&
+      parent.raw !== undefined && (parent.raw === null ||
+        typeof parent.raw !== 'object' || Array.isArray(parent.raw))) return true;
+    parent = parent.parent;
+  }
+  return false;
 };

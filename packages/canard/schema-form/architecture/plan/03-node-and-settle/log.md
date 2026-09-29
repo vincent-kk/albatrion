@@ -67,6 +67,7 @@ Planning method: 저장소 지침 — `PLAN.md` §2와 `plan/prompts.md`의 단�
 | 2026-09-30 | U6 | antigravity 코드 대조 `CODE-U6: PASS`(차단 0; 호출마다 판정이 PASS→FAIL→PASS로 흔들려 조율 세션이 직접 판정). 유일한 지적 — 양 비트 동시 지정의 억제 우선 단언이 Enable 시험 끝에 접혀 있음 — 을 받아들여 독립 시험 `WRITE-015 suppression wins …`로 떼고 Form 기본 상태에서도 단언(Enable 우선이면 채워지므로 판별함). settle 59시험 초록 | 이 커밋 |
 | 2026-09-30 | U7 | codex(세션 `bbba3c93`)가 `SchemaNode` 클래스(프로토타입 멤버 28 = DETAIL 표 28)·공개 형·가드 10·`schemaNodeFactory`, 클래스 파일 전용 NODE-010 린트, 새 fractal 비시험 파일의 형 단언·`any` 금지, 의존 방향 순환 시험을 씀. 형 단언 1건(`getDependencyIndex.ts`)은 선언 자리에서 형을 고쳐 없앰, TEST-070 중단 사유 없음. 조율 세션이 fractal 뿌리의 구현 둘(`guards.ts`·`schemaNodeFactory.ts`)을 `utils/`로 옮김(filid 뿌리 규칙, 가드 묶음은 옛 `filter.ts` 관례). 재실행 G11·G12·G26, tsc, eslint, unit 260파일·3,659시험 통과 | 이 커밋 |
 | 2026-09-30 | U7 | antigravity 코드 대조 `CODE-U7: PASS`(멤버 28 모두 PR-2 근거, 뒤 PR 멤버·스텁 없음). 비차단 둘: 순환 시험의 파일 수집 단언이 약함 → 중첩 파일 포함 단언을 더함. 떼어진 `target.active`를 거짓으로 단언하라는 제안은 NODE-044 문언과 부딪혀 원장 관리자 질의 → 26C-08: `active`는 형상 소속을 읽는 멤버라 떼어진 옛 참조는 거짓(살아 있는 트리의 사실, NODE-044 고정의 예외), 구현 유지. DETAIL 먼저 고치고 세 단언(살아 있는 노드 참, 옛 참조 거짓, 다시 들어도 옛 참조 거짓·새 인스턴스 참)과 값 고정 단언을 더함 | `ab5f5daf8`, `0ad9e4015`, `e1c734566`, 원장 `02ff97841` (`reviews/round-26-closing.md:83-91`) |
+| 2026-09-30 | U8 | U8-A(codex `3fa3910e`): SCN 다섯 부류·`diagnostics` 기대·코어 부류 러너, 빈 부류 단언 제거. 조율 세션 재실행 G14·G25, 코어 시나리오 8파일·25시험 통과. 결함 하나: union `omitEmpty` 미적용(VALUE-034). U8-B(codex `b4dd43b5`): 회귀 75/101·union 시험 13(`todo` 4는 04·06·07 몫). 미이식 26 중 뒤 PR 기제 12(§4), 나머지는 엔진 결함 후보 → codex 결함 라운드에서 원장 대조로 A(엔진 결함)·B(프로토타입이 원장과 다름)·C(PR-2 관측값 없음)로 분류 | `e28af11f7`, `892c6873d`, `e554f4922`, `d639840f0` |
 
 ## 3. 다음 행동
 
@@ -74,6 +75,8 @@ Planning method: 저장소 지침 — `PLAN.md` §2와 `plan/prompts.md`의 단�
 - 이 세션의 커밋은 경로를 지정한 `git add`만 쓴다(원장 세션의 미커밋 변경과 섞지 않음).
 
 ## 4. 원장·계획서 어긋남
+
+- 계획서 §6.1의 PR-2 회귀 배분에 뒤 PR 기제가 필요한 사례가 들어 있다: `r9.mjs:76`(경고 수 4건)·`:80`(검증기 결과 4건)은 PR-4의 경고 기록·검증기, `selfcheck-v5.mjs:348`(통지)은 PR-4, `:519`(배열 `omitTrailing`)은 PR-5. 26C-03에 따라 그 PR로 넘기고 G27의 기대 수를 그만큼 줄인다.
 
 - 계획서 U6 "배치에서 억제 우선"(WRITE-015 배치 행)은 PR-2에서 단언하지 않는다. `batch`는 PR-4의 기제(LANDING-064)이고 26C-03이 뒤 PR 기제를 쓰는 단언을 그 PR로 나누게 하므로 05(PR-4)가 단언한다.
 

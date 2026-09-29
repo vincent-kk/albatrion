@@ -82,8 +82,8 @@ describe('selfcheck-v5 PR-2 regression', () => {
       a: { type: 'string' },
     }, allOf: [{ controls: { active: './a === undefined' }, properties: {
       d: { type: 'string', default: 'D' },
-    } }] });
-    root.setValue(null);
+    } }] }, { snapshot: null });
+    root.resetSubtree();
     expect(root.find('/d')?.raw).toBe('D');
     root.find('/a')?.setValue('A');
     expect(root.outputValue).toEqual({ a: 'A' });

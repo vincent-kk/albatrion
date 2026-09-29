@@ -21,6 +21,16 @@ const overlayTree = () => {
 
 // filid:contract factory-single-path
 describe('selfcheck-v5 lifted and budget gates', () => {
+  it('selfcheck-v5.mjs:211 exposes an active constraint without emitting a value', () => {
+    const { root } = makeSchemaNodeTree({ type: 'object',
+      if: {}, then: { required: ['y'] },
+    }, { ifPredicate: () => input => input !== null && typeof input === 'object' &&
+      !('x' in input) });
+    root.setValue({});
+    expect(root.outputValue).toEqual({});
+    expect(root.jsonSchema).toMatchObject({ required: ['y'] });
+  });
+
   it('selfcheck-v5.mjs:204 lets the later birth turn the earlier negated gate off', () => {
     const { root } = makeSchemaNodeTree({ type: 'object', properties: {
       mode: { type: 'string' },

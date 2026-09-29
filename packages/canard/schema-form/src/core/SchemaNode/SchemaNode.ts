@@ -5,6 +5,7 @@ import { readSchemaNodeDefaultValue, resetSchemaNodeSubtree,
   writeSchemaNode } from '../settle';
 import { SetValueOption } from './type';
 import type { InactiveValue, SetValueOption as PublicSetValueOption } from './type';
+import { SetValueOption as WriteOption } from '../types/value';
 
 const EMPTY_PATHS: readonly string[] = Object.freeze([]);
 const EMPTY_VALUES: readonly InactiveValue[] = Object.freeze([]);
@@ -141,7 +142,9 @@ export class SchemaNode implements SchemaNodeRecord<SchemaNode> {
   }
   /** {@inheritDoc NodeSurface.setValue} */
   setValue(value: unknown, option: PublicSetValueOption = SetValueOption.Overwrite) {
-    return writeSchemaNode<SchemaNode>(this, value, 'callerReplace', option);
+    return writeSchemaNode<SchemaNode>(this, value,
+      (option & WriteOption.Merge) === WriteOption.Merge &&
+      !(option & WriteOption.Replace) ? 'callerPartial' : 'callerReplace', option);
   }
   /** {@inheritDoc NodeSurface.resetSubtree} */
   resetSubtree(option: PublicSetValueOption = SetValueOption.Overwrite) {

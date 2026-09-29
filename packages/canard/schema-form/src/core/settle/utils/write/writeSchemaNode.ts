@@ -13,6 +13,7 @@ import { BUDGET_EXCEEDED } from '../errors/settleErrorCode';
 import { transitionSettlement } from '../transition/transitionSettlement';
 import { restoreSourceB } from '../transition/restoreSourceB';
 import { pruneLatentRaw } from './pruneLatentRaw';
+import { promoteHostForChildWrite } from './promoteHostForChildWrite';
 
 /**
  * Settle one caller write through marking, calculation, and a single commit.
@@ -70,6 +71,8 @@ export const writeSchemaNode = <Self extends SchemaNodeRecord<Self>>(
       Array.isArray(input) || node.behavior.strategy !== 'branch')))
     pruneLatentRaw(node);
   markWrite(node, input, context);
+  if (kind !== 'load' && kind !== 'automatic')
+    promoteHostForChildWrite(node, context);
   registerRecalculation(context);
   computeNode(context.root, context);
   const explicitRaw = new Set(context.changedRaw);

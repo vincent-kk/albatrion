@@ -25,6 +25,20 @@ describe('TEST-077 union mismatch lamp', () => {
     expect(a?.schemaType).toBe(fixedType);
   });
 
+  it('TEST-077 turns the lamp off when a gate widens the effective list again', () => {
+    const { root } = makeSchemaNodeTree({ type: 'object', properties: {
+      narrow: { type: 'boolean' }, a: { type: ['string', 'number'] },
+    }, allOf: [{ controls: { active: './narrow === true' },
+      properties: { a: { type: 'number' } } }] });
+    root.setValue({ narrow: true, a: 'abc' });
+    const a = root.find('/a');
+    expect(a?.typeMismatch).toBe(true);
+    root.find('/narrow')?.setValue(false);
+    expect(a?.typeMismatch).toBe(false);
+    expect(root.typeMismatches).toEqual([]);
+    expect(a?.raw).toBe('abc');
+  });
+
   it('turns the lamp off when a later value matches the effective list', () => {
     const { root } = makeSchemaNodeTree({ type: ['number', 'boolean'] });
     root.setValue('invalid');

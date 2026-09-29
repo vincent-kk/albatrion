@@ -47,6 +47,7 @@ export const primeHost = <Self extends SchemaNodeRecord<Self>>(
         context.originalSchemas.set(child.path, child.schema);
       child.schema = schema;
       context.dirtyPaths.add(child.path);
+      context.changedNodes.add(child);
     }
     child.active = true;
     child.detached = false;
