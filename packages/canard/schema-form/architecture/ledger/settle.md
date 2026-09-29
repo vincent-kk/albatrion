@@ -136,6 +136,9 @@
   > 편집자 결정(18C-105): "【추론】 그 결과가 원본을 바꾸고 게이트를 뒤집으면 채움·비움과 같은 규칙으로 다음 라운드를 부르며, 라운드 상한(게이트 가진 조각 수 + 노드 게이트 수 + 1, SETTLE-005)은 그대로다." (`reviews/round-18-closing.md:2939`)
   > 편집자 결정(18C-105): "【추론】 한 노드는 한 라운드에 한 번만 다시 해석한다." (`reviews/round-18-closing.md:2940`)
   > "**예산.** 호스트 바퀴(게이트 가진 조각 수 + 노드 게이트 수 + 1), 파생 라운드, 전이 라운드(호스트 바퀴와 같은 식이다. 채움이나 나감의 비움이 다음 라운드를 부르는 것은 그 쓰기가 게이트를 뒤집어 아직 생기지 않은 노드를 내거나 아직 나가지 않은 노드를 내보낼 때뿐이고, 노드마다 정착 안에서 채움 한 번·비움 한 번뿐이라 같은 게이트가 다시 뒤집혀도 새 라운드를 낳지 않는다. 같은 정착 안에서 닫혔다 다시 열린 게이트의 노드는 이미 생긴 노드라 채움이 없다), 리스너 되먹임 파동, `onChange` 중첩의 다섯." (`03-mental-model.md:116`) — 둘째 보충은 이 문장의 괄호 끝부터이며, 이어지는 "상한은 루프를 잇는 고리 하나만 끊는다"는 SETTLE-016의 결정이다.
+  > 편집자 결정(26C-09): "【추론】 게이트가 자기가 선언하는 노드의 존재를 읽으면(`if: { not: { required: ['x'] } }`, `then: { properties: { x: { default: 1 } } }`), 라운드마다 형상이 뒤집힌다: x 없음 → 게이트 참 → x가 생긴 노드로 채움 → 다음 라운드에 x 있음 → 게이트 거짓 → x가 형상을 떠남(원본은 잠복) → 다음 라운드에 방출에 x가 없어 다시 참 → x가 다시 들되 원본이 이미 있어 채움은 없음 → 다시 거짓." (`reviews/round-26-closing.md:97`)
+  > 편집자 결정(26C-09): "【추론】 진동의 원인은 채움이 아니라 형상 안팎의 존재 여부이므로 "노드마다 한 정착에서 한 번만 채운다"는 것으로 수렴하지 않으며, 게이트는 방출 트리를 읽고 형상 밖은 없음이다(CONTROLS-080)." (`reviews/round-26-closing.md:98`)
+  > 편집자 결정(26C-09): "【추론】 그래서 이 사례는 전이 라운드 상한(게이트 가진 조각 수 + 노드 게이트 수 + 1, 여기서는 2)을 넘겨 SETTLE-011대로 채움을 뺀 원본 B를 커밋하고, `diagnostics`는 `'degraded'`·`cause: 'budget'`·`exceededBudget: 'transition'`·`iterations`는 상한값이며, 모든 환경에서 커밋·통지 뒤 사슬 끝에서 던진다." (`reviews/round-26-closing.md:99`)
 - 상태: 현행
 - 출처: `adr/0007-settle-cycle.md:39`(정본), `02-target-overview.md:161`, `08-design-a-to-z.md:246`, `03-mental-model.md:108,116`, `reviews/round-18-closing.md:2513-2514`, `reviews/round-18-owner-answers.md:37`, `reviews/round-18-closing.md:2908-2910,2914`, `reviews/round-18-closing.md:2938-2940`
 - 닫은 사람: 소유자 답(`reviews/round-10-owner-answers.md:7` A-1, 채움은 노드가 생길 때 한 번), 소유자 답(`reviews/round-9-spec.md:52` 읽기2 채우기 원천), 소유자 답(`reviews/round-9-spec.md:56` 읽기2 시점(A/B)), 소유자 답(`reviews/round-13-owner-answers.md:8` 13라운드 답 2, 나감의 비움), 소유자 답(`reviews/round-17-owner-answers.md:10` R17-2 ㄴ), 편집자 결정(10라운드, `07-conclusions.md:106` 4.22), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-91), 소유자 답(`reviews/round-18-owner-answers.md:37` union O7·O8; U7 두 번 해석), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-104), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-105)
@@ -219,6 +222,7 @@
   > 편집자 결정(18C-105): "【추론】 상한을 넘기면 SETTLE-011대로 원본 B를 커밋하고, 원본 B에는 쓰기 경계의 해석(정적 목록)만 남는다." (`reviews/round-18-closing.md:2942`)
   > 편집자 결정(18C-105): "【추론】 전이 단계의 재해석은 게이트 상태가 최종이 아니므로 원본 B에서 버린다." (`reviews/round-18-closing.md:2943`)
   > 편집자 결정(18C-105): "【추론】 원본 B에 남은 값이 좁혀진 유효 목록 밖이면 경고등이 켜진다." (`reviews/round-18-closing.md:2944`)
+  > 편집자 결정(26C-09): "【추론】 그래서 이 사례는 전이 라운드 상한(게이트 가진 조각 수 + 노드 게이트 수 + 1, 여기서는 2)을 넘겨 SETTLE-011대로 채움을 뺀 원본 B를 커밋하고, `diagnostics`는 `'degraded'`·`cause: 'budget'`·`exceededBudget: 'transition'`·`iterations`는 상한값이며, 모든 환경에서 커밋·통지 뒤 사슬 끝에서 던진다." (`reviews/round-26-closing.md:99`)
 - 상태: 현행
 - 출처: `adr/0007-settle-cycle.md:47`(정본, #1–#2·#4), `03-mental-model.md:116`, `02-target-overview.md:169`, `08-design-a-to-z.md:254`, `adr/0007-settle-cycle.md:59`, `06-conclusions.md:196`, `reviews/round-18-closing.md:2942-2944`
 - 닫은 사람: 편집자 결정(7–8라운드 수렴 D-31, `06-conclusions.md:196`), 편집자 결정(10라운드, 원본 B는 unsetValue가 지운 값도 되돌림, `07-conclusions.md:98`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-105)
