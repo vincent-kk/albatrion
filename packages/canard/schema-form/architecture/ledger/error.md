@@ -974,6 +974,9 @@
 - 닫은 사람: 편집자 결정(17라운드, ADR 0014 4판 채택), 소유자 답(`reviews/round-17-owner-answers.md:9` R17-1; `adr/0014-error-policy.md:307,308,311,313,317,318`), 소유자 답(`reviews/round-14-owner-answers.md:16` O-10; `adr/0014-error-policy.md:310`), 소유자 답(`reviews/round-14-owner-answers.md:8` O-2; `adr/0014-error-policy.md:317`), 소유자 답(`reviews/round-17-owner-answers.md:14` 통보 3; `adr/0014-error-policy.md:312`), 소유자 답(`reviews/round-17-owner-answers.md:15` 통보 4; `adr/0014-error-policy.md:314`)
 - 라운드: 17
 - 까닭: `adr/0014-error-policy.md:303`
+- 충돌:
+  > `adr/0014-error-policy.md:317`의 "`exceededBudget`은 정착 예산 셋만"은 18라운드 결정과 다르다: 재귀 펼침의 멈춤을 뜻하는 (가칭) `'recursion'`이 더해져 값이 넷이다(ERROR-190). 18라운드 결정이 이긴다(`reviews/round-18-closing.md:28`).
+  > `adr/0014-error-policy.md:311`의 "정적이면 청사진 오류, 동적이면 정착 오류(R17-1 나)"는 18라운드 결정과 다르다: 정적으로 아는 `injectTo` 대상은 없고, 대상 경로가 청사진에 없거나 터미널 아래인 경우는 모두 동적 대상 없음(`INJECT_TARGET_MISSING`)이다(CONTROLS-079). 18라운드 결정이 이긴다(`reviews/round-18-closing.md:386`).
 
 ### ERROR-046 이주 항목 문단
 

@@ -105,6 +105,7 @@
 - 충돌:
   > `adr/0005-blueprint-analysis-and-node-sharing.md:30`의 "PropertyDecl[]"은 소유자 답과 다르다: 구현 이름은 약어 없는 풀 네임(예: `PropertyDeclaration`)이다(BLUEPRINT-046). 소유자 답이 이긴다(`reviews/round-18-owner-answers.md:38`).
   > `adr/0005-blueprint-analysis-and-node-sharing.md:33`의 "Fragment {"는 소유자 답과 다르다: 구현의 타입 이름은 React `Fragment`와 겹치지 않는 `SchemaFragment`다(BLUEPRINT-047). 소유자 답이 이긴다(`reviews/round-18-owner-answers.md:39`).
+  > `adr/0005-blueprint-analysis-and-node-sharing.md:31`의 "fragments: Fragment[]"는 소유자 답과 다르다: 구현의 타입 이름은 React `Fragment`와 겹치지 않는 `SchemaFragment`다(BLUEPRINT-047). 소유자 답이 이긴다(`reviews/round-18-owner-answers.md:39`).
 
 ### BLUEPRINT-003 청사진에 forbids 칸은 없다 — 금지 구문은 폼이 읽지 않는다
 
@@ -180,6 +181,7 @@
 - 까닭: `adr/0005-blueprint-analysis-and-node-sharing.md:70`
 - 충돌:
   > `08-design-a-to-z.md:176`의 "키워드 순위는 본체 `properties` < `allOf` 항목 < `if/then/else` < `oneOf`·`anyOf` 분기이며 JSON 키 순서에 기대지 않는다."는 18라운드 결정과 다르다: 같은 호스트의 `oneOf` 분기는 모든 `anyOf` 분기보다 앞이다(FRAGMENT-049). 18라운드 결정이 이긴다(`reviews/round-18-closing.md:238-239`).
+  > `reviews/round-18-agenda.md:23`의 "같은 호스트의 `oneOf`와 `anyOf` 분기의 동순위"는 18라운드 결정과 다르다: 같은 호스트의 `oneOf` 분기는 모든 `anyOf` 분기보다 앞이다(FRAGMENT-049). 18라운드 결정이 이긴다(`reviews/round-18-closing.md:238-239`).
 
 ### BLUEPRINT-009 노드의 종류 — 여섯 종류, nullable은 플래그, type 없는 overlay는 어느 종류와도 맞음(소유자 확인 12-9)
 
@@ -985,6 +987,7 @@
 - 까닭: `reviews/round-18-owner-answers.md:33`
 - 충돌:
   > `reviews/round-18-owner-answers.md:33`의 "지금 `UNKNOWN_JSON_SCHEMA`가 되는 것은 그 칸뿐이다"는 19라운드 결정과 다르다: `object`와 `array`만 섞인 칸도 `UNKNOWN_JSON_SCHEMA`다(BLUEPRINT-048). 19라운드 결정이 이긴다(`reviews/round-19-closing.md:15`, 절차·범위를 19C-01에 맡긴 소유자 답 `reviews/round-19-owner-answers.md:7`).
+  > `reviews/round-18-owner-answers.md:33`의 "객체만·배열만인 경우(오늘과 같음)가 모두 여기에 든다"는 19라운드 결정과 다르다: 접은 집합 F가 `{object}`나 `{array}`인 칸은 variant 호스트로 추정하고, `object`나 `array`가 다른 종류와 섞인 경우만 `UNKNOWN_JSON_SCHEMA`다(BLUEPRINT-048). 19라운드 결정이 이긴다(`reviews/round-19-closing.md:9,15,21`, 소유자 답 `reviews/round-19-owner-answers.md:7`).
 
 ### BLUEPRINT-050 `type` 없이 `const`·`enum`만 있는 분기 없는 칸 — 리터럴의 JSON 종류로 원시 잎·null 잎, 종류 혼합·객체 리터럴은 `UNKNOWN_JSON_SCHEMA`, 분기 안의 `const`는 그대로 오류, 소유자 답 30행 첫 문장 대체, ERROR-164 "언제"
 

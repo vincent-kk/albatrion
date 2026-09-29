@@ -424,3 +424,7 @@ node ledger/checks/tokens.mjs check <목록> ledger/*.md
 ## 22라운드(`resetSubtree()`의 `injectTo` 발화·채움 범위) 반영 뒤의 잔여 (2026-09-29)
 
 잔여 488 그대로다. HANDOFF §1의 22라운드 문단이 든 코드 토큰(`resetSubtree()`, `injectTo`)은 원장이 이미 들고 있다.
+
+## 23라운드(F13 순서 힌트 폐기) 반영 뒤의 잔여 (2026-09-29)
+
+잔여는 아래 검사 결과대로다. HANDOFF §1의 23라운드 문단은 새 코드 토큰을 들지 않는다(F13은 원장이 이미 든다).

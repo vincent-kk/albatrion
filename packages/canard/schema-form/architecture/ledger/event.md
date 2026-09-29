@@ -363,6 +363,7 @@
 - 까닭: `adr/0008-event-system.md:87`
 - 충돌:
   > `adr/0008-event-system.md:87`의 "17라운드에 정착의 세 예산만 남겼다"는 18라운드 결정과 다르다: 재귀 펼침의 멈춤이 `exceededBudget` 값 (가칭) `'recursion'`을 더한다(ERROR-190). 18라운드 결정이 이긴다(`reviews/round-18-closing.md:28`).
+  > `adr/0008-event-system.md:87`의 "**예산은 다섯이며 서로 다른 것을 센다**"는 18라운드 결정과 다르다: 재귀 펼침의 멈춤이 예산 부류의 정착 오류로 더해져 `exceededBudget` 값은 정착 예산 셋에 (가칭) `'recursion'`을 더한 넷이다(ERROR-190). 18라운드 결정이 이긴다(`reviews/round-18-closing.md:28`).
 
 ### EVENT-021 예산 초과 시의 진행 — 커밋 → 검증 요청 → onChange, 예외는 onChange 중첩 하나
 

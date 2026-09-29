@@ -156,6 +156,8 @@
 - 닫은 사람: 소유자 답(`reviews/round-14-owner-answers.md:7` O-1), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-91)
 - 라운드: 18
 - 까닭: `reviews/round-14-owner-answers.md:7`, `reviews/round-18-closing.md:2556-2564`
+- 충돌:
+  > `adr/0014-error-policy.md:260`의 "선언 사이 값이 다름"은 18라운드 결정과 다르다: 한 분기의 정적 연언에 판별 선언이 여럿이면 그 교차가 공집합일 때만 청사진 오류이고, 겹치면 교차를 쓴다(FRAGMENT-048). 18라운드 결정이 이긴다(`reviews/round-18-closing.md:135`).
 
 ### FRAGMENT-008 명시 판별의 변환 — 청사진이 const·enum을 읽어 controls.active 조각 객체처럼 다루고 분기 스키마는 손대지 않음
 
@@ -232,7 +234,7 @@
 - 라운드: 10
 - 까닭: `reviews/round-10-owner-answers.md:17`
 - 충돌:
-  > `adr/0002-guard-fragment-model.md:62`의 "켜진 분기의 제약은 모두 연언으로 적용되고, 개발 모드에서 경고한다."는 드러남을 개발 모드로만 적는다. 경고의 드러남은 ADR 0014 4판이 정한다. 기본 출력은 개발 모드 로그이고 프로덕션에서 침묵하며, `onError` 핸들러가 있으면 모든 환경에서 경고 기록을 받는다. 정본이 이긴다(`adr/0014-error-policy.md:33`, `adr/0014-error-policy.md:232`).
+  > `adr/0002-guard-fragment-model.md:62`의 "켜진 분기의 제약은 모두 연언으로 적용되고, 개발 모드에서 경고한다."는 드러남을 개발 모드로만 적는다. 경고의 드러남은 ADR 0014 4판이 정한다. 기본 출력은 개발 모드 로그이고 프로덕션에서 침묵하며, `onError` 핸들러가 있으면 모든 환경에서 경고 기록을 받는다. 정본이 이긴다(`adr/0014-error-policy.md:33`, `adr/0014-error-policy.md:232`). 이긴 규칙의 집은 ERROR-001(세 층과 층별 규칙)과 ERROR-159(코드 표)이며, ADR 0014 4판의 규칙(ERROR-001, ERROR-159)이 이긴다.
 
 ### FRAGMENT-013 게이트 가진 분기의 정의 — controls.active(변환 포함) 또는 else: false인 if, 키 유무로 판정
 
@@ -303,6 +305,9 @@
 - 닫은 사람: 원리(`reviews/round-5-derivations.md:41` D-2 도출, `03-mental-model.md:162` 도출표), 편집자 결정(10라운드, `07-conclusions.md:132` 상한에 노드 게이트 수)
 - 라운드: 10
 - 까닭: `adr/0002-guard-fragment-model.md:113`, `reviews/round-5-derivations.md:41`
+- 충돌:
+  > `adr/0002-guard-fragment-model.md:113`의 "바퀴의 평가 순서 힌트(아래 5)로만 쓴다"는 23라운드 결정과 다르다: 직전 커밋의 활성 집합은 생긴 노드의 판정(전이)에만 쓰고 평가 순서 힌트로 쓰지 않으며, 바퀴의 평가 순서는 청사진 전순서다(SETTLE-050). 23라운드 결정이 이긴다(`reviews/round-23-closing.md:9-10`).
+  > `adr/0002-guard-fragment-model.md:117`의 "**바퀴의 평가 순서 힌트로** 쓴다(F13)"는 23라운드 결정과 다르다: 직전 커밋의 활성 집합은 평가 순서 힌트로 쓰지 않는다(SETTLE-050). 23라운드 결정이 이긴다(`reviews/round-23-closing.md:9`).
 
 ### FRAGMENT-018 호스트 바퀴 상한 초과 — 자동 쓰기를 뺀 원본 B 커밋, degraded, 모든 환경에서 사슬 끝 throw
 
@@ -385,6 +390,7 @@
 - 결정:
   > **폼은 `if`의 `required`와 축 2항(조건 프로퍼티는 `properties`에 선언한다)을 검사하지 않는다.** 폼은 `if`의 내용에 관여하지 않는다(원장 §1.2의 축 1항(폼은 JSON Schema 문법을 해석하지 않는다)). 소유자: "이건 우리가 참견할 문제는 아닙니다.
 - 보충:
+  > "평가하지 않습니다."" (`adr/0002-guard-fragment-model.md:163`) — 결정 끝의 소유자 인용이 문장 경계에서 잘려 닫는 따옴표가 빠졌다. 원문은 "이건 우리가 참견할 문제는 아닙니다. 평가하지 않습니다."이다.
   > 소유자(10라운드 E-23 되물음 답): "이해했습니다. 다만, 이건 우리가 참견할 문제는 아닙니다. 평가하지 않습니다." (`reviews/round-10-owner-answers.md:38`)
 - 상태: 현행(부정 결정)
 - 출처: `adr/0002-guard-fragment-model.md:163#1-3`(정본), `adr/0010-branch-conventions.md:16`, `adr/0010-branch-conventions.md:19`, `adr/0002-guard-fragment-model.md:14`, `adr/0002-guard-fragment-model.md:181`, `02-target-overview.md:235`, `07-conclusions.md:153`, `03-mental-model.md:149`, `03-mental-model.md:30`

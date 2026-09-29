@@ -4,11 +4,12 @@
 
 ## 1. 지금 어디인가 (2026-09-26, 18라운드 닫힘 + 소유자 검토 + union 설계 봉인)
 
+- **23라운드(2026-09-29, 설계문서 PR 01 진행 중에 열고 닫음).** design/01의 검증자가 FRAGMENT-017·SETTLE-018의 "평가 순서 힌트(F13)"와 GOAL-083·PROCESS-048의 "힌트 제거" 기록이 어느 쪽에도 충돌 줄 없이 맞선다고 물었다. P3·SETTLE-026·SETTLE-029와 8라운드의 실행 확인에서 유도되므로 원장 관리자가 편집자 결정으로 닫았다: 직전 커밋의 활성 집합은 전이 판정에만 쓰고 평가 순서 힌트로 쓰지 않으며 바퀴의 평가 순서는 청사진 전순서다(SETTLE-050 새 항목, FRAGMENT-017·SETTLE-018 충돌, GOAL-083 보충). 정본은 `reviews/round-23-closing.md` 23C-01. 소유자 답은 없다.
 - **22라운드(2026-09-29, 설계문서 PR 01 진행 중에 열고 닫음).** design/04의 검증자가 CONTROLS-084의 충돌 줄이 로드에 `resetSubtree()`를 넣으면서 "모든 원천 … `injectTo`가 모두 발화"가 폼 전체로 읽힌다고 물었다. WRITE-090·18C-101 근거·18C-102에서 유도되므로 원장 관리자가 편집자 결정으로 닫았다: `resetSubtree()`의 로드에서 `injectTo` 발화와 채움은 그 하위 트리에만(SETTLE-049 새 항목, CONTROLS-084·SETTLE-046 보충). 정본은 `reviews/round-22-closing.md` 22C-01. 소유자 답은 없다.
 - **21라운드(2026-09-28, 설계문서 PR 01 진행 중에 열고 닫음).** design/02의 검증자가 입력 쓰기에 준 억제 비트(`onChange(' a ', DisableAutomaticWrites)`)가 뒤이은 포커스 아웃 `trim` 쓰기도 막는지 원장에 없다고 물었다. WRITE-015의 범위 행("그 호출이 일으킨 자동 쓰기", "뒤이은 사용자 입력은 다른 호출")과 WRITE-078에서 유도되므로 원장 관리자가 편집자 결정으로 닫았다: 호출 수준 억제 비트는 뒤이은 포커스 아웃 `trim`에 듣지 않고, 포커스 아웃의 자름을 억제하는 자리는 Form 속성 `disableAutomaticWrites`뿐(WRITE-100 새 항목, WRITE-015·WRITE-078 보충). 정본은 `reviews/round-21-closing.md` 21C-01. 소유자 답은 없다.
 - **20라운드(2026-09-28, 설계문서 PR 01 진행 중에 열고 닫음).** 01의 형식 명세를 검증하던 중 PROCESS-023의 근거 표기("원장 §n", "ADR 00nn", "07 n.n")가 옛 문서의 것이라 새 설계문서·ADR이 원장 ID로 근거를 달면 문서가 원장을 앞선다는 지적이 나왔다. 원장이 정본이고 옛 문서는 백업으로 가므로(PROCESS-050·061·062) 편집자 결정으로 닫았다: 새 설계문서와 ADR은 문장 끝 괄호 안에 원장 ID(PROCESS-068 새 항목, PROCESS-023 보충·충돌). 정본은 `reviews/round-20-closing.md` 20C-01. 소유자 답은 없다.
 - **19라운드(2026-09-27, PR 02 진행 중에 열고 닫음).** 02의 통합 검증이 원장 안의 충돌을 찾았다: TEST-067(b)의 코퍼스 14종은 모두 호스트에 `type`이 없는 객체 분기 `oneOf`·`anyOf`인데 BLUEPRINT-039·045 E16이 그 칸을 오류로 정했고, "14종이 빌드됐다"는 근거는 라운드 9 프로토타입 위의 측정이었다. 소유자가 "접은 분기 형이 객체만·배열만이면 variant 호스트로 추정"을 정했고(`reviews/round-19-owner-answers.md:7`), 편집자 초안을 verifier·codex·antigravity가 대조해 결함 다섯(게이트 분기 셈, `'null'` 순서, `{object,array}`, 순환 절단, 형 수준의 `$ref` 예외)을 고친 뒤 채택했다. 검증이 찾은 둘째 물음(`type` 없이 `const`만 있는 태그 프로퍼티, 14종 중 2종)은 소유자가 리터럴 종류의 잎으로 받기로 답했다(`:8`). 정본은 `reviews/round-19-closing.md`의 19C-01·19C-02, 원문은 `reviews/raw-round19-typeless-object-host/`. 새 항목 BLUEPRINT-048~051, NODE-059, LANDING-207·208, TEST-079이고 BLUEPRINT-037·039는 분할됨이다. 남은 일은 PR 02의 TEST-079 게이트 구현이다.
-- **설계의 정본은 단일 원장 `ledger/`다.** 영역 17개, 항목 1,347개(22라운드 뒤; 현행 1,075(부정 결정·기록 포함), 대체됨 199, 분할됨 49, 중복 24, 열림 0). 형식과 규칙은 `ledger/README.md`.
+- **설계의 정본은 단일 원장 `ledger/`다.** 영역 17개, 항목 1,348개(23라운드 뒤; 현행 1,076(부정 결정·기록 포함), 대체됨 199, 분할됨 49, 중복 24, 열림 0). 형식과 규칙은 `ledger/README.md`.
 - **옛 설계 문서(`00`–`09`, `adr/`, `open-questions.md`)는 동결됐다.** 더 고치지 않는다. 어긋남은 원장의 충돌 칸에 적는다. 원장이 인용하는 옛 문서의 `path:line`은 모두 커밋 `ba398c330` 기준 줄 번호다(그 뒤 옛 문서는 바뀌지 않았다).
 - **18라운드가 닫혔고, 소유자가 검토했고, 결정은 봉인됐다.**
   - 편집자 결정의 정본은 `reviews/round-18-closing.md`의 블록 `18C-01`…`18C-105`이다. 모든 결정에 【추론】 표지가 있다.
@@ -118,6 +119,7 @@ node ledger/checks/plan-links.mjs plan/README.md plan/*/*.md -- ledger/*.md   # 
 | `reviews/round-20-closing.md` | 20라운드 편집자 결정의 정본(20C-01 새 설계문서와 ADR의 근거 표기는 문장 끝 괄호 안에 원장 ID). 소유자 답 없음 |
 | `reviews/round-21-closing.md` | 21라운드 편집자 결정의 정본(21C-01 호출 수준 억제 비트는 뒤이은 포커스 아웃 `trim`에 듣지 않음, 억제 자리는 Form 속성뿐). 소유자 답 없음 |
 | `reviews/round-22-closing.md` | 22라운드 편집자 결정의 정본(22C-01 `resetSubtree()`의 로드에서 `injectTo` 발화와 채움은 그 하위 트리에만). 소유자 답 없음 |
+| `reviews/round-23-closing.md` | 23라운드 편집자 결정의 정본(23C-01 직전 커밋의 활성 집합은 전이 판정에만, 평가 순서 힌트(F13) 폐기). 소유자 답 없음 |
 | `reviews/raw-round19-typeless-object-host/` | 19라운드 작업 파일: 지시서와 초안(`brief.md`), 검증 셋(`verifier.md`·`codex.md`·`antigravity.md`), 판정과 고친 결정문(`merged-v1.md`), X1 초안, 원장 반영 계획(`ledger-plan.md`) |
 | `reviews/raw-round18-union-swarm/` | union 설계 스웜: 공통 브리프, 렌즈 넷의 제안, 검증 둘, 판정 셋, 교차 확인 둘, O7·O8 검증, 정본 설계 `merged-v3.md`, 규칙 A 전수 실행 스크립트 |
 | `reviews/raw-round18-tests/` | 표준 대조(명세·생성기·검증기·폼 라이브러리, 브랜치 노드), 원장 정합성 시험(union, 채움 시점), 1차 교차 확인(codex·antigravity), 게이트 3 원문 |
