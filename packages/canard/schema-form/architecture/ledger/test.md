@@ -1178,6 +1178,7 @@
   > 편집자 결정(26C-03): "【추론】 미룬 단언은 PR-2의 `log.md`와 PR 본문에 사례마다 PR 번호를 단다(TEST-069가 처분 목록에 정한 방식)." (`reviews/round-26-closing.md:37`)
   > 편집자 결정(26C-04): "【추론】 `controls.active` 게이트(노드 게이트·조각 게이트)는 PR-2가 청사진이 컴파일한 식(`BlueprintExpression.evaluate`)으로 호스트 바퀴에서 실제로 평가하며, 술어 인터페이스 뒤의 대역으로 두지 않는다." (`reviews/round-26-closing.md:45`)
   > 편집자 결정(26C-04): "【추론】 `if` 게이트만 `record/`가 선언한 술어 인터페이스 뒤에 두고 시험은 대역 하나를 쓰며, 실제 술어는 PR-4의 `compileGuard`가 넣는다." (`reviews/round-26-closing.md:46`)
+  > 편집자 결정(29C-01): "【추론】 첫 발화의 쓰기가 게이트를 뒤집어 원천 노드가 채움 전에 나가면 결과는 첫 발화의 값이며, FRAGMENT-050 (3)대로 그 쓰기는 되돌리지 않는다; 그런 사례의 v7 기대(`REPORT-v7.md:47,51`의 A4b·X16과 그 변형 X16_noDefault)는 원장과 다르므로 이식하지 않고 원장의 값으로 바꾸며, TEST-069 (라)의 배분과 04 실행 계획의 "기대값은 `round18/proto/REPORT-v7.md`의 기대 치환을 따른다"(`plan/04-derive-and-controls/execution-plan.md:346`)는 v7의 모형이 원장과 다른 자리에는 미치지 않는다(03이 `plan/03-node-and-settle/log.md` §4에 남긴 선례와 같다)." (`reviews/round-29-closing.md:14`)
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:751-780`(정본), `reviews/round-18-closing.md:2797-2798`
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-25), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-98)

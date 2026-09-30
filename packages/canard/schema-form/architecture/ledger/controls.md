@@ -452,6 +452,8 @@
   > | `injectTo` | 자기 방출 값이 직전 커밋과 다를 때(에지) 다른 노드를 덮는다. 로드에는 직전 값이 없으므로 발화한다. 이름은 원천에 적고 대상을 가리키므로 방향을 남긴다(`inject`만 남기면 방향이 읽히지 않는다. 15라운드) | 파생 | 명사(함수) |
 - 보충:
   > "| `injectTo` | 명사 | 노드 | 파생 | 원천의 방출 값이 바뀔 때 대상에 전체 교체를 쓴다. 남에게 주는 값의 출처 | 발화한다 | 에지 |" (`08-design-a-to-z.md:109`)
+  > 편집자 결정(29C-01): "【추론】 생긴 노드와 로드된 노드의 `controls.derived`·`controls.injectTo`는 원천의 방출 값이 `undefined`여도(채움 전) 거짓→참 에지로 발화한다: WRITE-029·FRAGMENT-050 (2)·CONTROLS-027은 에지의 조건을 "직전 값이 없다"로만 두고 원천 값의 유무를 조건으로 두지 않으며, CONTROLS-079의 `value`는 원천의 방출 값이라 방출이 없으면 `undefined`다." (`reviews/round-29-closing.md:9`)
+  > 편집자 결정(29C-01): "【추론】 채움 뒤에는 새 에지가 있다: 채움 쓰기는 SETTLE-005 전이 행의 "→ 표시로"와 SETTLE-010(파생과 전이는 둘 다 표시로 돌아간다)에 따라 표시·계산·파생을 다시 지나고, 기준점은 그 규칙이 마지막으로 소비한 원천 값(`undefined`)이므로 채움 값으로의 변화는 SETTLE-004의 "원천이 다른 값으로 다시 바뀌면 새 에지"다." (`reviews/round-29-closing.md:12`)
 - 상태: 현행
 - 출처: `adr/0003-group-namespace.md:80,81,88`(정본), `08-design-a-to-z.md:109`, `07-conclusions.md:125`
 - 닫은 사람: 소유자 답(`reviews/round-15-decisions.md:11` 3), 편집자 결정(4라운드, 에지 발화 F11 `reviews/round-4-spec.md:144`)
@@ -1201,6 +1203,9 @@
   > 【추론】 새 코드는 없다.
 - 보충:
   > 소유자(12라운드 §9 답): "동의. 이는 자칫 ealry return 과 혼동이 발생해서 문제가 있었다" (`reviews/round-12-owner-answers.md:20`)
+  > 편집자 결정(29C-01): "【추론】 생긴 노드와 로드된 노드의 `controls.derived`·`controls.injectTo`는 원천의 방출 값이 `undefined`여도(채움 전) 거짓→참 에지로 발화한다: WRITE-029·FRAGMENT-050 (2)·CONTROLS-027은 에지의 조건을 "직전 값이 없다"로만 두고 원천 값의 유무를 조건으로 두지 않으며, CONTROLS-079의 `value`는 원천의 방출 값이라 방출이 없으면 `undefined`다." (`reviews/round-29-closing.md:9`)
+  > 편집자 결정(29C-01): "【추론】 그 `undefined`를 어떻게 다룰지는 작성자 함수의 몫이다: 원천은 런타임에도 언제든 `undefined`가 될 수 있으므로 함수는 어차피 그 입력을 다뤄야 하고, 없는 원천을 씨앗으로 쓰는 것도 작성자의 표현이다(G2)." (`reviews/round-29-closing.md:10`)
+  > 편집자 결정(29C-01): "【추론】 그래서 게이트가 뒤집히지 않는 보통의 경우 결과는 채움 값으로 발화한 것과 같고(v7의 기대와 같다), 단순 복사 `(value) => ({ '../t': value })`의 첫 발화는 `undefined` 항목이라 쓰지 않으므로(CONTROLS-079) 대상은 채움 값으로만 씌워져 CONTROLS-084가 지키는 것("오늘 코드도 마운트에서 원천의 `default`로 대상을 채우므로")이 성립한다." (`reviews/round-29-closing.md:13`)
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:382-413`(정본), `reviews/round-12-owner-answers.md:20`
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-14)
@@ -1353,6 +1358,9 @@
   > - **원리가 말하는 것.** P2는 작성자를 정당한 쓰기 주체로 인정하므로 `fire`를 허용한다. "있는 값을 고치지 않는다"(`03-mental-model.md` 82행)는 코어 자신의 `default`에 대한 문장이지 작성자의 규칙에 대한 문장이 아니다. 그러나 허용과 선호는 다르다. 이것은 "스키마의 규칙이 진실인가, 받은 데이터가 진실인가"라는 제품의 가치다.
 - 보충:
   > 편집자 결정(22C-01): "【추론】 CONTROLS-084의 "모든 원천"은 그 로드의 범위에 든 원천이다: 마운트와 `FormHandle.reset()`은 폼 전체, `resetSubtree()`는 그 하위 트리다." (`reviews/round-22-closing.md:10`)
+  > 편집자 결정(29C-01): "【추론】 그래서 게이트가 뒤집히지 않는 보통의 경우 결과는 채움 값으로 발화한 것과 같고(v7의 기대와 같다), 단순 복사 `(value) => ({ '../t': value })`의 첫 발화는 `undefined` 항목이라 쓰지 않으므로(CONTROLS-079) 대상은 채움 값으로만 씌워져 CONTROLS-084가 지키는 것("오늘 코드도 마운트에서 원천의 `default`로 대상을 채우므로")이 성립한다." (`reviews/round-29-closing.md:13`)
+  > 편집자 결정(29C-01): "【추론】 원장에 "원천이 없으면 태어날 때 발화하지 않는다"는 문장을 더하지 않는다: 그 규칙은 CONTROLS-084가 지운 `skip`의 부분 복원이고 G2에 걸리며, 현행 항목 어디에도 근거가 없다." (`reviews/round-29-closing.md:15`)
+  > 편집자 결정(29C-01): "【추론】 04는 "→ 표시로"가 구현에 있음을 게이트가 뒤집히지 않는 변형(결과가 채움 값으로 발화한 것)으로 단언한다; 그것이 없으면 마운트에서 원천의 `default`가 대상에 실리지 않아 CONTROLS-084에 어긋난다." (`reviews/round-29-closing.md:16`)
 - 상태: 현행
 - 출처: `06-conclusions.md:268,270-271`(정본. CONTROLS-055에서 분할), `07-conclusions.md:245`
 - 닫은 사람: 소유자 답(`reviews/round-10-owner-answers.md:19` D-6)

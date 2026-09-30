@@ -508,7 +508,10 @@
 
 - 결정:
   > **형상에 없는 노드의 규칙은 평가하지 않는다**(P4: 형상 변화는 쓰기가 아니다). 그 노드가 형상 밖에 있는 동안의 원천 변화는 에지가 아니고, 노드가 (다시) 생기면 그 노드의 `controls.unsetValue`·`controls.derived`·`controls.injectTo`의 에지는 거짓→참으로 본다(직전 값이 없다). 비활성 원천의 방출이 사라지는 것도 다른 노드의 `controls.injectTo`에 에지가 아니다.
-- 보충: 없음
+- 보충:
+  > 편집자 결정(29C-01): "【추론】 생긴 노드와 로드된 노드의 `controls.derived`·`controls.injectTo`는 원천의 방출 값이 `undefined`여도(채움 전) 거짓→참 에지로 발화한다: WRITE-029·FRAGMENT-050 (2)·CONTROLS-027은 에지의 조건을 "직전 값이 없다"로만 두고 원천 값의 유무를 조건으로 두지 않으며, CONTROLS-079의 `value`는 원천의 방출 값이라 방출이 없으면 `undefined`다." (`reviews/round-29-closing.md:9`)
+  > 편집자 결정(29C-01): "【추론】 그 `undefined`를 어떻게 다룰지는 작성자 함수의 몫이다: 원천은 런타임에도 언제든 `undefined`가 될 수 있으므로 함수는 어차피 그 입력을 다뤄야 하고, 없는 원천을 씨앗으로 쓰는 것도 작성자의 표현이다(G2)." (`reviews/round-29-closing.md:10`)
+  > 편집자 결정(29C-01): "【추론】 첫 발화의 쓰기가 게이트를 뒤집어 원천 노드가 채움 전에 나가면 결과는 첫 발화의 값이며, FRAGMENT-050 (3)대로 그 쓰기는 되돌리지 않는다; 그런 사례의 v7 기대(`REPORT-v7.md:47,51`의 A4b·X16과 그 변형 X16_noDefault)는 원장과 다르므로 이식하지 않고 원장의 값으로 바꾸며, TEST-069 (라)의 배분과 04 실행 계획의 "기대값은 `round18/proto/REPORT-v7.md`의 기대 치환을 따른다"(`plan/04-derive-and-controls/execution-plan.md:346`)는 v7의 모형이 원장과 다른 자리에는 미치지 않는다(03이 `plan/03-node-and-settle/log.md` §4에 남긴 선례와 같다)." (`reviews/round-29-closing.md:14`)
 - 상태: 현행
 - 출처: `03-mental-model.md:90#9-11`(정본)
 - 닫은 사람: 소유자 답(`reviews/round-12-owner-answers.md:18` §9 형상에 없는 노드)
