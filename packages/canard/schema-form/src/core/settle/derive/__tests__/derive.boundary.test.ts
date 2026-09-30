@@ -41,6 +41,37 @@ describe('derive rule table', () => {
 });
 
 describe('derive expression failures', () => {
+  it('ERROR-122 throwing derived leaves fills and later derive rounds running', () => {
+    const { root } = createTestTree({ type: 'object', properties: {
+      a: { type: 'string', default: 'fill-a' },
+      source: { type: 'string' },
+      d: { type: 'string', controls: { derived: '../source' } },
+      e: { type: 'string', controls: { derived: '../d' } },
+      bad: { type: 'string', controls: {
+        derived: '(() => { throw new Error("bad derive") })()',
+      } },
+    } });
+    expect(() => loadSchemaNodeAtMount(root, { source: 'D' },
+      SetValueOption.Overwrite)).toThrow('Derive expression failed');
+    expect(root.structure?.a?.raw).toBe('fill-a');
+    expect(root.structure?.d?.raw).toBe('D');
+    expect(root.structure?.e?.raw).toBe('D');
+    expect(root.runtime.diagnostics.cause).toBe('expression');
+  });
+
+  it('ERROR-122 missing dynamic injectTo target leaves unrelated fill running', () => {
+    const { root } = createTestTree({ type: 'object', properties: {
+      a: { type: 'string', default: 'fill-a' },
+      trigger: { type: 'string', controls: {
+        injectTo: () => ({ '../missing': 'X' }),
+      } },
+    } });
+    expect(() => loadSchemaNodeAtMount(root, { trigger: 'go' },
+      SetValueOption.Overwrite)).toThrow('Injection target missing');
+    expect(root.structure?.a?.raw).toBe('fill-a');
+    expect(root.runtime.diagnostics.cause).toBe('injectTarget');
+  });
+
   it('ERROR-122 commits caller input and degrades after a derived throw', () => {
     const { root } = createTestTree({ type: 'object', properties: {
       target: { type: 'string', controls: {

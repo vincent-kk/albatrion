@@ -43,11 +43,13 @@ export const finalizeExits = <Self extends SchemaNodeRecord<Self>>(
   const scope = context.kind === 'load' ? context.loadScope : undefined;
   const inLoadScope = (node: Self): boolean => scope !== undefined &&
     (!scope.path || node.path === scope.path || node.path.startsWith(`${scope.path}/`));
-  const applyPolicy = !context.suppressAutomaticWrites && !context.failure;
-  if (applyPolicy) applyExitClearing(context, inLoadScope);
+  const applyPolicy = !context.suppressAutomaticWrites && context.cause !== 'budget';
+  if (applyPolicy) applyExitClearing(context, (node) =>
+    inLoadScope(node) || context.throwingGateExits?.has(node) === true);
   for (const node of context.exited)
     if (!inLoadScope(node) && node.detached &&
-      (context.entered.has(node) || !applyPolicy))
+      (context.entered.has(node) || !applyPolicy ||
+        context.throwingGateExits?.has(node)))
       captureExitedRaw(node, false, context, false,
         getLatentOrder(node.parent, node.name, node.blueprintNode));
   if (context.root.runtime.latentRaw.size > 0)

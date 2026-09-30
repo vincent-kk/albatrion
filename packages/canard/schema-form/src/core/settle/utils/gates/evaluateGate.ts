@@ -84,6 +84,7 @@ export const evaluateGate = <Self extends SchemaNodeRecord<Self>>(
     }
     return gate.condition === true;
   } catch (cause) {
+    context.gateThrowVersion = (context.gateThrowVersion ?? 0) + 1;
     if (!context.failure) {
       context.failure = new SchemaFormError(
         gate.kind === 'if' ? GUARD_FAILED : EXPRESSION_THREW,

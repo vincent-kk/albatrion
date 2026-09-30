@@ -21,7 +21,7 @@ export const finishSettlement = <Self extends SchemaNodeRecord<Self>>(
   context: SettlementContext<Self>, scratch: SettlementScratch<Self>,
 ): void => {
   for (const path of context.changedRaw) scratch.explicitRaw.add(path);
-  if (context.hostWheelExceeded && !context.failure) {
+  if (context.hostWheelExceeded && context.cause !== 'budget') {
     context.failure = new SchemaFormError(BUDGET_EXCEEDED,
       `Host wheel budget exceeded at ${context.target.path}`,
       { path: context.target.path });
@@ -29,8 +29,8 @@ export const finishSettlement = <Self extends SchemaNodeRecord<Self>>(
     context.exceededBudget = 'hostWheel';
     context.iterations = context.hostWheelExceeded;
   }
-  if (!context.failure) runDeriveRounds(context);
-  if (!context.failure) transitionSettlement(context);
+  if (context.cause !== 'budget') runDeriveRounds(context);
+  if (context.cause !== 'budget') transitionSettlement(context);
   if (context.cause === 'budget') {
     restoreSourceB(context, scratch.explicitRaw);
     captureDeriveBaseline(context);

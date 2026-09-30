@@ -45,6 +45,10 @@ export interface SettlementContext<Self extends SchemaNodeRecord<Self>> {
   exited: Set<Self>;
   /** Nodes absent in a middle round and eligible for same-instance reentry. */
   pendingExits: Map<string, Self>;
+  /** Exits whose selecting gate threw and therefore cannot clear their subtree. */
+  throwingGateExits?: Set<Self>;
+  /** Incremented by each thrown gate evaluation to identify its selecting edge. */
+  gateThrowVersion?: number;
   /** Active declaration choices published only after this call commits. */
   selectedDeclarationIds: Map<Self, readonly number[]>;
   /** Original inputs retained for effective-list interpretation. */

@@ -28,7 +28,7 @@ export const runDeriveRounds = <Self extends SchemaNodeRecord<Self>>(
   context: SettlementContext<Self>,
 ): void => {
   const state = getDeriveState(context);
-  if (!state || context.failure) return;
+  if (!state || context.cause === 'budget') return;
   const previousTransition = context.inTransition;
   try {
     while (true) {
@@ -37,7 +37,7 @@ export const runDeriveRounds = <Self extends SchemaNodeRecord<Self>>(
         : collectDeriveSourcePaths(context);
       const decision = evaluateDeriveRound(context.root, state);
       if (state.trace) (context.traceRounds ??= []).push([...decision.trace]);
-      if (decision.failure) {
+      if (decision.failure && !context.failure) {
         const failure: NonNullable<DeriveRoundDecision<Self>['failure']> = decision.failure;
         context.failure = new SchemaFormError(
           ERROR_CODES[failure.kind],
@@ -57,7 +57,7 @@ export const runDeriveRounds = <Self extends SchemaNodeRecord<Self>>(
           !sameValue(write.target.emit, write.value),
       );
       if (changed.length === 0) return;
-      if (!context.failure && (context.deriveRounds ?? 0) >= DERIVE_ROUND_CAP) {
+      if ((context.deriveRounds ?? 0) >= DERIVE_ROUND_CAP) {
         context.failure = new SchemaFormError(
           BUDGET_EXCEEDED,
           `Derive budget exceeded at ${context.target.path}`,
@@ -82,7 +82,7 @@ export const runDeriveRounds = <Self extends SchemaNodeRecord<Self>>(
       registerRecalculation(context);
       context.hostWheelExceeded = undefined;
       computeNode(context.root, context);
-      if (context.hostWheelExceeded !== undefined && !context.failure) {
+      if (context.hostWheelExceeded !== undefined && !context.exceededBudget) {
         context.failure = new SchemaFormError(
           BUDGET_EXCEEDED,
           `Host wheel budget exceeded at ${context.target.path}`,
@@ -93,7 +93,7 @@ export const runDeriveRounds = <Self extends SchemaNodeRecord<Self>>(
         context.iterations = context.hostWheelExceeded;
         return;
       }
-      if (context.failure) return;
+      if (context.exceededBudget) return;
     }
   } finally {
     context.automatic = false;
