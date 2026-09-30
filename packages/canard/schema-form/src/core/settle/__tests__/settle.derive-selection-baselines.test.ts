@@ -7,6 +7,29 @@ import { createTestTree } from './fixtures/createTestTree';
 
 // filid:contract settle-derive
 describe('newly selected declaration baselines', () => {
+  it('FRAGMENT-050 same-length selection swap takes the new branch baseline', () => {
+    const { root } = createTestTree({ type: 'object', properties: {
+      enabled: { type: 'boolean' }, s: { type: 'string' },
+      t: { type: 'string' }, x: { type: 'string' },
+    }, if: {}, then: { properties: {
+      x: { type: 'string', controls: { derived: '../s' } },
+    } }, else: { properties: {
+      x: { type: 'string', controls: { derived: '../t' } },
+    } } });
+    loadSchemaNodeAtMount(root, { enabled: false, s: 'S1', t: 'T1', x: '' },
+      SetValueOption.Overwrite);
+    const key = JSON.stringify(['/x', 'string']);
+    const before = root.runtime.committedDeclarationIds?.get(key);
+    writeSchemaNode(root.structure!.x, 'm', 'input', SetValueOption.Overwrite);
+    writeSchemaNode(root.structure!.enabled, true, 'input', SetValueOption.Overwrite);
+    const after = root.runtime.committedDeclarationIds?.get(key);
+    expect(after?.length).toBe(before?.length);
+    expect(after).not.toEqual(before);
+    expect(root.structure?.x?.raw).toBe('m');
+    writeSchemaNode(root.structure!.s, 'S2', 'input', SetValueOption.Overwrite);
+    expect(root.structure?.x?.raw).toBe('S2');
+  });
+
   it('FRAGMENT-050 root if/then shared derived fires on its next source edge', () => {
     const { root } = createTestTree({ type: 'object', properties: {
       enabled: { type: 'boolean' }, s: { type: 'string' },
