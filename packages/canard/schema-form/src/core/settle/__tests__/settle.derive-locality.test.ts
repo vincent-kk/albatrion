@@ -7,6 +7,30 @@ import { createTestTree } from './fixtures/createTestTree';
 
 // filid:contract settle-derive
 describe('derive rule locality', () => {
+  it.each([
+    ['without own rule', undefined],
+    ['with own unsetValue', '../../s === "clear"'],
+  ])('SETTLE-004 visited child keeps unvisited host baseline %s',
+    (_variant, unsetValue) => {
+      const { root } = createTestTree({ type: 'object', properties: {
+        s: { type: 'string' }, t: { type: 'string' },
+        H: { type: 'object', controls: { children: [
+          { targets: ['x'], controls: { derived: '../t' } },
+        ] }, properties: {
+          x: { type: 'string', ...(unsetValue ? { controls: { unsetValue } } : {}) },
+          y: { type: 'string' },
+        } },
+      } });
+      loadSchemaNodeAtMount(root, { t: 'T1', s: 'a', H: { x: '', y: '' } },
+        SetValueOption.Overwrite);
+      writeSchemaNode(root.structure!.H.structure!.x, 'manual', 'input',
+        SetValueOption.Overwrite);
+      writeSchemaNode(root.structure!.s, 'b', 'input', SetValueOption.Overwrite);
+      writeSchemaNode(root.structure!.H.structure!.y, 'Y', 'input',
+        SetValueOption.Overwrite);
+      expect(root.structure?.H?.structure?.x?.raw).toBe('manual');
+    });
+
   it('SETTLE-017 leaf commit parses no unrelated derived baselines', () => {
     const parseCount = (size: number): number => {
       const properties: Record<string, BlueprintSchema> = {

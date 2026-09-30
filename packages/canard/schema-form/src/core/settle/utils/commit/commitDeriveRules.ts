@@ -39,10 +39,10 @@ export const commitDeriveRules = <Self extends SchemaNodeRecord<Self>>(
   }
   const runtime = context.root.runtime;
   for (const path of state.visitedSourcePaths)
-    pruneCommittedRuleKeys(runtime, path);
+    pruneCommittedRuleKeys(runtime, path, 'source');
   for (const exited of context.exited)
     walkSchemaNodes(exited, (node) =>
-      pruneCommittedRuleKeys(runtime, node.path));
+      pruneCommittedRuleKeys(runtime, node.path, 'occurrence'));
   for (const key of state.activeRuleKeys)
     if (state.consumedRuleValues.has(key))
       updateCommittedRuleValue(runtime, key, 'set',

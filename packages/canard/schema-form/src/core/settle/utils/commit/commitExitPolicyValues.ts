@@ -44,10 +44,10 @@ export const commitExitPolicyValues = <Self extends SchemaNodeRecord<Self>>(
   const runtime = context.root.runtime;
   for (const exited of context.exited)
     walkSchemaNodes(exited, (node) =>
-      pruneCommittedRuleKeys(runtime, node.path, true));
+      pruneCommittedRuleKeys(runtime, node.path, 'exitPolicy'));
   if (context.kind === 'load' && context.loadScope)
     walkSchemaNodes(context.loadScope, (node) =>
-      pruneCommittedRuleKeys(runtime, node.path, true));
+      pruneCommittedRuleKeys(runtime, node.path, 'exitPolicy'));
   const candidates = new Set(context.stateDirtyNodes);
   for (const source of context.stateDirtyNodes) {
     if (source.detached || !source.structure) continue;
