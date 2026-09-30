@@ -27,7 +27,8 @@ export const commitSettlement = <Self extends SchemaNodeRecord<Self>>(
   commitDeriveRules(context);
   if (process.env.NODE_ENV !== 'production') {
     finalizeDeriveTrace(context);
-    runtime.settlementTrace = { entry: { api: context.kind, option: context.option },
+    runtime.settlementTrace = { entry: { api: context.entryApi ?? context.kind,
+      option: context.option },
       rounds: context.traceRounds ?? [],
       ...(context.deriveBudgetRules ? { budget: context.deriveBudgetRules } : {}) };
   } else delete runtime.settlementTrace;

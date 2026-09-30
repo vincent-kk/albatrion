@@ -7,12 +7,12 @@ import type { FormTypeInputProps, InferSchemaNode, NullNode, NumberNode, ObjectN
 type PublicKeys = 'type' | 'strategy' | 'schemaType' | 'jsonSchema' |
   'required' | 'nullable' | 'depth' | 'isRoot' | 'rootNode' | 'parentNode' |
   'name' | 'escapedName' | 'path' | 'children' | 'raw' | 'extras' |
-  'value' | 'outputValue' | 'inactiveValues' | 'active' | 'typeMismatch' |
+  'value' | 'outputValue' | 'inactiveValues' | 'active' | 'context' | 'typeMismatch' |
   'typeMismatches' | 'diagnostics' | 'defaultValue' | 'find' | 'findNodes' |
   'setValue' | 'resetSubtree';
 
 describe('new SchemaNode public types', () => {
-  it('TEST-069 public type keys matches the PR-2 member table', () => {
+  it('TEST-069 public type keys include the context getter', () => {
     expectTypeOf<keyof SchemaNode>().toEqualTypeOf<PublicKeys>();
   });
 

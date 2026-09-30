@@ -11,6 +11,7 @@ export const collectDeriveSourcePaths = <Self extends SchemaNodeRecord<Self>>(
   context: SettlementContext<Self>,
 ): ReadonlySet<string> => {
   const paths = new Set<string>();
+  for (const owner of context.contextOwners ?? []) paths.add(owner);
   const dependencies = getDependencyIndex(context.root.runtime.blueprint);
   for (const changed of context.changedRaw) {
     for (const owner of dependencies.affected(changed)) paths.add(owner);

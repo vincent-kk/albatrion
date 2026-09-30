@@ -115,6 +115,8 @@ export class SchemaNode implements SchemaNodeRecord<SchemaNode> {
   /** {@inheritDoc NodeSurface.active} */
   get active() { return this.storedActive; }
   set active(value: boolean) { this.storedActive = value; }
+  /** {@inheritDoc NodeSurface.context} */
+  get context() { return this.runtime.context; }
   /** {@inheritDoc NodeSurface.typeMismatch} */
   get typeMismatch() { return readSchemaNodeTypeMismatch<SchemaNode>(this); }
   /** {@inheritDoc NodeSurface.typeMismatches} */

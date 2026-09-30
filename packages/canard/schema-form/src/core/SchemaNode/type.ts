@@ -58,6 +58,8 @@ export interface NodeSurface<
   readonly outputValue: unknown;
   readonly inactiveValues: readonly InactiveValue[];
   readonly active: boolean;
+  /** Shared context reference supplied by the current Form binding. */
+  readonly context: Readonly<Record<string, unknown>>;
   readonly typeMismatch: boolean;
   readonly typeMismatches: readonly string[];
   readonly diagnostics: NodeDiagnostics;

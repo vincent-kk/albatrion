@@ -34,11 +34,12 @@ describe('SchemaNode PR-2 surface', () => {
     }
   });
 
-  it('TEST-069 public index keys excludes binding-only channels', () => {
+  it('TEST-069 SchemaNode index names the binding-only context channel', () => {
     expect(Object.keys(surface).sort()).toEqual([
       'SetValueOption', 'isArrayNode', 'isBooleanNode', 'isBranchNode',
       'isNumberNode', 'isObjectNode', 'isSchemaNode', 'isStringNode',
       'isTerminalNode', 'isUnionNode', 'isVirtualNode', 'schemaNodeFactory',
+      'setContext',
     ]);
     expect(Object.keys(surface.SetValueOption)).toEqual([
       'Overwrite', 'Merge', 'DisableAutomaticWrites', 'EnableAutomaticWrites',

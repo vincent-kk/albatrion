@@ -21,6 +21,10 @@ export interface SettlementContext<Self extends SchemaNodeRecord<Self>> {
   kind: SchemaNodeWriteKind;
   /** Public bit mask retained for the development trace entry. */
   option: number;
+  /** Binding entry name when the settlement has no public write kind. */
+  entryApi?: string;
+  /** Declaration hosts whose context reads started this settlement. */
+  contextOwners?: readonly string[];
   /** Whether this analysis contains any authored gate. */
   hasGates: boolean;
   /** Call-local suppression after explicit bits override the form default. */
