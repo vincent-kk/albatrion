@@ -1,5 +1,6 @@
 import type { Blueprint, PropertyDeclaration } from '../../../blueprint';
 import { resolveDependencyPath } from '../paths/resolveDependencyPath';
+import { getContextOwners } from '../context/getContextOwners';
 
 /** No reverse dependency owners for a gate-free input path. */
 const NO_OWNERS: readonly string[] = Object.freeze([]);
@@ -19,6 +20,7 @@ class DependencyIndex {
 
   /** Build absolute watch paths from authored reverse dependency IDs. */
   constructor(blueprint: Blueprint) {
+    getContextOwners(blueprint);
     const dependencies = Object.entries(blueprint.dependencies);
     if (dependencies.length === 0 && blueprint.expressions.length === 0) return;
     const declarations = new Map<number, PropertyDeclaration>(blueprint.nodes.flatMap((node) =>
@@ -29,7 +31,8 @@ class DependencyIndex {
         const declaration = declarations.get(id);
         if (!declaration) continue;
         const watched = resolveDependencyPath(declaration.path, dependency);
-        if (watched !== '@') this.add(watched, declaration.path);
+        if (watched === '@') continue;
+        this.add(watched, declaration.path);
       }
     for (const node of blueprint.nodes)
       for (const declaration of node.declarations)
@@ -39,7 +42,8 @@ class DependencyIndex {
           if (!expression) continue;
           for (const dependency of expression.dependencies) {
             const watched = resolveDependencyPath(gate.hostPath, dependency);
-            if (watched !== '@') this.add(watched, declaration.path);
+            if (watched === '@') continue;
+            this.add(watched, declaration.path);
           }
         }
   }

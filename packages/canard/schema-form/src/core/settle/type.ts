@@ -1,6 +1,7 @@
 import type { Distribution, SchemaNodeRecord } from '../record';
 import type { EffectiveSchema } from '../blueprint';
 import type { SchemaFormError } from '../../errors';
+import type { DeriveState, DeriveTraceEntry } from './derive';
 
 /** Origin of a write before calculation and transition phases. */
 export type SchemaNodeWriteKind =
@@ -18,6 +19,8 @@ export interface SettlementContext<Self extends SchemaNodeRecord<Self>> {
   target: Self;
   /** Entry origin retained for later transition rules. */
   kind: SchemaNodeWriteKind;
+  /** Public bit mask retained for the development trace entry. */
+  option: number;
   /** Whether this analysis contains any authored gate. */
   hasGates: boolean;
   /** Call-local suppression after explicit bits override the form default. */
@@ -67,6 +70,14 @@ export interface SettlementContext<Self extends SchemaNodeRecord<Self>> {
   changedNodes: Set<Self>;
   /** Effective schema before this write for nodes visited by a gate wheel. */
   originalSchemas: Map<string, EffectiveSchema>;
+  /** Call-local baselines and consumed edges, allocated only for rule-bearing trees. */
+  deriveState?: DeriveState<Self>;
+  /** Number of applied derive write rounds throughout this settlement. */
+  deriveRounds?: number;
+  /** Development rule decisions grouped by round. */
+  traceRounds?: DeriveTraceEntry[][];
+  /** Last budget-exceeding attempt's rule names. */
+  deriveBudgetRules?: readonly DeriveTraceEntry[];
   /** First error to throw after the commit boundary. */
   failure?: SchemaFormError;
   /** Cause assigned to the deferred failure. */
@@ -74,7 +85,7 @@ export interface SettlementContext<Self extends SchemaNodeRecord<Self>> {
   /** Exhausted host rounds handed to the later budget phase. */
   hostWheelExceeded?: number;
   /** The exhausted transition or recursion budget, when applicable. */
-  exceededBudget?: 'hostWheel' | 'transition' | 'recursion';
+  exceededBudget?: 'hostWheel' | 'derive' | 'transition' | 'recursion';
   /** Number of rounds spent at the exhausted budget. */
   iterations?: number;
 }

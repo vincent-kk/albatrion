@@ -69,19 +69,20 @@ describe('settle gate calculation', () => {
     expect(root.structure?.user?.structure?.guarded).toBeUndefined();
   });
 
-  it('CONTROLS-080 withholds omitted host extras from @ dependencies', () => {
+  it('28C-03 context slot supplies @ independently of host extras', () => {
     const { root } = createTestTree({ type: 'object', properties: {
       user: { type: 'object', allOf: [
         { controls: { active: '@ && @.mode === "on"' },
           properties: { guarded: { type: 'string' } } },
       ] },
     } });
+    root.runtime.context = { mode: 'on' };
     writeSchemaNode(root, { user: null }, 'callerReplace', SetValueOption.Overwrite);
-    writeSchemaNode(root, { user: { mode: 'on' } },
+    writeSchemaNode(root, { user: { mode: 'off' } },
       'callerPartial', SetValueOption.Merge);
     expect(root.structure?.user?.raw).toBeNull();
-    expect(root.structure?.user?.extras).toEqual({ mode: 'on' });
-    expect(root.structure?.user?.structure?.guarded).toBeUndefined();
+    expect(root.structure?.user?.extras).toEqual({ mode: 'off' });
+    expect(root.structure?.user?.structure?.guarded).toBeDefined();
   });
 
   it('CONTROLS-080 reads a root child kept by the root output fallback', () => {
@@ -190,7 +191,7 @@ describe('settle gate calculation', () => {
 
   it('SETTLE-045 unescapes slash and tilde host segments for extras', () => {
     const { root } = createTestTree({ type: 'object', properties: {
-      'p/q~r': { type: 'object', allOf: [{ controls: { active: '@.enabled' },
+      'p/q~r': { type: 'object', allOf: [{ controls: { active: './enabled' },
         properties: { child: { type: 'string' } } }] },
     } });
     writeSchemaNode(root, { 'p/q~r': { enabled: true, child: 'shown' } },

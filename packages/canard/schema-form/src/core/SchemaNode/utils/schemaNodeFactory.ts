@@ -45,6 +45,7 @@ export function schemaNodeFactory(
 ): unknown {
   const runtime: SchemaNodeRuntime<RuntimeSchemaNode> = {
     ...runtimeSeed,
+    context: runtimeSeed.context ?? {},
     blueprint: analysis,
     nodeFactory: createSchemaNode,
     settlementScratch: undefined,

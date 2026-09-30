@@ -152,7 +152,7 @@ class GateRegistry {
       candidate.schemaPath === gate.schemaPath && candidate.key === 'active');
     return expression ? expression.dependencies.map((dependency) => {
       const path = resolveDependencyPath(location.hostPath, dependency);
-      return path === '@' ? location.hostPath : path;
+      return path;
     }) : [location.hostPath];
   }
 

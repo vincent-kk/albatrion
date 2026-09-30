@@ -23,6 +23,8 @@ import { finalizeExits } from '../transition/finalizeExits';
 import { getLatentOrder } from '../latent/getLatentOrder';
 import { hasLivePathKind } from '../detached/hasLivePathKind';
 import { distributeLatentValue } from '../latent/distributeLatentValue';
+import { runDeriveRounds } from '../derivation/runDeriveRounds';
+import { captureDeriveBaseline } from '../derivation/captureDeriveBaseline';
 
 /**
  * Apply a live write or an own-kind detached latent write (26C-14).
@@ -61,6 +63,7 @@ export const writeSchemaNode = <Self extends SchemaNodeRecord<Self>>(
     root: node.rootNode,
     target: node,
     kind,
+    option,
     hasGates: getTransitionCap(node.rootNode.runtime.blueprint) > 1,
     suppressAutomaticWrites: disable || (!enable &&
       node.rootNode.runtime.disableAutomaticWrites === true),
@@ -105,8 +108,12 @@ export const writeSchemaNode = <Self extends SchemaNodeRecord<Self>>(
       context.exceededBudget = 'hostWheel';
       context.iterations = context.hostWheelExceeded;
     }
+    if (!context.failure) runDeriveRounds(context);
     if (!context.failure) transitionSettlement(context);
-    if (context.cause === 'budget') restoreSourceB(context, explicitRaw);
+    if (context.cause === 'budget') {
+      restoreSourceB(context, explicitRaw);
+      captureDeriveBaseline(context);
+    }
     finalizeExits(context);
     if (kind === 'load')
       for (const path of node.runtime.typeMismatchPaths)

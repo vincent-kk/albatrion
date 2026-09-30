@@ -221,6 +221,32 @@ export interface SettlementScratch<Self> {
 
 /** Minimal per-tree slots consumed by the first settlement engine. */
 export interface SchemaNodeRuntime<Self> extends SchemaNodeRootRuntimeState {
+  /** Form context shared by every occurrence and expression in this tree. */
+  context?: Readonly<Record<string, unknown>>;
+  /** Last committed expression inputs, keyed by live authored rule occurrence. */
+  committedRuleValues?: Map<string, unknown>;
+  /** Last development settlement, replaced rather than accumulated. */
+  settlementTrace?: {
+    /** Entry API and public write option bits. */
+    readonly entry: { readonly api: string; readonly option: number };
+    /** Rule decisions grouped by evaluation round. */
+    readonly rounds: readonly (readonly {
+      readonly phase: string;
+      readonly kind: string;
+      readonly sourcePath: string;
+      readonly targetPath: string;
+      readonly previousValue: unknown;
+      readonly nextValue: unknown;
+      readonly result: string;
+    }[])[];
+    /** Last attempted rule list when derive exceeded its budget. */
+    readonly budget?: readonly {
+      readonly kind: string;
+      readonly sourcePath: string;
+      readonly targetPath: string;
+      readonly result: string;
+    }[];
+  };
   /** Form default for automatic writes, overridden by a call's explicit bits. */
   disableAutomaticWrites?: boolean;
   /** Form default for clearing raw when a node leaves the shape. */

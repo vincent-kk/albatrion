@@ -7,6 +7,8 @@ import { effectiveType } from './effectiveType';
 import { isTypeMismatch } from './isTypeMismatch';
 import { receivedType } from './receivedType';
 import { updateInactiveValuesMemo } from './updateInactiveValuesMemo';
+import { commitDeriveRules } from './commitDeriveRules';
+import { finalizeDeriveTrace } from './finalizeDeriveTrace';
 
 /** Shared frozen empty list for inactive and mismatch projections. */
 const EMPTY_PATHS: readonly string[] = Object.freeze([]);
@@ -22,6 +24,13 @@ export const commitSettlement = <Self extends SchemaNodeRecord<Self>>(
   context: SettlementContext<Self>,
 ): void => {
   const runtime = context.root.runtime;
+  commitDeriveRules(context);
+  if (process.env.NODE_ENV !== 'production') {
+    finalizeDeriveTrace(context);
+    runtime.settlementTrace = { entry: { api: context.kind, option: context.option },
+      rounds: context.traceRounds ?? [],
+      ...(context.deriveBudgetRules ? { budget: context.deriveBudgetRules } : {}) };
+  } else delete runtime.settlementTrace;
   const commit = (runtime.commitNumber ?? 0) + 1;
   runtime.commitNumber = commit;
   const declarations = runtime.committedDeclarationIds ?? new Map();

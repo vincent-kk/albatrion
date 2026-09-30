@@ -29,6 +29,7 @@ export const createTestTree = (
           if (gate.kind === 'if') predicates.set(gate, predicate);
   const runtime: SchemaNodeRuntime<PlainNode> = {
     blueprint: analysis,
+    context: {},
     ifPredicates: predicates,
     diagnostics: { status: 'stable' },
     nodeFactory: (entry, parent, treeRuntime) =>

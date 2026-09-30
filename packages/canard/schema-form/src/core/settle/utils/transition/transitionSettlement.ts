@@ -13,6 +13,7 @@ import { isMissingRaw } from './isMissingRaw';
 import { readDefault } from './readDefault';
 import { getTransitionCap } from './getTransitionCap';
 import { withdrawDetachedFills } from './withdrawDetachedFills';
+import { runDeriveRounds } from '../derivation/runDeriveRounds';
 
 /**
  * Apply appearance fills and final-list interpretation within a bounded round.
@@ -52,6 +53,7 @@ export const transitionSettlement = <Self extends SchemaNodeRecord<Self>>(
         filled.add(key);
       }
       if (context.kind !== 'load' && hasWrongKindObjectAncestor(node)) continue;
+      if (context.deriveState?.activeUnsetTargets.has(node)) continue;
       if (!isMissingRaw(node, context)) continue;
       const value = readDefault(node);
       if (value === undefined) continue;
@@ -98,6 +100,11 @@ export const transitionSettlement = <Self extends SchemaNodeRecord<Self>>(
       context.exceededBudget = 'hostWheel';
       context.iterations = context.hostWheelExceeded;
     }
+    if (context.failure) {
+      context.inTransition = false;
+      return;
+    }
+    runDeriveRounds(context);
     if (context.failure) {
       context.inTransition = false;
       return;

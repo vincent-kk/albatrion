@@ -77,7 +77,8 @@ export const evaluateGate = <Self extends SchemaNodeRecord<Self>>(
     if (expression) {
       const dependencies = expression.dependencies.map((dependency) => {
         const path = resolveDependencyPath(hostPath, dependency);
-        return path === '@' ? projectedExtra : readProjectedValue(context, path);
+        return path === '@' ? context.root.runtime.context ?? {} :
+          readProjectedValue(context, path);
       });
       return Boolean(expression.evaluate(dependencies));
     }
