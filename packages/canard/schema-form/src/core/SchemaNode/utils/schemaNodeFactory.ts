@@ -8,7 +8,7 @@ import type { InferSchemaNode, SchemaNode } from '../type';
 
 /** Tree inputs before the factory attaches its analysis and real creator. */
 export type SchemaNodeRuntimeSeed = Omit<SchemaNodeRuntime<unknown>,
-  'blueprint' | 'nodeFactory'>;
+  'blueprint' | 'nodeFactory' | 'settlementScratch'>;
 
 /** Create one record from a bound child or the root template. */
 const createSchemaNode = (
@@ -47,6 +47,7 @@ export function schemaNodeFactory(
     ...runtimeSeed,
     blueprint: analysis,
     nodeFactory: createSchemaNode,
+    settlementScratch: undefined,
   };
   return createSchemaNode(analysis.root, null, runtime);
 }

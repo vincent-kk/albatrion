@@ -195,4 +195,26 @@ describe('settle exits and budgets', () => {
       vi.unstubAllEnvs();
     }
   });
+
+  it('SETTLE-047 reuses cleared work containers after success and failure', () => {
+    const ordinary = createTestTree({ type: 'string' }).root;
+    writeSchemaNode(ordinary, 'first', 'input', SetValueOption.Overwrite);
+    const scratch = ordinary.runtime.settlementScratch;
+    expect(scratch?.inUse).toBe(false);
+    expect(scratch?.entered.size).toBe(0);
+    expect(scratch?.writtenInputs.size).toBe(0);
+    writeSchemaNode(ordinary, 'second', 'input', SetValueOption.Overwrite);
+    expect(ordinary.runtime.settlementScratch).toBe(scratch);
+
+    const unstable = createTestTree({ type: 'object', properties: {
+      a: { type: 'boolean', controls: { active: '!../b' } },
+      b: { type: 'boolean', controls: { active: '../a' } },
+    } }).root;
+    expect(() => writeSchemaNode(unstable, { a: true, b: true },
+      'callerReplace', SetValueOption.Overwrite)).toThrow();
+    expect(unstable.runtime.settlementScratch?.inUse).toBe(false);
+    expect(unstable.runtime.settlementScratch?.entered.size).toBe(0);
+    expect(unstable.runtime.settlementScratch?.automaticLog).toHaveLength(0);
+    expect(unstable.runtime.settlementScratch?.changedNodes.size).toBe(0);
+  });
 });

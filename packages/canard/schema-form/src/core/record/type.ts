@@ -140,6 +140,24 @@ export interface TypeMismatchRecord {
   readonly source: string;
 }
 
+/** Reusable settlement work containers bound to one tree's node type. */
+export interface SettlementScratch<Self> {
+  inUse: boolean;
+  entered: Set<Self>;
+  exited: Set<Self>;
+  selectedDeclarationIds: Map<Self, readonly number[]>;
+  writtenInputs: Map<Self, unknown>;
+  automaticLog: { node: Self; previousRaw: unknown; previousExtras: unknown }[];
+  filledNodes: Set<Self>;
+  latentAutomaticLog: Map<string, { present: boolean; value: unknown }>;
+  dirtyPaths: Set<string>;
+  shapeDirtyPaths: Set<string>;
+  changedRaw: Set<string>;
+  explicitRaw: Set<string>;
+  changedNodes: Set<Self>;
+  originalSchemas: Map<string, EffectiveSchema>;
+}
+
 /** Minimal per-tree slots consumed by the first settlement engine. */
 export interface SchemaNodeRuntime<Self> extends SchemaNodeRootRuntimeState {
   /** Form default for automatic writes, overridden by a call's explicit bits. */
@@ -166,4 +184,6 @@ export interface SchemaNodeRuntime<Self> extends SchemaNodeRootRuntimeState {
   budgets: { hostWheel: number; transition: number };
   /** Single node creator used throughout this tree. */
   nodeFactory: SchemaNodeFactory<Self>;
+  /** Lazily retained work containers for non-reentrant settlement calls. */
+  settlementScratch?: SettlementScratch<Self>;
 }

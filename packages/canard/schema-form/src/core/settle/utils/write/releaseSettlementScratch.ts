@@ -1,11 +1,11 @@
-import type { SettlementScratch } from './getSettlementScratch';
+import type { SettlementScratch } from '../../../record';
 
 /**
  * Drop call-local references before the runtime retains reusable containers.
  * @param scratch - Reserved work containers from one completed settlement
  * @returns Nothing; another synchronous write may reuse the containers
  */
-export const releaseSettlementScratch = (scratch: SettlementScratch): void => {
+export const releaseSettlementScratch = <Self>(scratch: SettlementScratch<Self>): void => {
   scratch.entered.clear();
   scratch.exited.clear();
   scratch.selectedDeclarationIds.clear();

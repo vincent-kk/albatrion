@@ -181,6 +181,23 @@ describe('settle commit', () => {
     expect(root.structure!.value.revision).toBe(revision);
   });
 
+  it('SETTLE-043 keeps a NaN child parent reference on an unrelated equal write', () => {
+    vi.spyOn(console, 'warn').mockImplementation(() => {});
+    const { root } = createTestTree({ type: 'object', properties: {
+      amount: { type: 'number' }, sibling: { type: 'string' },
+    } });
+    writeSchemaNode(root, { amount: NaN, sibling: 'same' },
+      'callerReplace', SetValueOption.Overwrite);
+    const emit = root.emit;
+    const local = root.local;
+    const sibling = root.structure?.sibling;
+    if (!sibling) throw new Error('Expected a sibling after the initial write');
+    writeSchemaNode(sibling, 'same', 'input', SetValueOption.Overwrite);
+    expect(root.emit).toBe(emit);
+    expect(root.local).toBe(local);
+    expect(root.behavior.assemble(root, root.children ?? [])).toBe(local);
+  });
+
   it('VALUE-037 warns about non-JSON data inside a whole terminal value only in development', () => {
     const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
     const first = createTestTree({ type: 'object', options: { terminal: true } }).root;

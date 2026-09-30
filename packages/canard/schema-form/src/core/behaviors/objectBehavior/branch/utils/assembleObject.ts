@@ -41,7 +41,7 @@ export const assembleObject: Behavior['assemble'] = (node, children) => {
           sameKeys = false;
           break;
         }
-        if (oldHasKey && child.emit !== Reflect.get(previous, child.name)) {
+        if (oldHasKey && !Object.is(child.emit, Reflect.get(previous, child.name))) {
           if (!patch) patch = { ...previous };
           writeObjectKey(patch, child.name, child.emit);
         }
@@ -96,7 +96,7 @@ export const assembleObject: Behavior['assemble'] = (node, children) => {
         const value = childValues.has(name)
           ? childValues.get(name)
           : extras ? Reflect.get(extras, name) : undefined;
-        if (value !== Reflect.get(previous, name)) {
+        if (!Object.is(value, Reflect.get(previous, name))) {
           if (!patch) patch = { ...previous };
           writeObjectKey(patch, name, value);
         }
