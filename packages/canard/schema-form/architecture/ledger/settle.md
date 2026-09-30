@@ -116,6 +116,8 @@
   > "버리되 소비하지 않으면 진 쓰기가 다음 라운드에 다시 시도된다." (`07-conclusions.md:218`)
   > 편집자 결정(29C-01): "【추론】 생긴 노드의 규칙을 채움 전에 평가하는 것은 설계다: SETTLE-005는 채움을 전이 단계(파생 뒤)에 두고, SETTLE-004의 순위 `controls.unsetValue` > `controls.derived` > `controls.injectTo` > 채움과 "생긴 노드의 `controls.unsetValue`가 참이면 채우지 않는다"는 그 순서에서만 성립한다." (`reviews/round-29-closing.md:11`)
   > 편집자 결정(29C-01): "【추론】 채움 뒤에는 새 에지가 있다: 채움 쓰기는 SETTLE-005 전이 행의 "→ 표시로"와 SETTLE-010(파생과 전이는 둘 다 표시로 돌아간다)에 따라 표시·계산·파생을 다시 지나고, 기준점은 그 규칙이 마지막으로 소비한 원천 값(`undefined`)이므로 채움 값으로의 변화는 SETTLE-004의 "원천이 다른 값으로 다시 바뀌면 새 에지"다." (`reviews/round-29-closing.md:12`)
+  > 편집자 결정(29C-01): "【추론】 생긴 노드의 규칙을 채움 전에 평가하는 것은 설계다: SETTLE-005는 채움을 전이 단계(파생 뒤)에 두고, SETTLE-004의 순위 `controls.unsetValue` > `controls.derived` > `controls.injectTo` > 채움과 "생긴 노드의 `controls.unsetValue`가 참이면 채우지 않는다"는 그 순서에서만 성립한다." (`reviews/round-29-closing.md:11`)
+  > 편집자 결정(29C-01): "【추론】 채움 뒤에는 새 에지가 있다: 채움 쓰기는 SETTLE-005 전이 행의 "→ 표시로"와 SETTLE-010(파생과 전이는 둘 다 표시로 돌아간다)에 따라 표시·계산·파생을 다시 지나고, 기준점은 그 규칙이 마지막으로 소비한 원천 값(`undefined`)이므로 채움 값으로의 변화는 SETTLE-004의 "원천이 다른 값으로 다시 바뀌면 새 에지"다." (`reviews/round-29-closing.md:12`)
 - 상태: 현행
 - 출처: `adr/0007-settle-cycle.md:38`(정본), `03-mental-model.md:124`, `02-target-overview.md:160,166`, `08-design-a-to-z.md:245,252`, `07-conclusions.md:215,218`, `03-mental-model.md:106-107`
 - 닫은 사람: 소유자 답(`reviews/round-10-owner-answers.md:23,24` E-8·E-9, 순위), 소유자 답(`reviews/round-10-owner-answers.md:20,22,26` D-7·D-17·E-16, 뒤가 앞을 덮는다), 소유자 답(`reviews/round-12-owner-answers.md:17` §9 같은 순위끼리), 소유자 답(`reviews/round-12-owner-answers.md:25` §9 `&derived`·`&injectTo` 충돌; 경고 없음 쪽만, 종류 순위는 13라운드 답 4가 정함), 소유자 답(`reviews/round-13-owner-answers.md:10` 13라운드 답 4, 같은 순위의 문서 순서와 경고 없음), 소유자 답(`reviews/round-10-owner-answers.md:10` A-4, 진짜 순환은 예산이 잡음), 편집자 결정(10라운드, 정착 안 에지 소비와 진 쓰기의 에지 소비, `07-conclusions.md:233`)
@@ -147,6 +149,11 @@
   > 편집자 결정(29C-01): "【추론】 생긴 노드의 규칙을 채움 전에 평가하는 것은 설계다: SETTLE-005는 채움을 전이 단계(파생 뒤)에 두고, SETTLE-004의 순위 `controls.unsetValue` > `controls.derived` > `controls.injectTo` > 채움과 "생긴 노드의 `controls.unsetValue`가 참이면 채우지 않는다"는 그 순서에서만 성립한다." (`reviews/round-29-closing.md:11`)
   > 편집자 결정(29C-01): "【추론】 채움 뒤에는 새 에지가 있다: 채움 쓰기는 SETTLE-005 전이 행의 "→ 표시로"와 SETTLE-010(파생과 전이는 둘 다 표시로 돌아간다)에 따라 표시·계산·파생을 다시 지나고, 기준점은 그 규칙이 마지막으로 소비한 원천 값(`undefined`)이므로 채움 값으로의 변화는 SETTLE-004의 "원천이 다른 값으로 다시 바뀌면 새 에지"다." (`reviews/round-29-closing.md:12`)
   > 편집자 결정(29C-01): "【추론】 04는 "→ 표시로"가 구현에 있음을 게이트가 뒤집히지 않는 변형(결과가 채움 값으로 발화한 것)으로 단언한다; 그것이 없으면 마운트에서 원천의 `default`가 대상에 실리지 않아 CONTROLS-084에 어긋난다." (`reviews/round-29-closing.md:16`)
+  > 편집자 결정(29C-01): "【추론】 생긴 노드의 규칙을 채움 전에 평가하는 것은 설계다: SETTLE-005는 채움을 전이 단계(파생 뒤)에 두고, SETTLE-004의 순위 `controls.unsetValue` > `controls.derived` > `controls.injectTo` > 채움과 "생긴 노드의 `controls.unsetValue`가 참이면 채우지 않는다"는 그 순서에서만 성립한다." (`reviews/round-29-closing.md:11`)
+  > 편집자 결정(29C-01): "【추론】 채움 뒤에는 새 에지가 있다: 채움 쓰기는 SETTLE-005 전이 행의 "→ 표시로"와 SETTLE-010(파생과 전이는 둘 다 표시로 돌아간다)에 따라 표시·계산·파생을 다시 지나고, 기준점은 그 규칙이 마지막으로 소비한 원천 값(`undefined`)이므로 채움 값으로의 변화는 SETTLE-004의 "원천이 다른 값으로 다시 바뀌면 새 에지"다." (`reviews/round-29-closing.md:12`)
+  > 편집자 결정(29C-01): "【추론】 04는 "→ 표시로"가 구현에 있음을 게이트가 뒤집히지 않는 변형(결과가 채움 값으로 발화한 것)으로 단언한다; 그것이 없으면 마운트에서 원천의 `default`가 대상에 실리지 않아 CONTROLS-084에 어긋난다." (`reviews/round-29-closing.md:16`)
+  > 편집자 결정(29C-02): "【추론】 식이나 가드가 던진 정착은 ERROR-121대로 그 자리마다 정의된 값으로 마치며, 던짐이 정착의 단계(파생 라운드, 전이의 채움과 나감 비움)를 끊는다는 문장은 원장에 없다; 트리 전체에 미치는 효과는 `degraded` 표식(ERROR-126)과 사슬 끝 throw뿐이다." (`reviews/round-29-closing.md:23`)
+  > 편집자 결정(29C-02): "【추론】 03(PR-2)이 계산 단계의 실패 하나로 그 정착의 전이(채움)와 나감 비움 전체를 건너뛴 것(`src/core/settle/utils/settlement/finishSettlement.ts:32-33`, `src/core/settle/utils/transition/finalizeExits.ts:46`; 파생 쪽도 같다 — `src/core/settle/utils/derivation/runDeriveRounds.ts`의 `context.failure` 조기 반환 두 곳이 실패 하나로 뒤 파생 라운드를 끊는다)은 ERROR-125보다 넓은 근사이고 03의 기록에 결정으로 남아 있지 않으므로 결함이다; 04가 ERROR-125의 범위(그 게이트로 나간 노드)로 좁혀 고치고 `plan/04-derive-and-controls/log.md` §4에 03의 이탈로 적는다(28C-03의 `@` 사례와 같은 처리)." (`reviews/round-29-closing.md:28`)
 - 상태: 현행
 - 출처: `adr/0007-settle-cycle.md:39`(정본), `02-target-overview.md:161`, `08-design-a-to-z.md:246`, `03-mental-model.md:108,116`, `reviews/round-18-closing.md:2513-2514`, `reviews/round-18-owner-answers.md:37`, `reviews/round-18-closing.md:2908-2910,2914`, `reviews/round-18-closing.md:2938-2940`
 - 닫은 사람: 소유자 답(`reviews/round-10-owner-answers.md:7` A-1, 채움은 노드가 생길 때 한 번), 소유자 답(`reviews/round-9-spec.md:52` 읽기2 채우기 원천), 소유자 답(`reviews/round-9-spec.md:56` 읽기2 시점(A/B)), 소유자 답(`reviews/round-13-owner-answers.md:8` 13라운드 답 2, 나감의 비움), 소유자 답(`reviews/round-17-owner-answers.md:10` R17-2 ㄴ), 편집자 결정(10라운드, `07-conclusions.md:106` 4.22), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-91), 소유자 답(`reviews/round-18-owner-answers.md:37` union O7·O8; U7 두 번 해석), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-104), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-105)
@@ -215,6 +222,7 @@
   > 원본을 쓰는 것은 파생과 전이뿐이고 둘 다 표시로 돌아간다. 그래서 커밋된 트리는 (스키마, 트리 전체의 `raw`·`extras`)의 순수 함수다(F9, P3). 상태는 이 둘뿐이다.
 - 보충:
   > 편집자 결정(29C-01): "【추론】 채움 뒤에는 새 에지가 있다: 채움 쓰기는 SETTLE-005 전이 행의 "→ 표시로"와 SETTLE-010(파생과 전이는 둘 다 표시로 돌아간다)에 따라 표시·계산·파생을 다시 지나고, 기준점은 그 규칙이 마지막으로 소비한 원천 값(`undefined`)이므로 채움 값으로의 변화는 SETTLE-004의 "원천이 다른 값으로 다시 바뀌면 새 에지"다." (`reviews/round-29-closing.md:12`)
+  > 편집자 결정(29C-01): "【추론】 채움 뒤에는 새 에지가 있다: 채움 쓰기는 SETTLE-005 전이 행의 "→ 표시로"와 SETTLE-010(파생과 전이는 둘 다 표시로 돌아간다)에 따라 표시·계산·파생을 다시 지나고, 기준점은 그 규칙이 마지막으로 소비한 원천 값(`undefined`)이므로 채움 값으로의 변화는 SETTLE-004의 "원천이 다른 값으로 다시 바뀌면 새 에지"다." (`reviews/round-29-closing.md:12`)
 - 상태: 현행
 - 출처: `adr/0007-settle-cycle.md:46`(정본), `02-target-overview.md:170`, `08-design-a-to-z.md:251`, `03-mental-model.md:114`
 - 닫은 사람: 원리(P3, `03-mental-model.md:15`), 편집자 결정(3–5라운드 반영 4차 본문, `adr/0007-settle-cycle.md:12`), 편집자 결정(10라운드 5차 본문, 상태 칸 `selection`을 지움(4.25), `adr/0007-settle-cycle.md:11`)
@@ -235,6 +243,7 @@
   > 편집자 결정(26C-11): "【추론】 전이 라운드 안에서 호스트 바퀴가 상한을 넘기면 그 자리에서 정착은 비수렴이다: 뒤의 채움이 풀어 주기를 기다리지 않고 SETTLE-011대로 원본 B를 커밋하며, `exceededBudget`은 `'hostWheel'`이다." (`reviews/round-26-closing.md:117`)
   > 편집자 결정(26C-11): "【추론】 호스트 바퀴 초과를 형상 변경으로 삼아 전이 라운드를 이어 가지 않는다: 같은 형상에 닿는 두 로드가 다른 `status`를 내는 것은 P3(형상은 상태의 순수 함수, SETTLE-029)에 어긋난다." (`reviews/round-26-closing.md:118`)
   > 편집자 결정(26C-11): "【추론】 그래서 `exceededBudget`은 넘긴 예산의 이름이다: 한 바퀴 안에서 게이트가 진동하면 `'hostWheel'`, 채움·비움이 게이트를 뒤집어 라운드 수가 상한을 넘기면 `'transition'`." (`reviews/round-26-closing.md:119`)
+  > 편집자 결정(29C-02): "【추론】 정착의 자동 쓰기를 모두 뺀 원본 B를 커밋하는 것은 SETTLE-011의 예산 초과 처분이며, 식·가드의 throw에는 적용하지 않는다." (`reviews/round-29-closing.md:27`)
 - 상태: 현행
 - 출처: `adr/0007-settle-cycle.md:47`(정본, #1–#2·#4), `03-mental-model.md:116`, `02-target-overview.md:169`, `08-design-a-to-z.md:254`, `adr/0007-settle-cycle.md:59`, `06-conclusions.md:196`, `reviews/round-18-closing.md:2942-2944`
 - 닫은 사람: 편집자 결정(7–8라운드 수렴 D-31, `06-conclusions.md:196`), 편집자 결정(10라운드, 원본 B는 unsetValue가 지운 값도 되돌림, `07-conclusions.md:98`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-105)
@@ -779,6 +788,7 @@
   > 편집자 결정(18C-102): "【추론】 로드는 에지와 생김의 기준을 비운다." (`reviews/round-18-closing.md:2866`)
   > 편집자 결정(18C-102): "【추론】 로드가 아닌 쓰기(`setValue(V)` 포함)는 직전 커밋을 기준으로 한다." (`reviews/round-18-closing.md:2867`)
   > 편집자 결정(22C-01): "【추론】 로드에서 `controls.injectTo`가 발화한다는 규칙(SETTLE-046, CONTROLS-084)은 `resetSubtree()`에는 그 하위 트리에만 적용한다: 원천 노드가 그 하위 트리에 있는 `injectTo`만 발화하고, 하위 트리 밖의 원천은 새 수명이 아니라 직전 커밋 그대로이므로 발화하지 않는다." (`reviews/round-22-closing.md:9`)
+  > 편집자 결정(29C-01): "【추론】 생긴 노드와 로드된 노드의 `controls.derived`·`controls.injectTo`는 원천의 방출 값이 `undefined`여도(채움 전) 거짓→참 에지로 발화한다: WRITE-029·FRAGMENT-050 (2)·CONTROLS-027은 에지의 조건을 "직전 값이 없다"로만 두고 원천 값의 유무를 조건으로 두지 않으며, CONTROLS-079의 `value`는 원천의 방출 값이라 방출이 없으면 `undefined`다." (`reviews/round-29-closing.md:9`)
   > 편집자 결정(29C-01): "【추론】 생긴 노드와 로드된 노드의 `controls.derived`·`controls.injectTo`는 원천의 방출 값이 `undefined`여도(채움 전) 거짓→참 에지로 발화한다: WRITE-029·FRAGMENT-050 (2)·CONTROLS-027은 에지의 조건을 "직전 값이 없다"로만 두고 원천 값의 유무를 조건으로 두지 않으며, CONTROLS-079의 `value`는 원천의 방출 값이라 방출이 없으면 `undefined`다." (`reviews/round-29-closing.md:9`)
 - 상태: 현행
 - 출처: `adr/0007-settle-cycle.md:92#2-4`(정본. SETTLE-027에서 분할), `02-target-overview.md:168`, `08-design-a-to-z.md:253`, `reviews/round-18-closing.md:2866-2867`

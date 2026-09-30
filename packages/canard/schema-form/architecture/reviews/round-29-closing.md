@@ -1,4 +1,4 @@
-# 29라운드 닫기 — 04 구현 중의 원장 해석: 태어난 노드의 파생 규칙과 `undefined` 원천
+# 29라운드 닫기 — 04 구현 중의 원장 해석 둘: 태어난 노드의 파생 규칙과 `undefined` 원천, 식이 던진 정착의 채움·나감 비움
 
 2026-10-01. 04 작업자(브랜치 `feat/schema-form-derive-and-controls`)가 회귀 이식 넷(`selfcheck-v5` A4b, `r8-port`·`r7-port` X16, X16_noDefault)에서 프로토타입 v7의 기대와 엔진의 결과가 다른 것을 발견하고 물었다: 생긴·로드된 노드의 `controls.injectTo`·`controls.derived`는 원천의 방출 값이 아직 `undefined`일 때(채움 전) 발화하는가. v7은 모형 선택(`spikes/round18/proto/utils/operations/fires.mjs:10-21`: 로드에서는 원천이 비어 있으면 발화하지 않고, 런타임 생김은 값 비교로 걸러짐)으로 채움 뒤에만 발화했다. 현행 항목에서 유도되므로 원장 관리자가 닫는다(PROCESS-066). 소유자가 뒤집으면 그 답이 이긴다. 결정 글은 고치지 않고 보충 줄만 더한다.
 
@@ -15,3 +15,15 @@
   - 【추론】 원장에 "원천이 없으면 태어날 때 발화하지 않는다"는 문장을 더하지 않는다: 그 규칙은 CONTROLS-084가 지운 `skip`의 부분 복원이고 G2에 걸리며, 현행 항목 어디에도 근거가 없다.
   - 【추론】 04는 "→ 표시로"가 구현에 있음을 게이트가 뒤집히지 않는 변형(결과가 채움 값으로 발화한 것)으로 단언한다; 그것이 없으면 마운트에서 원천의 `default`가 대상에 실리지 않아 CONTROLS-084에 어긋난다.
 - 근거: WRITE-029 "노드가 (다시) 생기면 그 노드의 `controls.unsetValue`·`controls.derived`·`controls.injectTo`의 에지는 거짓→참으로 본다(직전 값이 없다)"; FRAGMENT-050 "(2) 조각이 켜지는 정착에서 그 조각이 새로 들인 노드의 규칙 에지는 거짓→참이다(WRITE-029)", "그래서 `unsetValue`·`resetInteraction`은 식이 참이면 발화하고, `derived`·`injectTo`는 발화한다", "앞 라운드에 적용된 파생 쓰기는 뒤 라운드에서 조각이 꺼져도 되돌리지 않는다"; CONTROLS-027 "로드에는 직전 값이 없으므로 발화한다"; CONTROLS-084 "**지워진 선택지.** `skip`(로드 때는 발화하지 않음)은 `{ source: 'A' }`만 로드했을 때 초기 복사조차 없어 원천이 다시 바뀔 때까지 대상이 빈다. 공개 문서가 `injectTo`의 용도를 "Initial copy, default seeding"이라 적고 오늘 코드도 마운트에서 원천의 `default`로 대상을 채우므로 G2(표현력은 줄지 않는다)에 걸린다"; CONTROLS-079 "`value`는 원천의 방출 값이다"와 제목의 "`undefined` 항목과 `null`·`undefined` 반환은 쓰지 않음"; SETTLE-004 "순위는 `controls.unsetValue` > `controls.derived` > `controls.injectTo` > 채움이고", "기준점은 그 규칙이 이 정착에서 마지막으로 소비한 원천 값이다. 원천이 다른 값으로 다시 바뀌면 새 에지이고"; SETTLE-005 전이 행 "생긴 노드의 `controls.unsetValue`가 참이면 채우지 않는다(순위는 단계를 가로지른다, 원장 §4)", "→ 표시로"; TEST-069 "(라) 프로토타입 회귀의 배분: 한 사례는 그것이 건드리는 기제가 모두 있는 가장 이른 PR로 간다"; `plan/03-node-and-settle/log.md:99`의 "프로토타입 기대가 현행 원장과 달라(원장 관리자 확인) 이식하지 않는" 선례; SETTLE-010 "원본을 쓰는 것은 파생과 전이뿐이고 둘 다 표시로 돌아간다"; SETTLE-046 "`controls.injectTo`는 직전 값이 없으므로 발화한다(`fire`, 소유자 동의)".
+
+### 29C-02 식이 던져도 정착은 자리별 값으로 마친다 — 채움·나감 비움·다른 규칙은 진행, 예외는 ERROR-125의 범위뿐, 자동 쓰기 전체 제거는 예산 초과의 처분
+
+- 닫는 항목: ERROR-121(보충), ERROR-122(보충), ERROR-125(보충), SETTLE-011(보충), SETTLE-005(보충)
+- 결정:
+  - 【추론】 식이나 가드가 던진 정착은 ERROR-121대로 그 자리마다 정의된 값으로 마치며, 던짐이 정착의 단계(파생 라운드, 전이의 채움과 나감 비움)를 끊는다는 문장은 원장에 없다; 트리 전체에 미치는 효과는 `degraded` 표식(ERROR-126)과 사슬 끝 throw뿐이다.
+  - 【추론】 파생 규칙이 던지면 ERROR-122대로 그 규칙만 그 라운드의 후보에서 빠지고 에지를 소비하며, 같은 정착의 다른 규칙·다음 파생 라운드·채움·나감 비움은 평소대로 진행한다; 무관한 `controls.derived` 하나가 던져 로드의 채움이 빠지는 것은 결함이다.
+  - 【추론】 게이트가 던지면 그 게이트만 거짓이고, ERROR-125가 막는 것은 그 게이트로 나간 노드(WRITE-033대로 함께 나가는 하위 트리 포함)의 나감 비움뿐이다; 무관한 노드의 채움·나감 비움과 무관한 파생은 진행한다.
+  - 【추론】 상태 키의 식이 던지면 그 선언만 없는 것이고, 상태 키는 형상과 값을 바꾸지 않으므로(CONTROLS-022·023) 같은 정착의 채움·나감 비움에 영향이 없다.
+  - 【추론】 정착의 자동 쓰기를 모두 뺀 원본 B를 커밋하는 것은 SETTLE-011의 예산 초과 처분이며, 식·가드의 throw에는 적용하지 않는다.
+  - 【추론】 03(PR-2)이 계산 단계의 실패 하나로 그 정착의 전이(채움)와 나감 비움 전체를 건너뛴 것(`src/core/settle/utils/settlement/finishSettlement.ts:32-33`, `src/core/settle/utils/transition/finalizeExits.ts:46`; 파생 쪽도 같다 — `src/core/settle/utils/derivation/runDeriveRounds.ts`의 `context.failure` 조기 반환 두 곳이 실패 하나로 뒤 파생 라운드를 끊는다)은 ERROR-125보다 넓은 근사이고 03의 기록에 결정으로 남아 있지 않으므로 결함이다; 04가 ERROR-125의 범위(그 게이트로 나간 노드)로 좁혀 고치고 `plan/04-derive-and-controls/log.md` §4에 03의 이탈로 적는다(28C-03의 `@` 사례와 같은 처리).
+- 근거: ERROR-121 "던지면 그 자리마다 정의된 값으로 정착을 마치고, 사슬의 끝에서 모든 환경에서 throw한다(R17-1 나, 가칭 코드 `SCHEMA_FORM_ERROR.EXPRESSION_THREW`, 원래 예외는 `details.error`)."; ERROR-122 표 "| 게이트(`if` 게이트 함수와 그 가드, `controls.active`) | 그 게이트는 거짓이다 |", "| 상태 키(`controls.visible`·`controls.readOnly`·`controls.disabled`, 조각과 `controls.children`의 `controls`) | 그 선언은 없는 것이다 |", "| 파생 규칙(`controls.derived`·`controls.injectTo`·`controls.unsetValue`), 동적으로만 아는 `controls.injectTo` 대상이 없음 | 그 규칙을 그 라운드의 후보에서 빼고 에지를 소비한다 |"; ERROR-125 "식이나 가드가 던져 거짓이 된 게이트로 나간 노드에는 나감 비움을 적용하지 않는다(작성자의 잘못으로 커밋된 값을 잃지 않는다)."; ERROR-126 "어느 자리든 식이나 가드가 던지면 그 커밋은 `degraded`다(§5)."; SETTLE-011 "정착의 세 예산(호스트 바퀴, 파생 라운드, 전이 라운드) 가운데 하나라도 상한을 넘기면, 그 정착의 자동 쓰기 — 채움, `controls.derived`, `controls.injectTo`, `controls.unsetValue`, 나감의 비움 — 를 모두 뺀 **원본 B**를 커밋한다."; CONTROLS-022 제목 "숨기기만, 방출은 그대로"; CONTROLS-023 "잠금. 그 노드에만 걸린다. 값·형상·방출을 바꾸지 않는다"; SETTLE-005 전이 행의 채움·나감 비움 규칙(던짐을 조건으로 두지 않는다).

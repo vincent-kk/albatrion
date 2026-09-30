@@ -1853,7 +1853,10 @@
 
 - 결정:
   > 던지면 그 자리마다 정의된 값으로 정착을 마치고, 사슬의 끝에서 모든 환경에서 throw한다(R17-1 나, 가칭 코드 `SCHEMA_FORM_ERROR.EXPRESSION_THREW`, 원래 예외는 `details.error`).
-- 보충: 없음
+- 보충:
+  > 편집자 결정(29C-02): "【추론】 식이나 가드가 던진 정착은 ERROR-121대로 그 자리마다 정의된 값으로 마치며, 던짐이 정착의 단계(파생 라운드, 전이의 채움과 나감 비움)를 끊는다는 문장은 원장에 없다; 트리 전체에 미치는 효과는 `degraded` 표식(ERROR-126)과 사슬 끝 throw뿐이다." (`reviews/round-29-closing.md:23`)
+  > 편집자 결정(29C-02): "【추론】 파생 규칙이 던지면 ERROR-122대로 그 규칙만 그 라운드의 후보에서 빠지고 에지를 소비하며, 같은 정착의 다른 규칙·다음 파생 라운드·채움·나감 비움은 평소대로 진행한다; 무관한 `controls.derived` 하나가 던져 로드의 채움이 빠지는 것은 결함이다." (`reviews/round-29-closing.md:24`)
+  > 편집자 결정(29C-02): "【추론】 정착의 자동 쓰기를 모두 뺀 원본 B를 커밋하는 것은 SETTLE-011의 예산 초과 처분이며, 식·가드의 throw에는 적용하지 않는다." (`reviews/round-29-closing.md:27`)
 - 상태: 현행
 - 출처: `adr/0014-error-policy.md:188#2`(정본, ERROR-033에서 분할)
 - 닫은 사람: 소유자 답(`reviews/round-17-owner-answers.md:9` R17-1)
@@ -1873,6 +1876,9 @@
   > 편집자 결정(28C-05): "【추론】 ERROR-122의 자리별 값 표에 행 하나를 더해 읽는다: `controls.unsetOnInactive`의 식(노드 자신, `controls.children` 항목의 `controls`, 조각의 `controls`)이 직전 커밋의 방출 트리에서 던지면 그 선언은 "유지"다." (`reviews/round-28-closing.md:55`)
   > 편집자 결정(28C-05): "【추론】 "선언 없음"(아래 층으로 떨어짐)이 아니다: 되돌릴 수 없는 쓰기는 만장일치이고(WRITE-031) 던진 식은 비움에 찬성한 표가 아니며, 아래 층(Form 속성)이 참일 때 작성자의 잘못으로 커밋된 값을 잃게 되어 ERROR-125의 원칙(작성자의 잘못으로 커밋된 값을 잃지 않는다)에 어긋난다." (`reviews/round-28-closing.md:56`)
   > 편집자 결정(28C-05): "【추론】 던진 사실은 다른 자리와 같이 `EXPRESSION_THREW`로 사슬 끝에서 throw하고, 그 식을 평가한 정착의 커밋은 `degraded`다(ERROR-126)." (`reviews/round-28-closing.md:58`)
+  > 편집자 결정(29C-02): "【추론】 파생 규칙이 던지면 ERROR-122대로 그 규칙만 그 라운드의 후보에서 빠지고 에지를 소비하며, 같은 정착의 다른 규칙·다음 파생 라운드·채움·나감 비움은 평소대로 진행한다; 무관한 `controls.derived` 하나가 던져 로드의 채움이 빠지는 것은 결함이다." (`reviews/round-29-closing.md:24`)
+  > 편집자 결정(29C-02): "【추론】 게이트가 던지면 그 게이트만 거짓이고, ERROR-125가 막는 것은 그 게이트로 나간 노드(WRITE-033대로 함께 나가는 하위 트리 포함)의 나감 비움뿐이다; 무관한 노드의 채움·나감 비움과 무관한 파생은 진행한다." (`reviews/round-29-closing.md:25`)
+  > 편집자 결정(29C-02): "【추론】 상태 키의 식이 던지면 그 선언만 없는 것이고, 상태 키는 형상과 값을 바꾸지 않으므로(CONTROLS-022·023) 같은 정착의 채움·나감 비움에 영향이 없다." (`reviews/round-29-closing.md:26`)
 - 상태: 현행
 - 출처: `adr/0014-error-policy.md:190-195`(정본, ERROR-033에서 분할)
 - 닫은 사람: 편집자 결정(17라운드, `adr/0014-error-policy.md:188`)
@@ -1910,6 +1916,8 @@
   > 식이나 가드가 던져 거짓이 된 게이트로 나간 노드에는 나감 비움을 적용하지 않는다(작성자의 잘못으로 커밋된 값을 잃지 않는다).
 - 보충:
   > 편집자 결정(28C-05): "【추론】 "선언 없음"(아래 층으로 떨어짐)이 아니다: 되돌릴 수 없는 쓰기는 만장일치이고(WRITE-031) 던진 식은 비움에 찬성한 표가 아니며, 아래 층(Form 속성)이 참일 때 작성자의 잘못으로 커밋된 값을 잃게 되어 ERROR-125의 원칙(작성자의 잘못으로 커밋된 값을 잃지 않는다)에 어긋난다." (`reviews/round-28-closing.md:56`)
+  > 편집자 결정(29C-02): "【추론】 게이트가 던지면 그 게이트만 거짓이고, ERROR-125가 막는 것은 그 게이트로 나간 노드(WRITE-033대로 함께 나가는 하위 트리 포함)의 나감 비움뿐이다; 무관한 노드의 채움·나감 비움과 무관한 파생은 진행한다." (`reviews/round-29-closing.md:25`)
+  > 편집자 결정(29C-02): "【추론】 03(PR-2)이 계산 단계의 실패 하나로 그 정착의 전이(채움)와 나감 비움 전체를 건너뛴 것(`src/core/settle/utils/settlement/finishSettlement.ts:32-33`, `src/core/settle/utils/transition/finalizeExits.ts:46`; 파생 쪽도 같다 — `src/core/settle/utils/derivation/runDeriveRounds.ts`의 `context.failure` 조기 반환 두 곳이 실패 하나로 뒤 파생 라운드를 끊는다)은 ERROR-125보다 넓은 근사이고 03의 기록에 결정으로 남아 있지 않으므로 결함이다; 04가 ERROR-125의 범위(그 게이트로 나간 노드)로 좁혀 고치고 `plan/04-derive-and-controls/log.md` §4에 03의 이탈로 적는다(28C-03의 `@` 사례와 같은 처리)." (`reviews/round-29-closing.md:28`)
 - 상태: 현행
 - 출처: `adr/0014-error-policy.md:197#3`(정본, ERROR-033에서 분할)
 - 닫은 사람: 편집자 결정(17라운드, `adr/0014-error-policy.md:197`)
