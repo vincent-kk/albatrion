@@ -36,12 +36,24 @@ export const commitDeriveRules = <Self extends SchemaNodeRecord<Self>>(
     if (node.state !== previous) context.changedNodes.add(node);
   }
   const next = new Map(state.committedRuleValues);
-  const replacedPaths = new Set(state.visitedSourcePaths);
-  for (const node of context.exited) replacedPaths.add(node.path);
+  const exitedPaths = new Set([...context.exited].map((node) => node.path));
   for (const key of next.keys()) {
     const parts: unknown = JSON.parse(key);
-    if (isArray(parts) && typeof parts[0] === 'string' &&
-      replacedPaths.has(parts[0])) next.delete(key);
+    if (!isArray(parts) || typeof parts[0] !== 'string') continue;
+    const sourcePath = parts[0];
+    if (state.visitedSourcePaths.has(sourcePath)) {
+      next.delete(key);
+      continue;
+    }
+    let ancestor = sourcePath;
+    while (true) {
+      if (exitedPaths.has(ancestor)) {
+        next.delete(key);
+        break;
+      }
+      if (!ancestor) break;
+      ancestor = ancestor.slice(0, ancestor.lastIndexOf('/'));
+    }
   }
   for (const key of state.activeRuleKeys)
     if (state.consumedRuleValues.has(key))
