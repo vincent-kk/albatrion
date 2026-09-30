@@ -8,6 +8,7 @@
 - Speed first, minimal computation, and the same value read twice returns the same reference — every change states its speed and memory cost.
 - For a small, fixed set of checks known at build time, use direct `&&` or `||` conditions. Hoist a constant key array when iteration is clearer; never allocate the same fixed list on every call.
 - Use `hasOwnProperty` from `@winglet/common-utils/lib` for own-key checks instead of calling `Object.prototype.hasOwnProperty` directly.
+- Use `isArray` from `@winglet/common-utils/filter` for array checks instead of calling `Array.isArray` directly.
 
 ## Commands
 

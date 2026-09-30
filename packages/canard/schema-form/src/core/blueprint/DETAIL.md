@@ -56,7 +56,7 @@
 
 ### type-schema-type-invariant — schemaType 불변식
 
-- TEST-077에 따라 E1–E42 중 구성되는 모든 칸과 TEST-067(b) 코퍼스 14종의 모든 청사진 노드에서 `Array.isArray(schemaType)`은 union일 때만 참이고 배열 schemaType은 동결임을 검증합니다. 노드와 배열 아이템의 같은 참조는 노드 엔진 단계의 몫입니다.
+- TEST-077에 따라 E1–E42 중 구성되는 모든 칸과 TEST-067(b) 코퍼스 14종의 모든 청사진 노드에서 `isArray(schemaType)`은 union일 때만 참이고 배열 schemaType은 동결임을 검증합니다. 노드와 배열 아이템의 같은 참조는 노드 엔진 단계의 몫입니다.
 
 ### fragment-declarations — 조각과 공유
 
