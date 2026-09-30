@@ -21,6 +21,20 @@ export const computeNode = <Self extends SchemaNodeRecord<Self>>(
   context: SettlementContext<Self>,
 ): void => {
   if (!context.dirtyPaths.has(node.path)) return;
+  if (!context.hasGates && node.parent !== null &&
+    node.behavior.strategy === 'terminal' && context.entered.has(node)) {
+    updateOutput(node, context);
+    context.dirtyPaths.delete(node.path);
+    return;
+  }
+  if (!context.hasGates && !context.shapeDirtyPaths.has(node.path)) {
+    if (node.behavior.strategy === 'branch')
+      for (const child of dirtyChildren(node, context)) computeNode(child, context);
+    else if (node.parent === null) selectNodeSchema(node, context);
+    updateOutput(node, context);
+    context.dirtyPaths.delete(node.path);
+    return;
+  }
   if (!context.originalSchemas.has(node.path))
     context.originalSchemas.set(node.path, node.schema);
   const previous = { local: node.local, emit: node.emit, children: node.children,
@@ -41,16 +55,17 @@ export const computeNode = <Self extends SchemaNodeRecord<Self>>(
   }
   const prior = node.structure ?? {};
   const gates: BlueprintGate[] = [];
-  for (const entry of node.behavior.declareChildren(node))
-    for (const declaration of entry.declarations)
+  if (context.hasGates) {
+    for (const entry of node.behavior.declareChildren(node))
+      for (const declaration of entry.declarations)
+        for (const gate of declaration.gates)
+          if (!gates.includes(gate)) gates.push(gate);
+    for (const declaration of node.blueprintNode.declarations)
       for (const gate of declaration.gates)
         if (!gates.includes(gate)) gates.push(gate);
-  for (const declaration of node.blueprintNode.declarations)
-    for (const gate of declaration.gates)
-      if (!gates.includes(gate)) gates.push(gate);
-  const relocated = relocatedGates(node);
-  for (const occurrence of relocated)
-    if (!gates.includes(occurrence.gate)) gates.push(occurrence.gate);
+    for (const occurrence of relocatedGates(node))
+      if (!gates.includes(occurrence.gate)) gates.push(occurrence.gate);
+  }
   if (gates.length > 0) primeHost(node, prior, context);
   for (const child of dirtyChildren(node, context)) computeNode(child, context);
   if (gates.length > 0 && updateOutput(node, context))
@@ -62,7 +77,7 @@ export const computeNode = <Self extends SchemaNodeRecord<Self>>(
       (child) => computeNode(child, context), gates.length > 0);
     for (const child of dirtyChildren(node, context)) computeNode(child, context);
     const outputChanged = updateOutput(node, context);
-    const currentRelocated = relocatedGates(node);
+    const currentRelocated = context.hasGates ? relocatedGates(node) : [];
     for (const occurrence of currentRelocated)
       if (!gates.includes(occurrence.gate)) gates.push(occurrence.gate);
     cap = gates.length + 1;

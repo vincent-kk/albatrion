@@ -3,6 +3,9 @@ import type { SettlementContext } from '../../type';
 import { staticSpec } from './staticSpec';
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
+/** Declared child names are immutable for one analyzed node template. */
+const DECLARED_NAMES = new WeakMap<object, Set<string>>();
+
 /** Whether a value can merge by named keys without changing the host kind. */
 const isPlain = (value: unknown): value is Record<string, unknown> =>
   value !== null && typeof value === 'object' && !Array.isArray(value);
@@ -48,10 +51,23 @@ export const markWrite = <Self extends SchemaNodeRecord<Self>>(
   const source = isPlain(interpreted) ? interpreted : undefined;
   const previousExtras = node.extras;
   if (rawChanged && source) {
-    const declaredNames = new Set(node.blueprintNode.childEntries.map((entry) => entry.name));
-    const extras = Object.fromEntries(Object.entries(source).filter(([name]) =>
-      !declaredNames.has(name)));
-    node.extras = Object.keys(extras).length ? extras : undefined;
+    let declaredNames = DECLARED_NAMES.get(node.blueprintNode);
+    if (!declaredNames) {
+      declaredNames = new Set(node.blueprintNode.childEntries.map((entry) => entry.name));
+      DECLARED_NAMES.set(node.blueprintNode, declaredNames);
+    }
+    let extras: Record<string, unknown> | undefined;
+    for (const name of Object.keys(source)) {
+      const value = Reflect.get(source, name);
+      if (!declaredNames.has(name)) {
+        if (!extras) extras = {};
+        if (name === '__proto__')
+          Object.defineProperty(extras, name, { value, enumerable: true,
+            configurable: true, writable: true });
+        else extras[name] = value;
+      }
+    }
+    node.extras = extras;
   } else if (rawChanged) node.extras = undefined;
   if (context.automatic && !Object.is(previousExtras, node.extras))
     context.automaticChanged = true;

@@ -4,8 +4,51 @@ import type { Behavior } from '../../../../record';
 import { getStaticChoices } from '../../../utils/options/getStaticChoices';
 import { writeObjectKey } from '../../utils/keys/writeObjectKey';
 
+/** Last assembled shape allows a value-only write to patch its existing order. */
+const STABLE_SHAPES = new WeakMap<object, {
+  children: readonly unknown[];
+  schema: unknown;
+  extras: unknown;
+  names: readonly string[];
+}>();
+
 /** Combine live child projections and undeclared input in stable host order. */
 export const assembleObject: Behavior['assemble'] = (node, children) => {
+  const previous = node.local;
+  const stable = STABLE_SHAPES.get(node);
+  if (stable?.children === children && stable.schema === node.schema &&
+    stable.extras === undefined &&
+    node.extras === undefined && previous !== null &&
+    typeof previous === 'object' && !Array.isArray(previous)) {
+    let patch: Record<string, unknown> | undefined;
+    let sameKeys = true;
+    const oldNames = Object.keys(previous);
+    if (oldNames.length !== stable.names.length) sameKeys = false;
+    else for (let index = 0; index < oldNames.length; index++)
+      if (oldNames[index] !== stable.names[index]) {
+        sameKeys = false;
+        break;
+      }
+    if (sameKeys) {
+      for (const child of children) {
+        if (child === null || typeof child !== 'object' ||
+          !('name' in child) || typeof child.name !== 'string' || !('emit' in child)) {
+          sameKeys = false;
+          break;
+        }
+        const oldHasKey = hasOwnProperty(previous, child.name);
+        if ((child.emit === undefined) === oldHasKey) {
+          sameKeys = false;
+          break;
+        }
+        if (oldHasKey && child.emit !== Reflect.get(previous, child.name)) {
+          if (!patch) patch = { ...previous };
+          writeObjectKey(patch, child.name, child.emit);
+        }
+      }
+    }
+    if (sameKeys) return patch ?? previous;
+  }
   const childValues = new Map<string, unknown>();
   for (const child of children)
     if (child !== null && typeof child === 'object' &&
@@ -45,7 +88,6 @@ export const assembleObject: Behavior['assemble'] = (node, children) => {
         seen.add(name);
       }
 
-  const previous = node.local;
   if (previous !== null && typeof previous === 'object' && !Array.isArray(previous)) {
     const oldNames = Object.keys(previous);
     if (names.length === oldNames.length && names.every((name, index) => name === oldNames[index])) {
@@ -59,6 +101,8 @@ export const assembleObject: Behavior['assemble'] = (node, children) => {
           writeObjectKey(patch, name, value);
         }
       }
+      STABLE_SHAPES.set(node, { children, schema: node.schema, extras: node.extras,
+        names });
       return patch ?? previous;
     }
   }
@@ -67,5 +111,7 @@ export const assembleObject: Behavior['assemble'] = (node, children) => {
     writeObjectKey(result, name, childValues.has(name)
       ? childValues.get(name)
       : extras ? Reflect.get(extras, name) : undefined);
+  STABLE_SHAPES.set(node, { children, schema: node.schema, extras: node.extras,
+    names });
   return result;
 };

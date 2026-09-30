@@ -18,7 +18,8 @@ export const dirtyChildren = <Self extends SchemaNodeRecord<Self>>(
   for (const path of context.dirtyPaths) {
     if (!path.startsWith(prefix)) continue;
     const remaining = path.slice(prefix.length);
-    const encoded = remaining.split('/')[0];
+    const slash = remaining.indexOf('/');
+    const encoded = slash < 0 ? remaining : remaining.slice(0, slash);
     const name = unescapeSegment(encoded);
     const child = node.structure && hasOwnProperty(node.structure, name)
       ? node.structure[name] : undefined;

@@ -11,6 +11,8 @@ import { receivedType } from './receivedType';
 const EMPTY_PATHS: readonly string[] = Object.freeze([]);
 /** Shared frozen empty list for inactive values. */
 const EMPTY_VALUES: readonly { path: string; value: unknown }[] = Object.freeze([]);
+/** Shared empty warning batch. */
+const EMPTY_WARNINGS: readonly TypeMismatchRecord[] = Object.freeze([]);
 
 /**
  * Publish calculated changes, lamps, memoized paths, and one commit number.
@@ -28,7 +30,7 @@ export const commitSettlement = <Self extends SchemaNodeRecord<Self>>(
   for (const [node, ids] of context.selectedDeclarationIds)
     if (!node.detached)
       declarations.set(JSON.stringify([node.path, node.blueprintNode.kind]), ids);
-  const warnings: TypeMismatchRecord[] = [];
+  let warnings: TypeMismatchRecord[] | undefined;
   for (const node of context.changedNodes) {
     node.revision++;
     if (node.detached || node.blueprintNode.kind === 'virtual') continue;
@@ -49,6 +51,7 @@ export const commitSettlement = <Self extends SchemaNodeRecord<Self>>(
         source: context.kind === 'load' && context.entered.has(node) ? 'load' :
           context.changedRaw.has(node.path) ? context.kind : 'gate',
       };
+      if (!warnings) warnings = [];
       warnings.push(warning);
       warnDevelopmentIssue({ code: TYPE_MISMATCH,
         message: `Type mismatch at ${node.path} (commit ${commit})`,
@@ -69,41 +72,55 @@ export const commitSettlement = <Self extends SchemaNodeRecord<Self>>(
         });
     }
   }
-  runtime.typeMismatchRecords = Object.freeze(warnings);
-  runtime.refreshTargets = new Set(context.kind === 'load' ? [] :
-    [...context.changedRaw].filter((path) => path !== context.target.path));
-  const mismatchMemo = new Map<string, { commit: number; paths: readonly string[] }>();
-  const allPaths = [...runtime.typeMismatchPaths].sort();
-  mismatchMemo.set('', { commit, paths: allPaths.length ? Object.freeze(allPaths) : EMPTY_PATHS });
-  for (const path of allPaths) {
-    let ancestor = path;
-    while (ancestor) {
-      const paths = allPaths.filter((candidate) =>
-        candidate === ancestor || candidate.startsWith(`${ancestor}/`));
-      mismatchMemo.set(ancestor, { commit, paths: Object.freeze(paths) });
-      ancestor = ancestor.slice(0, ancestor.lastIndexOf('/'));
+  runtime.typeMismatchRecords = warnings ? Object.freeze(warnings) : EMPTY_WARNINGS;
+  const refreshTargets = runtime.refreshTargets ?? new Set<string>();
+  refreshTargets.clear();
+  if (context.kind !== 'load')
+    for (const path of context.changedRaw)
+      if (path !== context.target.path) refreshTargets.add(path);
+  runtime.refreshTargets = refreshTargets;
+  const mismatchMemo = runtime.typeMismatchesMemo ??
+    new Map<string, { commit: number; paths: readonly string[] }>();
+  mismatchMemo.clear();
+  if (runtime.typeMismatchPaths.size === 0)
+    mismatchMemo.set('', { commit, paths: EMPTY_PATHS });
+  else {
+    const allPaths = [...runtime.typeMismatchPaths].sort();
+    mismatchMemo.set('', { commit, paths: Object.freeze(allPaths) });
+    for (const path of allPaths) {
+      let ancestor = path;
+      while (ancestor) {
+        const paths = allPaths.filter((candidate) =>
+          candidate === ancestor || candidate.startsWith(`${ancestor}/`));
+        mismatchMemo.set(ancestor, { commit, paths: Object.freeze(paths) });
+        ancestor = ancestor.slice(0, ancestor.lastIndexOf('/'));
+      }
     }
   }
   runtime.typeMismatchesMemo = mismatchMemo;
-  const inactive = [...runtime.latentRaw].flatMap(([key, value]) => {
-    const identity: unknown = JSON.parse(key);
-    return Array.isArray(identity) && typeof identity[0] === 'string'
-      ? [{ path: identity[0], value }] : [];
-  }).sort((left, right) => left.path.localeCompare(right.path));
   runtime.inactiveValuesMemo.clear();
-  runtime.inactiveValuesMemo.set('', inactive.length ? Object.freeze(inactive.map(
-    (entry) => Object.freeze(entry))) : EMPTY_VALUES);
-  const inactiveHosts: string[] = [];
-  for (const entry of inactive) {
-    let ancestor = entry.path;
-    while (ancestor) {
-      if (!inactiveHosts.includes(ancestor)) inactiveHosts.push(ancestor);
-      ancestor = ancestor.slice(0, ancestor.lastIndexOf('/'));
+  if (runtime.latentRaw.size === 0)
+    runtime.inactiveValuesMemo.set('', EMPTY_VALUES);
+  else {
+    const inactive = [...runtime.latentRaw].flatMap(([key, value]) => {
+      const identity: unknown = JSON.parse(key);
+      return Array.isArray(identity) && typeof identity[0] === 'string'
+        ? [{ path: identity[0], value }] : [];
+    }).sort((left, right) => left.path.localeCompare(right.path));
+    runtime.inactiveValuesMemo.set('', inactive.length ? Object.freeze(inactive.map(
+      (entry) => Object.freeze(entry))) : EMPTY_VALUES);
+    const inactiveHosts: string[] = [];
+    for (const entry of inactive) {
+      let ancestor = entry.path;
+      while (ancestor) {
+        if (!inactiveHosts.includes(ancestor)) inactiveHosts.push(ancestor);
+        ancestor = ancestor.slice(0, ancestor.lastIndexOf('/'));
+      }
     }
+    for (const host of inactiveHosts)
+      runtime.inactiveValuesMemo.set(host, Object.freeze(inactive.filter((entry) =>
+        entry.path === host || entry.path.startsWith(`${host}/`))));
   }
-  for (const host of inactiveHosts)
-    runtime.inactiveValuesMemo.set(host, Object.freeze(inactive.filter((entry) =>
-      entry.path === host || entry.path.startsWith(`${host}/`))));
   if (context.failure && runtime.diagnostics.status !== 'degraded')
     runtime.diagnostics = { status: 'degraded', cause: context.cause,
       ...(context.cause === 'budget' ? { exceededBudget: context.exceededBudget,

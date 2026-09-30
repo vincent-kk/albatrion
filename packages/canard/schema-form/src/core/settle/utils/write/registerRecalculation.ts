@@ -19,15 +19,17 @@ export const registerRecalculation = <Self extends SchemaNodeRecord<Self>>(
       context.shapeDirtyPaths.add(declarationPath.slice(0,
         declarationPath.lastIndexOf('/')));
     }
-  for (const path of [...context.dirtyPaths]) {
+  for (const path of context.dirtyPaths) {
     let ancestor = path;
     while (ancestor) {
       ancestor = ancestor.slice(0, ancestor.lastIndexOf('/'));
       context.dirtyPaths.add(ancestor);
     }
   }
-  const registry = getGateRegistry(context.root.runtime);
-  for (const path of context.dirtyPaths)
-    if (registry.mayChangeAt(path, context.changedRaw))
-      context.shapeDirtyPaths.add(path);
+  if (context.hasGates) {
+    const registry = getGateRegistry(context.root.runtime);
+    for (const path of context.dirtyPaths)
+      if (registry.mayChangeAt(path, context.changedRaw))
+        context.shapeDirtyPaths.add(path);
+  }
 };

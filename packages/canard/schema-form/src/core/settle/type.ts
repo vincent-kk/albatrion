@@ -18,6 +18,8 @@ export interface SettlementContext<Self extends SchemaNodeRecord<Self>> {
   target: Self;
   /** Entry origin retained for later transition rules. */
   kind: SchemaNodeWriteKind;
+  /** Whether this analysis contains any authored gate. */
+  hasGates: boolean;
   /** Call-local suppression after explicit bits override the form default. */
   suppressAutomaticWrites: boolean;
   /** Load boundary whose current shape begins a new appearance lifetime. */

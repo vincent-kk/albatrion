@@ -21,6 +21,21 @@ describe('settle commit', () => {
     expect(JSON.stringify(root.emit)).toBe('{"z":"Z","a":"A","b":"B","x":1}');
   });
 
+  it('SETTLE-042 restores declared order after a consumer edits a value snapshot', () => {
+    const { root } = createTestTree({ type: 'object', properties: {
+      a: { type: 'string' }, b: { type: 'string' },
+    } });
+    writeSchemaNode(root, { a: 'A', b: 'B' }, 'callerReplace', SetValueOption.Overwrite);
+    if (root.local === null || typeof root.local !== 'object')
+      throw new Error('Expected an object snapshot');
+    Reflect.deleteProperty(root.local, 'a');
+    Reflect.set(root.local, 'a', 'edited');
+    Reflect.set(root.local, 'ghost', true);
+    writeSchemaNode(root.structure!.a, 'A2', 'input', SetValueOption.Overwrite);
+    expect(Object.keys(root.local!)).toEqual(['a', 'b']);
+    expect(root.local).toEqual({ a: 'A2', b: 'B' });
+  });
+
   it('SETTLE-042 recomputes inherited option overlays when a fragment gate changes', () => {
     const { root } = createTestTree({ type: 'object', properties: {
       flag: { type: 'boolean' }, a: { type: 'string' }, b: { type: 'string' },

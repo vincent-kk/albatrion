@@ -22,9 +22,19 @@ export const transitionSettlement = <Self extends SchemaNodeRecord<Self>>(
   context: SettlementContext<Self>,
 ): void => {
   if (context.suppressAutomaticWrites || context.failure) return;
+  if (!context.hasGates && context.entered.size === 0 && context.exited.size === 0) {
+    let narrowed = false;
+    for (const node of context.writtenInputs.keys())
+      if (!node.detached && effectiveType(node) !== node.schemaType) {
+        narrowed = true;
+        break;
+      }
+    if (!narrowed) return;
+  }
   context.inTransition = true;
   const cap = getTransitionCap(context.root.runtime.blueprint);
-  const filled = new Set<string>();
+  const filled = context.hasGates ? new Set<string>() : undefined;
+  const filledNodes = context.hasGates ? undefined : new Set<Self>();
   const cleared = new Set<Self>();
   let rounds = 0;
   let shapeChanged = false;
@@ -32,9 +42,15 @@ export const transitionSettlement = <Self extends SchemaNodeRecord<Self>>(
     context.automaticChanged = false;
     applyExitClearing(context, cleared);
     for (const node of [...context.entered].sort((left, right) => left.depth - right.depth)) {
-      const key = JSON.stringify([node.path, node.blueprintNode.kind]);
-      if (node.detached || filled.has(key)) continue;
-      filled.add(key);
+      if (node.detached) continue;
+      if (filledNodes) {
+        if (filledNodes.has(node)) continue;
+        filledNodes.add(node);
+      } else if (filled) {
+        const key = JSON.stringify([node.path, node.blueprintNode.kind]);
+        if (filled.has(key)) continue;
+        filled.add(key);
+      }
       if (context.kind !== 'load' && hasWrongKindObjectAncestor(node)) continue;
       if (!isMissingRaw(node)) continue;
       const value = readDefault(node);

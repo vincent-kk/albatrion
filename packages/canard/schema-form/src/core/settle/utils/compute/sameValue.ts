@@ -16,7 +16,11 @@ export const sameValue = (left: unknown, right: unknown): boolean => {
   }
   const leftKeys = Object.keys(left);
   const rightKeys = Object.keys(right);
-  return leftKeys.length === rightKeys.length &&
-    leftKeys.every((key, index) => key === rightKeys[index] &&
-      Object.is(Reflect.get(left, key), Reflect.get(right, key)));
+  if (leftKeys.length !== rightKeys.length) return false;
+  for (let index = 0; index < leftKeys.length; index++) {
+    const key = leftKeys[index];
+    if (key !== rightKeys[index] ||
+      !Object.is(Reflect.get(left, key), Reflect.get(right, key))) return false;
+  }
+  return true;
 };

@@ -13,6 +13,22 @@ import { updateOutput } from './updateOutput';
 import { hasRecursiveExpansion } from './hasRecursiveExpansion';
 import { RECURSIVE_SHAPE_DIVERGED } from '../errors/settleErrorCode';
 import { writeLatentRaw } from '../transition/writeLatentRaw';
+import type { BlueprintChildEntry } from '../../../blueprint';
+
+/** Ungated declarations are included by the effective-schema merger itself. */
+const NO_ACTIVE_IDS: readonly number[] = Object.freeze([]);
+/** Static selection IDs belong to the analyzed child edge. */
+const STATIC_IDS = new WeakMap<BlueprintChildEntry, readonly number[]>();
+
+/** Return one stable active-ID list for an ungated child edge. */
+const staticIds = (entry: BlueprintChildEntry): readonly number[] => {
+  let ids = STATIC_IDS.get(entry);
+  if (!ids) {
+    ids = Object.freeze(entry.declarations.map((declaration) => declaration.id));
+    STATIC_IDS.set(entry, ids);
+  }
+  return ids;
+};
 
 /**
  * Select all declared direct children in authored order for one host round.
@@ -37,10 +53,10 @@ export const selectChildren = <Self extends SchemaNodeRecord<Self>>(
   const seen = new Set<string>();
   let changed = false;
   for (const entry of node.behavior.declareChildren(node)) {
-    const active = entry.declarations.filter((declaration) =>
+    const active = context.hasGates ? entry.declarations.filter((declaration) =>
       declaration.gates.every((gate) => evaluateGate(gate, context, node,
         gate.schemaPath === `${declaration.schemaPath}/controls/active`
-          ? entry.name : undefined)));
+          ? entry.name : undefined))) : entry.declarations;
     if (active.length === 0) {
       if (context.kind === 'load' || context.changedRaw.has(node.path) || next[entry.name]) {
         const source = node.raw;
@@ -78,11 +94,12 @@ export const selectChildren = <Self extends SchemaNodeRecord<Self>>(
     const source = node.raw;
     const sourceInput = source !== null && typeof source === 'object' &&
       hasOwnProperty(source, entry.name) ? Reflect.get(source, entry.name) : undefined;
-    const latentKey = JSON.stringify([
+    const latent = context.root.runtime.latentRaw;
+    const latentKey = latent.size > 0 && !priorChild ? JSON.stringify([
       `${node.path}/${escapeSegment(entry.name)}`, entry.node.kind,
-    ]);
-    const input = context.root.runtime.latentRaw.has(latentKey) && !priorChild
-      ? context.root.runtime.latentRaw.get(latentKey) : sourceInput;
+    ]) : undefined;
+    const input = latentKey !== undefined && latent.has(latentKey)
+      ? latent.get(latentKey) : sourceInput;
     if (!priorChild && !next[entry.name] &&
       hasRecursiveExpansion(node, entry.node, input)) {
       if (!context.failure) {
@@ -96,7 +113,7 @@ export const selectChildren = <Self extends SchemaNodeRecord<Self>>(
     }
     const child = next[entry.name] ?? priorChild ??
       context.root.runtime.nodeFactory(entry, node, context.root.runtime);
-    getGateRegistry(child.runtime).register(child);
+    if (context.hasGates) getGateRegistry(child.runtime).register(child);
     let entryChanged = false;
     if (!priorChild && !next[entry.name]) {
       context.entered.add(child);
@@ -106,9 +123,11 @@ export const selectChildren = <Self extends SchemaNodeRecord<Self>>(
       changed = true;
       entryChanged = true;
     }
-    const ids = active.map((declaration) => declaration.id);
+    const ids = context.hasGates ? active.map((declaration) => declaration.id) :
+      staticIds(entry);
     context.selectedDeclarationIds.set(child, ids);
-    const effective = mergeEffectiveSchema(child.blueprintNode, ids, { mode: 'runtime' });
+    const effective = mergeEffectiveSchema(child.blueprintNode,
+      context.hasGates ? ids : NO_ACTIVE_IDS, { mode: 'runtime' });
     if (child.schema !== effective) {
       if (!context.originalSchemas.has(child.path))
         context.originalSchemas.set(child.path, child.schema);

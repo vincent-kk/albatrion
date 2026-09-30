@@ -14,6 +14,9 @@ import { transitionSettlement } from '../transition/transitionSettlement';
 import { restoreSourceB } from '../transition/restoreSourceB';
 import { pruneLatentRaw } from './pruneLatentRaw';
 import { promoteHostForChildWrite } from './promoteHostForChildWrite';
+import { getTransitionCap } from '../transition/getTransitionCap';
+import { getSettlementScratch } from './getSettlementScratch';
+import { releaseSettlementScratch } from './releaseSettlementScratch';
 
 /**
  * Settle one caller write through marking, calculation, and a single commit.
@@ -38,54 +41,61 @@ export const writeSchemaNode = <Self extends SchemaNodeRecord<Self>>(
   }
   const disable = (option & WriteOption.DisableAutomaticWrites) !== 0;
   const enable = (option & WriteOption.EnableAutomaticWrites) !== 0;
+  const scratch = getSettlementScratch(node.rootNode.runtime);
   const context: SettlementContext<Self> = {
     root: node.rootNode,
     target: node,
     kind,
+    hasGates: getTransitionCap(node.rootNode.runtime.blueprint) > 1,
     suppressAutomaticWrites: disable || (!enable &&
       node.rootNode.runtime.disableAutomaticWrites === true),
     loadScope: kind === 'load' ? node : undefined,
-    entered: new Set(),
-    exited: new Set(),
-    selectedDeclarationIds: new Map(),
-    writtenInputs: new Map(),
-    automaticLog: [],
-    filledNodes: new Set(),
+    entered: scratch.entered,
+    exited: scratch.exited,
+    selectedDeclarationIds: scratch.selectedDeclarationIds,
+    writtenInputs: scratch.writtenInputs,
+    automaticLog: scratch.automaticLog,
+    filledNodes: scratch.filledNodes,
     inTransition: false,
-    latentAutomaticLog: new Map(),
+    latentAutomaticLog: scratch.latentAutomaticLog,
     automatic: false,
     automaticChanged: false,
     transitionShapeChanged: false,
-    dirtyPaths: new Set(),
-    shapeDirtyPaths: new Set(),
-    changedRaw: new Set(),
-    changedNodes: new Set(),
-    originalSchemas: new Map(),
+    dirtyPaths: scratch.dirtyPaths,
+    shapeDirtyPaths: scratch.shapeDirtyPaths,
+    changedRaw: scratch.changedRaw,
+    changedNodes: scratch.changedNodes,
+    originalSchemas: scratch.originalSchemas,
   };
-  getGateRegistry(context.root.runtime).register(context.root);
-  if (kind === 'load')
-    for (const path of node.runtime.typeMismatchPaths)
-      if (!node.path || path === node.path || path.startsWith(`${node.path}/`))
-        node.runtime.typeMismatchPaths.delete(path);
-  if (kind === 'callerReplace' || kind === 'load' ||
-    (kind === 'callerPartial' && (input === null || typeof input !== 'object' ||
-      Array.isArray(input) || node.behavior.strategy !== 'branch')))
-    pruneLatentRaw(node);
-  markWrite(node, input, context);
-  if (kind !== 'load' && kind !== 'automatic')
-    promoteHostForChildWrite(node, context);
-  registerRecalculation(context);
-  computeNode(context.root, context);
-  const explicitRaw = new Set(context.changedRaw);
-  if (context.hostWheelExceeded && !context.failure) {
-    context.failure = new SchemaFormError(BUDGET_EXCEEDED,
-      `Host wheel budget exceeded at ${node.path}`, { path: node.path });
-    context.cause = 'budget';
-    context.exceededBudget = 'hostWheel';
-    context.iterations = context.hostWheelExceeded;
+  try {
+    if (context.hasGates) getGateRegistry(context.root.runtime).register(context.root);
+    if (kind === 'load')
+      for (const path of node.runtime.typeMismatchPaths)
+        if (!node.path || path === node.path || path.startsWith(`${node.path}/`))
+          node.runtime.typeMismatchPaths.delete(path);
+    if (kind === 'callerReplace' || kind === 'load' ||
+      (kind === 'callerPartial' && (input === null || typeof input !== 'object' ||
+        Array.isArray(input) || node.behavior.strategy !== 'branch')))
+      pruneLatentRaw(node);
+    markWrite(node, input, context);
+    if (kind !== 'load' && kind !== 'automatic')
+      promoteHostForChildWrite(node, context);
+    registerRecalculation(context);
+    computeNode(context.root, context);
+    const explicitRaw = scratch.explicitRaw;
+    for (const path of context.changedRaw) explicitRaw.add(path);
+    if (context.hostWheelExceeded && !context.failure) {
+      context.failure = new SchemaFormError(BUDGET_EXCEEDED,
+        `Host wheel budget exceeded at ${node.path}`, { path: node.path });
+      context.cause = 'budget';
+      context.exceededBudget = 'hostWheel';
+      context.iterations = context.hostWheelExceeded;
+    }
+    if (!context.failure) transitionSettlement(context);
+    if (context.cause === 'budget') restoreSourceB(context, explicitRaw);
+    commitSettlement(context);
+    if (context.failure) throw context.failure;
+  } finally {
+    releaseSettlementScratch(scratch);
   }
-  if (!context.failure) transitionSettlement(context);
-  if (context.cause === 'budget') restoreSourceB(context, explicitRaw);
-  commitSettlement(context);
-  if (context.failure) throw context.failure;
 };

@@ -26,7 +26,7 @@ export const primeHost = <Self extends SchemaNodeRecord<Self>>(
     const priorChild = hasOwnProperty(prior, entry.name) ? prior[entry.name] : undefined;
     const child = priorChild ??
       context.root.runtime.nodeFactory(entry, node, context.root.runtime);
-    getGateRegistry(child.runtime).register(child);
+    if (context.hasGates) getGateRegistry(child.runtime).register(child);
     if (!priorChild) {
       context.entered.add(child);
       const source = node.raw;

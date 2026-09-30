@@ -18,7 +18,8 @@ export const updateOutput = <Self extends SchemaNodeRecord<Self>>(
   if (node.parent === null && node.behavior.type === 'object' &&
     node.behavior.strategy === 'branch' && projected === undefined)
     projected = local;
-  const emit = sameValue(node.emit, projected) ? node.emit : projected;
+  const emit = node.emit === node.local && projected === local ? local :
+    sameValue(node.emit, projected) ? node.emit : projected;
   const changed = local !== node.local || emit !== node.emit;
   node.local = local;
   node.emit = emit;

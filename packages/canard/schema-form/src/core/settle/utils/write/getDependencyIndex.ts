@@ -1,6 +1,9 @@
 import type { Blueprint, PropertyDeclaration } from '../../../blueprint';
 import { resolveDependencyPath } from '../paths/resolveDependencyPath';
 
+/** No reverse dependency owners for a gate-free input path. */
+const NO_OWNERS: readonly string[] = Object.freeze([]);
+
 /** One absolute watch prefix and declarations registered exactly here. */
 interface DependencyNode {
   /** Declaration hosts that read this exact path. */
@@ -16,10 +19,12 @@ class DependencyIndex {
 
   /** Build absolute watch paths from authored reverse dependency IDs. */
   constructor(blueprint: Blueprint) {
+    const dependencies = Object.entries(blueprint.dependencies);
+    if (dependencies.length === 0 && blueprint.expressions.length === 0) return;
     const declarations = new Map<number, PropertyDeclaration>(blueprint.nodes.flatMap((node) =>
       node.declarations.map((declaration): [number, PropertyDeclaration] =>
         [declaration.id, declaration])));
-    for (const [dependency, ids] of Object.entries(blueprint.dependencies))
+    for (const [dependency, ids] of dependencies)
       for (const id of ids) {
         const declaration = declarations.get(id);
         if (!declaration) continue;
@@ -40,7 +45,9 @@ class DependencyIndex {
   }
 
   /** Return owners whose reads intersect a changed path in either direction. */
-  affected(changedPath: string): string[] {
+  affected(changedPath: string): readonly string[] {
+    if (this.root.owners.length === 0 && this.root.children.size === 0)
+      return NO_OWNERS;
     const owners = new Set<string>();
     let current: DependencyNode | undefined = this.root;
     for (const owner of current.owners) owners.add(owner);
