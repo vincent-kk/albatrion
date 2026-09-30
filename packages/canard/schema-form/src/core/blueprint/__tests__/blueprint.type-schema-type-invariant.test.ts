@@ -1,3 +1,4 @@
+import { isArray } from '@winglet/common-utils/filter';
 import { describe, expect, it } from 'vitest';
 
 // @ts-expect-error The original JavaScript corpus has no TypeScript declaration.
@@ -131,10 +132,10 @@ const TYPE_CELLS: readonly (readonly [string, BlueprintSchema])[] = [
 const expectInvariant = (label: string, schema: BlueprintSchema) => {
   for (const node of blueprint(schema).nodes) {
     expect(
-      Array.isArray(node.schemaType),
+      isArray(node.schemaType),
       `${label} ${node.schemaPath}`,
     ).toBe(node.kind === 'union');
-    if (Array.isArray(node.schemaType))
+    if (isArray(node.schemaType))
       expect(
         Object.isFrozen(node.schemaType),
         `${label} ${node.schemaPath} frozen`,

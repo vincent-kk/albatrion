@@ -1,3 +1,5 @@
+import { isArray } from '@winglet/common-utils/filter';
+
 import type { TypeMismatchRecord } from '../../../record';
 
 /**
@@ -12,7 +14,7 @@ export const receivedType = (value: unknown): TypeMismatchRecord['received'] => 
       Number.isInteger(value) ? 'integer' : 'number';
   if (typeof value === 'string') return 'string';
   if (typeof value === 'boolean') return 'boolean';
-  if (Array.isArray(value)) return 'array';
+  if (isArray(value)) return 'array';
   if (typeof value === 'object') return 'object';
   return 'other';
 };

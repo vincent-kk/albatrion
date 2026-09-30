@@ -1,3 +1,5 @@
+import { isArray } from '@winglet/common-utils/filter';
+
 import type { BlueprintGate, PropertyDeclaration } from '../../type';
 import { validateControlGroups } from '../diagnostics/validateControlGroups';
 import { readAllowedTypes } from '../types/readAllowedTypes';
@@ -128,7 +130,7 @@ export const collectDeclarations = (
       keyword === 'then' || keyword === 'else'
         ? [schema[keyword]]
         : schema[keyword];
-    if (!Array.isArray(values)) continue;
+    if (!isArray(values)) continue;
     values.forEach((child, index) => {
       if (child === undefined || child === false) return;
       const childPath = `${input.schemaPath}/${keyword}${keyword === 'then' || keyword === 'else' ? '' : `/${index}`}`;

@@ -1,3 +1,5 @@
+import { isArray } from '@winglet/common-utils/filter';
+
 import type { SchemaNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../type';
 import { setLatentRaw } from '../latent/setLatentRaw';
@@ -26,7 +28,7 @@ export const withdrawDetachedFills = <Self extends SchemaNodeRecord<Self>>(
     }
     for (const [key, previous] of context.latentAutomaticLog) {
       const identity: unknown = JSON.parse(key);
-      if (!Array.isArray(identity) || typeof identity[0] !== 'string' ||
+      if (!isArray(identity) || typeof identity[0] !== 'string' ||
         identity[0] !== node.path && !identity[0].startsWith(`${node.path}/`)) continue;
       setLatentRaw(context.root.runtime, undefined, key, previous.present,
         previous.value, undefined, undefined, context);

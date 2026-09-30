@@ -1,3 +1,4 @@
+import { isArray } from '@winglet/common-utils/filter';
 import { describe, expect, it } from 'vitest';
 
 import { blueprint } from '../index';
@@ -148,7 +149,7 @@ describe('blueprint static type conjunction', () => {
         return {
           kind,
           nullable,
-          schemaType: Array.isArray(schemaType)
+          schemaType: isArray(schemaType)
             ? [...schemaType].sort()
             : schemaType,
         };

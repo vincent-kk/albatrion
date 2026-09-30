@@ -1,3 +1,5 @@
+import { isArray } from '@winglet/common-utils/filter';
+
 import type { BlueprintChildEntry, PropertyDeclaration } from '../../../blueprint';
 
 /**
@@ -18,7 +20,7 @@ export const hasSharedConflict = (
     .map((declaration) => {
       const schema = declaration.schema;
       const type = typeof schema === 'object' && schema !== null ? schema.type : undefined;
-      const first = Array.isArray(type) ? type[0] : type;
+      const first = isArray(type) ? type[0] : type;
       return first === 'integer' ? 'number' : first ?? entry.node.kind;
     });
   return kinds.length > 1 && kinds.some((kind) => kind !== kinds[0]);

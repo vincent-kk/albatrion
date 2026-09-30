@@ -1,3 +1,5 @@
+import { isArray } from '@winglet/common-utils/filter';
+
 import type {
   BlueprintOptions,
   BlueprintSchema,
@@ -21,7 +23,7 @@ export const readAllowedTypes = (
 ): readonly SchemaTypeName[] | undefined => {
   if (typeof schema === 'boolean' || schema.type === undefined)
     return undefined;
-  const values = Array.isArray(schema.type) ? schema.type : [schema.type];
+  const values = isArray(schema.type) ? schema.type : [schema.type];
   if (
     !values.length ||
     values.some(

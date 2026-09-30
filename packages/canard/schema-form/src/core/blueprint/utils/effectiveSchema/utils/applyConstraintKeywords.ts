@@ -1,3 +1,5 @@
+import { isArray } from '@winglet/common-utils/filter';
+
 import {
   EMPTY_INTERSECTION,
   intersectConst,
@@ -48,7 +50,7 @@ export const applyConstraintKeywords = (
       ...(source[bound] === undefined ? {} : { [bound]: source[bound] }),
     };
     target.allOf = [
-      ...(Array.isArray(target.allOf) ? target.allOf : []),
+      ...(isArray(target.allOf) ? target.allOf : []),
       clause,
     ];
   }
@@ -85,8 +87,8 @@ export const applyConstraintKeywords = (
   );
   if (multipleOf !== undefined) target.multipleOf = multipleOf;
   const enumeration = intersectEnum(
-    Array.isArray(target.enum) ? target.enum : undefined,
-    Array.isArray(source.enum) ? source.enum : undefined,
+    isArray(target.enum) ? target.enum : undefined,
+    isArray(source.enum) ? source.enum : undefined,
     true,
   );
   if (enumeration === EMPTY_INTERSECTION) {

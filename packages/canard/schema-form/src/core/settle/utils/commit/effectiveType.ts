@@ -1,3 +1,5 @@
+import { isArray } from '@winglet/common-utils/filter';
+
 import type { BlueprintSchemaType, SchemaTypeName } from '../../../blueprint';
 import type { SchemaNodeRecord } from '../../../record';
 
@@ -13,7 +15,7 @@ export const effectiveType = <Self extends SchemaNodeRecord<Self>>(
   const candidate = typeof schema === 'object' && schema !== null
     ? schema.type : undefined;
   if (typeof candidate === 'string' && isTypeName(candidate)) return candidate;
-  if (Array.isArray(candidate) && candidate.every(isTypeName))
+  if (isArray(candidate) && candidate.every(isTypeName))
     return candidate;
   return node.schemaType;
 };

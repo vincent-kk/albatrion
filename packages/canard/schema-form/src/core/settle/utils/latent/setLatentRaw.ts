@@ -1,3 +1,5 @@
+import { isArray } from '@winglet/common-utils/filter';
+
 import type { BlueprintNode } from '../../../blueprint';
 import type { SchemaNodeRecord, SchemaNodeRuntime } from '../../../record';
 import type { SettlementContext } from '../../type';
@@ -33,7 +35,7 @@ export const setLatentRaw = <Self extends SchemaNodeRecord<Self>>(
     const metadata = runtime.latentRawMetadata ?? new Map();
     runtime.latentRawMetadata = metadata;
     const identity: unknown = JSON.parse(key);
-    if (Array.isArray(identity) && typeof identity[0] === 'string')
+    if (isArray(identity) && typeof identity[0] === 'string')
       metadata.set(key, { path: identity[0], blueprintNode: template, order });
   }
   if (had !== present || present && !Object.is(prior, value) || missingMetadata) {

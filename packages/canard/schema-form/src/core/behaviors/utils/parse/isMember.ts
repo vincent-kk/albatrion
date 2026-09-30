@@ -1,3 +1,5 @@
+import { isArray } from '@winglet/common-utils/filter';
+
 import type { SchemaTypeName } from '../../../blueprint';
 
 /** Test membership in one non-null JSON kind without coercing the input. */
@@ -17,7 +19,7 @@ export const isMember = (
     case 'object':
     case 'array':
       try {
-        const array = Array.isArray(value);
+        const array = isArray(value);
         return kind === 'array'
           ? array
           : value !== null && typeof value === 'object' && !array;

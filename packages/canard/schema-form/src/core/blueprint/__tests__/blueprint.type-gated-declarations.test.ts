@@ -1,3 +1,4 @@
+import { isArray } from '@winglet/common-utils/filter';
 import { describe, expect, it } from 'vitest';
 
 import { blueprint, mergeEffectiveSchema } from '../index';
@@ -36,7 +37,7 @@ describe('blueprint gated and declaration-only types', () => {
       expect(typeof effective === 'object' && effective.type).toEqual(
         _id === 'E26' ? 'number' : [_id === 'E41' ? 'integer' : 'number'],
       );
-      if (typeof effective === 'object' && Array.isArray(effective.type))
+      if (typeof effective === 'object' && isArray(effective.type))
         expect(Object.isFrozen(effective.type)).toBe(true);
       if (_id === 'E26')
         expect(typeof effective === 'object' && effective.type).toBe(

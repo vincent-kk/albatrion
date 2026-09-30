@@ -1,3 +1,5 @@
+import { isArray } from '@winglet/common-utils/filter';
+
 import type { SchemaNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../type';
 
@@ -19,7 +21,7 @@ export const hasLatentUnder = <Self extends SchemaNodeRecord<Self>>(
     for (const key of context.root.runtime.latentRaw.keys()) {
       if (ignored.has(key)) continue;
       const identity: unknown = JSON.parse(key);
-      if (!Array.isArray(identity) || typeof identity[0] !== 'string') continue;
+      if (!isArray(identity) || typeof identity[0] !== 'string') continue;
       let ancestor = identity[0];
       while (ancestor) {
         ancestor = ancestor.slice(0, ancestor.lastIndexOf('/'));

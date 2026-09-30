@@ -1,3 +1,4 @@
+import { isArray } from '@winglet/common-utils/filter';
 import { escapeSegment } from '@winglet/json/pointer';
 
 import type { BlueprintChildEntry } from '../../type';
@@ -51,7 +52,7 @@ export const populateNodeChildren = (
     const schema = readSchemaObject(declaration.schema);
     if (
       schema.type === 'null' ||
-      (Array.isArray(schema.type) &&
+      (isArray(schema.type) &&
         schema.type.length === 1 &&
         schema.type[0] === 'null')
     )
@@ -101,8 +102,8 @@ export const populateNodeChildren = (
     if (node.kind !== 'array') continue;
     const tuple =
       schema.prefixItems ??
-      (Array.isArray(schema.items) ? schema.items : undefined);
-    if (schema.prefixItems !== undefined && !Array.isArray(schema.prefixItems))
+      (isArray(schema.items) ? schema.items : undefined);
+    if (schema.prefixItems !== undefined && !isArray(schema.prefixItems))
       throwBlueprintError(
         BlueprintErrorCode.UnexpectedArraySchema,
         declaration.schemaPath,

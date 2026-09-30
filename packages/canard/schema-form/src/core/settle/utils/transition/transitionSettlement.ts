@@ -1,3 +1,5 @@
+import { isArray } from '@winglet/common-utils/filter';
+
 import { SchemaFormError } from '../../../../errors';
 import type { SchemaNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../type';
@@ -111,7 +113,7 @@ const hasWrongKindObjectAncestor = <Self extends SchemaNodeRecord<Self>>(
   while (parent) {
     if (parent.behavior.type === 'object' && parent.behavior.strategy === 'branch' &&
       parent.raw !== undefined && (parent.raw === null ||
-        typeof parent.raw !== 'object' || Array.isArray(parent.raw))) return true;
+        typeof parent.raw !== 'object' || isArray(parent.raw))) return true;
     parent = parent.parent;
   }
   return false;

@@ -1,3 +1,5 @@
+import { isArray } from '@winglet/common-utils/filter';
+
 import { mergeEffectiveSchema } from '../../../blueprint';
 import type { BlueprintNode } from '../../../blueprint';
 import { getStaticChoices } from './getStaticChoices';
@@ -12,7 +14,7 @@ export const isOmittedEmpty = (template: BlueprintNode, value: unknown): boolean
   if (!getStaticChoices(mergeEffectiveSchema(template, [],
     { mode: 'runtime' })).omitEmpty) return false;
   if (value === '') return true;
-  if (Array.isArray(value)) return value.length === 0;
+  if (isArray(value)) return value.length === 0;
   if (value === null || typeof value !== 'object') return false;
   const prototype = Object.getPrototypeOf(value);
   return (prototype === Object.prototype || prototype === null) &&

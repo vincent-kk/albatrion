@@ -1,3 +1,5 @@
+import { isArray } from '@winglet/common-utils/filter';
+
 /**
  * Compare calculated values while preserving an unchanged container reference.
  * @param left - Value from the previous commit
@@ -8,8 +10,8 @@ export const sameValue = (left: unknown, right: unknown): boolean => {
   if (Object.is(left, right)) return true;
   if (left === null || right === null ||
     typeof left !== 'object' || typeof right !== 'object' ||
-    Array.isArray(left) !== Array.isArray(right)) return false;
-  if (!Array.isArray(left)) {
+    isArray(left) !== isArray(right)) return false;
+  if (!isArray(left)) {
     const prototype = Object.getPrototypeOf(left);
     if (prototype !== Object.getPrototypeOf(right) ||
       (prototype !== Object.prototype && prototype !== null)) return false;

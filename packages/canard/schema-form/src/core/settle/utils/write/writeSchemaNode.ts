@@ -1,3 +1,5 @@
+import { isArray } from '@winglet/common-utils/filter';
+
 import type { SchemaNodeRecord } from '../../../record';
 import { SetValueOption } from '../../../types/value';
 import { SchemaFormError } from '../../../../errors';
@@ -54,7 +56,7 @@ export const writeSchemaNode = <Self extends SchemaNodeRecord<Self>>(
   const replaces = kind === 'callerReplace' ||
     kind === 'input' && node.behavior.strategy === 'branch' ||
     (kind === 'callerPartial' && (input === null || typeof input !== 'object' ||
-      Array.isArray(input) || node.behavior.strategy !== 'branch'));
+      isArray(input) || node.behavior.strategy !== 'branch'));
   const context: SettlementContext<Self> = {
     root: node.rootNode,
     target: node,

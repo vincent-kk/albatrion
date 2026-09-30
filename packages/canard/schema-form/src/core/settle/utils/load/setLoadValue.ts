@@ -1,3 +1,4 @@
+import { isArray } from '@winglet/common-utils/filter';
 import { unescapeSegment } from '@winglet/json/pointer';
 import { sameValue } from '../compute/sameValue';
 import { getLoadValue } from './getLoadValue';
@@ -23,7 +24,7 @@ export const setLoadValue = (snapshot: unknown, path: string, value: unknown): u
   let next = value;
   for (let index = segments.length - 1; index >= 0; index--) {
     const parent = ancestors[index];
-    const copy = Array.isArray(parent) ? [...parent] :
+    const copy = isArray(parent) ? [...parent] :
       parent !== null && typeof parent === 'object' ? { ...parent } : {};
     Reflect.set(copy, segments[index], next);
     next = copy;

@@ -1,3 +1,5 @@
+import { isArray } from '@winglet/common-utils/filter';
+
 import type { BlueprintSchemaType } from '../../../blueprint';
 
 /**
@@ -21,8 +23,8 @@ export const isTypeMismatch = (
       case 'boolean': return typeof value === 'boolean';
       case 'integer': return typeof value === 'number' && Number.isInteger(value);
       case 'number': return typeof value === 'number' && Number.isFinite(value);
-      case 'array': return Array.isArray(value);
-      case 'object': return value !== null && typeof value === 'object' && !Array.isArray(value);
+      case 'array': return isArray(value);
+      case 'object': return value !== null && typeof value === 'object' && !isArray(value);
       case 'null': return false;
     }
   });

@@ -1,3 +1,4 @@
+import { isArray } from '@winglet/common-utils/filter';
 import { escapeSegment } from '@winglet/json/pointer';
 import type { SchemaNodeRecord, SchemaNodeRuntime } from '../../../record';
 import type { SettlementContext } from '../../type';
@@ -18,7 +19,7 @@ export const pruneLatentRaw = <Self extends SchemaNodeRecord<Self>>(
   const childPaths = names?.map((name) => `${path}/${escapeSegment(name)}`);
   for (const key of runtime.latentRaw.keys()) {
     const identity: unknown = JSON.parse(key);
-    if (!Array.isArray(identity) || typeof identity[0] !== 'string') continue;
+    if (!isArray(identity) || typeof identity[0] !== 'string') continue;
     if (childPaths ? childPaths.some((childPath) => identity[0] === childPath ||
       identity[0].startsWith(`${childPath}/`)) :
       !path || identity[0] === path || identity[0].startsWith(`${path}/`))

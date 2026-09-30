@@ -1,4 +1,5 @@
 import { SchemaFormError } from '../../../../errors';
+import { isArray } from '@winglet/common-utils/filter';
 import { unescapeSegment } from '@winglet/json/pointer';
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 import type { BlueprintGate } from '../../../blueprint';
@@ -28,7 +29,7 @@ export const evaluateGate = <Self extends SchemaNodeRecord<Self>>(
     return false;
   const hostPath = getGateRegistry(owner.runtime).locate(owner, gate, edgeName).hostPath;
   const raw = readProjectedValue(context, hostPath);
-  const host = raw !== null && typeof raw === 'object' && !Array.isArray(raw)
+  const host = raw !== null && typeof raw === 'object' && !isArray(raw)
     ? raw : {};
   let input: Record<string, unknown> = { ...host };
   const hostNode = hostPath === '' ? context.root :
@@ -44,13 +45,13 @@ export const evaluateGate = <Self extends SchemaNodeRecord<Self>>(
     ancestor; ancestor = ancestor.parent)
     if (ancestor.behavior.strategy === 'branch' && ancestor.raw !== undefined &&
       (ancestor.parent !== null || raw === null || typeof raw !== 'object' ||
-        Array.isArray(raw))) {
+        isArray(raw))) {
       projectedHost = false;
       break;
     }
   const projectedExtra = projectedHost ? extra : undefined;
   if (projectedExtra !== null && typeof projectedExtra === 'object' &&
-    !Array.isArray(projectedExtra))
+    !isArray(projectedExtra))
     input = { ...input, ...projectedExtra };
   try {
     if (gate.kind === 'discriminator') {
@@ -58,7 +59,7 @@ export const evaluateGate = <Self extends SchemaNodeRecord<Self>>(
       if (condition === null || typeof condition !== 'object' ||
         !('propertyName' in condition) ||
         typeof condition.propertyName !== 'string' ||
-        !('values' in condition) || !Array.isArray(condition.values)) return false;
+        !('values' in condition) || !isArray(condition.values)) return false;
       const value = hasOwnProperty(input, condition.propertyName)
         ? input[condition.propertyName] : undefined;
       return condition.values.some((candidate: unknown) => Object.is(candidate, value));

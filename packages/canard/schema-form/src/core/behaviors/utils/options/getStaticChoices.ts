@@ -1,3 +1,5 @@
+import { isArray } from '@winglet/common-utils/filter';
+
 import type { EffectiveSchema } from '../../../blueprint';
 
 /** Option-derived choices shared by every call using one effective-schema memo result. */
@@ -21,14 +23,14 @@ export const getStaticChoices = (effective: EffectiveSchema): StaticChoices => {
   if (cached) return cached;
   const schema = effective.schema;
   const options = typeof schema === 'object' && schema !== null ? schema.options : undefined;
-  const hints = typeof options === 'object' && options !== null && !Array.isArray(options)
+  const hints = typeof options === 'object' && options !== null && !isArray(options)
     ? options
     : undefined;
   const propertyKeys = hints && 'propertyKeys' in hints ? hints.propertyKeys : undefined;
   const choices: StaticChoices = Object.freeze({
     omitEmpty: !hints || !('omitEmpty' in hints) || hints.omitEmpty !== false,
     trim: !!hints && 'trim' in hints && hints.trim === true,
-    propertyKeys: Array.isArray(propertyKeys)
+    propertyKeys: isArray(propertyKeys)
       ? Object.freeze(propertyKeys.filter((key: unknown): key is string => typeof key === 'string'))
       : NO_KEYS,
   });

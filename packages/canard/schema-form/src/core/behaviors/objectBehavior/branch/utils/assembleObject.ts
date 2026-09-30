@@ -1,3 +1,4 @@
+import { isArray } from '@winglet/common-utils/filter';
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
 import type { Behavior } from '../../../../record';
@@ -19,7 +20,7 @@ export const assembleObject: Behavior['assemble'] = (node, children) => {
   if (stable?.children === children && stable.schema === node.schema &&
     stable.extras === undefined &&
     node.extras === undefined && previous !== null &&
-    typeof previous === 'object' && !Array.isArray(previous)) {
+    typeof previous === 'object' && !isArray(previous)) {
     let patch: Record<string, unknown> | undefined;
     let sameKeys = true;
     const oldNames = Object.keys(previous);
@@ -55,7 +56,7 @@ export const assembleObject: Behavior['assemble'] = (node, children) => {
       'name' in child && typeof child.name === 'string' && 'emit' in child)
       childValues.set(child.name, child.emit);
   const extra = node.extras;
-  const extras = extra !== null && typeof extra === 'object' && !Array.isArray(extra)
+  const extras = extra !== null && typeof extra === 'object' && !isArray(extra)
     ? extra
     : undefined;
   const names: string[] = [];
@@ -88,7 +89,7 @@ export const assembleObject: Behavior['assemble'] = (node, children) => {
         seen.add(name);
       }
 
-  if (previous !== null && typeof previous === 'object' && !Array.isArray(previous)) {
+  if (previous !== null && typeof previous === 'object' && !isArray(previous)) {
     const oldNames = Object.keys(previous);
     if (names.length === oldNames.length && names.every((name, index) => name === oldNames[index])) {
       let patch: Record<string, unknown> | undefined;

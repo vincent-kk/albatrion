@@ -1,3 +1,5 @@
+import { isArray } from '@winglet/common-utils/filter';
+
 /**
  * Find nested values a JSON round trip cannot preserve inside a whole value.
  * @param value - Opaque object or array retained by one terminal node
@@ -32,7 +34,7 @@ export const collectNonJsonPaths = (value: unknown, path: string): string[] => {
     }
     active.add(current);
     pending.push({ leave: current });
-    if (Array.isArray(current)) {
+    if (isArray(current)) {
       for (let index = current.length - 1; index >= 0; index--)
         pending.push({ value: current[index], path: `${currentPath}/${index}` });
     } else {
