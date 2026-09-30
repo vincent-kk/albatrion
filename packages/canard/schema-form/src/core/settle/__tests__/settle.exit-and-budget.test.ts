@@ -2,10 +2,51 @@ import { describe, expect, it, vi } from 'vitest';
 
 import { SetValueOption } from '../../types/value';
 import { loadSchemaNodeAtMount, resetSchemaNodeForm, writeSchemaNode } from '../index';
+import { getTransitionCap } from '../utils/transition/getTransitionCap';
 import { createTestTree } from './fixtures/createTestTree';
 
 // filid:contract settle-budget
 describe('settle exits and budgets', () => {
+  it('SETTLE-041 counts discriminator and branch active as one fragment in both budgets', () => {
+    const { root, blueprint } = createTestTree({ type: 'object',
+      controls: { discriminator: 'kind' },
+      oneOf: [{ controls: { active: '!./x' }, properties: {
+        kind: { type: 'string', const: 'a' }, x: { type: 'number' },
+      } }],
+    });
+    expect(getTransitionCap(blueprint)).toBe(2);
+    expect(() => writeSchemaNode(root, { kind: 'a', x: 1 },
+      'callerReplace', SetValueOption.Overwrite)).toThrow();
+    expect(root.runtime.diagnostics).toMatchObject({ cause: 'budget',
+      exceededBudget: 'hostWheel', iterations: 2 });
+  });
+
+  it('SETTLE-041 counts one children active entry across its targets', () => {
+    const { root, blueprint } = createTestTree({ type: 'object',
+      properties: { a: { type: 'number' }, b: { type: 'number' } },
+      controls: { children: [{ targets: ['a', 'b'],
+        controls: { active: '!./a' } }] },
+    });
+    expect(getTransitionCap(blueprint)).toBe(2);
+    expect(() => writeSchemaNode(root, { a: 1, b: 2 },
+      'callerReplace', SetValueOption.Overwrite)).toThrow();
+    expect(root.runtime.diagnostics).toMatchObject({ cause: 'budget',
+      exceededBudget: 'hostWheel', iterations: 2 });
+  });
+
+  it('26C-09 keeps the self-negating fragment transition ceiling at two', () => {
+    const { root, blueprint } = createTestTree({ type: 'object',
+      if: { not: { required: ['x'] } },
+      then: { properties: { x: { type: 'number', default: 1 } } },
+    }, (input) => input !== null && typeof input === 'object' &&
+      !('x' in input));
+    expect(getTransitionCap(blueprint)).toBe(2);
+    expect(() => loadSchemaNodeAtMount(root, {}, SetValueOption.Overwrite))
+      .toThrow();
+    expect(root.runtime.diagnostics).toMatchObject({ cause: 'budget',
+      exceededBudget: 'transition', iterations: 2 });
+  });
+
   it('SETTLE-005 withdraws a mid-round fill absent from the final shape', () => {
     const { root } = createTestTree({ type: 'object', properties: {
       toggle: { type: 'boolean', default: true },

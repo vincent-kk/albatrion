@@ -9,6 +9,7 @@ import { selectNodeSchema } from './selectNodeSchema';
 import { relocatedGates } from './relocatedGates';
 import { scheduleRelocatedGates } from './scheduleRelocatedGates';
 import { updateOutput } from './updateOutput';
+import { getHostWheelBudgetCap } from '../gates/getGateBudgetCap';
 
 /**
  * Finish a dirty subtree with one descent and a bounded host gate wheel.
@@ -70,7 +71,7 @@ export const computeNode = <Self extends SchemaNodeRecord<Self>>(
   for (const child of dirtyChildren(node, context)) computeNode(child, context);
   if (gates.length > 0 && updateOutput(node, context))
     scheduleRelocatedGates(relocatedGates(node), context);
-  let cap = gates.length + 1;
+  let cap = getHostWheelBudgetCap(node, node.runtime.blueprint, gates);
   for (let round = 0; round < cap; round++) {
     const schemaChanged = node.parent === null && selectNodeSchema(node, context);
     const changed = selectChildren(node, context, prior,
@@ -80,7 +81,7 @@ export const computeNode = <Self extends SchemaNodeRecord<Self>>(
     const currentRelocated = context.hasGates ? relocatedGates(node) : [];
     for (const occurrence of currentRelocated)
       if (!gates.includes(occurrence.gate)) gates.push(occurrence.gate);
-    cap = gates.length + 1;
+    cap = getHostWheelBudgetCap(node, node.runtime.blueprint, gates);
     if (outputChanged) scheduleRelocatedGates(currentRelocated, context);
     if (!schemaChanged && !changed && !outputChanged) {
       preserveReferences(node, previous, context);

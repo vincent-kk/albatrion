@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { SetValueOption } from '../../types/value';
-import { writeSchemaNode } from '../index';
+import { loadSchemaNodeAtMount, writeSchemaNode } from '../index';
 import { createTestTree } from './fixtures/createTestTree';
 
 // filid:contract settle-write
@@ -10,6 +10,30 @@ describe('settle commit', () => {
     vi.restoreAllMocks();
     vi.unstubAllEnvs();
   });
+  it('VALUE-037 reports an out-of-list mount default as a fill', () => {
+    const { root } = createTestTree({ type: 'object', properties: {
+      value: { type: ['string', 'boolean'], default: 0 },
+    } });
+    loadSchemaNodeAtMount(root, {}, SetValueOption.Overwrite);
+    expect(root.structure?.value?.raw).toBe(0);
+    expect(root.runtime.typeMismatchRecords).toEqual([
+      expect.objectContaining({ path: '/value', reason: 'ambiguous',
+        source: 'fill' }),
+    ]);
+  });
+
+  it('VALUE-037 reports a directly loaded out-of-list value as load', () => {
+    const { root } = createTestTree({ type: 'object', properties: {
+      value: { type: ['string', 'boolean'], default: 1 },
+    } });
+    loadSchemaNodeAtMount(root, { value: 0 }, SetValueOption.Overwrite);
+    expect(root.structure?.value?.raw).toBe(0);
+    expect(root.runtime.typeMismatchRecords).toEqual([
+      expect.objectContaining({ path: '/value', reason: 'ambiguous',
+        source: 'load' }),
+    ]);
+  });
+
   it('SETTLE-042 and 18C-39 serialization preserve preferred, declared, and extra key order', () => {
     const { root } = createTestTree({ type: 'object',
       options: { propertyKeys: ['z', 'a'] },

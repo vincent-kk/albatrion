@@ -48,7 +48,8 @@ export const commitSettlement = <Self extends SchemaNodeRecord<Self>>(
         received: receivedType(node.raw),
         reason: ambiguous ? 'ambiguous' : 'unconvertible',
         ...(ambiguous ? { candidates } : {}),
-        source: context.kind === 'load' && context.entered.has(node) ? 'load' :
+        source: context.filledNodes.has(node) ? 'fill' :
+          context.kind === 'load' && context.entered.has(node) ? 'load' :
           context.changedRaw.has(node.path) ? context.kind : 'gate',
       };
       if (!warnings) warnings = [];
