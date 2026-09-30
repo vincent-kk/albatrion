@@ -7,6 +7,7 @@ import { getRuleTargets } from './utils/getRuleTargets';
 import { getDeriveSourceNodes } from './utils/getDeriveSourceNodes';
 import { evaluateScopedExpression } from './utils/evaluateScopedExpression';
 import type { ScopedExpressionResult } from './utils/evaluateScopedExpression';
+import { getSelectedDeclarationIds } from './utils/getSelectedDeclarationIds';
 
 /**
  * Decide final interaction resets from loaded values or false-to-true edges.
@@ -27,8 +28,7 @@ export const evaluateResetInteraction = <Self extends SchemaNodeRecord<Self>>(
     const node = pending.pop();
     if (!node || node.detached) continue;
     state.visitedSourcePaths.add(node.path);
-    const selected = state.selectedDeclarationIds.get(node) ??
-      node.blueprintNode.declarations.map((declaration) => declaration.id);
+    const selected = getSelectedDeclarationIds(node, state);
     for (const id of selected)
       for (const rule of table.byDeclaration.get(id) ?? []) {
         if (rule.kind !== 'resetInteraction') continue;

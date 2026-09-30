@@ -2,6 +2,7 @@ import { hasOwnProperty } from '@winglet/common-utils/lib';
 
 import type { SchemaNodeRecord } from '../../../../../record';
 import type { DeriveRule, DeriveState } from '../../../type';
+import { getSelectedDeclarationIds } from './getSelectedDeclarationIds';
 
 /**
  * Resolve a node, parent children item, or fragment scope in the live shape.
@@ -20,6 +21,6 @@ export const getRuleTargets = <Self extends SchemaNodeRecord<Self>>(
   if (target.detached) return [];
   if (rule.layer === 'fragment' && rule.targetDeclarationIds &&
     !rule.targetDeclarationIds.some((id) =>
-      state.selectedDeclarationIds.get(target)?.includes(id))) return [];
+      getSelectedDeclarationIds(target, state).includes(id))) return [];
   return [target];
 };

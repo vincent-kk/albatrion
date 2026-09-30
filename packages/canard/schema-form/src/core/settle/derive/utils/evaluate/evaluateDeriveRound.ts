@@ -15,6 +15,7 @@ import { getDeriveSourceOrder } from '../rank/getDeriveSourceOrder';
 import { getVirtualWriteFailure } from './utils/getVirtualWriteFailure';
 import { evaluateScopedExpression } from './utils/evaluateScopedExpression';
 import type { ScopedExpressionResult } from './utils/evaluateScopedExpression';
+import { getSelectedDeclarationIds } from './utils/getSelectedDeclarationIds';
 
 /**
  * Consume active derived and unsetValue edges in the completed current shape.
@@ -43,8 +44,7 @@ export const evaluateDeriveRound = <Self extends SchemaNodeRecord<Self>>(
       for (const key of state.activeRuleKeys)
         if (key.startsWith(`[${JSON.stringify(node.path)},`))
           state.activeRuleKeys.delete(key);
-    const selected = state.selectedDeclarationIds.get(node) ??
-      node.blueprintNode.declarations.map((declaration) => declaration.id);
+    const selected = getSelectedDeclarationIds(node, state);
     for (const id of selected)
       for (const rule of table.byDeclaration.get(id) ?? []) {
         if (rule.kind === 'resetInteraction') continue;
