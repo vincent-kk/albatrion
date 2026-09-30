@@ -15,7 +15,7 @@ const createContextTree = (schema: BlueprintSchema,
     typeMismatchPaths: new Set(), inactiveValuesMemo: new Map(),
   });
 
-// filid:contract settle-derive
+// filid:contract settle-context
 describe('context change settlement', () => {
   it('28C-03 setContext edge recalculates gates and derived, unsetValue, resetInteraction readers', () => {
     const root = createContextTree({ type: 'object', properties: {

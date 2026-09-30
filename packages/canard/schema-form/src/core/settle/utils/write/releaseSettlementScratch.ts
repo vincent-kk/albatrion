@@ -18,6 +18,7 @@ export const releaseSettlementScratch = <Self>(scratch: SettlementScratch<Self>)
   scratch.filledNodes.clear();
   scratch.latentAutomaticLog.clear();
   scratch.dirtyPaths.clear();
+  scratch.dependencyOwnerPaths.clear();
   scratch.shapeDirtyPaths.clear();
   scratch.changedRaw.clear();
   scratch.explicitRaw.clear();

@@ -13,7 +13,9 @@ export const publishStateKeys = <Self extends SchemaNodeRecord<Self>>(
   context: SettlementContext<Self>,
 ): void => {
   const result = calculateStateKeys(context.root, context.stateDirtyNodes,
-    context.selectedDeclarationIds);
+    context.selectedDeclarationIds, (source) => context.kind === 'load' ||
+      context.dependencyOwnerPaths.has(source.path) ||
+      context.shapeDirtyPaths.has(source.path));
   for (const { node, visible, readOnly, disabled } of result.entries) {
     if (node.visible !== visible || node.readOnly !== readOnly ||
       node.disabled !== disabled) context.changedNodes.add(node);

@@ -65,6 +65,8 @@ export const commitExitPolicyValues = <Self extends SchemaNodeRecord<Self>>(
   const candidates = new Set(context.stateDirtyNodes);
   for (const source of context.stateDirtyNodes) {
     if (source.detached || !source.structure) continue;
+    if (context.kind !== 'load' && !context.dependencyOwnerPaths.has(source.path) &&
+      !context.shapeDirtyPaths.has(source.path)) continue;
     const sourceKey = JSON.stringify([source.path, source.blueprintNode.kind]);
     const selected = context.selectedDeclarationIds.get(source) ??
       source.runtime.committedDeclarationIds?.get(sourceKey);

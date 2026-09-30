@@ -29,15 +29,18 @@ export interface CalculatedStateKeys<Self> {
  * @param root - Final emitted tree and compiled expression owner
  * @param stateDirtyNodes - Nodes reached by this settlement's calculation
  * @param selectedDeclarationIds - Active declarations chosen during the settlement
+ * @param expandFrom - Whether this host's declarations may affect direct children
  * @returns Local values and the first expression failure, without mutating records
  */
 export const calculateStateKeys = <Self extends SchemaNodeRecord<Self>>(
   root: Self, stateDirtyNodes: ReadonlySet<Self>,
   selectedDeclarationIds: ReadonlyMap<Self, readonly number[]>,
+  expandFrom: (source: Self) => boolean,
 ): CalculatedStateKeys<Self> => {
   const candidates = new Set(stateDirtyNodes);
   for (const source of stateDirtyNodes) {
     if (source.detached || !source.children?.length) continue;
+    if (!expandFrom(source)) continue;
     if (source.blueprintNode.declarations.some((declaration) => {
       if (declaration.scope === 'fragment') return true;
       const schema = declaration.schema;

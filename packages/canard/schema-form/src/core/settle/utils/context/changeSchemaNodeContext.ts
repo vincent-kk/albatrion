@@ -30,6 +30,7 @@ export const changeSchemaNodeContext = <Self extends SchemaNodeRecord<Self>>(
     if (context.hasGates) getGateRegistry(root.runtime).register(root);
     for (const owner of context.contextOwners) {
       context.dirtyPaths.add(owner);
+      context.dependencyOwnerPaths.add(owner);
       context.shapeDirtyPaths.add(owner.slice(0, owner.lastIndexOf('/')));
       let ancestor = owner;
       while (ancestor) {

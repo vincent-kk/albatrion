@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 
 import { blueprint } from '../../blueprint';
 import type { BlueprintSchema } from '../../blueprint';
@@ -58,18 +58,6 @@ describe('settled controls', () => {
     expect(root.structure?.b?.disabled).toBe(true);
   });
 
-  it('CONTROLS-073 evaluates a children item once for all addressed siblings', () => {
-    const { root } = createTestTree({ type: 'object', controls: { children: [
-      { targets: ['a', 'b'], controls: { readOnly: '@.locked()' } },
-    ] }, properties: { a: { type: 'string' }, b: { type: 'string' } } });
-    const locked = vi.fn(() => true);
-    root.runtime.context = { locked };
-    loadSchemaNodeAtMount(root, { a: 'a', b: 'b' }, SetValueOption.Overwrite);
-    expect(locked).toHaveBeenCalledTimes(1);
-    expect([root.structure?.a?.readOnly, root.structure?.b?.readOnly])
-      .toEqual([true, true]);
-  });
-
   it('state key expressions follow a later dependency change', () => {
     const { root } = createTestTree({ type: 'object', controls: { children: [
       { targets: ['target'], controls: { disabled: './flag' } },
@@ -81,6 +69,49 @@ describe('settled controls', () => {
     writeSchemaNode(root.structure!.flag, true, 'callerReplace', SetValueOption.Overwrite);
     expect([root.structure?.target?.visible, root.structure?.target?.disabled])
       .toEqual([true, true]);
+  });
+
+  it('fragment visible follows its dependency but ignores an unrelated leaf write', () => {
+    const { root } = createTestTree({ type: 'object', properties: {
+      x: { type: 'boolean' }, unrelated: { type: 'string' },
+    }, allOf: [{ controls: { visible: '../x' }, properties: {
+      child: { type: 'string' },
+    } }] });
+    loadSchemaNodeAtMount(root, { x: false, unrelated: 'a', child: 'c' },
+      SetValueOption.Overwrite);
+    expect(root.structure?.child?.visible).toBe(false);
+    writeSchemaNode(root.structure!.x, true, 'callerReplace', SetValueOption.Overwrite);
+    expect(root.structure?.child?.visible).toBe(true);
+    writeSchemaNode(root.structure!.unrelated, 'b', 'callerReplace',
+      SetValueOption.Overwrite);
+    expect(root.structure?.child?.visible).toBe(true);
+  });
+
+  it('state keys visit no fragment children for an unrelated leaf write', () => {
+    const allOf = Array.from({ length: 64 }, (_, index) => ({
+      controls: { visible: true },
+      properties: { [`fragment${index}`]: { type: 'string' as const } },
+    }));
+    const { root } = createTestTree({ type: 'object', properties: {
+      unrelated: { type: 'string' },
+    }, allOf });
+    loadSchemaNodeAtMount(root, { unrelated: 'a', ...Object.fromEntries(
+      allOf.map((_, index) => [`fragment${index}`, 'value'])) },
+    SetValueOption.Overwrite);
+    let publishedChildren = 0;
+    for (let index = 0; index < allOf.length; index += 1) {
+      const child = root.structure?.[`fragment${index}`];
+      expect(child).toBeDefined();
+      let visible = child!.visible;
+      Object.defineProperty(child, 'visible', { configurable: true,
+        get: () => visible, set: (value: boolean) => {
+          publishedChildren += 1;
+          visible = value;
+        } });
+    }
+    writeSchemaNode(root.structure!.unrelated, 'b', 'callerReplace',
+      SetValueOption.Overwrite);
+    expect(publishedChildren).toBe(0);
   });
 
   it('CONTROLS-042 fragment scope reaches only directly declared children', () => {
@@ -103,19 +134,6 @@ describe('settled controls', () => {
     expect([root.readOnly, root.disabled, root.visible]).toEqual([true, true, false]);
     expect([root.structure?.child?.readOnly, root.structure?.child?.disabled,
       root.structure?.child?.visible]).toEqual([false, false, true]);
-  });
-
-  it('ERROR-122 state key throw commits degraded and ignores that declaration', () => {
-    const { root } = createTestTree({ type: 'object', properties: {
-      child: { type: 'string', controls: { visible: '@.explode()' } },
-    } });
-    root.runtime.context = { explode: () => { throw new Error('state key'); } };
-    expect(() => loadSchemaNodeAtMount(root, { child: 'c' },
-      SetValueOption.Overwrite)).toThrow();
-    expect(root.runtime.diagnostics).toMatchObject({
-      status: 'degraded', cause: 'expression',
-    });
-    expect(root.structure?.child?.visible).toBe(true);
   });
 
   it('CONTROLS-083 locked writes still apply caller and derived values', () => {

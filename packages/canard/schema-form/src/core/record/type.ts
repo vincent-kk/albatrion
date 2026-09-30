@@ -221,6 +221,8 @@ export interface SettlementScratch<Self> {
   latentAutomaticLog: Map<string, { present: boolean; value: unknown }>;
   /** Paths scheduled for recalculation. */
   dirtyPaths: Set<string>;
+  /** Declaration-owner paths scheduled by reverse dependencies or context reads. */
+  dependencyOwnerPaths: Set<string>;
   /** Hosts scheduled for a new shape selection. */
   shapeDirtyPaths: Set<string>;
   /** Paths whose own source channels changed. */
