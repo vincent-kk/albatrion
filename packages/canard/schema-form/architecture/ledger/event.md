@@ -1102,7 +1102,9 @@
   > 무엇: 입력 중에 리스너가 `setValue(getValue())`를 부르는 장면과, 잎 하나만 바꾼 `setValue(V)`에서 `RequestRefresh`를 받는 노드를 센다.
   > 통과: 앞 장면은 0회, 뒤 장면은 바뀐 잎만 1회이며, 캐럿과 IME 상태가 남는다.
   > 실패: 원본이 바뀌지 않은 노드가 Refresh를 받으면 정착의 Refresh 대상을 고친다.
-- 보충: 없음
+- 보충:
+  > 편집자 결정(26C-03): "【추론】 게이트에 "PR: PR-2"라 적혀도 그 단언이 뒤 PR의 기제(`controls.derived`·`controls.injectTo`는 PR-3, 통지·사건 배달은 PR-4)를 요구하면, 그 단언은 그 기제가 모두 있는 가장 이른 PR에서 하고 PR-2는 자기 기제로 관찰할 수 있는 신호를 단언한다(TEST-069 (라))." (`reviews/round-26-closing.md:32`)
+  > 편집자 결정(26C-03): "【추론】 EVENT-071: PR-2는 커밋이 모으는 Refresh 대상 집합(원본이 실제로 바뀐 노드, 쓴 입력 제외; `setValue(getValue())`는 빈 집합)을 단언하고, 리스너 안의 `setValue`와 `RequestRefresh` 배달 횟수는 PR-4, 캐럿·IME 상태는 PR-7이 단언한다." (`reviews/round-26-closing.md:35`)
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:2730-2731,2738-2741`(정본)
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-94)

@@ -188,6 +188,7 @@
   > "| 진단 | 노드 칸 `diagnostics` | 마지막 로드 이후의 기록. `status`는 `'stable'` 또는 `'degraded'`이고, `cause`(예산·식·대상·공유 충돌), `exceededBudget`(정착의 세 예산), `iterations`, `commit`을 든다. 루트에서 관측한다. `degraded`는 다음 로드(마운트·전체 교체·`reset`)까지 남고(지속은 14라운드 답 O-2 가) 그 동안 폼의 제출 경로가 `SchemaFormError`로 거부한다(`getValue()`는 막지 않는다, 17라운드 소유자 답 R17-1 나). 되먹임·중첩 초과는 사슬 끝에서 던지되 `diagnostics`에 남기지 않고 제출을 막지 않는다(O-2는 정착 예산에 대한 답이다). 모양은 ADR 0014 4판 §5 | ADR 0008 §8, ADR 0014 |" (`02-target-overview.md:310`)
   > "| | 이벤트 `UpdateDiagnostics` | `diagnostics`가 바뀐 커밋에만 낸다 | ADR 0008 §8 |" (`02-target-overview.md:311`)
   > "| | Form 속성 `onDiagnosticsChange` | 호스트가 진단 상태를 관측하는 자리. 제출이 막힐 때 호스트는 이것과 제출 거부의 `SchemaFormError`로 폼 수준 표시를 그린다(17라운드 소유자 답 R17-1 나). 끄는 스위치(`throwOnBudgetExceeded`)는 없다 | ADR 0008 §3 |" (`02-target-overview.md:312`)
+  > 편집자 결정(26C-10): "【추론】 떼어진 노드에서 `diagnostics`는 살아 있는 트리(런타임의 진단 칸)를 읽는 NODE-044 고정 규칙의 예외다: `diagnostics`는 트리 전체의 커밋을 기술하며(ERROR-131) 루트에서 관측하는 것이라(SURFACE-007) `globalErrors`와 같은 부류다." (`reviews/round-26-closing.md:107`)
 - 상태: 현행
 - 출처: `08-design-a-to-z.md:413`(정본), `02-target-overview.md:310-312`, `06-conclusions.md:362`, `07-conclusions.md:348` (같은 규칙: EVENT-043, EVENT-044, ERROR-128, ERROR-135, ERROR-138), `reviews/round-18-closing.md:2797-2799`
 - 닫은 사람: 편집자 결정(8라운드 N4, `06-conclusions.md:362`), 편집자 결정(9라운드 N4 그대로, `07-conclusions.md:348`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-98)
@@ -904,6 +905,8 @@
 - 보충:
   > 반영 칸(설계서 메모 4): "게터 `typeMismatch: boolean`, 경로 목록 `typeMismatches: readonly string[]`, 경고 코드 `SCHEMA_FORM_WARNING.TYPE_MISMATCH`." (`reviews/round-18-owner-answers.md:41`)
   > 반영 칸(설계서 메모 3): "SURFACE-058의 겉면 수(명령 4 → 1, 약 57 → 약 54)" (`reviews/round-18-owner-answers.md:40`)
+  > 편집자 결정(26C-01): "【추론】 `SchemaNode` 겉면의 멤버는 그 멤버가 드러내는 기제를 들여오는 PR에서 겉면에 들고, 그 PR이 `SchemaNode/`의 `DETAIL.md` 목록·멤버 목록 시험·공개 형 `SchemaNode`를 함께 고친다(EVENT-063이 명령 메서드에 정한 방식)." (`reviews/round-26-closing.md:9`)
+  > 편집자 결정(26C-01): "【추론】 그래서 PR-2의 멤버 목록 시험은 PR-2 겉면의 목록을 단언하고, SURFACE-058의 약 54개는 PR-7 전환 시점의 수다; `plan/03-node-and-settle/verification.md:26`의 "이 PR은 명령 메서드 하나를 뺀 목록을 단언한다"는 이 블록으로 바꿔 읽는다." (`reviews/round-26-closing.md:14`)
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:911-913`(정본), `reviews/round-18-owner-answers.md:40`, `reviews/round-18-owner-answers.md:41`
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-32), 소유자 답(`reviews/round-18-owner-answers.md:40` 설계서 메모 3), 소유자 답(`reviews/round-18-owner-answers.md:41` 설계서 메모 4)

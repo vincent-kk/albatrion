@@ -12,7 +12,7 @@ export type {
   SchemaNode,
   NodeListener,
   UnionNodeEventType,
-} from './nodes';
+} from '../__legacy__/core/nodes';
 
 export {
   NodeState,
@@ -30,4 +30,4 @@ export {
   isArrayNode,
   isBranchNode,
   isTerminalNode,
-} from './nodes';
+} from '../__legacy__/core/nodes';

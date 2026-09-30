@@ -1,3 +1,4 @@
+import { isArray } from '@winglet/common-utils/filter';
 import { escapeSegment } from '@winglet/json/pointer';
 
 import type {
@@ -59,7 +60,7 @@ export const collectInlineTerminalWarnings = (
             ancestors,
           });
     for (const keyword of ['allOf', 'oneOf', 'anyOf', 'prefixItems'])
-      if (Array.isArray(record[keyword]))
+      if (isArray(record[keyword]))
         record[keyword].forEach((child: BlueprintSchema, index: number) =>
           pending.push({
             schema: child,
@@ -81,7 +82,7 @@ export const collectInlineTerminalWarnings = (
       'unevaluatedItems',
     ]) {
       const child = record[keyword];
-      if (Array.isArray(child))
+      if (isArray(child))
         child.forEach((item: BlueprintSchema, index: number) =>
           pending.push({
             schema: item,

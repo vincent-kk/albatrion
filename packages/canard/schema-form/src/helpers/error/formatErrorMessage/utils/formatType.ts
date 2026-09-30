@@ -1,3 +1,5 @@
+import { isArray } from '@winglet/common-utils/filter';
+
 /**
  * Formats a type value (handles array types like ['string', 'null']).
  * @param type - Type value (string or array)
@@ -6,6 +8,6 @@
  */
 export const formatType = (type: unknown, fallback = '(undefined)'): string => {
   if (type === undefined || type === null) return fallback;
-  if (Array.isArray(type)) return type.join(' | ');
+  if (isArray(type)) return type.join(' | ');
   return String(type);
 };
