@@ -55,7 +55,7 @@ export const transitionSettlement = <Self extends SchemaNodeRecord<Self>>(
       if (context.kind !== 'load' && hasWrongKindObjectAncestor(node)) continue;
       if (context.deriveState?.activeUnsetTargets.has(node)) continue;
       if (!isMissingRaw(node, context)) continue;
-      const value = readDefault(node);
+      const value = readDefault(node, context.selectedDeclarationIds);
       if (value === undefined) continue;
       context.filledNodes.add(node);
       context.automatic = true;

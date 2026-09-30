@@ -1,6 +1,20 @@
 import { isArray } from '@winglet/common-utils/filter';
 
-import type { SchemaNodeRecord } from '../../../record';
+import type { BlueprintNode } from '../../../blueprint';
+
+/** Shape data needed to resolve a declaration for a live or latent occurrence. */
+export interface ControlTarget<Self> {
+  /** Decoded direct-child name used by controls.children. */
+  readonly name: string;
+  /** Absolute occurrence path used by committed declaration IDs. */
+  readonly path: string;
+  /** Static declarations for this occurrence. */
+  readonly blueprintNode: BlueprintNode;
+  /** Direct parent whose groups may address this occurrence. */
+  readonly parent: Self | null;
+  /** Last active declaration choices for the whole tree. */
+  readonly runtime: { readonly committedDeclarationIds?: ReadonlyMap<string, readonly number[]> };
+}
 
 /** One selected declaration and the host that owns its expression paths. */
 export interface ControlLayer<Self> {
@@ -22,7 +36,7 @@ export interface ControlLayer<Self> {
  * @param selectedDeclarationIds - Current selections, falling back to the last commit
  * @returns Active control groups without evaluating their state keys
  */
-export const getControlLayers = <Self extends SchemaNodeRecord<Self>>(
+export const getControlLayers = <Self extends ControlTarget<Self>>(
   node: Self, selectedDeclarationIds: ReadonlyMap<Self, readonly number[]>,
 ): readonly ControlLayer<Self>[] => {
   const selected = (current: Self): readonly number[] =>

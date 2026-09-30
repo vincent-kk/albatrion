@@ -117,11 +117,16 @@ interface SchemaNodeDiagnostics {
   commit?: number;
 }
 
-/** Classification and document position of one latent occurrence. */
+/** Classification, document position, and retained exit decisions of a latent occurrence. */
 interface LatentRawMetadata {
   readonly path: string;
   readonly blueprintNode: BlueprintNode;
   readonly order: readonly number[];
+  /** Last-live explicit exit decisions retained after rule baselines are pruned. */
+  readonly exitLayers?: readonly {
+    readonly layer: 'node' | 'children' | 'fragment';
+    readonly clear: boolean;
+  }[];
 }
 
 /** Last published item and sort position for one enumerable latent occurrence. */

@@ -12,6 +12,8 @@ import { chooseDeriveWrite } from './utils/chooseDeriveWrite';
 import { KIND_RANK, LAYER_RANK } from '../rank/compareDeriveWrites';
 import { getDeriveSourceOrder } from '../rank/getDeriveSourceOrder';
 import { getVirtualWriteFailure } from './utils/getVirtualWriteFailure';
+import { evaluateScopedExpression } from './utils/evaluateScopedExpression';
+import type { ScopedExpressionResult } from './utils/evaluateScopedExpression';
 
 /**
  * Consume active derived and unsetValue edges in the completed current shape.
@@ -28,6 +30,7 @@ export const evaluateDeriveRound = <Self extends SchemaNodeRecord<Self>>(
   const winners = new Map<string, DeriveWrite<Self>>();
   const trace: DeriveTraceEntry[] = [];
   const traceWinners = new Map<string, number>();
+  const evaluatedExpressions = new Map<string, ScopedExpressionResult>();
   let failure: DeriveRoundDecision<Self>['failure'];
   if (!state.sourcePaths) state.activeRuleKeys.clear();
   state.activeUnsetTargets.clear();
@@ -86,13 +89,17 @@ export const evaluateDeriveRound = <Self extends SchemaNodeRecord<Self>>(
                 .map((dependency) =>
                   readDeriveDependency(root, target.path, dependency)),
             ];
-            if (load || !priorExists || !sameValue(prior, current))
-              value = rule.expression?.evaluate(rule.expression.dependencies.map(
-                (dependency) => readDeriveDependency(root, node.path, dependency)));
+            if (load || !priorExists || !sameValue(prior, current)) {
+              const evaluated = evaluateScopedExpression(root, node, rule,
+                evaluatedExpressions);
+              if (evaluated.threw) throw evaluated.cause;
+              value = evaluated.value;
+            }
           } else {
-            current = Boolean(rule.expression ? rule.expression.evaluate(
-              rule.expression.dependencies.map((dependency) =>
-                readDeriveDependency(root, node.path, dependency))) : rule.literal);
+            const evaluated = evaluateScopedExpression(root, node, rule,
+              evaluatedExpressions);
+            if (evaluated.threw) throw evaluated.cause;
+            current = Boolean(evaluated.value);
             if (!(current && (load || !priorExists || !prior)))
               value = undefined;
           }

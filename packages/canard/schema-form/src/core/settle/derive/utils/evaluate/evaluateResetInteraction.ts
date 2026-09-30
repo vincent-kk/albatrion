@@ -3,9 +3,10 @@ import type { DeriveResetInteractionDecision, DeriveState,
   DeriveTraceEntry } from '../../type';
 import { getDeriveRuleTable } from '../rules/getDeriveRuleTable';
 import { getDeriveRuleKey } from '../edges/getDeriveRuleKey';
-import { readDeriveDependency } from './utils/readDeriveDependency';
 import { getRuleTargets } from './utils/getRuleTargets';
 import { getDeriveSourceNodes } from './utils/getDeriveSourceNodes';
+import { evaluateScopedExpression } from './utils/evaluateScopedExpression';
+import type { ScopedExpressionResult } from './utils/evaluateScopedExpression';
 
 /**
  * Decide final interaction resets from loaded values or false-to-true edges.
@@ -20,6 +21,7 @@ export const evaluateResetInteraction = <Self extends SchemaNodeRecord<Self>>(
   const pending = getDeriveSourceNodes(root, state);
   const nodes: Self[] = [];
   const trace: DeriveTraceEntry[] = [];
+  const evaluatedExpressions = new Map<string, ScopedExpressionResult>();
   let failure: DeriveResetInteractionDecision<Self>['failure'];
   while (pending.length) {
     const node = pending.pop();
@@ -38,9 +40,10 @@ export const evaluateResetInteraction = <Self extends SchemaNodeRecord<Self>>(
         const previousExists = state.committedRuleValues.has(key);
         let current: boolean;
         try {
-          current = Boolean(rule.expression ? rule.expression.evaluate(
-            rule.expression.dependencies.map((dependency) =>
-              readDeriveDependency(root, node.path, dependency))) : rule.literal);
+          const evaluated = evaluateScopedExpression(root, node, rule,
+            evaluatedExpressions);
+          if (evaluated.threw) throw evaluated.cause;
+          current = Boolean(evaluated.value);
         } catch (cause) {
           if (!failure) failure = { sourcePath: node.path,
             schemaPath: rule.schemaPath, cause };

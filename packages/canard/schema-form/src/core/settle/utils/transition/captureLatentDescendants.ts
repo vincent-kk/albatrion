@@ -1,29 +1,33 @@
-import { hasOwnProperty } from '@winglet/common-utils/lib';
-import type { BlueprintNode } from '../../../blueprint';
+import { walkSchemaNodes } from '../../../navigation';
 import type { SchemaNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../type';
+import { getControlLayers } from '../controls/getControlLayers';
+import { readExitLayerPolicy } from '../controls/readExitLayerPolicy';
+import { readLatentExitPolicy } from '../controls/readLatentExitPolicy';
 import { writeLatentRaw } from './writeLatentRaw';
 
-/** Resolve the last committed declaration policy for an absent descendant. */
-const latentPolicy = <Self extends SchemaNodeRecord<Self>>(
-  context: SettlementContext<Self>, key: string, template: BlueprintNode,
-  inherited: boolean,
-): boolean => {
-  const ids = context.root.runtime.committedDeclarationIds?.get(key);
-  if (!ids?.length) return inherited;
-  let clear = false;
-  for (const declaration of template.declarations) {
-    if (!ids.includes(declaration.id) || declaration.scope !== 'node' ||
-      declaration.schema === null || typeof declaration.schema !== 'object') continue;
-    const controls = declaration.schema.controls;
-    if (controls === null || typeof controls !== 'object' ||
-      !hasOwnProperty(controls, 'unsetOnInactive')) continue;
-    const policy: unknown = Reflect.get(controls, 'unsetOnInactive');
-    if (policy === false) return false;
-    if (policy === true) clear = true;
-  }
-  return clear || inherited;
-};
+/** One stored source and its last-live exit decisions. */
+interface LatentEntry {
+  /** Encoded path and kind of the stored occurrence. */
+  readonly key: string;
+  /** Absolute address used to find its ancestor policy. */
+  readonly path: string;
+  /** Blueprint position distinguishing branches with the same path. */
+  readonly order: readonly number[];
+  /** Explicit decisions saved when the occurrence left the shape. */
+  readonly exitLayers?: readonly { layer: 'node' | 'children' | 'fragment';
+    clear: boolean }[];
+}
+
+/** Policy already resolved for one ancestor occurrence. */
+interface ResolvedAncestor {
+  /** Absolute address of the ancestor occurrence. */
+  readonly path: string;
+  /** Blueprint position matching descendant entries. */
+  readonly order: readonly number[];
+  /** Inherited policy after this ancestor's explicit layers. */
+  readonly clear: boolean;
+}
 
 /**
  * Apply a departing host's policy to its already latent descendants.
@@ -36,21 +40,39 @@ export const captureLatentDescendants = <Self extends SchemaNodeRecord<Self>>(
   context: SettlementContext<Self>, node: Self, inherited: boolean,
 ): void => {
   const prefix = `${node.path}/`;
-  const entries: { key: string; path: string; template: BlueprintNode }[] = [];
+  const entries: LatentEntry[] = [];
   for (const key of context.root.runtime.latentRaw.keys()) {
     const info = context.root.runtime.latentRawMetadata?.get(key);
     if (info && info.path.startsWith(prefix))
-      entries.push({ key, path: info.path, template: info.blueprintNode });
+      entries.push({ key, path: info.path, order: info.order,
+        exitLayers: info.exitLayers });
   }
   entries.sort((left, right) => left.path.length - right.path.length);
-  const policies = new Map<string, boolean>([[node.path, inherited]]);
+  const live = new Map<string, Self>();
+  walkSchemaNodes(node, (current) => live.set(JSON.stringify([
+    current.path, current.blueprintNode.kind]), current));
+  const resolved = new Map<string, ResolvedAncestor[]>([[node.path, [
+    { path: node.path, order: [], clear: inherited },
+  ]]]);
   for (const entry of entries) {
-    let parent = entry.path.slice(0, entry.path.lastIndexOf('/'));
-    while (!policies.has(parent) && parent.startsWith(prefix))
-      parent = parent.slice(0, parent.lastIndexOf('/'));
-    const clear = latentPolicy(context, entry.key, entry.template,
-      policies.get(parent) ?? inherited);
-    policies.set(entry.path, clear);
+    let parentPath = entry.path.slice(0, entry.path.lastIndexOf('/'));
+    let parent: ResolvedAncestor | undefined;
+    while (!parent && parentPath.length >= node.path.length) {
+      parent = resolved.get(parentPath)?.find((candidate) =>
+        candidate.order.every((position, index) =>
+          position === entry.order[index]));
+      if (parentPath === node.path) break;
+      parentPath = parentPath.slice(0, parentPath.lastIndexOf('/'));
+    }
+    const inheritedPolicy = parent?.clear ?? inherited;
+    const current = live.get(entry.key);
+    const clear = current ? readExitLayerPolicy(
+      getControlLayers(current, new Map()),
+      context.root.runtime.committedRuleValues, inheritedPolicy) :
+      readLatentExitPolicy(entry.exitLayers, inheritedPolicy);
+    const samePath = resolved.get(entry.path) ?? [];
+    samePath.push({ path: entry.path, order: entry.order, clear });
+    resolved.set(entry.path, samePath);
     if (clear) writeLatentRaw(context, entry.key, false, undefined);
   }
 };

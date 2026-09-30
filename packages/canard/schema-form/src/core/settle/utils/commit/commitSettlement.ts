@@ -8,6 +8,8 @@ import { isTypeMismatch } from './isTypeMismatch';
 import { receivedType } from './receivedType';
 import { updateInactiveValuesMemo } from './updateInactiveValuesMemo';
 import { commitDeriveRules } from './commitDeriveRules';
+import { commitExitPolicyValues } from './commitExitPolicyValues';
+import { snapshotExitedPolicies } from './snapshotExitedPolicies';
 import { finalizeDeriveTrace } from './finalizeDeriveTrace';
 
 /** Shared frozen empty list for inactive and mismatch projections. */
@@ -24,7 +26,9 @@ export const commitSettlement = <Self extends SchemaNodeRecord<Self>>(
   context: SettlementContext<Self>,
 ): void => {
   const runtime = context.root.runtime;
+  snapshotExitedPolicies(context);
   commitDeriveRules(context);
+  commitExitPolicyValues(context);
   if (process.env.NODE_ENV !== 'production') {
     finalizeDeriveTrace(context);
     runtime.settlementTrace = { entry: { api: context.entryApi ?? context.kind,
