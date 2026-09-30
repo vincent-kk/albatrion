@@ -37,9 +37,14 @@ Planning method: 저장소 지침 — `PLAN.md` §2와 `plan/prompts.md`의 단�
 
 | 2026-09-30 | U0 | antigravity 2차 검토(세션 `dd51aa1d`) `cleared`(낮음 둘 반영) → 범위 한정 재검토 `cleared`(커버리지·원장 대조 근거 첨부, 새 지적 0). 계획 리비전은 이 커밋. 실행 계획 §9 | 이 커밋 |
 
+| 2026-10-01 | U1 | G1·G2 met — 04의 레거시 이동 0(03에서 완료) | `59862834c` |
+| 2026-10-01 | U2 | codex(세션 `66239a0c`)가 `settle/derive/` INTENT·DETAIL과 settle·record·SchemaNode·core·SCN DETAIL을 씀(원장 NODE-016의 `settle/derive < settle`를 계획 §3.2보다 우선). G3 met. antigravity G4(세션 `efaea927`) `no-blocking`, 32문장 일치, 낮음 둘(`trim` 제외 WRITE-100, `injectTo` 후보 배제) 반영 → G4 met | `e2b22242b`, `212e6bc3a` |
+| 2026-10-01 | U3 | codex(세션 `fe2c9fab`): `settle/derive/`, `settle/utils/derivation/`, `settle/utils/context/`, 에지·로드 발화·`unsetValue`·예산·억제·정착 기록, `@` 결함 다섯 자리 수정, `sameValue`를 18C-50 (가)로 넓힘(03 정착 시험 초록 유지). 조율 세션 재실행: G5 163시험, G6, G26 met, eslint·tsc 깨끗, core unit 891 통과 1 실패 | `49ad47e13` |
+| 2026-10-01 | U3 | **계획 이탈**: `SchemaNode/__tests__/surface.test.ts`의 "26C-01 PR-2 member list matches the DETAIL table exactly"가 U2 문서 선행(`e2b22242b`)부터 빨강 — DETAIL 멤버 표가 04의 최종 멤버 여섯을 먼저 적었기 때문(기대 28, 실제 34). 시험을 느슨하게 하면 계약 약화라 고치지 않고, U4b·U5가 멤버를 들이면 초록이 된다. 그 사이 커밋은 이 시험 하나가 빨강 | 이 기록 |
+
 ## 3. 다음 행동
 
-- `seiri:execute`로 U1(레거시 확인, G2) → U2(문서 선행, G3·G4) → U3 … 순서대로. 구현은 codex, 단위 검토는 antigravity.
+- U3 antigravity 단위 검토와 U4(codex) 진행 중 → U4b → U5 → U6 → {U7, U8, U9} → U10.
 - 이 세션의 커밋은 경로를 지정한 `git add`만 쓴다(원장 세션의 미커밋 변경과 섞지 않음).
 
 ## 4. 원장·계획서 어긋남
