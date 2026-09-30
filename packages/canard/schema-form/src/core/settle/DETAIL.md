@@ -4,7 +4,7 @@
 
 - 의존 방향은 `blueprint < record < {behaviors, navigation} < settle < SchemaNode`입니다. 살아 있는 노드의 계산은 `node.behavior`를 호출하고 형상 밖 값의 정적 해석과 빈 값 판정은 behaviors 진입점을 소비합니다. `SchemaNode` 클래스는 import하지 않습니다(NODE-016, NODE-006, WRITE-082·098, VALUE-034).
 - 정착의 내부 organ을 외부 소비자가 직접 가져오지 않으므로 경계 예외는 없습니다(NODE-016).
-- 한 진입은 동기적으로 표시 → 계산(호스트 바퀴) → 전이 → 커밋합니다. 파생 단계와 `settle/derive/` fractal은 stage 04에서 이 사이에 들어옵니다(SETTLE-002–006, LANDING-063).
+- 한 진입은 동기적으로 표시 → 계산(호스트 바퀴) → 전이 → 커밋합니다. 파생 단계와 그 하위 `derive` fractal은 stage 04에서 이 사이에 들어옵니다(SETTLE-002–006, LANDING-063).
 
 ## API Contracts
 

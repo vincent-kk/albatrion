@@ -7,7 +7,7 @@
 - `normalizedValue` override는 **값 정제 목적으로만** 허용된다. 현재 유일한 override는 `ArrayNode`(`options.omitTrailing`)이다. 정제는 노드 트리를 바꾸지 않는다 — 자식 노드는 raw 상태를 유지하며, 정제로 사라진 항목의 노드도 그대로 남는다.
 - 정제 값을 읽는 곳은 밖으로 나가는 경로뿐이다 — 루트 검증 값, 루트 방출, `FormHandle.getValue`, 부모측 하이드레이션 스냅샷. 안으로 들어오는 경로(`setValue`)와 raw 관측 경로(`UpdateValue` payload)는 계속 `value`를 쓴다.
 - 노드 값 변경은 `setValue()` 공개 API를 경유한다. private `__value__`에 외부에서 접근하지 않는다.
-- 레거시 `nodes/`, `parsers/`, 옛 `__tests__/`는 `src/__legacy__/core/`로 옮긴다. `src/core/__tests__/scenarios/`는 새 하네스로 남긴다. 파서는 순수 값 변환만 담당하며 JSON Schema 검증 로직을 넣지 않는다.
+- 레거시 노드·파서 구현과 옛 `__tests__/`는 `src/__legacy__/core/`로 옮긴다. `src/core/__tests__/scenarios/`는 새 하네스로 남긴다. 파서는 순수 값 변환만 담당하며 JSON Schema 검증 로직을 넣지 않는다.
 - `src/core/index.ts`, `nodeFromJSONSchema.ts`, `types/`는 제자리를 유지하고 stage 07 전환(LANDING-159)까지 레거시 엔진을 가리킨다.
 - 새 `record/`, `behaviors/`, `navigation/`, `settle/`, `SchemaNode/` fractal은 NODE-016의 의존 순서 `blueprint` < `record` < {종류 모듈, `navigation`} < `settle` < `SchemaNode`에 따라 추가한다.
 - 이벤트는 `EventCascade`로 마이크로태스크 배칭한다. 단 `UpdateValue`는 동기 발행이다.

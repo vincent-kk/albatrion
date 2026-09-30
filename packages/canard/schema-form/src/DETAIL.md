@@ -5,7 +5,7 @@
 - `index.ts`가 이 패키지의 공개 표면이다. 소비자는 이 진입점이 이름으로 내보낸 심볼만 사용하며, 하위 모듈 파일을 직접 참조하지 않는다.
 - **스키마 `options`는 공개 계약이다.** `JSONSchema` 타입이 선언한 `options` 필드는 소비자가 스키마에 직접 쓰는 값이므로, 필드를 추가·삭제하거나 의미를 바꾸는 것은 공개 계약 변경이다.
 - 값 정제 옵션은 **값을 바꾸되 노드 트리를 바꾸지 않는다.** 정제는 노드가 밖으로 내보내는 값(`normalizedValue`)에만 적용되고, 자식 노드·렌더된 입력·raw `value`는 그대로 유지된다. 이 분리는 사용자가 편집 중인 화면이 정제 때문에 접히지 않게 하는 계약이다.
-- 새 노드 타입은 `core/nodes/` 아래에 두고 `index.ts`에 export를 추가한다. 이 디렉터리 루트에는 소스 파일을 직접 두지 않는다.
+- 옛 엔진의 노드 타입은 `__legacy__/core/nodes/`에 있고 엔진 전환(07 단계)까지 `<Form>`을 섬긴다. 새 엔진의 노드 종류는 `core/behaviors/`의 종류 fractal과 행 표로 더하며, 이 디렉터리 루트에는 소스 파일을 직접 두지 않는다.
 - 플러그인 등록은 `registerPlugin()`만을 경유한다. `PluginManager`의 static 상태를 우회 변경하지 않는다.
 
 ## API Contracts
@@ -22,7 +22,7 @@
 
 `trim`과 `omitTrailing`의 차이가 이 표의 요점이다 — `trim`은 **저장 값을 교체**하는 옵션이고, `omitTrailing`은 **방출 값만 걸러내는** 옵션이다. 후자는 raw 상태를 보존하므로 되돌릴 수 있고, 전자는 그렇지 않다.
 
-`omitTrailing`과 `omitEmpty`의 적용 지점도 다르다 — `omitTrailing`은 `ArrayNode.normalizedValue`에, `omitEmpty`는 부모 전파 경로에 걸린다. 두 필터가 함께 적용될 때의 순서는 `core/nodes/ArrayNode/utils/resolveArrayValueFilter`가 소유한다.
+`omitTrailing`과 `omitEmpty`의 적용 지점도 다르다 — `omitTrailing`은 `ArrayNode.normalizedValue`에, `omitEmpty`는 부모 전파 경로에 걸린다. 두 필터가 함께 적용될 때의 순서는 `__legacy__/core/nodes/ArrayNode/utils/resolveArrayValueFilter`가 소유한다.
 
 ### 값 채널
 
