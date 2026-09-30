@@ -47,9 +47,19 @@ Planning method: 저장소 지침 — `PLAN.md` §2와 `plan/prompts.md`의 단�
 | 2026-10-01 | U4b | codex(세션 `129177c0`): `setContext`(`SchemaNode/index.ts`·`src/core/index.ts` 이름 수출, `src/index.ts` 없음), `settle/utils/context/changeSchemaNodeContext.ts`, `context` 게터. G27·G30 met. G30의 `rolldown -c`가 `dist` 타입 선언을 지워 `stories/` 형 검사가 깨짐 → `yarn workspace @canard/schema-form build:types`로 복구하고 G30에 복구 안내를 더함 | `439c491c5` |
 | 2026-10-01 | U8 | PR-3 몫 82사례 이식(codex 세션 `de624cab`, 원천별 9·27·20·4·6·12·4). 실패 7 → debugger(opus) 진단: 제품 결함 0. `r9b.mjs:137`(원본 `undefined` 가드 누락)·`selfcheck-v5.mjs:297`(로드 진입을 비로드 `setValue`로 옮김)은 이식 오류로 고침. 나머지 넷은 원장 질의 Q9 → **29C-01**(원장 관리 세션, `9e1a2dfd9`): 태어나거나 로드된 노드의 규칙은 원천 방출 값이 `undefined`여도 거짓→참 에지로 발화한다. 기대를 `{ t: 'from-undefined' }`로 바꿈. 채움 뒤 파생 재평가(SETTLE-005 "→ 표시로")를 `derive.injectTo.edges.test.ts`에 단언. `r9.mjs:51`(`visible`)은 U5 뒤 초록 | `77dda7e75` |
 
+| 2026-10-01 | U5 | codex(세션 `7710e993`): 상태 키 결합(`settle/utils/controls/`, 결합 표 `STATE_KEYS`), 게터 `visible`·`enabled`·`readOnly`·`disabled`·`watchValues`, 떼어진 노드의 동결 읽기. G9·G10·G29 met, core unit 1,027 전부 초록(멤버 목록 시험과 `r9.mjs:51`이 초록으로 돌아옴) | `0ae92ff2d` |
+| 2026-10-01 | U4b·U5 | antigravity 단위 검토(세션 `e722b186`) `no-blocking`. 권고 하나: `watchValues`와 `derived` 의존 집합이 단일 문자열 `watch`를 받아 줌 — 원장은 "`watch`의 형은 문자열 배열이며 단일 문자열은 받지 않는다"(CONTROLS-019, CONTROLS-032 충돌 줄). 붉은 시험 둘을 먼저 보이고 두 자리를 배열만 읽게 고침. 청사진이 `watch` 형을 오류로 거르지 않는 것은 02 청사진의 몫이라 PR 본문에 기록 | `b7f3af435` |
+| 2026-10-01 | U6 | codex(세션 `1ce5d840`): 채움 원천의 `children` 항목·조각 층, 나감 정책 네 층·같은 층 유지 우선·꺼지는 조각·하위 트리·잠복 자손·직전 커밋 식 값(커밋 칸)·던진 식은 유지(28C-05). G11·G12 met, core unit 1,081 초록 | `06fd61da6` |
+| 2026-10-01 | U7·U8 | codex(세션 `9b51286f`): SCN `states` 기대·`resetSubtree` 단계·`derive`(8)·`controls`(10) 부류, 코어 러너 둘, PR-6 몫 회귀 `r9.mjs` 8·`edge-cases.mjs` 3. G13·G14·G15·G16 met | `09bc596ec` |
+| 2026-10-01 | 정리 | `settle/derive/__tests__`의 세 파일이 같은 `filid:contract derive-edge`를 선언하던 것을 정리 — 규칙 표·실패 판정 시험을 `derive.boundary.test.ts`(`derive-boundary`)로 합침(filid 검증 기록 규칙 §5) | `b7f3af435` |
+
+| 2026-10-01 | U9 | codex(세션 `53b9b437`): `bench/derive-and-controls.bench.ts`, 04 `performance.md`. TEST-071 한 원소 쓰기는 두 엔진 모두 28C-06 선 통과, 공유 원소 깊은 방문 0(지름길 있음). 통째 교체 객체 행은 크기비의 선형 하한 아래(빠른 쪽) → 소유자 수용 대기. 03 벤치 04 뒤 재측정에서 조각 16·64 행이 7–109배 느려짐 | 벤치 파일(미커밋) |
+| 2026-10-01 | U5 수정 | debugger(opus) 이분 탐색: 원인은 `0ae92ff2d`의 상태 키 단계 — 조상이라서 dirty인 호스트도 자식 전부로 넓혀 계산(`settle/utils/controls/calculateStateKeys.ts:39-48`, `getControlLayers.ts:61-73`). settle DETAIL "잎 입력은 재계산 목록만 순회"·SETTLE-017·GOAL-011 위반. Fix A(codex 세션 `7710e993`): 확장을 역의존·`@` 소유자·형상 변경·로드로 한정, 나감 정책 커밋에도 같은 가드. 비용 시험 수정 전 실패(기대 0, 실제 64). 조각 64 행 1.16ms → 0.031ms. B5·B6의 남은 상수 비용(`controls` 없는 청사진에서도 도는 단계)은 27라운드대로 최적화하지 않고 소유자 수용 목록으로 — 후속 후보는 청사진별 "controls 없음" 캐시 | `0cda5fd34`, `d5233155d` |
+| 2026-10-01 | 정리 | settle 시험의 `filid:contract`가 DETAIL에 없는 묶음(`settle-derive`·`settle-state-keys`)을 가리키던 것을 DETAIL 수락 묶음으로 정의하고, 맥락 시험을 `settle-context`·`settle-state-keys`로 옮김. 03부터의 `settle-transition` 미정의와 묶음 중복 선언은 filid 스캔 결과로 PR에 기록 | `0cda5fd34`, `d5233155d` |
+
 ## 3. 다음 행동
 
-- U5(codex) 진행 중 → U6 → U7·U8(PR-6 몫)·U9 → U10. U10 전에 `settle/derive/__tests__`의 `filid:contract derive-edge` 세 파일 중복 선언을 정리한다(filid 검증 기록 규칙 §5).
+- Fix A 뒤 벤치 재측정(codex) → U10: 최종 게이트(G7·G8 재실행 포함), 독립 `seiri:verify`, PLAN §2 7단계 교차 대조, PR. 소유자 수용이 필요한 벤치 행은 PR 본문에 모아 올린다.
 - 이 세션의 커밋은 경로를 지정한 `git add`만 쓴다(원장 세션의 미커밋 변경과 섞지 않음).
 
 ## 4. 원장·계획서 어긋남
