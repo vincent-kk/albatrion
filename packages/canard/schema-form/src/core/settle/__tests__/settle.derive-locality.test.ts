@@ -7,6 +7,25 @@ import { createTestTree } from './fixtures/createTestTree';
 
 // filid:contract settle-derive
 describe('derive rule locality', () => {
+  it('CONTROLS-026 reactivated declaration fires after its source baseline is pruned', () => {
+    const { root } = createTestTree({ type: 'object', properties: {
+      t: { type: 'string' }, flag: { type: 'boolean' },
+      x: { type: 'string' },
+    }, allOf: [{ controls: { active: './flag' }, properties: {
+      x: { type: 'string', controls: { derived: '../t' } },
+    } }] });
+    loadSchemaNodeAtMount(root, { t: 'T1', flag: true, x: '' },
+      SetValueOption.Overwrite);
+    const observed = [root.structure?.x?.raw];
+    writeSchemaNode(root.structure!.x, 'manual', 'input', SetValueOption.Overwrite);
+    observed.push(root.structure?.x?.raw);
+    writeSchemaNode(root.structure!.flag, false, 'input', SetValueOption.Overwrite);
+    observed.push(root.structure?.x?.raw);
+    writeSchemaNode(root.structure!.flag, true, 'input', SetValueOption.Overwrite);
+    observed.push(root.structure?.x?.raw);
+    expect(observed).toEqual(['T1', 'manual', 'manual', 'T1']);
+  });
+
   it.each([
     ['without own rule', undefined],
     ['with own unsetValue', '../../s === "clear"'],
