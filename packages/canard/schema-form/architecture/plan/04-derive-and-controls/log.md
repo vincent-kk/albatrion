@@ -68,8 +68,8 @@ Planning method: 저장소 지침 — `PLAN.md` §2와 `plan/prompts.md`의 단�
 
 ## 3. 다음 행동
 
-- Fix A 뒤 벤치 재측정(codex) → U10: 최종 게이트(G7·G8 재실행 포함), 독립 `seiri:verify`, PLAN §2 7단계 교차 대조, PR. 소유자 수용이 필요한 벤치 행은 PR 본문에 모아 올린다.
-- 이 세션의 커밋은 경로를 지정한 `git add`만 쓴다(원장 세션의 미커밋 변경과 섞지 않음).
+- PR [#351](https://github.com/vincent-kk/albatrion/pull/351)을 열었다. 이어서 `filid:enrich-docs`, filid 스캔 한 번(G24), `seiri:request-review`(antigravity), `seiri:receive-review`, 고침·재검증.
+- 소유자 확인: 벤치 행 수용(G18), storybook(G23).
 
 ## 4. 원장·계획서 어긋남
 
