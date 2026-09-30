@@ -31,12 +31,12 @@
 | `extras` | getter | 선언 밖 키의 상태 칸 | VALUE-002, 26C-01 |
 | `value` | getter | 계산된 `local` | VALUE-027 |
 | `outputValue` | getter | 계산된 `emit` | VALUE-027·034 |
-| `inactiveValues` | getter | 루트 잠복 원본 메모의 자기 경로 조회 | VALUE-029, WRITE-087 |
+| `inactiveValues` | getter | 살아 있으면 루트 잠복 원본 메모, 떼어졌으면 마지막 커밋에 동결한 목록 | VALUE-029, WRITE-087, NODE-044 |
 | `active` | getter | 형상에 있는가. 살아 있는 노드는 늘 참, 떼어진 옛 참조는 거짓이며 다시 들어도 거짓(재탄생은 새 인스턴스). NODE-044의 마지막 커밋 고정에서 빠지는 살아 있는 트리의 사실 | LANDING-062, 26C-04, 26C-08 |
-| `typeMismatch` | getter | 현재 유효 목록의 경고등 | VALUE-030·037, SURFACE-061 |
-| `typeMismatches` | getter | 루트 경로 집합의 하위 목록 메모 | VALUE-030·037, SURFACE-061 |
-| `diagnostics` | getter | 트리 런타임의 진단 | ERROR-130·204, 26C-01 |
-| `defaultValue` | getter | 루트 로드 스냅숏의 자기 경로 | WRITE-085 |
+| `typeMismatch` | getter | 살아 있으면 현재 경고등, 떼어졌으면 마지막 커밋의 경고등 | VALUE-030·037, SURFACE-061, NODE-044 |
+| `typeMismatches` | getter | 살아 있으면 하위 경로 목록 메모, 떼어졌으면 마지막 커밋의 목록 | VALUE-030·037, SURFACE-061, NODE-044 |
+| `diagnostics` | getter | 떼어진 참조에서도 살아 있는 트리 런타임의 진단을 읽는 NODE-044 예외 | ERROR-131·204, SURFACE-007 |
+| `defaultValue` | getter | 살아 있으면 루트 로드 스냅숏, 떼어졌으면 마지막 커밋의 자기 경로 값 | WRITE-085, NODE-044 |
 | `find(pointer)` | method | `navigation.find` | NODE-043·046·054 |
 | `findNodes(pointer)` | method | `navigation.findNodes` | NODE-043·046·054 |
 | `setValue(value, option?)` | method | `settle.writeSchemaNode`의 호출자 전체 교체 또는 `Merge` 부분 쓰기 | NODE-010, WRITE-079·096, 26C-01 |
@@ -60,6 +60,10 @@
 ### surface-types — 판별과 참조
 
 - `tsc --strict`에서 `as`·`any` 없이 종류·union 경고등 판별·`InferSchemaNode`가 좁혀지고 `children`은 저장 배열과 동일한 참조입니다(NODE-046·058, TEST-070).
+
+### surface-detached — 떼어진 참조의 고정 읽기
+
+- 이탈한 자손 전체의 옛 참조는 `active: false`이고 쓰기로 커밋 번호가 바뀌지 않습니다. 마지막 커밋의 `typeMismatch`·`typeMismatches`·`inactiveValues`·`defaultValue`는 이후 트리 변경·새 인스턴스 재진입에도 같습니다. `diagnostics`는 이탈 후에도 살아 있는 트리의 진단을 읽습니다. 이탈 객체의 전체 교체 값은 재진입 시 기존 자손 잠복 원본보다 우선하고, `Merge`는 양쪽이 키 병합 가능한 객체일 때 기존 키를 유지합니다(NODE-044, WRITE-079, ERROR-131, SURFACE-007, 26C-08).
 
 ## Last Updated
 

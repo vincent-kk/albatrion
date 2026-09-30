@@ -69,6 +69,14 @@
 - 분기 없는 단일 리터럴 종류의 `const`·`enum` 칸은 대응 원시 노드 형으로 좁힙니다.
 - 형 수준에서 청사진 오류를 확정할 수 있는 객체·배열 리터럴, 종류가 섞인 리터럴, 혼합 인라인 분기는 `never`입니다. 정적 판정이 불가능한 모양만 넓은 노드 형을 유지합니다.
 
+## Boundary Exemptions
+
+### `__tests__/makeSchemaNodeTree.ts` — 공유 시험 트리 생성
+
+- **Consumers**: `behaviors/unionBehavior/__tests__/**`
+- **Direct import**: `allowed`
+- **Reason**: 회귀 시험과 union 시험이 같은 실제 청사진·노드 트리 생성기를 소비합니다. 제품 진입점에 시험 전용 도우미를 공개하지 않기 위해 core의 테스트 구획에 보관합니다.
+
 ## Last Updated
 
 2026-09-30 — 공유 시나리오의 새 노드 트리 실행과 폼 수준 로드 계약 반영.
