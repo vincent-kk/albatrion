@@ -290,6 +290,7 @@
   > 자동 쓰기는 비객체 호스트의 원본을 건드리지 않고(F10, T-12), core는 호출자가 넘긴 객체를 바꾸지 않는다(F24, T-19).
 - 보충:
   > "호스트의 원본이 `null`·`17` 같은 잘못된 종류의 값일 때 그 자식은 존재하고 렌더되며 빈 상태를 보인다. 호스트의 그 원본을 비우는 것은 사용자·호출자의 부분 쓰기뿐이고 **그 자식의 투영된 방출이 존재하게 될 때만** 비운다. 자동 쓰기(채움 등)는 비객체 호스트의 원본을 건드리지 않으므로, `setValue({ user: null })` 뒤 `name`의 채움 값은 방출에 나타나지 않고 사용자가 `name`에 입력하면 `user`가 객체가 되어 방출된다(ADR 0007 F1, ADR 0013 F10)." (`08-design-a-to-z.md:274`)
+  > 편집자 결정(26C-14): "【추론】 형상에 없는 호스트가 잘못된 종류의 `raw`를 든 채 조상의 쓰기가 그 자손 잠복 잎에 "형상에 들었다면 투영된 방출을 낼 값"(없음이 아니고 VALUE-034의 빈 값이 아닌 값)을 쓰면, 그 쓰기에서 호스트의 잘못된 종류 `raw`를 없음으로 한다; 이는 WRITE-013의 판정을 형상 밖에서 정적으로 한 것이며 자동 쓰기에는 적용되지 않는다." (`reviews/round-26-closing.md:149`)
 - 상태: 현행
 - 출처: `adr/0013-core-does-not-rewrite-values.md:52#4`(정본), `08-design-a-to-z.md:274`, `reviews/round-18-closing.md:2831-2832`
 - 닫은 사람: 편집자 결정(5라운드, ADR 0013 4차 본문 `adr/0013-core-does-not-rewrite-values.md:12`; F10·T-12·F24·T-19), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-100)
@@ -1141,6 +1142,7 @@
   > 【추론】 틀린 종류의 값이면 S1 규칙대로 경고등이 켜지고 `VALUE_TYPE_MISMATCH` 경고가 간다.
 - 보충:
   > 반영 칸(설계서 메모 4): "게터 `typeMismatch: boolean`, 경로 목록 `typeMismatches: readonly string[]`, 경고 코드 `SCHEMA_FORM_WARNING.TYPE_MISMATCH`." (`reviews/round-18-owner-answers.md:41`)
+  > 편집자 결정(26C-10): "【추론】 떼어진 참조에 쓴 값은 살아 있는 노드에 쓸 때와 같은 쓰기 규칙으로 루트의 (경로, 종류) 잠복 원본에 닿는다: 전체 교체(옵션 없음·`Overwrite`·`setValue(V)`)는 그 경로의 잠복 원본을 받은 값으로 바꾸고 그 아래 자손의 잠복 원본을 없음으로 하며, `Merge`는 WRITE-079대로 키로 합칠 수 있는 자리에서만 합치고 그 밖은 통째로 바꾼다." (`reviews/round-26-closing.md:109`)
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:463-474`(정본), `reviews/round-18-owner-answers.md:41`
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-16), 소유자 답(`reviews/round-18-owner-answers.md:41` 설계서 메모 4)
@@ -1222,7 +1224,8 @@
   > 【추론】 D는 복사하거나 불변으로 다룬다(F24).
   > 【추론】 분배된 값은 잎마다 `interpret`를 지난다.
   > 【추론】 꺼진 조각의 자손에도 쓰기의 분배 규칙대로 들어가 잠복 원본이 된다(WRITE-018과 같은 분배).
-- 보충: 없음
+- 보충:
+  > 편집자 결정(26C-14): "【추론】 객체 호스트가 없음인지(채움 값 D의 대상인지)는 WRITE-082대로 호스트와 모든 자손의 `raw`·`extras`로 판정하며, 자손의 원본에는 종류를 가리지 않고 형상 밖 자손의 잠복 원본이 든다; 그래서 다른 종류의 잠복 원본만 있어도 호스트는 D를 받지 않고, 없음인 자식만 자기 차례에 채움을 받는다." (`reviews/round-26-closing.md:150`)
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:554-568`(정본)
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-18)
@@ -1287,6 +1290,7 @@
   > 편집자 결정(18C-97): "【추론】 아이템을 만들거나 없애는 모든 쓰기는 구조 연산처럼 그 경로의 스냅숏 배열의 자리를 맞춘다." (`reviews/round-18-closing.md:2779`)
   > 편집자 결정(18C-97): "【추론】 없어진 아이템의 자리는 잘라 내고, 새 아이템의 자리에는 `undefined`를 넣으며, 값은 싣지 않는다." (`reviews/round-18-closing.md:2780`)
   > 편집자 결정(18C-105): "【추론】 구조 연산(`push(v)`·삽입)은 WRITE-085대로 생성 값 `v`를 스냅숏 자리에 넣고, 아이템을 만드는 비구조 쓰기만 `undefined`를 넣는다." (`reviews/round-18-closing.md:2954`)
+  > 편집자 결정(26C-06): "【추론】 원장이 "루트가 든다"고 적은 트리 전체 자료(로드 스냅숏, 잠복 원본, 경고등 경로 집합, 잠복 원본 열거의 메모)의 저장 자리는 트리마다 하나인 `SchemaNodeRuntime`의 칸이며, 루트는 자기 `runtime` 필드를 통해 그것을 든다." (`reviews/round-26-closing.md:66`)
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:1220-1236`(정본), `reviews/round-18-closing.md:2779-2780,2883-2884`, `reviews/round-18-closing.md:2954`
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-44), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-97), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-103), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-105)
@@ -1333,7 +1337,10 @@
   > 【추론】 같은 항목 객체를 조상들의 배열이 함께 쓴다(절대 경로라서 가능하다).
   > PR: PR-2 벤치.
   > 무엇: 커밋 때 조상 경로 메모를 갱신하는 비용을 잰다.
-- 보충: 없음
+- 보충:
+  > 편집자 결정(26C-12): "【추론】 노드가 떼어진 뒤 같은 (경로, 종류)의 새 인스턴스가 형상에 든 동안, 옛 참조로 한 쓰기(`setValue(V)`, `Merge`, `resetSubtree()`)는 아무것도 하지 않는다: 잠복 원본을 만들지 않고, 살아 있는 노드의 원본에도 닿지 않으며, 오류가 아니다." (`reviews/round-26-closing.md:127`)
+  > 편집자 결정(26C-12): "【추론】 잠복 원본은 형상에 없는 노드의 원본이므로 그 경로가 살아 있으면 고칠 잠복 원본이 없고, 살아 있는 원본을 옛 참조로 바꾸면 표시·계산 없이 원본이 바뀌어 커밋된 트리가 상태의 순수 함수가 아니게 된다(SETTLE-010)." (`reviews/round-26-closing.md:128`)
+  > 편집자 결정(26C-13): "【추론】 `inactiveValues`의 열거는 경로 단위다: 반환 `{ path, value }`에는 종류가 없으므로, 같은 경로가 어느 종류로든 형상에 있는 동안 그 경로의 잠복 원본은 열거에 나오지 않고, 경로가 형상을 떠나면 나온다." (`reviews/round-26-closing.md:140`)
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:2171-2182,2188-2189`(정본)
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-81)
@@ -1482,6 +1489,8 @@
   > 실패: 전수 실행에서 12건 밖의 경우나 순서 위반이 나오면 `convert` 표를 고치고, 규칙이 사례를 하나로 정하지 못하면 이 블록을 고친다.
 - 보충:
   > 반영 칸(설계서 메모 4): "게터 `typeMismatch: boolean`, 경로 목록 `typeMismatches: readonly string[]`, 경고 코드 `SCHEMA_FORM_WARNING.TYPE_MISMATCH`." (`reviews/round-18-owner-answers.md:41`)
+  > 편집자 결정(26C-02): "【추론】 PR-2에 배정된 "렌더 시나리오" 게이트는 시나리오를 `@aileron/schema-form-scenarios`의 순수 데이터로 두고, 코어 시나리오 시험(`src/core/__tests__/scenarios/<부류>.spec.ts`)이 새 노드 트리에서 돌리는 것으로 통과를 잰다." (`reviews/round-26-closing.md:22`)
+  > 편집자 결정(26C-02): "【추론】 같은 데이터를 `<Form>`으로 그리는 시나리오 스토리와 e2e 실행기는 `<Form>`이 새 엔진을 쓰는 PR-7부터 돈다." (`reviews/round-26-closing.md:23`)
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:2482-2519,2566-2569`(정본), `reviews/round-18-closing.md:2908-2910,2914`, `reviews/round-18-owner-answers.md:41`
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-91), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-104), 소유자 답(`reviews/round-18-owner-answers.md:41` 설계서 메모 4)
@@ -1502,7 +1511,8 @@
   > 무엇: `omitEmpty` 필드에 `''`가 있고 꺼진 분기에 원본이 있는 폼에서 `setValue(getValue())`를 두 번 부른다.
   > 통과: 첫 호출에서 두 원본이 없음이 되어 `inactiveValues`에서 빠지고 방출 값·채움·에지는 그대로이며, 둘째 호출은 원본을 바꾸지 않고 `UpdateValue`를 내지 않는다.
   > 실패: 결과가 다르면 이 블록이나 WRITE-090의 보충을 고친다.
-- 보충: 없음
+- 보충:
+  > 편집자 결정(26C-14): "【추론】 어느 경로에 값을 싣는 쓰기(로드, 전체 교체 쓰기, 조상의 `Merge`·입력 쓰기가 나눠 준 값, 옛 참조로 한 쓰기)는 그 경로의 원본을 하나로 만든다: 그 경로에 형상에 있는 노드가 있으면 그 노드의 원본에, 옛 참조로 한 쓰기는 그 참조의 (경로, 종류) 잠복 원본에, 그 밖에는 그 경로의 선언 가운데 청사진 전순서에서 앞선 종류의 (경로, 종류) 잠복 원본에 쓰고, 같은 경로의 다른 종류 잠복 원본은 지운다." (`reviews/round-26-closing.md:147`)
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:2761-2764,2770-2773`(정본)
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-96)
@@ -1541,7 +1551,9 @@
   > 무엇: `name`에 `default`가 있는 폼에서 `setValue({ user: null })` 뒤와 `{ user: null }`을 로드한 `FormHandle.reset()` 뒤의 `name`의 원본과 방출, 그리고 `setValue(V)`가 낸 `UpdateValue`의 출처 칸을 본다.
   > 통과: `setValue` 뒤 `name`은 없음이고, 로드 뒤 `name`은 채움 값을 들되 방출에 나타나지 않으며, 출처 칸은 호출자 전체 교체다.
   > 실패: 이 블록을 고친다.
-- 보충: 없음
+- 보충:
+  > 편집자 결정(26C-03): "【추론】 게이트에 "PR: PR-2"라 적혀도 그 단언이 뒤 PR의 기제(`controls.derived`·`controls.injectTo`는 PR-3, 통지·사건 배달은 PR-4)를 요구하면, 그 단언은 그 기제가 모두 있는 가장 이른 PR에서 하고 PR-2는 자기 기제로 관찰할 수 있는 신호를 단언한다(TEST-069 (라))." (`reviews/round-26-closing.md:32`)
+  > 편집자 결정(26C-03): "【추론】 WRITE-096: PR-2는 표시 단계가 기록하는 쓰기 종류('호출자 전체 교체')를 표시 단계의 기록(VALUE-032)으로 단언하고, `UpdateValue`의 출처 칸은 PR-4가 단언한다." (`reviews/round-26-closing.md:36`)
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:2831-2834,2839-2842`(정본)
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-100)
@@ -1597,6 +1609,8 @@
   > 편집자 결정(18C-105): "【추론】 전이 단계의 재해석은 게이트 상태가 최종이 아니므로 원본 B에서 버린다." (`reviews/round-18-closing.md:2943`)
   > 편집자 결정(18C-105): "【추론】 원본 B에 남은 값이 좁혀진 유효 목록 밖이면 경고등이 켜진다." (`reviews/round-18-closing.md:2944`)
   > 편집자 결정(18C-105): "【추론】 비용: 라운드마다, 유효 목록이 바뀐 쓰인 노드에 한해 `interpret` 한 번이다." (`reviews/round-18-closing.md:2945`)
+  > 편집자 결정(26C-02): "【추론】 PR-2에 배정된 "렌더 시나리오" 게이트는 시나리오를 `@aileron/schema-form-scenarios`의 순수 데이터로 두고, 코어 시나리오 시험(`src/core/__tests__/scenarios/<부류>.spec.ts`)이 새 노드 트리에서 돌리는 것으로 통과를 잰다." (`reviews/round-26-closing.md:22`)
+  > 편집자 결정(26C-02): "【추론】 게이트 문장의 `FormHandle.reset()`은 코어에서 루트 노드의 폼 수준 로드(마운트와 같은 초기화 범위, 로드 스냅숏 갱신)로 읽고, `resetSubtree()`는 그 노드의 로드로 읽는다." (`reviews/round-26-closing.md:24`)
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:2908-2918,2925-2928`(정본), `reviews/round-18-closing.md:2938-2940,2942-2945`
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-104), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-105)
@@ -1646,6 +1660,8 @@
   > 편집자 결정(LANDING-065): "배열·터미널 배열 행(`arrayBehavior/`의 `branch/`·`terminal/`)" (`08-design-a-to-z.md:575`) — `push(v)`와 삽입의 스냅숏 시험은 배열 행을 들여오는 PR-5가 하고, PR-2(스냅숏·유효 목록)의 게이트에는 유효 목록 시험만 남는다(LANDING-065).
   > 편집자 결정(25C-11): "【추론】 E1–E42는 `src/core/blueprint/__tests__/`의 네 파일에 있다: `blueprint.type-syntax.test.ts`(E1–E10, E28), `blueprint.type-inference.test.ts`(E11–E17, E29, E32–E35), `blueprint.type-static-intersection.test.ts`(E18–E24, E30, E31, E36–E39), `blueprint.type-gated-declarations.test.ts`(E25–E27, E40–E42)." (`reviews/round-25-closing.md:103`)
   > 편집자 결정(25C-11): "【추론】 `union.kind-procedure.test.ts`의 단언은 위 네 파일의 표 행과 `blueprint.type-gated-declarations.test.ts`의 정적 소유자 없는 분기 접기 충돌 사례에, `union.null-only.test.ts`는 위 표 행에, `union.static-intersection.test.ts`는 `blueprint.type-static-intersection.test.ts`에, `union.schema-type-invariant.test.ts`는 `blueprint.type-syntax.test.ts`의 E1–E9 불변식에, `union.gated-narrowing.test.ts`는 `blueprint.type-gated-declarations.test.ts`에, `union.terminal-subtree-warning.test.ts`는 `blueprint.diagnostics.test.ts`와 `blueprint.type-syntax.test.ts`의 E28에 있다." (`reviews/round-25-closing.md:104`)
+  > 편집자 결정(26C-02): "【추론】 PR-2에 배정된 "렌더 시나리오" 게이트는 시나리오를 `@aileron/schema-form-scenarios`의 순수 데이터로 두고, 코어 시나리오 시험(`src/core/__tests__/scenarios/<부류>.spec.ts`)이 새 노드 트리에서 돌리는 것으로 통과를 잰다." (`reviews/round-26-closing.md:22`)
+  > 편집자 결정(26C-02): "【추론】 게이트 문장의 `FormHandle.reset()`은 코어에서 루트 노드의 폼 수준 로드(마운트와 같은 초기화 범위, 로드 스냅숏 갱신)로 읽고, `resetSubtree()`는 그 노드의 로드로 읽는다." (`reviews/round-26-closing.md:24`)
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:2938-2957,2969-2984`(정본), `reviews/round-18-owner-answers.md:24`, `08-design-a-to-z.md:575`
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-105), 소유자 답(`reviews/round-18-owner-answers.md:24` 18C 검토 1번; 입력이 보내는 값), 편집자 결정(18라운드, LANDING-065; 배열 스냅숏 시험은 PR-5)

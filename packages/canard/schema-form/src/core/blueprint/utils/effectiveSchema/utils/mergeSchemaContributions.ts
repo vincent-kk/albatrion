@@ -1,3 +1,5 @@
+import { isArray } from '@winglet/common-utils/filter';
+
 import type {
   BlueprintNode,
   EffectiveSchema,
@@ -30,7 +32,7 @@ export const mergeSchemaContributions = (
   const staticTypes =
     node.schemaType === 'virtual'
       ? undefined
-      : ((Array.isArray(node.schemaType)
+      : ((isArray(node.schemaType)
           ? node.schemaType
           : [node.schemaType]) as readonly SchemaTypeName[]);
   const state: EffectiveSchemaState = {

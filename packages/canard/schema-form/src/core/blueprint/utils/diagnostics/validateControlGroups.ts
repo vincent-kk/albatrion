@@ -1,3 +1,5 @@
+import { isArray } from '@winglet/common-utils/filter';
+
 import type { BlueprintSchema } from '../../type';
 import { readSchemaObject } from '../analyze/readSchemaObject';
 import type { AnalysisContext } from '../analyze/type';
@@ -28,7 +30,7 @@ export const validateControlGroups = (
         : fragment
           ? CHILD_CONTROL_KEYS
           : CONTROL_KEYS;
-    if (!value || typeof value !== 'object' || Array.isArray(value))
+    if (!value || typeof value !== 'object' || isArray(value))
       throwBlueprintError(
         BlueprintErrorCode.InvalidControlShape,
         `${schemaPath}/${group}`,
@@ -56,7 +58,7 @@ export const validateControlGroups = (
       context.options,
     );
   if (controls?.children !== undefined) {
-    if (!Array.isArray(controls.children))
+    if (!isArray(controls.children))
       throwBlueprintError(
         BlueprintErrorCode.InvalidControlShape,
         `${schemaPath}/controls/children`,
@@ -71,7 +73,7 @@ export const validateControlGroups = (
         Object.keys(entry).some(
           (key) => key !== 'targets' && key !== 'controls',
         ) ||
-        !Array.isArray(entry.targets) ||
+        !isArray(entry.targets) ||
         entry.targets.some((name: unknown) => typeof name !== 'string')
       )
         throwBlueprintError(

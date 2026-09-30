@@ -111,6 +111,9 @@
   > 공통 필드는 고정 배치하고 종류별 데이터는 한 칸 `structure`(객체의 키별 자식 맵, 배열의 아이템 목록과 키 번호, 가상의 참조)에 담는다. 노드 필드 `runtime`은 트리마다 하나인 `SchemaNodeRuntime`(통지 대기열, 검증기, 진단, 진입 깊이와 예산, `nodeFactory`, `onError` 보고기)을 가리킨다. 노드 인스턴스가 곧 레코드다(노드마다 객체 하나). 정착 알고리즘은 `settle`의 자유 함수가 레코드 위에서 돌린다.
 - 보충:
   > 편집자 결정(18C-33): "【추론】 branch 객체의 `structure`는 이름에서 그 커밋의 형상에 있는 자식 노드로 가는 맵이다." (`reviews/round-18-closing.md:924`)
+  > 편집자 결정(26C-06): "【추론】 원장이 "루트가 든다"고 적은 트리 전체 자료(로드 스냅숏, 잠복 원본, 경고등 경로 집합, 잠복 원본 열거의 메모)의 저장 자리는 트리마다 하나인 `SchemaNodeRuntime`의 칸이며, 루트는 자기 `runtime` 필드를 통해 그것을 든다." (`reviews/round-26-closing.md:66`)
+  > 편집자 결정(26C-06): "【추론】 NODE-004의 런타임 열거(통지 대기열, 검증기, 진단, 진입 깊이와 예산, `nodeFactory`, `onError` 보고기)는 닫힌 목록이 아니며, 칸을 더할 때는 NODE-045대로 `record/`의 선언을 고치고 그 대가를 레코드 `DETAIL.md`에 적는다." (`reviews/round-26-closing.md:67`)
+  > 편집자 결정(26C-06): "【추론】 레코드에 루트 전용 필드를 두지 않는다: 공통 필드는 고정 배치다(NODE-004)." (`reviews/round-26-closing.md:68`)
 - 상태: 현행
 - 출처: `09-landing-and-test-strategy.md:104#6-9`(정본), `reviews/round-17-owner-answers.md:38`, `reviews/round-17-owner-answers.md:46`, `reviews/round-18-closing.md:924`
 - 닫은 사람: 소유자 답(`reviews/round-17-owner-answers.md:46` 14 트리마다 하나인 공용 칸), 17라운드 스웜 수렴(편집자 결정, `reviews/raw-round17-node-structure.md` §2; 칸의 내용과 `settle`의 자유 함수), 17라운드 스웜 수렴(편집자 결정, `reviews/round-17-owner-answers.md:38`·`reviews/raw-round17-node-structure.md:154`; 소유자 이견 없이 권고대로 확정된 칸 `structure`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-33)
@@ -181,7 +184,12 @@
 
 - 결정:
   > **겉면 규칙.** `SchemaNode` 클래스 파일에는 필드·게터·문장 하나짜리 위임만 둔다. 분기·반복·종류 비교를 금하고(예외는 가드), 생성자는 선언 순서대로 대입만 하며, 노드마다 할당을 만들지 않는다(생성자와 필드 초기화식에 객체·배열 리터럴, 함수, `new`를 두지 않는다). 필드 집합은 고정한다. 멤버 목록은 공개 계약 목록과 같아야 하며, `SchemaNode/`의 `DETAIL.md` 목록과 프로토타입 멤버 이름을 맞대는 멤버 목록 시험으로 지킨다. 여러 단계를 잇는 조율(쓰기 → 커밋 → 통지 → 검증 요청, 하위 트리 상태 쓰기, `validate`, 로드)은 `dispatch`의 동사별 진입이 맡는다. 기계 검사는 그 클래스 파일에만 거는 ESLint 설정이다. 내부 통로(입력 마침 신호 `finishInput`, 입력 출처 표식이 붙은 쓰기)는 클래스 멤버가 아니며 `SchemaNode/` 진입점이 바인딩 전용으로 이름을 붙여 내보낸다. `core/index.ts`는 이들을 이름으로 다시 내보내고 `src/index.ts`는 내보내지 않는다(공개 index의 키 목록 시험). 겉면의 `INTENT.md` 첫 줄에 이름 함정 경고를 둔다(렌더 디렉토리 `src/components/SchemaNode`, 공개 판별 합집합 형 `SchemaNode`와 이름이 같다).
-- 보충: 없음
+- 보충:
+  > 편집자 결정(26C-01): "【추론】 `SchemaNode` 겉면의 멤버는 그 멤버가 드러내는 기제를 들여오는 PR에서 겉면에 들고, 그 PR이 `SchemaNode/`의 `DETAIL.md` 목록·멤버 목록 시험·공개 형 `SchemaNode`를 함께 고친다(EVENT-063이 명령 메서드에 정한 방식)." (`reviews/round-26-closing.md:9`)
+  > 편집자 결정(26C-01): "【추론】 명령 메서드 하나와 통지·검증 멤버(`subscribe`, `validate`, 오류 읽기와 외부 오류 설정)는 PR-4(EVENT-063·EVENT-073, LANDING-064), 배열 메서드는 PR-5(NODE-014, LANDING-065), 계산 게터 `visible`·`enabled`·`readOnly`·`disabled`는 PR-6(LANDING-066)에서 겉면에 든다." (`reviews/round-26-closing.md:11`)
+  > 편집자 결정(26C-01): "【추론】 원장이 PR을 적지 않은 멤버는 같은 규칙으로 그 기제를 들여오는 PR에 들며, 하위 트리 상태 쓰기와 `validate`처럼 여러 단계를 잇는 조율은 `dispatch`의 것이므로(NODE-010) PR-4다." (`reviews/round-26-closing.md:12`)
+  > 편집자 결정(26C-01): "【추론】 뒤 PR의 멤버를 PR-2 클래스에 무해한 구현(스텁)이나 `SchemaNodeRuntime` 칸으로의 위임으로 미리 두지 않는다: PR-2의 시험 대역은 `if` 게이트 술어 하나뿐이고 시험만을 위한 주입 자리를 새로 만들지 않는다(TEST-069 (나)); LANDING-062의 "게이트는 술어 인터페이스 뒤의 스텁"은 이 술어 하나를 말한다." (`reviews/round-26-closing.md:13`)
+  > 편집자 결정(18C-25): "【추론】 PR-2에서 사슬은 `settle` 호출 하나다(`setValue`가 `settle` 쓰기로 직접 위임, `reviews/raw-round17-node-structure.md:74`)." (`reviews/round-18-closing.md:756`)
 - 상태: 현행
 - 출처: `09-landing-and-test-strategy.md:109`(정본)
 - 닫은 사람: 17라운드 스웜 수렴(편집자 결정, `reviews/raw-round17-node-structure.md` §6; 소유자 지시 `reviews/round-17-owner-answers.md:25`)
@@ -288,6 +296,7 @@
   > 편집자 결정(18C-31): "PR: PR-2." (`reviews/round-18-closing.md:901`)
   > 편집자 결정(18C-31): "통과: 위 합격선 안이다." (`reviews/round-18-closing.md:902`)
   > 편집자 결정(18C-31): "실패: TEST-027의 절차(18C-26의 기록·수용 규칙)로 올린다." (`reviews/round-18-closing.md:903`)
+  > 소유자(27라운드, PR-2 벤치의 느린 행): "PR-2 벤치에서 남은 느린 행을 모두 수용한다" (`reviews/round-27-owner-answers.md:7`) — 요지. B2의 합격선(18C-31, 추정의 1.5배) 초과와 B3(JSC 숨은 맵 확인 불가)을 소유자가 받아들였다. 이 추정은 그대로 두고, 최적화는 구현 완료 뒤의 별도 작업이다(TEST-027).
 - 상태: 현행
 - 출처: `09-landing-and-test-strategy.md:115`(정본), `reviews/round-18-agenda.md:68`, `reviews/round-18-closing.md:890-896,901-903`
 - 닫은 사람: 17라운드 스웜 수렴(편집자 결정, `reviews/raw-round17-node-structure.md` §7), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-31)
@@ -662,7 +671,13 @@
   > 【추론】 터미널 아래 경로와 같은 규칙이다.
   > 【추론】 비활성 자식까지 담는 `subnodes`는 레코드에도 공개 겉면에도 두지 않는다.
   > 【추론】 `detectsCandidate`와 그 시험, 첫 후보로 물러나는 규칙, 내부 칸 `variant`·`scope`·`oneOfIndex`·`anyOfIndices`는 모두 폐기한다.
-- 보충: 없음
+- 보충:
+  > 편집자 결정(26C-06): "【추론】 원장이 "루트가 든다"고 적은 트리 전체 자료(로드 스냅숏, 잠복 원본, 경고등 경로 집합, 잠복 원본 열거의 메모)의 저장 자리는 트리마다 하나인 `SchemaNodeRuntime`의 칸이며, 루트는 자기 `runtime` 필드를 통해 그것을 든다." (`reviews/round-26-closing.md:66`)
+  > 편집자 결정(26C-13): "【추론】 잠복 원본이 생기는 길은 둘뿐이다: 노드가 형상을 떠날 때 그 노드의 원본(NODE-044), 그리고 비활성 경로 쓰기(18C-64, 옛 참조 쓰기 포함). 형상에 든 적 없는 다른 종류의 선언은 노드가 아니므로 부모 원본의 키 값에서 잠복 원본을 만들지 않으며, 그 값은 살아 있는 노드의 원본 하나다." (`reviews/round-26-closing.md:137`)
+  > 편집자 결정(26C-13): "【추론】 같은 경로에 다른 종류의 잠복 원본이 이미 있으면(종류 전환으로 떠난 노드의 원본) 지우지 않고 두며, 그 종류가 다시 형상에 들 때 그 원본으로 돌아온다." (`reviews/round-26-closing.md:139`)
+  > 편집자 결정(26C-13): "【추론】 로드(마운트·`FormHandle.reset()`·`resetSubtree()`)는 V의 값을 경로마다 원본으로 싣고, 형상에 없는 경로의 값은 그 자리에서 잠복 원본이 된다(로드 왕복): 같은 경로가 어느 종류로든 형상에 있으면 그 값은 살아 있는 노드의 원본이라 잠복 원본이 생기지 않고, 어느 종류도 형상에 없으면 그 경로의 선언 가운데 청사진 전순서에서 앞선 종류의 (경로, 종류) 잠복 원본이 된다. 이미 있던 잠복 원본은 V의 값으로 바뀌거나 지워진다." (`reviews/round-26-closing.md:138`)
+  > 편집자 결정(26C-14): "【추론】 어느 경로에 값을 싣는 쓰기(로드, 전체 교체 쓰기, 조상의 `Merge`·입력 쓰기가 나눠 준 값, 옛 참조로 한 쓰기)는 그 경로의 원본을 하나로 만든다: 그 경로에 형상에 있는 노드가 있으면 그 노드의 원본에, 옛 참조로 한 쓰기는 그 참조의 (경로, 종류) 잠복 원본에, 그 밖에는 그 경로의 선언 가운데 청사진 전순서에서 앞선 종류의 (경로, 종류) 잠복 원본에 쓰고, 같은 경로의 다른 종류 잠복 원본은 지운다." (`reviews/round-26-closing.md:147`)
+  > 편집자 결정(26C-14): "【추론】 26C-13 :139의 "다른 종류의 잠복 원본이 이미 있으면 지우지 않고 두며"는 그 경로에 값을 싣지 않는 쓰기(다른 경로의 쓰기, 게이트 전환)에서의 규칙이다." (`reviews/round-26-closing.md:148`)
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:921-931`(정본)
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-33)
@@ -689,7 +704,18 @@
   > 【추론】 노드가 다시 형상에 들면 새 인스턴스를 만든다("재탄생은 새 삶", `08-design-a-to-z.md:316`).
   > 【추론】 옛 참조는 떼어진 채로 남는다.
   > 【추론】 `SCHEMA_FORM_ERROR.DISPOSED_NODE_WRITE`(가칭)는 재생성 `reset`이 버린 트리의 노드에 대한 쓰기에만 남긴다.
-- 보충: 없음
+- 보충:
+  > 편집자 결정(26C-08): "【추론】 `active` 게터는 그 노드가 형상에 있는가(선언한 조각이 켜져 있고 노드 자신의 `controls.active`가 거짓이 아님, VALUE-006)를 읽는 멤버이므로, 살아 있는(형상 안) 노드에서는 늘 참이다." (`reviews/round-26-closing.md:87`)
+  > 편집자 결정(26C-08): "【추론】 떼어진 노드의 `active`는 거짓이다: 떼어짐은 형상을 떠난 것이고, 이 멤버는 `rootNode`·`globalState`·`globalErrors`처럼 살아 있는 트리의 사실을 읽는 NODE-044 고정 규칙의 예외다." (`reviews/round-26-closing.md:88`)
+  > 편집자 결정(26C-08): "【추론】 조각 게이트가 꺼져 떼어진 경우도 같으며(노드 게이트 값이 아니라 형상 여부를 읽는다), 노드가 다시 형상에 들어도 옛 참조의 `active`는 거짓인 채다(새 인스턴스가 참이다)." (`reviews/round-26-closing.md:89`)
+  > 편집자 결정(26C-10): "【추론】 떼어진 노드에서 `diagnostics`는 살아 있는 트리(런타임의 진단 칸)를 읽는 NODE-044 고정 규칙의 예외다: `diagnostics`는 트리 전체의 커밋을 기술하며(ERROR-131) 루트에서 관측하는 것이라(SURFACE-007) `globalErrors`와 같은 부류다." (`reviews/round-26-closing.md:107`)
+  > 편집자 결정(26C-10): "【추론】 `typeMismatch`·`typeMismatches`·`inactiveValues`·`defaultValue`는 NODE-044의 고정 읽기이며, 떼어질 때 그 노드가 형상에 있던 마지막 커밋의 값을 한 번 갈무리한다." (`reviews/round-26-closing.md:108`)
+  > 편집자 결정(26C-10): "【추론】 떼어진 참조에 쓴 값은 살아 있는 노드에 쓸 때와 같은 쓰기 규칙으로 루트의 (경로, 종류) 잠복 원본에 닿는다: 전체 교체(옵션 없음·`Overwrite`·`setValue(V)`)는 그 경로의 잠복 원본을 받은 값으로 바꾸고 그 아래 자손의 잠복 원본을 없음으로 하며, `Merge`는 WRITE-079대로 키로 합칠 수 있는 자리에서만 합치고 그 밖은 통째로 바꾼다." (`reviews/round-26-closing.md:109`)
+  > 편집자 결정(26C-10): "【추론】 규칙 평가와 방출은 없으며, 그래서 떼어지기 전과 뒤에 같은 순서로 쓴 결과의 원본이 같다." (`reviews/round-26-closing.md:110`)
+  > 편집자 결정(26C-12): "【추론】 노드가 떼어진 뒤 같은 (경로, 종류)의 새 인스턴스가 형상에 든 동안, 옛 참조로 한 쓰기(`setValue(V)`, `Merge`, `resetSubtree()`)는 아무것도 하지 않는다: 잠복 원본을 만들지 않고, 살아 있는 노드의 원본에도 닿지 않으며, 오류가 아니다." (`reviews/round-26-closing.md:127`)
+  > 편집자 결정(26C-12): "【추론】 잠복 원본은 형상에 없는 노드의 원본이므로 그 경로가 살아 있으면 고칠 잠복 원본이 없고, 살아 있는 원본을 옛 참조로 바꾸면 표시·계산 없이 원본이 바뀌어 커밋된 트리가 상태의 순수 함수가 아니게 된다(SETTLE-010)." (`reviews/round-26-closing.md:128`)
+  > 편집자 결정(26C-12): "【추론】 그 경로가 뒤에 다시 형상을 떠나면 옛 참조들의 쓰기는 다시 같은 (경로, 종류)의 잠복 원본에 닿는다(26C-10)." (`reviews/round-26-closing.md:129`)
+  > 편집자 결정(26C-14): "【추론】 어느 경로에 값을 싣는 쓰기(로드, 전체 교체 쓰기, 조상의 `Merge`·입력 쓰기가 나눠 준 값, 옛 참조로 한 쓰기)는 그 경로의 원본을 하나로 만든다: 그 경로에 형상에 있는 노드가 있으면 그 노드의 원본에, 옛 참조로 한 쓰기는 그 참조의 (경로, 종류) 잠복 원본에, 그 밖에는 그 경로의 선언 가운데 청사진 전순서에서 앞선 종류의 (경로, 종류) 잠복 원본에 쓰고, 같은 경로의 다른 종류 잠복 원본은 지운다." (`reviews/round-26-closing.md:147`)
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:943-959`(정본)
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-34)
@@ -709,7 +735,10 @@
   > 【추론】 그 대가를 레코드 `DETAIL.md`에 적는다(`Behavior`와 같은 방식).
   > 【추론】 PR-2의 병합 점검에 `import type`까지 센 순환 검사를 둔다.
   > 【추론】 도구는 PR-2가 고른다.
-- 보충: 없음
+- 보충:
+  > 편집자 결정(26C-06): "【추론】 원장이 "루트가 든다"고 적은 트리 전체 자료(로드 스냅숏, 잠복 원본, 경고등 경로 집합, 잠복 원본 열거의 메모)의 저장 자리는 트리마다 하나인 `SchemaNodeRuntime`의 칸이며, 루트는 자기 `runtime` 필드를 통해 그것을 든다." (`reviews/round-26-closing.md:66`)
+  > 편집자 결정(26C-06): "【추론】 NODE-004의 런타임 열거(통지 대기열, 검증기, 진단, 진입 깊이와 예산, `nodeFactory`, `onError` 보고기)는 닫힌 목록이 아니며, 칸을 더할 때는 NODE-045대로 `record/`의 선언을 고치고 그 대가를 레코드 `DETAIL.md`에 적는다." (`reviews/round-26-closing.md:67`)
+  > 편집자 결정(26C-06): "【추론】 진입 깊이와 예산 가운데 중첩 진입의 칸은 그 기제를 들여오는 PR-4가 더하고(26C-01, TEST-069), 런타임은 루트 참조를 따로 들지 않는다(레코드 필드로 닿는다)." (`reviews/round-26-closing.md:69`)
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:969-978`(정본)
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-35)

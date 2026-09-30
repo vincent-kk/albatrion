@@ -1,3 +1,5 @@
+import { isArray } from '@winglet/common-utils/filter';
+
 import type {
   BlueprintChildEntry,
   BlueprintNodeKind,
@@ -39,7 +41,7 @@ export const buildNodes = (
     const nonNull = group.allowed.filter((type) => type !== 'null');
     const schemaType: BlueprintSchemaType =
       nonNull.length > 1 ? Object.freeze(nonNull) : (nonNull[0] ?? 'null');
-    const kind: BlueprintNodeKind = Array.isArray(schemaType)
+    const kind: BlueprintNodeKind = isArray(schemaType)
       ? 'union'
       : schemaType === 'integer'
         ? 'number'

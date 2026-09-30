@@ -23,7 +23,7 @@
   - 표본 (c′) "`required` 없는 `if/then`으로만 끊긴 재귀 → 정착 오류"(TEST-067).
 - **union 행**(TEST-077, HANDOFF §2): 규칙 A 표 전체와 동점 12건, `integer` 멤버십, 게이트 전이에서 경고등만 바뀌고 값은 그대로, `setValue({kind:'num', a:'42'})`가 직전 상태와 무관하게 `a = 42`(U7), 서로소 게이트 둘의 충돌, 되먹임 반례의 라운드 상한(WRITE-099), 경고 1회·재발송 조건.
 - **공개 형**(TEST-070): 실제 공개 형으로 `tsc --strict`를 단언 없이 통과, `children`은 저장 배열과 같은 참조. 실패하면 소유자 물음.
-- **겉면**: 멤버 목록 시험 — "명령 넷이 메서드 하나로 합쳐지고(EVENT-073) 게터 이름은 `typeMismatch`·`typeMismatches`로 확정되어(SURFACE-061) 겉면 멤버는 약 54개다"(SURFACE-058의 충돌 줄). 이 PR은 명령 메서드 하나를 뺀 목록을 단언한다. 행 칸 순서 시험, 파일 한정 린트.
+- **겉면**: 멤버 목록 시험은 PR-2에서 실제로 들이는 클래스 멤버만 단언한다. `reviews/raw-round17-node-structure.md:74`의 PR-2 목록에 `raw`·`extras`·`diagnostics`·`defaultValue`·`resetSubtree`를 더하고 `SetValueOption`은 공개 옵션으로 둔다. 뒤 PR의 멤버는 해당 기제의 PR에서 `SchemaNode/DETAIL.md` 목록·멤버 목록 시험·공개 형을 함께 고친다(26C-01, NODE-010). 행 칸 순서 시험과 파일 한정 린트도 수행한다.
 - **쓰기**: 전체 교체 쓰기의 잠복 원본 비움과 멱등(WRITE-094), null 계약(WRITE-096), 채움 사건 — "이미 있던 노드는 채우지 않고 비우며, 게이트가 뒤집혀 새로 생기거나 켜진 노드는 채움을 받는다"(WRITE-097), 비객체 V의 `Merge`(WRITE-079), Refresh 대상(EVENT-071), 로드 규칙의 범위(EVENT-072), 진단 초기화(ERROR-204).
 - **방출**: 빈 호스트·루트의 투영(VALUE-034), 원본 참조 동일성(VALUE-037).
 

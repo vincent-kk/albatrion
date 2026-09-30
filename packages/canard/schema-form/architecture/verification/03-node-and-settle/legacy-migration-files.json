@@ -1,0 +1,1630 @@
+[
+  {
+    "old": "packages/canard/schema-form/src/core/__tests__/AbstractNode.depth.test.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/__tests__/AbstractNode.depth.test.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/__tests__/AbstractNode.derivedValue.circularReference.test.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/__tests__/AbstractNode.derivedValue.circularReference.test.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/__tests__/AbstractNode.derivedValue.test.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/__tests__/AbstractNode.derivedValue.test.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/__tests__/AbstractNode.enhancedValidation.test.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/__tests__/AbstractNode.enhancedValidation.test.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/__tests__/AbstractNode.errorDistribution.oneOf.test.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/__tests__/AbstractNode.errorDistribution.oneOf.test.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/__tests__/AbstractNode.find.test.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/__tests__/AbstractNode.find.test.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/__tests__/AbstractNode.findAll.test.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/__tests__/AbstractNode.findAll.test.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/__tests__/AbstractNode.globalState.test.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/__tests__/AbstractNode.globalState.test.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/__tests__/AbstractNode.injectTo.test.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/__tests__/AbstractNode.injectTo.test.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/__tests__/AbstractNode.jsonPointerEscape.test.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/__tests__/AbstractNode.jsonPointerEscape.test.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/__tests__/AbstractNode.pathStructure.test.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/__tests__/AbstractNode.pathStructure.test.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/__tests__/AbstractNode.pristine.test.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/__tests__/AbstractNode.pristine.test.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/__tests__/AbstractNode.setName-updatePath.test.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/__tests__/AbstractNode.setName-updatePath.test.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/__tests__/AbstractNode.subscribe.test.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/__tests__/AbstractNode.subscribe.test.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/__tests__/AbstractNode.subtreeState.test.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/__tests__/AbstractNode.subtreeState.test.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/__tests__/AbstractNode.test.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/__tests__/AbstractNode.test.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/__tests__/AllOfSchema.test.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/__tests__/AllOfSchema.test.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/__tests__/ArrayNode.branch.nullable.test.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/__tests__/ArrayNode.branch.nullable.test.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/__tests__/ArrayNode.branch.test.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/__tests__/ArrayNode.branch.test.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/__tests__/ArrayNode.childToParent.test.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/__tests__/ArrayNode.childToParent.test.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/__tests__/ArrayNode.clear.test.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/__tests__/ArrayNode.clear.test.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/__tests__/ArrayNode.defaultValue.test.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/__tests__/ArrayNode.defaultValue.test.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/__tests__/ArrayNode.itemShift-updatePath.test.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/__tests__/ArrayNode.itemShift-updatePath.test.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/__tests__/ArrayNode.maxItems.unlimited.test.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/__tests__/ArrayNode.maxItems.unlimited.test.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/__tests__/ArrayNode.nullable.blankReset.test.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/__tests__/ArrayNode.nullable.blankReset.test.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/__tests__/ArrayNode.nullable.consistency.test.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/__tests__/ArrayNode.nullable.consistency.test.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/__tests__/ArrayNode.omitTrailing.test.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/__tests__/ArrayNode.omitTrailing.test.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/__tests__/ArrayNode.prefixItems.test.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/__tests__/ArrayNode.prefixItems.test.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/__tests__/ArrayNode.schemaValidation.test.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/__tests__/ArrayNode.schemaValidation.test.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/__tests__/ArrayNode.setValueUndefined.test.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/__tests__/ArrayNode.setValueUndefined.test.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/__tests__/ArrayNode.terminal.nullable.test.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/__tests__/ArrayNode.terminal.nullable.test.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/__tests__/ArrayNode.terminal.test.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/__tests__/ArrayNode.terminal.test.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/__tests__/ArrayNode.test.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/__tests__/ArrayNode.test.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/__tests__/BooleanNode.nullable.test.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/__tests__/BooleanNode.nullable.test.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/__tests__/BooleanNode.test.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/__tests__/BooleanNode.test.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/__tests__/BranchStrategy.anyOf.initialDefault.test.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/__tests__/BranchStrategy.anyOf.initialDefault.test.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/__tests__/BranchStrategy.composition.defaultValue.test.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/__tests__/BranchStrategy.composition.defaultValue.test.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/__tests__/BranchStrategy.composition.fixtures.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/__tests__/BranchStrategy.composition.fixtures.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/__tests__/BranchStrategy.composition.merge.test.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/__tests__/BranchStrategy.composition.merge.test.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/__tests__/BranchStrategy.composition.setValue.test.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/__tests__/BranchStrategy.composition.setValue.test.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/__tests__/BranchStrategy.oneOf.initialComputed.test.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/__tests__/BranchStrategy.oneOf.initialComputed.test.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/__tests__/BranchStrategy.oneOf.initialDefault.test.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/__tests__/BranchStrategy.oneOf.initialDefault.test.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/__tests__/BranchStrategy.oneOf.initialRace.test.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/__tests__/BranchStrategy.oneOf.initialRace.test.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/__tests__/ConditionalSchema.checkDefinedValue.test.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/__tests__/ConditionalSchema.checkDefinedValue.test.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/__tests__/ConditionalSchema.complexNestedOneOf.test.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/__tests__/ConditionalSchema.complexNestedOneOf.test.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/__tests__/ConditionalSchema.deepNestedOneOf.test.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/__tests__/ConditionalSchema.deepNestedOneOf.test.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/__tests__/ConditionalSchema.eventStability.test.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/__tests__/ConditionalSchema.eventStability.test.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/__tests__/ConditionalSchema.setValue.test.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/__tests__/ConditionalSchema.setValue.test.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/__tests__/ContextNode.test.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/__tests__/ContextNode.test.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/__tests__/IfThenElse.onChange.realReact.test.tsx",
+    "new": "packages/canard/schema-form/src/__legacy__/core/__tests__/IfThenElse.onChange.realReact.test.tsx"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/__tests__/InferSchemaNode.round19.type.test.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/__tests__/InferSchemaNode.round19.type.test.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/__tests__/InferSchemaNode.type.test.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/__tests__/InferSchemaNode.type.test.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/__tests__/NullNode.test.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/__tests__/NullNode.test.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/__tests__/NullableFormScenarios.test.tsx",
+    "new": "packages/canard/schema-form/src/__legacy__/core/__tests__/NullableFormScenarios.test.tsx"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/__tests__/NumberNode.nullable.test.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/__tests__/NumberNode.nullable.test.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/__tests__/NumberNode.test.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/__tests__/NumberNode.test.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/__tests__/ObjectNode.allOf.test.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/__tests__/ObjectNode.allOf.test.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/__tests__/ObjectNode.anyOf.test.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/__tests__/ObjectNode.anyOf.test.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/__tests__/ObjectNode.branch.defaultAfterNull.test.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/__tests__/ObjectNode.branch.defaultAfterNull.test.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/__tests__/ObjectNode.branch.nullable.automaticWrite.test.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/__tests__/ObjectNode.branch.nullable.automaticWrite.test.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/__tests__/ObjectNode.branch.nullable.blankState.test.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/__tests__/ObjectNode.branch.nullable.blankState.test.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/__tests__/ObjectNode.branch.nullable.composition.test.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/__tests__/ObjectNode.branch.nullable.composition.test.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/__tests__/ObjectNode.branch.nullable.computed.test.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/__tests__/ObjectNode.branch.nullable.computed.test.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/__tests__/ObjectNode.branch.nullable.initialNull.test.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/__tests__/ObjectNode.branch.nullable.initialNull.test.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/__tests__/ObjectNode.branch.nullable.interface.test.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/__tests__/ObjectNode.branch.nullable.interface.test.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/__tests__/ObjectNode.branch.nullable.promotion.test.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/__tests__/ObjectNode.branch.nullable.promotion.test.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/__tests__/ObjectNode.branch.nullable.test.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/__tests__/ObjectNode.branch.nullable.test.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/__tests__/ObjectNode.branch.pendingRead.test.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/__tests__/ObjectNode.branch.pendingRead.test.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/__tests__/ObjectNode.branch.pendingReadCache.test.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/__tests__/ObjectNode.branch.pendingReadCache.test.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/__tests__/ObjectNode.childToParent.test.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/__tests__/ObjectNode.childToParent.test.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/__tests__/ObjectNode.composition.fixtures.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/__tests__/ObjectNode.composition.fixtures.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/__tests__/ObjectNode.composition.nullBranch.test.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/__tests__/ObjectNode.composition.nullBranch.test.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/__tests__/ObjectNode.composition.nullUnreachableWarning.test.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/__tests__/ObjectNode.composition.nullUnreachableWarning.test.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/__tests__/ObjectNode.composition.propertylessBranch.test.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/__tests__/ObjectNode.composition.propertylessBranch.test.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/__tests__/ObjectNode.composition.typeCompatibility.test.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/__tests__/ObjectNode.composition.typeCompatibility.test.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/__tests__/ObjectNode.composition.typeNarrowing.test.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/__tests__/ObjectNode.composition.typeNarrowing.test.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/__tests__/ObjectNode.oneOf.test.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/__tests__/ObjectNode.oneOf.test.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/__tests__/ObjectNode.propagate.batch.detailed.test.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/__tests__/ObjectNode.propagate.batch.detailed.test.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/__tests__/ObjectNode.propagate.batch.test.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/__tests__/ObjectNode.propagate.batch.test.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/__tests__/ObjectNode.terminal.nullable.test.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/__tests__/ObjectNode.terminal.nullable.test.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/__tests__/ObjectNode.terminal.test.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/__tests__/ObjectNode.terminal.test.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/__tests__/ObjectNode.test.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/__tests__/ObjectNode.test.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/__tests__/RefreshAndDefaultValue.test.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/__tests__/RefreshAndDefaultValue.test.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/__tests__/SchemaNodeFactory.nullable.test.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/__tests__/SchemaNodeFactory.nullable.test.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/__tests__/StringNode.nullable.test.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/__tests__/StringNode.nullable.test.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/__tests__/StringNode.test.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/__tests__/StringNode.test.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/__tests__/ValidationManager.compileFailure.test.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/__tests__/ValidationManager.compileFailure.test.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/__tests__/VirtualNode.test.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/__tests__/VirtualNode.test.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/__tests__/nestedComposition.warning.test.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/__tests__/nestedComposition.warning.test.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/__tests__/oneOfSchemaPath.test.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/__tests__/oneOfSchemaPath.test.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/__tests__/utils/createValidatorFactory.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/__tests__/utils/createValidatorFactory.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/AbstractNode/AbstractNode.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/AbstractNode.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/AbstractNode/DETAIL.md",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/DETAIL.md"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/AbstractNode/INTENT.md",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/INTENT.md"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/AbstractNode/filter.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/filter.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/AbstractNode/index.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/index.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/AbstractNode/utils/EventCascadeManager/DETAIL.md",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/EventCascadeManager/DETAIL.md"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/AbstractNode/utils/EventCascadeManager/EventCascadeManager.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/EventCascadeManager/EventCascadeManager.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/AbstractNode/utils/EventCascadeManager/INTENT.md",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/EventCascadeManager/INTENT.md"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/AbstractNode/utils/EventCascadeManager/__tests__/EventCascadeManager.test.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/EventCascadeManager/__tests__/EventCascadeManager.test.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/AbstractNode/utils/EventCascadeManager/index.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/EventCascadeManager/index.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/AbstractNode/utils/EventCascadeManager/utils/getEventCollection.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/EventCascadeManager/utils/getEventCollection.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/AbstractNode/utils/EventCascadeManager/utils/mergeEventEntries.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/EventCascadeManager/utils/mergeEventEntries.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/AbstractNode/utils/InjectionGuardManager/DETAIL.md",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/InjectionGuardManager/DETAIL.md"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/AbstractNode/utils/InjectionGuardManager/INTENT.md",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/InjectionGuardManager/INTENT.md"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/AbstractNode/utils/InjectionGuardManager/InjectionGuardManager.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/InjectionGuardManager/InjectionGuardManager.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/AbstractNode/utils/InjectionGuardManager/index.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/InjectionGuardManager/index.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/AbstractNode/utils/ValidationErrorManager/DETAIL.md",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/ValidationErrorManager/DETAIL.md"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/AbstractNode/utils/ValidationErrorManager/INTENT.md",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/ValidationErrorManager/INTENT.md"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/AbstractNode/utils/ValidationErrorManager/ValidationErrorManager.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/ValidationErrorManager/ValidationErrorManager.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/AbstractNode/utils/ValidationErrorManager/index.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/ValidationErrorManager/index.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/AbstractNode/utils/ValidationManager/DETAIL.md",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/ValidationManager/DETAIL.md"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/AbstractNode/utils/ValidationManager/INTENT.md",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/ValidationManager/INTENT.md"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/AbstractNode/utils/ValidationManager/ValidationManager.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/ValidationManager/ValidationManager.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/AbstractNode/utils/ValidationManager/__tests__/getFallbackValidator.test.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/ValidationManager/__tests__/getFallbackValidator.test.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/AbstractNode/utils/ValidationManager/__tests__/isCircularReferenceError.test.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/ValidationManager/__tests__/isCircularReferenceError.test.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/AbstractNode/utils/ValidationManager/__tests__/matchesSchemaPath.test.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/ValidationManager/__tests__/matchesSchemaPath.test.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/AbstractNode/utils/ValidationManager/index.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/ValidationManager/index.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/AbstractNode/utils/ValidationManager/type.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/ValidationManager/type.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/AbstractNode/utils/ValidationManager/utils/getFallbackValidator.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/ValidationManager/utils/getFallbackValidator.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/AbstractNode/utils/ValidationManager/utils/isCircularReferenceError.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/ValidationManager/utils/isCircularReferenceError.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/AbstractNode/utils/ValidationManager/utils/matchesSchemaPath.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/ValidationManager/utils/matchesSchemaPath.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/AbstractNode/utils/__tests__/ComputedPropertiesManager.test.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/__tests__/ComputedPropertiesManager.test.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/AbstractNode/utils/__tests__/EventCascadeManager.test.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/__tests__/EventCascadeManager.test.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/AbstractNode/utils/__tests__/afterMicrotask.test.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/__tests__/afterMicrotask.test.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/AbstractNode/utils/__tests__/applyEnhancer.test.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/__tests__/applyEnhancer.test.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/AbstractNode/utils/__tests__/breadthFirstSearch.test.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/__tests__/breadthFirstSearch.test.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/AbstractNode/utils/__tests__/checkDefinedValue.test.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/__tests__/checkDefinedValue.test.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/AbstractNode/utils/__tests__/depthFirstSearch.test.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/__tests__/depthFirstSearch.test.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/AbstractNode/utils/__tests__/findNode.test.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/__tests__/findNode.test.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/AbstractNode/utils/__tests__/findNodes.test.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/__tests__/findNodes.test.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/AbstractNode/utils/__tests__/getNodeGroup.test.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/__tests__/getNodeGroup.test.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/AbstractNode/utils/__tests__/getSafeEmptyValue.test.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/__tests__/getSafeEmptyValue.test.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/AbstractNode/utils/__tests__/getScopedSegment.test.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/__tests__/getScopedSegment.test.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/AbstractNode/utils/__tests__/shallowPatch.test.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/__tests__/shallowPatch.test.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/AbstractNode/utils/__tests__/sharedComputedSentinel.test.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/__tests__/sharedComputedSentinel.test.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/AbstractNode/utils/afterMicrotask/DETAIL.md",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/afterMicrotask/DETAIL.md"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/AbstractNode/utils/afterMicrotask/INTENT.md",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/afterMicrotask/INTENT.md"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/AbstractNode/utils/afterMicrotask/afterMicrotask.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/afterMicrotask/afterMicrotask.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/AbstractNode/utils/afterMicrotask/index.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/afterMicrotask/index.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/AbstractNode/utils/applyEnhancer/DETAIL.md",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/applyEnhancer/DETAIL.md"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/AbstractNode/utils/applyEnhancer/INTENT.md",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/applyEnhancer/INTENT.md"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/AbstractNode/utils/applyEnhancer/applyEnhancer.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/applyEnhancer/applyEnhancer.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/AbstractNode/utils/applyEnhancer/index.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/applyEnhancer/index.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/AbstractNode/utils/checkDefinedValue/DETAIL.md",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/checkDefinedValue/DETAIL.md"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/AbstractNode/utils/checkDefinedValue/INTENT.md",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/checkDefinedValue/INTENT.md"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/AbstractNode/utils/checkDefinedValue/checkDefinedValue.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/checkDefinedValue/checkDefinedValue.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/AbstractNode/utils/checkDefinedValue/index.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/checkDefinedValue/index.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/AbstractNode/utils/findNode/DETAIL.md",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/findNode/DETAIL.md"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/AbstractNode/utils/findNode/INTENT.md",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/findNode/INTENT.md"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/AbstractNode/utils/findNode/findNode.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/findNode/findNode.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/AbstractNode/utils/findNode/findNodes.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/findNode/findNodes.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/AbstractNode/utils/findNode/index.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/findNode/index.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/AbstractNode/utils/findNode/utils/__tests__/detectsCandidate.test.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/findNode/utils/__tests__/detectsCandidate.test.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/AbstractNode/utils/findNode/utils/__tests__/getSegments.test.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/findNode/utils/__tests__/getSegments.test.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/AbstractNode/utils/findNode/utils/detectsCandidate.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/findNode/utils/detectsCandidate.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/AbstractNode/utils/findNode/utils/getSegments.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/findNode/utils/getSegments.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/AbstractNode/utils/getComputedPropertiesManager/ComputedPropertiesManager/ComputedPropertiesManager.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/getComputedPropertiesManager/ComputedPropertiesManager/ComputedPropertiesManager.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/AbstractNode/utils/getComputedPropertiesManager/ComputedPropertiesManager/DETAIL.md",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/getComputedPropertiesManager/ComputedPropertiesManager/DETAIL.md"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/AbstractNode/utils/getComputedPropertiesManager/ComputedPropertiesManager/INTENT.md",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/getComputedPropertiesManager/ComputedPropertiesManager/INTENT.md"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/AbstractNode/utils/getComputedPropertiesManager/ComputedPropertiesManager/index.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/getComputedPropertiesManager/ComputedPropertiesManager/index.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/AbstractNode/utils/getComputedPropertiesManager/ComputedPropertiesManager/type.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/getComputedPropertiesManager/ComputedPropertiesManager/type.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/AbstractNode/utils/getComputedPropertiesManager/ComputedPropertiesManager/utils/__tests__/checkComputedOptionFactory.test.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/getComputedPropertiesManager/ComputedPropertiesManager/utils/__tests__/checkComputedOptionFactory.test.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/AbstractNode/utils/getComputedPropertiesManager/ComputedPropertiesManager/utils/__tests__/errorHandling.test.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/getComputedPropertiesManager/ComputedPropertiesManager/utils/__tests__/errorHandling.test.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/AbstractNode/utils/getComputedPropertiesManager/ComputedPropertiesManager/utils/__tests__/getConditionIndexFactory.test.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/getComputedPropertiesManager/ComputedPropertiesManager/utils/__tests__/getConditionIndexFactory.test.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/AbstractNode/utils/getComputedPropertiesManager/ComputedPropertiesManager/utils/__tests__/getConditionIndicesFactory.test.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/getComputedPropertiesManager/ComputedPropertiesManager/utils/__tests__/getConditionIndicesFactory.test.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/AbstractNode/utils/getComputedPropertiesManager/ComputedPropertiesManager/utils/__tests__/getDerivedValueFactory.test.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/getComputedPropertiesManager/ComputedPropertiesManager/utils/__tests__/getDerivedValueFactory.test.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/AbstractNode/utils/getComputedPropertiesManager/ComputedPropertiesManager/utils/__tests__/getExpressionFromSchema.test.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/getComputedPropertiesManager/ComputedPropertiesManager/utils/__tests__/getExpressionFromSchema.test.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/AbstractNode/utils/getComputedPropertiesManager/ComputedPropertiesManager/utils/__tests__/getObservedValuesFactory.test.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/getComputedPropertiesManager/ComputedPropertiesManager/utils/__tests__/getObservedValuesFactory.test.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/AbstractNode/utils/getComputedPropertiesManager/ComputedPropertiesManager/utils/__tests__/regex.test.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/getComputedPropertiesManager/ComputedPropertiesManager/utils/__tests__/regex.test.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/AbstractNode/utils/getComputedPropertiesManager/ComputedPropertiesManager/utils/checkComputedOptionFactory/DETAIL.md",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/getComputedPropertiesManager/ComputedPropertiesManager/utils/checkComputedOptionFactory/DETAIL.md"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/AbstractNode/utils/getComputedPropertiesManager/ComputedPropertiesManager/utils/checkComputedOptionFactory/INTENT.md",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/getComputedPropertiesManager/ComputedPropertiesManager/utils/checkComputedOptionFactory/INTENT.md"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/AbstractNode/utils/getComputedPropertiesManager/ComputedPropertiesManager/utils/checkComputedOptionFactory/checkComputedOptionFactory.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/getComputedPropertiesManager/ComputedPropertiesManager/utils/checkComputedOptionFactory/checkComputedOptionFactory.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/AbstractNode/utils/getComputedPropertiesManager/ComputedPropertiesManager/utils/checkComputedOptionFactory/index.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/getComputedPropertiesManager/ComputedPropertiesManager/utils/checkComputedOptionFactory/index.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/AbstractNode/utils/getComputedPropertiesManager/ComputedPropertiesManager/utils/getConditionIndexFactory/DETAIL.md",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/getComputedPropertiesManager/ComputedPropertiesManager/utils/getConditionIndexFactory/DETAIL.md"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/AbstractNode/utils/getComputedPropertiesManager/ComputedPropertiesManager/utils/getConditionIndexFactory/INTENT.md",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/getComputedPropertiesManager/ComputedPropertiesManager/utils/getConditionIndexFactory/INTENT.md"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/AbstractNode/utils/getComputedPropertiesManager/ComputedPropertiesManager/utils/getConditionIndexFactory/getConditionIndexFactory.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/getComputedPropertiesManager/ComputedPropertiesManager/utils/getConditionIndexFactory/getConditionIndexFactory.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/AbstractNode/utils/getComputedPropertiesManager/ComputedPropertiesManager/utils/getConditionIndexFactory/getConditionIndicesFactory.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/getComputedPropertiesManager/ComputedPropertiesManager/utils/getConditionIndexFactory/getConditionIndicesFactory.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/AbstractNode/utils/getComputedPropertiesManager/ComputedPropertiesManager/utils/getConditionIndexFactory/index.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/getComputedPropertiesManager/ComputedPropertiesManager/utils/getConditionIndexFactory/index.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/AbstractNode/utils/getComputedPropertiesManager/ComputedPropertiesManager/utils/getConditionIndexFactory/utils/extractConditionInfo.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/getComputedPropertiesManager/ComputedPropertiesManager/utils/getConditionIndexFactory/utils/extractConditionInfo.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/AbstractNode/utils/getComputedPropertiesManager/ComputedPropertiesManager/utils/getConditionIndexFactory/utils/getExpressionFromSchema.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/getComputedPropertiesManager/ComputedPropertiesManager/utils/getConditionIndexFactory/utils/getExpressionFromSchema.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/AbstractNode/utils/getComputedPropertiesManager/ComputedPropertiesManager/utils/getConditionIndexFactory/utils/getSimpleEquality.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/getComputedPropertiesManager/ComputedPropertiesManager/utils/getConditionIndexFactory/utils/getSimpleEquality.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/AbstractNode/utils/getComputedPropertiesManager/ComputedPropertiesManager/utils/getDerivedValueFactory/DETAIL.md",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/getComputedPropertiesManager/ComputedPropertiesManager/utils/getDerivedValueFactory/DETAIL.md"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/AbstractNode/utils/getComputedPropertiesManager/ComputedPropertiesManager/utils/getDerivedValueFactory/INTENT.md",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/getComputedPropertiesManager/ComputedPropertiesManager/utils/getDerivedValueFactory/INTENT.md"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/AbstractNode/utils/getComputedPropertiesManager/ComputedPropertiesManager/utils/getDerivedValueFactory/getDerivedValueFactory.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/getComputedPropertiesManager/ComputedPropertiesManager/utils/getDerivedValueFactory/getDerivedValueFactory.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/AbstractNode/utils/getComputedPropertiesManager/ComputedPropertiesManager/utils/getDerivedValueFactory/index.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/getComputedPropertiesManager/ComputedPropertiesManager/utils/getDerivedValueFactory/index.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/AbstractNode/utils/getComputedPropertiesManager/ComputedPropertiesManager/utils/getObservedValuesFactory/DETAIL.md",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/getComputedPropertiesManager/ComputedPropertiesManager/utils/getObservedValuesFactory/DETAIL.md"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/AbstractNode/utils/getComputedPropertiesManager/ComputedPropertiesManager/utils/getObservedValuesFactory/INTENT.md",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/getComputedPropertiesManager/ComputedPropertiesManager/utils/getObservedValuesFactory/INTENT.md"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/AbstractNode/utils/getComputedPropertiesManager/ComputedPropertiesManager/utils/getObservedValuesFactory/getObservedValuesFactory.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/getComputedPropertiesManager/ComputedPropertiesManager/utils/getObservedValuesFactory/getObservedValuesFactory.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/AbstractNode/utils/getComputedPropertiesManager/ComputedPropertiesManager/utils/getObservedValuesFactory/index.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/getComputedPropertiesManager/ComputedPropertiesManager/utils/getObservedValuesFactory/index.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/AbstractNode/utils/getComputedPropertiesManager/ComputedPropertiesManager/utils/regex.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/getComputedPropertiesManager/ComputedPropertiesManager/utils/regex.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/AbstractNode/utils/getComputedPropertiesManager/ComputedPropertiesManager/utils/type.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/getComputedPropertiesManager/ComputedPropertiesManager/utils/type.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/AbstractNode/utils/getComputedPropertiesManager/DETAIL.md",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/getComputedPropertiesManager/DETAIL.md"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/AbstractNode/utils/getComputedPropertiesManager/INTENT.md",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/getComputedPropertiesManager/INTENT.md"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/AbstractNode/utils/getComputedPropertiesManager/getComputedPropertiesManager.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/getComputedPropertiesManager/getComputedPropertiesManager.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/AbstractNode/utils/getComputedPropertiesManager/index.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/getComputedPropertiesManager/index.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/AbstractNode/utils/getComputedPropertiesManager/utils/needsRealComputedManager/DETAIL.md",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/getComputedPropertiesManager/utils/needsRealComputedManager/DETAIL.md"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/AbstractNode/utils/getComputedPropertiesManager/utils/needsRealComputedManager/INTENT.md",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/getComputedPropertiesManager/utils/needsRealComputedManager/INTENT.md"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/AbstractNode/utils/getComputedPropertiesManager/utils/needsRealComputedManager/index.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/getComputedPropertiesManager/utils/needsRealComputedManager/index.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/AbstractNode/utils/getComputedPropertiesManager/utils/needsRealComputedManager/needsRealComputedManager.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/getComputedPropertiesManager/utils/needsRealComputedManager/needsRealComputedManager.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/AbstractNode/utils/getComputedPropertiesManager/utils/sharedComputedSentinel/DETAIL.md",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/getComputedPropertiesManager/utils/sharedComputedSentinel/DETAIL.md"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/AbstractNode/utils/getComputedPropertiesManager/utils/sharedComputedSentinel/INTENT.md",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/getComputedPropertiesManager/utils/sharedComputedSentinel/INTENT.md"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/AbstractNode/utils/getComputedPropertiesManager/utils/sharedComputedSentinel/index.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/getComputedPropertiesManager/utils/sharedComputedSentinel/index.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/AbstractNode/utils/getComputedPropertiesManager/utils/sharedComputedSentinel/sharedComputedSentinel.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/getComputedPropertiesManager/utils/sharedComputedSentinel/sharedComputedSentinel.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/AbstractNode/utils/getNodeGroup/DETAIL.md",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/getNodeGroup/DETAIL.md"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/AbstractNode/utils/getNodeGroup/INTENT.md",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/getNodeGroup/INTENT.md"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/AbstractNode/utils/getNodeGroup/getNodeGroup.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/getNodeGroup/getNodeGroup.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/AbstractNode/utils/getNodeGroup/index.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/getNodeGroup/index.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/AbstractNode/utils/getSafeEmptyValue/DETAIL.md",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/getSafeEmptyValue/DETAIL.md"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/AbstractNode/utils/getSafeEmptyValue/INTENT.md",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/getSafeEmptyValue/INTENT.md"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/AbstractNode/utils/getSafeEmptyValue/getSafeEmptyValue.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/getSafeEmptyValue/getSafeEmptyValue.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/AbstractNode/utils/getSafeEmptyValue/index.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/getSafeEmptyValue/index.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/AbstractNode/utils/getScopedSegment/DETAIL.md",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/getScopedSegment/DETAIL.md"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/AbstractNode/utils/getScopedSegment/INTENT.md",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/getScopedSegment/INTENT.md"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/AbstractNode/utils/getScopedSegment/getScopedSegment.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/getScopedSegment/getScopedSegment.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/AbstractNode/utils/getScopedSegment/index.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/getScopedSegment/index.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/AbstractNode/utils/index.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/index.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/AbstractNode/utils/shallowPatch/DETAIL.md",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/shallowPatch/DETAIL.md"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/AbstractNode/utils/shallowPatch/INTENT.md",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/shallowPatch/INTENT.md"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/AbstractNode/utils/shallowPatch/index.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/shallowPatch/index.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/AbstractNode/utils/shallowPatch/shallowPatch.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/shallowPatch/shallowPatch.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/AbstractNode/utils/traversal/DETAIL.md",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/traversal/DETAIL.md"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/AbstractNode/utils/traversal/INTENT.md",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/traversal/INTENT.md"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/AbstractNode/utils/traversal/breadthFirstSearch.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/traversal/breadthFirstSearch.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/AbstractNode/utils/traversal/depthFirstSearch.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/traversal/depthFirstSearch.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/AbstractNode/utils/traversal/index.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/traversal/index.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/AbstractNode/utils/traversal/type.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/traversal/type.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/ArrayNode/ArrayNode.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/ArrayNode/ArrayNode.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/ArrayNode/DETAIL.md",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/ArrayNode/DETAIL.md"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/ArrayNode/INTENT.md",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/ArrayNode/INTENT.md"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/ArrayNode/filter.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/ArrayNode/filter.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/ArrayNode/index.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/ArrayNode/index.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/ArrayNode/strategies/BranchStrategy/BranchStrategy.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/ArrayNode/strategies/BranchStrategy/BranchStrategy.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/ArrayNode/strategies/BranchStrategy/DETAIL.md",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/ArrayNode/strategies/BranchStrategy/DETAIL.md"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/ArrayNode/strategies/BranchStrategy/INTENT.md",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/ArrayNode/strategies/BranchStrategy/INTENT.md"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/ArrayNode/strategies/BranchStrategy/index.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/ArrayNode/strategies/BranchStrategy/index.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/ArrayNode/strategies/BranchStrategy/type.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/ArrayNode/strategies/BranchStrategy/type.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/ArrayNode/strategies/BranchStrategy/utils/getChildSchema/DETAIL.md",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/ArrayNode/strategies/BranchStrategy/utils/getChildSchema/DETAIL.md"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/ArrayNode/strategies/BranchStrategy/utils/getChildSchema/INTENT.md",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/ArrayNode/strategies/BranchStrategy/utils/getChildSchema/INTENT.md"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/ArrayNode/strategies/BranchStrategy/utils/getChildSchema/getChildSchema.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/ArrayNode/strategies/BranchStrategy/utils/getChildSchema/getChildSchema.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/ArrayNode/strategies/BranchStrategy/utils/getChildSchema/index.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/ArrayNode/strategies/BranchStrategy/utils/getChildSchema/index.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/ArrayNode/strategies/BranchStrategy/utils/index.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/ArrayNode/strategies/BranchStrategy/utils/index.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/ArrayNode/strategies/BranchStrategy/utils/promiseAfterMicrotask/DETAIL.md",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/ArrayNode/strategies/BranchStrategy/utils/promiseAfterMicrotask/DETAIL.md"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/ArrayNode/strategies/BranchStrategy/utils/promiseAfterMicrotask/INTENT.md",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/ArrayNode/strategies/BranchStrategy/utils/promiseAfterMicrotask/INTENT.md"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/ArrayNode/strategies/BranchStrategy/utils/promiseAfterMicrotask/index.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/ArrayNode/strategies/BranchStrategy/utils/promiseAfterMicrotask/index.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/ArrayNode/strategies/BranchStrategy/utils/promiseAfterMicrotask/promiseAfterMicrotask.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/ArrayNode/strategies/BranchStrategy/utils/promiseAfterMicrotask/promiseAfterMicrotask.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/ArrayNode/strategies/BranchStrategy/utils/sharedResolvedPromises/DETAIL.md",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/ArrayNode/strategies/BranchStrategy/utils/sharedResolvedPromises/DETAIL.md"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/ArrayNode/strategies/BranchStrategy/utils/sharedResolvedPromises/INTENT.md",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/ArrayNode/strategies/BranchStrategy/utils/sharedResolvedPromises/INTENT.md"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/ArrayNode/strategies/BranchStrategy/utils/sharedResolvedPromises/index.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/ArrayNode/strategies/BranchStrategy/utils/sharedResolvedPromises/index.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/ArrayNode/strategies/BranchStrategy/utils/sharedResolvedPromises/sharedResolvedPromises.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/ArrayNode/strategies/BranchStrategy/utils/sharedResolvedPromises/sharedResolvedPromises.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/ArrayNode/strategies/DETAIL.md",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/ArrayNode/strategies/DETAIL.md"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/ArrayNode/strategies/INTENT.md",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/ArrayNode/strategies/INTENT.md"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/ArrayNode/strategies/TerminalStrategy/DETAIL.md",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/ArrayNode/strategies/TerminalStrategy/DETAIL.md"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/ArrayNode/strategies/TerminalStrategy/INTENT.md",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/ArrayNode/strategies/TerminalStrategy/INTENT.md"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/ArrayNode/strategies/TerminalStrategy/TerminalStrategy.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/ArrayNode/strategies/TerminalStrategy/TerminalStrategy.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/ArrayNode/strategies/TerminalStrategy/index.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/ArrayNode/strategies/TerminalStrategy/index.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/ArrayNode/strategies/index.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/ArrayNode/strategies/index.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/ArrayNode/strategies/types/index.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/ArrayNode/strategies/types/index.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/ArrayNode/strategies/types/strategy.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/ArrayNode/strategies/types/strategy.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/ArrayNode/utils/__tests__/omitTrailingArray.test.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/ArrayNode/utils/__tests__/omitTrailingArray.test.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/ArrayNode/utils/__tests__/resolveArrayValueFilter.test.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/ArrayNode/utils/__tests__/resolveArrayValueFilter.test.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/ArrayNode/utils/index.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/ArrayNode/utils/index.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/ArrayNode/utils/omitEmptyArray/DETAIL.md",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/ArrayNode/utils/omitEmptyArray/DETAIL.md"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/ArrayNode/utils/omitEmptyArray/INTENT.md",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/ArrayNode/utils/omitEmptyArray/INTENT.md"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/ArrayNode/utils/omitEmptyArray/index.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/ArrayNode/utils/omitEmptyArray/index.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/ArrayNode/utils/omitEmptyArray/omitEmptyArray.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/ArrayNode/utils/omitEmptyArray/omitEmptyArray.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/ArrayNode/utils/omitTrailingArray/DETAIL.md",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/ArrayNode/utils/omitTrailingArray/DETAIL.md"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/ArrayNode/utils/omitTrailingArray/INTENT.md",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/ArrayNode/utils/omitTrailingArray/INTENT.md"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/ArrayNode/utils/omitTrailingArray/index.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/ArrayNode/utils/omitTrailingArray/index.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/ArrayNode/utils/omitTrailingArray/omitTrailingArray.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/ArrayNode/utils/omitTrailingArray/omitTrailingArray.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/ArrayNode/utils/resolveArrayLimits/DETAIL.md",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/ArrayNode/utils/resolveArrayLimits/DETAIL.md"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/ArrayNode/utils/resolveArrayLimits/INTENT.md",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/ArrayNode/utils/resolveArrayLimits/INTENT.md"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/ArrayNode/utils/resolveArrayLimits/index.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/ArrayNode/utils/resolveArrayLimits/index.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/ArrayNode/utils/resolveArrayLimits/resolveArrayLimits.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/ArrayNode/utils/resolveArrayLimits/resolveArrayLimits.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/ArrayNode/utils/resolveArrayValueFilter/DETAIL.md",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/ArrayNode/utils/resolveArrayValueFilter/DETAIL.md"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/ArrayNode/utils/resolveArrayValueFilter/INTENT.md",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/ArrayNode/utils/resolveArrayValueFilter/INTENT.md"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/ArrayNode/utils/resolveArrayValueFilter/index.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/ArrayNode/utils/resolveArrayValueFilter/index.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/ArrayNode/utils/resolveArrayValueFilter/resolveArrayValueFilter.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/ArrayNode/utils/resolveArrayValueFilter/resolveArrayValueFilter.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/ArrayNode/validate.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/ArrayNode/validate.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/BooleanNode/BooleanNode.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/BooleanNode/BooleanNode.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/BooleanNode/DETAIL.md",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/BooleanNode/DETAIL.md"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/BooleanNode/INTENT.md",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/BooleanNode/INTENT.md"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/BooleanNode/filter.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/BooleanNode/filter.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/BooleanNode/index.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/BooleanNode/index.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/ContextNode/ContextNode.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/ContextNode/ContextNode.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/ContextNode/DETAIL.md",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/ContextNode/DETAIL.md"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/ContextNode/INTENT.md",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/ContextNode/INTENT.md"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/ContextNode/index.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/ContextNode/index.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/DETAIL.md",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/DETAIL.md"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/INTENT.md",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/INTENT.md"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/NullNode/DETAIL.md",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/NullNode/DETAIL.md"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/NullNode/INTENT.md",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/NullNode/INTENT.md"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/NullNode/NullNode.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/NullNode/NullNode.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/NullNode/filter.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/NullNode/filter.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/NullNode/index.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/NullNode/index.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/NumberNode/DETAIL.md",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/NumberNode/DETAIL.md"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/NumberNode/INTENT.md",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/NumberNode/INTENT.md"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/NumberNode/NumberNode.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/NumberNode/NumberNode.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/NumberNode/filter.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/NumberNode/filter.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/NumberNode/index.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/NumberNode/index.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/ObjectNode/DETAIL.md",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/DETAIL.md"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/ObjectNode/INTENT.md",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/INTENT.md"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/ObjectNode/ObjectNode.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/ObjectNode.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/ObjectNode/filter.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/filter.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/ObjectNode/index.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/index.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/ObjectNode/strategies/BranchStrategy/BranchStrategy.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/BranchStrategy.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/ObjectNode/strategies/BranchStrategy/DETAIL.md",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/DETAIL.md"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/ObjectNode/strategies/BranchStrategy/INTENT.md",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/INTENT.md"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/ObjectNode/strategies/BranchStrategy/index.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/index.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/ObjectNode/strategies/BranchStrategy/type.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/type.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/ObjectNode/strategies/BranchStrategy/utils/__tests__/getConditionsMap.test.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/utils/__tests__/getConditionsMap.test.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/ObjectNode/strategies/BranchStrategy/utils/__tests__/getFieldConditionMap.test.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/utils/__tests__/getFieldConditionMap.test.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/ObjectNode/strategies/BranchStrategy/utils/__tests__/getOneOfKeyInfo.test.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/utils/__tests__/getOneOfKeyInfo.test.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/ObjectNode/strategies/BranchStrategy/utils/__tests__/validateSchemaType.test.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/utils/__tests__/validateSchemaType.test.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/ObjectNode/strategies/BranchStrategy/utils/getChildNodeMap/DETAIL.md",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/utils/getChildNodeMap/DETAIL.md"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/ObjectNode/strategies/BranchStrategy/utils/getChildNodeMap/INTENT.md",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/utils/getChildNodeMap/INTENT.md"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/ObjectNode/strategies/BranchStrategy/utils/getChildNodeMap/getChildNodeMap.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/utils/getChildNodeMap/getChildNodeMap.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/ObjectNode/strategies/BranchStrategy/utils/getChildNodeMap/index.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/utils/getChildNodeMap/index.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/ObjectNode/strategies/BranchStrategy/utils/getChildren/DETAIL.md",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/utils/getChildren/DETAIL.md"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/ObjectNode/strategies/BranchStrategy/utils/getChildren/INTENT.md",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/utils/getChildren/INTENT.md"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/ObjectNode/strategies/BranchStrategy/utils/getChildren/getChildren.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/utils/getChildren/getChildren.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/ObjectNode/strategies/BranchStrategy/utils/getChildren/index.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/utils/getChildren/index.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/ObjectNode/strategies/BranchStrategy/utils/getCompositionKeyInfo/DETAIL.md",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/utils/getCompositionKeyInfo/DETAIL.md"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/ObjectNode/strategies/BranchStrategy/utils/getCompositionKeyInfo/INTENT.md",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/utils/getCompositionKeyInfo/INTENT.md"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/ObjectNode/strategies/BranchStrategy/utils/getCompositionKeyInfo/getCompositionKeyInfo.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/utils/getCompositionKeyInfo/getCompositionKeyInfo.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/ObjectNode/strategies/BranchStrategy/utils/getCompositionKeyInfo/index.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/utils/getCompositionKeyInfo/index.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/ObjectNode/strategies/BranchStrategy/utils/getCompositionNodeMapList/DETAIL.md",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/utils/getCompositionNodeMapList/DETAIL.md"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/ObjectNode/strategies/BranchStrategy/utils/getCompositionNodeMapList/INTENT.md",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/utils/getCompositionNodeMapList/INTENT.md"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/ObjectNode/strategies/BranchStrategy/utils/getCompositionNodeMapList/getCompositionNodeMapList.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/utils/getCompositionNodeMapList/getCompositionNodeMapList.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/ObjectNode/strategies/BranchStrategy/utils/getCompositionNodeMapList/index.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/utils/getCompositionNodeMapList/index.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/ObjectNode/strategies/BranchStrategy/utils/getCompositionNodeMapList/utils/throwIfTypeRedefinition.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/utils/getCompositionNodeMapList/utils/throwIfTypeRedefinition.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/ObjectNode/strategies/BranchStrategy/utils/getCompositionNodeMapList/utils/warnIfNestedComposition.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/utils/getCompositionNodeMapList/utils/warnIfNestedComposition.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/ObjectNode/strategies/BranchStrategy/utils/getCompositionNodeMapList/utils/warnIfNullBranchIgnored.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/utils/getCompositionNodeMapList/utils/warnIfNullBranchIgnored.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/ObjectNode/strategies/BranchStrategy/utils/getCompositionNodeMapList/utils/warnIfNullUnreachable.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/utils/getCompositionNodeMapList/utils/warnIfNullUnreachable.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/ObjectNode/strategies/BranchStrategy/utils/getConditionsMap/DETAIL.md",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/utils/getConditionsMap/DETAIL.md"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/ObjectNode/strategies/BranchStrategy/utils/getConditionsMap/INTENT.md",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/utils/getConditionsMap/INTENT.md"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/ObjectNode/strategies/BranchStrategy/utils/getConditionsMap/getConditionsMap.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/utils/getConditionsMap/getConditionsMap.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/ObjectNode/strategies/BranchStrategy/utils/getConditionsMap/index.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/utils/getConditionsMap/index.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/ObjectNode/strategies/BranchStrategy/utils/getFieldConditionMap/DETAIL.md",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/utils/getFieldConditionMap/DETAIL.md"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/ObjectNode/strategies/BranchStrategy/utils/getFieldConditionMap/INTENT.md",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/utils/getFieldConditionMap/INTENT.md"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/ObjectNode/strategies/BranchStrategy/utils/getFieldConditionMap/__tests__/flattenConditions.test.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/utils/getFieldConditionMap/__tests__/flattenConditions.test.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/ObjectNode/strategies/BranchStrategy/utils/getFieldConditionMap/getFieldConditionMap.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/utils/getFieldConditionMap/getFieldConditionMap.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/ObjectNode/strategies/BranchStrategy/utils/getFieldConditionMap/index.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/utils/getFieldConditionMap/index.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/ObjectNode/strategies/BranchStrategy/utils/getFieldConditionMap/utils/flattenConditions.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/utils/getFieldConditionMap/utils/flattenConditions.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/ObjectNode/strategies/BranchStrategy/utils/getVirtualReferencesMap/DETAIL.md",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/utils/getVirtualReferencesMap/DETAIL.md"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/ObjectNode/strategies/BranchStrategy/utils/getVirtualReferencesMap/INTENT.md",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/utils/getVirtualReferencesMap/INTENT.md"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/ObjectNode/strategies/BranchStrategy/utils/getVirtualReferencesMap/getVirtualReferencesMap.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/utils/getVirtualReferencesMap/getVirtualReferencesMap.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/ObjectNode/strategies/BranchStrategy/utils/getVirtualReferencesMap/index.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/utils/getVirtualReferencesMap/index.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/ObjectNode/strategies/BranchStrategy/utils/getVirtualReferencesMap/type.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/utils/getVirtualReferencesMap/type.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/ObjectNode/strategies/BranchStrategy/utils/hasCompositionSchema/hasCompositionSchema.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/utils/hasCompositionSchema/hasCompositionSchema.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/ObjectNode/strategies/BranchStrategy/utils/hasCompositionSchema/index.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/utils/hasCompositionSchema/index.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/ObjectNode/strategies/BranchStrategy/utils/index.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/utils/index.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/ObjectNode/strategies/BranchStrategy/utils/mergeShowConditions/DETAIL.md",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/utils/mergeShowConditions/DETAIL.md"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/ObjectNode/strategies/BranchStrategy/utils/mergeShowConditions/INTENT.md",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/utils/mergeShowConditions/INTENT.md"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/ObjectNode/strategies/BranchStrategy/utils/mergeShowConditions/index.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/utils/mergeShowConditions/index.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/ObjectNode/strategies/BranchStrategy/utils/mergeShowConditions/mergeShowConditions.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/utils/mergeShowConditions/mergeShowConditions.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/ObjectNode/strategies/BranchStrategy/utils/processValueWithSchema/DETAIL.md",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/utils/processValueWithSchema/DETAIL.md"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/ObjectNode/strategies/BranchStrategy/utils/processValueWithSchema/INTENT.md",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/utils/processValueWithSchema/INTENT.md"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/ObjectNode/strategies/BranchStrategy/utils/processValueWithSchema/index.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/utils/processValueWithSchema/index.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/ObjectNode/strategies/BranchStrategy/utils/processValueWithSchema/processValueWithCondition.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/utils/processValueWithSchema/processValueWithCondition.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/ObjectNode/strategies/BranchStrategy/utils/processValueWithSchema/processValueWithValidate.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/utils/processValueWithSchema/processValueWithValidate.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/ObjectNode/strategies/BranchStrategy/utils/processValueWithSchema/utils/requiredFactory.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/utils/processValueWithSchema/utils/requiredFactory.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/ObjectNode/strategies/BranchStrategy/utils/validateSchemaType/DETAIL.md",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/utils/validateSchemaType/DETAIL.md"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/ObjectNode/strategies/BranchStrategy/utils/validateSchemaType/INTENT.md",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/utils/validateSchemaType/INTENT.md"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/ObjectNode/strategies/BranchStrategy/utils/validateSchemaType/index.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/utils/validateSchemaType/index.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/ObjectNode/strategies/BranchStrategy/utils/validateSchemaType/validateSchemaType.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/utils/validateSchemaType/validateSchemaType.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/ObjectNode/strategies/DETAIL.md",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/DETAIL.md"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/ObjectNode/strategies/INTENT.md",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/INTENT.md"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/ObjectNode/strategies/TerminalStrategy/DETAIL.md",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/TerminalStrategy/DETAIL.md"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/ObjectNode/strategies/TerminalStrategy/INTENT.md",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/TerminalStrategy/INTENT.md"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/ObjectNode/strategies/TerminalStrategy/TerminalStrategy.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/TerminalStrategy/TerminalStrategy.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/ObjectNode/strategies/TerminalStrategy/index.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/TerminalStrategy/index.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/ObjectNode/strategies/index.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/index.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/ObjectNode/strategies/types/index.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/types/index.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/ObjectNode/strategies/types/strategy.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/types/strategy.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/ObjectNode/utils/__tests__/omitEmptyObject.test.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/utils/__tests__/omitEmptyObject.test.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/ObjectNode/utils/index.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/utils/index.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/ObjectNode/utils/omitEmptyObject/DETAIL.md",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/utils/omitEmptyObject/DETAIL.md"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/ObjectNode/utils/omitEmptyObject/INTENT.md",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/utils/omitEmptyObject/INTENT.md"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/ObjectNode/utils/omitEmptyObject/index.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/utils/omitEmptyObject/index.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/ObjectNode/utils/omitEmptyObject/omitEmptyObject.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/utils/omitEmptyObject/omitEmptyObject.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/StringNode/DETAIL.md",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/StringNode/DETAIL.md"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/StringNode/INTENT.md",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/StringNode/INTENT.md"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/StringNode/StringNode.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/StringNode/StringNode.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/StringNode/filter.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/StringNode/filter.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/StringNode/index.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/StringNode/index.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/VirtualNode/DETAIL.md",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/VirtualNode/DETAIL.md"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/VirtualNode/INTENT.md",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/VirtualNode/INTENT.md"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/VirtualNode/VirtualNode.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/VirtualNode/VirtualNode.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/VirtualNode/filter.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/VirtualNode/filter.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/VirtualNode/index.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/VirtualNode/index.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/filter.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/filter.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/index.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/index.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/nodes/schemaNodeFactory.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/nodes/schemaNodeFactory.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/parsers/DETAIL.md",
+    "new": "packages/canard/schema-form/src/__legacy__/core/parsers/DETAIL.md"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/parsers/INTENT.md",
+    "new": "packages/canard/schema-form/src/__legacy__/core/parsers/INTENT.md"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/parsers/__tests__/parseArray.test.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/parsers/__tests__/parseArray.test.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/parsers/__tests__/parseBoolean.test.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/parsers/__tests__/parseBoolean.test.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/parsers/__tests__/parseNumber.test.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/parsers/__tests__/parseNumber.test.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/parsers/__tests__/parseObject.test.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/parsers/__tests__/parseObject.test.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/parsers/__tests__/parseString.test.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/parsers/__tests__/parseString.test.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/parsers/index.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/parsers/index.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/parsers/parseArray.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/parsers/parseArray.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/parsers/parseBoolean.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/parsers/parseBoolean.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/parsers/parseNumber.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/parsers/parseNumber.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/parsers/parseObject.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/parsers/parseObject.ts"
+  },
+  {
+    "old": "packages/canard/schema-form/src/core/parsers/parseString.ts",
+    "new": "packages/canard/schema-form/src/__legacy__/core/parsers/parseString.ts"
+  }
+]

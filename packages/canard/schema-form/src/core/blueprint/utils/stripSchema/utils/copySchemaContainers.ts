@@ -1,3 +1,4 @@
+import { isArray } from '@winglet/common-utils/filter';
 import { DEFAULT_KEYWORDS } from '@winglet/json-schema/scanner';
 
 import { STRIP_SCHEMA_KEYWORDS } from '../constant';
@@ -21,7 +22,7 @@ export const copySchemaContainers = (
       result[keyword] = { ...value };
     else if (
       (kind === 'schemaList' || kind === 'items') &&
-      Array.isArray(value)
+      isArray(value)
     )
       result[keyword] = [...value];
   }

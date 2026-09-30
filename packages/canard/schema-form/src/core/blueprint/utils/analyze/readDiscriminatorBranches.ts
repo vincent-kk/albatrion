@@ -1,3 +1,4 @@
+import { isArray } from '@winglet/common-utils/filter';
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 import { equals } from '@winglet/common-utils/object';
 import { escapeSegment } from '@winglet/json/pointer';
@@ -45,7 +46,7 @@ export const readDiscriminatorBranches = (
       context.options,
     );
   for (const keyword of ['oneOf', 'anyOf'] as const) {
-    if (!Array.isArray(host[keyword])) continue;
+    if (!isArray(host[keyword])) continue;
     let previousMask: number | undefined;
     const previousValues: unknown[] = [];
     for (let index = 0; index < host[keyword].length; index++) {
@@ -82,7 +83,7 @@ export const readDiscriminatorBranches = (
               : undefined,
           ];
           for (const restriction of restrictions) {
-            if (!Array.isArray(restriction)) continue;
+            if (!isArray(restriction)) continue;
             const intersection = intersectEnum(values, restriction, true);
             if (
               intersection === EMPTY_INTERSECTION ||

@@ -7,7 +7,9 @@
 - `normalizedValue` override는 **값 정제 목적으로만** 허용된다. 현재 유일한 override는 `ArrayNode`(`options.omitTrailing`)이다. 정제는 노드 트리를 바꾸지 않는다 — 자식 노드는 raw 상태를 유지하며, 정제로 사라진 항목의 노드도 그대로 남는다.
 - 정제 값을 읽는 곳은 밖으로 나가는 경로뿐이다 — 루트 검증 값, 루트 방출, `FormHandle.getValue`, 부모측 하이드레이션 스냅샷. 안으로 들어오는 경로(`setValue`)와 raw 관측 경로(`UpdateValue` payload)는 계속 `value`를 쓴다.
 - 노드 값 변경은 `setValue()` 공개 API를 경유한다. private `__value__`에 외부에서 접근하지 않는다.
-- 파서(`parsers/`)는 순수 함수다. 값 변환만 담당하며 JSON Schema 검증 로직을 넣지 않는다.
+- 레거시 노드·파서 구현과 옛 `__tests__/`는 `src/__legacy__/core/`로 옮긴다. `src/core/__tests__/scenarios/`는 새 하네스로 남긴다. 파서는 순수 값 변환만 담당하며 JSON Schema 검증 로직을 넣지 않는다.
+- `src/core/index.ts`, `nodeFromJSONSchema.ts`, `types/`는 제자리를 유지하고 stage 07 전환(LANDING-159)까지 레거시 엔진을 가리킨다.
+- 새 `record/`, `behaviors/`, `navigation/`, `settle/`, `SchemaNode/` fractal은 NODE-016의 의존 순서 `blueprint` < `record` < {종류 모듈, `navigation`} < `settle` < `SchemaNode`에 따라 추가한다.
 - 이벤트는 `EventCascade`로 마이크로태스크 배칭한다. 단 `UpdateValue`는 동기 발행이다.
 - 노드 트리는 순환 참조를 만들지 않는다.
 
@@ -59,7 +61,7 @@
 
 - TEST-023에 따라 코어 시험이 공유 시나리오 데이터를 해석합니다. 비공개 시나리오 패키지는 코어 실행기를 소유하지 않습니다.
 - 주입된 코어 어댑터가 단계를 순서대로 한 번씩 실행하며 정착을 기다린 뒤 기대를 검사하고 실패를 호출자에게 전달합니다.
-- 빈 시나리오는 실행 단계가 0개입니다. 초기 뼈대의 빈 패밀리를 엔진 동작 검증으로 계산하지 않습니다.
+- 값·정착·채움·나감·union 부류의 모든 시나리오를 새 `SchemaNode` 트리에서 실행하고 단계별 형상·방출·진단을 검증합니다. `reset`은 루트 폼 수준 로드이며, `resetSubtree()`는 해당 하위 트리만 로드합니다.
 
 ### public-node-inference — 형 없는 스키마의 공개 노드 형
 
@@ -67,6 +69,14 @@
 - 분기 없는 단일 리터럴 종류의 `const`·`enum` 칸은 대응 원시 노드 형으로 좁힙니다.
 - 형 수준에서 청사진 오류를 확정할 수 있는 객체·배열 리터럴, 종류가 섞인 리터럴, 혼합 인라인 분기는 `never`입니다. 정적 판정이 불가능한 모양만 넓은 노드 형을 유지합니다.
 
+## Boundary Exemptions
+
+### `__tests__/makeSchemaNodeTree.ts` — 공유 시험 트리 생성
+
+- **Consumers**: `behaviors/unionBehavior/__tests__/**`
+- **Direct import**: `allowed`
+- **Reason**: 회귀 시험과 union 시험이 같은 실제 청사진·노드 트리 생성기를 소비합니다. 제품 진입점에 시험 전용 도우미를 공개하지 않기 위해 core의 테스트 구획에 보관합니다.
+
 ## Last Updated
 
-2026-09-27 — NODE-059의 형 없는 인라인 분기·리터럴 칸 공개 노드 추론 계약 반영.
+2026-09-30 — 공유 시나리오의 새 노드 트리 실행과 폼 수준 로드 계약 반영.

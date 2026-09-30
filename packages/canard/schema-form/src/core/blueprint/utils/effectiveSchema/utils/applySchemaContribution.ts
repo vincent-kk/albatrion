@@ -1,3 +1,5 @@
+import { isArray } from '@winglet/common-utils/filter';
+
 import type {
   EffectiveSchemaOptions,
   PropertyDeclaration,
@@ -59,8 +61,8 @@ export const applySchemaContribution = (
       if (declaration.scope === 'node') applyControlHints(state.schema, value);
     } else if (key === 'readOnly')
       state.schema.readOnly = state.schema.readOnly === true || value === true;
-    else if (key === 'required' && Array.isArray(value)) {
-      const earlier = Array.isArray(state.schema.required)
+    else if (key === 'required' && isArray(value)) {
+      const earlier = isArray(state.schema.required)
         ? state.schema.required
         : [];
       state.schema.required = [
@@ -72,9 +74,9 @@ export const applySchemaContribution = (
       ];
     } else if (key === 'pattern' && typeof value === 'string') {
       if (!state.patterns.includes(value)) state.patterns.push(value);
-    } else if (key === 'allOf' && Array.isArray(value))
+    } else if (key === 'allOf' && isArray(value))
       state.schema.allOf = [
-        ...(Array.isArray(state.schema.allOf) ? state.schema.allOf : []),
+        ...(isArray(state.schema.allOf) ? state.schema.allOf : []),
         ...value,
       ];
     else state.schema[key] = value;
