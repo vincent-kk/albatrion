@@ -1,4 +1,7 @@
+import { escapeSegment } from '@winglet/json/pointer';
+
 import type { Blueprint, PropertyDeclaration } from '../../../blueprint';
+import { getDeriveRuleTable } from '../../derive';
 import { resolveDependencyPath } from '../paths/resolveDependencyPath';
 import { getContextOwners } from '../context/getContextOwners';
 
@@ -34,6 +37,17 @@ class DependencyIndex {
         if (watched === '@') continue;
         this.add(watched, declaration.path);
       }
+    const rules = getDeriveRuleTable(blueprint);
+    for (const node of blueprint.nodes)
+      for (const declaration of node.declarations)
+        for (const rule of rules.byDeclaration.get(declaration.id) ?? []) {
+          if (rule.kind !== 'derived' || !rule.targetName) continue;
+          const targetPath = `${declaration.path}/${escapeSegment(rule.targetName)}`;
+          for (const watch of rule.watchDependencies) {
+            const watched = resolveDependencyPath(targetPath, watch);
+            if (watched !== '@') this.add(watched, declaration.path);
+          }
+        }
     for (const node of blueprint.nodes)
       for (const declaration of node.declarations)
         for (const gate of declaration.gates) {

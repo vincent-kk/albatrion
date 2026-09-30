@@ -175,17 +175,6 @@ describe('injectTo edge boundaries', () => {
     expect(root.runtime.diagnostics.cause).toBe('writeShape');
   });
 
-  it('ERROR-195 classifies an invalid derived virtual write the same way', () => {
-    const { root } = createTestTree({ type: 'object', controls: {
-      children: [{ targets: ['v'], controls: { derived: './source' } }],
-    }, properties: { source: { type: 'string' }, real: { type: 'string' } },
-    options: { virtual: { v: { fields: ['real'] } } } });
-    expect(() => loadSchemaNodeAtMount(root, { source: 'A' },
-      SetValueOption.Overwrite)).toThrow();
-    expect(root.runtime.diagnostics.cause).toBe('writeShape');
-    expect(root.structure?.source?.raw).toBe('A');
-  });
-
   it('29C-01 SETTLE-005 fill re-enters derive so a born source fires again with its default', () => {
     const injectTo = vi.fn((value: unknown) => ({ '../t': `from-${value}` }));
     const { root } = createTestTree({ type: 'object', properties: {
@@ -195,5 +184,51 @@ describe('injectTo edge boundaries', () => {
     loadSchemaNodeAtMount(root, {}, SetValueOption.Overwrite);
     expect(injectTo.mock.calls.map(([value]) => value)).toEqual([undefined, 'C']);
     expect(root.structure?.t?.raw).toBe('from-C');
+  });
+
+  it('CONTROLS-073 reborn target kind starts its children derived edge anew', () => {
+    const { root } = createTestTree({ type: 'object', controls: {
+      children: [{ targets: ['target'], controls: { derived: './source' } }],
+    }, properties: {
+      enabled: { type: 'boolean' }, source: { type: 'number' },
+    }, if: { required: ['enabled'] },
+    then: { properties: { target: { type: ['number', 'string'] } } },
+    else: { properties: { target: { type: 'number' } } },
+    });
+    loadSchemaNodeAtMount(root, { source: 10 }, SetValueOption.Overwrite);
+    const oldTarget = root.structure!.target;
+    expect(oldTarget.blueprintNode.kind).toBe('number');
+    const oldKey = [...root.runtime.committedRuleValues?.keys() ?? []]
+      .find((key) => key.includes('"/target","number"'));
+    expect(oldKey).toBeDefined();
+    writeSchemaNode(root.structure!.enabled, true, 'input', SetValueOption.Overwrite);
+    const newTarget = root.structure!.target;
+    expect(newTarget).not.toBe(oldTarget);
+    expect(newTarget.blueprintNode.kind).toBe('union');
+    expect(newTarget.raw).toBe(10);
+    expect([...root.runtime.committedRuleValues?.keys() ?? []]).not.toContain(oldKey);
+  });
+
+  it('SETTLE-043 active kind watch extends only the live target dependency tuple', () => {
+    const { root } = createTestTree({ type: 'object', controls: {
+      children: [{ targets: ['target'], controls: { derived: './source' } }],
+    }, properties: {
+      flag: { type: 'boolean' }, source: { type: 'number' },
+      a: { type: 'string' }, b: { type: 'string' },
+    }, if: { required: ['flag'] },
+    then: { properties: {
+      target: { type: 'string', controls: { watch: ['../a'] } },
+    } }, else: { properties: {
+      target: { type: 'number', controls: { watch: ['../b'] } },
+    } } });
+    loadSchemaNodeAtMount(root, { source: 10, a: 'A', b: 'B' },
+      SetValueOption.Overwrite);
+    const target = root.structure!.target;
+    expect(target.blueprintNode.kind).toBe('number');
+    writeSchemaNode(target, 99, 'input', SetValueOption.Overwrite);
+    writeSchemaNode(root.structure!.a, 'changed', 'input', SetValueOption.Overwrite);
+    expect(target.raw).toBe(99);
+    writeSchemaNode(root.structure!.b, 'C', 'input', SetValueOption.Overwrite);
+    expect(target.raw).toBe(10);
   });
 });

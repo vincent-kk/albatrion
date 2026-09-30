@@ -86,4 +86,19 @@ describe('context change settlement', () => {
     expect(suppressed.find('/target')?.value).toBe('manual');
     expect(enabled.find('/target')?.value).toBe('new');
   });
+
+  it('SETTLE-043 children derived watches the context of its live target kind', () => {
+    const root = createContextTree({ type: 'object', controls: {
+      children: [{ targets: ['target'], controls: { derived: './source' } }],
+    }, properties: {
+      source: { type: 'number' },
+      target: { type: 'number', controls: { watch: ['@'] } },
+    } }, { version: 1 });
+    root.setValue({ source: 10 });
+    root.find('/target')?.setValue(99);
+    expect(root.find('/target')?.value).toBe(99);
+
+    setContext(root, { version: 2 });
+    expect(root.find('/target')?.value).toBe(10);
+  });
 });

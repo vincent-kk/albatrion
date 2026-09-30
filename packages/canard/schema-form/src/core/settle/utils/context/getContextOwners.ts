@@ -1,4 +1,5 @@
 import type { Blueprint } from '../../../blueprint';
+import { getDeriveRuleTable } from '../../derive';
 
 /** Context readers are held apart from absolute JSON Pointer dependencies. */
 const OWNERS = new WeakMap<Blueprint, readonly string[]>();
@@ -19,9 +20,14 @@ export const getContextOwners = (blueprint: Blueprint): readonly string[] => {
     return EMPTY_OWNERS;
   }
   const owners: string[] = [];
+  const rules = getDeriveRuleTable(blueprint);
   for (const node of blueprint.nodes)
     for (const declaration of node.declarations)
-      if (ids.includes(declaration.id) && !owners.includes(declaration.path))
+      if ((ids.includes(declaration.id) ||
+        rules.byDeclaration.get(declaration.id)?.some((rule) =>
+          rule.kind === 'derived' && rule.targetName &&
+          rule.watchDependencies.includes('@'))) &&
+        !owners.includes(declaration.path))
         owners.push(declaration.path);
   OWNERS.set(blueprint, owners);
   return owners;

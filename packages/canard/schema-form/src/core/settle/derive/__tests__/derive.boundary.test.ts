@@ -68,4 +68,15 @@ describe('derive expression failures', () => {
     expect(root.runtime.diagnostics).toMatchObject({ status: 'degraded',
       cause: 'expression', commit: 1 });
   });
+
+  it('ERROR-195 classifies an invalid derived virtual write the same way', () => {
+    const { root } = createTestTree({ type: 'object', controls: {
+      children: [{ targets: ['v'], controls: { derived: './source' } }],
+    }, properties: { source: { type: 'string' }, real: { type: 'string' } },
+    options: { virtual: { v: { fields: ['real'] } } } });
+    expect(() => loadSchemaNodeAtMount(root, { source: 'A' },
+      SetValueOption.Overwrite)).toThrow();
+    expect(root.runtime.diagnostics.cause).toBe('writeShape');
+    expect(root.structure?.source?.raw).toBe('A');
+  });
 });

@@ -34,7 +34,8 @@ export const evaluateResetInteraction = <Self extends SchemaNodeRecord<Self>>(
         if (rule.kind !== 'resetInteraction') continue;
         const target = getRuleTargets(node, rule, state)[0];
         if (!target) continue;
-        const key = getDeriveRuleKey(node.path, node.blueprintNode.kind, rule);
+        const key = getDeriveRuleKey(node.path, node.blueprintNode.kind, rule,
+          target);
         state.activeRuleKeys.add(key);
         const previous = state.committedRuleValues.get(key);
         const previousExists = state.committedRuleValues.has(key);

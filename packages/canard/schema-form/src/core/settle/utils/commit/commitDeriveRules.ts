@@ -41,22 +41,28 @@ export const commitDeriveRules = <Self extends SchemaNodeRecord<Self>>(
     const parts: unknown = JSON.parse(key);
     if (!isArray(parts) || typeof parts[0] !== 'string') continue;
     const sourcePath = parts[0];
-    if (state.visitedSourcePaths.has(sourcePath)) {
+    if (state.visitedSourcePaths.has(sourcePath) ||
+      isExitedPath(sourcePath, exitedPaths) ||
+      typeof parts[5] === 'string' && isExitedPath(parts[5], exitedPaths))
       next.delete(key);
-      continue;
-    }
-    let ancestor = sourcePath;
-    while (true) {
-      if (exitedPaths.has(ancestor)) {
-        next.delete(key);
-        break;
-      }
-      if (!ancestor) break;
-      ancestor = ancestor.slice(0, ancestor.lastIndexOf('/'));
-    }
   }
   for (const key of state.activeRuleKeys)
     if (state.consumedRuleValues.has(key))
       next.set(key, state.consumedRuleValues.get(key));
   context.root.runtime.committedRuleValues = next;
+};
+
+/**
+ * Match an exited subtree root without confusing adjacent pointer segments.
+ * @param path - Absolute source or target occurrence path
+ * @param exitedPaths - Final departed subtree roots
+ * @returns Whether the occurrence is inside an exited subtree
+ */
+const isExitedPath = (path: string, exitedPaths: ReadonlySet<string>): boolean => {
+  let ancestor = path;
+  while (true) {
+    if (exitedPaths.has(ancestor)) return true;
+    if (!ancestor) return false;
+    ancestor = ancestor.slice(0, ancestor.lastIndexOf('/'));
+  }
 };

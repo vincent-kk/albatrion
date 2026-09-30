@@ -3,6 +3,7 @@ import { sameValue } from '../../../utils/compute/sameValue';
 import type { DeriveRoundDecision, DeriveState, DeriveTraceEntry,
   DeriveWrite } from '../../type';
 import { getDeriveRuleTable } from '../rules/getDeriveRuleTable';
+import { getWatchPaths } from '../rules/utils/getWatchPaths';
 import { getDeriveRuleKey } from '../edges/getDeriveRuleKey';
 import { readDeriveDependency } from './utils/readDeriveDependency';
 import { getRuleTargets } from './utils/getRuleTargets';
@@ -50,7 +51,8 @@ export const evaluateDeriveRound = <Self extends SchemaNodeRecord<Self>>(
         const target = rule.kind === 'injectTo' ? node :
           getRuleTargets(node, rule, state)[0];
         if (!target) continue;
-        const key = getDeriveRuleKey(node.path, node.blueprintNode.kind, rule);
+        const key = getDeriveRuleKey(node.path, node.blueprintNode.kind, rule,
+          target);
         state.activeRuleKeys.add(key);
         const consumed = state.consumedRuleValues.has(key);
         const priorExists = consumed || state.committedRuleValues.has(key);
@@ -81,10 +83,11 @@ export const evaluateDeriveRound = <Self extends SchemaNodeRecord<Self>>(
         let value: unknown;
         try {
           if (rule.kind === 'derived') {
+            const watchDependencies = getWatchPaths(target.blueprintNode);
             current = [
               ...rule.expression?.dependencies.map((dependency) =>
                 readDeriveDependency(root, node.path, dependency)) ?? [],
-              ...rule.watchDependencies.filter((dependency) =>
+              ...watchDependencies.filter((dependency) =>
                 target !== node || !rule.expression?.dependencies.includes(dependency))
                 .map((dependency) =>
                   readDeriveDependency(root, target.path, dependency)),
