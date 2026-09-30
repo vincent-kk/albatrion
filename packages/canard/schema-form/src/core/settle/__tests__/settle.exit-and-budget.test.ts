@@ -216,7 +216,9 @@ describe('settle exits and budgets', () => {
     } });
     expect(() => writeSchemaNode(root, { a: true, b: true },
       'callerReplace', SetValueOption.Overwrite)).toThrow();
-    expect(root.raw).toEqual({ a: true, b: true });
+    expect(root.raw).toBeUndefined();
+    expect(root.structure?.a?.raw).toBe(true);
+    expect(root.structure?.b?.raw).toBe(true);
     expect(root.runtime.diagnostics).toMatchObject({ status: 'degraded',
       cause: 'budget', exceededBudget: 'hostWheel', commit: 1 });
   });

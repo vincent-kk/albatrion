@@ -50,7 +50,7 @@ export const transitionSettlement = <Self extends SchemaNodeRecord<Self>>(
         filled.add(key);
       }
       if (context.kind !== 'load' && hasWrongKindObjectAncestor(node)) continue;
-      if (!isMissingRaw(node)) continue;
+      if (!isMissingRaw(node, context)) continue;
       const value = readDefault(node);
       if (value === undefined) continue;
       context.filledNodes.add(node);

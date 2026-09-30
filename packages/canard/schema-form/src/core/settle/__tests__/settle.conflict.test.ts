@@ -12,7 +12,9 @@ describe('shared declaration conflicts', () => {
     }, if: {}, then: { properties: { value: { type: 'string' } } } });
     expect(() => writeSchemaNode(root, { enabled: true, value: 3 },
       'callerReplace', SetValueOption.Overwrite)).toThrow('Active declarations conflict');
-    expect(root.raw).toEqual({ enabled: true, value: 3 });
+    expect(root.raw).toBeUndefined();
+    expect(root.extras).toEqual({ enabled: true });
+    expect(root.structure?.value?.raw).toBe(3);
     expect(root.runtime.diagnostics).toMatchObject({ status: 'degraded', cause: 'sharedConflict', commit: 1 });
   });
 

@@ -106,7 +106,8 @@ describe('final-shape exits', () => {
     writeSchemaNode(root, { kind: 'a', value: 'again' },
       'callerReplace', SetValueOption.Overwrite);
     expect(root.structure?.value?.raw).toBe('again');
-    expect(root.raw).toMatchObject({ kind: 'a', value: 'again' });
+    expect(root.raw).toBeUndefined();
+    expect(root.structure?.kind?.raw).toBe('a');
     expect([...root.runtime.latentRaw.keys()].filter((key) =>
       key.startsWith('["/value",'))).toEqual([]);
     expect(root.runtime.inactiveValuesMemo.get('')?.some((entry) =>
@@ -197,7 +198,7 @@ describe('final-shape exits', () => {
     expect([...root.runtime.latentRaw.keys()].filter((key) =>
       key.startsWith('["/value",'))).toEqual([JSON.stringify(['/value', 'string'])]);
     expect(root.runtime.inactiveValuesMemo.get('')).toEqual([
-      { path: '/value', value: 2 },
+      { path: '/value', value: '2' },
     ]);
   });
 
@@ -234,7 +235,7 @@ describe('final-shape exits', () => {
     expect([...root.runtime.latentRaw.keys()].filter((key) =>
       key.startsWith('["/value",'))).toEqual([JSON.stringify(['/value', 'string'])]);
     expect(root.runtime.inactiveValuesMemo.get('')).toEqual([
-      { path: '/value', value: 3 },
+      { path: '/value', value: '3' },
     ]);
   });
 
@@ -278,8 +279,9 @@ describe('final-shape exits', () => {
       writeSchemaNode(root.structure!.t, true, 'input', SetValueOption.Overwrite);
       expect(root.structure?.g).toBe(g);
       expect(g.detached).toBe(false);
-      expect(g.raw).toEqual({ leaf: 'keep' });
-      expect(root.raw).toMatchObject({ g: { leaf: 'keep' } });
+      expect(g.raw).toBeUndefined();
+      expect(g.structure?.leaf?.raw).toBe('keep');
+      expect(root.raw).toBeUndefined();
     });
 
   it('SETTLE-011 keeps the previous g instance after Source B restores the final shape', () => {
@@ -301,8 +303,9 @@ describe('final-shape exits', () => {
     expect(root.runtime.diagnostics).toMatchObject({ cause: 'budget' });
     expect(root.structure?.g).toBe(g);
     expect(g.detached).toBe(false);
-    expect(g.raw).toEqual({ leaf: 'keep' });
-    expect(root.raw).toMatchObject({ g: { leaf: 'keep' } });
+    expect(g.raw).toBeUndefined();
+    expect(g.structure?.leaf?.raw).toBe('keep');
+    expect(root.raw).toBeUndefined();
   });
 
   it('WRITE-015 keeps exited raw when automatic writes are disabled', () => {
@@ -319,7 +322,8 @@ describe('final-shape exits', () => {
       SetValueOption.DisableAutomaticWrites);
     expect(secret.detached).toBe(true);
     expect(secret.raw).toBe('held');
-    expect(root.raw).toHaveProperty('secret', 'held');
+    expect(root.raw).toBeUndefined();
+    expect(root.runtime.latentRaw.get(JSON.stringify(['/secret', 'string']))).toBe('held');
   });
 
   it('SETTLE-011 keeps exited raw after a degraded host wheel', () => {
@@ -342,6 +346,7 @@ describe('final-shape exits', () => {
     });
     expect(secret.detached).toBe(true);
     expect(secret.raw).toBe('held');
-    expect(root.raw).toHaveProperty('secret', 'held');
+    expect(root.raw).toBeUndefined();
+    expect(root.runtime.latentRaw.get(JSON.stringify(['/secret', 'string']))).toBe('held');
   });
 });

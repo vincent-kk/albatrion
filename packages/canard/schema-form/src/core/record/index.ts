@@ -5,6 +5,7 @@ export type {
   SchemaNodeFactory,
   SchemaNodeRuntime,
   SettlementScratch,
+  Distribution,
   TypeMismatchRecord,
 } from './type';
 export { updateSchemaNodeNameAndPath } from './utils/updateSchemaNodeNameAndPath';

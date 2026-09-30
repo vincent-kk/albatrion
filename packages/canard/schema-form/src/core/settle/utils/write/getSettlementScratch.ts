@@ -9,9 +9,11 @@ export const getSettlementScratch = <Self>(runtime: SchemaNodeRuntime<Self>): Se
   const cached = runtime.settlementScratch;
   const scratch: SettlementScratch<Self> = cached && !cached.inUse ? cached : {
     inUse: false,
-    entered: new Set<Self>(), exited: new Set<Self>(), pendingExits: new Map<string, Self>(),
+    entered: new Set<Self>(), revived: new Set<Self>(),
+    exited: new Set<Self>(), pendingExits: new Map<string, Self>(),
     selectedDeclarationIds: new Map<Self, readonly number[]>(),
-    writtenInputs: new Map<Self, unknown>(), automaticLog: [],
+    writtenInputs: new Map<Self, unknown>(), distributedInputs: new Map(),
+    wrongKindHosts: new Set<Self>(), automaticLog: [],
     filledNodes: new Set<Self>(),
     latentAutomaticLog: new Map<string, { present: boolean; value: unknown }>(),
     dirtyPaths: new Set<string>(), shapeDirtyPaths: new Set<string>(),

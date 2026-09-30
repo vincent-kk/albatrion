@@ -3,6 +3,7 @@ import type { SettlementContext } from '../../type';
 import { computeNode } from '../compute/computeNode';
 import { registerRecalculation } from '../write/registerRecalculation';
 import { withdrawDetachedFills } from './withdrawDetachedFills';
+import { setLatentRaw } from '../latent/setLatentRaw';
 
 /**
  * Restore write-boundary raw and extras before one final shape calculation.
@@ -18,14 +19,18 @@ export const restoreSourceB = <Self extends SchemaNodeRecord<Self>>(
     const entry = context.automaticLog[index];
     entry.node.raw = entry.previousRaw;
     entry.node.extras = entry.previousExtras;
+    if (entry.previousDistributed)
+      context.distributedInputs.set(entry.node, entry.previousDistributed);
+    else context.distributedInputs.delete(entry.node);
     context.dirtyPaths.add(entry.node.path);
     if (entry.node.behavior.strategy === 'branch')
       context.shapeDirtyPaths.add(entry.node.path);
   }
   for (const [key, previous] of context.latentAutomaticLog)
-    if (previous.present) context.root.runtime.latentRaw.set(key, previous.value);
-    else context.root.runtime.latentRaw.delete(key);
+    setLatentRaw(context.root.runtime, undefined, key, previous.present,
+      previous.value, undefined, undefined, context);
   withdrawDetachedFills(context);
+  for (const node of context.filledNodes) context.writtenInputs.delete(node);
   context.selectedDeclarationIds.clear();
   context.changedRaw.clear();
   for (const path of explicitRaw) context.changedRaw.add(path);

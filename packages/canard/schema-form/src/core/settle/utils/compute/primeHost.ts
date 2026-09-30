@@ -1,11 +1,10 @@
 import { mergeEffectiveSchema } from '../../../blueprint';
 import type { SchemaNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../type';
-import { markWrite } from '../write/markWrite';
 import { getGateRegistry } from '../gates/getGateRegistry';
-import { readHostInput } from './readHostInput';
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 import { escapeSegment } from '@winglet/json/pointer';
+import { enterSchemaNode } from './enterSchemaNode';
 
 /**
  * Start a gate wheel with only ungated children and their static overlays.
@@ -32,18 +31,11 @@ export const primeHost = <Self extends SchemaNodeRecord<Self>>(
     const child = priorChild ?? pending ??
       context.root.runtime.nodeFactory(entry, node, context.root.runtime);
     context.pendingExits.delete(key);
+    if (pending && child === pending) context.revived.add(child);
     if (context.hasGates) getGateRegistry(child.runtime).register(child);
     if (!priorChild && !pending) {
       context.entered.add(child);
-      const source = readHostInput(node, context);
-      const sourceInput = source !== null && typeof source === 'object' &&
-        hasOwnProperty(source, entry.name) ? Reflect.get(source, entry.name) : undefined;
-      const latentKey = JSON.stringify([
-        `${node.path}/${escapeSegment(entry.name)}`, entry.node.kind,
-      ]);
-      const input = node.runtime.latentRaw.has(latentKey)
-        ? node.runtime.latentRaw.get(latentKey) : sourceInput;
-      markWrite(child, input, context);
+      enterSchemaNode(node, child, entry.name, context);
       if (child.behavior.strategy === 'branch')
         context.shapeDirtyPaths.add(child.path);
     }

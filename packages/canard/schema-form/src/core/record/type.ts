@@ -40,9 +40,9 @@ export interface SchemaNodeRecord<Self> {
   structure: Record<string, Self> | null;
   /** Stored public child array for the last committed shape. */
   children: readonly Self[] | null;
-  /** Original input owned by this node. */
+  /** Interpreted terminal source or a branch's non-plain source. */
   raw: unknown;
-  /** Undeclared input retained beside the declared child values. */
+  /** Undeclared object keys retained in their incoming own-key order. */
   extras: unknown;
   /** Result of the current node gate. */
   active: boolean;
@@ -129,7 +129,7 @@ interface InactiveValueEntryMemo {
 interface SchemaNodeRootRuntimeState {
   /** Form-level load source, read at node paths. */
   loadSnapshot: unknown;
-  /** Source values kept for nodes outside the live shape. */
+  /** Per-kind latent leaf raw or a host's own frozen raw and extras. */
   latentRaw: Map<string, unknown>;
   /** Whether latent sources changed since the last inactive-value publication. */
   latentRawDirty?: boolean;
@@ -168,23 +168,54 @@ export interface TypeMismatchRecord {
   readonly source: string;
 }
 
+/** One host write's input and replacement mode for child distribution. */
+export interface Distribution {
+  /** Interpreted input distributed from this host during the current write. */
+  readonly input: unknown;
+  /** Whether absent child names are replaced as well. */
+  readonly whole: boolean;
+  /** Whether this distribution was an automatic transition write. */
+  readonly automatic: boolean;
+}
+
 /** Reusable settlement work containers bound to one tree's node type. */
 export interface SettlementScratch<Self> {
+  /** Whether a synchronous settlement currently owns these containers. */
   inUse: boolean;
+  /** Occurrences that first appeared during this settlement. */
   entered: Set<Self>;
+  /** Pending occurrences reused during a later host wheel. */
+  revived: Set<Self>;
+  /** Previously committed occurrences absent from the final shape. */
   exited: Set<Self>;
   /** Temporarily absent occurrences, addressed by path and blueprint kind. */
   pendingExits: Map<string, Self>;
+  /** Active declaration choices waiting for commit. */
   selectedDeclarationIds: Map<Self, readonly number[]>;
+  /** Original caller and fill inputs retained for effective-list interpretation. */
   writtenInputs: Map<Self, unknown>;
-  automaticLog: { node: Self; previousRaw: unknown; previousExtras: unknown }[];
+  /** Host writes to distribute to declared descendants. */
+  distributedInputs: Map<Self, Distribution>;
+  /** Wrong-kind hosts considered for conditional caller clearing. */
+  wrongKindHosts: Set<Self>;
+  /** Previous state of each reversible automatic node write. */
+  automaticLog: { node: Self; previousRaw: unknown; previousExtras: unknown;
+    previousDistributed?: Distribution }[];
+  /** Nodes whose absent source received a transition fill. */
   filledNodes: Set<Self>;
+  /** Previous values of latent entries touched in a transition. */
   latentAutomaticLog: Map<string, { present: boolean; value: unknown }>;
+  /** Paths scheduled for recalculation. */
   dirtyPaths: Set<string>;
+  /** Hosts scheduled for a new shape selection. */
   shapeDirtyPaths: Set<string>;
+  /** Paths whose own source channels changed. */
   changedRaw: Set<string>;
+  /** Explicit caller changes retained for Source B. */
   explicitRaw: Set<string>;
+  /** Nodes whose source or calculated result changed. */
   changedNodes: Set<Self>;
+  /** Effective schemas recorded before this settlement. */
   originalSchemas: Map<string, EffectiveSchema>;
 }
 

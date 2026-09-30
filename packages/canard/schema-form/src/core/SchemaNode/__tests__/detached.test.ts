@@ -224,7 +224,8 @@ describe('detached SchemaNode references', () => {
     if (!current || current === old) throw new Error('Expected a new group');
     const commit = Reflect.get(runtime, 'commitNumber');
     old.setValue({ leaf: 'x' }, SetValueOption.Merge);
-    expect(current.raw).toEqual({ leaf: 'initial' });
+    expect(current.raw).toBeUndefined();
+    expect(root.find('/group/leaf')?.raw).toBe('initial');
     expect(Reflect.get(runtime, 'commitNumber')).toBe(commit);
     expect(Reflect.get(runtime, 'latentRaw')).toEqual(new Map());
     expect(root.inactiveValues.some((entry) => entry.path === '/group')).toBe(false);

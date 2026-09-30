@@ -1,9 +1,7 @@
-import { escapeSegment } from '@winglet/json/pointer';
-import type { BlueprintNode } from '../../../blueprint';
 import { find } from '../../../navigation';
 import type { SchemaNodeRecord } from '../../../record';
 import { isTypeMismatch } from './isTypeMismatch';
-import { pickLatentChildren } from '../latent/pickLatentChildren';
+import { HostLatent } from '../latent/HostLatent';
 import { EMPTY_VALUES } from '../detached/emptyDetachedReads';
 
 /** Compare two occurrence positions without converting them to path strings. */
@@ -29,52 +27,22 @@ export const updateInactiveValuesMemo = <Self extends SchemaNodeRecord<Self>>(
   const entries = runtime.inactiveValueEntries ?? new Map();
   const changedPaths: string[] = [];
   const candidates = new Map<string, { path: string; value: unknown;
-    order: readonly number[]; explicit: boolean }>();
-  const ancestors = new Set<object>();
-  const hiddenHosts = new Set<string>();
-  for (const key of runtime.latentRaw.keys()) {
+    order: readonly number[] }>();
+  for (const [key, source] of runtime.latentRaw) {
     const info = metadata?.get(key);
-    if (info?.blueprintNode.strategy === 'branch' && find(root, info.path))
-      hiddenHosts.add(info.path);
-  }
-  const collect = (key: string, path: string, value: unknown,
-    template: BlueprintNode, order: readonly number[]): void => {
-    let ancestor = path;
-    while (ancestor) {
-      if (hiddenHosts.has(ancestor)) return;
-      ancestor = ancestor.slice(0, ancestor.lastIndexOf('/'));
-    }
-    if (find(root, path)) return;
-    if (template.strategy === 'terminal' ||
-      isTypeMismatch(value, template.schemaType, template.nullable)) {
-      candidates.set(key, { path, value, order,
-        explicit: runtime.latentRaw.has(key) });
-      return;
-    }
-    if (value === null || typeof value !== 'object' ||
-      Array.isArray(value) || ancestors.has(value)) return;
-    ancestors.add(value);
-    for (const index of pickLatentChildren(template, path, value,
-      runtime.latentRaw)) {
-      const child = template.childEntries[index];
-      const childPath = `${path}/${escapeSegment(child.name)}`;
-      const childKey = JSON.stringify([childPath, child.node.kind]);
-      collect(childKey, childPath, runtime.latentRaw.has(childKey) ?
-        runtime.latentRaw.get(childKey) : Reflect.get(value, child.name),
-      child.node, [...order, index]);
-    }
-    ancestors.delete(value);
-  };
-  for (const [key, value] of runtime.latentRaw) {
-    const info = metadata?.get(key);
-    if (info) collect(key, info.path, value, info.blueprintNode, info.order);
+    if (!info || find(root, info.path)) continue;
+    const template = info.blueprintNode;
+    const value = template.strategy === 'terminal' ? source :
+      source instanceof HostLatent && source.raw !== undefined &&
+        isTypeMismatch(source.raw, template.schemaType, template.nullable)
+        ? source.raw : undefined;
+    if (value !== undefined)
+      candidates.set(key, { path: info.path, value, order: info.order });
   }
   const chosen = new Map<string, string>();
   for (const [key, candidate] of candidates) {
     const held = candidates.get(chosen.get(candidate.path) ?? '');
-    if (!held || (candidate.explicit && !held.explicit) ||
-      (candidate.explicit === held.explicit &&
-        compareOrder(candidate.order, held.order) < 0))
+    if (!held || compareOrder(candidate.order, held.order) < 0)
       chosen.set(candidate.path, key);
   }
   for (const [key, candidate] of candidates)

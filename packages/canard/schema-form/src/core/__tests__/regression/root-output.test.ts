@@ -17,7 +17,7 @@ describe('round18 root output regression', () => {
     } });
     root.setValue({ hidden: {}, kept: {} });
     expect(root.outputValue).toEqual({ kept: {} });
-    expect(root.find('/hidden')?.raw).toEqual({});
-    expect(root.find('/kept')?.raw).toEqual({});
+    expect(root.find('/hidden')?.raw).toBeUndefined();
+    expect(root.find('/kept')?.raw).toBeUndefined();
   });
 });

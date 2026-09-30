@@ -36,7 +36,8 @@ describe('settle status parity regressions', () => {
     const cap = getTransitionCap(blueprint);
     expect(() => loadSchemaNodeAtMount(root, { a: 0 }, SetValueOption.Overwrite))
       .toThrow();
-    expect(root.raw).toEqual({ a: 0 });
+    expect(root.raw).toBeUndefined();
+    expect(root.structure?.a?.raw).toBe(0);
     expect(root.runtime.diagnostics).toMatchObject({ status: 'degraded',
       cause: 'budget', exceededBudget: 'transition', iterations: cap });
   });

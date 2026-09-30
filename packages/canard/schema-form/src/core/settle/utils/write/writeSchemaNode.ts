@@ -8,22 +8,23 @@ import { getGateRegistry } from '../gates/getGateRegistry';
 import { markWrite } from './markWrite';
 import { isPlain } from './isPlain';
 import { registerRecalculation } from './registerRecalculation';
-import { staticSpec } from './staticSpec';
 import { BUDGET_EXCEEDED } from '../errors/settleErrorCode';
 import { transitionSettlement } from '../transition/transitionSettlement';
 import { restoreSourceB } from '../transition/restoreSourceB';
 import { pruneLatentRaw } from './pruneLatentRaw';
-import { promoteHostForChildWrite } from './promoteHostForChildWrite';
+import { markWrongKindAncestors } from './markWrongKindAncestors';
+import { releaseWrongKindHosts } from './releaseWrongKindHosts';
 import { getTransitionCap } from '../transition/getTransitionCap';
 import { getSettlementScratch } from './getSettlementScratch';
 import { releaseSettlementScratch } from './releaseSettlementScratch';
 import { finalizeExits } from '../transition/finalizeExits';
 import { getLatentOrder } from '../latent/getLatentOrder';
 import { hasLivePathKind } from '../detached/hasLivePathKind';
+import { distributeLatentValue } from '../latent/distributeLatentValue';
 
 /**
- * Settle one caller write through marking, calculation, and a single commit.
- * @param node - Live target belonging to a tree with a node factory
+ * Apply a live write or an own-kind detached latent write (26C-14).
+ * @param node - Live target or detached reference in a tree with a node factory
  * @param input - Caller-owned value interpreted first under static types
  * @param kind - Input origin retained for warning and transition semantics
  * @param option - Caller flags whose automatic-write bits override the form default
@@ -38,32 +39,20 @@ export const writeSchemaNode = <Self extends SchemaNodeRecord<Self>>(
 ): void => {
   if (node.detached) {
     if (hasLivePathKind(node)) return;
-    const latentRaw = node.rootNode.runtime.latentRaw;
-    const key = JSON.stringify([node.path, node.blueprintNode.kind]);
-    const previous = latentRaw.get(key);
-    const mergeable = kind === 'callerPartial' && isPlain(input) &&
-      isPlain(previous) && node.behavior.strategy === 'branch';
-    if (mergeable) pruneLatentRaw(node, Object.keys(input));
-    else if (kind === 'callerReplace' || kind === 'load' ||
-      kind === 'callerPartial')
-      pruneLatentRaw(node);
-    const source = mergeable ? { ...previous, ...input } : input;
-    const interpreted = node.behavior.interpret(source,
-      staticSpec(node.schemaType, node.nullable));
-    if (!latentRaw.has(key) || !Object.is(latentRaw.get(key), interpreted) ||
-      !node.rootNode.runtime.latentRawMetadata?.has(key))
-      node.rootNode.runtime.latentRawDirty = true;
-    latentRaw.set(key, interpreted);
-    const metadata = node.rootNode.runtime.latentRawMetadata ?? new Map();
-    node.rootNode.runtime.latentRawMetadata = metadata;
-    metadata.set(key, { path: node.path, blueprintNode: node.blueprintNode,
-      order: getLatentOrder(node.parent, node.name, node.blueprintNode) });
+    const whole = kind !== 'callerPartial' || !isPlain(input) ||
+      node.behavior.strategy !== 'branch';
+    if (whole) pruneLatentRaw(node.rootNode.runtime, node.path);
+    distributeLatentValue(node.rootNode.runtime, undefined, node.path,
+      node.blueprintNode, input,
+      getLatentOrder(node.parent, node.name, node.blueprintNode),
+      whole, node.parent?.blueprintNode.childEntries ?? []);
     return;
   }
   const disable = (option & SetValueOption.DisableAutomaticWrites) !== 0;
   const enable = (option & SetValueOption.EnableAutomaticWrites) !== 0;
   const scratch = getSettlementScratch(node.rootNode.runtime);
   const replaces = kind === 'callerReplace' ||
+    kind === 'input' && node.behavior.strategy === 'branch' ||
     (kind === 'callerPartial' && (input === null || typeof input !== 'object' ||
       Array.isArray(input) || node.behavior.strategy !== 'branch'));
   const context: SettlementContext<Self> = {
@@ -76,10 +65,13 @@ export const writeSchemaNode = <Self extends SchemaNodeRecord<Self>>(
     loadScope: kind === 'load' ? node : undefined,
     replaceScope: replaces ? node : undefined,
     entered: scratch.entered,
+    revived: scratch.revived,
     exited: scratch.exited,
     pendingExits: scratch.pendingExits,
     selectedDeclarationIds: scratch.selectedDeclarationIds,
     writtenInputs: scratch.writtenInputs,
+    distributedInputs: scratch.distributedInputs,
+    wrongKindHosts: scratch.wrongKindHosts,
     automaticLog: scratch.automaticLog,
     filledNodes: scratch.filledNodes,
     inTransition: false,
@@ -94,12 +86,14 @@ export const writeSchemaNode = <Self extends SchemaNodeRecord<Self>>(
   };
   try {
     if (context.hasGates) getGateRegistry(context.root.runtime).register(context.root);
-    if (replaces || kind === 'load') pruneLatentRaw(node);
+    if (replaces || kind === 'load')
+      pruneLatentRaw(node.runtime, node.path, undefined, context);
     markWrite(node, input, context);
     if (kind !== 'load' && kind !== 'automatic')
-      promoteHostForChildWrite(node, context);
+      markWrongKindAncestors(node, context);
     registerRecalculation(context);
     computeNode(context.root, context);
+    releaseWrongKindHosts(context);
     const explicitRaw = scratch.explicitRaw;
     for (const path of context.changedRaw) explicitRaw.add(path);
     if (context.hostWheelExceeded && !context.failure) {

@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import { SetValueOption } from '../../types/value';
 import { throwingIfPredicate } from '../../__tests__/ifPredicate';
-import { writeSchemaNode } from '../index';
+import { loadSchemaNodeAtMount, writeSchemaNode } from '../index';
 import { getGateRegistry } from '../utils/gates/getGateRegistry';
 import { createTestTree } from './fixtures/createTestTree';
 
@@ -14,7 +14,7 @@ describe('settle gate calculation', () => {
     } });
     expect(() => writeSchemaNode(root, {}, 'callerReplace', SetValueOption.Overwrite))
       .toThrow('Gate evaluation failed');
-    expect(root.raw).toEqual({});
+    expect(root.raw).toBeUndefined();
     expect(root.runtime.diagnostics).toMatchObject({ status: 'degraded', cause: 'expression', commit: 1 });
   });
 
@@ -38,6 +38,62 @@ describe('settle gate calculation', () => {
     writeSchemaNode(root.structure!.flag, false, 'input', SetValueOption.Overwrite);
     expect(root.structure?.target).toBeUndefined();
     expect(root.emit).toEqual({ flag: false });
+  });
+
+  it('CONTROLS-080 hides extras below a host omitted by projection', () => {
+    const { root } = createTestTree({ type: 'object', properties: {
+      user: { type: 'object' },
+      probe: { type: 'string', default: 'D',
+        controls: { active: '#/user/mode === "on"' } },
+    } });
+    writeSchemaNode(root, { user: null }, 'callerReplace', SetValueOption.Overwrite);
+    writeSchemaNode(root, { user: { mode: 'on' } },
+      'callerPartial', SetValueOption.Merge);
+    expect(root.structure?.user?.raw).toBeNull();
+    expect(root.structure?.user?.extras).toEqual({ mode: 'on' });
+    expect(root.structure?.probe).toBeUndefined();
+    expect(root.emit).toEqual({});
+  });
+
+  it('CONTROLS-080 withholds host extras from an if predicate when raw is null', () => {
+    const { root } = createTestTree({ type: 'object', properties: {
+      user: { type: 'object', if: {}, then: {
+        properties: { guarded: { type: 'string' } },
+      } },
+    } });
+    writeSchemaNode(root, { user: null }, 'callerReplace', SetValueOption.Overwrite);
+    writeSchemaNode(root, { user: { enabled: true } },
+      'callerPartial', SetValueOption.Merge);
+    expect(root.structure?.user?.raw).toBeNull();
+    expect(root.structure?.user?.extras).toEqual({ enabled: true });
+    expect(root.structure?.user?.structure?.guarded).toBeUndefined();
+  });
+
+  it('CONTROLS-080 withholds omitted host extras from @ dependencies', () => {
+    const { root } = createTestTree({ type: 'object', properties: {
+      user: { type: 'object', allOf: [
+        { controls: { active: '@ && @.mode === "on"' },
+          properties: { guarded: { type: 'string' } } },
+      ] },
+    } });
+    writeSchemaNode(root, { user: null }, 'callerReplace', SetValueOption.Overwrite);
+    writeSchemaNode(root, { user: { mode: 'on' } },
+      'callerPartial', SetValueOption.Merge);
+    expect(root.structure?.user?.raw).toBeNull();
+    expect(root.structure?.user?.extras).toEqual({ mode: 'on' });
+    expect(root.structure?.user?.structure?.guarded).toBeUndefined();
+  });
+
+  it('CONTROLS-080 reads a root child kept by the root output fallback', () => {
+    const { root } = createTestTree({ type: 'object', properties: {
+      child: { type: 'string', default: 'D' },
+      probe: { type: 'string', default: 'P',
+        controls: { active: '#/child === "D"' } },
+    } });
+    loadSchemaNodeAtMount(root, null, SetValueOption.Overwrite);
+    expect(root.raw).toBeNull();
+    expect(root.emit).toMatchObject({ child: 'D' });
+    expect(root.structure?.probe?.raw).toBe('P');
   });
 
   it('TEST-069 fragment active evaluates a compiled host expression', () => {

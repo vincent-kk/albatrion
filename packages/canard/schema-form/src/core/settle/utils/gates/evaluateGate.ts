@@ -39,8 +39,19 @@ export const evaluateGate = <Self extends SchemaNodeRecord<Self>>(
         ? structure[name] : undefined;
     }, context.root);
   const extra = hostNode?.extras;
-  if (extra !== null && typeof extra === 'object' && !Array.isArray(extra))
-    input = { ...input, ...extra };
+  let projectedHost = hostNode !== undefined;
+  for (let ancestor: Self | null | undefined = hostNode;
+    ancestor; ancestor = ancestor.parent)
+    if (ancestor.behavior.strategy === 'branch' && ancestor.raw !== undefined &&
+      (ancestor.parent !== null || raw === null || typeof raw !== 'object' ||
+        Array.isArray(raw))) {
+      projectedHost = false;
+      break;
+    }
+  const projectedExtra = projectedHost ? extra : undefined;
+  if (projectedExtra !== null && typeof projectedExtra === 'object' &&
+    !Array.isArray(projectedExtra))
+    input = { ...input, ...projectedExtra };
   try {
     if (gate.kind === 'discriminator') {
       const condition = gate.condition;
@@ -65,7 +76,7 @@ export const evaluateGate = <Self extends SchemaNodeRecord<Self>>(
     if (expression) {
       const dependencies = expression.dependencies.map((dependency) => {
         const path = resolveDependencyPath(hostPath, dependency);
-        return path === '@' ? extra : readProjectedValue(context, path);
+        return path === '@' ? projectedExtra : readProjectedValue(context, path);
       });
       return Boolean(expression.evaluate(dependencies));
     }

@@ -219,7 +219,7 @@ describe('settle commit', () => {
     expect(initial.structure?.group?.structure?.deep?.structure?.x?.raw).toBe(1);
   });
 
-  it('26C-13 hides a latent branch host and its leaves while another kind is live', () => {
+  it('26C-13 enumerates latent leaves under a path live as another kind', () => {
     const { root } = createTestTree({ type: 'object', properties: {
       kind: { type: 'string' },
     }, allOf: [
@@ -234,8 +234,8 @@ describe('settle commit', () => {
     writeSchemaNode(root.structure!.kind, 'b', 'input', SetValueOption.Overwrite);
     expect(root.structure?.group?.blueprintNode.kind).toBe('string');
     expect(root.runtime.latentRaw.has(JSON.stringify(['/group', 'object'])))
-      .toBe(true);
-    expect(root.runtime.inactiveValuesMemo.get('')).toEqual([]);
+      .toBe(false);
+    expect(root.runtime.inactiveValuesMemo.get('')).toEqual([{ path: '/group/leaf', value: 'kept' }]);
     writeSchemaNode(root.structure!.kind, 'a', 'input', SetValueOption.Overwrite);
     expect(root.structure?.group?.structure?.leaf?.raw).toBe('kept');
   });
@@ -311,7 +311,7 @@ describe('settle commit', () => {
     expect(root.structure?.group?.structure?.deep?.structure?.x?.raw).toBe(9);
   });
 
-  it('WRITE-087 gives a newer latent descendant priority over its host raw', () => {
+  it('WRITE-087 records a detached leaf write beside untouched latent siblings', () => {
     const { root } = createTestTree({ type: 'object', properties: {
       flag: { type: 'boolean' },
       group: { type: 'object', controls: { active: '../flag' }, properties: {

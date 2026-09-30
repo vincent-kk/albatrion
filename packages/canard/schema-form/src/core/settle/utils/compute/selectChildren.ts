@@ -6,15 +6,15 @@ import type { SchemaNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../type';
 import { evaluateGate } from '../gates/evaluateGate';
 import { SHARED_NODE_CONFLICT } from '../errors/settleErrorCode';
-import { markWrite } from '../write/markWrite';
 import { getGateRegistry } from '../gates/getGateRegistry';
 import { hasSharedConflict } from './hasSharedConflict';
-import { readHostInput } from './readHostInput';
 import { updateOutput } from './updateOutput';
 import { hasRecursiveExpansion } from './hasRecursiveExpansion';
 import { RECURSIVE_SHAPE_DIVERGED } from '../errors/settleErrorCode';
-import { writeLatentRaw } from '../transition/writeLatentRaw';
 import { getLatentOrder } from '../latent/getLatentOrder';
+import { distributeLatentValue } from '../latent/distributeLatentValue';
+import { enterSchemaNode } from './enterSchemaNode';
+import { isPlain } from '../write/isPlain';
 import type { BlueprintChildEntry } from '../../../blueprint';
 
 /** Ungated declarations are included by the effective-schema merger itself. */
@@ -61,7 +61,7 @@ export const selectChildren = <Self extends SchemaNodeRecord<Self>>(
         gate.schemaPath === `${declaration.schemaPath}/controls/active`
           ? entry.name : undefined))) : entry.declarations;
     if (active.length === 0) {
-      if (context.kind === 'load' || context.changedRaw.has(node.path) ||
+      if (context.distributedInputs.has(node) ||
         next[entry.name]) inactiveEntries.push(entry);
       if (next[entry.name] && !seen.has(entry.name) &&
         next[entry.name].blueprintNode.kind === entry.node.kind) {
@@ -89,17 +89,18 @@ export const selectChildren = <Self extends SchemaNodeRecord<Self>>(
       ? prior[entry.name] : undefined;
     const currentChild = next[entry.name]?.blueprintNode.kind === entry.node.kind
       ? next[entry.name] : undefined;
-    const source = readHostInput(node, context);
-    const sourceInput = source !== null && typeof source === 'object' &&
-      hasOwnProperty(source, entry.name) ? Reflect.get(source, entry.name) : undefined;
+    const distribution = context.distributedInputs.get(node);
+    const ownsInput = distribution && isPlain(distribution.input) &&
+      hasOwnProperty(distribution.input, entry.name);
     const latent = context.root.runtime.latentRaw;
     const latentKey = latent.size > 0 && !priorChild ? JSON.stringify([
       `${node.path}/${escapeSegment(entry.name)}`, entry.node.kind,
     ]) : undefined;
-    const input = latentKey !== undefined && latent.has(latentKey)
-      ? latent.get(latentKey) : sourceInput;
+    const input = ownsInput ? Reflect.get(distribution.input, entry.name) :
+      distribution?.whole ? undefined :
+        latentKey !== undefined && latent.has(latentKey) ? latent.get(latentKey) : undefined;
     if (!priorChild && !currentChild &&
-      hasRecursiveExpansion(node, entry.node, input)) {
+      hasRecursiveExpansion(node, entry.node, input, context)) {
       if (!context.failure) {
         context.failure = new SchemaFormError(RECURSIVE_SHAPE_DIVERGED,
           `Recursive shape diverged at ${node.path}/${entry.name}`,
@@ -116,11 +117,12 @@ export const selectChildren = <Self extends SchemaNodeRecord<Self>>(
     const child = currentChild ?? priorChild ?? pending ??
       context.root.runtime.nodeFactory(entry, node, context.root.runtime);
     context.pendingExits.delete(key);
+    if (pending && child === pending) context.revived.add(child);
     if (context.hasGates) getGateRegistry(child.runtime).register(child);
     let entryChanged = false;
     if (!priorChild && !currentChild && !pending) {
       context.entered.add(child);
-      markWrite(child, input, context);
+      enterSchemaNode(node, child, entry.name, context);
       if (child.behavior.strategy === 'branch')
         context.shapeDirtyPaths.add(child.path);
       changed = true;
@@ -149,9 +151,6 @@ export const selectChildren = <Self extends SchemaNodeRecord<Self>>(
     }
     child.active = true;
     child.detached = false;
-    if (!priorChild && context.root.runtime.latentRaw.size > 0)
-      writeLatentRaw(context,
-        JSON.stringify([child.path, child.blueprintNode.kind]), false, undefined);
     if (next[entry.name] !== child) {
       changed = true;
       entryChanged = true;
@@ -170,25 +169,19 @@ export const selectChildren = <Self extends SchemaNodeRecord<Self>>(
     if (next[entry.name] || seen.has(entry.name) ||
       (context.kind !== 'load' && hasOwnProperty(prior, entry.name))) continue;
     seen.add(entry.name);
-    const source = readHostInput(node, context);
-    const ownsRaw = source !== null && typeof source === 'object' &&
-      hasOwnProperty(source, entry.name);
-    if (!ownsRaw && context.root.runtime.latentRaw.size === 0) continue;
-    const key = JSON.stringify([
-      `${node.path}/${escapeSegment(entry.name)}`, entry.node.kind,
-    ]);
-    writeLatentRaw(context, key, ownsRaw,
-      ownsRaw ? Reflect.get(source, entry.name) : undefined,
-      entry.node, ownsRaw ? getLatentOrder(node, entry.name, entry.node) : undefined);
+    const distribution = context.distributedInputs.get(node);
+    if (!distribution || !isPlain(distribution.input) ||
+      !hasOwnProperty(distribution.input, entry.name)) continue;
+    distributeLatentValue(node.runtime, context,
+      `${node.path}/${escapeSegment(entry.name)}`, entry.node,
+      Reflect.get(distribution.input, entry.name),
+      getLatentOrder(node, entry.name, entry.node), distribution.whole,
+      node.blueprintNode.childEntries, distribution.automatic);
   }
   for (const [name, child] of Object.entries(prior))
     if (next[name] !== child) {
       const key = JSON.stringify([child.path, child.blueprintNode.kind]);
       context.pendingExits.set(key, child);
-      if (context.kind !== 'load') {
-        writeLatentRaw(context, key, child.raw !== undefined, child.raw,
-          child.blueprintNode, getLatentOrder(child.parent, child.name, child.blueprintNode));
-      }
     }
   const nextChildren = Object.values(next);
   if (nextChildren.length !== before.length ||

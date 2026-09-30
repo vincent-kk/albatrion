@@ -1,4 +1,4 @@
-import type { SchemaNodeRecord } from '../record';
+import type { Distribution, SchemaNodeRecord } from '../record';
 import type { EffectiveSchema } from '../blueprint';
 import type { SchemaFormError } from '../../errors';
 
@@ -28,6 +28,8 @@ export interface SettlementContext<Self extends SchemaNodeRecord<Self>> {
   replaceScope?: Self;
   /** Nodes newly present after calculation or reset by this load. */
   entered: Set<Self>;
+  /** Reused pending occurrences whose sources must remain visible to fills. */
+  revived: Set<Self>;
   /** Nodes detached from the previous shape during this call. */
   exited: Set<Self>;
   /** Nodes absent in a middle round and eligible for same-instance reentry. */
@@ -36,14 +38,21 @@ export interface SettlementContext<Self extends SchemaNodeRecord<Self>> {
   selectedDeclarationIds: Map<Self, readonly number[]>;
   /** Original inputs retained for effective-list interpretation. */
   writtenInputs: Map<Self, unknown>;
+  /** Host inputs that must reach children during this settlement. */
+  distributedInputs: Map<Self, Distribution>;
+  /** Wrong-kind branch hosts eligible for conditional caller clearing. */
+  wrongKindHosts: Set<Self>;
   /** Previous state for each automatic write, restored in reverse order. */
-  automaticLog: { node: Self; previousRaw: unknown; previousExtras: unknown }[];
+  automaticLog: { node: Self; previousRaw: unknown; previousExtras: unknown;
+    previousDistributed?: Distribution }[];
   /** Nodes whose missing input received a default during this call. */
   filledNodes: Set<Self>;
   /** Whether shape updates belong to reversible automatic transition work. */
   inTransition: boolean;
   /** Previous latent entries changed during transition, indexed once per key. */
   latentAutomaticLog: Map<string, { present: boolean; value: unknown }>;
+  /** Proper ancestor paths of current latent keys, rebuilt after map changes. */
+  latentPrefixes?: Set<string>;
   /** Whether marking is currently applying a transition write. */
   automatic: boolean;
   /** True when the current transition round changed either state channel. */

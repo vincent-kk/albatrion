@@ -6,6 +6,9 @@ import { captureDetachedSchemaNodeReads } from '../detached/captureDetachedSchem
 import { getGateRegistry } from '../gates/getGateRegistry';
 import { applyExitClearing } from './applyExitClearing';
 import { withdrawDetachedFills } from './withdrawDetachedFills';
+import { captureExitedRaw } from './captureExitedRaw';
+import { getLatentOrder } from '../latent/getLatentOrder';
+import { writeLatentRaw } from './writeLatentRaw';
 
 /**
  * Decide exits only against the settled final shape, including Source B.
@@ -32,8 +35,26 @@ export const finalizeExits = <Self extends SchemaNodeRecord<Self>>(
         context.root.runtime.typeMismatchPaths.delete(path);
   }
   withdrawDetachedFills(context);
-  if (!context.suppressAutomaticWrites && !context.failure)
-    applyExitClearing(context);
+  if (context.kind !== 'load') {
+    const applyPolicy = !context.suppressAutomaticWrites && !context.failure;
+    if (applyPolicy) applyExitClearing(context);
+    for (const node of context.exited)
+      if (node.detached && (context.entered.has(node) || !applyPolicy))
+        captureExitedRaw(node, false, context, false,
+          getLatentOrder(node.parent, node.name, node.blueprintNode));
+  }
+  if (context.root.runtime.latentRaw.size > 0)
+    for (const node of [...context.entered, ...context.revived]) {
+      if (node.detached) continue;
+      let live = true;
+      for (let current: Self | null = node; current?.parent; current = current.parent)
+        if (current.parent.structure?.[current.name] !== current) {
+          live = false;
+          break;
+        }
+      if (live) writeLatentRaw(context,
+        JSON.stringify([node.path, node.blueprintNode.kind]), false, undefined);
+    }
   for (const node of context.exited)
     for (let ancestor = node.parent; ancestor; ancestor = ancestor.parent)
       if (!ancestor.detached) updateOutput(ancestor, context);

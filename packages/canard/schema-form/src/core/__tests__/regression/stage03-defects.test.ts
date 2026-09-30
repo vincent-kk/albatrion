@@ -15,7 +15,7 @@ describe('stage 03 ledger adjudication regressions', () => {
   const expectSelfNegatingBudget = () => {
     const root = selfNegatingGate();
     expect(() => root.setValue({})).toThrow();
-    expect(root.raw).toEqual({});
+    expect(root.raw).toBeUndefined();
     expect(root.outputValue).toEqual({});
     expect(root.find('/x')?.raw).toBeUndefined();
     expect(root.diagnostics).toMatchObject({ status: 'degraded', cause: 'budget',
@@ -110,7 +110,9 @@ describe('stage 03 ledger adjudication regressions', () => {
       ? input !== null && typeof input === 'object' && !('x' in input)
       : input !== null && typeof input === 'object' && 'y' in input });
     expect(() => root.setValue({ x: 1, y: 1 })).toThrow();
-    expect(root.raw).toEqual({ x: 1, y: 1 });
+    expect(root.raw).toBeUndefined();
+    expect(root.find('/x')?.raw).toBe(1);
+    expect(root.find('/y')?.raw).toBe(1);
     expect(root.diagnostics).toMatchObject({ status: 'degraded', cause: 'budget',
       exceededBudget: 'hostWheel', commit: expect.any(Number) });
   });

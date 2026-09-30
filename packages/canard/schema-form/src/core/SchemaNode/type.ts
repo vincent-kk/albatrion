@@ -50,7 +50,9 @@ export interface NodeSurface<
   readonly escapedName: string;
   readonly path: string;
   readonly children: Children;
+  /** Interpreted terminal source or a branch's non-plain source. */
   readonly raw: unknown;
+  /** Undeclared object keys retained in incoming own-key order. */
   readonly extras: unknown;
   readonly value: Value;
   readonly outputValue: unknown;
