@@ -93,7 +93,8 @@
   > | 단계 | 하는 일 | 예산 |
   > | ---- | ------- | ---- |
   > | 계산 | 루트에서 한 번 내려간다. 재계산 목록의 자식을 먼저 완료한 뒤 자기 `local`·`emit`·유효 스키마를 만든다. 호스트는 조각과 노드를 §2의 절차로 정한다. 게이트는 둘이다 — `if`(검증기 플러그인이 컴파일)와 `controls.active`(표현식). 노드 게이트는 조각 게이트와 같은 장치다(`07-conclusions.md` 4.24). 계산의 끝, 최종 트리에서 `controls.visible`·`controls.readOnly`·`controls.disabled`·표준 `readOnly`를 한 번 결정한다. 코어에 글로벌은 없고 상태 키는 그 노드에만 걸린다(원장 §4, 13라운드 답 1). **원본을 읽기만 한다**(E1) | 호스트 바퀴 = 게이트 가진 조각 수 + 노드 게이트 수 + 1 |
-- 보충: 없음
+- 보충:
+  > 편집자 결정(26C-11): "【추론】 전이 라운드 안에서 호스트 바퀴가 상한을 넘기면 그 자리에서 정착은 비수렴이다: 뒤의 채움이 풀어 주기를 기다리지 않고 SETTLE-011대로 원본 B를 커밋하며, `exceededBudget`은 `'hostWheel'`이다." (`reviews/round-26-closing.md:117`)
 - 상태: 현행
 - 출처: `adr/0007-settle-cycle.md:37`(정본), `02-target-overview.md:159`, `08-design-a-to-z.md:244`, `03-mental-model.md:100-105`
 - 닫은 사람: 편집자 결정(3–5라운드 반영 4차 본문, `adr/0007-settle-cycle.md:12`), 소유자 답(`reviews/round-10-owner-answers.md:8` A-2, 노드 게이트는 조각 게이트와 같은 장치), 소유자 답(`reviews/round-13-owner-answers.md:7` 13라운드 답 1, 코어에 글로벌 없음)
@@ -139,6 +140,8 @@
   > 편집자 결정(26C-09): "【추론】 게이트가 자기가 선언하는 노드의 존재를 읽으면(`if: { not: { required: ['x'] } }`, `then: { properties: { x: { default: 1 } } }`), 라운드마다 형상이 뒤집힌다: x 없음 → 게이트 참 → x가 생긴 노드로 채움 → 다음 라운드에 x 있음 → 게이트 거짓 → x가 형상을 떠남(원본은 잠복) → 다음 라운드에 방출에 x가 없어 다시 참 → x가 다시 들되 원본이 이미 있어 채움은 없음 → 다시 거짓." (`reviews/round-26-closing.md:97`)
   > 편집자 결정(26C-09): "【추론】 진동의 원인은 채움이 아니라 형상 안팎의 존재 여부이므로 "노드마다 한 정착에서 한 번만 채운다"는 것으로 수렴하지 않으며, 게이트는 방출 트리를 읽고 형상 밖은 없음이다(CONTROLS-080)." (`reviews/round-26-closing.md:98`)
   > 편집자 결정(26C-09): "【추론】 그래서 이 사례는 전이 라운드 상한(게이트 가진 조각 수 + 노드 게이트 수 + 1, 여기서는 2)을 넘겨 SETTLE-011대로 채움을 뺀 원본 B를 커밋하고, `diagnostics`는 `'degraded'`·`cause: 'budget'`·`exceededBudget: 'transition'`·`iterations`는 상한값이며, 모든 환경에서 커밋·통지 뒤 사슬 끝에서 던진다." (`reviews/round-26-closing.md:99`)
+  > 편집자 결정(26C-11): "【추론】 그래서 `exceededBudget`은 넘긴 예산의 이름이다: 한 바퀴 안에서 게이트가 진동하면 `'hostWheel'`, 채움·비움이 게이트를 뒤집어 라운드 수가 상한을 넘기면 `'transition'`." (`reviews/round-26-closing.md:119`)
+  > 편집자 결정(26C-11): "【추론】 26C-09의 사례는 라운드 2의 호스트 바퀴에서 진동하므로(x의 원본 1이 잠복해 있어 바퀴 안에서 x가 들면 있음, 나면 없음으로 게이트가 뒤집히고, 채움은 노드마다 한 번이라 전이 라운드는 넘치지 않는다) `exceededBudget`은 `'hostWheel'`이며, 26C-09 셋째 문장의 `'transition'`은 이 문장으로 바꿔 읽는다; 원본 B·`degraded`·`cause: 'budget'`·`iterations` 상한값·사슬 끝 throw는 그대로다." (`reviews/round-26-closing.md:120`)
 - 상태: 현행
 - 출처: `adr/0007-settle-cycle.md:39`(정본), `02-target-overview.md:161`, `08-design-a-to-z.md:246`, `03-mental-model.md:108,116`, `reviews/round-18-closing.md:2513-2514`, `reviews/round-18-owner-answers.md:37`, `reviews/round-18-closing.md:2908-2910,2914`, `reviews/round-18-closing.md:2938-2940`
 - 닫은 사람: 소유자 답(`reviews/round-10-owner-answers.md:7` A-1, 채움은 노드가 생길 때 한 번), 소유자 답(`reviews/round-9-spec.md:52` 읽기2 채우기 원천), 소유자 답(`reviews/round-9-spec.md:56` 읽기2 시점(A/B)), 소유자 답(`reviews/round-13-owner-answers.md:8` 13라운드 답 2, 나감의 비움), 소유자 답(`reviews/round-17-owner-answers.md:10` R17-2 ㄴ), 편집자 결정(10라운드, `07-conclusions.md:106` 4.22), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-91), 소유자 답(`reviews/round-18-owner-answers.md:37` union O7·O8; U7 두 번 해석), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-104), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-105)
@@ -223,6 +226,9 @@
   > 편집자 결정(18C-105): "【추론】 전이 단계의 재해석은 게이트 상태가 최종이 아니므로 원본 B에서 버린다." (`reviews/round-18-closing.md:2943`)
   > 편집자 결정(18C-105): "【추론】 원본 B에 남은 값이 좁혀진 유효 목록 밖이면 경고등이 켜진다." (`reviews/round-18-closing.md:2944`)
   > 편집자 결정(26C-09): "【추론】 그래서 이 사례는 전이 라운드 상한(게이트 가진 조각 수 + 노드 게이트 수 + 1, 여기서는 2)을 넘겨 SETTLE-011대로 채움을 뺀 원본 B를 커밋하고, `diagnostics`는 `'degraded'`·`cause: 'budget'`·`exceededBudget: 'transition'`·`iterations`는 상한값이며, 모든 환경에서 커밋·통지 뒤 사슬 끝에서 던진다." (`reviews/round-26-closing.md:99`)
+  > 편집자 결정(26C-11): "【추론】 전이 라운드 안에서 호스트 바퀴가 상한을 넘기면 그 자리에서 정착은 비수렴이다: 뒤의 채움이 풀어 주기를 기다리지 않고 SETTLE-011대로 원본 B를 커밋하며, `exceededBudget`은 `'hostWheel'`이다." (`reviews/round-26-closing.md:117`)
+  > 편집자 결정(26C-11): "【추론】 호스트 바퀴 초과를 형상 변경으로 삼아 전이 라운드를 이어 가지 않는다: 같은 형상에 닿는 두 로드가 다른 `status`를 내는 것은 P3(형상은 상태의 순수 함수, SETTLE-029)에 어긋난다." (`reviews/round-26-closing.md:118`)
+  > 편집자 결정(26C-11): "【추론】 그래서 `exceededBudget`은 넘긴 예산의 이름이다: 한 바퀴 안에서 게이트가 진동하면 `'hostWheel'`, 채움·비움이 게이트를 뒤집어 라운드 수가 상한을 넘기면 `'transition'`." (`reviews/round-26-closing.md:119`)
 - 상태: 현행
 - 출처: `adr/0007-settle-cycle.md:47`(정본, #1–#2·#4), `03-mental-model.md:116`, `02-target-overview.md:169`, `08-design-a-to-z.md:254`, `adr/0007-settle-cycle.md:59`, `06-conclusions.md:196`, `reviews/round-18-closing.md:2942-2944`
 - 닫은 사람: 편집자 결정(7–8라운드 수렴 D-31, `06-conclusions.md:196`), 편집자 결정(10라운드, 원본 B는 unsetValue가 지운 값도 되돌림, `07-conclusions.md:98`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-105)
@@ -236,7 +242,8 @@
 
 - 결정:
   > 결과는 `diagnostics.status = 'degraded'`(`cause`는 예산)로 둔다.
-- 보충: 없음
+- 보충:
+  > 편집자 결정(26C-11): "【추론】 그래서 `exceededBudget`은 넘긴 예산의 이름이다: 한 바퀴 안에서 게이트가 진동하면 `'hostWheel'`, 채움·비움이 게이트를 뒤집어 라운드 수가 상한을 넘기면 `'transition'`." (`reviews/round-26-closing.md:119`)
 - 상태: 중복(→ ERROR-132, ERROR-133)
 - 출처: `adr/0007-settle-cycle.md:47#3`(정본), `03-mental-model.md:116`, `02-target-overview.md:169`, `08-design-a-to-z.md:254`
 - 닫은 사람: 소유자 답(`reviews/round-17-owner-answers.md:9` R17-1), 편집자 결정(17라운드, ADR 0014 4판 채택, `adr/0014-error-policy.md:201`)

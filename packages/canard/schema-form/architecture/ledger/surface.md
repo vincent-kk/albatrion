@@ -188,6 +188,7 @@
   > "| 진단 | 노드 칸 `diagnostics` | 마지막 로드 이후의 기록. `status`는 `'stable'` 또는 `'degraded'`이고, `cause`(예산·식·대상·공유 충돌), `exceededBudget`(정착의 세 예산), `iterations`, `commit`을 든다. 루트에서 관측한다. `degraded`는 다음 로드(마운트·전체 교체·`reset`)까지 남고(지속은 14라운드 답 O-2 가) 그 동안 폼의 제출 경로가 `SchemaFormError`로 거부한다(`getValue()`는 막지 않는다, 17라운드 소유자 답 R17-1 나). 되먹임·중첩 초과는 사슬 끝에서 던지되 `diagnostics`에 남기지 않고 제출을 막지 않는다(O-2는 정착 예산에 대한 답이다). 모양은 ADR 0014 4판 §5 | ADR 0008 §8, ADR 0014 |" (`02-target-overview.md:310`)
   > "| | 이벤트 `UpdateDiagnostics` | `diagnostics`가 바뀐 커밋에만 낸다 | ADR 0008 §8 |" (`02-target-overview.md:311`)
   > "| | Form 속성 `onDiagnosticsChange` | 호스트가 진단 상태를 관측하는 자리. 제출이 막힐 때 호스트는 이것과 제출 거부의 `SchemaFormError`로 폼 수준 표시를 그린다(17라운드 소유자 답 R17-1 나). 끄는 스위치(`throwOnBudgetExceeded`)는 없다 | ADR 0008 §3 |" (`02-target-overview.md:312`)
+  > 편집자 결정(26C-10): "【추론】 떼어진 노드에서 `diagnostics`는 살아 있는 트리(런타임의 진단 칸)를 읽는 NODE-044 고정 규칙의 예외다: `diagnostics`는 트리 전체의 커밋을 기술하며(ERROR-131) 루트에서 관측하는 것이라(SURFACE-007) `globalErrors`와 같은 부류다." (`reviews/round-26-closing.md:107`)
 - 상태: 현행
 - 출처: `08-design-a-to-z.md:413`(정본), `02-target-overview.md:310-312`, `06-conclusions.md:362`, `07-conclusions.md:348` (같은 규칙: EVENT-043, EVENT-044, ERROR-128, ERROR-135, ERROR-138), `reviews/round-18-closing.md:2797-2799`
 - 닫은 사람: 편집자 결정(8라운드 N4, `06-conclusions.md:362`), 편집자 결정(9라운드 N4 그대로, `07-conclusions.md:348`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-98)

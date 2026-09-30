@@ -703,6 +703,10 @@
   > 편집자 결정(26C-08): "【추론】 `active` 게터는 그 노드가 형상에 있는가(선언한 조각이 켜져 있고 노드 자신의 `controls.active`가 거짓이 아님, VALUE-006)를 읽는 멤버이므로, 살아 있는(형상 안) 노드에서는 늘 참이다." (`reviews/round-26-closing.md:87`)
   > 편집자 결정(26C-08): "【추론】 떼어진 노드의 `active`는 거짓이다: 떼어짐은 형상을 떠난 것이고, 이 멤버는 `rootNode`·`globalState`·`globalErrors`처럼 살아 있는 트리의 사실을 읽는 NODE-044 고정 규칙의 예외다." (`reviews/round-26-closing.md:88`)
   > 편집자 결정(26C-08): "【추론】 조각 게이트가 꺼져 떼어진 경우도 같으며(노드 게이트 값이 아니라 형상 여부를 읽는다), 노드가 다시 형상에 들어도 옛 참조의 `active`는 거짓인 채다(새 인스턴스가 참이다)." (`reviews/round-26-closing.md:89`)
+  > 편집자 결정(26C-10): "【추론】 떼어진 노드에서 `diagnostics`는 살아 있는 트리(런타임의 진단 칸)를 읽는 NODE-044 고정 규칙의 예외다: `diagnostics`는 트리 전체의 커밋을 기술하며(ERROR-131) 루트에서 관측하는 것이라(SURFACE-007) `globalErrors`와 같은 부류다." (`reviews/round-26-closing.md:107`)
+  > 편집자 결정(26C-10): "【추론】 `typeMismatch`·`typeMismatches`·`inactiveValues`·`defaultValue`는 NODE-044의 고정 읽기이며, 떼어질 때 그 노드가 형상에 있던 마지막 커밋의 값을 한 번 갈무리한다." (`reviews/round-26-closing.md:108`)
+  > 편집자 결정(26C-10): "【추론】 떼어진 참조에 쓴 값은 살아 있는 노드에 쓸 때와 같은 쓰기 규칙으로 루트의 (경로, 종류) 잠복 원본에 닿는다: 전체 교체(옵션 없음·`Overwrite`·`setValue(V)`)는 그 경로의 잠복 원본을 받은 값으로 바꾸고 그 아래 자손의 잠복 원본을 없음으로 하며, `Merge`는 WRITE-079대로 키로 합칠 수 있는 자리에서만 합치고 그 밖은 통째로 바꾼다." (`reviews/round-26-closing.md:109`)
+  > 편집자 결정(26C-10): "【추론】 규칙 평가와 방출은 없으며, 그래서 떼어지기 전과 뒤에 같은 순서로 쓴 결과의 원본이 같다." (`reviews/round-26-closing.md:110`)
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:943-959`(정본)
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-34)

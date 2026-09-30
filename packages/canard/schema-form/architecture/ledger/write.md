@@ -1141,6 +1141,7 @@
   > 【추론】 틀린 종류의 값이면 S1 규칙대로 경고등이 켜지고 `VALUE_TYPE_MISMATCH` 경고가 간다.
 - 보충:
   > 반영 칸(설계서 메모 4): "게터 `typeMismatch: boolean`, 경로 목록 `typeMismatches: readonly string[]`, 경고 코드 `SCHEMA_FORM_WARNING.TYPE_MISMATCH`." (`reviews/round-18-owner-answers.md:41`)
+  > 편집자 결정(26C-10): "【추론】 떼어진 참조에 쓴 값은 살아 있는 노드에 쓸 때와 같은 쓰기 규칙으로 루트의 (경로, 종류) 잠복 원본에 닿는다: 전체 교체(옵션 없음·`Overwrite`·`setValue(V)`)는 그 경로의 잠복 원본을 받은 값으로 바꾸고 그 아래 자손의 잠복 원본을 없음으로 하며, `Merge`는 WRITE-079대로 키로 합칠 수 있는 자리에서만 합치고 그 밖은 통째로 바꾼다." (`reviews/round-26-closing.md:109`)
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:463-474`(정본), `reviews/round-18-owner-answers.md:41`
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-16), 소유자 답(`reviews/round-18-owner-answers.md:41` 설계서 메모 4)
