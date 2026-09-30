@@ -7,9 +7,11 @@ import { getDeriveRuleKey } from '../edges/getDeriveRuleKey';
 import { readDeriveDependency } from './utils/readDeriveDependency';
 import { getRuleTargets } from './utils/getRuleTargets';
 import { getDeriveSourceNodes } from './utils/getDeriveSourceNodes';
-
-/** Higher automatic rule wins when two first-unit rules address one node. */
-const PRIORITY = { derived: 3, injectTo: 2, unsetValue: 4 } as const;
+import { evaluateInjectTo } from './utils/evaluateInjectTo';
+import { chooseDeriveWrite } from './utils/chooseDeriveWrite';
+import { KIND_RANK, LAYER_RANK } from '../rank/compareDeriveWrites';
+import { getDeriveSourceOrder } from '../rank/getDeriveSourceOrder';
+import { getVirtualWriteFailure } from './utils/getVirtualWriteFailure';
 
 /**
  * Consume active derived and unsetValue edges in the completed current shape.
@@ -23,9 +25,9 @@ export const evaluateDeriveRound = <Self extends SchemaNodeRecord<Self>>(
   const table = getDeriveRuleTable(root.runtime.blueprint);
   if (table.rules.length === 0) return { writes: [], trace: [] };
   const pending = getDeriveSourceNodes(root, state);
-  const winners = new Map<Self, DeriveWrite<Self>>();
+  const winners = new Map<string, DeriveWrite<Self>>();
   const trace: DeriveTraceEntry[] = [];
-  const traceWinners = new Map<Self, number>();
+  const traceWinners = new Map<string, number>();
   let failure: DeriveRoundDecision<Self>['failure'];
   if (!state.sourcePaths) state.activeRuleKeys.clear();
   state.activeUnsetTargets.clear();
@@ -41,8 +43,9 @@ export const evaluateDeriveRound = <Self extends SchemaNodeRecord<Self>>(
       node.blueprintNode.declarations.map((declaration) => declaration.id);
     for (const id of selected)
       for (const rule of table.byDeclaration.get(id) ?? []) {
-        if (rule.kind === 'resetInteraction' || rule.kind === 'injectTo') continue;
-        const target = getRuleTargets(node, rule, state)[0];
+        if (rule.kind === 'resetInteraction') continue;
+        const target = rule.kind === 'injectTo' ? node :
+          getRuleTargets(node, rule, state)[0];
         if (!target) continue;
         const key = getDeriveRuleKey(node.path, node.blueprintNode.kind, rule);
         state.activeRuleKeys.add(key);
@@ -52,6 +55,25 @@ export const evaluateDeriveRound = <Self extends SchemaNodeRecord<Self>>(
           state.committedRuleValues.get(key);
         const load = !consumed && state.loadScope && (node.path === state.loadScope.path ||
           node.path.startsWith(`${state.loadScope.path}/`));
+        if (rule.kind === 'injectTo') {
+          const current = node.emit;
+          state.consumedRuleValues.set(key, current);
+          if (state.loadScope && node.path !== state.loadScope.path &&
+            !node.path.startsWith(`${state.loadScope.path}/`)) continue;
+          if (!load && priorExists && sameValue(prior, current)) continue;
+          const evaluated = evaluateInjectTo(node, root, rule);
+          if (evaluated.failure) {
+            if (!failure) failure = evaluated.failure;
+            continue;
+          }
+          for (const candidate of evaluated.writes)
+            chooseDeriveWrite(candidate, node.path, state, winners, trace, traceWinners);
+          if (evaluated.writes.length === 0 && state.trace)
+            trace.push({ phase: 'derive', kind: 'injectTo', sourcePath: node.path,
+              targetPath: node.path, previousValue: current, nextValue: undefined,
+              result: 'undefined' });
+          continue;
+        }
         let current: unknown;
         let value: unknown;
         try {
@@ -76,7 +98,7 @@ export const evaluateDeriveRound = <Self extends SchemaNodeRecord<Self>>(
           }
         } catch (cause) {
           if (!failure) failure = { sourcePath: node.path,
-            schemaPath: rule.schemaPath, cause };
+            schemaPath: rule.schemaPath, cause, kind: 'expression' };
           state.consumedRuleValues.set(key, current);
           continue;
         }
@@ -93,27 +115,18 @@ export const evaluateDeriveRound = <Self extends SchemaNodeRecord<Self>>(
             previousValue: target.emit, nextValue: value, result: 'undefined' });
           continue;
         }
-        const layer = rule.layer === 'node' ? 3 : rule.layer === 'children' ? 2 : 1;
-        const candidate: DeriveWrite<Self> = { target,
+        const candidate: DeriveWrite<Self> = { target, targetPath: target.path,
           value: rule.kind === 'unsetValue' ? undefined : value,
-          kind: rule.kind, layer };
-        const priorWinner = winners.get(target);
-        const wins = !state.suppressAutomaticWrites && (!priorWinner ||
-          PRIORITY[candidate.kind] > PRIORITY[priorWinner.kind] ||
-          PRIORITY[candidate.kind] === PRIORITY[priorWinner.kind] &&
-            candidate.layer >= priorWinner.layer);
-        if (wins) {
-          const previousIndex = traceWinners.get(target);
-          if (previousIndex !== undefined)
-            trace[previousIndex] = { ...trace[previousIndex], result: 'lost' };
-          winners.set(target, candidate);
-          if (state.trace) traceWinners.set(target, trace.length);
+          kind: rule.kind, rank: KIND_RANK[rule.kind], layer: LAYER_RANK[rule.layer],
+          sourceOrder: getDeriveSourceOrder(node), ruleOrder: rule.order,
+          returnOrder: 0 };
+        const invalid = getVirtualWriteFailure(node.path, rule.schemaPath,
+          target.path, target.blueprintNode, candidate.value);
+        if (invalid) {
+          if (!failure) failure = invalid;
+          continue;
         }
-        if (state.trace) trace.push({ phase: 'derive', kind: rule.kind,
-          sourcePath: node.path, targetPath: target.path, previousValue: target.emit,
-          nextValue: candidate.value,
-          result: state.suppressAutomaticWrites ? 'suppressed' :
-            wins ? 'applied' : 'lost' });
+        chooseDeriveWrite(candidate, node.path, state, winners, trace, traceWinners);
       }
     if (!state.sourcePaths)
       for (let index = (node.children?.length ?? 0) - 1; index >= 0; index--)

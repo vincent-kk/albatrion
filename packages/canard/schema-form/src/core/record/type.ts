@@ -102,7 +102,7 @@ interface SchemaNodeDiagnostics {
   /** Current settlement health. */
   status: 'stable' | 'degraded';
   /** Reason for a degraded commit. */
-  cause?: 'budget' | 'expression' | 'injectTarget' | 'sharedConflict';
+  cause?: 'budget' | 'expression' | 'injectTarget' | 'writeShape' | 'sharedConflict';
   /** Budget whose limit stopped settlement. */
   exceededBudget?: 'hostWheel' | 'derive' | 'transition' | 'recursion';
   /** Number of iterations at the exceeded limit. */

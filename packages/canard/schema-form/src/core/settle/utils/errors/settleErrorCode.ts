@@ -10,3 +10,7 @@ export const GUARD_FAILED = 'GUARD_FAILED';
 export const SHARED_NODE_CONFLICT = 'SHARED_NODE_CONFLICT';
 /** A disposed node cannot accept a later write. */
 export const DISPOSED_NODE_WRITE = 'DISPOSED_NODE_WRITE';
+/** A dynamic injection addressed no declared target. */
+export const INJECT_TARGET_MISSING = 'INJECT_TARGET_MISSING';
+/** An automatic write supplied a shape a virtual node cannot accept. */
+export const INVALID_VIRTUAL_NODE_VALUES = 'INVALID_VIRTUAL_NODE_VALUES';

@@ -16,6 +16,16 @@ describe('settle value equivalence', () => {
     expect(sameValue(new Date(0), new Date(0))).toBe(false);
   });
 
+  it('TEST-071 keeps a reference-equal element out of deep comparison', () => {
+    let visits = 0;
+    const shared = new Proxy({ nested: { value: 1 } }, {
+      ownKeys(target) { visits++; return Reflect.ownKeys(target); },
+      get(target, key, receiver) { visits++; return Reflect.get(target, key, receiver); },
+    });
+    expect(sameValue([shared, 1], [shared, 2])).toBe(false);
+    expect(visits).toBe(0);
+  });
+
   it('18C-50 keeps an equal terminal raw source reference at the write boundary', () => {
     const { root } = createTestTree({ type: 'string' });
     const first = { nested: { value: 1 } };

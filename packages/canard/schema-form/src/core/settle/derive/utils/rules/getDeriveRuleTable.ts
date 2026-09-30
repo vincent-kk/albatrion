@@ -9,7 +9,7 @@ const TABLES = new WeakMap<Blueprint, DeriveRuleTable>();
 /** Rule-free analyses share a read-only empty table. */
 const EMPTY_TABLE: DeriveRuleTable = { rules: Object.freeze([]), byDeclaration: new Map() };
 /** Keys whose string expression is evaluated by the first derive unit. */
-const RULE_KEYS = ['derived', 'unsetValue', 'resetInteraction'] as const;
+const RULE_KEYS = ['derived', 'unsetValue', 'resetInteraction', 'injectTo'] as const;
 
 /** One control group and one directly addressed target. */
 interface RuleGroup {
@@ -85,6 +85,7 @@ export const getDeriveRuleTable = (blueprint: Blueprint): DeriveRuleTable => {
             candidate.declarationId === declaration.id &&
             candidate.schemaPath === schemaPath && candidate.key === kind);
           if (typeof literal === 'string' && !expression) continue;
+          if (kind === 'injectTo' && typeof literal !== 'function') continue;
           const dependencies = [...expression?.dependencies ?? []];
           const watchDependencies = kind === 'derived' ?
             getWatchPaths(group.targetNode) : [];
@@ -94,7 +95,8 @@ export const getDeriveRuleTable = (blueprint: Blueprint): DeriveRuleTable => {
           const rule: DeriveRule = { declarationId: declaration.id, kind,
             schemaPath, layer: group.layer, targetName: group.targetName,
             targetDeclarationIds: group.targetDeclarationIds,
-            dependencies, watchDependencies, expression, literal };
+            dependencies, watchDependencies, expression, literal,
+            order: rules.length };
           rules.push(rule);
           const owned = byDeclaration.get(declaration.id) ?? [];
           owned.push(rule);

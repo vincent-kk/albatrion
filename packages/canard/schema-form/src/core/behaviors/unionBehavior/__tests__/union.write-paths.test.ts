@@ -78,8 +78,26 @@ describe('TEST-077 union write paths', () => {
     ]);
   });
 
-  it.todo('TEST-077 stage 04 (PR-3): derived writes through the effective union list');
-  it.todo('TEST-077 stage 04 (PR-3): injectTo writes through the effective union list');
+  it('TEST-077 derived writes through the effective union list', () => {
+    const { root } = makeSchemaNodeTree({ type: 'object', properties: {
+      source: { type: 'string' },
+      target: { type: ['number', 'boolean'], controls: { derived: '../source' } },
+    } });
+    root.setValue({ source: '42' });
+    expect(root.find('/target')?.raw).toBe(42);
+    expect(root.find('/target')?.typeMismatch).toBe(false);
+  });
+
+  it('TEST-077 injectTo writes through the effective union list', () => {
+    const { root } = makeSchemaNodeTree({ type: 'object', properties: {
+      source: { type: 'string', controls: {
+        injectTo: (value: unknown) => ({ '../target': value }),
+      } }, target: { type: ['number', 'boolean'] },
+    } });
+    root.setValue({ source: '42' });
+    expect(root.find('/target')?.raw).toBe(42);
+    expect(root.find('/target')?.typeMismatch).toBe(false);
+  });
   it.todo('TEST-077 stage 07 (PR-7): finished string input applies trim');
   it.todo('25C-11 stage 06 (PR-5): array node completes all eight node.type values');
 });

@@ -81,7 +81,7 @@ export interface SettlementContext<Self extends SchemaNodeRecord<Self>> {
   /** First error to throw after the commit boundary. */
   failure?: SchemaFormError;
   /** Cause assigned to the deferred failure. */
-  cause?: 'expression' | 'sharedConflict' | 'budget';
+  cause?: 'expression' | 'injectTarget' | 'writeShape' | 'sharedConflict' | 'budget';
   /** Exhausted host rounds handed to the later budget phase. */
   hostWheelExceeded?: number;
   /** The exhausted transition or recursion budget, when applicable. */

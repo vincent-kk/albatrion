@@ -1,4 +1,4 @@
-import type { BlueprintExpression } from '../../blueprint';
+import type { BlueprintChildEntry, BlueprintExpression, BlueprintNode } from '../../blueprint';
 import type { SchemaNodeRecord } from '../../record';
 
 /** Authored automatic rule kinds, including the later injection rule. */
@@ -26,6 +26,8 @@ export interface DeriveRule {
   readonly expression?: BlueprintExpression;
   /** Literal control value when no compiled expression is needed. */
   readonly literal: unknown;
+  /** Authored order among rule templates for tied declarations. */
+  readonly order: number;
 }
 
 /** Reusable rule templates for one immutable blueprint. */
@@ -68,6 +70,8 @@ export interface DeriveState<Self extends SchemaNodeRecord<Self>> {
   readonly activeRuleKeys: Set<string>;
   /** Live targets whose true unset rule prevents transition fill. */
   readonly activeUnsetTargets: Set<Self>;
+  /** Highest kind rank already applied to each target in this settlement. */
+  readonly appliedRanks: Map<string, number>;
   /** Source paths affected by a non-load write; absent for a load scan. */
   sourcePaths?: ReadonlySet<string>;
   /** Sources examined during this settlement, including later rounds. */
@@ -82,14 +86,30 @@ export interface DeriveState<Self extends SchemaNodeRecord<Self>> {
 
 /** Candidate for one automatic write after an edge has been consumed. */
 export interface DeriveWrite<Self> {
-  /** Live target record. */
-  readonly target: Self;
+  /** Live target record, absent when an injection addresses latent raw. */
+  readonly target?: Self;
+  /** Absolute data path of the addressed target. */
+  readonly targetPath: string;
+  /** Static template for a latent target. */
+  readonly template?: BlueprintNode;
+  /** Sibling templates used when distributing a latent replacement. */
+  readonly siblings?: readonly BlueprintChildEntry[];
+  /** Document position of a latent target. */
+  readonly targetOrder?: readonly number[];
   /** Raw replacement value, including undefined for unset. */
   readonly value: unknown;
   /** Kind of rule that produced this candidate. */
   readonly kind: 'derived' | 'unsetValue' | 'injectTo';
+  /** Kind precedence calculated from derive's rank table. */
+  readonly rank: number;
   /** Declaration specificity used after kind rank. */
   readonly layer: 1 | 2 | 3;
+  /** Live source position in document preorder. */
+  readonly sourceOrder: readonly number[];
+  /** Authored declaration order within the source and layer. */
+  readonly ruleOrder: number;
+  /** Return entry order within one injectTo call. */
+  readonly returnOrder: number;
 }
 
 /** Pure decision for one complete-tree derivation round. */
@@ -100,7 +120,8 @@ export interface DeriveRoundDecision<Self> {
   readonly trace: readonly DeriveTraceEntry[];
   /** First authored expression failure, if any. */
   readonly failure?: { readonly sourcePath: string; readonly schemaPath: string;
-    readonly cause: unknown };
+    readonly cause: unknown; readonly kind: 'expression' | 'injectTarget' | 'writeShape';
+    readonly targetPath?: string; readonly expectedLength?: number };
 }
 
 /** Final interaction reset decision made before the commit publishes revisions. */

@@ -21,6 +21,7 @@ export const getDeriveState = <Self extends SchemaNodeRecord<Self>>(
     consumedRuleValues: new Map(),
     activeRuleKeys: new Set(),
     activeUnsetTargets: new Set(),
+    appliedRanks: new Map(),
     visitedSourcePaths: new Set(),
     loadScope: context.loadScope,
     suppressAutomaticWrites: context.suppressAutomaticWrites,

@@ -1,14 +1,23 @@
 import { SchemaFormError } from '../../../../errors';
 import type { SchemaNodeRecord } from '../../../record';
 import { DERIVE_ROUND_CAP, evaluateDeriveRound } from '../../derive';
+import type { DeriveRoundDecision } from '../../derive';
 import type { SettlementContext } from '../../type';
 import { computeNode } from '../compute/computeNode';
 import { sameValue } from '../compute/sameValue';
-import { BUDGET_EXCEEDED, EXPRESSION_THREW } from '../errors/settleErrorCode';
-import { markWrite } from '../write/markWrite';
+import { BUDGET_EXCEEDED, EXPRESSION_THREW, INJECT_TARGET_MISSING,
+  INVALID_VIRTUAL_NODE_VALUES } from '../errors/settleErrorCode';
 import { registerRecalculation } from '../write/registerRecalculation';
 import { collectDeriveSourcePaths } from './collectDeriveSourcePaths';
 import { getDeriveState } from './getDeriveState';
+import { applyDeriveWrite } from './utils/applyDeriveWrite';
+
+/** Deferred error codes follow the failure's contract category. */
+const ERROR_CODES = { expression: EXPRESSION_THREW,
+  injectTarget: INJECT_TARGET_MISSING, writeShape: INVALID_VIRTUAL_NODE_VALUES } as const;
+/** Human-readable failure labels retain the existing expression wording. */
+const ERROR_LABELS = { expression: 'Derive expression failed',
+  injectTarget: 'Injection target missing', writeShape: 'Invalid virtual node values' } as const;
 
 /**
  * Apply bounded automatic candidates and recalculate before the next decision.
@@ -29,23 +38,26 @@ export const runDeriveRounds = <Self extends SchemaNodeRecord<Self>>(
       const decision = evaluateDeriveRound(context.root, state);
       if (state.trace) (context.traceRounds ??= []).push([...decision.trace]);
       if (decision.failure) {
+        const failure: NonNullable<DeriveRoundDecision<Self>['failure']> = decision.failure;
         context.failure = new SchemaFormError(
-          EXPRESSION_THREW,
-          `Derive expression failed at ${decision.failure.schemaPath}`,
+          ERROR_CODES[failure.kind],
+          `${ERROR_LABELS[failure.kind]} at ${failure.schemaPath}`,
           {
-            path: decision.failure.sourcePath,
-            schemaPath: decision.failure.schemaPath,
-            cause: decision.failure.cause,
+            path: failure.targetPath ?? failure.sourcePath,
+            schemaPath: failure.schemaPath,
+            cause: failure.cause,
+            ...(failure.expectedLength === undefined ? {} :
+              { expectedLength: failure.expectedLength, received: failure.cause }),
           },
         );
-        context.cause = 'expression';
-        return;
+        context.cause = failure.kind;
       }
       const changed = decision.writes.filter(
-        (write) => !sameValue(write.target.emit, write.value),
+        (write) => !write.target || write.target.blueprintNode.kind === 'virtual' ||
+          !sameValue(write.target.emit, write.value),
       );
       if (changed.length === 0) return;
-      if ((context.deriveRounds ?? 0) >= DERIVE_ROUND_CAP) {
+      if (!context.failure && (context.deriveRounds ?? 0) >= DERIVE_ROUND_CAP) {
         context.failure = new SchemaFormError(
           BUDGET_EXCEEDED,
           `Derive budget exceeded at ${context.target.path}`,
@@ -61,13 +73,16 @@ export const runDeriveRounds = <Self extends SchemaNodeRecord<Self>>(
       context.automaticChanged = false;
       context.automatic = true;
       context.inTransition = true;
-      for (const write of changed)
-        markWrite(write.target, write.value, context);
+      for (const write of changed) {
+        applyDeriveWrite(write, context);
+        state.appliedRanks.set(write.targetPath,
+          Math.max(state.appliedRanks.get(write.targetPath) ?? 0, write.rank));
+      }
       context.automatic = false;
       registerRecalculation(context);
       context.hostWheelExceeded = undefined;
       computeNode(context.root, context);
-      if (context.hostWheelExceeded !== undefined) {
+      if (context.hostWheelExceeded !== undefined && !context.failure) {
         context.failure = new SchemaFormError(
           BUDGET_EXCEEDED,
           `Host wheel budget exceeded at ${context.target.path}`,
@@ -78,6 +93,7 @@ export const runDeriveRounds = <Self extends SchemaNodeRecord<Self>>(
         context.iterations = context.hostWheelExceeded;
         return;
       }
+      if (context.failure) return;
     }
   } finally {
     context.automatic = false;
