@@ -141,6 +141,7 @@
   > 소유자(13라운드 답 2): "onChange 로 넘어가는 값(방출 표현값)에서 지워지는게 기본값이면 된다." (`reviews/round-13-owner-answers.md:8`)
   > 편집자 결정(26C-08): "【추론】 `active` 게터는 그 노드가 형상에 있는가(선언한 조각이 켜져 있고 노드 자신의 `controls.active`가 거짓이 아님, VALUE-006)를 읽는 멤버이므로, 살아 있는(형상 안) 노드에서는 늘 참이다." (`reviews/round-26-closing.md:87`)
   > 편집자 결정(26C-08): "【추론】 떼어진 노드의 `active`는 거짓이다: 떼어짐은 형상을 떠난 것이고, 이 멤버는 `rootNode`·`globalState`·`globalErrors`처럼 살아 있는 트리의 사실을 읽는 NODE-044 고정 규칙의 예외다." (`reviews/round-26-closing.md:88`)
+  > 편집자 결정(26C-13): "【추론】 로드(마운트·`FormHandle.reset()`·`resetSubtree()`)는 V의 값을 경로마다 원본으로 싣고, 형상에 없는 경로의 값은 그 자리에서 잠복 원본이 된다(로드 왕복): 같은 경로가 어느 종류로든 형상에 있으면 그 값은 살아 있는 노드의 원본이라 잠복 원본이 생기지 않고, 어느 종류도 형상에 없으면 그 경로의 선언 가운데 청사진 전순서에서 앞선 종류의 (경로, 종류) 잠복 원본이 된다. 이미 있던 잠복 원본은 V의 값으로 바뀌거나 지워진다." (`reviews/round-26-closing.md:138`)
 - 상태: 현행
 - 출처: `adr/0006-single-value-ownership.md:48-51`(정본), `02-target-overview.md:150`, `03-mental-model.md:72`, `08-design-a-to-z.md:167`, `adr/0002-guard-fragment-model.md:68`, `adr/0003-group-namespace.md:82`
 - 닫은 사람: 원리(`03-mental-model.md:72` P4), 소유자 답(`reviews/round-13-owner-answers.md:8` 2 나감 비움 기본값), 소유자 답(`reviews/round-13-owner-answers.md:17` 나감 정책 키 이름), 소유자 답(`reviews/round-17-owner-answers.md:10` R17-2, 보충의 하위 트리 문장), 소유자 답(`reviews/round-13-owner-answers.md:16` Form 속성의 자리)
@@ -426,6 +427,8 @@
   > 소유자(12-8 셋째 답): "폼 핸들이 오히려 쓸대가 없을거같은데. root node 에 핸들로 추가하고, 개별 노드는 rootNode 의 기능을 경유해서 node.inactiveValues 를 구현하면 어떨까 싶다." (`reviews/round-18-owner-answers.md:22`)
   > 반영 칸(12-8 셋째, 반환 모양): "반환 모양(WRITE-020, 안건 11-14)은 그대로 열림이다." (`reviews/round-18-owner-answers.md:22`)
   > 편집자 결정(18C-81): "【추론】 `node.inactiveValues`(와 그것이 부르는 루트 노드의 함수)는 읽기 전용 배열 `ReadonlyArray<{ readonly path: string; readonly value: unknown }>`을 돌려준다." (`reviews/round-18-closing.md:2171`)
+  > 편집자 결정(26C-13): "【추론】 잠복 원본이 생기는 길은 둘뿐이다: 노드가 형상을 떠날 때 그 노드의 원본(NODE-044), 그리고 비활성 경로 쓰기(18C-64, 옛 참조 쓰기 포함). 형상에 든 적 없는 다른 종류의 선언은 노드가 아니므로 부모 원본의 키 값에서 잠복 원본을 만들지 않으며, 그 값은 살아 있는 노드의 원본 하나다." (`reviews/round-26-closing.md:137`)
+  > 편집자 결정(26C-13): "【추론】 `inactiveValues`의 열거는 경로 단위다: 반환 `{ path, value }`에는 종류가 없으므로, 같은 경로가 어느 종류로든 형상에 있는 동안 그 경로의 잠복 원본은 열거에 나오지 않고, 경로가 형상을 떠나면 나온다." (`reviews/round-26-closing.md:140`)
 - 상태: 현행
 - 출처: `reviews/round-18-owner-answers.md:22`(정본, 12-8 셋째의 반영 칸. 표 행이라 조각 번호로 나눌 수 없다), `06-conclusions.md:388`, `02-target-overview.md:309`, `adr/0006-single-value-ownership.md:64`, `adr/0013-core-does-not-rewrite-values.md:108` (이름의 관례: SURFACE-050; 반환 모양은 열림 WRITE-020), `reviews/round-18-closing.md:2171`
 - 닫은 사람: 소유자 답(`reviews/round-18-owner-answers.md:22` 12-8 셋째), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-81; 반환 모양)
