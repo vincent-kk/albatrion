@@ -19,11 +19,11 @@ const makeTree = (schema: BlueprintSchema, snapshot: unknown = undefined) =>
   });
 
 describe('SchemaNode PR-2 surface', () => {
-  it('26C-01 PR-2 member list matches the DETAIL table exactly', () => {
+  it('26C-01 PR-6 member list matches the DETAIL table exactly', () => {
     const detail = readFileSync(new URL('../DETAIL.md', import.meta.url), 'utf8');
     const rows = [...detail.matchAll(/^\| `([^`]+)` \| (getter|method) \|/gm)]
       .map((match) => ({ name: match[1].replace(/\(.*/, ''), kind: match[2] }));
-    expect(rows).toHaveLength(28);
+    expect(rows).toHaveLength(34);
     const prototype = RuntimeSchemaNode.prototype;
     expect(Object.getOwnPropertyNames(prototype).filter((name) => name !== 'constructor').sort())
       .toEqual(rows.map((row) => row.name).sort());
@@ -32,6 +32,25 @@ describe('SchemaNode PR-2 surface', () => {
       expect(typeof (row.kind === 'getter' ? descriptor?.get : descriptor?.value))
         .toBe('function');
     }
+  });
+
+  it('28C-02 enabled is active and visible, regardless of disabled', () => {
+    const root = makeTree({ type: 'object', properties: {
+      shown: { type: 'boolean' },
+      target: { type: 'string', controls: {
+        active: '../shown', visible: true, disabled: true,
+      } },
+      hidden: { type: 'string', controls: { visible: false } },
+    } });
+    root.setValue({ shown: true, target: 'value', hidden: 'hidden' });
+    const target = root.find('/target');
+    expect(target?.enabled).toBe(true);
+    expect(target?.disabled).toBe(true);
+    expect(root.find('/hidden')?.enabled).toBe(false);
+    root.find('/shown')?.setValue(false);
+    expect(target?.active).toBe(false);
+    expect(target?.visible).toBe(true);
+    expect(target?.enabled).toBe(false);
   });
 
   it('TEST-069 SchemaNode index names the binding-only context channel', () => {

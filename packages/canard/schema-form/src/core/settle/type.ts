@@ -15,6 +15,10 @@ export type SchemaNodeWriteKind =
 export interface SettlementContext<Self extends SchemaNodeRecord<Self>> {
   /** Live root reached through the record boundary. */
   root: Self;
+  /** Emitted root reference from the preceding committed shape. */
+  previousEmit: unknown;
+  /** Binding context from the preceding committed shape. */
+  previousContext?: Readonly<Record<string, unknown>>;
   /** Original caller target, excluded from refresh targets. */
   target: Self;
   /** Entry origin retained for later transition rules. */
@@ -72,6 +76,8 @@ export interface SettlementContext<Self extends SchemaNodeRecord<Self>> {
   changedRaw: Set<string>;
   /** Nodes whose calculated value or shape changed. */
   changedNodes: Set<Self>;
+  /** Nodes visited by calculation before final state-key publication. */
+  stateDirtyNodes: Set<Self>;
   /** Effective schema before this write for nodes visited by a gate wheel. */
   originalSchemas: Map<string, EffectiveSchema>;
   /** Call-local baselines and consumed edges, allocated only for rule-bearing trees. */

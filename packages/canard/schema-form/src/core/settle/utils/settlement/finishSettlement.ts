@@ -8,6 +8,7 @@ import { BUDGET_EXCEEDED } from '../errors/settleErrorCode';
 import { finalizeExits } from '../transition/finalizeExits';
 import { restoreSourceB } from '../transition/restoreSourceB';
 import { transitionSettlement } from '../transition/transitionSettlement';
+import { publishStateKeys } from '../compute/publishStateKeys';
 
 /**
  * Complete derivation, transition, rollback, and one commit after calculation.
@@ -34,6 +35,7 @@ export const finishSettlement = <Self extends SchemaNodeRecord<Self>>(
     restoreSourceB(context, scratch.explicitRaw);
     captureDeriveBaseline(context);
   }
+  publishStateKeys(context);
   finalizeExits(context);
   if (context.kind === 'load')
     for (const path of context.target.runtime.typeMismatchPaths)

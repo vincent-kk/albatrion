@@ -7,7 +7,8 @@ import type { FormTypeInputProps, InferSchemaNode, NullNode, NumberNode, ObjectN
 type PublicKeys = 'type' | 'strategy' | 'schemaType' | 'jsonSchema' |
   'required' | 'nullable' | 'depth' | 'isRoot' | 'rootNode' | 'parentNode' |
   'name' | 'escapedName' | 'path' | 'children' | 'raw' | 'extras' |
-  'value' | 'outputValue' | 'inactiveValues' | 'active' | 'context' | 'typeMismatch' |
+  'value' | 'outputValue' | 'inactiveValues' | 'active' | 'visible' | 'enabled' |
+  'readOnly' | 'disabled' | 'watchValues' | 'context' | 'typeMismatch' |
   'typeMismatches' | 'diagnostics' | 'defaultValue' | 'find' | 'findNodes' |
   'setValue' | 'resetSubtree';
 

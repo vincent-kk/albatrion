@@ -20,6 +20,8 @@ export const createSettlementContext = <Self extends SchemaNodeRecord<Self>>(
   const enable = (option & SetValueOption.EnableAutomaticWrites) !== 0;
   return {
     root: node.rootNode,
+    previousEmit: node.rootNode.emit,
+    previousContext: node.rootNode.runtime.context,
     target: node,
     kind,
     option,
@@ -46,6 +48,7 @@ export const createSettlementContext = <Self extends SchemaNodeRecord<Self>>(
     shapeDirtyPaths: scratch.shapeDirtyPaths,
     changedRaw: scratch.changedRaw,
     changedNodes: scratch.changedNodes,
+    stateDirtyNodes: scratch.stateDirtyNodes,
     originalSchemas: scratch.originalSchemas,
   };
 };

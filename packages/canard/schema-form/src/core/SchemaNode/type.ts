@@ -58,6 +58,16 @@ export interface NodeSurface<
   readonly outputValue: unknown;
   readonly inactiveValues: readonly InactiveValue[];
   readonly active: boolean;
+  /** Local visibility after all active declarations are combined. */
+  readonly visible: boolean;
+  /** A node is enabled when it remains active and visible. */
+  readonly enabled: boolean;
+  /** Local read-only state, including standard schema readOnly. */
+  readonly readOnly: boolean;
+  /** Local disabled state, independent of enabled. */
+  readonly disabled: boolean;
+  /** Effective watched values read from the emitted tree. */
+  readonly watchValues: readonly unknown[];
   /** Shared context reference supplied by the current Form binding. */
   readonly context: Readonly<Record<string, unknown>>;
   readonly typeMismatch: boolean;

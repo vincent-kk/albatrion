@@ -46,6 +46,12 @@ export interface SchemaNodeRecord<Self> {
   extras: unknown;
   /** Result of the current node gate. */
   active: boolean;
+  /** Local visibility after all active state declarations are combined. */
+  visible: boolean;
+  /** Local read-only result, including standard schema readOnly. */
+  readOnly: boolean;
+  /** Local disabled result after all active state declarations are combined. */
+  disabled: boolean;
   /** Calculated local value before output projection. */
   local: unknown;
   /** Calculated output value. */
@@ -149,6 +155,9 @@ interface DetachedSchemaNodeReads {
   readonly typeMismatches: readonly string[];
   readonly inactiveValues: readonly { path: string; value: unknown }[];
   readonly defaultValue: unknown;
+  readonly visible: boolean;
+  readonly readOnly: boolean;
+  readonly disabled: boolean;
 }
 
 /** Structured warning emitted when a committed raw value misses its effective type. */
@@ -215,6 +224,8 @@ export interface SettlementScratch<Self> {
   explicitRaw: Set<string>;
   /** Nodes whose source or calculated result changed. */
   changedNodes: Set<Self>;
+  /** Nodes visited by calculation whose final state keys need publication. */
+  stateDirtyNodes: Set<Self>;
   /** Effective schemas recorded before this settlement. */
   originalSchemas: Map<string, EffectiveSchema>;
 }
@@ -265,6 +276,8 @@ export interface SchemaNodeRuntime<Self> extends SchemaNodeRootRuntimeState {
   typeMismatchesMemo?: Map<string, { commit: number; paths: readonly string[] }>;
   /** Frozen last-commit reads for departed references, allocated on first exit. */
   detachedReads?: WeakMap<object, DetachedSchemaNodeReads>;
+  /** Stable watch path results for each node within one completed commit. */
+  watchValuesMemo?: WeakMap<object, { commit: number; values: readonly unknown[] }>;
   /** Synchronous predicates for authored if gates. */
   ifPredicates: ReadonlyMap<BlueprintGate, (gateInput: unknown) => boolean>;
   /** Settlement health retained until a form-level load. */

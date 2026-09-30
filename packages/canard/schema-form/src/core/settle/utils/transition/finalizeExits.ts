@@ -25,7 +25,12 @@ export const finalizeExits = <Self extends SchemaNodeRecord<Self>>(
     context.exited.add(node);
     walkSchemaNodes(node, (departing) => {
       if (!departing.runtime.detachedReads?.has(departing))
-        captureDetachedSchemaNodeReads(departing);
+        captureDetachedSchemaNodeReads(departing, {
+          emit: context.previousEmit,
+          context: context.previousContext,
+          schema: context.originalSchemas.get(departing.path)?.schema ??
+            departing.schema.schema,
+        });
       departing.detached = true;
       departing.active = false;
     });
