@@ -15,7 +15,7 @@ export const getWatchPaths = (node: BlueprintNode): readonly string[] => {
       Reflect.get(schema, 'controls') : undefined;
     const watch = controls && typeof controls === 'object' ?
       Reflect.get(controls, 'watch') : undefined;
-    for (const path of isArray(watch) ? watch : watch === undefined ? [] : [watch])
+    for (const path of isArray(watch) ? watch : [])
       if (typeof path === 'string' && !watches.includes(path)) watches.push(path);
   }
   return watches;

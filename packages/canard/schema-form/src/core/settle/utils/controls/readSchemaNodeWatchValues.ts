@@ -32,7 +32,7 @@ export const readSchemaNodeWatchValues = <Self extends SchemaNodeRecord<Self>>(
   const controls: unknown = typeof schema === 'object' ? schema.controls : undefined;
   const watch: unknown = controls && typeof controls === 'object'
     ? Reflect.get(controls, 'watch') : undefined;
-  const paths = isArray(watch) ? watch : typeof watch === 'string' ? [watch] : [];
+  const paths = isArray(watch) ? watch : [];
   const values = paths.length ? Object.freeze(paths.map((path: unknown) =>
     typeof path === 'string' ? readStateDependency(node.rootNode, node.path, path,
       snapshot) :

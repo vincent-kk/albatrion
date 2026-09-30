@@ -136,17 +136,19 @@ describe('settled controls', () => {
     expect(root.structure?.target?.raw).toBe('b');
   });
 
-  it('28C-07 watchValues reads effective watch paths and memoizes a commit', () => {
+  it('28C-07 watchValues reads effective watch paths and memoizes a commit; CONTROLS-019 a single-string watch is not a watch', () => {
     const root = createSurfaceTree({ type: 'object', $defs: {
       watched: { type: 'string', controls: { watch: ['../second'] } },
     }, properties: {
       first: { type: 'string' }, second: { type: 'string' },
       target: { $ref: '#/$defs/watched', controls: { watch: ['../first'] } },
+      single: { type: 'string', controls: { watch: '../first' } },
     } });
     root.setValue({ first: 'a', second: 'b', target: 't' });
     const target = root.find('/target');
     expect(target?.watchValues).toEqual(['b']);
     expect(target?.watchValues).toBe(target?.watchValues);
+    expect(root.find('/single')?.watchValues).toEqual([]);
     root.find('/second')?.setValue('c');
     expect(target?.watchValues).toEqual(['c']);
   });
