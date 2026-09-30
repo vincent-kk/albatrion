@@ -1276,7 +1276,8 @@
 
 - 결정:
   > 작성자 스키마·호출자 데이터에서 온 정착 오류(예산 초과, `controls` 식·가드 실패, `controls.injectTo` 대상 없음)와 공유 충돌은 모든 환경에서 커밋·통지 뒤 사슬 끝에서 던진다(R17-1 나, 17라운드 소유자 답: "나 허용. 망가진 값을 올리는게 더 위험하겠다").
-- 보충: 없음
+- 보충:
+  > 편집자 결정(26C-05): "【추론】 정착은 활성 집합의 유효 스키마를 계산한 뒤 `typeConflict`가 참인 노드마다 정착 오류 `SHARED_NODE_CONFLICT`를 내고, `diagnostics.cause`는 `'sharedConflict'`이며, 드러남은 정착 오류 규칙대로 모든 환경에서 커밋·통지 뒤 사슬 끝이다(PR-2에서 사슬은 `settle` 호출 하나)." (`reviews/round-26-closing.md:57`)
 - 상태: 현행
 - 출처: `adr/0014-error-policy.md:53#1`(정본, ERROR-006에서 분할)
 - 닫은 사람: 소유자 답(`reviews/round-17-owner-answers.md:9` R17-1), 소유자 답(`reviews/round-14-owner-answers.md:16` O-10; 공유 충돌)
@@ -2006,6 +2007,9 @@
   > 편집자 결정(18C-21): "【추론】 `diagnostics.cause`에 다섯째 값 `(가칭) 'writeShape'`를 둔다(자동 쓰기가 대상이 받을 수 없는 모양의 값을 냄)." (`reviews/round-18-closing.md:666`)
   > 편집자 결정(18C-21): "【추론】 `'injectTarget'`은 "동적 대상 없음"이라는 한 뜻으로 남는다." (`reviews/round-18-closing.md:667`)
   > 편집자 결정(18C-21): "【추론】 한 값이 한 뜻을 가져야 예측할 수 있기 때문이다." (`reviews/round-18-closing.md:668`)
+  > 편집자 결정(26C-05): "【추론】 정착은 활성 집합의 유효 스키마를 계산한 뒤 `typeConflict`가 참인 노드마다 정착 오류 `SHARED_NODE_CONFLICT`를 내고, `diagnostics.cause`는 `'sharedConflict'`이며, 드러남은 정착 오류 규칙대로 모든 환경에서 커밋·통지 뒤 사슬 끝이다(PR-2에서 사슬은 `settle` 호출 하나)." (`reviews/round-26-closing.md:57`)
+  > 편집자 결정(26C-05): "【추론】 오류의 조건은 그 게이트들이 켜진 동안이고(BLUEPRINT-041 U2), 그로 인한 `degraded`는 ERROR-204대로 폼 수준 로드에서만 비운다." (`reviews/round-26-closing.md:58`)
+  > 편집자 결정(26C-05): "【추론】 BLUEPRINT-044 S5의 다른 조건(정적 선언이 없는 이름에서 fold가 다른 게이트 선언이 동시에 켜짐)은 유효 스키마의 신호가 아니며, 정착이 켜진 선언 집합에서 판정해 같은 코드 `SHARED_NODE_CONFLICT`와 `cause: 'sharedConflict'`로 낸다." (`reviews/round-26-closing.md:59`)
 - 상태: 현행
 - 출처: `adr/0014-error-policy.md:201#6`(정본, ERROR-034에서 분할), `reviews/round-18-closing.md:28,666-668`
 - 닫은 사람: 소유자 답(`reviews/round-17-owner-answers.md:9` R17-1; 원인 넷), 편집자 결정(17라운드, `adr/0014-error-policy.md:201`; 값 이름), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-01·18C-21)
@@ -3053,7 +3057,9 @@
   > 무엇: 한 하위 트리의 예산 초과로 `degraded`가 된 폼에서 다른 하위 트리의 `resetSubtree()`, 루트 `setValue(V)`, `FormHandle.reset()`을 차례로 부르고 `diagnostics`, 경고 중복 키, 제출 거부를 본다.
   > 통과: 앞의 둘 뒤에는 `degraded`, 중복 키, 제출 거부가 그대로 남고, `FormHandle.reset()` 뒤에는 `stable`이며 중복 키가 비었다.
   > 실패: 초기화하는 로드의 목록을 고친다.
-- 보충: 없음
+- 보충:
+  > 편집자 결정(26C-02): "【추론】 게이트 문장의 `FormHandle.reset()`은 코어에서 루트 노드의 폼 수준 로드(마운트와 같은 초기화 범위, 로드 스냅숏 갱신)로 읽고, `resetSubtree()`는 그 노드의 로드로 읽는다." (`reviews/round-26-closing.md:24`)
+  > 편집자 결정(26C-02): "【추론】 ERROR-204 게이트의 제출 거부 단언은 제출이 Form 바인딩이므로 PR-7이 하고, 경고 중복 키의 초기화 단언은 경고의 구조 키를 들여오는 PR-4가 하며(ERROR-032, LANDING-064), PR-2는 `diagnostics`의 초기화만 단언한다." (`reviews/round-26-closing.md:25`)
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:2797-2799,2805-2808`(정본)
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-98)

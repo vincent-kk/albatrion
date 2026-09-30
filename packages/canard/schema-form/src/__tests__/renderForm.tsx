@@ -10,6 +10,7 @@ import { act, render, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import Ajv from 'ajv/dist/2020';
 
+import { isArray } from '@winglet/common-utils/filter';
 import { JSONPointer as $ } from '@winglet/json/pointer';
 
 import {
@@ -86,7 +87,7 @@ export const setupValidatorPlugin = (): void => {
     validateFormats: false,
   });
   const transform = (errors: any[]): JSONSchemaError[] => {
-    if (!Array.isArray(errors)) return [];
+    if (!isArray(errors)) return [];
     return errors.map((error) => {
       const hasMissing =
         error.keyword === 'required' && error.params?.missingProperty;
@@ -118,7 +119,7 @@ export const setupValidatorPlugin = (): void => {
         await validate(data);
         return null;
       } catch (thrown: any) {
-        if (Array.isArray(thrown?.errors)) return transform(thrown.errors);
+        if (isArray(thrown?.errors)) return transform(thrown.errors);
         throw thrown;
       }
     };

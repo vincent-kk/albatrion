@@ -442,6 +442,8 @@
 - 보충:
   > "**16라운드 편집자 결정 여섯 — 확정(답 10).**" (`09-landing-and-test-strategy.md:279`)
   > "e2e는 부류마다 실행기 하나가 돌린다(§5.2)." (`09-landing-and-test-strategy.md:279`)
+  > 편집자 결정(26C-02): "【추론】 PR-2에 배정된 "렌더 시나리오" 게이트는 시나리오를 `@aileron/schema-form-scenarios`의 순수 데이터로 두고, 코어 시나리오 시험(`src/core/__tests__/scenarios/<부류>.spec.ts`)이 새 노드 트리에서 돌리는 것으로 통과를 잰다." (`reviews/round-26-closing.md:22`)
+  > 편집자 결정(26C-02): "【추론】 같은 데이터를 `<Form>`으로 그리는 시나리오 스토리와 e2e 실행기는 `<Form>`이 새 엔진을 쓰는 PR-7부터 돈다." (`reviews/round-26-closing.md:23`)
 - 상태: 현행
 - 출처: `09-landing-and-test-strategy.md:190-197,199`(정본), `reviews/round-16-owner-answers.md:7,14,16`, `reviews/round-16-owner-review.md:61`
 - 닫은 사람: 편집자 결정(16라운드, `09-landing-and-test-strategy.md:188`), 소유자 답(`reviews/round-16-owner-answers.md:14` 답 8), 소유자 답(`reviews/round-16-owner-answers.md:16` 답 10), 소유자 답(`reviews/round-16-owner-answers.md:7` 답 1)
@@ -508,6 +510,10 @@
   > 18라운드 안건(실행 확인, PR-2): "노드 구조의 벤치(섞인 종류 1만 노드의 읽기 순회, 노드당 힙 바이트, 같은 맵인지, 거대형 자리 수, 입력에서 커밋까지, 생성 시간. V8과 JavaScriptCore)" (`reviews/round-18-agenda.md:68`)
   > "**벤치 게이트 — 확정(답 6).**" (`09-landing-and-test-strategy.md:274`)
   > "§6.1대로. 느린 것은 통제 가능하고 일정 수준 안이어야 한다." (`09-landing-and-test-strategy.md:274`)
+  > 소유자(27라운드, PR-2 벤치의 느린 행): "PR-2 벤치에서 남은 느린 행을 모두 수용한다" (`reviews/round-27-owner-answers.md:7`) — 요지. Bun의 B5 키 입력 약 −49%와 B6 초기 로드 20ms 대 11ms, B2 노드당 메모리의 추정 상한 초과, 18C-15·67·81의 N·깊이 비례, B3 확인 불가를 소유자가 받아들였으므로 PR-2에 대해 이 게이트의 "이유를 적고 Vincent가 받아들여야 병합"은 충족되었다.
+  > 소유자(27라운드, 벤치 기록 문서): "벤치 기록과 성능 개선 이력을 문서로 남긴다. `verification/03-node-and-settle/performance.md`에 쓰고, Bun에서만 격차가 나는 원인 분석도 여기에 담는다" (`reviews/round-27-owner-answers.md:8`) — 요지. 느린 이유의 기록은 그 문서다.
+  > 소유자(27라운드, React 대 JS 코어의 비중): "form의 성능 대부분은 react에 의해 결정되어 큰 문제는 없을 수도 있음(이전 엔진 기록 기준 react가 95, js 코어가 5% 정도)" (`reviews/round-27-owner-answers.md:9`) — "일정 수준"을 읽는 배경이며 합격선은 아니다.
+  > 소유자(27라운드, 최적화의 시점): "현재 구현단계에서 최적화를 하는 것은 전체 원장을 흔들 수 있는 문제라, 구현 완료 후, 최적화를 시도할 예정입니다. 그 시점에 참고데이터가 될 수 있도록 기록을 원합니다.(섞이지 않게, 이후 작업으로 잘 분리해서 요청)" (`reviews/round-27-owner-answers.md:11`) — 구현 단계(PR-2~PR-7)에서는 최적화를 시도하지 않고 기록만 남기며, 최적화는 구현 완료 뒤 별도 작업이다.
 - 상태: 현행
 - 출처: `09-landing-and-test-strategy.md:223`(정본), `adr/0009-performance-budget-and-benchmarks.md:9,92`, `08-design-a-to-z.md:609`, `reviews/round-16-owner-answers.md:12`, `reviews/round-16-owner-review.md:57`, `reviews/round-18-agenda.md:68`
 - 닫은 사람: 소유자 답(`reviews/round-16-owner-answers.md:12` 답 6), 편집자 결정(16라운드 도출, '통제 가능'의 뜻, `09-landing-and-test-strategy.md:223`)
@@ -1165,6 +1171,11 @@
   > 편집자 결정(18C-98): "【추론】 `diagnostics`와 경고 중복 키는 폼 수준 로드(마운트, `FormHandle.reset()`)에서만 초기화한다." (`reviews/round-18-closing.md:2797`)
   > 편집자 결정(18C-98): "【추론】 `setValue(V)`와 `resetSubtree()`는 초기화하지 않는다." (`reviews/round-18-closing.md:2798`)
   > 편집자 결정(18C-15, 게이트의 PR 줄): "PR: PR-2 정착 시나리오(18C-25의 PR-2 시험)와 PR-2 벤치." (`reviews/round-18-closing.md:449`) — (a)–(c)의 세 단언은 이 PR 줄에 딸린다(SETTLE-045).
+  > 편집자 결정(26C-01): "【추론】 뒤 PR의 멤버를 PR-2 클래스에 무해한 구현(스텁)이나 `SchemaNodeRuntime` 칸으로의 위임으로 미리 두지 않는다: PR-2의 시험 대역은 `if` 게이트 술어 하나뿐이고 시험만을 위한 주입 자리를 새로 만들지 않는다(TEST-069 (나)); LANDING-062의 "게이트는 술어 인터페이스 뒤의 스텁"은 이 술어 하나를 말한다." (`reviews/round-26-closing.md:13`)
+  > 편집자 결정(26C-03): "【추론】 게이트에 "PR: PR-2"라 적혀도 그 단언이 뒤 PR의 기제(`controls.derived`·`controls.injectTo`는 PR-3, 통지·사건 배달은 PR-4)를 요구하면, 그 단언은 그 기제가 모두 있는 가장 이른 PR에서 하고 PR-2는 자기 기제로 관찰할 수 있는 신호를 단언한다(TEST-069 (라))." (`reviews/round-26-closing.md:32`)
+  > 편집자 결정(26C-03): "【추론】 미룬 단언은 PR-2의 `log.md`와 PR 본문에 사례마다 PR 번호를 단다(TEST-069가 처분 목록에 정한 방식)." (`reviews/round-26-closing.md:37`)
+  > 편집자 결정(26C-04): "【추론】 `controls.active` 게이트(노드 게이트·조각 게이트)는 PR-2가 청사진이 컴파일한 식(`BlueprintExpression.evaluate`)으로 호스트 바퀴에서 실제로 평가하며, 술어 인터페이스 뒤의 대역으로 두지 않는다." (`reviews/round-26-closing.md:45`)
+  > 편집자 결정(26C-04): "【추론】 `if` 게이트만 `record/`가 선언한 술어 인터페이스 뒤에 두고 시험은 대역 하나를 쓰며, 실제 술어는 PR-4의 `compileGuard`가 넣는다." (`reviews/round-26-closing.md:46`)
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:751-780`(정본), `reviews/round-18-closing.md:2797-2798`
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-25), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-98)
@@ -1179,7 +1190,8 @@
   > 통과: 둘 다 참이다.
   > 실패: 두 선택지(가: 한 함수에 가둔 단언 하나를 승인, 나: 단언 없이 목록 읽기마다 원소 검사·복사)를 그대로 소유자에게 올린다.
   > 실패: 그때 오늘 `src/core/nodeFromJSONSchema.ts:55`의 `as InferSchemaNode<Schema>`도 같은 물음의 대상으로 적는다.
-- 보충: 없음
+- 보충:
+  > 편집자 결정(26C-01): "【추론】 TEST-070의 "배열 멤버"는 배열 멤버를 들여오는 PR-5가 같은 조건(`tsc --strict`, `as`·`any` 없음)으로 단언하고, PR-2는 PR-2 공개 형으로 나머지를 단언한다(26C-03)." (`reviews/round-26-closing.md:15`)
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:1019-1023`(정본)
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-37)

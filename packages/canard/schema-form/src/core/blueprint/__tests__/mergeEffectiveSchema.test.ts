@@ -13,6 +13,7 @@ const gate: BlueprintGate = {
   kind: 'active',
   condition: './enabled',
   hostPath: '',
+  evaluationReads: [],
   schemaPath: '#/oneOf/0/controls/active',
 };
 

@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
+import { isArray } from '@winglet/common-utils/filter';
+
 import { blueprint } from '../index';
 import { BlueprintErrorCode } from '../utils/diagnostics/constant';
 
@@ -67,8 +69,8 @@ describe('blueprint explicit type syntax', () => {
   ] as const)('%s', (_id, schema, kind, schemaType, nullable, strategy) => {
     const node = blueprint(schema).root;
     expect(node).toMatchObject({ kind, schemaType, nullable, strategy });
-    expect(Array.isArray(node.schemaType)).toBe(kind === 'union');
-    if (Array.isArray(node.schemaType))
+    expect(isArray(node.schemaType)).toBe(kind === 'union');
+    if (isArray(node.schemaType))
       expect(Object.isFrozen(node.schemaType)).toBe(true);
   });
 

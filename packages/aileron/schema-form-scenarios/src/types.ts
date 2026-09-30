@@ -10,6 +10,14 @@ export interface ScenarioExpectation {
   readonly values?: Readonly<Record<string, unknown>>;
   /** Expected validation errors, indexed by JSON Pointer. */
   readonly errors?: Readonly<Record<string, readonly unknown[]>>;
+  /** Expected settlement health fields on the form root. */
+  readonly diagnostics?: Readonly<{
+    status: 'stable' | 'degraded';
+    cause?: 'budget' | 'expression' | 'injectTarget' | 'sharedConflict';
+    exceededBudget?: 'hostWheel' | 'derive' | 'transition' | 'recursion';
+    iterations?: number;
+    commit?: number;
+  }>;
 }
 
 /** Closed ledger vocabulary; batch interpretation belongs to the injected engine. */

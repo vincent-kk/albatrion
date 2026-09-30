@@ -241,3 +241,8 @@ reviews/round-18-owner-answers.md:46	18	개발계획 계획서 형식	"개발단
 reviews/round-19-owner-answers.md:7	19	형 없는 객체 호스트	"좋습니다. 두번째 길로 가보죠. $ref 로 정의된 스키마도, 해당 노드를 생성하는 시점에 $ref 가 아닌 실제 노드로 풀어낼거고, 그럼 최소한 그 노드들에 대해서는...
 reviews/round-19-owner-answers.md:8	19	`const`만 있는 프로퍼티(X1)	"좋습니다. 가. 수용합니다. 원장을 이 브랜치에서 바로 수정하고, 답변할 내용 만들어주세요" (2026-09-27)
 reviews/round-24-owner-answers.md:7	24	PR #348 편집자 결정 검토	"전반적으로 원장과 원칙을 기반으로 유도한 내용이라 문제가 없다고 보여집니다. 실제 구현을 해보고 난 후, 문제를 찾을 수는 있으니, 엣지케이스로서 테스트 후보로 남거둘 수 있겠습니다만, 기본적으론 판단에 동의합니다" (2026-09-29, `/preview` 댓글)
+reviews/round-27-owner-answers.md:7	27	PR-2 벤치의 느린 행	"PR-2 벤치에서 남은 느린 행을 모두 수용한다" (요지, 2026-09-30)
+reviews/round-27-owner-answers.md:8	27	벤치 기록 문서	"벤치 기록과 성능 개선 이력을 문서로 남긴다. `verification/03-node-and-settle/performance.md`에 쓰고, Bun에서만 격차가 나는 원인 분석도 여기에 담는다" (요지, 2026-09-30)
+reviews/round-27-owner-answers.md:9	27	React 대 JS 코어의 비중	"form의 성능 대부분은 react에 의해 결정되어 큰 문제는 없을 수도 있음(이전 엔진 기록 기준 react가 95, js 코어가 5% 정도)" (2026-09-30)
+reviews/round-27-owner-answers.md:10	27	최종 검사의 자리	"최종 검사는 리액트 jsdom 등에서 평가되어야 함" (2026-09-30)
+reviews/round-27-owner-answers.md:11	27	최적화의 시점	"현재 구현단계에서 최적화를 하는 것은 전체 원장을 흔들 수 있는 문제라, 구현 완료 후, 최적화를 시도할 예정입니다. 그 시점에 참고데이터가 될 수 있도록 기록을 원합니다.(섞이지 않게, 이후 작업으로 잘 분리해서 요청)" (2026-09-30)

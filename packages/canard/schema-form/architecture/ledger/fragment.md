@@ -180,7 +180,10 @@
   > 게이트의 종류는 둘이다. 둘 다 호스트 바퀴 안에서 같은 절차로 평가된다(ADR 0007).
   > - **`if` 게이트**: 스키마다. 검증기 플러그인의 `compileGuard`로 동기 평가한다(ADR 0004). 폼은 `if` 안에 무엇이 오든 그 뜻을 해석하지 않는다(원장 §1.2의 축 1항(폼은 JSON Schema 문법을 해석하지 않는다)).
   > - **`controls.active` 게이트**: 예약 층의 표현식이다. 조각 객체에 달면 조각 게이트, 노드 스키마에 달면 노드 게이트다(아래).
-- 보충: 없음
+- 보충:
+  > 편집자 결정(26C-04): "【추론】 판별 게이트(`{ kind: 'discriminator' }`)는 PR-2가 `./<key>`의 값이 `values`에 드는가로 평가하고 분기의 `controls.active`와 AND 하나로 묶는다(25C-06)." (`reviews/round-26-closing.md:44`)
+  > 편집자 결정(26C-04): "【추론】 `controls.active` 게이트(노드 게이트·조각 게이트)는 PR-2가 청사진이 컴파일한 식(`BlueprintExpression.evaluate`)으로 호스트 바퀴에서 실제로 평가하며, 술어 인터페이스 뒤의 대역으로 두지 않는다." (`reviews/round-26-closing.md:45`)
+  > 편집자 결정(26C-04): "【추론】 `if` 게이트만 `record/`가 선언한 술어 인터페이스 뒤에 두고 시험은 대역 하나를 쓰며, 실제 술어는 PR-4의 `compileGuard`가 넣는다." (`reviews/round-26-closing.md:46`)
 - 상태: 현행
 - 출처: `adr/0002-guard-fragment-model.md:48-51`(정본), `adr/0002-guard-fragment-model.md:33`, `adr/0002-guard-fragment-model.md:190`
 - 닫은 사람: 소유자 답(`reviews/round-9-spec.md:19` 축1), 편집자 결정(10라운드 5차 본문, `adr/0002-guard-fragment-model.md:14`)

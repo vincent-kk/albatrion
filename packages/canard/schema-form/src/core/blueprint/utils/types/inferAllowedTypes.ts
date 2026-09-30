@@ -1,3 +1,5 @@
+import { isArray } from '@winglet/common-utils/filter';
+
 import type { BlueprintSchema, SchemaTypeName } from '../../type';
 import { collectStaticSchemas } from '../analyze/collectStaticSchemas';
 import type { AnalysisContext } from '../analyze/type';
@@ -62,7 +64,7 @@ export const inferAllowedTypes = (
     for (const part of parts) {
       if (typeof part.schema === 'boolean') continue;
       const branches = part.schema[keyword];
-      if (!Array.isArray(branches)) continue;
+      if (!isArray(branches)) continue;
       branches.forEach((branch, index) => {
         const path = `${part.schemaPath}/${keyword}/${index}`;
         if (
