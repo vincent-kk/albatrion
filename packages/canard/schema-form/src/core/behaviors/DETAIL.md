@@ -2,15 +2,16 @@
 
 ## Requirements
 
-- `record < 종류 fractal < behaviors 뿌리 < SchemaNode`이며 종류 fractal과 `navigation`은 서로 의존하지 않습니다. `settle`은 이 표를 import하지 않고 `node.behavior`를 호출합니다(NODE-016, raw-round17 §3).
+- `record < 종류 fractal < behaviors 뿌리 < settle < SchemaNode`이며 종류 fractal과 `navigation`은 서로 의존하지 않습니다. `settle`은 살아 있는 노드의 행을 `node.behavior`로 호출하고 형상 밖 노드의 정적 해석과 빈 값 판정에는 이 fractal의 진입점을 소비합니다(NODE-016, WRITE-082·098).
 - `utils/parse/`는 독립 공개 계약이 아니라 행과 기본 union 입력의 내부 변환입니다. 그 문서 계약은 이 fractal의 DETAIL이 소유합니다(LANDING-150, NODE-056).
 - 이 fractal의 organ을 외부 소비자가 직접 가져올 이유가 없으므로 경계 예외는 없습니다(NODE-016).
 
 ## API Contracts
 
-- `BEHAVIORS`는 `Readonly<{ [type in BlueprintNodeKind]?: Readonly<{ branch?: Behavior; terminal?: Behavior }> }>`의 두 단계 표입니다. 배열 행이 없는 PR-2에서는 바깥 키도 부분 표입니다. 진입점은 표를 이름으로 내보내고, 생성 함수가 청사진의 `kind`·`strategy`로 행을 한 번 고릅니다. 행의 `Self`는 `record`의 제네릭 계약으로 전달하고 종류 모듈이 겉면의 `AnyNode`를 가져오지 않습니다(NODE-002·016·046, 26C-01).
+- `BEHAVIORS`는 `Readonly<{ [type in BlueprintNodeKind]?: Readonly<{ branch?: Behavior; terminal?: Behavior }> }>`의 두 단계 표입니다. 배열 행이 없는 PR-2에서는 바깥 키도 부분 표입니다. 진입점은 표와 정적 `omitEmpty` 빈 값 판정 함수 `isOmittedEmpty`를 이름으로 내보내고, 생성 함수가 청사진의 `kind`·`strategy`로 행을 한 번 고릅니다. 행의 `Self`는 `record`의 제네릭 계약으로 전달하고 종류 모듈이 겉면의 `AnyNode`를 가져오지 않습니다(NODE-002·016·046, VALUE-034, 26C-01).
 - PR-2의 행은 `string.terminal`, `number.terminal`, `boolean.terminal`, `null.terminal`, `union.terminal`, `virtual.branch`, `object.branch`, `object.terminal`뿐입니다. 터미널 배열 행은 06단계에서 추가합니다(NODE-002·047, BLUEPRINT-043, LANDING-065).
 - 행의 칸은 `interpret`, `assemble`, `project`, `finishInput`, `declareChildren`, `type`, `strategy` 순서입니다. 모든 행은 이 칸을 같은 순서로 가지며, 공유 기본 칸 위에 종류의 칸을 덮어 키 순서를 고정합니다. 같은 뜻의 칸은 같은 함수 참조를 씁니다. 여덟 줄을 넘는 칸과 종류 전용 보조는 그 종류의 utils organ에, 두 종류 이상이 쓰는 보조는 이 fractal의 utils organ에 둡니다(NODE-006·009, 26C-01).
+- 정적 `omitEmpty`가 적용된 값 `''`, 키 없는 평범한 `{}`, 빈 `[]`만 형상 밖 잎의 방출 없음으로 판정합니다. 유효 스키마는 정적 선언으로 합칩니다(VALUE-034, WRITE-013, 26C-14).
 - 객체 branch는 비객체 원본 아래에도 자식을 유지하고 각 자식의 `local`을 계산하지만 그 호스트의 자식 방출은 투영에서 제외합니다. 로드된 `null` 아래의 기본값은 편집 상태에만 남습니다(VALUE-036, WRITE-096).
 - `options`의 빈 값 생략·`trim`·키 순서 등 정적 선택은 칸 호출마다 다시 구하지 않습니다. 유효 스키마 메모가 바뀔 때 한 번 계산하고 그 메모와 함께 둡니다(NODE-006, SETTLE-042).
 - parse organ의 이름 붙은 계약은 `isMember(value: unknown, kind: UnionMemberType): boolean`, `convert(value: unknown, kind: UnionMemberType): unknown`, `interpret(value: unknown, spec: UnionSpec): unknown`입니다. `UnionSpec`은 얼린 `kinds`·`mask`·`nullable`을 갖고 기본 `kinds`는 청사진 `schemaType`과 같은 참조입니다. `convert`는 변환 불가 시 입력 참조를 그대로 돌려주고 성공 여부는 할당 없는 별도 판정으로 구별합니다. 세 함수는 순수하고 던지지 않으며 모든 입력에 결과가 있고, `interpret`는 멱등·순서 무관·할당 없음입니다(WRITE-084·093).
