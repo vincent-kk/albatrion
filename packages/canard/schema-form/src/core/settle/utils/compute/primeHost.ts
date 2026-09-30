@@ -24,10 +24,15 @@ export const primeHost = <Self extends SchemaNodeRecord<Self>>(
     if (baseline[entry.name] || !entry.declarations.some((declaration) =>
       declaration.gates.length === 0)) continue;
     const priorChild = hasOwnProperty(prior, entry.name) ? prior[entry.name] : undefined;
-    const child = priorChild ??
+    const key = JSON.stringify([
+      `${node.path}/${escapeSegment(entry.name)}`, entry.node.kind,
+    ]);
+    const pending = context.pendingExits.get(key);
+    const child = priorChild ?? pending ??
       context.root.runtime.nodeFactory(entry, node, context.root.runtime);
+    context.pendingExits.delete(key);
     if (context.hasGates) getGateRegistry(child.runtime).register(child);
-    if (!priorChild) {
+    if (!priorChild && !pending) {
       context.entered.add(child);
       const source = node.raw;
       const sourceInput = source !== null && typeof source === 'object' &&

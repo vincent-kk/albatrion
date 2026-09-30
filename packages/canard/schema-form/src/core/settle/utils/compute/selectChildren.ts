@@ -2,7 +2,6 @@ import { SchemaFormError } from '../../../../errors';
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 import { escapeSegment } from '@winglet/json/pointer';
 import { mergeEffectiveSchema } from '../../../blueprint';
-import { walkSchemaNodes } from '../../../navigation';
 import type { SchemaNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../type';
 import { evaluateGate } from '../gates/evaluateGate';
@@ -15,7 +14,6 @@ import { hasRecursiveExpansion } from './hasRecursiveExpansion';
 import { RECURSIVE_SHAPE_DIVERGED } from '../errors/settleErrorCode';
 import { writeLatentRaw } from '../transition/writeLatentRaw';
 import type { BlueprintChildEntry } from '../../../blueprint';
-import { captureDetachedSchemaNodeReads } from '../readDetachedSchemaNode';
 
 /** Ungated declarations are included by the effective-schema merger itself. */
 const NO_ACTIVE_IDS: readonly number[] = Object.freeze([]);
@@ -113,11 +111,16 @@ export const selectChildren = <Self extends SchemaNodeRecord<Self>>(
       }
       continue;
     }
-    const child = next[entry.name] ?? priorChild ??
+    const key = JSON.stringify([
+      `${node.path}/${escapeSegment(entry.name)}`, entry.node.kind,
+    ]);
+    const pending = context.pendingExits.get(key);
+    const child = next[entry.name] ?? priorChild ?? pending ??
       context.root.runtime.nodeFactory(entry, node, context.root.runtime);
+    context.pendingExits.delete(key);
     if (context.hasGates) getGateRegistry(child.runtime).register(child);
     let entryChanged = false;
-    if (!priorChild && !next[entry.name]) {
+    if (!priorChild && !next[entry.name] && !pending) {
       context.entered.add(child);
       markWrite(child, input, context);
       if (child.behavior.strategy === 'branch')
@@ -167,21 +170,11 @@ export const selectChildren = <Self extends SchemaNodeRecord<Self>>(
   }
   for (const [name, child] of Object.entries(prior))
     if (!next[name]) {
-      context.exited.add(child);
-      walkSchemaNodes(child, (departing) => {
-        if (!departing.runtime.detachedReads?.has(departing))
-          captureDetachedSchemaNodeReads(departing);
-        departing.detached = true;
-        departing.active = false;
-      });
-      getGateRegistry(child.runtime).remove(child);
       const key = JSON.stringify([child.path, child.blueprintNode.kind]);
+      context.pendingExits.set(key, child);
       const source = node.raw;
       writeLatentRaw(context, key, source !== null &&
         typeof source === 'object' && hasOwnProperty(source, name), child.raw);
-      for (const path of [...context.root.runtime.typeMismatchPaths])
-        if (path === child.path || path.startsWith(`${child.path}/`))
-          context.root.runtime.typeMismatchPaths.delete(path);
     }
   const nextChildren = Object.values(next);
   if (nextChildren.length !== before.length ||

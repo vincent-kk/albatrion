@@ -10,16 +10,14 @@ import { readDepartingAncestorPolicy } from './readDepartingAncestorPolicy';
 /**
  * Clear exited raw under node and form policies without changing extras.
  * @param context - Shape exits observed against the previous commit
- * @param cleared - Exits already processed in earlier transition rounds
  * @returns Nothing; changed live parents are scheduled for recalculation
  */
 export const applyExitClearing = <Self extends SchemaNodeRecord<Self>>(
-  context: SettlementContext<Self>, cleared: Set<Self>,
+  context: SettlementContext<Self>,
 ): void => {
   if (context.kind === 'load') return;
   for (const node of context.exited) {
-    if (cleared.has(node) || context.entered.has(node) || !node.detached) continue;
-    cleared.add(node);
+    if (context.entered.has(node) || !node.detached) continue;
     const inherited = readDepartingAncestorPolicy(context, node);
     const retained = captureLatentDescendants(context, node,
       captureExitedRaw(node, inherited, context),

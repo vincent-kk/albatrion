@@ -2,13 +2,10 @@ import type { SchemaNodeRecord, UnionSpec } from '../../../record';
 import type { SettlementContext } from '../../type';
 import { staticSpec } from './staticSpec';
 import { hasOwnProperty } from '@winglet/common-utils/lib';
+import { isPlain } from './isPlain';
 
 /** Declared child names are immutable for one analyzed node template. */
 const DECLARED_NAMES = new WeakMap<object, Set<string>>();
-
-/** Whether a value can merge by named keys without changing the host kind. */
-export const isPlain = (value: unknown): value is Record<string, unknown> =>
-  value !== null && typeof value === 'object' && !Array.isArray(value);
 
 /**
  * Store the original write and static interpretation before gate calculation.

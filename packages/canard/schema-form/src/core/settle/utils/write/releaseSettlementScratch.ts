@@ -8,6 +8,7 @@ import type { SettlementScratch } from '../../../record';
 export const releaseSettlementScratch = <Self>(scratch: SettlementScratch<Self>): void => {
   scratch.entered.clear();
   scratch.exited.clear();
+  scratch.pendingExits.clear();
   scratch.selectedDeclarationIds.clear();
   scratch.writtenInputs.clear();
   scratch.automaticLog.length = 0;

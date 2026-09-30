@@ -14,8 +14,12 @@ import { clearSubtreeState } from './clearSubtreeState';
 export const resetSchemaNodeForm = <Self extends SchemaNodeRecord<Self>>(
   root: Self, value: unknown, option: SetValueOption,
 ): void => {
-  root.runtime.loadSnapshot = setLoadValue(root.runtime.loadSnapshot, '', value);
+  const nextSnapshot = setLoadValue(root.runtime.loadSnapshot, '', value);
   root.runtime.diagnostics = { status: 'stable' };
   clearSubtreeState(root);
-  writeSchemaNode(root, value, 'load', option);
+  try {
+    writeSchemaNode(root, value, 'load', option);
+  } finally {
+    root.runtime.loadSnapshot = nextSnapshot;
+  }
 };

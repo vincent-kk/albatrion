@@ -28,6 +28,8 @@ export interface SettlementContext<Self extends SchemaNodeRecord<Self>> {
   entered: Set<Self>;
   /** Nodes detached from the previous shape during this call. */
   exited: Set<Self>;
+  /** Nodes absent in a middle round and eligible for same-instance reentry. */
+  pendingExits: Map<string, Self>;
   /** Active declaration choices published only after this call commits. */
   selectedDeclarationIds: Map<Self, readonly number[]>;
   /** Original inputs retained for effective-list interpretation. */

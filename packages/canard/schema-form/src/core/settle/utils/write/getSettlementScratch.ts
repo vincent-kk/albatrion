@@ -9,7 +9,7 @@ export const getSettlementScratch = <Self>(runtime: SchemaNodeRuntime<Self>): Se
   const cached = runtime.settlementScratch;
   const scratch: SettlementScratch<Self> = cached && !cached.inUse ? cached : {
     inUse: false,
-    entered: new Set<Self>(), exited: new Set<Self>(),
+    entered: new Set<Self>(), exited: new Set<Self>(), pendingExits: new Map<string, Self>(),
     selectedDeclarationIds: new Map<Self, readonly number[]>(),
     writtenInputs: new Map<Self, unknown>(), automaticLog: [],
     filledNodes: new Set<Self>(),

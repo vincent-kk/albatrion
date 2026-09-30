@@ -9,7 +9,6 @@ import { registerRecalculation } from '../write/registerRecalculation';
 import { staticSpec } from '../write/staticSpec';
 import { isMissingRaw } from './isMissingRaw';
 import { readDefault } from './readDefault';
-import { applyExitClearing } from './applyExitClearing';
 import { getTransitionCap } from './getTransitionCap';
 import { withdrawDetachedFills } from './withdrawDetachedFills';
 
@@ -35,13 +34,12 @@ export const transitionSettlement = <Self extends SchemaNodeRecord<Self>>(
   const cap = getTransitionCap(context.root.runtime.blueprint);
   const filled = context.hasGates ? new Set<string>() : undefined;
   const filledNodes = context.hasGates ? undefined : new Set<Self>();
-  const cleared = new Set<Self>();
   let rounds = 0;
   while (true) {
     context.automaticChanged = false;
-    applyExitClearing(context, cleared);
     for (const node of [...context.entered].sort((left, right) => left.depth - right.depth)) {
-      if (node.detached) continue;
+      if (node.detached || context.pendingExits.has(JSON.stringify([
+        node.path, node.blueprintNode.kind]))) continue;
       if (filledNodes) {
         if (filledNodes.has(node)) continue;
         filledNodes.add(node);
@@ -61,7 +59,8 @@ export const transitionSettlement = <Self extends SchemaNodeRecord<Self>>(
       context.automatic = false;
     }
     for (const [node, original] of context.writtenInputs) {
-      if (node.detached) continue;
+      if (node.detached || context.pendingExits.has(JSON.stringify([
+        node.path, node.blueprintNode.kind]))) continue;
       const effective = effectiveType(node);
       if (effective === node.schemaType) continue;
       context.automatic = true;

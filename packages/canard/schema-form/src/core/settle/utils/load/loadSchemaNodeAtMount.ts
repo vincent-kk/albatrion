@@ -13,7 +13,11 @@ import { setLoadValue } from './setLoadValue';
 export const loadSchemaNodeAtMount = <Self extends SchemaNodeRecord<Self>>(
   root: Self, value: unknown, option: SetValueOption,
 ): void => {
-  root.runtime.loadSnapshot = setLoadValue(root.runtime.loadSnapshot, '', value);
+  const nextSnapshot = setLoadValue(root.runtime.loadSnapshot, '', value);
   root.runtime.diagnostics = { status: 'stable' };
-  writeSchemaNode(root, value, 'load', option);
+  try {
+    writeSchemaNode(root, value, 'load', option);
+  } finally {
+    root.runtime.loadSnapshot = nextSnapshot;
+  }
 };

@@ -2,9 +2,30 @@ import { describe, expect, it } from 'vitest';
 
 import { makeSchemaNodeTree } from '../../__tests__/makeSchemaNodeTree';
 import { SetValueOption } from '../index';
+import { SchemaNode } from '../SchemaNode';
+import { loadSchemaNodeAtMount, resetSchemaNodeForm } from '../../settle';
 
 // filid:contract surface-detached
 describe('detached SchemaNode references', () => {
+  it('26C-10 freezes the previous load mismatch and default on form reset', () => {
+    const { root } = makeSchemaNodeTree({ type: 'object', properties: {
+      flag: { type: 'boolean' },
+      target: { type: 'number', controls: { active: '../flag' } },
+    } });
+    if (!(root instanceof SchemaNode))
+      throw new Error('Expected a runtime SchemaNode');
+    const runtimeRoot: SchemaNode = root;
+    loadSchemaNodeAtMount(runtimeRoot, { flag: true, target: 'bad' }, SetValueOption.Overwrite);
+    const target = root.find('/target');
+    if (!target) throw new Error('Expected the loaded target');
+    expect(target.typeMismatch).toBe(true);
+    resetSchemaNodeForm(runtimeRoot, { flag: false, target: 'other' }, SetValueOption.Overwrite);
+    expect(Reflect.get(target, 'detached')).toBe(true);
+    expect(target.typeMismatch).toBe(true);
+    expect(target.typeMismatches).toEqual(['/target']);
+    expect(target.defaultValue).toBe('bad');
+  });
+
   const groupedTree = () => makeSchemaNodeTree({ type: 'object', properties: {
     flag: { type: 'boolean' },
     group: { type: 'object', controls: { active: '../flag' }, properties: {

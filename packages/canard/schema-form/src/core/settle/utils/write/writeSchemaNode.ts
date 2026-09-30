@@ -5,7 +5,8 @@ import type { SchemaNodeWriteKind, SettlementContext } from '../../type';
 import { commitSettlement } from '../commit/commitSettlement';
 import { computeNode } from '../compute/computeNode';
 import { getGateRegistry } from '../gates/getGateRegistry';
-import { isPlain, markWrite } from './markWrite';
+import { markWrite } from './markWrite';
+import { isPlain } from './isPlain';
 import { registerRecalculation } from './registerRecalculation';
 import { staticSpec } from './staticSpec';
 import { BUDGET_EXCEEDED } from '../errors/settleErrorCode';
@@ -16,6 +17,7 @@ import { promoteHostForChildWrite } from './promoteHostForChildWrite';
 import { getTransitionCap } from '../transition/getTransitionCap';
 import { getSettlementScratch } from './getSettlementScratch';
 import { releaseSettlementScratch } from './releaseSettlementScratch';
+import { finalizeExits } from '../transition/finalizeExits';
 
 /**
  * Settle one caller write through marking, calculation, and a single commit.
@@ -59,6 +61,7 @@ export const writeSchemaNode = <Self extends SchemaNodeRecord<Self>>(
     loadScope: kind === 'load' ? node : undefined,
     entered: scratch.entered,
     exited: scratch.exited,
+    pendingExits: scratch.pendingExits,
     selectedDeclarationIds: scratch.selectedDeclarationIds,
     writtenInputs: scratch.writtenInputs,
     automaticLog: scratch.automaticLog,
@@ -75,10 +78,6 @@ export const writeSchemaNode = <Self extends SchemaNodeRecord<Self>>(
   };
   try {
     if (context.hasGates) getGateRegistry(context.root.runtime).register(context.root);
-    if (kind === 'load')
-      for (const path of node.runtime.typeMismatchPaths)
-        if (!node.path || path === node.path || path.startsWith(`${node.path}/`))
-          node.runtime.typeMismatchPaths.delete(path);
     if (kind === 'callerReplace' || kind === 'load' ||
       (kind === 'callerPartial' && (input === null || typeof input !== 'object' ||
         Array.isArray(input) || node.behavior.strategy !== 'branch')))
@@ -99,6 +98,11 @@ export const writeSchemaNode = <Self extends SchemaNodeRecord<Self>>(
     }
     if (!context.failure) transitionSettlement(context);
     if (context.cause === 'budget') restoreSourceB(context, explicitRaw);
+    finalizeExits(context);
+    if (kind === 'load')
+      for (const path of node.runtime.typeMismatchPaths)
+        if (!node.path || path === node.path || path.startsWith(`${node.path}/`))
+          node.runtime.typeMismatchPaths.delete(path);
     commitSettlement(context);
     if (context.failure) throw context.failure;
   } finally {

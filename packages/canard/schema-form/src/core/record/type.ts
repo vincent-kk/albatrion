@@ -153,6 +153,8 @@ export interface SettlementScratch<Self> {
   inUse: boolean;
   entered: Set<Self>;
   exited: Set<Self>;
+  /** Temporarily absent occurrences, addressed by path and blueprint kind. */
+  pendingExits: Map<string, Self>;
   selectedDeclarationIds: Map<Self, readonly number[]>;
   writtenInputs: Map<Self, unknown>;
   automaticLog: { node: Self; previousRaw: unknown; previousExtras: unknown }[];
