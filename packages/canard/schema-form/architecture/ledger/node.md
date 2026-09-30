@@ -296,6 +296,7 @@
   > 편집자 결정(18C-31): "PR: PR-2." (`reviews/round-18-closing.md:901`)
   > 편집자 결정(18C-31): "통과: 위 합격선 안이다." (`reviews/round-18-closing.md:902`)
   > 편집자 결정(18C-31): "실패: TEST-027의 절차(18C-26의 기록·수용 규칙)로 올린다." (`reviews/round-18-closing.md:903`)
+  > 소유자(27라운드, PR-2 벤치의 느린 행): "PR-2 벤치에서 남은 느린 행을 모두 수용한다" (`reviews/round-27-owner-answers.md:7`) — 요지. B2의 합격선(18C-31, 추정의 1.5배) 초과와 B3(JSC 숨은 맵 확인 불가)을 소유자가 받아들였다. 이 추정은 그대로 두고, 최적화는 구현 완료 뒤의 별도 작업이다(TEST-027).
 - 상태: 현행
 - 출처: `09-landing-and-test-strategy.md:115`(정본), `reviews/round-18-agenda.md:68`, `reviews/round-18-closing.md:890-896,901-903`
 - 닫은 사람: 17라운드 스웜 수렴(편집자 결정, `reviews/raw-round17-node-structure.md` §7), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-31)

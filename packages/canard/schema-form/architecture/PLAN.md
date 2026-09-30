@@ -97,4 +97,5 @@
 | 2026-09-29 | 25라운드: 02(#347)와 01(#348) 사이의 어긋남 16건을 원장 관리자가 편집자 결정으로 닫음(25C-01~12, 보충 줄만 추가). 01의 상태는 머지(절 통과 대기). 보정 PR `fix/schema-form-realign-01-02`가 코드·문서를 따라감 | `reviews/round-25-closing.md` |
 | 2026-09-29 | 보정 PR #349 머지 확인(`85e7d01af`, 10:28Z). 03의 의존(02·보정)이 풀림 | [#349](https://github.com/vincent-kk/albatrion/pull/349) |
 | 2026-09-29 | 26라운드: 03(PR-2) 착수 전 원장 해석 여섯 건을 원장 관리자가 편집자 결정으로 닫음(26C-01~09, 보충 줄만 추가). 겉면 멤버는 기제의 PR에서, `controls.active` 게이트는 PR-2가 실제 평가, 평가 자리 L은 PR-2가 청사진에 더함. `plan/03-node-and-settle/verification.md:26`의 겉면 문장은 26C-01로 바꿔 읽음 | `reviews/round-26-closing.md` |
+| 2026-09-30 | 27라운드: 소유자가 PR-2 벤치의 느린 행을 모두 수용(TEST-027 충족), 벤치 기록은 `verification/03-node-and-settle/performance.md`, 새 엔진의 React·jsdom 성능 평가는 PR-7 전환의 게이트, 최적화는 구현 완료 뒤 별도 작업으로 분리. 소유자 답 5행, 보충 줄만 추가 | `reviews/round-27-owner-answers.md` |
 | 2026-09-29 | 03 노드 트리·정착 착수 — 소유자 승인. 원장 질의는 원장 관리 세션 `albatrion-f8`로 | `feat/schema-form-node-and-settle`, `plan/03-node-and-settle/log.md` |

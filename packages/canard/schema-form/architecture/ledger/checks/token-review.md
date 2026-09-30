@@ -453,3 +453,7 @@ node ledger/checks/tokens.mjs check <목록> ledger/*.md
 ## 26라운드(03 착수 전 해석 여섯 건) 반영 뒤의 잔여 (2026-09-29)
 
 잔여 484 그대로다(`{"total":2492,"missing":484}`). HANDOFF §1의 26라운드 문단이 새로 든 코드 토큰(`EffectiveSchema { schema, typeConflict }`, `controls.active`, `FormHandle.reset()`)은 같은 라운드의 보충 줄이 원장에 함께 들었다. 새 항목은 없고 보충 줄 75개(26C 인용 74, 18C-25 정본 줄 인용 1)만 더했다. 26C-06(루트가 드는 자료의 저장 자리)의 보충 9줄과 26C-07(재귀 템플릿의 평가 자리 L)의 보충 7줄, 26C-08(떼어진 노드의 `active`)의 보충 7줄, 26C-09(자기 부정 게이트)의 보충 4줄이 뒤에 더해졌고 잔여는 그대로 484다.
+
+## 27라운드(소유자 답 5행) 반영 뒤의 잔여 (2026-09-30)
+
+잔여 484 그대로다. HANDOFF §1·§2의 27라운드 문단이 새로 든 코드 토큰(`verification/03-node-and-settle/performance.md`)은 같은 라운드의 TEST-027 보충이 원장에 함께 들었다. 새 항목은 없고 소유자 답 5행과 보충 줄 6개만 더했다.
