@@ -101,3 +101,4 @@
 | 2026-09-29 | 03 노드 트리·정착 착수 — 소유자 승인. 원장 질의는 원장 관리 세션 `albatrion-f8`로 | `feat/schema-form-node-and-settle`, `plan/03-node-and-settle/log.md` |
 | 2026-09-30 | 03 PR #350 머지 확인(`0705217d5`, 13:30Z). 04·05·06의 의존이 풀림 | [#350](https://github.com/vincent-kk/albatrion/pull/350) |
 | 2026-09-30 | 04 파생 + 상태 키·제어 착수 — 소유자 승인. D-1은 05 착수 때 다시 올린다. 원장 질의는 원장 관리 세션 `albatrion-79`로 | `feat/schema-form-derive-and-controls`, `plan/04-derive-and-controls/log.md` |
+| 2026-09-30 | 28라운드: 04(PR-3+PR-6) 실행 계획 초안의 원장 해석 일곱 건과 후속 둘을 원장 관리자가 편집자 결정으로 닫음(28C-01~08, 보충 줄만 추가). 정착 기록은 런타임 칸에 마지막 하나, `enabled = active && visible`, `@`는 맥락 칸(03의 extras 읽기는 04가 고침), `setContext`·맥락 에지는 PR-3, `unsetOnInactive` 식 throw는 유지, TEST-071 값 크기의 뜻, `watchValues`·`node.context`는 04 | `reviews/round-28-closing.md` |

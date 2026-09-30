@@ -375,6 +375,9 @@
   > | `visible` | 거짓이면 숨기기만 한다. 방출은 그대로다. 전환은 노드 생성이 아니다 | 계산의 끝 | 형용사 |
 - 보충:
   > "| `visible` | 형용사 | 노드 | 계산의 끝 | 표시만 가린다. 형상·값·방출을 바꾸지 않는다 | — | 전환은 생성이 아니다 |" (`08-design-a-to-z.md:105`)
+  > 편집자 결정(28C-02): "【추론】 계산 게터 `enabled`는 `active && visible`이다: 원장은 이 게터를 이름만 적었고(26C-01, LANDING-066, `reviews/raw-round17-node-structure.md:136`) 뜻을 새로 정하지 않았으므로 옛 엔진 `AbstractNode.enabled`의 뜻을 유지한다(뜻을 바꾸는 이주는 LANDING 이주 항목으로 적는 것이 원장의 방식이고 `enabled`에는 그런 항목이 없다)." (`reviews/round-28-closing.md:22`)
+  > 편집자 결정(28C-02): "【추론】 살아 있는(형상 안) 노드에서는 `active`가 늘 참이므로(26C-08) `enabled`는 `visible`과 같고, 잠금(`readOnly`·`disabled`)과는 무관하다." (`reviews/round-28-closing.md:23`)
+  > 편집자 결정(28C-02): "【추론】 `visible`·`readOnly`·`disabled` 게터는 CONTROLS-082의 로컬 결합 결과(잠금은 OR, 표시는 AND, 자리 넷)를 돌려주며, Form 속성의 전체 잠금은 렌더 계층이 그 위에 OR하므로 코어 게터에 들지 않는다." (`reviews/round-28-closing.md:24`)
 - 상태: 현행
 - 출처: `adr/0003-group-namespace.md:80,81,83`(정본), `08-design-a-to-z.md:105`, `07-conclusions.md:123`
 - 닫은 사람: 소유자 답(`reviews/round-9-spec.md:64` 예약 층의 뜻), 편집자 결정(10라운드, ADR 0003 5차 본문 `adr/0003-group-namespace.md:10`)
@@ -389,6 +392,8 @@
   > | `readOnly`, `disabled` | 잠금. 그 노드에만 걸린다. 값·형상·방출을 바꾸지 않는다 | 계산의 끝에서 한 번(코어에 글로벌 없음) | 형용사 |
 - 보충:
   > "| `readOnly`, `disabled` | 형용사 | 노드 | 계산의 끝 | 그 노드의 입력을 잠근다. 자손에 내려가지 않는다 | — | — |" (`08-design-a-to-z.md:106`)
+  > 편집자 결정(28C-02): "【추론】 `visible`·`readOnly`·`disabled` 게터는 CONTROLS-082의 로컬 결합 결과(잠금은 OR, 표시는 AND, 자리 넷)를 돌려주며, Form 속성의 전체 잠금은 렌더 계층이 그 위에 OR하므로 코어 게터에 들지 않는다." (`reviews/round-28-closing.md:24`)
+  > 편집자 결정(28C-02): "【추론】 떼어진 노드의 `visible`·`readOnly`·`disabled`는 NODE-044의 고정 읽기이며, 26C-10의 `typeMismatch` 등과 같이 떼어질 때 그 노드가 형상에 있던 마지막 커밋의 값을 한 번 갈무리한다; 26C-08의 예외는 `active`와 그것에서 도출되는 `enabled`에만 있다." (`reviews/round-28-closing.md:25`)
 - 상태: 현행
 - 출처: `adr/0003-group-namespace.md:80,81,84`(정본), `08-design-a-to-z.md:106`, `07-conclusions.md:123`
 - 닫은 사람: 소유자 답(`reviews/round-13-owner-answers.md:7` 1 잠금 규칙)
@@ -403,6 +408,8 @@
   > | `unsetOnInactive` | 나감 정책이 참으로 정해진 노드가 나갈 때 원본을 한 번 비운다. 기본 꺼짐. 네 층(노드 > `children` 항목의 `controls` > 조각의 `controls` > Form 속성), 같은 층은 하나라도 유지면 유지. 나가는 객체·분기에 켠 정책은 함께 나가는 하위 트리로 내려가고, 자손이 스스로 적은 선언이 가까운 순서로 이긴다(17라운드 소유자 답 R17-2 ㄴ, 08 §8.4) | 전이 | 형용사(어느 선언이 걸리는가도, 걸린 선언이 식일 때의 값도 직전 커밋의 것이며 나가는 순간 새로 평가하지 않는다. Form 속성은 `boolean`만) |
 - 보충:
   > "| `unsetOnInactive` | 형용사 | 노드, `children` 항목의 `controls`, 조각의 `controls`, Form 속성 | 전이 | 정책이 참으로 정해진 노드가 나갈 때 원본을 한 번 비운다. 나가는 객체·분기에 켠 정책은 함께 나가는 하위 트리로 내려가고, 자손이 스스로 적은 선언이 가까운 순서로 이긴다(17라운드 소유자 답 R17-2 ㄴ, §8.4). 어느 선언이 걸리는가도, 걸린 선언이 식일 때의 값도 직전 커밋(그 노드가 형상에 있던 마지막 커밋)의 것이다. Form 속성은 `boolean`만. 기본 꺼짐 | 로드에는 나감이 없다 | 나갈 때 한 번 |" (`08-design-a-to-z.md:112`)
+  > 편집자 결정(28C-05): "【추론】 ERROR-122의 자리별 값 표에 행 하나를 더해 읽는다: `controls.unsetOnInactive`의 식(노드 자신, `controls.children` 항목의 `controls`, 조각의 `controls`)이 직전 커밋의 방출 트리에서 던지면 그 선언은 "유지"다." (`reviews/round-28-closing.md:55`)
+  > 편집자 결정(28C-05): "【추론】 층 규칙은 그대로다: 그 층의 유지가 아래 층의 비움을 덮는다(세부가 포괄을 덮는다)." (`reviews/round-28-closing.md:57`)
 - 상태: 현행
 - 출처: `adr/0003-group-namespace.md:80,81,85`(정본), `08-design-a-to-z.md:112`, `07-conclusions.md:128`
 - 닫은 사람: 소유자 답(`reviews/round-13-owner-answers.md:8` 2 나감 비움 기본값), 소유자 답(`reviews/round-13-owner-answers.md:17` 나감 정책 키 이름), 소유자 답(`reviews/round-17-owner-answers.md:10` R17-2), 소유자 답(`reviews/round-17-owner-answers.md:13` 통보 2), 편집자 결정(13라운드, 네 층과 같은 층의 유지 우선 `reviews/round-13-owner-review.md:66`)
@@ -473,6 +480,8 @@
   > | `resetInteraction` | 식이 참이 되면 `dirty`·`touched`를 초기화한다. 값은 건드리지 않는다. 옛 이름 `pristine` | 커밋 | 동사 |
 - 보충:
   > "| `resetInteraction` | 동사 | 노드 | 커밋 | 식이 참이 되면 `dirty`·`touched`를 초기화한다. 값은 건드리지 않는다 | `unsetValue`와 같은 시점 규칙 | 같음 |" (`08-design-a-to-z.md:111`)
+  > 편집자 결정(28C-04): "【추론】 `DisableAutomaticWrites`로 억제한 로드(`FormHandle.reset(DisableAutomaticWrites)` 등)에서도 `controls.resetInteraction`은 커밋 단계에서 로드된 값으로 판정하고 참이면 `dirty`·`touched`를 비운다." (`reviews/round-28-closing.md:47`)
+  > 편집자 결정(28C-04): "【추론】 억제 비트의 범위는 그 호출이 일으킨 예약 층의 자동 쓰기(채움, `controls.derived`, `controls.injectTo`, `controls.unsetValue`, 나감의 비움)이고, `controls.resetInteraction`은 원본 쓰기도 예약 층의 자동 쓰기도 아니므로(EVENT-012) 그 범위 밖이다; 포커스 아웃 `trim`은 호출 비트가 아니라 Form 속성 `disableAutomaticWrites`만이 억제한다(21C-01, WRITE-100)." (`reviews/round-28-closing.md:48`)
 - 상태: 현행
 - 출처: `adr/0003-group-namespace.md:80,81,90`(정본), `08-design-a-to-z.md:111`, `07-conclusions.md:127`
 - 닫은 사람: 소유자 답(`reviews/round-12-owner-answers.md:15` 7 "input을 초기화"), 소유자 답(`reviews/round-12-owner-answers.md:13` 5 `&clearValue` 두 문장), 소유자 답(`reviews/round-9-spec.md:68` pristine 정정), 소유자 답(`reviews/round-10-owner-answers.md:32` E-5)
@@ -517,6 +526,9 @@
 - 보충:
   > "| `watch` | 선언 | 노드 | 청사진·표시 | 의존 경로 선언. 식이 읽는 경로를 정적으로 알 수 없을 때 작성자가 적는다. 경로의 값은 순서대로 공개 prop `watchValues`로 입력에 전달된다(`src/types/formTypeInput.ts:59`). 선언이 여럿이면 의존은 모든 선언의 합집합(청사진, 정적)이고 `watchValues`는 유효 스키마의 `controls.watch`(켜진 선언 가운데 전순서에서 나중 것)이며 한 선언 안의 순서와 중복은 그대로다(17라운드 스웜 수렴(편집자 결정)) | — | — |" (`08-design-a-to-z.md:115`)
   > "| `&watch` | `string\|string[]`. 명시적 의존 경로 | 유지 | 유지 | `getObservedValuesFactory.ts:29` / `adr/0003:25` |" (`05-before-after.md:44`)
+  > 편집자 결정(28C-07): "【추론】 코어 게터 `watchValues`(CONTROLS-032)는 PR-6, 곧 04의 겉면 멤버다: `reviews/raw-round17-node-structure.md:136`이 계산 상태 게터 여섯 가운데 `active`를 뺀 다섯을 PR-6으로 적었고, 26C-01이 LANDING-066의 넷만 인용한 것은 그 목록을 닫은 것이 아니다." (`reviews/round-28-closing.md:75`)
+  > 편집자 결정(28C-07): "【추론】 26C-01의 규칙("기제를 들여오는 PR")으로도 같다: `watchValues`의 기제 — 유효 스키마의 `controls.watch` 선택(나중 승)과 방출 트리의 경로 읽기(CONTROLS-080 (5)) — 는 상태 키·제어 단계의 것이다." (`reviews/round-28-closing.md:76`)
+  > 편집자 결정(28C-07): "【추론】 `FormTypeInputProps.watchValues`로 넘기는 일은 PR-7 렌더 계층이고, LANDING-137(`omitEmpty` 아래 빈 문자열이 `undefined`)은 게터가 방출 트리를 읽는 결과이므로 PR-6의 게터에 든다; EVENT-064의 계산 상태 비트에 `watchValues`가 드는 것은 PR-4 배달의 몫이다." (`reviews/round-28-closing.md:77`)
 - 상태: 현행
 - 출처: `adr/0003-group-namespace.md:80,81,93`(정본), `08-design-a-to-z.md:115`, `07-conclusions.md:124`, `05-before-after.md:44`
 - 닫은 사람: 편집자 결정(10라운드, ADR 0003 5차 본문 `adr/0003-group-namespace.md:10`), 17라운드 스웜 수렴(편집자 결정, `08-design-a-to-z.md:115`; 선언이 여럿일 때)
@@ -1255,6 +1267,15 @@
   > 【추론】 로드 때는 로드 시점의 맥락으로 평가한다.
 - 보충:
   > 편집자 결정(18C-91): "【추론】 CONTROLS-080 (5)에 식의 경로가 객체의 자기 키와 배열의 색인으로만 내려가고 원시 값 아래는 `undefined`라는 것(`reviews/round-18-owner-answers.md:29`)을 보충하며, 그래서 union 값이 `"abc"`일 때 `./slot/length`는 `undefined`다." (`reviews/round-18-closing.md:2547`)
+  > 편집자 결정(28C-03): "【추론】 식과 `controls.injectTo`의 `ctx.context`가 보는 `@`의 값은 트리마다 하나인 `SchemaNodeRuntime`의 맥락 칸이다(26C-06, NODE-045의 절차): 트리 생성 때 바인딩이 준 맥락 객체 하나를 받고, 없으면 `{}`다." (`reviews/round-28-closing.md:33`)
+  > 편집자 결정(28C-03): "【추론】 `FormProvider`의 맥락과 Form 속성 `context`를 얕게 병합하는 것은 바인딩의 일이며, 코어는 병합된 객체 하나만 받는다." (`reviews/round-28-closing.md:34`)
+  > 편집자 결정(28C-03): "【추론】 03(PR-2)이 `@`를 호스트의 `extras`로 읽은 것(`src/core/settle/utils/paths/resolveDependencyPath.ts:5-11`, `src/core/settle/utils/gates/evaluateGate.ts:80`, `src/core/settle/utils/gates/getGateRegistry.ts:155`의 호스트 경로 치환, `src/core/settle/utils/write/getDependencyIndex.ts:32,42`의 역의존 표 제외, 시험 `src/core/settle/__tests__/settle.gates.test.ts:72-84`)은 CONTROLS-080 (3) "`@`는 맥락이다"와 (6) "선언되지 않은 키면 `extras`의 값"(경로로 읽는다)에 어긋나는 결함이며 원장에 근거가 없다(03의 기록에 있는 `@` 관련 결정은 평가 자리 L의 계산에서 `@`를 세지 않는다는 것뿐이다)." (`reviews/round-28-closing.md:36`)
+  > 편집자 결정(28C-03): "【추론】 맥락 변경의 진입은 바인딩 전용 내부 통로 `setContext`(가칭, SURFACE-055·NODE-010)이고, 그것이 도는 정착(역의존 표의 `@` 항목이 가리키는 노드와 그 조상의 재계산, `@`를 읽는 `derived`·`unsetValue`·`resetInteraction`에게의 에지)은 PR-3의 기제다: 에지 소비와 파생이 PR-3이고(LANDING-063), 원장이 PR을 적지 않은 것은 그 기제를 들여오는 PR에 든다(26C-01)." (`reviews/round-28-closing.md:38`)
+  > 편집자 결정(28C-03): "【추론】 `controls.injectTo`는 맥락 변경으로 발화하지 않는다(CONTROLS-080 (8))." (`reviews/round-28-closing.md:40`)
+  > 편집자 결정(28C-08): "【추론】 맥락 변경의 정착은 로드가 아니므로 에지의 기준점은 직전 커밋이다(CONTROLS-080 (8) "기준점은 SETTLE-004대로 따르고, 같음 판정은 18C-50을 따른다")." (`reviews/round-28-closing.md:85`)
+  > 편집자 결정(28C-08): "【추론】 같은 참조가 오면 바뀜이 없어 정착이 돌지 않고, 내용이 같은 새 객체도 "깊이 같은 값은 같은 참조로 본다"에 따라 바뀜이 아니어서 정착이 돌지 않는다(같음은 18C-50 (가)로 판정한다)." (`reviews/round-28-closing.md:86`)
+  > 편집자 결정(28C-08): "【추론】 바뀌었으면 역의존 표의 `@` 항목이 가리키는 노드와 그 조상을 재계산 목록에 넣고, `@`를 읽는 게이트·상태 키는 그 재계산에서 다시 판정하며, `@`를 읽는 `derived`·`unsetValue`·`resetInteraction`에게는 에지이고 `injectTo`는 발화하지 않는다." (`reviews/round-28-closing.md:87`)
+  > 편집자 결정(28C-08): "【추론】 `setContext`는 억제 비트를 받지 않는다(옵션의 자리는 WRITE-015가 `setValue(V, option)`·`reset(option)`·마운트로, WRITE-091이 입력 `onChange`로 정한 것뿐이다); 호출 옵션이 없으므로 Form 속성 `disableAutomaticWrites`가 그 정착의 자동 쓰기에 기본값으로 든다(21C-01의 포커스 아웃 `trim`과 같은 모양)." (`reviews/round-28-closing.md:88`)
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:311-365`(정본), `reviews/round-18-closing.md:2547`
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-13), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-91)
@@ -1297,7 +1318,8 @@
   > 【추론】 원장은 표준 `readOnly`를 주석이 아니라 상태 키, 곧 노드의 잠금으로 읽는다.
   > 【추론】 SCHEMA-003(13라운드 소유자 답 1로 닫힘)이 그렇게 적고, 병합표는 상태 키를 주석과 따로 적는다(SCHEMA-010).
   > 【추론】 그래서 D-7은 잠금에 닿지 않고, 이 결합은 소유자 답과 어긋나지 않는다.
-- 보충: 없음
+- 보충:
+  > 편집자 결정(28C-02): "【추론】 `visible`·`readOnly`·`disabled` 게터는 CONTROLS-082의 로컬 결합 결과(잠금은 OR, 표시는 AND, 자리 넷)를 돌려주며, Form 속성의 전체 잠금은 렌더 계층이 그 위에 OR하므로 코어 게터에 들지 않는다." (`reviews/round-28-closing.md:24`)
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:1922-1936`(정본)
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-69)

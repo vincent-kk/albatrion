@@ -1869,7 +1869,10 @@
   > | 상태 키(`controls.visible`·`controls.readOnly`·`controls.disabled`, 조각과 `controls.children`의 `controls`) | 그 선언은 없는 것이다 |
   > | 파생 규칙(`controls.derived`·`controls.injectTo`·`controls.unsetValue`), 동적으로만 아는 `controls.injectTo` 대상이 없음 | 그 규칙을 그 라운드의 후보에서 빼고 에지를 소비한다 |
   > | `controls.resetInteraction` | 그 판정은 거짓이다 |
-- 보충: 없음
+- 보충:
+  > 편집자 결정(28C-05): "【추론】 ERROR-122의 자리별 값 표에 행 하나를 더해 읽는다: `controls.unsetOnInactive`의 식(노드 자신, `controls.children` 항목의 `controls`, 조각의 `controls`)이 직전 커밋의 방출 트리에서 던지면 그 선언은 "유지"다." (`reviews/round-28-closing.md:55`)
+  > 편집자 결정(28C-05): "【추론】 "선언 없음"(아래 층으로 떨어짐)이 아니다: 되돌릴 수 없는 쓰기는 만장일치이고(WRITE-031) 던진 식은 비움에 찬성한 표가 아니며, 아래 층(Form 속성)이 참일 때 작성자의 잘못으로 커밋된 값을 잃게 되어 ERROR-125의 원칙(작성자의 잘못으로 커밋된 값을 잃지 않는다)에 어긋난다." (`reviews/round-28-closing.md:56`)
+  > 편집자 결정(28C-05): "【추론】 던진 사실은 다른 자리와 같이 `EXPRESSION_THREW`로 사슬 끝에서 throw하고, 그 식을 평가한 정착의 커밋은 `degraded`다(ERROR-126)." (`reviews/round-28-closing.md:58`)
 - 상태: 현행
 - 출처: `adr/0014-error-policy.md:190-195`(정본, ERROR-033에서 분할)
 - 닫은 사람: 편집자 결정(17라운드, `adr/0014-error-policy.md:188`)
@@ -1905,7 +1908,8 @@
 
 - 결정:
   > 식이나 가드가 던져 거짓이 된 게이트로 나간 노드에는 나감 비움을 적용하지 않는다(작성자의 잘못으로 커밋된 값을 잃지 않는다).
-- 보충: 없음
+- 보충:
+  > 편집자 결정(28C-05): "【추론】 "선언 없음"(아래 층으로 떨어짐)이 아니다: 되돌릴 수 없는 쓰기는 만장일치이고(WRITE-031) 던진 식은 비움에 찬성한 표가 아니며, 아래 층(Form 속성)이 참일 때 작성자의 잘못으로 커밋된 값을 잃게 되어 ERROR-125의 원칙(작성자의 잘못으로 커밋된 값을 잃지 않는다)에 어긋난다." (`reviews/round-28-closing.md:56`)
 - 상태: 현행
 - 출처: `adr/0014-error-policy.md:197#3`(정본, ERROR-033에서 분할)
 - 닫은 사람: 편집자 결정(17라운드, `adr/0014-error-policy.md:197`)
@@ -1916,7 +1920,8 @@
 
 - 결정:
   > 어느 자리든 식이나 가드가 던지면 그 커밋은 `degraded`다(§5).
-- 보충: 없음
+- 보충:
+  > 편집자 결정(28C-05): "【추론】 던진 사실은 다른 자리와 같이 `EXPRESSION_THREW`로 사슬 끝에서 throw하고, 그 식을 평가한 정착의 커밋은 `degraded`다(ERROR-126)." (`reviews/round-28-closing.md:58`)
 - 상태: 현행
 - 출처: `adr/0014-error-policy.md:197#4`(정본, ERROR-033에서 분할)
 - 닫은 사람: 소유자 답(`reviews/round-17-owner-answers.md:9` R17-1)
@@ -2347,6 +2352,11 @@
   > 편집자 결정(25C-01): "【추론】 ERROR-164 `DISCRIMINATOR_MISMATCH` 행의 "선언 사이 값이 다름"은 별도 코드가 아니라 정적 연언 행의 사건을 판별 관점에서 적은 것이다." (`reviews/round-25-closing.md:11`)
   > 편집자 결정(25C-12): "【추론】 한 노드에 모인 선언들이 서로 다른 `controls.discriminator` 키를 적으면 SCHEMA-013대로 청사진 오류이고 코드는 `DISCRIMINATOR_MISMATCH`이며, ERROR-164 그 행의 "선언 사이 값이 다름"은 바로 이 경우를 뜻한다." (`reviews/round-25-closing.md:113`)
   > 편집자 결정(25C-12): "【추론】 그래서 `DISCRIMINATOR_MISMATCH`는 넷이다: 키가 어느 분기에도 없음(`reason: 'missing'`), 분기끼리 종류가 다름(`reason: 'kind'`), 분기 사이 값이 겹침(`reason: 'overlap'`), 같은 노드의 선언 사이 판별 키가 다름(`reason: 'key'`, details `{ propertyName, other, reason }`); 25C-01의 둘째·셋째 문장은 이 넷으로 바꿔 읽는다." (`reviews/round-25-closing.md:114`)
+  > 편집자 결정(28C-01): "【추론】 ERROR-159 정착 추적 행의 기록은 트리마다 하나인 `SchemaNodeRuntime`의 칸에 들며(26C-06), 칸을 더하는 절차는 NODE-045대로 `record/`의 선언을 고치고 그 대가를 레코드 `DETAIL.md`에 적는 것이다." (`reviews/round-28-closing.md:9`)
+  > 편집자 결정(28C-01): "【추론】 그 칸은 마지막 정착의 기록 하나만 들고 정착마다 새 기록으로 바꾼다: "정착마다 기록"은 기록의 단위이고, 누적 저장은 어느 항목도 예산(NODE-018)을 주지 않았다." (`reviews/round-28-closing.md:10`)
+  > 편집자 결정(28C-01): "【추론】 프로덕션에서는 기록을 만들지 않으므로 칸은 비어 있다; 이 행은 다른 경고 행의 "개발 모드 로그"와 달리 "(기록)" 층이라 콘솔 출력이 아니다." (`reviews/round-28-closing.md:11`)
+  > 편집자 결정(28C-01): "【추론】 PR-3은 이 기록을 위한 공개 `SchemaNode` 멤버·`onError` 기록·`FormHandle` 멤버를 더하지 않는다: 원장이 정한 멤버가 없고(26C-01), 이 행은 "`onError`에 가지 않음"이다." (`reviews/round-28-closing.md:12`)
+  > 편집자 결정(28C-01): "【추론】 개발 모드의 판정은 `process.env.NODE_ENV !== 'production'`(정적 치환)이며 ERROR-030의 보고기 판정과 같은 기준이고, 이 기록은 `onError` 핸들러의 유무(`hasConsumer()`)는 보지 않는다." (`reviews/round-28-closing.md:15`)
 - 상태: 현행
 - 출처: `adr/0014-error-policy.md:224-242`(정본, ERROR-043에서 분할), `reviews/round-18-closing.md:103,385,713`
 - 닫은 사람: 편집자 결정(17라운드, ADR 0014 4판 채택), 소유자 답 O-1(`reviews/round-14-owner-answers.md:7`)·O-10(`reviews/round-14-owner-answers.md:16`), 소유자 답 C-20(`reviews/round-10-owner-answers.md:17`)·13라운드 답 4(`reviews/round-13-owner-answers.md:10`), 소유자 답 E-23·E-19(`reviews/round-10-owner-answers.md:38,40`), 소유자 답(`reviews/round-17-owner-answers.md:9` R17-1; `adr/0014-error-policy.md:229,231,234,237,239`), 소유자 답(`reviews/round-12-owner-answers.md:14` 6 `else: false` 경고; `adr/0014-error-policy.md:230`), 소유자 답(`reviews/round-17-owner-answers.md:14` 통보 3, `reviews/round-17-owner-answers.md:33` (가); `adr/0014-error-policy.md:238`), 소유자 답(`reviews/round-17-owner-answers.md:15` 통보 4; `adr/0014-error-policy.md:240,242`), 게이트 고침(R17G-2, `reviews/raw-round17-onerror.md:150`; `adr/0014-error-policy.md:238`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-03·18C-14·18C-23)

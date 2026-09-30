@@ -457,3 +457,7 @@ node ledger/checks/tokens.mjs check <목록> ledger/*.md
 ## 27라운드(소유자 답 5행) 반영 뒤의 잔여 (2026-09-30)
 
 잔여 484 그대로다. HANDOFF §1·§2의 27라운드 문단이 새로 든 코드 토큰(`verification/03-node-and-settle/performance.md`)은 같은 라운드의 TEST-027 보충이 원장에 함께 들었다. 새 항목은 없고 소유자 답 5행과 보충 줄 6개만 더했다.
+
+## 28라운드(04 실행 계획 초안의 해석 일곱 건) 반영 뒤의 잔여 (2026-09-30)
+
+잔여 484 그대로다. HANDOFF §1의 28라운드 문단이 새로 든 코드 토큰(`enabled`, `active && visible`, `setContext`, `NODE_ENV`, `watchValues`)은 같은 라운드의 보충 줄(LANDING-066·NODE-044·SURFACE-055·ERROR-159·CONTROLS-032)이 원장에 함께 들었다. 새 항목은 없고 보충 줄 65개만 더했다(`reviews/round-28-closing.md` 28C-01~08).

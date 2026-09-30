@@ -855,7 +855,14 @@
   > 【추론】 `node.context`는 루트의 맥락 객체(같은 참조)를 돌려주는 getter로 남긴다.
   > 【추론】 맥락의 갱신은 `finishInput`처럼 바인딩 전용 내부 통로(NODE-010)이며, 가칭 `setContext`다.
   > 【추론】 `FormTypeInputProps.context`도 오늘처럼 남기며, 루트의 맥락 객체(`node.context`와 같은 참조)를 준다.
-- 보충: 없음
+- 보충:
+  > 편집자 결정(28C-03): "【추론】 식과 `controls.injectTo`의 `ctx.context`가 보는 `@`의 값은 트리마다 하나인 `SchemaNodeRuntime`의 맥락 칸이다(26C-06, NODE-045의 절차): 트리 생성 때 바인딩이 준 맥락 객체 하나를 받고, 없으면 `{}`다." (`reviews/round-28-closing.md:33`)
+  > 편집자 결정(28C-03): "【추론】 맥락 변경의 진입은 바인딩 전용 내부 통로 `setContext`(가칭, SURFACE-055·NODE-010)이고, 그것이 도는 정착(역의존 표의 `@` 항목이 가리키는 노드와 그 조상의 재계산, `@`를 읽는 `derived`·`unsetValue`·`resetInteraction`에게의 에지)은 PR-3의 기제다: 에지 소비와 파생이 PR-3이고(LANDING-063), 원장이 PR을 적지 않은 것은 그 기제를 들여오는 PR에 든다(26C-01)." (`reviews/round-28-closing.md:38`)
+  > 편집자 결정(28C-03): "【추론】 PR-7은 `FormProvider`·Form 속성을 병합해 이 통로를 부르는 바인딩만 붙인다." (`reviews/round-28-closing.md:39`)
+  > 편집자 결정(28C-08): "【추론】 `node.context` 게터(SURFACE-055)는 PR-3, 곧 04의 겉면 멤버다: 그 기제(런타임의 맥락 칸, 28C-03)가 04에 들어오고 게터는 그 칸의 같은 참조를 돌려줄 뿐이며(26C-01의 규칙), `FormTypeInputProps.context`는 PR-7 렌더 계층이다." (`reviews/round-28-closing.md:84`)
+  > 편집자 결정(28C-08): "【추론】 맥락 변경의 정착은 로드가 아니므로 에지의 기준점은 직전 커밋이다(CONTROLS-080 (8) "기준점은 SETTLE-004대로 따르고, 같음 판정은 18C-50을 따른다")." (`reviews/round-28-closing.md:85`)
+  > 편집자 결정(28C-08): "【추론】 같은 참조가 오면 바뀜이 없어 정착이 돌지 않고, 내용이 같은 새 객체도 "깊이 같은 값은 같은 참조로 본다"에 따라 바뀜이 아니어서 정착이 돌지 않는다(같음은 18C-50 (가)로 판정한다)." (`reviews/round-28-closing.md:86`)
+  > 편집자 결정(28C-08): "【추론】 내용이 같은 새 객체가 오면 맥락 칸은 옛 참조를 그대로 둔다: 정착이 돌지 않는데 칸만 바뀌면 `node.context`의 참조가 통지 없이 바뀌기 때문이다(SETTLE-043 (나)와 같은 모양)." (`reviews/round-28-closing.md:90`)
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:1259-1261`(정본)
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-45)
