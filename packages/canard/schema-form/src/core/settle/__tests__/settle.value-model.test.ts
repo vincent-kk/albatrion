@@ -1,7 +1,8 @@
 import { describe, expect, it } from 'vitest';
 
 import { SetValueOption } from '../../types/value';
-import { loadSchemaNodeAtMount, writeSchemaNode } from '../index';
+import { loadSchemaNodeAtMount, resetSchemaNodeSubtree,
+  writeSchemaNode } from '../index';
 import { createTestTree } from './fixtures/createTestTree';
 import { sourceAt } from './fixtures/sourceAt';
 
@@ -357,5 +358,30 @@ describe('per-node branch sources', () => {
     expect(root.structure?.g?.structure?.secret).toBeUndefined();
     expect(root.runtime.latentRaw.has(JSON.stringify(['/g/secret', 'string'])))
       .toBe(false);
+  });
+
+  it('EVENT-072 keeps sources of nodes a subtree reset moves out of the shape', () => {
+    const { root } = createTestTree({ type: 'object', properties: {
+      box: { type: 'object', properties: { b: { type: 'boolean' } } },
+      secret: { type: 'string', controls: { active: '../box/b === true' } },
+      grp: { type: 'object', properties: { x: { type: 'string' } },
+        controls: { active: '../box/b === true' } },
+    } });
+    loadSchemaNodeAtMount(root, { box: {}, secret: 'held' }, SetValueOption.Overwrite);
+    writeSchemaNode(root.structure!.box.structure!.b, true, 'input',
+      SetValueOption.Overwrite);
+    expect(root.structure?.secret?.raw).toBe('held');
+    writeSchemaNode(root.structure!.grp.structure!.x, 'typed', 'input',
+      SetValueOption.Overwrite);
+    resetSchemaNodeSubtree(root.structure!.box, SetValueOption.Overwrite);
+    expect(root.structure?.secret).toBeUndefined();
+    expect(root.structure?.grp).toBeUndefined();
+    expect(sourceAt(root, '/secret', 'string')).toBe('held');
+    expect(root.runtime.latentRaw.get(JSON.stringify(['/grp/x', 'string'])))
+      .toBe('typed');
+    writeSchemaNode(root.structure!.box.structure!.b, true, 'input',
+      SetValueOption.Overwrite);
+    expect(root.structure?.secret?.raw).toBe('held');
+    expect(root.structure?.grp?.structure?.x?.raw).toBe('typed');
   });
 });

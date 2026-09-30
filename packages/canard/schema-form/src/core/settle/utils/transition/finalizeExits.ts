@@ -35,14 +35,16 @@ export const finalizeExits = <Self extends SchemaNodeRecord<Self>>(
         context.root.runtime.typeMismatchPaths.delete(path);
   }
   withdrawDetachedFills(context);
-  if (context.kind !== 'load') {
-    const applyPolicy = !context.suppressAutomaticWrites && !context.failure;
-    if (applyPolicy) applyExitClearing(context);
-    for (const node of context.exited)
-      if (node.detached && (context.entered.has(node) || !applyPolicy))
-        captureExitedRaw(node, false, context, false,
-          getLatentOrder(node.parent, node.name, node.blueprintNode));
-  }
+  const scope = context.kind === 'load' ? context.loadScope : undefined;
+  const inLoadScope = (node: Self): boolean => scope !== undefined &&
+    (!scope.path || node.path === scope.path || node.path.startsWith(`${scope.path}/`));
+  const applyPolicy = !context.suppressAutomaticWrites && !context.failure;
+  if (applyPolicy) applyExitClearing(context, inLoadScope);
+  for (const node of context.exited)
+    if (!inLoadScope(node) && node.detached &&
+      (context.entered.has(node) || !applyPolicy))
+      captureExitedRaw(node, false, context, false,
+        getLatentOrder(node.parent, node.name, node.blueprintNode));
   if (context.root.runtime.latentRaw.size > 0)
     for (const node of [...context.entered, ...context.revived]) {
       if (node.detached) continue;
