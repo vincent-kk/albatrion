@@ -1,5 +1,5 @@
 import type { Behavior } from '../../record';
-import { interpret } from '../utils/parse';
+import { interpret } from '../utils/parse/interpret';
 import { assembleRaw } from '../utils/slots/assembleRaw';
 import { declareNoChildren } from '../utils/slots/declareNoChildren';
 import { finishStringInput } from '../utils/slots/finishStringInput';

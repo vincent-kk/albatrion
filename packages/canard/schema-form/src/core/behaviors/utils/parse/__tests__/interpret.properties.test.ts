@@ -4,7 +4,9 @@ import ts from 'typescript';
 import { describe, expect, it } from 'vitest';
 
 import type { UnionSpec } from '../../../../record';
-import { convert, interpret, isMember } from '../index';
+import { convert } from '../convert';
+import { interpret } from '../interpret';
+import { isMember } from '../isMember';
 
 /** The six non-null JSON kinds in the reference exhaustive check. */
 const KINDS = ['string', 'number', 'integer', 'boolean', 'object', 'array'] as const;

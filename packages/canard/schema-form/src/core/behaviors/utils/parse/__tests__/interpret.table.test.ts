@@ -1,7 +1,9 @@
 import { describe, expect, it } from 'vitest';
 
 import type { UnionSpec } from '../../../../record';
-import { convert, interpret, isMember } from '../index';
+import { convert } from '../convert';
+import { interpret } from '../interpret';
+import { isMember } from '../isMember';
 
 /** Build a scalar or union restriction without changing its kind identity. */
 const spec = (kinds: UnionSpec['kinds'], nullable = false): UnionSpec => ({
