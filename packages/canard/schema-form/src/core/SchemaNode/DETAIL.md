@@ -63,7 +63,7 @@
 
 ### surface-detached — 떼어진 참조의 고정 읽기
 
-- 이탈한 자손 전체의 옛 참조는 `active: false`이고 쓰기로 커밋 번호가 바뀌지 않습니다. 마지막 커밋의 `typeMismatch`·`typeMismatches`·`inactiveValues`·`defaultValue`는 이후 트리 변경·새 인스턴스 재진입에도 같습니다. `diagnostics`는 이탈 후에도 살아 있는 트리의 진단을 읽습니다. 이탈 객체의 전체 교체 값은 재진입 시 기존 자손 잠복 원본보다 우선하고, `Merge`는 양쪽이 키 병합 가능한 객체일 때 기존 키를 유지합니다(NODE-044, WRITE-079, ERROR-131, SURFACE-007, 26C-08).
+- 이탈한 자손 전체의 옛 참조는 `active: false`이고 쓰기로 커밋 번호가 바뀌지 않습니다. 마지막 커밋의 `typeMismatch`·`typeMismatches`·`inactiveValues`·`defaultValue`는 이후 트리 변경·새 인스턴스 재진입에도 같습니다. `diagnostics`는 이탈 후에도 살아 있는 트리의 진단을 읽습니다. 같은 `(path, kind)`가 새 인스턴스로 살아 있는 동안 옛 참조의 `setValue`·`Merge`·`resetSubtree`는 오류 없이 아무 효과도 내지 않으며 살아 있는 값과 잠복 원본을 보존합니다. 경로가 다시 이탈하면 두 옛 참조는 같은 잠복 원본을 쓰고 다음 재진입이 그 값을 읽습니다. 이탈 객체의 전체 교체 값은 재진입 시 기존 자손 잠복 원본보다 우선하고, `Merge`는 양쪽이 키 병합 가능한 객체일 때 기존 키를 유지합니다(NODE-043·044, WRITE-079·087, SETTLE-010, ERROR-131, SURFACE-007, 26C-08·12).
 
 ## Last Updated
 
