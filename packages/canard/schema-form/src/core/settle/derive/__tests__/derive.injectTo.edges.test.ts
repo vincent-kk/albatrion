@@ -185,4 +185,15 @@ describe('injectTo edge boundaries', () => {
     expect(root.runtime.diagnostics.cause).toBe('writeShape');
     expect(root.structure?.source?.raw).toBe('A');
   });
+
+  it('29C-01 SETTLE-005 fill re-enters derive so a born source fires again with its default', () => {
+    const injectTo = vi.fn((value: unknown) => ({ '../t': `from-${value}` }));
+    const { root } = createTestTree({ type: 'object', properties: {
+      c: { type: 'string', default: 'C', controls: { injectTo } },
+      t: { type: 'string' },
+    } });
+    loadSchemaNodeAtMount(root, {}, SetValueOption.Overwrite);
+    expect(injectTo.mock.calls.map(([value]) => value)).toEqual([undefined, 'C']);
+    expect(root.structure?.t?.raw).toBe('from-C');
+  });
 });
