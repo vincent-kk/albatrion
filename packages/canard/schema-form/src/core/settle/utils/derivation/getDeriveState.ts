@@ -24,6 +24,8 @@ export const getDeriveState = <Self extends SchemaNodeRecord<Self>>(
     appliedRanks: new Map(),
     visitedSourcePaths: new Set(),
     loadScope: context.loadScope,
+    entered: context.entered,
+    revived: context.revived,
     suppressAutomaticWrites: context.suppressAutomaticWrites,
     trace: process.env.NODE_ENV !== 'production',
   };

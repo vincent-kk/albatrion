@@ -58,14 +58,17 @@ export const evaluateDeriveRound = <Self extends SchemaNodeRecord<Self>>(
         const priorExists = consumed || state.committedRuleValues.has(key);
         const prior = consumed ? state.consumedRuleValues.get(key) :
           state.committedRuleValues.get(key);
-        const load = !consumed && state.loadScope && (node.path === state.loadScope.path ||
-          node.path.startsWith(`${state.loadScope.path}/`));
+        const load = !consumed && Boolean(state.loadScope &&
+          (node.path === state.loadScope.path ||
+            node.path.startsWith(`${state.loadScope.path}/`)));
+        const appeared = !consumed &&
+          (load || state.entered.has(target) || state.revived.has(target));
         if (rule.kind === 'injectTo') {
           const current = node.emit;
           state.consumedRuleValues.set(key, current);
           if (state.loadScope && node.path !== state.loadScope.path &&
             !node.path.startsWith(`${state.loadScope.path}/`)) continue;
-          if (!load && priorExists && sameValue(prior, current)) continue;
+          if (!appeared && (!priorExists || sameValue(prior, current))) continue;
           const evaluated = evaluateInjectTo(node, root, rule);
           if (evaluated.failure) {
             if (!failure) failure = evaluated.failure;
@@ -92,7 +95,7 @@ export const evaluateDeriveRound = <Self extends SchemaNodeRecord<Self>>(
                 .map((dependency) =>
                   readDeriveDependency(root, target.path, dependency)),
             ];
-            if (load || !priorExists || !sameValue(prior, current)) {
+            if (appeared || (priorExists && !sameValue(prior, current))) {
               const evaluated = evaluateScopedExpression(root, node, rule,
                 evaluatedExpressions);
               if (evaluated.threw) throw evaluated.cause;
@@ -103,7 +106,7 @@ export const evaluateDeriveRound = <Self extends SchemaNodeRecord<Self>>(
               evaluatedExpressions);
             if (evaluated.threw) throw evaluated.cause;
             current = Boolean(evaluated.value);
-            if (!(current && (load || !priorExists || !prior)))
+            if (!(current && (appeared || (priorExists && !prior))))
               value = undefined;
           }
         } catch (cause) {
@@ -116,8 +119,8 @@ export const evaluateDeriveRound = <Self extends SchemaNodeRecord<Self>>(
         if (rule.kind === 'unsetValue' && current)
           state.activeUnsetTargets.add(target);
         const fired = rule.kind === 'derived' ?
-          Boolean(load || !priorExists || !sameValue(prior, current)) :
-          current === true && Boolean(load || !priorExists || !prior);
+          Boolean(appeared || (priorExists && !sameValue(prior, current))) :
+          current === true && Boolean(appeared || (priorExists && !prior));
         if (!fired) continue;
         if (rule.kind === 'derived' && value === undefined) {
           if (state.trace) trace.push({ phase: 'derive', kind: rule.kind,

@@ -78,6 +78,10 @@ export interface DeriveState<Self extends SchemaNodeRecord<Self>> {
   readonly visitedSourcePaths: Set<string>;
   /** Source subtree whose load resets rule baselines. */
   readonly loadScope?: Self;
+  /** Nodes newly created or explicitly reloaded during this settlement. */
+  readonly entered: ReadonlySet<Self>;
+  /** Existing occurrences restored after a temporary exit in this settlement. */
+  readonly revived: ReadonlySet<Self>;
   /** Whether this call inhibits automatic writes. */
   readonly suppressAutomaticWrites: boolean;
   /** Whether development trace entries should be allocated. */

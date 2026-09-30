@@ -54,7 +54,8 @@ export const evaluateResetInteraction = <Self extends SchemaNodeRecord<Self>>(
         state.consumedRuleValues.set(key, current);
         const load = state.loadScope && (node.path === state.loadScope.path ||
           node.path.startsWith(`${state.loadScope.path}/`));
-        if (!current || !(load || !previousExists || !previous)) continue;
+        if (!current || !(load || state.entered.has(target) ||
+          state.revived.has(target) || (previousExists && !previous))) continue;
         if (!nodes.includes(target)) nodes.push(target);
         if (state.trace) trace.push({ phase: 'commit', kind: rule.kind,
           sourcePath: node.path, targetPath: target.path,

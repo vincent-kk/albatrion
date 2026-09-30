@@ -8,7 +8,7 @@ import { createTestTree } from './fixtures/createTestTree';
 
 // filid:contract settle-derive
 describe('active derive declarations', () => {
-  it('SETTLE-049 depth-one if activation derives in the switching settlement', () => {
+  it('FRAGMENT-050 shared node baseline only on depth-one if activation', () => {
     const { root } = createTestTree({ type: 'object', properties: {
       H: { type: 'object', properties: {
         enabled: { type: 'boolean' }, s: { type: 'string' },
@@ -22,10 +22,10 @@ describe('active derive declarations', () => {
     expect(root.structure?.H?.structure?.x?.raw).toBe('own');
     writeSchemaNode(root.structure!.H.structure!.enabled, true, 'input',
       SetValueOption.Overwrite);
-    expect(root.structure?.H?.structure?.x?.raw).toBe('S1');
+    expect(root.structure?.H?.structure?.x?.raw).toBe('own');
   });
 
-  it('SETTLE-049 depth-one if activation resets interaction immediately', () => {
+  it('FRAGMENT-050 shared node baseline only for resetInteraction', () => {
     const { root } = createTestTree({ type: 'object', properties: {
       H: { type: 'object', properties: {
         enabled: { type: 'boolean' }, x: { type: 'string' },
@@ -38,11 +38,11 @@ describe('active derive declarations', () => {
     target.state = { [NodeState.Dirty]: true, [NodeState.Touched]: true };
     writeSchemaNode(root.structure!.H.structure!.enabled, true, 'input',
       SetValueOption.Overwrite);
-    expect(target.state[NodeState.Dirty]).toBe(false);
-    expect(target.state[NodeState.Touched]).toBe(false);
+    expect(target.state[NodeState.Dirty]).toBe(true);
+    expect(target.state[NodeState.Touched]).toBe(true);
   });
 
-  it('SETTLE-049 depth-two if activation derives in the switching settlement', () => {
+  it('FRAGMENT-050 shared node baseline only on depth-two if activation', () => {
     const { root } = createTestTree({ type: 'object', properties: {
       G: { type: 'object', properties: {
         H: { type: 'object', properties: {
@@ -57,7 +57,7 @@ describe('active derive declarations', () => {
       SetValueOption.Overwrite);
     writeSchemaNode(root.structure!.G.structure!.H.structure!.enabled,
       true, 'input', SetValueOption.Overwrite);
-    expect(root.structure?.G?.structure?.H?.structure?.x?.raw).toBe('S1');
+    expect(root.structure?.G?.structure?.H?.structure?.x?.raw).toBe('own');
   });
 
   it('SETTLE-003 non-root effective schema and selection match a fresh load on both flips', () => {
@@ -152,7 +152,7 @@ describe('active derive declarations', () => {
     expect(target.state[NodeState.Touched]).toBe(true);
   });
 
-  it('SETTLE-049 keeps an inactive shared declaration from firing on a sibling edit', () => {
+  it('FRAGMENT-050 shared node baseline only after inactive declaration reselects', () => {
     const { root } = createTestTree({ type: 'object', properties: {
       flag: { type: 'boolean' }, source: { type: 'string' },
       target: { type: 'string' },
@@ -164,9 +164,111 @@ describe('active derive declarations', () => {
     writeSchemaNode(root.structure!.source, 'B', 'input', SetValueOption.Overwrite);
     expect(root.structure?.target?.raw).toBe('manual');
     writeSchemaNode(root.structure!.flag, true, 'input', SetValueOption.Overwrite);
-    expect(root.structure?.target?.raw).toBe('B');
+    expect(root.structure?.target?.raw).toBe('manual');
     writeSchemaNode(root.structure!.flag, false, 'input', SetValueOption.Overwrite);
     writeSchemaNode(root.structure!.source, 'C', 'input', SetValueOption.Overwrite);
+    expect(root.structure?.target?.raw).toBe('manual');
+  });
+
+  it('FRAGMENT-050 shared node baseline only for allOf derived, then source change fires', () => {
+    const { root } = createTestTree({ type: 'object', properties: {
+      flag: { type: 'boolean' }, source: { type: 'string' },
+      target: { type: 'string' },
+    }, allOf: [{ controls: { active: './flag' }, properties: {
+      target: { type: 'string', controls: { derived: '../source' } },
+    } }] });
+    loadSchemaNodeAtMount(root, { flag: false, source: 'A', target: 'manual' },
+      SetValueOption.Overwrite);
+    writeSchemaNode(root.structure!.flag, true, 'input', SetValueOption.Overwrite);
+    expect(root.structure?.target?.raw).toBe('manual');
+    writeSchemaNode(root.structure!.source, 'B', 'input', SetValueOption.Overwrite);
     expect(root.structure?.target?.raw).toBe('B');
+  });
+
+  it('FRAGMENT-050 newly entered node fires for allOf derived', () => {
+    const { root } = createTestTree({ type: 'object', properties: {
+      flag: { type: 'boolean' }, source: { type: 'string' },
+    }, allOf: [{ controls: { active: './flag' }, properties: {
+      target: { type: 'string', controls: { derived: '../source' } },
+    } }] });
+    loadSchemaNodeAtMount(root, { flag: false, source: 'A', target: 'manual' },
+      SetValueOption.Overwrite);
+    writeSchemaNode(root.structure!.flag, true, 'input', SetValueOption.Overwrite);
+    expect(root.structure?.target?.raw).toBe('A');
+  });
+
+  it('FRAGMENT-050 shared node baseline only for then derived, then source change fires', () => {
+    const { root } = createTestTree({ type: 'object', properties: {
+      enabled: { type: 'boolean' }, s: { type: 'string' },
+      x: { type: 'string' },
+    }, if: {}, then: { controls: { derived: './s' }, properties: {
+      x: { type: 'string' },
+    } } });
+    loadSchemaNodeAtMount(root, { enabled: false, s: 'S1', x: 'own' },
+      SetValueOption.Overwrite);
+    writeSchemaNode(root.structure!.enabled, true, 'input', SetValueOption.Overwrite);
+    expect(root.structure?.x?.raw).toBe('own');
+    writeSchemaNode(root.structure!.s, 'S2', 'input', SetValueOption.Overwrite);
+    expect(root.structure?.x?.raw).toBe('S2');
+  });
+
+  it('FRAGMENT-050 newly entered node fires for then derived', () => {
+    const { root } = createTestTree({ type: 'object', properties: {
+      enabled: { type: 'boolean' }, s: { type: 'string' },
+    }, if: {}, then: { controls: { derived: './s' }, properties: {
+      x: { type: 'string' },
+    } } });
+    loadSchemaNodeAtMount(root, { enabled: false, s: 'S1', x: 'own' },
+      SetValueOption.Overwrite);
+    writeSchemaNode(root.structure!.enabled, true, 'input', SetValueOption.Overwrite);
+    expect(root.structure?.x?.raw).toBe('S1');
+  });
+
+  it('FRAGMENT-050 shared node baseline only for unsetValue, then false-to-true fires', () => {
+    const { root } = createTestTree({ type: 'object', properties: {
+      flag: { type: 'boolean' }, clear: { type: 'boolean' },
+      target: { type: 'string' },
+    }, allOf: [{ controls: { active: './flag' }, properties: {
+      target: { type: 'string', controls: { unsetValue: '../clear' } },
+    } }] });
+    loadSchemaNodeAtMount(root, { flag: false, clear: true, target: 'held' },
+      SetValueOption.Overwrite);
+    writeSchemaNode(root.structure!.flag, true, 'input', SetValueOption.Overwrite);
+    expect(root.structure?.target?.raw).toBe('held');
+    writeSchemaNode(root.structure!.clear, false, 'input', SetValueOption.Overwrite);
+    expect(root.structure?.target?.raw).toBe('held');
+    writeSchemaNode(root.structure!.clear, true, 'input', SetValueOption.Overwrite);
+    expect(root.structure?.target?.raw).toBeUndefined();
+  });
+
+  it('FRAGMENT-050 shared injectTo baseline only and newly entered source fires', () => {
+    const injectTo = vi.fn((value: unknown) => ({ '../output': `from-${value}` }));
+    const shared = createTestTree({ type: 'object', properties: {
+      flag: { type: 'boolean' }, source: { type: 'string' },
+      output: { type: 'string' },
+    }, allOf: [{ controls: { active: './flag' }, properties: {
+      source: { type: 'string', controls: { injectTo } },
+    } }] }).root;
+    loadSchemaNodeAtMount(shared, { flag: false, source: 'A', output: 'manual' },
+      SetValueOption.Overwrite);
+    writeSchemaNode(shared.structure!.flag, true, 'input', SetValueOption.Overwrite);
+    expect(shared.structure?.output?.raw).toBe('manual');
+    expect(injectTo).not.toHaveBeenCalled();
+    writeSchemaNode(shared.structure!.source, 'B', 'input', SetValueOption.Overwrite);
+    expect(injectTo).toHaveBeenCalledWith('B', expect.any(Object));
+    expect(shared.structure?.output?.raw).toBe('from-B');
+
+    injectTo.mockClear();
+    const entered = createTestTree({ type: 'object', properties: {
+      flag: { type: 'boolean' }, output: { type: 'string' },
+    }, allOf: [{ controls: { active: './flag' }, properties: {
+      source: { type: 'string', controls: { injectTo } },
+    } }] }).root;
+    loadSchemaNodeAtMount(entered, { flag: false, source: 'A' },
+      SetValueOption.Overwrite);
+    writeSchemaNode(entered.structure!.flag, true, 'input', SetValueOption.Overwrite);
+    expect(entered.structure?.source?.raw).toBe('A');
+    expect(injectTo).toHaveBeenCalledWith('A', expect.any(Object));
+    expect(entered.structure?.output?.raw).toBe('from-A');
   });
 });

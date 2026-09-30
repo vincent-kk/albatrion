@@ -7,7 +7,7 @@ import { createTestTree } from './fixtures/createTestTree';
 
 // filid:contract settle-derive
 describe('derive rule locality', () => {
-  it('CONTROLS-026 reactivated declaration fires after its source baseline is pruned', () => {
+  it('FRAGMENT-050 reactivated shared declaration takes a baseline without firing', () => {
     const { root } = createTestTree({ type: 'object', properties: {
       t: { type: 'string' }, flag: { type: 'boolean' },
       x: { type: 'string' },
@@ -23,7 +23,7 @@ describe('derive rule locality', () => {
     observed.push(root.structure?.x?.raw);
     writeSchemaNode(root.structure!.flag, true, 'input', SetValueOption.Overwrite);
     observed.push(root.structure?.x?.raw);
-    expect(observed).toEqual(['T1', 'manual', 'manual', 'T1']);
+    expect(observed).toEqual(['T1', 'manual', 'manual', 'manual']);
   });
 
   it.each([
