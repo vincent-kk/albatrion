@@ -42,9 +42,14 @@ Planning method: 저장소 지침 — `PLAN.md` §2와 `plan/prompts.md`의 단�
 | 2026-10-01 | U3 | codex(세션 `fe2c9fab`): `settle/derive/`, `settle/utils/derivation/`, `settle/utils/context/`, 에지·로드 발화·`unsetValue`·예산·억제·정착 기록, `@` 결함 다섯 자리 수정, `sameValue`를 18C-50 (가)로 넓힘(03 정착 시험 초록 유지). 조율 세션 재실행: G5 163시험, G6, G26 met, eslint·tsc 깨끗, core unit 891 통과 1 실패 | `49ad47e13` |
 | 2026-10-01 | U3 | **계획 이탈**: `SchemaNode/__tests__/surface.test.ts`의 "26C-01 PR-2 member list matches the DETAIL table exactly"가 U2 문서 선행(`e2b22242b`)부터 빨강 — DETAIL 멤버 표가 04의 최종 멤버 여섯을 먼저 적었기 때문(기대 28, 실제 34). 시험을 느슨하게 하면 계약 약화라 고치지 않고, U4b·U5가 멤버를 들이면 초록이 된다. 그 사이 커밋은 이 시험 하나가 빨강 | 이 기록 |
 
+| 2026-10-01 | U3 | antigravity 단위 검토(세션 `19ed2e0c`) `blocking-found` — 근거 1–6은 없는 경로 인용이라 버리고, 지적 하나(나간 컨테이너 자손의 규칙 기준점이 커밋 칸에 남아 재탄생 에지가 빠짐, WRITE-029)는 조율 세션이 코드로 확인. codex(같은 세션 `fe2c9fab`)가 수정 전 실패(`expected true to be false`)를 보이고 고침. 대상 쪽 기준점은 CONTROLS-053대로 두었다 | `b3f7c1b49` |
+| 2026-10-01 | U4 | codex(세션 `e1330ad8`): `injectTo`·같은 대상 규칙(순위·층 표 `derive/utils/rank/`), 오류 코드 `INJECT_TARGET_MISSING`·`INVALID_VIRTUAL_NODE_VALUES`, union `it.todo` 둘을 실제 시험으로. G7·G8 met. antigravity 단위 검토(세션 `d44b6fa4`) `no-blocking`(인용 두 곳을 조율 세션이 대조) | `a9bd71b41` |
+| 2026-10-01 | U4b | codex(세션 `129177c0`): `setContext`(`SchemaNode/index.ts`·`src/core/index.ts` 이름 수출, `src/index.ts` 없음), `settle/utils/context/changeSchemaNodeContext.ts`, `context` 게터. G27·G30 met. G30의 `rolldown -c`가 `dist` 타입 선언을 지워 `stories/` 형 검사가 깨짐 → `yarn workspace @canard/schema-form build:types`로 복구하고 G30에 복구 안내를 더함 | `439c491c5` |
+| 2026-10-01 | U8 | PR-3 몫 82사례 이식(codex 세션 `de624cab`, 원천별 9·27·20·4·6·12·4). 실패 7 → debugger(opus) 진단: 제품 결함 0. `r9b.mjs:137`(원본 `undefined` 가드 누락)·`selfcheck-v5.mjs:297`(로드 진입을 비로드 `setValue`로 옮김)은 이식 오류로 고침. 나머지 넷은 원장 질의 Q9 → **29C-01**(원장 관리 세션, `9e1a2dfd9`): 태어나거나 로드된 노드의 규칙은 원천 방출 값이 `undefined`여도 거짓→참 에지로 발화한다. 기대를 `{ t: 'from-undefined' }`로 바꿈. 채움 뒤 파생 재평가(SETTLE-005 "→ 표시로")를 `derive.injectTo.edges.test.ts`에 단언. `r9.mjs:51`(`visible`)은 U5 뒤 초록 | `77dda7e75` |
+
 ## 3. 다음 행동
 
-- U3 antigravity 단위 검토와 U4(codex) 진행 중 → U4b → U5 → U6 → {U7, U8, U9} → U10.
+- U5(codex) 진행 중 → U6 → U7·U8(PR-6 몫)·U9 → U10. U10 전에 `settle/derive/__tests__`의 `filid:contract derive-edge` 세 파일 중복 선언을 정리한다(filid 검증 기록 규칙 §5).
 - 이 세션의 커밋은 경로를 지정한 `git add`만 쓴다(원장 세션의 미커밋 변경과 섞지 않음).
 
 ## 4. 원장·계획서 어긋남
@@ -58,4 +63,5 @@ Planning method: 저장소 지침 — `PLAN.md` §2와 `plan/prompts.md`의 단�
 | M5 | `verification.md:21`, `verification.md:26` | v7에 조각 `controls` 층 나감 에지 사례가 없고, 있는 사례(`settleRules.test.mjs:59`)는 `batch`(05 기제)를 쓴다 | TEST-069 (라), FRAGMENT-050, LANDING-064 | 조각 층 사례는 새로 쓰고, `:59`는 루트 `setValue(V)` 한 번으로 이식한다 |
 | M6 | `verification.md:12` | "02 §9 목록"은 보관된 검증 전략 절이며 상황 목록이 아니다 | LANDING-071, TEST-023 | 상황은 TEST-016·019와 원장 게이트에서 뽑는다 |
 | M7 | `adr-and-axes.md:26` | 자동 쓰기 억제 비트가 뒤이은 포커스 아웃 `trim`에 듣지 않는다는 WRITE-100이 빠졌다 | WRITE-078·100 | 원장 변경 없음(28라운드 확인). `trim`은 07이며 04의 억제 단언은 파생·주입·`unsetValue`·채움·나감 비움에 한정한다 |
+| M9 | TEST-069 (라)의 배분과 이 단계 `execution-plan.md`의 "기대값은 `round18/proto/REPORT-v7.md`의 기대 치환을 따른다"(v7 모형이 원장과 다른 자리에는 미치지 않음, `reviews/round-29-closing.md:14`), `spikes/round18/proto/REPORT-v7.md:47` | v7 모형(`spikes/round18/proto/utils/operations/fires.mjs:10-18`, LOAD_EDGE `e !== MISSING`)은 없음인 원천을 생김·로드에서 발화시키지 않아 A4b(`selfcheck-v5.mjs:285`)·X16(`r8-port.mjs:361`, `r7-port.mjs:444`)·X16_noDefault(`r8-port.mjs:362`)를 `from-C`로 기대한다 — 현행 원장과 다름 | WRITE-029, FRAGMENT-050 (2)·(3), CONTROLS-027·079·084, SETTLE-004·005, 29C-01 | 원장대로 `{ t: 'from-undefined' }`를 기대하고 엔진은 바꾸지 않는다. 시험 이름에 29C-01 |
 | M8 | 03 코드 `settle/utils/paths/resolveDependencyPath.ts:5-11`, `settle/utils/gates/evaluateGate.ts:80`, `settle/utils/gates/getGateRegistry.ts:155`(호스트 경로 치환), `settle/utils/write/getDependencyIndex.ts:32`·`:42`(역의존 표에서 제외), 시험 `settle/__tests__/settle.gates.test.ts:72-84` | 03이 `@`를 호스트 `extras`로 읽었다 — 원장 근거 없음(03의 이탈) | CONTROLS-080 (3)·(6)·(8), 28C-03 | 04 U3·U4b가 `@`를 런타임 맥락 칸으로 고치고 역의존 표에 `@` 소유자를 들인다 |
