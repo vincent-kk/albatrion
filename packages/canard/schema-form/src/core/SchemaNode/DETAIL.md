@@ -71,6 +71,14 @@
 
 - 이탈한 자손 전체의 옛 참조는 `active: false`·`enabled: false`이고 쓰기로 커밋 번호가 바뀌지 않습니다. 마지막 커밋의 `typeMismatch`·`typeMismatches`·`inactiveValues`·`defaultValue`·`visible`·`readOnly`·`disabled`는 이후 트리 변경·새 인스턴스 재진입에도 같습니다. `diagnostics`는 이탈 후에도 살아 있는 트리의 진단을 읽습니다. 같은 `(path, kind)`가 새 인스턴스로 살아 있는 동안 옛 참조의 `setValue`·`Merge`·`resetSubtree`는 오류 없이 아무 효과도 내지 않으며 살아 있는 값과 잠복 원본을 보존합니다. 경로가 다시 이탈하면 두 옛 참조는 같은 잠복 원본을 쓰고 다음 재진입이 그 값을 읽습니다. 이탈 객체의 전체 교체 값은 재진입 시 기존 자손 잠복 원본보다 우선하고, `Merge`는 양쪽이 키 병합 가능한 객체일 때 기존 키를 유지합니다(NODE-043·044, WRITE-079·087, SETTLE-010, ERROR-131, SURFACE-007, 26C-08·12, 28C-02).
 
+## Boundary Exemptions
+
+### `SchemaNode.ts` — 시나리오 러너의 런타임 레코드 형
+
+- **Consumers**: `**/src/core/__tests__/scenarios/utils/createCoreScenarioAdapter.ts`, `**/src/core/__tests__/scenarios/utils/executeCoreScenarioStep.ts`
+- **Direct import**: `allowed`
+- **Reason**: settle 진입 함수가 받는 런타임 레코드 형을 위해 클래스 형만 `import type`으로 읽습니다. 진입점은 공개 합집합 형만 내보내므로 시험을 위해 넓히지 않습니다(NODE-016, 실행 ADR D7에서 벗어남 — 03 계획 로그 §4).
+
 ## Last Updated
 
 2026-10-01
