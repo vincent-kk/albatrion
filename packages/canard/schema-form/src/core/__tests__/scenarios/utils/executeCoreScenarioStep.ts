@@ -17,7 +17,13 @@ export function executeCoreScenarioStep(
   const previousDiagnostics = root.diagnostics;
   try {
     if (step.action === 'reset') {
-      resetSchemaNodeForm(root, scenario.initialValue, SetValueOption.Overwrite);
+      resetSchemaNodeForm(root, scenario.initialValue,
+        SetValueOption.Overwrite | (step.automaticWrites === 'disabled'
+          ? SetValueOption.DisableAutomaticWrites : 0));
+    } else if (step.action === 'resetSubtree') {
+      const node = root.find(step.path);
+      if (!node) throw new Error(`Scenario node missing at ${step.path}`);
+      node.resetSubtree();
     } else if (step.action === 'setValue' || step.action === 'clear') {
       const node = root.find(step.path);
       if (!node) throw new Error(`Scenario node missing at ${step.path}`);
@@ -28,7 +34,8 @@ export function executeCoreScenarioStep(
       throw new Error(`Core scenario action ${step.action} requires a later PR`);
     }
   } catch (error) {
-    if ((step.action !== 'setValue' && step.action !== 'reset') ||
+    if ((step.action !== 'setValue' && step.action !== 'reset' &&
+      step.action !== 'resetSubtree') ||
       step.expect?.diagnostics?.status !== 'degraded' ||
       root.diagnostics.status !== 'degraded' ||
       root.diagnostics === previousDiagnostics) throw error;
