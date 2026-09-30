@@ -177,6 +177,67 @@ describe('settle commit', () => {
     ]);
   });
 
+  it('WRITE-087 lists detached object leaves without duplicating their host', () => {
+    const { root } = createTestTree({ type: 'object', properties: {
+      flag: { type: 'boolean' },
+      group: { type: 'object', controls: { active: '../flag' }, properties: {
+        leaf: { type: 'string' }, other: { type: 'string' },
+      } },
+    } });
+    loadSchemaNodeAtMount(root, { flag: true, group: {
+      leaf: 'L', other: 'O',
+    } }, SetValueOption.Overwrite);
+    writeSchemaNode(root.structure!.flag, false, 'input', SetValueOption.Overwrite);
+    expect(root.runtime.inactiveValuesMemo.get('')).toEqual([
+      { path: '/group/leaf', value: 'L' },
+      { path: '/group/other', value: 'O' },
+    ]);
+  });
+
+  it('WRITE-087 lists inactive values in blueprint document order', () => {
+    const { root } = createTestTree({ type: 'object', properties: {
+      flag: { type: 'boolean' },
+      zeta: { type: 'string', controls: { active: '../flag' } },
+      alpha: { type: 'string', controls: { active: '../flag' } },
+    } });
+    loadSchemaNodeAtMount(root, { flag: true, zeta: 'Z', alpha: 'A' },
+      SetValueOption.Overwrite);
+    writeSchemaNode(root.structure!.flag, false, 'input', SetValueOption.Overwrite);
+    expect(root.runtime.inactiveValuesMemo.get('')?.map((entry) => entry.path))
+      .toEqual(['/zeta', '/alpha']);
+  });
+
+  it('WRITE-087 reuses inactive array and entry references on unrelated commits', () => {
+    const { root } = createTestTree({ type: 'object', properties: {
+      flag: { type: 'boolean' },
+      other: { type: 'number' },
+      secret: { type: 'string', controls: { active: '../flag' } },
+    } });
+    loadSchemaNodeAtMount(root, { flag: true, other: 1, secret: 'held' },
+      SetValueOption.Overwrite);
+    writeSchemaNode(root.structure!.flag, false, 'input', SetValueOption.Overwrite);
+    const inactive = root.runtime.inactiveValuesMemo.get('');
+    const entry = inactive?.[0];
+    writeSchemaNode(root.structure!.other, 2, 'input', SetValueOption.Overwrite);
+    expect(root.runtime.inactiveValuesMemo.get('')).toBe(inactive);
+    expect(root.runtime.inactiveValuesMemo.get('')?.[0]).toBe(entry);
+  });
+
+  it('WRITE-087 includes a detached host that holds a wrong-kind value', () => {
+    const { root } = createTestTree({ type: 'object', properties: {
+      flag: { type: 'boolean' },
+      group: { type: 'object', controls: { active: '../flag' }, properties: {
+        leaf: { type: 'string' },
+      } },
+    } });
+    loadSchemaNodeAtMount(root, { flag: true, group: 'wrong' },
+      SetValueOption.Overwrite);
+    writeSchemaNode(root.structure!.flag, false, 'input', SetValueOption.Overwrite);
+    expect(root.runtime.inactiveValuesMemo.get('')).toEqual([
+      { path: '/group', value: 'wrong' },
+    ]);
+  });
+
   it('25C-04 reuses the effective-schema memo while active declarations remain stable', () => {
     const { root } = createTestTree({ type: 'object', properties: {
       value: { type: 'number' },

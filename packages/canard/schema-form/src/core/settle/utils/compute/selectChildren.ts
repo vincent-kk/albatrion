@@ -13,6 +13,7 @@ import { updateOutput } from './updateOutput';
 import { hasRecursiveExpansion } from './hasRecursiveExpansion';
 import { RECURSIVE_SHAPE_DIVERGED } from '../errors/settleErrorCode';
 import { writeLatentRaw } from '../transition/writeLatentRaw';
+import { getLatentOrder } from '../latent/getLatentOrder';
 import type { BlueprintChildEntry } from '../../../blueprint';
 
 /** Ungated declarations are included by the effective-schema merger itself. */
@@ -67,7 +68,8 @@ export const selectChildren = <Self extends SchemaNodeRecord<Self>>(
             `${node.path}/${escapeSegment(entry.name)}`, entry.node.kind,
           ]);
           writeLatentRaw(context, key, ownsRaw,
-            ownsRaw ? Reflect.get(source, entry.name) : undefined);
+            ownsRaw ? Reflect.get(source, entry.name) : undefined,
+            entry.node, ownsRaw ? getLatentOrder(node, entry.name, entry.node) : undefined);
         }
       }
       if (next[entry.name] && !seen.has(entry.name)) {
@@ -174,7 +176,8 @@ export const selectChildren = <Self extends SchemaNodeRecord<Self>>(
       context.pendingExits.set(key, child);
       const source = node.raw;
       writeLatentRaw(context, key, source !== null &&
-        typeof source === 'object' && hasOwnProperty(source, name), child.raw);
+        typeof source === 'object' && hasOwnProperty(source, name), child.raw,
+        child.blueprintNode, getLatentOrder(child.parent, child.name, child.blueprintNode));
     }
   const nextChildren = Object.values(next);
   if (nextChildren.length !== before.length ||

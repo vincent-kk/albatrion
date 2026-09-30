@@ -18,6 +18,8 @@ import { getTransitionCap } from '../transition/getTransitionCap';
 import { getSettlementScratch } from './getSettlementScratch';
 import { releaseSettlementScratch } from './releaseSettlementScratch';
 import { finalizeExits } from '../transition/finalizeExits';
+import { getLatentOrder } from '../latent/getLatentOrder';
+import { hasLivePathKind } from '../detached/hasLivePathKind';
 
 /**
  * Settle one caller write through marking, calculation, and a single commit.
@@ -35,6 +37,7 @@ export const writeSchemaNode = <Self extends SchemaNodeRecord<Self>>(
   option: SetValueOption,
 ): void => {
   if (node.detached) {
+    if (hasLivePathKind(node)) return;
     const latentRaw = node.rootNode.runtime.latentRaw;
     const key = JSON.stringify([node.path, node.blueprintNode.kind]);
     const previous = latentRaw.get(key);
@@ -46,6 +49,10 @@ export const writeSchemaNode = <Self extends SchemaNodeRecord<Self>>(
     const source = mergeable ? { ...previous, ...input } : input;
     latentRaw.set(key,
       node.behavior.interpret(source, staticSpec(node.schemaType, node.nullable)));
+    const metadata = node.rootNode.runtime.latentRawMetadata ?? new Map();
+    node.rootNode.runtime.latentRawMetadata = metadata;
+    metadata.set(key, { path: node.path, blueprintNode: node.blueprintNode,
+      order: getLatentOrder(node.parent, node.name, node.blueprintNode) });
     return;
   }
   const disable = (option & SetValueOption.DisableAutomaticWrites) !== 0;

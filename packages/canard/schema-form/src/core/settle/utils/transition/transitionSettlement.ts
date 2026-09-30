@@ -38,7 +38,8 @@ export const transitionSettlement = <Self extends SchemaNodeRecord<Self>>(
   while (true) {
     context.automaticChanged = false;
     for (const node of [...context.entered].sort((left, right) => left.depth - right.depth)) {
-      if (node.detached || context.pendingExits.has(JSON.stringify([
+      if (node.detached || context.pendingExits.size !== 0 &&
+        context.pendingExits.has(JSON.stringify([
         node.path, node.blueprintNode.kind]))) continue;
       if (filledNodes) {
         if (filledNodes.has(node)) continue;
@@ -59,7 +60,8 @@ export const transitionSettlement = <Self extends SchemaNodeRecord<Self>>(
       context.automatic = false;
     }
     for (const [node, original] of context.writtenInputs) {
-      if (node.detached || context.pendingExits.has(JSON.stringify([
+      if (node.detached || context.pendingExits.size !== 0 &&
+        context.pendingExits.has(JSON.stringify([
         node.path, node.blueprintNode.kind]))) continue;
       const effective = effectiveType(node);
       if (effective === node.schemaType) continue;

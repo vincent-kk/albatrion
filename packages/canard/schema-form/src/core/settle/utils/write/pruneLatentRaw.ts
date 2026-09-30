@@ -17,6 +17,9 @@ export const pruneLatentRaw = <Self extends SchemaNodeRecord<Self>>(
     if (childPaths ? childPaths.some((path) => identity[0] === path ||
       identity[0].startsWith(`${path}/`)) :
       !node.path || identity[0] === node.path ||
-      identity[0].startsWith(`${node.path}/`)) node.runtime.latentRaw.delete(key);
+      identity[0].startsWith(`${node.path}/`)) {
+      node.runtime.latentRaw.delete(key);
+      node.runtime.latentRawMetadata?.delete(key);
+    }
   }
 };

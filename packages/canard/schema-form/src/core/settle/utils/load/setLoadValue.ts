@@ -1,4 +1,6 @@
 import { unescapeSegment } from '@winglet/json/pointer';
+import { sameValue } from '../compute/sameValue';
+import { getLoadValue } from './getLoadValue';
 
 /**
  * Replace one snapshot path by copying only the ancestors above it.
@@ -8,6 +10,7 @@ import { unescapeSegment } from '@winglet/json/pointer';
  * @returns New root snapshot retaining all unrelated references
  */
 export const setLoadValue = (snapshot: unknown, path: string, value: unknown): unknown => {
+  if (sameValue(getLoadValue(snapshot, path), value)) return snapshot;
   if (!path) return value;
   const segments = path.slice(1).split('/').map(unescapeSegment);
   const ancestors: unknown[] = [snapshot];

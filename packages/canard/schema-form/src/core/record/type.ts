@@ -111,16 +111,34 @@ interface SchemaNodeDiagnostics {
   commit?: number;
 }
 
+/** Classification and document position of one latent occurrence. */
+interface LatentRawMetadata {
+  readonly path: string;
+  readonly blueprintNode: BlueprintNode;
+  readonly order: readonly number[];
+}
+
+/** Last published item and sort position for one enumerable latent occurrence. */
+interface InactiveValueEntryMemo {
+  readonly value: unknown;
+  readonly order: readonly number[];
+  readonly entry: Readonly<{ path: string; value: unknown }>;
+}
+
 /** Root-owned settlement data reached through a record's runtime. */
 interface SchemaNodeRootRuntimeState {
   /** Form-level load source, read at node paths. */
   loadSnapshot: unknown;
   /** Source values kept for nodes outside the live shape. */
   latentRaw: Map<string, unknown>;
+  /** Latent occurrence shape and document position, keyed like latentRaw. */
+  latentRawMetadata?: Map<string, LatentRawMetadata>;
   /** Current paths whose raw values miss their effective types. */
   typeMismatchPaths: Set<string>;
   /** Commit-scoped inactive value lists keyed by node path. */
   inactiveValuesMemo: Map<string, readonly { path: string; value: unknown }[]>;
+  /** Published latent item objects retained across unrelated commits. */
+  inactiveValueEntries?: Map<string, InactiveValueEntryMemo>;
 }
 
 /** Last committed reads retained for one node reference after it exits. */

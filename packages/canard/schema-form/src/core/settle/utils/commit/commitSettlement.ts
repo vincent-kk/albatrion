@@ -6,11 +6,10 @@ import { conversionCandidates } from './conversionCandidates';
 import { effectiveType } from './effectiveType';
 import { isTypeMismatch } from './isTypeMismatch';
 import { receivedType } from './receivedType';
+import { updateInactiveValuesMemo } from './updateInactiveValuesMemo';
 
 /** Shared frozen empty list for inactive and mismatch projections. */
 const EMPTY_PATHS: readonly string[] = Object.freeze([]);
-/** Shared frozen empty list for inactive values. */
-const EMPTY_VALUES: readonly { path: string; value: unknown }[] = Object.freeze([]);
 /** Shared empty warning batch. */
 const EMPTY_WARNINGS: readonly TypeMismatchRecord[] = Object.freeze([]);
 
@@ -99,29 +98,7 @@ export const commitSettlement = <Self extends SchemaNodeRecord<Self>>(
     }
   }
   runtime.typeMismatchesMemo = mismatchMemo;
-  runtime.inactiveValuesMemo.clear();
-  if (runtime.latentRaw.size === 0)
-    runtime.inactiveValuesMemo.set('', EMPTY_VALUES);
-  else {
-    const inactive = [...runtime.latentRaw].flatMap(([key, value]) => {
-      const identity: unknown = JSON.parse(key);
-      return Array.isArray(identity) && typeof identity[0] === 'string'
-        ? [{ path: identity[0], value }] : [];
-    }).sort((left, right) => left.path.localeCompare(right.path));
-    runtime.inactiveValuesMemo.set('', inactive.length ? Object.freeze(inactive.map(
-      (entry) => Object.freeze(entry))) : EMPTY_VALUES);
-    const inactiveHosts: string[] = [];
-    for (const entry of inactive) {
-      let ancestor = entry.path;
-      while (ancestor) {
-        if (!inactiveHosts.includes(ancestor)) inactiveHosts.push(ancestor);
-        ancestor = ancestor.slice(0, ancestor.lastIndexOf('/'));
-      }
-    }
-    for (const host of inactiveHosts)
-      runtime.inactiveValuesMemo.set(host, Object.freeze(inactive.filter((entry) =>
-        entry.path === host || entry.path.startsWith(`${host}/`))));
-  }
+  updateInactiveValuesMemo(runtime);
   if (context.failure && runtime.diagnostics.status !== 'degraded')
     runtime.diagnostics = { status: 'degraded', cause: context.cause,
       ...(context.cause === 'budget' ? { exceededBudget: context.exceededBudget,

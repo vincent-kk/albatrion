@@ -1,4 +1,4 @@
-import type { Blueprint, BlueprintGate } from '../../../blueprint';
+import type { Blueprint, BlueprintGate, BlueprintNodeKind } from '../../../blueprint';
 import type { SchemaNodeRecord } from '../../../record';
 import { escapeSegment } from '@winglet/json/pointer';
 import { resolveGateOccurrence } from './resolveGateOccurrence';
@@ -15,6 +15,8 @@ interface RegisteredGateOccurrence extends GateOccurrence {
 interface RegisteredNode {
   /** Live node that owns this path. */
   node: object;
+  /** Analyzed kind at this live path. */
+  kind: BlueprintNodeKind;
   /** Gate occurrences registered by its template and direct edges. */
   occurrences: readonly RegisteredGateOccurrence[];
 }
@@ -34,6 +36,12 @@ class GateRegistry {
 
   /** Bind exact expression dependencies from this tree's analyzed blueprint. */
   constructor(private readonly blueprint: Blueprint) {}
+
+  /** Compare a path and kind in the current indexed shape, if indexed. */
+  hasRegisteredPathKind(path: string, kind: BlueprintNodeKind): boolean | undefined {
+    if (this.byPath.size === 0) return undefined;
+    return this.byPath.get(path)?.kind === kind;
+  }
 
   /** Register template and direct-edge gates when an occurrence is created. */
   register<Self extends SchemaNodeRecord<Self>>(node: Self): void {
@@ -61,7 +69,7 @@ class GateRegistry {
     }
     this.byNode.set(node, memo);
     this.byEdge.set(node, edges);
-    this.byPath.set(node.path, { node, occurrences: [
+    this.byPath.set(node.path, { node, kind: node.blueprintNode.kind, occurrences: [
       ...memo.values(), ...[...edges.values()].flatMap((edge) => [...edge.values()]),
     ] });
   }
@@ -79,7 +87,7 @@ class GateRegistry {
     if (!memo) throw new Error(`Missing gate memo at ${node.path}`);
     this.add(node, gate, memo);
     const edges = this.byEdge.get(node);
-    this.byPath.set(node.path, { node, occurrences: [
+    this.byPath.set(node.path, { node, kind: node.blueprintNode.kind, occurrences: [
       ...memo.values(), ...[...edges?.values() ?? []].flatMap((edgeMemo) =>
         [...edgeMemo.values()]),
     ] });

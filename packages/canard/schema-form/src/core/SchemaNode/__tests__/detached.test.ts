@@ -185,4 +185,48 @@ describe('detached SchemaNode references', () => {
     expect(group.inactiveValues).toBe(before);
     expect(root.find('/group')?.inactiveValues).toEqual([]);
   });
+
+  it('26C-12 ignores old detached writes and reset while the same path is live', () => {
+    const { root, runtime } = makeSchemaNodeTree({ type: 'object', properties: {
+      flag: { type: 'boolean' },
+      target: { type: 'string', controls: { active: '../flag' } },
+    } }, { snapshot: { flag: true, target: 'loaded' } });
+    root.setValue({ flag: true, target: 'initial' });
+    const old = root.find('/target');
+    if (!old) throw new Error('Expected the first target');
+    root.find('/flag')?.setValue(false);
+    root.find('/flag')?.setValue(true);
+    const current = root.find('/target');
+    if (!current || current === old) throw new Error('Expected a new target');
+    const commit = Reflect.get(runtime, 'commitNumber');
+    old.setValue('x');
+    old.resetSubtree();
+    expect(current.raw).toBe('initial');
+    expect(Reflect.get(runtime, 'commitNumber')).toBe(commit);
+    expect(Reflect.get(runtime, 'latentRaw')).toEqual(new Map());
+    expect(root.inactiveValues.some((entry) => entry.path === '/target')).toBe(false);
+
+    root.find('/flag')?.setValue(false);
+    current.setValue('from second reference');
+    old.setValue('y');
+    root.find('/flag')?.setValue(true);
+    expect(root.find('/target')?.raw).toBe('y');
+  });
+
+  it('26C-12 ignores Merge through an old detached object while its path is live', () => {
+    const { root, runtime } = groupedTree();
+    root.setValue({ flag: true, group: { leaf: 'initial' } });
+    const old = root.find('/group');
+    if (!old) throw new Error('Expected the first group');
+    root.find('/flag')?.setValue(false);
+    root.find('/flag')?.setValue(true);
+    const current = root.find('/group');
+    if (!current || current === old) throw new Error('Expected a new group');
+    const commit = Reflect.get(runtime, 'commitNumber');
+    old.setValue({ leaf: 'x' }, SetValueOption.Merge);
+    expect(current.raw).toEqual({ leaf: 'initial' });
+    expect(Reflect.get(runtime, 'commitNumber')).toBe(commit);
+    expect(Reflect.get(runtime, 'latentRaw')).toEqual(new Map());
+    expect(root.inactiveValues.some((entry) => entry.path === '/group')).toBe(false);
+  });
 });

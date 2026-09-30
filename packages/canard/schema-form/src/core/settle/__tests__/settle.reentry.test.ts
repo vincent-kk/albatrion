@@ -50,4 +50,44 @@ describe('final-shape exits', () => {
     expect(g.raw).toEqual({ leaf: 'keep' });
     expect(root.raw).toMatchObject({ g: { leaf: 'keep' } });
   });
+
+  it('WRITE-015 keeps exited raw when automatic writes are disabled', () => {
+    const { root } = createTestTree({ type: 'object', properties: {
+      flag: { type: 'boolean' },
+      secret: { type: 'string', controls: {
+        active: '../flag', unsetOnInactive: true,
+      } },
+    } });
+    loadSchemaNodeAtMount(root, { flag: true, secret: 'held' },
+      SetValueOption.Overwrite);
+    const secret = root.structure!.secret;
+    writeSchemaNode(root.structure!.flag, false, 'input',
+      SetValueOption.DisableAutomaticWrites);
+    expect(secret.detached).toBe(true);
+    expect(secret.raw).toBe('held');
+    expect(root.raw).toHaveProperty('secret', 'held');
+  });
+
+  it('SETTLE-011 keeps exited raw after a degraded host wheel', () => {
+    const { root } = createTestTree({ type: 'object', properties: {
+      flag: { type: 'boolean' },
+      b: { type: 'number', default: 5 },
+      secret: { type: 'string', controls: {
+        active: '../flag', unsetOnInactive: true,
+      } },
+    }, controls: { children: [{ targets: ['b'], controls: {
+      active: '!../flag && ../b === undefined',
+    } }] } });
+    loadSchemaNodeAtMount(root, { flag: true, secret: 'held' },
+      SetValueOption.Overwrite);
+    const secret = root.structure!.secret;
+    expect(() => writeSchemaNode(root.structure!.flag, false, 'input',
+      SetValueOption.Overwrite)).toThrow();
+    expect(root.runtime.diagnostics).toMatchObject({
+      status: 'degraded', exceededBudget: 'hostWheel',
+    });
+    expect(secret.detached).toBe(true);
+    expect(secret.raw).toBe('held');
+    expect(root.raw).toHaveProperty('secret', 'held');
+  });
 });

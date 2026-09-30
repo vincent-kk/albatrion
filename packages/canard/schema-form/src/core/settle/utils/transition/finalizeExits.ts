@@ -32,7 +32,8 @@ export const finalizeExits = <Self extends SchemaNodeRecord<Self>>(
         context.root.runtime.typeMismatchPaths.delete(path);
   }
   withdrawDetachedFills(context);
-  applyExitClearing(context);
+  if (!context.suppressAutomaticWrites && !context.failure)
+    applyExitClearing(context);
   for (const node of context.exited)
     for (let ancestor = node.parent; ancestor; ancestor = ancestor.parent)
       if (!ancestor.detached) updateOutput(ancestor, context);
