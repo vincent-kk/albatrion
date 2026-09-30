@@ -19,7 +19,7 @@ describe('stage 03 ledger adjudication regressions', () => {
     expect(root.outputValue).toEqual({});
     expect(root.find('/x')?.raw).toBeUndefined();
     expect(root.diagnostics).toMatchObject({ status: 'degraded', cause: 'budget',
-      exceededBudget: 'transition', iterations: 2, commit: expect.any(Number) });
+      exceededBudget: 'hostWheel', iterations: 2, commit: expect.any(Number) });
   };
 
   it('selfcheck-v5.mjs:220 commits Source B after a self-negating shape cycle in production', () => {

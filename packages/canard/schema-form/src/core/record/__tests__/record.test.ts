@@ -34,7 +34,6 @@ const makeRecord = (): SchemaNodeRecord<PathNode> => {
       blueprint: analysis,
       ifPredicates: new Map(),
       diagnostics: { status: 'stable' },
-      budgets: { hostWheel: 1, transition: 1 },
       nodeFactory: (_entry, parent) => ({
         path: parent?.path ?? '',
         depth: parent?.depth ?? 0,

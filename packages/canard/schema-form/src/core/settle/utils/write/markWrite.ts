@@ -7,7 +7,7 @@ import { hasOwnProperty } from '@winglet/common-utils/lib';
 const DECLARED_NAMES = new WeakMap<object, Set<string>>();
 
 /** Whether a value can merge by named keys without changing the host kind. */
-const isPlain = (value: unknown): value is Record<string, unknown> =>
+export const isPlain = (value: unknown): value is Record<string, unknown> =>
   value !== null && typeof value === 'object' && !Array.isArray(value);
 
 /**

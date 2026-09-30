@@ -17,7 +17,6 @@ export function createCoreScenarioAdapter(scenario: FormScenario): ScenarioAdapt
   const root = schemaNodeFactory(blueprint(scenario.schema as BlueprintSchema), {
     ifPredicates: new Map(),
     diagnostics: { status: 'stable' },
-    budgets: { hostWheel: 32, transition: 32 },
     loadSnapshot: undefined,
     latentRaw: new Map(),
     typeMismatchPaths: new Set(),

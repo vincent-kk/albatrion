@@ -2,13 +2,10 @@ import type { BlueprintNode, BlueprintSchemaType, EffectiveSchema } from '../blu
 import { find, findNodes } from '../navigation';
 import type { Behavior, SchemaNodeRecord, SchemaNodeRuntime } from '../record';
 import { readSchemaNodeDefaultValue, resetSchemaNodeSubtree,
-  writeSchemaNode } from '../settle';
+  readSchemaNodeInactiveValues, readSchemaNodeTypeMismatch,
+  readSchemaNodeTypeMismatches, writeSchemaNode } from '../settle';
 import { SetValueOption } from './type';
-import type { InactiveValue, SetValueOption as PublicSetValueOption } from './type';
 import { SetValueOption as WriteOption } from '../types/value';
-
-const EMPTY_PATHS: readonly string[] = Object.freeze([]);
-const EMPTY_VALUES: readonly InactiveValue[] = Object.freeze([]);
 
 /** Runtime record implementation; the public SchemaNode name denotes a union type. */
 export class SchemaNode implements SchemaNodeRecord<SchemaNode> {
@@ -114,18 +111,14 @@ export class SchemaNode implements SchemaNodeRecord<SchemaNode> {
   /** {@inheritDoc NodeSurface.outputValue} */
   get outputValue() { return this.emit; }
   /** {@inheritDoc NodeSurface.inactiveValues} */
-  get inactiveValues() {
-    return this.runtime.inactiveValuesMemo.get(this.path) ?? EMPTY_VALUES;
-  }
+  get inactiveValues() { return readSchemaNodeInactiveValues<SchemaNode>(this); }
   /** {@inheritDoc NodeSurface.active} */
   get active() { return this.storedActive; }
   set active(value: boolean) { this.storedActive = value; }
   /** {@inheritDoc NodeSurface.typeMismatch} */
-  get typeMismatch() { return this.runtime.typeMismatchPaths.has(this.path); }
+  get typeMismatch() { return readSchemaNodeTypeMismatch<SchemaNode>(this); }
   /** {@inheritDoc NodeSurface.typeMismatches} */
-  get typeMismatches() {
-    return this.runtime.typeMismatchesMemo?.get(this.path)?.paths ?? EMPTY_PATHS;
-  }
+  get typeMismatches() { return readSchemaNodeTypeMismatches<SchemaNode>(this); }
   /** {@inheritDoc NodeSurface.diagnostics} */
   get diagnostics(): SchemaNodeRuntime<SchemaNode>['diagnostics'] {
     return this.runtime.diagnostics;
@@ -141,13 +134,13 @@ export class SchemaNode implements SchemaNodeRecord<SchemaNode> {
     return findNodes<SchemaNode>(this, pointer);
   }
   /** {@inheritDoc NodeSurface.setValue} */
-  setValue(value: unknown, option: PublicSetValueOption = SetValueOption.Overwrite) {
+  setValue(value: unknown, option: SetValueOption = SetValueOption.Overwrite) {
     return writeSchemaNode<SchemaNode>(this, value,
       (option & WriteOption.Merge) === WriteOption.Merge &&
       !(option & WriteOption.Replace) ? 'callerPartial' : 'callerReplace', option);
   }
   /** {@inheritDoc NodeSurface.resetSubtree} */
-  resetSubtree(option: PublicSetValueOption = SetValueOption.Overwrite) {
+  resetSubtree(option: SetValueOption = SetValueOption.Overwrite) {
     return resetSchemaNodeSubtree<SchemaNode>(this, option);
   }
 }

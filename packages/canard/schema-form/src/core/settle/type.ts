@@ -44,8 +44,6 @@ export interface SettlementContext<Self extends SchemaNodeRecord<Self>> {
   automatic: boolean;
   /** True when the current transition round changed either state channel. */
   automaticChanged: boolean;
-  /** True when a transition calculation changes a final child shape. */
-  transitionShapeChanged: boolean;
   /** Paths scheduled by the write and the blueprint dependency index. */
   dirtyPaths: Set<string>;
   /** Hosts whose declarations or children require a new gate/shape selection. */

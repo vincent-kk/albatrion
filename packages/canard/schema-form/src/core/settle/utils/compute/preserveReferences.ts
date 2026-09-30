@@ -30,8 +30,6 @@ export const preserveReferences = <Self extends SchemaNodeRecord<Self>>(
     previous.children.length === node.children.length &&
     previous.children.every((child, index) => child === node.children?.[index]))
     node.children = previous.children;
-  if (context.inTransition && node.children !== previous.children)
-    context.transitionShapeChanged = true;
   if (node.local === previous.local && node.emit === previous.emit &&
     node.children === previous.children &&
     node.schema === (context.originalSchemas.get(node.path) ?? previous.schema) &&

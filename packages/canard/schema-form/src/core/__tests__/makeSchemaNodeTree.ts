@@ -10,8 +10,6 @@ export const makeSchemaNodeTree = (
   options: {
     snapshot?: unknown;
     ifPredicate?: (gate: BlueprintGate) => IfPredicate;
-    hostWheelBudget?: number;
-    transitionBudget?: number;
   } = {},
 ) => {
   const analysis = blueprint(schema);
@@ -32,15 +30,14 @@ export const makeSchemaNodeTree = (
   const runtime = {
     ifPredicates,
     diagnostics: { status: 'stable' as const },
-    budgets: {
-      hostWheel: options.hostWheelBudget ?? 32,
-      transition: options.transitionBudget ?? 32,
-    },
     loadSnapshot: options.snapshot,
     latentRaw: new Map<string, unknown>(),
     typeMismatchPaths: new Set<string>(),
     inactiveValuesMemo: new Map<string, readonly { path: string; value: unknown }[]>(),
   };
   const root = schemaNodeFactory(analysis, runtime);
-  return { root, runtime: Reflect.get(root, 'runtime') as object };
+  const treeRuntime: unknown = Reflect.get(root, 'runtime');
+  if (treeRuntime === null || typeof treeRuntime !== 'object')
+    throw new Error('SchemaNode tree runtime is missing');
+  return { root, runtime: treeRuntime };
 };

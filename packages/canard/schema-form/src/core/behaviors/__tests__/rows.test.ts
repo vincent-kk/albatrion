@@ -33,7 +33,6 @@ const makeRecord = (
     blueprint: OBJECT_ANALYSIS,
     ifPredicates: new Map(),
     diagnostics: { status: 'stable' },
-    budgets: { hostWheel: 1, transition: 1 },
     nodeFactory: () => undefined,
     loadSnapshot: undefined,
     latentRaw: new Map(),

@@ -34,7 +34,7 @@ describe('settle exits and budgets', () => {
       exceededBudget: 'hostWheel', iterations: 2 });
   });
 
-  it('26C-09 keeps the self-negating fragment transition ceiling at two', () => {
+  it('26C-11 attributes a self-negating fragment to the host-wheel ceiling', () => {
     const { root, blueprint } = createTestTree({ type: 'object',
       if: { not: { required: ['x'] } },
       then: { properties: { x: { type: 'number', default: 1 } } },
@@ -44,7 +44,7 @@ describe('settle exits and budgets', () => {
     expect(() => loadSchemaNodeAtMount(root, {}, SetValueOption.Overwrite))
       .toThrow();
     expect(root.runtime.diagnostics).toMatchObject({ cause: 'budget',
-      exceededBudget: 'transition', iterations: 2 });
+      exceededBudget: 'hostWheel', iterations: 2 });
   });
 
   it('SETTLE-005 withdraws a mid-round fill absent from the final shape', () => {

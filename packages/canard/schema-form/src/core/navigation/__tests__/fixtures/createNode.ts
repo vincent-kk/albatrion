@@ -21,7 +21,6 @@ export const createNode = (
       blueprint: analysis,
       ifPredicates: new Map(),
       diagnostics: { status: 'stable' },
-      budgets: { hostWheel: 1, transition: 1 },
       nodeFactory: (entry, owner, treeRuntime) =>
         createNode('name' in entry ? entry.name : '', owner, 'branch', treeRuntime),
       loadSnapshot: undefined,

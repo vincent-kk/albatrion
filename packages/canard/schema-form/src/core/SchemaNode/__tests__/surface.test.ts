@@ -12,7 +12,6 @@ const makeTree = (schema: BlueprintSchema, snapshot: unknown = undefined) =>
   schemaNodeFactory(blueprint(schema), {
   ifPredicates: new Map(),
   diagnostics: { status: 'stable' },
-  budgets: { hostWheel: 32, transition: 32 },
   loadSnapshot: snapshot,
   latentRaw: new Map(),
   typeMismatchPaths: new Set(),

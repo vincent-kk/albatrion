@@ -37,7 +37,6 @@ export const transitionSettlement = <Self extends SchemaNodeRecord<Self>>(
   const filledNodes = context.hasGates ? undefined : new Set<Self>();
   const cleared = new Set<Self>();
   let rounds = 0;
-  let shapeChanged = false;
   while (true) {
     context.automaticChanged = false;
     applyExitClearing(context, cleared);
@@ -69,7 +68,7 @@ export const transitionSettlement = <Self extends SchemaNodeRecord<Self>>(
       markWrite(node, original, context, staticSpec(effective, node.nullable));
       context.automatic = false;
     }
-    if (!context.automaticChanged && !shapeChanged) {
+    if (!context.automaticChanged) {
       withdrawDetachedFills(context);
       context.inTransition = false;
       return;
@@ -85,19 +84,21 @@ export const transitionSettlement = <Self extends SchemaNodeRecord<Self>>(
       context.inTransition = false;
       return;
     }
-    if (shapeChanged) {
-      context.dirtyPaths.add(context.root.path);
-      context.shapeDirtyPaths.add(context.root.path);
-    }
     registerRecalculation(context);
-    context.transitionShapeChanged = false;
     context.hostWheelExceeded = undefined;
     computeNode(context.root, context);
+    if (context.hostWheelExceeded !== undefined && !context.failure) {
+      context.failure = new SchemaFormError(BUDGET_EXCEEDED,
+        `Host wheel budget exceeded at ${context.target.path}`,
+        { path: context.target.path });
+      context.cause = 'budget';
+      context.exceededBudget = 'hostWheel';
+      context.iterations = context.hostWheelExceeded;
+    }
     if (context.failure) {
       context.inTransition = false;
       return;
     }
-    shapeChanged = context.transitionShapeChanged || context.hostWheelExceeded !== undefined;
   }
 };
 

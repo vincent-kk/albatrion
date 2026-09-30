@@ -1,12 +1,11 @@
 import type { SchemaNodeRecord } from '../../../record';
-import type { SetValueOption } from '../../../types/value';
-import { SetValueOption as WriteOption } from '../../../types/value';
+import { SetValueOption } from '../../../types/value';
 import { SchemaFormError } from '../../../../errors';
 import type { SchemaNodeWriteKind, SettlementContext } from '../../type';
 import { commitSettlement } from '../commit/commitSettlement';
 import { computeNode } from '../compute/computeNode';
 import { getGateRegistry } from '../gates/getGateRegistry';
-import { markWrite } from './markWrite';
+import { isPlain, markWrite } from './markWrite';
 import { registerRecalculation } from './registerRecalculation';
 import { staticSpec } from './staticSpec';
 import { BUDGET_EXCEEDED } from '../errors/settleErrorCode';
@@ -34,13 +33,21 @@ export const writeSchemaNode = <Self extends SchemaNodeRecord<Self>>(
   option: SetValueOption,
 ): void => {
   if (node.detached) {
-    node.rootNode.runtime.latentRaw.set(
-      JSON.stringify([node.path, node.blueprintNode.kind]),
-      node.behavior.interpret(input, staticSpec(node.schemaType, node.nullable)));
+    const latentRaw = node.rootNode.runtime.latentRaw;
+    const key = JSON.stringify([node.path, node.blueprintNode.kind]);
+    const previous = latentRaw.get(key);
+    const mergeable = kind === 'callerPartial' && isPlain(input) &&
+      isPlain(previous) && node.behavior.strategy === 'branch';
+    if (mergeable) pruneLatentRaw(node, Object.keys(input));
+    else if (kind === 'callerReplace' || kind === 'load' ||
+      kind === 'callerPartial') pruneLatentRaw(node);
+    const source = mergeable ? { ...previous, ...input } : input;
+    latentRaw.set(key,
+      node.behavior.interpret(source, staticSpec(node.schemaType, node.nullable)));
     return;
   }
-  const disable = (option & WriteOption.DisableAutomaticWrites) !== 0;
-  const enable = (option & WriteOption.EnableAutomaticWrites) !== 0;
+  const disable = (option & SetValueOption.DisableAutomaticWrites) !== 0;
+  const enable = (option & SetValueOption.EnableAutomaticWrites) !== 0;
   const scratch = getSettlementScratch(node.rootNode.runtime);
   const context: SettlementContext<Self> = {
     root: node.rootNode,
@@ -60,7 +67,6 @@ export const writeSchemaNode = <Self extends SchemaNodeRecord<Self>>(
     latentAutomaticLog: scratch.latentAutomaticLog,
     automatic: false,
     automaticChanged: false,
-    transitionShapeChanged: false,
     dirtyPaths: scratch.dirtyPaths,
     shapeDirtyPaths: scratch.shapeDirtyPaths,
     changedRaw: scratch.changedRaw,

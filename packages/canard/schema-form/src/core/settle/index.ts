@@ -3,4 +3,6 @@ export { loadSchemaNodeAtMount } from './utils/load/loadSchemaNodeAtMount';
 export { resetSchemaNodeForm } from './utils/load/resetSchemaNodeForm';
 export { resetSchemaNodeSubtree } from './utils/load/resetSchemaNodeSubtree';
 export { readSchemaNodeDefaultValue } from './utils/load/readSchemaNodeDefaultValue';
+export { readSchemaNodeInactiveValues, readSchemaNodeTypeMismatch,
+  readSchemaNodeTypeMismatches } from './utils/readDetachedSchemaNode';
 export type { SchemaNodeWriteKind } from './type';

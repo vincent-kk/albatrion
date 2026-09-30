@@ -38,7 +38,6 @@ function makeNew(schema: BlueprintSchema, value?: unknown) {
   const root = schemaNodeFactory(blueprint(schema), {
     ifPredicates: new Map(),
     diagnostics: { status: 'stable' },
-    budgets: { hostWheel: 128, transition: 128 },
     loadSnapshot: undefined,
     latentRaw: new Map(),
     typeMismatchPaths: new Set(),
@@ -158,7 +157,7 @@ function b2() {
   const makeTree = () => {
     const root = schemaNodeFactory(analysis, {
       ifPredicates: new Map(), diagnostics: { status: 'stable' },
-      budgets: { hostWheel: 128, transition: 128 }, loadSnapshot: undefined,
+      loadSnapshot: undefined,
       latentRaw: new Map(), typeMismatchPaths: new Set(), inactiveValuesMemo: new Map(),
     }) as unknown as RuntimeSchemaNode;
     loadSchemaNodeAtMount(root, value, SetValueOption.Overwrite);
@@ -175,7 +174,7 @@ function heapOne(kind: 'new' | 'legacy') {
   if (analysis) {
     const root = schemaNodeFactory(analysis, {
       ifPredicates: new Map(), diagnostics: { status: 'stable' },
-      budgets: { hostWheel: 128, transition: 128 }, loadSnapshot: undefined,
+      loadSnapshot: undefined,
       latentRaw: new Map(), typeMismatchPaths: new Set(), inactiveValuesMemo: new Map(),
     }) as unknown as RuntimeSchemaNode;
     loadSchemaNodeAtMount(root, value, SetValueOption.Overwrite);
@@ -326,7 +325,7 @@ function main() {
   const freshLarge = () => {
     const root = schemaNodeFactory(largeAnalysis, {
       ifPredicates: new Map(), diagnostics: { status: 'stable' },
-      budgets: { hostWheel: 128, transition: 128 }, loadSnapshot: undefined,
+      loadSnapshot: undefined,
       latentRaw: new Map(), typeMismatchPaths: new Set(), inactiveValuesMemo: new Map(),
     }) as unknown as RuntimeSchemaNode;
     loadSchemaNodeAtMount(root, large.value, SetValueOption.Overwrite);

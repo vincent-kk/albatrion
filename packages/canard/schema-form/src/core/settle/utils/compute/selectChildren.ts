@@ -2,6 +2,7 @@ import { SchemaFormError } from '../../../../errors';
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 import { escapeSegment } from '@winglet/json/pointer';
 import { mergeEffectiveSchema } from '../../../blueprint';
+import { walkSchemaNodes } from '../../../navigation';
 import type { SchemaNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../type';
 import { evaluateGate } from '../gates/evaluateGate';
@@ -14,6 +15,7 @@ import { hasRecursiveExpansion } from './hasRecursiveExpansion';
 import { RECURSIVE_SHAPE_DIVERGED } from '../errors/settleErrorCode';
 import { writeLatentRaw } from '../transition/writeLatentRaw';
 import type { BlueprintChildEntry } from '../../../blueprint';
+import { captureDetachedSchemaNodeReads } from '../readDetachedSchemaNode';
 
 /** Ungated declarations are included by the effective-schema merger itself. */
 const NO_ACTIVE_IDS: readonly number[] = Object.freeze([]);
@@ -166,8 +168,12 @@ export const selectChildren = <Self extends SchemaNodeRecord<Self>>(
   for (const [name, child] of Object.entries(prior))
     if (!next[name]) {
       context.exited.add(child);
-      child.detached = true;
-      child.active = false;
+      walkSchemaNodes(child, (departing) => {
+        if (!departing.runtime.detachedReads?.has(departing))
+          captureDetachedSchemaNodeReads(departing);
+        departing.detached = true;
+        departing.active = false;
+      });
       getGateRegistry(child.runtime).remove(child);
       const key = JSON.stringify([child.path, child.blueprintNode.kind]);
       const source = node.raw;

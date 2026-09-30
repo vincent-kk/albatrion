@@ -31,7 +31,6 @@ export const createTestTree = (
     blueprint: analysis,
     ifPredicates: predicates,
     diagnostics: { status: 'stable' },
-    budgets: { hostWheel: 32, transition: 32 },
     nodeFactory: (entry, parent, treeRuntime) =>
       createPlainNode(entry, parent, treeRuntime, visits),
     loadSnapshot: undefined,

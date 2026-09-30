@@ -123,6 +123,14 @@ interface SchemaNodeRootRuntimeState {
   inactiveValuesMemo: Map<string, readonly { path: string; value: unknown }[]>;
 }
 
+/** Last committed reads retained for one node reference after it exits. */
+interface DetachedSchemaNodeReads {
+  readonly typeMismatch: boolean;
+  readonly typeMismatches: readonly string[];
+  readonly inactiveValues: readonly { path: string; value: unknown }[];
+  readonly defaultValue: unknown;
+}
+
 /** Structured warning emitted when a committed raw value misses its effective type. */
 export interface TypeMismatchRecord {
   readonly level: 'warning';
@@ -176,12 +184,12 @@ export interface SchemaNodeRuntime<Self> extends SchemaNodeRootRuntimeState {
   typeMismatchRecords?: readonly TypeMismatchRecord[];
   /** Commit-scoped subtree mismatch path lists. */
   typeMismatchesMemo?: Map<string, { commit: number; paths: readonly string[] }>;
+  /** Frozen last-commit reads for departed references, allocated on first exit. */
+  detachedReads?: WeakMap<object, DetachedSchemaNodeReads>;
   /** Synchronous predicates for authored if gates. */
   ifPredicates: ReadonlyMap<BlueprintGate, (gateInput: unknown) => boolean>;
   /** Settlement health retained until a form-level load. */
   diagnostics: SchemaNodeDiagnostics;
-  /** Host and transition iteration limits. */
-  budgets: { hostWheel: number; transition: number };
   /** Single node creator used throughout this tree. */
   nodeFactory: SchemaNodeFactory<Self>;
   /** Lazily retained work containers for non-reentrant settlement calls. */
