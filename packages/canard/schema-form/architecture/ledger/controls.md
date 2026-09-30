@@ -499,6 +499,8 @@
 - 보충:
   > "| `children` | 선언 | 객체 노드 | 각 키의 단계 | `[{ targets: [자식 이름…], controls: { readOnly, visible, active, disabled, unsetValue, default, derived, resetInteraction, unsetOnInactive } }]`. 이름으로 가리킨 직계 자식에 건다. 안쪽 `controls`는 닫힌 목록이며 `children`·`injectTo`·`discriminator`·`watch`는 들지 않는다. 손자에 걸려면 자식 스키마에 `controls.children`을 적는다 | — | — |" (`08-design-a-to-z.md:113`)
   > "형태는 `controls: { children: [{ targets: ['name', 'email'], controls: { readOnly: './locked', unsetValue: '...' } }] }`이며, 안쪽 `controls`에는 상태 키뿐 아니라 값 키(`default`, `derived`, `unsetValue`, `resetInteraction`, `unsetOnInactive`)도 둔다(소유자 답 14·15)." (`02-target-overview.md:297`)
+  > 편집자 결정(29C-04): "【추론】 조각 객체의 `controls`에 둘 수 있는 키는 CONTROLS-077의 닫힌 목록(`active` `visible` `readOnly` `disabled` `default` `derived` `unsetValue` `resetInteraction` `unsetOnInactive`)이고 `injectTo`는 청사진 오류다; `controls.children` 항목의 안쪽 `controls`도 같다(CONTROLS-030)." (`reviews/round-29-closing.md:45`)
+  > 편집자 결정(29C-04): "【추론】 02(PR-1) 청사진이 조각과 `controls.children` 항목의 `controls`에 `injectTo`를 모르는 키로 거부하는 것(`src/core/blueprint/utils/diagnostics/validateControlGroups.ts:27-46,95-113`의 키 목록과 모르는 키 거부, 조각 여부는 `src/core/blueprint/utils/diagnostics/collectDeclarations.ts:30-35,89`)은 원장과 맞으며 고칠 것이 없다." (`reviews/round-29-closing.md:48`)
 - 상태: 현행
 - 출처: `adr/0003-group-namespace.md:80,81,91`(정본), `08-design-a-to-z.md:113`, `02-target-overview.md:297`, `07-conclusions.md:122`
 - 닫은 사람: 소유자 답(`reviews/round-9-spec.md:108` 자식 집합 제어), 소유자 답(`reviews/round-10-owner-answers.md:16` C-15), 소유자 답(`reviews/round-10-owner-answers.md:21` D-14), 소유자 답(`reviews/round-13-owner-answers.md:7` 1 잠금 규칙; children 그룹은 예외), 소유자 답(`reviews/round-15-decisions.md:14` 6)
@@ -1144,7 +1146,10 @@
   > 【추론】 같은 대상에 여러 자동 쓰기가 겹치면 ADR 0003 §6의 순위와 층을 그대로 따른다.
   > 【추론】 조각이 켜지고 꺼지는 순간의 에지 기준은 18C-51을 따른다.
   > 【추론】 새 오류 코드는 없다(기존 청사진 오류의 모르는 키 부류).
-- 보충: 없음
+- 보충:
+  > 편집자 결정(29C-04): "【추론】 조각 객체의 `controls`에 둘 수 있는 키는 CONTROLS-077의 닫힌 목록(`active` `visible` `readOnly` `disabled` `default` `derived` `unsetValue` `resetInteraction` `unsetOnInactive`)이고 `injectTo`는 청사진 오류다; `controls.children` 항목의 안쪽 `controls`도 같다(CONTROLS-030)." (`reviews/round-29-closing.md:45`)
+  > 편집자 결정(29C-04): "【추론】 FRAGMENT-050의 "조각의 `controls`에 둔 에지 규칙(`unsetValue`·`derived`·`resetInteraction`·`injectTo`)"에서 `injectTo`는 18C-51이 지나가며 적은 열거이며, 같은 18라운드의 뒤 블록 18C-60이 허용 키 집합을 명시적으로 닫았으므로 CONTROLS-077이 이긴다; 조각 층의 에지 규칙은 `unsetValue`·`derived`·`resetInteraction` 셋으로 읽는다." (`reviews/round-29-closing.md:46`)
+  > 편집자 결정(29C-04): "【추론】 02(PR-1) 청사진이 조각과 `controls.children` 항목의 `controls`에 `injectTo`를 모르는 키로 거부하는 것(`src/core/blueprint/utils/diagnostics/validateControlGroups.ts:27-46,95-113`의 키 목록과 모르는 키 거부, 조각 여부는 `src/core/blueprint/utils/diagnostics/collectDeclarations.ts:30-35,89`)은 원장과 맞으며 고칠 것이 없다." (`reviews/round-29-closing.md:48`)
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:1704-1720`(정본)
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-60)

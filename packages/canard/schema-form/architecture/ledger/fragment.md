@@ -757,6 +757,9 @@
 - 보충:
   > 편집자 결정(29C-01): "【추론】 생긴 노드와 로드된 노드의 `controls.derived`·`controls.injectTo`는 원천의 방출 값이 `undefined`여도(채움 전) 거짓→참 에지로 발화한다: WRITE-029·FRAGMENT-050 (2)·CONTROLS-027은 에지의 조건을 "직전 값이 없다"로만 두고 원천 값의 유무를 조건으로 두지 않으며, CONTROLS-079의 `value`는 원천의 방출 값이라 방출이 없으면 `undefined`다." (`reviews/round-29-closing.md:9`)
   > 편집자 결정(29C-01): "【추론】 첫 발화의 쓰기가 게이트를 뒤집어 원천 노드가 채움 전에 나가면 결과는 첫 발화의 값이며, FRAGMENT-050 (3)대로 그 쓰기는 되돌리지 않는다; 그런 사례의 v7 기대(`REPORT-v7.md:47,51`의 A4b·X16과 그 변형 X16_noDefault)는 원장과 다르므로 이식하지 않고 원장의 값으로 바꾸며, TEST-069 (라)의 배분과 04 실행 계획의 "기대값은 `round18/proto/REPORT-v7.md`의 기대 치환을 따른다"(`plan/04-derive-and-controls/execution-plan.md:346`)는 v7의 모형이 원장과 다른 자리에는 미치지 않는다(03이 `plan/03-node-and-settle/log.md` §4에 남긴 선례와 같다)." (`reviews/round-29-closing.md:14`)
+  > 편집자 결정(29C-04): "【추론】 조각 객체의 `controls`에 둘 수 있는 키는 CONTROLS-077의 닫힌 목록(`active` `visible` `readOnly` `disabled` `default` `derived` `unsetValue` `resetInteraction` `unsetOnInactive`)이고 `injectTo`는 청사진 오류다; `controls.children` 항목의 안쪽 `controls`도 같다(CONTROLS-030)." (`reviews/round-29-closing.md:45`)
+  > 편집자 결정(29C-04): "【추론】 FRAGMENT-050의 "조각의 `controls`에 둔 에지 규칙(`unsetValue`·`derived`·`resetInteraction`·`injectTo`)"에서 `injectTo`는 18C-51이 지나가며 적은 열거이며, 같은 18라운드의 뒤 블록 18C-60이 허용 키 집합을 명시적으로 닫았으므로 CONTROLS-077이 이긴다; 조각 층의 에지 규칙은 `unsetValue`·`derived`·`resetInteraction` 셋으로 읽는다." (`reviews/round-29-closing.md:46`)
+  > 편집자 결정(29C-04): "【추론】 `controls.injectTo`는 노드 자신의 `controls`에만 있고, 조각이 선언한 노드의 `injectTo`가 그 조각이 켜져 있는 동안만 후보인 것은 WRITE-029("형상에 없는 노드의 규칙은 평가하지 않는다")에서 나온다." (`reviews/round-29-closing.md:47`)
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:1421-1432`(정본)
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-51)

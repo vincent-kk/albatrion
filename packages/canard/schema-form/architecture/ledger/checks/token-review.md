@@ -462,6 +462,6 @@ node ledger/checks/tokens.mjs check <목록> ledger/*.md
 
 잔여 484 그대로다. HANDOFF §1의 28라운드 문단이 새로 든 코드 토큰(`enabled`, `active && visible`, `setContext`, `NODE_ENV`, `watchValues`)은 같은 라운드의 보충 줄(LANDING-066·NODE-044·SURFACE-055·ERROR-159·CONTROLS-032)이 원장에 함께 들었다. 새 항목은 없고 보충 줄 65개만 더했다(`reviews/round-28-closing.md` 28C-01~08).
 
-## 29라운드(04 구현 중의 해석 세 건) 반영 뒤의 잔여 (2026-10-01)
+## 29라운드(04 구현 중의 해석 네 건) 반영 뒤의 잔여 (2026-10-01)
 
-잔여 484 그대로다. HANDOFF §1의 29라운드 문단이 새로 든 코드 토큰(`controls.injectTo`, `controls.derived`, `undefined`)은 원장에 이미 있다. 새 항목은 없고 보충 줄 43개만 더했다(`reviews/round-29-closing.md` 29C-01~03).
+잔여 484 그대로다. HANDOFF §1의 29라운드 문단이 새로 든 코드 토큰(`controls.injectTo`, `controls.derived`, `undefined`)은 원장에 이미 있다. 새 항목은 없고 보충 줄 51개만 더했다(`reviews/round-29-closing.md` 29C-01~04).
