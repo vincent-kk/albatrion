@@ -1,5 +1,6 @@
-import { isArray } from '@winglet/common-utils/filter';
 import { describe, expect, it } from 'vitest';
+
+import { isArray } from '@winglet/common-utils/filter';
 
 import { blueprint, mergeEffectiveSchema } from '../index';
 import { BlueprintErrorCode } from '../utils/diagnostics/constant';

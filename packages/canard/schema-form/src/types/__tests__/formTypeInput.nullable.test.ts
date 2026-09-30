@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
+import { isArray } from '@winglet/common-utils/filter';
+
 import type {
   FormTypeTestFn,
   FormTypeTestObject,
@@ -13,7 +15,7 @@ import type {
 const testMatches = (test: FormTypeTestObject, hint: Hint): boolean => {
   // Type matching
   if (test.type !== undefined) {
-    const testTypes = Array.isArray(test.type) ? test.type : [test.type];
+    const testTypes = isArray(test.type) ? test.type : [test.type];
     if (!testTypes.includes(hint.type)) {
       return false;
     }
@@ -28,7 +30,7 @@ const testMatches = (test: FormTypeTestObject, hint: Hint): boolean => {
 
   // Path matching
   if (test.path !== undefined) {
-    const testPaths = Array.isArray(test.path) ? test.path : [test.path];
+    const testPaths = isArray(test.path) ? test.path : [test.path];
     if (!testPaths.includes(hint.path)) {
       return false;
     }
@@ -36,7 +38,7 @@ const testMatches = (test: FormTypeTestObject, hint: Hint): boolean => {
 
   // Format matching
   if (test.format !== undefined) {
-    const testFormats = Array.isArray(test.format)
+    const testFormats = isArray(test.format)
       ? test.format
       : [test.format];
     if (!testFormats.includes(hint.format)) {
@@ -46,7 +48,7 @@ const testMatches = (test: FormTypeTestObject, hint: Hint): boolean => {
 
   // FormType matching
   if (test.formType !== undefined) {
-    const testFormTypes = Array.isArray(test.formType)
+    const testFormTypes = isArray(test.formType)
       ? test.formType
       : [test.formType];
     if (!testFormTypes.includes(hint.formType)) {

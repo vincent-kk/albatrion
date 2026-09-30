@@ -1,5 +1,6 @@
-import { isArray } from '@winglet/common-utils/filter';
 import { describe, expect, it } from 'vitest';
+
+import { isArray } from '@winglet/common-utils/filter';
 
 // @ts-expect-error The original JavaScript corpus has no TypeScript declaration.
 import { corpus } from '../../../../architecture/spikes/guard-cost/redteam3/corpus.mjs';
