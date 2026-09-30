@@ -29,8 +29,11 @@ export const registerRecalculation = <Self extends SchemaNodeRecord<Self>>(
   }
   if (context.hasGates) {
     const registry = getGateRegistry(context.root.runtime);
-    for (const path of context.dirtyPaths)
+    for (const path of context.dirtyPaths) {
       if (registry.mayChangeAt(path, context.changedRaw))
         context.shapeDirtyPaths.add(path);
+      if (path && registry.mayChangeOwnDeclarationAt(path, context.changedRaw))
+        context.shapeDirtyPaths.add(path.slice(0, path.lastIndexOf('/')));
+    }
   }
 };
