@@ -192,8 +192,10 @@ describe('injectTo edge boundaries', () => {
     }, properties: {
       enabled: { type: 'boolean' }, source: { type: 'number' },
     }, if: { required: ['enabled'] },
-    then: { properties: { target: { type: ['number', 'string'] } } },
-    else: { properties: { target: { type: 'number' } } },
+    then: { properties: { target: { type: ['number', 'string'],
+      controls: { unsetOnInactive: 'false' } } } },
+    else: { properties: { target: { type: 'number',
+      controls: { unsetOnInactive: 'false' } } } },
     });
     loadSchemaNodeAtMount(root, { source: 10 }, SetValueOption.Overwrite);
     const oldTarget = root.structure!.target;
@@ -207,6 +209,8 @@ describe('injectTo edge boundaries', () => {
     expect(newTarget.blueprintNode.kind).toBe('union');
     expect(newTarget.raw).toBe(10);
     expect([...root.runtime.committedRuleValues?.keys() ?? []]).not.toContain(oldKey);
+    expect([...root.runtime.committedRuleValues?.keys() ?? []].some((key) =>
+      key.includes('/derived') && key.includes('"/target","union"'))).toBe(true);
   });
 
   it('SETTLE-043 active kind watch extends only the live target dependency tuple', () => {

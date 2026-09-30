@@ -243,6 +243,10 @@ export interface SchemaNodeRuntime<Self> extends SchemaNodeRootRuntimeState {
   context?: Readonly<Record<string, unknown>>;
   /** Last committed expression inputs, keyed by live authored rule occurrence. */
   committedRuleValues?: Map<string, unknown>;
+  /** Committed rule keys indexed by their source path for bounded pruning. */
+  committedRuleKeysBySource?: Map<string, Set<string>>;
+  /** Committed rule keys indexed by live value target for exited-subtree pruning. */
+  committedRuleKeysByTarget?: Map<string, Set<string>>;
   /** Last development settlement, replaced rather than accumulated. */
   settlementTrace?: {
     /** Entry API and public write option bits. */

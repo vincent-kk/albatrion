@@ -6,7 +6,9 @@ import type { SettlementContext } from '../../type';
 import { getDeriveState } from '../derivation/getDeriveState';
 import { SchemaFormError } from '../../../../errors';
 import { EXPRESSION_THREW } from '../errors/settleErrorCode';
-import { isArray } from '@winglet/common-utils/filter';
+import { walkSchemaNodes } from '../../../navigation';
+import { pruneCommittedRuleKeys } from './pruneCommittedRuleKeys';
+import { updateCommittedRuleValue } from './updateCommittedRuleValue';
 
 /**
  * Publish final rule baselines and clear interaction flags before revision bumps.
@@ -35,34 +37,14 @@ export const commitDeriveRules = <Self extends SchemaNodeRecord<Self>>(
     });
     if (node.state !== previous) context.changedNodes.add(node);
   }
-  const next = new Map(state.committedRuleValues);
-  const exitedPaths = new Set([...context.exited].map((node) => node.path));
-  for (const key of next.keys()) {
-    const parts: unknown = JSON.parse(key);
-    if (!isArray(parts) || typeof parts[0] !== 'string') continue;
-    const sourcePath = parts[0];
-    if (state.visitedSourcePaths.has(sourcePath) ||
-      isExitedPath(sourcePath, exitedPaths) ||
-      typeof parts[5] === 'string' && isExitedPath(parts[5], exitedPaths))
-      next.delete(key);
-  }
+  const runtime = context.root.runtime;
+  for (const path of state.visitedSourcePaths)
+    pruneCommittedRuleKeys(runtime, path);
+  for (const exited of context.exited)
+    walkSchemaNodes(exited, (node) =>
+      pruneCommittedRuleKeys(runtime, node.path));
   for (const key of state.activeRuleKeys)
     if (state.consumedRuleValues.has(key))
-      next.set(key, state.consumedRuleValues.get(key));
-  context.root.runtime.committedRuleValues = next;
-};
-
-/**
- * Match an exited subtree root without confusing adjacent pointer segments.
- * @param path - Absolute source or target occurrence path
- * @param exitedPaths - Final departed subtree roots
- * @returns Whether the occurrence is inside an exited subtree
- */
-const isExitedPath = (path: string, exitedPaths: ReadonlySet<string>): boolean => {
-  let ancestor = path;
-  while (true) {
-    if (exitedPaths.has(ancestor)) return true;
-    if (!ancestor) return false;
-    ancestor = ancestor.slice(0, ancestor.lastIndexOf('/'));
-  }
+      updateCommittedRuleValue(runtime, key, 'set',
+        state.consumedRuleValues.get(key));
 };

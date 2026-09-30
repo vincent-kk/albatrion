@@ -4,11 +4,14 @@ import { hasOwnProperty } from '@winglet/common-utils/lib';
 import { SchemaFormError } from '../../../../errors';
 import type { Blueprint, BlueprintExpression } from '../../../blueprint';
 import type { SchemaNodeRecord } from '../../../record';
+import { walkSchemaNodes } from '../../../navigation';
 import type { SettlementContext } from '../../type';
 import { getControlLayers } from '../controls/getControlLayers';
 import { getExitPolicyKey } from '../controls/getExitPolicyKey';
 import { readStateDependency } from '../controls/readStateDependency';
 import { EXPRESSION_THREW } from '../errors/settleErrorCode';
+import { pruneCommittedRuleKeys } from './pruneCommittedRuleKeys';
+import { updateCommittedRuleValue } from './updateCommittedRuleValue';
 
 /** Compiled exit expressions indexed once per immutable analysis. */
 const EXIT_EXPRESSIONS = new WeakMap<Blueprint, ReadonlyMap<string, BlueprintExpression>>();
@@ -38,30 +41,13 @@ export const commitExitPolicyValues = <Self extends SchemaNodeRecord<Self>>(
 ): void => {
   const expressions = getExitExpressions(context.root.runtime.blueprint);
   if (expressions.size === 0) return;
-  const values = context.root.runtime.committedRuleValues ?? new Map<string, unknown>();
-  if (context.exited.size > 0 || context.kind === 'load') {
-    const exitedPaths = new Set([...context.exited].map((node) => node.path));
-    const scope = context.kind === 'load' ? context.loadScope?.path : undefined;
-    for (const key of values.keys()) {
-      const parts: unknown = JSON.parse(key);
-      if (!isArray(parts) || typeof parts[0] !== 'string') continue;
-      const path = parts[0];
-      if (scope !== undefined && (!scope || path === scope ||
-        path.startsWith(`${scope}/`))) {
-        values.delete(key);
-        continue;
-      }
-      let ancestor = path;
-      while (true) {
-        if (exitedPaths.has(ancestor)) {
-          values.delete(key);
-          break;
-        }
-        if (!ancestor) break;
-        ancestor = ancestor.slice(0, ancestor.lastIndexOf('/'));
-      }
-    }
-  }
+  const runtime = context.root.runtime;
+  for (const exited of context.exited)
+    walkSchemaNodes(exited, (node) =>
+      pruneCommittedRuleKeys(runtime, node.path, true));
+  if (context.kind === 'load' && context.loadScope)
+    walkSchemaNodes(context.loadScope, (node) =>
+      pruneCommittedRuleKeys(runtime, node.path, true));
   const candidates = new Set(context.stateDirtyNodes);
   for (const source of context.stateDirtyNodes) {
     if (source.detached || !source.structure) continue;
@@ -117,11 +103,12 @@ export const commitExitPolicyValues = <Self extends SchemaNodeRecord<Self>>(
         group.declarationId, schemaPath]));
       if (!expression) continue;
       try {
-        values.set(key, Boolean(expression.evaluate(expression.dependencies.map(
+        updateCommittedRuleValue(runtime, key, 'set', Boolean(
+          expression.evaluate(expression.dependencies.map(
           (dependency) => readStateDependency(context.root, group.host.path,
             dependency)))));
       } catch (cause) {
-        values.set(key, false);
+        updateCommittedRuleValue(runtime, key, 'set', false);
         if (!context.failure) {
           context.failure = new SchemaFormError(EXPRESSION_THREW,
             `Exit policy expression failed at ${schemaPath}`,
@@ -131,5 +118,4 @@ export const commitExitPolicyValues = <Self extends SchemaNodeRecord<Self>>(
       }
     }
   }
-  context.root.runtime.committedRuleValues = values;
 };
