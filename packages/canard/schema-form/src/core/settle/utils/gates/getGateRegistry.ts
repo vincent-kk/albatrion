@@ -4,6 +4,7 @@ import { escapeSegment } from '@winglet/json/pointer';
 import { resolveGateOccurrence } from './resolveGateOccurrence';
 import type { GateOccurrence } from './type';
 import { resolveDependencyPath } from '../paths/resolveDependencyPath';
+import { getGateExpression } from './getGateExpression';
 
 /** Bound gate with exact read paths used to invalidate its L. */
 interface RegisteredGateOccurrence extends GateOccurrence {
@@ -148,8 +149,7 @@ class GateRegistry {
       'propertyName' in gate.condition &&
       typeof gate.condition.propertyName === 'string')
       return [`${location.hostPath}/${escapeSegment(gate.condition.propertyName)}`];
-    const expression = this.blueprint.expressions.find((candidate) =>
-      candidate.schemaPath === gate.schemaPath && candidate.key === 'active');
+    const expression = getGateExpression(this.blueprint, gate.schemaPath);
     return expression ? expression.dependencies.map((dependency) => {
       const path = resolveDependencyPath(location.hostPath, dependency);
       return path;
