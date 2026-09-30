@@ -3,7 +3,7 @@
 ## Requirements
 
 - 의존 방향의 마지막은 `record < {behaviors 종류, navigation} < settle < SchemaNode`입니다. 이 fractal만 행 선택과 단일 클래스 생성을 함께 압니다(NODE-016, raw-round17 §3).
-- 제품 코드는 내부 구현을 진입점 밖에서 직접 소비하지 않습니다(NODE-016). 경계 예외는 하나입니다: core 시나리오 러너 도우미(`src/core/__tests__/scenarios/utils/`)는 settle 진입 함수가 받는 런타임 레코드 형을 위해 `SchemaNode/SchemaNode.ts`의 클래스 형만 `import type`으로 직접 읽습니다. 진입점은 공개 합집합 형만 내보내므로 시험을 위해 넓히지 않습니다(filid 경계 규칙 §5, D7).
+- 제품 코드는 내부 구현을 진입점 밖에서 직접 소비하지 않습니다(NODE-016). 경계 예외는 하나입니다: core 시나리오 러너 도우미(`src/core/__tests__/scenarios/utils/`)는 settle 진입 함수가 받는 런타임 레코드 형을 위해 `SchemaNode/SchemaNode.ts`의 클래스 형만 `import type`으로 직접 읽습니다. 진입점은 공개 합집합 형만 내보내므로 시험을 위해 넓히지 않습니다(filid 경계 규칙 §5. 실행 ADR D7에서 벗어남 — 계획 로그 §4).
 - PR-2 멤버 표가 클래스 프로토타입과 공개 형의 정확한 목록입니다. 기제가 들어오는 PR에서만 멤버를 더하며 스텁·시험 전용 주입 자리를 두지 않습니다(26C-01, NODE-010).
 
 ## API Contracts

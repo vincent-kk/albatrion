@@ -100,6 +100,8 @@ Planning method: 저장소 지침 — `PLAN.md` §2와 `plan/prompts.md`의 단�
 
 - 계획서 U6 "배치에서 억제 우선"(WRITE-015 배치 행)은 PR-2에서 단언하지 않는다. `batch`는 PR-4의 기제(LANDING-064)이고 26C-03이 뒤 PR 기제를 쓰는 단언을 그 PR로 나누게 하므로 05(PR-4)가 단언한다.
 
+- 실행 ADR D7의 "시험은 `SchemaNode/` 진입점만 가져온다"에서 벗어난다: `src/core/__tests__/scenarios/utils/`의 두 도우미가 settle 진입 함수가 받는 런타임 레코드 형을 위해 `SchemaNode/SchemaNode.ts`의 클래스 형을 `import type`으로 읽는다. 진입점을 넓히지 않고 `SchemaNode/DETAIL.md`에 경계 예외로 선언한다(NODE-016, filid 경계 규칙 §5).
+
 | # | 자리 | 어긋남 | 원장 | 처리 |
 | --- | --- | --- | --- | --- |
 | 1 | TEST-069 (라)의 묶음 이름·수 | "`r8-port`(q8 108)"의 108은 `spikes/round9/r9.mjs`이고, "`r7-port`(52, E1–E13·X*)"의 52는 `r9b.mjs`의 검사 수다. `r7-port.mjs`·`r8-port.mjs`는 단언 없는 관찰 도구다 | TEST-069 | 파일 기준으로 가르고 (라)의 일반 규칙으로 몫을 정한다(실행 계획 I9, §6.1) |
