@@ -131,6 +131,8 @@ interface SchemaNodeRootRuntimeState {
   loadSnapshot: unknown;
   /** Source values kept for nodes outside the live shape. */
   latentRaw: Map<string, unknown>;
+  /** Whether latent sources changed since the last inactive-value publication. */
+  latentRawDirty?: boolean;
   /** Latent occurrence shape and document position, keyed like latentRaw. */
   latentRawMetadata?: Map<string, LatentRawMetadata>;
   /** Current paths whose raw values miss their effective types. */

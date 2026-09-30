@@ -1,5 +1,9 @@
-import type { SchemaNodeRuntime } from '../../../record';
+import { escapeSegment } from '@winglet/json/pointer';
+import type { BlueprintNode } from '../../../blueprint';
+import { find } from '../../../navigation';
+import type { SchemaNodeRecord } from '../../../record';
 import { isTypeMismatch } from './isTypeMismatch';
+import { pickLatentChildren } from '../latent/pickLatentChildren';
 import { EMPTY_VALUES } from '../detached/emptyDetachedReads';
 
 /** Compare two occurrence positions without converting them to path strings. */
@@ -13,36 +17,81 @@ const compareOrder = (left: readonly number[], right: readonly number[]): number
 
 /**
  * Publish only changed latent subtrees while retaining unchanged item objects.
- * @param runtime - Tree-local raw sources, classification, and prior memo
+ * @param root - Current shape and tree-local latent classification and memo
  * @returns Nothing; inactiveValuesMemo is updated at this commit boundary
  */
-export const updateInactiveValuesMemo = <Self>(runtime: SchemaNodeRuntime<Self>): void => {
+export const updateInactiveValuesMemo = <Self extends SchemaNodeRecord<Self>>(
+  root: Self,
+): void => {
+  const runtime = root.runtime;
+  if (!runtime.latentRawDirty && runtime.inactiveValuesMemo.has('')) return;
   const metadata = runtime.latentRawMetadata;
   const entries = runtime.inactiveValueEntries ?? new Map();
   const changedPaths: string[] = [];
+  const candidates = new Map<string, { path: string; value: unknown;
+    order: readonly number[]; explicit: boolean }>();
+  const ancestors = new Set<object>();
+  const hiddenHosts = new Set<string>();
+  for (const key of runtime.latentRaw.keys()) {
+    const info = metadata?.get(key);
+    if (info?.blueprintNode.strategy === 'branch' && find(root, info.path))
+      hiddenHosts.add(info.path);
+  }
+  const collect = (key: string, path: string, value: unknown,
+    template: BlueprintNode, order: readonly number[]): void => {
+    let ancestor = path;
+    while (ancestor) {
+      if (hiddenHosts.has(ancestor)) return;
+      ancestor = ancestor.slice(0, ancestor.lastIndexOf('/'));
+    }
+    if (find(root, path)) return;
+    if (template.strategy === 'terminal' ||
+      isTypeMismatch(value, template.schemaType, template.nullable)) {
+      candidates.set(key, { path, value, order,
+        explicit: runtime.latentRaw.has(key) });
+      return;
+    }
+    if (value === null || typeof value !== 'object' ||
+      Array.isArray(value) || ancestors.has(value)) return;
+    ancestors.add(value);
+    for (const index of pickLatentChildren(template, path, value,
+      runtime.latentRaw)) {
+      const child = template.childEntries[index];
+      const childPath = `${path}/${escapeSegment(child.name)}`;
+      const childKey = JSON.stringify([childPath, child.node.kind]);
+      collect(childKey, childPath, runtime.latentRaw.has(childKey) ?
+        runtime.latentRaw.get(childKey) : Reflect.get(value, child.name),
+      child.node, [...order, index]);
+    }
+    ancestors.delete(value);
+  };
   for (const [key, value] of runtime.latentRaw) {
     const info = metadata?.get(key);
+    if (info) collect(key, info.path, value, info.blueprintNode, info.order);
+  }
+  const chosen = new Map<string, string>();
+  for (const [key, candidate] of candidates) {
+    const held = candidates.get(chosen.get(candidate.path) ?? '');
+    if (!held || (candidate.explicit && !held.explicit) ||
+      (candidate.explicit === held.explicit &&
+        compareOrder(candidate.order, held.order) < 0))
+      chosen.set(candidate.path, key);
+  }
+  for (const [key, candidate] of candidates)
+    if (chosen.get(candidate.path) !== key) candidates.delete(key);
+  for (const [key, candidate] of candidates) {
     const previous = entries.get(key);
-    if (!info || (info.blueprintNode.strategy !== 'terminal' &&
-      !isTypeMismatch(value, info.blueprintNode.schemaType,
-        info.blueprintNode.nullable))) {
-      if (previous) {
-        entries.delete(key);
-        changedPaths.push(previous.entry.path);
-      }
-      continue;
-    }
-    if (previous && Object.is(previous.value, value) &&
-      compareOrder(previous.order, info.order) === 0) continue;
+    if (previous && Object.is(previous.value, candidate.value) &&
+      compareOrder(previous.order, candidate.order) === 0) continue;
     entries.set(key, {
-      value, order: info.order,
-      entry: previous && Object.is(previous.value, value) ? previous.entry :
-        Object.freeze({ path: info.path, value }),
+      value: candidate.value, order: candidate.order,
+      entry: previous && Object.is(previous.value, candidate.value) ? previous.entry :
+        Object.freeze({ path: candidate.path, value: candidate.value }),
     });
-    changedPaths.push(info.path);
+    changedPaths.push(candidate.path);
   }
   for (const [key, previous] of entries)
-    if (!runtime.latentRaw.has(key)) {
+    if (!candidates.has(key)) {
       entries.delete(key);
       changedPaths.push(previous.entry.path);
     }
@@ -50,6 +99,7 @@ export const updateInactiveValuesMemo = <Self>(runtime: SchemaNodeRuntime<Self>)
     for (const key of metadata.keys())
       if (!runtime.latentRaw.has(key)) metadata.delete(key);
   runtime.inactiveValueEntries = entries;
+  runtime.latentRawDirty = false;
   if (changedPaths.length === 0 && runtime.inactiveValuesMemo.has('')) return;
   const ordered = [...entries.values()].sort((left, right) =>
     compareOrder(left.order, right.order) ||

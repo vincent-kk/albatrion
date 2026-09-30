@@ -6,6 +6,7 @@ import { captureLatentDescendants } from './captureLatentDescendants';
 import { readUnsetPolicy } from './readUnsetPolicy';
 import { writeLatentRaw } from './writeLatentRaw';
 import { readDepartingAncestorPolicy } from './readDepartingAncestorPolicy';
+import { isReplacedLivePath } from './isReplacedLivePath';
 
 /**
  * Clear exited raw under node and form policies without changing extras.
@@ -23,9 +24,11 @@ export const applyExitClearing = <Self extends SchemaNodeRecord<Self>>(
       captureExitedRaw(node, inherited, context),
       readUnsetPolicy(node, inherited));
     writeLatentRaw(context, JSON.stringify([node.path, node.blueprintNode.kind]),
-      retained !== undefined, retained);
+      retained !== undefined && !isReplacedLivePath(context, node.path), retained);
     if (Object.is(retained, node.raw)) continue;
     const parent = node.parent;
+    if (parent?.structure?.[node.name] && parent.structure[node.name] !== node)
+      continue;
     if (!parent || parent.raw === null || typeof parent.raw !== 'object' ||
       Array.isArray(parent.raw)) continue;
     const next = { ...parent.raw };

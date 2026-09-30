@@ -16,12 +16,16 @@ export const writeLatentRaw = <Self extends SchemaNodeRecord<Self>>(
   context: SettlementContext<Self>, key: string, present: boolean, value: unknown,
   template?: BlueprintNode, order?: readonly number[],
 ): void => {
-  const latent = context.root.runtime.latentRaw;
+  const runtime = context.root.runtime;
+  const latent = runtime.latentRaw;
   if (context.inTransition && !context.latentAutomaticLog.has(key))
     context.latentAutomaticLog.set(key, {
       present: latent.has(key), value: latent.get(key),
     });
   if (present) {
+    if (!latent.has(key) || !Object.is(latent.get(key), value) ||
+      (template && !runtime.latentRawMetadata?.has(key)))
+      runtime.latentRawDirty = true;
     latent.set(key, value);
     if (template && order) {
       const metadata = context.root.runtime.latentRawMetadata ?? new Map();
@@ -31,5 +35,5 @@ export const writeLatentRaw = <Self extends SchemaNodeRecord<Self>>(
         metadata.set(key, { path: identity[0], blueprintNode: template, order });
     }
   }
-  else latent.delete(key);
+  else if (latent.delete(key)) runtime.latentRawDirty = true;
 };

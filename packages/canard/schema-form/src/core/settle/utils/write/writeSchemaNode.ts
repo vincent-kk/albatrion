@@ -45,10 +45,15 @@ export const writeSchemaNode = <Self extends SchemaNodeRecord<Self>>(
       isPlain(previous) && node.behavior.strategy === 'branch';
     if (mergeable) pruneLatentRaw(node, Object.keys(input));
     else if (kind === 'callerReplace' || kind === 'load' ||
-      kind === 'callerPartial') pruneLatentRaw(node);
+      kind === 'callerPartial')
+      pruneLatentRaw(node);
     const source = mergeable ? { ...previous, ...input } : input;
-    latentRaw.set(key,
-      node.behavior.interpret(source, staticSpec(node.schemaType, node.nullable)));
+    const interpreted = node.behavior.interpret(source,
+      staticSpec(node.schemaType, node.nullable));
+    if (!latentRaw.has(key) || !Object.is(latentRaw.get(key), interpreted) ||
+      !node.rootNode.runtime.latentRawMetadata?.has(key))
+      node.rootNode.runtime.latentRawDirty = true;
+    latentRaw.set(key, interpreted);
     const metadata = node.rootNode.runtime.latentRawMetadata ?? new Map();
     node.rootNode.runtime.latentRawMetadata = metadata;
     metadata.set(key, { path: node.path, blueprintNode: node.blueprintNode,
@@ -58,6 +63,9 @@ export const writeSchemaNode = <Self extends SchemaNodeRecord<Self>>(
   const disable = (option & SetValueOption.DisableAutomaticWrites) !== 0;
   const enable = (option & SetValueOption.EnableAutomaticWrites) !== 0;
   const scratch = getSettlementScratch(node.rootNode.runtime);
+  const replaces = kind === 'callerReplace' ||
+    (kind === 'callerPartial' && (input === null || typeof input !== 'object' ||
+      Array.isArray(input) || node.behavior.strategy !== 'branch'));
   const context: SettlementContext<Self> = {
     root: node.rootNode,
     target: node,
@@ -66,6 +74,7 @@ export const writeSchemaNode = <Self extends SchemaNodeRecord<Self>>(
     suppressAutomaticWrites: disable || (!enable &&
       node.rootNode.runtime.disableAutomaticWrites === true),
     loadScope: kind === 'load' ? node : undefined,
+    replaceScope: replaces ? node : undefined,
     entered: scratch.entered,
     exited: scratch.exited,
     pendingExits: scratch.pendingExits,
@@ -85,10 +94,7 @@ export const writeSchemaNode = <Self extends SchemaNodeRecord<Self>>(
   };
   try {
     if (context.hasGates) getGateRegistry(context.root.runtime).register(context.root);
-    if (kind === 'callerReplace' || kind === 'load' ||
-      (kind === 'callerPartial' && (input === null || typeof input !== 'object' ||
-        Array.isArray(input) || node.behavior.strategy !== 'branch')))
-      pruneLatentRaw(node);
+    if (replaces || kind === 'load') pruneLatentRaw(node);
     markWrite(node, input, context);
     if (kind !== 'load' && kind !== 'automatic')
       promoteHostForChildWrite(node, context);

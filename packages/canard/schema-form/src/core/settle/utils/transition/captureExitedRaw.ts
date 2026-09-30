@@ -4,6 +4,7 @@ import { readUnsetPolicy } from './readUnsetPolicy';
 import type { SettlementContext } from '../../type';
 import { writeLatentRaw } from './writeLatentRaw';
 import { getLatentOrder } from '../latent/getLatentOrder';
+import { isReplacedLivePath } from './isReplacedLivePath';
 
 /**
  * Preserve or clear an exited declaration tree under its nearest policy.
@@ -27,7 +28,8 @@ export const captureExitedRaw = <Self extends SchemaNodeRecord<Self>>(
     retained = copy;
   }
   const key = JSON.stringify([node.path, node.blueprintNode.kind]);
-  writeLatentRaw(context, key, retained !== undefined, retained,
+  writeLatentRaw(context, key,
+    retained !== undefined && !isReplacedLivePath(context, node.path), retained,
     node.blueprintNode, getLatentOrder(node.parent, node.name, node.blueprintNode));
   return retained;
 };

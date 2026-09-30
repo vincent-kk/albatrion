@@ -24,6 +24,8 @@ export interface SettlementContext<Self extends SchemaNodeRecord<Self>> {
   suppressAutomaticWrites: boolean;
   /** Load boundary whose current shape begins a new appearance lifetime. */
   loadScope?: Self;
+  /** Whole-replacement boundary whose subtree keeps only the written raw per path. */
+  replaceScope?: Self;
   /** Nodes newly present after calculation or reset by this load. */
   entered: Set<Self>;
   /** Nodes detached from the previous shape during this call. */

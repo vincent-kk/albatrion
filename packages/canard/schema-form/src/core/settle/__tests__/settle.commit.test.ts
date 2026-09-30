@@ -194,6 +194,150 @@ describe('settle commit', () => {
     ]);
   });
 
+  it('WRITE-087 enumerates the same latent leaves after load or exit', () => {
+    const schema = { type: 'object', properties: {
+      flag: { type: 'boolean' },
+      group: { type: 'object', controls: { active: '../flag' }, properties: {
+        leaf: { type: 'string' },
+        deep: { type: 'object', properties: { x: { type: 'number' } } },
+      } },
+    } } as const;
+    const raw = { flag: false, group: { leaf: 'a', deep: { x: 1 } } };
+    const initial = createTestTree(schema).root;
+    loadSchemaNodeAtMount(initial, raw, SetValueOption.Overwrite);
+    const exited = createTestTree(schema).root;
+    loadSchemaNodeAtMount(exited, { ...raw, flag: true }, SetValueOption.Overwrite);
+    writeSchemaNode(exited.structure!.flag, false, 'input', SetValueOption.Overwrite);
+    const expected = [
+      { path: '/group/leaf', value: 'a' },
+      { path: '/group/deep/x', value: 1 },
+    ];
+    expect(initial.runtime.inactiveValuesMemo.get('')).toEqual(expected);
+    expect(exited.runtime.inactiveValuesMemo.get('')).toEqual(expected);
+    writeSchemaNode(initial.structure!.flag, true, 'input', SetValueOption.Overwrite);
+    expect(initial.structure?.group?.structure?.leaf?.raw).toBe('a');
+    expect(initial.structure?.group?.structure?.deep?.structure?.x?.raw).toBe(1);
+  });
+
+  it('26C-13 hides a latent branch host and its leaves while another kind is live', () => {
+    const { root } = createTestTree({ type: 'object', properties: {
+      kind: { type: 'string' },
+    }, allOf: [
+      { properties: { group: { type: 'object',
+        controls: { active: '../kind === "a"' },
+        properties: { leaf: { type: 'string' } } } } },
+      { properties: { group: { type: 'string',
+        controls: { active: '../kind === "b"' } } } },
+    ] });
+    loadSchemaNodeAtMount(root, { kind: 'a', group: { leaf: 'kept' } },
+      SetValueOption.Overwrite);
+    writeSchemaNode(root.structure!.kind, 'b', 'input', SetValueOption.Overwrite);
+    expect(root.structure?.group?.blueprintNode.kind).toBe('string');
+    expect(root.runtime.latentRaw.has(JSON.stringify(['/group', 'object'])))
+      .toBe(true);
+    expect(root.runtime.inactiveValuesMemo.get('')).toEqual([]);
+    writeSchemaNode(root.structure!.kind, 'a', 'input', SetValueOption.Overwrite);
+    expect(root.structure?.group?.structure?.leaf?.raw).toBe('kept');
+  });
+
+  it('26C-13 enumerates one entry for a same-name field under an inactive host', () => {
+    const { root } = createTestTree({ type: 'object', properties: {
+      flag: { type: 'boolean' },
+      group: { type: 'object', controls: { active: '../flag' },
+        allOf: [
+          { properties: { field: { type: 'string',
+            controls: { active: '../sel === 1' } } } },
+          { properties: { field: { type: 'number',
+            controls: { active: '../sel === 2' } } } },
+        ],
+        properties: { sel: { type: 'number' } } },
+    } });
+    loadSchemaNodeAtMount(root, { flag: false, group: { sel: 1, field: 'test' } },
+      SetValueOption.Overwrite);
+    const entries = root.runtime.inactiveValuesMemo.get('')
+      ?.filter((entry) => entry.path === '/group/field');
+    expect(entries).toEqual([{ path: '/group/field', value: 'test' }]);
+  });
+
+  it('26C-13 enumerates one entry for explicit latents of two kinds at a path', () => {
+    const { root } = createTestTree({ type: 'object', properties: {
+      kind: { type: 'string' },
+    }, allOf: [
+      { properties: { value: { type: 'string',
+        controls: { active: '../kind === "a"' } } } },
+      { properties: { value: { type: 'number',
+        controls: { active: '../kind === "b"' } } } },
+    ] });
+    loadSchemaNodeAtMount(root, { kind: 'a', value: 'hello' },
+      SetValueOption.Overwrite);
+    writeSchemaNode(root.structure!.kind, 'b', 'input', SetValueOption.Overwrite);
+    writeSchemaNode(root.structure!.value, 3, 'input', SetValueOption.Overwrite);
+    writeSchemaNode(root.structure!.kind, 'none', 'input', SetValueOption.Overwrite);
+    expect([...root.runtime.latentRaw.keys()].filter((key) =>
+      key.startsWith('["/value",')).length).toBe(2);
+    expect(root.runtime.inactiveValuesMemo.get('')).toEqual([
+      { path: '/value', value: 'hello' },
+    ]);
+  });
+
+  it('WRITE-087 enumerates a replaced detached host like an initially inactive host', () => {
+    const schema = { type: 'object', properties: {
+      flag: { type: 'boolean' },
+      group: { type: 'object', controls: { active: '../flag' }, properties: {
+        leaf: { type: 'string' },
+        deep: { type: 'object', properties: { x: { type: 'number' } } },
+      } },
+    } } as const;
+    const { root } = createTestTree(schema);
+    loadSchemaNodeAtMount(root, { flag: true,
+      group: { leaf: 'a', deep: { x: 1 } } }, SetValueOption.Overwrite);
+    const group = root.structure!.group;
+    writeSchemaNode(root.structure!.flag, false, 'input', SetValueOption.Overwrite);
+    writeSchemaNode(group, { leaf: 'z', deep: { x: 9 } },
+      'callerReplace', SetValueOption.Overwrite);
+    writeSchemaNode(root.structure!.flag, false, 'input', SetValueOption.Overwrite);
+    const initial = createTestTree(schema).root;
+    loadSchemaNodeAtMount(initial, { flag: false,
+      group: { leaf: 'z', deep: { x: 9 } } }, SetValueOption.Overwrite);
+    const expected = [
+      { path: '/group/leaf', value: 'z' },
+      { path: '/group/deep/x', value: 9 },
+    ];
+    expect(root.runtime.inactiveValuesMemo.get('')).toEqual(expected);
+    expect(root.runtime.inactiveValuesMemo.get(''))
+      .toEqual(initial.runtime.inactiveValuesMemo.get(''));
+    writeSchemaNode(root.structure!.flag, true, 'input', SetValueOption.Overwrite);
+    expect(root.structure?.group?.structure?.leaf?.raw).toBe('z');
+    expect(root.structure?.group?.structure?.deep?.structure?.x?.raw).toBe(9);
+  });
+
+  it('WRITE-087 gives a newer latent descendant priority over its host raw', () => {
+    const { root } = createTestTree({ type: 'object', properties: {
+      flag: { type: 'boolean' },
+      group: { type: 'object', controls: { active: '../flag' }, properties: {
+        leaf: { type: 'string' },
+        deep: { type: 'object', properties: { x: { type: 'number' } } },
+      } },
+    } });
+    loadSchemaNodeAtMount(root, { flag: true,
+      group: { leaf: 'a', deep: { x: 1 } } }, SetValueOption.Overwrite);
+    const leaf = root.structure!.group.structure!.leaf;
+    writeSchemaNode(root.structure!.flag, false, 'input', SetValueOption.Overwrite);
+    const unchangedX = root.runtime.inactiveValuesMemo.get('')?.find((entry) =>
+      entry.path === '/group/deep/x');
+    writeSchemaNode(leaf, 'newer', 'callerReplace', SetValueOption.Overwrite);
+    writeSchemaNode(root.structure!.flag, false, 'input', SetValueOption.Overwrite);
+    expect(root.runtime.inactiveValuesMemo.get('')).toEqual([
+      { path: '/group/leaf', value: 'newer' },
+      { path: '/group/deep/x', value: 1 },
+    ]);
+    expect(root.runtime.inactiveValuesMemo.get('')?.find((entry) =>
+      entry.path === '/group/deep/x')).toBe(unchangedX);
+    writeSchemaNode(root.structure!.flag, true, 'input', SetValueOption.Overwrite);
+    expect(root.structure?.group?.structure?.leaf?.raw).toBe('newer');
+    expect(root.structure?.group?.structure?.deep?.structure?.x?.raw).toBe(1);
+  });
+
   it('WRITE-087 lists inactive values in blueprint document order', () => {
     const { root } = createTestTree({ type: 'object', properties: {
       flag: { type: 'boolean' },
@@ -218,9 +362,11 @@ describe('settle commit', () => {
     writeSchemaNode(root.structure!.flag, false, 'input', SetValueOption.Overwrite);
     const inactive = root.runtime.inactiveValuesMemo.get('');
     const entry = inactive?.[0];
+    const latentIteration = vi.spyOn(root.runtime.latentRaw, Symbol.iterator);
     writeSchemaNode(root.structure!.other, 2, 'input', SetValueOption.Overwrite);
     expect(root.runtime.inactiveValuesMemo.get('')).toBe(inactive);
     expect(root.runtime.inactiveValuesMemo.get('')?.[0]).toBe(entry);
+    expect(latentIteration).not.toHaveBeenCalled();
   });
 
   it('WRITE-087 includes a detached host that holds a wrong-kind value', () => {

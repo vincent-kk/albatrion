@@ -9,6 +9,7 @@ import { SHARED_NODE_CONFLICT } from '../errors/settleErrorCode';
 import { markWrite } from '../write/markWrite';
 import { getGateRegistry } from '../gates/getGateRegistry';
 import { hasSharedConflict } from './hasSharedConflict';
+import { readHostInput } from './readHostInput';
 import { updateOutput } from './updateOutput';
 import { hasRecursiveExpansion } from './hasRecursiveExpansion';
 import { RECURSIVE_SHAPE_DIVERGED } from '../errors/settleErrorCode';
@@ -52,6 +53,7 @@ export const selectChildren = <Self extends SchemaNodeRecord<Self>>(
   Object.setPrototypeOf(next, null);
   node.structure = next;
   const seen = new Set<string>();
+  const inactiveEntries: BlueprintChildEntry[] = [];
   let changed = false;
   for (const entry of node.behavior.declareChildren(node)) {
     const active = context.hasGates ? entry.declarations.filter((declaration) =>
@@ -59,20 +61,10 @@ export const selectChildren = <Self extends SchemaNodeRecord<Self>>(
         gate.schemaPath === `${declaration.schemaPath}/controls/active`
           ? entry.name : undefined))) : entry.declarations;
     if (active.length === 0) {
-      if (context.kind === 'load' || context.changedRaw.has(node.path) || next[entry.name]) {
-        const source = node.raw;
-        const ownsRaw = source !== null && typeof source === 'object' &&
-          hasOwnProperty(source, entry.name);
-        if (ownsRaw || context.root.runtime.latentRaw.size > 0) {
-          const key = JSON.stringify([
-            `${node.path}/${escapeSegment(entry.name)}`, entry.node.kind,
-          ]);
-          writeLatentRaw(context, key, ownsRaw,
-            ownsRaw ? Reflect.get(source, entry.name) : undefined,
-            entry.node, ownsRaw ? getLatentOrder(node, entry.name, entry.node) : undefined);
-        }
-      }
-      if (next[entry.name] && !seen.has(entry.name)) {
+      if (context.kind === 'load' || context.changedRaw.has(node.path) ||
+        next[entry.name]) inactiveEntries.push(entry);
+      if (next[entry.name] && !seen.has(entry.name) &&
+        next[entry.name].blueprintNode.kind === entry.node.kind) {
         delete next[entry.name];
         changed = true;
         if (immediate) {
@@ -92,8 +84,12 @@ export const selectChildren = <Self extends SchemaNodeRecord<Self>>(
       continue;
     }
     seen.add(entry.name);
-    const priorChild = hasOwnProperty(prior, entry.name) ? prior[entry.name] : undefined;
-    const source = node.raw;
+    const priorChild = hasOwnProperty(prior, entry.name) &&
+      prior[entry.name].blueprintNode.kind === entry.node.kind
+      ? prior[entry.name] : undefined;
+    const currentChild = next[entry.name]?.blueprintNode.kind === entry.node.kind
+      ? next[entry.name] : undefined;
+    const source = readHostInput(node, context);
     const sourceInput = source !== null && typeof source === 'object' &&
       hasOwnProperty(source, entry.name) ? Reflect.get(source, entry.name) : undefined;
     const latent = context.root.runtime.latentRaw;
@@ -102,7 +98,7 @@ export const selectChildren = <Self extends SchemaNodeRecord<Self>>(
     ]) : undefined;
     const input = latentKey !== undefined && latent.has(latentKey)
       ? latent.get(latentKey) : sourceInput;
-    if (!priorChild && !next[entry.name] &&
+    if (!priorChild && !currentChild &&
       hasRecursiveExpansion(node, entry.node, input)) {
       if (!context.failure) {
         context.failure = new SchemaFormError(RECURSIVE_SHAPE_DIVERGED,
@@ -117,12 +113,12 @@ export const selectChildren = <Self extends SchemaNodeRecord<Self>>(
       `${node.path}/${escapeSegment(entry.name)}`, entry.node.kind,
     ]);
     const pending = context.pendingExits.get(key);
-    const child = next[entry.name] ?? priorChild ?? pending ??
+    const child = currentChild ?? priorChild ?? pending ??
       context.root.runtime.nodeFactory(entry, node, context.root.runtime);
     context.pendingExits.delete(key);
     if (context.hasGates) getGateRegistry(child.runtime).register(child);
     let entryChanged = false;
-    if (!priorChild && !next[entry.name] && !pending) {
+    if (!priorChild && !currentChild && !pending) {
       context.entered.add(child);
       markWrite(child, input, context);
       if (child.behavior.strategy === 'branch')
@@ -170,14 +166,29 @@ export const selectChildren = <Self extends SchemaNodeRecord<Self>>(
       updateOutput(node, context);
     }
   }
+  for (const entry of inactiveEntries) {
+    if (next[entry.name] || seen.has(entry.name) ||
+      (context.kind !== 'load' && hasOwnProperty(prior, entry.name))) continue;
+    seen.add(entry.name);
+    const source = readHostInput(node, context);
+    const ownsRaw = source !== null && typeof source === 'object' &&
+      hasOwnProperty(source, entry.name);
+    if (!ownsRaw && context.root.runtime.latentRaw.size === 0) continue;
+    const key = JSON.stringify([
+      `${node.path}/${escapeSegment(entry.name)}`, entry.node.kind,
+    ]);
+    writeLatentRaw(context, key, ownsRaw,
+      ownsRaw ? Reflect.get(source, entry.name) : undefined,
+      entry.node, ownsRaw ? getLatentOrder(node, entry.name, entry.node) : undefined);
+  }
   for (const [name, child] of Object.entries(prior))
-    if (!next[name]) {
+    if (next[name] !== child) {
       const key = JSON.stringify([child.path, child.blueprintNode.kind]);
       context.pendingExits.set(key, child);
-      const source = node.raw;
-      writeLatentRaw(context, key, source !== null &&
-        typeof source === 'object' && hasOwnProperty(source, name), child.raw,
-        child.blueprintNode, getLatentOrder(child.parent, child.name, child.blueprintNode));
+      if (context.kind !== 'load') {
+        writeLatentRaw(context, key, child.raw !== undefined, child.raw,
+          child.blueprintNode, getLatentOrder(child.parent, child.name, child.blueprintNode));
+      }
     }
   const nextChildren = Object.values(next);
   if (nextChildren.length !== before.length ||

@@ -98,7 +98,10 @@ export const commitSettlement = <Self extends SchemaNodeRecord<Self>>(
     }
   }
   runtime.typeMismatchesMemo = mismatchMemo;
-  updateInactiveValuesMemo(runtime);
+  if (runtime.latentRaw.size > 0 &&
+    (context.entered.size > 0 || context.exited.size > 0))
+    runtime.latentRawDirty = true;
+  updateInactiveValuesMemo(context.root);
   if (context.failure && runtime.diagnostics.status !== 'degraded')
     runtime.diagnostics = { status: 'degraded', cause: context.cause,
       ...(context.cause === 'budget' ? { exceededBudget: context.exceededBudget,

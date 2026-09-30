@@ -2,10 +2,10 @@ import type { SchemaNodeRecord } from '../../../record';
 import { escapeSegment } from '@winglet/json/pointer';
 
 /**
- * Remove latent sources omitted by a whole replacement within one scope.
- * @param node - Replacement target whose prior inactive paths are stale
+ * Remove every latent source of any kind covered by a whole replacement.
+ * @param node - Replacement target whose scope holds the stale latent sources
  * @param names - Optional replaced child names; absent means the whole scope
- * @returns Nothing; future inactive declarations read only the new input
+ * @returns Nothing; the replacement value becomes the only raw of each path
  */
 export const pruneLatentRaw = <Self extends SchemaNodeRecord<Self>>(
   node: Self, names?: readonly string[],
@@ -20,6 +20,7 @@ export const pruneLatentRaw = <Self extends SchemaNodeRecord<Self>>(
       identity[0].startsWith(`${node.path}/`)) {
       node.runtime.latentRaw.delete(key);
       node.runtime.latentRawMetadata?.delete(key);
+      node.runtime.latentRawDirty = true;
     }
   }
 };

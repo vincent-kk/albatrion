@@ -3,6 +3,7 @@ import type { SchemaNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../type';
 import { markWrite } from '../write/markWrite';
 import { getGateRegistry } from '../gates/getGateRegistry';
+import { readHostInput } from './readHostInput';
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 import { escapeSegment } from '@winglet/json/pointer';
 
@@ -34,7 +35,7 @@ export const primeHost = <Self extends SchemaNodeRecord<Self>>(
     if (context.hasGates) getGateRegistry(child.runtime).register(child);
     if (!priorChild && !pending) {
       context.entered.add(child);
-      const source = node.raw;
+      const source = readHostInput(node, context);
       const sourceInput = source !== null && typeof source === 'object' &&
         hasOwnProperty(source, entry.name) ? Reflect.get(source, entry.name) : undefined;
       const latentKey = JSON.stringify([
