@@ -1,6 +1,7 @@
 import { isArray } from '@winglet/common-utils/filter';
 
 import type { Blueprint, BlueprintNode } from '../../../../blueprint';
+import { getControlExpression } from '../../../utils/controls/getControlExpression';
 import type { DeriveRule, DeriveRuleTable } from '../../type';
 import { getWatchPaths } from './utils/getWatchPaths';
 
@@ -82,9 +83,8 @@ export const getDeriveRuleTable = (blueprint: Blueprint): DeriveRuleTable => {
           const literal: unknown = Reflect.get(group.controls, kind);
           if (literal === undefined) continue;
           const schemaPath = `${group.schemaPath}/${kind}`;
-          const expression = blueprint.expressions.find((candidate) =>
-            candidate.declarationId === declaration.id &&
-            candidate.schemaPath === schemaPath && candidate.key === kind);
+          const expression = getControlExpression(blueprint,
+            declaration.id, schemaPath, kind);
           if (typeof literal === 'string' && !expression) continue;
           if (kind === 'injectTo' && typeof literal !== 'function') continue;
           const dependencies = [...expression?.dependencies ?? []];

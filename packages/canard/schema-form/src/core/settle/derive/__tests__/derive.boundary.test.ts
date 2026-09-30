@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 import { blueprint } from '../../../blueprint';
 import { SetValueOption } from '../../../types/value';
@@ -8,6 +8,21 @@ import { getDeriveRuleTable } from '../index';
 
 // filid:contract derive-boundary
 describe('derive rule table', () => {
+  it('SETTLE-017 builds rule expressions without per-rule array searches', () => {
+    const analysis = blueprint({ type: 'object', properties: {
+      source: { type: 'string' },
+      target: { type: 'string', controls: { derived: '../source' } },
+    } });
+    const find = vi.spyOn(Array.prototype, 'find');
+    try {
+      expect(getDeriveRuleTable(analysis).rules).toHaveLength(1);
+      expect(find.mock.contexts.filter((target) =>
+        target === analysis.expressions)).toHaveLength(0);
+    } finally {
+      find.mockRestore();
+    }
+  });
+
   it('SETTLE-043 caches occurrences and combines only authored watches', () => {
     const analysis = blueprint({ type: 'object', properties: {
       source: { type: 'string' }, watched: { type: 'string' }, other: { type: 'string' },

@@ -1,7 +1,7 @@
 import { isArray } from '@winglet/common-utils/filter';
 
-import type { BlueprintExpression } from '../../../blueprint';
 import type { SchemaNodeRecord } from '../../../record';
+import { getControlExpression } from './getControlExpression';
 import { getControlLayers } from './getControlLayers';
 import { readStateDependency } from './readStateDependency';
 
@@ -51,7 +51,7 @@ export const calculateStateKeys = <Self extends SchemaNodeRecord<Self>>(
     })) for (const child of source.children) candidates.add(child);
   }
   const evaluated = new Map<string, boolean | undefined>();
-  const expressions = root.runtime.blueprint.expressions;
+  const blueprint = root.runtime.blueprint;
   const entries: CalculatedStateKeys<Self>['entries'][number][] = [];
   let failure: CalculatedStateKeys<Self>['failure'];
   for (const node of candidates) {
@@ -73,9 +73,8 @@ export const calculateStateKeys = <Self extends SchemaNodeRecord<Self>>(
           const cacheKey = JSON.stringify([group.host.path, schemaPath]);
           if (evaluated.has(cacheKey)) value = evaluated.get(cacheKey);
           else {
-            const expression: BlueprintExpression | undefined = expressions.find(
-              (candidate) => candidate.declarationId === group.declarationId &&
-                candidate.schemaPath === schemaPath && candidate.key === key);
+            const expression = getControlExpression(blueprint,
+              group.declarationId, schemaPath, key);
             if (expression) try {
               value = Boolean(expression.evaluate(expression.dependencies.map(
                 (dependency) => readStateDependency(root,
