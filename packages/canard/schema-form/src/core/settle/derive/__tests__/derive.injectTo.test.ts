@@ -52,6 +52,19 @@ describe('injectTo and same-target settlement', () => {
     expect(root.structure?.source?.raw).toBe('A node');
   });
 
+  it('SETTLE-004 layer chooses a children item over a later fragment', () => {
+    const { root } = createTestTree({ type: 'object', controls: {
+      children: [{ targets: ['target'], controls: {
+        derived: './seed + " children"',
+      } }],
+    }, properties: { seed: { type: 'string' } }, allOf: [{
+      controls: { derived: './seed + " fragment"' },
+      properties: { target: { type: 'string' } },
+    }] });
+    loadSchemaNodeAtMount(root, { seed: 'A' }, SetValueOption.Overwrite);
+    expect(root.structure?.target?.raw).toBe('A children');
+  });
+
   it('SETTLE-004 fragment order chooses the later fragment declaration', () => {
     const { root } = createTestTree({ type: 'object', allOf: [
       { controls: { derived: './seed + " first"' },

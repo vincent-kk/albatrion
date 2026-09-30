@@ -186,7 +186,7 @@ describe('settled controls', () => {
       shown: { type: 'boolean' }, branch: { type: 'object',
         controls: { active: '../shown' }, properties: {
           child: { type: 'string', controls: {
-            visible: false, readOnly: true, disabled: true,
+            visible: '!#/shown', readOnly: '#/shown', disabled: '#/shown',
           } },
         } },
     } });

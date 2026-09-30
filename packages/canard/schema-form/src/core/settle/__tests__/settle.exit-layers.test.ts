@@ -179,6 +179,8 @@ describe('settled exit policy layers', () => {
     writeSchemaNode(root.structure!.flag, false, 'input', SetValueOption.Overwrite);
     expect([...root.runtime.committedRuleValues?.keys() ?? []].some((key) =>
       key.startsWith('["/secret",'))).toBe(false);
+    expect(root.runtime.latentRaw.has(JSON.stringify(['/secret', 'string'])))
+      .toBe(false);
   });
 
   it('WRITE-039 visible preserved leaves a hidden value in shape', () => {

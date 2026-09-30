@@ -74,6 +74,7 @@ describe('context change settlement', () => {
   it('28C-08 form default suppression consumes the context edge', () => {
     const schema: BlueprintSchema = { type: 'object', properties: {
       target: { type: 'string', controls: { derived: '@.label' } },
+      unrelated: { type: 'string' },
     } };
     const suppressed = createContextTree(schema, { label: 'old' });
     const enabled = createContextTree(schema, { label: 'old' });
@@ -85,6 +86,10 @@ describe('context change settlement', () => {
     setContext(enabled, { label: 'new' });
     expect(suppressed.find('/target')?.value).toBe('manual');
     expect(enabled.find('/target')?.value).toBe('new');
+    expect([...suppressedRuntime.committedRuleValues?.values() ?? []].some((value) =>
+      JSON.stringify(value).includes('"new"'))).toBe(true);
+    suppressed.find('/unrelated')?.setValue('later');
+    expect(suppressed.find('/target')?.value).toBe('manual');
   });
 
   it('SETTLE-043 children derived watches the context of its live target kind', () => {
