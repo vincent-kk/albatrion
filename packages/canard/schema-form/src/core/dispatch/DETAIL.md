@@ -9,25 +9,27 @@
 
 ### 이름 붙은 진입점
 
-- `dispatchSetValue(node, value, option)`, `dispatchResetSubtree(node, option)`, `dispatchResetForm(root, value?, option?)`, `dispatchMount(root, value?, option?)`, `dispatchBatch(node, fn: () => void)`, `dispatchContextChange(root, context)`는 공개 쓰기 사슬을 엽니다. `dispatchBatch`의 중첩은 바깥 배치가 이기고, 함수가 던져도 표시된 쓰기를 정착·배달한 뒤 그 예외를 사슬 끝에서 드러냅니다(EVENT-013–019·035·061, LANDING-064).
+- `dispatchSetValue(node, value, option?)`, `dispatchResetSubtree(node, option?)`, `dispatchResetForm(root, value?, option?)`, `dispatchMount(root, value?, option?)`, `dispatchBatch(node, fn: () => void)`, `dispatchContextChange(root, context)`는 공개 쓰기 사슬을 엽니다. `dispatchBatch`의 중첩은 바깥 배치가 이기고, 함수가 던져도 표시된 쓰기를 정착·배달한 뒤 그 예외를 사슬 끝에서 드러냅니다(EVENT-013–019·035·061, LANDING-064).
 - `subscribeSchemaNode(node, listener): () => void`와 `readSchemaNodeRevision(node, mask?)`는 읽기이며 진입을 열지 않습니다. 구독 사건은 `{ type, payload?, options? }` 모양이고, `revision(mask?)`는 리스너 유무와 무관한 해당 비트 카운터의 합입니다(EVENT-001·004·007).
 - `dispatchRequest(node, kind: SchemaNodeRequestType): void`, `dispatchSetState(node, state)`, `dispatchSetSubtreeState(node, state)`, `dispatchClearSubtreeState(node)`, `dispatchSetExternalErrors(node, errors: readonly ValidationIssue[])`, `dispatchClearExternalErrors(node)`는 정착 밖 사건입니다. `dispatchValidate(node): Promise<readonly ValidationIssue[]>`는 호출할 때 새 판정을 요청합니다(EVENT-012·045·063·067·073, VALIDATE-049).
 - `adoptSchemaNodeChain(previousRoot, nextRoot)`는 재생성 reset의 진입 깊이, 배치 표시, 예산과 모은 오류를 새 루트에 넘기는 바인딩 전용 통로입니다(EVENT-030).
 
 ### 사슬, 파동, 기록
 
-- 진입은 같은 루트의 다른 공개 쓰기가 스택에 없을 때의 공개 쓰기 한 호출입니다. 정착은 동기로 커밋하고, 깊이 1 → 0에서 정착 파동, 검증 요청, `onChange`, 발생 순서의 `onError` 기록 전달, throw 순서로 끝납니다. 리스너 안의 쓰기는 같은 사슬의 다음 파동이고 `onChange` 안의 쓰기는 새 진입입니다(EVENT-008·027·033, ERROR-004·019, 31C-01).
+- 진입은 같은 루트의 다른 공개 쓰기가 스택에 없을 때의 공개 쓰기 한 호출입니다. 정착은 동기로 커밋하고, 깊이 1 → 0에서 정착 파동, 해당하는 검증 요청, `onChange`, 발생 순서의 `onError` 기록 전달, throw 순서로 끝납니다. `onChange`는 최외곽 동기 진입당 마지막 파동 뒤에 최종 emit으로 한 번만 부릅니다. 루트 emit 참조가 그대로인 쓰기는 검증 요청과 `onChange`를 모두 만들지 않습니다. 리스너 안의 쓰기는 같은 사슬의 다음 파동이고 `onChange` 안의 쓰기는 새 진입입니다(EVENT-008·026·027·031·033, ERROR-004·019, 31C-01).
+- `reset`은 emit 참조가 그대로여도 `ValidationMode`의 `OnChange` 비트가 켜져 있으면 검증을 한 번 요청합니다. 이 예외만으로 `onChange`를 부르지는 않으며, `resetSubtree()`의 요청은 그 하위 트리에만 적용합니다(EVENT-032·072).
+- `batch(fn)` 안의 `reset`은 그 로드를 즉시 정착시키고 커밋은 함수 끝의 파동에 합류시킵니다. 검증 요청과 해당하는 `onChange`는 최외곽 진입의 끝에서 냅니다. `resetSubtree()`의 즉시 정착 범위는 그 하위 트리뿐입니다(EVENT-015·072).
 - 파동 시작에 배달 집합과 리스너 목록을 고정합니다. 문서 순서 위→아래로 돌고 최종 이탈 노드는 건너뛰며, 중간 구독은 다음 파동부터, 해지는 즉시 반영합니다. 리스너 예외 하나가 다른 배달을 막지 않습니다(EVENT-004·009–011, SETTLE-007).
-- 되먹임 파동과 `onChange` 중첩은 각각 25입니다. 초과 뒤에도 커밋·검증 요청과 허용된 `onChange`를 마치고 모든 환경에서 `FEEDBACK_LIMIT_EXCEEDED`를 사슬 끝에 던지며 `diagnostics`에는 넣지 않습니다(EVENT-020–022·034, CONTROLS-079).
+- `injectTo`와 사용자 함수 안에서 공개 쓰기 API를 부르면 리스너 되먹임처럼 같은 최외곽 사슬의 안쪽 진입이 되고, 그 되먹임 파동 예산을 공유합니다. 되먹임이 낸 파동과 `onChange`가 연 새 진입의 중첩 상한은 각각 25입니다. 초과 뒤에도 커밋·해당하는 검증 요청과 허용된 `onChange`를 마치고 모든 환경에서 `FEEDBACK_LIMIT_EXCEEDED`를 사슬 끝에 던지며 `diagnostics`에는 넣지 않습니다(EVENT-008·020–022·034, CONTROLS-079).
 - `setState`의 dirty/touched 변화는 `UpdateState`, 외부 오류 변화는 `UpdateError`, 명령은 요청 비트로 표시합니다. 깊이 > 0이면 노드마다 합쳐 정착 파동 뒤 별도 파동으로 한 번, 깊이 0이면 호출 안에서 동기로 배달합니다. 이 사건은 검증 요청과 `onChange`를 만들지 않고, 떼어진 노드에는 무동작입니다(EVENT-012·045·067·073, NODE-044, 31C-01).
-- 정착의 커밋 뒤 throw를 받아 사슬 끝까지 모읍니다. 보고기가 소비자를 가질 때만 기록과 경고 서식을 만들고, 기록은 발생 순서대로 전달합니다. 하나의 예외는 원래 값을 던지고 여럿은 `SchemaFormError`의 `MULTIPLE_ERRORS`로 묶어 `details.errors`의 순서를 보존합니다. 전달 중 같은 폼에 대한 쓰기는 즉시 `WRITE_IN_OBSERVER`로 거부하지만 `validate()`는 허용합니다(ERROR-005·013·019·021·023·028–030, WRITE-099).
+- 정착의 커밋 뒤 throw를 받아 사슬 끝까지 모읍니다. 보고기가 소비자를 가질 때만 기록과 경고 서식을 만듭니다. 단, `NON_JSON_WHOLE_VALUE`의 깊이 점검과 보고는 `hasConsumer()`와 무관하게 개발 모드에서만 합니다. 기록은 발생 순서대로 전달합니다. 하나의 예외는 원래 값을 던지고 여럿은 `SchemaFormError`의 `MULTIPLE_ERRORS`로 묶어 `details.errors`의 순서를 보존합니다. 전달 중 같은 폼에 대한 쓰기는 즉시 `WRITE_IN_OBSERVER`로 거부하지만 `validate()`는 허용합니다(ERROR-005·013·019·021·023·028–030, WRITE-099, 31C-02).
 - 경고 중복 키는 코드·위치·코드별 판별 칸의 구조 키입니다. 폼 수준 로드에서만 비우며 `setValue(V)`·`resetSubtree()`에서는 유지합니다. 주인 없는 예외는 싱크로 한 번 보고하고 검증 결과 파동의 리스너 예외를 미처리 거부로 남기지 않습니다(ERROR-008·024·204, EVENT-046).
 
 ## Acceptance Criteria
 
 ### dispatch-order — 진입당 배달과 검증 순서
 
-- 커밋에서 표시한 비트를 문서 순서의 파동으로 한 번 배달하고, 최외곽 진입마다 검증 요청이 `onChange`보다 앞서며, 중첩 쓰기는 정해진 다음 파동에서 보입니다(EVENT-004·007·008·027, SETTLE-007).
+- 커밋에서 표시한 비트를 문서 순서의 파동으로 한 번 배달하고, 최외곽 진입에서 검증 요청과 `onChange`가 모두 생기면 요청이 앞서며, 중첩 쓰기는 정해진 다음 파동에서 보입니다(EVENT-004·007·008·027·031·032, SETTLE-007).
 
 ### dispatch-observers — 정착 밖 사건과 오류 격리
 

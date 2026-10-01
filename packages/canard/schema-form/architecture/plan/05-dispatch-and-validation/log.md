@@ -37,6 +37,9 @@ Planning method: 저장소 지침 — `PLAN.md` §2와 `plan/prompts.md`의 단�
 | 2026-10-01 | U0 | 계획 리뷰 1차 `rework-required`(F1–F5) → 수정과 32–34라운드 반영 → 범위 한정 재확인 `cleared`. 35라운드 답(35C-07: 플러그인 셋 모두 네이티브 `Error` 하위 클래스, `dialect?`, 공개 `ValidateFunction` 유지)은 조율 세션의 근거 대조만 | `a497e5801`, `bb17d3e79`, `plan-review.md` |
 | 2026-10-01 | U1 | G2 충족 — 옮길 레거시 0(03에서 완료) | — |
 | 2026-10-01 | U2 | codex 첫 세션(`3fd0c308`)은 도구 연결 시간 초과로 변경 없이 끝났고 이어 쓰기는 "세션 없음"으로 실패. 대체로 띄운 Claude opus 서브에이전트는 소유자 지시("codex로 다시")로 멈추고 그 부분 변경(`eslint.config.js`)을 되돌림. codex 새 세션(`3da53670`)이 새 문서 넷·고친 문서 여덟·경계 린트·가칭 표(75행)를 씀. `src/core` eslint 전후 107 errors로 새 오류 0, G4 충족. 소유자 지시: codex가 계속 실패하면 대체하지 않고 멈춘다 | 이 커밋 |
+| 2026-10-01 | U3 | codex(세션 `8e05b415`): 코드 표 상수(원장에서 센 현행 60), 기록 형 셋, core `Validator`·`ValidateFunction`·`GuardFunction`·`ValidationIssue`, 공개 `ValidatorPlugin`의 선택 멤버 셋, `ValidationIssue` 공개와 `JSONSchemaError` 별칭 유지. 원장 대조 시험·형 정합 시험이 먼저 붉음(까닭: 기제 없음). 적합성 시험의 실행 부분은 U7 몫이라 이름 붙인 `it.todo`. ajv6·7·8 형 검사 통과. G7·G8·G9 충족(조율 세션 재실행) | `dcd006ba6` |
+| 2026-10-01 | U2 | antigravity 원장 대조(G5, 세션 `525f01e6`) `blocking findings`: 차단 셋(디스패치의 `onChange`·`reset` 검증 요청·`batch` 안 `reset`·안쪽 쓰기 예산, VALIDATE-046 같은 `$id` 계약, 31C-02 `NON_JSON_WHOLE_VALUE` 예외)·비차단 다섯. codex(같은 세션 `8e05b415`)가 원장 줄을 확인하며 문서 넷을 고침 | 이 커밋 |
+| 2026-10-01 | 이탈 | U2가 `SchemaNode/DETAIL.md` 멤버 표에 05의 13행을 문서 선행으로 더해(34 → 47), `surface.test.ts`의 길이 단언이 U9까지 붉다(codex가 원인을 그 13행뿐으로 확인). 그래서 unit 전체를 요구하는 G12·G21은 U9 뒤에 잰다. 단위별 범위 게이트는 그대로 | — |
 
 ### 31C-05 가칭 확정
 
