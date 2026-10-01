@@ -151,6 +151,9 @@ Planning method: 저장소 지침 — `PLAN.md` §2와 `plan/prompts.md`의 단�
 | `duplicateSchemaId` | ERROR-201·31C-03 | 확정 | 동일 | 별도 코드가 아닌 두 컴파일 오류의 닫힌 reason입니다. |
 | `onListenerError` | ERROR-004·014·099 | 삭제 | — | 대체된 과거 Form 속성이며 기록은 `onError`가 받습니다. |
 | `throwOnBudgetExceeded` | ERROR-072·099 | 삭제 | — | 모든 환경에서 사슬 끝에 던지므로 스위치를 두지 않습니다. |
+| `configure({ directGuardCompile })` | VALIDATE-017·033, 52라운드, 55C-03 | 확정 | 동일 | 가드 직접 컴파일을 끄는 ajv 플러그인 옵션(기본 켜짐). 55C-03이 확정했습니다. |
+
+55C-03으로 `SchemaNodeRequestType`의 `Focus`·`Select`·`Refresh`·`Remount`(30라운드 소유자 답), `ValidatorBindRefusedError`, `configure({ directGuardCompile })`은 확정 이름이고, `JSONSchemaError`는 가칭이 아니라 50C-01의 호환 확장입니다.
 
 ## 3. 다음 행동
 
