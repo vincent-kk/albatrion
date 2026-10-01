@@ -101,15 +101,21 @@ export const commitSettlement = <Self extends SchemaNodeRecord<Self>>(
   else {
     const allPaths = [...runtime.typeMismatchPaths].sort();
     mismatchMemo.set('', { commit, paths: Object.freeze(allPaths) });
+    const byAncestor = new Map<string, string[]>();
     for (const path of allPaths) {
       let ancestor = path;
       while (ancestor) {
-        const paths = allPaths.filter((candidate) =>
-          candidate === ancestor || candidate.startsWith(`${ancestor}/`));
-        mismatchMemo.set(ancestor, { commit, paths: Object.freeze(paths) });
+        let paths = byAncestor.get(ancestor);
+        if (!paths) {
+          paths = [];
+          byAncestor.set(ancestor, paths);
+        }
+        paths.push(path);
         ancestor = ancestor.slice(0, ancestor.lastIndexOf('/'));
       }
     }
+    for (const [ancestor, paths] of byAncestor)
+      mismatchMemo.set(ancestor, { commit, paths: Object.freeze(paths) });
   }
   runtime.typeMismatchesMemo = mismatchMemo;
   if (runtime.latentRaw.size > 0 &&
