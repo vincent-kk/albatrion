@@ -266,7 +266,9 @@
 
 - 결정:
   > **진입 사슬.** 사슬 머리(리스너·`onChange` 밖에서 열린 동기 진입)와, 그 통지·`onChange`·리스너 안에서 열린 진입 전부가 한 사슬이다. ADR 0008의 "최외곽 진입"은 사슬 머리가 아닌 진입이며, 되먹임 상한(파동 25)은 진입마다, `onChange` 중첩 상한(25)은 사슬마다 센다. 사슬 안에서 난 오류 — 정착 오류, 리스너 오류, 되먹임·중첩 초과, `batch(fn)`의 fn이 던진 예외 — 는 모두 모아 두었다가 **사슬 머리가 끝날 때 한 번** 던진다. 안쪽 진입과 안쪽 `batch`는 정상 반환한다(fn이 던진 예외도 모아 둔다. 안쪽에서 던지면 사슬이 끊겨 통지가 빠진다). 순서는 커밋 → 통지 → 검증 요청 → `onChange` → 기록마다 `onError` → throw다. 그래서 값은 커밋되고, 구독자는 통지받고(P5: 커밋된 것은 반드시 통지된다), 호출자는 한 번만 오류를 본다.
-- 보충: 없음
+- 보충:
+  > 편집자 결정(58C-01): "【추론】 ERROR-004는 "사슬 안에서 난 오류 — 정착 오류, 리스너 오류, 되먹임·중첩 초과, `batch(fn)`의 fn이 던진 예외 — 는 모두 모아 두었다가 사슬 머리가 끝날 때 한 번 던진다"고 적었고 ERROR-005는 둘 이상이면 발생 순서대로 `details.errors`에 묶는다고 적었으므로, 한 정착 안에서 난 정착 오류는 게이트 실패든 공유 충돌·주입 대상 없음·쓰기 모양·식 throw·예산 초과든 모두 기록되어 묶인다; 정착이 `context.failure` 하나에 첫 실패만 남기고 뒤의 실패를 버리는 것은 ERROR-004의 "모두 모아"에 어긋나는 결함이라 55C-01과 같은 자리(집계 오류, LANDING-064 PR-4 행)에서 05가 고친다 — 정착은 실패 목록을 들고, `diagnostics.cause`는 그 목록의 첫 실패의 원인을 적으며(한 값, ERROR-034의 모양), 사슬 끝의 디스패치가 목록 전부를 발생 순서대로 하나로 묶어 던진다." (`reviews/round-58-closing.md:9`)
+  > 편집자 결정(58C-01): "【추론】 29C-03대로 계산 단계 뒤의 진행을 막는 조건은 예산 초과 하나이고 나머지 정착 오류는 계산 결과로 커밋되므로, "첫 실패만"이 의도된 규칙인 경우는 없다: 예산 초과는 그 뒤로 더 돌지 않아 더 이상의 오류가 나지 않는 것이지 앞서 기록된 오류를 버리는 것이 아니며, 예산 초과 앞에 난 가드 실패나 충돌은 묶음에 그대로 든다. 05 verifier가 찾은 순서 결함(게이트 아닌 실패가 게이트 실패 사이에서 발생 순서를 잃음)도 같은 수정에 든다." (`reviews/round-58-closing.md:10`)
 - 상태: 현행
 - 출처: `adr/0014-error-policy.md:49`(정본), `08-design-a-to-z.md:355`
 - 닫은 사람: 편집자 결정(ADR 0008 원리 도출)
@@ -282,6 +284,8 @@
   > **묶음.** 오류가 하나면 그대로 던진다. 둘 이상이면(부른 쪽이 있는 자리에서 `onError` 핸들러가 던진 예외를 원래 오류와 합칠 때 포함) `SchemaFormError` 하나(전용 코드, 가칭 `SCHEMA_FORM_ERROR.MULTIPLE_ERRORS`)로 묶어 발생 순서대로 `details.errors`에 담는다. 식이 던진 원래 예외는 `SchemaFormError`로 감싸고 `details.error`에 싣는다(오늘 `INJECT_TO`와 같은 방식). 내장 `AggregateError`와 `Error`의 `cause` 선택지는 쓰지 않는다. 빌드 변환 대상이 ES2020이라 둘 다 없고, 내장 `AggregateError`로 판별하면 사용자 코드의 `Promise.any`가 낸 남의 오류까지 폼의 것으로 오인한다. `BaseError.toJSON`이 `details`를 재귀 복사하므로 `details.errors`는 새 장치 없이 직렬화된다.
 - 보충:
   > 편집자 결정(55C-01): "【추론】 ERROR-005는 "오류가 하나면 그대로 던진다. 둘 이상이면 … `SchemaFormError` 하나(전용 코드, 가칭 `SCHEMA_FORM_ERROR.MULTIPLE_ERRORS`)로 묶어 발생 순서대로 `details.errors`에 담는다"고 적었고 ERROR-041은 가드 실패를 게이트마다의 정착 오류로 두었으므로, 한 쓰기가 가드 둘을 실패시키면 둘 다 기록되고(둘 다 surface `thrown`) 사슬 끝에서 하나로 묶어 던진다; `settle/utils/gates/evaluateGate.ts:127`이 첫 실패만 남기고 둘째를 드러내지 않는 것은 기록과 던짐이 어긋나는 결함이다. "`SchemaFormError`의 집계 오류(`details.errors`)"는 LANDING-064의 PR-4 행이므로 05가 PR-4에서 고친다(정착이 실패를 모으고 사슬 끝의 디스패치가 묶음); 06·07에 넘기지 않는다." (`reviews/round-55-closing.md:9`)
+  > 편집자 결정(58C-01): "【추론】 ERROR-004는 "사슬 안에서 난 오류 — 정착 오류, 리스너 오류, 되먹임·중첩 초과, `batch(fn)`의 fn이 던진 예외 — 는 모두 모아 두었다가 사슬 머리가 끝날 때 한 번 던진다"고 적었고 ERROR-005는 둘 이상이면 발생 순서대로 `details.errors`에 묶는다고 적었으므로, 한 정착 안에서 난 정착 오류는 게이트 실패든 공유 충돌·주입 대상 없음·쓰기 모양·식 throw·예산 초과든 모두 기록되어 묶인다; 정착이 `context.failure` 하나에 첫 실패만 남기고 뒤의 실패를 버리는 것은 ERROR-004의 "모두 모아"에 어긋나는 결함이라 55C-01과 같은 자리(집계 오류, LANDING-064 PR-4 행)에서 05가 고친다 — 정착은 실패 목록을 들고, `diagnostics.cause`는 그 목록의 첫 실패의 원인을 적으며(한 값, ERROR-034의 모양), 사슬 끝의 디스패치가 목록 전부를 발생 순서대로 하나로 묶어 던진다." (`reviews/round-58-closing.md:9`)
+  > 편집자 결정(59C-01): "【추론】 ERROR-017은 `path`를 "데이터 경로이며 노드에 묶인 사건에만 있다"로, `details`를 오류의 세부(`error.details`와 같은 참조)로 두었고 ERROR-005는 둘 이상의 오류를 발생 순서대로 `details.errors`에 담게 했으므로, 같은 대상을 겨눈 다른 출처의 오류 둘이 묶음 안에서 같은 모양으로 보이는 것은 묶음의 쓸모(어느 선언이 잘못되었는지 찾기)를 깎는다; 그래서 자동 쓰기가 대상에서 실패하는 두 오류 — `INJECT_TARGET_MISSING`(동적 대상 없음, `cause` `'injectTarget'`)과 자동 쓰기의 가상 노드 쓰기 모양 오류(가칭 `INVALID_VIRTUAL_NODE_VALUES`, `cause` 가칭 `'writeShape'`) — 의 `details`에 출처 노드의 데이터 경로 `sourcePath`(쓰기를 낸 `controls.injectTo` 선언의 노드)를 더한다. `path`는 지금처럼 사건이 묶인 대상 노드의 경로로 두어 ERROR-017의 뜻을 지키고, ERROR-195가 적은 `details`(기대 길이, 받은 값)는 그대로 남는다; 호출자 경로의 쓰기 모양 오류(42C-02)는 출처가 호출자라 `sourcePath`가 없다. 덧붙이는 변경이고 두 코드는 PR-4의 오류 라우팅 범위라 05가 PR-4에서 하며, 중복 제거를 없앤 수정(같은 대상에 대한 출처별 오류를 모두 남김)은 58C-01의 "모두 모아"에 든다." (`reviews/round-59-closing.md:9`)
 - 상태: 현행
 - 출처: `adr/0014-error-policy.md:51`(정본), `08-design-a-to-z.md:355`, `03-mental-model.md:180`(맥락: "둘 이상의 오류는 `SchemaFormError`의 `details.errors`로 묶는다(`AggregateError`·`cause`는 쓰지 않는다)")
 - 닫은 사람: 편집자 결정(17라운드, ADR 0014 4판 채택)
@@ -469,7 +473,8 @@
   > - `componentStack`: 바운더리가 잡은 오류에만 있으며, `errorInfo.componentStack`이다.
   >
   > 호스트는 `aggregate ?? error`의 동일성으로 전역 처리기와의 중복을 거를 수 있다. 다만 핸들러가 던져 부른 쪽이 있는 자리에서 새 묶음이 생기면, 이미 전달된 기록의 `aggregate ?? error`와 실제로 던진 값은 다르다(핸들러 결함의 경우다). 경고는 `BaseError` 인스턴스가 아닌 평범한 기록이다.
-- 보충: 없음
+- 보충:
+  > 편집자 결정(59C-01): "【추론】 ERROR-017은 `path`를 "데이터 경로이며 노드에 묶인 사건에만 있다"로, `details`를 오류의 세부(`error.details`와 같은 참조)로 두었고 ERROR-005는 둘 이상의 오류를 발생 순서대로 `details.errors`에 담게 했으므로, 같은 대상을 겨눈 다른 출처의 오류 둘이 묶음 안에서 같은 모양으로 보이는 것은 묶음의 쓸모(어느 선언이 잘못되었는지 찾기)를 깎는다; 그래서 자동 쓰기가 대상에서 실패하는 두 오류 — `INJECT_TARGET_MISSING`(동적 대상 없음, `cause` `'injectTarget'`)과 자동 쓰기의 가상 노드 쓰기 모양 오류(가칭 `INVALID_VIRTUAL_NODE_VALUES`, `cause` 가칭 `'writeShape'`) — 의 `details`에 출처 노드의 데이터 경로 `sourcePath`(쓰기를 낸 `controls.injectTo` 선언의 노드)를 더한다. `path`는 지금처럼 사건이 묶인 대상 노드의 경로로 두어 ERROR-017의 뜻을 지키고, ERROR-195가 적은 `details`(기대 길이, 받은 값)는 그대로 남는다; 호출자 경로의 쓰기 모양 오류(42C-02)는 출처가 호출자라 `sourcePath`가 없다. 덧붙이는 변경이고 두 코드는 PR-4의 오류 라우팅 범위라 05가 PR-4에서 하며, 중복 제거를 없앤 수정(같은 대상에 대한 출처별 오류를 모두 남김)은 58C-01의 "모두 모아"에 든다." (`reviews/round-59-closing.md:9`)
 - 상태: 현행
 - 출처: `adr/0014-error-policy.md:106-118`(정본), `08-design-a-to-z.md:359`
 - 닫은 사람: 17라운드 스웜 수렴(편집자 결정)
@@ -731,6 +736,7 @@
   > "emit 참조가 바뀌지 않은 쓰기는 `onChange`를 내지 않으므로 예산 초과가 보이지 않기 때문이다(06 §4.9, C2)." (`adr/0008-event-system.md:157`)
   > "`onChange`·`onDiagnosticsChange`는 준비 전의 호출을 버린다(마운트 뒤의 `diagnostics`는 핸들로 읽는다)." (`09-landing-and-test-strategy.md:48`)
   > "`onChange`·`onDiagnosticsChange`는 마운트 동안의 호출을 오늘처럼 버린다." (`08-design-a-to-z.md:367`)
+  > 편집자 결정(58C-01): "【추론】 ERROR-004는 "사슬 안에서 난 오류 — 정착 오류, 리스너 오류, 되먹임·중첩 초과, `batch(fn)`의 fn이 던진 예외 — 는 모두 모아 두었다가 사슬 머리가 끝날 때 한 번 던진다"고 적었고 ERROR-005는 둘 이상이면 발생 순서대로 `details.errors`에 묶는다고 적었으므로, 한 정착 안에서 난 정착 오류는 게이트 실패든 공유 충돌·주입 대상 없음·쓰기 모양·식 throw·예산 초과든 모두 기록되어 묶인다; 정착이 `context.failure` 하나에 첫 실패만 남기고 뒤의 실패를 버리는 것은 ERROR-004의 "모두 모아"에 어긋나는 결함이라 55C-01과 같은 자리(집계 오류, LANDING-064 PR-4 행)에서 05가 고친다 — 정착은 실패 목록을 들고, `diagnostics.cause`는 그 목록의 첫 실패의 원인을 적으며(한 값, ERROR-034의 모양), 사슬 끝의 디스패치가 목록 전부를 발생 순서대로 하나로 묶어 던진다." (`reviews/round-58-closing.md:9`)
 - 상태: 분할됨(→ ERROR-128, ERROR-129, ERROR-130, ERROR-131, ERROR-132, ERROR-133, ERROR-134, ERROR-135, ERROR-136, ERROR-137, ERROR-138, ERROR-139, ERROR-140, ERROR-141, ERROR-142)
 - 출처: `adr/0014-error-policy.md:199-207`(정본), `08-design-a-to-z.md:397`, `03-mental-model.md:67,116`, `02-target-overview.md:148,169,310-312,332`, `adr/0006-single-value-ownership.md:37`, `adr/0007-settle-cycle.md:47,59,64,116,145`, `adr/0008-event-system.md:157,160,161-164,169-171`
 - 닫은 사람: 소유자 답(`reviews/round-14-owner-answers.md:8` O-2), 소유자 답(`reviews/round-17-owner-answers.md:9` R17-1), 편집자 결정(17라운드, `exceededBudget` 다섯 값을 셋으로 줄이고 되먹임·중첩 초과를 `diagnostics`에서 뺌, `adr/0014-error-policy.md:207`·`02-target-overview.md:310`)
@@ -2931,6 +2937,7 @@
 - 보충:
   > 편집자 결정(42C-02): "【추론】 쓰기 쪽: 가상 노드에 온 호출자 쓰기는 ERROR-195대로 값이 `undefined`면 참조한 노드 모두에 그 쓰기 종류로 `undefined`를 쓰고, 배열인지를 길이보다 먼저 보아 길이가 참조 수와 같은 배열이면 자리마다 그 원소를 참조 노드에 같은 종류로 쓰며(나뉜 값은 참조 노드마다 `interpret`를 지난다), 그 밖의 값(`null`, 배열 아닌 값, 길이가 다른 배열)은 호출자 오류로 즉시 `SchemaFormError`(가칭 `INVALID_VIRTUAL_NODE_VALUES`, 기록에 `path`와 `details`의 기대 길이·받은 값)를 던진다; 자동 쓰기 경로의 분류(정착 오류, `cause` 가칭 `'writeShape'`)는 이미 있는 대로다. 가상 노드 자신은 `raw`가 없으므로(NODE-034) 쓰기가 가상 노드에 남기는 것은 dirty 표시뿐이고 값은 참조 노드에 산다." (`reviews/round-42-closing.md:18`)
   > 편집자 결정(45C-01): "【추론】 ERROR-195가 "참조한 잎 모두에 그 쓰기 종류로 `undefined`를 쓴다"고 적었고 쓰기의 종류는 호출자가 선언하며 core가 바꾸지 않으므로(WRITE 영역 D-4), 가상 노드는 종류를 바꾸지 않는 통로다: 호출자가 `Merge`를 주면 참조 노드마다 그 원소(또는 `undefined`)를 `Merge`로 쓰고 참조된 객체·배열 형제에서는 부분 쓰기가 되며, 옵션이 없거나 `Overwrite`면 참조 노드마다 전체 교체 쓰기다; 잎 참조에서는 둘이 같다. 42C-02의 "참조 노드마다의 전체 교체 쓰기"는 되물은 사례(옵션 없는 `setValue(undefined)`, 곧 기본 종류 `Overwrite`)를 말한 것이고 종류를 고정한 것이 아니다. 06의 "Merge여도 참조 가지를 교체한다" 시험은 뒤집어 "Merge는 참조 노드에서 부분 쓰기"로 둔다." (`reviews/round-45-closing.md:9`)
+  > 편집자 결정(59C-01): "【추론】 ERROR-017은 `path`를 "데이터 경로이며 노드에 묶인 사건에만 있다"로, `details`를 오류의 세부(`error.details`와 같은 참조)로 두었고 ERROR-005는 둘 이상의 오류를 발생 순서대로 `details.errors`에 담게 했으므로, 같은 대상을 겨눈 다른 출처의 오류 둘이 묶음 안에서 같은 모양으로 보이는 것은 묶음의 쓸모(어느 선언이 잘못되었는지 찾기)를 깎는다; 그래서 자동 쓰기가 대상에서 실패하는 두 오류 — `INJECT_TARGET_MISSING`(동적 대상 없음, `cause` `'injectTarget'`)과 자동 쓰기의 가상 노드 쓰기 모양 오류(가칭 `INVALID_VIRTUAL_NODE_VALUES`, `cause` 가칭 `'writeShape'`) — 의 `details`에 출처 노드의 데이터 경로 `sourcePath`(쓰기를 낸 `controls.injectTo` 선언의 노드)를 더한다. `path`는 지금처럼 사건이 묶인 대상 노드의 경로로 두어 ERROR-017의 뜻을 지키고, ERROR-195가 적은 `details`(기대 길이, 받은 값)는 그대로 남는다; 호출자 경로의 쓰기 모양 오류(42C-02)는 출처가 호출자라 `sourcePath`가 없다. 덧붙이는 변경이고 두 코드는 PR-4의 오류 라우팅 범위라 05가 PR-4에서 하며, 중복 제거를 없앤 수정(같은 대상에 대한 출처별 오류를 모두 남김)은 58C-01의 "모두 모아"에 든다." (`reviews/round-59-closing.md:9`)
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:654-672`(정본)
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-21)

@@ -1502,6 +1502,8 @@
 - 보충:
   > 편집자 결정(25C-08): "【추론】 시나리오 데이터 모듈의 자리는 `packages/aileron/schema-form-scenarios/src/<부류>/<이름>.scenario.ts`이며 TEST-023의 `src/**/*.scenario.ts` 안이다." (`reviews/round-25-closing.md:76`)
   > 편집자 결정(25C-08): "【추론】 시나리오 감싸개는 `ScenarioForm`, 핸들 등록은 `registerScenarioHandle`, 핸들 찾기는 `findScenarioHandle`이다." (`reviews/round-25-closing.md:77`)
+  > 편집자 결정(60C-01): "【추론】 filid의 분류는 "어댑터가 모듈 index를 보고하면 fractal"이고 "다른 이가 이름으로 부르면서 내부는 자유로이 바뀌는 디렉토리는 fractal"인데, 가족 디렉토리마다 `index.ts`가 그 가족의 장면 목록(`arrayScenarios` 등)을 이름으로 내보내고 패키지 루트 `index.ts`가 그것을 이름으로 가져오므로 가족은 자료 묶음이면서도 계약(장면 목록)을 가진 모듈이다; 그래서 문서 없이 예외로 두는 (A)는 분류를 거스르고, 뒤로 미루는 (C)는 같은 발견을 PR마다 다시 보게 하므로 (B)를 택한다. 문서는 짧다 — INTENT는 그 가족이 어느 동작 부류의 장면을 담는지와 자료 전용(실행·엔진 의존 없음, TEST-010)이라는 규약, DETAIL은 장면 파일 목록과 각 장면이 검증하는 원장 항목(배열 가족이면 TEST-018과 35C~48C의 결정들)이다. 패키지 INTENT의 "Families name value, settle, fill, exit, and union behavior"는 derive·controls·array를 더해 여덟으로 고친다." (`reviews/round-60-closing.md:9`)
+  > 편집자 결정(60C-01): "【추론】 여덟 가족 모두 #353에서 한다: 소유자가 "시나리오 문서의 처리"라는 패키지 전체의 결정을 구했고 문서만 더하는 변경이라 코드 위험이 없으며, 일곱 가족을 따로 PR로 내면 소유자의 머지 지시가 한 번 더 들고 그동안 05·07의 검사가 같은 발견을 다시 낸다; 06 실행 기록 §4에 "기존 일곱 가족의 문서는 패키지 전체 결정(60C-01)으로 이 PR에 들었다"고 적는다. `*.scenario.ts`의 홀로 파일 경고는 장면 하나가 파일 하나인 설계된 모양(LANDING-090의 "신규 시나리오의 자리와 파일당 상한")이므로 `.filid/config.json`의 `zero-peer-file.exempt`에 기존 항목들의 결대로 `**/aileron/schema-form-scenarios/src/**`를 더해 닫고, `array.spec.ts`의 동적 표 사례 상한 미확정은 통과로 바꾸지 않고 그 시험이 속한 fractal의 DETAIL에 "표가 장면 목록에서 생성되어 사례 수가 정적으로 세어지지 않는다"고 선언한다." (`reviews/round-60-closing.md:10`)
 - 상태: 현행
 - 출처: `09-landing-and-test-strategy.md:256`(정본), `08-design-a-to-z.md:570`
 - 닫은 사람: 편집자 결정(16라운드, 테스트 전략), 소유자 답(`reviews/round-16-owner-answers.md:14` 8), 소유자 답(`reviews/round-16-owner-answers.md:10` 4)
