@@ -10,8 +10,9 @@
   - 겉면: `SchemaNode.ts`, `SchemaNode/DETAIL.md` 멤버 표, `surface.test.ts`(시험 이름은 05의 `26C-01 PR-4 …`, 멤버 수는 두 단계의 합), `type-contract.test.ts`. 자동 병합된 `SchemaNode/type.ts`, `src/core/index.ts`, `record/type.ts`도 합집합인지 읽어서 확인한다.
   - 정착: `settle/type.ts`, `transitionSettlement.ts`, `evaluateDeriveRound.ts`는 06의 비례 비용 수정(44C-01·48C-01·49C-01·51C-01)과 05의 오류 기록(58C-01)을 함께 지킨다.
   - 문서: `core/DETAIL.md`, `record/DETAIL.md`, `settle/DETAIL.md`는 두 쪽 문장을 모두 남기고, 05가 이미 확정한 문장(59C-01 등)을 쓴다. `PLAN.md`는 05 행을 기준 브랜치에서, 06 행을 이 브랜치에서 가져온다.
-  - 성능 대장 `verification/performance-issues.md`: 05의 P-16–P-19, R-08–R-10을 그대로 두고, 06의 해결 행 R-08–R-16을 R-11부터 다시 매기고 06 문서의 인용을 함께 고친다. 06의 열림 행 P-20은 그대로 둔다.
-  - 시나리오 패키지 `index.ts`, `src/types.ts`, `src/__tests__/families.test.ts`는 두 단계의 가족과 필드를 합친다.
+  - 성능 대장 `verification/performance-issues.md`: 05의 P-16–P-21, R-08–R-10을 그대로 두고, 06의 해결 행 R-08–R-16을 R-11부터, 06의 열림 행 P-20을 P-22로 다시 매기며 06 문서의 인용을 함께 고친다.
+  - 시나리오 패키지 `index.ts`, `src/types.ts`, `src/__tests__/families.test.ts`는 두 단계의 가족과 필드를 합친다. `types.ts`에서 05는 기대 필드(`deliveryOrder`, `onChangeCount`, `validationRequestCount`, `onErrorCodes`)만 더했으므로 동작 어휘는 06 쪽(`pop`, 아이템 `update`)을 그대로 쓴다.
+  - 겉면의 `setValue`·`resetSubtree`는 05의 진입(`dispatchSetValue`, `dispatchResetSubtree`)을 부르는 기준 브랜치 쪽을 따른다.
 
 ### I2 확정된 오류 이름 (61라운드)
 
@@ -23,19 +24,21 @@
 - `dispatch/utils/entry/dispatch{Push,Pop,Update,Remove,Clear}.ts`를 더하고 `dispatch/index.ts`에서 이름으로 내보낸다(LANDING-084, LANDING-064, EVENT-027, EVENT-035).
 - 꼴은 `dispatchSetValue.ts`를 따른다: 첫 줄 `if (!enterSchemaNodeChain(node)) return;`(EVENT-008 되먹임 거부), `try`에서 `arrangeSchemaNodeItems` 호출, `catch`에서 `captureChainError`, `finally`에서 `exitSchemaNodeChain`.
 - 겉면의 다섯 멤버는 진입 함수를 한 문장으로 부른다. `arrayBehavior/`에는 진입 사슬을 두지 않는다.
-- 동사의 반환 값(log §4 M8)은 진입이 거부되면 `undefined`이다. `batch` 안의 동사가 `batchWrites` 대기열로 표현되지 않으면 대기열에 넣지 말고 멈춰 원장 질의로 올린다.
+- 동사의 반환 값(log §4 M8)은 진입이 거부되면 `undefined`이다.
+- `batch` 안의 동사: 쓰기는 `batchWrites`에 쌓였다가 배치 끝에 합쳐 정착하는데 동사는 동기 반환이 필요하다. 계약은 원장 질의 Q28(쌓인 쓰기를 먼저 정착한 뒤 동사를 바로 실행하는 안을 권함)의 답을 따르며, 답이 오기 전에는 이 갈래만 짓지 않는다.
 - 시험 `dispatch/__tests__/dispatch.array-entry.test.ts`(33C-01, EVENT-035, ERROR-197). 06 시험은 `batch` 합침이나 진입마다 한 번의 `onChange`를 단언하지 않는다.
 
 ### I4 `onError` 보고와 `UpdatePath` 배달
 
 - ERROR-197: 비배열 노드의 배열 메서드 던짐은 진입 사슬의 오류 포착을 거쳐 `onError`로 보고된다(35C-01). 같은 자리 DETAIL의 "배선 PR이 보고를 더한다" 문장을 현재 계약으로 바꾼다.
-- `UpdatePath`: 디스패처가 기록 수준의 `(previous, current)` 경로 사실을 EVENT-068의 payload `{ previous, current }`로 배달한다(35C-02, NODE-051). 경로 사실의 출처는 06의 재인덱싱 작업 칸이다.
+- `UpdatePath`: 05의 `markCommitDeliveries.ts`는 배달 스냅숏의 `path`와 노드의 `path`가 다르면 `UpdatePath`를 표시한다. 06의 재인덱싱이 남긴 `(previous, current)` 경로 사실의 노드(자손 포함)를 배달 후보에 넣어 EVENT-068의 payload `{ previous, current }`로 배달되게 한다(35C-02, NODE-051).
 
 ### I5 05의 기록 계약
 
 - 기록 칸 `state` → `interactionState`, 공개 `state`는 접근자. 06 코드와 시험을 맞춘다.
-- `globalStateCounts`·`globalState`와 커밋 훅 `commitGlobalState.ts`(43C-01)가 배열 아이템이 형상에 들고 날 때(구조 연산, 소멸, 나감)도 센다.
-- 05가 더한 경로 열쇠 런타임 저장소가 있으면 06의 재인덱싱(`rekeyArrayRuntimePaths.ts`)과 소멸 정리(`prunePerishedPaths.ts`)에 넣는다(실행 ADR D4). 목록은 병합 뒤 런타임 형을 읽어 정하고 이 계획의 기록에 남긴다.
+- `globalStateCounts`·`globalState`와 커밋 훅 `commitGlobalState.ts`(43C-01): 지금은 `context.exited`와 자손만 빼므로, 소멸한 아이템(`context.perished`, 35C-09)과 자손의 상태도 빼도록 고친다. 구조 연산으로 들어온 아이템은 `context.entered`로 더해지는지 확인한다.
+- 소멸 노드의 배달 저장소 정리: `markCommitDeliveries.ts`는 `context.exited` 중 떨어진 노드만 `deliverySnapshots`·`deliveryWatchIndex`에서 지우므로 소멸 노드도 지운다. 경로를 열쇠에 담는 `warningKeys`·`pendingWarningRecords`는 재인덱싱과 소멸 정리에 넣는다.
+- 그 밖에 05가 더한 경로 열쇠 또는 노드 열쇠 런타임 저장소는 병합 뒤 런타임 형을 전부 읽어 06의 재인덱싱(`rekeyArrayRuntimePaths.ts`)과 소멸 정리(`prunePerishedPaths.ts`)에 넣고(실행 ADR D4), 저장소마다 처리를 log에 적는다.
 - 검증기 계약: `compile`·`compileGuard`·`release`가 같은 사본을 받는다(VALIDATE-019).
 
 ### I6 `ifPredicates` 대역 제거
@@ -54,7 +57,11 @@
 - 차등 검사: 병합 전 HEAD 대 병합 뒤, 05가 바꾼 오류 묶음 외에 값·방출·잠복·선언 차이가 없음을 확인한다.
 - 검증 판정은 antigravity가 한다(소유자 지시). 샌드박스 하네스가 필요한 차등 검사만 Claude verifier가 맡고 그 까닭을 log에 적는다.
 
-## 2. 완료 조건
+## 2. 계획 리뷰
+
+antigravity(`0dd23346`) `rework-required`, 지적 여섯. 반영: P-20 → P-22 재번호(F1), 소멸 아이템의 전역 상태 계수(F2), 소멸 노드의 배달 저장소 정리(F3), G27–G28의 CHECK(F5), `resetSubtree` 진입(F6 첫째). 다르게 처리: F4(`batch` 안 동사를 바로 실행하자는 안)는 쌓인 쓰기와 순서가 뒤바뀌는 경우가 있어 원장 질의 Q28로 올림. F6 둘째(시나리오 `update` 어휘 충돌)는 05가 기대 필드만 더해 충돌이 아님(병합 기준 `10f98eec2` 대비 diff). G29·G30은 측정과 외부 판정이라 EVIDENCE로 두고 까닭을 적음.
+
+## 3. 완료 조건
 
 - 위 단위가 모두 반영되고 각 게이트가 통과한다(게이트 원장 G23–G30).
 - 원장과 다르거나 원장이 정하지 않은 것은 원장 관리자에게 묻고 답을 log에 남긴다.
