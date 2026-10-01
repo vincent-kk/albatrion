@@ -4,6 +4,7 @@ import { escapeSegment } from '@winglet/json/pointer';
 import { resolveGateOccurrence } from './resolveGateOccurrence';
 import type { GateOccurrence } from './type';
 import { resolveDependencyPath } from '../paths/resolveDependencyPath';
+import { getGateExpression } from './getGateExpression';
 
 /** Bound gate with exact read paths used to invalidate its L. */
 interface RegisteredGateOccurrence extends GateOccurrence {
@@ -19,6 +20,8 @@ interface RegisteredNode {
   kind: BlueprintNodeKind;
   /** Gate occurrences registered by its template and direct edges. */
   occurrences: readonly RegisteredGateOccurrence[];
+  /** Gates on this node's own declarations, before direct child edges. */
+  ownOccurrences: readonly RegisteredGateOccurrence[];
 }
 
 /** Settlement-owned location index that follows live record lifetimes. */
@@ -54,6 +57,7 @@ class GateRegistry {
         this.add(node, gate, memo,
           gate.schemaPath === `${node.blueprintNode.schemaPath}/controls/active`
             ? node.path : undefined);
+    const ownOccurrences = [...memo.values()];
     for (const entry of node.blueprintNode.childEntries) {
       let edgeMemo = edges.get(entry.name);
       if (!edgeMemo) {
@@ -69,7 +73,8 @@ class GateRegistry {
     }
     this.byNode.set(node, memo);
     this.byEdge.set(node, edges);
-    this.byPath.set(node.path, { node, kind: node.blueprintNode.kind, occurrences: [
+    this.byPath.set(node.path, { node, kind: node.blueprintNode.kind,
+      ownOccurrences, occurrences: [
       ...memo.values(), ...[...edges.values()].flatMap((edge) => [...edge.values()]),
     ] });
   }
@@ -87,7 +92,9 @@ class GateRegistry {
     if (!memo) throw new Error(`Missing gate memo at ${node.path}`);
     this.add(node, gate, memo);
     const edges = this.byEdge.get(node);
-    this.byPath.set(node.path, { node, kind: node.blueprintNode.kind, occurrences: [
+    this.byPath.set(node.path, { node, kind: node.blueprintNode.kind,
+      ownOccurrences: this.byPath.get(node.path)?.ownOccurrences ?? [],
+      occurrences: [
       ...memo.values(), ...[...edges?.values() ?? []].flatMap((edgeMemo) =>
         [...edgeMemo.values()]),
     ] });
@@ -105,11 +112,14 @@ class GateRegistry {
   /** Whether changed raw intersects any read that can affect this host's wheel. */
   mayChangeAt(path: string, changedRaw: ReadonlySet<string>): boolean {
     for (const occurrence of this.byLocation.get(path) ?? [])
-      for (const watched of occurrence.watchPaths)
-        for (const changed of changedRaw)
-          if (changed === watched || watched === '' ||
-            changed.startsWith(`${watched}/`) || watched.startsWith(`${changed}/`))
-            return true;
+      if (this.readsChanged(occurrence, changedRaw)) return true;
+    return false;
+  }
+
+  /** Whether a changed read can reselect this live node's own declarations. */
+  mayChangeOwnDeclarationAt(path: string, changedRaw: ReadonlySet<string>): boolean {
+    for (const occurrence of this.byPath.get(path)?.ownOccurrences ?? [])
+      if (this.readsChanged(occurrence, changedRaw)) return true;
     return false;
   }
 
@@ -148,12 +158,23 @@ class GateRegistry {
       'propertyName' in gate.condition &&
       typeof gate.condition.propertyName === 'string')
       return [`${location.hostPath}/${escapeSegment(gate.condition.propertyName)}`];
-    const expression = this.blueprint.expressions.find((candidate) =>
-      candidate.schemaPath === gate.schemaPath && candidate.key === 'active');
+    const expression = getGateExpression(this.blueprint, gate.schemaPath);
     return expression ? expression.dependencies.map((dependency) => {
       const path = resolveDependencyPath(location.hostPath, dependency);
-      return path === '@' ? location.hostPath : path;
+      return path;
     }) : [location.hostPath];
+  }
+
+  /** Check whether a bound gate reads a changed raw path. */
+  private readsChanged(
+    occurrence: RegisteredGateOccurrence, changedRaw: ReadonlySet<string>,
+  ): boolean {
+    for (const watched of occurrence.watchPaths)
+      for (const changed of changedRaw)
+        if (changed === watched || watched === '' ||
+          changed.startsWith(`${watched}/`) || watched.startsWith(`${changed}/`))
+          return true;
+    return false;
   }
 
   /** Remove a replaced path from its L buckets. */

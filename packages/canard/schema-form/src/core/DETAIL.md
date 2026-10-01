@@ -8,8 +8,8 @@
 - 정제 값을 읽는 곳은 밖으로 나가는 경로뿐이다 — 루트 검증 값, 루트 방출, `FormHandle.getValue`, 부모측 하이드레이션 스냅샷. 안으로 들어오는 경로(`setValue`)와 raw 관측 경로(`UpdateValue` payload)는 계속 `value`를 쓴다.
 - 노드 값 변경은 `setValue()` 공개 API를 경유한다. private `__value__`에 외부에서 접근하지 않는다.
 - 레거시 노드·파서 구현과 옛 `__tests__/`는 `src/__legacy__/core/`로 옮긴다. `src/core/__tests__/scenarios/`는 새 하네스로 남긴다. 파서는 순수 값 변환만 담당하며 JSON Schema 검증 로직을 넣지 않는다.
-- `src/core/index.ts`, `nodeFromJSONSchema.ts`, `types/`는 제자리를 유지하고 stage 07 전환(LANDING-159)까지 레거시 엔진을 가리킨다.
-- 새 `record/`, `behaviors/`, `navigation/`, `settle/`, `SchemaNode/` fractal은 NODE-016의 의존 순서 `blueprint` < `record` < {종류 모듈, `navigation`} < `settle` < `SchemaNode`에 따라 추가한다.
+- `src/core/index.ts`, `nodeFromJSONSchema.ts`, `types/`는 제자리를 유지하고 stage 07 전환까지 레거시 엔진을 가리키며, 바인딩 전용 `setContext` 한 이름만 새 `SchemaNode/` 진입점에서 다시 내보낸다(NODE-010, LANDING-159, SURFACE-055, 28C-08).
+- 새 `record/`, `behaviors/`, `navigation/`, `settle/`, `SchemaNode/` fractal은 `blueprint` < `record` < {종류 모듈, `navigation`} < `settle/derive` < `settle` < `SchemaNode`의 의존 순서를 따른다. `settle/derive`는 `settle`의 자식으로서 규칙 판정만 소유하고 settle의 라운드 실행기가 그 진입점을 소비한다(NODE-016·045, LANDING-083, SETTLE-004).
 - 이벤트는 `EventCascade`로 마이크로태스크 배칭한다. 단 `UpdateValue`는 동기 발행이다.
 - 노드 트리는 순환 참조를 만들지 않는다.
 
@@ -23,6 +23,7 @@
 | `SchemaNode` 및 타입별 노드                                      | `value`·`normalizedValue`·`setValue`·`validate`·`subscribe`·`find`·`revision` 등 노드 공개 표면 |
 | `isSchemaNode` · `isBranchNode` · `isTerminalNode` · 타입별 가드 | 런타임 타입 판별                                                                                |
 | `NodeEventType` · `SetValueOption` · `ValidationMode`            | 비트 플래그·열거값                                                                              |
+| `setContext(root, context)`                                      | 새 엔진의 바인딩 전용 내부 통로를 이름으로 다시 내보냄. 패키지 공개 `src/index.ts`에는 노출하지 않음(NODE-010, SURFACE-055, 28C-08) |
 
 ### 값 채널 규약
 
@@ -61,7 +62,35 @@
 
 - TEST-023에 따라 코어 시험이 공유 시나리오 데이터를 해석합니다. 비공개 시나리오 패키지는 코어 실행기를 소유하지 않습니다.
 - 주입된 코어 어댑터가 단계를 순서대로 한 번씩 실행하며 정착을 기다린 뒤 기대를 검사하고 실패를 호출자에게 전달합니다.
-- 값·정착·채움·나감·union 부류의 모든 시나리오를 새 `SchemaNode` 트리에서 실행하고 단계별 형상·방출·진단을 검증합니다. `reset`은 루트 폼 수준 로드이며, `resetSubtree()`는 해당 하위 트리만 로드합니다.
+- 각 부류의 시나리오를 새 `SchemaNode` 트리에서 실행하고 단계별 형상·방출·진단·상태 키를 검증합니다. `reset`은 루트 폼 수준 로드이며 `resetSubtree()`는 해당 하위 트리만 로드합니다(TEST-011·016·019·023, SETTLE-049).
+
+### scenario-value — 값 부류 시나리오
+
+- 공유 `value` 부류의 모든 시나리오가 코어 실행기에서 기대한 원본·방출·형 불일치 기록을 냅니다(TEST-019·023).
+
+### scenario-settle — 정착 부류 시나리오
+
+- 공유 `settle` 부류의 모든 시나리오가 코어 실행기에서 기대한 형상·진단·예산 결과를 냅니다(TEST-019·023).
+
+### scenario-fill — 채움 부류 시나리오
+
+- 공유 `fill` 부류의 모든 시나리오가 코어 실행기에서 기대한 채움 결과를 냅니다(TEST-019·023).
+
+### scenario-exit — 나감 부류 시나리오
+
+- 공유 `exit` 부류의 모든 시나리오가 코어 실행기에서 기대한 나감 비움·잠복 결과를 냅니다(TEST-019·023).
+
+### scenario-union — union 부류 시나리오
+
+- 공유 `union` 부류의 모든 시나리오가 코어 실행기에서 기대한 종류 선택·형상을 냅니다(TEST-019·023).
+
+### scenario-derive — 파생 부류 시나리오
+
+- 공유 `derive` 부류의 모든 시나리오가 코어 실행기에서 기대한 에지 발화·같은 대상 순위·예산·`injectTo` 결과를 냅니다(TEST-016·019·023, SETTLE-049).
+
+### scenario-controls — 제어 부류 시나리오
+
+- 공유 `controls` 부류의 모든 시나리오가 코어 실행기에서 기대한 상태 키 결합·범위·나감 층 결과를 냅니다(TEST-019·023).
 
 ### public-node-inference — 형 없는 스키마의 공개 노드 형
 
@@ -79,4 +108,4 @@
 
 ## Last Updated
 
-2026-09-30 — 공유 시나리오의 새 노드 트리 실행과 폼 수준 로드 계약 반영.
+2026-10-01

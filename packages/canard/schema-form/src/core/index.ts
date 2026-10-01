@@ -1,4 +1,5 @@
 export { nodeFromJSONSchema, contextNodeFactory } from './nodeFromJSONSchema';
+export { setContext } from './SchemaNode';
 
 export type {
   ArrayNode,

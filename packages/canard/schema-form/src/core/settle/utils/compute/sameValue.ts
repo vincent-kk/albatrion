@@ -1,16 +1,22 @@
 import { isArray } from '@winglet/common-utils/filter';
 
 /**
- * Compare calculated values while preserving an unchanged container reference.
+ * Compare nested JSON-like values while retaining equal references without descent.
  * @param left - Value from the previous commit
  * @param right - Value assembled during the current calculation
- * @returns Whether their ordered top-level contents are identical
+ * @returns Whether their ordered plain contents are identical
  */
 export const sameValue = (left: unknown, right: unknown): boolean => {
-  if (Object.is(left, right)) return true;
+  if (left === right || Number.isNaN(left) && Number.isNaN(right)) return true;
   if (left === null || right === null ||
     typeof left !== 'object' || typeof right !== 'object' ||
     isArray(left) !== isArray(right)) return false;
+  if (isArray(left) && isArray(right)) {
+    if (left.length !== right.length) return false;
+    for (let index = 0; index < left.length; index++)
+      if (!sameValue(left[index], right[index])) return false;
+    return true;
+  }
   if (!isArray(left)) {
     const prototype = Object.getPrototypeOf(left);
     if (prototype !== Object.getPrototypeOf(right) ||
@@ -22,7 +28,7 @@ export const sameValue = (left: unknown, right: unknown): boolean => {
   for (let index = 0; index < leftKeys.length; index++) {
     const key = leftKeys[index];
     if (key !== rightKeys[index] ||
-      !Object.is(Reflect.get(left, key), Reflect.get(right, key))) return false;
+      !sameValue(Reflect.get(left, key), Reflect.get(right, key))) return false;
   }
   return true;
 };

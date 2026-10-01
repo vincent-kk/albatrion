@@ -135,4 +135,38 @@ describe('NODE-016 and NODE-045 dependency direction', () => {
       specifier.includes('/__legacy__/')).map(({ source, specifier }) =>
       `${relative(CORE, source)} -> ${specifier}`)).toEqual([]);
   });
+
+  it('keeps derive below settle without importing its orchestration or type', () => {
+    const deriveRoot = join(CORE, 'settle', 'derive') + sep;
+    const settleRoot = join(CORE, 'settle') + sep;
+    const sameValue = join(CORE, 'settle', 'utils', 'compute', 'sameValue.ts');
+    const resolveDependencyPath = join(CORE, 'settle', 'utils', 'paths',
+      'resolveDependencyPath.ts');
+    const forbidden = edges.filter(({ source, target }) =>
+      source.startsWith(deriveRoot) && target.startsWith(settleRoot) &&
+      !target.startsWith(deriveRoot) && target !== sameValue &&
+      target !== resolveDependencyPath &&
+      !target.startsWith(join(CORE, 'settle', 'utils', 'controls') + sep));
+    expect(forbidden.map(({ source, specifier }) =>
+      `${relative(CORE, source)} -> ${specifier}`)).toEqual([]);
+  });
+
+  it('routes settle organ imports of derive through its index.ts', () => {
+    const deriveRoot = join(CORE, 'settle', 'derive') + sep;
+    const direct = edges.filter(({ source, target }) =>
+      source.startsWith(join(CORE, 'settle', 'utils') + sep) &&
+      target.startsWith(deriveRoot) &&
+      target !== join(CORE, 'settle', 'derive', 'index.ts'));
+    expect(direct.map(({ source, specifier }) =>
+      `${relative(CORE, source)} -> ${specifier}`)).toEqual([]);
+  });
+
+  it('keeps shared controls interpretation independent of settle orchestration types', () => {
+    const controlsRoot = join(CORE, 'settle', 'utils', 'controls') + sep;
+    const direct = edges.filter(({ source, target }) =>
+      source.startsWith(controlsRoot) &&
+      target === join(CORE, 'settle', 'type.ts'));
+    expect(direct.map(({ source, specifier }) =>
+      `${relative(CORE, source)} -> ${specifier}`)).toEqual([]);
+  });
 });

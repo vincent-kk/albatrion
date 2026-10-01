@@ -46,6 +46,12 @@ export interface SchemaNodeRecord<Self> {
   extras: unknown;
   /** Result of the current node gate. */
   active: boolean;
+  /** Local visibility after all active state declarations are combined. */
+  visible: boolean;
+  /** Local read-only result, including standard schema readOnly. */
+  readOnly: boolean;
+  /** Local disabled result after all active state declarations are combined. */
+  disabled: boolean;
   /** Calculated local value before output projection. */
   local: unknown;
   /** Calculated output value. */
@@ -102,7 +108,7 @@ interface SchemaNodeDiagnostics {
   /** Current settlement health. */
   status: 'stable' | 'degraded';
   /** Reason for a degraded commit. */
-  cause?: 'budget' | 'expression' | 'injectTarget' | 'sharedConflict';
+  cause?: 'budget' | 'expression' | 'injectTarget' | 'writeShape' | 'sharedConflict';
   /** Budget whose limit stopped settlement. */
   exceededBudget?: 'hostWheel' | 'derive' | 'transition' | 'recursion';
   /** Number of iterations at the exceeded limit. */
@@ -111,11 +117,16 @@ interface SchemaNodeDiagnostics {
   commit?: number;
 }
 
-/** Classification and document position of one latent occurrence. */
+/** Classification, document position, and retained exit decisions of a latent occurrence. */
 interface LatentRawMetadata {
   readonly path: string;
   readonly blueprintNode: BlueprintNode;
   readonly order: readonly number[];
+  /** Last-live explicit exit decisions retained after rule baselines are pruned. */
+  readonly exitLayers?: readonly {
+    readonly layer: 'node' | 'children' | 'fragment';
+    readonly clear: boolean;
+  }[];
 }
 
 /** Last published item and sort position for one enumerable latent occurrence. */
@@ -149,6 +160,9 @@ interface DetachedSchemaNodeReads {
   readonly typeMismatches: readonly string[];
   readonly inactiveValues: readonly { path: string; value: unknown }[];
   readonly defaultValue: unknown;
+  readonly visible: boolean;
+  readonly readOnly: boolean;
+  readonly disabled: boolean;
 }
 
 /** Structured warning emitted when a committed raw value misses its effective type. */
@@ -207,6 +221,8 @@ export interface SettlementScratch<Self> {
   latentAutomaticLog: Map<string, { present: boolean; value: unknown }>;
   /** Paths scheduled for recalculation. */
   dirtyPaths: Set<string>;
+  /** Declaration-owner paths scheduled by reverse dependencies or context reads. */
+  dependencyOwnerPaths: Set<string>;
   /** Hosts scheduled for a new shape selection. */
   shapeDirtyPaths: Set<string>;
   /** Paths whose own source channels changed. */
@@ -215,12 +231,44 @@ export interface SettlementScratch<Self> {
   explicitRaw: Set<string>;
   /** Nodes whose source or calculated result changed. */
   changedNodes: Set<Self>;
+  /** Nodes visited by calculation whose final state keys need publication. */
+  stateDirtyNodes: Set<Self>;
   /** Effective schemas recorded before this settlement. */
   originalSchemas: Map<string, EffectiveSchema>;
 }
 
 /** Minimal per-tree slots consumed by the first settlement engine. */
 export interface SchemaNodeRuntime<Self> extends SchemaNodeRootRuntimeState {
+  /** Form context shared by every occurrence and expression in this tree. */
+  context?: Readonly<Record<string, unknown>>;
+  /** Last committed expression inputs, keyed by live authored rule occurrence. */
+  committedRuleValues?: Map<string, unknown>;
+  /** Committed rule keys indexed by their source path for bounded pruning. */
+  committedRuleKeysBySource?: Map<string, Set<string>>;
+  /** Committed rule keys indexed by live value target for exited-subtree pruning. */
+  committedRuleKeysByTarget?: Map<string, Set<string>>;
+  /** Last development settlement, replaced rather than accumulated. */
+  settlementTrace?: {
+    /** Entry API and public write option bits. */
+    readonly entry: { readonly api: string; readonly option: number };
+    /** Rule decisions grouped by evaluation round. */
+    readonly rounds: readonly (readonly {
+      readonly phase: string;
+      readonly kind: string;
+      readonly sourcePath: string;
+      readonly targetPath: string;
+      readonly previousValue: unknown;
+      readonly nextValue: unknown;
+      readonly result: string;
+    }[])[];
+    /** Last attempted rule list when derive exceeded its budget. */
+    readonly budget?: readonly {
+      readonly kind: string;
+      readonly sourcePath: string;
+      readonly targetPath: string;
+      readonly result: string;
+    }[];
+  };
   /** Form default for automatic writes, overridden by a call's explicit bits. */
   disableAutomaticWrites?: boolean;
   /** Form default for clearing raw when a node leaves the shape. */
@@ -239,6 +287,8 @@ export interface SchemaNodeRuntime<Self> extends SchemaNodeRootRuntimeState {
   typeMismatchesMemo?: Map<string, { commit: number; paths: readonly string[] }>;
   /** Frozen last-commit reads for departed references, allocated on first exit. */
   detachedReads?: WeakMap<object, DetachedSchemaNodeReads>;
+  /** Stable watch path results for each node within one completed commit. */
+  watchValuesMemo?: WeakMap<object, { commit: number; values: readonly unknown[] }>;
   /** Synchronous predicates for authored if gates. */
   ifPredicates: ReadonlyMap<BlueprintGate, (gateInput: unknown) => boolean>;
   /** Settlement health retained until a form-level load. */

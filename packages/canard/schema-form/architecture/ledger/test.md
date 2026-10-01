@@ -332,6 +332,8 @@
   > | PR-3 | 같은 대상 규칙(종류·문서 순서·층·전순서·정착 단위), 에지 소비, `DisableAutomaticWrites`, 개발 모드 정착 기록 |
 - 보충:
   > 편집자 결정(18C-25): "【추론】 (다) 파생 라운드 예산과 그 `degraded`, `DisableAutomaticWrites`의 파생·`injectTo` 억제는 PR-3으로 미룬다." (`reviews/round-18-closing.md:769`)
+  > 편집자 결정(28C-01): "【추론】 PR-3은 이 기록을 위한 공개 `SchemaNode` 멤버·`onError` 기록·`FormHandle` 멤버를 더하지 않는다: 원장이 정한 멤버가 없고(26C-01), 이 행은 "`onError`에 가지 않음"이다." (`reviews/round-28-closing.md:12`)
+  > 편집자 결정(28C-01): "【추론】 시험이 런타임의 칸에서 이 기록을 읽는 것은 TEST-069 (나)가 금하는 "시험만을 위한 주입 자리"가 아니다: (나)가 금하는 것은 시험만을 위해 새로 만드는 입력 자리이고, 이 기록은 ERROR-159가 설계로 요구한 산출물이다." (`reviews/round-28-closing.md:13`)
 - 상태: 현행
 - 출처: `09-landing-and-test-strategy.md:166-167,170`(정본), `reviews/round-16-owner-review.md:27`, `reviews/round-18-closing.md:769`
 - 닫은 사람: 편집자 결정(16라운드, `09-landing-and-test-strategy.md:170`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-25)
@@ -1176,6 +1178,7 @@
   > 편집자 결정(26C-03): "【추론】 미룬 단언은 PR-2의 `log.md`와 PR 본문에 사례마다 PR 번호를 단다(TEST-069가 처분 목록에 정한 방식)." (`reviews/round-26-closing.md:37`)
   > 편집자 결정(26C-04): "【추론】 `controls.active` 게이트(노드 게이트·조각 게이트)는 PR-2가 청사진이 컴파일한 식(`BlueprintExpression.evaluate`)으로 호스트 바퀴에서 실제로 평가하며, 술어 인터페이스 뒤의 대역으로 두지 않는다." (`reviews/round-26-closing.md:45`)
   > 편집자 결정(26C-04): "【추론】 `if` 게이트만 `record/`가 선언한 술어 인터페이스 뒤에 두고 시험은 대역 하나를 쓰며, 실제 술어는 PR-4의 `compileGuard`가 넣는다." (`reviews/round-26-closing.md:46`)
+  > 편집자 결정(29C-01): "【추론】 첫 발화의 쓰기가 게이트를 뒤집어 원천 노드가 채움 전에 나가면 결과는 첫 발화의 값이며, FRAGMENT-050 (3)대로 그 쓰기는 되돌리지 않는다; 그런 사례의 v7 기대(`REPORT-v7.md:47,51`의 A4b·X16과 그 변형 X16_noDefault)는 원장과 다르므로 이식하지 않고 원장의 값으로 바꾸며, TEST-069 (라)의 배분과 04 실행 계획의 "기대값은 `round18/proto/REPORT-v7.md`의 기대 치환을 따른다"(`plan/04-derive-and-controls/execution-plan.md:346`)는 v7의 모형이 원장과 다른 자리에는 미치지 않는다(03이 `plan/03-node-and-settle/log.md` §4에 남긴 선례와 같다)." (`reviews/round-29-closing.md:14`)
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:751-780`(정본), `reviews/round-18-closing.md:2797-2798`
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-25), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-98)
@@ -1205,7 +1208,11 @@
   > PR: PR-3 벤치(회귀 항목).
   > 무엇: 객체 원천 `injectTo`(1만 원소의 터미널 객체·배열)에서 한 원소 쓰기의 비교 비용이 값 크기와 무관한지, 통째 교체가 선형인지 잰다.
   > 실패: 값 비교를 되돌리지 않고 지름길 구현을 고친다.
-- 보충: 없음
+- 보충:
+  > 편집자 결정(28C-06): "【추론】 TEST-071의 "한 원소 쓰기의 비교 비용이 값 크기와 무관"은 18C-50 (다)의 뜻이다: 비교는 이번 정착에서 새로 만들어진 부분에만 내려가므로, 통째 교체된 컨테이너의 원소 N개는 참조로만 견주고 바뀌지 않은 원소들의 깊은 크기(내용)에는 내려가지 않는다." (`reviews/round-28-closing.md:65`)
+  > 편집자 결정(28C-06): "【추론】 그래서 원소 수 N에 비례하는 참조 비교는 지름길이 요구하는 비용이고, "값 크기"는 원소 수가 아니라 바뀌지 않은 원소들의 깊은 크기다; "통째 교체가 선형"은 새로 만들어진 값 전체의 크기에 선형이라는 뜻이다." (`reviews/round-28-closing.md:66`)
+  > 편집자 결정(28C-06): "【추론】 합격선은 04의 검증 문서에 TEST-027의 절차로 적고 원장은 뜻만 보충한다: 원소 크기를 바꿔도 한 원소 쓰기의 비교 시간이 같은 수준인지, 통째 교체의 시간이 새 값의 크기에 선형인지를 잰다." (`reviews/round-28-closing.md:67`)
+  > 편집자 결정(28C-06): "【추론】 실패의 처분은 둘로 나눈다: 지름길이 없어서(비교가 새로 만들어진 부분 밖으로 내려가서) 실패하면 18C-50·SETTLE-043이 정한 기제의 결함이므로 고치는 것이 구현이고 최적화가 아니다 — 27라운드 소유자 답의 범위 밖이다; 지름길이 있는데 선만 넘으면 27라운드 답대로 고치지 않고 TEST-027의 절차(이유 기록, 소유자 수용)를 따르며 `verification/`의 성능 문서에 남긴다." (`reviews/round-28-closing.md:68`)
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:1394,1413-1415`(정본)
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-50)
