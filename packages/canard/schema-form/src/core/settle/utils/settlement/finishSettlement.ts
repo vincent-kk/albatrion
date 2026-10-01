@@ -41,8 +41,7 @@ export const finishSettlement = <Self extends SchemaNodeRecord<Self>>(
   if (context.kind !== 'load') {
     const resized = [...context.arrayCounts].filter(([host, previousCount]) =>
       !host.detached && host.itemCount !== previousCount)
-      .map(([host]) => host)
-      .sort((left, right) => left.path.length - right.path.length);
+      .map(([host]) => host);
     alignArraySnapshotSlots(resized);
   }
   if (context.kind === 'load')

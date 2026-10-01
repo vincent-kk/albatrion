@@ -2,11 +2,15 @@ import { isArray } from '@winglet/common-utils/filter';
 import { unescapeSegment } from '@winglet/json/pointer';
 import type { SchemaNodeRecord } from '../../../record';
 import { getLoadValue } from './getLoadValue';
+import { setLoadValue } from './setLoadValue';
 import { sameValue } from '../compute/sameValue';
+
+/** Only canonical decimal segments address array slots without named properties. */
+const ARRAY_INDEX = /^(0|[1-9]\d*)$/;
 
 /**
  * Align resized arrays in one snapshot draft after their final shapes are known.
- * @param hosts - Live arrays ordered from shortest to longest path
+ * @param hosts - Live resized arrays in settlement registration order
  * @returns Nothing; existing slots and unrelated references are retained
  */
 export const alignArraySnapshotSlots = <Self extends SchemaNodeRecord<Self>>(
@@ -49,6 +53,20 @@ export const alignArraySnapshotSlots = <Self extends SchemaNodeRecord<Self>>(
     }
     const encoded = host.path.slice(1).split('/');
     const segments = encoded.map(unescapeSegment);
+    let probe: unknown = draft;
+    let byName = false;
+    for (const segment of segments) {
+      if (isArray(probe) && !ARRAY_INDEX.test(segment)) {
+        byName = true;
+        break;
+      }
+      probe = probe !== null && typeof probe === 'object'
+        ? Reflect.get(probe, segment) : undefined;
+    }
+    if (byName) {
+      draft = setLoadValue(draft, host.path, slots);
+      continue;
+    }
     let parent = draftCopy(draft, '');
     draft = parent;
     let parentPath = '';
