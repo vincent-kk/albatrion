@@ -38,10 +38,13 @@ export const finishSettlement = <Self extends SchemaNodeRecord<Self>>(
   }
   publishStateKeys(context);
   finalizeExits(context);
-  if (context.kind !== 'load')
-    for (const [host, previousCount] of context.arrayCounts)
-      if (!host.detached && host.itemCount !== previousCount)
-        alignArraySnapshotSlots(host);
+  if (context.kind !== 'load') {
+    const resized = [...context.arrayCounts].filter(([host, previousCount]) =>
+      !host.detached && host.itemCount !== previousCount)
+      .map(([host]) => host)
+      .sort((left, right) => left.path.length - right.path.length);
+    alignArraySnapshotSlots(resized);
+  }
   if (context.kind === 'load')
     for (const path of context.target.runtime.typeMismatchPaths)
       if (!context.target.path || path === context.target.path ||
