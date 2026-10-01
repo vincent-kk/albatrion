@@ -14,7 +14,8 @@ import { RECURSIVE_SHAPE_DIVERGED } from '../errors/settleErrorCode';
 import { getLatentOrder } from '../latent/getLatentOrder';
 import { distributeLatentValue } from '../latent/distributeLatentValue';
 import { enterSchemaNode } from './enterSchemaNode';
-import { isPlain } from '../write/isPlain';
+import { hasDistributedChildInput } from '../write/hasDistributedChildInput';
+import { createChildNode } from './createChildNode';
 import type { BlueprintChildEntry } from '../../../blueprint';
 
 /** Ungated declarations are included by the effective-schema merger itself. */
@@ -51,6 +52,9 @@ export const selectChildren = <Self extends SchemaNodeRecord<Self>>(
   const before = node.children ?? [];
   const next: Record<string, Self> = { ...node.structure };
   Object.setPrototypeOf(next, null);
+  if (node.behavior.type === 'array')
+    for (const name of Object.keys(next))
+      if (Number(name) >= node.itemCount) delete next[name];
   node.structure = next;
   const seen = new Set<string>();
   const inactiveEntries: BlueprintChildEntry[] = [];
@@ -108,8 +112,9 @@ export const selectChildren = <Self extends SchemaNodeRecord<Self>>(
     const currentChild = next[entry.name]?.blueprintNode.kind === entry.node.kind
       ? next[entry.name] : undefined;
     const distribution = context.distributedInputs.get(node);
-    const ownsInput = distribution && isPlain(distribution.input) &&
-      hasOwnProperty(distribution.input, entry.name);
+    const ownsInput = distribution &&
+      hasDistributedChildInput(distribution.input, entry.name,
+        node.behavior.type === 'array');
     const latent = context.root.runtime.latentRaw;
     const latentKey = latent.size > 0 && !priorChild ? JSON.stringify([
       `${node.path}/${escapeSegment(entry.name)}`, entry.node.kind,
@@ -132,8 +137,8 @@ export const selectChildren = <Self extends SchemaNodeRecord<Self>>(
       `${node.path}/${escapeSegment(entry.name)}`, entry.node.kind,
     ]);
     const pending = context.pendingExits.get(key);
-    const child = currentChild ?? priorChild ?? pending ??
-      context.root.runtime.nodeFactory(entry, node, context.root.runtime);
+    const child = currentChild ?? priorChild ?? pending ?? createChildNode(node, entry);
+    context.perished.delete(child);
     context.pendingExits.delete(key);
     if (pending && child === pending) context.revived.add(child);
     if (context.hasGates) getGateRegistry(child.runtime).register(child);
@@ -188,8 +193,9 @@ export const selectChildren = <Self extends SchemaNodeRecord<Self>>(
       (context.kind !== 'load' && hasOwnProperty(prior, entry.name))) continue;
     seen.add(entry.name);
     const distribution = context.distributedInputs.get(node);
-    if (!distribution || !isPlain(distribution.input) ||
-      !hasOwnProperty(distribution.input, entry.name)) continue;
+    if (!distribution ||
+      !hasDistributedChildInput(distribution.input, entry.name,
+        node.behavior.type === 'array')) continue;
     distributeLatentValue(node.runtime, context,
       `${node.path}/${escapeSegment(entry.name)}`, entry.node,
       Reflect.get(distribution.input, entry.name),
@@ -198,8 +204,12 @@ export const selectChildren = <Self extends SchemaNodeRecord<Self>>(
   }
   for (const [name, child] of Object.entries(prior))
     if (next[name] !== child) {
-      const key = JSON.stringify([child.path, child.blueprintNode.kind]);
-      context.pendingExits.set(key, child);
+      if (node.behavior.type === 'array' && Number(name) >= node.itemCount)
+        context.perished.add(child);
+      else {
+        const key = JSON.stringify([child.path, child.blueprintNode.kind]);
+        context.pendingExits.set(key, child);
+      }
     }
   const nextChildren = Object.values(next);
   if (nextChildren.length !== before.length ||

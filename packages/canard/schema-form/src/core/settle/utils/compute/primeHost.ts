@@ -5,6 +5,7 @@ import { getGateRegistry } from '../gates/getGateRegistry';
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 import { escapeSegment } from '@winglet/json/pointer';
 import { enterSchemaNode } from './enterSchemaNode';
+import { createChildNode } from './createChildNode';
 
 /**
  * Start a gate wheel with only ungated children and their static overlays.
@@ -28,8 +29,8 @@ export const primeHost = <Self extends SchemaNodeRecord<Self>>(
       `${node.path}/${escapeSegment(entry.name)}`, entry.node.kind,
     ]);
     const pending = context.pendingExits.get(key);
-    const child = priorChild ?? pending ??
-      context.root.runtime.nodeFactory(entry, node, context.root.runtime);
+    const child = priorChild ?? pending ?? createChildNode(node, entry);
+    context.perished.delete(child);
     context.pendingExits.delete(key);
     if (pending && child === pending) context.revived.add(child);
     if (context.hasGates) getGateRegistry(child.runtime).register(child);

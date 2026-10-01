@@ -3,6 +3,7 @@ import type { SchemaNodeRecord } from '../../../record';
 import { isTypeMismatch } from './isTypeMismatch';
 import { HostLatent } from '../latent/HostLatent';
 import { EMPTY_VALUES } from '../detached/emptyDetachedReads';
+import { isArray } from '@winglet/common-utils/filter';
 
 /** Compare two occurrence positions without converting them to path strings. */
 const compareOrder = (left: readonly number[], right: readonly number[]): number => {
@@ -34,7 +35,9 @@ export const updateInactiveValuesMemo = <Self extends SchemaNodeRecord<Self>>(
     const template = info.blueprintNode;
     const value = template.strategy === 'terminal' ? source :
       source instanceof HostLatent && source.raw !== undefined &&
-        isTypeMismatch(source.raw, template.schemaType, template.nullable)
+        (template.kind === 'array' && template.strategy === 'branch' &&
+          isArray(source.raw) ||
+          isTypeMismatch(source.raw, template.schemaType, template.nullable))
         ? source.raw : undefined;
     if (value !== undefined)
       candidates.set(key, { path: info.path, value, order: info.order });

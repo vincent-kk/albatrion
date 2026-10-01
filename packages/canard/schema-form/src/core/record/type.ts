@@ -235,6 +235,8 @@ export interface SettlementScratch<Self> {
   exited: Set<Self>;
   /** Temporarily absent occurrences, addressed by path and blueprint kind. */
   pendingExits: Map<string, Self>;
+  /** Array items removed by length rather than declaration gating. */
+  perished: Set<Self>;
   /** Active declaration choices waiting for commit. */
   selectedDeclarationIds: Map<Self, readonly number[]>;
   /** Original caller and fill inputs retained for effective-list interpretation. */
@@ -246,6 +248,11 @@ export interface SettlementScratch<Self> {
   /** Previous state of each reversible automatic node write. */
   automaticLog: { node: Self; previousRaw: unknown; previousExtras: unknown;
     previousDistributed?: Distribution }[];
+  /** Ordered array shapes before reversible automatic writes. */
+  arrayStructureLog: { host: Self; previousItems: Self[];
+    previousItemCount: number; previousExtras: unknown; restored?: boolean }[];
+  /** First array length observed in this settlement for snapshot alignment. */
+  arrayCounts: Map<Self, number>;
   /** Nodes whose absent source received a transition fill. */
   filledNodes: Set<Self>;
   /** Previous values of latent entries touched in a transition. */

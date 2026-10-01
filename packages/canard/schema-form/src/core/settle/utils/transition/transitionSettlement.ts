@@ -1,5 +1,3 @@
-import { isArray } from '@winglet/common-utils/filter';
-
 import { SchemaFormError } from '../../../../errors';
 import type { SchemaNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../type';
@@ -14,6 +12,7 @@ import { readDefault } from './readDefault';
 import { getTransitionCap } from './getTransitionCap';
 import { withdrawDetachedFills } from './withdrawDetachedFills';
 import { runDeriveRounds } from '../derivation/runDeriveRounds';
+import { hasWrongKindBranchAncestor } from './hasWrongKindBranchAncestor';
 
 /**
  * Apply appearance fills and final-list interpretation within a bounded round.
@@ -52,7 +51,7 @@ export const transitionSettlement = <Self extends SchemaNodeRecord<Self>>(
         if (filled.has(key)) continue;
         filled.add(key);
       }
-      if (context.kind !== 'load' && hasWrongKindObjectAncestor(node)) continue;
+      if (context.kind !== 'load' && hasWrongKindBranchAncestor(node)) continue;
       if (context.deriveState?.activeUnsetTargets.has(node)) continue;
       if (!isMissingRaw(node, context)) continue;
       const value = readDefault(node, context.selectedDeclarationIds);
@@ -110,18 +109,4 @@ export const transitionSettlement = <Self extends SchemaNodeRecord<Self>>(
       return;
     }
   }
-};
-
-/** Non-load writes do not fill children hidden beneath a wrong-kind object host. */
-const hasWrongKindObjectAncestor = <Self extends SchemaNodeRecord<Self>>(
-  node: Self,
-): boolean => {
-  let parent = node.parent;
-  while (parent) {
-    if (parent.behavior.type === 'object' && parent.behavior.strategy === 'branch' &&
-      parent.raw !== undefined && (parent.raw === null ||
-        typeof parent.raw !== 'object' || isArray(parent.raw))) return true;
-    parent = parent.parent;
-  }
-  return false;
 };

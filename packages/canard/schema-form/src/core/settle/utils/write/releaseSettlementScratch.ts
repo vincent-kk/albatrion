@@ -10,11 +10,14 @@ export const releaseSettlementScratch = <Self>(scratch: SettlementScratch<Self>)
   scratch.revived.clear();
   scratch.exited.clear();
   scratch.pendingExits.clear();
+  scratch.perished.clear();
   scratch.selectedDeclarationIds.clear();
   scratch.writtenInputs.clear();
   scratch.distributedInputs.clear();
   scratch.wrongKindHosts.clear();
   scratch.automaticLog.length = 0;
+  scratch.arrayStructureLog.length = 0;
+  scratch.arrayCounts.clear();
   scratch.filledNodes.clear();
   scratch.latentAutomaticLog.clear();
   scratch.dirtyPaths.clear();

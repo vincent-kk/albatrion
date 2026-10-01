@@ -9,6 +9,7 @@ import { withdrawDetachedFills } from './withdrawDetachedFills';
 import { captureExitedRaw } from './captureExitedRaw';
 import { getLatentOrder } from '../latent/getLatentOrder';
 import { writeLatentRaw } from './writeLatentRaw';
+import { finalizePerished } from './finalizePerished';
 
 /**
  * Decide exits only against the settled final shape, including Source B.
@@ -18,6 +19,7 @@ import { writeLatentRaw } from './writeLatentRaw';
 export const finalizeExits = <Self extends SchemaNodeRecord<Self>>(
   context: SettlementContext<Self>,
 ): void => {
+  finalizePerished(context);
   for (const node of context.pendingExits.values()) {
     if (node.detached) continue;
     const parent = node.parent;

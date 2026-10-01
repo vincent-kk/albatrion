@@ -45,6 +45,8 @@ export interface SettlementContext<Self extends SchemaNodeRecord<Self>> {
   exited: Set<Self>;
   /** Nodes absent in a middle round and eligible for same-instance reentry. */
   pendingExits: Map<string, Self>;
+  /** Array items removed by length, without exit policy. */
+  perished: Set<Self>;
   /** Exits whose selecting gate threw and therefore cannot clear their subtree. */
   throwingGateExits?: Set<Self>;
   /** Incremented by each thrown gate evaluation to identify its selecting edge. */
@@ -60,6 +62,11 @@ export interface SettlementContext<Self extends SchemaNodeRecord<Self>> {
   /** Previous state for each automatic write, restored in reverse order. */
   automaticLog: { node: Self; previousRaw: unknown; previousExtras: unknown;
     previousDistributed?: Distribution }[];
+  /** Reversible array shape changes made by automatic writes. */
+  arrayStructureLog: { host: Self; previousItems: Self[];
+    previousItemCount: number; previousExtras: unknown; restored?: boolean }[];
+  /** Initial array lengths for non-load snapshot alignment. */
+  arrayCounts: Map<Self, number>;
   /** Nodes whose missing input received a default during this call. */
   filledNodes: Set<Self>;
   /** Whether shape updates belong to reversible automatic transition work. */

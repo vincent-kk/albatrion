@@ -4,6 +4,7 @@ import { computeNode } from '../compute/computeNode';
 import { registerRecalculation } from '../write/registerRecalculation';
 import { withdrawDetachedFills } from './withdrawDetachedFills';
 import { setLatentRaw } from '../latent/setLatentRaw';
+import { restoreArrayStructure } from './restoreArrayStructure';
 
 /**
  * Restore write-boundary raw and extras before one final shape calculation.
@@ -26,6 +27,7 @@ export const restoreSourceB = <Self extends SchemaNodeRecord<Self>>(
     if (entry.node.behavior.strategy === 'branch')
       context.shapeDirtyPaths.add(entry.node.path);
   }
+  restoreArrayStructure(context);
   for (const [key, previous] of context.latentAutomaticLog)
     setLatentRaw(context.root.runtime, undefined, key, previous.present,
       previous.value, undefined, undefined, context);
