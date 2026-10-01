@@ -53,7 +53,7 @@
 | 03 | 노드 트리·정착 | 머지 | [#350](https://github.com/vincent-kk/albatrion/pull/350) | 브랜치 `feat/schema-form-node-and-settle`. 2026-09-30 머지(`0705217d5`). 뒤 PR로 넘긴 사례는 [log](plan/03-node-and-settle/log.md) §4 |
 | 04 | 파생 + 상태 키·제어 | 머지 | [#351](https://github.com/vincent-kk/albatrion/pull/351) | 브랜치 `feat/schema-form-derive-and-controls`. 2026-10-01 머지(`54afafb86`). 뒤 단계로 넘긴 사례는 [log](plan/04-derive-and-controls/log.md) §4, 속도 문제는 [대장](verification/performance-issues.md). 느린 벤치 행 수용은 30라운드 소유자 답으로 기록(TEST-027·071 보충) |
 | 05 | 통지·검증 | 머지 | [#352](https://github.com/vincent-kk/albatrion/pull/352) | 브랜치 `feat/schema-form-dispatch-and-validation`. 2026-10-02 머지(`afbba714d`). D-1은 30라운드로 닫힘(EVENT-073 보충). 06이 맡을 일은 [log](plan/05-dispatch-and-validation/log.md) "06에 넘길 목록"과 #352 본문의 머지 순서 메모(33C-01). 느린 벤치 행 P-16–P-19는 56라운드로 소유자 수용, 속도 문제는 [대장](verification/performance-issues.md) |
-| 06 | 배열 | 리뷰(draft) | [#353](https://github.com/vincent-kk/albatrion/pull/353) | 브랜치 `feat/schema-form-array`. 새 문맥 verifier PASS(일곱째), 차등 검사 차이 0, P-14 소유자 수용(54라운드). PR 이후 filid·antigravity 약식 리뷰 완료, 최종 리뷰는 #344. 실행 기록은 [log](plan/06-array/log.md) |
+| 06 | 배열 | 리뷰 | [#353](https://github.com/vincent-kk/albatrion/pull/353) | 브랜치 `feat/schema-form-array`. 새 문맥 verifier PASS(일곱째), 차등 검사 차이 0, P-14 소유자 수용(54라운드). 05 통합 완료(05 먼저 머지, 06이 두 번째 머지). 머지 조건으로 P-23 소유자 수용 대기(63C-01). 최종 리뷰는 #344. 실행 기록은 [log](plan/06-array/log.md) |
 | 07 | 전환 | 대기 | — | 02–06 전부 머지 뒤. 원샷 |
 | 08 | 플러그인 | 대기 | — | 07 뒤 |
 | 최적화 | 성능 최적화 | 대기 | — | 07 머지 뒤 착수, 08과 병렬, 09 전에 끝냄. 묶음(M2)마다 PR 하나. 출발점은 [대장](verification/performance-issues.md), 계획은 [request](plan/perf-optimization/request.md) |
