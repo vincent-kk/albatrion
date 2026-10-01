@@ -19,6 +19,8 @@ Planning method: 저장소 지침 — `PLAN.md` §2와 `plan/prompts.md`의 단�
   - `arrayBehavior/`와 노드 겉면은 자기 진입 사슬(깊이 계수, `onChange`, 사슬 끝 throw)을 갖지 않는다.
   - 06이 먼저 머지되면 동사는 03의 겉면 쓰기와 같은 PR-2 꼴이다: settle 호출 하나, 자기 사슬 없음(TEST-069). 그래서 06의 시험은 배열 동사의 `batch` 합침(EVENT-035)이나 진입마다 한 번의 `onChange`를 단언하지 않는다.
 - 시험에서 `batch`·배달 의미가 필요하면 그것 없이 단언한다(04 log §4 M5의 꼴: `batch` 대신 루트 `setValue` 하나).
+- `if` 술어 대역(05 `3ef2ed652`, 05 log "06에 넘길 목록" 7): 05가 `src/core/__tests__/ifPredicate.ts`와 런타임 `ifPredicates`를 없애고 `evaluateGate`가 검증기로 컴파일한 실제 가드(`readSchemaNodeGuard`)를 읽는다. 이 브랜치의 시험 약 10개 파일(새 배열 시험 포함)이 아직 `ifPredicates`를 쓴다. 06이 05 뒤에 머지하면 06이 그 시험을 시험 검증기 `src/core/__tests__/fixtures/createTestValidator.ts`(ajv 8)로 옮기고, 06이 먼저 머지하면 05가 리베이스에서 옮긴다(33C-01).
+- 검증기 계약(05 log "06에 넘길 목록" 6, VALIDATE-019): `compile`·`compileGuard`·`release`에 같은 엔진 사본 객체를 넘긴다. 06은 검증기를 부르지 않으므로 나중에 머지하는 쪽이 시험 고정물만 맞춘다.
 
 ## 1. 최초 작업 기준선
 
