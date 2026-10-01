@@ -50,7 +50,7 @@
 | 02 | 기반 + 청사진 | 머지 | [#347](https://github.com/vincent-kk/albatrion/pull/347) | 전체 4,437시험·lint·strict·빌드 통과. 19라운드 원장 해소와 TEST-079 반영, 내부 Codex 대조 완료. Filid 잔여 발견은 기록했고 Antigravity 외부 확인은 자동 승인 검토가 거절함 |
 | 보정 | 01·02 보정 | 머지 | [#349](https://github.com/vincent-kk/albatrion/pull/349) | 브랜치 `fix/schema-form-realign-01-02`. 25라운드(`reviews/round-25-closing.md`)대로 청사진 코드·시험과 설계문서를 맞춤. 2026-09-29 머지(`85e7d01af`). [realign](plan/01-design-docs/realign.md) |
 | 03 | 노드 트리·정착 | 머지 | [#350](https://github.com/vincent-kk/albatrion/pull/350) | 브랜치 `feat/schema-form-node-and-settle`. 2026-09-30 머지(`0705217d5`). 뒤 PR로 넘긴 사례는 [log](plan/03-node-and-settle/log.md) §4 |
-| 04 | 파생 + 상태 키·제어 | 리뷰 | [#351](https://github.com/vincent-kk/albatrion/pull/351) | 브랜치 `feat/schema-form-derive-and-controls`. 05·06과 병렬. 벤치 행 수용(G18)·storybook(G23)은 소유자 확인 대기. 실행 계획과 기록은 [log](plan/04-derive-and-controls/log.md) |
+| 04 | 파생 + 상태 키·제어 | 머지 | [#351](https://github.com/vincent-kk/albatrion/pull/351) | 브랜치 `feat/schema-form-derive-and-controls`. 2026-10-01 머지(`54afafb86`). 뒤 단계로 넘긴 사례는 [log](plan/04-derive-and-controls/log.md) §4, 속도 문제는 [대장](verification/performance-issues.md). 느린 벤치 행 수용의 원장 기록은 소유자 확인 대기 |
 | 05 | 통지·검증 | 대기 | — | 03 뒤. **착수 전 소유자 결정**: 명령 메서드 이름·명령 종류 값의 형·`FormHandle` 대칭(EVENT-073) |
 | 06 | 배열 | 대기 | — | 03 뒤, 04·05와 병렬 |
 | 07 | 전환 | 대기 | — | 02–06 전부 머지 뒤. 원샷 |
@@ -67,7 +67,7 @@
 
 ## 4. 다음 할 일
 
-1. **04 파생 + 상태 키·제어** — [#351](https://github.com/vincent-kk/albatrion/pull/351) 리뷰 중(벤치 행 수용·storybook은 소유자 확인 대기). 03에서 넘어온 사례는 `plan/03-node-and-settle/log.md` §4. 06은 04와 병렬로 실행 가능, 05는 D-1 뒤. 기록은 [log](plan/04-derive-and-controls/log.md).
+1. **05·06 착수** — 05는 D-1(아래 3) 결정 뒤에, 06은 바로 착수할 수 있다. 04에서 넘어온 사례는 `plan/04-derive-and-controls/log.md` §4, 미뤄 둔 속도 문제는 `verification/performance-issues.md`.
 2. **01 절 단위 통과** — 머지된 설계문서 여덟 편(192절)을 소유자가 절 단위로 통과시키고 문서 머리의 표에 날짜를 적는다(25C-09). 통과 중 나온 새 결정은 원장에 새 라운드 항목으로 먼저 들어가고 문서가 따라간다(`plan/01-design-docs/verification.md`).
 3. **D-1 권장안** — 05 착수 전에 올린다. 권장은 `request(kind, payload?)` 하나에 명령 종류를 문자열 리터럴 합집합 `'focus' | 'select' | 'refresh' | 'remount'`로, `FormHandle`은 같은 모양 `request(path, kind, payload?)` 하나로 합치는 것(겉면 수 약 57 → 약 54). 소유자가 정한다.
 
