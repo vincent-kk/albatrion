@@ -39,6 +39,7 @@ Planning method: 저장소 지침 — `PLAN.md` §2와 `plan/prompts.md`의 단�
 
 - antigravity 계획 리뷰 판정을 받아 지적을 원장·코드와 대조하고, `cleared`까지 고친다.
 - 소유자 확인 대기: `@cfworker/json-schema` 개발 의존 추가(U12a, 31C-04). 그 설치 단계만 멈춘다.
+- 가칭 이름 확정 목록(U2, 31C-05)에 06이 더하는 `ARRAY_METHOD_ON_NON_ARRAY`(ERROR-197)를 넣는다: 배열이 아닌 노드에 `push`·`pop`·`update`·`remove`·`clear`를 부르면 배열 동사의 공용 칸이 던지는 `SchemaFormError`, 기록은 `path`와 `details.method`(06 세션 `albatrion-52`, 35C-01). 06은 `onError`에 보고하지 않고 던지며, 던지기 직전의 보고는 나중에 머지하는 단계의 디스패치 연결과 함께 든다(33C-01).
 
 ## 4. 원장·계획서 어긋남
 
