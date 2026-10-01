@@ -28,7 +28,7 @@ export const compileEntryGuards = (
       ? gate.schemaPath.slice(1) : gate.schemaPath;
     if (entry.guards.has(pointer)) continue;
     try { entry.guards.set(pointer,
-      { guard: validator.compileGuard(analysis.schema, pointer) }); }
+      { guard: validator.compileGuard(entry.copy, pointer) }); }
     catch (failure) { entry.guards.set(pointer, { failure }); }
   }
 };

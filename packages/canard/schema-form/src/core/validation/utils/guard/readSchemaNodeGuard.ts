@@ -25,7 +25,7 @@ export const readSchemaNodeGuard = (
     return cached.guard;
   }
   try {
-    const guard = validator.compileGuard(root, pointer);
+    const guard = validator.compileGuard(entry.copy, pointer);
     entry.guards.set(pointer, { guard });
     return guard;
   } catch (failure) {

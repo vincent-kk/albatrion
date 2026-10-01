@@ -249,15 +249,15 @@ export interface ValidatorPlugin {
   /** Validator Factory Function */
   compile: ValidatorFactory;
   /**
-   * Compile a synchronous guard for an authored schema pointer.
-   * @param root - Authored root shared with core by reference.
-   * @param pointer - Schema location whose condition is checked.
+   * Compile a synchronous guard for an authored schema pointer in the copy.
+   * @param root - The copy root previously passed to `compile`.
+   * @param pointer - Authored schema location preserved in the copy.
    * @returns A boolean predicate that does not modify its input.
    */
   compileGuard?(root: JSONSchema, pointer: string): (value: unknown) => boolean;
   /**
    * Release a root's validator resources when its cache entry is evicted.
-   * @param root - Authored root whose resources are no longer retained.
+   * @param root - The copy root previously passed to `compile`.
    * @returns Nothing; owned resources are discarded.
    */
   release?(root: JSONSchema): void;

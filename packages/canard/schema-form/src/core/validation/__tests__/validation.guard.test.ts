@@ -1,10 +1,11 @@
 import { describe, expect, it, vi } from 'vitest';
 import { blueprint } from '../../blueprint';
-import type { BlueprintGate } from '../../blueprint';
+import type { BlueprintGate, BlueprintSchema } from '../../blueprint';
 import type { Validator } from '../type';
 import { readSchemaNodeGuard } from '../utils/guard/readSchemaNodeGuard';
 import { compileEntryGuards } from '../utils/guard/compileEntryGuards';
 import { readValidationEntry } from '../utils/cache/readValidationEntry';
+import { evictValidationRoot } from '../utils/lifetime/evictValidationRoot';
 import { createTestValidator } from '../../__tests__/fixtures/createTestValidator';
 
 /** Locate the authored condition instead of making a test-only gate. */
@@ -17,6 +18,36 @@ const firstIfGate = (schema: { type: string; if: object; then: object }): Bluepr
 };
 
 describe('schema node guards', () => {
+  it('VALIDATE-019 shares one copy across compile, every guard, and release', () => {
+    const schema = { $id: 'https://example.test/identity-root', type: 'object',
+      $defs: { enabled: { const: true } },
+      if: { properties: { enabled: { $ref: '#/$defs/enabled' } } },
+      then: { type: 'object' },
+      allOf: [{ if: { required: ['enabled'] }, then: { type: 'object' } }] };
+    const analysis = blueprint(schema);
+    const compile = vi.fn((_copy: BlueprintSchema) => () => null);
+    const compileGuard = vi.fn((_root: BlueprintSchema, _pointer: string) => () => true);
+    const release = vi.fn((_root: BlueprintSchema) => undefined);
+    const validator: Validator = { compile, compileGuard, release };
+    const gate = firstIfGate(schema);
+    const runtime = { blueprint: analysis, validator };
+    readSchemaNodeGuard(runtime, gate);
+    const entry = readValidationEntry(validator, schema);
+    compileEntryGuards(entry, validator, analysis);
+    evictValidationRoot(validator, schema);
+    evictValidationRoot(validator, schema);
+
+    const copy = compile.mock.calls[0][0];
+    expect(copy).not.toBe(schema);
+    expect(copy).toHaveProperty('$defs.enabled');
+    expect(compileGuard).toHaveBeenCalledTimes(2);
+    expect(compileGuard.mock.calls.map(([, pointer]) => pointer))
+      .toEqual(expect.arrayContaining(['/if', '/allOf/0/if']));
+    for (const [guardRoot] of compileGuard.mock.calls)
+      expect(guardRoot).toBe(copy);
+    expect(release).toHaveBeenCalledExactlyOnceWith(copy);
+  });
+
   it('VALIDATE-044 evaluates a synchronous boolean guard at the authored position', () => {
     const schema = { type: 'object', if: { properties: { enabled: { const: true } },
       required: ['enabled'] }, then: { type: 'object' } };
@@ -29,7 +60,8 @@ describe('schema node guards', () => {
     const guard = readSchemaNodeGuard(runtime, gate);
     expect(guard?.({ enabled: true })).toBe(true);
     expect(guard?.({ enabled: false })).toBe(false);
-    expect(compileGuard).toHaveBeenCalledWith(schema, '/if');
+    expect(compileGuard).toHaveBeenCalledWith(
+      readValidationEntry(validator, schema).copy, '/if');
     expect(readSchemaNodeGuard(runtime, gate)).toBe(guard);
     expect(compileGuard).toHaveBeenCalledTimes(1);
   });

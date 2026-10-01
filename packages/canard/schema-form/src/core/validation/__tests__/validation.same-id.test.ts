@@ -4,21 +4,23 @@ import { adoptSchemaNodeChain, dispatchMount, dispatchValidate } from '../../dis
 import { createDispatchTree } from '../../dispatch/__tests__/fixtures/createDispatchTree';
 import { releaseValidationRoot, retainValidationRoot } from '../index';
 import type { Validator } from '../type';
+import type { BlueprintSchema } from '../../blueprint';
 
 // filid:contract validation-lifetime
 describe('same schema id trees', () => {
   it('VALIDATE-045 releases an unmounted same-id root before compiling its replacement', () => {
     const first = { $id: 'urn:replaced', type: 'string' };
     const second = { $id: 'urn:replaced', type: 'number' };
-    const compile = vi.fn(() => () => null);
-    const release = vi.fn();
+    const compile = vi.fn((_copy: BlueprintSchema) => () => null);
+    const release = vi.fn((_root: BlueprintSchema) => undefined);
     const validator: Validator = { compile, compileGuard: () => () => true, release };
     retainValidationRoot(validator, first);
     releaseValidationRoot(validator, first);
     expect(release).not.toHaveBeenCalled();
 
     retainValidationRoot(validator, second);
-    expect(release).toHaveBeenCalledExactlyOnceWith(first);
+    expect(release).toHaveBeenCalledExactlyOnceWith(compile.mock.calls[0][0]);
+    expect(release.mock.calls[0][0]).not.toBe(first);
     expect(compile).toHaveBeenCalledTimes(2);
     expect(release.mock.invocationCallOrder[0])
       .toBeLessThan(compile.mock.invocationCallOrder[1]);

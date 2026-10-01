@@ -16,9 +16,12 @@ export const evictValidationRoot = (validator: Validator,
   const index = list.recent.indexOf(authoredRoot);
   if (index >= 0) list.recent.splice(index, 1);
   list.counts.delete(authoredRoot);
-  try { validator.release?.(authoredRoot); }
+  const roots = validationEntries.get(validator);
+  const entry = typeof authoredRoot === 'object' && authoredRoot !== null
+    ? roots?.get(authoredRoot) : undefined;
+  try { if (entry) validator.release?.(entry.copy); }
   finally {
     if (typeof authoredRoot === 'object' && authoredRoot !== null)
-      validationEntries.get(validator)?.delete(authoredRoot);
+      roots?.delete(authoredRoot);
   }
 };

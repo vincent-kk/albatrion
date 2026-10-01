@@ -3,6 +3,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { releaseValidationRoot, retainValidationRoot } from '../index';
 import type { Validator } from '../type';
 import type { BlueprintSchema } from '../../blueprint';
+import { evictValidationRoot } from '../utils/lifetime/evictValidationRoot';
 
 // filid:contract validation-lifetime
 describe('validator registration lifetime', () => {
@@ -25,12 +26,21 @@ describe('validator registration lifetime', () => {
       expect(registered.size).toBeLessThanOrEqual(8);
     }
     expect(release).toHaveBeenCalledTimes(roots.length - 8);
-    expect(release.mock.calls.map(([root]) => root)).toEqual(roots.slice(0, -8));
+    for (let index = 0; index < release.mock.calls.length; index++)
+      expect(release.mock.calls[index][0]).toBe(compile.mock.calls[index][0]);
     const recent = roots[roots.length - 1];
     const before = compile.mock.calls.length;
     retainValidationRoot(validator, recent);
     expect(compile).toHaveBeenCalledTimes(before);
     releaseValidationRoot(validator, recent);
     expect(release).toHaveBeenCalledTimes(roots.length - 8);
+  });
+
+  it('VALIDATE-045 skips plugin release for a root without a cache entry', () => {
+    const release = vi.fn();
+    const validator: Validator = { compile: () => () => null,
+      compileGuard: () => () => true, release };
+    evictValidationRoot(validator, { $id: 'urn:never-compiled' });
+    expect(release).not.toHaveBeenCalled();
   });
 });

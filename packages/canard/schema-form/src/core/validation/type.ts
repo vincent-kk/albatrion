@@ -36,7 +36,7 @@ export type ValidateFunction<Value = unknown> = (
 ) => Promise<readonly ValidationIssue[] | null> | readonly ValidationIssue[] | null;
 
 /**
- * Compiles validation and synchronous guards for the authored schema.
+ * Compiles validation and synchronous guards for one engine-owned schema copy.
  * Core passes the emitted tree by reference to compile results and guards.
  * Validators and guards must not modify the received value or schema.
  * Not using value-modifying custom keywords (ajv `modifying: true`) is the consumer's responsibility.
@@ -50,15 +50,15 @@ export interface Validator {
    */
   compile(copy: BlueprintSchema): ValidateFunction;
   /**
-   * Compile a synchronous guard for a pointer in the authored root.
-   * @param root - Authored root retained by the validation cache.
-   * @param pointer - Schema location whose condition must be checked.
+   * Compile a synchronous guard for a pointer in the registered copy root.
+   * @param root - The copy root previously passed to `compile`.
+   * @param pointer - Authored schema location preserved in the copy.
    * @returns A synchronous boolean predicate.
    */
   compileGuard(root: BlueprintSchema, pointer: string): GuardFunction;
   /**
    * Release engine-owned resources when a root leaves the cache.
-   * @param root - Authored root whose cache entry was evicted.
+   * @param root - The copy root previously passed to `compile`.
    * @returns Nothing; resources associated with the root are discarded.
    */
   release?(root: BlueprintSchema): void;
