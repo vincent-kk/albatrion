@@ -1,7 +1,9 @@
 import { describe, expect, it } from 'vitest';
 
 import { SchemaNodeEventType } from '../../record';
+import type { SchemaNodeDelivery } from '../../record';
 import { dispatchBatch, dispatchSetValue, subscribeSchemaNode } from '../index';
+import { deliverWave } from '../utils/chain/deliverWave';
 import { createDispatchTree } from './fixtures/createDispatchTree';
 import { getDispatchChild } from './fixtures/getDispatchChild';
 
@@ -17,6 +19,41 @@ describe('dispatcher delivery waves', () => {
       subscribeSchemaNode(node, () => seen.push(node.path));
     dispatchSetValue(root, { first: 'c', second: 'd' });
     expect(seen).toEqual(['', '/first', '/second']);
+  });
+
+  it('EVENT-004 44C-01 orders listeners without comparing unobserved siblings', () => {
+    const { root } = createDispatchTree({ type: 'object', properties: {
+      a: { type: 'string' }, b: { type: 'string' }, c: { type: 'string' },
+      d: { type: 'string' }, e: { type: 'string' },
+    } });
+    dispatchSetValue(root, { a: 'a', b: 'b', c: 'c', d: 'd', e: 'e' });
+    const [a, b, c, d, e] = ['a', 'b', 'c', 'd', 'e'].map(
+      (name) => getDispatchChild(root, name));
+    const seen: string[] = [];
+    for (const node of [root, b, c, d, e])
+      subscribeSchemaNode(node, () => seen.push(node.path));
+
+    let unobservedParentReads = 0;
+    const parent = a.parent;
+    Object.defineProperty(a, 'parent', { configurable: true, get() {
+      unobservedParentReads += 1;
+      return parent;
+    } });
+    let siblingReads = 0;
+    const siblings = root.children;
+    Object.defineProperty(root, 'children', { configurable: true, get() {
+      siblingReads += 1;
+      return siblings;
+    } });
+
+    const pending = new Map<unknown, SchemaNodeDelivery>();
+    for (const node of [e, d, c, b, a, root])
+      pending.set(node, { type: SchemaNodeEventType.UpdateValue });
+    deliverWave(root, pending);
+
+    expect(seen).toEqual(['', '/b', '/c', '/d', '/e']);
+    expect(unobservedParentReads).toBe(0);
+    expect(siblingReads).toBe(1);
   });
 
   it('EVENT-008 sends a listener write in the next wave', () => {

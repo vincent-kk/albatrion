@@ -23,9 +23,15 @@ export const deliverWave = <Self extends SchemaNodeRecord<Self>>(
   root: Self, pending: Map<unknown, SchemaNodeDelivery>,
 ): void => {
   const runtime = root.runtime;
-  const nodes = [...pending.keys()].filter((node) => isWaveNode<Self>(node, runtime));
-  nodes.sort(compareDocumentOrder);
-  const fixed = new Map(nodes.map((node) => [node, [...runtime.listeners?.get(node) ?? []]]));
+  const fixed = new Map<Self, ((event: SchemaNodeDelivery) => void)[]>();
+  for (const candidate of pending.keys()) {
+    if (!isWaveNode<Self>(candidate, runtime)) continue;
+    const listeners = runtime.listeners?.get(candidate);
+    if (listeners?.size) fixed.set(candidate, [...listeners]);
+  }
+  const nodes = [...fixed.keys()];
+  const siblingIndexes = new Map<Self, Map<Self, number>>();
+  nodes.sort((left, right) => compareDocumentOrder(left, right, siblingIndexes));
   runtime.delivering = true;
   try {
     for (const node of nodes) {
