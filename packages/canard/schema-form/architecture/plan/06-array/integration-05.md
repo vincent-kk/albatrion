@@ -25,7 +25,8 @@
 - 꼴은 `dispatchSetValue.ts`를 따른다: 첫 줄 `if (!enterSchemaNodeChain(node)) return;`(EVENT-008 되먹임 거부), `try`에서 `arrangeSchemaNodeItems` 호출, `catch`에서 `captureChainError`, `finally`에서 `exitSchemaNodeChain`.
 - 겉면의 다섯 멤버는 진입 함수를 한 문장으로 부른다. `arrayBehavior/`에는 진입 사슬을 두지 않는다.
 - 동사의 반환 값(log §4 M8)은 진입이 거부되면 `undefined`이다.
-- `batch` 안의 동사: 쓰기는 `batchWrites`에 쌓였다가 배치 끝에 합쳐 정착하는데 동사는 동기 반환이 필요하다. 계약은 원장 질의 Q28(쌓인 쓰기를 먼저 정착한 뒤 동사를 바로 실행하는 안을 권함)의 답을 따르며, 답이 오기 전에는 이 갈래만 짓지 않는다.
+- `batch` 안의 동사(62C-01, EVENT-061·EVENT-013·EVENT-035·GOAL-058·NODE-051): 부른 자리에서 `readBatchValue(node)`(직전 커밋에 이 배치의 앞선 표시를 얹은 값)를 읽어 행의 계획(36C-01)을 적용하고, 결과 배열 전체를 호스트의 `runtime.batchWrites`에 통째 쓰기로 표시한다. 정착은 `fn`이 끝난 뒤 한 번이다. 동기 결과는 읽은 배열에서 나온다(`push`는 결과 길이, `pop`·`remove`는 그 자리의 표시된 원본). 잘못된 종류 값에는 47C-02·48C-02를 적용하고, 비배열 호스트의 `ARRAY_METHOD_ON_NON_ARRAY`는 `fn`의 예외처럼 사슬 머리 끝에서 던진다(EVENT-017). 배치 끝 정착은 통째 쓰기라 아이템 키는 위치로 잇는다. `batch`의 문서 주석에 62C-01이 정한 문장을 더하고 `dispatch` DETAIL에 적는다.
+- 33C-01이 미뤘던 시험을 이제 단언한다: 배열 동사를 담은 배치는 `onChange`를 한 번 부른다(EVENT-035).
 - 시험 `dispatch/__tests__/dispatch.array-entry.test.ts`(33C-01, EVENT-035, ERROR-197). 06 시험은 `batch` 합침이나 진입마다 한 번의 `onChange`를 단언하지 않는다.
 
 ### I4 `onError` 보고와 `UpdatePath` 배달
@@ -59,7 +60,7 @@
 
 ## 2. 계획 리뷰
 
-antigravity(`0dd23346`) `rework-required`, 지적 여섯. 반영: 06 열림 행의 P-22 재번호(F1), 소멸 아이템의 전역 상태 계수(F2), 소멸 노드의 배달 저장소 정리(F3), G27–G28의 CHECK(F5), `resetSubtree` 진입(F6 첫째). 다르게 처리: F4(`batch` 안 동사를 바로 실행하자는 안)는 쌓인 쓰기와 순서가 뒤바뀌는 경우가 있어 원장 질의 Q28로 올림. F6 둘째(시나리오 `update` 어휘 충돌)는 05가 기대 필드만 더해 충돌이 아님(병합 기준 `10f98eec2` 대비 diff). G29·G30은 측정과 외부 판정이라 EVIDENCE로 두고 까닭을 적음.
+antigravity(`0dd23346`) `rework-required`, 지적 여섯. 반영: 06 열림 행의 P-22 재번호(F1), 소멸 아이템의 전역 상태 계수(F2), 소멸 노드의 배달 저장소 정리(F3), G27–G28의 CHECK(F5), `resetSubtree` 진입(F6 첫째). 다르게 처리: F4(`batch` 안 동사를 바로 실행하자는 안)는 쌓인 쓰기와 순서가 뒤바뀌는 경우가 있어 원장 질의 Q28로 올렸고, 62C-01이 갱신 함수와 같은 표시 규칙으로 닫음. F6 둘째(시나리오 `update` 어휘 충돌)는 05가 기대 필드만 더해 충돌이 아님(병합 기준 `10f98eec2` 대비 diff). G29·G30은 측정과 외부 판정이라 EVIDENCE로 두고 까닭을 적음.
 
 ## 3. 완료 조건
 
