@@ -9,6 +9,11 @@ import type { InferSchemaNode, SchemaNode } from '../type';
 import { compileEntryGuards, readValidationEntry } from '../../validation';
 import type { Validator } from '../../validation';
 import { DIALECT_MISMATCH } from '../../../errors';
+import { PathKeyedMap } from '../../utils/pathIndex/PathKeyedMap';
+import { PathKeyedSet } from '../../utils/pathIndex/PathKeyedSet';
+
+/** Path-indexed stores the factory creates when the seed omits them. */
+type SeededPathStores = 'latentRaw' | 'typeMismatchPaths' | 'inactiveValuesMemo';
 
 /** Tree inputs before the factory attaches its analysis and real creator. */
 export type SchemaNodeRuntimeSeed = Omit<SchemaNodeRuntime<unknown>,
@@ -16,7 +21,8 @@ export type SchemaNodeRuntimeSeed = Omit<SchemaNodeRuntime<unknown>,
   'batchWrites' | 'validationTargets' | 'validationChangedNodes' |
   'globalStateCounts' | 'globalState' |
   'validationPendingTargets' |
-  'validator'>;
+  'validator' | SeededPathStores> &
+  Partial<Pick<SchemaNodeRuntime<unknown>, SeededPathStores>>;
 
 /** Create one record from a bound child or the root template. */
 const createSchemaNode = (
@@ -54,6 +60,9 @@ export function schemaNodeFactory(
 ): unknown {
   const runtime: SchemaNodeRuntime<RuntimeSchemaNode> = {
     ...runtimeSeed,
+    latentRaw: runtimeSeed.latentRaw ?? new PathKeyedMap('pair'),
+    typeMismatchPaths: runtimeSeed.typeMismatchPaths ?? new PathKeyedSet(),
+    inactiveValuesMemo: runtimeSeed.inactiveValuesMemo ?? new PathKeyedMap('path'),
     globalStateCounts: new Map(),
     globalState: {},
     validator,
