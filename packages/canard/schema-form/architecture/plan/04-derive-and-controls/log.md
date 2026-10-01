@@ -66,6 +66,7 @@ Planning method: 저장소 지침 — `PLAN.md` §2와 `plan/prompts.md`의 단�
 | 2026-10-01 | 원장 판정 | 조각 `controls.injectTo`는 청사진 오류가 맞음 — 허용 키는 CONTROLS-077·030의 닫힌 목록, FRAGMENT-050의 `injectTo` 열거는 조각 층에 대해 셋으로 읽음(29C-04, `ab06d0368`). 02 청사진 변경 없음. 설계 문서 두 곳의 같은 열거는 재생성 때 반영(04는 설계 문서를 건드리지 않음) | — |
 | 2026-10-01 | U10 재검증 ⑤–⑥ | ⑤ FAIL: 식 없는 게이트(`if/then`, 판별자 `oneOf`)로 켜지는 정착에서 호스트를 방문하지 않아 켠 뒤 첫 원천 변화가 기준점으로 흡수(`93affbcfd`의 회귀) → DETAIL 선행 뒤 선언 선택이 바뀐 호스트를 방문(`81fc67c2a`, `8c45c128e`, 새 시험 7 수정 전 실패). ⑥ PASS(G25): probe 25종 차등 모두 BAD→OK, 변이로 새 시험 실패 확인, unit+render 368 파일·4,651 통과. 선택적 시험 공백(같은 길이 선택 교체)도 채움 | `81fc67c2a`, `8c45c128e`, 이 행의 커밋 |
 | 2026-10-01 | PR 뒤 | PR #351. `filid:enrich-docs`: 17 fractal 모두 충분, 경로 지적 10은 스캔 기준(`src/core`) 탓이라 편집을 되돌림. filid 스캔(G24): facts 채운 뒤 순환 0, 04 fractal 발견 0. 03 산문 경계 예외를 `## Boundary Exemptions` 형식으로(`53c8b2d76`). antigravity 리뷰(세션 `bbbd42aa`) no-blocking — 시나리오 묶음 부류별 분리(`91cf56a80`, `b0237e167`), 순위 표 파일 분리(`921260aa5`), 나머지 둘은 추적 | `53c8b2d76`, `91cf56a80`, `b0237e167`, `921260aa5` |
+| 2026-10-01 | 정리 | 소유자 요청으로 03·04의 속도 문제(열림 12, 해결 7)를 `verification/performance-issues.md` 한곳에 모음. 03·04 성능 기록에서 링크 | — |
 
 ## 3. 다음 행동
 
