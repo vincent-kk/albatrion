@@ -2,6 +2,7 @@ import type { SchemaNodeRecord } from '../../../record';
 import { resetSchemaNodeForm } from '../../../settle';
 import { SetValueOption } from '../../../types/value';
 import { enterSchemaNodeChain } from '../chain/enterSchemaNodeChain';
+import { captureChainError } from '../chain/captureChainError';
 import { exitSchemaNodeChain } from '../chain/exitSchemaNodeChain';
 
 /**
@@ -16,9 +17,10 @@ export const dispatchResetForm = <Self extends SchemaNodeRecord<Self>>(
   option: SetValueOption = SetValueOption.Overwrite,
 ): void => {
   enterSchemaNodeChain(root);
+  root.runtime.warningKeys?.clear();
   root.runtime.batchWrites = undefined;
   (root.runtime.validationTargets ??= new Set()).add(root);
   try { resetSchemaNodeForm(root, value, option); }
-  catch (error) { root.runtime.chainErrors?.push(error); }
+  catch (error) { captureChainError(root.runtime, error); }
   finally { exitSchemaNodeChain(root); }
 };

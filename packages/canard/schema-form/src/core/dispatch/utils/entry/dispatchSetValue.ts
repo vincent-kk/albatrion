@@ -2,6 +2,7 @@ import type { SchemaNodeRecord } from '../../../record';
 import { writeSchemaNode } from '../../../settle';
 import { SetValueOption } from '../../../types/value';
 import { enterSchemaNodeChain } from '../chain/enterSchemaNodeChain';
+import { captureChainError } from '../chain/captureChainError';
 import { exitSchemaNodeChain } from '../chain/exitSchemaNodeChain';
 import { readBatchValue } from '../chain/readBatchValue';
 
@@ -29,7 +30,7 @@ export const dispatchSetValue = <Self extends SchemaNodeRecord<Self>>(
     }
   } catch (error) {
     if (node.rootNode.runtime.batchDepth) throw error;
-    node.rootNode.runtime.chainErrors?.push(error);
+    captureChainError(node.rootNode.runtime, error);
   } finally {
     exitSchemaNodeChain(node);
   }

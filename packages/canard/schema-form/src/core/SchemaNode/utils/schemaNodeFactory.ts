@@ -1,4 +1,5 @@
-import { mergeEffectiveSchema } from '../../blueprint';
+import { collectBlueprintWarnings, mergeEffectiveSchema } from '../../blueprint';
+import { createFormErrorRecord } from '../../dispatch';
 import type { Blueprint, BlueprintChildEntry, BlueprintNode,
   BlueprintSchema } from '../../blueprint';
 import { BEHAVIORS } from '../../behaviors';
@@ -59,6 +60,14 @@ export function schemaNodeFactory(
     onChangeBudget: 0,
     batchDepth: 0,
   };
+  if (runtime.errorReporter?.hasConsumer())
+    collectBlueprintWarnings(analysis, (diagnostic) => {
+      const record = createFormErrorRecord(true, diagnostic);
+      if (record) (runtime.pendingWarningRecords ??= new Map()).set(
+        JSON.stringify([record.code, diagnostic.schemaPath,
+          diagnostic.details.keyword ?? diagnostic.details.propertyName ?? '']),
+        record);
+    });
   if (validator && process.env.NODE_ENV !== 'production' &&
     analysis.schema !== null && typeof analysis.schema === 'object')
     compileEntryGuards(readValidationEntry(validator, analysis.schema),

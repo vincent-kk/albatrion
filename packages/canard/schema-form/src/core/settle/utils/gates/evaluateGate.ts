@@ -72,29 +72,33 @@ export const evaluateGate = <Self extends SchemaNodeRecord<Self>>(
       const runtime = context.root.runtime;
       const guard = readSchemaNodeGuard(runtime, gate);
       if (!guard) {
-        const keys = runtime.warningKeys ??= new Set();
+        const keys = runtime.errorReporter?.hasConsumer()
+          ? runtime.warningKeys ??= new Set() : undefined;
         if (runtime.validationMode !== ValidationMode.None &&
-          !keys.has(VALIDATOR_MISSING)) {
+          keys && !keys.has(VALIDATOR_MISSING)) {
           keys.add(VALIDATOR_MISSING);
           const record = { level: 'warning' as const,
             code: `SCHEMA_FORM_WARNING.${VALIDATOR_MISSING}` as const,
-            message: 'Validation is disabled because no validator was selected',
-            surface: 'sink' as const };
+            message: 'Validation is disabled because no validator was selected' };
           if (runtime.entryDepth)
             (runtime.pendingWarningRecords ??= new Map()).set(VALIDATOR_MISSING,
               record);
+          if (runtime.entryDepth)
+            runtime.chainOccurrences?.push({ kind: 'record', record });
           else if (runtime.errorReporter?.hasConsumer())
             runtime.errorReporter.report(record);
         }
-        if (!keys.has(CONDITIONAL_SCHEMA_WITHOUT_VALIDATOR)) {
+        if (keys && !keys.has(CONDITIONAL_SCHEMA_WITHOUT_VALIDATOR)) {
           keys.add(CONDITIONAL_SCHEMA_WITHOUT_VALIDATOR);
           const record = { level: 'warning' as const,
             code: `SCHEMA_FORM_WARNING.${CONDITIONAL_SCHEMA_WITHOUT_VALIDATOR}` as const,
             message: 'Conditional schema is inactive without a validator',
-            schemaPath: gate.schemaPath, surface: 'sink' as const };
+            schemaPath: gate.schemaPath };
           if (runtime.entryDepth)
             (runtime.pendingWarningRecords ??= new Map()).set(
               CONDITIONAL_SCHEMA_WITHOUT_VALIDATOR, record);
+          if (runtime.entryDepth)
+            runtime.chainOccurrences?.push({ kind: 'record', record });
           else if (runtime.errorReporter?.hasConsumer())
             runtime.errorReporter.report(record);
         }
@@ -128,15 +132,19 @@ export const evaluateGate = <Self extends SchemaNodeRecord<Self>>(
       );
       context.cause = 'expression';
     }
-    if (gate.kind === 'if' &&
+    if (gate.kind === 'if' && runtime.errorReporter?.hasConsumer() &&
       !runtime.reportedGuardFailures?.has(gate.schemaPath) &&
       !runtime.guardFailureRecords?.has(gate.schemaPath))
-      (runtime.guardFailureRecords ??= new Map()).set(gate.schemaPath,
-        { level: 'error', code: 'SCHEMA_FORM_ERROR.GUARD_FAILED',
+      {
+        const record = { level: 'error' as const,
+          code: 'SCHEMA_FORM_ERROR.GUARD_FAILED' as const,
           message: `Gate evaluation failed at ${gate.schemaPath}`,
           schemaPath: gate.schemaPath, path: hostPath,
           details: { cause },
-          surface: runtime.mountingGuardPass ? 'sink' : 'thrown' });
+          surface: runtime.mountingGuardPass ? 'sink' as const : 'thrown' as const };
+        (runtime.guardFailureRecords ??= new Map()).set(gate.schemaPath, record);
+        runtime.chainOccurrences?.push({ kind: 'record', record });
+      }
     return false;
   }
 };

@@ -1,5 +1,6 @@
 import type { SchemaNodeDelivery, SchemaNodeRecord } from '../../../record';
 import { compareDocumentOrder } from './utils/compareDocumentOrder';
+import { captureChainError } from './captureChainError';
 
 /**
  * Check that a pending key belongs to this tree's record shape.
@@ -36,7 +37,7 @@ export const deliverWave = <Self extends SchemaNodeRecord<Self>>(
           runtime.feedbackBlockedListeners?.has(listener)) continue;
         runtime.currentListener = listener;
         try { listener(event); }
-        catch (error) { runtime.chainErrors?.push(error); }
+        catch (error) { captureChainError(runtime, error); }
         finally { runtime.currentListener = undefined; }
       }
     }

@@ -301,6 +301,14 @@ export interface SchemaNodeRuntime<Self> extends SchemaNodeRootRuntimeState {
   chainInitialEmit?: unknown;
   /** Failures retained in occurrence order until the chain finishes. */
   chainErrors?: unknown[];
+  /** Error and warning occurrences in their actual chain order. */
+  chainOccurrences?: (
+    { kind: 'error'; error: unknown } | { kind: 'record'; record: FormErrorRecord }
+  )[];
+  /** True only while this form invokes its error reporter. */
+  reportingErrors?: boolean;
+  /** Schema locations supplied by a binding after reference-only reset rebuilding. */
+  rebuiltReferenceSchemaPaths?: readonly string[];
   /** Per-node subscribers, allocated only for a subscribed tree. */
   listeners?: Map<unknown, Set<(event: SchemaNodeDelivery) => void>>;
   /** Subscriber currently producing a delivery callback. */

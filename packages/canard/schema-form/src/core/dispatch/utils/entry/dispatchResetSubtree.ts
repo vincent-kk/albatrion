@@ -2,6 +2,7 @@ import type { SchemaNodeRecord } from '../../../record';
 import { resetSchemaNodeSubtree } from '../../../settle';
 import { SetValueOption } from '../../../types/value';
 import { enterSchemaNodeChain } from '../chain/enterSchemaNodeChain';
+import { captureChainError } from '../chain/captureChainError';
 import { exitSchemaNodeChain } from '../chain/exitSchemaNodeChain';
 
 /**
@@ -20,6 +21,6 @@ export const dispatchResetSubtree = <Self extends SchemaNodeRecord<Self>>(
       write.node !== node && !write.node.path.startsWith(`${node.path}/`));
   (runtime.validationTargets ??= new Set()).add(node);
   try { resetSchemaNodeSubtree(node, option); }
-  catch (error) { runtime.chainErrors?.push(error); }
+  catch (error) { captureChainError(runtime, error); }
   finally { exitSchemaNodeChain(node); }
 };

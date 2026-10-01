@@ -1,18 +1,21 @@
-import { FEEDBACK_LIMIT_EXCEEDED, MULTIPLE_ERRORS,
-  SchemaFormError } from '../../../../errors';
+import { FEEDBACK_LIMIT_EXCEEDED, FORM_ERROR_CODE_TABLE, JSONSchemaError,
+  LISTENER_THREW, SchemaFormError } from '../../../../errors';
+import type { FormErrorCode, FormErrorRecord } from '../../../../errors';
 import type { SchemaNodeRecord } from '../../../record';
 import { ValidationMode } from '../../../types/state';
 import { runDeliveryWaves } from './runDeliveryWaves';
 import { resolveSchemaNodeChainRoot } from './resolveSchemaNodeChainRoot';
+import { bundleChainErrors } from '../report/bundleChainErrors';
+import { createFormErrorRecord } from '../report/createFormErrorRecord';
+import { deliverChainRecords } from '../report/deliverChainRecords';
+import { captureChainError } from './captureChainError';
 
-/**
- * Bundle failures until U5b supplies the reporter's full record path.
- * @param errors - Failures in their occurrence order
- * @returns The original failure or a SchemaFormError aggregate
- */
-const aggregateDispatchErrors = (errors: readonly unknown[]): unknown =>
-  errors.length === 1 ? errors[0] : new SchemaFormError(MULTIPLE_ERRORS,
-    'Multiple dispatch errors', { errors });
+/** Find an authored code on a domain error without broadening the code table. */
+const errorCode = (error: unknown): FormErrorCode =>
+  error instanceof SchemaFormError || error instanceof JSONSchemaError
+    ? FORM_ERROR_CODE_TABLE.find(([code]) => code === error.code)?.[0] ??
+      `SCHEMA_FORM_ERROR.${LISTENER_THREW}`
+    : `SCHEMA_FORM_ERROR.${LISTENER_THREW}`;
 
 /**
  * Exit one public write and finish the outermost chain in contract order.
@@ -25,23 +28,27 @@ export const exitSchemaNodeChain = <Self extends SchemaNodeRecord<Self>>(
 ): void => {
   const activeRoot = resolveSchemaNodeChainRoot(node.rootNode);
   const runtime = activeRoot.runtime;
-  if (failure !== undefined) runtime.chainErrors?.push(failure);
+  if (failure !== undefined) captureChainError(runtime, failure);
   if ((runtime.entryDepth ?? 0) > 1) {
     runtime.entryDepth = (runtime.entryDepth ?? 0) - 1;
     return;
   }
   const root = runtime.chainRoot ?? activeRoot;
   runDeliveryWaves(root);
+  const occurrences = runtime.chainOccurrences ?? [];
+  const pending: FormErrorRecord[] = [];
   const warnings = runtime.pendingWarningRecords;
   if (warnings?.size) {
-    if (runtime.errorReporter?.hasConsumer())
-      for (const record of warnings.values()) runtime.errorReporter.report(record);
+    for (const record of warnings.values())
+      if (!occurrences.some((item) => item.kind === 'record' && item.record === record))
+        pending.push(record);
     warnings.clear();
   }
   const guardRecords = runtime.guardFailureRecords;
   if (guardRecords?.size) {
     for (const [key, record] of guardRecords) {
-      if (runtime.errorReporter?.hasConsumer()) runtime.errorReporter.report(record);
+      if (!occurrences.some((item) => item.kind === 'record' && item.record === record))
+        pending.push(record);
       (runtime.reportedGuardFailures ??= new Set()).add(key);
     }
     guardRecords.clear();
@@ -51,24 +58,32 @@ export const exitSchemaNodeChain = <Self extends SchemaNodeRecord<Self>>(
   if (runtime.validationMode && runtime.validationMode & ValidationMode.OnChange) {
     if (changed && !requests?.has(root)) {
       try { runtime.requestValidation?.(root); }
-      catch (error) { runtime.chainErrors?.push(error); }
+      catch (error) { captureChainError(runtime, error); }
     }
     for (const target of requests ?? []) {
       try { runtime.requestValidation?.(target); }
-      catch (error) { runtime.chainErrors?.push(error); }
+      catch (error) { captureChainError(runtime, error); }
     }
   }
   runtime.validationTargets = undefined;
   runtime.entryDepth = 0;
   const errors = runtime.chainErrors ?? [];
   if (changed && runtime.onChange) {
-    if ((runtime.onChangeBudget ?? 0) >= 25)
-      errors.push(new SchemaFormError(FEEDBACK_LIMIT_EXCEEDED,
-        'onChange nesting exceeded 25 callbacks'));
+    if ((runtime.onChangeBudget ?? 0) >= 25) {
+      const error = new SchemaFormError(FEEDBACK_LIMIT_EXCEEDED,
+        'onChange nesting exceeded 25 callbacks');
+      errors.push(error);
+      if (runtime.errorReporter?.hasConsumer())
+        occurrences.push({ kind: 'error', error });
+    }
     else {
       runtime.onChangeBudget = (runtime.onChangeBudget ?? 0) + 1;
       try { runtime.onChange(root.emit); }
-      catch (error) { errors.push(error); }
+      catch (error) {
+        errors.push(error);
+        if (runtime.errorReporter?.hasConsumer())
+          occurrences.push({ kind: 'error', error });
+      }
       finally { runtime.onChangeBudget -= 1; }
     }
   }
@@ -77,5 +92,36 @@ export const exitSchemaNodeChain = <Self extends SchemaNodeRecord<Self>>(
   runtime.feedbackBudget = 0;
   runtime.feedbackBlockedListeners = undefined;
   runtime.feedbackLimitReported = false;
-  if (errors.length) throw aggregateDispatchErrors(errors);
+  const original = bundleChainErrors(errors);
+  const aggregate = errors.length > 1 && original instanceof SchemaFormError
+    ? original : undefined;
+  for (const occurrence of occurrences) {
+    if (occurrence.kind === 'record') {
+      pending.push(occurrence.record);
+      continue;
+    }
+    const error = occurrence.error;
+      const existing = pending.find((record) =>
+        record.level === 'error' && record.code === errorCode(error) &&
+        error instanceof SchemaFormError &&
+        record.schemaPath === error.details.schemaPath);
+      if (existing && error instanceof SchemaFormError) {
+        existing.error = error;
+        existing.details = error.details;
+        existing.surface = 'thrown';
+        if (aggregate) existing.aggregate = aggregate;
+        continue;
+      }
+      const record = createFormErrorRecord(true, errorCode(error), 'error',
+        () => error instanceof Error ? error.message : String(error),
+        { error, ...(error instanceof SchemaFormError ||
+          error instanceof JSONSchemaError ? { details: error.details } : {}),
+          ...(aggregate ? { aggregate } : {}), surface: 'thrown' });
+      if (record) pending.push(record);
+  }
+  const handlerErrors = deliverChainRecords(runtime, pending, original, true);
+  runtime.chainOccurrences = undefined;
+  const exposed = !errors.length ? bundleChainErrors(handlerErrors) :
+    handlerErrors.length ? bundleChainErrors([original, ...handlerErrors]) : original;
+  if (errors.length || handlerErrors.length) throw exposed;
 };

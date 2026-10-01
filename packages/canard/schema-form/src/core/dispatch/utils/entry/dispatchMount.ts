@@ -2,8 +2,10 @@ import type { SchemaNodeRecord } from '../../../record';
 import { loadSchemaNodeAtMount } from '../../../settle';
 import { SetValueOption } from '../../../types/value';
 import { enterSchemaNodeChain } from '../chain/enterSchemaNodeChain';
+import { captureChainError } from '../chain/captureChainError';
 import { exitSchemaNodeChain } from '../chain/exitSchemaNodeChain';
 import { VALIDATOR_MISSING } from '../../../../errors';
+import type { FormErrorRecord } from '../../../../errors';
 import { ValidationMode } from '../../../types/state';
 
 /**
@@ -18,19 +20,23 @@ export const dispatchMount = <Self extends SchemaNodeRecord<Self>>(
   option: SetValueOption = SetValueOption.Overwrite,
 ): void => {
   enterSchemaNodeChain(root);
+  root.runtime.warningKeys?.clear();
   (root.runtime.validationTargets ??= new Set()).add(root);
   root.runtime.mountingGuardPass = process.env.NODE_ENV !== 'production';
   try { loadSchemaNodeAtMount(root, value, option); }
-  catch (error) { root.runtime.chainErrors?.push(error); }
+  catch (error) { captureChainError(root.runtime, error); }
   finally {
     const runtime = root.runtime;
-    if (!runtime.validator && runtime.validationMode !== ValidationMode.None &&
+    if (runtime.errorReporter?.hasConsumer() && !runtime.validator &&
+      runtime.validationMode !== ValidationMode.None &&
       !runtime.warningKeys?.has(VALIDATOR_MISSING)) {
       (runtime.warningKeys ??= new Set()).add(VALIDATOR_MISSING);
-      (runtime.pendingWarningRecords ??= new Map()).set(VALIDATOR_MISSING,
-        { level: 'warning', code: 'SCHEMA_FORM_WARNING.VALIDATOR_MISSING',
-          message: 'Validation is disabled because no validator was selected',
-          surface: 'sink' });
+      const record: FormErrorRecord =
+        { level: 'warning',
+          code: 'SCHEMA_FORM_WARNING.VALIDATOR_MISSING',
+          message: 'Validation is disabled because no validator was selected' };
+      (runtime.pendingWarningRecords ??= new Map()).set(VALIDATOR_MISSING, record);
+      runtime.chainOccurrences?.push({ kind: 'record', record });
     }
     root.runtime.mountingGuardPass = false;
     exitSchemaNodeChain(root);

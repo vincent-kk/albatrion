@@ -1,4 +1,5 @@
 import type { SchemaNodeRecord } from '../../../record';
+import { captureChainError } from './captureChainError';
 import { find } from '../../../navigation';
 import { writeSchemaNode } from '../../../settle';
 import { SetValueOption } from '../../../types/value';
@@ -25,5 +26,5 @@ export const flushBatchWrites = <Self extends SchemaNodeRecord<Self>>(
     (option & SetValueOption.Merge) === SetValueOption.Merge &&
     !(option & SetValueOption.Replace);
   try { writeSchemaNode(target, input, merge ? 'callerPartial' : 'callerReplace', option); }
-  catch (error) { runtime.chainErrors?.push(error); }
+  catch (error) { captureChainError(runtime, error); }
 };

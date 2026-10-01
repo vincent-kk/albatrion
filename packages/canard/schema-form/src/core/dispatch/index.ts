@@ -7,4 +7,5 @@ export { dispatchContextChange } from './utils/entry/dispatchContextChange';
 export { adoptSchemaNodeChain } from './utils/chain/adoptSchemaNodeChain';
 export { readSchemaNodeRevision } from './utils/read/readSchemaNodeRevision';
 export { subscribeSchemaNode } from './utils/read/subscribeSchemaNode';
+export { createFormErrorRecord } from './utils/report/createFormErrorRecord';
 export type { SchemaNodeEvent, SchemaNodeListener } from './type';

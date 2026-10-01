@@ -1,6 +1,7 @@
 import type { SchemaNodeRecord } from '../../../record';
 import { changeSchemaNodeContext } from '../../../settle';
 import { enterSchemaNodeChain } from '../chain/enterSchemaNodeChain';
+import { captureChainError } from '../chain/captureChainError';
 import { exitSchemaNodeChain } from '../chain/exitSchemaNodeChain';
 
 /**
@@ -14,6 +15,6 @@ export const dispatchContextChange = <Self extends SchemaNodeRecord<Self>>(
 ): void => {
   enterSchemaNodeChain(root);
   try { changeSchemaNodeContext(root, context); }
-  catch (error) { root.runtime.chainErrors?.push(error); }
+  catch (error) { captureChainError(root.runtime, error); }
   finally { exitSchemaNodeChain(root); }
 };

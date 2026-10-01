@@ -1,5 +1,7 @@
 import { FEEDBACK_LIMIT_EXCEEDED, SchemaFormError } from '../../../../errors';
 import type { SchemaNodeRecord } from '../../../record';
+import { assertNotInDelivery } from '../report/assertNotInDelivery';
+import { captureChainError } from './captureChainError';
 
 /**
  * Enter one public write on the tree shared by a record.
@@ -10,10 +12,12 @@ export const enterSchemaNodeChain = <Self extends SchemaNodeRecord<Self>>(
   node: Self,
 ): void => {
   const runtime = node.rootNode.runtime;
+  assertNotInDelivery(runtime);
   if (!runtime.entryDepth) {
     runtime.chainRoot = node.rootNode;
     runtime.chainInitialEmit = node.rootNode.emit;
     runtime.chainErrors = [];
+    runtime.chainOccurrences = [];
     runtime.feedbackBudget = 0;
     runtime.feedbackBlockedListeners = undefined;
     runtime.feedbackLimitReported = false;
@@ -21,7 +25,7 @@ export const enterSchemaNodeChain = <Self extends SchemaNodeRecord<Self>>(
   if (runtime.currentListener && (runtime.feedbackBudget ?? 0) >= 25) {
     (runtime.feedbackBlockedListeners ??= new Set()).add(runtime.currentListener);
     if (!runtime.feedbackLimitReported) {
-      runtime.chainErrors?.push(new SchemaFormError(FEEDBACK_LIMIT_EXCEEDED,
+      captureChainError(runtime, new SchemaFormError(FEEDBACK_LIMIT_EXCEEDED,
         'Listener feedback exceeded 25 waves'));
       runtime.feedbackLimitReported = true;
     }

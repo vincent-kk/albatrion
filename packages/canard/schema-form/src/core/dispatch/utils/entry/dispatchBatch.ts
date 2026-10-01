@@ -1,5 +1,6 @@
 import type { SchemaNodeRecord } from '../../../record';
 import { enterSchemaNodeChain } from '../chain/enterSchemaNodeChain';
+import { captureChainError } from '../chain/captureChainError';
 import { exitSchemaNodeChain } from '../chain/exitSchemaNodeChain';
 import { flushBatchWrites } from '../chain/flushBatchWrites';
 import { resolveSchemaNodeChainRoot } from '../chain/resolveSchemaNodeChainRoot';
@@ -21,7 +22,7 @@ export const dispatchBatch = <Self extends SchemaNodeRecord<Self>>(
   try { fn(); }
   catch (error) {
     if ((runtime.batchDepth ?? 0) > 1) throw error;
-    runtime.chainErrors?.push(error);
+    captureChainError(runtime, error);
   }
   finally {
     const activeRoot = resolveSchemaNodeChainRoot(node.rootNode);
