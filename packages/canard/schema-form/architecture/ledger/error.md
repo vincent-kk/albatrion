@@ -522,7 +522,9 @@
 
 - 결정:
   > **환경.** 클라이언트의 모든 환경에서 같은 사건은 같은 `code`, `level`, `details`, `surface`로 한 번 간다(G5). 핸들러가 있으면 프로덕션에서도 경고를 받는다. 예외는 하나다. 가드 컴파일 실패는 개발 모드가 시점을 앞당겨 마운트의 커밋 뒤에 보낸다(`surface`는 `'sink'`). 프로덕션에서는 그 가드를 처음 평가하는 사슬 끝에서 보내며(`surface`는 `'thrown'`), 한 번도 평가되지 않은 가드의 실패는 기록이 없다(§6). 오류 메시지는 어느 환경에서도 줄이지 않는다.
-- 보충: 없음
+- 보충:
+  > 편집자 결정(31C-02): "【추론】 ERROR-021이 "예외는 하나다"라고 적은 가드 컴파일 실패의 시점 차이에, 18라운드 뒤 블록 WRITE-099가 둘째 예외를 더했다: `NON_JSON_WHOLE_VALUE`의 깊이 점검은 핸들러가 있어도 프로덕션에서는 돌지 않는다. 뒤 결정이 이기므로 운영 모드에서 핸들러가 받지 못하는 경고는 이 코드 하나다." (`reviews/round-31-closing.md:20`)
+  > 편집자 결정(31C-02): "【추론】 `RESET_REBUILT_BY_REFERENCE`(ERROR-196)와 `MULTIPLE_GATED_BRANCHES_ACTIVE`의 "개발 모드이거나 핸들러가 있을 때만 판정"은 판정 비용(순회 한 번 더)을 소비자가 없을 때 아끼는 것이라 ERROR-021과 어긋나지 않는다: 핸들러가 있으면 프로덕션에서도 판정하고 전달한다. 구현은 이 둘을 `hasConsumer()`로, `NON_JSON_WHOLE_VALUE`를 개발 모드 조건으로 거르며, 나머지 경고는 ERROR-021대로 판정하고 소비자가 있으면 전달한다." (`reviews/round-31-closing.md:21`)
 - 상태: 현행
 - 출처: `adr/0014-error-policy.md:135`(정본), `08-design-a-to-z.md:362`
 - 닫은 사람: 17라운드 스웜 수렴(편집자 결정)
@@ -2519,6 +2521,9 @@
   > 편집자 결정(25C-12): "【추론】 한 분기의 정적 연언 안 판별 값의 공집합이 `EMPTY_ENUM_INTERSECTION`인 것(25C-01 첫 문장)은 그대로다." (`reviews/round-25-closing.md:115`)
   > 편집자 결정(29C-03): "【추론】 형상이 정해졌으므로 그 뒤의 파생 라운드·전이(채움과 나감 비움)는 29C-02대로 평소처럼 돌고, 커밋되는 것은 그 계산 결과와 그 정착의 자동 쓰기다; 자동 쓰기를 뺀 원본 B는 SETTLE-011의 예산 초과 처분이라 공유 충돌에는 쓰지 않는다." (`reviews/round-29-closing.md:36`)
   > 편집자 결정(29C-03): "【추론】 마운트의 공유 충돌도 커밋은 한다(ERROR-070 "공유 충돌은 모든 환경에서 커밋·통지 뒤 사슬 끝에서 던진다"; ERROR-164의 "커밋 뒤 싱크"는 렌더 계층의 커밋 뒤 이펙트다, ERROR-079); 폼이 서지 않는 것은 렌더 계층이 그리는 대체 화면이지 코어가 커밋을 멈추는 것이 아니다." (`reviews/round-29-closing.md:37`)
+  > 편집자 결정(31C-05): "【추론】 ERROR-164가 "'(가칭)'인 코드 이름은 PR-4에서 확정한다"고 적었으므로 가칭 이름의 확정은 05 작업자의 결정이고 소유자 결정이 아니다; 확정한 이름(바꾼 것은 까닭과 함께)은 PR 본문과 `plan/05-dispatch-and-validation/log.md`에 적는다." (`reviews/round-31-closing.md:45`)
+  > 편집자 결정(31C-05): "【추론】 원장은 명세이므로 가칭 표기가 그대로 남으면 어긋난다: 05가 목록을 보내면 원장 관리자가 ERROR-164와 제목에 그 코드를 든 항목마다 05의 기록을 출처로 보충 한 줄을 더한다(옛 글은 자라기만 한다). 05가 새 라운드를 열 필요는 없다." (`reviews/round-31-closing.md:46`)
+  > 편집자 결정(31C-05): "【추론】 소유자 답이나 뒤 라운드가 이미 확정한 이름은 가칭 문장을 이긴다: `union`·`unionBehavior/`·`isUnionNode`(BLUEPRINT-035), 경고등 코드 `SCHEMA_FORM_WARNING.TYPE_MISMATCH`(SURFACE-061, `VALUE_TYPE_MISMATCH` 가칭을 대신함), `JSON_SCHEMA_ERROR.INJECT_TARGET_NOT_FOUND`는 낼 자리가 없어 확정에서 빠짐(CONTROLS-079). 공개 이름은 맨 `Node`로 시작하지 않는다(SURFACE-056)." (`reviews/round-31-closing.md:47`)
 - 상태: 현행
 - 출처: `adr/0014-error-policy.md:248-300`(정본, ERROR-044에서 분할), `reviews/round-18-closing.md:386-387,661,670,731-733`, `reviews/round-18-closing.md:2458-2461,2550,2581`, `reviews/round-18-owner-answers.md:34`, `reviews/round-18-owner-answers.md:37`, `reviews/round-18-closing.md:2797-2798`, `reviews/round-18-owner-answers.md:41`
 - 닫은 사람: 편집자 결정(17라운드, ADR 0014 4판 채택), 게이트 고침(R17G-9·R17G-2), 소유자 답(`reviews/round-17-owner-answers.md:9` R17-1; `adr/0014-error-policy.md:263,266,267-271,279,281`), 소유자 답(`reviews/round-14-owner-answers.md:7` O-1; `adr/0014-error-policy.md:260`), 소유자 답(`reviews/round-14-owner-answers.md:16` O-10; `adr/0014-error-policy.md:261,266`), 소유자 답(`reviews/round-12-owner-answers.md:14` 6 `else: false` 경고; `adr/0014-error-policy.md:290`), 소유자 답(`reviews/round-17-owner-answers.md:14` 통보 3; `adr/0014-error-policy.md:281,293`), 소유자 답(`reviews/round-17-owner-answers.md:33` (가); `adr/0014-error-policy.md:293`), 소유자 답(`reviews/round-17-owner-answers.md:15` 통보 4; `adr/0014-error-policy.md:296`), 소유자 답(`reviews/round-17-owner-answers.md:11` R17-3; `adr/0014-error-policy.md:295`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-14·18C-21·18C-24), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-90·18C-91·18C-92), 소유자 답(`reviews/round-18-owner-answers.md:34` union O4; `VALIDATOR_BIND_REFUSED` 행), 소유자 답(`reviews/round-18-owner-answers.md:37` union O7·O8), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-98), 소유자 답(`reviews/round-18-owner-answers.md:41` 설계서 메모 4)
@@ -2943,6 +2948,7 @@
 - 보충:
   > 편집자 결정(18C-98): "【추론】 `diagnostics`와 경고 중복 키는 폼 수준 로드(마운트, `FormHandle.reset()`)에서만 초기화한다." (`reviews/round-18-closing.md:2797`)
   > 편집자 결정(18C-98): "【추론】 `setValue(V)`와 `resetSubtree()`는 초기화하지 않는다." (`reviews/round-18-closing.md:2798`)
+  > 편집자 결정(31C-02): "【추론】 `RESET_REBUILT_BY_REFERENCE`(ERROR-196)와 `MULTIPLE_GATED_BRANCHES_ACTIVE`의 "개발 모드이거나 핸들러가 있을 때만 판정"은 판정 비용(순회 한 번 더)을 소비자가 없을 때 아끼는 것이라 ERROR-021과 어긋나지 않는다: 핸들러가 있으면 프로덕션에서도 판정하고 전달한다. 구현은 이 둘을 `hasConsumer()`로, `NON_JSON_WHOLE_VALUE`를 개발 모드 조건으로 거르며, 나머지 경고는 ERROR-021대로 판정하고 소비자가 있으면 전달한다." (`reviews/round-31-closing.md:21`)
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:686-699`(정본), `reviews/round-18-closing.md:2797-2798`
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-22), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-98)
@@ -3023,7 +3029,9 @@
   > 【추론】 플러그인이 떼어 두지 못해 등록이 실패하면 새 코드 없이 있는 부류로 드러낸다.
   > 【추론】 전체 컴파일은 `SCHEMA_FORM_ERROR.VALIDATOR_COMPILE_FAILED`, 가드는 `SCHEMA_FORM_ERROR.GUARD_FAILED`이며, `details`에 가칭 `reason: 'duplicateSchemaId'`와 `$id`를 싣는다.
   > 【추론】 ADR 0014 §7.2 (미정) 행의 이 줄은 "코드 없음"으로 닫는다.
-- 보충: 없음
+- 보충:
+  > 편집자 결정(31C-03): "【추론】 `reason`은 새 코드가 아니라 기록의 `details` 칸이며, 그 값은 코드마다 원장이 이름 붙인 것으로 닫힌 리터럴 합집합이다: `VALUE_TYPE_MISMATCH`는 `'unconvertible'`·`'ambiguous'`(VALUE-037), `DISCRIMINATOR_MISMATCH`는 `'missing'`·`'kind'`·`'overlap'`·`'key'`(25C-12), `VALIDATOR_COMPILE_FAILED`·`GUARD_FAILED`는 `'duplicateSchemaId'`(ERROR-201, 가칭) 하나다." (`reviews/round-31-closing.md:28`)
+  > 편집자 결정(31C-03): "【추론】 원장이 이름 붙이지 않은 원인(예: 검증기 `compile`이 던짐)에는 `reason`을 싣지 않고 그 코드의 ERROR-164 행이 정한 `details`(원래 예외 등)만 싣는다; 값을 하나 더하는 것은 원장 항목이지 코드만의 변경이 아니다." (`reviews/round-31-closing.md:29`)
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:1587-1591`(정본)
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-57)
