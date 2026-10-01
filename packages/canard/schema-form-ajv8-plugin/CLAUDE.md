@@ -1,33 +1,34 @@
 # CLAUDE.md
 
-`@canard/schema-form-ajv8-plugin` — AJV 8.x validator plugin for `@canard/schema-form`. JSON Schema Draft 2020-12 / Draft 2019-09 지원.
+`@canard/schema-form-ajv8-plugin` provides AJV 8 validation for `@canard/schema-form`, with Draft-07, 2019-09, and 2020-12 entry points.
 
 ## Commands
 
 ```bash
-yarn build             # ESM + CJS 빌드 + 타입 선언
-yarn test              # Vitest 테스트
-yarn test --watch      # watch 모드
+yarn build             # ESM, CJS, and declarations
+yarn test              # Vitest
 yarn lint              # ESLint
-yarn storybook         # Storybook dev (port 6006)
+yarn storybook         # Storybook development server
 ```
 
 ## Architecture
 
-- `src/index.ts` — 플러그인 진입점
-- `src/validator/validatorPlugin.ts` — `bind()` / `compile()` 구현
-- `src/validator/createValidatorFactory.ts` — validator 팩토리
-- `src/validator/utils/transformErrors.ts` — AJV 에러 → schema-form 포맷 변환
+- `src/{default,2019,2020}/index.ts` are the three public entry points.
+- Each entry point owns a process-wide `bind` selection and a schema-root registry.
+- `src/validator/createValidatorFactory.ts` compiles full asynchronous validation.
+- `src/validator/createGuardCompiler.ts` compiles synchronous guards at root pointers.
+- `src/validator/utils/transformErrors.ts` maps AJV issues to `ValidationIssue`.
 
 ## Key Details
 
-- **AJV 기본 설정**: `allErrors: true`, `strictSchema: false`, `validateFormats: false`
-- **에러 변환**: `required` 에러는 `JSON_POINTER_SEPARATOR`로 missing property를 instancePath에 append, 나머지는 그대로 사용
-- **비동기 검증**: 모든 validator는 `$async: true`로 컴파일
-- **빌드 타겟**: ES2022, ESM(.mjs) + CJS(.cjs), Rolldown 사용
+- Default options: `allErrors: true`, `strictSchema: false`, `validateFormats: false`, `allowUnionTypes: true`.
+- `bind(instance)` immediately refuses enabled `coerceTypes`, `useDefaults`, or `removeAdditional`; a refused instance never replaces the current binding.
+- Callers discriminate the refusal by `group` (`'UNHANDLED_ERROR'`) and `code` (`'VALIDATOR_BIND_REFUSED'`); core's `isUnhandledError` does not recognize it.
+- Validation returns `null` or normalized issues; root `dataPath` is `''`.
+- A single location used from several dynamic scopes is unsupported by `compileGuard`.
+- Builds target ES2022, ESM (`.mjs`), and CJS (`.cjs`).
 
-## AJV 7.x와의 차이점
+## AJV 7 differences
 
-- `strict: false` → `strictSchema: false`
-- `dataPath` → `instancePath` (AJV 8.x 변경사항)
-- Draft 2020-12 지원 추가
+- AJV 8 uses `strictSchema: false` and `instancePath`.
+- The 2020 entry point supports Draft 2020-12.

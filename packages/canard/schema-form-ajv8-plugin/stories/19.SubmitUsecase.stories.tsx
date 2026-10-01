@@ -1,6 +1,6 @@
 import { useCallback, useRef, useState } from 'react';
 
-import type { FormHandle, JSONSchemaError } from '@canard/schema-form';
+import type { FormHandle, ValidationIssue } from '@canard/schema-form';
 import {
   Form,
   type JSONSchema,
@@ -45,7 +45,7 @@ export const UseSubmitHandler = () => {
   } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>();
-  const [errors, setErrors] = useState<JSONSchemaError[]>();
+  const [errors, setErrors] = useState<ValidationIssue[]>();
 
   const handleSubmit = useCallback((value?: Record<string, unknown>) => {
     return new Promise<void>((resolve) => {
@@ -134,7 +134,7 @@ export const UseSubmitHandlerWithNoValidation = () => {
   } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>();
-  const [errors, setErrors] = useState<JSONSchemaError[]>();
+  const [errors, setErrors] = useState<ValidationIssue[]>();
 
   const handleSubmit = useCallback((value?: Record<string, unknown>) => {
     return new Promise<void>((resolve) => {
@@ -204,7 +204,7 @@ export const UseSubmitHandlerWithOnRequestValidation = () => {
   } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>();
-  const [errors, setErrors] = useState<JSONSchemaError[]>();
+  const [errors, setErrors] = useState<ValidationIssue[]>();
 
   const handleSubmit = useCallback((value?: Record<string, unknown>) => {
     return new Promise<void>((resolve) => {

@@ -1,9 +1,13 @@
-import type { ValidatorPlugin } from '@canard/schema-form';
+import type { JSONSchema, ValidateFunction, ValidatorPlugin } from '@canard/schema-form';
 // `.js` is required, not cosmetic: ajv ships no `exports` map, so Node's ESM
 // resolver takes this subpath literally and will not try extensions.
 import Ajv, { type Options } from 'ajv/dist/2020.js';
 
+import { createGuardCompiler } from '../validator/createGuardCompiler';
 import { createValidatorFactory } from '../validator/createValidatorFactory';
+import { assertBindableInstance } from '../validator/utils/assertBindableInstance';
+import { type SchemaRootRegistry } from '../validator/utils/registerSchemaRoot';
+import { releaseSchemaRoot } from '../validator/utils/releaseSchemaRoot';
 
 export { createValidatorFactory };
 
@@ -18,9 +22,18 @@ const defaultSettings: Options = {
   allErrors: true,
   strictSchema: false,
   validateFormats: false,
+  allowUnionTypes: true,
 };
 
 let ajvInstance: Ajv | null = null;
+/** Root registrations persist across process-wide `bind` calls until release. */
+const roots: SchemaRootRegistry = { entries: new Map(), usedBases: new WeakSet(), nextId: 0 };
+
+/** Returns the currently bound instance, creating the default on first use. */
+const getInstance = (): Ajv => {
+  ajvInstance ??= new Ajv(defaultSettings);
+  return ajvInstance;
+};
 
 /**
  * AJV8 validator plugin for schema-form (Draft 2020-12 version).
@@ -42,10 +55,13 @@ let ajvInstance: Ajv | null = null;
  * const errors = await validator(data);
  * ```
  */
-export const ajvValidatorPlugin: ValidatorPlugin = {
-  bind: (instance: Ajv) => (ajvInstance = instance),
-  compile: (jsonSchema) => {
-    if (!ajvInstance) ajvInstance = new Ajv(defaultSettings);
-    return createValidatorFactory(ajvInstance)(jsonSchema);
+export const ajvValidatorPlugin = {
+  bind: (instance: Ajv) => {
+    assertBindableInstance(instance);
+    ajvInstance = instance;
   },
-};
+  compile: (jsonSchema: JSONSchema): ValidateFunction => createValidatorFactory(getInstance(), roots)(jsonSchema),
+  compileGuard: (root: JSONSchema, pointer: string): ((value: unknown) => boolean) => createGuardCompiler(getInstance(), roots, root, pointer),
+  release: (root: JSONSchema): void => releaseSchemaRoot(roots, root),
+  dialect: 'https://json-schema.org/draft/2020-12/schema',
+} satisfies ValidatorPlugin;

@@ -99,13 +99,20 @@ The plugin implements the `ValidatorPlugin` interface providing two main methods
 
 - **Purpose**: Allows you to provide a custom AJV instance with your preferred configuration
 - **Usage**: Optional - if not called, a default AJV instance will be created automatically
-- **Benefits**: Full control over AJV settings, custom keywords, formats, and validation rules
+- **Benefits**: Custom keywords, formats, and validation settings that preserve input values
+- **Binding rule**: Instances with enabled `coerceTypes`, `useDefaults`, or `removeAdditional` are rejected immediately. The previous instance remains bound.
+
+Callers discriminate the refusal by `group` (`'UNHANDLED_ERROR'`) and `code` (`'VALIDATOR_BIND_REFUSED'`); core's `isUnhandledError` does not recognize it.
 
 #### **`compile(jsonSchema)`**
 
 - **Purpose**: Creates a validator function from the provided JSON Schema
 - **Returns**: A validator factory function that can validate data against the schema
-- **Features**: Automatic error transformation, detailed validation messages, performance optimization
+- **Features**: Automatic `ValidationIssue` conversion and a root `dataPath` of `''`
+
+#### **`compileGuard(root, pointer)` and `release(root)`**
+
+Guards are synchronous and use a JSON Pointer into the authored root. Release removes that root's AJV registrations. A single location used from several dynamic scopes is unsupported by `compileGuard`.
 
 ### **Default Configuration**
 
@@ -114,9 +121,9 @@ When no custom AJV instance is provided, the plugin uses these default settings 
 ```typescript
 const defaultSettings: Ajv.Options = {
   allErrors: true, // Collect all validation errors, not just the first one
-  verbose: true, // Include schema and data information in errors
-  strict: false, // Disable strict mode for better compatibility
-  validateFormats: true, // Enable format validation (AJV 8.x default)
+  strictSchema: false,
+  validateFormats: false,
+  allowUnionTypes: true,
 };
 ```
 
