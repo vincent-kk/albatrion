@@ -829,7 +829,8 @@
   > 【추론】 어느 노드에서 읽어도 같다(오늘과 같음).
   > 【추론】 두 메서드는 그 노드의 하위 트리에 거는 `dispatch` 진입이다.
   > 【추론】 `FormHandle`의 `getState`·`setState`·`clearState`·`getErrors`는 오늘처럼 루트에 위임한다.
-- 보충: 없음
+- 보충:
+  > 편집자 결정(43C-01): "【추론】 셈(키별 참 노드 수)과 현재 `globalState` 객체는 NODE-004·26C-06대로 트리마다 하나인 `SchemaNodeRuntime`의 칸이고(칸을 더하는 절차는 NODE-045), 모든 노드의 `globalState` 게터는 SURFACE-053대로 그 런타임을 읽는 문장 하나다; 셈의 갱신은 두 곳이다 — 상태를 쓰는 `dispatch` 진입(`setState`, `setSubtreeState`, `clearSubtreeState`)에서 키마다 거짓→참이면 더하고 참→거짓이면 빼며, 정착 커밋에서 형상에 든 노드는 그때 참인 키의 수만큼 더하고 형상을 떠난 노드는 그만큼 뺀다. 커밋의 이 덧붙임은 `settle`의 공유 자리라 06과 부딪히면 33C-01의 결대로 뒤에 머지하는 쪽이 맞춘다." (`reviews/round-43-closing.md:10`)
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:1155-1159`(정본)
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-41)
