@@ -63,6 +63,7 @@ Planning method: 저장소 지침 — `PLAN.md` §2와 `plan/prompts.md`의 단�
 | 2026-10-01 | 원장 질의 | Q17: 자리 이동에서 노드는 옛 자리와 새 자리의 템플릿(선언 자리 `items`·`prefixItems[i]`)이 같을 때만 다시 쓰고, 다르면 값이 새 자리 템플릿의 새 노드의 탄생 입력이 되며 옛 노드는 소멸. 원장 관리자 확인, 41라운드 편집자 결정으로 기록 예정. 두 템플릿 튜플 시험에 새 키 단언 추가 | NODE-002·052·057 |
 | 2026-10-01 | U7 | 아이템 안 선언의 템플릿 경로 묶기(35C-08): `settle/utils/paths/`의 `bindTemplatePath`·`expandTemplatePaths`, 역의존 `affected`의 `*` 맞춤과 다른 아이템 고정 읽기의 호스트 하위 트리 의존(18C-13), 게이트 자리·파생 원천·`injectTo` 대상·`@` 맥락 소유자 묶기(codex `9d9504ef`). 게이트 등록·규칙 대상·상태 키 층·나감 정책 열쇠는 이미 노드의 실제 경로를 써서 바꾸지 않음. 시험 두 파일 15건. 해석: 아이템 자식에서 `../../0/x`가 다른 아이템 읽기, `(../../).length`가 배열 전체 읽기 | `eca49e27a` |
 | 2026-10-01 | U8 | array 부류 장면 15개(codex `268525ba`). SCN 시험 18건, 코어 시나리오 시험 58건 통과. SCN 단계에 `pop`을 더하고 `update` 단계를 배열 색인·값으로 바꿈(옛 `schema` 모양은 쓰는 곳 없음); 장면 기대에 동기 반환·노드 동일성과 키·스냅숏·자리별 청사진 종류·`extras`를 더함(I19·I20). core 시험 1,231 통과 | 이 커밋 |
+| 2026-10-01 | U9 | 회귀 이식 14건(codex `7c57bf8c`): 6.1의 배열 투영 5건(`settle.array-carryover.test.ts`, 26C-03·`rootOutput:13/24/30`), 레거시·GOAL 9건(`settle.array-legacy-ports.test.ts`). 이주 행과 기대가 다른 것 4건: 빈 중첩 배열의 `outputValue`는 `undefined`(LANDING-171, 2건), 코어의 `minItems` 자동 채움 없음(LANDING-116), `clear()`가 스냅숏 자리를 없애 재로드도 `[]`(LANDING-155·WRITE-095). 보류 1건: `virtual.render.test.tsx:199` 가상 노드 `setValue(undefined)`가 참조 잎을 비우지 않음(18C-21과 어긋남, 원인 조사 중) | 이 커밋 |
 
 ## 3. 다음 행동
 
