@@ -4,7 +4,7 @@
 
 ## 우산 안의 자리
 
-- 우산 순서 09, 마지막 자식 PR. base `1.0.0-beta`, 브랜치 제안 `chore/schema-form-release-and-cleanup`. 의존 08과 릴리스 전환 PR(`master`).
+- 우산 순서 09, 마지막 자식 PR. base `1.0.0-beta`, 브랜치 제안 `chore/schema-form-release-and-cleanup`. 의존 08, 성능 최적화 작업(`plan/perf-optimization/`, 27라운드 소유자 답), 릴리스 전환 PR(`master`).
 - 이 PR이 병합되면 우산 PR #344를 `master`로 병합한다(원샷 둘째, LANDING-058).
 
 ## 목적
@@ -30,6 +30,7 @@
 
 - 릴리스 전환 PR이 `master`에 병합돼 있다(LANDING-068·097).
 - 08이 `1.0.0-beta`에 들어와 있다.
+- 성능 최적화 작업(`plan/perf-optimization/`)이 끝나 세 판 대조표와 소유자 수용이 `verification/perf-optimization/`에 있다. 여기의 벤치 재실행은 그 "최적화 뒤" 판을 다시 재는 일이다.
 
 ## 산출물과 완료 기준
 
