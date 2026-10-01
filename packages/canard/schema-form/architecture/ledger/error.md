@@ -682,6 +682,7 @@
 - 보충:
   > 편집자 결정(34C-02): "【추론】 ERROR-032가 PR-4에 둔 "`ValidationIssue` 개명"은 새 이름을 공개 index에 내보내 `onError`의 공개(PR-7)보다 먼저 세우는 것이고, 옛 이름 `JSONSchemaError`를 같은 형의 별칭으로 PR-7까지 남기는 것은 LANDING-159 규칙 3(공개 진입점은 PR-7까지 옛 엔진)과 맞다; 옛 `<Form>` 형과 플러그인 스토리 파일이 아직 옛 이름을 가져오기 때문이다." (`reviews/round-34-closing.md:18`)
   > 편집자 결정(34C-02): "【추론】 별칭을 지우는 것은 LANDING-024 이주 21의 적용이며 전환(PR-7) 또는 이주 안내를 넣는 PR-8의 몫이다; ajv 플러그인 셋은 PR-4에서 새 이름으로 바꿔 가져온다(LANDING 영역 형제 패키지 문단)." (`reviews/round-34-closing.md:19`)
+  > 편집자 결정(35C-07): "【추론】 공개 `ValidateFunction`·`ValidatorFactory`(`src/types/error.ts`)의 모양을 PR-4에서 옮기거나 바꾸는 항목은 없다: ERROR-032의 PR-4 몫은 `ValidationIssue` 개명과 `ValidateFunction` 문서 주석("입력의 판정은 돌려주고 던지지 않는다. 던지면 실행 실패다")뿐이며, 그 주석은 PR-4에서 코어 `src/core/validation/`의 `ValidateFunction`에 달고 PR-7의 전환에서 공개 선언으로 옮긴다; 같은 이름의 두 형은 코어 쪽 선언에 이름 함정 한 줄로 가른다." (`reviews/round-35-closing.md:58`)
 - 상태: 현행
 - 출처: `adr/0014-error-policy.md:178-184`(정본), `08-design-a-to-z.md:571-578`
 - 닫은 사람: 편집자 결정(17라운드, ADR 0014 4판 채택)
@@ -2965,7 +2966,9 @@
   > 【추론】 throw 직전에 `onError`로 보낸다(surface `'thrown'`).
   > 【추론】 기록에는 `path`와 `details.method`를 싣는다.
   > 【추론】 §7.1 호출자 오류 행의 항목 목록과 ADR 0014 §3의 받는 것 목록에 더한다.
-- 보충: 없음
+- 보충:
+  > 편집자 결정(35C-01): "【추론】 ERROR-197의 던짐(`type`이 배열이 아닌 노드에서 `push`·`pop`·`update`·`remove`·`clear`를 부르면 행의 공유 칸이 모든 환경에서 즉시 `SchemaFormError`를 던진다, 기록에 `path`와 `details.method`)은 PR-5가 만드는 배열 행의 공유 칸에 사는 것이라 PR-5의 몫이고, NODE-014대로 메서드는 단일 클래스에 두되 형은 공개 `ArrayNode` 인터페이스에만 준다." (`reviews/round-35-closing.md:9`)
+  > 편집자 결정(35C-01): "【추론】 "throw 직전에 `onError`로 보낸다(surface `'thrown'`)"는 PR-4의 보고기를 쓰므로 33C-01의 디스패치 배선과 함께 뒤에 머지하는 단계가 더한다; 06이 먼저 머지되면 공유 칸은 던지기만 하고 보고를 시도하지 않으며, 그 자리의 DETAIL에 배선 PR이 보고를 더한다는 한 줄을 남긴다. 코드 이름은 가칭 그대로 쓰고 05의 확정 목록(31C-05)에 든다." (`reviews/round-35-closing.md:10`)
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:709-713`(정본)
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-23)

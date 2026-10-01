@@ -401,6 +401,7 @@
   > 열린 부분(제안 전부 — 받는지): "1라운드부터 미수락으로 남은 "방언 선언과 개발 모드 경고" 제안을 받는가" (`reviews/round-18-agenda.md:162`)
   > 소유자(12-4 답): "경고정도는 주도록 합시다" (`reviews/round-18-owner-answers.md:14`)
   > 반영 칸(12-4, 받음): "받는다. 플러그인이 자기 방언을 선택적으로 선언하고, 스키마의 `$schema`와 어긋나면 개발 모드에서 경고만 낸다(프로덕션 출력 없음, `onError` 핸들러가 있으면 경고 기록)." (`reviews/round-18-owner-answers.md:14`)
+  > 편집자 결정(35C-07): "【추론】 34C-01의 추가 멤버에 `dialect?`를 더한다: VALIDATE-044가 계약 멤버로 "선택 방언 선언(VALIDATE-026)"을 들었고 VALIDATE-026이 선언을 선택으로, 어긋남 경고를 개발 모드 전용(핸들러가 있으면 기록)으로 받았으므로, `ValidatorPlugin`의 네 번째 선택 멤버로 PR-4에서 더하고 ajv8 진입점 셋이 방언을 선언한다; 경고의 발화 자리는 트리 생성의 폼 수준 보고기라 LANDING-064의 core 쪽에 따라 PR-4다." (`reviews/round-35-closing.md:57`)
 - 상태: 현행
 - 출처: `adr/0004-validator-plugin-compile-guard.md:42`(정본), `reviews/round-1.md:178`, `reviews/round-18-owner-answers.md:14`(경고 코드는 ERROR-188)
 - 닫은 사람: 편집자 결정(1라운드, `reviews/round-1.md:178` 반영 칸), 소유자 답(`reviews/round-18-owner-answers.md:14` 12-4)
@@ -664,6 +665,7 @@
   > 편집자 결정(34C-01): "【추론】 LANDING-084는 PR-4의 새 fractal 칸에 "`app/plugin/type.ts` 개정"을 적었고 VALIDATE-044는 플러그인이 `Validator`에 소비자 훅 `bind?`만 더 가진다고 했으므로, 플러그인이 구현하고 가져오는 계약 형은 오늘도 공개 index가 내보내는 `ValidatorPlugin`이며 그 개정은 PR-4의 몫이다; 32C-01의 "새 계약 형은 공개 index가 아닌 새 엔진 쪽 모듈에서 내보낸다"는 코어가 받는 계약 형 `Validator`(가칭)와 Form 속성 `validatorFactory`의 공개 형에 한한 말이고, 플러그인용 `ValidatorPlugin`에는 미치지 않는다." (`reviews/round-34-closing.md:9`)
   > 편집자 결정(34C-01): "【추론】 PR-4의 `ValidatorPlugin` 개정은 더하기만 한다: `compileGuard?(root, pointer)`·`release?(root)`를 선택 멤버로 더하고, `compile` 결과 함수의 에러 정규화에 `rejectedKey`를 더한다; 선택으로 두는 까닭은 옛 엔진이 PR-7까지 공개 진입점을 섬기는 동안(LANDING-159 규칙 3) 소비자의 사용자 정의 플러그인이 형 검사에서 깨지지 않게 하는 것이며, 필수로 좁히는 것은 Form 속성이 `{ compile, compileGuard }` 객체가 되는 PR-7(LANDING-036 이주 33)에서 이주 항목과 함께 한다." (`reviews/round-34-closing.md:10`)
   > 편집자 결정(34C-01): "【추론】 코어의 `Validator` 형은 `src/core/validation/`에 두고 공개 index에서 내보내지 않으며, `compileGuard`가 있는 `ValidatorPlugin` 값이 구조적으로 `Validator`를 만족하게 두 형을 맞춘다; ajv 플러그인 셋은 세 멤버를 모두 구현하고(LANDING-093 개발계획 P1), 코어 쪽 적합성은 코어의 시험이 플러그인 셋을 `Validator`로 받아 단언한다. 부속 경로(`exports`에 둘째 진입점)를 더하는 것은 공개 겉면 추가라 이 라운드가 열지 않는다." (`reviews/round-34-closing.md:11`)
+  > 편집자 결정(35C-07): "【추론】 34C-01의 추가 멤버에 `dialect?`를 더한다: VALIDATE-044가 계약 멤버로 "선택 방언 선언(VALIDATE-026)"을 들었고 VALIDATE-026이 선언을 선택으로, 어긋남 경고를 개발 모드 전용(핸들러가 있으면 기록)으로 받았으므로, `ValidatorPlugin`의 네 번째 선택 멤버로 PR-4에서 더하고 ajv8 진입점 셋이 방언을 선언한다; 경고의 발화 자리는 트리 생성의 폼 수준 보고기라 LANDING-064의 core 쪽에 따라 PR-4다." (`reviews/round-35-closing.md:57`)
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:1509-1523`(정본), `reviews/round-18-owner-answers.md:34`
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-54), 소유자 답(`reviews/round-18-owner-answers.md:34` union O4; 계약 문장)
@@ -807,6 +809,7 @@
   > 편집자 결정(32C-02): "【추론】 VALIDATE-050과 ERROR-164가 `VALIDATOR_BIND_REFUSED`에 요구하는 것은 코드 `UNHANDLED_ERROR.VALIDATOR_BIND_REFUSED`, 부른 쪽에 즉시 던짐, 인스턴스를 붙이지 않음, `onError`에 가지 않음(`REGISTER_PLUGIN`과 같은 부류)이며, 던지는 객체가 코어의 `UnhandledError` 클래스여야 한다는 문장은 어느 항목에도 없다." (`reviews/round-32-closing.md:18`)
   > 편집자 결정(32C-02): "【추론】 ajv 플러그인 셋은 `@canard/schema-form`을 런타임 의존성으로 갖지 않으므로(형만 가져온다) 코어 클래스를 던지려면 새 런타임 의존성이 필요한데, 원장은 그런 의존을 정하지 않았다; 플러그인이 이미 런타임 의존성으로 가진 `@winglet/common-utils`의 `BaseError`를 그룹 `'UNHANDLED_ERROR'`·코드 `'VALIDATOR_BIND_REFUSED'`로 던진다(코어 `UnhandledError`와 같은 기반 클래스·같은 그룹·코드 모양). 플러그인 안의 하위 클래스로 감싸도 되나 `name`은 자기 이름을 적고 코어 클래스를 사칭하지 않는다." (`reviews/round-32-closing.md:19`)
   > 편집자 결정(32C-02): "【추론】 코어의 `isUnhandledError`는 `instanceof` 가드라 이 객체를 알아보지 못하며 이는 받아들인다: 이 사건은 폼 밖에서 플러그인의 `bind` 호출자에게 가는 것이라 코어의 가드로 거를 자리가 없고, 호출자는 `group`과 `code`로 가른다. 플러그인 문서에 이 한 줄을 적는다." (`reviews/round-32-closing.md:20`)
+  > 편집자 결정(35C-07): "【추론】 32C-02의 "플러그인이 이미 런타임 의존성으로 가진 `@winglet/common-utils`"는 ajv8 플러그인에만 맞고 ajv6·ajv7은 `ajv`만 의존하므로 바로잡는다: ajv 플러그인 셋은 저마다 네이티브 `Error`의 하위 클래스를 자기 이름으로 두고 `group: 'UNHANDLED_ERROR'`·`code: 'VALIDATOR_BIND_REFUSED'`·`details`(켜진 옵션 이름)를 실어 던지며, 호출자는 `group`과 `code`로 가른다; ajv8이 같은 칸을 가진 `BaseError`를 쓰는 것은 허용되나 셋을 같게 두는 것이 낫고, 새 작업 공간 의존성은 더하지 않는다." (`reviews/round-35-closing.md:56`)
 - 상태: 현행
 - 출처: `reviews/round-18-owner-answers.md:34`(정본, 반영 칸)
 - 닫은 사람: 소유자 답(`reviews/round-18-owner-answers.md:34` union O4)
