@@ -575,4 +575,5 @@ Planning method: 저장소 지침 — PLAN.md §2와 plan/prompts.md의 단계 �
 
 | 날짜 | 리뷰 | 판정 | 반영 |
 | --- | --- | --- | --- |
-| (대기) | `seiri:review-plan`(antigravity) | — | — |
+| 2026-10-01 | `seiri:review-plan`(antigravity, 세션 `15dafbc0`) 1차, HEAD `81649244f` | `rework-required` | 차단 셋(F1 공개 별칭 유지, F2 거짓 통과 게이트, F3 06 머지 절차)·비차단 둘(F4 린트, F5 번호). 32–34라운드와 함께 반영 — [plan-review.md](plan-review.md) |
+| 2026-10-01 | 같은 세션 범위 한정 재확인, HEAD `07fbc5878` | `cleared` | 지적 0. 뒤의 35라운드 답 반영은 조율 세션의 근거 대조만(`grounded-only`) — [plan-review.md](plan-review.md) |
