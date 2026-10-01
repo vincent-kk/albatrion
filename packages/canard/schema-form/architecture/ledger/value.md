@@ -543,7 +543,8 @@
   > 【추론】 이 사용성 변화를 이주 항목(F27 확장, LANDING-125)과 PR-8 문서에 적는다.
   > 【추론】 해법은 스키마에 nullable을 적는 것이다.
   > 【추론】 값 규칙은 이미 닫혀 있고 문서화만 남았다.
-- 보충: 없음
+- 보충:
+  > 편집자 결정(39C-01): "【추론】 원장은 잘못된 종류의 값을 보존하고 방출하라고 적었다: VALUE-033 "(4) nullable이 아닌 노드의 `null`은 바꾸지 않고 받은 그대로 방출된다", 쓰기 정책 표의 "nullable이 아닌 객체의 `null`을 `{}`로 바꾸기(S7), 비객체 값 버리기 | **폐기.** 보존·방출하고 type 에러를 낸다", WRITE-013의 예(`setValue({ user: null })` 뒤 `user`는 입력이 올 때까지 `null`인 채 방출된다); PR-2로 넘어온 프로토타입도 같다(`spikes/round9/regress/selfcheck-v5.mjs:485` "A3-3/A3-4-host: null and 17 hosts emit their raw, no branch on (G={}), children exist", `:569` "after setValue({target:null}) emit {target:null}"). 그래서 38C-01이 서고, 가지 호스트(객체·배열)는 잘못된 종류의 `raw`를 자기 방출로 내며 자식 방출만 투영에서 빠진다(VALUE-002 "비객체 호스트 아래 자식의 원본은 부모의 `emit`에 나타나지 않는다"); 게이트 입력이 `G = {}`인 것(SETTLE 영역)은 게이트가 보는 값의 규칙이지 방출의 규칙이 아니다." (`reviews/round-39-closing.md:9`)
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:1123-1127`(정본)
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-40)
@@ -601,6 +602,8 @@
   > 편집자 결정(18C-100): "【추론】 그래서 VALUE-036의 "빈 상태"는 로드로 온 `null` 아래에서는 채운 상태이고, 로드가 아닌 쓰기로 온 `null` 아래에서는 없음이다." (`reviews/round-18-closing.md:2833`)
   > 편집자 결정(38C-01): "【추론】 NODE-021·VALUE-002대로 가지 배열의 자식 집합은 값에서 오고(아이템 수 × 아이템 청사진) 자식이 있는 노드는 잘못된 종류의 값이 왔을 때만 `raw`를 드므로, 배열 호스트에 `null`·수·평범한 객체 같은 배열 아닌 값을 통째로 쓰면 호스트가 그 값을 `raw`로 들고 길이가 없으니 아이템은 0개다; 있던 아이템은 WRITE-036의 "통째 교체로 짧아진 배열"처럼 소멸이지 나감이 아니다. 객체 호스트의 자식이 스키마에서 와 비객체 `raw` 아래에도 존재한다는 VALUE-036의 문장은 자식이 값에서 오는 배열에는 옮겨 적용할 것이 없고, 아이템을 잘못된 종류의 `raw` 아래 남기라는 원장 문장은 없다." (`reviews/round-38-closing.md:9`)
   > 편집자 결정(38C-01): "【추론】 호스트의 방출은 억제되지 않고 그 잘못된 종류의 `raw`를 자기 값으로 방출한다(WRITE-013의 예 "`setValue({ user: null })` 뒤 … 사용자가 `name`에 입력하면 `user`가 객체가 되어 방출된다"는 그 전까지 `user`가 `null`을 방출함을 전제한다; VALUE-002 "비객체 호스트 아래 자식의 원본은 부모의 `emit`에 나타나지 않는다"는 자식 쪽 문장이다), 정합 경고등은 "잘못된 종류를 든 가지 노드도 켜진다"대로 켜진다. 로드로 온 비배열 값도 같되 채울 아이템이 없다." (`reviews/round-38-closing.md:10`)
+  > 편집자 결정(39C-01): "【추론】 원장은 잘못된 종류의 값을 보존하고 방출하라고 적었다: VALUE-033 "(4) nullable이 아닌 노드의 `null`은 바꾸지 않고 받은 그대로 방출된다", 쓰기 정책 표의 "nullable이 아닌 객체의 `null`을 `{}`로 바꾸기(S7), 비객체 값 버리기 | **폐기.** 보존·방출하고 type 에러를 낸다", WRITE-013의 예(`setValue({ user: null })` 뒤 `user`는 입력이 올 때까지 `null`인 채 방출된다); PR-2로 넘어온 프로토타입도 같다(`spikes/round9/regress/selfcheck-v5.mjs:485` "A3-3/A3-4-host: null and 17 hosts emit their raw, no branch on (G={}), children exist", `:569` "after setValue({target:null}) emit {target:null}"). 그래서 38C-01이 서고, 가지 호스트(객체·배열)는 잘못된 종류의 `raw`를 자기 방출로 내며 자식 방출만 투영에서 빠진다(VALUE-002 "비객체 호스트 아래 자식의 원본은 부모의 `emit`에 나타나지 않는다"); 게이트 입력이 `G = {}`인 것(SETTLE 영역)은 게이트가 보는 값의 규칙이지 방출의 규칙이 아니다." (`reviews/round-39-closing.md:9`)
+  > 편집자 결정(39C-01): "【추론】 머지된 객체 행의 `projectObject`가 비객체 `raw`에 `undefined`를 돌려주는 것과 `objectBehavior/DETAIL.md`의 "그 호스트의 방출은 하지 않습니다"는 03의 기록에 결정으로 남아 있지 않은 근사이며 결함이다(29C-02·29C-03의 선례와 같다); nullable 객체(`type: ['object','null']`)의 `null`이 방출에서 사라져 `{ user: null }`이 `{}`가 되는 것은 동작 결함이고, 배열 아이템인 객체 호스트의 `null`이 VALUE-034의 구멍 채움 `{}`로 바뀌어 보이는 것도 같은 결함이다." (`reviews/round-39-closing.md:10`)
 - 상태: 현행
 - 출처: `adr/0006-single-value-ownership.md:76`(정본, #1–#3·#5. VALUE-015에서 분할), `adr/0006-single-value-ownership.md:76#1-3`, `adr/0006-single-value-ownership.md:76#5`, `adr/0006-single-value-ownership.md:74`, `reviews/round-5-derivations.md:40`, `adr/0007-settle-cycle.md:115`, `adr/0013-core-does-not-rewrite-values.md:53`(WRITE-092의 정본), `reviews/round-18-closing.md:2831-2833`
 - 닫은 사람: 원리(`reviews/round-5-derivations.md:40` D-1), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-100)
