@@ -24,10 +24,13 @@ describe('validator registration lifetime', () => {
       releaseValidationRoot(validator, root);
       expect(registered.size).toBeLessThanOrEqual(8);
     }
+    expect(release).toHaveBeenCalledTimes(roots.length - 8);
+    expect(release.mock.calls.map(([root]) => root)).toEqual(roots.slice(0, -8));
     const recent = roots[roots.length - 1];
     const before = compile.mock.calls.length;
     retainValidationRoot(validator, recent);
     expect(compile).toHaveBeenCalledTimes(before);
     releaseValidationRoot(validator, recent);
+    expect(release).toHaveBeenCalledTimes(roots.length - 8);
   });
 });

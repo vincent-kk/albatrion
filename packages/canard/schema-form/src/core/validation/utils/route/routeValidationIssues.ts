@@ -1,3 +1,5 @@
+import { hasOwnProperty } from '@winglet/common-utils/lib';
+
 import type { SchemaNodeRecord } from '../../../record';
 import type { ValidationIssue } from '../../type';
 import { isOffUnionBranchIssue } from './isOffUnionBranchIssue';
@@ -22,13 +24,14 @@ export const routeValidationIssues = <Self extends SchemaNodeRecord<Self>>(
   const runtime = root.runtime;
   const before = runtime.validationErrors ?? new Map<unknown, readonly unknown[]>();
   const next = new Map<unknown, readonly unknown[]>(before);
+  const activeIds = issues.length > 0 && runtime.committedDeclarationIds ?
+    new Set([...runtime.committedDeclarationIds.values()].flat()) : undefined;
   const inScope = (node: Self): boolean => node === target ||
     node.path.startsWith(`${target.path}/`);
   for (const node of before.keys())
     if (isOwnedNode<Self>(node, runtime) && inScope(node)) next.delete(node);
   for (const issue of issues) {
-    if (isOffUnionBranchIssue(issue, runtime.blueprint,
-      runtime.committedDeclarationIds)) continue;
+    if (isOffUnionBranchIssue(issue, runtime.blueprint, activeIds)) continue;
     const path = normalizeIssueDataPath(issue.dataPath);
     let node = root;
     if (path) {
@@ -36,6 +39,7 @@ export const routeValidationIssues = <Self extends SchemaNodeRecord<Self>>(
       for (const encoded of path.slice(1).split('/')) {
         if (node.structure === null) break;
         const key = encoded.replace(/~1/g, '/').replace(/~0/g, '~');
+        if (!hasOwnProperty(node.structure, key)) { node = root; break; }
         const child = node.structure[key];
         if (!child) { node = root; break; }
         node = child;

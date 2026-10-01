@@ -1,12 +1,29 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 import { adoptSchemaNodeChain, dispatchMount, dispatchValidate } from '../../dispatch';
 import { createDispatchTree } from '../../dispatch/__tests__/fixtures/createDispatchTree';
-import { retainValidationRoot } from '../index';
+import { releaseValidationRoot, retainValidationRoot } from '../index';
 import type { Validator } from '../type';
 
 // filid:contract validation-lifetime
 describe('same schema id trees', () => {
+  it('VALIDATE-045 releases an unmounted same-id root before compiling its replacement', () => {
+    const first = { $id: 'urn:replaced', type: 'string' };
+    const second = { $id: 'urn:replaced', type: 'number' };
+    const compile = vi.fn(() => () => null);
+    const release = vi.fn();
+    const validator: Validator = { compile, compileGuard: () => () => true, release };
+    retainValidationRoot(validator, first);
+    releaseValidationRoot(validator, first);
+    expect(release).not.toHaveBeenCalled();
+
+    retainValidationRoot(validator, second);
+    expect(release).toHaveBeenCalledExactlyOnceWith(first);
+    expect(compile).toHaveBeenCalledTimes(2);
+    expect(release.mock.invocationCallOrder[0])
+      .toBeLessThan(compile.mock.invocationCallOrder[1]);
+  });
+
   it('VALIDATE-046 ERROR-201 keeps the older tree when a new root fails compilation', async () => {
     const first = { $id: 'urn:shared', type: 'string' };
     const second = { $id: 'urn:shared', type: 'number' };

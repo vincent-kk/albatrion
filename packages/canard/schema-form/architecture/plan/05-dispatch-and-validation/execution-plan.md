@@ -577,3 +577,4 @@ Planning method: 저장소 지침 — PLAN.md §2와 plan/prompts.md의 단계 �
 | --- | --- | --- | --- |
 | 2026-10-01 | `seiri:review-plan`(antigravity, 세션 `15dafbc0`) 1차, HEAD `81649244f` | `rework-required` | 차단 셋(F1 공개 별칭 유지, F2 거짓 통과 게이트, F3 06 머지 절차)·비차단 둘(F4 린트, F5 번호). 32–34라운드와 함께 반영 — [plan-review.md](plan-review.md) |
 | 2026-10-01 | 같은 세션 범위 한정 재확인, HEAD `07fbc5878` | `cleared` | 지적 0. 뒤의 35라운드 답 반영은 조율 세션의 근거 대조만(`grounded-only`) — [plan-review.md](plan-review.md) |
+| 2026-10-01 | U8 단위 리뷰(antigravity, 세션 `c6e6739d`), 커밋 `44f8dbd79` | `rework-required` | M4 두 자리(검증 불가의 폼 수준 기록, `adoptSchemaNodeChain` 사전 검사)는 원장대로라 판정. 차단으로 든 `routeValidationIssues.ts:39`의 프로토타입 키 크래시는 조율 세션이 반증 — 자식 표는 `primeHost.ts:22`·`selectChildren.ts:53`에서 프로토타입 없는 객체라 재현 안 됨 — 비차단으로 낮추고 `findNodes.ts:34`와 맞춰 `hasOwnProperty`로 고침. 비차단 둘(`release` 횟수 단언과 같은 `$id` 재등록 해제 시험, 이슈마다의 `Set` 할당)은 받아 고침 |

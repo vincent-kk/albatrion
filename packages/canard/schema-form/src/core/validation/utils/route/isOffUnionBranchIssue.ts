@@ -5,14 +5,14 @@ import type { ValidationIssue } from '../../type';
  * Determine whether an issue belongs exclusively to an inactive union fragment.
  * @param issue - Validator issue with an authored schema location.
  * @param blueprint - Fragment ownership table, including reference targets.
- * @param selected - Committed declaration identities by node occurrence.
+ * @param activeIds - Committed declaration identities collected once per routing pass.
  * @returns True only when attribution is unique and a sibling is active.
  */
 export const isOffUnionBranchIssue = (
   issue: ValidationIssue, blueprint: Blueprint,
-  selected?: ReadonlyMap<string, readonly number[]>,
+  activeIds?: ReadonlySet<number>,
 ): boolean => {
-  if (!issue.schemaPath || !selected) return false;
+  if (!issue.schemaPath || !activeIds) return false;
   const matches = blueprint.fragments.filter((fragment) =>
     issue.schemaPath === fragment.schemaPath ||
     issue.schemaPath?.startsWith(`${fragment.schemaPath}/`));
@@ -43,7 +43,6 @@ export const isOffUnionBranchIssue = (
     fragment.id !== owner.id &&
     /^\d+$/.test(fragment.schemaPath.slice(unionPath.length + 1)) &&
     fragment.schemaPath.startsWith(`${unionPath}/`));
-  const activeIds = new Set([...selected.values()].flat());
   const isActive = (fragment: SchemaFragment): boolean =>
     fragment.declares.some((id) => activeIds.has(id)) ||
     fragment.overlays.some((id) => activeIds.has(id));
