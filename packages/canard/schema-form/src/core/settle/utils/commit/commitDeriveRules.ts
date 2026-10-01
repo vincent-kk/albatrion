@@ -6,7 +6,7 @@ import type { SettlementContext } from '../../type';
 import { getDeriveState } from '../derivation/getDeriveState';
 import { SchemaFormError } from '../../../../errors';
 import { EXPRESSION_THREW } from '../errors/settleErrorCode';
-import { walkSchemaNodes } from '../../../navigation';
+import { walkOwnedSchemaNodes } from '../walkOwnedSchemaNodes';
 import { pruneCommittedRuleKeys } from './pruneCommittedRuleKeys';
 import { updateCommittedRuleValue } from './updateCommittedRuleValue';
 
@@ -41,7 +41,7 @@ export const commitDeriveRules = <Self extends SchemaNodeRecord<Self>>(
   for (const path of state.visitedSourcePaths)
     pruneCommittedRuleKeys(runtime, path, 'source');
   for (const exited of context.exited)
-    walkSchemaNodes(exited, (node) =>
+    walkOwnedSchemaNodes(exited, (node) =>
       pruneCommittedRuleKeys(runtime, node.path, 'occurrence'));
   for (const key of state.activeRuleKeys)
     if (state.consumedRuleValues.has(key))

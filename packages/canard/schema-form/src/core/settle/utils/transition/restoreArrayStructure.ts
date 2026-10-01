@@ -1,4 +1,4 @@
-import { walkSchemaNodes } from '../../../navigation';
+import { walkOwnedSchemaNodes } from '../walkOwnedSchemaNodes';
 import type { SchemaNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../type';
 import { getGateRegistry } from '../gates/getGateRegistry';
@@ -24,7 +24,7 @@ export const restoreArrayStructure = <Self extends SchemaNodeRecord<Self>>(
     const prior = new Set(previousItems);
     for (const item of host.children ?? []) if (!prior.has(item)) {
       getGateRegistry(item.runtime).remove(item);
-      walkSchemaNodes(item, (current) => {
+      walkOwnedSchemaNodes(item, (current) => {
         current.detached = true;
         current.active = false;
         context.entered.delete(current);

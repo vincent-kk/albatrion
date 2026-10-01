@@ -1,4 +1,4 @@
-import { walkSchemaNodes } from '../../../navigation';
+import { walkOwnedSchemaNodes } from '../walkOwnedSchemaNodes';
 import type { SchemaNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../type';
 import { captureDetachedSchemaNodeReads } from '../detached/captureDetachedSchemaNodeReads';
@@ -16,7 +16,7 @@ export const finalizePerished = <Self extends SchemaNodeRecord<Self>>(
 ): void => {
   for (const node of context.perished) {
     if (node.parent?.structure?.[node.name] === node) continue;
-    walkSchemaNodes(node, (departing) => {
+    walkOwnedSchemaNodes(node, (departing) => {
       if (!departing.runtime.detachedReads?.has(departing))
         captureDetachedSchemaNodeReads(departing, {
           emit: context.previousEmit,

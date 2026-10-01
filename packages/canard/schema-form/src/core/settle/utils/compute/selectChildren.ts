@@ -49,6 +49,23 @@ export const selectChildren = <Self extends SchemaNodeRecord<Self>>(
   computeChild: (child: Self) => void,
   immediate: boolean,
 ): boolean => {
+  if (node.behavior.type === 'virtual') {
+    const before = node.children ?? [];
+    const next: Record<string, Self> = Object.create(null);
+    const children: Self[] = [];
+    for (const field of node.blueprintNode.fields ?? []) {
+      const sibling = node.parent?.structure?.[field];
+      if (!sibling) continue;
+      next[field] = sibling;
+      children.push(sibling);
+    }
+    const changed = children.length !== before.length ||
+      children.some((child, index) => child !== before[index]);
+    node.structure = next;
+    node.children = changed ? children : before;
+    if (changed) context.changedNodes.add(node);
+    return changed;
+  }
   const before = node.children ?? [];
   const next: Record<string, Self> = { ...node.structure };
   Object.setPrototypeOf(next, null);
@@ -145,7 +162,8 @@ export const selectChildren = <Self extends SchemaNodeRecord<Self>>(
     let entryChanged = false;
     if (!priorChild && !currentChild && !pending) {
       context.entered.add(child);
-      enterSchemaNode(node, child, entry.name, context);
+      if (child.behavior.type === 'virtual') context.dirtyPaths.add(child.path);
+      else enterSchemaNode(node, child, entry.name, context);
       if (child.behavior.strategy === 'branch')
         context.shapeDirtyPaths.add(child.path);
       changed = true;
@@ -179,6 +197,10 @@ export const selectChildren = <Self extends SchemaNodeRecord<Self>>(
       entryChanged = true;
     }
     next[entry.name] = child;
+    if (child.behavior.type === 'virtual') {
+      context.dirtyPaths.add(child.path);
+      context.shapeDirtyPaths.add(child.path);
+    }
     if (context.dirtyPaths.has(child.path)) {
       computeChild(child);
       entryChanged = true;

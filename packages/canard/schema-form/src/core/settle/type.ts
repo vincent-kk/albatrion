@@ -1,5 +1,5 @@
 import type { Distribution, SchemaNodeRecord } from '../record';
-import type { EffectiveSchema } from '../blueprint';
+import type { BlueprintNode, EffectiveSchema } from '../blueprint';
 import type { SchemaFormError } from '../../errors';
 import type { DeriveState, DeriveTraceEntry } from './derive';
 
@@ -10,6 +10,10 @@ export type SchemaNodeWriteKind =
   | 'callerReplace'
   | 'load'
   | 'automatic';
+
+/** Virtual child names indexed by their real sibling's host template and field. */
+export type VirtualReferenceIndex = ReadonlyMap<BlueprintNode,
+  ReadonlyMap<string, readonly string[]>>;
 
 /** One synchronous write's work list and deferred failure. */
 export interface SettlementContext<Self extends SchemaNodeRecord<Self>> {
@@ -31,12 +35,16 @@ export interface SettlementContext<Self extends SchemaNodeRecord<Self>> {
   contextOwners?: readonly string[];
   /** Whether this analysis contains any authored gate. */
   hasGates: boolean;
+  /** Cached reverse references, absent for a blueprint without virtual nodes. */
+  virtualReferenceIndex: VirtualReferenceIndex | null;
   /** Call-local suppression after explicit bits override the form default. */
   suppressAutomaticWrites: boolean;
   /** Load boundary whose current shape begins a new appearance lifetime. */
   loadScope?: Self;
   /** Whole-replacement boundary whose subtree keeps only the written raw per path. */
   replaceScope?: Self;
+  /** Real sibling paths replaced by a caller write through a virtual node. */
+  virtualReplacePaths?: string[];
   /** Nodes newly present after calculation or reset by this load. */
   entered: Set<Self>;
   /** Reused pending occurrences whose sources must remain visible to fills. */

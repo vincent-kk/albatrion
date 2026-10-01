@@ -1,7 +1,7 @@
 import { isArray } from '@winglet/common-utils/filter';
 
 import { getItemEntry } from '../../../blueprint';
-import { walkSchemaNodes } from '../../../navigation';
+import { walkOwnedSchemaNodes } from '../walkOwnedSchemaNodes';
 import type { ArrayArrangePlan, SchemaNodeRecord } from '../../../record';
 import { updateSchemaNodeNameAndPath } from '../../../record';
 import type { SettlementContext } from '../../type';
@@ -76,7 +76,7 @@ export const applyArraySlots = <Self extends SchemaNodeRecord<Self>>(
       current: current === undefined ? undefined : `${host.path}/${current}` });
     if (!item || reused.has(item)) continue;
     context.perished.add(item);
-    walkSchemaNodes(item, (departing) => {
+    walkOwnedSchemaNodes(item, (departing) => {
       if (!departing.runtime.detachedReads?.has(departing))
         captureDetachedSchemaNodeReads(departing, {
           emit: context.previousEmit, context: context.previousContext,
@@ -89,7 +89,7 @@ export const applyArraySlots = <Self extends SchemaNodeRecord<Self>>(
 
   for (const [name, item] of Object.entries(nextItems)) {
     if (!reused.has(item) || item.name === name) continue;
-    walkSchemaNodes(item, (descendant) => {
+    walkOwnedSchemaNodes(item, (descendant) => {
       const previous = descendant.path;
       updateSchemaNodeNameAndPath(descendant,
         descendant === item ? name : descendant.name,
@@ -118,7 +118,7 @@ export const applyArraySlots = <Self extends SchemaNodeRecord<Self>>(
   }
   if (context.hasGates)
     for (const item of host.children)
-      walkSchemaNodes(item, (node) => registry.register(node));
+      walkOwnedSchemaNodes(item, (node) => registry.register(node));
   host.runtime.loadSnapshot = setLoadValue(host.runtime.loadSnapshot,
     host.path, nextSnapshot);
   return removed;

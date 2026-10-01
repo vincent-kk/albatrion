@@ -1,4 +1,4 @@
-import { walkSchemaNodes } from '../../../navigation';
+import { walkOwnedSchemaNodes } from '../walkOwnedSchemaNodes';
 import type { SchemaNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../type';
 import { getControlLayers } from '../controls/getControlLayers';
@@ -49,7 +49,7 @@ export const captureLatentDescendants = <Self extends SchemaNodeRecord<Self>>(
   }
   entries.sort((left, right) => left.path.length - right.path.length);
   const live = new Map<string, Self>();
-  walkSchemaNodes(node, (current) => live.set(JSON.stringify([
+  walkOwnedSchemaNodes(node, (current) => live.set(JSON.stringify([
     current.path, current.blueprintNode.kind]), current));
   const resolved = new Map<string, ResolvedAncestor[]>([[node.path, [
     { path: node.path, order: [], clear: inherited },

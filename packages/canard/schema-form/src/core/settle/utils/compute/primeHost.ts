@@ -36,7 +36,8 @@ export const primeHost = <Self extends SchemaNodeRecord<Self>>(
     if (context.hasGates) getGateRegistry(child.runtime).register(child);
     if (!priorChild && !pending) {
       context.entered.add(child);
-      enterSchemaNode(node, child, entry.name, context);
+      if (child.behavior.type === 'virtual') context.dirtyPaths.add(child.path);
+      else enterSchemaNode(node, child, entry.name, context);
       if (child.behavior.strategy === 'branch')
         context.shapeDirtyPaths.add(child.path);
     }

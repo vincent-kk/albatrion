@@ -22,6 +22,7 @@ export const captureExitedRaw = <Self extends SchemaNodeRecord<Self>>(
 ): void => {
   const clear = policy && readUnsetPolicy(node, inherited);
   for (const child of node.behavior.type === 'array' ? [] : node.children ?? []) {
+    if (child.parent !== node) continue;
     const entries = node.blueprintNode.childEntries;
     const exact = entries.findIndex((entry) =>
       entry.name === child.name && entry.node === child.blueprintNode);

@@ -23,6 +23,19 @@ export const updateOutput = <Self extends SchemaNodeRecord<Self>>(
   const changed = local !== node.local || emit !== node.emit;
   node.local = local;
   node.emit = emit;
-  if (changed) context.changedNodes.add(node);
+  if (changed) {
+    context.changedNodes.add(node);
+    const parent = node.parent;
+    const index = context.virtualReferenceIndex;
+    if (node.behavior.type !== 'virtual' && parent && index) {
+      const names = index.get(parent.blueprintNode)?.get(node.name);
+      if (names)
+        for (const name of names) {
+          const virtual = parent.structure?.[name];
+          if (virtual?.behavior.type === 'virtual' && !virtual.detached)
+            updateOutput(virtual, context);
+        }
+    }
+  }
   return changed;
 };

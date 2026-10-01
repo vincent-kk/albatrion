@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import { makeSchemaNodeTree } from '../../__tests__/makeSchemaNodeTree';
 import type { SchemaNode as RuntimeSchemaNode } from '../../SchemaNode/SchemaNode';
+import { SetValueOption } from '../../types/value';
 
 const makeRecordTree = (...args: Parameters<typeof makeSchemaNodeTree>) => {
   const tree = makeSchemaNodeTree(...args);
@@ -79,6 +80,24 @@ describe('array legacy contract ports', () => {
     }, options: { virtual: { period: { fields: ['startDate', 'endDate'] } } } },
     { snapshot: {} });
     root.resetSubtree();
+    const period = root.find('/period')!;
+    expect(period.value).toEqual([undefined, undefined]);
+    expect(period.children).toEqual([
+      root.find('/startDate'), root.find('/endDate'),
+    ]);
+    expect(period.find('/period/startDate')).toBe(root.find('/startDate'));
+    expect(root.outputValue).toEqual({});
+  });
+
+  it('VALUE-034 18C-21 clears referenced fields through virtual Overwrite', () => {
+    const { root } = makeRecordTree({ type: 'object', properties: {
+      startDate: { type: 'string' }, endDate: { type: 'string' },
+    }, options: { virtual: { period: { fields: ['startDate', 'endDate'] } } } },
+    { snapshot: { startDate: '2021-04-01', endDate: '2021-04-02' } });
+    root.resetSubtree();
+    root.find('/period')!.setValue(undefined, SetValueOption.Overwrite);
+    expect(root.find('/startDate')?.value).toBeUndefined();
+    expect(root.find('/endDate')?.value).toBeUndefined();
     expect(root.find('/period')?.value).toEqual([undefined, undefined]);
     expect(root.outputValue).toEqual({});
   });

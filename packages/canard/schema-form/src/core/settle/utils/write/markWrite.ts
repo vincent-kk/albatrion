@@ -1,6 +1,7 @@
 import { isArray } from '@winglet/common-utils/filter';
 import type { SchemaNodeRecord, UnionSpec } from '../../../record';
 import type { SettlementContext } from '../../type';
+import { assertVirtualWriteShape } from './assertVirtualWriteShape';
 import { isPlain } from './isPlain';
 import { nextExtras } from './nextExtras';
 import { pruneLatentRaw } from './pruneLatentRaw';
@@ -18,17 +19,22 @@ const DECLARED_NAMES = new WeakMap<object, Set<string>>();
  * @param input - Value received at this occurrence's write boundary
  * @param context - Work list recording source, shape, and automatic changes
  * @param spec - Static or narrowed type restriction used for interpretation
+ * @param forceWhole - Treat a virtual reference write as a whole subtree write
  * @returns Nothing; only this node's own state channels are stored here
  */
 export const markWrite = <Self extends SchemaNodeRecord<Self>>(
   node: Self, input: unknown, context: SettlementContext<Self>,
   spec: UnionSpec = staticSpec(node.schemaType, node.nullable),
+  forceWhole = false,
 ): void => {
+  if (node.behavior.type === 'virtual' && !context.automatic &&
+    context.kind !== 'load') assertVirtualWriteShape(node, input);
   if (context.loadScope) context.entered.add(node);
   if (context.kind === 'load') context.changedNodes.add(node);
   if (context.kind === 'load' && node.behavior.strategy === 'branch')
     context.shapeDirtyPaths.add(node.path);
-  const isMerge = context.kind === 'callerPartial' && !context.automatic;
+  const isMerge = context.kind === 'callerPartial' &&
+    !context.automatic && !forceWhole;
   if (!context.automatic) context.writtenInputs.set(node, input);
   else context.automaticLog.push({ node, previousRaw: node.raw,
     previousExtras: node.extras,
@@ -46,6 +52,17 @@ export const markWrite = <Self extends SchemaNodeRecord<Self>>(
   }
   if (node.behavior.type === 'virtual') {
     context.dirtyPaths.add(node.path);
+    const fields = node.blueprintNode.fields ?? [];
+    const values = isArray(value) ? value : undefined;
+    for (let index = 0; index < fields.length; index++) {
+      const sibling = node.parent?.structure?.[fields[index]];
+      if (!sibling) continue;
+      if (!context.automatic && context.kind !== 'load') {
+        (context.virtualReplacePaths ??= []).push(sibling.path);
+        pruneLatentRaw(sibling.runtime, sibling.path, undefined, context);
+      }
+      markWrite(sibling, values?.[index], context, undefined, true);
+    }
     return;
   }
   let nextRaw: unknown;
@@ -103,6 +120,7 @@ export const markWrite = <Self extends SchemaNodeRecord<Self>>(
     if (!whole && !hasDistributedChildInput(value, name,
       node.behavior.type === 'array')) continue;
     const child = node.structure[name];
+    if (child.behavior.type === 'virtual') continue;
     const childInput = hasDistributedChildInput(value, name,
       node.behavior.type === 'array') ?
       Reflect.get(value, name) : undefined;
@@ -110,6 +128,6 @@ export const markWrite = <Self extends SchemaNodeRecord<Self>>(
       context.writtenInputs.set(child, childInput);
       context.filledNodes.add(child);
     }
-    markWrite(child, childInput, context);
+    markWrite(child, childInput, context, undefined, forceWhole);
   }
 };
