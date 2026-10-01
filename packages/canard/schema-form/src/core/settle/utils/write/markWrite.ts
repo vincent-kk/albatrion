@@ -19,13 +19,11 @@ const DECLARED_NAMES = new WeakMap<object, Set<string>>();
  * @param input - Value received at this occurrence's write boundary
  * @param context - Work list recording source, shape, and automatic changes
  * @param spec - Static or narrowed type restriction used for interpretation
- * @param forceWhole - Treat a virtual reference write as a whole subtree write
  * @returns Nothing; only this node's own state channels are stored here
  */
 export const markWrite = <Self extends SchemaNodeRecord<Self>>(
   node: Self, input: unknown, context: SettlementContext<Self>,
   spec: UnionSpec = staticSpec(node.schemaType, node.nullable),
-  forceWhole = false,
 ): void => {
   if (node.behavior.type === 'virtual' && !context.automatic &&
     context.kind !== 'load') assertVirtualWriteShape(node, input);
@@ -33,8 +31,7 @@ export const markWrite = <Self extends SchemaNodeRecord<Self>>(
   if (context.kind === 'load') context.changedNodes.add(node);
   if (context.kind === 'load' && node.behavior.strategy === 'branch')
     context.shapeDirtyPaths.add(node.path);
-  const isMerge = context.kind === 'callerPartial' &&
-    !context.automatic && !forceWhole;
+  const isMerge = context.kind === 'callerPartial' && !context.automatic;
   if (!context.automatic) context.writtenInputs.set(node, input);
   else context.automaticLog.push({ node, previousRaw: node.raw,
     previousExtras: node.extras,
@@ -57,11 +54,11 @@ export const markWrite = <Self extends SchemaNodeRecord<Self>>(
     for (let index = 0; index < fields.length; index++) {
       const sibling = node.parent?.structure?.[fields[index]];
       if (!sibling) continue;
-      if (!context.automatic && context.kind !== 'load') {
+      if (!context.automatic && context.kind !== 'load' && !isMerge) {
         (context.virtualReplacePaths ??= []).push(sibling.path);
         pruneLatentRaw(sibling.runtime, sibling.path, undefined, context);
       }
-      markWrite(sibling, values?.[index], context, undefined, true);
+      markWrite(sibling, values?.[index], context);
     }
     return;
   }
@@ -128,6 +125,6 @@ export const markWrite = <Self extends SchemaNodeRecord<Self>>(
       context.writtenInputs.set(child, childInput);
       context.filledNodes.add(child);
     }
-    markWrite(child, childInput, context, undefined, forceWhole);
+    markWrite(child, childInput, context);
   }
 };

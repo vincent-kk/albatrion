@@ -30,7 +30,7 @@ export const enterSchemaNode = <Self extends SchemaNodeRecord<Self>>(
       context.writtenInputs.set(child, value);
       context.filledNodes.add(child);
     }
-    markWrite(child, value, context, undefined, distribution?.whole === true);
+    markWrite(child, value, context);
     if (distribution.automatic) context.automatic = false;
   } else restoreLatentState(child, own, context);
 };

@@ -57,7 +57,7 @@ describe('virtual writes and referenced siblings', () => {
     expect(period.value).toEqual(['7', 'b']);
   });
 
-  it('42C-02 replaces a referenced branch even when the caller uses Merge', () => {
+  it('45C-01 Merge performs a partial write at each referenced node', () => {
     const { root } = makeSchemaNodeTree({ type: 'object', properties: {
       details: { type: 'object', properties: {
         first: { type: 'string' }, second: { type: 'string' },
@@ -70,8 +70,10 @@ describe('virtual writes and referenced siblings', () => {
       { first: 'changed', second: 'keep' },
     ]);
     root.find('/group')!.setValue([{ first: 'new' }], SetValueOption.Merge);
-    expect(root.find('/details')?.value).toEqual({ first: 'new' });
-    expect(root.find('/group')?.value).toEqual([{ first: 'new' }]);
+    expect(root.find('/details')?.value).toEqual({ first: 'new', second: 'keep' });
+    expect(root.find('/group')?.value).toEqual([{ first: 'new', second: 'keep' }]);
+    root.find('/group')!.setValue([{ first: 'whole' }]);
+    expect(root.find('/details')?.value).toEqual({ first: 'whole' });
   });
 
   it('42C-02 keeps real siblings live when their virtual group exits', () => {
