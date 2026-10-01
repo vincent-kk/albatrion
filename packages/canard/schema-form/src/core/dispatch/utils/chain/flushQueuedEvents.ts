@@ -30,7 +30,7 @@ export const flushQueuedEvents = <Self extends SchemaNodeRecord<Self>>(
   const runtime = root.runtime;
   if (runtime.flushingQueuedEvents) return;
   runtime.flushingQueuedEvents = true;
-  const standalone = !runtime.entryDepth;
+  const standalone = !runtime.entryDepth && !runtime.chainErrors;
   const previousErrors = runtime.chainErrors;
   const previousOccurrences = runtime.chainOccurrences;
   let waves = 0;

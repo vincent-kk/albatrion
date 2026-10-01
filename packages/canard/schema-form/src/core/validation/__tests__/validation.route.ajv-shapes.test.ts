@@ -3,7 +3,8 @@ import { describe, expect, it } from 'vitest';
 import { dispatchMount } from '../../dispatch';
 import { createTestValidator } from '../../__tests__/fixtures/createTestValidator';
 import { createDispatchTree } from '../../dispatch/__tests__/fixtures/createDispatchTree';
-import { createValidatorCopy, readSchemaNodeErrors, routeValidationIssues } from '../index';
+import { readSchemaNodeErrors, routeValidationIssues } from '../index';
+import { createValidatorCopy } from '../utils/copy/createValidatorCopy';
 import type { ValidationIssue } from '../type';
 
 /** Branches use separate reference targets so each target has one owner. */

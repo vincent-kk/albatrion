@@ -5,7 +5,6 @@ export type {
   Validator,
 } from './type';
 export { readValidationEntry } from './utils/cache/readValidationEntry';
-export { createValidatorCopy } from './utils/copy/createValidatorCopy';
 export { readSchemaNodeGuard } from './utils/guard/readSchemaNodeGuard';
 export { compileEntryGuards } from './utils/guard/compileEntryGuards';
 export { requestSchemaNodeValidation } from './utils/run/requestSchemaNodeValidation';

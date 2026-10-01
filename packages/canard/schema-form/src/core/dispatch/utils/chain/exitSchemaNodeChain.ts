@@ -99,12 +99,19 @@ export const exitSchemaNodeChain = <Self extends SchemaNodeRecord<Self>>(
     }
   }
   const enclosing = runtime.enclosingChain;
-  runtime.enclosingChain = undefined;
+  runtime.enclosingChain = enclosing?.outer;
   runtime.chainErrors = enclosing?.errors;
   runtime.chainRoot = undefined;
   runtime.feedbackBudget = 0;
   runtime.feedbackBlockedListeners = undefined;
   runtime.feedbackLimitReported = false;
+  runtime.chainOccurrences = enclosing?.occurrences;
+  if (enclosing) {
+    enclosing.errors.push(...errors);
+    for (const record of pending) enclosing.occurrences.push({ kind: 'record', record });
+    enclosing.occurrences.push(...occurrences);
+    return;
+  }
   const original = bundleChainErrors(errors);
   const aggregate = errors.length > 1 && original instanceof SchemaFormError
     ? original : undefined;
@@ -133,13 +140,8 @@ export const exitSchemaNodeChain = <Self extends SchemaNodeRecord<Self>>(
       if (record) pending.push(record);
   }
   const handlerErrors = deliverChainRecords(runtime, pending, original, true);
-  runtime.chainOccurrences = enclosing?.occurrences;
   const exposed = !errors.length ? bundleChainErrors(handlerErrors) :
     handlerErrors.length ? bundleChainErrors([original, ...handlerErrors]) : original;
   if (!errors.length && !handlerErrors.length) return;
-  if (enclosing) {
-    enclosing.errors.push(exposed);
-    return;
-  }
   throw exposed;
 };

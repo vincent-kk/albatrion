@@ -2,7 +2,6 @@ import Ajv from 'ajv';
 import type { AnySchema } from 'ajv';
 import type { BlueprintSchema } from '../../blueprint';
 import type { GuardFunction, Validator } from '../../validation';
-import { createValidatorCopy } from '../../validation';
 
 /** Behavior selected for the guard error cases shared by core tests. */
 export type TestGuardMode = 'normal' | 'throw' | 'promise';
@@ -39,8 +38,7 @@ export const createTestValidator = (mode: TestGuardMode = 'normal'): Validator =
       if (!guardAjv) {
         guardAjv = new Ajv({ strict: false, allErrors: true,
           validateSchema: false });
-        const authoredCopy = createValidatorCopy(root);
-        guardAjv.addSchema(authoredCopy as AnySchema,
+        guardAjv.addSchema(structuredClone(root) as AnySchema,
           'https://example.test/generated-guard-root');
         guardRoots.set(root, guardAjv);
       }

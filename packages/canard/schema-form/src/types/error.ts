@@ -220,7 +220,7 @@ export type { ValidationIssue } from '@/schema-form/core/validation';
 /**
  * Legacy JSONSchemaError extends ValidationIssue and adds `key` property.
  */
-export interface JSONSchemaError extends ValidationIssue {
+export interface JSONSchemaError<SourceError = unknown> extends ValidationIssue<SourceError> {
   /** Legacy keyword parameters remain permissive until the PR-7 public engine switch. */
   details?: Record<string, any>;
   /**

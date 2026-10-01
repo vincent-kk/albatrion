@@ -325,9 +325,10 @@ export interface SchemaNodeRuntime<Self> extends SchemaNodeRootRuntimeState {
   chainOccurrences?: (
     { kind: 'error'; error: unknown } | { kind: 'record'; record: FormErrorRecord }
   )[];
-  /** Failure collection of a synchronous non-entry wave that a nested outermost entry hands its exposed failure to. */
+  /** Outer failure collection retained while a nested entry finishes. */
   enclosingChain?: { readonly errors: unknown[];
-    readonly occurrences: NonNullable<SchemaNodeRuntime<Self>['chainOccurrences']> };
+    readonly occurrences: NonNullable<SchemaNodeRuntime<Self>['chainOccurrences']>;
+    readonly outer?: SchemaNodeRuntime<Self>['enclosingChain'] };
   /** True only while this form invokes its error reporter. */
   reportingErrors?: boolean;
   /** Schema locations supplied by a binding after reference-only reset rebuilding. */
