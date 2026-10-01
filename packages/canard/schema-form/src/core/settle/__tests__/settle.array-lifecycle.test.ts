@@ -47,6 +47,45 @@ describe('array settlement lifecycle', () => {
     expect(root.find('/items')?.children?.[0]).not.toBe(formerFirst);
   });
 
+  it('38C-02 captures raw item trees and folds latent children into one host', () => {
+    const { root, runtime } = makeSchemaNodeTree({ type: 'object', properties: {
+      showHost: { type: 'boolean' },
+      items: { type: 'array', controls: { active: '../showHost' },
+        items: { type: 'object', properties: {
+          show: { type: 'boolean' },
+          visible: { type: 'string', default: 'fill' },
+          hidden: { type: 'string', controls: { active: '../show' } },
+          nested: { type: 'object', properties: {
+            leaf: { type: 'string' },
+          } },
+          nestedArray: { type: 'array', prefixItems: [
+            { type: 'string' },
+          ], items: false },
+        } } },
+    } });
+    root.setValue({ showHost: true, items: [
+      { show: true, visible: 'v', hidden: 'secret', nested: null,
+        nestedArray: ['first', 'tail'], extra: 9 }, {},
+    ] }, SetValueOption.DisableAutomaticWrites);
+    root.find('/items/0/show')?.setValue(false);
+    expect(root.find('/items/0/hidden')).toBeNull();
+    root.find('/showHost')?.setValue(false);
+    const latent: Map<string, { raw?: unknown }> = Reflect.get(runtime, 'latentRaw');
+    const rawTree = [{ show: false, visible: 'v', hidden: 'secret', nested: null,
+      nestedArray: ['first', 'tail'], extra: 9 },
+      undefined];
+    expect([...latent.keys()]).toEqual([JSON.stringify(['/items', 'array'])]);
+    expect(latent.get(JSON.stringify(['/items', 'array']))?.raw).toEqual(rawTree);
+    expect(root.inactiveValues).toEqual([{ path: '/items', value: rawTree }]);
+    root.find('/showHost')?.setValue(true);
+    expect(root.find('/items')?.value).toEqual([
+      { show: false, visible: 'v', nested: null,
+        nestedArray: ['first', 'tail'], extra: 9 }, { visible: 'fill' },
+    ]);
+    root.find('/items/0/show')?.setValue(true);
+    expect(root.find('/items/0/hidden')?.value).toBe('secret');
+  });
+
   it('35C-09 drops latent and declaration paths below a perished item', () => {
     const { root, runtime } = makeSchemaNodeTree({ type: 'array', items: {
       type: 'object', properties: {

@@ -8,10 +8,10 @@ import { omitTrailingArray } from './omitTrailingArray';
  * Project an opaque array with cached omission bits and no raw mutation.
  * @param node - Terminal record supplying raw kind and effective options
  * @param local - Whole raw array proposed for output
- * @returns Emitted array or undefined when suppressed by shape or options
+ * @returns Emitted raw or undefined when omitted by shape or options
  */
 export const projectTerminalArray: Behavior['project'] = (node, local) => {
-  if (node.raw !== undefined && !isArray(node.raw)) return undefined;
+  if (node.raw !== undefined && !isArray(node.raw)) return node.raw;
   if (!isArray(local)) return undefined;
   const choices = getStaticChoices(node.schema);
   const projected = choices.omitTrailing ? omitTrailingArray(local) : local;

@@ -153,6 +153,8 @@ describe('behavior rows', () => {
     expect(objectBehavior.terminal.project(node, object)).toBe(object);
     expect(objectBehavior.terminal.declareChildren(node)).toEqual([]);
     expect(objectBehavior.terminal.project(node, {})).toBeUndefined();
+    node.raw = 17;
+    expect(objectBehavior.terminal.project(node, object)).toBe(17);
   });
 
   it('returns static and gated blueprint child declarations without evaluating gates', () => {

@@ -52,7 +52,7 @@ describe('settle gate calculation', () => {
     expect(root.structure?.user?.raw).toBeNull();
     expect(root.structure?.user?.extras).toEqual({ mode: 'on' });
     expect(root.structure?.probe).toBeUndefined();
-    expect(root.emit).toEqual({});
+    expect(root.emit).toEqual({ user: null });
   });
 
   it('CONTROLS-080 withholds host extras from an if predicate when raw is null', () => {
@@ -85,7 +85,7 @@ describe('settle gate calculation', () => {
     expect(root.structure?.user?.structure?.guarded).toBeDefined();
   });
 
-  it('CONTROLS-080 reads a root child kept by the root output fallback', () => {
+  it('CONTROLS-080 excludes a root child from a wrong-kind raw emission', () => {
     const { root } = createTestTree({ type: 'object', properties: {
       child: { type: 'string', default: 'D' },
       probe: { type: 'string', default: 'P',
@@ -93,8 +93,8 @@ describe('settle gate calculation', () => {
     } });
     loadSchemaNodeAtMount(root, null, SetValueOption.Overwrite);
     expect(root.raw).toBeNull();
-    expect(root.emit).toMatchObject({ child: 'D' });
-    expect(root.structure?.probe?.raw).toBe('P');
+    expect(root.emit).toBeNull();
+    expect(root.structure?.probe).toBeUndefined();
   });
 
   it('TEST-069 fragment active evaluates a compiled host expression', () => {

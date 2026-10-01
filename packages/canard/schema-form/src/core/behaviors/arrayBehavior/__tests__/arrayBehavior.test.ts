@@ -112,7 +112,7 @@ describe('array branch calculation', () => {
       typeConflict: false };
     expect(arrayBehavior.branch.project(node, [])).toEqual([]);
     node.raw = { wrong: true };
-    expect(arrayBehavior.branch.project(node, ['kept'])).toBeUndefined();
+    expect(arrayBehavior.branch.project(node, ['kept'])).toBe(node.raw);
   });
 
   it('VALUE-034 keeps an emitted object before omitted host holes and tail nulls', () => {
@@ -224,7 +224,7 @@ describe('array terminal calculation', () => {
       typeConflict: false };
     expect(arrayBehavior.terminal.project(node, raw)).toBe(raw);
     node.raw = 3;
-    expect(arrayBehavior.terminal.project(node, raw)).toBeUndefined();
+    expect(arrayBehavior.terminal.project(node, raw)).toBe(3);
   });
 });
 

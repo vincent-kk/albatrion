@@ -95,9 +95,32 @@ describe('array settlement writes', () => {
     const { root } = makeSchemaNodeTree({ type: 'array', items: { type: 'string' } });
     root.setValue([]);
     expect(root.value).toEqual([]);
+    expect(root.outputValue).toEqual([]);
     root.setValue(['a', undefined, 'c']);
     expect(root.value).toHaveLength(3);
     expect(root.value).toEqual(['a', null, 'c']);
+  });
+
+  it('38C-01 emits wrong-kind array raw at the root without item nodes', () => {
+    const { root } = makeSchemaNodeTree({ type: 'array',
+      items: { type: 'string' } });
+    root.setValue(['old']);
+    root.setValue(null);
+    expect(root.raw).toBeNull();
+    expect(root.outputValue).toBeNull();
+    expect(Reflect.get(root, 'itemCount')).toBe(0);
+    expect(root.children).toEqual([]);
+    expect(root.typeMismatch).toBe(true);
+  });
+
+  it('39C-01 emits a wrong-kind object item raw instead of an object hole', () => {
+    const { root } = makeSchemaNodeTree({ type: 'array',
+      items: { type: 'object', properties: {
+        name: { type: 'string' },
+      } } });
+    root.setValue([null]);
+    expect(root.value).toEqual([null]);
+    expect(root.children?.[0].raw).toBeNull();
   });
 
   it('NODE-051 retains a wrong-kind array raw and perishes its old items', () => {

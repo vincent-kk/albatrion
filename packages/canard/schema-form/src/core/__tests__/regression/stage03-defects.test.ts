@@ -88,7 +88,7 @@ describe('stage 03 ledger adjudication regressions', () => {
     root.setValue(null);
     expect(root.raw).toBeNull();
     expect(root.find('/kind')?.raw).toBeUndefined();
-    expect(root.outputValue).toEqual({});
+    expect(root.outputValue).toBeNull();
   });
 
   it('r8-port.mjs:392 preserves extras order across Merge writes', () => {

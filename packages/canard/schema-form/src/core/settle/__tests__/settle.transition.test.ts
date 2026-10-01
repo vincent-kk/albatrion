@@ -116,7 +116,7 @@ describe('settle transitions and loads', () => {
     expect(root.structure?.user?.structure?.name?.raw).toBeUndefined();
     resetSchemaNodeForm(root, { user: null }, SetValueOption.Overwrite);
     expect(root.structure?.user?.structure?.name?.raw).toBe('N');
-    expect(root.emit).toEqual({});
+    expect(root.emit).toEqual({ user: null });
   });
 
   it('WRITE-094 whole replacement clears latent raw and is idempotent on a second call', () => {

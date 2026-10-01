@@ -15,8 +15,8 @@ export const updateOutput = <Self extends SchemaNodeRecord<Self>>(
   const assembled = node.behavior.assemble(node, node.children ?? []);
   const local = sameValue(node.local, assembled) ? node.local : assembled;
   let projected = node.behavior.project(node, local);
-  if (node.parent === null && node.behavior.type === 'object' &&
-    node.behavior.strategy === 'branch' && projected === undefined)
+  if (node.parent === null && projected === undefined &&
+    (node.behavior.type === 'object' || node.behavior.type === 'array'))
     projected = local;
   const emit = node.emit === node.local && projected === local ? local :
     sameValue(node.emit, projected) ? node.emit : projected;
