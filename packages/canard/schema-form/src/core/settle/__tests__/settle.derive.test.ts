@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 
 import { NodeState } from '../../types/state';
+import { SchemaNodeEventType } from '../../record';
 import { SetValueOption } from '../../types/value';
 import { loadSchemaNodeAtMount, writeSchemaNode } from '../index';
 import { createTestTree } from './fixtures/createTestTree';
@@ -86,11 +87,11 @@ describe('settle derivation', () => {
     loadSchemaNodeAtMount(root, { clear: false, target: 'X' }, SetValueOption.Overwrite);
     const target = root.structure!.target;
     target.state = { [NodeState.Dirty]: true, [NodeState.Touched]: true };
-    const revision = target.revision;
+    const revision = target.revisionLedger[SchemaNodeEventType.UpdateState] ?? 0;
     writeSchemaNode(root.structure!.clear, true, 'input', SetValueOption.Overwrite);
     expect(target.state[NodeState.Dirty]).toBe(false);
     expect(target.state[NodeState.Touched]).toBe(false);
-    expect(target.revision).toBeGreaterThan(revision);
+    expect(target.revisionLedger[SchemaNodeEventType.UpdateState]).toBeGreaterThan(revision);
     expect(target.raw).toBe('X');
   });
 

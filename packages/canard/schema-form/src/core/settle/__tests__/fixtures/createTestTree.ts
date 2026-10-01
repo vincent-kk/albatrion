@@ -28,6 +28,7 @@ export const createTestTree = (
         for (const gate of declaration.gates)
           if (gate.kind === 'if') predicates.set(gate, predicate);
   const runtime: SchemaNodeRuntime<PlainNode> = {
+    deliveries: new Map(),
     blueprint: analysis,
     context: {},
     ifPredicates: predicates,

@@ -1,5 +1,6 @@
 import type { BlueprintNode, BlueprintSchemaType, EffectiveSchema } from '../blueprint';
 import { find, findNodes } from '../navigation';
+import { EMPTY_REVISION_LEDGER } from '../record';
 import type { Behavior, SchemaNodeRecord, SchemaNodeRuntime } from '../record';
 import { readSchemaNodeDefaultValue, resetSchemaNodeSubtree,
   readSchemaNodeInactiveValues, readSchemaNodeTypeMismatch,
@@ -33,7 +34,8 @@ export class SchemaNode implements SchemaNodeRecord<SchemaNode> {
   emit: unknown;
   schema: EffectiveSchema;
   state: SchemaNodeRecord<SchemaNode>['state'];
-  revision: number;
+  /** Per-bit counts copied only after this occurrence first receives delivery. */
+  revisionLedger: Readonly<Record<number, number>>;
   detached: boolean;
 
   constructor(
@@ -68,7 +70,7 @@ export class SchemaNode implements SchemaNodeRecord<SchemaNode> {
     this.emit = undefined;
     this.schema = schema;
     this.state = state;
-    this.revision = 0;
+    this.revisionLedger = EMPTY_REVISION_LEDGER;
     this.detached = false;
   }
 

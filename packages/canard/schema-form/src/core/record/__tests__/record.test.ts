@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { blueprint } from '../../blueprint';
+import { EMPTY_REVISION_LEDGER } from '../index';
 import type { SchemaNodeRecord } from '../index';
 import {
   patchSchemaNodeInteractionState,
@@ -65,7 +66,7 @@ const makeRecord = (): SchemaNodeRecord<PathNode> => {
     emit: undefined,
     schema: { schema: {}, typeConflict: false },
     state: {},
-    revision: 0,
+    revisionLedger: EMPTY_REVISION_LEDGER,
     detached: false,
   };
 };

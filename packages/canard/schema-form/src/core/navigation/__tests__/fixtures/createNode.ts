@@ -1,4 +1,5 @@
 import { blueprint } from '../../../blueprint';
+import { EMPTY_REVISION_LEDGER } from '../../../record';
 import type { SchemaNodeRecord, SchemaNodeRuntime } from '../../../record';
 
 /** Plain node used to exercise navigation without the later engine class. */
@@ -62,7 +63,7 @@ export const createNode = (
     emit: undefined,
     schema: { schema: {}, typeConflict: false },
     state: {},
-    revision: 0,
+    revisionLedger: EMPTY_REVISION_LEDGER,
     detached: false,
   };
   if (parent?.structure !== null && parent !== null) {

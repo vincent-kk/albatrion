@@ -11,6 +11,7 @@ import { commitDeriveRules } from './commitDeriveRules';
 import { commitExitPolicyValues } from './commitExitPolicyValues';
 import { snapshotExitedPolicies } from './snapshotExitedPolicies';
 import { finalizeDeriveTrace } from './finalizeDeriveTrace';
+import { markCommitDeliveries } from './markCommitDeliveries';
 
 /** Shared frozen empty list for inactive and mismatch projections. */
 const EMPTY_PATHS: readonly string[] = Object.freeze([]);
@@ -45,7 +46,6 @@ export const commitSettlement = <Self extends SchemaNodeRecord<Self>>(
       declarations.set(JSON.stringify([node.path, node.blueprintNode.kind]), ids);
   let warnings: TypeMismatchRecord[] | undefined;
   for (const node of context.changedNodes) {
-    node.revision++;
     if (node.detached || node.blueprintNode.kind === 'virtual') continue;
     const effective = effectiveType(node);
     const mismatch = isTypeMismatch(node.raw, effective, node.nullable);
@@ -121,4 +121,5 @@ export const commitSettlement = <Self extends SchemaNodeRecord<Self>>(
       ...(context.cause === 'budget' ? { exceededBudget: context.exceededBudget,
         iterations: context.iterations } : {}),
       commit };
+  markCommitDeliveries(context);
 };

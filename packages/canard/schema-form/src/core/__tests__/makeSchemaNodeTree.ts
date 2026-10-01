@@ -28,6 +28,7 @@ export const makeSchemaNodeTree = (
     }
   }
   const runtime = {
+    deliveries: new Map(),
     ifPredicates,
     diagnostics: { status: 'stable' as const },
     loadSnapshot: options.snapshot,

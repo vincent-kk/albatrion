@@ -8,7 +8,47 @@ import type {
   EffectiveSchema,
   SchemaTypeName,
 } from '../blueprint';
-import type { NodeStateFlags } from '../types/state';
+import type { NodeStateFlags, ValidationMode } from '../types/state';
+import type { FormErrorReporter } from '../../errors';
+
+/** Shared ledger until an occurrence first receives a committed event. */
+export const EMPTY_REVISION_LEDGER: Readonly<Record<number, number>> = Object.freeze({});
+
+/** One pending node event with values indexed by their event bits. */
+export interface SchemaNodeDelivery {
+  /** Combined event bits waiting for dispatch. */
+  type: number;
+  /** Latest event-specific values for this wave. */
+  payload?: Partial<Record<number, unknown>>;
+  /** Latest event-specific metadata for this wave. */
+  options?: Partial<Record<number, unknown>>;
+}
+
+/** Last committed observations needed to mark the next delivery. */
+interface SchemaNodeDeliverySnapshot<Self> {
+  /** Path observed after the preceding commit. */
+  readonly path: string;
+  /** Calculated value before output projection. */
+  readonly local: unknown;
+  /** Projected value available to consumers. */
+  readonly emit: unknown;
+  /** Direct child collection reference. */
+  readonly children: readonly Self[] | null;
+  /** Gate result used by the computed-property bit. */
+  readonly active: boolean;
+  /** Final local visibility. */
+  readonly visible: boolean;
+  /** Final local read-only state. */
+  readonly readOnly: boolean;
+  /** Final local disabled state. */
+  readonly disabled: boolean;
+  /** Interaction state object before a possible reset. */
+  readonly state: NodeStateFlags;
+  /** Memoized effective schema reference. */
+  readonly schema: EffectiveSchema;
+  /** Committed watched values for reference comparison. */
+  readonly watchValues: readonly unknown[];
+}
 
 /** The fixed node layout implemented by every node kind. */
 export interface SchemaNodeRecord<Self> {
@@ -60,8 +100,8 @@ export interface SchemaNodeRecord<Self> {
   schema: EffectiveSchema;
   /** Interaction flags updated by shallow patches. */
   state: NodeStateFlags;
-  /** Last committed revision of this node. */
-  revision: number;
+  /** Per-bit commit counts, allocated on the first delivery. */
+  revisionLedger: Readonly<Record<number, number>>;
   /** Whether this reference has left the live shape. */
   detached: boolean;
 }
@@ -239,6 +279,40 @@ export interface SettlementScratch<Self> {
 
 /** Minimal per-tree slots consumed by the first settlement engine. */
 export interface SchemaNodeRuntime<Self> extends SchemaNodeRootRuntimeState {
+  /** Pending events consumed by the later dispatcher. */
+  deliveries?: Map<unknown, SchemaNodeDelivery>;
+  /** Last committed node observations for change detection. */
+  deliverySnapshots?: Map<unknown, SchemaNodeDeliverySnapshot<unknown>>;
+  /** Nodes with watch paths that can change without local recalculation. */
+  deliveryWatchNodes?: Set<unknown>;
+  /** Last diagnostics reference observed by delivery marking. */
+  deliveredDiagnostics?: SchemaNodeDiagnostics;
+  /** Public entry depth consumed by the later dispatcher. */
+  entryDepth?: number;
+  /** Remaining feedback and onChange budgets for one entry chain. */
+  feedbackBudget?: number;
+  /** Remaining nested onChange budget for one entry chain. */
+  onChangeBudget?: number;
+  /** Whether a listener or error handler is currently receiving delivery. */
+  delivering?: boolean;
+  /** Events marked outside settlement for the next dispatcher wave. */
+  queuedEvents?: Map<unknown, SchemaNodeDelivery>;
+  /** Warning identities already reported for this tree. */
+  warningKeys?: Set<string>;
+  /** Host observer for structured failures and warnings. */
+  errorReporter?: FormErrorReporter;
+  /** Selected validation engine, narrowed by the validation layer. */
+  validator?: unknown;
+  /** Form validation trigger policy. */
+  validationMode?: ValidationMode;
+  /** Host callback after a completed entry changes the emitted root value. */
+  onChange?: (value: unknown) => void;
+  /** Host callback after an entry changes interaction flags. */
+  onStateChange?: () => void;
+  /** Most recent validation request/result version. */
+  validationStamp?: number;
+  /** Validation and external issues keyed by live node. */
+  nodeErrors?: Map<unknown, readonly unknown[]>;
   /** Form context shared by every occurrence and expression in this tree. */
   context?: Readonly<Record<string, unknown>>;
   /** Last committed expression inputs, keyed by live authored rule occurrence. */

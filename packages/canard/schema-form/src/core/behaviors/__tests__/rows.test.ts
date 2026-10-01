@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import { blueprint } from '../../blueprint';
 import type { BlueprintNode } from '../../blueprint';
+import { EMPTY_REVISION_LEDGER } from '../../record';
 import type { Behavior, SchemaNodeRecord, UnionSpec } from '../../record';
 import { BEHAVIORS } from '../index';
 import { booleanBehavior } from '../booleanBehavior';
@@ -61,7 +62,7 @@ const makeRecord = (
   emit: undefined,
   schema: { schema: { options }, typeConflict: false },
   state: {},
-  revision: 0,
+  revisionLedger: EMPTY_REVISION_LEDGER,
   detached: false,
 });
 
