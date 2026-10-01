@@ -630,6 +630,7 @@
   > 【추론】 `default`의 객체·배열은 복사하지 않고 불변으로 다룬다(WRITE-071).
 - 보충:
   > 반영 칸(설계서 메모 4): "게터 `typeMismatch: boolean`, 경로 목록 `typeMismatches: readonly string[]`, 경고 코드 `SCHEMA_FORM_WARNING.TYPE_MISMATCH`." (`reviews/round-18-owner-answers.md:41`)
+  > 편집자 결정(31C-02): "【추론】 ERROR-021이 "예외는 하나다"라고 적은 가드 컴파일 실패의 시점 차이에, 18라운드 뒤 블록 WRITE-099가 둘째 예외를 더했다: `NON_JSON_WHOLE_VALUE`의 깊이 점검은 핸들러가 있어도 프로덕션에서는 돌지 않는다. 뒤 결정이 이기므로 운영 모드에서 핸들러가 받지 못하는 경고는 이 코드 하나다." (`reviews/round-31-closing.md:20`)
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:2520-2545`(정본), `reviews/round-18-closing.md:2797-2798`, `reviews/round-18-closing.md:2953`, `reviews/round-18-owner-answers.md:41`
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-91), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-98), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-105), 소유자 답(`reviews/round-18-owner-answers.md:41` 설계서 메모 4)

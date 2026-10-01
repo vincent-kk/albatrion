@@ -94,6 +94,9 @@
   > 1. **차등 테스트.** 임의의 (스키마, 상호작용 시퀀스)에 대해 `form.validate()`의 판정이 독립 검증기(작성된 스키마, `FormHandle.getValue()`)의 판정과 같아야 한다. 독립 검증기는 폼이 쓰는 플러그인과 다른 구현이어야 하고 값은 JSON으로 직렬화한 뒤 넣는다.
 - 보충:
   > "1. **차등 테스트.** 임의의 (스키마, 상호작용 시퀀스)에 대해 `form.validate()`의 판정이 독립 검증기(작성된 스키마, `FormHandle.getValue()`)의 판정과 같아야 한다. 이슈 #342 §2의 표가 시드다. 독립 검증기는 폼이 쓰는 플러그인과 **다른 구현**이어야 하고, 값은 JSON으로 직렬화한 뒤에 넣는다. 같은 플러그인에 같은 메모리 값을 넣으면 동어반복이다(`reviews/round-1.md` §7-8)." (`02-target-overview.md:365`)
+  > 편집자 결정(31C-04): "【추론】 TEST-001의 "독립 검증기는 폼이 쓰는 플러그인과 다른 구현이어야 하고"에서 다른 구현은 다른 라이브러리다: 폼이 쓰는 플러그인과 같은 메이저의 Ajv를 새로 만들어 작성 스키마를 바로 컴파일하는 것은 같은 구현이 다른 경로를 지나는 것이라, 1라운드가 막은 동어반복(같은 구현에 같은 값)을 피하지 못한다." (`reviews/round-31-closing.md:36`)
+  > 편집자 결정(31C-04): "【추론】 원장이 이미 아는 다른 구현은 `@cfworker/json-schema`(ADR 0004, VALIDATE 영역의 플러그인 구현체 후보)이며, 시험 하네스의 개발 의존성으로 쓰는 것이 자연스럽다; 다른 메이저의 ajv를 "다른 구현"으로 받는 것은 소유자 답 없이 하지 않는다. 개발 의존성을 더하는 일은 05가 PR을 연 뒤 소유자 확인 묶음에 든다." (`reviews/round-31-closing.md:37`)
+  > 편집자 결정(31C-04): "【추론】 나머지 모양은 TEST-001 그대로다: 독립 검증기는 폼을 거치지 않고 작성 스키마를 바로 컴파일하고, `FormHandle.getValue()`를 JSON으로 직렬화한 값을 넣어 `form.validate()`의 판정과 비교한다. 같은 메이저의 Ajv 직접 경로와의 비교는 회귀 검사로 더 둘 수 있으나 TEST-001의 오라클은 아니다." (`reviews/round-31-closing.md:38`)
 - 상태: 현행
 - 출처: `08-design-a-to-z.md:605`(정본), `02-target-overview.md:365`, `09-landing-and-test-strategy.md:171`, `reviews/round-1.md:146`
 - 닫은 사람: 편집자 결정(1라운드 검토 수용, `reviews/round-1.md:146`)
@@ -349,6 +352,7 @@
 - 보충:
   > "`hooks/`에는 오늘 시험이 하나도 없다. PR-4의 훅 시험이 처음이다." (`09-landing-and-test-strategy.md:176`)
   > 편집자 결정(18C-25): "【추론】 되먹임 파동과 `onChange` 중첩 예산, 진입 사슬의 사슬 끝 throw(중첩 진입, 통지·`onChange`와의 순서, `details.errors` 묶음)는 PR-4로 미룬다." (`reviews/round-18-closing.md:770`)
+  > 편집자 결정(31C-04): "【추론】 TEST-001의 "독립 검증기는 폼이 쓰는 플러그인과 다른 구현이어야 하고"에서 다른 구현은 다른 라이브러리다: 폼이 쓰는 플러그인과 같은 메이저의 Ajv를 새로 만들어 작성 스키마를 바로 컴파일하는 것은 같은 구현이 다른 경로를 지나는 것이라, 1라운드가 막은 동어반복(같은 구현에 같은 값)을 피하지 못한다." (`reviews/round-31-closing.md:36`)
 - 상태: 현행
 - 출처: `09-landing-and-test-strategy.md:166-167,171`(정본), `reviews/round-16-owner-review.md:27`, `reviews/round-18-closing.md:770`
 - 닫은 사람: 편집자 결정(16·17라운드, `09-landing-and-test-strategy.md:171`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-25)

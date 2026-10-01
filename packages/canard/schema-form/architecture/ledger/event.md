@@ -443,7 +443,8 @@
 
 - 결정:
   > **진입의 정의**(`spikes/work-loop/REPORT-v4c.txt` §1): 같은 루트의 다른 공개 쓰기 API가 호출 스택에 없는 상태에서 이루어진 한 번의 공개 쓰기 호출. 공개 쓰기 API는 `setValue`·`push`·`pop`·`update`·`remove`·`clear`·`batch`이고(06 N6, 07 §6.2), `reset`·`resetSubtree`·마운트는 그것을 거쳐 진입이 된다. 프로토타입 목록의 `select`(분기 선택)는 폼이 분기를 고르지 않으므로 사라졌고(07 §6.2 N2·N6), `write`는 입력의 `onChange`가 부르는 `setValue`에 흡수되며, `removeKey`는 `Merge`로 키에 `undefined`를 쓰는 것으로 대신한다(`03-mental-model.md` §3). 읽기·`subscribe`·상태 칸 쓰기(§2의 R15)는 진입이 아니다. 구현은 루트의 **진입 깊이 카운터**이며, 깊이가 1 → 0이 될 때 검증을 먼저 요청하고 그다음 `onChange`를 부른다(순서가 반대면 `onChange` 안의 쓰기가 만든 새 스탬프가 옛것에 밀린다).
-- 보충: 없음
+- 보충:
+  > 편집자 결정(31C-01): "【추론】 명령 메서드 `request(kind)`의 호출은 진입이 아니다: EVENT-027의 공개 쓰기 API 목록(`setValue`·`push`·`pop`·`update`·`remove`·`clear`·`batch`)에 명령이 없고, EVENT-045는 명령을 상태 변경·외부 오류와 함께 "정착을 거치지 않는 사건"으로 묶으며, EVENT-063대로 명령은 요청 사건만 내고 원본을 쓰지 않으므로 진입 깊이가 1 → 0이 될 때의 검증 요청과 `onChange`(EVENT-027)를 일으키지 않는다." (`reviews/round-31-closing.md:9`)
 - 상태: 현행
 - 출처: `adr/0008-event-system.md:116#1-4`(정본), `reviews/round-5-derivations.md:24`
 - 닫은 사람: 편집자 결정(5라운드 도출 C-9, `reviews/round-5-derivations.md:24`), 편집자 결정(10라운드 5차 본문, `adr/0008-event-system.md:13`)
@@ -684,6 +685,9 @@
 - 보충:
   > 소유자(16라운드 답 3): "배달 경로 제안 | "예" | 확정(제안 → 결정)" (`reviews/round-16-owner-answers.md:9`)
   > "**배달 경로 제안.** 정착을 거치지 않는 사건(상태, 외부 오류, 명령)은 같은 루트 디스패처가 같은 진입 규칙으로 배달하고, 검증 결과는 커밋 번호 스탬프를 검사한 뒤 자기 파동으로 배달한다(09 §2.4). 권고: 예." (`reviews/round-16-owner-review.md:54`)
+  > 편집자 결정(31C-01): "【추론】 EVENT-045의 "같은 진입 규칙"은 루트의 진입 깊이 카운터가 정하는 배달 시점이다: 깊이가 0보다 크면 명령·상태 변경·외부 오류 사건의 비트는 노드마다 모아 두고(EVENT-067), 깊이가 1 → 0이 되는 최외곽 진입의 끝에 한 번 배달한다." (`reviews/round-31-closing.md:10`)
+  > 편집자 결정(31C-01): "【추론】 진입이 열려 있지 않을 때(깊이 0) 들어온 `request(kind)`는 기다릴 진입의 끝이 없으므로 그 호출 안에서 동기로 배달한다; 같은 노드에 합칠 다른 비트가 없으니 그 명령 하나가 배달되며, `setState`와 외부 오류 설정·지움도 같다. 오늘 `batch` 밖에서 부른 `publish`가 동기로 배달되는 것과 같은 모양이다." (`reviews/round-31-closing.md:11`)
+  > 편집자 결정(31C-01): "【추론】 EVENT-045의 "명령은 즉시 재발행 통로를 유지한다(`DeferrableNodeProxy`가 오늘 하는 것)"는 렌더 계층의 몫이다(GOAL 영역 T-3: `RequestFocus`·`RequestSelect`가 지연 마운트를 풀고 드러난 커밋 안에서 명령을 동기로 다시 발행한다). 코어(PR-4)는 리스너 없는 노드에 간 명령을 렌더 계층이 다시 발행할 수 있게 두는 것까지이고, 다시 발행하는 코드는 PR-7이다." (`reviews/round-31-closing.md:12`)
 - 상태: 현행
 - 출처: `09-landing-and-test-strategy.md:60-62,64`(정본), `reviews/round-16-owner-review.md:54`
 - 닫은 사람: 소유자 답(`reviews/round-16-owner-answers.md:9` 3)
@@ -1039,7 +1043,8 @@
   > 【추론】 비트는 오늘과 같은 `UpdateState`다.
   > 【추론】 한 진입 안에서 두 경로가 같은 노드를 바꾸면 비트는 합쳐져 그 노드에 한 번 배달된다.
   > 【추론】 `onStateChange`는 최외곽 진입의 끝에서 한 번 부른다.
-- 보충: 없음
+- 보충:
+  > 편집자 결정(31C-01): "【추론】 진입이 열려 있지 않을 때(깊이 0) 들어온 `request(kind)`는 기다릴 진입의 끝이 없으므로 그 호출 안에서 동기로 배달한다; 같은 노드에 합칠 다른 비트가 없으니 그 명령 하나가 배달되며, `setState`와 외부 오류 설정·지움도 같다. 오늘 `batch` 밖에서 부른 `publish`가 동기로 배달되는 것과 같은 모양이다." (`reviews/round-31-closing.md:11`)
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:2195-2196,2199-2201`(정본)
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-82)
@@ -1147,6 +1152,8 @@
   > 소유자(30라운드, 명령 메서드 이름): "네" (`reviews/round-30-owner-answers.md:9`) — 풀어 쓴 물음 "메서드 하나의 이름을 `request`로 정하신 것이 맞습니까"에 대한 답. 노드의 공개 명령 메서드는 `request(kind)` 하나다.
   > 소유자(30라운드, 둘째 인자): "네" (`reviews/round-30-owner-answers.md:10`) — 종류 외의 추가 데이터를 받는 둘째 인자는 지금 두지 않는다. 뒤에 선택 인자로 더해도 호환은 깨지지 않는다.
   > 소유자(30라운드, 폼 핸들의 명령 모양): "네 맞습니다. 추가로, path 는 optional, 없으면 root 를 지칭합니다." (`reviews/round-30-owner-answers.md:11`) — `FormHandle`은 전용 메서드를 유지하고 `refresh`·`remount`를 더하며(16 → 18), 넷 모두 경로는 선택 인자이고 없으면 루트 노드다. 경로와 종류를 함께 받는 통합 메서드는 폼 핸들에 두지 않는다. 이로써 이 항목이 "소유자가 정한다"고 둔 이름·값의 형·`FormHandle` 모양이 모두 닫혔다(원장 관리자, 2026-10-01).
+  > 편집자 결정(31C-01): "【추론】 명령 메서드 `request(kind)`의 호출은 진입이 아니다: EVENT-027의 공개 쓰기 API 목록(`setValue`·`push`·`pop`·`update`·`remove`·`clear`·`batch`)에 명령이 없고, EVENT-045는 명령을 상태 변경·외부 오류와 함께 "정착을 거치지 않는 사건"으로 묶으며, EVENT-063대로 명령은 요청 사건만 내고 원본을 쓰지 않으므로 진입 깊이가 1 → 0이 될 때의 검증 요청과 `onChange`(EVENT-027)를 일으키지 않는다." (`reviews/round-31-closing.md:9`)
+  > 편집자 결정(31C-01): "【추론】 진입이 열려 있지 않을 때(깊이 0) 들어온 `request(kind)`는 기다릴 진입의 끝이 없으므로 그 호출 안에서 동기로 배달한다; 같은 노드에 합칠 다른 비트가 없으니 그 명령 하나가 배달되며, `setState`와 외부 오류 설정·지움도 같다. 오늘 `batch` 밖에서 부른 `publish`가 동기로 배달되는 것과 같은 모양이다." (`reviews/round-31-closing.md:11`)
 - 상태: 현행
 - 출처: `reviews/round-18-owner-answers.md:40`(정본, 반영 칸)
 - 닫은 사람: 소유자 답(`reviews/round-18-owner-answers.md:40` 설계서 메모 3), 편집자 결정(18라운드, `reviews/round-18-owner-answers.md:40` 반영 칸; 결정 주체와 때)
