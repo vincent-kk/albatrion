@@ -303,3 +303,4 @@ U3–U7은 앞 단위의 계약에 기대므로 차례로 간다. U8·U9·U10은
 | 차례 | 리뷰어 | 판정 | 반영 |
 | --- | --- | --- | --- |
 | 1 | antigravity(세션 `7083e143`, `261cc98e1` 기준) | `rework-required`: F1(차단) G19의 CHECK가 성공 표지를 따로 내지 않음; F2 게이트 번호의 빈칸과 U6·U7 차례; F3 시나리오 수에 재는 게이트 없음; F4 `@` 맥락 소유자(`getContextOwners`·`changeSchemaNodeContext`)가 템플릿 경로 묶기 목록에 없음; F5 게이트 색인의 `byLocation`·`watchPaths`는 열쇠 옮김으로 부족. 그 밖의 현행 주장 표본 13건 확인, 양방향 범위 누락·초과 없음, 원장 충돌 없음 | F1 CHECK를 `grep -q 'problems 0$' && echo LEDGER_LINKS_OK`로; F2 G1–G22로 연속 번호; F3 G11이 `log.md`의 "array 부류 장면" 줄을 확인; F4 U7·ADR D6에 더함; F5 U6·ADR D4에 지우고 다시 등록하는 절차를 더함 |
+| 2 | antigravity(새 세션 `8d3d8821`, `0b3575524` 기준, 고친 범위만) | `cleared`: F1–F5 모두 해결, 새 결함 없음(게이트 번호와 소속 단위 일치, 고친 CHECK는 성공 때만 표지 출력) | 없음 |

@@ -44,9 +44,12 @@ Planning method: 저장소 지침 — `PLAN.md` §2와 `plan/prompts.md`의 단�
 | 2026-10-01 | 조사 | 원장 계약 정리(항목 36과 닫기 6), 코드 지도, 넘어온 사례, 정착 기제 추적(경로 열쇠 저장소와 위험 14). 위험 목록은 실행 계획 §7과 ADR D4의 맥락으로 옮김 | 실행 계획 §2·§7 |
 | 2026-10-01 | write-plan | [execution-plan.md](execution-plan.md), [execution-adr.md](execution-adr.md)(D1–D7), 게이트 원장 `.seiri/tasks/schema-form-array/gates.md`(G1–G22) | 이 커밋 |
 
+| 2026-10-01 | 원장 머지 | 로컬 `1.0.0-beta`(35라운드 `3d934b5bd`까지)를 머지. `PLAN.md` §5 끝의 충돌만 양쪽 행을 살려 해소 | `213ddac72` |
+| 2026-10-01 | review-plan | antigravity `rework-required`(F1–F5) → 고침 `0b3575524` → 고친 범위 재확인 `cleared`. G1·G2 충족 | 실행 계획 §9 |
+
 ## 3. 다음 행동
 
-- 계획 리뷰(antigravity, `seiri:review-plan`)를 받아 `cleared`까지 고친다(G1).
+- U2 문서 선행 커밋(새 fractal `arrayBehavior/`의 INTENT·DETAIL과 실행 계획 §3.3의 계약 문서), 그다음 U3.
 
 ## 4. 원장·계획서 어긋남
 
