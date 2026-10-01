@@ -52,7 +52,7 @@
 | 보정 | 01·02 보정 | 머지 | [#349](https://github.com/vincent-kk/albatrion/pull/349) | 브랜치 `fix/schema-form-realign-01-02`. 25라운드(`reviews/round-25-closing.md`)대로 청사진 코드·시험과 설계문서를 맞춤. 2026-09-29 머지(`85e7d01af`). [realign](plan/01-design-docs/realign.md) |
 | 03 | 노드 트리·정착 | 머지 | [#350](https://github.com/vincent-kk/albatrion/pull/350) | 브랜치 `feat/schema-form-node-and-settle`. 2026-09-30 머지(`0705217d5`). 뒤 PR로 넘긴 사례는 [log](plan/03-node-and-settle/log.md) §4 |
 | 04 | 파생 + 상태 키·제어 | 머지 | [#351](https://github.com/vincent-kk/albatrion/pull/351) | 브랜치 `feat/schema-form-derive-and-controls`. 2026-10-01 머지(`54afafb86`). 뒤 단계로 넘긴 사례는 [log](plan/04-derive-and-controls/log.md) §4, 속도 문제는 [대장](verification/performance-issues.md). 느린 벤치 행 수용은 30라운드 소유자 답으로 기록(TEST-027·071 보충) |
-| 05 | 통지·검증 | 진행 | — | 브랜치 `feat/schema-form-dispatch-and-validation`(워크트리 `.claude/worktrees/stage-05`). D-1은 30라운드로 닫힘(EVENT-073 보충). 실행 기록은 [log](plan/05-dispatch-and-validation/log.md) |
+| 05 | 통지·검증 | PR | [#352](https://github.com/vincent-kk/albatrion/pull/352) | 브랜치 `feat/schema-form-dispatch-and-validation`(워크트리 `.claude/worktrees/stage-05`). D-1은 30라운드로 닫힘(EVENT-073 보충). 06보다 먼저 머지하므로 06이 맡을 일은 [log](plan/05-dispatch-and-validation/log.md) "06에 넘길 목록"(33C-01). 남은 게이트: 벤치 수용(G42), storybook(G52), filid 스캔(G50) |
 | 06 | 배열 | 대기 | — | 03 뒤, 04·05와 병렬 |
 | 07 | 전환 | 대기 | — | 02–06 전부 머지 뒤. 원샷 |
 | 08 | 플러그인 | 대기 | — | 07 뒤 |
@@ -69,7 +69,7 @@
 
 ## 4. 다음 할 일
 
-1. **05·06 착수** — D-1이 30라운드로 닫혔으므로 둘 다 착수할 수 있다. 04에서 넘어온 사례는 `plan/04-derive-and-controls/log.md` §4, 미뤄 둔 속도 문제는 `verification/performance-issues.md`.
+1. **05 리뷰·머지, 06 진행** — 05는 [#352](https://github.com/vincent-kk/albatrion/pull/352)에서 리뷰 중이고 벤치 수용(P-16–P-20)과 storybook 실행이 소유자 몫이다. 06은 05 뒤에 머지하며 `plan/05-dispatch-and-validation/log.md`의 "06에 넘길 목록"을 맡는다. 미뤄 둔 속도 문제는 `verification/performance-issues.md`.
 2. **01 절 단위 통과** — 머지된 설계문서 여덟 편(192절)을 소유자가 절 단위로 통과시키고 문서 머리의 표에 날짜를 적는다(25C-09). 통과 중 나온 새 결정은 원장에 새 라운드 항목으로 먼저 들어가고 문서가 따라간다(`plan/01-design-docs/verification.md`).
 3. **D-1** — 30라운드에서 소유자가 정했다: 노드는 `request(kind)` 하나, 종류 값은 요청 비트 별칭의 TS 열거(리터럴 합집합 불허), 한 호출에 종류 하나, 둘째 인자 없음, 폼 핸들은 전용 메서드 넷에 경로 선택 인자(없으면 루트). 편집자 권장이던 리터럴 합집합과 폼 핸들 통합 메서드는 택하지 않았다.
 
