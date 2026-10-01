@@ -1,3 +1,5 @@
+import { PathKeyedMap } from '../src/core/utils/pathIndex/PathKeyedMap';
+import { PathKeyedSet } from '../src/core/utils/pathIndex/PathKeyedSet';
 /**
  * TEST-071: compare one changed element and a whole replacement in the 04 engine.
  * Run this script separately under Node/V8 and Bun/JSC; do not overlap runs.
@@ -70,8 +72,8 @@ function makeTree(kind: Kind, initial: SourceValue) {
   } };
   const root = schemaNodeFactory(blueprint(schema), {
     diagnostics: { status: 'stable' },
-    loadSnapshot: undefined, latentRaw: new Map(),
-    typeMismatchPaths: new Set(), inactiveValuesMemo: new Map(),
+    loadSnapshot: undefined, latentRaw: new PathKeyedMap('pair'),
+    typeMismatchPaths: new PathKeyedSet(), inactiveValuesMemo: new PathKeyedMap<readonly { path: string; value: unknown }[]>('path'),
   }) as SchemaNode;
   loadSchemaNodeAtMount(root, { source: initial }, SetValueOption.Overwrite);
   const source = root.find('/source');

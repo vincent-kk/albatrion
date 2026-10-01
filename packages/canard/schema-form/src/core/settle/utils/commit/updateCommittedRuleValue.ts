@@ -1,3 +1,4 @@
+import { PathKeyedMap } from '../../../utils/pathIndex/PathKeyedMap';
 import { isArray } from '@winglet/common-utils/filter';
 
 import type { SchemaNodeRuntime } from '../../../record';
@@ -31,7 +32,7 @@ export const updateCommittedRuleValue = <Self>(
     }
     return;
   }
-  (runtime.committedRuleValues ??= new Map()).set(key, value);
+  (runtime.committedRuleValues ??= new PathKeyedMap('rule')).set(key, value);
   let sourceKeys = runtime.committedRuleKeysBySource?.get(source);
   if (!sourceKeys) {
     sourceKeys = new Set();

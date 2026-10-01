@@ -1,3 +1,4 @@
+import { PathKeyedMap } from '../../utils/pathIndex/PathKeyedMap';
 import { describe, expect, it } from 'vitest';
 
 import { SetValueOption } from '../../types/value';
@@ -9,6 +10,17 @@ import { rekeyArrayRuntimePaths } from '../utils/structure/rekeyArrayRuntimePath
 
 // filid:contract settle-array
 describe('array path movement', () => {
+  it('35C-02 removes latent slots outside the old plan before new items enter', () => {
+    const { root } = createTestTree({ type: 'array', items: { type: 'string' } });
+    const key = JSON.stringify(['/0/hidden', 'string']);
+    root.runtime.latentRaw.set(key, 'obsolete');
+    root.runtime.committedDeclarationIds = new PathKeyedMap('pair', [[key, [1]]]);
+    root.runtime.typeMismatchPaths.add('/0/hidden');
+    rekeyArrayRuntimePaths(root.runtime, '', []);
+    expect(root.runtime.latentRaw.has(key)).toBe(false);
+    expect(root.runtime.committedDeclarationIds.has(key)).toBe(false);
+    expect(root.runtime.typeMismatchPaths.has('/0/hidden')).toBe(false);
+  });
   it('35C-02 re-keys every path store in one collision-free pass', () => {
     const { root } = createTestTree({ type: 'array', items: { type: 'string' } });
     const runtime = root.runtime;
@@ -24,16 +36,17 @@ describe('array path movement', () => {
     const baseline = { previous: 'value' };
     runtime.latentRaw.set(oldLeaf, 'secret');
     runtime.latentRaw.set(JSON.stringify(['/0/old', 'string']), 'removed');
-    runtime.latentRawMetadata = new Map([[oldLeaf, metadata]]);
-    runtime.committedDeclarationIds = new Map([[oldLeaf, ids]]);
-    runtime.committedRuleValues = new Map([[oldRule, baseline]]);
+    runtime.latentRawMetadata = new PathKeyedMap('pair', [[oldLeaf, metadata]]);
+    runtime.committedDeclarationIds = new PathKeyedMap('pair', [[oldLeaf, ids]]);
+    runtime.committedRuleValues = new PathKeyedMap('rule', [[oldRule, baseline]]);
+    const ruleRootKeys = runtime.committedRuleValues.pathIndex.under('');
     runtime.committedRuleKeysBySource = new Map([['/1/hidden', new Set([oldRule])]]);
     runtime.committedRuleKeysByTarget = new Map([['/1/target', new Set([oldRule])]]);
     runtime.typeMismatchPaths.add('/1/hidden');
-    runtime.typeMismatchesMemo = new Map([['', { commit: 1,
+    runtime.typeMismatchesMemo = new PathKeyedMap('path', [['', { commit: 1,
       paths: ['/1/hidden'] }]]);
     runtime.inactiveValuesMemo.set('', [{ path: '/1/hidden', value: 'secret' }]);
-    runtime.inactiveValueEntries = new Map([[oldLeaf, {
+    runtime.inactiveValueEntries = new PathKeyedMap('pair', [[oldLeaf, {
       value: 'secret', order: [1], entry: { path: '/1/hidden', value: 'secret' },
     }]]);
 
@@ -50,6 +63,7 @@ describe('array path movement', () => {
     expect(runtime.committedDeclarationIds?.get(newLeaf)).toBe(ids);
     expect(runtime.committedRuleValues?.has(oldRule)).toBe(false);
     expect(runtime.committedRuleValues?.get(newRule)).toBe(baseline);
+    expect(runtime.committedRuleValues?.pathIndex.under('')).toBe(ruleRootKeys);
     expect(runtime.committedRuleKeysBySource?.has('/1/hidden')).toBe(false);
     expect(runtime.committedRuleKeysBySource?.get('/0/hidden')).toEqual(new Set([newRule]));
     expect(runtime.committedRuleKeysByTarget?.has('/1/target')).toBe(false);

@@ -1,3 +1,4 @@
+import { PathKeyedMap } from '../../../utils/pathIndex/PathKeyedMap';
 import { find } from '../../../navigation';
 import type { SchemaNodeRecord } from '../../../record';
 import { isTypeMismatch } from './isTypeMismatch';
@@ -25,7 +26,7 @@ export const updateInactiveValuesMemo = <Self extends SchemaNodeRecord<Self>>(
   const runtime = root.runtime;
   if (!runtime.latentRawDirty && runtime.inactiveValuesMemo.has('')) return;
   const metadata = runtime.latentRawMetadata;
-  const entries = runtime.inactiveValueEntries ?? new Map();
+  const entries = runtime.inactiveValueEntries ??= new PathKeyedMap('pair');
   const changedPaths: string[] = [];
   const candidates = new Map<string, { path: string; value: unknown;
     order: readonly number[] }>();

@@ -2,6 +2,8 @@
 
 ## Requirements
 
+- 경로 키 런타임 칸은 명시적인 PathKeyedMap·PathKeyedSet 형으로 선언하고 생성자가 색인을 소유합니다. record와 settle의 공통 소유자 core의 보조 형을 소비하여 settle 역의존을 만들지 않습니다. native Map·Set의 조회·열거 계약을 유지하고 값은 복제하지 않습니다. 메모리 비용은 K개 항목과 경로 깊이 D에 O(KD) 키 참조, 유일한 prefix 문자열·부모 연결·숫자 radix 마디입니다(NODE-045, SETTLE-017·047).
+
 - `blueprint < record < {종류 동작, navigation} < validation < settle/derive < settle < dispatch < SchemaNode`의 방향을 값 import와 `import type`에 똑같이 적용합니다. `record`는 청사진의 선언 형만 소비하며 상위 엔진을 알지 않습니다(NODE-016·045, LANDING-084).
 - 고정 필드 집합은 모든 종류에 동일합니다. 생성자는 선언 순서대로 필드에 대입하고 생성자·필드 초기화식에 노드별 객체·배열·함수 할당을 두지 않습니다(NODE-004·010).
 

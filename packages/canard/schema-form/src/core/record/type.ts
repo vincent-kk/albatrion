@@ -1,3 +1,5 @@
+import type { PathKeyedMap } from '../utils/pathIndex/PathKeyedMap';
+import type { PathKeyedSet } from '../utils/pathIndex/PathKeyedSet';
 import type {
   BlueprintChildEntry,
   Blueprint,
@@ -227,17 +229,17 @@ interface SchemaNodeRootRuntimeState {
   /** Form-level load source, read at node paths. */
   loadSnapshot: unknown;
   /** Per-kind latent leaf raw or a host's own frozen raw and extras. */
-  latentRaw: Map<string, unknown>;
+  latentRaw: PathKeyedMap<unknown>;
   /** Whether latent sources changed since the last inactive-value publication. */
   latentRawDirty?: boolean;
   /** Latent occurrence shape and document position, keyed like latentRaw. */
-  latentRawMetadata?: Map<string, LatentRawMetadata>;
+  latentRawMetadata?: PathKeyedMap<LatentRawMetadata>;
   /** Current paths whose raw values miss their effective types. */
-  typeMismatchPaths: Set<string>;
+  typeMismatchPaths: PathKeyedSet;
   /** Commit-scoped inactive value lists keyed by node path. */
-  inactiveValuesMemo: Map<string, readonly { path: string; value: unknown }[]>;
+  inactiveValuesMemo: PathKeyedMap<readonly { path: string; value: unknown }[]>;
   /** Published latent item objects retained across unrelated commits. */
-  inactiveValueEntries?: Map<string, InactiveValueEntryMemo>;
+  inactiveValueEntries?: PathKeyedMap<InactiveValueEntryMemo>;
 }
 
 /** Last committed reads retained for one node reference after it exits. */
@@ -457,7 +459,7 @@ export interface SchemaNodeRuntime<Self> extends SchemaNodeRootRuntimeState {
   /** Form context shared by every occurrence and expression in this tree. */
   context?: Readonly<Record<string, unknown>>;
   /** Last committed expression inputs, keyed by live authored rule occurrence. */
-  committedRuleValues?: Map<string, unknown>;
+  committedRuleValues?: PathKeyedMap<unknown>;
   /** Committed rule keys indexed by their source path for bounded pruning. */
   committedRuleKeysBySource?: Map<string, Set<string>>;
   /** Committed rule keys indexed by live value target for exited-subtree pruning. */
@@ -489,7 +491,7 @@ export interface SchemaNodeRuntime<Self> extends SchemaNodeRootRuntimeState {
   /** Form default for clearing raw when a node leaves the shape. */
   unsetOnInactive?: boolean;
   /** Last committed active declarations keyed by the occurrence path and kind. */
-  committedDeclarationIds?: Map<string, readonly number[]>;
+  committedDeclarationIds?: PathKeyedMap<readonly number[]>;
   /** Required real analysis shared by this tree and its settlement engine. */
   blueprint: Blueprint;
   /** Number of completed synchronous settlement calls. */
@@ -499,7 +501,7 @@ export interface SchemaNodeRuntime<Self> extends SchemaNodeRootRuntimeState {
   /** Newly lit mismatch records in the last committed batch. */
   typeMismatchRecords?: readonly TypeMismatchRecord[];
   /** Commit-scoped subtree mismatch path lists. */
-  typeMismatchesMemo?: Map<string, { commit: number; paths: readonly string[] }>;
+  typeMismatchesMemo?: PathKeyedMap<{ commit: number; paths: readonly string[] }>;
   /** Frozen last-commit reads for departed references, allocated on first exit. */
   detachedReads?: WeakMap<object, DetachedSchemaNodeReads>;
   /** Stable watch path results for each node within one completed commit. */

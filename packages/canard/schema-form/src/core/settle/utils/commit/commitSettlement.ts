@@ -1,3 +1,4 @@
+import { PathKeyedMap } from '../../../utils/pathIndex/PathKeyedMap';
 import type { SchemaNodeRecord, TypeMismatchRecord } from '../../../record';
 import { indexSchemaNodeWarning } from '../../../record';
 import { NON_JSON_WHOLE_VALUE, TYPE_MISMATCH } from '../../../../errors';
@@ -43,7 +44,7 @@ export const commitSettlement = <Self extends SchemaNodeRecord<Self>>(
   } else delete runtime.settlementTrace;
   const commit = (runtime.commitNumber ?? 0) + 1;
   runtime.commitNumber = commit;
-  const declarations = runtime.committedDeclarationIds ?? new Map();
+  const declarations = runtime.committedDeclarationIds ??= new PathKeyedMap('pair');
   runtime.committedDeclarationIds = declarations;
   for (const [node, ids] of context.selectedDeclarationIds)
     if (!node.detached)
@@ -120,7 +121,7 @@ export const commitSettlement = <Self extends SchemaNodeRecord<Self>>(
       if (path !== context.target.path) refreshTargets.add(path);
   runtime.refreshTargets = refreshTargets;
   const mismatchMemo = runtime.typeMismatchesMemo ??
-    new Map<string, { commit: number; paths: readonly string[] }>();
+    new PathKeyedMap<{ commit: number; paths: readonly string[] }>('path');
   mismatchMemo.clear();
   if (runtime.typeMismatchPaths.size === 0)
     mismatchMemo.set('', { commit, paths: EMPTY_PATHS });

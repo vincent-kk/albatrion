@@ -1,3 +1,5 @@
+import { PathKeyedMap } from '../../utils/pathIndex/PathKeyedMap';
+import { PathKeyedSet } from '../../utils/pathIndex/PathKeyedSet';
 import { describe, expect, it } from 'vitest';
 
 import { blueprint } from '../../blueprint';
@@ -11,8 +13,8 @@ import { createTestTree } from './fixtures/createTestTree';
 const createSurfaceTree = (schema: BlueprintSchema) => schemaNodeFactory(
   blueprint(schema), { context: {},
     diagnostics: { status: 'stable' }, loadSnapshot: undefined,
-    latentRaw: new Map(), typeMismatchPaths: new Set(),
-    inactiveValuesMemo: new Map() });
+    latentRaw: new PathKeyedMap('pair'), typeMismatchPaths: new PathKeyedSet(),
+    inactiveValuesMemo: new PathKeyedMap<readonly { path: string; value: unknown }[]>('path') });
 
 // filid:contract settle-state-keys
 describe('settled controls', () => {

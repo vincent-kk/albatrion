@@ -1,3 +1,4 @@
+import { PathKeyedMap } from '../../../utils/pathIndex/PathKeyedMap';
 import { isArray } from '@winglet/common-utils/filter';
 
 import type { BlueprintNode } from '../../../blueprint';
@@ -37,7 +38,7 @@ export const setLatentRaw = <Self extends SchemaNodeRecord<Self>>(
   if (present) latent.set(key, value);
   else latent.delete(key);
   if (template && order) {
-    const metadata = runtime.latentRawMetadata ?? new Map();
+    const metadata = runtime.latentRawMetadata ??= new PathKeyedMap('pair');
     runtime.latentRawMetadata = metadata;
     const identity: unknown = JSON.parse(key);
     if (isArray(identity) && typeof identity[0] === 'string')

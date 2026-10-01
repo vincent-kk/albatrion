@@ -1,3 +1,5 @@
+import { PathKeyedMap } from '../../utils/pathIndex/PathKeyedMap';
+import { PathKeyedSet } from '../../utils/pathIndex/PathKeyedSet';
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 
@@ -12,9 +14,9 @@ const makeTree = (schema: BlueprintSchema, snapshot: unknown = undefined) =>
   schemaNodeFactory(blueprint(schema), {
   diagnostics: { status: 'stable' },
   loadSnapshot: snapshot,
-  latentRaw: new Map(),
-  typeMismatchPaths: new Set(),
-  inactiveValuesMemo: new Map(),
+  latentRaw: new PathKeyedMap('pair'),
+  typeMismatchPaths: new PathKeyedSet(),
+  inactiveValuesMemo: new PathKeyedMap<readonly { path: string; value: unknown }[]>('path'),
   });
 
 describe('SchemaNode PR-2 surface', () => {

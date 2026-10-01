@@ -1,3 +1,5 @@
+import { PathKeyedMap } from '../../../utils/pathIndex/PathKeyedMap';
+import { PathKeyedSet } from '../../../utils/pathIndex/PathKeyedSet';
 import { blueprint } from '../../../blueprint';
 import { EMPTY_REVISION_LEDGER } from '../../../record';
 import type { SchemaNodeRecord, SchemaNodeRuntime } from '../../../record';
@@ -26,9 +28,9 @@ export const createNode = (
       globalStateCounts: new Map(),
       globalState: {},
       loadSnapshot: undefined,
-      latentRaw: new Map(),
-      typeMismatchPaths: new Set(),
-      inactiveValuesMemo: new Map(),
+      latentRaw: new PathKeyedMap('pair'),
+      typeMismatchPaths: new PathKeyedSet(),
+      inactiveValuesMemo: new PathKeyedMap<readonly { path: string; value: unknown }[]>('path'),
     };
   const escapedName = name.replace(/~/g, '~0').replace(/\//g, '~1');
   const node: TestNode = {

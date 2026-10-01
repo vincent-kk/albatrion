@@ -1,3 +1,5 @@
+import { PathKeyedMap } from '../src/core/utils/pathIndex/PathKeyedMap';
+import { PathKeyedSet } from '../src/core/utils/pathIndex/PathKeyedSet';
 /**
  * TEST-032: compare array input, whole writes, and retained heap with the legacy engine.
  * Run under Node/V8 and Bun/JSC without overlapping other benchmarks.
@@ -51,8 +53,8 @@ function makeTree(engine: Engine, input: Item[], analysis?: ReturnType<typeof bl
       onChange }) as unknown as BenchTree;
   const root = schemaNodeFactory(analysis ?? blueprint(schema), {
     diagnostics: { status: 'stable' },
-    loadSnapshot: undefined, latentRaw: new Map(),
-    typeMismatchPaths: new Set(), inactiveValuesMemo: new Map(),
+    loadSnapshot: undefined, latentRaw: new PathKeyedMap('pair'),
+    typeMismatchPaths: new PathKeyedSet(), inactiveValuesMemo: new PathKeyedMap<readonly { path: string; value: unknown }[]>('path'),
   }, createTestValidator()) as RuntimeSchemaNode;
   loadSchemaNodeAtMount(root, input, SetValueOption.Overwrite);
   return root as unknown as BenchTree;

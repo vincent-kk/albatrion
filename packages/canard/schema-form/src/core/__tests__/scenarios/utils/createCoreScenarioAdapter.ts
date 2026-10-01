@@ -1,3 +1,5 @@
+import { PathKeyedMap } from '../../../utils/pathIndex/PathKeyedMap';
+import { PathKeyedSet } from '../../../utils/pathIndex/PathKeyedSet';
 import type { FormScenario, ScenarioAdapter } from '@aileron/schema-form-scenarios';
 import { expect } from 'vitest';
 
@@ -21,9 +23,9 @@ export function createCoreScenarioAdapter(
   const root = schemaNodeFactory(blueprint(scenario.schema as BlueprintSchema), {
     diagnostics: { status: 'stable' },
     loadSnapshot: undefined,
-    latentRaw: new Map(),
-    typeMismatchPaths: new Set(),
-    inactiveValuesMemo: new Map(),
+    latentRaw: new PathKeyedMap('pair'),
+    typeMismatchPaths: new PathKeyedSet(),
+    inactiveValuesMemo: new PathKeyedMap<readonly { path: string; value: unknown }[]>('path'),
   }, createTestValidator());
   loadSchemaNodeAtMount(root as RuntimeSchemaNode, scenario.initialValue,
     SetValueOption.Overwrite);

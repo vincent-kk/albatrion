@@ -1,30 +1,34 @@
 import { isArray } from '@winglet/common-utils/filter';
-
 import type { FormErrorRecord } from '../../../../errors';
-
 import type { SchemaNodeRuntime } from '../../../record';
 import { indexSchemaNodeWarning } from '../../../record';
-import { updateCommittedRuleValue } from '../commit/updateCommittedRuleValue';
+import { getRuntimePathStores } from '../pathIndex/getRuntimePathStores';
+import { prunePerishedPaths } from '../transition/prunePerishedPaths';
+import { rekeyPairedPathStore } from './utils/rekeyPairedPathStore';
+import { rekeyCommittedRules } from './utils/rekeyCommittedRules';
+import { rekeyLatentMetadata } from './utils/rekeyLatentMetadata';
+import type { ArrayPathMove } from './type';
 
-/** An old item position that either survives at another position or perishes. */
-export interface ArrayPathMove {
-  /** Absolute item prefix before the structural edit. */
-  readonly previous: string;
-  /** Surviving item's absolute destination, absent when it perishes. */
-  readonly current?: string;
-}
+export type { ArrayPathMove } from './type';
 
 /**
- * Move every absolute-path store in two phases so chained shifts cannot collide.
- * @param runtime - Tree-owned stores and their memoized path indexes
+ * Move indexed entries in two phases so chained shifts cannot collide.
+ * @param runtime - Tree-owned stores and their persistent path indexes
  * @param hostPath - Array host whose position paths are being replaced
- * @param moves - Old position prefixes and their surviving destinations
- * @returns Nothing; cached subtree views are invalidated
+ * @param moves - Every old slot in order, with destinations absent for perished slots
+ * @returns Nothing; affected cached views are invalidated
  */
 export const rekeyArrayRuntimePaths = <Self>(
   runtime: SchemaNodeRuntime<Self>, hostPath: string,
   moves: readonly ArrayPathMove[],
 ): void => {
+  const stores = getRuntimePathStores(runtime);
+  const unaddressed = new Set<string>();
+  for (const store of [stores.latent, stores.metadata, stores.declarations,
+    stores.rules, stores.mismatches])
+    for (const path of store.pathIndex.tail(hostPath, moves.length)) unaddressed.add(path);
+  prunePerishedPaths(runtime, unaddressed);
+  const changed = moves.filter((move) => move.previous !== move.current);
   const prefix = `${hostPath}/`;
   const moveByPath = new Map(moves.map((move) => [move.previous, move.current]));
   const mapPath = (path: string): string | undefined => {
@@ -35,12 +39,11 @@ export const rekeyArrayRuntimePaths = <Self>(
     return destination === undefined ? undefined : destination + path.slice(itemPath.length);
   };
   const warningKeys = new Set<string>();
-  for (const move of moves)
+  for (const move of changed)
     for (const key of runtime.warningKeysByPath?.get(move.previous) ?? [])
       warningKeys.add(key);
   const warningMoves: { key: string; path: string;
-    record: FormErrorRecord | undefined;
-    remembered: boolean }[] = [];
+    record: FormErrorRecord | undefined; remembered: boolean }[] = [];
   for (const key of warningKeys) {
     const parts: unknown = JSON.parse(key);
     if (!isArray(parts) || typeof parts[1] !== 'string') continue;
@@ -56,73 +59,31 @@ export const rekeyArrayRuntimePaths = <Self>(
     if (move.remembered) (runtime.warningKeys ??= new Set()).add(move.key);
     indexSchemaNodeWarning(runtime, move.key, move.path, move.record);
   }
-  const rekeyPairMap = <Value>(store: Map<string, Value> | undefined,
-    transform?: (value: Value, path: string, previous: string) => Value): void => {
-    if (!store) return;
-    const inserts: [string, Value][] = [];
-    for (const [key, value] of store) {
-      const parts: unknown = JSON.parse(key);
-      if (!isArray(parts) || typeof parts[0] !== 'string' ||
-        !parts[0].startsWith(prefix)) continue;
-      store.delete(key);
-      const path = mapPath(parts[0]);
-      if (path === undefined) continue;
-      parts[0] = path;
-      inserts.push([JSON.stringify(parts), transform
-        ? transform(value, path, key) : value]);
-    }
-    for (const [key, value] of inserts) store.set(key, value);
-  };
-  rekeyPairMap(runtime.latentRaw);
-  rekeyPairMap(runtime.latentRawMetadata, (metadata, path, key) => {
-    const previous: unknown = JSON.parse(key);
-    const position = hostPath === '' ? 0 : hostPath.split('/').length - 1;
-    const order = [...metadata.order];
-    if (isArray(previous) && typeof previous[0] === 'string' &&
-      previous[0] !== path && order.length > position)
-      order[position] = Number(path.slice(prefix.length).split('/')[0]);
-    return { ...metadata, path, order };
-  });
-  rekeyPairMap(runtime.committedDeclarationIds);
-  runtime.latentRawDirty = true;
+  const latentChanged = changed.some((move) =>
+    stores.latent.pathIndex.under(move.previous).size > 0 ||
+    stores.metadata.pathIndex.under(move.previous).size > 0);
+  rekeyPairedPathStore(stores.latent, changed, mapPath);
+  rekeyPairedPathStore(stores.metadata, changed, mapPath,
+    (metadata, path, previous) => rekeyLatentMetadata(metadata, path, previous, hostPath));
+  rekeyPairedPathStore(stores.declarations, changed, mapPath);
+  if (latentChanged) runtime.latentRawDirty = true;
+  rekeyCommittedRules(runtime, changed, mapPath);
 
-  if (runtime.committedRuleValues) {
-    const values = [...runtime.committedRuleValues];
-    runtime.committedRuleValues.clear();
-    runtime.committedRuleKeysBySource?.clear();
-    runtime.committedRuleKeysByTarget?.clear();
-    for (const [key, value] of values) {
-      const parts: unknown = JSON.parse(key);
-      if (!isArray(parts) || typeof parts[0] !== 'string') continue;
-      const source = mapPath(parts[0]);
-      const target = typeof parts[5] === 'string' ? mapPath(parts[5]) : undefined;
-      if (source === undefined || (typeof parts[5] === 'string' &&
-        target === undefined)) continue;
-      parts[0] = source;
-      if (target !== undefined) parts[5] = target;
-      updateCommittedRuleValue(runtime, JSON.stringify(parts), 'set', value);
-    }
-  }
-
-  const mismatches: string[] = [];
-  for (const path of runtime.typeMismatchPaths) {
-    if (!path.startsWith(prefix)) continue;
-    runtime.typeMismatchPaths.delete(path);
+  const mismatchKeys = new Set<string>();
+  for (const move of changed)
+    for (const path of stores.mismatches.pathIndex.under(move.previous)) mismatchKeys.add(path);
+  const mismatches: { previous: string; current?: string }[] = [];
+  for (const path of mismatchKeys) {
     const current = mapPath(path);
-    if (current !== undefined) mismatches.push(current);
+    mismatches.push({ previous: path, current });
   }
-  for (const path of mismatches) runtime.typeMismatchPaths.add(path);
+  stores.mismatches.replacePaths(mismatches);
 
-  const intersectsHost = (path: string): boolean =>
-    path === hostPath || path.startsWith(prefix) ||
-    (path !== '' && hostPath.startsWith(`${path}/`)) || path === '';
-  for (const path of runtime.typeMismatchesMemo?.keys() ?? [])
-    if (intersectsHost(path)) runtime.typeMismatchesMemo?.delete(path);
-  for (const path of runtime.inactiveValuesMemo.keys())
-    if (intersectsHost(path)) runtime.inactiveValuesMemo.delete(path);
-  for (const key of runtime.inactiveValueEntries?.keys() ?? []) {
-    const parts: unknown = JSON.parse(key);
-    if (isArray(parts) && typeof parts[0] === 'string' &&
-      intersectsHost(parts[0])) runtime.inactiveValueEntries?.delete(key);
+  for (const store of [stores.mismatchMemo, stores.inactiveMemo, stores.inactiveEntries]) {
+    if (store !== stores.mismatchMemo && !latentChanged && !runtime.latentRawDirty) continue;
+    const keys = new Set<string>();
+    for (const move of changed)
+      for (const key of store.pathIndex.intersecting(move.previous)) keys.add(key);
+    for (const key of keys) store.delete(key);
   }
 };

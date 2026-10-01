@@ -1,3 +1,5 @@
+import { PathKeyedMap } from '../../utils/pathIndex/PathKeyedMap';
+import { PathKeyedSet } from '../../utils/pathIndex/PathKeyedSet';
 import { describe, expect, it } from 'vitest';
 
 import { blueprint } from '../../blueprint';
@@ -37,9 +39,9 @@ const makeRecord = (
     globalStateCounts: new Map(),
     globalState: {},
     loadSnapshot: undefined,
-    latentRaw: new Map(),
-    typeMismatchPaths: new Set(),
-    inactiveValuesMemo: new Map(),
+    latentRaw: new PathKeyedMap('pair'),
+    typeMismatchPaths: new PathKeyedSet(),
+    inactiveValuesMemo: new PathKeyedMap<readonly { path: string; value: unknown }[]>('path'),
   },
   blueprintNode,
   parent: null,
