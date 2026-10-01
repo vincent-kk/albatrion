@@ -280,7 +280,8 @@
 
 - 결정:
   > **묶음.** 오류가 하나면 그대로 던진다. 둘 이상이면(부른 쪽이 있는 자리에서 `onError` 핸들러가 던진 예외를 원래 오류와 합칠 때 포함) `SchemaFormError` 하나(전용 코드, 가칭 `SCHEMA_FORM_ERROR.MULTIPLE_ERRORS`)로 묶어 발생 순서대로 `details.errors`에 담는다. 식이 던진 원래 예외는 `SchemaFormError`로 감싸고 `details.error`에 싣는다(오늘 `INJECT_TO`와 같은 방식). 내장 `AggregateError`와 `Error`의 `cause` 선택지는 쓰지 않는다. 빌드 변환 대상이 ES2020이라 둘 다 없고, 내장 `AggregateError`로 판별하면 사용자 코드의 `Promise.any`가 낸 남의 오류까지 폼의 것으로 오인한다. `BaseError.toJSON`이 `details`를 재귀 복사하므로 `details.errors`는 새 장치 없이 직렬화된다.
-- 보충: 없음
+- 보충:
+  > 편집자 결정(55C-01): "【추론】 ERROR-005는 "오류가 하나면 그대로 던진다. 둘 이상이면 … `SchemaFormError` 하나(전용 코드, 가칭 `SCHEMA_FORM_ERROR.MULTIPLE_ERRORS`)로 묶어 발생 순서대로 `details.errors`에 담는다"고 적었고 ERROR-041은 가드 실패를 게이트마다의 정착 오류로 두었으므로, 한 쓰기가 가드 둘을 실패시키면 둘 다 기록되고(둘 다 surface `thrown`) 사슬 끝에서 하나로 묶어 던진다; `settle/utils/gates/evaluateGate.ts:127`이 첫 실패만 남기고 둘째를 드러내지 않는 것은 기록과 던짐이 어긋나는 결함이다. "`SchemaFormError`의 집계 오류(`details.errors`)"는 LANDING-064의 PR-4 행이므로 05가 PR-4에서 고친다(정착이 실패를 모으고 사슬 끝의 디스패치가 묶음); 06·07에 넘기지 않는다." (`reviews/round-55-closing.md:9`)
 - 상태: 현행
 - 출처: `adr/0014-error-policy.md:51`(정본), `08-design-a-to-z.md:355`, `03-mental-model.md:180`(맥락: "둘 이상의 오류는 `SchemaFormError`의 `details.errors`로 묶는다(`AggregateError`·`cause`는 쓰지 않는다)")
 - 닫은 사람: 편집자 결정(17라운드, ADR 0014 4판 채택)
@@ -819,6 +820,9 @@
 - 보충:
   > "AJV에서 가드의 호출은 싸고(좁은 가드 5–58 ns, 루트에 걸린 가드 200개를 키 입력마다 전부 돌려 7.9 µs) 비싼 것은 **컴파일**이다(가드 하나에 70–270 µs, 200개면 폼 생성 시점에 14–54 ms)." (`adr/0004-validator-plugin-compile-guard.md:46`)
   > "컴파일의 실패(지원하지 않는 정규식 등)를 폼 생성의 실패로 둘 것인가. Python 정규식 `(?i)…`은 Ajv 컴파일이 throw한다. 17라운드에 닫혔다: 가드 컴파일의 실패는 폼 생성의 실패가 아니라 그 게이트의 가드 실패(정착 오류)이고, 전체 스키마 컴파일의 실패는 검증 불가다(위 결정 절, ADR 0014 4판)." (`adr/0004-validator-plugin-compile-guard.md:78`)
+  > 편집자 결정(53C-01): "【추론】 ERROR-041은 "어느 환경이든 컴파일 실패는 그 게이트의 가드 실패다(게이트는 거짓, … 정착 오류)"라고 적어 실패의 단위를 게이트 하나로 두었고, ADR 0004 §78은 "가드 컴파일의 실패는 폼 생성의 실패가 아니라 그 게이트의 가드 실패(정착 오류)이고, 전체 스키마 컴파일의 실패는 검증 불가다"라고 둘을 갈랐다; 그러므로 루트의 다른 곳에 있는 컴파일 오류는 그 루트의 전체 검증을 검증 불가(`VALIDATOR_COMPILE_FAILED`)로 만들 뿐이고, 그 오류와 무관하게 자족한 가드가 올바로 평가되는 직접 경로의 동작이 원장이 적은 동작이다. 루트 위치 경로에서 모든 가드가 실패하던 것은 "가드 인스턴스가 위치를 풀며 루트 전체를 컴파일한다"는 방식에서 생긴 한계이지 원장이 요구한 동작이 아니며, 52라운드 조건 (1)의 "같은 판정"은 컴파일되는 루트에서의 판정 일치를 뜻한다(verifier가 확인). 그래서 직접 경로는 F2를 재현하지 않고, 05는 이 차이를 플러그인 README·`CLAUDE.md`·실행 기록과 PR의 소유자 묶음에 "루트 위치 경로의 한계"로 적는다; `$schema`가 있는 루트·가드를 루트 위치 경로로 돌리는 수정은 자족 조건의 보강으로 맞다. 옵션 이름 `configure({ directGuardCompile?: boolean })`은 31C-05의 가칭 목록에 든다." (`reviews/round-53-closing.md:9`)
+  > 편집자 결정(55C-01): "【추론】 ERROR-005는 "오류가 하나면 그대로 던진다. 둘 이상이면 … `SchemaFormError` 하나(전용 코드, 가칭 `SCHEMA_FORM_ERROR.MULTIPLE_ERRORS`)로 묶어 발생 순서대로 `details.errors`에 담는다"고 적었고 ERROR-041은 가드 실패를 게이트마다의 정착 오류로 두었으므로, 한 쓰기가 가드 둘을 실패시키면 둘 다 기록되고(둘 다 surface `thrown`) 사슬 끝에서 하나로 묶어 던진다; `settle/utils/gates/evaluateGate.ts:127`이 첫 실패만 남기고 둘째를 드러내지 않는 것은 기록과 던짐이 어긋나는 결함이다. "`SchemaFormError`의 집계 오류(`details.errors`)"는 LANDING-064의 PR-4 행이므로 05가 PR-4에서 고친다(정착이 실패를 모으고 사슬 끝의 디스패치가 묶음); 06·07에 넘기지 않는다." (`reviews/round-55-closing.md:9`)
+  > 편집자 결정(55C-02): "【추론】 소비자가 `bind(instance)`로 넘긴 인스턴스의 설정은 VALIDATE-003대로 소비자의 책임이고 VALIDATE-033은 가드용 인스턴스가 `allErrors: false` 말고는 같은 설정을 따르게 했으므로, 플러그인이 가드 인스턴스에서 `strictTypes`·`strictRequired`를 몰래 끄는 것은 두 항목에 어긋난다; 그런 인스턴스에서 일부 가드가 컴파일에 실패하면 ERROR-041대로 그 게이트의 가드 실패(정착 오류, `onError` 기록)로 드러나고 전체 검증은 그대로이므로, "엄격 옵션을 켠 인스턴스를 바인딩하면 일부 `if` 가드가 컴파일에 실패해 그 게이트가 거짓이 될 수 있다(strict 모드는 기본이 아니다, VALIDATE-005)"를 플러그인 문서에 적는 문서화된 한계다. 두 가드 경로 모두 같다." (`reviews/round-55-closing.md:17`)
 - 상태: 현행
 - 출처: `adr/0014-error-policy.md:218`(정본), `08-design-a-to-z.md:180`, `adr/0004-validator-plugin-compile-guard.md:9,46,78`, `08-design-a-to-z.md:345`
 - 닫은 사람: 17라운드 스웜 수렴(편집자 결정)
