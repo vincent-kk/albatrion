@@ -1,9 +1,7 @@
 import type { SchemaNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../type';
 import { hasOwnProperty } from '@winglet/common-utils/lib';
-
-/** Declared child-name indexes shared by occurrences of one blueprint node. */
-const DECLARED_NAMES = new WeakMap<object, Set<string>>();
+import { getDeclaredChildNames } from '../declarations/getDeclaredChildNames';
 
 /**
  * Read a path only from the current projected value and undeclared extras.
@@ -38,11 +36,7 @@ export const readProjectedValue = <Self extends SchemaNodeRecord<Self>>(
       hasOwnProperty(value, name))
       value = Reflect.get(value, name);
     else {
-      let declared = DECLARED_NAMES.get(node.blueprintNode);
-      if (!declared) {
-        declared = new Set(node.blueprintNode.childEntries.map((entry) => entry.name));
-        DECLARED_NAMES.set(node.blueprintNode, declared);
-      }
+      const declared = getDeclaredChildNames(node.blueprintNode);
       if (!declared.has(name) && node.extras !== null &&
         typeof node.extras === 'object' && hasOwnProperty(node.extras, name))
         value = Reflect.get(node.extras, name);

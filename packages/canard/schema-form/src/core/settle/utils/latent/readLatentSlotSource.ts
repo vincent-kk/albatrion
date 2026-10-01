@@ -5,6 +5,7 @@ import type { SchemaNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../type';
 import { isPlain } from '../write/isPlain';
 import { getLatentPathIndex } from './getLatentPathIndex';
+import { getEnteredLatentKeys } from './getEnteredLatentKeys';
 import { HostLatent } from './HostLatent';
 
 /**
@@ -24,13 +25,12 @@ export const readLatentSlotSource = <Self extends SchemaNodeRecord<Self>>(
   if (template.kind !== 'object' || template.strategy !== 'branch')
     return undefined;
   if (own === undefined) {
-    const ignored = new Set<string>();
-    for (const node of [...context.entered, ...context.revived])
-      if (!node.detached && (!node.parent || node.parent.structure?.[node.name] === node))
-        ignored.add(JSON.stringify([node.path, node.blueprintNode.kind]));
+    const entered = getEnteredLatentKeys(context);
     let hasDescendant = false;
     for (const key of getLatentPathIndex(context).get(path) ?? []) {
-      if (ignored.has(key) || JSON.parse(key)[0] === path) continue;
+      if (JSON.parse(key)[0] === path) continue;
+      if (entered.get(key)?.some((node) => !node.detached &&
+        (!node.parent || node.parent.structure?.[node.name] === node))) continue;
       hasDescendant = true;
       break;
     }

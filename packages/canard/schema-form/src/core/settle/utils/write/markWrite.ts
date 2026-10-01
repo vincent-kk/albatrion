@@ -9,9 +9,8 @@ import { staticSpec } from './staticSpec';
 import { sameValue } from '../compute/sameValue';
 import { hasDistributedChildInput } from './hasDistributedChildInput';
 import { arrayExtras } from './arrayExtras';
-
-/** Immutable child-name membership indexes keyed by analyzed template. */
-const DECLARED_NAMES = new WeakMap<object, Set<string>>();
+import { indexEnteredLatentKey } from '../latent/indexEnteredLatentKey';
+import { getDeclaredChildNames } from '../declarations/getDeclaredChildNames';
 
 /**
  * Mark a terminal source or distribute an object host write by declared key.
@@ -27,7 +26,10 @@ export const markWrite = <Self extends SchemaNodeRecord<Self>>(
 ): void => {
   if (node.behavior.type === 'virtual' && !context.automatic &&
     context.kind !== 'load') assertVirtualWriteShape(node, input);
-  if (context.loadScope) context.entered.add(node);
+  if (context.loadScope) {
+    context.entered.add(node);
+    indexEnteredLatentKey(context, node);
+  }
   if (context.kind === 'load') context.changedNodes.add(node);
   if (context.kind === 'load' && node.behavior.strategy === 'branch')
     context.shapeDirtyPaths.add(node.path);
@@ -87,11 +89,7 @@ export const markWrite = <Self extends SchemaNodeRecord<Self>>(
     if (isMerge && node !== context.replaceScope)
       pruneLatentRaw(node.runtime, node.path, undefined, context);
   } else {
-    let declared = DECLARED_NAMES.get(node.blueprintNode);
-    if (!declared) {
-      declared = new Set(node.blueprintNode.childEntries.map((entry) => entry.name));
-      DECLARED_NAMES.set(node.blueprintNode, declared);
-    }
+    const declared = getDeclaredChildNames(node.blueprintNode);
     whole = !isMerge;
     nextRaw = isMerge ? node.raw : undefined;
     if (isMerge && nextRaw !== undefined) context.wrongKindHosts.add(node);

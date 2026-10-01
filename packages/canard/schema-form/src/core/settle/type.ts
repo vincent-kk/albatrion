@@ -49,6 +49,8 @@ export interface SettlementContext<Self extends SchemaNodeRecord<Self>> {
   entered: Set<Self>;
   /** Reused pending occurrences whose sources must remain visible to fills. */
   revived: Set<Self>;
+  /** Entered then revived occurrences by latent key, built lazily and invalidated on rename. */
+  enteredLatentKeys?: Map<string, Self[]>;
   /** Nodes detached from the previous shape during this call. */
   exited: Set<Self>;
   /** Nodes absent in a middle round and eligible for same-instance reentry. */

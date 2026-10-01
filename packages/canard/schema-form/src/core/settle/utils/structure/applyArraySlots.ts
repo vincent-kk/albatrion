@@ -9,6 +9,7 @@ import { createChildNode } from '../compute/createChildNode';
 import { captureDetachedSchemaNodeReads } from '../detached/captureDetachedSchemaNodeReads';
 import { getGateRegistry } from '../gates/getGateRegistry';
 import { readRawTree } from '../latent/readRawTree';
+import { indexEnteredLatentKey } from '../latent/indexEnteredLatentKey';
 import { getLoadValue } from '../load/getLoadValue';
 import { setLoadValue } from '../load/setLoadValue';
 import { arrayExtras } from '../write/arrayExtras';
@@ -89,6 +90,7 @@ export const applyArraySlots = <Self extends SchemaNodeRecord<Self>>(
   if (perishedPaths) prunePerishedPaths(host.runtime, perishedPaths);
   rekeyArrayRuntimePaths(host.runtime, host.path, moves);
   context.latentDescendantKeys = undefined;
+  context.enteredLatentKeys = undefined;
 
   for (const [name, item] of Object.entries(nextItems)) {
     if (!reused.has(item) || item.name === name) continue;
@@ -117,6 +119,7 @@ export const applyArraySlots = <Self extends SchemaNodeRecord<Self>>(
   context.shapeDirtyPaths.add(host.path);
   for (const { node, value } of created) {
     context.entered.add(node);
+    indexEnteredLatentKey(context, node);
     markWrite(node, value, context);
   }
   if (context.hasGates)

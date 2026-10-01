@@ -6,6 +6,7 @@ import { hasOwnProperty } from '@winglet/common-utils/lib';
 import { escapeSegment } from '@winglet/json/pointer';
 import { enterSchemaNode } from './enterSchemaNode';
 import { createChildNode } from './createChildNode';
+import { indexEnteredLatentKey } from '../latent/indexEnteredLatentKey';
 
 /**
  * Start a gate wheel with only ungated children and their static overlays.
@@ -32,10 +33,14 @@ export const primeHost = <Self extends SchemaNodeRecord<Self>>(
     const child = priorChild ?? pending ?? createChildNode(node, entry);
     context.perished.delete(child);
     context.pendingExits.delete(key);
-    if (pending && child === pending) context.revived.add(child);
+    if (pending && child === pending) {
+      context.revived.add(child);
+      indexEnteredLatentKey(context, child);
+    }
     if (context.hasGates) getGateRegistry(child.runtime).register(child);
     if (!priorChild && !pending) {
       context.entered.add(child);
+      indexEnteredLatentKey(context, child);
       if (child.behavior.type === 'virtual') context.dirtyPaths.add(child.path);
       else enterSchemaNode(node, child, entry.name, context);
       if (child.behavior.strategy === 'branch')

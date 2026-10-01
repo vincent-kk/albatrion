@@ -17,6 +17,7 @@ import { enterSchemaNode } from './enterSchemaNode';
 import { hasDistributedChildInput } from '../write/hasDistributedChildInput';
 import { createChildNode } from './createChildNode';
 import type { BlueprintChildEntry } from '../../../blueprint';
+import { indexEnteredLatentKey } from '../latent/indexEnteredLatentKey';
 
 /** Ungated declarations are included by the effective-schema merger itself. */
 const NO_ACTIVE_IDS: readonly number[] = Object.freeze([]);
@@ -157,11 +158,15 @@ export const selectChildren = <Self extends SchemaNodeRecord<Self>>(
     const child = currentChild ?? priorChild ?? pending ?? createChildNode(node, entry);
     context.perished.delete(child);
     context.pendingExits.delete(key);
-    if (pending && child === pending) context.revived.add(child);
+    if (pending && child === pending) {
+      context.revived.add(child);
+      indexEnteredLatentKey(context, child);
+    }
     if (context.hasGates) getGateRegistry(child.runtime).register(child);
     let entryChanged = false;
     if (!priorChild && !currentChild && !pending) {
       context.entered.add(child);
+      indexEnteredLatentKey(context, child);
       if (child.behavior.type === 'virtual') context.dirtyPaths.add(child.path);
       else enterSchemaNode(node, child, entry.name, context);
       if (child.behavior.strategy === 'branch')
