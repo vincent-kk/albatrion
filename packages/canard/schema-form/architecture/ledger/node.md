@@ -139,7 +139,9 @@
 
 - 결정:
   > **행의 칸.** `interpret`(입력 해석), `assemble`(합성: 활성 자식의 방출 값 → local), `project`(투영: local → 방출 값), `finishInput`(입력 마침), `declareChildren`(자식 선언 목록만 돌려준다. 생성은 `settle`이 런타임의 `nodeFactory`로 한다), `type`, `strategy`. 행 계약의 형은 `Behavior`다. 행은 계산만 한다: 원본 쓰기, 되돌림 기록, 자식 연결과 폐기의 확정, 통지는 `settle`과 `dispatch`가 한다. 모든 행은 칸을 모두 같은 순서로 가지며 없는 동작은 공유 칸으로 채우고, 뜻이 같은 칸은 함수 객체 하나를 여러 행이 함께 쓴다(공유 로직을 타입별로 흩지 않는다는 요건을 행 수준에서도 지킨다). 옵션에서 나오는 정적 선택(빈 값 생략, 배열 뒤쪽 생략, `trim`, 배열 한계)은 칸이 불릴 때마다 계산하지 않고 유효 스키마 메모가 바뀔 때 한 번 계산해 메모와 함께 둔다.
-- 보충: 없음
+- 보충:
+  > 편집자 결정(36C-01): "【추론】 NODE-014가 "비배열에서 부르면 행의 공유 칸이 `SchemaFormError`를 던지므로 겉면과 `dispatch`는 종류를 묻지 않는다"고 적은 그 칸은 NODE-006·LANDING-056의 일곱 칸(`interpret`·`assemble`·`project`·`finishInput`·`declareChildren`·`type`·`strategy`)에 들어 있지 않으므로, 배열 구조 연산을 받는 여덟째 칸으로 모든 행이 같은 자리에 갖는다; 일곱 칸 목록은 모순되지 않고 늘어난다. 칸 이름(06 제안 `arrange`)과 자리(`declareChildren` 뒤, `type` 앞)는 06의 실행 결정 기록이 정하고 모듈 DETAIL은 이 라운드와 그 기록을 함께 인용한다." (`reviews/round-36-closing.md:9`)
+  > 편집자 결정(36C-01): "【추론】 NODE-006의 "행은 계산만 한다"대로 이 칸은 순수하다: 배열 행은 연산 계획(가지 행은 새 자리마다 옛 색인 또는 생성 값, 터미널 행은 사본 위에 만든 새 원본)을 돌려주고, 원본 쓰기·되돌림 기록·자식 연결과 폐기의 확정·통지는 `settle`과 `dispatch`가 한다; 비배열 행은 "없는 동작은 공유 칸으로 채우고, 뜻이 같은 칸은 함수 객체 하나를 여러 행이 함께 쓴다"대로 `ARRAY_METHOD_ON_NON_ARRAY`를 던지는 거부 함수 하나를 모두 함께 쓴다(ERROR-197, 35C-01)." (`reviews/round-36-closing.md:10`)
 - 상태: 현행
 - 출처: `09-landing-and-test-strategy.md:105`(정본), `reviews/round-17-owner-answers.md:38`, `reviews/round-17-owner-answers.md:43`, `reviews/round-17-owner-answers.md:44`
 - 닫은 사람: 소유자 답(`reviews/round-17-owner-answers.md:43` 9 입력 마침 칸), 17라운드 스웜 수렴(편집자 결정, `reviews/round-17-owner-answers.md:38`·`reviews/raw-round17-node-structure.md:154`; 소유자 이견 없이 권고대로 확정된 칸 `interpret`·`assemble`·`project`와 형 `Behavior`), 편집자 결정(17라운드, `reviews/round-17-owner-answers.md:44`; 소유자가 물음으로 낸 이름 `declareChildren`을 반대 없이 채택하고 칸의 일을 이름에 맞춤), 17라운드 스웜 수렴(편집자 결정, `reviews/raw-round17-node-structure.md` §5; 같은 순서, 공유 칸, 정적 선택의 메모)
@@ -245,6 +247,7 @@
   > **배열 메서드**는 클래스에 두되 타입은 `ArrayNode` 인터페이스에만 준다. 비배열에서 부르면 행의 공유 칸이 `SchemaFormError`를 던지므로 겉면과 `dispatch`는 종류를 묻지 않는다. UI 플러그인이 `node.push()`를 부른다. 비배열은 `type`이 배열이 아닌 노드를 말한다.
 - 보충:
   > 편집자 결정(35C-01): "【추론】 ERROR-197의 던짐(`type`이 배열이 아닌 노드에서 `push`·`pop`·`update`·`remove`·`clear`를 부르면 행의 공유 칸이 모든 환경에서 즉시 `SchemaFormError`를 던진다, 기록에 `path`와 `details.method`)은 PR-5가 만드는 배열 행의 공유 칸에 사는 것이라 PR-5의 몫이고, NODE-014대로 메서드는 단일 클래스에 두되 형은 공개 `ArrayNode` 인터페이스에만 준다." (`reviews/round-35-closing.md:9`)
+  > 편집자 결정(36C-01): "【추론】 NODE-014가 "비배열에서 부르면 행의 공유 칸이 `SchemaFormError`를 던지므로 겉면과 `dispatch`는 종류를 묻지 않는다"고 적은 그 칸은 NODE-006·LANDING-056의 일곱 칸(`interpret`·`assemble`·`project`·`finishInput`·`declareChildren`·`type`·`strategy`)에 들어 있지 않으므로, 배열 구조 연산을 받는 여덟째 칸으로 모든 행이 같은 자리에 갖는다; 일곱 칸 목록은 모순되지 않고 늘어난다. 칸 이름(06 제안 `arrange`)과 자리(`declareChildren` 뒤, `type` 앞)는 06의 실행 결정 기록이 정하고 모듈 DETAIL은 이 라운드와 그 기록을 함께 인용한다." (`reviews/round-36-closing.md:9`)
 - 상태: 현행
 - 출처: `09-landing-and-test-strategy.md:112`(정본) (같은 문장: ERROR-068; 그 오류 코드는 열림)
 - 닫은 사람: 17라운드 스웜 수렴(편집자 결정, `reviews/raw-round17-node-structure.md` §5)
@@ -901,7 +904,9 @@
   > 【추론】 조각은 아이템이 형상에 드는지를 정하지 않는다.
   > 【추론】 자리는 이름이 아니므로 빼면 뒤 자리가 밀리기 때문이다.
   > 【추론】 오늘 `ArrayNode/validate.ts`의 청사진 오류(아이템 청사진이 한 자리도 없는 배열 등)는 그대로 둔다.
-- 보충: 없음
+- 보충:
+  > 편집자 결정(36C-02): "【추론】 NODE-052는 자리 i의 청사진을 `prefixItems[i]`, 아니면 스키마인 `items`, 옛 철자 `items: [..]`이면 `additionalItems`로 정했는데 02 청사진은 `items: [..]`를 튜플로 컴파일하되 `additionalItems`를 컴파일하지 않으므로, 그 꼬리 자리의 아이템 템플릿 컴파일은 PR-5가 청사진에 더한다(아이템은 PR-5의 기제다, TEST-069 (라); LANDING-085가 `resolveArrayLimits`의 청사진 이동을 PR-5에 둔 것과 같은 결의 변경); 청사진 fractal의 DETAIL을 먼저 고치고 02의 기존 시험은 바꾸지 않는다." (`reviews/round-36-closing.md:17`)
+  > 편집자 결정(36C-02): "【추론】 컴파일하는 것은 `additionalItems`가 스키마 객체일 때뿐이다: `false`·불리언 `true`·없음은 NODE-052대로 "청사진이 없는 자리"라 노드를 만들지 않고 값은 호스트 `extras`로 가며 버리지도 막지도 않는다; 꼬리가 닫혔는지의 판정(`false`)과 열린 꼬리의 허용(`true`·없음)은 검증기의 몫이고 형상은 둘을 가르지 않는다. 새 철자 `items`가 스키마이고 `prefixItems`가 있을 때의 꼬리는 이미 `items`다." (`reviews/round-36-closing.md:18`)
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:1662-1680`(정본)
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-59)
