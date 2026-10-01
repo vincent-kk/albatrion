@@ -56,6 +56,9 @@ Planning method: 저장소 지침 — `PLAN.md` §2와 `plan/prompts.md`의 단�
 | 2026-10-01 | U13 | codex(세션 `afa0fe6a`): 05 몫 회귀 이식 다섯 파일(31 사례), SCN `notify`·`validation` 부류와 코어 러너. 사례 `selfcheck-v5.mjs:765`가 엔진 결함(M7)을 드러내 그 파일은 수정과 함께 커밋. G39 충족(조율 세션 재실행) | `27c2eeae6` |
 | 2026-10-01 | U11c | codex(세션 `d15bc93e`): ajv8 세 진입점(`allowUnionTypes`, 방언 선언), 등록 공유, `bind` 거부, 오류 변환. VALIDATE-046 (i)–(iv)·VALIDATE-047 (i)–(iii) 일치, (iv)는 같은 위치를 여러 동적 범위에서 쓸 때 독립 판정이 갈려 계획대로 미지원 문서화 — 소유자 상신 항목. 거부 오류 클래스 파일은 세 패키지에서 같음. G34·G35 충족(조율 세션 재실행) | `02f66d132` |
 | 2026-10-01 | M7 수정 | codex(세션 `ba36c445`): 상한에 닿은 리스너 되먹임 쓰기를 진입 전에 거부(`refuseListenerFeedback`, 공개 쓰기 진입 12곳이 결과를 확인). core unit 1,313 통과, G38 충족(조율 세션 재실행) | `dbd0cfdc3` |
+| 2026-10-01 | U11b | M6 수정 뒤 codex 새 세션(`42bfe63a`)이 ajv6을 본떠 구현. VALIDATE-046 (i)–(iv) 기본·`bind` 인스턴스 일치, VALIDATE-047 (i)–(iii) 일치, (iv)는 ajv8과 같이 미지원 문서화(소유자 상신 항목). 동적 참조 사례에서 독립 오라클도 스택이 넘쳐 참조를 자식 한 단계로 한정해 판정. 거부 오류 클래스 파일 세 패키지 동일(`cmp`). G32·G33 충족(조율 세션 재실행) | `5934ff18c` |
+| 2026-10-01 | 원장 | 44·45라운드 merge — 둘 다 06의 몫(통째 교체의 이차 비용, 가상 노드의 쓰기 종류 전달)이라 05 영향 없음. 06은 아직 `1.0.0-beta`에 머지되지 않음 | merge 커밋 |
+| 2026-10-01 | U12b | codex(세션 `681db4bc`): 같은 ajv 경로 비교 넷(core는 SCN `validationScenarios` 전부, 플러그인은 사례를 파일 안에 둠 — 플러그인에 SCN 개발 의존을 더하지 않는다는 소유자 결정 때문에 계획의 "SCN에서 읽음"과 다름). 파일 머리에 교차 구현 오라클은 ajv 아닌 플러그인을 기다린다고 적음(40라운드). 불일치 0. 사례 수가 적음(core 2, ajv6·7 각 3, ajv8 3×3) — PR 리뷰에서 판단 받음. G37 충족(조율 세션 재실행) | `6c494f9ce` |
 
 ### 31C-05 가칭 확정
 
@@ -141,9 +144,19 @@ Planning method: 저장소 지침 — `PLAN.md` §2와 `plan/prompts.md`의 단�
 
 ## 3. 다음 행동
 
-- U11b(재착수) 뒤에 U12b, U15(단독 실행), U16a·U16b.
-- PR 뒤 원장 관리 세션에 보낼 소유자 상신 묶음: (1) VALIDATE-047 (iv) — 한 위치를 여러 동적 범위에서 쓰는 스키마의 가드 미지원 문서화 권고(ajv8; ajv7 결과 대기), (2) U15의 새 느린 행 수용, (3) 31C-05 가칭 확정 목록의 보충 기록.
-- 가칭 이름 확정 목록(U2, 31C-05)에 06이 더하는 `ARRAY_METHOD_ON_NON_ARRAY`(ERROR-197)를 넣는다: 배열이 아닌 노드에 `push`·`pop`·`update`·`remove`·`clear`를 부르면 배열 동사의 공용 칸이 던지는 `SchemaFormError`, 기록은 `path`와 `details.method`(06 세션 `albatrion-52`, 35C-01). 06은 `onError`에 보고하지 않고 던지며, 던지기 직전의 보고는 나중에 머지하는 단계의 디스패치 연결과 함께 든다(33C-01).
+- U15(단독 실행) 뒤에 U16a·U16b.
+- PR 뒤 원장 관리 세션에 보낼 소유자 상신 묶음: (1) VALIDATE-047 (iv) — 한 위치를 여러 동적 범위에서 쓰는 스키마의 가드 미지원 문서화 권고(ajv7·ajv8), (2) U15의 새 느린 행 수용, (3) 31C-05 가칭 확정 목록의 보충 기록.
+
+### 06에 넘길 목록(05가 먼저 머지할 때, 33C-01·G46)
+
+06은 `1.0.0-beta`에 머지되지 않았으므로(2026-10-01) 05가 먼저 머지하면 06이 두 번째로 머지하는 단계다. 위 머리의 33C-01 합의 문장대로 06이 맡을 것:
+
+1. 배열 동사 다섯(`push`·`pop`·`update`·`remove`·`clear`)의 진입 파일을 `src/core/dispatch/utils/entry/dispatch{Push,Pop,Update,Remove,Clear}.ts`로 두고 `dispatch/index.ts`에 이름으로 내보내며, 겉면은 그것에 한 문장으로 위임하고 `arrayBehavior/`에는 진입 사슬을 두지 않는다. 진입 시험 `dispatch/__tests__/dispatch.array-entry.test.ts`(33C-01·EVENT-035·ERROR-197 태그). 각 진입은 `if (!enterSchemaNodeChain(node)) return;`로 되먹임 상한의 거부 결과를 확인한다(M7, `dbd0cfdc3`).
+2. `ARRAY_METHOD_ON_NON_ARRAY`(ERROR-197)를 던지기 직전에 `onError` 보고를 잇는다(35C-01). 이름은 05의 가칭 확정 표에 있다.
+3. `UpdatePath` 배달은 레코드의 `(previous, current)` 사실에서 디스패처가 한다(35C-02).
+4. 겉면 충돌: `SchemaNode.ts`·`SchemaNode/DETAIL.md` 멤버 표·`surface.test.ts`(이름 `26C-01 PR-4 …`, 개수는 두 단계의 합)·`SchemaNode/type.ts`·`type-contract.test.ts`·`src/core/index.ts`·`record/type.ts`를 합집합으로 맞춘다. 05의 추가는 각 파일에서 연속한 한 덩어리다.
+5. 05가 바꾼 기록 계약을 따른다: 기록 필드 `state` → `interactionState`(공개 `state`는 게터·세터), 런타임 `globalStateCounts`·`globalState`와 정착 커밋 훅 `settle/utils/commit/commitGlobalState.ts`(43C-01) — 배열 아이템이 형상에 들고 날 때도 이 훅이 센다. `setValue`·`resetSubtree`는 dispatch 진입을 거친다.
+6. 검증기 계약: `compile`·`compileGuard`·`release`는 같은 사본 객체를 받는다(M6, VALIDATE-019).
 
 ## 4. 원장·계획서 어긋남
 
