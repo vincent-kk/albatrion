@@ -139,7 +139,9 @@
 
 - 결정:
   > **행의 칸.** `interpret`(입력 해석), `assemble`(합성: 활성 자식의 방출 값 → local), `project`(투영: local → 방출 값), `finishInput`(입력 마침), `declareChildren`(자식 선언 목록만 돌려준다. 생성은 `settle`이 런타임의 `nodeFactory`로 한다), `type`, `strategy`. 행 계약의 형은 `Behavior`다. 행은 계산만 한다: 원본 쓰기, 되돌림 기록, 자식 연결과 폐기의 확정, 통지는 `settle`과 `dispatch`가 한다. 모든 행은 칸을 모두 같은 순서로 가지며 없는 동작은 공유 칸으로 채우고, 뜻이 같은 칸은 함수 객체 하나를 여러 행이 함께 쓴다(공유 로직을 타입별로 흩지 않는다는 요건을 행 수준에서도 지킨다). 옵션에서 나오는 정적 선택(빈 값 생략, 배열 뒤쪽 생략, `trim`, 배열 한계)은 칸이 불릴 때마다 계산하지 않고 유효 스키마 메모가 바뀔 때 한 번 계산해 메모와 함께 둔다.
-- 보충: 없음
+- 보충:
+  > 편집자 결정(36C-01): "【추론】 NODE-014가 "비배열에서 부르면 행의 공유 칸이 `SchemaFormError`를 던지므로 겉면과 `dispatch`는 종류를 묻지 않는다"고 적은 그 칸은 NODE-006·LANDING-056의 일곱 칸(`interpret`·`assemble`·`project`·`finishInput`·`declareChildren`·`type`·`strategy`)에 들어 있지 않으므로, 배열 구조 연산을 받는 여덟째 칸으로 모든 행이 같은 자리에 갖는다; 일곱 칸 목록은 모순되지 않고 늘어난다. 칸 이름(06 제안 `arrange`)과 자리(`declareChildren` 뒤, `type` 앞)는 06의 실행 결정 기록이 정하고 모듈 DETAIL은 이 라운드와 그 기록을 함께 인용한다." (`reviews/round-36-closing.md:9`)
+  > 편집자 결정(36C-01): "【추론】 NODE-006의 "행은 계산만 한다"대로 이 칸은 순수하다: 배열 행은 연산 계획(가지 행은 새 자리마다 옛 색인 또는 생성 값, 터미널 행은 사본 위에 만든 새 원본)을 돌려주고, 원본 쓰기·되돌림 기록·자식 연결과 폐기의 확정·통지는 `settle`과 `dispatch`가 한다; 비배열 행은 "없는 동작은 공유 칸으로 채우고, 뜻이 같은 칸은 함수 객체 하나를 여러 행이 함께 쓴다"대로 `ARRAY_METHOD_ON_NON_ARRAY`를 던지는 거부 함수 하나를 모두 함께 쓴다(ERROR-197, 35C-01)." (`reviews/round-36-closing.md:10`)
 - 상태: 현행
 - 출처: `09-landing-and-test-strategy.md:105`(정본), `reviews/round-17-owner-answers.md:38`, `reviews/round-17-owner-answers.md:43`, `reviews/round-17-owner-answers.md:44`
 - 닫은 사람: 소유자 답(`reviews/round-17-owner-answers.md:43` 9 입력 마침 칸), 17라운드 스웜 수렴(편집자 결정, `reviews/round-17-owner-answers.md:38`·`reviews/raw-round17-node-structure.md:154`; 소유자 이견 없이 권고대로 확정된 칸 `interpret`·`assemble`·`project`와 형 `Behavior`), 편집자 결정(17라운드, `reviews/round-17-owner-answers.md:44`; 소유자가 물음으로 낸 이름 `declareChildren`을 반대 없이 채택하고 칸의 일을 이름에 맞춤), 17라운드 스웜 수렴(편집자 결정, `reviews/raw-round17-node-structure.md` §5; 같은 순서, 공유 칸, 정적 선택의 메모)
@@ -245,6 +247,7 @@
   > **배열 메서드**는 클래스에 두되 타입은 `ArrayNode` 인터페이스에만 준다. 비배열에서 부르면 행의 공유 칸이 `SchemaFormError`를 던지므로 겉면과 `dispatch`는 종류를 묻지 않는다. UI 플러그인이 `node.push()`를 부른다. 비배열은 `type`이 배열이 아닌 노드를 말한다.
 - 보충:
   > 편집자 결정(35C-01): "【추론】 ERROR-197의 던짐(`type`이 배열이 아닌 노드에서 `push`·`pop`·`update`·`remove`·`clear`를 부르면 행의 공유 칸이 모든 환경에서 즉시 `SchemaFormError`를 던진다, 기록에 `path`와 `details.method`)은 PR-5가 만드는 배열 행의 공유 칸에 사는 것이라 PR-5의 몫이고, NODE-014대로 메서드는 단일 클래스에 두되 형은 공개 `ArrayNode` 인터페이스에만 준다." (`reviews/round-35-closing.md:9`)
+  > 편집자 결정(36C-01): "【추론】 NODE-014가 "비배열에서 부르면 행의 공유 칸이 `SchemaFormError`를 던지므로 겉면과 `dispatch`는 종류를 묻지 않는다"고 적은 그 칸은 NODE-006·LANDING-056의 일곱 칸(`interpret`·`assemble`·`project`·`finishInput`·`declareChildren`·`type`·`strategy`)에 들어 있지 않으므로, 배열 구조 연산을 받는 여덟째 칸으로 모든 행이 같은 자리에 갖는다; 일곱 칸 목록은 모순되지 않고 늘어난다. 칸 이름(06 제안 `arrange`)과 자리(`declareChildren` 뒤, `type` 앞)는 06의 실행 결정 기록이 정하고 모듈 DETAIL은 이 라운드와 그 기록을 함께 인용한다." (`reviews/round-36-closing.md:9`)
 - 상태: 현행
 - 출처: `09-landing-and-test-strategy.md:112`(정본) (같은 문장: ERROR-068; 그 오류 코드는 열림)
 - 닫은 사람: 17라운드 스웜 수렴(편집자 결정, `reviews/raw-round17-node-structure.md` §5)
@@ -355,6 +358,7 @@
   > | branch array | **값** — 아이템 수 × 아이템 청사진 | 위와 같다 | 인덱스와 독립적인 단조 키(현재의 `#n`, T-22) | 위와 같다 |
 - 보충:
   > "이 문서는 4차 본문이며 노드 종류 표는 5차 원장 §2를 따라 읽어야 한다: (1) 상태 칸은 `raw`·`extras` 둘뿐이고 `selection`은 없다." (`adr/0011-branch-node-composition.md:3`)
+  > 편집자 결정(38C-01): "【추론】 NODE-021·VALUE-002대로 가지 배열의 자식 집합은 값에서 오고(아이템 수 × 아이템 청사진) 자식이 있는 노드는 잘못된 종류의 값이 왔을 때만 `raw`를 드므로, 배열 호스트에 `null`·수·평범한 객체 같은 배열 아닌 값을 통째로 쓰면 호스트가 그 값을 `raw`로 들고 길이가 없으니 아이템은 0개다; 있던 아이템은 WRITE-036의 "통째 교체로 짧아진 배열"처럼 소멸이지 나감이 아니다. 객체 호스트의 자식이 스키마에서 와 비객체 `raw` 아래에도 존재한다는 VALUE-036의 문장은 자식이 값에서 오는 배열에는 옮겨 적용할 것이 없고, 아이템을 잘못된 종류의 `raw` 아래 남기라는 원장 문장은 없다." (`reviews/round-38-closing.md:9`)
 - 상태: 현행
 - 출처: `adr/0011-branch-node-composition.md:26-33`(정본)
 - 닫은 사람: 편집자 결정(ADR 0011 4차 본문, `adr/0011-branch-node-composition.md:12`), 편집자 결정(4라운드 3.1판, `adr/0011-branch-node-composition.md:5`; 노드 종류의 목록)
@@ -729,6 +733,7 @@
   > 편집자 결정(35C-09): "【추론】 `remove`·`pop`·`clear`·짧아진 통째 쓰기·로드로 소멸한 아이템과 그 자손은 NODE-044의 떼어진 노드다(읽기는 마지막 커밋에 고정, 구조 읽기는 함께 떼어진 하위 트리, `active`·`enabled`는 거짓, 구독은 남되 다시 발화하지 않음, 다시 들면 새 인스턴스); WRITE-036대로 나감 정책·나감 비움·잠복 포착·억제 비트·원본 B 기록은 없고, 런타임 경로를 키로 둔 저장소의 항목은 버린다." (`reviews/round-35-closing.md:74`)
   > 편집자 결정(35C-09): "【추론】 옛 참조로의 쓰기는 NODE-044 그대로다: 같은 (경로, 종류)의 살아 있는 인스턴스가 있으면 아무것도 하지 않고(재인덱싱 뒤에는 보통 이 경우), 없으면 루트의 (경로, 종류) 잠복 원본만 고친다; 배열을 따로 다루지 않는다." (`reviews/round-35-closing.md:75`)
   > 편집자 결정(35C-10): "【추론】 재진입은 그 값으로 아이템을 새 `#n` 키로 다시 만들고(NODE-044의 새 인스턴스, GOAL-073의 nonce), 채움은 로드·비로드 규칙대로 없음인 자손에만 간다(WRITE-007의 `push(v)` 규칙과 같다)." (`reviews/round-35-closing.md:83`)
+  > 편집자 결정(38C-02): "【추론】 잠복 원본이 생기는 길은 "노드가 형상을 떠날 때 그 노드의 원본"(26C-13, NODE-044)이고 형상은 상태(`raw`·`extras`)의 순수 함수(P3)이므로, 35C-10의 "배열 전체를 호스트 자신의 얼린 `raw`로"는 아이템의 방출이나 `local`이 아니라 원본 트리를 뜻한다: 자리마다 아이템 잎·터미널의 `raw`, 가지 아이템은 그 자식들의 원본 트리와 `extras`를 재귀로 모은 객체(배열 아이템이면 배열), 원본이 하나도 없는 자리는 `undefined`, 청사진 없는 자리는 `extras`의 값이다; VALUE-034의 방출용 채움(`{}`·`[]`·`null`)은 데이터가 아니라 얼리지 않는다." (`reviews/round-38-closing.md:18`)
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:943-959`(정본)
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-34)
@@ -871,6 +876,8 @@
 - 보충:
   > 편집자 결정(35C-02): "【추론】 구조 연산으로 아이템이 재인덱싱되면 PR-5가 그 아이템과 자손의 레코드 칸(이름·이스케이프한 이름·경로)을 고치고 `(previous, current)` 쌍을 레코드 수준의 사실로 남긴다; 그것을 `UpdatePath` 비트의 배달(EVENT-068의 payload `{ previous, current }`, 자손 포함)로 바꾸는 것은 디스패처(PR-4)의 일이라 33C-01대로 뒤에 머지하는 단계가 잇는다." (`reviews/round-35-closing.md:17`)
   > 편집자 결정(35C-03): "【추론】 SURFACE-005가 배열 쓰기를 다섯(`push`·`pop`·`update`·`remove`·`clear`)으로 닫았고, 원장의 "삽입"은 모두 "`push(v)`·삽입"(WRITE-085, WRITE-099) 또는 "`push`·`remove`·`insert`류"(NODE-051)로 연산 부류를 이름한 것이라 공개 동사도 내부 연산도 아니다; 06은 삽입을 만들지 않고, WRITE-099의 스냅숏 게이트는 `push('x')`로 충족하며 삽입 쪽은 동사가 없어 해당 없음으로 적는다. 삽입 동사가 필요해지면 SURFACE 라운드다." (`reviews/round-35-closing.md:25`)
+  > 편집자 결정(41C-01): "【추론】 노드는 생성 때 고른 행 하나를 `behavior`로 들고(NODE-002) `schemaType`은 선언에서 한 번 계산되므로(NODE-057) 다른 템플릿의 자리로 옮겨 쓸 수 없다; NODE-052는 밀림을 "값은 그 자리에 청사진이 있는지에 따라 노드와 `extras` 사이를 옮긴다"로 적고 `remove(0)` 뒤 `c`가 1번 자리에서 노드가 되는 예를 들었으므로, 같은 원리로 템플릿이 있는 두 자리 사이의 밀림에서도 노드는 옛 자리와 새 자리의 템플릿(같은 선언 객체 — `items` 또는 같은 `prefixItems[i]`; 스키마의 구조적 같음이 아니다)이 같을 때만 키 `#n`과 함께 재사용하고, 다르면 값(그 자리의 원본 트리)이 새 자리 템플릿의 새 노드의 생김 입력이 되어 새 키로 생기며 없음인 자손에만 채움이 가고(35C-10, WRITE-007), 옛 노드는 소멸한다(WRITE-036)." (`reviews/round-41-closing.md:9`)
+  > 편집자 결정(41C-01): "【추론】 템플릿이 하나인 보통의 배열(`items`만)에서는 신원이 늘 값을 따라가며, 이것이 NODE-051의 "키를 바꾸는 것은 구조 연산(`push`·`remove`·`insert`류)뿐이다"가 뜻하는 것이다." (`reviews/round-41-closing.md:10`)
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:1638-1653`(정본)
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-59)
@@ -901,7 +908,10 @@
   > 【추론】 조각은 아이템이 형상에 드는지를 정하지 않는다.
   > 【추론】 자리는 이름이 아니므로 빼면 뒤 자리가 밀리기 때문이다.
   > 【추론】 오늘 `ArrayNode/validate.ts`의 청사진 오류(아이템 청사진이 한 자리도 없는 배열 등)는 그대로 둔다.
-- 보충: 없음
+- 보충:
+  > 편집자 결정(36C-02): "【추론】 NODE-052는 자리 i의 청사진을 `prefixItems[i]`, 아니면 스키마인 `items`, 옛 철자 `items: [..]`이면 `additionalItems`로 정했는데 02 청사진은 `items: [..]`를 튜플로 컴파일하되 `additionalItems`를 컴파일하지 않으므로, 그 꼬리 자리의 아이템 템플릿 컴파일은 PR-5가 청사진에 더한다(아이템은 PR-5의 기제다, TEST-069 (라); LANDING-085가 `resolveArrayLimits`의 청사진 이동을 PR-5에 둔 것과 같은 결의 변경); 청사진 fractal의 DETAIL을 먼저 고치고 02의 기존 시험은 바꾸지 않는다." (`reviews/round-36-closing.md:17`)
+  > 편집자 결정(36C-02): "【추론】 컴파일하는 것은 `additionalItems`가 스키마 객체일 때뿐이다: `false`·불리언 `true`·없음은 NODE-052대로 "청사진이 없는 자리"라 노드를 만들지 않고 값은 호스트 `extras`로 가며 버리지도 막지도 않는다; 꼬리가 닫혔는지의 판정(`false`)과 열린 꼬리의 허용(`true`·없음)은 검증기의 몫이고 형상은 둘을 가르지 않는다. 새 철자 `items`가 스키마이고 `prefixItems`가 있을 때의 꼬리는 이미 `items`다." (`reviews/round-36-closing.md:18`)
+  > 편집자 결정(41C-01): "【추론】 노드는 생성 때 고른 행 하나를 `behavior`로 들고(NODE-002) `schemaType`은 선언에서 한 번 계산되므로(NODE-057) 다른 템플릿의 자리로 옮겨 쓸 수 없다; NODE-052는 밀림을 "값은 그 자리에 청사진이 있는지에 따라 노드와 `extras` 사이를 옮긴다"로 적고 `remove(0)` 뒤 `c`가 1번 자리에서 노드가 되는 예를 들었으므로, 같은 원리로 템플릿이 있는 두 자리 사이의 밀림에서도 노드는 옛 자리와 새 자리의 템플릿(같은 선언 객체 — `items` 또는 같은 `prefixItems[i]`; 스키마의 구조적 같음이 아니다)이 같을 때만 키 `#n`과 함께 재사용하고, 다르면 값(그 자리의 원본 트리)이 새 자리 템플릿의 새 노드의 생김 입력이 되어 새 키로 생기며 없음인 자손에만 채움이 가고(35C-10, WRITE-007), 옛 노드는 소멸한다(WRITE-036)." (`reviews/round-41-closing.md:9`)
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:1662-1680`(정본)
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-59)

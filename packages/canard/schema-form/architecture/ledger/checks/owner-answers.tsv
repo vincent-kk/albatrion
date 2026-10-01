@@ -254,3 +254,5 @@ reviews/round-30-owner-answers.md:11	30	폼 핸들의 명령 모양	"네 맞습�
 reviews/round-30-owner-answers.md:12	30	성능 최적화 작업의 자리	"맞습니다. 7끝나고 진행하면 됩니다." (2026-10-01)
 reviews/round-30-owner-answers.md:13	30	04의 스토리북 게이트	"제가 독립실행했는데 기록이 안되었군요. 모두 pass 로 끝났습니다." (2026-10-01)
 reviews/round-30-owner-answers.md:14	30	04 벤치의 느린 행	"맞습니다." (2026-10-01, 04 느린 벤치 행 수용)
+reviews/round-40-owner-answers.md:7	40	차등 시험의 독립 검증기	"내 결정이 맞다. ajv 플러그인에 다른 스키마 검증기를 추가하는건, 플러그인 단계에선 검토할만한데, 지금은 의도하지 않는다." (2026-10-01)
+reviews/round-40-owner-answers.md:8	40	차등 시험의 목적	"에당초 교차확인 목적인게 아닌가?" (2026-10-01, 되물음)

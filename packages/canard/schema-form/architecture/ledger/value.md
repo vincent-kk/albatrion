@@ -543,7 +543,8 @@
   > 【추론】 이 사용성 변화를 이주 항목(F27 확장, LANDING-125)과 PR-8 문서에 적는다.
   > 【추론】 해법은 스키마에 nullable을 적는 것이다.
   > 【추론】 값 규칙은 이미 닫혀 있고 문서화만 남았다.
-- 보충: 없음
+- 보충:
+  > 편집자 결정(39C-01): "【추론】 원장은 잘못된 종류의 값을 보존하고 방출하라고 적었다: VALUE-033 "(4) nullable이 아닌 노드의 `null`은 바꾸지 않고 받은 그대로 방출된다", 쓰기 정책 표의 "nullable이 아닌 객체의 `null`을 `{}`로 바꾸기(S7), 비객체 값 버리기 | **폐기.** 보존·방출하고 type 에러를 낸다", WRITE-013의 예(`setValue({ user: null })` 뒤 `user`는 입력이 올 때까지 `null`인 채 방출된다); PR-2로 넘어온 프로토타입도 같다(`spikes/round9/regress/selfcheck-v5.mjs:485` "A3-3/A3-4-host: null and 17 hosts emit their raw, no branch on (G={}), children exist", `:569` "after setValue({target:null}) emit {target:null}"). 그래서 38C-01이 서고, 가지 호스트(객체·배열)는 잘못된 종류의 `raw`를 자기 방출로 내며 자식 방출만 투영에서 빠진다(VALUE-002 "비객체 호스트 아래 자식의 원본은 부모의 `emit`에 나타나지 않는다"); 게이트 입력이 `G = {}`인 것(SETTLE 영역)은 게이트가 보는 값의 규칙이지 방출의 규칙이 아니다." (`reviews/round-39-closing.md:9`)
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:1123-1127`(정본)
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-40)
@@ -568,6 +569,10 @@
   > 실패: 오늘과 다른데 이주 행이 없으면 행을 더하고, 규칙의 결함이면 이 블록을 고친다.
 - 보충:
   > 편집자 결정(35C-08): "【추론】 아이템 선언의 노드 게이트와 아이템 스키마의 게이트 조각은 허용된다(BLUEPRINT-030은 게이트를 형상 확장의 경계로 센다); 게이트로 형상을 떠난 아이템은 WRITE-036의 소멸 목록(`remove`·짧아진 통째 쓰기·로드)에 없으므로 나감이며 나감 정책·비움·잠복 포착이 런타임 경로를 키로 적용되고, 자리는 색인이라 남아 VALUE-034대로 방출 없는 자리로 채운다(객체 `{}`, 배열 `[]`, 잎 `null`; `omitTrailing`은 그런 꼬리를 자른다)." (`reviews/round-35-closing.md:67`)
+  > 편집자 결정(37C-01): "【추론】 `omitTrailing`은 가지 배열의 방출 배열 꼬리에서 빈 자리의 최대 연속 구간을 자르는 투영이며, 빈 자리는 셋이다: (1) 방출이 없는 아이템의 자리를 VALUE-034대로 채운 값(객체 `{}`, 배열 `[]`, 잎 `null`), (2) 잎 아이템이 실제로 `null`을 방출한 자리(방출 배열에서 (1)의 잎과 구별되지 않고, PR-5로 넘어온 프로토타입 기대 `['a', null, null]` → `['a']`가 이것을 자른다), (3) 청사진이 없는 자리(`extras`)의 값이 `undefined` 또는 `null`인 자리." (`reviews/round-37-closing.md:9`)
+  > 편집자 결정(37C-01): "【추론】 `omitEmpty`를 끈 객체·배열 아이템이 실제로 방출한 `{}`·`[]`는 빈 자리가 아니라 자르지 않으며(VALUE-034 "`omitEmpty`를 끈 호스트는 `{}`·`[]`를 방출한다"; 프로토타입 `[{}, { a: 1 }, {}]`가 그대로 남는다), 앞과 가운데의 빈 자리는 색인을 지키기 위해 남긴다(레거시 `omitTrailingArray`의 주석과 같은 까닭, `[undefined, 'x', undefined]` → `[null, 'x']`); 원본 `raw`·상태·스냅숏은 바뀌지 않는다(GOAL P4, VALUE-034 "이 투영은 원본과 상태를 바꾸지 않는다")." (`reviews/round-37-closing.md:10`)
+  > 편집자 결정(38C-02): "【추론】 잠복 원본이 생기는 길은 "노드가 형상을 떠날 때 그 노드의 원본"(26C-13, NODE-044)이고 형상은 상태(`raw`·`extras`)의 순수 함수(P3)이므로, 35C-10의 "배열 전체를 호스트 자신의 얼린 `raw`로"는 아이템의 방출이나 `local`이 아니라 원본 트리를 뜻한다: 자리마다 아이템 잎·터미널의 `raw`, 가지 아이템은 그 자식들의 원본 트리와 `extras`를 재귀로 모은 객체(배열 아이템이면 배열), 원본이 하나도 없는 자리는 `undefined`, 청사진 없는 자리는 `extras`의 값이다; VALUE-034의 방출용 채움(`{}`·`[]`·`null`)은 데이터가 아니라 얼리지 않는다." (`reviews/round-38-closing.md:18`)
+  > 편집자 결정(38C-02): "【추론】 재진입은 그 원본 트리를 생김의 입력으로 삼아 새 키의 아이템을 만들고, 원본이 `undefined`인 자리와 자손에만 채움이 간다(35C-10, WRITE-007); 방출의 구멍은 그때 VALUE-034로 다시 채워진다." (`reviews/round-38-closing.md:20`)
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:2307-2315,2324-2327`(정본)
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-88)
@@ -595,6 +600,10 @@
   > 편집자 결정(18C-100): "【추론】 로드가 아닌 쓰기로 온 `null` 아래 자식은 채움 없이 없음이다(WRITE-090, WRITE-092)." (`reviews/round-18-closing.md:2831`)
   > 편집자 결정(18C-100): "【추론】 로드로 온 `null` 아래 자식은 로드의 새 수명이라 채움을 받는다." (`reviews/round-18-closing.md:2832`)
   > 편집자 결정(18C-100): "【추론】 그래서 VALUE-036의 "빈 상태"는 로드로 온 `null` 아래에서는 채운 상태이고, 로드가 아닌 쓰기로 온 `null` 아래에서는 없음이다." (`reviews/round-18-closing.md:2833`)
+  > 편집자 결정(38C-01): "【추론】 NODE-021·VALUE-002대로 가지 배열의 자식 집합은 값에서 오고(아이템 수 × 아이템 청사진) 자식이 있는 노드는 잘못된 종류의 값이 왔을 때만 `raw`를 드므로, 배열 호스트에 `null`·수·평범한 객체 같은 배열 아닌 값을 통째로 쓰면 호스트가 그 값을 `raw`로 들고 길이가 없으니 아이템은 0개다; 있던 아이템은 WRITE-036의 "통째 교체로 짧아진 배열"처럼 소멸이지 나감이 아니다. 객체 호스트의 자식이 스키마에서 와 비객체 `raw` 아래에도 존재한다는 VALUE-036의 문장은 자식이 값에서 오는 배열에는 옮겨 적용할 것이 없고, 아이템을 잘못된 종류의 `raw` 아래 남기라는 원장 문장은 없다." (`reviews/round-38-closing.md:9`)
+  > 편집자 결정(38C-01): "【추론】 호스트의 방출은 억제되지 않고 그 잘못된 종류의 `raw`를 자기 값으로 방출한다(WRITE-013의 예 "`setValue({ user: null })` 뒤 … 사용자가 `name`에 입력하면 `user`가 객체가 되어 방출된다"는 그 전까지 `user`가 `null`을 방출함을 전제한다; VALUE-002 "비객체 호스트 아래 자식의 원본은 부모의 `emit`에 나타나지 않는다"는 자식 쪽 문장이다), 정합 경고등은 "잘못된 종류를 든 가지 노드도 켜진다"대로 켜진다. 로드로 온 비배열 값도 같되 채울 아이템이 없다." (`reviews/round-38-closing.md:10`)
+  > 편집자 결정(39C-01): "【추론】 원장은 잘못된 종류의 값을 보존하고 방출하라고 적었다: VALUE-033 "(4) nullable이 아닌 노드의 `null`은 바꾸지 않고 받은 그대로 방출된다", 쓰기 정책 표의 "nullable이 아닌 객체의 `null`을 `{}`로 바꾸기(S7), 비객체 값 버리기 | **폐기.** 보존·방출하고 type 에러를 낸다", WRITE-013의 예(`setValue({ user: null })` 뒤 `user`는 입력이 올 때까지 `null`인 채 방출된다); PR-2로 넘어온 프로토타입도 같다(`spikes/round9/regress/selfcheck-v5.mjs:485` "A3-3/A3-4-host: null and 17 hosts emit their raw, no branch on (G={}), children exist", `:569` "after setValue({target:null}) emit {target:null}"). 그래서 38C-01이 서고, 가지 호스트(객체·배열)는 잘못된 종류의 `raw`를 자기 방출로 내며 자식 방출만 투영에서 빠진다(VALUE-002 "비객체 호스트 아래 자식의 원본은 부모의 `emit`에 나타나지 않는다"); 게이트 입력이 `G = {}`인 것(SETTLE 영역)은 게이트가 보는 값의 규칙이지 방출의 규칙이 아니다." (`reviews/round-39-closing.md:9`)
+  > 편집자 결정(39C-01): "【추론】 머지된 객체 행의 `projectObject`가 비객체 `raw`에 `undefined`를 돌려주는 것과 `objectBehavior/DETAIL.md`의 "그 호스트의 방출은 하지 않습니다"는 03의 기록에 결정으로 남아 있지 않은 근사이며 결함이다(29C-02·29C-03의 선례와 같다); nullable 객체(`type: ['object','null']`)의 `null`이 방출에서 사라져 `{ user: null }`이 `{}`가 되는 것은 동작 결함이고, 배열 아이템인 객체 호스트의 `null`이 VALUE-034의 구멍 채움 `{}`로 바뀌어 보이는 것도 같은 결함이다." (`reviews/round-39-closing.md:10`)
 - 상태: 현행
 - 출처: `adr/0006-single-value-ownership.md:76`(정본, #1–#3·#5. VALUE-015에서 분할), `adr/0006-single-value-ownership.md:76#1-3`, `adr/0006-single-value-ownership.md:76#5`, `adr/0006-single-value-ownership.md:74`, `reviews/round-5-derivations.md:40`, `adr/0007-settle-cycle.md:115`, `adr/0013-core-does-not-rewrite-values.md:53`(WRITE-092의 정본), `reviews/round-18-closing.md:2831-2833`
 - 닫은 사람: 원리(`reviews/round-5-derivations.md:40` D-1), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-100)
