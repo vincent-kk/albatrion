@@ -51,6 +51,12 @@
 - 58C-01: 한 정착의 오류는 모두 발생 순서대로 기록되고 사슬 끝에서 하나로 묶인다(`MULTIPLE_ERRORS`, `details.errors`). 예산 정지는 앞선 오류를 지우지 않는다. 06의 예산 정지 시험(`settle.array-rekey.test.ts`)과 `source-b-structure` 장면의 기대를 확인한다.
 - 59C-01: `INJECT_TARGET_MISSING`과 자동 쓰기의 `INVALID_VIRTUAL_NODE_VALUES`는 `details.sourcePath`를 가지며, 아이템마다 같은 없는 대상에 주입하면 아이템마다 오류가 하나씩 난다. 이를 단언하는 배열 시험을 하나 더한다.
 
+### I9 통합 중에 찾은 비례하지 않는 비용 (44C-01, 49C-01)
+
+- 배달 감시 전체 훑기: `settle/utils/commit/markCommitDeliveries.ts`가 배열 `remove`마다 폼의 모든 감시자를 훑는다(05의 경로·배열 자식 조건과 06이 더한 소멸·경로 사실 조건). 감시자 하나에 약 1.3µs이며 옮겨진 아이템 수와 무관하다(SETTLE-017, GOAL-011 위반). 나간 노드 조건만 남기고, 소멸 노드의 경로와 옮겨진 노드의 옛·새 경로를 감시 색인 조회(`watchIndex.affected`)에 넣는다.
+- 소멸 정리·재인덱싱의 저장소 전체 훑기: 06의 `prunePerishedPaths.ts`, `pruneArrayTailPaths.ts`, `rekeyArrayRuntimePaths.ts`가 `remove`마다 런타임 저장소 전체(`committedDeclarationIds` 등)를 훑고 열쇠마다 `JSON.parse`한다. 저장소마다 경로 색인을 두거나 기존 경로 색인(`getLatentPathIndex`와 같은 꼴)을 써서 비용이 소멸·이동한 경로 수에 비례하게 한다.
+- 각 수정은 고치기 전에 실패하는 규모 가드 시험을 갖고, 차등 검사로 뜻이 바뀌지 않았음을 확인한다.
+
 ### I8 게이트 재실행
 
 - core unit, render, `tsc`, `eslint`, 시나리오 패키지, 원장 인용 검사, 공개 `<Form>` 가드.
