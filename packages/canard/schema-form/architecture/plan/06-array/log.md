@@ -91,4 +91,6 @@ Planning method: 저장소 지침 — `PLAN.md` §2와 `plan/prompts.md`의 단�
 | M12 | `src/core/settle/utils/compute/selectChildren.ts`(03), `virtualBehavior` | 가상 노드 아래에 그림자 자식 `/period/startDate`를 만들어 읽어 값이 늘 `[undefined, undefined]` | NODE-034·054, 42C-01·02 | 06이 고침(U9b): `structure`가 실제 형제를 가리키고, 참조 노드가 바뀐 정착에서 가상 노드를 다시 조립 |
 | M13 | `src/core/settle/utils/compute/dirtyChildren.ts`(03) | 가지마다 정착 전체 `dirtyPaths`를 훑어 통째 쓰기가 아이템 수의 제곱 | SETTLE-047·017, GOAL-011, 44C-01 | 06이 고침(U10b): 부모별 색인. P-14는 재측정 뒤 해결로 |
 | M14 | `src/core/behaviors/arrayBehavior/DETAIL.md`(06 자신의 근사) | 잎 입력마다 배열 `assemble`이 모든 자리를 다시 만듦 | NODE-026, SETTLE-042, 44C-01 | 06이 고침(U10b): 형상이 같으면 재계산 자리만 고쳐 씀 |
+| M15 | `src/core/record/DETAIL.md`(U10b) | `Behavior.assemble`의 선택 인수 문장이 코드와 같은 커밋 `1f2cf27e6`에 들어감(문서 선행 어긋남) | filid 문서 선행 | 최종 verifier가 지적. 내용은 현행 계약과 맞으며 기록만 남김 |
+| M16 | 실행 계획 §7 첫 행 | 코드 추적의 위험 목록 1–14를 `log.md` 링크로 대조한다고 적었으나 그 목록은 파일로 남지 않음 | — | 최종 verifier가 지적. §7을 ADR D4의 저장소 열거와 저장소 옮김 시험으로 대조하도록 고침 |
 | M8 | 동사의 반환 값 | 원장이 정하지 않음 | GOAL-058(동기) | 레거시 반환을 동기로 지킴(실행 계획 I7, 자율 결정) |
