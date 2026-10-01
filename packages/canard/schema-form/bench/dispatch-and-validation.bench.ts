@@ -246,7 +246,7 @@ async function pluginMountRow(guards: number, samples: number, directGuardCompil
   ajvValidatorPlugin.configure({ directGuardCompile });
   let compiledRoot: JSONSchema | undefined;
   const validator: Validator = {
-    compile(copy) {
+    compile(copy: JSONSchema) {
       compiledRoot = copy;
       return ajvValidatorPlugin.compile(copy);
     },
