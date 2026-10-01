@@ -54,19 +54,27 @@ registerPlugin(ajvValidatorPlugin);
 
 ### **Plugin Interface**
 
-The plugin implements the `ValidatorPlugin` interface providing two main methods:
+The plugin implements `ValidatorPlugin` with validation, synchronous guards, and root release:
 
 #### **`bind(instance: Ajv.Ajv)`**
 
 - **Purpose**: Allows you to provide a custom AJV instance with your preferred configuration
 - **Usage**: Optional - if not called, a default AJV instance will be created automatically
 - **Benefits**: Full control over AJV settings, custom keywords, formats, and validation rules
+- **Refusal**: An instance with `coerceTypes`, `useDefaults`, or `removeAdditional` enabled is rejected immediately. The previous binding stays active. Callers discriminate the refusal by `group` (`'UNHANDLED_ERROR'`) and `code` (`'VALIDATOR_BIND_REFUSED'`); core's `isUnhandledError` does not recognize it.
 
 #### **`compile(jsonSchema)`**
 
 - **Purpose**: Creates a validator function from the provided JSON Schema
 - **Returns**: A validator factory function that can validate data against the schema
 - **Features**: Automatic error transformation, detailed validation messages, performance optimization
+
+#### **`compileGuard(root, pointer)` and `release(root)`**
+
+- `compileGuard` returns a synchronous boolean guard for a pointer in the registered root.
+- `compile`, `compileGuard`, and `release` share one registration when given the same engine-owned copy object.
+- `release` removes that registration and its compiled functions. A second live root with the same `$id` remains independent.
+- One location used from several dynamic scopes is unsupported: a single pointer guard cannot represent both scope-dependent verdicts.
 
 ### **Default Configuration**
 

@@ -1,29 +1,33 @@
 # CLAUDE.md
 
-`@canard/schema-form-ajv7-plugin` — AJV 7.x validator plugin for `@canard/schema-form`. JSON Schema Draft-07 / Draft 2019-09 지원.
+`@canard/schema-form-ajv7-plugin` is the AJV 7.x validator plugin for `@canard/schema-form`. Its default instance uses JSON Schema Draft-07; a bound Ajv 2019 instance can evaluate 2019-09 keywords.
 
 ## Commands
 
 ```bash
-yarn build             # ESM + CJS 빌드 + 타입 선언
-yarn test              # Vitest 테스트
-yarn test --watch      # watch 모드
+yarn build             # ESM, CJS, and type declarations
+yarn test              # Vitest tests
+yarn test --watch      # Watch mode
 yarn lint              # ESLint
-yarn storybook         # Storybook dev (port 6006)
+yarn storybook         # Storybook development server (port 6006)
 ```
 
 ## Architecture
 
-- `src/index.ts` — 플러그인 진입점
-- `src/validator/validatorPlugin.ts` — `bind()` / `compile()` 구현
-- `src/validator/createValidatorFactory.ts` — validator 팩토리
-- `src/validator/utils/transformErrors.ts` — AJV 에러 → schema-form 포맷 변환
-- `src/validator/utils/resolveAjvConstructor.ts` — `ajv` default import 에서 생성자 추출
+- `src/index.ts` — public entry point
+- `src/validator/validatorPlugin.ts` — binding, compilation, guard, and release lifecycle
+- `src/validator/createValidatorFactory.ts` — promise-returning validation
+- `src/validator/createGuardCompiler.ts` — synchronous pointer guards
+- `src/validator/utils/registerSchemaRoot.ts` — registration shared by validation and guards
+- `src/validator/utils/transformErrors.ts` — AJV errors to `ValidationIssue`
+- `src/validator/utils/resolveAjvConstructor.ts` — constructor extraction from the AJV default import
 
 ## Key Details
 
-- **AJV 기본 설정**: `allErrors: true`, `strict: false`, `validateFormats: false`
-- **에러 변환**: `required` 에러는 missing property를 dataPath에 append, 나머지는 JSONPointer 그대로 사용
-- **비동기 검증**: 모든 validator는 `$async: true`로 컴파일
-- **`ajv` interop**: ajv@7 의 `module.exports` 는 클래스가 아니라 `{ __esModule: true, default: Ajv }` 네임스페이스다. default import 로 얻는 값은 로더의 interop 에 따라 달라지므로 (Node 의 CJS→ESM interop 은 `__esModule` 을 무시함) `new Ajv(...)` 를 직접 호출하지 말고 `resolveAjvConstructor` 를 거칠 것
-- **빌드 타겟**: ES2022, ESM(.mjs) + CJS(.cjs), Rolldown 사용
+- **AJV defaults**: `allErrors: true`, `strict: false`, `validateFormats: false`.
+- **Binding refusal**: `bind(instance)` throws immediately when `opts.coerceTypes`, `opts.useDefaults`, or `opts.removeAdditional` is enabled. The previous binding remains active. Callers discriminate the refusal by `group` (`'UNHANDLED_ERROR'`) and `code` (`'VALIDATOR_BIND_REFUSED'`); core's `isUnhandledError` does not recognize it.
+- **Registration**: `compile(copy)`, `compileGuard(copy, pointer)`, and `release(copy)` use the same copy object identity. Overlapping live `$id` values use separate instances with the same settings.
+- **Guard scope**: Ajv 2019 dynamic and recursive references use the registered root's anchor context. One location used from several dynamic scopes is unsupported because `compileGuard(root, pointer)` provides one guard for that location.
+- **Errors**: `required` appends the missing property to `dataPath`, and root `dataPath` is `''`. Rejected object keys use `rejectedKey`.
+- **AJV interop**: ajv@7 may expose `{ __esModule: true, default: Ajv }` rather than the constructor. Resolve default imports with `resolveAjvConstructor` before instantiation.
+- **Build target**: ES2022, ESM (`.mjs`) and CJS (`.cjs`) via Rolldown.
