@@ -527,6 +527,7 @@
   > "최적화는 구현을 마친 뒤 별도 작업에서 하며, 이 대장이 그 작업의 출발점입니다." (`verification/performance-issues.md:3`) — 단계를 가로지르는 속도 문제 대장. TEST-027의 느린 행 기록(`verification/03-node-and-settle/performance.md`, `verification/04-derive-and-controls/performance.md`)을 모아 가리킨다(원장 관리자, 2026-10-01).
   > 소유자(30라운드, 성능 최적화 작업의 자리): "맞습니다. 7끝나고 진행하면 됩니다." (`reviews/round-30-owner-answers.md:12`) — 27라운드 답의 "구현 완료 후"는 07 전환 머지 뒤다. 최적화 작업은 07 뒤에 시작해 08과 병렬로 진행하고 09 전에 끝낸다(`plan/perf-optimization/`).
   > 소유자(30라운드, 04 벤치의 느린 행): "맞습니다." (`reviews/round-30-owner-answers.md:14`) — 풀어 쓴 물음 "04의 느린 벤치 행 둘(TEST-071 통째 교체 객체 행의 선 미달, 04 뒤 03 벤치의 B2·B5·B6·18C-15·67·81 행)을 지금 받아들이고 고치는 일은 최적화 작업으로 넘기는가"에 대한 답. PR-3 + PR-6(04, PR #351)에 대해 이 게이트의 "이유를 적고 Vincent가 받아들여야 병합"이 충족되었다. 느린 이유의 기록은 `verification/04-derive-and-controls/performance.md`와 `verification/03-node-and-settle/performance.md`, 후속은 속도 문제 대장이다(원장 관리자, 2026-10-01).
+  > 편집자 결정(44C-01): "【추론】 (다) 고친 뒤 벤치를 다시 돌리고, 계약을 지키되(변경에 비례) 레거시보다 느린 행만 TEST-027의 절차와 30라운드의 선례대로 소유자 수용 물음으로 묶어 원장 관리자가 올린다; 잎 키 입력 행은 레거시가 같은 완료 시점에서 관측되지 않았다는 단서를 행에 함께 적고, P-15(03 행의 흔들림, 인과 미확인)는 지금처럼 "열림"에 둔다. 메모리 행은 통과이므로 물을 것이 없다." (`reviews/round-44-closing.md:11`)
 - 상태: 현행
 - 출처: `09-landing-and-test-strategy.md:223`(정본), `adr/0009-performance-budget-and-benchmarks.md:9,92`, `08-design-a-to-z.md:609`, `reviews/round-16-owner-answers.md:12`, `reviews/round-16-owner-review.md:57`, `reviews/round-18-agenda.md:68`
 - 닫은 사람: 소유자 답(`reviews/round-16-owner-answers.md:12` 답 6), 편집자 결정(16라운드 도출, '통제 가능'의 뜻, `09-landing-and-test-strategy.md:223`)
