@@ -1,5 +1,10 @@
+import { escapeSegment } from '@winglet/json/pointer';
+
 import type { Blueprint, PropertyDeclaration } from '../../../blueprint';
+import { getDeriveRuleTable } from '../../derive';
 import { resolveDependencyPath } from '../paths/resolveDependencyPath';
+import { getContextOwners } from '../context/getContextOwners';
+import { getGateExpression } from '../gates/getGateExpression';
 
 /** No reverse dependency owners for a gate-free input path. */
 const NO_OWNERS: readonly string[] = Object.freeze([]);
@@ -19,6 +24,7 @@ class DependencyIndex {
 
   /** Build absolute watch paths from authored reverse dependency IDs. */
   constructor(blueprint: Blueprint) {
+    getContextOwners(blueprint);
     const dependencies = Object.entries(blueprint.dependencies);
     if (dependencies.length === 0 && blueprint.expressions.length === 0) return;
     const declarations = new Map<number, PropertyDeclaration>(blueprint.nodes.flatMap((node) =>
@@ -29,17 +35,29 @@ class DependencyIndex {
         const declaration = declarations.get(id);
         if (!declaration) continue;
         const watched = resolveDependencyPath(declaration.path, dependency);
-        if (watched !== '@') this.add(watched, declaration.path);
+        if (watched === '@') continue;
+        this.add(watched, declaration.path);
       }
+    const rules = getDeriveRuleTable(blueprint);
+    for (const node of blueprint.nodes)
+      for (const declaration of node.declarations)
+        for (const rule of rules.byDeclaration.get(declaration.id) ?? []) {
+          if (rule.kind !== 'derived' || !rule.targetName) continue;
+          const targetPath = `${declaration.path}/${escapeSegment(rule.targetName)}`;
+          for (const watch of rule.watchDependencies) {
+            const watched = resolveDependencyPath(targetPath, watch);
+            if (watched !== '@') this.add(watched, declaration.path);
+          }
+        }
     for (const node of blueprint.nodes)
       for (const declaration of node.declarations)
         for (const gate of declaration.gates) {
-          const expression = blueprint.expressions.find((candidate) =>
-            candidate.schemaPath === gate.schemaPath && candidate.key === 'active');
+          const expression = getGateExpression(blueprint, gate.schemaPath);
           if (!expression) continue;
           for (const dependency of expression.dependencies) {
             const watched = resolveDependencyPath(gate.hostPath, dependency);
-            if (watched !== '@') this.add(watched, declaration.path);
+            if (watched === '@') continue;
+            this.add(watched, declaration.path);
           }
         }
   }

@@ -1,6 +1,7 @@
 import type { Distribution, SchemaNodeRecord } from '../record';
 import type { EffectiveSchema } from '../blueprint';
 import type { SchemaFormError } from '../../errors';
+import type { DeriveState, DeriveTraceEntry } from './derive';
 
 /** Origin of a write before calculation and transition phases. */
 export type SchemaNodeWriteKind =
@@ -14,10 +15,20 @@ export type SchemaNodeWriteKind =
 export interface SettlementContext<Self extends SchemaNodeRecord<Self>> {
   /** Live root reached through the record boundary. */
   root: Self;
+  /** Emitted root reference from the preceding committed shape. */
+  previousEmit: unknown;
+  /** Binding context from the preceding committed shape. */
+  previousContext?: Readonly<Record<string, unknown>>;
   /** Original caller target, excluded from refresh targets. */
   target: Self;
   /** Entry origin retained for later transition rules. */
   kind: SchemaNodeWriteKind;
+  /** Public bit mask retained for the development trace entry. */
+  option: number;
+  /** Binding entry name when the settlement has no public write kind. */
+  entryApi?: string;
+  /** Declaration hosts whose context reads started this settlement. */
+  contextOwners?: readonly string[];
   /** Whether this analysis contains any authored gate. */
   hasGates: boolean;
   /** Call-local suppression after explicit bits override the form default. */
@@ -34,6 +45,10 @@ export interface SettlementContext<Self extends SchemaNodeRecord<Self>> {
   exited: Set<Self>;
   /** Nodes absent in a middle round and eligible for same-instance reentry. */
   pendingExits: Map<string, Self>;
+  /** Exits whose selecting gate threw and therefore cannot clear their subtree. */
+  throwingGateExits?: Set<Self>;
+  /** Incremented by each thrown gate evaluation to identify its selecting edge. */
+  gateThrowVersion?: number;
   /** Active declaration choices published only after this call commits. */
   selectedDeclarationIds: Map<Self, readonly number[]>;
   /** Original inputs retained for effective-list interpretation. */
@@ -59,22 +74,34 @@ export interface SettlementContext<Self extends SchemaNodeRecord<Self>> {
   automaticChanged: boolean;
   /** Paths scheduled by the write and the blueprint dependency index. */
   dirtyPaths: Set<string>;
+  /** Declaration-owner paths scheduled in this settlement by reverse dependencies or `@`. */
+  dependencyOwnerPaths: Set<string>;
   /** Hosts whose declarations or children require a new gate/shape selection. */
   shapeDirtyPaths: Set<string>;
   /** Raw paths actually changed during marking. */
   changedRaw: Set<string>;
   /** Nodes whose calculated value or shape changed. */
   changedNodes: Set<Self>;
+  /** Nodes visited by calculation before final state-key publication. */
+  stateDirtyNodes: Set<Self>;
   /** Effective schema before this write for nodes visited by a gate wheel. */
   originalSchemas: Map<string, EffectiveSchema>;
+  /** Call-local baselines and consumed edges, allocated only for rule-bearing trees. */
+  deriveState?: DeriveState<Self>;
+  /** Number of applied derive write rounds throughout this settlement. */
+  deriveRounds?: number;
+  /** Development rule decisions grouped by round. */
+  traceRounds?: DeriveTraceEntry[][];
+  /** Last budget-exceeding attempt's rule names. */
+  deriveBudgetRules?: readonly DeriveTraceEntry[];
   /** First error to throw after the commit boundary. */
   failure?: SchemaFormError;
   /** Cause assigned to the deferred failure. */
-  cause?: 'expression' | 'sharedConflict' | 'budget';
+  cause?: 'expression' | 'injectTarget' | 'writeShape' | 'sharedConflict' | 'budget';
   /** Exhausted host rounds handed to the later budget phase. */
   hostWheelExceeded?: number;
   /** The exhausted transition or recursion budget, when applicable. */
-  exceededBudget?: 'hostWheel' | 'transition' | 'recursion';
+  exceededBudget?: 'hostWheel' | 'derive' | 'transition' | 'recursion';
   /** Number of rounds spent at the exhausted budget. */
   iterations?: number;
 }

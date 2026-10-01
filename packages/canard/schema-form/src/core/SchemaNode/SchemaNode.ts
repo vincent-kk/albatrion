@@ -3,7 +3,7 @@ import { find, findNodes } from '../navigation';
 import type { Behavior, SchemaNodeRecord, SchemaNodeRuntime } from '../record';
 import { readSchemaNodeDefaultValue, resetSchemaNodeSubtree,
   readSchemaNodeInactiveValues, readSchemaNodeTypeMismatch,
-  readSchemaNodeTypeMismatches, writeSchemaNode } from '../settle';
+  readSchemaNodeTypeMismatches, readSchemaNodeWatchValues, writeSchemaNode } from '../settle';
 import { SetValueOption } from './type';
 import { SetValueOption as WriteOption } from '../types/value';
 
@@ -26,6 +26,9 @@ export class SchemaNode implements SchemaNodeRecord<SchemaNode> {
   private storedRaw: unknown;
   private storedExtras: unknown;
   private storedActive: boolean;
+  private storedVisible: boolean;
+  private storedReadOnly: boolean;
+  private storedDisabled: boolean;
   local: unknown;
   emit: unknown;
   schema: EffectiveSchema;
@@ -58,6 +61,9 @@ export class SchemaNode implements SchemaNodeRecord<SchemaNode> {
     this.storedRaw = undefined;
     this.storedExtras = undefined;
     this.storedActive = true;
+    this.storedVisible = true;
+    this.storedReadOnly = false;
+    this.storedDisabled = false;
     this.local = undefined;
     this.emit = undefined;
     this.schema = schema;
@@ -115,6 +121,21 @@ export class SchemaNode implements SchemaNodeRecord<SchemaNode> {
   /** {@inheritDoc NodeSurface.active} */
   get active() { return this.storedActive; }
   set active(value: boolean) { this.storedActive = value; }
+  /** {@inheritDoc NodeSurface.visible} */
+  get visible() { return this.storedVisible; }
+  set visible(value: boolean) { this.storedVisible = value; }
+  /** {@inheritDoc NodeSurface.enabled} */
+  get enabled() { return this.active && this.visible; }
+  /** {@inheritDoc NodeSurface.readOnly} */
+  get readOnly() { return this.storedReadOnly; }
+  set readOnly(value: boolean) { this.storedReadOnly = value; }
+  /** {@inheritDoc NodeSurface.disabled} */
+  get disabled() { return this.storedDisabled; }
+  set disabled(value: boolean) { this.storedDisabled = value; }
+  /** {@inheritDoc NodeSurface.watchValues} */
+  get watchValues() { return readSchemaNodeWatchValues<SchemaNode>(this); }
+  /** {@inheritDoc NodeSurface.context} */
+  get context() { return this.runtime.context; }
   /** {@inheritDoc NodeSurface.typeMismatch} */
   get typeMismatch() { return readSchemaNodeTypeMismatch<SchemaNode>(this); }
   /** {@inheritDoc NodeSurface.typeMismatches} */

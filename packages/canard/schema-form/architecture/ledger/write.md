@@ -331,6 +331,7 @@
   > 편집자 결정(18C-59): "【추론】 곧 새로 만든 뒤쪽 아이템이다." (`reviews/round-18-closing.md:1648`)
   > 편집자 결정(18C-59): "【추론】 이것이 WRITE-015 `Merge` 행이 미룬 "어떤 아이템이 생긴 것인가"의 답이다." (`reviews/round-18-closing.md:1649`)
   > 편집자 결정(21C-01): "【추론】 호출 옵션의 억제 비트(`DisableAutomaticWrites`·`EnableAutomaticWrites`)는 그 호출이 일으킨 자동 쓰기에만 들며, 뒤이은 포커스 아웃이 일으키는 `options.trim`의 자동 쓰기는 그 호출이 일으킨 것이 아니므로 듣지 않는다." (`reviews/round-21-closing.md:9`)
+  > 편집자 결정(28C-08): "【추론】 `setContext`는 억제 비트를 받지 않는다(옵션의 자리는 WRITE-015가 `setValue(V, option)`·`reset(option)`·마운트로, WRITE-091이 입력 `onChange`로 정한 것뿐이다); 호출 옵션이 없으므로 Form 속성 `disableAutomaticWrites`가 그 정착의 자동 쓰기에 기본값으로 든다(21C-01의 포커스 아웃 `trim`과 같은 모양)." (`reviews/round-28-closing.md:88`)
 - 상태: 현행
 - 출처: `adr/0013-core-does-not-rewrite-values.md:57`(정본), `adr/0013-core-does-not-rewrite-values.md:59-66,104,105`, `03-mental-model.md:88`, `08-design-a-to-z.md:278`, `02-target-overview.md:285`, `09-landing-and-test-strategy.md:90,93`, `06-conclusions.md:165-167`, `adr/0007-settle-cycle.md:88,89`, `reviews/round-18-closing.md:1647-1649`
 - 닫은 사람: 소유자 답(`reviews/round-4.md:113` D-7; 호출 단위 비트), 원리(D-5 원리에서 도출, `adr/0013-core-does-not-rewrite-values.md:3`; 범위), 편집자 결정(9라운드, `07-conclusions.md:304` 6.1 소유자가 동의한 이름), 편집자 결정(6라운드 D-19, `06-conclusions.md:163`; `Merge`의 배열 통째 교체), 16라운드 스웜 수렴(편집자 결정, `adr/0013-core-does-not-rewrite-values.md:8`; 배치 행의 `fn` 안 `reset`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-59)
@@ -507,7 +508,10 @@
 
 - 결정:
   > **형상에 없는 노드의 규칙은 평가하지 않는다**(P4: 형상 변화는 쓰기가 아니다). 그 노드가 형상 밖에 있는 동안의 원천 변화는 에지가 아니고, 노드가 (다시) 생기면 그 노드의 `controls.unsetValue`·`controls.derived`·`controls.injectTo`의 에지는 거짓→참으로 본다(직전 값이 없다). 비활성 원천의 방출이 사라지는 것도 다른 노드의 `controls.injectTo`에 에지가 아니다.
-- 보충: 없음
+- 보충:
+  > 편집자 결정(29C-01): "【추론】 생긴 노드와 로드된 노드의 `controls.derived`·`controls.injectTo`는 원천의 방출 값이 `undefined`여도(채움 전) 거짓→참 에지로 발화한다: WRITE-029·FRAGMENT-050 (2)·CONTROLS-027은 에지의 조건을 "직전 값이 없다"로만 두고 원천 값의 유무를 조건으로 두지 않으며, CONTROLS-079의 `value`는 원천의 방출 값이라 방출이 없으면 `undefined`다." (`reviews/round-29-closing.md:9`)
+  > 편집자 결정(29C-01): "【추론】 그 `undefined`를 어떻게 다룰지는 작성자 함수의 몫이다: 원천은 런타임에도 언제든 `undefined`가 될 수 있으므로 함수는 어차피 그 입력을 다뤄야 하고, 없는 원천을 씨앗으로 쓰는 것도 작성자의 표현이다(G2)." (`reviews/round-29-closing.md:10`)
+  > 편집자 결정(29C-01): "【추론】 첫 발화의 쓰기가 게이트를 뒤집어 원천 노드가 채움 전에 나가면 결과는 첫 발화의 값이며, FRAGMENT-050 (3)대로 그 쓰기는 되돌리지 않는다; 그런 사례의 v7 기대(`REPORT-v7.md:47,51`의 A4b·X16과 그 변형 X16_noDefault)는 원장과 다르므로 이식하지 않고 원장의 값으로 바꾸며, TEST-069 (라)의 배분과 04 실행 계획의 "기대값은 `round18/proto/REPORT-v7.md`의 기대 치환을 따른다"(`plan/04-derive-and-controls/execution-plan.md:346`)는 v7의 모형이 원장과 다른 자리에는 미치지 않는다(03이 `plan/03-node-and-settle/log.md` §4에 남긴 선례와 같다)." (`reviews/round-29-closing.md:14`)
 - 상태: 현행
 - 출처: `03-mental-model.md:90#9-11`(정본)
 - 닫은 사람: 소유자 답(`reviews/round-12-owner-answers.md:18` §9 형상에 없는 노드)
@@ -532,6 +536,9 @@
   > 나감 정책 키 `unsetOnInactive`(이름은 소유자 13라운드 확정. 철자는 노드의 `controls.unsetOnInactive`, Form 속성 `unsetOnInactive`)는 형용사 형(`boolean` 또는 식→`boolean`, 15라운드 결정 2. Form 속성은 `boolean`만)이며 네 층에서 세부가 포괄을 덮는다: 노드 자신 > `controls.children` 항목의 `controls` > 조각의 `controls` > Form 속성. 같은 층에 여럿이면 하나라도 유지면 유지한다(되돌릴 수 없는 쓰기는 만장일치).
 - 보충:
   > "자리 둘: 노드의 `controls.unsetOnInactive`(그리고 `children` 항목·조각의 `controls`), Form 속성 `unsetOnInactive`. 형은 형용사 형(`boolean` 또는 식→`boolean`, 15라운드 결정 2)이고 Form 속성은 노드 문맥이 없으므로 `boolean`만이다(부류 표의 앞 판에 적힌 "`boolean`만, 13라운드"는 사실과 달랐다. 13라운드는 이름과 기본값만 정했다, 17라운드 스웜 수렴(편집자 결정))." (`08-design-a-to-z.md:298`)
+  > 편집자 결정(28C-05): "【추론】 ERROR-122의 자리별 값 표에 행 하나를 더해 읽는다: `controls.unsetOnInactive`의 식(노드 자신, `controls.children` 항목의 `controls`, 조각의 `controls`)이 직전 커밋의 방출 트리에서 던지면 그 선언은 "유지"다." (`reviews/round-28-closing.md:55`)
+  > 편집자 결정(28C-05): "【추론】 "선언 없음"(아래 층으로 떨어짐)이 아니다: 되돌릴 수 없는 쓰기는 만장일치이고(WRITE-031) 던진 식은 비움에 찬성한 표가 아니며, 아래 층(Form 속성)이 참일 때 작성자의 잘못으로 커밋된 값을 잃게 되어 ERROR-125의 원칙(작성자의 잘못으로 커밋된 값을 잃지 않는다)에 어긋난다." (`reviews/round-28-closing.md:56`)
+  > 편집자 결정(28C-05): "【추론】 층 규칙은 그대로다: 그 층의 유지가 아래 층의 비움을 덮는다(세부가 포괄을 덮는다)." (`reviews/round-28-closing.md:57`)
 - 상태: 현행
 - 출처: `03-mental-model.md:94#8`(정본), `08-design-a-to-z.md:298`, `adr/0013-core-does-not-rewrite-values.md:45`, `07-conclusions.md:203`, `adr/0003-group-namespace.md:95#9`(CONTROLS-040의 정본, 층 규칙이 겹침)
 - 닫은 사람: 소유자 답(`reviews/round-12-owner-answers.md:10` 3 꺼질 때 값 정책; 별도 옵션), 소유자 답(`reviews/round-13-owner-answers.md:17` 나감 정책 키 이름), 소유자 답(`reviews/round-13-owner-answers.md:8` 2 나감 비움 기본값; 기본 유지), 소유자 답(`reviews/round-10-owner-answers.md:16` C-15; `controls.children` 항목의 값 키), 소유자 답(`reviews/round-13-owner-answers.md:16` Form 속성의 자리; Form 속성 층), 편집자 결정(13라운드, 소유자 검토 문서가 장치의 모양으로 제시 `reviews/round-13-owner-review.md:66`; 세부가 포괄을 덮음), 편집자 결정(15라운드 결정 2, `08-design-a-to-z.md:298`; 형용사 형), 17라운드 스웜 수렴(편집자 결정, `08-design-a-to-z.md:298`; Form 속성은 `boolean`만), 편집자 결정(12라운드 도출, `reviews/round-12-derivation.md:60`; 같은 층은 유지 우선)
@@ -1576,7 +1583,8 @@
   > 무엇: 빠진 키에서 참이 되는 `if`와 `controls.active` 게이트를 가진 폼에서 루트 `setValue(undefined)`를 부른다.
   > 통과: 이미 있던 노드는 채우지 않고 비우며, 게이트가 뒤집혀 새로 생기거나 켜진 노드는 채움을 받는다.
   > 실패: 채움 사건의 목록을 고친다.
-- 보충: 없음
+- 보충:
+  > 편집자 결정(28C-04): "【추론】 억제 비트의 범위는 그 호출이 일으킨 예약 층의 자동 쓰기(채움, `controls.derived`, `controls.injectTo`, `controls.unsetValue`, 나감의 비움)이고, `controls.resetInteraction`은 원본 쓰기도 예약 층의 자동 쓰기도 아니므로(EVENT-012) 그 범위 밖이다; 포커스 아웃 `trim`은 호출 비트가 아니라 Form 속성 `disableAutomaticWrites`만이 억제한다(21C-01, WRITE-100)." (`reviews/round-28-closing.md:48`)
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:2881-2889,2895-2898`(정본)
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-103)

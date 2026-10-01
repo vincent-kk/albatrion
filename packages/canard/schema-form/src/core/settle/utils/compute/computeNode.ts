@@ -22,6 +22,7 @@ export const computeNode = <Self extends SchemaNodeRecord<Self>>(
   context: SettlementContext<Self>,
 ): void => {
   if (!context.dirtyPaths.has(node.path)) return;
+  context.stateDirtyNodes.add(node);
   if (!context.hasGates && node.parent !== null &&
     node.behavior.strategy === 'terminal' && context.entered.has(node)) {
     updateOutput(node, context);

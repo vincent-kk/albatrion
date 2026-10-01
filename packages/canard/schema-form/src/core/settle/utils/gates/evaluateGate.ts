@@ -9,6 +9,7 @@ import { resolveDependencyPath } from '../paths/resolveDependencyPath';
 import { readProjectedValue } from './readProjectedValue';
 import { EXPRESSION_THREW, GUARD_FAILED } from '../errors/settleErrorCode';
 import { getGateRegistry } from './getGateRegistry';
+import { getGateExpression } from './getGateExpression';
 
 /**
  * Evaluate one bound gate with the real expression or injected if predicate.
@@ -70,19 +71,20 @@ export const evaluateGate = <Self extends SchemaNodeRecord<Self>>(
       const result = predicate(input);
       return gate.negated ? !result : result;
     }
-    const expression = context.root.runtime.blueprint?.expressions.find(
-      (candidate) => candidate.schemaPath === gate.schemaPath &&
-        candidate.key === 'active',
-    );
+    const blueprint = context.root.runtime.blueprint;
+    const expression = blueprint ? getGateExpression(blueprint, gate.schemaPath) :
+      undefined;
     if (expression) {
       const dependencies = expression.dependencies.map((dependency) => {
         const path = resolveDependencyPath(hostPath, dependency);
-        return path === '@' ? projectedExtra : readProjectedValue(context, path);
+        return path === '@' ? context.root.runtime.context ?? {} :
+          readProjectedValue(context, path);
       });
       return Boolean(expression.evaluate(dependencies));
     }
     return gate.condition === true;
   } catch (cause) {
+    context.gateThrowVersion = (context.gateThrowVersion ?? 0) + 1;
     if (!context.failure) {
       context.failure = new SchemaFormError(
         gate.kind === 'if' ? GUARD_FAILED : EXPRESSION_THREW,
