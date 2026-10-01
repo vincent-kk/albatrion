@@ -130,12 +130,12 @@ describe('newly selected declaration baselines', () => {
     loadSchemaNodeAtMount(root, { enabled: false, c: false, x: 'keep' },
       SetValueOption.Overwrite);
     const target = root.structure!.x;
-    target.state = { [NodeState.Dirty]: true, [NodeState.Touched]: true };
+    target.interactionState = { [NodeState.Dirty]: true, [NodeState.Touched]: true };
     writeSchemaNode(root.structure!.enabled, true, 'input', SetValueOption.Overwrite);
-    expect(target.state[NodeState.Dirty]).toBe(true);
+    expect(target.interactionState[NodeState.Dirty]).toBe(true);
     writeSchemaNode(root.structure!.c, true, 'input', SetValueOption.Overwrite);
-    expect(target.state[NodeState.Dirty]).toBe(false);
-    expect(target.state[NodeState.Touched]).toBe(false);
+    expect(target.interactionState[NodeState.Dirty]).toBe(false);
+    expect(target.interactionState[NodeState.Touched]).toBe(false);
   });
 
   it('FRAGMENT-050 if/then shared injectTo fires on its next source edge', () => {

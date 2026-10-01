@@ -34,6 +34,8 @@ const makeRecord = (
     blueprint: OBJECT_ANALYSIS,
     diagnostics: { status: 'stable' },
     nodeFactory: () => undefined,
+    globalStateCounts: new Map(),
+    globalState: {},
     loadSnapshot: undefined,
     latentRaw: new Map(),
     typeMismatchPaths: new Set(),
@@ -60,7 +62,7 @@ const makeRecord = (
   local: undefined,
   emit: undefined,
   schema: { schema: { options }, typeConflict: false },
-  state: {},
+  interactionState: {},
   revisionLedger: EMPTY_REVISION_LEDGER,
   detached: false,
 });

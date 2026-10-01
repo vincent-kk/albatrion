@@ -31,11 +31,11 @@ export const commitDeriveRules = <Self extends SchemaNodeRecord<Self>>(
     context.cause = 'expression';
   }
   for (const node of decision.nodes) {
-    const previous = node.state;
+    const previous = node.interactionState;
     patchSchemaNodeInteractionState(node, {
       [NodeState.Dirty]: false, [NodeState.Touched]: false,
     });
-    if (node.state !== previous) context.changedNodes.add(node);
+    if (node.interactionState !== previous) context.changedNodes.add(node);
   }
   const runtime = context.root.runtime;
   for (const path of state.visitedSourcePaths)

@@ -1,5 +1,6 @@
 export { nodeFromJSONSchema, contextNodeFactory } from './nodeFromJSONSchema';
 export { setContext } from './SchemaNode';
+export { SchemaNodeEventType, SchemaNodeRequestType } from './SchemaNode';
 export { retainValidationRoot, releaseValidationRoot } from './validation';
 
 export type {

@@ -1,6 +1,7 @@
 export { schemaNodeFactory } from './utils/schemaNodeFactory';
 export { setContext } from './utils/setContext';
 export { SetValueOption } from './type';
+export { SchemaNodeEventType, SchemaNodeRequestType } from '../record';
 export {
   isSchemaNode,
   isStringNode,

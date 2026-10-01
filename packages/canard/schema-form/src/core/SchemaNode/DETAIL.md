@@ -54,9 +54,9 @@
 | `errors` | getter | `validation.readSchemaNodeErrors`; 노드에 배정된 오류 | VALIDATE-043, SURFACE-053 |
 | `setExternalErrors(errors)` | method | `dispatch.dispatchSetExternalErrors` | EVENT-045, SURFACE-053 |
 | `clearExternalErrors()` | method | `dispatch.dispatchClearExternalErrors` | EVENT-045, SURFACE-053 |
-| `state` | getter/setter | 레코드의 상호작용 상태 칸; 쓰기는 `dispatch.dispatchSetState` | EVENT-012·067, NODE-010 |
+| `state` | getter/setter | 레코드의 `interactionState` 읽기; 쓰기는 `dispatch.dispatchSetState` | EVENT-012·067, NODE-010 |
 | `setState(state)` | method | `dispatch.dispatchSetState` | EVENT-012·067, SURFACE-053 |
-| `globalState` | getter | 루트의 상태 읽기 | SURFACE-053, LANDING-064 |
+| `globalState` | getter | 트리 런타임의 키별 참 노드 수에서 유도된 현재 `globalState` 읽기; 떼어진 참조도 같은 런타임을 읽음 | EVENT-062, SURFACE-053, NODE-044, 43C-01 |
 | `globalErrors` | getter | 루트의 전체 검증 오류 목록 | VALIDATE-043, SURFACE-053 |
 | `setSubtreeState(state)` | method | `dispatch.dispatchSetSubtreeState` | EVENT-067, NODE-010 |
 | `clearSubtreeState()` | method | `dispatch.dispatchClearSubtreeState` | EVENT-067, NODE-010 |

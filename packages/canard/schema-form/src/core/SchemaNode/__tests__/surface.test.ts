@@ -18,18 +18,19 @@ const makeTree = (schema: BlueprintSchema, snapshot: unknown = undefined) =>
   });
 
 describe('SchemaNode PR-2 surface', () => {
-  it('26C-01 PR-6 member list matches the DETAIL table exactly', () => {
+  it('26C-01 PR-4 member list matches the DETAIL table exactly', () => {
     const detail = readFileSync(new URL('../DETAIL.md', import.meta.url), 'utf8');
-    const rows = [...detail.matchAll(/^\| `([^`]+)` \| (getter|method) \|/gm)]
+    const rows = [...detail.matchAll(/^\| `([^`]+)` \| (getter|setter|getter\/setter|method) \|/gm)]
       .map((match) => ({ name: match[1].replace(/\(.*/, ''), kind: match[2] }));
-    expect(rows).toHaveLength(34);
+    expect(rows).toHaveLength(48);
     const prototype = RuntimeSchemaNode.prototype;
     expect(Object.getOwnPropertyNames(prototype).filter((name) => name !== 'constructor').sort())
       .toEqual(rows.map((row) => row.name).sort());
     for (const row of rows) {
       const descriptor = Object.getOwnPropertyDescriptor(prototype, row.name);
-      expect(typeof (row.kind === 'getter' ? descriptor?.get : descriptor?.value))
+      expect(typeof (row.kind.startsWith('getter') ? descriptor?.get : descriptor?.value))
         .toBe('function');
+      if (row.kind === 'getter/setter') expect(typeof descriptor?.set).toBe('function');
     }
   });
 
@@ -54,7 +55,8 @@ describe('SchemaNode PR-2 surface', () => {
 
   it('TEST-069 SchemaNode index names the binding-only context channel', () => {
     expect(Object.keys(surface).sort()).toEqual([
-      'SetValueOption', 'isArrayNode', 'isBooleanNode', 'isBranchNode',
+      'SchemaNodeEventType', 'SchemaNodeRequestType', 'SetValueOption',
+      'isArrayNode', 'isBooleanNode', 'isBranchNode',
       'isNumberNode', 'isObjectNode', 'isSchemaNode', 'isStringNode',
       'isTerminalNode', 'isUnionNode', 'isVirtualNode', 'schemaNodeFactory',
       'setContext',

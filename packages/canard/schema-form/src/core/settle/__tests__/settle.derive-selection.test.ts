@@ -37,11 +37,11 @@ describe('active derive declarations', () => {
     loadSchemaNodeAtMount(root, { H: { enabled: false, x: 'own' } },
       SetValueOption.Overwrite);
     const target = root.structure!.H.structure!.x;
-    target.state = { [NodeState.Dirty]: true, [NodeState.Touched]: true };
+    target.interactionState = { [NodeState.Dirty]: true, [NodeState.Touched]: true };
     writeSchemaNode(root.structure!.H.structure!.enabled, true, 'input',
       SetValueOption.Overwrite);
-    expect(target.state[NodeState.Dirty]).toBe(true);
-    expect(target.state[NodeState.Touched]).toBe(true);
+    expect(target.interactionState[NodeState.Dirty]).toBe(true);
+    expect(target.interactionState[NodeState.Touched]).toBe(true);
   });
 
   it('FRAGMENT-050 shared node baseline only on depth-two if activation', () => {
@@ -149,11 +149,11 @@ describe('active derive declarations', () => {
     loadSchemaNodeAtMount(root, { flag: false, H: { P: { q: 'q0' } } },
       SetValueOption.Overwrite);
     const target = root.structure!.H.structure!.P;
-    target.state = { [NodeState.Dirty]: true, [NodeState.Touched]: true };
+    target.interactionState = { [NodeState.Dirty]: true, [NodeState.Touched]: true };
     writeSchemaNode(target.structure!.q, 'user', 'input', SetValueOption.Overwrite);
     expect(target.structure?.q?.raw).toBe('user');
-    expect(target.state[NodeState.Dirty]).toBe(true);
-    expect(target.state[NodeState.Touched]).toBe(true);
+    expect(target.interactionState[NodeState.Dirty]).toBe(true);
+    expect(target.interactionState[NodeState.Touched]).toBe(true);
   });
 
   it('FRAGMENT-050 shared node baseline only after inactive declaration reselects', () => {

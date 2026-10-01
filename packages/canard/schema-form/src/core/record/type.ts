@@ -43,7 +43,7 @@ interface SchemaNodeDeliverySnapshot<Self> {
   /** Final local disabled state. */
   readonly disabled: boolean;
   /** Interaction state object before a possible reset. */
-  readonly state: NodeStateFlags;
+  readonly interactionState: NodeStateFlags;
   /** Memoized effective schema reference. */
   readonly schema: EffectiveSchema;
   /** Committed watched values for reference comparison. */
@@ -98,8 +98,8 @@ export interface SchemaNodeRecord<Self> {
   emit: unknown;
   /** Merged effective schema for the active declarations. */
   schema: EffectiveSchema;
-  /** Interaction flags updated by shallow patches. */
-  state: NodeStateFlags;
+  /** Stored interaction flags updated by shallow patches. */
+  interactionState: NodeStateFlags;
   /** Per-bit commit counts, allocated on the first delivery. */
   revisionLedger: Readonly<Record<number, number>>;
   /** Whether this reference has left the live shape. */
@@ -279,6 +279,10 @@ export interface SettlementScratch<Self> {
 
 /** Minimal per-tree slots consumed by the first settlement engine. */
 export interface SchemaNodeRuntime<Self> extends SchemaNodeRootRuntimeState {
+  /** Number of current-shape nodes with a truthy value for each state key. */
+  globalStateCounts: Map<string, number>;
+  /** Stable aggregate of keys whose count is positive. */
+  globalState: Readonly<Record<string, true>>;
   /** Pending events consumed by the later dispatcher. */
   deliveries?: Map<unknown, SchemaNodeDelivery>;
   /** Last committed node observations for change detection. */
@@ -360,7 +364,7 @@ export interface SchemaNodeRuntime<Self> extends SchemaNodeRootRuntimeState {
   /** Stamp of the latest queued write-triggered request. */
   validationRequestStamp?: number;
   /** Latest ordered whole-schema issues, including ownerless and hidden issues. */
-  globalErrors?: readonly unknown[];
+  globalErrors?: readonly { dataPath: string }[];
   /** Last displayed validator issues, separate from external errors. */
   validationErrors?: Map<unknown, readonly unknown[]>;
   /** Nodes whose displayed validator issues changed in the last result. */

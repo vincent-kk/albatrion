@@ -26,6 +26,8 @@ export const createTestTree = (
     diagnostics: { status: 'stable' },
     nodeFactory: (entry, parent, treeRuntime) =>
       createPlainNode(entry, parent, treeRuntime, visits),
+    globalStateCounts: new Map(),
+    globalState: {},
     loadSnapshot: undefined,
     latentRaw: new Map(),
     typeMismatchPaths: new Set(),

@@ -159,7 +159,7 @@ describe('settlement delivery ledger', () => {
     } });
     loadSchemaNodeAtMount(root, { clear: false, target: 'X' }, SetValueOption.Overwrite);
     const target = root.structure!.target;
-    target.state = { [NodeState.Dirty]: true, [NodeState.Touched]: true };
+    target.interactionState = { [NodeState.Dirty]: true, [NodeState.Touched]: true };
     root.runtime.deliveries?.clear();
     writeSchemaNode(root.structure!.clear, true, 'input', SetValueOption.Overwrite);
     expect((root.runtime.deliveries?.get(target)?.type ?? 0) &

@@ -1,4 +1,5 @@
-import { patchSchemaNodeInteractionState, SchemaNodeEventType } from '../../../record';
+import { accumulateGlobalStateDeltas, patchSchemaNodeInteractionState,
+  publishGlobalStateDeltas, SchemaNodeEventType } from '../../../record';
 import type { SchemaNodeRecord } from '../../../record';
 import type { NodeStateFlags } from '../../../types/state';
 import { flushQueuedEvents } from '../chain/flushQueuedEvents';
@@ -17,10 +18,17 @@ export const dispatchSetState = <Self extends SchemaNodeRecord<Self>>(
   if (node.detached) return;
   const runtime = node.rootNode.runtime;
   assertNotInDelivery(runtime);
-  const previous = node.state;
+  const previous = node.interactionState;
   patchSchemaNodeInteractionState(node, state);
-  if (previous === node.state) return;
+  if (previous === node.interactionState) return;
+  const deltas = new Map<string, number>();
+  accumulateGlobalStateDeltas(deltas, previous, node.interactionState, state);
+  publishGlobalStateDeltas(node.rootNode, deltas);
+  const snapshot = runtime.deliverySnapshots?.get(node);
+  if (snapshot) runtime.deliverySnapshots?.set(node, {
+    ...snapshot, interactionState: node.interactionState,
+  });
   runtime.stateChanged = true;
-  queueNonSettleEvent(node, SchemaNodeEventType.UpdateState, node.state);
+  queueNonSettleEvent(node, SchemaNodeEventType.UpdateState, node.interactionState);
   if (!runtime.entryDepth) flushQueuedEvents(node.rootNode);
 };

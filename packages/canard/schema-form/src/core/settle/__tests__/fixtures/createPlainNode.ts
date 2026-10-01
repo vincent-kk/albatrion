@@ -56,6 +56,6 @@ export const createPlainNode = (
     visible: true, readOnly: false, disabled: false,
     local: undefined, emit: undefined,
     schema: mergeEffectiveSchema(template, [], { mode: 'runtime' }),
-    state: {}, revisionLedger: EMPTY_REVISION_LEDGER, detached: false,
+    interactionState: {}, revisionLedger: EMPTY_REVISION_LEDGER, detached: false,
   };
 };

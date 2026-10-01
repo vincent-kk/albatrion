@@ -13,6 +13,7 @@ import { commitExitPolicyValues } from './commitExitPolicyValues';
 import { snapshotExitedPolicies } from './snapshotExitedPolicies';
 import { finalizeDeriveTrace } from './finalizeDeriveTrace';
 import { markCommitDeliveries } from './markCommitDeliveries';
+import { commitGlobalState } from './commitGlobalState';
 
 /** Shared frozen empty list for inactive and mismatch projections. */
 const EMPTY_PATHS: readonly string[] = Object.freeze([]);
@@ -30,6 +31,7 @@ export const commitSettlement = <Self extends SchemaNodeRecord<Self>>(
   const runtime = context.root.runtime;
   snapshotExitedPolicies(context);
   commitDeriveRules(context);
+  commitGlobalState(context);
   commitExitPolicyValues(context);
   if (process.env.NODE_ENV !== 'production') {
     finalizeDeriveTrace(context);

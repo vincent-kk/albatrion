@@ -1,4 +1,5 @@
-import { SchemaNodeEventType } from '../../../record';
+import { accumulateGlobalStateDeltas, publishGlobalStateDeltas,
+  SchemaNodeEventType } from '../../../record';
 import type { SchemaNodeRecord } from '../../../record';
 import { flushQueuedEvents } from '../chain/flushQueuedEvents';
 import { queueNonSettleEvent } from '../chain/queueNonSettleEvent';
@@ -15,16 +16,25 @@ export const dispatchClearSubtreeState = <Self extends SchemaNodeRecord<Self>>(
   if (node.detached) return;
   const runtime = node.rootNode.runtime;
   assertNotInDelivery(runtime);
+  const deltas = new Map<string, number>();
   const pending = [node];
   while (pending.length) {
     const current = pending.pop();
     if (!current || current.detached) continue;
-    if (Object.keys(current.state).length) {
-      current.state = {};
+    if (Object.keys(current.interactionState).length) {
+      const previous = current.interactionState;
+      current.interactionState = {};
+      accumulateGlobalStateDeltas(deltas, previous, current.interactionState, previous);
+      const snapshot = runtime.deliverySnapshots?.get(current);
+      if (snapshot) runtime.deliverySnapshots?.set(current, {
+        ...snapshot, interactionState: current.interactionState,
+      });
       runtime.stateChanged = true;
-      queueNonSettleEvent(current, SchemaNodeEventType.UpdateState, current.state);
+      queueNonSettleEvent(current, SchemaNodeEventType.UpdateState,
+        current.interactionState);
     }
     for (const child of current.children ?? []) pending.push(child);
   }
+  publishGlobalStateDeltas(node.rootNode, deltas);
   if (!runtime.entryDepth) flushQueuedEvents(node.rootNode);
 };

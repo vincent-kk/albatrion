@@ -10,7 +10,7 @@ import { getDispatchChild } from './fixtures/getDispatchChild';
 
 // filid:contract dispatch-observers
 describe('dispatcher state events', () => {
-  it('EVENT-012 EVENT-067 delivers a state patch synchronously without settling', () => {
+  it('EVENT-012 EVENT-067 43C-01 delivers state and aggregate bits synchronously', () => {
     const { root, runtime } = createDispatchTree({ type: 'string' });
     const onChange = vi.fn();
     const onStateChange = vi.fn();
@@ -25,12 +25,15 @@ describe('dispatcher state events', () => {
 
     dispatchSetState(root, { [NodeState.Dirty]: true });
 
-    expect(root.state[NodeState.Dirty]).toBe(true);
+    expect(root.interactionState[NodeState.Dirty]).toBe(true);
     expect(root.raw).toBeUndefined();
     expect(root.emit).toBeUndefined();
     expect(runtime.commitNumber).toBe(before);
-    expect(seen).toEqual([SchemaNodeEventType.UpdateState]);
+    expect(seen).toEqual([
+      SchemaNodeEventType.UpdateState | SchemaNodeEventType.UpdateGlobalState,
+    ]);
     expect(readSchemaNodeRevision(root, SchemaNodeEventType.UpdateState)).toBe(1);
+    expect(readSchemaNodeRevision(root, SchemaNodeEventType.UpdateGlobalState)).toBe(1);
     expect(onStateChange).toHaveBeenCalledTimes(1);
     expect(onChange).not.toHaveBeenCalled();
     expect(requestValidation).not.toHaveBeenCalled();
@@ -73,20 +76,20 @@ describe('dispatcher state events', () => {
     const second = getDispatchChild(root, 'second');
 
     dispatchSetSubtreeState(first, { [NodeState.Dirty]: true });
-    expect(first.state[NodeState.Dirty]).toBe(true);
-    expect(second.state[NodeState.Dirty]).toBeUndefined();
+    expect(first.interactionState[NodeState.Dirty]).toBe(true);
+    expect(second.interactionState[NodeState.Dirty]).toBeUndefined();
     dispatchClearSubtreeState(first);
-    expect(first.state[NodeState.Dirty]).toBeUndefined();
+    expect(first.interactionState[NodeState.Dirty]).toBeUndefined();
   });
 
   it('NODE-044 ignores state writes on a detached occurrence', () => {
     const { root } = createDispatchTree({ type: 'string' });
     root.detached = true;
-    const before = root.state;
+    const before = root.interactionState;
     dispatchSetState(root, { [NodeState.Dirty]: true });
     dispatchSetSubtreeState(root, { [NodeState.Touched]: true });
     dispatchClearSubtreeState(root);
-    expect(root.state).toBe(before);
+    expect(root.interactionState).toBe(before);
     expect(readSchemaNodeRevision(root, SchemaNodeEventType.UpdateState)).toBe(0);
   });
 
@@ -96,7 +99,7 @@ describe('dispatcher state events', () => {
     runtime.reportingErrors = true;
     expect(() => dispatchSetState(root, { [NodeState.Dirty]: true })).not.toThrow();
     expect(() => dispatchClearSubtreeState(root)).not.toThrow();
-    expect(root.state[NodeState.Dirty]).toBeUndefined();
+    expect(root.interactionState[NodeState.Dirty]).toBeUndefined();
   });
 
   it('ERROR-029 refuses state writes while the error observer is active', () => {
@@ -104,7 +107,7 @@ describe('dispatcher state events', () => {
     runtime.reportingErrors = true;
     expect(() => dispatchSetState(root, { [NodeState.Dirty]: true }))
       .toThrowError(expect.objectContaining({ code: 'SCHEMA_FORM_ERROR.WRITE_IN_OBSERVER' }));
-    expect(root.state[NodeState.Dirty]).toBeUndefined();
+    expect(root.interactionState[NodeState.Dirty]).toBeUndefined();
   });
 
   it('EVENT-067 surfaces an onStateChange failure after state delivery', () => {
@@ -123,7 +126,7 @@ describe('dispatcher state events', () => {
     let callbacks = 0;
     subscribeSchemaNode(root, (event) => {
       if (event.type & SchemaNodeEventType.UpdateState)
-        seen.push(root.state[NodeState.Touched] === true);
+        seen.push(root.interactionState[NodeState.Touched] === true);
     });
     runtime.onStateChange = () => {
       callbacks += 1;
@@ -142,7 +145,7 @@ describe('dispatcher state events', () => {
     let callbacks = 0;
     subscribeSchemaNode(root, (event) => {
       if (event.type & SchemaNodeEventType.UpdateState)
-        seen.push(root.state[NodeState.Touched] === true);
+        seen.push(root.interactionState[NodeState.Touched] === true);
     });
     runtime.onStateChange = () => {
       callbacks += 1;

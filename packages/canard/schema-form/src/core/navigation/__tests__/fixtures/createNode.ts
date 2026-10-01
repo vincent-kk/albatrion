@@ -23,6 +23,8 @@ export const createNode = (
       diagnostics: { status: 'stable' },
       nodeFactory: (entry, owner, treeRuntime) =>
         createNode('name' in entry ? entry.name : '', owner, 'branch', treeRuntime),
+      globalStateCounts: new Map(),
+      globalState: {},
       loadSnapshot: undefined,
       latentRaw: new Map(),
       typeMismatchPaths: new Set(),
@@ -61,7 +63,7 @@ export const createNode = (
     local: undefined,
     emit: undefined,
     schema: { schema: {}, typeConflict: false },
-    state: {},
+    interactionState: {},
     revisionLedger: EMPTY_REVISION_LEDGER,
     detached: false,
   };

@@ -64,7 +64,7 @@ export const markCommitDeliveries = <Self extends SchemaNodeRecord<Self>>(
       }
       if (previous.children !== node.children)
         mark(node, SchemaNodeEventType.UpdateChildren);
-      if (previous.state !== node.state) {
+      if (previous.interactionState !== node.interactionState) {
         runtime.stateChanged = true;
         if (!((runtime.queuedNonSettleEvents?.get(node)?.type ?? 0) &
           SchemaNodeEventType.UpdateState))
@@ -100,7 +100,8 @@ export const markCommitDeliveries = <Self extends SchemaNodeRecord<Self>>(
       mark(node, SchemaNodeEventType.RequestRefresh);
     snapshots.set(node, { path: node.path, local: node.local, emit: node.emit,
       children: node.children, active: node.active, visible: node.visible,
-      readOnly: node.readOnly, disabled: node.disabled, state: node.state,
+      readOnly: node.readOnly, disabled: node.disabled,
+      interactionState: node.interactionState,
       schema: node.schema, watchValues: watched });
   }
   runtime.deliverySnapshots = snapshots;

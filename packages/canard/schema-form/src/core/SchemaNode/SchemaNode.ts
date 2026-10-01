@@ -1,12 +1,23 @@
 import type { BlueprintNode, BlueprintSchemaType, EffectiveSchema } from '../blueprint';
 import { find, findNodes } from '../navigation';
+import { dispatchBatch, dispatchClearExternalErrors, dispatchClearSubtreeState,
+  dispatchRequest, dispatchResetSubtree, dispatchSetExternalErrors,
+  dispatchSetState, dispatchSetSubtreeState, dispatchSetValue, dispatchValidate,
+  readSchemaNodeRevision, subscribeSchemaNode } from '../dispatch';
+import type { SchemaNodeListener } from '../dispatch';
 import { EMPTY_REVISION_LEDGER } from '../record';
-import type { Behavior, SchemaNodeRecord, SchemaNodeRuntime } from '../record';
-import { readSchemaNodeDefaultValue, resetSchemaNodeSubtree,
+import type { Behavior, SchemaNodeEventType, SchemaNodeRecord,
+  SchemaNodeRequestType, SchemaNodeRuntime } from '../record';
+import { readSchemaNodeDefaultValue,
   readSchemaNodeInactiveValues, readSchemaNodeTypeMismatch,
-  readSchemaNodeTypeMismatches, readSchemaNodeWatchValues, writeSchemaNode } from '../settle';
+  readSchemaNodeTypeMismatches, readSchemaNodeWatchValues } from '../settle';
+import { readSchemaNodeErrors } from '../validation';
+import type { ValidationIssue } from '../validation';
+import type { NodeStateFlags } from '../types/state';
 import { SetValueOption } from './type';
-import { SetValueOption as WriteOption } from '../types/value';
+
+/** Shared empty whole-form issue list before a validation result exists. */
+const EMPTY_GLOBAL_ERRORS: readonly ValidationIssue[] = Object.freeze([]);
 
 /** Runtime record implementation; the public SchemaNode name denotes a union type. */
 export class SchemaNode implements SchemaNodeRecord<SchemaNode> {
@@ -33,7 +44,7 @@ export class SchemaNode implements SchemaNodeRecord<SchemaNode> {
   local: unknown;
   emit: unknown;
   schema: EffectiveSchema;
-  state: SchemaNodeRecord<SchemaNode>['state'];
+  interactionState: SchemaNodeRecord<SchemaNode>['interactionState'];
   /** Per-bit counts copied only after this occurrence first receives delivery. */
   revisionLedger: Readonly<Record<number, number>>;
   detached: boolean;
@@ -44,7 +55,7 @@ export class SchemaNode implements SchemaNodeRecord<SchemaNode> {
     name: string, escapedName: string, path: string, depth: number,
     structure: Record<string, SchemaNode> | null,
     children: readonly SchemaNode[] | null, schema: EffectiveSchema,
-    state: SchemaNodeRecord<SchemaNode>['state'],
+    state: SchemaNodeRecord<SchemaNode>['interactionState'],
   ) {
     this.behavior = behavior;
     this.runtime = runtime;
@@ -69,7 +80,7 @@ export class SchemaNode implements SchemaNodeRecord<SchemaNode> {
     this.local = undefined;
     this.emit = undefined;
     this.schema = schema;
-    this.state = state;
+    this.interactionState = state;
     this.revisionLedger = EMPTY_REVISION_LEDGER;
     this.detached = false;
   }
@@ -158,12 +169,48 @@ export class SchemaNode implements SchemaNodeRecord<SchemaNode> {
   }
   /** {@inheritDoc NodeSurface.setValue} */
   setValue(value: unknown, option: SetValueOption = SetValueOption.Overwrite) {
-    return writeSchemaNode<SchemaNode>(this, value,
-      (option & WriteOption.Merge) === WriteOption.Merge &&
-      !(option & WriteOption.Replace) ? 'callerPartial' : 'callerReplace', option);
+    return dispatchSetValue<SchemaNode>(this, value, option);
   }
   /** {@inheritDoc NodeSurface.resetSubtree} */
   resetSubtree(option: SetValueOption = SetValueOption.Overwrite) {
-    return resetSchemaNodeSubtree<SchemaNode>(this, option);
+    return dispatchResetSubtree<SchemaNode>(this, option);
   }
+  /** {@inheritDoc NodeSurface.state} */
+  get state() { return this.interactionState; }
+  /** {@inheritDoc NodeSurface.state} */
+  set state(value: NodeStateFlags) { dispatchSetState<SchemaNode>(this, value); }
+  /** {@inheritDoc NodeSurface.setState} */
+  setState(state: NodeStateFlags) { return dispatchSetState<SchemaNode>(this, state); }
+  /** {@inheritDoc NodeSurface.globalState} */
+  get globalState() { return this.runtime.globalState; }
+  /** {@inheritDoc NodeSurface.setSubtreeState} */
+  setSubtreeState(state: NodeStateFlags) {
+    return dispatchSetSubtreeState<SchemaNode>(this, state);
+  }
+  /** {@inheritDoc NodeSurface.clearSubtreeState} */
+  clearSubtreeState() { return dispatchClearSubtreeState<SchemaNode>(this); }
+  /** {@inheritDoc NodeSurface.errors} */
+  get errors() { return readSchemaNodeErrors<SchemaNode>(this); }
+  /** {@inheritDoc NodeSurface.globalErrors} */
+  get globalErrors() { return this.runtime.globalErrors ?? EMPTY_GLOBAL_ERRORS; }
+  /** {@inheritDoc NodeSurface.setExternalErrors} */
+  setExternalErrors(errors: readonly ValidationIssue[]) {
+    return dispatchSetExternalErrors<SchemaNode>(this, errors);
+  }
+  /** {@inheritDoc NodeSurface.clearExternalErrors} */
+  clearExternalErrors() { return dispatchClearExternalErrors<SchemaNode>(this); }
+  /** {@inheritDoc NodeSurface.validate} */
+  validate() { return dispatchValidate<SchemaNode>(this); }
+  /** {@inheritDoc NodeSurface.subscribe} */
+  subscribe(listener: SchemaNodeListener) {
+    return subscribeSchemaNode<SchemaNode>(this, listener);
+  }
+  /** {@inheritDoc NodeSurface.revision} */
+  revision(mask?: SchemaNodeEventType) {
+    return readSchemaNodeRevision<SchemaNode>(this, mask);
+  }
+  /** {@inheritDoc NodeSurface.request} */
+  request(kind: SchemaNodeRequestType) { return dispatchRequest<SchemaNode>(this, kind); }
+  /** {@inheritDoc NodeSurface.batch} */
+  batch(fn: () => void) { return dispatchBatch<SchemaNode>(this, fn); }
 }

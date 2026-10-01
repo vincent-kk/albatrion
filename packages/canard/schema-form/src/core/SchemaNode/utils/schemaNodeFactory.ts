@@ -14,6 +14,7 @@ import { DIALECT_MISMATCH } from '../../../errors';
 export type SchemaNodeRuntimeSeed = Omit<SchemaNodeRuntime<unknown>,
   'blueprint' | 'nodeFactory' | 'settlementScratch' | 'chainRoot' |
   'batchWrites' | 'validationTargets' | 'validationChangedNodes' |
+  'globalStateCounts' | 'globalState' |
   'validationPendingTargets' |
   'requestValidation' | 'validator'>;
 
@@ -53,6 +54,8 @@ export function schemaNodeFactory(
 ): unknown {
   const runtime: SchemaNodeRuntime<RuntimeSchemaNode> = {
     ...runtimeSeed,
+    globalStateCounts: new Map(),
+    globalState: {},
     validator,
     context: runtimeSeed.context ?? {},
     blueprint: analysis,
