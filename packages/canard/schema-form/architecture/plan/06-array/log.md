@@ -50,9 +50,14 @@ Planning method: 저장소 지침 — `PLAN.md` §2와 `plan/prompts.md`의 단�
 | 2026-10-01 | 원장 질의 | U2 초안이 찾은 둘을 원장 관리자가 36라운드로 닫음: 행의 여덟째 칸 `arrange`(36C-01), 옛 철자의 `additionalItems`는 스키마 객체일 때만 06이 청사진에 컴파일(36C-02). 실행 계획 I4·U3 갱신 | `reviews/round-36-closing.md` |
 | 2026-10-01 | U2 | 문서 선행: `arrayBehavior/` INTENT·DETAIL 새로, behaviors·종류 여섯·blueprint·record·settle·SchemaNode 문서 갱신(codex 세션 `ba0da3ae` 초안, 조율 세션이 원장 대조·36라운드 반영). `.ts` 변경 없음 | 이 커밋 |
 
+| 2026-10-01 | 환경 | 워크트리에 패키지 전용 `ajv`가 없어 `tsc`가 옛 시험·스토리에서 35건 실패. 원래 작업 폴더의 `packages/canard/schema-form/node_modules/ajv`를 워크트리 같은 자리에 심볼릭 링크로 연결(무시되는 경로, 커밋 없음) 뒤 0건 | — |
+| 2026-10-01 | U3 | `resolveArrayLimits` 청사진 이동, 아이템 자리 항목 `getItemEntry`, 옛 철자 `additionalItems` 컴파일(codex `faaf1c5d`). 조율 세션이 자리 항목의 게이트 객체 복사를 고침(게이트를 열쇠로 쓰는 `ifPredicates`와 짝이 깨짐) + 시험. 청사진 시험 558 → 577. G4 | `cf429e31c` |
+| 2026-10-01 | 원장 질의 | `omitTrailing`이 자르는 것(37C-01): 방출 배열 꼬리의 빈 자리 — 채운 자리, 잎의 실제 `null`, 청사진 없는 자리의 `undefined`·`null` | `reviews/round-37-closing.md` |
+| 2026-10-01 | U4 | `arrayBehavior/` 두 행, 모든 행의 여덟째 칸 `arrange`와 공유 거부 칸(ERROR-197), 레코드 칸 셋(codex `8a0344a4`). 조율 세션이 고침: 레코드 칸 셋을 공개 접근자가 아닌 내부 칸으로, 터미널 `update`의 반환 출처 `updated`, 아이템 수마다 쌓이던 항목 메모(반복 `push`에서 제곱 메모리)를 템플릿당 마지막 하나로. core 시험 1,157 통과. G3·G5 | `4d8b4bf0b` |
+
 ## 3. 다음 행동
 
-- U3 청사진(`resolveArrayLimits` 이동, 아이템 자리 항목 보조, `additionalItems` 컴파일).
+- U5 정착 ①(배열 분배, 위치 잇기, 소멸, 잠복, 비구조 쓰기의 스냅숏 자리, 원본 B 구조 기록).
 
 ## 4. 원장·계획서 어긋남
 
