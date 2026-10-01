@@ -2,7 +2,7 @@ import type { JSONSchema, ValidateFunction } from '@canard/schema-form';
 import type Ajv from 'ajv';
 
 import { registerSchemaRoot, type SchemaRootRegistry } from './utils/registerSchemaRoot';
-import { createSchemaRootRegistry } from './utils/releaseSchemaRoot';
+import { createSchemaRootRegistry } from './utils/createSchemaRootRegistry';
 import { transformErrors } from './utils/transformErrors';
 
 /**

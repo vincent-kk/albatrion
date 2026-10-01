@@ -2,9 +2,10 @@
 
 import type { JSONSchema } from '@canard/schema-form';
 import type Ajv from 'ajv';
-import type { Options } from 'ajv';
 
-/** Ajv's code scope keeps functions after removeSchema; cap one shared compiler's roots. */
+import { makeSibling, PLUGIN_KEY_PREFIX } from './makeSibling';
+
+/** Provisional cap: Ajv's code scope keeps functions after removeSchema. */
 const MAX_TRANSIENT_ROOTS = 64;
 
 /** One root's validation and optional guard registrations. */
@@ -31,20 +32,6 @@ export interface SchemaRootRegistry {
   compilerCount: number;
   nextId: number;
 }
-
-/** Clone a bound profile, including consumer formats and custom keywords. */
-const makeSibling = (baseAjv: Ajv, allErrors: boolean): Ajv => {
-  const Constructor = baseAjv.constructor as new (options: Options) => Ajv;
-  const sibling = new Constructor({ ...baseAjv.opts, allErrors });
-  for (const [name, format] of Object.entries(baseAjv.formats))
-    if (format !== undefined) sibling.addFormat(name, format);
-  for (const name of Object.keys(baseAjv.RULES.all)) {
-    if (sibling.getKeyword(name)) continue;
-    const keyword = baseAjv.getKeyword(name);
-    if (typeof keyword === 'object') sibling.addKeyword(keyword);
-  }
-  return sibling;
-};
 
 /** Registers a copy once for each bound instance and authored root identity. */
 export const registerSchemaRoot = (
@@ -79,7 +66,7 @@ export const registerSchemaRoot = (
   const validationAjv = conflict ? makeSibling(baseAjv, Boolean(baseAjv.opts.allErrors))
     : ids.length ? baseAjv : registry.compilerCurrent ?? baseAjv;
   if (!ids.length) registry.compilerCount++;
-  const key = `https://canard.invalid/ajv8/root/${++registry.nextId}`;
+  const key = `${PLUGIN_KEY_PREFIX}root/${++registry.nextId}`;
   const validationCopy = ids.length ? structuredClone(root) : undefined;
   const validationRefsBefore = validationCopy ? Object.keys(validationAjv.refs) : [];
   if (validationCopy) validationAjv.addSchema(validationCopy, key);
@@ -93,21 +80,4 @@ export const registerSchemaRoot = (
   registry.finalizer.register(root, registration, registration);
   if (ids.length) registry.active.push(new WeakRef(registration));
   return registration;
-};
-
-/** Materialize a first-error sibling only when a guard is requested. */
-export const registerSchemaGuard = (
-  baseAjv: Ajv,
-  root: JSONSchema,
-  registration: SchemaRootRegistration,
-): Ajv => {
-  if (registration.guardAjv) return registration.guardAjv;
-  const guardAjv = makeSibling(baseAjv, false);
-  const guardCopy = structuredClone(root);
-  const refsBefore = Object.keys(guardAjv.refs);
-  guardAjv.addSchema(guardCopy, registration.key);
-  registration.guardAjv = guardAjv;
-  registration.guardCopy = guardCopy;
-  registration.guardRefs = Object.keys(guardAjv.refs).filter((ref) => !refsBefore.includes(ref));
-  return guardAjv;
 };

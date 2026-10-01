@@ -1,8 +1,9 @@
 import type { JSONSchema } from '@canard/schema-form';
 import type Ajv from 'ajv';
 
-import { registerSchemaRoot, registerSchemaGuard, type SchemaRootRegistry } from './utils/registerSchemaRoot';
-import { createSchemaRootRegistry } from './utils/releaseSchemaRoot';
+import { registerSchemaRoot, type SchemaRootRegistry } from './utils/registerSchemaRoot';
+import { registerSchemaGuard } from './utils/registerSchemaGuard';
+import { createSchemaRootRegistry } from './utils/createSchemaRootRegistry';
 
 /**
  * Compiles a synchronous guard at a location in its registered root.

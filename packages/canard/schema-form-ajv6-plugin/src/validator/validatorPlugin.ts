@@ -4,12 +4,10 @@ import Ajv from 'ajv';
 import { createGuardCompiler } from './createGuardCompiler';
 import { createValidatorFactory } from './createValidatorFactory';
 import { assertBindableInstance } from './utils/assertBindableInstance';
-import {
-  registerSchemaRoot,
-  registerSchemaGuard,
-  type SchemaRootRegistration,
-} from './utils/registerSchemaRoot';
-import { disposeSchemaRoot, releaseSchemaRoot } from './utils/releaseSchemaRoot';
+import { registerSchemaRoot, type SchemaRootRegistration } from './utils/registerSchemaRoot';
+import { registerSchemaGuard } from './utils/registerSchemaGuard';
+import { disposeSchemaRoot } from './utils/disposeSchemaRoot';
+import { releaseSchemaRoot } from './utils/releaseSchemaRoot';
 
 /**
  * AJV6 defaults preserve the plugin's Draft-07 and format behavior.

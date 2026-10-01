@@ -2,9 +2,9 @@
 
 import type Ajv from 'ajv';
 
-import { cloneInstance } from './cloneInstance';
+import { cloneInstance, PLUGIN_KEY_PREFIX } from './cloneInstance';
 
-/** Ajv's code scope keeps functions after removeSchema; cap one shared compiler's roots. */
+/** Provisional cap: Ajv's code scope keeps functions after removeSchema. */
 const MAX_TRANSIENT_ROOTS = 64;
 
 /** Ajv instances and registration key retained for one root identity. */
@@ -55,7 +55,7 @@ export const registerSchemaRoot = (
   const validation = conflict ? cloneInstance(instance, Boolean(instance.opts.allErrors))
     : ids.length ? instance : pool.current;
   if (!ids.length) pool.count++;
-  const key = `urn:canard:schema-form:ajv7:${++nextSchemaRootKey}`;
+  const key = `${PLUGIN_KEY_PREFIX}${++nextSchemaRootKey}`;
   const validationCopy: object | undefined = ids.length
     ? JSON.parse(JSON.stringify(root)) : undefined;
   if (validationCopy) validation.addSchema(validationCopy, key);
@@ -65,19 +65,4 @@ export const registerSchemaRoot = (
   finalizer.register(root, registration, registration);
   if (ids.length) active.push(new WeakRef(registration));
   return registration;
-};
-
-/** Materialize a first-error sibling only when a guard is requested. */
-export const registerSchemaGuard = (
-  root: object,
-  instance: Ajv,
-  registration: SchemaRootRegistration,
-): Ajv => {
-  if (registration.guard) return registration.guard;
-  const guard = cloneInstance(instance, false);
-  const guardCopy: object = JSON.parse(JSON.stringify(root));
-  guard.addSchema(guardCopy, registration.key);
-  registration.guard = guard;
-  registration.guardCopy = guardCopy;
-  return guard;
 };

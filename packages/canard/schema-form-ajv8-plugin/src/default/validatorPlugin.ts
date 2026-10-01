@@ -5,7 +5,8 @@ import { createGuardCompiler } from '../validator/createGuardCompiler';
 import { createValidatorFactory } from '../validator/createValidatorFactory';
 import { assertBindableInstance } from '../validator/utils/assertBindableInstance';
 import { type SchemaRootRegistry } from '../validator/utils/registerSchemaRoot';
-import { createSchemaRootRegistry, releaseSchemaRoot } from '../validator/utils/releaseSchemaRoot';
+import { createSchemaRootRegistry } from '../validator/utils/createSchemaRootRegistry';
+import { releaseSchemaRoot } from '../validator/utils/releaseSchemaRoot';
 
 export { createValidatorFactory };
 

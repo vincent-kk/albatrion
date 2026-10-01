@@ -4,8 +4,10 @@ import Ajv, { type Options } from 'ajv';
 import { createValidatorFactory } from './createValidatorFactory';
 import { createGuardCompiler } from './createGuardCompiler';
 import { assertBindableInstance } from './utils/assertBindableInstance';
-import { registerSchemaRoot, registerSchemaGuard, type SchemaCompilerPool, type SchemaRootRegistration } from './utils/registerSchemaRoot';
-import { disposeSchemaRoot, releaseSchemaRoot } from './utils/releaseSchemaRoot';
+import { registerSchemaRoot, type SchemaCompilerPool, type SchemaRootRegistration } from './utils/registerSchemaRoot';
+import { registerSchemaGuard } from './utils/registerSchemaGuard';
+import { disposeSchemaRoot } from './utils/disposeSchemaRoot';
+import { releaseSchemaRoot } from './utils/releaseSchemaRoot';
 import { resolveAjvConstructor } from './utils/resolveAjvConstructor';
 
 /**
