@@ -8,8 +8,8 @@ const probe = (label: string, count: number): void => {
 };
 
 // filid:contract settle-budget
-describe('48C-01 SETTLE-017 proportional settlement work', () => {
-  it('FS-2 indexes mismatches without filtering all paths per ancestor', () => {
+describe('49C-01 SETTLE-017 proportional settlement work', () => {
+  it('M26 indexes mismatches without filtering all paths per ancestor', () => {
     const count = 2000;
     const { root, runtime } = makeSchemaNodeTree({ type: 'object', properties: {
       name: { type: 'string' }, rows: { type: 'array', items: {
@@ -33,7 +33,7 @@ describe('48C-01 SETTLE-017 proportional settlement work', () => {
       });
     try {
       root.find('/name')!.setValue('after');
-      probe('FS-2 filter visits', visited);
+      probe('M26 filter visits', visited);
       expect(visited).toBeLessThan(count * 12);
       expect(rows.typeMismatches).toEqual(beforeRows);
       expect(first.typeMismatches).toEqual(beforeFirst);
@@ -48,7 +48,7 @@ describe('48C-01 SETTLE-017 proportional settlement work', () => {
     }
   });
 
-  it('FS-3 removes exiting mismatches without scanning the whole set per exit', () => {
+  it('M27 removes exiting mismatches without scanning the whole set per exit', () => {
     const count = 2000;
     const { root, runtime } = makeSchemaNodeTree({ type: 'object', properties: {
       flag: { type: 'boolean' }, rows: { type: 'array', items: {
@@ -78,7 +78,7 @@ describe('48C-01 SETTLE-017 proportional settlement work', () => {
       });
     try {
       root.find('/flag')!.setValue(false);
-      probe('FS-3 mismatch iteration', visited);
+      probe('M27 mismatch iteration', visited);
       expect(visited).toBeLessThan(count * 12);
       expect(child.typeMismatches).toEqual(before);
       expect(child.typeMismatch).toBe(true);
@@ -88,7 +88,7 @@ describe('48C-01 SETTLE-017 proportional settlement work', () => {
     }
   });
 
-  it('FS-4 copies a large snapshot container only once for sibling resizes', () => {
+  it('M28 copies a large snapshot container only once for sibling resizes', () => {
     const count = 2000;
     const schema = { type: 'array' as const, items: { type: 'object' as const,
       properties: { tags: { type: 'array' as const,
@@ -108,7 +108,7 @@ describe('48C-01 SETTLE-017 proportional settlement work', () => {
     try {
       root.setValue(Array.from({ length: count }, () =>
         ({ tags: ['a', 'b'] })));
-      probe('FS-4 copied root elements', copiedElements);
+      probe('M28 copied root elements', copiedElements);
       expect(copiedElements).toBeLessThan(count * 12);
       expect(Reflect.get(runtime, 'loadSnapshot')).toEqual(Array.from({ length: count },
         () => ({ tags: ['a', undefined] })));
@@ -117,7 +117,7 @@ describe('48C-01 SETTLE-017 proportional settlement work', () => {
     }
   });
 
-  it('FS-4 matches sequential slot alignment for nested and sibling hosts', () => {
+  it('M28 matches sequential slot alignment for nested and sibling hosts', () => {
     const shared = { tags: ['a'] };
     const snapshot = [shared, { tags: ['b', 'c'] },
       { tags: ['d'] }, { tags: ['e'] }, shared];
@@ -142,7 +142,7 @@ describe('48C-01 SETTLE-017 proportional settlement work', () => {
     expect(result[4]).toBe(shared);
   });
 
-  it('N1 indexes declared names for repeated absent gate reads', () => {
+  it('M29 indexes declared names for repeated absent gate reads', () => {
     const count = 1000;
     const properties: Record<string, { type: 'string';
       controls: { active: string } }> = {};
@@ -161,7 +161,7 @@ describe('48C-01 SETTLE-017 proportional settlement work', () => {
       });
     try {
       root.setValue({});
-      probe('N1 child entry visits', visited);
+      probe('M29 child entry visits', visited);
       expect(visited).toBeLessThan(count * 12);
     } finally {
       spy.mockRestore();
