@@ -14,14 +14,14 @@ const STATE_KEYS = {
 /** Fixed control key order; combination does not depend on this order. */
 const KEY_NAMES = ['visible', 'readOnly', 'disabled'] as const;
 
-/** Pure calculation result, including the first expression that failed. */
+/** Pure calculation result, including the all expressions that failed. */
 export interface CalculatedStateKeys<Self> {
   /** Final local values paired with their live targets. */
   readonly entries: readonly { readonly node: Self; readonly visible: boolean;
     readonly readOnly: boolean; readonly disabled: boolean }[];
-  /** First failed state expression, retained for a degraded commit. */
-  readonly failure?: { readonly path: string; readonly schemaPath: string;
-    readonly cause: unknown };
+  /** Failed state expressions in evaluation order. */
+  readonly failures: readonly { readonly path: string; readonly schemaPath: string;
+    readonly cause: unknown }[];
 }
 
 /**
@@ -30,7 +30,7 @@ export interface CalculatedStateKeys<Self> {
  * @param stateDirtyNodes - Nodes reached by this settlement's calculation
  * @param selectedDeclarationIds - Active declarations chosen during the settlement
  * @param expandFrom - Whether this host's declarations may affect direct children
- * @returns Local values and the first expression failure, without mutating records
+ * @returns Local values and all expression failures, without mutating records
  */
 export const calculateStateKeys = <Self extends SchemaNodeRecord<Self>>(
   root: Self, stateDirtyNodes: ReadonlySet<Self>,
@@ -53,7 +53,7 @@ export const calculateStateKeys = <Self extends SchemaNodeRecord<Self>>(
   const evaluated = new Map<string, boolean | undefined>();
   const blueprint = root.runtime.blueprint;
   const entries: CalculatedStateKeys<Self>['entries'][number][] = [];
-  let failure: CalculatedStateKeys<Self>['failure'];
+  const failures: CalculatedStateKeys<Self>['failures'][number][] = [];
   for (const node of candidates) {
     if (node.detached || node.parent && node.parent.structure?.[node.name] !== node)
       continue;
@@ -80,7 +80,7 @@ export const calculateStateKeys = <Self extends SchemaNodeRecord<Self>>(
                 (dependency) => readStateDependency(root,
                   group.host.path, dependency))));
             } catch (cause) {
-              failure ??= { path: group.host.path, schemaPath, cause };
+              failures.push({ path: group.host.path, schemaPath, cause });
             }
             evaluated.set(cacheKey, value);
           }
@@ -89,5 +89,5 @@ export const calculateStateKeys = <Self extends SchemaNodeRecord<Self>>(
       }
     entries.push({ node, ...next });
   }
-  return { entries, ...(failure ? { failure } : {}) };
+  return { entries, failures };
 };

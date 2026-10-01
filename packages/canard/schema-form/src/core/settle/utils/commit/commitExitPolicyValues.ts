@@ -1,3 +1,4 @@
+import { recordSettlementFailure } from '../errors/recordSettlementFailure';
 import { isArray } from '@winglet/common-utils/filter';
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
@@ -109,12 +110,9 @@ export const commitExitPolicyValues = <Self extends SchemaNodeRecord<Self>>(
             dependency)))));
       } catch (cause) {
         updateCommittedRuleValue(runtime, key, 'set', false);
-        if (!context.failure) {
-          context.failure = new SchemaFormError(EXPRESSION_THREW,
-            `Exit policy expression failed at ${schemaPath}`,
-            { path: group.host.path, schemaPath, cause });
-          context.cause = 'expression';
-        }
+        recordSettlementFailure(context, new SchemaFormError(EXPRESSION_THREW,
+          `Exit policy expression failed at ${schemaPath}`,
+          { path: group.host.path, schemaPath, cause }), 'expression');
       }
     }
   }

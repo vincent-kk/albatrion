@@ -141,9 +141,9 @@ export const commitSettlement = <Self extends SchemaNodeRecord<Self>>(
     (context.entered.size > 0 || context.exited.size > 0))
     runtime.latentRawDirty = true;
   updateInactiveValuesMemo(context.root);
-  if (context.failure && runtime.diagnostics.status !== 'degraded')
+  if (context.failures?.length && runtime.diagnostics.status !== 'degraded')
     runtime.diagnostics = { status: 'degraded', cause: context.cause,
-      ...(context.cause === 'budget' ? { exceededBudget: context.exceededBudget,
+      ...(context.exceededBudget ? { exceededBudget: context.exceededBudget,
         iterations: context.iterations } : {}),
       commit };
   markCommitDeliveries(context);

@@ -1,3 +1,4 @@
+import { recordSettlementFailure } from '../errors/recordSettlementFailure';
 import { MULTIPLE_ERRORS, SchemaFormError } from '../../../../errors';
 import type { SchemaNodeRecord, SettlementScratch } from '../../../record';
 import type { SettlementContext } from '../../type';
@@ -21,17 +22,16 @@ export const finishSettlement = <Self extends SchemaNodeRecord<Self>>(
   context: SettlementContext<Self>, scratch: SettlementScratch<Self>,
 ): void => {
   for (const path of context.changedRaw) scratch.explicitRaw.add(path);
-  if (context.hostWheelExceeded && context.cause !== 'budget') {
-    context.failure = new SchemaFormError(BUDGET_EXCEEDED,
+  if (context.hostWheelExceeded && !context.exceededBudget) {
+    recordSettlementFailure(context, new SchemaFormError(BUDGET_EXCEEDED,
       `Host wheel budget exceeded at ${context.target.path}`,
-      { path: context.target.path });
-    context.cause = 'budget';
+      { path: context.target.path }), 'budget');
     context.exceededBudget = 'hostWheel';
     context.iterations = context.hostWheelExceeded;
   }
-  if (context.cause !== 'budget') runDeriveRounds(context);
-  if (context.cause !== 'budget') transitionSettlement(context);
-  if (context.cause === 'budget') {
+  if (!context.exceededBudget) runDeriveRounds(context);
+  if (!context.exceededBudget) transitionSettlement(context);
+  if (context.exceededBudget) {
     restoreSourceB(context, scratch.explicitRaw);
     captureDeriveBaseline(context);
   }
@@ -43,17 +43,10 @@ export const finishSettlement = <Self extends SchemaNodeRecord<Self>>(
         path.startsWith(`${context.target.path}/`))
         context.target.runtime.typeMismatchPaths.delete(path);
   commitSettlement(context);
-  const failures = context.gateFailures;
-  if (failures?.length) {
-    const runtime = context.root.runtime;
-    if (runtime.entryDepth && runtime.chainErrors) {
-      if (context.failure && failures.includes(context.failure)) return;
-    } else {
-      const errors = context.failure && !failures.includes(context.failure)
-        ? [...failures, context.failure] : failures;
-      throw errors.length === 1 ? errors[0] : new SchemaFormError(MULTIPLE_ERRORS,
-        'Multiple settlement errors', { errors });
-    }
-  }
-  if (context.failure) throw context.failure;
+  const failures = context.failures;
+  if (!failures?.length) return;
+  const runtime = context.root.runtime;
+  if (runtime.entryDepth && runtime.chainErrors) return;
+  throw failures.length === 1 ? failures[0] : new SchemaFormError(MULTIPLE_ERRORS,
+    'Multiple settlement errors', { errors: failures });
 };

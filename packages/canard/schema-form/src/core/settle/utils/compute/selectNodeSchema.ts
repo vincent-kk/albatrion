@@ -1,3 +1,4 @@
+import { recordSettlementFailure } from '../errors/recordSettlementFailure';
 import { MULTIPLE_GATED_BRANCHES_ACTIVE, SchemaFormError } from '../../../../errors';
 import { mergeEffectiveSchema } from '../../../blueprint';
 import type { SchemaNodeRecord } from '../../../record';
@@ -46,10 +47,9 @@ export const selectNodeSchema = <Self extends SchemaNodeRecord<Self>>(
   context.selectedDeclarationIds.set(node, active.map((declaration) => declaration.id));
   const effective = mergeEffectiveSchema(node.blueprintNode,
     active.map((declaration) => declaration.id), { mode: 'runtime' });
-  if (effective.typeConflict && !context.failure) {
-    context.failure = new SchemaFormError(SHARED_NODE_CONFLICT,
-      `Active declarations conflict at ${node.path}`, { path: node.path });
-    context.cause = 'sharedConflict';
+  if (effective.typeConflict) {
+    recordSettlementFailure(context, new SchemaFormError(SHARED_NODE_CONFLICT,
+      `Active declarations conflict at ${node.path}`, { path: node.path }), 'sharedConflict');
   }
   if (node.parent === null)
     node.active = active.some((declaration) => declaration.role === 'declaration');

@@ -1,3 +1,4 @@
+import { recordSettlementFailure } from '../errors/recordSettlementFailure';
 import { isArray } from '@winglet/common-utils/filter';
 
 import { SchemaFormError } from '../../../../errors';
@@ -23,7 +24,7 @@ import { runDeriveRounds } from '../derivation/runDeriveRounds';
 export const transitionSettlement = <Self extends SchemaNodeRecord<Self>>(
   context: SettlementContext<Self>,
 ): void => {
-  if (context.suppressAutomaticWrites || context.cause === 'budget') return;
+  if (context.suppressAutomaticWrites || context.exceededBudget) return;
   if (!context.hasGates && context.entered.size === 0 && context.exited.size === 0) {
     let narrowed = false;
     for (const node of context.writtenInputs.keys())
@@ -80,10 +81,9 @@ export const transitionSettlement = <Self extends SchemaNodeRecord<Self>>(
     }
     rounds++;
     if (rounds > cap) {
-      context.failure = new SchemaFormError(BUDGET_EXCEEDED,
+      recordSettlementFailure(context, new SchemaFormError(BUDGET_EXCEEDED,
         `Transition budget exceeded at ${context.target.path}`,
-        { path: context.target.path });
-      context.cause = 'budget';
+        { path: context.target.path }), 'budget');
       context.exceededBudget = 'transition';
       context.iterations = cap;
       context.inTransition = false;
@@ -93,10 +93,9 @@ export const transitionSettlement = <Self extends SchemaNodeRecord<Self>>(
     context.hostWheelExceeded = undefined;
     computeNode(context.root, context);
     if (context.hostWheelExceeded !== undefined && !context.exceededBudget) {
-      context.failure = new SchemaFormError(BUDGET_EXCEEDED,
+      recordSettlementFailure(context, new SchemaFormError(BUDGET_EXCEEDED,
         `Host wheel budget exceeded at ${context.target.path}`,
-        { path: context.target.path });
-      context.cause = 'budget';
+        { path: context.target.path }), 'budget');
       context.exceededBudget = 'hostWheel';
       context.iterations = context.hostWheelExceeded;
     }

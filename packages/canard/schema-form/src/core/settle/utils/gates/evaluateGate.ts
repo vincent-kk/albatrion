@@ -1,3 +1,4 @@
+import { recordSettlementFailure } from '../errors/recordSettlementFailure';
 import { CONDITIONAL_SCHEMA_WITHOUT_VALIDATOR,
   SchemaFormError, VALIDATOR_MISSING } from '../../../../errors';
 import { isArray } from '@winglet/common-utils/filter';
@@ -125,29 +126,12 @@ export const evaluateGate = <Self extends SchemaNodeRecord<Self>>(
     const runtime = context.root.runtime;
     context.gateThrowVersion = (context.gateThrowVersion ?? 0) + 1;
     const code = gate.kind === 'if' ? GUARD_FAILED : EXPRESSION_THREW;
-    const repeated = context.gateFailures?.some((error) =>
+    const repeated = context.failures?.some((error) =>
       error.code === `SCHEMA_FORM_ERROR.${code}` &&
       error.details.path === hostPath && error.details.schemaPath === gate.schemaPath);
     const failure = runtime.mountingGuardPass || repeated ? undefined :
       new SchemaFormError(code, `Gate evaluation failed at ${gate.schemaPath}`,
         { path: hostPath, schemaPath: gate.schemaPath, cause });
-    if (failure) {
-      const prior = context.failure;
-      if (prior && !context.gateFailures?.includes(prior)) {
-        (context.gateFailures ??= []).push(prior);
-        if (runtime.entryDepth) {
-          runtime.chainErrors?.push(prior);
-          if (runtime.errorReporter?.hasConsumer())
-            runtime.chainOccurrences?.push({ kind: 'error', error: prior });
-        }
-      }
-      (context.gateFailures ??= []).push(failure);
-      if (runtime.entryDepth) runtime.chainErrors?.push(failure);
-      if (!context.failure) {
-        context.failure = failure;
-        context.cause = 'expression';
-      }
-    }
     if (gate.kind === 'if' && runtime.errorReporter?.hasConsumer() &&
       !runtime.reportedGuardFailures?.has(gate.schemaPath) &&
       !runtime.guardFailureRecords?.has(gate.schemaPath))
@@ -161,8 +145,7 @@ export const evaluateGate = <Self extends SchemaNodeRecord<Self>>(
         (runtime.guardFailureRecords ??= new Map()).set(gate.schemaPath, record);
         runtime.chainOccurrences?.push({ kind: 'record', record });
       }
-    if (failure && runtime.entryDepth && runtime.errorReporter?.hasConsumer())
-      runtime.chainOccurrences?.push({ kind: 'error', error: failure });
+    if (failure) recordSettlementFailure(context, failure, 'expression');
     return false;
   }
 };
