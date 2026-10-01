@@ -2,6 +2,8 @@ import type { ComponentType } from 'react';
 
 import type { Fn } from '@aileron/declare';
 
+import type { JSONSchema } from '@/schema-form/types/jsonSchema';
+
 import type {
   FormTypeInputDefinition,
   FormTypeRendererProps,
@@ -246,4 +248,19 @@ export interface ValidatorPlugin {
   bind?: Fn<[instance: any]>;
   /** Validator Factory Function */
   compile: ValidatorFactory;
+  /**
+   * Compile a synchronous guard for an authored schema pointer.
+   * @param root - Authored root shared with core by reference.
+   * @param pointer - Schema location whose condition is checked.
+   * @returns A boolean predicate that does not modify its input.
+   */
+  compileGuard?(root: JSONSchema, pointer: string): (value: unknown) => boolean;
+  /**
+   * Release a root's validator resources when its cache entry is evicted.
+   * @param root - Authored root whose resources are no longer retained.
+   * @returns Nothing; owned resources are discarded.
+   */
+  release?(root: JSONSchema): void;
+  /** Declared JSON Schema dialect, when the plugin can identify one. */
+  readonly dialect?: string;
 }
