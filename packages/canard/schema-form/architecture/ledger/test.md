@@ -243,6 +243,7 @@
   > "가능한지는 PR-0이 확인한다." (`09-landing-and-test-strategy.md:277`)
   > 편집자 결정(25C-08): "【추론】 시나리오 감싸개는 `ScenarioForm`, 핸들 등록은 `registerScenarioHandle`, 핸들 찾기는 `findScenarioHandle`이다." (`reviews/round-25-closing.md:77`)
   > 편집자 결정(25C-08): "【추론】 `ScenarioExpectation`은 `shape`·`outputValue`·`values`·`errors` 넷으로 시작하고, `diagnostics`는 코어 러너(TEST-009)를 만드는 PR 03이 더한다." (`reviews/round-25-closing.md:78`)
+  > 편집자 결정(60C-01): "【추론】 filid의 분류는 "어댑터가 모듈 index를 보고하면 fractal"이고 "다른 이가 이름으로 부르면서 내부는 자유로이 바뀌는 디렉토리는 fractal"인데, 가족 디렉토리마다 `index.ts`가 그 가족의 장면 목록(`arrayScenarios` 등)을 이름으로 내보내고 패키지 루트 `index.ts`가 그것을 이름으로 가져오므로 가족은 자료 묶음이면서도 계약(장면 목록)을 가진 모듈이다; 그래서 문서 없이 예외로 두는 (A)는 분류를 거스르고, 뒤로 미루는 (C)는 같은 발견을 PR마다 다시 보게 하므로 (B)를 택한다. 문서는 짧다 — INTENT는 그 가족이 어느 동작 부류의 장면을 담는지와 자료 전용(실행·엔진 의존 없음, TEST-010)이라는 규약, DETAIL은 장면 파일 목록과 각 장면이 검증하는 원장 항목(배열 가족이면 TEST-018과 35C~48C의 결정들)이다. 패키지 INTENT의 "Families name value, settle, fill, exit, and union behavior"는 derive·controls·array를 더해 여덟으로 고친다." (`reviews/round-60-closing.md:9`)
 - 상태: 현행
 - 출처: `09-landing-and-test-strategy.md:150`(정본), `09-landing-and-test-strategy.md:192,277`, `reviews/round-16-owner-answers.md:14`, `reviews/round-16-owner-review.md:59`
 - 닫은 사람: 소유자 답(`reviews/round-16-owner-answers.md:14` 답 8), 편집자 결정(16라운드, `09-landing-and-test-strategy.md:150`)
