@@ -72,7 +72,10 @@ export const flushPendingGateReads = <Self extends SchemaNodeRecord<Self>>(
   }
   const flushRead = (read: string): void => {
     if (read === '@') return;
+    const local = read === path || read.startsWith(`${path}/`);
     for (const host of context.pendingOutputs ?? []) {
+      // A read inside the entry walks the entry node that the host holds before its subtree gates run.
+      if (local && host.raw === undefined) continue;
       if (read === host.path) flushPendingOutput(host, context);
       else if (read.startsWith(`${host.path}/`)) {
         const name = unescapeSegment(read.slice(host.path.length + 1).split('/')[0]);
