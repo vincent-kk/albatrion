@@ -1,9 +1,5 @@
 import type { DeriveWrite } from '../../type';
-
-/** Kind precedence spans phases and remains stable for the whole settlement. */
-export const KIND_RANK = { unsetValue: 4, derived: 3, injectTo: 2, fill: 1 } as const;
-/** A more specific authored control wins on the same source node. */
-export const LAYER_RANK = { fragment: 1, children: 2, node: 3 } as const;
+import { KIND_RANK } from './kindRank';
 
 /**
  * Compare same-target candidates from kind down to return entry order.

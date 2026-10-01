@@ -1,7 +1,8 @@
 import type { SchemaNodeRecord } from '../../../../../record';
 import { resolveDependencyPath } from '../../../../utils/paths/resolveDependencyPath';
 import type { DeriveRoundDecision, DeriveRule, DeriveWrite } from '../../../type';
-import { KIND_RANK, LAYER_RANK } from '../../rank/compareDeriveWrites';
+import { KIND_RANK } from '../../rank/kindRank';
+import { LAYER_RANK } from '../../rank/layerRank';
 import { getDeriveSourceOrder } from '../../rank/getDeriveSourceOrder';
 import { getInjectEntries } from './getInjectEntries';
 import { getInjectTarget } from './getInjectTarget';
