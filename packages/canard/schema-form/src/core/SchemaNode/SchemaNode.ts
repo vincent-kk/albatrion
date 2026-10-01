@@ -23,6 +23,9 @@ export class SchemaNode implements SchemaNodeRecord<SchemaNode> {
   private readonly storedSchemaType: BlueprintSchemaType;
   structure: Record<string, SchemaNode> | null;
   private storedChildren: readonly SchemaNode[] | null;
+  itemKey: number | null;
+  itemCount: number;
+  nextItemKey: number;
   private storedRaw: unknown;
   private storedExtras: unknown;
   private storedActive: boolean;
@@ -58,6 +61,9 @@ export class SchemaNode implements SchemaNodeRecord<SchemaNode> {
     this.storedSchemaType = blueprintNode.schemaType;
     this.structure = structure;
     this.storedChildren = children;
+    this.itemKey = null;
+    this.itemCount = 0;
+    this.nextItemKey = 0;
     this.storedRaw = undefined;
     this.storedExtras = undefined;
     this.storedActive = true;

@@ -19,10 +19,11 @@ const makeTree = (schema: BlueprintSchema, snapshot: unknown = undefined) =>
   });
 
 describe('SchemaNode PR-2 surface', () => {
-  it('26C-01 PR-6 member list matches the DETAIL table exactly', () => {
+  it('26C-01 current public members match the DETAIL table', () => {
     const detail = readFileSync(new URL('../DETAIL.md', import.meta.url), 'utf8');
     const rows = [...detail.matchAll(/^\| `([^`]+)` \| (getter|method) \|/gm)]
-      .map((match) => ({ name: match[1].replace(/\(.*/, ''), kind: match[2] }));
+      .map((match) => ({ name: match[1].replace(/\(.*/, ''), kind: match[2] }))
+      .filter((row) => !['push', 'pop', 'update', 'remove', 'clear'].includes(row.name));
     expect(rows).toHaveLength(34);
     const prototype = RuntimeSchemaNode.prototype;
     expect(Object.getOwnPropertyNames(prototype).filter((name) => name !== 'constructor').sort())

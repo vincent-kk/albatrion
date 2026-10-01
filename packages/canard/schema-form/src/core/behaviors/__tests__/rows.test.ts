@@ -51,6 +51,9 @@ const makeRecord = (
   schemaType: blueprintNode.schemaType,
   structure: null,
   children: null,
+  itemKey: null,
+  itemCount: 0,
+  nextItemKey: 0,
   raw,
   extras: undefined,
   active: true,
@@ -87,7 +90,7 @@ describe('behavior rows', () => {
     expect(present).toEqual([
       'string.terminal', 'number.terminal', 'boolean.terminal',
       'null.terminal', 'object.branch', 'object.terminal',
-      'virtual.branch', 'union.terminal',
+      'array.branch', 'array.terminal', 'virtual.branch', 'union.terminal',
     ]);
   });
 

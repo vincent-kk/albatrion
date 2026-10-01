@@ -39,6 +39,7 @@ export const createPlainNode = (
       for (const child of entries) visits.push(`select:${node.path}/${child.name}`);
       return entries;
     },
+    arrange: row.arrange,
     type: row.type,
     strategy: row.strategy,
   };
@@ -51,6 +52,7 @@ export const createPlainNode = (
     required: false, nullable: template.nullable, schemaType: template.schemaType,
     structure: template.strategy === 'branch' ? {} : null,
     children: template.strategy === 'branch' ? [] : null,
+    itemKey: null, itemCount: 0, nextItemKey: 0,
     raw: undefined, extras: undefined, active: true,
     visible: true, readOnly: false, disabled: false,
     local: undefined, emit: undefined,

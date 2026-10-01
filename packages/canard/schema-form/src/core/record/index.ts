@@ -1,6 +1,9 @@
 export type {
   SchemaNodeRecord,
   Behavior,
+  ArrayOperation,
+  ArrayArrangePlan,
+  ArrayArrangeResult,
   UnionSpec,
   SchemaNodeFactory,
   SchemaNodeRuntime,

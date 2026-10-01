@@ -4,6 +4,7 @@ import { assembleRaw } from '../utils/slots/assembleRaw';
 import { declareNoChildren } from '../utils/slots/declareNoChildren';
 import { finishNoInput } from '../utils/slots/finishNoInput';
 import { projectIdentity } from '../utils/slots/projectIdentity';
+import { rejectArrayOperation } from '../utils/slots/rejectArrayOperation';
 
 /** Calculation row for finite number and integer declarations. */
 export const numberBehavior: Behavior = Object.freeze({
@@ -12,6 +13,7 @@ export const numberBehavior: Behavior = Object.freeze({
   project: projectIdentity,
   finishInput: finishNoInput,
   declareChildren: declareNoChildren,
+  arrange: rejectArrayOperation,
   type: 'number',
   strategy: 'terminal',
 });

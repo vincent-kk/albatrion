@@ -9,7 +9,7 @@ const CORE = fileURLToPath(new URL('..', import.meta.url));
 const FRACTALS = ['blueprint', 'record', 'behaviors', 'navigation',
   'settle', 'SchemaNode'];
 const BEHAVIOR_KINDS = ['stringBehavior', 'numberBehavior', 'booleanBehavior',
-  'nullBehavior', 'objectBehavior', 'virtualBehavior', 'unionBehavior'];
+  'nullBehavior', 'objectBehavior', 'arrayBehavior', 'virtualBehavior', 'unionBehavior'];
 const ORDER: Readonly<Record<string, number>> = {
   blueprint: 0, record: 1, behaviors: 2, navigation: 2,
   settle: 3, SchemaNode: 4,

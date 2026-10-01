@@ -40,6 +40,12 @@ export interface SchemaNodeRecord<Self> {
   structure: Record<string, Self> | null;
   /** Stored public child array for the last committed shape. */
   children: readonly Self[] | null;
+  /** Creation-order nonce for an array item, absent on other nodes. */
+  itemKey: number | null;
+  /** Number of array host positions, including positions without templates. */
+  itemCount: number;
+  /** Next creation-order nonce owned by an array host. */
+  nextItemKey: number;
   /** Interpreted terminal source or a branch's non-plain source. */
   raw: unknown;
   /** Undeclared object keys retained in their incoming own-key order. */
@@ -78,6 +84,29 @@ export interface UnionSpec {
   readonly nullable: boolean;
 }
 
+/** Caller verb represented without changing a node or its children. */
+export type ArrayOperation =
+  | { kind: 'push'; value: unknown }
+  | { kind: 'pop' }
+  | { kind: 'update'; index: number; value: unknown }
+  | { kind: 'remove'; index: number }
+  | { kind: 'clear' };
+
+/** Where settlement obtains the synchronous result of an array verb. */
+export type ArrayArrangeResult =
+  | { source: 'length' }
+  | { source: 'removed'; index: number }
+  | { source: 'updated'; index: number }
+  | { source: 'void' };
+
+/** Pure structural proposal for a branch or a whole-value terminal array. */
+export type ArrayArrangePlan =
+  | { kind: 'noop' }
+  | { kind: 'slots'; slots: readonly ({ from: number } | { value: unknown })[];
+      result: ArrayArrangeResult }
+  | { kind: 'update'; index: number; value: unknown }
+  | { kind: 'raw'; raw: readonly unknown[]; result: ArrayArrangeResult };
+
 /** Pure calculation slots shared across nodes of one kind and strategy. */
 export interface Behavior<Self = unknown> {
   /** Interpret caller input under the current allowed types. */
@@ -90,6 +119,8 @@ export interface Behavior<Self = unknown> {
   finishInput<Node extends Self>(node: SchemaNodeRecord<Node>): string | undefined;
   /** Describe children to be created by the caller. */
   declareChildren<Node extends Self>(node: SchemaNodeRecord<Node>): readonly BlueprintChildEntry[];
+  /** Propose an array verb without writing source, shape, or notifications. */
+  arrange<Node extends Self>(node: SchemaNodeRecord<Node>, operation: ArrayOperation): ArrayArrangePlan;
   /** Stable dispatch kind of this row. */
   readonly type: BlueprintNodeKind;
   /** Fixed branch or terminal shape of this row. */
