@@ -9,9 +9,9 @@ import { transformDataPath } from './utils/transformDataPath';
 export const createValidatorFactory =
   (ajv: Ajv.Ajv, key?: string) =>
   (jsonSchema: JSONSchema): ValidateFunction => {
-    const validate = key
-      ? ajv.getSchema(key)
-      : ajv.compile({ ...jsonSchema, $async: true });
+    const transient = key ? undefined : { ...JSON.parse(JSON.stringify(jsonSchema)), $async: true };
+    const validate = key ? ajv.getSchema(key) : transient && ajv.compile(transient);
+    if (transient) ajv.removeSchema(transient);
     if (!validate) throw new Error(`Registered Ajv schema was not found: ${key}`);
     return async (data) => {
       try {

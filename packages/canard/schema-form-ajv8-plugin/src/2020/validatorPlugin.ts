@@ -7,7 +7,7 @@ import { createGuardCompiler } from '../validator/createGuardCompiler';
 import { createValidatorFactory } from '../validator/createValidatorFactory';
 import { assertBindableInstance } from '../validator/utils/assertBindableInstance';
 import { type SchemaRootRegistry } from '../validator/utils/registerSchemaRoot';
-import { releaseSchemaRoot } from '../validator/utils/releaseSchemaRoot';
+import { createSchemaRootRegistry, releaseSchemaRoot } from '../validator/utils/releaseSchemaRoot';
 
 export { createValidatorFactory };
 
@@ -27,7 +27,7 @@ const defaultSettings: Options = {
 
 let ajvInstance: Ajv | null = null;
 /** Root registrations persist across process-wide `bind` calls until release. */
-const roots: SchemaRootRegistry = { entries: new Map(), usedBases: new WeakSet(), nextId: 0 };
+const roots: SchemaRootRegistry = createSchemaRootRegistry();
 
 /** Returns the currently bound instance, creating the default on first use. */
 const getInstance = (): Ajv => {

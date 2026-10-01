@@ -1,36 +1,41 @@
+/// <reference lib="es2021.weakref" />
+
 import type Ajv from 'ajv';
-import type { Options } from 'ajv';
+
+import { cloneInstance } from './cloneInstance';
+
+/** Ajv's code scope keeps functions after removeSchema; cap one shared compiler's roots. */
+const MAX_TRANSIENT_ROOTS = 64;
 
 /** Ajv instances and registration key retained for one root identity. */
 export interface SchemaRootRegistration {
-  readonly root: object;
   readonly validation: Ajv;
-  readonly guard: Ajv;
+  guard?: Ajv;
   readonly key: string;
+  readonly rootId: string;
   readonly ids: readonly string[];
+  readonly validationCopy?: object;
+  guardCopy?: object;
 }
 
-/** Clone a bound Ajv 7 profile, including formats and custom keywords. */
-const cloneInstance = (instance: Ajv, allErrors: boolean): Ajv => {
-  const Constructor = instance.constructor as new (options?: Options) => Ajv;
-  const clone = new Constructor({ ...instance.opts, allErrors });
-  for (const [name, format] of Object.entries(instance.formats))
-    if (format !== undefined) clone.addFormat(name, format);
-  for (const name of Object.keys(instance.RULES.keywords)) {
-    if (clone.getKeyword(name)) continue;
-    const definition = instance.getKeyword(name);
-    if (definition === true) clone.addKeyword(name);
-    else if (definition) clone.addKeyword(definition);
-  }
-  return clone;
-};
+/** A bounded shared compiler for ID-free roots on one binding. */
+export interface SchemaCompilerPool {
+  readonly base: Ajv;
+  current: Ajv;
+  count: number;
+}
 
-/** Register a root once, isolating overlapping IDs on a matching Ajv profile. */
+/** Monotonic keys avoid collisions with registrations retained across binds. */
+let nextSchemaRootKey = 0;
+
+/** Register one copy, leaving its guard instance and ID-free validation cache empty. */
 export const registerSchemaRoot = (
   root: object,
   instance: Ajv,
   roots: WeakMap<object, SchemaRootRegistration>,
-  active: SchemaRootRegistration[],
+  active: WeakRef<SchemaRootRegistration>[],
+  finalizer: FinalizationRegistry<SchemaRootRegistration>,
+  pool: SchemaCompilerPool,
 ): SchemaRootRegistration => {
   const previous = roots.get(root);
   if (previous) return previous;
@@ -39,18 +44,40 @@ export const registerSchemaRoot = (
     if (name === '$id' && typeof value === 'string') ids.push(value);
     return value;
   });
-  const conflict = ids.some((id) =>
-    active.some((registration) => registration.ids.includes(id)));
-  const validation = conflict ? cloneInstance(instance, Boolean(instance.opts.allErrors)) : instance;
-  const guard = cloneInstance(instance, false);
+  if (ids.length)
+    for (let index = active.length - 1; index >= 0; index--)
+      if (!active[index].deref()) active.splice(index, 1);
+  const conflict = ids.some((id) => active.some((ref) => ref.deref()?.ids.includes(id)));
+  if (!ids.length && pool.count === MAX_TRANSIENT_ROOTS) {
+    pool.current = cloneInstance(pool.base, Boolean(pool.base.opts.allErrors));
+    pool.count = 0;
+  }
+  const validation = conflict ? cloneInstance(instance, Boolean(instance.opts.allErrors))
+    : ids.length ? instance : pool.current;
+  if (!ids.length) pool.count++;
   const key = `urn:canard:schema-form:ajv7:${++nextSchemaRootKey}`;
-  validation.addSchema(root, key);
-  guard.addSchema(root, key);
-  const registration = { root, validation, guard, key, ids };
+  const validationCopy: object | undefined = ids.length
+    ? JSON.parse(JSON.stringify(root)) : undefined;
+  if (validationCopy) validation.addSchema(validationCopy, key);
+  const rootId = '$id' in root && typeof root.$id === 'string' ? root.$id : key;
+  const registration = { validation, key, rootId, ids, validationCopy };
   roots.set(root, registration);
-  active.push(registration);
+  finalizer.register(root, registration, registration);
+  if (ids.length) active.push(new WeakRef(registration));
   return registration;
 };
 
-/** Monotonic keys avoid collisions with registrations retained across binds. */
-let nextSchemaRootKey = 0;
+/** Materialize a first-error sibling only when a guard is requested. */
+export const registerSchemaGuard = (
+  root: object,
+  instance: Ajv,
+  registration: SchemaRootRegistration,
+): Ajv => {
+  if (registration.guard) return registration.guard;
+  const guard = cloneInstance(instance, false);
+  const guardCopy: object = JSON.parse(JSON.stringify(root));
+  guard.addSchema(guardCopy, registration.key);
+  registration.guard = guard;
+  registration.guardCopy = guardCopy;
+  return guard;
+};

@@ -1,7 +1,8 @@
 import type { JSONSchema } from '@canard/schema-form';
 import type Ajv from 'ajv';
 
-import { registerSchemaRoot, type SchemaRootRegistry } from './utils/registerSchemaRoot';
+import { registerSchemaRoot, registerSchemaGuard, type SchemaRootRegistry } from './utils/registerSchemaRoot';
+import { createSchemaRootRegistry } from './utils/releaseSchemaRoot';
 
 /**
  * Compiles a synchronous guard at a location in its registered root.
@@ -18,18 +19,17 @@ export const createGuardCompiler = (
   pointer: string,
 ): ((value: unknown) => boolean) => {
   const registration = registerSchemaRoot(registry, ajv, root);
+  const guard = registerSchemaGuard(ajv, root, registration);
   if (pointer === '/if' && ('$dynamicAnchor' in root || '$recursiveAnchor' in root)) {
     const probe = { ...structuredClone(root), then: false, else: true } as JSONSchema;
-    const probeRegistry: SchemaRootRegistry = {
-      entries: new Map(),
-      usedBases: new WeakSet([ajv]),
-      nextId: 0,
-    };
+    const probeRegistry = createSchemaRootRegistry();
+    probeRegistry.active.push(new WeakRef(registration));
     const probeRegistration = registerSchemaRoot(probeRegistry, ajv, probe);
     registration.probes.push(probeRegistration);
-    const validateProbe = probeRegistration.guardAjv.compile({ $ref: probeRegistration.key });
+    const probeGuard = registerSchemaGuard(ajv, probe, probeRegistration);
+    const validateProbe = probeGuard.compile({ $ref: probeRegistration.key });
     return (value) => !validateProbe(value);
   }
-  const validate = registration.guardAjv.compile({ $ref: `${registration.key}#${pointer}` });
+  const validate = guard.compile({ $ref: `${registration.key}#${pointer}` });
   return (value) => Boolean(validate(value));
 };

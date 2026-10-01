@@ -6,9 +6,9 @@ export const createGuardCompiler = (
   pointer: string,
 ): ((value: unknown) => boolean) => {
   const fragment = pointer.startsWith('#') ? pointer : `#${pointer}`;
-  const rootId = '$id' in registration.root && typeof registration.root.$id === 'string'
-    ? registration.root.$id : registration.key;
-  const validate = registration.guard.compile({ $ref: `${rootId}${fragment}` });
+  const guard = registration.guard;
+  if (!guard) throw new Error('Ajv 6 guard root was not registered');
+  const validate = guard.compile({ $ref: `${registration.rootId}${fragment}` });
   return (value) => {
     const result = validate(value);
     if (typeof result !== 'boolean')

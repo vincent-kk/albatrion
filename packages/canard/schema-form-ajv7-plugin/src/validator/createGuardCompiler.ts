@@ -6,15 +6,16 @@ export const createGuardCompiler = (
   pointer: string,
 ): ((value: unknown) => boolean) => {
   const fragment = pointer.startsWith('#') ? pointer : `#${pointer}`;
-  const rootId = '$id' in registration.root && typeof registration.root.$id === 'string'
-    ? registration.root.$id : registration.key;
-  const validate = registration.guard.compile({ $ref: `${rootId}${fragment}` });
-  const rootValidate = registration.guard.getSchema(rootId);
-  if (!rootValidate) throw new Error(`Registered Ajv guard root was not found: ${rootId}`);
+  const guard = registration.guard;
+  const guardCopy = registration.guardCopy;
+  if (!guard || !guardCopy) throw new Error('Ajv 7 guard root was not registered');
+  const validate = guard.compile({ $ref: `${registration.rootId}${fragment}` });
+  const rootValidate = guard.getSchema(registration.rootId);
+  if (!rootValidate) throw new Error(`Registered Ajv guard root was not found: ${registration.rootId}`);
   const dynamicAnchors: Record<string, typeof rootValidate> = {};
-  if ('$dynamicAnchor' in registration.root && typeof registration.root.$dynamicAnchor === 'string')
-    dynamicAnchors[registration.root.$dynamicAnchor] = rootValidate;
-  if ('$recursiveAnchor' in registration.root && registration.root.$recursiveAnchor === true)
+  if ('$dynamicAnchor' in guardCopy && typeof guardCopy.$dynamicAnchor === 'string')
+    dynamicAnchors[guardCopy.$dynamicAnchor] = rootValidate;
+  if ('$recursiveAnchor' in guardCopy && guardCopy.$recursiveAnchor === true)
     dynamicAnchors[''] = rootValidate;
   return (value) => {
     const result = validate(value, {

@@ -4,8 +4,8 @@ import Ajv, { type Options } from 'ajv';
 import { createValidatorFactory } from './createValidatorFactory';
 import { createGuardCompiler } from './createGuardCompiler';
 import { assertBindableInstance } from './utils/assertBindableInstance';
-import { registerSchemaRoot, type SchemaRootRegistration } from './utils/registerSchemaRoot';
-import { releaseSchemaRoot } from './utils/releaseSchemaRoot';
+import { registerSchemaRoot, registerSchemaGuard, type SchemaCompilerPool, type SchemaRootRegistration } from './utils/registerSchemaRoot';
+import { disposeSchemaRoot, releaseSchemaRoot } from './utils/releaseSchemaRoot';
 import { resolveAjvConstructor } from './utils/resolveAjvConstructor';
 
 /**
@@ -32,7 +32,15 @@ let ajvInstance: Ajv | null = null;
 /** Root registrations belong to the current binding. */
 let roots = new WeakMap<object, SchemaRootRegistration>();
 /** Live registrations expose overlapping IDs to the registration boundary. */
-let active: SchemaRootRegistration[] = [];
+let active: WeakRef<SchemaRootRegistration>[] = [];
+const finalizer = new FinalizationRegistry<SchemaRootRegistration>(disposeSchemaRoot);
+let pool: SchemaCompilerPool | null = null;
+
+/** Share one compiler for up to 64 ID-free roots, then retire its Ajv code scope. */
+const getPool = (instance: Ajv): SchemaCompilerPool => {
+  if (!pool || pool.base !== instance) pool = { base: instance, current: instance, count: 0 };
+  return pool;
+};
 
 /**
  * AJV7 validator plugin for schema-form.
@@ -61,18 +69,22 @@ export const ajvValidatorPlugin: ValidatorPlugin &
     ajvInstance = instance;
     roots = new WeakMap();
     active = [];
+    pool = null;
   },
   compile: (jsonSchema) => {
     if (!ajvInstance) ajvInstance = new AjvConstructor(defaultSettings);
-    const registered = registerSchemaRoot(jsonSchema, ajvInstance, roots, active);
-    const validate = createValidatorFactory(registered.validation, registered.key)(jsonSchema);
+    const registered = registerSchemaRoot(jsonSchema, ajvInstance, roots, active, finalizer, getPool(ajvInstance));
+    const validate = createValidatorFactory(
+      registered.validation, registered.validationCopy ? registered.key : undefined,
+    )(jsonSchema);
     return async (value: unknown): Promise<ValidationIssue[] | null> => validate(value);
   },
   compileGuard: (root, pointer) => {
     if (!ajvInstance) ajvInstance = new AjvConstructor(defaultSettings);
-    const registered = registerSchemaRoot(root, ajvInstance, roots, active);
+    const registered = registerSchemaRoot(root, ajvInstance, roots, active, finalizer, getPool(ajvInstance));
+    registerSchemaGuard(root, ajvInstance, registered);
     return createGuardCompiler(registered, pointer);
   },
-  release: (root) => releaseSchemaRoot(root, roots, active),
+  release: (root) => releaseSchemaRoot(root, roots, active, finalizer),
   dialect: 'http://json-schema.org/draft-07/schema#',
 } satisfies ValidatorPlugin;

@@ -2,6 +2,7 @@ import type { JSONSchema, ValidateFunction } from '@canard/schema-form';
 import type Ajv from 'ajv';
 
 import { registerSchemaRoot, type SchemaRootRegistry } from './utils/registerSchemaRoot';
+import { createSchemaRootRegistry } from './utils/releaseSchemaRoot';
 import { transformErrors } from './utils/transformErrors';
 
 /**
@@ -11,13 +12,14 @@ import { transformErrors } from './utils/transformErrors';
  * @returns A compiler that preserves the authored schema and normalizes failures.
  */
 export const createValidatorFactory = (ajv: Ajv, registry?: SchemaRootRegistry) => {
-  const roots = registry ?? { entries: new Map(), usedBases: new WeakSet<Ajv>(), nextId: 0 };
+  const roots = registry ?? createSchemaRootRegistry();
   return (jsonSchema: JSONSchema): ValidateFunction => {
     const registration = registerSchemaRoot(roots, ajv, jsonSchema);
-    const validate = registration.validationAjv.compile({
-      $async: true,
-      $ref: registration.key,
-    });
+    const transient = registration.validationCopy
+      ? { $async: true, $ref: registration.key }
+      : { ...structuredClone(jsonSchema), $async: true };
+    const validate = registration.validationAjv.compile(transient);
+    registration.validationAjv.removeSchema(transient);
     return async (data) => {
       try {
         await validate(data);

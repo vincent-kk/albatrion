@@ -7,7 +7,10 @@ import { transformErrors } from './utils/transformErrors';
 export const createValidatorFactory =
   (ajv: Ajv, key?: string) =>
   (jsonSchema: JSONSchema): ValidateFunction => {
-    const validate = key ? ajv.getSchema(key) : ajv.compile(jsonSchema);
+    const transient: JSONSchema | undefined = key
+      ? undefined : JSON.parse(JSON.stringify(jsonSchema));
+    const validate = key ? ajv.getSchema(key) : transient && ajv.compile(transient);
+    if (transient) ajv.removeSchema(transient);
     if (!validate) throw new Error(`Registered Ajv schema was not found: ${key}`);
     return async (data) => {
       try {

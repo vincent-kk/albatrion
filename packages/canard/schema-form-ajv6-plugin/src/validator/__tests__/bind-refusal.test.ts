@@ -21,10 +21,10 @@ describe('VALIDATE-050 TEST-077 bind refusal', () => {
       group: 'UNHANDLED_ERROR', code: 'VALIDATOR_BIND_REFUSED',
       name: 'ValidatorBindRefusedError', details: { options: names },
     });
-    const schema = { type: 'string' } as const;
+    const schema = { $id: 'https://example.test/accepted-binding', type: 'string' } as const;
     ajvValidatorPlugin.compile(schema);
     expect(addSchema).toHaveBeenCalled();
-    expect(schema).toEqual({ type: 'string' });
+    expect(schema).toEqual({ $id: 'https://example.test/accepted-binding', type: 'string' });
   });
 
   it('accepts a non-mutating instance and exposes both optional methods', () => {
