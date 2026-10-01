@@ -1060,7 +1060,9 @@
   > 【추론】 오늘처럼 공개 이벤트 형(오늘 `NodeEventType`, 곧 `PublicNodeEventType` 여섯)에는 넣지 않는다.
   > 【추론】 렌더 계층은 입력을 다시 그리는 사건 집합에 이 비트를 더한다.
   > 【추론】 입력의 `path`·`name` prop과, 경로를 키로 쓰는 맵(첨부 파일 맵, `useChildNodeErrors`의 상태 맵)이 새 경로를 따라가게 하기 위해서다.
-- 보충: 없음
+- 보충:
+  > 편집자 결정(35C-02): "【추론】 구조 연산으로 아이템이 재인덱싱되면 PR-5가 그 아이템과 자손의 레코드 칸(이름·이스케이프한 이름·경로)을 고치고 `(previous, current)` 쌍을 레코드 수준의 사실로 남긴다; 그것을 `UpdatePath` 비트의 배달(EVENT-068의 payload `{ previous, current }`, 자손 포함)로 바꾸는 것은 디스패처(PR-4)의 일이라 33C-01대로 뒤에 머지하는 단계가 잇는다." (`reviews/round-35-closing.md:17`)
+  > 편집자 결정(35C-02): "【추론】 06의 시험은 26C-03대로 바뀐 경로(상태 신호)만 단언하고 배달은 단언하지 않는다." (`reviews/round-35-closing.md:18`)
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:2212-2216`(정본)
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-83)
