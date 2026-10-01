@@ -11,7 +11,7 @@ export const resolveGuardSchema = (root: object, pointer: string): object | bool
     const key = token.replace(/~1/g, '/').replace(/~0/g, '~');
     if (typeof schema !== 'object' || schema === null || !Object.prototype.hasOwnProperty.call(schema, key))
       return undefined;
-    schema = (schema as Record<string, unknown>)[key];
+    schema = Reflect.get(schema, key);
   }
   return typeof schema === 'boolean' || (typeof schema === 'object' && schema !== null)
     ? schema : undefined;

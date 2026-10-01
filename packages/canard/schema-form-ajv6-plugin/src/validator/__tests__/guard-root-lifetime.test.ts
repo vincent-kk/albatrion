@@ -13,6 +13,10 @@ it.each([true, false])('collects an abandoned root guard with directGuardCompile
   expect(checkGuardRootCollection(directGuardCompile)).toBe('GUARD_ROOT_COLLECTED');
 });
 
+it.each([true, false])('collects an abandoned /if guard root with directGuardCompile=%s', (directGuardCompile) => {
+  expect(checkGuardRootCollection(directGuardCompile, 'default', '/if')).toBe('GUARD_ROOT_COLLECTED');
+});
+
 it('release frees a directly compiled original root', () => {
   ajvValidatorPlugin.bind?.(new Ajv({ format: false }));
   const root = { type: 'string' } as const;

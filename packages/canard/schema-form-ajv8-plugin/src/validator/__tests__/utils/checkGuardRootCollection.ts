@@ -1,23 +1,26 @@
 import { execFileSync } from 'node:child_process';
-import { resolve } from 'node:path';
+import { dirname, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 /**
  * Exercise the actual compiler in an isolated process with garbage collection.
  * @param directGuardCompile - The compilation path whose weak ownership is checked.
  * @param dialect - The AJV8 entry point; older plugins use the default dialect.
+ * @param pointer - The original root or its nested conditional guard.
  * @returns The success marker only after an abandoned original root is collected.
  */
 export const checkGuardRootCollection = (
   directGuardCompile: boolean,
   dialect = 'default',
+  pointer = '',
 ): string => {
-  const packageRoot = process.cwd();
+  const packageRoot = resolve(dirname(fileURLToPath(import.meta.url)), '../../../..');
   const worktreeRoot = resolve(packageRoot, '../../..');
   const script = `
     const fs = require('node:fs');
     const path = require('node:path');
     const ts = require('typescript');
-    const [packageRoot, direct, dialect] = process.argv.slice(1);
+    const [packageRoot, direct, dialect, pointer] = process.argv.slice(1);
     require.extensions['.ts'] = (module, filename) => {
       const output = ts.transpileModule(fs.readFileSync(filename, 'utf8'), {
         compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022, esModuleInterop: true },
@@ -41,13 +44,13 @@ export const checkGuardRootCollection = (
     const registry = version === 8
       ? require(path.join(source, 'utils/createSchemaRootRegistry.ts')).createSchemaRootRegistry() : null;
     const makeRoot = () => {
-      const root = { type: 'string' };
+      const root = pointer === '/if' ? { type: 'object', if: { type: 'string' } } : { type: 'string' };
       const reference = new WeakRef(root);
-      if (version === 8) createGuardCompiler(instance, registry, root, '', direct === 'true');
+      if (version === 8) createGuardCompiler(instance, registry, root, pointer, direct === 'true');
       else {
         const registration = registerSchemaRoot(root, instance, roots, active, finalizer, pool);
         registerSchemaGuard(root, instance, registration);
-        createGuardCompiler(registration, '', root, direct === 'true', finalizer);
+        createGuardCompiler(registration, pointer, root, direct === 'true', finalizer);
       }
       return reference;
     };
@@ -65,6 +68,6 @@ export const checkGuardRootCollection = (
     })().catch((error) => { console.error(error.message); process.exitCode = 1; });
   `;
   return execFileSync(process.execPath, [
-    '--expose-gc', '-e', script, packageRoot, String(directGuardCompile), dialect,
+    '--expose-gc', '-e', script, packageRoot, String(directGuardCompile), dialect, pointer,
   ], { cwd: worktreeRoot, encoding: 'utf8' }).trim();
 };

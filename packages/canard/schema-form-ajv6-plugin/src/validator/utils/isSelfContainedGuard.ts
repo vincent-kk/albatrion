@@ -1,6 +1,6 @@
 /** Keys whose meaning depends on a schema's registered resource context. */
 const contextualKeys = [
-  '$ref', '$dynamicRef', '$recursiveRef', '$id',
+  '$schema', '$ref', '$dynamicRef', '$recursiveRef', '$id',
   '$anchor', '$dynamicAnchor', '$recursiveAnchor',
 ];
 

@@ -16,7 +16,8 @@ yarn storybook         # Storybook development server
 - `src/{default,2019,2020}/index.ts` are the three public entry points.
 - Each entry point owns a process-wide `bind` selection and a schema-root registry.
 - `src/validator/createValidatorFactory.ts` compiles full asynchronous validation.
-- `src/validator/createGuardCompiler.ts` compiles synchronous guards: a self-contained `if` subschema (no `$ref`, `$dynamicRef`, `$recursiveRef`, `$id`, or anchor keyword anywhere) directly on the guard instance, anything else at its root pointer. Each entry point's `configure({ directGuardCompile: false })` restores the root pointer for later compiles (ledger round 52, 46C-01 Option A).
+- `src/validator/createGuardCompiler.ts` compiles synchronous guards: a self-contained `if` subschema (no `$schema`, `$ref`, `$dynamicRef`, `$recursiveRef`, `$id`, or anchor keyword anywhere) directly on the guard instance only when the root has no own `$schema`; a root declaring `$schema` or a guard containing `$schema` uses the root pointer, as do other contextual guards. Each entry point's `configure({ directGuardCompile: false })` restores the root pointer for later compiles (ledger round 52, 46C-01 Option A).
+- A compile error that only appears when another part of the root is compiled (an unresolved `$ref`, an invalid regex) makes full validation report `VALIDATOR_COMPILE_FAILED` and fails every root-pointer guard, a limitation of that path; a directly compiled self-contained guard still evaluates, as ERROR-041's per-gate failure rule prescribes (ledger 53C-01). Do not make the direct path reproduce the root-wide failure.
 - `src/validator/utils/transformErrors.ts` maps AJV issues to `ValidationIssue`.
 
 ## Key Details

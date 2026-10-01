@@ -40,6 +40,21 @@ it('directGuardCompile uses the copy subschema identity and release frees it', (
   expect(Reflect.get(guard, '_cache').has(copy.if)).toBe(false);
 });
 
+it.each(['root', 'nested'] as const)('uses the root pointer for a %s $schema declaration', (location) => {
+  ajvValidatorPlugin.bind?.(new Constructor({ strict: false }));
+  ajvValidatorPlugin.configure({ directGuardCompile: true });
+  const metaSchema = dialect === '2020' ? 'https://json-schema.org/draft/2020-12/schema' : dialect === '2019' ? 'https://json-schema.org/draft/2019-09/schema' : 'http://json-schema.org/draft-07/schema#';
+  const schema = { type: 'object', properties: { n: { type: 'number', ...(location === 'nested' ? { $schema: metaSchema } : {}) } } } as const;
+  const copy = { type: 'object', if: schema, ...(location === 'root' ? { $schema: metaSchema } : {}) } as const;
+  const compile = vi.spyOn(Constructor.prototype, 'compile');
+  const guard = ajvValidatorPlugin.compileGuard(copy, '/if');
+  expect(guard({ n: 6 })).toBe(true);
+  expect(guard({ n: 'six' })).toBe(false);
+  expect(compile.mock.calls.some(([candidate]) => candidate === schema)).toBe(false);
+  expect(compile.mock.calls.some(([candidate]) => typeof candidate === 'object' && candidate !== null && '$ref' in candidate)).toBe(true);
+  ajvValidatorPlugin.release(copy);
+});
+
 it('directGuardCompile gives the root-pointer verdict', () => {
   const instance = new Constructor({ allErrors: true, strict: false, validateFormats: true });
   instance.addFormat('only-x', /^x$/);

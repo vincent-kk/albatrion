@@ -1,5 +1,6 @@
 import type { JSONSchema } from '@canard/schema-form';
 import Ajv from 'ajv';
+import draft04 from 'ajv/lib/refs/json-schema-draft-04.json';
 import { afterEach, expect, it, vi } from 'vitest';
 
 import { ajvValidatorPlugin } from '../validatorPlugin';
@@ -28,6 +29,21 @@ it('directGuardCompile uses the copy subschema identity and release frees it', (
   ajvValidatorPlugin.release(copy);
   expect(remove).toHaveBeenCalledWith(copy.if);
   expect(Reflect.get(Reflect.get(guard, '_cache'), '_cache')).not.toHaveProperty(JSON.stringify(copy.if));
+});
+
+it.each([true, false])('preserves draft-04 root meta-validation with directGuardCompile=%s', (directGuardCompile) => {
+  const instance = new Ajv({ schemaId: 'auto' });
+  instance.addMetaSchema(draft04);
+  ajvValidatorPlugin.bind?.(instance);
+  ajvValidatorPlugin.configure({ directGuardCompile });
+  const copy: JSONSchema = { type: 'object' };
+  Object.assign(copy, {
+    $schema: 'http://json-schema.org/draft-04/schema#',
+    if: { properties: { n: { minimum: 5, exclusiveMinimum: true } }, required: ['n'] },
+  });
+  const guard = ajvValidatorPlugin.compileGuard(copy, '/if');
+  expect([{ n: 5 }, { n: 6 }, {}].map(guard)).toEqual([false, true, false]);
+  ajvValidatorPlugin.release(copy);
 });
 
 it('directGuardCompile gives the root-pointer verdict', () => {

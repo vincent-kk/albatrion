@@ -22,7 +22,7 @@ export const createGuardCompiler = (
   const guard = registration.guard;
   if (!guard) throw new Error('Ajv 6 guard root was not registered');
   const schema = directGuardCompile ? resolveGuardSchema(root, pointer) : undefined;
-  const direct = schema !== undefined && isSelfContainedGuard(schema, registration.guardChecks, guard._opts.schemaId === 'id' || guard._opts.schemaId === 'auto');
+  const direct = schema !== undefined && !Object.prototype.hasOwnProperty.call(root, '$schema') && isSelfContainedGuard(schema, registration.guardChecks, guard._opts.schemaId === 'id' || guard._opts.schemaId === 'auto');
   if (direct) {
     // A direct root would retain itself through the finalizer's held value.
     // Its ID-free, dedicated guard is collected with the weak root registration.

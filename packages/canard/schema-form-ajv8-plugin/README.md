@@ -109,7 +109,13 @@ Callers discriminate the refusal by `group` (`'UNHANDLED_ERROR'`) and `code` (`'
 Self-contained guards compile their original copy subschema directly by default.
 Set `directGuardCompile: false` to use the registered root-pointer path for later
 compiles; existing predicates are unchanged and omitted options keep their value.
-Reference and identifier keys anywhere inside a guard always require the root path.
+Reference and identifier keys anywhere inside a guard always require the root path;
+a root declaring its own `$schema` or a guard containing `$schema` also uses the root pointer.
+A compile error that only appears when another part of the root is compiled, such as an
+unresolved `$ref`, makes full validation report `VALIDATOR_COMPILE_FAILED`. It also fails
+every guard compiled at a root pointer, which is a limitation of that path; a self-contained
+guard compiled directly still evaluates, because a guard compile failure belongs to its own
+gate only.
 The guard instance retains the bound dialect, formats and keywords with
 `allErrors: false`. `release(root)` also removes its directly compiled guards.
 

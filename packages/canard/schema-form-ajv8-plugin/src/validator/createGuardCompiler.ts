@@ -26,7 +26,7 @@ export const createGuardCompiler = (
   const registration = registerSchemaRoot(registry, ajv, root);
   const guard = registerSchemaGuard(ajv, root, registration);
   const schema = directGuardCompile ? resolveGuardSchema(root, pointer) : undefined;
-  if (schema !== undefined && isSelfContainedGuard(schema, registration.guardChecks)) {
+  if (schema !== undefined && !Object.prototype.hasOwnProperty.call(root, '$schema') && isSelfContainedGuard(schema, registration.guardChecks)) {
     // A direct root would retain itself through the finalizer's held value.
     // Its ID-free, dedicated guard is collected with the weak root registration.
     if (schema === root) registry.finalizer.unregister(registration);
