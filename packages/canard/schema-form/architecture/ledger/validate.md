@@ -283,6 +283,8 @@
   > "`compile`은 사본을, `compileGuard`는 사본의 루트와 위치를 받는다." (`08-design-a-to-z.md:345`)
   > "동작이 확인된 방식은 루트를 한 번 등록하고 가드를 **루트 안의 위치로** 가리키는 것이다 — `addSchema(root)` 뒤에 `compile({ $ref: 'root#/allOf/0/if' })`. 공허한 참의 의미도 보존된다(실행)." (`adr/0004-validator-plugin-compile-guard.md:73`)
   > "가드를 떼어낸 새 객체로 컴파일하면 검증기의 객체 identity 캐시가 빗나가므로, 작성된 스키마 안의 위치로 식별한다(위 '결정' 절) — `$id` 기저 URI와 `$dynamicRef`의 문맥 문제도 함께 걸려 있다(`reviews/round-1.md` §7-6)." (`adr/0004-validator-plugin-compile-guard.md:46`)
+  > 편집자 결정(46C-01): "【추론】 (a) 44C-01이 결함으로 본 것은 "변경에 비례하지 않는 비용"(GOAL-011 "비용은 폼의 크기가 아니라 그 동작이 바꾼 것의 크기에 비례한다", SETTLE-017·047의 순회 범위)이고, 가드 인스턴스가 루트를 한 번 더 컴파일하는 것은 루트마다 한 번이며 스키마 크기에 비례하는 마운트(로드) 비용이라 트리 전체 순회가 허용되는 로드의 범위 안이다; SETTLE-017의 "`if` 게이트의 컴파일은 작성된 스키마의 위치당 1회"도 지켜진다(가드마다 한 번, 루트 등록도 한 번). 그래서 계약 위반이 아니라 상수 배의 느린 행이며 TEST-027·072의 절차(이유를 적고 소유자가 받아들여야 병합)로 간다. 측정은 05 성능 기록과 속도 문제 대장 "열림"에 적는다(원인 확인: 가드 인스턴스의 `resolveSchema`가 미컴파일 루트를 컴파일함; 후보: A안)." (`reviews/round-46-closing.md:9`)
+  > 편집자 결정(46C-01): "【추론】 (b) B안은 금지다: VALIDATE-033은 가드용 인스턴스가 첫 실패에서 멈춰야 하고(`allErrors: false`) Ajv에서 그것이 인스턴스 옵션이라 검증용과 별도 인스턴스를 두되 나머지 설정을 같게 유지하는 규칙을 플러그인이 갖는다고 정했으므로, 검증 인스턴스에서 가드를 컴파일하면 가드가 모든 오류를 모으며 돌아 VALIDATE-033의 전제가 깨진다. A안은 ADR 0004가 "가드를 떼어낸 새 객체로 컴파일하면 검증기의 객체 identity 캐시가 빗나가므로 작성된 스키마 안의 위치로 식별한다 — `$id` 기저 URI와 `$dynamicRef`의 문맥 문제도 함께 걸려 있다"로 기각한 방식을 "그 문제가 생길 수 없는 자족한 부분 스키마"에 한해 되살리는 것이라 VALIDATE-017(정본 ADR 0004)의 방식 변경이고, 27라운드 소유자 답 "구현 단계에서는 최적화하지 않고 기록만 남긴다"의 범위에 드는 최적화다; 그래서 편집자가 열지 않고 소유자에게 "A안을 PR-4에서 지금 허용하는가, 아니면 마운트 행을 느린 행으로 받아들이고 A안은 최적화 작업으로 넘기는가"를 묶어 묻는다. A안이 허용되면 조건(안에 `$ref`·`$dynamicRef`·`$recursiveRef`·`$id`·`$anchor`·`$dynamicAnchor`·`$recursiveAnchor` 없음)과 등록 아래의 기록(`release(copy)`가 함께 풂, VALIDATE-019의 등록 소유)은 05가 제안한 대로다." (`reviews/round-46-closing.md:10`)
 - 상태: 현행
 - 출처: `adr/0004-validator-plugin-compile-guard.md:33`(정본), `adr/0004-validator-plugin-compile-guard.md:46,73`, `08-design-a-to-z.md:345`, `02-target-overview.md:175`, `09-landing-and-test-strategy.md:19`
 - 닫은 사람: 편집자 결정(16라운드, `09-landing-and-test-strategy.md:19` 조건 1)
@@ -486,7 +488,8 @@
 
 - 결정:
   > - 가드용 인스턴스는 첫 실패에서 멈춰야 하는데(`allErrors: false`) Ajv에서 그것은 인스턴스 옵션이다. 검증용과 가드용 인스턴스의 나머지 설정(format, 커스텀 키워드, 방언)을 같게 유지하는 규칙을 플러그인이 가져야 한다. `bind`는 모듈 전역이어서 설정의 단위가 폼이 아니라 프로세스다.
-- 보충: 없음
+- 보충:
+  > 편집자 결정(46C-01): "【추론】 (b) B안은 금지다: VALIDATE-033은 가드용 인스턴스가 첫 실패에서 멈춰야 하고(`allErrors: false`) Ajv에서 그것이 인스턴스 옵션이라 검증용과 별도 인스턴스를 두되 나머지 설정을 같게 유지하는 규칙을 플러그인이 갖는다고 정했으므로, 검증 인스턴스에서 가드를 컴파일하면 가드가 모든 오류를 모으며 돌아 VALIDATE-033의 전제가 깨진다. A안은 ADR 0004가 "가드를 떼어낸 새 객체로 컴파일하면 검증기의 객체 identity 캐시가 빗나가므로 작성된 스키마 안의 위치로 식별한다 — `$id` 기저 URI와 `$dynamicRef`의 문맥 문제도 함께 걸려 있다"로 기각한 방식을 "그 문제가 생길 수 없는 자족한 부분 스키마"에 한해 되살리는 것이라 VALIDATE-017(정본 ADR 0004)의 방식 변경이고, 27라운드 소유자 답 "구현 단계에서는 최적화하지 않고 기록만 남긴다"의 범위에 드는 최적화다; 그래서 편집자가 열지 않고 소유자에게 "A안을 PR-4에서 지금 허용하는가, 아니면 마운트 행을 느린 행으로 받아들이고 A안은 최적화 작업으로 넘기는가"를 묶어 묻는다. A안이 허용되면 조건(안에 `$ref`·`$dynamicRef`·`$recursiveRef`·`$id`·`$anchor`·`$dynamicAnchor`·`$recursiveAnchor` 없음)과 등록 아래의 기록(`release(copy)`가 함께 풂, VALIDATE-019의 등록 소유)은 05가 제안한 대로다." (`reviews/round-46-closing.md:10`)
 - 상태: 현행
 - 출처: `adr/0004-validator-plugin-compile-guard.md:77`(정본), `adr/0004-validator-plugin-compile-guard.md:71`
 - 닫은 사람: 편집자 결정(2라운드, `adr/0004-validator-plugin-compile-guard.md:71` S12)
