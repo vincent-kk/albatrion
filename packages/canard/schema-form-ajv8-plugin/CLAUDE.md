@@ -26,7 +26,8 @@ yarn storybook         # Storybook development server
 - `bind(instance)` immediately refuses enabled `coerceTypes`, `useDefaults`, or `removeAdditional`; a refused instance never replaces the current binding.
 - Callers discriminate the refusal by `group` (`'UNHANDLED_ERROR'`) and `code` (`'VALIDATOR_BIND_REFUSED'`); core's `isUnhandledError` does not recognize it.
 - Validation returns `null` or normalized issues; root `dataPath` is `''`.
-- A single location used from several dynamic scopes is unsupported by `compileGuard`.
+- **Guard scope**: VALIDATE-047 case (iv), one schema location reached from several dynamic scopes through `$dynamicRef` or `$recursiveRef`, is unsupported by `compileGuard`: there is one guard per location, and it answers for the first-compiled dynamic scope.
+- **Bound strict options**: `strictTypes` and `strictRequired` on a bound instance may make some `if` guards fail to compile. The affected gate becomes false and produces a `GUARD_FAILED` `onError` record. The plugin does not override the consumer's options, and strict mode is not the plugin default (VALIDATE-003, VALIDATE-005, VALIDATE-033, ERROR-041).
 - Builds target ES2022, ESM (`.mjs`), and CJS (`.cjs`).
 
 ## AJV 7 differences

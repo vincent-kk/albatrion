@@ -89,7 +89,9 @@ The guard instance retains the bound dialect, formats and keywords with
 - `compileGuard` returns a synchronous boolean guard for a pointer in the registered root.
 - `compile`, `compileGuard`, and `release` share one registration when given the same engine-owned copy object.
 - `release` removes that registration and its compiled functions. A second live root with the same `$id` remains independent.
-- One location used from several dynamic scopes is unsupported: a single pointer guard cannot represent both scope-dependent verdicts.
+- VALIDATE-047 case (iv), one schema location reached from several dynamic scopes through `$dynamicRef` or `$recursiveRef`, is unsupported. There is one guard per location, and it answers for the first-compiled dynamic scope.
+
+Strict options on a bound instance, such as `strictTypes` and `strictRequired`, may make some `if` guards fail to compile. The affected gate becomes false and produces a `GUARD_FAILED` `onError` record. The plugin does not override the consumer's options, and strict mode is not the plugin default (VALIDATE-003, VALIDATE-005, VALIDATE-033, ERROR-041).
 
 ### **Default Configuration**
 

@@ -94,6 +94,8 @@ AJV6 defaults to `$id`; `schemaId: 'id'` or `'auto'` also treats draft-04 `id` a
 - **Purpose**: Compiles a synchronous boolean guard at a schema pointer in the authored root, retaining its `$ref` context
 - **Limits**: Asynchronous formats and keywords are unsupported
 
+Strict options on a bound instance, such as `strictTypes` and `strictRequired`, may make some `if` guards fail to compile. The affected gate becomes false and produces a `GUARD_FAILED` `onError` record. The plugin does not override the consumer's options, and strict mode is not the plugin default (VALIDATE-003, VALIDATE-005, VALIDATE-033, ERROR-041).
+
 #### **`release(root)`**
 
 - **Purpose**: Removes that root's Ajv registrations and compiled results when the form cache evicts it

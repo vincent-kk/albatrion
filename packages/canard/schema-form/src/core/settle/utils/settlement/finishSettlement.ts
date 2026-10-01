@@ -1,4 +1,4 @@
-import { SchemaFormError } from '../../../../errors';
+import { MULTIPLE_ERRORS, SchemaFormError } from '../../../../errors';
 import type { SchemaNodeRecord, SettlementScratch } from '../../../record';
 import type { SettlementContext } from '../../type';
 import { commitSettlement } from '../commit/commitSettlement';
@@ -15,7 +15,7 @@ import { publishStateKeys } from '../compute/publishStateKeys';
  * @param context - Calculated call with any host budget failure
  * @param scratch - This call's explicit raw baseline container
  * @returns Nothing; committed records and runtime hold the result
- * @throws A deferred settlement failure after committing its diagnostics
+ * @throws Deferred failures after commit when no dispatch chain owns them
  */
 export const finishSettlement = <Self extends SchemaNodeRecord<Self>>(
   context: SettlementContext<Self>, scratch: SettlementScratch<Self>,
@@ -43,5 +43,17 @@ export const finishSettlement = <Self extends SchemaNodeRecord<Self>>(
         path.startsWith(`${context.target.path}/`))
         context.target.runtime.typeMismatchPaths.delete(path);
   commitSettlement(context);
+  const failures = context.gateFailures;
+  if (failures?.length) {
+    const runtime = context.root.runtime;
+    if (runtime.entryDepth && runtime.chainErrors) {
+      if (context.failure && failures.includes(context.failure)) return;
+    } else {
+      const errors = context.failure && !failures.includes(context.failure)
+        ? [context.failure, ...failures] : failures;
+      throw errors.length === 1 ? errors[0] : new SchemaFormError(MULTIPLE_ERRORS,
+        'Multiple settlement errors', { errors });
+    }
+  }
   if (context.failure) throw context.failure;
 };

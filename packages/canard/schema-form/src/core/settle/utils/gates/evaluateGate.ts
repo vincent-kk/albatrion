@@ -17,7 +17,7 @@ import { ValidationMode } from '../../../types/state';
 /**
  * Evaluate one bound gate with the real expression or validator guard.
  * @param gate - Declarative condition bound to the current occurrence
- * @param context - Current projected tree and deferred failure slot
+ * @param context - Projected tree and deferred gate failure collection to update
  * @param owner - Live occurrence whose template contains this gate
  * @param edgeName - Direct child whose own active gate is being evaluated
  * @returns Whether the condition currently admits its declaration
@@ -124,13 +124,20 @@ export const evaluateGate = <Self extends SchemaNodeRecord<Self>>(
   } catch (cause) {
     const runtime = context.root.runtime;
     context.gateThrowVersion = (context.gateThrowVersion ?? 0) + 1;
-    if (!context.failure && !runtime.mountingGuardPass) {
-      context.failure = new SchemaFormError(
-        gate.kind === 'if' ? GUARD_FAILED : EXPRESSION_THREW,
-        `Gate evaluation failed at ${gate.schemaPath}`,
-        { path: hostPath, schemaPath: gate.schemaPath, cause },
-      );
-      context.cause = 'expression';
+    const code = gate.kind === 'if' ? GUARD_FAILED : EXPRESSION_THREW;
+    const repeated = context.gateFailures?.some((error) =>
+      error.code === `SCHEMA_FORM_ERROR.${code}` &&
+      error.details.path === hostPath && error.details.schemaPath === gate.schemaPath);
+    const failure = runtime.mountingGuardPass || repeated ? undefined :
+      new SchemaFormError(code, `Gate evaluation failed at ${gate.schemaPath}`,
+        { path: hostPath, schemaPath: gate.schemaPath, cause });
+    if (failure) {
+      (context.gateFailures ??= []).push(failure);
+      if (runtime.entryDepth) runtime.chainErrors?.push(failure);
+      if (!context.failure) {
+        context.failure = failure;
+        context.cause = 'expression';
+      }
     }
     if (gate.kind === 'if' && runtime.errorReporter?.hasConsumer() &&
       !runtime.reportedGuardFailures?.has(gate.schemaPath) &&
@@ -145,6 +152,8 @@ export const evaluateGate = <Self extends SchemaNodeRecord<Self>>(
         (runtime.guardFailureRecords ??= new Map()).set(gate.schemaPath, record);
         runtime.chainOccurrences?.push({ kind: 'record', record });
       }
+    if (failure && runtime.entryDepth && runtime.errorReporter?.hasConsumer())
+      runtime.chainOccurrences?.push({ kind: 'error', error: failure });
     return false;
   }
 };

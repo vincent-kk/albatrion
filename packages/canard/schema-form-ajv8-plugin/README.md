@@ -127,7 +127,9 @@ The guard instance retains the bound dialect, formats and keywords with
 
 #### **`compileGuard(root, pointer)` and `release(root)`**
 
-Guards are synchronous and use a JSON Pointer into the authored root. Release removes that root's AJV registrations. A single location used from several dynamic scopes is unsupported by `compileGuard`.
+Guards are synchronous and use a JSON Pointer into the authored root. Release removes that root's AJV registrations. VALIDATE-047 case (iv), one schema location reached from several dynamic scopes through `$dynamicRef` or `$recursiveRef`, is unsupported by `compileGuard`: there is one guard per location, and it answers for the first-compiled dynamic scope.
+
+Strict options on a bound instance, such as `strictTypes` and `strictRequired`, may make some `if` guards fail to compile. The affected gate becomes false and produces a `GUARD_FAILED` `onError` record. The plugin does not override the consumer's options, and strict mode is not the plugin default (VALIDATE-003, VALIDATE-005, VALIDATE-033, ERROR-041).
 
 ### **Default Configuration**
 

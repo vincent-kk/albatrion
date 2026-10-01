@@ -11,7 +11,7 @@ export type SchemaNodeWriteKind =
   | 'load'
   | 'automatic';
 
-/** One synchronous write's work list and deferred failure. */
+/** One synchronous write's work list and deferred failures. */
 export interface SettlementContext<Self extends SchemaNodeRecord<Self>> {
   /** Live root reached through the record boundary. */
   root: Self;
@@ -94,8 +94,10 @@ export interface SettlementContext<Self extends SchemaNodeRecord<Self>> {
   traceRounds?: DeriveTraceEntry[][];
   /** Last budget-exceeding attempt's rule names. */
   deriveBudgetRules?: readonly DeriveTraceEntry[];
-  /** First error to throw after the commit boundary. */
+  /** First failure retained for diagnostics and non-gate error handling. */
   failure?: SchemaFormError;
+  /** First failure per gate location and host in this settlement's occurrence order. */
+  gateFailures?: SchemaFormError[];
   /** Cause assigned to the deferred failure. */
   cause?: 'expression' | 'injectTarget' | 'writeShape' | 'sharedConflict' | 'budget';
   /** Exhausted host rounds handed to the later budget phase. */
