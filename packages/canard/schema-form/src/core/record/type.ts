@@ -9,6 +9,7 @@ import type {
   SchemaTypeName,
 } from '../blueprint';
 import type { NodeStateFlags, ValidationMode } from '../types/state';
+import type { SetValueOption } from '../types/value';
 import type { FormErrorReporter } from '../../errors';
 
 /** Shared ledger until an occurrence first receives a committed event. */
@@ -289,10 +290,34 @@ export interface SchemaNodeRuntime<Self> extends SchemaNodeRootRuntimeState {
   deliveredDiagnostics?: SchemaNodeDiagnostics;
   /** Public entry depth consumed by the later dispatcher. */
   entryDepth?: number;
-  /** Remaining feedback and onChange budgets for one entry chain. */
+  /** Feedback waves already produced by the current outer entry. */
   feedbackBudget?: number;
-  /** Remaining nested onChange budget for one entry chain. */
+  /** Current nested onChange callback count. */
   onChangeBudget?: number;
+  /** Root that owns an entry, which can change during a rebuilt reset. */
+  chainRoot?: Self;
+  /** Replacement root used to finish a rebuilt open entry. */
+  adoptedRoot?: unknown;
+  /** Emitted root reference observed before this entry. */
+  chainInitialEmit?: unknown;
+  /** Failures retained in occurrence order until the chain finishes. */
+  chainErrors?: unknown[];
+  /** Per-node subscribers, allocated only for a subscribed tree. */
+  listeners?: Map<unknown, Set<(event: SchemaNodeDelivery) => void>>;
+  /** Subscriber currently producing a delivery callback. */
+  currentListener?: (event: SchemaNodeDelivery) => void;
+  /** Feedback producers already stopped at this chain's wave budget. */
+  feedbackBlockedListeners?: Set<(event: SchemaNodeDelivery) => void>;
+  /** Whether this chain already recorded its feedback limit failure. */
+  feedbackLimitReported?: boolean;
+  /** Number of active nested batch callbacks. */
+  batchDepth?: number;
+  /** Caller writes postponed until the outer batch callback finishes. */
+  batchWrites?: { node: Self; value: unknown; option: SetValueOption }[];
+  /** Reset scopes requiring validation even with an unchanged root emit. */
+  validationTargets?: Set<Self>;
+  /** Validation request seam filled by the validation unit. */
+  requestValidation?: (node: Self) => void;
   /** Whether a listener or error handler is currently receiving delivery. */
   delivering?: boolean;
   /** Events marked outside settlement for the next dispatcher wave. */
