@@ -45,6 +45,8 @@ Planning method: 저장소 지침 — `PLAN.md` §2와 `plan/prompts.md`의 단�
 | 2026-10-01 | 소유자 결정 | `@cfworker/json-schema` 개발 의존을 더하지 않음 — "ajv 까지만 일단 지원하는 방향으로 하자 … ajv 내부에 추가 개발의존성은 원치않아". 차등 테스트는 같은 ajv의 직접 판정과의 경로 비교로(소유자 선택), "다른 구현" 요구는 ajv 아닌 플러그인이 생길 때로 미룸. 원장 관리자에게 40라운드 기록을 요청. U12a 포기(G36 ABANDON), U12b 범위 고침 | 원장 기록 대기 |
 | 2026-10-01 | U7 | codex(세션 `48c432d4`): 사본·캐시·가드 읽기·개발 모드 일괄 컴파일, `evaluateGate`가 실제 가드를 읽음, 시험용 ajv 8 검증기. 술어 대역 삭제와 사용처 24파일(계획 추정 19) 이전 — 기대값을 바꿔야 한 사례 0(TEST-069 (나)가 찾을 차이 없음). G19·G20 충족 | `3ef2ed652` |
 | 2026-10-01 | U5b | codex(U5a와 같은 세션 `feab8128`): 사슬 끝 기록 전달·묶음·핸들러 예외·전달 중 쓰기 거부·경고 구조 키·주인 없는 싱크·청사진 오류 기록화. `oneOf` 호스트 자리는 `settle/utils/compute/selectNodeSchema.ts:18`. 계획 :214의 일반 중복 억제 대신 VALUE-037(`ledger/value.md:610`, 다시 켜질 때 재전달)을, ERROR-024의 "루트 전체 교체에서 키 초기화" 대신 그 항목의 충돌 줄과 ERROR-204를 따름. 바인딩(07)이 부를 자리 둘(정적 청사진 기록의 커밋 뒤 전달, 부른 쪽 없는 마운트)은 core 쪽만 준비. G15·G16 충족 | 이 커밋 |
+| 2026-10-01 | U6 | codex: 정착 밖 사건(`setState`·하위 트리 상태·외부 오류·`request`)의 진입과, 진입 안에서는 노드별로 합쳐 큐에 두고 깊이 0이면 호출 안에서 동기 배달(31C-01). G17·G18 충족 | `a93e766c9` |
+| 2026-10-01 | U8 | U7 세션 이어 쓰기가 "세션 없음"으로 실패(cennad 조회 문제) → codex 새 세션(`3500d216`): 실행·스탬프·라우팅·검증 불가·수명·같은 `$id`·방언 경고, `deliverValidationWave`와 `dispatchValidate`, 적합성 시험의 실행 부분. ajv6·7 모양은 리터럴 fixture. 같은 `$id` 재생성 reset의 원자성을 위해 계획 파일 목록 밖의 `adoptSchemaNodeChain`에 사전 검사를 더함(M4). G22·G23·G24 충족(조율 세션 재실행), tsc·eslint 통과, core unit 1,269 통과·실패는 `surface.test.ts` 하나(위 이탈) | `44f8dbd79` |
 
 ### 31C-05 가칭 확정
 
@@ -130,7 +132,8 @@ Planning method: 저장소 지침 — `PLAN.md` §2와 `plan/prompts.md`의 단�
 
 ## 3. 다음 행동
 
-- antigravity 계획 리뷰 판정을 받아 지적을 원장·코드와 대조하고, `cleared`까지 고친다.
+- U8 리뷰(antigravity) 판정을 받아 지적을 원장·코드와 대조하고 고친다.
+- U9 겉면(codex) 뒤에 G12·G21을 잰다. 이어 U10, U11a·U11b·U11c, U12b, U13–U15, U16a·U16b.
 - 가칭 이름 확정 목록(U2, 31C-05)에 06이 더하는 `ARRAY_METHOD_ON_NON_ARRAY`(ERROR-197)를 넣는다: 배열이 아닌 노드에 `push`·`pop`·`update`·`remove`·`clear`를 부르면 배열 동사의 공용 칸이 던지는 `SchemaFormError`, 기록은 `path`와 `details.method`(06 세션 `albatrion-52`, 35C-01). 06은 `onError`에 보고하지 않고 던지며, 던지기 직전의 보고는 나중에 머지하는 단계의 디스패치 연결과 함께 든다(33C-01).
 
 ## 4. 원장·계획서 어긋남
@@ -140,3 +143,4 @@ Planning method: 저장소 지침 — `PLAN.md` §2와 `plan/prompts.md`의 단�
 | M1 | `request.md:17`, `request.md:37`, `adr-and-axes.md:18`, `verification.md:23` | 명령 메서드의 이름·형·`FormHandle` 모양을 "착수 전 소유자 결정"으로 적음 | EVENT-073 보충(30라운드) | 30라운드 답대로 구현한다 |
 | M2 | `execution-plan.md:181`(U3) | `FormErrorRecord.details?: object`, `aggregate?: readonly FormErrorRecord[]` | ERROR-017(`ledger/error.md:458`): `details?: ErrorDetails`, `aggregate?: SchemaFormError` | 원장 서명대로 문서·구현(codex U2 보고) |
 | M3 | `execution-plan.md` U16a | 35C-02(`UpdatePath` 배달은 레코드의 `(previous, current)` 사실에서 디스패처가 함)가 없음 | 35라운드 35C-01·02 | 나중에 머지하는 단계의 디스패치 연결에 든다 — U16a 조건부 단계에 더함 |
+| M4 | `execution-plan.md:236`·`:241`(U8) | 만들 파일 목록에 `adoptSchemaNodeChain` 수정이 없고, 검증 불가 기록을 하위 트리 범위로 읽힐 여지가 있음 | VALIDATE-046 (iii)(같은 `$id` 재생성 reset의 원자성), VALIDATE-048·18C-105(`ledger/validate.md:769`, `VALIDATOR_COMPILE_FAILED`는 폼 수준 기록) | 사전 검사를 `adoptSchemaNodeChain`에 두고 기록은 폼 수준으로 구현(codex U8 보고), antigravity U8 리뷰에서 판정 |
