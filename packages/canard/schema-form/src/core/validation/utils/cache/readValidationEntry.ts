@@ -1,6 +1,9 @@
 import type { BlueprintSchema } from '../../../blueprint';
 import type { GuardFunction, ValidateFunction, Validator } from '../../type';
 import { createValidatorCopy } from '../copy/createValidatorCopy';
+import { validationEntries } from './validationEntries';
+import { evictValidationRoot } from '../lifetime/evictValidationRoot';
+import { recentReleaseList } from '../lifetime/recentReleaseList';
 
 /** Successful or failed compilation retained under one authored position. */
 export type GuardResult = { readonly guard: GuardFunction; readonly failure?: never } |
@@ -20,9 +23,6 @@ export interface ValidationEntry {
   eagerCompiled: boolean;
 }
 
-/** Cache owners remain independent even when their authored roots match. */
-const entries = new WeakMap<Validator, WeakMap<object, ValidationEntry>>();
-
 /**
  * Read or create the single copied and compiled entry for this validator/root pair.
  * @param validator - Selected instance; its identity owns an independent cache.
@@ -32,15 +32,24 @@ const entries = new WeakMap<Validator, WeakMap<object, ValidationEntry>>();
 export const readValidationEntry = (
   validator: Validator, authoredRoot: BlueprintSchema,
 ): ValidationEntry => {
-  let roots = entries.get(validator);
+  let roots = validationEntries.get(validator);
   if (!roots) {
     roots = new WeakMap();
-    entries.set(validator, roots);
+    validationEntries.set(validator, roots);
   }
   if (typeof authoredRoot !== 'object' || authoredRoot === null)
     throw new TypeError('Validation cache requires an authored root object');
   const existing = roots.get(authoredRoot);
   if (existing) return existing;
+  const list = recentReleaseList(validator);
+  if (typeof authoredRoot.$id === 'string')
+    for (const oldRoot of [...list.recent])
+      if (oldRoot !== authoredRoot && typeof oldRoot === 'object' &&
+        oldRoot !== null && oldRoot.$id === authoredRoot.$id)
+        evictValidationRoot(validator, oldRoot);
+  list.counts.set(authoredRoot, 0);
+  list.recent.push(authoredRoot);
+  if (list.recent.length > 8) evictValidationRoot(validator, list.recent[0]);
   const copy = createValidatorCopy(authoredRoot);
   let validate: ValidateFunction | undefined;
   let failure: unknown;

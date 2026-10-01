@@ -357,6 +357,32 @@ export interface SchemaNodeRuntime<Self> extends SchemaNodeRootRuntimeState {
   onStateChange?: () => void;
   /** Most recent validation request/result version. */
   validationStamp?: number;
+  /** Stamp of the latest queued write-triggered request. */
+  validationRequestStamp?: number;
+  /** Latest ordered whole-schema issues, including ownerless and hidden issues. */
+  globalErrors?: readonly unknown[];
+  /** Last displayed validator issues, separate from external errors. */
+  validationErrors?: Map<unknown, readonly unknown[]>;
+  /** Nodes whose displayed validator issues changed in the last result. */
+  validationChangedNodes?: Set<Self>;
+  /** True after this load discovers that whole-schema compilation failed. */
+  validationUnavailable?: boolean;
+  /** Whether this load has reported its one whole-schema compilation failure. */
+  validationCompileReported?: boolean;
+  /** Dispatcher-owned path for asynchronous execution and delivery failures. */
+  reportValidationFailure?: (failure: unknown) => void;
+  /** True while one microtask is queued to run the latest request. */
+  validationQueued?: boolean;
+  /** Subtree scopes merged into the next one-per-commit validation run. */
+  validationPendingTargets?: Set<Self>;
+  /** Most recent result and its commit number. */
+  validationResult?: { readonly commit: number; readonly issues: readonly unknown[] };
+  /** Stable merged reads of validator and external issues. */
+  combinedErrors?: Map<unknown, {
+    readonly external?: readonly unknown[];
+    readonly validation?: readonly unknown[];
+    readonly errors: readonly unknown[];
+  }>;
   /** Validation and external issues keyed by live node. */
   nodeErrors?: Map<unknown, readonly unknown[]>;
   /** Form context shared by every occurrence and expression in this tree. */

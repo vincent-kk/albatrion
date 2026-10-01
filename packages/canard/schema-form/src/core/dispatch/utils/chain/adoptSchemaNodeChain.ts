@@ -1,5 +1,6 @@
 import type { SchemaNodeRecord } from '../../../record';
 import { RESET_REBUILT_BY_REFERENCE } from '../../../../errors';
+import { assertValidationRootReady } from '../../../validation';
 import { dedupeWarningRecord } from '../report/dedupeWarningRecord';
 import { readReferenceOnlySchemaPaths } from '../report/readReferenceOnlySchemaPaths';
 
@@ -12,6 +13,7 @@ import { readReferenceOnlySchemaPaths } from '../report/readReferenceOnlySchemaP
 export const adoptSchemaNodeChain = <Self extends SchemaNodeRecord<Self>>(
   previousRoot: Self, nextRoot: Self,
 ): void => {
+  assertValidationRootReady(nextRoot);
   const previous = previousRoot.runtime;
   const next = nextRoot.runtime;
   next.entryDepth = previous.entryDepth;

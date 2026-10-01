@@ -18,6 +18,8 @@ export const dispatchResetForm = <Self extends SchemaNodeRecord<Self>>(
 ): void => {
   enterSchemaNodeChain(root);
   root.runtime.warningKeys?.clear();
+  root.runtime.validationUnavailable = false;
+  root.runtime.validationCompileReported = false;
   root.runtime.batchWrites = undefined;
   (root.runtime.validationTargets ??= new Set()).add(root);
   try { resetSchemaNodeForm(root, value, option); }

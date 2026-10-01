@@ -10,6 +10,7 @@ export { dispatchClearSubtreeState } from './utils/entry/dispatchClearSubtreeSta
 export { dispatchSetExternalErrors } from './utils/entry/dispatchSetExternalErrors';
 export { dispatchClearExternalErrors } from './utils/entry/dispatchClearExternalErrors';
 export { dispatchRequest } from './utils/entry/dispatchRequest';
+export { dispatchValidate } from './utils/entry/dispatchValidate';
 export { adoptSchemaNodeChain } from './utils/chain/adoptSchemaNodeChain';
 export { readSchemaNodeRevision } from './utils/read/readSchemaNodeRevision';
 export { subscribeSchemaNode } from './utils/read/subscribeSchemaNode';

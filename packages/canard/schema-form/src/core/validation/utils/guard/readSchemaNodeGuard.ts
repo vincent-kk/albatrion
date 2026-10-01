@@ -1,16 +1,7 @@
 import type { Blueprint, BlueprintGate } from '../../../blueprint';
-import type { GuardFunction, Validator } from '../../type';
+import type { GuardFunction } from '../../type';
 import { readValidationEntry } from '../cache/readValidationEntry';
-
-/**
- * Narrow a selected runtime value to the core validator contract.
- * @param candidate - Runtime-selected value supplied at tree creation.
- * @returns Whether core can call both compilation operations.
- */
-const isValidator = (candidate: unknown): candidate is Validator =>
-  candidate !== null && typeof candidate === 'object' &&
-  'compile' in candidate && typeof candidate.compile === 'function' &&
-  'compileGuard' in candidate && typeof candidate.compileGuard === 'function';
+import { isValidator } from './isValidator';
 
 /**
  * Lazily read one authored guard, preserving failed compilation for later trees.

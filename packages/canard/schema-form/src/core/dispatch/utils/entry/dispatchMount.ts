@@ -21,6 +21,8 @@ export const dispatchMount = <Self extends SchemaNodeRecord<Self>>(
 ): void => {
   enterSchemaNodeChain(root);
   root.runtime.warningKeys?.clear();
+  root.runtime.validationUnavailable = false;
+  root.runtime.validationCompileReported = false;
   (root.runtime.validationTargets ??= new Set()).add(root);
   root.runtime.mountingGuardPass = process.env.NODE_ENV !== 'production';
   try { loadSchemaNodeAtMount(root, value, option); }

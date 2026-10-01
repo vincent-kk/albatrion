@@ -2,6 +2,9 @@ import { FEEDBACK_LIMIT_EXCEEDED, JSONSchemaError, SchemaFormError } from '../..
 import type { FormErrorRecord } from '../../../../errors';
 import type { SchemaNodeRecord } from '../../../record';
 import { ValidationMode } from '../../../types/state';
+import { requestSchemaNodeValidation } from '../../../validation';
+import { deliverValidationWave } from './deliverValidationWave';
+import { reportValidationFailure } from '../report/reportValidationFailure';
 import { runDeliveryWaves } from './runDeliveryWaves';
 import { flushQueuedEvents } from './flushQueuedEvents';
 import { resolveSchemaNodeChainRoot } from './resolveSchemaNodeChainRoot';
@@ -51,12 +54,17 @@ export const exitSchemaNodeChain = <Self extends SchemaNodeRecord<Self>>(
   const changed = runtime.chainInitialEmit !== root.emit;
   const requests = runtime.validationTargets;
   if (runtime.validationMode && runtime.validationMode & ValidationMode.OnChange) {
+    runtime.reportValidationFailure ??= (error) =>
+      reportValidationFailure(runtime, error);
+    const request = runtime.requestValidation ?? ((target: Self) =>
+      requestSchemaNodeValidation(target, (issues, commit) =>
+        deliverValidationWave(target, issues, commit)));
     if (changed && !requests?.has(root)) {
-      try { runtime.requestValidation?.(root); }
+      try { request(root); }
       catch (error) { captureChainError(runtime, error); }
     }
     for (const target of requests ?? []) {
-      try { runtime.requestValidation?.(target); }
+      try { request(target); }
       catch (error) { captureChainError(runtime, error); }
     }
   }

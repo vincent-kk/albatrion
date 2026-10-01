@@ -12,7 +12,7 @@
 - `dispatchSetValue(node, value, option?)`, `dispatchResetSubtree(node, option?)`, `dispatchResetForm(root, value?, option?)`, `dispatchMount(root, value?, option?)`, `dispatchBatch(node, fn: () => void)`, `dispatchContextChange(root, context)`는 공개 쓰기 사슬을 엽니다. `dispatchBatch`의 중첩은 바깥 배치가 이기고, 함수가 던져도 표시된 쓰기를 정착·배달한 뒤 그 예외를 사슬 끝에서 드러냅니다(EVENT-013–019·035·061, LANDING-064).
 - `subscribeSchemaNode(node, listener): () => void`와 `readSchemaNodeRevision(node, mask?)`는 읽기이며 진입을 열지 않습니다. 구독 사건은 `{ type, payload?, options? }` 모양이고, `revision(mask?)`는 리스너 유무와 무관한 해당 비트 카운터의 합입니다(EVENT-001·004·007).
 - `dispatchRequest(node, kind: SchemaNodeRequestType): void`, `dispatchSetState(node, state)`, `dispatchSetSubtreeState(node, state)`, `dispatchClearSubtreeState(node)`, `dispatchSetExternalErrors(node, errors: readonly ValidationIssue[])`, `dispatchClearExternalErrors(node)`는 정착 밖 사건입니다. `dispatchValidate(node): Promise<readonly ValidationIssue[]>`는 호출할 때 새 판정을 요청합니다(EVENT-012·045·063·067·073, VALIDATE-049).
-- `adoptSchemaNodeChain(previousRoot, nextRoot)`는 재생성 reset의 진입 깊이, 배치 표시, 예산과 모은 오류를 새 루트에 넘기는 바인딩 전용 통로입니다(EVENT-030).
+- `adoptSchemaNodeChain(previousRoot, nextRoot)`는 새 루트의 검증 컴파일을 먼저 확인한 뒤 재생성 reset의 진입 깊이, 배치 표시, 예산과 모은 오류를 넘기는 바인딩 전용 통로입니다. 실패하면 옛 사슬은 그대로입니다(EVENT-030, VALIDATE-046).
 
 ### 사슬, 파동, 기록
 
