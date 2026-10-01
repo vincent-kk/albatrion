@@ -17,6 +17,16 @@ export interface ScenarioExpectation {
   }>>>;
   /** Expected validation errors, indexed by JSON Pointer. */
   readonly errors?: Readonly<Record<string, readonly unknown[]>>;
+  /** Synchronous result of the action, including undefined when present. */
+  readonly result?: unknown;
+  /** New path to the path of the same node before this step. */
+  readonly identity?: Readonly<Record<string, string>>;
+  /** Load-snapshot values observed through each node's defaultValue. */
+  readonly defaultValues?: Readonly<Record<string, unknown>>;
+  /** Blueprint schema types selected for array positions. */
+  readonly schemaTypes?: Readonly<Record<string, unknown>>;
+  /** Untemplated array tail values retained by a host. */
+  readonly extras?: Readonly<Record<string, unknown>>;
   /** Expected settlement health fields on the form root. */
   readonly diagnostics?: Readonly<{
     status: 'stable' | 'degraded';
@@ -31,9 +41,10 @@ export interface ScenarioExpectation {
 export type FormScenarioStep = (
   | { readonly action: 'setValue'; readonly path: string; readonly value: unknown }
   | { readonly action: 'clear'; readonly path: string }
-  | { readonly action: 'push'; readonly path: string; readonly value: unknown }
+  | { readonly action: 'push'; readonly path: string; readonly value?: unknown }
+  | { readonly action: 'pop'; readonly path: string }
   | { readonly action: 'remove'; readonly path: string; readonly index: number }
-  | { readonly action: 'update'; readonly path: string; readonly schema: object }
+  | { readonly action: 'update'; readonly path: string; readonly index: number; readonly value: unknown }
   | { readonly action: 'submit' }
   | { readonly action: 'reset'; readonly automaticWrites?: 'disabled' }
   | { readonly action: 'resetSubtree'; readonly path: string }
@@ -44,6 +55,8 @@ export type FormScenarioStep = (
 export interface FormScenario<Schema = object, Value = unknown> {
   /** Human-readable behavior used as the test and story label. */
   readonly name: string;
+  /** Ledger IDs and the behavior this scene checks. */
+  readonly description?: string;
   /** Schema interpreted by the injected form engine. */
   readonly schema: Schema;
   /** Optional initial value passed to the consumer's form. */

@@ -1,12 +1,13 @@
 import { describe, expect, it } from 'vitest';
 
 import { valueScenarios, settleScenarios, fillScenarios, exitScenarios,
-  unionScenarios, deriveScenarios, controlsScenarios } from '../../index';
+  unionScenarios, deriveScenarios, controlsScenarios, arrayScenarios } from '../../index';
 
 const families = [
   ['value', valueScenarios], ['settle', settleScenarios],
   ['fill', fillScenarios], ['exit', exitScenarios], ['union', unionScenarios],
   ['derive', deriveScenarios], ['controls', controlsScenarios],
+  ['array', arrayScenarios],
 ] as const;
 
 // filid:contract scenario-data
