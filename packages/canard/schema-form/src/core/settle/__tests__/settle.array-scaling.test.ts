@@ -4,7 +4,7 @@ import { makeSchemaNodeTree } from '../../__tests__/makeSchemaNodeTree';
 import { SchemaNode } from '../../SchemaNode/SchemaNode';
 import { SetValueOption } from '../../types/value';
 import { createTestTree } from './fixtures/createTestTree';
-import { writeSchemaNode } from '../index';
+import { loadSchemaNodeAtMount, writeSchemaNode } from '../index';
 import { dirtyChildren } from '../utils/compute/dirtyChildren';
 import { createSettlementContext } from '../utils/settlement/createSettlementContext';
 import { getSettlementScratch } from '../utils/write/getSettlementScratch';
@@ -55,6 +55,92 @@ const countLatentKeyVisits = (latent: Map<string, unknown>, action: () => void):
 
 // filid:contract settle-array
 describe('44C-01 array settlement scaling', () => {
+  it('51C-01 NODE-026 SETTLE-017 bounds host-gated array assembly on a whole write', () => {
+    const count = 2000;
+    const { root } = makeSchemaNodeTree({ type: 'object', properties: {
+      flag: { type: 'boolean' }, rows: { ...schema,
+        controls: { active: '#/flag' } },
+    } });
+    root.setValue({ flag: true, rows: items(count, 0) });
+    const rows = root.find('/rows');
+    if (!(rows instanceof SchemaNode)) throw new Error('Expected an array SchemaNode');
+    const behavior = rows.behavior;
+    let assemblies = 0;
+    Reflect.set(rows, 'behavior', { ...behavior,
+      assemble: (...args: Parameters<typeof behavior.assemble>) => {
+        assemblies++;
+        return behavior.assemble(...args);
+      },
+    });
+    try {
+      root.setValue({ flag: true, rows: items(count, 1) });
+      if (process.env.SETTLE_SCALING_PROBE)
+        console.info(`51C-01 array host assemblies: ${assemblies}`);
+      expect(root.value).toEqual({ flag: true, rows: items(count, 1) });
+      expect(assemblies).toBeLessThan(10);
+    } finally {
+      Reflect.set(rows, 'behavior', behavior);
+    }
+  });
+
+  it('51C-01 NODE-026 SETTLE-017 bounds object assembly on gated siblings first load', () => {
+    const count = 2000;
+    const properties = Object.fromEntries(Array.from({ length: count }, (_, index) =>
+      [`g${index}`, { type: 'string' as const, controls: { active: '../flag' } }]));
+    const { root } = createTestTree({ type: 'object', properties: {
+      flag: { type: 'boolean' }, ...properties,
+    } });
+    const value = { flag: true, ...Object.fromEntries(
+      Array.from({ length: count }, (_, index) => [`g${index}`, String(index)])) };
+    const behavior = root.behavior;
+    let assemblies = 0;
+    Reflect.set(root, 'behavior', { ...behavior,
+      assemble: (...args: Parameters<typeof behavior.assemble>) => {
+        assemblies++;
+        return behavior.assemble(...args);
+      },
+    });
+    try {
+      loadSchemaNodeAtMount(root, value, SetValueOption.Overwrite);
+      if (process.env.SETTLE_SCALING_PROBE)
+        console.info(`51C-01 object host assemblies: ${assemblies}`);
+      expect(root.emit).toEqual(value);
+      expect(assemblies).toBeLessThan(10);
+    } finally {
+      Reflect.set(root, 'behavior', behavior);
+    }
+  });
+
+  it('51C-01 18C-15 SETTLE-045 observes entered cousins before the current subtree publishes', () => {
+    const observations: unknown[] = [];
+    const { root } = createTestTree({ type: 'object', properties: {
+      first: { type: 'object', controls: { active: 'true' },
+        properties: { value: { type: 'string' } } },
+      current: { type: 'object', controls: { active: 'true' }, properties: {
+        value: { type: 'string' },
+        primer: { type: 'string', controls: {
+          active: '(../).value === "in-progress"',
+        } },
+        reader: { type: 'string', controls: {
+          active: '(@).observe((#/)) && (#/)?.first?.value === "entered"',
+        } },
+      } },
+    } });
+    root.runtime.context = { observe: (value: unknown) => {
+      observations.push(value);
+      return true;
+    } };
+    writeSchemaNode(root, { first: { value: 'entered' },
+      current: { value: 'in-progress', primer: 'ready', reader: 'visible' } },
+    'callerReplace', SetValueOption.Overwrite);
+    expect(observations.length).toBeGreaterThan(0);
+    for (const value of observations)
+      expect(value).toEqual({ first: { value: 'entered' } });
+    expect(root.emit).toEqual({ first: { value: 'entered' },
+      current: { value: 'in-progress', primer: 'ready', reader: 'visible' } });
+    expect(root.runtime.diagnostics.status).toBe('stable');
+  });
+
   it('49C-01 SETTLE-017 bounds dependency owners when every row list grows', () => {
     const count = 2000;
     const { root } = makeSchemaNodeTree({ type: 'object', properties: {

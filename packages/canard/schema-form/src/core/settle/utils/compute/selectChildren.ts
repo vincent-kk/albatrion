@@ -8,7 +8,8 @@ import { evaluateGate } from '../gates/evaluateGate';
 import { SHARED_NODE_CONFLICT } from '../errors/settleErrorCode';
 import { getGateRegistry } from '../gates/getGateRegistry';
 import { hasSharedConflict } from './hasSharedConflict';
-import { updateOutput } from './updateOutput';
+import { flushPendingOutput } from './flushPendingOutput';
+import { flushPendingGateReads } from '../gates/flushPendingGateReads';
 import { hasRecursiveExpansion } from './hasRecursiveExpansion';
 import { RECURSIVE_SHAPE_DIVERGED } from '../errors/settleErrorCode';
 import { getLatentOrder } from '../latent/getLatentOrder';
@@ -78,6 +79,8 @@ export const selectChildren = <Self extends SchemaNodeRecord<Self>>(
   const inactiveEntries: BlueprintChildEntry[] = [];
   let changed = false;
   for (const entry of node.behavior.declareChildren(node)) {
+    if (immediate) flushPendingGateReads(entry.node,
+      `${node.path}/${escapeSegment(entry.name)}`, context);
     let threw = false;
     const active = context.hasGates ? entry.declarations.filter((declaration) => {
       const version = context.gateThrowVersion;
@@ -104,8 +107,7 @@ export const selectChildren = <Self extends SchemaNodeRecord<Self>>(
         delete next[entry.name];
         changed = true;
         if (immediate) {
-          node.children = Object.values(next);
-          updateOutput(node, context);
+          (context.pendingOutputs ??= new Set()).add(node);
         }
       }
       continue;
@@ -211,10 +213,10 @@ export const selectChildren = <Self extends SchemaNodeRecord<Self>>(
       entryChanged = true;
     }
     if (immediate && entryChanged) {
-      node.children = Object.values(next);
-      updateOutput(node, context);
+      (context.pendingOutputs ??= new Set()).add(node);
     }
   }
+  flushPendingOutput(node, context);
   for (const entry of inactiveEntries) {
     if (next[entry.name] || seen.has(entry.name) ||
       (context.kind !== 'load' && hasOwnProperty(prior, entry.name))) continue;

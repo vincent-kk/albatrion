@@ -105,6 +105,8 @@ export interface SettlementContext<Self extends SchemaNodeRecord<Self>> {
   changedRaw: Set<string>;
   /** Nodes whose calculated value or shape changed. */
   changedNodes: Set<Self>;
+  /** Selecting hosts whose completed entries have not yet been assembled. */
+  pendingOutputs?: Set<Self>;
   /** Nodes visited by calculation before final state-key publication. */
   stateDirtyNodes: Set<Self>;
   /** Effective schema before this write for nodes visited by a gate wheel. */

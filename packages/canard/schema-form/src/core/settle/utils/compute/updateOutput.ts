@@ -14,6 +14,7 @@ export const updateOutput = <Self extends SchemaNodeRecord<Self>>(
   context: SettlementContext<Self>,
   recalculated?: readonly Self[],
 ): boolean => {
+  context.pendingOutputs?.delete(node);
   const hint = recalculated && node.behavior.type === 'array' &&
     node.behavior.strategy === 'branch' ? { incremental: false } : undefined;
   const assembled = node.behavior.assemble(node, node.children ?? [],
