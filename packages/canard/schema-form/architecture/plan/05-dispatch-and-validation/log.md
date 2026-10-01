@@ -61,7 +61,10 @@ Planning method: 저장소 지침 — `PLAN.md` §2와 `plan/prompts.md`의 단�
 | 2026-10-01 | U12b | codex(세션 `681db4bc`): 같은 ajv 경로 비교 넷(core는 SCN `validationScenarios` 전부, 플러그인은 사례를 파일 안에 둠 — 플러그인에 SCN 개발 의존을 더하지 않는다는 소유자 결정 때문에 계획의 "SCN에서 읽음"과 다름). 파일 머리에 교차 구현 오라클은 ajv 아닌 플러그인을 기다린다고 적음(40라운드). 불일치 0. 사례 수가 적음(core 2, ajv6·7 각 3, ajv8 3×3) — PR 리뷰에서 판단 받음. G37 충족(조율 세션 재실행) | `6c494f9ce` |
 | 2026-10-01 | U15 | codex(세션 `cc34b6de`)의 첫 벤치는 세 행 모두 옛 판 대비 0.27–0.40×. Claude opus 진단이 벤치의 불공정 셋(옛 판 마운트 타이머가 마이크로태스크 연쇄를 빼먹음, 옛 판이 고쳐 쓰는 작성 스키마를 표본마다 재사용, 파동 행의 `setTimeout` 바닥)과 05 코드의 비례하지 않는 비용 셋(배달 정렬의 `indexOf`, `markCommitDeliveries`의 자동 쓰기 탐색과 커밋마다 모든 감시 노드 재읽기)을 찾음 → 44C-01대로 05가 고침(`a9b297df1`, `70ffd59a6`; 감시 색인은 Claude opus verifier의 조건부 통과 뒤 지적 A–G 반영). 가드 인스턴스의 루트 재컴파일은 46라운드(질의 Q11)로 비례하는 느린 행, 후보 A는 소유자 답 대기. 04 코드의 파생 이차 비용 둘은 47라운드(질의 Q12)로 06 몫(06 `c9acb7a9c`에서 고침). 보정 뒤 재측정(Node 24.20.0, Bun 1.4.2): mount 0.433×/0.381×, guards200 0.565×/0.469×, wave 0.233×/0.120× — 남는 비례 비용은 P-16–P-20으로 소유자 수용 대기(G42). G41·G43 충족(`guard:check` 회귀 0·개선 14) | `b80a57faf` |
 | 2026-10-01 | U16a | 06은 아직 `1.0.0-beta`에 머지되지 않아 05가 먼저 머지 → G45 ABANDON(33C-01), G46은 "06에 넘길 목록"으로 충족. 원장 46–48라운드 merge(48은 06 몫). G44 충족 | merge 커밋 |
-| 2026-10-01 | U16b | G47·G48(대체된 ERROR-053·054 인용을 현행 항목으로 고침)·G54 충족. G53 unit·render 409 파일·4,857 통과 — 출력이 길어 hook이 증거로 잡지 못함(G12·G29와 같음), 저장된 출력에서 확인 | 이 커밋 |
+| 2026-10-01 | U16b | G47·G48(대체된 ERROR-053·054 인용을 현행 항목으로 고침)·G54 충족. G53 unit·render 409 파일·4,857 통과 — 출력이 길어 hook이 증거로 잡지 못함(G12·G29와 같음), 저장된 출력에서 확인 | `026d09a51` |
+| 2026-10-01 | G51 | Claude opus verifier `FAIL`: 차단 F1(깊이 0의 정착 밖 파동에서 쓰는 리스너 뒤의 예외가 사라짐, EVENT-010·ERROR-004·ERROR-019 (5)), F2(결과 파동 리스너 실패가 `onError`에 둘, ERROR-023), F3(`validate()` 거부에 기록 없음, 개발 모드에서 `OnChange` 컴파일 실패 싱크 생략, ERROR-019 (3)·ERROR-155), F4(디스패처의 시험 전용 주입 칸 `requestValidation`, TEST-069), F5(ajv6 제품 코드의 형 단언). PR 전 조건 C1: 레거시 `<Form>` 경로에서 플러그인 `compile`이 마운트마다 Ajv 인스턴스를 만들어 붙잡음(ajv8 300 루트 0.27 → 4.6 ms, 2.2 → 17.5 MB). 비차단 N1–N7. core·플러그인 codex 두 세션이 고침 | `253b08b89`, `bf0ffc32a` |
+| 2026-10-01 | G51 재검 1 | `FAIL`: R1(중첩 진입이 실패를 잃거나 두 번 기록 — 둘러싼 사슬이 칸 하나), R2(ajv7·8 컴파일러 교체가 `bind` 인스턴스의 사용자 스키마·정의 없는 키워드를 놓쳐 65번째 컴파일부터 깨짐), R3(공개 `JSONSchemaError`의 제네릭 매개변수가 빠짐). 그 사이 질의 Q13 → 50라운드 50C-01: `JSONSchemaError`는 `ValidationIssue`를 넓히는 공개 인터페이스(`details?: Record<string, any>`, `key?`)로 PR-7까지 유지. codex 두 세션이 고침, ajv6은 고정판 6.12의 내부 `_schemas`를 형 보강 선언으로 읽음(조율 세션 결정, 형 단언 없음) | `d958a5007`, `007922ad0` |
+| 2026-10-01 | G51 재검 2·3 | 재검 2 `FAIL`: R4(R1 수정이 만든 가드 실패 이중 기록) → `collectChainRecords`로 합침(`0d870e020`), 잠정 상한 64는 P-21. 재검 3 `FAIL`: B1(사슬 끝 기록에 `path`·`schemaPath`가 없음, ERROR-017), B2(같은 가드의 반복 실패 기록 수가 사슬 안팎에서 다름) → B2는 계획 I10(질의 Q5 답: 폼마다 자기 `GUARD_FAILED` 하나)대로 폼마다 한 번(조율 세션 결정) | `958ff3ec1` |
 
 ### 31C-05 가칭 확정
 
@@ -148,7 +151,7 @@ Planning method: 저장소 지침 — `PLAN.md` §2와 `plan/prompts.md`의 단�
 ## 3. 다음 행동
 
 - 남은 게이트: G51(독립 검증), PR 뒤 G50(filid 스캔), G52(소유자의 storybook 실행), G42(소유자 수용).
-- PR 뒤 원장 관리 세션에 보낼 소유자 상신 묶음: (1) VALIDATE-047 (iv) — 한 위치를 여러 동적 범위에서 쓰는 스키마의 가드 미지원 문서화 권고(ajv7·ajv8), (2) U15의 느린 행 P-16–P-19 수용(P-20 가드 루트 재컴파일은 46라운드에서 이미 소유자에게 물음), (3) 31C-05 가칭 확정 목록의 보충 기록.
+- PR 뒤 원장 관리 세션에 보낼 소유자 상신 묶음: (1) VALIDATE-047 (iv) — 한 위치를 여러 동적 범위에서 쓰는 스키마의 가드 미지원 문서화 권고(ajv7·ajv8), (2) U15의 느린 행 P-16–P-19 수용(P-20 가드 루트 재컴파일은 46라운드에서 이미 소유자에게 물음), (3) 31C-05 가칭 확정 목록의 보충 기록, (4) 한 쓰기가 서로 다른 가드 둘에서 실패하면 정착이 첫 실패만 던져 둘째 기록이 드러나지 않는 03 정착 정책(G51 재검 3의 비차단 지적)의 처리.
 
 ### 06에 넘길 목록(05가 먼저 머지할 때, 33C-01·G46)
 
@@ -160,6 +163,7 @@ Planning method: 저장소 지침 — `PLAN.md` §2와 `plan/prompts.md`의 단�
 4. 겉면 충돌: `SchemaNode.ts`·`SchemaNode/DETAIL.md` 멤버 표·`surface.test.ts`(이름 `26C-01 PR-4 …`, 개수는 두 단계의 합)·`SchemaNode/type.ts`·`type-contract.test.ts`·`src/core/index.ts`·`record/type.ts`를 합집합으로 맞춘다. 05의 추가는 각 파일에서 연속한 한 덩어리다.
 5. 05가 바꾼 기록 계약을 따른다: 기록 필드 `state` → `interactionState`(공개 `state`는 게터·세터), 런타임 `globalStateCounts`·`globalState`와 정착 커밋 훅 `settle/utils/commit/commitGlobalState.ts`(43C-01) — 배열 아이템이 형상에 들고 날 때도 이 훅이 센다. `setValue`·`resetSubtree`는 dispatch 진입을 거친다.
 6. 검증기 계약: `compile`·`compileGuard`·`release`는 같은 사본 객체를 받는다(M6, VALIDATE-019).
+7. `if` 술어 대역(`src/core/__tests__/ifPredicate.ts`, 런타임 `ifPredicates`)은 U7에서 지웠고 `evaluateGate`는 실제 가드를 읽는다. 06 브랜치의 시험 약 10 파일(새 배열 시험 포함)이 아직 쓰므로 시험용 검증기(`src/core/__tests__/fixtures/createTestValidator.ts`)로 옮긴다.
 
 ## 4. 원장·계획서 어긋남
 
