@@ -8,8 +8,8 @@
 - 정제 값을 읽는 곳은 밖으로 나가는 경로뿐이다 — 루트 검증 값, 루트 방출, `FormHandle.getValue`, 부모측 하이드레이션 스냅샷. 안으로 들어오는 경로(`setValue`)와 raw 관측 경로(`UpdateValue` payload)는 계속 `value`를 쓴다.
 - 노드 값 변경은 `setValue()` 공개 API를 경유한다. private `__value__`에 외부에서 접근하지 않는다.
 - 레거시 노드·파서 구현과 옛 `__tests__/`는 `src/__legacy__/core/`로 옮긴다. `src/core/__tests__/scenarios/`는 새 하네스로 남긴다. 파서는 순수 값 변환만 담당하며 JSON Schema 검증 로직을 넣지 않는다.
-- `src/core/index.ts`, `nodeFromJSONSchema.ts`, `types/`는 제자리를 유지하고 stage 07 전환까지 레거시 엔진을 가리키며, 바인딩 전용 `setContext` 한 이름만 새 `SchemaNode/` 진입점에서 다시 내보낸다(NODE-010, LANDING-159, SURFACE-055, 28C-08).
-- 새 `record/`, `behaviors/`, `navigation/`, `settle/`, `SchemaNode/` fractal은 `blueprint` < `record` < {종류 모듈, `navigation`} < `settle/derive` < `settle` < `SchemaNode`의 의존 순서를 따른다. `settle/derive`는 `settle`의 자식으로서 규칙 판정만 소유하고 settle의 라운드 실행기가 그 진입점을 소비한다(NODE-016·045, LANDING-083, SETTLE-004).
+- `src/core/index.ts`, `nodeFromJSONSchema.ts`, `types/`는 제자리를 유지하고 stage 07 전환까지 레거시 엔진을 가리키며, 바인딩 전용 `setContext`·`retainValidationRoot`·`releaseValidationRoot`만 새 fractal의 진입점에서 이름으로 다시 내보낸다. `Validator`·`ValidateFunction`은 다시 내보내지 않고 패키지 공개 `src/index.ts`에도 수명 함수를 두지 않는다(NODE-010, LANDING-159, SURFACE-055, VALIDATE-044, 28C-08, 32C-01).
+- 새 fractal의 의존 순서는 `blueprint` < `record` < {종류 모듈, `navigation`} < `validation` < `settle/derive` < `settle` < `dispatch` < `SchemaNode`다. `settle/derive`는 `settle`의 자식으로서 규칙 판정만 소유하고 settle의 라운드 실행기가 그 진입점을 소비한다. `validation`은 결과를 받은 콜백으로만 `dispatch`에 돌려주며 타입 간선도 역전시키지 않는다(NODE-016·045, LANDING-083·084, SETTLE-004).
 - 이벤트는 `EventCascade`로 마이크로태스크 배칭한다. 단 `UpdateValue`는 동기 발행이다.
 - 노드 트리는 순환 참조를 만들지 않는다.
 
@@ -24,6 +24,7 @@
 | `isSchemaNode` · `isBranchNode` · `isTerminalNode` · 타입별 가드 | 런타임 타입 판별                                                                                |
 | `NodeEventType` · `SetValueOption` · `ValidationMode`            | 비트 플래그·열거값                                                                              |
 | `setContext(root, context)`                                      | 새 엔진의 바인딩 전용 내부 통로를 이름으로 다시 내보냄. 패키지 공개 `src/index.ts`에는 노출하지 않음(NODE-010, SURFACE-055, 28C-08) |
+| `retainValidationRoot(validator, authoredRoot)` · `releaseValidationRoot(validator, authoredRoot)` | 07 바인딩 이펙트의 수명 증감 통로를 `validation/index.ts`에서 이름으로 다시 내보냄. 패키지 공개 `src/index.ts`에는 노출하지 않음(VALIDATE-021·045, NODE-010) |
 
 ### 값 채널 규약
 
