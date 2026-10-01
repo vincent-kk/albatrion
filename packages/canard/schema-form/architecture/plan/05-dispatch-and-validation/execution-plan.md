@@ -18,7 +18,7 @@ Planning method: 저장소 지침 — PLAN.md §2와 plan/prompts.md의 단계 �
 | 명령 메서드 하나(소유자가 정한 이름·형)와 멤버 목록 시험(`FormHandle` 쪽은 07) | U6, U9 | `request(kind)`·`SchemaNodeRequestType` 시험(G17·G18), 멤버 표·멤버 목록 시험·공개 형(G25) |
 | `onError` core 쪽과 코드 표 상수(ERROR-164), `TYPE_MISMATCH` | U3, U5b | 코드 표 기계 대조 시험(G7), 보고기 시험 태그(G15·G16) |
 | 검증기 계약과 ajv6·7·8 구현, `bind` 거부 | U3, U7, U11a, U11b, U11c | 플러그인 계약 게이트 넷·`bind-refusal`·`union-types`(G30–G35) |
-| 차등 테스트와 훅 수준 바인딩 시험 초록, `verification.md`의 게이트 전부 | U12, U13, U14, U15, U16 | 차등 스위트(G37), 회귀·시나리오(G38·G39), 훅 시험(G40), 벤치 행(G41–G43), 최종 게이트(G44–G51) |
+| 차등 테스트와 훅 수준 바인딩 시험 초록, `verification.md`의 게이트 전부 | U12, U13, U14, U15, U16a, U16b | 차등 스위트(G37), 회귀·시나리오(G38·G39), 훅 시험(G40), 벤치 행(G41–G43), 06 통합(G44–G46), 최종 게이트(G47–G54) |
 
 비목표(원장 ID와 함께):
 
@@ -30,12 +30,12 @@ Planning method: 저장소 지침 — PLAN.md §2와 plan/prompts.md의 단계 �
 - `degraded` 동안의 제출 거부와 그 시험(`SUBMIT_WHILE_DEGRADED`)은 07이다(TEST-069 (다)의 PR-7 줄, ERROR-138). 05는 코드 표에 그 행을 둔다.
 - UI 플러그인 넷의 `presentation.*` 이주는 플러그인 PR이다(LANDING-070 충돌 줄, LANDING-206). ajv 셋은 05다.
 - 코드 표 문서와 이주 안내, README 사용 규칙은 08이다(ERROR-032의 PR-8 줄, ERROR-031).
-- 배열 메서드(`push`·`pop`·`update`·`remove`·`clear`)와 그 `dispatch` 진입은 06의 기제다. 06이 05보다 늦게 머지되면 06이, 먼저 머지되면 05의 통합 단계(U16)가 진입 파일을 둔다(O2).
+- 배열 메서드(`push`·`pop`·`update`·`remove`·`clear`)는 06의 기제다. 그 `dispatch` 진입 파일은 05·06 가운데 뒤에 머지하는 단계가 더한다(33C-01): 06이 뒤면 06이, 05가 뒤면 05의 U16a가 둔다.
 - 성능 최적화. 벤치는 재고 보고만 하고, 새로 느린 것은 `ARCH/verification/performance-issues.md` "열림"에 행을 더한다(`reviews/round-27-owner-answers.md:11`). 계약을 어기는 비용(정착 범위 밖 순회, SETTLE-017)은 최적화가 아니라 결함이라 고친다.
 
 ## 2. 해석과 자율 결정
 
-원장으로 답이 정해지는 것은 여기서 닫는다. Q1–Q7은 31C-01~05로 닫혔다(Q6은 답이 바뀌었다). 남은 열린 질문 O1–O3은 영향받는 단계만 멈춘다(§2.3).
+원장으로 답이 정해지는 것은 여기서 닫는다. Q1–Q7은 31C-01~05로 닫혔다(Q6은 답이 바뀌었다). O1·O3은 32C-01·02로, O2는 33C-01로, Q8은 34C-01로 닫혔고 F1의 별칭 유지는 34C-02가 확인했다. 열린 원장 질문은 없다(§2.3).
 
 ### 2.1 해석 표
 
@@ -53,13 +53,14 @@ Planning method: 저장소 지침 — PLAN.md §2와 plan/prompts.md의 단계 �
 | I10 | 가드 | 가드 표는 core가 (검증기 인스턴스, 작성 루트 객체 정체)마다 한 항목에 사본·가드 표·전체 검증 함수(또는 그 실패)와 함께 든다. 가드 키는 작성 루트 안의 자리다. 프로덕션은 처음 필요할 때 컴파일하고, 개발 모드는 캐시 항목마다 한 번 모든 가드를 미리 컴파일한다. 실패는 캐시에 남고, 그 항목을 쓰는 폼 인스턴스마다 자기 `GUARD_FAILED`를 기록한다. 시점: 개발 모드는 마운트 커밋 뒤(`surface: 'sink'`), 프로덕션은 그 가드를 처음 평가한 사슬 끝(`'thrown'`), 평가되지 않은 가드는 기록하지 않는다. 컴파일 실패·던짐·boolean 아닌 값은 그 게이트의 가드 실패(게이트 거짓, 정착 오류)다 | VALIDATE-018·044 (4)·047·048, ERROR-041·164(`GUARD_FAILED` 행), 31C-03·Q5 답 | 닫힘(Q5 답) |
 | I11 | 검증기가 없을 때 | 고른 결과가 없음이고 모드가 `None`이 아니면 거부하지 않고 검증 없이 간다. 트리마다 한 번 `VALIDATOR_MISSING` 경고(같은 스키마 reset·`setValue(V)`로 다시 내지 않음). `if` 게이트가 있으면 그 조각은 꺼지고 `CONDITIONAL_SCHEMA_WITHOUT_VALIDATOR` 경고를 트리마다 한 번 | ERROR-146–151·153·154, W-01·W-02(검증 문서) | 닫힘 |
 | I12 | 시험 대역의 정리 | `runtime.ifPredicates`와 `src/core/__tests__/ifPredicate.ts`를 없앤다. 03·04 시험은 실제 검증기 계약을 구현한 시험용 검증기(`PKG`의 개발 의존 `ajv` 8로 `compile`·`compileGuard`를 구현, 옛 `src/__legacy__/core/__tests__/utils/createValidatorFactory.ts`와 같은 자리 개념)를 트리 생성 인자로 넘기고, `if: {}`에 술어로 뜻을 주던 사례는 `if`에 같은 뜻의 스키마(`{ properties: { enabled: { const: true } }, required: ['enabled'] }`)를 적는다. 던지는 가드와 boolean 아닌 가드는 공개 계약 `Validator`를 구현한 시험용 검증기(`compileGuard`가 던지는 함수·Promise를 돌려줌)로 시험한다. 이것은 공개 계약의 인자이지 시험만을 위한 주입 자리가 아니다 | TEST-069 (나)(`ledger/test.md:1153-1158`), VALIDATE-044 (4), 26C-04 | 자율 결정 |
-| I13 | `Validator`·`ValidationIssue`·`ValidateFunction`의 자리 | core의 형 파일은 React를 가져오지 않는다(GOAL-088). 그래서 세 형은 `src/core/validation/type.ts`에 선언하고, `src/types/error.ts`가 이름으로 다시 내보낸다(한 선언, 별칭 없음). `ValidationIssue`는 오늘의 공개 `PublicJSONSchemaError`(공개 이름 `JSONSchemaError`)의 개명이다. 옛 안쪽 `JSONSchemaError extends …`(`key` 칸, 레거시 전용)는 레거시 삭제까지 이름을 두고 `ValidationIssue`를 확장한다. 공개 `src/index.ts`는 `ValidationIssue`를 내보내고 인터페이스 별칭 `JSONSchemaError`를 뺀다(던지는 클래스 `JSONSchemaError`는 그대로). `ValidatorPlugin`은 `Validator`에 `bind?`만 더한 형이다 | ERROR-032, LANDING-024·070, SURFACE-014, VALIDATE-044, GOAL-088 | 자율 결정 |
-| I14 | 공개 `validatorFactory` 속성의 형 | `Validator` 형이 생기고 플러그인이 그것을 구현하는 것(계약 통일)은 05다. Form·`FormProvider` 속성 `validatorFactory`의 형을 함수에서 `Validator`로 바꾸는 것은 바인딩의 선택과 함께 07에 두고, 05에서는 옛 `ValidatorFactory`를 그대로 둔다(레거시 `<Form>`이 07까지 그 형을 소비함) | LANDING-064("`validatorFactory` 통일"), VALIDATE-044 (1)(2), LANDING-159 | O1 대기(영향: U3의 형 한 줄과 U10뿐) |
+| I13 | `Validator`·`ValidationIssue`·`ValidateFunction`의 자리와 공개 이름 | core의 형 파일은 React를 가져오지 않는다(GOAL-088). 그래서 세 형은 `src/core/validation/type.ts`에 선언한다. `Validator`(새 계약 형)는 새 엔진 모듈에서만 내보내고 공개 `src/index.ts`·`src/core/index.ts`에서 내보내지 않는다(32C-01). `ValidationIssue`는 오늘의 공개 `PublicJSONSchemaError`의 개명이며(ERROR-032, LANDING-070), `src/types/error.ts`가 `ValidationIssue`를 이름으로 다시 내보낸다(한 선언). 공개 `ValidatorFactory`·`ValidateFunction`(`src/types/error.ts:119,209`, `src/index.ts:72-73`)은 `validatorFactory` 속성의 형이므로 07까지 오늘의 선언을 그대로 둔다(32C-01). core 계약의 `ValidateFunction`은 `core/validation/type.ts`의 별개 선언이며 공개 색인에 오르지 않는다 — 두 선언의 이름이 같으므로 `src/types/error.ts`의 선언 머리에 "legacy public shape until PR-7; the engine contract is `core/validation`'s `ValidateFunction`" 한 줄을 둔다(이름 함정). 오늘의 공개 이름 상태: `src/index.ts:74`의 `PublicJSONSchemaError as JSONSchemaError`(형)가 공개 이름 `JSONSchemaError`의 유일한 수출이고, 던지는 클래스 `JSONSchemaError`(`src/errors/JSONSchemaError.ts:24`)는 이름으로 공개되지 않으며 `src/index.ts:16-21`은 가드 `isJSONSchemaError`만 내보낸다(그 술어 형이 클래스를 가리킴). 05는 이 상태를 지킨다: `src/index.ts`가 `ValidationIssue`를 더해 내보내고, 형 별칭 `JSONSchemaError`는 `ValidationIssue`를 가리키는 형 수출로 07까지 남긴다(`export type { ValidationIssue, ValidationIssue as JSONSchemaError }`). 클래스는 계속 이름으로 공개하지 않는다. 별칭의 삭제는 소비자 이주(07)다 — ajv 셋의 스토리 여섯(`stories/13.FormError.stories.tsx`, `stories/19.SubmitUsecase.stories.tsx`)이 공개 이름 `JSONSchemaError`를 가져온다. 레거시 Form 형(`src/components/Form/type.ts:22`에서 `@/schema-form/types`로 가져와 `:54,123,125`에서 씀)은 안쪽 `JSONSchemaError extends …`(`key` 칸, 레거시 전용)를 쓰며, 이 안쪽 형은 레거시 삭제까지 이름을 두고 `ValidationIssue`를 확장한다 | ERROR-032, LANDING-024·064·070·159(규칙 3), SURFACE-014·056, VALIDATE-044, GOAL-088, 32C-01 | 닫힘(32C-01) |
+| I14 | 공개 `validatorFactory` 속성의 형 | 계약 통일은 core가 받는 계약 형 하나를 정하고 core 트리 생성 인자와 ajv 셋이 그 형을 쓰게 하는 것까지가 05다. Form·`FormProvider` 속성 `validatorFactory`는 07까지 오늘의 형과 동작을 지킨다(LANDING-064의 PR-7 행, LANDING-036 이주 33) | LANDING-036·064·159, VALIDATE-044, 32C-01 | 닫힘(32C-01) |
+| I26 | 플러그인이 계약 형을 얻는 길 | 플러그인 쪽 계약은 공개 `ValidatorPlugin`(`src/app/plugin/type.ts`)이며 PR-4가 더하기만 하는 개정을 한다(LANDING-084 "`app/plugin/type.ts` 개정"): `compile`·`bind?`는 그대로, 선택 멤버 `compileGuard?(root, pointer)`·`release?(root)`를 더하고, 정규화된 오류에 `rejectedKey`가 생긴다(`ValidationIssue`). 선택 멤버는 PR-7에서 LANDING-036 이주 33과 함께 필수가 된다. core의 `Validator`는 `src/core/validation/`에만 있고 공개 색인에 오르지 않는다. 두 형은 `compileGuard`를 가진 `ValidatorPlugin` 값이 구조적으로 `Validator`를 만족하도록 맞춘다(`Validator`의 필수 멤버 `compile`·`compileGuard`가 `ValidatorPlugin`의 `compile`·선택 `compileGuard?`와 같은 서명, `release?`도 같음). core 쪽 일치는 플러그인 모양의 값을 `Validator`로 받는 core 시험이 단언하고, 플러그인 시험은 오늘처럼 공개 색인에서 `ValidatorPlugin`을 가져온다. 하위 경로 수출도, 플러그인 안의 중복 선언도 두지 않는다 | VALIDATE-044, LANDING-036·070·084, 32C-01, 34C-01 | 닫힘(34C-01) |
 | I15 | 레거시 import 분리 | 레거시 `ValidationManager`가 `PluginManager.validator?.compile`로 떨어지는 폴백(`ValidationManager.ts:1`, `:203`)을 바인딩 계층 `providers/RootNodeContext/RootNodeContextProvider.tsx`로 옮긴다: 거기서 `(schema) => factory?.(schema) || PluginManager.validator?.compile(schema)`를 만들어 넘긴다. 레거시 `<Form>`의 동작은 같다(같은 순서, 같은 시점). core만 쓰는 호스트(`nodeFromJSONSchema`를 직접 부름)는 등록 플러그인으로 떨어지지 않고 인자로 넘겨야 한다 — 원장이 정한 바뀜이며 PR 본문에 적는다 | LANDING-064(착수 전 칸), CONTROLS-075 (1), REACT-002, VALIDATE-044 (2) | 닫힘 |
 | I16 | 레거시 폴백 검증기의 루트 `''` | 원장은 `getFallbackValidator.ts:19`(03이 `src/__legacy__/…`로 옮김)를 05에서 `''`로 고치라고 한다. 레거시 `ValidationManager`는 `host.find(dataPath)`로 배정하며 `find('')`는 자기(루트)를 돌려주므로 같은 노드에 간다. 고치기 전에 레거시가 `'/'` 문자열에 기대는 자리를 찾고(경계 있는 탐색), 있으면 멈추고 질의한다 | FRAGMENT-053, LANDING-093(18C-74 보충), LANDING-205 | 닫힘(탐색 뒤 확인) |
 | I17 | 차등 시험의 독립 검증기 | ajv가 아닌 구현 `@cfworker/json-schema`를 개발 의존으로 더한다. 판정 대상은 (작성 스키마, 방출 값의 JSON 왕복)이다. 플러그인 패키지마다(그 플러그인의 판정 대 독립 검증기)와 core 시나리오(새 엔진 `validate()`의 판정 대 독립 검증기, 시험용 검증기 I12)에 둔다. 같은 major의 새 Ajv 대조는 덧붙인 회귀 검사로만 남길 수 있다. 의존 추가는 소유자 확인 대기다(U12a) | TEST-001(`ledger/test.md:94,96`), TEST-017, LANDING-071, VALIDATE-027·028(`ledger/validate.md:415-416`), 31C-04 | 닫힘(31C-04), 설치만 소유자 확인 대기 |
 | I18 | 플러그인 계약 게이트의 자리 | 플러그인 패키지는 공개 `@canard/schema-form`만 가져오고 그 진입점은 07까지 옛 엔진이다. 그래서 VALIDATE-046·047의 (i)–(iv)는 플러그인 계약 수준(`compile`·`compileGuard`·`release`의 판정을 독립 ajv와 비교)으로 각 플러그인 패키지에서 시험하고, VALIDATE-046 (iii) 재생성 reset의 원자성은 core에서 시험용 검증기로 한 번 더 본다. 에러 라우팅 규칙 (5)의 플러그인별 `$ref` 아래 `schemaPath` 모양은 각 플러그인이 내는 모양을 플러그인 시험이 단언하고, 같은 모양 셋을 core 라우팅 시험이 입력으로 쓴다 | VALIDATE-043·046·047, 18C-53·57·58, LANDING-159 | 자율 결정 |
-| I19 | `VALIDATOR_BIND_REFUSED`를 던지는 형 | 플러그인은 공개 진입점에서 오류 클래스를 받을 수 없다(`src/index.ts`는 가드만 내보냄, `@canard/schema-form`은 플러그인의 개발 의존). 제안: 플러그인 안의 `Error` 하위 클래스가 `name: 'UnhandledError'`, `code: 'UNHANDLED_ERROR.VALIDATOR_BIND_REFUSED'`, `details: { options }`를 든다(의존 추가 없음, 되돌리기 쉬움) | VALIDATE-050, ERROR-100, ERROR-164 보충 | O3 대기(제안대로 진행, 답이 다르면 그 파일만 고침) |
+| I19 | `VALIDATOR_BIND_REFUSED`를 던지는 형 | 플러그인은 `@winglet/common-utils/error`의 `BaseError`를 그룹 `'UNHANDLED_ERROR'`·코드 `'VALIDATOR_BIND_REFUSED'`로 던진다. `src/errors/UnhandledError.ts:17-22`와 같은 모양의 플러그인 안 하위 클래스(이름 `ValidatorBindRefusedError`, 가칭 — `name`도 그 이름이며 `'UnhandledError'`가 아님)로 감싸고 `details`에 켜진 옵션을 든다. core의 `isUnhandledError`는 `instanceof` 가드(`src/errors/UnhandledError.ts:30`)라 이 객체를 알아보지 못하며 이는 받아들인다. 플러그인 문서에 "호출자는 `group`과 `code`로 가른다" 한 줄을 적는다. `@winglet/common-utils`는 P8만 런타임 의존으로 갖고 P6·P7에는 없다(각 `package.json`) — P6·P7에 의존을 더하는 것은 잠금 파일 갱신이 필요하므로 U12a의 소유자 확인에 묶는다 | VALIDATE-050, ERROR-100·164, SURFACE-014, 32C-02 | 닫힘(32C-02), P6·P7 의존 추가만 소유자 확인 대기 |
 | I20 | 오류 코드 상수의 자리 | 코드 표(ERROR-164 행 + 그 뒤 더해진 행, 살아 있는 코드 60)는 렌더 계층 코드까지 포함하는 패키지 전체의 표라 `src/errors/`(기존 fractal)가 소유한다. 상수는 표의 순서를 따르고 문서 주석에 level·부류·언제를 적는다. settle의 `settle/utils/errors/settleErrorCode.ts`는 표의 상수를 이름으로 가져와 쓰도록 바뀐다(04 ADR D6의 "05가 이름을 확정하면 이 파일만 고친다"). 기록 형 `FormErrorRecord`·코드 형 `FormErrorCode`·보고기 형도 `src/errors/`의 형 파일이다 | ERROR-013·017·031·164·198, `request.md:50`, 04 `execution-adr.md` D6 | 자율 결정 |
 | I21 | `reason`의 값 | 코드마다 닫힌 리터럴 합집합이다: `VALIDATOR_COMPILE_FAILED`·`GUARD_FAILED` → `'duplicateSchemaId'`(+ `$id`), `TYPE_MISMATCH` → `'unconvertible' \| 'ambiguous'`, `DISCRIMINATOR_MISMATCH` → `'missing' \| 'kind' \| 'overlap' \| 'key'`. 원장이 이름 붙이지 않은 원인(검증기가 던짐 등)에는 `reason`을 두지 않고 던진 값은 그 행의 `details` 칸에 둔다. 새 코드는 없다 | ERROR-201, VALUE-037(`ledger/value.md:615`), 31C-03 | 닫힘(31C-03) |
 | I22 | ajv8 `allowUnionTypes` | ajv8의 세 진입점(`default`·`2019`·`2020`)에만 `allowUnionTypes: true`를 더한다. 판정을 바꾸지 않고 `strictTypes: "log"`의 `console.warn`만 없앤다. ajv7(`strict: false`)·ajv6(엄격 모드 없음)과 VALIDATE-003의 다른 기본값은 그대로다. `bind`는 ajv7·8에서 `instance.opts`, ajv6에서 `instance._opts`를 읽는다 | VALIDATE-003·050·051(`ledger/validate.md:101,813-814`), 31C-04(Q4 답) | 닫힘 |
@@ -94,9 +95,10 @@ Planning method: 저장소 지침 — PLAN.md §2와 plan/prompts.md의 단계 �
 
 | # | 받는 이 | 물음 | 제안 | 막는 범위 |
 | --- | --- | --- | --- | --- |
-| O1 | 원장 관리 세션 | LANDING-064의 "`validatorFactory` 통일"이 05에서 공개 Form·`FormProvider` 속성의 형을 `Validator`로 바꾸라는 뜻인가, 계약 형의 통일(07에서 속성이 받음)인가 | 계약 형 통일까지 05, 속성 형은 07(I14) | U3의 `src/types/error.ts` 형 한 줄, U10의 `RootNodeContextProvider.tsx` 조합식만 |
-| O2 | 조율 세션 | 06(배열, 병렬)의 배열 동사가 05의 `dispatch` 진입을 거치게 하는 일을 어느 PR이 하는가 | 늦게 머지되는 쪽이 진입 파일과 위임을 둔다 | U16의 통합 단계만 |
-| O3 | 원장 관리 세션 | `VALIDATOR_BIND_REFUSED`의 JS 클래스(공개 `UnhandledError`를 써야 하는가) | 플러그인 안의 `Error` 하위 클래스, `code`·`name` 일치(I19) | U11a–c의 `bind` 거부 오류 파일 셋 |
+| O1 | 원장 관리 세션 | `validatorFactory` 통일의 범위 | 닫힘: 32C-01(I13·I14) | — |
+| O2 | 조율 세션 | 06의 배열 동사의 `dispatch` 진입 파일 | 닫힘: 33C-01 — 뒤에 머지하는 단계가 더한다(U16a) | — |
+| O3 | 원장 관리 세션 | `VALIDATOR_BIND_REFUSED`의 JS 클래스 | 닫힘: 32C-02(I19) | — |
+| Q8 | 원장 관리 세션 | 플러그인이 계약 형을 얻는 길(패키지 `exports`가 `.` 하나) | 닫힘: 34C-01 — 공개 `ValidatorPlugin`에 선택 `compileGuard?`·`release?`(I26) | — |
 
 ## 3. 구조
 
@@ -110,7 +112,7 @@ Planning method: 저장소 지침 — PLAN.md §2와 plan/prompts.md의 단계 �
 | `PKG/src/core/settle/` | 기존 fractal | 커밋이 배달 집합과 비트를 표시(I7), `if` 게이트가 validation의 가드를 부름(I10), 오류 코드는 `src/errors/`의 표 |
 | `PKG/src/core/SchemaNode/` | 기존 fractal | 겉면 멤버 열넷(I5)의 한 문장 위임, 공개 형 `SchemaNodeEventType`·`SchemaNodeRequestType`, `setValue`·`resetSubtree`의 dispatch 위임 |
 | `PKG/src/errors/` | 기존 fractal | 코드 표 상수(I20), `FormErrorRecord`·`FormErrorCode`·`FormErrorReporter` 형 |
-| `PKG/src/app/plugin/type.ts` | 기존 organ | `ValidatorPlugin = Validator & { bind? }`(VALIDATE-044) |
+| `PKG/src/app/plugin/type.ts` | 기존 organ | 공개 `ValidatorPlugin`에 선택 `compileGuard?`·`release?`를 더함(VALIDATE-044, LANDING-084, 34C-01 — I26) |
 | `P6`·`P7`·`P8` | 형제 패키지 | 동기 `compileGuard`, `rejectedKey`, 같은 `$id` 떼어 두기, 선택 `release(root)`, `bind` 거부, 루트 `''`, ajv8 `allowUnionTypes`(LANDING-206) |
 
 `dispatch/`·`validation/` 뿌리에는 `INTENT.md`·`DETAIL.md`·`index.ts`·형만 든 `type.ts`를 두고 구현은 `utils/<주제>/`에 둔다(FCA §4, seiri structure §2). dispatch의 진입 함수는 `dispatch/utils/entry/`에 동사마다 한 파일이다(`request.md:50`, `reviews/raw-round17-node-structure.md` §6 규칙 7).
@@ -121,8 +123,8 @@ Planning method: 저장소 지침 — PLAN.md §2와 plan/prompts.md의 단계 �
 - `settle` → `validation/index.ts`(가드 평가 하나). `validation`은 `settle`·`dispatch`·`SchemaNode`를 `import type`으로도 가져오지 않는다. 검증 결과 배달은 dispatch가 넘기는 콜백이다(LANDING-084).
 - `dispatch` → `settle/index.ts`(쓰기·로드·맥락 변경), `validation/index.ts`(검증 요청·실행), `record/index.ts`. `SchemaNode` → `dispatch/index.ts`(쓰기·명령·상태·검증·구독), `settle/index.ts`(읽기), `validation/index.ts`(오류 읽기), `navigation`.
 - 새 fractal은 `__legacy__`와 `app/plugin`을 가져오지 않는다(LANDING-159 규칙 1, CONTROLS-075 (1)). core의 형 파일은 React를 가져오지 않는다(GOAL-088): `validation`은 `src/types`의 색인을 가져오지 않는다.
-- `src/types/error.ts` → `src/core/validation/index.ts`(형 이름 셋을 다시 내보냄, I13). `app/plugin/type.ts` → `src/core/validation/index.ts`(형).
-- `src/core/index.ts`는 바인딩이 07에 부를 이름(`retainValidationRoot`·`releaseValidationRoot`, 가칭)을 이름으로 다시 내보낸다. 나머지 수출은 07까지 옛 엔진이다. 공개 `src/index.ts`는 `./core`에서 이름을 골라 가져오므로 새 엔진이 새지 않는다(G27이 dist로 확인).
+- `src/types/error.ts` → `src/core/validation/index.ts`(`ValidationIssue`를 다시 내보냄, I13). `app/plugin/type.ts`는 `core/validation`을 가져오지 않는다(인라인 서명, I26). `app/plugin/__tests__/validatorConformance.test.ts` → `src/core/validation/index.ts`(형과 수명 함수, 시험만).
+- `src/core/index.ts`는 바인딩이 07에 부를 이름(`retainValidationRoot`·`releaseValidationRoot`, 가칭)을 이름으로 다시 내보낸다. 근거는 바인딩 전용 내부 통로의 선례다: NODE-010("`core/index.ts`는 이들을 이름으로 다시 내보내고 `src/index.ts`는 내보내지 않는다")과 28C-08이 `setContext`를 같은 자리에 두었고(`src/core/index.ts:2`, 04에서 머지됨), LANDING-159 규칙 3("`src/core/index.ts`와 `src/index.ts`는 PR-7까지 옛 엔진을 가리킨다")은 기존 수출을 바꾸지 않는다는 뜻으로 읽는다 — 이 이름들은 옛 수출을 대체하지 않고 더해질 뿐이며 `src/index.ts`는 이들을 가져오지 않는다. 나머지 수출은 07까지 옛 엔진이다. `Validator`와 그 형은 `src/core/index.ts`에서도 내보내지 않는다(32C-01). 공개 `src/index.ts`는 `./core`에서 이름을 골라 가져오므로 새 엔진이 새지 않는다(G27이 dist로 확인).
 - `src/core/__tests__/dependencyDirection.test.ts`의 `FRACTALS`에 `validation`·`dispatch`를 위 순서로 더하고, `validation`의 금지 목록(settle·dispatch·SchemaNode·app/plugin·legacy·`src/types` 색인)을 단언한다(NODE-045).
 
 ### 3.3 바뀌는 계약 문서(코드보다 먼저, U2)
@@ -142,11 +144,11 @@ Planning method: 저장소 지침 — PLAN.md §2와 plan/prompts.md의 단계 �
 
 **담당 배정(`plan/prompts.md` §1).** 위임은 cennad 경유로만 한다. 구현은 codex(한 단위 한 세션, 이어지는 고침은 같은 세션), 대조·리뷰는 antigravity, 대체는 Claude 서브에이전트(기계적 적용 sonnet·중간, 진단·게이트 판정 opus·높음, 대체 사실은 `log.md` §2). 조율 세션은 브리프·원장 질의·판단·커밋·PR을 맡는다. 파일마다 작성자는 하나이며 병렬 단위는 아래 파일 범위가 서로 겹치지 않는다. 구현 단위는 `seiri:implement`로 하고 새 동작은 고치기 전에 붉은 시험(까닭이 "기제 없음")을 먼저 기록한다. 시험 이름에 원장 ID 태그를 싣고 게이트가 그 문자열을 찾는다. 명령은 저장소 루트(이 작업 트리)에서 돈다.
 
-순서: U0 → U1 → U2 → U3 → U4 → {U5a → U5b → U6, U7} → U8 → U9 → {U13, U14, U15}; U10은 U3 뒤 언제든; U11a·U11b·U11c는 U3·U7 뒤 병렬; U12a는 U0 뒤 소유자 답을 기다림; U12b는 U8·U11·U12a 뒤; U16은 마지막. U7은 U5a와 병렬이 가능하다(U7: `validation/`·`settle/utils/gates/`·시험 대역 정리, U5a: `dispatch/`). 두 단위가 함께 쓰는 시험 도우미(`makeSchemaNodeTree.ts`, `settle/__tests__/fixtures/createTestTree.ts`)는 U7만 고치고, U5a의 시험은 `if` 게이트 없는 스키마만 쓰거나 U7이 끝난 뒤 그 사례를 더한다.
+순서: U0 → U1 → U2 → U3 → U4 → {U5a → U5b → U6, U7} → U8 → U9 → {U13, U14, U15}; U10은 U3 뒤 언제든; U11a·U11b·U11c는 U3·U7 뒤 병렬; U12a는 U0 뒤 소유자 답을 기다림; U12b는 U8·U11·U12a 뒤; U16a → U16b가 마지막. U7은 U5a와 병렬이 가능하다(U7: `validation/`·`settle/utils/gates/`·시험 대역 정리, U5a: `dispatch/`). 두 단위가 함께 쓰는 시험 도우미(`makeSchemaNodeTree.ts`, `settle/__tests__/fixtures/createTestTree.ts`)는 U7만 고치고, U5a의 시험은 `if` 게이트 없는 스키마만 쓰거나 U7이 끝난 뒤 그 사례를 더한다.
 
 ### U0 착수 — 이 계획, ADR, 게이트 원장, 질의 반영
 
-- 산출: `execution-plan.md`, `execution-adr.md`, `.seiri/tasks/schema-form-dispatch-and-validation/gates.md`, `log.md`(§2 진행, §4에 M2–M6, §2에 31C-01~05의 반영과 O1–O3 발송).
+- 산출: `execution-plan.md`, `execution-adr.md`, `.seiri/tasks/schema-form-dispatch-and-validation/gates.md`, `log.md`(§2 진행, §4에 M2–M6, §2에 31C-01~05·32C-01·02·33C-01·34C-01·02의 반영).
 - 완료: antigravity의 `seiri:review-plan`이 `cleared`(G1, 수동).
 
 ### U1 레거시 확인
@@ -169,7 +171,7 @@ Planning method: 저장소 지침 — PLAN.md §2와 plan/prompts.md의 단계 �
 
 - 원장: ERROR-005·013·017·031·032·164·198·201, LANDING-024·070, SURFACE-014·061, VALIDATE-044·050, GOAL-088, 31C-03.
 - 만들 파일: `PKG/src/errors/formErrorCode.ts`(코드 표 상수, 표 순서, 문서 주석에 level·부류·언제), `PKG/src/errors/type.ts`(`FormErrorRecord`, `FormErrorCode`, `FormErrorReporter`, `reason` 닫힌 합집합), `PKG/src/errors/__tests__/formErrorCode.ledger.test.ts`, `PKG/src/core/validation/type.ts`·`index.ts`(형만: `Validator`, `GuardFunction`, `ValidateFunction`, `ValidationIssue`).
-- 고칠 파일: `PKG/src/errors/index.ts`(`export *` — `src/errors/INTENT.md`의 저장소 관례가 seiri 규칙보다 앞섬), `PKG/src/types/error.ts`(`PublicJSONSchemaError` → `ValidationIssue` 다시 내보내기, `JSONSchemaError extends ValidationIssue`, `ValidateFunction`은 validation의 것을 다시 내보냄), `PKG/src/index.ts`(`ValidationIssue` 수출, 인터페이스 별칭 `JSONSchemaError` 삭제), `PKG/src/helpers/error/formatValidationError/utils/replacePattern.ts`, `PKG/src/app/plugin/type.ts`(`ValidatorPlugin = Validator & { bind?(instance: unknown): void }`), `PKG/src/core/settle/utils/errors/settleErrorCode.ts`(표 상수를 이름으로 가져옴).
+- 고칠 파일: `PKG/src/errors/index.ts`(`export *` — `src/errors/INTENT.md`의 저장소 관례가 seiri 규칙보다 앞섬), `PKG/src/types/error.ts`(`PublicJSONSchemaError` → `ValidationIssue` 다시 내보내기, `JSONSchemaError extends ValidationIssue`; 공개 `ValidatorFactory`·`ValidateFunction`은 오늘 선언 그대로 두고 이름 함정 한 줄만 더함 — I13), `PKG/src/index.ts`(형 수출 `ValidationIssue`를 더하고 `JSONSchemaError`는 `ValidationIssue`의 형 별칭으로 07까지 유지: `export type { ValidationIssue, ValidationIssue as JSONSchemaError }`; 던지는 클래스 `JSONSchemaError`는 오늘처럼 이름으로 공개하지 않고 가드 `isJSONSchemaError`만 그대로 — I13. `Validator`는 공개하지 않음 — 32C-01), `PKG/src/helpers/error/formatValidationError/utils/replacePattern.ts`, `PKG/src/app/plugin/type.ts`(오늘의 `ValidatorPlugin { bind?, compile }`에 선택 멤버 `compileGuard?(root: JSONSchema, pointer: string): (value: unknown) => boolean`·`release?(root: JSONSchema): void`·`readonly dialect?: string`을 인라인 서명으로 더함 — 더하기만 하는 공개 형 변경, PR-7에서 `compileGuard`가 필수가 됨. `Validator`를 가져오지 않으므로 공개 `.d.ts`에 새 계약 형 이름이 새지 않는다 — I26, 34C-01), `PKG/src/app/plugin/__tests__/validatorConformance.test.ts`(만듦: `compileGuard`를 가진 `ValidatorPlugin` 모양의 값을 `const validator: Validator = plugin`으로 받아 형 검사로 구조 일치를 단언하고 그 값으로 core의 `retainValidationRoot`·가드 읽기를 한 번 돌림, 단언·`any` 없음. 자리는 `app/plugin` 쪽이다 — `app` → `core`는 허용 방향이고, `core/validation`이 `app/plugin`을 가져오면 U2의 경계 린트와 의존 방향 시험이 막는다; 시험 이름에 `34C-01 ValidatorPlugin satisfies Validator`), `PKG/src/core/settle/utils/errors/settleErrorCode.ts`(표 상수를 이름으로 가져옴).
 - 서명(DETAIL과 같게):
   - `interface Validator { compile(copy: BlueprintSchema): ValidateFunction; compileGuard(root: BlueprintSchema, pointer: string): GuardFunction; release?(root: BlueprintSchema): void; readonly dialect?: string }`(메서드 문법 — 플러그인이 `JSONSchema`로 구현해도 맞음)
   - `type GuardFunction = (value: unknown) => boolean`
@@ -261,20 +263,20 @@ Planning method: 저장소 지침 — PLAN.md §2와 plan/prompts.md의 단계 �
 ### U11a·U11b·U11c ajv6·ajv7·ajv8 플러그인(병렬, 패키지마다 한 세션)
 
 - 원장: LANDING-070·093·206, VALIDATE-002·003·015·016·017·019·033·043·044·045·046·047·050·051, FRAGMENT-020·053, BLUEPRINT-044(ajv8 설정), TEST-077, 18C-53·56·57·58, 31C-04(Q4).
-- 고칠·만들 파일(패키지마다, `P8` 예; `P6`·`P7`은 `src/validator/validatorPlugin.ts` 하나): `src/validator/createValidatorFactory.ts`(`compile`이 등록된 사본 루트를 공유), `src/validator/createGuardCompiler.ts`(동기 `compileGuard`, `allErrors: false` 인스턴스, 같은 설정), `src/validator/utils/registerSchemaRoot.ts`(루트마다 `addSchema` 한 번·고유 키, 같은 `$id`는 같은 설정의 다른 인스턴스 — I25), `src/validator/utils/releaseSchemaRoot.ts`, `src/validator/utils/assertBindableInstance.ts`(`coerceTypes`·`useDefaults`·`removeAdditional` — ajv7·8은 `opts`, ajv6은 `_opts`), `src/validator/utils/createBindRefusedError.ts`(I19), `src/validator/utils/transformErrors.ts`(P6은 `transformDataPath.ts`: 루트 `''`, `rejectedKey` — FRAGMENT-020의 표), `src/{default,2019,2020}/validatorPlugin.ts`(P8: `allowUnionTypes: true`, `bind` 거부, `compileGuard`, `release`, 방언 선언), 시험 `src/validator/__tests__/`(`bind-refusal.test.ts`·`same-id.test.ts`·`guard-scope.test.ts`·`release.test.ts`·`rejected-key.test.ts`·`routing-shapes.test.ts`, P8에 `union-types.test.ts`), 기존 `datapath.test.ts`·`transformErrors.test.ts`의 루트 기대(`'/'` → `''`), 문서(P7·P8 `CLAUDE.md`와 세 패키지 `README.md`에 `bind` 거부 규칙 — P6에는 `CLAUDE.md`가 없어 README에만).
+- 고칠·만들 파일(패키지마다, `P8` 예; `P6`·`P7`은 `src/validator/validatorPlugin.ts` 하나): `src/validator/createValidatorFactory.ts`(`compile`이 등록된 사본 루트를 공유), `src/validator/createGuardCompiler.ts`(동기 `compileGuard`, `allErrors: false` 인스턴스, 같은 설정), `src/validator/utils/registerSchemaRoot.ts`(루트마다 `addSchema` 한 번·고유 키, 같은 `$id`는 같은 설정의 다른 인스턴스 — I25), `src/validator/utils/releaseSchemaRoot.ts`, `src/validator/utils/assertBindableInstance.ts`(`coerceTypes`·`useDefaults`·`removeAdditional` — ajv7·8은 `opts`, ajv6은 `_opts`), `src/validator/utils/ValidatorBindRefusedError.ts`(I19: `class ValidatorBindRefusedError extends BaseError`, `@winglet/common-utils/error`에서 가져옴, `super('UNHANDLED_ERROR', 'VALIDATOR_BIND_REFUSED', message, { options })`, `this.name = 'ValidatorBindRefusedError'`; P6·P7은 `package.json` `dependencies`에 `@winglet/common-utils`를 더함 — U12a 소유자 확인에 묶임), `src/validator/utils/transformErrors.ts`(P6은 `transformDataPath.ts`: 루트 `''`, `rejectedKey` — FRAGMENT-020의 표), `src/{default,2019,2020}/validatorPlugin.ts`(P8: `allowUnionTypes: true`, `bind` 거부, `compileGuard`, `release`, 방언 선언), 시험 `src/validator/__tests__/`(`bind-refusal.test.ts`·`same-id.test.ts`·`guard-scope.test.ts`·`release.test.ts`·`rejected-key.test.ts`·`routing-shapes.test.ts`, P8에 `union-types.test.ts`), 기존 `datapath.test.ts`·`transformErrors.test.ts`의 루트 기대(`'/'` → `''`), 문서(P7·P8 `CLAUDE.md`와 세 패키지 `README.md`에 `bind` 거부 규칙과 한 줄 "Callers discriminate the refusal by `group` (`'UNHANDLED_ERROR'`) and `code` (`'VALIDATOR_BIND_REFUSED'`); core's `isUnhandledError` does not recognize it." — 32C-02; P6에는 `CLAUDE.md`가 없어 README에만).
 - 단계(붉은 시험 먼저):
-  1. `bind` 거부(TEST-077): 세 옵션 각각과 조합에서 즉시 던지고 인스턴스를 붙이지 않음, 거부 뒤 앞 인스턴스 유지, 셋이 꺼진 인스턴스와 기본 인스턴스는 붙음, 원본 스키마 불변.
+  1. `bind` 거부(TEST-077): 세 옵션 각각과 조합에서 즉시 던지고 인스턴스를 붙이지 않음, 던진 것이 `group === 'UNHANDLED_ERROR'`·`code === 'VALIDATOR_BIND_REFUSED'`·`name === 'ValidatorBindRefusedError'`이며 `onError`로 가지 않음(32C-02), 거부 뒤 앞 인스턴스 유지, 셋이 꺼진 인스턴스와 기본 인스턴스는 붙음, 원본 스키마 불변.
   2. VALIDATE-046 (i)–(iv)를 기본 인스턴스와 `bind(instance)` 인스턴스 둘 다(ajv6·7·8), VALIDATE-047 (i)–(iv)는 ajv7·8, ajv6은 (i)만. 판정은 같은 패키지의 독립 ajv 인스턴스가 작성 스키마를 직접 컴파일한 결과와 비교. (i)–(iii)이 어긋나면 가드 컴파일 방식을 이 단위가 고친다(18C-58). (iv)만 어긋나면 "한 자리를 여러 동적 범위에서 씀" 미지원 문서화를 권고로 상신.
   3. `release(root)`: `removeSchema(key)`와 컴파일 결과 버림, 해제 뒤 다른 루트의 늦은 가드 컴파일이 맞음.
   4. `rejectedKey`와 `required`의 빠진 자식 경로(VALIDATE-043 (2)), 루트 `''`.
   5. P8: `{type:['string','number']}` 컴파일에서 `console.warn` 0회, `{type:[…], nullable:true}` 컴파일 뒤 작성 `type` 배열 불변(BLUEPRINT-044, TEST-077).
-  6. `ValidationIssue`·`ValidatorPlugin`을 공개 진입점에서 가져온다(LANDING-070).
+  6. import 줄: `import type { ValidationIssue, ValidatorPlugin } from '@canard/schema-form'` — 공개 진입점에서만 가져오고(LANDING-070), 플러그인의 소스와 스토리는 PR-4에서 새 이름 `ValidationIssue`로 바꾼다(`JSONSchemaError` 별칭은 바깥 소비자를 위해 07까지 남음, 34C-02). 플러그인 객체는 `satisfies ValidatorPlugin`으로 형을 맞추고, 시험이 `typeof plugin.compileGuard === 'function'`·`typeof plugin.release === 'function'`을 단언한다(선택 멤버라 형만으로는 빠짐을 못 잡음). 플러그인 안에 계약 형을 다시 선언하지 않는다(I26, 34C-01).
 - 완료: U11a G30·G31, U11b G32·G33, U11c G34·G35. 실패 처리는 VALIDATE-046·047의 실패 줄 그대로.
 
 ### U12a 독립 검증기 개발 의존 — 소유자 확인 대기
 
 - 원장: TEST-001, 31C-04.
-- `@cfworker/json-schema`(버전 고정)를 `PKG`·`P6`·`P7`·`P8`의 `devDependencies`에 더하는 것을 소유자에게 묻는다. 확인 뒤 조율 세션이 단독 호출 `yarn install`로 잠금 파일을 갱신한다(설치는 이 단위만 멈춤). O3의 답이 플러그인 의존 추가를 부르면 같은 물음에 묶는다.
+- `@cfworker/json-schema`(버전 고정)를 `PKG`·`P6`·`P7`·`P8`의 `devDependencies`에 더하는 것을 소유자에게 묻는다. 확인 뒤 조율 세션이 단독 호출 `yarn install`로 잠금 파일을 갱신한다(설치는 이 단위만 멈춤). 같은 물음에 32C-02가 부르는 `P6`·`P7`의 런타임 의존 `@winglet/common-utils`(`workspace:^`, P8과 같은 지정) 추가를 묶는다 — 32C-02는 그 패키지가 "이미 런타임 의존"이라 적었으나 `P8/package.json:74`에만 있고 `P6`·`P7`에는 없다. 답을 기다리는 동안 U11a·U11b의 `ValidatorBindRefusedError.ts`만 멈춘다.
 - 완료: G36(수동, 소유자 답과 설치 커밋).
 
 ### U12b 차등 테스트
@@ -306,11 +308,27 @@ Planning method: 저장소 지침 — PLAN.md §2와 plan/prompts.md의 단계 �
 - 단계: `node --import tsx`와 `/opt/homebrew/bin/bun`으로 같은 입력을 돈다. 판정은 TEST-072의 선(같은 실행에서 옛 판 대비 처리량 15% 넘는 하락 ∧ Welch p<0.05). 가드 200개 행은 미리 적은 수용 필요 항목이며 미리 받아들인 것이 아니다 — 수치를 바꿔 적고 선을 넘으면 Vincent의 수용을 받는다. 03·04 벤치(`bench/node-and-settle.bench.ts`, `bench/derive-and-controls.bench.ts`)를 다시 돌려 05 뒤 값을 기록만 한다. 새로 느린 것은 `ARCH/verification/performance-issues.md` "열림"에 행. P-03(게이트 형제 첫 로드 이차)이 배달 경로와 겹치면 수치만 그 행에 덧붙인다. 공개 `<Form>` 선(`guard:check`)도 돈다(레거시 경로의 import 분리 영향).
 - 완료: G41·G42·G43.
 
-### U16 최종 검증, 06과의 통합, PR
+### U16a 06과의 통합
 
-- 06(작업 트리 `stage-06`, `feat/schema-form-array`)이 먼저 머지되면 `1.0.0-beta`를 이 브랜치에 merge하고 `SchemaNode.ts`·`SchemaNode/DETAIL.md` 멤버 표·`surface.test.ts`·`type.ts`·`type-contract.test.ts`·`record/type.ts`의 충돌을 푼다. 배열 동사의 dispatch 진입(O2)을 두고 멤버 목록 시험을 다시 돈다. 05가 먼저면 06 쪽에 넘길 목록을 `log.md`에 적는다.
-- 검사: 패키지 unit·render(G44), lint·typecheck(G45), 플러그인 셋(G46), 원장 인용(G47), 작업 트리 깨끗함(G48). storybook은 소유자가 sandbox 밖에서(G51).
-- 독립 `seiri:verify`(최초 기준선 대 diff), PLAN §2 7단계(codex·antigravity 원장 대 구현 대조), PR(base `1.0.0-beta`) 본문에 `request.md` 완료 기준·`verification.md` 리뷰 체크리스트·가칭 확정 표·레거시 이동 목록(이동 0)·미룬 사례와 PR 번호(§6.2)·어긋남 ID(§2.2)·열린 질문의 처리. PR 뒤 `filid:enrich-docs`, filid 스캔 1회(G49), `seiri:request-review`, 독립 검증자 판정(G50).
+- 원장: 33C-01, LANDING-064·065·084, EVENT-027·035, TEST-069, 06 `log.md` "05와의 공유 파일 합의".
+- 기준과 방향: 05·06 가운데 뒤에 머지하는 쪽이 갱신된 `1.0.0-beta`를 자기 브랜치에 merge한다(`git fetch origin 1.0.0-beta` 뒤 `git merge --no-ff origin/1.0.0-beta`). rebase는 하지 않는다. 05가 뒤라면 이 단위를 PR 앞에서 하고, 05가 먼저라면 갱신된 `1.0.0-beta`를 merge해 G44만 확인하고 넘길 목록을 `log.md`에 적는다.
+- 충돌 파일과 파일마다의 규칙:
+  - `src/core/SchemaNode/SchemaNode.ts`, `SchemaNode/DETAIL.md` 멤버 표: 05 멤버 덩어리를 먼저, 06 멤버 덩어리를 그 뒤에 둔다(덩어리 안의 순서는 각 단계의 것 그대로).
+  - `SchemaNode/__tests__/surface.test.ts`: 기대 멤버 목록을 합집합으로 하고 DETAIL 표와 일대일로 비교한다. 시험 이름은 `26C-01 PR-4 and PR-5 member list matches the DETAIL table exactly`.
+  - `SchemaNode/type.ts`, `SchemaNode/__tests__/type-contract.test.ts`: 합집합을 취한다.
+  - `src/core/index.ts`: 두 단계의 수출을 모두 이름으로 다시 내보낸다(wildcard 없음).
+  - `src/core/record/type.ts`: 05의 `revisionLedger`를 유지하고, 06 코드가 옛 필드 `revision`을 읽으면 그 자리를 `revisionLedger`로 맞춘다(06 log 합의).
+- 조건부 단계(05가 뒤에 머지할 때만, 33C-01): 06의 배열 쓰기 동사 다섯의 겉면 위임을 `dispatch` 진입으로 옮긴다.
+  - 만들 파일: `dispatch/utils/entry/dispatchPush.ts`·`dispatchPop.ts`·`dispatchUpdate.ts`·`dispatchRemove.ts`·`dispatchClear.ts`(각각 진입을 열고 06이 PR-2 모양으로 둔 정착 호출 하나를 감싸고 진입을 닫음), `dispatch/__tests__/dispatch.array-entry.test.ts`.
+  - 고칠 파일: `SchemaNode.ts`의 06 배열 멤버 다섯을 진입 함수에 한 문장 위임으로, `dispatch/index.ts`·`dispatch/DETAIL.md`의 이름 붙은 수출과 서명.
+  - 시험(붉은 시험 먼저): `batch` 안의 배열 동사가 형제 진입으로 합쳐짐(EVENT-035), 진입당 `onChange` 한 번, 배열 동사 안 되먹임이 사슬 끝에서 throw(EVENT-027). `arrayBehavior/`에는 자기 진입 사슬이 없다.
+  - PR 본문에 다섯 진입 파일의 추가를 적는다.
+- 완료: G44, G45(05가 먼저 머지하면 33C-01을 까닭으로 ABANDON), G46.
+
+### U16b 최종 검증과 PR
+
+- 검사: 플러그인 셋(G47), 원장 인용(G48), 작업 트리 깨끗함(G49), 패키지 unit·render(G53), lint·typecheck(G54). storybook은 소유자가 sandbox 밖에서(G52).
+- 독립 `seiri:verify`(최초 기준선 대 diff), PLAN §2 7단계(codex·antigravity 원장 대 구현 대조), PR(base `1.0.0-beta`) 본문에 `request.md` 완료 기준·`verification.md` 리뷰 체크리스트·가칭 확정 표·레거시 이동 목록(이동 0)·미룬 사례와 PR 번호(§6.2)·어긋남 ID(§2.2)·열린 질문의 처리. PR 뒤 `filid:enrich-docs`, filid 스캔 1회(G50), `seiri:request-review`, 독립 검증자 판정(G51).
 
 ## 5. 요구사항 → 단위 → 검증 추적표
 
@@ -386,7 +404,7 @@ Planning method: 저장소 지침 — PLAN.md §2와 plan/prompts.md의 단계 �
 | --- | --- | --- | --- |
 | G-01 내장 검증기 없음 | VALIDATE-014, ERROR-143 | U7 | 의존 방향 시험(`validation` 비시험 파일에 `ajv` 없음) — G12 |
 | G-02–G-03 `Validator` 형, `bind`는 core가 부르지 않음 | VALIDATE-044 | U3, U7 | `type-contract`(G9), `validation.cache.test.ts`(`VALIDATE-044 core never binds`) — G19 |
-| G-04 속성 `validatorFactory`가 `Validator`를 받음 | VALIDATE-044 (1) | O1(제안: 07) | — |
+| G-04 속성 `validatorFactory`가 `Validator`를 받음 | VALIDATE-044 (1), LANDING-036 | 제외: 07(32C-01) | — |
 | G-05–G-07 고르는 순서·없음·참조 바뀌면 재생성 | VALIDATE-042·044 | U7(인자·없음), U10(레거시 순서 유지), 07(바인딩) | `validation.missing.test.ts` — G19 |
 | G-08–G-09 `app/plugin` 금지, 린트 범위 | CONTROLS-075 | U2, U10 | G4·G28 |
 | G-10–G-14 `compile`·`compileGuard` 서명, 동기, 같은 boolean, 사본, 루트 문맥 | VALIDATE-015–017·044 | U3, U7, U11 | `validation.guard.test.ts`(`VALIDATE-044 non-boolean`), 플러그인 `guard-scope.test.ts` — G19·G31·G33·G35 |
@@ -406,7 +424,7 @@ Planning method: 저장소 지침 — PLAN.md §2와 plan/prompts.md의 단계 �
 | G-48 기각안(내장 검증기) | VALIDATE-028 | 작업 없음 | ADR 0004가 이미 기각 |
 | G-49 플러그인 패키지 범위 | VALIDATE-025 | U11 | G30–G35 |
 | G-50 `ValidateFunction` 문서 주석 | ERROR-032·039 | U3 | G8 |
-| G-51 `ValidationIssue` 개명 | ERROR-032, LANDING-024·070 | U3 | G8 |
+| G-51 `ValidationIssue` 개명(공개 별칭 `JSONSchemaError`는 07까지 유지) | ERROR-032, LANDING-024·070, 34C-02 | U3 | G8 |
 | G-52 `None`은 판정 없음 | VALIDATE-008 | U8 | `validation.run.test.ts`(`VALIDATE-008`) — G23 |
 | G-53–G-54 판정의 정의, 스탬프, 방출 값 직렬화 동치·복사 없음 | VALIDATE-001·006·007·051 | U8, U12b | G23·G37 |
 | G-55 `&if`만의 판별 무효 | VALIDATE-036 | U12b | G37 |
@@ -517,24 +535,26 @@ Planning method: 저장소 지침 — PLAN.md §2와 plan/prompts.md의 단계 �
 | --- | --- | --- |
 | `selfcheck-v5.mjs` g5 `:736`(파동 중 배열 아이템 제거) | 배열 행은 PR-5 | 06 |
 | `FormHandle` 명령 넷·`batch`, 렌더 계층 `onError`, 마운트 가리기, `degraded` 제출 거부, React 18 실행, 바인딩의 검증기 선택과 참조 세기 이펙트 | PR-7(§1 비목표) | 07 |
-| 배열 동사의 dispatch 진입 | O2 | 06 또는 05 U16 |
+| 배열 동사의 dispatch 진입 | 33C-01: 뒤에 머지하는 단계가 더함 | 06 또는 05 U16a |
 
 ## 7. 위험과 대응
 
 | 위험 | 대응 |
 | --- | --- |
-| 06이 병렬로 같은 겉면 파일(`SchemaNode.ts`, `SchemaNode/DETAIL.md` 멤버 표, `surface.test.ts`, `type.ts`, `type-contract.test.ts`)과 `record/type.ts`에 멤버·칸을 더해 두 번째 머지에서 충돌 | 05의 추가를 파일마다 연속한 한 덩어리로 둔다. 오류 저장은 레코드 필드가 아니라 런타임 칸에 두어 레코드 칸 충돌을 줄인다(ADR D3). U16에 merge와 충돌 풀이, 멤버 목록 시험 재실행 단계를 둔다 |
+| 06이 병렬로 같은 겉면 파일(`SchemaNode.ts`, `SchemaNode/DETAIL.md` 멤버 표, `surface.test.ts`, `type.ts`, `type-contract.test.ts`, `core/index.ts`)과 `record/type.ts`에 멤버·칸을 더해 두 번째 머지에서 충돌 | 05의 추가를 파일마다 연속한 한 덩어리로 둔다. 오류 저장은 레코드 필드가 아니라 런타임 칸에 두어 레코드 칸 충돌을 줄인다(ADR D3). 뒤에 머지하는 쪽이 갱신된 `1.0.0-beta`를 merge(rebase 없음)하고 U16a의 파일별 규칙으로 풀며 G44가 합집합을 확인한다. 05가 뒤면 배열 동사 진입 파일 다섯도 05가 더한다(G45, 33C-01) |
 | 레코드 필드 `revision` 개명이 03·04 시험과 커밋을 흔듦 | U4에서 개명과 시험 이전만 하고 전체 unit을 돈다(G12). 비트별 원장 의미가 커밋당 +1 단언과 다르면 시험 이름에 EVENT-007을 싣고 바꾼다 |
 | 술어 대역을 실제 가드로 옮기며 기대값이 바뀜 | 기대값을 바꾸지 않는 이전만 한다(U7). 바뀌면 멈추고 그 사례를 `log.md` §4에 적어 원장과 대조한다(TEST-069 (나)의 목적) |
 | ajv `addSchema` 등록과 `compile`의 `$async` 감쌈이 같은 `$id`로 부딪힘 | 플러그인이 루트를 한 번 등록하고 `compile`·`compileGuard`가 그 등록을 공유한다(U11). VALIDATE-046 (i)이 판정한다 |
 | `bind` 인스턴스를 같은 설정으로 복제할 수 없음 | VALIDATE-046의 실패 줄대로 소유자에게 (a)·(b)를 올린다. 기본 인스턴스 게이트는 계속 |
-| 공개 `JSONSchemaError` 인터페이스 개명이 다른 패키지 스토리·벤치·문서의 형 검사를 깸 | 형 이름만 바꾸는 기계적 수정이며, 플러그인 셋 밖의 스토리(`schema-form-*-plugin/stories/`, `aileron/benchmark`)는 `grep -l "JSONSchemaError"`로 고른 형 참조만 고친다. 문서·README는 08이다. O1의 답에 따라 범위가 바뀌면 그 몫만 다시 정한다 |
+| 공개 형 이름 `JSONSchemaError`를 잃으면 바깥 소비자와 스토리의 형 검사가 깨짐 | 지우지 않는다: `src/index.ts`가 `ValidationIssue`를 더해 내보내고 `JSONSchemaError`를 `ValidationIssue`의 형 별칭으로 07까지 남긴다(I13, 34C-02). 별칭 삭제는 LANDING-024 이주 21(PR-7 또는 PR-8 이주 안내)이다. 던지는 클래스 `JSONSchemaError`는 오늘처럼 이름으로 공개하지 않으므로 같은 이름의 값·형이 공개 색인에서 겹치지 않는다. ajv 셋의 소스와 스토리는 PR-4에서 `ValidationIssue`로 옮긴다(LANDING-070). G8이 별칭 유지와 `Validator` 비공개를 확인한다 |
 | 레거시 폴백 `''`가 레거시 렌더의 루트 오류 표시를 바꿈 | U10의 경계 있는 탐색과 레거시·render 시험(G29). 기대는 자리가 있으면 멈춤 |
 | core만 쓰는 호스트가 등록 플러그인 폴백을 잃음 | 원장이 정한 바뀜(CONTROLS-075)이며 PR 본문에 이주 메모 |
 | 진입 사슬 비용이 03·04 벤치 행을 떨어뜨림 | 최적화하지 않는다. U15가 재고 `performance-issues.md`에 행을 더한다. 정착 범위 밖 순회가 원인이면 결함이라 고친다 |
 | 독립 검증기 설치가 늦어짐 | U12a만 멈춘다. U12b 밖의 모든 단위는 진행한다 |
 | `npx vitest`가 샌드박스에서 `.npmrc` 읽기 거부로 실패 | 04 선례대로 `npx`는 샌드박스 안에서 돈다. 실패하면 명령 모양을 고치고 허용 목록을 넓히자고 하지 않는다 |
-| storybook이 sandbox 안에서 안 뜸 | 01–04 선례대로 소유자가 sandbox 밖에서 돈다(G51) |
+| storybook이 sandbox 안에서 안 뜸 | 01–04 선례대로 소유자가 sandbox 밖에서 돈다(G52) |
+| `P6`·`P7`에 `@winglet/common-utils` 런타임 의존이 없어 32C-02의 `BaseError`를 쓸 수 없음 | U12a의 소유자 물음에 의존 추가를 묶는다. 답을 기다리는 동안 두 패키지의 거부 오류 파일만 멈춘다(I19) |
+| `! grep` 게이트가 대상 디렉터리가 없을 때 통과함(grep 종료 코드 2를 `!`가 뒤집음) | 부정 grep을 쓰는 게이트(G2·G8·G20·G24·G26·G27·G28·G45)는 앞에 `test -d`/`test -f`로 대상의 존재를 단언하거나 같은 게이트 안의 긍정 단언이 대상을 요구한다 |
 
 ## 8. 검증 명령(저장소 루트 = 이 작업 트리)
 
@@ -549,6 +569,7 @@ Planning method: 저장소 지침 — PLAN.md §2와 plan/prompts.md의 단계 �
 - 05 벤치: `(cd packages/canard/schema-form && node --import tsx bench/dispatch-and-validation.bench.ts)` 및 `(cd packages/canard/schema-form && /opt/homebrew/bin/bun bench/dispatch-and-validation.bench.ts)`
 - 03·04 벤치 기록 재측정: `bench/node-and-settle.bench.ts`, `bench/derive-and-controls.bench.ts`를 같은 두 엔진으로
 - 공개 `<Form>` 선: `yarn workspace @aileron/benchmark-form guard:check`(단독 호출)
+- 06과 merge한 뒤의 겉면 합집합: `(cd packages/canard/schema-form && npx vitest run --project unit src/core/SchemaNode/__tests__/surface.test.ts src/core/SchemaNode/__tests__/type-contract.test.ts)`(G44)
 - 번들 누출 확인: `(cd packages/canard/schema-form && npx rolldown -c)` 뒤 `dist/index.mjs`·`dist/index.cjs`에서 새 엔진에만 있는 이름(`dispatchSetValue`·`readSchemaNodeGuard`·`routeValidationIssues`)을 찾음
 
 ## 9. 리뷰 기록

@@ -66,7 +66,7 @@
   - 재생성 reset의 사슬 넘김은 `dispatch`가 이름 붙여 내보내는 함수이고, 부르는 쪽은 07의 폼 수준 재생성이다(EVENT-030).
 - 까닭: 동사와 파일의 1:1이 `dispatch`가 무게 중심이 되는 것을 막는다(`reviews/raw-round17-node-structure.md` §6 규칙 7, `request.md:50`). 사건마다 같은 디스패처를 거치면 "최외곽 진입 끝에 한 번"과 "노드마다 비트를 합침"을 한 곳에서 지킨다.
 - 버린 것: 명령이 자기 진입을 여는 것(31C-01이 정정 — 진입은 공개 쓰기뿐). 상태·명령을 노드가 바로 리스너에 보내는 것(노드는 일정을 잡지 않음, EVENT-004).
-- 결과: `SchemaNode`의 `setValue`·`resetSubtree`가 settle 대신 dispatch 진입에 위임한다. 06의 배열 동사도 같은 자리의 진입 파일을 거친다(계획 O2).
+- 결과: `SchemaNode`의 `setValue`·`resetSubtree`가 settle 대신 dispatch 진입에 위임한다. 06의 배열 동사도 같은 자리의 진입 파일을 거치며, 그 파일 다섯은 05·06 가운데 뒤에 머지하는 단계가 더한다(33C-01, 계획 U16a).
 
 ## D5 `onError`의 core 쪽 — 코드 표와 기록 형은 `src/errors/`, 보고기는 트리 생성 인자, 전달 규칙은 `dispatch`
 
@@ -80,17 +80,20 @@
 - 버린 것: 코드 표를 `dispatch/`에 두는 것(렌더·청사진 코드까지 core 조율자에 묶임). 정착 코드를 `settleErrorCode.ts`에만 두는 것(표가 두 곳으로 갈라져 기계 대조가 불가능).
 - 결과: `src/errors/DETAIL.md`가 표와 순서 규칙을 먼저 적는다. 코드 이름의 확정 목록은 `log.md`와 PR 본문이 기록하고 원장 관리자가 보충을 단다(31C-05). 코드 표 문서는 08이다.
 
-## D6 검증기 계약 형은 `validation/`이 선언하고, `src/types`와 `app/plugin`이 그것을 쓴다
+## D6 core의 검증기 계약 형은 `validation/`이 선언하고, 플러그인이 보는 공개 `ValidatorPlugin`은 그와 구조로 맞는 선택 멤버를 더한다
 
-- 맥락: 계약 형은 하나(가칭 `Validator`: `compile`, `compileGuard`, 선택 `release`, 선택 방언, 에러 정규화)이고 플러그인은 `bind?`만 더한다(VALIDATE-044). 검증 결과 형은 `ValidationIssue`로 개명하며 PR-4에 든다(ERROR-032, LANDING-024·070). core의 형 파일은 React를 가져오지 않는다(GOAL-088). 오늘의 `src/types/error.ts`는 React 형을 끄는 `./jsonSchema`를 가져오고, 플러그인 셋은 공개 진입점에서 형을 가져온다.
+- 맥락: 계약 형은 하나(가칭 `Validator`: `compile`, `compileGuard`, 선택 `release`, 선택 방언, 에러 정규화)이고 플러그인은 `bind?`만 더한다(VALIDATE-044). 검증 결과 형은 `ValidationIssue`로 개명하며 PR-4에 든다(ERROR-032, LANDING-024·070). PR-4는 core가 받는 계약 형과 ajv 셋을 바꾸고 공개 `validatorFactory` 속성은 07에서 바뀐다(32C-01). 플러그인 패키지의 `exports`는 `.` 하나다(34C-01). core의 형 파일은 React를 가져오지 않는다(GOAL-088). 오늘의 `src/types/error.ts`는 React 형을 끄는 `./jsonSchema`를 가져오고, 플러그인 셋은 공개 진입점에서 형을 가져온다.
 - 결정:
   - `Validator`, `GuardFunction`, `ValidateFunction`, `ValidationIssue`를 `PKG/src/core/validation/type.ts`에 선언한다(스키마 매개변수는 청사진의 React 없는 스키마 형, 메서드 문법이라 플러그인이 공개 `JSONSchema`로 구현해도 맞음).
-  - `src/types/error.ts`는 세 이름을 다시 내보내고, 옛 `PublicJSONSchemaError`는 `ValidationIssue`로 바뀐다. 공개 `src/index.ts`는 `ValidationIssue`를 내보내고 인터페이스 별칭 `JSONSchemaError`를 뺀다. 레거시 전용 안쪽 `JSONSchemaError`(`key` 칸)는 레거시 삭제까지 남아 `ValidationIssue`를 확장한다.
-  - `app/plugin/type.ts`의 `ValidatorPlugin`은 `Validator & { bind?(instance: unknown): void }`다.
-  - 공개 Form·`FormProvider` 속성 `validatorFactory`의 형 전환은 바인딩의 선택과 함께 07에 둔다(계획 I14, O1 대기).
-- 까닭: 계약 형을 소비하는 쪽(core의 검증)이 React 없이 선언할 수 있는 자리는 core 안이다. 한 선언을 여러 경로로 다시 내보내면 별칭 없이 한 이름이다(SURFACE-060의 원칙과 같음).
-- 버린 것: 형을 `src/types`에 두고 core가 가져오는 것(React 형이 core 형 그래프에 들어옴). 형을 `app/plugin`에 두는 것(core가 `app/plugin`을 가져오게 됨, CONTROLS-075).
-- 결과: 플러그인 셋은 `ValidationIssue`·`ValidatorPlugin`을 공개 진입점에서 가져온다. 공개 형의 개명은 PR 본문의 이주 목록에 든다(문서는 08).
+  - `Validator`는 core 쪽 형이다. `src/core/validation/`에서만 내보내고 공개 `src/index.ts`와 `src/core/index.ts`는 내보내지 않는다(32C-01, 34C-01).
+  - `src/types/error.ts`는 `ValidationIssue`를 다시 내보내고, 옛 `PublicJSONSchemaError`는 `ValidationIssue`로 바뀐다. 공개 `ValidatorFactory`·`ValidateFunction`(`validatorFactory` 속성의 형)은 07까지 오늘 선언 그대로 둔다(32C-01). 레거시 전용 안쪽 `JSONSchemaError`(`key` 칸)는 레거시 삭제까지 남아 `ValidationIssue`를 확장한다.
+  - 공개 `src/index.ts`는 `ValidationIssue`를 더해 내보내고, 공개 이름 `JSONSchemaError`는 `export type { ValidationIssue as JSONSchemaError }`로 07까지 남긴다(34C-02). 별칭 삭제는 LANDING-024 이주 21(PR-7 또는 PR-8 이주 안내)이다. 오늘과 같은 공존 상태를 지킨다: 공개 이름 `JSONSchemaError`는 형 하나뿐이고, 던지는 클래스 `JSONSchemaError`(`src/errors/JSONSchemaError.ts:24`)는 이름으로 공개되지 않으며 가드 `isJSONSchemaError`만 공개된다(`src/index.ts:16-21`).
+  - `app/plugin/type.ts`의 공개 `ValidatorPlugin`은 `compile`과 `bind?`를 그대로 두고, 선택 멤버 `compileGuard?(root, pointer)`·`release?(root)`·`dialect?`를 인라인 서명으로 더한다(LANDING-084 "`app/plugin/type.ts` 개정", 더하기만 함). 정규화된 오류에는 `rejectedKey`가 생긴다(`ValidationIssue`). 선택 멤버는 PR-7에서 LANDING-036 이주 33과 함께 필수가 된다.
+  - `Validator`의 필수 멤버(`compile`·`compileGuard`)와 선택 멤버(`release?`·`dialect?`)는 `ValidatorPlugin`의 대응 멤버와 같은 서명이라, `compileGuard`를 가진 `ValidatorPlugin` 값은 구조적으로 `Validator`를 만족한다. 이 일치는 `app/plugin/__tests__/validatorConformance.test.ts`가 그 값을 `Validator`로 받아 단언한다. 플러그인은 오늘처럼 공개 색인에서 `ValidatorPlugin`을 가져오며 하위 경로 수출도 플러그인 안 중복 선언도 없다.
+  - 공개 Form·`FormProvider` 속성 `validatorFactory`는 07까지 오늘의 형과 동작을 지킨다(32C-01; LANDING-064 PR-7 행, LANDING-036 이주 33).
+- 까닭: 계약 형을 소비하는 쪽(core의 검증)이 React 없이 선언할 수 있는 자리는 core 안이다. 공개 겉면은 LANDING-159 규칙 3대로 07까지 옛 엔진의 것이므로, 플러그인이 보는 형은 더하기만 하는 개정으로 넓히고 새 계약 형 이름은 공개하지 않는다. 형 별칭을 남기면 바깥 소비자의 형 검사가 07 전에 깨지지 않는다.
+- 버린 것: 형을 `src/types`에 두고 core가 가져오는 것(React 형이 core 형 그래프에 들어옴). 형을 `app/plugin`에 두는 것(core가 `app/plugin`을 가져오게 됨, CONTROLS-075). `ValidatorPlugin = Validator & { bind? }`(새 계약 형이 공개 `.d.ts`로 새고 `compileGuard`가 PR-7 전에 필수가 됨, 32C-01). 공개 별칭 `JSONSchemaError`를 05에서 지우는 것(LANDING-159 규칙 3, 34C-02). 플러그인이 계약 형을 하위 경로나 로컬 선언으로 얻는 것(34C-01).
+- 결과: 플러그인 셋은 `ValidationIssue`·`ValidatorPlugin`을 공개 진입점에서 가져오고 소스와 스토리를 PR-4에서 `ValidationIssue`로 옮긴다(LANDING-070). 공개 형의 개명과 별칭 유지는 PR 본문의 이주 목록에 든다(문서는 08).
 
 ## D7 가드 캐시·검증 실행·수명은 `validation/`이 소유하고, 바인딩이 부를 수명 함수는 `core/index.ts`가 이름으로 내보낸다
 
@@ -98,7 +101,7 @@
 - 결정:
   - `validation/utils/cache/`가 검증기 인스턴스마다 `WeakMap<작성 루트, 항목>`을 든다. 항목은 사본, 가드 표(작성 위치 키), 전체 검증 함수 또는 그 실패다. 실패도 캐시에 남고 소비하는 트리마다 자기 기록을 낸다.
   - 정착은 `validation`의 가드 읽기를 부른다. 검증기가 없으면 `if` 조각은 꺼지고 경고를 트리마다 한 번 낸다.
-  - 수명 함수 `retainValidationRoot`·`releaseValidationRoot`(가칭)를 `validation/index.ts`가 내보내고 `src/core/index.ts`가 이름으로 다시 내보낸다. 07의 바인딩 이펙트가 부르며 05는 함수와 시험까지다.
+  - 수명 함수 `retainValidationRoot`·`releaseValidationRoot`(가칭)를 `validation/index.ts`가 내보내고 `src/core/index.ts`가 이름으로 다시 내보낸다. 07의 바인딩 이펙트가 부르며 05는 함수와 시험까지다. 근거는 바인딩 전용 내부 통로의 선례다: NODE-010("`core/index.ts`는 이들을 이름으로 다시 내보내고 `src/index.ts`는 내보내지 않는다")과 28C-08이 같은 처리로 `setContext`를 `src/core/index.ts:2`에 두었다. LANDING-159 규칙 3("`src/core/index.ts`와 `src/index.ts`는 PR-7까지 옛 엔진을 가리킨다")은 기존 수출을 새 엔진으로 바꾸지 않는다는 뜻으로 읽고, 옛 수출을 대체하지 않는 바인딩 전용 이름의 추가는 그 선례대로 허용된다. `src/index.ts`는 이 이름을 가져오지 않는다(G26).
   - 검증 실행은 최외곽 진입마다 요청 한 번, 마이크로태스크 합치기, 최신 커밋 번호만 실행, 스탬프가 최신일 때만 dispatch의 콜백으로 결과 파동을 낸다(EVENT-046, VALIDATE-049).
 - 까닭: 캐시·가드·전체 검증·수명은 같은 항목의 생애라 한 fractal이 소유해야 해제가 캐시를 정확히 지운다. 증감 함수를 core가 내보내면 07은 부르는 자리만 더한다.
 - 버린 것: 플러그인이 가드 캐시를 드는 것(VALIDATE-019가 core에 둠). `FinalizationRegistry`로 해제하는 것(VALIDATE-021이 기본 경로에서 뺌). 트리 생성이 참조 세기를 올리는 것(커밋되지 않은 렌더의 루트가 목록에 남아야 함, VALIDATE-021).
@@ -117,7 +120,7 @@
 - 맥락: 세 플러그인은 모듈 전역 인스턴스 하나와 `$async: true` 감쌈의 `compile`만 가진다. 가드는 등록한 사본 루트 안의 위치로 주소를 잡고(`addSchema(root)` 뒤 `{ $ref: 'root#/…' }` 컴파일), 루트 등록은 플러그인의 검증기 인스턴스가 든다(VALIDATE-017·019). 같은 `$id`의 살아 있는 두 루트는 저마다 판정하며, 떼어 두기는 플러그인 계약이고 한 인스턴스가 둘을 못 들면 같은 설정의 다른 인스턴스에 등록한다(VALIDATE-046). 가드 인스턴스는 `allErrors: false`, 다른 설정은 같다(VALIDATE-033). `bind`는 값을 바꾸는 옵션을 거부한다(VALIDATE-050).
 - 결정:
   - 패키지마다 `src/validator/utils/registerSchemaRoot.ts`가 루트마다 `addSchema`를 한 번(고유 키) 하고, 같은 `$id`가 이미 살아 있으면 같은 설정의 다른 인스턴스에 등록한다. `compile`과 `compileGuard`는 이 등록을 공유하고, `release(root)`가 `removeSchema(key)`와 컴파일 결과를 지운다.
-  - `bind`는 `assertBindableInstance`(ajv7·8은 `opts`, ajv6은 `_opts`)를 먼저 부르고, 거부면 던지고 앞 인스턴스를 남긴다. 던지는 오류는 플러그인 안의 클래스이며 `code`가 `UNHANDLED_ERROR.VALIDATOR_BIND_REFUSED`다(계획 I19, O3 대기).
+  - `bind`는 `assertBindableInstance`(ajv7·8은 `opts`, ajv6은 `_opts`)를 먼저 부르고, 거부면 던지고 앞 인스턴스를 남긴다. 던지는 오류는 `@winglet/common-utils/error`의 `BaseError`를 확장한 플러그인 안 클래스 `ValidatorBindRefusedError`(가칭)이며, `src/errors/UnhandledError.ts:17-22`와 같은 모양으로 그룹 `'UNHANDLED_ERROR'`·코드 `'VALIDATOR_BIND_REFUSED'`·`details: { options }`를 들고 `name`은 자기 이름이다(`'UnhandledError'`를 사칭하지 않음, 32C-02). core의 `isUnhandledError`는 `instanceof` 가드(`src/errors/UnhandledError.ts:30`)라 이 객체를 알아보지 못하며, 플러그인 문서마다 "호출자는 `group`과 `code`로 가른다" 한 줄을 적는다. `@winglet/common-utils`는 P8만 런타임 의존으로 가지므로 P6·P7에 더하는 일은 U12a의 소유자 확인에 묶는다(계획 I19).
   - ajv8의 세 진입점 기본 설정에 `allowUnionTypes: true`를 더한다(VALIDATE-051).
   - 루트 `dataPath`는 `''`, 정규화된 에러에 `rejectedKey`(FRAGMENT-020·053).
 - 까닭: 한 루트를 두 번 등록하면 같은 `$id` 충돌이 생기므로 등록은 하나여야 한다. 같은 설정의 인스턴스로 떼어 두면 core가 `$id`를 고치지 않는다(VALIDATE-046).
