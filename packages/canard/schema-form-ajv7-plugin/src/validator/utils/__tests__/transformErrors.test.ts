@@ -17,7 +17,7 @@ describe('transformErrors', () => {
       ];
 
       const result = transformErrors(errors);
-      expect(result[0].dataPath).toBe('/');
+      expect(result[0].dataPath).toBe('');
     });
 
     it('단순한 속성 경로를 변환해야 한다', () => {
@@ -293,12 +293,12 @@ describe('transformErrors', () => {
           keyword: 'type',
           params: {},
           message: 'should be object',
-          dataPath: undefined as any,
+          dataPath: undefined as unknown as string,
         } as ErrorObject,
       ];
 
       const result = transformErrors(errors);
-      expect(result[0].dataPath).toBe('/');
+      expect(result[0].dataPath).toBe('');
     });
 
     it('params가 없는 required 에러를 처리해야 한다', () => {

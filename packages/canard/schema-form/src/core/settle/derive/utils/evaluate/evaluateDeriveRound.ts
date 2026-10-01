@@ -18,23 +18,26 @@ import { evaluateScopedExpression } from './utils/evaluateScopedExpression';
 import type { ScopedExpressionResult } from './utils/evaluateScopedExpression';
 import { getSelectedDeclarationIds } from './utils/getSelectedDeclarationIds';
 
+/** Frozen result reused when no expression fails. */
+const NO_FAILURES: readonly [] = Object.freeze([]);
+
 /**
  * Consume active derived and unsetValue edges in the completed current shape.
  * @param root - Live calculated root whose projected output is current
  * @param state - Commit and call-local rule baselines without settlement imports
- * @returns Candidate writes, optional trace entries, and an authored failure
+ * @returns Candidate writes, optional trace entries, and all authored failures
  */
 export const evaluateDeriveRound = <Self extends SchemaNodeRecord<Self>>(
   root: Self, state: DeriveState<Self>,
 ): DeriveRoundDecision<Self> => {
   const table = getDeriveRuleTable(root.runtime.blueprint);
-  if (table.rules.length === 0) return { writes: [], trace: [] };
+  if (table.rules.length === 0) return { writes: [], trace: [], failures: NO_FAILURES };
   const pending = getDeriveSourceNodes(root, state);
   const winners = new Map<string, DeriveWrite<Self>>();
   const trace: DeriveTraceEntry[] = [];
   const traceWinners = new Map<string, number>();
   const evaluatedExpressions = new Map<string, ScopedExpressionResult>();
-  let failure: DeriveRoundDecision<Self>['failure'];
+  let failures: DeriveRoundDecision<Self>['failures'][number][] | undefined;
   if (!state.sourcePaths) state.activeRuleKeys.clear();
   state.activeUnsetTargets.clear();
   while (pending.length) {
@@ -72,7 +75,7 @@ export const evaluateDeriveRound = <Self extends SchemaNodeRecord<Self>>(
           if (!appeared && (!priorExists || sameValue(prior, current))) continue;
           const evaluated = evaluateInjectTo(node, root, rule);
           if (evaluated.failure) {
-            if (!failure) failure = evaluated.failure;
+            (failures ??= []).push(evaluated.failure);
             continue;
           }
           for (const candidate of evaluated.writes)
@@ -111,8 +114,8 @@ export const evaluateDeriveRound = <Self extends SchemaNodeRecord<Self>>(
               value = undefined;
           }
         } catch (cause) {
-          if (!failure) failure = { sourcePath: node.path,
-            schemaPath: rule.schemaPath, cause, kind: 'expression' };
+          (failures ??= []).push({ sourcePath: node.path,
+            schemaPath: rule.schemaPath, cause, kind: 'expression' });
           state.consumedRuleValues.set(key, current);
           continue;
         }
@@ -137,7 +140,7 @@ export const evaluateDeriveRound = <Self extends SchemaNodeRecord<Self>>(
         const invalid = getVirtualWriteFailure(node.path, rule.schemaPath,
           target.path, target.blueprintNode, candidate.value);
         if (invalid) {
-          if (!failure) failure = invalid;
+          (failures ??= []).push(invalid);
           continue;
         }
         chooseDeriveWrite(candidate, node.path, state, winners, trace, traceWinners);
@@ -146,5 +149,5 @@ export const evaluateDeriveRound = <Self extends SchemaNodeRecord<Self>>(
       for (let index = (node.children?.length ?? 0) - 1; index >= 0; index--)
         pending.push(node.children![index]);
   }
-  return { writes: [...winners.values()], trace, ...(failure ? { failure } : {}) };
+  return { writes: [...winners.values()], trace, failures: failures ?? NO_FAILURES };
 };

@@ -5,7 +5,7 @@ import { NOOP_FUNCTION } from '@winglet/common-utils/constant';
 import type { Fn } from '@aileron/declare';
 
 import { BIT_MASK_ALL } from '@/schema-form/app/constants';
-import type { SchemaNode, UnionNodeEventType } from '@/schema-form/core';
+import type { NodeListener, UnionNodeEventType } from '@/schema-form/core';
 
 /**
  * Re-renders the component whenever the node delivers events matching the mask.
@@ -29,7 +29,10 @@ import type { SchemaNode, UnionNodeEventType } from '@/schema-form/core';
  * @returns Monotonic revision of matching deliveries — usable as a dependency
  *          or key that changes with every tracked delivery
  */
-export const useSchemaNodeTracker = <Node extends SchemaNode>(
+export const useSchemaNodeTracker = <Node extends {
+  subscribe(listener: NodeListener): Fn;
+  revision(mask?: number): number;
+}>(
   node: Node | null,
   tracking: UnionNodeEventType = BIT_MASK_ALL,
 ): number => {

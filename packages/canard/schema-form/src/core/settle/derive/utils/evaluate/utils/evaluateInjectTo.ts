@@ -19,7 +19,7 @@ import { getVirtualWriteFailure } from './getVirtualWriteFailure';
 export const evaluateInjectTo = <Self extends SchemaNodeRecord<Self>>(
   source: Self, root: Self, rule: DeriveRule,
 ): { writes: readonly DeriveWrite<Self>[];
-  failure?: DeriveRoundDecision<Self>['failure'] } => {
+  failure?: DeriveRoundDecision<Self>['failures'][number] } => {
   if (typeof rule.literal !== 'function') return { writes: [] };
   let result: unknown;
   try {

@@ -15,6 +15,8 @@ export default [
       'src/core/behaviors/**/*.ts',
       'src/core/navigation/**/*.ts',
       'src/core/settle/**/*.ts',
+      'src/core/dispatch/**',
+      'src/core/validation/**',
       'src/core/SchemaNode/**/*.ts',
     ],
     ignores: ['**/__tests__/**'],
@@ -78,6 +80,8 @@ export default [
       'src/core/behaviors/**/*.{ts,tsx}',
       'src/core/navigation/**/*.{ts,tsx}',
       'src/core/settle/**/*.{ts,tsx}',
+      'src/core/dispatch/**',
+      'src/core/validation/**',
       'src/core/SchemaNode/**/*.{ts,tsx}',
       'src/helpers/schemaIntersection/**/*.{ts,tsx}',
     ],
@@ -95,6 +99,16 @@ export default [
               ],
               message:
                 'New engine modules must not import the preserved legacy implementation (LANDING-159).',
+            },
+            {
+              group: [
+                '@/schema-form/app/plugin',
+                '@/schema-form/app/plugin/**',
+                '**/app/plugin',
+                '**/app/plugin/**',
+              ],
+              message:
+                'Core engine modules receive validators as inputs and must not import app/plugin (CONTROLS-075).',
             },
           ],
         },

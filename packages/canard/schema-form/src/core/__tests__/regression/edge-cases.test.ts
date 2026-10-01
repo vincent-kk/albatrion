@@ -27,11 +27,10 @@ describe('round9 edge cases with PR-2 mechanisms', () => {
 
   const elseTree = () => makeSchemaNodeTree({ type: 'object', properties: {
     kind: { type: 'string' },
-  }, allOf: [{ if: {}, then: { properties: { a: { type: 'string', default: 'A' } } },
-    else: { properties: { b: { type: 'string', default: 'B' } } } }] }, {
-    ifPredicate: () => input => input !== null && typeof input === 'object' &&
-      'kind' in input && input.kind === 'yes',
-  }).root;
+  }, allOf: [{ if: { properties: { kind: { const: 'yes' } },
+    required: ['kind'] },
+    then: { properties: { a: { type: 'string', default: 'A' } } },
+    else: { properties: { b: { type: 'string', default: 'B' } } } }] }).root;
 
   it('edge-cases.mjs:48 activates the else declaration inside allOf', () => {
     const root = elseTree();

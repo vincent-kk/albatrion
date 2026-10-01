@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
+import { nodeFromJSONSchema } from '@/schema-form/core';
 import type { JSONSchemaWithVirtual } from '@/schema-form/types';
 
 import { getFallbackValidator } from '../utils/getFallbackValidator';
@@ -34,7 +35,7 @@ describe('getFallbackValidator', () => {
     const errors = validator();
 
     expect(errors[0]).toHaveProperty('keyword', 'jsonSchemaCompileFailed');
-    expect(errors[0]).toHaveProperty('dataPath', '/');
+    expect(errors[0]).toHaveProperty('dataPath', '');
     expect(errors[0]).toHaveProperty('message', 'Schema validation error');
     expect(errors[0]).toHaveProperty('source', error);
     expect(errors[0]).toHaveProperty('details');
@@ -53,6 +54,18 @@ describe('getFallbackValidator', () => {
     const errors = validator();
 
     expect(errors[0].message).toBe(errorMessage);
+  });
+
+  it('routes the fallback error path to the legacy root node', () => {
+    const jsonSchema: JSONSchemaWithVirtual = { type: 'string' };
+    const node = nodeFromJSONSchema({ jsonSchema, onChange: () => {} });
+    const [error] = getFallbackValidator(
+      new Error('Compilation failed'),
+      jsonSchema,
+    )();
+
+    expect(node.find('')).toBe(node);
+    expect(node.find(error.dataPath)).toBe(node);
   });
 
   it('should include the original error as source', () => {

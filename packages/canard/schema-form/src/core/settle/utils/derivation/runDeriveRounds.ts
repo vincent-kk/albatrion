@@ -1,7 +1,7 @@
+import { recordSettlementFailure } from '../errors/recordSettlementFailure';
 import { SchemaFormError } from '../../../../errors';
 import type { SchemaNodeRecord } from '../../../record';
 import { DERIVE_ROUND_CAP, evaluateDeriveRound } from '../../derive';
-import type { DeriveRoundDecision } from '../../derive';
 import type { SettlementContext } from '../../type';
 import { computeNode } from '../compute/computeNode';
 import { sameValue } from '../compute/sameValue';
@@ -28,7 +28,7 @@ export const runDeriveRounds = <Self extends SchemaNodeRecord<Self>>(
   context: SettlementContext<Self>,
 ): void => {
   const state = getDeriveState(context);
-  if (!state || context.cause === 'budget') return;
+  if (!state || context.exceededBudget) return;
   const previousTransition = context.inTransition;
   try {
     while (true) {
@@ -37,20 +37,21 @@ export const runDeriveRounds = <Self extends SchemaNodeRecord<Self>>(
         : collectDeriveSourcePaths(context);
       const decision = evaluateDeriveRound(context.root, state);
       if (state.trace) (context.traceRounds ??= []).push([...decision.trace]);
-      if (decision.failure && !context.failure) {
-        const failure: NonNullable<DeriveRoundDecision<Self>['failure']> = decision.failure;
-        context.failure = new SchemaFormError(
+      for (const failure of decision.failures) {
+        recordSettlementFailure(context, new SchemaFormError(
           ERROR_CODES[failure.kind],
           `${ERROR_LABELS[failure.kind]} at ${failure.schemaPath}`,
           {
             path: failure.targetPath ?? failure.sourcePath,
             schemaPath: failure.schemaPath,
             cause: failure.cause,
+            ...(failure.kind === 'injectTarget' || failure.kind === 'writeShape'
+              ? { sourcePath: failure.sourcePath } : {}),
             ...(failure.expectedLength === undefined ? {} :
               { expectedLength: failure.expectedLength, received: failure.cause }),
           },
-        );
-        context.cause = failure.kind;
+        ), failure.kind, [failure.kind, failure.sourcePath,
+          failure.targetPath ?? '', failure.schemaPath].join('\u0000'));
       }
       const changed = decision.writes.filter(
         (write) => !write.target || write.target.blueprintNode.kind === 'virtual' ||
@@ -58,12 +59,11 @@ export const runDeriveRounds = <Self extends SchemaNodeRecord<Self>>(
       );
       if (changed.length === 0) return;
       if ((context.deriveRounds ?? 0) >= DERIVE_ROUND_CAP) {
-        context.failure = new SchemaFormError(
+        recordSettlementFailure(context, new SchemaFormError(
           BUDGET_EXCEEDED,
           `Derive budget exceeded at ${context.target.path}`,
           { path: context.target.path },
-        );
-        context.cause = 'budget';
+        ), 'budget');
         context.exceededBudget = 'derive';
         context.iterations = DERIVE_ROUND_CAP;
         context.deriveBudgetRules = decision.trace;
@@ -83,12 +83,11 @@ export const runDeriveRounds = <Self extends SchemaNodeRecord<Self>>(
       context.hostWheelExceeded = undefined;
       computeNode(context.root, context);
       if (context.hostWheelExceeded !== undefined && !context.exceededBudget) {
-        context.failure = new SchemaFormError(
+        recordSettlementFailure(context, new SchemaFormError(
           BUDGET_EXCEEDED,
           `Host wheel budget exceeded at ${context.target.path}`,
           { path: context.target.path },
-        );
-        context.cause = 'budget';
+        ), 'budget');
         context.exceededBudget = 'hostWheel';
         context.iterations = context.hostWheelExceeded;
         return;

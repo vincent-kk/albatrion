@@ -9,10 +9,8 @@ describe('selfcheck-v5 nested fragment regression', () => {
       p: { type: 'string' },
     }, allOf: [{ allOf: [{ controls: { active: './q !== undefined' },
       properties: { r: { type: 'string', default: 'R' } } }] }],
-    if: {}, then: { properties: { q: { type: 'string', default: 'Q' } } } }, {
-      ifPredicate: () => input => input !== null && typeof input === 'object' &&
-        'p' in input && input.p !== undefined,
-    });
+    if: { required: ['p'] },
+    then: { properties: { q: { type: 'string', default: 'Q' } } } });
     root.setValue({});
     root.setValue({ p: 'P' });
     expect(root.outputValue).toEqual({ p: 'P', q: 'Q', r: 'R' });
@@ -20,12 +18,12 @@ describe('selfcheck-v5 nested fragment regression', () => {
 
   const nestedThen = () => makeSchemaNodeTree({ type: 'object', properties: {
     p: { type: 'string' }, q: { type: 'string' },
-  }, if: {}, then: { properties: { inner: { type: 'string', default: 'I' } },
+  }, if: { required: ['p'] },
+    then: { properties: { inner: { type: 'string', default: 'I' } },
     allOf: [{ controls: { active: './q !== undefined' }, properties: {
       deep: { type: 'string', default: 'DEEP' },
     } }],
-  } }, { ifPredicate: () => input => input !== null &&
-    typeof input === 'object' && 'p' in input && input.p !== undefined }).root;
+  } }).root;
 
   it('selfcheck-v5.mjs:129 keeps a nested then off while its parent is off', () => {
     const root = nestedThen();
@@ -63,12 +61,11 @@ describe('selfcheck-v5 nested fragment regression', () => {
     const { root } = makeSchemaNodeTree({ type: 'object', properties: {
       a: { type: 'string' },
     }, allOf: [
-      { if: {}, then: { properties: { a: false } } },
+      { if: { required: ['a'] }, then: { properties: { a: false } } },
       { controls: { active: './a !== undefined' }, properties: {
         b: { type: 'number', default: 1 },
       } },
-    ] }, { ifPredicate: () => input => input !== null &&
-      typeof input === 'object' && 'a' in input && input.a !== undefined });
+    ] });
     root.setValue({ a: 'kept' });
     expect(root.value).toEqual({ a: 'kept', b: 1 });
     expect(root.outputValue).toEqual({ a: 'kept', b: 1 });
@@ -77,10 +74,9 @@ describe('selfcheck-v5 nested fragment regression', () => {
   it('selfcheck-v5.mjs:247 tests a presence guard on projected empty input', () => {
     const { root } = makeSchemaNodeTree({ type: 'object', properties: {
       a: { type: 'string' },
-    }, if: {}, then: { properties: {
+    }, if: { required: ['a'] }, then: { properties: {
       b: { type: 'string', default: 'B' },
-    } } }, { ifPredicate: () => input => input !== null &&
-      typeof input === 'object' && 'a' in input });
+    } } });
     root.setValue({ a: '' });
     expect(root.outputValue).toEqual({});
     expect(root.find('/b')).toBeNull();

@@ -17,6 +17,14 @@ export interface ScenarioExpectation {
   }>>>;
   /** Expected validation errors, indexed by JSON Pointer. */
   readonly errors?: Readonly<Record<string, readonly unknown[]>>;
+  /** Paths receiving value deliveries, in document order for this step. */
+  readonly deliveryOrder?: readonly string[];
+  /** Whole-form change callbacks made by this step. */
+  readonly onChangeCount?: number;
+  /** Validation requests made by this step before any explicit verdict check. */
+  readonly validationRequestCount?: number;
+  /** Structured error and warning codes reported during this step. */
+  readonly onErrorCodes?: readonly string[];
   /** Expected settlement health fields on the form root. */
   readonly diagnostics?: Readonly<{
     status: 'stable' | 'degraded';

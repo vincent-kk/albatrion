@@ -7,6 +7,7 @@
 - 값 정제 옵션은 **값을 바꾸되 노드 트리를 바꾸지 않는다.** 정제는 노드가 밖으로 내보내는 값(`normalizedValue`)에만 적용되고, 자식 노드·렌더된 입력·raw `value`는 그대로 유지된다. 이 분리는 사용자가 편집 중인 화면이 정제 때문에 접히지 않게 하는 계약이다.
 - 옛 엔진의 노드 타입은 `__legacy__/core/nodes/`에 있고 엔진 전환(07 단계)까지 `<Form>`을 섬긴다. 새 엔진의 노드 종류는 `core/behaviors/`의 종류 fractal과 행 표로 더한다.
 - 플러그인 등록은 `registerPlugin()`만을 경유한다. `PluginManager`의 static 상태를 우회 변경하지 않는다.
+- PR-7의 엔진 전환 전까지 공개 `JSONSchemaError`는 기존 소비자 형을 유지합니다. `details`의 키별 값은 `any`이고 `key?`도 남으며, 새 엔진의 `ValidationIssue`는 별도 이름으로 노출합니다(ERROR-032, 34C-02, LANDING-159 규칙 3).
 
 ## API Contracts
 

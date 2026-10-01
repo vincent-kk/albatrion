@@ -185,11 +185,11 @@ describe('settle transitions and loads', () => {
       left: { type: 'number' }, right: { type: 'number' },
     } });
     loadSchemaNodeAtMount(root, { left: 'bad', right: 'bad' }, SetValueOption.Overwrite);
-    root.structure!.left.state = { [NodeState.Touched]: true };
-    root.structure!.right.state = { [NodeState.Touched]: true };
+    root.structure!.left.interactionState = { [NodeState.Touched]: true };
+    root.structure!.right.interactionState = { [NodeState.Touched]: true };
     resetSchemaNodeSubtree(root.structure!.left, SetValueOption.Overwrite);
-    expect(root.structure?.left?.state[NodeState.Touched]).toBeUndefined();
-    expect(root.structure?.right?.state[NodeState.Touched]).toBe(true);
+    expect(root.structure?.left?.interactionState[NodeState.Touched]).toBeUndefined();
+    expect(root.structure?.right?.interactionState[NodeState.Touched]).toBe(true);
     expect([...root.runtime.typeMismatchPaths].sort()).toEqual(['/left', '/right']);
     expect(root.runtime.typeMismatchRecords?.map((record) => record.path)).toEqual(['/left']);
     expect(root.runtime.typeMismatchRecords?.[0]?.source).toBe('load');

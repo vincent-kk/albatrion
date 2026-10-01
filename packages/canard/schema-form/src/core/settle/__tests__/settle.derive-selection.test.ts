@@ -13,7 +13,8 @@ describe('active derive declarations', () => {
       H: { type: 'object', properties: {
         enabled: { type: 'boolean' }, s: { type: 'string' },
         x: { type: 'string' },
-      }, if: {}, then: { controls: { derived: './s' }, properties: {
+      }, if: { properties: { enabled: { const: true } },
+        required: ['enabled'] }, then: { controls: { derived: './s' }, properties: {
         x: { type: 'string' },
       } } },
     } });
@@ -29,17 +30,18 @@ describe('active derive declarations', () => {
     const { root } = createTestTree({ type: 'object', properties: {
       H: { type: 'object', properties: {
         enabled: { type: 'boolean' }, x: { type: 'string' },
-      }, if: {}, then: { controls: { resetInteraction: 'true' },
+      }, if: { properties: { enabled: { const: true } },
+        required: ['enabled'] }, then: { controls: { resetInteraction: 'true' },
         properties: { x: { type: 'string' } } } },
     } });
     loadSchemaNodeAtMount(root, { H: { enabled: false, x: 'own' } },
       SetValueOption.Overwrite);
     const target = root.structure!.H.structure!.x;
-    target.state = { [NodeState.Dirty]: true, [NodeState.Touched]: true };
+    target.interactionState = { [NodeState.Dirty]: true, [NodeState.Touched]: true };
     writeSchemaNode(root.structure!.H.structure!.enabled, true, 'input',
       SetValueOption.Overwrite);
-    expect(target.state[NodeState.Dirty]).toBe(true);
-    expect(target.state[NodeState.Touched]).toBe(true);
+    expect(target.interactionState[NodeState.Dirty]).toBe(true);
+    expect(target.interactionState[NodeState.Touched]).toBe(true);
   });
 
   it('FRAGMENT-050 shared node baseline only on depth-two if activation', () => {
@@ -48,7 +50,8 @@ describe('active derive declarations', () => {
         H: { type: 'object', properties: {
           enabled: { type: 'boolean' }, s: { type: 'string' },
           x: { type: 'string' },
-        }, if: {}, then: { controls: { derived: './s' }, properties: {
+        }, if: { properties: { enabled: { const: true } },
+          required: ['enabled'] }, then: { controls: { derived: './s' }, properties: {
           x: { type: 'string' },
         } } },
       } },
@@ -65,7 +68,8 @@ describe('active derive declarations', () => {
       H: { type: 'object', properties: {
         enabled: { type: 'boolean' }, s: { type: 'string' },
         x: { type: 'string' },
-      }, if: {}, then: { controls: { derived: './s' }, properties: {
+      }, if: { properties: { enabled: { const: true } },
+        required: ['enabled'] }, then: { controls: { derived: './s' }, properties: {
         x: { type: 'string', minLength: 3 }, extra: { type: 'string' },
       } } },
     } };
@@ -145,11 +149,11 @@ describe('active derive declarations', () => {
     loadSchemaNodeAtMount(root, { flag: false, H: { P: { q: 'q0' } } },
       SetValueOption.Overwrite);
     const target = root.structure!.H.structure!.P;
-    target.state = { [NodeState.Dirty]: true, [NodeState.Touched]: true };
+    target.interactionState = { [NodeState.Dirty]: true, [NodeState.Touched]: true };
     writeSchemaNode(target.structure!.q, 'user', 'input', SetValueOption.Overwrite);
     expect(target.structure?.q?.raw).toBe('user');
-    expect(target.state[NodeState.Dirty]).toBe(true);
-    expect(target.state[NodeState.Touched]).toBe(true);
+    expect(target.interactionState[NodeState.Dirty]).toBe(true);
+    expect(target.interactionState[NodeState.Touched]).toBe(true);
   });
 
   it('FRAGMENT-050 shared node baseline only after inactive declaration reselects', () => {
@@ -201,7 +205,8 @@ describe('active derive declarations', () => {
     const { root } = createTestTree({ type: 'object', properties: {
       enabled: { type: 'boolean' }, s: { type: 'string' },
       x: { type: 'string' },
-    }, if: {}, then: { controls: { derived: './s' }, properties: {
+    }, if: { properties: { enabled: { const: true } },
+      required: ['enabled'] }, then: { controls: { derived: './s' }, properties: {
       x: { type: 'string' },
     } } });
     loadSchemaNodeAtMount(root, { enabled: false, s: 'S1', x: 'own' },
@@ -215,7 +220,8 @@ describe('active derive declarations', () => {
   it('FRAGMENT-050 newly entered node fires for then derived', () => {
     const { root } = createTestTree({ type: 'object', properties: {
       enabled: { type: 'boolean' }, s: { type: 'string' },
-    }, if: {}, then: { controls: { derived: './s' }, properties: {
+    }, if: { properties: { enabled: { const: true } },
+      required: ['enabled'] }, then: { controls: { derived: './s' }, properties: {
       x: { type: 'string' },
     } } });
     loadSchemaNodeAtMount(root, { enabled: false, s: 'S1', x: 'own' },
