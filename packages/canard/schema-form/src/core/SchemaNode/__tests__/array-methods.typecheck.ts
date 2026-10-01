@@ -1,4 +1,4 @@
-import type { ArrayNode, StringNode } from '../index';
+import type { ArrayNode, StringNode } from '../type';
 
 declare const arrayNode: ArrayNode<string>;
 declare const stringNode: StringNode;
