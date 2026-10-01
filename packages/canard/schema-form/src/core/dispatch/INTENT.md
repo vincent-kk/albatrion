@@ -9,7 +9,7 @@
 ## Conventions
 
 - 의존 순서는 `blueprint < record < {behaviors, navigation} < validation < settle < dispatch < SchemaNode`입니다. `dispatch`는 아래 fractal의 진입점만 소비하고 노드 겉면을 가져오지 않습니다(NODE-016·045, LANDING-084).
-- `index.ts`는 동사별 `dispatchSetValue`·`dispatchResetSubtree`·`dispatchResetForm`·`dispatchMount`·`dispatchBatch`·`dispatchContextChange`, 읽기 `subscribeSchemaNode`·`readSchemaNodeRevision`, 정착 밖 `dispatchRequest`·상태·외부 오류 진입, `dispatchValidate`, `adoptSchemaNodeChain`, 트리 생성의 기록용 `createFormErrorRecord`를 이름으로 내보냅니다(NODE-010, LANDING-064·084, EVENT-030).
+- Name each write, read, validation, and binding entry explicitly at the boundary. Array verbs join the same entry chain and apply pure plans to prior batch marks before the single batch settlement (NODE-010, LANDING-064·084, EVENT-030, 62C-01).
 - 진입 깊이·파동/중첩 예산·대기 비트·콜백·보고기·전달 중 표시·경고 키는 `record`가 선언한 트리 런타임 칸입니다. 노드별 일정과 추가 고정 필드를 만들지 않습니다(NODE-004·045, EVENT-004, ERROR-024·029).
 
 ## Boundaries

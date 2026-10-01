@@ -17,7 +17,7 @@
 
 - 멤버를 더할 때 DETAIL의 PR별 목록·멤버 목록 시험·공개 형을 함께 고칩니다(26C-01).
 - 생성 시 청사진의 종류·전략으로 행을 한 번 선택합니다(NODE-002·008).
-- 배열 동사 다섯은 한 문장으로 정착에 위임하고 비배열 거부는 행의 공유 칸에 맡깁니다(NODE-010·014, 35C-01).
+- Delegate each array verb in one statement to its dispatch entry; the shared behavior slot rejects non-array hosts (NODE-010·014, 35C-01, 62C-01).
 
 ### Ask first
 

@@ -67,7 +67,7 @@
 | `clearSubtreeState()` | method | `dispatch.dispatchClearSubtreeState` | EVENT-067, NODE-010 |
 | `batch(fn: () => void)` | method | `dispatch.dispatchBatch` | EVENT-013–019·061, SURFACE-008 |
 
-- 배열 동사 다섯은 클래스에서 종류를 검사하지 않고 정착의 구조 진입 함수에 한 문장으로 위임합니다. 그 함수가 행의 `arrange` 칸을 거쳐 순수 계획을 받아 적용하며 비배열 행은 공유 칸 하나가 `SchemaFormError`를 즉시 던집니다. 메서드는 Promise를 돌려주지 않고, 무동작의 반환은 각 계획의 반환 출처를 따릅니다(NODE-010·014, ERROR-197, GOAL-058, 35C-01·06, 36C-01, 실행 ADR D1·D4).
+- 배열 동사 다섯은 클래스에서 종류를 검사하지 않고 dispatch의 동사별 진입 함수에 한 문장으로 위임합니다. 진입 함수는 배치 밖 정착의 동기 결과를 돌려주고 배치 안에서는 앞선 표시를 얹은 원본 배열에 행 계획을 적용하여 Replace로 표시합니다. 비배열 오류는 사슬 끝에서 보고하고 던지며 진입 거부는 `undefined`입니다. 배치 끝 통째 쓰기는 위치로 아이템 키를 잇습니다(NODE-010·014, ERROR-197, GOAL-058, 33C-01, 35C-01·06, 36C-01, 62C-01, 실행 ADR D1·D4).
 - 클래스 파일에는 레코드 순서의 저장 필드, 상수 읽기 게터, 한 문장 위임만 둡니다. 정착이 쓰는 공개 레코드 칸은 같은 이름의 게터와 한 문장 저장 세터를 짝지어 프로토타입 이름을 유지합니다. 생성자는 고정 선언 순서의 대입만 하고 필드 초기화식과 생성자에 객체·배열 리터럴·함수·`new`를 두지 않습니다. `type`·`strategy` 분기는 가드 외에는 행에서만 합니다. 공개 인터페이스가 멤버 주석의 정본이고 클래스는 `{@inheritDoc}`로 가리킵니다(NODE-010·049).
 - 공개 `SchemaNode`는 `type`으로 판별하는 `StringNode | NumberNode | BooleanNode | NullNode | ObjectNode | ArrayNode | VirtualNode | UnionNode`입니다. `schemaType`은 차례로 `'string'`, `'number' | 'integer'`, `'boolean'`, `'null'`, `'object'`, `'array'`, `'virtual'`, `UnionSchemaType`으로 좁힙니다. `UnionMemberType = 'string' | 'number' | 'integer' | 'boolean' | 'object' | 'array'`이고 `UnionSchemaType = readonly [UnionMemberType, UnionMemberType, ...UnionMemberType[]]`입니다(NODE-057·058).
 - 다섯 배열 메서드의 공개 형은 이 합집합의 `ArrayNode` 구성원에만 두고 branch·terminal 두 전략이 같은 서명을 가집니다. `type`으로 좁히지 않은 다른 노드 형에는 메서드가 없으며, 런타임에서 비배열 호출을 시도하면 행의 거부 칸이 처리합니다(NODE-010·014, SURFACE-005, TEST-070, 26C-01, 35C-01).

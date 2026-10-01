@@ -8,8 +8,10 @@
 
 ## API Contracts
 
+- `interpretSchemaNodeInput(template, input)`는 행의 정적 해석만 적용한 원본 트리를 돌려줍니다. dispatch는 배치 동사의 반환 슬롯에 이 함수를 사용하며 채움·파생·투영·생성은 하지 않습니다. 바뀐 하위 값이 있을 때만 그 조상 그릇을 복사하고 순환 입력은 재방문하지 않습니다. 비용은 반환 슬롯의 입력 트리 크기에 비례하며 첫 객체 템플릿에서 O(선언 자식 수)의 이름 색인을 약한 참조 캐시에 만들고 재사용합니다(EVENT-061, 62C-01).
+
 - 진입점은 `writeSchemaNode<Self>(node: SchemaNodeRecord<Self>, input: unknown, kind: SchemaNodeWriteKind, option: SetValueOption): void`, `loadSchemaNodeAtMount<Self>(root: SchemaNodeRecord<Self>, value: unknown, option: SetValueOption): void`, `resetSchemaNodeForm<Self>(root: SchemaNodeRecord<Self>, value: unknown, option: SetValueOption): void`, `resetSchemaNodeSubtree<Self>(node: SchemaNodeRecord<Self>, option: SetValueOption): void`, `readSchemaNodeDefaultValue<Self>(node: SchemaNodeRecord<Self>): unknown`과 정착용 맥락 변경 함수를 이름으로 내보냅니다. `readSchemaNodeInactiveValues`·`readSchemaNodeTypeMismatch`·`readSchemaNodeTypeMismatches`·`readSchemaNodeWatchValues`도 노드 겉면에 이름으로 제공하여 각 게터가 내부 organ 없이 한 문장으로 위임하게 합니다. 각 읽기 함수는 살아 있는 참조에서는 런타임 값을, 떼어진 참조에서는 마지막 커밋의 동결 값을 읽는 해당 멤버의 계약을 따릅니다. `SchemaNode.setValue`·`resetSubtree`·바인딩 전용 `setContext`의 조율은 `dispatch` 진입을 경유하고, 그 진입이 이곳의 동기 정착 함수를 부릅니다(NODE-010·044, LANDING-064·084, WRITE-085, CONTROLS-032·080, SURFACE-055, 26C-01, 28C-03·07·08).
-- 진입점은 `arrangeSchemaNodeItems(node, operation)`도 이름으로 내보냅니다. 이 함수는 행의 순수 `arrange` 계획을 적용하고 구조를 확정한 뒤 표시 → 계산 → 파생 → 전이 → 커밋을 동기적으로 한 번 돌립니다. 자기 진입 사슬은 없고 배선 뒤의 진입 사슬·통지와 `UpdatePath` 배달은 dispatch가 맡습니다(NODE-010·014, SURFACE-005, 33C-01, 35C-02, 36C-01, 실행 ADR D1·D4).
+- 진입점은 `arrangeSchemaNodeItems(node, operation)`도 이름으로 내보냅니다. 배치 밖 배열 진입은 dispatch의 사슬 안에서 이 함수를 호출하여 행 계획을 적용하고 표시 → 계산 → 파생 → 전이 → 커밋을 동기적으로 한 번 돌립니다. 배치 안 동사는 정착을 호출하지 않고 표시된 원본 배열에 순수 계획을 적용하며 배치 끝 통째 쓰기 하나로 정착합니다. 커밋은 재인덱싱 경로 사실의 노드와 자손을 배달 후보에 넣어 `UpdatePath`의 `{ previous, current }`를 표시합니다(NODE-010·014, SURFACE-005, 33C-01, 35C-02, 36C-01, 62C-01, 실행 ADR D1·D4).
 - `SchemaNodeWriteKind`는 `'input' | 'callerPartial' | 'callerReplace' | 'load' | 'automatic'`입니다. 마지막 종류는 채움·입력 마침 등 예약 층 쓰기이며, 기본 `setValue(V)`는 로드가 아닌 `callerReplace`입니다(VALUE-032, WRITE-096). 표시 단계가 종류·옵션·원래 쓰인 값을 기록하고, 정적 `schemaType`·`nullable`로 먼저 한 번 해석하며 쓴 노드와 역의존 조상을 재계산 목록에 넣습니다(WRITE-056·098, SETTLE-002·017).
 - `setValue(V, Merge)`는 `callerPartial`이며 받은 키마다 살아 있는 자식 또는 형상 밖 자손의 종류별 잠복 원본에 부분 쓰기를 합니다. 형상 밖 호스트의 잘못된 종류 `raw`는 자손 잠복 잎에 방출 가능한 값을 쓴 호출자 부분 쓰기에서만 비우고, 살아 있는 호스트의 `raw`는 자식 방출이 실제 생길 때만 비웁니다. 빈 객체로 승격하거나 형제의 기본값을 채우지 않습니다(WRITE-013·079·090, VALUE-002·034·036, 26C-10, 26C-14).
 - 통째 교체·로드에서 V에 없는 선언 자식은 없음으로 정하고(WRITE-091), 선언 밖 키는 `extras`에 보관합니다(WRITE-090).
@@ -63,6 +65,12 @@
 
 ## Acceptance Criteria
 
+### settle-array-integration — 배열 소멸과 기록 저장소
+
+- 오류 맵을 제거하기 전에 마지막 합쳐진 오류 읽기를 떼어진 노드의 약한 참조 읽기 묶음으로 보존합니다. 비용은 소멸 노드당 배열 참조 하나이며, 배열 합치기는 기존 오류 읽기 메모를 재사용합니다(NODE-044, 35C-09).
+
+- 소멸 아이템과 자손은 전역 상태 셈·배달/감시·오류/대상 대기 저장소에서 제거됩니다. 경고 구조 키는 현재 경로를 따르고 기록 객체는 당시 경로를 유지합니다. 값·계산 상태 변화가 없는 경로 사실도 아이템과 자손의 배달 후보가 됩니다. 같은 없는 대상을 겨눈 배열 아이템마다 출처 경로를 담은 오류를 하나씩 발생 순서대로 묶습니다(35C-02·09, 43C-01, 58C-01, 59C-01).
+
 ### settle-failure-identity — 오류 발생 식별자
 
 - 실패 중복 키는 한 정착의 발생 식별자이며, 대상 경로가 원천과 다른 파생 실패는 종류·원천 경로·대상 경로·규칙 스키마 경로를 함께 구별합니다. 같은 규칙을 공유하는 서로 다른 원천이 같은 대상에서 실패해도 별개 오류로 보존합니다(ERROR-004, 58C-01).
@@ -101,6 +109,8 @@
 - 통째 쓰기는 자리의 노드·키를 잇고 새 꼬리만 만들거나 남은 꼬리를 소멸시키며, 로드와 비로드의 생김·채움을 구분합니다. 구조 동사는 행 계획으로 경로 열쇠 저장소와 게이트 등록을 재배치하고 스냅숏 자리를 맞춘 뒤 한 번 정착하며, 원본 B는 자동 쓰기의 구조 로그를 역순으로 되돌리고 키 계수를 유지합니다. 아이템 선언은 실제 경로에 묶이고 비활성 배열 호스트의 잠복 원본은 전체 배열 하나입니다(NODE-051·052, WRITE-036·085·090·095·099, CONTROLS-080, 35C-02·05·08·09·10).
 
 ### settle-delivery — 변경 범위의 배달 표시
+
+- 소멸한 아이템과 자손의 직전 상호작용 상태를 전역 셈에서 빼고, 구조 연산의 새 아이템은 생김 집합으로 더합니다. 소멸 노드의 배달 스냅숏·감시 역색인·대기 사건·검증/외부 오류 및 대상 집합은 노드 identity로 지웁니다. 재인덱싱은 identity 저장소를 유지하고 경고 데이터 경로 키를 옮기며 소멸 경로의 경고는 버립니다. 사슬에 이미 발생한 오류와 기록은 당시 경로를 유지하여 발생 순서를 보존합니다. 정리는 소멸 하위 트리의 노드 수에 비례하고 일반 잎 쓰기에는 저장소 전체 순회를 더하지 않습니다(35C-02·09, 43C-01, 58C-01).
 
 - 관련 없는 한 잎 쓰기와 맥락 참조가 그대로인 커밋은 해당하지 않는 감시 노드의 감시 값을 다시 읽지 않습니다. `@` 감시는 마지막 배달에서 본 맥락 참조와 현재 참조가 다른 커밋에서만 후보가 되며, 의존 경로·맥락·형상 변경은 해당 감시 값과 `UpdateComputedProperties` 비트를 유지합니다(EVENT-064, CONTROLS-019, 28C-07, 44C-01).
 

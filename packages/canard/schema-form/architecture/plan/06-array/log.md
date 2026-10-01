@@ -6,6 +6,70 @@ Planning method: 저장소 지침 — `PLAN.md` §2와 `plan/prompts.md`의 단�
 
 ## 0. 머리
 
+### 2026-10-02 — 05 통합 I3·I4·I5·I7
+
+범위는 [integration-05.md](integration-05.md)의 I3·I4·I5·I7이다. `stage-06`에서만 작업했고 Git 커밋·push·stash·reset·checkout·stage는 하지 않았다. I8의 벤치·차등 검사·외부 검증 판정·PR 수정은 이번 요청 범위가 아니다.
+
+| 단위 | 변경 파일 (`src/core/` 기준) | 결과 |
+| --- | --- | --- |
+| I3 | `dispatch/utils/entry/dispatch{Push,Pop,Update,Remove,Clear}.ts`, `dispatch/utils/chain/markBatchArrayOperation.ts`, `dispatch/index.ts`, `SchemaNode/SchemaNode.ts`, `SchemaNode/type.ts`, `dispatch/utils/entry/dispatchBatch.ts`, `settle/utils/write/interpretSchemaNodeInput.ts`, `settle/index.ts`; 해당 INTENT·DETAIL | 다섯 사슬 진입, 거부 시 undefined, 배치 표시 위의 순수 계획·Replace 쓰기·동기 반환. 반환 슬롯의 정적 해석만 적용하고 정착은 배치 끝 한 번이다(33C-01, 62C-01). |
+| I4 | `settle/utils/commit/markCommitDeliveries.ts`, `behaviors/DETAIL.md`, `dispatch/DETAIL.md` | 비배열 오류를 사슬 끝에서 보고/던짐. 경로 사실을 명시적인 배달 후보로 삼아 계산 변화가 없는 아이템과 자손도 UpdatePath를 받는다(35C-01·02). |
+| I5 | `settle/utils/commit/{commitGlobalState,markCommitDeliveries,commitSettlement}.ts`, `settle/utils/compute/selectNodeSchema.ts`, `settle/utils/structure/rekeyArrayRuntimePaths.ts`, `settle/utils/transition/{prunePerishedPaths,pruneArrayTailPaths}.ts`, `settle/utils/detached/captureDetachedSchemaNodeReads.ts`, `validation/utils/read/readSchemaNodeErrors.ts`, `record/type.ts`, `record/index.ts`, `record/utils/indexSchemaNodeWarning.ts`, `dispatch/utils/report/clearWarningKeys.ts`, `dispatch/utils/entry/{dispatchMount,dispatchResetForm}.ts`, `dispatch/utils/chain/{adoptSchemaNodeChain,exitSchemaNodeChain}.ts`; 해당 INTENT·DETAIL | 소멸 상태 계수·노드 저장소 정리. 경고의 영향 경로 역색인. 활성 오류 맵 제거 전 마지막 errors 읽기를 WeakMap에 보존한다(35C-09, 43C-01, NODE-044). |
+| I7·회귀 | `dispatch/__tests__/dispatch.array-entry.test.ts`(12건), `settle/__tests__/settle.array-integration.test.ts`(6건), `settle/__tests__/settle.array-rekey.test.ts`, `__tests__/scenarios/array.source-b-structure.spec.ts` | 예산 전 오류 묶음과 아이템별 missing-target sourcePath를 검증한다. 기존 Source-B 장면은 앞선 오류가 없는 단일 예산 오류이므로 원래 오류 하나를 유지하며 값·구조 기대를 그대로 통과한다(58C-01, 59C-01). |
+
+#### I5 저장소별 결정
+
+`record/type.ts`의 전체 런타임 형을 읽고 데이터 경로·노드 identity·발생 스냅숏을 구분했다. 살아 있는 identity 맵은 재키하지 않는다. 소멸 노드 정리는 중복 없이 그 하위 트리만 순회하고, 새 경고 처리는 해당 아이템 접두사의 역색인만 조회한다. 기존 경로 저장소 재키의 전체 순회 비용은 기존 구현/P-22 범위이며 일반 잎 쓰기에 새 전체 순회를 더하지 않았다.
+
+| 저장소 | 재인덱싱 | 소멸 |
+| --- | --- | --- |
+| `loadSnapshot` | 기존 구조 슬롯 이동·자리 맞춤 유지 | 기존 자리 잘라냄 유지; 폼의 로드 자료는 별도 수명 |
+| `latentRaw`, `latentRawMetadata` | 기존 두 단계 경로/순서 이동 유지 | 기존 경로 제거·dirty 표시 유지 |
+| `committedDeclarationIds` | 기존 (path, kind) 재키 유지 | 기존 소멸 경로 삭제 유지 |
+| `committedRuleValues`, `committedRuleKeysBySource`, `committedRuleKeysByTarget` | 기존 원천/대상 경로 이동과 역색인 재구성 유지 | 기존 원천 또는 대상 소멸 규칙 삭제 유지 |
+| `typeMismatchPaths` | 기존 이동 유지 | 기존 삭제 유지 |
+| `typeMismatchesMemo`, `inactiveValuesMemo`, `inactiveValueEntries` | 기존 영향 범위 무효화 유지 | 기존 latent dirty 커밋에서 사라진 항목과 조상 메모 제거 |
+| `refreshTargets`, `typeMismatchRecords` | 커밋에서 현재 경로로 교체 | 같은 커밋 교체이므로 별도 재키/삭제 없음 |
+| `warningKeys`, `pendingWarningRecords` | 경고 구조 키의 데이터 경로만 충돌 없이 이동. 기록 객체는 발생 당시 path·details·identity 유지 | 해당 접두사의 데이터 경고 키/대기 항목 삭제. 이미 모인 사슬 발생 기록은 보존 |
+| `warningKeysByPath` (신규) | 영향받은 경고 키만 조상 색인에서 삭제/재등록 | 해당 접두사의 키만 삭제. 배달 후 일회성 키 제거, 폼 로드 초기화, 새 루트 인계 시 대기 기록 재색인 |
+| `deliverySnapshots` | 이전 path를 보존한 뒤 pathChanges 후보로 새 커밋 비교 | 소멸 아이템과 자손 삭제 |
+| `deliveryWatchIndex` | 경로 변경 후보 및 기존 형상 변경 감시 재평가로 현재 상대 경로 갱신 | 소멸 아이템과 자손 remove |
+| `deliveries`, `queuedEvents`, `queuedNonSettleEvents` | 살아 있는 node 키 유지; UpdatePath payload는 커밋에서 이전/현재로 갱신 | 소멸 아이템과 자손 삭제; 늦은 배달 없음 |
+| `globalStateCounts`, `globalState` | 경로와 무관한 참 키 계수 유지 | 직전 상태를 차감하고 entered를 더함; 0↔1 경계에서만 새 aggregate |
+| `nodeErrors`, `validationErrors`, `combinedErrors` | 살아 있는 node 키와 마지막 판정/외부 오류 배열 유지 | 활성 맵 삭제 전 마지막 합친 배열을 detachedReads에 같은 참조로 보존 |
+| `validationChangedNodes`, `validationTargets`, `validationPendingTargets` | 살아 있는 node 키 유지 | 소멸 아이템과 자손 삭제 |
+| `globalErrors`, `validationResult` | 마지막 전체 판정 스냅숏은 재작성하지 않음 | 그대로 보존; 다음 최신 판정에서 교체, 늦은 결과는 기존 commit stamp로 거부 |
+| `guardFailureRecords`, `reportedGuardFailures`, `rebuiltReferenceSchemaPaths` | 작성 스키마/가드 위치·폼 수명 키이므로 데이터 재키 없음 | 아이템 소멸은 가드의 폼당 보고 수명을 끝내지 않음 |
+| `listeners` | node identity 유지 | 기존 구독/해지 유효, 다시 발화하지 않음(NODE-044) |
+| `detachedReads`, `watchValuesMemo` | WeakMap identity 유지; 살아 있는 감시 메모는 커밋 번호로 갱신 | 마지막 읽기 보존; WeakMap이라 참조가 사라지면 수거 가능 |
+| `batchWrites` | 배치의 호출 순서·node 참조 유지 | 배치 동사는 소멸을 미리 적용하지 않음; 로드의 기존 표시 초기화 유지 |
+| `chainErrors`, `chainOccurrences`, `enclosingChain` | 발생 당시 오류/기록·순서·참조 보존 | 이미 발생한 오류/기록을 삭제하지 않음(58C-01) |
+| `settlementScratch`의 node/path 작업 집합·로그 | 한 정착의 원본 B·경로 사실을 유지; 별도 런타임 재키 없음 | 기존 perished 확정·되돌림 처리 후 release가 비움 |
+
+검증기의 compile·compileGuard·release 사본 계약은 변경하지 않았고 동일 사본/가드/수명 unit 검사를 포함한 전체 unit 검사를 통과했다(VALIDATE-019).
+
+#### 테스트와 수정 전 실패 증거
+
+- 새 테스트는 dispatch 12건 + settle 6건 = 18건이다. 이름에 33C-01·35C-01·35C-02·35C-09·43C-01·58C-01·59C-01·62C-01·EVENT-035를 달았다. 기존 예산/Source-B 시험 2건은 오류 관측을 강화했다.
+- 구현 전 소멸 상태 시험은 `{ touched: true, dirty: true }`가 남아 실패했고, 소멸 배달 스냅숏과 옛 경고 키도 `true`가 남아 실패했다. 오류 맵 제거 뒤 마지막 errors 읽기 시험은 `[]`와 마지막 오류 배열의 참조 차이로 실패했다.
+- 다섯 새 수출을 한정해서 제거했을 때 dispatch 12/12가 새 심볼 부재로 실패했다. 앞선 표시 읽기를 committed local로 바꾸면 push 2≠3, remove `{ n: 1 }`≠`{ n: 7 }`, clear 후 push 3≠1, wrong-kind pop 2≠undefined로 실패했다.
+- pathChanges 후보를 한정해서 제거하면 경로만 바뀐 아이템/자손의 payload가 undefined여서 실패했다. 오류 수집을 마지막 오류만 남기도록 한정하면 앞선 두 주입 오류가 사라져 MULTIPLE_ERRORS 대신 BUDGET_EXCEEDED로 실패했다. sourcePath만 제거한 별도 검사에서는 세 아이템 오류의 sourcePath 누락으로 실패했다.
+- 모든 한정 변경을 finally로 복원했다. 복원 후 관련 4개 파일 24/24 통과. 기존 Source-B 장면은 시나리오 데이터 수정이 필요하지 않았다.
+
+#### 최종 지정 검사
+
+| 위치 | 명령 | 결과 |
+| --- | --- | --- |
+| PKG | `npx tsc --noEmit -p tsconfig.json` | exit 0; 시험의 type-only 상대 import 오타 수정 후 재검사 |
+| PKG | `npx vitest run --project unit --reporter=dot` | 387 files, 4,541 passed, 1 todo, 실패 0 |
+| PKG | `npx vitest run --project render --reporter=dot` | 54 files, 543 passed, 실패 0 |
+| PKG | `npx eslint src/core` | exit 0 |
+| scenarios | `npx tsc --noEmit -p tsconfig.json` | exit 0 |
+| scenarios | `npx vitest run --reporter=dot` | 4 files, 21 passed, 실패 0 |
+| PKG/architecture | `node ledger/checks/plan-links.mjs plan/README.md plan/*/*.md -- ledger/*.md` | problems 0 |
+
+빌드 산출물 변경 없음. stage-06의 소스·문서·시험 변경은 모두 unstaged로 남긴다.
+
 - 선출 이유: 04 PR #351이 머지되어(`54afafb86`) 05·06의 의존(03)이 풀렸다. 05는 별도 세션(`albatrion-ce`, 워크트리 `.claude/worktrees/stage-05`)이 진행 중이고, 06은 05와 병렬로 이 세션이 맡는다. 소유자 승인 2026-10-01.
 - 브랜치 `feat/schema-form-array`, base와 PR base `1.0.0-beta`(`7fa4baa45`). 워크트리 `.claude/worktrees/stage-06`(sparse: `.claude/commands`·`.vscode` 제외 — 샌드박스 쓰기 제한, 개발과 무관). push는 PR 단계 전까지 하지 않는다.
 - 원장 질의는 원장 관리 세션 `albatrion-5c`로 보낸다. 이 단계의 편집자 결정은 원장 관리자가 새 라운드로 기록한다(05와 번호를 나눠 씀; 06의 첫 기록은 33라운드 33C-01). 소유자 질문은 PR을 연 뒤 원장 관리자가 묶어 올린다. 파일 소유: 원장 관리자는 `ledger/**`·`reviews/round-*`·`HANDOFF.md`·`PLAN.md` §1·§5(착수 한 줄 뒤), 이 세션은 `plan/06-array/**`·`src/**`·`verification/**`·`PLAN.md` §3·§4의 06 행.
