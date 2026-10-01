@@ -12,10 +12,10 @@ Planning method: 저장소 지침 — `PLAN.md` §2(한 PR의 순서)와 `plan/p
 
 | 완료 기준(`request.md`) | 단위 | 관찰할 증거 |
 | --- | --- | --- |
-| `arrayBehavior/` 세 조직과 문서 | U2, U4 | 문서 선행 커밋 검사(G3), 행 시험·행 표 시험 초록(G5), 의존 방향 시험(G10) |
-| 구조 연산·identity·스냅숏 자리 시험 | U5, U6, U7, U8 | §5 게이트 추적표의 시험 이름 태그(G6·G7·G8·G9)와 초록, 시나리오 수(G13) |
+| `arrayBehavior/` 세 조직과 문서 | U2, U4 | 문서 선행 커밋 검사(G3), 행 시험·행 표 시험 초록(G5), 의존 방향 시험(G9) |
+| 구조 연산·identity·스냅숏 자리 시험 | U5, U6, U7, U8 | §5 게이트 추적표의 시험 이름 태그(G6·G7·G8·G10)와 초록, 시나리오 수(G11) |
 | `resolveArrayLimits` 이동, 필터의 비트 분기 | U3, U4 | 옮긴 시험 초록과 청사진 문서 갱신(G4), 투영 시험(G5) |
-| 벤치 행(지연 실체화 판정 포함), `verification.md`의 게이트 전부 통과 | U9, U10, U11 | `verification/06-array/performance.md`의 세 행과 NODE-053 판정(G17·G18), 최종 게이트(G19–G25) |
+| 벤치 행(지연 실체화 판정 포함), `verification.md`의 게이트 전부 통과 | U9, U10, U11 | `verification/06-array/performance.md`의 세 행과 NODE-053 판정(G14·G15), 최종 게이트(G16–G22) |
 
 비목표(원장 ID와 함께):
 
@@ -127,7 +127,7 @@ U3–U7은 앞 단위의 계약에 기대므로 차례로 간다. U8·U9·U10은
 
 - 이 계획·`execution-adr.md`·`.seiri/tasks/schema-form-array/gates.md`를 쓰고, §2.2를 `log.md` §4로 옮기고, 원장 질의 답(33C-01, 35C-01~12)을 `log.md`에 적는다.
 - 계획 리뷰(antigravity, `seiri:review-plan`)를 받아 `cleared`까지 고친다(G1). 판정은 §9.
-- 완료: G1·G2.
+- 완료: G1.
 
 ### U1 레거시 확인
 
@@ -175,20 +175,20 @@ U3–U7은 앞 단위의 계약에 기대므로 차례로 간다. U8·U9·U10은
 - 원장: SURFACE-005·056, NODE-005·010·014·044·051·052, WRITE-007·022·085·088·095·099, GOAL-058·073, EVENT-068(사실만), TEST-070, 35C-01·02·03·05·06.
 - 붉은 시험 먼저(`settle/__tests__/`, `SchemaNode/__tests__/`).
 - settle 구조 진입 함수 하나(가칭 `arrangeSchemaNodeItems(node, operation)`, settle 진입점이 이름으로 내보냄): `node.behavior.arrange`의 계획을 받아 (1) 새 아이템 목록을 만든다(옛 노드 재사용, 새 자리는 노드 생성·새 키, 빠진 노드는 소멸), (2) 자리가 바뀐 아이템과 그 자손의 이름·경로를 바꾸고 경로 열쇠 저장소를 옮긴다, (3) 스냅숏 자리를 맞춘다(구조 연산의 새 자리는 `v`), (4) 생김(채움 대상)과 소멸을 정착 작업 칸에 적고, (5) 표시 → 계산 → 파생 → 전이 → 커밋을 한 번 돈다. `update`는 그 아이템에 `writeSchemaNode(item, v, 'callerReplace')`와 같은 경로를 탄다.
-- 경로 열쇠 저장소 옮기기(`settle/utils/structure/`): 게이트 경로 색인(`getGateRegistry`의 경로 맵), 잠복 원본과 메타데이터, `committedDeclarationIds`, 파생·나감 정책 규칙 기준값과 두 색인, `typeMismatchPaths`. 경로 접두로 찾는 메모(`typeMismatchesMemo`·`inactiveValuesMemo`·`inactiveValueEntries`)는 호스트 조상 경로부터 무효화한다. `record/utils/updateSchemaNodeNameAndPath.ts`를 자손까지 부르는 걷기로 감싼다(M7). 옮길 저장소 목록은 시험 하나(저장소마다 "옮긴 뒤 옛 경로에 항목 없음, 새 경로에 같은 항목")로 고정한다.
+- 경로 열쇠 저장소 옮기기(`settle/utils/structure/`): 게이트 색인은 맵 열쇠만 옮기지 않는다. `getGateRegistry`의 `byPath`·`byLocation`(자리 L 열쇠)과 게이트 발생 안의 `watchPaths`가 경로에서 계산되므로, 경로를 바꾸기 전에 옮길 하위 트리를 `remove(node)`로 지우고 경로를 바꾼 뒤 `register(node)`로 다시 등록해 L과 `watchPaths`를 새 경로로 다시 계산한다. 그 밖에 잠복 원본과 메타데이터, `committedDeclarationIds`, 파생·나감 정책 규칙 기준값과 두 색인, `typeMismatchPaths`. 경로 접두로 찾는 메모(`typeMismatchesMemo`·`inactiveValuesMemo`·`inactiveValueEntries`)는 호스트 조상 경로부터 무효화한다. `record/utils/updateSchemaNodeNameAndPath.ts`를 자손까지 부르는 걷기로 감싼다(M7). 옮길 저장소 목록은 시험 하나(저장소마다 "옮긴 뒤 옛 경로에 항목 없음, 새 경로에 같은 항목")로 고정한다.
 - 경로 바뀜 사실(35C-02): 바뀐 노드의 (이전, 지금) 경로를 정착 작업 칸에 모은다(배달은 PR-4). 시험은 바뀐 경로(상태 신호)만 단언한다.
 - 겉면: `SchemaNode.ts`에 다섯 메서드(한 문장 위임), `SchemaNode/type.ts`의 `ArrayNode` 두 구성원에 메서드 형, DETAIL 멤버 표, `surface.test.ts`(39), `type-contract.test.ts`, `tsc --strict` 형 시험(TEST-070). 05와 같은 파일이므로 이어진 덩어리로 둔다(log §0 합의).
 - 터미널 배열: 계획의 새 원본으로 호스트를 통째로 쓴다(`callerReplace`와 같은 비로드 통째 쓰기). 아이템 스냅숏 자리 없음.
 - 확인 시험: 동사마다 identity(노드 참조·키)와 스냅숏 자리(`push('x')` 뒤 새 아이템 `defaultValue`가 `'x'`이고 `resetSubtree()`가 `'x'`로 되돌림, WRITE-099), `remove(0)` 뒤 당겨진 아이템의 `dirty`·`touched`·잠복·`typeMismatch`·게이트 색인이 데이터를 따라감, 닫힌 튜플의 `remove(0)`에서 값이 `extras`에서 노드로 옮김(NODE-052 예), 범위 밖 무동작(35C-06), `null` 터미널 배열의 무동작, 소멸한 아이템 참조의 쓰기(살아 있는 같은 경로면 무동작, `pop` 뒤면 잠복 원본), 키 계수의 단조성(원본 B 되돌림 뒤에도), ERROR-197.
-- 완료: §5의 U6 행 태그, 겉면 시험·형 시험 초록(G8·G10).
+- 완료: §5의 U6 행 태그, 겉면 시험·형 시험 초록(G8·G9).
 
 ### U7 아이템 안의 선언 — 템플릿 경로 묶기
 
 - 원장: CONTROLS-080, SETTLE-017·045, 18C-13, BLUEPRINT-030, CONTROLS-073(아이템 안 객체의 `children`은 그대로), 35C-08.
 - 붉은 시험 먼저(`settle/__tests__/`, `settle/derive/__tests__/`): 아이템 안 형제 필드를 읽는 `controls.visible`·`readOnly`, 아이템 안 `derived`·`unsetValue`, 아이템 안 `if/then` 게이트, 아이템 자체의 `controls.active`(꺼진 아이템은 나감, 자리 유지·구멍 채움), 다른 아이템을 가리키는 절대 경로(`/arr/0/x`)와 `../1`, 배열 전체를 값으로 읽는 식(`(../items).length`), `remove(0)` 뒤에도 각 아이템의 식이 자기 데이터로 평가됨.
-- `settle/utils/paths/`에 템플릿 경로를 실제 경로로 묶는 보조. 역의존 색인(`getDependencyIndex.ts`)의 `affected`가 `*` 마디를 아무 색인과 맞추고 소유자 경로를 묶어 돌려준다. 게이트 등록·자리 L 계산(`getGateRegistry`·`resolveGateOccurrence`), 파생 규칙 소스·대상 해석(`getDeriveSourceNodes`·`getRuleTargets`·`getInjectTarget`), 상태 키 층(`getControlLayers`), 나감 정책 열쇠가 노드의 실제 경로를 기준으로 한다. 절대 경로로 다른 아이템을 읽는 독자는 배열 호스트 하위 트리 전체에 기댄다(18C-13).
+- `settle/utils/paths/`에 템플릿 경로를 실제 경로로 묶는 보조. 역의존 색인(`getDependencyIndex.ts`)의 `affected`가 `*` 마디를 아무 색인과 맞추고 소유자 경로를 묶어 돌려준다. 게이트 등록·자리 L 계산(`getGateRegistry`·`resolveGateOccurrence`), 파생 규칙 소스·대상 해석(`getDeriveSourceNodes`·`getRuleTargets`·`getInjectTarget`), 상태 키 층(`getControlLayers`), 나감 정책 열쇠, `@` 맥락 소유자(`getContextOwners`가 돌려주는 선언 경로를 `changeSchemaNodeContext`가 재계산 목록에 넣기 전에 실제 아이템 경로들로 펼침)가 노드의 실제 경로를 기준으로 한다. 절대 경로로 다른 아이템을 읽는 독자는 배열 호스트 하위 트리 전체에 기댄다(18C-13).
 - 확인 항목(작업 중 발견, 범위 안): 위 목록 밖에서 템플릿 경로를 실제 주소로 쓰는 자리가 나오면 같은 보조로 고치고 로그에 적는다.
-- 완료: §5의 U7 행 태그, 04 파생·상태 키 시험 초록(G9).
+- 완료: §5의 U7 행 태그, 04 파생·상태 키 시험 초록(G10).
 
 ### U8 시나리오와 SCN 부류
 
@@ -196,13 +196,13 @@ U3–U7은 앞 단위의 계약에 기대므로 차례로 간다. U8·U9·U10은
 - SCN에 `array` 부류(`SCN/src/array/`의 `*.scenario.ts`, 이름 `array.<slug>`, 모든 단계에 `expect`)와 필요한 단계 어휘(`pop`·`clear`). `SCN/src/__tests__/families.test.ts`의 부류 표에 더한다.
 - 코어 시나리오 시험 `CORE/__tests__/scenarios/array.spec.ts`와 실행기 `executeCoreScenarioStep`의 다섯 동사.
 - 장면: 구조 연산마다 identity와 스냅숏 자리, 통째 교체 뒤 아이템 노드 참조, `items`·`prefixItems`, 터미널 배열 행의 다섯 동사, `omitTrailing`, 원본 B의 배열 아이템 구조 기록, 위치 재조정(키 유지와 위치를 따라가는 상태), 청사진 없는 자리의 `extras` 보존, 구조 연산에서 값이 노드와 `extras` 사이를 옮김, 채움 시점 이주 행의 배열 장면(I20), 빈 배열 호스트·루트 방출.
-- 완료: SCN 시험·형·lint 초록, 코어 시나리오 초록, 부류 장면 수 기록(G13).
+- 완료: SCN 시험·형·lint 초록, 코어 시나리오 초록, `log.md` 진행 표에 "array 부류 장면 N개" 한 줄(G11).
 
 ### U9 회귀 이식
 
 - 원장: TEST-069 (라), 26C-01·03, 25C-11, VALUE-034, GOAL-074.
 - 이식: 03 `log.md` §4의 넘어온 사례(§6.1 표), VALUE-034 게이트의 오늘 단언(`ObjectNode.test.ts:57`의 배열 대응, `ArrayNode.defaultValue.test.ts:187-188`, `ArrayNode.clear.test.ts:41`, `virtual.render.test.tsx:66,199`의 배열 부분, `items.default` 없는 `push()`), GOAL-074의 분기 복원 회귀(비활성화가 원본을 건드리지 않음). 새 엔진에서 기대가 다른 행은 LANDING의 이주 행과 대조해 적는다.
-- 완료: 이식 수와 넘긴 사례를 `log.md`에 기록(G14·G15).
+- 완료: 이식 수와 넘긴 사례를 `log.md`에 기록(G12·G13).
 
 ### U10 벤치
 
@@ -210,12 +210,12 @@ U3–U7은 앞 단위의 계약에 기대므로 차례로 간다. U8·U9·U10은
 - `PKG/bench/array.bench.ts`(03·04 벤치와 같은 독립 스크립트, 같은 입력을 새 엔진과 레거시에 넣음): "긴 배열(아이템 10,000개) 안의 키 입력", "array 1000 루트 통째 쓰기", "노드당 메모리". Node와 Bun 각각.
 - 기록: `ARCH/verification/06-array/performance.md`(환경과 재현 명령, 행마다 수치·표본 수·판정). 느린 행은 `ARCH/verification/performance-issues.md`의 열림 표에 더하고 원장 관리자에게 소유자 수용을 요청한다. 03·04 벤치를 다시 재어 06이 앞 행을 느리게 했는지 함께 적는다.
 - 판정(I18)을 `log.md`에 적는다.
-- 완료: G17·G18.
+- 완료: G14·G15.
 
 ### U11 최종 검증과 PR
 
 - §8 명령 전부, 옛 시험 전체 초록, `seiri:verify`(새 컨텍스트 verifier에 최초 기준선·원장·계획·diff·근거), PR 본문(완료 기준·리뷰 체크리스트·원장 어긋남·넘긴 사례·레거시 이동 목록·33C-01의 진입 파일 문장), `PLAN.md` §3 06 → 리뷰. PR 뒤 `filid:enrich-docs`·`filid:scan`·약식 리뷰(antigravity)·수정·재검증(`plan/prompts.md` §8).
-- 완료: G19–G25.
+- 완료: G16–G22.
 
 ## 5. 게이트 추적표 — 원장이 PR-5에 배정한 단언
 
@@ -302,3 +302,4 @@ U3–U7은 앞 단위의 계약에 기대므로 차례로 간다. U8·U9·U10은
 
 | 차례 | 리뷰어 | 판정 | 반영 |
 | --- | --- | --- | --- |
+| 1 | antigravity(세션 `7083e143`, `261cc98e1` 기준) | `rework-required`: F1(차단) G19의 CHECK가 성공 표지를 따로 내지 않음; F2 게이트 번호의 빈칸과 U6·U7 차례; F3 시나리오 수에 재는 게이트 없음; F4 `@` 맥락 소유자(`getContextOwners`·`changeSchemaNodeContext`)가 템플릿 경로 묶기 목록에 없음; F5 게이트 색인의 `byLocation`·`watchPaths`는 열쇠 옮김으로 부족. 그 밖의 현행 주장 표본 13건 확인, 양방향 범위 누락·초과 없음, 원장 충돌 없음 | F1 CHECK를 `grep -q 'problems 0$' && echo LEDGER_LINKS_OK`로; F2 G1–G22로 연속 번호; F3 G11이 `log.md`의 "array 부류 장면" 줄을 확인; F4 U7·ADR D6에 더함; F5 U6·ADR D4에 지우고 다시 등록하는 절차를 더함 |

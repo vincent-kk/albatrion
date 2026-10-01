@@ -42,7 +42,7 @@ Planning method: 저장소 지침 — `PLAN.md` §2와 `plan/prompts.md`의 단�
 | 2026-10-01 | 착수 | 상황판 06 → 진행. 이 기록 작성 | `2688cbede` |
 | 2026-10-01 | 원장 질의 | 05와의 진입 파일 합의를 33C-01로 기록(원장 관리자 `56a7844ef`). Q1–Q11을 원장 관리자가 35C-01~12로 답함(기록 커밋은 원장 관리자 쪽에서 뒤따름) | 실행 계획 §2.3 |
 | 2026-10-01 | 조사 | 원장 계약 정리(항목 36과 닫기 6), 코드 지도, 넘어온 사례, 정착 기제 추적(경로 열쇠 저장소와 위험 14). 위험 목록은 실행 계획 §7과 ADR D4의 맥락으로 옮김 | 실행 계획 §2·§7 |
-| 2026-10-01 | write-plan | [execution-plan.md](execution-plan.md), [execution-adr.md](execution-adr.md)(D1–D7), 게이트 원장 `.seiri/tasks/schema-form-array/gates.md`(G1–G25) | 이 커밋 |
+| 2026-10-01 | write-plan | [execution-plan.md](execution-plan.md), [execution-adr.md](execution-adr.md)(D1–D7), 게이트 원장 `.seiri/tasks/schema-form-array/gates.md`(G1–G22) | 이 커밋 |
 
 ## 3. 다음 행동
 
