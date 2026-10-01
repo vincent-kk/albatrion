@@ -52,7 +52,7 @@
 | 보정 | 01·02 보정 | 머지 | [#349](https://github.com/vincent-kk/albatrion/pull/349) | 브랜치 `fix/schema-form-realign-01-02`. 25라운드(`reviews/round-25-closing.md`)대로 청사진 코드·시험과 설계문서를 맞춤. 2026-09-29 머지(`85e7d01af`). [realign](plan/01-design-docs/realign.md) |
 | 03 | 노드 트리·정착 | 머지 | [#350](https://github.com/vincent-kk/albatrion/pull/350) | 브랜치 `feat/schema-form-node-and-settle`. 2026-09-30 머지(`0705217d5`). 뒤 PR로 넘긴 사례는 [log](plan/03-node-and-settle/log.md) §4 |
 | 04 | 파생 + 상태 키·제어 | 머지 | [#351](https://github.com/vincent-kk/albatrion/pull/351) | 브랜치 `feat/schema-form-derive-and-controls`. 2026-10-01 머지(`54afafb86`). 뒤 단계로 넘긴 사례는 [log](plan/04-derive-and-controls/log.md) §4, 속도 문제는 [대장](verification/performance-issues.md). 느린 벤치 행 수용은 30라운드 소유자 답으로 기록(TEST-027·071 보충) |
-| 05 | 통지·검증 | PR | [#352](https://github.com/vincent-kk/albatrion/pull/352) | 브랜치 `feat/schema-form-dispatch-and-validation`(워크트리 `.claude/worktrees/stage-05`). D-1은 30라운드로 닫힘(EVENT-073 보충). 06보다 먼저 머지하므로 06이 맡을 일은 [log](plan/05-dispatch-and-validation/log.md) "06에 넘길 목록"(33C-01). 벤치 느린 행은 56라운드로 소유자 수용, filid 스캔 순환 0. 남은 것: 55C-01 재검, storybook 합계(G52), 소유자의 머지 지시 |
+| 05 | 통지·검증 | PR | [#352](https://github.com/vincent-kk/albatrion/pull/352) | 브랜치 `feat/schema-form-dispatch-and-validation`(워크트리 `.claude/worktrees/stage-05`). D-1은 30라운드로 닫힘(EVENT-073 보충). 06보다 먼저 머지하므로 06이 맡을 일은 [log](plan/05-dispatch-and-validation/log.md) "06에 넘길 목록"(33C-01). 벤치 느린 행은 56라운드로 소유자 수용, filid 스캔 순환 0, storybook 49파일·390 통과, 55·58·59라운드 반영 뒤 antigravity 검증 `PASS`. 남은 것: 소유자의 머지 지시 |
 | 06 | 배열 | 대기 | — | 03 뒤, 04·05와 병렬 |
 | 07 | 전환 | 대기 | — | 02–06 전부 머지 뒤. 원샷 |
 | 08 | 플러그인 | 대기 | — | 07 뒤 |
