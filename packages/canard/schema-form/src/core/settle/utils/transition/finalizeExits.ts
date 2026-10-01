@@ -66,7 +66,10 @@ export const finalizeExits = <Self extends SchemaNodeRecord<Self>>(
       if (live) writeLatentRaw(context,
         JSON.stringify([node.path, node.blueprintNode.kind]), false, undefined);
     }
+  const affectedAncestors = new Set<Self>();
   for (const node of context.exited)
     for (let ancestor = node.parent; ancestor; ancestor = ancestor.parent)
-      if (!ancestor.detached) updateOutput(ancestor, context);
+      if (!ancestor.detached) affectedAncestors.add(ancestor);
+  for (const ancestor of [...affectedAncestors].sort((left, right) =>
+    right.path.length - left.path.length)) updateOutput(ancestor, context);
 };

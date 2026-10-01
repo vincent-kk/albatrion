@@ -83,9 +83,21 @@ export const updateInactiveValuesMemo = <Self extends SchemaNodeRecord<Self>>(
       ancestor = ancestor.slice(0, ancestor.lastIndexOf('/'));
     }
   }
+  const entriesByHost = new Map<string, { path: string; value: unknown }[]>();
+  for (const { entry } of ordered) {
+    let ancestor = entry.path;
+    while (true) {
+      if (affected.has(ancestor)) {
+        const descendants = entriesByHost.get(ancestor) ?? [];
+        descendants.push(entry);
+        entriesByHost.set(ancestor, descendants);
+      }
+      if (!ancestor) break;
+      ancestor = ancestor.slice(0, ancestor.lastIndexOf('/'));
+    }
+  }
   for (const host of affected) {
-    const next = ordered.filter(({ entry }) => !host || entry.path === host ||
-      entry.path.startsWith(`${host}/`)).map(({ entry }) => entry);
+    const next = entriesByHost.get(host) ?? [];
     const previous = runtime.inactiveValuesMemo.get(host);
     if (previous && previous.length === next.length &&
       previous.every((entry, index) => entry === next[index])) continue;

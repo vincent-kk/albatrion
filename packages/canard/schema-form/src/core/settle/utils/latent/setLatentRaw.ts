@@ -3,6 +3,7 @@ import { isArray } from '@winglet/common-utils/filter';
 import type { BlueprintNode } from '../../../blueprint';
 import type { SchemaNodeRecord, SchemaNodeRuntime } from '../../../record';
 import type { SettlementContext } from '../../type';
+import { indexLatentDescendant } from './indexLatentDescendant';
 
 /**
  * Change one latent entry and retain its classification across deletions.
@@ -26,6 +27,8 @@ export const setLatentRaw = <Self extends SchemaNodeRecord<Self>>(
   const latent = runtime.latentRaw;
   const had = latent.has(key);
   const prior = latent.get(key);
+  const index = context?.latentDescendantKeys;
+  const previousPath = index ? runtime.latentRawMetadata?.get(key)?.path : undefined;
   const missingMetadata = present && template !== undefined &&
     !runtime.latentRawMetadata?.has(key);
   if (log && !log.has(key)) log.set(key, { present: had, value: prior });
@@ -38,6 +41,13 @@ export const setLatentRaw = <Self extends SchemaNodeRecord<Self>>(
     if (isArray(identity) && typeof identity[0] === 'string')
       metadata.set(key, { path: identity[0], blueprintNode: template, order });
   }
+  const currentPath = index ? runtime.latentRawMetadata?.get(key)?.path : undefined;
+  if (index && had && previousPath !== undefined &&
+    (!present || previousPath !== currentPath))
+    indexLatentDescendant(index, key, previousPath, false);
+  if (index && present && currentPath !== undefined &&
+    (!had || previousPath !== currentPath))
+    indexLatentDescendant(index, key, currentPath, true);
   if (had !== present || present && !Object.is(prior, value) || missingMetadata) {
     runtime.latentRawDirty = true;
     if (context) context.latentPrefixes = undefined;

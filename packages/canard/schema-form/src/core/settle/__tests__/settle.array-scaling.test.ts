@@ -14,9 +14,102 @@ const schema = { type: 'array' as const, items: { type: 'object' as const,
   properties: { key: { type: 'number' as const } } } };
 const items = (count: number, key: number) =>
   Array.from({ length: count }, () => ({ key }));
+const gatedRows = (count: number) => {
+  const { root } = makeSchemaNodeTree({ type: 'object', properties: {
+    flag: { type: 'boolean' }, rows: { type: 'array', items: {
+      type: 'object', properties: { child: { type: 'string',
+        controls: { active: '#/flag' } } },
+    } },
+  } });
+  if (!(root instanceof SchemaNode))
+    throw new Error('Expected a runtime SchemaNode');
+  root.setValue({ flag: true, rows: Array.from({ length: count }, (_, index) =>
+    ({ child: String(index) })) });
+  return { root, runtime: root.runtime };
+};
 
 // filid:contract settle-array
 describe('44C-01 array settlement scaling', () => {
+  it('48C-01 SETTLE-017 visits inactive memo entries linearly on mass exit', () => {
+    const count = 2000;
+    const { root } = gatedRows(count);
+    const filter = Array.prototype.filter;
+    let visited = 0;
+    Array.prototype.filter = function (this: unknown[], callback: unknown,
+      thisArg?: unknown) {
+      if (this.length && typeof this[0] === 'object' && this[0] !== null &&
+        'entry' in this[0] && 'order' in this[0]) visited += this.length;
+      return Reflect.apply(filter, this, [callback, thisArg]);
+    } as typeof Array.prototype.filter;
+    try {
+      root.find('/flag')!.setValue(false);
+      expect(visited).toBeLessThan(count * 12);
+    } finally {
+      Array.prototype.filter = filter;
+    }
+  });
+
+  it('48C-01 SETTLE-017 assembles the affected array once on mass exit', () => {
+    const count = 2000;
+    const { root } = gatedRows(count);
+    const rows = root.find('/rows');
+    if (!(rows instanceof SchemaNode))
+      throw new Error('Expected an array SchemaNode');
+    const behavior = rows.behavior;
+    let assemblies = 0;
+    Reflect.set(rows, 'behavior', { ...behavior,
+      assemble: (...args: Parameters<typeof behavior.assemble>) => {
+        if (args[0] === rows) assemblies++;
+        return behavior.assemble(...args);
+      },
+    });
+    try {
+      root.find('/flag')!.setValue(false);
+      expect(assemblies).toBeLessThan(10);
+    } finally {
+      Reflect.set(rows, 'behavior', behavior);
+    }
+  });
+
+  it('48C-01 SETTLE-017 visits latent entries linearly on mass exit', () => {
+    const count = 2000;
+    const { root, runtime } = gatedRows(count);
+    const keys = runtime.latentRaw.keys.bind(runtime.latentRaw);
+    let visited = 0;
+    const spy = vi.spyOn(runtime.latentRaw, 'keys').mockImplementation(function* () {
+      for (const key of keys()) {
+        visited++;
+        yield key;
+      }
+      return undefined;
+    });
+    try {
+      root.find('/flag')!.setValue(false);
+      expect(visited).toBeLessThan(count * 12);
+    } finally {
+      spy.mockRestore();
+    }
+  });
+
+  it('48C-01 retains mass exit and re-entry values and inactive sources', () => {
+    for (const count of [1, 7, 13]) {
+      const { root, runtime } = gatedRows(count);
+      const rows = Array.from({ length: count }, (_, index) =>
+        ({ child: String(index) }));
+      const inactive = Array.from({ length: count }, (_, index) =>
+        ({ path: `/rows/${index}/child`, value: String(index) }));
+      for (const flag of [false, true, false]) {
+        root.find('/flag')!.setValue(flag);
+        expect(root.value).toEqual({ flag, rows: flag ? rows :
+          Array.from({ length: count }, () => ({})) });
+        expect(root.inactiveValues).toEqual(flag ? [] : inactive);
+        expect([...runtime.latentRaw]).toEqual(flag ? [] :
+          inactive.map(({ path, value }) =>
+            [JSON.stringify([path, 'string']), value]));
+      }
+    }
+  });
+
   it('44C-01 SETTLE-047 scans path stores once when nested arrays grow', () => {
     const count = 2000;
     const { root } = makeSchemaNodeTree({ type: 'array', items: {
