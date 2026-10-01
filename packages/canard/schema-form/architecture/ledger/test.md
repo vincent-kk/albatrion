@@ -370,6 +370,7 @@
 - 보충:
   > 편집자 결정(18C-25): "【추론】 원본 B의 배열 아이템 구조 기록은 PR-5로 미룬다(TEST의 PR-5 행에 더함)." (`reviews/round-18-closing.md:771`)
   > 편집자 결정(18C-59): "PR-5 시험(TEST-018)에 위치 재조정(키 유지와, 위치를 따라가는 `dirty`·`touched`·바깥 오류·가상화 기록·노드 참조), 청사진 없는 자리의 `extras` 보존, 구조 연산에서 값이 노드와 `extras` 사이를 옮기는 것을 더한다." (`reviews/round-18-closing.md:1682`)
+  > 편집자 결정(37C-01): "【추론】 `omitTrailing`은 가지 배열의 방출 배열 꼬리에서 빈 자리의 최대 연속 구간을 자르는 투영이며, 빈 자리는 셋이다: (1) 방출이 없는 아이템의 자리를 VALUE-034대로 채운 값(객체 `{}`, 배열 `[]`, 잎 `null`), (2) 잎 아이템이 실제로 `null`을 방출한 자리(방출 배열에서 (1)의 잎과 구별되지 않고, PR-5로 넘어온 프로토타입 기대 `['a', null, null]` → `['a']`가 이것을 자른다), (3) 청사진이 없는 자리(`extras`)의 값이 `undefined` 또는 `null`인 자리." (`reviews/round-37-closing.md:9`)
 - 상태: 현행
 - 출처: `09-landing-and-test-strategy.md:166-167,172`(정본), `reviews/round-16-owner-review.md:27`, `reviews/round-18-closing.md:771,1682`
 - 닫은 사람: 편집자 결정(16라운드, `09-landing-and-test-strategy.md:172`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-25·18C-59)
