@@ -1,4 +1,4 @@
-import { FEEDBACK_LIMIT_EXCEEDED, JSONSchemaError, SchemaFormError } from '../../../../errors';
+import { FEEDBACK_LIMIT_EXCEEDED, SchemaFormError } from '../../../../errors';
 import type { FormErrorRecord } from '../../../../errors';
 import type { SchemaNodeRecord } from '../../../record';
 import { ValidationMode } from '../../../types/state';
@@ -9,9 +9,8 @@ import { runDeliveryWaves } from './runDeliveryWaves';
 import { flushQueuedEvents } from './flushQueuedEvents';
 import { resolveSchemaNodeChainRoot } from './resolveSchemaNodeChainRoot';
 import { bundleChainErrors } from '../report/bundleChainErrors';
-import { createFormErrorRecord } from '../report/createFormErrorRecord';
+import { collectChainRecords } from '../report/collectChainRecords';
 import { deliverChainRecords } from '../report/deliverChainRecords';
-import { readFormErrorCode } from '../report/readFormErrorCode';
 import { captureChainError } from './captureChainError';
 
 /**
@@ -115,30 +114,7 @@ export const exitSchemaNodeChain = <Self extends SchemaNodeRecord<Self>>(
   const original = bundleChainErrors(errors);
   const aggregate = errors.length > 1 && original instanceof SchemaFormError
     ? original : undefined;
-  for (const occurrence of occurrences) {
-    if (occurrence.kind === 'record') {
-      pending.push(occurrence.record);
-      continue;
-    }
-    const error = occurrence.error;
-      const existing = pending.find((record) =>
-        record.level === 'error' && record.code === readFormErrorCode(error) &&
-        error instanceof SchemaFormError &&
-        record.schemaPath === error.details.schemaPath);
-      if (existing && error instanceof SchemaFormError) {
-        existing.error = error;
-        existing.details = error.details;
-        existing.surface = 'thrown';
-        if (aggregate) existing.aggregate = aggregate;
-        continue;
-      }
-      const record = createFormErrorRecord(true, readFormErrorCode(error), 'error',
-        () => error instanceof Error ? error.message : String(error),
-        { error, ...(error instanceof SchemaFormError ||
-          error instanceof JSONSchemaError ? { details: error.details } : {}),
-          ...(aggregate ? { aggregate } : {}), surface: 'thrown' });
-      if (record) pending.push(record);
-  }
+  collectChainRecords(pending, occurrences, aggregate, 'thrown');
   const handlerErrors = deliverChainRecords(runtime, pending, original, true);
   const exposed = !errors.length ? bundleChainErrors(handlerErrors) :
     handlerErrors.length ? bundleChainErrors([original, ...handlerErrors]) : original;

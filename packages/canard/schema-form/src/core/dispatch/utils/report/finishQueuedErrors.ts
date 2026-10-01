@@ -1,10 +1,9 @@
-import { JSONSchemaError, SchemaFormError } from '../../../../errors';
+import { SchemaFormError } from '../../../../errors';
 import type { FormErrorRecord } from '../../../../errors';
 import type { SchemaNodeRuntime } from '../../../record';
 import { bundleChainErrors } from './bundleChainErrors';
-import { createFormErrorRecord } from './createFormErrorRecord';
+import { collectChainRecords } from './collectChainRecords';
 import { deliverChainRecords } from './deliverChainRecords';
-import { readFormErrorCode } from './readFormErrorCode';
 
 /**
  * Report and expose failures from a synchronous non-entry event wave.
@@ -24,19 +23,7 @@ export const finishQueuedErrors = (
   const aggregate = errors.length > 1 && original instanceof SchemaFormError ?
     original : undefined;
   const pending: FormErrorRecord[] = [];
-  for (const occurrence of occurrences) {
-    if (occurrence.kind === 'record') {
-      pending.push(occurrence.record);
-      continue;
-    }
-    const error = occurrence.error;
-    const record = createFormErrorRecord(true, readFormErrorCode(error), 'error',
-      () => error instanceof Error ? error.message : String(error),
-      { error, ...(error instanceof SchemaFormError ||
-        error instanceof JSONSchemaError ? { details: error.details } : {}),
-        ...(aggregate ? { aggregate } : {}), surface: caller ? 'thrown' : 'sink' });
-    if (record) pending.push(record);
-  }
+  collectChainRecords(pending, occurrences, aggregate, caller ? 'thrown' : 'sink');
   const handlerErrors = deliverChainRecords(runtime, pending, original, caller);
   if (caller && (errors.length || handlerErrors.length))
     throw errors.length && handlerErrors.length ?

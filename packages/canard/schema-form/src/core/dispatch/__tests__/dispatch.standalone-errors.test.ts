@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 
+import { createTestValidator } from '../../__tests__/fixtures/createTestValidator';
 import { SchemaNodeEventType, SchemaNodeRequestType } from '../../record';
 import { NodeState, ValidationMode } from '../../types/state';
 import type { Validator } from '../../validation';
@@ -10,6 +11,25 @@ import { getDispatchChild } from './fixtures/getDispatchChild';
 
 // filid:contract dispatch-observers
 describe('standalone wave failures', () => {
+  it('ERROR-023 ERROR-041 reports a throwing guard in a standalone request once', () => {
+    const report = vi.fn();
+    const { root } = createDispatchTree({
+      type: 'object', if: {},
+      then: { properties: { guarded: { type: 'string' } } },
+    }, undefined, createTestValidator('throw'), { hasConsumer: () => true, report });
+    subscribeSchemaNode(root, (event) => {
+      if (event.type & SchemaNodeRequestType.Focus)
+        dispatchSetValue(root, { enabled: true });
+    });
+
+    expect(() => dispatchRequest(root, SchemaNodeRequestType.Focus)).toThrow(
+      expect.objectContaining({ code: 'SCHEMA_FORM_ERROR.GUARD_FAILED' }));
+    expect(report).toHaveBeenCalledTimes(1);
+    expect(report.mock.calls[0][0]).toMatchObject({
+      code: 'SCHEMA_FORM_ERROR.GUARD_FAILED', surface: 'thrown',
+    });
+  });
+
   it('EVENT-010 ERROR-004 31C-01 preserves a request failure after an earlier listener writes', () => {
     const report = vi.fn();
     const { root } = createDispatchTree({ type: 'object', properties: {
