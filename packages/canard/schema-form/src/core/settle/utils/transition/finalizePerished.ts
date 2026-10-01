@@ -31,7 +31,8 @@ export const finalizePerished = <Self extends SchemaNodeRecord<Self>>(
     for (const [key, pending] of context.pendingExits)
       if (pending.path === node.path || pending.path.startsWith(`${node.path}/`))
         context.pendingExits.delete(key);
-    prunePerishedPath(node.runtime, node.path);
+    if (!node.parent?.structure?.[node.name])
+      prunePerishedPath(node.runtime, node.path);
   }
   for (const [host, previousCount] of context.arrayCounts)
     if (!host.detached && host.itemCount !== previousCount)

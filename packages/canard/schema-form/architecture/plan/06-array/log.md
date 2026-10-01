@@ -75,4 +75,5 @@ Planning method: 저장소 지침 — `PLAN.md` §2와 `plan/prompts.md`의 단�
 | M6 | `src/core/settle/DETAIL.md:28` | "배열 구조의 생성·폐기 로그는 PR-5에서 더한다" | LANDING-062 충돌 줄, 35C-05 | U5에서 구현하고 현행 계약으로 바꿈 |
 | M7 | `src/core/record/utils/updateSchemaNodeNameAndPath.ts` | 한 노드의 다섯 칸만 바꾸고 제품 호출자가 없음 | NODE-004·051 | U6의 경로 옮김 organ 안에서 씀 |
 | M9 | `src/core/behaviors/objectBehavior/utils/projectObject.ts`, `objectBehavior/DETAIL.md`(03) | 비객체 `raw`를 든 객체 호스트가 아무것도 방출하지 않음(루트만 `local`로 대체) | VALUE-033 (4), WRITE-013, 39C-01: 받은 그대로 방출 | 06이 고침(U5b): 객체·배열 행과 루트가 잘못된 종류 원본을 방출. 03·04 시험의 옛 기대는 고친 목록과 함께 PR 본문에 |
+| M10 | `src/core/settle/__tests__/settle.gates.test.ts`(03 시험 "reads a root child kept by the root output fallback") | `null`을 로드한 객체 루트가 `local`로 대체 방출하고 `#/child`를 읽는 게이트가 켜진다고 단언 | CONTROLS-080 (5)·18C-91: 식은 방출 트리를 읽고 원시 값 아래는 `undefined`; 39C-01 | 루트는 `null`을 방출하고 `probe`는 형상 밖, `child`는 편집 상태로 `'D'`를 든다고 고침(원장 관리자 확인, 새 라운드 없음). 함께 바뀐 03·04 기대 열하나는 39C-01의 직접 결과(PR 본문에 목록) |
 | M8 | 동사의 반환 값 | 원장이 정하지 않음 | GOAL-058(동기) | 레거시 반환을 동기로 지킴(실행 계획 I7, 자율 결정) |

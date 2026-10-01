@@ -1,4 +1,5 @@
 export { writeSchemaNode } from './utils/write/writeSchemaNode';
+export { arrangeSchemaNodeItems } from './utils/structure/arrangeSchemaNodeItems';
 export { loadSchemaNodeAtMount } from './utils/load/loadSchemaNodeAtMount';
 export { resetSchemaNodeForm } from './utils/load/resetSchemaNodeForm';
 export { resetSchemaNodeSubtree } from './utils/load/resetSchemaNodeSubtree';

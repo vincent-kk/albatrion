@@ -3,7 +3,8 @@ import { find, findNodes } from '../navigation';
 import type { Behavior, SchemaNodeRecord, SchemaNodeRuntime } from '../record';
 import { readSchemaNodeDefaultValue, resetSchemaNodeSubtree,
   readSchemaNodeInactiveValues, readSchemaNodeTypeMismatch,
-  readSchemaNodeTypeMismatches, readSchemaNodeWatchValues, writeSchemaNode } from '../settle';
+  readSchemaNodeTypeMismatches, readSchemaNodeWatchValues, writeSchemaNode,
+  arrangeSchemaNodeItems } from '../settle';
 import { SetValueOption } from './type';
 import { SetValueOption as WriteOption } from '../types/value';
 
@@ -166,6 +167,18 @@ export class SchemaNode implements SchemaNodeRecord<SchemaNode> {
       (option & WriteOption.Merge) === WriteOption.Merge &&
       !(option & WriteOption.Replace) ? 'callerPartial' : 'callerReplace', option);
   }
+  /** {@inheritDoc ArrayNode.push} */
+  push(value?: unknown) { return arrangeSchemaNodeItems<SchemaNode>(this, { kind: 'push', value }); }
+  /** {@inheritDoc ArrayNode.pop} */
+  pop() { return arrangeSchemaNodeItems<SchemaNode>(this, { kind: 'pop' }); }
+  /** {@inheritDoc ArrayNode.update} */
+  update(index: number, value: unknown) {
+    return arrangeSchemaNodeItems<SchemaNode>(this, { kind: 'update', index, value });
+  }
+  /** {@inheritDoc ArrayNode.remove} */
+  remove(index: number) { return arrangeSchemaNodeItems<SchemaNode>(this, { kind: 'remove', index }); }
+  /** {@inheritDoc ArrayNode.clear} */
+  clear() { return arrangeSchemaNodeItems<SchemaNode>(this, { kind: 'clear' }); }
   /** {@inheritDoc NodeSurface.resetSubtree} */
   resetSubtree(option: SetValueOption = SetValueOption.Overwrite) {
     return resetSchemaNodeSubtree<SchemaNode>(this, option);

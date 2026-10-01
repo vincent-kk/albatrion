@@ -94,6 +94,7 @@ describe('settle gate calculation', () => {
     loadSchemaNodeAtMount(root, null, SetValueOption.Overwrite);
     expect(root.raw).toBeNull();
     expect(root.emit).toBeNull();
+    expect(root.structure?.child?.raw).toBe('D');
     expect(root.structure?.probe).toBeUndefined();
   });
 

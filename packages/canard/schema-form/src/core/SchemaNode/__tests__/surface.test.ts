@@ -22,9 +22,8 @@ describe('SchemaNode PR-2 surface', () => {
   it('26C-01 current public members match the DETAIL table', () => {
     const detail = readFileSync(new URL('../DETAIL.md', import.meta.url), 'utf8');
     const rows = [...detail.matchAll(/^\| `([^`]+)` \| (getter|method) \|/gm)]
-      .map((match) => ({ name: match[1].replace(/\(.*/, ''), kind: match[2] }))
-      .filter((row) => !['push', 'pop', 'update', 'remove', 'clear'].includes(row.name));
-    expect(rows).toHaveLength(34);
+      .map((match) => ({ name: match[1].replace(/\(.*/, ''), kind: match[2] }));
+    expect(rows).toHaveLength(39);
     const prototype = RuntimeSchemaNode.prototype;
     expect(Object.getOwnPropertyNames(prototype).filter((name) => name !== 'constructor').sort())
       .toEqual(rows.map((row) => row.name).sort());
@@ -93,6 +92,27 @@ describe('SchemaNode PR-2 surface', () => {
     root.setValue({ first: 'one', second: 2 });
     expect(root.children).toBe(Reflect.get(root, 'storedChildren'));
     expect(root.children).toEqual([root.find('/first'), root.find('/second')]);
+  });
+
+  it('TEST-070 26C-01 returns the stored array children by reference', () => {
+    const root = makeTree({ type: 'array', items: { type: 'string' } });
+    root.setValue(['a']);
+    expect(root.children).toBe(Reflect.get(root, 'storedChildren'));
+  });
+
+  it('SURFACE-005 GOAL-058 delegates synchronous verbs and ERROR-197 rejects strings', () => {
+    const array = makeTree({ type: 'array', items: { type: 'string' } });
+    if (!surface.isArrayNode(array)) throw new Error('Expected an array node');
+    expect(array.push('x')).toBe(1);
+    expect(array.update(0, 'y')).toBe('y');
+    expect(array.remove(0)).toBe('y');
+    expect(array.push('z')).toBe(1);
+    expect(array.pop()).toBe('z');
+    expect(array.clear()).toBeUndefined();
+    const string = makeTree({ type: 'string' });
+    expect(() => Reflect.get(string, 'push').call(string, 'x')).toThrowError(
+      expect.objectContaining({ code: 'SCHEMA_FORM_ERROR.ARRAY_METHOD_ON_NON_ARRAY',
+        details: { path: '', method: 'push' } }));
   });
 
   it('TEST-069 isTerminalNode object includes terminal object nodes', () => {

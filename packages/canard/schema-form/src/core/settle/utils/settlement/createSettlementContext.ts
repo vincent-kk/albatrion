@@ -42,6 +42,7 @@ export const createSettlementContext = <Self extends SchemaNodeRecord<Self>>(
     automaticLog: scratch.automaticLog,
     arrayStructureLog: scratch.arrayStructureLog,
     arrayCounts: scratch.arrayCounts,
+    pathChanges: scratch.pathChanges,
     filledNodes: scratch.filledNodes,
     inTransition: false,
     latentAutomaticLog: scratch.latentAutomaticLog,

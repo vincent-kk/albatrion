@@ -92,11 +92,25 @@ export type ObjectNode =
     readonly SchemaNode[]>
   | NodeSurface<'object', 'terminal', 'object', Record<string, unknown> | null | undefined,
     null>;
-export type ArrayNode =
-  | NodeSurface<'array', 'branch', 'array', readonly unknown[] | null | undefined,
-    readonly SchemaNode[]>
-  | NodeSurface<'array', 'terminal', 'array', readonly unknown[] | null | undefined,
-    null>;
+/** Structural edits shared by branch and terminal array nodes. */
+interface ArrayNodeMethods<Item> {
+  /** Append one caller value and return the new length synchronously. */
+  push(value?: Item): number;
+  /** Remove the final position and return its last committed value. */
+  pop(): Item | undefined;
+  /** Replace one position without changing its snapshot or identity. */
+  update(index: number, value: Item): Item | undefined;
+  /** Remove one position and return its last committed value. */
+  remove(index: number): Item | undefined;
+  /** Remove every position without returning an item. */
+  clear(): void;
+}
+
+export type ArrayNode<Item = unknown> =
+  | (NodeSurface<'array', 'branch', 'array', readonly Item[] | null | undefined,
+    readonly SchemaNode[]> & ArrayNodeMethods<Item>)
+  | (NodeSurface<'array', 'terminal', 'array', readonly Item[] | null | undefined,
+    null> & ArrayNodeMethods<Item>);
 export type VirtualNode = NodeSurface<'virtual', 'branch', 'virtual',
   readonly unknown[] | undefined, readonly SchemaNode[]>;
 

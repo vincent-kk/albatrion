@@ -67,6 +67,8 @@ export interface SettlementContext<Self extends SchemaNodeRecord<Self>> {
     previousItemCount: number; previousExtras: unknown; restored?: boolean }[];
   /** Initial array lengths for non-load snapshot alignment. */
   arrayCounts: Map<Self, number>;
+  /** Reindexed node and descendant paths, without event delivery. */
+  pathChanges: { node: Self; previous: string; current: string }[];
   /** Nodes whose missing input received a default during this call. */
   filledNodes: Set<Self>;
   /** Whether shape updates belong to reversible automatic transition work. */

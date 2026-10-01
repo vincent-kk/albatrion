@@ -16,6 +16,7 @@ export const getSettlementScratch = <Self>(runtime: SchemaNodeRuntime<Self>): Se
     writtenInputs: new Map<Self, unknown>(), distributedInputs: new Map(),
     wrongKindHosts: new Set<Self>(), automaticLog: [],
     arrayStructureLog: [], arrayCounts: new Map<Self, number>(),
+    pathChanges: [],
     filledNodes: new Set<Self>(),
     latentAutomaticLog: new Map<string, { present: boolean; value: unknown }>(),
     dirtyPaths: new Set<string>(), dependencyOwnerPaths: new Set<string>(),
