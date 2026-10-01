@@ -381,7 +381,8 @@
   > 노드 명령 `remount`는 트리를 둔 채 그 노드의 UI만 다시 마운트한다.
   > 그 핸들 표면(`FormHandle.remount(path)`)은 ADR 0008의 C-11(소유자 확정 대기)에 딸린다(§8의 셋째).
   > 문서는 reset을 값 초기화의 기본으로, `key`를 그보다 강한 연산으로 소개한다.
-- 보충: 없음
+- 보충:
+  > 소유자(30라운드, 폼 핸들의 명령 모양): "네 맞습니다. 추가로, path 는 optional, 없으면 root 를 지칭합니다." (`reviews/round-30-owner-answers.md:11`) — 핸들 표면의 `remount`는 `refresh`와 함께 전용 메서드로 PR-7에서 들어가며 경로는 선택 인자다(EVENT-063·073).
 - 상태: 현행
 - 출처: `09-landing-and-test-strategy.md:91`(정본), `09-landing-and-test-strategy.md:271`, `adr/0008-event-system.md:151`
 - 닫은 사람: 16라운드 스웜 수렴(편집자 결정, `09-landing-and-test-strategy.md:79`)
