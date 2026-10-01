@@ -77,7 +77,7 @@ describe('array structural verbs', () => {
     expect(root.extras).toEqual(['d']);
   });
 
-  it('NODE-052 uses the destination blueprint when tuple schemas differ', () => {
+  it('NODE-052 gives a shifted value a new node when the slot template differs (Q17)', () => {
     const { root } = makeRecordTree({ type: 'array', prefixItems: [
       { type: 'string', minLength: 3 }, { type: 'string', maxLength: 2 },
     ], items: false });
@@ -89,6 +89,7 @@ describe('array structural verbs', () => {
       .toBe('first');
     expect(root.value).toEqual(['b']);
     expect(root.children![0].blueprintNode).toBe(firstBlueprint);
+    expect(root.children![0].itemKey).toBeGreaterThan(moved.itemKey!);
     expect(moved.detached).toBe(true);
   });
 
