@@ -53,7 +53,7 @@
 | 03 | 노드 트리·정착 | 머지 | [#350](https://github.com/vincent-kk/albatrion/pull/350) | 브랜치 `feat/schema-form-node-and-settle`. 2026-09-30 머지(`0705217d5`). 뒤 PR로 넘긴 사례는 [log](plan/03-node-and-settle/log.md) §4 |
 | 04 | 파생 + 상태 키·제어 | 머지 | [#351](https://github.com/vincent-kk/albatrion/pull/351) | 브랜치 `feat/schema-form-derive-and-controls`. 2026-10-01 머지(`54afafb86`). 뒤 단계로 넘긴 사례는 [log](plan/04-derive-and-controls/log.md) §4, 속도 문제는 [대장](verification/performance-issues.md). 느린 벤치 행 수용은 30라운드 소유자 답으로 기록(TEST-027·071 보충) |
 | 05 | 통지·검증 | 대기 | — | 03 뒤. 착수 전 소유자 결정 D-1은 30라운드로 닫힘(EVENT-073 보충). 착수 가능 |
-| 06 | 배열 | 대기 | — | 03 뒤, 04·05와 병렬 |
+| 06 | 배열 | 진행 | — | 브랜치 `feat/schema-form-array`(워크트리 `.claude/worktrees/stage-06`). 05와 병렬. 실행 기록은 [log](plan/06-array/log.md) |
 | 07 | 전환 | 대기 | — | 02–06 전부 머지 뒤. 원샷 |
 | 08 | 플러그인 | 대기 | — | 07 뒤 |
 | 최적화 | 성능 최적화 | 대기 | — | 07 머지 뒤 착수, 08과 병렬, 09 전에 끝냄. 묶음(M2)마다 PR 하나. 출발점은 [대장](verification/performance-issues.md), 계획은 [request](plan/perf-optimization/request.md) |
@@ -110,3 +110,4 @@
 | 2026-10-01 | 30라운드: D-1(EVENT-073)의 소유자 답 둘을 원장 세션에서 직접 받음 — 명령 메서드는 한 호출에 종류 하나, 종류 값은 내부 요청 비트의 별칭인 TS 열거(맨 리터럴 합집합 불허, 이름은 SURFACE-056을 따름). 합침은 디스패처가 한다. 메서드 이름·페이로드·`FormHandle` 모양은 05 세션이 전한 소유자 입장이 있으나 직접 확인 대기. EVENT-073 보충 두 줄 | `reviews/round-30-owner-answers.md` |
 | 2026-10-01 | 30라운드 마무리: 소유자가 풀어 쓴 물음 여섯에 직접 답함 — 명령 메서드 이름 `request`, 둘째 인자 없음, 폼 핸들은 전용 메서드 넷에 경로 선택 인자(없으면 루트, 16 → 18), 최적화 작업은 07 뒤·08과 병렬. 04의 스토리북 게이트는 "포기"가 아니라 소유자가 독립 실행해 모두 통과했고 기록만 빠진 것으로 정정(게이트 30 가운데 30). D-1 닫힘, 05 착수 가능. 소유자 지시로 로컬 `1.0.0-beta`를 원격에 푸시. 04 느린 벤치 행 수용은 다음 행에서 닫힘 | `reviews/round-30-owner-answers.md` |
 | 2026-10-01 | 30라운드 추가: 04 벤치의 느린 행 둘(TEST-071 통째 교체 객체 행, 04 뒤 03 벤치의 느려진 행)을 소유자가 "맞습니다."로 수용(TEST-027 충족). TEST-027·TEST-071 보충. 04의 소유자 확인 대기 항목이 모두 닫힘 | `reviews/round-30-owner-answers.md` |
+| 2026-10-01 | 06 배열 착수 — 소유자 승인. 05와 병렬로 별도 세션이 맡음. 원장 질의는 원장 관리 세션 `albatrion-5c`로 | `feat/schema-form-array`, `plan/06-array/log.md` |
