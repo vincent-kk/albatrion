@@ -1109,6 +1109,7 @@
   > 반영 칸(개발계획 P1): "ajv6·ajv7·ajv8의 `compileGuard`·`rejectedKey`·같은 `$id` 처리는 원장대로 PR-4에서 셋 다 구현한다(LANDING-064·093 그대로)." (`reviews/round-18-owner-answers.md:42`)
   > 편집자 결정(32C-01): "【추론】 LANDING-064의 PR-4 행 "검증기 계약(`compileGuard`, `rejectedKey`)의 플러그인·`validatorFactory` 통일과 ajv6·7·8 플러그인 구현"은 코어가 받는 검증기 계약 형 하나를 정하고 플러그인 셋과 코어의 트리 생성 인자가 그 형을 쓰게 하는 일이다; Form 속성 `validatorFactory`의 공개 형을 바꾸는 일은 아니다." (`reviews/round-32-closing.md:9`)
   > 편집자 결정(32C-01): "【추론】 Form 속성 `validatorFactory`가 함수 하나에서 `{ compile, compileGuard }` 객체로 바뀌는 것(LANDING-036 이주 33)은 공개 겉면의 변경이고, LANDING-159 규칙 3대로 `src/index.ts`는 PR-7까지 옛 엔진을 가리키며 LANDING-064의 PR-7 행이 Form 속성 `validatorFactory`의 연결을 전환 PR에 두므로, 공개 속성의 형과 동작은 PR-7에서 바뀐다; PR-4 전에는 공개 동작 변경이 없다." (`reviews/round-32-closing.md:10`)
+  > 편집자 결정(43C-01): "【추론】 `globalState`는 노드 상태의 유도 값이고 `UpdateGlobalState`는 상태 사건이므로, LANDING-064의 PR-4 행 "상태·오류·명령 사건과 검증 결과의 배달 경로"와 EVENT-067(`setState`의 상태 칸 변경은 정착 밖 사건, 비트 `UpdateState`)이 두는 자리인 PR-4가 EVENT-062의 기제 전부 — 키별 참 노드 수, 상태 변경과 형상 출입 때의 갱신, 0과 1 사이를 넘을 때만의 새 객체와 `UpdateGlobalState`, 그 결과로 `dirty`가 내려가는 것 — 를 만든다; 03은 통지와 상태 사건을 비목표로 두었고(03 기록 "비목표: … 통지·검증(05)") 04의 "상태 키"는 `readOnly`·`disabled`·`visible` 같은 제어 상태 키라 노드 `state`가 아니며(03 기록 §4의 P4 배분), 06·07에는 상태 사건이 없다. 계획서가 EVENT-062를 빠뜨린 것은 PR-4 행의 "상태 사건"에 접혀 있던 것이라 05가 자기 작업 항목에 더하고 실행 기록에 적는다." (`reviews/round-43-closing.md:9`)
 - 상태: 현행
 - 출처: `08-design-a-to-z.md:574`(정본), `09-landing-and-test-strategy.md:19,22,35,259`, `adr/0014-error-policy.md:178-184`, `reviews/round-18-owner-answers.md:42`
 - 닫은 사람: 소유자 답(`reviews/round-16-owner-answers.md:9` 3 배달 경로), 소유자 답(`reviews/round-16-owner-answers.md:16` 10 가드 캐시와 등록의 소유), 16라운드 스웜 수렴(편집자 결정, 재생성 reset의 같은 `$id`), 17라운드 스웜 수렴(편집자 결정, `onError` core 쪽과 가드 컴파일), 소유자 답(`reviews/round-18-owner-answers.md:42` 개발계획 P1)
@@ -2243,7 +2244,8 @@
 
 - 결정:
   > 이주(LANDING-147): 가상 노드에 모양이 틀린 쓰기의 오류 클래스가 `JSONSchemaError`에서 `SchemaFormError`로 바뀌고, 길이가 같은 문자열을 글자로 쪼개던 동작은 거부로 바뀐다.
-- 보충: 없음
+- 보충:
+  > 편집자 결정(42C-01): "【추론】 ERROR-195의 "즉시 throw하고, throw 직전에 `onError`로 보낸다"에서 throw는 PR-5가 `settle`의 쓰기 표시에서 하고, `onError` 보고는 PR-4의 보고기를 쓰므로 35C-01과 같이 33C-01의 디스패치 배선과 함께 뒤에 머지하는 단계가 잇는다; 06이 먼저 머지되면 던지기만 하고 그 자리의 DETAIL에 배선 PR이 보고를 더한다는 한 줄을 남긴다. 코드 이름은 가칭 `INVALID_VIRTUAL_NODE_VALUES` 그대로 쓰고(이미 파생 경로가 쓰는 코드와 같은 하나다) 05의 확정 목록(31C-05)에 든다. LANDING-147의 이주(오류 클래스가 `SchemaFormError`로, 같은 길이 문자열 쪼개기는 거부로)는 이 수정으로 호출자 경로에서도 실현된다." (`reviews/round-42-closing.md:11`)
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:673`(정본)
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-21)

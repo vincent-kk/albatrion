@@ -2924,7 +2924,8 @@
   > 【추론】 코드는 오류 클래스와 무리를 옮겨 `SCHEMA_FORM_ERROR.INVALID_VIRTUAL_NODE_VALUES`(가칭)로 한다.
   > 【추론】 `JSON_SCHEMA_ERROR`는 청사진 오류의 무리이고, 이 사건은 쓰기의 오류이기 때문이다.
   > 【추론】 기록에는 `path`와 `details`(기대 길이, 받은 값)를 싣는다.
-- 보충: 없음
+- 보충:
+  > 편집자 결정(42C-02): "【추론】 쓰기 쪽: 가상 노드에 온 호출자 쓰기는 ERROR-195대로 값이 `undefined`면 참조한 노드 모두에 그 쓰기 종류로 `undefined`를 쓰고, 배열인지를 길이보다 먼저 보아 길이가 참조 수와 같은 배열이면 자리마다 그 원소를 참조 노드에 같은 종류로 쓰며(나뉜 값은 참조 노드마다 `interpret`를 지난다), 그 밖의 값(`null`, 배열 아닌 값, 길이가 다른 배열)은 호출자 오류로 즉시 `SchemaFormError`(가칭 `INVALID_VIRTUAL_NODE_VALUES`, 기록에 `path`와 `details`의 기대 길이·받은 값)를 던진다; 자동 쓰기 경로의 분류(정착 오류, `cause` 가칭 `'writeShape'`)는 이미 있는 대로다. 가상 노드 자신은 `raw`가 없으므로(NODE-034) 쓰기가 가상 노드에 남기는 것은 dirty 표시뿐이고 값은 참조 노드에 산다." (`reviews/round-42-closing.md:18`)
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:654-672`(정본)
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-21)

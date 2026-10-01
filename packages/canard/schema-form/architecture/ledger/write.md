@@ -1414,6 +1414,7 @@
   > 편집자 결정(18C-102): "【추론】 로드가 아닌 쓰기(`setValue(V)` 포함)는 직전 커밋을 기준으로 한다." (`reviews/round-18-closing.md:2867`)
   > 편집자 결정(18C-103): "【추론】 `setValue(undefined)`는 이미 있던 노드를 다시 채우지 않고 비운다." (`reviews/round-18-closing.md:2888`)
   > 편집자 결정(18C-103): "【추론】 채움이 일어나는 사건에는 노드 게이트(`controls.active`)가 켜짐도 든다(SETTLE-005)." (`reviews/round-18-closing.md:2889`)
+  > 편집자 결정(42C-02): "【추론】 되물은 Overwrite 채움의 범위는 WRITE-090으로 닫힌다: 채움은 노드가 생길 때만 일어나고 `setValue(V)`·`Overwrite`는 로드가 아니라 전체 교체 쓰기라 이미 형상에 있던 노드를 다시 채우지 않으므로, 가상 노드의 `undefined` 분배는 참조 노드마다의 전체 교체 쓰기이되 채움이 없고 참조 노드의 하위 트리를 로드로 다루지 않는다; 그 쓰기로 새로 생긴 노드(참조 노드가 호스트이고 배열 원소가 객체일 때의 자식)만 WRITE-090대로 채움을 받는다. 그래서 옛 단언(`/startDate`·`/endDate`가 `undefined`, `/period`가 `[undefined, undefined]`, `getValue()`가 `{}`)은 그대로 이식한다." (`reviews/round-42-closing.md:21`)
 - 상태: 현행
 - 출처: `reviews/round-18-owner-answers.md:26`(정본, 반영 칸), `reviews/round-18-closing.md:2763-2764,2781,2866-2867,2888-2889`
 - 닫은 사람: 소유자 답(`reviews/round-18-owner-answers.md:26` 18C 검토 4번), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-96), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-97), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-102), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-103)
