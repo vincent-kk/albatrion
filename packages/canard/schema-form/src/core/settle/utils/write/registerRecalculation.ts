@@ -14,7 +14,7 @@ export const registerRecalculation = <Self extends SchemaNodeRecord<Self>>(
   const blueprint = context.root.runtime.blueprint;
   const dependencies = getDependencyIndex(blueprint);
   for (const changed of context.changedRaw)
-    for (const declarationPath of dependencies.affected(changed)) {
+    for (const declarationPath of dependencies.affected(changed, context.root)) {
       context.dirtyPaths.add(declarationPath);
       context.dependencyOwnerPaths.add(declarationPath);
       context.shapeDirtyPaths.add(declarationPath.slice(0,
