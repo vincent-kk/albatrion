@@ -2,6 +2,8 @@ import { EMPTY_REVISION_LEDGER, markSchemaNodeEvent, SchemaNodeEventType } from 
 import type { SchemaNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../type';
 import { readSchemaNodeWatchValues } from '../controls/readSchemaNodeWatchValues';
+import { createWatchDeliveryIndex } from './utils/createWatchDeliveryIndex';
+import { getWatchDeliveryPaths } from './utils/getWatchDeliveryPaths';
 
 /**
  * Mark one committed delivery set and advance its per-bit revision ledgers.
@@ -13,9 +15,45 @@ export const markCommitDeliveries = <Self extends SchemaNodeRecord<Self>>(
 ): void => {
   const runtime = context.root.runtime;
   const snapshots = runtime.deliverySnapshots ?? new Map();
-  const watchNodes = runtime.deliveryWatchNodes ?? new Set<unknown>();
+  const automaticNodes = new Set(context.automaticLog.map((write) => write.node));
+  const watchIndex = runtime.deliveryWatchIndex;
+  const affectedPaths = new Set<string>();
+  let fullWatchScan = context.exited.size > 0;
+  for (const node of context.entered) affectedPaths.add(node.path);
+  for (const node of context.changedNodes) {
+    const previous = snapshots.get(node);
+    if (previous && (previous.path !== node.path ||
+      node.behavior.type === 'array' && previous.children !== node.children))
+      fullWatchScan = true;
+    if (!previous || previous.local !== node.local || previous.emit !== node.emit)
+      affectedPaths.add(node.path);
+  }
+  for (const node of context.stateDirtyNodes) {
+    const previous = snapshots.get(node);
+    if (previous && previous.path !== node.path) fullWatchScan = true;
+    if (!previous || previous.interactionState !== node.interactionState ||
+      previous.active !== node.active || previous.visible !== node.visible ||
+      previous.readOnly !== node.readOnly || previous.disabled !== node.disabled)
+      affectedPaths.add(node.path);
+  }
+  // Drop an ancestor only when descendants explain its change; a host whose own raw or extras changed keeps its subtree.
+  for (const path of [...affectedPaths]) {
+    let ancestor = path;
+    while (ancestor) {
+      ancestor = ancestor.slice(0, ancestor.lastIndexOf('/'));
+      if (!context.changedRaw.has(ancestor)) affectedPaths.delete(ancestor);
+    }
+  }
   const candidates = new Set<unknown>([...context.changedNodes,
-    ...context.entered, ...context.stateDirtyNodes, ...watchNodes, context.root]);
+    ...context.entered, ...context.stateDirtyNodes, context.root]);
+  if (watchIndex) {
+    if (fullWatchScan)
+      for (const watcher of watchIndex.allNodes) candidates.add(watcher);
+    else if (runtime.deliveredContext !== runtime.context)
+      for (const watcher of watchIndex.contextNodes) candidates.add(watcher);
+    if (!fullWatchScan)
+      for (const path of affectedPaths) watchIndex.affected(path, candidates);
+  }
   const isTreeNode = (value: unknown): value is Self => value !== null &&
     typeof value === 'object' && Reflect.get(value, 'runtime') === runtime;
   const mark = (node: Self, bit: SchemaNodeEventType,
@@ -27,13 +65,16 @@ export const markCommitDeliveries = <Self extends SchemaNodeRecord<Self>>(
     const node = candidate;
     if (node.detached) {
       snapshots.delete(node);
-      watchNodes.delete(node);
+      watchIndex?.remove(node);
       continue;
     }
     const previous = snapshots.get(node);
     const watched = readSchemaNodeWatchValues(node);
-    if (watched.length) watchNodes.add(node);
-    else watchNodes.delete(node);
+    if (watched.length) {
+      const index = runtime.deliveryWatchIndex ??=
+        createWatchDeliveryIndex<Self>();
+      index.update(node, getWatchDeliveryPaths(node));
+    } else runtime.deliveryWatchIndex?.remove(node);
     const watchChanged = previous !== undefined &&
       (watched.length !== previous.watchValues.length ||
         watched.some((value, index) => value !== previous.watchValues[index]));
@@ -47,7 +88,7 @@ export const markCommitDeliveries = <Self extends SchemaNodeRecord<Self>>(
         const current = node.behavior.strategy === 'branch' ?
           { local: node.local, emit: node.emit } : node.local;
         const payload = { previous: oldValue, current };
-        const source = context.automaticLog.some((write) => write.node === node) ||
+        const source = automaticNodes.has(node) ||
           context.filledNodes.has(node) ? 'automatic' : context.kind;
         mark(node, SchemaNodeEventType.UpdateValue,
           process.env.NODE_ENV !== 'production' ? Object.freeze(payload) : payload,
@@ -87,7 +128,7 @@ export const markCommitDeliveries = <Self extends SchemaNodeRecord<Self>>(
       const current = node.behavior.strategy === 'branch' ?
         { local: node.local, emit: node.emit } : node.local;
       const payload = { previous: undefined, current };
-      const source = context.automaticLog.some((write) => write.node === node) ||
+      const source = automaticNodes.has(node) ||
         context.filledNodes.has(node) ? 'automatic' : context.kind;
       mark(node, SchemaNodeEventType.UpdateValue,
         process.env.NODE_ENV !== 'production' ? Object.freeze(payload) : payload,
@@ -105,15 +146,15 @@ export const markCommitDeliveries = <Self extends SchemaNodeRecord<Self>>(
       schema: node.schema, watchValues: watched });
   }
   runtime.deliverySnapshots = snapshots;
-  runtime.deliveryWatchNodes = watchNodes;
   for (const node of context.exited) {
     if (!node.detached) continue;
     snapshots.delete(node);
-    watchNodes.delete(node);
+    runtime.deliveryWatchIndex?.remove(node);
   }
   if (runtime.deliveredDiagnostics && runtime.deliveredDiagnostics !== runtime.diagnostics)
     mark(context.root, SchemaNodeEventType.UpdateDiagnostics);
   runtime.deliveredDiagnostics = runtime.diagnostics;
+  runtime.deliveredContext = runtime.context;
   for (const [candidate, delivery] of runtime.queuedEvents ?? []) {
     if (!isTreeNode(candidate) || candidate.detached) continue;
     const node = candidate;

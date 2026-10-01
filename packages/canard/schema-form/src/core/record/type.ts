@@ -50,6 +50,20 @@ interface SchemaNodeDeliverySnapshot<Self> {
   readonly watchValues: readonly unknown[];
 }
 
+/** Tree-local reverse watch paths used by commit delivery marking. */
+interface SchemaNodeWatchDeliveryIndex {
+  /** Live nodes with at least one resolved watch path. */
+  readonly allNodes: ReadonlySet<unknown>;
+  /** Nodes whose effective watch list reads the context slot. */
+  readonly contextNodes: ReadonlySet<unknown>;
+  /** Replace one live node's effective resolved watch paths. */
+  update(node: unknown, paths: readonly string[]): void;
+  /** Forget an occurrence that left the shape or lost its watch list. */
+  remove(node: unknown): void;
+  /** Add watchers of path ancestors and descendants to the candidate set. */
+  affected(path: string, candidates: Set<unknown>): void;
+}
+
 /** The fixed node layout implemented by every node kind. */
 export interface SchemaNodeRecord<Self> {
   /** Shared calculation row selected for this node's kind and strategy. */
@@ -287,10 +301,12 @@ export interface SchemaNodeRuntime<Self> extends SchemaNodeRootRuntimeState {
   deliveries?: Map<unknown, SchemaNodeDelivery>;
   /** Last committed node observations for change detection. */
   deliverySnapshots?: Map<unknown, SchemaNodeDeliverySnapshot<unknown>>;
-  /** Nodes with watch paths that can change without local recalculation. */
-  deliveryWatchNodes?: Set<unknown>;
+  /** Live reverse watch dependencies, allocated on the first watched node. */
+  deliveryWatchIndex?: SchemaNodeWatchDeliveryIndex;
   /** Last diagnostics reference observed by delivery marking. */
   deliveredDiagnostics?: SchemaNodeDiagnostics;
+  /** Context reference last observed by delivery marking. */
+  deliveredContext?: Readonly<Record<string, unknown>>;
   /** Public entry depth consumed by the later dispatcher. */
   entryDepth?: number;
   /** Feedback waves already produced by the current outer entry. */
