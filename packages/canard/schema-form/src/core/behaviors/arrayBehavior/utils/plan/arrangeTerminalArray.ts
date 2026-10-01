@@ -10,9 +10,8 @@ import { isValidArrayIndex } from './isValidArrayIndex';
  */
 export const arrangeTerminalArray: Behavior['arrange'] = (node, operation) => {
   const raw = node.raw;
-  if (raw !== undefined && raw !== null && !isArray(raw))
+  if (!isArray(raw) && raw !== undefined && operation.kind !== 'push')
     return { kind: 'noop' };
-  if (raw === null && operation.kind !== 'push') return { kind: 'noop' };
   const source = isArray(raw) ? raw : [];
   const length = source.length;
   if (operation.kind === 'push') return {

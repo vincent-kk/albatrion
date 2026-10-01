@@ -224,6 +224,21 @@ describe('array structural verbs', () => {
     expect(root.raw).toEqual(['y']);
   });
 
+  it('48C-02 pushes over a terminal wrong-kind value and clears its warning', () => {
+    const { root, runtime } = makeRecordTree({ type: 'array',
+      options: { terminal: true } });
+    root.setValue(17);
+    expect(root.typeMismatch).toBe(true);
+    const commit = Reflect.get(runtime, 'commitNumber');
+    expect(arrangeSchemaNodeItems(root, { kind: 'clear' })).toBeUndefined();
+    expect(arrangeSchemaNodeItems(root, { kind: 'pop' })).toBeUndefined();
+    expect(root.raw).toBe(17);
+    expect(Reflect.get(runtime, 'commitNumber')).toBe(commit);
+    expect(arrangeSchemaNodeItems(root, { kind: 'push', value: 'x' })).toBe(1);
+    expect(root.raw).toEqual(['x']);
+    expect(root.typeMismatch).toBe(false);
+  });
+
   it('47C-01 keeps nested array slots and live identity on a tuple tail update', () => {
     const { root } = makeRecordTree({ type: 'array', prefixItems: [
       { type: 'array', items: { type: 'object',
