@@ -99,5 +99,17 @@ describe('TEST-077 union write paths', () => {
     expect(root.find('/target')?.typeMismatch).toBe(false);
   });
   it.todo('TEST-077 stage 07 (PR-7): finished string input applies trim');
-  it.todo('25C-11 stage 06 (PR-5): array node completes all eight node.type values');
+  it('25C-11 completes all eight node.type values with the array node', () => {
+    const { root } = makeSchemaNodeTree({ type: 'object', properties: {
+      s: { type: 'string' }, n: { type: 'number' },
+      b: { type: 'boolean' }, z: { type: 'null' },
+      o: { type: 'object' }, u: { type: ['string', 'number'] },
+      a: { type: 'array', items: { type: 'string' } },
+    }, options: { virtual: { v: { fields: ['s'] } } } });
+    root.setValue({ s: 'text', n: 1, b: true, z: null, o: {}, u: 'value', a: ['x'] });
+    expect(['', '/s', '/n', '/b', '/z', '/u', '/v', '/a'].map(path =>
+      root.find(path)?.type)).toEqual([
+      'object', 'string', 'number', 'boolean', 'null', 'union', 'virtual', 'array',
+    ]);
+  });
 });
