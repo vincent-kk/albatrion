@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { isArray } from '@winglet/common-utils/filter';
 import { SchemaFormError } from '../../../errors';
 import type { BlueprintSchema } from '../../blueprint';
@@ -31,7 +31,6 @@ describe('ERROR-004 ERROR-005 58C-01 all settle settlement failures', () => {
       codes: ['GUARD_FAILED', 'BUDGET_EXCEEDED'], paths: ['', ''], cause: 'expression' },
   ] satisfies { name: string; schema: BlueprintSchema; value: unknown;
     codes: string[]; paths: string[]; cause: string }[])('$name preserves all failures in occurrence order', ({ schema, value, codes, paths, cause }) => {
-    const report = vi.fn();
     const { root } = createTestTree(schema, validator);
     let caught: unknown;
     try { writeSchemaNode(root, value, 'callerReplace', SetValueOption.Overwrite); }
@@ -43,7 +42,6 @@ describe('ERROR-004 ERROR-005 58C-01 all settle settlement failures', () => {
     expect(errors.map((error) => error.code)).toEqual(codes.map((code) => `SCHEMA_FORM_ERROR.${code}`));
     expect(errors.map((error) => error.details.path)).toEqual(paths);
     expect(root.runtime.diagnostics.cause).toBe(cause);
-    expect(report).not.toHaveBeenCalled();
     if (codes.includes('BUDGET_EXCEEDED')) {
       expect(root.runtime.diagnostics).toMatchObject({ exceededBudget: 'derive', iterations: 25 });
       expect(root.emit).toMatchObject({ left: 0, right: 0 });

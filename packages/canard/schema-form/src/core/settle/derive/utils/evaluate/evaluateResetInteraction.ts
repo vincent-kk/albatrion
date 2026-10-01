@@ -9,6 +9,9 @@ import { evaluateScopedExpression } from './utils/evaluateScopedExpression';
 import type { ScopedExpressionResult } from './utils/evaluateScopedExpression';
 import { getSelectedDeclarationIds } from './utils/getSelectedDeclarationIds';
 
+/** Frozen result reused when no expression fails. */
+const NO_FAILURES: readonly [] = Object.freeze([]);
+
 /**
  * Decide final interaction resets from loaded values or false-to-true edges.
  * @param root - Final calculated tree whose raw values remain untouched
@@ -23,7 +26,7 @@ export const evaluateResetInteraction = <Self extends SchemaNodeRecord<Self>>(
   const nodes: Self[] = [];
   const trace: DeriveTraceEntry[] = [];
   const evaluatedExpressions = new Map<string, ScopedExpressionResult>();
-  const failures: DeriveResetInteractionDecision<Self>['failures'][number][] = [];
+  let failures: DeriveResetInteractionDecision<Self>['failures'][number][] | undefined;
   while (pending.length) {
     const node = pending.pop();
     if (!node || node.detached) continue;
@@ -46,7 +49,7 @@ export const evaluateResetInteraction = <Self extends SchemaNodeRecord<Self>>(
           if (evaluated.threw) throw evaluated.cause;
           current = Boolean(evaluated.value);
         } catch (cause) {
-          failures.push({ sourcePath: node.path,
+          (failures ??= []).push({ sourcePath: node.path,
             schemaPath: rule.schemaPath, cause });
           state.consumedRuleValues.set(key, false);
           continue;
@@ -65,5 +68,5 @@ export const evaluateResetInteraction = <Self extends SchemaNodeRecord<Self>>(
       for (let index = (node.children?.length ?? 0) - 1; index >= 0; index--)
         pending.push(node.children![index]);
   }
-  return { nodes, trace, failures };
+  return { nodes, trace, failures: failures ?? NO_FAILURES };
 };

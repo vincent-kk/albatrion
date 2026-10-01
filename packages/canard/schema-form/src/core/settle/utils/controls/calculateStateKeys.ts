@@ -5,6 +5,9 @@ import { getControlExpression } from './getControlExpression';
 import { getControlLayers } from './getControlLayers';
 import { readStateDependency } from './readStateDependency';
 
+/** Frozen result reused when no expression fails. */
+const NO_FAILURES: readonly [] = Object.freeze([]);
+
 /** Each state key has its own identity and order-independent combination. */
 const STATE_KEYS = {
   visible: { initial: true, combine: (left: boolean, right: boolean) => left && right },
@@ -53,7 +56,7 @@ export const calculateStateKeys = <Self extends SchemaNodeRecord<Self>>(
   const evaluated = new Map<string, boolean | undefined>();
   const blueprint = root.runtime.blueprint;
   const entries: CalculatedStateKeys<Self>['entries'][number][] = [];
-  const failures: CalculatedStateKeys<Self>['failures'][number][] = [];
+  let failures: CalculatedStateKeys<Self>['failures'][number][] | undefined;
   for (const node of candidates) {
     if (node.detached || node.parent && node.parent.structure?.[node.name] !== node)
       continue;
@@ -80,7 +83,7 @@ export const calculateStateKeys = <Self extends SchemaNodeRecord<Self>>(
                 (dependency) => readStateDependency(root,
                   group.host.path, dependency))));
             } catch (cause) {
-              failures.push({ path: group.host.path, schemaPath, cause });
+              (failures ??= []).push({ path: group.host.path, schemaPath, cause });
             }
             evaluated.set(cacheKey, value);
           }
@@ -89,5 +92,5 @@ export const calculateStateKeys = <Self extends SchemaNodeRecord<Self>>(
       }
     entries.push({ node, ...next });
   }
-  return { entries, failures };
+  return { entries, failures: failures ?? NO_FAILURES };
 };

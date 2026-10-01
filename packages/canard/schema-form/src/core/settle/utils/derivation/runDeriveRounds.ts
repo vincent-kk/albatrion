@@ -48,7 +48,8 @@ export const runDeriveRounds = <Self extends SchemaNodeRecord<Self>>(
             ...(failure.expectedLength === undefined ? {} :
               { expectedLength: failure.expectedLength, received: failure.cause }),
           },
-        ), failure.kind);
+        ), failure.kind, [failure.kind, failure.sourcePath,
+          failure.targetPath ?? '', failure.schemaPath].join('\u0000'));
       }
       const changed = decision.writes.filter(
         (write) => !write.target || write.target.blueprintNode.kind === 'virtual' ||

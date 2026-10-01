@@ -96,6 +96,8 @@ export interface SettlementContext<Self extends SchemaNodeRecord<Self>> {
   deriveBudgetRules?: readonly DeriveTraceEntry[];
   /** All failure occurrences in order, deduplicated only on recomputation. */
   failures?: SchemaFormError[];
+  /** Recorded occurrence identities; only recomputation of one identity is merged. */
+  failureKeys?: Set<string>;
   /** First failure's cause, independent of later budget exhaustion. */
   cause?: 'expression' | 'injectTarget' | 'writeShape' | 'sharedConflict' | 'budget';
   /** Exhausted host rounds handed to the later budget phase. */
