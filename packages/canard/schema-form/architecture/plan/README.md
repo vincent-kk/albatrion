@@ -31,7 +31,9 @@ flowchart LR
   F --> S
   G --> S
   S --> P["08 플러그인 (UI 넷)"]
+  S --> O["최적화 — 성능 최적화 (동작 불변, 묶음마다 PR)"]
   P --> R["09 정리·릴리스 (PR-8, 레거시 삭제)"]
+  O --> R
   M -.-> T["릴리스 전환 PR (LANDING-097), master로 직접"]
 ```
 
@@ -45,6 +47,7 @@ flowchart LR
 | 06 | [06-array/](06-array/) | PR-5(LANDING-065·085·094) | 03 | 04·05와 병렬 |
 | 07 | [07-switch/](07-switch/) | PR-7(LANDING-067·087·095), 레거시 보존 | 02–06 전부 | 원샷 |
 | 08 | [08-plugins/](08-plugins/) | UI 플러그인 넷(LANDING-206) | 07 | — |
+| 최적화 | [perf-optimization/](perf-optimization/) | 원장 PR 없음 — 27라운드 소유자 답(TEST-027 보충)의 "구현 완료 뒤 별도 작업". 대장 `../verification/performance-issues.md`의 열림 행 | 07 | 08과 병렬, 09 전 |
 | 09 | [09-release-and-cleanup/](09-release-and-cleanup/) | PR-8(LANDING-068·096) + `src/__legacy__/` 삭제(LANDING-205) | 08, 릴리스 전환 PR | — |
 | 별도 | [release-transition/](release-transition/) | LANDING-097 | 없음 | 언제든, 09 전 |
 

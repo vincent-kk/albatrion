@@ -19,6 +19,7 @@
 | 06 | 배열 | [request](plan/06-array/request.md) | [verification](plan/06-array/verification.md) | [adr-and-axes](plan/06-array/adr-and-axes.md) | PR-5 | 03 |
 | 07 | 전환(원샷, 레거시 보존) | [request](plan/07-switch/request.md) | [verification](plan/07-switch/verification.md) | [adr-and-axes](plan/07-switch/adr-and-axes.md) | PR-7 | 02–06 |
 | 08 | 플러그인(UI 넷) | [request](plan/08-plugins/request.md) | [verification](plan/08-plugins/verification.md) | [adr-and-axes](plan/08-plugins/adr-and-axes.md) | LANDING-206 | 07 |
+| 최적화 | 성능 최적화(동작 불변) | [request](plan/perf-optimization/request.md) | [verification](plan/perf-optimization/verification.md) | [adr-and-axes](plan/perf-optimization/adr-and-axes.md) | 없음(27라운드 소유자 답, TEST-027 보충) | 07, 08과 병렬, 09 전 |
 | 09 | 정리·릴리스(레거시 삭제) | [request](plan/09-release-and-cleanup/request.md) | [verification](plan/09-release-and-cleanup/verification.md) | [adr-and-axes](plan/09-release-and-cleanup/adr-and-axes.md) | PR-8 | 08, 별도 |
 | 별도 | 릴리스 전환(`master` 직접) | [request](plan/release-transition/request.md) | [verification](plan/release-transition/verification.md) | [adr-and-axes](plan/release-transition/adr-and-axes.md) | LANDING-097 | 없음 |
 
@@ -55,7 +56,8 @@
 | 06 | 배열 | 대기 | — | 03 뒤, 04·05와 병렬 |
 | 07 | 전환 | 대기 | — | 02–06 전부 머지 뒤. 원샷 |
 | 08 | 플러그인 | 대기 | — | 07 뒤 |
-| 09 | 정리·릴리스 | 대기 | — | 08과 릴리스 전환 PR 뒤. 머지되면 우산을 `master`로 |
+| 최적화 | 성능 최적화 | 대기 | — | 07 머지 뒤 착수, 08과 병렬, 09 전에 끝냄. 묶음(M2)마다 PR 하나. 출발점은 [대장](verification/performance-issues.md), 계획은 [request](plan/perf-optimization/request.md) |
+| 09 | 정리·릴리스 | 대기 | — | 08·최적화와 릴리스 전환 PR 뒤. 머지되면 우산을 `master`로 |
 | 별도 | 릴리스 전환 | 대기 | — | 시점은 소유자가 정한다(LANDING-204) |
 
 ### 열린 소유자 결정
@@ -104,3 +106,4 @@
 | 2026-09-30 | 28라운드: 04(PR-3+PR-6) 실행 계획 초안의 원장 해석 일곱 건과 후속 둘을 원장 관리자가 편집자 결정으로 닫음(28C-01~08, 보충 줄만 추가). 정착 기록은 런타임 칸에 마지막 하나, `enabled = active && visible`, `@`는 맥락 칸(03의 extras 읽기는 04가 고침), `setContext`·맥락 에지는 PR-3, `unsetOnInactive` 식 throw는 유지, TEST-071 값 크기의 뜻, `watchValues`·`node.context`는 04 | `reviews/round-28-closing.md` |
 | 2026-10-01 | 29라운드: 04 구현 중 물음 넷(생긴 노드의 `injectTo`·`derived`가 `undefined` 원천에서 발화하는가; 식이 던진 정착의 채움·나감 비움; 공유 충돌 정착의 진행; 조각 `controls`의 `injectTo`)을 원장 관리자가 편집자 결정으로 닫음(29C-01~04, 보충 줄만 추가). 발화한다; 채움 뒤의 변화는 새 에지; v7의 모형 선택과 다른 회귀 기대는 원장 값으로 바꿈; 식이 던져도 자리별 값으로 정착을 마치며 03의 전이 전체 생략은 04가 고침; 공유 충돌도 앞선 종류로 커밋하고 자동 쓰기는 진행; 조각의 `injectTo`는 청사진 오류(CONTROLS-077) | `reviews/round-29-closing.md` |
 | 2026-10-01 | 04 PR #351 머지 확인(`54afafb86`, 01:11Z). 게이트 30 가운데 29 충족, G23 storybook은 실행 결과 없이 소유자가 머지를 결정해 사유를 남기고 포기(통과로 주장하지 않음). 04가 고친 03 결함은 29C-02·03과 비루트 노드의 자기 선언 재선택. 05·06의 의존이 풀림(05는 D-1 뒤). 속도 문제 대장 `verification/performance-issues.md` 시작 | [#351](https://github.com/vincent-kk/albatrion/pull/351) |
+| 2026-10-01 | 소유자 요청으로 구현 완료 뒤 성능 최적화 작업의 계획서 셋을 `plan/perf-optimization/`에 둠. 단계는 M0 측정판 고정(옛 판·최적화 전·묶음 뒤 세 기준선, 미측정 행의 수치) → M1 분류·우선순위(계약·차수·체감·위험, 소유자 확인 한 번) → M2 묶음별 PR(L1 이차 비용 → L2 상수 비용 → L3 비교·할당·메모리 → L4 런타임 교차, PR 하나에 가설 하나) → M3 종합 재측정과 TEST-027 수용. 자리는 07 머지 뒤·08과 병렬·09 전. 원장 항목은 더하지 않음 | `plan/perf-optimization/` |

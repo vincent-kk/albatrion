@@ -1,6 +1,6 @@
 # 속도 문제 대장
 
-새 엔진 구현 중 드러난 속도·메모리 문제를 단계와 상관없이 한곳에 모읍니다. 소유자 답(`reviews/round-27-owner-answers.md:11`)에 따라 구현 단계에서는 최적화하지 않습니다. 최적화는 구현을 마친 뒤 별도 작업에서 하며, 이 대장이 그 작업의 출발점입니다. 최종 판정은 07단계 React/jsdom 게이트(LANDING-067)가 합니다.
+새 엔진 구현 중 드러난 속도·메모리 문제를 단계와 상관없이 한곳에 모읍니다. 소유자 답(`reviews/round-27-owner-answers.md:11`)에 따라 구현 단계에서는 최적화하지 않습니다. 최적화는 구현을 마친 뒤 별도 작업에서 하며, 이 대장이 그 작업의 출발점입니다. 그 작업의 계획은 [plan/perf-optimization/](../plan/perf-optimization/request.md)에 있습니다. 최종 판정은 07단계 React/jsdom 게이트(LANDING-067)가 합니다.
 
 - 측정값과 명령의 원본은 단계별 기록입니다: [03 성능 기록](./03-node-and-settle/performance.md), [03 벤치 보고](./03-node-and-settle/bench-report.md), [04 성능 기록](./04-derive-and-controls/performance.md).
 - 계약을 어긴 비용(변경에 비례하지 않음, SETTLE-017·GOAL-011)은 수용 대상이 아닙니다. 발견한 단계에서 고쳤고 "해결" 절에 남깁니다.
