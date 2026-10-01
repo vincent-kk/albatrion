@@ -55,9 +55,13 @@ Planning method: 저장소 지침 — `PLAN.md` §2와 `plan/prompts.md`의 단�
 | 2026-10-01 | 원장 질의 | `omitTrailing`이 자르는 것(37C-01): 방출 배열 꼬리의 빈 자리 — 채운 자리, 잎의 실제 `null`, 청사진 없는 자리의 `undefined`·`null` | `reviews/round-37-closing.md` |
 | 2026-10-01 | U4 | `arrayBehavior/` 두 행, 모든 행의 여덟째 칸 `arrange`와 공유 거부 칸(ERROR-197), 레코드 칸 셋(codex `8a0344a4`). 조율 세션이 고침: 레코드 칸 셋을 공개 접근자가 아닌 내부 칸으로, 터미널 `update`의 반환 출처 `updated`, 아이템 수마다 쌓이던 항목 메모(반복 `push`에서 제곱 메모리)를 템플릿당 마지막 하나로. core 시험 1,157 통과. G3·G5 | `4d8b4bf0b` |
 
+| 2026-10-01 | U5 | 배열 분배·위치 잇기·소멸·전체 배열 잠복·비구조 쓰기의 스냅숏 자리·원본 B 구조 되돌림(codex `44877b15`). 시험 두 파일 19건, core 시험 1,176 통과. 해석 셋: 꺼진 아이템 뒤 호스트가 나가면 그 아이템의 잠복 원본으로 자리를 채움; 배열 잠복은 `inactiveValues` 항목 하나; 스냅숏이 없고 새 수가 0이면 배열을 만들지 않음 | `af402b2af` |
+| 2026-10-01 | 원장 질의 | 38C-01 배열 호스트의 잘못된 종류 값은 아이템 0·소멸·그 값 방출; 38C-02 나가는 배열 호스트의 잠복은 원본 트리; 39C-01 객체 행이 잘못된 종류 원본을 방출하지 않는 것은 03의 결함이며 06이 고침(M9) | `reviews/round-38-closing.md`, `round-39-closing.md` |
+| 2026-10-01 | U5b 문서 | 잘못된 종류 원본의 방출과 배열 잠복 원본 트리를 behaviors·객체·배열·settle 문서에 먼저 적음 | `5202c5827` |
+
 ## 3. 다음 행동
 
-- U5 정착 ①(배열 분배, 위치 잇기, 소멸, 잠복, 비구조 쓰기의 스냅숏 자리, 원본 B 구조 기록).
+- U5b 코드(39C-01 방출, 38C-02 원본 트리) 검토·커밋, 그다음 U6 구조 연산과 겉면.
 
 ## 4. 원장·계획서 어긋남
 
@@ -70,4 +74,5 @@ Planning method: 저장소 지침 — `PLAN.md` §2와 `plan/prompts.md`의 단�
 | M5 | `src/core/behaviors/DETAIL.md:12` | "터미널 배열 행은 06단계에서 추가" — 배열 branch 행도 06이 더함 | LANDING-065·094 | U2에서 문서를 고침 |
 | M6 | `src/core/settle/DETAIL.md:28` | "배열 구조의 생성·폐기 로그는 PR-5에서 더한다" | LANDING-062 충돌 줄, 35C-05 | U5에서 구현하고 현행 계약으로 바꿈 |
 | M7 | `src/core/record/utils/updateSchemaNodeNameAndPath.ts` | 한 노드의 다섯 칸만 바꾸고 제품 호출자가 없음 | NODE-004·051 | U6의 경로 옮김 organ 안에서 씀 |
+| M9 | `src/core/behaviors/objectBehavior/utils/projectObject.ts`, `objectBehavior/DETAIL.md`(03) | 비객체 `raw`를 든 객체 호스트가 아무것도 방출하지 않음(루트만 `local`로 대체) | VALUE-033 (4), WRITE-013, 39C-01: 받은 그대로 방출 | 06이 고침(U5b): 객체·배열 행과 루트가 잘못된 종류 원본을 방출. 03·04 시험의 옛 기대는 고친 목록과 함께 PR 본문에 |
 | M8 | 동사의 반환 값 | 원장이 정하지 않음 | GOAL-058(동기) | 레거시 반환을 동기로 지킴(실행 계획 I7, 자율 결정) |
