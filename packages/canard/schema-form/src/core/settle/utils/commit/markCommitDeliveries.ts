@@ -18,20 +18,21 @@ export const markCommitDeliveries = <Self extends SchemaNodeRecord<Self>>(
   const automaticNodes = new Set(context.automaticLog.map((write) => write.node));
   const watchIndex = runtime.deliveryWatchIndex;
   const affectedPaths = new Set<string>();
-  let fullWatchScan = context.exited.size > 0 || context.perished.size > 0 ||
-    context.pathChanges.length > 0;
+  const fullWatchScan = context.exited.size > 0;
   for (const node of context.entered) affectedPaths.add(node.path);
+  for (const node of context.perished)
+    affectedPaths.add(snapshots.get(node)?.path ?? node.path);
+  for (const change of context.pathChanges) {
+    affectedPaths.add(change.previous);
+    affectedPaths.add(change.current);
+  }
   for (const node of context.changedNodes) {
     const previous = snapshots.get(node);
-    if (previous && (previous.path !== node.path ||
-      node.behavior.type === 'array' && previous.children !== node.children))
-      fullWatchScan = true;
     if (!previous || previous.local !== node.local || previous.emit !== node.emit)
       affectedPaths.add(node.path);
   }
   for (const node of context.stateDirtyNodes) {
     const previous = snapshots.get(node);
-    if (previous && previous.path !== node.path) fullWatchScan = true;
     if (!previous || previous.interactionState !== node.interactionState ||
       previous.active !== node.active || previous.visible !== node.visible ||
       previous.readOnly !== node.readOnly || previous.disabled !== node.disabled)
