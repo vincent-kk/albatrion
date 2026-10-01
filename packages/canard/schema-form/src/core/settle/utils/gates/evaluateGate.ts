@@ -132,6 +132,15 @@ export const evaluateGate = <Self extends SchemaNodeRecord<Self>>(
       new SchemaFormError(code, `Gate evaluation failed at ${gate.schemaPath}`,
         { path: hostPath, schemaPath: gate.schemaPath, cause });
     if (failure) {
+      const prior = context.failure;
+      if (prior && !context.gateFailures?.includes(prior)) {
+        (context.gateFailures ??= []).push(prior);
+        if (runtime.entryDepth) {
+          runtime.chainErrors?.push(prior);
+          if (runtime.errorReporter?.hasConsumer())
+            runtime.chainOccurrences?.push({ kind: 'error', error: prior });
+        }
+      }
       (context.gateFailures ??= []).push(failure);
       if (runtime.entryDepth) runtime.chainErrors?.push(failure);
       if (!context.failure) {

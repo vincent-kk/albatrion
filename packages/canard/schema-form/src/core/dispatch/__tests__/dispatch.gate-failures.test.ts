@@ -9,6 +9,35 @@ import { dispatchMount, dispatchSetValue } from '../index';
 import { createDispatchTree } from './fixtures/createDispatchTree';
 
 describe('round 55 gate failure regression', () => {
+  it('ERROR-005 55C-01 preserves a conflict before a later guard in errors and records', () => {
+    const report = vi.fn();
+    const validator: Validator = { compile: () => () => null,
+      compileGuard: (_schema, pointer) => () => { throw new Error(pointer); } };
+    const schema: BlueprintSchema = { type: 'object', properties: {
+      a: { type: 'object', allOf: [
+        { controls: { active: 'true' }, properties: { shared: { type: 'number' } } },
+        { controls: { active: 'true' }, properties: { shared: { type: 'string' } } },
+      ] },
+      z: { type: 'object', if: {}, then: { properties: { k: { type: 'string' } } } },
+    } };
+    const { root } = createDispatchTree(schema, undefined, validator,
+      { hasConsumer: () => true, report });
+    let caught: unknown;
+    try { dispatchSetValue(root, { a: { shared: 1 }, z: { shared: 1 } }); }
+    catch (error) { caught = error; }
+    if (!(caught instanceof SchemaFormError)) throw new Error('Expected form error');
+    expect(caught.code).toBe('SCHEMA_FORM_ERROR.MULTIPLE_ERRORS');
+    const errors = caught.details.errors;
+    if (!isArray(errors)) throw new Error('Expected ordered errors');
+    const codes = ['SCHEMA_FORM_ERROR.SHARED_NODE_CONFLICT', 'SCHEMA_FORM_ERROR.GUARD_FAILED'];
+    expect(errors.map((error) => error.code)).toEqual(codes);
+    expect(report.mock.calls.map(([record]) => record.code)).toEqual(codes);
+    for (const [index, [record]] of report.mock.calls.entries()) {
+      expect(record.error).toBe(errors[index]);
+      expect(record.aggregate).toBe(caught);
+    }
+  });
+
   it('ERROR-005 ERROR-041 bundles two guards in evaluation order and merges their records', () => {
     const report = vi.fn();
     const evaluated: string[] = [];

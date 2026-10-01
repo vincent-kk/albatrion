@@ -8,9 +8,6 @@ import { performance } from 'node:perf_hooks';
 import Ajv from 'ajv';
 import type { AnySchema } from 'ajv';
 
-// This bench is a dev script outside the package build, so it imports plugin source directly.
-import { ajvValidatorPlugin } from '../../schema-form-ajv8-plugin/src/default/validatorPlugin';
-
 import { blueprint } from '../src/core/blueprint';
 import { nodeFromJSONSchema } from '../src/core/nodeFromJSONSchema';
 import { schemaNodeFactory, SetValueOption } from '../src/core/SchemaNode';
@@ -20,6 +17,14 @@ import { createTestValidator } from '../src/core/__tests__/fixtures/createTestVa
 import { ValidationMode } from '../src/core/types/state';
 import type { Validator } from '../src/core/validation';
 import type { JSONSchema } from '../src/types';
+
+// Load plugin source at runtime without adding it to this composite project's files.
+const pluginSource = new URL('../../schema-form-ajv8-plugin/src/default/validatorPlugin.ts', import.meta.url);
+const { ajvValidatorPlugin }: { ajvValidatorPlugin: Validator & {
+  bind(instance: Ajv): void;
+  configure(options: { directGuardCompile?: boolean }): void;
+  release(root: JSONSchema): void;
+} } = await import(pluginSource.href);
 
 const noop = () => {};
 const mountSamples = 31;

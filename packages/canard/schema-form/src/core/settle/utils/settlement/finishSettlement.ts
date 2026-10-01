@@ -50,7 +50,7 @@ export const finishSettlement = <Self extends SchemaNodeRecord<Self>>(
       if (context.failure && failures.includes(context.failure)) return;
     } else {
       const errors = context.failure && !failures.includes(context.failure)
-        ? [context.failure, ...failures] : failures;
+        ? [...failures, context.failure] : failures;
       throw errors.length === 1 ? errors[0] : new SchemaFormError(MULTIPLE_ERRORS,
         'Multiple settlement errors', { errors });
     }
