@@ -242,6 +242,7 @@ interface SchemaNodeRootRuntimeState {
 
 /** Last committed reads retained for one node reference after it exits. */
 interface DetachedSchemaNodeReads {
+  readonly errors: readonly { readonly dataPath: string }[];
   readonly typeMismatch: boolean;
   readonly typeMismatches: readonly string[];
   readonly inactiveValues: readonly { path: string; value: unknown }[];
@@ -405,6 +406,8 @@ export interface SchemaNodeRuntime<Self> extends SchemaNodeRootRuntimeState {
   warningKeys?: Set<string>;
   /** Warnings held until the public entry commits and finishes delivery. */
   pendingWarningRecords?: Map<string, FormErrorRecord>;
+  /** Data-path ancestor to warning keys, for change-proportional moves/pruning. */
+  warningKeysByPath?: Map<string, Set<string>>;
   /** Guard failures awaiting the current public entry's final delivery. */
   guardFailureRecords?: Map<string, FormErrorRecord>;
   /** Failed guards already reported by this consuming tree. */

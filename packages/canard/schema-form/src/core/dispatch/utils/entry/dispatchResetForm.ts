@@ -4,6 +4,7 @@ import { SetValueOption } from '../../../types/value';
 import { enterSchemaNodeChain } from '../chain/enterSchemaNodeChain';
 import { captureChainError } from '../chain/captureChainError';
 import { exitSchemaNodeChain } from '../chain/exitSchemaNodeChain';
+import { clearWarningKeys } from '../report/clearWarningKeys';
 
 /**
  * Start a new form load lifetime with a replacement root source.
@@ -17,7 +18,7 @@ export const dispatchResetForm = <Self extends SchemaNodeRecord<Self>>(
   option: SetValueOption = SetValueOption.Overwrite,
 ): void => {
   if (!enterSchemaNodeChain(root)) return;
-  root.runtime.warningKeys?.clear();
+  clearWarningKeys(root.runtime);
   root.runtime.validationUnavailable = false;
   root.runtime.validationCompileReported = false;
   root.runtime.batchWrites = undefined;

@@ -18,7 +18,8 @@ export const markCommitDeliveries = <Self extends SchemaNodeRecord<Self>>(
   const automaticNodes = new Set(context.automaticLog.map((write) => write.node));
   const watchIndex = runtime.deliveryWatchIndex;
   const affectedPaths = new Set<string>();
-  let fullWatchScan = context.exited.size > 0;
+  let fullWatchScan = context.exited.size > 0 || context.perished.size > 0 ||
+    context.pathChanges.length > 0;
   for (const node of context.entered) affectedPaths.add(node.path);
   for (const node of context.changedNodes) {
     const previous = snapshots.get(node);
@@ -46,6 +47,7 @@ export const markCommitDeliveries = <Self extends SchemaNodeRecord<Self>>(
   }
   const candidates = new Set<unknown>([...context.changedNodes,
     ...context.entered, ...context.stateDirtyNodes, context.root]);
+  for (const change of context.pathChanges) candidates.add(change.node);
   if (watchIndex) {
     if (fullWatchScan)
       for (const watcher of watchIndex.allNodes) candidates.add(watcher);
@@ -146,10 +148,24 @@ export const markCommitDeliveries = <Self extends SchemaNodeRecord<Self>>(
       schema: node.schema, watchValues: watched });
   }
   runtime.deliverySnapshots = snapshots;
-  for (const node of context.exited) {
-    if (!node.detached) continue;
+  const departing = [...context.exited, ...context.perished];
+  const seenDeparting = new Set<Self>();
+  while (departing.length) {
+    const node = departing.pop();
+    if (!node || !node.detached || seenDeparting.has(node)) continue;
+    seenDeparting.add(node);
     snapshots.delete(node);
     runtime.deliveryWatchIndex?.remove(node);
+    runtime.deliveries?.delete(node);
+    runtime.queuedEvents?.delete(node);
+    runtime.queuedNonSettleEvents?.delete(node);
+    runtime.validationErrors?.delete(node);
+    runtime.nodeErrors?.delete(node);
+    runtime.combinedErrors?.delete(node);
+    runtime.validationChangedNodes?.delete(node);
+    runtime.validationTargets?.delete(node);
+    runtime.validationPendingTargets?.delete(node);
+    for (const child of node.children ?? []) departing.push(child);
   }
   if (runtime.deliveredDiagnostics && runtime.deliveredDiagnostics !== runtime.diagnostics)
     mark(context.root, SchemaNodeEventType.UpdateDiagnostics);

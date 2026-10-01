@@ -37,5 +37,10 @@ export const pruneArrayTailPaths = <Self>(
   for (const path of runtime.typeMismatchPaths) check(path);
   for (const path of runtime.committedRuleKeysBySource?.keys() ?? []) check(path);
   for (const path of runtime.committedRuleKeysByTarget?.keys() ?? []) check(path);
+  for (const path of hosts.keys())
+    for (const key of runtime.warningKeysByPath?.get(path) ?? []) {
+      const parts: unknown = JSON.parse(key);
+      if (isArray(parts) && typeof parts[1] === 'string') check(parts[1]);
+    }
   prunePerishedPaths(runtime, removed);
 };

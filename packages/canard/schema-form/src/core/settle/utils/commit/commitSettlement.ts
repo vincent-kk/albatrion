@@ -1,4 +1,5 @@
 import type { SchemaNodeRecord, TypeMismatchRecord } from '../../../record';
+import { indexSchemaNodeWarning } from '../../../record';
 import { NON_JSON_WHOLE_VALUE, TYPE_MISMATCH } from '../../../../errors';
 import { warnDevelopmentIssue } from '../../../../helpers/warning';
 import type { SettlementContext } from '../../type';
@@ -80,8 +81,8 @@ export const commitSettlement = <Self extends SchemaNodeRecord<Self>>(
             ...(warning.candidates ? { candidates: warning.candidates } : {}),
             source: warning.source },
         } as const;
-        (runtime.pendingWarningRecords ??= new Map()).set(
-          JSON.stringify([code, node.path, commit]), record);
+        indexSchemaNodeWarning(runtime,
+          JSON.stringify([code, node.path, commit]), node.path, record);
         runtime.chainOccurrences?.push({ kind: 'record', record });
       }
     }
@@ -104,7 +105,7 @@ export const commitSettlement = <Self extends SchemaNodeRecord<Self>>(
               message: `Whole value at ${node.path} contains non-JSON data`,
               details: { path: node.path, innerPaths },
             } as const;
-            (runtime.pendingWarningRecords ??= new Map()).set(key, record);
+            indexSchemaNodeWarning(runtime, key, node.path, record);
             runtime.chainOccurrences?.push({ kind: 'record', record });
           }
         }

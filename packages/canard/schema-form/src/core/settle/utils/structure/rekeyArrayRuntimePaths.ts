@@ -1,6 +1,9 @@
 import { isArray } from '@winglet/common-utils/filter';
 
+import type { FormErrorRecord } from '../../../../errors';
+
 import type { SchemaNodeRuntime } from '../../../record';
+import { indexSchemaNodeWarning } from '../../../record';
 import { updateCommittedRuleValue } from '../commit/updateCommittedRuleValue';
 
 /** An old item position that either survives at another position or perishes. */
@@ -31,6 +34,28 @@ export const rekeyArrayRuntimePaths = <Self>(
     const destination = moveByPath.get(itemPath);
     return destination === undefined ? undefined : destination + path.slice(itemPath.length);
   };
+  const warningKeys = new Set<string>();
+  for (const move of moves)
+    for (const key of runtime.warningKeysByPath?.get(move.previous) ?? [])
+      warningKeys.add(key);
+  const warningMoves: { key: string; path: string;
+    record: FormErrorRecord | undefined;
+    remembered: boolean }[] = [];
+  for (const key of warningKeys) {
+    const parts: unknown = JSON.parse(key);
+    if (!isArray(parts) || typeof parts[1] !== 'string') continue;
+    const path = mapPath(parts[1]);
+    const record = runtime.pendingWarningRecords?.get(key);
+    const remembered = runtime.warningKeys?.has(key) === true;
+    indexSchemaNodeWarning(runtime, key, parts[1], undefined, true);
+    if (path === undefined) continue;
+    parts[1] = path;
+    warningMoves.push({ key: JSON.stringify(parts), path, record, remembered });
+  }
+  for (const move of warningMoves) {
+    if (move.remembered) (runtime.warningKeys ??= new Set()).add(move.key);
+    indexSchemaNodeWarning(runtime, move.key, move.path, move.record);
+  }
   const rekeyPairMap = <Value>(store: Map<string, Value> | undefined,
     transform?: (value: Value, path: string, previous: string) => Value): void => {
     if (!store) return;

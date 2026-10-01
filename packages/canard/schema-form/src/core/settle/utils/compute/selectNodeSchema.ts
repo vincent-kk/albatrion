@@ -2,6 +2,7 @@ import { recordSettlementFailure } from '../errors/recordSettlementFailure';
 import { MULTIPLE_GATED_BRANCHES_ACTIVE, SchemaFormError } from '../../../../errors';
 import { mergeEffectiveSchema } from '../../../blueprint';
 import type { SchemaNodeRecord } from '../../../record';
+import { indexSchemaNodeWarning } from '../../../record';
 import type { SettlementContext } from '../../type';
 import { evaluateGate } from '../gates/evaluateGate';
 import { SHARED_NODE_CONFLICT } from '../errors/settleErrorCode';
@@ -40,7 +41,7 @@ export const selectNodeSchema = <Self extends SchemaNodeRecord<Self>>(
         message: `Multiple gated oneOf branches are active at ${schemaPath}`,
         details: { branches: selected },
       } as const;
-      (node.runtime.pendingWarningRecords ??= new Map()).set(key, record);
+      indexSchemaNodeWarning(node.runtime, key, node.path, record);
       node.runtime.chainOccurrences?.push({ kind: 'record', record });
     }
   }

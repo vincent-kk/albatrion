@@ -7,6 +7,7 @@ import { exitSchemaNodeChain } from '../chain/exitSchemaNodeChain';
 import { VALIDATOR_MISSING } from '../../../../errors';
 import type { FormErrorRecord } from '../../../../errors';
 import { ValidationMode } from '../../../types/state';
+import { clearWarningKeys } from '../report/clearWarningKeys';
 
 /**
  * Commit the first form source through the same entry boundary as later writes.
@@ -20,7 +21,7 @@ export const dispatchMount = <Self extends SchemaNodeRecord<Self>>(
   option: SetValueOption = SetValueOption.Overwrite,
 ): void => {
   if (!enterSchemaNodeChain(root)) return;
-  root.runtime.warningKeys?.clear();
+  clearWarningKeys(root.runtime);
   root.runtime.validationUnavailable = false;
   root.runtime.validationCompileReported = false;
   (root.runtime.validationTargets ??= new Set()).add(root);

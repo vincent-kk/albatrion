@@ -108,7 +108,10 @@ export interface NodeSurface<
   revision(mask?: SchemaNodeEventType): number;
   /** Request one renderer action. */
   request(kind: SchemaNodeRequestType): void;
-  /** Group synchronous writes in one outer delivery boundary. */
+  /**
+   * Group synchronous writes in one outer delivery boundary.
+   * 배열 동사(`push`·`pop`·`update`·`remove`·`clear`)도 부른 자리에서 앞선 표시를 얹은 배열로 계산해 동기 결과를 돌려주고 결과 배열을 표시하며, 배치 끝의 정착은 통째 쓰기라 아이템 키는 위치로 잇는다.
+   */
   batch(fn: () => void): void;
 }
 

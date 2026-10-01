@@ -1,5 +1,6 @@
 import { arrayScenarios } from '@aileron/schema-form-scenarios';
 import { describe, expect, it } from 'vitest';
+import type { FormErrorRecord } from '../../../errors';
 
 import { createCoreScenarioAdapter } from './utils/createCoreScenarioAdapter';
 import { runScenario } from './utils/runScenario';
@@ -9,8 +10,11 @@ if (!scenario) throw new Error('array.source-b-structure scenario is missing');
 
 // filid:contract scenario-array-source-b
 describe('array Source-B structure rollback', () => {
-  it('restores the caller structure and preserves spent item keys', async () => {
+  it('58C-01 restores caller structure and reports its single budget occurrence', async () => {
     const adapter = createCoreScenarioAdapter(scenario);
+    const records: FormErrorRecord[] = [];
+    adapter.root.runtime.errorReporter = { hasConsumer: () => true,
+      report: (record) => records.push(record) };
     expect(adapter.root.find('/items')).toBeNull();
 
     await runScenario(scenario, adapter);
@@ -23,5 +27,8 @@ describe('array Source-B structure rollback', () => {
     expect(host?.value).toEqual([]);
     expect(host?.outputValue).toBeUndefined();
     expect(host?.nextItemKey).toBeGreaterThan(0);
+    expect(records.filter((record) => record.level === 'error')).toEqual([
+      expect.objectContaining({ code: 'SCHEMA_FORM_ERROR.BUDGET_EXCEEDED', surface: 'thrown' }),
+    ]);
   });
 });

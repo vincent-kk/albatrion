@@ -1,6 +1,7 @@
 import type { BlueprintNode, BlueprintSchemaType, EffectiveSchema } from '../blueprint';
 import { find, findNodes } from '../navigation';
 import { dispatchBatch, dispatchClearExternalErrors, dispatchClearSubtreeState,
+  dispatchPush, dispatchPop, dispatchUpdate, dispatchRemove, dispatchClear,
   dispatchRequest, dispatchResetSubtree, dispatchSetExternalErrors,
   dispatchSetState, dispatchSetSubtreeState, dispatchSetValue, dispatchValidate,
   readSchemaNodeRevision, subscribeSchemaNode } from '../dispatch';
@@ -10,8 +11,7 @@ import type { Behavior, SchemaNodeEventType, SchemaNodeRecord,
   SchemaNodeRequestType, SchemaNodeRuntime } from '../record';
 import { readSchemaNodeDefaultValue,
   readSchemaNodeInactiveValues, readSchemaNodeTypeMismatch,
-  readSchemaNodeTypeMismatches, readSchemaNodeWatchValues,
-  arrangeSchemaNodeItems } from '../settle';
+  readSchemaNodeTypeMismatches, readSchemaNodeWatchValues } from '../settle';
 import { readSchemaNodeErrors } from '../validation';
 import type { ValidationIssue } from '../validation';
 import type { NodeStateFlags } from '../types/state';
@@ -179,17 +179,17 @@ export class SchemaNode implements SchemaNodeRecord<SchemaNode> {
     return dispatchSetValue<SchemaNode>(this, value, option);
   }
   /** {@inheritDoc ArrayNode.push} */
-  push(value?: unknown) { return arrangeSchemaNodeItems<SchemaNode>(this, { kind: 'push', value }); }
+  push(value?: unknown) { return dispatchPush<SchemaNode>(this, value); }
   /** {@inheritDoc ArrayNode.pop} */
-  pop() { return arrangeSchemaNodeItems<SchemaNode>(this, { kind: 'pop' }); }
+  pop() { return dispatchPop<SchemaNode>(this); }
   /** {@inheritDoc ArrayNode.update} */
   update(index: number, value: unknown) {
-    return arrangeSchemaNodeItems<SchemaNode>(this, { kind: 'update', index, value });
+    return dispatchUpdate<SchemaNode>(this, index, value);
   }
   /** {@inheritDoc ArrayNode.remove} */
-  remove(index: number) { return arrangeSchemaNodeItems<SchemaNode>(this, { kind: 'remove', index }); }
+  remove(index: number) { return dispatchRemove<SchemaNode>(this, index); }
   /** {@inheritDoc ArrayNode.clear} */
-  clear() { return arrangeSchemaNodeItems<SchemaNode>(this, { kind: 'clear' }); }
+  clear() { return dispatchClear<SchemaNode>(this); }
   /** {@inheritDoc NodeSurface.resetSubtree} */
   resetSubtree(option: SetValueOption = SetValueOption.Overwrite) {
     return dispatchResetSubtree<SchemaNode>(this, option);

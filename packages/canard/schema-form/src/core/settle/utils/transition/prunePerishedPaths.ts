@@ -1,5 +1,6 @@
 import { isArray } from '@winglet/common-utils/filter';
 import type { SchemaNodeRuntime } from '../../../record';
+import { indexSchemaNodeWarning } from '../../../record';
 import { pruneCommittedRuleKeys } from '../commit/pruneCommittedRuleKeys';
 
 /**
@@ -12,6 +13,14 @@ export const prunePerishedPaths = <Self>(
   runtime: SchemaNodeRuntime<Self>, paths: ReadonlySet<string>,
 ): void => {
   if (paths.size === 0) return;
+  const warningKeys = new Set<string>();
+  for (const path of paths)
+    for (const key of runtime.warningKeysByPath?.get(path) ?? []) warningKeys.add(key);
+  for (const key of warningKeys) {
+    const parts: unknown = JSON.parse(key);
+    if (isArray(parts) && typeof parts[1] === 'string')
+      indexSchemaNodeWarning(runtime, key, parts[1], undefined, true);
+  }
   const lengths = new Set<number>();
   for (const path of paths) lengths.add(path.length);
   const pruneRoot = paths.has('');

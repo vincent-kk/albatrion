@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { SetValueOption } from '../../types/value';
+import { SchemaFormError } from '../../../errors';
 import { createTestTree } from './fixtures/createTestTree';
 import { arrangeSchemaNodeItems, writeSchemaNode } from '../index';
 import { getGateRegistry } from '../utils/gates/getGateRegistry';
@@ -136,7 +137,7 @@ describe('array path movement', () => {
     expect(root.structure!.list.local).toEqual(['a', 'b']);
   });
 
-  it('GOAL-073 does not reuse a key spent by a Source-B rollback', () => {
+  it('58C-01 GOAL-073 retains the single budget error and does not reuse a spent key', () => {
     const { root } = createTestTree({ type: 'object', properties: {
       a: { type: ['string', 'boolean'] },
       items: { type: 'array', default: ['filled'], items: { type: 'string' } },
@@ -146,8 +147,12 @@ describe('array path movement', () => {
       { controls: { active: './a !== "0"' },
         properties: { a: { type: 'string' } } },
     ] });
-    expect(() => writeSchemaNode(root, { a: 0 }, 'callerReplace',
-      SetValueOption.Overwrite)).toThrow();
+    let caught: unknown;
+    try { writeSchemaNode(root, { a: 0 }, 'callerReplace', SetValueOption.Overwrite); }
+    catch (error) { caught = error; }
+    expect(caught).toBeInstanceOf(SchemaFormError);
+    if (!(caught instanceof SchemaFormError)) throw new Error('Missing budget failure');
+    expect(caught.code).toBe('SCHEMA_FORM_ERROR.BUDGET_EXCEEDED');
     const host = root.structure!.items;
     const spent = host.nextItemKey;
     expect(spent).toBeGreaterThan(0);

@@ -2,13 +2,19 @@ import { accumulateGlobalStateDeltas, publishGlobalStateDeltas } from '../../../
 import type { SchemaNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../type';
 
-/** Apply final shape exits, entries, and committed interaction resets together. */
+/**
+ * Apply final exits, perished subtrees, entries, and interaction resets together.
+ * @param context - Final shape facts; revived perished candidates remain live
+ * @returns Nothing; publishes only truth-count boundary changes
+ * @remarks O(departing subtree size + entered/changed nodes), no whole-tree scan.
+ */
 export const commitGlobalState = <Self extends SchemaNodeRecord<Self>>(
   context: SettlementContext<Self>,
 ): void => {
   const runtime = context.root.runtime;
   const deltas = new Map<string, number>();
-  const exited = [...context.exited];
+  const exited = [...context.exited,
+    ...[...context.perished].filter((node) => node.detached)];
   const seen = new Set<Self>();
   while (exited.length) {
     const node = exited.pop();

@@ -10,3 +10,4 @@ export { readSchemaNodeTypeMismatches } from './utils/detached/readSchemaNodeTyp
 export { readSchemaNodeWatchValues } from './utils/controls/readSchemaNodeWatchValues';
 export { changeSchemaNodeContext } from './utils/context/changeSchemaNodeContext';
 export type { SchemaNodeWriteKind } from './type';
+export { interpretSchemaNodeInput } from './utils/write/interpretSchemaNodeInput';
