@@ -679,7 +679,9 @@
   > - PR-7: Form 속성, 바깥 감싸개와 보고기 문맥, 로드 기록의 준비 이펙트 전달, 바운더리의 렌더 때 보고기 읽기와 `componentStack`, 네이티브 submit 경로의 오류 층 거부 처리, `@winglet/react-utils`의 minor 변경(그 모듈의 `DETAIL.md`를 먼저 갱신)을 넣는다.
   > - PR-8: 코드 표와 이주 안내를 넣는다.
   > - 착수 조건: 검증 결과 형의 `ValidationIssue` 개명(08 §14)이 `onError`의 공개보다 먼저(또는 같은 PR에) 선다. 오늘은 `onValidate`가 공개 형 `JSONSchemaError[]`를 받는다.
-- 보충: 없음
+- 보충:
+  > 편집자 결정(34C-02): "【추론】 ERROR-032가 PR-4에 둔 "`ValidationIssue` 개명"은 새 이름을 공개 index에 내보내 `onError`의 공개(PR-7)보다 먼저 세우는 것이고, 옛 이름 `JSONSchemaError`를 같은 형의 별칭으로 PR-7까지 남기는 것은 LANDING-159 규칙 3(공개 진입점은 PR-7까지 옛 엔진)과 맞다; 옛 `<Form>` 형과 플러그인 스토리 파일이 아직 옛 이름을 가져오기 때문이다." (`reviews/round-34-closing.md:18`)
+  > 편집자 결정(34C-02): "【추론】 별칭을 지우는 것은 LANDING-024 이주 21의 적용이며 전환(PR-7) 또는 이주 안내를 넣는 PR-8의 몫이다; ajv 플러그인 셋은 PR-4에서 새 이름으로 바꿔 가져온다(LANDING 영역 형제 패키지 문단)." (`reviews/round-34-closing.md:19`)
 - 상태: 현행
 - 출처: `adr/0014-error-policy.md:178-184`(정본), `08-design-a-to-z.md:571-578`
 - 닫은 사람: 편집자 결정(17라운드, ADR 0014 4판 채택)
