@@ -1,31 +1,25 @@
 import type { JSONSchema, ValidateFunction } from '@canard/schema-form';
-import type { Ajv } from 'ajv';
+import Ajv from 'ajv';
 
 import { transformDataPath } from './utils/transformDataPath';
 
 /**
- * Creates a validator factory function that transforms AJV6 error dataPaths.
- *
- * This factory function creates validators that automatically convert AJV6's JSONPath format
- * error dataPaths to JSONPointer format for consistency with the schema-form library.
- *
- * @param ajv - The AJV instance to use for validation
- * @returns A factory function that creates validators for given JSON schemas
+ * Create promise-returning validation from an Ajv 6 instance and optional root key.
  */
 export const createValidatorFactory =
-  (ajv: Ajv) =>
+  (ajv: Ajv.Ajv, key?: string) =>
   (jsonSchema: JSONSchema): ValidateFunction => {
-    const validate = ajv.compile({
-      ...jsonSchema,
-      $async: true,
-    });
+    const validate = key
+      ? ajv.getSchema(key)
+      : ajv.compile({ ...jsonSchema, $async: true });
+    if (!validate) throw new Error(`Registered Ajv schema was not found: ${key}`);
     return async (data) => {
       try {
-        await validate(data);
-        return null;
-      } catch (thrown: any) {
-        if (Array.isArray(thrown?.errors))
-          return transformDataPath(thrown.errors);
+        const valid = await validate(data);
+        return valid ? null : transformDataPath(validate.errors ?? [], jsonSchema);
+      } catch (thrown) {
+        if (thrown instanceof Ajv.ValidationError)
+          return transformDataPath(thrown.errors, jsonSchema);
         throw thrown;
       }
     };

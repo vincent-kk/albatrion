@@ -55,19 +55,31 @@ registerPlugin(ajvValidatorPlugin);
 
 ### **Plugin Interface**
 
-The plugin implements the `ValidatorPlugin` interface providing two main methods:
+The plugin implements the `ValidatorPlugin` interface with validation, synchronous guards, and root release:
 
 #### **`bind(instance: Ajv.Ajv)`**
 
 - **Purpose**: Allows you to provide a custom AJV instance with your preferred configuration
 - **Usage**: Optional - if not called, a default AJV instance will be created automatically
 - **Benefits**: Full control over AJV settings, custom keywords, formats, and validation rules
+- **Restriction**: Instances with `coerceTypes`, `useDefaults`, or `removeAdditional` enabled are rejected immediately, before replacing the current binding. The thrown native `ValidatorBindRefusedError` lists the enabled options in `details.options`. Value-modifying custom keywords remain the consumer's responsibility.
+
+Callers discriminate the refusal by `group` (`'UNHANDLED_ERROR'`) and `code` (`'VALIDATOR_BIND_REFUSED'`); core's `isUnhandledError` does not recognize it.
 
 #### **`compile(jsonSchema)`**
 
 - **Purpose**: Creates a validator function from the provided JSON Schema
 - **Returns**: A validator factory function that can validate data against the schema
 - **Features**: Automatic error transformation, detailed validation messages, performance optimization
+
+#### **`compileGuard(root, pointer)`**
+
+- **Purpose**: Compiles a synchronous boolean guard at a schema pointer in the authored root, retaining its `$ref` context
+- **Limits**: Asynchronous formats and keywords are unsupported
+
+#### **`release(root)`**
+
+- **Purpose**: Removes that root's Ajv registrations and compiled results when the form cache evicts it
 
 ### **Default Configuration**
 
@@ -87,7 +99,7 @@ const defaultSettings: Ajv.Options = {
 The `createValidatorFactory` function provides:
 
 - **Error Standardization**: Converts AJV errors to a consistent format
-- **Performance Optimization**: Caches compiled validators for reuse
+- **Performance Optimization**: Reuses the registration for the same root object until `release(root)`
 - **Detailed Error Messages**: Rich error information for better user experience
 - **Type Safety**: Full TypeScript support with proper type inference
 
