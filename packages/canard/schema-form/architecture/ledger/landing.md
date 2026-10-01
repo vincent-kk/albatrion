@@ -530,6 +530,7 @@
 - 보충:
   > 편집자 결정(34C-02): "【추론】 ERROR-032가 PR-4에 둔 "`ValidationIssue` 개명"은 새 이름을 공개 index에 내보내 `onError`의 공개(PR-7)보다 먼저 세우는 것이고, 옛 이름 `JSONSchemaError`를 같은 형의 별칭으로 PR-7까지 남기는 것은 LANDING-159 규칙 3(공개 진입점은 PR-7까지 옛 엔진)과 맞다; 옛 `<Form>` 형과 플러그인 스토리 파일이 아직 옛 이름을 가져오기 때문이다." (`reviews/round-34-closing.md:18`)
   > 편집자 결정(34C-02): "【추론】 별칭을 지우는 것은 LANDING-024 이주 21의 적용이며 전환(PR-7) 또는 이주 안내를 넣는 PR-8의 몫이다; ajv 플러그인 셋은 PR-4에서 새 이름으로 바꿔 가져온다(LANDING 영역 형제 패키지 문단)." (`reviews/round-34-closing.md:19`)
+  > 편집자 결정(50C-01): "【추론】 34C-02가 옛 이름을 남기라고 한 까닭은 LANDING-159 규칙 3(공개 진입점은 PR-7까지 옛 엔진이고 PR-4 전에는 공개 동작 변경이 없다, 32C-01)대로 옛 `<Form>` 형과 플러그인 스토리, 그리고 소비자 코드가 계속 컴파일되게 하는 것이므로, 같은 형의 별칭이 `details`를 `unknown`으로 좁혀 소비자 코드를 PR-7 전에 깨뜨린다면 그 수단이 뜻을 거스른다; 그래서 `JSONSchemaError`는 옛 공개 형과 같은 모양을 지키는 `ValidationIssue`의 호환 확장(`details?: Record<string, any>`, `key?: number`)으로 `src/index.ts`에서 이름으로 내보내고, 새 엔진의 `ValidationIssue`는 `details?: Record<string, unknown>`을 지키며 함께 내보낸다(새 엔진의 값은 확장에 대입 가능하고, 새 엔진은 `key`를 쓰지 않는다). 옛 이름을 지우는 것은 34C-02·LANDING-024대로 PR-7 또는 PR-8의 몫이고, 그때 `any`와 `key`도 함께 사라진다; `ValidationIssue.details`를 `any`로 넓히거나 소비자의 좁힘을 받아들이는 길은 택하지 않는다." (`reviews/round-50-closing.md:9`)
 - 상태: 현행
 - 출처: `08-design-a-to-z.md:453`(정본), `08-design-a-to-z.md:599`, `adr/0014-error-policy.md:321`
 - 닫은 사람: 편집자 결정(14라운드, `08-design-a-to-z.md:453`)
@@ -2423,6 +2424,7 @@
   > 편집자 결정(18C-49에 LANDING-205를 적용): "【추론】 옛 코드와 함께 사는 `__tests__`는 코드와 함께 옮겨지고, PR-7까지 그대로 돈다." (`reviews/round-18-closing.md:1353`) — LANDING-205 뒤에는 PR-7이 진입점을 새 엔진으로 바꾼 뒤 레거시 안의 옛 단위 시험을 시험 글롭에서 빼 두고(옛 엔진은 더 `<Form>`에 닿지 않는다), 디렉토리와 함께 PR-8이 지운다.
   > 편집자 결정(32C-01): "【추론】 Form 속성 `validatorFactory`가 함수 하나에서 `{ compile, compileGuard }` 객체로 바뀌는 것(LANDING-036 이주 33)은 공개 겉면의 변경이고, LANDING-159 규칙 3대로 `src/index.ts`는 PR-7까지 옛 엔진을 가리키며 LANDING-064의 PR-7 행이 Form 속성 `validatorFactory`의 연결을 전환 PR에 두므로, 공개 속성의 형과 동작은 PR-7에서 바뀐다; PR-4 전에는 공개 동작 변경이 없다." (`reviews/round-32-closing.md:10`)
   > 편집자 결정(32C-01): "【추론】 그래서 PR-4의 새 계약 형은 공개 index가 아닌 새 엔진 쪽 모듈에서 내보내고, ajv 플러그인 셋은 그 형을 구현한다; 플러그인 패키지의 공개 겉면이 PR-4에서 바뀌는 것은 LANDING-093·LANDING-192(이주)대로이며 소비자용 Form 속성은 전환 뒤에 따른다." (`reviews/round-32-closing.md:11`)
+  > 편집자 결정(50C-01): "【추론】 34C-02가 옛 이름을 남기라고 한 까닭은 LANDING-159 규칙 3(공개 진입점은 PR-7까지 옛 엔진이고 PR-4 전에는 공개 동작 변경이 없다, 32C-01)대로 옛 `<Form>` 형과 플러그인 스토리, 그리고 소비자 코드가 계속 컴파일되게 하는 것이므로, 같은 형의 별칭이 `details`를 `unknown`으로 좁혀 소비자 코드를 PR-7 전에 깨뜨린다면 그 수단이 뜻을 거스른다; 그래서 `JSONSchemaError`는 옛 공개 형과 같은 모양을 지키는 `ValidationIssue`의 호환 확장(`details?: Record<string, any>`, `key?: number`)으로 `src/index.ts`에서 이름으로 내보내고, 새 엔진의 `ValidationIssue`는 `details?: Record<string, unknown>`을 지키며 함께 내보낸다(새 엔진의 값은 확장에 대입 가능하고, 새 엔진은 `key`를 쓰지 않는다). 옛 이름을 지우는 것은 34C-02·LANDING-024대로 PR-7 또는 PR-8의 몫이고, 그때 `any`와 `key`도 함께 사라진다; `ValidationIssue.details`를 `any`로 넓히거나 소비자의 좁힘을 받아들이는 길은 택하지 않는다." (`reviews/round-50-closing.md:9`)
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:1330-1363`(정본), `reviews/round-18-owner-answers.md:43`
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-49), 소유자 답(`reviews/round-18-owner-answers.md:43` 개발계획 P2), 편집자 결정(18라운드, 개발계획 07; 레거시 시험은 PR-7 뒤 글롭에서 뺌)
