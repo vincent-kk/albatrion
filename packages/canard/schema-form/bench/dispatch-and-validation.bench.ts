@@ -8,6 +8,9 @@ import { performance } from 'node:perf_hooks';
 import Ajv from 'ajv';
 import type { AnySchema } from 'ajv';
 
+// This bench is a dev script outside the package build, so it imports plugin source directly.
+import { ajvValidatorPlugin } from '../../schema-form-ajv8-plugin/src/default/validatorPlugin';
+
 import { blueprint } from '../src/core/blueprint';
 import { nodeFromJSONSchema } from '../src/core/nodeFromJSONSchema';
 import { schemaNodeFactory, SetValueOption } from '../src/core/SchemaNode';
@@ -124,8 +127,8 @@ function conditionalValue(count: number) {
   return value;
 }
 
-function newMount(schema: JSONSchema, value: ReturnType<typeof conditionalValue>, guards: number): MountSample {
-  const base = createTestValidator();
+function newMount(schema: JSONSchema, value: ReturnType<typeof conditionalValue>, guards: number,
+  base: Validator = createTestValidator()): MountSample {
   let compileMs = 0;
   let guardMs = 0;
   let guardCalls = 0;
@@ -198,7 +201,7 @@ function summarize(pair: Pair) {
     samples: pair.legacy.length };
 }
 
-async function mountRow(guards: number, samples: number) {
+async function mountRow(guards: number, samples: number, mount = newMount) {
   const value = conditionalValue(guards);
   const pairs: Pair = { legacy: [], new: [] };
   const parts = { legacyForm: 0, legacyValidator: 0, newForm: 0,
@@ -210,11 +213,11 @@ async function mountRow(guards: number, samples: number) {
     let old: MountSample;
     let current: MountSample;
     if (index % 2) {
-      current = newMount(newSchema, value, guards);
+      current = mount(newSchema, value, guards);
       old = await legacyMount(legacySchema, value, guards);
     } else {
       old = await legacyMount(legacySchema, value, guards);
-      current = newMount(newSchema, value, guards);
+      current = mount(newSchema, value, guards);
     }
     if (index < warmups) continue;
     pairs.legacy.push(old.ms);
@@ -235,6 +238,34 @@ async function mountRow(guards: number, samples: number) {
     newCompile: parts.newCompile / samples,
     newGuard: parts.newGuard / samples,
   } };
+}
+
+async function pluginMountRow(guards: number, samples: number, directGuardCompile: boolean) {
+  ajvValidatorPlugin.bind(new Ajv({ allErrors: true, strictSchema: false,
+    validateFormats: false, allowUnionTypes: true }));
+  ajvValidatorPlugin.configure({ directGuardCompile });
+  let compiledRoot: JSONSchema | undefined;
+  const validator: Validator = {
+    compile(copy) {
+      compiledRoot = copy;
+      return ajvValidatorPlugin.compile(copy);
+    },
+    compileGuard: ajvValidatorPlugin.compileGuard,
+    release: ajvValidatorPlugin.release,
+    dialect: ajvValidatorPlugin.dialect,
+  };
+  try {
+    return await mountRow(guards, samples, (schema, value, count) => {
+      try { return newMount(schema, value, count, validator); }
+      finally {
+        // Bare core mounts have no disposal; release the compiled copy outside the timer.
+        if (compiledRoot !== undefined) ajvValidatorPlugin.release(compiledRoot);
+        compiledRoot = undefined;
+      }
+    });
+  } finally {
+    ajvValidatorPlugin.configure({ directGuardCompile: true });
+  }
 }
 
 function flatSchema() {
@@ -307,6 +338,10 @@ async function main() {
     'TEST-076-mount': await mountRow(8, mountSamples),
     'TEST-076-guards200': await mountRow(200, guardSamples),
     'EVENT-004-wave': await waveRow(),
+    'TEST-076-mount-ajv8': await pluginMountRow(8, mountSamples, true),
+    'TEST-076-guards200-ajv8': await pluginMountRow(200, guardSamples, true),
+    'TEST-076-mount-ajv8-rootpointer': await pluginMountRow(8, mountSamples, false),
+    'TEST-076-guards200-ajv8-rootpointer': await pluginMountRow(200, guardSamples, false),
   };
   console.log(JSON.stringify({ runtime: Reflect.get(globalThis, 'Bun') ? 'bun' : 'node',
     version: Reflect.get(globalThis, 'Bun') ? process.versions.bun : process.version,
