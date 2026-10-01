@@ -465,3 +465,7 @@ node ledger/checks/tokens.mjs check <목록> ledger/*.md
 ## 29라운드(04 구현 중의 해석 네 건) 반영 뒤의 잔여 (2026-10-01)
 
 잔여 484 그대로다. HANDOFF §1의 29라운드 문단이 새로 든 코드 토큰(`controls.injectTo`, `controls.derived`, `undefined`)은 원장에 이미 있다. 새 항목은 없고 보충 줄 51개만 더했다(`reviews/round-29-closing.md` 29C-01~04).
+
+## 04 머지 기록(2026-10-01) 뒤의 잔여
+
+잔여 484 그대로다. HANDOFF §1·§2·§5의 04 머지 문단이 새로 든 코드 토큰(`verification/performance-issues.md`, `verification/04-derive-and-controls/performance.md`)은 TEST-027의 보충(속도 문제 대장 인용)이 원장에 함께 들었다. 머지 커밋 해시와 설계 문서의 줄 번호는 코드 서식 없이 적었다. 새 항목은 없고 보충 줄 하나만 더했다.
