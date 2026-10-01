@@ -4,6 +4,7 @@ import { useLazyConstant } from '@winglet/react-utils/hook';
 
 import type { Fn } from '@aileron/declare';
 
+import { PluginManager } from '@/schema-form/app/plugin';
 import type { FormProps } from '@/schema-form/components/Form';
 import {
   NodeEventType,
@@ -82,8 +83,10 @@ export const RootNodeContextProvider = <
   }, [contextNode, context]);
 
   const rootNode = useMemo(
-    () =>
-      nodeFromJSONSchema({
+    () => {
+      const factory = inputValidatorFactory || externalValidatorFactory;
+      const plugin = !factory && PluginManager.validator;
+      return nodeFromJSONSchema({
         jsonSchema,
         defaultValue,
         onChange,
@@ -91,9 +94,15 @@ export const RootNodeContextProvider = <
           inputValidationMode ??
           externalValidationMode ??
           DEFAULT_VALIDATION_MODE,
-        validatorFactory: inputValidatorFactory || externalValidatorFactory,
+        validatorFactory: factory
+          ? (schema) =>
+              factory(schema) || PluginManager.validator?.compile(schema)
+          : plugin
+            ? (schema) => plugin.compile(schema)
+            : undefined,
         contextNode,
-      }),
+      });
+    },
     [
       jsonSchema,
       defaultValue,

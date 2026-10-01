@@ -1,4 +1,4 @@
-import { changeSchemaNodeContext } from '../../settle';
+import { dispatchContextChange } from '../../dispatch';
 import type { SchemaNode } from '../type';
 import { requireRuntimeSchemaNode } from './requireRuntimeSchemaNode';
 
@@ -10,4 +10,4 @@ import { requireRuntimeSchemaNode } from './requireRuntimeSchemaNode';
  */
 export const setContext = (root: SchemaNode,
   context: Readonly<Record<string, unknown>>): void =>
-  changeSchemaNodeContext(requireRuntimeSchemaNode(root), context);
+  dispatchContextChange(requireRuntimeSchemaNode(root), context);

@@ -1,6 +1,10 @@
 import { SetValueOption as InternalSetValueOption } from '../types/value';
 import type { BlueprintSchema, SchemaTypeName } from '../blueprint';
 import type { SchemaNodeRuntime } from '../record';
+import type { SchemaNodeEventType, SchemaNodeRequestType } from '../record';
+import type { SchemaNodeListener } from '../dispatch';
+import type { ValidationIssue } from '../validation';
+import type { NodeStateFlags } from '../types/state';
 
 /** The four caller-facing flags understood by the first settlement engine. */
 export const SetValueOption: Readonly<Pick<typeof InternalSetValueOption,
@@ -78,6 +82,34 @@ export interface NodeSurface<
   findNodes(pointer?: string | readonly string[] | null): readonly SchemaNode[];
   setValue(value: unknown, option?: SetValueOption): void;
   resetSubtree(option?: SetValueOption): void;
+  /** Local interaction flags, patched through the dispatcher on assignment. */
+  state: NodeStateFlags;
+  /** Patch this occurrence's interaction flags. */
+  setState(state: NodeStateFlags): void;
+  /** True keys present on at least one node in the current tree shape. */
+  readonly globalState: Readonly<Record<string, true>>;
+  /** Patch interaction flags throughout this live subtree. */
+  setSubtreeState(state: NodeStateFlags): void;
+  /** Clear interaction flags throughout this live subtree. */
+  clearSubtreeState(): void;
+  /** Displayed validator and external issues for this occurrence. */
+  readonly errors: readonly ValidationIssue[];
+  /** Ordered whole-tree validator issues. */
+  readonly globalErrors: readonly ValidationIssue[];
+  /** Replace this occurrence's external issues. */
+  setExternalErrors(errors: readonly ValidationIssue[]): void;
+  /** Clear this occurrence's external issues. */
+  clearExternalErrors(): void;
+  /** Request a fresh whole-schema validation verdict. */
+  validate(): Promise<readonly ValidationIssue[]>;
+  /** Subscribe to future event deliveries. */
+  subscribe(listener: SchemaNodeListener): () => void;
+  /** Read the accumulated delivery revision for selected event bits. */
+  revision(mask?: SchemaNodeEventType): number;
+  /** Request one renderer action. */
+  request(kind: SchemaNodeRequestType): void;
+  /** Group synchronous writes in one outer delivery boundary. */
+  batch(fn: () => void): void;
 }
 
 export type StringNode = NodeSurface<'string', 'terminal', 'string',

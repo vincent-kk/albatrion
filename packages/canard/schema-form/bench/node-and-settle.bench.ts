@@ -36,7 +36,6 @@ function measure(run: (index: number) => void, warmups = 20): Sample {
 
 function makeNew(schema: BlueprintSchema, value?: unknown) {
   const root = schemaNodeFactory(blueprint(schema), {
-    ifPredicates: new Map(),
     diagnostics: { status: 'stable' },
     loadSnapshot: undefined,
     latentRaw: new Map(),
@@ -156,7 +155,7 @@ function b2() {
   const analysis = blueprint(schema);
   const makeTree = () => {
     const root = schemaNodeFactory(analysis, {
-      ifPredicates: new Map(), diagnostics: { status: 'stable' },
+      diagnostics: { status: 'stable' },
       loadSnapshot: undefined,
       latentRaw: new Map(), typeMismatchPaths: new Set(), inactiveValuesMemo: new Map(),
     }) as unknown as RuntimeSchemaNode;
@@ -173,7 +172,7 @@ function heapOne(kind: 'new' | 'legacy') {
   const before = heapUsed();
   if (analysis) {
     const root = schemaNodeFactory(analysis, {
-      ifPredicates: new Map(), diagnostics: { status: 'stable' },
+      diagnostics: { status: 'stable' },
       loadSnapshot: undefined,
       latentRaw: new Map(), typeMismatchPaths: new Set(), inactiveValuesMemo: new Map(),
     }) as unknown as RuntimeSchemaNode;
@@ -324,7 +323,7 @@ function main() {
   const largeAnalysis = blueprint(large.schema);
   const freshLarge = () => {
     const root = schemaNodeFactory(largeAnalysis, {
-      ifPredicates: new Map(), diagnostics: { status: 'stable' },
+      diagnostics: { status: 'stable' },
       loadSnapshot: undefined,
       latentRaw: new Map(), typeMismatchPaths: new Set(), inactiveValuesMemo: new Map(),
     }) as unknown as RuntimeSchemaNode;

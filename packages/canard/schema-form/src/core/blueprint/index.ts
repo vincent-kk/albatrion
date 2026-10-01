@@ -1,4 +1,5 @@
 export { blueprint } from './blueprint';
+export { collectBlueprintWarnings } from './utils/diagnostics/collectBlueprintWarnings';
 export { mergeEffectiveSchema } from './utils/effectiveSchema/mergeEffectiveSchema';
 export { stripSchema } from './utils/stripSchema/stripSchema';
 export { createDynamicFunction } from './utils/expressions/createDynamicFunction';

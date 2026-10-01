@@ -15,7 +15,7 @@ import type { DeriveRoundDecision } from '../../../type';
 export const getVirtualWriteFailure = (
   sourcePath: string, schemaPath: string, targetPath: string,
   template: BlueprintNode, value: unknown,
-): DeriveRoundDecision<unknown>['failure'] => {
+): DeriveRoundDecision<unknown>['failures'][number] | undefined => {
   if (template.kind !== 'virtual' || value === undefined ||
     isArray(value) && value.length === template.fields?.length) return undefined;
   return { sourcePath, schemaPath, targetPath, cause: value,

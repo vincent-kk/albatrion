@@ -7,11 +7,11 @@ describe('round9 edge-case controls under the current local policy', () => {
   it('edge-cases.mjs:49 CONTROLS-042 outer fragment does not lock a nested branch', () => {
     const { root } = makeSchemaNodeTree({ type: 'object', properties: {
       kind: { type: 'string' },
-    }, allOf: [{ controls: { readOnly: true }, if: {},
+    }, allOf: [{ controls: { readOnly: true },
+      if: { properties: { kind: { const: 'yes' } }, required: ['kind'] },
       then: { properties: { a: { type: 'string' } } },
       else: { properties: { b: { type: 'string' } } },
-    }] }, { ifPredicate: () => input => input !== null &&
-      typeof input === 'object' && 'kind' in input && input.kind === 'yes' });
+    }] });
     root.setValue({ kind: 'no', b: 'B' });
     expect(root.find('/b')?.readOnly).toBe(false);
   });

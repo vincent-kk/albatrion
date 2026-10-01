@@ -1,4 +1,3 @@
-import { PluginManager } from '@/schema-form/app/plugin';
 import type { ValidationMode } from '@/schema-form/core/types';
 import { JSONSchemaError } from '@/schema-form/errors';
 import {
@@ -23,8 +22,8 @@ import { matchesSchemaPath } from './utils/matchesSchemaPath';
  *
  * @description
  * `ValidationManager` handles the compilation and execution of JSON Schema validators
- * for form nodes. It integrates with the plugin system to use registered validators
- * and distributes validation errors to the appropriate child nodes based on their data paths.
+ * for form nodes. It uses the validator factory supplied by its host and distributes
+ * validation errors to the appropriate child nodes based on their data paths.
  *
  * Key responsibilities:
  * - Compiles JSON Schema into a validator function during initialization
@@ -172,7 +171,7 @@ export class ValidationManager {
    * The constructor performs the following:
    * 1. If `validationMode` is falsy, validation remains disabled
    * 2. Strips schema extensions (computed, formType, etc.) before compilation
-   * 3. Attempts to compile the schema using the provided factory or the plugin's validator
+   * 3. Attempts to compile the schema using the provided factory
    * 4. On circular reference errors, creates a fallback validator that returns the error
    *
    * @example
@@ -184,8 +183,6 @@ export class ValidationManager {
    *   'OnChange'
    * );
    *
-   * // Using plugin validator
-   * const manager = new ValidationManager(node, undefined, 'OnRequest');
    * ```
    */
   constructor(
@@ -199,8 +196,7 @@ export class ValidationManager {
     const jsonSchema = host.jsonSchema;
     const schema = stripSchemaExtensions(jsonSchema);
     try {
-      this.__validator__ =
-        validatorFactory?.(schema) || PluginManager.validator?.compile(schema);
+      this.__validator__ = validatorFactory?.(schema);
       this.enabled = this.__validator__ !== undefined;
     } catch (error: any) {
       // Circular graphs keep their dedicated diagnosis; every other compile

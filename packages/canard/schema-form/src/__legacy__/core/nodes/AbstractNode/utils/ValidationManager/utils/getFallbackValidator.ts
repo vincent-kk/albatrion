@@ -1,4 +1,3 @@
-import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
 import type {
   JSONSchemaError,
   JSONSchemaWithVirtual,
@@ -16,7 +15,7 @@ export const getFallbackValidator =
     [
       {
         keyword: 'jsonSchemaCompileFailed',
-        dataPath: $.Separator,
+        dataPath: '',
         message: error.message,
         source: error,
         details: {

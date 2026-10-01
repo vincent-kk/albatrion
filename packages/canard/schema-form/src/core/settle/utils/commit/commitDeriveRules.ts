@@ -1,3 +1,4 @@
+import { recordSettlementFailure } from '../errors/recordSettlementFailure';
 import { NodeState } from '../../../types/state';
 import { patchSchemaNodeInteractionState } from '../../../record';
 import type { SchemaNodeRecord } from '../../../record';
@@ -23,19 +24,18 @@ export const commitDeriveRules = <Self extends SchemaNodeRecord<Self>>(
   const decision = evaluateResetInteraction(context.root, state);
   if (state.trace && decision.trace.length)
     (context.traceRounds ??= []).push([...decision.trace]);
-  if (decision.failure && !context.failure) {
-    context.failure = new SchemaFormError(EXPRESSION_THREW,
-      `Reset interaction expression failed at ${decision.failure.schemaPath}`,
-      { path: decision.failure.sourcePath,
-        schemaPath: decision.failure.schemaPath, cause: decision.failure.cause });
-    context.cause = 'expression';
+  for (const failure of decision.failures) {
+    recordSettlementFailure(context, new SchemaFormError(EXPRESSION_THREW,
+      `Reset interaction expression failed at ${failure.schemaPath}`,
+      { path: failure.sourcePath,
+        schemaPath: failure.schemaPath, cause: failure.cause }), 'expression');
   }
   for (const node of decision.nodes) {
-    const previous = node.state;
+    const previous = node.interactionState;
     patchSchemaNodeInteractionState(node, {
       [NodeState.Dirty]: false, [NodeState.Touched]: false,
     });
-    if (node.state !== previous) context.changedNodes.add(node);
+    if (node.interactionState !== previous) context.changedNodes.add(node);
   }
   const runtime = context.root.runtime;
   for (const path of state.visitedSourcePaths)

@@ -4,7 +4,6 @@ import type { FormScenario } from '@aileron/schema-form-scenarios';
 import type { BlueprintSchema } from '../../blueprint';
 
 import { SetValueOption } from '../../types/value';
-import { ifPredicate } from '../ifPredicate';
 import { writeSchemaNode } from '../../settle';
 import { createTestTree } from '../../settle/__tests__/fixtures/createTestTree';
 import { runScenario } from './utils/runScenario';
@@ -14,7 +13,9 @@ describe('core effective-list scenario', () => {
   it('WRITE-099 E26 keeps the un-narrowed effective list identical to scalar schemaType', async () => {
     const schema: BlueprintSchema = { type: 'object',
       properties: { enabled: { type: 'boolean' }, a: { type: 'number' } },
-      if: {}, then: { properties: { a: { type: ['number', 'string'] } } },
+      if: { properties: { enabled: { const: true } },
+        required: ['enabled'] },
+      then: { properties: { a: { type: ['number', 'string'] } } },
     };
     const scenario: FormScenario = {
       name: 'WRITE-099 E26 effective list',
@@ -26,7 +27,7 @@ describe('core effective-list scenario', () => {
           expect: { outputValue: { enabled: true, a: 2 } } },
       ],
     };
-    const { root } = createTestTree(schema, ifPredicate);
+    const { root } = createTestTree(schema);
     const result = await runScenario(scenario, {
       execute: (step) => {
         if (step.action === 'setValue')

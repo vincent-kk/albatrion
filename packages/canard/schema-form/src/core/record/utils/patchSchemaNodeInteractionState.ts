@@ -8,5 +8,5 @@ export const patchSchemaNodeInteractionState = <Self>(
   patch: Partial<NodeStateFlags>,
 ): void => {
   if (node.detached) return;
-  node.state = shallowPatch(node.state, patch);
+  node.interactionState = shallowPatch(node.interactionState, patch);
 };

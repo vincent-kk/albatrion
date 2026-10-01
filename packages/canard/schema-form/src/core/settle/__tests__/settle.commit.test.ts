@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { SetValueOption } from '../../types/value';
+import { SchemaNodeEventType } from '../../record';
 import { loadSchemaNodeAtMount, writeSchemaNode } from '../index';
 import { createTestTree } from './fixtures/createTestTree';
 
@@ -117,14 +118,16 @@ describe('settle commit', () => {
     const { root } = createTestTree({ type: 'object', properties: {
       enabled: { type: 'boolean' },
       value: { type: ['number', 'string'] },
-    }, if: {}, then: { properties: { value: { type: 'string' } } } });
+    }, if: { properties: { enabled: { const: true } },
+      required: ['enabled'] },
+    then: { properties: { value: { type: 'string' } } } });
     writeSchemaNode(root, { enabled: false, value: 7 },
       'callerReplace', SetValueOption.Overwrite);
     expect(root.runtime.typeMismatchPaths.size).toBe(0);
     writeSchemaNode(root.structure!.enabled, true, 'input', SetValueOption.Overwrite);
     expect(root.structure!.value.schema.schema).toMatchObject({ type: ['string'] });
     expect(root.structure!.value.raw).toBe(7);
-    expect(root.structure!.value.revision).toBe(2);
+    expect(root.structure!.value.revisionLedger[SchemaNodeEventType.UpdateJsonSchema]).toBe(1);
     expect([...root.runtime.typeMismatchPaths]).toEqual(['/value']);
     expect(root.runtime.typeMismatchRecords?.[0]).toMatchObject({
       path: '/value', source: 'gate', expected: { effective: ['string'] },
@@ -147,10 +150,10 @@ describe('settle commit', () => {
     writeSchemaNode(root, { a: 'new', b: 'same' }, 'callerReplace', SetValueOption.Overwrite);
     expect([...root.runtime.refreshTargets!]).toEqual(['/a']);
     expect(root.runtime.commitNumber).toBe(2);
-    const revision = root.structure!.a.revision;
+    const revision = root.structure!.a.revisionLedger;
     writeSchemaNode(root, root.emit, 'callerReplace', SetValueOption.Overwrite);
     expect(root.runtime.refreshTargets?.size).toBe(0);
-    expect(root.structure!.a.revision).toBe(revision);
+    expect(root.structure!.a.revisionLedger).toBe(revision);
   });
 
   it('WRITE-087 memoizes frozen inactive values after a gate leaves', () => {
@@ -404,12 +407,12 @@ describe('settle commit', () => {
     const emit = root.emit;
     const local = root.local;
     const children = root.children;
-    const revision = root.structure!.value.revision;
+    const revision = root.structure!.value.revisionLedger;
     writeSchemaNode(root, emit, 'callerReplace', SetValueOption.Overwrite);
     expect(root.emit).toBe(emit);
     expect(root.local).toBe(local);
     expect(root.children).toBe(children);
-    expect(root.structure!.value.revision).toBe(revision);
+    expect(root.structure!.value.revisionLedger).toBe(revision);
   });
 
   it('SETTLE-043 keeps a NaN child parent reference on an unrelated equal write', () => {
