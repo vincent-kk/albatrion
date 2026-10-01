@@ -77,7 +77,7 @@ describe('array structural verbs', () => {
     expect(root.extras).toEqual(['d']);
   });
 
-  it('NODE-052 gives a shifted value a new node when the slot template differs (Q17)', () => {
+  it('NODE-052 gives a shifted value a new node when the slot template differs (41C-01)', () => {
     const { root } = makeRecordTree({ type: 'array', prefixItems: [
       { type: 'string', minLength: 3 }, { type: 'string', maxLength: 2 },
     ], items: false });
