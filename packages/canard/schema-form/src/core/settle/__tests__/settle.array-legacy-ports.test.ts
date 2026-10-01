@@ -24,7 +24,7 @@ describe('array legacy contract ports', () => {
     expect(root.value).toEqual({ list: ['a'] });
   });
 
-  it('VALUE-034 LANDING-116 LANDING-171 keeps a loaded empty nested array empty', () => {
+  it('VALUE-034 WRITE-022 LANDING-171 keeps a loaded empty nested array empty', () => {
     const { root } = makeRecordTree({ type: 'object', properties: {
       items: { type: 'array', minItems: 3,
         items: { type: 'number', default: 0 } },
@@ -36,7 +36,7 @@ describe('array legacy contract ports', () => {
     expect(root.value).toEqual({});
   });
 
-  it('VALUE-034 LANDING-116 preserves a loaded partial array without minItems fill', () => {
+  it('VALUE-034 WRITE-022 preserves a loaded partial array without minItems fill', () => {
     const { root } = makeRecordTree({ type: 'object', properties: {
       items: { type: 'array', minItems: 5,
         items: { type: 'number', default: 0 } },
@@ -46,7 +46,7 @@ describe('array legacy contract ports', () => {
     expect(root.value).toEqual({ items: [1, 2] });
   });
 
-  it('VALUE-034 LANDING-116 leaves minItems unfilled on an empty load', () => {
+  it('VALUE-034 WRITE-022 leaves minItems unfilled on an empty load', () => {
     const { root } = makeRecordTree({ type: 'object', properties: {
       list: { type: 'array', minItems: 2,
         items: { type: 'string', default: 'S' } },
@@ -57,7 +57,7 @@ describe('array legacy contract ports', () => {
   });
 
   it.each([false, true])(
-    'VALUE-034 LANDING-116 LANDING-155 clears minItems array terminal=%s',
+    'VALUE-034 WRITE-022 LANDING-155 clears minItems array terminal=%s',
     (terminal) => {
       const { root } = makeRecordTree({ type: 'object', properties: {
         list: { type: 'array', minItems: 2, options: { terminal },
