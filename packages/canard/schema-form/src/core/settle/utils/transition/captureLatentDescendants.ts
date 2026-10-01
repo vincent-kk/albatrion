@@ -1,3 +1,5 @@
+import { isArray } from '@winglet/common-utils/filter';
+
 import { walkOwnedSchemaNodes } from '../walkOwnedSchemaNodes';
 import type { SchemaNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../type';
@@ -45,7 +47,7 @@ export const captureLatentDescendants = <Self extends SchemaNodeRecord<Self>>(
   const entries: LatentEntry[] = [];
   for (const key of index.get(node.path) ?? []) {
     const identity: unknown = JSON.parse(key);
-    if (!Array.isArray(identity) || typeof identity[0] !== 'string') continue;
+    if (!isArray(identity) || typeof identity[0] !== 'string') continue;
     const path = identity[0];
     if (path === node.path) continue;
     const info = runtime.latentRawMetadata?.get(key);
