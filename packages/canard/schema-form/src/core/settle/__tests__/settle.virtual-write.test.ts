@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { SchemaFormError } from '../../../errors';
 import { SetValueOption } from '../../types/value';
 import { makeSchemaNodeTree } from '../../__tests__/makeSchemaNodeTree';
+import { getGateRegistry } from '../utils/gates/getGateRegistry';
 
 const periodSchema = {
   type: 'object',
@@ -93,6 +94,24 @@ describe('virtual writes and referenced siblings', () => {
     expect(root.find('/endDate')).toBe(endDate);
     expect(Reflect.get(startDate, 'detached')).toBe(false);
     expect(Reflect.get(endDate, 'detached')).toBe(false);
+  });
+
+  it('42C-02 keeps a real sibling gate registered when its virtual group exits', () => {
+    const { root } = makeSchemaNodeTree({ type: 'object', properties: {
+      enabled: { type: 'boolean' }, flag: { type: 'boolean' },
+      startDate: { type: 'string', controls: { active: '../flag' } },
+      endDate: { type: 'string' },
+    }, options: { virtual: { period: { fields: ['startDate', 'endDate'],
+      controls: { active: '../enabled' } } } } },
+    { snapshot: { enabled: true, flag: true, startDate: 'a', endDate: 'b' } });
+    root.resetSubtree();
+    const registry = getGateRegistry(Reflect.get(root, 'runtime'));
+    expect(registry.mayChangeOwnDeclarationAt('/startDate', new Set(['/flag'])))
+      .toBe(true);
+    root.find('/enabled')!.setValue(false);
+    expect(root.find('/period')).toBeNull();
+    expect(registry.mayChangeOwnDeclarationAt('/startDate', new Set(['/flag'])))
+      .toBe(true);
   });
 
   it.each([

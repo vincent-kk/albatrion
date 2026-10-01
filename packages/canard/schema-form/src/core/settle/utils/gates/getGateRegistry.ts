@@ -123,9 +123,10 @@ class GateRegistry {
     return false;
   }
 
-  /** Forget a detached subtree's location entries. */
+  /** Forget a detached subtree's location entries; a virtual node's referenced siblings stay. */
   remove<Self extends SchemaNodeRecord<Self>>(node: Self): void {
-    for (const child of node.children ?? []) this.remove(child);
+    for (const child of node.children ?? [])
+      if (child.parent === node) this.remove(child);
     if (this.byPath.get(node.path)?.node === node) this.removePath(node.path);
   }
 
