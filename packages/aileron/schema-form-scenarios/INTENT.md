@@ -10,7 +10,7 @@ schema-form 패키지에 의존하지 않고 schema-form 검증을 지원합니�
 
 - 시나리오 모듈에는 순수 데이터만 두며, 실행은 어댑터가 소유합니다.
 - 스키마·노드·핸들·주입된 폼에 구조적 계약을 사용합니다.
-- 부류는 value, settle, fill, exit, union, derive, controls, array 동작을 이름으로 나타냅니다.
+- 부류는 value, settle, fill, exit, union, derive, controls, array, notify, validation 동작을 이름으로 나타냅니다.
 
 ## Boundaries
 

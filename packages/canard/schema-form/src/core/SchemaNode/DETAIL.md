@@ -8,7 +8,7 @@
 
 ## API Contracts
 
-- 진입점은 클래스 이름과 겹치는 런타임 생성자를 내보내지 않고 공개 판별 합집합 `SchemaNode` 타입, 종류별 노드 타입, 가드 열, `InferSchemaNode`, 공개 옵션 `SetValueOption`, `schemaNodeFactory`와 `record`가 소유한 `SchemaNodeEventType`·`SchemaNodeRequestType`을 이름으로 내보냅니다. 두 열거는 07의 소비자 이주까지 새 엔진 표면에만 있으며 옛 `core/types/event.ts`와 별개입니다(SURFACE-056·060, EVENT-073, LANDING-158). `schemaNodeFactory(schema: Blueprint, runtimeSeed: SchemaNodeRuntimeSeed): SchemaNode`는 팩토리가 결합하는 `nodeFactory`·`blueprint` 칸과 정착이 지연 생성하는 `settlementScratch` 칸을 제외한 트리 입력을 받습니다. 트리마다 한 번 완성한 런타임에 실제 생성 함수를 결합합니다. 청사진 `kind`·`strategy`로 `BEHAVIORS[type][strategy]`를 골라 같은 클래스의 인스턴스를 만듭니다(NODE-008·010·045·046, WRITE-015). 빈 생성 함수 스텁을 호출자에게 요구하지 않습니다.
+- 진입점은 클래스 이름과 겹치는 런타임 생성자를 내보내지 않고 공개 판별 합집합 `SchemaNode` 타입, 종류별 노드 타입, 가드 열, `InferSchemaNode`, 공개 옵션 `SetValueOption`, `schemaNodeFactory`와 `record`가 소유한 `SchemaNodeEventType`·`SchemaNodeRequestType`을 이름으로 내보냅니다. 두 열거는 07의 소비자 이주까지 새 엔진 표면에만 있으며 옛 `core/types/event.ts`와 별개입니다(SURFACE-056·060, EVENT-073, LANDING-158). `schemaNodeFactory(schema: Blueprint, runtimeSeed: SchemaNodeRuntimeSeed): SchemaNode`는 팩토리가 결합하는 `nodeFactory`·`blueprint` 칸과 정착이 지연 생성하는 `settlementScratch` 칸을 제외한 트리 입력을 받습니다. 경로 색인 저장소 `latentRaw`·`typeMismatchPaths`·`inactiveValuesMemo`는 시드가 주지 않으면 팩토리가 빈 색인 저장소로 만들어, 호출자가 core 내부 클래스를 가져오지 않게 합니다. 트리마다 한 번 완성한 런타임에 실제 생성 함수를 결합합니다. 청사진 `kind`·`strategy`로 `BEHAVIORS[type][strategy]`를 골라 같은 클래스의 인스턴스를 만듭니다(NODE-008·010·045·046, WRITE-015). 빈 생성 함수 스텁을 호출자에게 요구하지 않습니다.
 - 아래 표의 `getter`는 필드 또는 계산 메모 읽기이며 `method`는 문장 하나의 위임입니다. 구현 클래스는 `SchemaNodeRecord<SchemaNode>`를 구현하고 위임 메서드에서 `SchemaNode` 자기 타입을 전달합니다. 종류별 생성 표·`InferSchemaNode` overload로 단언 없이 좁힙니다(NODE-046).
 
 | 멤버 | 종류 | 위임·읽기 대상 | 원장 |

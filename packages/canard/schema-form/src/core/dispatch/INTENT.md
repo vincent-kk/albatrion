@@ -9,7 +9,7 @@
 ## Conventions
 
 - 의존 순서는 `blueprint < record < {behaviors, navigation} < validation < settle < dispatch < SchemaNode`입니다. `dispatch`는 아래 fractal의 진입점만 소비하고 노드 겉면을 가져오지 않습니다(NODE-016·045, LANDING-084).
-- Name each write, read, validation, and binding entry explicitly at the boundary. Array verbs join the same entry chain and apply pure plans to prior batch marks before the single batch settlement (NODE-010, LANDING-064·084, EVENT-030, 62C-01).
+- 쓰기·읽기·검증·결합 진입을 경계에서 이름으로 드러냅니다. 배열 동사도 같은 진입 사슬에 들고, 배치 안에서는 앞선 표시에 순수 계획을 적용한 뒤 배치 끝의 한 번 정착에 맡깁니다(NODE-010, LANDING-064·084, EVENT-030, 62C-01).
 - 진입 깊이·파동/중첩 예산·대기 비트·콜백·보고기·전달 중 표시·경고 키는 `record`가 선언한 트리 런타임 칸입니다. 노드별 일정과 추가 고정 필드를 만들지 않습니다(NODE-004·045, EVENT-004, ERROR-024·029).
 
 ## Boundaries
