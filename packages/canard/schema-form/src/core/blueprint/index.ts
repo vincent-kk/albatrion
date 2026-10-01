@@ -1,5 +1,7 @@
 export { blueprint } from './blueprint';
 export { mergeEffectiveSchema } from './utils/effectiveSchema/mergeEffectiveSchema';
+export { getItemEntry } from './utils/itemEntry/getItemEntry';
+export { resolveArrayLimits } from './utils/resolveArrayLimits/resolveArrayLimits';
 export { stripSchema } from './utils/stripSchema/stripSchema';
 export { createDynamicFunction } from './utils/expressions/createDynamicFunction';
 export type { DynamicFunction } from './utils/expressions/createDynamicFunction';

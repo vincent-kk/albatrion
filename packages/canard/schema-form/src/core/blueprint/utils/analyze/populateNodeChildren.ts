@@ -122,7 +122,11 @@ export const populateNodeChildren = (
         if (existing) existing.push(input);
         else tuples.set(index, [input]);
       });
-    else if (schema.items !== undefined && typeof schema.items !== 'boolean') {
+    if (
+      schema.items !== undefined &&
+      typeof schema.items !== 'boolean' &&
+      !isArray(schema.items)
+    ) {
       if (schema.items === null || typeof schema.items !== 'object')
         throwBlueprintError(
           BlueprintErrorCode.UnexpectedArraySchema,
@@ -137,6 +141,20 @@ export const populateNodeChildren = (
         order: [...declaration.order, 0, 0],
       });
     }
+    const additionalItems = isArray(schema.items) && schema.prefixItems === undefined
+      ? schema.additionalItems
+      : undefined;
+    if (
+      additionalItems !== null &&
+      typeof additionalItems === 'object' &&
+      !isArray(additionalItems)
+    )
+      itemInputs.push({
+        ...base,
+        schema: additionalItems,
+        schemaPath: `${declaration.schemaPath}/additionalItems`,
+        order: [...declaration.order, 0, schema.items.length],
+      });
   }
   const entries = node.childEntries as BlueprintChildEntry[];
   for (const [name, inputs] of properties) {
