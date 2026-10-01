@@ -47,9 +47,12 @@ Planning method: 저장소 지침 — `PLAN.md` §2와 `plan/prompts.md`의 단�
 | 2026-10-01 | 원장 머지 | 로컬 `1.0.0-beta`(35라운드 `3d934b5bd`까지)를 머지. `PLAN.md` §5 끝의 충돌만 양쪽 행을 살려 해소 | `213ddac72` |
 | 2026-10-01 | review-plan | antigravity `rework-required`(F1–F5) → 고침 `0b3575524` → 고친 범위 재확인 `cleared`. G1·G2 충족 | 실행 계획 §9 |
 
+| 2026-10-01 | 원장 질의 | U2 초안이 찾은 둘을 원장 관리자가 36라운드로 닫음: 행의 여덟째 칸 `arrange`(36C-01), 옛 철자의 `additionalItems`는 스키마 객체일 때만 06이 청사진에 컴파일(36C-02). 실행 계획 I4·U3 갱신 | `reviews/round-36-closing.md` |
+| 2026-10-01 | U2 | 문서 선행: `arrayBehavior/` INTENT·DETAIL 새로, behaviors·종류 여섯·blueprint·record·settle·SchemaNode 문서 갱신(codex 세션 `ba0da3ae` 초안, 조율 세션이 원장 대조·36라운드 반영). `.ts` 변경 없음 | 이 커밋 |
+
 ## 3. 다음 행동
 
-- U2 문서 선행 커밋(새 fractal `arrayBehavior/`의 INTENT·DETAIL과 실행 계획 §3.3의 계약 문서), 그다음 U3.
+- U3 청사진(`resolveArrayLimits` 이동, 아이템 자리 항목 보조, `additionalItems` 컴파일).
 
 ## 4. 원장·계획서 어긋남
 

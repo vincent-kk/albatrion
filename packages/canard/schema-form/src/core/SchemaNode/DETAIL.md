@@ -27,8 +27,8 @@
 | `escapedName` | getter | 레코드 이스케이프 이름 | NODE-008 |
 | `path` | getter | 레코드 절대 경로 | NODE-008·054 |
 | `children` | getter | 현재 형상의 저장 배열 그대로 | NODE-043, TEST-070 |
-| `raw` | getter | 잎의 해석된 원본 또는 객체 branch의 비객체 원본. 평범한 객체 입력은 자식에 분배되어 호스트에는 `undefined` | VALUE-002·004, 26C-01 |
-| `extras` | getter | 객체 branch가 받은 선언 밖 키와 값을 삽입 순서로 보관하는 상태 칸 | VALUE-002·004, 26C-01 |
+| `raw` | getter | 잎·터미널의 해석된 원본 또는 branch 호스트의 잘못된 종류 원본. 객체·배열 입력은 각 자식에 분배되어 branch 호스트에는 저장되지 않음 | VALUE-002·004, NODE-021, 26C-01 |
+| `extras` | getter | 객체 branch의 선언 밖 키 또는 배열 branch의 청사진 없는 꼬리 자리 값을 받은 순서로 보관하는 상태 칸 | VALUE-002·004, NODE-052, 26C-01 |
 | `value` | getter | 계산된 `local` | VALUE-027 |
 | `outputValue` | getter | 계산된 `emit` | VALUE-027·034 |
 | `inactiveValues` | getter | 살아 있으면 루트 잠복 원본 메모, 떼어졌으면 마지막 커밋에 동결한 목록 | VALUE-029, WRITE-087, NODE-044 |
@@ -46,26 +46,33 @@
 | `find(pointer)` | method | `navigation.find` | NODE-043·046·054 |
 | `findNodes(pointer)` | method | `navigation.findNodes` | NODE-043·046·054 |
 | `setValue(value, option?)` | method | `settle.writeSchemaNode`의 호출자 전체 교체 또는 `Merge` 부분 쓰기 | NODE-010, WRITE-079·096, 26C-01 |
+| `push(value?)` | method | `settle.arrangeSchemaNodeItems`가 `behavior.arrange` 계획을 적용; 동기적으로 새 길이 반환 | NODE-010·014, SURFACE-005, GOAL-058 |
+| `pop()` | method | 같은 구조 진입; 빠진 아이템의 직전 커밋 `value` 또는 `undefined` 반환 | NODE-010·014, SURFACE-005, GOAL-058 |
+| `update(index, value)` | method | 같은 구조 진입; 쓰기 뒤 아이템 `value` 또는 범위 밖이면 `undefined` 반환 | NODE-010·014, SURFACE-005, 35C-06 |
+| `remove(index)` | method | 같은 구조 진입; 빠진 아이템의 직전 커밋 `value` 또는 `undefined` 반환 | NODE-010·014, SURFACE-005, GOAL-058 |
+| `clear()` | method | 같은 구조 진입; 동기적으로 `void` 반환 | NODE-010·014, SURFACE-005, GOAL-058 |
 | `resetSubtree(option?)` | method | `settle.resetSchemaNodeSubtree` | WRITE-085, SETTLE-049 |
 
+- 배열 동사 다섯은 클래스에서 종류를 검사하지 않고 정착의 구조 진입 함수에 한 문장으로 위임합니다. 그 함수가 행의 `arrange` 칸을 거쳐 순수 계획을 받아 적용하며 비배열 행은 공유 칸 하나가 `SchemaFormError`를 즉시 던집니다. 메서드는 Promise를 돌려주지 않고, 무동작의 반환은 각 계획의 반환 출처를 따릅니다(NODE-010·014, ERROR-197, GOAL-058, 35C-01·06, 36C-01, 실행 ADR D1·D4).
 - 클래스 파일에는 레코드 순서의 저장 필드, 상수 읽기 게터, 한 문장 위임만 둡니다. 정착이 쓰는 공개 레코드 칸은 같은 이름의 게터와 한 문장 저장 세터를 짝지어 프로토타입 이름을 유지합니다. 생성자는 고정 선언 순서의 대입만 하고 필드 초기화식과 생성자에 객체·배열 리터럴·함수·`new`를 두지 않습니다. `type`·`strategy` 분기는 가드 외에는 행에서만 합니다. 공개 인터페이스가 멤버 주석의 정본이고 클래스는 `{@inheritDoc}`로 가리킵니다(NODE-010·049).
 - 공개 `SchemaNode`는 `type`으로 판별하는 `StringNode | NumberNode | BooleanNode | NullNode | ObjectNode | ArrayNode | VirtualNode | UnionNode`입니다. `schemaType`은 차례로 `'string'`, `'number' | 'integer'`, `'boolean'`, `'null'`, `'object'`, `'array'`, `'virtual'`, `UnionSchemaType`으로 좁힙니다. `UnionMemberType = 'string' | 'number' | 'integer' | 'boolean' | 'object' | 'array'`이고 `UnionSchemaType = readonly [UnionMemberType, UnionMemberType, ...UnionMemberType[]]`입니다(NODE-057·058).
+- 다섯 배열 메서드의 공개 형은 이 합집합의 `ArrayNode` 구성원에만 두고 branch·terminal 두 전략이 같은 서명을 가집니다. `type`으로 좁히지 않은 다른 노드 형에는 메서드가 없으며, 런타임에서 비배열 호출을 시도하면 행의 거부 칸이 처리합니다(NODE-010·014, SURFACE-005, TEST-070, 26C-01, 35C-01).
 - `UnionNode`는 `type: 'union'`, `strategy: 'terminal'`, `children: null`이고 `typeMismatch: false`일 때 `value`는 허용 종류의 값·`undefined`·nullable일 때 `null`, `typeMismatch: true`일 때 `value: unknown`인 두 구성원으로 나뉩니다. `typeMismatch`는 `node.type`이 아니라 현재 `schemaType`·유효 목록과 `nullable` 기준이며 `false`는 검증 통과가 아닙니다(NODE-058, VALUE-037, SURFACE-061).
 - union 입력의 `FormTypeInputProps`는 `value`에 같은 판별 결과를 보여 주고 `onChange`는 목록 종류의 값과 `undefined`, nullable일 때만 `null`을 받습니다. `typeMismatch: true`의 `value: unknown`을 그대로 `onChange`의 허용 범위로 넓히지 않습니다. `ObjectValue`·`ArrayValue`를 포함한 객체·배열 원본 참조는 변환하지 않습니다(NODE-058, VALUE-037).
 - 공개 가드 열은 `isSchemaNode`, `isStringNode`, `isNumberNode`, `isBooleanNode`, `isObjectNode`, `isArrayNode`, `isVirtualNode`, `isUnionNode`, `isBranchNode`, `isTerminalNode`입니다. 첫째는 단일 클래스 `instanceof`, 종류 가드 일곱은 `type`, 마지막 둘은 `strategy`를 봅니다. `isNullNode`는 소비자가 없어 내보내지 않습니다. `isTerminalNode`는 union과 터미널 객체도 좁힙니다(NODE-015·041, raw-round17 §4).
 - `InferSchemaNode<Schema>`는 타입 배열의 null을 nullable로 떼고 integer를 종류 판정에서 number로 접어 한 종류면 그 노드, 둘 이상이면 `UnionNode`, null만이면 `NullNode`로 사상합니다. 형 없는 원시 분기는 종류 합집합으로, 전부 인라인 객체·배열인 분기는 각각 `ObjectNode`·`ArrayNode`로, 분기 없는 단일 종류 `const`·`enum`은 그 리터럴 종류로 사상합니다. 정적으로 판정할 수 없는 참조·게이트·복합 연언은 넓은 `SchemaNode`이고 청사진 오류인 모양은 `never`입니다. 오버로드가 생성 결과를 좁히며 단언·`any`를 쓰지 않습니다(NODE-046·058·059, TEST-070).
 - 새 타입과 가드는 PR-7 전까지 이 fractal의 `type.ts`와 진입점에만 있고 패키지 공개 진입점과 기존 `src/types`는 레거시 엔진을 가리킵니다(NODE-010·050, LANDING-159). `setContext`는 04에서 `SchemaNode/index.ts`가 이름 붙여 내보내고 `core/index.ts`가 이름으로 다시 내보내며 `src/index.ts`는 내보내지 않습니다(NODE-010, SURFACE-055, 28C-03·08). 이 바인딩 전용 함수는 클래스 멤버가 아니며 맥락 변경 정착을 settle 진입점에 한 문장으로 위임하고 옵션 비트를 받지 않습니다(NODE-010·016, WRITE-015, 28C-08).
-- `SetValueOption`은 클래스 멤버가 아니라 공개 옵션 형이며 `Overwrite`, `Merge`, `DisableAutomaticWrites`, `EnableAutomaticWrites`의 비트 뜻은 settle 계약을 따릅니다(WRITE-015, 26C-01). 통지·검증·명령과 배열 메서드는 해당 기제를 들일 때 세 표면을 함께 갱신합니다(EVENT-063, LANDING-064·065).
+- `SetValueOption`은 클래스 멤버가 아니라 공개 옵션 형이며 `Overwrite`, `Merge`, `DisableAutomaticWrites`, `EnableAutomaticWrites`의 비트 뜻은 settle 계약을 따릅니다(WRITE-015, 26C-01). 통지·검증·명령의 겉면은 해당 기제를 들일 때 멤버 표·멤버 목록 시험·공개 형을 함께 갱신합니다(EVENT-063, LANDING-064).
 
 ## Acceptance Criteria
 
 ### surface-members — 정확한 겉면
 
-- 멤버 목록 시험은 이 표의 계산 게터 다섯과 `context`를 포함한 게터·메서드 이름과 종류를 프로토타입 및 공개 형과 대조하고 스텁이 없음을 확인합니다. 클래스 파일 한정 린트와 행 칸 순서 시험도 통과합니다(NODE-010, 26C-01, LANDING-066, 28C-07·08).
+- 멤버 목록 시험은 배열 메서드 다섯을 포함한 이 표의 39개 게터·메서드 이름과 종류를 프로토타입 및 공개 형과 대조하고 스텁이 없음을 확인합니다. 클래스 파일 한정 린트와 행 칸 순서 시험도 통과합니다(NODE-010·014, SURFACE-005, 26C-01, LANDING-066, 28C-07·08).
 
 ### surface-types — 판별과 참조
 
-- `tsc --strict`에서 `as`·`any` 없이 종류·union 경고등 판별·`InferSchemaNode`가 좁혀지고 `children`은 저장 배열과 동일한 참조입니다(NODE-046·058, TEST-070).
+- `tsc --strict`에서 `as`·`any` 없이 종류·union 경고등 판별·`InferSchemaNode`가 좁혀지고 배열 메서드는 `ArrayNode`에만 있으며 `children`은 저장 배열과 동일한 참조입니다(NODE-010·014·046·058, TEST-070, 26C-01).
 
 ### surface-detached — 떼어진 참조의 고정 읽기
 
