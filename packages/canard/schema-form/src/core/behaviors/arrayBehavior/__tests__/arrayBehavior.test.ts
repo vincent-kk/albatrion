@@ -152,7 +152,7 @@ describe('array branch calculation', () => {
       .toEqual({ kind: 'slots', slots: [], result: { source: 'void' } });
   });
 
-  it('35C-06 returns noop for invalid positions, empty, and null raw', () => {
+  it('35C-06 47C-02 returns noop for invalid positions and non-push null verbs', () => {
     for (const row of [arrayBehavior.branch, arrayBehavior.terminal]) {
       const node = makeRecord(row,
         blueprint({ type: 'array', items: { type: 'string' } }).root,
@@ -164,15 +164,21 @@ describe('array branch calculation', () => {
         expect(row.arrange(node, { kind: 'update', index, value: 'x' }))
           .toEqual({ kind: 'noop' });
       }
-    node.raw = null;
+      node.raw = null;
       for (const operation of [
-        { kind: 'push', value: 'x' }, { kind: 'pop' },
+        { kind: 'pop' },
         { kind: 'update', index: 0, value: 'x' },
         { kind: 'remove', index: 0 }, { kind: 'clear' },
       ] as const)
         expect(row.arrange(node, operation)).toEqual({ kind: 'noop' });
+      expect(row.arrange(node, { kind: 'push', value: 'x' })).toEqual(
+        row.strategy === 'branch'
+          ? { kind: 'slots', slots: [{ value: 'x' }],
+            result: { source: 'length' } }
+          : { kind: 'raw', raw: ['x'], result: { source: 'length' } });
     }
   });
+
 });
 
 // filid:contract array-terminal

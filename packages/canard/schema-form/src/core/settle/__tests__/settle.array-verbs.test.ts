@@ -96,7 +96,7 @@ describe('array structural verbs', () => {
     expect(moved.detached).toBe(true);
   });
 
-  it('35C-06 leaves invalid operations and a null branch untouched', () => {
+  it('35C-06 38C-01 47C-02 leaves null removals untouched, then pushes', () => {
     const { root, runtime } = makeRecordTree({ type: 'array',
       items: { type: 'string' } });
     root.setValue(['a']);
@@ -107,9 +107,9 @@ describe('array structural verbs', () => {
         .toBeUndefined();
     }
     expect(Reflect.get(runtime, 'commitNumber')).toBe(commit);
+    const former = root.children![0];
     root.setValue(null);
     const nullCommit = Reflect.get(runtime, 'commitNumber');
-    expect(arrangeSchemaNodeItems(root, { kind: 'push', value: 'x' })).toBe(0);
     expect(arrangeSchemaNodeItems(root, { kind: 'pop' })).toBeUndefined();
     expect(arrangeSchemaNodeItems(root, { kind: 'update', index: 0,
       value: 'x' })).toBeUndefined();
@@ -118,6 +118,13 @@ describe('array structural verbs', () => {
     expect(arrangeSchemaNodeItems(root, { kind: 'clear' })).toBeUndefined();
     expect(root.outputValue).toBeNull();
     expect(Reflect.get(runtime, 'commitNumber')).toBe(nullCommit);
+    expect(arrangeSchemaNodeItems(root, { kind: 'push', value: 'x' })).toBe(1);
+    expect(root.value).toEqual(['x']);
+    expect(root.children![0].itemKey).toBeGreaterThan(former.itemKey!);
+    expect(Reflect.get(runtime, 'commitNumber')).toBeGreaterThan(nullCommit);
+    root.setValue(17);
+    expect(arrangeSchemaNodeItems(root, { kind: 'push', value: 'y' })).toBe(1);
+    expect(root.value).toEqual(['y']);
   });
 
   it('NODE-005 applies terminal verbs to copies and returns committed values', () => {
@@ -196,13 +203,12 @@ describe('array structural verbs', () => {
     expect(Reflect.get(runtime, 'loadSnapshot')).toEqual([]);
   });
 
-  it('35C-06 treats an empty pop and all terminal null verbs as no-ops', () => {
+  it('35C-06 47C-02 pushes on terminal null and undefined while other verbs are no-ops', () => {
     const { root, runtime } = makeRecordTree({ type: 'array',
       options: { terminal: true } });
     expect(arrangeSchemaNodeItems(root, { kind: 'pop' })).toBeUndefined();
     root.setValue(null);
     const commit = Reflect.get(runtime, 'commitNumber');
-    expect(arrangeSchemaNodeItems(root, { kind: 'push', value: 'x' })).toBe(0);
     expect(arrangeSchemaNodeItems(root, { kind: 'pop' })).toBeUndefined();
     expect(arrangeSchemaNodeItems(root, { kind: 'update', index: 0,
       value: 'x' })).toBeUndefined();
@@ -211,5 +217,41 @@ describe('array structural verbs', () => {
     expect(arrangeSchemaNodeItems(root, { kind: 'clear' })).toBeUndefined();
     expect(root.raw).toBeNull();
     expect(Reflect.get(runtime, 'commitNumber')).toBe(commit);
+    expect(arrangeSchemaNodeItems(root, { kind: 'push', value: 'x' })).toBe(1);
+    expect(root.raw).toEqual(['x']);
+    root.setValue(undefined);
+    expect(arrangeSchemaNodeItems(root, { kind: 'push', value: 'y' })).toBe(1);
+    expect(root.raw).toEqual(['y']);
+  });
+
+  it('47C-01 keeps nested array slots and live identity on a tuple tail update', () => {
+    const { root } = makeRecordTree({ type: 'array', prefixItems: [
+      { type: 'array', items: { type: 'object',
+        properties: { a: { type: 'string' } } } },
+    ], items: false });
+    root.setValue([[{}, {}], 'b']);
+    const nested = root.find('/0/1');
+    expect(nested).not.toBeNull();
+    expect(arrangeSchemaNodeItems(root, { kind: 'update', index: 1,
+      value: 'c' })).toBe('c');
+    expect(root.value).toEqual([[{}, {}], 'c']);
+    expect(root.find('/0/1')).toBe(nested);
+  });
+
+  it('47C-01 updates a gated slot through the raw tree without dropping nested slots', () => {
+    const { root, runtime } = makeRecordTree({ type: 'array', prefixItems: [
+      { type: 'array', items: { type: 'object',
+        properties: { a: { type: 'string' } } } },
+      { type: 'string', controls: { active: 'false' } },
+    ], items: false });
+    root.setValue([[{}, {}], 'b']);
+    const nested = root.find('/0/1');
+    expect(root.find('/1')).toBeNull();
+    expect(arrangeSchemaNodeItems(root, { kind: 'update', index: 1,
+      value: 'c' })).toBe('c');
+    expect(root.value).toEqual([[{}, {}], null]);
+    expect(root.find('/0/1')).toBe(nested);
+    const latent: Map<string, unknown> = Reflect.get(runtime, 'latentRaw');
+    expect(latent.get(JSON.stringify(['/1', 'string']))).toBe('c');
   });
 });

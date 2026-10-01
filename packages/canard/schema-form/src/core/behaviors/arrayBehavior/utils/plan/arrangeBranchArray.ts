@@ -9,7 +9,7 @@ import { isValidArrayIndex } from './isValidArrayIndex';
  * @returns Pure slot proposal, direct update, or no-op
  */
 export const arrangeBranchArray: Behavior['arrange'] = (node, operation) => {
-  if (node.raw === null) return { kind: 'noop' };
+  if (node.raw === null && operation.kind !== 'push') return { kind: 'noop' };
   const count = node.itemCount;
   switch (operation.kind) {
     case 'push':

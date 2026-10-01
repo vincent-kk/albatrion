@@ -73,7 +73,7 @@ describe('array settlement lifecycle', () => {
     const latent: Map<string, { raw?: unknown }> = Reflect.get(runtime, 'latentRaw');
     const rawTree = [{ show: false, visible: 'v', hidden: 'secret', nested: null,
       nestedArray: ['first', 'tail'], extra: 9 },
-      undefined];
+      { nestedArray: [] }];
     expect([...latent.keys()]).toEqual([JSON.stringify(['/items', 'array'])]);
     expect(latent.get(JSON.stringify(['/items', 'array']))?.raw).toEqual(rawTree);
     expect(root.inactiveValues).toEqual([{ path: '/items', value: rawTree }]);
@@ -84,6 +84,24 @@ describe('array settlement lifecycle', () => {
     ]);
     root.find('/items/0/show')?.setValue(true);
     expect(root.find('/items/0/hidden')?.value).toBe('secret');
+  });
+
+  it('47C-01 keeps nested array slot counts across host exit and re-entry', () => {
+    const { root } = makeSchemaNodeTree({ type: 'object', properties: {
+      showHost: { type: 'boolean' },
+      items: { type: 'array', controls: { active: '../showHost' },
+        items: { type: 'array', items: { type: 'object',
+          properties: { a: { type: 'string' } } } } },
+    } });
+    const items = [[{}, {}], [{ a: 'y' }]];
+    root.setValue({ showHost: true, items },
+      SetValueOption.DisableAutomaticWrites);
+    expect(root.find('/items')?.value).toEqual(items);
+    root.find('/showHost')?.setValue(false);
+    expect(root.inactiveValues).toEqual([{ path: '/items',
+      value: [[undefined, undefined], [{ a: 'y' }]] }]);
+    root.find('/showHost')?.setValue(true);
+    expect(root.find('/items')?.value).toEqual(items);
   });
 
   it('35C-09 drops latent and declaration paths below a perished item', () => {
