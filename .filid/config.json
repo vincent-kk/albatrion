@@ -32,6 +32,7 @@
     },
     "zero-peer-file": {
       "exempt": [
+        "**/aileron/schema-form-scenarios/src/**",
         "**/canard/schema-form/**",
         "**/lerx/promise-modal/**",
         "**/winglet/common-utils/**",

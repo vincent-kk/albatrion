@@ -129,4 +129,5 @@ Planning method: 저장소 지침 — `PLAN.md` §2와 `plan/prompts.md`의 단�
 | M35 | `src/core/settle/utils/gates/flushPendingGateReads.ts`(06, 51C-01 수정) | 아이템 게이트가 있는 행 안에 자기 게이트가 있으면 들어오는 아이템 안의 읽기마다 미리 갱신이 일어나 배열 호스트를 행마다 다시 조립 | 51C-01, NODE-026 | 여섯 번째 verifier가 찾음. 06이 고침(codex `de09a83e`, `099314f29`): 들어오는 자식 안의 읽기는 미리 갱신을 건너뜀. 2,000행 조립 2,003 → 4회 |
 | M36 | `src/core/settle/utils/gates/getGateRegistry.ts`의 `readsChanged`(04) | dirty 경로마다 바뀐 경로 전체를 견주어 게이트 행의 통째 쓰기가 제곱 | 49C-01, 52라운드 소유자 확인 | 여섯 번째 verifier가 찾음. 06이 고침(`32b7975e0`): 바뀐 경로와 그 조상 집합 조회. 2,000행 순회 12,006,000 → 8,000회 |
 | M37 | `src/core/settle/DETAIL.md` | 51C-01 뒤 정착 도중 노드 객체 읽기가 들어온 자식을 보지 않음 | VALUE-013, EVENT-061, 57C-01 | 여섯 번째 verifier가 지적(비차단). 57C-01: 코드 변경 없음, 직전 커밋을 돌려준다는 문장을 더함(`16fa480ef`) |
+| M38 | `schema-form-scenarios` family directories | The seven existing families' documents entered this PR by a package-wide decision. | 60C-01 | 기존 일곱 가족의 문서는 패키지 전체 결정(60C-01)으로 이 PR에 들었다 |
 | M8 | 동사의 반환 값 | 원장이 정하지 않음 | GOAL-058(동기) | 레거시 반환을 동기로 지킴(실행 계획 I7, 자율 결정) |
