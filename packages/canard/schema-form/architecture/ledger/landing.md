@@ -2243,7 +2243,8 @@
 
 - 결정:
   > 이주(LANDING-147): 가상 노드에 모양이 틀린 쓰기의 오류 클래스가 `JSONSchemaError`에서 `SchemaFormError`로 바뀌고, 길이가 같은 문자열을 글자로 쪼개던 동작은 거부로 바뀐다.
-- 보충: 없음
+- 보충:
+  > 편집자 결정(42C-01): "【추론】 ERROR-195의 "즉시 throw하고, throw 직전에 `onError`로 보낸다"에서 throw는 PR-5가 `settle`의 쓰기 표시에서 하고, `onError` 보고는 PR-4의 보고기를 쓰므로 35C-01과 같이 33C-01의 디스패치 배선과 함께 뒤에 머지하는 단계가 잇는다; 06이 먼저 머지되면 던지기만 하고 그 자리의 DETAIL에 배선 PR이 보고를 더한다는 한 줄을 남긴다. 코드 이름은 가칭 `INVALID_VIRTUAL_NODE_VALUES` 그대로 쓰고(이미 파생 경로가 쓰는 코드와 같은 하나다) 05의 확정 목록(31C-05)에 든다. LANDING-147의 이주(오류 클래스가 `SchemaFormError`로, 같은 길이 문자열 쪼개기는 거부로)는 이 수정으로 호출자 경로에서도 실현된다." (`reviews/round-42-closing.md:11`)
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:673`(정본)
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-21)
