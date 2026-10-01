@@ -53,6 +53,7 @@
 ### settle-failure-identity — 오류 발생 식별자
 
 - 실패 중복 키는 한 정착의 발생 식별자이며, 대상 경로가 원천과 다른 파생 실패는 종류·원천 경로·대상 경로·규칙 스키마 경로를 함께 구별합니다. 같은 규칙을 공유하는 서로 다른 원천이 같은 대상에서 실패해도 별개 오류로 보존합니다(ERROR-004, 58C-01).
+- 자동 쓰기의 `INJECT_TARGET_MISSING`·`INVALID_VIRTUAL_NODE_VALUES`는 오류 생성 시 `details.sourcePath`에 `controls.injectTo` 선언 노드의 데이터 경로를 넣고 `details.path`는 대상 경로로 유지합니다. 쓰기 모양 오류의 기대 길이·받은 값도 유지하며, 사슬 끝 기록은 같은 상세 참조를 전달합니다. 호출자 경로의 쓰기 모양 오류에는 원천 경로를 더하지 않습니다(ERROR-017·195, 59C-01).
 
 ### settle-gates — 평가와 위치
 

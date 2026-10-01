@@ -18,11 +18,20 @@ export type FormErrorReason<Code extends FormErrorCode> =
         ? 'missing' | 'kind' | 'overlap' | 'key'
         : never;
 
-/** Error details for a known code; unrelated codes have no reason field. */
+/**
+ * Code-specific details with closed reasons and automatic-write source paths.
+ * Only injection-target and virtual-write-shape errors allow sourcePath;
+ * caller-origin virtual-write-shape errors omit it.
+ */
 export type FormErrorDetails<Code extends FormErrorCode> = ErrorDetails &
   ([FormErrorReason<Code>] extends [never]
     ? { reason?: never }
-    : { reason?: FormErrorReason<Code> });
+    : { reason?: FormErrorReason<Code> }) &
+  (Code extends
+    | 'SCHEMA_FORM_ERROR.INJECT_TARGET_MISSING'
+    | 'SCHEMA_FORM_ERROR.INVALID_VIRTUAL_NODE_VALUES'
+    ? { sourcePath?: string }
+    : { sourcePath?: never });
 
 /** Observed form failure or warning; dispatch owns delivery and aggregation. */
 export interface FormErrorRecord {

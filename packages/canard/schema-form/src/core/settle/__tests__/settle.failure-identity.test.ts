@@ -8,7 +8,7 @@ import { SetValueOption } from '../../types/value';
 import { createTestTree } from './fixtures/createTestTree';
 
 // filid:contract settle-failure-identity
-describe('ERROR-004 58C-01 shared-rule failure occurrence identity', () => {
+describe('ERROR-004 58C-01 ERROR-017 ERROR-195 59C-01 shared-rule failure occurrence identity', () => {
   it.each([
     { target: '../absent', value: 'X', code: 'INJECT_TARGET_MISSING', path: '/absent' },
     { target: '../v', value: null, code: 'INVALID_VIRTUAL_NODE_VALUES', path: '/v' },
@@ -35,6 +35,7 @@ describe('ERROR-004 58C-01 shared-rule failure occurrence identity', () => {
       `SCHEMA_FORM_ERROR.${code}`, `SCHEMA_FORM_ERROR.${code}`,
     ]);
     expect(errors.map((error) => error.details.path)).toEqual([path, path]);
+    expect(errors.map((error) => error.details.sourcePath)).toEqual(['/a', '/b']);
     expect(errors.map((error) => error.details.schemaPath)).toEqual([
       '#/definitions/src/controls/injectTo', '#/definitions/src/controls/injectTo',
     ]);

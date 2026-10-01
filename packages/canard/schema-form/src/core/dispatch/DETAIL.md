@@ -31,6 +31,10 @@
 
 ## Acceptance Criteria
 
+### dispatch-source-details — 자동 쓰기의 원천 경로
+
+- 같은 대상을 겨눈 서로 다른 `injectTo` 선언의 대상 없음·가상 쓰기 모양 실패는 각각의 `details.sourcePath`를 오류 기록에도 유지합니다. 기록의 `path`는 대상 경로이고 `details`는 오류의 상세와 같은 참조입니다. 호출자 경로의 쓰기 모양 오류에는 `sourcePath`를 더하지 않습니다(ERROR-017·195, 59C-01).
+
 ### dispatch-order — 진입당 배달과 검증 순서
 
 - 커밋에서 표시한 비트를 문서 순서의 파동으로 한 번 배달하고, 최외곽 진입에서 검증 요청과 `onChange`가 모두 생기면 요청이 앞서며, 중첩 쓰기는 정해진 다음 파동에서 보입니다(EVENT-004·007·008·027·031·032, SETTLE-007).

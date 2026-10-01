@@ -12,6 +12,7 @@
 - `interface FormErrorRecord { level: 'error' | 'warning'; code: FormErrorCode; message: string; path?: string; schemaPath?: string; details?: ErrorDetails; error?: unknown; aggregate?: SchemaFormError; surface?: 'thrown' | 'rejected' | 'sink'; componentStack?: string }`입니다. `details`는 오류의 `error.details`와 같은 참조이며, `aggregate`는 둘 이상 묶여 실제로 던진 오류 객체입니다. `componentStack`을 채우는 것은 07의 렌더 계층입니다(ERROR-017·032).
 - `interface FormErrorReporter { report(record: FormErrorRecord): void; hasConsumer(): boolean }`은 core가 트리 생성 인자로 받는 형입니다. `hasConsumer()`가 거짓이면 일반 경고의 판정·서식·키 할당을 하지 않고, true이면 같은 사건의 code·level·details·surface를 환경에 따라 바꾸지 않습니다. `NON_JSON_WHOLE_VALUE`의 깊이 점검과 보고만은 `hasConsumer()`와 무관하게 개발 모드에서만 합니다(ERROR-013·021·030, WRITE-099, 31C-02).
 - 코드별 `reason`은 닫힌 값만 둡니다. `VALIDATOR_COMPILE_FAILED`·`GUARD_FAILED`에는 `'duplicateSchemaId'`, `TYPE_MISMATCH`에는 `'unconvertible' | 'ambiguous'`, `DISCRIMINATOR_MISMATCH`에는 `'missing' | 'kind' | 'overlap' | 'key'`를 씁니다. 원장이 이름 붙이지 않은 원인에는 `reason`을 만들지 않습니다(ERROR-201, VALUE-037, 31C-03).
+- `FormErrorDetails<Code>`의 `sourcePath?: string`은 `SCHEMA_FORM_ERROR.INJECT_TARGET_MISSING`·`SCHEMA_FORM_ERROR.INVALID_VIRTUAL_NODE_VALUES`에만 허용합니다. 자동 쓰기 실패의 `details.sourcePath`는 쓰기를 낸 `controls.injectTo` 선언 노드의 데이터 경로이며, `details.path`와 기록의 `path`는 대상 경로로 유지합니다. 쓰기 모양 오류의 `expectedLength`·`received`는 보존하고 호출자 경로의 쓰기 모양 오류에는 `sourcePath`를 넣지 않습니다. 오류 기록의 `details`는 이 필드를 포함한 `error.details`와 같은 참조입니다(ERROR-017·195, 59C-01).
 - 코드 표는 패키지 전체의 공개 데이터입니다. 기록 생성·사슬 끝 전달·묶음·경고 중복 키와 전달 중 쓰기 거부는 `dispatch`가 소유하며 이 fractal의 클래스·상수·형에는 넣지 않습니다(ERROR-004·005·024·029·164, NODE-016).
 
 ## Acceptance Criteria
@@ -21,7 +22,8 @@
 - 소비자는 코드와 타입 가드를 통해 오류 종류를 구분할 수 있습니다.
 - ERROR-164의 현행 행과 후속 보충의 코드·순서·level이 상수와 일치하고, 제외·오늘 전용 행과 `INJECT_TARGET_NOT_FOUND`는 새 표에 없습니다(ERROR-164·198, CONTROLS-079).
 - 상세 정보는 생성자가 받은 진단 맥락을 별도 마스킹 없이 보관합니다. ValidationError에는 원본 form value와 jsonSchema가 포함될 수 있으므로 호출자는 이를 사용자 응답이나 로그에 노출할 때 별도로 다뤄야 합니다.
+- 같은 대상을 겨눈 서로 다른 선언의 자동 쓰기 실패는 오류와 보고 기록 모두에서 서로 다른 `details.sourcePath`로 구별할 수 있습니다. 다른 코드의 상세 형은 이 필드를 허용하지 않습니다(ERROR-017·195, 59C-01).
 
 ## Last Updated
 
-2026-10-01
+2026-10-02

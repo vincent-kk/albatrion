@@ -45,6 +45,8 @@ export const runDeriveRounds = <Self extends SchemaNodeRecord<Self>>(
             path: failure.targetPath ?? failure.sourcePath,
             schemaPath: failure.schemaPath,
             cause: failure.cause,
+            ...(failure.kind === 'injectTarget' || failure.kind === 'writeShape'
+              ? { sourcePath: failure.sourcePath } : {}),
             ...(failure.expectedLength === undefined ? {} :
               { expectedLength: failure.expectedLength, received: failure.cause }),
           },
