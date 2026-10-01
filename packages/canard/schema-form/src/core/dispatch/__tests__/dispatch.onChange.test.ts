@@ -34,9 +34,11 @@ describe('dispatcher onChange', () => {
     const seen: unknown[] = [];
     runtime.onChange = (value) => seen.push(value);
     runtime.validationMode = ValidationMode.OnChange;
-    runtime.requestValidation = (node) => seen.push(`validation:${node.path}`);
+    const before = runtime.validationStamp ?? 0;
     dispatchResetForm(root, 'same');
-    expect(seen).toEqual(['validation:']);
+    expect(seen).toEqual([]);
+    expect(runtime.validationStamp).toBe(before + 1);
+    expect(runtime.validationPendingTargets?.has(root)).toBe(true);
   });
 
   it('EVENT-027 requests validation after delivery and before onChange', () => {
@@ -44,21 +46,14 @@ describe('dispatcher onChange', () => {
     const order: string[] = [];
     runtime.validationMode = ValidationMode.OnChange;
     subscribeSchemaNode(root, () => order.push('delivery'));
-    runtime.requestValidation = () => order.push('validation');
-    runtime.onChange = () => order.push('change');
+    const before = runtime.validationStamp ?? 0;
+    runtime.onChange = () => {
+      expect(runtime.validationStamp).toBe(before + 1);
+      order.push('change');
+    };
     dispatchSetValue(root, 'changed');
-    expect(order).toEqual(['delivery', 'validation', 'change']);
-  });
-
-  it('EVENT-021 continues to onChange after a validation request failure', () => {
-    const { root, runtime } = createDispatchTree({ type: 'string' });
-    const failure = new Error('request failed');
-    const order: string[] = [];
-    runtime.validationMode = ValidationMode.OnChange;
-    runtime.requestValidation = () => { order.push('validation'); throw failure; };
-    runtime.onChange = () => order.push('change');
-    expect(() => dispatchSetValue(root, 'changed')).toThrow(failure);
-    expect(order).toEqual(['validation', 'change']);
+    expect(order).toEqual(['delivery', 'change']);
+    expect(runtime.validationPendingTargets?.has(root)).toBe(true);
   });
 
   it('EVENT-033 treats a write inside onChange as a new entry', () => {

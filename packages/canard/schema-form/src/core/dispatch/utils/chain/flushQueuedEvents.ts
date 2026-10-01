@@ -21,10 +21,11 @@ const isQueuedNode = <Self extends SchemaNodeRecord<Self>>(
 /**
  * Deliver merged non-settlement bits in waves after committed events.
  * @param root - Live root owning the queued event table and observers
+ * @param caller - Whether a synchronous caller receives standalone failures
  * @returns Nothing; standalone failures are exposed after all deliveries
  */
 export const flushQueuedEvents = <Self extends SchemaNodeRecord<Self>>(
-  root: Self,
+  root: Self, caller = true,
 ): void => {
   const runtime = root.runtime;
   if (runtime.flushingQueuedEvents) return;
@@ -75,7 +76,7 @@ export const flushQueuedEvents = <Self extends SchemaNodeRecord<Self>>(
       catch (error) { captureChainError(runtime, error); }
     }
     if (standalone) finishQueuedErrors(runtime, runtime.chainErrors ?? [],
-      runtime.chainOccurrences ?? []);
+      runtime.chainOccurrences ?? [], caller);
   } finally {
     runtime.flushingQueuedEvents = false;
     if (standalone) {

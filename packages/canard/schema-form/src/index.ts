@@ -72,7 +72,7 @@ export type {
   ValidatorFactory,
   ValidateFunction,
   ValidationIssue,
-  ValidationIssue as JSONSchemaError,
+  JSONSchemaError,
 } from './types';
 
 export type * from './types/rolled';

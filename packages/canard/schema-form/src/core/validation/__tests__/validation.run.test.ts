@@ -86,6 +86,31 @@ describe('validation execution', () => {
     expect(order).toEqual(['change', 'validation']);
   });
 
+  it('EVENT-046 ERROR-019 reports a result-wave listener failure once to the sink', async () => {
+    const report = vi.fn();
+    const sink = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    try {
+      const validator: Validator = { compile: () => () => [],
+        compileGuard: () => () => true };
+      const { root, runtime } = createDispatchTree({ type: 'string' }, undefined,
+        validator, { hasConsumer: () => true, report });
+      dispatchMount(root, 'before');
+      runtime.validationMode = ValidationMode.OnChange;
+      const failure = new Error('result listener');
+      subscribeSchemaNode(root, (event) => {
+        if (event.type & SchemaNodeEventType.UpdateGlobalError) throw failure;
+      });
+
+      dispatchSetValue(root, 'after');
+      await new Promise((resolve) => setTimeout(resolve, 0));
+      expect(report).toHaveBeenCalledTimes(1);
+      expect(report.mock.calls[0][0]).toMatchObject({
+        code: 'SCHEMA_FORM_ERROR.LISTENER_THREW', error: failure, surface: 'sink',
+      });
+      expect(sink).toHaveBeenCalledTimes(1);
+    } finally { sink.mockRestore(); }
+  });
+
   it('WRITE-093 VALIDATE-051 passes the emitted union value by reference', async () => {
     const validate = vi.fn(() => null);
     const validator: Validator = { compile: () => validate, compileGuard: () => () => true };

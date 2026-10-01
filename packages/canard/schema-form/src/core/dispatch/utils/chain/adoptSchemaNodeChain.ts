@@ -21,6 +21,7 @@ export const adoptSchemaNodeChain = <Self extends SchemaNodeRecord<Self>>(
   next.chainInitialEmit = previous.chainInitialEmit;
   next.chainErrors = previous.chainErrors;
   next.chainOccurrences = previous.chainOccurrences;
+  next.enclosingChain = previous.enclosingChain;
   next.errorReporter ??= previous.errorReporter;
   next.feedbackBudget = previous.feedbackBudget;
   next.feedbackBlockedListeners = previous.feedbackBlockedListeners;
@@ -61,5 +62,6 @@ export const adoptSchemaNodeChain = <Self extends SchemaNodeRecord<Self>>(
   previous.queuedNonSettleEvents = undefined;
   previous.stateChanged = undefined;
   previous.chainOccurrences = undefined;
+  previous.enclosingChain = undefined;
   previous.pendingWarningRecords = undefined;
 };

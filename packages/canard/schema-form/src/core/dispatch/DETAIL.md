@@ -13,6 +13,7 @@
 - `subscribeSchemaNode(node, listener): () => void`와 `readSchemaNodeRevision(node, mask?)`는 읽기이며 진입을 열지 않습니다. 구독 사건은 `{ type, payload?, options? }` 모양이고, `revision(mask?)`는 리스너 유무와 무관한 해당 비트 카운터의 합입니다(EVENT-001·004·007).
 - `dispatchRequest(node, kind: SchemaNodeRequestType): void`, `dispatchSetState(node, state)`, `dispatchSetSubtreeState(node, state)`, `dispatchClearSubtreeState(node)`, `dispatchSetExternalErrors(node, errors: readonly ValidationIssue[])`, `dispatchClearExternalErrors(node)`는 정착 밖 사건입니다. `dispatchValidate(node): Promise<readonly ValidationIssue[]>`는 호출할 때 새 판정을 요청합니다(EVENT-012·045·063·067·073, VALIDATE-049).
 - `adoptSchemaNodeChain(previousRoot, nextRoot)`는 새 루트의 검증 컴파일을 먼저 확인한 뒤 재생성 reset의 진입 깊이, 배치 표시, 예산과 모은 오류를 넘기는 바인딩 전용 통로입니다. 실패하면 옛 사슬은 그대로입니다(EVENT-030, VALIDATE-046).
+- `createFormErrorRecord`는 새 트리 생성에서 청사진 진단을 소비자에게 전달할 기록으로 바꿉니다. `SchemaNode`가 이름 붙은 진입점으로 가져오며, 소비자가 없으면 서식을 만들지 않습니다(ERROR-017·019, NODE-010).
 
 ### 사슬, 파동, 기록
 
@@ -25,6 +26,7 @@
 - 상태 쓰기 진입 셋은 각 노드의 이전·다음 `interactionState`에서 참 여부가 달라진 키만 런타임의 셈에 반영하고 정착 비교 스냅숏의 상태 기준도 그 값으로 옮깁니다. 셈이 0↔1을 넘으면 공유 레코드 연산이 새 `globalState` 참조와 루트의 `UpdateGlobalState`를 대기시키며, 깊이 0이면 같은 호출에서, 열린 진입에서는 최외곽 끝의 정착 파동 뒤에 한 번 배달합니다. 겹치는 참 노드가 남으면 참조와 사건은 그대로입니다(EVENT-062·067, 43C-01, LANDING-152·153).
 - 정착의 커밋 뒤 throw를 받아 사슬 끝까지 모읍니다. 보고기가 소비자를 가질 때만 기록과 경고 서식을 만듭니다. 단, `NON_JSON_WHOLE_VALUE`의 깊이 점검과 보고는 `hasConsumer()`와 무관하게 개발 모드에서만 합니다. 기록은 발생 순서대로 전달합니다. 하나의 예외는 원래 값을 던지고 여럿은 `SchemaFormError`의 `MULTIPLE_ERRORS`로 묶어 `details.errors`의 순서를 보존합니다. 전달 중 같은 폼에 대한 쓰기는 즉시 `WRITE_IN_OBSERVER`로 거부하지만 `validate()`는 허용합니다(ERROR-005·013·019·021·023·028–030, WRITE-099, 31C-02).
 - 경고 중복 키는 코드·위치·코드별 판별 칸의 구조 키입니다. 폼 수준 로드에서만 비우며 `setValue(V)`·`resetSubtree()`에서는 유지합니다. 주인 없는 예외는 싱크로 한 번 보고하고 검증 결과 파동의 리스너 예외를 미처리 거부로 남기지 않습니다(ERROR-008·024·204, EVENT-046).
+- 정착 밖 동기 파동에서 안쪽 쓰기 진입이 열리면 바깥 파동의 오류 수집기를 보존·복원하고, 안쪽 진입의 노출 오류를 바깥 수집기에 합칩니다. 결과 파동은 호출자가 없으므로 리스너 오류를 `surface: 'sink'`로 한 번 보고하고 싱크로 한 번 보냅니다. 명시적 `validate()`의 검증기 실패는 거부 전에 `surface: 'rejected'`로 한 번 보고합니다(ERROR-004·019·022·023, EVENT-010·046).
 
 ## Acceptance Criteria
 

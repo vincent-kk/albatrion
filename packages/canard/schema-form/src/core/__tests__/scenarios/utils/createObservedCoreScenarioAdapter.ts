@@ -44,7 +44,7 @@ export function createObservedCoreScenarioAdapter(
   const delivered: string[] = [];
   const reported: string[] = [];
   let onChangeCount = 0;
-  let validationRequestCount = 0;
+  let validationRequestStamp = 0;
   const { root, runtime } = makeSchemaNodeTree(scenario.schema as BlueprintSchema, {
     snapshot: scenario.initialValue,
     errorReporter: { hasConsumer: () => true,
@@ -56,16 +56,13 @@ export function createObservedCoreScenarioAdapter(
   Reflect.set(runtime, 'onChange', () => { onChangeCount += 1; });
   Reflect.set(runtime, 'validationMode', family === 'notify'
     ? ValidationMode.OnChange : ValidationMode.OnRequest);
-  if (family === 'notify') Reflect.set(runtime, 'requestValidation', () => {
-    validationRequestCount += 1;
-  });
 
   return {
     execute: (step) => {
       delivered.length = 0;
       reported.length = 0;
       onChangeCount = 0;
-      validationRequestCount = 0;
+      validationRequestStamp = Reflect.get(runtime, 'validationStamp') ?? 0;
       executeStep(root, scenario, step);
     },
     settle: family === 'validation' ? async () => { await root.validate(); } : undefined,
@@ -76,7 +73,8 @@ export function createObservedCoreScenarioAdapter(
       if (expectation.onChangeCount !== undefined)
         expect(onChangeCount, 'onChangeCount').toBe(expectation.onChangeCount);
       if (expectation.validationRequestCount !== undefined)
-        expect(validationRequestCount, 'validationRequestCount')
+        expect((Reflect.get(runtime, 'validationStamp') ?? 0) - validationRequestStamp,
+          'validationRequestCount')
           .toBe(expectation.validationRequestCount);
       if (expectation.onErrorCodes)
         expect(reported, 'onErrorCodes').toEqual(expectation.onErrorCodes);

@@ -7,7 +7,7 @@
 ## Conventions
 
 - 의존 순서는 `blueprint < record < {behaviors, navigation} < validation < settle < dispatch < SchemaNode`입니다. `settle`은 이 fractal의 동기 가드 읽기를 소비하고 결과 배달은 받은 콜백으로 요청자에게 돌립니다(NODE-016·045, LANDING-084).
-- `index.ts`는 검증 계약 형, 동기 가드 읽기, 실행·라우팅·오류 읽기, 재생성 루트의 컴파일 사전 점검과 수명 함수를 이름으로 내보냅니다. 두 수명 함수만 `core/index.ts`가 바인딩을 위해 다시 내보내며 `src/index.ts`는 내보내지 않습니다(NODE-010, VALIDATE-044·046, LANDING-159).
+- `index.ts`는 검증 계약 형과 `readValidationEntry`·`createValidatorCopy`·`compileEntryGuards`·`runSchemaNodeValidation`·`routeValidationIssues` 및 동기 가드·오류 읽기, 재생성 루트의 컴파일 사전 점검과 수명 함수를 이름으로 내보냅니다. 두 수명 함수만 `core/index.ts`가 바인딩을 위해 다시 내보내며 `src/index.ts`는 내보내지 않습니다(NODE-010, VALIDATE-044·046, LANDING-159).
 - 캐시는 검증기 인스턴스와 작성 루트 정체성의 쌍이 소유합니다. 런타임에는 선택한 검증기·모드, 최신 커밋/요청 스탬프, 노드 오류 맵과 결과 배달 콜백을 둡니다. 노드 고정 필드를 늘리지 않습니다(VALIDATE-018·048·049, NODE-004·045).
 
 ## Boundaries

@@ -14,12 +14,11 @@ describe('dispatcher state events', () => {
     const { root, runtime } = createDispatchTree({ type: 'string' });
     const onChange = vi.fn();
     const onStateChange = vi.fn();
-    const requestValidation = vi.fn();
     runtime.onChange = onChange;
     runtime.onStateChange = onStateChange;
-    runtime.requestValidation = requestValidation;
     runtime.validationMode = ValidationMode.OnChange;
     const before = runtime.commitNumber;
+    const validationStamp = runtime.validationStamp;
     const seen: number[] = [];
     subscribeSchemaNode(root, (event) => seen.push(event.type));
 
@@ -36,7 +35,7 @@ describe('dispatcher state events', () => {
     expect(readSchemaNodeRevision(root, SchemaNodeEventType.UpdateGlobalState)).toBe(1);
     expect(onStateChange).toHaveBeenCalledTimes(1);
     expect(onChange).not.toHaveBeenCalled();
-    expect(requestValidation).not.toHaveBeenCalled();
+    expect(runtime.validationStamp).toBe(validationStamp);
   });
 
   it('EVENT-045 EVENT-067 31C-01 flushes one state event after the settle wave', () => {

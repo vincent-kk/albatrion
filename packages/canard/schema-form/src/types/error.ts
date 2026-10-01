@@ -26,6 +26,7 @@ export enum ShowError {
 
 /**
  * Factory function that creates validators for JSON Schema validation.
+ * This public factory keeps its legacy shape until PR-7; the engine contract is core/validation's Validator.
  *
  * Takes a JSON Schema and returns a validation function configured for that schema.
  * This abstraction allows different validation libraries (AJV, Joi, Yup, etc.) to be
@@ -117,13 +118,13 @@ export enum ShowError {
  * };
  * ```
  */
-/** Legacy public shape until PR-7; the engine contract is core/validation's Validator. */
 export interface ValidatorFactory {
   (schema: JSONSchema): ValidateFunction<any>;
 }
 
 /**
  * Validation function that checks data against a pre-compiled JSON Schema.
+ * This public function keeps its legacy shape until PR-7; the engine contract is core/validation's ValidateFunction.
  *
  * Created by a ValidatorFactory, this function performs the actual validation
  * of data values. It can be synchronous or asynchronous, returning either
@@ -208,7 +209,6 @@ export interface ValidatorFactory {
  * };
  * ```
  */
-/** Legacy public shape until PR-7; the engine contract is core/validation's ValidateFunction. */
 export type ValidateFunction<Value = unknown> = Fn<
   [data: Value],
   Promise<JSONSchemaError[] | null> | JSONSchemaError[] | null
@@ -221,6 +221,8 @@ export type { ValidationIssue } from '@/schema-form/core/validation';
  * Legacy JSONSchemaError extends ValidationIssue and adds `key` property.
  */
 export interface JSONSchemaError extends ValidationIssue {
+  /** Legacy keyword parameters remain permissive until the PR-7 public engine switch. */
+  details?: Record<string, any>;
   /**
    * Internal management property for array item errors.
    * @note This value is automatically managed and overwritten by the system.

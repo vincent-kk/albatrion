@@ -11,12 +11,14 @@ import { readFormErrorCode } from './readFormErrorCode';
  * @param runtime - Tree runtime with the current error reporter
  * @param errors - Original listener and state-callback failures in order
  * @param occurrences - Reportable occurrences retained during this wave
+ * @param caller - Whether the wave exposes failures by throwing to its caller
  * @returns Nothing when the wave had no failures
  */
 export const finishQueuedErrors = (
   runtime: Pick<SchemaNodeRuntime<unknown>, 'errorReporter' | 'reportingErrors'>,
   errors: readonly unknown[],
   occurrences: NonNullable<SchemaNodeRuntime<unknown>['chainOccurrences']>,
+  caller: boolean,
 ): void => {
   const original = bundleChainErrors(errors);
   const aggregate = errors.length > 1 && original instanceof SchemaFormError ?
@@ -32,11 +34,11 @@ export const finishQueuedErrors = (
       () => error instanceof Error ? error.message : String(error),
       { error, ...(error instanceof SchemaFormError ||
         error instanceof JSONSchemaError ? { details: error.details } : {}),
-        ...(aggregate ? { aggregate } : {}), surface: 'thrown' });
+        ...(aggregate ? { aggregate } : {}), surface: caller ? 'thrown' : 'sink' });
     if (record) pending.push(record);
   }
-  const handlerErrors = deliverChainRecords(runtime, pending, original, true);
-  if (errors.length || handlerErrors.length)
+  const handlerErrors = deliverChainRecords(runtime, pending, original, caller);
+  if (caller && (errors.length || handlerErrors.length))
     throw errors.length && handlerErrors.length ?
       bundleChainErrors([original, ...handlerErrors]) :
       errors.length ? original : bundleChainErrors(handlerErrors);

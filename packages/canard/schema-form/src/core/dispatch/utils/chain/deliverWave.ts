@@ -32,22 +32,17 @@ export const deliverWave = <Self extends SchemaNodeRecord<Self>>(
   const nodes = [...fixed.keys()];
   const siblingIndexes = new Map<Self, Map<Self, number>>();
   nodes.sort((left, right) => compareDocumentOrder(left, right, siblingIndexes));
-  runtime.delivering = true;
-  try {
-    for (const node of nodes) {
-      if (node.detached) continue;
-      const event = pending.get(node);
-      if (!event) continue;
-      for (const listener of fixed.get(node) ?? []) {
-        if (!runtime.listeners?.get(node)?.has(listener) ||
-          runtime.feedbackBlockedListeners?.has(listener)) continue;
-        runtime.currentListener = listener;
-        try { listener(event); }
-        catch (error) { captureChainError(runtime, error); }
-        finally { runtime.currentListener = undefined; }
-      }
+  for (const node of nodes) {
+    if (node.detached) continue;
+    const event = pending.get(node);
+    if (!event) continue;
+    for (const listener of fixed.get(node) ?? []) {
+      if (!runtime.listeners?.get(node)?.has(listener) ||
+        runtime.feedbackBlockedListeners?.has(listener)) continue;
+      runtime.currentListener = listener;
+      try { listener(event); }
+      catch (error) { captureChainError(runtime, error); }
+      finally { runtime.currentListener = undefined; }
     }
-  } finally {
-    runtime.delivering = false;
   }
 };

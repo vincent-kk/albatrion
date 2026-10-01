@@ -13,12 +13,11 @@ describe('dispatcher external errors', () => {
     const issues: readonly ValidationIssue[] = [{ dataPath: '', message: 'server' }];
     const seen: number[] = [];
     const onChange = vi.fn();
-    const requestValidation = vi.fn();
     runtime.onChange = onChange;
-    runtime.requestValidation = requestValidation;
     runtime.validationMode = ValidationMode.OnChange;
     subscribeSchemaNode(root, (event) => seen.push(event.type));
     const before = runtime.commitNumber;
+    const validationStamp = runtime.validationStamp;
 
     dispatchSetExternalErrors(root, issues);
 
@@ -29,7 +28,7 @@ describe('dispatcher external errors', () => {
     expect(root.emit).toBeUndefined();
     expect(runtime.commitNumber).toBe(before);
     expect(onChange).not.toHaveBeenCalled();
-    expect(requestValidation).not.toHaveBeenCalled();
+    expect(runtime.validationStamp).toBe(validationStamp);
     dispatchClearExternalErrors(root);
     expect(runtime.nodeErrors?.has(root) ?? false).toBe(false);
     expect(seen).toEqual([SchemaNodeEventType.UpdateError,

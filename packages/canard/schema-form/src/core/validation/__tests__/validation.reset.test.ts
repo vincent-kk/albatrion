@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 
 import { dispatchBatch, dispatchMount, dispatchResetSubtree } from '../../dispatch';
 import { createDispatchTree } from '../../dispatch/__tests__/fixtures/createDispatchTree';
@@ -14,21 +14,22 @@ describe('subtree load validation scope', () => {
     runtime.validationMode = ValidationMode.OnChange;
     runtime.warningKeys = new Set(['other-subtree-warning']);
     runtime.typeMismatchPaths.add('/b');
-    const request = vi.fn();
-    runtime.requestValidation = request;
+    const before = runtime.validationStamp ?? 0;
     const a = root.structure?.a ?? root;
     const b = root.structure?.b ?? root;
     const bValue = b.emit;
     dispatchResetSubtree(a);
-    expect(request).toHaveBeenCalledTimes(1);
-    expect(request).toHaveBeenLastCalledWith(a);
+    expect(runtime.validationStamp).toBe(before + 1);
+    expect(runtime.validationPendingTargets?.has(a)).toBe(true);
+    expect(runtime.validationPendingTargets?.has(root)).toBe(false);
     dispatchBatch(root, () => {
       dispatchResetSubtree(a);
       expect(a.emit).toBe('A');
-      expect(request).toHaveBeenCalledTimes(1);
+      expect(runtime.validationStamp).toBe(before + 1);
     });
-    expect(request).toHaveBeenCalledTimes(2);
-    expect(request).toHaveBeenLastCalledWith(a);
+    expect(runtime.validationStamp).toBe(before + 2);
+    expect(runtime.validationPendingTargets?.has(a)).toBe(true);
+    expect(runtime.validationPendingTargets?.has(root)).toBe(false);
     expect(b.emit).toBe(bValue);
     expect(runtime.warningKeys).toEqual(new Set(['other-subtree-warning']));
     expect(runtime.typeMismatchPaths.has('/b')).toBe(true);

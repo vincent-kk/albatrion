@@ -56,16 +56,13 @@ export const exitSchemaNodeChain = <Self extends SchemaNodeRecord<Self>>(
   if (runtime.validationMode && runtime.validationMode & ValidationMode.OnChange) {
     runtime.reportValidationFailure ??= (error) =>
       reportValidationFailure(runtime, error);
-    const request = runtime.requestValidation ?? ((target: Self) =>
-      requestSchemaNodeValidation(target, (issues, commit) =>
-        deliverValidationWave(target, issues, commit)));
     if (changed && !requests?.has(root)) {
-      try { request(root); }
-      catch (error) { captureChainError(runtime, error); }
+      requestSchemaNodeValidation(root, (issues, commit) =>
+        deliverValidationWave(root, issues, commit));
     }
     for (const target of requests ?? []) {
-      try { request(target); }
-      catch (error) { captureChainError(runtime, error); }
+      requestSchemaNodeValidation(target, (issues, commit) =>
+        deliverValidationWave(target, issues, commit));
     }
   }
   runtime.validationTargets = undefined;
@@ -101,7 +98,9 @@ export const exitSchemaNodeChain = <Self extends SchemaNodeRecord<Self>>(
       finally { runtime.onChangeBudget -= 1; }
     }
   }
-  runtime.chainErrors = undefined;
+  const enclosing = runtime.enclosingChain;
+  runtime.enclosingChain = undefined;
+  runtime.chainErrors = enclosing?.errors;
   runtime.chainRoot = undefined;
   runtime.feedbackBudget = 0;
   runtime.feedbackBlockedListeners = undefined;
@@ -134,8 +133,13 @@ export const exitSchemaNodeChain = <Self extends SchemaNodeRecord<Self>>(
       if (record) pending.push(record);
   }
   const handlerErrors = deliverChainRecords(runtime, pending, original, true);
-  runtime.chainOccurrences = undefined;
+  runtime.chainOccurrences = enclosing?.occurrences;
   const exposed = !errors.length ? bundleChainErrors(handlerErrors) :
     handlerErrors.length ? bundleChainErrors([original, ...handlerErrors]) : original;
-  if (errors.length || handlerErrors.length) throw exposed;
+  if (!errors.length && !handlerErrors.length) return;
+  if (enclosing) {
+    enclosing.errors.push(exposed);
+    return;
+  }
+  throw exposed;
 };

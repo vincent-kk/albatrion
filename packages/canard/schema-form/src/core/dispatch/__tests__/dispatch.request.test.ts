@@ -18,12 +18,11 @@ describe('dispatcher commands', () => {
     const { root, runtime } = createDispatchTree({ type: 'string' });
     const seen: number[] = [];
     const onChange = vi.fn();
-    const requestValidation = vi.fn();
     runtime.onChange = onChange;
-    runtime.requestValidation = requestValidation;
     runtime.validationMode = ValidationMode.OnChange;
     subscribeSchemaNode(root, (event) => seen.push(event.type));
     const before = runtime.commitNumber;
+    const validationStamp = runtime.validationStamp;
 
     dispatchRequest(root, SchemaNodeRequestType.Remount);
 
@@ -34,7 +33,7 @@ describe('dispatcher commands', () => {
     expect(runtime.entryDepth).toBe(0);
     expect(readSchemaNodeRevision(root, SchemaNodeEventType.RequestRemount)).toBe(1);
     expect(onChange).not.toHaveBeenCalled();
-    expect(requestValidation).not.toHaveBeenCalled();
+    expect(runtime.validationStamp).toBe(validationStamp);
   });
 
   it('EVENT-045 EVENT-073 merges commands once per node inside one entry', () => {

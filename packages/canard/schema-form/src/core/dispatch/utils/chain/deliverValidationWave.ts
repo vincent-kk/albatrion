@@ -21,5 +21,5 @@ export const deliverValidationWave = <Self extends SchemaNodeRecord<Self>>(
       runtime.validationErrors?.get(changed) ?? []);
   runtime.validationChangedNodes = undefined;
   queueNonSettleEvent(node.rootNode, SchemaNodeEventType.UpdateGlobalError, issues);
-  flushQueuedEvents(node.rootNode);
+  flushQueuedEvents(node.rootNode, false);
 };

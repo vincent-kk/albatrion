@@ -16,7 +16,7 @@ export type SchemaNodeRuntimeSeed = Omit<SchemaNodeRuntime<unknown>,
   'batchWrites' | 'validationTargets' | 'validationChangedNodes' |
   'globalStateCounts' | 'globalState' |
   'validationPendingTargets' |
-  'requestValidation' | 'validator'>;
+  'validator'>;
 
 /** Create one record from a bound child or the root template. */
 const createSchemaNode = (

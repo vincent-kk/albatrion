@@ -84,27 +84,28 @@ describe('round7 dispatch and notification ports', () => {
     root.setValue({ a: 'orig' });
     const a = requireNode(root, '/a');
     let changes = 0;
-    let requests = 0;
     Reflect.set(runtime, 'validationMode', ValidationMode.OnChange);
-    Reflect.set(runtime, 'requestValidation', () => { requests += 1; });
     Reflect.set(runtime, 'onChange', () => { changes += 1; });
     a.subscribe(() => { if (a.value === 'bad') a.setValue('orig'); });
+    const before: number = Reflect.get(runtime, 'validationStamp') ?? 0;
     a.setValue('bad');
-    expect([changes, requests, root.outputValue]).toEqual([1, 1, { a: 'orig' }]);
+    expect([changes, (Reflect.get(runtime, 'validationStamp') ?? 0) - before,
+      root.outputValue])
+      .toEqual([1, 1, { a: 'orig' }]);
     const batched = makeSchemaNodeTree({ type: 'object', properties: {
       a: { type: 'string' },
     } });
     batched.root.setValue({ a: 'orig' });
     let batchChanges = 0;
-    let batchRequests = 0;
     Reflect.set(batched.runtime, 'validationMode', ValidationMode.OnChange);
-    Reflect.set(batched.runtime, 'requestValidation', () => { batchRequests += 1; });
     Reflect.set(batched.runtime, 'onChange', () => { batchChanges += 1; });
+    const batchBefore: number = Reflect.get(batched.runtime, 'validationStamp') ?? 0;
     batched.root.batch(() => {
       requireNode(batched.root, '/a').setValue('bad');
       requireNode(batched.root, '/a').setValue('orig');
     });
-    expect([batchChanges, batchRequests, batched.root.outputValue])
+    expect([batchChanges, (Reflect.get(batched.runtime, 'validationStamp') ?? 0) - batchBefore,
+      batched.root.outputValue])
       .toEqual([0, 0, { a: 'orig' }]);
   });
 

@@ -1,4 +1,4 @@
-import { SchemaFormError, VALIDATOR_COMPILE_FAILED } from '../../../../errors';
+import { SchemaFormError } from '../../../../errors';
 import type { SchemaNodeRuntime } from '../../../record';
 import { reportOwnerlessError } from './reportOwnerlessError';
 import { readFormErrorCode } from './readFormErrorCode';
@@ -25,8 +25,5 @@ export const reportValidationFailure = (
     } catch (reporterFailure) { reportOwnerlessError(reporterFailure); }
     finally { runtime.reportingErrors = wasReporting; }
   }
-  if (!(failure instanceof SchemaFormError &&
-    failure.code === `SCHEMA_FORM_ERROR.${VALIDATOR_COMPILE_FAILED}` &&
-    runtime.errorReporter?.hasConsumer()))
-    reportOwnerlessError(failure);
+  reportOwnerlessError(failure);
 };

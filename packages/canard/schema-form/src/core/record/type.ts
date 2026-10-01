@@ -325,6 +325,9 @@ export interface SchemaNodeRuntime<Self> extends SchemaNodeRootRuntimeState {
   chainOccurrences?: (
     { kind: 'error'; error: unknown } | { kind: 'record'; record: FormErrorRecord }
   )[];
+  /** Failure collection of a synchronous non-entry wave that a nested outermost entry hands its exposed failure to. */
+  enclosingChain?: { readonly errors: unknown[];
+    readonly occurrences: NonNullable<SchemaNodeRuntime<Self>['chainOccurrences']> };
   /** True only while this form invokes its error reporter. */
   reportingErrors?: boolean;
   /** Schema locations supplied by a binding after reference-only reset rebuilding. */
@@ -343,10 +346,6 @@ export interface SchemaNodeRuntime<Self> extends SchemaNodeRootRuntimeState {
   batchWrites?: { node: Self; value: unknown; option: SetValueOption }[];
   /** Reset scopes requiring validation even with an unchanged root emit. */
   validationTargets?: Set<Self>;
-  /** Validation request seam filled by the validation unit. */
-  requestValidation?: (node: Self) => void;
-  /** Whether a listener or error handler is currently receiving delivery. */
-  delivering?: boolean;
   /** Events marked outside settlement for the next dispatcher wave. */
   queuedEvents?: Map<unknown, SchemaNodeDelivery>;
   /** Non-settlement events coalesced independently from commit deliveries. */
