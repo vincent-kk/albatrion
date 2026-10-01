@@ -27,14 +27,14 @@ export const registerRecalculation = <Self extends SchemaNodeRecord<Self>>(
       context.dirtyPaths.add(ancestor);
     }
   }
-  const changedAncestors = new Set<string>();
-  for (const changed of context.changedRaw)
-    for (let prefix = changed; prefix;) {
-      prefix = prefix.slice(0, prefix.lastIndexOf('/'));
-      if (changedAncestors.has(prefix)) break;
-      changedAncestors.add(prefix);
-    }
   if (context.hasGates) {
+    const changedAncestors = new Set<string>();
+    for (const changed of context.changedRaw)
+      for (let prefix = changed; prefix;) {
+        prefix = prefix.slice(0, prefix.lastIndexOf('/'));
+        if (changedAncestors.has(prefix)) break;
+        changedAncestors.add(prefix);
+      }
     const registry = getGateRegistry(context.root.runtime);
     for (const path of context.dirtyPaths) {
       if (registry.mayChangeAt(path, context.changedRaw, changedAncestors))
