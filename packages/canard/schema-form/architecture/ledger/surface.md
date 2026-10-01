@@ -914,6 +914,7 @@
   > 반영 칸(설계서 메모 3): "SURFACE-058의 겉면 수(명령 4 → 1, 약 57 → 약 54)" (`reviews/round-18-owner-answers.md:40`)
   > 편집자 결정(26C-01): "【추론】 `SchemaNode` 겉면의 멤버는 그 멤버가 드러내는 기제를 들여오는 PR에서 겉면에 들고, 그 PR이 `SchemaNode/`의 `DETAIL.md` 목록·멤버 목록 시험·공개 형 `SchemaNode`를 함께 고친다(EVENT-063이 명령 메서드에 정한 방식)." (`reviews/round-26-closing.md:9`)
   > 편집자 결정(26C-01): "【추론】 그래서 PR-2의 멤버 목록 시험은 PR-2 겉면의 목록을 단언하고, SURFACE-058의 약 54개는 PR-7 전환 시점의 수다; `plan/03-node-and-settle/verification.md:26`의 "이 PR은 명령 메서드 하나를 뺀 목록을 단언한다"는 이 블록으로 바꿔 읽는다." (`reviews/round-26-closing.md:14`)
+  > 소유자(30라운드, 명령 메서드 이름): "네" (`reviews/round-30-owner-answers.md:9`) — 명령 메서드 하나의 이름은 `request`이고 명령 한정 `publish` 부활은 택하지 않았다. 겉면 멤버 약 54개는 그대로다(원장 관리자, 2026-10-01).
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:911-913`(정본), `reviews/round-18-owner-answers.md:40`, `reviews/round-18-owner-answers.md:41`
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-32), 소유자 답(`reviews/round-18-owner-answers.md:40` 설계서 메모 3), 소유자 답(`reviews/round-18-owner-answers.md:41` 설계서 메모 4)
@@ -937,7 +938,8 @@
   > 무엇: `FormProps` 열아홉 칸, `FormHandle` 열여섯 멤버, 공개 이벤트 형 여섯을 하나씩 원장의 결정·이주 행과 대조한다.
   > 통과: 바뀌는 것마다 이주 행이 있다.
   > 실패: 빠진 이주 행을 더한다.
-- 보충: 없음
+- 보충:
+  > 소유자(30라운드, 폼 핸들의 명령 모양): "네 맞습니다. 추가로, path 는 optional, 없으면 root 를 지칭합니다." (`reviews/round-30-owner-answers.md:11`) — `FormHandle`의 멤버는 열여섯에서 열여덟이 되고(`refresh`·`remount` 추가), `focus`·`select`의 경로 인자는 필수에서 선택으로 바뀐다(없으면 루트). 이 둘은 원장의 결정으로 바뀌는 멤버이므로 PR-7의 대조 목록과 이주 행에 든다(원장 관리자, 2026-10-01).
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:2276-2282,2298-2301`(정본)
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-87)

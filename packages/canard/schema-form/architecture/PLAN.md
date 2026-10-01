@@ -52,7 +52,7 @@
 | 보정 | 01·02 보정 | 머지 | [#349](https://github.com/vincent-kk/albatrion/pull/349) | 브랜치 `fix/schema-form-realign-01-02`. 25라운드(`reviews/round-25-closing.md`)대로 청사진 코드·시험과 설계문서를 맞춤. 2026-09-29 머지(`85e7d01af`). [realign](plan/01-design-docs/realign.md) |
 | 03 | 노드 트리·정착 | 머지 | [#350](https://github.com/vincent-kk/albatrion/pull/350) | 브랜치 `feat/schema-form-node-and-settle`. 2026-09-30 머지(`0705217d5`). 뒤 PR로 넘긴 사례는 [log](plan/03-node-and-settle/log.md) §4 |
 | 04 | 파생 + 상태 키·제어 | 머지 | [#351](https://github.com/vincent-kk/albatrion/pull/351) | 브랜치 `feat/schema-form-derive-and-controls`. 2026-10-01 머지(`54afafb86`). 뒤 단계로 넘긴 사례는 [log](plan/04-derive-and-controls/log.md) §4, 속도 문제는 [대장](verification/performance-issues.md). 느린 벤치 행 수용의 원장 기록은 소유자 확인 대기 |
-| 05 | 통지·검증 | 대기 | — | 03 뒤. **착수 전 소유자 결정**: 명령 메서드 이름·명령 종류 값의 형·`FormHandle` 대칭(EVENT-073) |
+| 05 | 통지·검증 | 대기 | — | 03 뒤. 착수 전 소유자 결정 D-1은 30라운드로 닫힘(EVENT-073 보충). 착수 가능 |
 | 06 | 배열 | 대기 | — | 03 뒤, 04·05와 병렬 |
 | 07 | 전환 | 대기 | — | 02–06 전부 머지 뒤. 원샷 |
 | 08 | 플러그인 | 대기 | — | 07 뒤 |
@@ -64,14 +64,14 @@
 
 | 번호 | 물음 | 막는 것 | 어디에 기록 |
 | --- | --- | --- | --- |
-| D-1 | 명령 메서드의 이름(`action`·`interaction`·`request` 또는 명령 한정 `publish`), 명령 종류 값의 형(공개 열거 또는 문자열 리터럴), `FormHandle` 대칭 모양 | 05 착수 | EVENT-073 보충, `reviews/round-18-owner-answers.md` 새 행 |
+| D-1 | 명령 메서드의 이름·명령 종류 값의 형·`FormHandle` 대칭 모양 | 닫힘(30라운드): 이름 `request`, 값은 요청 비트 별칭의 TS 열거, 한 호출에 종류 하나, 둘째 인자 없음, 폼 핸들은 전용 메서드 넷(경로는 선택, 없으면 루트) | `reviews/round-30-owner-answers.md`, EVENT-073·063·SURFACE-058·059·REACT-025 보충 |
 | D-2 | 릴리스 전환 PR을 여는 시점 | 09 착수 | LANDING-204 보충 |
 
 ## 4. 다음 할 일
 
-1. **05·06 착수** — 05는 D-1(아래 3) 결정 뒤에, 06은 바로 착수할 수 있다. 04에서 넘어온 사례는 `plan/04-derive-and-controls/log.md` §4, 미뤄 둔 속도 문제는 `verification/performance-issues.md`.
+1. **05·06 착수** — D-1이 30라운드로 닫혔으므로 둘 다 착수할 수 있다. 04에서 넘어온 사례는 `plan/04-derive-and-controls/log.md` §4, 미뤄 둔 속도 문제는 `verification/performance-issues.md`.
 2. **01 절 단위 통과** — 머지된 설계문서 여덟 편(192절)을 소유자가 절 단위로 통과시키고 문서 머리의 표에 날짜를 적는다(25C-09). 통과 중 나온 새 결정은 원장에 새 라운드 항목으로 먼저 들어가고 문서가 따라간다(`plan/01-design-docs/verification.md`).
-3. **D-1 권장안** — 05 착수 전에 올린다. 권장은 `request(kind, payload?)` 하나에 명령 종류를 문자열 리터럴 합집합 `'focus' | 'select' | 'refresh' | 'remount'`로, `FormHandle`은 같은 모양 `request(path, kind, payload?)` 하나로 합치는 것(겉면 수 약 57 → 약 54). 소유자가 정한다.
+3. **D-1** — 30라운드에서 소유자가 정했다: 노드는 `request(kind)` 하나, 종류 값은 요청 비트 별칭의 TS 열거(리터럴 합집합 불허), 한 호출에 종류 하나, 둘째 인자 없음, 폼 핸들은 전용 메서드 넷에 경로 선택 인자(없으면 루트). 편집자 권장이던 리터럴 합집합과 폼 핸들 통합 메서드는 택하지 않았다.
 
 ## 5. 기록
 
@@ -108,3 +108,4 @@
 | 2026-10-01 | 04 PR #351 머지 확인(`54afafb86`, 01:11Z). 게이트 30 가운데 29 충족, G23 storybook은 실행 결과 없이 소유자가 머지를 결정해 사유를 남기고 포기(통과로 주장하지 않음). 04가 고친 03 결함은 29C-02·03과 비루트 노드의 자기 선언 재선택. 05·06의 의존이 풀림(05는 D-1 뒤). 속도 문제 대장 `verification/performance-issues.md` 시작 | [#351](https://github.com/vincent-kk/albatrion/pull/351) |
 | 2026-10-01 | 소유자 요청으로 구현 완료 뒤 성능 최적화 작업의 계획서 셋을 `plan/perf-optimization/`에 둠. 단계는 M0 측정판 고정(옛 판·최적화 전·묶음 뒤 세 기준선, 미측정 행의 수치) → M1 분류·우선순위(계약·차수·체감·위험, 소유자 확인 한 번) → M2 묶음별 PR(L1 이차 비용 → L2 상수 비용 → L3 비교·할당·메모리 → L4 런타임 교차, PR 하나에 가설 하나) → M3 종합 재측정과 TEST-027 수용. 자리는 07 머지 뒤·08과 병렬·09 전. 원장 항목은 더하지 않음 | `plan/perf-optimization/` |
 | 2026-10-01 | 30라운드: D-1(EVENT-073)의 소유자 답 둘을 원장 세션에서 직접 받음 — 명령 메서드는 한 호출에 종류 하나, 종류 값은 내부 요청 비트의 별칭인 TS 열거(맨 리터럴 합집합 불허, 이름은 SURFACE-056을 따름). 합침은 디스패처가 한다. 메서드 이름·페이로드·`FormHandle` 모양은 05 세션이 전한 소유자 입장이 있으나 직접 확인 대기. EVENT-073 보충 두 줄 | `reviews/round-30-owner-answers.md` |
+| 2026-10-01 | 30라운드 마무리: 소유자가 풀어 쓴 물음 여섯에 직접 답함 — 명령 메서드 이름 `request`, 둘째 인자 없음, 폼 핸들은 전용 메서드 넷에 경로 선택 인자(없으면 루트, 16 → 18), 최적화 작업은 07 뒤·08과 병렬. 04의 스토리북 게이트는 "포기"가 아니라 소유자가 독립 실행해 모두 통과했고 기록만 빠진 것으로 정정(게이트 30 가운데 30). D-1 닫힘, 05 착수 가능. 소유자 지시로 로컬 `1.0.0-beta`를 원격에 푸시. 04 느린 벤치 행 수용은 답이 비어 다시 물음 | `reviews/round-30-owner-answers.md` |

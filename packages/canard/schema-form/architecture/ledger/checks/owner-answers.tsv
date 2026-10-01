@@ -248,3 +248,8 @@ reviews/round-27-owner-answers.md:10	27	최종 검사의 자리	"최종 검사�
 reviews/round-27-owner-answers.md:11	27	최적화의 시점	"현재 구현단계에서 최적화를 하는 것은 전체 원장을 흔들 수 있는 문제라, 구현 완료 후, 최적화를 시도할 예정입니다. 그 시점에 참고데이터가 될 수 있도록 기록을 원합니다.(섞이지 않게, 이후 작업으로 잘 분리해서 요청)" (2026-09-30)
 reviews/round-30-owner-answers.md:7	30	한 호출에 종류 하나	"응 한번에 하나씩 받는걸로 고정. 비트 배칭은 디스패치가 하고있으니 무방하다. 이전 구현도 그렇게 구성된걸로 안다." (2026-10-01)
 reviews/round-30-owner-answers.md:8	30	종류 값은 비트	"비트 배칭은 디스패치가 하고있으니 무방하다." (2026-10-01)
+reviews/round-30-owner-answers.md:9	30	명령 메서드 이름	"네" (2026-10-01, 이름 `request`)
+reviews/round-30-owner-answers.md:10	30	명령 메서드의 둘째 인자	"네" (2026-10-01, 지금은 두지 않음)
+reviews/round-30-owner-answers.md:11	30	폼 핸들의 명령 모양	"네 맞습니다. 추가로, path 는 optional, 없으면 root 를 지칭합니다." (2026-10-01)
+reviews/round-30-owner-answers.md:12	30	성능 최적화 작업의 자리	"맞습니다. 7끝나고 진행하면 됩니다." (2026-10-01)
+reviews/round-30-owner-answers.md:13	30	04의 스토리북 게이트	"제가 독립실행했는데 기록이 안되었군요. 모두 pass 로 끝났습니다." (2026-10-01)

@@ -517,6 +517,7 @@
   > 소유자(27라운드, React 대 JS 코어의 비중): "form의 성능 대부분은 react에 의해 결정되어 큰 문제는 없을 수도 있음(이전 엔진 기록 기준 react가 95, js 코어가 5% 정도)" (`reviews/round-27-owner-answers.md:9`) — "일정 수준"을 읽는 배경이며 합격선은 아니다.
   > 소유자(27라운드, 최적화의 시점): "현재 구현단계에서 최적화를 하는 것은 전체 원장을 흔들 수 있는 문제라, 구현 완료 후, 최적화를 시도할 예정입니다. 그 시점에 참고데이터가 될 수 있도록 기록을 원합니다.(섞이지 않게, 이후 작업으로 잘 분리해서 요청)" (`reviews/round-27-owner-answers.md:11`) — 구현 단계(PR-2~PR-7)에서는 최적화를 시도하지 않고 기록만 남기며, 최적화는 구현 완료 뒤 별도 작업이다.
   > "최적화는 구현을 마친 뒤 별도 작업에서 하며, 이 대장이 그 작업의 출발점입니다." (`verification/performance-issues.md:3`) — 단계를 가로지르는 속도 문제 대장. TEST-027의 느린 행 기록(`verification/03-node-and-settle/performance.md`, `verification/04-derive-and-controls/performance.md`)을 모아 가리킨다(원장 관리자, 2026-10-01).
+  > 소유자(30라운드, 성능 최적화 작업의 자리): "맞습니다. 7끝나고 진행하면 됩니다." (`reviews/round-30-owner-answers.md:12`) — 27라운드 답의 "구현 완료 후"는 07 전환 머지 뒤다. 최적화 작업은 07 뒤에 시작해 08과 병렬로 진행하고 09 전에 끝낸다(`plan/perf-optimization/`).
 - 상태: 현행
 - 출처: `09-landing-and-test-strategy.md:223`(정본), `adr/0009-performance-budget-and-benchmarks.md:9,92`, `08-design-a-to-z.md:609`, `reviews/round-16-owner-answers.md:12`, `reviews/round-16-owner-review.md:57`, `reviews/round-18-agenda.md:68`
 - 닫은 사람: 소유자 답(`reviews/round-16-owner-answers.md:12` 답 6), 편집자 결정(16라운드 도출, '통제 가능'의 뜻, `09-landing-and-test-strategy.md:223`)

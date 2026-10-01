@@ -954,6 +954,8 @@
 - 보충:
   > 소유자(설계서 메모 3): "이 4개 기능을 4개로 분할해서 두지 말고 하나의 메소드에 여러 행위 타입을 파라미터로 받아서 행동하게 해줘." (`reviews/round-18-owner-answers.md:40`)
   > 반영 칸(설계서 메모 3): "방향: 노드 겉면에 명령 메서드 넷을 따로 두지 않고, 명령 종류를 매개변수로 받는 메서드 하나로 합친다(이름 후보 `action`·`interaction`·`request`, 또는 명령 사건에 한정한 `publish` 부활)." (`reviews/round-18-owner-answers.md:40`)
+  > 소유자(30라운드, 명령 메서드 이름): "네" (`reviews/round-30-owner-answers.md:9`) — 노드의 명령 메서드 하나의 이름은 `request`다(EVENT-073).
+  > 소유자(30라운드, 폼 핸들의 명령 모양): "네 맞습니다. 추가로, path 는 optional, 없으면 root 를 지칭합니다." (`reviews/round-30-owner-answers.md:11`) — `FormHandle`은 오늘의 `focus`·`select`에 `refresh`·`remount`를 대칭으로 더한 전용 메서드 넷이며, 경로는 선택 인자이고 없으면 루트 노드를 가리킨다. 경로가 있으면 `find(path)`한 노드의 `request`를 부르고 노드가 없으면 아무것도 하지 않는다. 충돌 줄의 "같은 모양 하나로 합칠지"는 합치지 않는 쪽으로 닫혔다(원장 관리자, 2026-10-01).
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:1182-1191`(정본), `reviews/round-18-owner-answers.md:40`
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-42), 소유자 답(`reviews/round-18-owner-answers.md:40` 설계서 메모 3)
@@ -1142,6 +1144,9 @@
   > 소유자(설계서 메모 3): "publish 가 없어진건.. 자의적으로 이벤트를 호출할 수 없어서 좀 그렇긴 한데, 이 4개 기능을 4개로 분할해서 두지 말고 하나의 메소드에 여러 행위 타입을 파라미터로 받아서 행동하게 해줘. 이전에는 publish 에 섞여있어서 메소드로 안보였는데, 이걸 별도 메소드로 빼니까 node 의 정체성이 좀 깨지는걸 action 이나 interaction 이나 뭐든.... publish 를 부활시키던가..." (`reviews/round-18-owner-answers.md:40`)
   > 소유자(30라운드, 한 호출에 종류 하나): "응 한번에 하나씩 받는걸로 고정. 비트 배칭은 디스패치가 하고있으니 무방하다. 이전 구현도 그렇게 구성된걸로 안다." (`reviews/round-30-owner-answers.md:7`) — 명령 메서드는 한 호출에 명령 종류 하나를 받는다. 같은 진입 안의 여러 명령은 디스패처가 비트를 합쳐 한 번 배달한다(EVENT-045·067). OR 한 입력은 받지 않는다.
   > 소유자(30라운드, 종류 값은 비트): "비트 배칭은 디스패치가 하고있으니 무방하다." (`reviews/round-30-owner-answers.md:8`) — 명령 종류 값은 내부 `NodeEventType`의 요청 비트의 별칭이고 공개 형은 TS 열거다. 맨 문자열 리터럴 합집합은 두지 않는다. 열거 이름은 SURFACE-056을 따른다. 메서드 이름·페이로드·`FormHandle` 모양은 소유자의 직접 확인을 기다린다(원장 관리자, 2026-10-01).
+  > 소유자(30라운드, 명령 메서드 이름): "네" (`reviews/round-30-owner-answers.md:9`) — 풀어 쓴 물음 "메서드 하나의 이름을 `request`로 정하신 것이 맞습니까"에 대한 답. 노드의 공개 명령 메서드는 `request(kind)` 하나다.
+  > 소유자(30라운드, 둘째 인자): "네" (`reviews/round-30-owner-answers.md:10`) — 종류 외의 추가 데이터를 받는 둘째 인자는 지금 두지 않는다. 뒤에 선택 인자로 더해도 호환은 깨지지 않는다.
+  > 소유자(30라운드, 폼 핸들의 명령 모양): "네 맞습니다. 추가로, path 는 optional, 없으면 root 를 지칭합니다." (`reviews/round-30-owner-answers.md:11`) — `FormHandle`은 전용 메서드를 유지하고 `refresh`·`remount`를 더하며(16 → 18), 넷 모두 경로는 선택 인자이고 없으면 루트 노드다. 경로와 종류를 함께 받는 통합 메서드는 폼 핸들에 두지 않는다. 이로써 이 항목이 "소유자가 정한다"고 둔 이름·값의 형·`FormHandle` 모양이 모두 닫혔다(원장 관리자, 2026-10-01).
 - 상태: 현행
 - 출처: `reviews/round-18-owner-answers.md:40`(정본, 반영 칸)
 - 닫은 사람: 소유자 답(`reviews/round-18-owner-answers.md:40` 설계서 메모 3), 편집자 결정(18라운드, `reviews/round-18-owner-answers.md:40` 반영 칸; 결정 주체와 때)
