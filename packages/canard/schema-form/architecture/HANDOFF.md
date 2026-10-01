@@ -31,6 +31,7 @@
   - union 설계는 스웜(렌즈 넷 → 검증 둘 → 병합 → codex·antigravity 교차 확인 → 2·3판)으로 만들었다. 작업 파일은 `reviews/raw-round18-union-swarm/`(정본 설계 `merged-v3.md`), 시험 보고는 `reviews/raw-round18-tests/`(표준 대조 둘, 원장 정합성 시험 둘, 1차 교차 확인 둘).
 - **기계 검사는 모두 문제 0이다(§4).** 소유자 답 248/248(27라운드 뒤), 정확 일치 225 항목, 블록 105/105, 문장 검사 17 영역 0/0, 토큰 잔여 484(25·26라운드 뒤; 옛 문서를 `_archive/2026-09-29/`로 옮기고 README·HANDOFF를 다시 쓴 뒤 485, 옛 문서에 원천이 있는 잔여 419는 이동 전후 같고, 나머지 66은 README·HANDOFF의 자기 서술 토큰이다 — `ledger/checks/token-review.md` 끝 절).
 - **의미 게이트(게이트 3)는 13건을 찾아 모두 고쳤다.** 원문은 `reviews/raw-round18-tests/gate3-union-fill.md`. 게이트가 "확인하지 못한 것"으로 남긴 둘(정적 선언이 없는 이름에서 게이트 없는 분기끼리 fold가 다를 때, EVENT-072의 "한 로드에 한 번"이 `VALIDATOR_COMPILE_FAILED`에서 뜻하는 것)은 §2의 최종 검증(E)에 넣는다.
+- **30라운드(2026-10-01, 05 착수 전).** D-1(EVENT-073)의 소유자 답 둘을 원장 세션에서 직접 받아 적었다(`reviews/round-30-owner-answers.md`): 명령 메서드는 한 호출에 종류 하나, 종류 값은 내부 요청 비트의 별칭인 TS 열거이며 맨 리터럴 합집합은 두지 않는다. 05 세션이 전한 나머지 셋(이름 `request`, 페이로드 없음, `FormHandle`은 전용 메서드 유지·`request(path, kind)` 없음)은 소유자의 직접 확인이 오면 같은 파일에 행을 더하고 EVENT-073·EVENT-063·SURFACE-058·SURFACE-059·REACT-025에 보충을 붙인다. 05는 그 커밋 뒤 착수한다
 
 ## 2. 다음 할 일 — 순서대로
 
@@ -138,6 +139,7 @@ node ledger/checks/doc-coverage.mjs design/*.md adr/*.md -- ledger/*.md   # 설�
 | `reviews/round-25-closing.md` | 25라운드 편집자 결정의 정본(25C-01~12: 02 청사진 코드와 01 설계문서의 어긋남 16건 — 오류 코드 셋, 시험 이름과 단언, 공집합 판정의 범위, 02가 정한 사실, 01의 상태). 소유자 답 없음 |
 | `reviews/round-26-closing.md` | 26라운드 편집자 결정의 정본(26C-01~14: 03(PR-2) 착수 전 해석 여섯 건 — 겉면 멤버의 PR 배분, 렌더 시나리오 게이트의 실행 자리, 뒤 PR 기제를 쓰는 게이트의 나눔, 게이트 평가의 몫과 평가 자리 L, `SHARED_NODE_CONFLICT`의 신호, 루트가 드는 자료의 저장 자리, 재귀 템플릿의 평가 자리 L, 떼어진 노드의 `active`, 자기 부정 게이트의 예산 초과). 소유자 답 없음 |
 | `reviews/round-27-owner-answers.md` | 27라운드 소유자 답(원문·요지) 5행: PR-2 벤치의 느린 행 수용, 벤치 기록 문서, React 대 JS 코어 비중, 최종 검사는 React·jsdom(PR-7 게이트), 최적화는 구현 완료 뒤 |
+| `reviews/round-30-owner-answers.md` | 30라운드 소유자 답: D-1 명령 메서드의 한 호출 한 종류·값은 비트 별칭 열거. 나머지 D-1 답은 직접 확인 뒤 행 추가 |
 | `reviews/round-28-closing.md` | 28라운드 편집자 결정의 정본(28C-01~08: 04(PR-3+PR-6) 실행 계획 초안의 해석 일곱 건과 후속 둘 — 개발 모드 정착 기록의 자리, `enabled`와 떼어진 노드의 상태 게터, `@` 맥락과 `setContext`의 PR, 억제 비트와 `resetInteraction`, `unsetOnInactive` 식의 throw, TEST-071의 값 크기, `watchValues`의 PR, `node.context`의 PR과 맥락 변경 정착). 보충 줄만 |
 | `reviews/round-29-closing.md` | 29라운드 편집자 결정의 정본(29C-01~04: 생긴·로드된 노드의 파생 규칙은 원천이 `undefined`여도 발화, 채움 뒤의 값 변화는 새 에지, v7의 모형 선택은 이식하지 않음; 식이 던진 정착의 채움·나감 비움은 진행, 03의 전이 전체 생략은 결함; 공유 충돌 정착도 진행하고 원본 B는 예산 초과에만; 조각 `controls`의 `injectTo`는 불허). 보충 줄만 |
 | `verification/performance-issues.md` | 단계를 가로지르는 속도 문제 대장(열림·해결). 구현 완료 뒤 최적화 작업의 출발점. 측정 원본은 단계별 `performance.md`(03·04) |

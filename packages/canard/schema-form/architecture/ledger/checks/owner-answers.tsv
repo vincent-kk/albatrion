@@ -246,3 +246,5 @@ reviews/round-27-owner-answers.md:8	27	벤치 기록 문서	"벤치 기록과 �
 reviews/round-27-owner-answers.md:9	27	React 대 JS 코어의 비중	"form의 성능 대부분은 react에 의해 결정되어 큰 문제는 없을 수도 있음(이전 엔진 기록 기준 react가 95, js 코어가 5% 정도)" (2026-09-30)
 reviews/round-27-owner-answers.md:10	27	최종 검사의 자리	"최종 검사는 리액트 jsdom 등에서 평가되어야 함" (2026-09-30)
 reviews/round-27-owner-answers.md:11	27	최적화의 시점	"현재 구현단계에서 최적화를 하는 것은 전체 원장을 흔들 수 있는 문제라, 구현 완료 후, 최적화를 시도할 예정입니다. 그 시점에 참고데이터가 될 수 있도록 기록을 원합니다.(섞이지 않게, 이후 작업으로 잘 분리해서 요청)" (2026-09-30)
+reviews/round-30-owner-answers.md:7	30	한 호출에 종류 하나	"응 한번에 하나씩 받는걸로 고정. 비트 배칭은 디스패치가 하고있으니 무방하다. 이전 구현도 그렇게 구성된걸로 안다." (2026-10-01)
+reviews/round-30-owner-answers.md:8	30	종류 값은 비트	"비트 배칭은 디스패치가 하고있으니 무방하다." (2026-10-01)
