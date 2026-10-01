@@ -9,7 +9,7 @@ describe('SchemaNode context', () => {
     const initial = { label: 'initial' };
     const root = schemaNodeFactory(blueprint({ type: 'object', properties: {
       child: { type: 'string' },
-    } }), { context: initial, ifPredicates: new Map(),
+    } }), { context: initial,
       diagnostics: { status: 'stable' }, loadSnapshot: undefined,
       latentRaw: new Map(), typeMismatchPaths: new Set(),
       inactiveValuesMemo: new Map() });

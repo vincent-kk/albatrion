@@ -1,8 +1,12 @@
 import { describe, expect, expectTypeOf, it } from 'vitest';
 
 import { isObjectNode, isTerminalNode } from '../index';
+import type { SchemaNodeEventType, SchemaNodeRequestType } from '../index';
 import type { FormTypeInputProps, InferSchemaNode, NullNode, NumberNode, ObjectNode,
   SchemaNode, StringNode, TerminalNode, UnionNode } from '../index';
+import type { ValidationIssue } from '../../validation';
+import type { SchemaNodeListener } from '../../dispatch';
+import type { NodeStateFlags } from '../../types/state';
 
 type PublicKeys = 'type' | 'strategy' | 'schemaType' | 'jsonSchema' |
   'required' | 'nullable' | 'depth' | 'isRoot' | 'rootNode' | 'parentNode' |
@@ -10,11 +14,46 @@ type PublicKeys = 'type' | 'strategy' | 'schemaType' | 'jsonSchema' |
   'value' | 'outputValue' | 'inactiveValues' | 'active' | 'visible' | 'enabled' |
   'readOnly' | 'disabled' | 'watchValues' | 'context' | 'typeMismatch' |
   'typeMismatches' | 'diagnostics' | 'defaultValue' | 'find' | 'findNodes' |
-  'setValue' | 'resetSubtree';
+  'setValue' | 'resetSubtree' | 'state' | 'setState' | 'globalState' |
+  'setSubtreeState' | 'clearSubtreeState' | 'errors' | 'globalErrors' |
+  'setExternalErrors' | 'clearExternalErrors' | 'request' | 'subscribe' |
+  'revision' | 'validate' | 'batch';
 
 describe('new SchemaNode public types', () => {
   it('TEST-069 public type keys include the context getter', () => {
     expectTypeOf<keyof SchemaNode>().toEqualTypeOf<PublicKeys>();
+  });
+
+  it('26C-01 PR-4 exposes event, state, validation, and batch signatures', () => {
+    expectTypeOf<SchemaNode['state']>().toEqualTypeOf<NodeStateFlags>();
+    expectTypeOf<Parameters<SchemaNode['setState']>[0]>()
+      .toEqualTypeOf<NodeStateFlags>();
+    expectTypeOf<Parameters<SchemaNode['setSubtreeState']>[0]>()
+      .toEqualTypeOf<NodeStateFlags>();
+    expectTypeOf<ReturnType<SchemaNode['clearSubtreeState']>>()
+      .toEqualTypeOf<void>();
+    expectTypeOf<SchemaNode['errors']>().toEqualTypeOf<readonly ValidationIssue[]>();
+    expectTypeOf<SchemaNode['globalErrors']>()
+      .toEqualTypeOf<readonly ValidationIssue[]>();
+    expectTypeOf<Parameters<SchemaNode['setExternalErrors']>[0]>()
+      .toEqualTypeOf<readonly ValidationIssue[]>();
+    expectTypeOf<ReturnType<SchemaNode['clearExternalErrors']>>()
+      .toEqualTypeOf<void>();
+    expectTypeOf<Parameters<SchemaNode['request']>[0]>()
+      .toEqualTypeOf<SchemaNodeRequestType>();
+    expectTypeOf<Parameters<SchemaNode['revision']>[0]>()
+      .toEqualTypeOf<SchemaNodeEventType | undefined>();
+    expectTypeOf<ReturnType<SchemaNode['revision']>>().toEqualTypeOf<number>();
+    expectTypeOf<ReturnType<SchemaNode['subscribe']>>()
+      .toEqualTypeOf<() => void>();
+    expectTypeOf<Parameters<SchemaNode['subscribe']>[0]>()
+      .toEqualTypeOf<SchemaNodeListener>();
+    expectTypeOf<ReturnType<SchemaNode['validate']>>()
+      .toEqualTypeOf<Promise<readonly ValidationIssue[]>>();
+    expectTypeOf<SchemaNode['globalState']>()
+      .toEqualTypeOf<Readonly<Record<string, true>>>();
+    expectTypeOf<Parameters<SchemaNode['batch']>[0]>()
+      .toEqualTypeOf<() => void>();
   });
 
   it('narrows kinds, schemaType, and terminal object strategy', () => {

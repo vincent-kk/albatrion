@@ -9,7 +9,7 @@ import { createTestTree } from './fixtures/createTestTree';
 
 /** Create a runtime surface tree for commit-scoped getter checks. */
 const createSurfaceTree = (schema: BlueprintSchema) => schemaNodeFactory(
-  blueprint(schema), { context: {}, ifPredicates: new Map(),
+  blueprint(schema), { context: {},
     diagnostics: { status: 'stable' }, loadSnapshot: undefined,
     latentRaw: new Map(), typeMismatchPaths: new Set(),
     inactiveValuesMemo: new Map() });

@@ -29,7 +29,7 @@ describe('final-shape exits', () => {
     } },
     { name: 'if/then/else', schema: {
       type: 'object', properties: { kind: { type: 'string' } },
-      if: {},
+      if: { properties: { kind: { const: 'a' } }, required: ['kind'] },
       then: { properties: { value: { type: 'string' } } },
       else: { properties: { value: { type: 'number' } } },
     } },
@@ -37,10 +37,7 @@ describe('final-shape exits', () => {
 
   for (const { name, schema: alternateSchema } of alternateKinds)
     it(`WRITE-099 keeps alternate value kinds stable for ${name}`, () => {
-      const predicate = (input: unknown): boolean =>
-        input !== null && typeof input === 'object' &&
-        'kind' in input && input.kind === 'a';
-      const { root: mounted } = createTestTree(alternateSchema, predicate);
+      const { root: mounted } = createTestTree(alternateSchema);
       expect(() => loadSchemaNodeAtMount(mounted, { kind: 'b', value: 2 },
         SetValueOption.Overwrite)).not.toThrow();
       expect(mounted.structure?.value?.blueprintNode.kind).toBe('number');
@@ -48,7 +45,7 @@ describe('final-shape exits', () => {
       expect(mounted.runtime.inactiveValuesMemo.get('')?.some((entry) =>
         entry.path === '/value')).toBe(false);
 
-      const { root } = createTestTree(alternateSchema, predicate);
+      const { root } = createTestTree(alternateSchema);
       loadSchemaNodeAtMount(root, { kind: 'a', value: 'first' },
         SetValueOption.Overwrite);
       expect(root.structure?.value?.blueprintNode.kind).toBe('string');

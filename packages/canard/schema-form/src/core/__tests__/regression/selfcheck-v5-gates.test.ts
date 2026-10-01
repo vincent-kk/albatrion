@@ -23,9 +23,8 @@ const overlayTree = () => {
 describe('selfcheck-v5 lifted and budget gates', () => {
   it('selfcheck-v5.mjs:211 exposes an active constraint without emitting a value', () => {
     const { root } = makeSchemaNodeTree({ type: 'object',
-      if: {}, then: { required: ['y'] },
-    }, { ifPredicate: () => input => input !== null && typeof input === 'object' &&
-      !('x' in input) });
+      if: { not: { required: ['x'] } }, then: { required: ['y'] },
+    });
     root.setValue({});
     expect(root.outputValue).toEqual({});
     expect(root.jsonSchema).toMatchObject({ required: ['y'] });
@@ -61,9 +60,13 @@ describe('selfcheck-v5 lifted and budget gates', () => {
         addr: { type: ['object', 'null'], properties: {
           city: { type: 'string' }, zip: { type: 'string' },
         } },
-      }, if: {}, then: { properties: {
+      }, if: { anyOf: [
+        { not: { required: ['addr'] } },
+        { properties: { addr: { type: 'object', required: ['zip'] } },
+          required: ['addr'] },
+      ] }, then: { properties: {
         zipNote: { type: 'string', default: 'has zip' },
-      } } }, { ifPredicate: () => guard });
+      } } });
       root.setValue(input);
       expect(root.find('/zipNote') !== null).toBe(guard(root.outputValue));
     }

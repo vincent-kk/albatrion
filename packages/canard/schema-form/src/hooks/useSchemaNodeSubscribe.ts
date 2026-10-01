@@ -4,9 +4,12 @@ import { useHandle } from '@winglet/react-utils/hook';
 
 import type { Fn } from '@aileron/declare';
 
-import type { NodeListener, SchemaNode } from '@/schema-form/core';
+import type { NodeListener } from '@/schema-form/core';
 
-export interface SchemaNodeSubscribeOptions<Node extends SchemaNode> {
+export interface SchemaNodeSubscribeOptions<Node extends {
+  subscribe(listener: NodeListener): Fn;
+  revision(mask?: number): number;
+}> {
   /**
    * Called once right after the subscription attaches (and again whenever it
    * re-attaches for a new node). Use it to catch up: re-read the current node
@@ -36,7 +39,10 @@ export interface SchemaNodeSubscribeOptions<Node extends SchemaNode> {
  * @param listener - Event listener function
  * @param options - Subscription options (see `SchemaNodeSubscribeOptions`)
  */
-export const useSchemaNodeSubscribe = <Node extends SchemaNode>(
+export const useSchemaNodeSubscribe = <Node extends {
+  subscribe(listener: NodeListener): Fn;
+  revision(mask?: number): number;
+}>(
   node: Node | null,
   listener: NodeListener,
   options?: SchemaNodeSubscribeOptions<Node>,

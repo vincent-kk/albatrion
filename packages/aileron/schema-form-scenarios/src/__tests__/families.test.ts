@@ -2,11 +2,13 @@ import { describe, expect, it } from 'vitest';
 
 import { valueScenarios, settleScenarios, fillScenarios, exitScenarios,
   unionScenarios, deriveScenarios, controlsScenarios } from '../../index';
+import { notifyScenarios, validationScenarios } from '../../index';
 
 const families = [
   ['value', valueScenarios], ['settle', settleScenarios],
   ['fill', fillScenarios], ['exit', exitScenarios], ['union', unionScenarios],
   ['derive', deriveScenarios], ['controls', controlsScenarios],
+  ['notify', notifyScenarios], ['validation', validationScenarios],
 ] as const;
 
 // filid:contract scenario-data
@@ -27,5 +29,11 @@ describe('shared scenario families', () => {
       'union.ambiguous', 'union.integer', 'union.object-array',
       'union.omit-empty', 'union.default-fill',
     ]));
+  });
+
+  it('keeps the ledger-named validation scenario addresses', () => {
+    expect(validationScenarios.map((scenario) => scenario.name)).toEqual([
+      'validation.if-only-oneof-invalid', 'validation.union-type-error-on-node',
+    ]);
   });
 });

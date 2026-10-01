@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { SetValueOption } from '../../types/value';
-import { throwingIfPredicate } from '../../__tests__/ifPredicate';
+import { createTestValidator } from '../../__tests__/fixtures/createTestValidator';
 import { loadSchemaNodeAtMount, writeSchemaNode } from '../index';
 import { getGateRegistry } from '../utils/gates/getGateRegistry';
 import { createTestTree } from './fixtures/createTestTree';
@@ -21,7 +21,7 @@ describe('settle gate calculation', () => {
   it('TEST-069 expression guard commits input then records expression cause', () => {
     const { root } = createTestTree({ type: 'object', if: {}, then: {
       properties: { guarded: { type: 'string' } },
-    } }, throwingIfPredicate);
+    } }, createTestValidator('throw'));
     expect(() => writeSchemaNode(root, { enabled: true }, 'callerReplace', SetValueOption.Overwrite))
       .toThrow('Gate evaluation failed');
     expect(root.runtime.diagnostics).toMatchObject({ status: 'degraded', cause: 'expression', commit: 1 });
@@ -57,7 +57,8 @@ describe('settle gate calculation', () => {
 
   it('CONTROLS-080 withholds host extras from an if predicate when raw is null', () => {
     const { root } = createTestTree({ type: 'object', properties: {
-      user: { type: 'object', if: {}, then: {
+      user: { type: 'object', if: { properties: { enabled: { const: true } },
+        required: ['enabled'] }, then: {
         properties: { guarded: { type: 'string' } },
       } },
     } });

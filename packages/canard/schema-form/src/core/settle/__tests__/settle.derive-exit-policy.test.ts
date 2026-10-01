@@ -18,9 +18,9 @@ describe('derive baseline alongside exit policy', () => {
     loadSchemaNodeAtMount(root, { clear: true, f: true, target: 'a' },
       SetValueOption.Overwrite);
     const target = root.structure!.target;
-    target.state = { [NodeState.Dirty]: true, [NodeState.Touched]: true };
+    target.interactionState = { [NodeState.Dirty]: true, [NodeState.Touched]: true };
     writeSchemaNode(target, 'b', 'input', SetValueOption.Overwrite);
     expect(target.raw).toBe('b');
-    expect(target.state[NodeState.Dirty]).toBe(true);
+    expect(target.interactionState[NodeState.Dirty]).toBe(true);
   });
 });

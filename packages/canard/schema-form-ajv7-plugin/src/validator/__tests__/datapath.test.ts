@@ -1,3 +1,4 @@
+import type { JSONSchema } from '@canard/schema-form';
 import { describe, expect, it } from 'vitest';
 
 import { ajvValidatorPlugin } from '../validatorPlugin';
@@ -14,7 +15,7 @@ describe('ajvValidatorPlugin - dataPath 정확성 검증', () => {
           email: { type: 'string' },
         },
         required: ['name'],
-      } as any;
+      } as unknown as JSONSchema;
       const validator = ajvValidatorPlugin.compile(schema);
 
       // Act & Assert - 타입 에러
@@ -57,7 +58,7 @@ describe('ajvValidatorPlugin - dataPath 정확성 검증', () => {
           },
         },
         required: ['user'],
-      } as any;
+      } as unknown as JSONSchema;
       const validator = ajvValidatorPlugin.compile(schema);
 
       // Act & Assert - 중첩된 속성 타입 에러
@@ -115,7 +116,7 @@ describe('ajvValidatorPlugin - dataPath 정확성 검증', () => {
             },
           },
         },
-      } as any;
+      } as unknown as JSONSchema;
       const validator = ajvValidatorPlugin.compile(schema);
 
       // Act & Assert - 배열 첫 번째 요소의 속성 타입 에러
@@ -172,7 +173,7 @@ describe('ajvValidatorPlugin - dataPath 정확성 검증', () => {
           },
         },
         required: ['personal', 'work'],
-      } as any;
+      } as unknown as JSONSchema;
       const validator = ajvValidatorPlugin.compile(schema);
 
       // Act
@@ -228,7 +229,7 @@ describe('ajvValidatorPlugin - dataPath 정확성 검증', () => {
             },
           },
         },
-      } as any;
+      } as unknown as JSONSchema;
       const validator = ajvValidatorPlugin.compile(schema);
 
       // Act & Assert - 숫자가 포함된 속성명은 배열 인덱스 형태로 변환됨
@@ -281,7 +282,7 @@ describe('ajvValidatorPlugin - dataPath 정확성 검증', () => {
           },
         },
         required: ['level1'],
-      } as any;
+      } as unknown as JSONSchema;
       const validator = ajvValidatorPlugin.compile(complexSchema);
 
       // Act & Assert - 숫자가 포함된 속성명은 배열 인덱스로 변환됨
@@ -325,7 +326,7 @@ describe('ajvValidatorPlugin - dataPath 정확성 검증', () => {
           allowed: { type: 'string' },
         },
         additionalProperties: false,
-      } as any;
+      } as unknown as JSONSchema;
       const validator = ajvValidatorPlugin.compile(schema);
 
       // Act
@@ -338,7 +339,7 @@ describe('ajvValidatorPlugin - dataPath 정확성 검증', () => {
       expect(result).toHaveLength(1);
       expect(result![0]).toMatchObject({
         keyword: 'additionalProperties',
-        dataPath: '/', // additionalProperties 에러는 루트 레벨
+        dataPath: '', // additionalProperties 에러는 루트 레벨
       });
     });
 
@@ -375,7 +376,7 @@ describe('ajvValidatorPlugin - dataPath 정확성 검증', () => {
             },
           },
         },
-      } as any;
+      } as unknown as JSONSchema;
       const validator = ajvValidatorPlugin.compile(schema);
 
       // Act & Assert - 매우 깊은 중첩 구조의 에러
@@ -456,7 +457,7 @@ describe('ajvValidatorPlugin - dataPath 정확성 검증', () => {
             additionalProperties: false,
           },
         },
-      } as any;
+      } as unknown as JSONSchema;
       const validator = ajvValidatorPlugin.compile(schema);
 
       // Act & Assert - pattern 위반

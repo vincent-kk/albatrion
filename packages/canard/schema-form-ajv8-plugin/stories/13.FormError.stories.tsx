@@ -5,7 +5,7 @@ import {
   type FormHandle,
   type FormTypeRendererProps,
   type JSONSchema,
-  type JSONSchemaError,
+  type ValidationIssue,
   NodeState,
   ShowError,
   ValidationMode,
@@ -250,7 +250,7 @@ export const NoValidate = () => {
     setValue(val);
   };
 
-  const [errors, setErrors] = useState<JSONSchemaError[]>([]);
+  const [errors, setErrors] = useState<ValidationIssue[]>([]);
 
   const refHandle = useRef<FormHandle<typeof schema>>(null);
 
@@ -282,7 +282,7 @@ export const ValidateOnRequest = () => {
     setValue(val);
   };
 
-  const [errors, setErrors] = useState<JSONSchemaError[]>([]);
+  const [errors, setErrors] = useState<ValidationIssue[]>([]);
 
   const refHandle = useRef<FormHandle<typeof schema>>(null);
 
@@ -320,7 +320,7 @@ export const ExternalErrors = () => {
     setValue(val);
   };
 
-  const [errors, setErrors] = useState<JSONSchemaError[]>([
+  const [errors, setErrors] = useState<ValidationIssue[]>([
     {
       keyword: 'maxLength',
       dataPath: '/message',
@@ -331,7 +331,7 @@ export const ExternalErrors = () => {
     },
   ]);
 
-  const [_errors, _setErrors] = useState<JSONSchemaError[]>([]);
+  const [_errors, _setErrors] = useState<ValidationIssue[]>([]);
   const refHandle = useRef<FormHandle<typeof schema>>(null);
 
   const clearErrors = () => {

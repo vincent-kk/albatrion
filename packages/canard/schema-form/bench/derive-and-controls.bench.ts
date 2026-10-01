@@ -69,7 +69,7 @@ function makeTree(kind: Kind, initial: SourceValue) {
     target: { type: 'number' as const },
   } };
   const root = schemaNodeFactory(blueprint(schema), {
-    ifPredicates: new Map(), diagnostics: { status: 'stable' },
+    diagnostics: { status: 'stable' },
     loadSnapshot: undefined, latentRaw: new Map(),
     typeMismatchPaths: new Set(), inactiveValuesMemo: new Map(),
   }) as SchemaNode;
