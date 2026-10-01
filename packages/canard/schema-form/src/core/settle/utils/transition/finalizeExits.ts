@@ -68,7 +68,7 @@ export const finalizeExits = <Self extends SchemaNodeRecord<Self>>(
   const scope = context.kind === 'load' ? context.loadScope : undefined;
   const inLoadScope = (node: Self): boolean => scope !== undefined &&
     (!scope.path || node.path === scope.path || node.path.startsWith(`${scope.path}/`));
-  const applyPolicy = !context.suppressAutomaticWrites && context.cause !== 'budget';
+  const applyPolicy = !context.suppressAutomaticWrites && !context.exceededBudget;
   if (applyPolicy) applyExitClearing(context, (node) =>
     inLoadScope(node) || context.throwingGateExits?.has(node) === true);
   for (const node of context.exited)

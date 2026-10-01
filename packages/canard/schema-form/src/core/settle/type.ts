@@ -15,7 +15,7 @@ export type SchemaNodeWriteKind =
 export type VirtualReferenceIndex = ReadonlyMap<BlueprintNode,
   ReadonlyMap<string, readonly string[]>>;
 
-/** One synchronous write's work list and deferred failure. */
+/** One synchronous write's work list and deferred failures. */
 export interface SettlementContext<Self extends SchemaNodeRecord<Self>> {
   /** Live root reached through the record boundary. */
   root: Self;
@@ -119,9 +119,11 @@ export interface SettlementContext<Self extends SchemaNodeRecord<Self>> {
   traceRounds?: DeriveTraceEntry[][];
   /** Last budget-exceeding attempt's rule names. */
   deriveBudgetRules?: readonly DeriveTraceEntry[];
-  /** First error to throw after the commit boundary. */
-  failure?: SchemaFormError;
-  /** Cause assigned to the deferred failure. */
+  /** All failure occurrences in order, deduplicated only on recomputation. */
+  failures?: SchemaFormError[];
+  /** Recorded occurrence identities; only recomputation of one identity is merged. */
+  failureKeys?: Set<string>;
+  /** First failure's cause, independent of later budget exhaustion. */
   cause?: 'expression' | 'injectTarget' | 'writeShape' | 'sharedConflict' | 'budget';
   /** Exhausted host rounds handed to the later budget phase. */
   hostWheelExceeded?: number;

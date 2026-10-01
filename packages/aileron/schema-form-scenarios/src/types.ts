@@ -27,6 +27,14 @@ export interface ScenarioExpectation {
   readonly schemaTypes?: Readonly<Record<string, unknown>>;
   /** Untemplated array tail values retained by a host. */
   readonly extras?: Readonly<Record<string, unknown>>;
+  /** Paths receiving value deliveries, in document order for this step. */
+  readonly deliveryOrder?: readonly string[];
+  /** Whole-form change callbacks made by this step. */
+  readonly onChangeCount?: number;
+  /** Validation requests made by this step before any explicit verdict check. */
+  readonly validationRequestCount?: number;
+  /** Structured error and warning codes reported during this step. */
+  readonly onErrorCodes?: readonly string[];
   /** Expected settlement health fields on the form root. */
   readonly diagnostics?: Readonly<{
     status: 'stable' | 'degraded';

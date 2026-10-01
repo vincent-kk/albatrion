@@ -1,7 +1,6 @@
 import { isArray } from '@winglet/common-utils/filter';
-import { SchemaFormError } from '../../../../errors';
+import { INVALID_VIRTUAL_NODE_VALUES, SchemaFormError } from '../../../../errors';
 import type { SchemaNodeRecord } from '../../../record';
-import { INVALID_VIRTUAL_NODE_VALUES } from '../errors/settleErrorCode';
 
 /**
  * Reject a caller's invalid virtual tuple before any settlement state changes.

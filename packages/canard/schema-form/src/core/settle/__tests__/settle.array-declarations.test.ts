@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { makeSchemaNodeTree } from '../../__tests__/makeSchemaNodeTree';
+import { createTestValidator } from '../../__tests__/fixtures/createTestValidator';
 import { setContext } from '../../SchemaNode';
 import { SchemaNode } from '../../SchemaNode/SchemaNode';
 
@@ -35,9 +36,7 @@ describe('array item declarations', () => {
       type: 'object', properties: { enabled: { type: 'boolean' } },
       if: { properties: { enabled: { const: true } } },
       then: { properties: { gated: { type: 'string' } } },
-    } }, { ifPredicate: () => (input) =>
-      input !== null && typeof input === 'object' &&
-      'enabled' in input && input.enabled === true });
+    } }, { validator: createTestValidator() });
     root.setValue([{ enabled: true, gated: 'A' },
       { enabled: false, gated: 'B' }]);
     expect(root.find('/0/gated')?.value).toBe('A');

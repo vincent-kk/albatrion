@@ -10,7 +10,7 @@
   - 겉면: `SchemaNode.ts`, `SchemaNode/DETAIL.md` 멤버 표, `surface.test.ts`(시험 이름은 05의 `26C-01 PR-4 …`, 멤버 수는 두 단계의 합), `type-contract.test.ts`. 자동 병합된 `SchemaNode/type.ts`, `src/core/index.ts`, `record/type.ts`도 합집합인지 읽어서 확인한다.
   - 정착: `settle/type.ts`, `transitionSettlement.ts`, `evaluateDeriveRound.ts`는 06의 비례 비용 수정(44C-01·48C-01·49C-01·51C-01)과 05의 오류 기록(58C-01)을 함께 지킨다.
   - 문서: `core/DETAIL.md`, `record/DETAIL.md`, `settle/DETAIL.md`는 두 쪽 문장을 모두 남기고, 05가 이미 확정한 문장(59C-01 등)을 쓴다. `PLAN.md`는 05 행을 기준 브랜치에서, 06 행을 이 브랜치에서 가져온다.
-  - 성능 대장 `verification/performance-issues.md`: 05의 P-16–P-21, R-08–R-10을 그대로 두고, 06의 해결 행 R-08–R-16을 R-11부터, 06의 열림 행 P-20을 P-22로 다시 매기며 06 문서의 인용을 함께 고친다.
+  - 성능 대장 `verification/performance-issues.md`: 05의 P-16–P-21, R-08–R-10을 그대로 두고, 06의 해결 행은 R-11–R-19, 06의 열림 행은 P-22로 기록하며 06 문서의 인용을 함께 고친다.
   - 시나리오 패키지 `index.ts`, `src/types.ts`, `src/__tests__/families.test.ts`는 두 단계의 가족과 필드를 합친다. `types.ts`에서 05는 기대 필드(`deliveryOrder`, `onChangeCount`, `validationRequestCount`, `onErrorCodes`)만 더했으므로 동작 어휘는 06 쪽(`pop`, 아이템 `update`)을 그대로 쓴다.
   - 겉면의 `setValue`·`resetSubtree`는 05의 진입(`dispatchSetValue`, `dispatchResetSubtree`)을 부르는 기준 브랜치 쪽을 따른다.
 
@@ -59,7 +59,7 @@
 
 ## 2. 계획 리뷰
 
-antigravity(`0dd23346`) `rework-required`, 지적 여섯. 반영: P-20 → P-22 재번호(F1), 소멸 아이템의 전역 상태 계수(F2), 소멸 노드의 배달 저장소 정리(F3), G27–G28의 CHECK(F5), `resetSubtree` 진입(F6 첫째). 다르게 처리: F4(`batch` 안 동사를 바로 실행하자는 안)는 쌓인 쓰기와 순서가 뒤바뀌는 경우가 있어 원장 질의 Q28로 올림. F6 둘째(시나리오 `update` 어휘 충돌)는 05가 기대 필드만 더해 충돌이 아님(병합 기준 `10f98eec2` 대비 diff). G29·G30은 측정과 외부 판정이라 EVIDENCE로 두고 까닭을 적음.
+antigravity(`0dd23346`) `rework-required`, 지적 여섯. 반영: 06 열림 행의 P-22 재번호(F1), 소멸 아이템의 전역 상태 계수(F2), 소멸 노드의 배달 저장소 정리(F3), G27–G28의 CHECK(F5), `resetSubtree` 진입(F6 첫째). 다르게 처리: F4(`batch` 안 동사를 바로 실행하자는 안)는 쌓인 쓰기와 순서가 뒤바뀌는 경우가 있어 원장 질의 Q28로 올림. F6 둘째(시나리오 `update` 어휘 충돌)는 05가 기대 필드만 더해 충돌이 아님(병합 기준 `10f98eec2` 대비 diff). G29·G30은 측정과 외부 판정이라 EVIDENCE로 두고 까닭을 적음.
 
 ## 3. 완료 조건
 

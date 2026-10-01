@@ -52,7 +52,7 @@
 | 보정 | 01·02 보정 | 머지 | [#349](https://github.com/vincent-kk/albatrion/pull/349) | 브랜치 `fix/schema-form-realign-01-02`. 25라운드(`reviews/round-25-closing.md`)대로 청사진 코드·시험과 설계문서를 맞춤. 2026-09-29 머지(`85e7d01af`). [realign](plan/01-design-docs/realign.md) |
 | 03 | 노드 트리·정착 | 머지 | [#350](https://github.com/vincent-kk/albatrion/pull/350) | 브랜치 `feat/schema-form-node-and-settle`. 2026-09-30 머지(`0705217d5`). 뒤 PR로 넘긴 사례는 [log](plan/03-node-and-settle/log.md) §4 |
 | 04 | 파생 + 상태 키·제어 | 머지 | [#351](https://github.com/vincent-kk/albatrion/pull/351) | 브랜치 `feat/schema-form-derive-and-controls`. 2026-10-01 머지(`54afafb86`). 뒤 단계로 넘긴 사례는 [log](plan/04-derive-and-controls/log.md) §4, 속도 문제는 [대장](verification/performance-issues.md). 느린 벤치 행 수용은 30라운드 소유자 답으로 기록(TEST-027·071 보충) |
-| 05 | 통지·검증 | 대기 | — | 03 뒤. 착수 전 소유자 결정 D-1은 30라운드로 닫힘(EVENT-073 보충). 착수 가능 |
+| 05 | 통지·검증 | 머지 | [#352](https://github.com/vincent-kk/albatrion/pull/352) | 브랜치 `feat/schema-form-dispatch-and-validation`. 2026-10-02 머지(`afbba714d`). D-1은 30라운드로 닫힘(EVENT-073 보충). 06이 맡을 일은 [log](plan/05-dispatch-and-validation/log.md) "06에 넘길 목록"과 #352 본문의 머지 순서 메모(33C-01). 느린 벤치 행 P-16–P-19는 56라운드로 소유자 수용, 속도 문제는 [대장](verification/performance-issues.md) |
 | 06 | 배열 | 리뷰(draft) | [#353](https://github.com/vincent-kk/albatrion/pull/353) | 브랜치 `feat/schema-form-array`. 새 문맥 verifier PASS(일곱째), 차등 검사 차이 0, P-14 소유자 수용(54라운드). PR 이후 filid·antigravity 약식 리뷰 완료, 최종 리뷰는 #344. 실행 기록은 [log](plan/06-array/log.md) |
 | 07 | 전환 | 대기 | — | 02–06 전부 머지 뒤. 원샷 |
 | 08 | 플러그인 | 대기 | — | 07 뒤 |
@@ -69,7 +69,7 @@
 
 ## 4. 다음 할 일
 
-1. **05·06 착수** — D-1이 30라운드로 닫혔으므로 둘 다 착수할 수 있다. 04에서 넘어온 사례는 `plan/04-derive-and-controls/log.md` §4, 미뤄 둔 속도 문제는 `verification/performance-issues.md`.
+1. **06 진행** — 05가 머지되었으므로(`afbba714d`) 06은 `1.0.0-beta`를 merge하고 `plan/05-dispatch-and-validation/log.md`의 "06에 넘길 목록"과 #352의 머지 순서 메모(배열 동사 진입, `onError` 배선, `UpdatePath` 배달, `ifPredicates` 시험 이전)를 맡는다. 05가 바꾼 정착 오류 집계(58C-01)와 `details.sourcePath`(59C-01)는 배열 항목에도 그대로 적용된다. 미뤄 둔 속도 문제는 `verification/performance-issues.md`.
 2. **01 절 단위 통과** — 머지된 설계문서 여덟 편(192절)을 소유자가 절 단위로 통과시키고 문서 머리의 표에 날짜를 적는다(25C-09). 통과 중 나온 새 결정은 원장에 새 라운드 항목으로 먼저 들어가고 문서가 따라간다(`plan/01-design-docs/verification.md`).
 3. **D-1** — 30라운드에서 소유자가 정했다: 노드는 `request(kind)` 하나, 종류 값은 요청 비트 별칭의 TS 열거(리터럴 합집합 불허), 한 호출에 종류 하나, 둘째 인자 없음, 폼 핸들은 전용 메서드 넷에 경로 선택 인자(없으면 루트). 편집자 권장이던 리터럴 합집합과 폼 핸들 통합 메서드는 택하지 않았다.
 
@@ -110,6 +110,7 @@
 | 2026-10-01 | 30라운드: D-1(EVENT-073)의 소유자 답 둘을 원장 세션에서 직접 받음 — 명령 메서드는 한 호출에 종류 하나, 종류 값은 내부 요청 비트의 별칭인 TS 열거(맨 리터럴 합집합 불허, 이름은 SURFACE-056을 따름). 합침은 디스패처가 한다. 메서드 이름·페이로드·`FormHandle` 모양은 05 세션이 전한 소유자 입장이 있으나 직접 확인 대기. EVENT-073 보충 두 줄 | `reviews/round-30-owner-answers.md` |
 | 2026-10-01 | 30라운드 마무리: 소유자가 풀어 쓴 물음 여섯에 직접 답함 — 명령 메서드 이름 `request`, 둘째 인자 없음, 폼 핸들은 전용 메서드 넷에 경로 선택 인자(없으면 루트, 16 → 18), 최적화 작업은 07 뒤·08과 병렬. 04의 스토리북 게이트는 "포기"가 아니라 소유자가 독립 실행해 모두 통과했고 기록만 빠진 것으로 정정(게이트 30 가운데 30). D-1 닫힘, 05 착수 가능. 소유자 지시로 로컬 `1.0.0-beta`를 원격에 푸시. 04 느린 벤치 행 수용은 다음 행에서 닫힘 | `reviews/round-30-owner-answers.md` |
 | 2026-10-01 | 30라운드 추가: 04 벤치의 느린 행 둘(TEST-071 통째 교체 객체 행, 04 뒤 03 벤치의 느려진 행)을 소유자가 "맞습니다."로 수용(TEST-027 충족). TEST-027·TEST-071 보충. 04의 소유자 확인 대기 항목이 모두 닫힘 | `reviews/round-30-owner-answers.md` |
+| 2026-10-01 | 05 통지·검증 착수 — 소유자 승인(D-1 결정 뒤 05). 06은 별도 세션이 병렬로 맡음. 원장 질의는 원장 관리 세션 `albatrion-5c`로 | `feat/schema-form-dispatch-and-validation`, `plan/05-dispatch-and-validation/log.md` |
 | 2026-10-01 | 31라운드: 05 착수 뒤 작업자의 원장 해석 일곱 건 — 넷은 현행 문장 확인(VALIDATE-051 ajv8만 `allowUnionTypes`, VALIDATE-048 공유 단위, ERROR-021 일반 규칙, ERROR-201 새 코드 없음), 다섯을 편집자 결정으로 닫음(31C-01 `request(kind)`는 진입이 아니며 진입 밖에서는 동기 배달, 31C-02 운영 모드 경고의 둘째 예외는 `NON_JSON_WHOLE_VALUE`, 31C-03 `reason` 값은 원장이 이름 붙인 것으로 닫힘, 31C-04 차등 시험의 독립 검증기는 ajv 아닌 라이브러리, 31C-05 가칭 확정은 PR-4 결정이되 보충으로 옮김). 보충 20줄. 같은 날 06(배열) 세션에 착수 지시 | `reviews/round-31-closing.md` |
 | 2026-10-01 | 32라운드: 05 실행 계획의 원장 해석 둘을 편집자 결정으로 닫음 — 32C-01 검증기 계약 통일은 PR-4에서 코어 쪽 계약 형과 ajv 플러그인 셋, Form 속성 `validatorFactory`의 공개 형은 PR-7; 32C-02 `VALIDATOR_BIND_REFUSED`는 플러그인이 던지는 `BaseError`(그룹 `UNHANDLED_ERROR`)이며 코어 `UnhandledError` 클래스는 요구되지 않음. 보충 13줄 | `reviews/round-32-closing.md` |
 | 2026-10-01 | 06 배열 착수 — 소유자 승인. 05와 병렬로 별도 세션이 맡음. 원장 질의는 원장 관리 세션 `albatrion-5c`로 | `feat/schema-form-array`, `plan/06-array/log.md` |
@@ -141,3 +142,4 @@
 | 2026-10-02 | 58라운드: 05의 해석 하나 — 58C-01 한 정착의 정착 오류는 종류를 가리지 않고 모두 모아 사슬 끝에서 발생 순서대로 묶어 던진다(ERROR-004·005); 첫 실패만 남기는 `context.failure`는 결함이라 05가 PR-4에서 고침; 예산 초과는 뒤의 진행을 멈출 뿐 앞의 오류를 버리지 않음(29C-03). 보충 4줄 | `reviews/round-58-closing.md` |
 | 2026-10-02 | 59라운드: 05의 해석 하나 — 59C-01 `INJECT_TARGET_MISSING`과 자동 쓰기의 가상 노드 쓰기 모양 오류의 `details`에 출처 노드 경로 `sourcePath`를 더함(`path`는 대상 그대로, 덧붙이는 변경, PR-4). 보충 3줄 | `reviews/round-59-closing.md` |
 | 2026-10-02 | 60라운드(소유자가 맡긴 결정): 시나리오 패키지의 가족 디렉토리는 진입점을 가진 모듈이라 여덟 가족 모두 INTENT·DETAIL을 두고(#353에서 한 번에), 패키지 INTENT의 가족 목록을 여덟으로, 장면 파일의 홀로 파일 경고는 `.filid/config.json` 예외 목록에 패키지 경로를 더해 닫음, 동적 표의 사례 상한 미확정은 DETAIL 선언(60C-01). 보충 3줄 | `reviews/round-60-closing.md` |
+| 2026-10-02 | 61라운드: PR-4 머지(`afbba714d`) 뒤 31C-05의 가칭 확정 기록 — 61C-01 05 실행 기록의 표(`plan/05-dispatch-and-validation/log.md:80-156`)를 정본으로 77개 처분을 적음(확정 그대로 67, 삭제·대체 10; 소유자 이름이 이김). 보충 15줄 | `reviews/round-61-closing.md` |

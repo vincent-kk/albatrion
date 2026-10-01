@@ -14,7 +14,7 @@
 - 두 행의 `arrange(node, operation)`는 순수 계획만 돌려줍니다. 연산은 `push(value?)`, `pop()`, `update(index, value)`, `remove(index)`, `clear()`이고, branch 계획은 새 자리마다 이전 자리 색인 또는 생성 값, 무동작 여부, 반환 값의 출처를 담습니다. 범위 밖·음수 색인의 `update`·`remove`, 빈 배열의 `pop`, 값이 배열이 아닌(`null`·`undefined`·수·객체 등) 배열의 `update`·`remove`·`pop`·`clear`는 오류 없는 무동작이며(`clear`는 그 값을 그대로 둠) 삽입 동사는 없습니다. 두 행 모두 배열이 아닌 값을 든 호스트의 `push(x)`는 그 값을 새 아이템 하나 `[x]`로 바꾸고 형 불일치 경고등을 끕니다(38C-01, 47C-02, 48C-02). core는 `minItems`까지 채우거나 `maxItems`를 넘는 쓰기를 막지 않습니다(SURFACE-005, WRITE-022, 35C-03·06, 36C-01, 실행 ADR D1).
 - terminal은 자식 선언이 없고 `raw`에 배열 전체 참조를 들며 `assemble`은 그 참조를 유지합니다. `project`는 같은 정적 투영 비트를 배열 원본에 적용하고 비배열 원본은 받은 그대로 방출하며 아이템 빈자리 채움은 적용하지 않습니다(39C-01). `arrange`는 유효한 동사에 기존 원본의 사본 위에서 적용한 새 원본 계획을 돌려주고, 무동작에는 무동작 계획을 돌려줍니다. 아이템 노드·재색인·배열 구조 로그는 없습니다(NODE-005·027, VALUE-034·037, 35C-06·12).
 - `utils/`는 `omitTrailingArray`·`omitEmptyArray`, 빈자리 채움, 자리별 값과 `extras` 합성, 순수 구조 계획 보조를 소유합니다. 두 투영 보조는 입력을 바꾸지 않고 다른 종류에 재수출하지 않습니다(NODE-009, LANDING-085).
-- 비배열 행의 `arrange`는 behaviors 공유 organ의 동일한 거부 칸이며 모든 환경에서 `path`와 `details.method`를 담은 `SchemaFormError`를 가칭 코드 `ARRAY_METHOD_ON_NON_ARRAY`로 즉시 던집니다. ERROR-197의 throw 직전 `onError` 보고는 dispatch 배선 PR이 더합니다(NODE-014, ERROR-197, 35C-01).
+- 비배열 행의 `arrange`는 behaviors 공유 organ의 동일한 거부 칸이며 모든 환경에서 `path`와 `details.method`를 담은 `SchemaFormError`를 `SCHEMA_FORM_ERROR.ARRAY_METHOD_ON_NON_ARRAY` 코드로 즉시 던집니다. ERROR-197의 throw 직전 `onError` 보고는 dispatch 배선 PR이 더합니다(NODE-014, ERROR-197, 35C-01).
 
 ## Acceptance Criteria
 

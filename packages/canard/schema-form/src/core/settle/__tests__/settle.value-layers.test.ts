@@ -59,13 +59,13 @@ describe('settled value rule layers', () => {
     root.runtime.context = { reset };
     loadSchemaNodeAtMount(root, { trigger: false, a: 'A', b: 'B' },
       SetValueOption.Overwrite);
-    root.structure!.a.state = { [NodeState.Dirty]: true, [NodeState.Touched]: true };
-    root.structure!.b.state = { [NodeState.Dirty]: true, [NodeState.Touched]: true };
+    root.structure!.a.interactionState = { [NodeState.Dirty]: true, [NodeState.Touched]: true };
+    root.structure!.b.interactionState = { [NodeState.Dirty]: true, [NodeState.Touched]: true };
     writeSchemaNode(root.structure!.trigger, true, 'input', SetValueOption.Overwrite);
     expect(reset).toHaveBeenCalledTimes(1);
-    expect(root.structure?.a?.state[NodeState.Dirty]).toBe(false);
-    expect(root.structure?.a?.state[NodeState.Touched]).toBe(false);
-    expect(root.structure?.b?.state[NodeState.Dirty]).toBe(false);
-    expect(root.structure?.b?.state[NodeState.Touched]).toBe(false);
+    expect(root.structure?.a?.interactionState[NodeState.Dirty]).toBe(false);
+    expect(root.structure?.a?.interactionState[NodeState.Touched]).toBe(false);
+    expect(root.structure?.b?.interactionState[NodeState.Dirty]).toBe(false);
+    expect(root.structure?.b?.interactionState[NodeState.Touched]).toBe(false);
   });
 });

@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { blueprint } from '../../blueprint';
+import { EMPTY_REVISION_LEDGER } from '../index';
 import type { SchemaNodeRecord } from '../index';
 import {
   patchSchemaNodeInteractionState,
@@ -33,12 +34,13 @@ const makeRecord = (): SchemaNodeRecord<PathNode> => {
     },
     runtime: {
       blueprint: analysis,
-      ifPredicates: new Map(),
       diagnostics: { status: 'stable' },
       nodeFactory: (_entry, parent) => ({
         path: parent?.path ?? '',
         depth: parent?.depth ?? 0,
       }),
+      globalStateCounts: new Map(),
+      globalState: {},
       loadSnapshot: undefined,
       latentRaw: new Map(),
       typeMismatchPaths: new Set(),
@@ -68,8 +70,8 @@ const makeRecord = (): SchemaNodeRecord<PathNode> => {
     local: undefined,
     emit: undefined,
     schema: { schema: {}, typeConflict: false },
-    state: {},
-    revision: 0,
+    interactionState: {},
+    revisionLedger: EMPTY_REVISION_LEDGER,
     detached: false,
   };
 };
@@ -112,17 +114,17 @@ describe('record layout operations', () => {
   it('leaves a detached reference unchanged when interaction flags are patched', () => {
     const node = makeRecord();
     node.detached = true;
-    const state = node.state;
+    const state = node.interactionState;
     patchSchemaNodeInteractionState(node, { touched: true });
-    expect(node.state).toBe(state);
-    expect(node.state).toEqual({});
+    expect(node.interactionState).toBe(state);
+    expect(node.interactionState).toEqual({});
   });
 
   it('retains the state reference for a no-op interaction patch', () => {
     const node = makeRecord();
-    node.state = { touched: true };
-    const state = node.state;
+    node.interactionState = { touched: true };
+    const state = node.interactionState;
     patchSchemaNodeInteractionState(node, { touched: true });
-    expect(node.state).toBe(state);
+    expect(node.interactionState).toBe(state);
   });
 });

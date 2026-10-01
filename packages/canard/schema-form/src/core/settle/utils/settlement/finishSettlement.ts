@@ -1,4 +1,5 @@
-import { SchemaFormError } from '../../../../errors';
+import { recordSettlementFailure } from '../errors/recordSettlementFailure';
+import { MULTIPLE_ERRORS, SchemaFormError } from '../../../../errors';
 import type { SchemaNodeRecord, SettlementScratch } from '../../../record';
 import type { SettlementContext } from '../../type';
 import { commitSettlement } from '../commit/commitSettlement';
@@ -16,23 +17,22 @@ import { alignArraySnapshotSlots } from '../load/alignArraySnapshotSlots';
  * @param context - Calculated call with any host budget failure
  * @param scratch - This call's explicit raw baseline container
  * @returns Nothing; committed records and runtime hold the result
- * @throws A deferred settlement failure after committing its diagnostics
+ * @throws Deferred failures after commit when no dispatch chain owns them
  */
 export const finishSettlement = <Self extends SchemaNodeRecord<Self>>(
   context: SettlementContext<Self>, scratch: SettlementScratch<Self>,
 ): void => {
   for (const path of context.changedRaw) scratch.explicitRaw.add(path);
-  if (context.hostWheelExceeded && context.cause !== 'budget') {
-    context.failure = new SchemaFormError(BUDGET_EXCEEDED,
+  if (context.hostWheelExceeded && !context.exceededBudget) {
+    recordSettlementFailure(context, new SchemaFormError(BUDGET_EXCEEDED,
       `Host wheel budget exceeded at ${context.target.path}`,
-      { path: context.target.path });
-    context.cause = 'budget';
+      { path: context.target.path }), 'budget');
     context.exceededBudget = 'hostWheel';
     context.iterations = context.hostWheelExceeded;
   }
-  if (context.cause !== 'budget') runDeriveRounds(context);
-  if (context.cause !== 'budget') transitionSettlement(context);
-  if (context.cause === 'budget') {
+  if (!context.exceededBudget) runDeriveRounds(context);
+  if (!context.exceededBudget) transitionSettlement(context);
+  if (context.exceededBudget) {
     restoreSourceB(context, scratch.explicitRaw);
     captureDeriveBaseline(context);
   }
@@ -50,5 +50,10 @@ export const finishSettlement = <Self extends SchemaNodeRecord<Self>>(
         path.startsWith(`${context.target.path}/`))
         context.target.runtime.typeMismatchPaths.delete(path);
   commitSettlement(context);
-  if (context.failure) throw context.failure;
+  const failures = context.failures;
+  if (!failures?.length) return;
+  const runtime = context.root.runtime;
+  if (runtime.entryDepth && runtime.chainErrors) return;
+  throw failures.length === 1 ? failures[0] : new SchemaFormError(MULTIPLE_ERRORS,
+    'Multiple settlement errors', { errors: failures });
 };

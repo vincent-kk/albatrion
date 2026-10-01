@@ -6,6 +6,7 @@ import type { BlueprintSchema } from '../../../blueprint';
 import { schemaNodeFactory, SetValueOption } from '../../../SchemaNode';
 import type { SchemaNode as RuntimeSchemaNode } from '../../../SchemaNode/SchemaNode';
 import { loadSchemaNodeAtMount } from '../../../settle';
+import { createTestValidator } from '../../fixtures/createTestValidator';
 import { assertCoreScenarioExpectation } from './assertCoreScenarioExpectation';
 import { executeCoreScenarioStep } from './executeCoreScenarioStep';
 
@@ -18,13 +19,12 @@ export function createCoreScenarioAdapter(
   scenario: FormScenario,
 ): ScenarioAdapter & { readonly root: RuntimeSchemaNode } {
   const root = schemaNodeFactory(blueprint(scenario.schema as BlueprintSchema), {
-    ifPredicates: new Map(),
     diagnostics: { status: 'stable' },
     loadSnapshot: undefined,
     latentRaw: new Map(),
     typeMismatchPaths: new Set(),
     inactiveValuesMemo: new Map(),
-  });
+  }, createTestValidator());
   loadSchemaNodeAtMount(root as RuntimeSchemaNode, scenario.initialValue,
     SetValueOption.Overwrite);
   const priorNodes = new Map<string, { node: RuntimeSchemaNode; itemKey: number | null }>();

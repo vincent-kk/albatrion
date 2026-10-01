@@ -9,8 +9,7 @@ describe('stage 03 ledger adjudication regressions', () => {
     if: { not: { required: ['x'] } }, then: { properties: {
       x: { type: 'number', default: 1 },
     }, required: ['x'] },
-  }, { ifPredicate: () => input => input !== null && typeof input === 'object' &&
-    !('x' in input) }).root;
+  }).root;
 
   const expectSelfNegatingBudget = () => {
     const root = selfNegatingGate();
@@ -104,11 +103,11 @@ describe('stage 03 ledger adjudication regressions', () => {
 
   it('selfcheck-v5.mjs:623 commits Source B after a mutual host gate cycle', () => {
     const { root } = makeSchemaNodeTree({ type: 'object', allOf: [
-      { if: {}, then: { properties: { y: { type: 'number' } } } },
-      { if: {}, then: { properties: { x: { type: 'number' } } } },
-    ] }, { ifPredicate: gate => input => gate.schemaPath.includes('allOf/0')
-      ? input !== null && typeof input === 'object' && !('x' in input)
-      : input !== null && typeof input === 'object' && 'y' in input });
+      { if: { not: { required: ['x'] } },
+        then: { properties: { y: { type: 'number' } } } },
+      { if: { required: ['y'] },
+        then: { properties: { x: { type: 'number' } } } },
+    ] });
     expect(() => root.setValue({ x: 1, y: 1 })).toThrow();
     expect(root.raw).toBeUndefined();
     expect(root.find('/x')?.raw).toBe(1);

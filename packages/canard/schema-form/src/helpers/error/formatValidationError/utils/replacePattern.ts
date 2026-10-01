@@ -1,8 +1,8 @@
-import type { PublicJSONSchemaError } from '@/schema-form/types';
+import type { ValidationIssue } from '@/schema-form/types';
 
 export const replacePattern = (
   errorMessage: string,
-  details: PublicJSONSchemaError['details'],
+  details: ValidationIssue['details'],
   value: any,
 ): string => {
   let message = errorMessage;

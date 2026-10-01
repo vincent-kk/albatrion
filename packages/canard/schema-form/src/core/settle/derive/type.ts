@@ -124,10 +124,10 @@ export interface DeriveRoundDecision<Self> {
   readonly writes: readonly DeriveWrite<Self>[];
   /** Development-only decisions, absent in production. */
   readonly trace: readonly DeriveTraceEntry[];
-  /** First authored expression failure, if any. */
-  readonly failure?: { readonly sourcePath: string; readonly schemaPath: string;
+  /** Authored failures in evaluation order. */
+  readonly failures: readonly { readonly sourcePath: string; readonly schemaPath: string;
     readonly cause: unknown; readonly kind: 'expression' | 'injectTarget' | 'writeShape';
-    readonly targetPath?: string; readonly expectedLength?: number };
+    readonly targetPath?: string; readonly expectedLength?: number }[];
 }
 
 /** Final interaction reset decision made before the commit publishes revisions. */
@@ -136,7 +136,7 @@ export interface DeriveResetInteractionDecision<Self> {
   readonly nodes: readonly Self[];
   /** Development-only decisions, absent in production. */
   readonly trace: readonly DeriveTraceEntry[];
-  /** First authored expression failure, if any. */
-  readonly failure?: { readonly sourcePath: string; readonly schemaPath: string;
-    readonly cause: unknown };
+  /** Authored failures in evaluation order. */
+  readonly failures: readonly { readonly sourcePath: string; readonly schemaPath: string;
+    readonly cause: unknown }[];
 }

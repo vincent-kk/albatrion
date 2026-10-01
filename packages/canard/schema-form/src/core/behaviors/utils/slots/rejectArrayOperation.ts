@@ -1,6 +1,5 @@
-import { SchemaFormError } from '../../../../errors';
+import { ARRAY_METHOD_ON_NON_ARRAY, SchemaFormError } from '../../../../errors';
 import type { Behavior } from '../../../record';
-import { ARRAY_METHOD_ON_NON_ARRAY } from '../arrayMethodErrorCode';
 
 /**
  * Reject an array verb on a non-array row with its method and node path.

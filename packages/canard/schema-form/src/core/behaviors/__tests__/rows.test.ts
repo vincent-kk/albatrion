@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import { blueprint } from '../../blueprint';
 import type { BlueprintNode } from '../../blueprint';
+import { EMPTY_REVISION_LEDGER } from '../../record';
 import type { Behavior, SchemaNodeRecord, UnionSpec } from '../../record';
 import { BEHAVIORS } from '../index';
 import { booleanBehavior } from '../booleanBehavior';
@@ -31,9 +32,10 @@ const makeRecord = (
   behavior,
   runtime: {
     blueprint: OBJECT_ANALYSIS,
-    ifPredicates: new Map(),
     diagnostics: { status: 'stable' },
     nodeFactory: () => undefined,
+    globalStateCounts: new Map(),
+    globalState: {},
     loadSnapshot: undefined,
     latentRaw: new Map(),
     typeMismatchPaths: new Set(),
@@ -63,8 +65,8 @@ const makeRecord = (
   local: undefined,
   emit: undefined,
   schema: { schema: { options }, typeConflict: false },
-  state: {},
-  revision: 0,
+  interactionState: {},
+  revisionLedger: EMPTY_REVISION_LEDGER,
   detached: false,
 });
 

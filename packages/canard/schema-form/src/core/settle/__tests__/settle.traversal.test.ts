@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { SetValueOption } from '../../types/value';
+import { SchemaNodeEventType } from '../../record';
 import { writeSchemaNode } from '../index';
 import { createTestTree } from './fixtures/createTestTree';
 
@@ -48,6 +49,6 @@ describe('bounded settlement traversal', () => {
       'callerReplace', SetValueOption.Overwrite);
     expect(visits.some((visit) => visit === '/right' ||
       visit.startsWith('/right/'))).toBe(false);
-    expect(root.structure!.right.revision).toBe(1);
+    expect(root.structure!.right.revisionLedger[SchemaNodeEventType.UpdateValue]).toBe(1);
   });
 });

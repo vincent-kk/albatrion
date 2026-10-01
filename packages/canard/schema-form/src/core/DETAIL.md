@@ -8,8 +8,8 @@
 - 정제 값을 읽는 곳은 밖으로 나가는 경로뿐이다 — 루트 검증 값, 루트 방출, `FormHandle.getValue`, 부모측 하이드레이션 스냅샷. 안으로 들어오는 경로(`setValue`)와 raw 관측 경로(`UpdateValue` payload)는 계속 `value`를 쓴다.
 - 노드 값 변경은 `setValue()` 공개 API를 경유한다. private `__value__`에 외부에서 접근하지 않는다.
 - 레거시 노드·파서 구현과 옛 `__tests__/`는 `src/__legacy__/core/`로 옮긴다. `src/core/__tests__/scenarios/`는 새 하네스로 남긴다. 파서는 순수 값 변환만 담당하며 JSON Schema 검증 로직을 넣지 않는다.
-- `src/core/index.ts`, `nodeFromJSONSchema.ts`, `types/`는 제자리를 유지하고 stage 07 전환까지 레거시 엔진을 가리키며, 바인딩 전용 `setContext` 한 이름만 새 `SchemaNode/` 진입점에서 다시 내보낸다(NODE-010, LANDING-159, SURFACE-055, 28C-08).
-- 새 `record/`, `behaviors/`, `navigation/`, `settle/`, `SchemaNode/` fractal은 `blueprint` < `record` < {종류 모듈, `navigation`} < `settle/derive` < `settle` < `SchemaNode`의 의존 순서를 따른다. `settle/derive`는 `settle`의 자식으로서 규칙 판정만 소유하고 settle의 라운드 실행기가 그 진입점을 소비한다(NODE-016·045, LANDING-083, SETTLE-004).
+- `src/core/index.ts`, `nodeFromJSONSchema.ts`, `types/`는 제자리를 유지하고 stage 07 전환까지 레거시 엔진을 가리킵니다. 바인딩 전용 `setContext`·`retainValidationRoot`·`releaseValidationRoot`와 새 엔진의 `SchemaNodeEventType`·`SchemaNodeRequestType`만 새 fractal의 진입점에서 이름으로 다시 내보냅니다. `Validator`·`ValidateFunction`과 새 엔진 이름은 패키지 공개 `src/index.ts`에 두지 않습니다(NODE-010, LANDING-159, SURFACE-055·056·060, VALIDATE-044, 28C-08, 32C-01).
+- 새 fractal의 의존 순서는 `blueprint` < `record` < {종류 모듈, `navigation`} < `validation` < `settle/derive` < `settle` < `dispatch` < `SchemaNode`다. `settle/derive`는 `settle`의 자식으로서 규칙 판정만 소유하고 settle의 라운드 실행기가 그 진입점을 소비한다. `validation`은 결과를 받은 콜백으로만 `dispatch`에 돌려주며 타입 간선도 역전시키지 않는다(NODE-016·045, LANDING-083·084, SETTLE-004).
 - 이벤트는 `EventCascade`로 마이크로태스크 배칭한다. 단 `UpdateValue`는 동기 발행이다.
 - 노드 트리는 순환 참조를 만들지 않는다.
 
@@ -23,7 +23,9 @@
 | `SchemaNode` 및 타입별 노드                                      | `value`·`normalizedValue`·`setValue`·`validate`·`subscribe`·`find`·`revision` 등 노드 공개 표면 |
 | `isSchemaNode` · `isBranchNode` · `isTerminalNode` · 타입별 가드 | 런타임 타입 판별                                                                                |
 | `NodeEventType` · `SetValueOption` · `ValidationMode`            | 비트 플래그·열거값                                                                              |
+| `SchemaNodeEventType` · `SchemaNodeRequestType`                  | 새 엔진 전용 사건·명령 열거값. 패키지 공개 진입점에는 노출하지 않음(EVENT-073, LANDING-159) |
 | `setContext(root, context)`                                      | 새 엔진의 바인딩 전용 내부 통로를 이름으로 다시 내보냄. 패키지 공개 `src/index.ts`에는 노출하지 않음(NODE-010, SURFACE-055, 28C-08) |
+| `retainValidationRoot(validator, authoredRoot)` · `releaseValidationRoot(validator, authoredRoot)` | 07 바인딩 이펙트의 수명 증감 통로를 `validation/index.ts`에서 이름으로 다시 내보냄. 패키지 공개 `src/index.ts`에는 노출하지 않음(VALIDATE-021·045, NODE-010) |
 
 ### 값 채널 규약
 
@@ -108,6 +110,18 @@
 ### scenario-array-source-b — 원본 B 배열 구조 복원
 
 - 예산 초과 때 자동 생성한 배열 아이템은 원본 B의 빈 형상으로 되돌아가고, 사용한 아이템 키는 재사용하지 않습니다(TEST-018, WRITE-099).
+
+### scenario-notify — 통지 부류 시나리오
+
+- 공유 `notify` 부류의 모든 시나리오가 관찰 어댑터로 실행되어 기대한 배달 순서·명령·상태 사건·`onError` 기록을 냅니다(EVENT-004·027, TEST-019·023).
+
+### scenario-validation — 검증 부류 시나리오
+
+- 공유 `validation` 부류의 모든 시나리오가 관찰 어댑터로 실행되어 기대한 판정·노드별 오류 라우팅·검증 불가 결과를 냅니다(VALIDATE-043, TEST-019·023).
+
+### scenario-differential — 같은 ajv 경로 비교
+
+- 공유 `validation` 부류의 각 시나리오에서 코어 트리의 검증 판정과 오류 경로가 같은 Ajv로 작성 스키마를 직접 검증한 결과와 같습니다. 다른 구현과의 교차 대조(TEST-001)는 ajv가 아닌 검증기 플러그인이 생길 때까지 미룹니다(소유자 결정: ajv만 지원).
 
 ### public-node-inference — 형 없는 스키마의 공개 노드 형
 

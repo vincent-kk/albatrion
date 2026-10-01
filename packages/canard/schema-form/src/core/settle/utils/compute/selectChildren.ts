@@ -1,3 +1,4 @@
+import { recordSettlementFailure } from '../errors/recordSettlementFailure';
 import { SchemaFormError } from '../../../../errors';
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 import { escapeSegment } from '@winglet/json/pointer';
@@ -117,11 +118,10 @@ export const selectChildren = <Self extends SchemaNodeRecord<Self>>(
     if (retained?.blueprintNode.kind === entry.node.kind)
       context.throwingGateExits?.delete(retained);
     if (seen.has(entry.name)) {
-      if (next[entry.name]?.blueprintNode.kind !== entry.node.kind && !context.failure) {
-        context.failure = new SchemaFormError(SHARED_NODE_CONFLICT,
+      if (next[entry.name]?.blueprintNode.kind !== entry.node.kind) {
+        recordSettlementFailure(context, new SchemaFormError(SHARED_NODE_CONFLICT,
           `Active declarations conflict at ${node.path}/${entry.name}`,
-          { path: `${node.path}/${entry.name}` });
-        context.cause = 'sharedConflict';
+          { path: `${node.path}/${entry.name}` }), 'sharedConflict');
       }
       continue;
     }
@@ -144,11 +144,10 @@ export const selectChildren = <Self extends SchemaNodeRecord<Self>>(
         latentKey !== undefined && latent.has(latentKey) ? latent.get(latentKey) : undefined;
     if (!priorChild && !currentChild &&
       hasRecursiveExpansion(node, entry.node, input, context)) {
-      if (context.cause !== 'budget') {
-        context.failure = new SchemaFormError(RECURSIVE_SHAPE_DIVERGED,
+      if (!context.exceededBudget) {
+        recordSettlementFailure(context, new SchemaFormError(RECURSIVE_SHAPE_DIVERGED,
           `Recursive shape diverged at ${node.path}/${entry.name}`,
-          { path: `${node.path}/${entry.name}` });
-        context.cause = 'budget';
+          { path: `${node.path}/${entry.name}` }), 'budget');
         context.exceededBudget = 'recursion';
       }
       continue;
@@ -192,10 +191,9 @@ export const selectChildren = <Self extends SchemaNodeRecord<Self>>(
       changed = true;
       entryChanged = true;
     }
-    if ((effective.typeConflict || hasSharedConflict(entry, active)) && !context.failure) {
-      context.failure = new SchemaFormError(SHARED_NODE_CONFLICT,
-        `Active declarations conflict at ${child.path}`, { path: child.path });
-      context.cause = 'sharedConflict';
+    if ((effective.typeConflict || hasSharedConflict(entry, active))) {
+      recordSettlementFailure(context, new SchemaFormError(SHARED_NODE_CONFLICT,
+        `Active declarations conflict at ${child.path}`, { path: child.path }), 'sharedConflict');
     }
     child.active = true;
     child.detached = false;

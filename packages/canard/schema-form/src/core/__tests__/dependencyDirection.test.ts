@@ -7,12 +7,12 @@ import { describe, expect, it } from 'vitest';
 /** Loaded by the unit suite; every non-test source edge is checked on each run. */
 const CORE = fileURLToPath(new URL('..', import.meta.url));
 const FRACTALS = ['blueprint', 'record', 'behaviors', 'navigation',
-  'settle', 'SchemaNode'];
+  'validation', 'settle', 'dispatch', 'SchemaNode'];
 const BEHAVIOR_KINDS = ['stringBehavior', 'numberBehavior', 'booleanBehavior',
   'nullBehavior', 'objectBehavior', 'arrayBehavior', 'virtualBehavior', 'unionBehavior'];
 const ORDER: Readonly<Record<string, number>> = {
   blueprint: 0, record: 1, behaviors: 2, navigation: 2,
-  settle: 3, SchemaNode: 4,
+  validation: 3, settle: 4, dispatch: 5, SchemaNode: 6,
 };
 
 interface Edge {
@@ -74,7 +74,7 @@ const files = FRACTALS.flatMap((name) => sourceFiles(join(CORE, name)));
 const edges = files.flatMap(importsIn);
 
 describe('NODE-016 and NODE-045 dependency direction', () => {
-  it('reads every non-test TypeScript file in the five fractals and blueprint', () => {
+  it('reads every non-test TypeScript file in the declared fractals', () => {
     for (const name of FRACTALS)
       expect(files.some((file) => owner(file) === name)).toBe(true);
     for (const nested of [

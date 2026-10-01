@@ -1,6 +1,7 @@
 import { mergeEffectiveSchema } from '../../../blueprint';
 import type { BlueprintChildEntry, BlueprintNode } from '../../../blueprint';
 import { BEHAVIORS } from '../../../behaviors';
+import { EMPTY_REVISION_LEDGER } from '../../../record';
 import type { Behavior, SchemaNodeRecord, SchemaNodeRuntime } from '../../../record';
 
 /** Plain record used by settlement tests, without the later SchemaNode class. */
@@ -57,6 +58,6 @@ export const createPlainNode = (
     visible: true, readOnly: false, disabled: false,
     local: undefined, emit: undefined,
     schema: mergeEffectiveSchema(template, [], { mode: 'runtime' }),
-    state: {}, revision: 0, detached: false,
+    interactionState: {}, revisionLedger: EMPTY_REVISION_LEDGER, detached: false,
   };
 };

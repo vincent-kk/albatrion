@@ -10,6 +10,7 @@ import { performance } from 'node:perf_hooks';
 import { scheduleMacrotaskSafe } from '@winglet/common-utils/scheduler';
 
 import { blueprint } from '../src/core/blueprint';
+import { createTestValidator } from '../src/core/__tests__/fixtures/createTestValidator';
 import { schemaNodeFactory, SetValueOption } from '../src/core/SchemaNode';
 import type { SchemaNode as RuntimeSchemaNode } from '../src/core/SchemaNode/SchemaNode';
 import { loadSchemaNodeAtMount } from '../src/core/settle';
@@ -49,10 +50,10 @@ function makeTree(engine: Engine, input: Item[], analysis?: ReturnType<typeof bl
     return nodeFromJSONSchema({ jsonSchema: schema, defaultValue: input,
       onChange }) as unknown as BenchTree;
   const root = schemaNodeFactory(analysis ?? blueprint(schema), {
-    ifPredicates: new Map(), diagnostics: { status: 'stable' },
+    diagnostics: { status: 'stable' },
     loadSnapshot: undefined, latentRaw: new Map(),
     typeMismatchPaths: new Set(), inactiveValuesMemo: new Map(),
-  }) as RuntimeSchemaNode;
+  }, createTestValidator()) as RuntimeSchemaNode;
   loadSchemaNodeAtMount(root, input, SetValueOption.Overwrite);
   return root as unknown as BenchTree;
 }

@@ -115,4 +115,4 @@ Node `B6`의 기존 기록 대비 **1.20×**, Bun `18C-67` 깊이 4의 **1.19×*
 
 제공된 `/tmp/claude-501/v4/p/rundiff.sh`의 `diff.mts`를 읽고, 스크립트에 고정된 옛 기준 경로 대신 보존한 초기 HEAD 경로를 넘겼습니다. 최종 코드로 24 seed × 7 schema × 600단계 = 100,800단계에서 차이 0: 값·`outputValue`·비활성 값·잠복 원본/메타데이터/순서·선언·형 불일치·규칙 저장소·스냅숏·기본값·진단·노드 revision. identity 검사 12,324건의 실패도 0이며, 이 harness는 이벤트를 계측하지 않습니다.
 
-패키지의 bare 명령 결과는 `npx vitest run --project unit src/core --reporter=dot` 158파일·1,290통과·2 todo, `npx vitest run --project render --reporter=dot` 52파일·539통과, `npx tsc --noEmit -p tsconfig.json`·`npx eslint src/core` 오류 0입니다. 로그·탐침·기준선은 `$TMPDIR/51c01.PeKqeR/`에 있습니다. P-03은 [속도 문제 대장](../performance-issues.md)의 R-14로 옮겼습니다.
+패키지의 bare 명령 결과는 `npx vitest run --project unit src/core --reporter=dot` 158파일·1,290통과·2 todo, `npx vitest run --project render --reporter=dot` 52파일·539통과, `npx tsc --noEmit -p tsconfig.json`·`npx eslint src/core` 오류 0입니다. 로그·탐침·기준선은 `$TMPDIR/51c01.PeKqeR/`에 있습니다. P-03은 [속도 문제 대장](../performance-issues.md)의 R-17로 옮겼습니다.

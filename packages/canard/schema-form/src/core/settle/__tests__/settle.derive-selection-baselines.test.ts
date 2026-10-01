@@ -11,7 +11,8 @@ describe('newly selected declaration baselines', () => {
     const { root } = createTestTree({ type: 'object', properties: {
       enabled: { type: 'boolean' }, s: { type: 'string' },
       t: { type: 'string' }, x: { type: 'string' },
-    }, if: {}, then: { properties: {
+    }, if: { properties: { enabled: { const: true } },
+      required: ['enabled'] }, then: { properties: {
       x: { type: 'string', controls: { derived: '../s' } },
     } }, else: { properties: {
       x: { type: 'string', controls: { derived: '../t' } },
@@ -34,7 +35,8 @@ describe('newly selected declaration baselines', () => {
     const { root } = createTestTree({ type: 'object', properties: {
       enabled: { type: 'boolean' }, s: { type: 'string' },
       x: { type: 'string' },
-    }, if: {}, then: { properties: {
+    }, if: { properties: { enabled: { const: true } },
+      required: ['enabled'] }, then: { properties: {
       x: { type: 'string', controls: { derived: '../s' } },
     } } });
     loadSchemaNodeAtMount(root, { enabled: false, s: 'S1', x: 'own' },
@@ -52,7 +54,8 @@ describe('newly selected declaration baselines', () => {
       H: { type: 'object', properties: {
         enabled: { type: 'boolean' }, s: { type: 'string' },
         x: { type: 'string' },
-      }, if: {}, then: { properties: {
+      }, if: { properties: { enabled: { const: true } },
+        required: ['enabled'] }, then: { properties: {
         x: { type: 'string', controls: { derived: '../s' } },
       } } },
     } });
@@ -70,7 +73,8 @@ describe('newly selected declaration baselines', () => {
     const { root } = createTestTree({ type: 'object', properties: {
       enabled: { type: 'boolean' }, s: { type: 'string' },
       x: { type: 'string' },
-    }, allOf: [{ if: {}, then: { properties: {
+    }, allOf: [{ if: { properties: { enabled: { const: true } },
+      required: ['enabled'] }, then: { properties: {
       x: { type: 'string', controls: { derived: '../s' } },
     } } }] });
     loadSchemaNodeAtMount(root, { enabled: false, s: 'S1', x: 'own' },
@@ -103,7 +107,8 @@ describe('newly selected declaration baselines', () => {
     const { root } = createTestTree({ type: 'object', properties: {
       enabled: { type: 'boolean' }, c: { type: 'boolean' },
       x: { type: 'string' },
-    }, if: {}, then: { properties: {
+    }, if: { properties: { enabled: { const: true } },
+      required: ['enabled'] }, then: { properties: {
       x: { type: 'string', controls: { unsetValue: '../c' } },
     } } });
     loadSchemaNodeAtMount(root, { enabled: false, c: false, x: 'keep' },
@@ -118,18 +123,19 @@ describe('newly selected declaration baselines', () => {
     const { root } = createTestTree({ type: 'object', properties: {
       enabled: { type: 'boolean' }, c: { type: 'boolean' },
       x: { type: 'string' },
-    }, if: {}, then: { properties: {
+    }, if: { properties: { enabled: { const: true } },
+      required: ['enabled'] }, then: { properties: {
       x: { type: 'string', controls: { resetInteraction: '../c' } },
     } } });
     loadSchemaNodeAtMount(root, { enabled: false, c: false, x: 'keep' },
       SetValueOption.Overwrite);
     const target = root.structure!.x;
-    target.state = { [NodeState.Dirty]: true, [NodeState.Touched]: true };
+    target.interactionState = { [NodeState.Dirty]: true, [NodeState.Touched]: true };
     writeSchemaNode(root.structure!.enabled, true, 'input', SetValueOption.Overwrite);
-    expect(target.state[NodeState.Dirty]).toBe(true);
+    expect(target.interactionState[NodeState.Dirty]).toBe(true);
     writeSchemaNode(root.structure!.c, true, 'input', SetValueOption.Overwrite);
-    expect(target.state[NodeState.Dirty]).toBe(false);
-    expect(target.state[NodeState.Touched]).toBe(false);
+    expect(target.interactionState[NodeState.Dirty]).toBe(false);
+    expect(target.interactionState[NodeState.Touched]).toBe(false);
   });
 
   it('FRAGMENT-050 if/then shared injectTo fires on its next source edge', () => {
@@ -137,7 +143,8 @@ describe('newly selected declaration baselines', () => {
     const { root } = createTestTree({ type: 'object', properties: {
       enabled: { type: 'boolean' }, src: { type: 'string' },
       out: { type: 'string' },
-    }, if: {}, then: { properties: {
+    }, if: { properties: { enabled: { const: true } },
+      required: ['enabled'] }, then: { properties: {
       src: { type: 'string', controls: { injectTo } },
     } } });
     loadSchemaNodeAtMount(root, { enabled: false, src: 'A', out: 'manual' },

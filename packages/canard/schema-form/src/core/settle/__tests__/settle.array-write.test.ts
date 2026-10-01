@@ -22,7 +22,7 @@ describe('array settlement writes', () => {
     writeSchemaNode(root, ['x', 'y', 'z'], 'callerReplace', SetValueOption.Overwrite);
     expect(root.children![0]).toBe(first);
     expect(root.children![1]).toBe(second);
-    expect(root.children![1].state).toMatchObject({ touched: true, dirty: true });
+    expect(root.children![1].interactionState).toMatchObject({ touched: true, dirty: true });
     expect(root.children!.map((item) => item.itemKey)).toEqual([0, 1, 2]);
     expect(root.local).toEqual(['x', 'y', 'z']);
   });

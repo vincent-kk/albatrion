@@ -1,4 +1,5 @@
 import { blueprint } from '../../../blueprint';
+import { EMPTY_REVISION_LEDGER } from '../../../record';
 import type { SchemaNodeRecord, SchemaNodeRuntime } from '../../../record';
 
 /** Plain node used to exercise navigation without the later engine class. */
@@ -19,10 +20,11 @@ export const createNode = (
   const runtime: SchemaNodeRuntime<TestNode> = suppliedRuntime ??
     parent?.runtime ?? {
       blueprint: analysis,
-      ifPredicates: new Map(),
       diagnostics: { status: 'stable' },
       nodeFactory: (entry, owner, treeRuntime) =>
         createNode('name' in entry ? entry.name : '', owner, 'branch', treeRuntime),
+      globalStateCounts: new Map(),
+      globalState: {},
       loadSnapshot: undefined,
       latentRaw: new Map(),
       typeMismatchPaths: new Set(),
@@ -65,8 +67,8 @@ export const createNode = (
     local: undefined,
     emit: undefined,
     schema: { schema: {}, typeConflict: false },
-    state: {},
-    revision: 0,
+    interactionState: {},
+    revisionLedger: EMPTY_REVISION_LEDGER,
     detached: false,
   };
   if (parent?.structure !== null && parent !== null) {

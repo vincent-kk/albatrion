@@ -50,10 +50,10 @@ describe('virtual writes and referenced siblings', () => {
     period.setValue(['a', 'b']);
     expect(root.outputValue).toEqual({ startDate: 'a', endDate: 'b' });
     expect(period.value).toEqual(['a', 'b']);
-    const revision = Reflect.get(period, 'revision');
+    const revision = period.revision();
     root.find('/startDate')!.setValue('c');
     expect(period.value).toEqual(['c', 'b']);
-    expect(Reflect.get(period, 'revision')).toBeGreaterThan(revision);
+    expect(period.revision()).toBeGreaterThan(revision);
     period.setValue([7, 'b']);
     expect(period.value).toEqual(['7', 'b']);
   });

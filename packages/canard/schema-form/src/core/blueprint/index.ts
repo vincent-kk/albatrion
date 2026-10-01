@@ -1,4 +1,5 @@
 export { blueprint } from './blueprint';
+export { collectBlueprintWarnings } from './utils/diagnostics/collectBlueprintWarnings';
 export { mergeEffectiveSchema } from './utils/effectiveSchema/mergeEffectiveSchema';
 export { getItemEntry } from './utils/itemEntry/getItemEntry';
 export { resolveArrayLimits } from './utils/resolveArrayLimits/resolveArrayLimits';

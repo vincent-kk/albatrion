@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { isArray } from '@winglet/common-utils/filter';
 
 import { SchemaFormError } from '../../../../errors';
+import { EMPTY_REVISION_LEDGER } from '../../../record';
 import { blueprint } from '../../../blueprint';
 import type { BlueprintNode } from '../../../blueprint';
 import type { ArrayOperation, Behavior, SchemaNodeRecord } from '../../../record';
@@ -17,8 +18,9 @@ const makeRecord = (
 ): SchemaNodeRecord<unknown> => ({
   behavior,
   runtime: {
-    blueprint: blueprint({ type: 'array' }), ifPredicates: new Map(),
+    blueprint: blueprint({ type: 'array' }),
     diagnostics: { status: 'stable' }, nodeFactory: () => undefined,
+    globalStateCounts: new Map(), globalState: {},
     loadSnapshot: undefined, latentRaw: new Map(),
     typeMismatchPaths: new Set(), inactiveValuesMemo: new Map(),
   },
@@ -29,7 +31,7 @@ const makeRecord = (
   raw, extras: undefined, active: true, visible: true, readOnly: false,
   disabled: false, local: undefined, emit: undefined,
   schema: { schema: { options }, typeConflict: false },
-  state: {}, revision: 0, detached: false,
+  interactionState: {}, revisionLedger: EMPTY_REVISION_LEDGER, detached: false,
 });
 
 // filid:contract array-branch
