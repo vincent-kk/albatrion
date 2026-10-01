@@ -273,16 +273,16 @@ Planning method: 저장소 지침 — PLAN.md §2와 plan/prompts.md의 단계 �
   6. import 줄: `import type { ValidationIssue, ValidatorPlugin } from '@canard/schema-form'` — 공개 진입점에서만 가져오고(LANDING-070), 플러그인의 소스와 스토리는 PR-4에서 새 이름 `ValidationIssue`로 바꾼다(`JSONSchemaError` 별칭은 바깥 소비자를 위해 07까지 남음, 34C-02). 플러그인 객체는 `satisfies ValidatorPlugin`으로 형을 맞추고, 시험이 `typeof plugin.compileGuard === 'function'`·`typeof plugin.release === 'function'`을 단언한다(선택 멤버라 형만으로는 빠짐을 못 잡음). 플러그인 안에 계약 형을 다시 선언하지 않는다(I26, 34C-01).
 - 완료: U11a G30·G31, U11b G32·G33, U11c G34·G35. 실패 처리는 VALIDATE-046·047의 실패 줄 그대로.
 
-### U12a 독립 검증기 개발 의존 — 소유자 확인 대기
+### U12a 독립 검증기 개발 의존 — 포기(소유자 결정)
 
-- 원장: TEST-001, 31C-04.
-- `@cfworker/json-schema`(버전 고정)를 `PKG`·`P6`·`P7`·`P8`의 `devDependencies`에 더하는 것을 소유자에게 묻는다. 확인 뒤 조율 세션이 단독 호출 `yarn install`로 잠금 파일을 갱신한다(설치는 이 단위만 멈춤). 이 단위의 물음은 이 개발 의존 하나다.
-- 완료: G36(수동, 소유자 답과 설치 커밋).
+- 원장: TEST-001, 31C-04, 소유자 답(2026-10-01, 36라운드 기록 대기).
+- 소유자 결정: ajv 플러그인 패키지에 개발 의존을 더하지 않고 지원은 ajv까지로 한다(`@cfworker/json-schema`는 내장 검증기 후보로 검토했을 뿐이며, 쓰려면 새 플러그인으로). 그래서 이 단위는 하지 않는다. G36은 이 까닭으로 ABANDON.
 
 ### U12b 차등 테스트
 
 - 원장: TEST-001·017, LANDING-071, VALIDATE-001·007·036·051, GOAL-003.
 - 만들 파일: `PKG/src/core/__tests__/scenarios/differential.spec.ts`(새 엔진 `validate()` 판정 대 독립 검증기, 시험용 검증기), `P6`·`P7`·`P8`의 `src/__tests__/differential.test.ts`(플러그인 판정 대 독립 검증기). 사례는 SCN의 순수 데이터에서 읽는다(아래 U13의 `validation` 부류).
+- 소유자 결정(2026-10-01)으로 독립 검증기는 같은 ajv의 직접 판정이다: 폼의 판정(사본 → 컴파일·가드 → 라우팅을 거친 결과)을 같은 ajv가 작성 스키마를 바로 컴파일해 낸 판정과 견준다. TEST-001의 "다른 구현" 요구는 ajv 아닌 검증기 플러그인이 생길 때 그 패키지로 미룬다(36라운드 기록 대기). 아래 "독립 검증기"는 이 직접 판정을 뜻한다.
 - 판정 대상은 (작성 스키마, 방출 값의 `JSON.parse(JSON.stringify(…))`)이고, 같은 사례에서 두 판정이 같아야 한다. `&if`만으로 가르던 스키마가 폼에서도 무효가 됨(VALIDATE-036), union 값의 형 오류는 union 노드(VALIDATE-051)를 사례에 둔다. 어긋나면 폼 쪽이 틀린 것으로 보고 VALIDATE 항목과 대조한다(`verification.md:32`).
 - 완료: G37.
 

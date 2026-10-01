@@ -40,6 +40,9 @@ Planning method: 저장소 지침 — `PLAN.md` §2와 `plan/prompts.md`의 단�
 | 2026-10-01 | U3 | codex(세션 `8e05b415`): 코드 표 상수(원장에서 센 현행 60), 기록 형 셋, core `Validator`·`ValidateFunction`·`GuardFunction`·`ValidationIssue`, 공개 `ValidatorPlugin`의 선택 멤버 셋, `ValidationIssue` 공개와 `JSONSchemaError` 별칭 유지. 원장 대조 시험·형 정합 시험이 먼저 붉음(까닭: 기제 없음). 적합성 시험의 실행 부분은 U7 몫이라 이름 붙인 `it.todo`. ajv6·7·8 형 검사 통과. G7·G8·G9 충족(조율 세션 재실행) | `dcd006ba6` |
 | 2026-10-01 | U2 | antigravity 원장 대조(G5, 세션 `525f01e6`) `blocking findings`: 차단 셋(디스패치의 `onChange`·`reset` 검증 요청·`batch` 안 `reset`·안쪽 쓰기 예산, VALIDATE-046 같은 `$id` 계약, 31C-02 `NON_JSON_WHOLE_VALUE` 예외)·비차단 다섯. codex(같은 세션 `8e05b415`)가 원장 줄을 확인하며 문서 넷을 고침 | 이 커밋 |
 | 2026-10-01 | 이탈 | U2가 `SchemaNode/DETAIL.md` 멤버 표에 05의 13행을 문서 선행으로 더해(34 → 47), `surface.test.ts`의 길이 단언이 U9까지 붉다(codex가 원인을 그 13행뿐으로 확인). 그래서 unit 전체를 요구하는 G12·G21은 U9 뒤에 잰다. 단위별 범위 게이트는 그대로 | — |
+| 2026-10-01 | U4 | codex(세션 `9fec47c2`): 열거 둘, 비트별 원장 `revisionLedger`, 커밋의 배달 표시. 계획의 `UpdateValue` 설명에 EVENT-023(호스트의 `local`·`emit`)·EVENT-024(마지막 통지 기준 `previous`)가 빠져 원장대로 구현. G10·G11 충족 | `5c90023ac` |
+| 2026-10-01 | U5a | codex(세션 `feab8128`): 진입 사슬·파동·`batch`·`onChange`·예산·`adoptSchemaNodeChain`, 의존 방향 시험에 `dispatch` 추가. U5b·U7과 이을 자리를 이름 붙여 둠. G3·G13·G14 충족. 계획은 U5a·U7 병렬을 허용하나 둘 다 `record/type.ts`를 고치고 같은 작업 트리에서 시험을 돌리므로 차례로 진행 | `833b55dd7` |
+| 2026-10-01 | 소유자 결정 | `@cfworker/json-schema` 개발 의존을 더하지 않음 — "ajv 까지만 일단 지원하는 방향으로 하자 … ajv 내부에 추가 개발의존성은 원치않아". 차등 테스트는 같은 ajv의 직접 판정과의 경로 비교로(소유자 선택), "다른 구현" 요구는 ajv 아닌 플러그인이 생길 때로 미룸. 원장 관리자에게 36라운드 기록을 요청. U12a 포기(G36 ABANDON), U12b 범위 고침 | 원장 기록 대기 |
 
 ### 31C-05 가칭 확정
 
@@ -126,7 +129,6 @@ Planning method: 저장소 지침 — `PLAN.md` §2와 `plan/prompts.md`의 단�
 ## 3. 다음 행동
 
 - antigravity 계획 리뷰 판정을 받아 지적을 원장·코드와 대조하고, `cleared`까지 고친다.
-- 소유자 확인 대기: `@cfworker/json-schema` 개발 의존 추가(U12a, 31C-04). 그 설치 단계만 멈춘다.
 - 가칭 이름 확정 목록(U2, 31C-05)에 06이 더하는 `ARRAY_METHOD_ON_NON_ARRAY`(ERROR-197)를 넣는다: 배열이 아닌 노드에 `push`·`pop`·`update`·`remove`·`clear`를 부르면 배열 동사의 공용 칸이 던지는 `SchemaFormError`, 기록은 `path`와 `details.method`(06 세션 `albatrion-52`, 35C-01). 06은 `onError`에 보고하지 않고 던지며, 던지기 직전의 보고는 나중에 머지하는 단계의 디스패치 연결과 함께 든다(33C-01).
 
 ## 4. 원장·계획서 어긋남
