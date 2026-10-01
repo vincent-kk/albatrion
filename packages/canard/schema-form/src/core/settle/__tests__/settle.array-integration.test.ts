@@ -130,6 +130,7 @@ describe('array integration runtime stores', () => {
     const code = 'SCHEMA_FORM_WARNING.TYPE_MISMATCH';
     const oldKey = JSON.stringify([code, '/1/n', 3]);
     const newKey = JSON.stringify([code, '/0/n', 3]);
+    // The perished item's key equals the shifted item's new key; the move must replace it, not collide.
     const removedKey = JSON.stringify([code, '/0/n', 3]);
     const record = { level: 'warning', code, path: '/1/n', message: 'mismatch',
       details: { path: '/1/n', innerPaths: ['/1/n/child'] } } as const;

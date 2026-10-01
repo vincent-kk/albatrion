@@ -69,4 +69,5 @@ export const adoptSchemaNodeChain = <Self extends SchemaNodeRecord<Self>>(
   previous.chainOccurrences = undefined;
   previous.enclosingChain = undefined;
   previous.pendingWarningRecords = undefined;
+  previous.warningKeysByPath = undefined;
 };
