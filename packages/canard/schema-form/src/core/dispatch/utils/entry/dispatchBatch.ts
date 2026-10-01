@@ -16,7 +16,7 @@ import { resolveSchemaNodeChainRoot } from '../chain/resolveSchemaNodeChainRoot'
 export const dispatchBatch = <Self extends SchemaNodeRecord<Self>>(
   node: Self, fn: () => void,
 ): void => {
-  enterSchemaNodeChain(node);
+  if (!enterSchemaNodeChain(node)) return;
   const runtime = node.rootNode.runtime;
   runtime.batchDepth = (runtime.batchDepth ?? 0) + 1;
   try { fn(); }

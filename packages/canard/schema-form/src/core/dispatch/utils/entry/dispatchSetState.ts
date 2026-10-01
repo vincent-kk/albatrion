@@ -4,6 +4,7 @@ import type { SchemaNodeRecord } from '../../../record';
 import type { NodeStateFlags } from '../../../types/state';
 import { flushQueuedEvents } from '../chain/flushQueuedEvents';
 import { queueNonSettleEvent } from '../chain/queueNonSettleEvent';
+import { refuseListenerFeedback } from '../chain/refuseListenerFeedback';
 import { assertNotInDelivery } from '../report/assertNotInDelivery';
 
 /**
@@ -18,6 +19,7 @@ export const dispatchSetState = <Self extends SchemaNodeRecord<Self>>(
   if (node.detached) return;
   const runtime = node.rootNode.runtime;
   assertNotInDelivery(runtime);
+  if (refuseListenerFeedback(runtime)) return;
   const previous = node.interactionState;
   patchSchemaNodeInteractionState(node, state);
   if (previous === node.interactionState) return;

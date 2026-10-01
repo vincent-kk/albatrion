@@ -1,16 +1,15 @@
-import { FEEDBACK_LIMIT_EXCEEDED, SchemaFormError } from '../../../../errors';
 import type { SchemaNodeRecord } from '../../../record';
 import { assertNotInDelivery } from '../report/assertNotInDelivery';
-import { captureChainError } from './captureChainError';
+import { refuseListenerFeedback } from './refuseListenerFeedback';
 
 /**
  * Enter one public write on the tree shared by a record.
  * @param node - Target whose live root owns the chain
- * @returns Nothing; the runtime depth holds the active stack
+ * @returns Whether the write entered; refused feedback leaves depth unchanged
  */
 export const enterSchemaNodeChain = <Self extends SchemaNodeRecord<Self>>(
   node: Self,
-): void => {
+): boolean => {
   const runtime = node.rootNode.runtime;
   assertNotInDelivery(runtime);
   if (!runtime.entryDepth) {
@@ -22,13 +21,7 @@ export const enterSchemaNodeChain = <Self extends SchemaNodeRecord<Self>>(
     runtime.feedbackBlockedListeners = undefined;
     runtime.feedbackLimitReported = false;
   }
-  if (runtime.currentListener && (runtime.feedbackBudget ?? 0) >= 25) {
-    (runtime.feedbackBlockedListeners ??= new Set()).add(runtime.currentListener);
-    if (!runtime.feedbackLimitReported) {
-      captureChainError(runtime, new SchemaFormError(FEEDBACK_LIMIT_EXCEEDED,
-        'Listener feedback exceeded 25 waves'));
-      runtime.feedbackLimitReported = true;
-    }
-  }
+  if (refuseListenerFeedback(runtime)) return false;
   runtime.entryDepth = (runtime.entryDepth ?? 0) + 1;
+  return true;
 };

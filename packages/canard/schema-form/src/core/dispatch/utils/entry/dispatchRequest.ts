@@ -2,6 +2,7 @@ import { SchemaNodeRequestType } from '../../../record';
 import type { SchemaNodeRecord } from '../../../record';
 import { flushQueuedEvents } from '../chain/flushQueuedEvents';
 import { queueNonSettleEvent } from '../chain/queueNonSettleEvent';
+import { refuseListenerFeedback } from '../chain/refuseListenerFeedback';
 import { assertNotInDelivery } from '../report/assertNotInDelivery';
 
 /**
@@ -20,6 +21,7 @@ export const dispatchRequest = <Self extends SchemaNodeRecord<Self>>(
     kind !== SchemaNodeRequestType.Select &&
     kind !== SchemaNodeRequestType.Refresh &&
     kind !== SchemaNodeRequestType.Remount) return;
+  if (refuseListenerFeedback(runtime)) return;
   queueNonSettleEvent(node, kind);
   if (!runtime.entryDepth) flushQueuedEvents(node.rootNode);
 };

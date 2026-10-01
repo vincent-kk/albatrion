@@ -14,7 +14,7 @@ import { exitSchemaNodeChain } from '../chain/exitSchemaNodeChain';
 export const dispatchResetSubtree = <Self extends SchemaNodeRecord<Self>>(
   node: Self, option: SetValueOption = SetValueOption.Overwrite,
 ): void => {
-  enterSchemaNodeChain(node);
+  if (!enterSchemaNodeChain(node)) return;
   const runtime = node.rootNode.runtime;
   if (runtime.batchWrites)
     runtime.batchWrites = runtime.batchWrites.filter((write) =>

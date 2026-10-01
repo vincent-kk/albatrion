@@ -16,7 +16,7 @@ import { readBatchValue } from '../chain/readBatchValue';
 export const dispatchSetValue = <Self extends SchemaNodeRecord<Self>>(
   node: Self, value: unknown, option: SetValueOption = SetValueOption.Overwrite,
 ): void => {
-  enterSchemaNodeChain(node);
+  if (!enterSchemaNodeChain(node)) return;
   try {
     const runtime = node.rootNode.runtime;
     const input = typeof value === 'function' ?

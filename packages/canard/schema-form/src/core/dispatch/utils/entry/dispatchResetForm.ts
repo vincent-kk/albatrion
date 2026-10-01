@@ -16,7 +16,7 @@ export const dispatchResetForm = <Self extends SchemaNodeRecord<Self>>(
   root: Self, value: unknown = root.runtime.loadSnapshot,
   option: SetValueOption = SetValueOption.Overwrite,
 ): void => {
-  enterSchemaNodeChain(root);
+  if (!enterSchemaNodeChain(root)) return;
   root.runtime.warningKeys?.clear();
   root.runtime.validationUnavailable = false;
   root.runtime.validationCompileReported = false;

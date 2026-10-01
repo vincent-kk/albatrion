@@ -13,7 +13,7 @@ import { exitSchemaNodeChain } from '../chain/exitSchemaNodeChain';
 export const dispatchContextChange = <Self extends SchemaNodeRecord<Self>>(
   root: Self, context: Readonly<Record<string, unknown>>,
 ): void => {
-  enterSchemaNodeChain(root);
+  if (!enterSchemaNodeChain(root)) return;
   try { changeSchemaNodeContext(root, context); }
   catch (error) { captureChainError(root.runtime, error); }
   finally { exitSchemaNodeChain(root); }
