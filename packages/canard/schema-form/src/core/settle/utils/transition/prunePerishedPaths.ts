@@ -12,13 +12,15 @@ export const prunePerishedPaths = <Self>(
   runtime: SchemaNodeRuntime<Self>, paths: ReadonlySet<string>,
 ): void => {
   if (paths.size === 0) return;
+  const lengths = new Set<number>();
+  for (const path of paths) lengths.add(path.length);
+  const pruneRoot = paths.has('');
   const under = (candidate: string): boolean => {
-    let end = candidate.length;
-    while (end > 0) {
-      if (paths.has(candidate.slice(0, end))) return true;
-      end = candidate.lastIndexOf('/', end - 1);
-    }
-    return paths.has('');
+    if (pruneRoot) return true;
+    for (const length of lengths)
+      if ((candidate.length === length || candidate.charCodeAt(length) === 47) &&
+        paths.has(candidate.slice(0, length))) return true;
+    return false;
   };
   for (const key of runtime.latentRaw.keys()) {
     const identity: unknown = JSON.parse(key);

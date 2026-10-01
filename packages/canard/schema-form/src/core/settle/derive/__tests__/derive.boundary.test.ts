@@ -5,9 +5,19 @@ import { SetValueOption } from '../../../types/value';
 import { loadSchemaNodeAtMount, writeSchemaNode } from '../../index';
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
 import { getDeriveRuleTable } from '../index';
+import { getDeriveSourceNodes } from '../utils/evaluate/utils/getDeriveSourceNodes';
 
 // filid:contract derive-boundary
 describe('derive rule table', () => {
+  it('SETTLE-017 resolves source path aliases to one node', () => {
+    const { root } = createTestTree({ type: 'object', properties: {
+      'a~b': { type: 'string' },
+    } });
+    loadSchemaNodeAtMount(root, { 'a~b': 'value' }, SetValueOption.Overwrite);
+    const state = { sourcePaths: new Set(['/a~b', '/a~0b']) };
+    expect(getDeriveSourceNodes(root, state)).toEqual([root.structure!['a~b']]);
+  });
+
   it('SETTLE-017 builds rule expressions without per-rule array searches', () => {
     const analysis = blueprint({ type: 'object', properties: {
       source: { type: 'string' },

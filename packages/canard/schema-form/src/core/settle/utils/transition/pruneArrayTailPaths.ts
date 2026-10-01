@@ -1,24 +1,29 @@
 import { isArray } from '@winglet/common-utils/filter';
-import type { SchemaNodeRecord } from '../../../record';
+import type { SchemaNodeRuntime } from '../../../record';
 import { prunePerishedPaths } from './prunePerishedPaths';
 
 /**
- * Discard paths of absent array slots, including items gated out before shrinking.
- * @param host - Array branch after its final itemCount is known
+ * Discard absent slots for all resized array hosts in one store scan.
+ * @param runtime - Tree whose path-keyed stores may contain removed slots
+ * @param hosts - Final item counts keyed by live array host path
  * @returns Nothing; surviving slot paths remain untouched
  */
-export const pruneArrayTailPaths = <Self extends SchemaNodeRecord<Self>>(
-  host: Self,
+export const pruneArrayTailPaths = <Self>(
+  runtime: SchemaNodeRuntime<Self>, hosts: ReadonlyMap<string, number>,
 ): void => {
-  const runtime = host.runtime;
   const removed = new Set<string>();
   const check = (path: string): void => {
-    const prefix = `${host.path}/`;
-    if (!path.startsWith(prefix)) return;
-    const segment = path.slice(prefix.length).split('/')[0];
-    const index = Number(segment);
-    if (Number.isInteger(index) && index >= host.itemCount && index >= 0 &&
-      String(index) === segment) removed.add(`${prefix}${segment}`);
+    for (let boundary = path.indexOf('/'); boundary !== -1;
+      boundary = path.indexOf('/', boundary + 1)) {
+      const prefix = path.slice(0, boundary);
+      const count = hosts.get(prefix);
+      if (count === undefined) continue;
+      const next = path.indexOf('/', boundary + 1);
+      const segment = path.slice(boundary + 1, next === -1 ? undefined : next);
+      const index = Number(segment);
+      if (Number.isInteger(index) && index >= count && index >= 0 &&
+        String(index) === segment) removed.add(`${prefix}/${segment}`);
+    }
   };
   for (const key of runtime.latentRaw.keys()) {
     const identity: unknown = JSON.parse(key);

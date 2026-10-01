@@ -17,6 +17,28 @@ const items = (count: number, key: number) =>
 
 // filid:contract settle-array
 describe('44C-01 array settlement scaling', () => {
+  it('44C-01 SETTLE-047 scans path stores once when nested arrays grow', () => {
+    const count = 2000;
+    const { root } = makeSchemaNodeTree({ type: 'array', items: {
+      type: 'object', properties: { tags: { type: 'array', items: {
+        type: 'string',
+      } } },
+    } });
+    root.setValue(Array.from({ length: count }, () => ({ tags: ['a'] })));
+    const parse = JSON.parse;
+    let parses = 0;
+    const spy = vi.spyOn(JSON, 'parse').mockImplementation((value) => {
+      parses++;
+      return parse(value);
+    });
+    try {
+      root.setValue(Array.from({ length: count }, () => ({ tags: ['a', 'b'] })));
+      expect(parses).toBeLessThan(count * 20);
+    } finally {
+      spy.mockRestore();
+    }
+  });
+
   it('44C-01 SETTLE-047 parses each path-keyed entry only linearly on clear', () => {
     const count = 2000;
     const { root } = makeSchemaNodeTree(schema);

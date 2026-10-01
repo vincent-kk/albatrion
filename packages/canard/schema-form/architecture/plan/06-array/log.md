@@ -71,6 +71,7 @@ Planning method: 저장소 지침 — `PLAN.md` §2와 `plan/prompts.md`의 단�
 | 2026-10-01 | U10 재측정 | `103433634`에서 06·03·04 벤치를 Node·Bun 순차 재측정(codex `3275534f`). 10,000개 배열 키 입력 Node 29.92/1.00 µs(29.92×), Bun 21.00/0.92 µs(22.90×) — 레거시는 같은 완료점이 아님; array 1000 통째 쓰기 Node 1.53×, Bun 4.19×; 노드당 메모리 0.330×·0.463× 통과. 두 시간 행은 비례 비용이라 NODE-053/I18대로 **소유자 수용 대기**(원장 관리자 경유). 03·04 행 재측정 비는 0.96–1.20×로 단일 재실행 퍼짐 안. 44C-01로 없앤 제곱 순회·전체 자리 재조립은 대장 R-08 | 이 커밋 |
 | 2026-10-01 | verifier 고침 ① | 최종 verifier(새 문맥) FAIL의 차단 5건 가운데 3건과 비차단 2건을 고침(codex `82df681e`): 소멸 경로 일괄 정리(M17), 04 파생 헬퍼의 제곱 비용(M18), 시험의 이중 형 변환 6곳을 `instanceof` 좁히기로, 쓰는 곳 없는 수출 `ArrayArrangeResult`, 넘기지 않는 인수 `values`. `clear()` 1k/2k/4k 150.6/597.2/2,467.4 → 3.2/4.3/9.1 ms, 파생 규칙 배열 `push` 500/1k/2k 39.0/128.8/454.7 → 13.2/24.7/50.8 ms, 통째 쓰기 100.2/303.6/1,156.8 → 16.6/34.5/69.0 ms. 기존 기대 변경 없음. core 시험 1,262 통과. 남은 2건(47C-01 원본 트리 자리 수, 47C-02 `null`의 `push`)은 문서 `4e9c3ac8f` 뒤 코드 | 이 커밋 |
 | 2026-10-01 | verifier 고침 ② | 47라운드 코드(codex `9a140773`): 원본 트리가 배열 자리 수를 지킴(M19), `null` 배열의 `push`(M20). 수정 전 실패 6건 확인. 바꾼 기존 기대 4건: `null` 위 `push` 반환 0 → 1(branch·terminal), `null` 위 `push` 계획 `noop` → 새 값, 객체 아이템 원본 `undefined` → `{ nestedArray: [] }`(47C-01). 조율 세션이 게이트 등록 지움을 소유한 자식으로 한정(M21, `d0a833754`, 수정 전 실패 확인). core 시험 1,266 통과 | 이 커밋 |
+| 2026-10-01 | verifier 고침 ③ | 두 번째 verifier(새 문맥) FAIL: 앞선 10건은 모두 닫힘 확인, 새 차단 1건(M22)과 비차단(M23, 접두 검사 비용, 중복 제거 시험 부재). codex `88fccc21`이 M22·접두 검사·`getDeriveSourceNodes` 중복 제거 시험을, 조율 세션이 M23(48C-02)을 고침. 집단 나감의 제곱 비용 셋은 48C-01로 06 몫(다음 커밋). core 시험 1,269, render 539 통과 | 이 커밋 |
 
 ## 3. 다음 행동
 
@@ -100,4 +101,6 @@ Planning method: 저장소 지침 — `PLAN.md` §2와 `plan/prompts.md`의 단�
 | M19 | `src/core/settle/utils/latent/readRawTree.ts`, `captureArrayLatent.ts`(06 U5b) | 원본이 없는 자리만 든 배열을 `undefined`로 접어 자리 수를 잃음: 살아 있는 아이템이 없는 자리의 `update`가 다른 아이템을 소멸시키고 잠복 재진입이 중첩 배열을 비움 | NODE-021·051, WRITE-007, 35C-06, GOAL-074, 47C-01 | 최종 verifier가 찾음. 06이 고침: 배열은 늘 자리 수 N의 배열로 읽음 |
 | M20 | `arrangeBranchArray.ts`, `arrangeTerminalArray.ts`, `arrayBehavior/DETAIL.md`(06 U4) | `null`을 든 배열의 `push`까지 무동작 | 38C-01, 47C-02 | 최종 verifier가 찾음. 06이 고침: `push(x)`는 `[x]`, 나머지 넷은 무동작 |
 | M21 | `src/core/settle/utils/gates/getGateRegistry.ts`(03) `remove` | 나가는 가상 노드의 자식(실제 형제)까지 게이트 등록을 지움 | 42C-02 | 최종 verifier가 지적(비차단). 06이 고침: 소유한 자식만 지움 |
+| M22 | `src/core/settle/utils/transition/finalizePerished.ts`, `pruneArrayTailPaths.ts`(06 U5) | 자리 수가 바뀐 호스트마다 경로 저장소 전체를 훑어 중첩 배열 여럿을 늘리거나 줄이는 통째 쓰기가 O(호스트 수 × 저장소) | SETTLE-047, GOAL-011, 44C-01 | 두 번째 verifier가 찾음. 06이 고침: 바뀐 호스트를 모아 한 번만 훑음. 2,000행 `tags` 늘림 1,863.9 → 39.4 ms, `JSON.parse` 12,002,000 → 6,001회 |
+| M23 | `arrangeTerminalArray.ts`, `arrayBehavior/DETAIL.md` | 터미널 배열의 `push`가 `null`·`undefined`만 바꾸고 수·객체에서는 무동작 | 47C-02 머리말, 48C-02 | 두 번째 verifier가 지적(비차단). 06이 고침(`59022ad3d`): 배열이 아닌 값 모두 `[x]` |
 | M8 | 동사의 반환 값 | 원장이 정하지 않음 | GOAL-058(동기) | 레거시 반환을 동기로 지킴(실행 계획 I7, 자율 결정) |

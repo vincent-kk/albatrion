@@ -11,7 +11,7 @@ import type { DeriveState } from '../../../type';
  * @returns Roots for a full load scan or exact affected live sources
  */
 export const getDeriveSourceNodes = <Self extends SchemaNodeRecord<Self>>(
-  root: Self, state: DeriveState<Self>,
+  root: Self, state: Pick<DeriveState<Self>, 'sourcePaths'>,
 ): Self[] => {
   if (!state.sourcePaths) return [root];
   const nodes: Self[] = [];
