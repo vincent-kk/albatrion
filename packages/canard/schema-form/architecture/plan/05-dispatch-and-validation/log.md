@@ -47,6 +47,9 @@ Planning method: 저장소 지침 — `PLAN.md` §2와 `plan/prompts.md`의 단�
 | 2026-10-01 | U5b | codex(U5a와 같은 세션 `feab8128`): 사슬 끝 기록 전달·묶음·핸들러 예외·전달 중 쓰기 거부·경고 구조 키·주인 없는 싱크·청사진 오류 기록화. `oneOf` 호스트 자리는 `settle/utils/compute/selectNodeSchema.ts:18`. 계획 :214의 일반 중복 억제 대신 VALUE-037(`ledger/value.md:610`, 다시 켜질 때 재전달)을, ERROR-024의 "루트 전체 교체에서 키 초기화" 대신 그 항목의 충돌 줄과 ERROR-204를 따름. 바인딩(07)이 부를 자리 둘(정적 청사진 기록의 커밋 뒤 전달, 부른 쪽 없는 마운트)은 core 쪽만 준비. G15·G16 충족 | 이 커밋 |
 | 2026-10-01 | U6 | codex: 정착 밖 사건(`setState`·하위 트리 상태·외부 오류·`request`)의 진입과, 진입 안에서는 노드별로 합쳐 큐에 두고 깊이 0이면 호출 안에서 동기 배달(31C-01). G17·G18 충족 | `a93e766c9` |
 | 2026-10-01 | U8 | U7 세션 이어 쓰기가 "세션 없음"으로 실패(cennad 조회 문제) → codex 새 세션(`3500d216`): 실행·스탬프·라우팅·검증 불가·수명·같은 `$id`·방언 경고, `deliverValidationWave`와 `dispatchValidate`, 적합성 시험의 실행 부분. ajv6·7 모양은 리터럴 fixture. 같은 `$id` 재생성 reset의 원자성을 위해 계획 파일 목록 밖의 `adoptSchemaNodeChain`에 사전 검사를 더함(M4). G22·G23·G24 충족(조율 세션 재실행), tsc·eslint 통과, core unit 1,269 통과·실패는 `surface.test.ts` 하나(위 이탈) | `44f8dbd79` |
+| 2026-10-01 | U8 리뷰 | antigravity(세션 `c6e6739d`) `rework-required` → codex(세션 `6a30f5ca`)가 고침: 자식 조회의 `hasOwnProperty`, 라우팅 한 번에 활성 선언 ID 집합 하나(조율 세션이 오류가 있을 때만 짓도록 한 줄 더 고침), `release` 정확 횟수(1,000 루트 중 992)와 같은 `$id` 재등록 해제 단언. 차단으로 든 크래시는 반증(실행 계획 리뷰 기록) | `8a202b4b4` |
+| 2026-10-01 | U10 | codex(세션 `adfc2bb9`): 레거시 `ValidationManager`의 `PluginManager` import와 폴백을 `RootNodeContextProvider`로 옮김(같은 순서·시점, `ValidatorFactory` 반환 형 때문에 한 식을 분기로 풂), 폴백 검증기의 루트 `''`. 경계 있는 탐색에서 루트 `'/'`에 기대는 자리 0. G28 충족(조율 세션 재실행) | `bc1418da2` |
+| 2026-10-01 | U9 | 첫 codex 세션(`6850db6d`)이 착수 전에 멈춤(M5) → 43라운드 답 merge → codex 새 세션(`8c0d2d6f`): 멤버 열넷, `setValue`·`resetSubtree`의 dispatch 위임, 기록 필드 `state` → `interactionState`, EVENT-062 기제(런타임 `globalStateCounts`·`globalState`, 상태 쓰기 진입 셋과 커밋 훅 `settle/utils/commit/commitGlobalState.ts`, 루트의 `UpdateGlobalState`). 03·04 시험은 필드 이름과 fixture의 새 런타임 칸만 바뀜, 기대값이 바뀐 것은 05의 상태 사건 시험 하나(43C-01의 새 계약). G25·G26·G27·G21 충족(조율 세션 재실행). G12(unit 346 파일·4,262 통과)와 G29(204 파일·2,974 통과)는 마커가 출력 끝에 찍혔으나 출력이 길어 hook이 증거로 잡지 못함 — 저장된 출력에서 확인 | `164817735` |
 
 ### 31C-05 가칭 확정
 
@@ -132,8 +135,7 @@ Planning method: 저장소 지침 — `PLAN.md` §2와 `plan/prompts.md`의 단�
 
 ## 3. 다음 행동
 
-- U8 리뷰(antigravity) 판정을 받아 지적을 원장·코드와 대조하고 고친다.
-- U9 겉면(codex) 뒤에 G12·G21을 잰다. 이어 U10, U11a·U11b·U11c, U12b, U13–U15, U16a·U16b.
+- U11a·U11b·U11c(codex 세 세션 병렬) 뒤에 U12b, U13–U15, U16a·U16b.
 - 가칭 이름 확정 목록(U2, 31C-05)에 06이 더하는 `ARRAY_METHOD_ON_NON_ARRAY`(ERROR-197)를 넣는다: 배열이 아닌 노드에 `push`·`pop`·`update`·`remove`·`clear`를 부르면 배열 동사의 공용 칸이 던지는 `SchemaFormError`, 기록은 `path`와 `details.method`(06 세션 `albatrion-52`, 35C-01). 06은 `onError`에 보고하지 않고 던지며, 던지기 직전의 보고는 나중에 머지하는 단계의 디스패치 연결과 함께 든다(33C-01).
 
 ## 4. 원장·계획서 어긋남
