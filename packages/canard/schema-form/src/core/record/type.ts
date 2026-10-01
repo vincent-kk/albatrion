@@ -112,7 +112,8 @@ export interface Behavior<Self = unknown> {
   /** Interpret caller input under the current allowed types. */
   interpret(input: unknown, spec: UnionSpec): unknown;
   /** Assemble the current child values without committing them. */
-  assemble<Node extends Self>(node: SchemaNodeRecord<Node>, children: readonly Node[]): unknown;
+  assemble<Node extends Self>(node: SchemaNodeRecord<Node>, children: readonly Node[],
+    recalculated?: readonly Node[], hint?: { incremental: boolean }): unknown;
   /** Project a local value into the outgoing value. */
   project<Node extends Self>(node: SchemaNodeRecord<Node>, local: unknown): unknown;
   /** Return a completed input string, or undefined when there is no write. */
@@ -261,6 +262,8 @@ export interface SettlementScratch<Self> {
   latentAutomaticLog: Map<string, { present: boolean; value: unknown }>;
   /** Paths scheduled for recalculation. */
   dirtyPaths: Set<string>;
+  /** Dirty descendant paths and their direct child names by ancestor. */
+  dirtyChildrenByParent: Map<string, Map<string, string>>;
   /** Declaration-owner paths scheduled by reverse dependencies or context reads. */
   dependencyOwnerPaths: Set<string>;
   /** Hosts scheduled for a new shape selection. */

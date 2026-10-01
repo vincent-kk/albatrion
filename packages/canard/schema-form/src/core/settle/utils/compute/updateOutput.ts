@@ -6,14 +6,20 @@ import { sameValue } from './sameValue';
  * Assemble and project a node once from its current child order.
  * @param node - Live node whose row owns assembly and projection
  * @param context - Current commit's changed-node set
+ * @param recalculated - Direct children recomputed with an unchanged host shape
  * @returns Whether either calculated value changed
  */
 export const updateOutput = <Self extends SchemaNodeRecord<Self>>(
   node: Self,
   context: SettlementContext<Self>,
+  recalculated?: readonly Self[],
 ): boolean => {
-  const assembled = node.behavior.assemble(node, node.children ?? []);
-  const local = sameValue(node.local, assembled) ? node.local : assembled;
+  const hint = recalculated && node.behavior.type === 'array' &&
+    node.behavior.strategy === 'branch' ? { incremental: false } : undefined;
+  const assembled = node.behavior.assemble(node, node.children ?? [],
+    recalculated, hint);
+  const local = hint?.incremental || !sameValue(node.local, assembled)
+    ? assembled : node.local;
   let projected = node.behavior.project(node, local);
   if (node.parent === null && projected === undefined &&
     (node.behavior.type === 'object' || node.behavior.type === 'array'))

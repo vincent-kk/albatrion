@@ -30,10 +30,14 @@ export const computeNode = <Self extends SchemaNodeRecord<Self>>(
     return;
   }
   if (!context.hasGates && !context.shapeDirtyPaths.has(node.path)) {
-    if (node.behavior.strategy === 'branch')
-      for (const child of dirtyChildren(node, context)) computeNode(child, context);
-    else if (node.parent === null) selectNodeSchema(node, context);
-    updateOutput(node, context);
+    if (node.behavior.strategy === 'branch') {
+      const recalculated = dirtyChildren(node, context);
+      for (const child of recalculated) computeNode(child, context);
+      updateOutput(node, context, recalculated);
+    } else {
+      if (node.parent === null) selectNodeSchema(node, context);
+      updateOutput(node, context);
+    }
     context.dirtyPaths.delete(node.path);
     return;
   }
@@ -49,8 +53,9 @@ export const computeNode = <Self extends SchemaNodeRecord<Self>>(
     return;
   }
   if (!context.shapeDirtyPaths.has(node.path)) {
-    for (const child of dirtyChildren(node, context)) computeNode(child, context);
-    updateOutput(node, context);
+    const recalculated = dirtyChildren(node, context);
+    for (const child of recalculated) computeNode(child, context);
+    updateOutput(node, context, recalculated);
     preserveReferences(node, previous, context);
     context.dirtyPaths.delete(node.path);
     return;

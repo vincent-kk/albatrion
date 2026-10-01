@@ -91,6 +91,8 @@ export interface SettlementContext<Self extends SchemaNodeRecord<Self>> {
   automaticChanged: boolean;
   /** Paths scheduled by the write and the blueprint dependency index. */
   dirtyPaths: Set<string>;
+  /** Dirty descendant paths and their direct child names by ancestor. */
+  dirtyChildrenByParent: Map<string, Map<string, string>>;
   /** Declaration-owner paths scheduled in this settlement by reverse dependencies or `@`. */
   dependencyOwnerPaths: Set<string>;
   /** Hosts whose declarations or children require a new gate/shape selection. */
