@@ -114,7 +114,8 @@ export const exitSchemaNodeChain = <Self extends SchemaNodeRecord<Self>>(
   const original = bundleChainErrors(errors);
   const aggregate = errors.length > 1 && original instanceof SchemaFormError
     ? original : undefined;
-  collectChainRecords(pending, occurrences, aggregate, 'thrown');
+  collectChainRecords(pending, occurrences, aggregate, 'thrown',
+    runtime.reportedGuardFailures);
   const handlerErrors = deliverChainRecords(runtime, pending, original, true);
   const exposed = !errors.length ? bundleChainErrors(handlerErrors) :
     handlerErrors.length ? bundleChainErrors([original, ...handlerErrors]) : original;

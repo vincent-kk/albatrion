@@ -1,13 +1,79 @@
 import { describe, expect, it, vi } from 'vitest';
 
+import { isArray } from '@winglet/common-utils/filter';
+
 import { blueprint } from '../../blueprint';
 import type { BlueprintDiagnostic } from '../../blueprint';
+import { SchemaFormError } from '../../../errors';
+import { createTestValidator } from '../../__tests__/fixtures/createTestValidator';
 import { dispatchMount, dispatchSetValue, subscribeSchemaNode } from '../index';
 import { createDispatchTree } from './fixtures/createDispatchTree';
 import { createFormErrorRecord } from '../utils/report/createFormErrorRecord';
 
 // filid:contract dispatch-report
 describe('chain error reporting', () => {
+  it('ERROR-023 ERROR-041 retains the first bundled guard error in its stored record', () => {
+    const report = vi.fn();
+    const { root, runtime } = createDispatchTree({ type: 'object', if: {},
+      then: { properties: { guarded: { type: 'string' } } },
+    }, undefined, createTestValidator('throw'), { hasConsumer: () => true, report });
+    let once = false;
+    runtime.onChange = () => {
+      if (!once) { once = true; dispatchSetValue(root, { x: 2 }); }
+    };
+    let caught: unknown;
+    try { dispatchSetValue(root, { x: 1 }); } catch (error) { caught = error; }
+    if (!(caught instanceof SchemaFormError)) throw new Error('Expected a bundle');
+    expect(caught.code).toBe('SCHEMA_FORM_ERROR.MULTIPLE_ERRORS');
+    const errors = caught.details.errors;
+    if (!isArray(errors)) throw new Error('Expected bundled errors');
+    expect(errors).toHaveLength(2);
+    expect(report).toHaveBeenCalledTimes(1);
+    expect(report.mock.calls[0][0].aggregate).toBe(caught);
+    expect(report.mock.calls[0][0].error).toBe(errors[0]);
+  });
+
+  it('ERROR-017 ERROR-121 retains the location of a thrown expression', () => {
+    const report = vi.fn();
+    const { root } = createDispatchTree({ type: 'object', properties: {
+      a: { type: 'string', controls: {
+        active: '(() => { throw new Error("x") })()',
+      } },
+    } }, undefined, undefined, { hasConsumer: () => true, report });
+    expect(() => dispatchSetValue(root, { a: 1 })).toThrow('Gate evaluation failed');
+    expect(report).toHaveBeenCalledTimes(1);
+    expect(report).toHaveBeenCalledWith(expect.objectContaining({
+      code: 'SCHEMA_FORM_ERROR.EXPRESSION_THREW', path: '/a',
+      schemaPath: '#/properties/a/controls/active', surface: 'thrown',
+    }));
+  });
+
+  it('ERROR-017 ERROR-121 keeps two same-location expression occurrences in a bundle', () => {
+    const report = vi.fn();
+    const { root, runtime } = createDispatchTree({ type: 'object', properties: {
+      a: { type: 'string', controls: {
+        active: '(() => { throw new Error("x") })()',
+      } },
+    } }, undefined, undefined, { hasConsumer: () => true, report });
+    let once = false;
+    runtime.onChange = () => {
+      if (!once) { once = true; dispatchSetValue(root, { a: 2 }); }
+    };
+    let caught: unknown;
+    try { dispatchSetValue(root, { a: 1 }); } catch (error) { caught = error; }
+    expect(caught).toBeInstanceOf(SchemaFormError);
+    if (!(caught instanceof SchemaFormError)) throw new Error('Expected a bundle');
+    expect(caught.code).toBe('SCHEMA_FORM_ERROR.MULTIPLE_ERRORS');
+    expect(caught.details.errors).toEqual([
+      expect.objectContaining({ code: 'SCHEMA_FORM_ERROR.EXPRESSION_THREW' }),
+      expect.objectContaining({ code: 'SCHEMA_FORM_ERROR.EXPRESSION_THREW' }),
+    ]);
+    expect(report).toHaveBeenCalledTimes(2);
+    for (const [record] of report.mock.calls)
+      expect(record).toMatchObject({ code: 'SCHEMA_FORM_ERROR.EXPRESSION_THREW',
+        aggregate: caught });
+  });
+
   it('ERROR-004 ERROR-019 ERROR-021 reports after delivery and onChange', () => {
     const order: string[] = [];
     const failure = new Error('listener');

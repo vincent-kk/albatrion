@@ -65,6 +65,9 @@ describe('guard records at public entry boundaries', () => {
       dispatchMount(root, { enabled: true });
       commit = runtime.commitNumber ?? 0;
       expect(commit).toBeGreaterThan(0);
+      expect(() => dispatchSetValue(root, { enabled: false })).toThrow('Gate evaluation failed');
+      expect(seen.filter((record) => record.code ===
+        'SCHEMA_FORM_ERROR.GUARD_FAILED')).toHaveLength(index + 1);
     }
     expect(compileGuard).toHaveBeenCalledTimes(1);
     expect(seen.filter((record) => record.code ===
@@ -94,6 +97,10 @@ describe('guard records at public entry boundaries', () => {
     ]);
     expect(runtime.commitNumber).toBeGreaterThan(0);
     expect(() => dispatchSetValue(root, { enabled: true })).toThrow();
+    expect(() => dispatchSetValue(root, { enabled: false })).toThrow();
+    expect(() => dispatchSetValue(root, { enabled: true })).toThrow();
+    expect(records.filter((record) => record.code ===
+      'SCHEMA_FORM_ERROR.GUARD_FAILED')).toHaveLength(1);
     expect(compileGuard).toHaveBeenCalledTimes(1);
   });
 
