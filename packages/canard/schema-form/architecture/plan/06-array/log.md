@@ -76,6 +76,7 @@ Planning method: 저장소 지침 — `PLAN.md` §2와 `plan/prompts.md`의 단�
 | 2026-10-01 | verifier 고침 ③ | 두 번째 verifier(새 문맥) FAIL: 앞선 10건은 모두 닫힘 확인, 새 차단 1건(M22)과 비차단(M23, 접두 검사 비용, 중복 제거 시험 부재). codex `88fccc21`이 M22·접두 검사·`getDeriveSourceNodes` 중복 제거 시험을, 조율 세션이 M23(48C-02)을 고침. 집단 나감의 제곱 비용 셋은 48C-01로 06 몫(다음 커밋). core 시험 1,269, render 539 통과 | 이 커밋 |
 | 2026-10-01 | 48C-01 | 집단 나감의 세 루프 수정(M24). 수정 전 2천 행 계수 실패(메모 방문 8,004,000, 배열 조립 2,002, 잠복 키 방문 2,001,000) → 0/3/1. 나감·재진입 값과 `inactiveValues` 차등 시험 추가. 객체 속성 게이트 나감은 37/131/486 ms로 증가가 남음(원인 둘: P-04의 `getLatentOrder`와 `readProjectedValue` — 뒤의 것은 M29로 고침). core 시험 1,273, render 539 통과 | 이 커밋 |
 | 2026-10-01 | verifier 고침 ④ | 세 번째 verifier(새 문맥) FAIL: 앞선 고침 모두 확인, 차등 231,000단계 차이 0, 같은 꼴의 전체 훑기 넷(M25–M29). 49C-01로 범위 확정: 배열 장면이 닿는 비용은 06이 고치고, 닿지 않는 03·04 비용은 "계약 위반, 수용 대상 아님" 열림 행으로. 다섯 고침을 고침마다 한 커밋으로. core 시험 1,280, render 539 통과 | 이 커밋 |
+| 2026-10-01 | verifier 고침 ⑤ | 네 번째 verifier(새 문맥) FAIL: 앞선 고침 모두 확인, 차단 3건(M30 회귀, M31 U7 결함, M32 뜻 변화)과 비차단(M33, 열림 행 P-16 `af062fc8b`). 고침마다 한 커밋. core 시험 1,286, render 539 통과 | 이 커밋 |
 
 ## 3. 다음 행동
 
@@ -113,4 +114,8 @@ Planning method: 저장소 지침 — `PLAN.md` §2와 `plan/prompts.md`의 단�
 | M27 | `finalizeExits.ts:40-42`(03) | 나감마다 `typeMismatchPaths` 전체 복사·훑기 | 49C-01 | 06이 고침(`0bb4db661`): 첫 나감에서 조상 색인을 한 번 만듦 |
 | M28 | `finishSettlement.ts`, `alignArraySnapshotSlots.ts`(06) | 크기가 바뀐 호스트마다 스냅숏 루트 배열을 경로 복사 | 49C-01 | 06이 고침(`fd66556bd`): 정착마다 한 초안, 용기마다 얕은 복사 한 번 |
 | M29 | `readProjectedValue.ts:37`(03) | 게이트 평가마다 자식 항목 선형 탐색; 객체 집단 나감의 남은 비용 절반을 P-04의 `getLatentOrder` 몫으로 잘못 적었음 | 49C-01 | 06이 고침(`4f5d8ae17`): 청사진별 자식 이름 집합. P-04 관련 관측 문장을 고침 |
+| M30 | `src/core/settle/utils/latent/readLatentSlotSource.ts`(06, `130aec77d`의 회귀) | 자리 읽기마다 들어온·되살아난 노드 전체로 집합을 다시 만들어 한 배열이 나가고 형제 배열이 들어오는 정착이 제곱 | 49C-01 | 네 번째 verifier가 찾음. 06이 고침(codex `71844513`, `6a9a34ad8`): 정착마다 들어온 잠복 열쇠 색인을 한 번 만들고 추가 자리에서 갱신. 1,000개에서 `JSON.stringify` 2,026,029 → 27,030회 |
+| M31 | `src/core/settle/utils/write/getDependencyIndex.ts:83`(06 U7, `eca49e27a`) | 묶은 경로를 계산하고도 묶기 전 템플릿 경로를 펼쳐 한 행의 변화가 모든 행의 소유자를 표시 | 35C-08, 49C-01 | 네 번째 verifier가 찾음. 06이 고침(`ebadd2e09`): 묶은 경로만 펼침. 2,000행 통째 쓰기의 소유자 8,000,000 → 4,000 |
+| M32 | `finishSettlement.ts`, `alignArraySnapshotSlots.ts`(06, `fd66556bd`의 회귀) | 한 초안 정렬이 경로 길이 순으로 정렬해 만든 용기의 열쇠 순서가 바뀌고, 배열 용기를 이름 마디로 지나는 경로에서 순차 결과와 다른 `defaultValue` | 49C-01(뜻을 바꾸지 않음) | 네 번째 verifier가 찾음. 06이 고침(`513f109fc`): 등록 순서 유지, 이름 마디는 순차 쓰기로 대체. 차등 검사 16 seed 차이 0 |
+| M33 | 시험 제목·공유 헬퍼 | verifier 보고서 이름(FS-2 등)을 시험 제목에 씀, 같은 `DECLARED_NAMES` 캐시가 두 곳, 잠복 경로 색인 삭제 유지 시험 없음 | seiri naming·reuse-first·test-validity | 네 번째 verifier가 지적(비차단). 고침: `f8e4c0df4`, `80358b9de`, `settle/utils/declarations/getDeclaredChildNames.ts`(`6a9a34ad8`, `markWrite.ts`가 M30과 같은 파일이라 한 커밋) |
 | M8 | 동사의 반환 값 | 원장이 정하지 않음 | GOAL-058(동기) | 레거시 반환을 동기로 지킴(실행 계획 I7, 자율 결정) |
