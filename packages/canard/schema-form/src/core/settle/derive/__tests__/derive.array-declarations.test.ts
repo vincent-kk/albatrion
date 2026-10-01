@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { makeSchemaNodeTree } from '../../../__tests__/makeSchemaNodeTree';
-import type { SchemaNode as RuntimeSchemaNode } from '../../../SchemaNode/SchemaNode';
+import { SchemaNode } from '../../../SchemaNode/SchemaNode';
 
 // filid:contract derive-rank
 describe('array item derivation', () => {
@@ -12,7 +12,9 @@ describe('array item derivation', () => {
         target: { type: 'string', controls: { derived: '../source' } },
       },
     } });
-    const array = root as unknown as RuntimeSchemaNode;
+    if (!(root instanceof SchemaNode))
+      throw new Error('Expected a runtime SchemaNode');
+    const array = root;
     root.setValue([{ source: 'A' }, { source: 'B' }]);
     expect(root.value).toEqual([{ source: 'A', target: 'A' },
       { source: 'B', target: 'B' }]);

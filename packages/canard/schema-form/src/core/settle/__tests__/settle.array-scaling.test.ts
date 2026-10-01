@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 
 import { makeSchemaNodeTree } from '../../__tests__/makeSchemaNodeTree';
+import { SchemaNode } from '../../SchemaNode/SchemaNode';
 import { SetValueOption } from '../../types/value';
 import { createTestTree } from './fixtures/createTestTree';
 import { writeSchemaNode } from '../index';
@@ -16,6 +17,56 @@ const items = (count: number, key: number) =>
 
 // filid:contract settle-array
 describe('44C-01 array settlement scaling', () => {
+  it('44C-01 SETTLE-047 parses each path-keyed entry only linearly on clear', () => {
+    const count = 2000;
+    const { root } = makeSchemaNodeTree(schema);
+    root.setValue(items(count, 0));
+    if (!(root instanceof SchemaNode))
+      throw new Error('Expected a runtime SchemaNode');
+    const parse = JSON.parse;
+    let parses = 0;
+    const spy = vi.spyOn(JSON, 'parse').mockImplementation((value) => {
+      parses++;
+      return parse(value);
+    });
+    try {
+      root.clear();
+      expect(parses).toBeLessThan(count * 20);
+    } finally {
+      spy.mockRestore();
+    }
+  });
+
+  it('44C-01 SETTLE-047 scans rule keys only linearly on derived push', () => {
+    const count = 2000;
+    const { root } = makeSchemaNodeTree({ type: 'array', items: {
+      type: 'object', properties: {
+        source: { type: 'string' },
+        target: { type: 'string', controls: { derived: '../source' } },
+      },
+    } });
+    root.setValue(Array.from({ length: count }, () => ({ source: 'a' })));
+    if (!(root instanceof SchemaNode))
+      throw new Error('Expected a runtime SchemaNode');
+    const iterate = Set.prototype[Symbol.iterator];
+    let scannedRuleKeys = 0;
+    const spy = vi.spyOn(Set.prototype, Symbol.iterator)
+      .mockImplementation(function* (this: Set<unknown>) {
+        for (const value of iterate.call(this)) {
+          if (typeof value === 'string' && value.startsWith('["/'))
+            scannedRuleKeys++;
+          yield value;
+        }
+        return undefined;
+      });
+    try {
+      root.push({ source: 'b' });
+      expect(scannedRuleKeys).toBeLessThan(count * 20);
+    } finally {
+      spy.mockRestore();
+    }
+  });
+
   it('NODE-026 preserves untouched emitted items after one changed keystroke', () => {
     const { root } = makeSchemaNodeTree(schema);
     root.setValue(items(3, 0));

@@ -1,6 +1,6 @@
 import { isArray } from '@winglet/common-utils/filter';
 import type { SchemaNodeRecord } from '../../../record';
-import { prunePerishedPath } from './prunePerishedPath';
+import { prunePerishedPaths } from './prunePerishedPaths';
 
 /**
  * Discard paths of absent array slots, including items gated out before shrinking.
@@ -32,5 +32,5 @@ export const pruneArrayTailPaths = <Self extends SchemaNodeRecord<Self>>(
   for (const path of runtime.typeMismatchPaths) check(path);
   for (const path of runtime.committedRuleKeysBySource?.keys() ?? []) check(path);
   for (const path of runtime.committedRuleKeysByTarget?.keys() ?? []) check(path);
-  for (const path of removed) prunePerishedPath(runtime, path);
+  prunePerishedPaths(runtime, removed);
 };

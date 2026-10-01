@@ -3,7 +3,7 @@ import type { SchemaNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../type';
 import { captureDetachedSchemaNodeReads } from '../detached/captureDetachedSchemaNodeReads';
 import { getGateRegistry } from '../gates/getGateRegistry';
-import { prunePerishedPath } from './prunePerishedPath';
+import { prunePerishedPaths } from './prunePerishedPaths';
 import { pruneArrayTailPaths } from './pruneArrayTailPaths';
 
 /**
@@ -14,6 +14,7 @@ import { pruneArrayTailPaths } from './pruneArrayTailPaths';
 export const finalizePerished = <Self extends SchemaNodeRecord<Self>>(
   context: SettlementContext<Self>,
 ): void => {
+  let perishedPaths: Set<string> | undefined;
   for (const node of context.perished) {
     if (node.parent?.structure?.[node.name] === node) continue;
     walkOwnedSchemaNodes(node, (departing) => {
@@ -32,8 +33,9 @@ export const finalizePerished = <Self extends SchemaNodeRecord<Self>>(
       if (pending.path === node.path || pending.path.startsWith(`${node.path}/`))
         context.pendingExits.delete(key);
     if (!node.parent?.structure?.[node.name])
-      prunePerishedPath(node.runtime, node.path);
+      (perishedPaths ??= new Set()).add(node.path);
   }
+  if (perishedPaths) prunePerishedPaths(context.root.runtime, perishedPaths);
   for (const [host, previousCount] of context.arrayCounts)
     if (!host.detached && host.itemCount !== previousCount)
       pruneArrayTailPaths(host);

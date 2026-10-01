@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import { makeSchemaNodeTree } from '../../__tests__/makeSchemaNodeTree';
 import { setContext } from '../../SchemaNode';
-import type { SchemaNode as RuntimeSchemaNode } from '../../SchemaNode/SchemaNode';
+import { SchemaNode } from '../../SchemaNode/SchemaNode';
 
 // filid:contract settle-array
 describe('array item declarations', () => {
@@ -130,7 +130,9 @@ describe('array item declarations', () => {
         } },
       },
     } });
-    const array = root as unknown as RuntimeSchemaNode;
+    if (!(root instanceof SchemaNode))
+      throw new Error('Expected a runtime SchemaNode');
+    const array = root;
     root.setValue([{ marker: 'a' }, { marker: 'b' }]);
     expect(root.find('/0/marker')?.visible).toBe(true);
     array.push({ marker: 'c' });
@@ -145,7 +147,9 @@ describe('array item declarations', () => {
         x: { type: 'string', controls: { visible: '../kind === "show"' } },
       },
     } });
-    const array = root as unknown as RuntimeSchemaNode;
+    if (!(root instanceof SchemaNode))
+      throw new Error('Expected a runtime SchemaNode');
+    const array = root;
     root.setValue([{ kind: 'hide', x: 'A' }, { kind: 'show', x: 'B' },
       { kind: 'hide', x: 'C' }]);
     const surviving = root.children?.[1];
@@ -181,7 +185,9 @@ describe('array item declarations', () => {
         gated: { type: 'string', controls: { active: '../kind === "on"' } },
       },
     } });
-    const array = root as unknown as RuntimeSchemaNode;
+    if (!(root instanceof SchemaNode))
+      throw new Error('Expected a runtime SchemaNode');
+    const array = root;
     root.setValue([{ kind: 'off', gated: 'A' }, { kind: 'on', gated: 'B' }]);
     array.remove(0);
     expect(root.find('/0/gated')?.value).toBe('B');

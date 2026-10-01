@@ -3,7 +3,6 @@ export type {
   Behavior,
   ArrayOperation,
   ArrayArrangePlan,
-  ArrayArrangeResult,
   UnionSpec,
   SchemaNodeFactory,
   SchemaNodeRuntime,

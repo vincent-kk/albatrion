@@ -1,12 +1,15 @@
 import { describe, expect, it } from 'vitest';
 
 import { makeSchemaNodeTree } from '../../__tests__/makeSchemaNodeTree';
-import type { SchemaNode as RuntimeSchemaNode } from '../../SchemaNode/SchemaNode';
+import { SchemaNode } from '../../SchemaNode/SchemaNode';
 import { SetValueOption } from '../../types/value';
 
 const makeRecordTree = (...args: Parameters<typeof makeSchemaNodeTree>) => {
   const tree = makeSchemaNodeTree(...args);
-  return { ...tree, root: tree.root as unknown as RuntimeSchemaNode };
+  if (!(tree.root instanceof SchemaNode))
+    throw new Error('Expected a runtime SchemaNode');
+  const root: SchemaNode = tree.root;
+  return { ...tree, root };
 };
 
 // filid:contract settle-array

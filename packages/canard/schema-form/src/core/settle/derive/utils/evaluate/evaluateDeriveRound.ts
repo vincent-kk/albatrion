@@ -17,6 +17,7 @@ import { getVirtualWriteFailure } from './utils/getVirtualWriteFailure';
 import { evaluateScopedExpression } from './utils/evaluateScopedExpression';
 import type { ScopedExpressionResult } from './utils/evaluateScopedExpression';
 import { getSelectedDeclarationIds } from './utils/getSelectedDeclarationIds';
+import { addActiveRuleKey } from './utils/addActiveRuleKey';
 
 /**
  * Consume active derived and unsetValue edges in the completed current shape.
@@ -35,16 +36,22 @@ export const evaluateDeriveRound = <Self extends SchemaNodeRecord<Self>>(
   const traceWinners = new Map<string, number>();
   const evaluatedExpressions = new Map<string, ScopedExpressionResult>();
   let failure: DeriveRoundDecision<Self>['failure'];
-  if (!state.sourcePaths) state.activeRuleKeys.clear();
+  if (!state.sourcePaths) {
+    state.activeRuleKeys.clear();
+    state.activeRuleKeysBySource.clear();
+  }
   state.activeUnsetTargets.clear();
   while (pending.length) {
     const node = pending.pop();
     if (!node || node.detached) continue;
     state.visitedSourcePaths.add(node.path);
-    if (state.sourcePaths)
-      for (const key of state.activeRuleKeys)
-        if (key.startsWith(`[${JSON.stringify(node.path)},`))
-          state.activeRuleKeys.delete(key);
+    if (state.sourcePaths) {
+      const sourceKeys = state.activeRuleKeysBySource.get(node.path);
+      if (sourceKeys) {
+        for (const key of sourceKeys) state.activeRuleKeys.delete(key);
+        state.activeRuleKeysBySource.delete(node.path);
+      }
+    }
     const selected = getSelectedDeclarationIds(node, state);
     for (const id of selected)
       for (const rule of table.byDeclaration.get(id) ?? []) {
@@ -54,7 +61,7 @@ export const evaluateDeriveRound = <Self extends SchemaNodeRecord<Self>>(
         if (!target) continue;
         const key = getDeriveRuleKey(node.path, node.blueprintNode.kind, rule,
           target);
-        state.activeRuleKeys.add(key);
+        addActiveRuleKey(state, node.path, key);
         const consumed = state.consumedRuleValues.has(key);
         const priorExists = consumed || state.committedRuleValues.has(key);
         const prior = consumed ? state.consumedRuleValues.get(key) :

@@ -3,16 +3,23 @@ import type { SchemaNodeRuntime } from '../../../record';
 import { pruneCommittedRuleKeys } from '../commit/pruneCommittedRuleKeys';
 
 /**
- * Drop every path-keyed source and baseline owned by a perished array item.
- * @param runtime - Tree whose path-keyed stores own the removed slot
- * @param path - Removed item path at the root of the scope
+ * Drop path-keyed sources and baselines for all perished array items in one pass.
+ * @param runtime - Tree whose path-keyed stores own the removed slots
+ * @param paths - Removed item paths at the roots of their scopes
  * @returns Nothing; unrelated paths retain their entries
  */
-export const prunePerishedPath = <Self>(
-  runtime: SchemaNodeRuntime<Self>, path: string,
+export const prunePerishedPaths = <Self>(
+  runtime: SchemaNodeRuntime<Self>, paths: ReadonlySet<string>,
 ): void => {
-  const under = (candidate: string): boolean => candidate === path ||
-    candidate.startsWith(`${path}/`);
+  if (paths.size === 0) return;
+  const under = (candidate: string): boolean => {
+    let end = candidate.length;
+    while (end > 0) {
+      if (paths.has(candidate.slice(0, end))) return true;
+      end = candidate.lastIndexOf('/', end - 1);
+    }
+    return paths.has('');
+  };
   for (const key of runtime.latentRaw.keys()) {
     const identity: unknown = JSON.parse(key);
     if (isArray(identity) && typeof identity[0] === 'string' && under(identity[0])) {
@@ -31,7 +38,11 @@ export const prunePerishedPath = <Self>(
     if (isArray(identity) && typeof identity[0] === 'string' && under(identity[0]))
       runtime.committedDeclarationIds?.delete(key);
   }
-  for (const path of [...runtime.committedRuleKeysBySource?.keys() ?? [],
-    ...runtime.committedRuleKeysByTarget?.keys() ?? []])
-    if (under(path)) pruneCommittedRuleKeys(runtime, path, 'occurrence');
+  const matchedRulePaths = new Set<string>();
+  for (const path of runtime.committedRuleKeysBySource?.keys() ?? [])
+    if (under(path)) matchedRulePaths.add(path);
+  for (const path of runtime.committedRuleKeysByTarget?.keys() ?? [])
+    if (under(path)) matchedRulePaths.add(path);
+  for (const path of matchedRulePaths)
+    pruneCommittedRuleKeys(runtime, path, 'occurrence');
 };

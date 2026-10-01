@@ -13,7 +13,7 @@ import { getLoadValue } from '../load/getLoadValue';
 import { setLoadValue } from '../load/setLoadValue';
 import { arrayExtras } from '../write/arrayExtras';
 import { markWrite } from '../write/markWrite';
-import { prunePerishedPath } from '../transition/prunePerishedPath';
+import { prunePerishedPaths } from '../transition/prunePerishedPaths';
 import { rekeyArrayRuntimePaths } from './rekeyArrayRuntimePaths';
 import type { ArrayPathMove } from './rekeyArrayRuntimePaths';
 
@@ -69,6 +69,7 @@ export const applyArraySlots = <Self extends SchemaNodeRecord<Self>>(
   }
 
   const moves: ArrayPathMove[] = [];
+  let perishedPaths: Set<string> | undefined;
   for (let index = 0; index < oldCount; index++) {
     const item = oldItems[String(index)];
     const current = destinations.get(index);
@@ -83,8 +84,9 @@ export const applyArraySlots = <Self extends SchemaNodeRecord<Self>>(
           schema: departing.schema.schema,
         });
     });
-    prunePerishedPath(host.runtime, item.path);
+    (perishedPaths ??= new Set()).add(item.path);
   }
+  if (perishedPaths) prunePerishedPaths(host.runtime, perishedPaths);
   rekeyArrayRuntimePaths(host.runtime, host.path, moves);
 
   for (const [name, item] of Object.entries(nextItems)) {
