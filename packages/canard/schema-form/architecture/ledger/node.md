@@ -126,7 +126,9 @@
 
 - 결정:
   > 터미널 객체는 행을 따로 두되 값을 통째로 드는 칸 함수를 잎과 함께 쓰고, 터미널 배열은 원본을 통째로 들되 배열 연산(`push`·`update`·`remove`·`pop`·`clear`)을 오늘처럼 원본 배열 위에서 지원한다.
-- 보충: 없음
+- 보충:
+  > 편집자 결정(35C-12): "【추론】 배열이 터미널인지는 PR-5가 정하지 않는다: NODE-002의 두 행(`branch`·`terminal`), NODE-027·028(인라인 `presentation.FormTypeInput`의 암묵 터미널은 렌더 계층의 판정 함수가 청사진에 넘겨 정하며 두 행을 가진 object·array에만 있다, NODE-047), BLUEPRINT의 `options.terminal: true` 허용과 `false`의 `TERMINAL_OPTION_UNSUPPORTED`, LANDING-048의 `node.strategy` 판정대로 06은 청사진의 `strategy`를 읽어 `array.terminal` 행을 고른다." (`reviews/round-35-closing.md:97`)
+  > 편집자 결정(35C-12): "【추론】 터미널 배열 행은 NODE-005대로 원본을 배열 전체로 들고 `push`·`pop`·`update`·`remove`·`clear`를 원본의 사본 위에서 수행해 호스트를 통째로 쓰며(아이템 노드·재인덱싱·아이템 스냅숏 이어 붙임이 없고 호스트 자신의 로드 스냅숏이 단위다), `project`가 LANDING-085가 `arrayBehavior/utils/`로 옮긴 `omitTrailing`·`omitEmpty` 보조로 자르고, 값이 `null`이면 동사는 무효 호출(35C-06)이며, VALUE-034의 빈자리 채움은 적용되지 않는다; 원본 B는 다른 터미널 노드처럼 호스트의 이전 `raw`만 적고 구조 로그는 두지 않는다." (`reviews/round-35-closing.md:98`)
 - 상태: 현행
 - 출처: `09-landing-and-test-strategy.md:104#11`(정본)
 - 닫은 사람: 17라운드 스웜 수렴(편집자 결정, `reviews/raw-round17-node-structure.md` §5)
@@ -175,7 +177,8 @@
 
 - 결정:
   > **behaviors 규칙.** 종류마다 fractal 하나(`INTENT.md`·`DETAIL.md`·진입점·같은 이름의 행 파일)를 둔다. 여덟 줄을 넘는 칸과 그 종류만의 보조는 그 종류의 `utils/`, 두 전략이 함께 쓰는 것은 그 종류의 `utils/`, 두 종류 이상이 쓰는 것은 `behaviors/utils/`에 둔다. behaviors 밖에서도 쓰는 것은 behaviors의 것이 아니다(예: `resolveArrayLimits`는 `blueprint/`로). 행은 칸을 모두 같은 순서로 갖는다. 종류 모듈은 behaviors 뿌리와 `settle`·`dispatch`·`validation`·공개 겉면을 가져오지 않는다.
-- 보충: 없음
+- 보충:
+  > 편집자 결정(35C-04): "【추론】 NODE-009(behaviors 밖에서도 쓰는 것은 `blueprint/`로)와 LANDING-085·094(PR-5의 이동)대로 `resolveArrayLimits`는 `blueprint/`의 조직에 두고 청사진 진입점에서 이름으로 내보내며, 조각이 준 `minItems`·`maxItems`가 세어지도록 유효 스키마의 `schema`를 받는다(WRITE-022 "제약을 유효 스키마로 노출"); 코어는 채우지도 막지도 않는다." (`reviews/round-35-closing.md:32`)
 - 상태: 현행
 - 출처: `09-landing-and-test-strategy.md:108`(정본), `adr/0011-branch-node-composition.md:99`
 - 닫은 사람: 소유자 답(`reviews/round-17-owner-answers.md:42` 4 종류 모듈; 전략이 아니라 종류마다 모듈 하나), 17라운드 스웜 수렴(편집자 결정, `reviews/raw-round17-node-structure.md` §5; 소유자 지시 `reviews/round-17-owner-answers.md:25`)
@@ -240,7 +243,8 @@
 
 - 결정:
   > **배열 메서드**는 클래스에 두되 타입은 `ArrayNode` 인터페이스에만 준다. 비배열에서 부르면 행의 공유 칸이 `SchemaFormError`를 던지므로 겉면과 `dispatch`는 종류를 묻지 않는다. UI 플러그인이 `node.push()`를 부른다. 비배열은 `type`이 배열이 아닌 노드를 말한다.
-- 보충: 없음
+- 보충:
+  > 편집자 결정(35C-01): "【추론】 ERROR-197의 던짐(`type`이 배열이 아닌 노드에서 `push`·`pop`·`update`·`remove`·`clear`를 부르면 행의 공유 칸이 모든 환경에서 즉시 `SchemaFormError`를 던진다, 기록에 `path`와 `details.method`)은 PR-5가 만드는 배열 행의 공유 칸에 사는 것이라 PR-5의 몫이고, NODE-014대로 메서드는 단일 클래스에 두되 형은 공개 `ArrayNode` 인터페이스에만 준다." (`reviews/round-35-closing.md:9`)
 - 상태: 현행
 - 출처: `09-landing-and-test-strategy.md:112`(정본) (같은 문장: ERROR-068; 그 오류 코드는 열림)
 - 닫은 사람: 17라운드 스웜 수렴(편집자 결정, `reviews/raw-round17-node-structure.md` §5)
@@ -441,6 +445,7 @@
   > "판정을 렌더 계층으로 옮기므로 core가 React 구성 요소를 판정하는 자리(`getNodeGroup.ts`의 `isReactComponent`)는 사라진다." (`adr/0011-branch-node-composition.md:59`)
   > "터미널 조건을 "있고 null이 아니다"로 넓히면 `React.lazy`의 결과나 설정 객체도 서브트리를 접는다." (`adr/0011-branch-node-composition.md:94`)
   > "`formTypeInputMap`은 트리 생성 뒤 렌더 계층에서 해석되므로 같은 컴포넌트가 인라인이면 터미널을 만들고 경로 매핑이면 만들지 않는다." (`adr/0011-branch-node-composition.md:94`)
+  > 편집자 결정(35C-12): "【추론】 배열이 터미널인지는 PR-5가 정하지 않는다: NODE-002의 두 행(`branch`·`terminal`), NODE-027·028(인라인 `presentation.FormTypeInput`의 암묵 터미널은 렌더 계층의 판정 함수가 청사진에 넘겨 정하며 두 행을 가진 object·array에만 있다, NODE-047), BLUEPRINT의 `options.terminal: true` 허용과 `false`의 `TERMINAL_OPTION_UNSUPPORTED`, LANDING-048의 `node.strategy` 판정대로 06은 청사진의 `strategy`를 읽어 `array.terminal` 행을 고른다." (`reviews/round-35-closing.md:97`)
 - 상태: 현행
 - 출처: `adr/0011-branch-node-composition.md:59#1-7`(정본), `open-questions.md:60`, `adr/0011-branch-node-composition.md:3`, `adr/0011-branch-node-composition.md:53`
 - 닫은 사람: 소유자 답(`reviews/round-17-owner-answers.md:12` 통보 1), 17라운드 스웜 수렴(편집자 결정, `adr/0011-branch-node-composition.md:59`; 판정 함수의 세 값과 core가 `presentation`을 읽지 않음)
@@ -721,6 +726,9 @@
   > 편집자 결정(26C-14): "【추론】 어느 경로에 값을 싣는 쓰기(로드, 전체 교체 쓰기, 조상의 `Merge`·입력 쓰기가 나눠 준 값, 옛 참조로 한 쓰기)는 그 경로의 원본을 하나로 만든다: 그 경로에 형상에 있는 노드가 있으면 그 노드의 원본에, 옛 참조로 한 쓰기는 그 참조의 (경로, 종류) 잠복 원본에, 그 밖에는 그 경로의 선언 가운데 청사진 전순서에서 앞선 종류의 (경로, 종류) 잠복 원본에 쓰고, 같은 경로의 다른 종류 잠복 원본은 지운다." (`reviews/round-26-closing.md:147`)
   > 편집자 결정(28C-02): "【추론】 떼어진 노드의 `visible`·`readOnly`·`disabled`는 NODE-044의 고정 읽기이며, 26C-10의 `typeMismatch` 등과 같이 떼어질 때 그 노드가 형상에 있던 마지막 커밋의 값을 한 번 갈무리한다; 26C-08의 예외는 `active`와 그것에서 도출되는 `enabled`에만 있다." (`reviews/round-28-closing.md:25`)
   > 편집자 결정(28C-02): "【추론】 떼어진 노드의 `enabled`는 거짓이다: `enabled`는 `active`에서 도출되므로 26C-08의 예외를 따르며, 그래서 NODE-044 고정 읽기의 예외이고 갈무리한 `visible` 값과 무관하다." (`reviews/round-28-closing.md:26`)
+  > 편집자 결정(35C-09): "【추론】 `remove`·`pop`·`clear`·짧아진 통째 쓰기·로드로 소멸한 아이템과 그 자손은 NODE-044의 떼어진 노드다(읽기는 마지막 커밋에 고정, 구조 읽기는 함께 떼어진 하위 트리, `active`·`enabled`는 거짓, 구독은 남되 다시 발화하지 않음, 다시 들면 새 인스턴스); WRITE-036대로 나감 정책·나감 비움·잠복 포착·억제 비트·원본 B 기록은 없고, 런타임 경로를 키로 둔 저장소의 항목은 버린다." (`reviews/round-35-closing.md:74`)
+  > 편집자 결정(35C-09): "【추론】 옛 참조로의 쓰기는 NODE-044 그대로다: 같은 (경로, 종류)의 살아 있는 인스턴스가 있으면 아무것도 하지 않고(재인덱싱 뒤에는 보통 이 경우), 없으면 루트의 (경로, 종류) 잠복 원본만 고친다; 배열을 따로 다루지 않는다." (`reviews/round-35-closing.md:75`)
+  > 편집자 결정(35C-10): "【추론】 재진입은 그 값으로 아이템을 새 `#n` 키로 다시 만들고(NODE-044의 새 인스턴스, GOAL-073의 nonce), 채움은 로드·비로드 규칙대로 없음인 자손에만 간다(WRITE-007의 `push(v)` 규칙과 같다)." (`reviews/round-35-closing.md:83`)
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:943-959`(정본)
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-34)
@@ -860,7 +868,9 @@
   > 【추론】 입력의 초기화는 identity가 아니라 Refresh 규칙이 맡는다.
   > 【추론】 로드는 모든 노드에 Refresh를 내므로(REACT-019·WRITE-048) 잎 입력은 어차피 다시 마운트된다.
   > 【추론】 그래서 포커스를 지키는 이득(T-22)은 로드가 아닌 통째 쓰기에만 있다.
-- 보충: 없음
+- 보충:
+  > 편집자 결정(35C-02): "【추론】 구조 연산으로 아이템이 재인덱싱되면 PR-5가 그 아이템과 자손의 레코드 칸(이름·이스케이프한 이름·경로)을 고치고 `(previous, current)` 쌍을 레코드 수준의 사실로 남긴다; 그것을 `UpdatePath` 비트의 배달(EVENT-068의 payload `{ previous, current }`, 자손 포함)로 바꾸는 것은 디스패처(PR-4)의 일이라 33C-01대로 뒤에 머지하는 단계가 잇는다." (`reviews/round-35-closing.md:17`)
+  > 편집자 결정(35C-03): "【추론】 SURFACE-005가 배열 쓰기를 다섯(`push`·`pop`·`update`·`remove`·`clear`)으로 닫았고, 원장의 "삽입"은 모두 "`push(v)`·삽입"(WRITE-085, WRITE-099) 또는 "`push`·`remove`·`insert`류"(NODE-051)로 연산 부류를 이름한 것이라 공개 동사도 내부 연산도 아니다; 06은 삽입을 만들지 않고, WRITE-099의 스냅숏 게이트는 `push('x')`로 충족하며 삽입 쪽은 동사가 없어 해당 없음으로 적는다. 삽입 동사가 필요해지면 SURFACE 라운드다." (`reviews/round-35-closing.md:25`)
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:1638-1653`(정본)
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-59)

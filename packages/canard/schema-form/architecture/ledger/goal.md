@@ -1063,6 +1063,7 @@
   > 편집자 결정(18C-59): "【추론】 ㄱ 통째 쓰기의 identity는 위치로 재조정한다." (`reviews/round-18-closing.md:1638`)
   > 편집자 결정(18C-59): "【추론】 새 값의 i번째 아이템은 쓰기 시점 identity 목록의 i번째 노드와 그 키(`#n`)를 이어 받고, 그 노드의 원본을 새 값으로 쓴다." (`reviews/round-18-closing.md:1641`)
   > 편집자 결정(18C-59): "【추론】 그래서 포커스를 지키는 이득(T-22)은 로드가 아닌 통째 쓰기에만 있다." (`reviews/round-18-closing.md:1653`)
+  > 편집자 결정(35C-05): "【추론】 키 카운터는 되감지 않는다: GOAL-073의 아이템 React key는 생성 순서의 nonce이고 단조 증가가 되돌린 아이템과 뒤 아이템의 신원을 구별해 주며, 되감으면 다른 노드가 같은 nonce를 받는다; 되돌린 아이템은 순번에 빈자리만 남긴다." (`reviews/round-35-closing.md:41`)
 - 상태: 현행
 - 출처: `04-inherited-constraints.md:37`(정본), `reviews/round-18-closing.md:1638,1641,1653`
 - 닫은 사람: 편집자 결정(4라운드, `04-inherited-constraints.md:5` 수용 기준 검토), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-59)

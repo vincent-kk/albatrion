@@ -210,6 +210,7 @@
   > 편집자 결정(18C-59): "`push`는 구조 연산이다." (`reviews/round-18-closing.md:1655`)
   > 편집자 결정(18C-59): "만든 아이템은 생긴 노드로서 채움을 받는다(`controls.default` > `default` > 없음)." (`reviews/round-18-closing.md:1656`)
   > 편집자 결정(18C-59): "`push(v)`면 원본은 `v`이고, 없음인 자손에만 채움이 간다." (`reviews/round-18-closing.md:1657`)
+  > 편집자 결정(35C-06): "【추론】 `update(i, v)`는 i번째 아이템에 `v`를 통째로 쓰는 로드 아닌 쓰기이고(그 안의 위치 재조정은 NODE-051), WRITE-007대로 그 아이템만 바뀌며 WRITE-085대로 구조 연산이 아니라 키와 스냅숏 자리를 지킨다." (`reviews/round-35-closing.md:48`)
 - 상태: 현행
 - 출처: `adr/0013-core-does-not-rewrite-values.md:38-47`(정본), `03-mental-model.md:76-86`, `08-design-a-to-z.md:262-272`, `07-conclusions.md:110`, `02-target-overview.md:287`, `adr/0013-core-does-not-rewrite-values.md:106`, `reviews/round-18-owner-answers.md:12`, `reviews/round-18-closing.md:1654-1657`
 - 닫은 사람: 편집자 결정(5라운드, ADR 0013 5차 본문 `adr/0013-core-does-not-rewrite-values.md:13`), 소유자 답(`reviews/round-10-owner-answers.md:7` A-1; 채움 행), 소유자 답(`reviews/round-10-owner-answers.md:19` D-6; `controls.injectTo`의 로드 발화), 편집자 결정(9라운드 도출, `07-conclusions.md:276`; `controls.derived` 행의 에지), 소유자 답(`reviews/round-12-owner-answers.md:19` §9 로드에서 `&derived`; `controls.derived`의 로드 발화), 소유자 답(`reviews/round-10-owner-answers.md:29,39` E-21; `controls.unsetValue` 행), 소유자 답(`reviews/round-13-owner-answers.md:8` 2 나감 비움 기본값; 나감의 비움 행), 소유자 답(`reviews/round-17-owner-answers.md:10` R17-2; 나감의 비움 행의 하위 트리), 소유자 답(`reviews/round-17-owner-answers.md:11` R17-3; 리프 입력 행의 `options.trim`), 편집자 결정(17라운드, `reviews/round-17-owner-answers.md:11` 반영 칸; 리프 입력 행에 둔 쓰기 종류), 편집자 결정(18라운드, 소유자 물음으로 올림, `reviews/round-18-agenda.md:160`), 소유자 답(`reviews/round-18-owner-answers.md:12` 12-2; trim 행만 WRITE-078로 대체), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-59)
@@ -423,7 +424,8 @@
   > | 배열을 `minItems`까지 채우기, `maxItems` 초과 `push` 차단 | **입력 컴포넌트로.** core는 제약을 유효 스키마로 노출하고 위반은 검증이 알린다 |
   > | nullable이 아닌 객체의 `null`을 `{}`로 바꾸기(S7), 비객체 값 버리기 | **폐기.** 보존·방출하고 type 에러를 낸다. 동작 변화로 기록한다(F27, `04-inherited-constraints.md`) |
   > | `Normalize`의 미선언 키 제거 | **폐기.** 미선언 키는 `extras` 칸에 보존하고 받은 순서로 방출한다(E16) |
-- 보충: 없음
+- 보충:
+  > 편집자 결정(35C-04): "【추론】 NODE-009(behaviors 밖에서도 쓰는 것은 `blueprint/`로)와 LANDING-085·094(PR-5의 이동)대로 `resolveArrayLimits`는 `blueprint/`의 조직에 두고 청사진 진입점에서 이름으로 내보내며, 조각이 준 `minItems`·`maxItems`가 세어지도록 유효 스키마의 `schema`를 받는다(WRITE-022 "제약을 유효 스키마로 노출"); 코어는 채우지도 막지도 않는다." (`reviews/round-35-closing.md:32`)
 - 상태: 현행
 - 출처: `adr/0013-core-does-not-rewrite-values.md:86,90-92`(정본), `open-questions.md:52`
 - 닫은 사람: 소유자 답(`reviews/round-2.md:119` 새 원칙; 배열 행), 편집자 결정(5라운드, ADR 0013 4차 본문 `adr/0013-core-does-not-rewrite-values.md:12`; F27·E16)
@@ -599,6 +601,9 @@
   > 쓰기로 원본이 없어진 소멸(배열 아이템 `remove`, 통째 교체, 로드)은 나감이 아니다. `controls.children` 항목의 `controls.active: false`는 노드 게이트다.
 - 보충:
   > "쓰기로 원본 자체가 없어져 노드가 사라지는 것(배열 아이템 `remove`, 통째 교체로 짧아진 배열, 로드)은 나감이 아니라 소멸이며 비움의 대상도, 억제 비트·원본 B의 기록 대상도 아니다. 비객체 호스트 아래 자식은 존재하므로 나감이 아니다. 부모 `controls.children` 항목의 `controls.active: false`(항목 게이트)는 노드 게이트와 같은 장치라 그 노드 자신의 나감이며 층(자기 키 > 그 항목을 포함한 `children` 항목 > 조각)을 그대로 센다(17라운드 스웜 수렴(편집자 결정))." (`08-design-a-to-z.md:299`)
+  > 편집자 결정(35C-05): "【추론】 자동 쓰기(채움·`derived`·`injectTo`·`unsetValue`·나감 비움)가 배열 호스트에 닿아 아이템을 만들거나 없애면 정착 작업장이 {호스트, 이전 아이템 목록(순서 있는 노드 참조), 이전 `extras`}를 적고, 예산 초과 때 기존 자동 쓰기 기록과 함께 거꾸로 되돌려 원본 B에 호출자 쓰기만의 구조를 남긴다(LANDING-062 충돌 줄과 TEST-069가 PR-5로 둔 기록); 그 정착에서 생겼다가 되돌린 아이템은 커밋된 형상에 한 번도 들지 않으므로 생김이 아니고 채움도 받지 않으며, 없어지는 아이템은 WRITE-036대로 나감이 아니다." (`reviews/round-35-closing.md:40`)
+  > 편집자 결정(35C-08): "【추론】 아이템 선언의 노드 게이트와 아이템 스키마의 게이트 조각은 허용된다(BLUEPRINT-030은 게이트를 형상 확장의 경계로 센다); 게이트로 형상을 떠난 아이템은 WRITE-036의 소멸 목록(`remove`·짧아진 통째 쓰기·로드)에 없으므로 나감이며 나감 정책·비움·잠복 포착이 런타임 경로를 키로 적용되고, 자리는 색인이라 남아 VALUE-034대로 방출 없는 자리로 채운다(객체 `{}`, 배열 `[]`, 잎 `null`; `omitTrailing`은 그런 꼬리를 자른다)." (`reviews/round-35-closing.md:67`)
+  > 편집자 결정(35C-09): "【추론】 `remove`·`pop`·`clear`·짧아진 통째 쓰기·로드로 소멸한 아이템과 그 자손은 NODE-044의 떼어진 노드다(읽기는 마지막 커밋에 고정, 구조 읽기는 함께 떼어진 하위 트리, `active`·`enabled`는 거짓, 구독은 남되 다시 발화하지 않음, 다시 들면 새 인스턴스); WRITE-036대로 나감 정책·나감 비움·잠복 포착·억제 비트·원본 B 기록은 없고, 런타임 경로를 키로 둔 저장소의 항목은 버린다." (`reviews/round-35-closing.md:74`)
 - 상태: 현행
 - 출처: `03-mental-model.md:94#22-23`(정본), `08-design-a-to-z.md:299`
 - 닫은 사람: 17라운드 스웜 수렴(편집자 결정, `reviews/raw-round17-convergence.md:78` O8-다; 소멸), 17라운드 스웜 수렴(편집자 결정, `08-design-a-to-z.md:299`; 항목 게이트의 층)
@@ -1298,6 +1303,8 @@
   > 편집자 결정(18C-97): "【추론】 없어진 아이템의 자리는 잘라 내고, 새 아이템의 자리에는 `undefined`를 넣으며, 값은 싣지 않는다." (`reviews/round-18-closing.md:2780`)
   > 편집자 결정(18C-105): "【추론】 구조 연산(`push(v)`·삽입)은 WRITE-085대로 생성 값 `v`를 스냅숏 자리에 넣고, 아이템을 만드는 비구조 쓰기만 `undefined`를 넣는다." (`reviews/round-18-closing.md:2954`)
   > 편집자 결정(26C-06): "【추론】 원장이 "루트가 든다"고 적은 트리 전체 자료(로드 스냅숏, 잠복 원본, 경고등 경로 집합, 잠복 원본 열거의 메모)의 저장 자리는 트리마다 하나인 `SchemaNodeRuntime`의 칸이며, 루트는 자기 `runtime` 필드를 통해 그것을 든다." (`reviews/round-26-closing.md:66`)
+  > 편집자 결정(35C-06): "【추론】 `update(i, v)`는 i번째 아이템에 `v`를 통째로 쓰는 로드 아닌 쓰기이고(그 안의 위치 재조정은 NODE-051), WRITE-007대로 그 아이템만 바뀌며 WRITE-085대로 구조 연산이 아니라 키와 스냅숏 자리를 지킨다." (`reviews/round-35-closing.md:48`)
+  > 편집자 결정(35C-06): "【추론】 범위 밖([0, 길이) 밖)·음수 인덱스의 `update`·`remove`, 빈 배열의 `pop()`, 값이 `null`인 터미널 배열의 `update`·`remove`·`pop`은 원장이 정한 바가 없으므로 레거시(`src/__legacy__/core/nodes/ArrayNode/strategies/BranchStrategy/BranchStrategy.ts:413-447`, `TerminalStrategy/TerminalStrategy.ts:195-224`)를 따라 오류도 경고도 없는 무효 호출이다; 새 코드는 없고 06의 시험이 무효 호출을 단언해 고정한다." (`reviews/round-35-closing.md:49`)
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:1220-1236`(정본), `reviews/round-18-closing.md:2779-2780,2883-2884`, `reviews/round-18-closing.md:2954`
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-44), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-97), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-103), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-105)
@@ -1670,6 +1677,7 @@
   > 편집자 결정(25C-11): "【추론】 `union.kind-procedure.test.ts`의 단언은 위 네 파일의 표 행과 `blueprint.type-gated-declarations.test.ts`의 정적 소유자 없는 분기 접기 충돌 사례에, `union.null-only.test.ts`는 위 표 행에, `union.static-intersection.test.ts`는 `blueprint.type-static-intersection.test.ts`에, `union.schema-type-invariant.test.ts`는 `blueprint.type-syntax.test.ts`의 E1–E9 불변식에, `union.gated-narrowing.test.ts`는 `blueprint.type-gated-declarations.test.ts`에, `union.terminal-subtree-warning.test.ts`는 `blueprint.diagnostics.test.ts`와 `blueprint.type-syntax.test.ts`의 E28에 있다." (`reviews/round-25-closing.md:104`)
   > 편집자 결정(26C-02): "【추론】 PR-2에 배정된 "렌더 시나리오" 게이트는 시나리오를 `@aileron/schema-form-scenarios`의 순수 데이터로 두고, 코어 시나리오 시험(`src/core/__tests__/scenarios/<부류>.spec.ts`)이 새 노드 트리에서 돌리는 것으로 통과를 잰다." (`reviews/round-26-closing.md:22`)
   > 편집자 결정(26C-02): "【추론】 게이트 문장의 `FormHandle.reset()`은 코어에서 루트 노드의 폼 수준 로드(마운트와 같은 초기화 범위, 로드 스냅숏 갱신)로 읽고, `resetSubtree()`는 그 노드의 로드로 읽는다." (`reviews/round-26-closing.md:24`)
+  > 편집자 결정(35C-03): "【추론】 SURFACE-005가 배열 쓰기를 다섯(`push`·`pop`·`update`·`remove`·`clear`)으로 닫았고, 원장의 "삽입"은 모두 "`push(v)`·삽입"(WRITE-085, WRITE-099) 또는 "`push`·`remove`·`insert`류"(NODE-051)로 연산 부류를 이름한 것이라 공개 동사도 내부 연산도 아니다; 06은 삽입을 만들지 않고, WRITE-099의 스냅숏 게이트는 `push('x')`로 충족하며 삽입 쪽은 동사가 없어 해당 없음으로 적는다. 삽입 동사가 필요해지면 SURFACE 라운드다." (`reviews/round-35-closing.md:25`)
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:2938-2957,2969-2984`(정본), `reviews/round-18-owner-answers.md:24`, `08-design-a-to-z.md:575`
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-105), 소유자 답(`reviews/round-18-owner-answers.md:24` 18C 검토 1번; 입력이 보내는 값), 편집자 결정(18라운드, LANDING-065; 배열 스냅숏 시험은 PR-5)
