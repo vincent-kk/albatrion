@@ -89,7 +89,7 @@
 
 ### `SchemaNode.ts` — 시나리오 러너의 런타임 레코드 형
 
-- **Consumers**: `**/src/core/__tests__/scenarios/utils/createCoreScenarioAdapter.ts`, `**/src/core/__tests__/scenarios/utils/executeCoreScenarioStep.ts`
+- **Consumers**: `**/src/core/__tests__/scenarios/utils/createCoreScenarioAdapter.ts`, `**/src/core/__tests__/scenarios/utils/createObservedCoreScenarioAdapter.ts`, `**/src/core/__tests__/scenarios/utils/executeCoreScenarioStep.ts`
 - **Direct import**: `allowed`
 - **Reason**: settle 진입 함수가 받는 런타임 레코드 형을 위해 클래스 형만 `import type`으로 읽습니다. 진입점은 공개 합집합 형만 내보내므로 시험을 위해 넓히지 않습니다(NODE-016, 실행 ADR D7에서 벗어남 — 03 계획 로그 §4).
 

@@ -15,7 +15,7 @@ import { makeSchemaNodeTree } from '../makeSchemaNodeTree';
 const uniquePaths = (paths: string[]): string[] => paths
   .filter((path, index) => paths.indexOf(path) === index).sort();
 
-// filid:contract scenario-runner
+// filid:contract scenario-differential
 describe('same-ajv path comparison on the core node tree', () => {
   it.each(validationScenarios)('$name', async (scenario) => {
     const direct = new Ajv({ strict: false, allErrors: true,
