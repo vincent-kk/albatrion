@@ -88,6 +88,7 @@ export const applyArraySlots = <Self extends SchemaNodeRecord<Self>>(
   }
   if (perishedPaths) prunePerishedPaths(host.runtime, perishedPaths);
   rekeyArrayRuntimePaths(host.runtime, host.path, moves);
+  context.latentDescendantKeys = undefined;
 
   for (const [name, item] of Object.entries(nextItems)) {
     if (!reused.has(item) || item.name === name) continue;

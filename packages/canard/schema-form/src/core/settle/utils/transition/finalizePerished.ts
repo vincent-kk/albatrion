@@ -35,10 +35,16 @@ export const finalizePerished = <Self extends SchemaNodeRecord<Self>>(
     if (!node.parent?.structure?.[node.name])
       (perishedPaths ??= new Set()).add(node.path);
   }
-  if (perishedPaths) prunePerishedPaths(context.root.runtime, perishedPaths);
+  if (perishedPaths) {
+    prunePerishedPaths(context.root.runtime, perishedPaths);
+    context.latentDescendantKeys = undefined;
+  }
   const resizedHosts = new Map<string, number>();
   for (const [host, previousCount] of context.arrayCounts)
     if (!host.detached && host.itemCount !== previousCount)
       resizedHosts.set(host.path, host.itemCount);
-  if (resizedHosts.size) pruneArrayTailPaths(context.root.runtime, resizedHosts);
+  if (resizedHosts.size) {
+    pruneArrayTailPaths(context.root.runtime, resizedHosts);
+    context.latentDescendantKeys = undefined;
+  }
 };

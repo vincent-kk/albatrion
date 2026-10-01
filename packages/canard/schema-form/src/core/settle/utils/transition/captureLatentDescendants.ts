@@ -5,7 +5,7 @@ import { getControlLayers } from '../controls/getControlLayers';
 import { readExitLayerPolicy } from '../controls/readExitLayerPolicy';
 import { readLatentExitPolicy } from '../controls/readLatentExitPolicy';
 import { writeLatentRaw } from './writeLatentRaw';
-import { indexLatentDescendant } from '../latent/indexLatentDescendant';
+import { getLatentPathIndex } from '../latent/getLatentPathIndex';
 
 /** One stored source and its last-live exit decisions. */
 interface LatentEntry {
@@ -41,20 +41,16 @@ export const captureLatentDescendants = <Self extends SchemaNodeRecord<Self>>(
   context: SettlementContext<Self>, node: Self, inherited: boolean,
 ): void => {
   const runtime = context.root.runtime;
-  let index = context.latentDescendantKeys;
-  if (!index) {
-    index = new Map();
-    for (const key of runtime.latentRaw.keys()) {
-      const path = runtime.latentRawMetadata?.get(key)?.path;
-      if (path !== undefined) indexLatentDescendant(index, key, path, true);
-    }
-    context.latentDescendantKeys = index;
-  }
+  const index = getLatentPathIndex(context);
   const entries: LatentEntry[] = [];
   for (const key of index.get(node.path) ?? []) {
+    const identity: unknown = JSON.parse(key);
+    if (!Array.isArray(identity) || typeof identity[0] !== 'string') continue;
+    const path = identity[0];
+    if (path === node.path) continue;
     const info = runtime.latentRawMetadata?.get(key);
     if (info)
-      entries.push({ key, path: info.path, order: info.order,
+      entries.push({ key, path, order: info.order,
         exitLayers: info.exitLayers });
   }
   entries.sort((left, right) => left.path.length - right.path.length);

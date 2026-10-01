@@ -27,5 +27,6 @@ export const snapshotExitedPolicies = <Self extends SchemaNodeRecord<Self>>(
         clear: readExitLayerPolicy([group], runtime.committedRuleValues, false),
       }));
       runtime.latentRawMetadata?.set(key, { ...metadata, exitLayers });
+      context.latentDescendantKeys = undefined;
     });
 };

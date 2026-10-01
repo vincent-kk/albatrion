@@ -85,7 +85,7 @@ export interface SettlementContext<Self extends SchemaNodeRecord<Self>> {
   latentAutomaticLog: Map<string, { present: boolean; value: unknown }>;
   /** Proper ancestor paths of current latent keys, rebuilt after map changes. */
   latentPrefixes?: Set<string>;
-  /** Latent keys under each proper ancestor, built only when exit policy needs them. */
+  /** Latent keys under their own path and each ancestor, built on first path lookup. */
   latentDescendantKeys?: Map<string, Set<string>>;
   /** Whether marking is currently applying a transition write. */
   automatic: boolean;

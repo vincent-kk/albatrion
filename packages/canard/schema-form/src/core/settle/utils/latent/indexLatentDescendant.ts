@@ -1,17 +1,15 @@
 /**
- * Keep a settlement's proper-ancestor lookup in step with one latent key.
- * @param index - Call-local descendant keys grouped by ancestor path
+ * Keep a settlement's path lookup in step with one latent key.
+ * @param index - Call-local keys grouped by their path and ancestor paths
  * @param key - Encoded path and kind stored in latentRaw
- * @param path - Decoded absolute path from the key's metadata
+ * @param path - Decoded absolute path from the key
  * @param present - Whether the key is now present in latentRaw
  * @returns Nothing; the index is updated in place
  */
 export const indexLatentDescendant = (
   index: Map<string, Set<string>>, key: string, path: string, present: boolean,
 ): void => {
-  const separator = path.lastIndexOf('/');
-  if (separator < 0) return;
-  let ancestor = path.slice(0, separator);
+  let ancestor = path;
   while (true) {
     if (present) {
       const descendants = index.get(ancestor) ?? new Set<string>();

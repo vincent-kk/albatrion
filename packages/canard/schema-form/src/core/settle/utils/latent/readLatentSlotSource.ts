@@ -4,7 +4,7 @@ import type { BlueprintNode } from '../../../blueprint';
 import type { SchemaNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../type';
 import { isPlain } from '../write/isPlain';
-import { hasLatentUnder } from './hasLatentUnder';
+import { getLatentPathIndex } from './getLatentPathIndex';
 import { HostLatent } from './HostLatent';
 
 /**
@@ -23,7 +23,19 @@ export const readLatentSlotSource = <Self extends SchemaNodeRecord<Self>>(
   if (own instanceof HostLatent && own.raw !== undefined) return own.raw;
   if (template.kind !== 'object' || template.strategy !== 'branch')
     return undefined;
-  if (own === undefined && !hasLatentUnder(context, path)) return undefined;
+  if (own === undefined) {
+    const ignored = new Set<string>();
+    for (const node of [...context.entered, ...context.revived])
+      if (!node.detached && (!node.parent || node.parent.structure?.[node.name] === node))
+        ignored.add(JSON.stringify([node.path, node.blueprintNode.kind]));
+    let hasDescendant = false;
+    for (const key of getLatentPathIndex(context).get(path) ?? []) {
+      if (ignored.has(key) || JSON.parse(key)[0] === path) continue;
+      hasDescendant = true;
+      break;
+    }
+    if (!hasDescendant) return undefined;
+  }
   const value: Record<string, unknown> = own instanceof HostLatent &&
     isPlain(own.extras) ? { ...own.extras } : {};
   let found = Object.keys(value).length > 0;

@@ -28,6 +28,30 @@ const gatedRows = (count: number) => {
   return { root, runtime: root.runtime };
 };
 
+/**
+ * Count latent key visits made by one settlement operation.
+ * @param latent - Store whose key iterator is the measured operation
+ * @param action - Settlement operation to run while visits are counted
+ * @returns Number of latent keys yielded during the operation
+ */
+const countLatentKeyVisits = (latent: Map<string, unknown>, action: () => void): number => {
+  const keys = latent.keys.bind(latent);
+  let visited = 0;
+  const spy = vi.spyOn(latent, 'keys').mockImplementation(function* () {
+    for (const key of keys()) {
+      visited++;
+      yield key;
+    }
+    return undefined;
+  });
+  try {
+    action();
+  } finally {
+    spy.mockRestore();
+  }
+  return visited;
+};
+
 // filid:contract settle-array
 describe('44C-01 array settlement scaling', () => {
   it('48C-01 SETTLE-017 visits inactive memo entries linearly on mass exit', () => {
@@ -108,6 +132,104 @@ describe('44C-01 array settlement scaling', () => {
             [JSON.stringify([path, 'string']), value]));
       }
     }
+  });
+
+  it('48C-01 SETTLE-017 bounds latent key visits for exit, capture and absent writes', () => {
+    const count = 250;
+    const tags = makeSchemaNodeTree({ type: 'object', properties: {
+      flag: { type: 'boolean' }, rows: { type: 'array', items: {
+        type: 'object', properties: { tags: { type: 'array',
+          controls: { active: '#/flag' }, items: { type: 'string' } } },
+      } },
+    } }).root;
+    if (!(tags instanceof SchemaNode)) throw new Error('Expected a runtime SchemaNode');
+    const tagRows = Array.from({ length: count }, (_, index) =>
+      ({ tags: [String(index)] }));
+    tags.setValue({ flag: true, rows: tagRows });
+    const tagVisits = countLatentKeyVisits(tags.runtime.latentRaw,
+      () => tags.find('/flag')!.setValue(false));
+    expect(tags.value).toEqual({ flag: false,
+      rows: Array.from({ length: count }, () => ({})) });
+    expect(tags.inactiveValues).toEqual(tagRows.map((row, index) =>
+      ({ path: `/rows/${index}/tags`, value: row.tags })));
+    tags.find('/flag')!.setValue(true);
+    expect(tags.value).toEqual({ flag: true, rows: tagRows });
+    expect(tags.inactiveValues).toEqual([]);
+
+    const list = makeSchemaNodeTree({ type: 'object', properties: {
+      flag: { type: 'boolean' }, rows: { type: 'array', items: {
+        type: 'object', properties: { list: { type: 'array',
+          controls: { active: '#/flag' }, items: { type: 'object',
+            controls: { active: './on === true' }, properties: {
+              on: { type: 'boolean' }, child: { type: 'string' },
+            } },
+        } },
+      } },
+    } }).root;
+    if (!(list instanceof SchemaNode)) throw new Error('Expected a runtime SchemaNode');
+    const listRows = Array.from({ length: count }, (_, index) =>
+      ({ list: [{ on: false, child: String(index) }] }));
+    list.setValue({ flag: true, rows: listRows });
+    const listVisits = countLatentKeyVisits(list.runtime.latentRaw,
+      () => list.find('/flag')!.setValue(false));
+    expect(list.value).toEqual({ flag: false,
+      rows: listRows.map(() => ({})) });
+    expect(list.inactiveValues).toEqual(listRows.map((row, index) =>
+      ({ path: `/rows/${index}/list`, value: row.list })));
+    list.find('/flag')!.setValue(true);
+    expect(list.value).toEqual({ flag: true, rows: listRows.map(() =>
+      ({ list: [{}] })) });
+    expect(list.inactiveValues).toEqual(listRows.flatMap((row, index) => [
+      { path: `/rows/${index}/list/0/on`, value: row.list[0].on },
+      { path: `/rows/${index}/list/0/child`, value: row.list[0].child },
+    ]));
+
+    const properties = Object.fromEntries(Array.from({ length: count }, (_, index) =>
+      [`g${index}`, { type: 'object' as const, controls: { active: '#/flag' },
+        properties: { child: { type: 'string' as const } } }]));
+    const absent = makeSchemaNodeTree({ type: 'object', properties: {
+      flag: { type: 'boolean' }, ...properties,
+    } }).root;
+    if (!(absent instanceof SchemaNode)) throw new Error('Expected a runtime SchemaNode');
+    const absentRows = Object.fromEntries(Array.from({ length: count }, (_, index) =>
+      [`g${index}`, { child: String(index) }]));
+    absent.setValue({ flag: false });
+    const absentVisits = countLatentKeyVisits(absent.runtime.latentRaw,
+      () => absent.setValue({ flag: false, ...absentRows }));
+    expect(absent.value).toEqual({ flag: false });
+    expect(absent.inactiveValues).toEqual(Array.from({ length: count }, (_, index) =>
+      ({ path: `/g${index}/child`, value: String(index) })));
+    absent.find('/flag')!.setValue(true);
+    expect(absent.value).toEqual({ flag: true, ...absentRows });
+    expect(absent.inactiveValues).toEqual([]);
+
+    expect(tagVisits).toBeLessThan(count * 12);
+    expect(listVisits).toBeLessThan(count * 12);
+    expect(absentVisits).toBeLessThan(count * 12);
+  });
+
+  it('48C-01 retains sibling latent descendants added after an index read', () => {
+    const group = { type: 'object' as const,
+      controls: { active: '#/f2', unsetOnInactive: true },
+      properties: { m: { type: 'object' as const,
+        controls: { unsetOnInactive: false },
+        properties: { x1: { type: 'string' as const,
+          controls: { active: '#/f1' } } },
+      } },
+    };
+    const { root } = makeSchemaNodeTree({ type: 'object', properties: {
+      f1: { type: 'boolean' }, f2: { type: 'boolean' },
+      xa: group, xb: group,
+    } });
+    root.setValue({ f1: true, f2: true,
+      xa: { m: { x1: 'A', extra: 'a' } },
+      xb: { m: { x1: 'B', extra: 'b' } } });
+    root.find('/f1')!.setValue(false);
+    root.find('/f2')!.setValue(false);
+    expect(root.inactiveValues).toEqual(expect.arrayContaining([
+      { path: '/xa/m/x1', value: 'A' },
+      { path: '/xb/m/x1', value: 'B' },
+    ]));
   });
 
   it('44C-01 SETTLE-047 scans path stores once when nested arrays grow', () => {

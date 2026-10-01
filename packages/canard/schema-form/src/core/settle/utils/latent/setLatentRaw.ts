@@ -14,7 +14,7 @@ import { indexLatentDescendant } from './indexLatentDescendant';
  * @param value - Replacement source, including explicit undefined
  * @param template - Blueprint classification for a new entry
  * @param order - Occurrence's document order from the root
- * @param context - Settlement whose latent-prefix memo must be invalidated
+ * @param context - Settlement whose path index and prefix memo track this write
  * @returns Nothing; the tree's latent map changes in place
  */
 export const setLatentRaw = <Self extends SchemaNodeRecord<Self>>(
@@ -28,7 +28,9 @@ export const setLatentRaw = <Self extends SchemaNodeRecord<Self>>(
   const had = latent.has(key);
   const prior = latent.get(key);
   const index = context?.latentDescendantKeys;
-  const previousPath = index ? runtime.latentRawMetadata?.get(key)?.path : undefined;
+  const identity: unknown = index ? JSON.parse(key) : undefined;
+  const path = isArray(identity) && typeof identity[0] === 'string' ?
+    identity[0] : undefined;
   const missingMetadata = present && template !== undefined &&
     !runtime.latentRawMetadata?.has(key);
   if (log && !log.has(key)) log.set(key, { present: had, value: prior });
@@ -41,13 +43,10 @@ export const setLatentRaw = <Self extends SchemaNodeRecord<Self>>(
     if (isArray(identity) && typeof identity[0] === 'string')
       metadata.set(key, { path: identity[0], blueprintNode: template, order });
   }
-  const currentPath = index ? runtime.latentRawMetadata?.get(key)?.path : undefined;
-  if (index && had && previousPath !== undefined &&
-    (!present || previousPath !== currentPath))
-    indexLatentDescendant(index, key, previousPath, false);
-  if (index && present && currentPath !== undefined &&
-    (!had || previousPath !== currentPath))
-    indexLatentDescendant(index, key, currentPath, true);
+  if (index && path !== undefined && had && !present)
+    indexLatentDescendant(index, key, path, false);
+  if (index && path !== undefined && present && !had)
+    indexLatentDescendant(index, key, path, true);
   if (had !== present || present && !Object.is(prior, value) || missingMetadata) {
     runtime.latentRawDirty = true;
     if (context) context.latentPrefixes = undefined;
