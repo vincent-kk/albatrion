@@ -80,7 +80,7 @@ class DependencyIndex {
         const path = entry.bindable
           ? bindTemplatePath(entry.path, changedPath) : entry.path;
         if (path.includes('/*'))
-          for (const expanded of expandTemplatePaths(root, entry.path))
+          for (const expanded of expandTemplatePaths(root, path))
             owners.add(expanded);
         else owners.add(path);
       }

@@ -8,6 +8,7 @@ import { writeSchemaNode } from '../index';
 import { dirtyChildren } from '../utils/compute/dirtyChildren';
 import { createSettlementContext } from '../utils/settlement/createSettlementContext';
 import { getSettlementScratch } from '../utils/write/getSettlementScratch';
+import { getDependencyIndex } from '../utils/write/getDependencyIndex';
 import { releaseSettlementScratch } from '../utils/write/releaseSettlementScratch';
 
 const schema = { type: 'array' as const, items: { type: 'object' as const,
@@ -54,6 +55,39 @@ const countLatentKeyVisits = (latent: Map<string, unknown>, action: () => void):
 
 // filid:contract settle-array
 describe('44C-01 array settlement scaling', () => {
+  it('49C-01 SETTLE-017 bounds dependency owners when every row list grows', () => {
+    const count = 2000;
+    const { root } = makeSchemaNodeTree({ type: 'object', properties: {
+      rows: { type: 'array', items: { type: 'object', properties: {
+        list: { type: 'array', items: { type: 'object',
+          controls: { active: './on === true' }, properties: {
+            on: { type: 'boolean' }, value: { type: 'string' },
+          } } },
+      } } },
+    } });
+    root.setValue({ rows: Array.from({ length: count }, (_, index) =>
+      ({ list: [{ on: false, value: String(index) }] })) });
+    if (!(root instanceof SchemaNode))
+      throw new Error('Expected a runtime SchemaNode');
+    const index = getDependencyIndex(root.runtime.blueprint);
+    const affected = index.affected.bind(index);
+    let owners = 0;
+    const spy = vi.spyOn(index, 'affected').mockImplementation((path, tree) => {
+      const result = affected(path, tree);
+      owners += result.length;
+      return result;
+    });
+    try {
+      root.setValue({ rows: Array.from({ length: count }, (_, row) =>
+        ({ list: [{ on: false, value: String(row) },
+          { on: false, value: 'added' }] })) });
+      if (process.env.SETTLE_SCALING_PROBE) console.info(`B2 owners: ${owners}`);
+      expect(owners).toBeLessThan(count * 12);
+    } finally {
+      spy.mockRestore();
+    }
+  });
+
   it('48C-01 SETTLE-017 visits inactive memo entries linearly on mass exit', () => {
     const count = 2000;
     const { root } = gatedRows(count);
