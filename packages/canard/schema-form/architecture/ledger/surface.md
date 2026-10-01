@@ -147,6 +147,9 @@
   > "`pop()`, `update(index, value)`" (`06-conclusions.md:386`)
   > "`remove(index)`, `clear()`" (`06-conclusions.md:386`)
   > 편집자 결정(18C-44): "【추론】 `node.resetSubtree()`는 진입 하나에서 `clearSubtreeState()`를 한 뒤 `node.defaultValue`를 그 하위 트리에 로드한다." (`reviews/round-18-closing.md:1227`)
+  > 편집자 결정(35C-03): "【추론】 SURFACE-005가 배열 쓰기를 다섯(`push`·`pop`·`update`·`remove`·`clear`)으로 닫았고, 원장의 "삽입"은 모두 "`push(v)`·삽입"(WRITE-085, WRITE-099) 또는 "`push`·`remove`·`insert`류"(NODE-051)로 연산 부류를 이름한 것이라 공개 동사도 내부 연산도 아니다; 06은 삽입을 만들지 않고, WRITE-099의 스냅숏 게이트는 `push('x')`로 충족하며 삽입 쪽은 동사가 없어 해당 없음으로 적는다. 삽입 동사가 필요해지면 SURFACE 라운드다." (`reviews/round-35-closing.md:25`)
+  > 편집자 결정(35C-06): "【추론】 `update(i, v)`는 i번째 아이템에 `v`를 통째로 쓰는 로드 아닌 쓰기이고(그 안의 위치 재조정은 NODE-051), WRITE-007대로 그 아이템만 바뀌며 WRITE-085대로 구조 연산이 아니라 키와 스냅숏 자리를 지킨다." (`reviews/round-35-closing.md:48`)
+  > 편집자 결정(35C-06): "【추론】 범위 밖([0, 길이) 밖)·음수 인덱스의 `update`·`remove`, 빈 배열의 `pop()`, 값이 `null`인 터미널 배열의 `update`·`remove`·`pop`은 원장이 정한 바가 없으므로 레거시(`src/__legacy__/core/nodes/ArrayNode/strategies/BranchStrategy/BranchStrategy.ts:413-447`, `TerminalStrategy/TerminalStrategy.ts:195-224`)를 따라 오류도 경고도 없는 무효 호출이다; 새 코드는 없고 06의 시험이 무효 호출을 단언해 고정한다." (`reviews/round-35-closing.md:49`)
 - 상태: 현행
 - 출처: `08-design-a-to-z.md:411`(정본), `02-target-overview.md:306`, `06-conclusions.md:338,386`, `07-conclusions.md:350`, `05-before-after.md:77` (같은 규칙: FRAGMENT-010, WRITE-015, EVENT-002; `resetSubtree`의 존폐는 열림 WRITE-050), `reviews/round-18-closing.md:1227`
 - 닫은 사람: 편집자 결정(9라운드, `07-conclusions.md:350` N6 나머지 그대로), 소유자 답(`reviews/round-10-owner-answers.md:9` A-3; `setSelectedBranch` 없음), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-44)
@@ -302,7 +305,9 @@
   > | 자리 | 이름 | 뜻 |
   > | --- | --- | --- |
   > | 오류 클래스 | `JSONSchemaError`(throw), `SchemaFormError`, `ValidationError`, `UnhandledError`, 인터페이스 `ValidationIssue`, 기록 형 `FormErrorRecord`와 코드 형 `FormErrorCode`(가칭. 코드 목록은 공개 계약, ADR 0014 §7) | §11.3 |
-- 보충: 없음
+- 보충:
+  > 편집자 결정(32C-02): "【추론】 ajv 플러그인 셋은 `@canard/schema-form`을 런타임 의존성으로 갖지 않으므로(형만 가져온다) 코어 클래스를 던지려면 새 런타임 의존성이 필요한데, 원장은 그런 의존을 정하지 않았다; 플러그인이 이미 런타임 의존성으로 가진 `@winglet/common-utils`의 `BaseError`를 그룹 `'UNHANDLED_ERROR'`·코드 `'VALIDATOR_BIND_REFUSED'`로 던진다(코어 `UnhandledError`와 같은 기반 클래스·같은 그룹·코드 모양). 플러그인 안의 하위 클래스로 감싸도 되나 `name`은 자기 이름을 적고 코어 클래스를 사칭하지 않는다." (`reviews/round-32-closing.md:19`)
+  > 편집자 결정(32C-02): "【추론】 코어의 `isUnhandledError`는 `instanceof` 가드라 이 객체를 알아보지 못하며 이는 받아들인다: 이 사건은 폼 밖에서 플러그인의 `bind` 호출자에게 가는 것이라 코어의 가드로 거를 자리가 없고, 호출자는 `group`과 `code`로 가른다. 플러그인 문서에 이 한 줄을 적는다." (`reviews/round-32-closing.md:20`)
 - 상태: 현행
 - 출처: `08-design-a-to-z.md:420`(정본) (같은 규칙: ERROR-013, ERROR-031, ERROR-164, ERROR-165)
 - 닫은 사람: 편집자 결정(17라운드, ADR 0014 4판 채택 `adr/0014-error-policy.md:3`)
@@ -824,7 +829,8 @@
   > 【추론】 어느 노드에서 읽어도 같다(오늘과 같음).
   > 【추론】 두 메서드는 그 노드의 하위 트리에 거는 `dispatch` 진입이다.
   > 【추론】 `FormHandle`의 `getState`·`setState`·`clearState`·`getErrors`는 오늘처럼 루트에 위임한다.
-- 보충: 없음
+- 보충:
+  > 편집자 결정(43C-01): "【추론】 셈(키별 참 노드 수)과 현재 `globalState` 객체는 NODE-004·26C-06대로 트리마다 하나인 `SchemaNodeRuntime`의 칸이고(칸을 더하는 절차는 NODE-045), 모든 노드의 `globalState` 게터는 SURFACE-053대로 그 런타임을 읽는 문장 하나다; 셈의 갱신은 두 곳이다 — 상태를 쓰는 `dispatch` 진입(`setState`, `setSubtreeState`, `clearSubtreeState`)에서 키마다 거짓→참이면 더하고 참→거짓이면 빼며, 정착 커밋에서 형상에 든 노드는 그때 참인 키의 수만큼 더하고 형상을 떠난 노드는 그만큼 뺀다. 커밋의 이 덧붙임은 `settle`의 공유 자리라 06과 부딪히면 33C-01의 결대로 뒤에 머지하는 쪽이 맞춘다." (`reviews/round-43-closing.md:10`)
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:1155-1159`(정본)
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-41)
@@ -914,6 +920,7 @@
   > 반영 칸(설계서 메모 3): "SURFACE-058의 겉면 수(명령 4 → 1, 약 57 → 약 54)" (`reviews/round-18-owner-answers.md:40`)
   > 편집자 결정(26C-01): "【추론】 `SchemaNode` 겉면의 멤버는 그 멤버가 드러내는 기제를 들여오는 PR에서 겉면에 들고, 그 PR이 `SchemaNode/`의 `DETAIL.md` 목록·멤버 목록 시험·공개 형 `SchemaNode`를 함께 고친다(EVENT-063이 명령 메서드에 정한 방식)." (`reviews/round-26-closing.md:9`)
   > 편집자 결정(26C-01): "【추론】 그래서 PR-2의 멤버 목록 시험은 PR-2 겉면의 목록을 단언하고, SURFACE-058의 약 54개는 PR-7 전환 시점의 수다; `plan/03-node-and-settle/verification.md:26`의 "이 PR은 명령 메서드 하나를 뺀 목록을 단언한다"는 이 블록으로 바꿔 읽는다." (`reviews/round-26-closing.md:14`)
+  > 소유자(30라운드, 명령 메서드 이름): "네" (`reviews/round-30-owner-answers.md:9`) — 명령 메서드 하나의 이름은 `request`이고 명령 한정 `publish` 부활은 택하지 않았다. 겉면 멤버 약 54개는 그대로다(원장 관리자, 2026-10-01).
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:911-913`(정본), `reviews/round-18-owner-answers.md:40`, `reviews/round-18-owner-answers.md:41`
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-32), 소유자 답(`reviews/round-18-owner-answers.md:40` 설계서 메모 3), 소유자 답(`reviews/round-18-owner-answers.md:41` 설계서 메모 4)
@@ -937,7 +944,8 @@
   > 무엇: `FormProps` 열아홉 칸, `FormHandle` 열여섯 멤버, 공개 이벤트 형 여섯을 하나씩 원장의 결정·이주 행과 대조한다.
   > 통과: 바뀌는 것마다 이주 행이 있다.
   > 실패: 빠진 이주 행을 더한다.
-- 보충: 없음
+- 보충:
+  > 소유자(30라운드, 폼 핸들의 명령 모양): "네 맞습니다. 추가로, path 는 optional, 없으면 root 를 지칭합니다." (`reviews/round-30-owner-answers.md:11`) — `FormHandle`의 멤버는 열여섯에서 열여덟이 되고(`refresh`·`remount` 추가), `focus`·`select`의 경로 인자는 필수에서 선택으로 바뀐다(없으면 루트). 이 둘은 원장의 결정으로 바뀌는 멤버이므로 PR-7의 대조 목록과 이주 행에 든다(원장 관리자, 2026-10-01).
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:2276-2282,2298-2301`(정본)
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-87)

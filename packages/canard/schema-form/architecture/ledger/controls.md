@@ -501,6 +501,7 @@
   > "형태는 `controls: { children: [{ targets: ['name', 'email'], controls: { readOnly: './locked', unsetValue: '...' } }] }`이며, 안쪽 `controls`에는 상태 키뿐 아니라 값 키(`default`, `derived`, `unsetValue`, `resetInteraction`, `unsetOnInactive`)도 둔다(소유자 답 14·15)." (`02-target-overview.md:297`)
   > 편집자 결정(29C-04): "【추론】 조각 객체의 `controls`에 둘 수 있는 키는 CONTROLS-077의 닫힌 목록(`active` `visible` `readOnly` `disabled` `default` `derived` `unsetValue` `resetInteraction` `unsetOnInactive`)이고 `injectTo`는 청사진 오류다; `controls.children` 항목의 안쪽 `controls`도 같다(CONTROLS-030)." (`reviews/round-29-closing.md:45`)
   > 편집자 결정(29C-04): "【추론】 02(PR-1) 청사진이 조각과 `controls.children` 항목의 `controls`에 `injectTo`를 모르는 키로 거부하는 것(`src/core/blueprint/utils/diagnostics/validateControlGroups.ts:27-46,95-113`의 키 목록과 모르는 키 거부, 조각 여부는 `src/core/blueprint/utils/diagnostics/collectDeclarations.ts:30-35,89`)은 원장과 맞으며 고칠 것이 없다." (`reviews/round-29-closing.md:48`)
+  > 편집자 결정(35C-11): "【추론】 CONTROLS-030은 `children`을 "부모가 이름으로 가리킨 직계 자식"에 거는 한 홉 장치로 적고 CONTROLS-073은 `targets`를 호스트 청사진의 직계 자식 이름으로 풀므로, 작성된 이름이 없는 배열 아이템(위치는 런타임이다)은 대상이 될 수 없다; 06은 위치 대상을 지원하지 않고 경고도 더하지 않으며, 배열 호스트의 `controls.children`은 02 청사진이 풀리지 않는 `targets`에 이미 하는 처리에 맡긴다. 그 처리가 없으면 뒤 라운드의 청사진 진단이지 배열 행의 경고가 아니다(새 경고 코드는 ERROR-164의 라운드다)." (`reviews/round-35-closing.md:90`)
 - 상태: 현행
 - 출처: `adr/0003-group-namespace.md:80,81,91`(정본), `08-design-a-to-z.md:113`, `02-target-overview.md:297`, `07-conclusions.md:122`
 - 닫은 사람: 소유자 답(`reviews/round-9-spec.md:108` 자식 집합 제어), 소유자 답(`reviews/round-10-owner-answers.md:16` C-15), 소유자 답(`reviews/round-10-owner-answers.md:21` D-14), 소유자 답(`reviews/round-13-owner-answers.md:7` 1 잠금 규칙; children 그룹은 예외), 소유자 답(`reviews/round-15-decisions.md:14` 6)
@@ -1071,6 +1072,7 @@
   > 【추론】 CONTROLS-046이 그대로다(18C-69).
 - 보충:
   > 편집자 결정(18C-12, SETTLE-041로 나뉜 (5)): "【추론】 (5) 예산 셈: 호스트 바퀴와 전이 라운드 식의 '노드 게이트 수'는 `controls.active`를 가진 `children` 항목을 대상 수와 무관하게 항목마다 하나로 센다." (`reviews/round-18-closing.md:283`)
+  > 편집자 결정(35C-11): "【추론】 CONTROLS-030은 `children`을 "부모가 이름으로 가리킨 직계 자식"에 거는 한 홉 장치로 적고 CONTROLS-073은 `targets`를 호스트 청사진의 직계 자식 이름으로 풀므로, 작성된 이름이 없는 배열 아이템(위치는 런타임이다)은 대상이 될 수 없다; 06은 위치 대상을 지원하지 않고 경고도 더하지 않으며, 배열 호스트의 `controls.children`은 02 청사진이 풀리지 않는 `targets`에 이미 하는 처리에 맡긴다. 그 처리가 없으면 뒤 라운드의 청사진 진단이지 배열 행의 경고가 아니다(새 경고 코드는 ERROR-164의 라운드다)." (`reviews/round-35-closing.md:90`)
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:270-275,277-282,288-297`(정본)
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-12)
@@ -1286,6 +1288,8 @@
   > 편집자 결정(28C-08): "【추론】 같은 참조가 오면 바뀜이 없어 정착이 돌지 않고, 내용이 같은 새 객체도 "깊이 같은 값은 같은 참조로 본다"에 따라 바뀜이 아니어서 정착이 돌지 않는다(같음은 18C-50 (가)로 판정한다)." (`reviews/round-28-closing.md:86`)
   > 편집자 결정(28C-08): "【추론】 바뀌었으면 역의존 표의 `@` 항목이 가리키는 노드와 그 조상을 재계산 목록에 넣고, `@`를 읽는 게이트·상태 키는 그 재계산에서 다시 판정하며, `@`를 읽는 `derived`·`unsetValue`·`resetInteraction`에게는 에지이고 `injectTo`는 발화하지 않는다." (`reviews/round-28-closing.md:87`)
   > 편집자 결정(28C-08): "【추론】 `setContext`는 억제 비트를 받지 않는다(옵션의 자리는 WRITE-015가 `setValue(V, option)`·`reset(option)`·마운트로, WRITE-091이 입력 `onChange`로 정한 것뿐이다); 호출 옵션이 없으므로 Form 속성 `disableAutomaticWrites`가 그 정착의 자동 쓰기에 기본값으로 든다(21C-01의 포커스 아웃 `trim`과 같은 모양)." (`reviews/round-28-closing.md:88`)
+  > 편집자 결정(35C-08): "【추론】 배열 아이템 안에 선언된 식·게이트·파생·상태 키의 아이템별 평가는 PR-5의 몫이다(TEST-069 (라): 아이템은 PR-5에서 처음 생긴다); CONTROLS-080대로 식은 작성 위치마다 한 번 컴파일하고 그 위치의 모든 아이템이 결과를 공유하며, 평가의 기준점은 노드 자신의 런타임 경로라 상대 경로(`..`, `../1`, `./x`)는 `/arr/3/...`에 대해 푼다." (`reviews/round-35-closing.md:65`)
+  > 편집자 결정(35C-08): "【추론】 원장은 선언 경로의 아이템 조각이 런타임에 어떻게 묶이는지 적지 않았으므로 정한다: 청사진의 선언 경로는 배열 층마다 아이템 조각 하나(`items`는 임의 색인, `prefixItems`는 그 색인)를 두고, SETTLE-017의 정적 역의존 표는 조각 단위로 맞추되 선언의 아이템 조각은 어느 색인과도 맞으며, 다른 아이템을 가리키는 절대 런타임 경로(`/arr/0/x`)는 18C-13대로 배열 호스트 하위 트리 전체에 기대는 의존이다; 이 맞춤은 조회 쪽(의존 색인·게이트 재배치)의 변경이고 청사진은 바뀌지 않는다." (`reviews/round-35-closing.md:66`)
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:311-365`(정본), `reviews/round-18-closing.md:2547`
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-13), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-91)
