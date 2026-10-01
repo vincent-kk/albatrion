@@ -16,7 +16,7 @@ yarn storybook         # Storybook development server
 - `src/{default,2019,2020}/index.ts` are the three public entry points.
 - Each entry point owns a process-wide `bind` selection and a schema-root registry.
 - `src/validator/createValidatorFactory.ts` compiles full asynchronous validation.
-- `src/validator/createGuardCompiler.ts` compiles synchronous guards at root pointers.
+- `src/validator/createGuardCompiler.ts` compiles synchronous guards: a self-contained `if` subschema (no `$ref`, `$dynamicRef`, `$recursiveRef`, `$id`, or anchor keyword anywhere) directly on the guard instance, anything else at its root pointer. Each entry point's `configure({ directGuardCompile: false })` restores the root pointer for later compiles (ledger round 52, 46C-01 Option A).
 - `src/validator/utils/transformErrors.ts` maps AJV issues to `ValidationIssue`.
 
 ## Key Details
