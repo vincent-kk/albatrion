@@ -518,6 +518,7 @@
   > 소유자(27라운드, 최적화의 시점): "현재 구현단계에서 최적화를 하는 것은 전체 원장을 흔들 수 있는 문제라, 구현 완료 후, 최적화를 시도할 예정입니다. 그 시점에 참고데이터가 될 수 있도록 기록을 원합니다.(섞이지 않게, 이후 작업으로 잘 분리해서 요청)" (`reviews/round-27-owner-answers.md:11`) — 구현 단계(PR-2~PR-7)에서는 최적화를 시도하지 않고 기록만 남기며, 최적화는 구현 완료 뒤 별도 작업이다.
   > "최적화는 구현을 마친 뒤 별도 작업에서 하며, 이 대장이 그 작업의 출발점입니다." (`verification/performance-issues.md:3`) — 단계를 가로지르는 속도 문제 대장. TEST-027의 느린 행 기록(`verification/03-node-and-settle/performance.md`, `verification/04-derive-and-controls/performance.md`)을 모아 가리킨다(원장 관리자, 2026-10-01).
   > 소유자(30라운드, 성능 최적화 작업의 자리): "맞습니다. 7끝나고 진행하면 됩니다." (`reviews/round-30-owner-answers.md:12`) — 27라운드 답의 "구현 완료 후"는 07 전환 머지 뒤다. 최적화 작업은 07 뒤에 시작해 08과 병렬로 진행하고 09 전에 끝낸다(`plan/perf-optimization/`).
+  > 소유자(30라운드, 04 벤치의 느린 행): "맞습니다." (`reviews/round-30-owner-answers.md:14`) — 풀어 쓴 물음 "04의 느린 벤치 행 둘(TEST-071 통째 교체 객체 행의 선 미달, 04 뒤 03 벤치의 B2·B5·B6·18C-15·67·81 행)을 지금 받아들이고 고치는 일은 최적화 작업으로 넘기는가"에 대한 답. PR-3 + PR-6(04, PR #351)에 대해 이 게이트의 "이유를 적고 Vincent가 받아들여야 병합"이 충족되었다. 느린 이유의 기록은 `verification/04-derive-and-controls/performance.md`와 `verification/03-node-and-settle/performance.md`, 후속은 속도 문제 대장이다(원장 관리자, 2026-10-01).
 - 상태: 현행
 - 출처: `09-landing-and-test-strategy.md:223`(정본), `adr/0009-performance-budget-and-benchmarks.md:9,92`, `08-design-a-to-z.md:609`, `reviews/round-16-owner-answers.md:12`, `reviews/round-16-owner-review.md:57`, `reviews/round-18-agenda.md:68`
 - 닫은 사람: 소유자 답(`reviews/round-16-owner-answers.md:12` 답 6), 편집자 결정(16라운드 도출, '통제 가능'의 뜻, `09-landing-and-test-strategy.md:223`)
@@ -1215,6 +1216,7 @@
   > 편집자 결정(28C-06): "【추론】 그래서 원소 수 N에 비례하는 참조 비교는 지름길이 요구하는 비용이고, "값 크기"는 원소 수가 아니라 바뀌지 않은 원소들의 깊은 크기다; "통째 교체가 선형"은 새로 만들어진 값 전체의 크기에 선형이라는 뜻이다." (`reviews/round-28-closing.md:66`)
   > 편집자 결정(28C-06): "【추론】 합격선은 04의 검증 문서에 TEST-027의 절차로 적고 원장은 뜻만 보충한다: 원소 크기를 바꿔도 한 원소 쓰기의 비교 시간이 같은 수준인지, 통째 교체의 시간이 새 값의 크기에 선형인지를 잰다." (`reviews/round-28-closing.md:67`)
   > 편집자 결정(28C-06): "【추론】 실패의 처분은 둘로 나눈다: 지름길이 없어서(비교가 새로 만들어진 부분 밖으로 내려가서) 실패하면 18C-50·SETTLE-043이 정한 기제의 결함이므로 고치는 것이 구현이고 최적화가 아니다 — 27라운드 소유자 답의 범위 밖이다; 지름길이 있는데 선만 넘으면 27라운드 답대로 고치지 않고 TEST-027의 절차(이유 기록, 소유자 수용)를 따르며 `verification/`의 성능 문서에 남긴다." (`reviews/round-28-closing.md:68`)
+  > 소유자(30라운드, 04 벤치의 느린 행): "맞습니다." (`reviews/round-30-owner-answers.md:14`) — 통째 교체의 객체 행이 28C-06의 선 하한(시간 비 2.375배)을 밑돈 것(Node 2.020배, Bun 1.938배)을 소유자가 받아들였다. 한 원소 쓰기 행과 배열 행은 통과했고 지름길(18C-50)의 존재는 확인되었다. 원인 가설(1만 개 키 열거 비용)의 분리와 개선은 최적화 작업의 몫이다(원장 관리자, 2026-10-01).
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:1394,1413-1415`(정본)
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-50)
