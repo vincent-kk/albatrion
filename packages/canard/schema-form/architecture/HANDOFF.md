@@ -33,7 +33,8 @@
 - **의미 게이트(게이트 3)는 13건을 찾아 모두 고쳤다.** 원문은 `reviews/raw-round18-tests/gate3-union-fill.md`. 게이트가 "확인하지 못한 것"으로 남긴 둘(정적 선언이 없는 이름에서 게이트 없는 분기끼리 fold가 다를 때, EVENT-072의 "한 로드에 한 번"이 `VALIDATOR_COMPILE_FAILED`에서 뜻하는 것)은 §2의 최종 검증(E)에 넣는다.
 - **30라운드(2026-10-01, 05 착수 전).** D-1(EVENT-073)의 소유자 답 둘을 원장 세션에서 직접 받아 적었다(`reviews/round-30-owner-answers.md`): 명령 메서드는 한 호출에 종류 하나, 종류 값은 내부 요청 비트의 별칭인 TS 열거이며 맨 리터럴 합집합은 두지 않는다. 같은 날 소유자가 풀어 쓴 물음에 직접 답해 나머지도 닫혔다: 이름 `request`, 둘째 인자 없음, `FormHandle`은 전용 메서드 넷(경로는 선택 인자, 없으면 루트), 최적화 작업은 07 뒤. 보충은 EVENT-073·EVENT-063·SURFACE-058·SURFACE-059·REACT-025·TEST-027·LANDING-063. 04의 스토리북 게이트는 소유자 독립 실행 통과로 정정. 04 느린 벤치 행 수용도 "맞습니다."로 받아 TEST-027·TEST-071에 보충했다(04의 소유자 확인 대기 항목이 모두 닫힘). D-1 닫힘, 05 착수 가능. 배운 것: 소유자에게는 줄임말·지시어 없이 물음을 풀어 써야 답이 온다
 - **31라운드(2026-10-01, 05 착수 뒤).** 05 작업자가 실행 계획을 쓰며 물은 원장 해석 일곱 건을 원장 관리자가 닫았다(`reviews/round-31-closing.md` 31C-01~05): 명령 메서드 호출은 진입이 아니고 진입 밖에서는 호출 안에서 동기로 배달한다, 운영 모드에서 핸들러가 받지 못하는 경고는 `NON_JSON_WHOLE_VALUE` 하나다, 기록의 `reason` 값은 원장이 코드마다 이름 붙인 것으로 닫힌다, 차등 시험의 독립 검증기는 ajv가 아닌 다른 라이브러리다, 가칭 이름의 확정은 PR-4의 결정이되 원장 관리자가 보충으로 옮긴다. 같은 날 06(배열) 세션이 열려 착수 지시를 받았다(워크트리는 stage-06, 브랜치는 배열 기능 브랜치; 이름은 06 계획서 request 참조).
-- **32라운드(2026-10-01, 05 실행 계획).** 05 작업자의 해석 둘을 닫았다(`reviews/round-32-closing.md` 32C-01~02): 검증기 계약 통일은 PR-4에서 코어 쪽 계약 형과 ajv 플러그인 셋을 바꾸고 Form 속성 `validatorFactory`의 공개 형은 PR-7 전환에서 바뀐다; `VALIDATOR_BIND_REFUSED`는 플러그인이 이미 의존하는 `@winglet/common-utils`의 `BaseError`로 던지며 코어 `UnhandledError` 클래스를 요구하는 항목은 없다. 다음 라운드 번호는 33.
+- **32라운드(2026-10-01, 05 실행 계획).** 05 작업자의 해석 둘을 닫았다(`reviews/round-32-closing.md` 32C-01~02): 검증기 계약 통일은 PR-4에서 코어 쪽 계약 형과 ajv 플러그인 셋을 바꾸고 Form 속성 `validatorFactory`의 공개 형은 PR-7 전환에서 바뀐다; `VALIDATOR_BIND_REFUSED`는 플러그인이 이미 의존하는 `@winglet/common-utils`의 `BaseError`로 던지며 코어 `UnhandledError` 클래스를 요구하는 항목은 없다.
+- **33라운드(2026-10-01, 06 착수).** 06(배열) 세션이 워크트리를 세우고 첫 커밋을 올렸다. 05와 합의한 공유 파일 분담 — 배열 쓰기 동사 다섯의 `dispatch` 진입 파일은 둘 가운데 뒤에 머지하는 쪽이 더하고, 먼저 머지한 06의 동사는 PR-2의 모양(정착 호출 하나, 자기 진입 사슬 없음)으로 둔다 — 을 LANDING-084·EVENT-027·LANDING-064에서 유도되는 것으로 닫았다(`reviews/round-33-closing.md` 33C-01). 다음 라운드 번호는 34.
 
 ## 2. 다음 할 일 — 순서대로
 
@@ -144,6 +145,7 @@ node ledger/checks/doc-coverage.mjs design/*.md adr/*.md -- ledger/*.md   # 설�
 | `reviews/round-30-owner-answers.md` | 30라운드 소유자 답: D-1 명령 메서드의 한 호출 한 종류·값은 비트 별칭 열거. 나머지 D-1 답은 직접 확인 뒤 행 추가 |
 | `reviews/round-31-closing.md` | 31라운드 편집자 결정 다섯: 05 착수 뒤의 원장 해석(진입 밖 명령 배달, 운영 모드 경고의 둘째 예외, `reason` 값, 차등 시험의 독립 검증기, 가칭 확정 절차) |
 | `reviews/round-32-closing.md` | 32라운드 편집자 결정 둘: `validatorFactory` 계약 통일의 공개 겉면 시점(PR-7), `VALIDATOR_BIND_REFUSED`가 던지는 객체 |
+| `reviews/round-33-closing.md` | 33라운드 편집자 결정 하나: 배열 쓰기 동사의 `dispatch` 진입 파일 분담(05·06 병렬) |
 | `reviews/round-28-closing.md` | 28라운드 편집자 결정의 정본(28C-01~08: 04(PR-3+PR-6) 실행 계획 초안의 해석 일곱 건과 후속 둘 — 개발 모드 정착 기록의 자리, `enabled`와 떼어진 노드의 상태 게터, `@` 맥락과 `setContext`의 PR, 억제 비트와 `resetInteraction`, `unsetOnInactive` 식의 throw, TEST-071의 값 크기, `watchValues`의 PR, `node.context`의 PR과 맥락 변경 정착). 보충 줄만 |
 | `reviews/round-29-closing.md` | 29라운드 편집자 결정의 정본(29C-01~04: 생긴·로드된 노드의 파생 규칙은 원천이 `undefined`여도 발화, 채움 뒤의 값 변화는 새 에지, v7의 모형 선택은 이식하지 않음; 식이 던진 정착의 채움·나감 비움은 진행, 03의 전이 전체 생략은 결함; 공유 충돌 정착도 진행하고 원본 B는 예산 초과에만; 조각 `controls`의 `injectTo`는 불허). 보충 줄만 |
 | `verification/performance-issues.md` | 단계를 가로지르는 속도 문제 대장(열림·해결). 구현 완료 뒤 최적화 작업의 출발점. 측정 원본은 단계별 `performance.md`(03·04) |

@@ -1115,7 +1115,9 @@
   > | PR | 내용 | 의존 | 착수 전 닫을 것 |
   > | --- | --- | --- | --- |
   > | PR-5 배열 | 배열·터미널 배열 행(`arrayBehavior/`의 `branch/`·`terminal/`), 겉면 배열 멤버, 배열 노드와 아이템 호스트, `items`·`prefixItems`, `push`·`remove`·`update`, 통째 교체의 identity, 아이템 채움 | PR-2 (PR-3·4와 병렬) | 배열 아이템의 생김과 채움, `contains` |
-- 보충: 없음
+- 보충:
+  > 편집자 결정(33C-01): "【추론】 원장은 `dispatch/` fractal을 PR-4에, 배열 동사를 PR-5에 두었고 둘이 병렬이므로 배열 동사의 진입 파일을 어느 PR이 더하는지는 적지 않았다; 05·06이 합의한 "뒤에 머지하는 쪽이 더한다"는 그 빈자리를 채우는 것이며 LANDING-084와 어긋나지 않는다. 조건은 둘 다 머지된 뒤 모든 쓰기 동사의 진입 함수가 `dispatch/`에 있고 겉면의 쓰기 위임이 그 진입을 거치는 것(LANDING-064 "겉면의 쓰기 위임을 `dispatch` 진입으로 옮김")이다." (`reviews/round-33-closing.md:10`)
+  > 편집자 결정(33C-01): "【추론】 06이 먼저 머지되면 그 동사는 03(PR-2)이 겉면 쓰기를 둔 모양 — 정착 호출 하나(TEST-069 "PR-2에서 사슬은 settle 호출 하나다") — 을 따르고, 05가 머지되는 쪽(또는 06이 뒤라면 06)이 겉면 위임을 `dispatch` 진입으로 옮기면서 배열 동사 다섯의 진입 파일을 더한다; `batch` 안의 배열 동사가 형제 진입으로 합쳐지는 것(EVENT-035)과 진입당 `onChange` 한 번은 그 뒤에만 성립하므로 06의 시험은 그 둘을 단언하지 않는다(03 log §4의 `batch` 사례 배분과 같다)." (`reviews/round-33-closing.md:11`)
 - 상태: 현행
 - 출처: `08-design-a-to-z.md:575`(정본), `09-landing-and-test-strategy.md:36,260`, `08-design-a-to-z.md:411`
 - 닫은 사람: 소유자 답(`reviews/round-17-owner-answers.md:42` 4 종류 모듈), 편집자 결정(14라운드 PR 계획, `08-design-a-to-z.md:575`), 편집자 결정(18라운드, SURFACE-005; 배열 쓰기는 다섯)
@@ -1404,7 +1406,10 @@
   > | PR | 부딪히는 오늘의 코드(교체 대상) | 그대로 쓰는 것 | 새 fractal |
   > | --- | --- | --- | --- |
   > | PR-4 통지·검증 | `EventCascadeManager`(노드별 마이크로태스크, 100회 throw), `ValidationManager`(실패 삼킴), `compile` 하나뿐인 계약 | 비트별 배달 원장 개념, 세대 번호, `transformErrors` | `src/core/dispatch/`, `src/core/validation/`, `app/plugin/type.ts` 개정. 진입 사슬은 `dispatch`가 쓰기 동사마다 진입 함수로 소유하고, 검증 결과 배달은 `dispatch`가 넘긴 콜백이다 |
-- 보충: 없음
+- 보충:
+  > 편집자 결정(33C-01): "【추론】 배열 쓰기 동사 `push`·`pop`·`update`·`remove`·`clear`는 EVENT-027의 공개 쓰기 API이므로 그 진입 함수는 LANDING-084대로 `dispatch`가 쓰기 동사마다 하나씩 소유한다; `arrayBehavior/`나 노드 겉면이 따로 진입 사슬(진입 깊이 카운터, `onChange`, 사슬 끝 throw)을 갖지 않는다." (`reviews/round-33-closing.md:9`)
+  > 편집자 결정(33C-01): "【추론】 원장은 `dispatch/` fractal을 PR-4에, 배열 동사를 PR-5에 두었고 둘이 병렬이므로 배열 동사의 진입 파일을 어느 PR이 더하는지는 적지 않았다; 05·06이 합의한 "뒤에 머지하는 쪽이 더한다"는 그 빈자리를 채우는 것이며 LANDING-084와 어긋나지 않는다. 조건은 둘 다 머지된 뒤 모든 쓰기 동사의 진입 함수가 `dispatch/`에 있고 겉면의 쓰기 위임이 그 진입을 거치는 것(LANDING-064 "겉면의 쓰기 위임을 `dispatch` 진입으로 옮김")이다." (`reviews/round-33-closing.md:10`)
+  > 편집자 결정(33C-01): "【추론】 06이 먼저 머지되면 그 동사는 03(PR-2)이 겉면 쓰기를 둔 모양 — 정착 호출 하나(TEST-069 "PR-2에서 사슬은 settle 호출 하나다") — 을 따르고, 05가 머지되는 쪽(또는 06이 뒤라면 06)이 겉면 위임을 `dispatch` 진입으로 옮기면서 배열 동사 다섯의 진입 파일을 더한다; `batch` 안의 배열 동사가 형제 진입으로 합쳐지는 것(EVENT-035)과 진입당 `onChange` 한 번은 그 뒤에만 성립하므로 06의 시험은 그 둘을 단언하지 않는다(03 log §4의 `batch` 사례 배분과 같다)." (`reviews/round-33-closing.md:11`)
 - 상태: 현행
 - 출처: `09-landing-and-test-strategy.md:35`(정본), `08-design-a-to-z.md:574`, `05-before-after.md:159`
 - 닫은 사람: 편집자 결정(16라운드 정착 검토), 17라운드 스웜 수렴(편집자 결정, 진입 사슬은 `dispatch`가 소유)
