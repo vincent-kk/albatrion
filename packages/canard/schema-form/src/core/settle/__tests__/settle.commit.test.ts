@@ -118,7 +118,9 @@ describe('settle commit', () => {
     const { root } = createTestTree({ type: 'object', properties: {
       enabled: { type: 'boolean' },
       value: { type: ['number', 'string'] },
-    }, if: {}, then: { properties: { value: { type: 'string' } } } });
+    }, if: { properties: { enabled: { const: true } },
+      required: ['enabled'] },
+    then: { properties: { value: { type: 'string' } } } });
     writeSchemaNode(root, { enabled: false, value: 7 },
       'callerReplace', SetValueOption.Overwrite);
     expect(root.runtime.typeMismatchPaths.size).toBe(0);

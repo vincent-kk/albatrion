@@ -38,8 +38,7 @@ describe('settle exits and budgets', () => {
     const { root, blueprint } = createTestTree({ type: 'object',
       if: { not: { required: ['x'] } },
       then: { properties: { x: { type: 'number', default: 1 } } },
-    }, (input) => input !== null && typeof input === 'object' &&
-      !('x' in input));
+    });
     expect(getTransitionCap(blueprint)).toBe(2);
     expect(() => loadSchemaNodeAtMount(root, {}, SetValueOption.Overwrite))
       .toThrow();
@@ -197,12 +196,11 @@ describe('settle exits and budgets', () => {
   it('TEST-067 recursion expansion commits Source B and records recursion', () => {
     const schema = { $defs: { Node: { type: 'object', properties: {
       hasChild: { type: 'boolean' },
-    }, if: { properties: { hasChild: { const: true } } }, then: {
+    }, if: { not: { properties: { hasChild: { const: false } },
+      required: ['hasChild'] } }, then: {
       properties: { child: { $ref: '#/$defs/Node' } },
     } } }, $ref: '#/$defs/Node' };
-    const { root } = createTestTree(schema, (input) =>
-      input === null || typeof input !== 'object' ||
-      !('hasChild' in input) || input.hasChild === true);
+    const { root } = createTestTree(schema);
     expect(() => writeSchemaNode(root, { hasChild: true }, 'callerReplace',
       SetValueOption.Overwrite)).toThrow();
     expect(root.runtime.diagnostics).toMatchObject({ status: 'degraded',

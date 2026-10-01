@@ -3,6 +3,8 @@ import { loadSchemaNodeAtMount } from '../../../settle';
 import { SetValueOption } from '../../../types/value';
 import { enterSchemaNodeChain } from '../chain/enterSchemaNodeChain';
 import { exitSchemaNodeChain } from '../chain/exitSchemaNodeChain';
+import { VALIDATOR_MISSING } from '../../../../errors';
+import { ValidationMode } from '../../../types/state';
 
 /**
  * Commit the first form source through the same entry boundary as later writes.
@@ -17,7 +19,20 @@ export const dispatchMount = <Self extends SchemaNodeRecord<Self>>(
 ): void => {
   enterSchemaNodeChain(root);
   (root.runtime.validationTargets ??= new Set()).add(root);
+  root.runtime.mountingGuardPass = process.env.NODE_ENV !== 'production';
   try { loadSchemaNodeAtMount(root, value, option); }
   catch (error) { root.runtime.chainErrors?.push(error); }
-  finally { exitSchemaNodeChain(root); }
+  finally {
+    const runtime = root.runtime;
+    if (!runtime.validator && runtime.validationMode !== ValidationMode.None &&
+      !runtime.warningKeys?.has(VALIDATOR_MISSING)) {
+      (runtime.warningKeys ??= new Set()).add(VALIDATOR_MISSING);
+      (runtime.pendingWarningRecords ??= new Map()).set(VALIDATOR_MISSING,
+        { level: 'warning', code: 'SCHEMA_FORM_WARNING.VALIDATOR_MISSING',
+          message: 'Validation is disabled because no validator was selected',
+          surface: 'sink' });
+    }
+    root.runtime.mountingGuardPass = false;
+    exitSchemaNodeChain(root);
+  }
 };

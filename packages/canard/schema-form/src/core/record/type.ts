@@ -1,7 +1,6 @@
 import type {
   BlueprintChildEntry,
   Blueprint,
-  BlueprintGate,
   BlueprintNode,
   BlueprintNodeKind,
   BlueprintSchemaType,
@@ -10,7 +9,7 @@ import type {
 } from '../blueprint';
 import type { NodeStateFlags, ValidationMode } from '../types/state';
 import type { SetValueOption } from '../types/value';
-import type { FormErrorReporter } from '../../errors';
+import type { FormErrorRecord, FormErrorReporter } from '../../errors';
 
 /** Shared ledger until an occurrence first receives a committed event. */
 export const EMPTY_REVISION_LEDGER: Readonly<Record<number, number>> = Object.freeze({});
@@ -324,6 +323,14 @@ export interface SchemaNodeRuntime<Self> extends SchemaNodeRootRuntimeState {
   queuedEvents?: Map<unknown, SchemaNodeDelivery>;
   /** Warning identities already reported for this tree. */
   warningKeys?: Set<string>;
+  /** Warnings held until the public entry commits and finishes delivery. */
+  pendingWarningRecords?: Map<string, FormErrorRecord>;
+  /** Guard failures awaiting the current public entry's final delivery. */
+  guardFailureRecords?: Map<string, FormErrorRecord>;
+  /** Failed guards already reported by this consuming tree. */
+  reportedGuardFailures?: Set<string>;
+  /** Development mount currently defers guard failures until its commit. */
+  mountingGuardPass?: boolean;
   /** Host observer for structured failures and warnings. */
   errorReporter?: FormErrorReporter;
   /** Selected validation engine, narrowed by the validation layer. */
@@ -388,8 +395,6 @@ export interface SchemaNodeRuntime<Self> extends SchemaNodeRootRuntimeState {
   detachedReads?: WeakMap<object, DetachedSchemaNodeReads>;
   /** Stable watch path results for each node within one completed commit. */
   watchValuesMemo?: WeakMap<object, { commit: number; values: readonly unknown[] }>;
-  /** Synchronous predicates for authored if gates. */
-  ifPredicates: ReadonlyMap<BlueprintGate, (gateInput: unknown) => boolean>;
   /** Settlement health retained until a form-level load. */
   diagnostics: SchemaNodeDiagnostics;
   /** Single node creator used throughout this tree. */

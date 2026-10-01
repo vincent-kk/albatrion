@@ -33,7 +33,6 @@ const makeRecord = (): SchemaNodeRecord<PathNode> => {
     },
     runtime: {
       blueprint: analysis,
-      ifPredicates: new Map(),
       diagnostics: { status: 'stable' },
       nodeFactory: (_entry, parent) => ({
         path: parent?.path ?? '',

@@ -10,7 +10,7 @@ import { NodeState } from '../../types/state';
 const createContextTree = (schema: BlueprintSchema,
   context: Readonly<Record<string, unknown>> = {}) =>
   schemaNodeFactory(blueprint(schema), {
-    context, ifPredicates: new Map(), diagnostics: { status: 'stable' },
+    context, diagnostics: { status: 'stable' },
     loadSnapshot: undefined, latentRaw: new Map(),
     typeMismatchPaths: new Set(), inactiveValuesMemo: new Map(),
   });

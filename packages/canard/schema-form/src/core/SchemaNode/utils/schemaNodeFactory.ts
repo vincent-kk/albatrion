@@ -5,11 +5,13 @@ import { BEHAVIORS } from '../../behaviors';
 import type { Behavior, SchemaNodeRuntime } from '../../record';
 import { SchemaNode as RuntimeSchemaNode } from '../SchemaNode';
 import type { InferSchemaNode, SchemaNode } from '../type';
+import { compileEntryGuards, readValidationEntry } from '../../validation';
+import type { Validator } from '../../validation';
 
 /** Tree inputs before the factory attaches its analysis and real creator. */
 export type SchemaNodeRuntimeSeed = Omit<SchemaNodeRuntime<unknown>,
   'blueprint' | 'nodeFactory' | 'settlementScratch' | 'chainRoot' |
-  'batchWrites' | 'validationTargets' | 'requestValidation'>;
+  'batchWrites' | 'validationTargets' | 'requestValidation' | 'validator'>;
 
 /** Create one record from a bound child or the root template. */
 const createSchemaNode = (
@@ -37,15 +39,17 @@ const createSchemaNode = (
 export function schemaNodeFactory<Schema extends BlueprintSchema>(
   analysis: Blueprint & { readonly schema: Schema },
   runtimeSeed: SchemaNodeRuntimeSeed,
+  validator?: Validator,
 ): InferSchemaNode<Schema>;
 export function schemaNodeFactory(
-  analysis: Blueprint, runtimeSeed: SchemaNodeRuntimeSeed,
+  analysis: Blueprint, runtimeSeed: SchemaNodeRuntimeSeed, validator?: Validator,
 ): SchemaNode;
 export function schemaNodeFactory(
-  analysis: Blueprint, runtimeSeed: SchemaNodeRuntimeSeed,
+  analysis: Blueprint, runtimeSeed: SchemaNodeRuntimeSeed, validator?: Validator,
 ): unknown {
   const runtime: SchemaNodeRuntime<RuntimeSchemaNode> = {
     ...runtimeSeed,
+    validator,
     context: runtimeSeed.context ?? {},
     blueprint: analysis,
     nodeFactory: createSchemaNode,
@@ -55,5 +59,9 @@ export function schemaNodeFactory(
     onChangeBudget: 0,
     batchDepth: 0,
   };
+  if (validator && process.env.NODE_ENV !== 'production' &&
+    analysis.schema !== null && typeof analysis.schema === 'object')
+    compileEntryGuards(readValidationEntry(validator, analysis.schema),
+      validator, analysis);
   return createSchemaNode(analysis.root, null, runtime);
 }

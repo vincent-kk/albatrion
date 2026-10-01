@@ -2,6 +2,8 @@ import { blueprint } from '../../../blueprint';
 import type { BlueprintSchema } from '../../../blueprint';
 import type { SchemaNodeRecord } from '../../../record';
 import { schemaNodeFactory } from '../../../SchemaNode';
+import type { Validator } from '../../../validation';
+import type { FormErrorReporter } from '../../../../errors';
 
 /** Test view of the record created by the public tree factory. */
 export interface DispatchTestNode extends SchemaNodeRecord<DispatchTestNode> {}
@@ -12,18 +14,22 @@ const isDispatchTestNode = (value: unknown): value is DispatchTestNode =>
   'runtime' in value && 'rootNode' in value && 'structure' in value;
 
 /**
- * Build a real tree with no conditional gates for dispatcher tests.
- * @param schema - Authored schema without an if gate
+ * Build a real tree for dispatcher tests.
+ * @param schema - Authored schema to analyze
  * @param snapshot - Optional source retained for reset tests
+ * @param validator - Selected validator for conditional schemas
+ * @param errorReporter - Observer for structured guard records
  * @returns Root record and its per-tree runtime
  */
 export const createDispatchTree = (schema: BlueprintSchema,
-  snapshot?: unknown) => {
+  snapshot?: unknown, validator?: Validator,
+  errorReporter?: FormErrorReporter) => {
   const created: unknown = schemaNodeFactory(blueprint(schema), {
-    ifPredicates: new Map(), diagnostics: { status: 'stable' },
+    errorReporter,
+    diagnostics: { status: 'stable' },
     loadSnapshot: snapshot, latentRaw: new Map(),
     typeMismatchPaths: new Set(), inactiveValuesMemo: new Map(),
-  });
+  }, validator);
   if (!isDispatchTestNode(created)) throw new Error('Tree factory omitted its record');
   const root = created;
   return { root, runtime: root.runtime };

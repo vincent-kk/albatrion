@@ -1,4 +1,5 @@
-import { SchemaFormError } from '../../../../errors';
+import { CONDITIONAL_SCHEMA_WITHOUT_VALIDATOR,
+  SchemaFormError, VALIDATOR_MISSING } from '../../../../errors';
 import { isArray } from '@winglet/common-utils/filter';
 import { unescapeSegment } from '@winglet/json/pointer';
 import { hasOwnProperty } from '@winglet/common-utils/lib';
@@ -10,9 +11,11 @@ import { readProjectedValue } from './readProjectedValue';
 import { EXPRESSION_THREW, GUARD_FAILED } from '../errors/settleErrorCode';
 import { getGateRegistry } from './getGateRegistry';
 import { getGateExpression } from './getGateExpression';
+import { readSchemaNodeGuard } from '../../../validation';
+import { ValidationMode } from '../../../types/state';
 
 /**
- * Evaluate one bound gate with the real expression or injected if predicate.
+ * Evaluate one bound gate with the real expression or validator guard.
  * @param gate - Declarative condition bound to the current occurrence
  * @param context - Current projected tree and deferred failure slot
  * @param owner - Live occurrence whose template contains this gate
@@ -66,9 +69,40 @@ export const evaluateGate = <Self extends SchemaNodeRecord<Self>>(
       return condition.values.some((candidate: unknown) => Object.is(candidate, value));
     }
     if (gate.kind === 'if') {
-      const predicate = context.root.runtime.ifPredicates.get(gate);
-      if (!predicate) throw new Error(`Missing if predicate at ${gate.schemaPath}`);
-      const result = predicate(input);
+      const runtime = context.root.runtime;
+      const guard = readSchemaNodeGuard(runtime, gate);
+      if (!guard) {
+        const keys = runtime.warningKeys ??= new Set();
+        if (runtime.validationMode !== ValidationMode.None &&
+          !keys.has(VALIDATOR_MISSING)) {
+          keys.add(VALIDATOR_MISSING);
+          const record = { level: 'warning' as const,
+            code: `SCHEMA_FORM_WARNING.${VALIDATOR_MISSING}` as const,
+            message: 'Validation is disabled because no validator was selected',
+            surface: 'sink' as const };
+          if (runtime.entryDepth)
+            (runtime.pendingWarningRecords ??= new Map()).set(VALIDATOR_MISSING,
+              record);
+          else if (runtime.errorReporter?.hasConsumer())
+            runtime.errorReporter.report(record);
+        }
+        if (!keys.has(CONDITIONAL_SCHEMA_WITHOUT_VALIDATOR)) {
+          keys.add(CONDITIONAL_SCHEMA_WITHOUT_VALIDATOR);
+          const record = { level: 'warning' as const,
+            code: `SCHEMA_FORM_WARNING.${CONDITIONAL_SCHEMA_WITHOUT_VALIDATOR}` as const,
+            message: 'Conditional schema is inactive without a validator',
+            schemaPath: gate.schemaPath, surface: 'sink' as const };
+          if (runtime.entryDepth)
+            (runtime.pendingWarningRecords ??= new Map()).set(
+              CONDITIONAL_SCHEMA_WITHOUT_VALIDATOR, record);
+          else if (runtime.errorReporter?.hasConsumer())
+            runtime.errorReporter.report(record);
+        }
+        return false;
+      }
+      const result: unknown = guard(input);
+      if (typeof result !== 'boolean')
+        throw new TypeError(`Guard at ${gate.schemaPath} did not return a boolean`);
       return gate.negated ? !result : result;
     }
     const blueprint = context.root.runtime.blueprint;
@@ -84,8 +118,9 @@ export const evaluateGate = <Self extends SchemaNodeRecord<Self>>(
     }
     return gate.condition === true;
   } catch (cause) {
+    const runtime = context.root.runtime;
     context.gateThrowVersion = (context.gateThrowVersion ?? 0) + 1;
-    if (!context.failure) {
+    if (!context.failure && !runtime.mountingGuardPass) {
       context.failure = new SchemaFormError(
         gate.kind === 'if' ? GUARD_FAILED : EXPRESSION_THREW,
         `Gate evaluation failed at ${gate.schemaPath}`,
@@ -93,6 +128,15 @@ export const evaluateGate = <Self extends SchemaNodeRecord<Self>>(
       );
       context.cause = 'expression';
     }
+    if (gate.kind === 'if' &&
+      !runtime.reportedGuardFailures?.has(gate.schemaPath) &&
+      !runtime.guardFailureRecords?.has(gate.schemaPath))
+      (runtime.guardFailureRecords ??= new Map()).set(gate.schemaPath,
+        { level: 'error', code: 'SCHEMA_FORM_ERROR.GUARD_FAILED',
+          message: `Gate evaluation failed at ${gate.schemaPath}`,
+          schemaPath: gate.schemaPath, path: hostPath,
+          details: { cause },
+          surface: runtime.mountingGuardPass ? 'sink' : 'thrown' });
     return false;
   }
 };

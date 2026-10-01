@@ -32,6 +32,20 @@ export const exitSchemaNodeChain = <Self extends SchemaNodeRecord<Self>>(
   }
   const root = runtime.chainRoot ?? activeRoot;
   runDeliveryWaves(root);
+  const warnings = runtime.pendingWarningRecords;
+  if (warnings?.size) {
+    if (runtime.errorReporter?.hasConsumer())
+      for (const record of warnings.values()) runtime.errorReporter.report(record);
+    warnings.clear();
+  }
+  const guardRecords = runtime.guardFailureRecords;
+  if (guardRecords?.size) {
+    for (const [key, record] of guardRecords) {
+      if (runtime.errorReporter?.hasConsumer()) runtime.errorReporter.report(record);
+      (runtime.reportedGuardFailures ??= new Set()).add(key);
+    }
+    guardRecords.clear();
+  }
   const changed = runtime.chainInitialEmit !== root.emit;
   const requests = runtime.validationTargets;
   if (runtime.validationMode && runtime.validationMode & ValidationMode.OnChange) {

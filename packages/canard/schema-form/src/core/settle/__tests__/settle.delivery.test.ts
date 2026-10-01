@@ -109,7 +109,8 @@ describe('settlement delivery ledger', () => {
   it('EVENT-064 reports effective schema references separately from computed properties', () => {
     const { root } = createTestTree({ type: 'object', properties: {
       enabled: { type: 'boolean' }, value: { type: 'string' },
-    }, if: {}, then: { properties: { value: { minLength: 2 } } } });
+    }, if: { properties: { enabled: { const: true } },
+      required: ['enabled'] }, then: { properties: { value: { minLength: 2 } } } });
     writeSchemaNode(root, { enabled: false, value: 'a' },
       'callerReplace', SetValueOption.Overwrite);
     const value = root.structure!.value;
@@ -142,7 +143,8 @@ describe('settlement delivery ledger', () => {
   it('EVENT-066 marks child shape changes even when a conditional value stays empty', () => {
     const { root } = createTestTree({ type: 'object', properties: {
       enabled: { type: 'boolean' },
-    }, if: {}, then: { properties: { extra: { type: 'string' } } } });
+    }, if: { properties: { enabled: { const: true } },
+      required: ['enabled'] }, then: { properties: { extra: { type: 'string' } } } });
     writeSchemaNode(root, { enabled: false }, 'callerReplace', SetValueOption.Overwrite);
     root.runtime.deliveries?.clear();
     writeSchemaNode(root.structure!.enabled, true, 'input', SetValueOption.Overwrite);

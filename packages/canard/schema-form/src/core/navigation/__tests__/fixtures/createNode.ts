@@ -20,7 +20,6 @@ export const createNode = (
   const runtime: SchemaNodeRuntime<TestNode> = suppliedRuntime ??
     parent?.runtime ?? {
       blueprint: analysis,
-      ifPredicates: new Map(),
       diagnostics: { status: 'stable' },
       nodeFactory: (entry, owner, treeRuntime) =>
         createNode('name' in entry ? entry.name : '', owner, 'branch', treeRuntime),

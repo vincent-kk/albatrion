@@ -32,7 +32,6 @@ const makeRecord = (
   behavior,
   runtime: {
     blueprint: OBJECT_ANALYSIS,
-    ifPredicates: new Map(),
     diagnostics: { status: 'stable' },
     nodeFactory: () => undefined,
     loadSnapshot: undefined,

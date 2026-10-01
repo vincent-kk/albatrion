@@ -12,11 +12,9 @@ const fillTree = () => {
     nil: { type: ['string', 'number', 'boolean', 'null'], default: 'D' },
     zero: { type: ['string', 'number', 'boolean', 'null'], default: 'D' },
     no: { type: ['string', 'number', 'boolean', 'null'], default: 'D' },
-  }, if: {}, then: { properties: { added: { type: 'string', default: 'A' } } },
-  else: { properties: { fallback: { type: 'string', default: 'F' } } } }, {
-    ifPredicate: () => input => input !== null && typeof input === 'object' &&
-      'kind' in input && input.kind === 'on',
-  });
+  }, if: { properties: { kind: { const: 'on' } }, required: ['kind'] },
+  then: { properties: { added: { type: 'string', default: 'A' } } },
+  else: { properties: { fallback: { type: 'string', default: 'F' } } } });
   root.setValue({ kind: 'off', empty: '', nil: null, zero: 0, no: false });
   return root;
 };
@@ -73,17 +71,14 @@ describe('round9 P1 fill regression', () => {
 });
 
 const branchTree = (keyword: 'oneOf' | 'anyOf', withElse: boolean) => {
-  const branches = ['a', 'b'].map(kind => ({ if: {},
+  const branches = ['a', 'b'].map(kind => ({
+    if: { properties: { kind: { const: kind } }, required: ['kind'] },
     then: { properties: { [kind]: { type: 'string', default: kind.toUpperCase() } } },
     ...(withElse ? { else: false } : {}),
   }));
   const { root } = makeSchemaNodeTree({ type: 'object', properties: {
     kind: { type: 'string' },
-  }, [keyword]: branches }, {
-    ifPredicate: gate => input => input !== null && typeof input === 'object' &&
-      'kind' in input && input.kind ===
-      (gate.schemaPath.includes('/0/') ? 'a' : 'b'),
-  });
+  }, [keyword]: branches });
   root.setValue({ kind: 'a' });
   return { root, branches };
 };

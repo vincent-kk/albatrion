@@ -13,7 +13,8 @@ describe('active derive declarations', () => {
       H: { type: 'object', properties: {
         enabled: { type: 'boolean' }, s: { type: 'string' },
         x: { type: 'string' },
-      }, if: {}, then: { controls: { derived: './s' }, properties: {
+      }, if: { properties: { enabled: { const: true } },
+        required: ['enabled'] }, then: { controls: { derived: './s' }, properties: {
         x: { type: 'string' },
       } } },
     } });
@@ -29,7 +30,8 @@ describe('active derive declarations', () => {
     const { root } = createTestTree({ type: 'object', properties: {
       H: { type: 'object', properties: {
         enabled: { type: 'boolean' }, x: { type: 'string' },
-      }, if: {}, then: { controls: { resetInteraction: 'true' },
+      }, if: { properties: { enabled: { const: true } },
+        required: ['enabled'] }, then: { controls: { resetInteraction: 'true' },
         properties: { x: { type: 'string' } } } },
     } });
     loadSchemaNodeAtMount(root, { H: { enabled: false, x: 'own' } },
@@ -48,7 +50,8 @@ describe('active derive declarations', () => {
         H: { type: 'object', properties: {
           enabled: { type: 'boolean' }, s: { type: 'string' },
           x: { type: 'string' },
-        }, if: {}, then: { controls: { derived: './s' }, properties: {
+        }, if: { properties: { enabled: { const: true } },
+          required: ['enabled'] }, then: { controls: { derived: './s' }, properties: {
           x: { type: 'string' },
         } } },
       } },
@@ -65,7 +68,8 @@ describe('active derive declarations', () => {
       H: { type: 'object', properties: {
         enabled: { type: 'boolean' }, s: { type: 'string' },
         x: { type: 'string' },
-      }, if: {}, then: { controls: { derived: './s' }, properties: {
+      }, if: { properties: { enabled: { const: true } },
+        required: ['enabled'] }, then: { controls: { derived: './s' }, properties: {
         x: { type: 'string', minLength: 3 }, extra: { type: 'string' },
       } } },
     } };
@@ -201,7 +205,8 @@ describe('active derive declarations', () => {
     const { root } = createTestTree({ type: 'object', properties: {
       enabled: { type: 'boolean' }, s: { type: 'string' },
       x: { type: 'string' },
-    }, if: {}, then: { controls: { derived: './s' }, properties: {
+    }, if: { properties: { enabled: { const: true } },
+      required: ['enabled'] }, then: { controls: { derived: './s' }, properties: {
       x: { type: 'string' },
     } } });
     loadSchemaNodeAtMount(root, { enabled: false, s: 'S1', x: 'own' },
@@ -215,7 +220,8 @@ describe('active derive declarations', () => {
   it('FRAGMENT-050 newly entered node fires for then derived', () => {
     const { root } = createTestTree({ type: 'object', properties: {
       enabled: { type: 'boolean' }, s: { type: 'string' },
-    }, if: {}, then: { controls: { derived: './s' }, properties: {
+    }, if: { properties: { enabled: { const: true } },
+      required: ['enabled'] }, then: { controls: { derived: './s' }, properties: {
       x: { type: 'string' },
     } } });
     loadSchemaNodeAtMount(root, { enabled: false, s: 'S1', x: 'own' },

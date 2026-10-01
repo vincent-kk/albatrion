@@ -11,9 +11,9 @@ const heldNode = (base: 'none' | 'unconditional' | 'default') => {
     ...(base === 'unconditional' ? { allOf: [{ properties: {
       x: { type: 'string', default: 'U' },
     } }] } : {}),
-    if: {}, then: { properties: { x: { type: 'string', default: 'T' } } },
-  }, { ifPredicate: () => input => input !== null && typeof input === 'object' &&
-    'kind' in input && input.kind === 'on' });
+    if: { properties: { kind: { const: 'on' } }, required: ['kind'] },
+    then: { properties: { x: { type: 'string', default: 'T' } } },
+  });
   root.setValue({ kind: 'off' });
   return root;
 };

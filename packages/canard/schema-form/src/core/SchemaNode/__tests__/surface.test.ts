@@ -10,7 +10,6 @@ import { schemaNodeFactory } from '../index';
 /** Create a tree with only the genuine PR-2 runtime inputs. */
 const makeTree = (schema: BlueprintSchema, snapshot: unknown = undefined) =>
   schemaNodeFactory(blueprint(schema), {
-  ifPredicates: new Map(),
   diagnostics: { status: 'stable' },
   loadSnapshot: snapshot,
   latentRaw: new Map(),
