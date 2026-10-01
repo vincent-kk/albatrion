@@ -10,6 +10,10 @@ const MAX_TRANSIENT_ROOTS = 64;
 
 /** One root's validation and optional guard registrations. */
 export interface SchemaRootRegistration {
+  /** Direct schemas are owned and released with this root's guard instance. */
+  readonly directGuards: (object | boolean)[];
+  /** Self-containment is computed once per object in this bound profile. */
+  readonly guardChecks: WeakMap<object, boolean>;
   readonly baseAjv: Ajv;
   readonly validationAjv: Ajv;
   guardAjv?: Ajv;
@@ -74,6 +78,7 @@ export const registerSchemaRoot = (
     ? Object.keys(validationAjv.refs).filter((ref) => !validationRefsBefore.includes(ref)) : [];
   const registration: SchemaRootRegistration = {
     baseAjv, validationAjv, validationCopy, validationRefs, key, ids, probes: [],
+    directGuards: [], guardChecks: new WeakMap(),
   };
   registrations.push(registration);
   registry.entries.set(root, registrations);

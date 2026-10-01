@@ -1,26 +1,33 @@
 import type { JSONSchema } from '@canard/schema-form';
 import Ajv from 'ajv';
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 
 /** Loads an unused default binding or a fresh explicitly bound instance. */
-const loadPlugin = async (mode: 'default' | 'bind') => {
+const loadPlugin = async (mode: 'default' | 'bind', directGuardCompile: boolean) => {
   vi.resetModules();
   const { ajvValidatorPlugin } = await import('../../default/validatorPlugin');
   if (mode === 'bind') ajvValidatorPlugin.bind(new Ajv({ strictSchema: false }));
+  ajvValidatorPlugin.configure({ directGuardCompile });
   return ajvValidatorPlugin;
 };
 
 /** A schema with a stable URI whose condition differs between live roots. */
-const root = (kind: string): JSONSchema => ({
+const root = (kind: string): JSONSchema => JSON.parse(JSON.stringify({
   $id: 'https://example.test/shared-root',
   type: 'object',
   if: { type: 'object', properties: { kind: { const: kind } }, required: ['kind'] },
   then: { required: ['selected'] },
-}) as unknown as JSONSchema;
+})) as JSONSchema;
 
+describe.each([true, false])('directGuardCompile=%s', (directGuardCompile) => {
+  afterEach(async () => {
+    (await import('../../default/validatorPlugin')).ajvValidatorPlugin.configure({ directGuardCompile: true });
+    (await import('../../2019/validatorPlugin')).ajvValidatorPlugin.configure({ directGuardCompile: true });
+    (await import('../../2020/validatorPlugin')).ajvValidatorPlugin.configure({ directGuardCompile: true });
+  });
 describe('VALIDATE-046 same-id roots', () => {
   it.each(['default', 'bind'] as const)('(i) keeps two live roots independent with %s', async (mode) => {
-    const ajvValidatorPlugin = await loadPlugin(mode);
+    const ajvValidatorPlugin = await loadPlugin(mode, directGuardCompile);
     const first = root('first');
     const second = root('second');
     const firstValidate = ajvValidatorPlugin.compile(first);
@@ -39,13 +46,13 @@ describe('VALIDATE-046 same-id roots', () => {
   });
 
   it.each(['default', 'bind'] as const)('(ii) isolates nested IDs and absolute self references with %s', async (mode) => {
-    const ajvValidatorPlugin = await loadPlugin(mode);
-    const makeRoot = (type: string): JSONSchema => ({
+    const ajvValidatorPlugin = await loadPlugin(mode, directGuardCompile);
+    const makeRoot = (type: string): JSONSchema => JSON.parse(JSON.stringify({
       $id: 'https://example.test/shared-self',
       $defs: { value: { $id: 'https://example.test/shared-inner', type } },
       if: { $ref: 'https://example.test/shared-self#/$defs/value' },
       then: { const: 'accepted' },
-    }) as unknown as JSONSchema;
+    })) as JSONSchema;
     const first = makeRoot('string');
     const second = makeRoot('number');
     const firstValidate = ajvValidatorPlugin.compile(first);
@@ -60,7 +67,7 @@ describe('VALIDATE-046 same-id roots', () => {
   });
 
   it.each(['default', 'bind'] as const)('(iii) retains the old root until release during reset with %s', async (mode) => {
-    const ajvValidatorPlugin = await loadPlugin(mode);
+    const ajvValidatorPlugin = await loadPlugin(mode, directGuardCompile);
     const oldRoot = root('old');
     const newRoot = root('new');
     const oldValidate = ajvValidatorPlugin.compile(oldRoot);
@@ -75,7 +82,7 @@ describe('VALIDATE-046 same-id roots', () => {
   });
 
   it.each(['default', 'bind'] as const)('(iv) allows a surviving root to compile a late guard with %s', async (mode) => {
-    const ajvValidatorPlugin = await loadPlugin(mode);
+    const ajvValidatorPlugin = await loadPlugin(mode, directGuardCompile);
     const removed = root('removed');
     const surviving = root('surviving');
     ajvValidatorPlugin.compile(removed);
@@ -86,4 +93,6 @@ describe('VALIDATE-046 same-id roots', () => {
     expect(ajvValidatorPlugin.compileGuard(surviving, '/if')(value)).toBe(!direct(value));
     ajvValidatorPlugin.release(surviving);
   });
+});
+
 });

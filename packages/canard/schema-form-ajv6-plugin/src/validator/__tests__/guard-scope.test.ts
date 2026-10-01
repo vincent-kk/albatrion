@@ -1,8 +1,14 @@
 import Ajv from 'ajv';
-import { describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
 import { ajvValidatorPlugin } from '../validatorPlugin';
 
+describe.each([true, false])('directGuardCompile=%s', (directGuardCompile) => {
+  beforeEach(() => { ajvValidatorPlugin.configure({ directGuardCompile }); });
+  afterEach(async () => {
+    ajvValidatorPlugin.configure({ directGuardCompile: true });
+    (await import('../validatorPlugin')).ajvValidatorPlugin.configure({ directGuardCompile: true });
+  });
 describe('VALIDATE-047 ajv6 case (i)', () => {
   it('resolves a relative $ref from an inner $id in the authored root', () => {
     ajvValidatorPlugin.bind!(new Ajv({ allErrors: true, format: false }));
@@ -30,4 +36,6 @@ describe('VALIDATE-047 ajv6 case (i)', () => {
       expect(direct({ item })).toBe(true);
     }
   });
+});
+
 });

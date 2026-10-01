@@ -1,5 +1,5 @@
 import Ajv from 'ajv';
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { ajvValidatorPlugin } from '../validatorPlugin';
 
@@ -7,11 +7,19 @@ const id = 'https://example.test/ajv7/shared.json';
 const oracle = (schema: object, value: unknown): boolean =>
   Boolean(new Ajv({ allErrors: true, strict: false, validateFormats: false }).compile(schema)(value));
 
+describe.each([true, false])('directGuardCompile=%s', (directGuardCompile) => {
+  beforeEach(() => { ajvValidatorPlugin.configure({ directGuardCompile }); });
+  afterEach(async () => {
+    ajvValidatorPlugin.configure({ directGuardCompile: true });
+    (await import('../validatorPlugin')).ajvValidatorPlugin.configure({ directGuardCompile: true });
+  });
 describe.each(['default', 'bind'] as const)('VALIDATE-046 %s', (mode) => {
   const getPlugin = async () => {
     if (mode === 'default') {
       vi.resetModules();
-      return (await import('../validatorPlugin')).ajvValidatorPlugin;
+      const plugin = (await import('../validatorPlugin')).ajvValidatorPlugin;
+      plugin.configure({ directGuardCompile });
+      return plugin;
     }
     ajvValidatorPlugin.bind?.(new Ajv({ allErrors: true, strict: false, validateFormats: false }));
     return ajvValidatorPlugin;
@@ -101,4 +109,6 @@ it('VALIDATE-046 bind clone retains consumer formats and keywords', async () => 
     expect((await validate(value)) === null).toBe(Boolean(expected(value)));
     expect(ajvValidatorPlugin.compileGuard(second, '')(value)).toBe(Boolean(expected(value)));
   }
+});
+
 });

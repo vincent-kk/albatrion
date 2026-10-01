@@ -3,7 +3,7 @@
 import type { JSONSchema } from '@canard/schema-form';
 import Ajv from 'ajv';
 import type { ErrorObject } from 'ajv';
-import { describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
 import { plugin } from '../index';
 import { resolveAjvConstructor } from '../validator/utils/resolveAjvConstructor';
@@ -38,6 +38,9 @@ const directPath = (error: ErrorObject): string => {
 const uniquePaths = (paths: string[]): string[] => paths
   .filter((path, index) => paths.indexOf(path) === index).sort();
 
+describe.each([true, false])('directGuardCompile=%s', (directGuardCompile) => {
+  beforeEach(() => { plugin.validator.configure({ directGuardCompile }); });
+  afterEach(() => { plugin.validator.configure({ directGuardCompile: true }); });
 describe('same-ajv path comparison for the ajv7 plugin', () => {
   it.each(cases)('$name', async ({ name, schema, value, valid }) => {
     const AjvConstructor = resolveAjvConstructor(Ajv);
@@ -46,6 +49,14 @@ describe('same-ajv path comparison for the ajv7 plugin', () => {
     const validateDirect = direct.compile(schema);
     const pluginSchema = JSON.parse(JSON.stringify(schema)) as JSONSchema;
     const validatePlugin = plugin.validator.compile(pluginSchema);
+    if ('oneOf' in schema) {
+      for (const index of [0, 1]) {
+        const guard = plugin.validator.compileGuard(pluginSchema, `/oneOf/${index}/if`);
+        const expected = direct.compile(schema.oneOf[index].if);
+        for (const candidate of [{ kind: 'a' }, { kind: 'b' }, {}, 1])
+          expect(guard(candidate)).toBe(Boolean(expected(candidate)));
+      }
+    }
     const emitted = JSON.parse(JSON.stringify(value));
     const issues = await validatePlugin(emitted);
     const directValid = validateDirect(emitted);
@@ -61,4 +72,6 @@ describe('same-ajv path comparison for the ajv7 plugin', () => {
       }));
     plugin.validator.release(pluginSchema);
   });
+});
+
 });

@@ -63,6 +63,15 @@ The plugin implements `ValidatorPlugin` with validation, synchronous guards, and
 - **Benefits**: Full control over AJV settings, custom keywords, formats, and validation rules
 - **Refusal**: An instance with `coerceTypes`, `useDefaults`, or `removeAdditional` enabled is rejected immediately. The previous binding stays active. Callers discriminate the refusal by `group` (`'UNHANDLED_ERROR'`) and `code` (`'VALIDATOR_BIND_REFUSED'`); core's `isUnhandledError` does not recognize it.
 
+#### **`configure(options: { directGuardCompile?: boolean }): void`**
+
+Self-contained guards compile their original copy subschema directly by default.
+Set `directGuardCompile: false` to use the registered root-pointer path for later
+compiles; existing predicates are unchanged and omitted options keep their value.
+Reference and identifier keys anywhere inside a guard always require the root path.
+The guard instance retains the bound dialect, formats and keywords with
+`allErrors: false`. `release(root)` also removes its directly compiled guards.
+
 #### **`compile(jsonSchema)`**
 
 - **Purpose**: Creates a validator function from the provided JSON Schema

@@ -1,8 +1,14 @@
 import Ajv from 'ajv';
 import Ajv2019 from 'ajv/dist/2019.js';
 import Ajv2020 from 'ajv/dist/2020.js';
-import { expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 
+describe.each([true, false])('directGuardCompile=%s', (directGuardCompile) => {
+  afterEach(async () => {
+    (await import('../../default/validatorPlugin')).ajvValidatorPlugin.configure({ directGuardCompile: true });
+    (await import('../../2019/validatorPlugin')).ajvValidatorPlugin.configure({ directGuardCompile: true });
+    (await import('../../2020/validatorPlugin')).ajvValidatorPlugin.configure({ directGuardCompile: true });
+  });
 it.each([
   ['default', Ajv, () => import('../../default/validatorPlugin')],
   ['2019', Ajv2019, () => import('../../2019/validatorPlugin')],
@@ -11,6 +17,7 @@ it.each([
   vi.resetModules();
   const compile = vi.spyOn(Constructor.prototype, 'compile');
   const { ajvValidatorPlugin } = await load();
+  ajvValidatorPlugin.configure({ directGuardCompile });
   ajvValidatorPlugin.compile({ type: 'string' });
   expect(compile.mock.contexts[0]).toMatchObject({
     opts: { allErrors: true, strictSchema: false, validateFormats: false, allowUnionTypes: true },
@@ -21,6 +28,7 @@ it.each([
 it('does not register or retain an ID-free legacy root in Ajv', async () => {
   vi.resetModules();
   const { ajvValidatorPlugin } = await import('../../default/validatorPlugin');
+  ajvValidatorPlugin.configure({ directGuardCompile });
   ajvValidatorPlugin.compile({ type: 'string' });
   const addSchema = vi.spyOn(Ajv.prototype, 'addSchema');
   ajvValidatorPlugin.compile({ type: 'number' });
@@ -31,6 +39,7 @@ it('does not register or retain an ID-free legacy root in Ajv', async () => {
 it('keeps a bound format after the shared compiler rolls over', async () => {
   vi.resetModules();
   const { ajvValidatorPlugin } = await import('../../default/validatorPlugin');
+  ajvValidatorPlugin.configure({ directGuardCompile });
   const instance = new Ajv({ strictSchema: false, validateFormats: true });
   instance.addFormat('only-x', /^x$/);
   ajvValidatorPlugin.bind(instance);
@@ -43,6 +52,7 @@ it('keeps a bound format after the shared compiler rolls over', async () => {
 
 it('keeps bound schemas and bare keywords after 65 fresh compiles', async () => {
   const { ajvValidatorPlugin } = await import('../../default/validatorPlugin');
+  ajvValidatorPlugin.configure({ directGuardCompile });
   const instance = new Ajv({ allErrors: true, strict: true });
   const definitionId = 'https://example.test/ajv8/bound-definition';
   instance.addSchema({ $id: definitionId, $defs: { word: { type: 'string' } } });
@@ -61,6 +71,7 @@ it('keeps bound schemas and bare keywords after 65 fresh compiles', async () => 
 
 it('VALIDATE-033 resolves a bound schema in a first-error guard sibling', async () => {
   const { ajvValidatorPlugin } = await import('../../default/validatorPlugin');
+  ajvValidatorPlugin.configure({ directGuardCompile });
   const instance = new Ajv({ allErrors: true, strict: true });
   const definitionId = 'https://example.test/ajv8/guard-definition';
   instance.addSchema({ $id: definitionId, type: 'string' });
@@ -73,6 +84,7 @@ it('VALIDATE-033 resolves a bound schema in a first-error guard sibling', async 
 
 it('VALIDATE-046 resolves a bound schema in a same-id conflict sibling', async () => {
   const { ajvValidatorPlugin } = await import('../../default/validatorPlugin');
+  ajvValidatorPlugin.configure({ directGuardCompile });
   const instance = new Ajv({ allErrors: true, strict: true });
   const definitionId = 'https://example.test/ajv8/conflict-definition';
   instance.addSchema({ $id: definitionId, type: 'string' });
@@ -85,4 +97,6 @@ it('VALIDATE-046 resolves a bound schema in a same-id conflict sibling', async (
   expect(await old(1)).toBeNull();
   expect(await current('ok')).toBeNull();
   expect(await current(1)).not.toBeNull();
+});
+
 });

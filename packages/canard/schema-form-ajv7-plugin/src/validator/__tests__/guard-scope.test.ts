@@ -1,10 +1,16 @@
 import type { JSONSchema } from '@canard/schema-form';
 import Ajv from 'ajv';
 import Ajv2019 from 'ajv/dist/2019.js';
-import { describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
 import { ajvValidatorPlugin } from '../validatorPlugin';
 
+describe.each([true, false])('directGuardCompile=%s', (directGuardCompile) => {
+  beforeEach(() => { ajvValidatorPlugin.configure({ directGuardCompile }); });
+  afterEach(async () => {
+    ajvValidatorPlugin.configure({ directGuardCompile: true });
+    (await import('../validatorPlugin')).ajvValidatorPlugin.configure({ directGuardCompile: true });
+  });
 describe('VALIDATE-033 VALIDATE-047 guard scope', () => {
   it('uses the bound format profile with allErrors disabled for guards', () => {
     const instance = new Ajv({ allErrors: true, strict: false, validateFormats: true });
@@ -58,7 +64,7 @@ describe('VALIDATE-033 VALIDATE-047 guard scope', () => {
       } },
     } as const;
     const direct = new Ajv2019({ allErrors: true, strict: false, validateFormats: false }).compile(root);
-    const guard = ajvValidatorPlugin.compileGuard(root as unknown as JSONSchema, '/$defs/branch/if');
+    const guard = ajvValidatorPlugin.compileGuard(JSON.parse(JSON.stringify(root)) as JSONSchema, '/$defs/branch/if');
     for (const item of [{ next: { kind: 'yes' } }, { next: { kind: 'no' } }]) {
       const accepted = direct({ kind: 'yes', item: { ...item, accepted: true } });
       const rejected = direct({ kind: 'yes', item: { ...item, rejected: true } });
@@ -82,7 +88,7 @@ describe('VALIDATE-033 VALIDATE-047 guard scope', () => {
       } },
     } as const;
     const direct = new Ajv2019({ allErrors: true, strict: false, validateFormats: false }).compile(root);
-    const guard = ajvValidatorPlugin.compileGuard(root as unknown as JSONSchema, '/$defs/branch/if');
+    const guard = ajvValidatorPlugin.compileGuard(JSON.parse(JSON.stringify(root)) as JSONSchema, '/$defs/branch/if');
     for (const item of [{ next: { kind: 'yes' } }, { next: { kind: 'no' } }]) {
       const accepted = direct({ kind: 'yes', item: { ...item, accepted: true } });
       const rejected = direct({ kind: 'yes', item: { ...item, rejected: true } });
@@ -121,8 +127,10 @@ describe('VALIDATE-033 VALIDATE-047 guard scope', () => {
     const left = direct({ left: { kind: 'left', item: { ...value, accepted: true } } });
     const right = direct({ right: { kind: 'right', item: { ...value, accepted: true } } });
     expect(left).not.toBe(right);
-    const guard = ajvValidatorPlugin.compileGuard(root as unknown as JSONSchema, '/$defs/common/if');
+    const guard = ajvValidatorPlugin.compileGuard(JSON.parse(JSON.stringify(root)) as JSONSchema, '/$defs/common/if');
     const verdict = guard(value);
     expect(verdict === left && verdict === right).toBe(false);
   });
+});
+
 });

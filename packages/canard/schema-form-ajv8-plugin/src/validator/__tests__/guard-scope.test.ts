@@ -1,43 +1,51 @@
 import type { JSONSchema } from '@canard/schema-form';
 import Ajv2019 from 'ajv/dist/2019.js';
 import Ajv2020 from 'ajv/dist/2020.js';
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 
 /** Loads a fresh Draft 2020 plugin for each default or custom binding case. */
-const load2020Plugin = async (mode: 'default' | 'bind') => {
+const load2020Plugin = async (mode: 'default' | 'bind', directGuardCompile: boolean) => {
   vi.resetModules();
   const { ajvValidatorPlugin } = await import('../../2020/validatorPlugin');
   if (mode === 'bind') ajvValidatorPlugin.bind(new Ajv2020({ strictSchema: false }));
+  ajvValidatorPlugin.configure({ directGuardCompile });
   return ajvValidatorPlugin;
 };
 
 /** Loads a fresh Draft 2019 plugin for each default or custom binding case. */
-const load2019Plugin = async (mode: 'default' | 'bind') => {
+const load2019Plugin = async (mode: 'default' | 'bind', directGuardCompile: boolean) => {
   vi.resetModules();
   const { ajvValidatorPlugin } = await import('../../2019/validatorPlugin');
   if (mode === 'bind') ajvValidatorPlugin.bind(new Ajv2019({ strictSchema: false }));
+  ajvValidatorPlugin.configure({ directGuardCompile });
   return ajvValidatorPlugin;
 };
 
+describe.each([true, false])('directGuardCompile=%s', (directGuardCompile) => {
+  afterEach(async () => {
+    (await import('../../default/validatorPlugin')).ajvValidatorPlugin.configure({ directGuardCompile: true });
+    (await import('../../2019/validatorPlugin')).ajvValidatorPlugin.configure({ directGuardCompile: true });
+    (await import('../../2020/validatorPlugin')).ajvValidatorPlugin.configure({ directGuardCompile: true });
+  });
 describe('VALIDATE-047 guard scope', () => {
   it('VALIDATE-033 carries custom formats and keywords into guard instances', async () => {
-    const plugin2020 = await load2020Plugin('default');
+    const plugin2020 = await load2020Plugin('default', directGuardCompile);
     const instance = new Ajv2020({ strictSchema: false, validateFormats: true });
     instance.addFormat('only-x', /^x$/);
     instance.addKeyword({ keyword: 'isOdd', type: 'number', schemaType: 'boolean', validate: (enabled: boolean, value: number) => !enabled || value % 2 === 1 });
     plugin2020.bind(instance);
-    const formatRoot = {
+    const formatRoot = JSON.parse(JSON.stringify({
       $id: 'https://example.test/custom-format',
       if: { type: 'string', format: 'only-x' },
       then: false,
       else: true,
-    } as unknown as JSONSchema;
-    const keywordRoot = {
+    })) as JSONSchema;
+    const keywordRoot = JSON.parse(JSON.stringify({
       $id: 'https://example.test/custom-keyword',
       if: { type: 'number', isOdd: true },
       then: false,
       else: true,
-    } as unknown as JSONSchema;
+    })) as JSONSchema;
     const direct = new Ajv2020({ strictSchema: false, validateFormats: true });
     direct.addFormat('only-x', /^x$/);
     direct.addKeyword({ keyword: 'isOdd', type: 'number', schemaType: 'boolean', validate: (enabled: boolean, value: number) => !enabled || value % 2 === 1 });
@@ -50,15 +58,15 @@ describe('VALIDATE-047 guard scope', () => {
   });
 
   it.each(['default', 'bind'] as const)('(i) resolves a relative ref from a nested $id with %s', async (mode) => {
-    const plugin2020 = await load2020Plugin(mode);
-    const schema = {
+    const plugin2020 = await load2020Plugin(mode, directGuardCompile);
+    const schema = JSON.parse(JSON.stringify({
       $id: 'https://example.test/outer',
       $defs: {
         condition: { $id: 'condition', type: 'string' },
         nested: { $id: 'nested', if: { $ref: '../condition' }, then: false, else: true },
       },
       $ref: 'nested',
-    } as unknown as JSONSchema;
+    })) as JSONSchema;
     const direct = new Ajv2020({ strictSchema: false }).compile(schema);
     const guard = plugin2020.compileGuard(schema, '/$defs/nested/if');
     for (const value of ['text', 42]) expect(guard(value)).toBe(!direct(value));
@@ -66,8 +74,8 @@ describe('VALIDATE-047 guard scope', () => {
   });
 
   it.each(['default', 'bind'] as const)('(ii) follows a 2020-12 $dynamicRef with %s', async (mode) => {
-    const plugin2020 = await load2020Plugin(mode);
-    const schema = {
+    const plugin2020 = await load2020Plugin(mode, directGuardCompile);
+    const schema = JSON.parse(JSON.stringify({
       $id: 'https://example.test/dynamic',
       $dynamicAnchor: 'node',
       $defs: {
@@ -82,7 +90,7 @@ describe('VALIDATE-047 guard scope', () => {
       if: { $ref: 'base' },
       then: false,
       else: true,
-    } as unknown as JSONSchema;
+    })) as JSONSchema;
     const direct = new Ajv2020({ strictSchema: false }).compile(schema);
     const guard = plugin2020.compileGuard(schema, '/if');
     for (const value of [{ value: 'ok' }, { value: 'ok', next: { value: 1 } }]) {
@@ -92,8 +100,8 @@ describe('VALIDATE-047 guard scope', () => {
   });
 
   it.each(['default', 'bind'] as const)('(iii) follows a 2019-09 $recursiveRef with %s', async (mode) => {
-    const plugin2019 = await load2019Plugin(mode);
-    const schema = {
+    const plugin2019 = await load2019Plugin(mode, directGuardCompile);
+    const schema = JSON.parse(JSON.stringify({
       $id: 'https://example.test/recursive',
       $recursiveAnchor: true,
       $defs: {
@@ -108,7 +116,7 @@ describe('VALIDATE-047 guard scope', () => {
       if: { $ref: 'base' },
       then: false,
       else: true,
-    } as unknown as JSONSchema;
+    })) as JSONSchema;
     const direct = new Ajv2019({ strictSchema: false }).compile(schema);
     const guard = plugin2019.compileGuard(schema, '/if');
     for (const value of [{ value: 'ok' }, { value: 'ok', next: { value: 1 } }]) {
@@ -118,8 +126,8 @@ describe('VALIDATE-047 guard scope', () => {
   });
 
   it.each(['default', 'bind'] as const)('(iv) observes a shared dynamic location from two scopes with %s', async (mode) => {
-    const plugin2020 = await load2020Plugin(mode);
-    const common = {
+    const plugin2020 = await load2020Plugin(mode, directGuardCompile);
+    const common = JSON.parse(JSON.stringify({
       $id: 'https://example.test/two-scopes',
       $defs: {
         shared: {
@@ -144,9 +152,9 @@ describe('VALIDATE-047 guard scope', () => {
           $ref: 'https://example.test/shared',
         },
       },
-    } as unknown as JSONSchema;
-    const stringRoot = { ...common, $ref: '#/$defs/stringScope' } as JSONSchema;
-    const numberRoot = { ...common, $ref: '#/$defs/numberScope' } as JSONSchema;
+    })) as JSONSchema;
+    const stringRoot = JSON.parse(JSON.stringify({ ...common, $ref: '#/$defs/stringScope' })) as JSONSchema;
+    const numberRoot = JSON.parse(JSON.stringify({ ...common, $ref: '#/$defs/numberScope' })) as JSONSchema;
     const value = { stringKey: true, numberKey: true, next: { stringKey: true } };
     const directString = new Ajv2020({ strictSchema: false }).compile(stringRoot);
     const directNumber = new Ajv2020({ strictSchema: false }).compile(numberRoot);
@@ -157,4 +165,6 @@ describe('VALIDATE-047 guard scope', () => {
     expect(guard(value)).toBe(!directNumber(value));
     plugin2020.release(stringRoot);
   });
+});
+
 });

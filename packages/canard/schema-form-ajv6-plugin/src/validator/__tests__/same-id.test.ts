@@ -1,5 +1,5 @@
 import Ajv from 'ajv';
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { ajvValidatorPlugin } from '../validatorPlugin';
 
@@ -9,11 +9,18 @@ const id = 'https://example.test/shared.json';
 const oracle = (schema: object, value: unknown): boolean =>
   Boolean(new Ajv({ allErrors: true, format: false }).compile(schema)(value));
 
+describe.each([true, false])('directGuardCompile=%s', (directGuardCompile) => {
+  beforeEach(() => { ajvValidatorPlugin.configure({ directGuardCompile }); });
+  afterEach(async () => {
+    ajvValidatorPlugin.configure({ directGuardCompile: true });
+    (await import('../validatorPlugin')).ajvValidatorPlugin.configure({ directGuardCompile: true });
+  });
 describe.each(['default', 'bind'] as const)('VALIDATE-046 %s', (mode) => {
   it('case (i): keeps two live roots with the same root $id independent', async () => {
     if (mode === 'default') {
       vi.resetModules();
       const { ajvValidatorPlugin: fresh } = await import('../validatorPlugin');
+      fresh.configure({ directGuardCompile });
       const first = { $id: id, type: 'string' } as const;
       const second = { $id: id, type: 'number' } as const;
       const one = fresh.compile(first);
@@ -39,6 +46,7 @@ describe.each(['default', 'bind'] as const)('VALIDATE-046 %s', (mode) => {
     const plugin = mode === 'default'
       ? (vi.resetModules(), (await import('../validatorPlugin')).ajvValidatorPlugin)
       : ajvValidatorPlugin;
+    plugin.configure({ directGuardCompile });
     if (mode === 'bind') plugin.bind!(new Ajv({ allErrors: true, format: false }));
     const first = {
       $id: id, type: 'object', definitions: { item: { $id: 'nested.json', type: 'string' } },
@@ -63,6 +71,7 @@ describe.each(['default', 'bind'] as const)('VALIDATE-046 %s', (mode) => {
     const plugin = mode === 'default'
       ? (vi.resetModules(), (await import('../validatorPlugin')).ajvValidatorPlugin)
       : ajvValidatorPlugin;
+    plugin.configure({ directGuardCompile });
     if (mode === 'bind') plugin.bind!(new Ajv({ allErrors: true, format: false }));
     const oldRoot = { $id: id, type: 'string' } as const;
     const nextRoot = { $id: id, type: 'number' } as const;
@@ -79,6 +88,7 @@ describe.each(['default', 'bind'] as const)('VALIDATE-046 %s', (mode) => {
     const plugin = mode === 'default'
       ? (vi.resetModules(), (await import('../validatorPlugin')).ajvValidatorPlugin)
       : ajvValidatorPlugin;
+    plugin.configure({ directGuardCompile });
     if (mode === 'bind') plugin.bind!(new Ajv({ allErrors: true, format: false }));
     const oldRoot = { $id: id, type: 'object', properties: { value: { type: 'string' } } } as const;
     const nextRoot = { $id: id, type: 'object', properties: { value: { type: 'number' } } } as const;
@@ -99,7 +109,7 @@ it('VALIDATE-046 bind clone retains formats and keywords added by the consumer',
     type: 'number',
     validate: (_schema: unknown, value: unknown) => typeof value === 'number' && value % 2 === 1,
   });
-  instance.addKeyword('annotation', undefined as unknown as Ajv.KeywordDefinition);
+  instance.addKeyword('annotation');
   ajvValidatorPlugin.bind!(instance);
   const first = { $id: id, type: 'string', format: 'onlyX' } as const;
   const second = { $id: id, type: 'number', oddNumber: true, annotation: true } as const;
@@ -111,8 +121,10 @@ it('VALIDATE-046 bind clone retains formats and keywords added by the consumer',
     type: 'number',
     validate: (_schema: unknown, value: unknown) => typeof value === 'number' && value % 2 === 1,
   });
-  independent.addKeyword('annotation', undefined as unknown as Ajv.KeywordDefinition);
+  independent.addKeyword('annotation');
   const expected = independent.compile(second);
   for (const value of [2, 3])
     expect((await validate(value)) === null).toBe(Boolean(expected(value)));
+});
+
 });

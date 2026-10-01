@@ -27,6 +27,19 @@ const defaultSettings: Options = {
 };
 
 let ajvInstance: Ajv | null = null;
+/** Process-wide optimization selection; existing predicates retain their behavior. */
+let directGuardCompile = true;
+
+/** Plugin-specific configuration extends the core contract without changing it. */
+type ConfigurableValidatorPlugin = ValidatorPlugin & {
+  /**
+   * Select direct compilation of self-contained guards (default true).
+   * @param options - False uses root pointers for later compiles; omitted fields
+   * keep their value. Existing predicates and bound Ajv settings are unchanged.
+   * @returns Nothing; updates this entry point's process-wide selection.
+   */
+  configure(options: { directGuardCompile?: boolean }): void;
+};
 /** Root registrations persist across process-wide `bind` calls until release. */
 const roots: SchemaRootRegistry = createSchemaRootRegistry();
 
@@ -57,12 +70,16 @@ const getInstance = (): Ajv => {
  * ```
  */
 export const ajvValidatorPlugin = {
+  /** Set direct compilation for later guards (default true); omitted options stay unchanged. */
+  configure: (options: { directGuardCompile?: boolean }): void => {
+    directGuardCompile = options.directGuardCompile ?? directGuardCompile;
+  },
   bind: (instance: Ajv) => {
     assertBindableInstance(instance);
     ajvInstance = instance;
   },
   compile: (jsonSchema: JSONSchema): ValidateFunction => createValidatorFactory(getInstance(), roots)(jsonSchema),
-  compileGuard: (root: JSONSchema, pointer: string): ((value: unknown) => boolean) => createGuardCompiler(getInstance(), roots, root, pointer),
+  compileGuard: (root: JSONSchema, pointer: string): ((value: unknown) => boolean) => createGuardCompiler(getInstance(), roots, root, pointer, directGuardCompile),
   release: (root: JSONSchema): void => releaseSchemaRoot(roots, root),
   dialect: 'https://json-schema.org/draft/2019-09/schema',
-} satisfies ValidatorPlugin;
+} satisfies ConfigurableValidatorPlugin;

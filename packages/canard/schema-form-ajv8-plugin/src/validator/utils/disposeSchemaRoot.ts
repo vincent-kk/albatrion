@@ -12,6 +12,9 @@ export const disposeSchemaRoot = (registration: SchemaRootRegistration): void =>
       resource.guardAjv.removeSchema(resource.key);
       if (resource.guardCopy) resource.guardAjv.removeSchema(resource.guardCopy);
       for (const ref of resource.guardRefs ?? []) resource.guardAjv.removeSchema(ref);
+      for (const schema of resource.directGuards)
+        if (typeof schema !== 'boolean') resource.guardAjv.removeSchema(schema);
+      resource.directGuards.length = 0;
     }
   }
 };
