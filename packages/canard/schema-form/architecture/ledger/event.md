@@ -445,6 +445,7 @@
   > **진입의 정의**(`spikes/work-loop/REPORT-v4c.txt` §1): 같은 루트의 다른 공개 쓰기 API가 호출 스택에 없는 상태에서 이루어진 한 번의 공개 쓰기 호출. 공개 쓰기 API는 `setValue`·`push`·`pop`·`update`·`remove`·`clear`·`batch`이고(06 N6, 07 §6.2), `reset`·`resetSubtree`·마운트는 그것을 거쳐 진입이 된다. 프로토타입 목록의 `select`(분기 선택)는 폼이 분기를 고르지 않으므로 사라졌고(07 §6.2 N2·N6), `write`는 입력의 `onChange`가 부르는 `setValue`에 흡수되며, `removeKey`는 `Merge`로 키에 `undefined`를 쓰는 것으로 대신한다(`03-mental-model.md` §3). 읽기·`subscribe`·상태 칸 쓰기(§2의 R15)는 진입이 아니다. 구현은 루트의 **진입 깊이 카운터**이며, 깊이가 1 → 0이 될 때 검증을 먼저 요청하고 그다음 `onChange`를 부른다(순서가 반대면 `onChange` 안의 쓰기가 만든 새 스탬프가 옛것에 밀린다).
 - 보충:
   > 편집자 결정(31C-01): "【추론】 명령 메서드 `request(kind)`의 호출은 진입이 아니다: EVENT-027의 공개 쓰기 API 목록(`setValue`·`push`·`pop`·`update`·`remove`·`clear`·`batch`)에 명령이 없고, EVENT-045는 명령을 상태 변경·외부 오류와 함께 "정착을 거치지 않는 사건"으로 묶으며, EVENT-063대로 명령은 요청 사건만 내고 원본을 쓰지 않으므로 진입 깊이가 1 → 0이 될 때의 검증 요청과 `onChange`(EVENT-027)를 일으키지 않는다." (`reviews/round-31-closing.md:9`)
+  > 편집자 결정(33C-01): "【추론】 배열 쓰기 동사 `push`·`pop`·`update`·`remove`·`clear`는 EVENT-027의 공개 쓰기 API이므로 그 진입 함수는 LANDING-084대로 `dispatch`가 쓰기 동사마다 하나씩 소유한다; `arrayBehavior/`나 노드 겉면이 따로 진입 사슬(진입 깊이 카운터, `onChange`, 사슬 끝 throw)을 갖지 않는다." (`reviews/round-33-closing.md:9`)
 - 상태: 현행
 - 출처: `adr/0008-event-system.md:116#1-4`(정본), `reviews/round-5-derivations.md:24`
 - 닫은 사람: 편집자 결정(5라운드 도출 C-9, `reviews/round-5-derivations.md:24`), 편집자 결정(10라운드 5차 본문, `adr/0008-event-system.md:13`)

@@ -571,6 +571,8 @@
   > Form 속성 `validatorFactory`는 유지하고 넓힌다(14라운드 답 O-7: '플러그인을 통한 전역 속성이 아니라 특정 커스텀 검증기 등을 추가한 커스텀 인스턴스 주입기').
 - 보충:
   > 소유자(14라운드 O-7): "맞긴 한데, 이건 plungin 을 통한 전역 속성이 아니라 특정 커스텀 검증기 등을 추가한 커스텀 인스턴스 주입기임. 제거할 이유가 있나? 설계를 확장하라. 필요한 기능이다." (`reviews/round-14-owner-answers.md:13`)
+  > 편집자 결정(32C-01): "【추론】 LANDING-064의 PR-4 행 "검증기 계약(`compileGuard`, `rejectedKey`)의 플러그인·`validatorFactory` 통일과 ajv6·7·8 플러그인 구현"은 코어가 받는 검증기 계약 형 하나를 정하고 플러그인 셋과 코어의 트리 생성 인자가 그 형을 쓰게 하는 일이다; Form 속성 `validatorFactory`의 공개 형을 바꾸는 일은 아니다." (`reviews/round-32-closing.md:9`)
+  > 편집자 결정(32C-01): "【추론】 Form 속성 `validatorFactory`가 함수 하나에서 `{ compile, compileGuard }` 객체로 바뀌는 것(LANDING-036 이주 33)은 공개 겉면의 변경이고, LANDING-159 규칙 3대로 `src/index.ts`는 PR-7까지 옛 엔진을 가리키며 LANDING-064의 PR-7 행이 Form 속성 `validatorFactory`의 연결을 전환 PR에 두므로, 공개 속성의 형과 동작은 PR-7에서 바뀐다; PR-4 전에는 공개 동작 변경이 없다." (`reviews/round-32-closing.md:10`)
 - 상태: 현행
 - 출처: `adr/0004-validator-plugin-compile-guard.md:37#1`(정본, VALIDATE-024에서 분할), `adr/0014-error-policy.md:211`, `08-design-a-to-z.md:345`, `02-target-overview.md:175`, `reviews/round-14-owner-answers.md:13`
 - 닫은 사람: 소유자 답(`reviews/round-14-owner-answers.md:13` O-7)
@@ -799,6 +801,9 @@
   > 검증기에 넘기는 스키마 사본은 (검증기 인스턴스, 작성 루트)마다 한 번 깊이 복사한다.
 - 보충:
   > 소유자(union O4): "추가 설명 필요. ajv 플러그인에 대한 이야기입니까? ajv 의 값변경 옵션에 대해서? 이건 의도적으로 금지해도 됩니다. 저희가 제어할 수 없는거니까" (`reviews/round-18-owner-answers.md:34`)
+  > 편집자 결정(32C-02): "【추론】 VALIDATE-050과 ERROR-164가 `VALIDATOR_BIND_REFUSED`에 요구하는 것은 코드 `UNHANDLED_ERROR.VALIDATOR_BIND_REFUSED`, 부른 쪽에 즉시 던짐, 인스턴스를 붙이지 않음, `onError`에 가지 않음(`REGISTER_PLUGIN`과 같은 부류)이며, 던지는 객체가 코어의 `UnhandledError` 클래스여야 한다는 문장은 어느 항목에도 없다." (`reviews/round-32-closing.md:18`)
+  > 편집자 결정(32C-02): "【추론】 ajv 플러그인 셋은 `@canard/schema-form`을 런타임 의존성으로 갖지 않으므로(형만 가져온다) 코어 클래스를 던지려면 새 런타임 의존성이 필요한데, 원장은 그런 의존을 정하지 않았다; 플러그인이 이미 런타임 의존성으로 가진 `@winglet/common-utils`의 `BaseError`를 그룹 `'UNHANDLED_ERROR'`·코드 `'VALIDATOR_BIND_REFUSED'`로 던진다(코어 `UnhandledError`와 같은 기반 클래스·같은 그룹·코드 모양). 플러그인 안의 하위 클래스로 감싸도 되나 `name`은 자기 이름을 적고 코어 클래스를 사칭하지 않는다." (`reviews/round-32-closing.md:19`)
+  > 편집자 결정(32C-02): "【추론】 코어의 `isUnhandledError`는 `instanceof` 가드라 이 객체를 알아보지 못하며 이는 받아들인다: 이 사건은 폼 밖에서 플러그인의 `bind` 호출자에게 가는 것이라 코어의 가드로 거를 자리가 없고, 호출자는 `group`과 `code`로 가른다. 플러그인 문서에 이 한 줄을 적는다." (`reviews/round-32-closing.md:20`)
 - 상태: 현행
 - 출처: `reviews/round-18-owner-answers.md:34`(정본, 반영 칸)
 - 닫은 사람: 소유자 답(`reviews/round-18-owner-answers.md:34` union O4)
