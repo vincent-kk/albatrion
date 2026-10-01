@@ -8,6 +8,13 @@ export interface ScenarioExpectation {
   readonly outputValue?: unknown;
   /** Expected values at individual JSON Pointer paths. */
   readonly values?: Readonly<Record<string, unknown>>;
+  /** Local state keys observed on nodes at JSON Pointer paths. */
+  readonly states?: Readonly<Record<string, Readonly<{
+    visible?: boolean;
+    readOnly?: boolean;
+    disabled?: boolean;
+    enabled?: boolean;
+  }>>>;
   /** Expected validation errors, indexed by JSON Pointer. */
   readonly errors?: Readonly<Record<string, readonly unknown[]>>;
   /** Expected settlement health fields on the form root. */
@@ -27,7 +34,9 @@ export type FormScenarioStep = (
   | { readonly action: 'push'; readonly path: string; readonly value: unknown }
   | { readonly action: 'remove'; readonly path: string; readonly index: number }
   | { readonly action: 'update'; readonly path: string; readonly schema: object }
-  | { readonly action: 'submit' | 'reset' }
+  | { readonly action: 'submit' }
+  | { readonly action: 'reset'; readonly automaticWrites?: 'disabled' }
+  | { readonly action: 'resetSubtree'; readonly path: string }
   | { readonly action: 'batch'; readonly steps: readonly FormScenarioStep[] }
 ) & { readonly expect?: ScenarioExpectation };
 

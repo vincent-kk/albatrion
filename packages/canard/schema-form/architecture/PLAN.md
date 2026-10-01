@@ -49,8 +49,8 @@
 | 01 | 설계문서 | 머지(절 통과 대기) | [#348](https://github.com/vincent-kk/albatrion/pull/348) | 설계문서 8편(`design/`)과 ADR 0001–0017(`adr/`), 옛 문서는 `_archive/2026-09-29/`. 2026-09-29 머지. 소유자 절 단위 통과는 머지된 문서 위에서 머리 표의 행을 `대기` → `통과`로 바꾸는 후속 커밋으로 받는다(25C-09, PROCESS-062). 02가 먼저 머지되어 생긴 틈 16건은 25라운드와 보정 PR이 닫는다([realign](plan/01-design-docs/realign.md)). 실행 계획과 기록은 [log](plan/01-design-docs/log.md) |
 | 02 | 기반 + 청사진 | 머지 | [#347](https://github.com/vincent-kk/albatrion/pull/347) | 전체 4,437시험·lint·strict·빌드 통과. 19라운드 원장 해소와 TEST-079 반영, 내부 Codex 대조 완료. Filid 잔여 발견은 기록했고 Antigravity 외부 확인은 자동 승인 검토가 거절함 |
 | 보정 | 01·02 보정 | 머지 | [#349](https://github.com/vincent-kk/albatrion/pull/349) | 브랜치 `fix/schema-form-realign-01-02`. 25라운드(`reviews/round-25-closing.md`)대로 청사진 코드·시험과 설계문서를 맞춤. 2026-09-29 머지(`85e7d01af`). [realign](plan/01-design-docs/realign.md) |
-| 03 | 노드 트리·정착 | 진행 | — | 브랜치 `feat/schema-form-node-and-settle`. 실행 계획과 기록은 [log](plan/03-node-and-settle/log.md) |
-| 04 | 파생 + 상태 키·제어 | 대기 | — | 03 뒤, 05·06과 병렬 |
+| 03 | 노드 트리·정착 | 머지 | [#350](https://github.com/vincent-kk/albatrion/pull/350) | 브랜치 `feat/schema-form-node-and-settle`. 2026-09-30 머지(`0705217d5`). 뒤 PR로 넘긴 사례는 [log](plan/03-node-and-settle/log.md) §4 |
+| 04 | 파생 + 상태 키·제어 | 리뷰 | [#351](https://github.com/vincent-kk/albatrion/pull/351) | 브랜치 `feat/schema-form-derive-and-controls`. 05·06과 병렬. 벤치 행 수용(G18)·storybook(G23)은 소유자 확인 대기. 실행 계획과 기록은 [log](plan/04-derive-and-controls/log.md) |
 | 05 | 통지·검증 | 대기 | — | 03 뒤. **착수 전 소유자 결정**: 명령 메서드 이름·명령 종류 값의 형·`FormHandle` 대칭(EVENT-073) |
 | 06 | 배열 | 대기 | — | 03 뒤, 04·05와 병렬 |
 | 07 | 전환 | 대기 | — | 02–06 전부 머지 뒤. 원샷 |
@@ -67,7 +67,7 @@
 
 ## 4. 다음 할 일
 
-1. **03 노드 트리·정착** — 브랜치 `feat/schema-form-node-and-settle`에서 진행 중. 보정에서 넘어온 것은 `plan/03-node-and-settle/request.md`의 "02·01 보정에서 넘어온 것" 절. 03 머지 뒤 04·05·06 병렬. 기록은 [log](plan/03-node-and-settle/log.md).
+1. **04 파생 + 상태 키·제어** — [#351](https://github.com/vincent-kk/albatrion/pull/351) 리뷰 중(벤치 행 수용·storybook은 소유자 확인 대기). 03에서 넘어온 사례는 `plan/03-node-and-settle/log.md` §4. 06은 04와 병렬로 실행 가능, 05는 D-1 뒤. 기록은 [log](plan/04-derive-and-controls/log.md).
 2. **01 절 단위 통과** — 머지된 설계문서 여덟 편(192절)을 소유자가 절 단위로 통과시키고 문서 머리의 표에 날짜를 적는다(25C-09). 통과 중 나온 새 결정은 원장에 새 라운드 항목으로 먼저 들어가고 문서가 따라간다(`plan/01-design-docs/verification.md`).
 3. **D-1 권장안** — 05 착수 전에 올린다. 권장은 `request(kind, payload?)` 하나에 명령 종류를 문자열 리터럴 합집합 `'focus' | 'select' | 'refresh' | 'remount'`로, `FormHandle`은 같은 모양 `request(path, kind, payload?)` 하나로 합치는 것(겉면 수 약 57 → 약 54). 소유자가 정한다.
 
@@ -99,3 +99,7 @@
 | 2026-09-29 | 26라운드: 03(PR-2) 착수 전 원장 해석 여섯 건을 원장 관리자가 편집자 결정으로 닫음(26C-01~14, 보충 줄만 추가). 겉면 멤버는 기제의 PR에서, `controls.active` 게이트는 PR-2가 실제 평가, 평가 자리 L은 PR-2가 청사진에 더함. `plan/03-node-and-settle/verification.md:26`의 겉면 문장은 26C-01로 바꿔 읽음 | `reviews/round-26-closing.md` |
 | 2026-09-30 | 27라운드: 소유자가 PR-2 벤치의 느린 행을 모두 수용(TEST-027 충족), 벤치 기록은 `verification/03-node-and-settle/performance.md`, 새 엔진의 React·jsdom 성능 평가는 PR-7 전환의 게이트, 최적화는 구현 완료 뒤 별도 작업으로 분리. 소유자 답 5행, 보충 줄만 추가 | `reviews/round-27-owner-answers.md` |
 | 2026-09-29 | 03 노드 트리·정착 착수 — 소유자 승인. 원장 질의는 원장 관리 세션 `albatrion-f8`로 | `feat/schema-form-node-and-settle`, `plan/03-node-and-settle/log.md` |
+| 2026-09-30 | 03 PR #350 머지 확인(`0705217d5`, 13:30Z). 04·05·06의 의존이 풀림 | [#350](https://github.com/vincent-kk/albatrion/pull/350) |
+| 2026-09-30 | 04 파생 + 상태 키·제어 착수 — 소유자 승인. D-1은 05 착수 때 다시 올린다. 원장 질의는 원장 관리 세션 `albatrion-79`로 | `feat/schema-form-derive-and-controls`, `plan/04-derive-and-controls/log.md` |
+| 2026-09-30 | 28라운드: 04(PR-3+PR-6) 실행 계획 초안의 원장 해석 일곱 건과 후속 둘을 원장 관리자가 편집자 결정으로 닫음(28C-01~08, 보충 줄만 추가). 정착 기록은 런타임 칸에 마지막 하나, `enabled = active && visible`, `@`는 맥락 칸(03의 extras 읽기는 04가 고침), `setContext`·맥락 에지는 PR-3, `unsetOnInactive` 식 throw는 유지, TEST-071 값 크기의 뜻, `watchValues`·`node.context`는 04 | `reviews/round-28-closing.md` |
+| 2026-10-01 | 29라운드: 04 구현 중 물음 넷(생긴 노드의 `injectTo`·`derived`가 `undefined` 원천에서 발화하는가; 식이 던진 정착의 채움·나감 비움; 공유 충돌 정착의 진행; 조각 `controls`의 `injectTo`)을 원장 관리자가 편집자 결정으로 닫음(29C-01~04, 보충 줄만 추가). 발화한다; 채움 뒤의 변화는 새 에지; v7의 모형 선택과 다른 회귀 기대는 원장 값으로 바꿈; 식이 던져도 자리별 값으로 정착을 마치며 03의 전이 전체 생략은 04가 고침; 공유 충돌도 앞선 종류로 커밋하고 자동 쓰기는 진행; 조각의 `injectTo`는 청사진 오류(CONTROLS-077) | `reviews/round-29-closing.md` |

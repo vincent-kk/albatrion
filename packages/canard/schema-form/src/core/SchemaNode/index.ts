@@ -1,4 +1,5 @@
 export { schemaNodeFactory } from './utils/schemaNodeFactory';
+export { setContext } from './utils/setContext';
 export { SetValueOption } from './type';
 export {
   isSchemaNode,

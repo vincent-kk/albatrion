@@ -5,6 +5,7 @@ import { isPlain } from './isPlain';
 import { nextExtras } from './nextExtras';
 import { pruneLatentRaw } from './pruneLatentRaw';
 import { staticSpec } from './staticSpec';
+import { sameValue } from '../compute/sameValue';
 
 /** Immutable child-name membership indexes keyed by analyzed template. */
 const DECLARED_NAMES = new WeakMap<object, Set<string>>();
@@ -32,7 +33,7 @@ export const markWrite = <Self extends SchemaNodeRecord<Self>>(
     previousDistributed: context.distributedInputs.get(node) });
   const value = node.behavior.interpret(input, spec);
   if (node.behavior.strategy !== 'branch') {
-    if (!Object.is(node.raw, value)) {
+    if (!sameValue(node.raw, value)) {
       node.raw = value;
       context.changedRaw.add(node.path);
       context.changedNodes.add(node);
@@ -65,8 +66,8 @@ export const markWrite = <Self extends SchemaNodeRecord<Self>>(
     if (isMerge && nextRaw !== undefined) context.wrongKindHosts.add(node);
     extras = nextExtras(node.extras, value, declared, isMerge);
   }
-  const rawChanged = !Object.is(node.raw, nextRaw);
-  const extrasChanged = !Object.is(node.extras, extras);
+  const rawChanged = !sameValue(node.raw, nextRaw);
+  const extrasChanged = !sameValue(node.extras, extras);
   if (rawChanged || extrasChanged) {
     node.raw = nextRaw;
     node.extras = extras;

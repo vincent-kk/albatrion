@@ -56,11 +56,25 @@ export const selectChildren = <Self extends SchemaNodeRecord<Self>>(
   const inactiveEntries: BlueprintChildEntry[] = [];
   let changed = false;
   for (const entry of node.behavior.declareChildren(node)) {
-    const active = context.hasGates ? entry.declarations.filter((declaration) =>
-      declaration.gates.every((gate) => evaluateGate(gate, context, node,
-        gate.schemaPath === `${declaration.schemaPath}/controls/active`
-          ? entry.name : undefined))) : entry.declarations;
+    let threw = false;
+    const active = context.hasGates ? entry.declarations.filter((declaration) => {
+      const version = context.gateThrowVersion;
+      const admitted = declaration.gates.every((gate) => evaluateGate(gate, context,
+        node, gate.schemaPath === `${declaration.schemaPath}/controls/active`
+          ? entry.name : undefined));
+      if (!admitted && context.gateThrowVersion !== version) threw = true;
+      return admitted;
+    }) : entry.declarations;
     if (active.length === 0) {
+      const priorChild = hasOwnProperty(prior, entry.name)
+        ? prior[entry.name] : undefined;
+      const exiting = priorChild?.blueprintNode.kind === entry.node.kind
+        ? priorChild : context.pendingExits.get(JSON.stringify([
+          `${node.path}/${escapeSegment(entry.name)}`, entry.node.kind]));
+      if (exiting) {
+        if (threw) (context.throwingGateExits ??= new Set()).add(exiting);
+        else context.throwingGateExits?.delete(exiting);
+      }
       if (context.distributedInputs.has(node) ||
         next[entry.name]) inactiveEntries.push(entry);
       if (next[entry.name] && !seen.has(entry.name) &&
@@ -74,6 +88,10 @@ export const selectChildren = <Self extends SchemaNodeRecord<Self>>(
       }
       continue;
     }
+    const retained = hasOwnProperty(prior, entry.name)
+      ? prior[entry.name] : undefined;
+    if (retained?.blueprintNode.kind === entry.node.kind)
+      context.throwingGateExits?.delete(retained);
     if (seen.has(entry.name)) {
       if (next[entry.name]?.blueprintNode.kind !== entry.node.kind && !context.failure) {
         context.failure = new SchemaFormError(SHARED_NODE_CONFLICT,
@@ -101,7 +119,7 @@ export const selectChildren = <Self extends SchemaNodeRecord<Self>>(
         latentKey !== undefined && latent.has(latentKey) ? latent.get(latentKey) : undefined;
     if (!priorChild && !currentChild &&
       hasRecursiveExpansion(node, entry.node, input, context)) {
-      if (!context.failure) {
+      if (context.cause !== 'budget') {
         context.failure = new SchemaFormError(RECURSIVE_SHAPE_DIVERGED,
           `Recursive shape diverged at ${node.path}/${entry.name}`,
           { path: `${node.path}/${entry.name}` });

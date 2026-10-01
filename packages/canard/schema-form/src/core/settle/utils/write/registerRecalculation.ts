@@ -16,6 +16,7 @@ export const registerRecalculation = <Self extends SchemaNodeRecord<Self>>(
   for (const changed of context.changedRaw)
     for (const declarationPath of dependencies.affected(changed)) {
       context.dirtyPaths.add(declarationPath);
+      context.dependencyOwnerPaths.add(declarationPath);
       context.shapeDirtyPaths.add(declarationPath.slice(0,
         declarationPath.lastIndexOf('/')));
     }
@@ -28,8 +29,11 @@ export const registerRecalculation = <Self extends SchemaNodeRecord<Self>>(
   }
   if (context.hasGates) {
     const registry = getGateRegistry(context.root.runtime);
-    for (const path of context.dirtyPaths)
+    for (const path of context.dirtyPaths) {
       if (registry.mayChangeAt(path, context.changedRaw))
         context.shapeDirtyPaths.add(path);
+      if (path && registry.mayChangeOwnDeclarationAt(path, context.changedRaw))
+        context.shapeDirtyPaths.add(path.slice(0, path.lastIndexOf('/')));
+    }
   }
 };

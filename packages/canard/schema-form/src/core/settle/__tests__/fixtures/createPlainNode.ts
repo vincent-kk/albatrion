@@ -52,6 +52,7 @@ export const createPlainNode = (
     structure: template.strategy === 'branch' ? {} : null,
     children: template.strategy === 'branch' ? [] : null,
     raw: undefined, extras: undefined, active: true,
+    visible: true, readOnly: false, disabled: false,
     local: undefined, emit: undefined,
     schema: mergeEffectiveSchema(template, [], { mode: 'runtime' }),
     state: {}, revision: 0, detached: false,

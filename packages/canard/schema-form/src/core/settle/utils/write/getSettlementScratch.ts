@@ -16,9 +16,11 @@ export const getSettlementScratch = <Self>(runtime: SchemaNodeRuntime<Self>): Se
     wrongKindHosts: new Set<Self>(), automaticLog: [],
     filledNodes: new Set<Self>(),
     latentAutomaticLog: new Map<string, { present: boolean; value: unknown }>(),
-    dirtyPaths: new Set<string>(), shapeDirtyPaths: new Set<string>(),
+    dirtyPaths: new Set<string>(), dependencyOwnerPaths: new Set<string>(),
+    shapeDirtyPaths: new Set<string>(),
     changedRaw: new Set<string>(), explicitRaw: new Set<string>(),
     changedNodes: new Set<Self>(),
+    stateDirtyNodes: new Set<Self>(),
     originalSchemas: new Map(),
   };
   if (!cached) runtime.settlementScratch = scratch;

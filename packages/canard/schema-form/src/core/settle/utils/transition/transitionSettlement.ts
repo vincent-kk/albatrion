@@ -13,6 +13,7 @@ import { isMissingRaw } from './isMissingRaw';
 import { readDefault } from './readDefault';
 import { getTransitionCap } from './getTransitionCap';
 import { withdrawDetachedFills } from './withdrawDetachedFills';
+import { runDeriveRounds } from '../derivation/runDeriveRounds';
 
 /**
  * Apply appearance fills and final-list interpretation within a bounded round.
@@ -22,7 +23,7 @@ import { withdrawDetachedFills } from './withdrawDetachedFills';
 export const transitionSettlement = <Self extends SchemaNodeRecord<Self>>(
   context: SettlementContext<Self>,
 ): void => {
-  if (context.suppressAutomaticWrites || context.failure) return;
+  if (context.suppressAutomaticWrites || context.cause === 'budget') return;
   if (!context.hasGates && context.entered.size === 0 && context.exited.size === 0) {
     let narrowed = false;
     for (const node of context.writtenInputs.keys())
@@ -52,8 +53,9 @@ export const transitionSettlement = <Self extends SchemaNodeRecord<Self>>(
         filled.add(key);
       }
       if (context.kind !== 'load' && hasWrongKindObjectAncestor(node)) continue;
+      if (context.deriveState?.activeUnsetTargets.has(node)) continue;
       if (!isMissingRaw(node, context)) continue;
-      const value = readDefault(node);
+      const value = readDefault(node, context.selectedDeclarationIds);
       if (value === undefined) continue;
       context.filledNodes.add(node);
       context.automatic = true;
@@ -90,7 +92,7 @@ export const transitionSettlement = <Self extends SchemaNodeRecord<Self>>(
     registerRecalculation(context);
     context.hostWheelExceeded = undefined;
     computeNode(context.root, context);
-    if (context.hostWheelExceeded !== undefined && !context.failure) {
+    if (context.hostWheelExceeded !== undefined && !context.exceededBudget) {
       context.failure = new SchemaFormError(BUDGET_EXCEEDED,
         `Host wheel budget exceeded at ${context.target.path}`,
         { path: context.target.path });
@@ -98,7 +100,12 @@ export const transitionSettlement = <Self extends SchemaNodeRecord<Self>>(
       context.exceededBudget = 'hostWheel';
       context.iterations = context.hostWheelExceeded;
     }
-    if (context.failure) {
+    if (context.exceededBudget) {
+      context.inTransition = false;
+      return;
+    }
+    runDeriveRounds(context);
+    if (context.exceededBudget) {
       context.inTransition = false;
       return;
     }

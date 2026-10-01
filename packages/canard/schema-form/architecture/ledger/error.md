@@ -1278,6 +1278,8 @@
   > 작성자 스키마·호출자 데이터에서 온 정착 오류(예산 초과, `controls` 식·가드 실패, `controls.injectTo` 대상 없음)와 공유 충돌은 모든 환경에서 커밋·통지 뒤 사슬 끝에서 던진다(R17-1 나, 17라운드 소유자 답: "나 허용. 망가진 값을 올리는게 더 위험하겠다").
 - 보충:
   > 편집자 결정(26C-05): "【추론】 정착은 활성 집합의 유효 스키마를 계산한 뒤 `typeConflict`가 참인 노드마다 정착 오류 `SHARED_NODE_CONFLICT`를 내고, `diagnostics.cause`는 `'sharedConflict'`이며, 드러남은 정착 오류 규칙대로 모든 환경에서 커밋·통지 뒤 사슬 끝이다(PR-2에서 사슬은 `settle` 호출 하나)." (`reviews/round-26-closing.md:57`)
+  > 편집자 결정(29C-03): "【추론】 형상이 정해졌으므로 그 뒤의 파생 라운드·전이(채움과 나감 비움)는 29C-02대로 평소처럼 돌고, 커밋되는 것은 그 계산 결과와 그 정착의 자동 쓰기다; 자동 쓰기를 뺀 원본 B는 SETTLE-011의 예산 초과 처분이라 공유 충돌에는 쓰지 않는다." (`reviews/round-29-closing.md:36`)
+  > 편집자 결정(29C-03): "【추론】 그래서 계산 단계 뒤의 진행을 막는 조건은 예산 초과(`cause: 'budget'`) 하나이고, 나머지 정착 오류(`'expression'`·`'injectTarget'`·`'sharedConflict'`)는 계산 결과로 커밋한다; 03(PR-2)이 공유 충돌에서 전이 전체를 건너뛴 것은 29C-02의 것과 같은 결함이며 04가 함께 고치고 `plan/04-derive-and-controls/log.md` §4에 적는다." (`reviews/round-29-closing.md:38`)
 - 상태: 현행
 - 출처: `adr/0014-error-policy.md:53#1`(정본, ERROR-006에서 분할)
 - 닫은 사람: 소유자 답(`reviews/round-17-owner-answers.md:9` R17-1), 소유자 답(`reviews/round-14-owner-answers.md:16` O-10; 공유 충돌)
@@ -1853,7 +1855,10 @@
 
 - 결정:
   > 던지면 그 자리마다 정의된 값으로 정착을 마치고, 사슬의 끝에서 모든 환경에서 throw한다(R17-1 나, 가칭 코드 `SCHEMA_FORM_ERROR.EXPRESSION_THREW`, 원래 예외는 `details.error`).
-- 보충: 없음
+- 보충:
+  > 편집자 결정(29C-02): "【추론】 식이나 가드가 던진 정착은 ERROR-121대로 그 자리마다 정의된 값으로 마치며, 던짐이 정착의 단계(파생 라운드, 전이의 채움과 나감 비움)를 끊는다는 문장은 원장에 없다; 트리 전체에 미치는 효과는 `degraded` 표식(ERROR-126)과 사슬 끝 throw뿐이다." (`reviews/round-29-closing.md:23`)
+  > 편집자 결정(29C-02): "【추론】 파생 규칙이 던지면 ERROR-122대로 그 규칙만 그 라운드의 후보에서 빠지고 에지를 소비하며, 같은 정착의 다른 규칙·다음 파생 라운드·채움·나감 비움은 평소대로 진행한다; 무관한 `controls.derived` 하나가 던져 로드의 채움이 빠지는 것은 결함이다." (`reviews/round-29-closing.md:24`)
+  > 편집자 결정(29C-02): "【추론】 정착의 자동 쓰기를 모두 뺀 원본 B를 커밋하는 것은 SETTLE-011의 예산 초과 처분이며, 식·가드의 throw에는 적용하지 않는다." (`reviews/round-29-closing.md:27`)
 - 상태: 현행
 - 출처: `adr/0014-error-policy.md:188#2`(정본, ERROR-033에서 분할)
 - 닫은 사람: 소유자 답(`reviews/round-17-owner-answers.md:9` R17-1)
@@ -1869,7 +1874,13 @@
   > | 상태 키(`controls.visible`·`controls.readOnly`·`controls.disabled`, 조각과 `controls.children`의 `controls`) | 그 선언은 없는 것이다 |
   > | 파생 규칙(`controls.derived`·`controls.injectTo`·`controls.unsetValue`), 동적으로만 아는 `controls.injectTo` 대상이 없음 | 그 규칙을 그 라운드의 후보에서 빼고 에지를 소비한다 |
   > | `controls.resetInteraction` | 그 판정은 거짓이다 |
-- 보충: 없음
+- 보충:
+  > 편집자 결정(28C-05): "【추론】 ERROR-122의 자리별 값 표에 행 하나를 더해 읽는다: `controls.unsetOnInactive`의 식(노드 자신, `controls.children` 항목의 `controls`, 조각의 `controls`)이 직전 커밋의 방출 트리에서 던지면 그 선언은 "유지"다." (`reviews/round-28-closing.md:55`)
+  > 편집자 결정(28C-05): "【추론】 "선언 없음"(아래 층으로 떨어짐)이 아니다: 되돌릴 수 없는 쓰기는 만장일치이고(WRITE-031) 던진 식은 비움에 찬성한 표가 아니며, 아래 층(Form 속성)이 참일 때 작성자의 잘못으로 커밋된 값을 잃게 되어 ERROR-125의 원칙(작성자의 잘못으로 커밋된 값을 잃지 않는다)에 어긋난다." (`reviews/round-28-closing.md:56`)
+  > 편집자 결정(28C-05): "【추론】 던진 사실은 다른 자리와 같이 `EXPRESSION_THREW`로 사슬 끝에서 throw하고, 그 식을 평가한 정착의 커밋은 `degraded`다(ERROR-126)." (`reviews/round-28-closing.md:58`)
+  > 편집자 결정(29C-02): "【추론】 파생 규칙이 던지면 ERROR-122대로 그 규칙만 그 라운드의 후보에서 빠지고 에지를 소비하며, 같은 정착의 다른 규칙·다음 파생 라운드·채움·나감 비움은 평소대로 진행한다; 무관한 `controls.derived` 하나가 던져 로드의 채움이 빠지는 것은 결함이다." (`reviews/round-29-closing.md:24`)
+  > 편집자 결정(29C-02): "【추론】 게이트가 던지면 그 게이트만 거짓이고, ERROR-125가 막는 것은 그 게이트로 나간 노드(WRITE-033대로 함께 나가는 하위 트리 포함)의 나감 비움뿐이다; 무관한 노드의 채움·나감 비움과 무관한 파생은 진행한다." (`reviews/round-29-closing.md:25`)
+  > 편집자 결정(29C-02): "【추론】 상태 키의 식이 던지면 그 선언만 없는 것이고, 상태 키는 형상과 값을 바꾸지 않으므로(CONTROLS-022·023) 같은 정착의 채움·나감 비움에 영향이 없다." (`reviews/round-29-closing.md:26`)
 - 상태: 현행
 - 출처: `adr/0014-error-policy.md:190-195`(정본, ERROR-033에서 분할)
 - 닫은 사람: 편집자 결정(17라운드, `adr/0014-error-policy.md:188`)
@@ -1905,7 +1916,10 @@
 
 - 결정:
   > 식이나 가드가 던져 거짓이 된 게이트로 나간 노드에는 나감 비움을 적용하지 않는다(작성자의 잘못으로 커밋된 값을 잃지 않는다).
-- 보충: 없음
+- 보충:
+  > 편집자 결정(28C-05): "【추론】 "선언 없음"(아래 층으로 떨어짐)이 아니다: 되돌릴 수 없는 쓰기는 만장일치이고(WRITE-031) 던진 식은 비움에 찬성한 표가 아니며, 아래 층(Form 속성)이 참일 때 작성자의 잘못으로 커밋된 값을 잃게 되어 ERROR-125의 원칙(작성자의 잘못으로 커밋된 값을 잃지 않는다)에 어긋난다." (`reviews/round-28-closing.md:56`)
+  > 편집자 결정(29C-02): "【추론】 게이트가 던지면 그 게이트만 거짓이고, ERROR-125가 막는 것은 그 게이트로 나간 노드(WRITE-033대로 함께 나가는 하위 트리 포함)의 나감 비움뿐이다; 무관한 노드의 채움·나감 비움과 무관한 파생은 진행한다." (`reviews/round-29-closing.md:25`)
+  > 편집자 결정(29C-02): "【추론】 03(PR-2)이 계산 단계의 실패 하나로 그 정착의 전이(채움)와 나감 비움 전체를 건너뛴 것(`src/core/settle/utils/settlement/finishSettlement.ts:32-33`, `src/core/settle/utils/transition/finalizeExits.ts:46`; 파생 쪽도 같다 — `src/core/settle/utils/derivation/runDeriveRounds.ts`의 `context.failure` 조기 반환 두 곳이 실패 하나로 뒤 파생 라운드를 끊는다)은 ERROR-125보다 넓은 근사이고 03의 기록에 결정으로 남아 있지 않으므로 결함이다; 04가 ERROR-125의 범위(그 게이트로 나간 노드)로 좁혀 고치고 `plan/04-derive-and-controls/log.md` §4에 03의 이탈로 적는다(28C-03의 `@` 사례와 같은 처리)." (`reviews/round-29-closing.md:28`)
 - 상태: 현행
 - 출처: `adr/0014-error-policy.md:197#3`(정본, ERROR-033에서 분할)
 - 닫은 사람: 편집자 결정(17라운드, `adr/0014-error-policy.md:197`)
@@ -1916,7 +1930,8 @@
 
 - 결정:
   > 어느 자리든 식이나 가드가 던지면 그 커밋은 `degraded`다(§5).
-- 보충: 없음
+- 보충:
+  > 편집자 결정(28C-05): "【추론】 던진 사실은 다른 자리와 같이 `EXPRESSION_THREW`로 사슬 끝에서 throw하고, 그 식을 평가한 정착의 커밋은 `degraded`다(ERROR-126)." (`reviews/round-28-closing.md:58`)
 - 상태: 현행
 - 출처: `adr/0014-error-policy.md:197#4`(정본, ERROR-033에서 분할)
 - 닫은 사람: 소유자 답(`reviews/round-17-owner-answers.md:9` R17-1)
@@ -2347,6 +2362,14 @@
   > 편집자 결정(25C-01): "【추론】 ERROR-164 `DISCRIMINATOR_MISMATCH` 행의 "선언 사이 값이 다름"은 별도 코드가 아니라 정적 연언 행의 사건을 판별 관점에서 적은 것이다." (`reviews/round-25-closing.md:11`)
   > 편집자 결정(25C-12): "【추론】 한 노드에 모인 선언들이 서로 다른 `controls.discriminator` 키를 적으면 SCHEMA-013대로 청사진 오류이고 코드는 `DISCRIMINATOR_MISMATCH`이며, ERROR-164 그 행의 "선언 사이 값이 다름"은 바로 이 경우를 뜻한다." (`reviews/round-25-closing.md:113`)
   > 편집자 결정(25C-12): "【추론】 그래서 `DISCRIMINATOR_MISMATCH`는 넷이다: 키가 어느 분기에도 없음(`reason: 'missing'`), 분기끼리 종류가 다름(`reason: 'kind'`), 분기 사이 값이 겹침(`reason: 'overlap'`), 같은 노드의 선언 사이 판별 키가 다름(`reason: 'key'`, details `{ propertyName, other, reason }`); 25C-01의 둘째·셋째 문장은 이 넷으로 바꿔 읽는다." (`reviews/round-25-closing.md:114`)
+  > 편집자 결정(28C-01): "【추론】 ERROR-159 정착 추적 행의 기록은 트리마다 하나인 `SchemaNodeRuntime`의 칸에 들며(26C-06), 칸을 더하는 절차는 NODE-045대로 `record/`의 선언을 고치고 그 대가를 레코드 `DETAIL.md`에 적는 것이다." (`reviews/round-28-closing.md:9`)
+  > 편집자 결정(28C-01): "【추론】 그 칸은 마지막 정착의 기록 하나만 들고 정착마다 새 기록으로 바꾼다: "정착마다 기록"은 기록의 단위이고, 누적 저장은 어느 항목도 예산(NODE-018)을 주지 않았다." (`reviews/round-28-closing.md:10`)
+  > 편집자 결정(28C-01): "【추론】 프로덕션에서는 기록을 만들지 않으므로 칸은 비어 있다; 이 행은 다른 경고 행의 "개발 모드 로그"와 달리 "(기록)" 층이라 콘솔 출력이 아니다." (`reviews/round-28-closing.md:11`)
+  > 편집자 결정(28C-01): "【추론】 PR-3은 이 기록을 위한 공개 `SchemaNode` 멤버·`onError` 기록·`FormHandle` 멤버를 더하지 않는다: 원장이 정한 멤버가 없고(26C-01), 이 행은 "`onError`에 가지 않음"이다." (`reviews/round-28-closing.md:12`)
+  > 편집자 결정(28C-01): "【추론】 개발 모드의 판정은 `process.env.NODE_ENV !== 'production'`(정적 치환)이며 ERROR-030의 보고기 판정과 같은 기준이고, 이 기록은 `onError` 핸들러의 유무(`hasConsumer()`)는 보지 않는다." (`reviews/round-28-closing.md:15`)
+  > 편집자 결정(29C-03): "【추론】 `SHARED_NODE_CONFLICT`가 난 정착의 자리별 값은 "전순서에서 앞선 종류의 노드를 살린 형상"이다(BLUEPRINT-012, ERROR-159·164): 게이트 선언끼리의 충돌에서는 충돌한 이름의 다른 종류 노드 하나가 형상에서 빠지고, 한 노드 안의 형 충돌(`typeConflict`, 26C-05·BLUEPRINT-041)에서는 노드가 정적 `schemaType`으로 남으며, 어느 쪽이든 형상은 정해진다." (`reviews/round-29-closing.md:35`)
+  > 편집자 결정(29C-03): "【추론】 형상이 정해졌으므로 그 뒤의 파생 라운드·전이(채움과 나감 비움)는 29C-02대로 평소처럼 돌고, 커밋되는 것은 그 계산 결과와 그 정착의 자동 쓰기다; 자동 쓰기를 뺀 원본 B는 SETTLE-011의 예산 초과 처분이라 공유 충돌에는 쓰지 않는다." (`reviews/round-29-closing.md:36`)
+  > 편집자 결정(29C-03): "【추론】 마운트의 공유 충돌도 커밋은 한다(ERROR-070 "공유 충돌은 모든 환경에서 커밋·통지 뒤 사슬 끝에서 던진다"; ERROR-164의 "커밋 뒤 싱크"는 렌더 계층의 커밋 뒤 이펙트다, ERROR-079); 폼이 서지 않는 것은 렌더 계층이 그리는 대체 화면이지 코어가 커밋을 멈추는 것이 아니다." (`reviews/round-29-closing.md:37`)
 - 상태: 현행
 - 출처: `adr/0014-error-policy.md:224-242`(정본, ERROR-043에서 분할), `reviews/round-18-closing.md:103,385,713`
 - 닫은 사람: 편집자 결정(17라운드, ADR 0014 4판 채택), 소유자 답 O-1(`reviews/round-14-owner-answers.md:7`)·O-10(`reviews/round-14-owner-answers.md:16`), 소유자 답 C-20(`reviews/round-10-owner-answers.md:17`)·13라운드 답 4(`reviews/round-13-owner-answers.md:10`), 소유자 답 E-23·E-19(`reviews/round-10-owner-answers.md:38,40`), 소유자 답(`reviews/round-17-owner-answers.md:9` R17-1; `adr/0014-error-policy.md:229,231,234,237,239`), 소유자 답(`reviews/round-12-owner-answers.md:14` 6 `else: false` 경고; `adr/0014-error-policy.md:230`), 소유자 답(`reviews/round-17-owner-answers.md:14` 통보 3, `reviews/round-17-owner-answers.md:33` (가); `adr/0014-error-policy.md:238`), 소유자 답(`reviews/round-17-owner-answers.md:15` 통보 4; `adr/0014-error-policy.md:240,242`), 게이트 고침(R17G-2, `reviews/raw-round17-onerror.md:150`; `adr/0014-error-policy.md:238`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-03·18C-14·18C-23)
@@ -2494,6 +2517,8 @@
   > 편집자 결정(25C-12): "【추론】 한 노드에 모인 선언들이 서로 다른 `controls.discriminator` 키를 적으면 SCHEMA-013대로 청사진 오류이고 코드는 `DISCRIMINATOR_MISMATCH`이며, ERROR-164 그 행의 "선언 사이 값이 다름"은 바로 이 경우를 뜻한다." (`reviews/round-25-closing.md:113`)
   > 편집자 결정(25C-12): "【추론】 그래서 `DISCRIMINATOR_MISMATCH`는 넷이다: 키가 어느 분기에도 없음(`reason: 'missing'`), 분기끼리 종류가 다름(`reason: 'kind'`), 분기 사이 값이 겹침(`reason: 'overlap'`), 같은 노드의 선언 사이 판별 키가 다름(`reason: 'key'`, details `{ propertyName, other, reason }`); 25C-01의 둘째·셋째 문장은 이 넷으로 바꿔 읽는다." (`reviews/round-25-closing.md:114`)
   > 편집자 결정(25C-12): "【추론】 한 분기의 정적 연언 안 판별 값의 공집합이 `EMPTY_ENUM_INTERSECTION`인 것(25C-01 첫 문장)은 그대로다." (`reviews/round-25-closing.md:115`)
+  > 편집자 결정(29C-03): "【추론】 형상이 정해졌으므로 그 뒤의 파생 라운드·전이(채움과 나감 비움)는 29C-02대로 평소처럼 돌고, 커밋되는 것은 그 계산 결과와 그 정착의 자동 쓰기다; 자동 쓰기를 뺀 원본 B는 SETTLE-011의 예산 초과 처분이라 공유 충돌에는 쓰지 않는다." (`reviews/round-29-closing.md:36`)
+  > 편집자 결정(29C-03): "【추론】 마운트의 공유 충돌도 커밋은 한다(ERROR-070 "공유 충돌은 모든 환경에서 커밋·통지 뒤 사슬 끝에서 던진다"; ERROR-164의 "커밋 뒤 싱크"는 렌더 계층의 커밋 뒤 이펙트다, ERROR-079); 폼이 서지 않는 것은 렌더 계층이 그리는 대체 화면이지 코어가 커밋을 멈추는 것이 아니다." (`reviews/round-29-closing.md:37`)
 - 상태: 현행
 - 출처: `adr/0014-error-policy.md:248-300`(정본, ERROR-044에서 분할), `reviews/round-18-closing.md:386-387,661,670,731-733`, `reviews/round-18-closing.md:2458-2461,2550,2581`, `reviews/round-18-owner-answers.md:34`, `reviews/round-18-owner-answers.md:37`, `reviews/round-18-closing.md:2797-2798`, `reviews/round-18-owner-answers.md:41`
 - 닫은 사람: 편집자 결정(17라운드, ADR 0014 4판 채택), 게이트 고침(R17G-9·R17G-2), 소유자 답(`reviews/round-17-owner-answers.md:9` R17-1; `adr/0014-error-policy.md:263,266,267-271,279,281`), 소유자 답(`reviews/round-14-owner-answers.md:7` O-1; `adr/0014-error-policy.md:260`), 소유자 답(`reviews/round-14-owner-answers.md:16` O-10; `adr/0014-error-policy.md:261,266`), 소유자 답(`reviews/round-12-owner-answers.md:14` 6 `else: false` 경고; `adr/0014-error-policy.md:290`), 소유자 답(`reviews/round-17-owner-answers.md:14` 통보 3; `adr/0014-error-policy.md:281,293`), 소유자 답(`reviews/round-17-owner-answers.md:33` (가); `adr/0014-error-policy.md:293`), 소유자 답(`reviews/round-17-owner-answers.md:15` 통보 4; `adr/0014-error-policy.md:296`), 소유자 답(`reviews/round-17-owner-answers.md:11` R17-3; `adr/0014-error-policy.md:295`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-14·18C-21·18C-24), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-90·18C-91·18C-92), 소유자 답(`reviews/round-18-owner-answers.md:34` union O4; `VALIDATOR_BIND_REFUSED` 행), 소유자 답(`reviews/round-18-owner-answers.md:37` union O7·O8), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-98), 소유자 답(`reviews/round-18-owner-answers.md:41` 설계서 메모 4)

@@ -19,6 +19,18 @@ export function assertCoreScenarioExpectation(
     expect(node, `value node ${path}`).not.toBeNull();
     expect(node?.value, `value ${path}`).toEqual(value);
   }
+  for (const [path, states] of Object.entries(expectation.states ?? {})) {
+    const node = root.find(path);
+    expect(node, `state node ${path}`).not.toBeNull();
+    if (states.visible !== undefined)
+      expect(node?.visible, `state ${path}.visible`).toBe(states.visible);
+    if (states.readOnly !== undefined)
+      expect(node?.readOnly, `state ${path}.readOnly`).toBe(states.readOnly);
+    if (states.disabled !== undefined)
+      expect(node?.disabled, `state ${path}.disabled`).toBe(states.disabled);
+    if (states.enabled !== undefined)
+      expect(node?.enabled, `state ${path}.enabled`).toBe(states.enabled);
+  }
   if ('outputValue' in expectation)
     expect(root.outputValue, 'outputValue').toEqual(expectation.outputValue);
   if (expectation.diagnostics)

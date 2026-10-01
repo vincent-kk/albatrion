@@ -6,4 +6,6 @@ export { readSchemaNodeDefaultValue } from './utils/load/readSchemaNodeDefaultVa
 export { readSchemaNodeInactiveValues } from './utils/detached/readSchemaNodeInactiveValues';
 export { readSchemaNodeTypeMismatch } from './utils/detached/readSchemaNodeTypeMismatch';
 export { readSchemaNodeTypeMismatches } from './utils/detached/readSchemaNodeTypeMismatches';
+export { readSchemaNodeWatchValues } from './utils/controls/readSchemaNodeWatchValues';
+export { changeSchemaNodeContext } from './utils/context/changeSchemaNodeContext';
 export type { SchemaNodeWriteKind } from './type';
