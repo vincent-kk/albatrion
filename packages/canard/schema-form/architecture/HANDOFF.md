@@ -37,7 +37,8 @@
 - **33라운드(2026-10-01, 06 착수).** 06(배열) 세션이 워크트리를 세우고 첫 커밋을 올렸다. 05와 합의한 공유 파일 분담 — 배열 쓰기 동사 다섯의 `dispatch` 진입 파일은 둘 가운데 뒤에 머지하는 쪽이 더하고, 먼저 머지한 06의 동사는 PR-2의 모양(정착 호출 하나, 자기 진입 사슬 없음)으로 둔다 — 을 LANDING-084·EVENT-027·LANDING-064에서 유도되는 것으로 닫았다(`reviews/round-33-closing.md` 33C-01).
 - **34라운드(2026-10-01, 05 실행 계획 후속).** 플러그인이 가져오는 검증기 계약 형은 공개 `ValidatorPlugin`이며 LANDING-084대로 PR-4가 개정한다(선택 멤버 `compileGuard?`·`release?`, `rejectedKey`; 필수로 좁히는 것은 PR-7). 코어의 `Validator` 형은 공개 index에 내보내지 않는다. `ValidationIssue`는 PR-4에서 더하고 옛 별칭 `JSONSchemaError`는 PR-7까지 남긴다(`reviews/round-34-closing.md` 34C-01~02).
 - **35라운드(2026-10-01, 06 실행 계획과 05 후속).** 06 작업자의 배열 해석 아홉(비배열 노드의 배열 메서드 던짐, 재인덱싱의 경로 갱신, 삽입 없음, `resolveArrayLimits`의 청사진 이동, 원본 B의 배열 구조 기록, 범위 밖 인덱스, 아이템 안 선언의 아이템별 평가, 소멸 아이템과 꺼진 배열 호스트의 잠복 원본, `controls.children`과 터미널 배열)과 05의 셋(32C-02의 전제 정정: ajv6·ajv7은 공용 유틸을 의존하지 않으므로 플러그인마다 자기 오류 클래스에 그룹·코드 칸, `dialect?` 추가, 공개 검증 형은 PR-4에서 그대로)을 편집자 결정 열둘로 닫았다(`reviews/round-35-closing.md` 35C-01~12).
-- **36라운드(2026-10-01, 06 문서 선행 작성).** 배열 메서드가 비배열 노드에서 던지는 "행의 공유 칸"(NODE-014)은 일곱 칸 목록(NODE-006·LANDING-056)에 더해지는 여덟째 행 칸이며, 배열 행은 순수한 연산 계획을 돌려주고 비배열 행은 공유 거부 함수 하나를 둔다; 옛 튜플 표기 `items: [..]`의 꼬리 템플릿 `additionalItems`는 PR-5가 청사진에 컴파일을 더한다(스키마 값만, `false`·`true`·없음은 `extras`). `reviews/round-36-closing.md` 36C-01~02. 다음 라운드 번호는 37.
+- **36라운드(2026-10-01, 06 문서 선행 작성).** 배열 메서드가 비배열 노드에서 던지는 "행의 공유 칸"(NODE-014)은 일곱 칸 목록(NODE-006·LANDING-056)에 더해지는 여덟째 행 칸이며, 배열 행은 순수한 연산 계획을 돌려주고 비배열 행은 공유 거부 함수 하나를 둔다; 옛 튜플 표기 `items: [..]`의 꼬리 템플릿 `additionalItems`는 PR-5가 청사진에 컴파일을 더한다(스키마 값만, `false`·`true`·없음은 `extras`). `reviews/round-36-closing.md` 36C-01~02.
+- **37라운드(2026-10-01, 06 투영).** 가지 배열의 `omitTrailing`은 방출 배열 꼬리에서 빈 자리의 최대 연속 구간을 자른다 — 빈 자리는 방출 없는 아이템의 채움(`{}`·`[]`·`null`), `null`을 방출한 잎 아이템, 청사진 없는 자리의 `undefined`·`null`이고, 실제 `{}`·`[]` 방출과 앞·가운데 빈 자리는 남기며 원본은 바뀌지 않는다(`reviews/round-37-closing.md` 37C-01). 다음 라운드 번호는 38.
 
 ## 2. 다음 할 일 — 순서대로
 
@@ -152,6 +153,7 @@ node ledger/checks/doc-coverage.mjs design/*.md adr/*.md -- ledger/*.md   # 설�
 | `reviews/round-34-closing.md` | 34라운드 편집자 결정 둘: 플러그인용 계약 형의 자리(`ValidatorPlugin`, PR-4가 개정), `JSONSchemaError` 별칭 유지 |
 | `reviews/round-35-closing.md` | 35라운드 편집자 결정 열둘: 06 배열 해석 아홉과 05 후속 셋(32C-02 정정 포함) |
 | `reviews/round-36-closing.md` | 36라운드 편집자 결정 둘: 배열 연산의 여덟째 행 칸, 옛 튜플 표기의 `additionalItems` 컴파일 |
+| `reviews/round-37-closing.md` | 37라운드 편집자 결정 하나: 가지 배열에서 `omitTrailing`이 자르는 것 |
 | `reviews/round-28-closing.md` | 28라운드 편집자 결정의 정본(28C-01~08: 04(PR-3+PR-6) 실행 계획 초안의 해석 일곱 건과 후속 둘 — 개발 모드 정착 기록의 자리, `enabled`와 떼어진 노드의 상태 게터, `@` 맥락과 `setContext`의 PR, 억제 비트와 `resetInteraction`, `unsetOnInactive` 식의 throw, TEST-071의 값 크기, `watchValues`의 PR, `node.context`의 PR과 맥락 변경 정착). 보충 줄만 |
 | `reviews/round-29-closing.md` | 29라운드 편집자 결정의 정본(29C-01~04: 생긴·로드된 노드의 파생 규칙은 원천이 `undefined`여도 발화, 채움 뒤의 값 변화는 새 에지, v7의 모형 선택은 이식하지 않음; 식이 던진 정착의 채움·나감 비움은 진행, 03의 전이 전체 생략은 결함; 공유 충돌 정착도 진행하고 원본 B는 예산 초과에만; 조각 `controls`의 `injectTo`는 불허). 보충 줄만 |
 | `verification/performance-issues.md` | 단계를 가로지르는 속도 문제 대장(열림·해결). 구현 완료 뒤 최적화 작업의 출발점. 측정 원본은 단계별 `performance.md`(03·04) |
