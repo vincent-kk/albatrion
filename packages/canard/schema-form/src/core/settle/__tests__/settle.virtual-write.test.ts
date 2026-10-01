@@ -106,11 +106,11 @@ describe('virtual writes and referenced siblings', () => {
     { snapshot: { enabled: true, flag: true, startDate: 'a', endDate: 'b' } });
     root.resetSubtree();
     const registry = getGateRegistry(Reflect.get(root, 'runtime'));
-    expect(registry.mayChangeOwnDeclarationAt('/startDate', new Set(['/flag'])))
+    expect(registry.mayChangeOwnDeclarationAt('/startDate', new Set(['/flag']), new Set([''])))
       .toBe(true);
     root.find('/enabled')!.setValue(false);
     expect(root.find('/period')).toBeNull();
-    expect(registry.mayChangeOwnDeclarationAt('/startDate', new Set(['/flag'])))
+    expect(registry.mayChangeOwnDeclarationAt('/startDate', new Set(['/flag']), new Set([''])))
       .toBe(true);
   });
 

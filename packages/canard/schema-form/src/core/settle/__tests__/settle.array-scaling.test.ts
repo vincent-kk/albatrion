@@ -55,6 +55,82 @@ const countLatentKeyVisits = (latent: Map<string, unknown>, action: () => void):
 
 // filid:contract settle-array
 describe('44C-01 array settlement scaling', () => {
+  it('51C-01 SETTLE-017 bounds item-gated row assembly when rows read their own fields', () => {
+    const count = 2000;
+    const { root } = makeSchemaNodeTree({ type: 'object', properties: {
+      flag: { type: 'boolean' }, rows: { type: 'array', items: {
+        type: 'object', controls: { active: '#/flag' }, properties: {
+          on: { type: 'boolean' }, x: { type: 'string' },
+          g: { type: 'string', controls: { active: '../on === true' } },
+        },
+      } },
+    } });
+    root.setValue({ flag: true, rows: Array.from({ length: count }, (_, index) =>
+      ({ on: true, x: `a${index}`, g: `g${index}` })) });
+    const rows = root.find('/rows');
+    if (!(rows instanceof SchemaNode))
+      throw new Error('Expected an array SchemaNode');
+    const behavior = rows.behavior;
+    let assemblies = 0;
+    Reflect.set(rows, 'behavior', { ...behavior,
+      assemble: (...args: Parameters<typeof behavior.assemble>) => {
+        assemblies++;
+        return behavior.assemble(...args);
+      },
+    });
+    try {
+      const value = Array.from({ length: count }, (_, index) =>
+        ({ on: true, x: `b${index}`, g: `g${index}` }));
+      rows.setValue(value);
+      if (process.env.SETTLE_SCALING_PROBE)
+        console.info(`51C-01 item-gated row assemblies: ${assemblies}`);
+      expect(root.value).toEqual({ flag: true, rows: value });
+      expect(assemblies).toBeLessThan(10);
+    } finally {
+      Reflect.set(rows, 'behavior', behavior);
+    }
+  });
+
+  it('49C-01 SETTLE-017 bounds changed-raw visits when gated rows are rewritten', () => {
+    const count = 2000;
+    const { root } = makeSchemaNodeTree({ type: 'object', properties: {
+      flag: { type: 'boolean' }, rows: { type: 'array', items: {
+        type: 'object', properties: {
+          on: { type: 'boolean' }, x: { type: 'string' },
+          g: { type: 'string', controls: { active: '../on === true' } },
+        },
+      } },
+    } });
+    root.setValue({ flag: true, rows: Array.from({ length: count }, (_, index) =>
+      ({ on: true, x: `a${index}`, g: `g${index}` })) });
+    if (!(root instanceof SchemaNode))
+      throw new Error('Expected a runtime SchemaNode');
+    const scratch = getSettlementScratch(root.runtime);
+    releaseSettlementScratch(scratch);
+    const changedRaw = scratch.changedRaw;
+    const iterate = Set.prototype[Symbol.iterator];
+    let visits = 0;
+    Object.defineProperty(changedRaw, Symbol.iterator, { configurable: true,
+      value: function* (this: Set<string>) {
+        for (const path of iterate.call(this)) {
+          visits++;
+          yield path;
+        }
+      },
+    });
+    try {
+      const value = Array.from({ length: count }, (_, index) =>
+        ({ on: true, x: `b${index}`, g: `g${index}` }));
+      root.find('/rows')!.setValue(value);
+      if (process.env.SETTLE_SCALING_PROBE)
+        console.info(`49C-01 changed-raw visits: ${visits}`);
+      expect(root.value).toEqual({ flag: true, rows: value });
+      expect(visits).toBeLessThan(count * 20);
+    } finally {
+      Reflect.deleteProperty(changedRaw, Symbol.iterator);
+    }
+  });
+
   it('51C-01 NODE-026 SETTLE-017 bounds host-gated array assembly on a whole write', () => {
     const count = 2000;
     const { root } = makeSchemaNodeTree({ type: 'object', properties: {
