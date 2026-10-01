@@ -20,6 +20,7 @@ export const finalizeExits = <Self extends SchemaNodeRecord<Self>>(
   context: SettlementContext<Self>,
 ): void => {
   finalizePerished(context);
+  let mismatchIndex: Map<string, Set<string>> | undefined;
   for (const node of context.pendingExits.values()) {
     if (node.detached) continue;
     const parent = node.parent;
@@ -37,9 +38,31 @@ export const finalizeExits = <Self extends SchemaNodeRecord<Self>>(
       departing.active = false;
     });
     getGateRegistry(node.runtime).remove(node);
-    for (const path of [...context.root.runtime.typeMismatchPaths])
-      if (path === node.path || path.startsWith(`${node.path}/`))
-        context.root.runtime.typeMismatchPaths.delete(path);
+    if (!mismatchIndex) {
+      mismatchIndex = new Map();
+      for (const path of context.root.runtime.typeMismatchPaths) {
+        let ancestor = path;
+        while (true) {
+          let paths = mismatchIndex.get(ancestor);
+          if (!paths) {
+            paths = new Set();
+            mismatchIndex.set(ancestor, paths);
+          }
+          paths.add(path);
+          if (!ancestor) break;
+          ancestor = ancestor.slice(0, ancestor.lastIndexOf('/'));
+        }
+      }
+    }
+    for (const path of [...mismatchIndex.get(node.path) ?? []]) {
+      context.root.runtime.typeMismatchPaths.delete(path);
+      let ancestor = path;
+      while (true) {
+        mismatchIndex.get(ancestor)?.delete(path);
+        if (!ancestor) break;
+        ancestor = ancestor.slice(0, ancestor.lastIndexOf('/'));
+      }
+    }
   }
   withdrawDetachedFills(context);
   const scope = context.kind === 'load' ? context.loadScope : undefined;
