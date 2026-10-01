@@ -50,6 +50,12 @@ Planning method: 저장소 지침 — `PLAN.md` §2와 `plan/prompts.md`의 단�
 | 2026-10-01 | U8 리뷰 | antigravity(세션 `c6e6739d`) `rework-required` → codex(세션 `6a30f5ca`)가 고침: 자식 조회의 `hasOwnProperty`, 라우팅 한 번에 활성 선언 ID 집합 하나(조율 세션이 오류가 있을 때만 짓도록 한 줄 더 고침), `release` 정확 횟수(1,000 루트 중 992)와 같은 `$id` 재등록 해제 단언. 차단으로 든 크래시는 반증(실행 계획 리뷰 기록) | `8a202b4b4` |
 | 2026-10-01 | U10 | codex(세션 `adfc2bb9`): 레거시 `ValidationManager`의 `PluginManager` import와 폴백을 `RootNodeContextProvider`로 옮김(같은 순서·시점, `ValidatorFactory` 반환 형 때문에 한 식을 분기로 풂), 폴백 검증기의 루트 `''`. 경계 있는 탐색에서 루트 `'/'`에 기대는 자리 0. G28 충족(조율 세션 재실행) | `bc1418da2` |
 | 2026-10-01 | U9 | 첫 codex 세션(`6850db6d`)이 착수 전에 멈춤(M5) → 43라운드 답 merge → codex 새 세션(`8c0d2d6f`): 멤버 열넷, `setValue`·`resetSubtree`의 dispatch 위임, 기록 필드 `state` → `interactionState`, EVENT-062 기제(런타임 `globalStateCounts`·`globalState`, 상태 쓰기 진입 셋과 커밋 훅 `settle/utils/commit/commitGlobalState.ts`, 루트의 `UpdateGlobalState`). 03·04 시험은 필드 이름과 fixture의 새 런타임 칸만 바뀜, 기대값이 바뀐 것은 05의 상태 사건 시험 하나(43C-01의 새 계약). G25·G26·G27·G21 충족(조율 세션 재실행). G12(unit 346 파일·4,262 통과)와 G29(204 파일·2,974 통과)는 마커가 출력 끝에 찍혔으나 출력이 길어 hook이 증거로 잡지 못함 — 저장된 출력에서 확인 | `164817735` |
+| 2026-10-01 | U14 | codex(세션 `671b781a`): 두 훅의 형 제약을 `subscribe`·`revision(mask?)`를 가진 구조 형으로(동작 무변경), 새 엔진 노드로 동기 통지·StrictMode·구독 뒤 따라잡기 시험. G40 충족(조율 세션 재실행). 같은 구조 형이 세 곳에 인라인으로 반복됨 — 이름 붙인 형 하나로 묶는 것은 PR 리뷰의 후속 항목 | `fa9a49678` |
+| 2026-10-01 | U11a | codex(세션 `0ec8915f`): ajv6 등록 공유·동기 가드·해제·`bind` 거부·루트 `''`. VALIDATE-046 (i)–(iv) 기본·`bind` 인스턴스 모두 통과, VALIDATE-047 (i) 통과. G30·G31 충족(조율 세션 재실행) | `29bebdf04` |
+| 2026-10-01 | M6 수정 | U11b 첫 세션(`3826b684`)이 멈춘 계약 충돌을 codex(세션 `dea49c3b`)가 core에서 고침: 세 호출에 같은 사본, VALIDATE-019 동일성 시험 | `ad286a22c` |
+| 2026-10-01 | U13 | codex(세션 `afa0fe6a`): 05 몫 회귀 이식 다섯 파일(31 사례), SCN `notify`·`validation` 부류와 코어 러너. 사례 `selfcheck-v5.mjs:765`가 엔진 결함(M7)을 드러내 그 파일은 수정과 함께 커밋. G39 충족(조율 세션 재실행) | `27c2eeae6` |
+| 2026-10-01 | U11c | codex(세션 `d15bc93e`): ajv8 세 진입점(`allowUnionTypes`, 방언 선언), 등록 공유, `bind` 거부, 오류 변환. VALIDATE-046 (i)–(iv)·VALIDATE-047 (i)–(iii) 일치, (iv)는 같은 위치를 여러 동적 범위에서 쓸 때 독립 판정이 갈려 계획대로 미지원 문서화 — 소유자 상신 항목. 거부 오류 클래스 파일은 세 패키지에서 같음. G34·G35 충족(조율 세션 재실행) | `02f66d132` |
+| 2026-10-01 | M7 수정 | codex(세션 `ba36c445`): 상한에 닿은 리스너 되먹임 쓰기를 진입 전에 거부(`refuseListenerFeedback`, 공개 쓰기 진입 12곳이 결과를 확인). core unit 1,313 통과, G38 충족(조율 세션 재실행) | `dbd0cfdc3` |
 
 ### 31C-05 가칭 확정
 
@@ -135,7 +141,8 @@ Planning method: 저장소 지침 — `PLAN.md` §2와 `plan/prompts.md`의 단�
 
 ## 3. 다음 행동
 
-- U11a·U11b·U11c(codex 세 세션 병렬) 뒤에 U12b, U13–U15, U16a·U16b.
+- U11b(재착수) 뒤에 U12b, U15(단독 실행), U16a·U16b.
+- PR 뒤 원장 관리 세션에 보낼 소유자 상신 묶음: (1) VALIDATE-047 (iv) — 한 위치를 여러 동적 범위에서 쓰는 스키마의 가드 미지원 문서화 권고(ajv8; ajv7 결과 대기), (2) U15의 새 느린 행 수용, (3) 31C-05 가칭 확정 목록의 보충 기록.
 - 가칭 이름 확정 목록(U2, 31C-05)에 06이 더하는 `ARRAY_METHOD_ON_NON_ARRAY`(ERROR-197)를 넣는다: 배열이 아닌 노드에 `push`·`pop`·`update`·`remove`·`clear`를 부르면 배열 동사의 공용 칸이 던지는 `SchemaFormError`, 기록은 `path`와 `details.method`(06 세션 `albatrion-52`, 35C-01). 06은 `onError`에 보고하지 않고 던지며, 던지기 직전의 보고는 나중에 머지하는 단계의 디스패치 연결과 함께 든다(33C-01).
 
 ## 4. 원장·계획서 어긋남
@@ -148,3 +155,4 @@ Planning method: 저장소 지침 — `PLAN.md` §2와 `plan/prompts.md`의 단�
 | M4 | `execution-plan.md:236`·`:241`(U8) | 만들 파일 목록에 `adoptSchemaNodeChain` 수정이 없고, 검증 불가 기록을 하위 트리 범위로 읽힐 여지가 있음 | VALIDATE-046 (iii)(같은 `$id` 재생성 reset의 원자성), VALIDATE-048·18C-105(`ledger/validate.md:769`, `VALIDATOR_COMPILE_FAILED`는 폼 수준 기록) | 사전 검사를 `adoptSchemaNodeChain`에 두고 기록은 폼 수준으로 구현(codex U8 보고), antigravity U8 리뷰에서 판정 |
 | M5 | `execution-plan.md:48`(I5)·U9 | `globalState`를 멤버 하나로만 적고 EVENT-062의 유도 기제(런타임의 키별 참 노드 수, 상태 쓰기 진입과 정착 커밋의 형상 출입 때의 갱신, 0과 1 사이를 넘을 때만 새 객체와 루트의 `UpdateGlobalState`)가 빠짐. codex U9 첫 세션(`6850db6d`)이 착수 전에 멈춰 물음 | 43라운드 43C-01(질의 Q10, `reviews/round-43-closing.md`): 기제 전부가 PR-4 몫, PR-4 행의 "상태 사건"에 접혀 있던 것 | U9 범위에 더함. 공개 `state` 세터가 `dispatchSetState`에 위임하도록 기록 필드 `state`를 저장 전용 이름으로 바꿈(U4의 `revisionLedger`와 같은 결, 43C-01이 원장과 어긋나지 않음을 확인) |
 | M6 | U3·U7 구현(`validation/type.ts`의 `compileGuard`·`release` TSDoc "Authored root", `readSchemaNodeGuard.ts:28`·`compileEntryGuards.ts:31`·`evictValidationRoot.ts:19`) | core가 `compile`에는 엔진 사본을, `compileGuard`·`release`에는 작성 루트를 넘겨 플러그인이 세 호출을 한 등록에 묶을 수 없음. codex U11b 세션(`3826b684`)이 착수 중에 멈춰 보고 | VALIDATE-019(`ledger/validate.md:305-308`, "사본 루트의 등록"), VALIDATE-045·18C-56, ADR D9 | core가 세 호출에 같은 사본 객체를 넘기도록 고침(캐시·수명의 키는 작성 루트 그대로). 그 뒤 U11b를 다시 맡김 |
+| M7 | U5a 구현(`dispatch/utils/chain/enterSchemaNodeChain.ts:25`) | 되먹임 상한에 닿은 뒤의 리스너 쓰기를 차단 목록에 넣고 오류만 기록하고 그 쓰기는 정착·커밋함(`selfcheck-v5.mjs:765`, 기대 `p24`·실제 `p25`) | EVENT-008("그 파동의 리스너 되먹임만 거부"), EVENT-020 | 진입 전에 거부하도록 고침(`dbd0cfdc3`) |
