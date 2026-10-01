@@ -4,7 +4,7 @@ import { describe, it } from 'vitest';
 import { createCoreScenarioAdapter } from './utils/createCoreScenarioAdapter';
 import { runScenario } from './utils/runScenario';
 
-// filid:contract scenario-runner
+// filid:contract scenario-union
 describe('union scenarios on the core node tree', () => {
   it.each(unionScenarios)('$name', async (scenario) => {
     await runScenario(scenario, createCoreScenarioAdapter(scenario));
