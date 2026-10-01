@@ -1,21 +1,15 @@
-import { FEEDBACK_LIMIT_EXCEEDED, FORM_ERROR_CODE_TABLE, JSONSchemaError,
-  LISTENER_THREW, SchemaFormError } from '../../../../errors';
-import type { FormErrorCode, FormErrorRecord } from '../../../../errors';
+import { FEEDBACK_LIMIT_EXCEEDED, JSONSchemaError, SchemaFormError } from '../../../../errors';
+import type { FormErrorRecord } from '../../../../errors';
 import type { SchemaNodeRecord } from '../../../record';
 import { ValidationMode } from '../../../types/state';
 import { runDeliveryWaves } from './runDeliveryWaves';
+import { flushQueuedEvents } from './flushQueuedEvents';
 import { resolveSchemaNodeChainRoot } from './resolveSchemaNodeChainRoot';
 import { bundleChainErrors } from '../report/bundleChainErrors';
 import { createFormErrorRecord } from '../report/createFormErrorRecord';
 import { deliverChainRecords } from '../report/deliverChainRecords';
+import { readFormErrorCode } from '../report/readFormErrorCode';
 import { captureChainError } from './captureChainError';
-
-/** Find an authored code on a domain error without broadening the code table. */
-const errorCode = (error: unknown): FormErrorCode =>
-  error instanceof SchemaFormError || error instanceof JSONSchemaError
-    ? FORM_ERROR_CODE_TABLE.find(([code]) => code === error.code)?.[0] ??
-      `SCHEMA_FORM_ERROR.${LISTENER_THREW}`
-    : `SCHEMA_FORM_ERROR.${LISTENER_THREW}`;
 
 /**
  * Exit one public write and finish the outermost chain in contract order.
@@ -35,6 +29,7 @@ export const exitSchemaNodeChain = <Self extends SchemaNodeRecord<Self>>(
   }
   const root = runtime.chainRoot ?? activeRoot;
   runDeliveryWaves(root);
+  flushQueuedEvents(root);
   const occurrences = runtime.chainOccurrences ?? [];
   const pending: FormErrorRecord[] = [];
   const warnings = runtime.pendingWarningRecords;
@@ -68,6 +63,17 @@ export const exitSchemaNodeChain = <Self extends SchemaNodeRecord<Self>>(
   runtime.validationTargets = undefined;
   runtime.entryDepth = 0;
   const errors = runtime.chainErrors ?? [];
+  if (runtime.stateChanged) {
+    runtime.stateChanged = false;
+    try { runtime.onStateChange?.(); }
+    catch (error) {
+      errors.push(error);
+      if (runtime.errorReporter?.hasConsumer())
+        occurrences.push({ kind: 'error', error });
+    }
+    runtime.chainErrors = errors;
+    runtime.chainOccurrences = occurrences;
+  }
   if (changed && runtime.onChange) {
     if ((runtime.onChangeBudget ?? 0) >= 25) {
       const error = new SchemaFormError(FEEDBACK_LIMIT_EXCEEDED,
@@ -102,7 +108,7 @@ export const exitSchemaNodeChain = <Self extends SchemaNodeRecord<Self>>(
     }
     const error = occurrence.error;
       const existing = pending.find((record) =>
-        record.level === 'error' && record.code === errorCode(error) &&
+        record.level === 'error' && record.code === readFormErrorCode(error) &&
         error instanceof SchemaFormError &&
         record.schemaPath === error.details.schemaPath);
       if (existing && error instanceof SchemaFormError) {
@@ -112,7 +118,7 @@ export const exitSchemaNodeChain = <Self extends SchemaNodeRecord<Self>>(
         if (aggregate) existing.aggregate = aggregate;
         continue;
       }
-      const record = createFormErrorRecord(true, errorCode(error), 'error',
+      const record = createFormErrorRecord(true, readFormErrorCode(error), 'error',
         () => error instanceof Error ? error.message : String(error),
         { error, ...(error instanceof SchemaFormError ||
           error instanceof JSONSchemaError ? { details: error.details } : {}),

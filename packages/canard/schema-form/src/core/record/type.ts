@@ -329,6 +329,12 @@ export interface SchemaNodeRuntime<Self> extends SchemaNodeRootRuntimeState {
   delivering?: boolean;
   /** Events marked outside settlement for the next dispatcher wave. */
   queuedEvents?: Map<unknown, SchemaNodeDelivery>;
+  /** Non-settlement events coalesced independently from commit deliveries. */
+  queuedNonSettleEvents?: Map<unknown, SchemaNodeDelivery>;
+  /** Whether a non-settlement wave is draining, preventing listener reentry. */
+  flushingQueuedEvents?: boolean;
+  /** Whether interaction flags changed since the last outer delivery. */
+  stateChanged?: boolean;
   /** Warning identities already reported for this tree. */
   warningKeys?: Set<string>;
   /** Warnings held until the public entry commits and finishes delivery. */

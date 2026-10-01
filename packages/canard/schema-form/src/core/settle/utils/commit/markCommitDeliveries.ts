@@ -64,8 +64,12 @@ export const markCommitDeliveries = <Self extends SchemaNodeRecord<Self>>(
       }
       if (previous.children !== node.children)
         mark(node, SchemaNodeEventType.UpdateChildren);
-      if (previous.state !== node.state)
-        mark(node, SchemaNodeEventType.UpdateState);
+      if (previous.state !== node.state) {
+        runtime.stateChanged = true;
+        if (!((runtime.queuedNonSettleEvents?.get(node)?.type ?? 0) &
+          SchemaNodeEventType.UpdateState))
+          mark(node, SchemaNodeEventType.UpdateState);
+      }
       if (previous.active !== node.active || previous.visible !== node.visible ||
         previous.readOnly !== node.readOnly || previous.disabled !== node.disabled ||
         watchChanged)

@@ -29,6 +29,9 @@ export const adoptSchemaNodeChain = <Self extends SchemaNodeRecord<Self>>(
   next.batchWrites = previous.batchWrites;
   next.validationTargets = previous.validationTargets;
   next.deliveries = previous.deliveries;
+  next.queuedNonSettleEvents = previous.queuedNonSettleEvents;
+  next.stateChanged = previous.stateChanged;
+  next.nodeErrors = previous.nodeErrors;
   if (previous.pendingWarningRecords)
     for (const [key, record] of previous.pendingWarningRecords)
       (next.pendingWarningRecords ??= new Map()).set(key, record);
@@ -53,6 +56,8 @@ export const adoptSchemaNodeChain = <Self extends SchemaNodeRecord<Self>>(
   previous.batchDepth = 0;
   previous.batchWrites = undefined;
   previous.deliveries = undefined;
+  previous.queuedNonSettleEvents = undefined;
+  previous.stateChanged = undefined;
   previous.chainOccurrences = undefined;
   previous.pendingWarningRecords = undefined;
 };
