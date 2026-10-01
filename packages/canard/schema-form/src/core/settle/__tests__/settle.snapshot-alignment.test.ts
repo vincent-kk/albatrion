@@ -6,6 +6,23 @@ import { SetValueOption } from '../../types/value';
 import { loadSchemaNodeAtMount } from '../index';
 
 describe('49C-01 snapshot alignment matches sequential writes', () => {
+  it('fills sparse default slots when a later child alignment reuses the array', () => {
+    const { root } = makeSchemaNodeTree({ type: 'object', properties: {
+      a: { type: 'array', items: { type: 'object', properties: {
+        x: { type: 'array', items: { type: 'string' } },
+      } } },
+    } });
+    if (!(root instanceof SchemaNode))
+      throw new Error('Expected a runtime SchemaNode');
+    const sparse: { x: string[] }[] = [];
+    sparse[1] = { x: ['1'] };
+    sparse[2] = { x: [] };
+    loadSchemaNodeAtMount<SchemaNode>(root, { a: sparse }, SetValueOption.Overwrite);
+    root.setValue({ a: [{ x: [] }, { x: ['1', '2'] }] });
+    expect(Object.keys(root.find('/a')!.defaultValue as unknown[]))
+      .toEqual(['0', '1']);
+  });
+
   it('keeps resized child arrays in settlement registration order', () => {
     const { root } = makeSchemaNodeTree({ type: 'array', items: {
       type: 'object', properties: {

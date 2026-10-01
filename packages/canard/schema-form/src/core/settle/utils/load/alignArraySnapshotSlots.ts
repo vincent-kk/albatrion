@@ -4,9 +4,7 @@ import type { SchemaNodeRecord } from '../../../record';
 import { getLoadValue } from './getLoadValue';
 import { setLoadValue } from './setLoadValue';
 import { sameValue } from '../compute/sameValue';
-
-/** Only canonical decimal segments address array slots without named properties. */
-const ARRAY_INDEX = /^(0|[1-9]\d*)$/;
+import { isCanonicalArrayIndex } from '../paths/isCanonicalArrayIndex';
 
 /**
  * Align resized arrays in one snapshot draft after their final shapes are known.
@@ -21,9 +19,17 @@ export const alignArraySnapshotSlots = <Self extends SchemaNodeRecord<Self>>(
   let draft = runtime.loadSnapshot;
   const copies = new WeakMap<object, Map<string, object>>();
   const draftContainers = new WeakSet<object>();
+  const holey = new WeakSet<object>();
   const draftCopy = (source: unknown, path: string): object => {
     if (source !== null && typeof source === 'object') {
-      if (draftContainers.has(source)) return source;
+      if (draftContainers.has(source)) {
+        if (isArray(source) && holey.has(source)) {
+          for (let index = 0; index < source.length; index++)
+            if (!(index in source)) source[index] = undefined;
+          holey.delete(source);
+        }
+        return source;
+      }
       let byPath = copies.get(source);
       const existing = byPath?.get(path);
       if (existing) return existing;
@@ -47,6 +53,7 @@ export const alignArraySnapshotSlots = <Self extends SchemaNodeRecord<Self>>(
     while (slots.length < host.itemCount) slots.push(undefined);
     if (sameValue(previous, slots)) continue;
     draftContainers.add(slots);
+    holey.add(slots);
     if (!host.path) {
       draft = slots;
       continue;
@@ -56,7 +63,7 @@ export const alignArraySnapshotSlots = <Self extends SchemaNodeRecord<Self>>(
     let probe: unknown = draft;
     let byName = false;
     for (const segment of segments) {
-      if (isArray(probe) && !ARRAY_INDEX.test(segment)) {
+      if (isArray(probe) && !isCanonicalArrayIndex(segment)) {
         byName = true;
         break;
       }
@@ -74,10 +81,13 @@ export const alignArraySnapshotSlots = <Self extends SchemaNodeRecord<Self>>(
       const segment = segments[index];
       parentPath += `/${encoded[index]}`;
       const child = draftCopy(Reflect.get(parent, segment), parentPath);
+      if (isArray(parent) && Number(segment) > parent.length) holey.add(parent);
       Reflect.set(parent, segment, child);
       parent = child;
     }
-    Reflect.set(parent, segments[segments.length - 1], slots);
+    const segment = segments[segments.length - 1];
+    if (isArray(parent) && Number(segment) > parent.length) holey.add(parent);
+    Reflect.set(parent, segment, slots);
   }
   runtime.loadSnapshot = draft;
 };

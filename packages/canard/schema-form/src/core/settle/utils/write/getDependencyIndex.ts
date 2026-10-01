@@ -6,13 +6,12 @@ import { getDeriveRuleTable } from '../../derive';
 import { bindTemplatePath } from '../paths/bindTemplatePath';
 import { expandTemplatePaths } from '../paths/expandTemplatePaths';
 import { resolveDependencyPath } from '../paths/resolveDependencyPath';
+import { isCanonicalArrayIndex } from '../paths/isCanonicalArrayIndex';
 import { getContextOwners } from '../context/getContextOwners';
 import { getGateExpression } from '../gates/getGateExpression';
 
 /** No reverse dependency owners for a gate-free input path. */
 const NO_OWNERS: readonly string[] = Object.freeze([]);
-/** Only decimal array indices may match a template item segment. */
-const ARRAY_INDEX = /^(0|[1-9]\d*)$/;
 
 /** One absolute watch prefix and declarations registered exactly here. */
 interface DependencyNode {
@@ -91,7 +90,7 @@ class DependencyIndex {
       for (const node of current) {
         const exact = node.children.get(segment);
         if (exact) next.push(exact);
-        if (ARRAY_INDEX.test(segment)) {
+        if (isCanonicalArrayIndex(segment)) {
           const wildcard = node.children.get('*');
           if (wildcard) next.push(wildcard);
         }
