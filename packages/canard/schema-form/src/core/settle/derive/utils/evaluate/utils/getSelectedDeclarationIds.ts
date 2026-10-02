@@ -1,5 +1,6 @@
 import type { SchemaNodeRecord } from '../../../../../record';
 import type { DeriveState } from '../../../type';
+import { getCommittedDeclarationKey } from '../../../../../utils/getCommittedDeclarationKey';
 
 /**
  * Read the active declarations for a live occurrence across settlement calls.
@@ -10,6 +11,5 @@ import type { DeriveState } from '../../../type';
 export const getSelectedDeclarationIds = <Self extends SchemaNodeRecord<Self>>(
   node: Self, state: DeriveState<Self>,
 ): readonly number[] => state.selectedDeclarationIds.get(node) ??
-  node.runtime.committedDeclarationIds?.get(JSON.stringify([
-    node.path, node.blueprintNode.kind,
-  ])) ?? node.blueprintNode.declarations.map((declaration) => declaration.id);
+  node.runtime.committedDeclarationIds?.get(getCommittedDeclarationKey(node)) ??
+  node.blueprintNode.declarations.map((declaration) => declaration.id);

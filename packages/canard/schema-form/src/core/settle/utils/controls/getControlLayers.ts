@@ -1,6 +1,7 @@
 import { isArray } from '@winglet/common-utils/filter';
 
 import type { BlueprintNode } from '../../../blueprint';
+import { getCommittedDeclarationKey } from '../../../utils/getCommittedDeclarationKey';
 
 /** Shape data needed to resolve a declaration for a live or latent occurrence. */
 export interface ControlTarget<Self> {
@@ -41,9 +42,8 @@ export const getControlLayers = <Self extends ControlTarget<Self>>(
 ): readonly ControlLayer<Self>[] => {
   const selected = (current: Self): readonly number[] =>
     selectedDeclarationIds.get(current) ??
-    current.runtime.committedDeclarationIds?.get(JSON.stringify([
-      current.path, current.blueprintNode.kind,
-    ])) ?? current.blueprintNode.declarations.map((declaration) => declaration.id);
+    current.runtime.committedDeclarationIds?.get(getCommittedDeclarationKey(current)) ??
+    current.blueprintNode.declarations.map((declaration) => declaration.id);
   const nodeIds = selected(node);
   const groups: ControlLayer<Self>[] = [];
   for (const declaration of node.blueprintNode.declarations) {

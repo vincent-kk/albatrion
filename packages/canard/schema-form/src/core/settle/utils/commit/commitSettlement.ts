@@ -1,4 +1,5 @@
 import { PathKeyedMap } from '../../../utils/pathIndex/PathKeyedMap';
+import { getCommittedDeclarationKey } from '../../../utils/getCommittedDeclarationKey';
 import type { SchemaNodeRecord, TypeMismatchRecord } from '../../../record';
 import { indexSchemaNodeWarning } from '../../../record';
 import { NON_JSON_WHOLE_VALUE, TYPE_MISMATCH } from '../../../../errors';
@@ -49,7 +50,7 @@ export const commitSettlement = <Self extends SchemaNodeRecord<Self>>(
   runtime.committedDeclarationIds = declarations;
   for (const [node, ids] of context.selectedDeclarationIds)
     if (!node.detached)
-      declarations.set(JSON.stringify([node.path, node.blueprintNode.kind]), ids);
+      declarations.set(getCommittedDeclarationKey(node), ids);
   let warnings: TypeMismatchRecord[] | undefined;
   for (const node of context.changedNodes) {
     if (node.detached || node.blueprintNode.kind === 'virtual') continue;
