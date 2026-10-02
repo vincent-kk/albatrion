@@ -8,7 +8,7 @@
 
 이어받는 세션은 [`HANDOFF.md`](./HANDOFF.md)부터 읽는다 — 현재 상태, 다음 할 일, 검사 명령.
 
-1. [`PLAN.md`](./PLAN.md) — 개발의 단일 진입점: 계획 링크, 수행 방법, 단계별 진행 상황, 다음 할 일
+1. [`PLAN.md`](./PLAN.md) — 개발의 단일 진입점: 계획 링크, 수행 방법, 단계별 진행 상황, 다음 할 일. 기록(날짜·무엇·어디의 표와 라운드별 요지)은 [PLAN-LOG.md](./PLAN-LOG.md)
 2. [`ledger/`](./ledger/README.md) — 원장. 결정의 정본이다(영역 열일곱, 항목마다 결정과 상태, 있을 때 보충과 충돌)
 3. [`design/`](./design/) — 원장을 읽는 표면인 설계문서 여덟. 문장 끝 괄호의 ID가 근거이고, 어긋나면 원장이 이긴다
    - [`00-goals-and-values.md`](./design/00-goals-and-values.md) 목표와 가치 · [`01-schema-to-blueprint.md`](./design/01-schema-to-blueprint.md) 스키마에서 청사진까지 · [`02-node-and-value.md`](./design/02-node-and-value.md) 노드와 값 · [`03-settle-and-events.md`](./design/03-settle-and-events.md) 정착과 통지
