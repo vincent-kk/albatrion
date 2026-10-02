@@ -688,6 +688,7 @@
   > "**로컬**은 노드 자신의 키와 `controls`의 식이다." (`02-target-overview.md:294`)
   > "오늘 루트 키 다섯(`readOnly`·`disabled`·`active`·`visible`·`pristine`)의 특수 처리와 README의 "Priority System"은 사라진다." (`08-design-a-to-z.md:335`)
   > "렌더 계층이 코어의 결과 위에 OR한다." (`08-design-a-to-z.md:339`)
+  > 편집자 결정(65C-02): "【추론】 상태 키(SETTLE-003 "상태 키는 그 노드에만 걸린다", CONTROLS-045), 전역 상태(EVENT-062 "형상 안 노드에서 유도한다 — 키별 참 노드 수"), 감시 트리거는 모두 청사진이 선언한 기능이므로 어느 노드가 그 기능을 가질 수 있는지는 컴파일 때 정해진다; 그러므로 그 통과가 바뀐 노드 전체를 훑는 것은 SETTLE-017의 "역의존 표(정적 색인)"와 같은 결로 청사진 범위의 정적 색인(기능 → 그 기능을 선언한 청사진 노드 집합)으로 바꿀 수 있고, 통과는 재계산 목록과 그 색인의 교집합만 방문한다. 기능을 선언한 노드가 없는 폼에서는 통과가 0 방문이다. 의미는 바뀌지 않는다: 어느 노드가 어떤 상태 키·전역 상태 비트·감시를 갖는지는 그대로이고, 방문 순서가 결과에 들지 않는 통과에만 적용한다(순서가 결과에 드는 통과는 SETTLE-006의 순서를 지킨다)." (`reviews/round-65-closing.md:17`)
 - 상태: 현행
 - 출처: `adr/0003-group-namespace.md:115`(정본), `02-target-overview.md:291-297`, `08-design-a-to-z.md:335-339`, `07-conclusions.md:158`, `07-conclusions.md:164`
 - 닫은 사람: 소유자 답(`reviews/round-13-owner-answers.md:7` 1 잠금 규칙), 소유자 답(`reviews/round-10-owner-answers.md:25` E-13), 소유자 답(`reviews/round-13-owner-answers.md:16` Form 속성의 자리), 소유자 답(`reviews/round-12-owner-answers.md:7` 1 Form 속성 `false`)
@@ -1213,6 +1214,7 @@
   > 편집자 결정(29C-01): "【추론】 생긴 노드와 로드된 노드의 `controls.derived`·`controls.injectTo`는 원천의 방출 값이 `undefined`여도(채움 전) 거짓→참 에지로 발화한다: WRITE-029·FRAGMENT-050 (2)·CONTROLS-027은 에지의 조건을 "직전 값이 없다"로만 두고 원천 값의 유무를 조건으로 두지 않으며, CONTROLS-079의 `value`는 원천의 방출 값이라 방출이 없으면 `undefined`다." (`reviews/round-29-closing.md:9`)
   > 편집자 결정(29C-01): "【추론】 그 `undefined`를 어떻게 다룰지는 작성자 함수의 몫이다: 원천은 런타임에도 언제든 `undefined`가 될 수 있으므로 함수는 어차피 그 입력을 다뤄야 하고, 없는 원천을 씨앗으로 쓰는 것도 작성자의 표현이다(G2)." (`reviews/round-29-closing.md:10`)
   > 편집자 결정(29C-01): "【추론】 그래서 게이트가 뒤집히지 않는 보통의 경우 결과는 채움 값으로 발화한 것과 같고(v7의 기대와 같다), 단순 복사 `(value) => ({ '../t': value })`의 첫 발화는 `undefined` 항목이라 쓰지 않으므로(CONTROLS-079) 대상은 채움 값으로만 씌워져 CONTROLS-084가 지키는 것("오늘 코드도 마운트에서 원천의 `default`로 대상을 채우므로")이 성립한다." (`reviews/round-29-closing.md:13`)
+  > 편집자 결정(61C-01): "【추론】 삭제·대체는 열이다: `JSON_SCHEMA_ERROR.INJECT_TARGET_NOT_FOUND` 삭제(`injectTo` 대상은 정적으로 알 수 없고 동적 실패는 `SCHEMA_FORM_ERROR.INJECT_TARGET_MISSING`, CONTROLS-079); `JSON_SCHEMA_ERROR.INVALID_VIRTUAL_NODE_VALUES` 삭제 → `SCHEMA_FORM_ERROR.INVALID_VIRTUAL_NODE_VALUES`(쓰기 오류로 부류 이동, ERROR-195); `SCHEMA_FORM_WARNING.VALUE_TYPE_MISMATCH` 삭제 → `SCHEMA_FORM_WARNING.TYPE_MISMATCH`(소유자 확정, SURFACE-061); `SCHEMA_FORM_WARNING.UNSET_ON_INACTIVE_ON_OBJECT` 삭제(소유자 판정으로 코드 행 제거); `NodeState` → `SchemaNodeState`, `NodeEventType` → `SchemaNodeEventType`(SURFACE-056, 옛 소비자 이주는 07); `valueTypeMismatch`·`valueTypeMismatches` → `typeMismatch`·`typeMismatches`(SURFACE-061); `latent` → `getInactiveValues(path)`(SURFACE-006); 옛 Form 속성 `onListenerError`와 `throwOnBudgetExceeded` 삭제(기록은 `onError`가 받고, 모든 환경에서 사슬 끝에 던진다). 원장에서 이 옛 이름을 가진 문장은 옛 글로 남고 이 보충이 이긴다." (`reviews/round-61-closing.md:10`)
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:382-413`(정본), `reviews/round-12-owner-answers.md:20`
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-14)

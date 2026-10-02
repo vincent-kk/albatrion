@@ -71,6 +71,7 @@ Planning method: 저장소 지침 — `PLAN.md` §2와 `plan/prompts.md`의 단�
 | 2026-10-02 | G50, 리뷰 | PR 경계 filid 스캔: 순환 0, 05 몫 발견 셋(SchemaNode 경계 예외 소비자 누락, 시나리오 spec 셋의 묶음 분산) 고침, `src/errors/index.ts` 와일드카드는 그 INTENT의 규약이라 둠 → 재스캔 05 몫 확정 오류 0(`085aff7e9`). antigravity 약식 리뷰 `no-blocking`, 지적 5(비차단 3·nit 2): `enclosingChain` 설명 보강, 벤치 플러그인 행의 형 오류로 깨진 G54 복구(`579cdea1e`), 나머지는 추적·소유자 몫 | `579cdea1e` |
 | 2026-10-02 | 55·56라운드 | 소유자 묶음 답: 55C-01 한 쓰기가 가드 둘을 실패시키면 둘 다 묶어 던짐(03 정착의 첫 실패만 남기기는 결함), 55C-02 VALIDATE-047 (iv)와 엄격 옵션 바인딩의 가드 컴파일 실패는 문서화된 한계, 55C-03 가칭 확정. 56라운드 소유자가 P-16~P-19를 PR-4에서 수용(G42), "지수적 악화는 수용 대상 아님"이 일반 규칙이 됨. 55C-01 구현(codex) → 검증 에이전트(Claude opus) `FAIL` G1(게이트·비게이트 실패의 순서), G2(가드 뒤 비게이트 실패가 버려짐) → 질의 58라운드 58C-01: 모든 정착 오류를 발생 순서로 모아 묶음, `diagnostics.cause`는 첫 실패, 예산 초과는 진행만 멈춤 | `458fbcac6`, `c56670343`, `14ae38a32` |
 | 2026-10-02 | 58·59라운드 | 58C-01 구현 → 검증 에이전트(Claude opus) `FAIL` D1(다른 원천 노드의 실패가 같은 대상에서 합쳐짐) → 원천 포함 식별자. 질의 59라운드 59C-01: `INJECT_TARGET_MISSING`과 자동 쓰기 `INVALID_VIRTUAL_NODE_VALUES`에 `details.sourcePath`(호출자 경로 오류에는 없음). 소유자 지시(원장 세션 전달): 검증은 antigravity로 될 때 antigravity를 씀 → 58C·59C 묶음 재검을 antigravity가 판정, `PASS`(탐침 p14~p17·core 시험·형 검사 실행). storybook(G52)은 `@aileron/development-helper` 빌드 뒤 이 세션이 실행, 49파일·390 통과 | `3b643f9d7`, `7d14760f2` |
+| 2026-10-02 | 머지 | 최종 게이트(unit+render 417파일·4,900 통과, lint·typecheck·합성 `tsc`, plan-links 0, 플러그인 114·119·297, storybook 390) 뒤 소유자가 GitHub에서 #352를 squash 머지. 게이트 원장의 G12·G29·G53은 통과하나 출력이 길어 hook이 표시를 잡지 못해 미기록으로 남음(저장된 출력에서 확인) | `afbba714d` |
 
 ### 31C-05 가칭 확정
 

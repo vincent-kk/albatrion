@@ -82,6 +82,7 @@
   > 편집자 결정(18C-40): "【추론】 (1) 경고등은 VALUE-002의 분류로 '계산' 칸이다." (`reviews/round-18-closing.md:1084`)
   > 편집자 결정(18C-59): "【추론】 배열 호스트의 `extras`는 아이템 청사진이 없는 자리의 값이다." (`reviews/round-18-closing.md:1668`)
   > 편집자 결정(18C-59): "【추론】 자리 순서로 들고, 선언된 아이템 뒤에 방출한다(VALUE-002 보충)." (`reviews/round-18-closing.md:1669`)
+  > 편집자 결정(65C-03): "【추론】 장부를 노드 키 `Map`(`deliverySnapshots`·`deliveries`·`queuedEvents`)에서 레코드 필드(기준값, 대기 마스크, 비트별 `revision` 칸, payload 칸)로 옮기는 것은 NODE-004 "노드 인스턴스가 곧 레코드"와 맞고, VALUE-002 "상태는 `raw`와 `extras` 둘뿐이다(P3). 나머지는 상태에서 계산되거나 작업의 기록이다"의 "작업의 기록"에 든다 — 장부는 형상·값·방출에 들지 않고 읽기 API에 노출되지 않으며 커밋이 비운다. 그러므로 P3를 어기지 않는다. 조건은 넷이다: (1) 레코드 필드는 `record/type.ts`에 선언하고 NODE-004를 따르는 `record`의 DETAIL을 먼저 고친다; (2) 차등 시험은 개정 대장(비트별 `revision`), payload(`previous`·`current`), 배달 순서, `UpdateGlobalState` 횟수의 불변을 S1·S2 전후로 확인한다(06의 54만 단계 차등과 같은 모양); (3) S1과 S2는 별도 커밋이되 한 설계이므로 같은 PR 안에서 잇고, S3 뒤에 한다; (4) 05가 정한 이름(`revisionLedger`, `UpdateGlobalState`, 사건 종류)은 바뀌지 않는다." (`reviews/round-65-closing.md:26`)
 - 상태: 현행
 - 출처: `adr/0006-single-value-ownership.md:27-42`(정본), `adr/0006-single-value-ownership.md:3,9`, `02-target-overview.md:142-148`, `03-mental-model.md:57-70`, `08-design-a-to-z.md:151-166`, `reviews/round-18-closing.md:1084,1668-1669`, `reviews/round-18-closing.md:1084`
 - 닫은 사람: 소유자 답(`reviews/round-10-owner-answers.md:9` A-3, 상태가 둘뿐인 것은 그 귀결 `adr/0006-single-value-ownership.md:3`), 원리(`03-mental-model.md:55-72` §2, 칸 목록 `adr/0006-single-value-ownership.md:3`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-40·18C-59), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-40; 경고등은 계산 칸)
@@ -219,6 +220,7 @@
   > 편집자 결정(18C-50): "【추론】 쓰기 경계에서 지금 값과 같으면 쓰지 않는 것은 오늘과 같다." (`reviews/round-18-closing.md:1384`)
   > 편집자 결정(18C-50): "【추론】 호스트의 `emit`은 VALUE-012대로 만든다." (`reviews/round-18-closing.md:1385`)
   > 편집자 결정(18C-50): "【추론】 새로 만든 것이 직전 커밋의 것과 키 목록(순서 포함)도 같고 키마다의 자식 `emit` 참조도 같으면 직전 참조를 둔다(얕은 비교, 재계산 목록의 호스트만)." (`reviews/round-18-closing.md:1386`)
+  > 편집자 결정(67C-01): "【추론】 재현의 `/rows`가 내용은 같은데 새 참조로 지어진 것은 SETTLE-043 (나)의 되살림 구멍이지 배달의 문제가 아니다: 되살림이 맞게 되면 `/rows`의 참조가 유지되어 `UpdateValue`도 감시 에지도 나지 않아 둘이 맞는다. 06은 원인을 귀속한다 — 배열 호스트의 `assemble`·커밋 되살림(06의 `arrayBehavior`, 44C-01 (나)의 "바뀐 것이 없으면 같은 참조")이면 배열 시나리오가 닿으므로 #353에서 고치고 재현을 시험으로 남기며, 원인이 03의 잎·객체 되살림(`resetSubtree`의 로드가 같은 원본에 새 참조를 두는 것)이면 49C-01대로 대장 "열림"에 "같은 참조 규칙 위반, 수용 대상 아님 — 07 전환 또는 전용 성능 작업"으로 행을 더하고 고치지 않는다. 어느 쪽이든 S1 전의 동작(참조가 바뀌어 `/z`가 256을 받음)은 참조 비교로서 일관되었고 65C-03의 불변 기준으로 맞다." (`reviews/round-67-closing.md:10`)
 - 상태: 현행
 - 출처: `adr/0006-single-value-ownership.md:68`(정본), `reviews/round-18-closing.md:1383-1386`
 - 닫은 사람: 편집자 결정(4차 본문, 3·4·5라운드 반영 F9, `adr/0006-single-value-ownership.md:10`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-50)
@@ -467,6 +469,7 @@
   > 편집자 결정(18C-101): "【추론】 "로드마다 다시 만든다"(VALUE-030)는 `resetSubtree()`에는 그 하위 트리에만 적용한다." (`reviews/round-18-closing.md:2851`)
   > 반영 칸(설계서 메모 4): "게터 `typeMismatch: boolean`, 경로 목록 `typeMismatches: readonly string[]`, 경고 코드 `SCHEMA_FORM_WARNING.TYPE_MISMATCH`." (`reviews/round-18-owner-answers.md:41`)
   > 편집자 결정(26C-06): "【추론】 원장이 "루트가 든다"고 적은 트리 전체 자료(로드 스냅숏, 잠복 원본, 경고등 경로 집합, 잠복 원본 열거의 메모)의 저장 자리는 트리마다 하나인 `SchemaNodeRuntime`의 칸이며, 루트는 자기 `runtime` 필드를 통해 그것을 든다." (`reviews/round-26-closing.md:66`)
+  > 편집자 결정(61C-01): "【추론】 삭제·대체는 열이다: `JSON_SCHEMA_ERROR.INJECT_TARGET_NOT_FOUND` 삭제(`injectTo` 대상은 정적으로 알 수 없고 동적 실패는 `SCHEMA_FORM_ERROR.INJECT_TARGET_MISSING`, CONTROLS-079); `JSON_SCHEMA_ERROR.INVALID_VIRTUAL_NODE_VALUES` 삭제 → `SCHEMA_FORM_ERROR.INVALID_VIRTUAL_NODE_VALUES`(쓰기 오류로 부류 이동, ERROR-195); `SCHEMA_FORM_WARNING.VALUE_TYPE_MISMATCH` 삭제 → `SCHEMA_FORM_WARNING.TYPE_MISMATCH`(소유자 확정, SURFACE-061); `SCHEMA_FORM_WARNING.UNSET_ON_INACTIVE_ON_OBJECT` 삭제(소유자 판정으로 코드 행 제거); `NodeState` → `SchemaNodeState`, `NodeEventType` → `SchemaNodeEventType`(SURFACE-056, 옛 소비자 이주는 07); `valueTypeMismatch`·`valueTypeMismatches` → `typeMismatch`·`typeMismatches`(SURFACE-061); `latent` → `getInactiveValues(path)`(SURFACE-006); 옛 Form 속성 `onListenerError`와 `throwOnBudgetExceeded` 삭제(기록은 `onError`가 받고, 모든 환경에서 사슬 끝에 던진다). 원장에서 이 옛 이름을 가진 문장은 옛 글로 남고 이 보충이 이긴다." (`reviews/round-61-closing.md:10`)
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:1084-1090,1096-1103`(정본), `reviews/round-18-closing.md:2520-2521,2526`, `reviews/round-18-closing.md:2851`, `reviews/round-18-owner-answers.md:41`
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-40), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-91), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-101), 소유자 답(`reviews/round-18-owner-answers.md:41` 설계서 메모 4)
