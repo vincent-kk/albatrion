@@ -216,6 +216,8 @@
 | LANDING-206 | UI 플러그인 넷의 이주는 플러그인 PR(우산 순서 N+1) — `presentation.*` 이주·자사 플러그인 수정 목록·union 항목, PR-7은 기본 입력으로 검증, ajv 셋은 원장대로 PR-4, 이주 표와 이주 점검은 PR-7에 남음 | 현행 | 소유자 답(`reviews/round-18-owner-answers.md:42` 개발계획 P1) |
 | LANDING-207 | 이주(19라운드) — 형 없는 객체 분기 `oneOf`·`anyOf`(pydantic·zod·OpenAPI·TypeBox)는 object variant 호스트, `Optional[Self]`는 `RECURSIVE_SHAPE_UNBOUNDED` | 현행 | 편집자 결정(19라운드, `reviews/round-19-closing.md` 19C-01) |
 | LANDING-208 | 이주(19라운드) — `type` 없이 `const`·`enum`만 있는 프로퍼티(OpenAPI 3.1·JSON Schema 2020-12 관용구, 수기 태그)는 리터럴 종류의 원시 잎 | 현행 | 편집자 결정(19라운드, `reviews/round-19-closing.md` 19C-02) |
+| LANDING-209 | 이주(80라운드) — 폼 핸들 명령 넷(`focus`·`select`·`refresh`·`remount`)의 경로는 선택 인자(없으면 루트), `focus`·`select`의 필수 경로가 선택으로, `refresh`·`remount` 추가 | 현행 | 편집자 결정(80라운드, `reviews/round-80-closing.md` 80C-01) |
+| LANDING-210 | 이주(80라운드) — 공개 표면의 배열(`FormProps.errors`·`onValidate` 인자, `FormHandle.getErrors`·`validate`·`findNodes` 반환, `errorMatrix` 안 배열)은 `readonly` | 현행 | 편집자 결정(80라운드, `reviews/round-80-closing.md` 80C-02) |
 
 ## 항목
 
@@ -486,7 +488,8 @@
   > | # | 오늘 | 새 설계 |
   > | --- | --- | --- |
   > | 18 | 10비트 `SetValueOption` | 비트 넷 |
-- 보충: 없음
+- 보충:
+  > 편집자 결정(80C-03): "【추론】 귀속의 기준은 72C-01·78C-02가 가른 대로 "원장이 그 단계에 둔 규칙이 온전히 있었는데 코드가 없거나 다른가"다. (가) LANDING-141의 `INVALID_WRITE_OPTION`은 05가 오류 코드 표(`plan/05-dispatch-and-validation/log.md:101`)에 "확정·동일, 충돌한 공개 쓰기 옵션의 호출자 오류"로 올렸으므로 던지는 동작이 없던 것은 05의 결함이다. (나) LANDING-132·SCHEMA-041의 `required` 표시는 "부모 유효 스키마의 `required`(연언 문맥의 켜진 조각 합집합)"이고 유효 스키마는 정착이 계산하므로(03의 `selectNodeSchema`, 04의 게이트·조각 선택) 켜진 `then`에 따라 자식의 `required`가 갱신되지 않던 것은 03·04의 결함이며, 07은 고친 파일로 둘 가운데 어느 쪽인지 적는다. (다) LANDING-021의 옛 `core/types/value`에 남은 `SetValueOption` 복합 비트는 LANDING-087이 "`core/types`의 event·state·value는 남는다"고 하며 그 안의 옛 비트 정리를 07의 형 전환(진입점 전환과 함께)에 둔 것이므로 결함이 아니라 07의 몫이다. (라) `FormHandle.reset(option?)`(억제 비트 둘만, WRITE-015 보충·ADR 0013)은 07의 U6이 빠뜨린 것이므로 앞 단계 귀속이 아니라 07의 실행 기록에 "빠뜨린 것을 채움"으로 적는다. (가)·(나)는 42라운드·78C-02의 선례대로 `plan/07-switch/log.md` §8 "앞 단계 결함"에 재현 사례와 함께 적고, 메운 시험(이주 점검표의 (가) 행)이 그 증거다." (`reviews/round-80-closing.md:25`)
 - 상태: 현행
 - 출처: `08-design-a-to-z.md:450`(정본), `07-conclusions.md:345`, `02-target-overview.md:339,353`
 - 닫은 사람: 편집자 결정(9라운드 이름, `07-conclusions.md:345` N1; 비트마스크는 8라운드 소유자 지시, `HANDOFF.md` 8라운드 행)
@@ -1594,6 +1597,7 @@
   > 편집자 결정(68C-06): "【추론】 TEST-055는 PR-7이 `@winglet/react-utils`의 자기 changeset(`minor`)을 더한다고 정했고, 루트 `CLAUDE.md`의 "changesets를 쓰지 않고 릴리스 때 판을 올린다"와의 충돌은 01 재정렬 기록(`plan/01-design-docs/realign.md:29,167`)이 "TEST-054·055, LANDING-097: 원장이 이긴다"로 닫았으며, 02(PR-1)는 그대로 `.changeset/common-utils-merge-policies.md`를 더했다. 07은 같은 모양으로 `.changeset/` 아래 `@winglet/react-utils`의 `minor` changeset 파일 하나를 더하고 변경 사유를 그 파일과 커밋 메시지에 적는다. `package.json`의 `version`은 올리지 않는다 — 판 올림은 changesets 가동(LANDING-097, 릴리스 전환 PR)과 PR-8(LANDING-096)의 몫이고, 07이 올리면 프리릴리스 무리의 판 계산과 두 번 셈한다. 루트 `CLAUDE.md`의 문장은 릴리스 전환 PR이 고친다(LANDING-097 "판 올림 스크립트 정리와 루트 `CLAUDE.md`")." (`reviews/round-68-closing.md:44`)
   > 편집자 결정(68C-09): "【추론】 LANDING-095의 "`architecture/spikes/**` 가운데 제품 동작에 남는 상황의 e2e 이식(§5.3)"은 기준만 적었고 목록은 없다. 07은 스파이크의 시험 파일(오늘 `spikes/events/caret`·`entry`, `spikes/work-loop/redteam4-events/current`·`react`)을 사례 단위로 나눠 사례마다 (가) 제품 동작으로 남아 e2e 또는 렌더 시험으로 옮김(새 시험 이름), (나) 설계 탐색이라 옮기지 않음(까닭)을 적은 표를 `plan/07-switch/log.md`에 두고, 옮긴 시험은 새 자리에서 돌며 스파이크 파일은 지우지 않는다(스파이크는 설계 기록이다). 여기에 더해 EVENT-070·REACT-017(18C-85)이 PR-7에 둔 사례 — `useLayoutEffect`와 `useEffect`에서 `node.setValue`로 서로를 되쓰는 두 필드 — 는 `spikes/events/`에 더하고 React 18과 19에서 각각 실행하며, 통과(두 이펙트 모두에서 React가 순환을 끊음)이면 규칙을 그대로 두고 실패하면 EVENT-070대로 소유자에게 올린다(편집자가 정하지 않는다)." (`reviews/round-68-closing.md:65`)
   > 편집자 결정(69C-02): "【추론】 LANDING-095의 PR-7 행은 "`reset`의 로드 전환(같은 스키마 판정, 커밋 재대조, 호출 안의 재생성, 자식 프록시 마운트 여부로 가르는 입력 판정, 노드가 드는 Refresh 번호와 상호작용 초기화 번호)"을 PR-7에 두었고, 05는 오류 코드 표에 `DISPOSED_NODE_WRITE`를 "재생성으로 버린 트리의 노드 쓰기만 거부"로 올리되 동작은 두지 않았다(`plan/05-dispatch-and-validation/log.md:102`). 그러므로 재생성 reset의 폐기(WRITE-046·086의 네 일), 상호작용 초기화 번호의 노드 칸과 그것을 올리는 셋(reset, `clearState`, `controls.resetInteraction`; REACT-024)과 바인딩의 읽기(`useSchemaNodeTracker`), 폐기된 노드에 온 쓰기의 `DISPOSED_NODE_WRITE`는 07이 코어에 더하는 것이 원장의 배정이며 03·04·05의 결함으로 적지 않는다. 조건: 폐기는 부모·자식·루트 참조를 끊지 않고(WRITE-086), 옛 노드의 읽기는 폐기 직전 마지막 커밋을 돌려주며, 검증기 등록의 참조 수는 폐기가 아니라 옛 트리의 효과 정리에서 내린다; 번호 올리기는 통지 없이 동기이고 Refresh 번호는 `revision`과 함께 노드가 든다(REACT-024); 입력 출처 표식이 붙은 늦은 쓰기는 조용히 버리고 표식 없는 쓰기만 `DISPOSED_NODE_WRITE`로 던진다(REACT-010의 가름). 코어 쪽 변경은 `record`·`settle`·`dispatch`의 DETAIL을 코드보다 먼저 고치고, 차등 시험(폐기 전후의 개정 대장과 값 불변)으로 03–06의 시나리오가 그대로임을 보인다." (`reviews/round-69-closing.md:16`)
+  > 편집자 결정(77C-01): "【추론】 TEST-025는 소유자 답(16라운드 답 4, "전체 정리 허용")을 받아 옛 스토리 49파일의 처분을 셋으로 정했고 09 §5.4는 "옛 스토리는 PR-7에서 모두 정리된다"고 했으므로, 옛 스토리는 `src/__legacy__/`의 엔진 코드처럼 PR-8까지 보존하는 것이 아니라 PR-7 안에서 파일마다 처분되는 대상이다(LANDING-205의 보존은 `src/__legacy__/`에 한한다; 73C-01이 옛 스토리를 "같은 처분"이라 한 것은 글롭에서 빼는 수단을 말한 것이지 보존을 뜻하지 않는다). 그래서 U8의 (C) — Storybook 글롭과 `tsconfig`의 형 검사에서 `stories/*.stories.tsx`를 빼는 것 — 는 U9(새 시나리오 스토리와 `playScenario`)가 처분을 마칠 때까지 묶음 끝 점검을 초록으로 두는 발판으로만 허용하고, PR-7의 게이트는 "옛 스토리 파일이 남지 않는다"이다: 02가 만든 처분 목록(`verification/02-foundation-and-blueprint/story-disposition.md`)의 행마다 (가) 시나리오 → 데이터 모듈 + `stories/scenarios/`의 다섯 줄 스토리(새 이름), (나) 사용법 → `stories/usage/`에 새 문법으로 다시 씀(소수), (다) 인라인 스키마 → 지움을 적어 07의 처분표 옆에 두고, U9 끝에 49파일을 지우며 글롭·`tsconfig`의 제외 항목도 함께 없앤다. 262건의 형 오류를 새 API로 고쳐 살리는 대안은 TEST-025의 "인라인 스키마 스토리는 남기지 않는다"와 어긋나므로 택하지 않는다. (A)는 68C-01·TEST-005의 적용이고 "버리고 새로 쓴다" 31파일을 U8에서 지우고 U9에서 e2e로 다시 쓰는 사이의 상태는 처분표가 행방을 들고 PR-7이 원샷이므로 허용되며, 기대값이 원장 변경과 부딪히는 파일은 멈추고 물음으로 보낸다; (B)는 73C-01·75C-01 그대로; (D)는 TEST-021의 고칠 것 다섯이다." (`reviews/round-77-closing.md:9`)
 - 상태: 현행
 - 출처: `09-landing-and-test-strategy.md:261`(정본), `08-design-a-to-z.md:577`, `reviews/round-18-closing.md:2730-2731`, `reviews/round-18-owner-answers.md:42`
 - 닫은 사람: 소유자 답(`reviews/round-17-owner-answers.md:9` R17-1), 소유자 답(`reviews/round-17-owner-answers.md:11` R17-3), 소유자 답(`reviews/round-17-owner-answers.md:22` `group`의 이름), 소유자 답(`reviews/round-16-owner-answers.md:10,11` 4·5), 16라운드 스웜 수렴(편집자 결정, reset·로드), 17라운드 스웜 수렴(편집자 결정, 바인딩 계약 첫째·넷째), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-94), 소유자 답(`reviews/round-18-owner-answers.md:42` 개발계획 P1)
@@ -2083,7 +2087,8 @@
 
 - 결정:
   > 이주(LANDING-132): 조건부 `required`가 있는 필드의 필수 표시는 오늘 늘 켜지고, 새 설계에서는 켜진 `then`에 따라 바뀐다.
-- 보충: 없음
+- 보충:
+  > 편집자 결정(80C-03): "【추론】 귀속의 기준은 72C-01·78C-02가 가른 대로 "원장이 그 단계에 둔 규칙이 온전히 있었는데 코드가 없거나 다른가"다. (가) LANDING-141의 `INVALID_WRITE_OPTION`은 05가 오류 코드 표(`plan/05-dispatch-and-validation/log.md:101`)에 "확정·동일, 충돌한 공개 쓰기 옵션의 호출자 오류"로 올렸으므로 던지는 동작이 없던 것은 05의 결함이다. (나) LANDING-132·SCHEMA-041의 `required` 표시는 "부모 유효 스키마의 `required`(연언 문맥의 켜진 조각 합집합)"이고 유효 스키마는 정착이 계산하므로(03의 `selectNodeSchema`, 04의 게이트·조각 선택) 켜진 `then`에 따라 자식의 `required`가 갱신되지 않던 것은 03·04의 결함이며, 07은 고친 파일로 둘 가운데 어느 쪽인지 적는다. (다) LANDING-021의 옛 `core/types/value`에 남은 `SetValueOption` 복합 비트는 LANDING-087이 "`core/types`의 event·state·value는 남는다"고 하며 그 안의 옛 비트 정리를 07의 형 전환(진입점 전환과 함께)에 둔 것이므로 결함이 아니라 07의 몫이다. (라) `FormHandle.reset(option?)`(억제 비트 둘만, WRITE-015 보충·ADR 0013)은 07의 U6이 빠뜨린 것이므로 앞 단계 귀속이 아니라 07의 실행 기록에 "빠뜨린 것을 채움"으로 적는다. (가)·(나)는 42라운드·78C-02의 선례대로 `plan/07-switch/log.md` §8 "앞 단계 결함"에 재현 사례와 함께 적고, 메운 시험(이주 점검표의 (가) 행)이 그 증거다." (`reviews/round-80-closing.md:25`)
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:159`(정본)
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-06)
@@ -2183,7 +2188,8 @@
 
 - 결정:
   > 이주(LANDING-141): `Overwrite | Merge`는 오늘 `Overwrite`로 동작하고(`value.ts:65`), 새 설계에서는 `INVALID_WRITE_OPTION`으로 던진다(`adr/0014-error-policy.md:276` 행의 이주 쪽).
-- 보충: 없음
+- 보충:
+  > 편집자 결정(80C-03): "【추론】 귀속의 기준은 72C-01·78C-02가 가른 대로 "원장이 그 단계에 둔 규칙이 온전히 있었는데 코드가 없거나 다른가"다. (가) LANDING-141의 `INVALID_WRITE_OPTION`은 05가 오류 코드 표(`plan/05-dispatch-and-validation/log.md:101`)에 "확정·동일, 충돌한 공개 쓰기 옵션의 호출자 오류"로 올렸으므로 던지는 동작이 없던 것은 05의 결함이다. (나) LANDING-132·SCHEMA-041의 `required` 표시는 "부모 유효 스키마의 `required`(연언 문맥의 켜진 조각 합집합)"이고 유효 스키마는 정착이 계산하므로(03의 `selectNodeSchema`, 04의 게이트·조각 선택) 켜진 `then`에 따라 자식의 `required`가 갱신되지 않던 것은 03·04의 결함이며, 07은 고친 파일로 둘 가운데 어느 쪽인지 적는다. (다) LANDING-021의 옛 `core/types/value`에 남은 `SetValueOption` 복합 비트는 LANDING-087이 "`core/types`의 event·state·value는 남는다"고 하며 그 안의 옛 비트 정리를 07의 형 전환(진입점 전환과 함께)에 둔 것이므로 결함이 아니라 07의 몫이다. (라) `FormHandle.reset(option?)`(억제 비트 둘만, WRITE-015 보충·ADR 0013)은 07의 U6이 빠뜨린 것이므로 앞 단계 귀속이 아니라 07의 실행 기록에 "빠뜨린 것을 채움"으로 적는다. (가)·(나)는 42라운드·78C-02의 선례대로 `plan/07-switch/log.md` §8 "앞 단계 결함"에 재현 사례와 함께 적고, 메운 시험(이주 점검표의 (가) 행)이 그 증거다." (`reviews/round-80-closing.md:25`)
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:500`(정본)
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-16)
@@ -2988,6 +2994,7 @@
   > 소유자(개발계획 P3·P4): "이외 권장대로." (`reviews/round-18-owner-answers.md:44`)
   > 소유자(개발계획 1-가): "1-가" (`reviews/round-18-owner-answers.md:45`)
   > 반영 칸(개발계획 1-가): "기반 PR과 병렬이며 코드 PR을 막지 않는다." (`reviews/round-18-owner-answers.md:45`) — 자식 순서의 "설계 PR·설계문서 PR → 개발 PR 여섯"에서 설계문서 PR은 순차가 아니라 병렬이다.
+  > 소유자(76라운드, 정돈 단계의 신설과 자리): "그렇게 하자. 지금은 안할거고, 그 단계에서 내가 집중적으로 코드를 보면서 진행할게. 일단 단계만 구분해두렴. 큰 틀이나 인터페이스를 바꿀거같진 않고, 파일 구성이나 함수 이름, 함수 로직 등을 손댈거같아." (`reviews/round-76-owner-answers.md:7`) — 개발 순서에 "정돈" 단계가 든다: 07 전환 → 08 플러그인 → 정돈 → 성능 최적화 → 09. 범위는 내부(파일 구성·함수 이름·함수 로직)이고 fractal 경계와 공개 인터페이스는 바꾸지 않는다(원장 관리자, 2026-10-03).
 - 상태: 현행
 - 출처: `reviews/round-18-owner-answers.md:44`(정본, 반영 칸), `reviews/round-18-owner-answers.md:45`
 - 닫은 사람: 소유자 답(`reviews/round-18-owner-answers.md:44` 개발계획 P3·P4), 소유자 답(`reviews/round-18-owner-answers.md:45` 개발계획 1-가)
@@ -3054,3 +3061,26 @@
 - 닫은 사람: 편집자 결정(19라운드, `reviews/round-19-closing.md` 19C-02)
 - 라운드: 19
 - 까닭: `reviews/round-19-closing.md:48`
+
+
+### LANDING-209 이주(80라운드) — 폼 핸들 명령 넷(`focus`·`select`·`refresh`·`remount`)의 경로는 선택 인자(없으면 루트), `focus`·`select`의 필수 경로가 선택으로, `refresh`·`remount` 추가
+
+- 결정:
+  > 【추론】 이주(LANDING-209): `FormHandle.focus(path)`·`select(path)`는 오늘 경로가 필수이고 `refresh`·`remount`는 없으며, 새 설계에서는 명령 넷(`focus`·`select`·`refresh`·`remount`)이 모두 경로를 선택 인자로 받고 경로가 없으면 루트 노드를 가리키며 경로가 있으면 그 노드를 찾아 명령 메서드를 부르고 노드가 없으면 아무것도 하지 않는다(30라운드 소유자 답, EVENT-063).
+- 보충: 없음
+- 상태: 현행
+- 출처: `reviews/round-80-closing.md:9`(정본)
+- 닫은 사람: 편집자 결정(80라운드, `reviews/round-80-closing.md` 80C-01)
+- 라운드: 80
+- 까닭: `reviews/round-80-closing.md:11`
+
+### LANDING-210 이주(80라운드) — 공개 표면의 배열(`FormProps.errors`·`onValidate` 인자, `FormHandle.getErrors`·`validate`·`findNodes` 반환, `errorMatrix` 안 배열)은 `readonly`
+
+- 결정:
+  > 【추론】 이주(LANDING-210): 공개 표면의 배열(`FormProps.errors`와 `onValidate`의 인자, `FormHandle.getErrors()`·`validate()`·`findNodes()`의 반환, `useChildNodeErrors`의 `errorMatrix` 안 배열)은 오늘 변경 가능한 배열 형이고, 새 설계에서는 `readonly` 배열이다 — 돌려준 배열은 코어가 같은 값을 같은 참조로 드는 것이라 소비자가 제자리에서 고치면 안 되며, 받는 배열은 `readonly`가 더 넓은 형이라 오늘의 호출이 그대로 컴파일된다; 옛 배열을 제자리에서 고치거나 변경 가능한 형에 대입하던 소비자는 형 오류를 보며 복사(`[...arr]`)로 고친다.
+- 보충: 없음
+- 상태: 현행
+- 출처: `reviews/round-80-closing.md:17`(정본)
+- 닫은 사람: 편집자 결정(80라운드, `reviews/round-80-closing.md` 80C-02)
+- 라운드: 80
+- 까닭: `reviews/round-80-closing.md:19`
