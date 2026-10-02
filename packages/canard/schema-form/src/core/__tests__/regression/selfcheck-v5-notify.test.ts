@@ -143,6 +143,20 @@ describe('selfcheck-v5 notification ports', () => {
     expect(refreshed).toEqual(['/b']);
   });
 
+  it('selfcheck-v5.mjs:756 pair EVENT-071 refreshes a caller-written leaf once', () => {
+    const { root } = makeSchemaNodeTree({ type: 'object', properties: {
+      a: { type: 'string' }, b: { type: 'string' },
+    } });
+    root.setValue({});
+    const refreshed: string[] = [];
+    for (const path of ['/a', '/b'])
+      requireNode(root, path).subscribe((event) => {
+        if (event.type & SchemaNodeEventType.RequestRefresh) refreshed.push(path);
+      });
+    requireNode(root, '/a').setValue('ab');
+    expect(refreshed).toEqual(['/a']);
+  });
+
   it('selfcheck-v5.mjs:765 EVENT-020 ends feedback after 25 waves', () => {
     const { root, leaf } = nestedTree();
     let feedback = 0;

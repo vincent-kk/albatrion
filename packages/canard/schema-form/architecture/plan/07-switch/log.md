@@ -33,6 +33,7 @@ Planning method: 저장소 지침 — `PLAN.md` §2와 `plan/prompts.md`의 단�
 | 2026-10-02 | U2 | 문서 선행 커밋 `9bf211ff1`(DETAIL 16편, codex). codex가 계획 U4의 상호작용 초기화 번호 문장이 REACT-024보다 좁음을 찾아 계획을 고침. antigravity 원장 대조(세션 `59e1ad97`): 차단 0, 비차단 3(인용 오기 둘, 단계 일정 문장 하나) → `1891c8fb3` | 계획 §9, 커밋 |
 | 2026-10-02 | U3 | `@winglet/react-utils` 선택 인자 둘과 `minor` changeset(codex), 시험 183 → 188, G6·G7 | `561b37137` |
 | 2026-10-02 | U4 | core 통로(codex, apex): 원자 판정 수정 `f00089331`(03·04 결함, 69C-04)과 바인딩 전용 통로 일곱 `a0d30bb36`. core 시험 1,586 → 1,611, unit+render 5,145 초록, G9–G11. codex가 멈춘 항목 하나(일반 `setValue`의 직접 대상 Refresh 보정이 `selfcheck-v5` 기대와 부딪힘, 기존 동작 유지)는 antigravity 리뷰에 판정을 맡김 | 커밋 |
+| 2026-10-02 | U4 | antigravity 코드 리뷰(세션 `f65e7a88`): 차단 1 — 호출자가 잎에 쓴 `setValue`가 그 잎을 Refresh에서 뺌(03–06은 입력 출처가 없어 직접 대상을 쓴 입력으로 근사). EVENT-071·18C-94대로 입력 출처 쓰기만 자신을 빼게 고침 `13c50ba51`, 회귀 :756 사례는 입력 통로로 옮기고 짝 사례("호출자 setValue는 그 잎에 1회")를 더함. 분류는 72C-01(03–06 결함 아님). 비차단 1(레코드 칸 순서) 반영. 리뷰어가 시험 유효성 항목에 답하지 못해 U14 최종 검증에 다시 맡김 | `reviews/round-72-closing.md` |
 | 2026-10-02 | U1 | 워크트리에 `yarn install --immutable`과 `@canard/schema-form`의 작업 공간 의존 빌드. 옛 엔진 패키지 벤치 일곱을 `3911b7591`에서 재어 `verification/07-switch/bench-legacy-baseline.json`(종료 코드 1은 03–06의 독립 스크립트 넷이 vitest 묶음이 아니라서 난 "No test suite found"뿐). 처분표·이주 점검표(128행)와 추출 스크립트·옛 스토리 정리표(49파일)·스파이크 사례표(§5)를 codex(세션 셋)가 쓰고 조율자가 확인. BF에 `@canard/schema-form_0.16.0` 별칭(G3–G5) | `verification/07-switch/` |
 
 ## 3. 자율 판단
