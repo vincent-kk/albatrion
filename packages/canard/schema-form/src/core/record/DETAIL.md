@@ -9,6 +9,7 @@
 
 ## API Contracts
 
+- 정착 도중 공개 상태 쓰기가 전역 계수를 즉시 반영하면, 이미 포착된 `deliveryPreviousState`도 그 쓰기 뒤 상태로 옮깁니다. 커밋은 즉시 처리한 증감과 상태 사건을 다시 만들지 않으며 이후 정착 상태 변경만 비교합니다. 변경 마스크가 없는 노드에는 기준 칸을 만들지 않습니다(EVENT-062·067, 43C-01, 65C-03).
 - S2의 배달 작업 기록은 레코드에 있습니다. `deliveryInitialized`는 첫 커밋 여부, `deliveryChanges`는 계산·형상·키 재부여·상태 쓰기가 포착한 변경 종류입니다. 첫 변경에서만 `deliveryPreviousLocal`·`deliveryPreviousEmit`, `deliveryPreviousPath`, `deliveryPreviousChildren`, `deliveryPreviousComputed`(네 상태의 비트 묶음), `deliveryPreviousSchema`, `deliveryPreviousState`에 그 종류의 기준을 보관합니다. `deliveryWatchValues`는 정적 watch 선언 대상에만 남기는 감시 기준입니다. 생성자는 이전 값 칸을 `undefined`, 변경 마스크를 `0`, 초기화 표시를 `false`로 대입하며 객체를 할당하지 않습니다. 11필드 관측 스냅숏 객체는 두지 않습니다(NODE-004, VALUE-002, 65C-03).
 - 기준 칸·변경 마스크는 작업의 기록이며 공개 읽기와 형상·값·방출 계산에 들어가지 않습니다(P3). 커밋은 변경 종류만 최종 값과 비교하여 같은 기준으로 돌아온 A→B→A를 제외하고 비트 개정과 payload를 확정한 뒤 기준 칸·변경 마스크를 비웁니다. 배달 전 여러 커밋이 있으면 각 커밋의 개정은 독립적으로 증가하며 `pendingDelivery.payload.previous`가 마지막 통지 기준을 계속 유지합니다. `pendingRevision`은 커밋에서, `pendingDelivery`·`pendingNonSettleDelivery`는 파동 전체 분리 때 비웁니다. 마지막 통지 기준과 커밋 비교 기준의 수명을 섞지 않습니다(EVENT-007·024). 이탈/소멸은 이 작업 기록과 런타임 대상 집합·감시/검증 장부를 제거하고 detached 읽기는 유지합니다(63C-02, I5).
 
