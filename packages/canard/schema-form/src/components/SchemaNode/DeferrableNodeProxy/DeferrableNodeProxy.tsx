@@ -35,7 +35,10 @@ export const DeferrableNodeProxy = ({
   const pendingEventsRef = useRef(0);
   const placeholderRef = useRef<Element | null>(null);
 
-  useSchemaNodeTracker(node, SchemaNodeEventType.UpdateComputedProperties);
+  useSchemaNodeTracker(
+    node,
+    SchemaNodeEventType.UpdateComputedProperties | SchemaNodeEventType.UpdatePath,
+  );
 
   useSchemaNodeSubscribe(revealed ? null : node, ({ type }) => {
     const forced = type & FORCE_REVEAL_EVENT;
