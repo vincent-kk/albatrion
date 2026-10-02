@@ -26,30 +26,30 @@ export interface SchemaNodeDelivery {
   options?: Partial<Record<number, unknown>>;
 }
 
-/** Last committed observations needed to mark the next delivery. */
+/** Internal observations updated after every comparison for this occurrence. */
 interface SchemaNodeDeliverySnapshot<Self> {
   /** Path observed after the preceding commit. */
-  readonly path: string;
+  path: string;
   /** Calculated value before output projection. */
-  readonly local: unknown;
+  local: unknown;
   /** Projected value available to consumers. */
-  readonly emit: unknown;
+  emit: unknown;
   /** Direct child collection reference. */
-  readonly children: readonly Self[] | null;
+  children: readonly Self[] | null;
   /** Gate result used by the computed-property bit. */
-  readonly active: boolean;
+  active: boolean;
   /** Final local visibility. */
-  readonly visible: boolean;
+  visible: boolean;
   /** Final local read-only state. */
-  readonly readOnly: boolean;
+  readOnly: boolean;
   /** Final local disabled state. */
-  readonly disabled: boolean;
+  disabled: boolean;
   /** Interaction state object before a possible reset. */
-  readonly interactionState: NodeStateFlags;
+  interactionState: NodeStateFlags;
   /** Memoized effective schema reference. */
-  readonly schema: EffectiveSchema;
+  schema: EffectiveSchema;
   /** Committed watched values for reference comparison. */
-  readonly watchValues: readonly unknown[];
+  watchValues: readonly unknown[];
 }
 
 /** Tree-local reverse watch paths used by commit delivery marking. */

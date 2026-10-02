@@ -151,7 +151,19 @@ export const markCommitDeliveries = <Self extends SchemaNodeRecord<Self>>(
       mark(node, SchemaNodeEventType.RequestRefresh);
     else if (runtime.refreshTargets?.has(node.path))
       mark(node, SchemaNodeEventType.RequestRefresh);
-    snapshots.set(node, { path: node.path, local: node.local, emit: node.emit,
+    if (previous) {
+      previous.path = node.path;
+      previous.local = node.local;
+      previous.emit = node.emit;
+      previous.children = node.children;
+      previous.active = node.active;
+      previous.visible = node.visible;
+      previous.readOnly = node.readOnly;
+      previous.disabled = node.disabled;
+      previous.interactionState = node.interactionState;
+      previous.schema = node.schema;
+      previous.watchValues = watched;
+    } else snapshots.set(node, { path: node.path, local: node.local, emit: node.emit,
       children: node.children, active: node.active, visible: node.visible,
       readOnly: node.readOnly, disabled: node.disabled,
       interactionState: node.interactionState,
