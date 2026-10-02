@@ -2,6 +2,8 @@
 
 ## Requirements
 
+- 상태 키·감시의 커밋 계산은 settle이 재계산/배달 후보와 청사진 기능 정적 색인의 교집합에 제한합니다. dispatch는 이미 표시된 배달 집합의 문서 순서, payload, 비트별 개정 및 전역 상태→배달→검증→`onChange` 순서를 유지합니다. 전역 상호작용 상태는 모든 노드에 런타임 API로 쓸 수 있어 정적 선언 색인으로 줄일 수 없으며, 최외곽 진입당 `UpdateGlobalState` 한 번의 계약을 유지합니다(SETTLE-006, EVENT-062·064, 43C-01, 65C-02).
+
 - `blueprint < record < {behaviors, navigation} < validation < settle < dispatch < SchemaNode`를 타입 import에도 지킵니다. `dispatch`는 `record`의 비트/런타임, `settle`의 동기 커밋, `validation`의 요청을 진입점으로만 연결합니다. 검증 결과는 `dispatch`가 넘긴 콜백으로 돌아옵니다(NODE-016·045, LANDING-084).
 - `SchemaNodeRuntime`의 진입 깊이, 되먹임 파동 수, `onChange` 중첩 수, 배달 대기열, 리스너/콜백, 보고기, 전달 중 깃발, 경고 구조 키를 쓰며, 그 칸의 선언은 `record`가 소유합니다. 레코드의 `revisionLedger`는 읽기만 하고 커밋 표시를 다시 계산하지 않습니다(NODE-004·045, 26C-06, EVENT-004·007, ERROR-024·029).
 
