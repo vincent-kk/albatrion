@@ -19,6 +19,11 @@
 - 주인 없는 오류 싱크와 Form `onError` 기록은 별도로 관찰합니다. 반환한 container에 현재 핸들과 화면 어댑터를 등록하고 언마운트 때 해제합니다(TEST-011·021).
 - 공유 `clear` 단계는 nullable이 아닌 기본 문자열·수 입력에서 실제 DOM 입력 비우기로 실행해 undefined 전달을 관찰합니다(LANDING-196). 배열·nullable·기타 위젯과 batch 내부의 비우기는 핸들 동작으로 실행합니다.
 
+### 이주 검증
+
+- 이주 시험은 공개 Form으로 새 동작을 검증하며 레거시 구현을 import하지 않습니다. 0.16.0의 동작은 이주 점검표의 기록으로 대조하고, 채움 시점 세 장면은 T1-B 탐침을 근거로 삼습니다(LANDING-200–203).
+- 공개 표면 대조는 FormProps의 기존 칸과 추가 칸, FormHandle, 이벤트·명령·훅의 이름과 시그니처를 형 검사로 확인합니다(SURFACE-059). 원장에 없는 변경은 이주 행을 임의로 만들지 않고 원장 관리자에게 보고합니다.
+
 ### 스키마 옵션
 
 `types/jsonSchema.ts`가 선언하는 `options` 필드. 각 옵션은 특정 스키마 타입에만 존재한다.
@@ -65,6 +70,7 @@ NODE-059의 형 없는 인라인 객체·배열 oneOf·anyOf는 분기 값 형�
 ### union-input-types — 읽기 전용 종류 튜플은 값 합집합을 보존한다
 
 - 실제 공개 `InferValueType`과 `FormTypeInputProps`를 사용한 시험에서 선언한 종류의 값은 허용하고 목록 밖 값은 타입 오류로 거부합니다.
+- `InferJSONSchema`는 서로 다른 비-null 종류의 값 합집합을 하나의 type 튜플로 추론하며, 이에 대응하는 입력 노드는 `UnionNode`입니다(LANDING-190). 같은 종류의 리터럴 합집합과 nullable 단일 종류는 기존 종류 노드를 유지합니다.
 - 정규화는 튜플 원소와 원래 type 프로퍼티의 필수·선택 여부를 보존합니다.
 
 ### public-value-inference — 형 없는 스키마의 공개 값 형

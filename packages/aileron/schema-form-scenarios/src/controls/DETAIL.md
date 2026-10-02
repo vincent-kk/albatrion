@@ -7,6 +7,8 @@
 
 ## API Contracts
 
+가상화 스토리는 같은 입력 데이터를 소비하되 `controls.virtualization` 이름을 소비자 렌더러가 인식해 Form의 가상화 설정을 주입합니다(TEST-025). 공유 데이터는 브라우저 API나 폼 속성의 구현에 의존하지 않습니다.
+
 U9 렌더 장면은 presentation 전달과 빈 입력의 undefined 방출, 가상 branch 자식의 전체 값 쓰기·활성 왕복을 관찰한다(LANDING-019·034·125·167·196).
 캐럿·IME·focus·trim의 소비자 계측은 schema-form의 전용 e2e가 소유하며 데이터 모듈에 React나 spy를 넣지 않는다(TEST-023).
 

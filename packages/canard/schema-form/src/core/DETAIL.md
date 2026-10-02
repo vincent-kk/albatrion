@@ -16,6 +16,8 @@
 
 ## API Contracts
 
+- 공개 쓰기 옵션은 독립 비트 `Overwrite=1`, `Merge=2`, `DisableAutomaticWrites=4`, `EnableAutomaticWrites=8`입니다. `Overwrite`와 `Merge`의 동시 지정은 쓰기 전에 `INVALID_WRITE_OPTION`으로 거부합니다(LANDING-021·141). 내부 빈 옵션과 교체 표시는 같은 네 비트 계약을 사용합니다.
+
 ### 진입점 표면
 
 | 심볼                                                             | 계약                                                                                            |

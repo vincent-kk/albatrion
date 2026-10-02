@@ -8,6 +8,7 @@ import { commitGlobalState } from './commitGlobalState';
 import { getWatchDeliveryPaths } from './utils/getWatchDeliveryPaths';
 import { isSameDeliveryValue } from './utils/isSameDeliveryValue';
 import { readSettlementSource } from './utils/readSettlementSource';
+import { isArray } from '@winglet/common-utils/filter';
 
 /** Payload immutability follows the module's development build mode. */
 const DEVELOPMENT = process.env.NODE_ENV !== 'production';
@@ -53,6 +54,23 @@ export const markCommitDeliveries = <Self extends SchemaNodeRecord<Self>>(
     }
   }
   const candidates = new Set<unknown>();
+  for (const host of context.changedNodes) {
+    if (host.detached || host.blueprintNode.kind !== 'object' || !host.children)
+      continue;
+    if (host.deliveryInitialized && host.deliveryPreviousSchema === undefined &&
+      !(host.deliveryChanges & SchemaNodeEventType.UpdateChildren)) continue;
+    const schema = host.schema.schema;
+    const required = typeof schema === 'object' ? schema.required : undefined;
+    for (const child of host.children) {
+      if (child.parent !== host || child.blueprintNode.kind === 'virtual') continue;
+      const next = isArray(required) && required.includes(child.name);
+      if (child.required === next) continue;
+      child.required = next;
+      candidates.add(child);
+      if (child.deliveryInitialized)
+        markSchemaNodeEvent(child, SchemaNodeEventType.UpdateComputedProperties);
+    }
+  }
   for (const node of context.changedNodes) candidates.add(node);
   for (const node of context.entered) candidates.add(node);
   for (const node of context.stateDirtyNodes) candidates.add(node);

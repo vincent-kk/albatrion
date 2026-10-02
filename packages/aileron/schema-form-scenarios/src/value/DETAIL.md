@@ -7,6 +7,8 @@
 
 ## API Contracts
 
+U9 스토리 회귀는 패키지 공개 진입점의 값 렌더링과 루트 `$defs` 참조·이스케이프된 경로를 공유 데이터로 관찰합니다(TEST-025). 스토리 이름이 기존 장면을 소비하면 같은 스키마와 단계를 재사용하며 스토리에 복제하지 않습니다.
+
 렌더 값 장면은 TEST-005의 nullable 보존 사례와 LANDING-139·196·200의 빈 값·승격 계약을 함께 기술합니다. VALUE-036 보충의 로드 null은 자식 채움을 받으며, 로드 아닌 null 쓰기는 채우지 않습니다. REACT-027의 nullable 비우기 조작은 null이고 non-nullable 빈 입력은 undefined입니다. 제목의 첫 원장 ID가 기대값의 근거입니다.
 
 `valueScenarios`는 `index.ts`를 통해 부류의 순서 있는 장면 목록을 내보낸다.

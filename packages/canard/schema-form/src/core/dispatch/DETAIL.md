@@ -12,6 +12,8 @@
 
 ## API Contracts
 
+- `setValue`는 독립 비트 `Overwrite`와 `Merge`가 함께 오면 updater 실행과 쓰기 표시 전에 `INVALID_WRITE_OPTION`으로 거부합니다. 오류는 기존 사슬 보고·throw 통로로 전달하며 검사 비용은 고정 비트 연산입니다(LANDING-141).
+
 ### 이름 붙은 진입점
 
 - `dispatchPush`·`dispatchPop`·`dispatchUpdate`·`dispatchRemove`·`dispatchClear`는 같은 공개 쓰기 사슬로 들어가며 거부 시 `undefined`를 돌려줍니다. 배치 밖에서는 배열 정착의 동기 결과를 돌려주고, 배치 안에서는 `readBatchValue`의 앞선 표시를 얹은 배열에 행의 순수 계획을 적용하여 결과 배열을 Replace로 표시합니다. push는 결과 길이, pop·remove는 표시된 자리의 원본, update는 입력 값, clear는 `undefined`입니다. 잘못된 종류 값에는 push만 `[x]`를 표시하고 나머지는 무동작입니다. 비배열 호출은 사슬 끝에서 `ARRAY_METHOD_ON_NON_ARRAY`를 `surface: 'thrown'`으로 보고하고 던집니다. 배치 끝 정착은 통째 쓰기라 아이템 키는 위치로 잇고 정착·`onChange`는 한 번입니다. 비용은 배열 계획/복사 O(배열 길이), 앞선 표시 합성 비용이며 노드별 고정 칸은 늘리지 않습니다(33C-01, 35C-01, 62C-01, EVENT-035·061).

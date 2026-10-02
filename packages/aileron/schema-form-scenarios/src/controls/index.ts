@@ -1,4 +1,5 @@
 import type { FormScenario } from '../types';
+export { virtualizationScenario } from './virtualization.scenario';
 import { controlsRenderScenarios } from './render.scenario';
 import { stateScenarios } from './states.scenario';
 import { scopeScenarios } from './scope.scenario';

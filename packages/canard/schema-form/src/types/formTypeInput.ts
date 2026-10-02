@@ -96,7 +96,7 @@ export interface FormTypeInputProps<
  */
 export type FormTypeInputPropsWithSchema<
   Value extends AllowedValue = any,
-  Schema extends JSONSchemaWithVirtual = unknown extends Value
+  Schema extends JSONSchema | JSONSchemaWithVirtual = unknown extends Value
     ? JSONSchemaWithVirtual
     : InferJSONSchema<Value>,
   Context extends Dictionary = object,
@@ -111,7 +111,7 @@ export type FormTypeInputPropsWithSchema<
  */
 export type FormTypeInputPropsWithNode<
   Value extends AllowedValue = any,
-  Schema extends JSONSchemaWithVirtual = unknown extends Value
+  Schema extends JSONSchema | JSONSchemaWithVirtual = unknown extends Value
     ? JSONSchemaWithVirtual
     : InferJSONSchema<Value>,
   Node extends SchemaNode = InferSchemaNode<Schema>,

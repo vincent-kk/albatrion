@@ -5,6 +5,7 @@ import { enterSchemaNodeChain } from '../chain/enterSchemaNodeChain';
 import { captureChainError } from '../chain/captureChainError';
 import { exitSchemaNodeChain } from '../chain/exitSchemaNodeChain';
 import { readBatchValue } from '../chain/readBatchValue';
+import { INVALID_WRITE_OPTION, SchemaFormError } from '../../../../errors';
 
 /**
  * Commit a public value write or mark it within the current batch.
@@ -21,6 +22,9 @@ export const dispatchSetValue = <Self extends SchemaNodeRecord<Self>>(
   if (source === 'input' && (node.disposed || node.rootNode.disposed)) return;
   if (!enterSchemaNodeChain(node)) return;
   try {
+    if ((option & SetValueOption.Overwrite) && (option & SetValueOption.Merge))
+      throw new SchemaFormError(INVALID_WRITE_OPTION,
+        'Overwrite and Merge cannot be combined', { path: node.path, option });
     const runtime = node.rootNode.runtime;
     const input = typeof value === 'function' ?
       value(runtime.batchDepth ? readBatchValue(node) : node.local) : value;
