@@ -216,6 +216,8 @@
 | LANDING-206 | UI 플러그인 넷의 이주는 플러그인 PR(우산 순서 N+1) — `presentation.*` 이주·자사 플러그인 수정 목록·union 항목, PR-7은 기본 입력으로 검증, ajv 셋은 원장대로 PR-4, 이주 표와 이주 점검은 PR-7에 남음 | 현행 | 소유자 답(`reviews/round-18-owner-answers.md:42` 개발계획 P1) |
 | LANDING-207 | 이주(19라운드) — 형 없는 객체 분기 `oneOf`·`anyOf`(pydantic·zod·OpenAPI·TypeBox)는 object variant 호스트, `Optional[Self]`는 `RECURSIVE_SHAPE_UNBOUNDED` | 현행 | 편집자 결정(19라운드, `reviews/round-19-closing.md` 19C-01) |
 | LANDING-208 | 이주(19라운드) — `type` 없이 `const`·`enum`만 있는 프로퍼티(OpenAPI 3.1·JSON Schema 2020-12 관용구, 수기 태그)는 리터럴 종류의 원시 잎 | 현행 | 편집자 결정(19라운드, `reviews/round-19-closing.md` 19C-02) |
+| LANDING-209 | 이주(80라운드) — 폼 핸들 명령 넷(`focus`·`select`·`refresh`·`remount`)의 경로는 선택 인자(없으면 루트), `focus`·`select`의 필수 경로가 선택으로, `refresh`·`remount` 추가 | 현행 | 편집자 결정(80라운드, `reviews/round-80-closing.md` 80C-01) |
+| LANDING-210 | 이주(80라운드) — 공개 표면의 배열(`FormProps.errors`·`onValidate` 인자, `FormHandle.getErrors`·`validate`·`findNodes` 반환, `errorMatrix` 안 배열)은 `readonly` | 현행 | 편집자 결정(80라운드, `reviews/round-80-closing.md` 80C-02) |
 
 ## 항목
 
@@ -486,7 +488,8 @@
   > | # | 오늘 | 새 설계 |
   > | --- | --- | --- |
   > | 18 | 10비트 `SetValueOption` | 비트 넷 |
-- 보충: 없음
+- 보충:
+  > 편집자 결정(80C-03): "【추론】 귀속의 기준은 72C-01·78C-02가 가른 대로 "원장이 그 단계에 둔 규칙이 온전히 있었는데 코드가 없거나 다른가"다. (가) LANDING-141의 `INVALID_WRITE_OPTION`은 05가 오류 코드 표(`plan/05-dispatch-and-validation/log.md:101`)에 "확정·동일, 충돌한 공개 쓰기 옵션의 호출자 오류"로 올렸으므로 던지는 동작이 없던 것은 05의 결함이다. (나) LANDING-132·SCHEMA-041의 `required` 표시는 "부모 유효 스키마의 `required`(연언 문맥의 켜진 조각 합집합)"이고 유효 스키마는 정착이 계산하므로(03의 `selectNodeSchema`, 04의 게이트·조각 선택) 켜진 `then`에 따라 자식의 `required`가 갱신되지 않던 것은 03·04의 결함이며, 07은 고친 파일로 둘 가운데 어느 쪽인지 적는다. (다) LANDING-021의 옛 `core/types/value`에 남은 `SetValueOption` 복합 비트는 LANDING-087이 "`core/types`의 event·state·value는 남는다"고 하며 그 안의 옛 비트 정리를 07의 형 전환(진입점 전환과 함께)에 둔 것이므로 결함이 아니라 07의 몫이다. (라) `FormHandle.reset(option?)`(억제 비트 둘만, WRITE-015 보충·ADR 0013)은 07의 U6이 빠뜨린 것이므로 앞 단계 귀속이 아니라 07의 실행 기록에 "빠뜨린 것을 채움"으로 적는다. (가)·(나)는 42라운드·78C-02의 선례대로 `plan/07-switch/log.md` §8 "앞 단계 결함"에 재현 사례와 함께 적고, 메운 시험(이주 점검표의 (가) 행)이 그 증거다." (`reviews/round-80-closing.md:25`)
 - 상태: 현행
 - 출처: `08-design-a-to-z.md:450`(정본), `07-conclusions.md:345`, `02-target-overview.md:339,353`
 - 닫은 사람: 편집자 결정(9라운드 이름, `07-conclusions.md:345` N1; 비트마스크는 8라운드 소유자 지시, `HANDOFF.md` 8라운드 행)
@@ -2084,7 +2087,8 @@
 
 - 결정:
   > 이주(LANDING-132): 조건부 `required`가 있는 필드의 필수 표시는 오늘 늘 켜지고, 새 설계에서는 켜진 `then`에 따라 바뀐다.
-- 보충: 없음
+- 보충:
+  > 편집자 결정(80C-03): "【추론】 귀속의 기준은 72C-01·78C-02가 가른 대로 "원장이 그 단계에 둔 규칙이 온전히 있었는데 코드가 없거나 다른가"다. (가) LANDING-141의 `INVALID_WRITE_OPTION`은 05가 오류 코드 표(`plan/05-dispatch-and-validation/log.md:101`)에 "확정·동일, 충돌한 공개 쓰기 옵션의 호출자 오류"로 올렸으므로 던지는 동작이 없던 것은 05의 결함이다. (나) LANDING-132·SCHEMA-041의 `required` 표시는 "부모 유효 스키마의 `required`(연언 문맥의 켜진 조각 합집합)"이고 유효 스키마는 정착이 계산하므로(03의 `selectNodeSchema`, 04의 게이트·조각 선택) 켜진 `then`에 따라 자식의 `required`가 갱신되지 않던 것은 03·04의 결함이며, 07은 고친 파일로 둘 가운데 어느 쪽인지 적는다. (다) LANDING-021의 옛 `core/types/value`에 남은 `SetValueOption` 복합 비트는 LANDING-087이 "`core/types`의 event·state·value는 남는다"고 하며 그 안의 옛 비트 정리를 07의 형 전환(진입점 전환과 함께)에 둔 것이므로 결함이 아니라 07의 몫이다. (라) `FormHandle.reset(option?)`(억제 비트 둘만, WRITE-015 보충·ADR 0013)은 07의 U6이 빠뜨린 것이므로 앞 단계 귀속이 아니라 07의 실행 기록에 "빠뜨린 것을 채움"으로 적는다. (가)·(나)는 42라운드·78C-02의 선례대로 `plan/07-switch/log.md` §8 "앞 단계 결함"에 재현 사례와 함께 적고, 메운 시험(이주 점검표의 (가) 행)이 그 증거다." (`reviews/round-80-closing.md:25`)
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:159`(정본)
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-06)
@@ -2184,7 +2188,8 @@
 
 - 결정:
   > 이주(LANDING-141): `Overwrite | Merge`는 오늘 `Overwrite`로 동작하고(`value.ts:65`), 새 설계에서는 `INVALID_WRITE_OPTION`으로 던진다(`adr/0014-error-policy.md:276` 행의 이주 쪽).
-- 보충: 없음
+- 보충:
+  > 편집자 결정(80C-03): "【추론】 귀속의 기준은 72C-01·78C-02가 가른 대로 "원장이 그 단계에 둔 규칙이 온전히 있었는데 코드가 없거나 다른가"다. (가) LANDING-141의 `INVALID_WRITE_OPTION`은 05가 오류 코드 표(`plan/05-dispatch-and-validation/log.md:101`)에 "확정·동일, 충돌한 공개 쓰기 옵션의 호출자 오류"로 올렸으므로 던지는 동작이 없던 것은 05의 결함이다. (나) LANDING-132·SCHEMA-041의 `required` 표시는 "부모 유효 스키마의 `required`(연언 문맥의 켜진 조각 합집합)"이고 유효 스키마는 정착이 계산하므로(03의 `selectNodeSchema`, 04의 게이트·조각 선택) 켜진 `then`에 따라 자식의 `required`가 갱신되지 않던 것은 03·04의 결함이며, 07은 고친 파일로 둘 가운데 어느 쪽인지 적는다. (다) LANDING-021의 옛 `core/types/value`에 남은 `SetValueOption` 복합 비트는 LANDING-087이 "`core/types`의 event·state·value는 남는다"고 하며 그 안의 옛 비트 정리를 07의 형 전환(진입점 전환과 함께)에 둔 것이므로 결함이 아니라 07의 몫이다. (라) `FormHandle.reset(option?)`(억제 비트 둘만, WRITE-015 보충·ADR 0013)은 07의 U6이 빠뜨린 것이므로 앞 단계 귀속이 아니라 07의 실행 기록에 "빠뜨린 것을 채움"으로 적는다. (가)·(나)는 42라운드·78C-02의 선례대로 `plan/07-switch/log.md` §8 "앞 단계 결함"에 재현 사례와 함께 적고, 메운 시험(이주 점검표의 (가) 행)이 그 증거다." (`reviews/round-80-closing.md:25`)
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:500`(정본)
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-16)
@@ -3056,3 +3061,26 @@
 - 닫은 사람: 편집자 결정(19라운드, `reviews/round-19-closing.md` 19C-02)
 - 라운드: 19
 - 까닭: `reviews/round-19-closing.md:48`
+
+
+### LANDING-209 이주(80라운드) — 폼 핸들 명령 넷(`focus`·`select`·`refresh`·`remount`)의 경로는 선택 인자(없으면 루트), `focus`·`select`의 필수 경로가 선택으로, `refresh`·`remount` 추가
+
+- 결정:
+  > 【추론】 이주(LANDING-209): `FormHandle.focus(path)`·`select(path)`는 오늘 경로가 필수이고 `refresh`·`remount`는 없으며, 새 설계에서는 명령 넷(`focus`·`select`·`refresh`·`remount`)이 모두 경로를 선택 인자로 받고 경로가 없으면 루트 노드를 가리키며 경로가 있으면 그 노드를 찾아 명령 메서드를 부르고 노드가 없으면 아무것도 하지 않는다(30라운드 소유자 답, EVENT-063).
+- 보충: 없음
+- 상태: 현행
+- 출처: `reviews/round-80-closing.md:9`(정본)
+- 닫은 사람: 편집자 결정(80라운드, `reviews/round-80-closing.md` 80C-01)
+- 라운드: 80
+- 까닭: `reviews/round-80-closing.md:11`
+
+### LANDING-210 이주(80라운드) — 공개 표면의 배열(`FormProps.errors`·`onValidate` 인자, `FormHandle.getErrors`·`validate`·`findNodes` 반환, `errorMatrix` 안 배열)은 `readonly`
+
+- 결정:
+  > 【추론】 이주(LANDING-210): 공개 표면의 배열(`FormProps.errors`와 `onValidate`의 인자, `FormHandle.getErrors()`·`validate()`·`findNodes()`의 반환, `useChildNodeErrors`의 `errorMatrix` 안 배열)은 오늘 변경 가능한 배열 형이고, 새 설계에서는 `readonly` 배열이다 — 돌려준 배열은 코어가 같은 값을 같은 참조로 드는 것이라 소비자가 제자리에서 고치면 안 되며, 받는 배열은 `readonly`가 더 넓은 형이라 오늘의 호출이 그대로 컴파일된다; 옛 배열을 제자리에서 고치거나 변경 가능한 형에 대입하던 소비자는 형 오류를 보며 복사(`[...arr]`)로 고친다.
+- 보충: 없음
+- 상태: 현행
+- 출처: `reviews/round-80-closing.md:17`(정본)
+- 닫은 사람: 편집자 결정(80라운드, `reviews/round-80-closing.md` 80C-02)
+- 라운드: 80
+- 까닭: `reviews/round-80-closing.md:19`

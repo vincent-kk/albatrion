@@ -82,4 +82,4 @@
 
 | 날짜 | 무엇 | 어디 |
 | --- | --- | --- |
-| 2026-10-03 | 79라운드: 07의 물음 하나 — 79C-01 globalErrors·getErrors()는 오늘과 같이 "루트의 외부 오류(Form errors 속성이 통째로 루트에) + 검증 라우팅 목록", 루트 아닌 노드의 명령형 외부 오류는 그 노드 errors에만; 코어는 바뀔 때 합쳐 같은 참조 유지, 세 e2e는 건 자리에 따라 단언을 가름, 이주 점검표에 "변경 없음" 한 줄. 보충 2줄 | `reviews/round-79-closing.md` |
+| 2026-10-03 | 80라운드: 07 이주 점검의 셋 — 80C-01 LANDING-209 신설(폼 핸들 명령 넷의 선택 경로, refresh·remount 추가); 80C-02 LANDING-210 신설(공개 배열 readonly, 되돌리지 않음); 80C-03 귀속: INVALID_WRITE_OPTION은 05 결함, 켜진 then의 required 표시는 03·04 결함, SetValueOption 잔재 제거는 07 몫, reset(option?)은 07 자신의 빠뜨림. 보충 5줄, 새 항목 2 | `reviews/round-80-closing.md` |
