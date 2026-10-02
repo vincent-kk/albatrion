@@ -1,5 +1,6 @@
 import { SchemaNodeRevisionLedger, markSchemaNodeEvent, SchemaNodeEventType } from '../../../record';
 import type { SchemaNodeRecord } from '../../../record';
+import { getFeatureNodeIndex } from '../../../blueprint';
 import type { SettlementContext } from '../../type';
 import { readSchemaNodeWatchValues } from '../controls/readSchemaNodeWatchValues';
 import { createWatchDeliveryIndex } from './utils/createWatchDeliveryIndex';
@@ -7,6 +8,9 @@ import { getWatchDeliveryPaths } from './utils/getWatchDeliveryPaths';
 
 /** Payload immutability follows the module's development build mode. */
 const DEVELOPMENT = process.env.NODE_ENV !== 'production';
+
+/** Candidates without a watch declaration share the same immutable empty value. */
+const EMPTY_WATCH_VALUES: readonly unknown[] = Object.freeze([]);
 
 /**
  * Mark one committed delivery set and advance its per-bit revision ledgers.
@@ -24,6 +28,7 @@ export const markCommitDeliveries = <Self extends SchemaNodeRecord<Self>>(
   const snapshots = runtime.deliverySnapshots ?? new Map();
   const automaticNodes = new Set(context.automaticLog.map((write) => write.node));
   const watchIndex = runtime.deliveryWatchIndex;
+  const watchNodes = getFeatureNodeIndex(runtime.blueprint).watchNodes;
   const fullWatchScan = context.exited.size > 0;
   let affectedPaths: Set<string> | undefined;
   if (watchIndex?.allNodes.size && !fullWatchScan) {
@@ -86,12 +91,15 @@ export const markCommitDeliveries = <Self extends SchemaNodeRecord<Self>>(
     }
     const previous = snapshots.get(node);
     const pending = deliveries?.get(node)?.payload;
-    const watched = readSchemaNodeWatchValues(node);
-    if (watched.length) {
-      const index = runtime.deliveryWatchIndex ??=
-        createWatchDeliveryIndex<Self>();
-      index.update(node, getWatchDeliveryPaths(node));
-    } else runtime.deliveryWatchIndex?.remove(node);
+    const hasWatch = watchNodes.has(node.blueprintNode.id);
+    const watched = hasWatch ? readSchemaNodeWatchValues(node) : EMPTY_WATCH_VALUES;
+    if (hasWatch) {
+      if (watched.length) {
+        const index = runtime.deliveryWatchIndex ??=
+          createWatchDeliveryIndex<Self>();
+        index.update(node, getWatchDeliveryPaths(node));
+      } else runtime.deliveryWatchIndex?.remove(node);
+    }
     const watchChanged = previous !== undefined &&
       (watched.length !== previous.watchValues.length ||
         watched.some((value, index) => value !== previous.watchValues[index]));

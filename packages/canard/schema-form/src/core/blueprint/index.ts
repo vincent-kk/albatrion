@@ -1,4 +1,5 @@
 export { blueprint } from './blueprint';
+export { getFeatureNodeIndex } from './utils/features/getFeatureNodeIndex/getFeatureNodeIndex';
 export { collectBlueprintWarnings } from './utils/diagnostics/collectBlueprintWarnings';
 export { mergeEffectiveSchema } from './utils/effectiveSchema/mergeEffectiveSchema';
 export { getItemEntry } from './utils/itemEntry/getItemEntry';
@@ -17,6 +18,7 @@ export type {
   BlueprintSchema,
   BlueprintDiagnostic,
   BlueprintExpression,
+  BlueprintFeatureNodeIndex,
   BlueprintGate,
   BlueprintNodeKind,
   BlueprintSchemaType,
