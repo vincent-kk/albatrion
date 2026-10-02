@@ -1,6 +1,6 @@
 import type { SchemaNodeRecord } from '../../../../../record';
 import type { DeriveState } from '../../../type';
-import { getCommittedDeclarationKey } from '../../../../../utils/getCommittedDeclarationKey';
+import { getCommittedDeclarationKey } from '../../../../utils/controls/getCommittedDeclarationKey';
 
 /**
  * Read the active declarations for a live occurrence across settlement calls.

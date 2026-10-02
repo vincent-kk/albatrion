@@ -17,6 +17,10 @@ export const markCommitDeliveries = <Self extends SchemaNodeRecord<Self>>(
   context: SettlementContext<Self>,
 ): void => {
   const runtime = context.root.runtime;
+  const deliveries = runtime.deliveries;
+  const refreshTargets = runtime.refreshTargets;
+  const loadScope = context.kind === 'load' ? context.loadScope : undefined;
+  const loadPrefix = loadScope ? `${loadScope.path}/` : '';
   const snapshots = runtime.deliverySnapshots ?? new Map();
   const automaticNodes = new Set(context.automaticLog.map((write) => write.node));
   const watchIndex = runtime.deliveryWatchIndex;
@@ -81,6 +85,7 @@ export const markCommitDeliveries = <Self extends SchemaNodeRecord<Self>>(
       continue;
     }
     const previous = snapshots.get(node);
+    const pending = deliveries?.get(node)?.payload;
     const watched = readSchemaNodeWatchValues(node);
     if (watched.length) {
       const index = runtime.deliveryWatchIndex ??=
@@ -92,10 +97,9 @@ export const markCommitDeliveries = <Self extends SchemaNodeRecord<Self>>(
         watched.some((value, index) => value !== previous.watchValues[index]));
     if (previous) {
       if (previous.local !== node.local || previous.emit !== node.emit) {
-        const pending = runtime.deliveries?.get(node)?.payload?.[
-          SchemaNodeEventType.UpdateValue];
-        const oldValue = pending !== null && typeof pending === 'object' ?
-          Reflect.get(pending, 'previous') : node.behavior.strategy === 'branch' ?
+        const pendingValue = pending?.[SchemaNodeEventType.UpdateValue];
+        const oldValue = pendingValue !== null && typeof pendingValue === 'object' ?
+          Reflect.get(pendingValue, 'previous') : node.behavior.strategy === 'branch' ?
             { local: previous.local, emit: previous.emit } : previous.local;
         const current = node.behavior.strategy === 'branch' ?
           { local: node.local, emit: node.emit } : node.local;
@@ -107,10 +111,9 @@ export const markCommitDeliveries = <Self extends SchemaNodeRecord<Self>>(
           { source });
       }
       if (previous.path !== node.path) {
-        const pending = runtime.deliveries?.get(node)?.payload?.[
-          SchemaNodeEventType.UpdatePath];
-        const oldPath = pending !== null && typeof pending === 'object' ?
-          Reflect.get(pending, 'previous') : previous.path;
+        const pendingPath = pending?.[SchemaNodeEventType.UpdatePath];
+        const oldPath = pendingPath !== null && typeof pendingPath === 'object' ?
+          Reflect.get(pendingPath, 'previous') : previous.path;
         const payload = { previous: oldPath, current: node.path };
         mark(node, SchemaNodeEventType.UpdatePath,
           DEVELOPMENT ? Object.freeze(payload) : payload);
@@ -128,10 +131,9 @@ export const markCommitDeliveries = <Self extends SchemaNodeRecord<Self>>(
         watchChanged)
         mark(node, SchemaNodeEventType.UpdateComputedProperties);
       if (previous.schema !== node.schema) {
-        const pending = runtime.deliveries?.get(node)?.payload?.[
-          SchemaNodeEventType.UpdateJsonSchema];
-        const oldSchema = pending !== null && typeof pending === 'object' ?
-          Reflect.get(pending, 'previous') : previous.schema.schema;
+        const pendingSchema = pending?.[SchemaNodeEventType.UpdateJsonSchema];
+        const oldSchema = pendingSchema !== null && typeof pendingSchema === 'object' ?
+          Reflect.get(pendingSchema, 'previous') : previous.schema.schema;
         const payload = { previous: oldSchema, current: node.schema.schema };
         mark(node, SchemaNodeEventType.UpdateJsonSchema,
           DEVELOPMENT ? Object.freeze(payload) : payload);
@@ -146,10 +148,9 @@ export const markCommitDeliveries = <Self extends SchemaNodeRecord<Self>>(
         DEVELOPMENT ? Object.freeze(payload) : payload,
         { source });
     }
-    if (context.kind === 'load' && context.loadScope &&
-      (node === context.loadScope || node.path.startsWith(`${context.loadScope.path}/`)))
+    if (loadScope && (node === loadScope || node.path.startsWith(loadPrefix)))
       mark(node, SchemaNodeEventType.RequestRefresh);
-    else if (runtime.refreshTargets?.has(node.path))
+    else if (refreshTargets?.has(node.path))
       mark(node, SchemaNodeEventType.RequestRefresh);
     if (previous) {
       previous.path = node.path;

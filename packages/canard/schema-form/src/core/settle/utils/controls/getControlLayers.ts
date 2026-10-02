@@ -1,7 +1,7 @@
 import { isArray } from '@winglet/common-utils/filter';
 
 import type { BlueprintNode } from '../../../blueprint';
-import { getCommittedDeclarationKey } from '../../../utils/getCommittedDeclarationKey';
+import { getCommittedDeclarationKey } from './getCommittedDeclarationKey';
 
 /** Shape data needed to resolve a declaration for a live or latent occurrence. */
 export interface ControlTarget<Self> {

@@ -1,5 +1,5 @@
 import { PathKeyedMap } from '../../../utils/pathIndex/PathKeyedMap';
-import { getCommittedDeclarationKey } from '../../../utils/getCommittedDeclarationKey';
+import { getCommittedDeclarationKey } from '../controls/getCommittedDeclarationKey';
 import type { SchemaNodeRecord, TypeMismatchRecord } from '../../../record';
 import { indexSchemaNodeWarning } from '../../../record';
 import { NON_JSON_WHOLE_VALUE, TYPE_MISMATCH } from '../../../../errors';

@@ -1,4 +1,4 @@
-import type { BlueprintNodeKind } from '../blueprint';
+import type { BlueprintNodeKind } from '../../../blueprint';
 
 /** Last serialized identity for a live or latent declaration target. */
 const KEYS = new WeakMap<object, {
