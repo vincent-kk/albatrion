@@ -31,11 +31,12 @@ export const commitSettlement = <Self extends SchemaNodeRecord<Self>>(
   context: SettlementContext<Self>,
 ): void => {
   const runtime = context.root.runtime;
+  const development = process.env.NODE_ENV !== 'production';
   snapshotExitedPolicies(context);
   commitDeriveRules(context);
   commitGlobalState(context);
   commitExitPolicyValues(context);
-  if (process.env.NODE_ENV !== 'production') {
+  if (development) {
     finalizeDeriveTrace(context);
     runtime.settlementTrace = { entry: { api: context.entryApi ?? context.kind,
       option: context.option },
@@ -87,7 +88,7 @@ export const commitSettlement = <Self extends SchemaNodeRecord<Self>>(
         runtime.chainOccurrences?.push({ kind: 'record', record });
       }
     }
-    if (process.env.NODE_ENV !== 'production' &&
+    if (development &&
       node.behavior.strategy === 'terminal' && node.raw !== null &&
       typeof node.raw === 'object' && context.changedRaw.has(node.path)) {
       const innerPaths = collectNonJsonPaths(node.raw, node.path);
