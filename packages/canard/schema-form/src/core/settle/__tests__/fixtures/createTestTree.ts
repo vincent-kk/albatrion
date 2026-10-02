@@ -21,7 +21,7 @@ export const createTestTree = (
   const analysis = blueprint(schema);
   const visits: string[] = [];
   const runtime: SchemaNodeRuntime<PlainNode> = {
-    deliveries: new Map(),
+    deliveries: new Set(),
     blueprint: analysis,
     context: {},
     validator,

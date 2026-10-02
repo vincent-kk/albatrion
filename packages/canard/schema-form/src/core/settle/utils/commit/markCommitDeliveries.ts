@@ -4,6 +4,7 @@ import { getFeatureNodeIndex } from '../../../blueprint';
 import type { SettlementContext } from '../../type';
 import { readSchemaNodeWatchValues } from '../controls/readSchemaNodeWatchValues';
 import { createWatchDeliveryIndex } from './utils/createWatchDeliveryIndex';
+import { commitGlobalState } from './commitGlobalState';
 import { getWatchDeliveryPaths } from './utils/getWatchDeliveryPaths';
 
 /** Payload immutability follows the module's development build mode. */
@@ -15,17 +16,17 @@ const EMPTY_WATCH_VALUES: readonly unknown[] = Object.freeze([]);
 /**
  * Mark one committed delivery set and advance its per-bit revision ledgers.
  * @param context - Final settlement observations and write origin
- * @returns Nothing; runtime holds pending events and comparison snapshots
+ * @param visit - Mismatch and refresh work sharing this record visit
+ * @returns Nothing; records hold committed baselines and pending deliveries
  */
 export const markCommitDeliveries = <Self extends SchemaNodeRecord<Self>>(
   context: SettlementContext<Self>,
+  visit?: (node: Self) => void,
 ): void => {
   const runtime = context.root.runtime;
-  const deliveries = runtime.deliveries;
   const refreshTargets = runtime.refreshTargets;
   const loadScope = context.kind === 'load' ? context.loadScope : undefined;
   const loadPrefix = loadScope ? `${loadScope.path}/` : '';
-  const snapshots = runtime.deliverySnapshots ?? new Map();
   const automaticNodes = new Set(context.automaticLog.map((write) => write.node));
   const watchIndex = runtime.deliveryWatchIndex;
   const watchNodes = getFeatureNodeIndex(runtime.blueprint).watchNodes;
@@ -35,18 +36,18 @@ export const markCommitDeliveries = <Self extends SchemaNodeRecord<Self>>(
     affectedPaths = new Set<string>();
     for (const node of context.entered) affectedPaths.add(node.path);
     for (const node of context.perished)
-      affectedPaths.add(snapshots.get(node)?.path ?? node.path);
+      affectedPaths.add(node.deliveryBaseline?.path ?? node.path);
     for (const change of context.pathChanges) {
       affectedPaths.add(change.previous);
       affectedPaths.add(change.current);
     }
     for (const node of context.changedNodes) {
-      const previous = snapshots.get(node);
+      const previous = node.deliveryBaseline;
       if (!previous || previous.local !== node.local || previous.emit !== node.emit)
         affectedPaths.add(node.path);
     }
     for (const node of context.stateDirtyNodes) {
-      const previous = snapshots.get(node);
+      const previous = node.deliveryBaseline;
       if (!previous || previous.interactionState !== node.interactionState ||
         previous.active !== node.active || previous.visible !== node.visible ||
         previous.readOnly !== node.readOnly || previous.disabled !== node.disabled)
@@ -81,16 +82,26 @@ export const markCommitDeliveries = <Self extends SchemaNodeRecord<Self>>(
     payload?: unknown, options?: unknown): void => {
     markSchemaNodeEvent(node, bit, payload, options);
   };
-  for (const candidate of candidates) {
+  for (const node of runtime.revisionNodes ?? []) candidates.add(node);
+  if (runtime.deliveredDiagnostics && runtime.deliveredDiagnostics !== runtime.diagnostics)
+    mark(context.root, SchemaNodeEventType.UpdateDiagnostics);
+  runtime.deliveredDiagnostics = runtime.diagnostics;
+  const globalState = commitGlobalState(context);
+  const ordered = new Set<unknown>(globalState.nodes);
+  for (const node of candidates) ordered.add(node);
+  for (const candidate of ordered) {
     if (!isTreeNode(candidate)) continue;
     const node = candidate;
+    visit?.(node);
+    globalState.visit(node);
+    if (!candidates.has(node)) continue;
     if (node.detached) {
-      snapshots.delete(node);
+      node.deliveryBaseline = undefined;
       watchIndex?.remove(node);
       continue;
     }
-    const previous = snapshots.get(node);
-    const pending = deliveries?.get(node)?.payload;
+    const previous = node.deliveryBaseline;
+    const pending = node.pendingDelivery?.payload;
     const hasWatch = watchNodes.has(node.blueprintNode.id);
     const watched = hasWatch ? readSchemaNodeWatchValues(node) : EMPTY_WATCH_VALUES;
     if (hasWatch) {
@@ -130,7 +141,7 @@ export const markCommitDeliveries = <Self extends SchemaNodeRecord<Self>>(
         mark(node, SchemaNodeEventType.UpdateChildren);
       if (previous.interactionState !== node.interactionState) {
         runtime.stateChanged = true;
-        if (!((runtime.queuedNonSettleEvents?.get(node)?.type ?? 0) &
+        if (!((node.pendingNonSettleDelivery?.type ?? 0) &
           SchemaNodeEventType.UpdateState))
           mark(node, SchemaNodeEventType.UpdateState);
       }
@@ -172,23 +183,31 @@ export const markCommitDeliveries = <Self extends SchemaNodeRecord<Self>>(
       previous.interactionState = node.interactionState;
       previous.schema = node.schema;
       previous.watchValues = watched;
-    } else snapshots.set(node, { path: node.path, local: node.local, emit: node.emit,
+    } else node.deliveryBaseline = { path: node.path, local: node.local, emit: node.emit,
       children: node.children, active: node.active, visible: node.visible,
       readOnly: node.readOnly, disabled: node.disabled,
       interactionState: node.interactionState,
-      schema: node.schema, watchValues: watched });
+      schema: node.schema, watchValues: watched };
+    if (node.pendingRevision) {
+      node.revisionLedger = new SchemaNodeRevisionLedger(node.revisionLedger, node.pendingRevision);
+      node.pendingRevision = 0;
+    }
   }
-  runtime.deliverySnapshots = snapshots;
+  globalState.finish();
+  runtime.revisionNodes?.clear();
   const departing = [...context.exited, ...context.perished];
   const seenDeparting = new Set<Self>();
   while (departing.length) {
     const node = departing.pop();
     if (!node || !node.detached || seenDeparting.has(node)) continue;
     seenDeparting.add(node);
-    snapshots.delete(node);
+    node.deliveryBaseline = undefined;
+    node.pendingDelivery = undefined;
+    node.pendingRevision = 0;
+    node.pendingNonSettleDelivery = undefined;
     runtime.deliveryWatchIndex?.remove(node);
     runtime.deliveries?.delete(node);
-    runtime.queuedEvents?.delete(node);
+    runtime.revisionNodes?.delete(node);
     runtime.queuedNonSettleEvents?.delete(node);
     runtime.validationErrors?.delete(node);
     runtime.nodeErrors?.delete(node);
@@ -198,15 +217,5 @@ export const markCommitDeliveries = <Self extends SchemaNodeRecord<Self>>(
     runtime.validationPendingTargets?.delete(node);
     for (const child of node.children ?? []) departing.push(child);
   }
-  if (runtime.deliveredDiagnostics && runtime.deliveredDiagnostics !== runtime.diagnostics)
-    mark(context.root, SchemaNodeEventType.UpdateDiagnostics);
-  runtime.deliveredDiagnostics = runtime.diagnostics;
   runtime.deliveredContext = runtime.context;
-  for (const [candidate, delivery] of runtime.queuedEvents ?? []) {
-    if (!isTreeNode(candidate) || candidate.detached) continue;
-    const node = candidate;
-    const mask = delivery.type;
-    node.revisionLedger = new SchemaNodeRevisionLedger(node.revisionLedger, mask);
-  }
-  runtime.queuedEvents?.clear();
 };

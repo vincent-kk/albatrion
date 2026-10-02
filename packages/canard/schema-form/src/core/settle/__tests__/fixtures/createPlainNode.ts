@@ -58,6 +58,8 @@ export const createPlainNode = (
     visible: true, readOnly: false, disabled: false,
     local: undefined, emit: undefined,
     schema: mergeEffectiveSchema(template, [], { mode: 'runtime' }),
-    interactionState: {}, revisionLedger: EMPTY_REVISION_LEDGER, detached: false,
+    interactionState: {}, revisionLedger: EMPTY_REVISION_LEDGER,
+    deliveryBaseline: undefined, pendingDelivery: undefined, pendingRevision: 0,
+    pendingNonSettleDelivery: undefined, detached: false,
   };
 };

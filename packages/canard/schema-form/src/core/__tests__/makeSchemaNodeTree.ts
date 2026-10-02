@@ -18,7 +18,7 @@ export const makeSchemaNodeTree = (
 ) => {
   const analysis = blueprint(schema);
   const runtime = {
-    deliveries: new Map(),
+    deliveries: new Set(),
     errorReporter: options.errorReporter,
     diagnostics: { status: 'stable' as const },
     loadSnapshot: options.snapshot,

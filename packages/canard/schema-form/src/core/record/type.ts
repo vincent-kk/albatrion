@@ -124,6 +124,14 @@ export interface SchemaNodeRecord<Self> {
   interactionState: NodeStateFlags;
   /** Per-bit commit counts, allocated on the first delivery. */
   revisionLedger: Readonly<Record<number, number>>;
+  /** Last committed observations; work history, never public state. */
+  deliveryBaseline?: SchemaNodeDeliverySnapshot<Self>;
+  /** Event bits and immutable payloads awaiting the next settlement wave. */
+  pendingDelivery?: SchemaNodeDelivery;
+  /** Bits to advance once at this commit, independently of listeners. */
+  pendingRevision: number;
+  /** State and command events awaiting their separate wave. */
+  pendingNonSettleDelivery?: SchemaNodeDelivery;
   /** Whether this reference has left the live shape. */
   detached: boolean;
 }
@@ -344,9 +352,9 @@ export interface SchemaNodeRuntime<Self> extends SchemaNodeRootRuntimeState {
   /** Stable aggregate of keys whose count is positive. */
   globalState: Readonly<Record<string, true>>;
   /** Pending events consumed by the later dispatcher. */
-  deliveries?: Map<unknown, SchemaNodeDelivery>;
-  /** Last committed node observations for change detection. */
-  deliverySnapshots?: Map<unknown, SchemaNodeDeliverySnapshot<unknown>>;
+  deliveries?: Set<Self>;
+  /** Nodes with revision bits marked before the commit visitor reaches them. */
+  revisionNodes?: Set<Self>;
   /** Live reverse watch dependencies, allocated on the first watched node. */
   deliveryWatchIndex?: SchemaNodeWatchDeliveryIndex;
   /** Last diagnostics reference observed by delivery marking. */
@@ -396,10 +404,8 @@ export interface SchemaNodeRuntime<Self> extends SchemaNodeRootRuntimeState {
   batchWrites?: { node: Self; value: unknown; option: SetValueOption }[];
   /** Reset scopes requiring validation even with an unchanged root emit. */
   validationTargets?: Set<Self>;
-  /** Events marked outside settlement for the next dispatcher wave. */
-  queuedEvents?: Map<unknown, SchemaNodeDelivery>;
   /** Non-settlement events coalesced independently from commit deliveries. */
-  queuedNonSettleEvents?: Map<unknown, SchemaNodeDelivery>;
+  queuedNonSettleEvents?: Set<Self>;
   /** Whether a non-settlement wave is draining, preventing listener reentry. */
   flushingQueuedEvents?: boolean;
   /** Whether interaction flags changed since the last outer delivery. */

@@ -1,6 +1,6 @@
 import { FEEDBACK_LIMIT_EXCEEDED, SchemaFormError } from '../../../../errors';
 import { SchemaNodeRevisionLedger } from '../../../record';
-import type { SchemaNodeRecord } from '../../../record';
+import type { SchemaNodeDelivery, SchemaNodeRecord } from '../../../record';
 import { deliverWave } from './deliverWave';
 import { captureChainError } from './captureChainError';
 import { runDeliveryWaves } from './runDeliveryWaves';
@@ -49,6 +49,8 @@ export const flushQueuedEvents = <Self extends SchemaNodeRecord<Self>>(
       if (runtime.queuedNonSettleEvents?.size) {
         waves += 1;
         if (waves > 25) {
+          for (const node of runtime.queuedNonSettleEvents)
+            node.pendingNonSettleDelivery = undefined;
           runtime.queuedNonSettleEvents = undefined;
           if (!budgetReported)
             captureChainError(runtime, new SchemaFormError(FEEDBACK_LIMIT_EXCEEDED,
@@ -56,14 +58,18 @@ export const flushQueuedEvents = <Self extends SchemaNodeRecord<Self>>(
           budgetReported = true;
           continue;
         }
-        const pending = runtime.queuedNonSettleEvents;
-        runtime.queuedNonSettleEvents = undefined;
-        for (const [candidate, delivery] of pending) {
+        const pending: [Self, SchemaNodeDelivery][] = [];
+        for (const candidate of runtime.queuedNonSettleEvents) {
+          const delivery = candidate.pendingNonSettleDelivery;
+          candidate.pendingNonSettleDelivery = undefined;
+          if (!delivery) continue;
           if (!isQueuedNode<Self>(candidate, runtime)) continue;
           const node = candidate;
+          pending.push([node, delivery]);
           node.revisionLedger = new SchemaNodeRevisionLedger(
             node.revisionLedger, delivery.type);
         }
+        runtime.queuedNonSettleEvents = undefined;
         deliverWave(root, pending);
         continue;
       }

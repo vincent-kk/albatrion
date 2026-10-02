@@ -19,7 +19,8 @@ type SeededPathStores = 'latentRaw' | 'typeMismatchPaths' | 'inactiveValuesMemo'
 export type SchemaNodeRuntimeSeed = Omit<SchemaNodeRuntime<unknown>,
   'blueprint' | 'nodeFactory' | 'settlementScratch' | 'chainRoot' |
   'batchWrites' | 'validationTargets' | 'validationChangedNodes' |
-  'globalStateCounts' | 'globalState' |
+  'globalStateCounts' | 'globalState' | 'deliveries' | 'revisionNodes' |
+  'queuedNonSettleEvents' |
   'validationPendingTargets' |
   'validator' | SeededPathStores> &
   Partial<Pick<SchemaNodeRuntime<unknown>, SeededPathStores>>;

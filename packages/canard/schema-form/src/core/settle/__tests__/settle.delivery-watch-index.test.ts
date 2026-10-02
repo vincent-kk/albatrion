@@ -29,18 +29,20 @@ describe('44C-01 EVENT-064 watch delivery candidates', () => {
     expect(watchers.every((node) =>
       root.runtime.watchValuesMemo?.get(node)?.commit === before)).toBe(true);
 
+    for (const node of root.runtime.deliveries ?? []) node.pendingDelivery = undefined;
     root.runtime.deliveries?.clear();
     writeSchemaNode(root.structure!.x, 1, 'input', SetValueOption.Overwrite);
     expect(watchers.every((node) =>
       root.runtime.watchValuesMemo?.get(node)?.commit === before)).toBe(true);
     expect(watchers.every((node) =>
-      ((root.runtime.deliveries?.get(node)?.type ?? 0) &
+      ((node.pendingDelivery?.type ?? 0) &
         SchemaNodeEventType.UpdateComputedProperties) === 0)).toBe(true);
 
+    for (const node of root.runtime.deliveries ?? []) node.pendingDelivery = undefined;
     root.runtime.deliveries?.clear();
     writeSchemaNode(root.structure!.anchor, 1, 'input', SetValueOption.Overwrite);
     expect(watchers.every((node) =>
-      ((root.runtime.deliveries?.get(node)?.type ?? 0) &
+      ((node.pendingDelivery?.type ?? 0) &
         SchemaNodeEventType.UpdateComputedProperties) ===
         SchemaNodeEventType.UpdateComputedProperties)).toBe(true);
     expect(watchers.every((node) =>
@@ -58,12 +60,13 @@ describe('44C-01 EVENT-064 watch delivery candidates', () => {
       'callerReplace', SetValueOption.Overwrite);
     const watcher = root.structure!.watcher;
     expect(root.runtime.watchValuesMemo?.get(watcher)?.values).toEqual([undefined]);
+    for (const node of root.runtime.deliveries ?? []) node.pendingDelivery = undefined;
     root.runtime.deliveries?.clear();
 
     writeSchemaNode(root.structure!.enabled, true, 'input', SetValueOption.Overwrite);
     expect(root.structure?.conditional).toBeDefined();
     expect(root.runtime.watchValuesMemo?.get(watcher)?.values).toEqual(['arrived']);
-    expect((root.runtime.deliveries?.get(watcher)?.type ?? 0) &
+    expect((watcher.pendingDelivery?.type ?? 0) &
       SchemaNodeEventType.UpdateComputedProperties)
       .toBe(SchemaNodeEventType.UpdateComputedProperties);
   });
@@ -77,18 +80,20 @@ describe('44C-01 EVENT-064 watch delivery candidates', () => {
     writeSchemaNode(root, { x: 0, watcher: 'fixed' },
       'callerReplace', SetValueOption.Overwrite);
     const watcher = root.structure!.watcher;
+    for (const node of root.runtime.deliveries ?? []) node.pendingDelivery = undefined;
     root.runtime.deliveries?.clear();
 
     writeSchemaNode(root.structure!.x, 1, 'input', SetValueOption.Overwrite);
     expect(root.runtime.watchValuesMemo?.get(watcher)?.commit)
       .not.toBe(root.runtime.commitNumber);
-    expect((root.runtime.deliveries?.get(watcher)?.type ?? 0) &
+    expect((watcher.pendingDelivery?.type ?? 0) &
       SchemaNodeEventType.UpdateComputedProperties).toBe(0);
+    for (const node of root.runtime.deliveries ?? []) node.pendingDelivery = undefined;
     root.runtime.deliveries?.clear();
 
     changeSchemaNodeContext(root, { version: 2 });
     expect(root.runtime.watchValuesMemo?.get(watcher)?.values).toEqual([{ version: 2 }]);
-    expect((root.runtime.deliveries?.get(watcher)?.type ?? 0) &
+    expect((watcher.pendingDelivery?.type ?? 0) &
       SchemaNodeEventType.UpdateComputedProperties)
       .toBe(SchemaNodeEventType.UpdateComputedProperties);
   });
@@ -107,7 +112,7 @@ describe('44C-01 EVENT-064 watch delivery candidates', () => {
 
     writeSchemaNode(source, 'same', 'input', SetValueOption.Overwrite);
     expect(root.runtime.commitNumber).toBe((before ?? 0) + 1);
-    expect((root.runtime.deliveries?.get(watcher)?.type ?? 0) &
+    expect((watcher.pendingDelivery?.type ?? 0) &
       SchemaNodeEventType.UpdateComputedProperties).toBe(0);
   });
 
@@ -120,14 +125,15 @@ describe('44C-01 EVENT-064 watch delivery candidates', () => {
     writeSchemaNode(root, { enabled: true, watcher: 'fixed' },
       'callerReplace', SetValueOption.Overwrite);
     const watcher = root.structure!.watcher;
-    expect(root.runtime.deliverySnapshots?.get(watcher)?.watchValues)
+    expect(watcher.deliveryBaseline?.watchValues)
       .toEqual(['arrived']);
+    for (const node of root.runtime.deliveries ?? []) node.pendingDelivery = undefined;
     root.runtime.deliveries?.clear();
 
     writeSchemaNode(root.structure!.enabled, false, 'input', SetValueOption.Overwrite);
     expect(root.structure!.conditional).toBeUndefined();
     expect(root.runtime.watchValuesMemo?.get(watcher)?.values).toEqual([undefined]);
-    expect((root.runtime.deliveries?.get(watcher)?.type ?? 0) &
+    expect((watcher.pendingDelivery?.type ?? 0) &
       SchemaNodeEventType.UpdateComputedProperties)
       .toBe(SchemaNodeEventType.UpdateComputedProperties);
   });

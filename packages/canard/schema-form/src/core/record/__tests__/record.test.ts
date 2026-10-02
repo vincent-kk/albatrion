@@ -73,7 +73,7 @@ const makeRecord = (): SchemaNodeRecord<PathNode> => {
     emit: undefined,
     schema: { schema: {}, typeConflict: false },
     interactionState: {},
-    revisionLedger: EMPTY_REVISION_LEDGER,
+    revisionLedger: EMPTY_REVISION_LEDGER, pendingRevision: 0,
     detached: false,
   };
 };

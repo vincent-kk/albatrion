@@ -68,7 +68,7 @@ const makeRecord = (
   emit: undefined,
   schema: { schema: { options }, typeConflict: false },
   interactionState: {},
-  revisionLedger: EMPTY_REVISION_LEDGER,
+  revisionLedger: EMPTY_REVISION_LEDGER, pendingRevision: 0,
   detached: false,
 });
 

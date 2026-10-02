@@ -51,6 +51,10 @@ export class SchemaNode implements SchemaNodeRecord<SchemaNode> {
   interactionState: SchemaNodeRecord<SchemaNode>['interactionState'];
   /** Per-bit counts copied only after this occurrence first receives delivery. */
   revisionLedger: Readonly<Record<number, number>>;
+  deliveryBaseline: SchemaNodeRecord<SchemaNode>['deliveryBaseline'];
+  pendingDelivery: SchemaNodeRecord<SchemaNode>['pendingDelivery'];
+  pendingRevision: number;
+  pendingNonSettleDelivery: SchemaNodeRecord<SchemaNode>['pendingNonSettleDelivery'];
   detached: boolean;
 
   constructor(
@@ -89,6 +93,10 @@ export class SchemaNode implements SchemaNodeRecord<SchemaNode> {
     this.schema = schema;
     this.interactionState = state;
     this.revisionLedger = EMPTY_REVISION_LEDGER;
+    this.deliveryBaseline = undefined;
+    this.pendingDelivery = undefined;
+    this.pendingRevision = 0;
+    this.pendingNonSettleDelivery = undefined;
     this.detached = false;
   }
 
