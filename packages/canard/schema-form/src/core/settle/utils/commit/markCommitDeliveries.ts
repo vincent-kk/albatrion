@@ -20,44 +20,50 @@ export const markCommitDeliveries = <Self extends SchemaNodeRecord<Self>>(
   const snapshots = runtime.deliverySnapshots ?? new Map();
   const automaticNodes = new Set(context.automaticLog.map((write) => write.node));
   const watchIndex = runtime.deliveryWatchIndex;
-  const affectedPaths = new Set<string>();
   const fullWatchScan = context.exited.size > 0;
-  for (const node of context.entered) affectedPaths.add(node.path);
-  for (const node of context.perished)
-    affectedPaths.add(snapshots.get(node)?.path ?? node.path);
-  for (const change of context.pathChanges) {
-    affectedPaths.add(change.previous);
-    affectedPaths.add(change.current);
-  }
-  for (const node of context.changedNodes) {
-    const previous = snapshots.get(node);
-    if (!previous || previous.local !== node.local || previous.emit !== node.emit)
-      affectedPaths.add(node.path);
-  }
-  for (const node of context.stateDirtyNodes) {
-    const previous = snapshots.get(node);
-    if (!previous || previous.interactionState !== node.interactionState ||
-      previous.active !== node.active || previous.visible !== node.visible ||
-      previous.readOnly !== node.readOnly || previous.disabled !== node.disabled)
-      affectedPaths.add(node.path);
-  }
-  // Drop an ancestor only when descendants explain its change; a host whose own raw or extras changed keeps its subtree.
-  for (const path of [...affectedPaths]) {
-    let ancestor = path;
-    while (ancestor) {
-      ancestor = ancestor.slice(0, ancestor.lastIndexOf('/'));
-      if (!context.changedRaw.has(ancestor)) affectedPaths.delete(ancestor);
+  let affectedPaths: Set<string> | undefined;
+  if (watchIndex?.allNodes.size && !fullWatchScan) {
+    affectedPaths = new Set<string>();
+    for (const node of context.entered) affectedPaths.add(node.path);
+    for (const node of context.perished)
+      affectedPaths.add(snapshots.get(node)?.path ?? node.path);
+    for (const change of context.pathChanges) {
+      affectedPaths.add(change.previous);
+      affectedPaths.add(change.current);
+    }
+    for (const node of context.changedNodes) {
+      const previous = snapshots.get(node);
+      if (!previous || previous.local !== node.local || previous.emit !== node.emit)
+        affectedPaths.add(node.path);
+    }
+    for (const node of context.stateDirtyNodes) {
+      const previous = snapshots.get(node);
+      if (!previous || previous.interactionState !== node.interactionState ||
+        previous.active !== node.active || previous.visible !== node.visible ||
+        previous.readOnly !== node.readOnly || previous.disabled !== node.disabled)
+        affectedPaths.add(node.path);
+    }
+    // A deleted ancestor's chain was already covered by the surviving descendant.
+    for (const path of affectedPaths) {
+      let ancestor = path;
+      while (ancestor) {
+        ancestor = ancestor.slice(0, ancestor.lastIndexOf('/'));
+        if (!context.changedRaw.has(ancestor)) affectedPaths.delete(ancestor);
+      }
     }
   }
-  const candidates = new Set<unknown>([...context.changedNodes,
-    ...context.entered, ...context.stateDirtyNodes, context.root]);
+  const candidates = new Set<unknown>();
+  for (const node of context.changedNodes) candidates.add(node);
+  for (const node of context.entered) candidates.add(node);
+  for (const node of context.stateDirtyNodes) candidates.add(node);
+  candidates.add(context.root);
   for (const change of context.pathChanges) candidates.add(change.node);
   if (watchIndex) {
     if (fullWatchScan)
       for (const watcher of watchIndex.allNodes) candidates.add(watcher);
     else if (runtime.deliveredContext !== runtime.context)
       for (const watcher of watchIndex.contextNodes) candidates.add(watcher);
-    if (!fullWatchScan)
+    if (affectedPaths)
       for (const path of affectedPaths) watchIndex.affected(path, candidates);
   }
   const isTreeNode = (value: unknown): value is Self => value !== null &&
