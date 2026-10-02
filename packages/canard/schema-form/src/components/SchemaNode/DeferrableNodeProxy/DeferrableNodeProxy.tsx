@@ -71,6 +71,14 @@ export const DeferrableNodeProxy = ({
     [manager],
   );
 
+  useLayoutEffect(() => {
+    const element = placeholderRef.current;
+    if (element === null) return;
+    // React 18 replays effects without replaying DOM refs in StrictMode.
+    manager.register(element, () => setRevealed(true));
+    return () => manager.unregister(element);
+  }, [manager, revealed, node.enabled]);
+
   if (!node.enabled) return null;
   if (revealed) return <NodeProxy {...proxyProps} />;
 

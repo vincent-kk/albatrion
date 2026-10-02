@@ -93,6 +93,9 @@ jobs:
           yarn workspaces foreach -R --topological-dev
           --from '@canard/schema-form' run build
 
+      - name: schema-form React 18 and 19 render tests
+        run: yarn workspace @canard/schema-form test --run --project render --project react18 --reporter=dot
+
       - name: schema-form micro bench
         run: yarn workspace @canard/schema-form bench
         env:

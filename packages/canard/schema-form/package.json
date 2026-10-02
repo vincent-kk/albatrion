@@ -81,6 +81,8 @@
     "eslint": "8.57.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "react-dom18": "npm:react-dom@18.3.1",
+    "react18": "npm:react@18.3.1",
     "rolldown": "^1.2.0",
     "tsc-alias": "^1.8.16",
     "typescript": "^5.7.2",

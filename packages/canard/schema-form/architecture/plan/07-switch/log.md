@@ -42,6 +42,7 @@ Planning method: 저장소 지침 — `PLAN.md` §2와 `plan/prompts.md`의 단�
 | 2026-10-03 | U9 | e2e 26파일 195건(codex 두 묶음, 파일당 15건 이하, 사례 제목은 원장 ID로 시작, 78C-01), 스파이크 (가) 이식과 EVENT-070 사례 추가(실행은 U11). 찾은 결함: SETTLE-049 부분 트리 로드 밖 주입 대상의 Refresh 누락(`56817740d`), 폼 수준 오류 목록에서 루트 외부 오류가 빠짐(Q22 → 79C-01, `d5fc1e3f4`). 공유 시나리오의 빈 입력을 `clear` 단계로. 시나리오 스토리 10파일 43건·사용법 4파일, 옛 스토리 49파일 삭제와 임시 제외 해제(77C-01). Storybook의 Chromium 실행은 샌드박스가 Mach 포트 등록을 막아(`Permission denied (1100)`) 이 세션에서 돌지 않음 — 브라우저 게이트(U11)는 소유자가 직접 실행해야 함. G18·G19·G19b 충족 | `reviews/round-79-closing.md` |
 | 2026-10-03 | U10·U12 | U12 UI 플러그인 이름 이주(`05516c496`, 08 목록 114줄). U10 이주 점검 128행 처분(`2cef0c37a`), Q23 → 80C-01·02로 LANDING-209·210 행 추가(130행, `--check-complete` 통과). 80C-03: 05·03 결함 둘은 §8, LANDING-021의 옛 `SetValueOption` 잔재 제거는 07 몫(LANDING-087), `FormHandle.reset(option?)`은 U6이 빠뜨린 것을 채움(`8e184e2a2`) | `reviews/round-80-closing.md` |
 | 2026-10-02 | U1 | 워크트리에 `yarn install --immutable`과 `@canard/schema-form`의 작업 공간 의존 빌드. 옛 엔진 패키지 벤치 일곱을 `3911b7591`에서 재어 `verification/07-switch/bench-legacy-baseline.json`(종료 코드 1은 03–06의 독립 스크립트 넷이 vitest 묶음이 아니라서 난 "No test suite found"뿐). 처분표·이주 점검표(128행)와 추출 스크립트·옛 스토리 정리표(49파일)·스파이크 사례표(§5)를 codex(세션 셋)가 쓰고 조율자가 확인. BF에 `@canard/schema-form_0.16.0` 별칭(G3–G5) | `verification/07-switch/` |
+| 2026-10-03 | U11 | React 18 별칭/dedupe 및 같은 렌더 시험 집합, CommonJS Testing Library 통합, 버전·StrictMode·서버 렌더 시험과 CI 두 프로젝트 실행을 반영. EVENT-070 단언을 Form 렌더 시험으로 이식했으며 두 판 layout/passive 모두 watchdog에 도달해 원장 관리자 판정 대기(단언 유지). 추가로 확인된 React 18 StrictMode의 placeholder 미등록은 layout effect의 멱등 재등록으로 수정(기존 가상화 22사례 두 판 통과). 브라우저 네 게이트 스토리·사람 확인표를 작성했으며 이번 실행 경로에서는 Chromium이 시작됨: 세 게이트 통과·조합 중 Refresh의 IME 실패, 소유자 확인 대기. git 쓰기·설치 없음 | `verification/07-switch/react-gates.md`, `browser-gates.md` |
 
 ## 3. 자율 판단
 
@@ -147,7 +148,7 @@ U8 중단 기록: 원장 충돌 5파일의 원문 보존은 78C-01의 "버리고
 | `spikes/work-loop/redteam4-events/react.test.tsx` | `microtaskNotify=true` | (나) 옮기지 않음 | 단언 없는 마이크로태스크 통지 대안 관찰이며 EVENT-002가 동기 통지로 정했다. |
 | `spikes/work-loop/redteam4-events/react.test.tsx` | `model: synchronous notify` | (가) 옮김 | `src/__tests__/e2e/notify.test.tsx` → "10,000개 동기 구독 필드의 한 핸들러 변경이 한 React 커밋으로 배달된다". 시간 출력에는 예산을 새로 부여하지 않는다. |
 | `spikes/work-loop/redteam4-events/react.test.tsx` | `C is committed but never bumped → its component never re-renders` | (나) 옮기지 않음 | 마지막 파동의 C가 커밋됐는데 DOM은 비어 있다는 초기 모형 결함을 고정한다. 마지막 파동도 배달하는 EVENT-008·revision 일괄 증가 EVENT-007로 대체되어 낡은 DOM 단언을 이식하지 않는다. |
-| `spikes/events/effect-feedback.spike.test.tsx`(새) | EVENT-070: `useLayoutEffect`·`useEffect`에서 두 필드가 `node.setValue`로 서로를 되쓴다 | (가) 더함 | `spikes/events/`에 추가하여 `react18`·`render` 두 판 실행(React 18·19). 두 이펙트 모두 React가 순환을 throw나 중단으로 끊는지 단언한다. 계속 돌면 EVENT-070대로 소유자에게 올린다(68C-09·REACT-017). |
+| `spikes/events/effect-feedback.spike.test.tsx`(새) | EVENT-070: `useLayoutEffect`·`useEffect`에서 두 필드가 `node.setValue`로 서로를 되쓴다 | (가) 더함 | 설계 기록은 스파이크에 보존하고 `src/components/Form/__tests__/Form.effectFeedback.test.tsx`로 단언을 그대로 이식하여 `react18`·`render` 두 판에서 실행한다. 2026-10-03 실행: React 18 layout 201회·passive 202회, React 19 layout·passive 각각 201회로 watchdog 한도(200회)에 도달했다. React 자체 중단 단언 네 건이 실패했으며 시험을 완화하거나 core 예산을 바꾸지 않았다. EVENT-070대로 원장 관리자/소유자 판정 대기(68C-09·REACT-017). |
 
 ## 6. UI 플러그인 고친 줄(68C-07)
 
