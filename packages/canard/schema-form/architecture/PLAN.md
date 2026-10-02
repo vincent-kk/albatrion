@@ -69,7 +69,7 @@
 
 ## 4. 다음 할 일
 
-1. **06 진행** — 05가 머지되었으므로(`afbba714d`) 06은 `1.0.0-beta`를 merge하고 `plan/05-dispatch-and-validation/log.md`의 "06에 넘길 목록"과 #352의 머지 순서 메모(배열 동사 진입, `onError` 배선, `UpdatePath` 배달, `ifPredicates` 시험 이전)를 맡는다. 05가 바꾼 정착 오류 집계(58C-01)와 `details.sourcePath`(59C-01)는 배열 항목에도 그대로 적용된다. 미뤄 둔 속도 문제는 `verification/performance-issues.md`.
+1. **07 진행** — 02–06이 전부 머지되었으므로(06은 `07a083c18`) 07 전환은 `1.0.0-beta`에서 `feat/schema-form-switch`를 내고 `plan/07-switch/request.md`·`verification.md`로 시작한다(원샷, LANDING-058·072). 레거시는 지우지 않고(LANDING-205), UI 플러그인 넷의 `presentation.*` 이주는 08(LANDING-206). 06이 넘긴 열린 행 P-24·P-25와 05의 느린 행은 `verification/performance-issues.md`; 07의 시나리오가 닿으면 07이 고치고(49C-01), 아니면 전용 성능 작업이다.
 2. **01 절 단위 통과** — 머지된 설계문서 여덟 편(192절)을 소유자가 절 단위로 통과시키고 문서 머리의 표에 날짜를 적는다(25C-09). 통과 중 나온 새 결정은 원장에 새 라운드 항목으로 먼저 들어가고 문서가 따라간다(`plan/01-design-docs/verification.md`).
 3. **D-1** — 30라운드에서 소유자가 정했다: 노드는 `request(kind)` 하나, 종류 값은 요청 비트 별칭의 TS 열거(리터럴 합집합 불허), 한 호출에 종류 하나, 둘째 인자 없음, 폼 핸들은 전용 메서드 넷에 경로 선택 인자(없으면 루트). 편집자 권장이던 리터럴 합집합과 폼 핸들 통합 메서드는 택하지 않았다.
 
