@@ -48,7 +48,8 @@ export const SchemaNodeInput = memo(
     const { readOnly: rootReadOnly, disabled: rootDisabled } =
       useInputControlContext();
     const isLive = useLiveNode(node);
-    const [ref, version] = useFormTypeInputControl(node, mountedChildren);
+    const [ref, version, handleCompositionStart, handleCompositionEnd] =
+      useFormTypeInputControl(node, mountedChildren);
     const generation = useMemo(
       () => node.revision(SchemaNodeEventType.RequestRefresh),
       // eslint-disable-next-line react-hooks/exhaustive-deps -- Capture a revision once per mounted input generation.
@@ -126,6 +127,8 @@ export const SchemaNodeInput = memo(
         style={DISPLAY_CONTENT}
         onFocus={handleFocus}
         onBlur={handleBlur}
+        onCompositionStartCapture={handleCompositionStart}
+        onCompositionEnd={handleCompositionEnd}
       >
         <FormTypeInput
           required={node.required}

@@ -1,4 +1,9 @@
-import { type MutableRefObject, useLayoutEffect, useRef } from 'react';
+import {
+  type MutableRefObject,
+  useCallback,
+  useLayoutEffect,
+  useRef,
+} from 'react';
 
 import { useVersion } from '@winglet/react-utils/hook';
 
@@ -8,7 +13,7 @@ import { type SchemaNode, SchemaNodeEventType } from '@/schema-form/core';
  * Controls rendering and focus/select behavior for form-type inputs based on SchemaNode events.
  *
  * Event Handling:
- * - `RequestRefresh`: Increments version to trigger component re-rendering
+ * - `RequestRefresh`: Increments the input key, deferring replacement until composition ends
  * - `RequestFocus`: Focuses the first focusable element (input, textarea, button) in container
  * - `RequestSelect`: Selects text in the first selectable element (input, textarea) in container
  *
@@ -21,8 +26,7 @@ import { type SchemaNode, SchemaNodeEventType } from '@/schema-form/core';
  *
  * @param node - The SchemaNode instance to subscribe to for events
  * @param mountedChildren - Count of committed child proxies owned by the input
- * @returns Tuple of [ref, version] - ref to attach to container element,
- *          version number that increments on RequestRefresh events
+ * @returns Container ref, input key and composition handlers that preserve the composing input
  */
 export const useFormTypeInputControl = <Node extends SchemaNode>(
   node: Node,
@@ -30,14 +34,27 @@ export const useFormTypeInputControl = <Node extends SchemaNode>(
 ) => {
   const [version, update] = useVersion();
   const ref = useRef<HTMLDivElement>(null);
+  const composing = useRef(false);
+  const pendingRefresh = useRef(false);
+  const handleCompositionStart = useCallback(() => {
+    composing.current = true;
+  }, []);
+  const handleCompositionEnd = useCallback(() => {
+    composing.current = false;
+    if (!pendingRefresh.current) return;
+    pendingRefresh.current = false;
+    update();
+  }, [update]);
   useLayoutEffect(() => {
     if (!node) return;
     const unsubscribe = node.subscribe(({ type }) => {
       if (
         type & SchemaNodeEventType.RequestRefresh &&
         mountedChildren.current === 0
-      )
-        update();
+      ) {
+        if (composing.current) pendingRefresh.current = true;
+        else update();
+      }
       if (type & SchemaNodeEventType.RequestFocus)
         queryElement(ref.current)?.focus();
       if (type & SchemaNodeEventType.RequestSelect) {
@@ -47,7 +64,7 @@ export const useFormTypeInputControl = <Node extends SchemaNode>(
     });
     return unsubscribe;
   }, [node, ref, update, mountedChildren]);
-  return [ref, version] as const;
+  return [ref, version, handleCompositionStart, handleCompositionEnd] as const;
 };
 
 const FOCUS_SELECT_SELECTOR = 'input, textarea, button' as const;
