@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { SchemaNodeEventType } from '../../SchemaNode';
+import { SchemaNodeEventType, writeSchemaNodeInput } from '../../SchemaNode';
 import type { SchemaNode } from '../../SchemaNode';
 import { makeSchemaNodeTree } from '../makeSchemaNodeTree';
 
@@ -139,7 +139,7 @@ describe('selfcheck-v5 notification ports', () => {
       requireNode(root, path).subscribe((event) => {
         if (event.type & SchemaNodeEventType.RequestRefresh) refreshed.push(path);
       });
-    requireNode(root, '/a').setValue('ab');
+    writeSchemaNodeInput(requireNode(root, '/a'), 'ab');
     expect(refreshed).toEqual(['/b']);
   });
 

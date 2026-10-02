@@ -59,8 +59,7 @@ export const commitSettlement = <Self extends SchemaNodeRecord<Self>>(
   refreshTargets.clear();
   if (context.kind !== 'load')
     for (const path of context.changedRaw) {
-      const source = readSettlementSource(context, path, true);
-      if (source !== 'input' && (source === 'automatic' || path !== context.target.path))
+      if (readSettlementSource(context, path, true) !== 'input')
         refreshTargets.add(path);
     }
   runtime.refreshTargets = refreshTargets;

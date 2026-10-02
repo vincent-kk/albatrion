@@ -156,6 +156,17 @@ describe('settle commit', () => {
     expect(root.structure!.a.revisionLedger).toBe(revision);
   });
 
+  it('EVENT-071 refreshes a caller-written leaf and excludes only the input-origin leaf', () => {
+    const { root } = createTestTree({ type: 'object', properties: {
+      a: { type: 'string' },
+    } });
+    writeSchemaNode(root, { a: 'old' }, 'callerReplace', SetValueOption.Overwrite);
+    writeSchemaNode(root.structure!.a, 'caller', 'callerReplace', SetValueOption.Overwrite);
+    expect([...root.runtime.refreshTargets!]).toEqual(['/a']);
+    writeSchemaNode(root.structure!.a, 'typed', 'input', SetValueOption.Overwrite);
+    expect(root.runtime.refreshTargets?.size).toBe(0);
+  });
+
   it('WRITE-087 memoizes frozen inactive values after a gate leaves', () => {
     const { root } = createTestTree({ type: 'object', properties: {
       flag: { type: 'boolean' },

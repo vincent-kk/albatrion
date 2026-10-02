@@ -42,10 +42,6 @@ interface SchemaNodeWatchDeliveryIndex {
 
 /** The fixed node layout implemented by every node kind. */
 export interface SchemaNodeRecord<Self> {
-  /** Retired by binding adoption; reads retain the preceding commit. */
-  disposed: boolean;
-  /** Monotone interaction lifetime, independent of event delivery. */
-  interactionReset: number;
   /** Shared calculation row selected for this node's kind and strategy. */
   readonly behavior: Behavior<Self>;
   /** Per-tree services and settlement records. */
@@ -129,6 +125,10 @@ export interface SchemaNodeRecord<Self> {
   pendingNonSettleDelivery?: SchemaNodeDelivery;
   /** Whether this reference has left the live shape. */
   detached: boolean;
+  /** Retired by binding adoption; reads retain the preceding commit. */
+  disposed: boolean;
+  /** Monotone interaction lifetime, independent of event delivery. */
+  interactionReset: number;
 }
 
 /** Read-only type candidates used by a calculation row. */
