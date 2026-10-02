@@ -7,7 +7,9 @@
 ## API Contracts
 
 - placeholder는 공간을 예약하는 관찰 대상이며 data-path, data-deferred와 aria-hidden을 유지합니다.
-- 교차·idle backfill 또는 focus/select 명령으로 노출합니다. 커밋 후 노출 기록을 남기고 보류한 명령을 즉시 재발행합니다.
+- 교차·idle backfill 또는 `request(kind)`의 focus/select 명령으로 즉시 노출합니다. 커밋 후 노출 기록을 남기고 보류한 명령을 `request`로 다시 실행하여 마운트된 입력의 DOM 동작에 연결합니다. 공개 `publish`는 사용하지 않습니다(EVENT-063·073, EVENT-065, 68C-03).
+- 지연 자리도 입력의 자식 프록시 마운트 판정에 포함되며, 그 판정은 Refresh에서 컨테이너 입력의 비값 상태를 유지할지 결정합니다(REACT-028).
+- 사용자 Placeholder의 필드 오류 경계는 소유 자리에서 한 번 감싸며 `useReporter`로 렌더 때 폼 보고기를 읽어 fallback과 오류 기록으로 연결합니다(68C-08, ERROR-114–117).
 
 ## Acceptance Criteria
 
@@ -18,4 +20,4 @@
 
 ## Last Updated
 
-2026-09-16
+계약 기준: EVENT-063·065·073, REACT-028, 68C-03·08.

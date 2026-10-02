@@ -8,7 +8,7 @@
 
 ## API Contracts
 
-- 진입점은 클래스 이름과 겹치는 런타임 생성자를 내보내지 않고 공개 판별 합집합 `SchemaNode` 타입, 종류별 노드 타입, 가드 열, `InferSchemaNode`, 공개 옵션 `SetValueOption`, `schemaNodeFactory`와 `record`가 소유한 `SchemaNodeEventType`·`SchemaNodeRequestType`을 이름으로 내보냅니다. 두 열거는 07의 소비자 이주까지 새 엔진 표면에만 있으며 옛 `core/types/event.ts`와 별개입니다(SURFACE-056·060, EVENT-073, LANDING-158). `schemaNodeFactory(schema: Blueprint, runtimeSeed: SchemaNodeRuntimeSeed): SchemaNode`는 팩토리가 결합하는 `nodeFactory`·`blueprint` 칸과 정착이 지연 생성하는 `settlementScratch` 칸을 제외한 트리 입력을 받습니다. 경로 색인 저장소 `latentRaw`·`typeMismatchPaths`·`inactiveValuesMemo`는 시드가 주지 않으면 팩토리가 빈 색인 저장소로 만들어, 호출자가 core 내부 클래스를 가져오지 않게 합니다. 트리마다 한 번 완성한 런타임에 실제 생성 함수를 결합합니다. 청사진 `kind`·`strategy`로 `BEHAVIORS[type][strategy]`를 골라 같은 클래스의 인스턴스를 만듭니다(NODE-008·010·045·046, WRITE-015). 빈 생성 함수 스텁을 호출자에게 요구하지 않습니다.
+- 진입점은 클래스 이름과 겹치는 런타임 생성자를 내보내지 않고 공개 판별 합집합 `SchemaNode` 타입, 종류별 노드 타입, 가드 열, `InferSchemaNode`, 공개 옵션 `SetValueOption`, `schemaNodeFactory`와 `record`가 소유한 `SchemaNodeEventType`·`SchemaNodeRequestType`을 이름으로 내보냅니다. 노드 형·가드와 사건·명령 열거는 패키지 공개 진입점에서도 이름으로 내보냅니다(SURFACE-056·060, EVENT-073, LANDING-067·158). `schemaNodeFactory(schema: Blueprint, runtimeSeed: SchemaNodeRuntimeSeed, validator?: Validator): SchemaNode`는 팩토리가 결합하는 `nodeFactory`·`blueprint` 칸과 정착이 지연 생성하는 `settlementScratch` 칸을 제외한 트리 입력과 선택 검증기를 받습니다. 경로 색인 저장소 `latentRaw`·`typeMismatchPaths`·`inactiveValuesMemo`는 시드가 주지 않으면 팩토리가 빈 색인 저장소로 만들어, 호출자가 core 내부 클래스를 가져오지 않게 합니다. 트리마다 한 번 완성한 런타임에 실제 생성 함수를 결합합니다. 청사진 `kind`·`strategy`로 `BEHAVIORS[type][strategy]`를 골라 같은 클래스의 인스턴스를 만듭니다(NODE-008·010·045·046, WRITE-015). 빈 생성 함수 스텁을 호출자에게 요구하지 않습니다.
 - 아래 표의 `getter`는 필드 또는 계산 메모 읽기이며 `method`는 문장 하나의 위임입니다. 구현 클래스는 `SchemaNodeRecord<SchemaNode>`를 구현하고 위임 메서드에서 `SchemaNode` 자기 타입을 전달합니다. 종류별 생성 표·`InferSchemaNode` overload로 단언 없이 좁힙니다(NODE-046).
 
 | 멤버 | 종류 | 위임·읽기 대상 | 원장 |
@@ -75,8 +75,22 @@
 - union 입력의 `FormTypeInputProps`는 `value`에 같은 판별 결과를 보여 주고 `onChange`는 목록 종류의 값과 `undefined`, nullable일 때만 `null`을 받습니다. `typeMismatch: true`의 `value: unknown`을 그대로 `onChange`의 허용 범위로 넓히지 않습니다. `ObjectValue`·`ArrayValue`를 포함한 객체·배열 원본 참조는 변환하지 않습니다(NODE-058, VALUE-037).
 - 공개 가드 열은 `isSchemaNode`, `isStringNode`, `isNumberNode`, `isBooleanNode`, `isObjectNode`, `isArrayNode`, `isVirtualNode`, `isUnionNode`, `isBranchNode`, `isTerminalNode`입니다. 첫째는 단일 클래스 `instanceof`, 종류 가드 일곱은 `type`, 마지막 둘은 `strategy`를 봅니다. `isNullNode`는 소비자가 없어 내보내지 않습니다. `isTerminalNode`는 union과 터미널 객체도 좁힙니다(NODE-015·041, raw-round17 §4).
 - `InferSchemaNode<Schema>`는 타입 배열의 null을 nullable로 떼고 integer를 종류 판정에서 number로 접어 한 종류면 그 노드, 둘 이상이면 `UnionNode`, null만이면 `NullNode`로 사상합니다. 형 없는 원시 분기는 종류 합집합으로, 전부 인라인 객체·배열인 분기는 각각 `ObjectNode`·`ArrayNode`로, 분기 없는 단일 종류 `const`·`enum`은 그 리터럴 종류로 사상합니다. 정적으로 판정할 수 없는 참조·게이트·복합 연언은 넓은 `SchemaNode`이고 청사진 오류인 모양은 `never`입니다. 오버로드가 생성 결과를 좁히며 단언·`any`를 쓰지 않습니다(NODE-046·058·059, TEST-070).
-- 새 타입과 가드는 PR-7 전까지 이 fractal의 `type.ts`와 진입점에만 있고 패키지 공개 진입점과 기존 `src/types`는 레거시 엔진을 가리킵니다(NODE-010·050, LANDING-159). `setContext`는 04에서 `SchemaNode/index.ts`가 이름 붙여 내보내고 `core/index.ts`가 이름으로 다시 내보내며 `src/index.ts`는 내보내지 않습니다(NODE-010, SURFACE-055, 28C-03·08). 이 바인딩 전용 함수는 클래스 멤버가 아니며 맥락 변경 사슬을 `dispatch.dispatchContextChange`에 한 문장으로 위임하고 옵션 비트를 받지 않습니다(NODE-010·016, LANDING-064·084, WRITE-015, 28C-08).
+- 공개 노드 형·가드는 이 fractal이 소유하고 패키지 진입점이 이름으로 내보내며, 소비자 형도 새 엔진 계약을 따릅니다(NODE-010·050, LANDING-067·159). `setContext`는 `SchemaNode/index.ts`가 이름 붙여 내보내고 `core/index.ts`가 이름으로 다시 내보내며 `src/index.ts`는 내보내지 않습니다(NODE-010, SURFACE-055, 28C-03·08). 이 바인딩 전용 함수는 클래스 멤버가 아니며 맥락 변경 사슬을 `dispatch.dispatchContextChange`에 한 문장으로 위임하고 옵션 비트를 받지 않습니다(NODE-010·016, LANDING-064·084, WRITE-015, 28C-08).
 - `SetValueOption`은 클래스 멤버가 아니라 공개 옵션 형이며 `Overwrite`, `Merge`, `DisableAutomaticWrites`, `EnableAutomaticWrites`의 비트 뜻은 settle 계약을 따릅니다(WRITE-015, 26C-01). 05의 통지·검증 멤버와 06의 배열 메서드는 위 표·공개 형·멤버 목록 시험을 함께 갱신합니다(EVENT-063, LANDING-064·065, 26C-01).
+
+### 바인딩 전용 통로
+
+통로의 몸은 `dispatch/`의 진입 함수가 소유합니다. `SchemaNode/index.ts`의 겉면은 공개 `SchemaNode` 형을 받는 이름 있는 함수이며, `core/index.ts`가 와일드카드 없이 이름으로 다시 내보내고 `src/index.ts`는 내보내지 않습니다. 각 함수의 문서 주석은 `binding-only; not exported from src/index.ts`를 명시합니다(69C-01, LANDING-064, 실행 ADR D2).
+
+| 함수 | 계약 | 원장 |
+| --- | --- | --- |
+| `buildSchemaNodeTree(props)` | 청사진 작성과 팩토리 결합으로 트리를 만들며 마운트하지 않습니다 | 70C-01, VALIDATE-010 |
+| `mountSchemaNode(root, value?, option?, { deferValidation? })` | 루트 로드를 마운트하고 검증 요청의 미룸 선택을 받습니다 | 69C-01·05, LANDING-041 |
+| `reloadSchemaNodeForm(root, value?)` | 트리는 유지한 채 폼 수준 reset 로드로 외부 오류와 검증 결과를 비웁니다 | WRITE-045, 69C-03 |
+| `adoptSchemaNodeTree(previousRoot, nextRoot)` | 재생성 트리로 사슬과 경로 키 외부 오류를 인계하고 옛 트리를 폐기합니다 | 69C-02·03, WRITE-046 |
+| `writeSchemaNodeInput(node, value, option)` | 입력 출처 표식을 실은 쓰기로 `handleChange` 진입 전체를 구별합니다 | REACT-009·010, 69C-01 |
+| `finishSchemaNodeInput(node)` | 입력 마침을 동작 행의 `finishInput`으로 보내 자동 쓰기 계약을 적용합니다 | WRITE-083, 69C-01 |
+| `readSchemaNodeInteractionReset(node)` | 사건 개정과 별개인 노드의 상호작용 초기화 번호를 읽습니다 | REACT-024, 69C-02 |
 
 ## Acceptance Criteria
 
@@ -102,4 +116,4 @@
 
 ## Last Updated
 
-2026-10-01
+계약 기준: 69C-01–05, 70C-01, NODE-010·050, REACT-009·010·024.

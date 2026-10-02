@@ -9,6 +9,9 @@
 
 ## API Contracts
 
+- 노드 레코드는 폐기 표시와 상호작용 초기화 번호를 고정 칸으로 보유합니다. 초기값은 각각 거짓과 0이며, 번호는 `revision`의 사건 비트가 아닌 바인딩 전용 읽기로 관찰합니다. 상호작용 초기화 번호는 상태 칸 쓰기로 `dirty`·`touched`를 비우는 셋(폼 reset, `clearState`, `controls.resetInteraction`)에서 오르고 비움이 아닌 쓰기에서는 오르지 않습니다(REACT-024). 재생성 인계의 폐기에서는 Refresh 번호와 이 번호를 통지 없이 동기로 올립니다. 메모리 비용은 노드당 boolean 칸 하나와 number 칸 하나의 고정 슬롯 두 개이며, 판정 identity는 공유 청사진당 함수 참조 두 개를 보유하여 노드별 판정 칸을 추가하지 않습니다(REACT-024, WRITE-046·086, 69C-02·04, 실행 ADR D5).
+- 런타임이 보유한 청사진 결과는 작성 때 받은 `isAtomic`·`isTerminal`의 identity를 유지합니다. 정착의 런타임 병합은 이 두 참조를 그대로 소비하며 레코드가 판정 함수를 다시 만들거나 React를 가져오지 않습니다(REACT-003, 69C-04, 실행 ADR D5).
+
 - 정착 도중 공개 상태 쓰기가 전역 계수를 즉시 반영하면, 이미 포착된 `deliveryPreviousState`도 그 쓰기 뒤 상태로 옮깁니다. 커밋은 즉시 처리한 증감과 상태 사건을 다시 만들지 않으며 이후 정착 상태 변경만 비교합니다. 변경 마스크가 없는 노드에는 기준 칸을 만들지 않습니다(EVENT-062·067, 43C-01, 65C-03).
 - S2의 배달 작업 기록은 레코드에 있습니다. `deliveryInitialized`는 첫 커밋 여부, `deliveryChanges`는 계산·형상·키 재부여·상태 쓰기가 포착한 변경 종류입니다. 첫 변경에서만 `deliveryPreviousLocal`·`deliveryPreviousEmit`, `deliveryPreviousPath`, `deliveryPreviousChildren`, `deliveryPreviousComputed`(네 상태의 비트 묶음), `deliveryPreviousSchema`, `deliveryPreviousState`에 그 종류의 기준을 보관합니다. `deliveryWatchValues`는 정적 watch 선언 대상에만 남기는 감시 기준입니다. 생성자는 이전 값 칸을 `undefined`, 변경 마스크를 `0`, 초기화 표시를 `false`로 대입하며 객체를 할당하지 않습니다. 11필드 관측 스냅숏 객체는 두지 않습니다(NODE-004, VALUE-002, 65C-03).
 - 기준 칸·변경 마스크는 작업의 기록이며 공개 읽기와 형상·값·방출 계산에 들어가지 않습니다(P3). 커밋은 변경 종류만 최종 값과 비교하여 같은 기준으로 돌아온 A→B→A를 제외하고 비트 개정과 payload를 확정한 뒤 기준 칸·변경 마스크를 비웁니다. 배달 전 여러 커밋이 있으면 각 커밋의 개정은 독립적으로 증가하며 `pendingDelivery.payload.previous`가 마지막 통지 기준을 계속 유지합니다. `pendingRevision`은 커밋에서, `pendingDelivery`·`pendingNonSettleDelivery`는 파동 전체 분리 때 비웁니다. 마지막 통지 기준과 커밋 비교 기준의 수명을 섞지 않습니다(EVENT-007·024). 이탈/소멸은 이 작업 기록과 런타임 대상 집합·감시/검증 장부를 제거하고 detached 읽기는 유지합니다(63C-02, I5).
@@ -19,7 +22,7 @@
 - 선택적 `warningKeysByPath`는 데이터 경로의 각 조상→경고 구조 키 역색인입니다. `indexSchemaNodeWarning`은 경고를 대기 저장소에 넣을 때 이 색인을 함께 갱신하고 삭제 시 두 경고 저장소에서도 지웁니다. 재인덱싱과 소멸은 영향받은 아이템 접두사의 키만 조회하며 기록 객체는 발생 당시 경로를 보존합니다. 비용은 경고 등록/삭제 O(경로 깊이), 메모리 O(경고 수 × 깊이)이고 경고가 없는 트리에는 색인을 만들지 않습니다(35C-09, ERROR-017·024, NODE-045).
 
 - 진입점은 `SchemaNodeRecord`, `Behavior`, `UnionSpec`, `SchemaNodeFactory`, `SchemaNodeRuntime`, `SettlementScratch`, `updateSchemaNodeNameAndPath`, `patchSchemaNodeInteractionState`, `shallowPatch`를 이름으로 내보냅니다. 외부 소비자는 레코드의 진입점으로만 들어옵니다(NODE-008·016).
-- 진입점은 기존 레코드 계약과 함께 `SchemaNodeEventType`, `SchemaNodeRequestType`, `markSchemaNodeEvent`를 이름으로 내보냅니다. 두 열거는 새 엔진의 비트와 명령 종류를 이곳에서 처음 선언하고 옛 `core/types/event.ts`는 07의 소비자 이주까지 그대로 둡니다. `RequestEmitChange`·`RequestInjection`은 두지 않습니다(SURFACE-056·060, EVENT-073, LANDING-158·170).
+- 진입점은 기존 레코드 계약과 함께 `SchemaNodeEventType`, `SchemaNodeRequestType`, `markSchemaNodeEvent`를 이름으로 내보냅니다. 두 열거의 비트와 명령 종류는 이 모듈이 소유하고 core와 패키지 진입점이 이름으로 내보내며, 남는 `core/types/event.ts`의 사건 형도 새 엔진 계약을 따릅니다. `RequestEmitChange`·`RequestInjection`은 두지 않습니다(SURFACE-056·060, EVENT-073, LANDING-067·087·158·170).
 - `SchemaNodeEventType`은 남는 옛 비트의 자리 값을 유지하고 `UpdateJsonSchema`·`UpdateDiagnostics`를 더합니다. `SchemaNodeRequestType`의 `Focus`·`Select`·`Refresh`·`Remount`는 각각 `RequestFocus`·`RequestSelect`·`RequestRefresh`·`RequestRemount` 비트와 같습니다. 한 명령 호출은 종류 하나만 받습니다(EVENT-043·064·073, SURFACE-057·060).
 - 모든 종류의 논리 필드 선언과 생성자 대입 순서는 일치합니다. 배달 작업 칸은 `revisionLedger` 뒤와 `detached` 앞에 둡니다. 상호작용 상태의 저장 칸은 공개 `state`와 구별하며, 기준값과 개정은 상태가 아니라 작업 기록입니다(NODE-004, VALUE-002, 65C-03).
 - `itemKey`는 배열 아이템의 생성 순서 nonce인 숫자이며 아이템이 아니면 `null`이고 공개 멤버로 노출하지 않습니다. 배열 branch 호스트의 `itemCount`는 청사진 없는 꼬리 자리를 포함한 값의 길이이며 그 밖에는 `0`입니다. 호스트의 `nextItemKey`는 새 아이템의 키 계수이고 원본 B 되돌림에서도 감소하지 않습니다. 세 필드는 모든 노드에 같은 고정 칸 세 개의 메모리 비용을 더하며 아이템 목록은 기존 `structure`에 둡니다(NODE-004·045·051·052, GOAL-073, SURFACE-054, 35C-05, 실행 ADR D3).
@@ -77,4 +80,4 @@
 
 ## Last Updated
 
-2026-10-02
+계약 기준: 69C-02·04, REACT-003·024, WRITE-046·086, 실행 ADR D5.

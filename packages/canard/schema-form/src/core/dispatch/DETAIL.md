@@ -16,10 +16,14 @@
 
 - `dispatchPush`·`dispatchPop`·`dispatchUpdate`·`dispatchRemove`·`dispatchClear`는 같은 공개 쓰기 사슬로 들어가며 거부 시 `undefined`를 돌려줍니다. 배치 밖에서는 배열 정착의 동기 결과를 돌려주고, 배치 안에서는 `readBatchValue`의 앞선 표시를 얹은 배열에 행의 순수 계획을 적용하여 결과 배열을 Replace로 표시합니다. push는 결과 길이, pop·remove는 표시된 자리의 원본, update는 입력 값, clear는 `undefined`입니다. 잘못된 종류 값에는 push만 `[x]`를 표시하고 나머지는 무동작입니다. 비배열 호출은 사슬 끝에서 `ARRAY_METHOD_ON_NON_ARRAY`를 `surface: 'thrown'`으로 보고하고 던집니다. 배치 끝 정착은 통째 쓰기라 아이템 키는 위치로 잇고 정착·`onChange`는 한 번입니다. 비용은 배열 계획/복사 O(배열 길이), 앞선 표시 합성 비용이며 노드별 고정 칸은 늘리지 않습니다(33C-01, 35C-01, 62C-01, EVENT-035·061).
 
-- `dispatchSetValue(node, value, option?)`, `dispatchResetSubtree(node, option?)`, `dispatchResetForm(root, value?, option?)`, `dispatchMount(root, value?, option?)`, `dispatchBatch(node, fn: () => void)`, `dispatchContextChange(root, context)`는 공개 쓰기 사슬을 엽니다. `dispatchBatch`의 중첩은 바깥 배치가 이기고, 함수가 던져도 표시된 쓰기를 정착·배달한 뒤 그 예외를 사슬 끝에서 드러냅니다(EVENT-013–019·035·061, LANDING-064).
+- `dispatchSetValue(node, value, option?)`, `dispatchResetSubtree(node, option?)`, `dispatchResetForm(root, value?, option?)`, `dispatchMount(root, value?, option?, { deferValidation? })`, `dispatchBatch(node, fn: () => void)`, `dispatchContextChange(root, context)`는 공개 쓰기 사슬을 엽니다. `dispatchBatch`의 중첩은 바깥 배치가 이기고, 함수가 던져도 표시된 쓰기를 정착·배달한 뒤 그 예외를 사슬 끝에서 드러냅니다(EVENT-013–019·035·061, LANDING-064).
+- 입력 출처 쓰기 진입은 사슬 진입 칸에 `source: 'input'`을 싣습니다. 이 출처는 `UpdateValue`의 `options.source`, 쓴 입력 자신을 제외하는 Refresh 판정과 늦은 쓰기 차단에 흐르며 공개 `SetValueOption`의 비트가 아닙니다. `handleChange`의 값 쓰기·외부 오류 지움·dirty를 한 `batch`로 묶은 진입 전체가 같은 표식을 갖고, 폐기된 노드의 표식 있는 셋은 조용히 버립니다(REACT-009·010·011, EVENT-071, 69C-01·02, 실행 ADR D4).
+- 입력 마침 진입은 동작 행의 `finishInput` 결과를 자동 쓰기로 적용합니다. 문자열 `options.trim`은 바뀐 값만 쓰며 외부 오류와 dirty를 유지하고 입력을 Refresh합니다. Form의 `disableAutomaticWrites`가 참이면 이 자동 쓰기는 억제됩니다(WRITE-083, TEST-020, 69C-01).
+- 마운트의 `deferValidation`이 참이면 로드 사슬 끝에서 검증을 요청하지 않고 바인딩의 준비 이펙트가 커밋 뒤 요청합니다. 기본값은 거짓이며 core 호스트는 사슬 끝에서 직접 요청합니다. 두 경로 모두 로드 뒤 `OnChange` 비트가 켜져 있으면 한 번 요청합니다(69C-05, LANDING-041).
+- 폼 reset 진입은 외부 오류와 검증 결과를 비웁니다. 바인딩의 `errors` 속성은 같은 reset 호출이 돌아오기 전에 현재 트리에 경로 키로 재적용하며, 비움과 재적용의 통지는 진입 끝의 규칙을 따릅니다(WRITE-045, 69C-03).
 - `subscribeSchemaNode(node, listener): () => void`와 `readSchemaNodeRevision(node, mask?)`는 읽기이며 진입을 열지 않습니다. 구독 사건은 `{ type, payload?, options? }` 모양이고, `revision(mask?)`는 리스너 유무와 무관한 해당 비트 카운터의 합입니다(EVENT-001·004·007).
 - `dispatchRequest(node, kind: SchemaNodeRequestType): void`, `dispatchSetState(node, state)`, `dispatchSetSubtreeState(node, state)`, `dispatchClearSubtreeState(node)`, `dispatchSetExternalErrors(node, errors: readonly ValidationIssue[])`, `dispatchClearExternalErrors(node)`는 정착 밖 사건입니다. `dispatchValidate(node): Promise<readonly ValidationIssue[]>`는 호출할 때 새 판정을 요청합니다(EVENT-012·045·063·067·073, VALIDATE-049).
-- `adoptSchemaNodeChain(previousRoot, nextRoot)`는 새 루트의 검증 컴파일을 먼저 확인한 뒤 재생성 reset의 진입 깊이, 배치 표시, 예산과 모은 오류를 넘기는 바인딩 전용 통로입니다. 실패하면 옛 사슬은 그대로입니다(EVENT-030, VALIDATE-046).
+- `adoptSchemaNodeChain(previousRoot, nextRoot)`는 새 루트의 검증 컴파일을 먼저 확인한 뒤 재생성 reset의 진입 깊이, 배치 표시, 예산과 모은 오류를 넘기는 바인딩 전용 통로입니다. 외부 오류는 옛 노드 객체가 아닌 경로 키로 넘기고, 인계한 옛 트리는 settle의 폐기 계약에 따라 표시·리스너 해제·통지 없는 동기 번호 증가를 마칩니다. 검증기 등록 참조 수는 옛 트리 이펙트 정리에서 내립니다. 컴파일 확인이 실패하면 옛 사슬은 그대로입니다(EVENT-030, VALIDATE-046, WRITE-046·086, 69C-02·03).
 - `createFormErrorRecord`는 새 트리 생성에서 청사진 진단을 소비자에게 전달할 기록으로 바꿉니다. `SchemaNode`가 이름 붙은 진입점으로 가져오며, 소비자가 없으면 서식을 만들지 않습니다(ERROR-017·019, NODE-010).
 
 ### 사슬, 파동, 기록
@@ -60,4 +64,4 @@
 
 ## Last Updated
 
-2026-10-02
+계약 기준: 69C-01–03·05, REACT-009–011, WRITE-045·046·083·086.
