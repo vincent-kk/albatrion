@@ -1,3 +1,4 @@
+import { captureSchemaNodeChange } from '../../../record';
 import { mergeEffectiveSchema } from '../../../blueprint';
 import type { SchemaNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../type';
@@ -5,6 +6,8 @@ import { getGateRegistry } from '../gates/getGateRegistry';
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 import { escapeSegment } from '@winglet/json/pointer';
 import { enterSchemaNode } from './enterSchemaNode';
+import { createChildNode } from './createChildNode';
+import { indexEnteredLatentKey } from '../latent/indexEnteredLatentKey';
 
 /**
  * Start a gate wheel with only ungated children and their static overlays.
@@ -28,14 +31,19 @@ export const primeHost = <Self extends SchemaNodeRecord<Self>>(
       `${node.path}/${escapeSegment(entry.name)}`, entry.node.kind,
     ]);
     const pending = context.pendingExits.get(key);
-    const child = priorChild ?? pending ??
-      context.root.runtime.nodeFactory(entry, node, context.root.runtime);
+    const child = priorChild ?? pending ?? createChildNode(node, entry);
+    context.perished.delete(child);
     context.pendingExits.delete(key);
-    if (pending && child === pending) context.revived.add(child);
+    if (pending && child === pending) {
+      context.revived.add(child);
+      indexEnteredLatentKey(context, child);
+    }
     if (context.hasGates) getGateRegistry(child.runtime).register(child);
     if (!priorChild && !pending) {
       context.entered.add(child);
-      enterSchemaNode(node, child, entry.name, context);
+      indexEnteredLatentKey(context, child);
+      if (child.behavior.type === 'virtual') context.dirtyPaths.add(child.path);
+      else enterSchemaNode(node, child, entry.name, context);
       if (child.behavior.strategy === 'branch')
         context.shapeDirtyPaths.add(child.path);
     }
@@ -43,14 +51,14 @@ export const primeHost = <Self extends SchemaNodeRecord<Self>>(
     if (child.schema !== schema) {
       if (!context.originalSchemas.has(child.path))
         context.originalSchemas.set(child.path, child.schema);
-      child.schema = schema;
+      child.schema = captureSchemaNodeChange(child, 'schema', schema);
       context.dirtyPaths.add(child.path);
       context.changedNodes.add(child);
     }
-    child.active = true;
+    child.active = captureSchemaNodeChange(child, 'active', true);
     child.detached = false;
     baseline[entry.name] = child;
   }
   node.structure = baseline;
-  node.children = Object.values(baseline);
+  node.children = captureSchemaNodeChange(node, 'children', Object.values(baseline));
 };

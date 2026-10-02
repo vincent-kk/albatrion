@@ -1,5 +1,6 @@
 import type { BlueprintNodeKind } from '../blueprint';
 import type { Behavior } from '../record';
+import { arrayBehavior } from './arrayBehavior';
 import { booleanBehavior } from './booleanBehavior';
 import { nullBehavior } from './nullBehavior';
 import { numberBehavior } from './numberBehavior';
@@ -22,4 +23,5 @@ export const BEHAVIORS: Readonly<{
   union: Object.freeze({ terminal: unionBehavior }),
   virtual: Object.freeze({ branch: virtualBehavior }),
   object: objectBehavior,
+  array: arrayBehavior,
 });

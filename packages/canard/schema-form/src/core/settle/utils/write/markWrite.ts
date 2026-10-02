@@ -1,14 +1,16 @@
-import { hasOwnProperty } from '@winglet/common-utils/lib';
+import { isArray } from '@winglet/common-utils/filter';
 import type { SchemaNodeRecord, UnionSpec } from '../../../record';
 import type { SettlementContext } from '../../type';
+import { assertVirtualWriteShape } from './assertVirtualWriteShape';
 import { isPlain } from './isPlain';
 import { nextExtras } from './nextExtras';
 import { pruneLatentRaw } from './pruneLatentRaw';
 import { staticSpec } from './staticSpec';
 import { sameValue } from '../compute/sameValue';
-
-/** Immutable child-name membership indexes keyed by analyzed template. */
-const DECLARED_NAMES = new WeakMap<object, Set<string>>();
+import { hasDistributedChildInput } from './hasDistributedChildInput';
+import { arrayExtras } from './arrayExtras';
+import { indexEnteredLatentKey } from '../latent/indexEnteredLatentKey';
+import { getDeclaredChildNames } from '../declarations/getDeclaredChildNames';
 
 /**
  * Mark a terminal source or distribute an object host write by declared key.
@@ -22,7 +24,12 @@ export const markWrite = <Self extends SchemaNodeRecord<Self>>(
   node: Self, input: unknown, context: SettlementContext<Self>,
   spec: UnionSpec = staticSpec(node.schemaType, node.nullable),
 ): void => {
-  if (context.loadScope) context.entered.add(node);
+  if (node.behavior.type === 'virtual' && !context.automatic &&
+    context.kind !== 'load') assertVirtualWriteShape(node, input);
+  if (context.loadScope) {
+    context.entered.add(node);
+    indexEnteredLatentKey(context, node);
+  }
   if (context.kind === 'load') context.changedNodes.add(node);
   if (context.kind === 'load' && node.behavior.strategy === 'branch')
     context.shapeDirtyPaths.add(node.path);
@@ -44,23 +51,45 @@ export const markWrite = <Self extends SchemaNodeRecord<Self>>(
   }
   if (node.behavior.type === 'virtual') {
     context.dirtyPaths.add(node.path);
+    const fields = node.blueprintNode.fields ?? [];
+    const values = isArray(value) ? value : undefined;
+    for (let index = 0; index < fields.length; index++) {
+      const sibling = node.parent?.structure?.[fields[index]];
+      if (!sibling) continue;
+      if (!context.automatic && context.kind !== 'load' && !isMerge) {
+        (context.virtualReplacePaths ??= []).push(sibling.path);
+        pruneLatentRaw(sibling.runtime, sibling.path, undefined, context);
+      }
+      markWrite(sibling, values?.[index], context);
+    }
     return;
   }
   let nextRaw: unknown;
   let extras: unknown;
   let whole: boolean;
-  if (!isPlain(value)) {
+  let countChanged = false;
+  if (node.behavior.type === 'array') {
+    const previousItemCount = node.itemCount;
+    if (context.automatic) context.arrayStructureLog.push({ host: node,
+      previousItems: [...node.children ?? []], previousItemCount,
+      previousExtras: node.extras });
+    if (!context.arrayCounts.has(node))
+      context.arrayCounts.set(node, previousItemCount);
+    node.itemCount = isArray(value) ? value.length : 0;
+    countChanged = node.itemCount !== previousItemCount;
+    nextRaw = isArray(value) ? undefined : value;
+    extras = isArray(value) ? arrayExtras(node, value) : undefined;
+    whole = true;
+    if (isMerge && node !== context.replaceScope)
+      pruneLatentRaw(node.runtime, node.path, undefined, context);
+  } else if (!isPlain(value)) {
     nextRaw = value;
     extras = undefined;
     whole = true;
     if (isMerge && node !== context.replaceScope)
       pruneLatentRaw(node.runtime, node.path, undefined, context);
   } else {
-    let declared = DECLARED_NAMES.get(node.blueprintNode);
-    if (!declared) {
-      declared = new Set(node.blueprintNode.childEntries.map((entry) => entry.name));
-      DECLARED_NAMES.set(node.blueprintNode, declared);
-    }
+    const declared = getDeclaredChildNames(node.blueprintNode);
     whole = !isMerge;
     nextRaw = isMerge ? node.raw : undefined;
     if (isMerge && nextRaw !== undefined) context.wrongKindHosts.add(node);
@@ -68,7 +97,7 @@ export const markWrite = <Self extends SchemaNodeRecord<Self>>(
   }
   const rawChanged = !sameValue(node.raw, nextRaw);
   const extrasChanged = !sameValue(node.extras, extras);
-  if (rawChanged || extrasChanged) {
+  if (rawChanged || extrasChanged || countChanged) {
     node.raw = nextRaw;
     node.extras = extras;
     context.changedRaw.add(node.path);
@@ -82,9 +111,13 @@ export const markWrite = <Self extends SchemaNodeRecord<Self>>(
   context.shapeDirtyPaths.add(node.path);
   if (node.structure === null) return;
   for (const name of Object.keys(node.structure)) {
-    if (!whole && (!isPlain(value) || !hasOwnProperty(value, name))) continue;
+    if (node.behavior.type === 'array' && Number(name) >= node.itemCount) continue;
+    if (!whole && !hasDistributedChildInput(value, name,
+      node.behavior.type === 'array')) continue;
     const child = node.structure[name];
-    const childInput = isPlain(value) && hasOwnProperty(value, name) ?
+    if (child.behavior.type === 'virtual') continue;
+    const childInput = hasDistributedChildInput(value, name,
+      node.behavior.type === 'array') ?
       Reflect.get(value, name) : undefined;
     if (context.automatic) {
       context.writtenInputs.set(child, childInput);

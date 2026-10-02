@@ -1,3 +1,4 @@
+import { captureSchemaNodeChange } from '../../../record';
 import type { SchemaNodeRecord } from '../../../record';
 
 /**
@@ -6,6 +7,6 @@ import type { SchemaNodeRecord } from '../../../record';
  * @returns Nothing; sibling state remains untouched
  */
 export const clearSubtreeState = <Self extends SchemaNodeRecord<Self>>(node: Self): void => {
-  node.interactionState = {};
+  node.interactionState = captureSchemaNodeChange(node, 'interactionState', {});
   for (const child of node.children ?? []) clearSubtreeState(child);
 };

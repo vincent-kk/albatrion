@@ -2,7 +2,7 @@
 
 ## Requirements
 
-TEST-008, TEST-010, TEST-011, TEST-022, TEST-023, TEST-024, TEST-077 및 LANDING-090이 이 비공개 검증 패키지의 범위를 정한다. 값·정착·채움·나감·union·derive·controls 부류의 엔진 시나리오는 같은 데이터로 코어 러너와 후속 렌더 실행기가 소비한다(TEST-011·016·019·023).
+TEST-008, TEST-010, TEST-011, TEST-022, TEST-023, TEST-024, TEST-077 및 LANDING-090이 이 비공개 검증 패키지의 범위를 정한다. 값·정착·채움·나감·union·derive·controls·배열·통지·검증 부류의 엔진 시나리오는 같은 데이터로 코어 러너와 후속 렌더 실행기가 소비한다(TEST-011·016·019·023).
 
 시나리오 데이터는 React, 테스트 러너, 폼 엔진과 독립적이다. 어댑터는 실행 환경별 의존성을 사용할 수 있지만, 이 패키지는 타입 전용으로도 `@canard/schema-form`을 가져오지 않는다. 그래야 schema-form 테스트가 공유 시나리오를 소비할 때 의존성 순환이 생기지 않는다.
 
@@ -10,7 +10,7 @@ TEST-008, TEST-010, TEST-011, TEST-022, TEST-023, TEST-024, TEST-077 및 LANDING
 
 ## API Contracts
 
-`FormScenario`는 이름, 구조적 스키마, 선택적 초기 값, 순서 있는 단계를 기술한다(TEST-011·023). 단계는 `setValue`, `clear`, `push`, `remove`, `update`, `submit`, `reset`, `batch`, `resetSubtree` 중 하나이며 `resetSubtree`는 `{ action: 'resetSubtree', path }`로 해당 하위 트리만 로드한다(TEST-011·023, SETTLE-049). `ScenarioExpectation.states?: Record<경로, { visible?: boolean; readOnly?: boolean; disabled?: boolean; enabled?: boolean }>`는 노드별 로컬 상태 키 관찰이고, 형태·값·오류·진단 기대값과 함께 단계 완료 뒤에 검사한다(TEST-011·019·023, CONTROLS-082, 28C-02).
+`FormScenario`는 이름, 구조적 스키마, 선택적 초기 값, 순서 있는 단계를 기술한다(TEST-011·023). 단계는 `setValue`, `clear`, `push`, `pop`, `remove`, `update`, `submit`, `reset`, `batch`, `resetSubtree` 중 하나이며 `update`는 배열 색인과 값을 받고 `resetSubtree`는 `{ action: 'resetSubtree', path }`로 해당 하위 트리만 로드한다(TEST-011·023, SETTLE-049, I19). 배열 동사의 결과, 단계 전후 노드 동일성과 키, 스냅숏 기본값, 자리별 청사진 종류, 청사진 없는 꼬리의 `extras`도 구조적 기대값으로 기술한다(TEST-018, NODE-051·052, WRITE-095·099). `ScenarioExpectation.states?: Record<경로, { visible?: boolean; readOnly?: boolean; disabled?: boolean; enabled?: boolean }>`는 노드별 로컬 상태 키 관찰이고, 형태·값·오류·진단 기대값과 함께 단계 완료 뒤에 검사한다(TEST-011·019·023, CONTROLS-082, 28C-02).
 
 코어 실행기는 TEST-023에 따라 schema-form의 코어 검증 소유자가 맡는다. 이 패키지는 코어 실행기를 공개하지 않으며 엔진 시나리오를 실행하지 않는다.
 
@@ -25,8 +25,8 @@ TEST-008, TEST-010, TEST-011, TEST-022, TEST-023, TEST-024, TEST-077 및 LANDING
 ### scenario-data — 순수 공유 기술
 
 - 시나리오 모듈에는 런타임 실행이나 엔진 의존성이 없다.
-- 동작 어휘는 계약의 아홉 동작만 허용하고 `resetSubtree`는 명시한 경로만 로드한다(TEST-011·023, SETTLE-049).
-- value, settle, fill, exit, union, derive, controls 계열은 실제 기대값이 있는 시나리오를 제공한다(TEST-011·016·019·023).
+- 동작 어휘는 계약의 열 동작만 허용하고 `resetSubtree`는 명시한 경로만 로드한다(TEST-011·023, SETTLE-049).
+- value, settle, fill, exit, union, derive, controls, array 계열은 실제 기대값이 있는 시나리오를 제공한다(TEST-011·016·018·019·023).
 - `states`는 노드별 `visible`·`readOnly`·`disabled`·`enabled`의 기대값을 구조적으로 표현하고 코어 러너가 관찰한다(TEST-011·019·023, CONTROLS-082).
 
 ### scenario-screen-order — 순서 있는 화면 실행

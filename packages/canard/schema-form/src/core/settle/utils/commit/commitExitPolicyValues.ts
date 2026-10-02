@@ -5,7 +5,7 @@ import { hasOwnProperty } from '@winglet/common-utils/lib';
 import { SchemaFormError } from '../../../../errors';
 import type { Blueprint, BlueprintExpression } from '../../../blueprint';
 import type { SchemaNodeRecord } from '../../../record';
-import { walkSchemaNodes } from '../../../navigation';
+import { walkOwnedSchemaNodes } from '../walkOwnedSchemaNodes';
 import type { SettlementContext } from '../../type';
 import { getControlLayers } from '../controls/getControlLayers';
 import { getExitPolicyKey } from '../controls/getExitPolicyKey';
@@ -44,10 +44,10 @@ export const commitExitPolicyValues = <Self extends SchemaNodeRecord<Self>>(
   if (expressions.size === 0) return;
   const runtime = context.root.runtime;
   for (const exited of context.exited)
-    walkSchemaNodes(exited, (node) =>
+    walkOwnedSchemaNodes(exited, (node) =>
       pruneCommittedRuleKeys(runtime, node.path, 'exitPolicy'));
   if (context.kind === 'load' && context.loadScope)
-    walkSchemaNodes(context.loadScope, (node) =>
+    walkOwnedSchemaNodes(context.loadScope, (node) =>
       pruneCommittedRuleKeys(runtime, node.path, 'exitPolicy'));
   const candidates = new Set(context.stateDirtyNodes);
   for (const source of context.stateDirtyNodes) {

@@ -5,7 +5,4 @@ import { schemaNodeFactory } from '@/schema-form/core/SchemaNode';
 export const createHookNode = () => schemaNodeFactory(blueprint({ type: 'string' }), {
   diagnostics: { status: 'stable' },
   loadSnapshot: undefined,
-  latentRaw: new Map(),
-  typeMismatchPaths: new Set(),
-  inactiveValuesMemo: new Map(),
 });

@@ -9,6 +9,7 @@ import { resolveSchemaNodeChainRoot } from '../chain/resolveSchemaNodeChainRoot'
  * Group synchronous caller writes into one outer delivery boundary.
  * Updaters run at their call site against prior marked values; ordinary reads
  * continue to return the preceding committed value until this callback ends.
+ * 배열 동사(`push`·`pop`·`update`·`remove`·`clear`)도 부른 자리에서 앞선 표시를 얹은 배열로 계산해 동기 결과를 돌려주고 결과 배열을 표시하며, 배치 끝의 정착은 통째 쓰기라 아이템 키는 위치로 잇는다.
  * @param node - Any occurrence in the tree being batched
  * @param fn - Synchronous writes to mark, including nested batches
  * @returns Nothing; a thrown callback is rethrown after marked work commits

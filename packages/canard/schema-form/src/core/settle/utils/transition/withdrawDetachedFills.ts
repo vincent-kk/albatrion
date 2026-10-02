@@ -3,6 +3,7 @@ import { isArray } from '@winglet/common-utils/filter';
 import type { SchemaNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../type';
 import { setLatentRaw } from '../latent/setLatentRaw';
+import { restoreArrayStructure } from './restoreArrayStructure';
 
 /**
  * Withdraw automatic writes throughout every finally detached filled subtree.
@@ -14,6 +15,7 @@ export const withdrawDetachedFills = <Self extends SchemaNodeRecord<Self>>(
 ): void => {
   for (const node of context.filledNodes) {
     if (!node.detached) continue;
+    restoreArrayStructure(context, node);
     for (let index = context.automaticLog.length - 1; index >= 0; index--) {
       const entry = context.automaticLog[index];
       let ancestor: Self | null = entry.node;

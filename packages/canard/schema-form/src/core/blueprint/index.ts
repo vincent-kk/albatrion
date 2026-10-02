@@ -1,6 +1,9 @@
 export { blueprint } from './blueprint';
+export { getFeatureNodeIndex } from './utils/features/getFeatureNodeIndex/getFeatureNodeIndex';
 export { collectBlueprintWarnings } from './utils/diagnostics/collectBlueprintWarnings';
 export { mergeEffectiveSchema } from './utils/effectiveSchema/mergeEffectiveSchema';
+export { getItemEntry } from './utils/itemEntry/getItemEntry';
+export { resolveArrayLimits } from './utils/resolveArrayLimits/resolveArrayLimits';
 export { stripSchema } from './utils/stripSchema/stripSchema';
 export { createDynamicFunction } from './utils/expressions/createDynamicFunction';
 export type { DynamicFunction } from './utils/expressions/createDynamicFunction';
@@ -15,6 +18,7 @@ export type {
   BlueprintSchema,
   BlueprintDiagnostic,
   BlueprintExpression,
+  BlueprintFeatureNodeIndex,
   BlueprintGate,
   BlueprintNodeKind,
   BlueprintSchemaType,

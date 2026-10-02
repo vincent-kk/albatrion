@@ -1,12 +1,11 @@
 import { recordSettlementFailure } from '../errors/recordSettlementFailure';
-import { SchemaFormError } from '../../../../errors';
+import { INVALID_VIRTUAL_NODE_VALUES, SchemaFormError } from '../../../../errors';
 import type { SchemaNodeRecord } from '../../../record';
 import { DERIVE_ROUND_CAP, evaluateDeriveRound } from '../../derive';
 import type { SettlementContext } from '../../type';
 import { computeNode } from '../compute/computeNode';
 import { sameValue } from '../compute/sameValue';
-import { BUDGET_EXCEEDED, EXPRESSION_THREW, INJECT_TARGET_MISSING,
-  INVALID_VIRTUAL_NODE_VALUES } from '../errors/settleErrorCode';
+import { BUDGET_EXCEEDED, EXPRESSION_THREW, INJECT_TARGET_MISSING } from '../errors/settleErrorCode';
 import { registerRecalculation } from '../write/registerRecalculation';
 import { collectDeriveSourcePaths } from './collectDeriveSourcePaths';
 import { getDeriveState } from './getDeriveState';
@@ -14,7 +13,8 @@ import { applyDeriveWrite } from './utils/applyDeriveWrite';
 
 /** Deferred error codes follow the failure's contract category. */
 const ERROR_CODES = { expression: EXPRESSION_THREW,
-  injectTarget: INJECT_TARGET_MISSING, writeShape: INVALID_VIRTUAL_NODE_VALUES } as const;
+  injectTarget: INJECT_TARGET_MISSING,
+  writeShape: INVALID_VIRTUAL_NODE_VALUES } as const;
 /** Human-readable failure labels retain the existing expression wording. */
 const ERROR_LABELS = { expression: 'Derive expression failed',
   injectTarget: 'Injection target missing', writeShape: 'Invalid virtual node values' } as const;

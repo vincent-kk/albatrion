@@ -13,6 +13,7 @@ export const readSchemaNodeErrors = <Self extends SchemaNodeRecord<Self>>(
   node: Self,
 ): readonly ValidationIssue[] => {
   const runtime = node.rootNode.runtime;
+  if (node.detached) return runtime.detachedReads?.get(node)?.errors ?? EMPTY_ISSUES;
   const external = runtime.nodeErrors?.get(node);
   const validation = runtime.validationErrors?.get(node);
   const isIssues = (items: readonly unknown[] | undefined): items is readonly ValidationIssue[] =>

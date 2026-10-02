@@ -21,12 +21,13 @@ export const publishGlobalStateDeltas = <Self extends SchemaNodeRecord<Self>>(
   }
   if (!nextState) return;
   runtime.globalState = nextState;
-  const queued = runtime.queuedNonSettleEvents ?? new Map();
-  const previous = queued.get(root);
-  queued.set(root, {
+  const queued = runtime.queuedNonSettleEvents ?? new Set();
+  const previous = root.pendingNonSettleDelivery;
+  root.pendingNonSettleDelivery = {
     type: (previous?.type ?? 0) | SchemaNodeEventType.UpdateGlobalState,
     payload: { ...previous?.payload,
       [SchemaNodeEventType.UpdateGlobalState]: nextState },
-  });
+  };
+  queued.add(root);
   runtime.queuedNonSettleEvents = queued;
 };

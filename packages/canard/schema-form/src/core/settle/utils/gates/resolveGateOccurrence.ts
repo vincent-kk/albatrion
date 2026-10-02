@@ -1,5 +1,7 @@
 import type { BlueprintGate } from '../../../blueprint';
+import { bindTemplatePath } from '../paths/bindTemplatePath';
 import type { GateOccurrence } from './type';
+import { bindGateHostPath } from './bindGateHostPath';
 
 /**
  * Bind a template gate once to a live owner's absolute occurrence path.
@@ -15,18 +17,15 @@ export const resolveGateOccurrence = (
   occurrencePath: string,
   childHostPath?: string,
 ): GateOccurrence => {
-  const suffix = gate.hostPath === templatePath ? '' :
-    gate.hostPath.startsWith(`${templatePath}/`)
-      ? gate.hostPath.slice(templatePath.length) : undefined;
-  const hostPath = childHostPath ??
-    (suffix === undefined ? gate.hostPath : `${occurrencePath}${suffix}`);
+  const hostPath = bindGateHostPath(gate, templatePath, occurrencePath, childHostPath);
   let common = hostPath.split('/').filter(Boolean);
   for (const read of gate.evaluationReads) {
     if (typeof read === 'number') {
       common = common.slice(0, Math.max(0, common.length - read));
       continue;
     }
-    const target = read.split('/').filter(Boolean);
+    const target = bindTemplatePath(read, childHostPath ?? occurrencePath)
+      .split('/').filter(Boolean);
     let index = 0;
     while (index < common.length && index < target.length &&
       common[index] === target[index]) index++;

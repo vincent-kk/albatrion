@@ -6,6 +6,7 @@ import type { SchemaNodeWriteKind } from '../../type';
 import { computeNode } from '../compute/computeNode';
 import { getGateRegistry } from '../gates/getGateRegistry';
 import { markWrite } from './markWrite';
+import { assertVirtualWriteShape } from './assertVirtualWriteShape';
 import { isPlain } from './isPlain';
 import { registerRecalculation } from './registerRecalculation';
 import { pruneLatentRaw } from './pruneLatentRaw';
@@ -34,6 +35,9 @@ export const writeSchemaNode = <Self extends SchemaNodeRecord<Self>>(
   kind: SchemaNodeWriteKind,
   option: SetValueOption,
 ): void => {
+  if (node.behavior.type === 'virtual' &&
+    kind !== 'load' && kind !== 'automatic')
+    assertVirtualWriteShape(node, input);
   if (node.detached) {
     if (hasLivePathKind(node)) return;
     const whole = kind !== 'callerPartial' || !isPlain(input) ||

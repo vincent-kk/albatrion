@@ -167,6 +167,16 @@ export interface Blueprint {
   readonly expressions: readonly BlueprintExpression[];
 }
 
+/** Conservative static bounds shared by feature passes for one blueprint. */
+export interface BlueprintFeatureNodeIndex {
+  /** Templates whose own declarations can change local state keys. */
+  readonly stateKeyNodes: ReadonlySet<number>;
+  /** Parent templates and direct child names addressed by state control layers. */
+  readonly stateKeyChildren: ReadonlyMap<number, ReadonlySet<string>>;
+  /** Templates whose node or referring-edge declarations can supply watch hints. */
+  readonly watchNodes: ReadonlySet<number>;
+}
+
 /** A compiled expression never executed during schema analysis. */
 export interface BlueprintExpression {
   /** Contribution whose controls contain this expression. */

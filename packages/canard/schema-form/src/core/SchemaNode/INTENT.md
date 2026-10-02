@@ -17,6 +17,7 @@
 
 - 멤버를 더할 때 DETAIL의 PR별 목록·멤버 목록 시험·공개 형을 함께 고칩니다(26C-01).
 - 생성 시 청사진의 종류·전략으로 행을 한 번 선택합니다(NODE-002·008).
+- Delegate each array verb in one statement to its dispatch entry; the shared behavior slot rejects non-array hosts (NODE-010·014, 35C-01, 62C-01).
 
 ### Ask first
 
@@ -25,4 +26,4 @@
 ### Never do
 
 - 클래스 본문에 정착·탐색·종류 분기 로직 또는 노드별 할당을 넣지 않습니다(NODE-010).
-- PR-4 이후의 통지·검증·명령, 06단계의 배열 멤버, PR-6 계산 게터를 PR-2 스텁으로 미리 두지 않습니다(26C-01, LANDING-065).
+- 기제가 없는 겉면 멤버를 스텁이나 시험용 런타임 칸으로 미리 두지 않습니다(26C-01).

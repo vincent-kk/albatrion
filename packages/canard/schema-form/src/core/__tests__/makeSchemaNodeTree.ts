@@ -1,3 +1,5 @@
+import { PathKeyedMap } from '../utils/pathIndex/PathKeyedMap';
+import { PathKeyedSet } from '../utils/pathIndex/PathKeyedSet';
 import { blueprint } from '../blueprint';
 import type { BlueprintSchema } from '../blueprint';
 import { schemaNodeFactory } from '../SchemaNode';
@@ -16,13 +18,13 @@ export const makeSchemaNodeTree = (
 ) => {
   const analysis = blueprint(schema);
   const runtime = {
-    deliveries: new Map(),
+    deliveries: new Set(),
     errorReporter: options.errorReporter,
     diagnostics: { status: 'stable' as const },
     loadSnapshot: options.snapshot,
-    latentRaw: new Map<string, unknown>(),
-    typeMismatchPaths: new Set<string>(),
-    inactiveValuesMemo: new Map<string, readonly { path: string; value: unknown }[]>(),
+    latentRaw: new PathKeyedMap('pair'),
+    typeMismatchPaths: new PathKeyedSet(),
+    inactiveValuesMemo: new PathKeyedMap<readonly { path: string; value: unknown }[]>('path'),
   };
   const validator = 'validator' in options ? options.validator : createTestValidator();
   const root = schemaNodeFactory(analysis, runtime, validator);

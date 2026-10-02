@@ -2,6 +2,8 @@
 
 ## Requirements
 
+- 경로 키 저장소 보조는 record의 런타임 형 선언과 생성·정착의 쓰기가 함께 소비하므로 공통 소유자인 core에 둡니다. PathKeyedMap·PathKeyedSet은 빈 색인을 생성할 때 소유하고 native Map·Set의 열거·instanceof를 유지하며 인스턴스 adoption이나 메서드 패치를 하지 않습니다. K개 항목·깊이 D에서 O(KD) 색인 키 참조와 유일 prefix 및 숫자 radix 저장량을 추가합니다(NODE-045, SETTLE-017·047, GOAL-011).
+
 - `core/index.ts`가 이 fractal의 공개 표면이다. `nodeFromJSONSchema()` 팩토리, 노드 타입과 타입 가드, `NodeEventType`·`SetValueOption`·`ValidationMode` 등 열거값을 이름으로 내보낸다.
 - **모든 노드는 값을 두 채널로 노출한다.** `value`는 노드가 보유한 raw 값이고, `normalizedValue`는 스키마 출력 옵션이 적용된 정제 뷰다. 기본 구현은 `AbstractNode`가 제공하며 `value`를 그대로 돌려주므로, 정제가 필요 없는 노드 타입은 아무것도 구현하지 않는다.
 - `normalizedValue` override는 **값 정제 목적으로만** 허용된다. 현재 유일한 override는 `ArrayNode`(`options.omitTrailing`)이다. 정제는 노드 트리를 바꾸지 않는다 — 자식 노드는 raw 상태를 유지하며, 정제로 사라진 항목의 노드도 그대로 남는다.
@@ -62,6 +64,7 @@
 
 ### scenario-runner — 코어 시나리오 실행 소유
 
+- 시나리오 명세 표는 각 부류의 장면 목록에서 생성되므로 사례 수를 정적으로 셀 수 없으며 `spec-document-case-cap`은 `indeterminate`로 유지합니다(60C-01).
 - TEST-023에 따라 코어 시험이 공유 시나리오 데이터를 해석합니다. 비공개 시나리오 패키지는 코어 실행기를 소유하지 않습니다.
 - 주입된 코어 어댑터가 단계를 순서대로 한 번씩 실행하며 정착을 기다린 뒤 기대를 검사하고 실패를 호출자에게 전달합니다.
 - 각 부류의 시나리오를 새 `SchemaNode` 트리에서 실행하고 단계별 형상·방출·진단·상태 키를 검증합니다. `reset`은 루트 폼 수준 로드이며 `resetSubtree()`는 해당 하위 트리만 로드합니다(TEST-011·016·019·023, SETTLE-049).
@@ -94,6 +97,22 @@
 
 - 공유 `controls` 부류의 모든 시나리오가 코어 실행기에서 기대한 상태 키 결합·범위·나감 층 결과를 냅니다(TEST-019·023).
 
+### scenario-array — 배열 부류 시나리오
+
+- 공유 `array` 부류의 일반 장면에서 다섯 구조 동사와 배열 아이템 형상·identity·스냅숏·방출을 코어 실행기가 실제 노드에서 검사합니다(TEST-011·018·023, NODE-051·052, WRITE-095·099, VALUE-034, LANDING-202·203, 26C-02).
+
+### scenario-array-position — 위치 이동의 상태
+
+- 구조 연산으로 이동한 아이템은 키와 노드 참조를 유지하며 상호 작용 상태가 새 위치를 따릅니다(TEST-018, NODE-051).
+
+### scenario-array-terminal — 터미널 배열의 사본
+
+- 터미널 배열의 다섯 동사는 매번 직전 원본을 보존하고 새 배열 사본을 기록합니다(TEST-018, NODE-005).
+
+### scenario-array-source-b — 원본 B 배열 구조 복원
+
+- 예산 초과 때 자동 생성한 배열 아이템은 원본 B의 빈 형상으로 되돌아가고, 사용한 아이템 키는 재사용하지 않습니다(TEST-018, WRITE-099).
+
 ### scenario-notify — 통지 부류 시나리오
 
 - 공유 `notify` 부류의 모든 시나리오가 관찰 어댑터로 실행되어 기대한 배달 순서·명령·상태 사건·`onError` 기록을 냅니다(EVENT-004·027, TEST-019·023).
@@ -122,4 +141,4 @@
 
 ## Last Updated
 
-2026-10-01
+2026-10-02

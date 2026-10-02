@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from 'vitest';
 
 import { SchemaNodeEventType } from '../../record';
 import { NodeState, ValidationMode } from '../../types/state';
-import { dispatchBatch, dispatchClearSubtreeState, dispatchSetState,
+import { dispatchBatch, dispatchClearSubtreeState, dispatchResetSubtree, dispatchSetState,
   dispatchSetSubtreeState, dispatchSetValue, readSchemaNodeRevision,
   subscribeSchemaNode } from '../index';
 import { createDispatchTree } from './fixtures/createDispatchTree';
@@ -10,6 +10,36 @@ import { getDispatchChild } from './fixtures/getDispatchChild';
 
 // filid:contract dispatch-observers
 describe('dispatcher state events', () => {
+  it.each(['node', 'subtree', 'clear'] as const)(
+    'keeps immediate %s state writes during reset out of the settlement delta', (kind) => {
+      let duringReset: (() => void) | undefined;
+      const { root, runtime } = createDispatchTree({ type: 'object', properties: {
+        source: { type: 'string', controls: { injectTo: () => {
+          const callback = duringReset;
+          duringReset = undefined;
+          callback?.();
+          return {};
+        } } },
+      } }, { source: 'a' });
+      dispatchSetValue(root, { source: 'a' });
+      const before = readSchemaNodeRevision(root, SchemaNodeEventType.UpdateState);
+      duringReset = () => {
+        if (kind === 'subtree') dispatchSetSubtreeState(root, { custom: true });
+        else dispatchSetState(root, { custom: true });
+        if (kind === 'clear') dispatchClearSubtreeState(root);
+      };
+
+      dispatchResetSubtree(root);
+
+      expect(runtime.globalStateCounts.get('custom') ?? 0)
+        .toBe(kind === 'subtree' ? 2 : kind === 'clear' ? 0 : 1);
+      expect(readSchemaNodeRevision(root, SchemaNodeEventType.UpdateState) - before).toBe(1);
+      dispatchClearSubtreeState(root);
+      expect(runtime.globalStateCounts.has('custom')).toBe(false);
+      expect(runtime.globalState).toEqual({});
+    },
+  );
+
   it('EVENT-012 EVENT-067 43C-01 delivers state and aggregate bits synchronously', () => {
     const { root, runtime } = createDispatchTree({ type: 'string' });
     const onChange = vi.fn();

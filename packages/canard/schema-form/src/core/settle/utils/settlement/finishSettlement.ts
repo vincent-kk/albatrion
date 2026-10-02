@@ -10,6 +10,7 @@ import { finalizeExits } from '../transition/finalizeExits';
 import { restoreSourceB } from '../transition/restoreSourceB';
 import { transitionSettlement } from '../transition/transitionSettlement';
 import { publishStateKeys } from '../compute/publishStateKeys';
+import { alignArraySnapshotSlots } from '../load/alignArraySnapshotSlots';
 
 /**
  * Complete derivation, transition, rollback, and one commit after calculation.
@@ -37,6 +38,12 @@ export const finishSettlement = <Self extends SchemaNodeRecord<Self>>(
   }
   publishStateKeys(context);
   finalizeExits(context);
+  if (context.kind !== 'load') {
+    const resized = [...context.arrayCounts].filter(([host, previousCount]) =>
+      !host.detached && host.itemCount !== previousCount)
+      .map(([host]) => host);
+    alignArraySnapshotSlots(resized);
+  }
   if (context.kind === 'load')
     for (const path of context.target.runtime.typeMismatchPaths)
       if (!context.target.path || path === context.target.path ||

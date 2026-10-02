@@ -33,11 +33,11 @@ export const evaluateGate = <Self extends SchemaNodeRecord<Self>>(
     !evaluateGate(parentGate, context, owner)))
     return false;
   const hostPath = getGateRegistry(owner.runtime).locate(owner, gate, edgeName).hostPath;
-  const raw = readProjectedValue(context, hostPath);
+  const raw = gate.kind === 'active' ? undefined : readProjectedValue(context, hostPath);
   const host = raw !== null && typeof raw === 'object' && !isArray(raw)
     ? raw : {};
   let input: Record<string, unknown> = { ...host };
-  const hostNode = hostPath === '' ? context.root :
+  const hostNode = gate.kind === 'active' ? undefined : hostPath === '' ? context.root :
     hostPath.split('/').slice(1).reduce<Self | undefined>((node, encoded) => {
       const structure = node?.structure;
       const name = unescapeSegment(encoded);

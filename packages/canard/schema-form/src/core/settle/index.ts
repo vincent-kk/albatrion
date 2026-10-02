@@ -1,4 +1,5 @@
 export { writeSchemaNode } from './utils/write/writeSchemaNode';
+export { arrangeSchemaNodeItems } from './utils/structure/arrangeSchemaNodeItems';
 export { loadSchemaNodeAtMount } from './utils/load/loadSchemaNodeAtMount';
 export { resetSchemaNodeForm } from './utils/load/resetSchemaNodeForm';
 export { resetSchemaNodeSubtree } from './utils/load/resetSchemaNodeSubtree';
@@ -9,3 +10,4 @@ export { readSchemaNodeTypeMismatches } from './utils/detached/readSchemaNodeTyp
 export { readSchemaNodeWatchValues } from './utils/controls/readSchemaNodeWatchValues';
 export { changeSchemaNodeContext } from './utils/context/changeSchemaNodeContext';
 export type { SchemaNodeWriteKind } from './type';
+export { interpretSchemaNodeInput } from './utils/write/interpretSchemaNodeInput';

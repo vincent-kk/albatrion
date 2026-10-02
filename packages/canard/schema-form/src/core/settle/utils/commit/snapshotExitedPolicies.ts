@@ -1,6 +1,6 @@
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
-import { walkSchemaNodes } from '../../../navigation';
+import { walkOwnedSchemaNodes } from '../walkOwnedSchemaNodes';
 import type { SchemaNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../type';
 import { getControlLayers } from '../controls/getControlLayers';
@@ -16,7 +16,7 @@ export const snapshotExitedPolicies = <Self extends SchemaNodeRecord<Self>>(
 ): void => {
   const runtime = context.root.runtime;
   for (const exited of context.exited)
-    walkSchemaNodes(exited, (node) => {
+    walkOwnedSchemaNodes(exited, (node) => {
       const key = JSON.stringify([node.path, node.blueprintNode.kind]);
       if (!runtime.latentRaw.has(key)) return;
       const metadata = runtime.latentRawMetadata?.get(key);
@@ -27,5 +27,6 @@ export const snapshotExitedPolicies = <Self extends SchemaNodeRecord<Self>>(
         clear: readExitLayerPolicy([group], runtime.committedRuleValues, false),
       }));
       runtime.latentRawMetadata?.set(key, { ...metadata, exitLayers });
+      context.latentDescendantKeys = undefined;
     });
 };

@@ -8,6 +8,7 @@ import { getDeriveSourceNodes } from './utils/getDeriveSourceNodes';
 import { evaluateScopedExpression } from './utils/evaluateScopedExpression';
 import type { ScopedExpressionResult } from './utils/evaluateScopedExpression';
 import { getSelectedDeclarationIds } from './utils/getSelectedDeclarationIds';
+import { addActiveRuleKey } from './utils/addActiveRuleKey';
 
 /** Frozen result reused when no expression fails. */
 const NO_FAILURES: readonly [] = Object.freeze([]);
@@ -39,7 +40,7 @@ export const evaluateResetInteraction = <Self extends SchemaNodeRecord<Self>>(
         if (!target) continue;
         const key = getDeriveRuleKey(node.path, node.blueprintNode.kind, rule,
           target);
-        state.activeRuleKeys.add(key);
+        addActiveRuleKey(state, node.path, key);
         const previous = state.committedRuleValues.get(key);
         const previousExists = state.committedRuleValues.has(key);
         let current: boolean;

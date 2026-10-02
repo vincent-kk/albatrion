@@ -78,7 +78,7 @@ describe('selfcheck-v5 derive regression', () => {
     root.find('/host')?.setValue(null);
     root.find('/src')?.setValue('b');
     expect(root.find('/host')?.raw).toBeNull();
-    expect(root.outputValue).toEqual({ src: 'b' });
+    expect(root.outputValue).toEqual({ src: 'b', host: null });
   });
 
   const suppressedTree = (disabled: boolean) => {

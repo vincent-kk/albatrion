@@ -1,0 +1,1 @@
+export { arrayBehavior } from './arrayBehavior';

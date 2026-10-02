@@ -1,4 +1,6 @@
 import type { SchemaNodeRecord } from '../../../record';
+import { indexSchemaNodeWarning } from '../../../record';
+import { isArray } from '@winglet/common-utils/filter';
 import { RESET_REBUILT_BY_REFERENCE } from '../../../../errors';
 import { assertValidationRootReady } from '../../../validation';
 import { dedupeWarningRecord } from '../report/dedupeWarningRecord';
@@ -36,8 +38,11 @@ export const adoptSchemaNodeChain = <Self extends SchemaNodeRecord<Self>>(
   next.stateChanged = previous.stateChanged;
   next.nodeErrors = previous.nodeErrors;
   if (previous.pendingWarningRecords)
-    for (const [key, record] of previous.pendingWarningRecords)
-      (next.pendingWarningRecords ??= new Map()).set(key, record);
+    for (const [key, record] of previous.pendingWarningRecords) {
+      const parts: unknown = record.path === undefined ? undefined : JSON.parse(key);
+      indexSchemaNodeWarning(next, key,
+        isArray(parts) && typeof parts[1] === 'string' ? parts[1] : undefined, record);
+    }
   if (next.errorReporter?.hasConsumer()) {
     const paths = next.rebuiltReferenceSchemaPaths ??
       readReferenceOnlySchemaPaths(previous.blueprint?.schema, next.blueprint?.schema);
@@ -64,4 +69,5 @@ export const adoptSchemaNodeChain = <Self extends SchemaNodeRecord<Self>>(
   previous.chainOccurrences = undefined;
   previous.enclosingChain = undefined;
   previous.pendingWarningRecords = undefined;
+  previous.warningKeysByPath = undefined;
 };

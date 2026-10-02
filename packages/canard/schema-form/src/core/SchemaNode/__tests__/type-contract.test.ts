@@ -2,7 +2,7 @@ import { describe, expect, expectTypeOf, it } from 'vitest';
 
 import { isObjectNode, isTerminalNode } from '../index';
 import type { SchemaNodeEventType, SchemaNodeRequestType } from '../index';
-import type { FormTypeInputProps, InferSchemaNode, NullNode, NumberNode, ObjectNode,
+import type { ArrayNode, FormTypeInputProps, InferSchemaNode, NullNode, NumberNode, ObjectNode,
   SchemaNode, StringNode, TerminalNode, UnionNode } from '../index';
 import type { ValidationIssue } from '../../validation';
 import type { SchemaNodeListener } from '../../dispatch';
@@ -70,6 +70,17 @@ describe('new SchemaNode public types', () => {
         expectTypeOf(node.children).toEqualTypeOf<null>();
     };
     expect(checkTerminalObject).toBeTypeOf('function');
+  });
+
+  it('TEST-070 keeps structural verbs on both array strategies', () => {
+    expectTypeOf<ArrayNode<string>['push']>().toEqualTypeOf<(value?: string) => number>();
+    expectTypeOf<ArrayNode<string>['pop']>().toEqualTypeOf<() => string | undefined>();
+    expectTypeOf<ArrayNode<string>['update']>()
+      .toEqualTypeOf<(index: number, value: string) => string | undefined>();
+    expectTypeOf<ArrayNode<string>['remove']>()
+      .toEqualTypeOf<(index: number) => string | undefined>();
+    expectTypeOf<ArrayNode<string>['clear']>().toEqualTypeOf<() => void>();
+    expectTypeOf<'push' extends keyof StringNode ? true : false>().toEqualTypeOf<false>();
   });
 
   it('splits union values by mismatch without widening onChange', () => {

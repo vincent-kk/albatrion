@@ -1,3 +1,5 @@
+import { PathKeyedMap } from '../../../utils/pathIndex/PathKeyedMap';
+import { PathKeyedSet } from '../../../utils/pathIndex/PathKeyedSet';
 import { blueprint } from '../../../blueprint';
 import { EMPTY_REVISION_LEDGER } from '../../../record';
 import type { SchemaNodeRecord, SchemaNodeRuntime } from '../../../record';
@@ -26,9 +28,9 @@ export const createNode = (
       globalStateCounts: new Map(),
       globalState: {},
       loadSnapshot: undefined,
-      latentRaw: new Map(),
-      typeMismatchPaths: new Set(),
-      inactiveValuesMemo: new Map(),
+      latentRaw: new PathKeyedMap('pair'),
+      typeMismatchPaths: new PathKeyedSet(),
+      inactiveValuesMemo: new PathKeyedMap<readonly { path: string; value: unknown }[]>('path'),
     };
   const escapedName = name.replace(/~/g, '~0').replace(/\//g, '~1');
   const node: TestNode = {
@@ -38,6 +40,7 @@ export const createNode = (
       project: (_record, local) => local,
       finishInput: () => undefined,
       declareChildren: (record) => record.blueprintNode.childEntries,
+      arrange: () => ({ kind: 'noop' }),
       type: 'object',
       strategy,
     },
@@ -54,6 +57,9 @@ export const createNode = (
     schemaType: template.schemaType,
     structure: strategy === 'branch' ? {} : null,
     children: strategy === 'branch' ? [] : null,
+    itemKey: null,
+    itemCount: 0,
+    nextItemKey: 0,
     raw: undefined,
     extras: undefined,
     active: true,
@@ -65,6 +71,7 @@ export const createNode = (
     schema: { schema: {}, typeConflict: false },
     interactionState: {},
     revisionLedger: EMPTY_REVISION_LEDGER,
+    deliveryInitialized: false, deliveryChanges: 0, pendingRevision: 0,
     detached: false,
   };
   if (parent?.structure !== null && parent !== null) {

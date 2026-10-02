@@ -1,3 +1,5 @@
+import { PathKeyedMap } from '../../../utils/pathIndex/PathKeyedMap';
+import { PathKeyedSet } from '../../../utils/pathIndex/PathKeyedSet';
 import { blueprint } from '../../../blueprint';
 import type { Blueprint, BlueprintSchema } from '../../../blueprint';
 import type { SchemaNodeRuntime } from '../../../record';
@@ -19,7 +21,7 @@ export const createTestTree = (
   const analysis = blueprint(schema);
   const visits: string[] = [];
   const runtime: SchemaNodeRuntime<PlainNode> = {
-    deliveries: new Map(),
+    deliveries: new Set(),
     blueprint: analysis,
     context: {},
     validator,
@@ -29,9 +31,9 @@ export const createTestTree = (
     globalStateCounts: new Map(),
     globalState: {},
     loadSnapshot: undefined,
-    latentRaw: new Map(),
-    typeMismatchPaths: new Set(),
-    inactiveValuesMemo: new Map(),
+    latentRaw: new PathKeyedMap('pair'),
+    typeMismatchPaths: new PathKeyedSet(),
+    inactiveValuesMemo: new PathKeyedMap<readonly { path: string; value: unknown }[]>('path'),
   };
   return { root: createPlainNode(analysis.root, null, runtime, visits),
     blueprint: analysis, visits };

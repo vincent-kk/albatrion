@@ -5,6 +5,7 @@ import { SchemaNodeEventType } from '../../record';
 import { SetValueOption } from '../../types/value';
 import { loadSchemaNodeAtMount, writeSchemaNode } from '../index';
 import { createTestTree } from './fixtures/createTestTree';
+import { setTestInteractionState } from './fixtures/setTestInteractionState';
 
 // filid:contract settle-derive
 describe('settle derivation', () => {
@@ -86,7 +87,7 @@ describe('settle derivation', () => {
     } });
     loadSchemaNodeAtMount(root, { clear: false, target: 'X' }, SetValueOption.Overwrite);
     const target = root.structure!.target;
-    target.interactionState = { [NodeState.Dirty]: true, [NodeState.Touched]: true };
+    setTestInteractionState(target, { [NodeState.Dirty]: true, [NodeState.Touched]: true });
     const revision = target.revisionLedger[SchemaNodeEventType.UpdateState] ?? 0;
     writeSchemaNode(root.structure!.clear, true, 'input', SetValueOption.Overwrite);
     expect(target.interactionState[NodeState.Dirty]).toBe(false);
@@ -106,7 +107,7 @@ describe('settle derivation', () => {
     loadSchemaNodeAtMount(root, { clear: false, target: 'before' },
       SetValueOption.Overwrite);
     const target = root.structure!.target;
-    target.interactionState = { [NodeState.Dirty]: true, [NodeState.Touched]: true };
+    setTestInteractionState(target, { [NodeState.Dirty]: true, [NodeState.Touched]: true });
     writeSchemaNode(root, { clear: true, target: 'manual' }, 'load',
       SetValueOption.DisableAutomaticWrites);
     expect(root.structure?.target?.raw).toBe('manual');
