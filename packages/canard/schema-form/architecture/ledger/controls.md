@@ -688,6 +688,7 @@
   > "**로컬**은 노드 자신의 키와 `controls`의 식이다." (`02-target-overview.md:294`)
   > "오늘 루트 키 다섯(`readOnly`·`disabled`·`active`·`visible`·`pristine`)의 특수 처리와 README의 "Priority System"은 사라진다." (`08-design-a-to-z.md:335`)
   > "렌더 계층이 코어의 결과 위에 OR한다." (`08-design-a-to-z.md:339`)
+  > 편집자 결정(65C-02): "【추론】 상태 키(SETTLE-003 "상태 키는 그 노드에만 걸린다", CONTROLS-045), 전역 상태(EVENT-062 "형상 안 노드에서 유도한다 — 키별 참 노드 수"), 감시 트리거는 모두 청사진이 선언한 기능이므로 어느 노드가 그 기능을 가질 수 있는지는 컴파일 때 정해진다; 그러므로 그 통과가 바뀐 노드 전체를 훑는 것은 SETTLE-017의 "역의존 표(정적 색인)"와 같은 결로 청사진 범위의 정적 색인(기능 → 그 기능을 선언한 청사진 노드 집합)으로 바꿀 수 있고, 통과는 재계산 목록과 그 색인의 교집합만 방문한다. 기능을 선언한 노드가 없는 폼에서는 통과가 0 방문이다. 의미는 바뀌지 않는다: 어느 노드가 어떤 상태 키·전역 상태 비트·감시를 갖는지는 그대로이고, 방문 순서가 결과에 들지 않는 통과에만 적용한다(순서가 결과에 드는 통과는 SETTLE-006의 순서를 지킨다)." (`reviews/round-65-closing.md:17`)
 - 상태: 현행
 - 출처: `adr/0003-group-namespace.md:115`(정본), `02-target-overview.md:291-297`, `08-design-a-to-z.md:335-339`, `07-conclusions.md:158`, `07-conclusions.md:164`
 - 닫은 사람: 소유자 답(`reviews/round-13-owner-answers.md:7` 1 잠금 규칙), 소유자 답(`reviews/round-10-owner-answers.md:25` E-13), 소유자 답(`reviews/round-13-owner-answers.md:16` Form 속성의 자리), 소유자 답(`reviews/round-12-owner-answers.md:7` 1 Form 속성 `false`)
