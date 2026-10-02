@@ -54,7 +54,7 @@
 | 04 | 파생 + 상태 키·제어 | 머지 | [#351](https://github.com/vincent-kk/albatrion/pull/351) | 브랜치 `feat/schema-form-derive-and-controls`. 2026-10-01 머지(`54afafb86`). 뒤 단계로 넘긴 사례는 [log](plan/04-derive-and-controls/log.md) §4, 속도 문제는 [대장](verification/performance-issues.md). 느린 벤치 행 수용은 30라운드 소유자 답으로 기록(TEST-027·071 보충) |
 | 05 | 통지·검증 | 머지 | [#352](https://github.com/vincent-kk/albatrion/pull/352) | 브랜치 `feat/schema-form-dispatch-and-validation`. 2026-10-02 머지(`afbba714d`). D-1은 30라운드로 닫힘(EVENT-073 보충). 06이 맡을 일은 [log](plan/05-dispatch-and-validation/log.md) "06에 넘길 목록"과 #352 본문의 머지 순서 메모(33C-01). 느린 벤치 행 P-16–P-19는 56라운드로 소유자 수용, 속도 문제는 [대장](verification/performance-issues.md) |
 | 06 | 배열 | 머지 | [#353](https://github.com/vincent-kk/albatrion/pull/353) | 브랜치 `feat/schema-form-array`. 2026-10-02 머지(`07a083c18`). 05를 통합해 그 "06에 넘길 목록"을 맡음. P-23은 64·65라운드대로 진단·개선해 R-22 해결(65C-01 표본, 통째 쓰기 Node 1.39–1.42×·Bun 2.09–2.11×), P-14의 54라운드 수용 유지. 07이 이어받는 열림 행 P-24·P-25(03 코드, 수용 대상 아님), 속도 문제는 [대장](verification/performance-issues.md). 실행 기록은 [log](plan/06-array/log.md) |
-| 07 | 전환 | 착수 가능 | — | 02–06 전부 머지(06 `07a083c18`, 2026-10-02). 원샷. 브랜치 제안 `feat/schema-form-switch`, 착수 문서 [request](plan/07-switch/request.md) |
+| 07 | 전환 | 진행 | — | 브랜치 `feat/schema-form-switch`(2026-10-02 착수, `1.0.0-beta` `1ba284393`). 원샷. 착수 물음은 68라운드로 닫힘. 실행 계획은 [execution-plan](plan/07-switch/execution-plan.md), 기록은 [log](plan/07-switch/log.md) |
 | 08 | 플러그인 | 대기 | — | 07 뒤 |
 | 최적화 | 성능 최적화 | 대기 | — | 07 머지 뒤 착수, 08과 병렬, 09 전에 끝냄. 묶음(M2)마다 PR 하나. 출발점은 [대장](verification/performance-issues.md), 계획은 [request](plan/perf-optimization/request.md) |
 | 09 | 정리·릴리스 | 대기 | — | 08·최적화와 릴리스 전환 PR 뒤. 머지되면 우산을 `master`로 |
