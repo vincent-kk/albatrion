@@ -26,7 +26,7 @@ export const captureSchemaNodeChange = <Self, Key extends keyof typeof CHANGE_BI
   Value extends SchemaNodeRecord<Self>[Key]>(
   node: SchemaNodeRecord<Self>, field: Key, value: Value,
 ): Value => {
-  if (node[field] === value || !node.deliveryInitialized) return value;
+  if (node[field] === value || !node.deliveryInitialized || node.detached) return value;
   const bit = CHANGE_BITS[field];
   if (!(node.deliveryChanges & bit)) {
     switch (bit) {
