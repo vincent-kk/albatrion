@@ -3,10 +3,10 @@ import type { SchemaNodeRecord } from '../../../record';
 import { getFeatureNodeIndex } from '../../../blueprint';
 import type { SettlementContext } from '../../type';
 import { readSchemaNodeWatchValues } from '../controls/readSchemaNodeWatchValues';
-import { sameValue } from '../compute/sameValue';
 import { createWatchDeliveryIndex } from './utils/createWatchDeliveryIndex';
 import { commitGlobalState } from './commitGlobalState';
 import { getWatchDeliveryPaths } from './utils/getWatchDeliveryPaths';
+import { isSameDeliveryValue } from './utils/isSameDeliveryValue';
 
 /** Payload immutability follows the module's development build mode. */
 const DEVELOPMENT = process.env.NODE_ENV !== 'production';
@@ -108,10 +108,11 @@ export const markCommitDeliveries = <Self extends SchemaNodeRecord<Self>>(
     }
     const watchChanged = initialized &&
       (watched.length !== previousWatchValues.length ||
-        watched.some((value, index) => !sameValue(value, previousWatchValues[index])));
+        watched.some((value, index) => !isSameDeliveryValue(value, previousWatchValues[index])));
     if (initialized) {
       if ((changes & SchemaNodeEventType.UpdateValue) &&
-        (node.deliveryPreviousLocal !== node.local || node.deliveryPreviousEmit !== node.emit)) {
+        (!isSameDeliveryValue(node.deliveryPreviousLocal, node.local) ||
+          !isSameDeliveryValue(node.deliveryPreviousEmit, node.emit))) {
         const pendingValue = pending?.[SchemaNodeEventType.UpdateValue];
         const oldValue = pendingValue !== null && typeof pendingValue === 'object' ?
           Reflect.get(pendingValue, 'previous') : node.behavior.strategy === 'branch' ?
