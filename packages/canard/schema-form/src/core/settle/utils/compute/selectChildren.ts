@@ -18,13 +18,18 @@ import { distributeLatentValue } from '../latent/distributeLatentValue';
 import { enterSchemaNode } from './enterSchemaNode';
 import { hasDistributedChildInput } from '../write/hasDistributedChildInput';
 import { createChildNode } from './createChildNode';
-import type { BlueprintChildEntry } from '../../../blueprint';
+import type { BlueprintChildEntry, BlueprintNode, EffectiveSchema } from '../../../blueprint';
 import { indexEnteredLatentKey } from '../latent/indexEnteredLatentKey';
 
 /** Ungated declarations are included by the effective-schema merger itself. */
 const NO_ACTIVE_IDS: readonly number[] = Object.freeze([]);
 /** Static selection IDs belong to the analyzed child edge. */
 const STATIC_IDS = new WeakMap<BlueprintChildEntry, readonly number[]>();
+
+/** Immutable, ungated object shapes shared by occurrences of one blueprint host. */
+const STATIC_SHAPES = new WeakMap<BlueprintNode, readonly {
+  entry: BlueprintChildEntry; ids: readonly number[]; schema: EffectiveSchema;
+}[] | null>();
 
 /** Return one stable active-ID list for an ungated child edge. */
 const staticIds = (entry: BlueprintChildEntry): readonly number[] => {
@@ -34,6 +39,27 @@ const staticIds = (entry: BlueprintChildEntry): readonly number[] => {
     STATIC_IDS.set(entry, ids);
   }
   return ids;
+};
+
+/** Memoize an unambiguous static host in the structure's property order. */
+const staticShape = (host: BlueprintNode) => {
+  if (STATIC_SHAPES.has(host)) return STATIC_SHAPES.get(host);
+  const selected: Record<string, {
+    entry: BlueprintChildEntry; ids: readonly number[]; schema: EffectiveSchema;
+  }> = Object.create(null);
+  for (const entry of host.childEntries) {
+    const schema = mergeEffectiveSchema(entry.node, NO_ACTIVE_IDS, { mode: 'runtime' });
+    if (hasOwnProperty(selected, entry.name) || entry.node.kind === 'virtual' ||
+      !entry.declarations.length || schema.typeConflict ||
+      entry.declarations.some((declaration) => declaration.gates.length > 0)) {
+      STATIC_SHAPES.set(host, null);
+      return null;
+    }
+    selected[entry.name] = { entry, ids: staticIds(entry), schema };
+  }
+  const shape = Object.values(selected);
+  STATIC_SHAPES.set(host, shape);
+  return shape;
 };
 
 /**
@@ -52,6 +78,24 @@ export const selectChildren = <Self extends SchemaNodeRecord<Self>>(
   computeChild: (child: Self) => void,
   immediate: boolean,
 ): boolean => {
+  if (!context.hasGates && node.behavior.type === 'object') {
+    const shape = staticShape(node.blueprintNode);
+    const children = node.children;
+    if (shape && children && children.length === shape.length &&
+      shape.every(({ entry, schema }, index) => {
+        const child = children[index];
+        return child.name === entry.name && child.blueprintNode === entry.node &&
+          child.schema === schema && child.active && !child.detached &&
+          node.structure?.[entry.name] === child;
+      })) {
+      for (let index = 0; index < shape.length; index++) {
+        const child = children[index];
+        context.selectedDeclarationIds.set(child, shape[index].ids);
+        if (context.dirtyPaths.has(child.path)) computeChild(child);
+      }
+      return false;
+    }
+  }
   if (node.behavior.type === 'virtual') {
     const before = node.children ?? [];
     const next: Record<string, Self> = Object.create(null);
