@@ -71,7 +71,7 @@ describe('selfcheck-v5 PR-2 regression', () => {
     root.setValue({ note: 'typed', keep: 'K1' });
     const note = root.find('/note');
     root.setValue(null);
-    expect(root.outputValue).toEqual({});
+    expect(root.outputValue).toBeNull();
     note?.setValue('Z');
     expect(root.outputValue).toEqual({ note: 'Z' });
     expect(root.find('/keep')?.raw).toBeUndefined();
@@ -114,7 +114,7 @@ describe('selfcheck-v5 PR-2 regression', () => {
       root.setValue({ keep: 'OLD' });
       const note = root.find('/note');
       root.setValue(value);
-      expect(root.outputValue).toEqual({});
+      expect(root.outputValue).toEqual(value);
       note?.setValue('Z');
       expect(root.outputValue).toEqual({ note: 'Z' });
     });
@@ -190,7 +190,7 @@ describe('selfcheck-v5 PR-2 regression', () => {
     const root = nullHost();
     root.setValue({ target: { note: 'typed', reason: 'edited' } });
     root.setValue({ target: null });
-    expect(root.outputValue).toEqual({});
+    expect(root.outputValue).toEqual({ target: null });
     expect(root.find('/target')?.raw).toBeNull();
     expect(root.find('/target')?.children?.map(child => child.raw))
       .toEqual([undefined, undefined]);

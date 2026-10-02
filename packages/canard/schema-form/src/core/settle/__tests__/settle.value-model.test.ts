@@ -8,6 +8,47 @@ import { sourceAt } from './fixtures/sourceAt';
 
 // filid:contract settle-write
 describe('per-node branch sources', () => {
+  it('39C-01 preserves null and scalar object hosts without child emission', () => {
+    const schema = { type: 'object' as const, properties: {
+      kind: { type: 'string' as const },
+    }, allOf: [{ controls: { active: './kind === "cat"' },
+      properties: { meow: { type: 'boolean' as const, default: true } } }] };
+    const nullTree = createTestTree(schema).root;
+    loadSchemaNodeAtMount(nullTree, null, SetValueOption.Overwrite);
+    expect(nullTree.emit).toBeNull();
+    expect(nullTree.structure?.kind).toBeDefined();
+    expect(nullTree.structure?.meow).toBeUndefined();
+    const scalarTree = createTestTree(schema).root;
+    loadSchemaNodeAtMount(scalarTree, 17, SetValueOption.Overwrite);
+    expect(scalarTree.emit).toBe(17);
+    expect(scalarTree.structure?.kind).toBeDefined();
+    expect(scalarTree.structure?.meow).toBeUndefined();
+    const catTree = createTestTree(schema).root;
+    loadSchemaNodeAtMount(catTree, { kind: 'cat' }, SetValueOption.Overwrite);
+    expect(catTree.emit).toEqual({ kind: 'cat', meow: true });
+  });
+
+  it('39C-01 keeps a nullable object null and a replaced child null', () => {
+    const { root } = createTestTree({ type: 'object', properties: {
+      user: { type: ['object', 'null'], properties: {
+        note: { type: 'string' },
+      } },
+      target: { type: 'object', properties: {
+        note: { type: 'string' },
+        reason: { type: 'string', default: 'because' },
+      } },
+    } });
+    loadSchemaNodeAtMount(root, { user: null, target: {
+      note: 'typed', reason: 'edited',
+    } }, SetValueOption.Overwrite);
+    expect(root.emit).toEqual({ user: null, target: {
+      note: 'typed', reason: 'edited',
+    } });
+    writeSchemaNode(root, { user: null, target: null }, 'callerReplace',
+      SetValueOption.Overwrite);
+    expect(root.emit).toEqual({ user: null, target: null });
+    expect(root.structure?.target?.structure?.note?.raw).toBeUndefined();
+  });
   it('VALUE-002/004 keeps an object host empty and its extra keys separately', () => {
     const { root } = createTestTree({ type: 'object', properties: {
       a: { type: 'string' },

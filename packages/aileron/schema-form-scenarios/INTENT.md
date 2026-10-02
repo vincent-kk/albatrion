@@ -2,37 +2,37 @@
 
 ## Purpose
 
-Own reusable form scenario data and the screen adapter for a rendered form.
-This private workspace supports
-schema-form verification without depending on the schema-form package.
+재사용 가능한 폼 시나리오 데이터와 렌더된 폼의 화면 어댑터를 소유합니다.
+이 비공개 워크스페이스는
+schema-form 패키지에 의존하지 않고 schema-form 검증을 지원합니다.
 
 ## Conventions
 
-- Scenario modules contain pure data; execution belongs to adapters.
-- Use structural contracts for schemas, nodes, handles, and injected forms.
-- Families name value, settle, fill, exit, and union behavior.
+- 시나리오 모듈에는 순수 데이터만 두며, 실행은 어댑터가 소유합니다.
+- 스키마·노드·핸들·주입된 폼에 구조적 계약을 사용합니다.
+- 부류는 value, settle, fill, exit, union, derive, controls, array, notify, validation 동작을 이름으로 나타냅니다.
 
 ## Boundaries
 
-The package owns scenario vocabulary, screen execution, DOM handle registration,
-and the form wrapper. The consumer owns core scenario execution, the engine,
-form implementation, rendering lifecycle, and assertion runtime.
+패키지는 시나리오 어휘·화면 실행·DOM 핸들 등록을 소유하며,
+폼 감싸개도 소유합니다. 소비자는 코어 시나리오 실행·엔진·
+폼 구현·렌더링 수명주기·단언 런타임을 소유합니다.
 
 ## Always do
 
-- Keep schema-form imports absent, including type-only imports.
-- Resolve registered handles on the received element and its descendants.
-- Keep scenario data reusable by core tests, render tests, and Storybook.
-- Preserve the single `playScenario(scenario, element)` entry shape.
+- 형 전용 가져오기를 포함해 schema-form 가져오기를 두지 않습니다.
+- 받은 요소와 그 하위 요소에서 등록된 핸들을 찾습니다.
+- 코어 시험·렌더 시험·Storybook에서 시나리오 데이터를 재사용할 수 있게 유지합니다.
+- 단일 `playScenario(scenario, element)` 진입 형태를 보존합니다.
 
 ## Ask first
 
-- Expand the action vocabulary beyond the ledger's eight actions.
-- Add a dependency from this package to a form engine implementation.
-- Make this private verification package publishable.
+- 원장의 여덟 동작을 넘어 동작 어휘를 넓히기 전에 확인합니다.
+- 이 패키지에서 폼 엔진 구현에 대한 의존성을 추가하기 전에 확인합니다.
+- 이 비공개 검증 패키지를 배포 가능하게 만들기 전에 확인합니다.
 
 ## Never do
 
-- Import an engine or a test runner into a scenario data module.
-- Duplicate a scenario's schema and steps in each execution layer.
-- Claim that an empty family verifies engine behavior.
+- 시나리오 데이터 모듈에 엔진이나 테스트 러너를 가져오지 않습니다.
+- 각 실행 계층에 시나리오의 스키마와 단계를 복제하지 않습니다.
+- 빈 부류가 엔진 동작을 검증한다고 주장하지 않습니다.

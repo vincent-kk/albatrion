@@ -199,7 +199,7 @@ describe('injectTo and same-target settlement', () => {
     writeSchemaNode(root.structure!.source, 'B', 'input', SetValueOption.Overwrite);
     expect(root.structure?.box?.raw).toBeNull();
     expect(root.structure?.box?.structure?.target?.raw).toBe('injected');
-    expect(root.emit).toEqual({ source: 'B' });
+    expect(root.emit).toEqual({ source: 'B', box: null });
   });
 
   it('ERROR-195 writeShape degrades an invalid automatic virtual write', () => {

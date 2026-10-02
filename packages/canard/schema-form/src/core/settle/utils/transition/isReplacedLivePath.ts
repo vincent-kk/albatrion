@@ -12,8 +12,11 @@ export const isReplacedLivePath = <Self extends SchemaNodeRecord<Self>>(
   context: SettlementContext<Self>, path: string,
 ): boolean => {
   const scope = context.replaceScope;
-  if (!scope) return false;
-  if (scope.path && path !== scope.path && !path.startsWith(`${scope.path}/`))
+  const withinScope = scope !== undefined &&
+    (!scope.path || path === scope.path || path.startsWith(`${scope.path}/`));
+  const withinVirtual = context.virtualReplacePaths?.some((replaced) =>
+    path === replaced || path.startsWith(`${replaced}/`)) ?? false;
+  if (!withinScope && !withinVirtual)
     return false;
   const live = find(context.root, path);
   return live !== null && !live.detached;

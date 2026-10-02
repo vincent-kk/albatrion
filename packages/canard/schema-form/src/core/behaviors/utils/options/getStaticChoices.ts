@@ -6,6 +6,8 @@ import type { EffectiveSchema } from '../../../blueprint';
 export interface StaticChoices {
   /** Whether an empty scalar or object is absent from output. */
   readonly omitEmpty: boolean;
+  /** Whether nullish and unfilled trailing array positions are excluded. */
+  readonly omitTrailing: boolean;
   /** Whether completed string input loses surrounding whitespace. */
   readonly trim: boolean;
   /** Preferred host key order ahead of authored declarations. */
@@ -29,6 +31,7 @@ export const getStaticChoices = (effective: EffectiveSchema): StaticChoices => {
   const propertyKeys = hints && 'propertyKeys' in hints ? hints.propertyKeys : undefined;
   const choices: StaticChoices = Object.freeze({
     omitEmpty: !hints || !('omitEmpty' in hints) || hints.omitEmpty !== false,
+    omitTrailing: !!hints && 'omitTrailing' in hints && hints.omitTrailing === true,
     trim: !!hints && 'trim' in hints && hints.trim === true,
     propertyKeys: isArray(propertyKeys)
       ? Object.freeze(propertyKeys.filter((key: unknown): key is string => typeof key === 'string'))

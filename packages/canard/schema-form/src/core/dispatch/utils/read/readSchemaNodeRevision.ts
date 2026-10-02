@@ -1,4 +1,4 @@
-import { SchemaNodeEventType } from '../../../record';
+import { EMPTY_REVISION_LEDGER, SchemaNodeRevisionLedger, SchemaNodeEventType } from '../../../record';
 import type { SchemaNodeRecord } from '../../../record';
 
 /**
@@ -10,8 +10,11 @@ import type { SchemaNodeRecord } from '../../../record';
 export const readSchemaNodeRevision = <Self extends SchemaNodeRecord<Self>>(
   node: Self, mask = Number.MAX_SAFE_INTEGER,
 ): number => {
+  const ledger = node.revisionLedger;
+  if (ledger === EMPTY_REVISION_LEDGER) return 0;
+  if (ledger instanceof SchemaNodeRevisionLedger) return ledger.read(mask);
   let revision = 0;
   for (let bit = 1; bit <= SchemaNodeEventType.UpdateDiagnostics; bit *= 2)
-    if (mask & bit) revision += node.revisionLedger[bit] ?? 0;
+    if (mask & bit) revision += ledger[bit] ?? 0;
   return revision;
 };

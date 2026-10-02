@@ -7,6 +7,7 @@ import { createSettlementContext } from '../settlement/createSettlementContext';
 import { finishSettlement } from '../settlement/finishSettlement';
 import { getSettlementScratch } from '../write/getSettlementScratch';
 import { releaseSettlementScratch } from '../write/releaseSettlementScratch';
+import { expandTemplatePaths } from '../paths/expandTemplatePaths';
 import { getContextOwners } from './getContextOwners';
 
 /**
@@ -23,7 +24,9 @@ export const changeSchemaNodeContext = <Self extends SchemaNodeRecord<Self>>(
   const context = createSettlementContext(root, 'automatic',
     SetValueOption.Overwrite, scratch);
   context.entryApi = 'setContext';
-  context.contextOwners = getContextOwners(root.runtime.blueprint);
+  const owners = getContextOwners(root.runtime.blueprint);
+  context.contextOwners = owners.some((owner) => owner.includes('/*'))
+    ? owners.flatMap((owner) => expandTemplatePaths(root, owner)) : owners;
   root.runtime.context = contextValue;
   context.changedNodes.add(root);
   try {

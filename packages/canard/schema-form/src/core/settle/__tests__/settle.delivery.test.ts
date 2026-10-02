@@ -30,7 +30,7 @@ describe('settlement delivery ledger', () => {
     const previous = a.revisionLedger[SchemaNodeEventType.UpdateValue] ?? 0;
     writeSchemaNode(root, { a: 'second', b: 'same' },
       'callerReplace', SetValueOption.Overwrite);
-    expect((root.runtime.deliveries?.get(a)?.type ?? 0) & SchemaNodeEventType.UpdateValue)
+    expect((a.pendingDelivery?.type ?? 0) & SchemaNodeEventType.UpdateValue)
       .toBe(SchemaNodeEventType.UpdateValue);
     expect(a.revisionLedger[SchemaNodeEventType.UpdateValue]).toBe(previous + 1);
     expect(b.revisionLedger[SchemaNodeEventType.UpdateValue]).toBe(1);
@@ -39,9 +39,10 @@ describe('settlement delivery ledger', () => {
   it('WRITE-096 carries old and new value references and the caller replacement source', () => {
     const { root } = createTestTree({ type: 'string' });
     writeSchemaNode(root, 'old', 'callerReplace', SetValueOption.Overwrite);
+    for (const node of root.runtime.deliveries ?? []) node.pendingDelivery = undefined;
     root.runtime.deliveries?.clear();
     writeSchemaNode(root, 'new', 'callerReplace', SetValueOption.Overwrite);
-    const event = root.runtime.deliveries?.get(root);
+    const event = root.pendingDelivery;
     expect(event?.payload?.[SchemaNodeEventType.UpdateValue])
       .toEqual({ previous: 'old', current: 'new' });
     expect(event?.options?.[SchemaNodeEventType.UpdateValue])
@@ -54,19 +55,21 @@ describe('settlement delivery ledger', () => {
     } });
     writeSchemaNode(root, { value: 'old' }, 'callerReplace', SetValueOption.Overwrite);
     const previous = { local: root.local, emit: root.emit };
+    for (const node of root.runtime.deliveries ?? []) node.pendingDelivery = undefined;
     root.runtime.deliveries?.clear();
     writeSchemaNode(root, { value: 'new' }, 'callerReplace', SetValueOption.Overwrite);
-    expect(root.runtime.deliveries?.get(root)?.payload?.[SchemaNodeEventType.UpdateValue])
+    expect(root.pendingDelivery?.payload?.[SchemaNodeEventType.UpdateValue])
       .toEqual({ previous, current: { local: root.local, emit: root.emit } });
   });
 
   it('EVENT-006 includes a pending signal and EVENT-007 bumps its bit once', () => {
     const { root } = createTestTree({ type: 'string' });
     writeSchemaNode(root, 'same', 'callerReplace', SetValueOption.Overwrite);
+    for (const node of root.runtime.deliveries ?? []) node.pendingDelivery = undefined;
     root.runtime.deliveries?.clear();
     markSchemaNodeEvent(root, SchemaNodeEventType.RequestFocus);
     writeSchemaNode(root, 'same', 'callerReplace', SetValueOption.Overwrite);
-    expect(root.runtime.deliveries?.get(root)?.type).toBe(SchemaNodeEventType.RequestFocus);
+    expect(root.pendingDelivery?.type).toBe(SchemaNodeEventType.RequestFocus);
     expect(root.revisionLedger[SchemaNodeEventType.RequestFocus]).toBe(1);
     writeSchemaNode(root, 'same', 'callerReplace', SetValueOption.Overwrite);
     expect(root.revisionLedger[SchemaNodeEventType.RequestFocus]).toBe(1);
@@ -80,7 +83,7 @@ describe('settlement delivery ledger', () => {
     writeSchemaNode(root, { source: 'A' }, 'callerReplace', SetValueOption.Overwrite);
     const target = root.structure!.target;
     expect(target.local).toBe('A');
-    expect(root.runtime.deliveries?.get(target)?.options?.[
+    expect(target.pendingDelivery?.options?.[
       SchemaNodeEventType.UpdateValue]).toEqual({ source: 'automatic' });
   });
 
@@ -91,19 +94,20 @@ describe('settlement delivery ledger', () => {
     loadSchemaNodeAtMount(root, { a: 'one', b: 'same' }, SetValueOption.Overwrite);
     const a = root.structure!.a;
     const b = root.structure!.b;
-    expect((root.runtime.deliveries?.get(root)?.type ?? 0) & SchemaNodeEventType.RequestRefresh)
+    expect((root.pendingDelivery?.type ?? 0) & SchemaNodeEventType.RequestRefresh)
       .toBe(SchemaNodeEventType.RequestRefresh);
-    expect((root.runtime.deliveries?.get(a)?.type ?? 0) & SchemaNodeEventType.RequestRefresh)
+    expect((a.pendingDelivery?.type ?? 0) & SchemaNodeEventType.RequestRefresh)
       .toBe(SchemaNodeEventType.RequestRefresh);
-    expect((root.runtime.deliveries?.get(b)?.type ?? 0) & SchemaNodeEventType.RequestRefresh)
+    expect((b.pendingDelivery?.type ?? 0) & SchemaNodeEventType.RequestRefresh)
       .toBe(SchemaNodeEventType.RequestRefresh);
+    for (const node of root.runtime.deliveries ?? []) node.pendingDelivery = undefined;
     root.runtime.deliveries?.clear();
     writeSchemaNode(root, { a: 'two', b: 'same' },
       'callerReplace', SetValueOption.Overwrite);
-    expect((root.runtime.deliveries?.get(a)?.type ?? 0) & SchemaNodeEventType.RequestRefresh)
+    expect((a.pendingDelivery?.type ?? 0) & SchemaNodeEventType.RequestRefresh)
       .toBe(SchemaNodeEventType.RequestRefresh);
-    expect((root.runtime.deliveries?.get(b)?.type ?? 0) & SchemaNodeEventType.RequestRefresh).toBe(0);
-    expect((root.runtime.deliveries?.get(root)?.type ?? 0) & SchemaNodeEventType.RequestRefresh).toBe(0);
+    expect((b.pendingDelivery?.type ?? 0) & SchemaNodeEventType.RequestRefresh).toBe(0);
+    expect((root.pendingDelivery?.type ?? 0) & SchemaNodeEventType.RequestRefresh).toBe(0);
   });
 
   it('EVENT-064 reports effective schema references separately from computed properties', () => {
@@ -115,28 +119,30 @@ describe('settlement delivery ledger', () => {
       'callerReplace', SetValueOption.Overwrite);
     const value = root.structure!.value;
     const previous = value.schema;
+    for (const node of root.runtime.deliveries ?? []) node.pendingDelivery = undefined;
     root.runtime.deliveries?.clear();
     writeSchemaNode(root.structure!.enabled, true, 'input', SetValueOption.Overwrite);
-    const payload = root.runtime.deliveries?.get(value)?.payload?.[
+    const payload = value.pendingDelivery?.payload?.[
       SchemaNodeEventType.UpdateJsonSchema];
     expect(payload).toEqual({ previous: previous.schema, current: value.schema.schema });
     expect(Object.isFrozen(payload)).toBe(process.env.NODE_ENV !== 'production');
-    expect((root.runtime.deliveries?.get(value)?.type ?? 0) &
+    expect((value.pendingDelivery?.type ?? 0) &
       SchemaNodeEventType.UpdateComputedProperties).toBe(0);
   });
 
   it('EVENT-043 marks root diagnostics only when a commit changes them', () => {
     const { root } = createTestTree({ type: 'string' });
     writeSchemaNode(root, 'first', 'callerReplace', SetValueOption.Overwrite);
-    expect((root.runtime.deliveries?.get(root)?.type ?? 0) &
+    expect((root.pendingDelivery?.type ?? 0) &
       SchemaNodeEventType.UpdateDiagnostics).toBe(0);
+    for (const node of root.runtime.deliveries ?? []) node.pendingDelivery = undefined;
     root.runtime.deliveries?.clear();
     writeSchemaNode(root, 'second', 'callerReplace', SetValueOption.Overwrite);
-    expect((root.runtime.deliveries?.get(root)?.type ?? 0) &
+    expect((root.pendingDelivery?.type ?? 0) &
       SchemaNodeEventType.UpdateDiagnostics).toBe(0);
     root.runtime.diagnostics = { status: 'degraded', cause: 'budget' };
     writeSchemaNode(root, 'third', 'callerReplace', SetValueOption.Overwrite);
-    expect((root.runtime.deliveries?.get(root)?.type ?? 0) &
+    expect((root.pendingDelivery?.type ?? 0) &
       SchemaNodeEventType.UpdateDiagnostics).toBe(SchemaNodeEventType.UpdateDiagnostics);
   });
 
@@ -146,9 +152,10 @@ describe('settlement delivery ledger', () => {
     }, if: { properties: { enabled: { const: true } },
       required: ['enabled'] }, then: { properties: { extra: { type: 'string' } } } });
     writeSchemaNode(root, { enabled: false }, 'callerReplace', SetValueOption.Overwrite);
+    for (const node of root.runtime.deliveries ?? []) node.pendingDelivery = undefined;
     root.runtime.deliveries?.clear();
     writeSchemaNode(root.structure!.enabled, true, 'input', SetValueOption.Overwrite);
-    expect((root.runtime.deliveries?.get(root)?.type ?? 0) &
+    expect((root.pendingDelivery?.type ?? 0) &
       SchemaNodeEventType.UpdateChildren).toBe(SchemaNodeEventType.UpdateChildren);
   });
 
@@ -160,9 +167,10 @@ describe('settlement delivery ledger', () => {
     loadSchemaNodeAtMount(root, { clear: false, target: 'X' }, SetValueOption.Overwrite);
     const target = root.structure!.target;
     target.interactionState = { [NodeState.Dirty]: true, [NodeState.Touched]: true };
+    for (const node of root.runtime.deliveries ?? []) node.pendingDelivery = undefined;
     root.runtime.deliveries?.clear();
     writeSchemaNode(root.structure!.clear, true, 'input', SetValueOption.Overwrite);
-    expect((root.runtime.deliveries?.get(target)?.type ?? 0) &
+    expect((target.pendingDelivery?.type ?? 0) &
       SchemaNodeEventType.UpdateState).toBe(SchemaNodeEventType.UpdateState);
   });
 
@@ -174,9 +182,10 @@ describe('settlement delivery ledger', () => {
     writeSchemaNode(root, { source: 'old', watcher: 'fixed' },
       'callerReplace', SetValueOption.Overwrite);
     const watcher = root.structure!.watcher;
+    for (const node of root.runtime.deliveries ?? []) node.pendingDelivery = undefined;
     root.runtime.deliveries?.clear();
     writeSchemaNode(root.structure!.source, 'new', 'input', SetValueOption.Overwrite);
-    expect((root.runtime.deliveries?.get(watcher)?.type ?? 0) &
+    expect((watcher.pendingDelivery?.type ?? 0) &
       SchemaNodeEventType.UpdateComputedProperties)
       .toBe(SchemaNodeEventType.UpdateComputedProperties);
   });

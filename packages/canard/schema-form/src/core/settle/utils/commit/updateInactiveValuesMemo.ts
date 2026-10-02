@@ -1,8 +1,10 @@
+import { PathKeyedMap } from '../../../utils/pathIndex/PathKeyedMap';
 import { find } from '../../../navigation';
 import type { SchemaNodeRecord } from '../../../record';
 import { isTypeMismatch } from './isTypeMismatch';
 import { HostLatent } from '../latent/HostLatent';
 import { EMPTY_VALUES } from '../detached/emptyDetachedReads';
+import { isArray } from '@winglet/common-utils/filter';
 
 /** Compare two occurrence positions without converting them to path strings. */
 const compareOrder = (left: readonly number[], right: readonly number[]): number => {
@@ -24,7 +26,7 @@ export const updateInactiveValuesMemo = <Self extends SchemaNodeRecord<Self>>(
   const runtime = root.runtime;
   if (!runtime.latentRawDirty && runtime.inactiveValuesMemo.has('')) return;
   const metadata = runtime.latentRawMetadata;
-  const entries = runtime.inactiveValueEntries ?? new Map();
+  const entries = runtime.inactiveValueEntries ??= new PathKeyedMap('pair');
   const changedPaths: string[] = [];
   const candidates = new Map<string, { path: string; value: unknown;
     order: readonly number[] }>();
@@ -34,7 +36,9 @@ export const updateInactiveValuesMemo = <Self extends SchemaNodeRecord<Self>>(
     const template = info.blueprintNode;
     const value = template.strategy === 'terminal' ? source :
       source instanceof HostLatent && source.raw !== undefined &&
-        isTypeMismatch(source.raw, template.schemaType, template.nullable)
+        (template.kind === 'array' && template.strategy === 'branch' &&
+          isArray(source.raw) ||
+          isTypeMismatch(source.raw, template.schemaType, template.nullable))
         ? source.raw : undefined;
     if (value !== undefined)
       candidates.set(key, { path: info.path, value, order: info.order });
@@ -80,9 +84,21 @@ export const updateInactiveValuesMemo = <Self extends SchemaNodeRecord<Self>>(
       ancestor = ancestor.slice(0, ancestor.lastIndexOf('/'));
     }
   }
+  const entriesByHost = new Map<string, { path: string; value: unknown }[]>();
+  for (const { entry } of ordered) {
+    let ancestor = entry.path;
+    while (true) {
+      if (affected.has(ancestor)) {
+        const descendants = entriesByHost.get(ancestor) ?? [];
+        descendants.push(entry);
+        entriesByHost.set(ancestor, descendants);
+      }
+      if (!ancestor) break;
+      ancestor = ancestor.slice(0, ancestor.lastIndexOf('/'));
+    }
+  }
   for (const host of affected) {
-    const next = ordered.filter(({ entry }) => !host || entry.path === host ||
-      entry.path.startsWith(`${host}/`)).map(({ entry }) => entry);
+    const next = entriesByHost.get(host) ?? [];
     const previous = runtime.inactiveValuesMemo.get(host);
     if (previous && previous.length === next.length &&
       previous.every((entry, index) => entry === next[index])) continue;

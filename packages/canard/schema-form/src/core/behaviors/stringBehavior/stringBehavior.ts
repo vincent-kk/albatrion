@@ -4,6 +4,7 @@ import { assembleRaw } from '../utils/slots/assembleRaw';
 import { declareNoChildren } from '../utils/slots/declareNoChildren';
 import { finishStringInput } from '../utils/slots/finishStringInput';
 import { projectEmpty } from '../utils/slots/projectEmpty';
+import { rejectArrayOperation } from '../utils/slots/rejectArrayOperation';
 
 /** Calculation row for scalar string nodes. */
 export const stringBehavior: Behavior = Object.freeze({
@@ -12,6 +13,7 @@ export const stringBehavior: Behavior = Object.freeze({
   project: projectEmpty,
   finishInput: finishStringInput,
   declareChildren: declareNoChildren,
+  arrange: rejectArrayOperation,
   type: 'string',
   strategy: 'terminal',
 });

@@ -110,22 +110,25 @@ class GateRegistry {
   }
 
   /** Whether changed raw intersects any read that can affect this host's wheel. */
-  mayChangeAt(path: string, changedRaw: ReadonlySet<string>): boolean {
+  mayChangeAt(path: string, changedRaw: ReadonlySet<string>,
+    changedAncestors: ReadonlySet<string>): boolean {
     for (const occurrence of this.byLocation.get(path) ?? [])
-      if (this.readsChanged(occurrence, changedRaw)) return true;
+      if (this.readsChanged(occurrence, changedRaw, changedAncestors)) return true;
     return false;
   }
 
   /** Whether a changed read can reselect this live node's own declarations. */
-  mayChangeOwnDeclarationAt(path: string, changedRaw: ReadonlySet<string>): boolean {
+  mayChangeOwnDeclarationAt(path: string, changedRaw: ReadonlySet<string>,
+    changedAncestors: ReadonlySet<string>): boolean {
     for (const occurrence of this.byPath.get(path)?.ownOccurrences ?? [])
-      if (this.readsChanged(occurrence, changedRaw)) return true;
+      if (this.readsChanged(occurrence, changedRaw, changedAncestors)) return true;
     return false;
   }
 
-  /** Forget a detached subtree's location entries. */
+  /** Forget a detached subtree's location entries; a virtual node's referenced siblings stay. */
   remove<Self extends SchemaNodeRecord<Self>>(node: Self): void {
-    for (const child of node.children ?? []) this.remove(child);
+    for (const child of node.children ?? [])
+      if (child.parent === node) this.remove(child);
     if (this.byPath.get(node.path)?.node === node) this.removePath(node.path);
   }
 
@@ -168,12 +171,17 @@ class GateRegistry {
   /** Check whether a bound gate reads a changed raw path. */
   private readsChanged(
     occurrence: RegisteredGateOccurrence, changedRaw: ReadonlySet<string>,
+    changedAncestors: ReadonlySet<string>,
   ): boolean {
-    for (const watched of occurrence.watchPaths)
-      for (const changed of changedRaw)
-        if (changed === watched || watched === '' ||
-          changed.startsWith(`${watched}/`) || watched.startsWith(`${changed}/`))
-          return true;
+    if (changedRaw.size === 0) return false;
+    for (const watched of occurrence.watchPaths) {
+      if (watched === '' || changedRaw.has(watched) || changedAncestors.has(watched)) return true;
+      if (watched.startsWith('/'))
+        for (let prefix = watched; prefix;) {
+          prefix = prefix.slice(0, prefix.lastIndexOf('/'));
+          if (changedRaw.has(prefix)) return true;
+        }
+    }
     return false;
   }
 

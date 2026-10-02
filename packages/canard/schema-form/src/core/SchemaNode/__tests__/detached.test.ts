@@ -203,7 +203,8 @@ describe('detached SchemaNode references', () => {
     old.resetSubtree();
     expect(current.raw).toBe('initial');
     expect(Reflect.get(runtime, 'commitNumber')).toBe(commit);
-    expect(Reflect.get(runtime, 'latentRaw')).toEqual(new Map());
+    expect(Reflect.get(runtime, 'latentRaw')).toBeInstanceOf(Map);
+    expect(Reflect.get(runtime, 'latentRaw')).toHaveProperty('size', 0);
     expect(root.inactiveValues.some((entry) => entry.path === '/target')).toBe(false);
 
     root.find('/flag')?.setValue(false);
@@ -227,7 +228,8 @@ describe('detached SchemaNode references', () => {
     expect(current.raw).toBeUndefined();
     expect(root.find('/group/leaf')?.raw).toBe('initial');
     expect(Reflect.get(runtime, 'commitNumber')).toBe(commit);
-    expect(Reflect.get(runtime, 'latentRaw')).toEqual(new Map());
+    expect(Reflect.get(runtime, 'latentRaw')).toBeInstanceOf(Map);
+    expect(Reflect.get(runtime, 'latentRaw')).toHaveProperty('size', 0);
     expect(root.inactiveValues.some((entry) => entry.path === '/group')).toBe(false);
   });
 });

@@ -46,9 +46,9 @@ describe('dispatcher delivery waves', () => {
       return siblings;
     } });
 
-    const pending = new Map<unknown, SchemaNodeDelivery>();
+    const pending: [typeof root, SchemaNodeDelivery][] = [];
     for (const node of [e, d, c, b, a, root])
-      pending.set(node, { type: SchemaNodeEventType.UpdateValue });
+      pending.push([node, { type: SchemaNodeEventType.UpdateValue }]);
     deliverWave(root, pending);
 
     expect(seen).toEqual(['', '/b', '/c', '/d', '/e']);
@@ -112,7 +112,8 @@ describe('dispatcher delivery waves', () => {
     let calls = 0;
     subscribeSchemaNode(child, () => { calls += 1; });
     child.detached = true;
-    runtime.deliveries?.set(child, { type: SchemaNodeEventType.UpdateValue });
+    runtime.deliveries?.add(child);
+    child.pendingDelivery = { type: SchemaNodeEventType.UpdateValue };
     dispatchBatch(root, () => {});
     expect(calls).toBe(0);
     expect(runtime.deliveries?.has(child)).toBe(false);

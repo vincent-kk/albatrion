@@ -1,6 +1,8 @@
 import { FEEDBACK_LIMIT_EXCEEDED, SchemaFormError } from '../../../../errors';
+import { isArray } from '@winglet/common-utils/filter';
 import type { FormErrorRecord } from '../../../../errors';
 import type { SchemaNodeRecord } from '../../../record';
+import { indexSchemaNodeWarning } from '../../../record';
 import { ValidationMode } from '../../../types/state';
 import { requestSchemaNodeValidation } from '../../../validation';
 import { deliverValidationWave } from './deliverValidationWave';
@@ -36,9 +38,16 @@ export const exitSchemaNodeChain = <Self extends SchemaNodeRecord<Self>>(
   const pending: FormErrorRecord[] = [];
   const warnings = runtime.pendingWarningRecords;
   if (warnings?.size) {
-    for (const record of warnings.values())
+    for (const [key, record] of warnings) {
       if (!occurrences.some((item) => item.kind === 'record' && item.record === record))
         pending.push(record);
+      if (!runtime.warningKeys?.has(key)) {
+        const parts: unknown = JSON.parse(key.startsWith('[') ? key : 'null');
+        const path = isArray(parts) ? parts[1] : undefined;
+        indexSchemaNodeWarning(runtime, key,
+          typeof path === 'string' ? path : undefined, undefined, true);
+      }
+    }
     warnings.clear();
   }
   const guardRecords = runtime.guardFailureRecords;

@@ -3,6 +3,7 @@ import { BEHAVIORS, isOmittedEmpty } from '../../../behaviors';
 import type { BlueprintChildEntry, BlueprintNode } from '../../../blueprint';
 import type { SchemaNodeRecord, SchemaNodeRuntime } from '../../../record';
 import type { SettlementContext } from '../../type';
+import { getDeclaredChildNames } from '../declarations/getDeclaredChildNames';
 import { isPlain } from '../write/isPlain';
 import { nextExtras } from '../write/nextExtras';
 import { pruneLatentRaw } from '../write/pruneLatentRaw';
@@ -63,7 +64,7 @@ export const distributeLatentValue = <Self extends SchemaNodeRecord<Self>>(
   if (whole) pruneLatentRaw(runtime, path, undefined, context);
   const prior = runtime.latentRaw.get(key);
   const previous = prior instanceof HostLatent ? prior : undefined;
-  const declared = new Set(template.childEntries.map((entry) => entry.name));
+  const declared = getDeclaredChildNames(template);
   const extras = nextExtras(whole ? undefined : previous?.extras,
     value, declared, !whole);
   let wrote = false;

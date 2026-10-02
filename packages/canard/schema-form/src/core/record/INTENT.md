@@ -8,6 +8,7 @@
 
 - 상태는 `raw`와 `extras`뿐이며 나머지 값은 계산값 또는 작업 기록입니다(VALUE-002).
 - 노드 인스턴스가 곧 `SchemaNodeRecord<Self>`이고 종류별 자료는 `structure` 한 칸에 둡니다(NODE-004·046).
+- Keep warning path indexes and frozen detached reads in optional tree stores; add no fixed per-node fields for pruning (NODE-044·045, 35C-09).
 - 넓은 범위의 노드 이름에는 `SchemaNode`를 쓰고, 필드 같은 좁은 범위에서만 `node`를 씁니다(NODE-011, SURFACE-056).
 
 ## Boundaries

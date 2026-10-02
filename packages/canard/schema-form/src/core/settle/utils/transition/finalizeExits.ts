@@ -1,4 +1,5 @@
-import { walkSchemaNodes } from '../../../navigation';
+import { captureSchemaNodeChange } from '../../../record';
+import { walkOwnedSchemaNodes } from '../walkOwnedSchemaNodes';
 import type { SchemaNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../type';
 import { updateOutput } from '../compute/updateOutput';
@@ -9,6 +10,7 @@ import { withdrawDetachedFills } from './withdrawDetachedFills';
 import { captureExitedRaw } from './captureExitedRaw';
 import { getLatentOrder } from '../latent/getLatentOrder';
 import { writeLatentRaw } from './writeLatentRaw';
+import { finalizePerished } from './finalizePerished';
 
 /**
  * Decide exits only against the settled final shape, including Source B.
@@ -18,12 +20,14 @@ import { writeLatentRaw } from './writeLatentRaw';
 export const finalizeExits = <Self extends SchemaNodeRecord<Self>>(
   context: SettlementContext<Self>,
 ): void => {
+  finalizePerished(context);
+  let mismatchIndex: Map<string, Set<string>> | undefined;
   for (const node of context.pendingExits.values()) {
     if (node.detached) continue;
     const parent = node.parent;
     if (parent?.structure?.[node.name] === node) continue;
     context.exited.add(node);
-    walkSchemaNodes(node, (departing) => {
+    walkOwnedSchemaNodes(node, (departing) => {
       if (!departing.runtime.detachedReads?.has(departing))
         captureDetachedSchemaNodeReads(departing, {
           emit: context.previousEmit,
@@ -32,12 +36,34 @@ export const finalizeExits = <Self extends SchemaNodeRecord<Self>>(
             departing.schema.schema,
         });
       departing.detached = true;
-      departing.active = false;
+      departing.active = captureSchemaNodeChange(departing, 'active', false);
     });
     getGateRegistry(node.runtime).remove(node);
-    for (const path of [...context.root.runtime.typeMismatchPaths])
-      if (path === node.path || path.startsWith(`${node.path}/`))
-        context.root.runtime.typeMismatchPaths.delete(path);
+    if (!mismatchIndex) {
+      mismatchIndex = new Map();
+      for (const path of context.root.runtime.typeMismatchPaths) {
+        let ancestor = path;
+        while (true) {
+          let paths = mismatchIndex.get(ancestor);
+          if (!paths) {
+            paths = new Set();
+            mismatchIndex.set(ancestor, paths);
+          }
+          paths.add(path);
+          if (!ancestor) break;
+          ancestor = ancestor.slice(0, ancestor.lastIndexOf('/'));
+        }
+      }
+    }
+    for (const path of [...mismatchIndex.get(node.path) ?? []]) {
+      context.root.runtime.typeMismatchPaths.delete(path);
+      let ancestor = path;
+      while (true) {
+        mismatchIndex.get(ancestor)?.delete(path);
+        if (!ancestor) break;
+        ancestor = ancestor.slice(0, ancestor.lastIndexOf('/'));
+      }
+    }
   }
   withdrawDetachedFills(context);
   const scope = context.kind === 'load' ? context.loadScope : undefined;
@@ -64,7 +90,10 @@ export const finalizeExits = <Self extends SchemaNodeRecord<Self>>(
       if (live) writeLatentRaw(context,
         JSON.stringify([node.path, node.blueprintNode.kind]), false, undefined);
     }
+  const affectedAncestors = new Set<Self>();
   for (const node of context.exited)
     for (let ancestor = node.parent; ancestor; ancestor = ancestor.parent)
-      if (!ancestor.detached) updateOutput(ancestor, context);
+      if (!ancestor.detached) affectedAncestors.add(ancestor);
+  for (const ancestor of [...affectedAncestors].sort((left, right) =>
+    right.path.length - left.path.length)) updateOutput(ancestor, context);
 };

@@ -1,3 +1,5 @@
+import { PathKeyedMap } from '../../utils/pathIndex/PathKeyedMap';
+import { PathKeyedSet } from '../../utils/pathIndex/PathKeyedSet';
 import { describe, expect, it, vi } from 'vitest';
 
 import { blueprint } from '../../blueprint';
@@ -11,8 +13,8 @@ const createContextTree = (schema: BlueprintSchema,
   context: Readonly<Record<string, unknown>> = {}) =>
   schemaNodeFactory(blueprint(schema), {
     context, diagnostics: { status: 'stable' },
-    loadSnapshot: undefined, latentRaw: new Map(),
-    typeMismatchPaths: new Set(), inactiveValuesMemo: new Map(),
+    loadSnapshot: undefined, latentRaw: new PathKeyedMap('pair'),
+    typeMismatchPaths: new PathKeyedSet(), inactiveValuesMemo: new PathKeyedMap<readonly { path: string; value: unknown }[]>('path'),
   });
 
 // filid:contract settle-context

@@ -11,10 +11,11 @@ import type { DeriveState } from '../../../type';
  * @returns Roots for a full load scan or exact affected live sources
  */
 export const getDeriveSourceNodes = <Self extends SchemaNodeRecord<Self>>(
-  root: Self, state: DeriveState<Self>,
+  root: Self, state: Pick<DeriveState<Self>, 'sourcePaths'>,
 ): Self[] => {
   if (!state.sourcePaths) return [root];
   const nodes: Self[] = [];
+  const seen = new Set<Self>();
   for (const path of state.sourcePaths) {
     let node: Self | undefined = root;
     for (const encoded of path.split('/').slice(1)) {
@@ -23,7 +24,10 @@ export const getDeriveSourceNodes = <Self extends SchemaNodeRecord<Self>>(
       node = children && hasOwnProperty(children, name) ? children[name] : undefined;
       if (!node) break;
     }
-    if (node && !nodes.includes(node)) nodes.push(node);
+    if (node && !seen.has(node)) {
+      seen.add(node);
+      nodes.push(node);
+    }
   }
   return nodes;
 };

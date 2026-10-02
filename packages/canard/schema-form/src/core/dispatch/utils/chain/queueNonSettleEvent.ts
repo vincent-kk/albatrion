@@ -13,12 +13,13 @@ export const queueNonSettleEvent = <Self extends SchemaNodeRecord<Self>>(
   payload?: unknown,
 ): void => {
   const runtime = node.rootNode.runtime;
-  const queued = runtime.queuedNonSettleEvents ?? new Map();
-  const previous = queued.get(node);
-  queued.set(node, {
+  const queued = runtime.queuedNonSettleEvents ?? new Set();
+  const previous = node.pendingNonSettleDelivery;
+  node.pendingNonSettleDelivery = {
     type: (previous?.type ?? 0) | bit,
     payload: payload === undefined ? previous?.payload :
       { ...previous?.payload, [bit]: payload },
-  });
+  };
+  queued.add(node);
   runtime.queuedNonSettleEvents = queued;
 };
