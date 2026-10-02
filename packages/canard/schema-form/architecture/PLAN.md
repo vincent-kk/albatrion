@@ -19,6 +19,7 @@
 | 06 | 배열 | [request](plan/06-array/request.md) | [verification](plan/06-array/verification.md) | [adr-and-axes](plan/06-array/adr-and-axes.md) | PR-5 | 03 |
 | 07 | 전환(원샷, 레거시 보존) | [request](plan/07-switch/request.md) | [verification](plan/07-switch/verification.md) | [adr-and-axes](plan/07-switch/adr-and-axes.md) | PR-7 | 02–06 |
 | 08 | 플러그인(UI 넷) | [request](plan/08-plugins/request.md) | [verification](plan/08-plugins/verification.md) | [adr-and-axes](plan/08-plugins/adr-and-axes.md) | LANDING-206 | 07 |
+| 정돈 | 코드 정돈 | 대기 | — | 08 뒤, 최적화 앞. 소유자가 코드를 직접 보며 파일 구성·함수 이름·함수 로직을 손질한다(76라운드 소유자 답, `reviews/round-76-owner-answers.md`). fractal 경계와 공개 인터페이스는 바꾸지 않는다. 원칙을 소유자 라운드로 먼저 적고 작업 세션이 한 번에 적용, 동작 불변은 차등 시험·기존 스위트·벤치로 보임. P-24·P-25를 함께 처리할 수 있음 |
 | 최적화 | 성능 최적화(동작 불변) | [request](plan/perf-optimization/request.md) | [verification](plan/perf-optimization/verification.md) | [adr-and-axes](plan/perf-optimization/adr-and-axes.md) | 없음(27라운드 소유자 답, TEST-027 보충) | 07, 08과 병렬, 09 전 |
 | 09 | 정리·릴리스(레거시 삭제) | [request](plan/09-release-and-cleanup/request.md) | [verification](plan/09-release-and-cleanup/verification.md) | [adr-and-axes](plan/09-release-and-cleanup/adr-and-axes.md) | PR-8 | 08, 별도 |
 | 별도 | 릴리스 전환(`master` 직접) | [request](plan/release-transition/request.md) | [verification](plan/release-transition/verification.md) | [adr-and-axes](plan/release-transition/adr-and-axes.md) | LANDING-097 | 없음 |
@@ -72,6 +73,7 @@
 1. **07 진행** — 02–06이 전부 머지되었으므로(06은 `07a083c18`) 07 전환은 `1.0.0-beta`에서 `feat/schema-form-switch`를 내고 `plan/07-switch/request.md`·`verification.md`로 시작한다(원샷, LANDING-058·072). 레거시는 지우지 않고(LANDING-205), UI 플러그인 넷의 `presentation.*` 이주는 08(LANDING-206). 06이 넘긴 열린 행 P-24·P-25와 05의 느린 행은 `verification/performance-issues.md`; 07의 시나리오가 닿으면 07이 고치고(49C-01), 아니면 전용 성능 작업이다.
 2. **01 절 단위 통과** — 머지된 설계문서 여덟 편(192절)을 소유자가 절 단위로 통과시키고 문서 머리의 표에 날짜를 적는다(25C-09). 통과 중 나온 새 결정은 원장에 새 라운드 항목으로 먼저 들어가고 문서가 따라간다(`plan/01-design-docs/verification.md`).
 3. **D-1** — 30라운드에서 소유자가 정했다: 노드는 `request(kind)` 하나, 종류 값은 요청 비트 별칭의 TS 열거(리터럴 합집합 불허), 한 호출에 종류 하나, 둘째 인자 없음, 폼 핸들은 전용 메서드 넷에 경로 선택 인자(없으면 루트). 편집자 권장이던 리터럴 합집합과 폼 핸들 통합 메서드는 택하지 않았다.
+4. **정돈(08 뒤)** — 소유자가 07·08의 구현 코드를 직접 보며 파일 구성·함수 이름·함수 로직의 원칙을 정하면 원장 관리자가 소유자 라운드로 적고, 작업 세션이 코드 전체에 한 번에 적용한다. 성능 최적화는 그 뒤다(`reviews/round-76-owner-answers.md`).
 
 ## 5. 기록
 
@@ -79,4 +81,4 @@
 
 | 날짜 | 무엇 | 어디 |
 | --- | --- | --- |
-| 2026-10-02 | 75라운드: 07의 충돌 하나 — 75C-01 레거시 안에서 공개 진입점의 <Form>을 그리는 시험 두 파일은 옛 구현이 아니라 보존 대상 아님: 사례는 처분표 행으로 새 e2e에 옮긴 뒤 파일을 지움, ESLint 예외 없음(73C-01 좁힘); 이주 안내의 정식 자리는 PR-8(LANDING-068), 07은 이주 점검표에 재료. 보충 4줄 | `reviews/round-75-closing.md` |
+| 2026-10-03 | 76라운드 소유자 답: 새 단계 "정돈" — 08 플러그인 뒤·성능 최적화 앞, 범위는 내부(파일 구성·함수 이름·함수 로직), fractal 경계·공개 인터페이스는 불변, 소유자가 코드를 직접 보며 원칙을 정하면 소유자 라운드로 적고 작업 세션이 한 번에 적용. 최적화는 "08과 병렬"에서 "정돈 뒤"로. 보충 2줄 | `reviews/round-76-owner-answers.md` |
