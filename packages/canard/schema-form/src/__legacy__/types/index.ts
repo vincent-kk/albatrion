@@ -27,6 +27,7 @@ export {
 } from './jsonSchema';
 export {
   ShowError,
+  type FormatError,
   type JSONSchemaError,
   type ValidateFunction,
   type ValidationIssue,
@@ -43,5 +44,5 @@ export type {
   StringValue,
   UndefinedValue,
   VirtualNodeValue,
-} from '../../types/value';
-export type { InjectHandlerContext, InjectToHandler } from '../../types/injectTo';
+} from '@/schema-form/__legacy__/types/value';
+export type { InjectHandlerContext, InjectToHandler } from '@/schema-form/__legacy__/types/injectTo';

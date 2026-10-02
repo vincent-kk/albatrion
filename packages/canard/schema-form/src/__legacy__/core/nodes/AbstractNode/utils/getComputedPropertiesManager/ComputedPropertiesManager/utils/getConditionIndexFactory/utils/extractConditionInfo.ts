@@ -1,6 +1,6 @@
-import type { PathManager } from '@/schema-form/core/blueprint';
-import { JSON_POINTER_PATH_REGEX } from '@/schema-form/core/blueprint';
-import { combineConditions } from '@/schema-form/helpers/dynamicExpression';
+import type { PathManager } from '@/schema-form/__legacy__/core/blueprint';
+import { JSON_POINTER_PATH_REGEX } from '@/schema-form/__legacy__/core/blueprint';
+import { combineConditions } from '@/schema-form/__legacy__/helpers/dynamicExpression';
 import { isNullBranch } from '@/schema-form/__legacy__/helpers/jsonSchema';
 import type { PartialJSONSchema } from '@/schema-form/__legacy__/types';
 

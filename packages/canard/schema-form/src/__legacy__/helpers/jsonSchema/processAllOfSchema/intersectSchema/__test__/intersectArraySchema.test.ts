@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest';
 
-import type { ArraySchema } from '@/schema-form/__legacy__/types';
+import type { ArraySchema } from '@/schema-form/__legacy__/types/jsonSchema';
 
 import { intersectArraySchema } from '../intersectArraySchema';
 

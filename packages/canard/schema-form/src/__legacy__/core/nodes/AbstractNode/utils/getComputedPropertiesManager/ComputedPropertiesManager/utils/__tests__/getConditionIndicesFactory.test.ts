@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
-import { getPathManager } from '@/schema-form/core/blueprint';
-import type { JSONSchemaWithVirtual } from '@/schema-form/__legacy__/types';
+import { getPathManager } from '@/schema-form/__legacy__/core/blueprint';
+import type { JSONSchemaWithVirtual } from '@/schema-form/__legacy__/types/jsonSchema';
 
 import { getConditionIndicesFactory } from '../getConditionIndexFactory/getConditionIndicesFactory';
 

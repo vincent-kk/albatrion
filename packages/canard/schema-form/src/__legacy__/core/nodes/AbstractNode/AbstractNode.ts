@@ -4,19 +4,19 @@ import { escapeSegment, setValue } from '@winglet/json/pointer';
 
 import type { Dictionary, Fn, Nullish } from '@aileron/declare';
 
-import { BIT_MASK_ALL, UNIT_SEPARATOR } from '@/schema-form/app/constants';
-import { JSONSchemaError } from '@/schema-form/errors';
+import { BIT_MASK_ALL, UNIT_SEPARATOR } from '@/schema-form/__legacy__/app/constants';
+import { JSONSchemaError } from '@/schema-form/__legacy__/errors';
 import {
   getDefaultValue,
   getEmptyValue,
-} from '@/schema-form/helpers/defaultValue';
-import { formatInjectToError } from '@/schema-form/helpers/error';
+} from '@/schema-form/__legacy__/helpers/defaultValue';
+import { formatInjectToError } from '@/schema-form/__legacy__/helpers/error';
 import {
   JSONPointer as $,
   getAbsolutePath,
   isAbsolutePath,
   joinSegment,
-} from '@/schema-form/helpers/jsonPointer';
+} from '@/schema-form/__legacy__/helpers/jsonPointer';
 import type {
   AllowedValue,
   InjectHandlerContext,

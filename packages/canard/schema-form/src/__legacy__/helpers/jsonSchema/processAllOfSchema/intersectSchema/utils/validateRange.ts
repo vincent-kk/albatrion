@@ -1,9 +1,9 @@
-import { JSONSchemaError } from '@/schema-form/errors';
-import { formatInvalidRangeError } from '@/schema-form/helpers/error';
+import { JSONSchemaError } from '@/schema-form/__legacy__/errors';
+import { formatInvalidRangeError } from '@/schema-form/__legacy__/helpers/error';
 import {
   EMPTY_INTERSECTION,
   validateRange as validate,
-} from '@/schema-form/helpers/schemaIntersection';
+} from '@/schema-form/__legacy__/helpers/schemaIntersection';
 
 /**
  * Validates that a minimum value is not greater than a maximum value.

@@ -1,4 +1,4 @@
-import { BIT_MASK_NONE } from '@/schema-form/app/constants';
+import { BIT_MASK_NONE } from '@/schema-form/__legacy__/app/constants';
 import type {
   NodeEventCollection,
   NodeEventEntity,

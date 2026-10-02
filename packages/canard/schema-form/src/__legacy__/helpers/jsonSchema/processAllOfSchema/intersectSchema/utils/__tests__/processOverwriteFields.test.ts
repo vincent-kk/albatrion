@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest';
 
-import type { StringSchema } from '@/schema-form/__legacy__/types';
+import type { StringSchema } from '@/schema-form/__legacy__/types/jsonSchema';
 
 import { processOverwriteFields } from '../processOverwriteFields';
 

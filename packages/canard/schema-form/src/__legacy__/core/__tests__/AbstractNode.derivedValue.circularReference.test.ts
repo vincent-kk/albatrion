@@ -7,8 +7,8 @@
  */
 import { describe, expect, it, vi } from 'vitest';
 
-import { isSchemaFormError } from '@/schema-form/errors';
-import type { JSONSchemaWithVirtual } from '@/schema-form/__legacy__/types';
+import { isSchemaFormError } from '@/schema-form/__legacy__/errors';
+import type { JSONSchemaWithVirtual } from '@/schema-form/__legacy__/types/jsonSchema';
 
 import { nodeFromJSONSchema } from '../nodeFromJSONSchema';
 import type { NumberNode } from '../nodes/NumberNode';

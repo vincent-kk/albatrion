@@ -3,11 +3,8 @@ import type Ajv from 'ajv/dist/2020';
 
 import { JSONPointer as $ } from '@winglet/json/pointer';
 
-import type {
-  JSONSchema,
-  JSONSchemaError,
-  ValidateFunction,
-} from '@/schema-form/__legacy__/types';
+import type { JSONSchema } from '@/schema-form/__legacy__/types/jsonSchema';
+import type { JSONSchemaError, ValidateFunction } from '@/schema-form/__legacy__/types/error';
 
 export const createValidatorFactory =
   (ajv: Ajv) =>

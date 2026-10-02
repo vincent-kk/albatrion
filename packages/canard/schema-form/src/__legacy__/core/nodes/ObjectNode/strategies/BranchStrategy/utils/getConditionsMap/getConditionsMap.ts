@@ -1,4 +1,4 @@
-import { convertExpression } from '@/schema-form/helpers/dynamicExpression';
+import { convertExpression } from '@/schema-form/__legacy__/helpers/dynamicExpression';
 
 import type { FieldConditionMap } from '../getFieldConditionMap';
 

@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest';
 
-import type { NullSchema } from '@/schema-form/__legacy__/types';
+import type { NullSchema } from '@/schema-form/__legacy__/types/jsonSchema';
 
 import { intersectNullSchema } from '../intersectNullSchema';
 

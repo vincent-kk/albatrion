@@ -1,8 +1,8 @@
-import { formatNullBranchIgnoredWarning } from '@/schema-form/helpers/error';
+import { formatNullBranchIgnoredWarning } from '@/schema-form/__legacy__/helpers/error';
 import {
   NULL_BRANCH_IGNORED_FOR_FORM,
   warnDevelopmentIssue,
-} from '@/schema-form/helpers/warning';
+} from '@/schema-form/__legacy__/helpers/warning';
 import type { ObjectSchema } from '@/schema-form/__legacy__/types';
 
 /**

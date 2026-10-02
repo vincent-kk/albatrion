@@ -1,19 +1,6 @@
 import { describe, expectTypeOf, it } from 'vitest';
 
-import type {
-  ArraySchema,
-  BooleanSchema,
-  NullSchema,
-  NullableArraySchema,
-  NullableBooleanSchema,
-  NullableNumberSchema,
-  NullableObjectSchema,
-  NullableStringSchema,
-  NumberSchema,
-  ObjectSchema,
-  StringSchema,
-  VirtualSchema,
-} from '@/schema-form/__legacy__/types';
+import type { ArraySchema, BooleanSchema, NullSchema, NullableArraySchema, NullableBooleanSchema, NullableNumberSchema, NullableObjectSchema, NullableStringSchema, NumberSchema, ObjectSchema, StringSchema, VirtualSchema } from '@/schema-form/__legacy__/types/jsonSchema';
 
 import type { ArrayNode } from '../nodes/ArrayNode';
 import type { BooleanNode } from '../nodes/BooleanNode';

@@ -15,16 +15,16 @@ export {
   type NodeEventPayload,
   type NodeListener,
   type UnionNodeEventType,
-} from '../../../core/types/event';
+} from '@/schema-form/__legacy__/core/types/event';
 export {
   NodeState,
   ValidationMode,
   type NodeStateFlags,
-} from '../../../core/types/state';
+} from '@/schema-form/__legacy__/core/types/state';
 export {
   PublicSetValueOption,
   SetValueOption,
   type HandleChange,
   type ResetOptions,
   type UnionSetValueOption,
-} from '../../../core/types/value';
+} from '@/schema-form/__legacy__/core/types/value';

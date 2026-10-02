@@ -2,12 +2,12 @@ import { isArray } from '@winglet/common-utils/filter';
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
 import type { ObjectNode } from '@/schema-form/__legacy__/core/nodes/ObjectNode';
-import { formatNullUnreachableWarning } from '@/schema-form/helpers/error';
+import { formatNullUnreachableWarning } from '@/schema-form/__legacy__/helpers/error';
 import { extractSchemaInfo } from '@/schema-form/__legacy__/helpers/jsonSchema';
 import {
   NULLABLE_ONE_OF_NULL_UNREACHABLE,
   warnDevelopmentIssue,
-} from '@/schema-form/helpers/warning';
+} from '@/schema-form/__legacy__/helpers/warning';
 import type { ObjectSchema } from '@/schema-form/__legacy__/types';
 
 /**

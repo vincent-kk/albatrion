@@ -1,10 +1,6 @@
 import { describe, expect, test } from 'vitest';
 
-import type {
-  NullSchema,
-  NumberSchema,
-  StringSchema,
-} from '@/schema-form/__legacy__/types';
+import type { NullSchema, NumberSchema, StringSchema } from '@/schema-form/__legacy__/types/jsonSchema';
 
 import { processSchemaType } from '../processSchemaType';
 

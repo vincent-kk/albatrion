@@ -1,4 +1,4 @@
-import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
+import { JSONPointer as $ } from '@/schema-form/__legacy__/helpers/jsonPointer';
 
 /**
  * Checks if a JSON schema path matches a target path with proper boundary validation.

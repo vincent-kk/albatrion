@@ -1,5 +1,5 @@
-import { getPathManager } from '@/schema-form/core/blueprint';
-import type { DynamicFunction } from '@/schema-form/core/blueprint';
+import { getPathManager } from '@/schema-form/__legacy__/core/blueprint';
+import type { DynamicFunction } from '@/schema-form/__legacy__/core/blueprint';
 import type {
   JSONSchemaType,
   JSONSchemaWithVirtual,

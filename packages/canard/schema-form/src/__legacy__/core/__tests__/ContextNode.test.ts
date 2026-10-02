@@ -7,7 +7,7 @@ import {
   nodeFromJSONSchema,
 } from '@/schema-form/__legacy__/core/nodeFromJSONSchema';
 import { NodeEventType } from '@/schema-form/__legacy__/core/types';
-import type { JSONSchema } from '@/schema-form/__legacy__/types';
+import type { JSONSchema } from '@/schema-form/__legacy__/types/jsonSchema';
 
 import type { ArrayNode } from '../nodes/ArrayNode';
 import type { NumberNode } from '../nodes/NumberNode';

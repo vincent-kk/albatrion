@@ -1,9 +1,9 @@
 import { isArray, isString } from '@winglet/common-utils/filter';
 
-import type { PathManager } from '@/schema-form/core/blueprint';
-import type { DynamicFunction } from '@/schema-form/core/blueprint';
-import { JSONSchemaError } from '@/schema-form/errors';
-import { formatObservedValuesError } from '@/schema-form/helpers/error';
+import type { PathManager } from '@/schema-form/__legacy__/core/blueprint';
+import type { DynamicFunction } from '@/schema-form/__legacy__/core/blueprint';
+import { JSONSchemaError } from '@/schema-form/__legacy__/errors';
+import { formatObservedValuesError } from '@/schema-form/__legacy__/helpers/error';
 import type { JSONSchemaWithVirtual } from '@/schema-form/__legacy__/types';
 
 import { ALIAS, type ObservedFieldName } from '../type';

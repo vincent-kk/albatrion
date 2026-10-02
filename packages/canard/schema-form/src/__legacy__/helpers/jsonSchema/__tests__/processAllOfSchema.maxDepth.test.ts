@@ -1,10 +1,6 @@
 import { describe, expect, test } from 'vitest';
 
-import type {
-  ArraySchema,
-  ObjectSchema,
-  StringSchema,
-} from '@/schema-form/__legacy__/types';
+import type { ArraySchema, ObjectSchema, StringSchema } from '@/schema-form/__legacy__/types/jsonSchema';
 
 import { processAllOfSchema } from '../processAllOfSchema/processAllOfSchema';
 

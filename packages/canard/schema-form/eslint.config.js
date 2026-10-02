@@ -10,6 +10,38 @@ const __dirname = path.dirname(__filename);
 export default [
   ...createESLintConfig(path.resolve(__dirname, './tsconfig.json')),
   {
+    files: ['src/__legacy__/**/*.{ts,tsx}'],
+    // removed with the files in unit U8 (75C-01)
+    ignores: [
+      'src/__legacy__/core/__tests__/IfThenElse.onChange.realReact.test.tsx',
+      'src/__legacy__/core/__tests__/NullableFormScenarios.test.tsx',
+    ],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          paths: [
+            {
+              name: '@/schema-form',
+              message: 'Legacy modules must use local legacy copies.',
+            },
+          ],
+          patterns: [
+            {
+              group: [
+                '@/schema-form/*',
+                '!@/schema-form/__legacy__',
+                '!@/schema-form/__legacy__/**',
+              ],
+              message:
+                'Legacy modules must use local legacy copies. Relative escapes are checked by check-legacy-isolation.mjs.',
+            },
+          ],
+        },
+      ],
+    },
+  },
+  {
     files: [
       'src/core/record/**/*.ts',
       'src/core/behaviors/**/*.ts',

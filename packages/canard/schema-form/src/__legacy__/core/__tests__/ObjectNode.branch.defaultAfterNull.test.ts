@@ -8,7 +8,7 @@ import {
   type StringNode,
   nodeFromJSONSchema,
 } from '@/schema-form/__legacy__/core';
-import type { JSONSchema } from '@/schema-form/__legacy__/types';
+import type { JSONSchema } from '@/schema-form/__legacy__/types/jsonSchema';
 
 /**
  * Node-tree twin of the `[default-after-null]` cases in

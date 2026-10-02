@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import type { JSONSchemaWithVirtual } from '@/schema-form/__legacy__/types';
+import type { JSONSchemaWithVirtual } from '@/schema-form/__legacy__/types/jsonSchema';
 
 import { nodeFromJSONSchema } from '../nodeFromJSONSchema';
 import type { BooleanNode } from '../nodes/BooleanNode';

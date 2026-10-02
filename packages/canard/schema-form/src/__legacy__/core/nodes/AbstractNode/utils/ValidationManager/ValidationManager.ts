@@ -1,10 +1,10 @@
 import type { ValidationMode } from '@/schema-form/__legacy__/core/types';
-import { JSONSchemaError } from '@/schema-form/errors';
+import { JSONSchemaError } from '@/schema-form/__legacy__/errors';
 import {
   formatCircularReferenceError,
   formatSchemaCompileError,
   transformErrors,
-} from '@/schema-form/helpers/error';
+} from '@/schema-form/__legacy__/helpers/error';
 import { stripSchemaExtensions } from '@/schema-form/__legacy__/helpers/jsonSchema';
 import type {
   ValidateFunction,

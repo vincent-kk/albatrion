@@ -11,8 +11,8 @@ import type {
 
 import type { ContextNode } from '../nodes/ContextNode';
 import type { SchemaNode } from './node';
-import type { ValidationMode } from '../../../core/types/state';
-import type { HandleChange } from '../../../core/types/value';
+import type { ValidationMode } from '@/schema-form/__legacy__/core/types/state';
+import type { HandleChange } from '@/schema-form/__legacy__/core/types/value';
 
 /**
  * Factory signature used to produce a concrete `SchemaNode` from factory props.

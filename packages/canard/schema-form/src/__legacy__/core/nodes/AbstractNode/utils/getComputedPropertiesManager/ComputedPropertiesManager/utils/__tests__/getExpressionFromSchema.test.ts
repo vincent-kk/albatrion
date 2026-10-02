@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import type { PartialJSONSchema } from '@/schema-form/__legacy__/types';
+import type { PartialJSONSchema } from '@/schema-form/__legacy__/types/jsonSchema';
 
 import { getExpressionFromSchema } from '../getConditionIndexFactory/utils/getExpressionFromSchema';
 

@@ -3,8 +3,8 @@ import { describe, expect, it } from 'vitest';
 import { delay } from '@winglet/common-utils';
 
 import { nodeFromJSONSchema } from '@/schema-form/__legacy__/core';
-import { JSONSchemaError } from '@/schema-form/errors';
-import type { JSONSchema } from '@/schema-form/__legacy__/types';
+import { JSONSchemaError } from '@/schema-form/__legacy__/errors';
+import type { JSONSchema } from '@/schema-form/__legacy__/types/jsonSchema';
 
 import { validateArraySchema } from '../nodes/ArrayNode';
 

@@ -1,4 +1,4 @@
-import { getEmptyValue } from '@/schema-form/helpers/defaultValue';
+import { getEmptyValue } from '@/schema-form/__legacy__/helpers/defaultValue';
 import type { JSONSchemaType } from '@/schema-form/__legacy__/types';
 
 /**

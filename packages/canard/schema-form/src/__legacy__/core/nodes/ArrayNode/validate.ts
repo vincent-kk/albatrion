@@ -1,10 +1,10 @@
-import { JSONSchemaError } from '@/schema-form/errors';
+import { JSONSchemaError } from '@/schema-form/__legacy__/errors';
 import {
   formatItemsFalseWithoutPrefixItemsError,
   formatMaxItemsExceedsPrefixItemsError,
   formatMinItemsExceedsPrefixItemsError,
   formatMissingItemsAndPrefixItemsError,
-} from '@/schema-form/helpers/error';
+} from '@/schema-form/__legacy__/helpers/error';
 import type { ArraySchema } from '@/schema-form/__legacy__/types';
 
 /**

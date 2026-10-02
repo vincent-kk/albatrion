@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { nodeFromJSONSchema } from '@/schema-form/__legacy__/core';
-import type { JSONSchema } from '@/schema-form/__legacy__/types';
+import type { JSONSchema } from '@/schema-form/__legacy__/types/jsonSchema';
 
 import type { ObjectNode } from '../nodes/ObjectNode';
 

@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest';
 
-import type { NumberSchema } from '@/schema-form/__legacy__/types';
+import type { NumberSchema } from '@/schema-form/__legacy__/types/jsonSchema';
 
 import { intersectNumberSchema } from '../intersectNumberSchema';
 

@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { nodeFromJSONSchema } from '@/schema-form/__legacy__/core';
-import type { JSONSchemaWithVirtual } from '@/schema-form/__legacy__/types';
+import type { JSONSchemaWithVirtual } from '@/schema-form/__legacy__/types/jsonSchema';
 
 import { getFallbackValidator } from '../utils/getFallbackValidator';
 

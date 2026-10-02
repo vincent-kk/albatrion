@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
-import { ENHANCED_KEY } from '@/schema-form/app/constants/internal';
-import type { JSONSchema } from '@/schema-form/__legacy__/types';
+import { ENHANCED_KEY } from '@/schema-form/__legacy__/app/constants/internal';
+import type { JSONSchema } from '@/schema-form/__legacy__/types/jsonSchema';
 
 import { preprocessSchema } from '../preprocessSchema';
 

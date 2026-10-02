@@ -1,6 +1,6 @@
 import { merge } from '@winglet/common-utils/object';
 
-import { combineConditions } from '@/schema-form/helpers/dynamicExpression';
+import { combineConditions } from '@/schema-form/__legacy__/helpers/dynamicExpression';
 import type { JSONSchemaWithRef } from '@/schema-form/__legacy__/types';
 
 /**

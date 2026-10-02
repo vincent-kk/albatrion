@@ -14,8 +14,8 @@ import type {
   NodeListener,
   UnionNodeEventType,
 } from '@/schema-form/__legacy__/core/types';
-import { SchemaFormError } from '@/schema-form/errors';
-import { formatInfiniteLoopError } from '@/schema-form/helpers/error';
+import { SchemaFormError } from '@/schema-form/__legacy__/errors';
+import { formatInfiniteLoopError } from '@/schema-form/__legacy__/helpers/error';
 
 import { getEventCollection } from './utils/getEventCollection';
 import { mergeEventEntries } from './utils/mergeEventEntries';

@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { delay } from '@winglet/common-utils';
 
 import { nodeFromJSONSchema } from '@/schema-form/__legacy__/core';
-import type { JSONSchema } from '@/schema-form/__legacy__/types';
+import type { JSONSchema } from '@/schema-form/__legacy__/types/jsonSchema';
 
 /**
  * JSON Pointer RFC 6901에 따른 이스케이프 테스트

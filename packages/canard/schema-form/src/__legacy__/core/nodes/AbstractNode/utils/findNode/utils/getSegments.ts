@@ -1,4 +1,4 @@
-import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
+import { JSONPointer as $ } from '@/schema-form/__legacy__/helpers/jsonPointer';
 
 /**
  * Parses a JSON Pointer path string into an array of segments.

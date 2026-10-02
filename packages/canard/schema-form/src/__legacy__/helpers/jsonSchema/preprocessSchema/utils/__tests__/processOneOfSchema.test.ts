@@ -4,8 +4,8 @@ import {
   END_OF_TEXT,
   START_OF_TEXT,
   UNIT_SEPARATOR,
-} from '@/schema-form/app/constants/control';
-import type { JSONSchema } from '@/schema-form/__legacy__/types';
+} from '@/schema-form/__legacy__/app/constants/control';
+import type { JSONSchema } from '@/schema-form/__legacy__/types/jsonSchema';
 
 import { processOneOfSchema } from '../processOneOfSchema';
 

@@ -3,9 +3,9 @@ import { NOOP_FUNCTION } from '@winglet/common-utils/constant';
 import { isArray } from '@winglet/common-utils/filter';
 
 import { processAllOfSchema } from '@/schema-form/__legacy__/helpers/jsonSchema/processAllOfSchema';
-import { JSONSchemaError } from '@/schema-form/errors';
-import { formatUnknownJSONSchemaError } from '@/schema-form/helpers/error';
-import { JSONPointer } from '@/schema-form/helpers/jsonPointer';
+import { JSONSchemaError } from '@/schema-form/__legacy__/errors';
+import { formatUnknownJSONSchemaError } from '@/schema-form/__legacy__/helpers/error';
+import { JSONPointer } from '@/schema-form/__legacy__/helpers/jsonPointer';
 import {
   type ResolveSchema,
   extractSchemaInfo,

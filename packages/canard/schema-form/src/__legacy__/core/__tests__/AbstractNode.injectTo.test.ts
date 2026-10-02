@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import type { InjectHandlerContext, JSONSchema } from '@/schema-form/__legacy__/types';
+import type { InjectHandlerContext } from '@/schema-form/__legacy__/types/injectTo';
+import type { JSONSchema } from '@/schema-form/__legacy__/types/jsonSchema';
 
 import { contextNodeFactory, nodeFromJSONSchema } from '../nodeFromJSONSchema';
 import { NodeEventType } from '../types';

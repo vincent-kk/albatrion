@@ -75,6 +75,9 @@ Planning method: 저장소 지침 — `PLAN.md` §2와 `plan/prompts.md`의 단�
 | `src/types/jsonSchema.ts`의 옛 `JSONSchema` 묶음 | `src/__legacy__/types/jsonSchema.ts` | 사본(새 형은 core 스키마 형으로 뜻이 바뀜) | GOAL-088, 71C-01 조건 1 |
 | `src/types/error.ts`의 `ValidateFunction`·`ValidatorFactory`·`JSONSchemaError` | `src/__legacy__/types/error.ts` | 옮김(공개 형에서 빠짐) | 32C-01, I12 |
 | `src/helpers/jsonSchema/`의 `extractSchemaInfo`·`filter`·`getResolveSchema`·`isNullBranch`·`stripSchemaExtensions` | `src/__legacy__/helpers/jsonSchema/` | 사본(옛 `JSONSchema` 형에 묶임) | 71C-01 조건 1 |
+| 레거시가 가져오던 새 코드 전부(전이 폐쇄): `errors`, `helpers/{error,warning,defaultValue,dynamicExpression,schemaIntersection,jsonPointer,jsonSchema}`, `app/constants`, `types/{value,injectTo}`, `core/types/{event,state,value}`와 `core/blueprint`·`core/validation`이 닿는 새 core 103파일 — 모두 190파일 | `src/__legacy__/` 같은 상대 경로 | 사본(전환 직전 `1def2cc4f`의 내용, 가져오기는 별칭 접두만 바꿈). 목록은 `verification/07-switch/legacy-copies.md` | 74라운드 소유자 답 |
+| 렌더 계층으로 가던 형 전용 연결(옛 스키마의 `FormTypeInput` 칸 형, 렌더 오류 형, 플러그인 형) | 레거시 안의 최소 형(`ComponentType<never>`, 로컬 `FormatError`, `PluginErrorFeatures`) | 대체 — 옛 렌더 계층은 복제하지 않음 | 75C-01 |
+| `src/__legacy__/core/__tests__/IfThenElse.onChange.realReact.test.tsx`, `NullableFormScenarios.test.tsx` | — | 지움 예정(U8, 공개 겉면의 시험, 사례는 처분표 추가 행) | 75C-01 |
 
 ## 5. 스파이크 사례표(68C-09)
 

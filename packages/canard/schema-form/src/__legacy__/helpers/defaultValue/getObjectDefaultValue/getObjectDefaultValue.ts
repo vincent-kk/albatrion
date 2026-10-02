@@ -1,0 +1,36 @@
+import { isEmptyObject } from '@winglet/common-utils/filter';
+import { hasOwnProperty } from '@winglet/common-utils/lib';
+import { JSONSchemaScanner } from '@winglet/json-schema/scanner';
+import { setValue } from '@winglet/json/pointer';
+
+import type { Nullish } from '@aileron/declare';
+
+import type {
+  JSONSchema,
+  ObjectSchema,
+  ObjectValue,
+} from '@/schema-form/__legacy__/types';
+
+export const getObjectDefaultValue = (
+  jsonSchema: ObjectSchema,
+  inputDefault?: ObjectValue | Nullish,
+): ObjectValue | Nullish => {
+  const defaultValue =
+    inputDefault !== undefined ? inputDefault : jsonSchema.default;
+  const result = defaultValue || {};
+  new JSONSchemaScanner<JSONSchema>({
+    visitor: {
+      enter: ({ schema, dataPath }) => {
+        if (hasOwnProperty(schema, 'default'))
+          setValue(result, dataPath, schema.default, SET_VALUE_OPTIONS);
+      },
+    },
+  }).scan(jsonSchema);
+  if (isEmptyObject(result)) return defaultValue;
+  return result;
+};
+
+const SET_VALUE_OPTIONS = {
+  overwrite: false,
+  preserveNull: false,
+};

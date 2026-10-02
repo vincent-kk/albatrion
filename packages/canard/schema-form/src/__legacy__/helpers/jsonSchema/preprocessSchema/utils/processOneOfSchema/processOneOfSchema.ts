@@ -1,6 +1,6 @@
 import { merge } from '@winglet/common-utils/object';
 
-import { ENHANCED_KEY } from '@/schema-form/app/constants';
+import { ENHANCED_KEY } from '@/schema-form/__legacy__/app/constants';
 import type { JSONSchema } from '@/schema-form/__legacy__/types';
 
 /**

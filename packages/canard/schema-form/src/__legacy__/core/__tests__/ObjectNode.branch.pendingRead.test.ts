@@ -11,7 +11,7 @@ import {
   type StringNode,
   nodeFromJSONSchema,
 } from '@/schema-form/__legacy__/core';
-import type { JSONSchema } from '@/schema-form/__legacy__/types';
+import type { JSONSchema } from '@/schema-form/__legacy__/types/jsonSchema';
 
 /**
  * Node-tree twin of `nullable.object-pending-read.render.test.tsx`: the same

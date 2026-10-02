@@ -1,5 +1,5 @@
 import type { SchemaNode } from '@/schema-form/__legacy__/core';
-import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
+import { JSONPointer as $ } from '@/schema-form/__legacy__/helpers/jsonPointer';
 
 import { getSegments } from './utils/getSegments';
 

@@ -8,11 +8,11 @@ import type {
   HandleChange,
   SchemaNodeFactory,
 } from '@/schema-form/__legacy__/core/types';
-import { JSONSchemaError } from '@/schema-form/errors';
+import { JSONSchemaError } from '@/schema-form/__legacy__/errors';
 import {
   formatCompositionPropertyExclusivenessError,
   formatCompositionPropertyRedefinitionError,
-} from '@/schema-form/helpers/error';
+} from '@/schema-form/__legacy__/helpers/error';
 import { isNullBranch } from '@/schema-form/__legacy__/helpers/jsonSchema';
 import type {
   JSONSchema,

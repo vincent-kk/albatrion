@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { nodeFromJSONSchema } from '@/schema-form/__legacy__/core';
-import type { JSONSchema } from '@/schema-form/__legacy__/types';
+import type { JSONSchema } from '@/schema-form/__legacy__/types/jsonSchema';
 
 const WARNING = 'SCHEMA_FORM_WARNING.NULLABLE_ONE_OF_NULL_UNREACHABLE';
 

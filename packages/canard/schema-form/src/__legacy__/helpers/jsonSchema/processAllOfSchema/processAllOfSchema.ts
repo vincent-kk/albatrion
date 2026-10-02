@@ -1,14 +1,14 @@
 import { cloneLite } from '@winglet/common-utils/object';
 
-import { JSONSchemaError } from '@/schema-form/errors';
+import { JSONSchemaError } from '@/schema-form/__legacy__/errors';
 import {
   formatAllOfIgnoredKeywordWarning,
   formatAllOfTypeRedefinitionError,
-} from '@/schema-form/helpers/error';
+} from '@/schema-form/__legacy__/helpers/error';
 import {
   ALL_OF_KEYWORD_IGNORED_FOR_FORM,
   warnDevelopmentIssue,
-} from '@/schema-form/helpers/warning';
+} from '@/schema-form/__legacy__/helpers/warning';
 import type { JSONSchema } from '@/schema-form/__legacy__/types';
 
 import { getCloneDepth } from './utils/getCloneDepth';

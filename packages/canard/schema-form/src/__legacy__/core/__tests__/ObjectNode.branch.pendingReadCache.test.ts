@@ -9,7 +9,7 @@ import {
   type StringNode,
   nodeFromJSONSchema,
 } from '@/schema-form/__legacy__/core';
-import type { JSONSchema } from '@/schema-form/__legacy__/types';
+import type { JSONSchema } from '@/schema-form/__legacy__/types/jsonSchema';
 
 /**
  * A read of a pending value is remembered until the value changes again. Each

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import type { ArraySchema, ObjectSchema } from '@/schema-form/__legacy__/types';
+import type { ArraySchema, ObjectSchema } from '@/schema-form/__legacy__/types/jsonSchema';
 
 import { nodeFromJSONSchema } from '../nodeFromJSONSchema';
 import { isArrayNode, isObjectNode } from '../nodes';

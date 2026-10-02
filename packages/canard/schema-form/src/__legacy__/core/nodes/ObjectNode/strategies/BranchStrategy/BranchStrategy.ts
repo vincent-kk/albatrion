@@ -8,7 +8,7 @@ import { getObjectKeys, sortObjectKeys } from '@winglet/common-utils/object';
 
 import type { Fn, Nullish } from '@aileron/declare';
 
-import { ENHANCED_KEY } from '@/schema-form/app/constants';
+import { ENHANCED_KEY } from '@/schema-form/__legacy__/app/constants';
 import type { AbstractNode } from '@/schema-form/__legacy__/core/nodes/AbstractNode';
 import type { ObjectNode } from '@/schema-form/__legacy__/core/nodes/ObjectNode';
 import {
@@ -20,8 +20,8 @@ import {
   SetValueOption,
   type UnionSetValueOption,
 } from '@/schema-form/__legacy__/core/types';
-import { getDefaultValue } from '@/schema-form/helpers/defaultValue';
-import { joinSegment } from '@/schema-form/helpers/jsonPointer';
+import { getDefaultValue } from '@/schema-form/__legacy__/helpers/defaultValue';
+import { joinSegment } from '@/schema-form/__legacy__/helpers/jsonPointer';
 import { isTerminalType } from '@/schema-form/__legacy__/helpers/jsonSchema';
 import type { ObjectValue } from '@/schema-form/__legacy__/types';
 

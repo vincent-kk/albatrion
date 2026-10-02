@@ -1,8 +1,8 @@
 import { isIdenticalSchemaType } from '@winglet/json-schema/filter';
 
 import type { ObjectNode } from '@/schema-form/__legacy__/core/nodes/ObjectNode';
-import { JSONSchemaError } from '@/schema-form/errors';
-import { formatCompositionTypeRedefinitionError } from '@/schema-form/helpers/error';
+import { JSONSchemaError } from '@/schema-form/__legacy__/errors';
+import { formatCompositionTypeRedefinitionError } from '@/schema-form/__legacy__/helpers/error';
 import { extractSchemaInfo } from '@/schema-form/__legacy__/helpers/jsonSchema';
 import type { ObjectSchema } from '@/schema-form/__legacy__/types';
 

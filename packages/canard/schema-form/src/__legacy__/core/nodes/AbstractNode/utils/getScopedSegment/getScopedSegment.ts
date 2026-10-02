@@ -1,4 +1,4 @@
-import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
+import { JSONPointer as $ } from '@/schema-form/__legacy__/helpers/jsonPointer';
 import type { JSONSchemaType } from '@/schema-form/__legacy__/types';
 
 /**

@@ -2,11 +2,8 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { delay } from '@winglet/common-utils';
 
-import type {
-  AllowedValue,
-  JSONSchema,
-  JSONSchemaWithVirtual,
-} from '@/schema-form/__legacy__/types';
+import type { AllowedValue } from '@/schema-form/__legacy__/types/value';
+import type { JSONSchema, JSONSchemaWithVirtual } from '@/schema-form/__legacy__/types/jsonSchema';
 
 import { nodeFromJSONSchema } from '../nodeFromJSONSchema';
 import { AbstractNode } from '../nodes/AbstractNode/AbstractNode';

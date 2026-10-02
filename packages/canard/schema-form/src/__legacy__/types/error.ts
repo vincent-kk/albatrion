@@ -1,4 +1,6 @@
-import type { Fn } from '@aileron/declare';
+import type { ReactNode } from 'react';
+
+import type { Dictionary, Fn } from '@aileron/declare';
 
 import {
   BIT_FLAG_00,
@@ -6,10 +8,32 @@ import {
   BIT_FLAG_02,
   BIT_FLAG_03,
   BIT_FLAG_04,
-} from '@/schema-form/app/constants';
+} from '@/schema-form/__legacy__/app/constants';
 
-import type { JSONSchema } from './jsonSchema';
-import type { ValidationIssue } from '@/schema-form/core/validation';
+import type { ValidationIssue } from '@/schema-form/__legacy__/core/validation';
+
+import type { JSONSchema, JSONSchemaWithVirtual } from './jsonSchema';
+
+/** The formatter reads only schema messages and the current node value. */
+export type FormatError = Fn<
+  [
+    error: JSONSchemaError,
+    node: { jsonSchema: JSONSchemaWithVirtual; value: unknown },
+    context: Dictionary,
+  ],
+  ReactNode
+>;
+
+/** Plugin error messages inspect feature presence without invoking renderers. */
+export interface PluginErrorFeatures {
+  FormError?: unknown;
+  FormGroup?: unknown;
+  FormInput?: unknown;
+  FormLabel?: unknown;
+  formTypeInputDefinitions?: readonly unknown[];
+  validator?: unknown;
+  formatError?: unknown;
+}
 
 export enum ShowError {
   /** Always show error */
@@ -215,7 +239,7 @@ export type ValidateFunction<Value = unknown> = Fn<
 >;
 
 /** Normalized validation results belong to the engine contract. */
-export type { ValidationIssue } from '@/schema-form/core/validation';
+export type { ValidationIssue } from '@/schema-form/__legacy__/core/validation';
 
 /**
  * Legacy JSONSchemaError extends ValidationIssue and adds `key` property.

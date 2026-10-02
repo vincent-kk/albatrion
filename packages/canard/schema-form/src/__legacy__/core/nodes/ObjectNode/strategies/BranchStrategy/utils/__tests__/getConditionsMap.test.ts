@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import type { ObjectSchema } from '@/schema-form/__legacy__/types';
+import type { ObjectSchema } from '@/schema-form/__legacy__/types/jsonSchema';
 
 import { getConditionsMap } from '../getConditionsMap';
 import { getFieldConditionMap } from '../getFieldConditionMap';

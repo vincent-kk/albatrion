@@ -18,8 +18,7 @@ import type {
 
 import type { Dictionary, IsNullable } from '@aileron/declare';
 
-import type { UnknownFormTypeInputProps } from '../../types/formTypeInput';
-import type { InjectToHandler } from '../../types/injectTo';
+import type { InjectToHandler } from '@/schema-form/__legacy__/types/injectTo';
 import type {
   AllowedValue,
   ArrayValue,
@@ -28,7 +27,10 @@ import type {
   ObjectValue,
   StringValue,
   VirtualNodeValue,
-} from '../../types/value';
+} from '@/schema-form/__legacy__/types/value';
+
+/** The legacy engine detects components without rendering their props. */
+type LegacyFormTypeInput = ComponentType<never>;
 
 export const isVirtualSchema = (schema: {
   type: string;
@@ -226,7 +228,7 @@ export type NullSchema<Options extends Dictionary = object> = BasicSchema &
 /** Base schema properties for all types */
 export type BasicSchema = {
   /** Custom React component for input rendering */
-  FormTypeInput?: ComponentType<UnknownFormTypeInputProps> | null;
+  FormTypeInput?: LegacyFormTypeInput | null;
   /** Props passed to FormTypeInput component */
   FormTypeInputProps?: {
     /** Placeholder text for input fields */
