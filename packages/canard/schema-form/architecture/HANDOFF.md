@@ -182,7 +182,7 @@ node ledger/checks/doc-coverage.mjs design/*.md adr/*.md -- ledger/*.md   # 설�
 | `reviews/round-78-closing.md` | 78라운드 편집자 결정 둘: 중단 파일 다섯의 처분, 재귀 확장 차단은 03 결함 |
 | `reviews/round-79-closing.md` | 79라운드 편집자 결정 하나: `globalErrors`의 내용은 오늘과 같음 |
 | `reviews/round-80-closing.md` | 80라운드 편집자 결정 셋: 이주 행 LANDING-209·210 신설, 메운 빈 곳 셋의 귀속 |
-| `reviews/round-82-closing.md` | 82라운드 편집자 결정 하나: 성능 게이트 109행의 네 갈래 처분 |
+| `reviews/round-82-closing.md` | 82라운드 편집자 결정 하나: 성능 게이트 백아홉 행의 네 갈래 처분 |
 | `reviews/round-28-closing.md` | 28라운드 편집자 결정의 정본(28C-01~08: 04(PR-3+PR-6) 실행 계획 초안의 해석 일곱 건과 후속 둘 — 개발 모드 정착 기록의 자리, `enabled`와 떼어진 노드의 상태 게터, `@` 맥락과 `setContext`의 PR, 억제 비트와 `resetInteraction`, `unsetOnInactive` 식의 throw, TEST-071의 값 크기, `watchValues`의 PR, `node.context`의 PR과 맥락 변경 정착). 보충 줄만 |
 | `reviews/round-29-closing.md` | 29라운드 편집자 결정의 정본(29C-01~04: 생긴·로드된 노드의 파생 규칙은 원천이 `undefined`여도 발화, 채움 뒤의 값 변화는 새 에지, v7의 모형 선택은 이식하지 않음; 식이 던진 정착의 채움·나감 비움은 진행, 03의 전이 전체 생략은 결함; 공유 충돌 정착도 진행하고 원본 B는 예산 초과에만; 조각 `controls`의 `injectTo`는 불허). 보충 줄만 |
 | `verification/performance-issues.md` | 단계를 가로지르는 속도 문제 대장(열림·해결). 구현 완료 뒤 최적화 작업의 출발점. 측정 원본은 단계별 `performance.md`(03·04) |
