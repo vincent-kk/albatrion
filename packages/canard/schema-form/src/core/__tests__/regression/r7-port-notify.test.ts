@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import { SchemaNodeEventType, SetValueOption } from '../../SchemaNode';
 import type { SchemaNode } from '../../SchemaNode';
-import { NodeState, ValidationMode } from '../../types/state';
+import { SchemaNodeState, ValidationMode } from '../../types/state';
 import { makeSchemaNodeTree } from '../makeSchemaNodeTree';
 
 const requireNode = (root: SchemaNode, path: string): SchemaNode => {
@@ -173,12 +173,12 @@ describe('round7 dispatch and notification ports', () => {
     } });
     root.setValue({ clear: false, target: 'X' });
     const target = requireNode(root, '/target');
-    target.setState({ [NodeState.Dirty]: true, [NodeState.Touched]: true });
+    target.setState({ [SchemaNodeState.Dirty]: true, [SchemaNodeState.Touched]: true });
     const delivered: number[] = [];
     target.subscribe((event) => { delivered.push(event.type); });
     requireNode(root, '/clear').setValue(true);
     expect(target.state).toMatchObject({
-      [NodeState.Dirty]: false, [NodeState.Touched]: false,
+      [SchemaNodeState.Dirty]: false, [SchemaNodeState.Touched]: false,
     });
     expect(delivered.some((type) => !!(type & SchemaNodeEventType.UpdateState))).toBe(true);
   });

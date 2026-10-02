@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import { EMPTY_REVISION_LEDGER, markSchemaNodeEvent,
   SchemaNodeEventType, SchemaNodeRequestType } from '../../record';
-import { NodeState } from '../../types/state';
+import { SchemaNodeState } from '../../types/state';
 import { SetValueOption } from '../../types/value';
 import { loadSchemaNodeAtMount, writeSchemaNode } from '../index';
 import { createTestTree } from './fixtures/createTestTree';
@@ -166,7 +166,7 @@ describe('settlement delivery ledger', () => {
     } });
     loadSchemaNodeAtMount(root, { clear: false, target: 'X' }, SetValueOption.Overwrite);
     const target = root.structure!.target;
-    target.interactionState = { [NodeState.Dirty]: true, [NodeState.Touched]: true };
+    target.interactionState = { [SchemaNodeState.Dirty]: true, [SchemaNodeState.Touched]: true };
     for (const node of root.runtime.deliveries ?? []) node.pendingDelivery = undefined;
     root.runtime.deliveries?.clear();
     writeSchemaNode(root.structure!.clear, true, 'input', SetValueOption.Overwrite);

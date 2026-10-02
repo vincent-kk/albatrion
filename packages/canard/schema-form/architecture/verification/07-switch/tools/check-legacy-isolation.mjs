@@ -6,11 +6,6 @@ import { fileURLToPath } from 'node:url';
 const sourceRoot = fileURLToPath(new URL('../../../../src/', import.meta.url));
 const legacyRoot = path.join(sourceRoot, '__legacy__');
 const extensions = ['.ts', '.tsx', '.mts', '.cts', '.js', '.jsx', '.mjs', '.cjs'];
-// removed with the files in unit U8 (75C-01)
-const EXCEPTED_LEGACY_FILES = [
-  '__legacy__/core/__tests__/IfThenElse.onChange.realReact.test.tsx',
-  '__legacy__/core/__tests__/NullableFormScenarios.test.tsx',
-];
 
 function walk(directory) {
   return fs.readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {
@@ -165,7 +160,7 @@ for (const filename of files) {
     const target = resolveSpecifier(filename, specifier.value);
     if (!target || !isInside(target, sourceRoot)) continue;
     const targetLegacy = isInside(target, legacyRoot);
-    if (legacy === targetLegacy || (legacy && EXCEPTED_LEGACY_FILES.includes(relative))) continue;
+    if (legacy === targetLegacy) continue;
     const direction = legacy ? 'legacy -> non-legacy' : 'non-legacy -> legacy';
     const destination = path.relative(sourceRoot, target).split(path.sep).join('/');
     violations.push('src/' + relative + ':' + specifier.line + ' ' + direction + ': ' + JSON.stringify(specifier.value) + ' -> src/' + destination);

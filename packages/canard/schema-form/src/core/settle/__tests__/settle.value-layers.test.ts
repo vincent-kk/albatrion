@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import { NodeState } from '../../types/state';
+import { SchemaNodeState } from '../../types/state';
 import { SetValueOption } from '../../types/value';
 import { loadSchemaNodeAtMount, writeSchemaNode } from '../index';
 import { createTestTree } from './fixtures/createTestTree';
@@ -59,13 +59,13 @@ describe('settled value rule layers', () => {
     root.runtime.context = { reset };
     loadSchemaNodeAtMount(root, { trigger: false, a: 'A', b: 'B' },
       SetValueOption.Overwrite);
-    root.structure!.a.interactionState = { [NodeState.Dirty]: true, [NodeState.Touched]: true };
-    root.structure!.b.interactionState = { [NodeState.Dirty]: true, [NodeState.Touched]: true };
+    root.structure!.a.interactionState = { [SchemaNodeState.Dirty]: true, [SchemaNodeState.Touched]: true };
+    root.structure!.b.interactionState = { [SchemaNodeState.Dirty]: true, [SchemaNodeState.Touched]: true };
     writeSchemaNode(root.structure!.trigger, true, 'input', SetValueOption.Overwrite);
     expect(reset).toHaveBeenCalledTimes(1);
-    expect(root.structure?.a?.interactionState[NodeState.Dirty]).toBe(false);
-    expect(root.structure?.a?.interactionState[NodeState.Touched]).toBe(false);
-    expect(root.structure?.b?.interactionState[NodeState.Dirty]).toBe(false);
-    expect(root.structure?.b?.interactionState[NodeState.Touched]).toBe(false);
+    expect(root.structure?.a?.interactionState[SchemaNodeState.Dirty]).toBe(false);
+    expect(root.structure?.a?.interactionState[SchemaNodeState.Touched]).toBe(false);
+    expect(root.structure?.b?.interactionState[SchemaNodeState.Dirty]).toBe(false);
+    expect(root.structure?.b?.interactionState[SchemaNodeState.Touched]).toBe(false);
   });
 });

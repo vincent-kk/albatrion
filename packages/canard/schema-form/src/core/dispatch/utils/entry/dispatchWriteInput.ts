@@ -1,6 +1,6 @@
 import type { SchemaNodeRecord } from '../../../record';
 import type { SetValueOption } from '../../../types/value';
-import { NodeState } from '../../../types/state';
+import { SchemaNodeState } from '../../../types/state';
 import { dispatchBatch } from './dispatchBatch';
 import { dispatchClearExternalErrors } from './dispatchClearExternalErrors';
 import { dispatchSetState } from './dispatchSetState';
@@ -21,6 +21,6 @@ export const dispatchWriteInput = <Self extends SchemaNodeRecord<Self>>(
     dispatchSetValue(node, value, option, 'input');
     if (node.disposed || node.rootNode.disposed) return;
     dispatchClearExternalErrors(node);
-    dispatchSetState(node, { [NodeState.Dirty]: true });
+    dispatchSetState(node, { [SchemaNodeState.Dirty]: true });
   });
 };

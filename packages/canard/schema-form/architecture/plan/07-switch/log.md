@@ -66,6 +66,10 @@ Planning method: 저장소 지침 — `PLAN.md` §2와 `plan/prompts.md`의 단�
 
 ## 7. 레거시 이동 목록(71C-01)
 
+U8(77C-01·75C-01): `src/__legacy__/core/__tests__/IfThenElse.onChange.realReact.test.tsx`는 지움(공개 겉면의 시험, 사례 2건은 `verification/07-switch/render-disposition.md`의 레거시 추가 행 1–2), `NullableFormScenarios.test.tsx`는 지움(공개 겉면의 시험, 사례 12건은 같은 표의 추가 행 3–14). ESLint·격리 도구의 두 파일 예외도 제거했습니다. 레거시 시험 157파일·2311건은 LANDING-159 보충대로 unit·render에서 제외하며, 두 파일 삭제 후 참고용 시험은 155파일·2297건입니다.
+
+U8 중단 기록: 원장 충돌 5파일은 HEAD 원문을 유지합니다. 후속 표면 복구로 tsc는 14→1오류, render는 30→13실패입니다. 남은 render 12건은 중단 파일 4개에 속하고, 별도 ref/context 파일의 재귀 엔진 문제 1건이 있습니다. 파일별 관찰과 관리자 물음은 `verification/07-switch/u8-disposition-report.md`에 있습니다. unit·lint·격리는 통과했으나 U8은 미완료입니다. I21의 옛 스토리 보존 해석은 77C-01에 따라 U9까지의 임시 제외로 바로잡았으며 U9 끝에 파일과 제외 설정을 함께 없앱니다.
+
 07이 새 코드에서 지우거나 바꾼 것 가운데 레거시가 계속 쓰는 것을 `src/__legacy__/` 안 같은 상대 경로로 옮기거나 사본으로 둔 목록이다. 레거시의 가져오기는 별칭 접두만 바꿨다. 새 코드는 이 경로를 가져오지 않는다(LANDING-159 규칙 1, G19).
 
 | 원래 자리 | 레거시 자리 | 처분 | 근거 |
@@ -135,3 +139,8 @@ Planning method: 저장소 지침 — `PLAN.md` §2와 `plan/prompts.md`의 단�
 ## 6. UI 플러그인 고친 줄(68C-07)
 
 U12에서 채운다.
+
+### U8 후속 표면 복구
+
+- SURFACE-056·060, LANDING-157의 `SchemaNodeState` 이름이 새 엔진에서 빠져 있음을 확인했습니다. 비트와 동작을 유지하고 내부 소비자·core·패키지 경계를 같은 이름으로 연결합니다. 상태 렌더 시험은 이름·렌더러 속성·presentation만 바꾸며 기대값은 유지합니다.
+- 77C-01(A)로 중단한 파일은 그대로 두고, 재귀 `$ref`의 형상 실패는 표면 실패와 분리하여 보고합니다.

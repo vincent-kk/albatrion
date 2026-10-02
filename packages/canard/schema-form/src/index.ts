@@ -45,6 +45,7 @@ export {
   ValidationMode,
   SchemaNodeEventType,
   SchemaNodeRequestType,
+  SchemaNodeState,
   SetValueOption,
   isArrayNode,
   isBooleanNode,

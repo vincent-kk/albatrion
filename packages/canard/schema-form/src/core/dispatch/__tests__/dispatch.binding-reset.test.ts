@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import { NodeState } from '../../types/state';
+import { SchemaNodeState } from '../../types/state';
 import { SchemaNodeEventType } from '../../record';
 import * as dispatch from '../index';
 import { createDispatchTree } from './fixtures/createDispatchTree';
@@ -116,7 +116,7 @@ describe('binding load lifetime', () => {
     expect(child.local).toBe('old');
     expect(() => dispatch.dispatchSetValue(child, 'late')).toThrowError(
       expect.objectContaining({ code: expect.stringContaining('DISPOSED_NODE_WRITE') }));
-    expect(() => dispatch.dispatchSetState(child, { [NodeState.Dirty]: true })).toThrowError(
+    expect(() => dispatch.dispatchSetState(child, { [SchemaNodeState.Dirty]: true })).toThrowError(
       expect.objectContaining({ code: expect.stringContaining('DISPOSED_NODE_WRITE') }));
   });
 
@@ -132,7 +132,7 @@ describe('binding load lifetime', () => {
     expect(child.interactionReset).toBe(0);
     dispatch.dispatchClearSubtreeState(child);
     expect(child.interactionReset).toBe(1);
-    dispatch.dispatchSetState(child, { [NodeState.Touched]: true });
+    dispatch.dispatchSetState(child, { [SchemaNodeState.Touched]: true });
     dispatch.dispatchSetValue(getDispatchChild(root, 'clear'), true);
     expect(child.interactionReset).toBe(2);
     dispatch.dispatchResetForm(root, { clear: false, child: 'base' });

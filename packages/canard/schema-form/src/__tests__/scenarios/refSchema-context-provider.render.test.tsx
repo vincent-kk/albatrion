@@ -98,7 +98,7 @@ const contextActiveSchema = {
     publicField: { type: 'string' },
     adminField: {
       type: 'string',
-      computed: { active: '@.userRole === "admin"' },
+      controls: { active: '@.userRole === "admin"' },
     },
   },
 } satisfies JSONSchema;
@@ -106,7 +106,7 @@ const contextActiveSchema = {
 const contextReadOnlySchema = {
   type: 'object',
   properties: {
-    bio: { type: 'string', computed: { readOnly: '@.mode === "view"' } },
+    bio: { type: 'string', controls: { readOnly: '@.mode === "view"' } },
   },
 } satisfies JSONSchema;
 
@@ -383,7 +383,7 @@ describe('FormProvider supplies definitions/context to a nested Form', () => {
     type: 'object',
     properties: {
       name: { type: 'string' },
-      number: { type: 'number', formType: 'external-input1' },
+      number: { type: 'number', presentation: { formType: 'external-input1' } },
     },
   } satisfies JSONSchema;
 

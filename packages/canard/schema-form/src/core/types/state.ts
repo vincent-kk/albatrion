@@ -16,7 +16,7 @@ export enum ValidationMode {
 }
 
 /** UI state flags a node can carry. */
-export enum NodeState {
+export enum SchemaNodeState {
   /** Value diverged from its initial/default state. */
   Dirty = BIT_FLAG_00,
   /** Node interacted with (e.g., focused/blurred) at least once. */
@@ -27,8 +27,8 @@ export enum NodeState {
 
 /** Typed bag of boolean-like UI state flags carried by a node. */
 export type NodeStateFlags = {
-  [NodeState.Dirty]?: boolean;
-  [NodeState.Touched]?: boolean;
-  [NodeState.ShowError]?: boolean;
+  [SchemaNodeState.Dirty]?: boolean;
+  [SchemaNodeState.Touched]?: boolean;
+  [SchemaNodeState.ShowError]?: boolean;
   [key: string]: any;
 };

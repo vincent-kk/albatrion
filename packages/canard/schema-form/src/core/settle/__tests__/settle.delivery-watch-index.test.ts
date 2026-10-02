@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import type { BlueprintSchema } from '../../blueprint';
 import { SchemaNodeEventType } from '../../record';
-import { NodeState } from '../../types/state';
+import { SchemaNodeState } from '../../types/state';
 import { SetValueOption } from '../../types/value';
 import { changeSchemaNodeContext, resetSchemaNodeSubtree, writeSchemaNode } from '../index';
 import { createTestTree } from './fixtures/createTestTree';
@@ -107,7 +107,7 @@ describe('44C-01 EVENT-064 watch delivery candidates', () => {
       'callerReplace', SetValueOption.Overwrite);
     const source = root.structure!.source;
     const watcher = root.structure!.watcher;
-    source.interactionState = { [NodeState.Touched]: true };
+    source.interactionState = { [SchemaNodeState.Touched]: true };
     const before = root.runtime.commitNumber;
 
     writeSchemaNode(source, 'same', 'input', SetValueOption.Overwrite);

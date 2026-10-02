@@ -3,7 +3,7 @@ import { resolve } from 'path';
 import { storybookTest } from '@storybook/addon-vitest/vitest-plugin';
 import { defineConfig } from 'vitest/config';
 
-/** DOM-backed tests retain their environment when moved into the legacy tree. */
+/** DOM-backed product tests run in the render project. */
 const renderTests = [
   'src/**/*.test.tsx',
   'src/**/helpers/virtualization/__tests__/VirtualizationManager.test.ts',
@@ -24,7 +24,7 @@ export default defineConfig({
           name: 'unit',
           environment: 'node',
           include: ['src/**/*.{spec,test}.ts'],
-          exclude: renderTests,
+          exclude: [...renderTests, 'src/__legacy__/**'],
         },
       },
       {
@@ -33,6 +33,7 @@ export default defineConfig({
           name: 'render',
           environment: 'jsdom',
           include: renderTests,
+          exclude: ['src/__legacy__/**'],
         },
       },
       {

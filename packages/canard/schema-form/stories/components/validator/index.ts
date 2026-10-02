@@ -1,4 +1,4 @@
-import type { SchemaFormPlugin } from '../../../src';
+import type { SchemaFormPlugin } from '@canard/schema-form';
 import { ajvValidatorPlugin } from './validatorPlugin';
 
 export const plugin = {

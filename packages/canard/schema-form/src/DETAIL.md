@@ -8,8 +8,15 @@
 - `<Form>`은 `core/`의 새 엔진을 사용하며 노드 종류는 동작 행 계약을 따릅니다. `src/__legacy__/`는 참고용으로 보존하고, 비레거시 코드는 이 경로를 가져오지 않습니다(LANDING-067·205).
 - 플러그인 등록은 `registerPlugin()`만을 경유한다. `PluginManager`의 static 상태를 우회 변경하지 않는다.
 - 공개 검증 오류 형은 `ValidationIssue`이며 패키지 진입점은 `JSONSchemaError`를 내보내지 않습니다. 노드 형·가드도 새 엔진의 계약을 이름으로 내보냅니다(ERROR-032, 34C-02·50C-01, LANDING-067·170).
+- 상태 열거는 내부와 공개 경계에서 `SchemaNodeState` 한 이름을 사용하며 Dirty=1·Touched=2·ShowError=4를 유지합니다. `NodeState` 별칭은 내보내지 않습니다(SURFACE-056·060, LANDING-157).
 
 ## API Contracts
+
+### 렌더 시험 하니스
+
+- `renderForm`은 동기 guard와 루트 검증기를 등록하고 생성 시 정착된 Form을 관찰합니다. `flushOnMount: false`는 React 비동기 작업의 추가 대기만 생략하며 미정착 엔진 스냅숏을 뜻하지 않습니다(TEST-021).
+- `reset`은 호출 안의 동기 로드와 이후 React 커밋 재대조를 포함합니다. 하니스의 비동기 래퍼는 그 커밋을 기다립니다.
+- 주인 없는 오류 싱크와 Form `onError` 기록은 별도로 관찰합니다. 반환한 container에 현재 핸들과 화면 어댑터를 등록하고 언마운트 때 해제합니다(TEST-011·021).
 
 ### 스키마 옵션
 

@@ -42,7 +42,7 @@ export type {
   InferSchemaNode,
   FormTypeInputProps,
 } from './SchemaNode';
-export { ValidationMode } from './types/state';
+export { SchemaNodeState, ValidationMode } from './types/state';
 export type { JSONSchema } from './types/jsonSchema';
 export { retainValidationRoot, releaseValidationRoot } from './validation';
 export type { Validator, ValidationIssue } from './validation';

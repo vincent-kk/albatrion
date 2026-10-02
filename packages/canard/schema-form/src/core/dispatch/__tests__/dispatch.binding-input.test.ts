@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import { NodeState, ValidationMode } from '../../types/state';
+import { SchemaNodeState, ValidationMode } from '../../types/state';
 import { SetValueOption } from '../../types/value';
 import { SchemaNodeEventType } from '../../record';
 import * as dispatch from '../index';
@@ -71,7 +71,7 @@ describe('binding input entries', () => {
     dispatch.dispatchWriteInput(root, 'new');
     expect(root.local).toBe('new');
     expect(runtime.nodeErrors?.has(root)).toBe(false);
-    expect(root.interactionState[NodeState.Dirty]).toBe(true);
+    expect(root.interactionState[SchemaNodeState.Dirty]).toBe(true);
     expect(runtime.commitNumber).toBe((before ?? 0) + 1);
   });
 
@@ -110,7 +110,7 @@ describe('binding input entries', () => {
     dispatch.dispatchMount(root, '  value  ');
     const errors = [{ dataPath: '', message: 'external' }];
     dispatch.dispatchSetExternalErrors(root, errors);
-    dispatch.dispatchSetState(root, { [NodeState.Dirty]: true });
+    dispatch.dispatchSetState(root, { [SchemaNodeState.Dirty]: true });
     const state = root.interactionState;
     const listener = vi.fn();
     dispatch.subscribeSchemaNode(root, listener);

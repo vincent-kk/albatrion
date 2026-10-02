@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import { NodeState } from '../../types/state';
+import { SchemaNodeState } from '../../types/state';
 import { SchemaNodeEventType } from '../../record';
 import { SetValueOption } from '../../types/value';
 import { loadSchemaNodeAtMount, writeSchemaNode } from '../index';
@@ -87,11 +87,11 @@ describe('settle derivation', () => {
     } });
     loadSchemaNodeAtMount(root, { clear: false, target: 'X' }, SetValueOption.Overwrite);
     const target = root.structure!.target;
-    setTestInteractionState(target, { [NodeState.Dirty]: true, [NodeState.Touched]: true });
+    setTestInteractionState(target, { [SchemaNodeState.Dirty]: true, [SchemaNodeState.Touched]: true });
     const revision = target.revisionLedger[SchemaNodeEventType.UpdateState] ?? 0;
     writeSchemaNode(root.structure!.clear, true, 'input', SetValueOption.Overwrite);
-    expect(target.interactionState[NodeState.Dirty]).toBe(false);
-    expect(target.interactionState[NodeState.Touched]).toBe(false);
+    expect(target.interactionState[SchemaNodeState.Dirty]).toBe(false);
+    expect(target.interactionState[SchemaNodeState.Touched]).toBe(false);
     expect(target.revisionLedger[SchemaNodeEventType.UpdateState]).toBeGreaterThan(revision);
     expect(target.raw).toBe('X');
   });
@@ -107,12 +107,12 @@ describe('settle derivation', () => {
     loadSchemaNodeAtMount(root, { clear: false, target: 'before' },
       SetValueOption.Overwrite);
     const target = root.structure!.target;
-    setTestInteractionState(target, { [NodeState.Dirty]: true, [NodeState.Touched]: true });
+    setTestInteractionState(target, { [SchemaNodeState.Dirty]: true, [SchemaNodeState.Touched]: true });
     writeSchemaNode(root, { clear: true, target: 'manual' }, 'load',
       SetValueOption.DisableAutomaticWrites);
     expect(root.structure?.target?.raw).toBe('manual');
-    expect(root.structure?.target?.interactionState[NodeState.Dirty]).toBe(false);
-    expect(root.structure?.target?.interactionState[NodeState.Touched]).toBe(false);
+    expect(root.structure?.target?.interactionState[SchemaNodeState.Dirty]).toBe(false);
+    expect(root.structure?.target?.interactionState[SchemaNodeState.Touched]).toBe(false);
   });
 
   it('TEST-069 derive budget restores the original caller source B', () => {

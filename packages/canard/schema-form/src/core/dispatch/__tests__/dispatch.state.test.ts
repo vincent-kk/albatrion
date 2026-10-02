@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 
 import { SchemaNodeEventType } from '../../record';
-import { NodeState, ValidationMode } from '../../types/state';
+import { SchemaNodeState, ValidationMode } from '../../types/state';
 import { dispatchBatch, dispatchClearSubtreeState, dispatchResetSubtree, dispatchSetState,
   dispatchSetSubtreeState, dispatchSetValue, readSchemaNodeRevision,
   subscribeSchemaNode } from '../index';
@@ -52,9 +52,9 @@ describe('dispatcher state events', () => {
     const seen: number[] = [];
     subscribeSchemaNode(root, (event) => seen.push(event.type));
 
-    dispatchSetState(root, { [NodeState.Dirty]: true });
+    dispatchSetState(root, { [SchemaNodeState.Dirty]: true });
 
-    expect(root.interactionState[NodeState.Dirty]).toBe(true);
+    expect(root.interactionState[SchemaNodeState.Dirty]).toBe(true);
     expect(root.raw).toBeUndefined();
     expect(root.emit).toBeUndefined();
     expect(runtime.commitNumber).toBe(before);
@@ -85,8 +85,8 @@ describe('dispatcher state events', () => {
     });
 
     dispatchBatch(root, () => {
-      dispatchSetState(child, { [NodeState.Dirty]: true });
-      dispatchSetState(child, { [NodeState.Touched]: true });
+      dispatchSetState(child, { [SchemaNodeState.Dirty]: true });
+      dispatchSetState(child, { [SchemaNodeState.Touched]: true });
       dispatchSetValue(root, { child: 'new' });
       expect(seen).toEqual([]);
     });
@@ -104,19 +104,19 @@ describe('dispatcher state events', () => {
     const first = getDispatchChild(root, 'first');
     const second = getDispatchChild(root, 'second');
 
-    dispatchSetSubtreeState(first, { [NodeState.Dirty]: true });
-    expect(first.interactionState[NodeState.Dirty]).toBe(true);
-    expect(second.interactionState[NodeState.Dirty]).toBeUndefined();
+    dispatchSetSubtreeState(first, { [SchemaNodeState.Dirty]: true });
+    expect(first.interactionState[SchemaNodeState.Dirty]).toBe(true);
+    expect(second.interactionState[SchemaNodeState.Dirty]).toBeUndefined();
     dispatchClearSubtreeState(first);
-    expect(first.interactionState[NodeState.Dirty]).toBeUndefined();
+    expect(first.interactionState[SchemaNodeState.Dirty]).toBeUndefined();
   });
 
   it('NODE-044 ignores state writes on a detached occurrence', () => {
     const { root } = createDispatchTree({ type: 'string' });
     root.detached = true;
     const before = root.interactionState;
-    dispatchSetState(root, { [NodeState.Dirty]: true });
-    dispatchSetSubtreeState(root, { [NodeState.Touched]: true });
+    dispatchSetState(root, { [SchemaNodeState.Dirty]: true });
+    dispatchSetSubtreeState(root, { [SchemaNodeState.Touched]: true });
     dispatchClearSubtreeState(root);
     expect(root.interactionState).toBe(before);
     expect(readSchemaNodeRevision(root, SchemaNodeEventType.UpdateState)).toBe(0);
@@ -126,17 +126,17 @@ describe('dispatcher state events', () => {
     const { root, runtime } = createDispatchTree({ type: 'string' });
     root.detached = true;
     runtime.reportingErrors = true;
-    expect(() => dispatchSetState(root, { [NodeState.Dirty]: true })).not.toThrow();
+    expect(() => dispatchSetState(root, { [SchemaNodeState.Dirty]: true })).not.toThrow();
     expect(() => dispatchClearSubtreeState(root)).not.toThrow();
-    expect(root.interactionState[NodeState.Dirty]).toBeUndefined();
+    expect(root.interactionState[SchemaNodeState.Dirty]).toBeUndefined();
   });
 
   it('ERROR-029 refuses state writes while the error observer is active', () => {
     const { root, runtime } = createDispatchTree({ type: 'string' });
     runtime.reportingErrors = true;
-    expect(() => dispatchSetState(root, { [NodeState.Dirty]: true }))
+    expect(() => dispatchSetState(root, { [SchemaNodeState.Dirty]: true }))
       .toThrowError(expect.objectContaining({ code: 'SCHEMA_FORM_ERROR.WRITE_IN_OBSERVER' }));
-    expect(root.interactionState[NodeState.Dirty]).toBeUndefined();
+    expect(root.interactionState[SchemaNodeState.Dirty]).toBeUndefined();
   });
 
   it('EVENT-067 surfaces an onStateChange failure after state delivery', () => {
@@ -145,7 +145,7 @@ describe('dispatcher state events', () => {
     const seen = vi.fn();
     subscribeSchemaNode(root, seen);
     runtime.onStateChange = () => { throw failure; };
-    expect(() => dispatchSetState(root, { [NodeState.Dirty]: true })).toThrow(failure);
+    expect(() => dispatchSetState(root, { [SchemaNodeState.Dirty]: true })).toThrow(failure);
     expect(seen).toHaveBeenCalledTimes(1);
   });
 
@@ -155,14 +155,14 @@ describe('dispatcher state events', () => {
     let callbacks = 0;
     subscribeSchemaNode(root, (event) => {
       if (event.type & SchemaNodeEventType.UpdateState)
-        seen.push(root.interactionState[NodeState.Touched] === true);
+        seen.push(root.interactionState[SchemaNodeState.Touched] === true);
     });
     runtime.onStateChange = () => {
       callbacks += 1;
       if (callbacks === 1)
-        dispatchSetState(root, { [NodeState.Touched]: true });
+        dispatchSetState(root, { [SchemaNodeState.Touched]: true });
     };
-    dispatchBatch(root, () => dispatchSetState(root, { [NodeState.Dirty]: true }));
+    dispatchBatch(root, () => dispatchSetState(root, { [SchemaNodeState.Dirty]: true }));
     expect(seen).toEqual([false, true]);
     expect(callbacks).toBe(2);
     expect(runtime.entryDepth).toBe(0);
@@ -174,14 +174,14 @@ describe('dispatcher state events', () => {
     let callbacks = 0;
     subscribeSchemaNode(root, (event) => {
       if (event.type & SchemaNodeEventType.UpdateState)
-        seen.push(root.interactionState[NodeState.Touched] === true);
+        seen.push(root.interactionState[SchemaNodeState.Touched] === true);
     });
     runtime.onStateChange = () => {
       callbacks += 1;
       if (callbacks === 1)
-        dispatchSetState(root, { [NodeState.Touched]: true });
+        dispatchSetState(root, { [SchemaNodeState.Touched]: true });
     };
-    dispatchSetState(root, { [NodeState.Dirty]: true });
+    dispatchSetState(root, { [SchemaNodeState.Dirty]: true });
     expect(seen).toEqual([false, true]);
     expect(callbacks).toBe(2);
   });

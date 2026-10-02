@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { NodeState } from '../../types/state';
+import { SchemaNodeState } from '../../types/state';
 import { SetValueOption } from '../../types/value';
 import { writeSchemaNode } from '../index';
 import { createTestTree } from './fixtures/createTestTree';
@@ -16,17 +16,17 @@ describe('EVENT-062 43C-01 settlement shape counts', () => {
     root.runtime.nodeFactory = (entry, parent, runtime) => {
       const node = createNode(entry, parent, runtime);
       if ('name' in entry && entry.name === 'target')
-        node.interactionState = { [NodeState.Dirty]: true };
+        node.interactionState = { [SchemaNodeState.Dirty]: true };
       return node;
     };
     writeSchemaNode(root, { flag: true, target: 'value' },
       'callerReplace', SetValueOption.Overwrite);
-    expect(root.runtime.globalState).toEqual({ [NodeState.Dirty]: true });
+    expect(root.runtime.globalState).toEqual({ [SchemaNodeState.Dirty]: true });
     writeSchemaNode(root.structure!.flag, false, 'callerReplace',
       SetValueOption.Overwrite);
     expect(root.runtime.globalState).toEqual({});
     writeSchemaNode(root.structure!.flag, true, 'callerReplace',
       SetValueOption.Overwrite);
-    expect(root.runtime.globalState).toEqual({ [NodeState.Dirty]: true });
+    expect(root.runtime.globalState).toEqual({ [SchemaNodeState.Dirty]: true });
   });
 });

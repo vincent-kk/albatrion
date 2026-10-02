@@ -1,5 +1,5 @@
 import { recordSettlementFailure } from '../errors/recordSettlementFailure';
-import { NodeState } from '../../../types/state';
+import { SchemaNodeState } from '../../../types/state';
 import { captureSchemaNodeChange, shallowPatch } from '../../../record';
 import type { SchemaNodeRecord } from '../../../record';
 import { evaluateResetInteraction } from '../../derive';
@@ -35,7 +35,7 @@ export const commitDeriveRules = <Self extends SchemaNodeRecord<Self>>(
     const previous = node.interactionState;
     node.interactionState = captureSchemaNodeChange(node, 'interactionState',
       shallowPatch(node.interactionState, {
-        [NodeState.Dirty]: false, [NodeState.Touched]: false,
+        [SchemaNodeState.Dirty]: false, [SchemaNodeState.Touched]: false,
       }));
     if (node.interactionState !== previous) context.changedNodes.add(node);
   }

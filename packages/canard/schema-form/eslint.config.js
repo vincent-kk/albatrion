@@ -11,11 +11,6 @@ export default [
   ...createESLintConfig(path.resolve(__dirname, './tsconfig.json')),
   {
     files: ['src/__legacy__/**/*.{ts,tsx}'],
-    // removed with the files in unit U8 (75C-01)
-    ignores: [
-      'src/__legacy__/core/__tests__/IfThenElse.onChange.realReact.test.tsx',
-      'src/__legacy__/core/__tests__/NullableFormScenarios.test.tsx',
-    ],
     rules: {
       'no-restricted-imports': [
         'error',

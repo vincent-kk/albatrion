@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { SetValueOption } from '../../types/value';
-import { NodeState } from '../../types/state';
+import { SchemaNodeState } from '../../types/state';
 import { loadSchemaNodeAtMount, readSchemaNodeDefaultValue, resetSchemaNodeForm,
   resetSchemaNodeSubtree, writeSchemaNode } from '../index';
 import { createTestTree } from './fixtures/createTestTree';
@@ -186,11 +186,11 @@ describe('settle transitions and loads', () => {
       left: { type: 'number' }, right: { type: 'number' },
     } });
     loadSchemaNodeAtMount(root, { left: 'bad', right: 'bad' }, SetValueOption.Overwrite);
-    setTestInteractionState(root.structure!.left, { [NodeState.Touched]: true });
-    setTestInteractionState(root.structure!.right, { [NodeState.Touched]: true });
+    setTestInteractionState(root.structure!.left, { [SchemaNodeState.Touched]: true });
+    setTestInteractionState(root.structure!.right, { [SchemaNodeState.Touched]: true });
     resetSchemaNodeSubtree(root.structure!.left, SetValueOption.Overwrite);
-    expect(root.structure?.left?.interactionState[NodeState.Touched]).toBeUndefined();
-    expect(root.structure?.right?.interactionState[NodeState.Touched]).toBe(true);
+    expect(root.structure?.left?.interactionState[SchemaNodeState.Touched]).toBeUndefined();
+    expect(root.structure?.right?.interactionState[SchemaNodeState.Touched]).toBe(true);
     expect([...root.runtime.typeMismatchPaths].sort()).toEqual(['/left', '/right']);
     expect(root.runtime.typeMismatchRecords?.map((record) => record.path)).toEqual(['/left']);
     expect(root.runtime.typeMismatchRecords?.[0]?.source).toBe('load');

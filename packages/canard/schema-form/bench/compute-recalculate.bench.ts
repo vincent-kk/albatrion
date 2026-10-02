@@ -4,7 +4,7 @@ import { ComputedPropertiesManager } from '@/schema-form/__legacy__/core/nodes/A
 import type {
   JSONSchemaType,
   JSONSchemaWithVirtual,
-} from '@/schema-form/types';
+} from '@/schema-form/__legacy__/types';
 
 /**
  * Pure ComputedPropertiesManager.recalculate cost.

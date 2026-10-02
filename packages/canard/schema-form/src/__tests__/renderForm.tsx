@@ -8,10 +8,11 @@ import {
 
 import { act, render, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import Ajv from 'ajv/dist/2020';
+import { registerScenarioHandle } from '@aileron/schema-form-scenarios';
 
-import { isArray } from '@winglet/common-utils/filter';
-import { JSONPointer as $ } from '@winglet/json/pointer';
+import { createRenderValidator } from './helpers/createRenderValidator';
+import { observeErrorSink } from './helpers/observeErrorSink';
+import { createRenderScenarioAdapter } from './helpers/createRenderScenarioAdapter';
 
 import {
   Form,
@@ -20,112 +21,15 @@ import {
   type FormTypeInputDefinition,
   type FormTypeInputProps,
   type JSONSchema,
-  type JSONSchemaError,
+  type ValidationIssue,
   type SchemaNode,
-  type ValidatorFactory,
-  type ValidatorPlugin,
   registerPlugin,
 } from '@/schema-form';
+import type { FormErrorRecord } from '@/schema-form/errors';
 
-/**
- * Shared render-test harness for @canard/schema-form.
- *
- * Why this exists
- * ---------------
- * The library converts a JSON Schema into a node tree and then renders React
- * inputs from it. A whole class of bugs lives in the gap between the two — the
- * node tree settles correctly (often via a microtask cascade) but the rendered
- * DOM diverges (fields missing on initial mount, stale values after a branch
- * switch, ghost array rows after reorder, etc.). Node-tree-only unit tests
- * cannot see those regressions.
- *
- * This harness renders a real <Form> through the public API and exposes BOTH
- * layers so a single test can assert the node tree AND the rendered DOM at once.
- *
- * Load-bearing DOM facts (verified against src/):
- *   - `SchemaNodeProxy` wraps every ENABLED node in
- *     `<div data-path={node.path} role="none" style="display:contents">`, and
- *     renders `null` when `!node.enabled` (scoped && active && visible).
- *     → `[data-path="/x"]` presence is the canonical "is this node rendered"
- *       hook for ALL node types (object / array / terminal), not just inputs.
- *   - Virtualization placeholders share the SAME identity attribute
- *     (`data-path`) plus a `data-deferred` state marker, so
- *     `[data-path="/x"]` addresses a node uniformly while
- *     `:not([data-deferred])` distinguishes an actually mounted subtree.
- *   - Every built-in terminal input renders with `id={node.path}` (the
- *     JSONPointer) and is UNCONTROLLED (defaultValue / defaultChecked). After a
- *     programmatic setValue the DOM only updates when the input re-mounts via
- *     the RequestRefresh cascade — so DOM value assertions double as regression
- *     checks for that refresh path.
- *   - Arrays render add/remove buttons via `title="add item"` / "remove item".
- *
- * Two-phase assertions
- * --------------------
- * Pass `{ flushOnMount: false }` to assert the SYNCHRONOUS post-render snapshot
- * (before the microtask cascade drains) — this is what distinguishes a priming
- * regression (branch fields absent at first paint) from a settled-tree test.
- * Then call `await form.flush()` and assert the post-cascade DOM.
- */
-
-// ---------------------------------------------------------------------------
-// Validator plugin (opt-in)
-// ---------------------------------------------------------------------------
-
-let validatorRegistered = false;
-
-/**
- * Register a minimal AJV (draft 2020-12) validator plugin once per test run.
- * Validation relies on a registered validator plugin, so any suite that asserts
- * on AJV errors must call this (or pass `{ validator: true }` to `renderForm`).
- */
+/** The shared harness observes settled node state and committed React DOM. */
 export const setupValidatorPlugin = (): void => {
-  if (validatorRegistered) return;
-  validatorRegistered = true;
-  const ajv = new Ajv({
-    allErrors: true,
-    strictSchema: false,
-    validateFormats: false,
-  });
-  const transform = (errors: any[]): JSONSchemaError[] => {
-    if (!isArray(errors)) return [];
-    return errors.map((error) => {
-      const hasMissing =
-        error.keyword === 'required' && error.params?.missingProperty;
-      const instancePath: string = error.instancePath ?? '';
-      const dataPath = !instancePath
-        ? hasMissing
-          ? $.Separator + error.params.missingProperty
-          : ''
-        : hasMissing
-          ? instancePath + $.Separator + error.params.missingProperty
-          : instancePath;
-      return {
-        dataPath,
-        schemaPath: error.schemaPath,
-        keyword: error.keyword,
-        message: error.message,
-        details: error.params,
-        source: error,
-      } as JSONSchemaError;
-    });
-  };
-  // `as ValidatorFactory` reconciles the harness's `@winglet/json-schema`
-  // JSONSchema with the library's own JSONSchema (the factory param is
-  // contravariant); the function body is contract-correct.
-  const compile = ((jsonSchema: JSONSchema) => {
-    const validate = ajv.compile({ ...jsonSchema, $async: true });
-    return async (data: unknown) => {
-      try {
-        await validate(data);
-        return null;
-      } catch (thrown: any) {
-        if (isArray(thrown?.errors)) return transform(thrown.errors);
-        throw thrown;
-      }
-    };
-  }) as ValidatorFactory;
-  const plugin: ValidatorPlugin = { bind: () => {}, compile };
-  registerPlugin({ validator: plugin });
+  registerPlugin({ validator: createRenderValidator() });
 };
 
 // ---------------------------------------------------------------------------
@@ -183,7 +87,6 @@ const buildInstrumentedDefinitions = (
   };
   return [
     { test: { type: 'number' }, Component: Numeric },
-    { test: { type: 'integer' }, Component: Numeric },
     { test: { type: 'boolean' }, Component: Check },
     { test: { type: 'string' }, Component: Text },
   ];
@@ -205,9 +108,8 @@ export interface RenderFormOptions extends Omit<FormProps, 'jsonSchema'> {
    */
   instrument?: boolean;
   /**
-   * Drain the initial composition cascade before returning (default true).
-   * Set false to assert the synchronous post-render snapshot (priming gaps),
-   * then call `await form.flush()` for the settled state.
+   * Wait for pending React work before returning (default true).
+   * False skips this extra wait; the engine is already synchronously settled.
    */
   flushOnMount?: boolean;
   /** Milliseconds to drain on the initial mount flush (default 0). */
@@ -225,8 +127,12 @@ export interface FormHarness {
   lastValue: () => any;
   /** Every value `onChange` has reported, in order. */
   changeLog: () => any[];
-  /** Errors caught on `window` (error / unhandledrejection) since mount. */
+  /** Ownerless host errors since mount, formatted for existing assertions. */
   caughtErrors: () => string[];
+  /** Original ownerless error values from reportError, window, or console. */
+  sinkErrors: () => unknown[];
+  /** Form-owned records delivered through onError, separate from host failures. */
+  errorRecords: () => FormErrorRecord[];
   unmount: () => void;
 
   // ---- DOM presence (by JSONPointer path; canonical [data-path] hook) ----
@@ -259,7 +165,7 @@ export interface FormHarness {
   /** Current root value from the handle. */
   getValue: () => any;
   /** Current errors from the handle. */
-  getErrors: () => JSONSchemaError[];
+  getErrors: () => readonly ValidationIssue[];
   /** Attached files map (for file-upload scenarios). */
   attachedFilesMap: () => ReturnType<FormHandle['getAttachedFilesMap']>;
 
@@ -279,15 +185,15 @@ export interface FormHarness {
 
   // ---- programmatic ----
   /**
-   * Set the whole form value and let the cascade settle (wrapped in act +
-   * flushed). For mid-cascade assertions use `handle.setValue` directly.
+   * Set the whole form value synchronously and wait for the React commit.
    */
   setValue: (value: any, option?: number) => Promise<void>;
+  /** Load current Form props synchronously, then wait for commit reconciliation. */
   reset: () => Promise<void>;
-  validate: () => Promise<JSONSchemaError[]>;
+  validate: () => Promise<readonly ValidationIssue[]>;
 
   // ---- async draining ----
-  /** Flush microtasks + a macrotask so the event cascade settles. */
+  /** Wait for pending React effects, validation, or virtualization work. */
   flush: (ms?: number) => Promise<void>;
 }
 
@@ -295,7 +201,7 @@ const byId = (
   container: HTMLElement,
   path: string,
 ): HTMLInputElement | HTMLSelectElement | null =>
-  container.querySelector(`#${CSS.escape(path)}`);
+  Array.from(container.querySelectorAll<HTMLInputElement | HTMLSelectElement>('input[id], select[id], textarea[id]')).find((element) => element.id === path) ?? null;
 
 const byPath = (container: HTMLElement, path: string): HTMLElement | null =>
   container.querySelector(`[data-path="${path}"]`);
@@ -322,6 +228,7 @@ export const renderForm = async (
     flushOnMount = true,
     initialFlushMs = 0,
     onChange,
+    onError,
     formTypeInputDefinitions,
     ...formProps
   } = options;
@@ -330,14 +237,9 @@ export const renderForm = async (
   const ref = createRef<FormHandle>();
   const user = userEvent.setup();
   const changes: any[] = [];
-  const errors: string[] = [];
+  const sink = observeErrorSink();
+  const records: FormErrorRecord[] = [];
   const mountMap = new Map<string, number>();
-
-  const onError = (e: ErrorEvent) => errors.push(e.message ?? String(e.error));
-  const onRejection = (e: PromiseRejectionEvent) =>
-    errors.push(String(e.reason?.message ?? e.reason));
-  window.addEventListener('error', onError);
-  window.addEventListener('unhandledrejection', onRejection);
 
   const defs: FormTypeInputDefinition[] = [
     ...(formTypeInputDefinitions ?? []),
@@ -346,14 +248,18 @@ export const renderForm = async (
 
   const form = (
     <Form
-      ref={ref as any}
-      jsonSchema={jsonSchema as any}
+      ref={ref}
+      jsonSchema={jsonSchema}
       onChange={(value: any) => {
         changes.push(value);
         onChange?.(value);
       }}
+      onError={(record) => {
+        records.push(record);
+        onError?.(record);
+      }}
       formTypeInputDefinitions={defs.length ? defs : undefined}
-      {...(formProps as any)}
+      {...formProps}
     />
   );
   const element: ReactElement = strictMode ? (
@@ -367,14 +273,12 @@ export const renderForm = async (
     await act(async () => {
       utils = render(element);
     });
-    // Drain the initial composition cascade (oneOf/anyOf branch attach,
-    // defaults, computed visibility) so the first assertion sees settled DOM.
+    // Engine settlement is synchronous; this wait drains React and host work.
     await act(async () => {
       await new Promise((r) => setTimeout(r, initialFlushMs));
     });
   } else {
-    // Synchronous commit only — microtask cascade NOT drained, so the caller
-    // can assert the priming snapshot before calling `flush()`.
+    // Skip the extra host wait while retaining the settled engine snapshot.
     act(() => {
       utils = render(element);
     });
@@ -388,17 +292,20 @@ export const renderForm = async (
     });
   };
 
-  return {
+  let unregister = () => {};
+  const harness: FormHarness = {
     handle: ref.current as FormHandle,
     container,
     user,
     lastValue: () => changes[changes.length - 1],
     changeLog: () => changes.slice(),
-    caughtErrors: () => errors.slice(),
+    caughtErrors: () => sink.errors().map((error) => error instanceof Error ? error.message : String(error)),
+    sinkErrors: sink.errors,
+    errorRecords: () => records.slice(),
     unmount: () => {
-      window.removeEventListener('error', onError);
-      window.removeEventListener('unhandledrejection', onRejection);
       utils.unmount();
+      unregister();
+      sink.cleanup();
     },
 
     wrapper: (path) => byPath(container, path),
@@ -495,7 +402,7 @@ export const renderForm = async (
       });
     },
     validate: async () => {
-      let result: JSONSchemaError[] = [];
+      let result: readonly ValidationIssue[] = [];
       await act(async () => {
         result = (await ref.current?.validate()) ?? [];
       });
@@ -504,4 +411,6 @@ export const renderForm = async (
 
     flush,
   };
+  unregister = registerScenarioHandle(container, harness.handle, createRenderScenarioAdapter(harness));
+  return harness;
 };
