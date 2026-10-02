@@ -17,6 +17,6 @@ export interface SchemaNodeProxyProps {
   onFileAttachRef?: RefObject<ChildNodeComponentProps['onFileAttach']>;
   overridePropsRef?: RefObject<OverridableFormTypeInputProps>;
   FormTypeInput?: ComponentType<FormTypeInputProps>;
-  FormTypeRenderer?: ComponentType<FormTypeRendererProps>;
+  FormTypeGroupRenderer?: ComponentType<FormTypeRendererProps>;
   Wrapper?: ComponentType<PropsWithChildren<Dictionary>>;
 }

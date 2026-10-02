@@ -2,7 +2,7 @@ import { type CSSProperties, memo } from 'react';
 
 import { PluginManager } from '@/schema-form/app/plugin';
 import { SchemaNodeProxy } from '@/schema-form/components/SchemaNode';
-import { useExternalFormContext } from '@/schema-form/providers';
+import { useFormTypeRendererContext } from '@/schema-form/providers';
 
 export interface FormErrorProps {
   path?: string;
@@ -62,12 +62,14 @@ export interface FormErrorProps {
  * ```
  */
 export const FormError = memo(({ path, style, className }: FormErrorProps) => {
-  const { FormErrorRenderer } = useExternalFormContext();
+  const { FormTypeErrorRenderer } = useFormTypeRendererContext();
   return (
     <span style={style} className={className}>
       <SchemaNodeProxy
         path={path}
-        FormTypeRenderer={FormErrorRenderer || PluginManager.FormError}
+        FormTypeGroupRenderer={
+          FormTypeErrorRenderer || PluginManager.FormTypeErrorRenderer
+        }
       />
     </span>
   );

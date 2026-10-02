@@ -7,7 +7,6 @@ import { extractSchemaInfo } from '../extractSchemaInfo';
 describe('extractSchemaInfo', () => {
   describe('when type is undefined', () => {
     it('should return null for schema without type', () => {
-      // @ts-expect-error: error for test
       const schema: JSONSchema = {
         properties: {
           name: { type: 'string' },
@@ -20,7 +19,6 @@ describe('extractSchemaInfo', () => {
     });
 
     it('should return null for empty schema', () => {
-      // @ts-expect-error: error for test
       const schema: JSONSchema = {};
 
       const result = extractSchemaInfo(schema);

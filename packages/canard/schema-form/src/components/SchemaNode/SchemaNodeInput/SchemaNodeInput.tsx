@@ -4,24 +4,28 @@ import { isArray } from '@winglet/common-utils/filter';
 import { useMemorize, useOnUnmount } from '@winglet/react-utils/hook';
 
 import { DISPLAY_CONTENT, NONE_ROLE } from '@/schema-form/app/constants';
-import { NodeEventType, NodeState } from '@/schema-form/core';
+import {
+  SchemaNodeEventType,
+  SetValueOption,
+  finishSchemaNodeInput,
+  readSchemaNodeInteractionReset,
+  writeSchemaNodeInput,
+} from '@/schema-form/core';
 import { useSchemaNodeTracker } from '@/schema-form/hooks/useSchemaNodeTracker';
 import {
   useFormTypeRendererContext,
   useInputControlContext,
   useWorkspaceContext,
 } from '@/schema-form/providers';
-import type { SetStateFnWithOptions } from '@/schema-form/types';
+import { useLiveNode } from '@/schema-form/providers/RootNodeContext';
+import type { JSONSchema, SetStateFnWithOptions } from '@/schema-form/types';
 
 import { useChildNodeComponents } from './hooks/useChildNodeComponents';
 import { useFormTypeInput } from './hooks/useFormTypeInput';
 import { useFormTypeInputControl } from './hooks/useFormTypeInputControl';
-import {
-  HANDLE_CHANGE_OPTION,
-  REACTIVE_RERENDERING_EVENTS,
-  type SchemaNodeInputProps,
-} from './type';
+import { REACTIVE_RERENDERING_EVENTS, type SchemaNodeInputProps } from './type';
 
+/** Bind one input draft to the live node without treating typing as a caller refresh. */
 export const SchemaNodeInput = memo(
   ({
     node,
@@ -31,72 +35,90 @@ export const SchemaNodeInput = memo(
     PreferredFormTypeInput,
     NodeProxy,
   }: SchemaNodeInputProps) => {
-    const FormTypeInputByNode = useFormTypeInput(
+    const selected = useFormTypeInput(node, PreferredFormTypeInput !== null);
+    const FormTypeInput = PreferredFormTypeInput || selected;
+    const mountedChildren = useRef(0);
+    const ChildNodeComponents = useChildNodeComponents(
       node,
-      PreferredFormTypeInput !== null,
+      NodeProxy,
+      mountedChildren,
     );
-    const FormTypeInput = useMemo(
-      () => PreferredFormTypeInput || FormTypeInputByNode,
-      [PreferredFormTypeInput, FormTypeInputByNode],
-    );
-    const ChildNodeComponents = useChildNodeComponents(node, NodeProxy);
-
     const { checkShowError } = useFormTypeRendererContext();
     const { attachedFilesMap, context } = useWorkspaceContext();
     const { readOnly: rootReadOnly, disabled: rootDisabled } =
       useInputControlContext();
-
-    const handleChange = useCallback<SetStateFnWithOptions<any>>(
-      (input, option = HANDLE_CHANGE_OPTION) => {
-        if (node.readOnly || node.disabled) return;
-        if (onChangeRef.current) onChangeRef.current(input, option);
-        else node.setValue(input, option);
-        node.clearExternalErrors();
-        if (!node.state[NodeState.Dirty])
-          node.setState({ [NodeState.Dirty]: true });
-      },
-      [node, onChangeRef],
+    const isLive = useLiveNode(node);
+    const [ref, version] = useFormTypeInputControl(node, mountedChildren);
+    const generation = useMemo(
+      () => node.revision(SchemaNodeEventType.RequestRefresh),
+      // eslint-disable-next-line react-hooks/exhaustive-deps -- Capture a revision once per mounted input generation.
+      [node, version],
     );
-
+    const defaultValue = useMemorize(() => node.value, [node, version]);
+    const accepts = useCallback(
+      () =>
+        isLive() &&
+        (mountedChildren.current > 0 ||
+          generation === node.revision(SchemaNodeEventType.RequestRefresh)),
+      [node, generation, isLive],
+    );
+    const handleChange = useCallback<SetStateFnWithOptions<any>>(
+      (input, option = SetValueOption.Overwrite) => {
+        if (
+          !accepts() ||
+          rootReadOnly ||
+          rootDisabled ||
+          node.readOnly ||
+          node.disabled
+        )
+          return;
+        if (!onChangeRef.current) writeSchemaNodeInput(node, input, option);
+        else
+          node.batch(() => {
+            onChangeRef.current!(input, option);
+            node.clearExternalErrors();
+            node.setState({ 1: true });
+          });
+      },
+      [accepts, rootReadOnly, rootDisabled, node, onChangeRef],
+    );
     const handleFileAttach = useCallback(
       (files: File | File[] | undefined) => {
+        if (!accepts()) return;
         if (onFileAttachRef.current) return onFileAttachRef.current(files);
         if (files === undefined) attachedFilesMap.delete(node.path);
         else attachedFilesMap.set(node.path, isArray(files) ? files : [files]);
       },
-      [attachedFilesMap, node.path, onFileAttachRef],
+      [accepts, node, onFileAttachRef, attachedFilesMap],
     );
-
     const requestId =
       useRef<ReturnType<typeof requestAnimationFrame>>(undefined);
     const handleFocus = useCallback(() => {
-      node.publish(NodeEventType.Focused);
-      if (requestId.current === undefined) return;
-      cancelAnimationFrame(requestId.current);
+      if (requestId.current !== undefined)
+        cancelAnimationFrame(requestId.current);
       requestId.current = undefined;
-    }, [node]);
-
+    }, []);
     const handleBlur = useCallback(() => {
-      node.publish(NodeEventType.Blurred);
-      if (node.state[NodeState.Touched]) return;
+      if (!accepts()) return;
+      const reset = readSchemaNodeInteractionReset(node);
+      finishSchemaNodeInput(node);
+      if (node.state[2]) return;
       requestId.current = requestAnimationFrame(() => {
-        if (!node.state[NodeState.Touched])
-          node.setState({ [NodeState.Touched]: true });
+        if (
+          isLive() &&
+          reset === readSchemaNodeInteractionReset(node) &&
+          !node.state[2]
+        )
+          node.setState({ 2: true });
       });
-    }, [node]);
-
+    }, [accepts, isLive, node]);
     useOnUnmount(() => {
       attachedFilesMap.delete(node.path);
-      if (requestId.current === undefined) return;
-      cancelAnimationFrame(requestId.current);
+      if (requestId.current !== undefined)
+        cancelAnimationFrame(requestId.current);
     });
-
-    const [ref, version] = useFormTypeInputControl(node);
-    const defaultValue = useMemorize(() => node.value, [version]);
     useSchemaNodeTracker(node, REACTIVE_RERENDERING_EVENTS);
-
     if (!FormTypeInput) return null;
-
     return (
       <div
         ref={ref}
@@ -106,22 +128,24 @@ export const SchemaNodeInput = memo(
         onBlur={handleBlur}
       >
         <FormTypeInput
-          // Overridable: UI behavior and styling
           required={node.required}
-          readOnly={rootReadOnly || node.readOnly}
-          disabled={rootDisabled || node.disabled}
-          {...node.jsonSchema.FormTypeInputProps}
-          // Semi-overridable: Value handler and file attach handler
+          placeholder={undefined}
+          style={undefined}
+          className={undefined}
+          {...(node.jsonSchema as JSONSchema).presentation?.FormTypeInputProps}
           defaultValue={defaultValue}
           value={node.value}
           onChange={handleChange}
           onFileAttach={handleFileAttach}
           {...overrideProps}
-          // Non-overridable: Essential node system properties
+          readOnly={rootReadOnly || node.readOnly || !!overrideProps.readOnly}
+          disabled={rootDisabled || node.disabled || !!overrideProps.disabled}
           key={version}
-          jsonSchema={node.jsonSchema}
+          jsonSchema={node.jsonSchema as JSONSchema}
           node={node}
-          type={node.schemaType}
+          type={node.type}
+          schemaType={node.schemaType}
+          typeMismatch={node.typeMismatch}
           name={node.name}
           path={node.path}
           nullable={node.nullable}

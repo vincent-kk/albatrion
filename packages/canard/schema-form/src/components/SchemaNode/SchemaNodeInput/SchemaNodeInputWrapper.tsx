@@ -10,6 +10,7 @@ import {
 } from '@winglet/react-utils/hook';
 
 import type { SchemaNode } from '@/schema-form/core';
+import { useBoundaryReporter } from '@/schema-form/providers/FormErrorContext';
 import type {
   ChildNodeComponentProps,
   FormTypeInputProps,
@@ -53,8 +54,18 @@ export const SchemaNodeInputWrapper = (
       OverridePreferredFormTypeInput &&
       isReactComponent(OverridePreferredFormTypeInput)
         ? isMemoComponent(OverridePreferredFormTypeInput)
-          ? withErrorBoundary(OverridePreferredFormTypeInput)
-          : memo(withErrorBoundary(OverridePreferredFormTypeInput))
+          ? withErrorBoundary(
+              OverridePreferredFormTypeInput,
+              undefined,
+              useBoundaryReporter,
+            )
+          : memo(
+              withErrorBoundary(
+                OverridePreferredFormTypeInput,
+                undefined,
+                useBoundaryReporter,
+              ),
+            )
         : null,
     );
     return (

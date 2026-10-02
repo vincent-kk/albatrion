@@ -19,14 +19,14 @@ import { ExternalFormContext } from './ExternalFormContext';
 export interface ExternalFormContextProviderProps {
   /** List of FormTypeInputDefinition declared externally */
   formTypeInputDefinitions?: FormTypeInputDefinition[];
-  /** FormGroupRenderer component declared externally */
-  FormGroupRenderer?: ComponentType<FormTypeRendererProps>;
-  /** FormLabelRenderer component declared externally */
-  FormLabelRenderer?: ComponentType<FormTypeRendererProps>;
-  /** FormInputRenderer component declared externally */
-  FormInputRenderer?: ComponentType<FormTypeRendererProps>;
-  /** FormErrorRenderer component declared externally */
-  FormErrorRenderer?: ComponentType<FormTypeRendererProps>;
+  /** FormTypeGroupRenderer component declared externally */
+  FormTypeGroupRenderer?: ComponentType<FormTypeRendererProps>;
+  /** FormTypeLabelRenderer component declared externally */
+  FormTypeLabelRenderer?: ComponentType<FormTypeRendererProps>;
+  /** FormTypeInputRenderer component declared externally */
+  FormTypeInputRenderer?: ComponentType<FormTypeRendererProps>;
+  /** FormTypeErrorRenderer component declared externally */
+  FormTypeErrorRenderer?: ComponentType<FormTypeRendererProps>;
   /** FormatError function declared externally */
   formatError?: FormatError;
   /**
@@ -65,8 +65,8 @@ export interface ExternalFormContextProviderProps {
  * function App() {
  *   return (
  *     <FormProvider
- *       FormLabelRenderer={CustomLabel}
- *       FormErrorRenderer={CustomError}
+ *       FormTypeLabelRenderer={CustomLabel}
+ *       FormTypeErrorRenderer={CustomError}
  *       showError={ShowError.Touched}
  *     >
  *       <MyForms />
@@ -158,10 +158,10 @@ export interface ExternalFormContextProviderProps {
  * ```tsx
  * <FormProvider
  *   // Custom renderers
- *   FormGroupRenderer={MyFormGroup}
- *   FormLabelRenderer={MyFormLabel}
- *   FormInputRenderer={MyFormInput}
- *   FormErrorRenderer={MyFormError}
+ *   FormTypeGroupRenderer={MyFormGroup}
+ *   FormTypeLabelRenderer={MyFormLabel}
+ *   FormTypeInputRenderer={MyFormInput}
+ *   FormTypeErrorRenderer={MyFormError}
  *
  *   // Custom input types
  *   formTypeInputDefinitions={[
@@ -196,10 +196,10 @@ export interface ExternalFormContextProviderProps {
  */
 export const ExternalFormContextProvider = ({
   formTypeInputDefinitions,
-  FormGroupRenderer,
-  FormLabelRenderer,
-  FormInputRenderer,
-  FormErrorRenderer,
+  FormTypeGroupRenderer,
+  FormTypeLabelRenderer,
+  FormTypeInputRenderer,
+  FormTypeErrorRenderer,
   formatError,
   showError,
   validationMode,
@@ -209,10 +209,10 @@ export const ExternalFormContextProvider = ({
 }: PropsWithChildren<ExternalFormContextProviderProps>) => {
   const constant = useConstant({
     formTypeInputDefinitions,
-    FormGroupRenderer,
-    FormLabelRenderer,
-    FormInputRenderer,
-    FormErrorRenderer,
+    FormTypeGroupRenderer,
+    FormTypeLabelRenderer,
+    FormTypeInputRenderer,
+    FormTypeErrorRenderer,
     formatError,
   });
   const context = useSnapshot(inputContext);
@@ -221,10 +221,10 @@ export const ExternalFormContextProvider = ({
       fromExternalFormTypeInputDefinitions: constant.formTypeInputDefinitions
         ? normalizeFormTypeInputDefinitions(constant.formTypeInputDefinitions)
         : undefined,
-      FormGroupRenderer: constant.FormGroupRenderer,
-      FormLabelRenderer: constant.FormLabelRenderer,
-      FormInputRenderer: constant.FormInputRenderer,
-      FormErrorRenderer: constant.FormErrorRenderer,
+      FormTypeGroupRenderer: constant.FormTypeGroupRenderer,
+      FormTypeLabelRenderer: constant.FormTypeLabelRenderer,
+      FormTypeInputRenderer: constant.FormTypeInputRenderer,
+      FormTypeErrorRenderer: constant.FormTypeErrorRenderer,
       formatError: constant.formatError,
       showError,
       validationMode,

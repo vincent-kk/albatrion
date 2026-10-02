@@ -42,7 +42,7 @@ export interface TestWrapperOptions {
   /** Pre-populated attached files */
   attachedFilesMap?: AttachedFilesMap;
   /** Custom FormTypeRenderer */
-  CustomFormTypeRenderer?: React.ComponentType<FormTypeRendererProps>;
+  FormTypeGroupRenderer?: React.ComponentType<FormTypeRendererProps>;
   /** Show error configuration */
   showError?: boolean;
   /** Root node for RootNodeContext - provides mock node with find method */
@@ -96,7 +96,7 @@ export const createTestWrapper = (options: TestWrapperOptions = {}) => {
     disabled = false,
     context = {},
     attachedFilesMap = new Map(),
-    CustomFormTypeRenderer,
+    FormTypeGroupRenderer,
     showError = true,
     rootNode = createMockRootNode(),
   } = options;
@@ -113,7 +113,7 @@ export const createTestWrapper = (options: TestWrapperOptions = {}) => {
   return ({ children }: PropsWithChildren) => (
     <ExternalFormContextProvider
       formTypeInputDefinitions={defaultDefinitions}
-      FormGroupRenderer={MockFormTypeRenderer as any}
+      FormTypeGroupRenderer={MockFormTypeRenderer as any}
       showError={showError}
     >
       <FormTypeInputsContextProvider
@@ -121,7 +121,7 @@ export const createTestWrapper = (options: TestWrapperOptions = {}) => {
         formTypeInputMap={formTypeInputMap}
       >
         <FormTypeRendererContextProvider
-          CustomFormTypeRenderer={CustomFormTypeRenderer as any}
+          FormTypeGroupRenderer={FormTypeGroupRenderer as any}
           showError={showError}
         >
           <InputControlContextProvider readOnly={readOnly} disabled={disabled}>

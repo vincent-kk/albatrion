@@ -63,6 +63,8 @@ describe('normalizeFormTypeInputMap', () => {
       // /user/(name|email) 패턴
       expect(
         result[0].test({
+          schemaType: 'string',
+          typeMismatch: false,
           path: '/user/name',
           type: 'string',
           nullable: false,
@@ -73,6 +75,8 @@ describe('normalizeFormTypeInputMap', () => {
 
       expect(
         result[0].test({
+          schemaType: 'string',
+          typeMismatch: false,
           path: '/user/email',
           type: 'string',
           nullable: false,
@@ -83,6 +87,8 @@ describe('normalizeFormTypeInputMap', () => {
 
       expect(
         result[0].test({
+          schemaType: 'string',
+          typeMismatch: false,
           path: '/user/phone',
           type: 'string',
           nullable: false,
@@ -94,6 +100,8 @@ describe('normalizeFormTypeInputMap', () => {
       // /api/v[12]/users 패턴
       expect(
         result[1].test({
+          schemaType: 'string',
+          typeMismatch: false,
           path: '/api/v1/users',
           type: 'string',
           nullable: false,
@@ -104,6 +112,8 @@ describe('normalizeFormTypeInputMap', () => {
 
       expect(
         result[1].test({
+          schemaType: 'string',
+          typeMismatch: false,
           path: '/api/v2/users',
           type: 'string',
           nullable: false,
@@ -114,6 +124,8 @@ describe('normalizeFormTypeInputMap', () => {
 
       expect(
         result[1].test({
+          schemaType: 'string',
+          typeMismatch: false,
           path: '/api/v3/users',
           type: 'string',
           nullable: false,
@@ -125,6 +137,8 @@ describe('normalizeFormTypeInputMap', () => {
       // /settings/\\d+ 패턴 (숫자)
       expect(
         result[2].test({
+          schemaType: 'string',
+          typeMismatch: false,
           path: '/settings/123',
           type: 'number',
           nullable: false,
@@ -135,6 +149,8 @@ describe('normalizeFormTypeInputMap', () => {
 
       expect(
         result[2].test({
+          schemaType: 'string',
+          typeMismatch: false,
           path: '/settings/0',
           type: 'number',
           nullable: false,
@@ -145,6 +161,8 @@ describe('normalizeFormTypeInputMap', () => {
 
       expect(
         result[2].test({
+          schemaType: 'string',
+          typeMismatch: false,
           path: '/settings/abc',
           type: 'number',
           nullable: false,
@@ -156,6 +174,8 @@ describe('normalizeFormTypeInputMap', () => {
       // ^/admin.* 패턴 (admin으로 시작하는 모든 경로)
       expect(
         result[3].test({
+          schemaType: 'string',
+          typeMismatch: false,
           path: '/admin',
           type: 'string',
           nullable: false,
@@ -166,6 +186,8 @@ describe('normalizeFormTypeInputMap', () => {
 
       expect(
         result[3].test({
+          schemaType: 'string',
+          typeMismatch: false,
           path: '/admin/users',
           type: 'string',
           nullable: false,
@@ -176,6 +198,8 @@ describe('normalizeFormTypeInputMap', () => {
 
       expect(
         result[3].test({
+          schemaType: 'string',
+          typeMismatch: false,
           path: '/admin/settings/theme',
           type: 'string',
           nullable: false,
@@ -186,6 +210,8 @@ describe('normalizeFormTypeInputMap', () => {
 
       expect(
         result[3].test({
+          schemaType: 'string',
+          typeMismatch: false,
           path: '/user/admin',
           type: 'string',
           nullable: false,
@@ -208,6 +234,8 @@ describe('normalizeFormTypeInputMap', () => {
       // 날짜 패턴
       expect(
         result[0].test({
+          schemaType: 'string',
+          typeMismatch: false,
           path: '/orders/2024-01-15',
           type: 'string',
           nullable: false,
@@ -218,6 +246,8 @@ describe('normalizeFormTypeInputMap', () => {
 
       expect(
         result[0].test({
+          schemaType: 'string',
+          typeMismatch: false,
           path: '/orders/2024-1-5',
           type: 'string',
           nullable: false,
@@ -229,6 +259,8 @@ describe('normalizeFormTypeInputMap', () => {
       // 이미지 파일 패턴
       expect(
         result[1].test({
+          schemaType: 'string',
+          typeMismatch: false,
           path: '/files/avatar.jpg',
           type: 'string',
           nullable: false,
@@ -239,6 +271,8 @@ describe('normalizeFormTypeInputMap', () => {
 
       expect(
         result[1].test({
+          schemaType: 'string',
+          typeMismatch: false,
           path: '/files/logo.png',
           type: 'string',
           nullable: false,
@@ -249,6 +283,8 @@ describe('normalizeFormTypeInputMap', () => {
 
       expect(
         result[1].test({
+          schemaType: 'string',
+          typeMismatch: false,
           path: '/files/document.pdf',
           type: 'string',
           nullable: false,
@@ -260,6 +296,8 @@ describe('normalizeFormTypeInputMap', () => {
       // 비캡처 그룹 패턴
       expect(
         result[2].test({
+          schemaType: 'string',
+          typeMismatch: false,
           path: '/api/users/123/comments',
           type: 'string',
           nullable: false,
@@ -270,6 +308,8 @@ describe('normalizeFormTypeInputMap', () => {
 
       expect(
         result[2].test({
+          schemaType: 'string',
+          typeMismatch: false,
           path: '/api/posts/456/comments',
           type: 'string',
           nullable: false,
@@ -280,6 +320,8 @@ describe('normalizeFormTypeInputMap', () => {
 
       expect(
         result[2].test({
+          schemaType: 'string',
+          typeMismatch: false,
           path: '/api/orders/789/comments',
           type: 'string',
           nullable: false,
@@ -300,6 +342,8 @@ describe('normalizeFormTypeInputMap', () => {
       // 정확한 경로가 먼저 체크되고, 그 후 정규식이 체크됨
       expect(
         result[0].test({
+          schemaType: 'string',
+          typeMismatch: false,
           path: '/user/profile',
           type: 'string',
           nullable: false,
@@ -310,6 +354,8 @@ describe('normalizeFormTypeInputMap', () => {
 
       expect(
         result[1].test({
+          schemaType: 'string',
+          typeMismatch: false,
           path: '/user/profile',
           type: 'string',
           nullable: false,
@@ -320,6 +366,8 @@ describe('normalizeFormTypeInputMap', () => {
 
       expect(
         result[1].test({
+          schemaType: 'string',
+          typeMismatch: false,
           path: '/user/settings',
           type: 'string',
           nullable: false,
@@ -365,6 +413,8 @@ describe('normalizeFormTypeInputMap', () => {
       // 정확한 경로 매칭 테스트
       expect(
         result[0].test({
+          schemaType: 'string',
+          typeMismatch: false,
           path: '/user/name',
           type: 'string',
           nullable: false,
@@ -375,6 +425,8 @@ describe('normalizeFormTypeInputMap', () => {
 
       expect(
         result[0].test({
+          schemaType: 'string',
+          typeMismatch: false,
           path: '/user/email',
           type: 'string',
           nullable: false,
@@ -385,6 +437,8 @@ describe('normalizeFormTypeInputMap', () => {
 
       expect(
         result[1].test({
+          schemaType: 'string',
+          typeMismatch: false,
           path: '/user/email',
           type: 'string',
           nullable: false,
@@ -395,6 +449,8 @@ describe('normalizeFormTypeInputMap', () => {
 
       expect(
         result[2].test({
+          schemaType: 'string',
+          typeMismatch: false,
           path: '/settings/theme',
           type: 'string',
           nullable: false,
@@ -413,6 +469,8 @@ describe('normalizeFormTypeInputMap', () => {
 
       expect(
         result[0].test({
+          schemaType: 'string',
+          typeMismatch: false,
           path: '/user/age',
           type: 'string',
           nullable: false,
@@ -423,6 +481,8 @@ describe('normalizeFormTypeInputMap', () => {
 
       expect(
         result[0].test({
+          schemaType: 'string',
+          typeMismatch: false,
           path: '/admin/name',
           type: 'string',
           nullable: false,
@@ -447,6 +507,8 @@ describe('normalizeFormTypeInputMap', () => {
       // 첫 번째 패턴: /users/*/name
       expect(
         result[0].test({
+          schemaType: 'string',
+          typeMismatch: false,
           path: '/users/0/name',
           type: 'string',
           nullable: false,
@@ -457,6 +519,8 @@ describe('normalizeFormTypeInputMap', () => {
 
       expect(
         result[0].test({
+          schemaType: 'string',
+          typeMismatch: false,
           path: '/users/123/name',
           type: 'string',
           nullable: false,
@@ -468,6 +532,8 @@ describe('normalizeFormTypeInputMap', () => {
       // 와일드카드(*)는 이제 모든 필드를 매칭 (배열 인덱스뿐만 아니라 문자열 키도)
       expect(
         result[0].test({
+          schemaType: 'string',
+          typeMismatch: false,
           path: '/users/invalid/name',
           type: 'string',
           nullable: false,
@@ -478,6 +544,8 @@ describe('normalizeFormTypeInputMap', () => {
 
       expect(
         result[0].test({
+          schemaType: 'string',
+          typeMismatch: false,
           path: '/users/0/email',
           type: 'string',
           nullable: false,
@@ -489,6 +557,8 @@ describe('normalizeFormTypeInputMap', () => {
       // 두 번째 패턴: /items/*/description
       expect(
         result[1].test({
+          schemaType: 'string',
+          typeMismatch: false,
           path: '/items/5/description',
           type: 'string',
           nullable: false,
@@ -499,6 +569,8 @@ describe('normalizeFormTypeInputMap', () => {
 
       expect(
         result[1].test({
+          schemaType: 'string',
+          typeMismatch: false,
           path: '/items/0/title',
           type: 'string',
           nullable: false,
@@ -510,6 +582,8 @@ describe('normalizeFormTypeInputMap', () => {
       // 세 번째 패턴: /data/*/nested/*/value
       expect(
         result[2].test({
+          schemaType: 'string',
+          typeMismatch: false,
           path: '/data/0/nested/1/value',
           type: 'number',
           nullable: false,
@@ -520,6 +594,8 @@ describe('normalizeFormTypeInputMap', () => {
 
       expect(
         result[2].test({
+          schemaType: 'string',
+          typeMismatch: false,
           path: '/data/10/nested/20/value',
           type: 'number',
           nullable: false,
@@ -531,6 +607,8 @@ describe('normalizeFormTypeInputMap', () => {
       // 와일드카드(*)는 문자열 키도 매칭
       expect(
         result[2].test({
+          schemaType: 'string',
+          typeMismatch: false,
           path: '/data/abc/nested/1/value',
           type: 'number',
           nullable: false,
@@ -550,6 +628,8 @@ describe('normalizeFormTypeInputMap', () => {
       // 세그먼트 수가 다른 경우들
       expect(
         result[0].test({
+          schemaType: 'string',
+          typeMismatch: false,
           path: '/users/0',
           type: 'string',
           nullable: false,
@@ -560,6 +640,8 @@ describe('normalizeFormTypeInputMap', () => {
 
       expect(
         result[0].test({
+          schemaType: 'string',
+          typeMismatch: false,
           path: '/users/0/name/extra',
           type: 'string',
           nullable: false,
@@ -570,6 +652,8 @@ describe('normalizeFormTypeInputMap', () => {
 
       expect(
         result[0].test({
+          schemaType: 'string',
+          typeMismatch: false,
           path: '/users',
           type: 'string',
           nullable: false,
@@ -588,6 +672,8 @@ describe('normalizeFormTypeInputMap', () => {
 
       expect(
         result[0].test({
+          schemaType: 'string',
+          typeMismatch: false,
           path: '/api/users/0/profile',
           type: 'string',
           nullable: false,
@@ -598,6 +684,8 @@ describe('normalizeFormTypeInputMap', () => {
 
       expect(
         result[0].test({
+          schemaType: 'string',
+          typeMismatch: false,
           path: '/api/admin/0/profile',
           type: 'string',
           nullable: false,
@@ -608,6 +696,8 @@ describe('normalizeFormTypeInputMap', () => {
 
       expect(
         result[0].test({
+          schemaType: 'string',
+          typeMismatch: false,
           path: '/v2/users/0/profile',
           type: 'string',
           nullable: false,
@@ -634,6 +724,8 @@ describe('normalizeFormTypeInputMap', () => {
       // 인덱스 패턴: /users/*/name
       expect(
         result[0].test({
+          schemaType: 'string',
+          typeMismatch: false,
           path: '/users/0/name',
           type: 'string',
           nullable: false,
@@ -645,6 +737,8 @@ describe('normalizeFormTypeInputMap', () => {
       // 와일드카드(*)는 모든 세그먼트 매칭 (문자열 키 포함)
       expect(
         result[0].test({
+          schemaType: 'string',
+          typeMismatch: false,
           path: '/users/admin/name',
           type: 'string',
           nullable: false,
@@ -656,6 +750,8 @@ describe('normalizeFormTypeInputMap', () => {
       // 정규식: /users/\\d+/email (숫자 인덱스만)
       expect(
         result[1].test({
+          schemaType: 'string',
+          typeMismatch: false,
           path: '/users/123/email',
           type: 'string',
           nullable: false,
@@ -666,6 +762,8 @@ describe('normalizeFormTypeInputMap', () => {
 
       expect(
         result[1].test({
+          schemaType: 'string',
+          typeMismatch: false,
           path: '/users/0/email',
           type: 'string',
           nullable: false,
@@ -676,6 +774,8 @@ describe('normalizeFormTypeInputMap', () => {
 
       expect(
         result[1].test({
+          schemaType: 'string',
+          typeMismatch: false,
           path: '/users/admin/email',
           type: 'string',
           nullable: false,
@@ -687,6 +787,8 @@ describe('normalizeFormTypeInputMap', () => {
       // 정확한 경로: /users/admin/settings
       expect(
         result[2].test({
+          schemaType: 'string',
+          typeMismatch: false,
           path: '/users/admin/settings',
           type: 'string',
           nullable: false,
@@ -697,6 +799,8 @@ describe('normalizeFormTypeInputMap', () => {
 
       expect(
         result[2].test({
+          schemaType: 'string',
+          typeMismatch: false,
           path: '/users/0/settings',
           type: 'string',
           nullable: false,
@@ -708,6 +812,8 @@ describe('normalizeFormTypeInputMap', () => {
       // 정규식: /api/v\\d+/.*
       expect(
         result[3].test({
+          schemaType: 'string',
+          typeMismatch: false,
           path: '/api/v1/users',
           type: 'string',
           nullable: false,
@@ -718,6 +824,8 @@ describe('normalizeFormTypeInputMap', () => {
 
       expect(
         result[3].test({
+          schemaType: 'string',
+          typeMismatch: false,
           path: '/api/v2/posts/123',
           type: 'string',
           nullable: false,
@@ -728,6 +836,8 @@ describe('normalizeFormTypeInputMap', () => {
 
       expect(
         result[3].test({
+          schemaType: 'string',
+          typeMismatch: false,
           path: '/api/beta/users',
           type: 'string',
           nullable: false,
@@ -739,6 +849,8 @@ describe('normalizeFormTypeInputMap', () => {
       // 혼합 패턴: /files/*/images/(thumb|full)
       expect(
         result[4].test({
+          schemaType: 'string',
+          typeMismatch: false,
           path: '/files/gallery/images/thumb',
           type: 'string',
           nullable: false,
@@ -760,6 +872,8 @@ describe('normalizeFormTypeInputMap', () => {
       // Fragment 제거 후 정규식 매칭
       expect(
         result[0].test({
+          schemaType: 'string',
+          typeMismatch: false,
           path: '/users/123/profile',
           type: 'string',
           nullable: false,
@@ -770,6 +884,8 @@ describe('normalizeFormTypeInputMap', () => {
 
       expect(
         result[1].test({
+          schemaType: 'string',
+          typeMismatch: false,
           path: '/admin/users',
           type: 'string',
           nullable: false,
@@ -780,6 +896,8 @@ describe('normalizeFormTypeInputMap', () => {
 
       expect(
         result[1].test({
+          schemaType: 'string',
+          typeMismatch: false,
           path: '/admin/posts',
           type: 'string',
           nullable: false,
@@ -790,6 +908,8 @@ describe('normalizeFormTypeInputMap', () => {
 
       expect(
         result[1].test({
+          schemaType: 'string',
+          typeMismatch: false,
           path: '/admin/comments',
           type: 'string',
           nullable: false,
@@ -815,6 +935,8 @@ describe('normalizeFormTypeInputMap', () => {
       // 인덱스 패턴
       expect(
         result[0].test({
+          schemaType: 'string',
+          typeMismatch: false,
           path: '/users/0/name',
           type: 'string',
           nullable: false,
@@ -826,6 +948,8 @@ describe('normalizeFormTypeInputMap', () => {
       // 정확한 경로
       expect(
         result[1].test({
+          schemaType: 'string',
+          typeMismatch: false,
           path: '/users/profile',
           type: 'string',
           nullable: false,
@@ -836,6 +960,8 @@ describe('normalizeFormTypeInputMap', () => {
 
       expect(
         result[2].test({
+          schemaType: 'string',
+          typeMismatch: false,
           path: '/admin/settings',
           type: 'number',
           nullable: false,
@@ -847,6 +973,8 @@ describe('normalizeFormTypeInputMap', () => {
       // 다중 인덱스 패턴
       expect(
         result[3].test({
+          schemaType: 'string',
+          typeMismatch: false,
           path: '/items/0/tags/1',
           type: 'string',
           nullable: false,
@@ -857,6 +985,8 @@ describe('normalizeFormTypeInputMap', () => {
 
       expect(
         result[3].test({
+          schemaType: 'string',
+          typeMismatch: false,
           path: '/items/5/tags/10',
           type: 'string',
           nullable: false,
@@ -880,6 +1010,8 @@ describe('normalizeFormTypeInputMap', () => {
       // Fragment가 제거된 후 매칭되어야 함
       expect(
         result[0].test({
+          schemaType: 'string',
+          typeMismatch: false,
           path: '/user/name',
           type: 'string',
           nullable: false,
@@ -890,6 +1022,8 @@ describe('normalizeFormTypeInputMap', () => {
 
       expect(
         result[1].test({
+          schemaType: 'string',
+          typeMismatch: false,
           path: '/items/0/title',
           type: 'string',
           nullable: false,
@@ -916,6 +1050,8 @@ describe('normalizeFormTypeInputMap', () => {
       // 사용자 정보
       expect(
         result[0].test({
+          schemaType: 'string',
+          typeMismatch: false,
           path: '/user/name',
           type: 'string',
           nullable: false,
@@ -926,6 +1062,8 @@ describe('normalizeFormTypeInputMap', () => {
 
       expect(
         result[1].test({
+          schemaType: 'string',
+          typeMismatch: false,
           path: '/user/email',
           type: 'string',
           nullable: false,
@@ -937,6 +1075,8 @@ describe('normalizeFormTypeInputMap', () => {
       // 주문 아이템
       expect(
         result[2].test({
+          schemaType: 'string',
+          typeMismatch: false,
           path: '/orders/0/items/0/name',
           type: 'string',
           nullable: false,
@@ -947,6 +1087,8 @@ describe('normalizeFormTypeInputMap', () => {
 
       expect(
         result[2].test({
+          schemaType: 'string',
+          typeMismatch: false,
           path: '/orders/5/items/2/name',
           type: 'string',
           nullable: false,
@@ -958,6 +1100,8 @@ describe('normalizeFormTypeInputMap', () => {
       // 주문 총액
       expect(
         result[3].test({
+          schemaType: 'string',
+          typeMismatch: false,
           path: '/orders/0/total',
           type: 'number',
           nullable: false,
@@ -969,6 +1113,8 @@ describe('normalizeFormTypeInputMap', () => {
       // 설정들
       expect(
         result[4].test({
+          schemaType: 'string',
+          typeMismatch: false,
           path: '/settings/0',
           type: 'string',
           nullable: false,
@@ -979,6 +1125,8 @@ describe('normalizeFormTypeInputMap', () => {
 
       expect(
         result[4].test({
+          schemaType: 'string',
+          typeMismatch: false,
           path: '/settings/100',
           type: 'string',
           nullable: false,
@@ -1000,6 +1148,8 @@ describe('normalizeFormTypeInputMap', () => {
       // 각각 다른 패턴이므로 겹치지 않아야 함
       expect(
         result[0].test({
+          schemaType: 'string',
+          typeMismatch: false,
           path: '/api/users/123',
           type: 'string',
           nullable: false,
@@ -1010,6 +1160,8 @@ describe('normalizeFormTypeInputMap', () => {
 
       expect(
         result[0].test({
+          schemaType: 'string',
+          typeMismatch: false,
           path: '/api/posts/1/comments/2',
           type: 'string',
           nullable: false,
@@ -1020,6 +1172,8 @@ describe('normalizeFormTypeInputMap', () => {
 
       expect(
         result[1].test({
+          schemaType: 'string',
+          typeMismatch: false,
           path: '/api/posts/1/comments/2',
           type: 'string',
           nullable: false,
@@ -1030,6 +1184,8 @@ describe('normalizeFormTypeInputMap', () => {
 
       expect(
         result[1].test({
+          schemaType: 'string',
+          typeMismatch: false,
           path: '/api/users/123',
           type: 'string',
           nullable: false,
@@ -1040,6 +1196,8 @@ describe('normalizeFormTypeInputMap', () => {
 
       expect(
         result[2].test({
+          schemaType: 'string',
+          typeMismatch: false,
           path: '/static/assets',
           type: 'string',
           nullable: false,
@@ -1078,6 +1236,8 @@ describe('normalizeFormTypeInputMap', () => {
 
       expect(
         result[0].test({
+          schemaType: 'string',
+          typeMismatch: false,
           path: '',
           type: 'string',
           nullable: false,
@@ -1088,6 +1248,8 @@ describe('normalizeFormTypeInputMap', () => {
 
       expect(
         result[1].test({
+          schemaType: 'string',
+          typeMismatch: false,
           path: '',
           type: 'string',
           nullable: false,
@@ -1098,6 +1260,8 @@ describe('normalizeFormTypeInputMap', () => {
 
       expect(
         result[2].test({
+          schemaType: 'string',
+          typeMismatch: false,
           path: '',
           type: 'string',
           nullable: false,
@@ -1108,6 +1272,8 @@ describe('normalizeFormTypeInputMap', () => {
 
       expect(
         result[3].test({
+          schemaType: 'string',
+          typeMismatch: false,
           path: '',
           type: 'string',
           nullable: false,
@@ -1126,6 +1292,8 @@ describe('normalizeFormTypeInputMap', () => {
 
       expect(
         result[0].test({
+          schemaType: 'string',
+          typeMismatch: false,
           path: '/level1/0/level3/1/level5/2/level7/3/value',
           type: 'string',
           nullable: false,
@@ -1137,6 +1305,8 @@ describe('normalizeFormTypeInputMap', () => {
       // 와일드카드(*)는 모든 세그먼트 매칭 (문자열 키 포함)
       expect(
         result[0].test({
+          schemaType: 'string',
+          typeMismatch: false,
           path: '/level1/0/level3/1/level5/2/level7/invalid/value',
           type: 'string',
           nullable: false,
@@ -1156,6 +1326,8 @@ describe('normalizeFormTypeInputMap', () => {
       // 유효한 인덱스들
       expect(
         result[0].test({
+          schemaType: 'string',
+          typeMismatch: false,
           path: '/users/0/profile',
           type: 'string',
           nullable: false,
@@ -1166,6 +1338,8 @@ describe('normalizeFormTypeInputMap', () => {
 
       expect(
         result[0].test({
+          schemaType: 'string',
+          typeMismatch: false,
           path: '/users/123/profile',
           type: 'string',
           nullable: false,
@@ -1177,6 +1351,8 @@ describe('normalizeFormTypeInputMap', () => {
       // 와일드카드(*)는 모든 세그먼트 매칭 (문자열 키 포함)
       expect(
         result[0].test({
+          schemaType: 'string',
+          typeMismatch: false,
           path: '/users/abc/profile',
           type: 'string',
           nullable: false,
@@ -1187,6 +1363,8 @@ describe('normalizeFormTypeInputMap', () => {
 
       expect(
         result[0].test({
+          schemaType: 'string',
+          typeMismatch: false,
           path: '/users/-1/profile',
           type: 'string',
           nullable: false,
@@ -1197,6 +1375,8 @@ describe('normalizeFormTypeInputMap', () => {
 
       expect(
         result[0].test({
+          schemaType: 'string',
+          typeMismatch: false,
           path: '/users/01/profile',
           type: 'string',
           nullable: false,
@@ -1218,6 +1398,8 @@ describe('normalizeFormTypeInputMap', () => {
       // 다양한 문자열 키 매칭
       expect(
         result[0].test({
+          schemaType: 'string',
+          typeMismatch: false,
           path: '/config/theme/value',
           type: 'string',
           nullable: false,
@@ -1228,6 +1410,8 @@ describe('normalizeFormTypeInputMap', () => {
 
       expect(
         result[0].test({
+          schemaType: 'string',
+          typeMismatch: false,
           path: '/config/language/value',
           type: 'string',
           nullable: false,
@@ -1238,6 +1422,8 @@ describe('normalizeFormTypeInputMap', () => {
 
       expect(
         result[0].test({
+          schemaType: 'string',
+          typeMismatch: false,
           path: '/config/user-settings/value',
           type: 'string',
           nullable: false,
@@ -1249,6 +1435,8 @@ describe('normalizeFormTypeInputMap', () => {
       // 숫자 인덱스도 여전히 매칭
       expect(
         result[0].test({
+          schemaType: 'string',
+          typeMismatch: false,
           path: '/config/0/value',
           type: 'string',
           nullable: false,
@@ -1268,6 +1456,8 @@ describe('normalizeFormTypeInputMap', () => {
 
       expect(
         result[0].test({
+          schemaType: 'string',
+          typeMismatch: false,
           path: '/metadata/customKey1',
           type: 'string',
           nullable: false,
@@ -1278,6 +1468,8 @@ describe('normalizeFormTypeInputMap', () => {
 
       expect(
         result[0].test({
+          schemaType: 'string',
+          typeMismatch: false,
           path: '/metadata/another-custom-key',
           type: 'string',
           nullable: false,
@@ -1288,6 +1480,8 @@ describe('normalizeFormTypeInputMap', () => {
 
       expect(
         result[0].test({
+          schemaType: 'string',
+          typeMismatch: false,
           path: '/metadata/key_with_underscore',
           type: 'string',
           nullable: false,
@@ -1307,6 +1501,8 @@ describe('normalizeFormTypeInputMap', () => {
       // entity와 attribute 모두 문자열 키
       expect(
         result[0].test({
+          schemaType: 'string',
+          typeMismatch: false,
           path: '/entities/user/attributes/name/value',
           type: 'string',
           nullable: false,
@@ -1318,6 +1514,8 @@ describe('normalizeFormTypeInputMap', () => {
       // entity는 숫자, attribute는 문자열
       expect(
         result[0].test({
+          schemaType: 'string',
+          typeMismatch: false,
           path: '/entities/0/attributes/email/value',
           type: 'string',
           nullable: false,
@@ -1329,6 +1527,8 @@ describe('normalizeFormTypeInputMap', () => {
       // entity는 문자열, attribute는 숫자
       expect(
         result[0].test({
+          schemaType: 'string',
+          typeMismatch: false,
           path: '/entities/product/attributes/0/value',
           type: 'string',
           nullable: false,
@@ -1340,6 +1540,8 @@ describe('normalizeFormTypeInputMap', () => {
       // 모두 숫자
       expect(
         result[0].test({
+          schemaType: 'string',
+          typeMismatch: false,
           path: '/entities/0/attributes/1/value',
           type: 'string',
           nullable: false,
@@ -1359,6 +1561,8 @@ describe('normalizeFormTypeInputMap', () => {
       // 하이픈, 언더스코어
       expect(
         result[0].test({
+          schemaType: 'string',
+          typeMismatch: false,
           path: '/fields/field-name/label',
           type: 'string',
           nullable: false,
@@ -1369,6 +1573,8 @@ describe('normalizeFormTypeInputMap', () => {
 
       expect(
         result[0].test({
+          schemaType: 'string',
+          typeMismatch: false,
           path: '/fields/field_name/label',
           type: 'string',
           nullable: false,
@@ -1380,6 +1586,8 @@ describe('normalizeFormTypeInputMap', () => {
       // camelCase, PascalCase
       expect(
         result[0].test({
+          schemaType: 'string',
+          typeMismatch: false,
           path: '/fields/fieldName/label',
           type: 'string',
           nullable: false,
@@ -1390,6 +1598,8 @@ describe('normalizeFormTypeInputMap', () => {
 
       expect(
         result[0].test({
+          schemaType: 'string',
+          typeMismatch: false,
           path: '/fields/FieldName/label',
           type: 'string',
           nullable: false,
@@ -1409,6 +1619,8 @@ describe('normalizeFormTypeInputMap', () => {
       // 경로 세그먼트 수가 일치하지 않으면 매칭 안됨
       expect(
         result[0].test({
+          schemaType: 'string',
+          typeMismatch: false,
           path: '/users/name',
           type: 'string',
           nullable: false,
@@ -1419,6 +1631,8 @@ describe('normalizeFormTypeInputMap', () => {
 
       expect(
         result[0].test({
+          schemaType: 'string',
+          typeMismatch: false,
           path: '/users//name', // 빈 세그먼트
           type: 'string',
           nullable: false,
@@ -1439,6 +1653,8 @@ describe('normalizeFormTypeInputMap', () => {
       // 정확한 경로는 첫 번째 정의에서 매칭
       expect(
         result[0].test({
+          schemaType: 'string',
+          typeMismatch: false,
           path: '/users/admin/settings',
           type: 'string',
           nullable: false,
@@ -1450,6 +1666,8 @@ describe('normalizeFormTypeInputMap', () => {
       // 와일드카드 패턴도 같은 경로 매칭
       expect(
         result[1].test({
+          schemaType: 'string',
+          typeMismatch: false,
           path: '/users/admin/settings',
           type: 'string',
           nullable: false,
@@ -1461,6 +1679,8 @@ describe('normalizeFormTypeInputMap', () => {
       // 다른 사용자는 와일드카드만 매칭
       expect(
         result[0].test({
+          schemaType: 'string',
+          typeMismatch: false,
           path: '/users/guest/settings',
           type: 'string',
           nullable: false,
@@ -1471,6 +1691,8 @@ describe('normalizeFormTypeInputMap', () => {
 
       expect(
         result[1].test({
+          schemaType: 'string',
+          typeMismatch: false,
           path: '/users/guest/settings',
           type: 'string',
           nullable: false,
@@ -1489,6 +1711,8 @@ describe('normalizeFormTypeInputMap', () => {
 
       expect(
         result[0].test({
+          schemaType: 'string',
+          typeMismatch: false,
           path: '/a/x/y/b',
           type: 'string',
           nullable: false,
@@ -1499,6 +1723,8 @@ describe('normalizeFormTypeInputMap', () => {
 
       expect(
         result[0].test({
+          schemaType: 'string',
+          typeMismatch: false,
           path: '/a/1/2/b',
           type: 'string',
           nullable: false,
@@ -1509,6 +1735,8 @@ describe('normalizeFormTypeInputMap', () => {
 
       expect(
         result[0].test({
+          schemaType: 'string',
+          typeMismatch: false,
           path: '/a/key1/key2/b',
           type: 'string',
           nullable: false,
@@ -1520,6 +1748,8 @@ describe('normalizeFormTypeInputMap', () => {
       // 세그먼트 수 불일치
       expect(
         result[0].test({
+          schemaType: 'string',
+          typeMismatch: false,
           path: '/a/x/b',
           type: 'string',
           nullable: false,
@@ -1538,6 +1768,8 @@ describe('normalizeFormTypeInputMap', () => {
 
       expect(
         result[0].test({
+          schemaType: 'string',
+          typeMismatch: false,
           path: '/settings/theme',
           type: 'string',
           nullable: false,
@@ -1548,6 +1780,8 @@ describe('normalizeFormTypeInputMap', () => {
 
       expect(
         result[0].test({
+          schemaType: 'string',
+          typeMismatch: false,
           path: '/settings/0',
           type: 'string',
           nullable: false,
@@ -1558,6 +1792,8 @@ describe('normalizeFormTypeInputMap', () => {
 
       expect(
         result[0].test({
+          schemaType: 'string',
+          typeMismatch: false,
           path: '/settings/very-long-key-name',
           type: 'string',
           nullable: false,
@@ -1576,6 +1812,8 @@ describe('normalizeFormTypeInputMap', () => {
 
       expect(
         result[0].test({
+          schemaType: 'string',
+          typeMismatch: false,
           path: '/app/config/value',
           type: 'string',
           nullable: false,
@@ -1586,6 +1824,8 @@ describe('normalizeFormTypeInputMap', () => {
 
       expect(
         result[0].test({
+          schemaType: 'string',
+          typeMismatch: false,
           path: '/0/config/value',
           type: 'string',
           nullable: false,
@@ -1596,6 +1836,8 @@ describe('normalizeFormTypeInputMap', () => {
 
       expect(
         result[0].test({
+          schemaType: 'string',
+          typeMismatch: false,
           path: '/production/config/value',
           type: 'string',
           nullable: false,

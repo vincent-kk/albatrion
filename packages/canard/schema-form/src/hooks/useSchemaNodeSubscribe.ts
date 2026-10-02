@@ -4,18 +4,21 @@ import { useHandle } from '@winglet/react-utils/hook';
 
 import type { Fn } from '@aileron/declare';
 
-import type { NodeListener } from '@/schema-form/core';
+import type { SchemaNode } from '@/schema-form/core';
 
-export interface SchemaNodeSubscribeOptions<Node extends {
-  subscribe(listener: NodeListener): Fn;
-  revision(mask?: number): number;
-}> {
+/** Catch-up callback for state delivered before the subscription commits. */
+export interface SchemaNodeSubscribeOptions<
+  Node extends {
+    subscribe(listener: Parameters<SchemaNode['subscribe']>[0]): Fn;
+    revision(mask?: number): number;
+  },
+> {
   /**
    * Called once right after the subscription attaches (and again whenever it
    * re-attaches for a new node). Use it to catch up: re-read the current node
    * state that `listener` would otherwise have derived from events.
    *
-   * Node events are microtask-batched and this subscription only attaches at
+   * Node events are synchronous and this subscription only attaches at
    * commit, so events delivered in the render→commit gap of a concurrent
    * mount (Suspense retry / transition) reach zero listeners and are NOT
    * replayed. Any listener that mirrors node state into React state MUST
@@ -39,12 +42,14 @@ export interface SchemaNodeSubscribeOptions<Node extends {
  * @param listener - Event listener function
  * @param options - Subscription options (see `SchemaNodeSubscribeOptions`)
  */
-export const useSchemaNodeSubscribe = <Node extends {
-  subscribe(listener: NodeListener): Fn;
-  revision(mask?: number): number;
-}>(
+export const useSchemaNodeSubscribe = <
+  Node extends {
+    subscribe(listener: Parameters<SchemaNode['subscribe']>[0]): Fn;
+    revision(mask?: number): number;
+  },
+>(
   node: Node | null,
-  listener: NodeListener,
+  listener: Parameters<SchemaNode['subscribe']>[0],
   options?: SchemaNodeSubscribeOptions<Node>,
 ) => {
   const handleListener = useHandle(listener);

@@ -123,7 +123,7 @@ export const FormRender = memo(
     const overridePropsRef = useReference(restProps);
     const constant = useConstant({
       FormTypeInput: FormTypeInput as ComponentType<FormTypeInputProps>,
-      FormTypeRenderer: children,
+      FormTypeGroupRenderer: children,
       Wrapper,
     });
     return (
@@ -131,7 +131,7 @@ export const FormRender = memo(
         path={path}
         overridePropsRef={overridePropsRef}
         FormTypeInput={constant.FormTypeInput}
-        FormTypeRenderer={constant.FormTypeRenderer}
+        FormTypeGroupRenderer={constant.FormTypeGroupRenderer}
         Wrapper={constant.Wrapper}
       />
     );

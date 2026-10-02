@@ -27,10 +27,10 @@ const getPluginKey = createFingerprintFactory();
  * import { registerPlugin } from '@canard/schema-form';
  *
  * registerPlugin({
- *   FormGroup: CustomFormGroup,
- *   FormLabel: CustomFormLabel,
- *   FormInput: CustomFormInput,
- *   FormError: CustomFormError,
+ *   FormTypeGroupRenderer: CustomFormGroup,
+ *   FormTypeLabelRenderer: CustomFormLabel,
+ *   FormTypeInputRenderer: CustomFormInput,
+ *   FormTypeErrorRenderer: CustomFormError,
  * });
  * ```
  *
@@ -111,10 +111,10 @@ const getPluginKey = createFingerprintFactory();
  * ```typescript
  * const myFormPlugin: SchemaFormPlugin = {
  *   // Custom renderer components
- *   FormGroup: MyFormGroup,
- *   FormLabel: MyFormLabel,
- *   FormInput: MyFormInput,
- *   FormError: MyFormError,
+ *   FormTypeGroupRenderer: MyFormGroup,
+ *   FormTypeLabelRenderer: MyFormLabel,
+ *   FormTypeInputRenderer: MyFormInput,
+ *   FormTypeErrorRenderer: MyFormError,
  *
  *   // Custom input types
  *   formTypeInputDefinitions: [
@@ -155,7 +155,7 @@ const getPluginKey = createFingerprintFactory();
  * ```typescript
  * // First plugin
  * registerPlugin({
- *   FormLabel: CustomLabel1,
+ *   FormTypeLabelRenderer: CustomLabel1,
  *   formTypeInputDefinitions: [
  *     { test: { format: 'date' }, Component: DatePicker1 }
  *   ],
@@ -163,8 +163,8 @@ const getPluginKey = createFingerprintFactory();
  *
  * // Second plugin - behavior differs by property:
  * registerPlugin({
- *   FormLabel: CustomLabel2, // REPLACES CustomLabel1
- *   FormInput: CustomInput,  // ADDS to render kit
+ *   FormTypeLabelRenderer: CustomLabel2, // REPLACES CustomLabel1
+ *   FormTypeInputRenderer: CustomInput,  // ADDS to render kit
  *   formTypeInputDefinitions: [
  *     { test: { format: 'date' }, Component: DatePicker2 }, // PREPENDED (takes precedence)
  *     { test: { format: 'time' }, Component: TimePicker }   // ADDED
@@ -184,7 +184,7 @@ const getPluginKey = createFingerprintFactory();
  * @remarks
  * ### Plugin Merge Behavior
  * When multiple plugins are registered:
- * - **Render components** (FormGroup, FormLabel, FormInput, FormError): Last one wins (replacement)
+ * - **Render components** (FormTypeGroupRenderer, FormTypeLabelRenderer, FormTypeInputRenderer, FormTypeErrorRenderer): Last one wins (replacement)
  * - **formTypeInputDefinitions**: Prepended to list (first match wins), allowing overrides
  * - **validator**: Last one wins (complete replacement)
  * - **formatError**: Last one wins (complete replacement)

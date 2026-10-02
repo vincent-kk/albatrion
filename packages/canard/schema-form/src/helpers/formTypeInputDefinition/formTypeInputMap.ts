@@ -1,16 +1,13 @@
 import { isReactComponent } from '@winglet/react-utils/filter';
 import { withErrorBoundary } from '@winglet/react-utils/hoc';
 
-import { SchemaFormError } from '@/schema-form/errors';
-import { formatFormTypeInputMapError } from '@/schema-form/helpers/error';
-import {
-  JSONPointer as $,
-  stripFragment,
-} from '@/schema-form/helpers/jsonPointer';
-import type { FormTypeInputMap, FormTypeTestFn } from '@/schema-form/types';
+import { useBoundaryReporter } from '@/schema-form/providers/FormErrorContext';
+import type { FormTypeInputMap } from '@/schema-form/types';
 
 import { INCLUDE_WILDCARD_REGEX } from './regex';
 import type { NormalizedFormTypeInputDefinition } from './type';
+import { formTypeTestFnFactory } from './utils/formTypeTestFnFactory';
+import { pathExactMatchFnFactory } from './utils/pathExactMatchFnFactory';
 
 /**
  * Normalizes form type input map.
@@ -29,46 +26,13 @@ export const normalizeFormTypeInputMap = (
     if (INCLUDE_WILDCARD_REGEX.test(k))
       result.push({
         test: formTypeTestFnFactory(k),
-        Component: withErrorBoundary(Component),
+        Component: withErrorBoundary(Component, undefined, useBoundaryReporter),
       });
     else
       result.push({
         test: pathExactMatchFnFactory(k),
-        Component: withErrorBoundary(Component),
+        Component: withErrorBoundary(Component, undefined, useBoundaryReporter),
       });
   }
   return result;
-};
-
-const pathExactMatchFnFactory = (inputPath: string): FormTypeTestFn => {
-  try {
-    const path = stripFragment(inputPath);
-    const regex = path ? new RegExp(path) : null;
-    return (hint) => {
-      if (hint.path === path) return true;
-      if (regex?.test(hint.path)) return true;
-      return false;
-    };
-  } catch (error) {
-    throw new SchemaFormError(
-      'FORM_TYPE_INPUT_MAP',
-      formatFormTypeInputMapError(inputPath, error),
-      { path: inputPath, error },
-    );
-  }
-};
-
-const formTypeTestFnFactory = (path: string): FormTypeTestFn => {
-  const segments = stripFragment(path).split($.Separator);
-  return (hint) => {
-    const hintSegments = hint.path.split($.Separator);
-    if (segments.length !== hintSegments.length) return false;
-    for (let i = 0, l = segments.length; i < l; i++) {
-      const segment = segments[i];
-      const hintSegment = hintSegments[i];
-      if (segment === $.Wildcard) continue;
-      else if (segment !== hintSegment) return false;
-    }
-    return true;
-  };
 };

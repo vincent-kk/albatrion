@@ -9,7 +9,7 @@ import type {
   SchemaNode,
   ValidationMode,
 } from '@/schema-form/core';
-import type { NodeStateFlags } from '@/schema-form/__legacy__/core/nodes';
+import type { FormErrorRecord } from '@/schema-form/errors';
 import type { VirtualizationOptions } from '@/schema-form/helpers/virtualization';
 import type {
   AllowedValue,
@@ -19,12 +19,12 @@ import type {
   FormTypeRendererProps,
   InferValueType,
   JSONSchema,
-  JSONSchemaError,
   SetStateFnWithOptions,
   ShowError,
   ValidatorFactory,
 } from '@/schema-form/types';
 
+/** Live root view passed to function children. */
 export interface FormChildrenProps<
   Schema extends JSONSchema,
   Value extends AllowedValue = InferValueType<Schema>,
@@ -33,9 +33,10 @@ export interface FormChildrenProps<
   jsonSchema: Schema;
   defaultValue?: Value;
   value?: Value;
-  errors?: JSONSchemaError[];
+  errors?: SchemaNode['globalErrors'];
 }
 
+/** Public configuration consumed at load, commit, or input time as documented. */
 export interface FormProps<
   Schema extends JSONSchema = JSONSchema,
   Value extends AllowedValue = InferValueType<Schema>,
@@ -51,19 +52,33 @@ export interface FormProps<
   /** Function called when the value of this SchemaForm changes */
   onChange?: Fn<[value: Value]>;
   /** Function called when the value of this SchemaForm is validated */
-  onValidate?: Fn<[jsonSchemaError: JSONSchemaError[]]>;
+  onValidate?: Fn<[errors: SchemaNode['globalErrors']]>;
   /** Function called when the form is submitted */
   onSubmit?: Fn<[value: Value], Promise<void> | void>;
   /** Function called when the state of this SchemaForm changes */
-  onStateChange?: Fn<[state: NodeStateFlags]>;
+  onStateChange?: Fn<[state: SchemaNode['globalState']]>;
+  /** Instance error records, including committed construction and render failures. */
+  onError?: Fn<[record: FormErrorRecord]>;
+  /** Root diagnostics after preparation; initial diagnostics remain on the handle. */
+  onDiagnosticsChange?: Fn<[diagnostics: SchemaNode['diagnostics']]>;
+  /** Default removal policy for inactive fields. */
+  unsetOnInactive?: boolean;
+  /** Suppress automatic writes without blocking imperative writes. */
+  disableAutomaticWrites?: boolean;
   /** List of FormTypeInput definitions */
   formTypeInputDefinitions?: FormTypeInputDefinition[];
   /** FormTypeInput path mapping */
   formTypeInputMap?: FormTypeInputMap;
   /** Custom form type renderer component */
-  CustomFormTypeRenderer?: ComponentType<FormTypeRendererProps>;
+  FormTypeGroupRenderer?: ComponentType<FormTypeRendererProps>;
+  /** Label renderer shared by Form.Label instances. */
+  FormTypeLabelRenderer?: ComponentType<FormTypeRendererProps>;
+  /** Input renderer shared by Form.Input instances. */
+  FormTypeInputRenderer?: ComponentType<FormTypeRendererProps>;
+  /** Error renderer shared by Form.Error instances. */
+  FormTypeErrorRenderer?: ComponentType<FormTypeRendererProps>;
   /** Initial validation errors, default is undefined */
-  errors?: JSONSchemaError[];
+  errors?: SchemaNode['globalErrors'];
   /** Custom format error function */
   formatError?: FormTypeRendererProps['formatError'];
   /**
@@ -105,24 +120,27 @@ export interface FormProps<
     | Fn<[props: FormChildrenProps<Schema, Value>], ReactNode>;
 }
 
+/** Eighteen imperative operations always addressing the current root. */
 export interface FormHandle<
   Schema extends JSONSchema = JSONSchema,
   Value extends AllowedValue = InferValueType<Schema>,
 > {
   node?: InferSchemaNode<Schema>;
-  focus: Fn<[path: SchemaNode['path']]>;
-  select: Fn<[path: SchemaNode['path']]>;
+  focus: Fn<[path?: SchemaNode['path']]>;
+  select: Fn<[path?: SchemaNode['path']]>;
+  refresh: Fn<[path?: SchemaNode['path']]>;
+  remount: Fn<[path?: SchemaNode['path']]>;
   reset: Fn;
   findNode: Fn<[path: SchemaNode['path']], SchemaNode | null>;
-  findNodes: Fn<[path: SchemaNode['path']], SchemaNode[]>;
-  getState: Fn<[], NodeStateFlags>;
-  setState: Fn<[state: NodeStateFlags]>;
+  findNodes: Fn<[path: SchemaNode['path']], readonly SchemaNode[]>;
+  getState: Fn<[], SchemaNode['globalState']>;
+  setState: Fn<[state: SchemaNode['state']]>;
   clearState: Fn;
   getValue: Fn<[], Value>;
   setValue: SetStateFnWithOptions<Value>;
-  getErrors: Fn<[], JSONSchemaError[]>;
+  getErrors: Fn<[], SchemaNode['globalErrors']>;
   getAttachedFilesMap: Fn<[], AttachedFilesMap>;
-  validate: Fn<[], Promise<JSONSchemaError[]>>;
-  showError: Fn<[visible: boolean]>;
+  validate: Fn<[], Promise<SchemaNode['globalErrors']>>;
+  showError: Fn<[visible?: boolean]>;
   submit: TrackableHandlerFunction;
 }

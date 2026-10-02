@@ -9,6 +9,7 @@ import type {
 
 const FormTypeInputArray = ({
   node,
+  jsonSchema,
   readOnly,
   disabled,
   ChildNodeComponents,
@@ -42,26 +43,27 @@ const FormTypeInputArray = ({
             </div>
           );
         })}
-      {!readOnly && node.maxItems > node.length && (
-        <label
-          style={{
-            display: 'flex',
-            justifyContent: 'flex-end',
-            alignItems: 'center',
-            cursor: 'pointer',
-            marginBottom: 5,
-          }}
-        >
-          <div style={{ marginRight: 10 }}>Add New Item</div>
-          <Button
-            title="add item"
-            label="+"
-            disabled={disabled}
-            onClick={handleClick}
-            fontSize="1rem"
-          />
-        </label>
-      )}
+      {!readOnly &&
+        (jsonSchema.maxItems ?? Infinity) > (node.children?.length ?? 0) && (
+          <label
+            style={{
+              display: 'flex',
+              justifyContent: 'flex-end',
+              alignItems: 'center',
+              cursor: 'pointer',
+              marginBottom: 5,
+            }}
+          >
+            <div style={{ marginRight: 10 }}>Add New Item</div>
+            <Button
+              title="add item"
+              label="+"
+              disabled={disabled}
+              onClick={handleClick}
+              fontSize="1rem"
+            />
+          </label>
+        )}
     </div>
   );
 };

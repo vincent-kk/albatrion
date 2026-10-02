@@ -2,7 +2,7 @@ import { type ReactNode, memo } from 'react';
 
 import type { Fn } from '@aileron/declare';
 
-import { NodeEventType } from '@/schema-form/core';
+import { SchemaNodeEventType } from '@/schema-form/core';
 import { useSchemaNodeTracker } from '@/schema-form/hooks/useSchemaNodeTracker';
 import { useRootNodeContext } from '@/schema-form/providers';
 import type {
@@ -15,10 +15,10 @@ import type { FormChildrenProps } from '../type';
 
 /** Root-node events that re-run the function-children render-prop. */
 const RERENDERING_EVENT =
-  NodeEventType.UpdateValue |
-  NodeEventType.UpdateGlobalError |
-  NodeEventType.RequestRefresh |
-  NodeEventType.RequestRemount;
+  SchemaNodeEventType.UpdateValue |
+  SchemaNodeEventType.UpdateGlobalError |
+  SchemaNodeEventType.RequestRefresh |
+  SchemaNodeEventType.RequestRemount;
 
 interface FormChildrenRendererProps<
   Schema extends JSONSchema,

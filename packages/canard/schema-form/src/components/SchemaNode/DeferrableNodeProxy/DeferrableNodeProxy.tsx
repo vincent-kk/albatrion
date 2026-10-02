@@ -1,8 +1,9 @@
 import { useCallback, useLayoutEffect, useRef, useState } from 'react';
 
-import { NodeEventType } from '@/schema-form/core';
+import { SchemaNodeEventType, SchemaNodeRequestType } from '@/schema-form/core';
 import { useSchemaNodeSubscribe } from '@/schema-form/hooks/useSchemaNodeSubscribe';
 import { useSchemaNodeTracker } from '@/schema-form/hooks/useSchemaNodeTracker';
+import { FormErrorPathContext } from '@/schema-form/providers/FormErrorContext';
 
 import type { DeferrableNodeProxyProps } from './type';
 
@@ -13,7 +14,7 @@ import type { DeferrableNodeProxyProps } from './type';
  * would un-defer the whole form.
  */
 const FORCE_REVEAL_EVENT =
-  NodeEventType.RequestFocus | NodeEventType.RequestSelect;
+  SchemaNodeEventType.RequestFocus | SchemaNodeEventType.RequestSelect;
 
 /**
  * Virtualization gate for a single schema node.
@@ -34,7 +35,7 @@ export const DeferrableNodeProxy = ({
   const pendingEventsRef = useRef(0);
   const placeholderRef = useRef<Element | null>(null);
 
-  useSchemaNodeTracker(node, NodeEventType.UpdateComputedProperties);
+  useSchemaNodeTracker(node, SchemaNodeEventType.UpdateComputedProperties);
 
   useSchemaNodeSubscribe(revealed ? null : node, ({ type }) => {
     const forced = type & FORCE_REVEAL_EVENT;
@@ -51,10 +52,10 @@ export const DeferrableNodeProxy = ({
     pendingEventsRef.current = 0;
     // Synchronous re-publish: the inner control subscribed in a child layout
     // effect of this very commit, so the command cannot be lost or looped.
-    if (pending & NodeEventType.RequestFocus)
-      node.publish(NodeEventType.RequestFocus, undefined, undefined, true);
-    if (pending & NodeEventType.RequestSelect)
-      node.publish(NodeEventType.RequestSelect, undefined, undefined, true);
+    if (pending & SchemaNodeEventType.RequestFocus)
+      node.request(SchemaNodeRequestType.Focus);
+    if (pending & SchemaNodeEventType.RequestSelect)
+      node.request(SchemaNodeRequestType.Select);
   }, [revealed, manager, node]);
 
   const handlePlaceholder = useCallback(
@@ -80,7 +81,11 @@ export const DeferrableNodeProxy = ({
       aria-hidden
       style={{ height }}
     >
-      {Placeholder !== null && <Placeholder node={node} height={height} />}
+      {Placeholder !== null && (
+        <FormErrorPathContext.Provider value={node.path}>
+          <Placeholder node={node} height={height} />
+        </FormErrorPathContext.Provider>
+      )}
     </div>
   );
 };

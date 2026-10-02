@@ -14,13 +14,22 @@ const FormTypeInputNumber = ({
   readOnly,
   disabled,
   defaultValue,
+  value,
+  nullable,
   onChange,
   placeholder,
   style,
   className,
 }: FormTypeInputProps<number | null>) => {
   const handleChange = useHandle((event: ChangeEvent<HTMLInputElement>) => {
-    onChange(event.target.valueAsNumber);
+    if (event.target.validity.badInput) return;
+    onChange(
+      event.target.value === ''
+        ? nullable
+          ? null
+          : undefined
+        : event.target.valueAsNumber,
+    );
   });
   return (
     <input
@@ -33,6 +42,10 @@ const FormTypeInputNumber = ({
       placeholder={placeholder}
       defaultValue={defaultValue ?? undefined}
       onChange={handleChange}
+      onBlur={(event) => {
+        if (event.target.validity.badInput)
+          event.target.value = value == null ? '' : String(value);
+      }}
       style={style}
       className={className}
     />
@@ -41,5 +54,5 @@ const FormTypeInputNumber = ({
 
 export const FormTypeInputNumberDefinition = {
   Component: FormTypeInputNumber,
-  test: { type: ['number', 'integer'] },
+  test: { type: 'number' },
 } satisfies FormTypeInputDefinition;

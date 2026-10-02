@@ -2,8 +2,6 @@ import '@testing-library/jest-dom';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { NodeState } from '@/schema-form/core';
-
 import { SchemaNodeProxy } from '../SchemaNodeProxy';
 import {
   CustomFormTypeInput,
@@ -21,11 +19,24 @@ import {
 } from './SchemaNodePropsFlow.helpers';
 
 // Mock isSchemaNode to accept our mock objects
-vi.mock('@/schema-form/__legacy__/core/nodes/filter', async (importOriginal) => {
-  const original =
-    await importOriginal<typeof import('@/schema-form/__legacy__/core/nodes/filter')>();
+vi.mock('@/schema-form/core', async (importOriginal) => {
+  const original = await importOriginal<typeof import('@/schema-form/core')>();
   return {
     ...original,
+    writeSchemaNodeInput: (node: any, value: unknown, option?: number) => {
+      if (!node._isMockSchemaNode)
+        return original.writeSchemaNodeInput(node, value, option);
+      node.setValue(value, option);
+      node.clearExternalErrors();
+      if (!node.state[1]) node.setState({ 1: true });
+    },
+    readSchemaNodeInteractionReset: (node: any) =>
+      node._isMockSchemaNode
+        ? 0
+        : original.readSchemaNodeInteractionReset(node),
+    finishSchemaNodeInput: (node: any) => {
+      if (!node._isMockSchemaNode) original.finishSchemaNodeInput(node);
+    },
     isSchemaNode: (input: any): boolean => {
       // Accept real SchemaNode instances OR our mock objects with _isMockSchemaNode flag
       if (input && input._isMockSchemaNode === true) return true;
@@ -243,7 +254,7 @@ describe('SchemaNodePropsFlow', () => {
       fireEvent.change(input, { target: { value: 'test' } });
 
       expect(mockNode.setState).toHaveBeenCalledWith({
-        [NodeState.Dirty]: true,
+        [1]: true,
       });
     });
 
@@ -251,7 +262,7 @@ describe('SchemaNodePropsFlow', () => {
       const mockNode = createStringNode({
         path: 'test.field',
         name: 'field',
-        state: { [NodeState.Dirty]: true },
+        state: { [1]: true },
       });
 
       render(<SchemaNodeProxy node={mockNode} />, {

@@ -7,8 +7,12 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type { JSONSchema } from '@winglet/json-schema';
 
-import { NodeEventType, SetValueOption } from '@/schema-form/core';
-import type { ArrayNode } from '@/schema-form/__legacy__/core/nodes/ArrayNode';
+import {
+  SchemaNodeEventType,
+  SetValueOption,
+  writeSchemaNodeInput,
+} from '@/schema-form/core';
+import type { ArrayNode } from '@/schema-form/core';
 import { useSchemaNode } from '@/schema-form/hooks/useSchemaNode';
 import type {
   FormTypeInputDefinition,
@@ -115,7 +119,7 @@ describe('SchemaNodeProxy Refresh Integration', () => {
       ).toBeGreaterThan(initialRenderCount);
     });
 
-    it('should NOT publish RequestRefresh when SetValueOption.Default is used', async () => {
+    it('REACT-009 should NOT publish RequestRefresh for an input-source write', async () => {
       let capturedNode: any = null;
 
       const TrackingInput: FC<FormTypeInputProps> = (props) => {
@@ -143,20 +147,24 @@ describe('SchemaNodeProxy Refresh Integration', () => {
       });
 
       // Subscribe to track events
-      const events: NodeEventType[] = [];
-      capturedNode?.subscribe(({ type }: { type: NodeEventType }) => {
+      const events: SchemaNodeEventType[] = [];
+      capturedNode?.subscribe(({ type }: { type: SchemaNodeEventType }) => {
         events.push(type);
       });
 
       await act(async () => {
-        capturedNode?.setValue('another value', SetValueOption.Default);
+        writeSchemaNodeInput(
+          capturedNode,
+          'another value',
+          SetValueOption.Overwrite,
+        );
         await vi.advanceTimersByTimeAsync(100);
       });
 
       // RequestRefresh should not be in events when using Default option
       expect(
-        events.some((e) => e & NodeEventType.RequestRefresh),
-        'SetValueOption.Default should not trigger RequestRefresh event',
+        events.some((e) => e & SchemaNodeEventType.RequestRefresh),
+        'Input-source writes should not trigger RequestRefresh event',
       ).toBe(false);
     });
   });
@@ -2493,8 +2501,8 @@ describe('Edge Cases', () => {
       expect(arrayNode?.children?.length).toBe(3);
 
       // Get references to items before removal
-      const itemBNode = arrayNode?.children?.[1]?.node;
-      const itemCNode = arrayNode?.children?.[2]?.node;
+      const itemBNode = arrayNode?.children?.[1];
+      const itemCNode = arrayNode?.children?.[2];
 
       expect(itemBNode?.path).toBe('/items/1');
       expect(itemCNode?.path).toBe('/items/2');
@@ -2511,8 +2519,8 @@ describe('Edge Cases', () => {
 
       // Array children should reflect the new state
       expect(arrayNode?.children?.length).toBe(2);
-      expect(arrayNode?.children?.[0]?.node.path).toBe('/items/0');
-      expect(arrayNode?.children?.[1]?.node.path).toBe('/items/1');
+      expect(arrayNode?.children?.[0]?.path).toBe('/items/0');
+      expect(arrayNode?.children?.[1].path).toBe('/items/1');
     });
 
     it('should handle nested object array item removal correctly', async () => {
@@ -2641,7 +2649,7 @@ describe('Edge Cases', () => {
 
       // Subscribe to track UpdateChildren events
       arrayNode?.subscribe(({ type }) => {
-        if (type & NodeEventType.UpdateChildren) {
+        if (type & SchemaNodeEventType.UpdateChildren) {
           updateChildrenEvents.push(type);
         }
       });

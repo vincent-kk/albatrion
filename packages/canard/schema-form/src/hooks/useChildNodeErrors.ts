@@ -1,86 +1,21 @@
 import {
   type ReactNode,
-  useEffect,
-  useLayoutEffect,
+  useCallback,
   useMemo,
-  useRef,
-  useState,
+  useSyncExternalStore,
 } from 'react';
 
-import { map } from '@winglet/common-utils/array';
-import { isTruthy } from '@winglet/common-utils/filter';
-import { useHandle, useVersion } from '@winglet/react-utils/hook';
-
-import { NodeEventType, NodeState, type SchemaNode } from '@/schema-form/core';
+import {
+  type SchemaNode,
+  SchemaNodeEventType,
+  type ValidationIssue,
+} from '@/schema-form/core';
 import {
   useFormTypeRendererContext,
   useWorkspaceContext,
 } from '@/schema-form/providers';
-import type { JSONSchemaError } from '@/schema-form/types';
 
-import { useSchemaNodeSubscribe } from './useSchemaNodeSubscribe';
-
-/**
- * Manages error states of child nodes in a branch schema node.
- *
- * This hook subscribes to error updates from all child nodes and provides both
- * raw error data and formatted error messages. It automatically handles:
- * - Real-time error state synchronization with child nodes
- * - Dynamic updates when children are added/removed
- * - Error message formatting using the current form renderer context
- * - Cleanup of subscriptions when the component unmounts
- *
- * The hook is designed for branch nodes (containers) that need to display
- * validation errors from their child fields in aggregate or individually.
- *
- * @example
- * ```typescript
- * // Basic usage in a form container component
- * const FormTypeObjectInput = ({ node }: FormTypeInputProps) => {
- *   const { errorMessage,showError, formattedError,showErrors, formattedErrors, errorMatrix } = useChildNodeErrors(node);
- *
- *   return (
- *     <div>
- *       {node.children?.map((child, index) => (
- *         <div key={child.key}>
- *           <ChildComponent node={child.node} />
- *           {showErrors[index] && formattedErrors[index] && (
- *             <span className="error">{formattedErrors[index]}</span>
- *           )}
- *         </div>
- *       ))}
- *       {showError && formattedError && (
- *         <div className="summary-error">{formattedError}</div>
- *       )}
- *       {errorMessage && <div className="summary-error">{errorMessage}</div>}
- *     </div>
- *   );
- * };
- *
- * // Usage with disabled state
- * const ConditionalFormSection = ({ node, isDisabled }) => {
- *   const { errorMessages } = useChildNodeErrors(node, isDisabled);
- *   // When disabled=true, errorMessages will be empty array
- * };
- * ```
- *
- * @param node - The branch SchemaNode instance that contains child nodes.
- *                Must be a branch node (not a leaf node).
- * @param disabled - Optional flag to disable error tracking. When true,
- *                   all error states are cleared and no new subscriptions are made.
- *
- * @returns Object containing comprehensive error information:
- * @returns {ReactNode} errorMessage - The first non-null and visible error message from formattedErrors.
- *                                    Useful for displaying a single summary error.
- * @returns {boolean} showError - Whether any error should be shown.
- * @returns {boolean[]} showErrors - Array of booleans indicating if each child should show an error.
- * @returns {ReactNode} formattedError - The first non-null error message from formattedErrors.
- *                                    Useful for displaying a single summary error.
- * @returns {ReactNode[]} formattedErrors - Array of formatted error messages for each child,
- *                                       indexed by child position. Null entries indicate no error.
- * @returns {JSONSchemaError[][]} errorMatrix - 2D array of raw error objects for each child.
- *                                             Useful for custom error processing or debugging.
- */
+/** Read direct-child issues and visibility, resubscribing when children or paths change. */
 export const useChildNodeErrors = (
   node: SchemaNode,
   disabled?: boolean,
@@ -90,192 +25,59 @@ export const useChildNodeErrors = (
   formattedError: ReactNode;
   showErrors: boolean[];
   formattedErrors: ReactNode[];
-  errorMatrix: JSONSchemaError[][];
+  errorMatrix: (readonly ValidationIssue[])[];
 } => {
   const { formatError, checkShowError } = useFormTypeRendererContext();
   const { context } = useWorkspaceContext();
-
-  // Track current children and subscribe to structural changes
-  const [children, setChildren] = useState(node.children);
-
-  const [errorMatrix, setErrorMatrix] = useState<JSONSchemaError[][]>(() =>
-    new Array(children?.length || 0).fill(null).map(() => []),
-  );
-  const [formattedErrors, setFormattedErrors] = useState<ReactNode[]>(() =>
-    new Array(children?.length || 0).fill(null),
-  );
-
-  const nodeStateMap = useRef(
-    new Map<string, Parameters<typeof checkShowError>[0]>(),
-  );
-  const [version, update] = useVersion();
-
-  // Applies the current children snapshot; no-op when the reference is
-  // unchanged (children getters return a fresh array on structural change).
-  const appliedChildrenRef = useRef(children);
-  const applyChildren = useHandle(() => {
-    const current = node.children;
-    if (appliedChildrenRef.current === current) return;
-    appliedChildrenRef.current = current;
-    const length = current?.length || 0;
-    setChildren(current);
-    setErrorMatrix(new Array(length).fill(null).map(() => []));
-    setFormattedErrors(new Array(length).fill(null));
-  });
-
-  useSchemaNodeSubscribe(
-    node,
-    ({ type }) => {
-      if (type & NodeEventType.UpdateChildren) applyChildren();
-      if (type & NodeEventType.UpdateState) {
-        const {
-          [NodeState.Dirty]: dirty,
-          [NodeState.Touched]: touched,
-          [NodeState.ShowError]: showError,
-        } = node.state;
-        nodeStateMap.current.set(node.path, { dirty, touched, showError });
-        update();
-      }
+  const mask =
+    SchemaNodeEventType.UpdateChildren |
+    SchemaNodeEventType.UpdateState |
+    SchemaNodeEventType.UpdatePath |
+    SchemaNodeEventType.UpdateError;
+  const children = node.children;
+  const subscribe = useCallback(
+    (update: () => void) => {
+      if (disabled) return () => {};
+      const unsubscribes = [node, ...(children ?? [])].map((child) =>
+        child.subscribe(({ type }) => {
+          if (type & mask) update();
+        }),
+      );
+      return () => {
+        for (const unsubscribe of unsubscribes) unsubscribe();
+      };
     },
-    {
-      // Catch up on deliveries that predate the subscription (e.g. the
-      // render→commit gap of a concurrent mount): re-read the children
-      // snapshot and this node's own state flags.
-      onSubscribe: () => {
-        applyChildren();
-        const {
-          [NodeState.Dirty]: dirty,
-          [NodeState.Touched]: touched,
-          [NodeState.ShowError]: showError,
-        } = node.state;
-        if (
-          dirty !== undefined ||
-          touched !== undefined ||
-          showError !== undefined
-        ) {
-          nodeStateMap.current.set(node.path, { dirty, touched, showError });
-          update();
-        }
-      },
-    },
+    [node, children, disabled, mask],
   );
-
-  // Clear all errors when disabled
-  useEffect(() => {
-    if (!disabled) return;
-    const length = children?.length || 0;
-    setErrorMatrix(new Array(length).fill(null).map(() => []));
-    setFormattedErrors(new Array(length).fill(null));
-  }, [disabled, children]);
-
-  // Subscribe to error updates from all child nodes
-  useLayoutEffect(() => {
-    if (disabled) return;
-    const childrenLength = children?.length;
-    if (!childrenLength) return;
-
-    const unsubscribes = new Array(childrenLength);
-
-    // Applies a child's error set to the indexed mirrors (shared between the
-    // event listener and the subscribe-time catch-up below).
-    const applyChildErrors = (
-      index: number,
-      childNode: SchemaNode,
-      errors: JSONSchemaError[] | undefined,
-    ) => {
-      const firstError = errors?.find(isTruthy);
-      setErrorMatrix((prev) => {
-        if (prev[index] === errors) return prev;
-        const newErrors = [...prev];
-        newErrors[index] = errors || [];
-        return newErrors;
-      });
-      setFormattedErrors((prev) => {
-        if (prev[index] === firstError) return prev;
-        const formattedError = [...prev];
-        formattedError[index] = firstError
-          ? formatError(firstError, childNode, context)
-          : null;
-        return formattedError;
-      });
-    };
-
-    // Create subscription for each child node
-    for (let i = 0; i < childrenLength; i++) {
-      const node = children[i].node;
-      unsubscribes[i] = node.subscribe(({ type, payload }) => {
-        if (type & NodeEventType.UpdateError)
-          applyChildErrors(i, node, payload?.[NodeEventType.UpdateError]);
-        if (type & NodeEventType.UpdateState) {
-          const {
-            [NodeState.Dirty]: dirty,
-            [NodeState.Touched]: touched,
-            [NodeState.ShowError]: showError,
-          } = node.state;
-          nodeStateMap.current.set(node.path, { dirty, touched, showError });
-          update();
-        }
-      });
-      // Catch up on deliveries that predate this subscription (concurrent
-      // mount gap, or errors settled before the children mirror caught up).
-      const errors = node.errors;
-      if (errors && errors.length > 0) applyChildErrors(i, node, errors);
-      const {
-        [NodeState.Dirty]: dirty,
-        [NodeState.Touched]: touched,
-        [NodeState.ShowError]: showError,
-      } = node.state;
-      if (
-        dirty !== undefined ||
-        touched !== undefined ||
-        showError !== undefined
-      ) {
-        nodeStateMap.current.set(node.path, { dirty, touched, showError });
-        update();
-      }
-    }
-    // Cleanup all subscriptions
-    return () => {
-      for (const unsubscribe of unsubscribes) unsubscribe();
-    };
-  }, [node, disabled, children, formatError, context, update]);
-
-  // Memoized computation of the first available error message
-  const formattedError = useMemo<ReactNode>(
-    () => formattedErrors.find(isTruthy),
-    [formattedErrors],
-  );
-
-  const showErrors = useMemo(
+  const snapshot = useCallback(
     () =>
-      children
-        ? map(children, ({ node }) => {
-            const state = nodeStateMap.current.get(node.path);
-            return state ? checkShowError(state) : false;
-          })
-        : [],
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [children, version, checkShowError],
+      [node, ...(node.children ?? [])]
+        .map((child) => child.revision(mask))
+        .join(':'),
+    [node, mask],
   );
-
-  const showError = useMemo(() => {
-    const state = nodeStateMap.current.get(node.path);
-    const showError = state ? checkShowError(state) : false;
-    return showError || showErrors.some(isTruthy);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [node, version, showErrors, checkShowError]);
-
-  const errorMessage = useMemo<ReactNode>(
-    () => showError && formattedError,
-    [showError, formattedError],
-  );
-
-  return {
-    errorMessage,
-    showError,
-    formattedError,
-    showErrors,
-    formattedErrors,
-    errorMatrix,
-  };
+  const revision = useSyncExternalStore(subscribe, snapshot, snapshot);
+  return useMemo(() => {
+    const current = node.children ?? [];
+    const errorMatrix = current.map((child) => (disabled ? [] : child.errors));
+    const formattedErrors = errorMatrix.map((errors, index) =>
+      errors.length ? formatError(errors[0], current[index], context) : null,
+    );
+    const showErrors = current.map(
+      (child) => !disabled && checkShowError(child.state),
+    );
+    const formattedError =
+      formattedErrors.find((message) => message != null) ?? null;
+    const showError =
+      !disabled && (checkShowError(node.state) || showErrors.some(Boolean));
+    return {
+      errorMessage: showError ? formattedError : null,
+      showError,
+      formattedError,
+      showErrors,
+      formattedErrors,
+      errorMatrix,
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- Node revisions invalidate same-identity getters.
+  }, [node, disabled, revision, formatError, checkShowError, context]);
 };

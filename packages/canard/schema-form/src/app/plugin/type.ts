@@ -2,14 +2,13 @@ import type { ComponentType } from 'react';
 
 import type { Fn } from '@aileron/declare';
 
-import type { JSONSchema } from '@/schema-form/types/jsonSchema';
-
 import type {
   FormTypeInputDefinition,
   FormTypeRendererProps,
   FormatError,
-  ValidatorFactory,
+  ValidateFunction,
 } from '@/schema-form/types';
+import type { JSONSchema } from '@/schema-form/types/jsonSchema';
 
 /**
  * Plugin configuration for extending schema-form functionality.
@@ -22,8 +21,8 @@ import type {
  * Minimal plugin with custom components:
  * ```typescript
  * const myPlugin: SchemaFormPlugin = {
- *   FormGroup: CustomFormGroup,
- *   FormLabel: CustomFormLabel,
+ *   FormTypeGroupRenderer: CustomFormGroup,
+ *   FormTypeLabelRenderer: CustomFormLabel,
  * };
  * ```
  *
@@ -34,12 +33,12 @@ import type {
  *
  * const antdPlugin: SchemaFormPlugin = {
  *   // Custom render components
- *   FormGroup: ({ Input, errorMessage }) => (
+ *   FormTypeGroupRenderer: ({ Input, errorMessage }) => (
  *     <Form.Item help={errorMessage}>
  *       <Input />
  *     </Form.Item>
  *   ),
- *   FormLabel: ({ jsonSchema }) => (
+ *   FormTypeLabelRenderer: ({ jsonSchema }) => (
  *     <span>{jsonSchema.title || jsonSchema.name}</span>
  *   ),
  *
@@ -73,10 +72,10 @@ import type {
  * ```typescript
  * const fullPlugin: SchemaFormPlugin = {
  *   // Render components
- *   FormGroup: CustomFormGroup,
- *   FormLabel: CustomFormLabel,
- *   FormInput: CustomFormInput,
- *   FormError: CustomFormError,
+ *   FormTypeGroupRenderer: CustomFormGroup,
+ *   FormTypeLabelRenderer: CustomFormLabel,
+ *   FormTypeInputRenderer: CustomFormInput,
+ *   FormTypeErrorRenderer: CustomFormError,
  *
  *   // Input type definitions
  *   formTypeInputDefinitions: [
@@ -111,13 +110,13 @@ import type {
  */
 export interface SchemaFormPlugin {
   /** Form.Group Component */
-  FormGroup?: ComponentType<FormTypeRendererProps>;
+  FormTypeGroupRenderer?: ComponentType<FormTypeRendererProps>;
   /** Form.Label Component */
-  FormLabel?: ComponentType<FormTypeRendererProps>;
+  FormTypeLabelRenderer?: ComponentType<FormTypeRendererProps>;
   /** Form.Input Component */
-  FormInput?: ComponentType<FormTypeRendererProps>;
+  FormTypeInputRenderer?: ComponentType<FormTypeRendererProps>;
   /** Form.Error Component */
-  FormError?: ComponentType<FormTypeRendererProps>;
+  FormTypeErrorRenderer?: ComponentType<FormTypeRendererProps>;
   /** FormTypeInputDefinition */
   formTypeInputDefinitions?: FormTypeInputDefinition[];
   /** Validator Plugin */
@@ -247,14 +246,14 @@ export interface ValidatorPlugin {
    */
   bind?: Fn<[instance: any]>;
   /** Validator Factory Function */
-  compile: ValidatorFactory;
+  compile: (jsonSchema: JSONSchema) => ValidateFunction;
   /**
    * Compile a synchronous guard for an authored schema pointer in the copy.
    * @param root - The copy root previously passed to `compile`.
    * @param pointer - Authored schema location preserved in the copy.
    * @returns A boolean predicate that does not modify its input.
    */
-  compileGuard?(root: JSONSchema, pointer: string): (value: unknown) => boolean;
+  compileGuard(root: JSONSchema, pointer: string): (value: unknown) => boolean;
   /**
    * Release a root's validator resources when its cache entry is evicted.
    * @param root - The copy root previously passed to `compile`.

@@ -14,6 +14,7 @@ const FormTypeInputString = ({
   disabled,
   jsonSchema,
   defaultValue,
+  nullable,
   onChange,
   placeholder,
   style,
@@ -25,7 +26,13 @@ const FormTypeInputString = ({
     else return 'text';
   }, [jsonSchema?.format]);
   const handleChange = useHandle((event: ChangeEvent<HTMLInputElement>) => {
-    onChange(event.target.value);
+    onChange(
+      event.target.value === ''
+        ? nullable
+          ? null
+          : undefined
+        : event.target.value,
+    );
   });
   return (
     <input

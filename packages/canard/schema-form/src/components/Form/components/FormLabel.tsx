@@ -2,7 +2,7 @@ import { type CSSProperties, memo } from 'react';
 
 import { PluginManager } from '@/schema-form/app/plugin';
 import { SchemaNodeProxy } from '@/schema-form/components/SchemaNode';
-import { useExternalFormContext } from '@/schema-form/providers';
+import { useFormTypeRendererContext } from '@/schema-form/providers';
 
 export interface FormLabelProps {
   path?: string;
@@ -56,12 +56,14 @@ export interface FormLabelProps {
  * ```
  */
 export const FormLabel = memo(({ path, style, className }: FormLabelProps) => {
-  const { FormLabelRenderer } = useExternalFormContext();
+  const { FormTypeLabelRenderer } = useFormTypeRendererContext();
   return (
     <label style={style} className={className} htmlFor={path}>
       <SchemaNodeProxy
         path={path}
-        FormTypeRenderer={FormLabelRenderer || PluginManager.FormLabel}
+        FormTypeGroupRenderer={
+          FormTypeLabelRenderer || PluginManager.FormTypeLabelRenderer
+        }
       />
     </label>
   );

@@ -4,7 +4,7 @@ import { useConstant, useReference } from '@winglet/react-utils/hook';
 
 import { PluginManager } from '@/schema-form/app/plugin';
 import { SchemaNodeProxy } from '@/schema-form/components/SchemaNode';
-import { useExternalFormContext } from '@/schema-form/providers';
+import { useFormTypeRendererContext } from '@/schema-form/providers';
 import type {
   AllowedValue,
   ChildNodeComponentProps,
@@ -83,7 +83,7 @@ export const FormInput = memo(
     FormTypeInput: InputFormTypeInput,
     ...restProps
   }: FormInputProps<AllowedValue>) => {
-    const { FormInputRenderer } = useExternalFormContext();
+    const { FormTypeInputRenderer } = useFormTypeRendererContext();
     const overridePropsRef = useReference(restProps);
     const FormTypeInput = useConstant(
       InputFormTypeInput as ComponentType<FormTypeInputProps>,
@@ -93,7 +93,9 @@ export const FormInput = memo(
         path={path}
         overridePropsRef={overridePropsRef}
         FormTypeInput={FormTypeInput}
-        FormTypeRenderer={FormInputRenderer || PluginManager.FormInput}
+        FormTypeGroupRenderer={
+          FormTypeInputRenderer || PluginManager.FormTypeInputRenderer
+        }
       />
     );
   },

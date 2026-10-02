@@ -417,7 +417,7 @@ describe('formatErrorMessage', () => {
   describe('formatRegisterPluginError', () => {
     it('플러그인 등록 에러 메시지를 포맷해야 합니다', () => {
       const plugin = {
-        renderKit: { FormInput: () => null },
+        renderKit: { FormTypeInputRenderer: () => null },
       } as SchemaFormPlugin;
       const error = new Error('Invalid component');
       const result = formatRegisterPluginError(plugin, error);
@@ -861,14 +861,15 @@ describe('formatErrorMessage', () => {
 
     it('formatRegisterPluginError 스냅샷', () => {
       const mockPlugin: SchemaFormPlugin = {
-        FormInput: () => null,
-        FormLabel: () => null,
+        FormTypeInputRenderer: () => null,
+        FormTypeLabelRenderer: () => null,
         formTypeInputDefinitions: [
           { test: { type: 'string' }, Component: () => null },
         ],
         validator: {
           bind: () => {},
           compile: () => () => null,
+          compileGuard: () => () => true,
         },
       };
       const result = formatRegisterPluginError(
