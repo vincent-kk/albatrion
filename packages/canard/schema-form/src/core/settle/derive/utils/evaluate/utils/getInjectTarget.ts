@@ -1,6 +1,7 @@
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 import { unescapeSegment } from '@winglet/json/pointer';
 
+import { getItemEntry } from '../../../../../blueprint';
 import type { SchemaNodeRecord } from '../../../../../record';
 import { getDeriveChildEntry } from '../../rank/getDeriveChildEntry';
 
@@ -22,7 +23,12 @@ export const getInjectTarget = <Self extends SchemaNodeRecord<Self>>(
     if (template.strategy !== 'branch') return undefined;
     const name = unescapeSegment(encoded);
     siblings = template.childEntries;
-    const found = getDeriveChildEntry(template, name);
+    const index = Number(name);
+    const item = template.kind === 'array' && Number.isInteger(index) &&
+      index >= 0 && String(index) === name ? getItemEntry(template, index) :
+      undefined;
+    const found = item ? { entry: item, position: index } :
+      getDeriveChildEntry(template, name);
     if (!found) return undefined;
     order.push(found.position);
     const structure: Record<string, Self> | null = live?.structure ?? null;

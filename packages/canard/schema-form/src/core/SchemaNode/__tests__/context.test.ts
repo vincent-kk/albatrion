@@ -1,3 +1,5 @@
+import { PathKeyedMap } from '../../utils/pathIndex/PathKeyedMap';
+import { PathKeyedSet } from '../../utils/pathIndex/PathKeyedSet';
 import { describe, expect, it } from 'vitest';
 
 import { blueprint } from '../../blueprint';
@@ -11,8 +13,8 @@ describe('SchemaNode context', () => {
       child: { type: 'string' },
     } }), { context: initial,
       diagnostics: { status: 'stable' }, loadSnapshot: undefined,
-      latentRaw: new Map(), typeMismatchPaths: new Set(),
-      inactiveValuesMemo: new Map() });
+      latentRaw: new PathKeyedMap('pair'), typeMismatchPaths: new PathKeyedSet(),
+      inactiveValuesMemo: new PathKeyedMap<readonly { path: string; value: unknown }[]>('path') });
     root.setValue({ child: 'value' });
     const child = root.find('/child');
     expect(root.context).toBe(initial);

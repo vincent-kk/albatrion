@@ -1,3 +1,5 @@
+import { PathKeyedMap } from '../../../utils/pathIndex/PathKeyedMap';
+import { PathKeyedSet } from '../../../utils/pathIndex/PathKeyedSet';
 import { blueprint } from '../../../blueprint';
 import type { BlueprintSchema } from '../../../blueprint';
 import type { SchemaNodeRecord } from '../../../record';
@@ -27,8 +29,8 @@ export const createDispatchTree = (schema: BlueprintSchema,
   const created: unknown = schemaNodeFactory(blueprint(schema), {
     errorReporter,
     diagnostics: { status: 'stable' },
-    loadSnapshot: snapshot, latentRaw: new Map(),
-    typeMismatchPaths: new Set(), inactiveValuesMemo: new Map(),
+    loadSnapshot: snapshot, latentRaw: new PathKeyedMap('pair'),
+    typeMismatchPaths: new PathKeyedSet(), inactiveValuesMemo: new PathKeyedMap<readonly { path: string; value: unknown }[]>('path'),
   }, validator);
   if (!isDispatchTestNode(created)) throw new Error('Tree factory omitted its record');
   const root = created;

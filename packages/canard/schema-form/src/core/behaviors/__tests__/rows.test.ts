@@ -1,3 +1,5 @@
+import { PathKeyedMap } from '../../utils/pathIndex/PathKeyedMap';
+import { PathKeyedSet } from '../../utils/pathIndex/PathKeyedSet';
 import { describe, expect, it } from 'vitest';
 
 import { blueprint } from '../../blueprint';
@@ -37,9 +39,9 @@ const makeRecord = (
     globalStateCounts: new Map(),
     globalState: {},
     loadSnapshot: undefined,
-    latentRaw: new Map(),
-    typeMismatchPaths: new Set(),
-    inactiveValuesMemo: new Map(),
+    latentRaw: new PathKeyedMap('pair'),
+    typeMismatchPaths: new PathKeyedSet(),
+    inactiveValuesMemo: new PathKeyedMap<readonly { path: string; value: unknown }[]>('path'),
   },
   blueprintNode,
   parent: null,
@@ -53,6 +55,9 @@ const makeRecord = (
   schemaType: blueprintNode.schemaType,
   structure: null,
   children: null,
+  itemKey: null,
+  itemCount: 0,
+  nextItemKey: 0,
   raw,
   extras: undefined,
   active: true,
@@ -64,6 +69,7 @@ const makeRecord = (
   schema: { schema: { options }, typeConflict: false },
   interactionState: {},
   revisionLedger: EMPTY_REVISION_LEDGER,
+    deliveryInitialized: false, deliveryChanges: 0, pendingRevision: 0,
   detached: false,
 });
 
@@ -89,7 +95,7 @@ describe('behavior rows', () => {
     expect(present).toEqual([
       'string.terminal', 'number.terminal', 'boolean.terminal',
       'null.terminal', 'object.branch', 'object.terminal',
-      'virtual.branch', 'union.terminal',
+      'array.branch', 'array.terminal', 'virtual.branch', 'union.terminal',
     ]);
   });
 
@@ -152,6 +158,8 @@ describe('behavior rows', () => {
     expect(objectBehavior.terminal.project(node, object)).toBe(object);
     expect(objectBehavior.terminal.declareChildren(node)).toEqual([]);
     expect(objectBehavior.terminal.project(node, {})).toBeUndefined();
+    node.raw = 17;
+    expect(objectBehavior.terminal.project(node, object)).toBe(17);
   });
 
   it('returns static and gated blueprint child declarations without evaluating gates', () => {

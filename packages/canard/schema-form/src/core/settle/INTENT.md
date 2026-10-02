@@ -9,6 +9,7 @@
 - 원본을 바꾸는 단계와 계산 단계를 구별하고, 상태는 `raw`·`extras` 둘만 둡니다. 형상 밖 정적 해석과 빈 값 판정은 behaviors 진입점을 소비합니다(VALUE-002, WRITE-082·098, NODE-016, SETTLE-002–006).
 - 청사진은 선언과 식을 제공하고, 이 모듈이 게이트를 평가합니다(26C-04).
 - PR-2의 예산은 호스트 바퀴와 전이 라운드입니다(TEST-069).
+- Provide static input interpretation for marked array results without applying fill, derivation, projection, or shape creation (EVENT-061, 62C-01).
 
 ## Boundaries
 

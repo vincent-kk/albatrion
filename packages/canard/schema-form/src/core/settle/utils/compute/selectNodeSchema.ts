@@ -1,7 +1,9 @@
+import { captureSchemaNodeChange } from '../../../record';
 import { recordSettlementFailure } from '../errors/recordSettlementFailure';
 import { MULTIPLE_GATED_BRANCHES_ACTIVE, SchemaFormError } from '../../../../errors';
 import { mergeEffectiveSchema } from '../../../blueprint';
 import type { SchemaNodeRecord } from '../../../record';
+import { indexSchemaNodeWarning } from '../../../record';
 import type { SettlementContext } from '../../type';
 import { evaluateGate } from '../gates/evaluateGate';
 import { SHARED_NODE_CONFLICT } from '../errors/settleErrorCode';
@@ -40,7 +42,7 @@ export const selectNodeSchema = <Self extends SchemaNodeRecord<Self>>(
         message: `Multiple gated oneOf branches are active at ${schemaPath}`,
         details: { branches: selected },
       } as const;
-      (node.runtime.pendingWarningRecords ??= new Map()).set(key, record);
+      indexSchemaNodeWarning(node.runtime, key, node.path, record);
       node.runtime.chainOccurrences?.push({ kind: 'record', record });
     }
   }
@@ -52,9 +54,9 @@ export const selectNodeSchema = <Self extends SchemaNodeRecord<Self>>(
       `Active declarations conflict at ${node.path}`, { path: node.path }), 'sharedConflict');
   }
   if (node.parent === null)
-    node.active = active.some((declaration) => declaration.role === 'declaration');
+    node.active = captureSchemaNodeChange(node, 'active', active.some((declaration) => declaration.role === 'declaration'));
   if (node.schema === effective) return false;
-  node.schema = effective;
+  node.schema = captureSchemaNodeChange(node, 'schema', effective);
   context.changedNodes.add(node);
   return true;
 };

@@ -14,7 +14,7 @@ export const registerRecalculation = <Self extends SchemaNodeRecord<Self>>(
   const blueprint = context.root.runtime.blueprint;
   const dependencies = getDependencyIndex(blueprint);
   for (const changed of context.changedRaw)
-    for (const declarationPath of dependencies.affected(changed)) {
+    for (const declarationPath of dependencies.affected(changed, context.root)) {
       context.dirtyPaths.add(declarationPath);
       context.dependencyOwnerPaths.add(declarationPath);
       context.shapeDirtyPaths.add(declarationPath.slice(0,
@@ -28,11 +28,18 @@ export const registerRecalculation = <Self extends SchemaNodeRecord<Self>>(
     }
   }
   if (context.hasGates) {
+    const changedAncestors = new Set<string>();
+    for (const changed of context.changedRaw)
+      for (let prefix = changed; prefix;) {
+        prefix = prefix.slice(0, prefix.lastIndexOf('/'));
+        if (changedAncestors.has(prefix)) break;
+        changedAncestors.add(prefix);
+      }
     const registry = getGateRegistry(context.root.runtime);
     for (const path of context.dirtyPaths) {
-      if (registry.mayChangeAt(path, context.changedRaw))
+      if (registry.mayChangeAt(path, context.changedRaw, changedAncestors))
         context.shapeDirtyPaths.add(path);
-      if (path && registry.mayChangeOwnDeclarationAt(path, context.changedRaw))
+      if (path && registry.mayChangeOwnDeclarationAt(path, context.changedRaw, changedAncestors))
         context.shapeDirtyPaths.add(path.slice(0, path.lastIndexOf('/')));
     }
   }

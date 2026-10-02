@@ -1,4 +1,5 @@
 import type { SchemaNodeRecord } from '../../../record';
+import { readSchemaNodeErrors } from '../../../validation';
 import { readSchemaNodeDefaultValue } from '../load/readSchemaNodeDefaultValue';
 import { readSchemaNodeWatchValues } from '../controls/readSchemaNodeWatchValues';
 import type { WatchValuesSnapshot } from '../controls/readSchemaNodeWatchValues';
@@ -17,6 +18,7 @@ export const captureDetachedSchemaNodeReads = <Self extends SchemaNodeRecord<Sel
   runtime.watchValuesMemo?.delete(node);
   readSchemaNodeWatchValues(node, watchSnapshot);
   const reads = Object.freeze({
+    errors: readSchemaNodeErrors(node),
     typeMismatch: runtime.typeMismatchPaths.has(node.path),
     typeMismatches: runtime.typeMismatchesMemo?.get(node.path)?.paths ?? EMPTY_PATHS,
     inactiveValues: runtime.inactiveValuesMemo.get(node.path) ?? EMPTY_VALUES,

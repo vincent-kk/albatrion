@@ -1,7 +1,6 @@
-import { hasOwnProperty } from '@winglet/common-utils/lib';
 import type { SchemaNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../type';
-import { isPlain } from '../write/isPlain';
+import { hasDistributedChildInput } from '../write/hasDistributedChildInput';
 import { markWrite } from '../write/markWrite';
 import { restoreLatentState } from '../latent/restoreLatentState';
 
@@ -20,8 +19,8 @@ export const enterSchemaNode = <Self extends SchemaNodeRecord<Self>>(
   const key = JSON.stringify([child.path, child.blueprintNode.kind]);
   const latent = context.root.runtime.latentRaw;
   const own = latent.get(key);
-  const write = distribution && isPlain(distribution.input) &&
-    hasOwnProperty(distribution.input, name);
+  const write = distribution && hasDistributedChildInput(distribution.input, name,
+    host.behavior.type === 'array');
   if (write || distribution?.whole) {
     if (write && !distribution.whole && latent.has(key))
       restoreLatentState(child, own, context);

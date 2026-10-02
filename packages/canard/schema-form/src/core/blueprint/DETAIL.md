@@ -14,7 +14,12 @@
 
 ## API Contracts
 
+- 기능 정적 색인은 청사진 identity마다 한 번 만들고 재사용합니다. 상태 키는 표준 `readOnly`와 노드 `controls.visible/readOnly/disabled`를 가진 템플릿 및 조각·부모 `controls.children`이 주소 지정한 직접 자식 경계를 구별합니다. 비활성 선언도 색인에 남겨 마지막 상태 키를 기본값으로 되돌릴 수 있고, 참조 템플릿·배열 아이템은 실제 부모와 이름으로 자식 대상을 판정합니다. 감시는 유효 스키마에 `controls.watch`를 기여할 수 있는 노드/참조 에지 선언을 색인합니다. 리터럴·식은 평가하지 않으며 색인의 메모리는 O(기능 선언 템플릿 + 직접 자식 대상 수)입니다(SETTLE-017, CONTROLS-045, EVENT-064, 65C-02).
+
 - `blueprint(schema, options?)`는 작성 루트와 분석 옵션으로 청사진을 만듭니다. 옵션은 터미널 판정·원자 판정·진단 수집기를 주입합니다. 캐시를 사용하는 호출은 호출자가 소유한 캐시를 명시적으로 전달하고, 동일 스키마와 동일 판정 조건에서 결과 참조를 재사용합니다. 캐시는 진단 소비자가 나중에 붙어도 루트당 경고를 한 번 수집할 수 있어야 합니다.
+- 진입점이 이름으로 내보내는 `resolveArrayLimits`는 유효 스키마의 `schema`를 받아 `{ min, max }`를 돌려줍니다. `min`은 `minItems ?? 0`, `max`는 `maxItems ?? Infinity`와 닫힌 튜플의 `prefixItems.length` 중 작은 값입니다. 닫힌 튜플은 `prefixItems`가 배열이고 `items`가 없거나 `false`인 경우이며, 조각이 준 길이 제약도 유효 스키마를 통해 셉니다. 코어는 이 한계까지 채우거나 초과 쓰기를 막지 않고, 이름 수출의 의도한 소비자는 07·08단계 렌더 계층의 입력 구성 요소입니다. 레거시는 자기 사본을 유지합니다(NODE-009, WRITE-022, LANDING-085·094·159, 35C-04).
+- 배열 템플릿과 색인 `i`를 받는 자리 항목 보조는 이름 `String(i)`, 노드 `prefixItems[i] ?? item`, 호스트 경로 및 속성 항목과 같은 방식으로 다시 묶은 선언을 가진 `BlueprintChildEntry` 모양을 돌려줍니다. 선언 경로는 템플릿의 `/arr/*` 또는 `/arr/<i>`를 유지하고, 템플릿·색인별 지연 메모로 같은 자리의 항목 참조를 재사용하며, 청사진이 없으면 `undefined`입니다. 이 보조는 런타임 노드를 만들거나 청사진 분석 결과를 바꾸지 않습니다(NODE-006·052, CONTROLS-080, 35C-08, 실행 ADR D2).
+- 옛 표기 `items: [...]`는 자리별 `prefixItems` 템플릿으로 컴파일하고, 같은 선언의 `additionalItems`가 스키마 객체이면 그 꼬리 자리의 아이템 템플릿(`item`)으로 컴파일합니다. `additionalItems`가 `false`·`true`이거나 없으면 꼬리는 청사진 없는 자리이며, 꼬리가 닫혔는가는 검증기의 판단이라 청사진은 모형으로 두지 않습니다. 기존 `items` 튜플 컴파일과 그 시험은 그대로입니다(NODE-052, SCHEMA-001, 36C-02).
 - 청사진은 `PropertyDeclaration`, `SchemaFragment` 및 노드별 선언·종류·schemaType·nullable·전략을 노출합니다. 형 없는 variant의 schemaType은 추정한 `'object'`·`'array'`이고 nullable은 null을 포함한 U에서 정합니다. 조각은 schemaPath, 게이트 기술, 선언 문맥, 선언·제약·상속 overlay와 자식 조각을 보존합니다. 게이트 기술에는 실제 평가 결과를 저장하지 않습니다.
 - 자식 연결은 이름·참조 템플릿·해당 호스트의 선언과 게이트를 보존합니다. 같은 참조 대상이라도 호스트별 덧씌움이나 선언 문맥이 다르면 유효 스키마의 선언 집합을 공유하지 않습니다. 재귀 참조는 분석 중인 템플릿을 다시 가리켜 유한하게 유지하며, 최초 방문 경로를 이후 연결의 호스트 경로로 오인하지 않습니다.
 - 유효 스키마 병합은 활성 선언을 전순서로 받아 결과 기록 `EffectiveSchema { schema, typeConflict }`를 돌려줍니다. 정적 모드에서 둘 이상의 기여를 교차한 결과가 공집합이면 경로가 있는 JSONSchemaError입니다. 선언 하나의 역전 범위와 리터럴 `enum: []`은 검증기 몫이라 그대로 둡니다. 런타임 enum·const 공집합은 enum 빈 배열로 표시하고 충돌한 const를 제거합니다. 형 교집합이 비면 enum 빈 배열을 적지 않고 `typeConflict`로 드러내며 형과 nullable은 정적 선언대로 남기고(BLUEPRINT-041), 이를 정착 오류로 던지는 일은 후속 정착 계약의 몫입니다. 서로 다른 키워드 사이의 모순은 판정하지 않습니다.
@@ -95,6 +100,10 @@
 
 - 폼 예약 키는 스키마 위치에서 제거하며 const·enum·default 등의 데이터 내부에 같은 이름이 있어도 보존합니다.
 
+### array-limits-and-slots — 길이 한계와 아이템 자리
+
+- 유효 스키마 조각의 길이 제약과 닫힌 튜플의 상한을 합쳐 `{ min, max }`를 돌려주며 core의 값 쓰기는 그 한계를 강제하지 않습니다. 같은 템플릿·색인의 자리 항목은 같은 참조이고, 선언 경로는 템플릿 경로를 유지하며 청사진 없는 자리에는 항목이 없습니다. 옛 표기의 스키마 객체 `additionalItems`는 꼬리 자리의 템플릿이 되고 `false`·`true`·없음은 청사진 없는 꼬리입니다(NODE-009·052, WRITE-022, 35C-04·08, 36C-02).
+
 ## Boundary Exemptions
 
 ### `utils/expressions` — shared compiler during migration
@@ -105,4 +114,4 @@
 
 ## Last Updated
 
-2026-09-29
+2026-10-01

@@ -1,4 +1,4 @@
-import type { SchemaNodeRecord } from '../../../record';
+import type { SchemaNodeDelivery, SchemaNodeRecord } from '../../../record';
 import { deliverWave } from './deliverWave';
 
 /**
@@ -12,8 +12,12 @@ export const runDeliveryWaves = <Self extends SchemaNodeRecord<Self>>(
   const runtime = root.runtime;
   let waves = 0;
   while (runtime.deliveries?.size) {
-    const pending = runtime.deliveries;
-    runtime.deliveries = new Map();
+    const pending: [Self, SchemaNodeDelivery][] = [];
+    for (const node of runtime.deliveries) {
+      if (node.pendingDelivery) pending.push([node, node.pendingDelivery]);
+      node.pendingDelivery = undefined;
+    }
+    runtime.deliveries = new Set();
     waves += 1;
     runtime.feedbackBudget = waves - 1;
     deliverWave(root, pending);

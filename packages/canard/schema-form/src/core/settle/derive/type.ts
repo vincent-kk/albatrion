@@ -68,6 +68,8 @@ export interface DeriveState<Self extends SchemaNodeRecord<Self>> {
   readonly consumedRuleValues: Map<string, unknown>;
   /** Final live rule keys from this round, used to prune exited occurrences. */
   readonly activeRuleKeys: Set<string>;
+  /** Active keys grouped by source path for bounded re-evaluation. */
+  readonly activeRuleKeysBySource: Map<string, Set<string>>;
   /** Live targets whose true unset rule prevents transition fill. */
   readonly activeUnsetTargets: Set<Self>;
   /** Highest kind rank already applied to each target in this settlement. */

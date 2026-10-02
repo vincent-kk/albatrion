@@ -1,3 +1,5 @@
+import type { PathKeyedMap } from '../utils/pathIndex/PathKeyedMap';
+import type { PathKeyedSet } from '../utils/pathIndex/PathKeyedSet';
 import type {
   BlueprintChildEntry,
   Blueprint,
@@ -22,32 +24,6 @@ export interface SchemaNodeDelivery {
   payload?: Partial<Record<number, unknown>>;
   /** Latest event-specific metadata for this wave. */
   options?: Partial<Record<number, unknown>>;
-}
-
-/** Last committed observations needed to mark the next delivery. */
-interface SchemaNodeDeliverySnapshot<Self> {
-  /** Path observed after the preceding commit. */
-  readonly path: string;
-  /** Calculated value before output projection. */
-  readonly local: unknown;
-  /** Projected value available to consumers. */
-  readonly emit: unknown;
-  /** Direct child collection reference. */
-  readonly children: readonly Self[] | null;
-  /** Gate result used by the computed-property bit. */
-  readonly active: boolean;
-  /** Final local visibility. */
-  readonly visible: boolean;
-  /** Final local read-only state. */
-  readonly readOnly: boolean;
-  /** Final local disabled state. */
-  readonly disabled: boolean;
-  /** Interaction state object before a possible reset. */
-  readonly interactionState: NodeStateFlags;
-  /** Memoized effective schema reference. */
-  readonly schema: EffectiveSchema;
-  /** Committed watched values for reference comparison. */
-  readonly watchValues: readonly unknown[];
 }
 
 /** Tree-local reverse watch paths used by commit delivery marking. */
@@ -94,6 +70,12 @@ export interface SchemaNodeRecord<Self> {
   structure: Record<string, Self> | null;
   /** Stored public child array for the last committed shape. */
   children: readonly Self[] | null;
+  /** Creation-order nonce for an array item, absent on other nodes. */
+  itemKey: number | null;
+  /** Number of array host positions, including positions without templates. */
+  itemCount: number;
+  /** Next creation-order nonce owned by an array host. */
+  nextItemKey: number;
   /** Interpreted terminal source or a branch's non-plain source. */
   raw: unknown;
   /** Undeclared object keys retained in their incoming own-key order. */
@@ -116,6 +98,31 @@ export interface SchemaNodeRecord<Self> {
   interactionState: NodeStateFlags;
   /** Per-bit commit counts, allocated on the first delivery. */
   revisionLedger: Readonly<Record<number, number>>;
+  /** Whether this occurrence has completed its initial delivery comparison. */
+  deliveryInitialized: boolean;
+  /** Event kinds with first-change baselines pending this commit. */
+  deliveryChanges: number;
+  /** Value/output identities at the first value change in this commit. */
+  deliveryPreviousLocal?: unknown;
+  deliveryPreviousEmit?: unknown;
+  /** Address before this commit's first rekey. */
+  deliveryPreviousPath?: string;
+  /** Child identity collection before the first shape change. */
+  deliveryPreviousChildren?: readonly Self[] | null;
+  /** Packed active/visible/readOnly/disabled values before their first change. */
+  deliveryPreviousComputed?: number;
+  /** Effective schema identity before this commit's first schema change. */
+  deliveryPreviousSchema?: EffectiveSchema;
+  /** Interaction state before settlement clears or patches it. */
+  deliveryPreviousState?: NodeStateFlags;
+  /** Last compared watch values, present only on declared watch targets. */
+  deliveryWatchValues?: readonly unknown[];
+  /** Event bits and immutable payloads awaiting the next settlement wave. */
+  pendingDelivery?: SchemaNodeDelivery;
+  /** Bits to advance once at this commit, independently of listeners. */
+  pendingRevision: number;
+  /** State and command events awaiting their separate wave. */
+  pendingNonSettleDelivery?: SchemaNodeDelivery;
   /** Whether this reference has left the live shape. */
   detached: boolean;
 }
@@ -132,18 +139,44 @@ export interface UnionSpec {
   readonly nullable: boolean;
 }
 
+/** Caller verb represented without changing a node or its children. */
+export type ArrayOperation =
+  | { kind: 'push'; value: unknown }
+  | { kind: 'pop' }
+  | { kind: 'update'; index: number; value: unknown }
+  | { kind: 'remove'; index: number }
+  | { kind: 'clear' };
+
+/** Where settlement obtains the synchronous result of an array verb. */
+export type ArrayArrangeResult =
+  | { source: 'length' }
+  | { source: 'removed'; index: number }
+  | { source: 'updated'; index: number }
+  | { source: 'void' };
+
+/** Pure structural proposal for a branch or a whole-value terminal array. */
+export type ArrayArrangePlan =
+  | { kind: 'noop' }
+  | { kind: 'slots'; slots: readonly ({ from: number } | { value: unknown })[];
+      result: ArrayArrangeResult }
+  | { kind: 'update'; index: number; value: unknown }
+  | { kind: 'raw'; raw: readonly unknown[]; result: ArrayArrangeResult };
+
 /** Pure calculation slots shared across nodes of one kind and strategy. */
 export interface Behavior<Self = unknown> {
   /** Interpret caller input under the current allowed types. */
   interpret(input: unknown, spec: UnionSpec): unknown;
   /** Assemble the current child values without committing them. */
-  assemble<Node extends Self>(node: SchemaNodeRecord<Node>, children: readonly Node[]): unknown;
+  assemble<Node extends Self>(node: SchemaNodeRecord<Node>, children: readonly Node[],
+    recalculated?: readonly Node[], hint?: { incremental: boolean }): unknown;
   /** Project a local value into the outgoing value. */
   project<Node extends Self>(node: SchemaNodeRecord<Node>, local: unknown): unknown;
   /** Return a completed input string, or undefined when there is no write. */
   finishInput<Node extends Self>(node: SchemaNodeRecord<Node>): string | undefined;
   /** Describe children to be created by the caller. */
   declareChildren<Node extends Self>(node: SchemaNodeRecord<Node>): readonly BlueprintChildEntry[];
+  /** Propose an array verb without writing source, shape, or notifications. */
+  arrange<Node extends Self>(node: SchemaNodeRecord<Node>, operation: ArrayOperation): ArrayArrangePlan;
   /** Stable dispatch kind of this row. */
   readonly type: BlueprintNodeKind;
   /** Fixed branch or terminal shape of this row. */
@@ -195,21 +228,22 @@ interface SchemaNodeRootRuntimeState {
   /** Form-level load source, read at node paths. */
   loadSnapshot: unknown;
   /** Per-kind latent leaf raw or a host's own frozen raw and extras. */
-  latentRaw: Map<string, unknown>;
+  latentRaw: PathKeyedMap<unknown>;
   /** Whether latent sources changed since the last inactive-value publication. */
   latentRawDirty?: boolean;
   /** Latent occurrence shape and document position, keyed like latentRaw. */
-  latentRawMetadata?: Map<string, LatentRawMetadata>;
+  latentRawMetadata?: PathKeyedMap<LatentRawMetadata>;
   /** Current paths whose raw values miss their effective types. */
-  typeMismatchPaths: Set<string>;
+  typeMismatchPaths: PathKeyedSet;
   /** Commit-scoped inactive value lists keyed by node path. */
-  inactiveValuesMemo: Map<string, readonly { path: string; value: unknown }[]>;
+  inactiveValuesMemo: PathKeyedMap<readonly { path: string; value: unknown }[]>;
   /** Published latent item objects retained across unrelated commits. */
-  inactiveValueEntries?: Map<string, InactiveValueEntryMemo>;
+  inactiveValueEntries?: PathKeyedMap<InactiveValueEntryMemo>;
 }
 
 /** Last committed reads retained for one node reference after it exits. */
 interface DetachedSchemaNodeReads {
+  readonly errors: readonly { readonly dataPath: string }[];
   readonly typeMismatch: boolean;
   readonly typeMismatches: readonly string[];
   readonly inactiveValues: readonly { path: string; value: unknown }[];
@@ -258,6 +292,8 @@ export interface SettlementScratch<Self> {
   exited: Set<Self>;
   /** Temporarily absent occurrences, addressed by path and blueprint kind. */
   pendingExits: Map<string, Self>;
+  /** Array items removed by length rather than declaration gating. */
+  perished: Set<Self>;
   /** Active declaration choices waiting for commit. */
   selectedDeclarationIds: Map<Self, readonly number[]>;
   /** Original caller and fill inputs retained for effective-list interpretation. */
@@ -269,12 +305,21 @@ export interface SettlementScratch<Self> {
   /** Previous state of each reversible automatic node write. */
   automaticLog: { node: Self; previousRaw: unknown; previousExtras: unknown;
     previousDistributed?: Distribution }[];
+  /** Ordered array shapes before reversible automatic writes. */
+  arrayStructureLog: { host: Self; previousItems: Self[];
+    previousItemCount: number; previousExtras: unknown; restored?: boolean }[];
+  /** First array length observed in this settlement for snapshot alignment. */
+  arrayCounts: Map<Self, number>;
+  /** Paths changed before settlement, retained for later UpdatePath delivery. */
+  pathChanges: { node: Self; previous: string; current: string }[];
   /** Nodes whose absent source received a transition fill. */
   filledNodes: Set<Self>;
   /** Previous values of latent entries touched in a transition. */
   latentAutomaticLog: Map<string, { present: boolean; value: unknown }>;
   /** Paths scheduled for recalculation. */
   dirtyPaths: Set<string>;
+  /** Dirty descendant paths and their direct child names by ancestor. */
+  dirtyChildrenByParent: Map<string, Map<string, string>>;
   /** Declaration-owner paths scheduled by reverse dependencies or context reads. */
   dependencyOwnerPaths: Set<string>;
   /** Hosts scheduled for a new shape selection. */
@@ -298,11 +343,13 @@ export interface SchemaNodeRuntime<Self> extends SchemaNodeRootRuntimeState {
   /** Stable aggregate of keys whose count is positive. */
   globalState: Readonly<Record<string, true>>;
   /** Pending events consumed by the later dispatcher. */
-  deliveries?: Map<unknown, SchemaNodeDelivery>;
-  /** Last committed node observations for change detection. */
-  deliverySnapshots?: Map<unknown, SchemaNodeDeliverySnapshot<unknown>>;
+  deliveries?: Set<Self>;
+  /** Nodes with revision bits marked before the commit visitor reaches them. */
+  revisionNodes?: Set<Self>;
   /** Live reverse watch dependencies, allocated on the first watched node. */
   deliveryWatchIndex?: SchemaNodeWatchDeliveryIndex;
+  /** Paths captured at value/state mutations and consumed by commit watch lookup. */
+  deliveryAffectedPaths?: Set<string>;
   /** Last diagnostics reference observed by delivery marking. */
   deliveredDiagnostics?: SchemaNodeDiagnostics;
   /** Context reference last observed by delivery marking. */
@@ -350,10 +397,8 @@ export interface SchemaNodeRuntime<Self> extends SchemaNodeRootRuntimeState {
   batchWrites?: { node: Self; value: unknown; option: SetValueOption }[];
   /** Reset scopes requiring validation even with an unchanged root emit. */
   validationTargets?: Set<Self>;
-  /** Events marked outside settlement for the next dispatcher wave. */
-  queuedEvents?: Map<unknown, SchemaNodeDelivery>;
   /** Non-settlement events coalesced independently from commit deliveries. */
-  queuedNonSettleEvents?: Map<unknown, SchemaNodeDelivery>;
+  queuedNonSettleEvents?: Set<Self>;
   /** Whether a non-settlement wave is draining, preventing listener reentry. */
   flushingQueuedEvents?: boolean;
   /** Whether interaction flags changed since the last outer delivery. */
@@ -362,6 +407,8 @@ export interface SchemaNodeRuntime<Self> extends SchemaNodeRootRuntimeState {
   warningKeys?: Set<string>;
   /** Warnings held until the public entry commits and finishes delivery. */
   pendingWarningRecords?: Map<string, FormErrorRecord>;
+  /** Data-path ancestor to warning keys, for change-proportional moves/pruning. */
+  warningKeysByPath?: Map<string, Set<string>>;
   /** Guard failures awaiting the current public entry's final delivery. */
   guardFailureRecords?: Map<string, FormErrorRecord>;
   /** Failed guards already reported by this consuming tree. */
@@ -411,7 +458,7 @@ export interface SchemaNodeRuntime<Self> extends SchemaNodeRootRuntimeState {
   /** Form context shared by every occurrence and expression in this tree. */
   context?: Readonly<Record<string, unknown>>;
   /** Last committed expression inputs, keyed by live authored rule occurrence. */
-  committedRuleValues?: Map<string, unknown>;
+  committedRuleValues?: PathKeyedMap<unknown>;
   /** Committed rule keys indexed by their source path for bounded pruning. */
   committedRuleKeysBySource?: Map<string, Set<string>>;
   /** Committed rule keys indexed by live value target for exited-subtree pruning. */
@@ -443,7 +490,7 @@ export interface SchemaNodeRuntime<Self> extends SchemaNodeRootRuntimeState {
   /** Form default for clearing raw when a node leaves the shape. */
   unsetOnInactive?: boolean;
   /** Last committed active declarations keyed by the occurrence path and kind. */
-  committedDeclarationIds?: Map<string, readonly number[]>;
+  committedDeclarationIds?: PathKeyedMap<readonly number[]>;
   /** Required real analysis shared by this tree and its settlement engine. */
   blueprint: Blueprint;
   /** Number of completed synchronous settlement calls. */
@@ -453,7 +500,7 @@ export interface SchemaNodeRuntime<Self> extends SchemaNodeRootRuntimeState {
   /** Newly lit mismatch records in the last committed batch. */
   typeMismatchRecords?: readonly TypeMismatchRecord[];
   /** Commit-scoped subtree mismatch path lists. */
-  typeMismatchesMemo?: Map<string, { commit: number; paths: readonly string[] }>;
+  typeMismatchesMemo?: PathKeyedMap<{ commit: number; paths: readonly string[] }>;
   /** Frozen last-commit reads for departed references, allocated on first exit. */
   detachedReads?: WeakMap<object, DetachedSchemaNodeReads>;
   /** Stable watch path results for each node within one completed commit. */

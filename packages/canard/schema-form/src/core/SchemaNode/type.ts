@@ -108,7 +108,10 @@ export interface NodeSurface<
   revision(mask?: SchemaNodeEventType): number;
   /** Request one renderer action. */
   request(kind: SchemaNodeRequestType): void;
-  /** Group synchronous writes in one outer delivery boundary. */
+  /**
+   * Group synchronous writes in one outer delivery boundary.
+   * 배열 동사(`push`·`pop`·`update`·`remove`·`clear`)도 부른 자리에서 앞선 표시를 얹은 배열로 계산해 동기 결과를 돌려주고 결과 배열을 표시하며, 배치 끝의 정착은 통째 쓰기라 아이템 키는 위치로 잇는다.
+   */
   batch(fn: () => void): void;
 }
 
@@ -124,11 +127,25 @@ export type ObjectNode =
     readonly SchemaNode[]>
   | NodeSurface<'object', 'terminal', 'object', Record<string, unknown> | null | undefined,
     null>;
-export type ArrayNode =
-  | NodeSurface<'array', 'branch', 'array', readonly unknown[] | null | undefined,
-    readonly SchemaNode[]>
-  | NodeSurface<'array', 'terminal', 'array', readonly unknown[] | null | undefined,
-    null>;
+/** Structural edits shared by branch and terminal array nodes. */
+interface ArrayNodeMethods<Item> {
+  /** Append one caller value and return the new length synchronously. */
+  push(value?: Item): number;
+  /** Remove the final position and return its last committed value. */
+  pop(): Item | undefined;
+  /** Replace one position without changing its snapshot or identity. */
+  update(index: number, value: Item): Item | undefined;
+  /** Remove one position and return its last committed value. */
+  remove(index: number): Item | undefined;
+  /** Remove every position without returning an item. */
+  clear(): void;
+}
+
+export type ArrayNode<Item = unknown> =
+  | (NodeSurface<'array', 'branch', 'array', readonly Item[] | null | undefined,
+    readonly SchemaNode[]> & ArrayNodeMethods<Item>)
+  | (NodeSurface<'array', 'terminal', 'array', readonly Item[] | null | undefined,
+    null> & ArrayNodeMethods<Item>);
 export type VirtualNode = NodeSurface<'virtual', 'branch', 'virtual',
   readonly unknown[] | undefined, readonly SchemaNode[]>;
 

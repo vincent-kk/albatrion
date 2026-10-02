@@ -1,5 +1,4 @@
-import { isArray } from '@winglet/common-utils/filter';
-
+import { getFeatureNodeIndex } from '../../../blueprint';
 import type { SchemaNodeRecord } from '../../../record';
 import { getControlExpression } from './getControlExpression';
 import { getControlLayers } from './getControlLayers';
@@ -40,21 +39,24 @@ export const calculateStateKeys = <Self extends SchemaNodeRecord<Self>>(
   selectedDeclarationIds: ReadonlyMap<Self, readonly number[]>,
   expandFrom: (source: Self) => boolean,
 ): CalculatedStateKeys<Self> => {
-  const candidates = new Set(stateDirtyNodes);
+  const blueprint = root.runtime.blueprint;
+  const index = getFeatureNodeIndex(blueprint);
+  const isTarget = (node: Self): boolean => index.stateKeyNodes.has(node.blueprintNode.id) ||
+    !!node.parent && !!(index.stateKeyChildren.get(node.parent.blueprintNode.id)?.has(node.name) ||
+      node.parent.blueprintNode.kind === 'array' &&
+      index.stateKeyChildren.get(node.parent.blueprintNode.id)?.has('*'));
+  const candidates = new Set<Self>();
+  for (const node of stateDirtyNodes) if (isTarget(node)) candidates.add(node);
   for (const source of stateDirtyNodes) {
+    const targets = index.stateKeyChildren.get(source.blueprintNode.id);
+    if (!targets) continue;
     if (source.detached || !source.children?.length) continue;
     if (!expandFrom(source)) continue;
-    if (source.blueprintNode.declarations.some((declaration) => {
-      if (declaration.scope === 'fragment') return true;
-      const schema = declaration.schema;
-      if (!schema || typeof schema !== 'object') return false;
-      const controls: unknown = Reflect.get(schema, 'controls');
-      return controls && typeof controls === 'object' &&
-        isArray(Reflect.get(controls, 'children'));
-    })) for (const child of source.children) candidates.add(child);
+    for (const child of source.children)
+      if (targets.has(child.name) || source.blueprintNode.kind === 'array' && targets.has('*'))
+        candidates.add(child);
   }
   const evaluated = new Map<string, boolean | undefined>();
-  const blueprint = root.runtime.blueprint;
   const entries: CalculatedStateKeys<Self>['entries'][number][] = [];
   let failures: CalculatedStateKeys<Self>['failures'][number][] | undefined;
   for (const node of candidates) {

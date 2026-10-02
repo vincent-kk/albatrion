@@ -13,17 +13,16 @@ export const dirtyChildren = <Self extends SchemaNodeRecord<Self>>(
   node: Self,
   context: SettlementContext<Self>,
 ): Self[] => {
-  const prefix = `${node.path}/`;
   const children: Self[] = [];
-  for (const path of context.dirtyPaths) {
-    if (!path.startsWith(prefix)) continue;
-    const remaining = path.slice(prefix.length);
-    const slash = remaining.indexOf('/');
-    const encoded = slash < 0 ? remaining : remaining.slice(0, slash);
+  const seen = new Set<Self>();
+  for (const encoded of context.dirtyChildrenByParent.get(node.path)?.values() ?? []) {
     const name = unescapeSegment(encoded);
     const child = node.structure && hasOwnProperty(node.structure, name)
       ? node.structure[name] : undefined;
-    if (child && !children.includes(child)) children.push(child);
+    if (child && !seen.has(child)) {
+      seen.add(child);
+      children.push(child);
+    }
   }
   return children;
 };

@@ -1,6 +1,7 @@
 import type { BlueprintNode, BlueprintSchemaType, EffectiveSchema } from '../blueprint';
 import { find, findNodes } from '../navigation';
 import { dispatchBatch, dispatchClearExternalErrors, dispatchClearSubtreeState,
+  dispatchPush, dispatchPop, dispatchUpdate, dispatchRemove, dispatchClear,
   dispatchRequest, dispatchResetSubtree, dispatchSetExternalErrors,
   dispatchSetState, dispatchSetSubtreeState, dispatchSetValue, dispatchValidate,
   readSchemaNodeRevision, subscribeSchemaNode } from '../dispatch';
@@ -35,6 +36,9 @@ export class SchemaNode implements SchemaNodeRecord<SchemaNode> {
   private readonly storedSchemaType: BlueprintSchemaType;
   structure: Record<string, SchemaNode> | null;
   private storedChildren: readonly SchemaNode[] | null;
+  itemKey: number | null;
+  itemCount: number;
+  nextItemKey: number;
   private storedRaw: unknown;
   private storedExtras: unknown;
   private storedActive: boolean;
@@ -47,6 +51,19 @@ export class SchemaNode implements SchemaNodeRecord<SchemaNode> {
   interactionState: SchemaNodeRecord<SchemaNode>['interactionState'];
   /** Per-bit counts copied only after this occurrence first receives delivery. */
   revisionLedger: Readonly<Record<number, number>>;
+  deliveryInitialized: boolean;
+  deliveryChanges: number;
+  deliveryPreviousLocal: unknown;
+  deliveryPreviousEmit: unknown;
+  deliveryPreviousPath: string | undefined;
+  deliveryPreviousChildren: readonly SchemaNode[] | null | undefined;
+  deliveryPreviousComputed: number | undefined;
+  deliveryPreviousSchema: EffectiveSchema | undefined;
+  deliveryPreviousState: NodeStateFlags | undefined;
+  deliveryWatchValues: readonly unknown[] | undefined;
+  pendingDelivery: SchemaNodeRecord<SchemaNode>['pendingDelivery'];
+  pendingRevision: number;
+  pendingNonSettleDelivery: SchemaNodeRecord<SchemaNode>['pendingNonSettleDelivery'];
   detached: boolean;
 
   constructor(
@@ -71,6 +88,9 @@ export class SchemaNode implements SchemaNodeRecord<SchemaNode> {
     this.storedSchemaType = blueprintNode.schemaType;
     this.structure = structure;
     this.storedChildren = children;
+    this.itemKey = null;
+    this.itemCount = 0;
+    this.nextItemKey = 0;
     this.storedRaw = undefined;
     this.storedExtras = undefined;
     this.storedActive = true;
@@ -82,6 +102,19 @@ export class SchemaNode implements SchemaNodeRecord<SchemaNode> {
     this.schema = schema;
     this.interactionState = state;
     this.revisionLedger = EMPTY_REVISION_LEDGER;
+    this.deliveryInitialized = false;
+    this.deliveryChanges = 0;
+    this.deliveryPreviousLocal = undefined;
+    this.deliveryPreviousEmit = undefined;
+    this.deliveryPreviousPath = undefined;
+    this.deliveryPreviousChildren = undefined;
+    this.deliveryPreviousComputed = undefined;
+    this.deliveryPreviousSchema = undefined;
+    this.deliveryPreviousState = undefined;
+    this.deliveryWatchValues = undefined;
+    this.pendingDelivery = undefined;
+    this.pendingRevision = 0;
+    this.pendingNonSettleDelivery = undefined;
     this.detached = false;
   }
 
@@ -171,6 +204,18 @@ export class SchemaNode implements SchemaNodeRecord<SchemaNode> {
   setValue(value: unknown, option: SetValueOption = SetValueOption.Overwrite) {
     return dispatchSetValue<SchemaNode>(this, value, option);
   }
+  /** {@inheritDoc ArrayNode.push} */
+  push(value?: unknown) { return dispatchPush<SchemaNode>(this, value); }
+  /** {@inheritDoc ArrayNode.pop} */
+  pop() { return dispatchPop<SchemaNode>(this); }
+  /** {@inheritDoc ArrayNode.update} */
+  update(index: number, value: unknown) {
+    return dispatchUpdate<SchemaNode>(this, index, value);
+  }
+  /** {@inheritDoc ArrayNode.remove} */
+  remove(index: number) { return dispatchRemove<SchemaNode>(this, index); }
+  /** {@inheritDoc ArrayNode.clear} */
+  clear() { return dispatchClear<SchemaNode>(this); }
   /** {@inheritDoc NodeSurface.resetSubtree} */
   resetSubtree(option: SetValueOption = SetValueOption.Overwrite) {
     return dispatchResetSubtree<SchemaNode>(this, option);

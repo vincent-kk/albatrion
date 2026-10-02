@@ -2,6 +2,7 @@ import { isArray } from '@winglet/common-utils/filter';
 import { escapeSegment } from '@winglet/json/pointer';
 import type { SchemaNodeRecord, SchemaNodeRuntime } from '../../../record';
 import type { SettlementContext } from '../../type';
+import { getLatentPathIndex } from '../latent/getLatentPathIndex';
 import { setLatentRaw } from '../latent/setLatentRaw';
 
 /**
@@ -17,13 +18,22 @@ export const pruneLatentRaw = <Self extends SchemaNodeRecord<Self>>(
   names?: readonly string[], context?: SettlementContext<Self>,
 ): void => {
   const childPaths = names?.map((name) => `${path}/${escapeSegment(name)}`);
+  if (context) {
+    const index = getLatentPathIndex(context);
+    const paths = childPaths ?? [path];
+    for (const childPath of paths)
+      for (const key of [...index.get(childPath) ?? []])
+        setLatentRaw(runtime,
+          context.inTransition ? context.latentAutomaticLog : undefined,
+          key, false, undefined, undefined, undefined, context);
+    return;
+  }
   for (const key of runtime.latentRaw.keys()) {
     const identity: unknown = JSON.parse(key);
     if (!isArray(identity) || typeof identity[0] !== 'string') continue;
     if (childPaths ? childPaths.some((childPath) => identity[0] === childPath ||
       identity[0].startsWith(`${childPath}/`)) :
       !path || identity[0] === path || identity[0].startsWith(`${path}/`))
-      setLatentRaw(runtime, context?.inTransition ? context.latentAutomaticLog : undefined,
-        key, false, undefined, undefined, undefined, context);
+      setLatentRaw(runtime, undefined, key, false, undefined);
   }
 };

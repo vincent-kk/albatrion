@@ -9,11 +9,11 @@ import { resetSchemaNodeForm } from '../../../settle';
  * @param root - Live runtime record behind the public node surface
  * @param scenario - Shared initial value used by the reset action
  * @param step - Operation to execute; unsupported later-PR actions fail loudly
- * @returns Nothing after the synchronous settle completes
+ * @returns The synchronous action result after settlement
  */
 export function executeCoreScenarioStep(
   root: RuntimeSchemaNode, scenario: FormScenario, step: FormScenarioStep,
-): void {
+): unknown {
   const previousDiagnostics = root.diagnostics;
   try {
     if (step.action === 'reset') {
@@ -24,10 +24,18 @@ export function executeCoreScenarioStep(
       const node = root.find(step.path);
       if (!node) throw new Error(`Scenario node missing at ${step.path}`);
       node.resetSubtree();
-    } else if (step.action === 'setValue' || step.action === 'clear') {
+    } else if (step.action === 'setValue' || step.action === 'clear' ||
+      step.action === 'push' || step.action === 'pop' ||
+      step.action === 'remove' || step.action === 'update') {
       const node = root.find(step.path);
       if (!node) throw new Error(`Scenario node missing at ${step.path}`);
-      node.setValue(step.action === 'clear' ? undefined : step.value);
+      if (step.action === 'setValue') return node.setValue(step.value);
+      if (step.action === 'clear')
+        return node.type === 'array' ? node.clear() : node.setValue(undefined);
+      if (step.action === 'push') return node.push(step.value);
+      if (step.action === 'pop') return node.pop();
+      if (step.action === 'remove') return node.remove(step.index);
+      return node.update(step.index, step.value);
     } else if (step.action === 'batch') {
       for (const nested of step.steps) executeCoreScenarioStep(root, scenario, nested);
     } else {
@@ -40,4 +48,5 @@ export function executeCoreScenarioStep(
       root.diagnostics.status !== 'degraded' ||
       root.diagnostics === previousDiagnostics) throw error;
   }
+  return undefined;
 }

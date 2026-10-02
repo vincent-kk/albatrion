@@ -1,4 +1,9 @@
 export { dispatchSetValue } from './utils/entry/dispatchSetValue';
+export { dispatchPush } from './utils/entry/dispatchPush';
+export { dispatchPop } from './utils/entry/dispatchPop';
+export { dispatchUpdate } from './utils/entry/dispatchUpdate';
+export { dispatchRemove } from './utils/entry/dispatchRemove';
+export { dispatchClear } from './utils/entry/dispatchClear';
 export { dispatchResetSubtree } from './utils/entry/dispatchResetSubtree';
 export { dispatchResetForm } from './utils/entry/dispatchResetForm';
 export { dispatchMount } from './utils/entry/dispatchMount';

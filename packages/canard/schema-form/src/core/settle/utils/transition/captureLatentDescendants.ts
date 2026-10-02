@@ -1,10 +1,13 @@
-import { walkSchemaNodes } from '../../../navigation';
+import { isArray } from '@winglet/common-utils/filter';
+
+import { walkOwnedSchemaNodes } from '../walkOwnedSchemaNodes';
 import type { SchemaNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../type';
 import { getControlLayers } from '../controls/getControlLayers';
 import { readExitLayerPolicy } from '../controls/readExitLayerPolicy';
 import { readLatentExitPolicy } from '../controls/readLatentExitPolicy';
 import { writeLatentRaw } from './writeLatentRaw';
+import { getLatentPathIndex } from '../latent/getLatentPathIndex';
 
 /** One stored source and its last-live exit decisions. */
 interface LatentEntry {
@@ -39,17 +42,22 @@ interface ResolvedAncestor {
 export const captureLatentDescendants = <Self extends SchemaNodeRecord<Self>>(
   context: SettlementContext<Self>, node: Self, inherited: boolean,
 ): void => {
-  const prefix = `${node.path}/`;
+  const runtime = context.root.runtime;
+  const index = getLatentPathIndex(context);
   const entries: LatentEntry[] = [];
-  for (const key of context.root.runtime.latentRaw.keys()) {
-    const info = context.root.runtime.latentRawMetadata?.get(key);
-    if (info && info.path.startsWith(prefix))
-      entries.push({ key, path: info.path, order: info.order,
+  for (const key of index.get(node.path) ?? []) {
+    const identity: unknown = JSON.parse(key);
+    if (!isArray(identity) || typeof identity[0] !== 'string') continue;
+    const path = identity[0];
+    if (path === node.path) continue;
+    const info = runtime.latentRawMetadata?.get(key);
+    if (info)
+      entries.push({ key, path, order: info.order,
         exitLayers: info.exitLayers });
   }
   entries.sort((left, right) => left.path.length - right.path.length);
   const live = new Map<string, Self>();
-  walkSchemaNodes(node, (current) => live.set(JSON.stringify([
+  walkOwnedSchemaNodes(node, (current) => live.set(JSON.stringify([
     current.path, current.blueprintNode.kind]), current));
   const resolved = new Map<string, ResolvedAncestor[]>([[node.path, [
     { path: node.path, order: [], clear: inherited },

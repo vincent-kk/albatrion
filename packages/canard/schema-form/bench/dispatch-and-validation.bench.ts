@@ -1,3 +1,5 @@
+import { PathKeyedMap } from '../src/core/utils/pathIndex/PathKeyedMap';
+import { PathKeyedSet } from '../src/core/utils/pathIndex/PathKeyedSet';
 /**
  * U15: same-run legacy/new mount and delivery comparisons.
  * Each mount uses a fresh schema per engine; legacy timing includes onChange
@@ -152,8 +154,8 @@ function newMount(schema: JSONSchema, value: ReturnType<typeof conditionalValue>
   const start = performance.now();
   const root: unknown = schemaNodeFactory(blueprint(schema), {
     diagnostics: { status: 'stable' }, validationMode: ValidationMode.OnChange,
-    loadSnapshot: undefined, latentRaw: new Map(),
-    typeMismatchPaths: new Set(), inactiveValuesMemo: new Map(),
+    loadSnapshot: undefined, latentRaw: new PathKeyedMap('pair'),
+    typeMismatchPaths: new PathKeyedSet(), inactiveValuesMemo: new PathKeyedMap<readonly { path: string; value: unknown }[]>('path'),
   }, validator);
   if (!(root instanceof SchemaNode)) throw new Error('New mount did not create a runtime node');
   dispatchMount(root, value, SetValueOption.Overwrite);
@@ -292,7 +294,7 @@ async function waveRow() {
     defaultValue: waveValue(0) });
   const newRoot: unknown = schemaNodeFactory(blueprint(schema), {
     diagnostics: { status: 'stable' }, loadSnapshot: undefined,
-    latentRaw: new Map(), typeMismatchPaths: new Set(), inactiveValuesMemo: new Map(),
+    latentRaw: new PathKeyedMap('pair'), typeMismatchPaths: new PathKeyedSet(), inactiveValuesMemo: new PathKeyedMap<readonly { path: string; value: unknown }[]>('path'),
   });
   if (!(newRoot instanceof SchemaNode)) throw new Error('New wave did not create a runtime node');
   dispatchMount(newRoot, waveValue(0));

@@ -1,8 +1,12 @@
 import { escapeSegment } from '@winglet/json/pointer';
 
 import type { Blueprint, PropertyDeclaration } from '../../../blueprint';
+import type { SchemaNodeRecord } from '../../../record';
 import { getDeriveRuleTable } from '../../derive';
+import { bindTemplatePath } from '../paths/bindTemplatePath';
+import { expandTemplatePaths } from '../paths/expandTemplatePaths';
 import { resolveDependencyPath } from '../paths/resolveDependencyPath';
+import { isCanonicalArrayIndex } from '../paths/isCanonicalArrayIndex';
 import { getContextOwners } from '../context/getContextOwners';
 import { getGateExpression } from '../gates/getGateExpression';
 
@@ -12,7 +16,7 @@ const NO_OWNERS: readonly string[] = Object.freeze([]);
 /** One absolute watch prefix and declarations registered exactly here. */
 interface DependencyNode {
   /** Declaration hosts that read this exact path. */
-  owners: string[];
+  owners: { path: string; bindable: boolean }[];
   /** Next escaped JSON Pointer segments. */
   children: Map<string, DependencyNode>;
 }
@@ -63,22 +67,43 @@ class DependencyIndex {
   }
 
   /** Return owners whose reads intersect a changed path in either direction. */
-  affected(changedPath: string): readonly string[] {
+  affected<Self extends SchemaNodeRecord<Self>>(
+    changedPath: string, root: Self,
+  ): readonly string[] {
     if (this.root.owners.length === 0 && this.root.children.size === 0)
       return NO_OWNERS;
     const owners = new Set<string>();
-    let current: DependencyNode | undefined = this.root;
-    for (const owner of current.owners) owners.add(owner);
+    let current: DependencyNode[] = [this.root];
+    const collect = (node: DependencyNode): void => {
+      for (const entry of node.owners) {
+        const path = entry.bindable
+          ? bindTemplatePath(entry.path, changedPath) : entry.path;
+        if (path.includes('/*'))
+          for (const expanded of expandTemplatePaths(root, path))
+            owners.add(expanded);
+        else owners.add(path);
+      }
+    };
+    collect(this.root);
     for (const segment of changedPath.split('/').filter(Boolean)) {
-      current = current.children.get(segment);
-      if (!current) return [...owners];
-      for (const owner of current.owners) owners.add(owner);
+      const next: DependencyNode[] = [];
+      for (const node of current) {
+        const exact = node.children.get(segment);
+        if (exact) next.push(exact);
+        if (isCanonicalArrayIndex(segment)) {
+          const wildcard = node.children.get('*');
+          if (wildcard) next.push(wildcard);
+        }
+      }
+      if (next.length === 0) return [...owners];
+      current = next;
+      for (const node of current) collect(node);
     }
-    const pending = [...current.children.values()];
+    const pending = current.flatMap((node) => [...node.children.values()]);
     while (pending.length) {
       const child = pending.pop();
       if (!child) continue;
-      for (const owner of child.owners) owners.add(owner);
+      collect(child);
       pending.push(...child.children.values());
     }
     return [...owners];
@@ -86,6 +111,17 @@ class DependencyIndex {
 
   /** Insert one exact watched location into the pointer trie. */
   private add(watchedPath: string, owner: string): void {
+    const ownerParts = owner.split('/');
+    const watchedParts = watchedPath.split('/');
+    // A fixed read of another item depends on that array host's whole subtree.
+    for (let index = 1; index < ownerParts.length; index++) {
+      if (ownerParts[index] === '*' && watchedParts[index] !== '*' &&
+        ownerParts.slice(1, index).every((part, position) =>
+          part === watchedParts[position + 1]) && watchedParts[index]) {
+        watchedPath = ownerParts.slice(0, index).join('/');
+        break;
+      }
+    }
     let current = this.root;
     for (const segment of watchedPath.split('/').filter(Boolean)) {
       let child = current.children.get(segment);
@@ -95,7 +131,11 @@ class DependencyIndex {
       }
       current = child;
     }
-    if (!current.owners.includes(owner)) current.owners.push(owner);
+    const indexedParts = watchedPath.split('/');
+    if (!current.owners.some((entry) => entry.path === owner))
+      current.owners.push({ path: owner,
+        bindable: ownerParts.every((part, index) =>
+          part !== '*' || indexedParts[index] === '*') });
   }
 }
 

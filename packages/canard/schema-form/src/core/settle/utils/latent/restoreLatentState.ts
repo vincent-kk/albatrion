@@ -2,6 +2,7 @@ import type { SchemaNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../type';
 import { markWrite } from '../write/markWrite';
 import { HostLatent } from './HostLatent';
+import { isArray } from '@winglet/common-utils/filter';
 
 /**
  * Restore only one entering node's own latent state.
@@ -19,6 +20,10 @@ export const restoreLatentState = <Self extends SchemaNodeRecord<Self>>(
   }
   const raw = value instanceof HostLatent ? value.raw : undefined;
   const extras = value instanceof HostLatent ? value.extras : undefined;
+  if (node.behavior.type === 'array' && isArray(raw)) {
+    markWrite(node, raw, context);
+    return;
+  }
   if (!Object.is(node.raw, raw) || !Object.is(node.extras, extras)) {
     node.raw = raw;
     node.extras = extras;

@@ -3,8 +3,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { SetValueOption } from '../../../types/value';
 import { loadSchemaNodeAtMount, resetSchemaNodeSubtree,
   writeSchemaNode } from '../../index';
-import { INJECT_TARGET_MISSING, INVALID_VIRTUAL_NODE_VALUES } from
-  '../../utils/errors/settleErrorCode';
+import { INJECT_TARGET_MISSING, INVALID_VIRTUAL_NODE_VALUES } from '../../../../errors';
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
 
 // filid:contract derive-edge

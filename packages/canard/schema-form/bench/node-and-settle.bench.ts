@@ -1,3 +1,5 @@
+import { PathKeyedMap } from '../src/core/utils/pathIndex/PathKeyedMap';
+import { PathKeyedSet } from '../src/core/utils/pathIndex/PathKeyedSet';
 /**
  * Standalone U9 measurements. Run once under Node/V8 and once under Bun/JSC.
  * Each timed sample receives the same schema and input in both runtimes.
@@ -38,9 +40,9 @@ function makeNew(schema: BlueprintSchema, value?: unknown) {
   const root = schemaNodeFactory(blueprint(schema), {
     diagnostics: { status: 'stable' },
     loadSnapshot: undefined,
-    latentRaw: new Map(),
-    typeMismatchPaths: new Set(),
-    inactiveValuesMemo: new Map(),
+    latentRaw: new PathKeyedMap('pair'),
+    typeMismatchPaths: new PathKeyedSet(),
+    inactiveValuesMemo: new PathKeyedMap<readonly { path: string; value: unknown }[]>('path'),
   }) as unknown as RuntimeSchemaNode;
   if (value !== undefined) loadSchemaNodeAtMount(root, value, SetValueOption.Overwrite);
   return root;
@@ -157,7 +159,7 @@ function b2() {
     const root = schemaNodeFactory(analysis, {
       diagnostics: { status: 'stable' },
       loadSnapshot: undefined,
-      latentRaw: new Map(), typeMismatchPaths: new Set(), inactiveValuesMemo: new Map(),
+      latentRaw: new PathKeyedMap('pair'), typeMismatchPaths: new PathKeyedSet(), inactiveValuesMemo: new PathKeyedMap<readonly { path: string; value: unknown }[]>('path'),
     }) as unknown as RuntimeSchemaNode;
     loadSchemaNodeAtMount(root, value, SetValueOption.Overwrite);
     return root;
@@ -174,7 +176,7 @@ function heapOne(kind: 'new' | 'legacy') {
     const root = schemaNodeFactory(analysis, {
       diagnostics: { status: 'stable' },
       loadSnapshot: undefined,
-      latentRaw: new Map(), typeMismatchPaths: new Set(), inactiveValuesMemo: new Map(),
+      latentRaw: new PathKeyedMap('pair'), typeMismatchPaths: new PathKeyedSet(), inactiveValuesMemo: new PathKeyedMap<readonly { path: string; value: unknown }[]>('path'),
     }) as unknown as RuntimeSchemaNode;
     loadSchemaNodeAtMount(root, value, SetValueOption.Overwrite);
     liveHeapRoot = root;
@@ -325,7 +327,7 @@ function main() {
     const root = schemaNodeFactory(largeAnalysis, {
       diagnostics: { status: 'stable' },
       loadSnapshot: undefined,
-      latentRaw: new Map(), typeMismatchPaths: new Set(), inactiveValuesMemo: new Map(),
+      latentRaw: new PathKeyedMap('pair'), typeMismatchPaths: new PathKeyedSet(), inactiveValuesMemo: new PathKeyedMap<readonly { path: string; value: unknown }[]>('path'),
     }) as unknown as RuntimeSchemaNode;
     loadSchemaNodeAtMount(root, large.value, SetValueOption.Overwrite);
     return root;

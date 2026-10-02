@@ -20,23 +20,21 @@ const isWaveNode = <Self extends SchemaNodeRecord<Self>>(
  * @returns Nothing; callback failures append to the current chain
  */
 export const deliverWave = <Self extends SchemaNodeRecord<Self>>(
-  root: Self, pending: Map<unknown, SchemaNodeDelivery>,
+  root: Self, pending: readonly (readonly [Self, SchemaNodeDelivery])[],
 ): void => {
   const runtime = root.runtime;
-  const fixed = new Map<Self, ((event: SchemaNodeDelivery) => void)[]>();
-  for (const candidate of pending.keys()) {
+  const fixed: { node: Self; event: SchemaNodeDelivery;
+    listeners: ((event: SchemaNodeDelivery) => void)[] }[] = [];
+  for (const [candidate, event] of pending) {
     if (!isWaveNode<Self>(candidate, runtime)) continue;
     const listeners = runtime.listeners?.get(candidate);
-    if (listeners?.size) fixed.set(candidate, [...listeners]);
+    if (listeners?.size) fixed.push({ node: candidate, event, listeners: [...listeners] });
   }
-  const nodes = [...fixed.keys()];
   const siblingIndexes = new Map<Self, Map<Self, number>>();
-  nodes.sort((left, right) => compareDocumentOrder(left, right, siblingIndexes));
-  for (const node of nodes) {
+  fixed.sort((left, right) => compareDocumentOrder(left.node, right.node, siblingIndexes));
+  for (const { node, event, listeners } of fixed) {
     if (node.detached) continue;
-    const event = pending.get(node);
-    if (!event) continue;
-    for (const listener of fixed.get(node) ?? []) {
+    for (const listener of listeners) {
       if (!runtime.listeners?.get(node)?.has(listener) ||
         runtime.feedbackBlockedListeners?.has(listener)) continue;
       runtime.currentListener = listener;
