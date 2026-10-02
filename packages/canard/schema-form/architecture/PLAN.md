@@ -19,8 +19,8 @@
 | 06 | 배열 | [request](plan/06-array/request.md) | [verification](plan/06-array/verification.md) | [adr-and-axes](plan/06-array/adr-and-axes.md) | PR-5 | 03 |
 | 07 | 전환(원샷, 레거시 보존) | [request](plan/07-switch/request.md) | [verification](plan/07-switch/verification.md) | [adr-and-axes](plan/07-switch/adr-and-axes.md) | PR-7 | 02–06 |
 | 08 | 플러그인(UI 넷) | [request](plan/08-plugins/request.md) | [verification](plan/08-plugins/verification.md) | [adr-and-axes](plan/08-plugins/adr-and-axes.md) | LANDING-206 | 07 |
-| 정돈 | 코드 정돈 | 대기 | — | 08 뒤, 최적화 앞. 소유자가 코드를 직접 보며 파일 구성·함수 이름·함수 로직을 손질한다(76라운드 소유자 답, `reviews/round-76-owner-answers.md`). fractal 경계와 공개 인터페이스는 바꾸지 않는다. 원칙을 소유자 라운드로 먼저 적고 작업 세션이 한 번에 적용, 동작 불변은 차등 시험·기존 스위트·벤치로 보임. P-24·P-25를 함께 처리할 수 있음 |
-| 최적화 | 성능 최적화(동작 불변) | [request](plan/perf-optimization/request.md) | [verification](plan/perf-optimization/verification.md) | [adr-and-axes](plan/perf-optimization/adr-and-axes.md) | 없음(27라운드 소유자 답, TEST-027 보충) | 07, 08과 병렬, 09 전 |
+| 정돈 | 코드 정돈(내부: 파일 구성·함수 이름·함수 로직) | — | — | — | 없음(76라운드 소유자 답, `reviews/round-76-owner-answers.md`) | 08 뒤, 최적화 앞 |
+| 최적화 | 성능 최적화(동작 불변) | [request](plan/perf-optimization/request.md) | [verification](plan/perf-optimization/verification.md) | [adr-and-axes](plan/perf-optimization/adr-and-axes.md) | 없음(27라운드 소유자 답, TEST-027 보충) | 정돈 뒤(76라운드), 09 전 |
 | 09 | 정리·릴리스(레거시 삭제) | [request](plan/09-release-and-cleanup/request.md) | [verification](plan/09-release-and-cleanup/verification.md) | [adr-and-axes](plan/09-release-and-cleanup/adr-and-axes.md) | PR-8 | 08, 별도 |
 | 별도 | 릴리스 전환(`master` 직접) | [request](plan/release-transition/request.md) | [verification](plan/release-transition/verification.md) | [adr-and-axes](plan/release-transition/adr-and-axes.md) | LANDING-097 | 없음 |
 
@@ -57,7 +57,8 @@
 | 06 | 배열 | 머지 | [#353](https://github.com/vincent-kk/albatrion/pull/353) | 브랜치 `feat/schema-form-array`. 2026-10-02 머지(`07a083c18`). 05를 통합해 그 "06에 넘길 목록"을 맡음. P-23은 64·65라운드대로 진단·개선해 R-22 해결(65C-01 표본, 통째 쓰기 Node 1.39–1.42×·Bun 2.09–2.11×), P-14의 54라운드 수용 유지. 07이 이어받는 열림 행 P-24·P-25(03 코드, 수용 대상 아님), 속도 문제는 [대장](verification/performance-issues.md). 실행 기록은 [log](plan/06-array/log.md) |
 | 07 | 전환 | 착수 가능 | — | 02–06 전부 머지(06 `07a083c18`, 2026-10-02). 원샷. 브랜치 제안 `feat/schema-form-switch`, 착수 문서 [request](plan/07-switch/request.md) |
 | 08 | 플러그인 | 대기 | — | 07 뒤 |
-| 최적화 | 성능 최적화 | 대기 | — | 07 머지 뒤 착수, 08과 병렬, 09 전에 끝냄. 묶음(M2)마다 PR 하나. 출발점은 [대장](verification/performance-issues.md), 계획은 [request](plan/perf-optimization/request.md) |
+| 정돈 | 코드 정돈 | 대기 | — | 08 뒤, 최적화 앞. 소유자가 코드를 직접 보며 파일 구성·함수 이름·함수 로직을 손질한다(76라운드 소유자 답, `reviews/round-76-owner-answers.md`). fractal 경계와 공개 인터페이스는 바꾸지 않는다. 원칙을 소유자 라운드로 먼저 적고 작업 세션이 한 번에 적용, 동작 불변은 차등 시험·기존 스위트·벤치로 보임. P-24·P-25를 함께 처리할 수 있음 |
+| 최적화 | 성능 최적화 | 대기 | — | 정돈 뒤 착수(76라운드 소유자 답), 09 전에 끝냄. 묶음(M2)마다 PR 하나. 출발점은 [대장](verification/performance-issues.md), 계획은 [request](plan/perf-optimization/request.md) |
 | 09 | 정리·릴리스 | 대기 | — | 08·최적화와 릴리스 전환 PR 뒤. 머지되면 우산을 `master`로 |
 | 별도 | 릴리스 전환 | 대기 | — | 시점은 소유자가 정한다(LANDING-204) |
 
