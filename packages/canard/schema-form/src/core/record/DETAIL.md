@@ -48,6 +48,10 @@
 - `updateSchemaNodeNameAndPath<Self extends { path: string; depth: number }>(node: SchemaNodeRecord<Self>, name: string, parent: Self | null): void`는 JSON Pointer 이스케이프를 적용한 `escapedName`·절대 `path`·`depth`를 일관되게 고칩니다. 부모의 `path`·`depth`를 읽으므로 `Self`에 그 두 칸을 요구합니다. 호출자가 영향받은 자손을 같은 함수로 갱신합니다. `patchSchemaNodeInteractionState<Self>(node: SchemaNodeRecord<Self>, patch: Partial<NodeStateFlags>): void`는 `shallowPatch<State extends object>(previous: State, patch: Partial<State>): State`의 결과만 `interactionState`에 반영합니다. 같은 키·값이면 이전 참조를 돌려줍니다(NODE-008, LANDING-082).
 - `record`가 `settle`, `SchemaNode`, `dispatch`, `validation`, 앱·플러그인 및 레거시를 가져오는 일은 타입 전용 import까지 금지합니다. 행이나 런타임 칸을 늘릴 때 이 선언을 먼저 고치는 것이 의존 역전의 비용입니다(NODE-016·045, LANDING-159).
 
+- `revisionLedger`의 이름과 비트별 읽기를 유지하면서 배달된 노드의 카운터는 알려진 17개 비트의 조밀한 슬롯에 보관합니다. 내부 `SchemaNodeRevisionLedger`는 진입점에서 정착·dispatch에 제공하며 비트 접근자는 슬롯을 읽습니다. 변경된 원장만 슬롯 사본과 새 원장으로 교체하므로 읽기가 보관한 이전 원장은 바뀌지 않습니다. 빈 원장은 공유 동결 상수이며 노드 고정 필드는 늘지 않습니다. 비트별 증가 시점과 `revision(mask)` 합은 리스너와 무관하게 동일합니다(EVENT-001·007, 65C-01, I11 step 1).
+- 아직 전달하지 않은 배달 항목·비트별 payload/options 표와 커밋 비트 항목은 같은 대기열 안에서 갱신합니다. dispatch가 파동을 전달하기 전에 표를 분리하므로 이미 리스너에게 건넨 사건·payload/options는 다음 표시가 수정하지 않습니다. 마지막 정의된 값, 최초 삽입 순서와 개발 모드 payload 동결은 유지하며 반복 표시의 객체·표 복사를 없앱니다(EVENT-004·006·007·023·024, 65C-01, I11 step 1).
+- 배달 비교 스냅숏은 공개 값 참조를 담는 내부 관측 버퍼입니다. 전역 상태 집계와 해당 노드의 모든 비교를 마친 뒤 같은 버퍼의 필드를 갱신하고 새 발생에만 버퍼를 할당합니다. 저장된 값·자식 배열·상태·감시 값 자체는 변경하지 않습니다. 노드당 관측 필드 수와 마지막 통지 기준은 유지합니다(EVENT-004·006·007·024, 65C-01, I11 step 1).
+
 ## Acceptance Criteria
 
 ### record-layout — 고정 배치
