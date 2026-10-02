@@ -6,6 +6,8 @@
 
 측정일: 2026-10-03 KST. 시작 HEAD: `f08ff8451`, 이 문서와 함께 있는 미커밋 U13 하니스 변경을 적용했습니다. 설치·Git 쓰기·다른 워크트리 사용은 하지 않았습니다. 측정은 순차 실행했고 다른 테스트 묶음을 동시에 돌리지 않았습니다. 초기 하니스 진단과 중단한 코어·React 표본은 최종 통계에서 제외했습니다.
 
+원 표본(TEST-026): 모두 2026-10-03 KST 측정이며 BF의 `results/`에 보존합니다. 최초 U13은 `equivalent-2026-10-03-f08ff8451-core.json`·`equivalent-2026-10-03-f08ff8451-render.json`(측정 당시 HEAD `f08ff8451`)입니다. 82C는 `equivalent-82c01-core-final.json`·`equivalent-82c01-residual-core.json`·`equivalent-82c01-render-final.json` 및 `equivalent-82c01-render-clean-array-push-100.json`·`equivalent-82c01-render-clean-array-replace-200.json`·`equivalent-82c01-render-clean-array-push-remove-100.json`·`equivalent-82c01-render-clean-computed-visible-derived.json`입니다(측정 당시 HEAD `b49f53962`, 수정 소스·원 표본 보존 커밋 `1f8a8d10f`). `equivalent-82c01-render-selection.json`은 채택 연결표이며 독립 원 표본이 아닙니다. 진단 원 표본은 이 보고서 옆의 `phases-before.json`·`phases-after.json`·`phases-residual-before.json`·`phases-residual-after.json`·`recursion-cost.json`에 같은 날짜·보존 커밋으로 남아 있습니다. 파일명이 날짜·커밋을 생략한 82C 자료도 위 출처와 JSON의 timestamp·commit으로 연결하며, 당시 HEAD를 최종 수정 커밋으로 바꿔 적지 않습니다.
+
 ## 환경과 비교 조건
 
 - CPU: Apple M1 Max, 10 cores, RAM 64 GiB. OS: macOS 26.6.2 (25G83), Darwin 25.6.0 arm64. Node v26.10.0, React 19.2.6, Vitest 3.2.6, rolldown 1.2.0, esbuild 0.25.9.
@@ -241,12 +243,12 @@
 
 ## typecheck / 프로젝트 실행 시간
 
-| 측정 | 옛 | 새 | 새/옛 | 판정 |
-| --- | --- | --- | --- | --- |
-| typecheck 3회 중앙값 | 보존 표본 없음 | 7.5457 s | — | GOAL-088 비용 기록, 각 종료 코드 0/0/0 |
-| jsdom render 프로젝트 벽시계 | 같은 suite 기준선 없음 | 60.2651 s | — |  Test Files  1 failed \| 70 passed (71);       Tests  2 failed \| 433 passed (435);    Duration  58.77s (transform 2.05s, setup 0ms, collect 61.23s, tests 73.04s, environment 15.66s, prepare 3.54s); ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯;  FAIL  \|render\| src/components/Form/__tests__/Form.effectFeedback.test.tsx > EVENT-070 cross-entry feedback > EVENT-070 React stops two fields writing back through useLayoutEffect;  FAIL  \|render\| src/components/Form/__tests__/Form.effectFeedback.test.tsx > EVENT-070 cross-entry feedback > EVENT-070 React stops two fields writing back through useEffect |
+| 측정 | 옛 중앙값 / p99 | 새 중앙값 | 새 p99 | 새/옛 | 판정 |
+| --- | --- | --- | --- | --- | --- |
+| typecheck 3회 | 보존 표본 없음 | 7.5457 s | 7.6049 s | — | GOAL-088 비용 기록, 각 종료 코드 0/0/0 |
+| jsdom render 프로젝트 벽시계(1회) | 같은 suite 기준선 없음 | 60.2651 s | 60.2651 s | — |  Test Files  1 failed \| 70 passed (71);       Tests  2 failed \| 433 passed (435);    Duration  58.77s (transform 2.05s, setup 0ms, collect 61.23s, tests 73.04s, environment 15.66s, prepare 3.54s); ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯;  FAIL  \|render\| src/components/Form/__tests__/Form.effectFeedback.test.tsx > EVENT-070 cross-entry feedback > EVENT-070 React stops two fields writing back through useLayoutEffect;  FAIL  \|render\| src/components/Form/__tests__/Form.effectFeedback.test.tsx > EVENT-070 cross-entry feedback > EVENT-070 React stops two fields writing back through useEffect |
 
-typecheck 각 실행: 7.6049 s (exit 0), 7.5457 s (exit 0), 7.5250 s (exit 0).
+typecheck 각 실행: 7.6049 s (exit 0), 7.5457 s (exit 0), 7.5250 s (exit 0). typecheck p99는 3회 표본의 nearest-rank 최댓값입니다. jsdom은 1회 실행이라 중앙값과 p99가 같은 단일 관측값이며 반복 실행의 분포를 나타내지 않습니다. 번들 바이트 표와 모듈 기여도 표는 결정적 산출물의 크기 기록이므로 중앙값·p99 대상이 아닙니다.
 
 최종 unit+render:  Test Files  1 failed | 323 passed (324);       Tests  2 failed | 2585 passed | 1 todo (2588);    Duration  62.94s (transform 5.42s, setup 0ms, collect 152.51s, tests 88.96s, environment 17.28s, prepare 15.30s); ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯;  FAIL  |render| src/components/Form/__tests__/Form.effectFeedback.test.tsx > EVENT-070 cross-entry feedback > EVENT-070 React stops two fields writing back through useLayoutEffect;  FAIL  |render| src/components/Form/__tests__/Form.effectFeedback.test.tsx > EVENT-070 cross-entry feedback > EVENT-070 React stops two fields writing back through useEffect. fixture equivalent:  Test Files  1 passed (1);       Tests  19 passed (19);    Duration  11.43s (transform 285ms, setup 0ms, collect 79ms, tests 11.00s, environment 169ms, prepare 41ms). 
 
@@ -340,17 +342,17 @@ typecheck 각 실행: 7.6049 s (exit 0), 7.5457 s (exit 0), 7.5250 s (exit 0).
 
 [전체 단계별 크기 표와 L/E/Q 분해](phase-breakdown.md)에 blueprint, node creation, 첫 settlement, transition, output, 재계산·역의존·파생 등록, commit, delivery marking, dispatch exit를 기록했습니다. L은 작은 크기의 노드/영향 게이트당 상수 비용을 큰 크기에 선형 확장한 값, E는 그 밖의 잔차이며, 원자료와 ratio-of-ratios를 함께 공개합니다. node 수만으로 N·depth 경로 인코딩 비용을 이차 비용과 혼동하지 않습니다. 검증기는 BF에서 사용하지 않아 validation registration/run은 0회입니다.
 
-| 측정 몫 | fixture | 수정 전 ms | 수정 후 ms | 후/전 |
-| --- | --- | ---: | ---: | ---: |
-| mount/derive-rule-index | oneOf-5 | 0.021084 | 0.002668 | 0.127 |
-| mount/derive-rule-index | oneOf-10 | 0.062541 | 0.003916 | 0.063 |
-| mount/derive-rule-index | oneOf-20 | 0.221084 | 0.005793 | 0.026 |
-| mount/recalculation-registration | nested-d3-f4 | 0.033000 | 0.029167 | 0.884 |
-| mount/recalculation-registration | nested-d5-f4 | 0.760792 | 0.448208 | 0.589 |
-| update/output | flat-50 | 0.074501 | 0.018542 | 0.249 |
-| update/output | flat-100 | 0.155376 | 0.018874 | 0.121 |
-| update/output | flat-500 | 0.716957 | 0.027915 | 0.039 |
-| mount/recursive-expansion | nested-d5-f4 | 0.058841 | 0.199245 | 3.386 |
+| 측정 몫 | fixture | 수정 전 중앙값 ms | 수정 후 중앙값 ms | 중앙값 후/전 | 수정 전 p99 ms | 수정 후 p99 ms |
+| --- | --- | ---: | ---: | ---: | ---: | ---: |
+| mount/derive-rule-index | oneOf-5 | 0.021084 | 0.002668 | 0.127 | 0.023374 | 0.003125 |
+| mount/derive-rule-index | oneOf-10 | 0.062541 | 0.003916 | 0.063 | 0.066958 | 0.004456 |
+| mount/derive-rule-index | oneOf-20 | 0.221084 | 0.005793 | 0.026 | 0.266041 | 0.016751 |
+| mount/recalculation-registration | nested-d3-f4 | 0.033000 | 0.029167 | 0.884 | 0.037460 | 0.032874 |
+| mount/recalculation-registration | nested-d5-f4 | 0.760792 | 0.448208 | 0.589 | 0.818917 | 0.494583 |
+| update/output | flat-50 | 0.074501 | 0.018542 | 0.249 | 0.092542 | 0.035959 |
+| update/output | flat-100 | 0.155376 | 0.018874 | 0.121 | 0.194584 | 0.025625 |
+| update/output | flat-500 | 0.716957 | 0.027915 | 0.039 | 0.827418 | 0.041456 |
+| mount/recursive-expansion | nested-d5-f4 | 0.058841 | 0.199245 | 3.386 | 0.069979 | 0.370491 |
 
 ### 코드 귀속·복잡도·메모리
 
@@ -368,13 +370,13 @@ typecheck 각 실행: 7.6049 s (exit 0), 7.5457 s (exit 0), 7.5250 s (exit 0).
 
 최신 모든 phase의 L/E/Q와 양의 잔차 귀속은 [후속 표](residual-breakdown.md)에 있습니다. DirtyPathSet은 후속 수정에서 ungated 등록 경계에 한해 고유 prefix closure와 직접 에지 색인을 사용합니다. 일반/gated 임의 add/delete 순서는 유지하며 경로 문자열 길이 비용과 임시 O(고유 prefix 수) 메모리는 남습니다.
 
-남은 양의 잔차도 숨기지 않습니다. 파생 등록의 flat/nested mount Q는 1.341/1.486, E는 0.012986/0.063114ms입니다. 이 입력에는 controls가 없어 `getDeriveRuleTable.ts:41–46`의 선언별 1회 읽기만 실행되므로 해당 타이밍만으로 이차 알고리즘의 증거로 삼지 않습니다. array mount delivery marking Q=1.121, E=1.119247ms도 단일 노드별 표시와 경로 길이 비용을 포함하며, 원인을 전부 특정했다고 주장하지 않습니다. 이 때문에 P-30–40을 크기 독립 수용 묶음으로 옮기지 않았습니다.
+남은 양의 잔차도 숨기지 않습니다. 파생 등록의 flat/nested mount Q는 1.341/1.486, E는 0.012986/0.063114ms입니다. 이 입력에는 controls가 없어 `getDeriveRuleTable.ts:41–46`의 선언별 1회 읽기만 실행되므로 해당 타이밍만으로 이차 알고리즘의 증거로 삼지 않습니다. array mount delivery marking Q=1.121, E=1.119247ms도 단일 노드별 표시와 경로 길이 비용을 포함하며, 원인을 전부 특정했다고 주장하지 않습니다. 이 보류는 후속 83C-01로 해제하여 (나)의 소유자 묶음에 넣습니다.
 
 oneOf의 실제 생성 노드는 모든 크기에서 6개지만 영향 게이트는 5/10/20개입니다. gate-evaluation 호출은 mount 100/200/400, update 120/240/480으로 정확히 선형이며 수정 전후 같습니다. SETTLE-017·020·044·050은 이 영향 게이트 전체의 고정 출발점·전순서 평가를 요구합니다. 이를 생략하는 최적화는 하지 않았습니다. 따라서 반복 중복 검색 제거와 필수 O(B) 비용은 다른 처분입니다.
 
 ### 비도달 귀속과 미해결 경계
 
-P-135: stage06 src/core/settle/utils/transition/withdrawDetachedFills.ts:19(07a083c18)는 fill별 자동 로그·조상·잠복 로그 중첩 O(F·(A·D+L))입니다. [후속 계수](operation-counts.json)의19 fixture×mount/update38행에서 detachedFills와 withdrawLogEntries 모두0으로 내부 분기 비도달을 확인했습니다. **열린 행 — 수용 대상 아님, 어느 PR의 머지도 막지 않음**을 유지합니다.
+P-135: stage06 src/core/settle/utils/transition/withdrawDetachedFills.ts:19(07a083c18)는 fill별 자동 로그·조상·잠복 로그 중첩 O(F·(A·D+L))입니다. [후속 계수](operation-counts.json)의19 fixture×mount/update38행에서 detachedFills와 withdrawLogEntries 모두0으로 내부 분기 비도달을 확인했습니다. **열린 행 — 수용 대상 아님, 머지를 막지 않음(P-24·P-25와 같은 자리)**을 유지합니다.
 
 P-25의 정착 중간값 대 직전 커밋 참조 복원 문제는 그대로 열려 있습니다. 검토자가 제시한 rows[{v,d:derived}]의 resetSubtree 사례는 HEAD의 원래 updateOutput으로 복원하여도 root 참조 검증이 실패했습니다. 이번 개선의 새 회귀나 해결로 기록하지 않습니다. 새 부분 합성은 재계산 자식의 같은 내용을 비교해 기존 부모 참조 보호를 유지하며 별도 회귀 테스트로 검증했습니다.
 
@@ -388,48 +390,48 @@ P-25의 정착 중간값 대 직전 커밋 참조 복원 문제는 그대로 열
 
 [이번 수정 직전 원자료](../../../../../aileron/benchmark-form/results/equivalent-82c01-core-final.json) · [최신 잔여 수정 후 원자료](../../../../../aileron/benchmark-form/results/equivalent-82c01-residual-core.json)
 
-| fixture | 측정 | 전 배율 | 후 배율 | 후 새 엔진 중앙값 ms | 후 새 엔진 p99 ms |
-| --- | --- | ---: | ---: | ---: | ---: |
-| sample-0 | core-mount | 2.289× | 2.290× | 0.560604 | 0.615625 |
-| sample-0 | core-update | 1.729× | 1.832× | 0.116250 | 0.146333 |
-| sample-1 | core-mount | 2.454× | 2.357× | 0.810333 | 0.917583 |
-| sample-1 | core-update | 1.620× | 1.662× | 0.115896 | 0.173250 |
-| sample-2 | core-mount | 2.329× | 2.318× | 0.831125 | 0.907583 |
-| sample-2 | core-update | 1.512× | 1.593× | 0.126854 | 0.183709 |
-| sample-3 | core-mount | 3.202× | 3.190× | 1.963625 | 2.102542 |
-| sample-3 | core-update | 1.460× | 1.390× | 0.103458 | 0.161166 |
-| flat-50 | core-mount | 3.991× | 3.903× | 3.069312 | 3.821792 |
-| flat-50 | core-update | 1.012× | 0.972× | 0.663647 | 0.926417 |
-| flat-100 | core-mount | 4.522× | 4.354× | 4.630709 | 6.034583 |
-| flat-100 | core-update | 0.703× | 0.742× | 0.648811 | 0.851750 |
-| flat-500 | core-mount | 4.982× | 4.803× | 12.058521 | 13.505417 |
-| flat-500 | core-update | 0.225× | 0.224× | 0.839374 | 1.154876 |
-| nested-d3-f4 | core-mount | 5.143× | 4.873× | 4.324729 | 5.391125 |
-| nested-d3-f4 | core-update | 1.545× | 1.559× | 0.722938 | 1.055918 |
-| nested-d5-f4 | core-mount | 8.205× | 7.284× | 34.037355 | 37.078208 |
-| nested-d5-f4 | core-update | 1.594× | 1.558× | 0.581730 | 0.848582 |
-| array-100 | core-mount | 2.791× | 2.687× | 4.706437 | 5.005417 |
-| array-100 | core-update | 1.250× | 1.195× | 0.128938 | 0.199125 |
-| array-500 | core-mount | 3.277× | 3.156× | 20.132687 | 22.646458 |
-| array-500 | core-update | 0.763× | 0.745× | 0.153146 | 0.222750 |
-| array-1000 | core-mount | 3.354× | 3.340× | 39.720937 | 43.958250 |
-| array-1000 | core-update | 0.443× | 0.455× | 0.177749 | 0.236500 |
-| oneOf-5 | core-mount | 3.927× | 3.370× | 1.747521 | 2.612458 |
-| oneOf-5 | core-update | 6.495× | 6.326× | 0.994520 | 1.306917 |
-| oneOf-10 | core-mount | 4.019× | 3.717× | 2.135979 | 2.600000 |
-| oneOf-10 | core-update | 7.862× | 7.620× | 1.213479 | 1.513583 |
-| oneOf-20 | core-mount | 4.490× | 4.295× | 3.007001 | 3.620833 |
-| oneOf-20 | core-update | 11.196× | 10.633× | 1.711479 | 2.257583 |
-| array-push-100 | core-mount | 3.193× | 3.381× | 0.822854 | 1.517667 |
-| array-push-100 | core-update | 4.879× | 4.848× | 119.317209 | 164.199501 |
-| array-replace-200 | core-mount | 3.393× | 3.355× | 0.622146 | 0.697167 |
-| array-replace-200 | core-update | 3.028× | 2.801× | 8.113896 | 9.221958 |
-| array-push-remove-100 | core-mount | 3.034× | 3.068× | 0.805687 | 0.976458 |
-| array-push-remove-100 | core-update | 3.656× | 3.973× | 159.353913 | 273.093572 |
-| computed-visible-derived | core-mount | 2.499× | 2.336× | 0.880480 | 1.372542 |
-| computed-visible-derived | core-update | 3.020× | 2.772× | 0.355479 | 0.505625 |
+| fixture | 측정 | 전 배율 | 전 옛 중앙값 ms | 전 새 중앙값 ms | 전 옛 p99 ms | 전 새 p99 ms | 후 배율 | 후 옛 중앙값 ms | 후 새 중앙값 ms | 후 옛 p99 ms | 후 새 p99 ms |
+| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| sample-0 | core-mount | 2.289× | 0.252000 | 0.576812 | 0.501458 | 1.048125 | 2.290× | 0.244792 | 0.560604 | 0.354459 | 0.615625 |
+| sample-0 | core-update | 1.729× | 0.062521 | 0.108104 | 0.105084 | 0.167792 | 1.832× | 0.063459 | 0.116250 | 0.080375 | 0.146333 |
+| sample-1 | core-mount | 2.454× | 0.341062 | 0.836959 | 0.672333 | 1.669750 | 2.357× | 0.343792 | 0.810333 | 0.694459 | 0.917583 |
+| sample-1 | core-update | 1.620× | 0.065812 | 0.106624 | 0.115667 | 0.224875 | 1.662× | 0.069729 | 0.115896 | 0.098916 | 0.173250 |
+| sample-2 | core-mount | 2.329× | 0.360230 | 0.839042 | 0.732042 | 1.760458 | 2.318× | 0.358479 | 0.831125 | 0.455250 | 0.907583 |
+| sample-2 | core-update | 1.512× | 0.075126 | 0.113604 | 0.158000 | 0.256583 | 1.593× | 0.079625 | 0.126854 | 0.110625 | 0.183709 |
+| sample-3 | core-mount | 3.202× | 0.625750 | 2.003750 | 0.742167 | 2.172042 | 3.190× | 0.615521 | 1.963625 | 0.722042 | 2.102542 |
+| sample-3 | core-update | 1.460× | 0.069979 | 0.102147 | 0.106917 | 0.167125 | 1.390× | 0.074417 | 0.103458 | 0.100750 | 0.161166 |
+| flat-50 | core-mount | 3.991× | 0.907187 | 3.620417 | 1.200208 | 4.405750 | 3.903× | 0.786396 | 3.069312 | 0.966958 | 3.821792 |
+| flat-50 | core-update | 1.012× | 0.744668 | 0.753751 | 1.191874 | 0.917916 | 0.972× | 0.682855 | 0.663647 | 1.044502 | 0.926417 |
+| flat-100 | core-mount | 4.522× | 1.210625 | 5.474271 | 1.732083 | 6.771542 | 4.354× | 1.063521 | 4.630709 | 1.411542 | 6.034583 |
+| flat-100 | core-update | 0.703× | 1.012395 | 0.712023 | 1.562627 | 1.631917 | 0.742× | 0.874605 | 0.648811 | 1.282540 | 0.851750 |
+| flat-500 | core-mount | 4.982× | 2.480812 | 12.359395 | 2.849791 | 13.954916 | 4.803× | 2.510624 | 12.058521 | 2.763500 | 13.505417 |
+| flat-500 | core-update | 0.225× | 3.784937 | 0.852749 | 4.273002 | 1.386835 | 0.224× | 3.750084 | 0.839374 | 4.191251 | 1.154876 |
+| nested-d3-f4 | core-mount | 5.143× | 1.011187 | 5.200875 | 1.449000 | 6.426917 | 4.873× | 0.887542 | 4.324729 | 1.113917 | 5.391125 |
+| nested-d3-f4 | core-update | 1.545× | 0.513646 | 0.793771 | 0.650208 | 1.141376 | 1.559× | 0.463647 | 0.722938 | 0.710293 | 1.055918 |
+| nested-d5-f4 | core-mount | 8.205× | 4.724605 | 38.766792 | 5.320375 | 56.383166 | 7.284× | 4.672959 | 34.037355 | 5.048542 | 37.078208 |
+| nested-d5-f4 | core-update | 1.594× | 0.375022 | 0.597646 | 1.118875 | 1.655042 | 1.558× | 0.373334 | 0.581730 | 0.521665 | 0.848582 |
+| array-100 | core-mount | 2.791× | 1.736083 | 4.845563 | 1.889917 | 5.234875 | 2.687× | 1.751792 | 4.706437 | 1.878458 | 5.005417 |
+| array-100 | core-update | 1.250× | 0.105459 | 0.131792 | 0.165667 | 0.226458 | 1.195× | 0.107875 | 0.128938 | 0.142625 | 0.199125 |
+| array-500 | core-mount | 3.277× | 6.371208 | 20.877875 | 7.590041 | 23.807375 | 3.156× | 6.379771 | 20.132687 | 6.913834 | 22.646458 |
+| array-500 | core-update | 0.763× | 0.200229 | 0.152770 | 0.267042 | 0.247792 | 0.745× | 0.205520 | 0.153146 | 0.262917 | 0.222750 |
+| array-1000 | core-mount | 3.354× | 11.971334 | 40.148354 | 12.805375 | 47.119333 | 3.340× | 11.891166 | 39.720937 | 12.895417 | 43.958250 |
+| array-1000 | core-update | 0.443× | 0.369917 | 0.163916 | 0.452708 | 0.241875 | 0.455× | 0.391062 | 0.177749 | 0.476125 | 0.236500 |
+| oneOf-5 | core-mount | 3.927× | 0.519271 | 2.038938 | 0.984000 | 4.288167 | 3.370× | 0.518521 | 1.747521 | 0.615333 | 2.612458 |
+| oneOf-5 | core-update | 6.495× | 0.155167 | 1.007812 | 0.309542 | 2.012083 | 6.326× | 0.157209 | 0.994520 | 0.241208 | 1.306917 |
+| oneOf-10 | core-mount | 4.019× | 0.575604 | 2.313125 | 0.683708 | 2.866333 | 3.717× | 0.574584 | 2.135979 | 0.666167 | 2.600000 |
+| oneOf-10 | core-update | 7.862× | 0.157562 | 1.238708 | 0.228542 | 1.671417 | 7.620× | 0.159250 | 1.213479 | 0.229043 | 1.513583 |
+| oneOf-20 | core-mount | 4.490× | 0.699355 | 3.139896 | 0.871625 | 4.341917 | 4.295× | 0.700145 | 3.007001 | 0.798375 | 3.620833 |
+| oneOf-20 | core-update | 11.196× | 0.157147 | 1.759458 | 0.236375 | 2.287083 | 10.633× | 0.160958 | 1.711479 | 0.222458 | 2.257583 |
+| array-push-100 | core-mount | 3.193× | 0.253812 | 0.810416 | 0.420541 | 1.397209 | 3.381× | 0.243375 | 0.822854 | 0.410958 | 1.517667 |
+| array-push-100 | core-update | 4.879× | 24.950352 | 121.734186 | 44.986467 | 166.178882 | 4.848× | 24.612645 | 119.317209 | 39.891916 | 164.199501 |
+| array-replace-200 | core-mount | 3.393× | 0.182437 | 0.619083 | 0.206916 | 0.694583 | 3.355× | 0.185416 | 0.622146 | 0.203500 | 0.697167 |
+| array-replace-200 | core-update | 3.028× | 2.862480 | 8.668125 | 3.269792 | 9.548583 | 2.801× | 2.897021 | 8.113896 | 3.179750 | 9.221958 |
+| array-push-remove-100 | core-mount | 3.034× | 0.274417 | 0.832520 | 0.413667 | 1.441375 | 3.068× | 0.262605 | 0.805687 | 0.343375 | 0.976458 |
+| array-push-remove-100 | core-update | 3.656× | 41.060065 | 150.103477 | 63.367830 | 296.424326 | 3.973× | 40.112207 | 159.353913 | 60.964882 | 273.093572 |
+| computed-visible-derived | core-mount | 2.499× | 0.439041 | 1.097313 | 0.635750 | 1.500792 | 2.336× | 0.376958 | 0.880480 | 0.498459 | 1.372542 |
+| computed-visible-derived | core-update | 3.020× | 0.139292 | 0.420708 | 0.221708 | 0.652167 | 2.772× | 0.128250 | 0.355479 | 0.190292 | 0.505625 |
 
-재현: BF에서 `node --expose-gc --import tsx src/index.ts --equivalent --mode=core --min-samples=100 --out=results/equivalent-82c01-residual-core.json`. 위 전/후는 첫82C 수정본과 잔여 수정본입니다. P-30–40·P-54–56은 전체 새/옛 배율이 크기 독립은 아니므로 (나)에 새로 넣지 않습니다. 영향 gate O(B), 경로 표현 길이 비용, 선형 연산의 시간 잔차를 구조적 중복과 구분한 [후속 진단](residual-breakdown.md)을 참조합니다.
+재현: BF에서 `node --expose-gc --import tsx src/index.ts --equivalent --mode=core --min-samples=100 --out=results/equivalent-82c01-residual-core.json`. 위 전/후는 첫82C 수정본과 잔여 수정본입니다. P-30–40·P-54–56은 83C-01에 따라 최대 측정 크기의 배율을 대표값으로 삼아 (나)에 넣습니다. 영향 gate O(B), 경로 표현 길이 비용, 선형 연산의 시간 잔차를 구조적 중복과 구분한 [후속 진단](residual-breakdown.md)을 참조합니다.
 
 ### BF React 최종 채택 표본
 
@@ -437,139 +439,264 @@ P-25의 정착 중간값 대 직전 커밋 참조 복원 문제는 그대로 열
 
 [채택 manifest](../../../../../aileron/benchmark-form/results/equivalent-82c01-render-selection.json)는 첫 실행의 15개 fixture와 마지막 네 fixture의 단독 재측정 원자료를 연결합니다. 각 엔진 100개 표본이며 첫 실행 JSON의 excludedFixtures는 사용하지 않습니다. commits 수는 manifest에서 확인합니다.
 
-| fixture | 측정 | 새/옛 중앙값 | 새 엔진 중앙값 ms | 새 엔진 p99 ms |
-| --- | --- | ---: | ---: | ---: |
-| sample-0 | render-mount-wall | 1.399× | 5.444125 | 5.800083 |
-| sample-0 | render-update-wall | 1.421× | 3.164646 | 3.492042 |
-| sample-0 | profiler-mount | 1.244× | 2.396019 | 2.661787 |
-| sample-0 | profiler-update | 0.850× | 0.259458 | 0.392330 |
-| sample-1 | render-mount-wall | 1.182× | 6.997625 | 7.926625 |
-| sample-1 | render-update-wall | 1.472× | 3.254188 | 3.643042 |
-| sample-1 | profiler-mount | 1.167× | 4.226121 | 4.734586 |
-| sample-1 | profiler-update | 0.916× | 0.332036 | 0.531077 |
-| sample-2 | render-mount-wall | 1.207× | 6.790979 | 7.071417 |
-| sample-2 | render-update-wall | 1.576× | 3.258313 | 3.588959 |
-| sample-2 | profiler-mount | 1.208× | 3.752192 | 3.943641 |
-| sample-2 | profiler-update | 0.908× | 0.334831 | 0.495791 |
-| sample-3 | render-mount-wall | 1.162× | 15.820459 | 19.073292 |
-| sample-3 | render-update-wall | 1.422× | 3.190562 | 3.472541 |
-| sample-3 | profiler-mount | 1.145× | 11.645078 | 14.798507 |
-| sample-3 | profiler-update | 0.813× | 0.233065 | 0.414249 |
-| flat-50 | render-mount-wall | 1.158× | 15.168187 | 18.800500 |
-| flat-50 | render-update-wall | 1.070× | 29.417438 | 31.453542 |
-| flat-50 | profiler-mount | 1.124× | 10.987309 | 14.723799 |
-| flat-50 | profiler-update | 0.842× | 1.640375 | 2.583502 |
-| flat-100 | render-mount-wall | 1.080× | 25.011229 | 31.312959 |
-| flat-100 | render-update-wall | 1.155× | 30.123416 | 31.989875 |
-| flat-100 | profiler-mount | 1.093× | 19.727308 | 26.102032 |
-| flat-100 | profiler-update | 0.905× | 1.861334 | 2.713374 |
-| flat-500 | render-mount-wall | 1.010× | 110.141292 | 140.097584 |
-| flat-500 | render-update-wall | 1.236× | 36.265438 | 39.159833 |
-| flat-500 | profiler-mount | 1.061× | 92.439642 | 124.198619 |
-| flat-500 | profiler-update | 0.767× | 2.988686 | 4.203342 |
-| nested-d3-f4 | render-mount-wall | 1.112× | 21.655624 | 27.658125 |
-| nested-d3-f4 | render-update-wall | 1.178× | 30.595938 | 33.141917 |
-| nested-d3-f4 | profiler-mount | 1.123× | 16.651026 | 22.571435 |
-| nested-d3-f4 | profiler-update | 0.957× | 2.445481 | 4.404665 |
-| nested-d5-f4 | render-mount-wall | 0.964× | 301.284542 | 324.019291 |
-| nested-d5-f4 | render-update-wall | 1.411× | 34.133750 | 37.236375 |
-| nested-d5-f4 | profiler-mount | 1.057× | 248.550208 | 274.746936 |
-| nested-d5-f4 | profiler-update | 1.030× | 3.512534 | 6.681980 |
-| array-100 | render-mount-wall | 0.959× | 95.017833 | 127.649542 |
-| array-100 | render-update-wall | 1.243× | 5.613209 | 7.511708 |
-| array-100 | profiler-mount | 0.966× | 77.737787 | 111.438461 |
-| array-100 | profiler-update | 0.961× | 1.256837 | 2.951686 |
-| array-500 | render-mount-wall | 0.848× | 436.422209 | 455.407875 |
-| array-500 | render-update-wall | 1.555× | 20.956146 | 25.990375 |
-| array-500 | profiler-mount | 0.909× | 364.552660 | 372.261922 |
-| array-500 | profiler-update | 2.108× | 10.462226 | 14.800339 |
-| array-1000 | render-mount-wall | 0.917× | 879.664855 | 895.666667 |
-| array-1000 | render-update-wall | 1.076× | 42.288355 | 45.750000 |
-| array-1000 | profiler-mount | 0.985× | 730.518994 | 747.266661 |
-| array-1000 | profiler-update | 0.998× | 22.066001 | 26.163225 |
-| oneOf-5 | render-mount-wall | 1.429× | 6.687833 | 8.036875 |
-| oneOf-5 | render-update-wall | 1.425× | 8.761937 | 9.595500 |
-| oneOf-5 | profiler-mount | 1.475× | 3.713460 | 4.769914 |
-| oneOf-5 | profiler-update | 0.873× | 1.875867 | 2.231330 |
-| oneOf-10 | render-mount-wall | 1.458× | 7.143355 | 8.465500 |
-| oneOf-10 | render-update-wall | 1.463× | 9.007792 | 9.965667 |
-| oneOf-10 | profiler-mount | 1.498× | 4.176958 | 5.300336 |
-| oneOf-10 | profiler-update | 0.802× | 1.872140 | 2.270208 |
-| oneOf-20 | render-mount-wall | 1.572× | 8.116917 | 9.407666 |
-| oneOf-20 | render-update-wall | 1.529× | 9.494209 | 10.648958 |
-| oneOf-20 | profiler-mount | 1.720× | 5.322044 | 6.390579 |
-| oneOf-20 | profiler-update | 0.803× | 1.942045 | 2.481515 |
-| array-push-100 | render-mount-wall | 1.126× | 4.844250 | 5.309292 |
-| array-push-100 | render-update-wall | 1.496× | 568.134666 | 616.299875 |
-| array-push-100 | profiler-mount | 1.350× | 1.938439 | 2.390497 |
-| array-push-100 | profiler-update | 1.186× | 182.262620 | 210.011526 |
-| array-replace-200 | render-mount-wall | 1.143× | 5.107458 | 5.570125 |
-| array-replace-200 | render-update-wall | 1.125× | 173.762771 | 209.773334 |
-| array-replace-200 | profiler-mount | 1.380× | 2.050166 | 2.454206 |
-| array-replace-200 | profiler-update | 1.084× | 139.537477 | 171.768454 |
-| array-push-remove-100 | render-mount-wall | 1.214× | 6.052750 | 7.881792 |
-| array-push-remove-100 | render-update-wall | 1.530× | 1162.706396 | 1287.646333 |
-| array-push-remove-100 | profiler-mount | 1.336× | 2.994711 | 4.439129 |
-| array-push-remove-100 | profiler-update | 1.177× | 326.066537 | 379.304900 |
-| computed-visible-derived | render-mount-wall | 1.292× | 6.059500 | 6.473958 |
-| computed-visible-derived | render-update-wall | 1.226× | 9.787376 | 10.582167 |
-| computed-visible-derived | profiler-mount | 1.143× | 3.028208 | 3.302836 |
-| computed-visible-derived | profiler-update | 0.920× | 1.097997 | 1.482514 |
+| fixture | 측정 | 새/옛 중앙값 | 옛 중앙값 ms | 새 중앙값 ms | 옛 p99 ms | 새 p99 ms |
+| --- | --- | ---: | ---: | ---: | ---: | ---: |
+| sample-0 | render-mount-wall | 1.399× | 3.892542 | 5.444125 | 5.241041 | 5.800083 |
+| sample-0 | render-update-wall | 1.421× | 2.227646 | 3.164646 | 3.627875 | 3.492042 |
+| sample-0 | profiler-mount | 1.244× | 1.925974 | 2.396019 | 2.278746 | 2.661787 |
+| sample-0 | profiler-update | 0.850× | 0.305252 | 0.259458 | 0.459956 | 0.392330 |
+| sample-1 | render-mount-wall | 1.182× | 5.922083 | 6.997625 | 7.349750 | 7.926625 |
+| sample-1 | render-update-wall | 1.472× | 2.210125 | 3.254188 | 3.614834 | 3.643042 |
+| sample-1 | profiler-mount | 1.167× | 3.622476 | 4.226121 | 4.119185 | 4.734586 |
+| sample-1 | profiler-update | 0.916× | 0.362501 | 0.332036 | 0.556252 | 0.531077 |
+| sample-2 | render-mount-wall | 1.207× | 5.626791 | 6.790979 | 6.471916 | 7.071417 |
+| sample-2 | render-update-wall | 1.576× | 2.066854 | 3.258313 | 3.582584 | 3.588959 |
+| sample-2 | profiler-mount | 1.208× | 3.104894 | 3.752192 | 3.308833 | 3.943641 |
+| sample-2 | profiler-update | 0.908× | 0.368894 | 0.334831 | 0.539587 | 0.495791 |
+| sample-3 | render-mount-wall | 1.162× | 13.612146 | 15.820459 | 17.303042 | 19.073292 |
+| sample-3 | render-update-wall | 1.422× | 2.243792 | 3.190562 | 3.503667 | 3.472541 |
+| sample-3 | profiler-mount | 1.145× | 10.167147 | 11.645078 | 13.639552 | 14.798507 |
+| sample-3 | profiler-update | 0.813× | 0.286606 | 0.233065 | 0.440081 | 0.414249 |
+| flat-50 | render-mount-wall | 1.158× | 13.098541 | 15.168187 | 17.179334 | 18.800500 |
+| flat-50 | render-update-wall | 1.070× | 27.503313 | 29.417438 | 30.380375 | 31.453542 |
+| flat-50 | profiler-mount | 1.124× | 9.773607 | 10.987309 | 13.679971 | 14.723799 |
+| flat-50 | profiler-update | 0.842× | 1.948885 | 1.640375 | 3.000187 | 2.583502 |
+| flat-100 | render-mount-wall | 1.080× | 23.148605 | 25.011229 | 30.246625 | 31.312959 |
+| flat-100 | render-update-wall | 1.155× | 26.090625 | 30.123416 | 29.830292 | 31.989875 |
+| flat-100 | profiler-mount | 1.093× | 18.048523 | 19.727308 | 24.991984 | 26.102032 |
+| flat-100 | profiler-update | 0.905× | 2.056338 | 1.861334 | 3.151118 | 2.713374 |
+| flat-500 | render-mount-wall | 1.010× | 109.096563 | 110.141292 | 140.906125 | 140.097584 |
+| flat-500 | render-update-wall | 1.236× | 29.336875 | 36.265438 | 32.450250 | 39.159833 |
+| flat-500 | profiler-mount | 1.061× | 87.134506 | 92.439642 | 120.294939 | 124.198619 |
+| flat-500 | profiler-update | 0.767× | 3.898014 | 2.988686 | 4.984113 | 4.203342 |
+| nested-d3-f4 | render-mount-wall | 1.112× | 19.470166 | 21.655624 | 25.442584 | 27.658125 |
+| nested-d3-f4 | render-update-wall | 1.178× | 25.978521 | 30.595938 | 29.714833 | 33.141917 |
+| nested-d3-f4 | profiler-mount | 1.123× | 14.821456 | 16.651026 | 20.737261 | 22.571435 |
+| nested-d3-f4 | profiler-update | 0.957× | 2.554142 | 2.445481 | 4.462415 | 4.404665 |
+| nested-d5-f4 | render-mount-wall | 0.964× | 312.569500 | 301.284542 | 329.734208 | 324.019291 |
+| nested-d5-f4 | render-update-wall | 1.411× | 24.199292 | 34.133750 | 28.079833 | 37.236375 |
+| nested-d5-f4 | profiler-mount | 1.057× | 235.205276 | 248.550208 | 253.119221 | 274.746936 |
+| nested-d5-f4 | profiler-update | 1.030× | 3.411097 | 3.512534 | 7.305967 | 6.681980 |
+| array-100 | render-mount-wall | 0.959× | 99.124562 | 95.017833 | 130.460500 | 127.649542 |
+| array-100 | render-update-wall | 1.243× | 4.516667 | 5.613209 | 8.650625 | 7.511708 |
+| array-100 | profiler-mount | 0.966× | 80.498448 | 77.737787 | 107.976504 | 111.438461 |
+| array-100 | profiler-update | 0.961× | 1.308470 | 1.256837 | 3.071485 | 2.951686 |
+| array-500 | render-mount-wall | 0.848× | 514.354875 | 436.422209 | 527.782917 | 455.407875 |
+| array-500 | render-update-wall | 1.555× | 13.474708 | 20.956146 | 14.468208 | 25.990375 |
+| array-500 | profiler-mount | 0.909× | 401.191365 | 364.552660 | 413.901568 | 372.261922 |
+| array-500 | profiler-update | 2.108× | 4.963464 | 10.462226 | 5.311520 | 14.800339 |
+| array-1000 | render-mount-wall | 0.917× | 959.396896 | 879.664855 | 977.812708 | 895.666667 |
+| array-1000 | render-update-wall | 1.076× | 39.305479 | 42.288355 | 43.932375 | 45.750000 |
+| array-1000 | profiler-mount | 0.985× | 741.819094 | 730.518994 | 765.176401 | 747.266661 |
+| array-1000 | profiler-update | 0.998× | 22.119633 | 22.066001 | 24.622985 | 26.163225 |
+| oneOf-5 | render-mount-wall | 1.429× | 4.679938 | 6.687833 | 5.215542 | 8.036875 |
+| oneOf-5 | render-update-wall | 1.425× | 6.149458 | 8.761937 | 7.185791 | 9.595500 |
+| oneOf-5 | profiler-mount | 1.475× | 2.517173 | 3.713460 | 3.031658 | 4.769914 |
+| oneOf-5 | profiler-update | 0.873× | 2.149169 | 1.875867 | 2.923622 | 2.231330 |
+| oneOf-10 | render-mount-wall | 1.458× | 4.899458 | 7.143355 | 5.337000 | 8.465500 |
+| oneOf-10 | render-update-wall | 1.463× | 6.156771 | 9.007792 | 7.312500 | 9.965667 |
+| oneOf-10 | profiler-mount | 1.498× | 2.788232 | 4.176958 | 3.182154 | 5.300336 |
+| oneOf-10 | profiler-update | 0.802× | 2.333036 | 1.872140 | 3.090621 | 2.270208 |
+| oneOf-20 | render-mount-wall | 1.572× | 5.163708 | 8.116917 | 6.242292 | 9.407666 |
+| oneOf-20 | render-update-wall | 1.529× | 6.207584 | 9.494209 | 7.338667 | 10.648958 |
+| oneOf-20 | profiler-mount | 1.720× | 3.095089 | 5.322044 | 3.706837 | 6.390579 |
+| oneOf-20 | profiler-update | 0.803× | 2.419266 | 1.942045 | 3.064279 | 2.481515 |
+| array-push-100 | render-mount-wall | 1.126× | 4.301521 | 4.844250 | 4.649000 | 5.309292 |
+| array-push-100 | render-update-wall | 1.496× | 379.788479 | 568.134666 | 420.757625 | 616.299875 |
+| array-push-100 | profiler-mount | 1.350× | 1.435731 | 1.938439 | 1.675125 | 2.390497 |
+| array-push-100 | profiler-update | 1.186× | 153.664254 | 182.262620 | 185.239981 | 210.011526 |
+| array-replace-200 | render-mount-wall | 1.143× | 4.466750 | 5.107458 | 5.043459 | 5.570125 |
+| array-replace-200 | render-update-wall | 1.125× | 154.506667 | 173.762771 | 185.534584 | 209.773334 |
+| array-replace-200 | profiler-mount | 1.380× | 1.485229 | 2.050166 | 1.885951 | 2.454206 |
+| array-replace-200 | profiler-update | 1.084× | 128.736285 | 139.537477 | 161.976023 | 171.768454 |
+| array-push-remove-100 | render-mount-wall | 1.214× | 4.984833 | 6.052750 | 6.549542 | 7.881792 |
+| array-push-remove-100 | render-update-wall | 1.530× | 759.903042 | 1162.706396 | 832.134666 | 1287.646333 |
+| array-push-remove-100 | profiler-mount | 1.336× | 2.242167 | 2.994711 | 3.455099 | 4.439129 |
+| array-push-remove-100 | profiler-update | 1.177× | 277.069744 | 326.066537 | 323.248888 | 379.304900 |
+| computed-visible-derived | render-mount-wall | 1.292× | 4.690999 | 6.059500 | 6.089625 | 6.473958 |
+| computed-visible-derived | render-update-wall | 1.226× | 7.980813 | 9.787376 | 9.531625 | 10.582167 |
+| computed-visible-derived | profiler-mount | 1.143× | 2.649232 | 3.028208 | 2.889384 | 3.302836 |
+| computed-visible-derived | profiler-update | 0.920× | 1.193524 | 1.097997 | 1.684248 | 1.482514 |
+
+채택 표본의 커밋 수도 원자료 없이 읽을 수 있도록 아래에 기록합니다. 단위는 회이며 시간 게이트가 아닌 진단입니다.
+
+| fixture | 측정 | 옛 중앙값 회 | 새 중앙값 회 | 옛 p99 회 | 새 p99 회 |
+| --- | --- | ---: | ---: | ---: | ---: |
+| sample-0 | commits-mount | 2.000000 | 2.000000 | 2.000000 | 2.000000 |
+| sample-0 | commits-update | 2.000000 | 1.000000 | 2.000000 | 1.000000 |
+| sample-1 | commits-mount | 2.000000 | 2.000000 | 2.000000 | 2.000000 |
+| sample-1 | commits-update | 2.000000 | 1.000000 | 2.000000 | 1.000000 |
+| sample-2 | commits-mount | 2.000000 | 2.000000 | 2.000000 | 2.000000 |
+| sample-2 | commits-update | 2.000000 | 1.000000 | 2.000000 | 1.000000 |
+| sample-3 | commits-mount | 2.000000 | 2.000000 | 2.000000 | 2.000000 |
+| sample-3 | commits-update | 2.000000 | 1.000000 | 2.000000 | 1.000000 |
+| flat-50 | commits-mount | 2.000000 | 2.000000 | 2.000000 | 2.000000 |
+| flat-50 | commits-update | 20.000000 | 10.000000 | 20.000000 | 10.000000 |
+| flat-100 | commits-mount | 2.000000 | 2.000000 | 2.000000 | 2.000000 |
+| flat-100 | commits-update | 20.000000 | 10.000000 | 20.000000 | 10.000000 |
+| flat-500 | commits-mount | 2.000000 | 2.000000 | 2.000000 | 2.000000 |
+| flat-500 | commits-update | 20.000000 | 10.000000 | 20.000000 | 10.000000 |
+| nested-d3-f4 | commits-mount | 2.000000 | 2.000000 | 2.000000 | 2.000000 |
+| nested-d3-f4 | commits-update | 20.000000 | 10.000000 | 20.000000 | 10.000000 |
+| nested-d5-f4 | commits-mount | 2.000000 | 2.000000 | 2.000000 | 2.000000 |
+| nested-d5-f4 | commits-update | 20.000000 | 10.000000 | 20.000000 | 10.000000 |
+| array-100 | commits-mount | 2.000000 | 2.000000 | 2.000000 | 2.000000 |
+| array-100 | commits-update | 2.000000 | 1.000000 | 2.000000 | 1.000000 |
+| array-500 | commits-mount | 2.000000 | 2.000000 | 2.000000 | 2.000000 |
+| array-500 | commits-update | 2.000000 | 1.000000 | 2.000000 | 1.000000 |
+| array-1000 | commits-mount | 2.000000 | 2.000000 | 2.000000 | 2.000000 |
+| array-1000 | commits-update | 2.000000 | 1.000000 | 2.000000 | 1.000000 |
+| oneOf-5 | commits-mount | 3.000000 | 2.000000 | 3.000000 | 2.000000 |
+| oneOf-5 | commits-update | 6.000000 | 2.000000 | 6.000000 | 2.000000 |
+| oneOf-10 | commits-mount | 3.000000 | 2.000000 | 3.000000 | 2.000000 |
+| oneOf-10 | commits-update | 6.000000 | 2.000000 | 6.000000 | 2.000000 |
+| oneOf-20 | commits-mount | 3.000000 | 2.000000 | 3.000000 | 2.000000 |
+| oneOf-20 | commits-update | 6.000000 | 2.000000 | 6.000000 | 2.000000 |
+| array-push-100 | commits-mount | 2.000000 | 2.000000 | 2.000000 | 2.000000 |
+| array-push-100 | commits-update | 200.000000 | 100.000000 | 200.000000 | 100.000000 |
+| array-replace-200 | commits-mount | 2.000000 | 2.000000 | 2.000000 | 2.000000 |
+| array-replace-200 | commits-update | 1.000000 | 1.000000 | 1.000000 | 1.000000 |
+| array-push-remove-100 | commits-mount | 2.000000 | 2.000000 | 2.000000 | 2.000000 |
+| array-push-remove-100 | commits-update | 400.000000 | 200.000000 | 400.000000 | 200.000000 |
+| computed-visible-derived | commits-mount | 3.000000 | 2.000000 | 3.000000 | 2.000000 |
+| computed-visible-derived | commits-update | 7.000000 | 3.000000 | 7.000000 | 3.000000 |
 
 BF 명령은 `node --expose-gc --import tsx src/index.ts --equivalent --mode=render --min-samples=100 --out=results/equivalent-82c01-render-final.json`입니다. 마지막 네 개는 같은 명령에 `--fixture=array-push-100`, `array-replace-200`, `array-push-remove-100`, `computed-visible-derived`를 각각 적용하고 `equivalent-82c01-render-clean-<fixture>.json`에 기록했습니다.
 
 ## 82C-01 (나) 소유자 묶음
 
-아래는 관측 범위에서 크기 성장에 따른 추가 악화를 확인하지 않은 잔여 회귀입니다. sample·push·replace·computed는 크기 계열이 없는 고정 fixture이므로 그 고정 작업에 한정한 묶음이며 임의 크기에서 상수 배율임을 입증한 것은 아닙니다. nested update는 최신 d3/d5에서1.559/1.558×입니다. 코어 행은 최신 잔여 수정 후, React 행은 위에서 명시한 이전 snapshot입니다. 모두 **미수용**이며 원장 관리자 경유 소유자 판단 대상으로만 기록합니다.
+아래는 83C-01에 따라 크기 계열의 보류 행을 합친 소유자 묶음입니다. sample·push·replace·computed는 크기 계열이 없는 고정 fixture이므로 그 고정 작업에 한정합니다. 코어는 최신 잔여 수정 후, React는 위에서 명시한 잔여 수정 이전 snapshot이며 모두 **미수용**입니다. 각 행의 원래 fixture를 남기고 같은 측정·계열에서 가장 큰 측정 크기의 값을 대표로 적었습니다. 시간 단위는 ms입니다.
 
-| 행 | 측정 / fixture | 대표 중앙값 배율 |
-| --- | --- | ---: |
-| P-26 | core-mount / sample-0 | 2.290× |
-| P-27 | core-mount / sample-1 | 2.357× |
-| P-28 | core-mount / sample-2 | 2.318× |
-| P-29 | core-mount / sample-3 | 3.190× |
-| P-41 | core-mount / array-push-100 | 3.381× |
-| P-42 | core-mount / array-replace-200 | 3.355× |
-| P-43 | core-mount / array-push-remove-100 | 3.068× |
-| P-44 | core-mount / computed-visible-derived | 2.336× |
-| P-45 | core-update / sample-0 | 1.832× |
-| P-46 | core-update / sample-1 | 1.662× |
-| P-47 | core-update / sample-2 | 1.593× |
-| P-48 | core-update / sample-3 | 1.390× |
-| P-51 | core-update / nested-d3-f4 | 1.559× |
-| P-52 | core-update / nested-d5-f4 | 1.558× |
-| P-53 | core-update / array-100 | 1.195× |
-| P-57 | core-update / array-push-100 | 4.848× |
-| P-58 | core-update / array-replace-200 | 2.801× |
-| P-59 | core-update / array-push-remove-100 | 3.973× |
-| P-60 | core-update / computed-visible-derived | 2.772× |
-| P-61 | render-mount-wall / sample-0 | 1.399× |
-| P-62 | render-mount-wall / sample-1 | 1.182× |
-| P-63 | render-mount-wall / sample-2 | 1.207× |
-| P-67 | render-mount-wall / array-push-100 | 1.126× |
-| P-68 | render-mount-wall / array-replace-200 | 1.143× |
-| P-69 | render-mount-wall / array-push-remove-100 | 1.214× |
-| P-70 | render-mount-wall / computed-visible-derived | 1.292× |
-| P-71 | render-update-wall / sample-0 | 1.421× |
-| P-72 | render-update-wall / sample-1 | 1.472× |
-| P-73 | render-update-wall / sample-2 | 1.576× |
-| P-74 | render-update-wall / sample-3 | 1.422× |
-| P-84 | render-update-wall / array-push-100 | 1.496× |
-| P-85 | render-update-wall / array-push-remove-100 | 1.530× |
-| P-86 | render-update-wall / computed-visible-derived | 1.226× |
-| P-87 | profiler-mount / sample-0 | 1.244× |
-| P-88 | profiler-mount / sample-2 | 1.208× |
-| P-92 | profiler-mount / array-push-100 | 1.350× |
-| P-93 | profiler-mount / array-replace-200 | 1.380× |
-| P-94 | profiler-mount / array-push-remove-100 | 1.336× |
-| P-98 | profiler-update / array-push-remove-100 | 1.177× |
+단계별 잔차가 0 근처이므로 남은 비용은 크기에 선형이며, 옛 판의 크기에 둔감한 고정 몫 때문에 작은 폼의 배율이 낮게 나오므로 가장 큰 측정 크기의 배율이 두 선형 상수의 비에 가장 가깝습니다(83C-01).
 
-재측정에서 회귀 판정이 없어 별도 감시로 둔 행: P-49, P-50, P-95, P-97. 승인이나 기존 원장 수용을 뜻하지 않습니다.
-크기 독립인 전체 배율로 확인하지 않아 묶음에서 보류한 행: P-30–40·P-54–56·P-64–66·P-75–83·P-89–91·P-96. 코어의 최신 배율은 flat mount3.903→4.354→4.803×, nested mount4.873→7.284×, oneOf mount3.370→3.717→4.295×, oneOf update6.326→7.620→10.633×입니다. [후속 진단](residual-breakdown.md)에 각 phase의 L/E/Q와 코드 귀속을 완료했으며 구조 결함 해결을 크기 독립 배율 또는 소유자 수용과 동일시하지 않습니다. 이번 (나) 신규 이동은 없습니다.
+| 행 | 측정 / 원래 fixture | 대표 fixture(최대 측정 크기) | 대표 중앙값 배율 | 옛 중앙값 ms | 새 중앙값 ms | 옛 p99 ms | 새 p99 ms |
+| --- | --- | --- | ---: | ---: | ---: | ---: | ---: |
+| P-26 | core-mount / sample-0 | sample-0 | 2.290× | 0.244792 | 0.560604 | 0.354459 | 0.615625 |
+| P-27 | core-mount / sample-1 | sample-1 | 2.357× | 0.343792 | 0.810333 | 0.694459 | 0.917583 |
+| P-28 | core-mount / sample-2 | sample-2 | 2.318× | 0.358479 | 0.831125 | 0.455250 | 0.907583 |
+| P-29 | core-mount / sample-3 | sample-3 | 3.190× | 0.615521 | 1.963625 | 0.722042 | 2.102542 |
+| P-30 | core-mount / flat-50 | flat-500 | 4.803× | 2.510624 | 12.058521 | 2.763500 | 13.505417 |
+| P-31 | core-mount / flat-100 | flat-500 | 4.803× | 2.510624 | 12.058521 | 2.763500 | 13.505417 |
+| P-32 | core-mount / flat-500 | flat-500 | 4.803× | 2.510624 | 12.058521 | 2.763500 | 13.505417 |
+| P-33 | core-mount / nested-d3-f4 | nested-d5-f4 | 7.284× | 4.672959 | 34.037355 | 5.048542 | 37.078208 |
+| P-34 | core-mount / nested-d5-f4 | nested-d5-f4 | 7.284× | 4.672959 | 34.037355 | 5.048542 | 37.078208 |
+| P-35 | core-mount / array-100 | array-1000 | 3.340× | 11.891166 | 39.720937 | 12.895417 | 43.958250 |
+| P-36 | core-mount / array-500 | array-1000 | 3.340× | 11.891166 | 39.720937 | 12.895417 | 43.958250 |
+| P-37 | core-mount / array-1000 | array-1000 | 3.340× | 11.891166 | 39.720937 | 12.895417 | 43.958250 |
+| P-38 | core-mount / oneOf-5 | oneOf-20 | 4.295× | 0.700145 | 3.007001 | 0.798375 | 3.620833 |
+| P-39 | core-mount / oneOf-10 | oneOf-20 | 4.295× | 0.700145 | 3.007001 | 0.798375 | 3.620833 |
+| P-40 | core-mount / oneOf-20 | oneOf-20 | 4.295× | 0.700145 | 3.007001 | 0.798375 | 3.620833 |
+| P-41 | core-mount / array-push-100 | array-push-100 | 3.381× | 0.243375 | 0.822854 | 0.410958 | 1.517667 |
+| P-42 | core-mount / array-replace-200 | array-replace-200 | 3.355× | 0.185416 | 0.622146 | 0.203500 | 0.697167 |
+| P-43 | core-mount / array-push-remove-100 | array-push-remove-100 | 3.068× | 0.262605 | 0.805687 | 0.343375 | 0.976458 |
+| P-44 | core-mount / computed-visible-derived | computed-visible-derived | 2.336× | 0.376958 | 0.880480 | 0.498459 | 1.372542 |
+| P-45 | core-update / sample-0 | sample-0 | 1.832× | 0.063459 | 0.116250 | 0.080375 | 0.146333 |
+| P-46 | core-update / sample-1 | sample-1 | 1.662× | 0.069729 | 0.115896 | 0.098916 | 0.173250 |
+| P-47 | core-update / sample-2 | sample-2 | 1.593× | 0.079625 | 0.126854 | 0.110625 | 0.183709 |
+| P-48 | core-update / sample-3 | sample-3 | 1.390× | 0.074417 | 0.103458 | 0.100750 | 0.161166 |
+| P-51 | core-update / nested-d3-f4 | nested-d5-f4 | 1.558× | 0.373334 | 0.581730 | 0.521665 | 0.848582 |
+| P-52 | core-update / nested-d5-f4 | nested-d5-f4 | 1.558× | 0.373334 | 0.581730 | 0.521665 | 0.848582 |
+| P-53 | core-update / array-100 | array-1000 | 0.455× | 0.391062 | 0.177749 | 0.476125 | 0.236500 |
+| P-54 | core-update / oneOf-5 | oneOf-20 | 10.633× | 0.160958 | 1.711479 | 0.222458 | 2.257583 |
+| P-55 | core-update / oneOf-10 | oneOf-20 | 10.633× | 0.160958 | 1.711479 | 0.222458 | 2.257583 |
+| P-56 | core-update / oneOf-20 | oneOf-20 | 10.633× | 0.160958 | 1.711479 | 0.222458 | 2.257583 |
+| P-57 | core-update / array-push-100 | array-push-100 | 4.848× | 24.612645 | 119.317209 | 39.891916 | 164.199501 |
+| P-58 | core-update / array-replace-200 | array-replace-200 | 2.801× | 2.897021 | 8.113896 | 3.179750 | 9.221958 |
+| P-59 | core-update / array-push-remove-100 | array-push-remove-100 | 3.973× | 40.112207 | 159.353913 | 60.964882 | 273.093572 |
+| P-60 | core-update / computed-visible-derived | computed-visible-derived | 2.772× | 0.128250 | 0.355479 | 0.190292 | 0.505625 |
+| P-61 | render-mount-wall / sample-0 | sample-0 | 1.399× | 3.892542 | 5.444125 | 5.241041 | 5.800083 |
+| P-62 | render-mount-wall / sample-1 | sample-1 | 1.182× | 5.922083 | 6.997625 | 7.349750 | 7.926625 |
+| P-63 | render-mount-wall / sample-2 | sample-2 | 1.207× | 5.626791 | 6.790979 | 6.471916 | 7.071417 |
+| P-64 | render-mount-wall / oneOf-5 | oneOf-20 | 1.572× | 5.163708 | 8.116917 | 6.242292 | 9.407666 |
+| P-65 | render-mount-wall / oneOf-10 | oneOf-20 | 1.572× | 5.163708 | 8.116917 | 6.242292 | 9.407666 |
+| P-66 | render-mount-wall / oneOf-20 | oneOf-20 | 1.572× | 5.163708 | 8.116917 | 6.242292 | 9.407666 |
+| P-67 | render-mount-wall / array-push-100 | array-push-100 | 1.126× | 4.301521 | 4.844250 | 4.649000 | 5.309292 |
+| P-68 | render-mount-wall / array-replace-200 | array-replace-200 | 1.143× | 4.466750 | 5.107458 | 5.043459 | 5.570125 |
+| P-69 | render-mount-wall / array-push-remove-100 | array-push-remove-100 | 1.214× | 4.984833 | 6.052750 | 6.549542 | 7.881792 |
+| P-70 | render-mount-wall / computed-visible-derived | computed-visible-derived | 1.292× | 4.690999 | 6.059500 | 6.089625 | 6.473958 |
+| P-71 | render-update-wall / sample-0 | sample-0 | 1.421× | 2.227646 | 3.164646 | 3.627875 | 3.492042 |
+| P-72 | render-update-wall / sample-1 | sample-1 | 1.472× | 2.210125 | 3.254188 | 3.614834 | 3.643042 |
+| P-73 | render-update-wall / sample-2 | sample-2 | 1.576× | 2.066854 | 3.258313 | 3.582584 | 3.588959 |
+| P-74 | render-update-wall / sample-3 | sample-3 | 1.422× | 2.243792 | 3.190562 | 3.503667 | 3.472541 |
+| P-75 | render-update-wall / flat-100 | flat-500 | 1.236× | 29.336875 | 36.265438 | 32.450250 | 39.159833 |
+| P-76 | render-update-wall / flat-500 | flat-500 | 1.236× | 29.336875 | 36.265438 | 32.450250 | 39.159833 |
+| P-77 | render-update-wall / nested-d3-f4 | nested-d5-f4 | 1.411× | 24.199292 | 34.133750 | 28.079833 | 37.236375 |
+| P-78 | render-update-wall / nested-d5-f4 | nested-d5-f4 | 1.411× | 24.199292 | 34.133750 | 28.079833 | 37.236375 |
+| P-79 | render-update-wall / array-100 | array-1000 | 1.076× | 39.305479 | 42.288355 | 43.932375 | 45.750000 |
+| P-80 | render-update-wall / array-500 | array-1000 | 1.076× | 39.305479 | 42.288355 | 43.932375 | 45.750000 |
+| P-81 | render-update-wall / oneOf-5 | oneOf-20 | 1.529× | 6.207584 | 9.494209 | 7.338667 | 10.648958 |
+| P-82 | render-update-wall / oneOf-10 | oneOf-20 | 1.529× | 6.207584 | 9.494209 | 7.338667 | 10.648958 |
+| P-83 | render-update-wall / oneOf-20 | oneOf-20 | 1.529× | 6.207584 | 9.494209 | 7.338667 | 10.648958 |
+| P-84 | render-update-wall / array-push-100 | array-push-100 | 1.496× | 379.788479 | 568.134666 | 420.757625 | 616.299875 |
+| P-85 | render-update-wall / array-push-remove-100 | array-push-remove-100 | 1.530× | 759.903042 | 1162.706396 | 832.134666 | 1287.646333 |
+| P-86 | render-update-wall / computed-visible-derived | computed-visible-derived | 1.226× | 7.980813 | 9.787376 | 9.531625 | 10.582167 |
+| P-87 | profiler-mount / sample-0 | sample-0 | 1.244× | 1.925974 | 2.396019 | 2.278746 | 2.661787 |
+| P-88 | profiler-mount / sample-2 | sample-2 | 1.208× | 3.104894 | 3.752192 | 3.308833 | 3.943641 |
+| P-89 | profiler-mount / oneOf-5 | oneOf-20 | 1.720× | 3.095089 | 5.322044 | 3.706837 | 6.390579 |
+| P-90 | profiler-mount / oneOf-10 | oneOf-20 | 1.720× | 3.095089 | 5.322044 | 3.706837 | 6.390579 |
+| P-91 | profiler-mount / oneOf-20 | oneOf-20 | 1.720× | 3.095089 | 5.322044 | 3.706837 | 6.390579 |
+| P-92 | profiler-mount / array-push-100 | array-push-100 | 1.350× | 1.435731 | 1.938439 | 1.675125 | 2.390497 |
+| P-93 | profiler-mount / array-replace-200 | array-replace-200 | 1.380× | 1.485229 | 2.050166 | 1.885951 | 2.454206 |
+| P-94 | profiler-mount / array-push-remove-100 | array-push-remove-100 | 1.336× | 2.242167 | 2.994711 | 3.455099 | 4.439129 |
+| P-96 | profiler-update / array-500 | array-1000 | 0.998× | 22.119633 | 22.066001 | 24.622985 | 26.163225 |
+| P-98 | profiler-update / array-push-remove-100 | array-push-remove-100 | 1.177× | 277.069744 | 326.066537 | 323.248888 | 379.304900 |
+
+재측정에서 회귀 판정이 없어 별도 감시로 둔 행: P-49, P-50, P-95, P-97. P-53·P-79·P-80·P-96 등은 원래 fixture의 회귀 행을 유지하되 최대 크기 대표 배율은 1 아래일 수 있습니다. 최대 크기로 대표값을 정하는 것은 개별 측정의 판정 변경이나 소유자 수용을 뜻하지 않습니다.
+
+P-30–40·P-54–56·P-64–66·P-75–83·P-89–91·P-96의 보류는 83C-01로 해제하고 소유자 묶음에 넣었습니다. 대표 코어 값은 flat-500 mount 4.803×, nested-d5-f4 mount 7.284×, oneOf-20 mount 4.295×·update 10.633×입니다. [후속 진단](residual-breakdown.md)의 L/E/Q·코드 귀속이 근거이며 추가 크기 재측정은 성능 최적화 단계로 넘깁니다.
 
 ## 82C-01 (다) 새 엔진 패키지 기준선
 
 PKG에서 bench:baseline의 실제 명령 `npx --no-install vitest bench --config vitest.bench.config.ts --run --outputJson bench/.results/baseline.json`을 최신 잔여 수정 후 다시 실행했습니다. 생성된 7개 파일·44개 benchmark의 결과를 [bench-82c01-residual-baseline.json](bench-82c01-residual-baseline.json)에 보존했습니다. P-99–132의 상태는 모두 **기록(새 엔진의 회귀 감시 기준선, 비교 판정 없음)**입니다. 구 엔진 중앙값과 비교하지 않았습니다. 기록 파일은 Vitest bench 통계 출력이며 samples 배열이 비어 있는 형식이므로 이후 독립 표본 검정 자료로 간주하지 않습니다.
+
+TEST-026 요약: 2026-10-03 측정, 보존 커밋 `1f8a8d10f`의 새 엔진 기준선입니다. 시간 단위는 ms이며 비교 판정은 없습니다.
+
+| 벤치 / 그룹 / 항목 | 새 엔진 중앙값 ms | 새 엔진 p99 ms |
+| --- | ---: | ---: |
+| branch-strategy-init.bench.ts / blueprint/load: branch initialization through core / oneOf 2 branches × 3 children | 0.247250 | 1.503958 |
+| branch-strategy-init.bench.ts / blueprint/load: branch initialization through core / oneOf 5 branches × 3 children | 0.383125 | 1.689875 |
+| branch-strategy-init.bench.ts / blueprint/load: branch initialization through core / oneOf 2 branches × 10 children | 0.491062 | 1.734333 |
+| branch-strategy-init.bench.ts / blueprint/load: branch initialization through core / oneOf 10 branches × 10 children (heavy) | 1.548334 | 2.950458 |
+| branch-strategy-init.bench.ts / blueprint/load: branch initialization through core / nested oneOf depth 3 | 1.284500 | 2.233500 |
+| branch-strategy-init.bench.ts / blueprint/load: branch initialization through core / nested oneOf depth 5 | 8.867792 | 10.839667 |
+| compute-recalculate.bench.ts / settle: controls through public core / visible only (1 dep) | 0.014208 | 0.025166 |
+| compute-recalculate.bench.ts / settle: controls through public core / visible + active (2 deps) | 0.044875 | 0.093500 |
+| compute-recalculate.bench.ts / settle: controls through public core / derived simple (2 deps) | 0.033291 | 0.055500 |
+| compute-recalculate.bench.ts / settle: controls through public core / derived heavy (7 deps) | 0.034833 | 0.045333 |
+| compute-recalculate.bench.ts / settle: controls through public core / watch 5 deps | 0.015875 | 0.022916 |
+| compute-recalculate.bench.ts / settle: controls through public core / oneOfIndex 3 branches | 0.103875 | 0.206917 |
+| event-cascade.bench.ts / dispatch: public writes (legacy macrotask drain retained) / flat batch: 10 setValue on distinct fields + 1 drain | 2.113855 | 3.070667 |
+| event-cascade.bench.ts / dispatch: public writes (legacy macrotask drain retained) / derived chain (a→sum→twice→label): 1 setValue + drain | 1.471166 | 2.871416 |
+| event-cascade.bench.ts / dispatch: public writes (legacy macrotask drain retained) / oneOf branch switch (a↔b): 1 setValue + drain | 1.776980 | 5.531667 |
+| find-node.bench.ts / navigation: find through core / depth 3 (4 segments) | 0.000708 | 0.000833 |
+| find-node.bench.ts / navigation: find through core / depth 7 (8 segments) | 0.001250 | 0.001500 |
+| find-node.bench.ts / navigation: find through core / depth 12 (13 segments) | 0.001958 | 0.002292 |
+| find-node.bench.ts / navigation: find through core / wide fanout 10 → last child | 0.000250 | 0.000292 |
+| find-node.bench.ts / navigation: find through core / wide fanout 50 → last child | 0.000250 | 0.000292 |
+| find-node.bench.ts / navigation: find through core / wide fanout 50 → first child | 0.000250 | 0.000292 |
+| nodeFromJSONSchema.bench.ts / load: nodeFromJSONSchema through core / flat (5 props, terminal only) | 0.098917 | 0.316750 |
+| nodeFromJSONSchema.bench.ts / load: nodeFromJSONSchema through core / nested (2 sub-objects, 7 terminals) | 0.160541 | 1.545709 |
+| nodeFromJSONSchema.bench.ts / load: nodeFromJSONSchema through core / oneOf (single branch active) | 0.194041 | 1.300209 |
+| nodeFromJSONSchema.bench.ts / load: nodeFromJSONSchema through core / computed (visible + derived deps) | 0.140000 | 0.482709 |
+| object-pending-read.bench.ts / settle: object read after child write / 1000 × (child write + 1 parent value read) + drain | 10.165938 | 18.449458 |
+| object-pending-read.bench.ts / settle: object read after child write / 1000 × (child write + 3 parent value reads) + drain | 9.929604 | 15.016083 |
+| object-pending-read.bench.ts / settle: object read after child write / 1000 × child write, no read + drain | 9.754333 | 15.427417 |
+| object-pending-read.bench.ts / settle: object read after child write / 1000 × same-value write at depth 2 + drain | 8.032542 | 11.879542 |
+| object-pending-read.bench.ts / settle: object read after child write / 1000 × same-value write at depth 8 + drain | 17.788792 | 29.452750 |
+| object-pending-read.bench.ts / settle: object read after child write / 1000 × same-value write at depth 16 + drain | 29.837854 | 48.416333 |
+| object-pending-read.bench.ts / settle: object read after child write / create a 50-field form | 0.708312 | 2.289208 |
+| render-delay.bench.ts / load/render-delay: small (5 terminals) / [mount] nodeFromJSONSchema (validation off) | 0.104000 | 0.432000 |
+| render-delay.bench.ts / load/render-delay: small (5 terminals) / [mount] nodeFromJSONSchema (validation on) | 0.095459 | 0.175125 |
+| render-delay.bench.ts / load/render-delay: small (5 terminals) / [guard] clone(schema) | 0.002083 | 0.002292 |
+| render-delay.bench.ts / load/render-delay: small (5 terminals) / [guard] clone(defaultValue) | 0.000417 | 0.000459 |
+| render-delay.bench.ts / load/render-delay: medium (25 terminals) / [mount] nodeFromJSONSchema (validation off) | 0.451208 | 2.040458 |
+| render-delay.bench.ts / load/render-delay: medium (25 terminals) / [mount] nodeFromJSONSchema (validation on) | 0.440375 | 1.936416 |
+| render-delay.bench.ts / load/render-delay: medium (25 terminals) / [guard] clone(schema) | 0.011084 | 0.024000 |
+| render-delay.bench.ts / load/render-delay: medium (25 terminals) / [guard] clone(defaultValue) | 0.002291 | 0.002459 |
+| render-delay.bench.ts / load/render-delay: large (150 terminals) / [mount] nodeFromJSONSchema (validation off) | 2.329208 | 6.345750 |
+| render-delay.bench.ts / load/render-delay: large (150 terminals) / [mount] nodeFromJSONSchema (validation on) | 2.246105 | 7.410875 |
+| render-delay.bench.ts / load/render-delay: large (150 terminals) / [guard] clone(schema) | 0.061334 | 0.067375 |
+| render-delay.bench.ts / load/render-delay: large (150 terminals) / [guard] clone(defaultValue) | 0.009375 | 0.010042 |
 
 ## 82C-01 (라) 번들 분해
 
@@ -606,4 +733,4 @@ PKG에서 `npx --no-install rolldown -c` 후 `node architecture/verification/07-
 | core/index.ts | 0 | 0.00% |
 | index.ts | 0 | 0.00% |
 
-P-133·134 원인 칸에도 상위 다섯 기여도와 전체 표 경로를 기록했습니다. 소유자 수용 및 G26 완료를 선언하지 않았습니다. 원장 항목 변경이 필요한 구현 변경은 하지 않았으며 원장 변경 요청은 없습니다. 잔여 배율·분류 보류는 후속 판단 대상으로 명시했습니다.
+P-133·134 원인 칸에도 상위 다섯 기여도와 전체 표 경로를 기록했습니다. 소유자 수용 및 G26 완료를 선언하지 않았습니다. 원장 항목 변경이 필요한 구현 변경은 하지 않았으며 원장 변경 요청은 없습니다. 잔여 배율의 소유자 수용은 대기 중이며 크기 계열 분류 보류는 83C-01에 따라 (나)로 옮겼습니다.
