@@ -1,4 +1,4 @@
-import { EMPTY_REVISION_LEDGER, markSchemaNodeEvent, SchemaNodeEventType } from '../../../record';
+import { SchemaNodeRevisionLedger, markSchemaNodeEvent, SchemaNodeEventType } from '../../../record';
 import type { SchemaNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../type';
 import { readSchemaNodeWatchValues } from '../controls/readSchemaNodeWatchValues';
@@ -176,11 +176,7 @@ export const markCommitDeliveries = <Self extends SchemaNodeRecord<Self>>(
     if (!isTreeNode(candidate) || candidate.detached) continue;
     const node = candidate;
     const mask = delivery.type;
-    const ledger: Record<number, number> = node.revisionLedger === EMPTY_REVISION_LEDGER ?
-      {} : { ...node.revisionLedger };
-    for (let bit = 1; bit <= SchemaNodeEventType.UpdateDiagnostics; bit *= 2)
-      if (mask & bit) ledger[bit] = (ledger[bit] ?? 0) + 1;
-    node.revisionLedger = ledger;
+    node.revisionLedger = new SchemaNodeRevisionLedger(node.revisionLedger, mask);
   }
   runtime.queuedEvents?.clear();
 };

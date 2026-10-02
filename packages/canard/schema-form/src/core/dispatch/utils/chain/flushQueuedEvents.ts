@@ -1,5 +1,5 @@
 import { FEEDBACK_LIMIT_EXCEEDED, SchemaFormError } from '../../../../errors';
-import { EMPTY_REVISION_LEDGER, SchemaNodeEventType } from '../../../record';
+import { SchemaNodeRevisionLedger } from '../../../record';
 import type { SchemaNodeRecord } from '../../../record';
 import { deliverWave } from './deliverWave';
 import { captureChainError } from './captureChainError';
@@ -61,12 +61,8 @@ export const flushQueuedEvents = <Self extends SchemaNodeRecord<Self>>(
         for (const [candidate, delivery] of pending) {
           if (!isQueuedNode<Self>(candidate, runtime)) continue;
           const node = candidate;
-          const ledger: Record<number, number> =
-            node.revisionLedger === EMPTY_REVISION_LEDGER ? {} :
-              { ...node.revisionLedger };
-          for (let bit = 1; bit <= SchemaNodeEventType.UpdateDiagnostics; bit *= 2)
-            if (delivery.type & bit) ledger[bit] = (ledger[bit] ?? 0) + 1;
-          node.revisionLedger = ledger;
+          node.revisionLedger = new SchemaNodeRevisionLedger(
+            node.revisionLedger, delivery.type);
         }
         deliverWave(root, pending);
         continue;

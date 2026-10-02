@@ -12,6 +12,7 @@ export type {
   SchemaNodeDelivery,
 } from './type';
 export { EMPTY_REVISION_LEDGER } from './type';
+export { SchemaNodeRevisionLedger } from './utils/SchemaNodeRevisionLedger';
 export { SchemaNodeEventType } from './SchemaNodeEventType';
 export { SchemaNodeRequestType } from './SchemaNodeRequestType';
 export { markSchemaNodeEvent } from './utils/markSchemaNodeEvent';
