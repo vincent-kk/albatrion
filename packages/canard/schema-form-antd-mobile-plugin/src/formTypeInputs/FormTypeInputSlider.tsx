@@ -54,7 +54,7 @@ const FormTypeInputSlider = ({
 
 export const FormTypeInputSliderDefinition = {
   Component: FormTypeInputSlider,
-  test: ({ type, jsonSchema, format }) => {
+  test: ({ schemaType: type, jsonSchema, format }) => {
     return (
       ((type === 'number' || type === 'integer') && format === 'slider') ||
       (type === 'array' &&

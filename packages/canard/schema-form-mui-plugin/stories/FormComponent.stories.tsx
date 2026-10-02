@@ -160,7 +160,7 @@ const bigSchema = {
 export const FormErrorComponent = () => {
   return (
     <FormProvider
-      FormErrorRenderer={FormError}
+      FormTypeErrorRenderer={FormError}
       formTypeInputDefinitions={formTypeInputDefinitions}
     >
       <Form jsonSchema={jsonSchema} showError>
@@ -173,7 +173,7 @@ export const FormErrorComponent = () => {
 export const FormInputComponent = () => {
   return (
     <FormProvider
-      FormInputRenderer={FormInput}
+      FormTypeInputRenderer={FormInput}
       formTypeInputDefinitions={formTypeInputDefinitions}
     >
       <Form jsonSchema={jsonSchema} showError>
@@ -186,7 +186,7 @@ export const FormInputComponent = () => {
 export const FormLabelComponent = () => {
   return (
     <FormProvider
-      FormLabelRenderer={FormLabel}
+      FormTypeLabelRenderer={FormLabel}
       formTypeInputDefinitions={formTypeInputDefinitions}
     >
       <Form jsonSchema={jsonSchema} showError>
@@ -199,7 +199,7 @@ export const FormLabelComponent = () => {
 export const FormGroupComponent = () => {
   return (
     <FormProvider
-      FormGroupRenderer={FormGroup}
+      FormTypeGroupRenderer={FormGroup}
       formTypeInputDefinitions={formTypeInputDefinitions}
     >
       <Form jsonSchema={bigSchema} showError context={{}} />

@@ -8,7 +8,7 @@ import {
   type FormTypeInputMap,
   type FormTypeInputProps,
   type JSONSchema,
-  type JSONSchemaError,
+  type ValidationIssue,
   SetValueOption,
   registerPlugin,
 } from '@canard/schema-form';
@@ -610,7 +610,7 @@ export const VirtualSchema = () => {
   } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>({});
-  const [errors, setErrors] = useState<JSONSchemaError[]>([]);
+  const [errors, setErrors] = useState<readonly ValidationIssue[]>([]);
 
   return (
     <StoryLayout jsonSchema={jsonSchema} errors={errors} value={value}>

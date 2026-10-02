@@ -148,7 +148,292 @@ U8 중단 기록: 원장 충돌 5파일의 원문 보존은 78C-01의 "버리고
 
 ## 6. UI 플러그인 고친 줄(68C-07)
 
-U12에서 채운다.
+U12는 LANDING-067·206, 68C-07에 따라 공개 표면의 이름과 컴파일에 필요한 대응만 고칩니다. `node.strategy`와 렌더러 등록 키를 사용하고, 정수 판별은 작성된 종류인 `schemaType`으로 옮겨 기존 정수 파싱·선택을 유지합니다. 배열의 삭제된 `maxItems`·`length` 게터는 같은 상한 계산(닫힌 튜플 포함)과 branch 자식 수·terminal 값 길이로 대응합니다. `presentation.*`·옵션 키, 빈 입력 방출, union 지원은 08 목록에 남깁니다.
+
+검증 범위: 네 플러그인의 번들·선언 생성 및 `src`·`stories`를 포함한 전체 타입 검사, 지정된 이름 검색. 후속 요청으로 `stories/**`도 수정 범위에 포함됐습니다. schema-form의 `exports["."].types`는 `dist/index.d.ts`이므로 새 엔진의 dist를 먼저 생성합니다. 설치와 git 쓰기는 하지 않습니다.
+
+### U12 변경 줄
+
+수정 뒤의 줄 번호와 전후 식을 아래에 기록합니다. 삽입 줄의 이전 값은 `∅`입니다.
+
+| 플러그인 | 파일:줄(패키지 기준) | 이전 → 이후 | 같은 입력에서 렌더 결과·방출 값이 같은가 |
+| --- | --- | --- | --- |
+| antd5 | `src/components/FormGroup.tsx:18` | `if (node.group === 'branch') {` → `if (node.strategy === 'branch') {` | 같음 — 같은 branch/terminal 전략으로 같은 JSX 분기를 선택합니다. |
+| antd5 | `src/formTypeInputs/FormTypeInputArray.tsx:5` | `∅` → `import { isArray } from '@winglet/common-utils/filter';` | 같음 — 기존 게터의 상한(기본 Infinity·닫힌 튜플)과 길이(branch 자식 수·terminal 값 길이)를 공개 필드로 같은 방식으로 계산합니다. |
+| antd5 | `src/formTypeInputs/FormTypeInputArray.tsx:6` | `∅` → `import { minLite } from '@winglet/common-utils/math';` | 같음 — 기존 게터의 상한(기본 Infinity·닫힌 튜플)과 길이(branch 자식 수·terminal 값 길이)를 공개 필드로 같은 방식으로 계산합니다. |
+| antd5 | `src/formTypeInputs/FormTypeInputArray.tsx:25` | `∅` → `jsonSchema,` | 같음 — 기존 게터의 상한(기본 Infinity·닫힌 튜플)과 길이(branch 자식 수·terminal 값 길이)를 공개 필드로 같은 방식으로 계산합니다. |
+| antd5 | `src/formTypeInputs/FormTypeInputArray.tsx:32` | `∅` → `const maxItems = minLite(` | 같음 — 기존 게터의 상한(기본 Infinity·닫힌 튜플)과 길이(branch 자식 수·terminal 값 길이)를 공개 필드로 같은 방식으로 계산합니다. |
+| antd5 | `src/formTypeInputs/FormTypeInputArray.tsx:33` | `∅` → `typeof jsonSchema.maxItems === 'number' ? jsonSchema.maxItems : Infinity,` | 같음 — 기존 게터의 상한(기본 Infinity·닫힌 튜플)과 길이(branch 자식 수·terminal 값 길이)를 공개 필드로 같은 방식으로 계산합니다. |
+| antd5 | `src/formTypeInputs/FormTypeInputArray.tsx:34` | `∅` → `!jsonSchema.items && isArray(jsonSchema.prefixItems)` | 같음 — 기존 게터의 상한(기본 Infinity·닫힌 튜플)과 길이(branch 자식 수·terminal 값 길이)를 공개 필드로 같은 방식으로 계산합니다. |
+| antd5 | `src/formTypeInputs/FormTypeInputArray.tsx:35` | `∅` → `? jsonSchema.prefixItems.length` | 같음 — 기존 게터의 상한(기본 Infinity·닫힌 튜플)과 길이(branch 자식 수·terminal 값 길이)를 공개 필드로 같은 방식으로 계산합니다. |
+| antd5 | `src/formTypeInputs/FormTypeInputArray.tsx:36` | `∅` → `: Infinity,` | 같음 — 기존 게터의 상한(기본 Infinity·닫힌 튜플)과 길이(branch 자식 수·terminal 값 길이)를 공개 필드로 같은 방식으로 계산합니다. |
+| antd5 | `src/formTypeInputs/FormTypeInputArray.tsx:37` | `∅` → `);` | 같음 — 기존 게터의 상한(기본 Infinity·닫힌 튜플)과 길이(branch 자식 수·terminal 값 길이)를 공개 필드로 같은 방식으로 계산합니다. |
+| antd5 | `src/formTypeInputs/FormTypeInputArray.tsx:38` | `∅` → `const length = node.children?.length ?? node.value?.length ?? 0;` | 같음 — 기존 게터의 상한(기본 Infinity·닫힌 튜플)과 길이(branch 자식 수·terminal 값 길이)를 공개 필드로 같은 방식으로 계산합니다. |
+| antd5 | `src/formTypeInputs/FormTypeInputArray.tsx:64` | `{!readOnly && node.maxItems > node.length && (` → `{!readOnly && maxItems > length && (` | 같음 — 기존 게터의 상한(기본 Infinity·닫힌 튜플)과 길이(branch 자식 수·terminal 값 길이)를 공개 필드로 같은 방식으로 계산합니다. |
+| antd5 | `src/formTypeInputs/FormTypeInputNumber.tsx:62` | `type: ['number', 'integer'],` → `schemaType: ['number', 'integer'],` | 같음 — 정수 종류를 schemaType으로 읽어 기존 number/integer 선택·정수 파싱·step과 방출 값을 유지합니다. union 지원은 추가하지 않습니다. |
+| antd5 | `src/formTypeInputs/FormTypeInputRadioGroup.tsx:84` | `test: ({ type, formType, jsonSchema }) => {` → `test: ({ schemaType: type, formType, jsonSchema }) => {` | 같음 — 정수 종류를 schemaType으로 읽어 기존 number/integer 선택·정수 파싱·step과 방출 값을 유지합니다. union 지원은 추가하지 않습니다. |
+| antd5 | `src/formTypeInputs/FormTypeInputSlider.tsx:53` | `type: ['number', 'integer'],` → `schemaType: ['number', 'integer'],` | 같음 — 정수 종류를 schemaType으로 읽어 기존 number/integer 선택·정수 파싱·step과 방출 값을 유지합니다. union 지원은 추가하지 않습니다. |
+| antd5 | `src/index.ts:10` | `FormGroup,` → `FormTypeGroupRenderer: FormGroup,` | 같음 — 등록 슬롯의 공개 이름만 대응하며 기존 렌더 컴포넌트와 입력 정의 순서를 유지합니다. |
+| antd5 | `src/index.ts:11` | `FormLabel,` → `FormTypeLabelRenderer: FormLabel,` | 같음 — 등록 슬롯의 공개 이름만 대응하며 기존 렌더 컴포넌트와 입력 정의 순서를 유지합니다. |
+| antd5 | `src/index.ts:12` | `FormInput,` → `FormTypeInputRenderer: FormInput,` | 같음 — 등록 슬롯의 공개 이름만 대응하며 기존 렌더 컴포넌트와 입력 정의 순서를 유지합니다. |
+| antd5 | `src/index.ts:13` | `FormError,` → `FormTypeErrorRenderer: FormError,` | 같음 — 등록 슬롯의 공개 이름만 대응하며 기존 렌더 컴포넌트와 입력 정의 순서를 유지합니다. |
+| antd6 | `src/components/FormGroup.tsx:18` | `if (node.group === 'branch') {` → `if (node.strategy === 'branch') {` | 같음 — 같은 branch/terminal 전략으로 같은 JSX 분기를 선택합니다. |
+| antd6 | `src/formTypeInputs/FormTypeInputArray.tsx:5` | `∅` → `import { isArray } from '@winglet/common-utils/filter';` | 같음 — 기존 게터의 상한(기본 Infinity·닫힌 튜플)과 길이(branch 자식 수·terminal 값 길이)를 공개 필드로 같은 방식으로 계산합니다. |
+| antd6 | `src/formTypeInputs/FormTypeInputArray.tsx:6` | `∅` → `import { minLite } from '@winglet/common-utils/math';` | 같음 — 기존 게터의 상한(기본 Infinity·닫힌 튜플)과 길이(branch 자식 수·terminal 값 길이)를 공개 필드로 같은 방식으로 계산합니다. |
+| antd6 | `src/formTypeInputs/FormTypeInputArray.tsx:25` | `∅` → `jsonSchema,` | 같음 — 기존 게터의 상한(기본 Infinity·닫힌 튜플)과 길이(branch 자식 수·terminal 값 길이)를 공개 필드로 같은 방식으로 계산합니다. |
+| antd6 | `src/formTypeInputs/FormTypeInputArray.tsx:32` | `∅` → `const maxItems = minLite(` | 같음 — 기존 게터의 상한(기본 Infinity·닫힌 튜플)과 길이(branch 자식 수·terminal 값 길이)를 공개 필드로 같은 방식으로 계산합니다. |
+| antd6 | `src/formTypeInputs/FormTypeInputArray.tsx:33` | `∅` → `typeof jsonSchema.maxItems === 'number' ? jsonSchema.maxItems : Infinity,` | 같음 — 기존 게터의 상한(기본 Infinity·닫힌 튜플)과 길이(branch 자식 수·terminal 값 길이)를 공개 필드로 같은 방식으로 계산합니다. |
+| antd6 | `src/formTypeInputs/FormTypeInputArray.tsx:34` | `∅` → `!jsonSchema.items && isArray(jsonSchema.prefixItems)` | 같음 — 기존 게터의 상한(기본 Infinity·닫힌 튜플)과 길이(branch 자식 수·terminal 값 길이)를 공개 필드로 같은 방식으로 계산합니다. |
+| antd6 | `src/formTypeInputs/FormTypeInputArray.tsx:35` | `∅` → `? jsonSchema.prefixItems.length` | 같음 — 기존 게터의 상한(기본 Infinity·닫힌 튜플)과 길이(branch 자식 수·terminal 값 길이)를 공개 필드로 같은 방식으로 계산합니다. |
+| antd6 | `src/formTypeInputs/FormTypeInputArray.tsx:36` | `∅` → `: Infinity,` | 같음 — 기존 게터의 상한(기본 Infinity·닫힌 튜플)과 길이(branch 자식 수·terminal 값 길이)를 공개 필드로 같은 방식으로 계산합니다. |
+| antd6 | `src/formTypeInputs/FormTypeInputArray.tsx:37` | `∅` → `);` | 같음 — 기존 게터의 상한(기본 Infinity·닫힌 튜플)과 길이(branch 자식 수·terminal 값 길이)를 공개 필드로 같은 방식으로 계산합니다. |
+| antd6 | `src/formTypeInputs/FormTypeInputArray.tsx:38` | `∅` → `const length = node.children?.length ?? node.value?.length ?? 0;` | 같음 — 기존 게터의 상한(기본 Infinity·닫힌 튜플)과 길이(branch 자식 수·terminal 값 길이)를 공개 필드로 같은 방식으로 계산합니다. |
+| antd6 | `src/formTypeInputs/FormTypeInputArray.tsx:64` | `{!readOnly && node.maxItems > node.length && (` → `{!readOnly && maxItems > length && (` | 같음 — 기존 게터의 상한(기본 Infinity·닫힌 튜플)과 길이(branch 자식 수·terminal 값 길이)를 공개 필드로 같은 방식으로 계산합니다. |
+| antd6 | `src/formTypeInputs/FormTypeInputNumber.tsx:62` | `type: ['number', 'integer'],` → `schemaType: ['number', 'integer'],` | 같음 — 정수 종류를 schemaType으로 읽어 기존 number/integer 선택·정수 파싱·step과 방출 값을 유지합니다. union 지원은 추가하지 않습니다. |
+| antd6 | `src/formTypeInputs/FormTypeInputRadioGroup.tsx:84` | `test: ({ type, formType, jsonSchema }) => {` → `test: ({ schemaType: type, formType, jsonSchema }) => {` | 같음 — 정수 종류를 schemaType으로 읽어 기존 number/integer 선택·정수 파싱·step과 방출 값을 유지합니다. union 지원은 추가하지 않습니다. |
+| antd6 | `src/formTypeInputs/FormTypeInputSlider.tsx:53` | `type: ['number', 'integer'],` → `schemaType: ['number', 'integer'],` | 같음 — 정수 종류를 schemaType으로 읽어 기존 number/integer 선택·정수 파싱·step과 방출 값을 유지합니다. union 지원은 추가하지 않습니다. |
+| antd6 | `src/index.ts:10` | `FormGroup,` → `FormTypeGroupRenderer: FormGroup,` | 같음 — 등록 슬롯의 공개 이름만 대응하며 기존 렌더 컴포넌트와 입력 정의 순서를 유지합니다. |
+| antd6 | `src/index.ts:11` | `FormLabel,` → `FormTypeLabelRenderer: FormLabel,` | 같음 — 등록 슬롯의 공개 이름만 대응하며 기존 렌더 컴포넌트와 입력 정의 순서를 유지합니다. |
+| antd6 | `src/index.ts:12` | `FormInput,` → `FormTypeInputRenderer: FormInput,` | 같음 — 등록 슬롯의 공개 이름만 대응하며 기존 렌더 컴포넌트와 입력 정의 순서를 유지합니다. |
+| antd6 | `src/index.ts:13` | `FormError,` → `FormTypeErrorRenderer: FormError,` | 같음 — 등록 슬롯의 공개 이름만 대응하며 기존 렌더 컴포넌트와 입력 정의 순서를 유지합니다. |
+| antd-mobile | `src/components/FormGroup.tsx:18` | `if (node.group === 'branch') {` → `if (node.strategy === 'branch') {` | 같음 — 같은 branch/terminal 전략으로 같은 JSX 분기를 선택합니다. |
+| antd-mobile | `src/formTypeInputs/FormTypeInputArray.tsx:4` | `∅` → `import { isArray } from '@winglet/common-utils/filter';` | 같음 — 기존 게터의 상한(기본 Infinity·닫힌 튜플)과 길이(branch 자식 수·terminal 값 길이)를 공개 필드로 같은 방식으로 계산합니다. |
+| antd-mobile | `src/formTypeInputs/FormTypeInputArray.tsx:5` | `∅` → `import { minLite } from '@winglet/common-utils/math';` | 같음 — 기존 게터의 상한(기본 Infinity·닫힌 튜플)과 길이(branch 자식 수·terminal 값 길이)를 공개 필드로 같은 방식으로 계산합니다. |
+| antd-mobile | `src/formTypeInputs/FormTypeInputArray.tsx:30` | `∅` → `jsonSchema,` | 같음 — 기존 게터의 상한(기본 Infinity·닫힌 튜플)과 길이(branch 자식 수·terminal 값 길이)를 공개 필드로 같은 방식으로 계산합니다. |
+| antd-mobile | `src/formTypeInputs/FormTypeInputArray.tsx:37` | `∅` → `const maxItems = minLite(` | 같음 — 기존 게터의 상한(기본 Infinity·닫힌 튜플)과 길이(branch 자식 수·terminal 값 길이)를 공개 필드로 같은 방식으로 계산합니다. |
+| antd-mobile | `src/formTypeInputs/FormTypeInputArray.tsx:38` | `∅` → `typeof jsonSchema.maxItems === 'number' ? jsonSchema.maxItems : Infinity,` | 같음 — 기존 게터의 상한(기본 Infinity·닫힌 튜플)과 길이(branch 자식 수·terminal 값 길이)를 공개 필드로 같은 방식으로 계산합니다. |
+| antd-mobile | `src/formTypeInputs/FormTypeInputArray.tsx:39` | `∅` → `!jsonSchema.items && isArray(jsonSchema.prefixItems)` | 같음 — 기존 게터의 상한(기본 Infinity·닫힌 튜플)과 길이(branch 자식 수·terminal 값 길이)를 공개 필드로 같은 방식으로 계산합니다. |
+| antd-mobile | `src/formTypeInputs/FormTypeInputArray.tsx:40` | `∅` → `? jsonSchema.prefixItems.length` | 같음 — 기존 게터의 상한(기본 Infinity·닫힌 튜플)과 길이(branch 자식 수·terminal 값 길이)를 공개 필드로 같은 방식으로 계산합니다. |
+| antd-mobile | `src/formTypeInputs/FormTypeInputArray.tsx:41` | `∅` → `: Infinity,` | 같음 — 기존 게터의 상한(기본 Infinity·닫힌 튜플)과 길이(branch 자식 수·terminal 값 길이)를 공개 필드로 같은 방식으로 계산합니다. |
+| antd-mobile | `src/formTypeInputs/FormTypeInputArray.tsx:42` | `∅` → `);` | 같음 — 기존 게터의 상한(기본 Infinity·닫힌 튜플)과 길이(branch 자식 수·terminal 값 길이)를 공개 필드로 같은 방식으로 계산합니다. |
+| antd-mobile | `src/formTypeInputs/FormTypeInputArray.tsx:43` | `∅` → `const length = node.children?.length ?? node.value?.length ?? 0;` | 같음 — 기존 게터의 상한(기본 Infinity·닫힌 튜플)과 길이(branch 자식 수·terminal 값 길이)를 공개 필드로 같은 방식으로 계산합니다. |
+| antd-mobile | `src/formTypeInputs/FormTypeInputArray.tsx:68` | `{!readOnly && node.maxItems > node.length && (` → `{!readOnly && maxItems > length && (` | 같음 — 기존 게터의 상한(기본 Infinity·닫힌 튜플)과 길이(branch 자식 수·terminal 값 길이)를 공개 필드로 같은 방식으로 계산합니다. |
+| antd-mobile | `src/formTypeInputs/FormTypeInputNumber.tsx:51` | `type: ['number', 'integer'],` → `schemaType: ['number', 'integer'],` | 같음 — 정수 종류를 schemaType으로 읽어 기존 number/integer 선택·정수 파싱·step과 방출 값을 유지합니다. union 지원은 추가하지 않습니다. |
+| antd-mobile | `src/formTypeInputs/FormTypeInputRadioGroup.tsx:89` | `test: ({ type, formType, jsonSchema }) => {` → `test: ({ schemaType: type, formType, jsonSchema }) => {` | 같음 — 정수 종류를 schemaType으로 읽어 기존 number/integer 선택·정수 파싱·step과 방출 값을 유지합니다. union 지원은 추가하지 않습니다. |
+| antd-mobile | `src/formTypeInputs/FormTypeInputSlider.tsx:57` | `test: ({ type, jsonSchema, format }) => {` → `test: ({ schemaType: type, jsonSchema, format }) => {` | 같음 — 정수 종류를 schemaType으로 읽어 기존 number/integer 선택·정수 파싱·step과 방출 값을 유지합니다. union 지원은 추가하지 않습니다. |
+| antd-mobile | `src/index.ts:10` | `FormGroup,` → `FormTypeGroupRenderer: FormGroup,` | 같음 — 등록 슬롯의 공개 이름만 대응하며 기존 렌더 컴포넌트와 입력 정의 순서를 유지합니다. |
+| antd-mobile | `src/index.ts:11` | `FormLabel,` → `FormTypeLabelRenderer: FormLabel,` | 같음 — 등록 슬롯의 공개 이름만 대응하며 기존 렌더 컴포넌트와 입력 정의 순서를 유지합니다. |
+| antd-mobile | `src/index.ts:12` | `FormInput,` → `FormTypeInputRenderer: FormInput,` | 같음 — 등록 슬롯의 공개 이름만 대응하며 기존 렌더 컴포넌트와 입력 정의 순서를 유지합니다. |
+| antd-mobile | `src/index.ts:13` | `FormError,` → `FormTypeErrorRenderer: FormError,` | 같음 — 등록 슬롯의 공개 이름만 대응하며 기존 렌더 컴포넌트와 입력 정의 순서를 유지합니다. |
+| mui | `src/components/FormGroup.tsx:14` | `if (node.group === 'branch') {` → `if (node.strategy === 'branch') {` | 같음 — 같은 branch/terminal 전략으로 같은 JSX 분기를 선택합니다. |
+| mui | `src/formTypeInputs/FormTypeInputArray.tsx:5` | `∅` → `import { isArray } from '@winglet/common-utils/filter';` | 같음 — 기존 게터의 상한(기본 Infinity·닫힌 튜플)과 길이(branch 자식 수·terminal 값 길이)를 공개 필드로 같은 방식으로 계산합니다. |
+| mui | `src/formTypeInputs/FormTypeInputArray.tsx:6` | `∅` → `import { minLite } from '@winglet/common-utils/math';` | 같음 — 기존 게터의 상한(기본 Infinity·닫힌 튜플)과 길이(branch 자식 수·terminal 값 길이)를 공개 필드로 같은 방식으로 계산합니다. |
+| mui | `src/formTypeInputs/FormTypeInputArray.tsx:25` | `∅` → `jsonSchema,` | 같음 — 기존 게터의 상한(기본 Infinity·닫힌 튜플)과 길이(branch 자식 수·terminal 값 길이)를 공개 필드로 같은 방식으로 계산합니다. |
+| mui | `src/formTypeInputs/FormTypeInputArray.tsx:32` | `∅` → `const maxItems = minLite(` | 같음 — 기존 게터의 상한(기본 Infinity·닫힌 튜플)과 길이(branch 자식 수·terminal 값 길이)를 공개 필드로 같은 방식으로 계산합니다. |
+| mui | `src/formTypeInputs/FormTypeInputArray.tsx:33` | `∅` → `typeof jsonSchema.maxItems === 'number' ? jsonSchema.maxItems : Infinity,` | 같음 — 기존 게터의 상한(기본 Infinity·닫힌 튜플)과 길이(branch 자식 수·terminal 값 길이)를 공개 필드로 같은 방식으로 계산합니다. |
+| mui | `src/formTypeInputs/FormTypeInputArray.tsx:34` | `∅` → `!jsonSchema.items && isArray(jsonSchema.prefixItems)` | 같음 — 기존 게터의 상한(기본 Infinity·닫힌 튜플)과 길이(branch 자식 수·terminal 값 길이)를 공개 필드로 같은 방식으로 계산합니다. |
+| mui | `src/formTypeInputs/FormTypeInputArray.tsx:35` | `∅` → `? jsonSchema.prefixItems.length` | 같음 — 기존 게터의 상한(기본 Infinity·닫힌 튜플)과 길이(branch 자식 수·terminal 값 길이)를 공개 필드로 같은 방식으로 계산합니다. |
+| mui | `src/formTypeInputs/FormTypeInputArray.tsx:36` | `∅` → `: Infinity,` | 같음 — 기존 게터의 상한(기본 Infinity·닫힌 튜플)과 길이(branch 자식 수·terminal 값 길이)를 공개 필드로 같은 방식으로 계산합니다. |
+| mui | `src/formTypeInputs/FormTypeInputArray.tsx:37` | `∅` → `);` | 같음 — 기존 게터의 상한(기본 Infinity·닫힌 튜플)과 길이(branch 자식 수·terminal 값 길이)를 공개 필드로 같은 방식으로 계산합니다. |
+| mui | `src/formTypeInputs/FormTypeInputArray.tsx:38` | `∅` → `const length = node.children?.length ?? node.value?.length ?? 0;` | 같음 — 기존 게터의 상한(기본 Infinity·닫힌 튜플)과 길이(branch 자식 수·terminal 값 길이)를 공개 필드로 같은 방식으로 계산합니다. |
+| mui | `src/formTypeInputs/FormTypeInputArray.tsx:66` | `{!readOnly && node.maxItems > node.length && (` → `{!readOnly && maxItems > length && (` | 같음 — 기존 게터의 상한(기본 Infinity·닫힌 튜플)과 길이(branch 자식 수·terminal 값 길이)를 공개 필드로 같은 방식으로 계산합니다. |
+| mui | `src/formTypeInputs/FormTypeInputNumber.tsx:29` | `type,` → `schemaType: type,` | 같음 — 정수 종류를 schemaType으로 읽어 기존 number/integer 선택·정수 파싱·step과 방출 값을 유지합니다. union 지원은 추가하지 않습니다. |
+| mui | `src/formTypeInputs/FormTypeInputNumber.tsx:120` | `type: ['number', 'integer'],` → `schemaType: ['number', 'integer'],` | 같음 — 정수 종류를 schemaType으로 읽어 기존 number/integer 선택·정수 파싱·step과 방출 값을 유지합니다. union 지원은 추가하지 않습니다. |
+| mui | `src/formTypeInputs/FormTypeInputRadioGroup.tsx:124` | `test: ({ type, formType, jsonSchema }) =>` → `test: ({ schemaType: type, formType, jsonSchema }) =>` | 같음 — 정수 종류를 schemaType으로 읽어 기존 number/integer 선택·정수 파싱·step과 방출 값을 유지합니다. union 지원은 추가하지 않습니다. |
+| mui | `src/formTypeInputs/FormTypeInputSlider.tsx:113` | `test: ({ type, formType }) =>` → `test: ({ schemaType: type, formType }) =>` | 같음 — 정수 종류를 schemaType으로 읽어 기존 number/integer 선택·정수 파싱·step과 방출 값을 유지합니다. union 지원은 추가하지 않습니다. |
+| mui | `src/index.ts:10` | `FormGroup,` → `FormTypeGroupRenderer: FormGroup,` | 같음 — 등록 슬롯의 공개 이름만 대응하며 기존 렌더 컴포넌트와 입력 정의 순서를 유지합니다. |
+| mui | `src/index.ts:11` | `FormLabel,` → `FormTypeLabelRenderer: FormLabel,` | 같음 — 등록 슬롯의 공개 이름만 대응하며 기존 렌더 컴포넌트와 입력 정의 순서를 유지합니다. |
+| mui | `src/index.ts:12` | `FormInput,` → `FormTypeInputRenderer: FormInput,` | 같음 — 등록 슬롯의 공개 이름만 대응하며 기존 렌더 컴포넌트와 입력 정의 순서를 유지합니다. |
+| mui | `src/index.ts:13` | `FormError,` → `FormTypeErrorRenderer: FormError,` | 같음 — 등록 슬롯의 공개 이름만 대응하며 기존 렌더 컴포넌트와 입력 정의 순서를 유지합니다. |
+
+src 수정 줄 수(추가·교체된 이후 줄, 공백 줄 제외): antd5 19줄, antd6 19줄, antd-mobile 19줄, mui 20줄. 총 77줄이며 모든 수정 줄의 판정은 같음입니다.
+
+#### U12 stories 후속 수정
+
+후속 요청에서 각 플러그인의 `stories/**`를 허용했습니다. 수정 전 전체 타입검사에서 네 패키지 각각 8건의 같은 오류를 재현했습니다. 새 렌더러 prop 이름, 공개 `ValidationIssue` 이름 및 `onValidate`의 읽기 전용 배열 형식만 대응하며 schema·presentation·옵션 키·validator 구현·handle 호출은 변경하지 않습니다.
+
+| 플러그인 | 파일:줄(패키지 기준) | 이전 → 이후 | 같은 입력에서 렌더 결과·방출 값이 같은가 |
+| --- | --- | --- | --- |
+| antd5 | `stories/FormComponent.stories.tsx:163` | `FormErrorRenderer={FormError}` → `FormTypeErrorRenderer={FormError}` | 같음 — 새 공개 슬롯으로 같은 렌더 컴포넌트를 연결하며 기존 입력 스키마와 JSX를 유지합니다. |
+| antd5 | `stories/FormComponent.stories.tsx:176` | `FormInputRenderer={FormInput}` → `FormTypeInputRenderer={FormInput}` | 같음 — 새 공개 슬롯으로 같은 렌더 컴포넌트를 연결하며 기존 입력 스키마와 JSX를 유지합니다. |
+| antd5 | `stories/FormComponent.stories.tsx:189` | `FormLabelRenderer={FormLabel}` → `FormTypeLabelRenderer={FormLabel}` | 같음 — 새 공개 슬롯으로 같은 렌더 컴포넌트를 연결하며 기존 입력 스키마와 JSX를 유지합니다. |
+| antd5 | `stories/FormComponent.stories.tsx:202` | `FormGroupRenderer={FormGroup}` → `FormTypeGroupRenderer={FormGroup}` | 같음 — 새 공개 슬롯으로 같은 렌더 컴포넌트를 연결하며 기존 입력 스키마와 JSX를 유지합니다. |
+| antd5 | `stories/FormTypeInput.stories.tsx:7` | `type JSONSchemaError,` → `type ValidationIssue,` | 같음 — 지워지는 타입 가져오기만 바꾸며 검증 오류의 런타임 객체를 변환하지 않습니다. |
+| antd5 | `stories/FormTypeInput.stories.tsx:37` | `const [errors, setErrors] = useState<JSONSchemaError[]>([]);` → `const [errors, setErrors] = useState<readonly ValidationIssue[]>([]);` | 같음 — onValidate의 읽기 전용 배열을 같은 setter로 보관하며 초기 배열·콜백·오류 표시는 유지합니다. |
+| antd5 | `stories/RegisterPlugin.stories.tsx:11` | `type JSONSchemaError,` → `type ValidationIssue,` | 같음 — 지워지는 타입 가져오기만 바꾸며 검증 오류의 런타임 객체를 변환하지 않습니다. |
+| antd5 | `stories/RegisterPlugin.stories.tsx:612` | `const [errors, setErrors] = useState<JSONSchemaError[]>([]);` → `const [errors, setErrors] = useState<readonly ValidationIssue[]>([]);` | 같음 — onValidate의 읽기 전용 배열을 같은 setter로 보관하며 초기 배열·콜백·오류 표시는 유지합니다. |
+| antd6 | `stories/FormComponent.stories.tsx:163` | `FormErrorRenderer={FormError}` → `FormTypeErrorRenderer={FormError}` | 같음 — 새 공개 슬롯으로 같은 렌더 컴포넌트를 연결하며 기존 입력 스키마와 JSX를 유지합니다. |
+| antd6 | `stories/FormComponent.stories.tsx:176` | `FormInputRenderer={FormInput}` → `FormTypeInputRenderer={FormInput}` | 같음 — 새 공개 슬롯으로 같은 렌더 컴포넌트를 연결하며 기존 입력 스키마와 JSX를 유지합니다. |
+| antd6 | `stories/FormComponent.stories.tsx:189` | `FormLabelRenderer={FormLabel}` → `FormTypeLabelRenderer={FormLabel}` | 같음 — 새 공개 슬롯으로 같은 렌더 컴포넌트를 연결하며 기존 입력 스키마와 JSX를 유지합니다. |
+| antd6 | `stories/FormComponent.stories.tsx:202` | `FormGroupRenderer={FormGroup}` → `FormTypeGroupRenderer={FormGroup}` | 같음 — 새 공개 슬롯으로 같은 렌더 컴포넌트를 연결하며 기존 입력 스키마와 JSX를 유지합니다. |
+| antd6 | `stories/FormTypeInput.stories.tsx:7` | `type JSONSchemaError,` → `type ValidationIssue,` | 같음 — 지워지는 타입 가져오기만 바꾸며 검증 오류의 런타임 객체를 변환하지 않습니다. |
+| antd6 | `stories/FormTypeInput.stories.tsx:38` | `const [errors, setErrors] = useState<JSONSchemaError[]>([]);` → `const [errors, setErrors] = useState<readonly ValidationIssue[]>([]);` | 같음 — onValidate의 읽기 전용 배열을 같은 setter로 보관하며 초기 배열·콜백·오류 표시는 유지합니다. |
+| antd6 | `stories/RegisterPlugin.stories.tsx:11` | `type JSONSchemaError,` → `type ValidationIssue,` | 같음 — 지워지는 타입 가져오기만 바꾸며 검증 오류의 런타임 객체를 변환하지 않습니다. |
+| antd6 | `stories/RegisterPlugin.stories.tsx:612` | `const [errors, setErrors] = useState<JSONSchemaError[]>([]);` → `const [errors, setErrors] = useState<readonly ValidationIssue[]>([]);` | 같음 — onValidate의 읽기 전용 배열을 같은 setter로 보관하며 초기 배열·콜백·오류 표시는 유지합니다. |
+| antd-mobile | `stories/FormComponent.stories.tsx:163` | `FormErrorRenderer={FormError}` → `FormTypeErrorRenderer={FormError}` | 같음 — 새 공개 슬롯으로 같은 렌더 컴포넌트를 연결하며 기존 입력 스키마와 JSX를 유지합니다. |
+| antd-mobile | `stories/FormComponent.stories.tsx:176` | `FormInputRenderer={FormInput}` → `FormTypeInputRenderer={FormInput}` | 같음 — 새 공개 슬롯으로 같은 렌더 컴포넌트를 연결하며 기존 입력 스키마와 JSX를 유지합니다. |
+| antd-mobile | `stories/FormComponent.stories.tsx:189` | `FormLabelRenderer={FormLabel}` → `FormTypeLabelRenderer={FormLabel}` | 같음 — 새 공개 슬롯으로 같은 렌더 컴포넌트를 연결하며 기존 입력 스키마와 JSX를 유지합니다. |
+| antd-mobile | `stories/FormComponent.stories.tsx:202` | `FormGroupRenderer={FormGroup}` → `FormTypeGroupRenderer={FormGroup}` | 같음 — 새 공개 슬롯으로 같은 렌더 컴포넌트를 연결하며 기존 입력 스키마와 JSX를 유지합니다. |
+| antd-mobile | `stories/FormTypeInput.stories.tsx:7` | `type JSONSchemaError,` → `type ValidationIssue,` | 같음 — 지워지는 타입 가져오기만 바꾸며 검증 오류의 런타임 객체를 변환하지 않습니다. |
+| antd-mobile | `stories/FormTypeInput.stories.tsx:31` | `const [errors, setErrors] = useState<JSONSchemaError[]>([]);` → `const [errors, setErrors] = useState<readonly ValidationIssue[]>([]);` | 같음 — onValidate의 읽기 전용 배열을 같은 setter로 보관하며 초기 배열·콜백·오류 표시는 유지합니다. |
+| antd-mobile | `stories/RegisterPlugin.stories.tsx:11` | `type JSONSchemaError,` → `type ValidationIssue,` | 같음 — 지워지는 타입 가져오기만 바꾸며 검증 오류의 런타임 객체를 변환하지 않습니다. |
+| antd-mobile | `stories/RegisterPlugin.stories.tsx:613` | `const [errors, setErrors] = useState<JSONSchemaError[]>([]);` → `const [errors, setErrors] = useState<readonly ValidationIssue[]>([]);` | 같음 — onValidate의 읽기 전용 배열을 같은 setter로 보관하며 초기 배열·콜백·오류 표시는 유지합니다. |
+| mui | `stories/FormComponent.stories.tsx:163` | `FormErrorRenderer={FormError}` → `FormTypeErrorRenderer={FormError}` | 같음 — 새 공개 슬롯으로 같은 렌더 컴포넌트를 연결하며 기존 입력 스키마와 JSX를 유지합니다. |
+| mui | `stories/FormComponent.stories.tsx:176` | `FormInputRenderer={FormInput}` → `FormTypeInputRenderer={FormInput}` | 같음 — 새 공개 슬롯으로 같은 렌더 컴포넌트를 연결하며 기존 입력 스키마와 JSX를 유지합니다. |
+| mui | `stories/FormComponent.stories.tsx:189` | `FormLabelRenderer={FormLabel}` → `FormTypeLabelRenderer={FormLabel}` | 같음 — 새 공개 슬롯으로 같은 렌더 컴포넌트를 연결하며 기존 입력 스키마와 JSX를 유지합니다. |
+| mui | `stories/FormComponent.stories.tsx:202` | `FormGroupRenderer={FormGroup}` → `FormTypeGroupRenderer={FormGroup}` | 같음 — 새 공개 슬롯으로 같은 렌더 컴포넌트를 연결하며 기존 입력 스키마와 JSX를 유지합니다. |
+| mui | `stories/FormTypeInput.stories.tsx:7` | `type JSONSchemaError,` → `type ValidationIssue,` | 같음 — 지워지는 타입 가져오기만 바꾸며 검증 오류의 런타임 객체를 변환하지 않습니다. |
+| mui | `stories/FormTypeInput.stories.tsx:35` | `const [errors, setErrors] = useState<JSONSchemaError[]>([]);` → `const [errors, setErrors] = useState<readonly ValidationIssue[]>([]);` | 같음 — onValidate의 읽기 전용 배열을 같은 setter로 보관하며 초기 배열·콜백·오류 표시는 유지합니다. |
+| mui | `stories/RegisterPlugin.stories.tsx:11` | `type JSONSchemaError,` → `type ValidationIssue,` | 같음 — 지워지는 타입 가져오기만 바꾸며 검증 오류의 런타임 객체를 변환하지 않습니다. |
+| mui | `stories/RegisterPlugin.stories.tsx:612` | `const [errors, setErrors] = useState<JSONSchemaError[]>([]);` → `const [errors, setErrors] = useState<readonly ValidationIssue[]>([]);` | 같음 — onValidate의 읽기 전용 배열을 같은 setter로 보관하며 초기 배열·콜백·오류 표시는 유지합니다. |
+| antd5 | `stories/components/StoryLayout.tsx:13` | `errors?: any[];` → `errors?: readonly any[];` | 같음 — 읽기만 하는 표시 prop의 타입을 넓히며 같은 배열 참조와 JSON.stringify(errors, null, 2) 출력을 유지합니다. |
+| antd6 | `stories/components/StoryLayout.tsx:13` | `errors?: any[];` → `errors?: readonly any[];` | 같음 — 읽기만 하는 표시 prop의 타입을 넓히며 같은 배열 참조와 JSON.stringify(errors, null, 2) 출력을 유지합니다. |
+| antd-mobile | `stories/components/StoryLayout.tsx:13` | `errors?: any[];` → `errors?: readonly any[];` | 같음 — 읽기만 하는 표시 prop의 타입을 넓히며 같은 배열 참조와 JSON.stringify(errors, null, 2) 출력을 유지합니다. |
+| mui | `stories/components/StoryLayout.tsx:13` | `errors?: any[];` → `errors?: readonly any[];` | 같음 — 읽기만 하는 표시 prop의 타입을 넓히며 같은 배열 참조와 JSON.stringify(errors, null, 2) 출력을 유지합니다. |
+
+stories 후속 수정은 각 플러그인 9줄씩 총 36줄입니다. src와 stories를 합쳐 antd5 28줄·antd6 28줄·antd-mobile 28줄·mui 29줄, 전체 113줄이며 모두 같음으로 판정합니다. 컴파일 때문에 동작 또는 옵션 키를 바꿔야 하는 새 줄은 없으므로 08 목록 114행을 유지합니다.
+
+읽기 전용 상태 배열 대응 뒤 전체 검사에서 TS4104가 각 2건 드러났습니다. 원인은 두 사용처가 아니라 `StoryLayout`의 `errors?: any[]` 표시 prop입니다. 이 컴포넌트는 오류 배열을 변경하지 않고 JSON.stringify로 표시하므로 prop을 `readonly any[]`로 넓혀 같은 참조를 받게 합니다. 배열 복사나 오류 변환은 추가하지 않습니다.
+
+### 08 목록
+
+기존 키를 새 presentation 표면으로 옮기거나 방출 값을 바꾸는 줄은 07에서 수정하지 않습니다. 같은 작성 입력을 그대로 넣었을 때 옵션 읽기·입력 선택·방출 값이 달라질 수 있으므로 08에서 소비자 이주와 함께 검증합니다.
+
+| 플러그인 | 파일:줄(패키지 기준) | 수정하지 않은 식 | 08 작업 | 같은 입력에서 렌더 결과·방출 값이 같은가 |
+| --- | --- | --- | --- | --- |
+| antd5 | `src/formTypeInputs/FormTypeInputBooleanSwitch.tsx:71` | `test: ({ type, formType }) => type === 'boolean' && formType === 'switch',` | presentation.*·옵션 키 이주 | 다름 — 기존 작성 키의 읽기 위치나 컴포넌트 선택 조건이 달라질 수 있습니다. |
+| antd5 | `src/formTypeInputs/FormTypeInputDate.tsx:43` | `const { minimum, maximum } = jsonSchema.options &#124;&#124; {};` | presentation.*·옵션 키 이주 | 다름 — 기존 작성 키의 읽기 위치나 컴포넌트 선택 조건이 달라질 수 있습니다. |
+| antd5 | `src/formTypeInputs/FormTypeInputDateRange.tsx:68` | `const { minimum, maximum } = jsonSchema.options &#124;&#124; {};` | presentation.*·옵션 키 이주 | 다름 — 기존 작성 키의 읽기 위치나 컴포넌트 선택 조건이 달라질 수 있습니다. |
+| antd5 | `src/formTypeInputs/FormTypeInputDateRange.tsx:98` | `test: ({ type, format, formType, jsonSchema }) =>` | presentation.*·옵션 키 이주 | 다름 — 기존 작성 키의 읽기 위치나 컴포넌트 선택 조건이 달라질 수 있습니다. |
+| antd5 | `src/formTypeInputs/FormTypeInputDateRange.tsx:100` | `(format === 'date-range' &#124;&#124; formType === 'dateRange') &&` | presentation.*·옵션 키 이주 | 다름 — 기존 작성 키의 읽기 위치나 컴포넌트 선택 조건이 달라질 수 있습니다. |
+| antd5 | `src/formTypeInputs/FormTypeInputMonth.tsx:43` | `const { minimum, maximum } = jsonSchema.options &#124;&#124; {};` | presentation.*·옵션 키 이주 | 다름 — 기존 작성 키의 읽기 위치나 컴포넌트 선택 조건이 달라질 수 있습니다. |
+| antd5 | `src/formTypeInputs/FormTypeInputMonthRange.tsx:67` | `const { minimum, maximum } = jsonSchema.options &#124;&#124; {};` | presentation.*·옵션 키 이주 | 다름 — 기존 작성 키의 읽기 위치나 컴포넌트 선택 조건이 달라질 수 있습니다. |
+| antd5 | `src/formTypeInputs/FormTypeInputMonthRange.tsx:97` | `test: ({ type, format, formType, jsonSchema }) =>` | presentation.*·옵션 키 이주 | 다름 — 기존 작성 키의 읽기 위치나 컴포넌트 선택 조건이 달라질 수 있습니다. |
+| antd5 | `src/formTypeInputs/FormTypeInputMonthRange.tsx:99` | `(format === 'month-range' &#124;&#124; formType === 'monthRange') &&` | presentation.*·옵션 키 이주 | 다름 — 기존 작성 키의 읽기 위치나 컴포넌트 선택 조건이 달라질 수 있습니다. |
+| antd5 | `src/formTypeInputs/FormTypeInputNumber.tsx:37` | `const handleChange = useHandle((value: number &#124; null) => {` | 빈 수 입력·null/NaN 방출 이주 | 다름 — 동일한 빈 입력의 방출 값이 null/NaN에서 undefined 등으로 바뀝니다(LANDING-182–184). |
+| antd5 | `src/formTypeInputs/FormTypeInputRadioGroup.tsx:84` | `test: ({ schemaType: type, formType, jsonSchema }) => {` | presentation.*·옵션 키 이주 | 다름 — 기존 작성 키의 읽기 위치나 컴포넌트 선택 조건이 달라질 수 있습니다. |
+| antd5 | `src/formTypeInputs/FormTypeInputRadioGroup.tsx:87` | `(formType === 'radio' &#124;&#124; formType === 'radiogroup') &&` | presentation.*·옵션 키 이주 | 다름 — 기존 작성 키의 읽기 위치나 컴포넌트 선택 조건이 달라질 수 있습니다. |
+| antd5 | `src/formTypeInputs/FormTypeInputSlider.tsx:20` | `if (value === null) onChange(NaN);` | 빈 수 입력·null/NaN 방출 이주 | 다름 — 동일한 빈 입력의 방출 값이 null/NaN에서 undefined 등으로 바뀝니다(LANDING-182–184). |
+| antd5 | `src/formTypeInputs/FormTypeInputSlider.tsx:31` | `...(jsonSchema.options?.lazy === false` | presentation.*·옵션 키 이주 | 다름 — 기존 작성 키의 읽기 위치나 컴포넌트 선택 조건이 달라질 수 있습니다. |
+| antd5 | `src/formTypeInputs/FormTypeInputSlider.tsx:54` | `formType: 'slider',` | presentation.*·옵션 키 이주 | 다름 — 기존 작성 키의 읽기 위치나 컴포넌트 선택 조건이 달라질 수 있습니다. |
+| antd5 | `src/formTypeInputs/FormTypeInputString.tsx:16` | `formType?: 'password';` | presentation.*·옵션 키 이주 | 다름 — 기존 작성 키의 읽기 위치나 컴포넌트 선택 조건이 달라질 수 있습니다. |
+| antd5 | `src/formTypeInputs/FormTypeInputString.tsx:41` | `if (jsonSchema.format === 'password' &#124;&#124; jsonSchema.formType === 'password')` | presentation.*·옵션 키 이주 | 다름 — 기존 작성 키의 읽기 위치나 컴포넌트 선택 조건이 달라질 수 있습니다. |
+| antd5 | `src/formTypeInputs/FormTypeInputStringCheckbox.tsx:84` | `test: ({ type, formType, jsonSchema }) => {` | presentation.*·옵션 키 이주 | 다름 — 기존 작성 키의 읽기 위치나 컴포넌트 선택 조건이 달라질 수 있습니다. |
+| antd5 | `src/formTypeInputs/FormTypeInputStringCheckbox.tsx:87` | `formType === 'checkbox' &&` | presentation.*·옵션 키 이주 | 다름 — 기존 작성 키의 읽기 위치나 컴포넌트 선택 조건이 달라질 수 있습니다. |
+| antd5 | `src/formTypeInputs/FormTypeInputStringSwitch.tsx:76` | `test: ({ type, formType, jsonSchema }) =>` | presentation.*·옵션 키 이주 | 다름 — 기존 작성 키의 읽기 위치나 컴포넌트 선택 조건이 달라질 수 있습니다. |
+| antd5 | `src/formTypeInputs/FormTypeInputStringSwitch.tsx:77` | `type === 'string' && formType === 'switch' && jsonSchema.enum?.length === 2,` | presentation.*·옵션 키 이주 | 다름 — 기존 작성 키의 읽기 위치나 컴포넌트 선택 조건이 달라질 수 있습니다. |
+| antd5 | `src/formTypeInputs/FormTypeInputTextarea.tsx:67` | `test: ({ type, format, formType }) =>` | presentation.*·옵션 키 이주 | 다름 — 기존 작성 키의 읽기 위치나 컴포넌트 선택 조건이 달라질 수 있습니다. |
+| antd5 | `src/formTypeInputs/FormTypeInputTextarea.tsx:68` | `type === 'string' && (format === 'textarea' &#124;&#124; formType === 'textarea'),` | presentation.*·옵션 키 이주 | 다름 — 기존 작성 키의 읽기 위치나 컴포넌트 선택 조건이 달라질 수 있습니다. |
+| antd5 | `src/formTypeInputs/FormTypeInputTimeRange.tsx:63` | `const { minimum, maximum } = jsonSchema.options &#124;&#124; {};` | presentation.*·옵션 키 이주 | 다름 — 기존 작성 키의 읽기 위치나 컴포넌트 선택 조건이 달라질 수 있습니다. |
+| antd5 | `src/formTypeInputs/FormTypeInputTimeRange.tsx:100` | `test: ({ type, format, formType, jsonSchema }) =>` | presentation.*·옵션 키 이주 | 다름 — 기존 작성 키의 읽기 위치나 컴포넌트 선택 조건이 달라질 수 있습니다. |
+| antd5 | `src/formTypeInputs/FormTypeInputTimeRange.tsx:102` | `(format === 'time-range' &#124;&#124; formType === 'timeRange') &&` | presentation.*·옵션 키 이주 | 다름 — 기존 작성 키의 읽기 위치나 컴포넌트 선택 조건이 달라질 수 있습니다. |
+| antd5 | `src/formTypeInputs/FormTypeInputUri.tsx:25` | `formType?: 'uri';` | presentation.*·옵션 키 이주 | 다름 — 기존 작성 키의 읽기 위치나 컴포넌트 선택 조건이 달라질 수 있습니다. |
+| antd5 | `src/formTypeInputs/FormTypeInputUri.tsx:95` | `const rawProtocols = jsonSchema.options?.protocols &#124;&#124; DEFAULT_PROTOCOLS;` | presentation.*·옵션 키 이주 | 다름 — 기존 작성 키의 읽기 위치나 컴포넌트 선택 조건이 달라질 수 있습니다. |
+| antd5 | `src/formTypeInputs/FormTypeInputUri.tsx:194` | `test: ({ type, format, formType }) =>` | presentation.*·옵션 키 이주 | 다름 — 기존 작성 키의 읽기 위치나 컴포넌트 선택 조건이 달라질 수 있습니다. |
+| antd5 | `src/formTypeInputs/FormTypeInputUri.tsx:195` | `type === 'string' && (format === 'uri' &#124;&#124; formType === 'uri'),` | presentation.*·옵션 키 이주 | 다름 — 기존 작성 키의 읽기 위치나 컴포넌트 선택 조건이 달라질 수 있습니다. |
+| antd5 | `src/formTypeInputs/FormTypeInputNumber.tsx:62` | `schemaType: ['number', 'integer'],` | union 항목 지원 | 다름 — 같은 union 스키마에서 선택되는 입력 컴포넌트와 값 해석이 바뀌므로 08에서 별도로 설계합니다(LANDING-206). |
+| antd5 | `src/formTypeInputs/FormTypeInputRadioGroup.tsx:84` | `test: ({ schemaType: type, formType, jsonSchema }) => {` | union 항목 지원 | 다름 — 같은 union 스키마에서 선택되는 입력 컴포넌트와 값 해석이 바뀌므로 08에서 별도로 설계합니다(LANDING-206). |
+| antd5 | `src/formTypeInputs/FormTypeInputSlider.tsx:53` | `schemaType: ['number', 'integer'],` | union 항목 지원 | 다름 — 같은 union 스키마에서 선택되는 입력 컴포넌트와 값 해석이 바뀌므로 08에서 별도로 설계합니다(LANDING-206). |
+| antd6 | `src/formTypeInputs/FormTypeInputBooleanSwitch.tsx:71` | `test: ({ type, formType }) => type === 'boolean' && formType === 'switch',` | presentation.*·옵션 키 이주 | 다름 — 기존 작성 키의 읽기 위치나 컴포넌트 선택 조건이 달라질 수 있습니다. |
+| antd6 | `src/formTypeInputs/FormTypeInputDate.tsx:43` | `const { minimum, maximum } = jsonSchema.options &#124;&#124; {};` | presentation.*·옵션 키 이주 | 다름 — 기존 작성 키의 읽기 위치나 컴포넌트 선택 조건이 달라질 수 있습니다. |
+| antd6 | `src/formTypeInputs/FormTypeInputDateRange.tsx:68` | `const { minimum, maximum } = jsonSchema.options &#124;&#124; {};` | presentation.*·옵션 키 이주 | 다름 — 기존 작성 키의 읽기 위치나 컴포넌트 선택 조건이 달라질 수 있습니다. |
+| antd6 | `src/formTypeInputs/FormTypeInputDateRange.tsx:98` | `test: ({ type, format, formType, jsonSchema }) =>` | presentation.*·옵션 키 이주 | 다름 — 기존 작성 키의 읽기 위치나 컴포넌트 선택 조건이 달라질 수 있습니다. |
+| antd6 | `src/formTypeInputs/FormTypeInputDateRange.tsx:100` | `(format === 'date-range' &#124;&#124; formType === 'dateRange') &&` | presentation.*·옵션 키 이주 | 다름 — 기존 작성 키의 읽기 위치나 컴포넌트 선택 조건이 달라질 수 있습니다. |
+| antd6 | `src/formTypeInputs/FormTypeInputMonth.tsx:43` | `const { minimum, maximum } = jsonSchema.options &#124;&#124; {};` | presentation.*·옵션 키 이주 | 다름 — 기존 작성 키의 읽기 위치나 컴포넌트 선택 조건이 달라질 수 있습니다. |
+| antd6 | `src/formTypeInputs/FormTypeInputMonthRange.tsx:67` | `const { minimum, maximum } = jsonSchema.options &#124;&#124; {};` | presentation.*·옵션 키 이주 | 다름 — 기존 작성 키의 읽기 위치나 컴포넌트 선택 조건이 달라질 수 있습니다. |
+| antd6 | `src/formTypeInputs/FormTypeInputMonthRange.tsx:97` | `test: ({ type, format, formType, jsonSchema }) =>` | presentation.*·옵션 키 이주 | 다름 — 기존 작성 키의 읽기 위치나 컴포넌트 선택 조건이 달라질 수 있습니다. |
+| antd6 | `src/formTypeInputs/FormTypeInputMonthRange.tsx:99` | `(format === 'month-range' &#124;&#124; formType === 'monthRange') &&` | presentation.*·옵션 키 이주 | 다름 — 기존 작성 키의 읽기 위치나 컴포넌트 선택 조건이 달라질 수 있습니다. |
+| antd6 | `src/formTypeInputs/FormTypeInputNumber.tsx:37` | `const handleChange = useHandle((value: number &#124; null) => {` | 빈 수 입력·null/NaN 방출 이주 | 다름 — 동일한 빈 입력의 방출 값이 null/NaN에서 undefined 등으로 바뀝니다(LANDING-182–184). |
+| antd6 | `src/formTypeInputs/FormTypeInputRadioGroup.tsx:84` | `test: ({ schemaType: type, formType, jsonSchema }) => {` | presentation.*·옵션 키 이주 | 다름 — 기존 작성 키의 읽기 위치나 컴포넌트 선택 조건이 달라질 수 있습니다. |
+| antd6 | `src/formTypeInputs/FormTypeInputRadioGroup.tsx:87` | `(formType === 'radio' &#124;&#124; formType === 'radiogroup') &&` | presentation.*·옵션 키 이주 | 다름 — 기존 작성 키의 읽기 위치나 컴포넌트 선택 조건이 달라질 수 있습니다. |
+| antd6 | `src/formTypeInputs/FormTypeInputSlider.tsx:20` | `if (value === null) onChange(NaN);` | 빈 수 입력·null/NaN 방출 이주 | 다름 — 동일한 빈 입력의 방출 값이 null/NaN에서 undefined 등으로 바뀝니다(LANDING-182–184). |
+| antd6 | `src/formTypeInputs/FormTypeInputSlider.tsx:31` | `...(jsonSchema.options?.lazy === false` | presentation.*·옵션 키 이주 | 다름 — 기존 작성 키의 읽기 위치나 컴포넌트 선택 조건이 달라질 수 있습니다. |
+| antd6 | `src/formTypeInputs/FormTypeInputSlider.tsx:54` | `formType: 'slider',` | presentation.*·옵션 키 이주 | 다름 — 기존 작성 키의 읽기 위치나 컴포넌트 선택 조건이 달라질 수 있습니다. |
+| antd6 | `src/formTypeInputs/FormTypeInputString.tsx:16` | `formType?: 'password';` | presentation.*·옵션 키 이주 | 다름 — 기존 작성 키의 읽기 위치나 컴포넌트 선택 조건이 달라질 수 있습니다. |
+| antd6 | `src/formTypeInputs/FormTypeInputString.tsx:41` | `if (jsonSchema.format === 'password' &#124;&#124; jsonSchema.formType === 'password')` | presentation.*·옵션 키 이주 | 다름 — 기존 작성 키의 읽기 위치나 컴포넌트 선택 조건이 달라질 수 있습니다. |
+| antd6 | `src/formTypeInputs/FormTypeInputStringCheckbox.tsx:84` | `test: ({ type, formType, jsonSchema }) => {` | presentation.*·옵션 키 이주 | 다름 — 기존 작성 키의 읽기 위치나 컴포넌트 선택 조건이 달라질 수 있습니다. |
+| antd6 | `src/formTypeInputs/FormTypeInputStringCheckbox.tsx:87` | `formType === 'checkbox' &&` | presentation.*·옵션 키 이주 | 다름 — 기존 작성 키의 읽기 위치나 컴포넌트 선택 조건이 달라질 수 있습니다. |
+| antd6 | `src/formTypeInputs/FormTypeInputStringSwitch.tsx:76` | `test: ({ type, formType, jsonSchema }) =>` | presentation.*·옵션 키 이주 | 다름 — 기존 작성 키의 읽기 위치나 컴포넌트 선택 조건이 달라질 수 있습니다. |
+| antd6 | `src/formTypeInputs/FormTypeInputStringSwitch.tsx:77` | `type === 'string' && formType === 'switch' && jsonSchema.enum?.length === 2,` | presentation.*·옵션 키 이주 | 다름 — 기존 작성 키의 읽기 위치나 컴포넌트 선택 조건이 달라질 수 있습니다. |
+| antd6 | `src/formTypeInputs/FormTypeInputTextarea.tsx:67` | `test: ({ type, format, formType }) =>` | presentation.*·옵션 키 이주 | 다름 — 기존 작성 키의 읽기 위치나 컴포넌트 선택 조건이 달라질 수 있습니다. |
+| antd6 | `src/formTypeInputs/FormTypeInputTextarea.tsx:68` | `type === 'string' && (format === 'textarea' &#124;&#124; formType === 'textarea'),` | presentation.*·옵션 키 이주 | 다름 — 기존 작성 키의 읽기 위치나 컴포넌트 선택 조건이 달라질 수 있습니다. |
+| antd6 | `src/formTypeInputs/FormTypeInputTimeRange.tsx:63` | `const { minimum, maximum } = jsonSchema.options &#124;&#124; {};` | presentation.*·옵션 키 이주 | 다름 — 기존 작성 키의 읽기 위치나 컴포넌트 선택 조건이 달라질 수 있습니다. |
+| antd6 | `src/formTypeInputs/FormTypeInputTimeRange.tsx:100` | `test: ({ type, format, formType, jsonSchema }) =>` | presentation.*·옵션 키 이주 | 다름 — 기존 작성 키의 읽기 위치나 컴포넌트 선택 조건이 달라질 수 있습니다. |
+| antd6 | `src/formTypeInputs/FormTypeInputTimeRange.tsx:102` | `(format === 'time-range' &#124;&#124; formType === 'timeRange') &&` | presentation.*·옵션 키 이주 | 다름 — 기존 작성 키의 읽기 위치나 컴포넌트 선택 조건이 달라질 수 있습니다. |
+| antd6 | `src/formTypeInputs/FormTypeInputUri.tsx:25` | `formType?: 'uri';` | presentation.*·옵션 키 이주 | 다름 — 기존 작성 키의 읽기 위치나 컴포넌트 선택 조건이 달라질 수 있습니다. |
+| antd6 | `src/formTypeInputs/FormTypeInputUri.tsx:95` | `const rawProtocols = jsonSchema.options?.protocols &#124;&#124; DEFAULT_PROTOCOLS;` | presentation.*·옵션 키 이주 | 다름 — 기존 작성 키의 읽기 위치나 컴포넌트 선택 조건이 달라질 수 있습니다. |
+| antd6 | `src/formTypeInputs/FormTypeInputUri.tsx:194` | `test: ({ type, format, formType }) =>` | presentation.*·옵션 키 이주 | 다름 — 기존 작성 키의 읽기 위치나 컴포넌트 선택 조건이 달라질 수 있습니다. |
+| antd6 | `src/formTypeInputs/FormTypeInputUri.tsx:195` | `type === 'string' && (format === 'uri' &#124;&#124; formType === 'uri'),` | presentation.*·옵션 키 이주 | 다름 — 기존 작성 키의 읽기 위치나 컴포넌트 선택 조건이 달라질 수 있습니다. |
+| antd6 | `src/formTypeInputs/FormTypeInputNumber.tsx:62` | `schemaType: ['number', 'integer'],` | union 항목 지원 | 다름 — 같은 union 스키마에서 선택되는 입력 컴포넌트와 값 해석이 바뀌므로 08에서 별도로 설계합니다(LANDING-206). |
+| antd6 | `src/formTypeInputs/FormTypeInputRadioGroup.tsx:84` | `test: ({ schemaType: type, formType, jsonSchema }) => {` | union 항목 지원 | 다름 — 같은 union 스키마에서 선택되는 입력 컴포넌트와 값 해석이 바뀌므로 08에서 별도로 설계합니다(LANDING-206). |
+| antd6 | `src/formTypeInputs/FormTypeInputSlider.tsx:53` | `schemaType: ['number', 'integer'],` | union 항목 지원 | 다름 — 같은 union 스키마에서 선택되는 입력 컴포넌트와 값 해석이 바뀌므로 08에서 별도로 설계합니다(LANDING-206). |
+| antd-mobile | `src/formTypeInputs/FormTypeInputBooleanSwitch.tsx:55` | `test: ({ type, formType }) => type === 'boolean' && formType === 'switch',` | presentation.*·옵션 키 이주 | 다름 — 기존 작성 키의 읽기 위치나 컴포넌트 선택 조건이 달라질 수 있습니다. |
+| antd-mobile | `src/formTypeInputs/FormTypeInputNumber.tsx:30` | `const handleChange = useHandle((value: number &#124; null) => {` | 빈 수 입력·null/NaN 방출 이주 | 다름 — 동일한 빈 입력의 방출 값이 null/NaN에서 undefined 등으로 바뀝니다(LANDING-182–184). |
+| antd-mobile | `src/formTypeInputs/FormTypeInputRadioGroup.tsx:89` | `test: ({ schemaType: type, formType, jsonSchema }) => {` | presentation.*·옵션 키 이주 | 다름 — 기존 작성 키의 읽기 위치나 컴포넌트 선택 조건이 달라질 수 있습니다. |
+| antd-mobile | `src/formTypeInputs/FormTypeInputRadioGroup.tsx:92` | `(formType === 'radio' &#124;&#124; formType === 'radiogroup') &&` | presentation.*·옵션 키 이주 | 다름 — 기존 작성 키의 읽기 위치나 컴포넌트 선택 조건이 달라질 수 있습니다. |
+| antd-mobile | `src/formTypeInputs/FormTypeInputSlider.tsx:21` | `if (value === null) onChange(NaN);` | 빈 수 입력·null/NaN 방출 이주 | 다름 — 동일한 빈 입력의 방출 값이 null/NaN에서 undefined 등으로 바뀝니다(LANDING-182–184). |
+| antd-mobile | `src/formTypeInputs/FormTypeInputSlider.tsx:33` | `range: jsonSchema.options?.range,` | presentation.*·옵션 키 이주 | 다름 — 기존 작성 키의 읽기 위치나 컴포넌트 선택 조건이 달라질 수 있습니다. |
+| antd-mobile | `src/formTypeInputs/FormTypeInputSlider.tsx:34` | `marks: jsonSchema.options?.marks,` | presentation.*·옵션 키 이주 | 다름 — 기존 작성 키의 읽기 위치나 컴포넌트 선택 조건이 달라질 수 있습니다. |
+| antd-mobile | `src/formTypeInputs/FormTypeInputSlider.tsx:35` | `...(jsonSchema.options?.lazy === false` | presentation.*·옵션 키 이주 | 다름 — 기존 작성 키의 읽기 위치나 컴포넌트 선택 조건이 달라질 수 있습니다. |
+| antd-mobile | `src/formTypeInputs/FormTypeInputString.tsx:13` | `formType?: 'password';` | presentation.*·옵션 키 이주 | 다름 — 기존 작성 키의 읽기 위치나 컴포넌트 선택 조건이 달라질 수 있습니다. |
+| antd-mobile | `src/formTypeInputs/FormTypeInputStringCheckbox.tsx:92` | `test: ({ type, formType, jsonSchema }) => {` | presentation.*·옵션 키 이주 | 다름 — 기존 작성 키의 읽기 위치나 컴포넌트 선택 조건이 달라질 수 있습니다. |
+| antd-mobile | `src/formTypeInputs/FormTypeInputStringCheckbox.tsx:95` | `formType === 'checkbox' &&` | presentation.*·옵션 키 이주 | 다름 — 기존 작성 키의 읽기 위치나 컴포넌트 선택 조건이 달라질 수 있습니다. |
+| antd-mobile | `src/formTypeInputs/FormTypeInputStringSwitch.tsx:71` | `test: ({ type, formType, jsonSchema }) =>` | presentation.*·옵션 키 이주 | 다름 — 기존 작성 키의 읽기 위치나 컴포넌트 선택 조건이 달라질 수 있습니다. |
+| antd-mobile | `src/formTypeInputs/FormTypeInputStringSwitch.tsx:72` | `type === 'string' && formType === 'switch' && jsonSchema.enum?.length === 2,` | presentation.*·옵션 키 이주 | 다름 — 기존 작성 키의 읽기 위치나 컴포넌트 선택 조건이 달라질 수 있습니다. |
+| antd-mobile | `src/formTypeInputs/FormTypeInputTextarea.tsx:52` | `test: ({ type, format, formType }) =>` | presentation.*·옵션 키 이주 | 다름 — 기존 작성 키의 읽기 위치나 컴포넌트 선택 조건이 달라질 수 있습니다. |
+| antd-mobile | `src/formTypeInputs/FormTypeInputTextarea.tsx:53` | `type === 'string' && (format === 'textarea' &#124;&#124; formType === 'textarea'),` | presentation.*·옵션 키 이주 | 다름 — 기존 작성 키의 읽기 위치나 컴포넌트 선택 조건이 달라질 수 있습니다. |
+| antd-mobile | `src/formTypeInputs/FormTypeInputNumber.tsx:51` | `schemaType: ['number', 'integer'],` | union 항목 지원 | 다름 — 같은 union 스키마에서 선택되는 입력 컴포넌트와 값 해석이 바뀌므로 08에서 별도로 설계합니다(LANDING-206). |
+| antd-mobile | `src/formTypeInputs/FormTypeInputRadioGroup.tsx:89` | `test: ({ schemaType: type, formType, jsonSchema }) => {` | union 항목 지원 | 다름 — 같은 union 스키마에서 선택되는 입력 컴포넌트와 값 해석이 바뀌므로 08에서 별도로 설계합니다(LANDING-206). |
+| antd-mobile | `src/formTypeInputs/FormTypeInputSlider.tsx:57` | `test: ({ schemaType: type, jsonSchema, format }) => {` | union 항목 지원 | 다름 — 같은 union 스키마에서 선택되는 입력 컴포넌트와 값 해석이 바뀌므로 08에서 별도로 설계합니다(LANDING-206). |
+| mui | `src/formTypeInputs/FormTypeInputBooleanSwitch.tsx:16` | `formType: 'switch';` | presentation.*·옵션 키 이주 | 다름 — 기존 작성 키의 읽기 위치나 컴포넌트 선택 조건이 달라질 수 있습니다. |
+| mui | `src/formTypeInputs/FormTypeInputBooleanSwitch.tsx:76` | `test: ({ type, formType }) => type === 'boolean' && formType === 'switch',` | presentation.*·옵션 키 이주 | 다름 — 기존 작성 키의 읽기 위치나 컴포넌트 선택 조건이 달라질 수 있습니다. |
+| mui | `src/formTypeInputs/FormTypeInputNumber.tsx:75` | `onChange(null);` | 빈 수 입력·null/NaN 방출 이주 | 다름 — 동일한 빈 입력의 방출 값이 null/NaN에서 undefined 등으로 바뀝니다(LANDING-182–184). |
+| mui | `src/formTypeInputs/FormTypeInputRadioGroup.tsx:18` | `formType: 'radio';` | presentation.*·옵션 키 이주 | 다름 — 기존 작성 키의 읽기 위치나 컴포넌트 선택 조건이 달라질 수 있습니다. |
+| mui | `src/formTypeInputs/FormTypeInputRadioGroup.tsx:23` | `formType: 'radio';` | presentation.*·옵션 키 이주 | 다름 — 기존 작성 키의 읽기 위치나 컴포넌트 선택 조건이 달라질 수 있습니다. |
+| mui | `src/formTypeInputs/FormTypeInputRadioGroup.tsx:60` | `const radioLabels = jsonSchema.radioLabels;` | presentation.*·옵션 키 이주 | 다름 — 기존 작성 키의 읽기 위치나 컴포넌트 선택 조건이 달라질 수 있습니다. |
+| mui | `src/formTypeInputs/FormTypeInputRadioGroup.tsx:124` | `test: ({ schemaType: type, formType, jsonSchema }) =>` | presentation.*·옵션 키 이주 | 다름 — 기존 작성 키의 읽기 위치나 컴포넌트 선택 조건이 달라질 수 있습니다. |
+| mui | `src/formTypeInputs/FormTypeInputRadioGroup.tsx:126` | `(formType === 'radio' &#124;&#124; formType === 'radiogroup') &&` | presentation.*·옵션 키 이주 | 다름 — 기존 작성 키의 읽기 위치나 컴포넌트 선택 조건이 달라질 수 있습니다. |
+| mui | `src/formTypeInputs/FormTypeInputSlider.tsx:16` | `formType: 'slider';` | presentation.*·옵션 키 이주 | 다름 — 기존 작성 키의 읽기 위치나 컴포넌트 선택 조건이 달라질 수 있습니다. |
+| mui | `src/formTypeInputs/FormTypeInputSlider.tsx:57` | `const isLazy = jsonSchema.lazy ?? false;` | presentation.*·옵션 키 이주 | 다름 — 기존 작성 키의 읽기 위치나 컴포넌트 선택 조건이 달라질 수 있습니다. |
+| mui | `src/formTypeInputs/FormTypeInputSlider.tsx:113` | `test: ({ schemaType: type, formType }) =>` | presentation.*·옵션 키 이주 | 다름 — 기존 작성 키의 읽기 위치나 컴포넌트 선택 조건이 달라질 수 있습니다. |
+| mui | `src/formTypeInputs/FormTypeInputSlider.tsx:114` | `(type === 'number' &#124;&#124; type === 'integer') && formType === 'slider',` | presentation.*·옵션 키 이주 | 다름 — 기존 작성 키의 읽기 위치나 컴포넌트 선택 조건이 달라질 수 있습니다. |
+| mui | `src/formTypeInputs/FormTypeInputString.tsx:17` | `formType?: 'password';` | presentation.*·옵션 키 이주 | 다름 — 기존 작성 키의 읽기 위치나 컴포넌트 선택 조건이 달라질 수 있습니다. |
+| mui | `src/formTypeInputs/FormTypeInputString.tsx:74` | `jsonSchema.format === 'password' &#124;&#124; jsonSchema.formType === 'password'` | presentation.*·옵션 키 이주 | 다름 — 기존 작성 키의 읽기 위치나 컴포넌트 선택 조건이 달라질 수 있습니다. |
+| mui | `src/formTypeInputs/FormTypeInputStringCheckbox.tsx:23` | `formType: 'checkbox';` | presentation.*·옵션 키 이주 | 다름 — 기존 작성 키의 읽기 위치나 컴포넌트 선택 조건이 달라질 수 있습니다. |
+| mui | `src/formTypeInputs/FormTypeInputStringCheckbox.tsx:130` | `test: ({ type, formType, jsonSchema }) =>` | presentation.*·옵션 키 이주 | 다름 — 기존 작성 키의 읽기 위치나 컴포넌트 선택 조건이 달라질 수 있습니다. |
+| mui | `src/formTypeInputs/FormTypeInputStringCheckbox.tsx:132` | `formType === 'checkbox' &&` | presentation.*·옵션 키 이주 | 다름 — 기존 작성 키의 읽기 위치나 컴포넌트 선택 조건이 달라질 수 있습니다. |
+| mui | `src/formTypeInputs/FormTypeInputStringSwitch.tsx:16` | `formType: 'switch';` | presentation.*·옵션 키 이주 | 다름 — 기존 작성 키의 읽기 위치나 컴포넌트 선택 조건이 달라질 수 있습니다. |
+| mui | `src/formTypeInputs/FormTypeInputStringSwitch.tsx:105` | `test: ({ type, formType, jsonSchema }) =>` | presentation.*·옵션 키 이주 | 다름 — 기존 작성 키의 읽기 위치나 컴포넌트 선택 조건이 달라질 수 있습니다. |
+| mui | `src/formTypeInputs/FormTypeInputStringSwitch.tsx:106` | `type === 'string' && formType === 'switch' && jsonSchema.enum?.length === 2,` | presentation.*·옵션 키 이주 | 다름 — 기존 작성 키의 읽기 위치나 컴포넌트 선택 조건이 달라질 수 있습니다. |
+| mui | `src/formTypeInputs/FormTypeInputTextarea.tsx:17` | `formType?: 'textarea';` | presentation.*·옵션 키 이주 | 다름 — 기존 작성 키의 읽기 위치나 컴포넌트 선택 조건이 달라질 수 있습니다. |
+| mui | `src/formTypeInputs/FormTypeInputTextarea.tsx:117` | `test: ({ type, format, formType }) =>` | presentation.*·옵션 키 이주 | 다름 — 기존 작성 키의 읽기 위치나 컴포넌트 선택 조건이 달라질 수 있습니다. |
+| mui | `src/formTypeInputs/FormTypeInputTextarea.tsx:118` | `type === 'string' && (format === 'textarea' &#124;&#124; formType === 'textarea'),` | presentation.*·옵션 키 이주 | 다름 — 기존 작성 키의 읽기 위치나 컴포넌트 선택 조건이 달라질 수 있습니다. |
+| mui | `src/formTypeInputs/FormTypeInputUri.tsx:25` | `}> & { format?: 'uri'; formType?: 'uri' };` | presentation.*·옵션 키 이주 | 다름 — 기존 작성 키의 읽기 위치나 컴포넌트 선택 조건이 달라질 수 있습니다. |
+| mui | `src/formTypeInputs/FormTypeInputUri.tsx:128` | `protocolsProp &#124;&#124; jsonSchema.options?.protocols &#124;&#124; DEFAULT_PROTOCOLS;` | presentation.*·옵션 키 이주 | 다름 — 기존 작성 키의 읽기 위치나 컴포넌트 선택 조건이 달라질 수 있습니다. |
+| mui | `src/formTypeInputs/FormTypeInputUri.tsx:231` | `test: ({ type, format, formType }) =>` | presentation.*·옵션 키 이주 | 다름 — 기존 작성 키의 읽기 위치나 컴포넌트 선택 조건이 달라질 수 있습니다. |
+| mui | `src/formTypeInputs/FormTypeInputUri.tsx:232` | `type === 'string' && (format === 'uri' &#124;&#124; formType === 'uri'),` | presentation.*·옵션 키 이주 | 다름 — 기존 작성 키의 읽기 위치나 컴포넌트 선택 조건이 달라질 수 있습니다. |
+| mui | `src/formTypeInputs/FormTypeInputNumber.tsx:120` | `schemaType: ['number', 'integer'],` | union 항목 지원 | 다름 — 같은 union 스키마에서 선택되는 입력 컴포넌트와 값 해석이 바뀌므로 08에서 별도로 설계합니다(LANDING-206). |
+| mui | `src/formTypeInputs/FormTypeInputRadioGroup.tsx:124` | `test: ({ schemaType: type, formType, jsonSchema }) =>` | union 항목 지원 | 다름 — 같은 union 스키마에서 선택되는 입력 컴포넌트와 값 해석이 바뀌므로 08에서 별도로 설계합니다(LANDING-206). |
+| mui | `src/formTypeInputs/FormTypeInputSlider.tsx:113` | `test: ({ schemaType: type, formType }) =>` | union 항목 지원 | 다름 — 같은 union 스키마에서 선택되는 입력 컴포넌트와 값 해석이 바뀌므로 08에서 별도로 설계합니다(LANDING-206). |
+
+08 목록: 114행(antd5 33행, antd6 33행, antd-mobile 18행, mui 30행). 위 코드는 수정하지 않았습니다. union 항목 행의 schemaType 이름 대응만 위 변경 표에 포함되며 union 조건을 추가하는 일은 08입니다.
+
+### U12 명령 결과
+
+수정 전 전체 타입 검사: antd5·antd6는 `src` 각 9건 및 `stories` 각 8건, antd-mobile은 `src` 8건 및 `stories` 8건, mui는 `src` 10건 및 `stories` 8건으로 실패했습니다. 새 schema-form dist를 참조한 결과입니다.
+
+모든 npx 호출에는 `npm_config_offline=true`와 `--no-install`을 적용했습니다. 실행 디렉터리는 아래 패키지 자신의 디렉터리입니다. build 스크립트의 yarn 호출을 아래 도구 호출로 펼쳤으며 schema-form은 플러그인이 읽는 런타임 번들과 선언만 생성했습니다(`build:hashes`와 schema-form 전체 typecheck는 이 작업의 범위가 아닙니다). 생성한 dist는 소스 수정 목록에 포함하지 않습니다.
+
+| 대상 | 명령 | 결과 |
+| --- | --- | --- |
+| schema-form | `npx --no-install rolldown -c` | 통과(0), 새 ESM·CJS dist 생성 |
+| schema-form | `npx --no-install -c 'node ../../aileron/script/build/buildTypes.mjs'` | 통과(0), tsc → tsc-alias → fixDtsExtensions, 새 공개 선언 생성 |
+| antd5·antd6·antd-mobile·mui 각각 | `npx --no-install rolldown -c` | 네 번 모두 통과(0), 각 플러그인의 ESM·CJS 생성 |
+| antd5·antd6·antd-mobile·mui 각각 | `npx --no-install -c 'node ../../aileron/script/build/buildTypes.mjs'` | 네 번 모두 통과(0), 각 플러그인의 선언 생성 |
+| antd5·antd6·antd-mobile·mui 각각 | `npx --no-install tsc --noEmit --composite false --incremental false -p tsconfig.declarations.json` | 네 번 모두 통과(0), `src` 전용 검사 |
+| antd5·antd6·antd-mobile·mui 각각 | `npx --no-install tsc --noEmit --composite false --declaration false --emitDeclarationOnly false --rootDir . -p tsconfig.json` | 후속 최종 검사 네 번 모두 통과(0), `src`·`stories` 오류 0건. 초기 stories 각 8건과 readonly 대응 중간 각 2건의 실패를 제거함 |
+| 네 플러그인의 `src` | 요청의 grep 식을 `/bin/bash`에서 실행 | 통과(0), `node.group`·`FormTypeRenderer` 필드 0건 및 각 플러그인에 `node.strategy` 존재 |
+| 네 플러그인 | `rg --files <plugin> -g '*.test.*' -g '*.spec.*'` | 자체 시험 파일 각 0개, 조건부 `npx vitest run` 대상 없음 |
+| 네 플러그인의 `src` | `npx --no-install prettier --check '<src>/**/*.{ts,tsx}'` | 통과(0), 네 디렉터리 모두 검사 |
+| 수정 경로 | `git diff --check -- <네 src> <log.md>` (`GIT_OPTIONAL_LOCKS=0`) | 통과(0), 읽기 전용 검사 |
+| 배열 상한·길이 대응 | context-mode JS 탐침: 실제 수정 식과 레거시 resolveArrayLimits·게터 규칙 비교 | 96조합 통과(상한 없음·0·3, 닫힌 튜플·명시 상한·열린 튜플 × branch/terminal·null/값 길이 × 네 플러그인), DOM 시험을 대체하지 않음 |
+| 후속 변경 stories 16파일 | context-mode JS 탐침: HEAD와 수정본을 TypeScript transpileModule로 변환해 비교 | 통과, 승인된 렌더러 prop 이름 네 곳의 대응 외에 생성 JavaScript 동일. 스키마·옵션·콜백·오류 표시의 런타임 코드는 유지함 |
+
+초기 전체 검사의 stories 오류는 후속 요청에서 허용한 범위에서 모두 제거했습니다. 새 렌더러 prop 이름 네 곳, `ValidationIssue` 가져오기와 상태 배열, 읽기만 하는 `StoryLayout.errors`의 readonly 형식만 대응했습니다. validator 객체와 handle 호출에는 컴파일 오류가 없어 변경하지 않았습니다. presentation·옵션 키를 바꿔야 컴파일되는 스토리는 없었습니다.
+
+후속 최종 빌드는 네 패키지 각각 자신의 디렉터리에서 `npx --no-install rolldown -c` → `npx --no-install -c 'node ../../aileron/script/build/buildTypes.mjs'` → 위 `tsconfig.json` 전체 타입 검사 순서로 실행했고, 총 12명령이 모두 종료 코드 0입니다. package.json build의 번들·선언·전체 typecheck 단계를 모두 펼쳐 실행했으므로 U12/G24의 네 플러그인 전체 빌드 게이트는 초록입니다. 초기 src 이름 검색의 통과는 src 수정이 없어 계속 유효합니다. 자체 시험 파일도 추가하지 않았으며 이전의 각 0개 기록을 유지합니다.
+
+소스 전용 검사 진단 중 `--declaration false`를 선언 설정에 함께 넣은 호출은 TS5069(declarationDir와 모순)로 실패했습니다. 이 옵션을 제거한 위의 `tsconfig.declarations.json` 명령으로 네 패키지를 검사하여 통과했습니다.
 
 ### U8 후속 표면 복구
 

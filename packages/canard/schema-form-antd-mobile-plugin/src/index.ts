@@ -7,9 +7,9 @@ import { FormLabel } from './components/FormLabel';
 import { formTypeInputDefinitions } from './formTypeInputs';
 
 export const plugin = {
-  FormGroup,
-  FormLabel,
-  FormInput,
-  FormError,
+  FormTypeGroupRenderer: FormGroup,
+  FormTypeLabelRenderer: FormLabel,
+  FormTypeInputRenderer: FormInput,
+  FormTypeErrorRenderer: FormError,
   formTypeInputDefinitions,
 } satisfies SchemaFormPlugin;

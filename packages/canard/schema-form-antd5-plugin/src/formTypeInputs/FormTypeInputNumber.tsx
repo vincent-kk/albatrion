@@ -59,6 +59,6 @@ const FormTypeInputNumber = ({
 export const FormTypeInputNumberDefinition = {
   Component: FormTypeInputNumber,
   test: {
-    type: ['number', 'integer'],
+    schemaType: ['number', 'integer'],
   },
 } satisfies FormTypeInputDefinition;
