@@ -12,17 +12,19 @@ import type { SchemaNodeEventType } from '../SchemaNodeEventType';
 export const markSchemaNodeEvent = <Self extends SchemaNodeRecord<Self>>(
   node: Self, bit: SchemaNodeEventType, payload?: unknown, options?: unknown,
 ): void => {
-  const deliveries = node.runtime.deliveries ?? new Map();
+  const deliveries = node.runtime.deliveries ??= new Map();
   const previous = deliveries.get(node);
-  deliveries.set(node, {
-    type: (previous?.type ?? 0) | bit,
-    payload: payload === undefined ? previous?.payload :
-      { ...previous?.payload, [bit]: payload },
-    options: options === undefined ? previous?.options :
-      { ...previous?.options, [bit]: options },
+  if (previous) {
+    previous.type |= bit;
+    if (payload !== undefined) (previous.payload ??= {})[bit] = payload;
+    if (options !== undefined) (previous.options ??= {})[bit] = options;
+  } else deliveries.set(node, {
+    type: bit,
+    payload: payload === undefined ? undefined : { [bit]: payload },
+    options: options === undefined ? undefined : { [bit]: options },
   });
-  node.runtime.deliveries = deliveries;
-  const queued = node.runtime.queuedEvents ?? new Map();
-  queued.set(node, { type: (queued.get(node)?.type ?? 0) | bit });
-  node.runtime.queuedEvents = queued;
+  const queued = node.runtime.queuedEvents ??= new Map();
+  const pending = queued.get(node);
+  if (pending) pending.type |= bit;
+  else queued.set(node, { type: bit });
 };
