@@ -2,7 +2,7 @@
 
 Planning method: 저장소 지침 — `PLAN.md` §2(한 PR의 순서)와 `plan/prompts.md`의 단계 실행 절차, 소유자의 07 착수 승인(2026-10-02). 단위마다 채우는 단계·명령·기대 결과는 seiri `write-plan`의 불변식에서 가져온다. 구조 결정은 [execution-adr.md](execution-adr.md), 게이트 원장은 `.seiri/tasks/schema-form-switch/gates.md`, 진행과 어긋남은 [log.md](log.md)에 적는다.
 
-정본의 순서: 원장 `ledger/<area>.md`(`상태: 현행` 항목의 결정·보충·충돌 줄) > 계획서 `request.md`·`adr-and-axes.md`·`verification.md` > 이 계획. 이 계획이 원장과 다르게 읽히면 원장대로 간다. 최초 기준선(원문 경로와 해시)은 `log.md` §1에 있다. 원장 관리 세션 `노르덴컨트롤`이 착수 확인과 물음 Q1–Q10에 답했고 68라운드(68C-01–10, `reviews/round-68-closing.md`)로 적었다. 물음 Q11–Q15(69라운드 대상)는 권장안으로 적어 두고 답이 오면 §2.3을 고친 뒤 해당 단위를 시작한다.
+정본의 순서: 원장 `ledger/<area>.md`(`상태: 현행` 항목의 결정·보충·충돌 줄) > 계획서 `request.md`·`adr-and-axes.md`·`verification.md` > 이 계획. 이 계획이 원장과 다르게 읽히면 원장대로 간다. 최초 기준선(원문 경로와 해시)은 `log.md` §1에 있다. 원장 관리 세션 `노르덴컨트롤`이 착수 확인과 물음 Q1–Q10에 답했고 68라운드(68C-01–10, `reviews/round-68-closing.md`)로 적었다. 물음 Q11–Q15는 69라운드(69C-01–05, `reviews/round-69-closing.md`)가 권장안대로 닫았다. `nodeFromJSONSchema`의 새 서명(ADR D3)은 공개 겉면 변경이라 70라운드 물음으로 보내 SURFACE 보충으로 적는다.
 
 경로 약어: `PKG` = `packages/canard/schema-form`, `CORE` = `PKG/src/core`, `ARCH` = `PKG/architecture`, `SCN` = `packages/aileron/schema-form-scenarios`, `BF` = `packages/aileron/benchmark-form`, `RU` = `packages/winglet/react-utils`, `V7` = `ARCH/verification/07-switch`. 단계 번호와 원장 PR 번호의 대응은 07 = PR-7이다(LANDING-204).
 
@@ -34,12 +34,12 @@ Planning method: 저장소 지침 — `PLAN.md` §2(한 PR의 순서)와 `plan/p
 | # | 물음 | 채택한 해석 | 근거 | 상태 |
 | --- | --- | --- | --- | --- |
 | I1 | 진행 순서 | 원장은 PR-7의 내부 순서를 정하지 않았다. 바깥 동작을 바꾸지 않는 준비(U1–U4)를 먼저 초록으로 끝내고, 렌더 계층을 제자리에서 바꾸는 전환 묶음(U5–U8)은 한 덩어리로 둔다. 묶음 안의 중간 커밋은 `render` 프로젝트가 붉을 수 있고, 묶음 끝(U8 완료)에서 `tsc`·lint·unit·render가 모두 초록이어야 한다. 원장 관리자의 권장 순서 (1)–(6)과 내용은 같고 (1)–(3)을 한 묶음으로 합친 점만 다르다 | LANDING-067·072, 원장 관리자 착수 답 4, ADR D1 | 자율 결정 |
-| I2 | 바인딩 전용 통로 | core가 마운트·폼 reset·인계·입력 출처 쓰기·입력 마침을 공개 `SchemaNode` 형을 받는 함수로 만들고 `SchemaNode/index.ts`가 이름으로 내보낸다. `core/index.ts`가 이름으로 다시 내보내고 `src/index.ts`는 내보내지 않는다 | REACT-009 보충, `request.md:37`, `design/02-node-and-value.md:98,106,108`, Q11 | 권장(Q11 답 대기) |
-| I3 | 입력 출처 표식 | 공개 `SetValueOption` 네 비트는 그대로 두고, 입력 출처 쓰기 함수가 사슬 진입에 출처를 싣는다. `UpdateValue`의 `options.source`가 `'input'`이 되고, 정착의 Refresh 대상에서 쓴 입력 자신을 빼는 판정과 늦은 쓰기 차단이 이 출처를 읽는다 | REACT-009·010, EVENT-071, WRITE-083 | 권장(Q11) |
-| I4 | 옛 트리 폐기와 번호 | 재생성 reset은 새 루트를 인계받은 뒤 옛 트리에 폐기 표시를 하고 리스너를 떼며, 통지 없이 Refresh 번호와 상호작용 초기화 번호를 올린다. 폐기된 노드에 온 표식 없는 쓰기는 `DISPOSED_NODE_WRITE`로 던진다. 상호작용 초기화 번호는 레코드 칸과 읽기 하나(`revision`의 비트가 아닌 바인딩 전용 읽기)로 둔다 | WRITE-046·086, REACT-024, Q12 | 권장(Q12) |
-| I5 | reset의 외부 오류 | 폼 reset은 외부 오류를 비운다. 재생성 뒤에는 바인딩이 `errors` 속성을 새 트리에 다시 적용한다 | WRITE-045, Q13 | 권장(Q13) |
-| I6 | 런타임 병합의 원자 판정 | 청사진이 받은 `isAtomic`을 런타임 레코드까지 이어 실행 중 유효 스키마 병합(`selectNodeSchema`·`selectChildren`·`primeHost`)이 같은 판정을 쓴다. 03·04 결함의 고침으로 별도 커밋 | REACT-003·004, Q14 | 권장(Q14) |
-| I7 | 마운트 검증 요청 | 마운트 진입에 "검증 요청을 미룸" 선택을 둔다. 바인딩은 미룸으로 마운트하고 준비 이펙트에서 루트 검증을 요청한다. core만 쓰는 호스트의 기본은 오늘대로 | LANDING-067("마운트 로드의 검증 요청을 준비 시점에"), Q15 | 권장(Q15) |
+| I2 | 바인딩 전용 통로 | core가 마운트·폼 reset·인계·입력 출처 쓰기·입력 마침을 공개 `SchemaNode` 형을 받는 함수로 만들고 `SchemaNode/index.ts`가 이름으로 내보낸다. `core/index.ts`가 이름으로 다시 내보내고(와일드카드 없음) `src/index.ts`는 내보내지 않는다. 통로의 몸은 `dispatch/`의 진입 함수, 겉은 `SchemaNode/index.ts`의 이름 있는 내보내기. 함수마다 문서 주석에 "바인딩 전용, `src/index.ts`가 내보내지 않음", `SchemaNode/DETAIL.md`에 통로 목록 | REACT-009·010 보충, `request.md:37`, `design/02-node-and-value.md:98,106,108`, 69C-01 | 닫힘 |
+| I3 | 입력 출처 표식 | 공개 `SetValueOption` 네 비트는 그대로 두고, 입력 출처 쓰기 함수가 사슬 진입에 출처를 싣는다. `UpdateValue`의 `options.source`가 `'input'`이 되고, 정착의 Refresh 대상에서 쓴 입력 자신을 빼는 판정과 늦은 쓰기 차단이 이 출처를 읽는다. 표식은 `handleChange` 진입 전체(값 쓰기·외부 오류 지움·dirty를 `batch` 하나로)에 붙는다 | REACT-009·010, EVENT-071, WRITE-083, 69C-01 | 닫힘 |
+| I4 | 옛 트리 폐기와 번호 | 재생성 reset은 새 루트를 인계받은 뒤 옛 트리에 폐기 표시를 하고 리스너를 떼며, 통지 없이 Refresh 번호와 상호작용 초기화 번호를 올린다. 폐기된 노드에 온 표식 없는 쓰기는 `DISPOSED_NODE_WRITE`로 던진다. 상호작용 초기화 번호는 레코드 칸과 읽기 하나(`revision`의 비트가 아닌 바인딩 전용 읽기)로 둔다. 조건: 폐기는 참조를 끊지 않음(WRITE-086), 옛 노드 읽기는 마지막 커밋, 검증기 등록 참조 수는 이펙트 정리에서 내림, 번호 올리기는 통지 없이 동기, 표식 있는 늦은 쓰기는 조용히 버리고 표식 없는 쓰기만 던짐. 차등 시험으로 03–06 시나리오 불변. 앞 단계의 결함이 아니라 PR-7의 일 | WRITE-046·086, REACT-024, LANDING-095, 69C-02 | 닫힘 |
+| I5 | reset의 외부 오류 | 외부 오류를 비우는 일은 core의 폼 reset 진입이 한다. `errors` 속성 재적용은 바인딩이 같은 진입 안(돌아오기 전, 재생성이면 새 트리)에서 경로 키로 한다. 인계도 옛 노드 객체 키가 아니라 경로 키로 넘긴다. PR-7의 일이며 코드와 원장의 어긋남(M6)으로 적는다 | WRITE-045, 69C-03 | 닫힘 |
+| I6 | 런타임 병합의 원자 판정 | 청사진 결과가 작성 때 받은 `isAtomic`·`isTerminal`의 identity를 들고, 실행 중 병합 셋(`selectNodeSchema`·`selectChildren`·`primeHost`)이 그것을 넘긴다(캐시 키가 판정 identity를 포함하는 오늘 규칙 그대로). 03·04 결함의 고침으로 별도 커밋. 게이트로 켜진 선언이 React 요소·ref 모양을 `options`·`presentation`에 싣는 시험과, core만 쓰는 호스트의 동작 불변을 같은 시험으로 | REACT-003·004, 49C-01, 69C-04 | 닫힘 |
+| I7 | 마운트 검증 요청 | 마운트 진입에 "검증 요청을 미룸" 선택을 둔다. 바인딩 전용 마운트 함수가 켜고 준비 이펙트에서 요청한다(로드 뒤 `OnChange` 비트면 한 번). 선택을 켜지 않은 호출은 동작 불변(LANDING-041의 core 호스트 모양) | LANDING-041·067, 69C-05 | 닫힘 |
 | I8 | `nodeFromJSONSchema` | core만 쓰는 호스트의 진입이다. 새 서명은 ADR D3. `<Form>`의 트리 생성도 같은 함수를 지나 두 경로가 같은 계약을 갖는다 | VALIDATE-010, CONTROLS-075, LANDING-067 | 자율 결정(원장 미정) |
 | I9 | 같은 스키마 판정 | 렌더 계층 `helpers/`의 비교 함수(키 순서까지 깊은 같음, JSON 밖 값은 참조 같음). `@winglet`의 `equals`는 키 순서를 보지 않으므로 쓰지 않는다 | WRITE-043 | 자율 결정 |
 | I10 | 마운트 중 통지 | 렌더 중 `useMemo`에서 트리를 만들고 마운트한다. 시드에 버퍼형 보고기를 넣어 마운트 정착의 기록을 모으고, 준비 이펙트가 비워 `onError`로 보낸다. `onChange`·`onDiagnosticsChange`는 준비 깃발 전에는 버린다. StrictMode의 버려진 렌더 기록은 커밋된 로드 객체에 붙지 않으므로 가지 않는다 | REACT-007, ERROR-026, LANDING-075 첫째·넷째 | 닫힘 |
@@ -65,9 +65,9 @@ Planning method: 저장소 지침 — `PLAN.md` §2(한 PR의 순서)와 `plan/p
 | M3 | `request.md:41`, LANDING-159 규칙 4 | 레거시 통째 삭제 | LANDING-205(충돌 줄로 이김) | 보존, import 0 |
 | M4 | `request.md:24` | "changeset(`minor`)" 대 루트 `CLAUDE.md` | 68C-06 | changeset 파일, 판 올림 없음 |
 | M5 | `CORE/SchemaNode/DETAIL.md:11` | `schemaNodeFactory` 서명에 `validator` 빠짐 | — | U2에서 문서를 고침 |
-| M6 | core 폼 reset | 외부 오류를 비우지 않음 | WRITE-045 | I5(Q13) |
-| M7 | core 런타임 병합 | `isAtomic` 미전달 | REACT-003 | I6(Q14) |
-| M8 | `dispatchMount` | 사슬 끝에서 검증 요청 | LANDING-067 | I7(Q15) |
+| M6 | core 폼 reset | 외부 오류를 비우지 않고 인계가 옛 노드 키 맵을 넘김 | WRITE-045, 69C-03 | I5, PR-7의 일 |
+| M7 | core 런타임 병합 | `isAtomic` 미전달(`{ mode: 'runtime' }`만 넘김) | REACT-003, 69C-04 | I6, 03·04 결함 |
+| M8 | `dispatchMount` | 바인딩이 검증 요청을 미룰 길이 없음(사슬 끝 요청은 core 호스트 모양이라 결함 아님) | LANDING-041·067, 69C-05 | I7 |
 | M9 | `ledger/test.md:421`의 "447건", TEST-025의 "33,533줄" | 오늘 셈 444건·33,545줄 | 68C-01 | 처분표에 센 기준과 함께 |
 
 ### 2.3 원장 질의와 답
@@ -76,7 +76,8 @@ Planning method: 저장소 지침 — `PLAN.md` §2(한 PR의 순서)와 `plan/p
 | --- | --- | --- |
 | 착수 1–6 | 07 선출 확인, 미결 소유자 결정 없음, 계획서 뒤의 현행 결정(26C-02, 28C-07, 32C-01, 34C-02·50C-01, 35C-04·12, 27라운드 소유자 답), P-24·P-25 규칙, D-1의 적용, 레거시·플러그인 경계, 권장 순서, 문서 소유 경계 | 비목표, I1, I11–I13, I20 |
 | Q1–Q10 | 68C-01–10 | I14–I19, I21, M1–M4 |
-| Q11–Q15 | 답 대기(69라운드) | I2–I7 |
+| Q11–Q15 | 69C-01–05(권장안대로, 조건 더함) | I2–I7, M6–M8 |
+| Q16(보낼 것) | `nodeFromJSONSchema` 새 서명(ADR D3)을 SURFACE 보충으로 | I8 |
 
 ## 3. 구조
 
@@ -117,7 +118,7 @@ core는 `app/plugin`·렌더 계층·React를 가져오지 않는다(CONTROLS-07
 | 실패 원인 | Claude `debugger`(opus·high) |
 | 최종 게이트 판정 | 새 컨텍스트의 Claude `verifier`(opus·xhigh) |
 
-U0–U4는 바깥 동작을 바꾸지 않으며 각자 초록으로 끝난다. U3·U4는 U2 뒤 병렬로 갈 수 있다. U5–U8은 전환 묶음이다(I1). U9–U13은 U8 뒤에 가며 U11·U12·U13은 서로 병렬이다. 파일마다 작성자는 하나다.
+U0–U4는 바깥 동작을 바꾸지 않으며 각자 초록으로 끝난다. U3·U4는 U2 뒤 병렬로 갈 수 있다. U5–U8은 전환 묶음이다(I1). U9–U13은 U8 뒤에 간다. U10과 U11은 U9가 만드는 e2e·시나리오 스토리·EVENT-070 사례에 기대므로 U9 뒤에 가고, U12·U13은 U8 뒤 독립으로 병렬이다. 파일마다 작성자는 하나다.
 
 ### U0 착수 — 이 계획, ADR, 게이트 원장, 기록
 
@@ -140,26 +141,27 @@ U0–U4는 바깥 동작을 바꾸지 않으며 각자 초록으로 끝난다. U
 ### U2 문서 선행
 
 - §3.3의 문서를 고친다. 코드는 넣지 않는다. 한 커밋(`docs(schema-form): ...`)으로 코드보다 먼저 들어간다. `CORE/INTENT.md`의 공개 경계 문장만 U5의 수출 전환 커밋에 둔다. RU의 문서도 이 커밋 또는 U3 코드보다 앞선 별개 커밋으로(ERROR-119).
-- 완료: G6(RU 문서가 RU 코드보다 앞섬), G8(렌더 fractal·core 문서가 코드보다 앞섬).
+- 완료: 문서 선행은 코드가 들어온 뒤에야 판정할 수 있으므로, RU 쪽은 U3 끝에 G6, 렌더 계층 쪽은 U6 끝에 G8로 판정한다(둘 다 "문서 커밋이 그 코드의 첫 커밋보다 앞섬").
 
 ### U3 `@winglet/react-utils` 선택 인자
 
 - 원장: ERROR-117·119, TEST-055, 68C-08, ERROR-110–116.
 - 붉은 시험 먼저(`RU/src/hoc/withErrorBoundary/__tests__/`, `components/__tests__/`): 속성 `onError`가 렌더 오류에서 `(error, { componentStack })`로 한 번 불림, 없을 때 오늘과 같은 fallback, `useReporter`가 렌더 때 문맥을 읽어 그 보고기를 부름, 인자가 없을 때 훅 호출 수가 같음(기본 훅), forwardRef 판도 같음.
 - `ErrorBoundary`에 `onError?`(`componentDidCatch`에서 부름), `withErrorBoundary`·`withErrorBoundaryForwardRef`에 셋째 인자 `useReporter?`. `.changeset/<이름>.md`에 `'@winglet/react-utils': minor`와 사유.
-- 완료: RU 시험·형·lint 초록, changeset 파일(G7).
+- 완료: RU 문서 선행(G6), RU 시험·형 초록과 changeset 파일(G7).
 
 ### U4 core 통로
 
-- 원장: REACT-003·004·007·009·010·024, WRITE-043·045·046·086, EVENT-071, LANDING-067, VALIDATE-010·044, Q11–Q15의 답.
-- 착수 조건: Q11–Q15의 답을 §2.3에 반영. 답이 권장안과 다르면 이 단위의 해당 항목을 답대로 고치고 재리뷰(scoped)한다.
+- 원장: REACT-003·004·007·009·010·024, WRITE-043·045·046·086, EVENT-071, LANDING-041·067·095, VALIDATE-010·044, 69C-01–05.
+- 문서 먼저: 이 단위가 고치는 core fractal(`SchemaNode`·`dispatch`·`settle`·`record`·`blueprint`)의 DETAIL은 U2의 문서 커밋에 든다(69C-02 "DETAIL 먼저").
 - 붉은 시험 먼저(`CORE/dispatch/__tests__/`, `settle/__tests__/`, `SchemaNode/__tests__/`, 시험 이름에 ID 태그):
   - 입력 출처 쓰기: `UpdateValue`의 `options.source`가 `'input'`, 쓴 노드 자신은 Refresh 대상이 아님, 원본이 실제로 바뀐 다른 노드만 Refresh(EVENT-071, 18C-94).
   - 입력 마침: 문자열 행 `options.trim`에서 잘린 값만 자동 쓰기로 씀, 바깥 오류·dirty 그대로, 그 노드의 입력이 Refresh(WRITE-083, TEST-020 충돌 줄 1), 억제 폼에서는 자르지 않음.
   - 마운트 검증 미룸: 미룸 선택이면 사슬 끝에서 검증을 요청하지 않음, 기본은 오늘대로.
-  - 폼 reset: 외부 오류를 비움(WRITE-045).
-  - 재생성 인계와 폐기: 인계 뒤 옛 트리의 리스너가 불리지 않음, 옛 노드의 Refresh 번호·상호작용 초기화 번호가 통지 없이 오름, 표식 없는 쓰기가 `DISPOSED_NODE_WRITE`(WRITE-046·086).
-  - 런타임 원자 판정: 게이트로 켜진 두 조각이 같은 `presentation` 키에 원자 값(`$$typeof` 표식 객체)을 넣으면 나중 것이 이김(REACT-003, M7).
+  - 폼 reset: 외부 오류를 비움(WRITE-045). 인계가 외부 오류를 경로 키로 넘김(69C-03).
+  - 재생성 인계와 폐기: 인계 뒤 옛 트리의 리스너가 불리지 않음, 옛 노드의 Refresh 번호·상호작용 초기화 번호가 통지 없이 동기로 오름, 옛 노드 읽기는 마지막 커밋이고 참조는 끊기지 않음, 표식 있는 늦은 쓰기는 조용히 버려지고 표식 없는 쓰기만 `DISPOSED_NODE_WRITE`(WRITE-046·086, 69C-02). 03–06 시나리오가 폐기 도입 전후로 같은 결과(차등 시험).
+  - 런타임 원자 판정: 게이트로 켜진 선언이 React 요소(`$$typeof` 표식 객체)·ref 모양(`{ current }`)을 `options`·`presentation`에 실어도 실행 중 병합이 원자로 다뤄 나중 것이 이김, 판정을 주지 않은 core 호스트는 동작 불변(REACT-003, M7, 69C-04).
+  - 상호작용 초기화 번호 읽기: 폼 reset·재생성마다 오르고 다른 쓰기에서는 오르지 않음(REACT-024).
 - 바인딩 전용 함수 다섯과 `SchemaNode/index.ts`의 이름 수출. `core/index.ts`는 아직 레거시를 가리킨다(전환은 U5).
 - 완료: 통로 시험 초록(G9), 02–06의 core 시험 전체 초록(G10), 의존 방향 시험에 `binding` organ(G11).
 
@@ -183,7 +185,7 @@ U0–U4는 바깥 동작을 바꾸지 않으며 각자 초록으로 끝난다. U
 - 제출: `degraded` 동안의 거부(`SUBMIT_WHILE_DEGRADED`, 네이티브 submit은 `onError`와 싱크로), 검증 불가의 거부(R17-1 나). "드러남과 제출 거부는 모든 환경에서 같다"(LANDING-095).
 - 바운더리: 루트(`withErrorBoundaryForwardRef` + 속성 `onError`)와 필드(소유 지점 1회 감쌈 + `useReporter`), 가두고 보고하기·다시 던지지 않기, `componentStack`. 청사진 오류의 생성 자리 포착과 대체 화면, 마운트 정착 오류의 원인별 처리(§11.3).
 - 붉은 시험 먼저(`src/components/Form/__tests__/`, `providers/RootNodeContext/__tests__/`, e2e 자리는 U9): 마운트 중 `onChange` 없음, `onError` 커밋 뒤 한 번(StrictMode 포함), 준비 시점 검증, `degraded` 제출 거부, reset 두 경로, 핸들 18 멤버, 바운더리 보고.
-- 완료: 묶음 끝 게이트(G14·G15).
+- 완료: 렌더 계층 문서 선행(G8, 이 단위의 첫 렌더 코드 커밋 뒤 판정), 묶음 끝 게이트(G14·G15).
 
 ### U7 전환 ③ — 프록시, 입력, 훅, 가상화, 기본 입력
 
@@ -230,7 +232,8 @@ U0–U4는 바깥 동작을 바꾸지 않으며 각자 초록으로 끝난다. U
 
 - 원장: REACT-017·027·028, EVENT-065·070, ERROR-115·116, TEST-024, 18C-40·62·63·73·85, 68C-10.
 - `react18`·`react-dom18` 별칭 개발 의존, `vite.config.ts`의 `react18` 프로젝트, 지속 통합 작업 흐름에 두 프로젝트. EVENT-070 사례(실패하면 원장 관리자에게), StrictMode·`renderToString` 사례.
-- storybook 브라우저(Chromium): IME 조합(CDP `Input.imeSetComposition`·`insertText`, ㄱ→가→각, 평범한 입력·캐럿 포매터·조합 중 Refresh), 수 입력 `badInput`과 흐림 뒤 표시, 입력 판정(reset 시험·StrictMode·가상화), 빈 `ChildNodeComponents` 감지 비용. 사람이 확인하는 목록(macOS Safari·Chrome 한국어 IME)은 `V7/browser-gates.md`에 적고 소유자 확인 칸을 둔다.
+- storybook 브라우저(Chromium): IME 조합(CDP `Input.imeSetComposition`·`insertText`, ㄱ→가→각, 평범한 입력·캐럿 포매터·조합 중 Refresh), 수 입력 `badInput`과 흐림 뒤 표시, 입력 판정(reset 시험·StrictMode·가상화), 빈 `ChildNodeComponents` 감지 비용. `V7/browser-gates.md`는 이 네 게이트(EVENT-065, REACT-027, REACT-028, 18C-73)마다 행 하나에 시험 이름·실행 환경·결과를 적고, 그 아래 사람이 확인하는 목록(macOS Safari·Chrome 한국어 IME)과 소유자 확인 칸을 둔다.
+- 실행 환경: storybook 프로젝트는 Playwright Chromium 바이너리가 있어야 돈다(`npx playwright install chromium`, 이미 설치되었는지 먼저 확인). react18 프로젝트는 `resolve.alias`와 함께 `resolve.dedupe`로 `react`·`react-dom`을 한 벌로 묶어 `@testing-library/react`가 같은 판을 읽게 한다.
 - 완료: G22·G23.
 
 ### U12 UI 플러그인 넷
@@ -295,7 +298,9 @@ U0–U4는 바깥 동작을 바꾸지 않으며 각자 초록으로 끝난다. U
 | React 18에서 19 전용 API를 쓰는 시험 | 제외 목록에 이름과 까닭(68C-10) |
 | 플러그인 최소 고침이 동작을 바꿈 | 68C-07의 판정 기준, 바뀌는 줄은 08로 |
 | 벤치가 느림 | TEST-027 절차, 최적화는 비목표 |
-| Q11–Q15 답이 권장과 다름 | U4 착수 조건, scoped 재리뷰 |
+| Playwright Chromium이 없어 storybook 게이트가 환경 때문에 실패 | U11에서 설치 여부를 먼저 확인하고 설치 명령을 `V7/browser-gates.md`에 적음 |
+| react18 프로젝트에서 React가 두 벌 실려 "Invalid hook call" | `resolve.dedupe`와 별칭을 함께, 첫 실행에서 `React.version`을 단언하는 시험 하나 |
+| 시험 이름 필터가 0건과 맞아 게이트가 비어서 통과 | 게이트마다 태그가 시험 파일에 실제로 있는지 먼저 grep으로 단언(05의 G11·G14·G16 모양) |
 
 ## 8. 검증 명령(저장소 루트)
 
@@ -315,3 +320,4 @@ U0–U4는 바깥 동작을 바꾸지 않으며 각자 초록으로 끝난다. U
 
 | 차례 | 리뷰어 | 판정 | 반영 |
 | --- | --- | --- | --- |
+| 1 | antigravity(세션 `a934a8d0`, `a44003ddd` 기준, 두 차례 응답) | `rework-required`: F1(차단) `vitest -t` 필터가 0건과 맞으면 종료 코드 0이라 G9·G14·G15·G16·G21·G22가 비어서 통과; F2(차단) G6·G8은 코드가 들어오기 전인 U2 끝에 판정 불가; F3(차단) G24가 플러그인만 보고 본체 `ChildNodeComponentProps`·`FormGroupProps`의 `FormTypeRenderer` 칸을 보지 않음; F4 G19가 넓은 옛 글롭의 제거를 보지 않음; F5 `browser-gates.md`의 네 행이 본문에 없음, `TBD`만으로는 빈 칸을 못 잡음; F6 U10·U11이 U9에 기댐; F7 LANDING-150 검사 없음; F8 G26에 CHECK 없음; F9 경계 린트 넓힘의 검사 없음; F10 Playwright 바이너리와 React 두 벌 위험. 원장·68C와의 충돌 없음, 범위 누락·초과 없음, 현행 주장 표본 12건 확인 | F1 태그 존재를 grep으로 먼저 단언(05 모양); F2 G6은 U3 끝, G8은 U6 끝에 판정; F3 G12가 본체 소스의 칸 선언 0을 단언; F4 G19에 넓은 글롭 부재; F5 U11 본문과 G17·G18의 빈 표 칸 단언; F6 §4 의존 문장; F7 G16에 문서 주석 단언; F8 G26 CHECK; F9 G13에 `src/core/**` 단언; F10 U11 실행 환경과 §7 위험 두 줄. 함께 69라운드(69C-01–05)를 I2–I7·M6–M8·U4·ADR D2·D5에 반영 |
