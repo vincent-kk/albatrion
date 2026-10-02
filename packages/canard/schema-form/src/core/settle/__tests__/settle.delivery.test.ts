@@ -1,10 +1,10 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 import { EMPTY_REVISION_LEDGER, markSchemaNodeEvent,
   SchemaNodeEventType, SchemaNodeRequestType } from '../../record';
 import { SchemaNodeState } from '../../types/state';
 import { SetValueOption } from '../../types/value';
-import { loadSchemaNodeAtMount, writeSchemaNode } from '../index';
+import { loadSchemaNodeAtMount, resetSchemaNodeSubtree, writeSchemaNode } from '../index';
 import { createTestTree } from './fixtures/createTestTree';
 
 // filid:contract settle-delivery
@@ -108,6 +108,64 @@ describe('settlement delivery ledger', () => {
       .toBe(SchemaNodeEventType.RequestRefresh);
     expect((b.pendingDelivery?.type ?? 0) & SchemaNodeEventType.RequestRefresh).toBe(0);
     expect((root.pendingDelivery?.type ?? 0) & SchemaNodeEventType.RequestRefresh).toBe(0);
+  });
+
+  it('EVENT-071 and SETTLE-049 refresh an injection target outside the loaded subtree', () => {
+    const { root } = createTestTree({ type: 'object', properties: {
+      left: { type: 'object', properties: {
+        source: { type: 'string', controls: {
+          injectTo: (value: unknown) => ({ '../../leftTarget': `left:${value}` }),
+        } },
+      } },
+      rightSource: { type: 'string', controls: {
+        injectTo: (value: unknown) => ({ '../rightTarget': `right:${value}` }),
+      } },
+      leftTarget: { type: 'string' }, rightTarget: { type: 'string' },
+    } });
+    loadSchemaNodeAtMount(root, { left: { source: 'A' }, rightSource: 'B' },
+      SetValueOption.Overwrite);
+    const left = root.structure!.left;
+    const source = left.structure!.source;
+    const leftTarget = root.structure!.leftTarget;
+    const rightTarget = root.structure!.rightTarget;
+    writeSchemaNode(leftTarget, 'manual-left', 'input', SetValueOption.Overwrite);
+    writeSchemaNode(rightTarget, 'manual-right', 'input', SetValueOption.Overwrite);
+    for (const node of root.runtime.deliveries ?? []) node.pendingDelivery = undefined;
+    root.runtime.deliveries?.clear();
+    const targetRevision = leftTarget.revisionLedger[SchemaNodeEventType.RequestRefresh] ?? 0;
+    const sourceRevision = source.revisionLedger[SchemaNodeEventType.RequestRefresh] ?? 0;
+
+    resetSchemaNodeSubtree(left, SetValueOption.Overwrite);
+
+    expect(leftTarget.raw).toBe('left:A');
+    expect((leftTarget.pendingDelivery?.type ?? 0) & SchemaNodeEventType.RequestRefresh)
+      .toBe(SchemaNodeEventType.RequestRefresh);
+    expect(leftTarget.revisionLedger[SchemaNodeEventType.RequestRefresh]).toBe(targetRevision + 1);
+    expect(source.raw).toBe('A');
+    expect(source.revisionLedger[SchemaNodeEventType.RequestRefresh]).toBe(sourceRevision + 1);
+    expect(rightTarget.raw).toBe('manual-right');
+    expect((rightTarget.pendingDelivery?.type ?? 0) & SchemaNodeEventType.RequestRefresh).toBe(0);
+  });
+
+  it('EVENT-071 and SETTLE-049 omit Refresh when an outside injection leaves raw unchanged', () => {
+    const injectTo = vi.fn(() => ({ '../../target': 'injected' }));
+    const { root } = createTestTree({ type: 'object', properties: {
+      group: { type: 'object', properties: {
+        source: { type: 'string', controls: { injectTo } },
+      } }, target: { type: 'string' },
+    } });
+    loadSchemaNodeAtMount(root, { group: { source: 'A' } }, SetValueOption.Overwrite);
+    const target = root.structure!.target;
+    const revision = target.revisionLedger[SchemaNodeEventType.RequestRefresh];
+    for (const node of root.runtime.deliveries ?? []) node.pendingDelivery = undefined;
+    root.runtime.deliveries?.clear();
+
+    resetSchemaNodeSubtree(root.structure!.group, SetValueOption.Overwrite);
+
+    expect(injectTo).toHaveBeenCalledTimes(2);
+    expect(target.raw).toBe('injected');
+    expect((target.pendingDelivery?.type ?? 0) & SchemaNodeEventType.RequestRefresh).toBe(0);
+    expect(target.revisionLedger[SchemaNodeEventType.RequestRefresh]).toBe(revision);
   });
 
   it('EVENT-064 reports effective schema references separately from computed properties', () => {

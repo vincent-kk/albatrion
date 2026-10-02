@@ -57,11 +57,14 @@ export const commitSettlement = <Self extends SchemaNodeRecord<Self>>(
       commit };
   const refreshTargets = runtime.refreshTargets ?? new Set<string>();
   refreshTargets.clear();
-  if (context.kind !== 'load')
-    for (const path of context.changedRaw) {
-      if (readSettlementSource(context, path, true) !== 'input')
-        refreshTargets.add(path);
-    }
+  const loadScope = context.kind === 'load' ? context.loadScope : undefined;
+  const loadPrefix = loadScope ? `${loadScope.path}/` : '';
+  for (const path of context.changedRaw) {
+    if (loadScope && (path === loadScope.path || path.startsWith(loadPrefix)))
+      continue;
+    if (readSettlementSource(context, path, true) !== 'input')
+      refreshTargets.add(path);
+  }
   runtime.refreshTargets = refreshTargets;
   let warnings: TypeMismatchRecord[] | undefined;
   let warningTasks: Map<Self, () => void> | undefined;

@@ -504,7 +504,7 @@ export interface SchemaNodeRuntime<Self> extends SchemaNodeRootRuntimeState {
   blueprint: Blueprint;
   /** Number of completed synchronous settlement calls. */
   commitNumber?: number;
-  /** Last non-load write's refresh paths, committed as one batch. */
+  /** Changed non-load paths in the last settlement, excluding the written input. */
   refreshTargets?: Set<string>;
   /** Newly lit mismatch records in the last committed batch. */
   typeMismatchRecords?: readonly TypeMismatchRecord[];
