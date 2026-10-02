@@ -9,8 +9,8 @@
 
 ## API Contracts
 
-- S1 배달 작업 기록은 노드 레코드가 소유합니다. `deliveryBaseline`은 마지막 커밋 비교 기준, `pendingDelivery`는 다음 정착 파동의 비트·payload/options, `pendingRevision`은 이번 커밋에서 올릴 비트, `pendingNonSettleDelivery`는 별도 상태·명령 파동의 자료입니다. `revisionLedger`의 기존 조밀한 비트 슬롯과 불변 사본 계약은 유지합니다. 모든 종류는 이 네 칸을 같은 순서로 `undefined`/`0`으로 초기화하므로 생성 시 추가 객체를 할당하지 않습니다. 런타임의 `deliveries`·`revisionNodes`·`queuedNonSettleEvents`는 대상 집합만 보유하며 노드 키 Map에서 사건 자료를 조회하지 않습니다(NODE-004, VALUE-002, 65C-03).
-- 이 칸은 상태나 공개 읽기 결과가 아니라 작업의 기록입니다. 커밋은 개정 대기 마스크를 비우고 비교 기준을 전진시킵니다. dispatch는 리스너 호출 전에 파동 전체의 payload 소유권을 분리하고 레코드의 대기 칸을 비웁니다. 이탈/소멸은 기준·대기 칸과 대상 집합, 감시 색인 및 검증 장부를 제거하며 detached 읽기 묶음은 마지막 값을 유지합니다. 재진입해 살아남은 발생은 정리하지 않습니다(EVENT-007·024·062, 63C-02, I5).
+- S2의 배달 작업 기록은 레코드에 있습니다. `deliveryInitialized`는 첫 커밋 여부, `deliveryChanges`는 계산·형상·키 재부여·상태 쓰기가 포착한 변경 종류입니다. 첫 변경에서만 `deliveryPreviousLocal`·`deliveryPreviousEmit`, `deliveryPreviousPath`, `deliveryPreviousChildren`, `deliveryPreviousComputed`(네 상태의 비트 묶음), `deliveryPreviousSchema`, `deliveryPreviousState`에 그 종류의 기준을 보관합니다. `deliveryWatchValues`는 정적 watch 선언 대상에만 남기는 감시 기준입니다. 생성자는 이전 값 칸을 `undefined`, 변경 마스크를 `0`, 초기화 표시를 `false`로 대입하며 객체를 할당하지 않습니다. 11필드 관측 스냅숏 객체는 두지 않습니다(NODE-004, VALUE-002, 65C-03).
+- 기준 칸·변경 마스크는 작업의 기록이며 공개 읽기와 형상·값·방출 계산에 들어가지 않습니다(P3). 커밋은 변경 종류만 최종 값과 비교하여 같은 기준으로 돌아온 A→B→A를 제외하고 비트 개정과 payload를 확정한 뒤 기준 칸·변경 마스크를 비웁니다. 배달 전 여러 커밋이 있으면 각 커밋의 개정은 독립적으로 증가하며 `pendingDelivery.payload.previous`가 마지막 통지 기준을 계속 유지합니다. `pendingRevision`은 커밋에서, `pendingDelivery`·`pendingNonSettleDelivery`는 파동 전체 분리 때 비웁니다. 마지막 통지 기준과 커밋 비교 기준의 수명을 섞지 않습니다(EVENT-007·024). 이탈/소멸은 이 작업 기록과 런타임 대상 집합·감시/검증 장부를 제거하고 detached 읽기는 유지합니다(63C-02, I5).
 
 
 - 떼어진 읽기 묶음은 마지막 커밋의 합쳐진 노드 오류 배열도 같은 참조로 보존합니다. 살아 있는 오류 맵을 소멸 시 지워도 옛 노드의 `errors`는 바뀌지 않습니다. WeakMap 항목당 배열 참조 하나이며 노드별 고정 필드는 늘리지 않습니다(NODE-044·045, 35C-09).
@@ -20,7 +20,7 @@
 - 진입점은 `SchemaNodeRecord`, `Behavior`, `UnionSpec`, `SchemaNodeFactory`, `SchemaNodeRuntime`, `SettlementScratch`, `updateSchemaNodeNameAndPath`, `patchSchemaNodeInteractionState`, `shallowPatch`를 이름으로 내보냅니다. 외부 소비자는 레코드의 진입점으로만 들어옵니다(NODE-008·016).
 - 진입점은 기존 레코드 계약과 함께 `SchemaNodeEventType`, `SchemaNodeRequestType`, `markSchemaNodeEvent`를 이름으로 내보냅니다. 두 열거는 새 엔진의 비트와 명령 종류를 이곳에서 처음 선언하고 옛 `core/types/event.ts`는 07의 소비자 이주까지 그대로 둡니다. `RequestEmitChange`·`RequestInjection`은 두지 않습니다(SURFACE-056·060, EVENT-073, LANDING-158·170).
 - `SchemaNodeEventType`은 남는 옛 비트의 자리 값을 유지하고 `UpdateJsonSchema`·`UpdateDiagnostics`를 더합니다. `SchemaNodeRequestType`의 `Focus`·`Select`·`Refresh`·`Remount`는 각각 `RequestFocus`·`RequestSelect`·`RequestRefresh`·`RequestRemount` 비트와 같습니다. 한 명령 호출은 종류 하나만 받습니다(EVENT-043·064·073, SURFACE-057·060).
-- `SchemaNodeRecord<Self>`의 논리 필드 선언·생성자 대입 순서는 다음과 같습니다: `behavior`, `runtime`, `blueprintNode`, `parent`, `rootNode`, `name`, `escapedName`, `path`, `depth`, `required`, `nullable`, `schemaType`, `structure`, `children`, `itemKey`, `itemCount`, `nextItemKey`, `raw`, `extras`, `active`, `visible`, `readOnly`, `disabled`, `local`, `emit`, `schema`, `interactionState`, `revisionLedger`, `deliveryBaseline`, `pendingDelivery`, `pendingRevision`, `pendingNonSettleDelivery`, `detached`. `interactionState`는 공개 `state`와 구별한 저장 전용 칸입니다. 세 상태 키 필드는 `active` 옆의 고정 배치이며 계산 끝에 최종 형상의 로컬 결합 결과로 씁니다(NODE-002·004·043·046·057, CONTROLS-082, SETTLE-003, 28C-02, EVENT-007·067, NODE-045).
+- 모든 종류의 논리 필드 선언과 생성자 대입 순서는 일치합니다. 배달 작업 칸은 `revisionLedger` 뒤와 `detached` 앞에 둡니다. 상호작용 상태의 저장 칸은 공개 `state`와 구별하며, 기준값과 개정은 상태가 아니라 작업 기록입니다(NODE-004, VALUE-002, 65C-03).
 - `itemKey`는 배열 아이템의 생성 순서 nonce인 숫자이며 아이템이 아니면 `null`이고 공개 멤버로 노출하지 않습니다. 배열 branch 호스트의 `itemCount`는 청사진 없는 꼬리 자리를 포함한 값의 길이이며 그 밖에는 `0`입니다. 호스트의 `nextItemKey`는 새 아이템의 키 계수이고 원본 B 되돌림에서도 감소하지 않습니다. 세 필드는 모든 노드에 같은 고정 칸 세 개의 메모리 비용을 더하며 아이템 목록은 기존 `structure`에 둡니다(NODE-004·045·051·052, GOAL-073, SURFACE-054, 35C-05, 실행 ADR D3).
 - 세 상태 키 필드의 메모리 대가는 노드당 고정 칸 세 개이며 `watchValues`는 필드 대신 읽기 메모를 씁니다(NODE-004·045, CONTROLS-032·082, 28C-07).
 - 구현 클래스는 같은 자리에서 `rootNode`를 private `root`에 저장하고 getter로 읽으며, 다른 일부 공개 레코드 칸도 `stored*` 필드와 getter·setter로 구현합니다. `parent`·`rootNode`·`structure`의 노드 원소는 `Self`이고 구현은 `SchemaNode` 자기 타입을 사용합니다. `interactionState`는 기존 공용 `NodeStateFlags`를 소비하며 공개 `state` 게터는 이를 읽고 세터는 `dispatchSetState`로 위임합니다. `behavior`·`schemaType`은 수명 동안 같은 참조입니다(NODE-002·004·043·046·057, VALUE-002, EVENT-067).
@@ -54,7 +54,7 @@
 
 - `revisionLedger`의 이름과 비트별 읽기를 유지하면서 배달된 노드의 카운터는 알려진 17개 비트의 조밀한 슬롯에 보관합니다. 내부 `SchemaNodeRevisionLedger`는 진입점에서 정착·dispatch에 제공하며 비트 접근자는 슬롯을 읽습니다. 변경된 원장만 슬롯 사본과 새 원장으로 교체하므로 읽기가 보관한 이전 원장은 바뀌지 않습니다. 빈 원장은 공유 동결 상수이며 노드 고정 필드는 늘지 않습니다. 비트별 증가 시점과 `revision(mask)` 합은 리스너와 무관하게 동일합니다(EVENT-001·007, 65C-01, I11 step 1).
 - 아직 전달하지 않은 배달 항목·비트별 payload/options 표와 커밋 비트 항목은 같은 대기열 안에서 갱신합니다. dispatch가 파동을 전달하기 전에 표를 분리하므로 이미 리스너에게 건넨 사건·payload/options는 다음 표시가 수정하지 않습니다. 마지막 정의된 값, 최초 삽입 순서와 개발 모드 payload 동결은 유지하며 반복 표시의 객체·표 복사를 없앱니다(EVENT-004·006·007·023·024, 65C-01, I11 step 1).
-- S1의 `deliveryBaseline`은 공개 값 참조를 담는 레코드 내부 관측 버퍼입니다. 전역 상태 집계와 해당 노드의 모든 비교를 마친 뒤 같은 버퍼의 필드를 갱신하고 새 발생에만 버퍼를 할당합니다. 저장된 값·자식 배열·상태·감시 값 자체는 변경하지 않습니다. 노드당 관측 필드 수와 마지막 통지 기준은 유지합니다(EVENT-004·006·007·024, 65C-01, I11 step 1).
+- 계산·상태 변경의 현장 기록은 감시 역색인이 있을 때만 `deliveryAffectedPaths`에 영향 경로를 더합니다. 이 경로 작업 집합은 정착 커밋에서 소비/삭제하고 변경 노드의 관측 필드를 다시 읽어 경로 집합을 재구축하지 않습니다. 경로 이동 목록과 형상 출입 사실은 그대로 감시 색인 조회에 합류합니다. 정적 watch 선언 색인과 affected 조회는 유지합니다(65C-02·03).
 
 ## Acceptance Criteria
 
