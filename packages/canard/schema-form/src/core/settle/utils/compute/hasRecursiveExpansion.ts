@@ -5,7 +5,8 @@ import { hasLatentUnder } from '../latent/hasLatentUnder';
 import { isMissingRaw } from '../transition/isMissingRaw';
 
 /**
- * Stop repeating a template only when an ancestor subtree has no source.
+ * Stop source-free template repetition within object-property chains.
+ * Array item edges terminate the chain because only existing items expand.
  * @param parent - Current declaration host
  * @param template - Template requested by the gate
  * @param input - Distributed or latent source for the new occurrence
@@ -19,6 +20,7 @@ export const hasRecursiveExpansion = <Self extends SchemaNodeRecord<Self>>(
   if (input !== undefined) return false;
   let ancestor: Self | null = parent;
   while (ancestor) {
+    if (ancestor.behavior.type === 'array') return false;
     if (ancestor.blueprintNode === template) {
       const hasSource = ancestor.raw !== undefined ||
         ancestor.extras !== undefined ||
