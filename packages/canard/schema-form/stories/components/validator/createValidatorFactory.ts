@@ -1,23 +1,12 @@
-import type { JSONSchema, ValidateFunction } from '@canard/schema-form';
+import type { JSONSchema, ValidateFunction } from '../../../src';
 import type Ajv from 'ajv';
 
 import { transformErrors } from './utils/transformErrors';
 
+/** Bind synchronous authored-schema validation to a consumer-owned AJV instance. */
 export const createValidatorFactory =
   (ajv: Ajv) =>
   (jsonSchema: JSONSchema): ValidateFunction => {
-    const validate = ajv.compile({
-      ...jsonSchema,
-      $async: true,
-    });
-    return async (data) => {
-      try {
-        await validate(data);
-        return null;
-      } catch (thrown: any) {
-        if (Array.isArray(thrown?.errors))
-          return transformErrors(thrown.errors);
-        throw thrown;
-      }
-    };
+    const validate = ajv.compile(jsonSchema);
+    return (data) => validate(data) ? null : transformErrors(validate.errors ?? []);
   };

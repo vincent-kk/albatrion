@@ -1,8 +1,9 @@
-import type { SchemaFormPlugin } from '@canard/schema-form';
+import type { SchemaFormPlugin } from '../../../src';
 import { ajvValidatorPlugin } from './validatorPlugin';
 
+/** Consumer registration uses the public plugin contract. */
 export const plugin = {
   validator: ajvValidatorPlugin,
 } satisfies SchemaFormPlugin;
 
-export { createValidatorFactory } from './createValidatorFactory';
+export { ajvValidatorPlugin } from './validatorPlugin';

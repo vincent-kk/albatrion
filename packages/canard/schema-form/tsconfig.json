@@ -17,6 +17,5 @@
     "bench/**/*.ts",
     "vitest.bench.config.ts"
   ],
-  // temporary until U9 deletes the old stories (77C-01)
-  "exclude": ["node_modules", "dist", "stories/*.stories.tsx"]
+  "exclude": ["node_modules", "dist"]
 }

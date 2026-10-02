@@ -118,9 +118,8 @@ product projects. Run `yarn test --run --project <name>` to select a project.
 - The renderer registers its handle on the wrapper root or render container.
   `playScenario` searches the received element and descendants, so story and
   render contexts share the same call shape.
-- Scenario stories mirror the same data and call `playScenario` from `play`;
-  usage stories are documentation-only. New-engine stories begin at the engine
-  switch; the current stories keep rendering the legacy public entry point.
+- Scenario stories render the current public Form entry, mirror the same data,
+  and call `playScenario` from `play`; usage stories are documentation-only.
 - Final observable behavior needs a render scenario; a core test alone does not
   verify DOM behavior. Harness skeleton tests and empty families claim no engine
   behavior coverage.

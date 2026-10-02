@@ -17,6 +17,7 @@
 - `renderForm`은 동기 guard와 루트 검증기를 등록하고 생성 시 정착된 Form을 관찰합니다. `flushOnMount: false`는 React 비동기 작업의 추가 대기만 생략하며 미정착 엔진 스냅숏을 뜻하지 않습니다(TEST-021).
 - `reset`은 호출 안의 동기 로드와 이후 React 커밋 재대조를 포함합니다. 하니스의 비동기 래퍼는 그 커밋을 기다립니다.
 - 주인 없는 오류 싱크와 Form `onError` 기록은 별도로 관찰합니다. 반환한 container에 현재 핸들과 화면 어댑터를 등록하고 언마운트 때 해제합니다(TEST-011·021).
+- 공유 `clear` 단계는 nullable이 아닌 기본 문자열·수 입력에서 실제 DOM 입력 비우기로 실행해 undefined 전달을 관찰합니다(LANDING-196). 배열·nullable·기타 위젯과 batch 내부의 비우기는 핸들 동작으로 실행합니다.
 
 ### 스키마 옵션
 
