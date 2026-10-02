@@ -196,7 +196,8 @@
 - 결정:
   > - `ENHANCED_KEY`, enhancer, `preprocessSchema`의 마커 주입, `__processCompositionValue__`의 마커 기록, `transformErrors`의 마커 필터가 모두 사라진다. 이슈 #342 §3.1·§3.3·§3.4가 함께 사라진다.
   > - `nodeFromJSONSchema`를 직접 부르는 경로와 `<Form>` 경로가 같은 계약을 갖게 된다(지금은 다르다).
-- 보충: 없음
+- 보충:
+  > 편집자 결정(70C-01): "【추론】 서명은 `nodeFromJSONSchema<Schema extends JSONSchema>(props: { jsonSchema: Schema; defaultValue?: InferValueType<Schema>; validator?: Validator; validationMode?: ValidationMode; context?: Dictionary; onChange?: (value: InferValueType<Schema> | undefined) => void; onStateChange?: () => void; errorReporter?: FormErrorReporter; unsetOnInactive?: boolean; disableAutomaticWrites?: boolean; isTerminal?: (schema: JSONSchema) => boolean | undefined; isAtomic?: (value: unknown) => boolean; deferMountValidation?: boolean }): InferSchemaNode<Schema>`이고 돌려주는 것은 마운트가 끝난 루트다. 칸마다 근거가 있다: `validator`는 함수 `validatorFactory`가 `{ compile, compileGuard, … }` 객체로 바뀌는 32C-01과 같은 방향이며 형은 새 엔진 쪽 `core/validation/type.ts`의 `Validator`다(공개 index가 아닌 모듈에서 내보냄, 32C-01); `context`는 옛 `contextNode`(`contextNodeFactory`의 노드)를 값으로 바꾼 것으로 `SchemaNode/`의 `setContext`가 받는 값이다; `errorReporter`는 05가 core 인자로 둔 보고기(`report`·`hasConsumer`, LANDING-064 PR-4 행)이고 `isTerminal`·`isAtomic`은 REACT-003이 렌더 계층이 넘긴다고 한 판정 둘이며 core만 쓰는 호스트가 주지 않으면 판정이 없다; `deferMountValidation`은 69C-05의 미룸 선택으로 기본은 꺼짐이라 켜지 않은 호출은 오늘대로 사슬 끝에서 검증을 요청한다. 안에서는 69C-01의 바인딩 전용 통로 가운데 "트리 생성(마운트 없음)"과 "마운트"를 차례로 부르고, `<Form>`은 첫 마운트에서 이 함수를(`deferMountValidation: true`, 버퍼형 보고기) 부르며 재생성 reset은 같은 트리 생성 통로 → 인계 → 마운트를 부르므로 두 경로가 같은 생성 함수를 지난다 — VALIDATE-010 "직접 부르는 경로와 `<Form>` 경로가 같은 계약"의 구현이다." (`reviews/round-70-closing.md:9`)
 - 상태: 현행
 - 출처: `adr/0001-validator-input-invariant.md:43,46`(정본), `adr/0001-validator-input-invariant.md:44`
 - 닫은 사람: 원리(`03-mental-model.md:13` P1)
