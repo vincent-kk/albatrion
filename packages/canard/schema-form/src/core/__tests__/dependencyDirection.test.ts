@@ -80,11 +80,12 @@ describe('NODE-016 and NODE-045 dependency direction', () => {
     expect(bindings.length).toBeGreaterThanOrEqual(7);
     const forbidden = edges.filter(({ source, target }) => source.startsWith(binding) &&
       owner(target) !== 'SchemaNode' &&
-      !['blueprint', 'dispatch', 'record', 'validation'].some((name) =>
+      !['blueprint', 'behaviors', 'dispatch', 'record', 'validation'].some((name) =>
         target === join(CORE, name, 'index.ts')) &&
       !target.startsWith(join(CORE, 'types') + sep) &&
       !target.startsWith(join(CORE, '..', 'types') + sep) &&
       target !== join(CORE, '..', 'errors', 'index.ts') &&
+      target !== '@winglet/common-utils/filter' &&
       !target.startsWith('@aileron/'));
     expect(forbidden.map(({ specifier }) => specifier)).toEqual([]);
   });

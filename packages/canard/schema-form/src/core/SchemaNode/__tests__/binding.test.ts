@@ -26,7 +26,7 @@ describe('binding-only surface', () => {
     surface.finishSchemaNodeInput(child);
     expect(child.value).toBe('changed');
     expect(surface.readSchemaNodeInteractionReset(child)).toBe(0);
-    surface.reloadSchemaNodeForm(root);
+    surface.reloadSchemaNodeForm(root, root.defaultValue);
     expect(child.value).toBe('initial');
     expect(surface.readSchemaNodeInteractionReset(child)).toBe(1);
   });

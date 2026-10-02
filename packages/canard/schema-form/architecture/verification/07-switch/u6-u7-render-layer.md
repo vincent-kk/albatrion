@@ -81,29 +81,33 @@ U7의 기본 union 입력은 §5 B3 때문에 아직 추가하지 않았습니�
 
 ## 5. 개별 중단 항목과 core 결함
 
+후속 B1–B3 닫기 검증은 아래의 해결 기록입니다. §1–4·6–8의 수치와 중단 설명은 최초 렌더 전환 구현 당시의 증거로 남깁니다. 원장의 ERROR-113은 보고기 수명, LANDING-186은 모르는 시험 키 항목이므로 요청의 테스트 태그는 유지하되 observer 쓰기 거부는 error 원장의 WRITE_IN_OBSERVER 정책, union 초안은 REACT-033에 대조했습니다. 동작 충돌은 없습니다.
+
 ### B1 — explicit undefined reset (core 결함)
 
-- 현행 근거: WRITE-043의 “그 시점의 defaultValue로 다시 로드”, WRITE-045의 같은 schema node identity 유지 및 한 진입 초기화.
-- 재현: defaultValue가 'before'인 Form을 같은 schema/undefined default로 rerender한 뒤 reset하면 'before'가 남습니다. 기대값은 undefined이며 root identity는 같아야 합니다.
-- 원인: `src/core/dispatch/utils/entry/dispatchResetForm.ts`의 `value: unknown = root.runtime.loadSnapshot` 기본 인자가 explicit undefined를 이전 snapshot으로 바꿉니다. `reloadSchemaNodeForm(root, undefined)`도 이 경로를 탑니다.
-- 영향: 기존 값에서 undefined로 같은-tree reset하는 항목만 차단됩니다. 다른 값·같은 schema·다른 schema·commit 재대조 reset은 구현·검증했습니다.
-- CORE는 수정하지 않았습니다. 추가 setValue, 강제 새 tree 생성 등의 우회는 WRITE-043·045의 한 진입/identity 계약을 훼손하므로 넣지 않았습니다.
+- **해결됨.** `dispatchResetForm`과 `reloadSchemaNodeForm`의 로드 값은 필수 인자이며 명시한 `undefined`를 그대로 로드합니다. 이전 snapshot을 다시 읽는 기존 호출자는 해당 값을 명시합니다.
+- core: `core/SchemaNode/utils/binding/__tests__/reloadSchemaNodeForm.test.ts`의 `WRITE-043 WRITE-045 same-tree reset to explicit undefined preserves root identity`가 값·로드 snapshot·오류·상호작용 초기화를 검증합니다.
+- render: `providers/RootNodeContext/__tests__/blockedCoreContracts.test.tsx`의 `WRITE-043 preserves explicit undefined when resetting a same-schema form`이 root identity와 undefined를 검증합니다.
+- 두 테스트는 수정 전 각각 `previous`·`before`가 남아 실패했고 수정 뒤 통과했습니다.
 
 ### B2 — 커밋 뒤 버퍼/React 경계 보고 중 core 쓰기 거부 (binding/core 연결 결함)
 
-- 현행 근거: ERROR-113은 onError 관찰자 안의 쓰기를 금지하고 WRITE_IN_OBSERVER로 거부하도록 합니다. ERROR-026은 생성 중 기록을 commit 뒤에 전달하도록 합니다. ERROR-028의 직접 core 보고자 예외 전달 사례는 통과합니다.
-- 재현: 초기 TYPE_MISMATCH 기록이 commit 뒤 onError에 전달될 때 입력이 보유한 node로 setValue(3)를 호출하면 현재 성공합니다. 기대한 WRITE_IN_OBSERVER가 발생하지 않습니다.
-- 원인: `src/core/dispatch/utils/report/assertNotInDelivery.ts`는 runtime.reportingErrors만 검사합니다. core 자체 기록 배달은 이 플래그를 설정하지만 commit 뒤 binding 보고가 이 범위에 들어갈 수 있는 core index의 binding-only 진입은 없습니다.
-- 현재 reporter의 재귀 보고 방지는 core 쓰기 가드와 동등하지 않습니다. 이 둘을 같다고 주장하지 않습니다. 필요한 것은 binding에서 실행할 수 있는 core 관찰자 범위이며, 공개 node patch/private runtime 접근은 추가하지 않았습니다.
-- CORE는 수정하지 않았습니다. buffered/React-boundary 관찰자 중 쓰기 거부 항목만 미완료입니다.
+- **해결됨.** `observeSchemaNodeReports(root, deliver)`가 core의 `runtime.reportingErrors` 범위에서 전달하고 `finally`로 이전 값을 복원합니다. 생성·commit·reset 로드의 현재 root를 instance reporter에 연결하여 buffered 전달과 field/root 경계의 `onError`가 이 범위에 들어갑니다. 두 binding 함수는 SchemaNode/core에서 이름으로만 내보내며 `src/index.ts`는 내보내지 않습니다(69C-01).
+- core: `core/SchemaNode/utils/binding/__tests__/observeSchemaNodeReports.test.ts`의 `ERROR-113 rejects writes throughout nested report scopes and restores them afterwards`, `ERROR-113 restores the previous report scope when delivery throws`, `ERROR-113 retains the core reporter scope after a nested binding delivery`가 통과합니다.
+- render: 기존 `ERROR-113 refuses core writes during committed buffered onError delivery`와 `providers/FormErrorContext/__tests__/observerScopes.test.tsx`의 `ERROR-113 rejects writes in the field boundary reporter after commit`, `ERROR-113 rejects writes in the root boundary reporter while retaining its root`, `ERROR-113 scopes reports to a replacement root after schema reset`, `ERROR-113 guards an initial field boundary report under StrictMode`이 통과합니다. 마지막 사례는 실제 선택한 load의 root·pendingLoad를 Provider에서 연결하도록 고치기 전에는 observer 거부가 없어 실패했습니다.
+- 새 함수 부재의 수정 전 실패와 buffered 재현 실패를 확인했습니다. observer 연결만 제거한 대조 실행에서는 buffered·field·root 세 사례가 모두 거부 오류가 없어 실패했고, 연결 복원 뒤 지정 render 전체에서도 통과했습니다.
 
 ### B3 — 기본 union 입력의 pure interpret 연결 (경계 계약 미비)
 
-- 현행 근거: REACT-033은 “core와 같은 interpret를 유효 목록으로 적용”하고 멤버일 때만 발행하며, 기본 목록 열한째에 FormTypeInputString 감싸개를 추가하도록 합니다. 동시에 “규칙 A를 미리 보는 공개 함수는 지금 내보내지 않음”을 명시합니다. LANDING-186과 formTypeDefinitions/DETAIL.md의 초안·IME·유효 목록 규칙도 적용 대상입니다.
-- 현재 구현에는 pure interpreter가 `src/core/behaviors/utils/parse/interpret.ts`에 있지만 `src/core/index.ts` 또는 behaviors 진입점에 없습니다. 지정된 core index 소비 제한에서 이를 호출할 수 있는 binding-only 함수도 없습니다.
-- 재현: type ['number','string']가 기본 입력으로 내려오면 textbox가 없습니다. string 멤버 '42' 보존 단언에 도달하지 못합니다.
-- 동일 parser를 복제하거나 private core 파일을 deep import하거나 임시 live tree의 쓰기로 draft를 해석하지 않았습니다. 새 공개 preview 함수를 임의로 만들지도 않았습니다. binding-only pure 해석 접근의 경계 결정/제공이 필요한 항목으로 기록합니다.
-- union 감싸개·IME·유효 목록 변경 후 draft 재평가·union 비우기/표시는 이 항목에 의존하므로 함께 미완료입니다. 일반 숫자·문자열·checkbox와 Hint/선택 규칙은 별도로 완료했습니다.
+- **해결됨.** `interpretSchemaNodeDraft(node, draft)`는 작성·유효 타입의 교집합에 기존 `behaviors`의 순수 `interpret`·`isMember`를 적용하고 `{ value, isMember }`를 쓰기 없이 돌려줍니다. 하위 parser는 이름 붙은 behaviors 경계로 재사용합니다.
+- 열한 번째 기본 정의 `{ type: 'union' }`를 `FormTypeInputStringDefinition` 바로 앞에 넣었습니다. 기존 String 입력을 감싸 초안·IME·유효 목록 재평가·undefined 비우기·nullable null 표시·객체/배열 읽기 전용 표시와 참조별 문자열화 메모·무효 표지를 제공합니다. 새 공개 preview는 없습니다.
+- core: `core/SchemaNode/utils/binding/__tests__/interpretSchemaNodeDraft.test.ts`의 `REACT-033 preserves the string member 42 without writing or notifying`, `REACT-033 interprets drafts using the current effective type list`가 통과합니다.
+- render: `formTypeDefinitions/__tests__/blockedUnionInput.test.tsx`의 `REACT-033 LANDING-186 renders the default union input and retains string members`, `REACT-033 retains invalid drafts until blur and clears nullable unions to undefined`, `REACT-033 keeps IME composition entirely in the input draft`, `REACT-033 re-evaluates the retained draft when the effective list changes`, `REACT-033 defers effective-list draft re-evaluation until composition ends`, `REACT-033 displays containers read-only and marks mismatched primitives`, `REACT-033 renders an empty read-only display when no primitive kind is effective`, `REACT-033 marks container serialization failures without replacing them with an editable draft`가 모두 통과합니다.
+- 수정 전 새 pure 함수가 없고 union textbox가 없어 실패한 것을 관측했습니다. 수정 뒤 `['number','string']`의 `'42'`는 문자열로 남고, number-only 유효 목록에서는 숫자로 발행됩니다.
+
+B1–B3 후속 최종 명령 결과(PKG 기준): unit 종료 0, 404파일/4,616 pass/기존 todo 1; 지정 render 종료 1, 21파일/114 pass/15 fail이며 실패 파일은 B4의 `src/components/__tests__/SchemaNodeProxy.refresh.test.tsx` 하나입니다. 지정 core/components/formTypeDefinitions/providers lint는 종료 0입니다. tsc는 종료 2이며 `src/__tests__/**` 40, `stories/**` 262, `src/__legacy__/**` 0, `bench/**` 1, 네 영역 밖 0입니다. 이 수치는 동시 작업이 있는 최종 검사 시점의 결과입니다. 설치와 Git 쓰기는 수행하지 않았습니다.
+
+시작 HEAD는 `a77b8cc25`였고 마지막 확인에서는 외부 legacy 격리 커밋 `9bfc068e7`이 관측됐습니다. 해당 커밋은 동시 작업자의 legacy/eslint와 관련 architecture 기록을 바꾸었고 B1–B3 변경과 겹치지 않습니다. 아래 B4 본문은 시작 HEAD와 바이트 단위로 동일함을 확인했습니다.
 
 ### B4 — 범위 지정 render 게이트에 포함된 구형 의미 테스트
 

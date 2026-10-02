@@ -59,7 +59,7 @@ describe('binding load lifetime', () => {
     const child = getDispatchChild(root, 'child');
     dispatch.dispatchSetExternalErrors(child, [{ dataPath: '/child', message: 'external' }]);
     runtime.validationErrors = new Map([[child, [{ dataPath: '/child' }]]]);
-    dispatch.dispatchResetForm(root);
+    dispatch.dispatchResetForm(root, root.runtime.loadSnapshot);
     expect(runtime.nodeErrors?.size ?? 0).toBe(0);
     expect(runtime.validationErrors?.size ?? 0).toBe(0);
   });

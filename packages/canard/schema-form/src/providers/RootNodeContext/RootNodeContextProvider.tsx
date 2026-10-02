@@ -79,6 +79,10 @@ export const RootNodeContextProvider = ({
   );
   const getSnapshot = useMemo(() => () => store.load, [store]);
   const load = useSyncExternalStore(subscribe, getSnapshot, getSnapshot);
+  if (reporter) {
+    reporter.root = load.root;
+    reporter.pendingLoad = () => flushRootLoad(load, true);
+  }
   const pending = useRef<RootLoadProps | undefined>(undefined);
   const [, schedule] = useState(0);
   const reset = useHandle(() => {

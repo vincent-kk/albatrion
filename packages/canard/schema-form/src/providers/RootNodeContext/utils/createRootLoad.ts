@@ -7,7 +7,6 @@ import {
 } from '@/schema-form/helpers/schemaIdentity';
 
 import type { RootLoad, RootLoadProps } from '../type';
-import { flushRootLoad } from './flushRootLoad';
 
 /** Build a speculative root; buffer records until its binding is committed. */
 export const createRootLoad = (
@@ -22,7 +21,6 @@ export const createRootLoad = (
     prepared: false,
     reporter,
   };
-  if (reporter) reporter.pendingLoad = () => flushRootLoad(load, true);
   try {
     load.root = buildSchemaNodeTree({
       ...props,
@@ -33,7 +31,10 @@ export const createRootLoad = (
         hasConsumer: () =>
           reporter?.hasConsumer() ?? process.env.NODE_ENV !== 'production',
         report: (record) => {
-          if (load.ready) reporter?.report(record);
+          if (load.ready) {
+            if (reporter && load.root) reporter.root = load.root;
+            reporter?.report(record);
+          }
           else load.records.push(record);
         },
       },

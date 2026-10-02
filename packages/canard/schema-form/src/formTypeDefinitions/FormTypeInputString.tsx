@@ -1,4 +1,4 @@
-import { type ChangeEvent, useMemo } from 'react';
+import { type ChangeEvent, type ComponentPropsWithRef, useMemo } from 'react';
 
 import { useHandle } from '@winglet/react-utils/hook';
 
@@ -7,7 +7,8 @@ import type {
   FormTypeInputProps,
 } from '@/schema-form/types';
 
-const FormTypeInputString = ({
+/** Render the common string input; binding wrappers may supply native draft handlers. */
+export const FormTypeInputString = ({
   path,
   name,
   readOnly,
@@ -19,7 +20,10 @@ const FormTypeInputString = ({
   placeholder,
   style,
   className,
-}: FormTypeInputProps<string | null>) => {
+  inputProps,
+}: FormTypeInputProps & {
+  inputProps?: ComponentPropsWithRef<'input'>;
+}) => {
   const type = useMemo(() => {
     if (jsonSchema?.format === 'password') return 'password';
     else if (jsonSchema?.format === 'email') return 'email';
@@ -46,10 +50,12 @@ const FormTypeInputString = ({
       onChange={handleChange}
       style={style}
       className={className}
+      {...inputProps}
     />
   );
 };
 
+/** Match the ordinary string fallback after more specific definitions. */
 export const FormTypeInputStringDefinition = {
   Component: FormTypeInputString,
   test: { type: 'string' },

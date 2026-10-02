@@ -59,9 +59,11 @@ describe('SchemaNode PR-2 surface', () => {
     expect(Object.keys(surface).sort()).toEqual([
       'SchemaNodeEventType', 'SchemaNodeRequestType', 'SetValueOption',
       'adoptSchemaNodeTree', 'buildSchemaNodeTree', 'finishSchemaNodeInput',
+      'interpretSchemaNodeDraft',
       'isArrayNode', 'isBooleanNode', 'isBranchNode',
       'isNumberNode', 'isObjectNode', 'isSchemaNode', 'isStringNode',
       'isTerminalNode', 'isUnionNode', 'isVirtualNode', 'mountSchemaNode',
+      'observeSchemaNodeReports',
       'readSchemaNodeInteractionReset', 'reloadSchemaNodeForm', 'schemaNodeFactory',
       'setContext', 'writeSchemaNodeInput',
     ]);

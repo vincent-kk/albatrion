@@ -22,6 +22,8 @@ export {
   writeSchemaNodeInput,
   finishSchemaNodeInput,
   readSchemaNodeInteractionReset,
+  observeSchemaNodeReports,
+  interpretSchemaNodeDraft,
 } from './SchemaNode';
 export type {
   SchemaNode,

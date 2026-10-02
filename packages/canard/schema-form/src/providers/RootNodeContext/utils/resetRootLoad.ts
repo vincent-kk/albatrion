@@ -43,6 +43,7 @@ export const resetRootLoad = (
   next.ready = previous.ready;
   next.prepared = true;
   const replacement = next.root;
+  if (next.reporter) next.reporter.root = replacement;
   const load = () => {
     if (root) adoptSchemaNodeTree(root, replacement);
     mountSchemaNode(replacement, clone(props.defaultValue));

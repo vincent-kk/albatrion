@@ -10,12 +10,12 @@ import { clearSchemaNodeFormErrors } from './utils/clearSchemaNodeFormErrors';
 /**
  * Start a new form load lifetime with a replacement root source.
  * @param root - Live form root
- * @param value - Replacement load snapshot, defaulting to the retained source
+ * @param value - Required replacement load snapshot; undefined clears the source
  * @param option - Automatic-write selection for this load
  * @returns Nothing; the outer entry delivers the load
  */
 export const dispatchResetForm = <Self extends SchemaNodeRecord<Self>>(
-  root: Self, value: unknown = root.runtime.loadSnapshot,
+  root: Self, value: unknown,
   option: SetValueOption = SetValueOption.Overwrite,
 ): void => {
   if (!enterSchemaNodeChain(root)) return;
