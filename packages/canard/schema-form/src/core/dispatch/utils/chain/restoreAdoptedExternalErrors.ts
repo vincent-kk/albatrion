@@ -1,6 +1,7 @@
 import type { SchemaNodeRecord } from '../../../record';
 import { SchemaNodeEventType } from '../../../record';
 import { find } from '../../../navigation';
+import { updateSchemaNodeGlobalErrors } from '../../../validation';
 import { queueNonSettleEvent } from './queueNonSettleEvent';
 
 /**
@@ -16,6 +17,7 @@ export const restoreAdoptedExternalErrors = <Self extends SchemaNodeRecord<Self>
     const node = find(root, path);
     if (!node) continue;
     (runtime.nodeErrors ??= new Map()).set(node, errors);
+    if (node === root) updateSchemaNodeGlobalErrors(root);
     runtime.adoptedExternalErrors?.delete(path);
     queueNonSettleEvent(node, SchemaNodeEventType.UpdateError, errors);
   }

@@ -13,7 +13,9 @@ export const clearSchemaNodeFormErrors = <Self extends SchemaNodeRecord<Self>>(
   root: Self,
 ): void => {
   const runtime = root.runtime;
+  const rootExternalChanged = runtime.nodeErrors?.delete(root);
   const changed = routeValidationIssues(root, []);
+  if (rootExternalChanged) changed.add(root);
   const pending = [root];
   while (pending.length) {
     const node = pending.pop();

@@ -61,8 +61,9 @@ it('ERROR-112 REACT-010 isolates a field formatter failure with the field path',
         properties: { bad: { type: 'string' }, good: { type: 'string' } },
       }}
       errors={[{ dataPath: '/bad', keyword: 'external', message: 'bad' }]}
-      formatError={() => {
-        throw error;
+      formatError={(_issue, node) => {
+        if (node.path === '/bad') throw error;
+        return null;
       }}
     />,
   );

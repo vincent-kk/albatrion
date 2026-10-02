@@ -4,6 +4,7 @@ import type { SchemaNodeRecord } from '../../../record';
 import type { ValidationIssue } from '../../type';
 import { isOffUnionBranchIssue } from './isOffUnionBranchIssue';
 import { normalizeIssueDataPath } from './normalizeIssueDataPath';
+import { updateSchemaNodeGlobalErrors } from './updateSchemaNodeGlobalErrors';
 
 /** Identify a record owned by this tree without an unchecked type assertion. */
 const isOwnedNode = <Self extends SchemaNodeRecord<Self>>(
@@ -66,7 +67,10 @@ export const routeValidationIssues = <Self extends SchemaNodeRecord<Self>>(
   if (runtime.validationChangedNodes)
     for (const node of changed) runtime.validationChangedNodes.add(node);
   else runtime.validationChangedNodes = changed;
-  runtime.globalErrors = issues;
+  if (runtime.routedValidationErrors !== issues) {
+    runtime.routedValidationErrors = issues;
+    updateSchemaNodeGlobalErrors(root);
+  }
   runtime.combinedErrors?.clear();
   return changed;
 };

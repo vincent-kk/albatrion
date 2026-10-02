@@ -403,7 +403,7 @@ export interface SchemaNodeRuntime<Self> extends SchemaNodeRootRuntimeState {
   /** Mount defers validation until the binding's ready effect. */
   deferMountValidation?: boolean;
   /** External errors awaiting the replacement tree's first committed shape. */
-  adoptedExternalErrors?: Map<string, readonly unknown[]>;
+  adoptedExternalErrors?: Map<string, readonly { dataPath: string }[]>;
   /** Reset scopes requiring validation even with an unchanged root emit. */
   validationTargets?: Set<Self>;
   /** Non-settlement events coalesced independently from commit deliveries. */
@@ -438,8 +438,10 @@ export interface SchemaNodeRuntime<Self> extends SchemaNodeRootRuntimeState {
   validationStamp?: number;
   /** Stamp of the latest queued write-triggered request. */
   validationRequestStamp?: number;
-  /** Latest ordered whole-schema issues, including ownerless and hidden issues. */
+  /** Root external issues followed by the ordered whole-schema validator issues. */
   globalErrors?: readonly { dataPath: string }[];
+  /** Latest ordered validator issues, including ownerless and hidden issues. */
+  routedValidationErrors?: readonly { dataPath: string }[];
   /** Last displayed validator issues, separate from external errors. */
   validationErrors?: Map<unknown, readonly unknown[]>;
   /** Nodes whose displayed validator issues changed in the last result. */
@@ -462,8 +464,8 @@ export interface SchemaNodeRuntime<Self> extends SchemaNodeRootRuntimeState {
     readonly validation?: readonly unknown[];
     readonly errors: readonly unknown[];
   }>;
-  /** Validation and external issues keyed by live node. */
-  nodeErrors?: Map<unknown, readonly unknown[]>;
+  /** External issues keyed by live node. */
+  nodeErrors?: Map<unknown, readonly { dataPath: string }[]>;
   /** Form context shared by every occurrence and expression in this tree. */
   context?: Readonly<Record<string, unknown>>;
   /** Last committed expression inputs, keyed by live authored rule occurrence. */

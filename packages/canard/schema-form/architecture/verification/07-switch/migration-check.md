@@ -155,6 +155,8 @@ node verification/07-switch/tools/extract-migration-rows.mjs
 
 공개 표면 잔여의 거취: 형 별칭 `JSONSchemaError`(= `ValidationIssue`, 34C-02·50C-01 "PR-7까지")는 07 전환 커밋에서 공개 index에서 빠짐(74라운드 소유자 답, 75C-01). 옛 이름의 별칭은 두지 않음. throw 클래스의 판별 함수 `isJSONSchemaError`는 오류 분류의 현행 공개 함수로 남음. 이주 안내 본문은 PR-8(LANDING-068)
 
+globalErrors·getErrors()의 내용: 변경 없음(루트 외부 오류 + 검증 목록, 79C-01)
+
 - 마운트 정착 동안 onChange가 나지 않음(TEST-020·021). 초기 값은 동기 정착 뒤 getValue로 읽습니다. 07 U8 처분 78C-01: `array.omit-trailing.injection.render.test.tsx`, `deferred-mount.render.test.tsx`.
 - 터미널 호스트는 값을 통째로 들고 자식 기본값을 채우지 않음(NODE-005); 호출자 defaultValue 불변은 유지합니다(WRITE-071). 07 U8 처분 78C-01: `default-value.input-immutability.render.test.tsx`.
 - 검증 마커 제거 뒤 표준 oneOf에서 다른 분기가 유효하면 오류가 없음(LANDING-115·VALIDATE-010·036). controls.active는 표준 검증의 분기 선택 마커가 아닙니다. 07 U8 처분 78C-01: `multi-render-split-brain.render.test.tsx`.
