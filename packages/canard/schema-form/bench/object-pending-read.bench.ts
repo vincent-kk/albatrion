@@ -79,7 +79,11 @@ const repeatSameValue = (leaf: NumberNode) => async () => {
   await drain();
 };
 
-describe('object pending read', () => {
+// Core writes settle synchronously; retain the legacy batch/drain workload for comparison.
+if (!group || !field)
+  throw new Error('object-read benchmark requires mounted fields');
+
+describe('settle: object read after child write', () => {
   bench(
     `${BATCH} × (child write + 1 parent value read) + drain`,
     async () => {

@@ -1,0 +1,44 @@
+{
+  "build": {
+    "seconds": 0.562052125,
+    "exit": 0,
+    "summary": ""
+  },
+  "minify": {
+    "seconds": 2.272497,
+    "exit": 0,
+    "summary": ""
+  },
+  "minifiedGzip": 71317,
+  "plainGzip": 103820,
+  "typecheck": [
+    {
+      "seconds": 7.604898832999999,
+      "exit": 0,
+      "summary": ""
+    },
+    {
+      "seconds": 7.5457114579999995,
+      "exit": 0,
+      "summary": ""
+    },
+    {
+      "seconds": 7.524953708000001,
+      "exit": 0,
+      "summary": ""
+    }
+  ],
+  "typecheckMedianSeconds": 7.5457114579999995,
+  "packageBench": {
+    "seconds": 40.158112499999994,
+    "exit": 0,
+    "summary": ""
+  },
+  "renderSeconds": 60.265113584000005,
+  "renderSummary": " Test Files  1 failed | 70 passed (71);       Tests  2 failed | 433 passed (435);    Duration  58.77s (transform 2.05s, setup 0ms, collect 61.23s, tests 73.04s, environment 15.66s, prepare 3.54s); ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯;  FAIL  |render| src/components/Form/__tests__/Form.effectFeedback.test.tsx > EVENT-070 cross-entry feedback > EVENT-070 React stops two fields writing back through useLayoutEffect;  FAIL  |render| src/components/Form/__tests__/Form.effectFeedback.test.tsx > EVENT-070 cross-entry feedback > EVENT-070 React stops two fields writing back through useEffect",
+  "renderExit": 1,
+  "finalSummary": " Test Files  1 failed | 323 passed (324);       Tests  2 failed | 2585 passed | 1 todo (2588);    Duration  62.94s (transform 5.42s, setup 0ms, collect 152.51s, tests 88.96s, environment 17.28s, prepare 15.30s); ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯;  FAIL  |render| src/components/Form/__tests__/Form.effectFeedback.test.tsx > EVENT-070 cross-entry feedback > EVENT-070 React stops two fields writing back through useLayoutEffect;  FAIL  |render| src/components/Form/__tests__/Form.effectFeedback.test.tsx > EVENT-070 cross-entry feedback > EVENT-070 React stops two fields writing back through useEffect",
+  "finalExit": 1,
+  "equivalentSummary": " Test Files  1 passed (1);       Tests  19 passed (19);    Duration  11.43s (transform 285ms, setup 0ms, collect 79ms, tests 11.00s, environment 169ms, prepare 41ms)",
+  "equivalentExit": 0
+}

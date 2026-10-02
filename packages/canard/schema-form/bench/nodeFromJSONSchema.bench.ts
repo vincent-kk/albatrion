@@ -54,14 +54,14 @@ const oneOfSchema: JSONSchema = {
   },
   oneOf: [
     {
-      '&if': "./type === 'a'",
+      controls: { active: "./type === 'a'" },
       properties: {
         fieldA1: { type: 'string', default: 'a1' },
         fieldA2: { type: 'number', default: 10 },
       },
     },
     {
-      '&if': "./type === 'b'",
+      controls: { active: "./type === 'b'" },
       properties: {
         fieldB1: { type: 'string', default: 'b1' },
         fieldB2: { type: 'number', default: 20 },
@@ -76,24 +76,24 @@ const computedSchema: JSONSchema = {
     trigger: { type: 'string', default: 'on' },
     a: {
       type: 'string',
-      computed: { visible: '../trigger === "on"' },
+      controls: { visible: '../trigger === "on"' },
       default: 'A',
     },
     b: {
       type: 'string',
-      computed: { visible: '../trigger === "off"' },
+      controls: { visible: '../trigger === "off"' },
       default: 'B',
     },
     derived: {
       type: 'string',
-      computed: { derived: '../a + "/" + ../b' },
+      controls: { derived: '../a + "/" + ../b' },
     },
   },
 };
 
 const noop = () => {};
 
-describe('nodeFromJSONSchema', () => {
+describe('load: nodeFromJSONSchema through core', () => {
   bench('flat (5 props, terminal only)', () => {
     nodeFromJSONSchema({ jsonSchema: flatSchema, onChange: noop });
   });
