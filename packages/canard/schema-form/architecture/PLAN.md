@@ -154,5 +154,6 @@
 | 2026-10-02 | 70라운드: 07의 서명 하나 — 70C-01 nodeFromJSONSchema의 새 서명을 07의 안대로 확정(validator 객체·context 값·보고기·isTerminal·isAtomic·deferMountValidation 기본 꺼짐, 마운트 끝난 루트 반환, 안에서 바인딩 전용 통로의 생성→마운트). 코어 전용 진입이라 이주 행 없음, core/index.ts 이름 내보내기, src/index.ts 제외. 보충 5줄 | `reviews/round-70-closing.md` |
 | 2026-10-02 | 71라운드: 07의 해석 하나 — 71C-01 core/types의 node·constructor는 새 코드에서 지우되 LANDING-159의 모양으로 src/__legacy__/core/types/에 옮기고 레거시 가져오기만 돌림; 남는 event·state·value 형의 레거시 가져오기는 오늘 있던 것이라 규칙 2를 넓히지 않음. 보충 3줄 | `reviews/round-71-closing.md` |
 | 2026-10-02 | 72라운드: 07의 분류 하나 — 72C-01 03–06 코어의 "쓴 노드 제외"는 입력 출처 통로가 없던 동안의 근사(26C-03)라 결함 아님; 07이 입력 출처를 들이며 입력 쓰기만 자신을 빼고 호출자·자동 쓰기는 바뀐 모든 노드에 Refresh. 보충 2줄 | `reviews/round-72-closing.md` |
+| 2026-10-02 | 73라운드: 07의 처분 하나 — 73C-01 레거시 안의 <Form> 렌더 시험 두 파일(14건)은 처분표 행으로 올려 09 §4.3대로 처분(새 e2e 이름 기재), 레거시 파일은 고치지 않고 전환 커밋에서 src/__legacy__/**를 render·unit 글롭에서 뺌(LANDING-159 보충). 보충 3줄 | `reviews/round-73-closing.md` |
 | 2026-10-02 | 65라운드 덧붙임: P-23 해결 — 06이 세 단계를 모두 구현하고 54라운드 방법으로 재어 Node 1.39–1.42배·Bun 2.09–2.11배(수용 수치 이하), 대장 "해결" R-22; P-14 수용 유지. 되살림 구멍은 03 귀속의 열린 행 P-25. PR #353 머리 `e147d98cb`, 06 쪽 머지 조건 충족 | `reviews/round-65-closing.md` |
 | 2026-10-02 | 06 머지 — PR #353 소유자 스쿼시 머지 `07a083c18`, 06 문서 커밋 `80875e50f`(§3 06 행 머지, 06 실행 기록 머지 항목). 07 행을 착수 가능으로. 우산 PR #344 본문 갱신 | `HANDOFF.md` §1 "06 머지" |
