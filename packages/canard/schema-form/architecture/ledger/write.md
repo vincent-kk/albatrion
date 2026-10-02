@@ -712,7 +712,8 @@
 - 결정:
   > **유지하는 것.** 노드 트리와 노드 identity, 청사진과 식 컴파일, 가드·사본 캐시, 검증기 등록, 유효 스키마 메모, 가상화의 드러난 기록(identity가 이어지는 노드에만), provider, `<form>`, 렌더러, 호출자 `children`.
   > **상호작용과 Form 층.** 두 경로 모두 한 진입 안에서: `dirty`·`touched`를 비우고 집계 상태가 실제로 바뀐 때만 `onStateChange`를 한 번 낸다(이미 비어 있으면 내지 않는다. `onChange`의 '바뀐 때만'과 같은 규칙. 오늘은 빠지는 것으로 판독했다, `reviews/raw-round16-reset.md` §4의 H1). 명령형 외부 오류와 검증 결과를 비우고 `errors` prop을 다시 적용한다. 첨부 파일 맵의 내용을 비운다(오늘과 같다). `showError`를 prop 값으로 돌린다(오늘은 유지된다, `Form.tsx:101`. 바뀌는 동작이며 근거는 위의 판정 기준이다). 로드이므로 `diagnostics`를 새로 적는다(예산 안이면 `stable`이 되고, 넘으면 다시 기록된다. 바뀌었으면 `onDiagnosticsChange`를 낸다. 앞서 `degraded`였다면 로드가 풀고 제출 거부도 풀리며, 로드가 다시 예산을 넘기면 다시 `degraded`가 되어 제출을 거부한다. 17라운드 소유자 답 R17-1 나).
-- 보충: 없음
+- 보충:
+  > 편집자 결정(69C-03): "【추론】 WRITE-045는 reset의 상호작용·Form 층 초기화를 "두 경로 모두 한 진입 안에서" 하도록 정했고 그 안에 "명령형 외부 오류와 검증 결과를 비우고 `errors` prop을 다시 적용한다"가 있다. 외부 오류는 05가 코어 상태(`dispatchSetExternalErrors`·`dispatchClearExternalErrors`)로 두었으므로 비우는 일은 코어의 폼 reset 진입이 하고, `errors` prop은 바인딩만 아는 값이므로 다시 적용하는 일은 바인딩이 같은 진입 안(reset 진입이 돌아오기 전, 재생성이면 새 트리에)에서 경로로 한다 — 옛 노드 객체를 키로 한 맵은 재생성 뒤 새 트리에서 쓸 수 없으므로 인계와 재적용은 경로 키(`FormErrors`의 모양 그대로)로 한다. 오늘 코어의 폼 reset이 외부 오류를 비우지 않는 것은 reset의 로드 전환이 PR-7의 일이라(LANDING-095) 05의 결함으로 적지 않고 07이 코어에서 고치며, `plan/07-switch/log.md`에 "코드와 원장의 어긋남"으로 적는다. 비움과 재적용은 한 진입이므로 `onStateChange`·`onError`는 진입 끝의 규칙(바뀐 때만 한 번)을 따른다." (`reviews/round-69-closing.md:23`)
 - 상태: 현행
 - 출처: `09-landing-and-test-strategy.md:83-84`(정본)
 - 닫은 사람: 16라운드 스웜 수렴(편집자 결정, `09-landing-and-test-strategy.md:79`), 소유자 답(`00-goals.md:109` C6; `dirty`·`touched` 현행 유지), 소유자 답(`reviews/round-17-owner-answers.md:9` R17-1; `diagnostics` 재기록)
@@ -723,7 +724,8 @@
 
 - 결정:
   > **스키마가 다른 경로.** 트리와 캐시를 새로 만든다(비용은 `<Form key>`의 재생성과 같다). reset 호출 안에서 동기로 만들고(트리 생성은 core의 연산이다, C3), 새 트리를 로드한 뒤 돌아오기 전에 핸들(`node`·`getValue`·`setValue` 등)을 새 트리로 바꾼다. 그래서 최외곽 호출의 `reset(); getValue()`와 `reset(); setValue(x)`는 경로와 무관하게 새 트리에 닿고(열린 진입 안에서도 같다, 열째), 오늘의 틈(reset 직후 `setValue`가 사라지고 `submit`이 아무것도 하지 않음)이 재생성 경로에도 남지 않는다. React 연결은 외부 저장소(`useSyncExternalStore`)로 알려 막는 차선으로 곧바로 커밋한다(`startTransition` 안에서도 옛 화면이 입력을 받는 틈을 두지 않는다). 옛 트리는 폐기로 표시하고 리스너를 놓는다. 옛 트리를 폐기할 때 그 노드들의 Refresh 번호와 상호작용 초기화 번호를 통지 없이 함께 올려, 폐기된 트리의 입력 인스턴스가 뒤늦게 낸 `onChange`·`onFileAttach`(언마운트 때의 flush 포함)와 흐림 뒤 미룬 `touched`가 여섯째의 검사에서 core에 닿기 전에 버려지게 한다. 여섯째의 검사를 받지 않는 컨테이너 입력의 늦은 `onChange`는 `handleChange`의 진입 하나(§2.3의 셋째)로 오고 그 진입 전체(값 쓰기, 외부 오류 지움, `dirty` 표시)가 입력 출처 표식(§2.3의 둘째)을 달고 오므로, 폐기된 노드는 셋을 모두 조용히 버린다. 늦은 `onFileAttach`는 노드 쓰기가 아니라 reset을 넘어 남는 Form 층 첨부 파일 맵의 쓰기이므로(오늘의 `SchemaNodeInput.tsx:61-67`), 래퍼가 맵에 쓰기 전에 노드의 폐기 표시를 읽어 폐기된 노드면 버린다(컨테이너 입력 포함). 표식 없이 폐기된 노드에 온 쓰기, 곧 호출자가 미리 잡아 둔 옛 노드 참조로 한 쓰기는 적용하지 않고 호출자 오류(`SchemaFormError`)로 환경 불문 즉시 던진다(ADR 0014 4판의 호출자 오류). 그래서 폐기된 노드에서 던지는 쓰기는 호출자가 잡아 둔 옛 노드 참조로 한 것뿐이다. 입력 컴포넌트가 래퍼를 거치지 않고 `FormTypeInputProps`의 `node`로 한 쓰기도 표식이 없으므로 이 옛 노드 참조에 들며, 재생성 reset 뒤 타이머나 언마운트 정리에서 하면 던진다(문서화, 열여섯째). 노드 참조와 가상화 기록은 이어지지 않는다(노드 참조가 reset을 넘어 이어지는 것은 로드 경로뿐이다. 문서화). 옛 트리의 콜백 억제를 위한 별도 표지(오늘의 `ready`)는 필요 없다. `onChange`는 로드 경로와 같은 규칙이다(새 트리의 방출 참조는 새로우므로 사실상 한 번 낸다).
-- 보충: 없음
+- 보충:
+  > 편집자 결정(69C-02): "【추론】 LANDING-095의 PR-7 행은 "`reset`의 로드 전환(같은 스키마 판정, 커밋 재대조, 호출 안의 재생성, 자식 프록시 마운트 여부로 가르는 입력 판정, 노드가 드는 Refresh 번호와 상호작용 초기화 번호)"을 PR-7에 두었고, 05는 오류 코드 표에 `DISPOSED_NODE_WRITE`를 "재생성으로 버린 트리의 노드 쓰기만 거부"로 올리되 동작은 두지 않았다(`plan/05-dispatch-and-validation/log.md:102`). 그러므로 재생성 reset의 폐기(WRITE-046·086의 네 일), 상호작용 초기화 번호의 노드 칸과 그것을 올리는 셋(reset, `clearState`, `controls.resetInteraction`; REACT-024)과 바인딩의 읽기(`useSchemaNodeTracker`), 폐기된 노드에 온 쓰기의 `DISPOSED_NODE_WRITE`는 07이 코어에 더하는 것이 원장의 배정이며 03·04·05의 결함으로 적지 않는다. 조건: 폐기는 부모·자식·루트 참조를 끊지 않고(WRITE-086), 옛 노드의 읽기는 폐기 직전 마지막 커밋을 돌려주며, 검증기 등록의 참조 수는 폐기가 아니라 옛 트리의 효과 정리에서 내린다; 번호 올리기는 통지 없이 동기이고 Refresh 번호는 `revision`과 함께 노드가 든다(REACT-024); 입력 출처 표식이 붙은 늦은 쓰기는 조용히 버리고 표식 없는 쓰기만 `DISPOSED_NODE_WRITE`로 던진다(REACT-010의 가름). 코어 쪽 변경은 `record`·`settle`·`dispatch`의 DETAIL을 코드보다 먼저 고치고, 차등 시험(폐기 전후의 개정 대장과 값 불변)으로 03–06의 시나리오가 그대로임을 보인다." (`reviews/round-69-closing.md:16`)
 - 상태: 현행
 - 출처: `09-landing-and-test-strategy.md:87#1-15`(정본)
 - 닫은 사람: 16라운드 스웜 수렴(편집자 결정, `09-landing-and-test-strategy.md:79`)
@@ -1330,7 +1332,8 @@
   > 【추론】 이 코드의 범위와 형상을 떠난 노드의 옛 참조는 18C-34가 정한다.
   > 【추론】 소비자가 옛 노드 하나를 들고 있으면 그 옛 트리 전체가 수거되지 않고 남는다.
   > 【추론】 이를 문서화하고, 수명을 이어 가려면 새 핸들에서 다시 찾으라고 안내한다.
-- 보충: 없음
+- 보충:
+  > 편집자 결정(69C-02): "【추론】 LANDING-095의 PR-7 행은 "`reset`의 로드 전환(같은 스키마 판정, 커밋 재대조, 호출 안의 재생성, 자식 프록시 마운트 여부로 가르는 입력 판정, 노드가 드는 Refresh 번호와 상호작용 초기화 번호)"을 PR-7에 두었고, 05는 오류 코드 표에 `DISPOSED_NODE_WRITE`를 "재생성으로 버린 트리의 노드 쓰기만 거부"로 올리되 동작은 두지 않았다(`plan/05-dispatch-and-validation/log.md:102`). 그러므로 재생성 reset의 폐기(WRITE-046·086의 네 일), 상호작용 초기화 번호의 노드 칸과 그것을 올리는 셋(reset, `clearState`, `controls.resetInteraction`; REACT-024)과 바인딩의 읽기(`useSchemaNodeTracker`), 폐기된 노드에 온 쓰기의 `DISPOSED_NODE_WRITE`는 07이 코어에 더하는 것이 원장의 배정이며 03·04·05의 결함으로 적지 않는다. 조건: 폐기는 부모·자식·루트 참조를 끊지 않고(WRITE-086), 옛 노드의 읽기는 폐기 직전 마지막 커밋을 돌려주며, 검증기 등록의 참조 수는 폐기가 아니라 옛 트리의 효과 정리에서 내린다; 번호 올리기는 통지 없이 동기이고 Refresh 번호는 `revision`과 함께 노드가 든다(REACT-024); 입력 출처 표식이 붙은 늦은 쓰기는 조용히 버리고 표식 없는 쓰기만 `DISPOSED_NODE_WRITE`로 던진다(REACT-010의 가름). 코어 쪽 변경은 `record`·`settle`·`dispatch`의 DETAIL을 코드보다 먼저 고치고, 차등 시험(폐기 전후의 개정 대장과 값 불변)으로 03–06의 시나리오가 그대로임을 보인다." (`reviews/round-69-closing.md:16`)
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:1730-1738`(정본)
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-61)

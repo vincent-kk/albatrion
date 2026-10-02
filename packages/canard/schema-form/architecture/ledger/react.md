@@ -79,6 +79,7 @@
   > "React 요소(`$$typeof`)와 ref 모양(자기 열거 키가 `current` 하나뿐인 객체)은 원자라 나중 승이다." (`08-design-a-to-z.md:327`)
   > "원자 판정 함수는 렌더 계층이 터미널 판정 함수와 함께 청사진에 넘기며 core는 React 요소의 표식을 모른다(P5)." (`08-design-a-to-z.md:327`)
   > "렌더 계층이 넘긴 판정으로 정하는 원자(React 요소, ref 모양)와 한쪽 값의 참조 이동은 `@winglet/common-utils` `merge`의 선택 인자" (`08-design-a-to-z.md:571`)
+  > 편집자 결정(69C-04): "【추론】 REACT-003은 렌더 계층이 터미널 판정 함수와 원자 판정 함수를 청사진에 넘기고 그 판정으로 `options`·`presentation` 병합의 원자(React 요소, ref 모양)를 정한다고 했으며, 그 규칙은 선언이 정적으로 켜졌든 게이트로 실행 중에 켜졌든 같은 병합이다. 오늘 `isAtomic`은 정적 분석(`blueprint/utils/analyze/buildNodes.ts`)과 청사진 캐시 항목에만 쓰이고, 실행 중 병합(`settle/utils/compute/selectNodeSchema.ts`·`selectChildren.ts`·`primeHost.ts`)은 `mergeEffectiveSchema(node, ids, { mode: 'runtime' })`로 불러 `options.isAtomic`이 비므로 `mergeHintGroup`이 원자를 모른 채 병합한다 — React 요소를 깊이 들어가 합치거나 ref 객체를 평범한 객체로 보는 결함이다. 02–06에는 React 요소를 실은 선언이 시나리오에 없어 드러나지 않았고 07의 렌더 시나리오가 닿으므로 49C-01대로 07이 고친다: 청사진 결과(`Blueprint`)가 작성 때 받은 `isAtomic`(그리고 `isTerminal`)의 identity를 들고, 실행 중 병합은 그 판정을 넘긴다(캐시 키가 판정 identity를 포함하는 오늘의 규칙 그대로). 별도 커밋으로, 게이트로 켜진 선언이 React 요소와 ref 모양을 `options`·`presentation`에 싣는 시험을 더하며, core만 쓰는 호스트에는 판정이 없으므로 동작이 바뀌지 않음을 같은 시험으로 보인다." (`reviews/round-69-closing.md:30`)
 - 상태: 현행
 - 출처: `08-design-a-to-z.md:399#4`(정본), `08-design-a-to-z.md:327`, `08-design-a-to-z.md:571`, `adr/0011-branch-node-composition.md:59`
 - 닫은 사람: 소유자 답(`reviews/round-17-owner-answers.md:12` 통보 1), 17라운드 스웜 수렴(편집자 결정, `08-design-a-to-z.md:327`)
@@ -158,6 +159,7 @@
   > 공개 `SetValueOption`은 비트 넷뿐이라 Refresh 판정에 필요한 "사용자 입력에서 왔다"는 표식은 렌더 계층이 내부 통로로 넘긴다.
 - 보충:
   > "내부 통로(입력 마침 신호 `finishInput`, 입력 출처 표식이 붙은 쓰기)는 클래스 멤버가 아니며 `SchemaNode/` 진입점이 바인딩 전용으로 이름을 붙여 내보낸다." (`09-landing-and-test-strategy.md:109`)
+  > 편집자 결정(69C-01): "【추론】 REACT-009의 보충은 "내부 통로(입력 마침 신호 `finishInput`, 입력 출처 표식이 붙은 쓰기)는 클래스 멤버가 아니며 `SchemaNode/` 진입점이 바인딩 전용으로 이름을 붙여 내보낸다"고 자리를 정했고, 05가 진입 사슬의 소유를 `dispatch`(쓰기 동사마다 진입 함수)로 두었으므로(LANDING-064 PR-4 행) 통로의 몸은 `dispatch/`의 진입 함수이고 겉은 `SchemaNode/index.ts`의 이름 있는 내보내기다. 오늘 `dispatchMount`·`dispatchResetForm`·`adoptSchemaNodeChain`이 런타임 레코드 형을 받는 것은 05가 코어 안에서만 쓴 모양이므로, 07은 공개 `SchemaNode` 형을 받아 레코드로 내려가는 바인딩 전용 함수(마운트, 폼 reset, 인계, 입력 출처 쓰기, 입력 마침)를 `SchemaNode/index.ts`에서 이름으로 내보내고, `core/index.ts`는 그것을 이름으로 다시 내보내며(와일드카드 금지), `src/index.ts`는 내보내지 않는다(소비자 겉면이 아니다; 공개 `SetValueOption`은 비트 넷뿐이라는 REACT-009의 전제가 지켜진다). 입력 출처 표식은 `handleChange`의 진입 전체(값 쓰기·외부 오류 지움·`dirty` 표시를 `batch` 하나로)에 붙고(REACT-010), 폐기된 노드는 그 셋을 조용히 버린다(69C-02). 각 함수의 문서 주석에 "바인딩 전용, `src/index.ts`가 내보내지 않음"을 적고 `SchemaNode/DETAIL.md`에 통로 목록을 둔다." (`reviews/round-69-closing.md:9`)
 - 상태: 현행
 - 출처: `09-landing-and-test-strategy.md:49#1-2`(정본), `09-landing-and-test-strategy.md:109`, `reviews/round-16-owner-review.md:33`
 - 닫은 사람: 편집자 결정(16라운드, `reviews/round-16-owner-review.md:33` 새로 정함)
@@ -170,6 +172,7 @@
   > 같은 표식은 `handleChange`의 진입 전체에 붙고, 재생성 reset으로 폐기된 노드가 늦은 입력 쓰기를 호출자 오류와 가르는 데에도 쓴다(§2.6의 일곱째).
 - 보충:
   > "여섯째의 검사를 받지 않는 컨테이너 입력의 늦은 `onChange`는 `handleChange`의 진입 하나(§2.3의 셋째)로 오고 그 진입 전체(값 쓰기, 외부 오류 지움, `dirty` 표시)가 입력 출처 표식(§2.3의 둘째)을 달고 오므로, 폐기된 노드는 셋을 모두 조용히 버린다." (`09-landing-and-test-strategy.md:87`)
+  > 편집자 결정(69C-01): "【추론】 REACT-009의 보충은 "내부 통로(입력 마침 신호 `finishInput`, 입력 출처 표식이 붙은 쓰기)는 클래스 멤버가 아니며 `SchemaNode/` 진입점이 바인딩 전용으로 이름을 붙여 내보낸다"고 자리를 정했고, 05가 진입 사슬의 소유를 `dispatch`(쓰기 동사마다 진입 함수)로 두었으므로(LANDING-064 PR-4 행) 통로의 몸은 `dispatch/`의 진입 함수이고 겉은 `SchemaNode/index.ts`의 이름 있는 내보내기다. 오늘 `dispatchMount`·`dispatchResetForm`·`adoptSchemaNodeChain`이 런타임 레코드 형을 받는 것은 05가 코어 안에서만 쓴 모양이므로, 07은 공개 `SchemaNode` 형을 받아 레코드로 내려가는 바인딩 전용 함수(마운트, 폼 reset, 인계, 입력 출처 쓰기, 입력 마침)를 `SchemaNode/index.ts`에서 이름으로 내보내고, `core/index.ts`는 그것을 이름으로 다시 내보내며(와일드카드 금지), `src/index.ts`는 내보내지 않는다(소비자 겉면이 아니다; 공개 `SetValueOption`은 비트 넷뿐이라는 REACT-009의 전제가 지켜진다). 입력 출처 표식은 `handleChange`의 진입 전체(값 쓰기·외부 오류 지움·`dirty` 표시를 `batch` 하나로)에 붙고(REACT-010), 폐기된 노드는 그 셋을 조용히 버린다(69C-02). 각 함수의 문서 주석에 "바인딩 전용, `src/index.ts`가 내보내지 않음"을 적고 `SchemaNode/DETAIL.md`에 통로 목록을 둔다." (`reviews/round-69-closing.md:9`)
 - 상태: 현행
 - 출처: `09-landing-and-test-strategy.md:49#3`(정본), `09-landing-and-test-strategy.md:87`
 - 닫은 사람: 16라운드 스웜 수렴(편집자 결정, `09-landing-and-test-strategy.md:71`)
@@ -367,6 +370,7 @@
 - 보충:
   > "옛 트리를 폐기할 때 그 노드들의 Refresh 번호와 상호작용 초기화 번호를 통지 없이 함께 올려, 폐기된 트리의 입력 인스턴스가 뒤늦게 낸 `onChange`·`onFileAttach`(언마운트 때의 flush 포함)와 흐림 뒤 미룬 `touched`가 여섯째의 검사에서 core에 닿기 전에 버려지게 한다." (`09-landing-and-test-strategy.md:87`)
   > "늦은 `onFileAttach`는 노드 쓰기가 아니라 reset을 넘어 남는 Form 층 첨부 파일 맵의 쓰기이므로(오늘의 `SchemaNodeInput.tsx:61-67`), 래퍼가 맵에 쓰기 전에 노드의 폐기 표시를 읽어 폐기된 노드면 버린다(컨테이너 입력 포함)." (`09-landing-and-test-strategy.md:87`)
+  > 편집자 결정(69C-02): "【추론】 LANDING-095의 PR-7 행은 "`reset`의 로드 전환(같은 스키마 판정, 커밋 재대조, 호출 안의 재생성, 자식 프록시 마운트 여부로 가르는 입력 판정, 노드가 드는 Refresh 번호와 상호작용 초기화 번호)"을 PR-7에 두었고, 05는 오류 코드 표에 `DISPOSED_NODE_WRITE`를 "재생성으로 버린 트리의 노드 쓰기만 거부"로 올리되 동작은 두지 않았다(`plan/05-dispatch-and-validation/log.md:102`). 그러므로 재생성 reset의 폐기(WRITE-046·086의 네 일), 상호작용 초기화 번호의 노드 칸과 그것을 올리는 셋(reset, `clearState`, `controls.resetInteraction`; REACT-024)과 바인딩의 읽기(`useSchemaNodeTracker`), 폐기된 노드에 온 쓰기의 `DISPOSED_NODE_WRITE`는 07이 코어에 더하는 것이 원장의 배정이며 03·04·05의 결함으로 적지 않는다. 조건: 폐기는 부모·자식·루트 참조를 끊지 않고(WRITE-086), 옛 노드의 읽기는 폐기 직전 마지막 커밋을 돌려주며, 검증기 등록의 참조 수는 폐기가 아니라 옛 트리의 효과 정리에서 내린다; 번호 올리기는 통지 없이 동기이고 Refresh 번호는 `revision`과 함께 노드가 든다(REACT-024); 입력 출처 표식이 붙은 늦은 쓰기는 조용히 버리고 표식 없는 쓰기만 `DISPOSED_NODE_WRITE`로 던진다(REACT-010의 가름). 코어 쪽 변경은 `record`·`settle`·`dispatch`의 DETAIL을 코드보다 먼저 고치고, 차등 시험(폐기 전후의 개정 대장과 값 불변)으로 03–06의 시나리오가 그대로임을 보인다." (`reviews/round-69-closing.md:16`)
 - 상태: 현행
 - 출처: `09-landing-and-test-strategy.md:86`(정본), `09-landing-and-test-strategy.md:87,94,271`, `08-design-a-to-z.md:468,471`
 - 닫은 사람: 16라운드 스웜 수렴(편집자 결정, `09-landing-and-test-strategy.md:79`)
