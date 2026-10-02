@@ -152,3 +152,5 @@ node verification/07-switch/tools/extract-migration-rows.mjs
 
 코어 전용 진입의 서명 변경: 옛 `nodeFromJSONSchema({ jsonSchema, defaultValue, onChange, validationMode, validatorFactory, contextNode })` → 새 서명(plan/07-switch/execution-adr.md D3), 이주 행 아님(70C-01)
 
+
+공개 표면 잔여의 거취: 형 별칭 `JSONSchemaError`(= `ValidationIssue`, 34C-02·50C-01 "PR-7까지")는 07 전환 커밋에서 공개 index에서 빠짐(74라운드 소유자 답, 75C-01). 옛 이름의 별칭은 두지 않음. throw 클래스의 판별 함수 `isJSONSchemaError`는 오류 분류의 현행 공개 함수로 남음. 이주 안내 본문은 PR-8(LANDING-068)
