@@ -40,7 +40,7 @@ Planning method: 저장소 지침 — `PLAN.md` §2(한 PR의 순서)와 `plan/p
 | I5 | reset의 외부 오류 | 외부 오류를 비우는 일은 core의 폼 reset 진입이 한다. `errors` 속성 재적용은 바인딩이 같은 진입 안(돌아오기 전, 재생성이면 새 트리)에서 경로 키로 한다. 인계도 옛 노드 객체 키가 아니라 경로 키로 넘긴다. PR-7의 일이며 코드와 원장의 어긋남(M6)으로 적는다 | WRITE-045, 69C-03 | 닫힘 |
 | I6 | 런타임 병합의 원자 판정 | 청사진 결과가 작성 때 받은 `isAtomic`·`isTerminal`의 identity를 들고, 실행 중 병합 셋(`selectNodeSchema`·`selectChildren`·`primeHost`)이 그것을 넘긴다(캐시 키가 판정 identity를 포함하는 오늘 규칙 그대로). 03·04 결함의 고침으로 별도 커밋. 게이트로 켜진 선언이 React 요소·ref 모양을 `options`·`presentation`에 싣는 시험과, core만 쓰는 호스트의 동작 불변을 같은 시험으로 | REACT-003·004, 49C-01, 69C-04 | 닫힘 |
 | I7 | 마운트 검증 요청 | 마운트 진입에 "검증 요청을 미룸" 선택을 둔다. 바인딩 전용 마운트 함수가 켜고 준비 이펙트에서 요청한다(로드 뒤 `OnChange` 비트면 한 번). 선택을 켜지 않은 호출은 동작 불변(LANDING-041의 core 호스트 모양) | LANDING-041·067, 69C-05 | 닫힘 |
-| I8 | `nodeFromJSONSchema` | core만 쓰는 호스트의 진입이다. 새 서명은 ADR D3. `<Form>`의 트리 생성도 같은 함수를 지나 두 경로가 같은 계약을 갖는다 | VALIDATE-010, CONTROLS-075, LANDING-067 | 자율 결정(원장 미정) |
+| I8 | `nodeFromJSONSchema` | core만 쓰는 호스트의 진입이다. 새 서명은 ADR D3 그대로. `<Form>`은 같은 생성 통로를 바인딩 전용 함수로 불러 두 경로가 같은 계약을 갖는다(문서 주석에 그대로 적음). 소비자 겉면이 아니므로 이주 행은 두지 않고 이주 점검표 끝에 "코어 전용 진입의 서명 변경" 한 줄. 옛 `contextNodeFactory` 내보내기는 `src/__legacy__/`로 가고 `core/index.ts`에서 빠진다 | VALIDATE-010, CONTROLS-075, LANDING-067, REACT-003, 70C-01 | 닫힘 |
 | I9 | 같은 스키마 판정 | 렌더 계층 `helpers/`의 비교 함수(키 순서까지 깊은 같음, JSON 밖 값은 참조 같음). `@winglet`의 `equals`는 키 순서를 보지 않으므로 쓰지 않는다 | WRITE-043 | 자율 결정 |
 | I10 | 마운트 중 통지 | 렌더 중 `useMemo`에서 트리를 만들고 마운트한다. 시드에 버퍼형 보고기를 넣어 마운트 정착의 기록을 모으고, 준비 이펙트가 비워 `onError`로 보낸다. `onChange`·`onDiagnosticsChange`는 준비 깃발 전에는 버린다. StrictMode의 버려진 렌더 기록은 커밋된 로드 객체에 붙지 않으므로 가지 않는다 | REACT-007, ERROR-026, LANDING-075 첫째·넷째 | 닫힘 |
 | I11 | `validatorFactory` | Form 속성의 공개 형은 `{ compile, compileGuard }` 객체다(필수 `compileGuard`). 고르는 순서 Form 속성 > `FormProvider` > 플러그인, 고른 검증기의 참조가 바뀌면 재생성. 공개 `ValidateFunction`·`ValidatorFactory`의 옛 모양은 지우고 이주 행에 적는다 | 32C-01, VALIDATE-044, ERROR-032 보충(35C-07) | 닫힘 |
@@ -77,7 +77,7 @@ Planning method: 저장소 지침 — `PLAN.md` §2(한 PR의 순서)와 `plan/p
 | 착수 1–6 | 07 선출 확인, 미결 소유자 결정 없음, 계획서 뒤의 현행 결정(26C-02, 28C-07, 32C-01, 34C-02·50C-01, 35C-04·12, 27라운드 소유자 답), P-24·P-25 규칙, D-1의 적용, 레거시·플러그인 경계, 권장 순서, 문서 소유 경계 | 비목표, I1, I11–I13, I20 |
 | Q1–Q10 | 68C-01–10 | I14–I19, I21, M1–M4 |
 | Q11–Q15 | 69C-01–05(권장안대로, 조건 더함) | I2–I7, M6–M8 |
-| Q16(보낼 것) | `nodeFromJSONSchema` 새 서명(ADR D3)을 SURFACE 보충으로 | I8 |
+| Q16 | 70C-01: D3 서명 확정, 이주 행 대신 점검표 한 줄, `contextNodeFactory`는 레거시로 | I8, U5, U10 |
 
 ## 3. 구조
 
@@ -170,7 +170,7 @@ U0–U4는 바깥 동작을 바꾸지 않으며 각자 초록으로 끝난다. U
 전환 묶음의 시작. 이 커밋부터 U8 완료까지 `render` 프로젝트가 붉을 수 있다(I1).
 
 - 원장: LANDING-067·087·159·205, GOAL-088, NODE-015·058, SURFACE-056·059·061, REACT-032, LANDING-181·185, 32C-01, 34C-02·50C-01.
-- `CORE/nodeFromJSONSchema.ts`를 ADR D3대로 다시 짓는다. `CORE/index.ts`가 `SchemaNode/`·`validation/` 진입점과 바인딩 전용 함수를 이름으로 내보낸다. `CORE/types/node.ts`·`constructor.ts`를 지운다. `CORE/INTENT.md`의 공개 경계 문장을 같은 커밋에서 고친다.
+- `CORE/nodeFromJSONSchema.ts`를 ADR D3대로 다시 짓는다(70C-01). 옛 `contextNodeFactory` 내보내기는 `src/__legacy__/`로 옮기고 `CORE/index.ts`에서 뺀다. `CORE/index.ts`가 `SchemaNode/`·`validation/` 진입점과 바인딩 전용 함수를 이름으로 내보낸다. `CORE/types/node.ts`·`constructor.ts`를 지운다. `CORE/INTENT.md`의 공개 경계 문장을 같은 커밋에서 고친다.
 - `src/index.ts`: 새 노드 형·가드(`isUnionNode` 포함)·`UnionNode`·`InferSchemaNode`·`SchemaNodeEventType`·`SchemaNodeRequestType`·`SetValueOption`·`ValidationIssue`, `JSONSchemaError` 제거(I12). 공개 이벤트 형 여섯과 `ValidationMode`는 SURFACE-059대로.
 - `types/jsonSchema.ts`: `JSONSchema<Options, Presentation>`의 바인딩 판을 같은 이름으로(GOAL-088, 전역 모듈 확장 없음). `types/formTypeInput.ts`: Hint·`FormTypeInputProps`의 `type`·`schemaType`·`nullable`·`typeMismatch`, `FormTypeTestObject.type`·`schemaType`(REACT-032, LANDING-181·185). `types/formTypeRenderer.ts`·`Form/components/FormGroup.tsx`: `FormTypeRenderer` 칸 → `FormTypeGroupRenderer`(LANDING-067). `types/error.ts`: `ValidatorFactory`·`ValidateFunction`의 옛 모양 제거, Form 속성 검증기 형(I11).
 - 경계 린트 넓힘(I22).
@@ -225,6 +225,7 @@ U0–U4는 바깥 동작을 바꾸지 않으며 각자 초록으로 끝난다. U
 - `V7/migration-check.md`의 행마다 처분을 채운다. (가)는 `src/__tests__/migration/<행>.test.tsx`(가칭) 또는 e2e의 시험 이름으로 오늘 동작(0.16.0 별칭 또는 레거시)과 새 동작을 대조한다. (나)는 02–06의 시험 이름을 인용한다. (다)는 08·09. 폐기·분할·대체 행은 "현행 아님".
 - 채움 시점 이주 행 셋(LANDING-200–202): 세 장면을 오늘 코드와 새 구현에서 돌린다. 오늘 결과는 T1-B 탐침(`reviews/raw-round18-tests/t1b-fill-consistency.md`)과 같고 새 결과는 이주 행대로(LANDING-203).
 - 공개 표면 잔여의 거취(SURFACE-059, 18C-87): `FormProps` 열아홉 칸과 새 셋, `FormHandle` 18, `ValidationMode`, 공개 이벤트 형 여섯, 명령·훅의 거취를 형 시험과 표로 대조.
+- 점검표 끝에 "코어 전용 진입의 서명 변경" 한 줄: 옛 `nodeFromJSONSchema({ jsonSchema, defaultValue, onChange, validationMode, validatorFactory, contextNode })` → ADR D3의 새 서명(70C-01, 이주 행 아님).
 - 빠진 이주 행이 나오면 원장 관리자에게 물음으로 보내고(원장 LANDING 영역에 먼저 더함), 시험은 그 뒤에 더한다(`verification.md` 실패 처리).
 - 완료: G20·G21.
 
@@ -321,3 +322,4 @@ U0–U4는 바깥 동작을 바꾸지 않으며 각자 초록으로 끝난다. U
 | 차례 | 리뷰어 | 판정 | 반영 |
 | --- | --- | --- | --- |
 | 1 | antigravity(세션 `a934a8d0`, `a44003ddd` 기준, 두 차례 응답) | `rework-required`: F1(차단) `vitest -t` 필터가 0건과 맞으면 종료 코드 0이라 G9·G14·G15·G16·G21·G22가 비어서 통과; F2(차단) G6·G8은 코드가 들어오기 전인 U2 끝에 판정 불가; F3(차단) G24가 플러그인만 보고 본체 `ChildNodeComponentProps`·`FormGroupProps`의 `FormTypeRenderer` 칸을 보지 않음; F4 G19가 넓은 옛 글롭의 제거를 보지 않음; F5 `browser-gates.md`의 네 행이 본문에 없음, `TBD`만으로는 빈 칸을 못 잡음; F6 U10·U11이 U9에 기댐; F7 LANDING-150 검사 없음; F8 G26에 CHECK 없음; F9 경계 린트 넓힘의 검사 없음; F10 Playwright 바이너리와 React 두 벌 위험. 원장·68C와의 충돌 없음, 범위 누락·초과 없음, 현행 주장 표본 12건 확인 | F1 태그 존재를 grep으로 먼저 단언(05 모양); F2 G6은 U3 끝, G8은 U6 끝에 판정; F3 G12가 본체 소스의 칸 선언 0을 단언; F4 G19에 넓은 글롭 부재; F5 U11 본문과 G17·G18의 빈 표 칸 단언; F6 §4 의존 문장; F7 G16에 문서 주석 단언; F8 G26 CHECK; F9 G13에 `src/core/**` 단언; F10 U11 실행 환경과 §7 위험 두 줄. 함께 69라운드(69C-01–05)를 I2–I7·M6–M8·U4·ADR D2·D5에 반영 |
+| 2 | antigravity(같은 세션 `a934a8d0`, `94aeaa468` 기준, 고친 범위만) | `cleared`: F1–F10 모두 해결(게이트·행 인용), I2–I7·M6–M8·U4·D2·D5가 69C-01–05와 일치, 새 결함 없음(태그 존재 단언, 판정 시점 이동, 서브셸 감쌈, G1–G33 연속, 계획이 인용한 게이트 모두 있음) | 없음 |

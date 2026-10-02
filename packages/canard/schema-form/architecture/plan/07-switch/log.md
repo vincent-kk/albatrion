@@ -9,7 +9,7 @@ Planning method: 저장소 지침 — `PLAN.md` §2와 `plan/prompts.md`의 단�
 - 단계: 07 전환(PR-7). 선출 까닭: 02–06이 모두 머지되었고(06 `07a083c18`), 07보다 먼저 처리할 원장 작업이 없다(원장 관리자 착수 답 1). 08·최적화·09는 07 뒤, 릴리스 전환은 D-2에 막힘.
 - 브랜치 `feat/schema-form-switch`, base `1.0.0-beta`(`93ff8d7bc`, 69라운드). 작업 자리는 워크트리 `.claude/worktrees/stage-07`(샌드박스가 쓰기를 막는 `.claude/commands/`·`.vscode/`는 이 워크트리에서만 sparse-checkout으로 뺌). PR: 아직 없음.
 - seiri 작업 `schema-form-switch`(게이트 원장은 워크트리의 `.seiri/tasks/schema-form-switch/gates.md`), 워크플로우 단계: write-plan(리뷰 1차 반영) → review-plan(고친 범위 재확인).
-- 다음 행동: 리뷰 재확인(G1), 원장 관리자에게 Q16(`nodeFromJSONSchema` 서명) 송부, 그 뒤 U1.
+- 다음 행동: U1(전환 직전 기준선). 계획 리뷰는 `cleared`(G1), Q16은 70C-01로 닫힘.
 
 ## 1. 최초 기준선
 
