@@ -3,6 +3,7 @@ import type { SchemaNodeRecord } from '../../../record';
 import { getFeatureNodeIndex } from '../../../blueprint';
 import type { SettlementContext } from '../../type';
 import { readSchemaNodeWatchValues } from '../controls/readSchemaNodeWatchValues';
+import { sameValue } from '../compute/sameValue';
 import { createWatchDeliveryIndex } from './utils/createWatchDeliveryIndex';
 import { commitGlobalState } from './commitGlobalState';
 import { getWatchDeliveryPaths } from './utils/getWatchDeliveryPaths';
@@ -107,7 +108,7 @@ export const markCommitDeliveries = <Self extends SchemaNodeRecord<Self>>(
     }
     const watchChanged = initialized &&
       (watched.length !== previousWatchValues.length ||
-        watched.some((value, index) => value !== previousWatchValues[index]));
+        watched.some((value, index) => !sameValue(value, previousWatchValues[index])));
     if (initialized) {
       if ((changes & SchemaNodeEventType.UpdateValue) &&
         (node.deliveryPreviousLocal !== node.local || node.deliveryPreviousEmit !== node.emit)) {
