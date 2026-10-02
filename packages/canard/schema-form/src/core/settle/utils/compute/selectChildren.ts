@@ -19,7 +19,7 @@ import { distributeLatentValue } from '../latent/distributeLatentValue';
 import { enterSchemaNode } from './enterSchemaNode';
 import { hasDistributedChildInput } from '../write/hasDistributedChildInput';
 import { createChildNode } from './createChildNode';
-import type { BlueprintChildEntry, BlueprintNode, EffectiveSchema } from '../../../blueprint';
+import type { BlueprintChildEntry, BlueprintNode, BlueprintOptions, EffectiveSchema } from '../../../blueprint';
 import { indexEnteredLatentKey } from '../latent/indexEnteredLatentKey';
 
 /** Ungated declarations are included by the effective-schema merger itself. */
@@ -43,13 +43,13 @@ const staticIds = (entry: BlueprintChildEntry): readonly number[] => {
 };
 
 /** Memoize an unambiguous static host in the structure's property order. */
-const staticShape = (host: BlueprintNode) => {
+const staticShape = (host: BlueprintNode, isAtomic: BlueprintOptions['isAtomic']) => {
   if (STATIC_SHAPES.has(host)) return STATIC_SHAPES.get(host);
   const selected: Record<string, {
     entry: BlueprintChildEntry; ids: readonly number[]; schema: EffectiveSchema;
   }> = Object.create(null);
   for (const entry of host.childEntries) {
-    const schema = mergeEffectiveSchema(entry.node, NO_ACTIVE_IDS, { mode: 'runtime' });
+    const schema = mergeEffectiveSchema(entry.node, NO_ACTIVE_IDS, { mode: 'runtime', isAtomic });
     if (hasOwnProperty(selected, entry.name) || entry.node.kind === 'virtual' ||
       !entry.declarations.length || schema.typeConflict ||
       entry.declarations.some((declaration) => declaration.gates.length > 0)) {
@@ -80,7 +80,7 @@ export const selectChildren = <Self extends SchemaNodeRecord<Self>>(
   immediate: boolean,
 ): boolean => {
   if (!context.hasGates && node.behavior.type === 'object') {
-    const shape = staticShape(node.blueprintNode);
+    const shape = staticShape(node.blueprintNode, node.runtime.blueprint?.isAtomic);
     const children = node.children;
     if (shape && children && children.length === shape.length &&
       shape.every(({ entry, schema }, index) => {
@@ -224,7 +224,8 @@ export const selectChildren = <Self extends SchemaNodeRecord<Self>>(
       staticIds(entry);
     context.selectedDeclarationIds.set(child, ids);
     const effective = mergeEffectiveSchema(child.blueprintNode,
-      context.hasGates ? ids : NO_ACTIVE_IDS, { mode: 'runtime' });
+      context.hasGates ? ids : NO_ACTIVE_IDS,
+      { mode: 'runtime', isAtomic: node.runtime.blueprint?.isAtomic });
     if (child.schema !== effective) {
       if (!context.originalSchemas.has(child.path))
         context.originalSchemas.set(child.path, child.schema);

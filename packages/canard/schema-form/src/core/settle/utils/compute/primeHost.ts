@@ -47,7 +47,8 @@ export const primeHost = <Self extends SchemaNodeRecord<Self>>(
       if (child.behavior.strategy === 'branch')
         context.shapeDirtyPaths.add(child.path);
     }
-    const schema = mergeEffectiveSchema(child.blueprintNode, [], { mode: 'runtime' });
+    const schema = mergeEffectiveSchema(child.blueprintNode, [],
+      { mode: 'runtime', isAtomic: node.runtime.blueprint?.isAtomic });
     if (child.schema !== schema) {
       if (!context.originalSchemas.has(child.path))
         context.originalSchemas.set(child.path, child.schema);

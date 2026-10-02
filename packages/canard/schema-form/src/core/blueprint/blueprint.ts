@@ -72,6 +72,8 @@ export const blueprint = (
     Object.freeze(fragment);
   }
   const result = Object.freeze({
+    isAtomic: options.isAtomic,
+    isTerminal: options.isTerminal,
     schema,
     root,
     nodes: Object.freeze(context.nodes),

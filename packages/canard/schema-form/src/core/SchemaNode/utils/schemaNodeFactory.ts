@@ -43,7 +43,8 @@ const createSchemaNode = (
     behavior, runtime, template, parent, name, escapedName, path, depth,
     template.strategy === 'branch' ? {} : null,
     template.strategy === 'branch' ? [] : null,
-    mergeEffectiveSchema(template, [], { mode: 'runtime' }), {},
+    mergeEffectiveSchema(template, [],
+      { mode: 'runtime', isAtomic: runtime.blueprint?.isAtomic }), {},
   );
 };
 

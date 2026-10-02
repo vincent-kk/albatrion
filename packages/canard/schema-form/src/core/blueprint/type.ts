@@ -153,6 +153,10 @@ export interface BlueprintDiagnostic {
 
 /** Immutable result of analyzing one authored root. */
 export interface Blueprint {
+  /** Renderer predicates retained by identity for runtime schema merging. */
+  readonly isAtomic?: BlueprintOptions['isAtomic'];
+  /** Terminal strategy predicate used when constructing this analysis. */
+  readonly isTerminal?: BlueprintOptions['isTerminal'];
   /** Original root reference, never cloned or mutated by analysis. */
   readonly schema: BlueprintSchema;
   /** Root template. */

@@ -1,7 +1,7 @@
 import { PathKeyedMap } from '../../../utils/pathIndex/PathKeyedMap';
 import { PathKeyedSet } from '../../../utils/pathIndex/PathKeyedSet';
 import { blueprint } from '../../../blueprint';
-import type { Blueprint, BlueprintSchema } from '../../../blueprint';
+import type { Blueprint, BlueprintOptions, BlueprintSchema } from '../../../blueprint';
 import type { SchemaNodeRuntime } from '../../../record';
 import type { Validator } from '../../../validation';
 import { createTestValidator } from '../../../__tests__/fixtures/createTestValidator';
@@ -12,13 +12,15 @@ import type { PlainNode } from './createPlainNode';
  * Compose one analyzed schema and a plain-record factory for settlement tests.
  * @param schema - Authored root to analyze with the real blueprint compiler
  * @param validator - Selected validator using the core contract.
+ * @param options - Renderer predicates supplied to blueprint analysis
  * @returns Root, analysis, and visit log shared by all created records
  */
 export const createTestTree = (
   schema: BlueprintSchema,
   validator: Validator = createTestValidator(),
+  options: BlueprintOptions = {},
 ): { root: PlainNode; blueprint: Blueprint; visits: string[] } => {
-  const analysis = blueprint(schema);
+  const analysis = blueprint(schema, options);
   const visits: string[] = [];
   const runtime: SchemaNodeRuntime<PlainNode> = {
     deliveries: new Set(),
