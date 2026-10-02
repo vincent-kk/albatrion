@@ -1,8 +1,34 @@
-import type { BlueprintNode } from '../../../blueprint';
+import type { Blueprint, BlueprintNode } from '../../../blueprint';
 import type { SchemaNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../type';
 import { hasLatentUnder } from '../latent/hasLatentUnder';
 import { isMissingRaw } from '../transition/isMissingRaw';
+
+/** Only the cycle verdict outlives the one-time graph traversal. */
+const CYCLIC_BLUEPRINTS = new WeakMap<Blueprint, boolean>();
+
+/**
+ * Detect a back edge without mistaking shared DAG templates for recursion.
+ * @param node - Template at the current DFS position
+ * @param visiting - Templates on the active DFS stack
+ * @param visited - Templates whose outgoing edges have been checked
+ * @returns Whether a reachable template cycle exists
+ */
+const hasTemplateCycle = (
+  node: BlueprintNode, visiting: Set<BlueprintNode>, visited: Set<BlueprintNode>,
+): boolean => {
+  if (visiting.has(node)) return true;
+  if (visited.has(node)) return false;
+  visiting.add(node);
+  for (const entry of node.childEntries)
+    if (hasTemplateCycle(entry.node, visiting, visited)) return true;
+  if (node.item && hasTemplateCycle(node.item, visiting, visited)) return true;
+  for (const item of node.prefixItems ?? [])
+    if (hasTemplateCycle(item, visiting, visited)) return true;
+  visiting.delete(node);
+  visited.add(node);
+  return false;
+};
 
 /**
  * Stop source-free template repetition within object-property chains.
@@ -18,6 +44,13 @@ export const hasRecursiveExpansion = <Self extends SchemaNodeRecord<Self>>(
   context: SettlementContext<Self>,
 ): boolean => {
   if (input !== undefined) return false;
+  const analysis = parent.runtime.blueprint;
+  let cyclic = CYCLIC_BLUEPRINTS.get(analysis);
+  if (cyclic === undefined) {
+    cyclic = hasTemplateCycle(analysis.root, new Set(), new Set());
+    CYCLIC_BLUEPRINTS.set(analysis, cyclic);
+  }
+  if (!cyclic) return false;
   let ancestor: Self | null = parent;
   while (ancestor) {
     if (ancestor.behavior.type === 'array') return false;

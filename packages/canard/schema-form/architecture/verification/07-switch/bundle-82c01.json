@@ -1,0 +1,33 @@
+{
+  "esbuild": "0.25.9",
+  "distBytes": 503227,
+  "distMinifiedBytes": 237764,
+  "distMinifiedGzipBytes": 71994,
+  "distGzipBytes": 104592,
+  "sourceMinifiedBytes": 253435,
+  "sourceMinifiedGzipBytes": 74589,
+  "groups": {
+    "core/settle": 107769,
+    "core/blueprint": 35493,
+    "core/dispatch": 21715,
+    "components": 13917,
+    "core/behaviors": 11470,
+    "helpers": 10794,
+    "providers": 10607,
+    "formTypeDefinitions": 8640,
+    "core/validation": 7324,
+    "core/SchemaNode": 6132,
+    "core/record": 4900,
+    "errors": 4682,
+    "core/utils": 4076,
+    "hooks": 1885,
+    "app": 1750,
+    "core/navigation": 972,
+    "bundle wrapper/exports": 657,
+    "core/types": 502,
+    "types": 150,
+    "core/index.ts": 0,
+    "index.ts": 0
+  },
+  "note": "Fractal attribution is bytesInOutput from source-entry bundling; dist-entry bundling preserves the TEST-075 budget method. Gzip bytes are not additive by source file."
+}

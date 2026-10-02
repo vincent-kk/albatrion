@@ -45,7 +45,11 @@ export const getDeriveRuleTable = (blueprint: Blueprint): DeriveRuleTable => {
         Reflect.get(schema, 'controls') : undefined;
       if (!controls || typeof controls !== 'object' || isArray(controls)) continue;
       const groups: RuleGroup[] = [];
-      if (declaration.scope === 'fragment') {
+      const hasOwnRules = Reflect.get(controls, 'derived') !== undefined ||
+        Reflect.get(controls, 'unsetValue') !== undefined ||
+        Reflect.get(controls, 'resetInteraction') !== undefined ||
+        Reflect.get(controls, 'injectTo') !== undefined;
+      if (hasOwnRules && declaration.scope === 'fragment') {
         for (const entry of node.childEntries) {
           const selected = entry.declarations.filter((child) =>
             child.schemaPath.startsWith(`${declaration.schemaPath}/properties/`) ||
@@ -57,7 +61,7 @@ export const getDeriveRuleTable = (blueprint: Blueprint): DeriveRuleTable => {
             targetDeclarationIds: selected.map((child) => child.id),
             targetNodes: [entry.node] });
         }
-      } else groups.push({ controls,
+      } else if (hasOwnRules) groups.push({ controls,
         schemaPath: `${declaration.schemaPath}/controls`, layer: 'node',
         targetNodes: [node] });
       const children: unknown = Reflect.get(controls, 'children');

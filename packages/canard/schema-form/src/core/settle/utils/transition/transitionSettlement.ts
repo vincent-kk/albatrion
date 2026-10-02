@@ -41,7 +41,10 @@ export const transitionSettlement = <Self extends SchemaNodeRecord<Self>>(
   let rounds = 0;
   while (true) {
     context.automaticChanged = false;
-    for (const node of [...context.entered].sort((left, right) => left.depth - right.depth)) {
+    const enteredByDepth: Self[][] = [];
+    for (const node of context.entered)
+      (enteredByDepth[node.depth] ??= []).push(node);
+    for (const node of enteredByDepth.flat()) {
       if (node.detached || context.pendingExits.size !== 0 &&
         context.pendingExits.has(JSON.stringify([
         node.path, node.blueprintNode.kind]))) continue;
@@ -55,9 +58,9 @@ export const transitionSettlement = <Self extends SchemaNodeRecord<Self>>(
       }
       if (context.kind !== 'load' && hasWrongKindBranchAncestor(node)) continue;
       if (context.deriveState?.activeUnsetTargets.has(node)) continue;
-      if (!isMissingRaw(node, context)) continue;
+      if (node.raw !== undefined) continue;
       const value = readDefault(node, context.selectedDeclarationIds);
-      if (value === undefined) continue;
+      if (value === undefined || !isMissingRaw(node, context)) continue;
       context.filledNodes.add(node);
       context.automatic = true;
       context.writtenInputs.set(node, value);

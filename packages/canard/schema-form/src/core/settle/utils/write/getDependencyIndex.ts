@@ -17,6 +17,8 @@ const NO_OWNERS: readonly string[] = Object.freeze([]);
 interface DependencyNode {
   /** Declaration hosts that read this exact path. */
   owners: { path: string; bindable: boolean }[];
+  /** Reused membership index preserves linear registration and owner order. */
+  ownerPaths: Set<string>;
   /** Next escaped JSON Pointer segments. */
   children: Map<string, DependencyNode>;
 }
@@ -24,7 +26,9 @@ interface DependencyNode {
 /** Queryable reverse dependencies built once from the blueprint dictionary. */
 class DependencyIndex {
   /** Root of the absolute JSON Pointer watch trie. */
-  private readonly root: DependencyNode = { owners: [], children: new Map() };
+  private readonly root: DependencyNode = {
+    owners: [], ownerPaths: new Set(), children: new Map(),
+  };
 
   /** Build absolute watch paths from authored reverse dependency IDs. */
   constructor(blueprint: Blueprint) {
@@ -126,16 +130,18 @@ class DependencyIndex {
     for (const segment of watchedPath.split('/').filter(Boolean)) {
       let child = current.children.get(segment);
       if (!child) {
-        child = { owners: [], children: new Map() };
+        child = { owners: [], ownerPaths: new Set(), children: new Map() };
         current.children.set(segment, child);
       }
       current = child;
     }
     const indexedParts = watchedPath.split('/');
-    if (!current.owners.some((entry) => entry.path === owner))
+    if (!current.ownerPaths.has(owner)) {
+      current.ownerPaths.add(owner);
       current.owners.push({ path: owner,
         bindable: ownerParts.every((part, index) =>
           part !== '*' || indexedParts[index] === '*') });
+    }
   }
 }
 

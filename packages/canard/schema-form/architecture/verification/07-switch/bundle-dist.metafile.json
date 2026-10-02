@@ -1,0 +1,235 @@
+{
+  "inputs": {
+    "dist/index.mjs": {
+      "bytes": 503227,
+      "imports": [
+        {
+          "path": "@winglet/common-utils/filter",
+          "kind": "import-statement",
+          "external": true
+        },
+        {
+          "path": "@winglet/common-utils/object",
+          "kind": "import-statement",
+          "external": true
+        },
+        {
+          "path": "@winglet/common-utils/error",
+          "kind": "import-statement",
+          "external": true
+        },
+        {
+          "path": "@winglet/react-utils/object",
+          "kind": "import-statement",
+          "external": true
+        },
+        {
+          "path": "react/jsx-runtime",
+          "kind": "import-statement",
+          "external": true
+        },
+        {
+          "path": "@winglet/json-schema/filter",
+          "kind": "import-statement",
+          "external": true
+        },
+        {
+          "path": "react",
+          "kind": "import-statement",
+          "external": true
+        },
+        {
+          "path": "@winglet/common-utils/array",
+          "kind": "import-statement",
+          "external": true
+        },
+        {
+          "path": "@winglet/react-utils/hook",
+          "kind": "import-statement",
+          "external": true
+        },
+        {
+          "path": "@winglet/common-utils/math",
+          "kind": "import-statement",
+          "external": true
+        },
+        {
+          "path": "@winglet/common-utils/lib",
+          "kind": "import-statement",
+          "external": true
+        },
+        {
+          "path": "@winglet/json/pointer",
+          "kind": "import-statement",
+          "external": true
+        },
+        {
+          "path": "@winglet/common-utils/console",
+          "kind": "import-statement",
+          "external": true
+        },
+        {
+          "path": "@winglet/react-utils/filter",
+          "kind": "import-statement",
+          "external": true
+        },
+        {
+          "path": "@winglet/react-utils/hoc",
+          "kind": "import-statement",
+          "external": true
+        },
+        {
+          "path": "@winglet/common-utils/function",
+          "kind": "import-statement",
+          "external": true
+        },
+        {
+          "path": "@winglet/common-utils/scheduler",
+          "kind": "import-statement",
+          "external": true
+        },
+        {
+          "path": "@winglet/common-utils/constant",
+          "kind": "import-statement",
+          "external": true
+        }
+      ],
+      "format": "esm"
+    }
+  },
+  "outputs": {
+    "architecture/verification/07-switch/.performance/dist.min.mjs": {
+      "imports": [
+        {
+          "path": "@winglet/common-utils/filter",
+          "kind": "import-statement",
+          "external": true
+        },
+        {
+          "path": "@winglet/common-utils/object",
+          "kind": "import-statement",
+          "external": true
+        },
+        {
+          "path": "@winglet/common-utils/error",
+          "kind": "import-statement",
+          "external": true
+        },
+        {
+          "path": "@winglet/react-utils/object",
+          "kind": "import-statement",
+          "external": true
+        },
+        {
+          "path": "react/jsx-runtime",
+          "kind": "import-statement",
+          "external": true
+        },
+        {
+          "path": "@winglet/json-schema/filter",
+          "kind": "import-statement",
+          "external": true
+        },
+        {
+          "path": "react",
+          "kind": "import-statement",
+          "external": true
+        },
+        {
+          "path": "@winglet/common-utils/array",
+          "kind": "import-statement",
+          "external": true
+        },
+        {
+          "path": "@winglet/react-utils/hook",
+          "kind": "import-statement",
+          "external": true
+        },
+        {
+          "path": "@winglet/common-utils/math",
+          "kind": "import-statement",
+          "external": true
+        },
+        {
+          "path": "@winglet/common-utils/lib",
+          "kind": "import-statement",
+          "external": true
+        },
+        {
+          "path": "@winglet/json/pointer",
+          "kind": "import-statement",
+          "external": true
+        },
+        {
+          "path": "@winglet/common-utils/console",
+          "kind": "import-statement",
+          "external": true
+        },
+        {
+          "path": "@winglet/react-utils/filter",
+          "kind": "import-statement",
+          "external": true
+        },
+        {
+          "path": "@winglet/react-utils/hoc",
+          "kind": "import-statement",
+          "external": true
+        },
+        {
+          "path": "@winglet/common-utils/function",
+          "kind": "import-statement",
+          "external": true
+        },
+        {
+          "path": "@winglet/common-utils/scheduler",
+          "kind": "import-statement",
+          "external": true
+        },
+        {
+          "path": "@winglet/common-utils/constant",
+          "kind": "import-statement",
+          "external": true
+        }
+      ],
+      "exports": [
+        "Form",
+        "FormProvider",
+        "JSONPointer",
+        "SchemaNodeEventType",
+        "SchemaNodeRequestType",
+        "SchemaNodeState",
+        "SetValueOption",
+        "ShowError",
+        "ValidationMode",
+        "VirtualizationBackfill",
+        "isArrayNode",
+        "isBooleanNode",
+        "isBranchNode",
+        "isJSONSchemaError",
+        "isNumberNode",
+        "isObjectNode",
+        "isSchemaFormError",
+        "isSchemaNode",
+        "isStringNode",
+        "isTerminalNode",
+        "isUnhandledError",
+        "isUnionNode",
+        "isValidationError",
+        "isVirtualNode",
+        "registerPlugin",
+        "useChildNodeComponentMap",
+        "useChildNodeErrors",
+        "useFormSubmit",
+        "useSchemaNodeSubscribe",
+        "useSchemaNodeTracker"
+      ],
+      "entryPoint": "dist/index.mjs",
+      "inputs": {
+        "dist/index.mjs": {
+          "bytesInOutput": 237105
+        }
+      },
+      "bytes": 237764
+    }
+  }
+}

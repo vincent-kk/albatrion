@@ -8,6 +8,8 @@
 
 ## API Contracts
 
+- 조각의 대상 자식 검색은 그 조각에 `derived`·`unsetValue`·`resetInteraction`·`injectTo` 중 하나가 있을 때만 수행합니다. `active`만 있는 분기 B개에서는 파생 표 생성이 전체 자식 검색 B회 대신 O(선언 수) 시간이며 불필요한 대상 배열을 할당하지 않습니다. `children`의 별도 규칙은 계속 처리하고 규칙 순서·층·에지 의미를 바꾸지 않습니다(SETTLE-017·043, 82C-01).
+
 - `index.ts`는 `getDeriveRuleTable(blueprint: Blueprint): DeriveRuleTable`, `evaluateDeriveRound<Self>(root: SchemaNodeRecord<Self>, state: DeriveState<Self>): DeriveRoundDecision<Self>`, `evaluateResetInteraction<Self>(root: SchemaNodeRecord<Self>, state: DeriveState<Self>): DeriveResetInteractionDecision<Self>`, `DERIVE_ROUND_CAP = 25`와 `DeriveRuleTable`·`DeriveState`·`DeriveRoundDecision`·`DeriveResetInteractionDecision`·`DeriveTraceEntry` 형을 이름으로 내보냅니다. `settle/utils/derivation/`은 라운드 판정을, `settle/utils/commit/`은 상호작용 초기화 판정을 이 진입점에서 소비합니다(SETTLE-004·006·017, NODE-016, CONTROLS-029).
 - `DeriveState<Self>`는 완성된 트리, 호출의 로드 범위와 억제 여부, 직전 커밋의 규칙 값, 이번 정착에서 소비한 값, 대상별 이미 적용한 종류 순위를 판정에 건넵니다. `DeriveRoundDecision<Self>`는 대상마다 승자 하나인 쓰기 후보, 승패와 무관하게 소비할 에지, 개발 모드 기록 항목을 돌려주며 원본을 바꾸지 않습니다(SETTLE-004·028·048·049, WRITE-015, ERROR-159).
 - 규칙 표의 한 발생은 선언 ID·종류·원천 발생 경로·선언 층·조각 전순서·식 기록 또는 `injectTo` 함수·`watch` 경로를 구별합니다. `derived` 의존 집합은 그 식의 경로와 같은 노드 모든 선언의 `controls.watch` 경로의 합집합이며, 같은 노드의 다른 식 경로는 제외합니다(SETTLE-043, CONTROLS-032·079·080).
@@ -56,4 +58,4 @@
 
 ## Last Updated
 
-2026-10-02
+2026-10-03

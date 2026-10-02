@@ -1,0 +1,385 @@
+{
+  "node": "v26.10.0",
+  "rows": [
+    {
+      "fixture": "sample-0",
+      "mode": "mount",
+      "directLinks": 4,
+      "prefixLinks": 0,
+      "sourceVisits": 2,
+      "deriveDeclarations": 3,
+      "detachedFills": 0,
+      "withdrawLogEntries": 0
+    },
+    {
+      "fixture": "sample-0",
+      "mode": "update",
+      "directLinks": 1,
+      "prefixLinks": 1,
+      "sourceVisits": 0,
+      "deriveDeclarations": 0,
+      "detachedFills": 0,
+      "withdrawLogEntries": 0
+    },
+    {
+      "fixture": "sample-1",
+      "mode": "mount",
+      "directLinks": 18,
+      "prefixLinks": 0,
+      "sourceVisits": 7,
+      "deriveDeclarations": 10,
+      "detachedFills": 0,
+      "withdrawLogEntries": 0
+    },
+    {
+      "fixture": "sample-1",
+      "mode": "update",
+      "directLinks": 2,
+      "prefixLinks": 2,
+      "sourceVisits": 0,
+      "deriveDeclarations": 0,
+      "detachedFills": 0,
+      "withdrawLogEntries": 0
+    },
+    {
+      "fixture": "sample-2",
+      "mode": "mount",
+      "directLinks": 8,
+      "prefixLinks": 0,
+      "sourceVisits": 2,
+      "deriveDeclarations": 16,
+      "detachedFills": 0,
+      "withdrawLogEntries": 0
+    },
+    {
+      "fixture": "sample-2",
+      "mode": "update",
+      "directLinks": 2,
+      "prefixLinks": 2,
+      "sourceVisits": 0,
+      "deriveDeclarations": 0,
+      "detachedFills": 0,
+      "withdrawLogEntries": 0
+    },
+    {
+      "fixture": "sample-3",
+      "mode": "mount",
+      "directLinks": 54,
+      "prefixLinks": 0,
+      "sourceVisits": 11,
+      "deriveDeclarations": 51,
+      "detachedFills": 0,
+      "withdrawLogEntries": 0
+    },
+    {
+      "fixture": "sample-3",
+      "mode": "update",
+      "directLinks": 2,
+      "prefixLinks": 2,
+      "sourceVisits": 0,
+      "deriveDeclarations": 0,
+      "detachedFills": 0,
+      "withdrawLogEntries": 0
+    },
+    {
+      "fixture": "flat-50",
+      "mode": "mount",
+      "directLinks": 100,
+      "prefixLinks": 0,
+      "sourceVisits": 50,
+      "deriveDeclarations": 51,
+      "detachedFills": 0,
+      "withdrawLogEntries": 0
+    },
+    {
+      "fixture": "flat-50",
+      "mode": "update",
+      "directLinks": 10,
+      "prefixLinks": 10,
+      "sourceVisits": 0,
+      "deriveDeclarations": 0,
+      "detachedFills": 0,
+      "withdrawLogEntries": 0
+    },
+    {
+      "fixture": "flat-100",
+      "mode": "mount",
+      "directLinks": 200,
+      "prefixLinks": 0,
+      "sourceVisits": 100,
+      "deriveDeclarations": 101,
+      "detachedFills": 0,
+      "withdrawLogEntries": 0
+    },
+    {
+      "fixture": "flat-100",
+      "mode": "update",
+      "directLinks": 10,
+      "prefixLinks": 10,
+      "sourceVisits": 0,
+      "deriveDeclarations": 0,
+      "detachedFills": 0,
+      "withdrawLogEntries": 0
+    },
+    {
+      "fixture": "flat-500",
+      "mode": "mount",
+      "directLinks": 1000,
+      "prefixLinks": 0,
+      "sourceVisits": 500,
+      "deriveDeclarations": 501,
+      "detachedFills": 0,
+      "withdrawLogEntries": 0
+    },
+    {
+      "fixture": "flat-500",
+      "mode": "update",
+      "directLinks": 10,
+      "prefixLinks": 10,
+      "sourceVisits": 0,
+      "deriveDeclarations": 0,
+      "detachedFills": 0,
+      "withdrawLogEntries": 0
+    },
+    {
+      "fixture": "nested-d3-f4",
+      "mode": "mount",
+      "directLinks": 168,
+      "prefixLinks": 0,
+      "sourceVisits": 64,
+      "deriveDeclarations": 85,
+      "detachedFills": 0,
+      "withdrawLogEntries": 0
+    },
+    {
+      "fixture": "nested-d3-f4",
+      "mode": "update",
+      "directLinks": 30,
+      "prefixLinks": 30,
+      "sourceVisits": 0,
+      "deriveDeclarations": 0,
+      "detachedFills": 0,
+      "withdrawLogEntries": 0
+    },
+    {
+      "fixture": "nested-d5-f4",
+      "mode": "mount",
+      "directLinks": 2728,
+      "prefixLinks": 0,
+      "sourceVisits": 1024,
+      "deriveDeclarations": 1365,
+      "detachedFills": 0,
+      "withdrawLogEntries": 0
+    },
+    {
+      "fixture": "nested-d5-f4",
+      "mode": "update",
+      "directLinks": 50,
+      "prefixLinks": 50,
+      "sourceVisits": 0,
+      "deriveDeclarations": 0,
+      "detachedFills": 0,
+      "withdrawLogEntries": 0
+    },
+    {
+      "fixture": "array-100",
+      "mode": "mount",
+      "directLinks": 402,
+      "prefixLinks": 0,
+      "sourceVisits": 1,
+      "deriveDeclarations": 6,
+      "detachedFills": 0,
+      "withdrawLogEntries": 0
+    },
+    {
+      "fixture": "array-100",
+      "mode": "update",
+      "directLinks": 3,
+      "prefixLinks": 3,
+      "sourceVisits": 0,
+      "deriveDeclarations": 0,
+      "detachedFills": 0,
+      "withdrawLogEntries": 0
+    },
+    {
+      "fixture": "array-500",
+      "mode": "mount",
+      "directLinks": 2002,
+      "prefixLinks": 0,
+      "sourceVisits": 1,
+      "deriveDeclarations": 6,
+      "detachedFills": 0,
+      "withdrawLogEntries": 0
+    },
+    {
+      "fixture": "array-500",
+      "mode": "update",
+      "directLinks": 3,
+      "prefixLinks": 3,
+      "sourceVisits": 0,
+      "deriveDeclarations": 0,
+      "detachedFills": 0,
+      "withdrawLogEntries": 0
+    },
+    {
+      "fixture": "array-1000",
+      "mode": "mount",
+      "directLinks": 4002,
+      "prefixLinks": 0,
+      "sourceVisits": 1,
+      "deriveDeclarations": 6,
+      "detachedFills": 0,
+      "withdrawLogEntries": 0
+    },
+    {
+      "fixture": "array-1000",
+      "mode": "update",
+      "directLinks": 3,
+      "prefixLinks": 3,
+      "sourceVisits": 0,
+      "deriveDeclarations": 0,
+      "detachedFills": 0,
+      "withdrawLogEntries": 0
+    },
+    {
+      "fixture": "oneOf-5",
+      "mode": "mount",
+      "directLinks": 0,
+      "prefixLinks": 22,
+      "sourceVisits": 5,
+      "deriveDeclarations": 23,
+      "detachedFills": 0,
+      "withdrawLogEntries": 0
+    },
+    {
+      "fixture": "oneOf-5",
+      "mode": "update",
+      "directLinks": 0,
+      "prefixLinks": 35,
+      "sourceVisits": 3,
+      "deriveDeclarations": 0,
+      "detachedFills": 0,
+      "withdrawLogEntries": 0
+    },
+    {
+      "fixture": "oneOf-10",
+      "mode": "mount",
+      "directLinks": 0,
+      "prefixLinks": 37,
+      "sourceVisits": 5,
+      "deriveDeclarations": 43,
+      "detachedFills": 0,
+      "withdrawLogEntries": 0
+    },
+    {
+      "fixture": "oneOf-10",
+      "mode": "update",
+      "directLinks": 0,
+      "prefixLinks": 65,
+      "sourceVisits": 3,
+      "deriveDeclarations": 0,
+      "detachedFills": 0,
+      "withdrawLogEntries": 0
+    },
+    {
+      "fixture": "oneOf-20",
+      "mode": "mount",
+      "directLinks": 0,
+      "prefixLinks": 67,
+      "sourceVisits": 5,
+      "deriveDeclarations": 83,
+      "detachedFills": 0,
+      "withdrawLogEntries": 0
+    },
+    {
+      "fixture": "oneOf-20",
+      "mode": "update",
+      "directLinks": 0,
+      "prefixLinks": 125,
+      "sourceVisits": 3,
+      "deriveDeclarations": 0,
+      "detachedFills": 0,
+      "withdrawLogEntries": 0
+    },
+    {
+      "fixture": "array-push-100",
+      "mode": "mount",
+      "directLinks": 2,
+      "prefixLinks": 0,
+      "sourceVisits": 1,
+      "deriveDeclarations": 6,
+      "detachedFills": 0,
+      "withdrawLogEntries": 0
+    },
+    {
+      "fixture": "array-push-100",
+      "mode": "update",
+      "directLinks": 100,
+      "prefixLinks": 100,
+      "sourceVisits": 0,
+      "deriveDeclarations": 0,
+      "detachedFills": 0,
+      "withdrawLogEntries": 0
+    },
+    {
+      "fixture": "array-replace-200",
+      "mode": "mount",
+      "directLinks": 2,
+      "prefixLinks": 0,
+      "sourceVisits": 1,
+      "deriveDeclarations": 6,
+      "detachedFills": 0,
+      "withdrawLogEntries": 0
+    },
+    {
+      "fixture": "array-replace-200",
+      "mode": "update",
+      "directLinks": 801,
+      "prefixLinks": 1,
+      "sourceVisits": 0,
+      "deriveDeclarations": 0,
+      "detachedFills": 0,
+      "withdrawLogEntries": 0
+    },
+    {
+      "fixture": "array-push-remove-100",
+      "mode": "mount",
+      "directLinks": 2,
+      "prefixLinks": 0,
+      "sourceVisits": 1,
+      "deriveDeclarations": 6,
+      "detachedFills": 0,
+      "withdrawLogEntries": 0
+    },
+    {
+      "fixture": "array-push-remove-100",
+      "mode": "update",
+      "directLinks": 200,
+      "prefixLinks": 200,
+      "sourceVisits": 0,
+      "deriveDeclarations": 0,
+      "detachedFills": 0,
+      "withdrawLogEntries": 0
+    },
+    {
+      "fixture": "computed-visible-derived",
+      "mode": "mount",
+      "directLinks": 11,
+      "prefixLinks": 0,
+      "sourceVisits": 2,
+      "deriveDeclarations": 5,
+      "detachedFills": 0,
+      "withdrawLogEntries": 0
+    },
+    {
+      "fixture": "computed-visible-derived",
+      "mode": "update",
+      "directLinks": 7,
+      "prefixLinks": 3,
+      "sourceVisits": 0,
+      "deriveDeclarations": 0,
+      "detachedFills": 0,
+      "withdrawLogEntries": 0
+    }
+  ]
+}

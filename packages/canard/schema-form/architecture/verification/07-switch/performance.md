@@ -1,5 +1,9 @@
 # 07 전환 U13 — 벤치와 번들 크기
 
+최신 후속 결과는 [잔여 성장 재진단](residual-breakdown.md)입니다. 최초 U13 및 첫82C phase/React 시간 표는 이력이며, 코어 최종 표·(나)의 코어 값·(다) 기준선·(라) 번들은 잔여 수정 후 자료입니다. source-presence O(ND)와 dirty-index 중복을 추가 수정했고 d5 acyclic cold 비용은 실제 선형 상수 증가로 귀속했습니다.
+
+82C-01 재진단은 아래 별도 절이 현재 판정입니다. 위쪽 U13 표의 수치는 b49f53962에 보존된 이전 측정이며, 당시 수용 대기 문구는 현재 수용이나 크기 독립성의 증거가 아닙니다. 이번 시작 HEAD는 b49f53962이고 Git 쓰기는 하지 않았습니다.
+
 측정일: 2026-10-03 KST. 시작 HEAD: `f08ff8451`, 이 문서와 함께 있는 미커밋 U13 하니스 변경을 적용했습니다. 설치·Git 쓰기·다른 워크트리 사용은 하지 않았습니다. 측정은 순차 실행했고 다른 테스트 묶음을 동시에 돌리지 않았습니다. 초기 하니스 진단과 중단한 코어·React 표본은 최종 통계에서 제외했습니다.
 
 ## 환경과 비교 조건
@@ -224,92 +228,9 @@
 | array-push-remove-100 | 400.0000 | 200.0000 | 0.5000 | 400.0000 | 200.0000 | 0.5000 | — | — | 커밋 수 관측 |
 | computed-visible-derived | 7.0000 | 3.0000 | 0.4286 | 7.0000 | 3.0000 | 0.4286 | — | — | 커밋 수 관측 |
 
-## 패키지 벤치 — 보존 기준선 대 새 core
+## 패키지 벤치 — 새 엔진 회귀 감시
 
-일곱 파일 모두 새 core 진입점을 사용합니다. 독립 실행 스크립트 네 개는 Vitest bench 수집에서 제외했습니다. 생성·분기·find·쓰기 행의 옛 이름을 행 대응 키로 보존하고 describe는 blueprint/load/settle/dispatch/navigation으로 바꿨습니다. compute-recalculate는 옛 내부 계산기 단독 호출에서 공개 쓰기·정착으로 범위가 넓어졌으므로 순수 속도 회귀로 해석하지 않습니다. render-delay의 clone 두 행은 역사적 대조군이며 새 엔진 측정이 아닙니다. validation on은 mode flag만 켠 것으로 validator 컴파일을 포함하지 않습니다. event/object 행은 옛 drain을 유지합니다.
-
-옛 JSON에는 개별 samples가 비어 있어 처리량 Welch를 재구성할 수 없습니다. 처리량 감소가 15%를 넘는 행을 보수적으로 수용 대기에 올리되 통계 판정은 미확정입니다. 같은 실행의 BF 비교가 정식 옛/새 게이트입니다.
-
-패키지 벤치는 보존 기준선과 같은 Vitest/Tinybench 시간 기반 설정을 쓰며 파일 실행은 직렬로 고정했습니다. 새 sampleCount는 11–1893819회입니다. BF의 100표본 조건과 구분하며, 작은 표본의 p99는 특히 불안정합니다.
-
-### branch-strategy-init.bench.ts
-
-| 행 | 옛 중앙값 ms | 새 중앙값 ms | 새/옛 | 옛 p99 ms | 새 p99 ms | 처리량 감소 % | 판정 |
-| --- | ---: | ---: | ---: | ---: | ---: | ---: | --- |
-| blueprint/load: branch initialization through core / oneOf 2 branches × 3 children | 0.0323 | 0.2600 | 8.0413 | 0.0755 | 1.0964 | 87.8037 | P-99: 수용 대기 — 원장 관리자를 거쳐 소유자 수용 필요 (통계 미확정) |
-| blueprint/load: branch initialization through core / oneOf 5 branches × 3 children | 0.0577 | 0.3980 | 6.8918 | 0.1530 | 2.5111 | 83.8436 | P-100: 수용 대기 — 원장 관리자를 거쳐 소유자 수용 필요 (통계 미확정) |
-| blueprint/load: branch initialization through core / oneOf 2 branches × 10 children | 0.0672 | 0.4849 | 7.2196 | 0.2533 | 2.5490 | 85.6191 | P-101: 수용 대기 — 원장 관리자를 거쳐 소유자 수용 필요 (통계 미확정) |
-| blueprint/load: branch initialization through core / oneOf 10 branches × 10 children (heavy) | 0.2886 | 1.8168 | 6.2960 | 0.6315 | 6.3666 | 83.3236 | P-102: 수용 대기 — 원장 관리자를 거쳐 소유자 수용 필요 (통계 미확정) |
-| blueprint/load: branch initialization through core / nested oneOf depth 3 | 0.0583 | 1.2445 | 21.3655 | 0.1314 | 2.6457 | 95.0463 | P-103: 수용 대기 — 원장 관리자를 거쳐 소유자 수용 필요 (통계 미확정) |
-| blueprint/load: branch initialization through core / nested oneOf depth 5 | 0.0904 | 8.4103 | 93.0604 | 0.2065 | 9.4351 | 98.7947 | P-104: 수용 대기 — 원장 관리자를 거쳐 소유자 수용 필요 (통계 미확정) |
-
-### compute-recalculate.bench.ts
-
-| 행 | 옛 중앙값 ms | 새 중앙값 ms | 새/옛 | 옛 p99 ms | 새 p99 ms | 처리량 감소 % | 판정 |
-| --- | ---: | ---: | ---: | ---: | ---: | ---: | --- |
-| settle: controls through public core / visible only (1 dep) | 0.000041 | 0.0132 | 322.1463 | 0.000042 | 0.0215 | 99.7845 | P-105: 수용 대기 — 원장 관리자를 거쳐 소유자 수용 필요 (측정 범위 확대; 통계 미확정) |
-| settle: controls through public core / visible + active (2 deps) | 0.000041 | 0.0466 | 1137.1951 | 0.000042 | 0.0888 | 99.9412 | P-106: 수용 대기 — 원장 관리자를 거쳐 소유자 수용 필요 (측정 범위 확대; 통계 미확정) |
-| settle: controls through public core / derived simple (2 deps) | 0.000041 | 0.0339 | 827.2195 | 0.000042 | 0.0578 | 99.9211 | P-107: 수용 대기 — 원장 관리자를 거쳐 소유자 수용 필요 (측정 범위 확대; 통계 미확정) |
-| settle: controls through public core / derived heavy (7 deps) | 0.000041 | 0.0365 | 889.2439 | 0.000042 | 0.0511 | 99.9200 | P-108: 수용 대기 — 원장 관리자를 거쳐 소유자 수용 필요 (측정 범위 확대; 통계 미확정) |
-| settle: controls through public core / watch 5 deps | 0.000042 | 0.0159 | 378.9524 | 0.000042 | 0.0326 | 99.7759 | P-109: 수용 대기 — 원장 관리자를 거쳐 소유자 수용 필요 (측정 범위 확대; 통계 미확정) |
-| settle: controls through public core / oneOfIndex 3 branches | 0.000042 | 0.1090 | 2595.2381 | 0.000042 | 0.1652 | 99.9657 | P-110: 수용 대기 — 원장 관리자를 거쳐 소유자 수용 필요 (측정 범위 확대; 통계 미확정) |
-
-### event-cascade.bench.ts
-
-| 행 | 옛 중앙값 ms | 새 중앙값 ms | 새/옛 | 옛 p99 ms | 새 p99 ms | 처리량 감소 % | 판정 |
-| --- | ---: | ---: | ---: | ---: | ---: | ---: | --- |
-| dispatch: public writes (legacy macrotask drain retained) / flat batch: 10 setValue on distinct fields + 1 drain | 1.2770 | 1.5867 | 1.2425 | 7.0072 | 2.7820 | 10.4604 | 기술 비교, Welch 재구성 불가 (표본 983/880) |
-| dispatch: public writes (legacy macrotask drain retained) / derived chain (a→sum→twice→label): 1 setValue + drain | 1.2338 | 1.5310 | 1.2409 | 6.5451 | 5.0619 | 28.2763 | P-111: 수용 대기 — 원장 관리자를 거쳐 소유자 수용 필요 (통계 미확정) |
-| dispatch: public writes (legacy macrotask drain retained) / oneOf branch switch (a↔b): 1 setValue + drain | 1.2472 | 1.6553 | 1.3272 | 6.4050 | 6.3140 | 24.3898 | P-112: 수용 대기 — 원장 관리자를 거쳐 소유자 수용 필요 (통계 미확정) |
-
-### find-node.bench.ts
-
-| 행 | 옛 중앙값 ms | 새 중앙값 ms | 새/옛 | 옛 p99 ms | 새 p99 ms | 처리량 감소 % | 판정 |
-| --- | ---: | ---: | ---: | ---: | ---: | ---: | --- |
-| navigation: find through core / depth 3 (4 segments) | 0.000541 | 0.000750 | 1.3863 | 0.000667 | 0.000916 | 28.3608 | P-113: 수용 대기 — 원장 관리자를 거쳐 소유자 수용 필요 (통계 미확정) |
-| navigation: find through core / depth 7 (8 segments) | 0.000834 | 0.0013 | 1.5995 | 0.001000 | 0.0017 | 36.5359 | P-114: 수용 대기 — 원장 관리자를 거쳐 소유자 수용 필요 (통계 미확정) |
-| navigation: find through core / depth 12 (13 segments) | 0.0012 | 0.0021 | 1.7000 | 0.0014 | 0.0025 | 41.8342 | P-115: 수용 대기 — 원장 관리자를 거쳐 소유자 수용 필요 (통계 미확정) |
-| navigation: find through core / wide fanout 10 → last child | 0.000292 | 0.000250 | 0.8562 | 0.000334 | 0.000292 | -8.3622 | 기술 비교, Welch 재구성 불가 (표본 1729226/1873820) |
-| navigation: find through core / wide fanout 50 → last child | 0.000333 | 0.000250 | 0.7508 | 0.000416 | 0.000292 | -27.6685 | 기술 비교, Welch 재구성 불가 (표본 1456080/1858956) |
-| navigation: find through core / wide fanout 50 → first child | 0.000291 | 0.000250 | 0.8591 | 0.000334 | 0.000292 | -6.3043 | 기술 비교, Welch 재구성 불가 (표본 1781507/1893819) |
-
-### nodeFromJSONSchema.bench.ts
-
-| 행 | 옛 중앙값 ms | 새 중앙값 ms | 새/옛 | 옛 p99 ms | 새 p99 ms | 처리량 감소 % | 판정 |
-| --- | ---: | ---: | ---: | ---: | ---: | ---: | --- |
-| load: nodeFromJSONSchema through core / flat (5 props, terminal only) | 0.0187 | 0.0999 | 5.3504 | 0.0422 | 0.2294 | 79.7604 | P-116: 수용 대기 — 원장 관리자를 거쳐 소유자 수용 필요 (통계 미확정) |
-| load: nodeFromJSONSchema through core / nested (2 sub-objects, 7 terminals) | 0.0322 | 0.1653 | 5.1240 | 0.0610 | 0.3308 | 83.0012 | P-117: 수용 대기 — 원장 관리자를 거쳐 소유자 수용 필요 (통계 미확정) |
-| load: nodeFromJSONSchema through core / oneOf (single branch active) | 0.0269 | 0.1977 | 7.3566 | 0.0553 | 0.3868 | 86.3361 | P-118: 수용 대기 — 원장 관리자를 거쳐 소유자 수용 필요 (통계 미확정) |
-| load: nodeFromJSONSchema through core / computed (visible + derived deps) | 0.0251 | 0.1373 | 5.4644 | 0.0469 | 0.3014 | 82.3123 | P-119: 수용 대기 — 원장 관리자를 거쳐 소유자 수용 필요 (통계 미확정) |
-
-### object-pending-read.bench.ts
-
-| 행 | 옛 중앙값 ms | 새 중앙값 ms | 새/옛 | 옛 p99 ms | 새 p99 ms | 처리량 감소 % | 판정 |
-| --- | ---: | ---: | ---: | ---: | ---: | ---: | --- |
-| settle: object read after child write / 1000 × (child write + 1 parent value read) + drain | 2.4686 | 9.5688 | 3.8763 | 3.4510 | 11.6486 | 74.2973 | P-120: 수용 대기 — 원장 관리자를 거쳐 소유자 수용 필요 (통계 미확정) |
-| settle: object read after child write / 1000 × (child write + 3 parent value reads) + drain | 3.1680 | 9.4812 | 2.9928 | 8.0175 | 10.1535 | 63.5629 | P-121: 수용 대기 — 원장 관리자를 거쳐 소유자 수용 필요 (통계 미확정) |
-| settle: object read after child write / 1000 × child write, no read + drain | 1.9370 | 9.4855 | 4.8969 | 6.4110 | 10.4944 | 76.8592 | P-122: 수용 대기 — 원장 관리자를 거쳐 소유자 수용 필요 (통계 미확정) |
-| settle: object read after child write / 1000 × same-value write at depth 2 + drain | 1.9363 | 8.7828 | 4.5359 | 7.2014 | 12.9248 | 74.8291 | P-123: 수용 대기 — 원장 관리자를 거쳐 소유자 수용 필요 (통계 미확정) |
-| settle: object read after child write / 1000 × same-value write at depth 8 + drain | 2.3285 | 30.1846 | 12.9629 | 7.1629 | 40.3171 | 91.6170 | P-124: 수용 대기 — 원장 관리자를 거쳐 소유자 수용 필요 (통계 미확정) |
-| settle: object read after child write / 1000 × same-value write at depth 16 + drain | 1.9749 | 94.3484 | 47.7744 | 6.4153 | 106.0186 | 97.7038 | P-125: 수용 대기 — 원장 관리자를 거쳐 소유자 수용 필요 (통계 미확정) |
-| settle: object read after child write / create a 50-field form | 0.1398 | 0.7479 | 5.3499 | 0.3266 | 4.0730 | 80.5736 | P-126: 수용 대기 — 원장 관리자를 거쳐 소유자 수용 필요 (통계 미확정) |
-
-### render-delay.bench.ts
-
-| 행 | 옛 중앙값 ms | 새 중앙값 ms | 새/옛 | 옛 p99 ms | 새 p99 ms | 처리량 감소 % | 판정 |
-| --- | ---: | ---: | ---: | ---: | ---: | ---: | --- |
-| load/render-delay: small (5 terminals) / [mount] nodeFromJSONSchema (validation off) | 0.0186 | 0.0978 | 5.2528 | 0.0430 | 0.2450 | 79.4498 | P-127: 수용 대기 — 원장 관리자를 거쳐 소유자 수용 필요 (통계 미확정) |
-| load/render-delay: small (5 terminals) / [mount] nodeFromJSONSchema (validation on) | 0.0222 | 0.0924 | 4.1536 | 0.0394 | 0.1585 | 79.4692 | P-128: 수용 대기 — 원장 관리자를 거쳐 소유자 수용 필요 (통계 미확정) |
-| load/render-delay: small (5 terminals) / [guard] clone(schema) | 0.0020 | 0.0021 | 1.0201 | 0.0024 | 0.0023 | -0.5663 | 기술 비교, Welch 재구성 불가 (표본 238028/239376) |
-| load/render-delay: small (5 terminals) / [guard] clone(defaultValue) | 0.000417 | 0.000417 | 1.0000 | 0.000500 | 0.000459 | -0.9765 | 기술 비교, Welch 재구성 불가 (표본 1166655/1178047) |
-| load/render-delay: medium (25 terminals) / [mount] nodeFromJSONSchema (validation off) | 0.0907 | 0.4463 | 4.9200 | 0.1513 | 3.5667 | 79.1191 | P-129: 수용 대기 — 원장 관리자를 거쳐 소유자 수용 필요 (통계 미확정) |
-| load/render-delay: medium (25 terminals) / [mount] nodeFromJSONSchema (validation on) | 0.1130 | 0.4313 | 3.8167 | 0.2132 | 3.4447 | 72.1182 | P-130: 수용 대기 — 원장 관리자를 거쳐 소유자 수용 필요 (통계 미확정) |
-| load/render-delay: medium (25 terminals) / [guard] clone(schema) | 0.0111 | 0.0114 | 1.0263 | 0.0151 | 0.0233 | 12.0594 | 기술 비교, Welch 재구성 불가 (표본 43818/38534) |
-| load/render-delay: medium (25 terminals) / [guard] clone(defaultValue) | 0.0023 | 0.0023 | 1.0179 | 0.0026 | 0.0025 | 0.7759 | 기술 비교, Welch 재구성 불가 (표본 214461/212797) |
-| load/render-delay: large (150 terminals) / [mount] nodeFromJSONSchema (validation off) | 0.4650 | 2.2880 | 4.9201 | 6.2400 | 7.6365 | 78.8142 | P-131: 수용 대기 — 원장 관리자를 거쳐 소유자 수용 필요 (통계 미확정) |
-| load/render-delay: large (150 terminals) / [mount] nodeFromJSONSchema (validation on) | 0.5920 | 2.2470 | 3.7959 | 5.9674 | 6.1002 | 76.5732 | P-132: 수용 대기 — 원장 관리자를 거쳐 소유자 수용 필요 (통계 미확정) |
-| load/render-delay: large (150 terminals) / [guard] clone(schema) | 0.0614 | 0.0622 | 1.0136 | 0.0794 | 0.0684 | -0.3604 | 기술 비교, Welch 재구성 불가 (표본 7910/7939) |
-| load/render-delay: large (150 terminals) / [guard] clone(defaultValue) | 0.0093 | 0.0093 | 0.9956 | 0.0121 | 0.0098 | -1.8300 | 기술 비교, Welch 재구성 불가 (표본 52676/53640) |
+82C-01 (다)에 따라 옛 중앙값과의 비율 표 및 통계 미확정 후보 판정을 철회합니다. 옛 JSON은 역사 자료로만 보존하며 새 기준선 기록과 명령은 아래 82C-01 절을 따릅니다. P-99–132는 비교 판정 없는 기록입니다.
 
 ## 번들 크기
 
@@ -410,39 +331,279 @@ typecheck 각 실행: 7.6049 s (exit 0), 7.5457 s (exit 0), 7.5250 s (exit 0).
 - 07 U13: 중앙값 6.5913→10.9706 ms (1.6644×), 처리량 −27.5157%, p=7.641e-16; [측정](./07-switch/performance.md)
 - 07 U13: 중앙값 152.7274→188.2053 ms (1.2323×), 처리량 −19.0526%, p=1.258e-35; [측정](./07-switch/performance.md)
 - 07 U13: 중앙값 291.3427→338.9561 ms (1.1634×), 처리량 −17.4595%, p=8.250e-20; [측정](./07-switch/performance.md)
-- 07 U13: 중앙값 0.0323→0.2600 ms (8.0413×), 처리량 −87.8037%; 보존 표본 부재로 Welch 미확정; [측정](./07-switch/performance.md)
-- 07 U13: 중앙값 0.0577→0.3980 ms (6.8918×), 처리량 −83.8436%; 보존 표본 부재로 Welch 미확정; [측정](./07-switch/performance.md)
-- 07 U13: 중앙값 0.0672→0.4849 ms (7.2196×), 처리량 −85.6191%; 보존 표본 부재로 Welch 미확정; [측정](./07-switch/performance.md)
-- 07 U13: 중앙값 0.2886→1.8168 ms (6.2960×), 처리량 −83.3236%; 보존 표본 부재로 Welch 미확정; [측정](./07-switch/performance.md)
-- 07 U13: 중앙값 0.0583→1.2445 ms (21.3655×), 처리량 −95.0463%; 보존 표본 부재로 Welch 미확정; [측정](./07-switch/performance.md)
-- 07 U13: 중앙값 0.0904→8.4103 ms (93.0604×), 처리량 −98.7947%; 보존 표본 부재로 Welch 미확정; [측정](./07-switch/performance.md)
-- 07 U13: 중앙값 0.000041→0.0132 ms (322.1463×), 처리량 −99.7845%; 보존 표본 부재로 Welch 미확정; [측정](./07-switch/performance.md)
-- 07 U13: 중앙값 0.000041→0.0466 ms (1137.1951×), 처리량 −99.9412%; 보존 표본 부재로 Welch 미확정; [측정](./07-switch/performance.md)
-- 07 U13: 중앙값 0.000041→0.0339 ms (827.2195×), 처리량 −99.9211%; 보존 표본 부재로 Welch 미확정; [측정](./07-switch/performance.md)
-- 07 U13: 중앙값 0.000041→0.0365 ms (889.2439×), 처리량 −99.9200%; 보존 표본 부재로 Welch 미확정; [측정](./07-switch/performance.md)
-- 07 U13: 중앙값 0.000042→0.0159 ms (378.9524×), 처리량 −99.7759%; 보존 표본 부재로 Welch 미확정; [측정](./07-switch/performance.md)
-- 07 U13: 중앙값 0.000042→0.1090 ms (2595.2381×), 처리량 −99.9657%; 보존 표본 부재로 Welch 미확정; [측정](./07-switch/performance.md)
-- 07 U13: 중앙값 1.2338→1.5310 ms (1.2409×), 처리량 −28.2763%; 보존 표본 부재로 Welch 미확정; [측정](./07-switch/performance.md)
-- 07 U13: 중앙값 1.2472→1.6553 ms (1.3272×), 처리량 −24.3898%; 보존 표본 부재로 Welch 미확정; [측정](./07-switch/performance.md)
-- 07 U13: 중앙값 0.000541→0.000750 ms (1.3863×), 처리량 −28.3608%; 보존 표본 부재로 Welch 미확정; [측정](./07-switch/performance.md)
-- 07 U13: 중앙값 0.000834→0.0013 ms (1.5995×), 처리량 −36.5359%; 보존 표본 부재로 Welch 미확정; [측정](./07-switch/performance.md)
-- 07 U13: 중앙값 0.0012→0.0021 ms (1.7000×), 처리량 −41.8342%; 보존 표본 부재로 Welch 미확정; [측정](./07-switch/performance.md)
-- 07 U13: 중앙값 0.0187→0.0999 ms (5.3504×), 처리량 −79.7604%; 보존 표본 부재로 Welch 미확정; [측정](./07-switch/performance.md)
-- 07 U13: 중앙값 0.0322→0.1653 ms (5.1240×), 처리량 −83.0012%; 보존 표본 부재로 Welch 미확정; [측정](./07-switch/performance.md)
-- 07 U13: 중앙값 0.0269→0.1977 ms (7.3566×), 처리량 −86.3361%; 보존 표본 부재로 Welch 미확정; [측정](./07-switch/performance.md)
-- 07 U13: 중앙값 0.0251→0.1373 ms (5.4644×), 처리량 −82.3123%; 보존 표본 부재로 Welch 미확정; [측정](./07-switch/performance.md)
-- 07 U13: 중앙값 2.4686→9.5688 ms (3.8763×), 처리량 −74.2973%; 보존 표본 부재로 Welch 미확정; [측정](./07-switch/performance.md)
-- 07 U13: 중앙값 3.1680→9.4812 ms (2.9928×), 처리량 −63.5629%; 보존 표본 부재로 Welch 미확정; [측정](./07-switch/performance.md)
-- 07 U13: 중앙값 1.9370→9.4855 ms (4.8969×), 처리량 −76.8592%; 보존 표본 부재로 Welch 미확정; [측정](./07-switch/performance.md)
-- 07 U13: 중앙값 1.9363→8.7828 ms (4.5359×), 처리량 −74.8291%; 보존 표본 부재로 Welch 미확정; [측정](./07-switch/performance.md)
-- 07 U13: 중앙값 2.3285→30.1846 ms (12.9629×), 처리량 −91.6170%; 보존 표본 부재로 Welch 미확정; [측정](./07-switch/performance.md)
-- 07 U13: 중앙값 1.9749→94.3484 ms (47.7744×), 처리량 −97.7038%; 보존 표본 부재로 Welch 미확정; [측정](./07-switch/performance.md)
-- 07 U13: 중앙값 0.1398→0.7479 ms (5.3499×), 처리량 −80.5736%; 보존 표본 부재로 Welch 미확정; [측정](./07-switch/performance.md)
-- 07 U13: 중앙값 0.0186→0.0978 ms (5.2528×), 처리량 −79.4498%; 보존 표본 부재로 Welch 미확정; [측정](./07-switch/performance.md)
-- 07 U13: 중앙값 0.0222→0.0924 ms (4.1536×), 처리량 −79.4692%; 보존 표본 부재로 Welch 미확정; [측정](./07-switch/performance.md)
-- 07 U13: 중앙값 0.0907→0.4463 ms (4.9200×), 처리량 −79.1191%; 보존 표본 부재로 Welch 미확정; [측정](./07-switch/performance.md)
-- 07 U13: 중앙값 0.1130→0.4313 ms (3.8167×), 처리량 −72.1182%; 보존 표본 부재로 Welch 미확정; [측정](./07-switch/performance.md)
-- 07 U13: 중앙값 0.4650→2.2880 ms (4.9201×), 처리량 −78.8142%; 보존 표본 부재로 Welch 미확정; [측정](./07-switch/performance.md)
-- 07 U13: 중앙값 0.5920→2.2470 ms (3.7959×), 처리량 −76.5732%; 보존 표본 부재로 Welch 미확정; [측정](./07-switch/performance.md)
 - 07 U13: 37,023→71,317 B (1.9263×); [측정](./07-switch/performance.md)
 - 07 U13: 51,632→103,820 B (2.0108×); [측정](./07-switch/performance.md)
+
+## 82C-01 (가) 단계별 진단과 수정
+
+시작 HEAD b49f53962, 결정 원문 origin/1.0.0-beta의 46694ad8e(82C-01), 49C-01·64라운드 답·65C-01·56라운드 보충·TEST-026/027/075·GOAL-011을 적용했습니다. 처음 P-30–40·P-49–56을 계약 위반 후보로 바꾸고 진단했습니다. React 측정 말미에 프로세스 대기 확인이 환경에서 거부되어 패키지 벤치가 조기 시작했고 즉시 중단했습니다. 겹칠 가능성이 있는 마지막 네 fixture는 같은 BF 명령에 `--fixture`만 추가하여 단독 재측정한 표본으로 교체했으며, 중단된 패키지 측정도 폐기하고 다시 실행했습니다. 최종 채택 표본은 다른 테스트/측정과 겹치지 않습니다.
+
+[전체 단계별 크기 표와 L/E/Q 분해](phase-breakdown.md)에 blueprint, node creation, 첫 settlement, transition, output, 재계산·역의존·파생 등록, commit, delivery marking, dispatch exit를 기록했습니다. L은 작은 크기의 노드/영향 게이트당 상수 비용을 큰 크기에 선형 확장한 값, E는 그 밖의 잔차이며, 원자료와 ratio-of-ratios를 함께 공개합니다. node 수만으로 N·depth 경로 인코딩 비용을 이차 비용과 혼동하지 않습니다. 검증기는 BF에서 사용하지 않아 validation registration/run은 0회입니다.
+
+| 측정 몫 | fixture | 수정 전 ms | 수정 후 ms | 후/전 |
+| --- | --- | ---: | ---: | ---: |
+| mount/derive-rule-index | oneOf-5 | 0.021084 | 0.002668 | 0.127 |
+| mount/derive-rule-index | oneOf-10 | 0.062541 | 0.003916 | 0.063 |
+| mount/derive-rule-index | oneOf-20 | 0.221084 | 0.005793 | 0.026 |
+| mount/recalculation-registration | nested-d3-f4 | 0.033000 | 0.029167 | 0.884 |
+| mount/recalculation-registration | nested-d5-f4 | 0.760792 | 0.448208 | 0.589 |
+| update/output | flat-50 | 0.074501 | 0.018542 | 0.249 |
+| update/output | flat-100 | 0.155376 | 0.018874 | 0.121 |
+| update/output | flat-500 | 0.716957 | 0.027915 | 0.039 |
+| mount/recursive-expansion | nested-d5-f4 | 0.058841 | 0.199245 | 3.386 |
+
+### 코드 귀속·복잡도·메모리
+
+아래 경로는 PKG 기준이며 줄 번호는 이번 수정 후입니다. 선행 단계 소유 코드라도 07의 nodeFromJSONSchema/binding 시나리오가 닿으므로 49C-01에 따라 이번에 수정했습니다.
+
+| 원인과 위치 | 전→후 알고리즘 | 검증·비용 |
+| --- | --- | --- |
+| 03/04 역의존 등록, `src/core/settle/utils/write/getDependencyIndex.ts:139` | 동일 읽기 경로 owner마다 배열 some, O(B²) → 순서 배열+재사용 Set, O(B) | 64분기 비교 2207→0; Set 보유 O(유일 owner); P-22 해결 |
+| 03 호스트 계산, `src/core/settle/utils/compute/computeNode.ts:65` | gates.includes 반복 O(B²) → 최초 순서 유지 Set O(B) | 32분기 검색 대상 합 4560→0; 임시 O(게이트 수), 게이트 평가 자체는 보존 |
+| 04 파생 표, `src/core/settle/derive/utils/rules/getDeriveRuleTable.ts:48` | active만 있는 조각마다 전체 자식 탐색 O(B²) → 파생 키 유무를 먼저 확인, O(선언 수) | 64분기 자식 검사 4160→0; 대상 배열 할당 제거, 추가 상수 boolean |
+| 07 재귀 확장 보호, `src/core/settle/utils/compute/hasRecursiveExpansion.ts:48` | 비순환 트리의 발생마다 조상 탐색 O(ND) → 청사진당 O(V+E) cycle DFS 후 O(1) 확인 | 비순환 조상 getter 1→0; DFS 임시 O(V), 청사진당 약한 boolean. 실제 d5 몫은 증가했으며 상수 비용 교환을 숨기지 않음. 순환 그래프는 배열 경계 포함 기존 보호 유지 |
+| 03/06 재계산 등록, `src/core/settle/utils/write/registerRecalculation.ts:23` | 이미 확장한 조상 반복 → 호출당 유일 조상 한 번 확장 | 깊이32 사슬 add 528→32 이하, 임시 Set O(경로 수) |
+| 03 전이 채움, `src/core/settle/utils/transition/transitionSettlement.ts:44` | entered 깊이 정렬 O(N log N) → 안정 깊이 bucket O(N+D) | 5노드 예시의 정렬 대상 10→0; 임시 O(N+D); 라운드 시작 snapshot 및 동일 깊이 순서 보존 |
+| 03 객체 갱신(P-24), `src/core/behaviors/objectBehavior/branch/utils/assembleObject.ts:21`, `src/core/settle/utils/compute/updateOutput.ts:25` | 사본 밖 전체 형제/키/동등 비교 → 재계산 직계 자식만 패치·비교 | 이전 root 키 열거 2→0. 63C-03 허용 얕은 사본 O(키 수)는 유지; 나머지 O(재계산 자식 및 변경 하위 내용). 키수 WeakMap O(살아 있는 합성 객체); 같은 값 참조 유지 |
+
+최신 모든 phase의 L/E/Q와 양의 잔차 귀속은 [후속 표](residual-breakdown.md)에 있습니다. DirtyPathSet은 후속 수정에서 ungated 등록 경계에 한해 고유 prefix closure와 직접 에지 색인을 사용합니다. 일반/gated 임의 add/delete 순서는 유지하며 경로 문자열 길이 비용과 임시 O(고유 prefix 수) 메모리는 남습니다.
+
+남은 양의 잔차도 숨기지 않습니다. 파생 등록의 flat/nested mount Q는 1.341/1.486, E는 0.012986/0.063114ms입니다. 이 입력에는 controls가 없어 `getDeriveRuleTable.ts:41–46`의 선언별 1회 읽기만 실행되므로 해당 타이밍만으로 이차 알고리즘의 증거로 삼지 않습니다. array mount delivery marking Q=1.121, E=1.119247ms도 단일 노드별 표시와 경로 길이 비용을 포함하며, 원인을 전부 특정했다고 주장하지 않습니다. 이 때문에 P-30–40을 크기 독립 수용 묶음으로 옮기지 않았습니다.
+
+oneOf의 실제 생성 노드는 모든 크기에서 6개지만 영향 게이트는 5/10/20개입니다. gate-evaluation 호출은 mount 100/200/400, update 120/240/480으로 정확히 선형이며 수정 전후 같습니다. SETTLE-017·020·044·050은 이 영향 게이트 전체의 고정 출발점·전순서 평가를 요구합니다. 이를 생략하는 최적화는 하지 않았습니다. 따라서 반복 중복 검색 제거와 필수 O(B) 비용은 다른 처분입니다.
+
+### 비도달 귀속과 미해결 경계
+
+P-135: stage06 src/core/settle/utils/transition/withdrawDetachedFills.ts:19(07a083c18)는 fill별 자동 로그·조상·잠복 로그 중첩 O(F·(A·D+L))입니다. [후속 계수](operation-counts.json)의19 fixture×mount/update38행에서 detachedFills와 withdrawLogEntries 모두0으로 내부 분기 비도달을 확인했습니다. **열린 행 — 수용 대상 아님, 어느 PR의 머지도 막지 않음**을 유지합니다.
+
+P-25의 정착 중간값 대 직전 커밋 참조 복원 문제는 그대로 열려 있습니다. 검토자가 제시한 rows[{v,d:derived}]의 resetSubtree 사례는 HEAD의 원래 updateOutput으로 복원하여도 root 참조 검증이 실패했습니다. 이번 개선의 새 회귀나 해결로 기록하지 않습니다. 새 부분 합성은 재계산 자식의 같은 내용을 비교해 기존 부모 참조 보호를 유지하며 별도 회귀 테스트로 검증했습니다.
+
+### 검증
+
+최신 잔여 수정 후 `npx --no-install vitest run --project unit --project render --project react18 --reporter=dot`:399파일,3035통과·4실패·1todo(64.05초). 실패는 Form.effectFeedback의 useLayoutEffect/useEffect EVENT-070이 render/react18에 각각 발생한 것뿐입니다. `npx --no-install tsc --noEmit --composite false --rootDir . -p tsconfig.json` 및 `npx --no-install eslint "src/**/*.{ts,tsx}"`는 exit0입니다. 후속9사례의 red/green과 순서·source 보존 및 읽기 전용 검토 PASS는 [후속 기록](residual-breakdown.md)에 있습니다.
+
+### BF 코어 최종 재측정
+
+같은 명령, warmup 10, 각 엔진 100개 표본, AB/BA 교대로 실행했습니다. phase 타이머를 넣지 않은 최종 BF 결과이며, 아래 배율은 각 실행의 legacy 대비 값입니다. 두 실행 사이 환경 차이가 있어 배율 차이 전체를 코드 효과로 단정하지 않습니다. 복잡도 효과는 위 계수 테스트와 phase 자료로 분리합니다.
+
+[이번 수정 직전 원자료](../../../../../aileron/benchmark-form/results/equivalent-82c01-core-final.json) · [최신 잔여 수정 후 원자료](../../../../../aileron/benchmark-form/results/equivalent-82c01-residual-core.json)
+
+| fixture | 측정 | 전 배율 | 후 배율 | 후 새 엔진 중앙값 ms | 후 새 엔진 p99 ms |
+| --- | --- | ---: | ---: | ---: | ---: |
+| sample-0 | core-mount | 2.289× | 2.290× | 0.560604 | 0.615625 |
+| sample-0 | core-update | 1.729× | 1.832× | 0.116250 | 0.146333 |
+| sample-1 | core-mount | 2.454× | 2.357× | 0.810333 | 0.917583 |
+| sample-1 | core-update | 1.620× | 1.662× | 0.115896 | 0.173250 |
+| sample-2 | core-mount | 2.329× | 2.318× | 0.831125 | 0.907583 |
+| sample-2 | core-update | 1.512× | 1.593× | 0.126854 | 0.183709 |
+| sample-3 | core-mount | 3.202× | 3.190× | 1.963625 | 2.102542 |
+| sample-3 | core-update | 1.460× | 1.390× | 0.103458 | 0.161166 |
+| flat-50 | core-mount | 3.991× | 3.903× | 3.069312 | 3.821792 |
+| flat-50 | core-update | 1.012× | 0.972× | 0.663647 | 0.926417 |
+| flat-100 | core-mount | 4.522× | 4.354× | 4.630709 | 6.034583 |
+| flat-100 | core-update | 0.703× | 0.742× | 0.648811 | 0.851750 |
+| flat-500 | core-mount | 4.982× | 4.803× | 12.058521 | 13.505417 |
+| flat-500 | core-update | 0.225× | 0.224× | 0.839374 | 1.154876 |
+| nested-d3-f4 | core-mount | 5.143× | 4.873× | 4.324729 | 5.391125 |
+| nested-d3-f4 | core-update | 1.545× | 1.559× | 0.722938 | 1.055918 |
+| nested-d5-f4 | core-mount | 8.205× | 7.284× | 34.037355 | 37.078208 |
+| nested-d5-f4 | core-update | 1.594× | 1.558× | 0.581730 | 0.848582 |
+| array-100 | core-mount | 2.791× | 2.687× | 4.706437 | 5.005417 |
+| array-100 | core-update | 1.250× | 1.195× | 0.128938 | 0.199125 |
+| array-500 | core-mount | 3.277× | 3.156× | 20.132687 | 22.646458 |
+| array-500 | core-update | 0.763× | 0.745× | 0.153146 | 0.222750 |
+| array-1000 | core-mount | 3.354× | 3.340× | 39.720937 | 43.958250 |
+| array-1000 | core-update | 0.443× | 0.455× | 0.177749 | 0.236500 |
+| oneOf-5 | core-mount | 3.927× | 3.370× | 1.747521 | 2.612458 |
+| oneOf-5 | core-update | 6.495× | 6.326× | 0.994520 | 1.306917 |
+| oneOf-10 | core-mount | 4.019× | 3.717× | 2.135979 | 2.600000 |
+| oneOf-10 | core-update | 7.862× | 7.620× | 1.213479 | 1.513583 |
+| oneOf-20 | core-mount | 4.490× | 4.295× | 3.007001 | 3.620833 |
+| oneOf-20 | core-update | 11.196× | 10.633× | 1.711479 | 2.257583 |
+| array-push-100 | core-mount | 3.193× | 3.381× | 0.822854 | 1.517667 |
+| array-push-100 | core-update | 4.879× | 4.848× | 119.317209 | 164.199501 |
+| array-replace-200 | core-mount | 3.393× | 3.355× | 0.622146 | 0.697167 |
+| array-replace-200 | core-update | 3.028× | 2.801× | 8.113896 | 9.221958 |
+| array-push-remove-100 | core-mount | 3.034× | 3.068× | 0.805687 | 0.976458 |
+| array-push-remove-100 | core-update | 3.656× | 3.973× | 159.353913 | 273.093572 |
+| computed-visible-derived | core-mount | 2.499× | 2.336× | 0.880480 | 1.372542 |
+| computed-visible-derived | core-update | 3.020× | 2.772× | 0.355479 | 0.505625 |
+
+재현: BF에서 `node --expose-gc --import tsx src/index.ts --equivalent --mode=core --min-samples=100 --out=results/equivalent-82c01-residual-core.json`. 위 전/후는 첫82C 수정본과 잔여 수정본입니다. P-30–40·P-54–56은 전체 새/옛 배율이 크기 독립은 아니므로 (나)에 새로 넣지 않습니다. 영향 gate O(B), 경로 표현 길이 비용, 선형 연산의 시간 잔차를 구조적 중복과 구분한 [후속 진단](residual-breakdown.md)을 참조합니다.
+
+### BF React 최종 채택 표본
+
+이 React BF 시간 표는 **이번 잔여 수정 이전**의 측정입니다. 최신 React 동작은 전체 render/react18 suite로 검증했으며 후속에서 React BF 시간을 재측정한 것으로 주장하지 않습니다.
+
+[채택 manifest](../../../../../aileron/benchmark-form/results/equivalent-82c01-render-selection.json)는 첫 실행의 15개 fixture와 마지막 네 fixture의 단독 재측정 원자료를 연결합니다. 각 엔진 100개 표본이며 첫 실행 JSON의 excludedFixtures는 사용하지 않습니다. commits 수는 manifest에서 확인합니다.
+
+| fixture | 측정 | 새/옛 중앙값 | 새 엔진 중앙값 ms | 새 엔진 p99 ms |
+| --- | --- | ---: | ---: | ---: |
+| sample-0 | render-mount-wall | 1.399× | 5.444125 | 5.800083 |
+| sample-0 | render-update-wall | 1.421× | 3.164646 | 3.492042 |
+| sample-0 | profiler-mount | 1.244× | 2.396019 | 2.661787 |
+| sample-0 | profiler-update | 0.850× | 0.259458 | 0.392330 |
+| sample-1 | render-mount-wall | 1.182× | 6.997625 | 7.926625 |
+| sample-1 | render-update-wall | 1.472× | 3.254188 | 3.643042 |
+| sample-1 | profiler-mount | 1.167× | 4.226121 | 4.734586 |
+| sample-1 | profiler-update | 0.916× | 0.332036 | 0.531077 |
+| sample-2 | render-mount-wall | 1.207× | 6.790979 | 7.071417 |
+| sample-2 | render-update-wall | 1.576× | 3.258313 | 3.588959 |
+| sample-2 | profiler-mount | 1.208× | 3.752192 | 3.943641 |
+| sample-2 | profiler-update | 0.908× | 0.334831 | 0.495791 |
+| sample-3 | render-mount-wall | 1.162× | 15.820459 | 19.073292 |
+| sample-3 | render-update-wall | 1.422× | 3.190562 | 3.472541 |
+| sample-3 | profiler-mount | 1.145× | 11.645078 | 14.798507 |
+| sample-3 | profiler-update | 0.813× | 0.233065 | 0.414249 |
+| flat-50 | render-mount-wall | 1.158× | 15.168187 | 18.800500 |
+| flat-50 | render-update-wall | 1.070× | 29.417438 | 31.453542 |
+| flat-50 | profiler-mount | 1.124× | 10.987309 | 14.723799 |
+| flat-50 | profiler-update | 0.842× | 1.640375 | 2.583502 |
+| flat-100 | render-mount-wall | 1.080× | 25.011229 | 31.312959 |
+| flat-100 | render-update-wall | 1.155× | 30.123416 | 31.989875 |
+| flat-100 | profiler-mount | 1.093× | 19.727308 | 26.102032 |
+| flat-100 | profiler-update | 0.905× | 1.861334 | 2.713374 |
+| flat-500 | render-mount-wall | 1.010× | 110.141292 | 140.097584 |
+| flat-500 | render-update-wall | 1.236× | 36.265438 | 39.159833 |
+| flat-500 | profiler-mount | 1.061× | 92.439642 | 124.198619 |
+| flat-500 | profiler-update | 0.767× | 2.988686 | 4.203342 |
+| nested-d3-f4 | render-mount-wall | 1.112× | 21.655624 | 27.658125 |
+| nested-d3-f4 | render-update-wall | 1.178× | 30.595938 | 33.141917 |
+| nested-d3-f4 | profiler-mount | 1.123× | 16.651026 | 22.571435 |
+| nested-d3-f4 | profiler-update | 0.957× | 2.445481 | 4.404665 |
+| nested-d5-f4 | render-mount-wall | 0.964× | 301.284542 | 324.019291 |
+| nested-d5-f4 | render-update-wall | 1.411× | 34.133750 | 37.236375 |
+| nested-d5-f4 | profiler-mount | 1.057× | 248.550208 | 274.746936 |
+| nested-d5-f4 | profiler-update | 1.030× | 3.512534 | 6.681980 |
+| array-100 | render-mount-wall | 0.959× | 95.017833 | 127.649542 |
+| array-100 | render-update-wall | 1.243× | 5.613209 | 7.511708 |
+| array-100 | profiler-mount | 0.966× | 77.737787 | 111.438461 |
+| array-100 | profiler-update | 0.961× | 1.256837 | 2.951686 |
+| array-500 | render-mount-wall | 0.848× | 436.422209 | 455.407875 |
+| array-500 | render-update-wall | 1.555× | 20.956146 | 25.990375 |
+| array-500 | profiler-mount | 0.909× | 364.552660 | 372.261922 |
+| array-500 | profiler-update | 2.108× | 10.462226 | 14.800339 |
+| array-1000 | render-mount-wall | 0.917× | 879.664855 | 895.666667 |
+| array-1000 | render-update-wall | 1.076× | 42.288355 | 45.750000 |
+| array-1000 | profiler-mount | 0.985× | 730.518994 | 747.266661 |
+| array-1000 | profiler-update | 0.998× | 22.066001 | 26.163225 |
+| oneOf-5 | render-mount-wall | 1.429× | 6.687833 | 8.036875 |
+| oneOf-5 | render-update-wall | 1.425× | 8.761937 | 9.595500 |
+| oneOf-5 | profiler-mount | 1.475× | 3.713460 | 4.769914 |
+| oneOf-5 | profiler-update | 0.873× | 1.875867 | 2.231330 |
+| oneOf-10 | render-mount-wall | 1.458× | 7.143355 | 8.465500 |
+| oneOf-10 | render-update-wall | 1.463× | 9.007792 | 9.965667 |
+| oneOf-10 | profiler-mount | 1.498× | 4.176958 | 5.300336 |
+| oneOf-10 | profiler-update | 0.802× | 1.872140 | 2.270208 |
+| oneOf-20 | render-mount-wall | 1.572× | 8.116917 | 9.407666 |
+| oneOf-20 | render-update-wall | 1.529× | 9.494209 | 10.648958 |
+| oneOf-20 | profiler-mount | 1.720× | 5.322044 | 6.390579 |
+| oneOf-20 | profiler-update | 0.803× | 1.942045 | 2.481515 |
+| array-push-100 | render-mount-wall | 1.126× | 4.844250 | 5.309292 |
+| array-push-100 | render-update-wall | 1.496× | 568.134666 | 616.299875 |
+| array-push-100 | profiler-mount | 1.350× | 1.938439 | 2.390497 |
+| array-push-100 | profiler-update | 1.186× | 182.262620 | 210.011526 |
+| array-replace-200 | render-mount-wall | 1.143× | 5.107458 | 5.570125 |
+| array-replace-200 | render-update-wall | 1.125× | 173.762771 | 209.773334 |
+| array-replace-200 | profiler-mount | 1.380× | 2.050166 | 2.454206 |
+| array-replace-200 | profiler-update | 1.084× | 139.537477 | 171.768454 |
+| array-push-remove-100 | render-mount-wall | 1.214× | 6.052750 | 7.881792 |
+| array-push-remove-100 | render-update-wall | 1.530× | 1162.706396 | 1287.646333 |
+| array-push-remove-100 | profiler-mount | 1.336× | 2.994711 | 4.439129 |
+| array-push-remove-100 | profiler-update | 1.177× | 326.066537 | 379.304900 |
+| computed-visible-derived | render-mount-wall | 1.292× | 6.059500 | 6.473958 |
+| computed-visible-derived | render-update-wall | 1.226× | 9.787376 | 10.582167 |
+| computed-visible-derived | profiler-mount | 1.143× | 3.028208 | 3.302836 |
+| computed-visible-derived | profiler-update | 0.920× | 1.097997 | 1.482514 |
+
+BF 명령은 `node --expose-gc --import tsx src/index.ts --equivalent --mode=render --min-samples=100 --out=results/equivalent-82c01-render-final.json`입니다. 마지막 네 개는 같은 명령에 `--fixture=array-push-100`, `array-replace-200`, `array-push-remove-100`, `computed-visible-derived`를 각각 적용하고 `equivalent-82c01-render-clean-<fixture>.json`에 기록했습니다.
+
+## 82C-01 (나) 소유자 묶음
+
+아래는 관측 범위에서 크기 성장에 따른 추가 악화를 확인하지 않은 잔여 회귀입니다. sample·push·replace·computed는 크기 계열이 없는 고정 fixture이므로 그 고정 작업에 한정한 묶음이며 임의 크기에서 상수 배율임을 입증한 것은 아닙니다. nested update는 최신 d3/d5에서1.559/1.558×입니다. 코어 행은 최신 잔여 수정 후, React 행은 위에서 명시한 이전 snapshot입니다. 모두 **미수용**이며 원장 관리자 경유 소유자 판단 대상으로만 기록합니다.
+
+| 행 | 측정 / fixture | 대표 중앙값 배율 |
+| --- | --- | ---: |
+| P-26 | core-mount / sample-0 | 2.290× |
+| P-27 | core-mount / sample-1 | 2.357× |
+| P-28 | core-mount / sample-2 | 2.318× |
+| P-29 | core-mount / sample-3 | 3.190× |
+| P-41 | core-mount / array-push-100 | 3.381× |
+| P-42 | core-mount / array-replace-200 | 3.355× |
+| P-43 | core-mount / array-push-remove-100 | 3.068× |
+| P-44 | core-mount / computed-visible-derived | 2.336× |
+| P-45 | core-update / sample-0 | 1.832× |
+| P-46 | core-update / sample-1 | 1.662× |
+| P-47 | core-update / sample-2 | 1.593× |
+| P-48 | core-update / sample-3 | 1.390× |
+| P-51 | core-update / nested-d3-f4 | 1.559× |
+| P-52 | core-update / nested-d5-f4 | 1.558× |
+| P-53 | core-update / array-100 | 1.195× |
+| P-57 | core-update / array-push-100 | 4.848× |
+| P-58 | core-update / array-replace-200 | 2.801× |
+| P-59 | core-update / array-push-remove-100 | 3.973× |
+| P-60 | core-update / computed-visible-derived | 2.772× |
+| P-61 | render-mount-wall / sample-0 | 1.399× |
+| P-62 | render-mount-wall / sample-1 | 1.182× |
+| P-63 | render-mount-wall / sample-2 | 1.207× |
+| P-67 | render-mount-wall / array-push-100 | 1.126× |
+| P-68 | render-mount-wall / array-replace-200 | 1.143× |
+| P-69 | render-mount-wall / array-push-remove-100 | 1.214× |
+| P-70 | render-mount-wall / computed-visible-derived | 1.292× |
+| P-71 | render-update-wall / sample-0 | 1.421× |
+| P-72 | render-update-wall / sample-1 | 1.472× |
+| P-73 | render-update-wall / sample-2 | 1.576× |
+| P-74 | render-update-wall / sample-3 | 1.422× |
+| P-84 | render-update-wall / array-push-100 | 1.496× |
+| P-85 | render-update-wall / array-push-remove-100 | 1.530× |
+| P-86 | render-update-wall / computed-visible-derived | 1.226× |
+| P-87 | profiler-mount / sample-0 | 1.244× |
+| P-88 | profiler-mount / sample-2 | 1.208× |
+| P-92 | profiler-mount / array-push-100 | 1.350× |
+| P-93 | profiler-mount / array-replace-200 | 1.380× |
+| P-94 | profiler-mount / array-push-remove-100 | 1.336× |
+| P-98 | profiler-update / array-push-remove-100 | 1.177× |
+
+재측정에서 회귀 판정이 없어 별도 감시로 둔 행: P-49, P-50, P-95, P-97. 승인이나 기존 원장 수용을 뜻하지 않습니다.
+크기 독립인 전체 배율로 확인하지 않아 묶음에서 보류한 행: P-30–40·P-54–56·P-64–66·P-75–83·P-89–91·P-96. 코어의 최신 배율은 flat mount3.903→4.354→4.803×, nested mount4.873→7.284×, oneOf mount3.370→3.717→4.295×, oneOf update6.326→7.620→10.633×입니다. [후속 진단](residual-breakdown.md)에 각 phase의 L/E/Q와 코드 귀속을 완료했으며 구조 결함 해결을 크기 독립 배율 또는 소유자 수용과 동일시하지 않습니다. 이번 (나) 신규 이동은 없습니다.
+
+## 82C-01 (다) 새 엔진 패키지 기준선
+
+PKG에서 bench:baseline의 실제 명령 `npx --no-install vitest bench --config vitest.bench.config.ts --run --outputJson bench/.results/baseline.json`을 최신 잔여 수정 후 다시 실행했습니다. 생성된 7개 파일·44개 benchmark의 결과를 [bench-82c01-residual-baseline.json](bench-82c01-residual-baseline.json)에 보존했습니다. P-99–132의 상태는 모두 **기록(새 엔진의 회귀 감시 기준선, 비교 판정 없음)**입니다. 구 엔진 중앙값과 비교하지 않았습니다. 기록 파일은 Vitest bench 통계 출력이며 samples 배열이 비어 있는 형식이므로 이후 독립 표본 검정 자료로 간주하지 않습니다.
+
+## 82C-01 (라) 번들 분해
+
+PKG에서 `npx --no-install rolldown -c` 후 `node architecture/verification/07-switch/measure-bundle.mjs`를 실행했습니다. esbuild 0.25.9의 `--bundle --minify --format=esm --packages=external` 및 `gzip -9 -c`를 사용했습니다. 생성된 dist 런타임 산출물은 제출 대상에 넣지 않았습니다.
+
+| TEST-075 측정 | 기존 기준 B | 현재 B | 배율 |
+| --- | ---: | ---: | ---: |
+| dist entry minify + gzip | 37,023 | 71,994 | 1.9446× |
+| dist entry gzip | 51,632 | 104,592 | 2.0257× |
+
+[dist metafile](bundle-dist.metafile.json) · [source metafile](bundle-source.metafile.json) · [집계 JSON](bundle-82c01.json) · [재현 스크립트](measure-bundle.mjs). dist는 이미 합쳐져 있어 fractal 귀속은 같은 옵션으로 src/index.ts를 별도 bundle한 bytesInOutput을 사용합니다. source minify 253,435B와 dist minify 237,764B는 tree shaking·변환 경계가 달라 동일 값이 아닙니다. 다음 표는 source 전체와 정확히 합산되며 gzip 기여도나 TEST-075 예산 분할 값이 아닙니다.
+
+| fractal / 묶음 | minified 기여 B | source bundle 비중 |
+| --- | ---: | ---: |
+| core/settle | 107,769 | 42.52% |
+| core/blueprint | 35,493 | 14.00% |
+| core/dispatch | 21,715 | 8.57% |
+| components | 13,917 | 5.49% |
+| core/behaviors | 11,470 | 4.53% |
+| helpers | 10,794 | 4.26% |
+| providers | 10,607 | 4.19% |
+| formTypeDefinitions | 8,640 | 3.41% |
+| core/validation | 7,324 | 2.89% |
+| core/SchemaNode | 6,132 | 2.42% |
+| core/record | 4,900 | 1.93% |
+| errors | 4,682 | 1.85% |
+| core/utils | 4,076 | 1.61% |
+| hooks | 1,885 | 0.74% |
+| app | 1,750 | 0.69% |
+| core/navigation | 972 | 0.38% |
+| bundle wrapper/exports | 657 | 0.26% |
+| core/types | 502 | 0.20% |
+| types | 150 | 0.06% |
+| core/index.ts | 0 | 0.00% |
+| index.ts | 0 | 0.00% |
+
+P-133·134 원인 칸에도 상위 다섯 기여도와 전체 표 경로를 기록했습니다. 소유자 수용 및 G26 완료를 선언하지 않았습니다. 원장 항목 변경이 필요한 구현 변경은 하지 않았으며 원장 변경 요청은 없습니다. 잔여 배율·분류 보류는 후속 판단 대상으로 명시했습니다.

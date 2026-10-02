@@ -62,16 +62,26 @@ export const computeNode = <Self extends SchemaNodeRecord<Self>>(
   }
   const prior = node.structure ?? {};
   const gates: BlueprintGate[] = [];
+  const seenGates = new Set<BlueprintGate>();
   if (context.hasGates) {
     for (const entry of node.behavior.declareChildren(node))
       for (const declaration of entry.declarations)
         for (const gate of declaration.gates)
-          if (!gates.includes(gate)) gates.push(gate);
+          if (!seenGates.has(gate)) {
+            seenGates.add(gate);
+            gates.push(gate);
+          }
     for (const declaration of node.blueprintNode.declarations)
       for (const gate of declaration.gates)
-        if (!gates.includes(gate)) gates.push(gate);
+        if (!seenGates.has(gate)) {
+          seenGates.add(gate);
+          gates.push(gate);
+        }
     for (const occurrence of relocatedGates(node))
-      if (!gates.includes(occurrence.gate)) gates.push(occurrence.gate);
+      if (!seenGates.has(occurrence.gate)) {
+        seenGates.add(occurrence.gate);
+        gates.push(occurrence.gate);
+      }
   }
   if (gates.length > 0) primeHost(node, prior, context);
   for (const child of dirtyChildren(node, context)) computeNode(child, context);
@@ -86,7 +96,10 @@ export const computeNode = <Self extends SchemaNodeRecord<Self>>(
     const outputChanged = updateOutput(node, context);
     const currentRelocated = context.hasGates ? relocatedGates(node) : [];
     for (const occurrence of currentRelocated)
-      if (!gates.includes(occurrence.gate)) gates.push(occurrence.gate);
+      if (!seenGates.has(occurrence.gate)) {
+        seenGates.add(occurrence.gate);
+        gates.push(occurrence.gate);
+      }
     cap = getHostWheelBudgetCap(node, node.runtime.blueprint, gates);
     if (outputChanged) scheduleRelocatedGates(currentRelocated, context);
     if (!schemaChanged && !changed && !outputChanged) {
