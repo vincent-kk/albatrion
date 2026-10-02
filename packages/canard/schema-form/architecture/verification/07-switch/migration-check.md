@@ -220,7 +220,7 @@ H는 이름 18개뿐 아니라 반환·인자·옵션까지 정확히 비교합�
 | select | 이름 유지·확장 | (path?: string) → void; EVENT-073·SURFACE-059 보충 | H·C |
 | refresh | 추가 | (path?: string) → void; EVENT-073 | H·C |
 | remount | 추가 | (path?: string) → void; EVENT-073 | H·C |
-| reset | 유지 | () → void; 같은 트리·교체 동작은 LANDING-039. 옵션 인자는 아래 계약 차이 | H |
+| reset | 유지 | (option?: SetValueOption.DisableAutomaticWrites \| SetValueOption.EnableAutomaticWrites) → void; WRITE-015, 같은 트리·교체 동작은 LANDING-039 | H |
 | findNode | 유지 | (path: string) → SchemaNode 또는 null | H |
 | findNodes | 유지 | (path: string) → readonly SchemaNode[]; readonly 물음 별도 | H |
 | getState | 유지 | () → SchemaNode.globalState | H |
@@ -263,7 +263,6 @@ H는 이름 18개뿐 아니라 반환·인자·옵션까지 정확히 비교합�
 
 - **미등록 이주 후보 M1:** `focus`·`select`의 필수 path가 선택적으로 바뀐다는 SURFACE-059 보충은 이주 행에 넣도록 명시하지만, 추출 대상인 `### LANDING-nnn 이주` 128개 행에는 해당 서명 행이 없습니다. `refresh`·`remount` 추가와 함께 별도 이주 행이 필요한지 원장 관리자가 결정해야 합니다. U10은 행을 추가하지 않았습니다.
 - **미등록 이주 후보 M2:** 기존 mutable 오류 배열과 노드 배열이 `readonly`로 바뀌었습니다(`FormProps.errors`·`onValidate`, `FormHandle.getErrors`·`validate`·`findNodes`, `useChildNodeErrors.errorMatrix`의 내부 배열). LANDING-024는 오류 형의 개명만, LANDING-049는 findAll 개명만 정합니다. 기존 배열을 수정하거나 mutable 배열에 대입하던 소비자의 형 오류를 다루는 이주 행은 없습니다. U10은 현행 형을 증명하고 물음만 남깁니다.
-- **기존 행의 구현 차이:** LANDING-039 원문은 `FormHandle.reset(option?)`에 억제 비트 둘을 허용하지만 현재 공개 서명은 `reset(): void`입니다. 이는 빠진 이주 행이 아니라 기존 행의 미구현 서명이며, 위 H는 현행 서명을 기록합니다. 별도 구현 단위에서 결정·보완해야 합니다.
 - 코어 전용 `nodeFromJSONSchema` 서명 변경은 70C-01이 이주 행이 아니라고 명시하므로 위 후보에 포함하지 않습니다. 신규 진단 콜백·명령 추가도 기존 소비자를 깨는 변경과 구별합니다.
 
 ## U10 검증 범위

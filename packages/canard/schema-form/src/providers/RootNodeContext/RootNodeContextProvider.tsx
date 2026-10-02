@@ -85,9 +85,9 @@ export const RootNodeContextProvider = ({
   }
   const pending = useRef<RootLoadProps | undefined>(undefined);
   const [, schedule] = useState(0);
-  const reset = useHandle(() => {
+  const reset = useHandle((option?: Parameters<RootBinding['reset']>[0]) => {
     const used = committed.current;
-    store.load = resetRootLoad(store.load, used);
+    store.load = resetRootLoad(store.load, used, option);
     store.unsubscribe();
     store.unsubscribe = subscribeRootLoad(store.load);
     binding.current.root = store.load.root;

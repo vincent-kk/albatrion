@@ -66,7 +66,7 @@ export const FormContents = (
         binding.current.root
           ?.find(path)
           ?.request(SchemaNodeRequestType.Remount),
-      reset: () => binding.current.reset(),
+      reset: (option) => binding.current.reset(option),
       findNode: (path) => binding.current.root?.find(path) ?? null,
       findNodes: (path) => binding.current.root?.findNodes(path) ?? [],
       getState: () => binding.current.root?.globalState ?? {},

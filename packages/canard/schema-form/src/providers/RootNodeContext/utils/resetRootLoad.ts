@@ -4,6 +4,7 @@ import {
   adoptSchemaNodeTree,
   mountSchemaNode,
   reloadSchemaNodeForm,
+  SetValueOption,
 } from '@/schema-form/core';
 import { isSameSchema } from '@/schema-form/helpers/schemaIdentity';
 
@@ -11,11 +12,23 @@ import type { RootLoad, RootLoadProps } from '../type';
 import { applyFormErrors } from './applyFormErrors';
 import { createRootLoad } from './createRootLoad';
 
-/** Perform one synchronous load, preserving equal authored roots and replacing others. */
+/**
+ * Perform one synchronous load, preserving equal authored roots and replacing others.
+ * @param previous - Committed load whose tree may be retained
+ * @param props - Committed schema, source and Form defaults for the new load
+ * @param option - Call-local automatic-write override; other bits are ignored
+ * @returns The retained or replacement load with synchronous errors recorded
+ */
 export const resetRootLoad = (
   previous: RootLoad,
   props: RootLoadProps,
+  option?: typeof SetValueOption.DisableAutomaticWrites | typeof SetValueOption.EnableAutomaticWrites,
 ): RootLoad => {
+  const automaticWrites = (option ?? 0) &
+    (SetValueOption.DisableAutomaticWrites | SetValueOption.EnableAutomaticWrites);
+  const loadOption = automaticWrites || (props.disableAutomaticWrites
+    ? SetValueOption.DisableAutomaticWrites
+    : SetValueOption.EnableAutomaticWrites);
   previous.reporter?.beginLoad();
   const root = previous.root;
   if (
@@ -27,7 +40,7 @@ export const resetRootLoad = (
     previous.error = undefined;
     try {
       root.batch(() => {
-        reloadSchemaNodeForm(root, clone(props.defaultValue));
+        reloadSchemaNodeForm(root, clone(props.defaultValue), loadOption);
         applyFormErrors(root, props.errors);
       });
     } catch (error) {
@@ -46,7 +59,7 @@ export const resetRootLoad = (
   if (next.reporter) next.reporter.root = replacement;
   const load = () => {
     if (root) adoptSchemaNodeTree(root, replacement);
-    mountSchemaNode(replacement, clone(props.defaultValue));
+    mountSchemaNode(replacement, clone(props.defaultValue), loadOption);
     applyFormErrors(replacement, props.errors);
   };
   try {

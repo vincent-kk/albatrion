@@ -32,13 +32,18 @@
 
 `FormHandle`의 멤버는 `node`·`focus`·`select`·`refresh`·`remount`·`reset`·`findNode`·`findNodes`·`getState`·`setState`·`clearState`·`getValue`·`setValue`·`getErrors`·`getAttachedFilesMap`·`validate`·`showError`·`submit`의 18개입니다. 현재 루트에 위임하며 공개 `publish`는 두지 않습니다(EVENT-063·073, SURFACE-059, 68C-03).
 
-`reset`은 같은 스키마면 `reloadSchemaNodeForm`으로 트리를 유지하고, 다르면 같은 호출 안에서 작성·인계·마운트·옛 트리 폐기·핸들 교체를 끝냅니다. 외부 오류와 검증 결과를 비우고 경로 키 `errors`를 재적용하며, 커밋된 속성 재대조는 Provider의 로드 계약을 따릅니다(WRITE-042–046, 69C-02·03).
+`reset(option?)`은 같은 스키마면 `reloadSchemaNodeForm`으로 트리를 유지하고, 다르면 같은 호출 안에서 작성·인계·마운트·옛 트리 폐기·핸들 교체를 끝냅니다. 옵션은 공개 `SetValueOption.DisableAutomaticWrites`·`EnableAutomaticWrites`만 받으며 그 로드에서 Form `disableAutomaticWrites` 속성보다 우선합니다. 생략하면 속성을 따르고 둘 다 주면 억제가 이깁니다. 캐스트로 전달된 다른 비트는 무시하며 로드 의미는 바뀌지 않습니다(WRITE-015, LANDING-039, ADR 0013). 외부 오류와 검증 결과를 비우고 경로 키 `errors`를 재적용하며, 커밋된 속성 재대조는 Provider의 로드 계약을 따릅니다(WRITE-042–046, 69C-02·03).
 
 - `rootNode`가 아직 없으면 조회 계열은 예외를 던지지 않는다. `findNode`는 `null`, `findNodes`·`getErrors`·`validate`는 빈 배열, `getState`는 빈 객체, `getValue`는 런타임에서 `undefined`를 반환한다.
 - `focus(path?)`·`select(path?)`·`refresh(path?)`·`remount(path?)`는 해당 노드의 `request(kind)`를 호출합니다. 경로가 없으면 루트이고 지정 경로의 노드가 없으면 무동작입니다(EVENT-063·073, SURFACE-059).
 - `submit`은 `getTrackableHandler`로 감싸여 진행 상태를 추적할 수 있다.
 
 ## Acceptance Criteria
+
+### reset-options — 로드별 자동 쓰기 억제
+
+- 같은 트리 reload와 재생성 트리 mount 모두 호출의 억제 비트가 Form 기본값보다 우선합니다. 옵션 생략은 Form 속성을 따르고 두 비트 동시 지정은 억제가 이깁니다(WRITE-015, LANDING-039).
+- 공개 형은 `Overwrite`·`Merge`를 거부하며 캐스트로 전달된 다른 비트는 로드 의미를 바꾸지 않습니다.
 
 ### emit-normalized — 방출 경로는 정제 값을 낸다
 

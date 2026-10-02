@@ -86,7 +86,7 @@
 | --- | --- | --- |
 | `buildSchemaNodeTree(props)` | 청사진 작성과 팩토리 결합으로 트리를 만들며 마운트하지 않습니다 | 70C-01, VALIDATE-010 |
 | `mountSchemaNode(root, value?, option?, { deferValidation? })` | 루트 로드를 마운트하고 검증 요청의 미룸 선택을 받습니다 | 69C-01·05, LANDING-041 |
-| `reloadSchemaNodeForm(root, value)` | 명시적인 `undefined`를 포함한 필수 로드 값으로 트리는 유지한 채 폼 수준 reset을 수행하고 외부 오류와 검증 결과를 비웁니다 | WRITE-043·045, 69C-03 |
+| `reloadSchemaNodeForm(root, value, option?)` | 명시적인 `undefined`를 포함한 필수 로드 값으로 트리는 유지한 채 폼 수준 reset을 수행하고 외부 오류와 검증 결과를 비웁니다. 선택적 자동 쓰기 비트는 그 로드에만 적용됩니다 | WRITE-015·043·045, 69C-03 |
 | `adoptSchemaNodeTree(previousRoot, nextRoot)` | 재생성 트리로 사슬과 경로 키 외부 오류를 인계하고 옛 트리를 폐기합니다 | 69C-02·03, WRITE-046 |
 | `writeSchemaNodeInput(node, value, option)` | 입력 출처 표식을 실은 쓰기로 `handleChange` 진입 전체를 구별합니다 | REACT-009·010, 69C-01 |
 | `finishSchemaNodeInput(node)` | 입력 마침을 동작 행의 `finishInput`으로 보내 자동 쓰기 계약을 적용합니다 | WRITE-083, 69C-01 |

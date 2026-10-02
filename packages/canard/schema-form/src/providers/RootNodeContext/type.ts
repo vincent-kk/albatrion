@@ -1,4 +1,4 @@
-import type { FormProps } from '@/schema-form/components/Form';
+import type { FormHandle, FormProps } from '@/schema-form/components/Form';
 import type { SchemaNode, Validator } from '@/schema-form/core';
 import type { FormErrorRecord } from '@/schema-form/errors';
 
@@ -37,5 +37,5 @@ export interface RootLoad {
 /** Bridge exposing current root and reset to the Form handle. */
 export interface RootBinding {
   root?: SchemaNode;
-  reset(): void;
+  reset: FormHandle['reset'];
 }
