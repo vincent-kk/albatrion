@@ -54,7 +54,7 @@
 | 04 | 파생 + 상태 키·제어 | 머지 | [#351](https://github.com/vincent-kk/albatrion/pull/351) | 브랜치 `feat/schema-form-derive-and-controls`. 2026-10-01 머지(`54afafb86`). 뒤 단계로 넘긴 사례는 [log](plan/04-derive-and-controls/log.md) §4, 속도 문제는 [대장](verification/performance-issues.md). 느린 벤치 행 수용은 30라운드 소유자 답으로 기록(TEST-027·071 보충) |
 | 05 | 통지·검증 | 머지 | [#352](https://github.com/vincent-kk/albatrion/pull/352) | 브랜치 `feat/schema-form-dispatch-and-validation`. 2026-10-02 머지(`afbba714d`). D-1은 30라운드로 닫힘(EVENT-073 보충). 06이 맡을 일은 [log](plan/05-dispatch-and-validation/log.md) "06에 넘길 목록"과 #352 본문의 머지 순서 메모(33C-01). 느린 벤치 행 P-16–P-19는 56라운드로 소유자 수용, 속도 문제는 [대장](verification/performance-issues.md) |
 | 06 | 배열 | 머지 | [#353](https://github.com/vincent-kk/albatrion/pull/353) | 브랜치 `feat/schema-form-array`. 2026-10-02 머지(`07a083c18`). 05를 통합해 그 "06에 넘길 목록"을 맡음. P-23은 64·65라운드대로 진단·개선해 R-22 해결(65C-01 표본, 통째 쓰기 Node 1.39–1.42×·Bun 2.09–2.11×), P-14의 54라운드 수용 유지. 07이 이어받는 열림 행 P-24·P-25(03 코드, 수용 대상 아님), 속도 문제는 [대장](verification/performance-issues.md). 실행 기록은 [log](plan/06-array/log.md) |
-| 07 | 전환 | 대기 | — | 02–06 전부 머지 뒤. 원샷 |
+| 07 | 전환 | 착수 가능 | — | 02–06 전부 머지(06 `07a083c18`, 2026-10-02). 원샷. 브랜치 제안 `feat/schema-form-switch`, 착수 문서 [request](plan/07-switch/request.md) |
 | 08 | 플러그인 | 대기 | — | 07 뒤 |
 | 최적화 | 성능 최적화 | 대기 | — | 07 머지 뒤 착수, 08과 병렬, 09 전에 끝냄. 묶음(M2)마다 PR 하나. 출발점은 [대장](verification/performance-issues.md), 계획은 [request](plan/perf-optimization/request.md) |
 | 09 | 정리·릴리스 | 대기 | — | 08·최적화와 릴리스 전환 PR 뒤. 머지되면 우산을 `master`로 |
@@ -150,3 +150,4 @@
 | 2026-10-02 | 66라운드: 06의 해석 하나 — 66C-01 배달 변경 판정과 감시 에지의 동등은 SETTLE-043의 `sameValue`(SameValueZero)다. 옛 코드의 `NaN`→`NaN` 헛 배달은 결함(S2가 없앤 것이 맞음), S2 뒤 감시 값의 `NaN` 덧배달도 결함이라 06이 고침. 보충 5줄 | `reviews/round-66-closing.md` |
 | 2026-10-02 | 67라운드: 06의 해석 하나 — 67C-01 SETTLE-043의 한 판정은 두 자리에 산다: 깊은 구조 비교는 커밋의 참조 되살림에서 한 번, 배달·감시 에지는 참조 비교(원시 값은 SameValueZero). 배달 차이에 깊은 도우미를 쓰면 틀림. 내용 같고 참조 새로운 호스트는 되살림의 구멍 — 배열 호스트면 06이 고치고 03이면 열린 행. 보충 5줄 | `reviews/round-67-closing.md` |
 | 2026-10-02 | 65라운드 덧붙임: P-23 해결 — 06이 세 단계를 모두 구현하고 54라운드 방법으로 재어 Node 1.39–1.42배·Bun 2.09–2.11배(수용 수치 이하), 대장 "해결" R-22; P-14 수용 유지. 되살림 구멍은 03 귀속의 열린 행 P-25. PR #353 머리 `e147d98cb`, 06 쪽 머지 조건 충족 | `reviews/round-65-closing.md` |
+| 2026-10-02 | 06 머지 — PR #353 소유자 스쿼시 머지 `07a083c18`, 06 문서 커밋 `80875e50f`(§3 06 행 머지, 06 실행 기록 머지 항목). 07 행을 착수 가능으로. 우산 PR #344 본문 갱신 | `HANDOFF.md` §1 "06 머지" |
