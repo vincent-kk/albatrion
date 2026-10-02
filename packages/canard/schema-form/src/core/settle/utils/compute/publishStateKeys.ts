@@ -4,6 +4,7 @@ import type { SchemaNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../type';
 import { calculateStateKeys } from '../controls/calculateStateKeys';
 import { EXPRESSION_THREW } from '../errors/settleErrorCode';
+import { declaresStateKeys } from '../controls/declaresStateKeys';
 
 /**
  * Write final local controls and defer all failed expressions until commit.
@@ -13,6 +14,7 @@ import { EXPRESSION_THREW } from '../errors/settleErrorCode';
 export const publishStateKeys = <Self extends SchemaNodeRecord<Self>>(
   context: SettlementContext<Self>,
 ): void => {
+  if (!declaresStateKeys(context.root.runtime.blueprint)) return;
   const result = calculateStateKeys(context.root, context.stateDirtyNodes,
     context.selectedDeclarationIds, (source) => context.kind === 'load' ||
       context.dependencyOwnerPaths.has(source.path) ||
