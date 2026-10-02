@@ -52,7 +52,7 @@
 | 보정 | 01·02 보정 | 머지 | [#349](https://github.com/vincent-kk/albatrion/pull/349) | 브랜치 `fix/schema-form-realign-01-02`. 25라운드(`reviews/round-25-closing.md`)대로 청사진 코드·시험과 설계문서를 맞춤. 2026-09-29 머지(`85e7d01af`). [realign](plan/01-design-docs/realign.md) |
 | 03 | 노드 트리·정착 | 머지 | [#350](https://github.com/vincent-kk/albatrion/pull/350) | 브랜치 `feat/schema-form-node-and-settle`. 2026-09-30 머지(`0705217d5`). 뒤 PR로 넘긴 사례는 [log](plan/03-node-and-settle/log.md) §4 |
 | 04 | 파생 + 상태 키·제어 | 머지 | [#351](https://github.com/vincent-kk/albatrion/pull/351) | 브랜치 `feat/schema-form-derive-and-controls`. 2026-10-01 머지(`54afafb86`). 뒤 단계로 넘긴 사례는 [log](plan/04-derive-and-controls/log.md) §4, 속도 문제는 [대장](verification/performance-issues.md). 느린 벤치 행 수용은 30라운드 소유자 답으로 기록(TEST-027·071 보충) |
-| 05 | 통지·검증 | PR | [#352](https://github.com/vincent-kk/albatrion/pull/352) | 브랜치 `feat/schema-form-dispatch-and-validation`(워크트리 `.claude/worktrees/stage-05`). D-1은 30라운드로 닫힘(EVENT-073 보충). 06보다 먼저 머지하므로 06이 맡을 일은 [log](plan/05-dispatch-and-validation/log.md) "06에 넘길 목록"(33C-01). 벤치 느린 행은 56라운드로 소유자 수용, filid 스캔 순환 0, storybook 49파일·390 통과, 55·58·59라운드 반영 뒤 antigravity 검증 `PASS`. 남은 것: 소유자의 머지 지시 |
+| 05 | 통지·검증 | 머지 | [#352](https://github.com/vincent-kk/albatrion/pull/352) | 브랜치 `feat/schema-form-dispatch-and-validation`. 2026-10-02 머지(`afbba714d`). D-1은 30라운드로 닫힘(EVENT-073 보충). 06이 맡을 일은 [log](plan/05-dispatch-and-validation/log.md) "06에 넘길 목록"과 #352 본문의 머지 순서 메모(33C-01). 느린 벤치 행 P-16–P-19는 56라운드로 소유자 수용, 속도 문제는 [대장](verification/performance-issues.md) |
 | 06 | 배열 | 대기 | — | 03 뒤, 04·05와 병렬 |
 | 07 | 전환 | 대기 | — | 02–06 전부 머지 뒤. 원샷 |
 | 08 | 플러그인 | 대기 | — | 07 뒤 |
@@ -69,7 +69,7 @@
 
 ## 4. 다음 할 일
 
-1. **05 리뷰·머지, 06 진행** — 05는 [#352](https://github.com/vincent-kk/albatrion/pull/352)에서 리뷰 중이고 벤치 수용(P-16–P-20)과 storybook 실행이 소유자 몫이다. 06은 05 뒤에 머지하며 `plan/05-dispatch-and-validation/log.md`의 "06에 넘길 목록"을 맡는다. 미뤄 둔 속도 문제는 `verification/performance-issues.md`.
+1. **06 진행** — 05가 머지되었으므로(`afbba714d`) 06은 `1.0.0-beta`를 merge하고 `plan/05-dispatch-and-validation/log.md`의 "06에 넘길 목록"과 #352의 머지 순서 메모(배열 동사 진입, `onError` 배선, `UpdatePath` 배달, `ifPredicates` 시험 이전)를 맡는다. 05가 바꾼 정착 오류 집계(58C-01)와 `details.sourcePath`(59C-01)는 배열 항목에도 그대로 적용된다. 미뤄 둔 속도 문제는 `verification/performance-issues.md`.
 2. **01 절 단위 통과** — 머지된 설계문서 여덟 편(192절)을 소유자가 절 단위로 통과시키고 문서 머리의 표에 날짜를 적는다(25C-09). 통과 중 나온 새 결정은 원장에 새 라운드 항목으로 먼저 들어가고 문서가 따라간다(`plan/01-design-docs/verification.md`).
 3. **D-1** — 30라운드에서 소유자가 정했다: 노드는 `request(kind)` 하나, 종류 값은 요청 비트 별칭의 TS 열거(리터럴 합집합 불허), 한 호출에 종류 하나, 둘째 인자 없음, 폼 핸들은 전용 메서드 넷에 경로 선택 인자(없으면 루트). 편집자 권장이던 리터럴 합집합과 폼 핸들 통합 메서드는 택하지 않았다.
 
@@ -141,3 +141,11 @@
 | 2026-10-02 | 58라운드: 05의 해석 하나 — 58C-01 한 정착의 정착 오류는 종류를 가리지 않고 모두 모아 사슬 끝에서 발생 순서대로 묶어 던진다(ERROR-004·005); 첫 실패만 남기는 `context.failure`는 결함이라 05가 PR-4에서 고침; 예산 초과는 뒤의 진행을 멈출 뿐 앞의 오류를 버리지 않음(29C-03). 보충 4줄 | `reviews/round-58-closing.md` |
 | 2026-10-02 | 59라운드: 05의 해석 하나 — 59C-01 `INJECT_TARGET_MISSING`과 자동 쓰기의 가상 노드 쓰기 모양 오류의 `details`에 출처 노드 경로 `sourcePath`를 더함(`path`는 대상 그대로, 덧붙이는 변경, PR-4). 보충 3줄 | `reviews/round-59-closing.md` |
 | 2026-10-02 | 60라운드(소유자가 맡긴 결정): 시나리오 패키지의 가족 디렉토리는 진입점을 가진 모듈이라 여덟 가족 모두 INTENT·DETAIL을 두고(#353에서 한 번에), 패키지 INTENT의 가족 목록을 여덟으로, 장면 파일의 홀로 파일 경고는 `.filid/config.json` 예외 목록에 패키지 경로를 더해 닫음, 동적 표의 사례 상한 미확정은 DETAIL 선언(60C-01). 보충 3줄 | `reviews/round-60-closing.md` |
+| 2026-10-02 | 61라운드: PR-4 머지(`afbba714d`) 뒤 31C-05의 가칭 확정 기록 — 61C-01 05 실행 기록의 표(`plan/05-dispatch-and-validation/log.md:80-156`)를 정본으로 77개 처분을 적음(확정 그대로 67, 삭제·대체 10; 소유자 이름이 이김). 보충 15줄 | `reviews/round-61-closing.md` |
+| 2026-10-02 | 62라운드: 06 통합의 해석 하나 — 62C-01 `batch(fn)` 안의 배열 동사는 updater와 같다(EVENT-061): 앞선 표시를 얹은 배열을 부른 자리에서 읽어 계산하고 동기 결과를 돌려주며 결과 배열을 통째 쓰기로 표시만 함. 정착은 fn 끝 한 번, 배치 안 정착 당김은 로드뿐, 아이템 키는 위치로(NODE-051). 보충 10줄 | `reviews/round-62-closing.md` |
+| 2026-10-02 | 63라운드: 06 통합 보고의 셋 — 63C-01 P-14의 둘째 원인(05의 커밋마다 하는 배달 표시, 바뀐 노드 수에 비례)은 54라운드 수용 밖이라 05 귀속의 새 행 P-23으로 소유자 수용을 따로 물음(닫기 파일 덧붙임 참조)(통합은 기다리지 않음); 63C-02 배열 `remove`의 전체 감시자 훑기와 저장소 전체 훑기는 계약 위반이라 06이 고침(05 파일 포함); 63C-03 키 입력의 배열 얕은 사본은 44C-01 모델의 비용으로 수용. 보충 9줄 | `reviews/round-63-closing.md` |
+| 2026-10-02 | 64라운드: 소유자 답 하나 — P-23(05의 커밋마다 하는 배달 표시가 더한 배열 통째 쓰기의 비용)은 수용하지 않고 06 PR 안에서 속도를 개선한다("속도개선을 해보세요. 너무 느리군요"). 통과 기준은 54라운드 수용 수치 이하로 복귀. 덧붙임: 소유자가 요지를 보탬 — 상승 추세가 구조적일 수 있으니 먼저 원인을 상수·구조로 가르고, 구조 몫은 원장 라운드를 거쳐 설계를 바꾼다. 보충 7줄 | `reviews/round-64-owner-answers.md` |
+| 2026-10-02 | 65라운드: P-23의 진단과 처분 — 65C-01 상승 추세는 단계마다 더해진 전체 훑기의 누적(모두 선형, 계약 위반 아님); 상수 몫은 03·04 코드까지 06이 고침(물음 30). 65C-02 S3 기능 통과는 청사진 정적 색인과의 교집합만 방문. 65C-03 S1+S2 배달 장부를 변경 현장에서 포착하고 커밋 방문 하나·레코드 필드로(EVENT-007·024, SETTLE-006 그대로; S4는 하지 않음). 65C-04 객체 키 입력의 형제 수 비례 비용은 열린 행. 보충 19줄 | `reviews/round-65-closing.md` |
+| 2026-10-02 | 66라운드: 06의 해석 하나 — 66C-01 배달 변경 판정과 감시 에지의 동등은 SETTLE-043의 `sameValue`(SameValueZero)다. 옛 코드의 `NaN`→`NaN` 헛 배달은 결함(S2가 없앤 것이 맞음), S2 뒤 감시 값의 `NaN` 덧배달도 결함이라 06이 고침. 보충 5줄 | `reviews/round-66-closing.md` |
+| 2026-10-02 | 67라운드: 06의 해석 하나 — 67C-01 SETTLE-043의 한 판정은 두 자리에 산다: 깊은 구조 비교는 커밋의 참조 되살림에서 한 번, 배달·감시 에지는 참조 비교(원시 값은 SameValueZero). 배달 차이에 깊은 도우미를 쓰면 틀림. 내용 같고 참조 새로운 호스트는 되살림의 구멍 — 배열 호스트면 06이 고치고 03이면 열린 행. 보충 5줄 | `reviews/round-67-closing.md` |
+| 2026-10-02 | 65라운드 덧붙임: P-23 해결 — 06이 세 단계를 모두 구현하고 54라운드 방법으로 재어 Node 1.39–1.42배·Bun 2.09–2.11배(수용 수치 이하), 대장 "해결" R-22; P-14 수용 유지. 되살림 구멍은 03 귀속의 열린 행 P-25. PR #353 머리 `e147d98cb`, 06 쪽 머지 조건 충족 | `reviews/round-65-closing.md` |
