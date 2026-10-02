@@ -5,6 +5,9 @@ import { readSchemaNodeWatchValues } from '../controls/readSchemaNodeWatchValues
 import { createWatchDeliveryIndex } from './utils/createWatchDeliveryIndex';
 import { getWatchDeliveryPaths } from './utils/getWatchDeliveryPaths';
 
+/** Payload immutability follows the module's development build mode. */
+const DEVELOPMENT = process.env.NODE_ENV !== 'production';
+
 /**
  * Mark one committed delivery set and advance its per-bit revision ledgers.
  * @param context - Final settlement observations and write origin
@@ -94,7 +97,7 @@ export const markCommitDeliveries = <Self extends SchemaNodeRecord<Self>>(
         const source = automaticNodes.has(node) ||
           context.filledNodes.has(node) ? 'automatic' : context.kind;
         mark(node, SchemaNodeEventType.UpdateValue,
-          process.env.NODE_ENV !== 'production' ? Object.freeze(payload) : payload,
+          DEVELOPMENT ? Object.freeze(payload) : payload,
           { source });
       }
       if (previous.path !== node.path) {
@@ -104,7 +107,7 @@ export const markCommitDeliveries = <Self extends SchemaNodeRecord<Self>>(
           Reflect.get(pending, 'previous') : previous.path;
         const payload = { previous: oldPath, current: node.path };
         mark(node, SchemaNodeEventType.UpdatePath,
-          process.env.NODE_ENV !== 'production' ? Object.freeze(payload) : payload);
+          DEVELOPMENT ? Object.freeze(payload) : payload);
       }
       if (previous.children !== node.children)
         mark(node, SchemaNodeEventType.UpdateChildren);
@@ -125,7 +128,7 @@ export const markCommitDeliveries = <Self extends SchemaNodeRecord<Self>>(
           Reflect.get(pending, 'previous') : previous.schema.schema;
         const payload = { previous: oldSchema, current: node.schema.schema };
         mark(node, SchemaNodeEventType.UpdateJsonSchema,
-          process.env.NODE_ENV !== 'production' ? Object.freeze(payload) : payload);
+          DEVELOPMENT ? Object.freeze(payload) : payload);
       }
     } else if (context.changedNodes.has(node)) {
       const current = node.behavior.strategy === 'branch' ?
@@ -134,7 +137,7 @@ export const markCommitDeliveries = <Self extends SchemaNodeRecord<Self>>(
       const source = automaticNodes.has(node) ||
         context.filledNodes.has(node) ? 'automatic' : context.kind;
       mark(node, SchemaNodeEventType.UpdateValue,
-        process.env.NODE_ENV !== 'production' ? Object.freeze(payload) : payload,
+        DEVELOPMENT ? Object.freeze(payload) : payload,
         { source });
     }
     if (context.kind === 'load' && context.loadScope &&
