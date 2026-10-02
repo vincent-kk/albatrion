@@ -74,6 +74,21 @@ const files = FRACTALS.flatMap((name) => sourceFiles(join(CORE, name)));
 const edges = files.flatMap(importsIn);
 
 describe('NODE-016 and NODE-045 dependency direction', () => {
+  it('REACT-009 binding organ depends only on its owner and lower core entry points', () => {
+    const binding = join(CORE, 'SchemaNode', 'utils', 'binding') + sep;
+    const bindings = files.filter((file) => file.startsWith(binding));
+    expect(bindings.length).toBeGreaterThanOrEqual(7);
+    const forbidden = edges.filter(({ source, target }) => source.startsWith(binding) &&
+      owner(target) !== 'SchemaNode' &&
+      !['blueprint', 'dispatch', 'record', 'validation'].some((name) =>
+        target === join(CORE, name, 'index.ts')) &&
+      !target.startsWith(join(CORE, 'types') + sep) &&
+      !target.startsWith(join(CORE, '..', 'types') + sep) &&
+      target !== join(CORE, '..', 'errors', 'index.ts') &&
+      !target.startsWith('@aileron/'));
+    expect(forbidden.map(({ specifier }) => specifier)).toEqual([]);
+  });
+
   it('reads every non-test TypeScript file in the declared fractals', () => {
     for (const name of FRACTALS)
       expect(files.some((file) => owner(file) === name)).toBe(true);

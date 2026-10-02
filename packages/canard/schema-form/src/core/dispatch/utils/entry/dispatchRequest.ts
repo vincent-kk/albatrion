@@ -1,5 +1,6 @@
 import { SchemaNodeRequestType } from '../../../record';
 import type { SchemaNodeRecord } from '../../../record';
+import { assertSchemaNodeWritable } from '../../../settle';
 import { flushQueuedEvents } from '../chain/flushQueuedEvents';
 import { queueNonSettleEvent } from '../chain/queueNonSettleEvent';
 import { refuseListenerFeedback } from '../chain/refuseListenerFeedback';
@@ -14,6 +15,7 @@ import { assertNotInDelivery } from '../report/assertNotInDelivery';
 export const dispatchRequest = <Self extends SchemaNodeRecord<Self>>(
   node: Self, kind: SchemaNodeRequestType,
 ): void => {
+  assertSchemaNodeWritable(node);
   if (node.detached) return;
   const runtime = node.rootNode.runtime;
   assertNotInDelivery(runtime);

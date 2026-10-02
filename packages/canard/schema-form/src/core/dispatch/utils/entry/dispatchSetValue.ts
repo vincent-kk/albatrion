@@ -11,22 +11,25 @@ import { readBatchValue } from '../chain/readBatchValue';
  * @param node - Live or retained target occurrence
  * @param value - Input value or updater evaluated at its call site
  * @param option - Replacement, merge, and automatic-write flags
+ * @param source - Binding-only origin carried independently of public flags
  * @returns Nothing; outer entry owns notification and failures
  */
 export const dispatchSetValue = <Self extends SchemaNodeRecord<Self>>(
   node: Self, value: unknown, option: SetValueOption = SetValueOption.Overwrite,
+  source?: 'input',
 ): void => {
+  if (source === 'input' && (node.disposed || node.rootNode.disposed)) return;
   if (!enterSchemaNodeChain(node)) return;
   try {
     const runtime = node.rootNode.runtime;
     const input = typeof value === 'function' ?
       value(runtime.batchDepth ? readBatchValue(node) : node.local) : value;
     if (runtime.batchDepth) {
-      (runtime.batchWrites ??= []).push({ node, value: input, option });
+      (runtime.batchWrites ??= []).push({ node, value: input, option, source });
     } else {
       const merge = (option & SetValueOption.Merge) === SetValueOption.Merge &&
         !(option & SetValueOption.Replace);
-      writeSchemaNode(node, input, merge ? 'callerPartial' : 'callerReplace', option);
+      writeSchemaNode(node, input, merge ? 'callerPartial' : 'callerReplace', option, source);
     }
   } catch (error) {
     if (node.rootNode.runtime.batchDepth) throw error;

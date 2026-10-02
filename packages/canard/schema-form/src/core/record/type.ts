@@ -42,6 +42,10 @@ interface SchemaNodeWatchDeliveryIndex {
 
 /** The fixed node layout implemented by every node kind. */
 export interface SchemaNodeRecord<Self> {
+  /** Retired by binding adoption; reads retain the preceding commit. */
+  disposed: boolean;
+  /** Monotone interaction lifetime, independent of event delivery. */
+  interactionReset: number;
   /** Shared calculation row selected for this node's kind and strategy. */
   readonly behavior: Behavior<Self>;
   /** Per-tree services and settlement records. */
@@ -394,7 +398,12 @@ export interface SchemaNodeRuntime<Self> extends SchemaNodeRootRuntimeState {
   /** Number of active nested batch callbacks. */
   batchDepth?: number;
   /** Caller writes postponed until the outer batch callback finishes. */
-  batchWrites?: { node: Self; value: unknown; option: SetValueOption }[];
+  batchWrites?: { node: Self; value: unknown; option: SetValueOption;
+    source?: 'input' | 'automatic' }[];
+  /** Mount defers validation until the binding's ready effect. */
+  deferMountValidation?: boolean;
+  /** External errors awaiting the replacement tree's first committed shape. */
+  adoptedExternalErrors?: Map<string, readonly unknown[]>;
   /** Reset scopes requiring validation even with an unchanged root emit. */
   validationTargets?: Set<Self>;
   /** Non-settlement events coalesced independently from commit deliveries. */

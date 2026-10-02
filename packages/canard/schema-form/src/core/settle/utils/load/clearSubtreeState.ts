@@ -7,6 +7,14 @@ import type { SchemaNodeRecord } from '../../../record';
  * @returns Nothing; sibling state remains untouched
  */
 export const clearSubtreeState = <Self extends SchemaNodeRecord<Self>>(node: Self): void => {
-  node.interactionState = captureSchemaNodeChange(node, 'interactionState', {});
-  for (const child of node.children ?? []) clearSubtreeState(child);
+  const pending = [node];
+  const visited = new Set<Self>();
+  while (pending.length) {
+    const current = pending.pop();
+    if (!current || visited.has(current)) continue;
+    visited.add(current);
+    current.interactionReset += 1;
+    current.interactionState = captureSchemaNodeChange(current, 'interactionState', {});
+    for (const child of current.children ?? []) pending.push(child);
+  }
 };

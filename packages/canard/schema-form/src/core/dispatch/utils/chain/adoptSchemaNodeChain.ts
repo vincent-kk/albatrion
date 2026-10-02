@@ -3,6 +3,8 @@ import { indexSchemaNodeWarning } from '../../../record';
 import { isArray } from '@winglet/common-utils/filter';
 import { RESET_REBUILT_BY_REFERENCE } from '../../../../errors';
 import { assertValidationRootReady } from '../../../validation';
+import { disposeSchemaNodeTree } from '../../../settle';
+import { restoreAdoptedExternalErrors } from './restoreAdoptedExternalErrors';
 import { dedupeWarningRecord } from '../report/dedupeWarningRecord';
 import { readReferenceOnlySchemaPaths } from '../report/readReferenceOnlySchemaPaths';
 
@@ -32,11 +34,17 @@ export const adoptSchemaNodeChain = <Self extends SchemaNodeRecord<Self>>(
   next.onChangeBudget = previous.onChangeBudget;
   next.batchDepth = previous.batchDepth;
   next.batchWrites = previous.batchWrites;
-  next.validationTargets = previous.validationTargets;
+  next.validationTargets = previous.validationTargets?.size ? new Set([nextRoot]) :
+    undefined;
   next.deliveries = previous.deliveries;
   next.queuedNonSettleEvents = previous.queuedNonSettleEvents;
   next.stateChanged = previous.stateChanged;
-  next.nodeErrors = previous.nodeErrors;
+  next.adoptedExternalErrors = new Map(previous.adoptedExternalErrors);
+  for (const [node, errors] of previous.nodeErrors ?? [])
+    if (node !== null && typeof node === 'object' &&
+      'path' in node && typeof node.path === 'string')
+      next.adoptedExternalErrors.set(node.path, errors);
+  restoreAdoptedExternalErrors(nextRoot);
   if (previous.pendingWarningRecords)
     for (const [key, record] of previous.pendingWarningRecords) {
       const parts: unknown = record.path === undefined ? undefined : JSON.parse(key);
@@ -70,4 +78,5 @@ export const adoptSchemaNodeChain = <Self extends SchemaNodeRecord<Self>>(
   previous.enclosingChain = undefined;
   previous.pendingWarningRecords = undefined;
   previous.warningKeysByPath = undefined;
+  disposeSchemaNodeTree(previousRoot);
 };

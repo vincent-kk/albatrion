@@ -65,6 +65,8 @@ export class SchemaNode implements SchemaNodeRecord<SchemaNode> {
   pendingRevision: number;
   pendingNonSettleDelivery: SchemaNodeRecord<SchemaNode>['pendingNonSettleDelivery'];
   detached: boolean;
+  disposed: boolean;
+  interactionReset: number;
 
   constructor(
     behavior: Behavior<SchemaNode>, runtime: SchemaNodeRuntime<SchemaNode>,
@@ -116,6 +118,8 @@ export class SchemaNode implements SchemaNodeRecord<SchemaNode> {
     this.pendingRevision = 0;
     this.pendingNonSettleDelivery = undefined;
     this.detached = false;
+    this.disposed = false;
+    this.interactionReset = 0;
   }
 
   /** {@inheritDoc NodeSurface.type} */

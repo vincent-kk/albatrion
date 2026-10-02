@@ -1,4 +1,5 @@
 import { PathKeyedMap } from '../../../utils/pathIndex/PathKeyedMap';
+import { readSettlementSource } from './utils/readSettlementSource';
 import { getCommittedDeclarationKey } from '../controls/getCommittedDeclarationKey';
 import type { SchemaNodeRecord, TypeMismatchRecord } from '../../../record';
 import { indexSchemaNodeWarning } from '../../../record';
@@ -57,8 +58,11 @@ export const commitSettlement = <Self extends SchemaNodeRecord<Self>>(
   const refreshTargets = runtime.refreshTargets ?? new Set<string>();
   refreshTargets.clear();
   if (context.kind !== 'load')
-    for (const path of context.changedRaw)
-      if (path !== context.target.path) refreshTargets.add(path);
+    for (const path of context.changedRaw) {
+      const source = readSettlementSource(context, path, true);
+      if (source !== 'input' && (source === 'automatic' || path !== context.target.path))
+        refreshTargets.add(path);
+    }
   runtime.refreshTargets = refreshTargets;
   let warnings: TypeMismatchRecord[] | undefined;
   let warningTasks: Map<Self, () => void> | undefined;

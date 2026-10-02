@@ -7,6 +7,7 @@ import { createWatchDeliveryIndex } from './utils/createWatchDeliveryIndex';
 import { commitGlobalState } from './commitGlobalState';
 import { getWatchDeliveryPaths } from './utils/getWatchDeliveryPaths';
 import { isSameDeliveryValue } from './utils/isSameDeliveryValue';
+import { readSettlementSource } from './utils/readSettlementSource';
 
 /** Payload immutability follows the module's development build mode. */
 const DEVELOPMENT = process.env.NODE_ENV !== 'production';
@@ -121,7 +122,7 @@ export const markCommitDeliveries = <Self extends SchemaNodeRecord<Self>>(
           { local: node.local, emit: node.emit } : node.local;
         const payload = { previous: oldValue, current };
         const source = automaticNodes.has(node) ||
-          context.filledNodes.has(node) ? 'automatic' : context.kind;
+          context.filledNodes.has(node) ? 'automatic' : readSettlementSource(context, node.path);
         mark(node, SchemaNodeEventType.UpdateValue,
           DEVELOPMENT ? Object.freeze(payload) : payload,
           { source });
@@ -159,7 +160,7 @@ export const markCommitDeliveries = <Self extends SchemaNodeRecord<Self>>(
         { local: node.local, emit: node.emit } : node.local;
       const payload = { previous: undefined, current };
       const source = automaticNodes.has(node) ||
-        context.filledNodes.has(node) ? 'automatic' : context.kind;
+        context.filledNodes.has(node) ? 'automatic' : readSettlementSource(context, node.path);
       mark(node, SchemaNodeEventType.UpdateValue,
         DEVELOPMENT ? Object.freeze(payload) : payload,
         { source });

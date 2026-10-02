@@ -5,6 +5,7 @@ import { enterSchemaNodeChain } from '../chain/enterSchemaNodeChain';
 import { captureChainError } from '../chain/captureChainError';
 import { exitSchemaNodeChain } from '../chain/exitSchemaNodeChain';
 import { clearWarningKeys } from '../report/clearWarningKeys';
+import { clearSchemaNodeFormErrors } from './utils/clearSchemaNodeFormErrors';
 
 /**
  * Start a new form load lifetime with a replacement root source.
@@ -23,7 +24,10 @@ export const dispatchResetForm = <Self extends SchemaNodeRecord<Self>>(
   root.runtime.validationCompileReported = false;
   root.runtime.batchWrites = undefined;
   (root.runtime.validationTargets ??= new Set()).add(root);
-  try { resetSchemaNodeForm(root, value, option); }
+  try {
+    clearSchemaNodeFormErrors(root);
+    resetSchemaNodeForm(root, value, option);
+  }
   catch (error) { captureChainError(root.runtime, error); }
   finally { exitSchemaNodeChain(root); }
 };

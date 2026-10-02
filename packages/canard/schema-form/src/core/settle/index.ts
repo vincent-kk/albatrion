@@ -1,4 +1,6 @@
 export { writeSchemaNode } from './utils/write/writeSchemaNode';
+export { assertSchemaNodeWritable } from './utils/dispose/assertSchemaNodeWritable';
+export { disposeSchemaNodeTree } from './utils/dispose/disposeSchemaNodeTree';
 export { arrangeSchemaNodeItems } from './utils/structure/arrangeSchemaNodeItems';
 export { loadSchemaNodeAtMount } from './utils/load/loadSchemaNodeAtMount';
 export { resetSchemaNodeForm } from './utils/load/resetSchemaNodeForm';

@@ -13,6 +13,7 @@ import { readFormErrorCode } from '../report/readFormErrorCode';
  * Revalidate the current emitted snapshot on explicit request.
  * @param node - Root or subtree whose displayed errors should refresh.
  * @returns The fresh, unfiltered whole-schema verdict.
+ * Retired occurrences validate their frozen snapshot without publishing results.
  * @throws A structured validator compilation or execution failure.
  */
 export const dispatchValidate = async <Self extends SchemaNodeRecord<Self>>(
@@ -20,6 +21,8 @@ export const dispatchValidate = async <Self extends SchemaNodeRecord<Self>>(
 ): Promise<readonly ValidationIssue[]> => {
   const runtime = node.rootNode.runtime;
   if (runtime.validationMode === ValidationMode.None) return [];
+  if (node.disposed || node.rootNode.disposed)
+    return await runSchemaNodeValidation(node) ?? [];
   runtime.validationStamp = (runtime.validationStamp ?? 0) + 1;
   runtime.validationPendingTargets = undefined;
   const stamp = runtime.validationStamp;
@@ -27,6 +30,7 @@ export const dispatchValidate = async <Self extends SchemaNodeRecord<Self>>(
   let issues: readonly ValidationIssue[] | null;
   try { issues = await runSchemaNodeValidation(node); }
   catch (failure) {
+    if (node.disposed || node.rootNode.disposed) throw failure;
     const compileFailure = failure instanceof SchemaFormError &&
       failure.code === `SCHEMA_FORM_ERROR.${VALIDATOR_COMPILE_FAILED}`;
     if (compileFailure) runtime.validationUnavailable = true;

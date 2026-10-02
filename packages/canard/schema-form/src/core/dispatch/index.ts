@@ -1,4 +1,7 @@
 export { dispatchSetValue } from './utils/entry/dispatchSetValue';
+export { dispatchWriteInput } from './utils/entry/dispatchWriteInput';
+export { dispatchFinishInput } from './utils/entry/dispatchFinishInput';
+export { readSchemaNodeInteractionReset } from './utils/read/readSchemaNodeInteractionReset';
 export { dispatchPush } from './utils/entry/dispatchPush';
 export { dispatchPop } from './utils/entry/dispatchPop';
 export { dispatchUpdate } from './utils/entry/dispatchUpdate';

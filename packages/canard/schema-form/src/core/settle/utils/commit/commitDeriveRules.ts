@@ -31,6 +31,7 @@ export const commitDeriveRules = <Self extends SchemaNodeRecord<Self>>(
         schemaPath: failure.schemaPath, cause: failure.cause }), 'expression');
   }
   for (const node of decision.nodes) {
+    node.interactionReset += 1;
     const previous = node.interactionState;
     node.interactionState = captureSchemaNodeChange(node, 'interactionState',
       shallowPatch(node.interactionState, {

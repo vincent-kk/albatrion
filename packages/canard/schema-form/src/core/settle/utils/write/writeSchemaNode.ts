@@ -2,7 +2,7 @@ import { isArray } from '@winglet/common-utils/filter';
 
 import type { SchemaNodeRecord } from '../../../record';
 import type { SetValueOption } from '../../../types/value';
-import type { SchemaNodeWriteKind } from '../../type';
+import type { SchemaNodeWriteKind, SettlementContext } from '../../type';
 import { computeNode } from '../compute/computeNode';
 import { getGateRegistry } from '../gates/getGateRegistry';
 import { markWrite } from './markWrite';
@@ -19,6 +19,7 @@ import { hasLivePathKind } from '../detached/hasLivePathKind';
 import { distributeLatentValue } from '../latent/distributeLatentValue';
 import { createSettlementContext } from '../settlement/createSettlementContext';
 import { finishSettlement } from '../settlement/finishSettlement';
+import { assertSchemaNodeWritable } from '../dispose/assertSchemaNodeWritable';
 
 /**
  * Apply a live write or an own-kind detached latent write (26C-14).
@@ -26,6 +27,8 @@ import { finishSettlement } from '../settlement/finishSettlement';
  * @param input - Caller-owned value interpreted first under static types
  * @param kind - Input origin retained for warning and transition semantics
  * @param option - Caller flags whose automatic-write bits override the form default
+ * @param source - Binding origin independent of merge and replacement semantics
+ * @param writeOrigins - Call-ordered batch origins for delivery and Refresh
  * @returns Nothing; live records carry the committed shape and values
  * @throws A deferred gate or shared declaration failure after commit
  */
@@ -34,7 +37,11 @@ export const writeSchemaNode = <Self extends SchemaNodeRecord<Self>>(
   input: unknown,
   kind: SchemaNodeWriteKind,
   option: SetValueOption,
+  source: SchemaNodeWriteKind = kind,
+  writeOrigins?: SettlementContext<Self>['writeOrigins'],
 ): void => {
+  if (source === 'input' && (node.disposed || node.rootNode.disposed)) return;
+  assertSchemaNodeWritable(node);
   if (node.behavior.type === 'virtual' &&
     kind !== 'load' && kind !== 'automatic')
     assertVirtualWriteShape(node, input);
@@ -55,6 +62,8 @@ export const writeSchemaNode = <Self extends SchemaNodeRecord<Self>>(
     (kind === 'callerPartial' && (input === null || typeof input !== 'object' ||
       isArray(input) || node.behavior.strategy !== 'branch'));
   const context = createSettlementContext(node, kind, option, scratch, replaces);
+  context.source = source;
+  context.writeOrigins = writeOrigins;
   try {
     if (context.hasGates) getGateRegistry(context.root.runtime).register(context.root);
     if (replaces || kind === 'load')

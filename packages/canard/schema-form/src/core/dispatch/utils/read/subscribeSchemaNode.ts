@@ -10,6 +10,7 @@ import type { SchemaNodeListener } from '../../type';
 export const subscribeSchemaNode = <Self extends SchemaNodeRecord<Self>>(
   node: Self, listener: SchemaNodeListener,
 ): (() => void) => {
+  if (node.disposed || node.rootNode.disposed) return () => {};
   const runtime = node.rootNode.runtime;
   const listeners = runtime.listeners ?? new Map();
   const subscriptions = listeners.get(node) ?? new Set();

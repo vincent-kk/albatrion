@@ -27,6 +27,11 @@ export interface SettlementContext<Self extends SchemaNodeRecord<Self>> {
   target: Self;
   /** Entry origin retained for later transition rules. */
   kind: SchemaNodeWriteKind;
+  /** Binding delivery origin, independent of replacement or merge semantics. */
+  source?: SchemaNodeWriteKind;
+  /** Call-ordered origins, resolved by the final write covering each path. */
+  writeOrigins?: readonly { path: string; source: SchemaNodeWriteKind;
+    keys?: readonly string[] }[];
   /** Public bit mask retained for the development trace entry. */
   option: number;
   /** Binding entry name when the settlement has no public write kind. */

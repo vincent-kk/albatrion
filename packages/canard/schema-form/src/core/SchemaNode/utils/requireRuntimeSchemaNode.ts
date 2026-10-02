@@ -3,11 +3,15 @@ import { SchemaNode as RuntimeSchemaNode } from '../SchemaNode';
 
 /**
  * Narrow the public discriminated view to the single binding runtime class.
- * @param node - Root supplied by a schema-form binding
+ * @param node - Public occurrence supplied by a schema-form binding
+ * @param rootOnly - Whether this operation requires a live root shape
  * @returns Its record-bearing runtime instance
- * @throws TypeError when the input is not a live runtime root
+ * @throws TypeError when the input does not have the required runtime shape
  */
-export const requireRuntimeSchemaNode = (node: PublicSchemaNode): RuntimeSchemaNode => {
-  if (node instanceof RuntimeSchemaNode && node.isRoot && !node.detached) return node;
-  throw new TypeError('setContext requires a live schema-form root node');
+export const requireRuntimeSchemaNode = (
+  node: PublicSchemaNode, rootOnly = false,
+): RuntimeSchemaNode => {
+  if (node instanceof RuntimeSchemaNode &&
+    (!rootOnly || node.isRoot && !node.detached)) return node;
+  throw new TypeError('Binding requires a schema-form node with the requested root shape');
 };

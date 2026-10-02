@@ -1,5 +1,6 @@
 import { SchemaNodeEventType } from '../../../record';
 import type { SchemaNodeRecord } from '../../../record';
+import { assertSchemaNodeWritable } from '../../../settle';
 import type { ValidationIssue } from '../../../validation';
 import { flushQueuedEvents } from '../chain/flushQueuedEvents';
 import { queueNonSettleEvent } from '../chain/queueNonSettleEvent';
@@ -15,6 +16,7 @@ import { assertNotInDelivery } from '../report/assertNotInDelivery';
 export const dispatchSetExternalErrors = <Self extends SchemaNodeRecord<Self>>(
   node: Self, errors: readonly ValidationIssue[],
 ): void => {
+  assertSchemaNodeWritable(node);
   if (node.detached) return;
   const runtime = node.rootNode.runtime;
   assertNotInDelivery(runtime);

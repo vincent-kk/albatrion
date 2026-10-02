@@ -71,6 +71,7 @@ const makeRecord = (
   revisionLedger: EMPTY_REVISION_LEDGER,
     deliveryInitialized: false, deliveryChanges: 0, pendingRevision: 0,
   detached: false,
+  disposed: false, interactionReset: 0,
 });
 
 /** Construct the read-only scalar interpretation restriction. */
