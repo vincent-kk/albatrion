@@ -984,6 +984,7 @@
   > 반영 칸(설계서 메모 3): "방향: 노드 겉면에 명령 메서드 넷을 따로 두지 않고, 명령 종류를 매개변수로 받는 메서드 하나로 합친다(이름 후보 `action`·`interaction`·`request`, 또는 명령 사건에 한정한 `publish` 부활)." (`reviews/round-18-owner-answers.md:40`)
   > 소유자(30라운드, 명령 메서드 이름): "네" (`reviews/round-30-owner-answers.md:9`) — 노드의 명령 메서드 하나의 이름은 `request`다(EVENT-073).
   > 소유자(30라운드, 폼 핸들의 명령 모양): "네 맞습니다. 추가로, path 는 optional, 없으면 root 를 지칭합니다." (`reviews/round-30-owner-answers.md:11`) — `FormHandle`은 오늘의 `focus`·`select`에 `refresh`·`remount`를 대칭으로 더한 전용 메서드 넷이며, 경로는 선택 인자이고 없으면 루트 노드를 가리킨다. 경로가 있으면 `find(path)`한 노드의 `request`를 부르고 노드가 없으면 아무것도 하지 않는다. 충돌 줄의 "같은 모양 하나로 합칠지"는 합치지 않는 쪽으로 닫혔다(원장 관리자, 2026-10-01).
+  > 편집자 결정(68C-03): "【추론】 설계서 메모 3은 방향("넷을 따로 두지 말고 종류를 매개변수로 받는 메서드 하나로")과 이름 후보(`action`·`interaction`·`request`, 또는 명령에 한정한 `publish` 부활)를 함께 적은 것이고, 30라운드에서 소유자가 이름을 `request`로 확정하며 "공개 `publish`는 두지 않는다"(EVENT-063 보충)로 닫혔다. LANDING-170의 "`RequestEmitChange`·`RequestInjection`은 새 설계에 없다"와 "소비자가 publish할 수 없다"는 그대로이고, 메모 3의 `publish` 부활 후보는 택하지 않은 안으로 읽는다. 07의 `FormHandle`과 렌더 계층은 노드의 `request(kind)`만 부른다." (`reviews/round-68-closing.md:23`)
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:1182-1191`(정본), `reviews/round-18-owner-answers.md:40`
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-42), 소유자 답(`reviews/round-18-owner-answers.md:40` 설계서 메모 3)
@@ -1120,7 +1121,9 @@
   > 통과: 그러면 이 규칙을 그대로 둔다.
   > 실패(특히 패시브 이펙트 순환이 개발 모드 경고만 내고 계속 도는 경우): core가 진입 간 순환 감지를 더할지 소유자에게 올린다.
   > 실패: 이것은 core 예산의 단위를 바꾸는 일이라 편집자가 정하지 않는다.
-- 보충: 없음
+- 보충:
+  > 편집자 결정(68C-09): "【추론】 LANDING-095의 "`architecture/spikes/**` 가운데 제품 동작에 남는 상황의 e2e 이식(§5.3)"은 기준만 적었고 목록은 없다. 07은 스파이크의 시험 파일(오늘 `spikes/events/caret`·`entry`, `spikes/work-loop/redteam4-events/current`·`react`)을 사례 단위로 나눠 사례마다 (가) 제품 동작으로 남아 e2e 또는 렌더 시험으로 옮김(새 시험 이름), (나) 설계 탐색이라 옮기지 않음(까닭)을 적은 표를 `plan/07-switch/log.md`에 두고, 옮긴 시험은 새 자리에서 돌며 스파이크 파일은 지우지 않는다(스파이크는 설계 기록이다). 여기에 더해 EVENT-070·REACT-017(18C-85)이 PR-7에 둔 사례 — `useLayoutEffect`와 `useEffect`에서 `node.setValue`로 서로를 되쓰는 두 필드 — 는 `spikes/events/`에 더하고 React 18과 19에서 각각 실행하며, 통과(두 이펙트 모두에서 React가 순환을 끊음)이면 규칙을 그대로 두고 실패하면 EVENT-070대로 소유자에게 올린다(편집자가 정하지 않는다)." (`reviews/round-68-closing.md:65`)
+  > 편집자 결정(68C-10): "【추론】 REACT-017은 "PR-7에 React 18 실행 시험을 둔다"만 정했고 방법은 열어 두었다. 07의 안(별칭 개발 의존 `react18`·`react-dom18`, vitest `render` 프로젝트의 복제본에서 `resolve.alias`로 React 18을 끼움)은 같은 시험 파일을 두 판에서 돌리므로 "React 18을 계속 지원한다"의 증거로 충분하고, 동료 의존 `>=18 <20`의 두 끝을 모두 실행하는 셈이다. 조건: `react18` 프로젝트는 `render` 프로젝트와 같은 포함 글롭을 쓰고(React 19 전용 API를 쓰는 시험이 있으면 그 파일만 제외 목록에 이름을 적고 까닭을 단다), EVENT-070의 이펙트 되먹임 사례와 StrictMode·서버(`renderToString`) 사례(ERROR-115·116의 실행 확인)도 두 판에서 돈다. 지속 통합에 두 프로젝트를 모두 넣는다. 별칭 의존이 `yarn.lock`을 바꾸는 것은 68C-05의 범위다." (`reviews/round-68-closing.md:72`)
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:2237-2239,2244-2250`(정본)
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-85)

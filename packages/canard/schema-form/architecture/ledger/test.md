@@ -151,6 +151,7 @@
   > "조합과 옛 키가 없는 17파일은 기대값을 버리지 않고 이름만 바꿔 e2e의 추가 단언으로 둔다." (`reviews/round-16-owner-review.md:58`)
   > "**17파일의 단언 유지 — 확정(답 7).**" (`09-landing-and-test-strategy.md:276`)
   > "08 §18의 넷째에 예외로 적었다." (`09-landing-and-test-strategy.md:276`)
+  > 편집자 결정(68C-01): "【추론】 "렌더 시나리오 438건"(LANDING-067, 08 §18의 PR-7 행)과 "447건이 통과하므로"(TEST-023, 09 §5.1)는 설계 시점에 `src/__tests__`를 센 수이고, 원장 어디에도 파일 이름 목록이나 17파일의 이름 목록은 없다(TEST-005의 원문은 기준만 적었고, 설계서 07의 네 부류 표는 대표 이름 여섯뿐이다). 그러므로 수는 구속이 아니고 처분이 구속이다: 07은 전환 직전 커밋의 `src/__tests__`(그리고 `src` 전체의 렌더 시험)를 파일·건수로 세어 처분표를 `verification/07-switch/`에 새로 만들고, 파일마다 09 §4.3의 세 처분(그대로 산다·버리고 새로 쓴다·표면만 고친다) 가운데 하나와 그 까닭을 적으며, "표면만 고친다"에서 조합(`oneOf`·`anyOf`·`if`·`allOf`의 옛 자동 감지)과 옛 키(`presentation.*`로 옮긴 것, `group`, `JSONSchemaError` 등 이주 표가 바꾼 이름)가 없는 파일이 TEST-005의 17파일이다. 수가 17과 다르게 나오면 처분표에 센 기준과 함께 적고 TEST-005를 고치지 않는다(옛 글은 자라기만 한다; 17은 소유자가 받아들인 예외의 범위를 적은 수이지 파일 수의 약속이 아니다). 438·447과 오늘 수의 차이는 `plan/07-switch/log.md`에 한 줄로 남긴다. 이 처분표가 PR-7의 렌더 시나리오 게이트이고, 전환 뒤 `render` 프로젝트의 초록은 처분표의 "산다"·"표면만 고친다" 파일 전부가 돈다는 뜻이다." (`reviews/round-68-closing.md:9`)
 - 상태: 현행
 - 출처: `08-design-a-to-z.md:608#3`(정본), `09-landing-and-test-strategy.md:159`, `09-landing-and-test-strategy.md:276`, `reviews/round-16-owner-answers.md:13`, `reviews/round-16-owner-review.md:58`
 - 닫은 사람: 소유자 답(`reviews/round-16-owner-answers.md:13` 답 7)
@@ -504,7 +505,8 @@
   > - **둘로 나눠 잰다.** 코어(`node` 환경, 트리 생성·값 갱신·정착 시간)와 렌더(React 19, `<React.Profiler>`의 커밋 수와 `actualDuration`, `render-trace`의 번짐).
   > - **조건.** 워밍업 10회 이상, 표본 100회 이상, 평균 대신 중앙값과 99번째 백분위, `node --expose-gc`로 표본 사이 명시적 수집. 결과는 `results/`에 날짜와 커밋으로 남긴다.
   > - **패키지 벤치 일곱**(`bench/*.bench.ts`: `branch-strategy-init`, `compute-recalculate`, `event-cascade`, `find-node`, `nodeFromJSONSchema`, `object-pending-read`, `render-delay`)은 새 엔진의 대응물로 다시 쓴다. 이름은 새 fractal을 따른다(`blueprint`, `settle`, `dispatch`, `find`, `load`). 옛 엔진에서 마지막 기준선을 `bench:baseline`으로 남긴다. 이름이 바뀌므로 옛 판 대 새 판의 비교는 `@aileron/benchmark-form`만 맡고, 패키지 벤치는 새 엔진 안의 회귀 감시로 쓴다. 지속 통합 작업 흐름 `.github/workflows/performance-benchmarks.yml`의 과다 렌더 단언과 회귀 검사는 PR-7에서 새 기준선으로 갱신한다.
-- 보충: 없음
+- 보충:
+  > 편집자 결정(68C-04): "【추론】 TEST-026은 하니스를 `@aileron/benchmark-form`으로, 비교 대상을 "npm 별칭의 옛 판과 워크스페이스 판"으로 정했다. 전환 뒤 워크스페이스 판은 새 엔진이므로 옛 판 자리는 마지막으로 배포된 판(오늘 `0.16.0`; 별칭 `@canard/schema-form_0.16.0`)이 맡는다 — 전환 직전 커밋의 워크스페이스 판을 따로 기준으로 삼지 않는다. 그 까닭은 1.0.0-beta의 공개 진입점이 PR-7까지 옛 엔진을 가리키고(LANDING-159 규칙 3) 02–06이 공개 동작을 바꾸지 않았으므로(32C-01) 배포 판과 전환 직전의 옛 엔진이 같은 동작이기 때문이며, 둘이 다르다는 증거가 나오면 그때 전환 직전 커밋을 별칭으로 더한다. 07은 `fixtures/equivalent/<이름>.ts`에 옛 문법과 새 문법 쌍과 상호작용 열을 두고, 두 판이 같은 `[data-path]` 집합을 그리는지 시험이 단언한 뒤에 잰다. 패키지 벤치(`bench/*.bench.ts`)는 02–06이 새 fractal 이름으로 일부 다시 썼으므로 07은 TEST-026의 일곱 대응물 가운데 아직 없는 것(렌더 지연 등)을 채우고, 옛 엔진의 마지막 기준선은 전환 직전 커밋에서 `bench:baseline`으로 남긴다. `.github/workflows/performance-benchmarks.yml`의 과다 렌더 단언과 회귀 검사를 새 기준선으로 갱신하는 것도 TEST-026이 PR-7에 둔 일이다. 느린 행은 TEST-027 절차다." (`reviews/round-68-closing.md:30`)
 - 상태: 현행
 - 출처: `09-landing-and-test-strategy.md:218-222`(정본), `reviews/round-16-owner-review.md:37`, `adr/0009-performance-budget-and-benchmarks.md:20,32`
 - 닫은 사람: 편집자 결정(16라운드, `09-landing-and-test-strategy.md:216`)
@@ -949,7 +951,9 @@
 
 - 결정:
   > 11. **무리 밖 패키지.** PR-1이 바꾸는 `@winglet/common-utils`(`merge`의 선택 인자: 배열 교체, 원자 판정, 한쪽 값의 참조 이동, 양쪽에 있는 객체의 쓰기 시 복사. 인자가 없으면 오늘 동작, 더하기만 하는 변경)는 PR-1에서, PR-7이 바꾸는 `@winglet/react-utils`(ErrorBoundary와 감싸개 둘의 렌더 때 보고 함수를 얻는 선택 인자, 더하기만 하는 변경. 17라운드 소유자 답 (나)로 허용)는 PR-7에서 자기 changeset(`minor`)을 더한다. 본체의 `workspace:^`는 포장 때 그 판으로 바뀌고, 릴리스 테스트는 여섯째의 폐포로 그것을 포장해 넣는다. `@winglet/react-utils`의 범위 밖 판 변경이라 `@lerx/promise-modal`도 patch로 함께 배포된다(`fixed` 무리의 UI 플러그인은 PR-8의 판으로 묶인다).
-- 보충: 없음
+- 보충:
+  > 편집자 결정(68C-06): "【추론】 TEST-055는 PR-7이 `@winglet/react-utils`의 자기 changeset(`minor`)을 더한다고 정했고, 루트 `CLAUDE.md`의 "changesets를 쓰지 않고 릴리스 때 판을 올린다"와의 충돌은 01 재정렬 기록(`plan/01-design-docs/realign.md:29,167`)이 "TEST-054·055, LANDING-097: 원장이 이긴다"로 닫았으며, 02(PR-1)는 그대로 `.changeset/common-utils-merge-policies.md`를 더했다. 07은 같은 모양으로 `.changeset/` 아래 `@winglet/react-utils`의 `minor` changeset 파일 하나를 더하고 변경 사유를 그 파일과 커밋 메시지에 적는다. `package.json`의 `version`은 올리지 않는다 — 판 올림은 changesets 가동(LANDING-097, 릴리스 전환 PR)과 PR-8(LANDING-096)의 몫이고, 07이 올리면 프리릴리스 무리의 판 계산과 두 번 셈한다. 루트 `CLAUDE.md`의 문장은 릴리스 전환 PR이 고친다(LANDING-097 "판 올림 스크립트 정리와 루트 `CLAUDE.md`")." (`reviews/round-68-closing.md:44`)
+  > 편집자 결정(68C-08): "【추론】 ERROR-117은 "인자의 모양(ErrorBoundary 보고 콜백 속성과 그 공개, 또는 감싸개의 보고기 읽기 인자)은 PR-7에서 고른다"고 두 후보를 함께 적었고, 07은 둘을 겹쳐 골랐다: 루트 바운더리는 (가) 속성을 직접 쓰고, 감싸는 자리가 모듈 수준·`FormProvider`·폼마다로 갈리는 필드 바운더리는 감싸기를 그대로 두고 (나) 셋째 인자로 "문맥에서 보고기를 읽는 훅"을 넘겨 렌더 때 읽는다. 이것은 17라운드 스웜 수렴의 요구(감싸기 자리를 옮기지 않고 렌더 때 문맥에서 보고기를 읽음, R17G-9)와 소유자 허용의 범위(더하기만 하는 변경, 주지 않으면 오늘 동작, `minor`)를 모두 지키므로 그대로 확정한다. 조건 셋: `@winglet/react-utils`의 그 모듈 `DETAIL.md`를 코드보다 먼저 갱신한다(ERROR-117의 출처 행), 보고기는 전달 중 표지·`WeakSet`·경고 집합을 드는 인스턴스 보고기이고 바운더리는 그것을 부르기만 한다(ERROR-110–116의 역할 분담 그대로), `info`는 React가 주는 `componentStack`만 노출하고 다른 필드는 더하지 않는다. 훅 인자의 이름 `useReporter`는 React 훅 규칙(렌더 때 조건 없이 호출)을 따라야 하므로 감싸개는 인자가 없을 때도 호출 수를 바꾸지 않도록 기본 훅(항상 `undefined`를 돌려줌)을 쓴다." (`reviews/round-68-closing.md:58`)
 - 상태: 현행
 - 출처: `09-landing-and-test-strategy.md:247`(정본), `09-landing-and-test-strategy.md:278`, `reviews/round-16-owner-answers.md:15`, `reviews/round-17-owner-answers.md:34`
 - 닫은 사람: 16라운드 스웜 수렴(편집자 결정, `09-landing-and-test-strategy.md:235`), 소유자 답(`reviews/round-17-owner-answers.md:34` (나))
