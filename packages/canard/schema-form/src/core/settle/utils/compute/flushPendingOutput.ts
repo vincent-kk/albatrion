@@ -1,3 +1,4 @@
+import { captureSchemaNodeChange } from '../../../record';
 import type { SchemaNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../type';
 import { updateOutput } from './updateOutput';
@@ -13,7 +14,7 @@ export const flushPendingOutput = <Self extends SchemaNodeRecord<Self>>(
   context: SettlementContext<Self>,
 ): boolean => {
   if (!context.pendingOutputs?.delete(node)) return false;
-  node.children = Object.values(node.structure ?? {});
+  node.children = captureSchemaNodeChange(node, 'children', Object.values(node.structure ?? {}));
   updateOutput(node, context);
   return true;
 };

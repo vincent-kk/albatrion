@@ -70,7 +70,8 @@ export const createNode = (
     emit: undefined,
     schema: { schema: {}, typeConflict: false },
     interactionState: {},
-    revisionLedger: EMPTY_REVISION_LEDGER, pendingRevision: 0,
+    revisionLedger: EMPTY_REVISION_LEDGER,
+    deliveryInitialized: false, deliveryChanges: 0, pendingRevision: 0,
     detached: false,
   };
   if (parent?.structure !== null && parent !== null) {

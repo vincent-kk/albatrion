@@ -125,7 +125,7 @@ describe('44C-01 EVENT-064 watch delivery candidates', () => {
     writeSchemaNode(root, { enabled: true, watcher: 'fixed' },
       'callerReplace', SetValueOption.Overwrite);
     const watcher = root.structure!.watcher;
-    expect(watcher.deliveryBaseline?.watchValues)
+    expect(watcher.deliveryWatchValues)
       .toEqual(['arrived']);
     for (const node of root.runtime.deliveries ?? []) node.pendingDelivery = undefined;
     root.runtime.deliveries?.clear();

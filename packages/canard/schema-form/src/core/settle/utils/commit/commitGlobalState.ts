@@ -1,4 +1,4 @@
-import { accumulateGlobalStateDeltas, publishGlobalStateDeltas } from '../../../record';
+import { SchemaNodeEventType, accumulateGlobalStateDeltas, publishGlobalStateDeltas } from '../../../record';
 import type { SchemaNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../type';
 import { hasOwnProperty } from '@winglet/common-utils/lib';
@@ -41,17 +41,18 @@ export const commitGlobalState = <Self extends SchemaNodeRecord<Self>>(
   return {
     nodes,
     visit(node: Self): void {
-      const snapshot = node.deliveryBaseline;
+      const previousState = (node.deliveryChanges & SchemaNodeEventType.UpdateState)
+        ? node.deliveryPreviousState ?? node.interactionState : node.interactionState;
       if (departing.has(node)) {
-        if (!context.entered.has(node) || snapshot)
+        if (!context.entered.has(node) || node.deliveryInitialized)
           accumulateGlobalStateDeltas(deltas,
-            snapshot?.interactionState ?? node.interactionState, {});
+            previousState, {});
         if (node.detached) return;
       }
       if (node.detached) return;
       if (context.entered.has(node)) {
         accumulateGlobalStateDeltas(deltas,
-          snapshot?.interactionState ?? {}, node.interactionState);
+          node.deliveryInitialized ? previousState : {}, node.interactionState);
         return;
       }
       if (!nodes.has(node)) return;
@@ -61,7 +62,7 @@ export const commitGlobalState = <Self extends SchemaNodeRecord<Self>>(
             deltas.set(key, (deltas.get(key) ?? 0) + 1);
         return;
       }
-      const previous = snapshot?.interactionState ?? node.interactionState;
+      const previous = previousState;
       if (previous !== node.interactionState)
         accumulateGlobalStateDeltas(deltas, previous, node.interactionState);
     },

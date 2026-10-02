@@ -22,3 +22,6 @@ export { patchSchemaNodeInteractionState } from './utils/patchSchemaNodeInteract
 export { shallowPatch } from './utils/shallowPatch';
 export { accumulateGlobalStateDeltas } from './utils/accumulateGlobalStateDeltas';
 export { publishGlobalStateDeltas } from './utils/publishGlobalStateDeltas';
+
+export { captureSchemaNodeChange } from './utils/captureSchemaNodeChange';
+export { clearSchemaNodeChanges } from './utils/clearSchemaNodeChanges';

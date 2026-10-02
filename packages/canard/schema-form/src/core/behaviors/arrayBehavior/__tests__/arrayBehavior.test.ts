@@ -33,7 +33,8 @@ const makeRecord = (
   raw, extras: undefined, active: true, visible: true, readOnly: false,
   disabled: false, local: undefined, emit: undefined,
   schema: { schema: { options }, typeConflict: false },
-  interactionState: {}, revisionLedger: EMPTY_REVISION_LEDGER, pendingRevision: 0, detached: false,
+  interactionState: {}, revisionLedger: EMPTY_REVISION_LEDGER,
+    deliveryInitialized: false, deliveryChanges: 0, pendingRevision: 0, detached: false,
 });
 
 // filid:contract array-branch

@@ -7,6 +7,9 @@ import { EMPTY_REVISION_LEDGER } from '../index';
 import type { SchemaNodeRecord } from '../index';
 import {
   patchSchemaNodeInteractionState,
+  captureSchemaNodeChange,
+  clearSchemaNodeChanges,
+  SchemaNodeEventType,
   shallowPatch,
   updateSchemaNodeNameAndPath,
 } from '../index';
@@ -73,13 +76,68 @@ const makeRecord = (): SchemaNodeRecord<PathNode> => {
     emit: undefined,
     schema: { schema: {}, typeConflict: false },
     interactionState: {},
-    revisionLedger: EMPTY_REVISION_LEDGER, pendingRevision: 0,
+    revisionLedger: EMPTY_REVISION_LEDGER,
+    deliveryInitialized: false, deliveryChanges: 0, pendingRevision: 0,
     detached: false,
   };
 };
 
 // filid:contract record-layout
 describe('record layout operations', () => {
+  it('captures the first value baseline while later writes and A-B-A retain it', () => {
+    const node = makeRecord();
+    node.deliveryInitialized = true;
+    node.local = node.emit = 'A';
+    node.local = captureSchemaNodeChange(node, 'local', 'B');
+    node.emit = captureSchemaNodeChange(node, 'emit', 'C');
+    expect(node.deliveryChanges).toBe(SchemaNodeEventType.UpdateValue);
+    expect(node.deliveryPreviousLocal).toBe('A');
+    expect(node.deliveryPreviousEmit).toBe('A');
+    node.local = captureSchemaNodeChange(node, 'local', 'A');
+    node.emit = captureSchemaNodeChange(node, 'emit', 'A');
+    expect(node.deliveryPreviousLocal).toBe(node.local);
+    expect(node.deliveryPreviousEmit).toBe(node.emit);
+    clearSchemaNodeChanges(node);
+    expect(node.deliveryChanges).toBe(0);
+    expect(node.deliveryPreviousLocal).toBeUndefined();
+    expect(node.deliveryPreviousEmit).toBeUndefined();
+  });
+
+  it('keeps distinct first baselines for path, children, computed, schema and state', () => {
+    const node = makeRecord();
+    node.deliveryInitialized = true;
+    const children = node.children, schema = node.schema, state = node.interactionState;
+    node.path = captureSchemaNodeChange(node, 'path', '/next');
+    node.children = captureSchemaNodeChange(node, 'children', []);
+    node.visible = captureSchemaNodeChange(node, 'visible', false);
+    node.disabled = captureSchemaNodeChange(node, 'disabled', true);
+    node.schema = captureSchemaNodeChange(node, 'schema', { schema: { title: 'next' }, typeConflict: false });
+    node.interactionState = captureSchemaNodeChange(node, 'interactionState', { dirty: true });
+    expect(node.deliveryPreviousPath).toBe('');
+    expect(node.deliveryPreviousChildren).toBe(children);
+    expect(node.deliveryPreviousComputed).toBe(3);
+    expect(node.deliveryPreviousSchema).toBe(schema);
+    expect(node.deliveryPreviousState).toBe(state);
+    clearSchemaNodeChanges(node);
+    expect([node.deliveryPreviousPath, node.deliveryPreviousChildren,
+      node.deliveryPreviousComputed, node.deliveryPreviousSchema, node.deliveryPreviousState])
+      .toEqual([undefined, undefined, undefined, undefined, undefined]);
+    expect(node.path).toBe('/next');
+    expect(node.visible).toBe(false);
+    expect(node.interactionState).toEqual({ dirty: true });
+  });
+
+  it('allocates no change records for initialization or equal assignments', () => {
+    const node = makeRecord();
+    expect(captureSchemaNodeChange(node, 'local', 'first')).toBe('first');
+    expect(node.deliveryChanges).toBe(0);
+    expect(node.local).toBeUndefined();
+    node.deliveryInitialized = true;
+    expect(captureSchemaNodeChange(node, 'local', undefined)).toBeUndefined();
+    expect(node.deliveryChanges).toBe(0);
+    expect(node.runtime.deliveryAffectedPaths).toBeUndefined();
+  });
+
   it('keeps the same state reference for an unchanged shallow patch', () => {
     const state = { touched: true };
     expect(shallowPatch(state, { touched: true })).toBe(state);

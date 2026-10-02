@@ -1,3 +1,4 @@
+import { captureSchemaNodeChange } from '../../../record';
 import { walkOwnedSchemaNodes } from '../walkOwnedSchemaNodes';
 import type { SchemaNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../type';
@@ -26,7 +27,7 @@ export const restoreArrayStructure = <Self extends SchemaNodeRecord<Self>>(
       getGateRegistry(item.runtime).remove(item);
       walkOwnedSchemaNodes(item, (current) => {
         current.detached = true;
-        current.active = false;
+        current.active = captureSchemaNodeChange(current, 'active', false);
         context.entered.delete(current);
         context.perished.delete(current);
       });
@@ -35,11 +36,11 @@ export const restoreArrayStructure = <Self extends SchemaNodeRecord<Self>>(
     for (const item of previousItems) {
       structure[item.name] = item;
       item.detached = false;
-      item.active = true;
+      item.active = captureSchemaNodeChange(item, 'active', true);
       context.perished.delete(item);
     }
     host.structure = structure;
-    host.children = previousItems;
+    host.children = captureSchemaNodeChange(host, 'children', previousItems);
     host.itemCount = previousItemCount;
     host.extras = previousExtras;
     context.dirtyPaths.add(host.path);

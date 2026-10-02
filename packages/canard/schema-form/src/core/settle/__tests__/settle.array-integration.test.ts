@@ -76,9 +76,8 @@ describe('array integration runtime stores', () => {
       const deltas = new Map<string, number>();
       for (const node of [item, leaf]) {
         accumulateGlobalStateDeltas(deltas, {}, node.interactionState);
-        const previous = node.deliveryBaseline!;
-        node.deliveryBaseline = { ...previous,
-          interactionState: node.interactionState };
+        node.deliveryPreviousState = node.interactionState;
+        node.deliveryChanges |= SchemaNodeEventType.UpdateState;
       }
       publishGlobalStateDeltas(root, deltas);
       expect(root.runtime.globalState).toEqual({ touched: true, dirty: true });
@@ -114,7 +113,9 @@ describe('array integration runtime stores', () => {
     expect(runtime.deliveryWatchIndex?.allNodes.has(leaf)).toBe(true);
     arrangeSchemaNodeItems(root, { kind: 'clear' });
     for (const node of [item, leaf]) {
-      expect(node.deliveryBaseline).toBeUndefined();
+      expect(node.deliveryChanges).toBe(0);
+      expect(node.deliveryPreviousState).toBeUndefined();
+      expect(node.deliveryWatchValues).toBeUndefined();
       expect(node.pendingDelivery).toBeUndefined();
       expect(node.pendingNonSettleDelivery).toBeUndefined();
       expect(runtime.deliveryWatchIndex?.allNodes.has(node)).toBe(false);

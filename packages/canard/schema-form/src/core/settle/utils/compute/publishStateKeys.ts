@@ -1,3 +1,4 @@
+import { captureSchemaNodeChange } from '../../../record';
 import { recordSettlementFailure } from '../errors/recordSettlementFailure';
 import { SchemaFormError } from '../../../../errors';
 import type { SchemaNodeRecord } from '../../../record';
@@ -23,9 +24,9 @@ export const publishStateKeys = <Self extends SchemaNodeRecord<Self>>(
   for (const { node, visible, readOnly, disabled } of result.entries) {
     if (node.visible !== visible || node.readOnly !== readOnly ||
       node.disabled !== disabled) context.changedNodes.add(node);
-    node.visible = visible;
-    node.readOnly = readOnly;
-    node.disabled = disabled;
+    node.visible = captureSchemaNodeChange(node, 'visible', visible);
+    node.readOnly = captureSchemaNodeChange(node, 'readOnly', readOnly);
+    node.disabled = captureSchemaNodeChange(node, 'disabled', disabled);
   }
   for (const failure of result.failures) {
     const { path, schemaPath, cause } = failure;

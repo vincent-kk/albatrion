@@ -26,8 +26,6 @@ export const dispatchSetState = <Self extends SchemaNodeRecord<Self>>(
   const deltas = new Map<string, number>();
   accumulateGlobalStateDeltas(deltas, previous, node.interactionState, state);
   publishGlobalStateDeltas(node.rootNode, deltas);
-  const snapshot = node.deliveryBaseline;
-  if (snapshot) snapshot.interactionState = node.interactionState;
   runtime.stateChanged = true;
   queueNonSettleEvent(node, SchemaNodeEventType.UpdateState, node.interactionState);
   if (!runtime.entryDepth) flushQueuedEvents(node.rootNode);

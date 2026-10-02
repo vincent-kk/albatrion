@@ -1,6 +1,6 @@
 import { recordSettlementFailure } from '../errors/recordSettlementFailure';
 import { NodeState } from '../../../types/state';
-import { patchSchemaNodeInteractionState } from '../../../record';
+import { captureSchemaNodeChange, shallowPatch } from '../../../record';
 import type { SchemaNodeRecord } from '../../../record';
 import { evaluateResetInteraction } from '../../derive';
 import type { SettlementContext } from '../../type';
@@ -32,9 +32,10 @@ export const commitDeriveRules = <Self extends SchemaNodeRecord<Self>>(
   }
   for (const node of decision.nodes) {
     const previous = node.interactionState;
-    patchSchemaNodeInteractionState(node, {
-      [NodeState.Dirty]: false, [NodeState.Touched]: false,
-    });
+    node.interactionState = captureSchemaNodeChange(node, 'interactionState',
+      shallowPatch(node.interactionState, {
+        [NodeState.Dirty]: false, [NodeState.Touched]: false,
+      }));
     if (node.interactionState !== previous) context.changedNodes.add(node);
   }
   const runtime = context.root.runtime;

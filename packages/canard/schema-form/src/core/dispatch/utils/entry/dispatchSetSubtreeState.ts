@@ -29,8 +29,6 @@ export const dispatchSetSubtreeState = <Self extends SchemaNodeRecord<Self>>(
     patchSchemaNodeInteractionState(current, state);
     if (previous !== current.interactionState) {
       accumulateGlobalStateDeltas(deltas, previous, current.interactionState, state);
-      const snapshot = current.deliveryBaseline;
-      if (snapshot) snapshot.interactionState = current.interactionState;
       runtime.stateChanged = true;
       queueNonSettleEvent(current, SchemaNodeEventType.UpdateState,
         current.interactionState);

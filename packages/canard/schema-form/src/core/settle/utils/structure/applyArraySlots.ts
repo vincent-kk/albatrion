@@ -1,3 +1,4 @@
+import { captureSchemaNodeChange } from '../../../record';
 import { isArray } from '@winglet/common-utils/filter';
 
 import { getItemEntry } from '../../../blueprint';
@@ -111,7 +112,7 @@ export const applyArraySlots = <Self extends SchemaNodeRecord<Self>>(
   host.raw = undefined;
   host.extras = arrayExtras(host, nextRaw);
   host.structure = nextItems;
-  host.children = Object.values(nextItems);
+  host.children = captureSchemaNodeChange(host, 'children', Object.values(nextItems));
   context.arrayCounts.set(host, oldCount);
   context.changedRaw.add(host.path);
   context.changedNodes.add(host);

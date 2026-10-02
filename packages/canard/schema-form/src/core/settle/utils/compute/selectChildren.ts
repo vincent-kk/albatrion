@@ -1,3 +1,4 @@
+import { captureSchemaNodeChange } from '../../../record';
 import { recordSettlementFailure } from '../errors/recordSettlementFailure';
 import { SchemaFormError } from '../../../../errors';
 import { hasOwnProperty } from '@winglet/common-utils/lib';
@@ -109,7 +110,7 @@ export const selectChildren = <Self extends SchemaNodeRecord<Self>>(
     const changed = children.length !== before.length ||
       children.some((child, index) => child !== before[index]);
     node.structure = next;
-    node.children = changed ? children : before;
+    node.children = captureSchemaNodeChange(node, 'children', changed ? children : before);
     if (changed) context.changedNodes.add(node);
     return changed;
   }
@@ -227,7 +228,7 @@ export const selectChildren = <Self extends SchemaNodeRecord<Self>>(
     if (child.schema !== effective) {
       if (!context.originalSchemas.has(child.path))
         context.originalSchemas.set(child.path, child.schema);
-      child.schema = effective;
+      child.schema = captureSchemaNodeChange(child, 'schema', effective);
       context.dirtyPaths.add(child.path);
       if (child.behavior.strategy === 'branch')
         context.shapeDirtyPaths.add(child.path);
@@ -239,7 +240,7 @@ export const selectChildren = <Self extends SchemaNodeRecord<Self>>(
       recordSettlementFailure(context, new SchemaFormError(SHARED_NODE_CONFLICT,
         `Active declarations conflict at ${child.path}`, { path: child.path }), 'sharedConflict');
     }
-    child.active = true;
+    child.active = captureSchemaNodeChange(child, 'active', true);
     child.detached = false;
     if (next[entry.name] !== child) {
       changed = true;
@@ -286,7 +287,7 @@ export const selectChildren = <Self extends SchemaNodeRecord<Self>>(
   if (nextChildren.length !== before.length ||
     nextChildren.some((child, index) => child !== before[index]))
     changed = true;
-  node.children = nextChildren;
+  node.children = captureSchemaNodeChange(node, 'children', nextChildren);
   if (changed) context.changedNodes.add(node);
   return changed;
 };

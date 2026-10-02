@@ -1,3 +1,4 @@
+import { captureSchemaNodeChange } from '../../../record';
 import { recordSettlementFailure } from '../errors/recordSettlementFailure';
 import { MULTIPLE_GATED_BRANCHES_ACTIVE, SchemaFormError } from '../../../../errors';
 import { mergeEffectiveSchema } from '../../../blueprint';
@@ -53,9 +54,9 @@ export const selectNodeSchema = <Self extends SchemaNodeRecord<Self>>(
       `Active declarations conflict at ${node.path}`, { path: node.path }), 'sharedConflict');
   }
   if (node.parent === null)
-    node.active = active.some((declaration) => declaration.role === 'declaration');
+    node.active = captureSchemaNodeChange(node, 'active', active.some((declaration) => declaration.role === 'declaration'));
   if (node.schema === effective) return false;
-  node.schema = effective;
+  node.schema = captureSchemaNodeChange(node, 'schema', effective);
   context.changedNodes.add(node);
   return true;
 };

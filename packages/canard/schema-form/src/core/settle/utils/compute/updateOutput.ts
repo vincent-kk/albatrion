@@ -1,3 +1,4 @@
+import { captureSchemaNodeChange } from '../../../record';
 import type { SchemaNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../type';
 import { sameValue } from './sameValue';
@@ -28,8 +29,8 @@ export const updateOutput = <Self extends SchemaNodeRecord<Self>>(
   const emit = node.emit === node.local && projected === local ? local :
     sameValue(node.emit, projected) ? node.emit : projected;
   const changed = local !== node.local || emit !== node.emit;
-  node.local = local;
-  node.emit = emit;
+  node.local = captureSchemaNodeChange(node, 'local', local);
+  node.emit = captureSchemaNodeChange(node, 'emit', emit);
   if (changed) {
     context.changedNodes.add(node);
     const parent = node.parent;

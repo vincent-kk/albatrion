@@ -26,32 +26,6 @@ export interface SchemaNodeDelivery {
   options?: Partial<Record<number, unknown>>;
 }
 
-/** Internal observations updated after every comparison for this occurrence. */
-interface SchemaNodeDeliverySnapshot<Self> {
-  /** Path observed after the preceding commit. */
-  path: string;
-  /** Calculated value before output projection. */
-  local: unknown;
-  /** Projected value available to consumers. */
-  emit: unknown;
-  /** Direct child collection reference. */
-  children: readonly Self[] | null;
-  /** Gate result used by the computed-property bit. */
-  active: boolean;
-  /** Final local visibility. */
-  visible: boolean;
-  /** Final local read-only state. */
-  readOnly: boolean;
-  /** Final local disabled state. */
-  disabled: boolean;
-  /** Interaction state object before a possible reset. */
-  interactionState: NodeStateFlags;
-  /** Memoized effective schema reference. */
-  schema: EffectiveSchema;
-  /** Committed watched values for reference comparison. */
-  watchValues: readonly unknown[];
-}
-
 /** Tree-local reverse watch paths used by commit delivery marking. */
 interface SchemaNodeWatchDeliveryIndex {
   /** Live nodes with at least one resolved watch path. */
@@ -124,8 +98,25 @@ export interface SchemaNodeRecord<Self> {
   interactionState: NodeStateFlags;
   /** Per-bit commit counts, allocated on the first delivery. */
   revisionLedger: Readonly<Record<number, number>>;
-  /** Last committed observations; work history, never public state. */
-  deliveryBaseline?: SchemaNodeDeliverySnapshot<Self>;
+  /** Whether this occurrence has completed its initial delivery comparison. */
+  deliveryInitialized: boolean;
+  /** Event kinds with first-change baselines pending this commit. */
+  deliveryChanges: number;
+  /** Value/output identities at the first value change in this commit. */
+  deliveryPreviousLocal?: unknown;
+  deliveryPreviousEmit?: unknown;
+  /** Address before this commit's first rekey. */
+  deliveryPreviousPath?: string;
+  /** Child identity collection before the first shape change. */
+  deliveryPreviousChildren?: readonly Self[] | null;
+  /** Packed active/visible/readOnly/disabled values before their first change. */
+  deliveryPreviousComputed?: number;
+  /** Effective schema identity before this commit's first schema change. */
+  deliveryPreviousSchema?: EffectiveSchema;
+  /** Interaction state before settlement clears or patches it. */
+  deliveryPreviousState?: NodeStateFlags;
+  /** Last compared watch values, present only on declared watch targets. */
+  deliveryWatchValues?: readonly unknown[];
   /** Event bits and immutable payloads awaiting the next settlement wave. */
   pendingDelivery?: SchemaNodeDelivery;
   /** Bits to advance once at this commit, independently of listeners. */
@@ -357,6 +348,8 @@ export interface SchemaNodeRuntime<Self> extends SchemaNodeRootRuntimeState {
   revisionNodes?: Set<Self>;
   /** Live reverse watch dependencies, allocated on the first watched node. */
   deliveryWatchIndex?: SchemaNodeWatchDeliveryIndex;
+  /** Paths captured at value/state mutations and consumed by commit watch lookup. */
+  deliveryAffectedPaths?: Set<string>;
   /** Last diagnostics reference observed by delivery marking. */
   deliveredDiagnostics?: SchemaNodeDiagnostics;
   /** Context reference last observed by delivery marking. */

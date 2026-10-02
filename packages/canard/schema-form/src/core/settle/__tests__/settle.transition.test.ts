@@ -5,6 +5,7 @@ import { NodeState } from '../../types/state';
 import { loadSchemaNodeAtMount, readSchemaNodeDefaultValue, resetSchemaNodeForm,
   resetSchemaNodeSubtree, writeSchemaNode } from '../index';
 import { createTestTree } from './fixtures/createTestTree';
+import { setTestInteractionState } from './fixtures/setTestInteractionState';
 
 // filid:contract settle-write
 describe('settle transitions and loads', () => {
@@ -185,8 +186,8 @@ describe('settle transitions and loads', () => {
       left: { type: 'number' }, right: { type: 'number' },
     } });
     loadSchemaNodeAtMount(root, { left: 'bad', right: 'bad' }, SetValueOption.Overwrite);
-    root.structure!.left.interactionState = { [NodeState.Touched]: true };
-    root.structure!.right.interactionState = { [NodeState.Touched]: true };
+    setTestInteractionState(root.structure!.left, { [NodeState.Touched]: true });
+    setTestInteractionState(root.structure!.right, { [NodeState.Touched]: true });
     resetSchemaNodeSubtree(root.structure!.left, SetValueOption.Overwrite);
     expect(root.structure?.left?.interactionState[NodeState.Touched]).toBeUndefined();
     expect(root.structure?.right?.interactionState[NodeState.Touched]).toBe(true);

@@ -1,3 +1,4 @@
+import { captureSchemaNodeChange } from '../../../record';
 import { mergeEffectiveSchema } from '../../../blueprint';
 import type { SchemaNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../type';
@@ -50,14 +51,14 @@ export const primeHost = <Self extends SchemaNodeRecord<Self>>(
     if (child.schema !== schema) {
       if (!context.originalSchemas.has(child.path))
         context.originalSchemas.set(child.path, child.schema);
-      child.schema = schema;
+      child.schema = captureSchemaNodeChange(child, 'schema', schema);
       context.dirtyPaths.add(child.path);
       context.changedNodes.add(child);
     }
-    child.active = true;
+    child.active = captureSchemaNodeChange(child, 'active', true);
     child.detached = false;
     baseline[entry.name] = child;
   }
   node.structure = baseline;
-  node.children = Object.values(baseline);
+  node.children = captureSchemaNodeChange(node, 'children', Object.values(baseline));
 };

@@ -51,7 +51,16 @@ export class SchemaNode implements SchemaNodeRecord<SchemaNode> {
   interactionState: SchemaNodeRecord<SchemaNode>['interactionState'];
   /** Per-bit counts copied only after this occurrence first receives delivery. */
   revisionLedger: Readonly<Record<number, number>>;
-  deliveryBaseline: SchemaNodeRecord<SchemaNode>['deliveryBaseline'];
+  deliveryInitialized: boolean;
+  deliveryChanges: number;
+  deliveryPreviousLocal: unknown;
+  deliveryPreviousEmit: unknown;
+  deliveryPreviousPath: string | undefined;
+  deliveryPreviousChildren: readonly SchemaNode[] | null | undefined;
+  deliveryPreviousComputed: number | undefined;
+  deliveryPreviousSchema: EffectiveSchema | undefined;
+  deliveryPreviousState: NodeStateFlags | undefined;
+  deliveryWatchValues: readonly unknown[] | undefined;
   pendingDelivery: SchemaNodeRecord<SchemaNode>['pendingDelivery'];
   pendingRevision: number;
   pendingNonSettleDelivery: SchemaNodeRecord<SchemaNode>['pendingNonSettleDelivery'];
@@ -93,7 +102,16 @@ export class SchemaNode implements SchemaNodeRecord<SchemaNode> {
     this.schema = schema;
     this.interactionState = state;
     this.revisionLedger = EMPTY_REVISION_LEDGER;
-    this.deliveryBaseline = undefined;
+    this.deliveryInitialized = false;
+    this.deliveryChanges = 0;
+    this.deliveryPreviousLocal = undefined;
+    this.deliveryPreviousEmit = undefined;
+    this.deliveryPreviousPath = undefined;
+    this.deliveryPreviousChildren = undefined;
+    this.deliveryPreviousComputed = undefined;
+    this.deliveryPreviousSchema = undefined;
+    this.deliveryPreviousState = undefined;
+    this.deliveryWatchValues = undefined;
     this.pendingDelivery = undefined;
     this.pendingRevision = 0;
     this.pendingNonSettleDelivery = undefined;

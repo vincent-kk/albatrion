@@ -1,3 +1,4 @@
+import { captureSchemaNodeChange } from '../../../record';
 import { walkOwnedSchemaNodes } from '../walkOwnedSchemaNodes';
 import type { SchemaNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../type';
@@ -35,7 +36,7 @@ export const finalizeExits = <Self extends SchemaNodeRecord<Self>>(
             departing.schema.schema,
         });
       departing.detached = true;
-      departing.active = false;
+      departing.active = captureSchemaNodeChange(departing, 'active', false);
     });
     getGateRegistry(node.runtime).remove(node);
     if (!mismatchIndex) {

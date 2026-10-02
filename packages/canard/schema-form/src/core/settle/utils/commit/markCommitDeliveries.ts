@@ -1,4 +1,4 @@
-import { SchemaNodeRevisionLedger, markSchemaNodeEvent, SchemaNodeEventType } from '../../../record';
+import { clearSchemaNodeChanges, SchemaNodeRevisionLedger, markSchemaNodeEvent, SchemaNodeEventType } from '../../../record';
 import type { SchemaNodeRecord } from '../../../record';
 import { getFeatureNodeIndex } from '../../../blueprint';
 import type { SettlementContext } from '../../type';
@@ -33,25 +33,13 @@ export const markCommitDeliveries = <Self extends SchemaNodeRecord<Self>>(
   const fullWatchScan = context.exited.size > 0;
   let affectedPaths: Set<string> | undefined;
   if (watchIndex?.allNodes.size && !fullWatchScan) {
-    affectedPaths = new Set<string>();
+    affectedPaths = runtime.deliveryAffectedPaths ?? new Set<string>();
     for (const node of context.entered) affectedPaths.add(node.path);
     for (const node of context.perished)
-      affectedPaths.add(node.deliveryBaseline?.path ?? node.path);
+      affectedPaths.add(node.deliveryPreviousPath ?? node.path);
     for (const change of context.pathChanges) {
       affectedPaths.add(change.previous);
       affectedPaths.add(change.current);
-    }
-    for (const node of context.changedNodes) {
-      const previous = node.deliveryBaseline;
-      if (!previous || previous.local !== node.local || previous.emit !== node.emit)
-        affectedPaths.add(node.path);
-    }
-    for (const node of context.stateDirtyNodes) {
-      const previous = node.deliveryBaseline;
-      if (!previous || previous.interactionState !== node.interactionState ||
-        previous.active !== node.active || previous.visible !== node.visible ||
-        previous.readOnly !== node.readOnly || previous.disabled !== node.disabled)
-        affectedPaths.add(node.path);
     }
     // A deleted ancestor's chain was already covered by the surviving descendant.
     for (const path of affectedPaths) {
@@ -94,13 +82,19 @@ export const markCommitDeliveries = <Self extends SchemaNodeRecord<Self>>(
     const node = candidate;
     visit?.(node);
     globalState.visit(node);
-    if (!candidates.has(node)) continue;
+    if (!candidates.has(node)) {
+      clearSchemaNodeChanges(node);
+      continue;
+    }
     if (node.detached) {
-      node.deliveryBaseline = undefined;
+      clearSchemaNodeChanges(node);
+      node.deliveryWatchValues = undefined;
       watchIndex?.remove(node);
       continue;
     }
-    const previous = node.deliveryBaseline;
+    const initialized = node.deliveryInitialized;
+    const changes = node.deliveryChanges;
+    const previousWatchValues = node.deliveryWatchValues ?? EMPTY_WATCH_VALUES;
     const pending = node.pendingDelivery?.payload;
     const hasWatch = watchNodes.has(node.blueprintNode.id);
     const watched = hasWatch ? readSchemaNodeWatchValues(node) : EMPTY_WATCH_VALUES;
@@ -111,15 +105,16 @@ export const markCommitDeliveries = <Self extends SchemaNodeRecord<Self>>(
         index.update(node, getWatchDeliveryPaths(node));
       } else runtime.deliveryWatchIndex?.remove(node);
     }
-    const watchChanged = previous !== undefined &&
-      (watched.length !== previous.watchValues.length ||
-        watched.some((value, index) => value !== previous.watchValues[index]));
-    if (previous) {
-      if (previous.local !== node.local || previous.emit !== node.emit) {
+    const watchChanged = initialized &&
+      (watched.length !== previousWatchValues.length ||
+        watched.some((value, index) => value !== previousWatchValues[index]));
+    if (initialized) {
+      if ((changes & SchemaNodeEventType.UpdateValue) &&
+        (node.deliveryPreviousLocal !== node.local || node.deliveryPreviousEmit !== node.emit)) {
         const pendingValue = pending?.[SchemaNodeEventType.UpdateValue];
         const oldValue = pendingValue !== null && typeof pendingValue === 'object' ?
           Reflect.get(pendingValue, 'previous') : node.behavior.strategy === 'branch' ?
-            { local: previous.local, emit: previous.emit } : previous.local;
+            { local: node.deliveryPreviousLocal, emit: node.deliveryPreviousEmit } : node.deliveryPreviousLocal;
         const current = node.behavior.strategy === 'branch' ?
           { local: node.local, emit: node.emit } : node.local;
         const payload = { previous: oldValue, current };
@@ -129,30 +124,30 @@ export const markCommitDeliveries = <Self extends SchemaNodeRecord<Self>>(
           DEVELOPMENT ? Object.freeze(payload) : payload,
           { source });
       }
-      if (previous.path !== node.path) {
+      if ((changes & SchemaNodeEventType.UpdatePath) && node.deliveryPreviousPath !== node.path) {
         const pendingPath = pending?.[SchemaNodeEventType.UpdatePath];
         const oldPath = pendingPath !== null && typeof pendingPath === 'object' ?
-          Reflect.get(pendingPath, 'previous') : previous.path;
+          Reflect.get(pendingPath, 'previous') : node.deliveryPreviousPath;
         const payload = { previous: oldPath, current: node.path };
         mark(node, SchemaNodeEventType.UpdatePath,
           DEVELOPMENT ? Object.freeze(payload) : payload);
       }
-      if (previous.children !== node.children)
+      if ((changes & SchemaNodeEventType.UpdateChildren) && node.deliveryPreviousChildren !== node.children)
         mark(node, SchemaNodeEventType.UpdateChildren);
-      if (previous.interactionState !== node.interactionState) {
+      if ((changes & SchemaNodeEventType.UpdateState) && node.deliveryPreviousState !== node.interactionState) {
         runtime.stateChanged = true;
         if (!((node.pendingNonSettleDelivery?.type ?? 0) &
           SchemaNodeEventType.UpdateState))
           mark(node, SchemaNodeEventType.UpdateState);
       }
-      if (previous.active !== node.active || previous.visible !== node.visible ||
-        previous.readOnly !== node.readOnly || previous.disabled !== node.disabled ||
-        watchChanged)
+      if (((changes & SchemaNodeEventType.UpdateComputedProperties) &&
+        node.deliveryPreviousComputed !== (+node.active | +node.visible << 1 |
+          +node.readOnly << 2 | +node.disabled << 3)) || watchChanged)
         mark(node, SchemaNodeEventType.UpdateComputedProperties);
-      if (previous.schema !== node.schema) {
+      if ((changes & SchemaNodeEventType.UpdateJsonSchema) && node.deliveryPreviousSchema !== node.schema) {
         const pendingSchema = pending?.[SchemaNodeEventType.UpdateJsonSchema];
         const oldSchema = pendingSchema !== null && typeof pendingSchema === 'object' ?
-          Reflect.get(pendingSchema, 'previous') : previous.schema.schema;
+          Reflect.get(pendingSchema, 'previous') : node.deliveryPreviousSchema?.schema;
         const payload = { previous: oldSchema, current: node.schema.schema };
         mark(node, SchemaNodeEventType.UpdateJsonSchema,
           DEVELOPMENT ? Object.freeze(payload) : payload);
@@ -171,23 +166,9 @@ export const markCommitDeliveries = <Self extends SchemaNodeRecord<Self>>(
       mark(node, SchemaNodeEventType.RequestRefresh);
     else if (refreshTargets?.has(node.path))
       mark(node, SchemaNodeEventType.RequestRefresh);
-    if (previous) {
-      previous.path = node.path;
-      previous.local = node.local;
-      previous.emit = node.emit;
-      previous.children = node.children;
-      previous.active = node.active;
-      previous.visible = node.visible;
-      previous.readOnly = node.readOnly;
-      previous.disabled = node.disabled;
-      previous.interactionState = node.interactionState;
-      previous.schema = node.schema;
-      previous.watchValues = watched;
-    } else node.deliveryBaseline = { path: node.path, local: node.local, emit: node.emit,
-      children: node.children, active: node.active, visible: node.visible,
-      readOnly: node.readOnly, disabled: node.disabled,
-      interactionState: node.interactionState,
-      schema: node.schema, watchValues: watched };
+    node.deliveryInitialized = true;
+    if (hasWatch) node.deliveryWatchValues = watched;
+    clearSchemaNodeChanges(node);
     if (node.pendingRevision) {
       node.revisionLedger = new SchemaNodeRevisionLedger(node.revisionLedger, node.pendingRevision);
       node.pendingRevision = 0;
@@ -201,7 +182,8 @@ export const markCommitDeliveries = <Self extends SchemaNodeRecord<Self>>(
     const node = departing.pop();
     if (!node || !node.detached || seenDeparting.has(node)) continue;
     seenDeparting.add(node);
-    node.deliveryBaseline = undefined;
+    clearSchemaNodeChanges(node);
+      node.deliveryWatchValues = undefined;
     node.pendingDelivery = undefined;
     node.pendingRevision = 0;
     node.pendingNonSettleDelivery = undefined;
@@ -218,4 +200,5 @@ export const markCommitDeliveries = <Self extends SchemaNodeRecord<Self>>(
     for (const child of node.children ?? []) departing.push(child);
   }
   runtime.deliveredContext = runtime.context;
+  runtime.deliveryAffectedPaths = undefined;
 };
