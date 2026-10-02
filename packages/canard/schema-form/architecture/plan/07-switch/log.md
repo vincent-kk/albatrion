@@ -26,6 +26,7 @@ Planning method: 저장소 지침 — `PLAN.md` §2와 `plan/prompts.md`의 단�
 
 | 날짜 | 단위 | 무엇 | 근거 |
 | --- | --- | --- | --- |
+| 2026-10-03 | U8 | 렌더 처분·하니스 이주 1a821faa7, 재귀 확장 수정 29d061941, placeholder 경로 추적 수정 fc651e734; 78C-01에 따라 중단 5파일을 삭제하고 유효한 관찰을 U9 e2e로 인계 | 78C-01·02, `verification/07-switch/u8-disposition-report.md` |
 | 2026-10-02 | U0 | 원장 관리자에게 착수 확인 1–6과 물음 Q1–Q10을 보내 답을 받음(68C-01–10). 현재 코드·시험·원장 조사(서브에이전트 여섯). 실행 계획·ADR·게이트 원장 작성. Q11–Q15 송부 | `reviews/round-68-closing.md` |
 | 2026-10-02 | U0 | 작업 공간 사고: 메인 체크아웃에서 07 브랜치를 만든 탓에 원장 관리자의 68·69라운드 커밋(`1ba284393`·`93ff8d7bc`)이 07 브랜치에 들어감. 소유자가 `1.0.0-beta`를 `93ff8d7bc`로 맞췄고, 07은 워크트리로 옮김. 07의 첫 커밋 `a44003ddd`는 `93ff8d7bc` 위 | 원장 관리자와의 교신 |
 | 2026-10-02 | U0 | Q11–Q15 답(69C-01–05, 권장안대로) 반영. 계획 리뷰 1차 `rework-required`(F1–F10) 반영 | `reviews/round-69-closing.md`, 계획 §9 |
@@ -68,7 +69,7 @@ Planning method: 저장소 지침 — `PLAN.md` §2와 `plan/prompts.md`의 단�
 
 U8(77C-01·75C-01): `src/__legacy__/core/__tests__/IfThenElse.onChange.realReact.test.tsx`는 지움(공개 겉면의 시험, 사례 2건은 `verification/07-switch/render-disposition.md`의 레거시 추가 행 1–2), `NullableFormScenarios.test.tsx`는 지움(공개 겉면의 시험, 사례 12건은 같은 표의 추가 행 3–14). ESLint·격리 도구의 두 파일 예외도 제거했습니다. 레거시 시험 157파일·2311건은 LANDING-159 보충대로 unit·render에서 제외하며, 두 파일 삭제 후 참고용 시험은 155파일·2297건입니다.
 
-U8 중단 기록: 원장 충돌 5파일은 HEAD 원문을 유지합니다. 후속 표면 복구로 tsc는 14→1오류, render는 30→13실패입니다. 남은 render 12건은 중단 파일 4개에 속하고, 별도 ref/context 파일의 재귀 엔진 문제 1건이 있습니다. 파일별 관찰과 관리자 물음은 `verification/07-switch/u8-disposition-report.md`에 있습니다. unit·lint·격리는 통과했으나 U8은 미완료입니다. I21의 옛 스토리 보존 해석은 77C-01에 따라 U9까지의 임시 제외로 바로잡았으며 U9 끝에 파일과 제외 설정을 함께 없앱니다.
+U8 중단 기록: 원장 충돌 5파일의 원문 보존은 78C-01의 "버리고 새로 쓴다" 처분으로 닫아 삭제했습니다. 유효한 관찰의 U9 예정 사례와 변경 근거는 렌더 처분표에, 소비자가 볼 변경은 이주 점검표에 교차 기록했습니다. 재귀 확장·placeholder 경로 결함은 29d061941·fc651e734로 고쳤으며 귀속은 §8에 적습니다. 파일별 관찰과 검증은 `verification/07-switch/u8-disposition-report.md`에 있습니다. I21의 옛 스토리 보존 해석은 77C-01에 따라 U9까지의 임시 제외로 바로잡았으며 U9 끝에 파일과 제외 설정을 함께 없앱니다.
 
 07이 새 코드에서 지우거나 바꾼 것 가운데 레거시가 계속 쓰는 것을 `src/__legacy__/` 안 같은 상대 경로로 옮기거나 사본으로 둔 목록이다. 레거시의 가져오기는 별칭 접두만 바꿨다. 새 코드는 이 경로를 가져오지 않는다(LANDING-159 규칙 1, G19).
 
@@ -82,6 +83,13 @@ U8 중단 기록: 원장 충돌 5파일은 HEAD 원문을 유지합니다. 후�
 | 레거시가 가져오던 새 코드 전부(전이 폐쇄): `errors`, `helpers/{error,warning,defaultValue,dynamicExpression,schemaIntersection,jsonPointer,jsonSchema}`, `app/constants`, `types/{value,injectTo}`, `core/types/{event,state,value}`와 `core/blueprint`·`core/validation`이 닿는 새 core 103파일 — 모두 190파일 | `src/__legacy__/` 같은 상대 경로 | 사본(전환 직전 `1def2cc4f`의 내용, 가져오기는 별칭 접두만 바꿈). 목록은 `verification/07-switch/legacy-copies.md` | 74라운드 소유자 답 |
 | 렌더 계층으로 가던 형 전용 연결(옛 스키마의 `FormTypeInput` 칸 형, 렌더 오류 형, 플러그인 형) | 레거시 안의 최소 형(`ComponentType<never>`, 로컬 `FormatError`, `PluginErrorFeatures`) | 대체 — 옛 렌더 계층은 복제하지 않음 | 75C-01 |
 | `src/__legacy__/core/__tests__/IfThenElse.onChange.realReact.test.tsx`, `NullableFormScenarios.test.tsx` | — | 지움 예정(U8, 공개 겉면의 시험, 사례는 처분표 추가 행) | 75C-01 |
+
+## 8. 앞 단계 결함
+
+| 날짜 | 귀속 | 결함 | 재현 스키마 | 수정 커밋 | 근거 |
+| --- | --- | --- | --- | --- | --- |
+| 2026-10-03 | 03 정착(78C-02) | self-recursive `$ref: "#"` 배열 아이템이 자라지 않음. hasRecursiveExpansion이 배열 아이템 아래의 확장을 거부해 RECURSIVE_SHAPE_DIVERGED를 냄 | `{ type: 'object', properties: { id: { type: 'string' }, children: { type: 'array', items: { $ref: '#' } } } }`, 값 `{ id: 'root', children: [{}] }` | `29d061941` | BLUEPRINT-030, 78C-02 |
+| 2026-10-03 | 07 바인딩 | 앞 행 remove 뒤 deferred placeholder가 UpdatePath를 따르지 않아 옛 경로에 남음. 이동한 노출 필드 주소와 겹쳐 다시 placeholder로 관찰됨 | `{ type: 'object', properties: { items: { type: 'array', items: { type: 'string' } } } }`; 값은 items의 문자열 12개, 가상화 threshold 10·eagerCount 3·backfill None. `/items/11`을 드러낸 뒤 0번 행 remove → `/items/10`에서 재현 | `fc651e734` | LANDING-087, WRITE-045; reveal 기록은 노드 identity를 유지하며 placeholder의 경로 추적 누락을 고침 |
 
 ## 5. 스파이크 사례표(68C-09)
 

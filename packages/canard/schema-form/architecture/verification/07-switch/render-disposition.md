@@ -6,7 +6,7 @@
 
 ## 전환 직전 기준
 
-전환 직전 커밋: `3911b7591` (`feat/schema-form-switch`, 2026-10-02). 아래 셈은 이 워크트리의 현재 파일을 기준으로 합니다. 표의 파일 경로는 `packages/canard/schema-form` 기준 상대 경로입니다.
+전환 직전 커밋: `3911b7591` (`feat/schema-form-switch`, 2026-10-02). 아래 셈은 전환 직전 파일 목록을 기준으로 하며, 삭제한 파일도 처분·U9 인계 기록에 남깁니다. 표의 파일 경로는 `packages/canard/schema-form` 기준 상대 경로입니다.
 
 `vite.config.ts`의 `renderTests`에 포함되는 `src/**/*.test.tsx`와 `src/**/helpers/virtualization/__tests__/VirtualizationManager.test.ts`를 세며, `src/__legacy__/**`는 제외합니다. 현재 해당 DOM 의존 `.test.ts`는 1파일입니다. `architecture/spikes/**`, `.spec.ts`, 하니스·픽스처 자체는 포함하지 않습니다.
 
@@ -69,7 +69,7 @@ PY
 
 이 기준의 현재 TEST-005 대상은 **4파일·24건**입니다. 원문의 17은 고정 목표로 맞추지 않습니다. 대표로 적혔던 `array.mutation-identity`·`controlled-interaction`·`default-value`는 현재 각각 배열 identity·trim·minItems 단언의 의미 변경에 걸립니다. `formType-resolution`·`state-management`·`validation.errors`는 기대값을 살릴 수 있어도 현재 파일에 옛 키·이름이 있어 TEST-005에서는 제외합니다.
 
-`새 자리`는 U9의 인수 계획입니다. U8은 재작성 대상 파일을 삭제하고 아래 까닭 칸에 보존할 상황을 기록했습니다. 표면 수정 중 계약 충돌이나 선행 구현 불일치가 확인된 파일은 원문을 유지하며 결과를 [U8 보고서](./u8-disposition-report.md)에 적습니다. TEST-005의 기존 파일은 전환 때 표면을 맞추고, 스키마·단계는 공유 데이터로 옮기며 살아 있는 단언을 표시된 e2e 부류의 추가 단언으로 잇습니다. 그 밖의 표면 수정 파일은 같은 파일에서 이름을 맞춥니다. e2e 부류는 `packages/aileron/schema-form-scenarios/src/{value,settle,fill,exit,union,derive,controls,array,notify,validation}/`에 맞춥니다. 소비자 spy·StrictMode·첨부 파일 맵·IO 계측이 필요한 재작성은 전용 파일을 지정합니다. 여러 원본 파일을 같은 부류로 합친다는 뜻이며, 건수는 원본의 수입니다. 새 실행기는 TEST-023의 파일당 15건 상한을 별도로 지켜야 합니다.
+`새 자리`는 U9의 인수 계획입니다. U8은 재작성 대상 파일을 삭제하고 아래 까닭 칸에 보존할 상황을 기록했습니다. 원장 충돌로 원문을 보존했던 다섯 파일도 78C-01에 따라 재작성으로 처분했으며 결과는 [U8 보고서](./u8-disposition-report.md)에 적습니다. TEST-005의 기존 파일은 전환 때 표면을 맞추고, 스키마·단계는 공유 데이터로 옮기며 살아 있는 단언을 표시된 e2e 부류의 추가 단언으로 잇습니다. 그 밖의 표면 수정 파일은 같은 파일에서 이름을 맞춥니다. e2e 부류는 `packages/aileron/schema-form-scenarios/src/{value,settle,fill,exit,union,derive,controls,array,notify,validation}/`에 맞춥니다. 소비자 spy·StrictMode·첨부 파일 맵·IO 계측이 필요한 재작성은 전용 파일을 지정합니다. 여러 원본 파일을 같은 부류로 합친다는 뜻이며, 건수는 원본의 수입니다. 새 실행기는 TEST-023의 파일당 15건 상한을 별도로 지켜야 합니다.
 
 ## 파일별 처분
 
@@ -80,7 +80,7 @@ PY
 | `src/__tests__/scenarios/array.mutation-identity.render.test.tsx` | 12 | 버리고 새로 쓴다 | 재정렬 때 모든 행의 mount ordinal 증가와 기존 초점 소실을 단언합니다. 새 배열 통째 쓰기는 위치로 노드를 잇고 바뀐 원본의 입력만 Refresh합니다(LANDING-164·199·202). U9 보존: 배열 추가·삭제·재정렬, 값과 초점, 안정 itemKey. | 비해당: 기대값 변경 | `src/__tests__/e2e/array.test.tsx` |
 | `src/__tests__/scenarios/array.omit-trailing.composite.render.test.tsx` | 9 | 버리고 새로 쓴다 | 분기 복원·required 자동 활성과 주입의 원시 배열 복사를 함께 단언합니다. 분기·채움 및 주입이 읽는 투영값 기준으로 재구성해야 합니다(LANDING-004·011·027·032, LANDING-023). U9 보존: 분기와 omitTrailing 결합, 출력 기반 주입, 오류 인덱스. | 비해당: 조합·옛 computed 및 의미 변경 | `src/__tests__/e2e/array.test.tsx` |
 | `src/__tests__/scenarios/array.omit-trailing.conditional.render.test.tsx` | 9 | 버리고 새로 쓴다 | 분기 왕복 때 minItems 입력 복원과 then.required 기반 활성에 의존합니다. 명시 활성·원본 유지·입력 컴포넌트의 제약으로 다시 씁니다(LANDING-018·027·032·116). U9 보존: 조건 왕복과 배열 출력, 사용자 입력 보존. | 비해당: 조합·옛 제어 키 | `src/__tests__/e2e/array.test.tsx` |
-| `src/__tests__/scenarios/array.omit-trailing.injection.render.test.tsx` | 10 | 표면만 고친다 | setValue·defaultValue·reset·nullable·StrictMode 뒤의 잘린 방출값과 입력 존재만 확인합니다. 노드 교체 횟수나 재채움은 단언하지 않으며, 맨 terminal을 options.terminal로 옮기면 기대를 유지합니다(LANDING-034·039·164). | 비해당: 맨 terminal 사용 | 같은 파일(이름만) |
+| `src/__tests__/scenarios/array.omit-trailing.injection.render.test.tsx` | 10 | 버리고 새로 쓴다 | 앞·중간 빈자리의 undefined 방출은 VALUE-034의 null 방출로 바뀌고, 최초 defaultValue 정착의 onChange는 TEST-020·021에 따라 없습니다(78C-01). U9 보존: setValue·defaultValue·reset·nullable·StrictMode에서 omitTrailing 트림과 입력 존재. | 비해당: 빈자리 방출·마운트 기대값 변경 | `src/__tests__/e2e/array.test.tsx` — `VALUE-034 omitTrailing trims trailing holes and preserves leading null slots`; `src/__tests__/e2e/settle.test.tsx` — `TEST-020 mount settlement exposes trimmed defaults without onChange` |
 | `src/__tests__/scenarios/array.omit-trailing.render.test.tsx` | 12 | 버리고 새로 쓴다 | minItems만으로 빈 행이 생긴다는 초기 조건을 포함합니다. omitTrailing의 출력·오류 인덱스 자산은 살리되, 채움 책임이 입력 컴포넌트로 옮겨지는 새 상황으로 다시 씁니다(LANDING-116). U9 보존: 후행 undefined 생략, 내부 빈칸, 검증 경로. | 비해당: 옛 채움 전제 | `src/__tests__/e2e/array.test.tsx` |
 | `src/__tests__/scenarios/array.prefixItems-terminal.render.test.tsx` | 14 | 버리고 새로 쓴다 | minItems로 튜플 슬롯을 생성하고 터미널 배열에 위치 기본값을 채우는 전제를 단언합니다. 제약·채움 책임과 prefixItems 상황을 새 배열 데이터로 다시 짭니다(LANDING-116·149·165). U9 보존: prefixItems 위치 스키마, 터미널 배열 값, 외부 기본값. | 비해당: 맨 terminal 및 옛 채움 | `src/__tests__/e2e/array.test.tsx` |
 | `src/__tests__/scenarios/composition.allOf-ifThenElse.render.test.tsx` | 12 | 버리고 새로 쓴다 | allOf 병합에 then.required 자동 활성과 꺼진 필드 처리가 섞여 있습니다. then.properties·controls.active와 새 유효 스키마 기준으로 다시 씁니다(LANDING-010·018·027·038). U9 보존: allOf 조건 병합, 활성 필드 DOM, required 검증. | 비해당: 조합·computed | `src/__tests__/e2e/settle.test.tsx` |
@@ -93,13 +93,13 @@ PY
 | `src/__tests__/scenarios/computed.readonly-disabled.render.test.tsx` | 13 | 표면만 고친다 | 단순 의존 식의 최종 잠금·Form 속성 잠금·select의 disabled 관찰입니다. 표준 readOnly와 거짓 제어의 충돌 우선순위나 잠금 중 쓰기는 단언하지 않아 기대를 유지합니다. computed 이름만 맞춥니다(LANDING-007·012·015·016·168). | 비해당: computed 사용 | 같은 파일(이름만) |
 | `src/__tests__/scenarios/computed.visibility.render.test.tsx` | 12 | 표면만 고친다 | visible의 숨김·값 유지와 active의 DOM·방출 제외를 확인합니다. 꺼진 노드의 원본 삭제·복원 자체는 단언하지 않습니다. computed·&visible·&active를 controls로 옮겨 최종 기대를 유지합니다(LANDING-007·018·033). | 비해당: computed·평면 &키 | 같은 파일(이름만) |
 | `src/__tests__/scenarios/controlled-interaction.render.test.tsx` | 13 | 버리고 새로 쓴다 | trim 뒤 비제어 DOM에 공백이 남는다는 단언이 있습니다. 새 finishInput 자동 쓰기는 비제어 입력을 다시 마운트하므로 기대가 달라집니다(LANDING-145). U9 보존: 제어·비제어 입력, blur trim, focus·select. | 비해당: trim 기대값 변경 | `src/__tests__/e2e/controls.test.tsx` |
-| `src/__tests__/scenarios/default-value.input-immutability.render.test.tsx` | 2 | 표면만 고친다 | 호출자의 defaultValue 불변성과 frozen 값 렌더는 유지됩니다. terminal·formType의 스키마 위치만 바꿉니다(LANDING-034). | 비해당: 맨 terminal·formType | 같은 파일(이름만) |
+| `src/__tests__/scenarios/default-value.input-immutability.render.test.tsx` | 2 | 버리고 새로 쓴다 | NODE-005의 터미널 호스트는 값을 통째로 들어 자식 기본값을 채우지 않으므로 기존 값 기대가 바뀝니다(78C-01). WRITE-071의 호출자 defaultValue 불변과 frozen 값 렌더 관찰은 유지합니다. | 비해당: 터미널 자식 채움 기대값 변경 | `src/__tests__/e2e/fill.test.tsx` — `WRITE-071 caller defaultValue remains immutable without terminal child filling`, `NODE-005 frozen terminal defaults render without child default filling` |
 | `src/__tests__/scenarios/default-value.render.test.tsx` | 14 | 버리고 새로 쓴다 | minItems만으로 단일·중첩 배열을 자동 채우는 기대가 다수입니다. 새 채움과 입력 제약을 분리한 데이터로 옮깁니다(LANDING-116·144·202). U9 보존: 스키마·외부 기본값, 중첩 객체·배열, reset. | 비해당: 옛 minItems 자동 채움 | `src/__tests__/e2e/fill.test.tsx` |
-| `src/__tests__/scenarios/deferred-mount.render.test.tsx` | 15 | 표면만 고친다 | placeholder·교차·idle·focus 재생·지연 필드의 최종 값과 오류를 관찰합니다. 분기 재진입 기본값 복원이나 전체 교체 identity 소실은 단언하지 않습니다. computed·&if를 명시 controls로 옮깁니다(LANDING-006·007·033, TEST-021). | 비해당: oneOf·옛 제어 키 | 같은 파일(이름만) |
+| `src/__tests__/scenarios/deferred-mount.render.test.tsx` | 15 | 버리고 새로 쓴다 | TEST-020·021에 따라 마운트 정착 onChange가 없으므로 최초 방출 기대를 버립니다(78C-01). computed·&if 사례는 controls·controls.active로 이주합니다(LANDING-006·007·033). U9 보존: getValue의 지연 필드 값, controls 아래 지연 필드·placeholder·교차·idle·focus와 오류; 형제 삭제 뒤 reveal 유지는 LANDING-087·WRITE-045의 기대를 유지하며 fc651e734로 구현 차단을 고쳤습니다. | 비해당: 마운트 기대값 변경·옛 제어 키 | `src/__tests__/e2e/deferred-mount.test.tsx` — `TEST-020 getValue includes deferred field values without mount onChange`, `LANDING-007 deferred fields follow controls visibility`, `LANDING-006 deferred branch placeholders follow controls active`, `LANDING-087 revealed fields stay eager after sibling removal` |
 | `src/__tests__/scenarios/deferred-mount.strict.render.test.tsx` | 3 | 표면만 고친다 | StrictMode의 관찰 등록 복구·idle 완료·focus 단일 재생은 유지됩니다. IO/idle 계측을 살리고 공통 하니스의 새 핸들·동기 정착 연결을 맞춥니다(TEST-021·023). | 해당: 조합·옛 키 없음 | e2e 추가 단언: `src/__tests__/e2e/settle.test.tsx` |
 | `src/__tests__/scenarios/formType-resolution.render.test.tsx` | 13 | 표면만 고친다 | 입력 선택 우선순위·경로 매핑·사용자 레이아웃·오류 ReactNode 기대는 유지됩니다. 스키마 FormTypeInput을 presentation으로, CustomFormTypeRenderer·node.group을 새 이름으로 바꿉니다(LANDING-034·035·043). | 비해당: 옛 입력·렌더러 키·group | 같은 파일(이름만) |
 | `src/__tests__/scenarios/injectTo.render.test.tsx` | 13 | 버리고 새로 쓴다 | 양방향 주입의 자동 순환 차단과 주입을 통한 옛 oneOf 선택을 단언합니다. 예산·명시 활성·동기 진입 기준으로 바꿉니다(LANDING-004·022·030). U9 보존: 형제·부모·배열 주입, 연쇄와 순환, 분기 활성. | 비해당: oneOf·&if 및 순환 차단 의미 | `src/__tests__/e2e/derive.test.tsx` |
-| `src/__tests__/scenarios/multi-render-split-brain.render.test.tsx` | 10 | 표면만 고친다 | 여러 Form.Render와 분리된 Input/Error/Label의 최종 값·오류 일치를 확인합니다. 초기 중간 빈 값이나 분기 복원값은 단언하지 않습니다. &if를 controls.active로 옮기며 합성 Form API 이름은 유지합니다(LANDING-006·033·035). | 비해당: oneOf·&if | 같은 파일(이름만) |
+| `src/__tests__/scenarios/multi-render-split-brain.render.test.tsx` | 10 | 버리고 새로 쓴다 | LANDING-115·VALIDATE-010·036의 마커 제거 후 표준 oneOf는 다른 분기가 유효하면 오류가 없으므로 기존 오류 기대를 버립니다(78C-01). U9 보존: 여러 Form.Render와 분리된 Input/Error/Label에서 분기 전환의 자식·값·오류가 함께 갱신되는 관찰. | 비해당: 표준 oneOf 오류 기대값 변경 | `src/__tests__/e2e/union.test.tsx` — `VALIDATE-010 branch switches update children and errors together`, `VALIDATE-036 standard oneOf has no error when another branch is valid` |
 | `src/__tests__/scenarios/nullable.object-blank-state.render.test.tsx` | 8 | 버리고 새로 쓴다 | null 아래 자식에 기본값을 보이고 승격 때 가져오며 defaultValue를 생성 시점 값으로 고정합니다. 새 null 자식·로드 스냅숏으로 바꿉니다(LANDING-139·155·200). U9 보존: null 객체 빈 화면, 자식 쓰기 승격, 로드 기본값. | 비해당: oneOf·&if 및 null 채움 의미 | `src/__tests__/e2e/value.test.tsx` |
 | `src/__tests__/scenarios/nullable.object-initial-null.render.test.tsx` | 7 | 버리고 새로 쓴다 | null 객체의 사용자 쓰기에 형제 기본값이 함께 살아난다는 기대가 있습니다. 새 승격은 숨은 기본값을 재채움하지 않습니다(LANDING-139·200). U9 보존: 초기 null, 자식 사용자 입력, 형제 값. | 비해당: 조합·옛 null 승격 기대 | `src/__tests__/e2e/value.test.tsx` |
 | `src/__tests__/scenarios/nullable.object-null-branch.render.test.tsx` | 8 | 버리고 새로 쓴다 | null 아래 kind 기본값으로 a 분기를 그리고 승격 때 kind를 포함한다는 기대가 있습니다. null 조상 아래 채움과 활성 판정을 새로 씁니다(LANDING-004·139·200). U9 보존: null 조상과 분기 필드, 활성 전환, 승격. | 비해당: oneOf/anyOf·&if 및 채움 의미 | `src/__tests__/e2e/union.test.tsx` |
@@ -112,7 +112,7 @@ PY
 | `src/__tests__/scenarios/refSchema-context-provider.render.test.tsx` | 13 | 표면만 고친다 | 안전한 배열 경유 재귀·$ref·context 전달과 명시 제어의 최종 DOM 기대를 유지합니다. 무제한 객체 재귀의 옛 오류는 단언하지 않으며 computed 및 스키마 입력 키만 옮깁니다(LANDING-007·034·128). | 비해당: computed·옛 스키마 입력 키 | 같은 파일(이름만) |
 | `src/__tests__/scenarios/refresh.uncontrolled-value.render.test.tsx` | 11 | 버리고 새로 쓴다 | Refresh 없는 setValue 뒤 비제어 DOM을 낡게 두고 분기 왕복 때 기본값을 다시 넣는 기대가 있습니다. 새 Refresh 범위·원본 유지·입력 출처 규칙으로 바꿉니다(LANDING-021·032·042·199·201). U9 보존: 외부 setValue, 입력 Refresh, 분기 왕복 DOM. | 비해당: oneOf·&if·NodeEventType 및 Refresh 의미 | `src/__tests__/e2e/notify.test.tsx` |
 | `src/__tests__/scenarios/renderProp.value.render.test.tsx` | 10 | 표면만 고친다 | 한 문자 쓰기의 렌더 1회, settle 뒤 getValue와 일치, 비함수 children 안정성을 확인합니다. 여러 쓰기의 옛 debounce 횟수나 reset의 노드 교체는 단언하지 않으므로 기대를 유지하고 하니스 설명을 맞춥니다(LANDING-022·039, TEST-021). | 해당: 조합·옛 키 없음 | e2e 추가 단언: `src/__tests__/e2e/notify.test.tsx` |
-| `src/__tests__/scenarios/reset.pristine.render.test.tsx` | 14 | 표면만 고친다 | reset 뒤 기본값·상호작용 초기화와 터미널 입력 리마운트 기대는 유지됩니다. provider·브랜치 전체 리마운트나 트리 참조 교체는 단언하지 않습니다. NodeState·&if를 옮깁니다(LANDING-006·039·157, 설계서 07 §2.6). | 비해당: oneOf·&if·NodeState | 같은 파일(이름만) |
+| `src/__tests__/scenarios/reset.pristine.render.test.tsx` | 14 | 버리고 새로 쓴다 | LANDING-148에 따라 비활성 변형의 find는 null이므로 옛 노드의 enabled=false 단언을 버립니다(78C-01). LANDING-157의 NodeState→SchemaNodeState는 이름 이주입니다. U9 보존: reset 뒤 비활성 분기 잔여 없음, 기본값·상호작용 초기화와 터미널 입력 리마운트. | 비해당: 비활성 find 기대값 변경·옛 상태 이름 | `src/__tests__/e2e/exit.test.tsx` — `LANDING-148 reset leaves no inactive branch residue and find returns null`; `src/__tests__/e2e/settle.test.tsx` — `LANDING-157 reset clears interaction state and remounts terminal inputs` |
 | `src/__tests__/scenarios/schema-props-renderer.render.test.tsx` | 12 | 버리고 새로 쓴다 | 빈 입력에도 omitEmpty:false 문자열·수 키가 남는다고 단언합니다. 기본 입력이 undefined를 쓰는 새 계약은 단순 presentation 이름 교체를 넘습니다(LANDING-034·125·196). U9 보존: presentation props 전달, 사용자 렌더러, 입력 값. | 비해당: 옛 표현 키 및 빈 입력 기대 | `src/__tests__/e2e/controls.test.tsx` |
 | `src/__tests__/scenarios/state-management.render.test.tsx` | 14 | 표면만 고친다 | Dirty·Touched·ShowError·하위 상태 초기화와 값 유지의 기대는 같습니다. 비불리언 전역 상태나 마지막 참인 노드가 사라지는 옛 집계는 단언하지 않습니다. 상태·이벤트·렌더러·메시지 이름을 맞춥니다(LANDING-034·035·152·153·157·158). | 비해당: NodeState·NodeEventType·옛 렌더러/메시지 키 | 같은 파일(이름만) |
 | `src/__tests__/scenarios/terminal-mode.render.test.tsx` | 15 | 버리고 새로 쓴다 | 터미널 배열의 minItems 채움·undefined 교체 비움과 객체 기본값 조립에 의존합니다. options 이동만으로 해결되지 않으며 새 터미널 동작·채움·로드로 다시 씁니다(LANDING-116·142·144·149). U9 보존: 터미널 객체·배열, 전체 값 입력, reset. | 비해당: 맨 terminal·formType·propertyKeys 및 채움 의미 | `src/__tests__/e2e/array.test.tsx` |
@@ -133,8 +133,8 @@ PY
 | 처분 | 파일 수 | 건수 | TEST-005 파일 수 |
 | --- | --- | --- | --- |
 | 그대로 산다 | 3 | 16 | 0 |
-| 표면만 고친다 | 18 | 160 | 4 |
-| 버리고 새로 쓴다 | 31 | 345 | 0 |
+| 표면만 고친다 | 13 | 109 | 4 |
+| 버리고 새로 쓴다 | 36 | 396 | 0 |
 | 합계 | 52 | 521 | 4 |
 
 | TEST-005 파일 | 건수 | 추가 단언의 새 자리 |
@@ -145,7 +145,7 @@ PY
 | `src/__tests__/scenarios/renderProp.value.render.test.tsx` | 10 | `src/__tests__/e2e/notify.test.tsx` |
 | 합계 | 24 | 4파일이며 원장의 17은 그대로 둡니다. |
 
-위 부류별 합계는 전환 직전 처분 결정입니다. U8 후속 실행에서 원장 충돌로 중단한 5파일은 원문을 보존했습니다. 상태 시험은 표면 복구로 통과했고, ref/context 시험은 표면 3건을 복구했으나 재귀 엔진 문제 1건이 남습니다. 기존 처분은 관리자 답 없이 바꾸지 않으며, 전체 실패별 분류·충돌 단언·원장 ID·실행 결과는 [U8 보고서](./u8-disposition-report.md)를 확인합니다.
+위 부류별 합계는 전환 직전 52파일·521건의 목록에 78C-01의 처분 변경을 반영한 셈입니다. 원장 충돌로 중단했던 5파일·51건은 "버리고 새로 쓴다"로 옮겨 삭제했으며 유효한 관찰은 각 행의 U9 예정 사례로 인계했습니다. 상태 시험은 표면 복구로 통과했고, ref/context의 재귀 엔진 문제와 deferred placeholder 경로 문제는 각각 29d061941·fc651e734로 고쳤습니다. 전체 실패별 분류·충돌 단언·원장 ID·실행 결과는 [U8 보고서](./u8-disposition-report.md)를 확인합니다.
 
 
 ## 레거시 공개 Form 사례의 새 자리 (73C-01·75C-01)

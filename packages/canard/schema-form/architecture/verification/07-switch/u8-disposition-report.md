@@ -4,7 +4,7 @@
 
 ## 판정
 
-**미완료 — 원장 관리자 답과 선행 구현 보완이 필요합니다.** 재작성 대상 31파일과 레거시 공개 Form 시험 2파일을 삭제했습니다. 생존 후보 21파일 가운데 8파일을 표면 수정했습니다(7파일 통과, ref/context 1파일에 엔진 실패 1건). 8파일은 원문 그대로 통과했고, 원장 충돌로 중단한 5파일은 HEAD 원문과 바이트 단위로 같습니다. 후속 수정으로 tsc 오류는 14→1건, render 실패는 30→13건입니다. 남은 render 12건은 중단 파일 4개에 속하고, 1건은 별도 재귀 엔진 차단입니다. 중단 파일을 글롭에서 빼거나 기대값을 고치지 않았습니다. U9의 대체 e2e는 이 단위에서 구현하지 않았습니다.
+**78C-01의 중단 파일 처분 완료.** 원장 충돌로 보존했던 다섯 파일은 78C-01에 따라 "버리고 새로 쓴다"로 옮겨 삭제했습니다. 재작성 처분은 기존 31파일에서 36파일로 늘었으며 레거시 공개 Form 시험 2파일의 삭제도 유지합니다. 유효한 관찰의 U9 e2e 파일·원장 ID로 시작하는 예정 사례 이름은 렌더 처분표에, 소비자가 볼 변경 다섯 가지는 이주 점검표에 교차 기록했습니다. 별도 재귀 확장·placeholder 경로 결함은 29d061941·fc651e734로 고쳤습니다. 아래 중단 표와 이전 명령 결과는 처분 전 진단 기록이며 관리자 답 대기는 78C-01로 닫혔습니다. U9의 대체 e2e는 이 단위에서 구현하지 않았으며 이 판정은 U8 전체 완료를 뜻하지 않습니다.
 
 ## 파일별 처분
 
@@ -17,7 +17,7 @@
 | `src/__tests__/scenarios/array.mutation-identity.render.test.tsx` | deleted | 기대가 바뀌는 옛 시험을 삭제하고 처분표의 새 e2e 자리와 보존 상황으로 인계했습니다. |
 | `src/__tests__/scenarios/array.omit-trailing.composite.render.test.tsx` | deleted | 기대가 바뀌는 옛 시험을 삭제하고 처분표의 새 e2e 자리와 보존 상황으로 인계했습니다. |
 | `src/__tests__/scenarios/array.omit-trailing.conditional.render.test.tsx` | deleted | 기대가 바뀌는 옛 시험을 삭제하고 처분표의 새 e2e 자리와 보존 상황으로 인계했습니다. |
-| `src/__tests__/scenarios/array.omit-trailing.injection.render.test.tsx` | kept (중단) | VALUE-034·TEST-020·TEST-021 충돌·선행 문제를 확인하여 원문으로 복구했습니다. |
+| `src/__tests__/scenarios/array.omit-trailing.injection.render.test.tsx` | deleted | VALUE-034·TEST-020·021의 기대 변경을 78C-01로 처분하고 omitTrailing 관찰을 U9 예정 사례로 인계했습니다. |
 | `src/__tests__/scenarios/array.omit-trailing.render.test.tsx` | deleted | 기대가 바뀌는 옛 시험을 삭제하고 처분표의 새 e2e 자리와 보존 상황으로 인계했습니다. |
 | `src/__tests__/scenarios/array.prefixItems-terminal.render.test.tsx` | deleted | 기대가 바뀌는 옛 시험을 삭제하고 처분표의 새 e2e 자리와 보존 상황으로 인계했습니다. |
 | `src/__tests__/scenarios/composition.allOf-ifThenElse.render.test.tsx` | deleted | 기대가 바뀌는 옛 시험을 삭제하고 처분표의 새 e2e 자리와 보존 상황으로 인계했습니다. |
@@ -30,13 +30,13 @@
 | `src/__tests__/scenarios/computed.readonly-disabled.render.test.tsx` | surface-fixed | 새 API·스키마 위치·검증기 모양만 맞췄으며 기존 단언은 모두 동일합니다. |
 | `src/__tests__/scenarios/computed.visibility.render.test.tsx` | surface-fixed | 새 API·스키마 위치·검증기 모양만 맞췄으며 기존 단언은 모두 동일합니다. |
 | `src/__tests__/scenarios/controlled-interaction.render.test.tsx` | deleted | 기대가 바뀌는 옛 시험을 삭제하고 처분표의 새 e2e 자리와 보존 상황으로 인계했습니다. |
-| `src/__tests__/scenarios/default-value.input-immutability.render.test.tsx` | kept (중단) | NODE-005·WRITE-071 충돌·선행 문제를 확인하여 원문으로 복구했습니다. |
+| `src/__tests__/scenarios/default-value.input-immutability.render.test.tsx` | deleted | NODE-005·WRITE-071에 따라 78C-01로 처분하고 호출자 defaultValue 불변 관찰을 U9 예정 사례로 인계했습니다. |
 | `src/__tests__/scenarios/default-value.render.test.tsx` | deleted | 기대가 바뀌는 옛 시험을 삭제하고 처분표의 새 e2e 자리와 보존 상황으로 인계했습니다. |
-| `src/__tests__/scenarios/deferred-mount.render.test.tsx` | kept (중단) | TEST-020·TEST-021 충돌·선행 문제를 확인하여 원문으로 복구했습니다. |
+| `src/__tests__/scenarios/deferred-mount.render.test.tsx` | deleted | TEST-020·021의 마운트 기대 변경을 78C-01로 처분하고 getValue·controls 아래 지연 필드 관찰을 U9 예정 사례로 인계했습니다. |
 | `src/__tests__/scenarios/deferred-mount.strict.render.test.tsx` | kept | 파일은 고치지 않았고 새 공통 하니스 또는 기존 독립 연결로 통과했습니다. |
 | `src/__tests__/scenarios/formType-resolution.render.test.tsx` | surface-fixed | 새 API·스키마 위치·검증기 모양만 맞췄으며 기존 단언은 모두 동일합니다. |
 | `src/__tests__/scenarios/injectTo.render.test.tsx` | deleted | 기대가 바뀌는 옛 시험을 삭제하고 처분표의 새 e2e 자리와 보존 상황으로 인계했습니다. |
-| `src/__tests__/scenarios/multi-render-split-brain.render.test.tsx` | kept (중단) | LANDING-115·VALIDATE-010·VALIDATE-036 충돌·선행 문제를 확인하여 원문으로 복구했습니다. |
+| `src/__tests__/scenarios/multi-render-split-brain.render.test.tsx` | deleted | LANDING-115·VALIDATE-010·036의 오류 기대 변경을 78C-01로 처분하고 분기 자식·오류 동기 관찰을 U9 예정 사례로 인계했습니다. |
 | `src/__tests__/scenarios/nullable.object-blank-state.render.test.tsx` | deleted | 기대가 바뀌는 옛 시험을 삭제하고 처분표의 새 e2e 자리와 보존 상황으로 인계했습니다. |
 | `src/__tests__/scenarios/nullable.object-initial-null.render.test.tsx` | deleted | 기대가 바뀌는 옛 시험을 삭제하고 처분표의 새 e2e 자리와 보존 상황으로 인계했습니다. |
 | `src/__tests__/scenarios/nullable.object-null-branch.render.test.tsx` | deleted | 기대가 바뀌는 옛 시험을 삭제하고 처분표의 새 e2e 자리와 보존 상황으로 인계했습니다. |
@@ -49,7 +49,7 @@
 | `src/__tests__/scenarios/refSchema-context-provider.render.test.tsx` | surface-fixed (엔진 차단 1건) | controls·presentation 표면 3건은 복구했고 재귀 형상 오류 1건은 아래에 구체적인 원인을 기록했습니다. |
 | `src/__tests__/scenarios/refresh.uncontrolled-value.render.test.tsx` | deleted | 기대가 바뀌는 옛 시험을 삭제하고 처분표의 새 e2e 자리와 보존 상황으로 인계했습니다. |
 | `src/__tests__/scenarios/renderProp.value.render.test.tsx` | kept | 파일은 고치지 않았고 새 공통 하니스 또는 기존 독립 연결로 통과했습니다. |
-| `src/__tests__/scenarios/reset.pristine.render.test.tsx` | kept (중단) | LANDING-148·LANDING-157 충돌·선행 문제를 확인하여 원문으로 복구했습니다. |
+| `src/__tests__/scenarios/reset.pristine.render.test.tsx` | deleted | LANDING-148의 find 기대 변경을 78C-01로 처분하고 reset 뒤 비활성 잔여 없음 관찰을 U9 예정 사례로 인계했습니다. LANDING-157은 이름 이주입니다. |
 | `src/__tests__/scenarios/schema-props-renderer.render.test.tsx` | deleted | 기대가 바뀌는 옛 시험을 삭제하고 처분표의 새 e2e 자리와 보존 상황으로 인계했습니다. |
 | `src/__tests__/scenarios/state-management.render.test.tsx` | surface-fixed | SchemaNodeState·SchemaNodeEventType·FormTypeGroupRenderer·presentation만 맞춰 14건 모두 통과했습니다. |
 | `src/__tests__/scenarios/terminal-mode.render.test.tsx` | deleted | 기대가 바뀌는 옛 시험을 삭제하고 처분표의 새 e2e 자리와 보존 상황으로 인계했습니다. |
@@ -217,3 +217,32 @@ SURFACE-056·060, LANDING-157에 따라 `core/types/state.ts`의 enum을 `Schema
 | `git diff --check` (worktree 루트) | 통과 |
 
 하니스 계약 시험은 변경 전 3건 모두 실패했습니다: DOM 등록 없음, 동기 guard의 detail 누락, errorRecords 없음. 구현 후 전체 render 실행에서 세 시험은 모두 통과했습니다. 중단 파일에 12실패가 있고, 중단으로 분류하지 않은 ref/context 파일의 재귀 엔진 차단 1실패가 남습니다. 최종 G3(TypeScript)·G4(render)는 미충족으로 유지합니다.
+
+## D-A·D-B 구현 차단 수정 검증 (2026-10-03)
+
+- **D-A / BLUEPRINT-030**: `hasRecursiveExpansion`이 배열 아이템 에지를 넘어 원본 없는 같은 청사진 조상을 검사한 것이 원인입니다. 배열 부모에서 조상 탐색을 끝내어 빈 객체 아이템도 참조 필드와 빈 자식 배열을 만들도록 했습니다. 빈 배열은 아이템을 만들지 않고, 객체 프로퍼티만의 청사진 오류와 아이템 내부의 원본 없는 게이트 순환 정착 오류는 유지합니다(18C-01, LANDING-128).
+- **D-B / LANDING-087**: reveal 기록은 이미 노드 identity의 `WeakSet`이며 경로나 위치 키가 아니었습니다. `DeferrableNodeProxy`가 `UpdatePath`를 추적하지 않아 미노출 형제 placeholder가 이전 경로에 남고, 이동한 노출 필드의 `/items/10`과 겹쳤습니다. 경로 사건을 추적하여 placeholder 주소만 현재 노드 경로로 갱신합니다. 노드·입력 DOM identity와 defer-once는 유지합니다. 06-array 계획·검증에서 `reveal`/`defer-once` 기록은 발견하지 못했으며, 현행 LANDING-087과 PKG/CLAUDE.md 계약을 적용했습니다.
+- 새 회귀 파일은 `core/settle/__tests__/settle.array-recursion.test.ts`(4사례)와 `components/SchemaNode/__tests__/virtualization.rekey.render.test.tsx`(1사례)입니다. 수정 전에는 push의 `RECURSIVE_SHAPE_DIVERGED`와 삭제 후 placeholder 판정으로 2실패·3통과였고, 수정 후 5사례 모두 통과했습니다. 기존 두 문제 렌더 사례도 원문 그대로 통과했습니다.
+
+아래 명령은 PKG에서 실행했고 npx의 offline/설치 거부 설정을 사용했습니다. git 쓰기·설치 및 `src/__tests__/**`·`src/__legacy__/**` 편집은 하지 않았습니다.
+
+| 명령 | 결과 |
+| --- | --- |
+| `npx vitest run --project unit --reporter=dot` | exit 0, 250파일, 2112 passed·1 todo |
+| `npx vitest run --project render --reporter=dot` | exit 1, 35파일 통과·4파일 실패, 221 passed·11 failed |
+| `npx tsc --noEmit --composite false --rootDir . -p tsconfig.json` | exit 2, 알려진 `reset.pristine.render.test.tsx(6,10)`의 `NodeState` TS2305 1건만 남음 |
+| `npx eslint "src/**/*.{ts,tsx}"` | exit 0, 출력 없음 |
+
+남은 render 실패는 중단 표 안의 `array.omit-trailing.injection.render.test.tsx` 2건, `deferred-mount.render.test.tsx` 3건, `multi-render-split-brain.render.test.tsx` 2건, `reset.pristine.render.test.tsx` 4건입니다. 중단 표 밖의 실패는 없으며, D-A·D-B 구현 차단은 해소했습니다. 기존 U8 전체 완료 판정과 원장 관리자 보류는 이 수정으로 닫지 않습니다.
+
+## 78C-01 처분 후 검증 (2026-10-03)
+
+다섯 중단 파일을 삭제한 뒤 PKG에서 실행했습니다. npx에는 `--no-install`과 offline·설치 거부 설정을 사용했습니다. 위 실패 수와 보류는 처분 전 기록이며, 이번 결과는 U9 대체 e2e 구현 완료를 뜻하지 않습니다.
+
+| 명령 | 결과 |
+| --- | --- |
+| `npx --no-install vitest run --project render --reporter=dot` | exit 0, 34파일·181사례 통과 |
+| `npx --no-install tsc --noEmit --composite false --rootDir . -p tsconfig.json` | exit 0, 오류 0 |
+| `npx --no-install eslint "src/**/*.{ts,tsx}"` | exit 0, 출력 없음 |
+| `node architecture/verification/07-switch/tools/extract-migration-rows.mjs --check architecture/verification/07-switch/migration-check.md` | exit 0, 이주 ID 128행 점검 통과 |
+| `grep -nE '\|[[:space:]]*\|' architecture/verification/07-switch/render-disposition.md`와 TBD 검사 | 출력 없음, 빈 셀 0·TBD 0 |
