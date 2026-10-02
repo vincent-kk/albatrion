@@ -1,5 +1,7 @@
 export { Portal } from './components';
 export {
+  type ErrorBoundaryReporter,
+  type UseErrorBoundaryReporter,
   withErrorBoundary,
   withErrorBoundaryForwardRef,
   withUploader,

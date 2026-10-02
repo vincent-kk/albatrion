@@ -2,9 +2,20 @@ import { Component, type ErrorInfo, type ReactNode } from 'react';
 
 import { FallbackMessage } from './FallbackMessage';
 
+/** Reports a caught render error with only React's component stack. */
+export type ErrorBoundaryReporter = (
+  error: unknown,
+  info: { componentStack?: string },
+) => void;
+
+/** Reads an optional render error reporter from the current React context. */
+export type UseErrorBoundaryReporter = () => ErrorBoundaryReporter | undefined;
+
 interface Props {
   children: ReactNode;
   fallback?: ReactNode;
+  /** Receives each caught render error after the boundary logs it. */
+  onError?: ErrorBoundaryReporter;
 }
 
 interface State {
@@ -51,6 +62,9 @@ export class ErrorBoundary extends Component<Props, State> {
    */
   componentDidCatch(error: Error, errorInfo: ErrorInfo): void {
     console.error('ErrorBoundary caught an error:', error, errorInfo);
+    this.props.onError?.(error, {
+      componentStack: errorInfo.componentStack ?? undefined,
+    });
   }
 
   render(): ReactNode {
