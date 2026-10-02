@@ -7,6 +7,8 @@
 
 ## API Contracts
 
+렌더 값 장면은 TEST-005의 nullable 보존 사례와 LANDING-139·196·200의 빈 값·승격 계약을 함께 기술합니다. VALUE-036 보충의 로드 null은 자식 채움을 받으며, 로드 아닌 null 쓰기는 채우지 않습니다. REACT-027의 nullable 비우기 조작은 null이고 non-nullable 빈 입력은 undefined입니다. 제목의 첫 원장 ID가 기대값의 근거입니다.
+
 `valueScenarios`는 `index.ts`를 통해 부류의 순서 있는 장면 목록을 내보낸다.
 소비자는 주입한 어댑터로 각 스키마와 순서 있는 단계를 실행한다.
 데이터는 관찰 가능한 기대값을 기록하며, 엔진·렌더 단언은 소비자가 소유한다.
@@ -30,4 +32,4 @@
 
 ## Last Updated
 
-2026-10-02
+2026-10-03

@@ -48,6 +48,15 @@ export const createRenderScenarioAdapter = (form: FormHarness): ScenarioAdapter 
       changeStart = form.changeLog().length;
       errorStart = form.errorRecords().length;
       result = undefined;
+      if (step.action === 'clear') {
+        const node = form.node(step.path);
+        const field = form.field(step.path);
+        if (node && !node.nullable && (node.type === 'string' || node.type === 'number') &&
+          field?.tagName === 'INPUT' && (field.type === 'text' || field.type === 'number')) {
+          await form.type(step.path, '');
+          return;
+        }
+      }
       if (step.action === 'setValue') {
         const field = form.field(step.path);
         if (field && typeof step.value === 'string') {

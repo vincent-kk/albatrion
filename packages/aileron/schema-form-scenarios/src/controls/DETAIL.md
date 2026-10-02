@@ -7,9 +7,13 @@
 
 ## API Contracts
 
+U9 렌더 장면은 presentation 전달과 빈 입력의 undefined 방출, 가상 branch 자식의 전체 값 쓰기·활성 왕복을 관찰한다(LANDING-019·034·125·167·196).
+캐럿·IME·focus·trim의 소비자 계측은 schema-form의 전용 e2e가 소유하며 데이터 모듈에 React나 spy를 넣지 않는다(TEST-023).
+
 `controlsScenarios`는 `index.ts`를 통해 부류의 순서 있는 장면 목록을 내보낸다.
 소비자는 주입한 어댑터로 각 스키마와 순서 있는 단계를 실행한다.
 데이터는 관찰 가능한 기대값을 기록하며, 엔진·렌더 단언은 소비자가 소유한다.
+렌더 장면도 `controls.` 주소와 각 최상위 단계의 기대값을 공유한다. LANDING-196의 빈 입력은 `clear`로 표현해 코어의 undefined 쓰기와 화면의 실제 입력 비우기가 같은 데이터와 기대값을 소비하게 한다. `states` 장면의 batch는 readOnly 입력 조작을 흉내 내지 않고 호출자의 직접 쓰기를 유지한다.
 
 ## Acceptance Criteria
 
@@ -38,4 +42,4 @@
 
 ## Last Updated
 
-2026-10-02
+2026-10-03
