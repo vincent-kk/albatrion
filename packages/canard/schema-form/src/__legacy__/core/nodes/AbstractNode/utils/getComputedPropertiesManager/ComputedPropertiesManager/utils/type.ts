@@ -1,4 +1,4 @@
-import type { JSONSchemaWithVirtual } from '@/schema-form/types';
+import type { JSONSchemaWithVirtual } from '@/schema-form/__legacy__/types';
 
 /**
  * Alias for fields specified under computed

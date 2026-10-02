@@ -2,11 +2,11 @@ import { describe, expect, it, vi } from 'vitest';
 
 import { delay } from '@winglet/common-utils/promise';
 
-import { nodeFromJSONSchema } from '@/schema-form/core';
+import { nodeFromJSONSchema } from '@/schema-form/__legacy__/core';
 
 import type { ArrayNode } from '../nodes/ArrayNode';
 import type { ObjectNode } from '../nodes/ObjectNode';
-import { NodeEventType, type SchemaNode, ValidationMode } from '../../../core/types';
+import { NodeEventType, type SchemaNode, ValidationMode } from '../types';
 
 /**
  * Helper function to access protected __setName__ method for testing

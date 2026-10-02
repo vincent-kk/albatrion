@@ -1,16 +1,16 @@
-import type { ValidationMode } from '@/schema-form/core/types';
+import type { ValidationMode } from '@/schema-form/__legacy__/core/types';
 import { JSONSchemaError } from '@/schema-form/errors';
 import {
   formatCircularReferenceError,
   formatSchemaCompileError,
   transformErrors,
 } from '@/schema-form/helpers/error';
-import { stripSchemaExtensions } from '@/schema-form/helpers/jsonSchema';
+import { stripSchemaExtensions } from '@/schema-form/__legacy__/helpers/jsonSchema';
 import type {
   ValidateFunction,
   JSONSchemaError as ValidationError,
   ValidatorFactory,
-} from '@/schema-form/types';
+} from '@/schema-form/__legacy__/types';
 
 import type { ValidationHost } from './type';
 import { getFallbackValidator } from './utils/getFallbackValidator';

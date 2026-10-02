@@ -10,7 +10,7 @@ import {
   convertExpression,
 } from '@/schema-form/helpers/dynamicExpression';
 import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
-import type { PartialJSONSchema } from '@/schema-form/types';
+import type { PartialJSONSchema } from '@/schema-form/__legacy__/types';
 
 /**
  * Extracts conditional expressions from a JSON Schema's properties

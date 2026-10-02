@@ -1,7 +1,7 @@
 import type {
   JSONSchemaError,
   JSONSchemaWithVirtual,
-} from '@/schema-form/types';
+} from '@/schema-form/__legacy__/types';
 
 interface ValidationTarget {
   readonly variant: number | undefined;

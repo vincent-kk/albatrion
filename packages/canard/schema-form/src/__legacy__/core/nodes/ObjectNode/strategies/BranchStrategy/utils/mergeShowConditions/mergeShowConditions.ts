@@ -1,7 +1,7 @@
 import { merge } from '@winglet/common-utils/object';
 
 import { combineConditions } from '@/schema-form/helpers/dynamicExpression';
-import type { JSONSchemaWithRef } from '@/schema-form/types';
+import type { JSONSchemaWithRef } from '@/schema-form/__legacy__/types';
 
 /**
  * Merges JSON schema with conditions and returns a new schema.

@@ -7,7 +7,7 @@ import type {
   JSONSchema,
   JSONSchemaError,
   ValidateFunction,
-} from '@/schema-form/types';
+} from '@/schema-form/__legacy__/types';
 
 export const createValidatorFactory =
   (ajv: Ajv) =>

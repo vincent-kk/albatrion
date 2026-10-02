@@ -23,7 +23,7 @@ import type {
   JSONSchemaType,
   JSONSchemaWithVirtual,
   JSONSchemaError as ValidationError,
-} from '@/schema-form/types';
+} from '@/schema-form/__legacy__/types';
 
 import {
   type ChildNode,
@@ -40,7 +40,7 @@ import {
   type UnionNodeEventType,
   type UnionSetValueOption,
   ValidationMode,
-} from '../../../../core/types';
+} from '../../types';
 import {
   type ComputedProperties,
   EventCascadeManager,

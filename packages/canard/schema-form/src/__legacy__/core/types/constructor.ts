@@ -7,12 +7,12 @@ import type {
   JSONSchemaWithRef,
   JSONSchemaWithVirtual,
   ValidatorFactory,
-} from '@/schema-form/types';
+} from '@/schema-form/__legacy__/types';
 
-import type { ContextNode } from '../../__legacy__/core/nodes/ContextNode';
+import type { ContextNode } from '../nodes/ContextNode';
 import type { SchemaNode } from './node';
-import type { ValidationMode } from './state';
-import type { HandleChange } from './value';
+import type { ValidationMode } from '../../../core/types/state';
+import type { HandleChange } from '../../../core/types/value';
 
 /**
  * Factory signature used to produce a concrete `SchemaNode` from factory props.

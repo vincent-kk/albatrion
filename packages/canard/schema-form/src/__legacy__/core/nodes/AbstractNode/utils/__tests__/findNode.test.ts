@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 
-import type { SchemaNode } from '@/schema-form/core';
+import type { SchemaNode } from '@/schema-form/__legacy__/core';
 
 import { findNode } from '../findNode';
 

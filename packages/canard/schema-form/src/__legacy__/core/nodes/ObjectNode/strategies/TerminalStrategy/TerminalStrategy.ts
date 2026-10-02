@@ -10,9 +10,9 @@ import {
   NodeEventType,
   SetValueOption,
   type UnionSetValueOption,
-} from '@/schema-form/core/types';
+} from '@/schema-form/__legacy__/core/types';
 import { getObjectDefaultValue } from '@/schema-form/helpers/defaultValue';
-import type { ObjectValue } from '@/schema-form/types';
+import type { ObjectValue } from '@/schema-form/__legacy__/types';
 
 import type { ObjectNodeStrategy } from '../types';
 

@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import type { JSONSchema } from '@/schema-form/types';
+import type { JSONSchema } from '@/schema-form/__legacy__/types';
 
 import { processAllOfSchema } from '../processAllOfSchema';
 

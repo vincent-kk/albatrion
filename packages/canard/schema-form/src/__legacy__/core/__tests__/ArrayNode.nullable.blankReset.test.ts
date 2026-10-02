@@ -2,8 +2,8 @@ import { describe, expect, it, vi } from 'vitest';
 
 import { delay } from '@winglet/common-utils';
 
-import { nodeFromJSONSchema } from '@/schema-form/core';
-import type { JSONSchema } from '@/schema-form/types';
+import { nodeFromJSONSchema } from '@/schema-form/__legacy__/core';
+import type { JSONSchema } from '@/schema-form/__legacy__/types';
 
 import type { ObjectValue } from '../../../types';
 import type { ArrayNode } from '../nodes/ArrayNode';

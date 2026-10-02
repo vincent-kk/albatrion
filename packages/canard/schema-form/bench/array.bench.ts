@@ -16,7 +16,7 @@ import { createTestValidator } from '../src/core/__tests__/fixtures/createTestVa
 import { schemaNodeFactory, SetValueOption } from '../src/core/SchemaNode';
 import type { SchemaNode as RuntimeSchemaNode } from '../src/core/SchemaNode/SchemaNode';
 import { loadSchemaNodeAtMount } from '../src/core/settle';
-import { nodeFromJSONSchema } from '../src/core/nodeFromJSONSchema';
+import { nodeFromJSONSchema } from '../src/__legacy__/core/nodeFromJSONSchema';
 
 const schema = { type: 'array' as const, items: {
   type: 'object' as const, properties: { key: { type: 'number' as const } },

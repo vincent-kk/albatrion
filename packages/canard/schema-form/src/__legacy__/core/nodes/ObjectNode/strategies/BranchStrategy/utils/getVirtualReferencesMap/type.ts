@@ -1,4 +1,4 @@
-import type { ObjectSchema } from '@/schema-form/types';
+import type { ObjectSchema } from '@/schema-form/__legacy__/types';
 
 export type VirtualReference = NonNullable<ObjectSchema['virtual']>[string];
 /** Reverse index: field name -> virtual keys referencing it (built here, not read from the schema) */

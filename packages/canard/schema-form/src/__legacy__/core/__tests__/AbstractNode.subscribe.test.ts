@@ -6,11 +6,11 @@ import type {
   AllowedValue,
   JSONSchema,
   JSONSchemaWithVirtual,
-} from '@/schema-form/types';
+} from '@/schema-form/__legacy__/types';
 
-import { nodeFromJSONSchema } from '../../../core/nodeFromJSONSchema';
+import { nodeFromJSONSchema } from '../nodeFromJSONSchema';
 import { AbstractNode } from '../nodes/AbstractNode/AbstractNode';
-import { NodeEventType } from '../../../core/types';
+import { NodeEventType } from '../types';
 
 // 테스트를 위한 구체 클래스 구현
 class TestNode extends AbstractNode<JSONSchemaWithVirtual, AllowedValue> {

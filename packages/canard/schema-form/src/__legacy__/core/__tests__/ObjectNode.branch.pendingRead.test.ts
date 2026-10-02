@@ -10,8 +10,8 @@ import {
   SetValueOption,
   type StringNode,
   nodeFromJSONSchema,
-} from '@/schema-form/core';
-import type { JSONSchema } from '@/schema-form/types';
+} from '@/schema-form/__legacy__/core';
+import type { JSONSchema } from '@/schema-form/__legacy__/types';
 
 /**
  * Node-tree twin of `nullable.object-pending-read.render.test.tsx`: the same

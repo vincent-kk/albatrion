@@ -7,7 +7,7 @@ import type {
   AllowedValue,
   JSONSchema,
   JSONSchemaWithVirtual,
-} from '@/schema-form/types';
+} from '@/schema-form/__legacy__/types';
 
 export interface FlattenCondition {
   condition: Dictionary<AllowedValue | AllowedValue[]>;

@@ -1,5 +1,5 @@
-import { extractSchemaInfo } from '@/schema-form/helpers/jsonSchema/extractSchemaInfo';
-import type { JSONSchema, JSONSchemaType } from '@/schema-form/types';
+import { extractSchemaInfo } from '@/schema-form/__legacy__/helpers/jsonSchema/extractSchemaInfo';
+import type { JSONSchema, JSONSchemaType } from '@/schema-form/__legacy__/types';
 
 /**
  * Processes schema type during allOf schema merging.

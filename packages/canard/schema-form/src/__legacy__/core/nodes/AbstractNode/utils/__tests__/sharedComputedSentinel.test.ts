@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import type { JSONSchemaWithVirtual } from '@/schema-form/types';
+import type { JSONSchemaWithVirtual } from '@/schema-form/__legacy__/types';
 
 import { needsRealComputedManager } from '../getComputedPropertiesManager/utils/needsRealComputedManager';
 import { sharedComputedSentinel } from '../getComputedPropertiesManager/utils/sharedComputedSentinel';

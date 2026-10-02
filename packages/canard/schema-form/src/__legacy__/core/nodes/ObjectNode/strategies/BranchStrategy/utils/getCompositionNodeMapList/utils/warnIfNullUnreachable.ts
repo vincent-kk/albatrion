@@ -3,12 +3,12 @@ import { hasOwnProperty } from '@winglet/common-utils/lib';
 
 import type { ObjectNode } from '@/schema-form/__legacy__/core/nodes/ObjectNode';
 import { formatNullUnreachableWarning } from '@/schema-form/helpers/error';
-import { extractSchemaInfo } from '@/schema-form/helpers/jsonSchema';
+import { extractSchemaInfo } from '@/schema-form/__legacy__/helpers/jsonSchema';
 import {
   NULLABLE_ONE_OF_NULL_UNREACHABLE,
   warnDevelopmentIssue,
 } from '@/schema-form/helpers/warning';
-import type { ObjectSchema } from '@/schema-form/types';
+import type { ObjectSchema } from '@/schema-form/__legacy__/types';
 
 /**
  * Emit a development warning when a nullable object's `oneOf` can never validate `null`.

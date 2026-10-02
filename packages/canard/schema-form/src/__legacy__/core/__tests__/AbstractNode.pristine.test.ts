@@ -1,13 +1,13 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import type { JSONSchemaWithVirtual } from '@/schema-form/types';
+import type { JSONSchemaWithVirtual } from '@/schema-form/__legacy__/types';
 
-import { nodeFromJSONSchema } from '../../../core/nodeFromJSONSchema';
+import { nodeFromJSONSchema } from '../nodeFromJSONSchema';
 import type { BooleanNode } from '../nodes/BooleanNode';
 import type { NumberNode } from '../nodes/NumberNode';
 import type { ObjectNode } from '../nodes/ObjectNode';
 import type { StringNode } from '../nodes/StringNode';
-import { NodeEventType, NodeState } from '../../../core/types';
+import { NodeEventType, NodeState } from '../types';
 
 const wait = (delay = 10) => {
   return new Promise((resolve) => {

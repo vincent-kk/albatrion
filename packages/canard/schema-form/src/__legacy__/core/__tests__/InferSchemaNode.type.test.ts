@@ -13,7 +13,7 @@ import type {
   ObjectSchema,
   StringSchema,
   VirtualSchema,
-} from '@/schema-form/types';
+} from '@/schema-form/__legacy__/types';
 
 import type { ArrayNode } from '../nodes/ArrayNode';
 import type { BooleanNode } from '../nodes/BooleanNode';
@@ -22,7 +22,7 @@ import type { NumberNode } from '../nodes/NumberNode';
 import type { ObjectNode } from '../nodes/ObjectNode';
 import type { StringNode } from '../nodes/StringNode';
 import type { VirtualNode } from '../nodes/VirtualNode';
-import type { InferSchemaNode, SchemaNode } from '../../../core/types';
+import type { InferSchemaNode, SchemaNode } from '../types';
 
 describe('InferSchemaNode type inference tests', () => {
   describe('Non-nullable schemas', () => {

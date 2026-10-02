@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import type { ObjectSchema } from '@/schema-form/types';
+import type { ObjectSchema } from '@/schema-form/__legacy__/types';
 
 import { getCompositionKeyInfo } from '../getCompositionKeyInfo';
 

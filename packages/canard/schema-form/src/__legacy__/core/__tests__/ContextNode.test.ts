@@ -5,9 +5,9 @@ import { delay } from '@winglet/common-utils';
 import {
   contextNodeFactory,
   nodeFromJSONSchema,
-} from '@/schema-form/core/nodeFromJSONSchema';
-import { NodeEventType } from '@/schema-form/core/types';
-import type { JSONSchema } from '@/schema-form/types';
+} from '@/schema-form/__legacy__/core/nodeFromJSONSchema';
+import { NodeEventType } from '@/schema-form/__legacy__/core/types';
+import type { JSONSchema } from '@/schema-form/__legacy__/types';
 
 import type { ArrayNode } from '../nodes/ArrayNode';
 import type { NumberNode } from '../nodes/NumberNode';

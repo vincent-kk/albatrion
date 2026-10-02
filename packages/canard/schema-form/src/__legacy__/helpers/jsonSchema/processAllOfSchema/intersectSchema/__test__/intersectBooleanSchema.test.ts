@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest';
 
-import type { BooleanSchema } from '@/schema-form/types';
+import type { BooleanSchema } from '@/schema-form/__legacy__/types';
 
 import { intersectBooleanSchema } from '../intersectBooleanSchema';
 

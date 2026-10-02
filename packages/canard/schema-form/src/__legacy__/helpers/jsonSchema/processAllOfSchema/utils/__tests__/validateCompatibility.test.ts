@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest';
 
-import type { JSONSchema } from '@/schema-form/types';
+import type { JSONSchema } from '@/schema-form/__legacy__/types';
 
 import { validateCompatibility } from '../validateCompatibility';
 

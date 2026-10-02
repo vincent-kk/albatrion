@@ -8,12 +8,12 @@ import { describe, expect, it, vi } from 'vitest';
 
 import { delay } from '@winglet/common-utils';
 
-import { nodeFromJSONSchema } from '@/schema-form/core';
-import type { JSONSchema } from '@/schema-form/types';
+import { nodeFromJSONSchema } from '@/schema-form/__legacy__/core';
+import type { JSONSchema } from '@/schema-form/__legacy__/types';
 
 import type { ObjectNode } from '../nodes/ObjectNode';
 import type { StringNode } from '../nodes/StringNode';
-import { NodeEventType } from '../../../core/types';
+import { NodeEventType } from '../types';
 
 describe('ObjectNode Propagate Batch Detailed Analysis', () => {
   describe('exact call count analysis', () => {

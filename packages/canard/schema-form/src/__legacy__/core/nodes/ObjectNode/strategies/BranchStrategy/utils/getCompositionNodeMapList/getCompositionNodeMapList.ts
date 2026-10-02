@@ -7,18 +7,18 @@ import type {
   ChildNode,
   HandleChange,
   SchemaNodeFactory,
-} from '@/schema-form/core/types';
+} from '@/schema-form/__legacy__/core/types';
 import { JSONSchemaError } from '@/schema-form/errors';
 import {
   formatCompositionPropertyExclusivenessError,
   formatCompositionPropertyRedefinitionError,
 } from '@/schema-form/helpers/error';
-import { isNullBranch } from '@/schema-form/helpers/jsonSchema';
+import { isNullBranch } from '@/schema-form/__legacy__/helpers/jsonSchema';
 import type {
   JSONSchema,
   ObjectSchema,
   ObjectValue,
-} from '@/schema-form/types';
+} from '@/schema-form/__legacy__/types';
 
 import { throwIfTypeRedefinition } from './utils/throwIfTypeRedefinition';
 import { warnIfNestedComposition } from './utils/warnIfNestedComposition';

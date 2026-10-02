@@ -21,6 +21,13 @@ const testMatches = (test: FormTypeTestObject, hint: Hint): boolean => {
     }
   }
 
+  if (test.schemaType !== undefined) {
+    const types = isArray(test.schemaType)
+      ? test.schemaType
+      : [test.schemaType];
+    if (!types.includes(hint.schemaType)) return false;
+  }
+
   // Nullable matching
   if (test.nullable !== undefined) {
     if (test.nullable !== hint.nullable) {
@@ -38,9 +45,7 @@ const testMatches = (test: FormTypeTestObject, hint: Hint): boolean => {
 
   // Format matching
   if (test.format !== undefined) {
-    const testFormats = isArray(test.format)
-      ? test.format
-      : [test.format];
+    const testFormats = isArray(test.format) ? test.format : [test.format];
     if (!testFormats.includes(hint.format)) {
       return false;
     }
@@ -64,11 +69,14 @@ describe('FormTypeInput - Nullable Type Matching', () => {
     it('should match nullable string types', () => {
       const test: FormTypeTestObject = {
         type: 'string',
+        schemaType: 'string',
         nullable: true,
       };
 
       const hint: Hint = {
         type: 'string',
+        schemaType: 'string',
+        typeMismatch: false,
         nullable: true,
         required: false,
         path: '/name',
@@ -81,11 +89,14 @@ describe('FormTypeInput - Nullable Type Matching', () => {
     it('should match non-nullable string types', () => {
       const test: FormTypeTestObject = {
         type: 'string',
+        schemaType: 'string',
         nullable: false,
       };
 
       const hint: Hint = {
         type: 'string',
+        schemaType: 'string',
+        typeMismatch: false,
         nullable: false,
         required: true,
         path: '/name',
@@ -98,11 +109,14 @@ describe('FormTypeInput - Nullable Type Matching', () => {
     it('should not match when nullable property differs', () => {
       const test: FormTypeTestObject = {
         type: 'string',
+        schemaType: 'string',
         nullable: true,
       };
 
       const nonNullableHint: Hint = {
         type: 'string',
+        schemaType: 'string',
+        typeMismatch: false,
         nullable: false,
         required: true,
         path: '/name',
@@ -120,6 +134,8 @@ describe('FormTypeInput - Nullable Type Matching', () => {
 
       const nullableHint: Hint = {
         type: 'string',
+        schemaType: 'string',
+        typeMismatch: false,
         nullable: true,
         required: false,
         path: '/name',
@@ -128,6 +144,8 @@ describe('FormTypeInput - Nullable Type Matching', () => {
 
       const nonNullableHint: Hint = {
         type: 'string',
+        schemaType: 'string',
+        typeMismatch: false,
         nullable: false,
         required: true,
         path: '/name',
@@ -143,11 +161,14 @@ describe('FormTypeInput - Nullable Type Matching', () => {
     it('should match nullable number types', () => {
       const test: FormTypeTestObject = {
         type: 'number',
+        schemaType: 'number',
         nullable: true,
       };
 
       const hint: Hint = {
         type: 'number',
+        schemaType: 'number',
+        typeMismatch: false,
         nullable: true,
         required: false,
         path: '/age',
@@ -159,12 +180,15 @@ describe('FormTypeInput - Nullable Type Matching', () => {
 
     it('should match nullable integer types', () => {
       const test: FormTypeTestObject = {
-        type: 'integer',
+        type: 'number',
+        schemaType: 'integer',
         nullable: true,
       };
 
       const hint: Hint = {
-        type: 'integer',
+        type: 'number',
+        schemaType: 'integer',
+        typeMismatch: false,
         nullable: true,
         required: false,
         path: '/count',
@@ -177,11 +201,14 @@ describe('FormTypeInput - Nullable Type Matching', () => {
     it('should match nullable boolean types', () => {
       const test: FormTypeTestObject = {
         type: 'boolean',
+        schemaType: 'boolean',
         nullable: true,
       };
 
       const hint: Hint = {
         type: 'boolean',
+        schemaType: 'boolean',
+        typeMismatch: false,
         nullable: true,
         required: false,
         path: '/active',
@@ -194,11 +221,14 @@ describe('FormTypeInput - Nullable Type Matching', () => {
     it('should match nullable object types', () => {
       const test: FormTypeTestObject = {
         type: 'object',
+        schemaType: 'object',
         nullable: true,
       };
 
       const hint: Hint = {
         type: 'object',
+        schemaType: 'object',
+        typeMismatch: false,
         nullable: true,
         required: false,
         path: '/address',
@@ -211,11 +241,14 @@ describe('FormTypeInput - Nullable Type Matching', () => {
     it('should match nullable array types', () => {
       const test: FormTypeTestObject = {
         type: 'array',
+        schemaType: 'array',
         nullable: true,
       };
 
       const hint: Hint = {
         type: 'array',
+        schemaType: 'array',
+        typeMismatch: false,
         nullable: true,
         required: false,
         path: '/items',
@@ -240,6 +273,8 @@ describe('FormTypeInput - Nullable Type Matching', () => {
 
       const stringHint: Hint = {
         type: 'string',
+        schemaType: 'string',
+        typeMismatch: false,
         nullable: true,
         required: false,
         path: '/value',
@@ -248,6 +283,8 @@ describe('FormTypeInput - Nullable Type Matching', () => {
 
       const numberHint: Hint = {
         type: 'number',
+        schemaType: 'number',
+        typeMismatch: false,
         nullable: true,
         required: false,
         path: '/value',
@@ -266,6 +303,8 @@ describe('FormTypeInput - Nullable Type Matching', () => {
 
       const nonNullableHint: Hint = {
         type: 'string',
+        schemaType: 'string',
+        typeMismatch: false,
         nullable: false,
         required: true,
         path: '/value',
@@ -286,6 +325,8 @@ describe('FormTypeInput - Nullable Type Matching', () => {
 
       const hint: Hint = {
         type: 'string',
+        schemaType: 'string',
+        typeMismatch: false,
         nullable: true,
         required: false,
         path: '/email',
@@ -308,6 +349,8 @@ describe('FormTypeInput - Nullable Type Matching', () => {
 
       const hint: Hint = {
         type: 'string',
+        schemaType: 'string',
+        typeMismatch: false,
         nullable: false,
         required: true,
         path: '/email',
@@ -332,6 +375,8 @@ describe('FormTypeInput - Nullable Type Matching', () => {
 
       const hint: Hint = {
         type: 'string',
+        schemaType: 'string',
+        typeMismatch: false,
         nullable: true,
         required: false,
         path: '/user/name',
@@ -350,6 +395,8 @@ describe('FormTypeInput - Nullable Type Matching', () => {
 
       const hint: Hint = {
         type: 'string',
+        schemaType: 'string',
+        typeMismatch: false,
         nullable: true,
         required: false,
         path: '/user/email',
@@ -371,6 +418,8 @@ describe('FormTypeInput - Nullable Type Matching', () => {
 
       const hint: Hint = {
         type: 'string',
+        schemaType: 'string',
+        typeMismatch: false,
         nullable: true,
         required: false,
         path: '/user/birthdate',
@@ -387,6 +436,8 @@ describe('FormTypeInput - Nullable Type Matching', () => {
     it('should not match when any property differs', () => {
       const baseHint: Hint = {
         type: 'string',
+        schemaType: 'string',
+        typeMismatch: false,
         nullable: true,
         required: false,
         path: '/field',
@@ -411,11 +462,14 @@ describe('FormTypeInput - Nullable Type Matching', () => {
     it('should handle null type (pure null schema)', () => {
       const test: FormTypeTestObject = {
         type: 'null',
+        schemaType: 'null',
         nullable: true,
       };
 
       const hint: Hint = {
         type: 'null',
+        schemaType: 'null',
+        typeMismatch: false,
         nullable: true,
         required: false,
         path: '/nullField',
@@ -427,17 +481,21 @@ describe('FormTypeInput - Nullable Type Matching', () => {
 
     it('should distinguish between integer and number with nullable', () => {
       const integerTest: FormTypeTestObject = {
-        type: 'integer',
+        type: 'number',
+        schemaType: 'integer',
         nullable: true,
       };
 
       const numberTest: FormTypeTestObject = {
         type: 'number',
+        schemaType: 'number',
         nullable: true,
       };
 
       const integerHint: Hint = {
-        type: 'integer',
+        type: 'number',
+        schemaType: 'integer',
+        typeMismatch: false,
         nullable: true,
         required: false,
         path: '/count',
@@ -446,6 +504,8 @@ describe('FormTypeInput - Nullable Type Matching', () => {
 
       const numberHint: Hint = {
         type: 'number',
+        schemaType: 'number',
+        typeMismatch: false,
         nullable: true,
         required: false,
         path: '/amount',
@@ -467,6 +527,8 @@ describe('FormTypeInput - Nullable Type Matching', () => {
       const hints: Hint[] = [
         {
           type: 'string',
+          schemaType: 'string',
+          typeMismatch: false,
           nullable: true,
           required: false,
           path: '/a',
@@ -474,6 +536,8 @@ describe('FormTypeInput - Nullable Type Matching', () => {
         },
         {
           type: 'number',
+          schemaType: 'number',
+          typeMismatch: false,
           nullable: false,
           required: true,
           path: '/b',
@@ -481,6 +545,8 @@ describe('FormTypeInput - Nullable Type Matching', () => {
         },
         {
           type: 'boolean',
+          schemaType: 'boolean',
+          typeMismatch: false,
           nullable: true,
           required: false,
           path: '/c',
@@ -496,12 +562,15 @@ describe('FormTypeInput - Nullable Type Matching', () => {
     it('should handle undefined format in both test and hint', () => {
       const test: FormTypeTestObject = {
         type: 'string',
+        schemaType: 'string',
         nullable: true,
         // format is undefined
       };
 
       const hint: Hint = {
         type: 'string',
+        schemaType: 'string',
+        typeMismatch: false,
         nullable: true,
         required: false,
         path: '/field',
@@ -521,6 +590,8 @@ describe('FormTypeInput - Nullable Type Matching', () => {
 
       const hint: Hint = {
         type: 'string',
+        schemaType: 'string',
+        typeMismatch: false,
         nullable: true,
         required: false,
         path: '/custom',
@@ -543,6 +614,8 @@ describe('FormTypeInput - Nullable Type Matching', () => {
 
       const nullableStringHint: Hint = {
         type: 'string',
+        schemaType: 'string',
+        typeMismatch: false,
         nullable: true,
         required: false,
         path: '/field',
@@ -551,6 +624,8 @@ describe('FormTypeInput - Nullable Type Matching', () => {
 
       const nonNullableStringHint: Hint = {
         type: 'string',
+        schemaType: 'string',
+        typeMismatch: false,
         nullable: false,
         required: true,
         path: '/field',
@@ -575,6 +650,8 @@ describe('FormTypeInput - Nullable Type Matching', () => {
       const matchingHints: Hint[] = [
         {
           type: 'string',
+          schemaType: 'string',
+          typeMismatch: false,
           nullable: true,
           required: false,
           path: '/email',
@@ -583,6 +660,8 @@ describe('FormTypeInput - Nullable Type Matching', () => {
         },
         {
           type: 'number',
+          schemaType: 'number',
+          typeMismatch: false,
           nullable: false,
           required: true,
           path: '/age',
@@ -593,6 +672,8 @@ describe('FormTypeInput - Nullable Type Matching', () => {
       const nonMatchingHints: Hint[] = [
         {
           type: 'string',
+          schemaType: 'string',
+          typeMismatch: false,
           nullable: false,
           required: true,
           path: '/email',
@@ -601,6 +682,8 @@ describe('FormTypeInput - Nullable Type Matching', () => {
         },
         {
           type: 'number',
+          schemaType: 'number',
+          typeMismatch: false,
           nullable: true,
           required: false,
           path: '/age',
@@ -634,6 +717,8 @@ describe('FormTypeInput - Nullable Type Matching', () => {
 
       const requiredEmail: Hint = {
         type: 'string',
+        schemaType: 'string',
+        typeMismatch: false,
         nullable: false,
         required: true,
         path: '/contact/email',
@@ -643,6 +728,8 @@ describe('FormTypeInput - Nullable Type Matching', () => {
 
       const optionalEmail: Hint = {
         type: 'string',
+        schemaType: 'string',
+        typeMismatch: false,
         nullable: true,
         required: false,
         path: '/contact/secondaryEmail',
@@ -662,16 +749,20 @@ describe('FormTypeInput - Nullable Type Matching', () => {
     it('should match nullable number slider component', () => {
       const sliderTest: FormTypeTestObject = {
         type: 'number',
+        schemaType: 'number',
         nullable: false, // Slider requires value
       };
 
       const optionalSliderTest: FormTypeTestObject = {
         type: 'number',
+        schemaType: 'number',
         nullable: true, // Optional slider with "not set" state
       };
 
       const requiredNumber: Hint = {
         type: 'number',
+        schemaType: 'number',
+        typeMismatch: false,
         nullable: false,
         required: true,
         path: '/settings/volume',
@@ -680,6 +771,8 @@ describe('FormTypeInput - Nullable Type Matching', () => {
 
       const optionalNumber: Hint = {
         type: 'number',
+        schemaType: 'number',
+        typeMismatch: false,
         nullable: true,
         required: false,
         path: '/settings/optionalVolume',

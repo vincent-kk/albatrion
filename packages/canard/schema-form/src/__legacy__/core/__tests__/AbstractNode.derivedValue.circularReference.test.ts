@@ -8,13 +8,13 @@
 import { describe, expect, it, vi } from 'vitest';
 
 import { isSchemaFormError } from '@/schema-form/errors';
-import type { JSONSchemaWithVirtual } from '@/schema-form/types';
+import type { JSONSchemaWithVirtual } from '@/schema-form/__legacy__/types';
 
-import { nodeFromJSONSchema } from '../../../core/nodeFromJSONSchema';
+import { nodeFromJSONSchema } from '../nodeFromJSONSchema';
 import type { NumberNode } from '../nodes/NumberNode';
 import type { ObjectNode } from '../nodes/ObjectNode';
 import type { StringNode } from '../nodes/StringNode';
-import { NodeEventType } from '../../../core/types';
+import { NodeEventType } from '../types';
 
 const wait = (delay = 10) => {
   return new Promise((resolve) => {

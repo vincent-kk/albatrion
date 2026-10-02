@@ -1,5 +1,5 @@
 import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
-import type { JSONSchemaType } from '@/schema-form/types';
+import type { JSONSchemaType } from '@/schema-form/__legacy__/types';
 
 /**
  * Generates a JSON Schema path segment for a node based on its scope and context.

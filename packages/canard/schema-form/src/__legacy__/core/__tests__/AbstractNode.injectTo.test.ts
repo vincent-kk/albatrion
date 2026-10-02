@@ -1,9 +1,9 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import type { InjectHandlerContext, JSONSchema } from '@/schema-form/types';
+import type { InjectHandlerContext, JSONSchema } from '@/schema-form/__legacy__/types';
 
-import { contextNodeFactory, nodeFromJSONSchema } from '../../../core/nodeFromJSONSchema';
-import { NodeEventType } from '../../../core/types';
+import { contextNodeFactory, nodeFromJSONSchema } from '../nodeFromJSONSchema';
+import { NodeEventType } from '../types';
 
 const wait = (delay = 10) => {
   return new Promise((resolve) => {

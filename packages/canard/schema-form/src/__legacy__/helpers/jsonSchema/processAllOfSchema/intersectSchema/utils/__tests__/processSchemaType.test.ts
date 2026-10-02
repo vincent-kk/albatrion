@@ -4,7 +4,7 @@ import type {
   NullSchema,
   NumberSchema,
   StringSchema,
-} from '@/schema-form/types';
+} from '@/schema-form/__legacy__/types';
 
 import { processSchemaType } from '../processSchemaType';
 

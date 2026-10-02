@@ -1,7 +1,7 @@
 import { isArray } from '@winglet/common-utils/filter';
 import { minLite } from '@winglet/common-utils/math';
 
-import type { ArraySchema } from '@/schema-form/types';
+import type { ArraySchema } from '@/schema-form/__legacy__/types';
 
 interface ArrayLimits {
   readonly min: number;

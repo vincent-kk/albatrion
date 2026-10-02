@@ -8,8 +8,8 @@ import {
   type SchemaNode,
   type StringNode,
   nodeFromJSONSchema,
-} from '@/schema-form/core';
-import type { JSONSchema } from '@/schema-form/types';
+} from '@/schema-form/__legacy__/core';
+import type { JSONSchema } from '@/schema-form/__legacy__/types';
 
 /**
  * A read of a pending value is remembered until the value changes again. Each

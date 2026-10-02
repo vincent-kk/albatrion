@@ -1,6 +1,6 @@
 import { isArray } from '@winglet/common-utils/filter';
 
-import type { ArrayValue } from '@/schema-form/types';
+import type { ArrayValue } from '@/schema-form/__legacy__/types';
 
 /**
  * Parses input value to array format.

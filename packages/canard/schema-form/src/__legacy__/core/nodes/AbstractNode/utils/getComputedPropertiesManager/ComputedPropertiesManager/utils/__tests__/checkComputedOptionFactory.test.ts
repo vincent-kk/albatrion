@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { getPathManager } from '@/schema-form/core/blueprint';
-import type { JSONSchemaWithVirtual } from '@/schema-form/types';
+import type { JSONSchemaWithVirtual } from '@/schema-form/__legacy__/types';
 
 import { checkComputedOptionFactory } from '../checkComputedOptionFactory';
 

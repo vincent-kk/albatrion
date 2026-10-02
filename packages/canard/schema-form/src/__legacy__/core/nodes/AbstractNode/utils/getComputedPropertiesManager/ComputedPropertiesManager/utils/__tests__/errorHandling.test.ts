@@ -2,7 +2,7 @@ import { describe, expect, test } from 'vitest';
 
 import { getPathManager } from '@/schema-form/core/blueprint';
 import { JSONSchemaError } from '@/schema-form/errors';
-import type { JSONSchemaWithVirtual } from '@/schema-form/types';
+import type { JSONSchemaWithVirtual } from '@/schema-form/__legacy__/types';
 
 import { checkComputedOptionFactory } from '../checkComputedOptionFactory';
 import { getConditionIndexFactory } from '../getConditionIndexFactory';

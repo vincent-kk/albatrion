@@ -1,5 +1,5 @@
 import { getEmptyValue } from '@/schema-form/helpers/defaultValue';
-import type { JSONSchemaType } from '@/schema-form/types';
+import type { JSONSchemaType } from '@/schema-form/__legacy__/types';
 
 /**
  * Returns default value based on JSON Schema's default property or type

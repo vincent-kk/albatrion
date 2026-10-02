@@ -1,6 +1,6 @@
 import { equals } from '@winglet/common-utils/object';
 
-import type { JSONSchemaError as ValidationError } from '@/schema-form/types';
+import type { JSONSchemaError as ValidationError } from '@/schema-form/__legacy__/types';
 
 const RECURSIVE_ERROR_OMITTED_KEYS = new Set(['key']);
 

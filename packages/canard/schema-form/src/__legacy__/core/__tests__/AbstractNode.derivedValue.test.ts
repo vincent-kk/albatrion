@@ -1,15 +1,15 @@
 import { describe, expect, it, vi } from 'vitest';
 
 import { isSchemaFormError } from '@/schema-form/errors';
-import type { JSONSchemaWithVirtual } from '@/schema-form/types';
+import type { JSONSchemaWithVirtual } from '@/schema-form/__legacy__/types';
 
-import { nodeFromJSONSchema } from '../../../core/nodeFromJSONSchema';
+import { nodeFromJSONSchema } from '../nodeFromJSONSchema';
 import type { AbstractNode } from '../nodes/AbstractNode';
 import type { ArrayNode } from '../nodes/ArrayNode';
 import type { BooleanNode } from '../nodes/BooleanNode';
 import type { NumberNode } from '../nodes/NumberNode';
 import type { StringNode } from '../nodes/StringNode';
-import { NodeEventType, type SchemaNode } from '../../../core/types';
+import { NodeEventType, type SchemaNode } from '../types';
 
 /**
  * Helper function to access protected __computeEnabled__ property for testing

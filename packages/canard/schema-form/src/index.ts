@@ -39,10 +39,13 @@ export {
   type ObjectNode,
   type StringNode,
   type VirtualNode,
-  NodeState,
+  type UnionNode,
+  type BranchNode,
+  type TerminalNode,
   ValidationMode,
-  PublicNodeEventType as NodeEventType,
-  PublicSetValueOption as SetValueOption,
+  SchemaNodeEventType,
+  SchemaNodeRequestType,
+  SetValueOption,
   isArrayNode,
   isBooleanNode,
   isBranchNode,
@@ -52,6 +55,7 @@ export {
   isStringNode,
   isTerminalNode,
   isVirtualNode,
+  isUnionNode,
 } from './core';
 
 export { ShowError } from './types';
@@ -67,12 +71,13 @@ export type {
   FormTypeTestObject,
   FormatError,
   Hint,
+  SchemaNodeType,
+  JSONSchema,
   InferValueType,
   InjectToHandler,
   ValidatorFactory,
   ValidateFunction,
   ValidationIssue,
-  JSONSchemaError,
 } from './types';
 
 export type * from './types/rolled';

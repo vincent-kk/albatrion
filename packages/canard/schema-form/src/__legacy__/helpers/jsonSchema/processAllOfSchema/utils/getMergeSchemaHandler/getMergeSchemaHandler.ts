@@ -1,7 +1,7 @@
 import type { Fn } from '@aileron/declare';
 
-import { extractSchemaInfo } from '@/schema-form/helpers/jsonSchema/extractSchemaInfo';
-import type { JSONSchema } from '@/schema-form/types';
+import { extractSchemaInfo } from '@/schema-form/__legacy__/helpers/jsonSchema/extractSchemaInfo';
+import type { JSONSchema } from '@/schema-form/__legacy__/types';
 
 import {
   intersectArraySchema,

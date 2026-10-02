@@ -4,7 +4,7 @@ import type {
   ArraySchema,
   ObjectSchema,
   StringSchema,
-} from '@/schema-form/types';
+} from '@/schema-form/__legacy__/types';
 
 import { processAllOfSchema } from '../processAllOfSchema/processAllOfSchema';
 

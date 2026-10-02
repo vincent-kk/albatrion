@@ -1,11 +1,11 @@
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 import { isReactComponent } from '@winglet/react-utils/filter';
 
-import { isBranchType } from '@/schema-form/helpers/jsonSchema';
+import { isBranchType } from '@/schema-form/__legacy__/helpers/jsonSchema';
 import type {
   JSONSchemaType,
   JSONSchemaWithVirtual,
-} from '@/schema-form/types';
+} from '@/schema-form/__legacy__/types';
 
 /**
  * Returns the node group based on the schema type.

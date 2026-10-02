@@ -1,7 +1,7 @@
 import type {
   JSONSchemaError,
   JSONSchemaWithVirtual,
-} from '@/schema-form/types';
+} from '@/schema-form/__legacy__/types';
 
 /**
  * Creates a fallback validator to use when a JSON schema compilation error occurs.

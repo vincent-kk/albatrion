@@ -5,7 +5,7 @@ import {
   formatMinItemsExceedsPrefixItemsError,
   formatMissingItemsAndPrefixItemsError,
 } from '@/schema-form/helpers/error';
-import type { ArraySchema } from '@/schema-form/types';
+import type { ArraySchema } from '@/schema-form/__legacy__/types';
 
 /**
  * Validates an array schema to ensure it has a valid structure for ArrayNode creation.

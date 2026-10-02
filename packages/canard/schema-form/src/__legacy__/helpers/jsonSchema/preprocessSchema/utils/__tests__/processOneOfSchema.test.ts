@@ -5,7 +5,7 @@ import {
   START_OF_TEXT,
   UNIT_SEPARATOR,
 } from '@/schema-form/app/constants/control';
-import type { JSONSchema } from '@/schema-form/types';
+import type { JSONSchema } from '@/schema-form/__legacy__/types';
 
 import { processOneOfSchema } from '../processOneOfSchema';
 

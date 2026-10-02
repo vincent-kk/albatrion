@@ -1,7 +1,7 @@
 import Ajv from 'ajv/dist/2020';
 import { describe, expect, it, vi } from 'vitest';
 
-import { nodeFromJSONSchema } from '@/schema-form/core';
+import { nodeFromJSONSchema } from '@/schema-form/__legacy__/core';
 
 import { ValidationMode } from '../nodes';
 import { createValidatorFactory } from './utils/createValidatorFactory';

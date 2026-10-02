@@ -1,7 +1,7 @@
 import { merge } from '@winglet/common-utils/object';
 
 import { ENHANCED_KEY } from '@/schema-form/app/constants';
-import type { JSONSchema } from '@/schema-form/types';
+import type { JSONSchema } from '@/schema-form/__legacy__/types';
 
 /**
  * Processes a oneOf schema by adding an enhanced key property that tracks the selected variant.

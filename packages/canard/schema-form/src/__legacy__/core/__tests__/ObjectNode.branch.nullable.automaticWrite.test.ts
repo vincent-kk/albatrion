@@ -2,8 +2,8 @@ import { describe, expect, it } from 'vitest';
 
 import { delay } from '@winglet/common-utils';
 
-import { SetValueOption, nodeFromJSONSchema } from '@/schema-form/core';
-import type { JSONSchema } from '@/schema-form/types';
+import { SetValueOption, nodeFromJSONSchema } from '@/schema-form/__legacy__/core';
+import type { JSONSchema } from '@/schema-form/__legacy__/types';
 
 import type { ArrayNode } from '../nodes/ArrayNode';
 import type { BooleanNode } from '../nodes/BooleanNode';
@@ -11,7 +11,7 @@ import type { NullNode } from '../nodes/NullNode';
 import type { NumberNode } from '../nodes/NumberNode';
 import type { ObjectNode } from '../nodes/ObjectNode';
 import type { StringNode } from '../nodes/StringNode';
-import type { SchemaNode } from '../../../core/types';
+import type { SchemaNode } from '../types';
 
 /** Values the form produces by itself (derived, reset on activation) must never turn a `null` object into an object; only a write from outside may. */
 describe('ObjectNode branch nullable — automatic writes never promote null', () => {

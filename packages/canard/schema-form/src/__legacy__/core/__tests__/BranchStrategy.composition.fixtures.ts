@@ -1,4 +1,4 @@
-import type { JSONSchema } from '@/schema-form/types';
+import type { JSONSchema } from '@/schema-form/__legacy__/types';
 
 /** Composition keyword a branch level uses to declare its conditional subschemas. */
 export type CompositionScope = 'oneOf' | 'anyOf';

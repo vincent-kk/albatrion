@@ -7,9 +7,9 @@ import type {
   NumberSchema,
   ObjectSchema,
   StringSchema,
-} from '@/schema-form/types';
+} from '@/schema-form/__legacy__/types';
 
-import { nodeFromJSONSchema } from '../../../core/nodeFromJSONSchema';
+import { nodeFromJSONSchema } from '../nodeFromJSONSchema';
 import { ArrayNode } from '../nodes/ArrayNode';
 import { BooleanNode } from '../nodes/BooleanNode';
 import { NullNode } from '../nodes/NullNode';

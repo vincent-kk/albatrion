@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import type { ObjectValue } from '@/schema-form/types';
+import type { ObjectValue } from '@/schema-form/__legacy__/types';
 
 import { omitEmptyObject } from '../omitEmptyObject';
 

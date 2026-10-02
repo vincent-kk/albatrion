@@ -5,16 +5,12 @@ import type { Dictionary, Fn } from '@aileron/declare';
 import type { ChildNodeComponent } from '@/schema-form/components/SchemaNode';
 import type {
   InferSchemaNode,
-  PublicSetValueOption,
   SchemaNode,
+  SetValueOption,
 } from '@/schema-form/core';
 
 import type { FormTypeRendererProps } from './formTypeRenderer';
-import type {
-  InferJSONSchema,
-  JSONSchemaType,
-  JSONSchemaWithVirtual,
-} from './jsonSchema';
+import type { InferJSONSchema, JSONSchemaWithVirtual } from './jsonSchema';
 import type { AllowedValue } from './value';
 
 /**
@@ -44,7 +40,11 @@ export interface FormTypeInputProps<
   /** Schema node assigned to FormTypeInput Component */
   node: Node;
   /** JSON Schema type of this field (e.g., 'string', 'number', 'object', 'array') */
-  type: Node['schemaType'];
+  type: Node['type'];
+  /** Authored accepted schema kind(s), including integer. */
+  schemaType: Node['schemaType'];
+  /** Whether the stored value mismatches the accepted kinds. */
+  typeMismatch: Node['typeMismatch'];
   /** Name of schema node assigned to FormTypeInput Component */
   name: Node['name'];
   /** Path of schema node assigned to FormTypeInput Component */
@@ -114,7 +114,9 @@ export interface UnknownFormTypeInputProps {
   node: any;
   name: string;
   path: string;
-  type: any;
+  type: SchemaNodeType;
+  schemaType: SchemaNode['schemaType'];
+  typeMismatch: boolean;
   nullable: boolean;
   errors: any[];
   errorVisible: boolean;
@@ -143,7 +145,7 @@ export type ChildNodeComponentProps<Value extends AllowedValue = any> = {
   value?: Value;
   onChange?: SetStateFnWithOptions<Value>;
   onFileAttach?: Fn<[file: File | File[] | undefined]>;
-  FormTypeRenderer?: ComponentType<FormTypeRendererProps>;
+  FormTypeGroupRenderer?: ComponentType<FormTypeRendererProps>;
   className?: string;
   style?: CSSProperties;
   [alt: string]: any;
@@ -151,16 +153,20 @@ export type ChildNodeComponentProps<Value extends AllowedValue = any> = {
 
 export type OverridableFormTypeInputProps = Omit<
   ChildNodeComponentProps,
-  'onChange' | 'onFileAttach' | 'FormTypeRenderer'
+  'onChange' | 'onFileAttach' | 'FormTypeGroupRenderer'
 >;
 
 export type FormTypeTestFn = Fn<[hint: Hint], boolean>;
+
+export type SchemaNodeType = SchemaNode['type'];
 
 type OptionalString = string | undefined;
 
 export type FormTypeTestObject = Partial<{
   /** SchemaNode['schemaType'] | Array<SchemaNode['schemaType']> */
-  type: JSONSchemaType | JSONSchemaType[];
+  type: SchemaNodeType | SchemaNodeType[];
+  /** Accepted schema kinds, including integer and union member arrays. */
+  schemaType: SchemaNode['schemaType'] | SchemaNode['schemaType'][];
   /** SchemaNode['path'] | Array<SchemaNode['path']> */
   path: string | string[];
   /** SchemaNode['required'] */
@@ -175,7 +181,11 @@ export type FormTypeTestObject = Partial<{
 
 export type Hint = {
   /** SchemaNode['schemaType'] */
-  type: JSONSchemaType;
+  type: SchemaNodeType;
+  /** Authored accepted schema kind(s). */
+  schemaType: SchemaNode['schemaType'];
+  /** Whether the stored value mismatches the accepted kinds. */
+  typeMismatch: boolean;
   /** SchemaNode['path'] */
   path: string;
   /** SchemaNode['required'] */
@@ -200,7 +210,7 @@ export type FormTypeInputMap<T = unknown> = {
 };
 
 export type SetStateFnWithOptions<S = unknown> = Fn<
-  [value: S | ((prevState: S) => S), options?: PublicSetValueOption]
+  [value: S | ((prevState: S) => S), options?: SetValueOption]
 >;
 
 export type AttachedFilesMap = Map<SchemaNode['path'], File[]>;

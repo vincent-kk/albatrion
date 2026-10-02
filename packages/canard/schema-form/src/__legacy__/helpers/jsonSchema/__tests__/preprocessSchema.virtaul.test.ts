@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import type { JSONSchema } from '@/schema-form/types';
+import type { JSONSchema } from '@/schema-form/__legacy__/types';
 
 import { preprocessSchema } from '../preprocessSchema';
 

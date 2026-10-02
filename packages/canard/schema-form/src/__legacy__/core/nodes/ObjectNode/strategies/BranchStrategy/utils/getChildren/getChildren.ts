@@ -6,8 +6,8 @@ import type {
   ChildNode,
   SchemaNode,
   SchemaNodeFactory,
-} from '@/schema-form/core/types';
-import type { AllowedValue } from '@/schema-form/types';
+} from '@/schema-form/__legacy__/core/types';
+import type { AllowedValue } from '@/schema-form/__legacy__/types';
 
 import type { ConditionsMap } from '../getConditionsMap';
 import type {

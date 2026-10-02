@@ -3,7 +3,7 @@ import { isArray } from '@winglet/common-utils/filter';
 import type {
   JSONSchemaType,
   JSONSchemaWithVirtual,
-} from '@/schema-form/types';
+} from '@/schema-form/__legacy__/types';
 
 import {
   ALIAS,

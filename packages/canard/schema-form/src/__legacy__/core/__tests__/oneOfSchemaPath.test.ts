@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest';
 
-import type { ArraySchema, ObjectSchema } from '@/schema-form/types';
+import type { ArraySchema, ObjectSchema } from '@/schema-form/__legacy__/types';
 
-import { nodeFromJSONSchema } from '../../../core/nodeFromJSONSchema';
+import { nodeFromJSONSchema } from '../nodeFromJSONSchema';
 import { isArrayNode, isObjectNode } from '../nodes';
 
 describe('oneOf schemaPath assignment', () => {

@@ -1,6 +1,6 @@
 import { isArraySchema, isObjectSchema } from '@winglet/json-schema/filter';
 
-import type { JSONSchema } from '@/schema-form/types';
+import type { JSONSchema } from '@/schema-form/__legacy__/types';
 
 /**
  * Determines the cloning depth limit based on the JSON Schema.

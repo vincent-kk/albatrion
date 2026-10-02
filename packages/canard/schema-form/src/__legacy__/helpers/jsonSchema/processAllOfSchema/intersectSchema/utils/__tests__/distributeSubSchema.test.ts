@@ -4,7 +4,7 @@ import type {
   ArraySchema,
   JSONSchema,
   ObjectSchema,
-} from '@/schema-form/types';
+} from '@/schema-form/__legacy__/types';
 
 import {
   distributeAllOfItems,

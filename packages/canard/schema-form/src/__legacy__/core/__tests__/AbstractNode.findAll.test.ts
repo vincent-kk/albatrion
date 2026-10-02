@@ -2,8 +2,8 @@ import { describe, expect, it } from 'vitest';
 
 import { delay } from '@winglet/common-utils';
 
-import { contextNodeFactory, nodeFromJSONSchema } from '@/schema-form/core';
-import type { JSONSchema } from '@/schema-form/types';
+import { contextNodeFactory, nodeFromJSONSchema } from '@/schema-form/__legacy__/core';
+import type { JSONSchema } from '@/schema-form/__legacy__/types';
 
 import type { ArrayNode } from '../nodes/ArrayNode';
 import type { NumberNode } from '../nodes/NumberNode';

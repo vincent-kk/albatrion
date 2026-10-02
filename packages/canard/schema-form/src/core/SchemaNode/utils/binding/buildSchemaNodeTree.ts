@@ -1,5 +1,5 @@
 import type { Dictionary } from '@aileron/declare';
-import type { JSONSchema } from '../../../../types/jsonSchema';
+import type { JSONSchema } from '../../../types/jsonSchema';
 import type { InferValueType } from '../../../../types/value';
 import type { FormErrorReporter } from '../../../../errors';
 import { blueprint } from '../../../blueprint';

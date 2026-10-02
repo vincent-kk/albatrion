@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import type { JSONSchemaWithVirtual } from '@/schema-form/types';
+import type { JSONSchemaWithVirtual } from '@/schema-form/__legacy__/types';
 
 import { ComputedPropertiesManager } from '../getComputedPropertiesManager/ComputedPropertiesManager';
 

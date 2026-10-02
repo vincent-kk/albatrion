@@ -20,7 +20,7 @@ import type {
 export type FormGroupProps<Value extends AllowedValue> = {
   path?: string;
   FormTypeInput?: ComponentType<FormTypeInputProps<Value>>;
-  FormTypeRenderer?: ComponentType<FormTypeRendererProps>;
+  FormTypeGroupRenderer?: ComponentType<FormTypeRendererProps>;
   Wrapper?: ComponentType<PropsWithChildren<Dictionary>>;
 } & ChildNodeComponentProps;
 

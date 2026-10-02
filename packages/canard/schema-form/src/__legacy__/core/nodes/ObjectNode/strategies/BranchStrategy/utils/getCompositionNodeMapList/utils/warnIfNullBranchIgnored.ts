@@ -3,7 +3,7 @@ import {
   NULL_BRANCH_IGNORED_FOR_FORM,
   warnDevelopmentIssue,
 } from '@/schema-form/helpers/warning';
-import type { ObjectSchema } from '@/schema-form/types';
+import type { ObjectSchema } from '@/schema-form/__legacy__/types';
 
 /**
  * Emit a development warning when a `{ type: 'null' }` composition branch carries

@@ -1,4 +1,4 @@
-import type { BooleanSchema } from '@/schema-form/types';
+import type { BooleanSchema } from '@/schema-form/__legacy__/types';
 
 import { intersectConst } from './utils/intersectConst';
 import { intersectEnum } from './utils/intersectEnum';

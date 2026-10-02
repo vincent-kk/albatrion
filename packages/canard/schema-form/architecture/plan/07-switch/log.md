@@ -34,6 +34,7 @@ Planning method: 저장소 지침 — `PLAN.md` §2와 `plan/prompts.md`의 단�
 | 2026-10-02 | U3 | `@winglet/react-utils` 선택 인자 둘과 `minor` changeset(codex), 시험 183 → 188, G6·G7 | `561b37137` |
 | 2026-10-02 | U4 | core 통로(codex, apex): 원자 판정 수정 `f00089331`(03·04 결함, 69C-04)과 바인딩 전용 통로 일곱 `a0d30bb36`. core 시험 1,586 → 1,611, unit+render 5,145 초록, G9–G11. codex가 멈춘 항목 하나(일반 `setValue`의 직접 대상 Refresh 보정이 `selfcheck-v5` 기대와 부딪힘, 기존 동작 유지)는 antigravity 리뷰에 판정을 맡김 | 커밋 |
 | 2026-10-02 | U4 | antigravity 코드 리뷰(세션 `f65e7a88`): 차단 1 — 호출자가 잎에 쓴 `setValue`가 그 잎을 Refresh에서 뺌(03–06은 입력 출처가 없어 직접 대상을 쓴 입력으로 근사). EVENT-071·18C-94대로 입력 출처 쓰기만 자신을 빼게 고침 `13c50ba51`, 회귀 :756 사례는 입력 통로로 옮기고 짝 사례("호출자 setValue는 그 잎에 1회")를 더함. 분류는 72C-01(03–06 결함 아님). 비차단 1(레코드 칸 순서) 반영. 리뷰어가 시험 유효성 항목에 답하지 못해 U14 최종 검증에 다시 맡김 | `reviews/round-72-closing.md` |
+| 2026-10-02 | U5 | 진입점과 형 전환(codex, apex). **붉은 중간 커밋(D1)**: `tsc`가 렌더 계층(providers·components·hooks·formTypeDefinitions·app·helpers·`src/__tests__`)과 stories에서 붉음 — U6–U9가 닫음. core·types·`src/index.ts`·`__legacy__`·bench는 형 오류 0, core·types·레거시 시험 4,174건 초록. 조율자 보정: 03–06 core 벤치 셋(array·node-and-settle·dispatch-and-validation)의 옛 쪽이 `src/core/nodeFromJSONSchema`를 가리켜 전환 뒤 새 엔진끼리 견줄 뻔함 → `src/__legacy__/core/nodeFromJSONSchema`와 레거시 `JSONSchema` 형으로 돌림. 레거시 형 묶음 index 둘을 이름 다시 내보내기로(71C-01). `<Form>`을 그리는 레거시 시험 두 파일(`IfThenElse.onChange.realReact`, `NullableFormScenarios`, 14건)이 붉음 — 처분은 원장 관리자에게 물음(Q18) | §7 |
 | 2026-10-02 | U1 | 워크트리에 `yarn install --immutable`과 `@canard/schema-form`의 작업 공간 의존 빌드. 옛 엔진 패키지 벤치 일곱을 `3911b7591`에서 재어 `verification/07-switch/bench-legacy-baseline.json`(종료 코드 1은 03–06의 독립 스크립트 넷이 vitest 묶음이 아니라서 난 "No test suite found"뿐). 처분표·이주 점검표(128행)와 추출 스크립트·옛 스토리 정리표(49파일)·스파이크 사례표(§5)를 codex(세션 셋)가 쓰고 조율자가 확인. BF에 `@canard/schema-form_0.16.0` 별칭(G3–G5) | `verification/07-switch/` |
 
 ## 3. 자율 판단
@@ -60,6 +61,18 @@ Planning method: 저장소 지침 — `PLAN.md` §2와 `plan/prompts.md`의 단�
 | M6 | 69C-03: PR-7의 일(코드와 원장의 어긋남), U4에서 고침 |
 | M7 | 69C-04: 03·04의 결함, U4에서 별도 커밋으로 고침 |
 | M8 | 69C-05: 결함이 아닌 빈자리, U4에서 미룸 선택을 더함 |
+
+## 7. 레거시 이동 목록(71C-01)
+
+07이 새 코드에서 지우거나 바꾼 것 가운데 레거시가 계속 쓰는 것을 `src/__legacy__/` 안 같은 상대 경로로 옮기거나 사본으로 둔 목록이다. 레거시의 가져오기는 별칭 접두만 바꿨다. 새 코드는 이 경로를 가져오지 않는다(LANDING-159 규칙 1, G19).
+
+| 원래 자리 | 레거시 자리 | 처분 | 근거 |
+| --- | --- | --- | --- |
+| `src/core/types/node.ts`, `constructor.ts` | `src/__legacy__/core/types/` (index는 이름으로 다시 내보내고 `event`·`state`·`value`는 남은 core 형을 가리킴) | 옮김 | LANDING-087, 71C-01 |
+| `src/core/nodeFromJSONSchema.ts`의 옛 구현과 `contextNodeFactory` | `src/__legacy__/core/nodeFromJSONSchema.ts`, `src/__legacy__/core/index.ts` | 옮김 | 70C-01 |
+| `src/types/jsonSchema.ts`의 옛 `JSONSchema` 묶음 | `src/__legacy__/types/jsonSchema.ts` | 사본(새 형은 core 스키마 형으로 뜻이 바뀜) | GOAL-088, 71C-01 조건 1 |
+| `src/types/error.ts`의 `ValidateFunction`·`ValidatorFactory`·`JSONSchemaError` | `src/__legacy__/types/error.ts` | 옮김(공개 형에서 빠짐) | 32C-01, I12 |
+| `src/helpers/jsonSchema/`의 `extractSchemaInfo`·`filter`·`getResolveSchema`·`isNullBranch`·`stripSchemaExtensions` | `src/__legacy__/helpers/jsonSchema/` | 사본(옛 `JSONSchema` 형에 묶임) | 71C-01 조건 1 |
 
 ## 5. 스파이크 사례표(68C-09)
 

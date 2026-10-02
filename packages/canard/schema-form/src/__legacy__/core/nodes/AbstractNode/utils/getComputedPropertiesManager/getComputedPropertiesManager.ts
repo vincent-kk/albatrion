@@ -1,7 +1,7 @@
 import type {
   JSONSchemaType,
   JSONSchemaWithVirtual,
-} from '@/schema-form/types';
+} from '@/schema-form/__legacy__/types';
 
 import {
   type ComputedProperties,

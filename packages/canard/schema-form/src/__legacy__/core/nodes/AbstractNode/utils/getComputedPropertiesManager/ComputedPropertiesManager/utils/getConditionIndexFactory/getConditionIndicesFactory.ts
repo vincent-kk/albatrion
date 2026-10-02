@@ -8,7 +8,7 @@ import type {
   JSONSchemaType,
   JSONSchemaWithVirtual,
   PartialJSONSchema,
-} from '@/schema-form/types';
+} from '@/schema-form/__legacy__/types';
 
 import type { ConditionIndexName } from '../type';
 import { extractConditionInfo } from './utils/extractConditionInfo';

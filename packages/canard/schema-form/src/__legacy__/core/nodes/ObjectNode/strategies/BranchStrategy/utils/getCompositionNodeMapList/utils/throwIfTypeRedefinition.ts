@@ -3,8 +3,8 @@ import { isIdenticalSchemaType } from '@winglet/json-schema/filter';
 import type { ObjectNode } from '@/schema-form/__legacy__/core/nodes/ObjectNode';
 import { JSONSchemaError } from '@/schema-form/errors';
 import { formatCompositionTypeRedefinitionError } from '@/schema-form/helpers/error';
-import { extractSchemaInfo } from '@/schema-form/helpers/jsonSchema';
-import type { ObjectSchema } from '@/schema-form/types';
+import { extractSchemaInfo } from '@/schema-form/__legacy__/helpers/jsonSchema';
+import type { ObjectSchema } from '@/schema-form/__legacy__/types';
 
 /**
  * Rejects a composition branch whose `type` says something its parent does not allow.

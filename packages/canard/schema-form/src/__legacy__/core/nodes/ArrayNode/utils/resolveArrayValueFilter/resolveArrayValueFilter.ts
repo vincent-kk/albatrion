@@ -1,6 +1,6 @@
 import type { Nullish } from '@aileron/declare';
 
-import type { ArraySchema, ArrayValue } from '@/schema-form/types';
+import type { ArraySchema, ArrayValue } from '@/schema-form/__legacy__/types';
 
 import { omitEmptyArray } from '../omitEmptyArray';
 import { omitTrailingArray } from '../omitTrailingArray';
