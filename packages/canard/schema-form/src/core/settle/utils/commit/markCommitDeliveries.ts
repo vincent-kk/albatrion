@@ -183,7 +183,7 @@ export const markCommitDeliveries = <Self extends SchemaNodeRecord<Self>>(
     if (!node || !node.detached || seenDeparting.has(node)) continue;
     seenDeparting.add(node);
     clearSchemaNodeChanges(node);
-      node.deliveryWatchValues = undefined;
+    node.deliveryWatchValues = undefined;
     node.pendingDelivery = undefined;
     node.pendingRevision = 0;
     node.pendingNonSettleDelivery = undefined;
