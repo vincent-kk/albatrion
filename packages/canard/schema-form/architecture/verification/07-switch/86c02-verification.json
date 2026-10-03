@@ -1,0 +1,54 @@
+{
+  "head": "b44dc7ebf",
+  "date": "2026-10-03",
+  "commands": [
+    {
+      "command": "npx --no-install vitest run --project unit --project render --project react18 --reporter=dot",
+      "exit": 1,
+      "files": {
+        "passed": 400,
+        "failed": 2,
+        "total": 402
+      },
+      "tests": {
+        "passed": 3047,
+        "failed": 4,
+        "todo": 1,
+        "total": 3052
+      },
+      "failures": [
+        "render: EVENT-070 React stops two fields writing back through useLayoutEffect",
+        "render: EVENT-070 React stops two fields writing back through useEffect",
+        "react18: EVENT-070 React stops two fields writing back through useLayoutEffect",
+        "react18: EVENT-070 React stops two fields writing back through useEffect"
+      ],
+      "source": "Full suite captured in tool cell 56; only the user-authorized EVENT-070 failures occurred."
+    },
+    {
+      "command": "npx --no-install tsc --noEmit --composite false --rootDir . -p tsconfig.json",
+      "exit": 0
+    },
+    {
+      "command": "npx --no-install eslint \"src/**/*.{ts,tsx}\"",
+      "exit": 0
+    }
+  ],
+  "sourceHashes": {
+    "packages/canard/schema-form/src/core/settle/DETAIL.md": "68f1c369807f718da66e202d4c1efdd2edfa5429cbd04729bfd3d070a759a217",
+    "packages/canard/schema-form/src/core/settle/__tests__/static-first-load.test.ts": "4f5a2436452cbf2d7f3f926097c1830114d67d95eb0aaff2a5829add60f47094",
+    "packages/canard/schema-form/src/core/settle/type.ts": "858e5da0b7d5d3495cfc9798e8a97c40de3dd0076e6dd858b702d5c3a46764c8",
+    "packages/canard/schema-form/src/core/settle/utils/commit/commitSettlement.ts": "0e0c97c3c395b187e9c270a17b76286eb099e6bdc306fd929f55cd040ca776c5",
+    "packages/canard/schema-form/src/core/settle/utils/commit/markCommitDeliveries.ts": "072f67b9600d4db96d8dab5fd2529e4f07fded7e78c6066ae0aa42c40c4ab18f",
+    "packages/canard/schema-form/src/core/settle/utils/compute/computeNode.ts": "9817d3227a50462404bae48832f0c8b4dd76005d7c1e37e91dc0bfc0bff65944",
+    "packages/canard/schema-form/src/core/settle/utils/compute/enterSchemaNode.ts": "da5aeaf5642b5ca6aac086403e9192d40f0d35397102eeae81dca536797f5946",
+    "packages/canard/schema-form/src/core/settle/utils/compute/selectChildren.ts": "1df99c201fbae0913ea39b12f8fc47e4a1cba98af9d186dad025ec2f6653a1ed",
+    "packages/canard/schema-form/src/core/settle/utils/compute/utils/hasIndependentLeafDefaults.ts": "6cea708f96632f8062597943c35fd56ded69df3f8d8daf0a0e6096330484f138",
+    "packages/canard/schema-form/src/core/settle/utils/controls/getControlLayers.ts": "b86baa5d1b7575cdbc00fdb42343a4a5d4a9d887d4f0d1114c4357ce602f602f",
+    "packages/canard/schema-form/src/core/settle/utils/transition/transitionSettlement.ts": "948d3f23a8234a00c69f6555341d86046e0dd30009b4ca7cb5939151c1b20df3",
+    "packages/canard/schema-form/src/core/validation/DETAIL.md": "77b7e6a09d335f439377efca373476941725f944ed778f81a7194a8b3a6aca4b",
+    "packages/canard/schema-form/src/core/validation/utils/route/routeValidationIssues.ts": "51b8139a218d94cab76c55418165b8f4c6f201342a169ada343976e37a77ef71",
+    "packages/canard/schema-form/src/formTypeDefinitions/DETAIL.md": "4c9d3ca3b2cbd29406874cfd6b5133b40edcdf8935c9d8cf32ca8ee175fc34dc",
+    "packages/canard/schema-form/src/formTypeDefinitions/FormTypeInputArray.tsx": "b39981b06b838f3c7344cbe95147a5a13d959571d6c50da6b338fffb35b3bb3f",
+    "packages/canard/schema-form/src/formTypeDefinitions/__tests__/array-memo.test.tsx": "eaf63d5eac056a46799ee735cf1625fd73fba189f315252fc1ebb7750c308800"
+  }
+}

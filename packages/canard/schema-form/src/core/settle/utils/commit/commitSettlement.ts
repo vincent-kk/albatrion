@@ -45,11 +45,12 @@ export const commitSettlement = <Self extends SchemaNodeRecord<Self>>(
   } else delete runtime.settlementTrace;
   const commit = (runtime.commitNumber ?? 0) + 1;
   runtime.commitNumber = commit;
-  const declarations = runtime.committedDeclarationIds ??= new PathKeyedMap('pair');
-  runtime.committedDeclarationIds = declarations;
-  for (const [node, ids] of context.selectedDeclarationIds)
-    if (!node.detached)
-      declarations.set(getCommittedDeclarationKey(node), ids);
+  if (context.hasGates) {
+    const declarations = runtime.committedDeclarationIds ??= new PathKeyedMap('pair');
+    for (const [node, ids] of context.selectedDeclarationIds)
+      if (!node.detached)
+        declarations.set(getCommittedDeclarationKey(node), ids);
+  }
   if (context.failures?.length && runtime.diagnostics.status !== 'degraded')
     runtime.diagnostics = { status: 'degraded', cause: context.cause,
       ...(context.exceededBudget ? { exceededBudget: context.exceededBudget,

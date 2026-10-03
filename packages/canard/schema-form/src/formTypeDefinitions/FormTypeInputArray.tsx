@@ -1,4 +1,4 @@
-import { type CSSProperties, useCallback } from 'react';
+import { type CSSProperties, memo, useCallback } from 'react';
 
 import { map } from '@winglet/common-utils/array';
 
@@ -7,14 +7,25 @@ import type {
   FormTypeInputProps,
 } from '@/schema-form/types';
 
-const FormTypeInputArray = ({
+/** Forward list-affecting props while each child retains its own value subscription. */
+const FormTypeInputArray = ({ node, jsonSchema, readOnly, disabled,
+  ChildNodeComponents, style }: FormTypeInputProps<any[]>) => (
+  <ArrayItems node={node} jsonSchema={jsonSchema} readOnly={readOnly}
+    disabled={disabled} ChildNodeComponents={ChildNodeComponents} style={style}
+    childCount={node.children?.length ?? 0} />
+);
+
+/** Rebuild rows only when their identity, structure or presentation changes. */
+const ArrayItems = memo(function ArrayItems({
   node,
   jsonSchema,
   readOnly,
   disabled,
   ChildNodeComponents,
   style,
-}: FormTypeInputProps<any[]>) => {
+  childCount,
+}: Pick<FormTypeInputProps<any[]>, 'node' | 'jsonSchema' | 'readOnly' |
+  'disabled' | 'ChildNodeComponents' | 'style'> & { childCount: number }) {
   const handleClick = useCallback(() => {
     node.push();
   }, [node]);
@@ -44,7 +55,7 @@ const FormTypeInputArray = ({
           );
         })}
       {!readOnly &&
-        (jsonSchema.maxItems ?? Infinity) > (node.children?.length ?? 0) && (
+        (jsonSchema.maxItems ?? Infinity) > childCount && (
           <label
             style={{
               display: 'flex',
@@ -66,7 +77,7 @@ const FormTypeInputArray = ({
         )}
     </div>
   );
-};
+});
 
 const Button = ({
   title,

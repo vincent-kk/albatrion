@@ -10,6 +10,7 @@ import { relocatedGates } from './relocatedGates';
 import { scheduleRelocatedGates } from './scheduleRelocatedGates';
 import { updateOutput } from './updateOutput';
 import { getHostWheelBudgetCap } from '../gates/getGateBudgetCap';
+import { hasIndependentLeafDefaults } from './utils/hasIndependentLeafDefaults';
 
 /**
  * Finish a dirty subtree with one descent and a bounded host gate wheel.
@@ -22,10 +23,17 @@ export const computeNode = <Self extends SchemaNodeRecord<Self>>(
   context: SettlementContext<Self>,
 ): void => {
   if (!context.dirtyPaths.has(node.path)) return;
+  if (node === context.root && context.kind === 'load' &&
+    node.behavior.type === 'object' && node.behavior.strategy === 'branch' &&
+    !node.deliveryInitialized && !context.suppressAutomaticWrites &&
+    !context.hasGates && context.writtenInputs.get(node) === undefined &&
+    node.runtime.latentRaw.size === 0 &&
+    hasIndependentLeafDefaults(node.runtime.blueprint)) context.initialOutputs = [];
   context.stateDirtyNodes.add(node);
   if (!context.hasGates && node.parent !== null &&
     node.behavior.strategy === 'terminal' && context.entered.has(node)) {
-    updateOutput(node, context);
+    if (context.initialOutputs) context.initialOutputs.push(node);
+    else updateOutput(node, context);
     context.dirtyPaths.delete(node.path);
     return;
   }
@@ -93,7 +101,9 @@ export const computeNode = <Self extends SchemaNodeRecord<Self>>(
     const changed = selectChildren(node, context, prior,
       (child) => computeNode(child, context), gates.length > 0);
     for (const child of dirtyChildren(node, context)) computeNode(child, context);
-    const outputChanged = updateOutput(node, context);
+    let outputChanged = false;
+    if (context.initialOutputs) context.initialOutputs.push(node);
+    else outputChanged = updateOutput(node, context);
     const currentRelocated = context.hasGates ? relocatedGates(node) : [];
     for (const occurrence of currentRelocated)
       if (!seenGates.has(occurrence.gate)) {

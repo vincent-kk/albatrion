@@ -25,7 +25,7 @@ export const routeValidationIssues = <Self extends SchemaNodeRecord<Self>>(
   const runtime = root.runtime;
   const before = runtime.validationErrors ?? new Map<unknown, readonly unknown[]>();
   const next = new Map<unknown, readonly unknown[]>(before);
-  const activeIds = issues.length > 0 && runtime.committedDeclarationIds ?
+  const activeIds = issues.length > 0 && runtime.committedDeclarationIds?.size ?
     new Set([...runtime.committedDeclarationIds.values()].flat()) : undefined;
   const inScope = (node: Self): boolean => node === target ||
     node.path.startsWith(`${target.path}/`);

@@ -23,6 +23,22 @@ const trace = !process.argv.includes('--plain');
 const render = process.argv.includes('--render');
 const componentProbe = process.argv.includes('--component-probe');
 const ownerProbe = process.argv.includes('--owner-stack');
+const production = process.argv.includes('--production');
+process.env.NODE_ENV = production ? 'production' : 'development';
+const sourceRef = process.env.PHASE_SOURCE_REF;
+const candidateFiles = {
+  i: ['core/settle/utils/compute/selectChildren.ts', 'core/settle/utils/compute/enterSchemaNode.ts'],
+  ii: ['core/settle/utils/commit/commitSettlement.ts', 'core/settle/utils/controls/getControlLayers.ts', 'core/validation/utils/route/routeValidationIssues.ts'],
+  iii: ['core/settle/utils/commit/markCommitDeliveries.ts'],
+  iv: ['formTypeDefinitions/FormTypeInputArray.tsx'],
+  v: ['core/settle/type.ts', 'core/settle/utils/compute/computeNode.ts',
+    'core/settle/utils/compute/utils/hasIndependentLeafDefaults.ts', 'core/settle/utils/transition/transitionSettlement.ts'],
+};
+const selectedCandidateFiles = (process.env.PHASE_CANDIDATES?.split(',') ?? [])
+  .flatMap(candidate => {
+    if (!candidateFiles[candidate]) throw new Error(`Unknown candidate: ${candidate}`);
+    return candidateFiles[candidate];
+  });
 const modeName = componentProbe ? 'render-components-fresh' : `${render ? 'render' : 'core'}-${trace ? 'traced' : 'plain'}`;
 const tag = '@canard/schema-form@0.16.0';
 const gitFiles = new Set(execFileSync('git', ['ls-tree', '-r', '--name-only', tag,
@@ -58,7 +74,7 @@ function phaseFor(file, name, node) {
   if (componentProbe && (file.includes('/formTypeDefinitions/FormTypeInputArray.tsx') ||
     file.endsWith('/useChildNodeComponents.tsx') || file.endsWith('/SchemaNodeInput.tsx'))) return 'react-render';
   if (name === 'nodeFromJSONSchema') return 'other';
-  if (file.includes('react-dom-client.development.js')) {
+  if (/react-dom-(client\.development|profiling\.profiling)\.js$/.test(file)) {
     if (['renderRootSync', 'renderRootConcurrent'].includes(name)) return 'react-render';
     if (['commitRoot', 'flushMutationEffects', 'flushLayoutEffects', 'flushPassiveEffects'].includes(name)) return 'react-commit';
     return undefined;
@@ -135,7 +151,7 @@ async function bundle(version) {
       ${render ? version === 'old' ? "export {Form} from 'release-form';" : `export {Form} from ${JSON.stringify(path.join(pkg, 'src/index.ts'))};` : ''}`,
       resolveDir: bf, loader: 'ts' },
     write: false, bundle: true, packages: 'external', platform: 'node', format: 'cjs',
-    jsx: 'automatic', define: { 'process.env.NODE_ENV': JSON.stringify('development') },
+    jsx: 'automatic', define: { 'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV) },
     plugins: [{ name: 'diagnostic-only-source', setup(builder) {
       builder.onResolve({ filter: /^release-form$/ }, () => oldResolve('components/Form'));
       builder.onResolve({ filter: /^@\/schema-form\/__legacy__\// }, ({ path: p }) => ({ path: localResolve(path.join(pkg, 'src/__legacy__', p.split('/__legacy__/')[1])) }));
@@ -151,7 +167,13 @@ async function bundle(version) {
         if (!virtualSources.has(args.path)) virtualSources.set(args.path, execFileSync('git', ['show', `${tag}:${args.path}`], { cwd: repo, encoding: 'utf8' }));
         return { contents: instrument(args.path, virtualSources.get(args.path), trace), loader: args.path.endsWith('tsx') ? 'tsx' : 'ts' };
       });
-      builder.onLoad({ filter: /\/schema-form\/src\/.*\.tsx?$/ }, args => ({ contents: instrument(args.path, fs.readFileSync(args.path, 'utf8'), trace), loader: args.path.endsWith('tsx') ? 'tsx' : 'ts' }));
+      builder.onLoad({ filter: /\/schema-form\/src\/.*\.tsx?$/ }, args => {
+        const source = sourceRef && !args.path.includes('/__legacy__/') &&
+          !selectedCandidateFiles.includes(path.relative(path.join(pkg, 'src'), args.path))
+          ? execFileSync('git', ['show', `${sourceRef}:${path.relative(repo, args.path)}`], { cwd: repo, encoding: 'utf8' })
+          : fs.readFileSync(args.path, 'utf8');
+        return { contents: instrument(args.path, source, trace), loader: args.path.endsWith('tsx') ? 'tsx' : 'ts' };
+      });
     } }],
   });
   const module = { exports: {} };
@@ -210,10 +232,10 @@ if (render) {
   globalThis.IntersectionObserver = class { observe() {} unobserve() {} disconnect() {} takeRecords() { return []; } };
   const originalJsLoader = Module._extensions['.js'];
   Module._extensions['.js'] = (module, filename) => {
-    if (trace && filename.endsWith('/react-dom-client.development.js')) module._compile(instrument(filename, fs.readFileSync(filename, 'utf8'), true), filename);
+    if (trace && /react-dom-(client\.development|profiling\.profiling)\.js$/.test(filename)) module._compile(instrument(filename, fs.readFileSync(filename, 'utf8'), true), filename);
     else originalJsLoader(module, filename);
   };
-  React = bfReq('react'); ({ flushSync } = bfReq('react-dom')); ({ createRoot } = bfReq('react-dom/client'));
+  React = bfReq('react'); ({ flushSync } = bfReq('react-dom')); ({ createRoot } = bfReq(production ? 'react-dom/profiling' : 'react-dom/client'));
   Module._extensions['.js'] = originalJsLoader;
   if (ownerProbe) {
     const jsxRuntime = bfReq('react/jsx-runtime');
@@ -246,7 +268,7 @@ for (const fixture of fixtures) {
       for (const version of i % 2 ? ['new', 'old'] : ['old', 'new']) {
         globalThis.gc?.();
         const schema = structuredClone(version === 'old' ? fixture.legacy : fixture.workspace);
-        const services = branch ? validatorServices() : {};
+        const services = branch && validation === 'on' ? validatorServices() : {};
         const props = { jsonSchema: schema, validationMode: validation === 'on' ? 1 : 0, onChange() {}, ...services };
         if (render && version === 'new') props.validatorFactory = services.validator;
         let root, cleanup = () => {}, commits = [];
@@ -319,8 +341,8 @@ for (const fixture of fixtures) {
     console.log(`${modeName} ${fixture.name} ${validation}: ${count} paired samples, equal values${render ? ' and rendered paths' : ''}`);
   }
 }
-const result = { environment: { date: new Date().toISOString(), head: execFileSync('git', ['rev-parse', 'HEAD'], { cwd: repo, encoding: 'utf8' }).trim(), node: process.version, v8: process.versions.v8, platform: process.platform, arch: process.arch, cpu: os.cpus()[0].model, cpus: os.cpus().length, memory: os.totalmem(), react: bfReq('react/package.json').version, ajv: req('ajv/package.json').version, mode: 'development', warmup: smoke ? 1 : warmup, samples: smoke ? 2 : sampleCount }, hooks, rows };
-const destination = path.join(out, `branchless-phase-${modeName}${smoke ? '-smoke' : ''}.json`);
+const result = { environment: { date: new Date().toISOString(), head: execFileSync('git', ['rev-parse', 'HEAD'], { cwd: repo, encoding: 'utf8' }).trim(), sourceRef: sourceRef ?? 'working-tree', node: process.version, v8: process.versions.v8, platform: process.platform, arch: process.arch, cpu: os.cpus()[0].model, cpus: os.cpus().length, memory: os.totalmem(), react: bfReq('react/package.json').version, ajv: req('ajv/package.json').version, mode: production ? 'production-profiling' : 'development', warmup: smoke ? 1 : warmup, samples: smoke ? 2 : sampleCount }, hooks, rows };
+const destination = path.join(out, `${process.env.PHASE_OUTPUT ?? 'branchless-phase'}-${modeName}${production ? '-production' : ''}${smoke ? '-smoke' : ''}.json`);
 fs.writeFileSync(destination, JSON.stringify(result, null, 2));
 console.log(`Saved ${path.relative(repo, destination)}`);
 }

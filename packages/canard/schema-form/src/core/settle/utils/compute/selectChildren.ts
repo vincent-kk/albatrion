@@ -91,7 +91,8 @@ export const selectChildren = <Self extends SchemaNodeRecord<Self>>(
       })) {
       for (let index = 0; index < shape.length; index++) {
         const child = children[index];
-        context.selectedDeclarationIds.set(child, shape[index].ids);
+        if (context.selectedDeclarationIds.get(child) !== shape[index].ids)
+          context.selectedDeclarationIds.set(child, shape[index].ids);
         if (context.dirtyPaths.has(child.path)) computeChild(child);
       }
       return false;
@@ -197,13 +198,13 @@ export const selectChildren = <Self extends SchemaNodeRecord<Self>>(
       }
       continue;
     }
-    const key = JSON.stringify([
+    const key = context.pendingExits.size > 0 ? JSON.stringify([
       `${node.path}/${escapeSegment(entry.name)}`, entry.node.kind,
-    ]);
-    const pending = context.pendingExits.get(key);
+    ]) : undefined;
+    const pending = key === undefined ? undefined : context.pendingExits.get(key);
     const child = currentChild ?? priorChild ?? pending ?? createChildNode(node, entry);
     context.perished.delete(child);
-    context.pendingExits.delete(key);
+    if (key !== undefined) context.pendingExits.delete(key);
     if (pending && child === pending) {
       context.revived.add(child);
       indexEnteredLatentKey(context, child);
@@ -222,7 +223,8 @@ export const selectChildren = <Self extends SchemaNodeRecord<Self>>(
     }
     const ids = context.hasGates ? active.map((declaration) => declaration.id) :
       staticIds(entry);
-    context.selectedDeclarationIds.set(child, ids);
+    if (context.selectedDeclarationIds.get(child) !== ids)
+      context.selectedDeclarationIds.set(child, ids);
     const effective = mergeEffectiveSchema(child.blueprintNode,
       context.hasGates ? ids : NO_ACTIVE_IDS,
       { mode: 'runtime', isAtomic: node.runtime.blueprint?.isAtomic });

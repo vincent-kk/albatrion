@@ -3,6 +3,19 @@ import { isArray } from '@winglet/common-utils/filter';
 import type { BlueprintNode } from '../../../blueprint';
 import { getCommittedDeclarationKey } from './getCommittedDeclarationKey';
 
+/** Unselected static fallbacks share IDs for the immutable declaration owner. */
+const DECLARATION_IDS = new WeakMap<BlueprintNode, readonly number[]>();
+
+/** Return the authored declaration order without a per-occurrence copy. */
+const declarationIds = (node: BlueprintNode): readonly number[] => {
+  let ids = DECLARATION_IDS.get(node);
+  if (!ids) {
+    ids = Object.freeze(node.declarations.map((declaration) => declaration.id));
+    DECLARATION_IDS.set(node, ids);
+  }
+  return ids;
+};
+
 /** Shape data needed to resolve a declaration for a live or latent occurrence. */
 export interface ControlTarget<Self> {
   /** Decoded direct-child name used by controls.children. */
@@ -43,7 +56,7 @@ export const getControlLayers = <Self extends ControlTarget<Self>>(
   const selected = (current: Self): readonly number[] =>
     selectedDeclarationIds.get(current) ??
     current.runtime.committedDeclarationIds?.get(getCommittedDeclarationKey(current)) ??
-    current.blueprintNode.declarations.map((declaration) => declaration.id);
+    declarationIds(current.blueprintNode);
   const nodeIds = selected(node);
   const groups: ControlLayer<Self>[] = [];
   for (const declaration of node.blueprintNode.declarations) {

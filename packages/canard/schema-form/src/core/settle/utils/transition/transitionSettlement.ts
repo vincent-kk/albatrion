@@ -15,6 +15,7 @@ import { getTransitionCap } from './getTransitionCap';
 import { withdrawDetachedFills } from './withdrawDetachedFills';
 import { runDeriveRounds } from '../derivation/runDeriveRounds';
 import { hasWrongKindBranchAncestor } from './hasWrongKindBranchAncestor';
+import { updateOutput } from '../compute/updateOutput';
 
 /**
  * Apply appearance fills and final-list interpretation within a bounded round.
@@ -76,6 +77,14 @@ export const transitionSettlement = <Self extends SchemaNodeRecord<Self>>(
       context.automatic = true;
       markWrite(node, original, context, staticSpec(effective, node.nullable));
       context.automatic = false;
+    }
+    if (context.initialOutputs) {
+      const outputs = context.initialOutputs;
+      context.initialOutputs = undefined;
+      for (const node of outputs) updateOutput(node, context);
+      context.dirtyPaths.clear();
+      context.inTransition = false;
+      return;
     }
     if (!context.automaticChanged) {
       withdrawDetachedFills(context);

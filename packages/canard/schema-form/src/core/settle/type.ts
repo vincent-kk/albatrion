@@ -40,6 +40,8 @@ export interface SettlementContext<Self extends SchemaNodeRecord<Self>> {
   contextOwners?: readonly string[];
   /** Whether this analysis contains any authored gate. */
   hasGates: boolean;
+  /** First-load postorder awaiting independent leaf fill before its only assembly. */
+  initialOutputs?: Self[];
   /** Cached reverse references, absent for a blueprint without virtual nodes. */
   virtualReferenceIndex: VirtualReferenceIndex | null;
   /** Call-local suppression after explicit bits override the form default. */

@@ -7,6 +7,8 @@
 
 ## API Contracts
 
+- 게이트 없는 트리는 정적 선언을 청사진에서 공유하여 발생 경로별 활성 ID 복사본을 두지 않습니다. 이때 꺼진 union 분기가 없으므로 오류의 경로 라우팅만 적용합니다. 게이트가 있는 경우 커밋된 활성 선언으로 꺼진 분기의 표시 오류를 계속 걸러냅니다. 검증기·작성 루트의 캐시와 source 선택은 바꾸지 않으며 정적 트리의 반복 ID 집합 할당만 제거합니다(86C-02 ii, VALIDATE-043·048).
+
 ### 계약 형과 진입점
 
 - `interface Validator { compile(copy: BlueprintSchema): ValidateFunction; compileGuard(root: BlueprintSchema, pointer: string): GuardFunction; release?(root: BlueprintSchema): void; readonly dialect?: string }`를 `type.ts`가 선언합니다. `type GuardFunction = (value: unknown) => boolean`이며 가드는 비동기 형식·키워드를 지원하지 않습니다. `type ValidateFunction<Value = unknown> = (data: Value) => Promise<readonly ValidationIssue[] | null> | readonly ValidationIssue[] | null`은 입력 판정을 돌려주고 던지지 않는 계약입니다. 던짐은 실행 실패입니다(VALIDATE-015·016·044, ERROR-032).
