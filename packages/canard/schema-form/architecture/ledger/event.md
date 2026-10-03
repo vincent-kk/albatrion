@@ -570,6 +570,7 @@
   > "core가 풀 문제가 아니라 **문서화 대상**이다" (`adr/0007-settle-cycle.md:107`)
   > "소비자에게 보인다: 첫 `onChange`는 파생 값이 없는 stale emit(`{a:'x'}`, 커밋 2)이고 둘째가 최종값(`{a:'x', b:'derived:x'}`, 커밋 3)이다. 통지마다 저장하는 앱은 키 입력당 두 번 저장하고 첫 저장이 stale이다." (`adr/0008-event-system.md:136`)
   > "DOM·emit·마지막 `onChange`는 끝에서 일치한다(tearing 없음)." (`adr/0008-event-system.md:136`)
+  > 소유자(81라운드, EVENT-070 실패의 처분): "이벤트 되먹임은 3번으로 가자. hook체인은 같은 컴포넌트 내에서만 막아주나보군" (`reviews/round-81-owner-answers.md:7`) — 코어는 진입 사이의 순환을 감지하지 않고(예산 단위는 진입 사슬 그대로) 예방은 C-10 문서가 맡으며, 바인딩 계층이 개발 모드에서만 같은 노드의 값 변화 없는 연속 되쓰기를 경고 한 번으로 알린다; 게이트의 통과 조건은 "C-10 안내가 있고 개발 모드 경고가 난다"로 바뀐다(원장 관리자, 2026-10-03).
 - 상태: 현행
 - 출처: `adr/0008-event-system.md:134,138`(정본), `adr/0008-event-system.md:136`, `adr/0007-settle-cycle.md:107`, `reviews/round-5-derivations.md:25`
 - 닫은 사람: 편집자 결정(5라운드 도출 C-10, `reviews/round-5-derivations.md:25`)
@@ -1124,6 +1125,7 @@
 - 보충:
   > 편집자 결정(68C-09): "【추론】 LANDING-095의 "`architecture/spikes/**` 가운데 제품 동작에 남는 상황의 e2e 이식(§5.3)"은 기준만 적었고 목록은 없다. 07은 스파이크의 시험 파일(오늘 `spikes/events/caret`·`entry`, `spikes/work-loop/redteam4-events/current`·`react`)을 사례 단위로 나눠 사례마다 (가) 제품 동작으로 남아 e2e 또는 렌더 시험으로 옮김(새 시험 이름), (나) 설계 탐색이라 옮기지 않음(까닭)을 적은 표를 `plan/07-switch/log.md`에 두고, 옮긴 시험은 새 자리에서 돌며 스파이크 파일은 지우지 않는다(스파이크는 설계 기록이다). 여기에 더해 EVENT-070·REACT-017(18C-85)이 PR-7에 둔 사례 — `useLayoutEffect`와 `useEffect`에서 `node.setValue`로 서로를 되쓰는 두 필드 — 는 `spikes/events/`에 더하고 React 18과 19에서 각각 실행하며, 통과(두 이펙트 모두에서 React가 순환을 끊음)이면 규칙을 그대로 두고 실패하면 EVENT-070대로 소유자에게 올린다(편집자가 정하지 않는다)." (`reviews/round-68-closing.md:65`)
   > 편집자 결정(68C-10): "【추론】 REACT-017은 "PR-7에 React 18 실행 시험을 둔다"만 정했고 방법은 열어 두었다. 07의 안(별칭 개발 의존 `react18`·`react-dom18`, vitest `render` 프로젝트의 복제본에서 `resolve.alias`로 React 18을 끼움)은 같은 시험 파일을 두 판에서 돌리므로 "React 18을 계속 지원한다"의 증거로 충분하고, 동료 의존 `>=18 <20`의 두 끝을 모두 실행하는 셈이다. 조건: `react18` 프로젝트는 `render` 프로젝트와 같은 포함 글롭을 쓰고(React 19 전용 API를 쓰는 시험이 있으면 그 파일만 제외 목록에 이름을 적고 까닭을 단다), EVENT-070의 이펙트 되먹임 사례와 StrictMode·서버(`renderToString`) 사례(ERROR-115·116의 실행 확인)도 두 판에서 돈다. 지속 통합에 두 프로젝트를 모두 넣는다. 별칭 의존이 `yarn.lock`을 바꾸는 것은 68C-05의 범위다." (`reviews/round-68-closing.md:72`)
+  > 소유자(81라운드, EVENT-070 실패의 처분): "이벤트 되먹임은 3번으로 가자. hook체인은 같은 컴포넌트 내에서만 막아주나보군" (`reviews/round-81-owner-answers.md:7`) — 코어는 진입 사이의 순환을 감지하지 않고(예산 단위는 진입 사슬 그대로) 예방은 C-10 문서가 맡으며, 바인딩 계층이 개발 모드에서만 같은 노드의 값 변화 없는 연속 되쓰기를 경고 한 번으로 알린다; 게이트의 통과 조건은 "C-10 안내가 있고 개발 모드 경고가 난다"로 바뀐다(원장 관리자, 2026-10-03).
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:2237-2239,2244-2250`(정본)
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-85)

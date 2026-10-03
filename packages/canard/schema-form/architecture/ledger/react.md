@@ -264,6 +264,7 @@
   > 편집자 결정(18C-85): "무엇: 이벤트 스파이크(`spikes/events/`)에 이펙트 되먹임 사례를 더한다." (`reviews/round-18-closing.md:2245`)
   > 편집자 결정(18C-85): "무엇: `useLayoutEffect`와 `useEffect`에서 `node.setValue`로 서로를 되쓰는 두 필드를 만들고, React 18과 19에서 각각 실행한다." (`reviews/round-18-closing.md:2246`)
   > 편집자 결정(68C-10): "【추론】 REACT-017은 "PR-7에 React 18 실행 시험을 둔다"만 정했고 방법은 열어 두었다. 07의 안(별칭 개발 의존 `react18`·`react-dom18`, vitest `render` 프로젝트의 복제본에서 `resolve.alias`로 React 18을 끼움)은 같은 시험 파일을 두 판에서 돌리므로 "React 18을 계속 지원한다"의 증거로 충분하고, 동료 의존 `>=18 <20`의 두 끝을 모두 실행하는 셈이다. 조건: `react18` 프로젝트는 `render` 프로젝트와 같은 포함 글롭을 쓰고(React 19 전용 API를 쓰는 시험이 있으면 그 파일만 제외 목록에 이름을 적고 까닭을 단다), EVENT-070의 이펙트 되먹임 사례와 StrictMode·서버(`renderToString`) 사례(ERROR-115·116의 실행 확인)도 두 판에서 돈다. 지속 통합에 두 프로젝트를 모두 넣는다. 별칭 의존이 `yarn.lock`을 바꾸는 것은 68C-05의 범위다." (`reviews/round-68-closing.md:72`)
+  > 소유자(81라운드, EVENT-070 실패의 처분): "이벤트 되먹임은 3번으로 가자. hook체인은 같은 컴포넌트 내에서만 막아주나보군" (`reviews/round-81-owner-answers.md:7`) — 코어는 진입 사이의 순환을 감지하지 않고(예산 단위는 진입 사슬 그대로) 예방은 C-10 문서가 맡으며, 바인딩 계층이 개발 모드에서만 같은 노드의 값 변화 없는 연속 되쓰기를 경고 한 번으로 알린다; 게이트의 통과 조건은 "C-10 안내가 있고 개발 모드 경고가 난다"로 바뀐다(원장 관리자, 2026-10-03).
 - 상태: 현행
 - 출처: `09-landing-and-test-strategy.md:273`(정본), `09-landing-and-test-strategy.md:26`, `reviews/round-16-owner-review.md:56`, `reviews/round-16-owner-answers.md:11`, `reviews/round-18-closing.md:2244-2246`
 - 닫은 사람: 소유자 답(`reviews/round-16-owner-answers.md:11` 확인 5), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-85)
