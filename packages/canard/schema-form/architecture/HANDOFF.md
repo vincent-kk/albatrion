@@ -42,6 +42,7 @@
    - **소유자 메모(2026-09-27, 설계서 검토, `reviews/round-18-owner-answers.md` 38–41행) — 반영됨(2026-09-27, 소유자 지시)**: (38) 청사진 내부 이름은 약어 없이(`PropertyDecl` → `PropertyDeclaration` 같은 풀 네임) → BLUEPRINT-046, BLUEPRINT-002에 보충·충돌. (39) 조각의 구현 타입 이름은 `SchemaFragment`(개념어 "조각"과 FRAGMENT 영역 이름은 그대로) → BLUEPRINT-047, BLUEPRINT-002에 보충·충돌. 둘은 PR-1의 청사진 `DETAIL.md`·`type.ts`가 적는다. (40) 명령 넷(`focus`·`select`·`refresh`·`remount`)은 메서드 넷이 아니라 명령 종류를 매개변수로 받는 노드 메서드 하나(`action`·`interaction`·`request` 또는 명령 한정 `publish`) → EVENT-073; 메서드 이름·값의 형·`FormHandle` 대칭 모양은 PR-4 착수 전에 편집자가 권장안을 올리고 소유자가 정한다. EVENT-063·SURFACE-011·SURFACE-058·LANDING-170에 보충·충돌(겉면 수 약 57 → 약 54). (41) 경고등 공개 이름 확정: 게터 `typeMismatch`·목록 `typeMismatches`·코드 `SCHEMA_FORM_WARNING.TYPE_MISMATCH` → SURFACE-061; 가칭을 결정문에 든 현행 항목 열둘(BLUEPRINT-041, ERROR-186, ERROR-198, LANDING-126, NODE-058, REACT-032, REACT-033, SURFACE-052, SURFACE-058, VALUE-030, VALUE-037, WRITE-079)에 보충·충돌, 보충만 든 항목 6개(ERROR-164, NODE-041, REACT-027, SURFACE-010, TEST-077, WRITE-093)에 보충. 시험 파일 이름 `union.mismatch-light.test.ts`는 그대로다. LANDING-127은 가칭을 들지 않아 손대지 않았다. 네 행은 `ledger/checks/owner-answers.tsv`에 더했고(235건), `reviews/round-18-closing-summary.md` §D에는 넣지 않았다.
    - PR-2 게이트에 반드시 넣을 시험: 규칙 A 표 전체와 동점 12건, `integer` 멤버십, 게이트 켜짐·꺼짐 전이에서 경고등만 바뀌고 값은 바뀌지 않음, `setValue({kind:'num', a:'42'})`가 직전 상태와 무관하게 `a = 42`(U7), 서로소 게이트 둘의 충돌(TEST-077).
 - **성능 최적화는 구현 완료 뒤의 별도 작업이다(27라운드 소유자 답).** PR-2~PR-7에서는 느린 행을 고치지 않고 `verification/03-node-and-settle/performance.md`에 기록만 남긴다. 구현이 끝나면 그 기록을 참고 데이터로 삼아 최적화를 따로 요청받아 시작한다(섞이지 않게 분리). 단계를 가로지르는 속도 문제 대장은 `verification/performance-issues.md`이며(04에서 시작, 03·04의 성능 기록을 가리킨다), 구현을 마친 뒤 최적화 작업의 출발점이다. 그 작업의 계획서 셋은 plan 아래 perf-optimization 디렉토리(M0 측정판 고정 → M1 분류·우선순위 → M2 묶음별 PR → M3 종합 재측정·수용; 07 머지 뒤 착수, 08과 병렬, 09 전)이며, 원장 항목을 더하지 않고 동작 불변·측정·원장 불변을 게이트로 둔다.
+- **원장 관리자 세션의 인수(2026-10-03, 89라운드 뒤, 소유자 지시로 세션 종료).** 소유자는 원장 관리자 역할을 세웠다: 단계 세션의 원장 물음에 편집자 결정(라운드)으로 답하고, 소유자의 직접 말만 소유자 라운드로 적으며, 소유자가 직접 답해야 하는 것만 대기를 알리고 묻는다. 07 전환 세션은 소유자 지시로 함께 닫혔고 재개 지점을 가지 feat/schema-form-switch의 커밋 b31125119에 두었다(plan/07-switch/log.md 0절: 게이트 스물넷 통과·서른셋 가운데, 열린 게이트와 순서는 88라운드 마무리 → 89라운드 정적 첫 로드 구현 → 분기 전환 정착 진단 → 되먹임의 개발 모드 경고(81라운드 3번) → 원장 대 구현 대조 게이트의 재검증 → 나머지 게이트; 게이트 원장 사본은 plan/07-switch/gates-snapshot.md). 07 워크트리에는 중단된 codex 작업(88C-02 정리, 88C-01 b3, array-1000 재측정)의 미완성·미검증 변경이 커밋되지 않은 채 남아 있으므로 다음 07 세션이 먼저 처분한다. 원장 쪽에서 열린 것: 다음 라운드 번호는 90이고, 기다리는 것은 07의 정적 첫 로드 구현과 재측정(85C-01 목표, 86C-01 측정 조건), 그 뒤 분기 전환 정착의 단계별 진단과 설계안(89C-05), 목표에 못 미친 행이 남으면 수치·b1·b2의 절감 상한·뒤집힐 항목과 함께 소유자에게 올리는 일(86C-02, 84·87라운드 소유자 답). 성능 게이트 G26은 그때까지 열려 있고 PR-7은 머지되지 않는다. 소유자에게 대기 중인 결정은 없다. 라운드를 닫는 절차와 도구는 3절 끝에 있다.
 
 ## 3. 일하는 법
 
@@ -74,6 +75,8 @@
 1. 소유자 답은 고정이다. 어긋나는 결론은 소유자 물음이 된다.
 2. 원칙으로 정해지지 않고, 서열 없는 가치가 부딪치며, 사용자에게 보이는 결과가 갈리는 것만 소유자에게 간다. 나머지는 편집자나 스웜이 정하고, 닫은 사람에 그렇게 적는다.
 3. 오류는 삼키지 않는다.
+
+**라운드를 닫는 절차(68라운드부터의 관례, 89라운드까지 그대로).** 단계 세션의 물음이 오면 관련 원장 항목을 읽고 reviews 디렉토리에 round-NN-closing.md를 쓴다. 머리글은 날짜·누가 무엇을 물었는가·편집자 결정으로 닫는다는 선언이고, 결정 블록은 NNC-kk 제목, 닫는 항목, 결정(추론 표지 한 줄), 근거다. 소유자의 직접 말은 round-NN-owner-answers.md의 표(확인, 물음 요지, 답 원문, 반영)에 적고 owner-answers.tsv에 행을 더한다. 보충은 sup-insert.mjs가 결정 줄을 글자 그대로 인용해 항목에 넣고, round-close.mjs가 PLAN 5절·PLAN-LOG 1절·HANDOFF 1절(최신 라운드 셋만, 가장 오래된 것은 PLAN-LOG 2절로)·HANDOFF 5절 지도를 갱신한다. 그다음 4절의 검사를 모두 돌린다(토큰 잔여는 사백칠십구에서 변하지 않아야 하고, HANDOFF의 새 글은 역따옴표 파일 이름과 숫자 표기를 피한다). 커밋은 바뀐 파일을 경로로 지정해 하고(원장 관리자는 ledger, reviews, HANDOFF, PLAN 5절과 소유자가 청한 절, PLAN-LOG, ledger/checks만 고친다), 커밋 전에 현재 가지가 1.0.0-beta인지 확인하며, 커밋마다 밀어 올린다. 단계 세션에는 결정 요지와 다음 라운드 번호를 보낸다. 단계 세션의 허가 차단을 대신 풀어 주지 않는다 — 원장 판단만 주고 허가는 소유자에게 돌린다.
 
 ## 4. 검사 명령 (`architecture/`에서, 모두 문제 0이어야 한다)
 
@@ -112,6 +115,8 @@ node ledger/checks/doc-coverage.mjs design/*.md adr/*.md -- ledger/*.md   # 설�
 | `ledger/checks/owner-answers.tsv` | 기록된 소유자 답 목록(242) |
 | `ledger/checks/token-review.md` | 토큰 검사 잔여의 판정 |
 | `ledger/checks/doc-coverage.mjs` | 설계문서·ADR 역검사(원장 → 문서). 영역을 좁힐 때는 `--areas`, 픽스처는 `ledger/checks/fixtures/doc-coverage/` |
+| ledger/checks/round-close.mjs | 라운드를 닫은 뒤의 장부 갱신(PLAN 5절·PLAN-LOG·HANDOFF 1절과 5절). 쓰는 법은 파일 머리 |
+| ledger/checks/sup-insert.mjs | 닫기 문서의 결정 줄을 글자 그대로 인용해 항목에 보충으로 넣는 도구. 계획은 JSON 파일 |
 | `ledger/checks/doc-token-exempt.tsv` | `doc-coverage`의 토큰 예외(이긴 충돌·가리킴 바꿈·정비 문장만, 행마다 까닭) |
 | `design/*.md` ×8 | 설계문서. 원장을 읽는 표면이며 문장 끝 괄호의 ID가 근거다(단계 01, 2026-09-29) |
 | `adr/*.md` ×17 | ADR 0001–0017. 본문은 설계문서의 같은 절을 글자 그대로 모은 것이다 |
