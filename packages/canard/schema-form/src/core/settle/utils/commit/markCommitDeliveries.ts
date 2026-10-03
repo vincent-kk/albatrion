@@ -30,8 +30,9 @@ export const markCommitDeliveries = <Self extends SchemaNodeRecord<Self>>(
   const refreshTargets = runtime.refreshTargets;
   const loadScope = context.kind === 'load' ? context.loadScope : undefined;
   const loadPrefix = loadScope ? `${loadScope.path}/` : '';
-  const automaticNodes = context.automaticLog.length > 0
-    ? new Set(context.automaticLog.map((write) => write.node)) : undefined;
+  const automaticNodes = new Set<Self>();
+  for (let index = 0; index < context.automaticLog.length; index++)
+    automaticNodes.add(context.automaticLog[index].node);
   const watchIndex = runtime.deliveryWatchIndex;
   const watchNodes = getFeatureNodeIndex(runtime.blueprint).watchNodes;
   const fullWatchScan = context.exited.size > 0;
@@ -62,7 +63,8 @@ export const markCommitDeliveries = <Self extends SchemaNodeRecord<Self>>(
       !(host.deliveryChanges & SchemaNodeEventType.UpdateChildren)) continue;
     const schema = host.schema.schema;
     const required = typeof schema === 'object' ? schema.required : undefined;
-    for (const child of host.children) {
+    for (let index = 0; index < host.children.length; index++) {
+      const child = host.children[index];
       if (child.parent !== host || child.blueprintNode.kind === 'virtual') continue;
       const next = isArray(required) && required.includes(child.name);
       if (child.required === next) continue;
@@ -96,10 +98,8 @@ export const markCommitDeliveries = <Self extends SchemaNodeRecord<Self>>(
     mark(context.root, SchemaNodeEventType.UpdateDiagnostics);
   runtime.deliveredDiagnostics = runtime.diagnostics;
   const globalState = commitGlobalState(context);
-  const ordered = globalState.nodes.size > 0
-    ? new Set<unknown>(globalState.nodes) : candidates;
-  if (ordered !== candidates)
-    for (const node of candidates) ordered.add(node);
+  const ordered = new Set<unknown>(globalState.nodes);
+  for (const node of candidates) ordered.add(node);
   for (const candidate of ordered) {
     if (!isTreeNode(candidate)) continue;
     const node = candidate;
@@ -128,9 +128,9 @@ export const markCommitDeliveries = <Self extends SchemaNodeRecord<Self>>(
         index.update(node, getWatchDeliveryPaths(node));
       } else runtime.deliveryWatchIndex?.remove(node);
     }
-    const watchChanged = initialized &&
-      (watched.length !== previousWatchValues.length ||
-        watched.some((value, index) => !isSameDeliveryValue(value, previousWatchValues[index])));
+    let watchChanged = initialized && watched.length !== previousWatchValues.length;
+    for (let index = 0; initialized && !watchChanged && index < watched.length; index++)
+      if (!isSameDeliveryValue(watched[index], previousWatchValues[index])) watchChanged = true;
     if (initialized) {
       if ((changes & SchemaNodeEventType.UpdateValue) &&
         (!isSameDeliveryValue(node.deliveryPreviousLocal, node.local) ||
@@ -142,7 +142,7 @@ export const markCommitDeliveries = <Self extends SchemaNodeRecord<Self>>(
         const current = node.behavior.strategy === 'branch' ?
           { local: node.local, emit: node.emit } : node.local;
         const payload = { previous: oldValue, current };
-        const source = automaticNodes?.has(node) ||
+        const source = automaticNodes.has(node) ||
           context.filledNodes.has(node) ? 'automatic' : readSettlementSource(context, node.path);
         mark(node, SchemaNodeEventType.UpdateValue,
           DEVELOPMENT ? Object.freeze(payload) : payload,
@@ -180,7 +180,7 @@ export const markCommitDeliveries = <Self extends SchemaNodeRecord<Self>>(
       const current = node.behavior.strategy === 'branch' ?
         { local: node.local, emit: node.emit } : node.local;
       const payload = { previous: undefined, current };
-      const source = automaticNodes?.has(node) ||
+      const source = automaticNodes.has(node) ||
         context.filledNodes.has(node) ? 'automatic' : readSettlementSource(context, node.path);
       mark(node, SchemaNodeEventType.UpdateValue,
         DEVELOPMENT ? Object.freeze(payload) : payload,
@@ -200,10 +200,11 @@ export const markCommitDeliveries = <Self extends SchemaNodeRecord<Self>>(
   }
   globalState.finish();
   runtime.revisionNodes?.clear();
-  const departing = context.exited.size || context.perished.size
-    ? [...context.exited, ...context.perished] : undefined;
-  const seenDeparting = departing ? new Set<Self>() : undefined;
-  while (departing?.length && seenDeparting) {
+  const departing: Self[] = [];
+  for (const node of context.exited) departing.push(node);
+  for (const node of context.perished) departing.push(node);
+  const seenDeparting = new Set<Self>();
+  while (departing.length) {
     const node = departing.pop();
     if (!node || !node.detached || seenDeparting.has(node)) continue;
     seenDeparting.add(node);
@@ -222,7 +223,9 @@ export const markCommitDeliveries = <Self extends SchemaNodeRecord<Self>>(
     runtime.validationChangedNodes?.delete(node);
     runtime.validationTargets?.delete(node);
     runtime.validationPendingTargets?.delete(node);
-    for (const child of node.children ?? []) departing.push(child);
+    const children = node.children;
+    for (let index = 0; children && index < children.length; index++)
+      departing.push(children[index]);
   }
   runtime.deliveredContext = runtime.context;
   runtime.deliveryAffectedPaths = undefined;

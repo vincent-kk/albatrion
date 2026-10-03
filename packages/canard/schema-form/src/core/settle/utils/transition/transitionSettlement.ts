@@ -45,28 +45,33 @@ export const transitionSettlement = <Self extends SchemaNodeRecord<Self>>(
     const enteredByDepth: Self[][] = [];
     for (const node of context.entered)
       (enteredByDepth[node.depth] ??= []).push(node);
-    for (const node of enteredByDepth.flat()) {
-      if (node.detached || context.pendingExits.size !== 0 &&
-        context.pendingExits.has(JSON.stringify([
-        node.path, node.blueprintNode.kind]))) continue;
-      if (filledNodes) {
-        if (filledNodes.has(node)) continue;
-        filledNodes.add(node);
-      } else if (filled) {
-        const key = JSON.stringify([node.path, node.blueprintNode.kind]);
-        if (filled.has(key)) continue;
-        filled.add(key);
+    for (let depth = 0; depth < enteredByDepth.length; depth++) {
+      const entered = enteredByDepth[depth];
+      if (!entered) continue;
+      for (let index = 0; index < entered.length; index++) {
+        const node = entered[index];
+        if (node.detached || context.pendingExits.size !== 0 &&
+          context.pendingExits.has(JSON.stringify([
+            node.path, node.blueprintNode.kind]))) continue;
+        if (filledNodes) {
+          if (filledNodes.has(node)) continue;
+          filledNodes.add(node);
+        } else if (filled) {
+          const key = JSON.stringify([node.path, node.blueprintNode.kind]);
+          if (filled.has(key)) continue;
+          filled.add(key);
+        }
+        if (context.kind !== 'load' && hasWrongKindBranchAncestor(node)) continue;
+        if (context.deriveState?.activeUnsetTargets.has(node)) continue;
+        if (node.raw !== undefined) continue;
+        const value = readDefault(node, context.selectedDeclarationIds);
+        if (value === undefined || !isMissingRaw(node, context)) continue;
+        context.filledNodes.add(node);
+        context.automatic = true;
+        context.writtenInputs.set(node, value);
+        markWrite(node, value, context);
+        context.automatic = false;
       }
-      if (context.kind !== 'load' && hasWrongKindBranchAncestor(node)) continue;
-      if (context.deriveState?.activeUnsetTargets.has(node)) continue;
-      if (node.raw !== undefined) continue;
-      const value = readDefault(node, context.selectedDeclarationIds);
-      if (value === undefined || !isMissingRaw(node, context)) continue;
-      context.filledNodes.add(node);
-      context.automatic = true;
-      context.writtenInputs.set(node, value);
-      markWrite(node, value, context);
-      context.automatic = false;
     }
     for (const [node, original] of context.writtenInputs) {
       if (node.detached || context.pendingExits.size !== 0 &&
@@ -81,7 +86,8 @@ export const transitionSettlement = <Self extends SchemaNodeRecord<Self>>(
     if (context.initialOutputs) {
       const outputs = context.initialOutputs;
       context.initialOutputs = undefined;
-      for (const node of outputs) updateOutput(node, context);
+      for (let index = 0; index < outputs.length; index++)
+        updateOutput(outputs[index], context);
       context.dirtyPaths.clear();
       context.inTransition = false;
       return;

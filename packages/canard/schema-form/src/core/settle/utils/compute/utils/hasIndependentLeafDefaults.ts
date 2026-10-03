@@ -12,24 +12,30 @@ export const hasIndependentLeafDefaults = (blueprint: Blueprint): boolean => {
   const cached = INDEPENDENT.get(blueprint);
   if (cached !== undefined) return cached;
   let hasDefault = false;
-  const independent = blueprint.expressions.length === 0 && blueprint.nodes.every((node) => {
+  let independent = blueprint.expressions.length === 0;
+  for (let index = 0; independent && index < blueprint.nodes.length; index++) {
+    const node = blueprint.nodes[index];
     if (node.kind !== 'object' && node.kind !== 'string' && node.kind !== 'number' &&
-      node.kind !== 'boolean' && node.kind !== 'null') return false;
-    if (node.kind === 'object' && node.strategy !== 'branch') return false;
-    return node.declarations.every((declaration) => {
-      if (declaration.gates.length) return false;
+      node.kind !== 'boolean' && node.kind !== 'null' ||
+      node.kind === 'object' && node.strategy !== 'branch') {
+      independent = false;
+      break;
+    }
+    for (let declarationIndex = 0; declarationIndex < node.declarations.length; declarationIndex++) {
+      const declaration = node.declarations[declarationIndex];
+      if (declaration.gates.length) { independent = false; break; }
       const schema = declaration.schema;
-      if (!schema || typeof schema !== 'object') return true;
-      if (schema.controls !== undefined) return false;
+      if (!schema || typeof schema !== 'object') continue;
+      if (schema.controls !== undefined) { independent = false; break; }
       const value = schema.default;
-      if (value === undefined) return true;
+      if (value === undefined) continue;
       if (node.kind === 'object' || value !== null &&
         typeof value !== 'string' && typeof value !== 'number' &&
-        typeof value !== 'boolean') return false;
+        typeof value !== 'boolean') { independent = false; break; }
       hasDefault = true;
-      return true;
-    });
-  }) && hasDefault;
+    }
+  }
+  independent = independent && hasDefault;
   INDEPENDENT.set(blueprint, independent);
   return independent;
 };

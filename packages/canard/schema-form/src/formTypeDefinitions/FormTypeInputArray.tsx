@@ -1,6 +1,4 @@
-import { type CSSProperties, memo, useCallback } from 'react';
-
-import { map } from '@winglet/common-utils/array';
+import { type CSSProperties, type ReactElement, memo, useCallback } from 'react';
 
 import type {
   FormTypeInputDefinition,
@@ -35,25 +33,23 @@ const ArrayItems = memo(function ArrayItems({
     },
     [node],
   );
+  const rows: ReactElement[] = [];
+  for (let index = 0; ChildNodeComponents && index < ChildNodeComponents.length; index++) {
+    const ChildNodeComponent = ChildNodeComponents[index];
+    const key = ChildNodeComponent.key;
+    rows.push(
+      <div key={key} style={{ display: 'flex' }}>
+        <ChildNodeComponent key={key} />
+        {!readOnly && (
+          <Button title="remove item" label="x" disabled={disabled}
+            onClick={() => handleRemoveClick(index)} />
+        )}
+      </div>,
+    );
+  }
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 5, ...style }}>
-      {ChildNodeComponents &&
-        map(ChildNodeComponents, (ChildNodeComponent, i) => {
-          const key = ChildNodeComponent.key;
-          return (
-            <div key={key} style={{ display: 'flex' }}>
-              <ChildNodeComponent key={key} />
-              {!readOnly && (
-                <Button
-                  title="remove item"
-                  label="x"
-                  disabled={disabled}
-                  onClick={() => handleRemoveClick(i)}
-                />
-              )}
-            </div>
-          );
-        })}
+      {rows}
       {!readOnly &&
         (jsonSchema.maxItems ?? Infinity) > childCount && (
           <label

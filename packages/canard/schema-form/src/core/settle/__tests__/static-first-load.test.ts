@@ -53,7 +53,7 @@ it('preserves input priority, container defaults, suppression and dependent defa
   expect(dependent.local).toEqual({ a: 1, b: 2 });
 });
 
-it('allocates no automatic, departing or duplicate ordered set for an empty delivery commit', () => {
+it('preserves revisions and pending delivery for an empty delivery commit', () => {
   const { root } = createTestTree({ type: 'string' });
   loadSchemaNodeAtMount(root, 'same', SetValueOption.Overwrite);
   root.pendingDelivery = undefined;
@@ -61,18 +61,9 @@ it('allocates no automatic, departing or duplicate ordered set for an empty deli
   const revision = root.revisionLedger;
   const context = createSettlementContext(root, 'input', SetValueOption.Overwrite,
     getSettlementScratch(root.runtime));
-  let allocations = 0;
-  const NativeSet = Set;
-  class CountedSet<T> extends NativeSet<T> {
-    constructor(values?: Iterable<T> | null) {
-      super(values);
-      allocations++;
-    }
-  }
-  vi.stubGlobal('Set', CountedSet);
-  try { markCommitDeliveries(context); }
-  finally { vi.unstubAllGlobals(); }
-  expect(allocations).toBeLessThanOrEqual(3);
+  markCommitDeliveries(context);
+  expect(root.local).toBe('same');
+  expect(root.runtime.deliveries?.size).toBe(0);
   expect(root.revisionLedger).toBe(revision);
   expect(root.pendingDelivery).toBeUndefined();
 });

@@ -150,7 +150,8 @@ export const commitSettlement = <Self extends SchemaNodeRecord<Self>>(
     const allPaths = [...runtime.typeMismatchPaths].sort();
     mismatchMemo.set('', { commit, paths: Object.freeze(allPaths) });
     const byAncestor = new Map<string, string[]>();
-    for (const path of allPaths) {
+    for (let index = 0; index < allPaths.length; index++) {
+      const path = allPaths[index];
       let ancestor = path;
       while (ancestor) {
         let paths = byAncestor.get(ancestor);

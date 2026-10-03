@@ -36,7 +36,10 @@ const STATIC_SHAPES = new WeakMap<BlueprintNode, readonly {
 const staticIds = (entry: BlueprintChildEntry): readonly number[] => {
   let ids = STATIC_IDS.get(entry);
   if (!ids) {
-    ids = Object.freeze(entry.declarations.map((declaration) => declaration.id));
+    const collected: number[] = [];
+    for (let index = 0; index < entry.declarations.length; index++)
+      collected.push(entry.declarations[index].id);
+    ids = Object.freeze(collected);
     STATIC_IDS.set(entry, ids);
   }
   return ids;
@@ -48,11 +51,15 @@ const staticShape = (host: BlueprintNode, isAtomic: BlueprintOptions['isAtomic']
   const selected: Record<string, {
     entry: BlueprintChildEntry; ids: readonly number[]; schema: EffectiveSchema;
   }> = Object.create(null);
-  for (const entry of host.childEntries) {
+  for (let index = 0; index < host.childEntries.length; index++) {
+    const entry = host.childEntries[index];
     const schema = mergeEffectiveSchema(entry.node, NO_ACTIVE_IDS, { mode: 'runtime', isAtomic });
+    let hasGate = false;
+    for (let declarationIndex = 0; declarationIndex < entry.declarations.length; declarationIndex++)
+      if (entry.declarations[declarationIndex].gates.length > 0) { hasGate = true; break; }
     if (hasOwnProperty(selected, entry.name) || entry.node.kind === 'virtual' ||
       !entry.declarations.length || schema.typeConflict ||
-      entry.declarations.some((declaration) => declaration.gates.length > 0)) {
+      hasGate) {
       STATIC_SHAPES.set(host, null);
       return null;
     }
@@ -82,13 +89,16 @@ export const selectChildren = <Self extends SchemaNodeRecord<Self>>(
   if (!context.hasGates && node.behavior.type === 'object') {
     const shape = staticShape(node.blueprintNode, node.runtime.blueprint?.isAtomic);
     const children = node.children;
-    if (shape && children && children.length === shape.length &&
-      shape.every(({ entry, schema }, index) => {
+    let matches = !!shape && !!children && children.length === shape.length;
+    if (matches && shape && children)
+      for (let index = 0; index < shape.length; index++) {
+        const { entry, schema } = shape[index];
         const child = children[index];
-        return child.name === entry.name && child.blueprintNode === entry.node &&
-          child.schema === schema && child.active && !child.detached &&
-          node.structure?.[entry.name] === child;
-      })) {
+        if (child.name !== entry.name || child.blueprintNode !== entry.node ||
+          child.schema !== schema || !child.active || child.detached ||
+          node.structure?.[entry.name] !== child) { matches = false; break; }
+      }
+    if (matches && shape && children) {
       for (let index = 0; index < shape.length; index++) {
         const child = children[index];
         if (context.selectedDeclarationIds.get(child) !== shape[index].ids)
@@ -102,14 +112,17 @@ export const selectChildren = <Self extends SchemaNodeRecord<Self>>(
     const before = node.children ?? [];
     const next: Record<string, Self> = Object.create(null);
     const children: Self[] = [];
-    for (const field of node.blueprintNode.fields ?? []) {
+    const fields = node.blueprintNode.fields;
+    for (let index = 0; fields && index < fields.length; index++) {
+      const field = fields[index];
       const sibling = node.parent?.structure?.[field];
       if (!sibling) continue;
       next[field] = sibling;
       children.push(sibling);
     }
-    const changed = children.length !== before.length ||
-      children.some((child, index) => child !== before[index]);
+    let changed = children.length !== before.length;
+    for (let index = 0; !changed && index < children.length; index++)
+      if (children[index] !== before[index]) changed = true;
     node.structure = next;
     node.children = captureSchemaNodeChange(node, 'children', changed ? children : before);
     if (changed) context.changedNodes.add(node);
@@ -118,26 +131,44 @@ export const selectChildren = <Self extends SchemaNodeRecord<Self>>(
   const before = node.children ?? [];
   const next: Record<string, Self> = { ...node.structure };
   Object.setPrototypeOf(next, null);
-  if (node.behavior.type === 'array')
-    for (const name of Object.keys(next))
+  if (node.behavior.type === 'array') {
+    const names = Object.keys(next);
+    for (let index = 0; index < names.length; index++) {
+      const name = names[index];
       if (Number(name) >= node.itemCount) delete next[name];
+    }
+  }
   node.structure = next;
   const seen = new Set<string>();
   const inactiveEntries: BlueprintChildEntry[] = [];
   let changed = false;
-  for (const entry of node.behavior.declareChildren(node)) {
+  const entries = node.behavior.declareChildren(node);
+  for (let entryIndex = 0; entryIndex < entries.length; entryIndex++) {
+    const entry = entries[entryIndex];
     if (immediate) flushPendingGateReads(entry.node,
       `${node.path}/${escapeSegment(entry.name)}`, context);
     let threw = false;
-    const active = context.hasGates ? entry.declarations.filter((declaration) => {
-      const version = context.gateThrowVersion;
-      const admitted = declaration.gates.every((gate) => evaluateGate(gate, context,
-        node, gate.schemaPath === `${declaration.schemaPath}/controls/active`
-          ? entry.name : undefined));
-      if (!admitted && context.gateThrowVersion !== version) threw = true;
-      return admitted;
-    }) : entry.declarations;
-    if (active.length === 0) {
+    let declarations = entry.declarations;
+    let activeIds: number[] | undefined;
+    if (context.hasGates) {
+      const active: typeof entry.declarations[number][] = [];
+      activeIds = [];
+      for (let index = 0; index < entry.declarations.length; index++) {
+        const declaration = entry.declarations[index];
+        const version = context.gateThrowVersion;
+        let admitted = true;
+        for (let gateIndex = 0; gateIndex < declaration.gates.length; gateIndex++) {
+          const gate = declaration.gates[gateIndex];
+          if (!evaluateGate(gate, context, node,
+            gate.schemaPath === `${declaration.schemaPath}/controls/active`
+              ? entry.name : undefined)) { admitted = false; break; }
+        }
+        if (admitted) { active.push(declaration); activeIds.push(declaration.id); }
+        else if (context.gateThrowVersion !== version) threw = true;
+      }
+      declarations = active;
+    }
+    if (declarations.length === 0) {
       const priorChild = hasOwnProperty(prior, entry.name)
         ? prior[entry.name] : undefined;
       const exiting = priorChild?.blueprintNode.kind === entry.node.kind
@@ -221,8 +252,7 @@ export const selectChildren = <Self extends SchemaNodeRecord<Self>>(
       changed = true;
       entryChanged = true;
     }
-    const ids = context.hasGates ? active.map((declaration) => declaration.id) :
-      staticIds(entry);
+    const ids = activeIds ?? staticIds(entry);
     if (context.selectedDeclarationIds.get(child) !== ids)
       context.selectedDeclarationIds.set(child, ids);
     const effective = mergeEffectiveSchema(child.blueprintNode,
@@ -239,7 +269,7 @@ export const selectChildren = <Self extends SchemaNodeRecord<Self>>(
       changed = true;
       entryChanged = true;
     }
-    if ((effective.typeConflict || hasSharedConflict(entry, active))) {
+    if ((effective.typeConflict || hasSharedConflict(entry, declarations))) {
       recordSettlementFailure(context, new SchemaFormError(SHARED_NODE_CONFLICT,
         `Active declarations conflict at ${child.path}`, { path: child.path }), 'sharedConflict');
     }
@@ -263,7 +293,8 @@ export const selectChildren = <Self extends SchemaNodeRecord<Self>>(
     }
   }
   flushPendingOutput(node, context);
-  for (const entry of inactiveEntries) {
+  for (let index = 0; index < inactiveEntries.length; index++) {
+    const entry = inactiveEntries[index];
     if (next[entry.name] || seen.has(entry.name) ||
       (context.kind !== 'load' && hasOwnProperty(prior, entry.name))) continue;
     seen.add(entry.name);
@@ -277,7 +308,10 @@ export const selectChildren = <Self extends SchemaNodeRecord<Self>>(
       getLatentOrder(node, entry.name, entry.node), distribution.whole,
       node.blueprintNode.childEntries, distribution.automatic);
   }
-  for (const [name, child] of Object.entries(prior))
+  const priorNames = Object.keys(prior);
+  for (let index = 0; index < priorNames.length; index++) {
+    const name = priorNames[index];
+    const child = prior[name];
     if (next[name] !== child) {
       if (node.behavior.type === 'array' && Number(name) >= node.itemCount)
         context.perished.add(child);
@@ -286,10 +320,11 @@ export const selectChildren = <Self extends SchemaNodeRecord<Self>>(
         context.pendingExits.set(key, child);
       }
     }
+  }
   const nextChildren = Object.values(next);
-  if (nextChildren.length !== before.length ||
-    nextChildren.some((child, index) => child !== before[index]))
-    changed = true;
+  if (nextChildren.length !== before.length) changed = true;
+  for (let index = 0; !changed && index < nextChildren.length; index++)
+    if (nextChildren[index] !== before[index]) changed = true;
   node.children = captureSchemaNodeChange(node, 'children', nextChildren);
   if (changed) context.changedNodes.add(node);
   return changed;
