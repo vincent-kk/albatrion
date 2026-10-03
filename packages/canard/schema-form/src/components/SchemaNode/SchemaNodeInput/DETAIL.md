@@ -7,14 +7,16 @@
 ## API Contracts
 
 - 입력 선택은 인라인 지정, 입력 맵, 내부 정의, 외부 정의, 플러그인 fallback의 우선순위를 유지합니다.
+- 첫 마운트의 자식 layout effect에서 호출한 입력 onChange도 Context의 살아 있는 노드에 기록되며 부모 binding 준비 순서 때문에 버리지 않습니다(WRITE-046).
 - 사용자 변경은 폼 전체 잠금과 노드의 읽기 전용·disabled 상태를 확인합니다. `handleChange`는 한 `batch` 안에서 ① `writeSchemaNodeInput`으로 값 쓰기 ② 외부 오류 지움 ③ dirty 표시를 수행합니다. 세 단계 전체가 사슬 진입의 입력 출처 표식을 가지며 공개 옵션 비트를 더하지 않습니다. 사슬 끝에서 던지는 오류가 있어도 이미 표시한 dirty를 보존하고, 폐기된 노드의 표식 있는 세 단계는 조용히 버립니다(REACT-009–011, 69C-01·02).
 - 흐림 처리는 `Blurred` 발행 대신 `finishSchemaNodeInput`으로 입력 마침을 전달합니다. 문자열 행의 `finishInput`이 `options.trim` 자동 쓰기를 판단하고 외부 오류·dirty는 유지합니다(WRITE-083, LANDING-067).
-- 대체된 입력은 마운트 시 붙잡은 노드 Refresh 번호와 쓰기 시 번호가 다르면 늦은 `onChange`·`onFileAttach`를 버립니다. 흐림 뒤 미룬 touched는 흐릴 때 읽은 상호작용 초기화 번호와 콜백 시 번호가 다르면 버립니다. 첨부 파일 맵은 컨테이너 입력에서도 폐기된 노드의 늦은 쓰기를 받지 않습니다(REACT-024, 69C-02).
-- Refresh의 다시 마운트 판정은 노드 종류만이 아니라 자식 프록시의 실제 마운트 여부로 가릅니다. 터미널·값 전체 브랜치·빈 배열·접힌 입력은 다시 마운트하고, 자식을 그리는 기본 객체·배열 입력은 유지합니다. 컨테이너 입력에는 대체된 입력의 Refresh 번호 검사를 적용하지 않습니다(REACT-024·028).
+- 입력의 key와 defaultValue 메모 의존은 `useSchemaNodeTracker`로 읽은 노드 Refresh 번호를 사용하며 구독 전에 놓친 Refresh도 구독 뒤 따라잡습니다. 조합 중·마운트된 자식 프록시가 있는 동안은 적용 세대를 유지합니다. 대체된 입력은 마운트 시 붙잡은 이 번호와 쓰기 시 번호가 다르면 늦은 `onChange`·`onFileAttach`를 버립니다. 흐림 뒤 미룬 touched는 흐릴 때 읽은 상호작용 초기화 번호와 콜백 시 번호가 다르면 버립니다. 첨부 파일 맵은 컨테이너 입력에서도 폐기된 노드의 늦은 쓰기를 받지 않습니다(REACT-024·028, 69C-02).
+- Refresh의 다시 마운트 판정은 노드 종류만이 아니라 자식 프록시의 실제 마운트 여부로 가릅니다. 터미널·값 전체 브랜치·빈 배열·접힌 입력은 다시 마운트하고, 자식을 그리는 기본 객체·배열 입력은 추적 스냅숏을 유지하여 Refresh만으로 다시 렌더링하지 않습니다. 컨테이너 입력에는 대체된 입력의 Refresh 번호 검사를 적용하지 않습니다(REACT-024·028).
 - 입력의 `compositionstart`부터 `compositionend`까지 다시 마운트가 필요한 Refresh는 보류합니다. 조합 중에는 Refresh로 입력 DOM을 교체하거나 값을 복원하지 않고, 중복 요청은 하나로 모아 `compositionend`에서 적용합니다. 노드의 Refresh 번호와 동기 통지는 즉시 진행하므로 이전 입력의 조합 완료·늦은 변경 콜백은 번호 검사로 버립니다. 조합 중 Refresh가 없으면 완료 텍스트는 정상적으로 노드에 전달합니다(EVENT-065, REACT-024).
 - `useFormTypeInput`의 메모 의존에는 유효 `jsonSchema` 참조가 포함됩니다. Hint는 `{ type: node.type, schemaType: node.schemaType, nullable: node.nullable, path, required, jsonSchema, format, formType }`이며 입력 props의 같은 이름은 같은 값입니다. `schemaType`은 integer와 union 목록을 보존하고 입력 props는 `typeMismatch`·`watchValues`도 전달합니다(REACT-012·032, LANDING-137·181·185).
 - 객체 시험의 키는 `type`·`schemaType`·`path`·`required`·`nullable`·`format`·`formType`입니다. 모르는 키는 대조에서 빼고 `type`의 integer도 무효 시험으로 다루며, 개발 모드 `FORM_TYPE_TEST_INVALID`는 정의마다 한 번 보고합니다. union은 `{ type: 'union' }` 또는 함수 시험으로 선택합니다(REACT-032·033).
 - 터미널 입력의 `ChildNodeComponents`는 빈 배열입니다. 개발 모드 또는 오류 핸들러가 있는 경우 읽기를 감지하는 동결 빈 배열을 전달하여 첫 색인·length·순회 읽기를 `CHILD_NODE_COMPONENTS_ON_TERMINAL`로 기록합니다. 필드 커밋 뒤 이펙트에서 보고하고 로드마다 `(code, path)`로 한 번만 전달하며, 핸들러가 없는 프로덕션은 보통의 빈 배열을 사용합니다(ERROR-202).
+- 같은 브랜치에 매칭한 입력 맵과 정의 목록의 입력은 같은 ChildNodeComponents를 받으며 부모 입력 인스턴스를 유지합니다. 맵의 정규식이 터미널 자식에도 매칭하면 그 자식의 동일 컴포넌트 호출에는 빈 ChildNodeComponents를 전달합니다(REACT-019·028, ERROR-202).
 - 재귀 NodeProxy의 props는 형제 SchemaNodeProxyProps 계약을 통해 공유하며, 입력 계층은 SchemaNodeProxy 구현에 의존하지 않습니다.
 
 ## Acceptance Criteria

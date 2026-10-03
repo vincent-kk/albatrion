@@ -1,16 +1,71 @@
-import { createRef } from 'react';
+import { createRef, useEffect, useLayoutEffect } from 'react';
 
 import { act, cleanup, fireEvent, render } from '@testing-library/react';
 import { afterEach, expect, it, vi } from 'vitest';
 
 import { Form, type FormHandle } from '@/schema-form/components/Form';
-import { SchemaNodeEventType } from '@/schema-form/core';
+import { SchemaNodeEventType, ValidationMode } from '@/schema-form/core';
 import type { FormTypeInputProps } from '@/schema-form/types';
 
 afterEach(() => {
   cleanup();
   vi.restoreAllMocks();
 });
+
+it('REACT-024 catches up a mount-time Refresh before two user changes', () => {
+  const Input = ({ node, value, onChange }: FormTypeInputProps) => {
+    useLayoutEffect(() => {
+      node.setValue('normalized');
+    }, [node]);
+    return (
+      <input
+        value={value ?? ''}
+        onChange={(event) => onChange(event.currentTarget.value)}
+      />
+    );
+  };
+  const ref = createRef<FormHandle>();
+  const view = render(
+    <Form
+      ref={ref}
+      jsonSchema={{ type: 'object', properties: {
+        s: { type: 'string', presentation: { FormTypeInput: Input } },
+      } }}
+      validationMode={ValidationMode.None}
+    />,
+  );
+  expect(ref.current!.getValue()).toEqual({ s: 'normalized' });
+  for (const value of ['typed1', 'typed2']) {
+    fireEvent.change(view.container.querySelector('input')!, {
+      target: { value },
+    });
+    expect(ref.current!.getValue()).toEqual({ s: value });
+  }
+});
+
+it.each([['layout', useLayoutEffect], ['passive', useEffect]] as const)(
+  'WRITE-046 accepts mount-time onChange before root binding (%s)',
+  (_, useMountEffect) => {
+    const Input = ({ value, onChange }: FormTypeInputProps) => {
+      useMountEffect(() => {
+        if (value === undefined) onChange('normalized');
+        // eslint-disable-next-line react-hooks/exhaustive-deps -- Reproduce an input's mount-only normalization.
+      }, []);
+      return <input value={value ?? ''} readOnly />;
+    };
+    const ref = createRef<FormHandle>();
+    render(
+      <Form
+        ref={ref}
+        jsonSchema={{ type: 'object', properties: {
+          s: { type: 'string', presentation: { FormTypeInput: Input } },
+        } }}
+        validationMode={ValidationMode.None}
+      />,
+    );
+    expect(ref.current!.getValue()).toEqual({ s: 'normalized' });
+  },
+);
 
 it('REACT-009 REACT-011 batches input write, error clear and dirty without refreshing itself', () => {
   let props: FormTypeInputProps;
@@ -137,3 +192,61 @@ it('REACT-028 preserves a branch input with mounted child proxies on refresh', (
   act(() => ref.current!.refresh());
   expect(mounts).toBe(before);
 });
+
+it('REACT-019 ERROR-202 an unanchored input map also matches terminal descendants', () => {
+  const counts = new Map<string, number>();
+  const Container = ({ path, ChildNodeComponents }: FormTypeInputProps) => {
+    counts.set(path, ChildNodeComponents.length);
+    return <>{ChildNodeComponents.map((Child) => <Child key={Child.key} />)}</>;
+  };
+  render(
+    <Form
+      jsonSchema={{ type: 'object', properties: {
+        o: { type: 'object', properties: { s: { type: 'string' } } },
+      } }}
+      formTypeInputMap={{ '/o': Container }}
+      validationMode={ValidationMode.None}
+      onError={vi.fn()}
+    />,
+  );
+  expect(counts.get('/o')).toBe(1);
+  expect(counts.get('/o/s')).toBe(0);
+});
+
+it.each(['anchored map', 'definitions'] as const)(
+  'REACT-019 REACT-028 supplies child proxies to a mapped or defined container (%s)',
+  (selection) => {
+    let childCount = -1;
+    const Container = ({ value, onChange, ChildNodeComponents }: FormTypeInputProps) => {
+      childCount = ChildNodeComponents.length;
+      return <div data-testid="container">{ChildNodeComponents.map((Child) => (
+        <Child
+          key={Child.key}
+          onChange={(next) => onChange({ ...value, [Child.field]: next })}
+        />
+      ))}</div>;
+    };
+    const ref = createRef<FormHandle>();
+    const view = render(
+      <Form
+        ref={ref}
+        jsonSchema={{ type: 'object', properties: {
+          o: { type: 'object', properties: { s: { type: 'string' } } },
+        } }}
+        defaultValue={{ o: { s: 'a' } }}
+        validationMode={ValidationMode.None}
+        formTypeInputMap={selection === 'anchored map' ? { '^/o$': Container } : undefined}
+        formTypeInputDefinitions={selection === 'definitions'
+          ? [{ test: { path: '/o' }, Component: Container }]
+          : undefined}
+      />,
+    );
+    expect(childCount).toBe(1);
+    const container = view.getByTestId('container');
+    for (const value of ['ab', 'abc']) {
+      fireEvent.change(view.container.querySelector('input')!, { target: { value } });
+      expect(ref.current!.getValue()).toEqual({ o: { s: value } });
+      expect(view.getByTestId('container')).toBe(container);
+    }
+  },
+);

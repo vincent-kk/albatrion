@@ -83,7 +83,10 @@ export const RootNodeContextProvider = ({
     reporter.root = load.root;
     reporter.pendingLoad = () => flushRootLoad(load, true);
   }
-  const pending = useRef<RootLoadProps | undefined>(undefined);
+  const pending = useRef<
+    | { props: RootLoadProps; option: Parameters<RootBinding['reset']>[0] }
+    | undefined
+  >(undefined);
   const [, schedule] = useState(0);
   const reset = useHandle((option?: Parameters<RootBinding['reset']>[0]) => {
     const used = committed.current;
@@ -93,7 +96,7 @@ export const RootNodeContextProvider = ({
     binding.current.root = store.load.root;
     attachedFilesMap.clear();
     onReset();
-    pending.current = used;
+    pending.current = { props: used, option };
     schedule((version) => version + 1);
     for (const listener of store.listeners) listener();
     if (store.load.error) throw store.load.error;
@@ -112,17 +115,18 @@ export const RootNodeContextProvider = ({
     };
     if (store.load.root && previous.context !== current.context)
       setContext(store.load.root, context);
-    if (previous.validator !== current.validator) reset();
-    else if (pending.current) {
-      const used = pending.current;
-      pending.current = undefined;
+    const requested = pending.current;
+    pending.current = undefined;
+    if (previous.validator !== current.validator) reset(requested?.option);
+    else if (requested) {
+      const { props: used, option } = requested;
       if (
         !isSameSchema(used.jsonSchema, current.jsonSchema) ||
         !isSameSchema(used.defaultValue, current.defaultValue) ||
         !isSameSchema(used.errors, current.errors) ||
         used.showError !== current.showError
       )
-        reset();
+        reset(option);
     }
   });
 

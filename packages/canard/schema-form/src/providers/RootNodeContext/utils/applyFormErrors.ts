@@ -6,15 +6,32 @@ export const applyFormErrors = (
   errors: readonly ValidationIssue[] = [],
   previous: readonly ValidationIssue[] = [],
 ): void => {
-  const paths = [...errors, ...previous].map((issue) => issue.dataPath);
+  const groups = new Map<string, ValidationIssue[]>();
+  const paths: string[] = [];
+  for (let index = 0; index < errors.length; index++) {
+    const issue = errors[index];
+    const path = issue.dataPath;
+    let group = groups.get(path);
+    if (!group) {
+      group = [];
+      groups.set(path, group);
+      paths.push(path);
+    }
+    group.push(issue);
+  }
+  for (let index = 0; index < previous.length; index++) {
+    const path = previous[index].dataPath;
+    if (groups.has(path)) continue;
+    groups.set(path, []);
+    paths.push(path);
+  }
   root.batch(() => {
     root.setExternalErrors(errors);
     for (let index = 0; index < paths.length; index++) {
       const path = paths[index];
-      if (paths.indexOf(path) !== index) continue;
       const node = root.find(path);
       if (node && node !== root)
-        node.setExternalErrors(errors.filter((issue) => issue.dataPath === path));
+        node.setExternalErrors(groups.get(path)!);
     }
   });
 };

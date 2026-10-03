@@ -2,23 +2,24 @@ import {
   type MutableRefObject,
   useCallback,
   useLayoutEffect,
+  useMemo,
+  useReducer,
   useRef,
 } from 'react';
 
-import { useVersion } from '@winglet/react-utils/hook';
-
 import { type SchemaNode, SchemaNodeEventType } from '@/schema-form/core';
+import { useSchemaNodeTracker } from '@/schema-form/hooks/useSchemaNodeTracker';
 
 /**
  * Controls rendering and focus/select behavior for form-type inputs based on SchemaNode events.
  *
  * Event Handling:
- * - `RequestRefresh`: Increments the input key, deferring replacement until composition ends
+ * - `RequestRefresh`: Tracks the node revision, deferring replacement until composition ends
  * - `RequestFocus`: Focuses the first focusable element (input, textarea, button) in container
  * - `RequestSelect`: Selects text in the first selectable element (input, textarea) in container
  *
  * Usage in SchemaNodeInput:
- * - The returned version keys the input and captures its current value.
+ * - The returned generation keys the input and captures its current value.
  *
  * Design Note:
  * - Input-origin writes exclude their own Refresh through the core binding.
@@ -32,29 +33,39 @@ export const useFormTypeInputControl = <Node extends SchemaNode>(
   node: Node,
   mountedChildren: MutableRefObject<number>,
 ) => {
-  const [version, update] = useVersion();
+  const generation = useRef(node.revision(SchemaNodeEventType.RequestRefresh));
+  const [, releaseComposition] = useReducer((value: number) => value + 1, 0);
   const ref = useRef<HTMLDivElement>(null);
   const composing = useRef(false);
-  const pendingRefresh = useRef(false);
+  const refreshSource = useMemo(
+    () => ({
+      subscribe: (listener: Parameters<Node['subscribe']>[0]) =>
+        node.subscribe(listener),
+      revision: (tracking?: number) =>
+        composing.current || mountedChildren.current > 0
+          ? generation.current
+          : node.revision(tracking),
+    }),
+    [node, mountedChildren],
+  );
+  generation.current = useSchemaNodeTracker(
+    refreshSource,
+    SchemaNodeEventType.RequestRefresh,
+  );
   const handleCompositionStart = useCallback(() => {
     composing.current = true;
   }, []);
   const handleCompositionEnd = useCallback(() => {
     composing.current = false;
-    if (!pendingRefresh.current) return;
-    pendingRefresh.current = false;
-    update();
-  }, [update]);
+    if (
+      mountedChildren.current === 0 &&
+      generation.current !== node.revision(SchemaNodeEventType.RequestRefresh)
+    )
+      releaseComposition();
+  }, [node, mountedChildren]);
   useLayoutEffect(() => {
     if (!node) return;
     const unsubscribe = node.subscribe(({ type }) => {
-      if (
-        type & SchemaNodeEventType.RequestRefresh &&
-        mountedChildren.current === 0
-      ) {
-        if (composing.current) pendingRefresh.current = true;
-        else update();
-      }
       if (type & SchemaNodeEventType.RequestFocus)
         queryElement(ref.current)?.focus();
       if (type & SchemaNodeEventType.RequestSelect) {
@@ -63,8 +74,8 @@ export const useFormTypeInputControl = <Node extends SchemaNode>(
       }
     });
     return unsubscribe;
-  }, [node, ref, update, mountedChildren]);
-  return [ref, version, handleCompositionStart, handleCompositionEnd] as const;
+  }, [node, ref]);
+  return [ref, generation.current, handleCompositionStart, handleCompositionEnd] as const;
 };
 
 const FOCUS_SELECT_SELECTOR = 'input, textarea, button' as const;

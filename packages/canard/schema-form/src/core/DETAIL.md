@@ -8,7 +8,7 @@
 - 노드의 `value`는 편집 중인 계산값이고 `outputValue`는 스키마 출력 옵션이 적용된 투영 값입니다. 원본 상태는 `raw`·`extras`에 두며 투영은 노드 트리와 편집 상태를 바꾸지 않습니다(VALUE-002·027·034, LANDING-067).
 - 루트 검증·루트 방출·`FormHandle.getValue`·제출은 `outputValue`를 읽습니다. 입력과 `UpdateValue` 관측은 `value`를 사용하며 노드 변경은 공개 쓰기 API 또는 이름 붙은 바인딩 전용 통로를 경유합니다(LANDING-067, REACT-009·010).
 - `src/__legacy__/core/`의 노드·파서·시험은 참고용으로 보존하며 비레거시 코드가 가져오지 않습니다. 새 시나리오 하네스는 새 엔진을 검증합니다(LANDING-205).
-- `nodeFromJSONSchema`는 core만 쓰는 호스트의 진입이며 `src/index.ts`는 내보내지 않습니다. `<Form>`도 같은 트리 생성 통로를 바인딩 전용 함수로 사용합니다. `contextNodeFactory`는 `src/__legacy__/`에 속하며 core·패키지 진입점이 내보내지 않습니다. `core/types`는 event·state·value 계약을 유지하고 node·constructor 계약은 두지 않습니다(LANDING-087, 70C-01).
+- `nodeFromJSONSchema`는 core만 쓰는 호스트의 진입이며 `src/index.ts`는 내보내지 않습니다. `<Form>`도 같은 트리 생성 통로를 바인딩 전용 함수로 사용합니다. `contextNodeFactory`는 `src/__legacy__/`에 속하며 core·패키지 진입점이 내보내지 않습니다. `core/types`의 event·state·value는 구체 파일로 소비하며 별도 와일드카드 배럴이나 node·constructor 계약은 두지 않습니다(LANDING-087, 70C-01).
 - 공개 노드 형·가드와 `SchemaNodeEventType`·`SchemaNodeRequestType`·`SchemaNodeState`는 패키지 진입점이 이름으로 내보냅니다. 바인딩 전용 함수와 `Validator`·`ValidateFunction`은 패키지 공개 `src/index.ts`가 내보내지 않습니다(NODE-010, SURFACE-055·056·060, VALIDATE-044, 32C-01, 69C-01).
 - 새 fractal의 의존 순서는 `blueprint` < `record` < {종류 모듈, `navigation`} < `validation` < `settle/derive` < `settle` < `dispatch` < `SchemaNode`다. `settle/derive`는 `settle`의 자식으로서 규칙 판정만 소유하고 settle의 라운드 실행기가 그 진입점을 소비한다. `validation`은 결과를 받은 콜백으로만 `dispatch`에 돌려주며 타입 간선도 역전시키지 않는다(NODE-016·045, LANDING-083·084, SETTLE-004).
 - 사건은 루트의 동기 진입 사슬에서 정착·파동 배달·검증 요청·`onChange` 순서로 조율합니다. 경계 린트는 `src/core/**` 전체에 적용하여 `app/plugin` 가져오기를 금지합니다(EVENT-027, CONTROLS-075, LANDING-067).

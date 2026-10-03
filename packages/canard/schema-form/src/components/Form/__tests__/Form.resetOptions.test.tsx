@@ -1,4 +1,4 @@
-import { createRef } from 'react';
+import { createRef, useState } from 'react';
 
 import { act, cleanup, render } from '@testing-library/react';
 import { afterEach, expect, it } from 'vitest';
@@ -9,6 +9,37 @@ import { Form } from '../Form';
 import type { FormHandle } from '../type';
 
 afterEach(cleanup);
+
+it.each([
+  ['same schema', false, false],
+  ['regenerated', true, false],
+  ['validator', false, true],
+] as const)('WRITE-044 commit re-check preserves reset suppression (%s)', (_, replacement, changeValidator) => {
+  const ref = createRef<FormHandle>();
+  const schema = { type: 'object', properties: { a: { type: 'string' }, filled: { type: 'string', default: 'automatic' } } } as const;
+  let setDefault!: (value: { a: string }) => void;
+  const firstValidator = { compile: () => () => null, compileGuard: () => () => true };
+  const secondValidator = { ...firstValidator };
+  const App = () => {
+    const [defaultValue, updateDefault] = useState({ a: '1' });
+    setDefault = updateDefault;
+    const jsonSchema = replacement && defaultValue.a === '2'
+      ? { ...schema, title: 'replacement' }
+      : schema;
+    const validatorFactory = changeValidator
+      ? defaultValue.a === '2' ? secondValidator : firstValidator
+      : undefined;
+    return <Form ref={ref} jsonSchema={jsonSchema} defaultValue={defaultValue} validatorFactory={validatorFactory} validationMode={ValidationMode.None}><span /></Form>;
+  };
+  render(<App />);
+  const original = ref.current!.node;
+  act(() => {
+    setDefault({ a: '2' });
+    ref.current!.reset(SetValueOption.DisableAutomaticWrites);
+  });
+  expect(ref.current!.getValue()).toEqual({ a: '2' });
+  expect(ref.current!.node === original).toBe(!replacement && !changeValidator);
+});
 
 it.each([false, true])('WRITE-015 LANDING-039 reset load options override the Form default (replacement: %s)', (replacement) => {
   const ref = createRef<FormHandle>();

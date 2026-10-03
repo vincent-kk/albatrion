@@ -1,4 +1,4 @@
-import { memo, useCallback, useMemo, useRef } from 'react';
+import { memo, useCallback, useRef } from 'react';
 
 import { isArray } from '@winglet/common-utils/filter';
 import { useMemorize, useOnUnmount } from '@winglet/react-utils/hook';
@@ -48,14 +48,9 @@ export const SchemaNodeInput = memo(
     const { readOnly: rootReadOnly, disabled: rootDisabled } =
       useInputControlContext();
     const isLive = useLiveNode(node);
-    const [ref, version, handleCompositionStart, handleCompositionEnd] =
+    const [ref, generation, handleCompositionStart, handleCompositionEnd] =
       useFormTypeInputControl(node, mountedChildren);
-    const generation = useMemo(
-      () => node.revision(SchemaNodeEventType.RequestRefresh),
-      // eslint-disable-next-line react-hooks/exhaustive-deps -- Capture a revision once per mounted input generation.
-      [node, version],
-    );
-    const defaultValue = useMemorize(() => node.value, [node, version]);
+    const defaultValue = useMemorize(() => node.value, [node, generation]);
     const accepts = useCallback(
       () =>
         isLive() &&
@@ -143,7 +138,7 @@ export const SchemaNodeInput = memo(
           {...overrideProps}
           readOnly={rootReadOnly || node.readOnly || !!overrideProps.readOnly}
           disabled={rootDisabled || node.disabled || !!overrideProps.disabled}
-          key={version}
+          key={generation}
           jsonSchema={node.jsonSchema as JSONSchema}
           node={node}
           type={node.type}

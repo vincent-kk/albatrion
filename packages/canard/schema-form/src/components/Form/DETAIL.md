@@ -10,6 +10,8 @@
 
 ## API Contracts
 
+- 기본값·스키마 변경과 같은 React 배치에서 호출한 `reset(option?)`은 커밋 재대조에도 원래 자동 쓰기 억제 옵션을 전달하여 최신 기본값을 자동 채움 없이 읽습니다(WRITE-044).
+
 ### 값 채널
 
 - `getValue()`·`submit`·`onChange`는 `rootNode.outputValue`를 읽습니다. `setValue(value, options)`는 받은 값을 `rootNode.setValue`에 넘깁니다.
@@ -42,7 +44,7 @@
 
 ### reset-options — 로드별 자동 쓰기 억제
 
-- 같은 트리 reload와 재생성 트리 mount 모두 호출의 억제 비트가 Form 기본값보다 우선합니다. 옵션 생략은 Form 속성을 따르고 두 비트 동시 지정은 억제가 이깁니다(WRITE-015, LANDING-039).
+- 같은 트리 reload와 재생성 트리 mount 및 validator·props 커밋 재대조 모두 호출의 억제 비트가 Form 기본값보다 우선합니다. 옵션 생략은 Form 속성을 따르고 두 비트 동시 지정은 억제가 이깁니다(WRITE-015·044, LANDING-039).
 - 공개 형은 `Overwrite`·`Merge`를 거부하며 캐스트로 전달된 다른 비트는 로드 의미를 바꾸지 않습니다.
 
 ### emit-normalized — 방출 경로는 정제 값을 낸다
