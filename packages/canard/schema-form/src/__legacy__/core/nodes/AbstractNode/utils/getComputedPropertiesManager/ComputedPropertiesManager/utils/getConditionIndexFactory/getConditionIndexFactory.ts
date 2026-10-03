@@ -1,0 +1,72 @@
+import { isArray } from '@winglet/common-utils/filter';
+
+import type { PathManager } from '@/schema-form/core/blueprint';
+import type { DynamicFunction } from '@/schema-form/core/blueprint';
+import { JSONSchemaError } from '@/schema-form/errors';
+import { formatConditionIndexError } from '@/schema-form/helpers/error';
+import type {
+  JSONSchemaType,
+  JSONSchemaWithVirtual,
+  PartialJSONSchema,
+} from '@/schema-form/types';
+
+import type { ConditionIndexName } from '../type';
+import { extractConditionInfo } from './utils/extractConditionInfo';
+import { getSimpleEquality } from './utils/getSimpleEquality';
+
+type GetConditionIndex = DynamicFunction<number>;
+
+/**
+ * Creates a function to calculate the index of condition schema.
+ * @param jsonSchema - JSON schema
+ * @returns Condition index factory function
+ */
+export const getConditionIndexFactory =
+  (type: JSONSchemaType, jsonSchema: JSONSchemaWithVirtual) =>
+  /**
+   * Returns a condition index calculation function for the given dependency paths and field name.
+   * @param dependencyPaths - Dependency path array
+   * @param fieldName - Field name to calculate index for (oneOf, anyOf, etc.)
+   * @param conditionField - Field name where condition is specified (if, ifNot, ifAny, ifAll)
+   * @returns Condition index calculation function or undefined
+   */
+  (
+    pathManager: PathManager,
+    fieldName: string,
+    conditionField: ConditionIndexName,
+  ): GetConditionIndex | undefined => {
+    if (type !== 'object') return undefined;
+
+    const conditionSchemas: PartialJSONSchema[] = jsonSchema[fieldName];
+    if (!isArray(conditionSchemas)) return undefined;
+
+    const { expressions, schemaIndices } = extractConditionInfo(
+      conditionSchemas,
+      conditionField,
+      pathManager,
+    );
+
+    const length = expressions.length;
+    if (length === 0) return undefined;
+
+    const simpleEquality = getSimpleEquality(expressions, schemaIndices);
+
+    if (simpleEquality) return simpleEquality;
+
+    const lines = new Array<string>(length);
+    for (let i = 0, exp = expressions[0]; i < length; i++, exp = expressions[i])
+      lines[i] = `if(${exp}) return ${schemaIndices[i]};`;
+
+    try {
+      return new Function(
+        'dependencies',
+        `${lines.join('\n')}\nreturn -1;`,
+      ) as GetConditionIndex;
+    } catch (error) {
+      throw new JSONSchemaError(
+        'CONDITION_INDEX',
+        formatConditionIndexError(fieldName, expressions, lines, error),
+        { fieldName, expressions, lines, error },
+      );
+    }
+  };

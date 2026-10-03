@@ -2,12 +2,16 @@
 
 ## Requirements
 
+- 경로 키 저장소 보조는 record의 런타임 형 선언과 생성·정착의 쓰기가 함께 소비하므로 공통 소유자인 core에 둡니다. PathKeyedMap·PathKeyedSet은 빈 색인을 생성할 때 소유하고 native Map·Set의 열거·instanceof를 유지하며 인스턴스 adoption이나 메서드 패치를 하지 않습니다. K개 항목·깊이 D에서 O(KD) 색인 키 참조와 유일 prefix 및 숫자 radix 저장량을 추가합니다(NODE-045, SETTLE-017·047, GOAL-011).
+
 - `core/index.ts`가 이 fractal의 공개 표면이다. `nodeFromJSONSchema()` 팩토리, 노드 타입과 타입 가드, `NodeEventType`·`SetValueOption`·`ValidationMode` 등 열거값을 이름으로 내보낸다.
 - **모든 노드는 값을 두 채널로 노출한다.** `value`는 노드가 보유한 raw 값이고, `normalizedValue`는 스키마 출력 옵션이 적용된 정제 뷰다. 기본 구현은 `AbstractNode`가 제공하며 `value`를 그대로 돌려주므로, 정제가 필요 없는 노드 타입은 아무것도 구현하지 않는다.
 - `normalizedValue` override는 **값 정제 목적으로만** 허용된다. 현재 유일한 override는 `ArrayNode`(`options.omitTrailing`)이다. 정제는 노드 트리를 바꾸지 않는다 — 자식 노드는 raw 상태를 유지하며, 정제로 사라진 항목의 노드도 그대로 남는다.
 - 정제 값을 읽는 곳은 밖으로 나가는 경로뿐이다 — 루트 검증 값, 루트 방출, `FormHandle.getValue`, 부모측 하이드레이션 스냅샷. 안으로 들어오는 경로(`setValue`)와 raw 관측 경로(`UpdateValue` payload)는 계속 `value`를 쓴다.
 - 노드 값 변경은 `setValue()` 공개 API를 경유한다. private `__value__`에 외부에서 접근하지 않는다.
-- 파서(`parsers/`)는 순수 함수다. 값 변환만 담당하며 JSON Schema 검증 로직을 넣지 않는다.
+- 레거시 노드·파서 구현과 옛 `__tests__/`는 `src/__legacy__/core/`로 옮긴다. `src/core/__tests__/scenarios/`는 새 하네스로 남긴다. 파서는 순수 값 변환만 담당하며 JSON Schema 검증 로직을 넣지 않는다.
+- `src/core/index.ts`, `nodeFromJSONSchema.ts`, `types/`는 제자리를 유지하고 stage 07 전환까지 레거시 엔진을 가리킵니다. 바인딩 전용 `setContext`·`retainValidationRoot`·`releaseValidationRoot`와 새 엔진의 `SchemaNodeEventType`·`SchemaNodeRequestType`만 새 fractal의 진입점에서 이름으로 다시 내보냅니다. `Validator`·`ValidateFunction`과 새 엔진 이름은 패키지 공개 `src/index.ts`에 두지 않습니다(NODE-010, LANDING-159, SURFACE-055·056·060, VALIDATE-044, 28C-08, 32C-01).
+- 새 fractal의 의존 순서는 `blueprint` < `record` < {종류 모듈, `navigation`} < `validation` < `settle/derive` < `settle` < `dispatch` < `SchemaNode`다. `settle/derive`는 `settle`의 자식으로서 규칙 판정만 소유하고 settle의 라운드 실행기가 그 진입점을 소비한다. `validation`은 결과를 받은 콜백으로만 `dispatch`에 돌려주며 타입 간선도 역전시키지 않는다(NODE-016·045, LANDING-083·084, SETTLE-004).
 - 이벤트는 `EventCascade`로 마이크로태스크 배칭한다. 단 `UpdateValue`는 동기 발행이다.
 - 노드 트리는 순환 참조를 만들지 않는다.
 
@@ -21,8 +25,13 @@
 | `SchemaNode` 및 타입별 노드                                      | `value`·`normalizedValue`·`setValue`·`validate`·`subscribe`·`find`·`revision` 등 노드 공개 표면 |
 | `isSchemaNode` · `isBranchNode` · `isTerminalNode` · 타입별 가드 | 런타임 타입 판별                                                                                |
 | `NodeEventType` · `SetValueOption` · `ValidationMode`            | 비트 플래그·열거값                                                                              |
+| `SchemaNodeEventType` · `SchemaNodeRequestType`                  | 새 엔진 전용 사건·명령 열거값. 패키지 공개 진입점에는 노출하지 않음(EVENT-073, LANDING-159) |
+| `setContext(root, context)`                                      | 새 엔진의 바인딩 전용 내부 통로를 이름으로 다시 내보냄. 패키지 공개 `src/index.ts`에는 노출하지 않음(NODE-010, SURFACE-055, 28C-08) |
+| `retainValidationRoot(validator, authoredRoot)` · `releaseValidationRoot(validator, authoredRoot)` | 07 바인딩 이펙트의 수명 증감 통로를 `validation/index.ts`에서 이름으로 다시 내보냄. 패키지 공개 `src/index.ts`에는 노출하지 않음(VALIDATE-021·045, NODE-010) |
 
 ### 값 채널 규약
+
+생성자 기본값의 타입은 노드가 이미 보관하는 `Value | Nullish`와 일치합니다. 공개 스키마 union 추론이 null을 보존해도 기존 노드의 기본값 입력을 좁히지 않으며, 이 타입 보정은 런타임 파서나 변경 통보 동작을 바꾸지 않습니다.
 
 | 채널                     | 읽는 곳                                                          | 특성                               |
 | ------------------------ | ---------------------------------------------------------------- | ---------------------------------- |
@@ -33,7 +42,9 @@
 
 ### 노드 타입 추가
 
-새 노드 타입은 `AbstractNode`를 상속하고 `nodes/index.ts`에 export를 추가한다. `type`, `value` getter/setter, `applyValue`는 필수 구현이고 `normalizedValue`는 정제가 필요할 때만 override한다.
+기존 엔진의 노드 타입은 AbstractNode 상속 계약을 유지합니다. 재설계 엔진에는 이 상속 의무를 적용하지 않으며, 청사진이 정한 종류와 후속 단일 노드 계약을 따릅니다. 전환 전 공개 팩토리는 기존 엔진을 계속 사용합니다.
+
+공개 `InferSchemaNode`는 NODE-059에 따라 형 없는 `oneOf`·`anyOf`의 모든 분기가 인라인 객체 또는 인라인 배열 스키마일 때만 각각 `ObjectNode`·`ArrayNode`로 좁힙니다. `$ref`, 게이트 분기, 두 키워드의 동시 사용, 본체 `allOf`는 넓은 `SchemaNode`를 유지합니다. 형 없는 분기 없는 `const`·`enum` 칸은 리터럴의 JSON 종류에 맞는 원시 노드로 좁힙니다. 이 타입 추론은 기존 런타임 팩토리의 동작을 바꾸지 않습니다.
 
 ## Acceptance Criteria
 
@@ -51,6 +62,83 @@
 
 - `nodeFromJSONSchema()`로 만든 트리의 루트가 스키마 타입에 대응하는 노드 인스턴스이고, 각 타입 가드가 그 노드를 참으로 판별한다.
 
+### scenario-runner — 코어 시나리오 실행 소유
+
+- 시나리오 명세 표는 각 부류의 장면 목록에서 생성되므로 사례 수를 정적으로 셀 수 없으며 `spec-document-case-cap`은 `indeterminate`로 유지합니다(60C-01).
+- TEST-023에 따라 코어 시험이 공유 시나리오 데이터를 해석합니다. 비공개 시나리오 패키지는 코어 실행기를 소유하지 않습니다.
+- 주입된 코어 어댑터가 단계를 순서대로 한 번씩 실행하며 정착을 기다린 뒤 기대를 검사하고 실패를 호출자에게 전달합니다.
+- 각 부류의 시나리오를 새 `SchemaNode` 트리에서 실행하고 단계별 형상·방출·진단·상태 키를 검증합니다. `reset`은 루트 폼 수준 로드이며 `resetSubtree()`는 해당 하위 트리만 로드합니다(TEST-011·016·019·023, SETTLE-049).
+
+### scenario-value — 값 부류 시나리오
+
+- 공유 `value` 부류의 모든 시나리오가 코어 실행기에서 기대한 원본·방출·형 불일치 기록을 냅니다(TEST-019·023).
+
+### scenario-settle — 정착 부류 시나리오
+
+- 공유 `settle` 부류의 모든 시나리오가 코어 실행기에서 기대한 형상·진단·예산 결과를 냅니다(TEST-019·023).
+
+### scenario-fill — 채움 부류 시나리오
+
+- 공유 `fill` 부류의 모든 시나리오가 코어 실행기에서 기대한 채움 결과를 냅니다(TEST-019·023).
+
+### scenario-exit — 나감 부류 시나리오
+
+- 공유 `exit` 부류의 모든 시나리오가 코어 실행기에서 기대한 나감 비움·잠복 결과를 냅니다(TEST-019·023).
+
+### scenario-union — union 부류 시나리오
+
+- 공유 `union` 부류의 모든 시나리오가 코어 실행기에서 기대한 종류 선택·형상을 냅니다(TEST-019·023).
+
+### scenario-derive — 파생 부류 시나리오
+
+- 공유 `derive` 부류의 모든 시나리오가 코어 실행기에서 기대한 에지 발화·같은 대상 순위·예산·`injectTo` 결과를 냅니다(TEST-016·019·023, SETTLE-049).
+
+### scenario-controls — 제어 부류 시나리오
+
+- 공유 `controls` 부류의 모든 시나리오가 코어 실행기에서 기대한 상태 키 결합·범위·나감 층 결과를 냅니다(TEST-019·023).
+
+### scenario-array — 배열 부류 시나리오
+
+- 공유 `array` 부류의 일반 장면에서 다섯 구조 동사와 배열 아이템 형상·identity·스냅숏·방출을 코어 실행기가 실제 노드에서 검사합니다(TEST-011·018·023, NODE-051·052, WRITE-095·099, VALUE-034, LANDING-202·203, 26C-02).
+
+### scenario-array-position — 위치 이동의 상태
+
+- 구조 연산으로 이동한 아이템은 키와 노드 참조를 유지하며 상호 작용 상태가 새 위치를 따릅니다(TEST-018, NODE-051).
+
+### scenario-array-terminal — 터미널 배열의 사본
+
+- 터미널 배열의 다섯 동사는 매번 직전 원본을 보존하고 새 배열 사본을 기록합니다(TEST-018, NODE-005).
+
+### scenario-array-source-b — 원본 B 배열 구조 복원
+
+- 예산 초과 때 자동 생성한 배열 아이템은 원본 B의 빈 형상으로 되돌아가고, 사용한 아이템 키는 재사용하지 않습니다(TEST-018, WRITE-099).
+
+### scenario-notify — 통지 부류 시나리오
+
+- 공유 `notify` 부류의 모든 시나리오가 관찰 어댑터로 실행되어 기대한 배달 순서·명령·상태 사건·`onError` 기록을 냅니다(EVENT-004·027, TEST-019·023).
+
+### scenario-validation — 검증 부류 시나리오
+
+- 공유 `validation` 부류의 모든 시나리오가 관찰 어댑터로 실행되어 기대한 판정·노드별 오류 라우팅·검증 불가 결과를 냅니다(VALIDATE-043, TEST-019·023).
+
+### scenario-differential — 같은 ajv 경로 비교
+
+- 공유 `validation` 부류의 각 시나리오에서 코어 트리의 검증 판정과 오류 경로가 같은 Ajv로 작성 스키마를 직접 검증한 결과와 같습니다. 다른 구현과의 교차 대조(TEST-001)는 ajv가 아닌 검증기 플러그인이 생길 때까지 미룹니다(소유자 결정: ajv만 지원).
+
+### public-node-inference — 형 없는 스키마의 공개 노드 형
+
+- 인라인 객체·배열 분기만 있는 칸은 대응 노드로 좁히고, 참조·게이트·두 키워드·본체 allOf가 있으면 넓은 노드 형을 유지합니다.
+- 분기 없는 단일 리터럴 종류의 `const`·`enum` 칸은 대응 원시 노드 형으로 좁힙니다.
+- 형 수준에서 청사진 오류를 확정할 수 있는 객체·배열 리터럴, 종류가 섞인 리터럴, 혼합 인라인 분기는 `never`입니다. 정적 판정이 불가능한 모양만 넓은 노드 형을 유지합니다.
+
+## Boundary Exemptions
+
+### `__tests__/makeSchemaNodeTree.ts` — 공유 시험 트리 생성
+
+- **Consumers**: `behaviors/unionBehavior/__tests__/**`
+- **Direct import**: `allowed`
+- **Reason**: 회귀 시험과 union 시험이 같은 실제 청사진·노드 트리 생성기를 소비합니다. 제품 진입점에 시험 전용 도우미를 공개하지 않기 위해 core의 테스트 구획에 보관합니다.
+
 ## Last Updated
 
-2026-08-12 — 공개 `normalizedValue` getter 도입에 맞춰 raw/정제 두 채널 규약과 채널별 소비 지점, 정제가 노드 트리를 보존한다는 계약을 명문화 (신규 문서).
+2026-10-02

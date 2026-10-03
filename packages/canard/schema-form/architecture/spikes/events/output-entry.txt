@@ -1,0 +1,29 @@
+npm notice run albatrion@0.0.0 npx
+npm notice run 'vitest' run --config architecture/spikes/events/vitest.entry.config.mjs
+
+ RUN  v3.2.6 /Users/Vincent/Workspace/albatrion/.claude/worktrees/r5-false-usage/packages/canard/schema-form/architecture/spikes/events
+
+stdout | entry.spike.test.tsx
+
+OBSERVATIONS
+[layout / act] keystroke 'x': entries=2 (sync 2) onChange=2 (sync 2) validations=2 commits=2 (sync 2) settles=2 waves=2 | onChange payloads=[{"emit":"{\"a\":\"x\"}","commit":2,"phase":"during-dispatch"},{"emit":"{\"a\":\"x\",\"b\":\"derived:x\"}","commit":3,"phase":"during-dispatch"}] | validation stamps=[2,3] | effects=["layout-effect writes \"derived:x\" (entryDepth before=0)"] | DOM a="x" b="derived:x" emit={"a":"x","b":"derived:x"} consistent=true firstOnChangeStale=true
+[layout / native] keystroke 'x': entries=2 (sync 2) onChange=2 (sync 2) validations=2 commits=2 (sync 2) settles=2 waves=2 | onChange payloads=[{"emit":"{\"a\":\"x\"}","commit":2,"phase":"during-dispatch"},{"emit":"{\"a\":\"x\",\"b\":\"derived:x\"}","commit":3,"phase":"during-dispatch"}] | validation stamps=[2,3] | effects=["layout-effect writes \"derived:x\" (entryDepth before=0)"] | DOM a="x" b="derived:x" emit={"a":"x","b":"derived:x"} consistent=true firstOnChangeStale=true
+[passive / act] keystroke 'x': entries=2 (sync 2) onChange=2 (sync 2) validations=2 commits=2 (sync 2) settles=2 waves=2 | onChange payloads=[{"emit":"{\"a\":\"x\"}","commit":2,"phase":"during-dispatch"},{"emit":"{\"a\":\"x\",\"b\":\"derived:x\"}","commit":3,"phase":"during-dispatch"}] | validation stamps=[2,3] | effects=["passive-effect writes \"derived:x\" (entryDepth before=0)"] | DOM a="x" b="derived:x" emit={"a":"x","b":"derived:x"} consistent=true firstOnChangeStale=true
+[passive / native] keystroke 'x': entries=2 (sync 2) onChange=2 (sync 2) validations=2 commits=2 (sync 2) settles=2 waves=2 | onChange payloads=[{"emit":"{\"a\":\"x\"}","commit":2,"phase":"during-dispatch"},{"emit":"{\"a\":\"x\",\"b\":\"derived:x\"}","commit":3,"phase":"during-dispatch"}] | validation stamps=[2,3] | effects=["passive-effect writes \"derived:x\" (entryDepth before=0)"] | DOM a="x" b="derived:x" emit={"a":"x","b":"derived:x"} consistent=true firstOnChangeStale=true
+[control] keystroke, no effect writer: entries=1 onChange=1 validations=1 commits=1 emit={"a":"x"}
+[listener] store listener derives b: entries=1 onChange=1 validations=1 commits=1 settles=2 waves=2 effects=[] DOM b="derived:x" emit={"a":"x","b":"derived:x"}
+
+
+ ✓ entry.spike.test.tsx > v4c onChange per outermost entry under React 19 + jsdom (C-10) > commit counter hook is live 1ms
+ ✓ entry.spike.test.tsx > v4c onChange per outermost entry under React 19 + jsdom (C-10) > [layout / act] keystroke in a; layout effect writes b 40ms
+ ✓ entry.spike.test.tsx > v4c onChange per outermost entry under React 19 + jsdom (C-10) > [layout / native] keystroke in a; layout effect writes b 5ms
+ ✓ entry.spike.test.tsx > v4c onChange per outermost entry under React 19 + jsdom (C-10) > [passive / act] keystroke in a; passive effect writes b 4ms
+ ✓ entry.spike.test.tsx > v4c onChange per outermost entry under React 19 + jsdom (C-10) > [passive / native] keystroke in a; passive effect writes b 4ms
+ ✓ entry.spike.test.tsx > v4c onChange per outermost entry under React 19 + jsdom (C-10) > [control] keystroke in a with no effect writer -> 1 entry, 1 onChange 3ms
+ ✓ entry.spike.test.tsx > v4c onChange per outermost entry under React 19 + jsdom (C-10) > [listener] keystroke in a; a store listener (not React) writes b -> 1 entry, 1 onChange, 2 waves 4ms
+
+ Test Files  1 passed (1)
+      Tests  7 passed (7)
+   Start at  01:00:03
+   Duration  820ms (transform 48ms, setup 0ms, collect 166ms, tests 61ms, environment 336ms, prepare 84ms)
+

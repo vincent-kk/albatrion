@@ -1,0 +1,136 @@
+{
+  "node": "v24.20.0",
+  "corpus": [
+    {
+      "id": "pydantic-2.9 discriminated Literal",
+      "accepted": true,
+      "nodes": 5,
+      "milliseconds": 2.8644590000000107
+    },
+    {
+      "id": "pydantic-2.9 Optional[Union[Cat,Dog]]",
+      "accepted": true,
+      "nodes": 5,
+      "milliseconds": 0.4407500000000937
+    },
+    {
+      "id": "pydantic-2.9 Optional[discriminated]",
+      "accepted": true,
+      "nodes": 5,
+      "milliseconds": 0.2595420000000104
+    },
+    {
+      "id": "pydantic-2.x const+enum (추론)",
+      "accepted": true,
+      "nodes": 5,
+      "milliseconds": 0.236582999999996
+    },
+    {
+      "id": "OpenAPI-3.0 petstore mapping-only",
+      "accepted": true,
+      "nodes": 6,
+      "milliseconds": 0.41154199999994034
+    },
+    {
+      "id": "OpenAPI-3.0 nullable branch",
+      "accepted": true,
+      "nodes": 5,
+      "milliseconds": 0.14783299999999144
+    },
+    {
+      "id": "OpenAPI-3.1 two-level allOf inheritance (TypeSpec style, 추론)",
+      "accepted": true,
+      "nodes": 6,
+      "milliseconds": 0.21862499999997453
+    },
+    {
+      "id": "OpenAPI-3.1 type:[object,null] branch",
+      "accepted": true,
+      "nodes": 5,
+      "milliseconds": 0.23583299999995688
+    },
+    {
+      "id": "zod-to-json-schema-3.23 discriminatedUnion",
+      "accepted": true,
+      "nodes": 5,
+      "milliseconds": 0.1107080000000451
+    },
+    {
+      "id": "zod-to-json-schema-3.23 discriminatedUnion with z.enum tag",
+      "accepted": true,
+      "nodes": 5,
+      "milliseconds": 0.08283300000005056
+    },
+    {
+      "id": "TypeBox-0.32 Union of Object+Literal",
+      "accepted": true,
+      "nodes": 5,
+      "milliseconds": 0.08733299999994415
+    },
+    {
+      "id": "typescript-json-schema-0.64 two literal keys per member",
+      "accepted": true,
+      "nodes": 6,
+      "milliseconds": 0.10883300000000418
+    },
+    {
+      "id": "hand anyOf overlapping tag values",
+      "accepted": true,
+      "nodes": 6,
+      "milliseconds": 0.10620800000003783
+    },
+    {
+      "id": "pydantic-2.9 recursive tree union",
+      "accepted": true,
+      "nodes": 5,
+      "milliseconds": 0.1687090000000353
+    }
+  ],
+  "rows": [
+    {
+      "references": 100,
+      "nodes": 3,
+      "samplesMilliseconds": [
+        0.47774999999990087,
+        0.413208999999938,
+        0.4802500000000691,
+        0.4093329999999469,
+        0.4365829999999278,
+        0.4753339999999753,
+        0.3702920000000631
+      ],
+      "medianMilliseconds": 0.4365829999999278,
+      "cache": false
+    },
+    {
+      "references": 1000,
+      "nodes": 3,
+      "samplesMilliseconds": [
+        2.2463750000000573,
+        1.8463749999999663,
+        1.9063330000000178,
+        2.7814160000000356,
+        2.0808339999999816,
+        7.644042000000013,
+        3.1753329999999096
+      ],
+      "medianMilliseconds": 2.2463750000000573,
+      "cache": false
+    },
+    {
+      "references": 5000,
+      "nodes": 3,
+      "samplesMilliseconds": [
+        33.278999999999996,
+        15.36850000000004,
+        21.01212499999997,
+        13.297707999999943,
+        10.961999999999989,
+        11.701624999999922,
+        14.433250000000044
+      ],
+      "medianMilliseconds": 14.433250000000044,
+      "cache": false
+    }
+  ]
+}

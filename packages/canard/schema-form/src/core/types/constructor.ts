@@ -1,4 +1,4 @@
-import type { Fn } from '@aileron/declare';
+import type { Fn, Nullish } from '@aileron/declare';
 
 import type {
   AllowedValue,
@@ -9,7 +9,7 @@ import type {
   ValidatorFactory,
 } from '@/schema-form/types';
 
-import type { ContextNode } from '../nodes/ContextNode';
+import type { ContextNode } from '../../__legacy__/core/nodes/ContextNode';
 import type { SchemaNode } from './node';
 import type { ValidationMode } from './state';
 import type { HandleChange } from './value';
@@ -49,7 +49,7 @@ export interface SchemaNodeConstructorProps<
   schemaType: JSONSchemaType;
   required?: boolean;
   nullable: boolean;
-  defaultValue?: Value;
+  defaultValue?: Value | Nullish;
   onChange: HandleChange<Value>;
   parentNode?: SchemaNode;
   validationMode?: ValidationMode;

@@ -9,6 +9,112 @@ const __dirname = path.dirname(__filename);
 
 export default [
   ...createESLintConfig(path.resolve(__dirname, './tsconfig.json')),
+  {
+    files: [
+      'src/core/record/**/*.ts',
+      'src/core/behaviors/**/*.ts',
+      'src/core/navigation/**/*.ts',
+      'src/core/settle/**/*.ts',
+      'src/core/dispatch/**',
+      'src/core/validation/**',
+      'src/core/SchemaNode/**/*.ts',
+    ],
+    ignores: ['**/__tests__/**'],
+    rules: {
+      '@typescript-eslint/consistent-type-assertions': ['error', { assertionStyle: 'never' }],
+      '@typescript-eslint/no-explicit-any': 'error',
+    },
+  },
+  {
+    files: ['src/core/SchemaNode/SchemaNode.ts'],
+    rules: {
+      'no-restricted-syntax': [
+        'error',
+        {
+          selector: "PropertyDefinition[key.type='PrivateIdentifier']",
+          message: 'ES # private fields are forbidden in SchemaNode (NODE-010).',
+        },
+        {
+          selector: "MethodDefinition[key.type='PrivateIdentifier']",
+          message: 'ES # private methods are forbidden in SchemaNode (NODE-010).',
+        },
+        {
+          selector: 'PropertyDefinition[value!=null]',
+          message: 'SchemaNode fields are assigned only by the constructor (NODE-010).',
+        },
+        {
+          selector: "MethodDefinition[kind='method'][value.body.body.length!=1]",
+          message: 'SchemaNode methods contain one delegation statement (NODE-010).',
+        },
+        {
+          selector: "MethodDefinition[kind='get'][value.body.body.length!=1], MethodDefinition[kind='set'][value.body.body.length!=1]",
+          message: 'SchemaNode accessors contain one storage statement (NODE-010).',
+        },
+        {
+          selector: "MethodDefinition[kind='constructor'] BlockStatement > :not(ExpressionStatement)",
+          message: 'SchemaNode construction consists only of assignments (NODE-010).',
+        },
+        {
+          selector: "MethodDefinition[kind='constructor'] BlockStatement > ExpressionStatement > :not(AssignmentExpression)",
+          message: 'SchemaNode construction consists only of assignments (NODE-010).',
+        },
+        {
+          selector: "MethodDefinition[kind='constructor'] BlockStatement > ExpressionStatement > AssignmentExpression[left.object.type!='ThisExpression']",
+          message: 'SchemaNode construction assigns only its own fields (NODE-010).',
+        },
+        {
+          selector: "MethodDefinition[kind='constructor'] :matches(NewExpression, ObjectExpression, ArrayExpression, ArrowFunctionExpression)",
+          message: 'SchemaNode construction only assigns precomputed fields (NODE-010).',
+        },
+        {
+          selector: 'IfStatement, SwitchStatement, ForStatement, ForOfStatement, WhileStatement',
+          message: 'SchemaNode branching belongs to its owner modules (NODE-010).',
+        },
+      ],
+    },
+  },
+  {
+    files: [
+      'src/core/blueprint/**/*.{ts,tsx}',
+      'src/core/record/**/*.{ts,tsx}',
+      'src/core/behaviors/**/*.{ts,tsx}',
+      'src/core/navigation/**/*.{ts,tsx}',
+      'src/core/settle/**/*.{ts,tsx}',
+      'src/core/dispatch/**',
+      'src/core/validation/**',
+      'src/core/SchemaNode/**/*.{ts,tsx}',
+      'src/helpers/schemaIntersection/**/*.{ts,tsx}',
+    ],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              group: [
+                '@/schema-form/__legacy__',
+                '@/schema-form/__legacy__/**',
+                '**/__legacy__',
+                '**/__legacy__/**',
+              ],
+              message:
+                'New engine modules must not import the preserved legacy implementation (LANDING-159).',
+            },
+            {
+              group: [
+                '@/schema-form/app/plugin',
+                '@/schema-form/app/plugin/**',
+                '**/app/plugin',
+                '**/app/plugin/**',
+              ],
+              message:
+                'Core engine modules receive validators as inputs and must not import app/plugin (CONTROLS-075).',
+            },
+          ],
+        },
+      ],
+    },
+  },
   // Friend-zone boundary for internal node members.
   // `__member__` APIs on nodes are `public @internal` (stripped from public
   // d.ts via stripInternal) so the strategy/manager friend zone (src/core,

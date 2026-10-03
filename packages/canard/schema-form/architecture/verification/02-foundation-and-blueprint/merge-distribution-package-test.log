@@ -1,0 +1,355 @@
+
+ RUN  v3.2.6 /Users/Vincent/Workspace/albatrion/packages/winglet/common-utils
+
+ ✓ src/utils/promise/__tests__/withTimeout.test.ts (3 tests) 134ms
+ ✓ src/utils/promise/__tests__/delay.test.ts (3 tests) 155ms
+stdout | src/utils/scheduler/MessageChannelScheduler/__tests__/MessageChannelScheduler.performance.test.ts > MessageChannelScheduler > Performance Comparison: MessageChannel vs setTimeout > should measure execution latency comparison
+
+=== Performance Comparison (100 iterations) ===
+MessageChannel avg latency: 0.011ms
+setTimeout(0) avg latency: 1.366ms
+Speedup: 124.99x
+
+stdout | src/utils/scheduler/MessageChannelScheduler/__tests__/MessageChannelScheduler.performance.test.ts > MessageChannelScheduler > Performance Comparison: MessageChannel vs setTimeout > should compare batch task scheduling performance
+
+=== Batch Scheduling (1000 tasks) ===
+MessageChannel total time: 0.61ms
+setTimeout(0) total time: 2.47ms
+Speedup: 4.04x
+
+ ✓ src/utils/promise/__tests__/waitAndReturn.timing.test.ts (2 tests) 168ms
+stdout | src/utils/scheduler/MessageChannelScheduler/__tests__/MessageChannelScheduler.performance.test.ts > MessageChannelScheduler > Performance Comparison: MessageChannel vs setTimeout > should measure task execution order consistency
+
+=== Execution Order ===
+[
+  'microtask-1',
+  'microtask-2',
+  'messageChannel-1',
+  'messageChannel-2',
+  'setTimeout-1',
+  'setTimeout-2'
+]
+
+stdout | src/utils/scheduler/MessageChannelScheduler/__tests__/MessageChannelScheduler.performance.test.ts > MessageChannelScheduler > Browser Environment Performance Comparison > should compare MessageChannel vs setTimeout vs scheduleMacrotask in browser-like conditions
+
+=== Browser-like Individual Task Latency Test ===
+
+ ✓ src/utils/promise/__tests__/waitAndExecute.test.ts (5 tests) 308ms
+stdout | src/utils/scheduler/MessageChannelScheduler/__tests__/MessageChannelScheduler.test.ts > MessageChannelScheduler > Advanced Scheduling Patterns > should maintain performance under stress with real computations
+
+=== Stress Test (5000 tasks) ===
+Total time: 11.70ms
+Throughput: 427230 tasks/second
+Avg per task: 0.002ms
+
+ ✓ src/utils/scheduler/__tests__/scheduleMacrotask.partialGlobals.test.ts (2 tests) 28ms
+ ✓ src/utils/object/__tests__/clone.test.ts (30 tests) 45ms
+ ✓ src/utils/promise/__tests__/timeout.test.ts (3 tests) 105ms
+ ✓ src/utils/promise/__tests__/waitAndReturn.test.ts (6 tests) 509ms
+stdout | src/utils/scheduler/MessageChannelScheduler/__tests__/MessageChannelScheduler.performance.test.ts > MessageChannelScheduler > Browser Environment Performance Comparison > should compare MessageChannel vs setTimeout vs scheduleMacrotask in browser-like conditions
+MessageChannel (setImmediate) avg: 0.029ms
+setTimeout(0) avg: 1.138ms
+scheduleMacrotask avg: 0.038ms
+MessageChannel speedup over setTimeout: 38.95x
+MessageChannel speedup over scheduleMacrotask: 1.30x
+
+stdout | src/utils/scheduler/MessageChannelScheduler/__tests__/MessageChannelScheduler.performance.test.ts > MessageChannelScheduler > Browser Environment Performance Comparison > should demonstrate the 4ms setTimeout delay issue vs MessageChannel
+
+=== 4ms setTimeout Delay vs MessageChannel Demo ===
+
+ ✓ src/utils/scheduler/__tests__/scheduleNextTick.test.ts (4 tests) 16ms
+stdout | src/utils/scheduler/MessageChannelScheduler/__tests__/MessageChannelScheduler.test.ts > MessageChannelScheduler > Macro Task Timing Analysis > should measure precise timing between macro task executions
+
+=== Macro Task Timing Intervals ===
+Average interval: 0.005ms
+Min interval: 0.003ms
+Max interval: 0.015ms
+
+stdout | src/utils/scheduler/MessageChannelScheduler/__tests__/MessageChannelScheduler.performance.test.ts > MessageChannelScheduler > Browser Environment Performance Comparison > should demonstrate the 4ms setTimeout delay issue vs MessageChannel
+
+Rapid Sequential Scheduling (20 tasks):
+setTimeout(0) - Total: 10.53ms, Avg per task: 1.422ms
+MessageChannel - Total: 5.32ms, Avg per task: 0.080ms
+Total time speedup: 1.98x
+Per-task speedup: 17.69x
+
+stdout | src/utils/scheduler/MessageChannelScheduler/__tests__/MessageChannelScheduler.performance.test.ts > MessageChannelScheduler > Browser Environment Performance Comparison > should show execution timing with mixed task types
+
+=== Mixed Task Execution Order ===
+
+stdout | src/utils/scheduler/MessageChannelScheduler/__tests__/MessageChannelScheduler.test.ts > MessageChannelScheduler > Macro Task Timing Analysis > should compare timing consistency between schedulers
+
+=== Timing Consistency Analysis ===
+MessageChannel variance: 0.000
+setTimeout variance: 0.382
+MessageChannel std dev: 0.002ms
+setTimeout std dev: 0.618ms
+
+stdout | src/utils/scheduler/MessageChannelScheduler/__tests__/MessageChannelScheduler.performance.test.ts > MessageChannelScheduler > Browser Environment Performance Comparison > should show execution timing with mixed task types
+Execution order with timestamps (ms from start):
+  0.107ms: Promise.resolve()
+  0.117ms: queueMicrotask
+  0.158ms: setImmediate (MessageChannel)
+  2.367ms: setTimeout(0)
+  2.382ms: setTimeout(1)
+
+ ✓ src/utils/scheduler/MessageChannelScheduler/__tests__/MessageChannelScheduler.performance.test.ts (6 tests) 561ms
+stdout | src/utils/scheduler/MessageChannelScheduler/__tests__/MessageChannelScheduler.test.ts > MessageChannelScheduler > Macro Task Timing Analysis > should verify macro task executes after all microtasks
+
+=== Microtask vs Macrotask Order ===
+[
+  'microtask-0',
+  'microtask-1',
+  'microtask-2',
+  'microtask-3',
+  'microtask-4',
+  'macro-task',
+  'nested-microtask'
+]
+
+ ✓ src/utils/object/serialization/parseGraph/__tests__/graph-decoder-validation.test.ts (7 tests) 83ms
+ ✓ src/utils/scheduler/__tests__/scheduleMacrotaskSafe.test.ts (4 tests) 58ms
+ ✓ src/utils/scheduler/__tests__/scheduleMacrotask.fallback.test.ts (2 tests) 89ms
+ ✓ src/utils/scheduler/MessageChannelScheduler/__tests__/MessageChannelScheduler.flush.test.ts (3 tests) 46ms
+stdout | src/utils/scheduler/MessageChannelScheduler/__tests__/MessageChannelScheduler.test.ts > MessageChannelScheduler > Batch Execution with Dynamic Task Addition > should handle tasks added during batch execution
+
+=== Batch Execution with Dynamic Task Addition ===
+Execution order: [
+  'batch1-task1',
+  'batch1-task2',
+  'batch1-task3',
+  'batch2-task1',
+  'batch2-task2',
+  'batch2-task3'
+]
+
+ ✓ src/utils/function/rateLimit/__tests__/debounce.test.ts (9 tests) 693ms
+ ✓ src/utils/array/__tests__/difference.test.ts (1 test) 1ms
+ ✓ src/utils/scheduler/__tests__/scheduleMacrotask.test.ts (4 tests) 64ms
+stdout | src/utils/scheduler/MessageChannelScheduler/__tests__/MessageChannelScheduler.test.ts > MessageChannelScheduler > Batch Execution with Dynamic Task Addition > should handle nested task scheduling with correct batch separation
+
+=== Nested Task Scheduling Batch Analysis ===
+Batch separation results: [ [ 1, 2, 3, 4, 5, 7 ], [ 6 ] ]
+
+ ✓ src/utils/object/__tests__/stableEquals.edge-cases.test.ts (8 tests) 7ms
+stdout | src/utils/scheduler/MessageChannelScheduler/__tests__/MessageChannelScheduler.test.ts > MessageChannelScheduler > Batch Execution with Dynamic Task Addition > should maintain correct batch execution order with proper separation
+
+=== Batch Execution Sequence ===
+1: batch1-task1
+2: batch1-task2
+3: batch1-task3
+4: batch2-task1
+5: batch2-task2
+6: batch2-task3
+7: batch3-task1
+Batch 1 tasks: [ 'batch1-task1', 'batch1-task2', 'batch1-task3' ]
+Batch 2 tasks: [ 'batch2-task1', 'batch2-task2', 'batch2-task3' ]
+Batch 3 tasks: [ 'batch3-task1' ]
+
+stdout | src/utils/scheduler/MessageChannelScheduler/__tests__/MessageChannelScheduler.test.ts > MessageChannelScheduler > Batch Execution with Dynamic Task Addition > should correctly handle synchronous context batching vs dynamic additions
+
+=== Scheduling synchronous context batch ===
+
+stdout | src/utils/scheduler/MessageChannelScheduler/__tests__/MessageChannelScheduler.test.ts > MessageChannelScheduler > Batch Execution with Dynamic Task Addition > should correctly handle synchronous context batching vs dynamic additions
+Executing sync-1, now adding dynamic tasks...
+Executing sync-2, adding more dynamic tasks...
+Executing sync-3 (last in sync batch)
+
+stdout | src/utils/scheduler/MessageChannelScheduler/__tests__/MessageChannelScheduler.test.ts > MessageChannelScheduler > Batch Execution with Dynamic Task Addition > should correctly handle synchronous context batching vs dynamic additions
+Executing dynamic-1 (should be in next batch)
+Executing dynamic-2 (should be in next batch)
+Executing dynamic-3 (should be in next batch)
+
+ ✓ src/utils/function/rateLimit/__tests__/throttle.test.ts (9 tests) 839ms
+ ✓ src/utils/object/fingerprint/__tests__/candidate.test.ts (8 tests) 66ms
+stdout | src/utils/scheduler/MessageChannelScheduler/__tests__/MessageChannelScheduler.test.ts > MessageChannelScheduler > Batch Execution with Dynamic Task Addition > should correctly handle synchronous context batching vs dynamic additions
+
+=== Final Execution Analysis ===
+1: sync-1
+2: sync-2
+3: sync-3
+4: dynamic-1
+5: dynamic-2
+6: dynamic-3
+Last sync task order: 3
+First dynamic task order: 4
+
+ ✓ src/utils/object/serialization/__tests__/graph-references.test.ts (2 tests) 37ms
+ ✓ src/utils/array/__tests__/primitiveArrayEqual.test.ts (23 tests) 5ms
+ ✓ src/utils/function/enhance/getTrackableHandler/__tests__/getTrackableHandler.test.ts (32 tests) 10ms
+ ✓ src/utils/scheduler/__tests__/scheduleCancelableMacrotask.test.ts (5 tests) 9ms
+ ✓ src/utils/object/__tests__/cloneLite.test.ts (22 tests) 18ms
+ ✓ src/utils/array/__tests__/forEach.test.ts (4 tests) 4ms
+ ✓ src/utils/object/__tests__/getObjectKeys.test.ts (7 tests) 11ms
+ ✓ src/utils/math/__tests__/gcd.test.ts (11 tests) 4ms
+ ✓ src/errors/__tests__/BaseError.toJSON.native.test.ts (11 tests) 12ms
+ ✓ src/errors/__tests__/BaseError.toJSON.test.ts (15 tests) 15ms
+ ✓ src/utils/hash/__tests__/polynomialHash.test.ts (21 tests) 8ms
+ ✓ src/utils/array/__tests__/differenceWith.test.ts (5 tests) 4ms
+ ✓ src/utils/math/__tests__/toBase.test.ts (8 tests) 13ms
+ ✓ src/errors/__tests__/BaseError.toJSON.boxed.test.ts (15 tests) 13ms
+ ✓ src/utils/object/serialization/__tests__/graph-primitives.test.ts (2 tests) 3ms
+ ✓ src/utils/object/__tests__/stableEquals.test.ts (25 tests) 7ms
+ ✓ src/utils/math/__tests__/maxLite.test.ts (8 tests) 2ms
+ ✓ src/utils/object/__tests__/shallowClone.test.ts (28 tests) 10ms
+ ✓ src/utils/math/__tests__/max.test.ts (7 tests) 3ms
+ ✓ src/utils/object/__tests__/clone.builtins.test.ts (4 tests) 2ms
+ ✓ src/utils/hash/__tests__/murmur3.test.ts (31 tests) 6ms
+ ✓ src/utils/filter/__tests__/isEmptyPlainObject.test.ts (8 tests) 4ms
+ ✓ src/utils/array/__tests__/sortWithReference.test.ts (20 tests) 11ms
+ ✓ src/utils/object/__tests__/transformValues.test.ts (6 tests) 2ms
+ ✓ src/utils/array/__tests__/at.test.ts (8 tests) 3ms
+ ✓ src/utils/object/__tests__/equals.test.ts (31 tests) 6ms
+ ✓ src/utils/array/__tests__/filter.test.ts (7 tests) 3ms
+ ✓ src/utils/array/__tests__/uniqueBy.test.ts (9 tests) 4ms
+ ✓ src/utils/math/__tests__/isEven.test.ts (5 tests) 2ms
+ ✓ src/utils/math/__tests__/min.test.ts (7 tests) 3ms
+ ✓ src/utils/console/__tests__/printWarning.test.ts (2 tests) 2ms
+ ✓ src/utils/math/__tests__/range.test.ts (8 tests) 13ms
+ ✓ src/utils/array/__tests__/orderedMerge.test.ts (27 tests) 7ms
+ ✓ src/utils/convert/__tests__/convertMsFromDuration.test.ts (9 tests) 2ms
+ ✓ src/utils/filter/__tests__/isFalsy.test.ts (26 tests) 4ms
+ ✓ src/libs/__tests__/cache.test.ts (7 tests) 2ms
+ ✓ src/utils/filter/__tests__/isEmpty.test.ts (14 tests) 3ms
+stdout | src/utils/scheduler/MessageChannelScheduler/__tests__/MessageChannelScheduler.test.ts > MessageChannelScheduler > Batch Execution with Dynamic Task Addition > should handle high-frequency dynamic task additions efficiently
+
+=== High-Frequency Dynamic Task Addition ===
+Total tasks executed: 15
+Expected tasks: 25
+Check iterations: 200
+Batch distribution: [ 15 ]
+Number of batches: 1
+
+stdout | src/utils/scheduler/MessageChannelScheduler/__tests__/MessageChannelScheduler.test.ts > MessageChannelScheduler > Automatic Batch Optimization > should transparently optimize regular schedule() calls with automatic batching
+
+=== Transparent Batch Optimization (1000 tasks) ===
+Total time with auto-batching: 5.65ms
+Average per task: 0.0057ms
+Throughput: 176899 tasks/second
+
+ ✓ src/utils/object/__tests__/sortObjectKeys.test.ts (13 tests) 3ms
+stdout | src/utils/scheduler/MessageChannelScheduler/__tests__/MessageChannelScheduler.test.ts > MessageChannelScheduler > Automatic Batch Optimization > should compare optimized schedule() performance vs setTimeout
+
+=== Optimized schedule() vs setTimeout (2000 tasks) ===
+MessageChannel (auto-batch): 7.28ms
+setTimeout batch: 7.49ms
+Relative performance: 1.03x
+
+ ✓ src/utils/scheduler/MessageChannelScheduler/__tests__/MessageChannelScheduler.test.ts (27 tests) 2228ms
+   ✓ MessageChannelScheduler > Batch Execution with Dynamic Task Addition > should handle high-frequency dynamic task additions efficiently  1235ms
+ ✓ src/utils/object/__tests__/getSymbols.test.ts (6 tests) 2ms
+ ✓ src/utils/math/__tests__/fromBase.test.ts (10 tests) 9ms
+ ✓ src/utils/filter/__tests__/isArrayIndex.test.ts (26 tests) 3ms
+ ✓ src/utils/math/__tests__/mean.test.ts (6 tests) 3ms
+ ✓ src/utils/object/__tests__/stableEquals.omits.test.ts (10 tests) 2ms
+ ✓ src/utils/object/fingerprint/__tests__/fingerprint.test.ts (6 tests) 2ms
+ ✓ src/utils/object/fingerprint/__tests__/sort.test.ts (4 tests) 4ms
+ ✓ src/errors/__tests__/AbortError.test.ts (4 tests) 2ms
+ ✓ src/utils/object/serialization/__tests__/graph-containers.test.ts (4 tests) 8ms
+ ✓ src/utils/promise/__tests__/withTimeout.cleanup.test.ts (2 tests) 3ms
+ ✓ src/utils/object/__tests__/getDataProperty.test.ts (9 tests) 3ms
+ ✓ src/utils/array/__tests__/forEachDual.test.ts (8 tests) 2ms
+ ✓ src/libs/__tests__/random.test.ts (9 tests) 5ms
+ ✓ src/utils/math/__tests__/permutation.test.ts (7 tests) 2ms
+ ✓ src/utils/object/fingerprint/__tests__/modes.test.ts (5 tests) 3ms
+ ✓ src/utils/array/__tests__/differenceBy.test.ts (4 tests) 2ms
+ ✓ src/utils/function/rateLimit/__tests__/rateLimit.dispose.test.ts (2 tests) 67ms
+ ✓ src/utils/array/__tests__/chunk.test.ts (8 tests) 6ms
+ ✓ src/utils/object/__tests__/hasUndefined.test.ts (23 tests) 3ms
+ ✓ src/utils/function/enhance/getTrackableHandler/__tests__/getTrackableHandler.publish.test.ts (2 tests) 3ms
+ ✓ src/utils/math/__tests__/round.test.ts (10 tests) 3ms
+ ✓ src/utils/array/__tests__/map.test.ts (5 tests) 4ms
+ ✓ src/utils/array/__tests__/intersectionBy.test.ts (5 tests) 7ms
+ ✓ src/errors/__tests__/BaseError.test.ts (3 tests) 2ms
+ ✓ src/libs/__tests__/getKeys.test.ts (12 tests) 4ms
+ ✓ src/utils/object/merge/__tests__/mergeOptions.test.ts (11 tests) 7ms
+ ✓ src/utils/hash/__tests__/murmur3.reference.test.ts (6 tests) 8ms
+ ✓ src/utils/array/__tests__/differenceLite.test.ts (11 tests) 29ms
+ ✓ src/utils/filter/__tests__/isMap.test.ts (3 tests) 2ms
+ ✓ src/utils/math/__tests__/fibonacci.test.ts (6 tests) 2ms
+stderr | src/utils/console/__tests__/printError.test.ts > printError > should call console.error with default options
+
+
+ ⚠️ Test Error ⚠️ 
+
+  Error message 1
+  Error message 2
+
+
+stderr | src/utils/console/__tests__/printError.test.ts > printError > should call console.error with custom options
+Additional info
+
+ 🚨 Custom Error 🚨 
+
+  Custom error message
+
+
+stderr | src/utils/console/__tests__/printError.test.ts > printError > should handle empty message array
+
+
+ ⚠️ Empty Message ⚠️ 
+
+
+
+ ✓ src/utils/console/__tests__/printError.test.ts (3 tests) 6ms
+ ✓ src/utils/array/__tests__/uniqueWith.test.ts (4 tests) 10ms
+ ✓ src/utils/function/enhance/getTrackableHandler/__tests__/getTrackableHandler.cleanup.test.ts (3 tests) 7ms
+ ✓ src/utils/math/__tests__/lcm.test.ts (9 tests) 2ms
+ ✓ src/utils/object/fingerprint/__tests__/factory.test.ts (5 tests) 3ms
+ ✓ src/utils/array/__tests__/forEachReverse.test.ts (7 tests) 2ms
+ ✓ src/utils/object/merge/__tests__/merge.test.ts (12 tests) 4ms
+ ✓ src/utils/array/__tests__/groupBy.test.ts (8 tests) 5ms
+ ✓ src/utils/object/serialization/__tests__/graph-omit.test.ts (2 tests) 6ms
+ ✓ src/utils/array/__tests__/intersectionLite.test.ts (13 tests) 11ms
+ ✓ src/utils/math/__tests__/combination.test.ts (8 tests) 3ms
+ ✓ src/utils/math/__tests__/sum.test.ts (7 tests) 2ms
+ ✓ src/utils/math/__tests__/factorial.test.ts (6 tests) 3ms
+ ✓ src/utils/filter/__tests__/isTruthy.test.ts (2 tests) 2ms
+ ✓ src/utils/object/__tests__/equals.contract.test.ts (11 tests) 6ms
+ ✓ src/utils/math/__tests__/isClose.test.ts (12 tests) 2ms
+ ✓ src/utils/object/__tests__/setDataProperty.test.ts (7 tests) 2ms
+ ✓ src/utils/object/__tests__/removeUndefined.test.ts (9 tests) 3ms
+ ✓ src/utils/math/__tests__/digitSum.test.ts (6 tests) 2ms
+ ✓ src/utils/array/__tests__/intersectionWith.test.ts (3 tests) 2ms
+ ✓ src/utils/math/__tests__/median.test.ts (8 tests) 2ms
+ ✓ src/utils/object/__tests__/stableEquals.contract.test.ts (6 tests) 2ms
+ ✓ src/utils/object/__tests__/transformKeys.test.ts (5 tests) 2ms
+ ✓ src/utils/filter/__tests__/isEmptyObject.test.ts (7 tests) 3ms
+ ✓ src/utils/object/__tests__/cloneLite.reserved.test.ts (5 tests) 4ms
+ ✓ src/utils/math/__tests__/isPrime.test.ts (7 tests) 2ms
+ ✓ src/utils/promise/__tests__/withTimeout.syncThrow.test.ts (1 test) 2ms
+ ✓ src/utils/math/__tests__/minLite.test.ts (8 tests) 2ms
+ ✓ src/errors/__tests__/TimeoutError.test.ts (4 tests) 2ms
+ ✓ src/errors/__tests__/InvalidTypeError.test.ts (4 tests) 11ms
+ ✓ src/utils/filter/__tests__/isError.test.ts (4 tests) 20ms
+ ✓ src/utils/array/__tests__/unique.test.ts (4 tests) 2ms
+ ✓ src/utils/object/__tests__/deleteDataProperty.test.ts (5 tests) 7ms
+ ✓ src/utils/math/__tests__/inRange.test.ts (6 tests) 2ms
+ ✓ src/libs/__tests__/hasOwnProperty.test.ts (9 tests) 8ms
+ ✓ src/utils/array/__tests__/intersection.test.ts (1 test) 3ms
+ ✓ src/utils/math/__tests__/clamp.test.ts (7 tests) 6ms
+ ✓ src/utils/object/__tests__/shallowClone.special-objects.test.ts (12 tests) 3ms
+ ✓ src/utils/filter/__tests__/isArrayLike.test.ts (7 tests) 2ms
+ ✓ src/libs/__tests__/getTypeTag.test.ts (5 tests) 2ms
+ ✓ src/utils/object/fingerprint/__tests__/surface.test.ts (1 test) 2ms
+ ✓ src/utils/math/__tests__/isOdd.test.ts (5 tests) 2ms
+ ✓ src/utils/filter/__tests__/isObject.test.ts (6 tests) 2ms
+ ✓ src/utils/scheduler/__tests__/scheduleMicrotask.test.ts (4 tests) 3ms
+ ✓ src/utils/filter/__tests__/isPlainObject.test.ts (2 tests) 1ms
+ ✓ src/libs/__tests__/counter.test.ts (5 tests) 2ms
+ ✓ src/utils/object/__tests__/serialization-surface.test.ts (1 test) 2ms
+ ✓ src/utils/filter/__tests__/isSharedArrayBuffer.test.ts (3 tests) 2ms
+ ✓ src/utils/filter/__tests__/isNil.test.ts (2 tests) 2ms
+ ✓ src/utils/filter/__tests__/isBlob.test.ts (3 tests) 3ms
+ ✓ src/utils/filter/__tests__/isDate.test.ts (3 tests) 3ms
+ ✓ src/utils/filter/__tests__/isDataView.test.ts (2 tests) 2ms
+ ✓ src/utils/math/__tests__/abs.test.ts (4 tests) 2ms
+ ✓ src/utils/filter/__tests__/isArray.test.ts (2 tests) 12ms
+ ✓ src/utils/filter/__tests__/isEmptyArray.test.ts (3 tests) 5ms
+ ✓ src/utils/filter/__tests__/isFunction.test.ts (2 tests) 1ms
+
+ Test Files  145 passed (145)
+      Tests  1166 passed (1166)
+   Start at  12:08:21
+   Duration  5.87s (transform 2.74s, setup 0ms, collect 9.06s, tests 6.90s, environment 27ms, prepare 10.46s)
+

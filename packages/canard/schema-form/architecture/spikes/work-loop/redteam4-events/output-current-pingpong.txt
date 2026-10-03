@@ -1,0 +1,2 @@
+##RESULT## 2-current {"listenerCalls":200,"revA":100,"revB":100,"outerCaught":null,"caughtInListener":"caught in listener: Infinite loop detected in derived value computation.","uncaught":["uncaughtException: Infinite loop detected in derived value computation."],"uncaughtCount":1,"ms":5.2}
+##RESULT## 2-current-after-reset {"listenerCalls":200,"uncaughtCount":2}

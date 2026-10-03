@@ -1,0 +1,77 @@
+│
+▲  No story files found for the specified pattern:
+│  stories/**/*.story.@(js|jsx|mjs|ts|tsx)
+│
+▲  No story files found for the specified pattern:
+│  src/**/*.story.@(js|jsx|mjs|ts|tsx)
+│
+▲  No story files found for the specified pattern: src/**/*.mdx
+│
+▲  No story files found for the specified pattern:
+│  src/**/*.stories.@(js|jsx|mjs|ts|tsx)
+│ ┌────────────────────────────────────────────────────────────────────────────┐
+│ │  Info: Found a setup file with "setProjectAnnotations".                    │
+│ │  Skipping automatic provisioning of preview annotations to avoid           │
+│ │  conflicts. Since Storybook 10.3, "@storybook/addon-vitest" applies these  │
+│ │   automatically.                                                           │
+│ │  You can safely remove the "setProjectAnnotations" call from your setup    │
+│ │  file, or remove the file entirely if you don't have custom code there.    │
+│ └────────────────────────────────────────────────────────────────────────────┘
+
+ RUN  v3.2.6 /Users/Vincent/Workspace/albatrion/packages/canard/schema-form
+
+ ❯ |unit| src/core/blueprint/__tests__/stripSchema.test.ts (10 tests | 1 failed) 9ms
+   × stripSchema > strips draft-07 schema dependencies while preserving property dependency data 7ms
+     → expected { dependencies: { a: [ …(3) ], …(2) } } to deeply equal { dependencies: { a: [ …(3) ], …(2) } }
+   ✓ stripSchema > preserves boolean schemas and identity when no form groups exist 0ms
+   ✓ stripSchema > removes the three reserved groups from nested schema positions 0ms
+   ✓ stripSchema > preserves identical names inside literal data and unknown extension data 0ms
+   ✓ stripSchema > strips modern applicators through the scanner vocabulary 0ms
+   ✓ stripSchema > does not mutate frozen authored schemas or inline referenced definitions 0ms
+   ✓ stripSchema > preserves property names equal to reserved group names 0ms
+   ✓ stripSchema > removes present undefined groups without stripping unknown top-level keys 0ms
+   ✓ stripSchema > visits reference siblings and nested definitions without expanding recursive refs 0ms
+   ✓ stripSchema > preserves shared authored siblings and literal aliases while stripping schema occurrences 0ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  |unit| src/core/blueprint/__tests__/stripSchema.test.ts > stripSchema > strips draft-07 schema dependencies while preserving property dependency data
+AssertionError: expected { dependencies: { a: [ …(3) ], …(2) } } to deeply equal { dependencies: { a: [ …(3) ], …(2) } }
+
+- Expected
++ Received
+
+@@ -4,12 +4,15 @@
+        "controls",
+        "options",
+        "presentation",
+      ],
+      "b": {
++       "controls": {},
+        "properties": {
+-         "c": {},
++         "c": {
++           "options": {},
++         },
+        },
+      },
+      "c": false,
+    },
+  }
+
+ ❯ src/core/blueprint/__tests__/stripSchema.test.ts:10:33
+      8|     const names = ['controls', 'options', 'presentation'];
+      9|     const schema = { dependencies: { a: names, b: { controls: {}, prop…
+     10|     expect(stripSchema(schema)).toEqual({ dependencies: { a: names, b:…
+       |                                 ^
+     11|     expect(schema.dependencies.b.controls).toEqual({});
+     12|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 9 passed (10)
+   Start at  11:17:57
+   Duration  431ms (transform 121ms, setup 0ms, collect 213ms, tests 9ms, environment 0ms, prepare 58ms)
+

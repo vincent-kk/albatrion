@@ -1,0 +1,415 @@
+WORK LOOP v4 SPIKE — round-4-spec.md §A (work loop 3.1) + §B (event system)
+=============================================================================
+
+Environment: Node v24.20.0, darwin arm64, ajv 8 resolved from
+packages/canard/schema-form-ajv8-plugin. One process per measurement case,
+harness.mjs method (calibrated batch, 2 s warm-up, 11 samples, median;
+9 samples for the 10,000-item cases).
+
+Files (all under spikes/work-loop/):
+  proto/loop-v4.mjs        the v4 loop + root dispatcher
+  proto/build-v4.mjs       tree builders on loop-v4 (same shapes as build-v3)
+  proto/selfcheck-v4.mjs   scenarios a-g, 63 PASS / 0 FAIL, plus INFO rows
+  run-proto-v4.mjs         measurement runner, `node run-proto-v4.mjs <case>`
+  results-proto-v4.jsonl   machine-readable rows of the final run
+Nothing outside spikes/work-loop/ was touched. No package installed.
+
+
+1. WHAT WAS IMPLEMENTED
+-----------------------
+
+State slots (A1): raw (leaf; host only when a non-object arrived), selection
+(select-guard union host), extras (undeclared keys of a host), computed
+local / emit / per-host settle {status, sweeps}, dirty lists, revision.
+
+Writes (A2): setValue(node, V, 'Overwrite' | 'Merge'); write(leaf, v) is the
+leaf-input partial write (records the value the input reported, for A6);
+select(host, i); removeKey(host, k); push/remove on arrays; reset(root);
+prime(root, V, opts) is the load. Overwrite is a full replacement: a host
+distributes an object to its children and ERASES every child absent from V
+(recursively: raw, extras, selection; a host gets an `absent` flag); null /
+17 / 'broken' / wrong kind become the host's own raw and erase all children.
+Merge changes only the given keys; any partial write below a non-object
+host clears that host's raw (A5). Keys declared by no fragment go to
+`extras` (Overwrite replaces the slot, Merge merges into it).
+
+Settle (A3): rounds of
+  compute    one root-down recursion, dirty children first in document order
+             (dirty lists sorted by position), hosts sweep their fragments.
+  derive     injectTo rules in order; a rule fires when map(from.emit)
+             differs from the target (leaf: !== raw; host: JSON-equal vs
+             emit) and is a FULL REPLACEMENT of the target.
+  transition for every host computed this round: a fragment that is on now
+             and was off at the previous COMMIT (or any on fragment of a host
+             that received a full replacement, plus its unconditional
+             children) injects `default` into ABSENT children. Default =
+             the child's own (`properties`) default, overridden by the last
+             ACTIVE fragment in total order that declares the child. Overlay
+             owners whose on-state differs from what the child computed with
+             re-dirty the child. Every injection is a staged write.
+  Any staged write -> next round. ROUND_CAP 25: round 25 is computed, its
+  derive/transition writes are detected but not staged; status =
+  'budget-exceeded'. Then commit (raw, selection, extras, memos, fragOn,
+  active flags, settle; changed nodes collected top-down), notify (B), and
+  in dev mode a throw AFTER notification.
+  disableDefaultInjection: when the settle contains a full replacement, no
+  injection happens in that settle at all; later settles inject normally.
+
+Host compute (A4): A0 = unconditional children + inherited overlays whose
+owner is on. G = compose(A) = active children's emit in schema order +
+extras — the children's emit already carry omitEmpty ('' and undefined
+omitted), omitTrailing (arrays) and null, so G is what the validator sees;
+a host whose own raw is a non-object evaluates every guard on {}. One sweep
+evaluates EVERY fragment in tree order; a fragment that turns on or off
+recomposes G before the next guard (incremental "current A"); nested
+fragments are traversed only when their enclosing fragment is on in this
+same sweep (off otherwise); inherited overlay fragments take the owner's
+current on-state; select fragments read `selection`. Option B (false turns
+the fragment off). Repeat while A changed; cap = fragments + 1; past the cap
+A is the last sweep's A and settle.status = 'budget-exceeded' (host slot
+and root slot). No prohibition fragments: `properties: {a: false}` and `not`
+declare nothing (D-3 iii). local := compose(A_final); emit := non-object raw
+if any, else MISSING when local has no keys, else local (same reference).
+Composition: when A equals the committed fragment set and no dirty child
+appeared/disappeared, the committed local is copied once and patched with
+the dirty children only (same reference when nothing differs); otherwise it
+is rebuilt in schema order (no `delete`; a `{...o}` normalize after a
+rebuild of > 16 keys keeps V8 out of dictionary mode — see §4).
+
+Notification (B): every write outside batch(fn) settles and notifies
+synchronously; batch stages and settles once at the outermost end. Root
+dispatcher: delivery set = nodes whose local/emit/settle changed, top-down
+in compute order, then signal-only nodes; a node's revision rises right
+before its listeners; each listener call is isolated (errors collected);
+a node whose ancestor chain no longer reaches the root is skipped and its
+signal bits cleared; a listener's write settles + commits immediately and
+its entries go to the NEXT wave (entries from all writers of one wave form
+one next wave); WAVE_CAP 25 is recorded (settle.status
+'wave-cap-exceeded', dev throws) but nothing is dropped. Payload =
+{previous, current} with {local, emit} for hosts/arrays, the emit value for
+leaves, plus `refresh` (RequestRefresh bit) and a `settle` snapshot; built
+only for nodes with listeners or the root. root.onChange(emit) once per
+commit whose root emit reference changed. RequestRefresh (A6): a leaf whose
+committed raw differs from the value its input last reported (never
+reported = always differs).
+
+
+2. AMBIGUITIES RESOLVED (most literal reading, and what was picked)
+--------------------------------------------------------------------
+
+R1  A4-3 "현재 A로 합성한 local": incremental — G is recomposed after each
+    fragment toggle within a sweep. The alternative (G fixed per sweep from
+    the sweep's starting A) makes a forward chain cost N sweeps, so A4-1's
+    "정순 체인 2바퀴" forces this reading.
+R2  A4-2 "감싸는 조각이 활성일 때만 순회": the enclosing fragment's state
+    from THIS sweep (pre-order); nested fragments of an off fragment are
+    set off without evaluation.
+R3  A2 (i) "전체 교체 직후" needs the active set, so it runs in the
+    transition stage of the same round via a per-host `replaced` flag: all
+    on fragments + unconditional children of a replaced host inject into
+    absent children. (ii) is the off->on comparison against the previous
+    commit. Both consume the shared 25-round budget (A3).
+R4  "없음" for a host: an `absent` flag set by erase, cleared by any value
+    or any write below it. A nested host absent from V (key missing, not
+    null) is "present with absent children" as soon as one of its children
+    receives a default — so V = {} with a nested `reason: default 'because'`
+    emits {target: {reason: 'because'}} while V = {target: null} emits
+    {target: null}. Recorded as D5.
+R5  disableDefaultInjection: the whole settle that contains a full
+    replacement injects nothing (also fragments that turn on in later rounds
+    of that settle); a later user write injects normally.
+R6  A3 cap: round 25 is computed; its writes are detected, not staged (v3
+    R8). Overlay re-dirtying counts as a write for the budget.
+R7  A4-4 / B3-4 dev throw: after commit AND after the notification waves
+    (a throw between commit and notify would lose the notifications).
+R8  injectTo target = host: "differs" = JSON deep-equal against the host's
+    emit; leaf: `!==` against raw. A4c: the rule re-fires every settle while
+    the source is unchanged (E7).
+R9  B3-4 waves: writes from several listeners in one wave merge into ONE
+    next wave (each commit's entries kept, so a node changed by two commits
+    is delivered twice in that wave). "넘으면 ... 마지막 파동까지 배달":
+    no truncation, deliver until the queue is empty, record the overflow.
+R10 B3-1 "문서 순서": dirty lists are sorted by child position before the
+    compute recursion; the commit walk collects in that order.
+R11 B3-2 delivery set is exactly local/emit/settle changes ∪ signals; a
+    child's activation change alone is NOT delivered (D7).
+R12 A7 k default = first branch value (E8) is the builder's job — modeled
+    as the discriminator leaf's own default. Value unions and discriminator
+    identification (B) are outside the prototype.
+R13 A5 "emit := raw" for a null/17 host; local is still composed from the
+    children (they exist and render blank). An object host with no emitted
+    keys is omitted (MISSING; getValue() at the root -> undefined), as v3.
+R14 injectTo into a child of a null host is a full replacement of that
+    leaf, not a "partial write", so the host stays null (codex A6-automatic:
+    raw note='auto-b', emit host null).
+R15 Array Merge = Overwrite; omitTrailing trims trailing null/undefined in
+    the emit only; an array with a non-array raw emits that raw.
+R16 A6: a leaf never reported by an input (NOREPORT) always gets Refresh
+    when its raw changes — including erasure to absent by a bulk write, so
+    S4 marks all 50,000 leaves (bit only; payload built only if subscribed).
+
+
+3. SCENARIOS (node proto/selfcheck-v4.mjs — 63 PASS, 0 FAIL)
+--------------------------------------------------------------
+
+a. round-3 counterexamples (redteam3/attacks.mjs, a33.mjs, codex3 run.mjs)
+   "gone" = the round-3 defect no longer reproduces under v4 rules.
+
+  A3-1a  x=1 (a then b) / x=2 (b then a) / x=2 (setValue): emit.x == raw.x in
+         every order; history lives in raw (E1). gone (T1a). Full
+         replacement picks the LAST active declaration.
+  A3-1b  removed x is not re-injected by an unrelated keystroke; a later
+         setValue(V) without x re-injects it (load contract). gone (T1a
+         "settle-unit" reading).
+  A3-1c  nested-in-unconditional allOf resolves p,q,r in 3 rounds. gone.
+  A3-1d  nested fragment inside an OFF then: deep stays absent (round 3
+         injected DEEP with the outer off). gone (T1c / E3).
+  A3-2   raw-present chain of 30: forward 2 sweeps / 60 guards, reverse 31
+         sweeps / 930 guards, one round. PASS (A4-1 sweeps).
+         DEFAULT-driven chain of 30 (codex A3-2-chain, defaults i+1): 25
+         rounds, budget-exceeded, only 25 keys — each link needs one
+         transition round. -> D1.
+  A3-2b  unrelated keystroke with N satisfied fragments: N=30 reverse 31
+         sweeps 930 guards 388 us, forward 2 sweeps 60 guards 57 us; N=200
+         reverse 201 sweeps 40,200 guards 19.0 ms, forward 2 sweeps 400
+         guards 4.1 ms. Forward pays 30/200 REBUILDS of local per
+         keystroke (fixed start turns each fragment on again). -> D3.
+  A3-4A  negated guard + other activation: emit {seed,x:1}, valid open and
+         closed (codex option-open/closed b-mode); redteam variant with
+         else/additionalProperties: emit {mode:'full', extra:'E'} valid,
+         then/else not both on. gone (T5).
+  A3-4B  no defaults -> fragment on, nothing emitted. unchanged.
+  A3-4C  self-negating: budget-exceeded after 2 sweeps (cap 2), A fixed at
+         {} (x raw 1 kept, not emitted), ajv invalid, no throw in prod; dev
+         throws after commit. PASS (A4-1 out-of-scope class, observable).
+  A3-5   `a:false` declares nothing: local = emit = {a:'kept', b:1}, ajv
+         rejects -> D-3 (iii) as specified. gone (T6 / D2 of v3).
+  A3-4-omit  a='' is absent for the guard as for the validator: no b. gone
+         (T4 second half / E5).
+  A3-4-lift  {addr:null} -> guard true, zipNote injected, same as ajv on
+         the emit (G1, A4-2). {addr:{}} -> addr omitted -> guard vacuously
+         true -> zipNote injected; ajv on the emit agrees. {addr:{city}} ->
+         false. PASS (matches the validator; note the vacuous case).
+  A4a    injectTo two-cycle: 25 rounds, emit == raw == {t:24,u:24}. PASS
+         (T7 gone: committed tree is F(raw)).
+  A4b    c (declared by `not required t`) injects t: user cannot remove t —
+         the inactive c still feeds the rule. E7 declared. unchanged.
+  A4c    injectTo 17 into a host = full replacement (a erased, b default
+         'BD' injected under 17); a partial write to host/a un-17s the host
+         in round 1 and derive puts 17 back in round 2. Now DEFINED (was
+         "partial or full?" in round 3).
+  A5a    k default = first branch ('a'): {} loads to {k:'a', x:'X'}, valid.
+         gone (T8).
+  A5b/c  value union, anyOf same-k select: not modeled (B is out of scope).
+  A6a    setValue(null): keep erased, note default under null, partial
+         write -> {note:'Z'} (D-1). gone (T9).
+  A6b    under null G={} turns `not required a` on and d='D' is injected
+         into raw under the null host; write a -> emit {a:'A'}, d latent.
+         Consistent with D-1; see D10.
+  A6c    {addr:null} valid; {addr:{}} and {addr:{zip:''}} emit {} ->
+         "required addr" error. unchanged (validator's view).
+  A8a    zip:='' keeps the root emit reference and notifies nothing (E11).
+         gone (T11).
+  C1     replacement purges latent SECRET; extras emitted last; codex
+         C1-write-kinds partial/replace/reset/re-emit all as stated. gone.
+         setValue({kind:a}) then getValue() = {kind:a, base:BASE, a:A0}
+         (defaults injected; equal only with disableDefaultInjection).
+  C2-extra  key declared by an inactive fragment -> child raw (E16), shows
+         when the fragment turns on, no default. PASS.
+  C3     host 17: extras and a erased, b default injected, partial revives
+         {a:'A2', b:'BD'}; 'broken' and [] emit as-is then {note:'Z'}. PASS.
+  a33    {} and {k:cat} valid ({k:cat, meow:M}); {k:zzz,name} preserved and
+         rejected; {k:''} -> k omitted, no branch; cat->dog drops meow from
+         the emit, raw kept. PASS (T3 kept, T8 gone).
+  codex A3-1-select  same raw {a:1,b:2}: selection 0 -> {a:1}, 1 -> {b:2};
+         initial selection tie -> first. PASS (E2 slot).
+  codex A3-1-value-guards  both write orders -> {a:'x'}. PASS.
+  codex A3-nested-activation  child default {} -> token default -> done, 3
+         rounds. PASS (needed the host `absent` flag, R4).
+  codex A3-3/A3-4-host  {} -> {kind:cat, meow:true} (k default), null ->
+         null, 17 -> 17, no branch on, children exist. PASS.
+  codex A4-cap  non-cyclic min(30, n+1): 25 rounds, emit == raw == 24 (24
+         writes executed; round 25 computed, its write not). PASS; note the
+         number is 24 under the literal "round past the cap not executed".
+  codex A6-automatic  injectTo into a child under null: host stays null,
+         note raw 'auto-b'. PASS (R14).
+  codex C2-load  ''/null/{}/0/false are values; {} gets 'D'; extra 42 kept;
+         omitTrailing raw [a,null,null] emit [a]. PASS.
+  codex C1-activation-default  on:=true injects child 'D'. PASS.
+
+b. determinism (A1-1 + A4-7): four write orders (d,b,c,a / a,c,b,d / batch
+   / load) -> identical emit AND identical JSON text
+   {"a","b","c","d"} in schema order; extras after declared keys in
+   insertion order. PASS (v3 D1 gone).
+
+c. null contract: line 31 PASS (emit {target:null}, note absent -> '',
+   reason 'because', Refresh on both), line 42 PASS ({note:'again',
+   reason:'because'}), line 148 PASS (through null, type note, kind a->b ->
+   {kind:'b', note:'typed', bValue:'B'}), record swap PASS (no 'secret',
+   no 'r'). INFO line 55: clear reason ('' write) under null then type note
+   -> A5 literal gives emit undefined then {target:{note:'again'}}; the
+   existing test expects {target:null} then {target:{note:'again'}}. -> D4.
+
+d. chains PASS (see A3-2), negated fixpoint PASS (A3-4A), self-negating
+   PASS (A3-4C). Extra: v3 scenario h (mutual: `not required x` declares y,
+   `required y` declares x, raw {x:1,y:1}) has NO fixpoint under option B:
+   3 sweeps, budget-exceeded, A fixed at {both on}, emit {x,y} which ajv
+   rejects while {} would pass. -> D2.
+
+e. inherited overlay: load {flag:'on', child:{p}} -> q injected via the
+   overlay, child's own `required q` chains to r (4 rounds); flag removed
+   -> q and r leave the emit (raw kept); flag back -> both return. PASS.
+
+f. disableDefaultInjection: {id:101} loads without status; a later
+   user-caused activation injects x; without the flag status is injected;
+   a later full replacement under the flag injects nothing. PASS.
+
+g. notification
+  g1 order root, mid, leaf for a leaf write and for a root write. PASS
+  g2 mid's listener writes the leaf in wave 1: wave-1 payloads show the
+     wave-1 commit ({x:'a2'}) while node.value shows 'a3'; mid and leaf
+     delivered again in wave 2 with 'a3'. PASS
+  g3 1,000 writes in one batch: 1 settle, 1 wave, 1 onChange, 1,000 leaf
+     notifications; nested batch: still 1. PASS
+  g4 throwing root listener: mid and leaf still notified, root revision +1,
+     error collected. PASS
+  g5 root listener removes item 2 during wave 1: item 2 and its leaf (later
+     in the same fixed set) are skipped. PASS (needed the ancestor walk —
+     a detached ancestor detaches the subtree).
+  g6 same-value write: no emit change, no notification, no revision. PASS
+  g7 typing 'ab' -> no Refresh on a; injectTo changing sibling b -> Refresh
+     on b only. PASS
+  wave cap: a listener that re-writes 40 times -> 41 waves all delivered,
+     settle.status 'wave-cap-exceeded', no throw in prod. PASS (literal) ->
+     D6.
+
+
+4. MEASUREMENTS — v3 (results-proto-v3.jsonl) vs v4 (results-proto-v4.jsonl)
+------------------------------------------------------------------------------
+
+case         v3 median   v4 median   v4 counts (per op)
+s1-same      1.35 us     1.39 us     visited 2, 1 copy, 0 sweeps, 1 round, 1 wave, 2 notifications
+s3a-small    6.89 us     10.24 us    200 guards, 1 sweep, 1 copy, 0 rebuilds, 1 wave
+s3b-small    88.82 us    108.29 us   on: 2 rounds, 4 sweeps, 800 guards, 2 rebuilds, 3 injections /
+                                     off: 1 round, 1 sweep, 200 guards, 1 rebuild (no delete)
+s4-items     7.58 ms     11.98 ms    visited 60,002, 10,001 copies, 60,002 delivery entries
+s5-batch     244 us*     335 us      1 settle, 1 copy, 1 wave, 1,001 entries  (*v3 s5 measured
+                                     in this session with the v3 batch(); v2 was 368 us)
+n1 (new)     —           1.45 us     keystroke, 1,001 listeners, 2 notifications (settle + notify)
+n2 (new)     —           14.44 ms    root write 10,000 x 5, 60,002 listeners, 60,002
+                                     notifications, 1 wave (spread 19%)
+
+Reading:
+- The keystroke path is unchanged when no fragment moves (s1, n1): one copy,
+  one patch, no sweep; notifying two subscribed nodes costs ~0.06 us. The
+  "every write settles and notifies synchronously" rule has no measurable
+  cost at this scale.
+- s3a-small +49%: the same 200 guard evaluations as v3 plus the A0/committed
+  comparison, applyActive over 600 conditional children, and the wave.
+- s3b-small +22%: turning on now costs two rounds (the default injection is
+  a transition write -> recompute) = 800 guards instead of 400, and two
+  schema-order rebuilds of an 800-key local instead of v3's copy+patch.
+  Turning off is one rebuild (no `delete`, E13b) instead of delete+spread.
+- s4-items +58%: bookkeeping per node — full-replacement erase/present
+  flags, extras scan of every item value, per-host transition check, a
+  delivery entry + revision bump for all 60,002 changed nodes, Refresh bit
+  on 50,000 leaves. Profile (self time): commit 17%, applyValue 16%,
+  computeObject 13%, dispatch 11%, transition 9%, compute 8%, compose 6%.
+- n2 adds 2.5 ms over s4 for 60,002 payload objects + listener calls.
+- Two pitfalls hit on the way: (1) iterating all 1,000 children of a host
+  and reading prev[name] per child costs ~85 us per keystroke (megamorphic
+  keyed loads on a 1,000-property object) — composition must be O(dirty)
+  on the stable-shape path, as in v3; (2) an object rebuilt by inserting
+  >128 keys one at a time is in dictionary mode and every later copy of it
+  costs ~170 us — one `{...o}` normalize after a rebuild fixes it (kept at
+  a separate call site from the copy, per the v3 finding).
+
+
+5. SPEC DEFECTS FOUND
+---------------------
+
+D1  [반례, A3 + A4-1 + E1] A dependency chain whose links are DEFAULTS
+    costs one derive round per link: fragment i turns on, its child's
+    default is a transition write, the recompute lets fragment i+1 see it.
+    A 30-link chain (codex A3-2-chain's own input) ends budget-exceeded at
+    ROUND_CAP 25 with 25 keys, forward or reverse, although the raw-present
+    chain resolves in 2 / 31 sweeps of one round. "정순 체인은 2바퀴" is
+    true of sweeps and false of rounds; the shared 25-round budget is the
+    binding limit. Either the transition must loop inside the host's compute
+    (inject -> re-sweep before leaving the host) or the cap must exceed the
+    longest default chain the schema can declare.
+
+D2  [반례, A4-1] "부정 가드 + 다른 조각의 활성 조합은 고정점에 닿는다" holds
+    for one-directional dependence (codex option-open, redteam A3-4A) and
+    fails for mutual dependence: `if not required x then y` + `if required
+    y then x` with raw {x:1,y:1} oscillates (3 sweeps), is fixed at the last
+    sweep's A = {both on}, emits {x,y} which the validator rejects while {}
+    (the other fixpoint candidate) would pass. The class is wider than
+    "self-negating".
+
+D3  [측정, A4-1 fixed start + A4-7 no delete] With N fragments already on,
+    an unrelated keystroke re-derives A from the unconditional start, and
+    every fragment that turns on again rebuilds local in schema order:
+    N=30 forward chain 57 us / 30 rebuilds, N=200 4.1 ms / 200 rebuilds per
+    keystroke (200 independent fragments, none on: 10 us). Reverse chains
+    add the O(N²) guards: N=30 388 us, N=200 19 ms (round-3 redteam model:
+    1.6 ms / 267 ms). The spec should either allow composition to patch
+    (order restored at the end) or state the O(N × keys) cost.
+
+D4  [미정의, A5 vs src/__tests__/scenarios/nullable.object-blank-state
+    line 55] "자식에 부분 쓰기가 오면 호스트의 raw가 비워진다" makes
+    clearing a field ('' write) under a null host promote the host to an
+    object whose only key is omitted -> emit undefined, then typing gives
+    {target:{note:'again'}}. The existing test expects {target:null} to
+    survive the clear. Undefined: whether a write of '' / undefined is a
+    promoting partial write.
+
+D5  [미정의, A2 load contract + "없음"] A nested host that is simply absent
+    from V (key missing) has absent children, so the load contract injects
+    their defaults and the host becomes an object: V = {} emits
+    {target:{reason:'because'}} while V = {target:null} emits
+    {target:null}. The spec defines "없음" for leaves; for hosts it does not
+    say whether absence is inherited or the host stays absent until
+    written.
+
+D6  [미정의, B3-4] "넘으면 남은 통지를 버리지 않고 마지막 파동까지 배달한
+    뒤" has no terminating reading for a listener that writes on every
+    notification: the prototype delivered all 41 waves of a 40-rewrite
+    listener. Either the cap stops delivery (contradicting "버리지 않고")
+    or "마지막 파동" needs a definition.
+
+D7  [미정의, B3-2] The delivery set is local/emit/settle changes ∪ signals;
+    a child that becomes inactive without an emit change (meow after
+    cat->dog: emit stays 'M') receives no notification, only its parent
+    does. A renderer subscribed to the child cannot learn it left the
+    tree's active set.
+
+D8  [측정, A6] A leaf never reported by an input (NOREPORT) gets
+    RequestRefresh on every raw change including erasure, so a bulk write
+    marks all 50,000 leaves (S4). Cheap as a bit, but the rule "다르면
+    보낸다" should say what an erased (absent) raw is compared with.
+
+D9  [측정, A4-6] Each overlay level costs one extra round: the parent's
+    sweep re-dirties the child, the child's overlay fragment turns on, its
+    default is a third round, a child fragment chained on it a fourth
+    (scenario e: 4 rounds on load). Deep overlay chains draw on the same
+    25-round budget as D1.
+
+D10 [관찰, A2 (i) under null] Under a null host guards run on {} so
+    `not required a` turns on and injects d='D' into raw beneath the null;
+    when a write to `a` un-nulls the host, d stays as latent raw and would
+    reappear if `a` were removed later. D-1 removed latent record data;
+    injection under null re-creates latent data.
+
+D11 [통과, A4c/E7] injectTo into a host re-fires on every settle while its
+    source is unchanged: the user's partial write into that host is undone
+    in round 2 of the same settle. Declared, but the host is uneditable for
+    as long as the source holds.
+
+D12 [측정] The v4 bookkeeping is +58% on the bulk write (11.98 vs 7.58 ms)
+    and +22% on a fragment flip; the keystroke with no fragment change is
+    unchanged (1.39 vs 1.35 us). Per-node costs: entry + revision for every
+    changed node, present/replaced flags, extras scan, Refresh check.
+
+Not tested: validation, error routing (A7/A8 residual), value unions and
+discriminator identification (B), contains/prefixItems, virtualization.

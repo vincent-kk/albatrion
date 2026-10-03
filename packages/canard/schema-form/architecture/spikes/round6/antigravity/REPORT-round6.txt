@@ -1,0 +1,37 @@
+REPORT-round6 — Round 6 Architectural Spike & Counterexamples
+=============================================================
+
+Date: 2026-09-23
+Author: Antigravity Architectural Review (Round 6)
+Target Directory: packages/canard/schema-form/architecture/spikes/round6/antigravity/
+
+1. Executed Script
+------------------
+File: packages/canard/schema-form/architecture/spikes/round6/antigravity/counterexample-round6.mjs
+
+2. Execution Output
+-------------------
+=== Round 6 Architectural Spike ===
+
+[Test 1] Select-guard initialSelection with extra key only:
+prime({ zzz: "unknownKey" }) => { bestIndex: 0, bestCount: 0 }
+=> Confirmed: Prototype loop-v4b activates Branch 0 and injects defaults on unrelated keys, contradicting P2 & D-8.
+
+[Test 2] Non-idempotent setValue(getValue()) data destruction under omitEmpty:
+User edited nickname to '': raw = { nickname: '', bio: 'Hello' } emit = { bio: 'Hello' }
+After setValue(getValue()): raw = { nickname: 'Guest', bio: 'Hello' } emit = { nickname: 'Guest', bio: 'Hello' }
+=> Confirmed: User cleared string '' is replaced by default 'Guest' upon setValue(getValue()).
+
+All spike tests finished successfully.
+
+3. Detailed Findings
+---------------------
+(1) Discrepancy between Derivation and Prototype in Select-Guard (U-1):
+- Specification text in reviews/round-5-derivations.md §1 (C-1·C-7) states:
+  "여분 키나 무조건 자식 키만 있는 값도 '분기 키 없음'이다. 분기가 선언한 키를 하나도 갖고 있지 않으면 분기 없음(selection 없음)."
+- However, prototype loop-v4b.mjs initializes `bestCount = -1`. When loadedValue has keys that do not match any branch (e.g. `{zzz: 1}`), count is 0, which is > -1. Thus, branch 0 is selected by tie-break, violating D-8 ("폼은 값을 만들지 않는다").
+
+(2) Data Destruction in setValue(getValue()) with omitEmpty:
+- adr/0013:59 and adr/0007:89 (D-7 (a)) accept that setValue(getValue()) applies load semantics.
+- When `omitEmpty: true`, user-cleared empty strings are omitted from emit.
+- Calling setValue(getValue()) causes the omitted key to be treated as "absent", triggering default injection and resurrecting default values over user-intended deletions without warning.
