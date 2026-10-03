@@ -7,9 +7,16 @@ Planning method: 저장소 지침 — `PLAN.md` §2와 `plan/prompts.md`의 단�
 ## 0. 재개 지점
 
 - 단계: 07 전환(PR-7). 선출 까닭: 02–06이 모두 머지되었고(06 `07a083c18`), 07보다 먼저 처리할 원장 작업이 없다(원장 관리자 착수 답 1). 08·최적화·09는 07 뒤, 릴리스 전환은 D-2에 막힘.
-- 브랜치 `feat/schema-form-switch`, base `1.0.0-beta`(`93ff8d7bc`, 69라운드). 작업 자리는 워크트리 `.claude/worktrees/stage-07`(샌드박스가 쓰기를 막는 `.claude/commands/`·`.vscode/`는 이 워크트리에서만 sparse-checkout으로 뺌). PR: 아직 없음.
-- seiri 작업 `schema-form-switch`(게이트 원장은 워크트리의 `.seiri/tasks/schema-form-switch/gates.md`), 워크플로우 단계: write-plan(리뷰 1차 반영) → review-plan(고친 범위 재확인).
-- 다음 행동: U2(문서 선행, codex 진행 중) 확인과 커밋, 그 뒤 U3·U4.
+- 브랜치 `feat/schema-form-switch`, base `1.0.0-beta`(`93ff8d7bc`, 69라운드). 작업 자리는 워크트리 `.claude/worktrees/stage-07`(샌드박스가 쓰기를 막는 `.claude/commands/`·`.vscode/`는 이 워크트리에서만 sparse-checkout으로 뺌). PR: 아직 없음. PR-7은 G26이 닫힐 때까지 머지되지 않는다(89C-05).
+- seiri 작업 `schema-form-switch`, 단계 execute. 게이트 원장은 워크트리의 `.seiri/tasks/schema-form-switch/gates.md`(gitignore 대상이며 seiri 도구의 `gates status`는 메인 체크아웃의 같은 경로를 읽어 1/33으로 잘못 보인다 — 워크트리 파일을 직접 읽는다). 72시간 유휴 삭제에 대비한 사본은 [gates-snapshot.md](gates-snapshot.md).
+- 게이트 상태(2026-10-03 세션 종료 시): 33 가운데 24 충족. 열린 것은 G13b·G17b·G19b·G24(충족 근거는 §2에 있으나 장부 표시가 안 됨 — CHECK를 다시 돌려 표시), G22(EVENT-070, 81라운드 3번 처분의 개발 모드 경고 구현 뒤), G23(브라우저 게이트, 이 세션의 샌드박스에서 Chromium이 돌지 않음 — 소유자가 `packages/canard/schema-form`에서 `yarn vitest run --project storybook`), G26(85C-01 목표 속도), G27(최종 `seiri:verify`), G29(전체 시험과 플러그인 넷의 단독 빌드), G31(filid 스캔), G32(원장 대 구현 대조 재검증), G33(PR).
+- 다음 행동, 순서대로:
+  1. 88라운드 작업(88C-02 측정 파일 정리·스크립트 기본값, 88C-01 b3 좁은 변형, array-1000 갱신 회귀의 조용한 재측정)은 소유자 지시로 세션 종료 때 codex를 **중단**했다(약 33분 진행, 완료 보고 없음). 미완성 변경이 워크트리에 **커밋 안 된 채** 남아 있다: 86c02-*-traced.json 여섯 삭제와 요약 JSON, 측정 스크립트 기본값, b3 구현 중간(record·dispatch·settle의 DETAIL과 `markSchemaNodeEvent.ts`·`runDeliveryWaves.ts`·`markCommitDeliveries.ts`·시험), BF `equivalent.ts`. 검증되지 않은 상태이므로 그대로 믿지 말 것 — `git status`/`git diff`로 보고, 88C-02 정리는 살려서 검증 후 커밋하고, b3는 시험 아홉 묶음과 측정으로 다시 확인하거나 `git checkout`으로 버리고 새로 한다. b3에서 이득이 측정되지 않으면 되돌린 상태가 최종(88C-01).
+  2. 89C-01–04대로 정적 첫 로드 경로(i)와 분기 없는 청사진(ii)을 구현한다: settle·blueprint DETAIL 먼저, 차등 시험을 범용 경로에서 초록으로 고정한 뒤 정적 경로에 같은 단언, 커밋 번호는 자격 판정 뒤 예약, 첫 자격은 89C-02의 범위, 정착 도중 동기 보고자 호출이 있으면 ERROR-019 결함으로 고침. 변경 하나에 재측정 하나(89C-05).
+  3. 분기 전환 정착(의존 등록·게이트 고정점·파생 라운드·전이·커밋)의 65C-01 방식 단계별 진단과 설계안 — 뒤집히는 항목이 있으면 코드 전에 원장 관리자에게.
+  4. EVENT-070 81라운드 3번: components DETAIL에 감지 단위("같은 노드의 연속 진입 수")와 문턱을 먼저 적고, 개발 모드에서만 경고 1회, Form.effectFeedback 시험의 통과 조건을 바꿈 → G22.
+  5. G32 재검증(Claude verifier, 인용마다 실재 확인), 그 뒤 G27·G29·G31·G33. PR 본문 "알림" 절에 88C-02의 한 줄(측정 원 자료 약 124 MB가 `0189c443b` 히스토리에 남으며 스쿼시 머지와 가지 삭제로 사라짐)을 적는다. 커밋·PR에 세션 링크를 넣지 않는다(소유자 전역 규칙).
+- 원장 관리자 다음 라운드 번호: 90.
 
 ## 1. 최초 기준선
 
@@ -27,6 +34,8 @@ Planning method: 저장소 지침 — `PLAN.md` §2와 `plan/prompts.md`의 단�
 | 날짜 | 단위 | 무엇 | 근거 |
 | --- | --- | --- | --- |
 | 2026-10-03 | U13 | 82C-01 단계별 크기 진단과 구조 중복 수정 `1f8a8d10f`; 83C-01에 따라 크기 계열을 최대 측정 크기 배율의 소유자 묶음으로 옮기고 중앙값·p99·원 표본 출처를 보고서에 기록. 재귀 검사의 첫 실행 3.39× 증가는 성장비 0.61로 선형이므로 기록하며 수용을 선언하지 않음 | TEST-027 56라운드 보충, TEST-026, 82C-01·83C-01; `verification/07-switch/performance.md`·`residual-breakdown.md`, 앞 단계 귀속은 §8 |
+| 2026-10-03 | U13 | 84라운드 소유자 답(느린 행 수용 안 함, 번들 크기는 수용하고 뒤로): 분기 없는 폼의 옛 판 대 새 판 단계별 재진단 `b44dc7ebf` — 최대 크기 마운트에서 분석 9.1–10.3×, 정착·채움 8.9–9.9×, 노드 생성 0.18–0.53×; 배열 React 초과는 React 19 개발 빌드 owner-stack 예산의 비대칭. 85C-01 목표 속도(분기 없는 코어 1.5×, 분기 폼은 검증기 끈 측정 1.5×, React 마운트 1.2×·갱신 1.0×), 86C-01 React 층은 production profiling 빌드로 판정. 86C-02 코드 수준 후보 다섯 `0189c443b`(목표 충족 코어 8/26, React 20/34). 87라운드 소유자 원칙(최소 순회, 과감한 생략, for/while 루프)을 손댄 함수에 적용하고 (iii) 빈 배달 집합은 이득이 없어 되돌림, 정적 첫 로드 설계안 `3b2cbee8a`; 마운트 노드당 계산 2→1회, 1,000행 배열 push 방문 4/바뀜 4·앞 삭제 2,000/1,001, array-1000 갱신 +14.9%(0.137→0.157 ms, G32 시험과 시간이 겹침 — 88라운드에서 조용한 조건으로 재측정). 89라운드가 설계안 (i)·(ii)를 승인(89C-01–05). G26은 열린 채 | `reviews/round-84-owner-answers.md`–`round-89-closing.md`; `verification/07-switch/branchless-phase-diagnosis.md`·`remeasure-86c02.md`·`static-first-load-design.md`·`b3-payload-proposal.md` |
+| 2026-10-03 | Final | G32 원장 대 구현 대조: antigravity 재시도의 "지적 0"은 인용 경로 8개 가운데 4개가 실재하지 않아 증거로 받지 않음. Claude verifier가 막는 결함 둘(WRITE-044 reset 재대조의 억제 비트 소실, REACT-024 마운트 layout effect 쓰기 뒤 입력이 굳음)과 비차단 셋을 직접 재현. 수정 위임은 자동 권한 판정기가 막았고 소유자가 이 세션에 직접 "앞선 지시문대로 그대로 진행" 승인 → `8955aa173`(시험 3,067 통과, EVENT-070 네 건만 실패). 조사 둘(formTypeInputMap 컨테이너 입력, assembleObject 키 순서)은 결함 아님. 재검증은 성능 작업 뒤 | 원장 관리자와의 교신, `.seiri/tasks/stage-07-review-fixes/report.md` |
 | 2026-10-03 | U8 | 렌더 처분·하니스 이주 1a821faa7, 재귀 확장 수정 29d061941, placeholder 경로 추적 수정 fc651e734; 78C-01에 따라 중단 5파일을 삭제하고 유효한 관찰을 U9 e2e로 인계 | 78C-01·02, `verification/07-switch/u8-disposition-report.md` |
 | 2026-10-02 | U0 | 원장 관리자에게 착수 확인 1–6과 물음 Q1–Q10을 보내 답을 받음(68C-01–10). 현재 코드·시험·원장 조사(서브에이전트 여섯). 실행 계획·ADR·게이트 원장 작성. Q11–Q15 송부 | `reviews/round-68-closing.md` |
 | 2026-10-02 | U0 | 작업 공간 사고: 메인 체크아웃에서 07 브랜치를 만든 탓에 원장 관리자의 68·69라운드 커밋(`1ba284393`·`93ff8d7bc`)이 07 브랜치에 들어감. 소유자가 `1.0.0-beta`를 `93ff8d7bc`로 맞췄고, 07은 워크트리로 옮김. 07의 첫 커밋 `a44003ddd`는 `93ff8d7bc` 위 | 원장 관리자와의 교신 |
