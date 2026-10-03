@@ -589,7 +589,8 @@
 - 결정:
   > 노드가 **생긴다**는 것은 그 노드가 직전 커밋의 형상에 없고 이번 정착의 최종 형상에 있다는 뜻이다. 채움(`controls.default` > `default`)은 이 사건에만 일어난다(ADR 0007, ADR 0013).
   > 본체나 다른 켜진 조각이 이미 두고 있던 노드는 새 조각이 켜져도 생기지 않는다. `controls.visible`의 전환은 생성이 아니다.
-- 보충: 없음
+- 보충:
+  > 편집자 결정(89C-02): "【추론】 자격 밖 입력이 노드 변경 전에 범용 경로로 가는 한 두 경로의 관측은 같아야 하므로 적용 범위를 좁히는 것은 계약이 아니라 구현 선택이고 편집자가 승인한다. 범위를 그렇게 가르는 까닭은 SETTLE-046·VALUE-035다 — 로드에서는 최종 형상의 노드가 모두 "생긴 노드"로서 채움을 받고(`controls.default` > `default`), `injectTo`는 발화하며 `controls.unsetValue`는 로드된 값으로 평가한다 — 그 가운데 literal `default`의 채움만이 다른 노드를 보지 않는 독립 계산이고, 발화·평가·동적 `controls.default`는 전이 라운드와 식 평가가 필요하므로 범용 경로의 몫이다. `DisableAutomaticWrites`는 "채움을 쓰지 않는다"는 플래그라 첫 범위에 들어도 된다. 확대 순서는 뜻이 적은 쪽부터다: (1) literal `default`(첫 구현), (2) 명시 `null`·`undefined` 입력(nullable 판정 BLUEPRINT-044와 없음의 뜻), (3) wrong-kind 입력(mismatch 목록과 LANDING-126의 `VALUE_TYPE_MISMATCH` 경고 기록 — 그 기록도 89C-01대로 모아 두었다가 사슬 끝에서 간다), (4) literal `controls.default`(SETTLE-005의 순위 `controls.default` > `default`를 literal끼리만). 각 확대는 설계안의 차등 행렬에서 그 부류의 사례가 범용 경로에서 먼저 초록이고 정적 경로에서 같은 단언을 통과한 뒤에만 한다. 재귀 배열(BLUEPRINT-030의 잘린 되풀이)·virtual·whole-value 전략은 자격 판정이 복잡해 첫 로드 절감 대비 위험이 크므로 PR-7에서는 범용 경로로 남기고, 그 폼들의 첫 로드가 목표(85C-01)에 못 미치면 그 행은 정돈·성능 최적화 단계의 열린 행으로 적는다 — 측정된 행(flat·nested·array·derived·oneOf·if-then)에는 그 셋이 없다." (`reviews/round-89-closing.md:16`)
 - 상태: 현행
 - 출처: `adr/0006-single-value-ownership.md:52`(정본, #1–#2·#4–#5. VALUE-007에서 분할), `adr/0006-single-value-ownership.md:52#1-2`, `adr/0006-single-value-ownership.md:52#4-5`, `07-conclusions.md:67`
 - 닫은 사람: 소유자 답(`reviews/round-9-spec.md:56` 읽기2 시점(A/B)), 원리(`03-mental-model.md:90` 로드는 새 수명)
