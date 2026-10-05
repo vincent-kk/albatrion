@@ -1,0 +1,20 @@
+{
+  "decision": "reverted",
+  "head": "c4b7bbaeee4b7a5bcf48657c1eaec7100f79a1ca",
+  "differential": {
+    "method": "작업 트리 내부 .round88-head에 git archive c4b7bbaee로 원본 src 및 패키지 설정을 추출하고 기존 node_modules를 연결했습니다. 새 테스트 두 파일을 그대로 복사하여 HEAD 사본과 후보에서 같은 Vitest 명령을 각각 실행했습니다.",
+    "command": "npx --no-install vitest run --project unit --project render --project react18 src/core/dispatch/__tests__/dispatch.payload-boundary.test.ts src/__tests__/e2e/payload-boundary.test.tsx --reporter=dot",
+    "head": { "exitCode": 0, "filesPassed": 3, "testsPassed": 11 },
+    "candidate": { "exitCode": 0, "filesPassed": 3, "testsPassed": 11 },
+    "groups": ["구독 전후 및 미구독 파동", "두 커밋의 한 파동 병합", "A→B→A", "파동 중 flushSync 및 해제·재구독", "전체 비트 revision", "previous/current 참조", "개발 동결", "리스너 오류·전역 상태 순서", "늦은 구독의 읽기/구독 간극"]
+  },
+  "finalCommands": [
+    { "command": "npx vitest run --project unit --project render --project react18 --reporter=dot", "exitCode": 1, "filesPassed": 405, "filesFailed": 2, "testsPassed": 3078, "testsFailed": 4, "todo": 1, "seconds": 63.76,
+      "failures": ["render EVENT-070 useLayoutEffect", "render EVENT-070 useEffect", "react18 EVENT-070 useLayoutEffect", "react18 EVENT-070 useEffect"],
+      "note": "첫 전체 실행은 도구의 60초 제한으로 종료하여 판정에서 제외하고 240초 한도로 재실행했습니다. ErrorBoundary 의도적 예외 출력은 테스트 실패로 추가 집계하지 않았습니다." },
+    { "command": "npx tsc --noEmit --composite false --rootDir . -p tsconfig.json", "exitCode": 0 },
+    { "command": "npx eslint \"src/**/*.{ts,tsx}\"", "exitCode": 0 },
+    { "command": "node architecture/verification/07-switch/tools/check-legacy-isolation.mjs", "exitCode": 0, "result": "LEGACY_ISOLATED: 1577 files checked" }
+  ],
+  "scope": "모든 최종 명령은 PKG에서 실행했습니다. npx에는 npm_config_offline=true를 적용했고 설치·git 쓰기·추가 에이전트 실행은 하지 않았습니다. 최종 기존 src 파일과 기존 단언은 HEAD와 동일하며 새 차등 테스트 두 파일만 추가됩니다."
+}

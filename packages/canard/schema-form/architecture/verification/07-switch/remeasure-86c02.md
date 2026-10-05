@@ -651,3 +651,132 @@ npx --no-install vitest run --project unit --project render --project react18 --
 npx --no-install tsc --noEmit --composite false --rootDir . -p tsconfig.json
 npx --no-install eslint "src/**/*.{ts,tsx}"
 ```
+
+### 88C-01 b3 결과
+
+**판정: 되돌림.** `c4b7bbaeee4b7a5bcf48657c1eaec7100f79a1ca`와 중단 실행의 b3 초안을 다시 검증·측정했습니다. 아홉 차등 묶음은 양쪽에서 통과했으나, 구독한 BF 경로의 median에서 회차 편차를 넘는 시간 이득을 확인하지 못했습니다. 88C-01의 조건에 따라 제품 구현·타입·세 DETAIL·기존 테스트 세 파일을 모두 HEAD로 복원했습니다. 신규 materialize 함수와 실행 불가능했던 초안 할당 스크립트도 제거했습니다. 최종 제품에 채택한 속도·메모리 변화는 **0**입니다. 새 차등 테스트 두 파일, 이 보고서와 측정 증거만 남깁니다.
+
+판정 근거는 `git show origin/1.0.0-beta:packages/canard/schema-form/architecture/reviews/round-88-closing.md`의 88C-01, 승인된 `b3-payload-proposal.md`, EVENT-001·007·024, SETTLE-006, 65C-03입니다. revision을 구독 여부에 종속시키는 S4는 시험 후보에 포함하지 않았습니다. 후보의 필드 선언과 record/dispatch/settle DETAIL을 먼저 확인했으며, 추가 제품 구현은 하지 않고 기존 초안을 측정했습니다. 최종 상태에 제품 변경이 없으므로 폐기한 작업 칸의 계약 문서도 남기지 않습니다. git 쓰기·커밋·설치는 하지 않았습니다.
+
+#### HEAD와 같은 아홉 묶음
+
+작업 트리 **내부** `.round88-head`에 `git archive c4b7bbaee`로 PKG의 원본 `src`, 패키지 manifest·Vitest 설정·Storybook 설정을 추출했습니다. 루트 tsconfig와 기존 루트/패키지 `node_modules`를 연결하고 신규 테스트 두 파일만 같은 상대 경로로 복사했습니다. 제품 source alias는 각각의 패키지 `src`를 향하므로 설치된 번들이나 후보 코드를 HEAD 테스트에 사용하지 않습니다. 작업 종료 때 이 임시 사본을 제거했습니다.
+
+두 구현에서 동일하게 실행한 명령은 다음과 같습니다. 각 구현 **unit 9건 + render 1건 + react18 1건 = 11건**, 3개 파일이 모두 통과했습니다. HEAD 사본의 초기 의존성/tsconfig 연결 누락은 수집 오류로 제외했고, 연결을 고친 뒤의 완료 실행만 증거로 삼았습니다.
+
+```sh
+npx --no-install vitest run --project unit --project render --project react18 \
+  src/core/dispatch/__tests__/dispatch.payload-boundary.test.ts \
+  src/__tests__/e2e/payload-boundary.test.tsx --reporter=dot
+```
+
+| 묶음 | 동일한 단언으로 확인한 관측 | HEAD / 후보 |
+| --- | --- | --- |
+| 01 구독 시점 전후 | 첫 파동 전 A→B의 previous=undefined; 미구독 C 파동 뒤 D의 previous=C; A 파동 완료→B 커밋→구독에서는 A→B; 해제 중 C 파동 후 재구독은 C→D; 구독 자체는 콜백 없음 | 통과 / 통과 |
+| 02 두 커밋 병합 | B·C 커밋은 revision·commitNumber를 각각 두 번 올리고, 한 파동에서 A→C 한 사건; source는 callerReplace | 통과 / 통과 |
+| 03 A→B→A | 커밋 사이 변화의 UpdateValue 비트는 유지되고 최종 파동은 previous=A, current=A | 통과 / 통과 |
+| 04 파동 중 flushSync·해제·재구독 | 먼저 고정한 뒤 노드의 A→B는 앞 리스너의 쓰기로 변하지 않음; 해제된 콜백은 생략; 재구독은 다음 B→C 파동부터 참여; 실제 React 18·19 flushSync에서도 같음 | 통과 / 통과 |
+| 05 비트별 revision | 미구독·구독 모두 17개 비트 대조; 단말 값 쓰기는 UpdateValue·RequestRefresh만 증가; 배열 이동은 /1→/0의 동결된 경로 payload | 통과 / 통과 |
+| 06 previous/current 참조 | branch local·emit의 이전/현재 참조를 `toBe`로 확인; 두 리스너가 같은 사건을 받음; 공개 봉투 키도 동일 | 통과 / 통과 |
+| 07 동결 | 첫 콜백부터 값 payload 동결·변조 throw; 다음 리스너는 같은 payload; branch 내부 포장은 기존처럼 얕은 동결 범위 밖; 유효 스키마 previous/current와 동결 확인 | 통과 / 통과 |
+| 08 오류·전역 상태 순서 | 첫 리스너 오류에도 둘째 value 콜백 실행 후 state→global→state-complete; 같은 오류를 최외곽에서 throw, 전역 dirty=true | 통과 / 통과 |
+| 09 늦은 구독 간극 | 읽기 뒤 미구독 커밋에서 revision이 이미 증가; 구독은 과거 사건 재생이나 previous 덮어쓰기를 하지 않음; 다음 배달은 A→B | 통과 / 통과 |
+
+unit 파일의 SHA-256은 `ec1873d0e1220a8aecea149c40df9448d89f45ba1bc7539190eeded8ac431359`, React 파일은 `1923741ab2cadf42a361d5bf4c1d20aa2026c70b209bdc7cd93275d9020c70d2`이며 HEAD 사본과 최종 파일이 일치했습니다. 비트 시험 작성 중 Refresh 증가를 빠뜨린 기대값은 양쪽에서 똑같이 실패했습니다. 기존 계약대로 UpdateValue와 RequestRefresh 증가를 명시한 뒤 양쪽을 다시 통과시켰습니다. 기존 테스트 기대값은 이 과정에서 바꾸지 않았습니다.
+
+#### 기존 단언 변경의 줄별 처분
+
+아래 줄 번호는 HEAD 파일 기준입니다. **모두 원문으로 복원했으므로 최종 변경된 기존 단언은 없습니다.** 내부 표현을 바꿨다는 이유만으로 기존 동결 단언을 없앤 초안을 최종 결과로 승인하지 않았습니다.
+
+| 파일·HEAD 줄 | 초안의 삭제/대체 줄 | 관측 보존 검토와 최종 처분 |
+| --- | --- | --- |
+| settle.delivery:46 | `expect(event?.payload?.[UpdateValue])` → `expect(event).toMatchObject(...)` | 커밋 봉투의 내부 위치를 바꾼 검사입니다. 공개 값 쌍은 신규 01·02에서 같지만, 최종은 원래 payload 접근을 복원했습니다. |
+| settle.delivery:47 | `{ previous: 'old', current: 'new' }` → `event.payload`가 undefined라는 검사 | 기존 값 쌍 단언과 같은 주장이 아닙니다. old/new 단언을 복원하고 초안의 undefined 단언을 제거했습니다. source 단언은 처음부터 유지됐습니다. |
+| settle.delivery:61 | branch `pendingDelivery.payload[UpdateValue]` 접근 → 참조 칸 검사 | 공개 branch 참조 동등성은 신규 06으로 확인했지만 최종은 원래 payload 접근을 복원했습니다. |
+| settle.delivery:62 | `{ previous, current: { local, emit } }` → local/emit 칸 및 payload undefined | 포장 위치 변화일 뿐 공개 의미 변경은 06에서 없었으나, 원래 객체 모양 단언을 그대로 복원했습니다. |
+| settle.delivery:183–184 | UpdateJsonSchema payload를 읽는 두 줄 → previousSchema/currentSchema 검사 | 신규 07에서 공개 스키마 payload를 검증했습니다. 최종은 두 원래 읽기 줄을 복원했습니다. |
+| settle.delivery:185 | 스키마 previous/current 동등 단언 제거 | 신규 07에서도 같은 값·참조를 확인했으며 기존 단언도 복원했습니다. |
+| settle.delivery:186 | 개발 모드 `Object.isFrozen(payload)` 단언 → payload undefined | 동결 경계 이동의 보완 시험 없이 대체할 수 없는 줄입니다. 신규 07에서 첫 리스너 전 동결을 확인했고, 최종은 원래 동결 단언을 복원했습니다. |
+| dispatch.waves:116 | 직접 `{ type: UpdateValue }` 대입 → `markSchemaNodeEvent` 호출 | 단언 변경은 아니지만 helper가 revision 대상 등록까지 더하여 fixture를 넓힙니다. 최종은 import 추가와 이 대입 대체를 모두 복원했습니다. 기존 calls=0·대상 제거 단언은 유지됐습니다. |
+| settle.array-integration:111 | 직접 `{ type: 1 }` 대입 → `markSchemaNodeEvent(node, 1)` | 앞선 revisionNodes·pendingRevision·deliveries 등록을 반복하므로 의도한 제거 관측은 같지만, 더 넓은 fixture 변경을 남길 필요가 없습니다. import와 대입을 복원했습니다. 기존 제거 단언은 유지됐습니다. |
+
+#### 측정 방법과 범위
+
+[전체 합산·회차별 값·할당 위치·번들 해시](./round-88-b3-summary.json)에 72개 시간 실행과 24개 별도 할당 실행을 보존했습니다. 측정 시각은 2026-10-05 16:36–16:52 KST, Apple M1 Max, Node **v24.20.0**입니다. 앞의 quiet 기준선은 Node v26.10.0이므로 저장된 절대 시간과 직접 비교하지 않고 **HEAD를 같은 현재 런타임에서 다시 측정**했습니다.
+
+quiet 기준선의 새 프로세스·새 스키마·mount 전 명시적 GC·validation OFF·20회 예열·101표본·3회 반복·교대 순서·nearest-rank median/p99 방식을 따랐습니다. fixture는 BF의 실제 `equivalentFixtures`이며 nested-d5는 nested-d5-f4입니다. 1·3회 HEAD→후보, 2회 후보→HEAD로 실행하고 303개 표본을 합쳤습니다. 번들은 메모리에서 미리 생성하고 esbuild 서비스를 종료한 후 시간을 쟀습니다. 시간 실행에는 추적 코드를 넣지 않았습니다.
+
+core는 미구독 development 생성/갱신입니다. subscribed는 같은 코어 트리의 모든 노드에 콜백을 붙인 뒤 갱신하여 배달 비용을 추가 관찰했습니다. render는 jsdom에서 실제 공개 `Form`을 production React로 생성하고 `flushSync`로 BF 상호작용을 수행하는 구독 경로입니다. mount는 생성/flushSync의 동기 시간, update는 모든 상호작용의 동기 구간 합입니다. 각 구간 밖 timer 대기는 제외했습니다. **이번 runner는 상호작용 사이에도 timer 대기를 넣었으므로, 앞의 quiet runner가 mount/update 사이에만 대기한 것과 스케줄 세부는 다릅니다.** HEAD와 후보에는 동일하게 적용했습니다. 각 쌍의 mount/update 최종 값도 일치함을 확인했습니다. React DOM 전체 그리기 성능이나 실제 브라우저 입력 지연이라고 확대 해석하지 않습니다.
+
+측정 중 이 세션은 다른 명령·테스트·빌드·추가 에이전트를 병행하지 않았습니다. 다만 시작 전 호스트 프로세스 목록에는 apfsd·GUI 작업과 기존 Claude 프로세스가 있어 **머신 전체에 다른 작업이 없었다고 보장할 수 없습니다.** 타 세션 프로세스를 종료하지 않았습니다. 이 한계와 회차 편차를 고려해 작은 음수 차이를 채택 근거로 삼지 않았습니다.
+
+편차 기준은 두 변형 각각의 회차별 median 최댓값−최솟값 중 큰 값입니다. 세 쌍이 모두 개선되고 합산 median 절감도 이 편차를 넘는 경우만 반복 편차 초과로 보았습니다. 통계적 유의확률 검정은 아닙니다. 해당 조건을 충족한 구독 경로는 **0개**입니다.
+
+#### 시간 결과
+
+단위는 ms, 변화율은 `(후보 / HEAD − 1) × 100`이며 음수가 개선입니다.
+
+| 미구독 코어 | 작업 | HEAD median / p99 | 후보 median / p99 | median 변화 |
+| --- | --- | ---: | ---: | ---: |
+| flat-500 | mount | 8.19054 / 9.06971 | 8.08529 / 9.01729 | −1.29% |
+| nested-d5-f4 | mount | 24.02567 / 26.98092 | 23.84983 / 26.93258 | −0.73% |
+| array-1000 | mount | 22.24133 / 28.04146 | 22.21100 / 27.93829 | −0.14% |
+| array-1000 | update | 0.09804 / 0.18108 | 0.09579 / 0.18838 | −2.29% |
+| oneOf-20 | update | 1.36504 / 1.69192 | 1.34883 / 1.68825 | −1.19% |
+
+| 모든 노드 구독 코어 | HEAD update median / p99 | 후보 update median / p99 | median 변화 |
+| --- | ---: | ---: | ---: |
+| flat-500 | 0.30079 / 0.49037 | 0.30338 / 0.48242 | +0.86% |
+| nested-d5-f4 | 0.45709 / 0.64217 | 0.46608 / 0.75650 | +1.97% |
+| array-1000 | 0.11013 / 0.24058 | 0.10850 / 0.23704 | −1.48% |
+| oneOf-20 | 1.36833 / 1.87662 | 1.43858 / 1.96187 | +5.13% |
+
+| 실제 React 구독 | 작업 | HEAD median / p99 | 후보 median / p99 | median 변화 |
+| --- | --- | ---: | ---: | ---: |
+| flat-500 | mount | 71.16196 / 75.84154 | 70.54208 / 75.40287 | −0.87% |
+| nested-d5-f4 | mount | 186.49450 / 195.12558 | 186.36083 / 209.39100 | −0.07% |
+| array-1000 | mount | 574.12242 / 607.52679 | 573.65571 / 601.72133 | −0.08% |
+| flat-500 | update | 2.70854 / 3.53958 | 2.75529 / 3.81108 | +1.73% |
+| nested-d5-f4 | update | 2.84821 / 4.03154 | 2.89642 / 4.35275 | +1.69% |
+| array-1000 | update | 1.18388 / 1.51021 | 1.19313 / 1.49338 | +0.78% |
+| oneOf-20 | update | 3.17925 / 3.87192 | 3.18571 / 3.98996 | +0.20% |
+
+| React update | 회차 1 / 2 / 3 median 변화 | 편차 기준 ms |
+| --- | ---: | ---: |
+| flat-500 | −0.71% / +0.69% / +4.42% | 0.19288 |
+| nested-d5-f4 | −2.37% / −0.33% / +8.95% | 0.46954 |
+| array-1000 | +3.10% / +0.12% / −1.56% | 0.03029 |
+| oneOf-20 | −3.29% / +2.11% / −1.20% | 0.30704 |
+
+#### 할당과 메모리 비용
+
+별도 프로세스에서 TypeScript AST의 객체 리터럴·`Object.freeze` 호출에 계수기를 삽입했습니다. 범위는 markCommitDeliveries, markSchemaNodeEvent, materializeDeliveryPayload 세 파일이며, 실행된 위치별 횟수는 summary에만 있습니다. 값 객체·배열·Set·React 내부 객체 등 다른 할당은 포함하지 않습니다. 다음은 **실행된 객체 수**이지 heap byte 수나 정적 상한이 아닙니다.
+
+| 작업 | HEAD 객체 → 후보 객체 | 생략한 객체 | development freeze HEAD → 후보 |
+| --- | ---: | ---: | ---: |
+| flat-500 미구독 mount | 2,506 → 1,503 | 1,003 | 501 → 0 |
+| nested-d5-f4 미구독 mount | 7,166 → 4,095 | 3,071 | 1,365 → 0 |
+| array-1000 미구독 mount | 21,012 → 12,006 | 9,006 | 4,002 → 0 |
+| array-1000 미구독 update | 26 → 12 | 14 | 4 → 0 |
+| oneOf-20 미구독 update | 56 → 30 | 26 | 12 → 0 |
+| flat-500 React update | 120 → 140 | −20 | production: 0 → 0 |
+| nested-d5-f4 React update | 400 → 460 | −60 | production: 0 → 0 |
+| array-1000 React update | 26 → 30 | −4 | production: 0 → 0 |
+| oneOf-20 React update | 56 → 48 | 8 | production: 0 → 0 |
+
+후보는 노드 고정 칸을 늘리지 않았지만 대기 봉투마다 마스크·초기화 표시·이전/현재 값·방출·경로·스키마의 **10칸**을 초기화하고 파동까지 유지했습니다. 구독 사건에는 공개 봉투 객체 하나를 추가로 만들었습니다. 따라서 미구독 중첩 객체 감소가 전체 메모리 byte 감소를 뜻하지 않으며, 이번 실험은 순 heap byte 절감을 증명하지 않았습니다. 속도 비용은 모든 대기 봉투의 추가 칸 초기화와 구독 사건의 구체화·봉투 생성이고, 이 비용을 포함한 실제 시간 결과가 채택 기준을 충족하지 못했습니다.
+
+#### 최종 검증과 산출물
+
+[검증 요약](./round-88-b3-verification-summary.json)에 명령·종료 코드·허용 실패를 기록했습니다. 아래 명령은 제품 복원 후 PKG에서 순차 실행했고, `npm_config_offline=true`로 설치를 막았습니다.
+
+| 명령 | 결과 |
+| --- | --- |
+| `npx vitest run --project unit --project render --project react18 --reporter=dot` | 종료 1; 405파일·3,078사례 통과, todo 1; 실패 4건은 render/react18 각각의 EVENT-070 useLayoutEffect/useEffect 두 사례뿐 |
+| `npx tsc --noEmit --composite false --rootDir . -p tsconfig.json` | 종료 0 |
+| `npx eslint "src/**/*.{ts,tsx}"` | 종료 0 |
+| `node architecture/verification/07-switch/tools/check-legacy-isolation.mjs` | 종료 0; `LEGACY_ISOLATED: 1577 files checked` |
+
+처음 전체 Vitest 실행은 도구의 60초 한도에 걸려 결과에서 제외했습니다. 한도를 늘린 재실행이 63.76초에 완료된 결과가 위 표입니다. 측정과 테스트를 겹쳐 실행하지 않았습니다.
+
+원표본 72개는 `round-88-b3-<core|subscribed|render>-<fixture>-<head|candidate>-r<1|2|3>-timings.json`이며 mount/update 숫자 배열만 보유합니다. 모든 표본·요약 파일은 5,000,000바이트 이하이고, 시간 표본과 측정 합산 summary 73개의 합계는 363,325바이트, 가장 큰 측정 summary는 90,159바이트입니다. 추적 세부·환경·결과 해시는 합산 summary에만 남겼습니다. 임시 소스 사본·실행기는 작업 트리 내부에서 사용한 뒤 제거했으며 생성 번들·빌드 산출물은 남기지 않았습니다.
