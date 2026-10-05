@@ -44,7 +44,7 @@ if (!NN || !planRow || !bullet || !mapRow) throw new Error('usage: round-close.m
   while (log[log.length - 1].trim() === '') log.pop();
   log.push(oldest, '');
   fs.writeFileSync('PLAN-LOG.md', log.join('\n'));
-  h[s1] = h[s1].replace(/\([^)]*\)$/, `(2026-10-02, ${NN}라운드 닫힘; 07 전환 진행 중)`);
+  h[s1] = h[s1].replace(/\([^)]*\)$/, `(${new Date().toISOString().slice(0, 10)}, ${NN}라운드 닫힘; 07 전환 진행 중)`);
   const j = h.findIndex((l) => l.startsWith(`| \`reviews/round-${prevNN}-`));
   if (j < 0) throw new Error(`HANDOFF §5 row for round ${prevNN} not found`);
   h.splice(j + 1, 0, mapRow);
