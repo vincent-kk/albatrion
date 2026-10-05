@@ -26,12 +26,13 @@ interface DependencyNode {
 /** Queryable reverse dependencies built once from the blueprint dictionary. */
 class DependencyIndex {
   /** Root of the absolute JSON Pointer watch trie. */
-  private readonly root: DependencyNode = {
-    owners: [], ownerPaths: new Set(), children: new Map(),
-  };
+  private readonly root: DependencyNode | undefined;
 
   /** Build absolute watch paths from authored reverse dependency IDs. */
-  constructor(blueprint: Blueprint) {
+  constructor(blueprint?: Blueprint) {
+    this.root = undefined;
+    if (!blueprint) return;
+    this.root = { owners: [], ownerPaths: new Set(), children: new Map() };
     getContextOwners(blueprint);
     const dependencies = Object.entries(blueprint.dependencies);
     if (dependencies.length === 0 && blueprint.expressions.length === 0) return;
@@ -74,10 +75,11 @@ class DependencyIndex {
   affected<Self extends SchemaNodeRecord<Self>>(
     changedPath: string, root: Self,
   ): readonly string[] {
-    if (this.root.owners.length === 0 && this.root.children.size === 0)
+    const rootIndex = this.root;
+    if (!rootIndex || rootIndex.owners.length === 0 && rootIndex.children.size === 0)
       return NO_OWNERS;
     const owners = new Set<string>();
-    let current: DependencyNode[] = [this.root];
+    let current: DependencyNode[] = [rootIndex];
     const collect = (node: DependencyNode): void => {
       for (const entry of node.owners) {
         const path = entry.bindable
@@ -88,7 +90,7 @@ class DependencyIndex {
         else owners.add(path);
       }
     };
-    collect(this.root);
+    collect(rootIndex);
     for (const segment of changedPath.split('/').filter(Boolean)) {
       const next: DependencyNode[] = [];
       for (const node of current) {
@@ -126,7 +128,7 @@ class DependencyIndex {
         break;
       }
     }
-    let current = this.root;
+    let current = this.root!;
     for (const segment of watchedPath.split('/').filter(Boolean)) {
       let child = current.children.get(segment);
       if (!child) {
@@ -147,6 +149,9 @@ class DependencyIndex {
 
 /** Cached dependency indexes live only while their analyzed blueprint lives. */
 const INDEXES = new WeakMap<Blueprint, DependencyIndex>();
+/** Dependency absence is proven independently of branch presence. */
+const EMPTY_INDEX = new DependencyIndex();
+Object.freeze(EMPTY_INDEX);
 
 /**
  * Reuse a path index for all writes against one analyzed blueprint.
@@ -154,6 +159,8 @@ const INDEXES = new WeakMap<Blueprint, DependencyIndex>();
  * @returns Reverse dependency trie for ancestor and descendant invalidation
  */
 export const getDependencyIndex = (blueprint: Blueprint): DependencyIndex => {
+  if (!blueprint.capabilities.hasDependencies && !blueprint.capabilities.hasExpressions)
+    return EMPTY_INDEX;
   let index = INDEXES.get(blueprint);
   if (!index) {
     index = new DependencyIndex(blueprint);

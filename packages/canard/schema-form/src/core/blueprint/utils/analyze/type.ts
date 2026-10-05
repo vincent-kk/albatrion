@@ -1,4 +1,5 @@
 import type {
+  Blueprint,
   BlueprintGate,
   BlueprintNode,
   BlueprintOptions,
@@ -36,15 +37,17 @@ export interface SchemaInput {
 }
 /** State owned by one invocation, never process-global or reused across roots. */
 export interface AnalysisContext {
+  /** Monotonic feature evidence collected together with authored declarations. */
+  capabilities: { -readonly [Key in keyof Blueprint['capabilities']]: boolean };
   schema: BlueprintSchema;
   options: BlueprintOptions;
   nodes: MutableNode[];
   fragments: MutableFragment[];
   declarationId: number;
-  declarationOwners: Map<number, number>;
+  declarationOwners: Map<number, number> | undefined;
   templates: Map<string, MutableNode[]>;
   constructing: Map<string, MutableNode[]>;
   /** Authored branch locations converted into explicit discriminator gates. */
   discriminatorBranches?: Set<string>;
-  dependencies: Record<string, number[]>;
+  dependencies: Record<string, number[]> | undefined;
 }

@@ -1,0 +1,2556 @@
+{
+  "sourceCommit": "fba01cbeac9078a63c1a92cbb94c8318ece67ef1",
+  "sourceState": "89C-03 승인 설계 (ii) 분기 없는 청사진; (i) 정적 첫 로드는 구현하지 않음",
+  "environment": {
+    "startedAt": "2026-10-05T11:02:36.257Z",
+    "endedAt": "2026-10-05T11:02:37.857Z",
+    "node": "v26.10.0",
+    "v8": "14.6.202.34-node.35",
+    "platform": "darwin",
+    "arch": "arm64",
+    "cpu": "Apple M1 Max",
+    "cpus": 10,
+    "memory": 68719476736,
+    "warmup": 20,
+    "samples": 101,
+    "validation": "off",
+    "mode": "development synchronous core",
+    "explicitGc": true,
+    "trace": false,
+    "bundleSha256": "736a4ff19f664bcce6ee819a7e7d7080210028573b1bf53a6ad40cafb25ebdfb"
+  },
+  "methodology": "동일 세션의 HEAD fba01cbea(H)와 작업트리(W). 픽스처마다 H→W, W→H, H→W, 각 판·회차 새 프로세스에서 예열 20·표본 101, 303 원표본의 nearest-rank median/p99. validation off, 명시적 GC, 메모리 번들 뒤 esbuild 종료. 다른 명령·테스트·에이전트와 병렬 실행 없음.",
+  "limits": "운영체제·GUI 및 상주 도구 서비스는 중지하지 않았습니다. heap byte는 미측정입니다. 작은 차이는 이 측정만으로 변경에 귀속하지 않습니다.",
+  "rows": [
+    {
+      "fixture": "flat-500",
+      "mode": "mount",
+      "before": {
+        "median": 7.217792000000372,
+        "p99": 7.942707999999584,
+        "sampleCount": 303
+      },
+      "after": {
+        "median": 6.502583000000072,
+        "p99": 7.755874999999833,
+        "sampleCount": 303
+      },
+      "pairs": [
+        {
+          "run": 1,
+          "order": "H→W",
+          "before": {
+            "median": 7.220707999999831,
+            "p99": 7.982915999999932,
+            "sampleCount": 101
+          },
+          "after": {
+            "median": 6.376749999999902,
+            "p99": 6.749915999999985,
+            "sampleCount": 101
+          },
+          "changePercent": -11.68802283654109
+        },
+        {
+          "run": 2,
+          "order": "W→H",
+          "before": {
+            "median": 7.221583999999893,
+            "p99": 7.7787500000004,
+            "sampleCount": 101
+          },
+          "after": {
+            "median": 7.105791999999951,
+            "p99": 7.997833000000014,
+            "sampleCount": 101
+          },
+          "changePercent": -1.6034155387508298
+        },
+        {
+          "run": 3,
+          "order": "H→W",
+          "before": {
+            "median": 7.203292000000147,
+            "p99": 7.807042000000365,
+            "sampleCount": 101
+          },
+          "after": {
+            "median": 6.358208999999988,
+            "p99": 6.772875000000113,
+            "sampleCount": 101
+          },
+          "changePercent": -11.731899803591773
+        }
+      ],
+      "changePercent": -9.90897216212746,
+      "gate85C01": {
+        "oldVersion": "0.16.0",
+        "oldMedian": 2.5434,
+        "ceiling": 3.8151,
+        "ratio": 2.556649760163589,
+        "verdict": "미달",
+        "source": "remeasure-86c02.md의 코어·무계측 synchronous 대조(비동기 정착 제외), validation off",
+        "limitation": "기존 old는 Node v24.20.0이며 이번 호스트와 시점이 다릅니다. 공식 active 게이트를 닫는 근거가 아닌 동일 동기 범위의 1.5배 수치 판정입니다."
+      },
+      "activeOldReference": {
+        "oldMedian": 4.6643,
+        "ratio": 1.394117659670277,
+        "note": "배타 active의 비동기 정착·계측 범위가 달라 이 동기 시간과의 비율은 참고값입니다."
+      }
+    },
+    {
+      "fixture": "flat-500",
+      "mode": "update",
+      "before": {
+        "median": 0.20687499999985448,
+        "p99": 0.2910420000002887,
+        "sampleCount": 303
+      },
+      "after": {
+        "median": 0.19891699999993762,
+        "p99": 0.29229099999997743,
+        "sampleCount": 303
+      },
+      "pairs": [
+        {
+          "run": 1,
+          "order": "H→W",
+          "before": {
+            "median": 0.2102919999997539,
+            "p99": 0.28662500000018554,
+            "sampleCount": 101
+          },
+          "after": {
+            "median": 0.19650000000001455,
+            "p99": 0.2828339999999798,
+            "sampleCount": 101
+          },
+          "changePercent": -6.558499609949731
+        },
+        {
+          "run": 2,
+          "order": "W→H",
+          "before": {
+            "median": 0.20837500000016007,
+            "p99": 0.2970420000001468,
+            "sampleCount": 101
+          },
+          "after": {
+            "median": 0.20466699999997218,
+            "p99": 0.2967080000000806,
+            "sampleCount": 101
+          },
+          "changePercent": -1.7794841032681696
+        },
+        {
+          "run": 3,
+          "order": "H→W",
+          "before": {
+            "median": 0.2015000000001237,
+            "p99": 0.2910420000002887,
+            "sampleCount": 101
+          },
+          "after": {
+            "median": 0.19333300000016607,
+            "p99": 0.28512499999999363,
+            "sampleCount": 101
+          },
+          "changePercent": -4.053101736949182
+        }
+      ],
+      "changePercent": -3.8467673715637307,
+      "gate85C01": {
+        "oldVersion": "0.16.0",
+        "oldMedian": 0.1114,
+        "ceiling": 0.1671,
+        "ratio": 1.7856104129258314,
+        "verdict": "미달",
+        "source": "remeasure-86c02.md의 코어·무계측 synchronous 대조(비동기 정착 제외), validation off",
+        "limitation": "기존 old는 Node v24.20.0이며 이번 호스트와 시점이 다릅니다. 공식 active 게이트를 닫는 근거가 아닌 동일 동기 범위의 1.5배 수치 판정입니다."
+      },
+      "activeOldReference": {
+        "oldMedian": 2.3811,
+        "ratio": 0.08353996052242141,
+        "note": "배타 active의 비동기 정착·계측 범위가 달라 이 동기 시간과의 비율은 참고값입니다."
+      }
+    },
+    {
+      "fixture": "nested-d5-f4",
+      "mode": "mount",
+      "before": {
+        "median": 21.764999999999418,
+        "p99": 24.827250000000276,
+        "sampleCount": 303
+      },
+      "after": {
+        "median": 18.808917000000292,
+        "p99": 21.00308300000006,
+        "sampleCount": 303
+      },
+      "pairs": [
+        {
+          "run": 1,
+          "order": "H→W",
+          "before": {
+            "median": 21.69445900000028,
+            "p99": 24.55712500000027,
+            "sampleCount": 101
+          },
+          "after": {
+            "median": 18.70575000000008,
+            "p99": 21.019167000000152,
+            "sampleCount": 101
+          },
+          "changePercent": -13.776370270400196
+        },
+        {
+          "run": 2,
+          "order": "W→H",
+          "before": {
+            "median": 21.74212499999976,
+            "p99": 25.152334000000337,
+            "sampleCount": 101
+          },
+          "after": {
+            "median": 18.750499999999647,
+            "p99": 21.00308300000006,
+            "sampleCount": 101
+          },
+          "changePercent": -13.759579617908301
+        },
+        {
+          "run": 3,
+          "order": "H→W",
+          "before": {
+            "median": 21.82408299999952,
+            "p99": 24.67058300000008,
+            "sampleCount": 101
+          },
+          "after": {
+            "median": 18.996000000000095,
+            "p99": 20.775916999999936,
+            "sampleCount": 101
+          },
+          "changePercent": -12.958542175629951
+        }
+      ],
+      "changePercent": -13.581819434868848,
+      "gate85C01": {
+        "oldVersion": "0.16.0",
+        "oldMedian": 4.9585,
+        "ceiling": 7.437749999999999,
+        "ratio": 3.7932675204195405,
+        "verdict": "미달",
+        "source": "remeasure-86c02.md의 코어·무계측 synchronous 대조(비동기 정착 제외), validation off",
+        "limitation": "기존 old는 Node v24.20.0이며 이번 호스트와 시점이 다릅니다. 공식 active 게이트를 닫는 근거가 아닌 동일 동기 범위의 1.5배 수치 판정입니다."
+      },
+      "activeOldReference": {
+        "oldMedian": 11.3944,
+        "ratio": 1.6507158779751714,
+        "note": "배타 active의 비동기 정착·계측 범위가 달라 이 동기 시간과의 비율은 참고값입니다."
+      }
+    },
+    {
+      "fixture": "array-1000",
+      "mode": "mount",
+      "before": {
+        "median": 21.67491599999994,
+        "p99": 27.334249999999884,
+        "sampleCount": 303
+      },
+      "after": {
+        "median": 20.857167000000118,
+        "p99": 24.97204099999999,
+        "sampleCount": 303
+      },
+      "pairs": [
+        {
+          "run": 1,
+          "order": "H→W",
+          "before": {
+            "median": 20.947833000000173,
+            "p99": 25.54449999999997,
+            "sampleCount": 101
+          },
+          "after": {
+            "median": 20.703125,
+            "p99": 25.415541000000303,
+            "sampleCount": 101
+          },
+          "changePercent": -1.1681781117892753
+        },
+        {
+          "run": 2,
+          "order": "W→H",
+          "before": {
+            "median": 21.212290999999823,
+            "p99": 25.029333999999835,
+            "sampleCount": 101
+          },
+          "after": {
+            "median": 20.98287500000015,
+            "p99": 24.880125000000135,
+            "sampleCount": 101
+          },
+          "changePercent": -1.081523914600624
+        },
+        {
+          "run": 3,
+          "order": "H→W",
+          "before": {
+            "median": 23.081250000000182,
+            "p99": 27.686125000000175,
+            "sampleCount": 101
+          },
+          "after": {
+            "median": 20.8862909999998,
+            "p99": 24.790042000000085,
+            "sampleCount": 101
+          },
+          "changePercent": -9.509705930139678
+        }
+      ],
+      "changePercent": -3.7727897076963224,
+      "gate85C01": {
+        "oldVersion": "0.16.0",
+        "oldMedian": 12.1019,
+        "ceiling": 18.15285,
+        "ratio": 1.7234621836240687,
+        "verdict": "미달",
+        "source": "remeasure-86c02.md의 코어·무계측 synchronous 대조(비동기 정착 제외), validation off",
+        "limitation": "기존 old는 Node v24.20.0이며 이번 호스트와 시점이 다릅니다. 공식 active 게이트를 닫는 근거가 아닌 동일 동기 범위의 1.5배 수치 판정입니다."
+      },
+      "activeOldReference": {
+        "oldMedian": 29.8274,
+        "ratio": 0.6992619873002714,
+        "note": "배타 active의 비동기 정착·계측 범위가 달라 이 동기 시간과의 비율은 참고값입니다."
+      }
+    },
+    {
+      "fixture": "array-1000",
+      "mode": "update",
+      "before": {
+        "median": 0.09200000000055297,
+        "p99": 0.161750000000211,
+        "sampleCount": 303
+      },
+      "after": {
+        "median": 0.09358400000019174,
+        "p99": 0.1593750000001819,
+        "sampleCount": 303
+      },
+      "pairs": [
+        {
+          "run": 1,
+          "order": "H→W",
+          "before": {
+            "median": 0.09125000000040018,
+            "p99": 0.161750000000211,
+            "sampleCount": 101
+          },
+          "after": {
+            "median": 0.09116600000015751,
+            "p99": 0.1518750000000182,
+            "sampleCount": 101
+          },
+          "changePercent": -0.09205479478607836
+        },
+        {
+          "run": 2,
+          "order": "W→H",
+          "before": {
+            "median": 0.09150000000045111,
+            "p99": 0.16329200000018318,
+            "sampleCount": 101
+          },
+          "after": {
+            "median": 0.09508400000004258,
+            "p99": 0.15866700000003675,
+            "sampleCount": 101
+          },
+          "changePercent": 3.9169398902445973
+        },
+        {
+          "run": 3,
+          "order": "H→W",
+          "before": {
+            "median": 0.0933340000001408,
+            "p99": 0.15637499999957072,
+            "sampleCount": 101
+          },
+          "after": {
+            "median": 0.09312500000010004,
+            "p99": 0.1715830000000551,
+            "sampleCount": 101
+          },
+          "changePercent": -0.22392697199353773
+        }
+      ],
+      "changePercent": 1.7217391300317963,
+      "gate85C01": {
+        "oldVersion": "0.16.0",
+        "oldMedian": 0.1781,
+        "ceiling": 0.26715,
+        "ratio": 0.5254576080864218,
+        "verdict": "충족",
+        "source": "remeasure-86c02.md의 코어·무계측 synchronous 대조(비동기 정착 제외), validation off",
+        "limitation": "기존 old는 Node v24.20.0이며 이번 호스트와 시점이 다릅니다. 공식 active 게이트를 닫는 근거가 아닌 동일 동기 범위의 1.5배 수치 판정입니다."
+      },
+      "activeOldReference": {
+        "oldMedian": 0.4465,
+        "ratio": 0.2095946248604518,
+        "note": "배타 active의 비동기 정착·계측 범위가 달라 이 동기 시간과의 비율은 참고값입니다."
+      }
+    },
+    {
+      "fixture": "computed-visible-derived",
+      "mode": "mount",
+      "before": {
+        "median": 0.4721669999998994,
+        "p99": 0.5560829999999441,
+        "sampleCount": 303
+      },
+      "after": {
+        "median": 0.45545799999990777,
+        "p99": 0.5586659999999881,
+        "sampleCount": 303
+      },
+      "pairs": [
+        {
+          "run": 1,
+          "order": "H→W",
+          "before": {
+            "median": 0.4771249999998872,
+            "p99": 0.5560829999999441,
+            "sampleCount": 101
+          },
+          "after": {
+            "median": 0.4519159999999829,
+            "p99": 0.553875000000005,
+            "sampleCount": 101
+          },
+          "changePercent": -5.283521089842347
+        },
+        {
+          "run": 2,
+          "order": "W→H",
+          "before": {
+            "median": 0.4706670000000486,
+            "p99": 0.5525410000000193,
+            "sampleCount": 101
+          },
+          "after": {
+            "median": 0.4452079999999796,
+            "p99": 0.5641669999999976,
+            "sampleCount": 101
+          },
+          "changePercent": -5.409132146521067
+        },
+        {
+          "run": 3,
+          "order": "H→W",
+          "before": {
+            "median": 0.4706660000001648,
+            "p99": 0.6033339999999043,
+            "sampleCount": 101
+          },
+          "after": {
+            "median": 0.46191699999997127,
+            "p99": 0.5581669999999974,
+            "sampleCount": 101
+          },
+          "changePercent": -1.8588553241981498
+        }
+      ],
+      "changePercent": -3.5387903008882837,
+      "gate85C01": {
+        "oldVersion": "0.16.0",
+        "oldMedian": 0.3058,
+        "ceiling": 0.4587,
+        "ratio": 1.4893982995418829,
+        "verdict": "충족",
+        "source": "remeasure-86c02.md의 코어·무계측 synchronous 대조(비동기 정착 제외), validation off",
+        "limitation": "기존 old는 Node v24.20.0이며 이번 호스트와 시점이 다릅니다. 공식 active 게이트를 닫는 근거가 아닌 동일 동기 범위의 1.5배 수치 판정입니다."
+      },
+      "activeOldReference": {
+        "oldMedian": 0.3297,
+        "ratio": 1.3814316044886497,
+        "note": "배타 active의 비동기 정착·계측 범위가 달라 이 동기 시간과의 비율은 참고값입니다."
+      }
+    },
+    {
+      "fixture": "computed-visible-derived",
+      "mode": "update",
+      "before": {
+        "median": 0.2296249999999418,
+        "p99": 0.3320410000001175,
+        "sampleCount": 303
+      },
+      "after": {
+        "median": 0.22666700000002038,
+        "p99": 0.33174999999999955,
+        "sampleCount": 303
+      },
+      "pairs": [
+        {
+          "run": 1,
+          "order": "H→W",
+          "before": {
+            "median": 0.2347500000000764,
+            "p99": 0.34095799999977316,
+            "sampleCount": 101
+          },
+          "after": {
+            "median": 0.224666999999954,
+            "p99": 0.3264170000000206,
+            "sampleCount": 101
+          },
+          "changePercent": -4.295207667782375
+        },
+        {
+          "run": 2,
+          "order": "W→H",
+          "before": {
+            "median": 0.22745899999972607,
+            "p99": 0.3203750000002401,
+            "sampleCount": 101
+          },
+          "after": {
+            "median": 0.22350000000000136,
+            "p99": 0.33174999999999955,
+            "sampleCount": 101
+          },
+          "changePercent": -1.7405334586582555
+        },
+        {
+          "run": 3,
+          "order": "H→W",
+          "before": {
+            "median": 0.22795899999982794,
+            "p99": 0.3222920000002887,
+            "sampleCount": 101
+          },
+          "after": {
+            "median": 0.23354199999994307,
+            "p99": 0.3299580000000333,
+            "sampleCount": 101
+          },
+          "changePercent": 2.4491246233398822
+        }
+      ],
+      "changePercent": -1.288187261806062,
+      "gate85C01": {
+        "oldVersion": "0.16.0",
+        "oldMedian": 0.0399,
+        "ceiling": 0.05985,
+        "ratio": 5.680877192982967,
+        "verdict": "미달",
+        "source": "remeasure-86c02.md의 코어·무계측 synchronous 대조(비동기 정착 제외), validation off",
+        "limitation": "기존 old는 Node v24.20.0이며 이번 호스트와 시점이 다릅니다. 공식 active 게이트를 닫는 근거가 아닌 동일 동기 범위의 1.5배 수치 판정입니다."
+      },
+      "activeOldReference": {
+        "oldMedian": 0.111,
+        "ratio": 2.0420450450452288,
+        "note": "배타 active의 비동기 정착·계측 범위가 달라 이 동기 시간과의 비율은 참고값입니다."
+      }
+    },
+    {
+      "fixture": "oneOf-20",
+      "mode": "update",
+      "before": {
+        "median": 1.1870420000000195,
+        "p99": 1.501459000000068,
+        "sampleCount": 303
+      },
+      "after": {
+        "median": 1.1844999999999573,
+        "p99": 1.5032080000000292,
+        "sampleCount": 303
+      },
+      "pairs": [
+        {
+          "run": 1,
+          "order": "H→W",
+          "before": {
+            "median": 1.1669999999999163,
+            "p99": 1.453791999999794,
+            "sampleCount": 101
+          },
+          "after": {
+            "median": 1.181250000000091,
+            "p99": 1.5459170000000313,
+            "sampleCount": 101
+          },
+          "changePercent": 1.2210796915317568
+        },
+        {
+          "run": 2,
+          "order": "W→H",
+          "before": {
+            "median": 1.2040839999999662,
+            "p99": 1.5722909999999501,
+            "sampleCount": 101
+          },
+          "after": {
+            "median": 1.1838749999999436,
+            "p99": 1.4059579999999983,
+            "sampleCount": 101
+          },
+          "changePercent": -1.6783712764244951
+        },
+        {
+          "run": 3,
+          "order": "H→W",
+          "before": {
+            "median": 1.1941249999999854,
+            "p99": 1.501459000000068,
+            "sampleCount": 101
+          },
+          "after": {
+            "median": 1.1917090000000599,
+            "p99": 1.406458999999984,
+            "sampleCount": 101
+          },
+          "changePercent": -0.20232387730979573
+        }
+      ],
+      "changePercent": -0.21414575053469997,
+      "gate85C01": {
+        "oldVersion": "0.16.0",
+        "oldMedian": 0.0266,
+        "ceiling": 0.0399,
+        "ratio": 44.53007518796832,
+        "verdict": "미달",
+        "source": "remeasure-86c02.md의 코어·무계측 synchronous 대조(비동기 정착 제외), validation off",
+        "limitation": "기존 old는 Node v24.20.0이며 이번 호스트와 시점이 다릅니다. 공식 active 게이트를 닫는 근거가 아닌 동일 동기 범위의 1.5배 수치 판정입니다."
+      },
+      "activeOldReference": {
+        "oldMedian": 0.2247,
+        "ratio": 5.271473075211203,
+        "note": "배타 active의 비동기 정착·계측 범위가 달라 이 동기 시간과의 비율은 참고값입니다."
+      }
+    }
+  ],
+  "runs": [
+    {
+      "fixture": "flat-500",
+      "run": 1,
+      "variant": "H",
+      "environment": {
+        "startedAt": "2026-10-05T11:02:36.257Z",
+        "endedAt": "2026-10-05T11:02:37.857Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpu": "Apple M1 Max",
+        "cpus": 10,
+        "memory": 68719476736,
+        "warmup": 20,
+        "samples": 101,
+        "validation": "off",
+        "mode": "development synchronous core",
+        "explicitGc": true,
+        "trace": false,
+        "bundleSha256": "736a4ff19f664bcce6ee819a7e7d7080210028573b1bf53a6ad40cafb25ebdfb"
+      },
+      "mount": {
+        "median": 7.220707999999831,
+        "p99": 7.982915999999932,
+        "sampleCount": 101
+      },
+      "update": {
+        "median": 0.2102919999997539,
+        "p99": 0.28662500000018554,
+        "sampleCount": 101
+      },
+      "observationsSha256": "a02621472d545476f52b4a784704de6327e2e5009501510c44f61440c936b78f",
+      "note": "같은 새 스키마·전체 BF 상호작용에서 모든 표본의 mount/update 값과 안정 진단을 확인했습니다. 시간 원표본에는 숫자 배열만 저장합니다."
+    },
+    {
+      "fixture": "flat-500",
+      "run": 1,
+      "variant": "W",
+      "environment": {
+        "startedAt": "2026-10-05T11:02:38.023Z",
+        "endedAt": "2026-10-05T11:02:39.525Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpu": "Apple M1 Max",
+        "cpus": 10,
+        "memory": 68719476736,
+        "warmup": 20,
+        "samples": 101,
+        "validation": "off",
+        "mode": "development synchronous core",
+        "explicitGc": true,
+        "trace": false,
+        "bundleSha256": "7a996df444d490219024eafcc9ee267e006151c9e390c46fa821dccf31d00b27"
+      },
+      "mount": {
+        "median": 6.376749999999902,
+        "p99": 6.749915999999985,
+        "sampleCount": 101
+      },
+      "update": {
+        "median": 0.19650000000001455,
+        "p99": 0.2828339999999798,
+        "sampleCount": 101
+      },
+      "observationsSha256": "a02621472d545476f52b4a784704de6327e2e5009501510c44f61440c936b78f",
+      "note": "같은 새 스키마·전체 BF 상호작용에서 모든 표본의 mount/update 값과 안정 진단을 확인했습니다. 시간 원표본에는 숫자 배열만 저장합니다."
+    },
+    {
+      "fixture": "flat-500",
+      "run": 2,
+      "variant": "W",
+      "environment": {
+        "startedAt": "2026-10-05T11:02:39.692Z",
+        "endedAt": "2026-10-05T11:02:41.288Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpu": "Apple M1 Max",
+        "cpus": 10,
+        "memory": 68719476736,
+        "warmup": 20,
+        "samples": 101,
+        "validation": "off",
+        "mode": "development synchronous core",
+        "explicitGc": true,
+        "trace": false,
+        "bundleSha256": "7a996df444d490219024eafcc9ee267e006151c9e390c46fa821dccf31d00b27"
+      },
+      "mount": {
+        "median": 7.105791999999951,
+        "p99": 7.997833000000014,
+        "sampleCount": 101
+      },
+      "update": {
+        "median": 0.20466699999997218,
+        "p99": 0.2967080000000806,
+        "sampleCount": 101
+      },
+      "observationsSha256": "a02621472d545476f52b4a784704de6327e2e5009501510c44f61440c936b78f",
+      "note": "같은 새 스키마·전체 BF 상호작용에서 모든 표본의 mount/update 값과 안정 진단을 확인했습니다. 시간 원표본에는 숫자 배열만 저장합니다."
+    },
+    {
+      "fixture": "flat-500",
+      "run": 2,
+      "variant": "H",
+      "environment": {
+        "startedAt": "2026-10-05T11:02:44.867Z",
+        "endedAt": "2026-10-05T11:02:46.461Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpu": "Apple M1 Max",
+        "cpus": 10,
+        "memory": 68719476736,
+        "warmup": 20,
+        "samples": 101,
+        "validation": "off",
+        "mode": "development synchronous core",
+        "explicitGc": true,
+        "trace": false,
+        "bundleSha256": "736a4ff19f664bcce6ee819a7e7d7080210028573b1bf53a6ad40cafb25ebdfb"
+      },
+      "mount": {
+        "median": 7.221583999999893,
+        "p99": 7.7787500000004,
+        "sampleCount": 101
+      },
+      "update": {
+        "median": 0.20837500000016007,
+        "p99": 0.2970420000001468,
+        "sampleCount": 101
+      },
+      "observationsSha256": "a02621472d545476f52b4a784704de6327e2e5009501510c44f61440c936b78f",
+      "note": "같은 새 스키마·전체 BF 상호작용에서 모든 표본의 mount/update 값과 안정 진단을 확인했습니다. 시간 원표본에는 숫자 배열만 저장합니다."
+    },
+    {
+      "fixture": "flat-500",
+      "run": 3,
+      "variant": "H",
+      "environment": {
+        "startedAt": "2026-10-05T11:02:50.041Z",
+        "endedAt": "2026-10-05T11:02:51.640Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpu": "Apple M1 Max",
+        "cpus": 10,
+        "memory": 68719476736,
+        "warmup": 20,
+        "samples": 101,
+        "validation": "off",
+        "mode": "development synchronous core",
+        "explicitGc": true,
+        "trace": false,
+        "bundleSha256": "736a4ff19f664bcce6ee819a7e7d7080210028573b1bf53a6ad40cafb25ebdfb"
+      },
+      "mount": {
+        "median": 7.203292000000147,
+        "p99": 7.807042000000365,
+        "sampleCount": 101
+      },
+      "update": {
+        "median": 0.2015000000001237,
+        "p99": 0.2910420000002887,
+        "sampleCount": 101
+      },
+      "observationsSha256": "a02621472d545476f52b4a784704de6327e2e5009501510c44f61440c936b78f",
+      "note": "같은 새 스키마·전체 BF 상호작용에서 모든 표본의 mount/update 값과 안정 진단을 확인했습니다. 시간 원표본에는 숫자 배열만 저장합니다."
+    },
+    {
+      "fixture": "flat-500",
+      "run": 3,
+      "variant": "W",
+      "environment": {
+        "startedAt": "2026-10-05T11:02:51.801Z",
+        "endedAt": "2026-10-05T11:02:53.301Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpu": "Apple M1 Max",
+        "cpus": 10,
+        "memory": 68719476736,
+        "warmup": 20,
+        "samples": 101,
+        "validation": "off",
+        "mode": "development synchronous core",
+        "explicitGc": true,
+        "trace": false,
+        "bundleSha256": "7a996df444d490219024eafcc9ee267e006151c9e390c46fa821dccf31d00b27"
+      },
+      "mount": {
+        "median": 6.358208999999988,
+        "p99": 6.772875000000113,
+        "sampleCount": 101
+      },
+      "update": {
+        "median": 0.19333300000016607,
+        "p99": 0.28512499999999363,
+        "sampleCount": 101
+      },
+      "observationsSha256": "a02621472d545476f52b4a784704de6327e2e5009501510c44f61440c936b78f",
+      "note": "같은 새 스키마·전체 BF 상호작용에서 모든 표본의 mount/update 값과 안정 진단을 확인했습니다. 시간 원표본에는 숫자 배열만 저장합니다."
+    },
+    {
+      "fixture": "nested-d5-f4",
+      "run": 1,
+      "variant": "H",
+      "environment": {
+        "startedAt": "2026-10-05T11:02:56.855Z",
+        "endedAt": "2026-10-05T11:03:00.488Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpu": "Apple M1 Max",
+        "cpus": 10,
+        "memory": 68719476736,
+        "warmup": 20,
+        "samples": 101,
+        "validation": "off",
+        "mode": "development synchronous core",
+        "explicitGc": true,
+        "trace": false,
+        "bundleSha256": "736a4ff19f664bcce6ee819a7e7d7080210028573b1bf53a6ad40cafb25ebdfb"
+      },
+      "mount": {
+        "median": 21.69445900000028,
+        "p99": 24.55712500000027,
+        "sampleCount": 101
+      },
+      "update": {
+        "median": 0.3516669999999067,
+        "p99": 0.44637499999953434,
+        "sampleCount": 101
+      },
+      "observationsSha256": "18a017c8ef099fe21bc5f4cb89e81bda1919e4afd4e0cc1c49e8065bb0d31261",
+      "note": "같은 새 스키마·전체 BF 상호작용에서 모든 표본의 mount/update 값과 안정 진단을 확인했습니다. 시간 원표본에는 숫자 배열만 저장합니다."
+    },
+    {
+      "fixture": "nested-d5-f4",
+      "run": 1,
+      "variant": "W",
+      "environment": {
+        "startedAt": "2026-10-05T11:03:00.653Z",
+        "endedAt": "2026-10-05T11:03:03.940Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpu": "Apple M1 Max",
+        "cpus": 10,
+        "memory": 68719476736,
+        "warmup": 20,
+        "samples": 101,
+        "validation": "off",
+        "mode": "development synchronous core",
+        "explicitGc": true,
+        "trace": false,
+        "bundleSha256": "7a996df444d490219024eafcc9ee267e006151c9e390c46fa821dccf31d00b27"
+      },
+      "mount": {
+        "median": 18.70575000000008,
+        "p99": 21.019167000000152,
+        "sampleCount": 101
+      },
+      "update": {
+        "median": 0.3245830000000751,
+        "p99": 0.42695800000001327,
+        "sampleCount": 101
+      },
+      "observationsSha256": "18a017c8ef099fe21bc5f4cb89e81bda1919e4afd4e0cc1c49e8065bb0d31261",
+      "note": "같은 새 스키마·전체 BF 상호작용에서 모든 표본의 mount/update 값과 안정 진단을 확인했습니다. 시간 원표본에는 숫자 배열만 저장합니다."
+    },
+    {
+      "fixture": "nested-d5-f4",
+      "run": 2,
+      "variant": "W",
+      "environment": {
+        "startedAt": "2026-10-05T11:03:04.103Z",
+        "endedAt": "2026-10-05T11:03:07.405Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpu": "Apple M1 Max",
+        "cpus": 10,
+        "memory": 68719476736,
+        "warmup": 20,
+        "samples": 101,
+        "validation": "off",
+        "mode": "development synchronous core",
+        "explicitGc": true,
+        "trace": false,
+        "bundleSha256": "7a996df444d490219024eafcc9ee267e006151c9e390c46fa821dccf31d00b27"
+      },
+      "mount": {
+        "median": 18.750499999999647,
+        "p99": 21.00308300000006,
+        "sampleCount": 101
+      },
+      "update": {
+        "median": 0.3257080000003043,
+        "p99": 0.46108299999991686,
+        "sampleCount": 101
+      },
+      "observationsSha256": "18a017c8ef099fe21bc5f4cb89e81bda1919e4afd4e0cc1c49e8065bb0d31261",
+      "note": "같은 새 스키마·전체 BF 상호작용에서 모든 표본의 mount/update 값과 안정 진단을 확인했습니다. 시간 원표본에는 숫자 배열만 저장합니다."
+    },
+    {
+      "fixture": "nested-d5-f4",
+      "run": 2,
+      "variant": "H",
+      "environment": {
+        "startedAt": "2026-10-05T11:03:11.008Z",
+        "endedAt": "2026-10-05T11:03:14.629Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpu": "Apple M1 Max",
+        "cpus": 10,
+        "memory": 68719476736,
+        "warmup": 20,
+        "samples": 101,
+        "validation": "off",
+        "mode": "development synchronous core",
+        "explicitGc": true,
+        "trace": false,
+        "bundleSha256": "736a4ff19f664bcce6ee819a7e7d7080210028573b1bf53a6ad40cafb25ebdfb"
+      },
+      "mount": {
+        "median": 21.74212499999976,
+        "p99": 25.152334000000337,
+        "sampleCount": 101
+      },
+      "update": {
+        "median": 0.34779099999923346,
+        "p99": 0.4789170000003651,
+        "sampleCount": 101
+      },
+      "observationsSha256": "18a017c8ef099fe21bc5f4cb89e81bda1919e4afd4e0cc1c49e8065bb0d31261",
+      "note": "같은 새 스키마·전체 BF 상호작용에서 모든 표본의 mount/update 값과 안정 진단을 확인했습니다. 시간 원표본에는 숫자 배열만 저장합니다."
+    },
+    {
+      "fixture": "nested-d5-f4",
+      "run": 3,
+      "variant": "H",
+      "environment": {
+        "startedAt": "2026-10-05T11:03:18.226Z",
+        "endedAt": "2026-10-05T11:03:21.875Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpu": "Apple M1 Max",
+        "cpus": 10,
+        "memory": 68719476736,
+        "warmup": 20,
+        "samples": 101,
+        "validation": "off",
+        "mode": "development synchronous core",
+        "explicitGc": true,
+        "trace": false,
+        "bundleSha256": "736a4ff19f664bcce6ee819a7e7d7080210028573b1bf53a6ad40cafb25ebdfb"
+      },
+      "mount": {
+        "median": 21.82408299999952,
+        "p99": 24.67058300000008,
+        "sampleCount": 101
+      },
+      "update": {
+        "median": 0.3472910000000411,
+        "p99": 0.45420800000010786,
+        "sampleCount": 101
+      },
+      "observationsSha256": "18a017c8ef099fe21bc5f4cb89e81bda1919e4afd4e0cc1c49e8065bb0d31261",
+      "note": "같은 새 스키마·전체 BF 상호작용에서 모든 표본의 mount/update 값과 안정 진단을 확인했습니다. 시간 원표본에는 숫자 배열만 저장합니다."
+    },
+    {
+      "fixture": "nested-d5-f4",
+      "run": 3,
+      "variant": "W",
+      "environment": {
+        "startedAt": "2026-10-05T11:03:22.037Z",
+        "endedAt": "2026-10-05T11:03:25.341Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpu": "Apple M1 Max",
+        "cpus": 10,
+        "memory": 68719476736,
+        "warmup": 20,
+        "samples": 101,
+        "validation": "off",
+        "mode": "development synchronous core",
+        "explicitGc": true,
+        "trace": false,
+        "bundleSha256": "7a996df444d490219024eafcc9ee267e006151c9e390c46fa821dccf31d00b27"
+      },
+      "mount": {
+        "median": 18.996000000000095,
+        "p99": 20.775916999999936,
+        "sampleCount": 101
+      },
+      "update": {
+        "median": 0.32904099999996106,
+        "p99": 0.4280420000000049,
+        "sampleCount": 101
+      },
+      "observationsSha256": "18a017c8ef099fe21bc5f4cb89e81bda1919e4afd4e0cc1c49e8065bb0d31261",
+      "note": "같은 새 스키마·전체 BF 상호작용에서 모든 표본의 mount/update 값과 안정 진단을 확인했습니다. 시간 원표본에는 숫자 배열만 저장합니다."
+    },
+    {
+      "fixture": "array-1000",
+      "run": 1,
+      "variant": "H",
+      "environment": {
+        "startedAt": "2026-10-05T11:03:28.919Z",
+        "endedAt": "2026-10-05T11:03:32.356Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpu": "Apple M1 Max",
+        "cpus": 10,
+        "memory": 68719476736,
+        "warmup": 20,
+        "samples": 101,
+        "validation": "off",
+        "mode": "development synchronous core",
+        "explicitGc": true,
+        "trace": false,
+        "bundleSha256": "736a4ff19f664bcce6ee819a7e7d7080210028573b1bf53a6ad40cafb25ebdfb"
+      },
+      "mount": {
+        "median": 20.947833000000173,
+        "p99": 25.54449999999997,
+        "sampleCount": 101
+      },
+      "update": {
+        "median": 0.09125000000040018,
+        "p99": 0.161750000000211,
+        "sampleCount": 101
+      },
+      "observationsSha256": "c5d0238845c7129774a44c424feb66237994b3738b19a25d940d28c6e4912ab1",
+      "note": "같은 새 스키마·전체 BF 상호작용에서 모든 표본의 mount/update 값과 안정 진단을 확인했습니다. 시간 원표본에는 숫자 배열만 저장합니다."
+    },
+    {
+      "fixture": "array-1000",
+      "run": 1,
+      "variant": "W",
+      "environment": {
+        "startedAt": "2026-10-05T11:03:32.524Z",
+        "endedAt": "2026-10-05T11:03:35.831Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpu": "Apple M1 Max",
+        "cpus": 10,
+        "memory": 68719476736,
+        "warmup": 20,
+        "samples": 101,
+        "validation": "off",
+        "mode": "development synchronous core",
+        "explicitGc": true,
+        "trace": false,
+        "bundleSha256": "7a996df444d490219024eafcc9ee267e006151c9e390c46fa821dccf31d00b27"
+      },
+      "mount": {
+        "median": 20.703125,
+        "p99": 25.415541000000303,
+        "sampleCount": 101
+      },
+      "update": {
+        "median": 0.09116600000015751,
+        "p99": 0.1518750000000182,
+        "sampleCount": 101
+      },
+      "observationsSha256": "c5d0238845c7129774a44c424feb66237994b3738b19a25d940d28c6e4912ab1",
+      "note": "같은 새 스키마·전체 BF 상호작용에서 모든 표본의 mount/update 값과 안정 진단을 확인했습니다. 시간 원표본에는 숫자 배열만 저장합니다."
+    },
+    {
+      "fixture": "array-1000",
+      "run": 2,
+      "variant": "W",
+      "environment": {
+        "startedAt": "2026-10-05T11:03:35.996Z",
+        "endedAt": "2026-10-05T11:03:39.341Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpu": "Apple M1 Max",
+        "cpus": 10,
+        "memory": 68719476736,
+        "warmup": 20,
+        "samples": 101,
+        "validation": "off",
+        "mode": "development synchronous core",
+        "explicitGc": true,
+        "trace": false,
+        "bundleSha256": "7a996df444d490219024eafcc9ee267e006151c9e390c46fa821dccf31d00b27"
+      },
+      "mount": {
+        "median": 20.98287500000015,
+        "p99": 24.880125000000135,
+        "sampleCount": 101
+      },
+      "update": {
+        "median": 0.09508400000004258,
+        "p99": 0.15866700000003675,
+        "sampleCount": 101
+      },
+      "observationsSha256": "c5d0238845c7129774a44c424feb66237994b3738b19a25d940d28c6e4912ab1",
+      "note": "같은 새 스키마·전체 BF 상호작용에서 모든 표본의 mount/update 값과 안정 진단을 확인했습니다. 시간 원표본에는 숫자 배열만 저장합니다."
+    },
+    {
+      "fixture": "array-1000",
+      "run": 2,
+      "variant": "H",
+      "environment": {
+        "startedAt": "2026-10-05T11:03:42.899Z",
+        "endedAt": "2026-10-05T11:03:46.319Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpu": "Apple M1 Max",
+        "cpus": 10,
+        "memory": 68719476736,
+        "warmup": 20,
+        "samples": 101,
+        "validation": "off",
+        "mode": "development synchronous core",
+        "explicitGc": true,
+        "trace": false,
+        "bundleSha256": "736a4ff19f664bcce6ee819a7e7d7080210028573b1bf53a6ad40cafb25ebdfb"
+      },
+      "mount": {
+        "median": 21.212290999999823,
+        "p99": 25.029333999999835,
+        "sampleCount": 101
+      },
+      "update": {
+        "median": 0.09150000000045111,
+        "p99": 0.16329200000018318,
+        "sampleCount": 101
+      },
+      "observationsSha256": "c5d0238845c7129774a44c424feb66237994b3738b19a25d940d28c6e4912ab1",
+      "note": "같은 새 스키마·전체 BF 상호작용에서 모든 표본의 mount/update 값과 안정 진단을 확인했습니다. 시간 원표본에는 숫자 배열만 저장합니다."
+    },
+    {
+      "fixture": "array-1000",
+      "run": 3,
+      "variant": "H",
+      "environment": {
+        "startedAt": "2026-10-05T11:03:49.935Z",
+        "endedAt": "2026-10-05T11:03:53.549Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpu": "Apple M1 Max",
+        "cpus": 10,
+        "memory": 68719476736,
+        "warmup": 20,
+        "samples": 101,
+        "validation": "off",
+        "mode": "development synchronous core",
+        "explicitGc": true,
+        "trace": false,
+        "bundleSha256": "736a4ff19f664bcce6ee819a7e7d7080210028573b1bf53a6ad40cafb25ebdfb"
+      },
+      "mount": {
+        "median": 23.081250000000182,
+        "p99": 27.686125000000175,
+        "sampleCount": 101
+      },
+      "update": {
+        "median": 0.0933340000001408,
+        "p99": 0.15637499999957072,
+        "sampleCount": 101
+      },
+      "observationsSha256": "c5d0238845c7129774a44c424feb66237994b3738b19a25d940d28c6e4912ab1",
+      "note": "같은 새 스키마·전체 BF 상호작용에서 모든 표본의 mount/update 값과 안정 진단을 확인했습니다. 시간 원표본에는 숫자 배열만 저장합니다."
+    },
+    {
+      "fixture": "array-1000",
+      "run": 3,
+      "variant": "W",
+      "environment": {
+        "startedAt": "2026-10-05T11:03:53.718Z",
+        "endedAt": "2026-10-05T11:03:57.048Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpu": "Apple M1 Max",
+        "cpus": 10,
+        "memory": 68719476736,
+        "warmup": 20,
+        "samples": 101,
+        "validation": "off",
+        "mode": "development synchronous core",
+        "explicitGc": true,
+        "trace": false,
+        "bundleSha256": "7a996df444d490219024eafcc9ee267e006151c9e390c46fa821dccf31d00b27"
+      },
+      "mount": {
+        "median": 20.8862909999998,
+        "p99": 24.790042000000085,
+        "sampleCount": 101
+      },
+      "update": {
+        "median": 0.09312500000010004,
+        "p99": 0.1715830000000551,
+        "sampleCount": 101
+      },
+      "observationsSha256": "c5d0238845c7129774a44c424feb66237994b3738b19a25d940d28c6e4912ab1",
+      "note": "같은 새 스키마·전체 BF 상호작용에서 모든 표본의 mount/update 값과 안정 진단을 확인했습니다. 시간 원표본에는 숫자 배열만 저장합니다."
+    },
+    {
+      "fixture": "computed-visible-derived",
+      "run": 1,
+      "variant": "H",
+      "environment": {
+        "startedAt": "2026-10-05T11:04:00.685Z",
+        "endedAt": "2026-10-05T11:04:01.317Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpu": "Apple M1 Max",
+        "cpus": 10,
+        "memory": 68719476736,
+        "warmup": 20,
+        "samples": 101,
+        "validation": "off",
+        "mode": "development synchronous core",
+        "explicitGc": true,
+        "trace": false,
+        "bundleSha256": "736a4ff19f664bcce6ee819a7e7d7080210028573b1bf53a6ad40cafb25ebdfb"
+      },
+      "mount": {
+        "median": 0.4771249999998872,
+        "p99": 0.5560829999999441,
+        "sampleCount": 101
+      },
+      "update": {
+        "median": 0.2347500000000764,
+        "p99": 0.34095799999977316,
+        "sampleCount": 101
+      },
+      "observationsSha256": "f72e986299c7eb0ddfccd152d27f739844140ee53f9d115c12a28af449cf09cb",
+      "note": "같은 새 스키마·전체 BF 상호작용에서 모든 표본의 mount/update 값과 안정 진단을 확인했습니다. 시간 원표본에는 숫자 배열만 저장합니다."
+    },
+    {
+      "fixture": "computed-visible-derived",
+      "run": 1,
+      "variant": "W",
+      "environment": {
+        "startedAt": "2026-10-05T11:04:01.475Z",
+        "endedAt": "2026-10-05T11:04:02.098Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpu": "Apple M1 Max",
+        "cpus": 10,
+        "memory": 68719476736,
+        "warmup": 20,
+        "samples": 101,
+        "validation": "off",
+        "mode": "development synchronous core",
+        "explicitGc": true,
+        "trace": false,
+        "bundleSha256": "7a996df444d490219024eafcc9ee267e006151c9e390c46fa821dccf31d00b27"
+      },
+      "mount": {
+        "median": 0.4519159999999829,
+        "p99": 0.553875000000005,
+        "sampleCount": 101
+      },
+      "update": {
+        "median": 0.224666999999954,
+        "p99": 0.3264170000000206,
+        "sampleCount": 101
+      },
+      "observationsSha256": "f72e986299c7eb0ddfccd152d27f739844140ee53f9d115c12a28af449cf09cb",
+      "note": "같은 새 스키마·전체 BF 상호작용에서 모든 표본의 mount/update 값과 안정 진단을 확인했습니다. 시간 원표본에는 숫자 배열만 저장합니다."
+    },
+    {
+      "fixture": "computed-visible-derived",
+      "run": 2,
+      "variant": "W",
+      "environment": {
+        "startedAt": "2026-10-05T11:04:02.257Z",
+        "endedAt": "2026-10-05T11:04:02.889Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpu": "Apple M1 Max",
+        "cpus": 10,
+        "memory": 68719476736,
+        "warmup": 20,
+        "samples": 101,
+        "validation": "off",
+        "mode": "development synchronous core",
+        "explicitGc": true,
+        "trace": false,
+        "bundleSha256": "7a996df444d490219024eafcc9ee267e006151c9e390c46fa821dccf31d00b27"
+      },
+      "mount": {
+        "median": 0.4452079999999796,
+        "p99": 0.5641669999999976,
+        "sampleCount": 101
+      },
+      "update": {
+        "median": 0.22350000000000136,
+        "p99": 0.33174999999999955,
+        "sampleCount": 101
+      },
+      "observationsSha256": "f72e986299c7eb0ddfccd152d27f739844140ee53f9d115c12a28af449cf09cb",
+      "note": "같은 새 스키마·전체 BF 상호작용에서 모든 표본의 mount/update 값과 안정 진단을 확인했습니다. 시간 원표본에는 숫자 배열만 저장합니다."
+    },
+    {
+      "fixture": "computed-visible-derived",
+      "run": 2,
+      "variant": "H",
+      "environment": {
+        "startedAt": "2026-10-05T11:04:06.502Z",
+        "endedAt": "2026-10-05T11:04:07.129Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpu": "Apple M1 Max",
+        "cpus": 10,
+        "memory": 68719476736,
+        "warmup": 20,
+        "samples": 101,
+        "validation": "off",
+        "mode": "development synchronous core",
+        "explicitGc": true,
+        "trace": false,
+        "bundleSha256": "736a4ff19f664bcce6ee819a7e7d7080210028573b1bf53a6ad40cafb25ebdfb"
+      },
+      "mount": {
+        "median": 0.4706670000000486,
+        "p99": 0.5525410000000193,
+        "sampleCount": 101
+      },
+      "update": {
+        "median": 0.22745899999972607,
+        "p99": 0.3203750000002401,
+        "sampleCount": 101
+      },
+      "observationsSha256": "f72e986299c7eb0ddfccd152d27f739844140ee53f9d115c12a28af449cf09cb",
+      "note": "같은 새 스키마·전체 BF 상호작용에서 모든 표본의 mount/update 값과 안정 진단을 확인했습니다. 시간 원표본에는 숫자 배열만 저장합니다."
+    },
+    {
+      "fixture": "computed-visible-derived",
+      "run": 3,
+      "variant": "H",
+      "environment": {
+        "startedAt": "2026-10-05T11:04:10.702Z",
+        "endedAt": "2026-10-05T11:04:11.342Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpu": "Apple M1 Max",
+        "cpus": 10,
+        "memory": 68719476736,
+        "warmup": 20,
+        "samples": 101,
+        "validation": "off",
+        "mode": "development synchronous core",
+        "explicitGc": true,
+        "trace": false,
+        "bundleSha256": "736a4ff19f664bcce6ee819a7e7d7080210028573b1bf53a6ad40cafb25ebdfb"
+      },
+      "mount": {
+        "median": 0.4706660000001648,
+        "p99": 0.6033339999999043,
+        "sampleCount": 101
+      },
+      "update": {
+        "median": 0.22795899999982794,
+        "p99": 0.3222920000002887,
+        "sampleCount": 101
+      },
+      "observationsSha256": "f72e986299c7eb0ddfccd152d27f739844140ee53f9d115c12a28af449cf09cb",
+      "note": "같은 새 스키마·전체 BF 상호작용에서 모든 표본의 mount/update 값과 안정 진단을 확인했습니다. 시간 원표본에는 숫자 배열만 저장합니다."
+    },
+    {
+      "fixture": "computed-visible-derived",
+      "run": 3,
+      "variant": "W",
+      "environment": {
+        "startedAt": "2026-10-05T11:04:11.503Z",
+        "endedAt": "2026-10-05T11:04:12.121Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpu": "Apple M1 Max",
+        "cpus": 10,
+        "memory": 68719476736,
+        "warmup": 20,
+        "samples": 101,
+        "validation": "off",
+        "mode": "development synchronous core",
+        "explicitGc": true,
+        "trace": false,
+        "bundleSha256": "7a996df444d490219024eafcc9ee267e006151c9e390c46fa821dccf31d00b27"
+      },
+      "mount": {
+        "median": 0.46191699999997127,
+        "p99": 0.5581669999999974,
+        "sampleCount": 101
+      },
+      "update": {
+        "median": 0.23354199999994307,
+        "p99": 0.3299580000000333,
+        "sampleCount": 101
+      },
+      "observationsSha256": "f72e986299c7eb0ddfccd152d27f739844140ee53f9d115c12a28af449cf09cb",
+      "note": "같은 새 스키마·전체 BF 상호작용에서 모든 표본의 mount/update 값과 안정 진단을 확인했습니다. 시간 원표본에는 숫자 배열만 저장합니다."
+    },
+    {
+      "fixture": "oneOf-20",
+      "run": 1,
+      "variant": "H",
+      "environment": {
+        "startedAt": "2026-10-05T11:04:15.716Z",
+        "endedAt": "2026-10-05T11:04:16.678Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpu": "Apple M1 Max",
+        "cpus": 10,
+        "memory": 68719476736,
+        "warmup": 20,
+        "samples": 101,
+        "validation": "off",
+        "mode": "development synchronous core",
+        "explicitGc": true,
+        "trace": false,
+        "bundleSha256": "736a4ff19f664bcce6ee819a7e7d7080210028573b1bf53a6ad40cafb25ebdfb"
+      },
+      "mount": {
+        "median": 1.8621250000005602,
+        "p99": 2.0653330000000096,
+        "sampleCount": 101
+      },
+      "update": {
+        "median": 1.1669999999999163,
+        "p99": 1.453791999999794,
+        "sampleCount": 101
+      },
+      "observationsSha256": "bb6990f4421fa3089a544621f58a65d4fdef1792123004bf1ff3e7c5451100ae",
+      "note": "같은 새 스키마·전체 BF 상호작용에서 모든 표본의 mount/update 값과 안정 진단을 확인했습니다. 시간 원표본에는 숫자 배열만 저장합니다."
+    },
+    {
+      "fixture": "oneOf-20",
+      "run": 1,
+      "variant": "W",
+      "environment": {
+        "startedAt": "2026-10-05T11:04:16.842Z",
+        "endedAt": "2026-10-05T11:04:17.833Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpu": "Apple M1 Max",
+        "cpus": 10,
+        "memory": 68719476736,
+        "warmup": 20,
+        "samples": 101,
+        "validation": "off",
+        "mode": "development synchronous core",
+        "explicitGc": true,
+        "trace": false,
+        "bundleSha256": "7a996df444d490219024eafcc9ee267e006151c9e390c46fa821dccf31d00b27"
+      },
+      "mount": {
+        "median": 1.797292000000084,
+        "p99": 1.9957090000000335,
+        "sampleCount": 101
+      },
+      "update": {
+        "median": 1.181250000000091,
+        "p99": 1.5459170000000313,
+        "sampleCount": 101
+      },
+      "observationsSha256": "bb6990f4421fa3089a544621f58a65d4fdef1792123004bf1ff3e7c5451100ae",
+      "note": "같은 새 스키마·전체 BF 상호작용에서 모든 표본의 mount/update 값과 안정 진단을 확인했습니다. 시간 원표본에는 숫자 배열만 저장합니다."
+    },
+    {
+      "fixture": "oneOf-20",
+      "run": 2,
+      "variant": "W",
+      "environment": {
+        "startedAt": "2026-10-05T11:04:17.995Z",
+        "endedAt": "2026-10-05T11:04:18.975Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpu": "Apple M1 Max",
+        "cpus": 10,
+        "memory": 68719476736,
+        "warmup": 20,
+        "samples": 101,
+        "validation": "off",
+        "mode": "development synchronous core",
+        "explicitGc": true,
+        "trace": false,
+        "bundleSha256": "7a996df444d490219024eafcc9ee267e006151c9e390c46fa821dccf31d00b27"
+      },
+      "mount": {
+        "median": 1.8010830000000624,
+        "p99": 2.0391250000000127,
+        "sampleCount": 101
+      },
+      "update": {
+        "median": 1.1838749999999436,
+        "p99": 1.4059579999999983,
+        "sampleCount": 101
+      },
+      "observationsSha256": "bb6990f4421fa3089a544621f58a65d4fdef1792123004bf1ff3e7c5451100ae",
+      "note": "같은 새 스키마·전체 BF 상호작용에서 모든 표본의 mount/update 값과 안정 진단을 확인했습니다. 시간 원표본에는 숫자 배열만 저장합니다."
+    },
+    {
+      "fixture": "oneOf-20",
+      "run": 2,
+      "variant": "H",
+      "environment": {
+        "startedAt": "2026-10-05T11:04:22.610Z",
+        "endedAt": "2026-10-05T11:04:23.604Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpu": "Apple M1 Max",
+        "cpus": 10,
+        "memory": 68719476736,
+        "warmup": 20,
+        "samples": 101,
+        "validation": "off",
+        "mode": "development synchronous core",
+        "explicitGc": true,
+        "trace": false,
+        "bundleSha256": "736a4ff19f664bcce6ee819a7e7d7080210028573b1bf53a6ad40cafb25ebdfb"
+      },
+      "mount": {
+        "median": 1.8668330000000424,
+        "p99": 2.106166999999914,
+        "sampleCount": 101
+      },
+      "update": {
+        "median": 1.2040839999999662,
+        "p99": 1.5722909999999501,
+        "sampleCount": 101
+      },
+      "observationsSha256": "bb6990f4421fa3089a544621f58a65d4fdef1792123004bf1ff3e7c5451100ae",
+      "note": "같은 새 스키마·전체 BF 상호작용에서 모든 표본의 mount/update 값과 안정 진단을 확인했습니다. 시간 원표본에는 숫자 배열만 저장합니다."
+    },
+    {
+      "fixture": "oneOf-20",
+      "run": 3,
+      "variant": "H",
+      "environment": {
+        "startedAt": "2026-10-05T11:04:27.172Z",
+        "endedAt": "2026-10-05T11:04:28.169Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpu": "Apple M1 Max",
+        "cpus": 10,
+        "memory": 68719476736,
+        "warmup": 20,
+        "samples": 101,
+        "validation": "off",
+        "mode": "development synchronous core",
+        "explicitGc": true,
+        "trace": false,
+        "bundleSha256": "736a4ff19f664bcce6ee819a7e7d7080210028573b1bf53a6ad40cafb25ebdfb"
+      },
+      "mount": {
+        "median": 1.8774170000006052,
+        "p99": 2.0861250000002656,
+        "sampleCount": 101
+      },
+      "update": {
+        "median": 1.1941249999999854,
+        "p99": 1.501459000000068,
+        "sampleCount": 101
+      },
+      "observationsSha256": "bb6990f4421fa3089a544621f58a65d4fdef1792123004bf1ff3e7c5451100ae",
+      "note": "같은 새 스키마·전체 BF 상호작용에서 모든 표본의 mount/update 값과 안정 진단을 확인했습니다. 시간 원표본에는 숫자 배열만 저장합니다."
+    },
+    {
+      "fixture": "oneOf-20",
+      "run": 3,
+      "variant": "W",
+      "environment": {
+        "startedAt": "2026-10-05T11:04:28.334Z",
+        "endedAt": "2026-10-05T11:04:29.316Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpu": "Apple M1 Max",
+        "cpus": 10,
+        "memory": 68719476736,
+        "warmup": 20,
+        "samples": 101,
+        "validation": "off",
+        "mode": "development synchronous core",
+        "explicitGc": true,
+        "trace": false,
+        "bundleSha256": "7a996df444d490219024eafcc9ee267e006151c9e390c46fa821dccf31d00b27"
+      },
+      "mount": {
+        "median": 1.8121250000000373,
+        "p99": 1.9799170000000004,
+        "sampleCount": 101
+      },
+      "update": {
+        "median": 1.1917090000000599,
+        "p99": 1.406458999999984,
+        "sampleCount": 101
+      },
+      "observationsSha256": "bb6990f4421fa3089a544621f58a65d4fdef1792123004bf1ff3e7c5451100ae",
+      "note": "같은 새 스키마·전체 BF 상호작용에서 모든 표본의 mount/update 값과 안정 진단을 확인했습니다. 시간 원표본에는 숫자 배열만 저장합니다."
+    }
+  ],
+  "structureCounts": [
+    {
+      "fixture": "flat-500",
+      "before": {
+        "fixture": "flat-500",
+        "variant": "H",
+        "revision": "fba01cbea",
+        "graph": {
+          "nodes": 501,
+          "fragments": 501,
+          "declarations": 501,
+          "expressions": 0,
+          "dependencyPaths": 0
+        },
+        "capabilities": null,
+        "afterMount": {
+          "blueprint/utils/effectiveSchema/mergeEffectiveSchema.ts:DEFAULT_MEMO:WeakMap": 1,
+          "blueprint/utils/effectiveSchema/mergeEffectiveSchema.ts:DEFAULT_NO_ACTIVE:WeakMap": 1,
+          "blueprint/utils/features/getFeatureNodeIndex/getFeatureNodeIndex.ts:INDICES:WeakMap": 1,
+          "blueprint/utils/itemEntry/getItemEntry.ts:ENTRIES:WeakMap": 1,
+          "settle/utils/gates/getGateExpression.ts:GATE_EXPRESSIONS:WeakMap": 1,
+          "settle/utils/gates/getGateRegistry.ts:REGISTRIES:WeakMap": 1,
+          "settle/utils/write/staticSpec.ts:anonymous:Map": 2,
+          "settle/utils/write/staticSpec.ts:anonymous:WeakMap": 2,
+          "settle/utils/declarations/getDeclaredChildNames.ts:DECLARED_NAMES:WeakMap": 1,
+          "settle/utils/gates/flushPendingGateReads.ts:READ_PLANS:WeakMap": 1,
+          "settle/utils/compute/utils/getRecursiveRelativeSpan.ts:RELATIVE_SPANS:WeakMap": 1,
+          "settle/utils/compute/hasRecursiveExpansion.ts:CYCLIC_BLUEPRINTS:WeakMap": 1,
+          "settle/utils/compute/selectChildren.ts:STATIC_IDS:WeakMap": 1,
+          "settle/utils/compute/selectChildren.ts:STATIC_SHAPES:WeakMap": 1,
+          "settle/utils/gates/getGateBudgetCap.ts:INDICES:WeakMap": 1,
+          "settle/utils/gates/getGateBudgetCap.ts:HOST_CAPS:WeakMap": 1,
+          "settle/utils/compute/utils/hasIndependentLeafDefaults.ts:INDEPENDENT:WeakMap": 1,
+          "settle/utils/controls/getControlExpression.ts:CONTROL_EXPRESSIONS:WeakMap": 1,
+          "settle/derive/utils/rules/utils/getWatchPaths.ts:WATCH_PATHS:WeakMap": 1,
+          "settle/derive/utils/rules/getDeriveRuleTable.ts:TABLES:WeakMap": 1,
+          "settle/derive/utils/rules/getDeriveRuleTable.ts:byDeclaration:Map": 2,
+          "settle/derive/utils/edges/getDeriveRuleKey.ts:TARGET_IDS:WeakMap": 1,
+          "settle/utils/controls/getCommittedDeclarationKey.ts:KEYS:WeakMap": 1,
+          "settle/derive/utils/rank/getDeriveChildEntry.ts:CHILDREN:WeakMap": 1,
+          "settle/utils/context/getContextOwners.ts:OWNERS:WeakMap": 1,
+          "settle/utils/write/getDependencyIndex.ts:INDEXES:WeakMap": 1,
+          "settle/utils/compute/getVirtualReferenceIndex.ts:REFERENCES:WeakMap": 1,
+          "settle/utils/controls/getControlLayers.ts:DECLARATION_IDS:WeakMap": 1,
+          "settle/utils/commit/commitExitPolicyValues.ts:EXIT_EXPRESSIONS:WeakMap": 1,
+          "settle/utils/write/interpretSchemaNodeInput.ts:OBJECT_CHILDREN:WeakMap": 1,
+          "blueprint/blueprint.ts:declarationOwners:Map": 1,
+          "blueprint/blueprint.ts:templates:Map": 1,
+          "blueprint/blueprint.ts:constructing:Map": 1,
+          "blueprint/utils/analyze/readDiscriminatorBranches.ts:result:Map": 501,
+          "blueprint/utils/types/resolveNodeStrategy.ts:children:Map": 1,
+          "blueprint/utils/effectiveSchema/utils/ensureEffectiveSchemaCache.ts:schemas:Map": 1002,
+          "blueprint/utils/analyze/populateNodeChildren.ts:properties:Map": 1,
+          "blueprint/utils/analyze/populateNodeChildren.ts:tuples:Map": 1,
+          "blueprint/utils/analyze/populateVirtualNodes.ts:groups:Map": 1,
+          "blueprint/utils/analyze/validateShape.ts:complete:Set": 1,
+          "blueprint/utils/analyze/validateShape.ts:active:Set": 1,
+          "blueprint/utils/analyze/compileBlueprintExpressions.ts:visited:Set": 1,
+          "settle/utils/write/getSettlementScratch.ts:anonymous:Map": 1,
+          "settle/utils/write/getSettlementScratch.ts:entered:Set": 1,
+          "settle/utils/write/getSettlementScratch.ts:revived:Set": 1,
+          "settle/utils/write/getSettlementScratch.ts:exited:Set": 1,
+          "settle/utils/write/getSettlementScratch.ts:pendingExits:Map": 1,
+          "settle/utils/write/getSettlementScratch.ts:perished:Set": 1,
+          "settle/utils/write/getSettlementScratch.ts:selectedDeclarationIds:Map": 1,
+          "settle/utils/write/getSettlementScratch.ts:writtenInputs:Map": 1,
+          "settle/utils/write/getSettlementScratch.ts:distributedInputs:Map": 1,
+          "settle/utils/write/getSettlementScratch.ts:wrongKindHosts:Set": 1,
+          "settle/utils/write/getSettlementScratch.ts:arrayCounts:Map": 1,
+          "settle/utils/write/getSettlementScratch.ts:filledNodes:Set": 1,
+          "settle/utils/write/getSettlementScratch.ts:latentAutomaticLog:Map": 1,
+          "settle/utils/write/getSettlementScratch.ts:dependencyOwnerPaths:Set": 1,
+          "settle/utils/write/getSettlementScratch.ts:shapeDirtyPaths:Set": 1,
+          "settle/utils/write/getSettlementScratch.ts:changedRaw:Set": 1,
+          "settle/utils/write/getSettlementScratch.ts:explicitRaw:Set": 1,
+          "settle/utils/write/getSettlementScratch.ts:changedNodes:Set": 1,
+          "settle/utils/write/getSettlementScratch.ts:stateDirtyNodes:Set": 1,
+          "settle/utils/write/getSettlementScratch.ts:originalSchemas:Map": 1,
+          "settle/utils/gates/getGateBudgetCap.ts:decisionsByGate:Map": 1,
+          "settle/utils/gates/getGateBudgetCap.ts:decisions:Set": 2,
+          "settle/utils/latent/getLatentPathIndex.ts:anonymous:Map": 1,
+          "settle/utils/write/DirtyPathSet.ts:linked:Set": 1,
+          "settle/utils/write/getDependencyIndex.ts:ownerPaths:Set": 1,
+          "settle/utils/write/getDependencyIndex.ts:children:Map": 1,
+          "settle/utils/write/registerRecalculation.ts:expanded:Set": 1,
+          "settle/utils/compute/computeNode.ts:seenGates:Set": 1,
+          "settle/utils/compute/dirtyChildren.ts:seen:Set": 2,
+          "settle/utils/compute/selectChildren.ts:seen:Set": 1,
+          "settle/utils/compute/hasRecursiveExpansion.ts:anonymous:Set": 2,
+          "settle/utils/write/DirtyPathSet.ts:anonymous:Map": 501,
+          "settle/utils/transition/transitionSettlement.ts:anonymous:Set": 1,
+          "blueprint/utils/features/getFeatureNodeIndex/utils/buildFeatureNodeIndex.ts:stateKeyNodes:Set": 1,
+          "blueprint/utils/features/getFeatureNodeIndex/utils/buildFeatureNodeIndex.ts:stateKeyChildren:Map": 1,
+          "blueprint/utils/features/getFeatureNodeIndex/utils/buildFeatureNodeIndex.ts:watchNodes:Set": 1,
+          "blueprint/utils/features/getFeatureNodeIndex/utils/buildFeatureNodeIndex.ts:targets:Set": 501,
+          "settle/utils/transition/finalizePerished.ts:resizedHosts:Map": 1,
+          "settle/utils/transition/finalizeExits.ts:affectedAncestors:Set": 1,
+          "settle/utils/commit/commitExitPolicyValues.ts:anonymous:Map": 1,
+          "settle/utils/commit/commitSettlement.ts:anonymous:Set": 1,
+          "settle/utils/commit/markCommitDeliveries.ts:automaticNodes:Set": 1,
+          "settle/utils/commit/markCommitDeliveries.ts:candidates:Set": 1,
+          "settle/utils/commit/commitGlobalState.ts:deltas:Map": 1,
+          "settle/utils/commit/commitGlobalState.ts:departing:Set": 1,
+          "settle/utils/commit/commitGlobalState.ts:nodes:Set": 1,
+          "settle/utils/commit/commitGlobalState.ts:visited:Set": 1,
+          "settle/utils/commit/markCommitDeliveries.ts:ordered:Set": 1,
+          "settle/utils/commit/markCommitDeliveries.ts:seenDeparting:Set": 1,
+          "settle/utils/commit/updateInactiveValuesMemo.ts:candidates:Map": 1,
+          "settle/utils/commit/updateInactiveValuesMemo.ts:chosen:Map": 1,
+          "settle/utils/commit/updateInactiveValuesMemo.ts:affected:Set": 1,
+          "settle/utils/commit/updateInactiveValuesMemo.ts:entriesByHost:Map": 1
+        },
+        "afterUpdate": {
+          "blueprint/utils/effectiveSchema/mergeEffectiveSchema.ts:DEFAULT_MEMO:WeakMap": 1,
+          "blueprint/utils/effectiveSchema/mergeEffectiveSchema.ts:DEFAULT_NO_ACTIVE:WeakMap": 1,
+          "blueprint/utils/features/getFeatureNodeIndex/getFeatureNodeIndex.ts:INDICES:WeakMap": 1,
+          "blueprint/utils/itemEntry/getItemEntry.ts:ENTRIES:WeakMap": 1,
+          "settle/utils/gates/getGateExpression.ts:GATE_EXPRESSIONS:WeakMap": 1,
+          "settle/utils/gates/getGateRegistry.ts:REGISTRIES:WeakMap": 1,
+          "settle/utils/write/staticSpec.ts:anonymous:Map": 2,
+          "settle/utils/write/staticSpec.ts:anonymous:WeakMap": 2,
+          "settle/utils/declarations/getDeclaredChildNames.ts:DECLARED_NAMES:WeakMap": 1,
+          "settle/utils/gates/flushPendingGateReads.ts:READ_PLANS:WeakMap": 1,
+          "settle/utils/compute/utils/getRecursiveRelativeSpan.ts:RELATIVE_SPANS:WeakMap": 1,
+          "settle/utils/compute/hasRecursiveExpansion.ts:CYCLIC_BLUEPRINTS:WeakMap": 1,
+          "settle/utils/compute/selectChildren.ts:STATIC_IDS:WeakMap": 1,
+          "settle/utils/compute/selectChildren.ts:STATIC_SHAPES:WeakMap": 1,
+          "settle/utils/gates/getGateBudgetCap.ts:INDICES:WeakMap": 1,
+          "settle/utils/gates/getGateBudgetCap.ts:HOST_CAPS:WeakMap": 1,
+          "settle/utils/compute/utils/hasIndependentLeafDefaults.ts:INDEPENDENT:WeakMap": 1,
+          "settle/utils/controls/getControlExpression.ts:CONTROL_EXPRESSIONS:WeakMap": 1,
+          "settle/derive/utils/rules/utils/getWatchPaths.ts:WATCH_PATHS:WeakMap": 1,
+          "settle/derive/utils/rules/getDeriveRuleTable.ts:TABLES:WeakMap": 1,
+          "settle/derive/utils/rules/getDeriveRuleTable.ts:byDeclaration:Map": 2,
+          "settle/derive/utils/edges/getDeriveRuleKey.ts:TARGET_IDS:WeakMap": 1,
+          "settle/utils/controls/getCommittedDeclarationKey.ts:KEYS:WeakMap": 1,
+          "settle/derive/utils/rank/getDeriveChildEntry.ts:CHILDREN:WeakMap": 1,
+          "settle/utils/context/getContextOwners.ts:OWNERS:WeakMap": 1,
+          "settle/utils/write/getDependencyIndex.ts:INDEXES:WeakMap": 1,
+          "settle/utils/compute/getVirtualReferenceIndex.ts:REFERENCES:WeakMap": 1,
+          "settle/utils/controls/getControlLayers.ts:DECLARATION_IDS:WeakMap": 1,
+          "settle/utils/commit/commitExitPolicyValues.ts:EXIT_EXPRESSIONS:WeakMap": 1,
+          "settle/utils/write/interpretSchemaNodeInput.ts:OBJECT_CHILDREN:WeakMap": 1,
+          "blueprint/blueprint.ts:declarationOwners:Map": 1,
+          "blueprint/blueprint.ts:templates:Map": 1,
+          "blueprint/blueprint.ts:constructing:Map": 1,
+          "blueprint/utils/analyze/readDiscriminatorBranches.ts:result:Map": 501,
+          "blueprint/utils/types/resolveNodeStrategy.ts:children:Map": 1,
+          "blueprint/utils/effectiveSchema/utils/ensureEffectiveSchemaCache.ts:schemas:Map": 1002,
+          "blueprint/utils/analyze/populateNodeChildren.ts:properties:Map": 1,
+          "blueprint/utils/analyze/populateNodeChildren.ts:tuples:Map": 1,
+          "blueprint/utils/analyze/populateVirtualNodes.ts:groups:Map": 1,
+          "blueprint/utils/analyze/validateShape.ts:complete:Set": 1,
+          "blueprint/utils/analyze/validateShape.ts:active:Set": 1,
+          "blueprint/utils/analyze/compileBlueprintExpressions.ts:visited:Set": 1,
+          "settle/utils/write/getSettlementScratch.ts:anonymous:Map": 1,
+          "settle/utils/write/getSettlementScratch.ts:entered:Set": 1,
+          "settle/utils/write/getSettlementScratch.ts:revived:Set": 1,
+          "settle/utils/write/getSettlementScratch.ts:exited:Set": 1,
+          "settle/utils/write/getSettlementScratch.ts:pendingExits:Map": 1,
+          "settle/utils/write/getSettlementScratch.ts:perished:Set": 1,
+          "settle/utils/write/getSettlementScratch.ts:selectedDeclarationIds:Map": 1,
+          "settle/utils/write/getSettlementScratch.ts:writtenInputs:Map": 1,
+          "settle/utils/write/getSettlementScratch.ts:distributedInputs:Map": 1,
+          "settle/utils/write/getSettlementScratch.ts:wrongKindHosts:Set": 1,
+          "settle/utils/write/getSettlementScratch.ts:arrayCounts:Map": 1,
+          "settle/utils/write/getSettlementScratch.ts:filledNodes:Set": 1,
+          "settle/utils/write/getSettlementScratch.ts:latentAutomaticLog:Map": 1,
+          "settle/utils/write/getSettlementScratch.ts:dependencyOwnerPaths:Set": 1,
+          "settle/utils/write/getSettlementScratch.ts:shapeDirtyPaths:Set": 1,
+          "settle/utils/write/getSettlementScratch.ts:changedRaw:Set": 1,
+          "settle/utils/write/getSettlementScratch.ts:explicitRaw:Set": 1,
+          "settle/utils/write/getSettlementScratch.ts:changedNodes:Set": 1,
+          "settle/utils/write/getSettlementScratch.ts:stateDirtyNodes:Set": 1,
+          "settle/utils/write/getSettlementScratch.ts:originalSchemas:Map": 1,
+          "settle/utils/gates/getGateBudgetCap.ts:decisionsByGate:Map": 1,
+          "settle/utils/gates/getGateBudgetCap.ts:decisions:Set": 2,
+          "settle/utils/latent/getLatentPathIndex.ts:anonymous:Map": 11,
+          "settle/utils/write/DirtyPathSet.ts:linked:Set": 11,
+          "settle/utils/write/getDependencyIndex.ts:ownerPaths:Set": 1,
+          "settle/utils/write/getDependencyIndex.ts:children:Map": 1,
+          "settle/utils/write/registerRecalculation.ts:expanded:Set": 11,
+          "settle/utils/compute/computeNode.ts:seenGates:Set": 1,
+          "settle/utils/compute/dirtyChildren.ts:seen:Set": 12,
+          "settle/utils/compute/selectChildren.ts:seen:Set": 1,
+          "settle/utils/compute/hasRecursiveExpansion.ts:anonymous:Set": 2,
+          "settle/utils/write/DirtyPathSet.ts:anonymous:Map": 521,
+          "settle/utils/transition/transitionSettlement.ts:anonymous:Set": 1,
+          "blueprint/utils/features/getFeatureNodeIndex/utils/buildFeatureNodeIndex.ts:stateKeyNodes:Set": 1,
+          "blueprint/utils/features/getFeatureNodeIndex/utils/buildFeatureNodeIndex.ts:stateKeyChildren:Map": 1,
+          "blueprint/utils/features/getFeatureNodeIndex/utils/buildFeatureNodeIndex.ts:watchNodes:Set": 1,
+          "blueprint/utils/features/getFeatureNodeIndex/utils/buildFeatureNodeIndex.ts:targets:Set": 501,
+          "settle/utils/transition/finalizePerished.ts:resizedHosts:Map": 11,
+          "settle/utils/transition/finalizeExits.ts:affectedAncestors:Set": 11,
+          "settle/utils/commit/commitExitPolicyValues.ts:anonymous:Map": 1,
+          "settle/utils/commit/commitSettlement.ts:anonymous:Set": 1,
+          "settle/utils/commit/markCommitDeliveries.ts:automaticNodes:Set": 11,
+          "settle/utils/commit/markCommitDeliveries.ts:candidates:Set": 11,
+          "settle/utils/commit/commitGlobalState.ts:deltas:Map": 11,
+          "settle/utils/commit/commitGlobalState.ts:departing:Set": 11,
+          "settle/utils/commit/commitGlobalState.ts:nodes:Set": 11,
+          "settle/utils/commit/commitGlobalState.ts:visited:Set": 1,
+          "settle/utils/commit/markCommitDeliveries.ts:ordered:Set": 11,
+          "settle/utils/commit/markCommitDeliveries.ts:seenDeparting:Set": 11,
+          "settle/utils/commit/updateInactiveValuesMemo.ts:candidates:Map": 1,
+          "settle/utils/commit/updateInactiveValuesMemo.ts:chosen:Map": 1,
+          "settle/utils/commit/updateInactiveValuesMemo.ts:affected:Set": 1,
+          "settle/utils/commit/updateInactiveValuesMemo.ts:entriesByHost:Map": 1
+        },
+        "observationsSha256": "a02621472d545476f52b4a784704de6327e2e5009501510c44f61440c936b78f",
+        "methodology": "별도 새 프로세스의 메모리 번들에서만 TypeScript AST로 Map/Set/WeakMap/WeakSet 생성식을 감쌌습니다. 제품 소스·시간 표본에는 계측이 없습니다. 모듈 공통 캐시 생성도 포함하며 같은 파일·선언 이름·종류로 집계합니다.",
+        "environment": {
+          "node": "v26.10.0",
+          "bundleSha256": "9a8f065c06b360e90c49f90518b31499b3ac522ea6728e6bb502b51d7651b4e3",
+          "validation": "off"
+        }
+      },
+      "after": {
+        "fixture": "flat-500",
+        "variant": "W",
+        "revision": "working-tree",
+        "graph": {
+          "nodes": 501,
+          "fragments": 501,
+          "declarations": 501,
+          "expressions": 0,
+          "dependencyPaths": 0
+        },
+        "capabilities": {
+          "branchless": true,
+          "hasExpressions": false,
+          "hasDerive": false,
+          "hasWatch": false,
+          "hasState": false,
+          "hasDependencies": false
+        },
+        "afterMount": {
+          "blueprint/utils/effectiveSchema/mergeEffectiveSchema.ts:DEFAULT_MEMO:WeakMap": 1,
+          "blueprint/utils/effectiveSchema/mergeEffectiveSchema.ts:DEFAULT_NO_ACTIVE:WeakMap": 1,
+          "blueprint/utils/features/getFeatureNodeIndex/getFeatureNodeIndex.ts:INDICES:WeakMap": 1,
+          "blueprint/utils/itemEntry/getItemEntry.ts:ENTRIES:WeakMap": 1,
+          "settle/utils/gates/getGateExpression.ts:GATE_EXPRESSIONS:WeakMap": 1,
+          "settle/utils/gates/getGateRegistry.ts:REGISTRIES:WeakMap": 1,
+          "settle/utils/write/staticSpec.ts:anonymous:Map": 2,
+          "settle/utils/write/staticSpec.ts:anonymous:WeakMap": 2,
+          "settle/utils/declarations/getDeclaredChildNames.ts:DECLARED_NAMES:WeakMap": 1,
+          "settle/utils/gates/flushPendingGateReads.ts:READ_PLANS:WeakMap": 1,
+          "settle/utils/compute/utils/getRecursiveRelativeSpan.ts:RELATIVE_SPANS:WeakMap": 1,
+          "settle/utils/compute/hasRecursiveExpansion.ts:CYCLIC_BLUEPRINTS:WeakMap": 1,
+          "settle/utils/compute/selectChildren.ts:STATIC_IDS:WeakMap": 1,
+          "settle/utils/compute/selectChildren.ts:STATIC_SHAPES:WeakMap": 1,
+          "settle/utils/gates/getGateBudgetCap.ts:INDICES:WeakMap": 1,
+          "settle/utils/gates/getGateBudgetCap.ts:HOST_CAPS:WeakMap": 1,
+          "settle/utils/compute/utils/hasIndependentLeafDefaults.ts:INDEPENDENT:WeakMap": 1,
+          "settle/utils/controls/getControlExpression.ts:CONTROL_EXPRESSIONS:WeakMap": 1,
+          "settle/derive/utils/rules/utils/getWatchPaths.ts:WATCH_PATHS:WeakMap": 1,
+          "settle/derive/utils/rules/getDeriveRuleTable.ts:TABLES:WeakMap": 1,
+          "settle/derive/utils/edges/getDeriveRuleKey.ts:TARGET_IDS:WeakMap": 1,
+          "settle/utils/controls/getCommittedDeclarationKey.ts:KEYS:WeakMap": 1,
+          "settle/derive/utils/rank/getDeriveChildEntry.ts:CHILDREN:WeakMap": 1,
+          "settle/utils/context/getContextOwners.ts:OWNERS:WeakMap": 1,
+          "settle/utils/write/getDependencyIndex.ts:INDEXES:WeakMap": 1,
+          "settle/utils/compute/getVirtualReferenceIndex.ts:REFERENCES:WeakMap": 1,
+          "settle/utils/controls/getControlLayers.ts:DECLARATION_IDS:WeakMap": 1,
+          "settle/utils/commit/commitExitPolicyValues.ts:EXIT_EXPRESSIONS:WeakMap": 1,
+          "settle/utils/write/interpretSchemaNodeInput.ts:OBJECT_CHILDREN:WeakMap": 1,
+          "blueprint/blueprint.ts:templates:Map": 1,
+          "blueprint/blueprint.ts:constructing:Map": 1,
+          "blueprint/utils/types/resolveNodeStrategy.ts:children:Map": 1,
+          "blueprint/utils/effectiveSchema/utils/ensureEffectiveSchemaCache.ts:schemas:Map": 1002,
+          "blueprint/utils/analyze/populateNodeChildren.ts:properties:Map": 1,
+          "blueprint/utils/analyze/populateNodeChildren.ts:tuples:Map": 1,
+          "blueprint/utils/analyze/populateVirtualNodes.ts:groups:Map": 1,
+          "blueprint/utils/analyze/validateShape.ts:complete:Set": 1,
+          "blueprint/utils/analyze/validateShape.ts:active:Set": 1,
+          "settle/utils/write/getSettlementScratch.ts:anonymous:Map": 1,
+          "settle/utils/write/getSettlementScratch.ts:entered:Set": 1,
+          "settle/utils/write/getSettlementScratch.ts:revived:Set": 1,
+          "settle/utils/write/getSettlementScratch.ts:exited:Set": 1,
+          "settle/utils/write/getSettlementScratch.ts:pendingExits:Map": 1,
+          "settle/utils/write/getSettlementScratch.ts:perished:Set": 1,
+          "settle/utils/write/getSettlementScratch.ts:selectedDeclarationIds:Map": 1,
+          "settle/utils/write/getSettlementScratch.ts:writtenInputs:Map": 1,
+          "settle/utils/write/getSettlementScratch.ts:distributedInputs:Map": 1,
+          "settle/utils/write/getSettlementScratch.ts:wrongKindHosts:Set": 1,
+          "settle/utils/write/getSettlementScratch.ts:arrayCounts:Map": 1,
+          "settle/utils/write/getSettlementScratch.ts:filledNodes:Set": 1,
+          "settle/utils/write/getSettlementScratch.ts:latentAutomaticLog:Map": 1,
+          "settle/utils/write/getSettlementScratch.ts:dependencyOwnerPaths:Set": 1,
+          "settle/utils/write/getSettlementScratch.ts:shapeDirtyPaths:Set": 1,
+          "settle/utils/write/getSettlementScratch.ts:changedRaw:Set": 1,
+          "settle/utils/write/getSettlementScratch.ts:explicitRaw:Set": 1,
+          "settle/utils/write/getSettlementScratch.ts:changedNodes:Set": 1,
+          "settle/utils/write/getSettlementScratch.ts:stateDirtyNodes:Set": 1,
+          "settle/utils/write/getSettlementScratch.ts:originalSchemas:Map": 1,
+          "settle/utils/latent/getLatentPathIndex.ts:anonymous:Map": 1,
+          "settle/utils/write/DirtyPathSet.ts:linked:Set": 1,
+          "settle/utils/write/registerRecalculation.ts:expanded:Set": 1,
+          "settle/utils/compute/computeNode.ts:seenGates:Set": 1,
+          "settle/utils/compute/dirtyChildren.ts:seen:Set": 2,
+          "settle/utils/compute/selectChildren.ts:seen:Set": 1,
+          "settle/utils/compute/hasRecursiveExpansion.ts:anonymous:Set": 2,
+          "settle/utils/write/DirtyPathSet.ts:anonymous:Map": 501,
+          "settle/utils/transition/transitionSettlement.ts:anonymous:Set": 1,
+          "settle/utils/transition/finalizePerished.ts:resizedHosts:Map": 1,
+          "settle/utils/transition/finalizeExits.ts:affectedAncestors:Set": 1,
+          "settle/utils/commit/commitExitPolicyValues.ts:anonymous:Map": 1,
+          "settle/utils/commit/commitSettlement.ts:anonymous:Set": 1,
+          "settle/utils/commit/markCommitDeliveries.ts:automaticNodes:Set": 1,
+          "settle/utils/commit/markCommitDeliveries.ts:candidates:Set": 1,
+          "settle/utils/commit/commitGlobalState.ts:deltas:Map": 1,
+          "settle/utils/commit/commitGlobalState.ts:departing:Set": 1,
+          "settle/utils/commit/commitGlobalState.ts:nodes:Set": 1,
+          "settle/utils/commit/commitGlobalState.ts:visited:Set": 1,
+          "settle/utils/commit/markCommitDeliveries.ts:ordered:Set": 1,
+          "settle/utils/commit/markCommitDeliveries.ts:seenDeparting:Set": 1,
+          "settle/utils/commit/updateInactiveValuesMemo.ts:candidates:Map": 1,
+          "settle/utils/commit/updateInactiveValuesMemo.ts:chosen:Map": 1,
+          "settle/utils/commit/updateInactiveValuesMemo.ts:affected:Set": 1,
+          "settle/utils/commit/updateInactiveValuesMemo.ts:entriesByHost:Map": 1
+        },
+        "afterUpdate": {
+          "blueprint/utils/effectiveSchema/mergeEffectiveSchema.ts:DEFAULT_MEMO:WeakMap": 1,
+          "blueprint/utils/effectiveSchema/mergeEffectiveSchema.ts:DEFAULT_NO_ACTIVE:WeakMap": 1,
+          "blueprint/utils/features/getFeatureNodeIndex/getFeatureNodeIndex.ts:INDICES:WeakMap": 1,
+          "blueprint/utils/itemEntry/getItemEntry.ts:ENTRIES:WeakMap": 1,
+          "settle/utils/gates/getGateExpression.ts:GATE_EXPRESSIONS:WeakMap": 1,
+          "settle/utils/gates/getGateRegistry.ts:REGISTRIES:WeakMap": 1,
+          "settle/utils/write/staticSpec.ts:anonymous:Map": 2,
+          "settle/utils/write/staticSpec.ts:anonymous:WeakMap": 2,
+          "settle/utils/declarations/getDeclaredChildNames.ts:DECLARED_NAMES:WeakMap": 1,
+          "settle/utils/gates/flushPendingGateReads.ts:READ_PLANS:WeakMap": 1,
+          "settle/utils/compute/utils/getRecursiveRelativeSpan.ts:RELATIVE_SPANS:WeakMap": 1,
+          "settle/utils/compute/hasRecursiveExpansion.ts:CYCLIC_BLUEPRINTS:WeakMap": 1,
+          "settle/utils/compute/selectChildren.ts:STATIC_IDS:WeakMap": 1,
+          "settle/utils/compute/selectChildren.ts:STATIC_SHAPES:WeakMap": 1,
+          "settle/utils/gates/getGateBudgetCap.ts:INDICES:WeakMap": 1,
+          "settle/utils/gates/getGateBudgetCap.ts:HOST_CAPS:WeakMap": 1,
+          "settle/utils/compute/utils/hasIndependentLeafDefaults.ts:INDEPENDENT:WeakMap": 1,
+          "settle/utils/controls/getControlExpression.ts:CONTROL_EXPRESSIONS:WeakMap": 1,
+          "settle/derive/utils/rules/utils/getWatchPaths.ts:WATCH_PATHS:WeakMap": 1,
+          "settle/derive/utils/rules/getDeriveRuleTable.ts:TABLES:WeakMap": 1,
+          "settle/derive/utils/edges/getDeriveRuleKey.ts:TARGET_IDS:WeakMap": 1,
+          "settle/utils/controls/getCommittedDeclarationKey.ts:KEYS:WeakMap": 1,
+          "settle/derive/utils/rank/getDeriveChildEntry.ts:CHILDREN:WeakMap": 1,
+          "settle/utils/context/getContextOwners.ts:OWNERS:WeakMap": 1,
+          "settle/utils/write/getDependencyIndex.ts:INDEXES:WeakMap": 1,
+          "settle/utils/compute/getVirtualReferenceIndex.ts:REFERENCES:WeakMap": 1,
+          "settle/utils/controls/getControlLayers.ts:DECLARATION_IDS:WeakMap": 1,
+          "settle/utils/commit/commitExitPolicyValues.ts:EXIT_EXPRESSIONS:WeakMap": 1,
+          "settle/utils/write/interpretSchemaNodeInput.ts:OBJECT_CHILDREN:WeakMap": 1,
+          "blueprint/blueprint.ts:templates:Map": 1,
+          "blueprint/blueprint.ts:constructing:Map": 1,
+          "blueprint/utils/types/resolveNodeStrategy.ts:children:Map": 1,
+          "blueprint/utils/effectiveSchema/utils/ensureEffectiveSchemaCache.ts:schemas:Map": 1002,
+          "blueprint/utils/analyze/populateNodeChildren.ts:properties:Map": 1,
+          "blueprint/utils/analyze/populateNodeChildren.ts:tuples:Map": 1,
+          "blueprint/utils/analyze/populateVirtualNodes.ts:groups:Map": 1,
+          "blueprint/utils/analyze/validateShape.ts:complete:Set": 1,
+          "blueprint/utils/analyze/validateShape.ts:active:Set": 1,
+          "settle/utils/write/getSettlementScratch.ts:anonymous:Map": 1,
+          "settle/utils/write/getSettlementScratch.ts:entered:Set": 1,
+          "settle/utils/write/getSettlementScratch.ts:revived:Set": 1,
+          "settle/utils/write/getSettlementScratch.ts:exited:Set": 1,
+          "settle/utils/write/getSettlementScratch.ts:pendingExits:Map": 1,
+          "settle/utils/write/getSettlementScratch.ts:perished:Set": 1,
+          "settle/utils/write/getSettlementScratch.ts:selectedDeclarationIds:Map": 1,
+          "settle/utils/write/getSettlementScratch.ts:writtenInputs:Map": 1,
+          "settle/utils/write/getSettlementScratch.ts:distributedInputs:Map": 1,
+          "settle/utils/write/getSettlementScratch.ts:wrongKindHosts:Set": 1,
+          "settle/utils/write/getSettlementScratch.ts:arrayCounts:Map": 1,
+          "settle/utils/write/getSettlementScratch.ts:filledNodes:Set": 1,
+          "settle/utils/write/getSettlementScratch.ts:latentAutomaticLog:Map": 1,
+          "settle/utils/write/getSettlementScratch.ts:dependencyOwnerPaths:Set": 1,
+          "settle/utils/write/getSettlementScratch.ts:shapeDirtyPaths:Set": 1,
+          "settle/utils/write/getSettlementScratch.ts:changedRaw:Set": 1,
+          "settle/utils/write/getSettlementScratch.ts:explicitRaw:Set": 1,
+          "settle/utils/write/getSettlementScratch.ts:changedNodes:Set": 1,
+          "settle/utils/write/getSettlementScratch.ts:stateDirtyNodes:Set": 1,
+          "settle/utils/write/getSettlementScratch.ts:originalSchemas:Map": 1,
+          "settle/utils/latent/getLatentPathIndex.ts:anonymous:Map": 11,
+          "settle/utils/write/DirtyPathSet.ts:linked:Set": 11,
+          "settle/utils/write/registerRecalculation.ts:expanded:Set": 11,
+          "settle/utils/compute/computeNode.ts:seenGates:Set": 1,
+          "settle/utils/compute/dirtyChildren.ts:seen:Set": 12,
+          "settle/utils/compute/selectChildren.ts:seen:Set": 1,
+          "settle/utils/compute/hasRecursiveExpansion.ts:anonymous:Set": 2,
+          "settle/utils/write/DirtyPathSet.ts:anonymous:Map": 521,
+          "settle/utils/transition/transitionSettlement.ts:anonymous:Set": 1,
+          "settle/utils/transition/finalizePerished.ts:resizedHosts:Map": 11,
+          "settle/utils/transition/finalizeExits.ts:affectedAncestors:Set": 11,
+          "settle/utils/commit/commitExitPolicyValues.ts:anonymous:Map": 1,
+          "settle/utils/commit/commitSettlement.ts:anonymous:Set": 1,
+          "settle/utils/commit/markCommitDeliveries.ts:automaticNodes:Set": 11,
+          "settle/utils/commit/markCommitDeliveries.ts:candidates:Set": 11,
+          "settle/utils/commit/commitGlobalState.ts:deltas:Map": 11,
+          "settle/utils/commit/commitGlobalState.ts:departing:Set": 11,
+          "settle/utils/commit/commitGlobalState.ts:nodes:Set": 11,
+          "settle/utils/commit/commitGlobalState.ts:visited:Set": 1,
+          "settle/utils/commit/markCommitDeliveries.ts:ordered:Set": 11,
+          "settle/utils/commit/markCommitDeliveries.ts:seenDeparting:Set": 11,
+          "settle/utils/commit/updateInactiveValuesMemo.ts:candidates:Map": 1,
+          "settle/utils/commit/updateInactiveValuesMemo.ts:chosen:Map": 1,
+          "settle/utils/commit/updateInactiveValuesMemo.ts:affected:Set": 1,
+          "settle/utils/commit/updateInactiveValuesMemo.ts:entriesByHost:Map": 1
+        },
+        "observationsSha256": "a02621472d545476f52b4a784704de6327e2e5009501510c44f61440c936b78f",
+        "methodology": "별도 새 프로세스의 메모리 번들에서만 TypeScript AST로 Map/Set/WeakMap/WeakSet 생성식을 감쌌습니다. 제품 소스·시간 표본에는 계측이 없습니다. 모듈 공통 캐시 생성도 포함하며 같은 파일·선언 이름·종류로 집계합니다.",
+        "environment": {
+          "node": "v26.10.0",
+          "bundleSha256": "8f533566a7033d77e95c064cb3286c681e89b1e6a174a729b7afe6e729b00359",
+          "validation": "off"
+        }
+      }
+    },
+    {
+      "fixture": "nested-d5-f4",
+      "before": {
+        "fixture": "nested-d5-f4",
+        "variant": "H",
+        "revision": "fba01cbea",
+        "graph": {
+          "nodes": 1365,
+          "fragments": 1365,
+          "declarations": 1365,
+          "expressions": 0,
+          "dependencyPaths": 0
+        },
+        "capabilities": null,
+        "afterMount": {
+          "blueprint/utils/effectiveSchema/mergeEffectiveSchema.ts:DEFAULT_MEMO:WeakMap": 1,
+          "blueprint/utils/effectiveSchema/mergeEffectiveSchema.ts:DEFAULT_NO_ACTIVE:WeakMap": 1,
+          "blueprint/utils/features/getFeatureNodeIndex/getFeatureNodeIndex.ts:INDICES:WeakMap": 1,
+          "blueprint/utils/itemEntry/getItemEntry.ts:ENTRIES:WeakMap": 1,
+          "settle/utils/gates/getGateExpression.ts:GATE_EXPRESSIONS:WeakMap": 1,
+          "settle/utils/gates/getGateRegistry.ts:REGISTRIES:WeakMap": 1,
+          "settle/utils/write/staticSpec.ts:anonymous:Map": 2,
+          "settle/utils/write/staticSpec.ts:anonymous:WeakMap": 2,
+          "settle/utils/declarations/getDeclaredChildNames.ts:DECLARED_NAMES:WeakMap": 1,
+          "settle/utils/gates/flushPendingGateReads.ts:READ_PLANS:WeakMap": 1,
+          "settle/utils/compute/utils/getRecursiveRelativeSpan.ts:RELATIVE_SPANS:WeakMap": 1,
+          "settle/utils/compute/hasRecursiveExpansion.ts:CYCLIC_BLUEPRINTS:WeakMap": 1,
+          "settle/utils/compute/selectChildren.ts:STATIC_IDS:WeakMap": 1,
+          "settle/utils/compute/selectChildren.ts:STATIC_SHAPES:WeakMap": 1,
+          "settle/utils/gates/getGateBudgetCap.ts:INDICES:WeakMap": 1,
+          "settle/utils/gates/getGateBudgetCap.ts:HOST_CAPS:WeakMap": 1,
+          "settle/utils/compute/utils/hasIndependentLeafDefaults.ts:INDEPENDENT:WeakMap": 1,
+          "settle/utils/controls/getControlExpression.ts:CONTROL_EXPRESSIONS:WeakMap": 1,
+          "settle/derive/utils/rules/utils/getWatchPaths.ts:WATCH_PATHS:WeakMap": 1,
+          "settle/derive/utils/rules/getDeriveRuleTable.ts:TABLES:WeakMap": 1,
+          "settle/derive/utils/rules/getDeriveRuleTable.ts:byDeclaration:Map": 2,
+          "settle/derive/utils/edges/getDeriveRuleKey.ts:TARGET_IDS:WeakMap": 1,
+          "settle/utils/controls/getCommittedDeclarationKey.ts:KEYS:WeakMap": 1,
+          "settle/derive/utils/rank/getDeriveChildEntry.ts:CHILDREN:WeakMap": 1,
+          "settle/utils/context/getContextOwners.ts:OWNERS:WeakMap": 1,
+          "settle/utils/write/getDependencyIndex.ts:INDEXES:WeakMap": 1,
+          "settle/utils/compute/getVirtualReferenceIndex.ts:REFERENCES:WeakMap": 1,
+          "settle/utils/controls/getControlLayers.ts:DECLARATION_IDS:WeakMap": 1,
+          "settle/utils/commit/commitExitPolicyValues.ts:EXIT_EXPRESSIONS:WeakMap": 1,
+          "settle/utils/write/interpretSchemaNodeInput.ts:OBJECT_CHILDREN:WeakMap": 1,
+          "blueprint/blueprint.ts:declarationOwners:Map": 1,
+          "blueprint/blueprint.ts:templates:Map": 1,
+          "blueprint/blueprint.ts:constructing:Map": 1,
+          "blueprint/utils/analyze/readDiscriminatorBranches.ts:result:Map": 1365,
+          "blueprint/utils/types/resolveNodeStrategy.ts:children:Map": 341,
+          "blueprint/utils/effectiveSchema/utils/ensureEffectiveSchemaCache.ts:schemas:Map": 2730,
+          "blueprint/utils/analyze/populateNodeChildren.ts:properties:Map": 341,
+          "blueprint/utils/analyze/populateNodeChildren.ts:tuples:Map": 341,
+          "blueprint/utils/analyze/populateVirtualNodes.ts:groups:Map": 341,
+          "blueprint/utils/analyze/validateShape.ts:complete:Set": 1,
+          "blueprint/utils/analyze/validateShape.ts:active:Set": 1,
+          "blueprint/utils/analyze/compileBlueprintExpressions.ts:visited:Set": 1,
+          "settle/utils/write/getSettlementScratch.ts:anonymous:Map": 1,
+          "settle/utils/write/getSettlementScratch.ts:entered:Set": 1,
+          "settle/utils/write/getSettlementScratch.ts:revived:Set": 1,
+          "settle/utils/write/getSettlementScratch.ts:exited:Set": 1,
+          "settle/utils/write/getSettlementScratch.ts:pendingExits:Map": 1,
+          "settle/utils/write/getSettlementScratch.ts:perished:Set": 1,
+          "settle/utils/write/getSettlementScratch.ts:selectedDeclarationIds:Map": 1,
+          "settle/utils/write/getSettlementScratch.ts:writtenInputs:Map": 1,
+          "settle/utils/write/getSettlementScratch.ts:distributedInputs:Map": 1,
+          "settle/utils/write/getSettlementScratch.ts:wrongKindHosts:Set": 1,
+          "settle/utils/write/getSettlementScratch.ts:arrayCounts:Map": 1,
+          "settle/utils/write/getSettlementScratch.ts:filledNodes:Set": 1,
+          "settle/utils/write/getSettlementScratch.ts:latentAutomaticLog:Map": 1,
+          "settle/utils/write/getSettlementScratch.ts:dependencyOwnerPaths:Set": 1,
+          "settle/utils/write/getSettlementScratch.ts:shapeDirtyPaths:Set": 1,
+          "settle/utils/write/getSettlementScratch.ts:changedRaw:Set": 1,
+          "settle/utils/write/getSettlementScratch.ts:explicitRaw:Set": 1,
+          "settle/utils/write/getSettlementScratch.ts:changedNodes:Set": 1,
+          "settle/utils/write/getSettlementScratch.ts:stateDirtyNodes:Set": 1,
+          "settle/utils/write/getSettlementScratch.ts:originalSchemas:Map": 1,
+          "settle/utils/gates/getGateBudgetCap.ts:decisionsByGate:Map": 1,
+          "settle/utils/gates/getGateBudgetCap.ts:decisions:Set": 342,
+          "settle/utils/latent/getLatentPathIndex.ts:anonymous:Map": 1,
+          "settle/utils/write/DirtyPathSet.ts:linked:Set": 1,
+          "settle/utils/write/getDependencyIndex.ts:ownerPaths:Set": 1,
+          "settle/utils/write/getDependencyIndex.ts:children:Map": 1,
+          "settle/utils/write/registerRecalculation.ts:expanded:Set": 1,
+          "settle/utils/compute/computeNode.ts:seenGates:Set": 341,
+          "settle/utils/compute/dirtyChildren.ts:seen:Set": 682,
+          "settle/utils/compute/selectChildren.ts:seen:Set": 341,
+          "settle/utils/compute/hasRecursiveExpansion.ts:anonymous:Set": 2,
+          "settle/utils/write/DirtyPathSet.ts:anonymous:Map": 1705,
+          "settle/utils/transition/transitionSettlement.ts:anonymous:Set": 1,
+          "blueprint/utils/features/getFeatureNodeIndex/utils/buildFeatureNodeIndex.ts:stateKeyNodes:Set": 1,
+          "blueprint/utils/features/getFeatureNodeIndex/utils/buildFeatureNodeIndex.ts:stateKeyChildren:Map": 1,
+          "blueprint/utils/features/getFeatureNodeIndex/utils/buildFeatureNodeIndex.ts:watchNodes:Set": 1,
+          "blueprint/utils/features/getFeatureNodeIndex/utils/buildFeatureNodeIndex.ts:targets:Set": 1365,
+          "settle/utils/transition/finalizePerished.ts:resizedHosts:Map": 1,
+          "settle/utils/transition/finalizeExits.ts:affectedAncestors:Set": 1,
+          "settle/utils/commit/commitExitPolicyValues.ts:anonymous:Map": 1,
+          "settle/utils/commit/commitSettlement.ts:anonymous:Set": 1,
+          "settle/utils/commit/markCommitDeliveries.ts:automaticNodes:Set": 1,
+          "settle/utils/commit/markCommitDeliveries.ts:candidates:Set": 1,
+          "settle/utils/commit/commitGlobalState.ts:deltas:Map": 1,
+          "settle/utils/commit/commitGlobalState.ts:departing:Set": 1,
+          "settle/utils/commit/commitGlobalState.ts:nodes:Set": 1,
+          "settle/utils/commit/commitGlobalState.ts:visited:Set": 1,
+          "settle/utils/commit/markCommitDeliveries.ts:ordered:Set": 1,
+          "settle/utils/commit/markCommitDeliveries.ts:seenDeparting:Set": 1,
+          "settle/utils/commit/updateInactiveValuesMemo.ts:candidates:Map": 1,
+          "settle/utils/commit/updateInactiveValuesMemo.ts:chosen:Map": 1,
+          "settle/utils/commit/updateInactiveValuesMemo.ts:affected:Set": 1,
+          "settle/utils/commit/updateInactiveValuesMemo.ts:entriesByHost:Map": 1
+        },
+        "afterUpdate": {
+          "blueprint/utils/effectiveSchema/mergeEffectiveSchema.ts:DEFAULT_MEMO:WeakMap": 1,
+          "blueprint/utils/effectiveSchema/mergeEffectiveSchema.ts:DEFAULT_NO_ACTIVE:WeakMap": 1,
+          "blueprint/utils/features/getFeatureNodeIndex/getFeatureNodeIndex.ts:INDICES:WeakMap": 1,
+          "blueprint/utils/itemEntry/getItemEntry.ts:ENTRIES:WeakMap": 1,
+          "settle/utils/gates/getGateExpression.ts:GATE_EXPRESSIONS:WeakMap": 1,
+          "settle/utils/gates/getGateRegistry.ts:REGISTRIES:WeakMap": 1,
+          "settle/utils/write/staticSpec.ts:anonymous:Map": 2,
+          "settle/utils/write/staticSpec.ts:anonymous:WeakMap": 2,
+          "settle/utils/declarations/getDeclaredChildNames.ts:DECLARED_NAMES:WeakMap": 1,
+          "settle/utils/gates/flushPendingGateReads.ts:READ_PLANS:WeakMap": 1,
+          "settle/utils/compute/utils/getRecursiveRelativeSpan.ts:RELATIVE_SPANS:WeakMap": 1,
+          "settle/utils/compute/hasRecursiveExpansion.ts:CYCLIC_BLUEPRINTS:WeakMap": 1,
+          "settle/utils/compute/selectChildren.ts:STATIC_IDS:WeakMap": 1,
+          "settle/utils/compute/selectChildren.ts:STATIC_SHAPES:WeakMap": 1,
+          "settle/utils/gates/getGateBudgetCap.ts:INDICES:WeakMap": 1,
+          "settle/utils/gates/getGateBudgetCap.ts:HOST_CAPS:WeakMap": 1,
+          "settle/utils/compute/utils/hasIndependentLeafDefaults.ts:INDEPENDENT:WeakMap": 1,
+          "settle/utils/controls/getControlExpression.ts:CONTROL_EXPRESSIONS:WeakMap": 1,
+          "settle/derive/utils/rules/utils/getWatchPaths.ts:WATCH_PATHS:WeakMap": 1,
+          "settle/derive/utils/rules/getDeriveRuleTable.ts:TABLES:WeakMap": 1,
+          "settle/derive/utils/rules/getDeriveRuleTable.ts:byDeclaration:Map": 2,
+          "settle/derive/utils/edges/getDeriveRuleKey.ts:TARGET_IDS:WeakMap": 1,
+          "settle/utils/controls/getCommittedDeclarationKey.ts:KEYS:WeakMap": 1,
+          "settle/derive/utils/rank/getDeriveChildEntry.ts:CHILDREN:WeakMap": 1,
+          "settle/utils/context/getContextOwners.ts:OWNERS:WeakMap": 1,
+          "settle/utils/write/getDependencyIndex.ts:INDEXES:WeakMap": 1,
+          "settle/utils/compute/getVirtualReferenceIndex.ts:REFERENCES:WeakMap": 1,
+          "settle/utils/controls/getControlLayers.ts:DECLARATION_IDS:WeakMap": 1,
+          "settle/utils/commit/commitExitPolicyValues.ts:EXIT_EXPRESSIONS:WeakMap": 1,
+          "settle/utils/write/interpretSchemaNodeInput.ts:OBJECT_CHILDREN:WeakMap": 1,
+          "blueprint/blueprint.ts:declarationOwners:Map": 1,
+          "blueprint/blueprint.ts:templates:Map": 1,
+          "blueprint/blueprint.ts:constructing:Map": 1,
+          "blueprint/utils/analyze/readDiscriminatorBranches.ts:result:Map": 1365,
+          "blueprint/utils/types/resolveNodeStrategy.ts:children:Map": 341,
+          "blueprint/utils/effectiveSchema/utils/ensureEffectiveSchemaCache.ts:schemas:Map": 2730,
+          "blueprint/utils/analyze/populateNodeChildren.ts:properties:Map": 341,
+          "blueprint/utils/analyze/populateNodeChildren.ts:tuples:Map": 341,
+          "blueprint/utils/analyze/populateVirtualNodes.ts:groups:Map": 341,
+          "blueprint/utils/analyze/validateShape.ts:complete:Set": 1,
+          "blueprint/utils/analyze/validateShape.ts:active:Set": 1,
+          "blueprint/utils/analyze/compileBlueprintExpressions.ts:visited:Set": 1,
+          "settle/utils/write/getSettlementScratch.ts:anonymous:Map": 1,
+          "settle/utils/write/getSettlementScratch.ts:entered:Set": 1,
+          "settle/utils/write/getSettlementScratch.ts:revived:Set": 1,
+          "settle/utils/write/getSettlementScratch.ts:exited:Set": 1,
+          "settle/utils/write/getSettlementScratch.ts:pendingExits:Map": 1,
+          "settle/utils/write/getSettlementScratch.ts:perished:Set": 1,
+          "settle/utils/write/getSettlementScratch.ts:selectedDeclarationIds:Map": 1,
+          "settle/utils/write/getSettlementScratch.ts:writtenInputs:Map": 1,
+          "settle/utils/write/getSettlementScratch.ts:distributedInputs:Map": 1,
+          "settle/utils/write/getSettlementScratch.ts:wrongKindHosts:Set": 1,
+          "settle/utils/write/getSettlementScratch.ts:arrayCounts:Map": 1,
+          "settle/utils/write/getSettlementScratch.ts:filledNodes:Set": 1,
+          "settle/utils/write/getSettlementScratch.ts:latentAutomaticLog:Map": 1,
+          "settle/utils/write/getSettlementScratch.ts:dependencyOwnerPaths:Set": 1,
+          "settle/utils/write/getSettlementScratch.ts:shapeDirtyPaths:Set": 1,
+          "settle/utils/write/getSettlementScratch.ts:changedRaw:Set": 1,
+          "settle/utils/write/getSettlementScratch.ts:explicitRaw:Set": 1,
+          "settle/utils/write/getSettlementScratch.ts:changedNodes:Set": 1,
+          "settle/utils/write/getSettlementScratch.ts:stateDirtyNodes:Set": 1,
+          "settle/utils/write/getSettlementScratch.ts:originalSchemas:Map": 1,
+          "settle/utils/gates/getGateBudgetCap.ts:decisionsByGate:Map": 1,
+          "settle/utils/gates/getGateBudgetCap.ts:decisions:Set": 342,
+          "settle/utils/latent/getLatentPathIndex.ts:anonymous:Map": 11,
+          "settle/utils/write/DirtyPathSet.ts:linked:Set": 11,
+          "settle/utils/write/getDependencyIndex.ts:ownerPaths:Set": 1,
+          "settle/utils/write/getDependencyIndex.ts:children:Map": 1,
+          "settle/utils/write/registerRecalculation.ts:expanded:Set": 11,
+          "settle/utils/compute/computeNode.ts:seenGates:Set": 341,
+          "settle/utils/compute/dirtyChildren.ts:seen:Set": 732,
+          "settle/utils/compute/selectChildren.ts:seen:Set": 341,
+          "settle/utils/compute/hasRecursiveExpansion.ts:anonymous:Set": 2,
+          "settle/utils/write/DirtyPathSet.ts:anonymous:Map": 1805,
+          "settle/utils/transition/transitionSettlement.ts:anonymous:Set": 1,
+          "blueprint/utils/features/getFeatureNodeIndex/utils/buildFeatureNodeIndex.ts:stateKeyNodes:Set": 1,
+          "blueprint/utils/features/getFeatureNodeIndex/utils/buildFeatureNodeIndex.ts:stateKeyChildren:Map": 1,
+          "blueprint/utils/features/getFeatureNodeIndex/utils/buildFeatureNodeIndex.ts:watchNodes:Set": 1,
+          "blueprint/utils/features/getFeatureNodeIndex/utils/buildFeatureNodeIndex.ts:targets:Set": 1365,
+          "settle/utils/transition/finalizePerished.ts:resizedHosts:Map": 11,
+          "settle/utils/transition/finalizeExits.ts:affectedAncestors:Set": 11,
+          "settle/utils/commit/commitExitPolicyValues.ts:anonymous:Map": 1,
+          "settle/utils/commit/commitSettlement.ts:anonymous:Set": 1,
+          "settle/utils/commit/markCommitDeliveries.ts:automaticNodes:Set": 11,
+          "settle/utils/commit/markCommitDeliveries.ts:candidates:Set": 11,
+          "settle/utils/commit/commitGlobalState.ts:deltas:Map": 11,
+          "settle/utils/commit/commitGlobalState.ts:departing:Set": 11,
+          "settle/utils/commit/commitGlobalState.ts:nodes:Set": 11,
+          "settle/utils/commit/commitGlobalState.ts:visited:Set": 1,
+          "settle/utils/commit/markCommitDeliveries.ts:ordered:Set": 11,
+          "settle/utils/commit/markCommitDeliveries.ts:seenDeparting:Set": 11,
+          "settle/utils/commit/updateInactiveValuesMemo.ts:candidates:Map": 1,
+          "settle/utils/commit/updateInactiveValuesMemo.ts:chosen:Map": 1,
+          "settle/utils/commit/updateInactiveValuesMemo.ts:affected:Set": 1,
+          "settle/utils/commit/updateInactiveValuesMemo.ts:entriesByHost:Map": 1
+        },
+        "observationsSha256": "18a017c8ef099fe21bc5f4cb89e81bda1919e4afd4e0cc1c49e8065bb0d31261",
+        "methodology": "별도 새 프로세스의 메모리 번들에서만 TypeScript AST로 Map/Set/WeakMap/WeakSet 생성식을 감쌌습니다. 제품 소스·시간 표본에는 계측이 없습니다. 모듈 공통 캐시 생성도 포함하며 같은 파일·선언 이름·종류로 집계합니다.",
+        "environment": {
+          "node": "v26.10.0",
+          "bundleSha256": "9a8f065c06b360e90c49f90518b31499b3ac522ea6728e6bb502b51d7651b4e3",
+          "validation": "off"
+        }
+      },
+      "after": {
+        "fixture": "nested-d5-f4",
+        "variant": "W",
+        "revision": "working-tree",
+        "graph": {
+          "nodes": 1365,
+          "fragments": 1365,
+          "declarations": 1365,
+          "expressions": 0,
+          "dependencyPaths": 0
+        },
+        "capabilities": {
+          "branchless": true,
+          "hasExpressions": false,
+          "hasDerive": false,
+          "hasWatch": false,
+          "hasState": false,
+          "hasDependencies": false
+        },
+        "afterMount": {
+          "blueprint/utils/effectiveSchema/mergeEffectiveSchema.ts:DEFAULT_MEMO:WeakMap": 1,
+          "blueprint/utils/effectiveSchema/mergeEffectiveSchema.ts:DEFAULT_NO_ACTIVE:WeakMap": 1,
+          "blueprint/utils/features/getFeatureNodeIndex/getFeatureNodeIndex.ts:INDICES:WeakMap": 1,
+          "blueprint/utils/itemEntry/getItemEntry.ts:ENTRIES:WeakMap": 1,
+          "settle/utils/gates/getGateExpression.ts:GATE_EXPRESSIONS:WeakMap": 1,
+          "settle/utils/gates/getGateRegistry.ts:REGISTRIES:WeakMap": 1,
+          "settle/utils/write/staticSpec.ts:anonymous:Map": 2,
+          "settle/utils/write/staticSpec.ts:anonymous:WeakMap": 2,
+          "settle/utils/declarations/getDeclaredChildNames.ts:DECLARED_NAMES:WeakMap": 1,
+          "settle/utils/gates/flushPendingGateReads.ts:READ_PLANS:WeakMap": 1,
+          "settle/utils/compute/utils/getRecursiveRelativeSpan.ts:RELATIVE_SPANS:WeakMap": 1,
+          "settle/utils/compute/hasRecursiveExpansion.ts:CYCLIC_BLUEPRINTS:WeakMap": 1,
+          "settle/utils/compute/selectChildren.ts:STATIC_IDS:WeakMap": 1,
+          "settle/utils/compute/selectChildren.ts:STATIC_SHAPES:WeakMap": 1,
+          "settle/utils/gates/getGateBudgetCap.ts:INDICES:WeakMap": 1,
+          "settle/utils/gates/getGateBudgetCap.ts:HOST_CAPS:WeakMap": 1,
+          "settle/utils/compute/utils/hasIndependentLeafDefaults.ts:INDEPENDENT:WeakMap": 1,
+          "settle/utils/controls/getControlExpression.ts:CONTROL_EXPRESSIONS:WeakMap": 1,
+          "settle/derive/utils/rules/utils/getWatchPaths.ts:WATCH_PATHS:WeakMap": 1,
+          "settle/derive/utils/rules/getDeriveRuleTable.ts:TABLES:WeakMap": 1,
+          "settle/derive/utils/edges/getDeriveRuleKey.ts:TARGET_IDS:WeakMap": 1,
+          "settle/utils/controls/getCommittedDeclarationKey.ts:KEYS:WeakMap": 1,
+          "settle/derive/utils/rank/getDeriveChildEntry.ts:CHILDREN:WeakMap": 1,
+          "settle/utils/context/getContextOwners.ts:OWNERS:WeakMap": 1,
+          "settle/utils/write/getDependencyIndex.ts:INDEXES:WeakMap": 1,
+          "settle/utils/compute/getVirtualReferenceIndex.ts:REFERENCES:WeakMap": 1,
+          "settle/utils/controls/getControlLayers.ts:DECLARATION_IDS:WeakMap": 1,
+          "settle/utils/commit/commitExitPolicyValues.ts:EXIT_EXPRESSIONS:WeakMap": 1,
+          "settle/utils/write/interpretSchemaNodeInput.ts:OBJECT_CHILDREN:WeakMap": 1,
+          "blueprint/blueprint.ts:templates:Map": 1,
+          "blueprint/blueprint.ts:constructing:Map": 1,
+          "blueprint/utils/types/resolveNodeStrategy.ts:children:Map": 341,
+          "blueprint/utils/effectiveSchema/utils/ensureEffectiveSchemaCache.ts:schemas:Map": 2730,
+          "blueprint/utils/analyze/populateNodeChildren.ts:properties:Map": 341,
+          "blueprint/utils/analyze/populateNodeChildren.ts:tuples:Map": 341,
+          "blueprint/utils/analyze/populateVirtualNodes.ts:groups:Map": 341,
+          "blueprint/utils/analyze/validateShape.ts:complete:Set": 1,
+          "blueprint/utils/analyze/validateShape.ts:active:Set": 1,
+          "settle/utils/write/getSettlementScratch.ts:anonymous:Map": 1,
+          "settle/utils/write/getSettlementScratch.ts:entered:Set": 1,
+          "settle/utils/write/getSettlementScratch.ts:revived:Set": 1,
+          "settle/utils/write/getSettlementScratch.ts:exited:Set": 1,
+          "settle/utils/write/getSettlementScratch.ts:pendingExits:Map": 1,
+          "settle/utils/write/getSettlementScratch.ts:perished:Set": 1,
+          "settle/utils/write/getSettlementScratch.ts:selectedDeclarationIds:Map": 1,
+          "settle/utils/write/getSettlementScratch.ts:writtenInputs:Map": 1,
+          "settle/utils/write/getSettlementScratch.ts:distributedInputs:Map": 1,
+          "settle/utils/write/getSettlementScratch.ts:wrongKindHosts:Set": 1,
+          "settle/utils/write/getSettlementScratch.ts:arrayCounts:Map": 1,
+          "settle/utils/write/getSettlementScratch.ts:filledNodes:Set": 1,
+          "settle/utils/write/getSettlementScratch.ts:latentAutomaticLog:Map": 1,
+          "settle/utils/write/getSettlementScratch.ts:dependencyOwnerPaths:Set": 1,
+          "settle/utils/write/getSettlementScratch.ts:shapeDirtyPaths:Set": 1,
+          "settle/utils/write/getSettlementScratch.ts:changedRaw:Set": 1,
+          "settle/utils/write/getSettlementScratch.ts:explicitRaw:Set": 1,
+          "settle/utils/write/getSettlementScratch.ts:changedNodes:Set": 1,
+          "settle/utils/write/getSettlementScratch.ts:stateDirtyNodes:Set": 1,
+          "settle/utils/write/getSettlementScratch.ts:originalSchemas:Map": 1,
+          "settle/utils/latent/getLatentPathIndex.ts:anonymous:Map": 1,
+          "settle/utils/write/DirtyPathSet.ts:linked:Set": 1,
+          "settle/utils/write/registerRecalculation.ts:expanded:Set": 1,
+          "settle/utils/compute/computeNode.ts:seenGates:Set": 341,
+          "settle/utils/compute/dirtyChildren.ts:seen:Set": 682,
+          "settle/utils/compute/selectChildren.ts:seen:Set": 341,
+          "settle/utils/compute/hasRecursiveExpansion.ts:anonymous:Set": 2,
+          "settle/utils/write/DirtyPathSet.ts:anonymous:Map": 1705,
+          "settle/utils/transition/transitionSettlement.ts:anonymous:Set": 1,
+          "settle/utils/transition/finalizePerished.ts:resizedHosts:Map": 1,
+          "settle/utils/transition/finalizeExits.ts:affectedAncestors:Set": 1,
+          "settle/utils/commit/commitExitPolicyValues.ts:anonymous:Map": 1,
+          "settle/utils/commit/commitSettlement.ts:anonymous:Set": 1,
+          "settle/utils/commit/markCommitDeliveries.ts:automaticNodes:Set": 1,
+          "settle/utils/commit/markCommitDeliveries.ts:candidates:Set": 1,
+          "settle/utils/commit/commitGlobalState.ts:deltas:Map": 1,
+          "settle/utils/commit/commitGlobalState.ts:departing:Set": 1,
+          "settle/utils/commit/commitGlobalState.ts:nodes:Set": 1,
+          "settle/utils/commit/commitGlobalState.ts:visited:Set": 1,
+          "settle/utils/commit/markCommitDeliveries.ts:ordered:Set": 1,
+          "settle/utils/commit/markCommitDeliveries.ts:seenDeparting:Set": 1,
+          "settle/utils/commit/updateInactiveValuesMemo.ts:candidates:Map": 1,
+          "settle/utils/commit/updateInactiveValuesMemo.ts:chosen:Map": 1,
+          "settle/utils/commit/updateInactiveValuesMemo.ts:affected:Set": 1,
+          "settle/utils/commit/updateInactiveValuesMemo.ts:entriesByHost:Map": 1
+        },
+        "afterUpdate": {
+          "blueprint/utils/effectiveSchema/mergeEffectiveSchema.ts:DEFAULT_MEMO:WeakMap": 1,
+          "blueprint/utils/effectiveSchema/mergeEffectiveSchema.ts:DEFAULT_NO_ACTIVE:WeakMap": 1,
+          "blueprint/utils/features/getFeatureNodeIndex/getFeatureNodeIndex.ts:INDICES:WeakMap": 1,
+          "blueprint/utils/itemEntry/getItemEntry.ts:ENTRIES:WeakMap": 1,
+          "settle/utils/gates/getGateExpression.ts:GATE_EXPRESSIONS:WeakMap": 1,
+          "settle/utils/gates/getGateRegistry.ts:REGISTRIES:WeakMap": 1,
+          "settle/utils/write/staticSpec.ts:anonymous:Map": 2,
+          "settle/utils/write/staticSpec.ts:anonymous:WeakMap": 2,
+          "settle/utils/declarations/getDeclaredChildNames.ts:DECLARED_NAMES:WeakMap": 1,
+          "settle/utils/gates/flushPendingGateReads.ts:READ_PLANS:WeakMap": 1,
+          "settle/utils/compute/utils/getRecursiveRelativeSpan.ts:RELATIVE_SPANS:WeakMap": 1,
+          "settle/utils/compute/hasRecursiveExpansion.ts:CYCLIC_BLUEPRINTS:WeakMap": 1,
+          "settle/utils/compute/selectChildren.ts:STATIC_IDS:WeakMap": 1,
+          "settle/utils/compute/selectChildren.ts:STATIC_SHAPES:WeakMap": 1,
+          "settle/utils/gates/getGateBudgetCap.ts:INDICES:WeakMap": 1,
+          "settle/utils/gates/getGateBudgetCap.ts:HOST_CAPS:WeakMap": 1,
+          "settle/utils/compute/utils/hasIndependentLeafDefaults.ts:INDEPENDENT:WeakMap": 1,
+          "settle/utils/controls/getControlExpression.ts:CONTROL_EXPRESSIONS:WeakMap": 1,
+          "settle/derive/utils/rules/utils/getWatchPaths.ts:WATCH_PATHS:WeakMap": 1,
+          "settle/derive/utils/rules/getDeriveRuleTable.ts:TABLES:WeakMap": 1,
+          "settle/derive/utils/edges/getDeriveRuleKey.ts:TARGET_IDS:WeakMap": 1,
+          "settle/utils/controls/getCommittedDeclarationKey.ts:KEYS:WeakMap": 1,
+          "settle/derive/utils/rank/getDeriveChildEntry.ts:CHILDREN:WeakMap": 1,
+          "settle/utils/context/getContextOwners.ts:OWNERS:WeakMap": 1,
+          "settle/utils/write/getDependencyIndex.ts:INDEXES:WeakMap": 1,
+          "settle/utils/compute/getVirtualReferenceIndex.ts:REFERENCES:WeakMap": 1,
+          "settle/utils/controls/getControlLayers.ts:DECLARATION_IDS:WeakMap": 1,
+          "settle/utils/commit/commitExitPolicyValues.ts:EXIT_EXPRESSIONS:WeakMap": 1,
+          "settle/utils/write/interpretSchemaNodeInput.ts:OBJECT_CHILDREN:WeakMap": 1,
+          "blueprint/blueprint.ts:templates:Map": 1,
+          "blueprint/blueprint.ts:constructing:Map": 1,
+          "blueprint/utils/types/resolveNodeStrategy.ts:children:Map": 341,
+          "blueprint/utils/effectiveSchema/utils/ensureEffectiveSchemaCache.ts:schemas:Map": 2730,
+          "blueprint/utils/analyze/populateNodeChildren.ts:properties:Map": 341,
+          "blueprint/utils/analyze/populateNodeChildren.ts:tuples:Map": 341,
+          "blueprint/utils/analyze/populateVirtualNodes.ts:groups:Map": 341,
+          "blueprint/utils/analyze/validateShape.ts:complete:Set": 1,
+          "blueprint/utils/analyze/validateShape.ts:active:Set": 1,
+          "settle/utils/write/getSettlementScratch.ts:anonymous:Map": 1,
+          "settle/utils/write/getSettlementScratch.ts:entered:Set": 1,
+          "settle/utils/write/getSettlementScratch.ts:revived:Set": 1,
+          "settle/utils/write/getSettlementScratch.ts:exited:Set": 1,
+          "settle/utils/write/getSettlementScratch.ts:pendingExits:Map": 1,
+          "settle/utils/write/getSettlementScratch.ts:perished:Set": 1,
+          "settle/utils/write/getSettlementScratch.ts:selectedDeclarationIds:Map": 1,
+          "settle/utils/write/getSettlementScratch.ts:writtenInputs:Map": 1,
+          "settle/utils/write/getSettlementScratch.ts:distributedInputs:Map": 1,
+          "settle/utils/write/getSettlementScratch.ts:wrongKindHosts:Set": 1,
+          "settle/utils/write/getSettlementScratch.ts:arrayCounts:Map": 1,
+          "settle/utils/write/getSettlementScratch.ts:filledNodes:Set": 1,
+          "settle/utils/write/getSettlementScratch.ts:latentAutomaticLog:Map": 1,
+          "settle/utils/write/getSettlementScratch.ts:dependencyOwnerPaths:Set": 1,
+          "settle/utils/write/getSettlementScratch.ts:shapeDirtyPaths:Set": 1,
+          "settle/utils/write/getSettlementScratch.ts:changedRaw:Set": 1,
+          "settle/utils/write/getSettlementScratch.ts:explicitRaw:Set": 1,
+          "settle/utils/write/getSettlementScratch.ts:changedNodes:Set": 1,
+          "settle/utils/write/getSettlementScratch.ts:stateDirtyNodes:Set": 1,
+          "settle/utils/write/getSettlementScratch.ts:originalSchemas:Map": 1,
+          "settle/utils/latent/getLatentPathIndex.ts:anonymous:Map": 11,
+          "settle/utils/write/DirtyPathSet.ts:linked:Set": 11,
+          "settle/utils/write/registerRecalculation.ts:expanded:Set": 11,
+          "settle/utils/compute/computeNode.ts:seenGates:Set": 341,
+          "settle/utils/compute/dirtyChildren.ts:seen:Set": 732,
+          "settle/utils/compute/selectChildren.ts:seen:Set": 341,
+          "settle/utils/compute/hasRecursiveExpansion.ts:anonymous:Set": 2,
+          "settle/utils/write/DirtyPathSet.ts:anonymous:Map": 1805,
+          "settle/utils/transition/transitionSettlement.ts:anonymous:Set": 1,
+          "settle/utils/transition/finalizePerished.ts:resizedHosts:Map": 11,
+          "settle/utils/transition/finalizeExits.ts:affectedAncestors:Set": 11,
+          "settle/utils/commit/commitExitPolicyValues.ts:anonymous:Map": 1,
+          "settle/utils/commit/commitSettlement.ts:anonymous:Set": 1,
+          "settle/utils/commit/markCommitDeliveries.ts:automaticNodes:Set": 11,
+          "settle/utils/commit/markCommitDeliveries.ts:candidates:Set": 11,
+          "settle/utils/commit/commitGlobalState.ts:deltas:Map": 11,
+          "settle/utils/commit/commitGlobalState.ts:departing:Set": 11,
+          "settle/utils/commit/commitGlobalState.ts:nodes:Set": 11,
+          "settle/utils/commit/commitGlobalState.ts:visited:Set": 1,
+          "settle/utils/commit/markCommitDeliveries.ts:ordered:Set": 11,
+          "settle/utils/commit/markCommitDeliveries.ts:seenDeparting:Set": 11,
+          "settle/utils/commit/updateInactiveValuesMemo.ts:candidates:Map": 1,
+          "settle/utils/commit/updateInactiveValuesMemo.ts:chosen:Map": 1,
+          "settle/utils/commit/updateInactiveValuesMemo.ts:affected:Set": 1,
+          "settle/utils/commit/updateInactiveValuesMemo.ts:entriesByHost:Map": 1
+        },
+        "observationsSha256": "18a017c8ef099fe21bc5f4cb89e81bda1919e4afd4e0cc1c49e8065bb0d31261",
+        "methodology": "별도 새 프로세스의 메모리 번들에서만 TypeScript AST로 Map/Set/WeakMap/WeakSet 생성식을 감쌌습니다. 제품 소스·시간 표본에는 계측이 없습니다. 모듈 공통 캐시 생성도 포함하며 같은 파일·선언 이름·종류로 집계합니다.",
+        "environment": {
+          "node": "v26.10.0",
+          "bundleSha256": "8f533566a7033d77e95c064cb3286c681e89b1e6a174a729b7afe6e729b00359",
+          "validation": "off"
+        }
+      }
+    }
+  ],
+  "speedAndMemory": "선언 수집에 여섯 불리언 capability를 결합하고 청사진당 고정 기록 O(1)을 추가합니다. 정적 그래프·충돌·형상·경고 검사는 유지하며, 기능 부재가 별도로 증명된 경우에만 동적 선언 소유자 Map·조건 읽기 계획·게이트 예산/호스트/식 색인·역의존 trie·빈 식/기능/파생 표의 O(S) 수집과 할당을 제거합니다. 실제 기능이 있으면 기존 색인과 의존 정보를 보유합니다. 빈 조회 결과에는 변경 메서드가 없고 반복 읽기 참조가 같습니다. heap byte는 미측정이며 구조 할당 수를 별도 진단 실행에서 기록합니다.",
+  "sessionRange": {
+    "startedAt": "2026-10-05T11:02:36.257Z",
+    "endedAt": "2026-10-05T11:04:29.316Z",
+    "order": ["H→W", "W→H", "H→W"],
+    "processes": 30,
+    "structureProcesses": 4,
+    "sequential": true
+  },
+  "verification": {
+    "vitest": {
+      "command": "npx vitest run --project unit --project render --project react18 --reporter=dot",
+      "exitCode": 1,
+      "passedFiles": 411,
+      "failedFiles": 2,
+      "passedTests": 3120,
+      "failedTests": 4,
+      "todoTests": 1,
+      "durationSeconds": 66.43,
+      "allowedFailuresOnly": true,
+      "failures": [
+        {"project": "render", "contract": "EVENT-070", "case": "useLayoutEffect"},
+        {"project": "render", "contract": "EVENT-070", "case": "useEffect"},
+        {"project": "react18", "contract": "EVENT-070", "case": "useLayoutEffect"},
+        {"project": "react18", "contract": "EVENT-070", "case": "useEffect"}
+      ]
+    },
+    "tsc": {"command": "npx tsc --noEmit --composite false --rootDir . -p tsconfig.json", "exitCode": 0},
+    "eslint": {"command": "npx eslint \"src/**/*.{ts,tsx}\"", "exitCode": 0},
+    "legacyIsolation": {"command": "node architecture/verification/07-switch/tools/check-legacy-isolation.mjs", "exitCode": 0, "checkedFiles": 1591},
+    "branchlessProof": {"preFixFailures": 5, "reachPlaces": ["$ref", "allOf", "items", "prefixItems", "additionalItems", "inline", "virtual"], "branchMechanisms": ["oneOf", "anyOf", "if", "discriminator", "controls.active"], "childrenActive": true},
+    "differential": {"bfFixtures": "전체 픽스처와 모든 상호작용", "blueprintCorpusSchemas": 14, "staticDiagnosticSchemas": 45, "genericAnalysis": "시험에서 수집 capability를 범용 경로로 고정", "observablesEqual": true, "newTests": 10},
+    "blankDeriveDeclaration": "규칙이 비어 있어도 hasDerive가 참이면 빈 표를 청사진 사이에서 공유하지 않음; 수정 전 실패·수정 후 통과",
+    "installs": 0,
+    "gitWrites": 0,
+    "otherAgentRuns": 0
+  },
+  "oneOfRegression": "합산 중앙값 -0.21%로 중앙값 회귀 없음. p99 +0.12%, 회차별 +1.22%/-1.68%/-0.20%이며 작은 증감을 확정적인 개선으로 해석하지 않음.",
+  "openQuestions": [],
+  "remainingGate": "85C-01의 같은 동기 범위 역사적 0.16.0 수치 조건에서는 branchless 일곱 행 중 array update·derived mount만 충족. 나머지 미달과 G26은 유지하며 공식 active 게이트를 닫지 않음."
+}

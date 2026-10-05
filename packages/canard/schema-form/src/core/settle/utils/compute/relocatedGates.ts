@@ -9,4 +9,4 @@ import type { GateOccurrence } from '../gates/type';
  */
 export const relocatedGates = <Self extends SchemaNodeRecord<Self>>(
   node: Self,
-): GateOccurrence[] => getGateRegistry(node.runtime).relocated(node.path);
+): readonly GateOccurrence[] => getGateRegistry(node.runtime).relocated(node.path);

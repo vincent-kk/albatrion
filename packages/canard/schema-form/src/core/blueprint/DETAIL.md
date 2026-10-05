@@ -2,6 +2,9 @@
 
 ## Requirements
 
+- 89C-03에 따라 분기 없음은 선언 수집이 실제 도달한 모든 작성 위치에서 `oneOf`·`anyOf`·`if`·discriminator·`controls.active`가 없다는 증명입니다. 참조 대상, 무게이트 allOf, items·prefixItems·옛 additionalItems, 인라인 자식 및 가상 선언을 같은 수집 과정에서 판정합니다. 터미널 아래 무시되는 데이터는 기존 경고 범위대로 유지합니다. BLUEPRINT-002의 선언·Fragment 그래프, BLUEPRINT-001·012·044·030의 정적 충돌·S0–S6·터미널 경고·재귀 판정·작성 순서·판정 함수 메모는 분기 유무와 무관하게 유지합니다.
+- 분기 없음과 식·watch·state·파생 규칙 없음은 각각 독립된 capability입니다. 기능이 없을 때만 불변 빈 결과를 공유하며, 기능이 있으면 식 컴파일·기능 색인·SETTLE-017 역의존 표를 유지합니다. 조건 평가용 자료·동적 선언 조합 자료·gate-host 색인·게이트 역의존 trie·빈 registry만 생략합니다. 생성 시 분석 완료, 청사진 캐시 키와 if 게이트의 작성 위치당 단일 컴파일은 유지합니다. 수집 중 capability 결합은 O(S) 순회에 고정 검사만 더하고 청사진당 O(1) 기록을 보유합니다. 기능 없는 경우 후속 O(S) 분석과 O(S) 색인 할당을 제거하며, 기능 있는 경우 기존 시간·메모리 차수는 유지합니다. 실제 시간과 구조 수는 93라운드 짝 측정으로 기록합니다.
+
 - 원장은 BLUEPRINT·FRAGMENT·SCHEMA 영역 및 관련 CONTROLS·ERROR 보충을 정본으로 삼습니다. 정적 분석은 노드 생성·값 판정·게이트 평가를 하지 않습니다.
 - 의존 방향은 `blueprint < record < {종류 동작, navigation} < settle < SchemaNode`입니다. 청사진은 뒤 fractal을 가져오지 않고 그들이 소비할 선언·식·평가 자리만 내며, 식 컴파일러 organ의 기존 경계 예외는 아래에 둡니다(NODE-016, SETTLE-045).
 - 작성 위치별 분석은 한 번이며 참조 그래프는 유한합니다. 객체 프로퍼티만으로 이어지는 무게이트·비터미널 순환은 오류이고, nullable은 순환을 끊지 않습니다. 배열 아이템·게이트·터미널은 형상 확장의 경계입니다.
@@ -38,6 +41,18 @@
 - 터미널 하위 예약 키 경고는 터미널 노드의 schemaPath별 한 기록에 keys·paths를 모읍니다. 같은 코드와 schemaPath의 중복을 억제하며 인라인 하위만 조사하고 참조 대상은 따라가지 않습니다(BLUEPRINT-044).
 
 ## Acceptance Criteria
+
+### branchless-proof — 도달한 모든 선언의 분기 부재
+
+- 참조 대상·allOf·items·prefixItems·옛 additionalItems·인라인 자식·가상 선언 및 children 제어에 숨은 분기를 모두 보수적으로 판정합니다. 미사용 정의와 터미널 아래는 기존 선언 수집 및 경고 정책을 따릅니다.
+
+### branchless-equivalence — 정적 계약과 관측 동등성
+
+- BF 픽스처와 기존 청사진 시험 스키마에서 최적화 분석과 범용 분석의 선언·Fragment·노드 트리·값·오류·경고·진단이 같습니다. S0–S6, 정적 충돌, 터미널 하위 경고, 재귀 판단, 작성 순서 및 판정 함수 identity 메모의 기존 기대값은 바꾸지 않습니다.
+
+### branchless-features — 독립 기능 증명과 색인 보존
+
+- 분기 없는 식·derive·watch·state 스키마는 각 기능 색인과 역의존 정보를 유지하며 쓰기 후 값·상태·감시가 같습니다. 기능 없는 청사진의 빈 조회 결과는 변경할 수 없고 반복 조회 참조가 같습니다.
 
 ### type-syntax — 명시한 형과 전략
 
@@ -114,4 +129,4 @@
 
 ## Last Updated
 
-계약 기준: REACT-003·004, 69C-04.
+계약 기준: REACT-003·004, 69C-04, 89C-03.

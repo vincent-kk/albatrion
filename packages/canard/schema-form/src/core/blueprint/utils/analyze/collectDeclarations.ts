@@ -4,10 +4,16 @@ import type { BlueprintGate, PropertyDeclaration } from '../../type';
 import { validateControlGroups } from '../diagnostics/validateControlGroups';
 import { readAllowedTypes } from '../types/readAllowedTypes';
 import { createBlueprintGate } from './createBlueprintGate';
+import { collectSchemaCapabilities } from './collectSchemaCapabilities';
 import { readDiscriminatorBranches } from './readDiscriminatorBranches';
 import { readSchemaObject } from './readSchemaObject';
 import { resolveReference } from './resolveReference';
 import type { AnalysisContext, SchemaInput } from './type';
+
+/** Keyword ranks form the authored total order, independent of object insertion order. */
+const FRAGMENT_KEYWORDS = [
+  ['allOf', 1], ['then', 2], ['else', 2], ['oneOf', 3], ['anyOf', 4],
+] as const;
 
 /**
  * Expand one slot's fragments in keyword order without expanding child nodes.
@@ -34,6 +40,9 @@ export const collectDeclarations = (
     input.isFragment ?? false,
   );
   readAllowedTypes(input.schema, input.schemaPath, context.options);
+  collectSchemaCapabilities(context, input.schema);
+  if (input.gates.length || input.context === 'declaration')
+    context.capabilities.branchless = false;
   const gates: BlueprintGate[] = [...input.gates];
   if (
     schema.controls?.active !== undefined &&
@@ -86,13 +95,14 @@ export const collectDeclarations = (
   if (input.inherited) fragment.inheritedOverlays.push(declaration.id);
   const result = [declaration];
   const owner = ownerId ?? declaration.id;
-  context.declarationOwners.set(declaration.id, owner);
-  const discriminators = readDiscriminatorBranches(
+  if (!context.capabilities.branchless)
+    (context.declarationOwners ??= new Map()).set(declaration.id, owner);
+  const discriminators = schema.controls?.discriminator === undefined ? undefined : readDiscriminatorBranches(
     context,
     input.schema,
     input.schemaPath,
   );
-  if (discriminators.size) {
+  if (discriminators?.size) {
     context.discriminatorBranches ??= new Set<string>();
     for (const branchPath of discriminators.keys())
       context.discriminatorBranches.add(branchPath);
@@ -117,13 +127,8 @@ export const collectDeclarations = (
       ),
     );
   }
-  for (const [keyword, rank] of [
-    ['allOf', 1],
-    ['then', 2],
-    ['else', 2],
-    ['oneOf', 3],
-    ['anyOf', 4],
-  ] as const) {
+  for (let keywordIndex = 0; keywordIndex < FRAGMENT_KEYWORDS.length; keywordIndex++) {
+    const [keyword, rank] = FRAGMENT_KEYWORDS[keywordIndex];
     if ((keyword === 'then' || keyword === 'else') && schema.if === undefined)
       continue;
     const values =
@@ -131,11 +136,12 @@ export const collectDeclarations = (
         ? [schema[keyword]]
         : schema[keyword];
     if (!isArray(values)) continue;
-    values.forEach((child, index) => {
-      if (child === undefined || child === false) return;
+    for (let index = 0; index < values.length; index++) {
+      const child = values[index];
+      if (child === undefined || child === false) continue;
       const childPath = `${input.schemaPath}/${keyword}${keyword === 'then' || keyword === 'else' ? '' : `/${index}`}`;
       const nestedGates = [...gates];
-      const discriminator = discriminators.get(childPath);
+      const discriminator = discriminators?.get(childPath);
       if (discriminator)
         nestedGates.push(
           createBlueprintGate({
@@ -180,7 +186,7 @@ export const collectDeclarations = (
           owner,
         ),
       );
-    });
+    }
   }
   return result;
 };

@@ -7,6 +7,7 @@ import { createRequire } from 'node:module';
 import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { instrumentRound93Structures } from './instrument-round-93-structures.mjs';
 
 const verification = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const pkg = path.resolve(verification, '../../..');
@@ -16,8 +17,11 @@ const fixtures = ['flat-500', 'nested-d5-f4', 'array-1000', 'computed-visible-de
 const warmup = 20;
 const samples = 101;
 const paired = process.argv.includes('--paired');
+const round93 = process.argv.includes('--round93');
+const structures = process.argv.includes('--structures');
 const variant = paired ? process.argv[5] : 'W';
-const revision = variant === 'H' ? 'afd8ade3d' : undefined;
+const revision = variant === 'H' ? (round93 ? 'fba01cbea' : 'afd8ade3d') : undefined;
+const pairedRound = round93 ? 93 : 92;
 
 /** Persist timing-only samples or one aggregate report, below the 5 MB ceiling. */
 function save(name, value) {
@@ -46,7 +50,7 @@ if (process.argv[2] === '--summarize-paired') {
       const order = run === 2 ? ['W', 'H'] : ['H', 'W'];
       let previous;
       for (const side of order) {
-        const stem = `round-92-paired-${fixture}-r${run}-${side}`;
+        const stem = `round-${pairedRound}-paired-${fixture}-r${run}-${side}`;
         const timings = JSON.parse(fs.readFileSync(path.join(verification, `${stem}-timings.json`), 'utf8'));
         const summary = JSON.parse(fs.readFileSync(path.join(verification, `${stem}-summary.json`), 'utf8'));
         assert.equal(summary.variant, side);
@@ -71,19 +75,59 @@ if (process.argv[2] === '--summarize-paired') {
       const after = metric(combined.W[mode]);
       assert.equal(before.sampleCount, 303);
       assert.equal(after.sampleCount, 303);
-      rows.push({ fixture, mode, before, after,
+      const pairs = [];
+      for (let run = 1; run <= 3; run++) {
+        const head = runs.find(item => item.fixture === fixture && item.run === run && item.variant === 'H');
+        const working = runs.find(item => item.fixture === fixture && item.run === run && item.variant === 'W');
+        pairs.push({ run, order: run === 2 ? 'W→H' : 'H→W',
+          before: head[mode], after: working[mode],
+          changePercent: (working[mode].median / head[mode].median - 1) * 100 });
+      }
+      rows.push({ fixture, mode, before, after, pairs,
         changePercent: (after.median / before.median - 1) * 100 });
     }
   }
   const report = {
     sourceCommit: execFileSync('git', ['rev-parse', 'HEAD'], { cwd: repo, encoding: 'utf8' }).trim(),
-    sourceState: '92C-01–03 미커밋 범용 정착 수정본; 다음 변경의 기준선은 rows[].after',
+    sourceState: round93 ? '89C-03 승인 설계 (ii) 분기 없는 청사진; (i) 정적 첫 로드는 구현하지 않음' :
+      '92C-01–03 미커밋 범용 정착 수정본; 다음 변경의 기준선은 rows[].after',
     environment: runs[0].environment,
-    methodology: '동일 세션의 HEAD afd8ade3d(H)와 작업트리(W). 픽스처마다 H→W, W→H, H→W, 각 판·회차 새 프로세스에서 예열 20·표본 101, 303 원표본의 nearest-rank median/p99. validation off, 명시적 GC, 메모리 번들 뒤 esbuild 종료. 다른 명령·테스트·에이전트와 병렬 실행 없음.',
+    methodology: `동일 세션의 HEAD ${round93 ? 'fba01cbea' : 'afd8ade3d'}(H)와 작업트리(W). 픽스처마다 H→W, W→H, H→W, 각 판·회차 새 프로세스에서 예열 20·표본 101, 303 원표본의 nearest-rank median/p99. validation off, 명시적 GC, 메모리 번들 뒤 esbuild 종료. 다른 명령·테스트·에이전트와 병렬 실행 없음.`,
     limits: '운영체제·GUI 및 상주 도구 서비스는 중지하지 않았습니다. heap byte는 미측정입니다. 작은 차이는 이 측정만으로 변경에 귀속하지 않습니다.',
     rows, runs,
   };
-  save('round-92-baseline-summary.json', report);
+  if (round93) {
+    const synchronousOld = { 'flat-500': [2.5434, 0.1114], 'nested-d5-f4': [4.9585],
+      'array-1000': [12.1019, 0.1781], 'computed-visible-derived': [0.3058, 0.0399],
+      'oneOf-20': [0.5308, 0.0266] };
+    const activeOld = { 'flat-500': [4.6643, 2.3811], 'nested-d5-f4': [11.3944],
+      'array-1000': [29.8274, 0.4465], 'computed-visible-derived': [0.3297, 0.1110],
+      'oneOf-20': [0.9584, 0.2247] };
+    for (const row of rows) {
+      const position = row.mode === 'mount' ? 0 : 1;
+      const oldMedian = synchronousOld[row.fixture][position];
+      row.gate85C01 = { oldVersion: '0.16.0', oldMedian, ceiling: oldMedian * 1.5,
+        ratio: row.after.median / oldMedian,
+        verdict: row.after.median <= oldMedian * 1.5 ? '충족' : '미달',
+        source: 'remeasure-86c02.md의 코어·무계측 synchronous 대조(비동기 정착 제외), validation off',
+        limitation: '기존 old는 Node v24.20.0이며 이번 호스트와 시점이 다릅니다. 공식 active 게이트를 닫는 근거가 아닌 동일 동기 범위의 1.5배 수치 판정입니다.' };
+      row.activeOldReference = { oldMedian: activeOld[row.fixture][position],
+        ratio: row.after.median / activeOld[row.fixture][position],
+        note: '배타 active의 비동기 정착·계측 범위가 달라 이 동기 시간과의 비율은 참고값입니다.' };
+    }
+    report.structureCounts = [];
+    for (const fixture of ['flat-500', 'nested-d5-f4']) {
+      const before = JSON.parse(fs.readFileSync(path.join(verification,
+        `round-93-structures-${fixture}-H-summary.json`), 'utf8'));
+      const after = JSON.parse(fs.readFileSync(path.join(verification,
+        `round-93-structures-${fixture}-W-summary.json`), 'utf8'));
+      assert.deepEqual(before.graph, after.graph);
+      assert.equal(before.observationsSha256, after.observationsSha256);
+      report.structureCounts.push({ fixture, before, after });
+    }
+    report.speedAndMemory = '선언 수집에 여섯 불리언 capability를 결합하고 청사진당 고정 기록 O(1)을 추가합니다. 정적 그래프·충돌·형상·경고 검사는 유지하며, 기능 부재가 별도로 증명된 경우에만 동적 선언 소유자 Map·조건 읽기 계획·게이트 예산/호스트/식 색인·역의존 trie·빈 식/기능/파생 표의 O(S) 수집과 할당을 제거합니다. 실제 기능이 있으면 기존 색인과 의존 정보를 보유합니다. 빈 조회 결과에는 변경 메서드가 없고 반복 읽기 참조가 같습니다. heap byte는 미측정이며 구조 할당 수를 별도 진단 실행에서 기록합니다.';
+  }
+  save(`round-${pairedRound}-baseline-summary.json`, report);
   for (const row of rows)
     console.log(`${row.fixture} ${row.mode}: ${row.before.median.toFixed(6)} → ${row.after.median.toFixed(6)} ms (${row.changePercent.toFixed(2)}%)`);
 } else if (process.argv[2] === '--summarize') {
@@ -139,12 +183,14 @@ if (process.argv[2] === '--summarize-paired') {
     write: false, bundle: true, packages: 'external', platform: 'node', format: 'cjs',
     define: { 'process.env.NODE_ENV': '"development"' },
     plugins: [{ name: 'round90-local-source', setup(builder) {
-      if (revision) builder.onLoad({ filter: /\.(ts|tsx)$/ }, args => {
+      if (revision || structures) builder.onLoad({ filter: /\.(ts|tsx)$/ }, args => {
         const relative = path.relative(repo, args.path);
         if (relative.startsWith('..') || relative.includes('node_modules') ||
           !relative.startsWith('packages/')) return undefined;
-        return { contents: execFileSync('git', ['show', `${revision}:${relative}`],
-          { cwd: repo, encoding: 'utf8' }), loader: args.path.endsWith('.tsx') ? 'tsx' : 'ts' };
+        let contents = revision ? execFileSync('git', ['show', `${revision}:${relative}`],
+          { cwd: repo, encoding: 'utf8' }) : fs.readFileSync(args.path, 'utf8');
+        if (structures) contents = instrumentRound93Structures(contents, relative, require('typescript'));
+        return { contents, loader: args.path.endsWith('.tsx') ? 'tsx' : 'ts' };
       });
       builder.onResolve({ filter: /^@\/schema-form/ }, args => {
         const base = path.join(src, args.path.replace(/^@\/schema-form\/?/, ''));
@@ -157,10 +203,40 @@ if (process.argv[2] === '--summarize-paired') {
   stop();
   const bundleSha256 = createHash('sha256').update(bundle.outputFiles[0].text).digest('hex');
   const module = { exports: {} };
+  const allocations = Object.create(null);
+  if (structures) globalThis.__round93Count = (key, value) => {
+    allocations[key] = (allocations[key] ?? 0) + 1;
+    return value;
+  };
   new Function('require', 'module', 'exports', bundle.outputFiles[0].text)(require, module, module.exports);
   const api = module.exports;
   const fixture = api.equivalentFixtures.find(item => item.name === fixtureName);
   assert(fixture);
+  if (structures) {
+    assert(round93 && ['flat-500', 'nested-d5-f4'].includes(fixtureName));
+    const root = api.nodeFromJSONSchema({ jsonSchema: structuredClone(fixture.workspace), validationMode: 0 });
+    const afterMount = { ...allocations };
+    const mounted = JSON.stringify(root.value);
+    for (let index = 0; index < fixture.interactions.length; index++) {
+      const interaction = fixture.interactions[index];
+      assert.equal(interaction.kind, 'set');
+      root.find(interaction.path).setValue(interaction.value);
+    }
+    const analysis = root.runtime.blueprint;
+    save(`round-93-structures-${fixtureName}-${variant}-summary.json`, {
+      fixture: fixtureName, variant, revision: revision ?? 'working-tree',
+      graph: { nodes: analysis.nodes.length, fragments: analysis.fragments.length,
+        declarations: analysis.fragments.reduce((sum, item) => sum + item.declares.length + item.overlays.length, 0),
+        expressions: analysis.expressions.length, dependencyPaths: Object.keys(analysis.dependencies).length },
+      capabilities: analysis.capabilities ?? null,
+      afterMount, afterUpdate: { ...allocations },
+      observationsSha256: createHash('sha256').update(JSON.stringify([mounted, JSON.stringify(root.value)])).digest('hex'),
+      methodology: '별도 새 프로세스의 메모리 번들에서만 TypeScript AST로 Map/Set/WeakMap/WeakSet 생성식을 감쌌습니다. 제품 소스·시간 표본에는 계측이 없습니다. 모듈 공통 캐시 생성도 포함하며 같은 파일·선언 이름·종류로 집계합니다.',
+      environment: { node: process.version, bundleSha256, validation: 'off' },
+    });
+    console.log(`${fixtureName} ${variant} 구조 수 완료: ${analysis.nodes.length} 노드, ${analysis.fragments.length} 조각`);
+    process.exit(0);
+  }
   const timings = { mount: [], update: [] };
   let observation;
   const startedAt = new Date().toISOString();
@@ -190,7 +266,7 @@ if (process.argv[2] === '--summarize-paired') {
       timings.update.push(update);
     }
   }
-  const stem = paired ? `round-92-paired-${fixtureName}-r${run}-${variant}` :
+  const stem = paired ? `round-${pairedRound}-paired-${fixtureName}-r${run}-${variant}` :
     `round-90-baseline-${fixtureName}-r${run}`;
   save(`${stem}-timings.json`, timings);
   save(`${stem}-summary.json`, {

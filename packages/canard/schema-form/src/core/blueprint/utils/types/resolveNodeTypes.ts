@@ -21,7 +21,7 @@ export const resolveNodeTypes = (
   allowed: readonly SchemaTypeName[];
   declarations: readonly PropertyDeclaration[];
 }[] => {
-  const fixed = declarations.filter(
+  const fixed = context.capabilities.branchless ? declarations : declarations.filter(
     (declaration) =>
       declaration.context === 'conjunction' && !declaration.gates.length,
   );
@@ -53,6 +53,7 @@ export const resolveNodeTypes = (
         fixed[0].schema,
         fixed[0].schemaPath,
       );
+    if (context.capabilities.branchless) return [{ allowed: allowed!, declarations }];
     const mask = foldAllowedTypes(allowed!);
     for (const declaration of declarations) {
       if (
@@ -115,7 +116,7 @@ export const resolveNodeTypes = (
         (declaration.role === 'overlay' &&
           group.declarations.some(
             (owner) =>
-              context.declarationOwners.get(declaration.id) === owner.id,
+              context.declarationOwners?.get(declaration.id) === owner.id,
           )),
     ),
   }));

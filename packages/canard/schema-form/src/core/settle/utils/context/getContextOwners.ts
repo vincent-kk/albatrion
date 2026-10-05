@@ -12,6 +12,7 @@ const EMPTY_OWNERS: readonly string[] = Object.freeze([]);
  * @returns Memoized owner paths to recalculate when context changes
  */
 export const getContextOwners = (blueprint: Blueprint): readonly string[] => {
+  if (!blueprint.capabilities.hasDependencies) return EMPTY_OWNERS;
   const cached = OWNERS.get(blueprint);
   if (cached) return cached;
   const ids = blueprint.dependencies['@'];

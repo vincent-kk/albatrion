@@ -104,7 +104,7 @@ class GateRegistry {
   }
 
   /** Read relocated gates at one host without scanning other templates. */
-  relocated(path: string): GateOccurrence[] {
+  relocated(path: string): readonly GateOccurrence[] {
     return [...this.byLocation.get(path) ?? []].filter((entry) =>
       entry.hostPath !== path);
   }
@@ -198,12 +198,29 @@ class GateRegistry {
 /** One persistent registry per runtime, retained only while that runtime lives. */
 const REGISTRIES = new WeakMap<object, GateRegistry>();
 
+/** Query surface shared by real registries and the branchless absence result. */
+type GateRegistryView = Pick<GateRegistry, 'hasRegisteredPathKind' | 'register' |
+  'locate' | 'relocated' | 'mayChangeAt' | 'mayChangeOwnDeclarationAt' | 'remove'>;
+/** No per-runtime maps, weak maps or live path registrations for branchless graphs. */
+const EMPTY_REGISTRY: GateRegistryView = Object.freeze({
+  hasRegisteredPathKind: () => undefined,
+  register: () => undefined,
+  locate: (): never => { throw new Error('A branchless blueprint has no gate occurrences'); },
+  relocated: () => EMPTY_OCCURRENCES,
+  mayChangeAt: () => false,
+  mayChangeOwnDeclarationAt: () => false,
+  remove: () => undefined,
+});
+/** Repeated absent relocation reads preserve reference identity. */
+const EMPTY_OCCURRENCES: readonly GateOccurrence[] = Object.freeze([]);
+
 /**
  * Get the settlement-owned occurrence memo for a tree runtime.
  * @param runtime - Shared root runtime identity
  * @returns Registry of memoized L values for live records
  */
-export const getGateRegistry = (runtime: { blueprint: Blueprint }): GateRegistry => {
+export const getGateRegistry = (runtime: { blueprint: Blueprint }): GateRegistryView => {
+  if (runtime.blueprint.capabilities.branchless) return EMPTY_REGISTRY;
   let registry = REGISTRIES.get(runtime);
   if (!registry) {
     registry = new GateRegistry(runtime.blueprint);

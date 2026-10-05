@@ -6,6 +6,11 @@ import { validateShape } from './utils/analyze/validateShape';
 import { collectBlueprintWarnings } from './utils/diagnostics/collectBlueprintWarnings';
 import { validateChildTargets } from './utils/diagnostics/validateChildTargets';
 
+/** Feature-free graphs share frozen values only after independent absence proofs. */
+const EMPTY_EXPRESSIONS: Blueprint['expressions'] = Object.freeze([]);
+/** Empty null-prototype dictionary preserves prototype-name dependency behavior. */
+const EMPTY_DEPENDENCIES: Blueprint['dependencies'] = Object.freeze(Object.create(null));
+
 /**
  * Analyze authored schema data into an immutable, finite declaration graph.
  * @param schema - Authored root, retained by reference and never mutated
@@ -31,15 +36,17 @@ export const blueprint = (
     return cached.blueprint;
   }
   const context: AnalysisContext = {
+    capabilities: { branchless: true, hasExpressions: false, hasDerive: false,
+      hasWatch: false, hasState: false, hasDependencies: false },
     schema,
     options,
     nodes: [],
     fragments: [],
     declarationId: 0,
-    declarationOwners: new Map(),
+    declarationOwners: undefined,
     templates: new Map(),
     constructing: new Map(),
-    dependencies: Object.create(null),
+    dependencies: undefined,
   };
   const [root] = buildNodes(
     context,
@@ -59,12 +66,15 @@ export const blueprint = (
   );
   validateShape(context);
   validateChildTargets(context);
-  const expressions = compileBlueprintExpressions(context);
-  for (const node of context.nodes) {
+  const expressions = context.capabilities.hasExpressions || context.capabilities.hasWatch
+    ? compileBlueprintExpressions(context) : EMPTY_EXPRESSIONS;
+  for (let index = 0; index < context.nodes.length; index++) {
+    const node = context.nodes[index];
     Object.freeze(node.childEntries);
     Object.freeze(node);
   }
-  for (const fragment of context.fragments) {
+  for (let index = 0; index < context.fragments.length; index++) {
+    const fragment = context.fragments[index];
     Object.freeze(fragment.declares);
     Object.freeze(fragment.overlays);
     Object.freeze(fragment.inheritedOverlays);
@@ -72,13 +82,14 @@ export const blueprint = (
     Object.freeze(fragment);
   }
   const result = Object.freeze({
+    capabilities: Object.freeze(context.capabilities),
     isAtomic: options.isAtomic,
     isTerminal: options.isTerminal,
     schema,
     root,
     nodes: Object.freeze(context.nodes),
     fragments: Object.freeze(context.fragments),
-    dependencies: Object.freeze(context.dependencies),
+    dependencies: context.dependencies ? Object.freeze(context.dependencies) : EMPTY_DEPENDENCIES,
     expressions,
   });
   collectBlueprintWarnings(result, options.collect);

@@ -32,6 +32,7 @@ export const flushPendingGateReads = <Self extends SchemaNodeRecord<Self>>(
   path: string,
   context: SettlementContext<Self>,
 ): void => {
+  if (context.root.runtime.blueprint.capabilities.branchless) return;
   if (!context.pendingOutputs?.size) return;
   let plan = READ_PLANS.get(template);
   if (!plan) {

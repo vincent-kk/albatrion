@@ -1,0 +1,35 @@
+{
+  "fixture": "array-1000",
+  "run": 1,
+  "variant": "H",
+  "environment": {
+    "startedAt": "2026-10-05T11:03:28.919Z",
+    "endedAt": "2026-10-05T11:03:32.356Z",
+    "node": "v26.10.0",
+    "v8": "14.6.202.34-node.35",
+    "platform": "darwin",
+    "arch": "arm64",
+    "cpu": "Apple M1 Max",
+    "cpus": 10,
+    "memory": 68719476736,
+    "warmup": 20,
+    "samples": 101,
+    "validation": "off",
+    "mode": "development synchronous core",
+    "explicitGc": true,
+    "trace": false,
+    "bundleSha256": "736a4ff19f664bcce6ee819a7e7d7080210028573b1bf53a6ad40cafb25ebdfb"
+  },
+  "mount": {
+    "median": 20.947833000000173,
+    "p99": 25.54449999999997,
+    "sampleCount": 101
+  },
+  "update": {
+    "median": 0.09125000000040018,
+    "p99": 0.161750000000211,
+    "sampleCount": 101
+  },
+  "observationsSha256": "c5d0238845c7129774a44c424feb66237994b3738b19a25d940d28c6e4912ab1",
+  "note": "같은 새 스키마·전체 BF 상호작용에서 모든 표본의 mount/update 값과 안정 진단을 확인했습니다. 시간 원표본에는 숫자 배열만 저장합니다."
+}

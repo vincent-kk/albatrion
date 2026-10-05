@@ -153,6 +153,21 @@ export interface BlueprintDiagnostic {
 
 /** Immutable result of analyzing one authored root. */
 export interface Blueprint {
+  /** Independent absence proofs over every authored position declaration collection reaches. */
+  readonly capabilities: {
+    /** No disjunction, if, discriminator or active control was reached. */
+    readonly branchless: boolean;
+    /** At least one supported control was authored as an expression string. */
+    readonly hasExpressions: boolean;
+    /** Automatic value/interaction rules exist independently of gates. */
+    readonly hasDerive: boolean;
+    /** A watch declaration exists, including an empty authored list. */
+    readonly hasWatch: boolean;
+    /** Local or child-scoped state keys can contribute to the feature index. */
+    readonly hasState: boolean;
+    /** Compiled expressions or watch paths registered reverse dependencies. */
+    readonly hasDependencies: boolean;
+  };
   /** Renderer predicates retained by identity for runtime schema merging. */
   readonly isAtomic?: BlueprintOptions['isAtomic'];
   /** Terminal strategy predicate used when constructing this analysis. */
