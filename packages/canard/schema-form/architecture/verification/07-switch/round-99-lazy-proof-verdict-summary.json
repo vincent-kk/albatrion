@@ -1,0 +1,86 @@
+{
+  "sourceHead": "9caec9a1178a3f594026cef87e53d05fddc2c79c",
+  "preConvergenceCommit": "403226d12",
+  "measurementSummary": "round-99-lazy-proof-first-write-summary.json",
+  "naturalMountSummary": "round-99-lazy-proof-summary.json",
+  "measurementIntervalUtc": {
+    "naturalStart": "2026-10-05T22:30:48.096Z",
+    "naturalEnd": "2026-10-05T22:32:48.980Z",
+    "firstWriteStart": "2026-10-05T22:35:25.325Z",
+    "firstWriteEnd": "2026-10-05T22:37:18.524Z"
+  },
+  "fixturePreparation": {
+    "initialValue": { "trigger": "on", "source": 1, "target": 2 },
+    "reason": "원래 픽스처는 마운트에서 실제 파생 쓰기를 하므로 증명을 마운트에서 계산하는 것이 계약상 맞습니다. 첫 갱신에 비용을 분리하려고 세 판에 같은 일관된 초기값을 제공합니다. W는 모든 표본의 마운트 후 증명 부재와 첫 갱신 후 증명 존재를 시간 밖 getter로 단언했습니다.",
+    "discardedPreparation": "target=2만 제공한 준비는 source default 채움 전 파생 쓰기가 생겨 W의 마운트 후 증명 부재 단언에 실패했습니다. 프로세스는 스스로 종료했고 그 준비의 P/H 표본 4개 파일은 제거했습니다. 최종 비교에는 섞지 않았습니다.",
+    "secondForm": "같은 스키마 객체의 첫 폼 청사진을 명시적 BlueprintOptions.cache로 공유합니다. 기본 코어/React 생성은 이 캐시를 주입하지 않으므로 스키마 객체가 같다는 사실만으로 자동 공유되는 이득은 아닙니다. 청사진 정체성을 매 표본 단언했습니다."
+  },
+  "assessment": {
+    "mount": {
+      "medianUs": { "P": 501.5, "H": 515.542, "W": 490.667 },
+      "workingVsPrePercent": -2.16,
+      "workingVsHeadPercent": -4.83,
+      "pairedWorkingVsPrePercent": [-1.05, -4.89, 1.32],
+      "verdict": "403226d12 수준의 노이즈 범위입니다. 회차별 차이가 0을 가로지르며 확정적인 추가 속도 이득으로 보지 않습니다."
+    },
+    "firstUpdate": {
+      "medianUs": { "P": 200.25, "H": 181.542, "W": 196.583 },
+      "priorGainUs": 18.708,
+      "proofRelocationIncrementUs": 15.041,
+      "nominalNetGainUs": 3.667,
+      "workingVsPrePercent": -1.83,
+      "workingVsHeadPercent": 8.29,
+      "pairedNetGainUs": [12.208, 7.458, -6.125],
+      "slowerThirdPair": {
+        "P": 190.833,
+        "H": 183.083,
+        "W": 196.958,
+        "workingVsPrePercent": 3.21
+      },
+      "verdict": "집계 중앙값에서는 기존 이득이 증명 이동의 추가 비용을 3.667µs 넘지만 안정적인 초과 이득은 입증하지 못합니다. 세 번째 회차는 403226d12보다 6.125µs 느렸습니다. 추가 비용은 W-H의 운영상 차이이며 collector만의 독립 CPU 시간으로 해석하지 않습니다."
+    },
+    "laterUpdate": {
+      "medianUs": { "P": 101.125, "H": 88.291, "W": 90.417 },
+      "workingVsPrePercent": -10.59,
+      "workingVsHeadPercent": 2.41,
+      "verdict": "403226d12 대비 세 회차 모두 빨랐습니다. HEAD 대비 작은 차이는 부호가 바뀌어 노이즈로 봅니다."
+    },
+    "secondFormMedianUs": {
+      "mount": { "P": 156.083, "H": 149.958, "W": 148.083 },
+      "first": { "P": 115.458, "H": 103.333, "W": 102.709 },
+      "later": { "P": 95.667, "H": 82.75, "W": 81.875 },
+      "verdict": "증명을 재사용하는 첫 갱신은 403226d12 대비 -11.04%, HEAD 대비 -0.60%이며 세 회차 모두 403226d12보다 빨랐습니다."
+    },
+    "negativeControls": {
+      "flat500MountUs": { "P": 4399.208, "H": 4449.875, "W": 4302.334 },
+      "nestedD5F4MountUs": { "P": 12793.458, "H": 12748, "W": 12676.792 },
+      "verdict": "파생 증명 대상이 없는 대조군은 각각 P 대비 -2.20%, -0.91%였습니다. 작은 차이는 세션 변동으로 보고 제품 개선으로 귀속하지 않습니다."
+    }
+  },
+  "speedAndMemory": "쓰기 없는 생성·마운트의 O(선언+읽기+대상×읽기) 증명 작업과 임시 색인을 첫 실제 파생 쓰기로 옮깁니다. 이후 쓰기는 O(1) 약한 조회를 사용합니다. 청사진당 한 약한 캐시 항목에 Set 또는 증명 불가 null을 보유합니다. O(정적 대상 수) 경로 참조와 기존 O(컴파일 식 수)의 완전성 등록을 유지하며 노드·값·식 descriptor shape를 추가하지 않습니다. heap byte는 측정하지 않았습니다.",
+  "verification": {
+    "failFirst": "수정 전 새 두 사례가 마운트에서 collector가 이미 1회 실행됐다는 원인으로 실패했습니다.",
+    "focused": { "filesPassed": 3, "testsPassed": 21, "originalDifferentialCases": 19, "newLazyCases": 2, "shadow": "통과" },
+    "vitest": {
+      "command": "npx vitest run --project unit --project render --project react18 --reporter=dot",
+      "exitCode": 1,
+      "filesPassed": 422,
+      "filesFailed": 2,
+      "testsPassed": 3191,
+      "testsFailed": 4,
+      "todo": 1,
+      "durationSeconds": 63.89,
+      "onlyFailures": "EVENT-070 useLayoutEffect/useEffect가 render·react18에서 각각 실패한 허용된 4건"
+    },
+    "typescript": { "command": "npx tsc --noEmit --composite false --rootDir . -p tsconfig.json", "exitCode": 0 },
+    "eslint": { "command": "npx eslint \"src/**/*.{ts,tsx}\"", "exitCode": 0 },
+    "legacyIsolation": { "command": "node architecture/verification/07-switch/tools/check-legacy-isolation.mjs", "exitCode": 0, "filesChecked": 1621 }
+  },
+  "timingArtifacts": {
+    "firstWrite": { "files": 27, "samples": 7272, "totalBytes": 178410, "maxFileBytes": 15070 },
+    "includingNaturalMount": { "files": 54, "totalBytes": 356772, "maxFileBytes": 15082 },
+    "format": "숫자 시간 표본만 담습니다. 상세 정보는 summary JSON에 둡니다.",
+    "perFileCeilingBytes": 5000000
+  },
+  "constraints": "stage-07 안에서만 작업했습니다. 제품 변경은 지연 계산 한 가지이며 이후 제품/시험 코드를 바꾸지 않았습니다. 설치·git 쓰기·커밋·독립 에이전트·강제 종료 없이 순차 실행했습니다. esbuild는 stdin EOF 뒤 자발 종료0을 확인했습니다. 세 판의 관측 해시는 같고 각 측정 프로세스 실행 구간은 겹치지 않습니다. 기존 OS·상주 도구 서비스는 유지됩니다."
+}

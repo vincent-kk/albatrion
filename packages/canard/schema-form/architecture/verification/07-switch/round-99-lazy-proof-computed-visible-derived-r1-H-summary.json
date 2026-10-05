@@ -1,0 +1,64 @@
+{
+  "sourceHead": "9caec9a1178a3f594026cef87e53d05fddc2c79c",
+  "revision": "9caec9a1178a3f594026cef87e53d05fddc2c79c",
+  "fixture": "computed-visible-derived",
+  "variant": "H",
+  "run": 1,
+  "environment": {
+    "startedAt": "2026-10-05T22:30:53.071Z",
+    "endedAt": "2026-10-05T22:30:57.946Z",
+    "node": "v26.10.0",
+    "v8": "14.6.202.34-node.35",
+    "platform": "darwin",
+    "arch": "arm64",
+    "cpu": "Apple M1 Max",
+    "warmup": 20,
+    "samples": 101,
+    "validation": "off",
+    "mode": "development synchronous core",
+    "instrumented": false,
+    "explicitGc": true,
+    "esbuildNaturalExits": 1,
+    "bundleSha256": "5a508d2cd2147b5cb794f2c02332d926ce45c5831560e692db91e6346d31d3c6"
+  },
+  "observations": {
+    "mount": "b2234f571c211456f1a1d1b5199210cf65b786b072ebebb422da6fc0245fa3de",
+    "first": "59219d6e354ee95b157d6364ef778baaabd2de5b2c315d575aacc11627b2dfa9",
+    "later": "e7f09823dfc5b17bcec85713d2a247998dc3cd954da2d691ab2cf911995f23de",
+    "secondMount": "b2234f571c211456f1a1d1b5199210cf65b786b072ebebb422da6fc0245fa3de",
+    "secondFirst": "59219d6e354ee95b157d6364ef778baaabd2de5b2c315d575aacc11627b2dfa9",
+    "secondLater": "e7f09823dfc5b17bcec85713d2a247998dc3cd954da2d691ab2cf911995f23de"
+  },
+  "metrics": {
+    "mount": {
+      "median": 0.5597500000003492,
+      "p99": 0.6865829999997004,
+      "sampleCount": 101
+    },
+    "first": {
+      "median": 0.11433400000078109,
+      "p99": 0.16962499999999636,
+      "sampleCount": 101
+    },
+    "later": {
+      "median": 0.07524999999986903,
+      "p99": 0.09758300000021336,
+      "sampleCount": 101
+    },
+    "secondMount": {
+      "median": 0.19337499999983265,
+      "p99": 0.26345800000035524,
+      "sampleCount": 101
+    },
+    "secondFirst": {
+      "median": 0.0860000000002401,
+      "p99": 0.11754099999961909,
+      "sampleCount": 101
+    },
+    "secondLater": {
+      "median": 0.07312499999989086,
+      "p99": 0.10233299999981682,
+      "sampleCount": 101
+    }
+  }
+}

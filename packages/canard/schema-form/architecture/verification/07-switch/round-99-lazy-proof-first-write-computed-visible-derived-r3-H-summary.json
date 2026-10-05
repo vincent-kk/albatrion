@@ -1,0 +1,68 @@
+{
+  "sourceHead": "9caec9a1178a3f594026cef87e53d05fddc2c79c",
+  "revision": "9caec9a1178a3f594026cef87e53d05fddc2c79c",
+  "fixture": "computed-visible-derived",
+  "variant": "H",
+  "run": 3,
+  "environment": {
+    "startedAt": "2026-10-05T22:35:53.973Z",
+    "endedAt": "2026-10-05T22:35:59.030Z",
+    "node": "v26.10.0",
+    "v8": "14.6.202.34-node.35",
+    "platform": "darwin",
+    "arch": "arm64",
+    "cpu": "Apple M1 Max",
+    "warmup": 20,
+    "samples": 101,
+    "validation": "off",
+    "mode": "development synchronous core",
+    "instrumented": false,
+    "explicitGc": true,
+    "esbuildNaturalExits": 1,
+    "bundleSha256": "db576f3fa17e5a5e359bccb60dd06bba61c8cb64f98ea31e794ef92e495cf4c2"
+  },
+  "observations": {
+    "mount": "ba5a591e84c20a0b002435fce96710605c022b3d09ec929939a9bf5059eb1dc2",
+    "first": "59219d6e354ee95b157d6364ef778baaabd2de5b2c315d575aacc11627b2dfa9",
+    "later": "e7f09823dfc5b17bcec85713d2a247998dc3cd954da2d691ab2cf911995f23de",
+    "secondMount": "ba5a591e84c20a0b002435fce96710605c022b3d09ec929939a9bf5059eb1dc2",
+    "secondFirst": "59219d6e354ee95b157d6364ef778baaabd2de5b2c315d575aacc11627b2dfa9",
+    "secondLater": "e7f09823dfc5b17bcec85713d2a247998dc3cd954da2d691ab2cf911995f23de"
+  },
+  "proofAvailability": {
+    "afterMount": true,
+    "afterFirst": true
+  },
+  "metrics": {
+    "mount": {
+      "median": 0.5310420000000704,
+      "p99": 0.6136659999997391,
+      "sampleCount": 101
+    },
+    "first": {
+      "median": 0.18308299999989686,
+      "p99": 0.2340409999997064,
+      "sampleCount": 101
+    },
+    "later": {
+      "median": 0.08991700000024139,
+      "p99": 0.12020799999982046,
+      "sampleCount": 101
+    },
+    "secondMount": {
+      "median": 0.151625000000422,
+      "p99": 0.19133399999918765,
+      "sampleCount": 101
+    },
+    "secondFirst": {
+      "median": 0.10670900000013717,
+      "p99": 0.1350840000000062,
+      "sampleCount": 101
+    },
+    "secondLater": {
+      "median": 0.08650000000034197,
+      "p99": 0.14345799999955489,
+      "sampleCount": 101
+    }
+  }
+}

@@ -12,7 +12,7 @@ import type { PlainNode } from './createPlainNode';
 
 /** Compiler sidecar is optional until the optimization's fail-first check. */
 interface ConvergenceTargets {
-  /** Read the creation-time proof without changing its entries. */
+  /** Read the memoized proof without triggering collection. */
   get(blueprint: Blueprint): ReadonlySet<string> | undefined;
   /** Disable the proof for one independent reference tree. */
   set(blueprint: Blueprint, targets: ReadonlySet<string> | undefined): void;
@@ -34,13 +34,12 @@ export const runDeriveConvergenceCase = (
   const enabled = process.env.ROUND99_SKIP !== 'off';
   const environment = process.env.NODE_ENV;
   const variants = enabled && environment === 'test' ? 3 : 2;
-  if (enabled) expect(sidecar, 'creation-time convergence proof').toBeDefined();
+  if (enabled) expect(sidecar, 'first-write convergence proof').toBeDefined();
   const observations: string[][] = [];
   let result;
   for (let variant = 0; variant < variants; variant++) {
     if (variant === 2) vi.stubEnv('NODE_ENV', 'development');
     const { root, blueprint } = createTestTree(schema);
-    const proof = sidecar?.get(blueprint);
     if (variant === 0 || !enabled) sidecar?.set(blueprint, undefined);
     const snapshots: string[] = [];
     const contexts: SettlementContext<PlainNode>[] = [];
@@ -105,7 +104,7 @@ export const runDeriveConvergenceCase = (
       if (variant === 2) vi.stubEnv('NODE_ENV', environment);
     }
     observations.push(snapshots);
-    if (variant < 2) result = { root, proof, decisions, contexts, snapshots };
+    if (variant < 2) result = { root, proof: sidecar?.get(blueprint), decisions, contexts, snapshots };
   }
   expect(observations[1]).toEqual(observations[0]);
   if (variants === 3) expect(observations[2]).toEqual(observations[0]);

@@ -32,7 +32,6 @@ export const runDeriveRounds = <Self extends SchemaNodeRecord<Self>>(
   const state = getDeriveState(context);
   if (!state || context.exceededBudget) return;
   const previousTransition = context.inTransition;
-  const terminalTargets = DeriveConvergenceTargets.get(context.root.runtime.blueprint);
   try {
     while (true) {
       state.sourcePaths = context.loadScope
@@ -78,6 +77,7 @@ export const runDeriveRounds = <Self extends SchemaNodeRecord<Self>>(
       context.automaticChanged = false;
       context.automatic = true;
       context.inTransition = true;
+      const terminalTargets = DeriveConvergenceTargets.getOrCollect(context.root.runtime.blueprint);
       let skipConfirmation = terminalTargets !== undefined && decision.failures.length === 0;
       for (let index = 0; index < changed.length; index++) {
         const write = changed[index];

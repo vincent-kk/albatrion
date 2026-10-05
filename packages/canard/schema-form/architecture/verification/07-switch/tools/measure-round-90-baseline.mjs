@@ -17,7 +17,9 @@ if (process.argv.includes('--round93i') &&
   process.exit(0);
 }
 
-if (process.argv.includes('--round98') || process.argv.includes('--round99')) {
+if (process.argv.includes('--round99-lazy')) {
+  await import('./measure-round-99-lazy-proof.mjs');
+} else if (process.argv.includes('--round98') || process.argv.includes('--round99')) {
   await import('./measure-round-98-a1.mjs');
 } else {
 const verification = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');

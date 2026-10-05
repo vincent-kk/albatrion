@@ -1,0 +1,68 @@
+{
+  "sourceHead": "9caec9a1178a3f594026cef87e53d05fddc2c79c",
+  "revision": "403226d12",
+  "fixture": "computed-visible-derived",
+  "variant": "P",
+  "run": 2,
+  "environment": {
+    "startedAt": "2026-10-05T22:35:43.829Z",
+    "endedAt": "2026-10-05T22:35:48.815Z",
+    "node": "v26.10.0",
+    "v8": "14.6.202.34-node.35",
+    "platform": "darwin",
+    "arch": "arm64",
+    "cpu": "Apple M1 Max",
+    "warmup": 20,
+    "samples": 101,
+    "validation": "off",
+    "mode": "development synchronous core",
+    "instrumented": false,
+    "explicitGc": true,
+    "esbuildNaturalExits": 1,
+    "bundleSha256": "87e04c2442c0e50290a1cda14c81d444d0709b38dbcb8ec488aeb1b1a87db801"
+  },
+  "observations": {
+    "mount": "ba5a591e84c20a0b002435fce96710605c022b3d09ec929939a9bf5059eb1dc2",
+    "first": "59219d6e354ee95b157d6364ef778baaabd2de5b2c315d575aacc11627b2dfa9",
+    "later": "e7f09823dfc5b17bcec85713d2a247998dc3cd954da2d691ab2cf911995f23de",
+    "secondMount": "ba5a591e84c20a0b002435fce96710605c022b3d09ec929939a9bf5059eb1dc2",
+    "secondFirst": "59219d6e354ee95b157d6364ef778baaabd2de5b2c315d575aacc11627b2dfa9",
+    "secondLater": "e7f09823dfc5b17bcec85713d2a247998dc3cd954da2d691ab2cf911995f23de"
+  },
+  "proofAvailability": {
+    "afterMount": false,
+    "afterFirst": false
+  },
+  "metrics": {
+    "mount": {
+      "median": 0.5185830000000351,
+      "p99": 0.6568340000003445,
+      "sampleCount": 101
+    },
+    "first": {
+      "median": 0.20687499999985448,
+      "p99": 0.2864580000004935,
+      "sampleCount": 101
+    },
+    "later": {
+      "median": 0.10437499999989086,
+      "p99": 0.1991250000000946,
+      "sampleCount": 101
+    },
+    "secondMount": {
+      "median": 0.161583999999948,
+      "p99": 0.21354199999996126,
+      "sampleCount": 101
+    },
+    "secondFirst": {
+      "median": 0.11908300000004601,
+      "p99": 0.18999999999959982,
+      "sampleCount": 101
+    },
+    "secondLater": {
+      "median": 0.0985419999997248,
+      "p99": 0.17358299999978044,
+      "sampleCount": 101
+    }
+  }
+}

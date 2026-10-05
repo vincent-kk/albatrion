@@ -1,0 +1,34 @@
+{
+  "sourceHead": "9caec9a1178a3f594026cef87e53d05fddc2c79c",
+  "revision": "403226d12",
+  "fixture": "nested-d5-f4",
+  "variant": "P",
+  "run": 2,
+  "environment": {
+    "startedAt": "2026-10-05T22:32:27.794Z",
+    "endedAt": "2026-10-05T22:32:33.877Z",
+    "node": "v26.10.0",
+    "v8": "14.6.202.34-node.35",
+    "platform": "darwin",
+    "arch": "arm64",
+    "cpu": "Apple M1 Max",
+    "warmup": 20,
+    "samples": 101,
+    "validation": "off",
+    "mode": "development synchronous core",
+    "instrumented": false,
+    "explicitGc": true,
+    "esbuildNaturalExits": 1,
+    "bundleSha256": "aa701264d8d3eec87f4bab1bd873067d134d9480042cb436be67578a64c37b7a"
+  },
+  "observations": {
+    "mount": "67ac737d4f58dd337e695b7837e6411f1bfc991019a72bee0a0679af63d254d9"
+  },
+  "metrics": {
+    "mount": {
+      "median": 12.84441699999934,
+      "p99": 13.916416999999456,
+      "sampleCount": 101
+    }
+  }
+}
