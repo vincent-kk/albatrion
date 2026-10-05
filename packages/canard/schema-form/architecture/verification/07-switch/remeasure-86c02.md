@@ -828,3 +828,88 @@ PKG에서 아래 명령을 순차 실행했습니다. npx는 offline 및 설치 
 | `npx tsc --noEmit --composite false --rootDir . -p tsconfig.json` | 종료 0 |
 | `npx eslint "src/**/*.{ts,tsx}"` | 종료 0 |
 | `node architecture/verification/07-switch/tools/check-legacy-isolation.mjs` | 종료 0; `LEGACY_ISOLATED: 1579 files checked` |
+
+## 90라운드
+
+### 90C-01 범용 정착의 같은 라운드 자손 채움
+
+HEAD `afd8ade3d`의 미커밋 수정본입니다. 판정은 `git show origin/1.0.0-beta:packages/canard/schema-form/architecture/reviews/round-90-closing.md`(34321c81f) 및 WRITE-082·SETTLE-005·WRITE-088·BLUEPRINT-030에 따릅니다. 정착 DETAIL을 먼저 갱신하고, 배열 D의 1개·1,000개 아이템과 중첩·객체 D 안 배열 D가 전이 예산 초과로 실패하는 것을 확인한 뒤 구현했습니다.
+
+수정 위치는 `transitionSettlement.ts:51`의 생김 커서·같은 라운드 bucket 연결, `collectFillDescendants.ts:12`의 호스트 쓰기 자손 분류, `hasRecursiveFill.ts:10`의 원본 없는 반복 보호입니다. 이번 채움이 낸 새 자손만 부모부터 잇고, 명시 원본과 자동 억제·unset/derived 우선순위를 지킵니다. 기존 게이트의 뒤집힘과 새 자손 안 게이트의 첫 평가를 구별하며 노드마다 채움 한 번, 게이트 가진 조각 수 + 노드 게이트 수 + 1 상한을 유지합니다. 상대 게이트 읽기가 끝내는 유한 재귀는 통과하고 같은 유효 재귀 기본값의 원본 없는 사슬은 정착 오류로 끊습니다.
+
+새 회귀/특성화 10건과 미커밋 차등 행렬 11건이 모두 초록입니다. 행렬의 아이템 1개·1,000개 두 오류 기대는 90C-01의 원장 동작에 맞춰 정상 완료·stable·label 채움으로 바꿨습니다. 빈 배열의 기존 방출 `{}`는 유지했습니다. DisableAutomaticWrites와 WRITE-088 push(v) 특성화는 수정 전에도 통과했고 유지됩니다. 게이트 형제가 새 자손의 채움 없음 때문에 누락되지 않는 경우, 파생 우선순위 및 유한 상대 게이트 재귀도 포함합니다.
+
+### 조용한 기준선
+
+최종 제품 소스에서 2026-10-05 17:51:50–17:52:25 KST에 BF 실제 픽스처를 순차 측정했습니다. Node v26.10.0·V8 14.6.202.34-node.35·Apple M1 Max·development 동기 코어·validation OFF·구독 없음입니다. 픽스처·회차마다 새 프로세스, 예열 20·표본 101을 3회 실행했으며 새 스키마·mount 전 명시적 GC·mount/update 사이 timer 대기를 사용했습니다. 메모리에서 번들을 만들고 esbuild 서비스를 종료한 뒤 측정했으며, 측정 중 다른 명령·테스트·추가 에이전트는 실행하지 않았습니다.
+
+[round-90-baseline-summary.json](./round-90-baseline-summary.json)에 환경·번들 해시·회차별 median/p99·최종 값 해시·비용을 보존했습니다. 아래 표는 같은 세션에서 HEAD `afd8ade3d`와 수정본 작업 트리를 번갈아(H→W, W→H, H→W) 측정한 짝지은 비교입니다. 픽스처마다 새 프로세스, 예열 20, 표본 101을 3회 실행해 303개 표본을 사용했고 Node v26.10.0, 실행기는 `tools/measure-round-90-baseline.mjs`입니다.
+
+| 픽스처 | 작업 | HEAD (ms) | 수정본 (ms) | 변화 |
+| --- | --- | ---: | ---: | ---: |
+| array-1000 | update | 0.0962 | 0.0957 | −0.5% |
+| array-1000 | mount | 21.84 | 22.03 | +0.9% |
+| nested-d5 | mount | 22.30 | 22.65 | +1.5% (수정본 3회차 하나가 24.2 ms로 튐, 나머지 22.1·22.0) |
+| oneOf-20 | update | 1.2355 | 1.2103 | −2.0% |
+| flat-500 | update | 0.2078 | 0.2075 | −0.2% |
+
+앞서 보고한 +33%는 측정 시점의 기계 상태였으며 코드 때문이 아닙니다. 채움이 없는 update는 `transitionSettlement.ts:32-40`에서 일찍 반환하여 새 코드를 하나도 실행하지 않습니다(계수: flat-500, nested-d5, array-1000, derived의 update는 패스 0회이고, oneOf-20은 말단 채움만으로 패스 2회이며 `collectFillDescendants` 호출은 없습니다). round-88 기준선은 `afd8ade3d`가 아니라 `b31125119`에서 측정한 값입니다. 앞으로 기준선 비교는 같은 세션에서 번갈아 순서로 측정합니다.
+
+각 새 채움 묶음의 bucket 작업은 O(N+D), 호스트 Set·생김/채움 전 길이 Map은 O(채운 호스트+생긴 branch) 임시 참조를 보유하며 영구 메모리나 노드 shape 필드는 더하지 않습니다. 실제 branch 기본값 후보에서만 조상을 확인하고 재귀 템플릿 반복 후보에서만 작성 게이트 읽기를 추가 확인합니다. 형상/파생 재계산은 기존 경로이며 heap byte는 별도 미측정입니다.
+
+시간 원표본 15개에는 mount/update 숫자 배열만 있고, 각 101개 표본을 보존했습니다. 회차 요약 15개와 합산 요약 1개를 포함한 31개 측정 JSON의 최대 크기는 24,467바이트, 합계는 113,552바이트로 모두 5 MB 이하입니다. 생성 번들은 파일로 남기지 않았습니다. 실행기는 `tools/measure-round-90-baseline.mjs`이며 픽스처별 `node --expose-gc <실행기> <픽스처> <1|2|3>`를 순차 실행하고 마지막에 `<실행기> --summarize`로 합칩니다.
+
+### 지정 검증 및 귀속
+
+최종 제품 소스에서 PKG의 지정 명령을 순차 실행했습니다. npx는 offline·설치 확인 거부 설정으로 기존 로컬 도구만 사용했습니다. git 쓰기·설치·다른 에이전트 실행은 없었습니다.
+
+| 명령 | 결과 |
+| --- | --- |
+| `npx vitest run --project unit --project render --project react18 --reporter=dot` | 종료 1; 408파일·3,101건 통과, todo 1; render/react18의 EVENT-070 useLayoutEffect/useEffect 두 건씩만 실패 |
+| `npx tsc --noEmit --composite false --rootDir . -p tsconfig.json` | 종료 0 |
+| `npx eslint "src/**/*.{ts,tsx}"` | 종료 0 |
+| `node architecture/verification/07-switch/tools/check-legacy-isolation.mjs` | 종료 0; `LEGACY_ISOLATED: 1582 files checked` |
+
+[검증 요약](./round-90-verification-summary.json)에 red→green 범위와 명령 결과를 보존했습니다. `plan/07-switch/log.md` §8에는 90C-01의 06 귀속·03 수정 위치 결함 한 행과, 90C-02에 따라 afd8ade3d의 ERROR-019 두 수정 파일별 귀속 한 행씩을 추가했습니다. evaluateGate.ts는 05 통지·검증, commitSettlement.ts는 03 정착에 05가 얹은 보고 경로로 적었습니다.
+
+## 92라운드
+
+92C-01–03 적용 뒤의 범용 경로를 다음 변경의 기준선으로 남깁니다. `hasRecursiveFill`은 `hasRecursiveExpansion`의 원본 판정과 상대 읽기 범위를 그대로 사용하며 정의는 settle/DETAIL에 한 번 기록했습니다. 명시 분배된 빈 배열은 D로 다시 채우지 않습니다. 호출자의 `push(undefined)`가 만든 배열 자리도 유한 재귀 확장을 허용합니다. 새 branch 예외는 현재 생김 묶음의 첫 평가에만 적용하고 배열 자리 예외도 이번 D가 처음 만든 자리로 제한했습니다. a→b→c→d는 이어 채움 1회·센 라운드 4회·상한 4로 안정되며, 선언을 재사용해 실제 사슬이 상한 3을 넘는 사례는 `BUDGET_EXCEEDED`입니다. 무게이트 배열 D 자손은 라운드 1회입니다.
+
+### 같은 세션의 쌍 측정
+
+2026-10-05 18:45:52–18:49:09 KST. Apple M1 Max, Node v26.10.0, V8 14.6.202.34-node.35, development 동기 코어, validation off, 구독 없음. 이전 90라운드 표와 실행 환경·시점이 다르므로 아래 H와 W만 비교합니다. H는 HEAD `afd8ade3df3e3d42accc3be0967e74e550bde83d`의 소스를 `git show`로 읽어 메모리에서 번들한 판이며 W는 작업트리 소스입니다. 두 판 모두 같은 설치된 작업 공간 의존성을 사용했습니다.
+
+실행기는 `tools/measure-round-90-baseline.mjs`입니다. 픽스처마다 회차 1 H→W, 회차 2 W→H, 회차 3 H→W로 `node --expose-gc <실행기> <픽스처> <회차> --paired <H|W>`를 순차 실행했습니다. 판·회차·픽스처마다 새 프로세스, 예열 20회·표본 101회, mount 전 명시적 GC, mount/update 사이 timer 대기, 새 스키마를 사용했습니다. esbuild 서비스는 측정 전에 종료했습니다. 측정 동안 다른 명령·테스트·추가 에이전트를 실행하지 않았습니다. `<실행기> --summarize-paired`가 순서·표본 수·값 관측 해시 일치를 확인하고 303개 원표본의 nearest-rank 중앙값/p99를 합산합니다. 숫자의 단위는 ms입니다.
+
+| 픽스처 | 작업 | H 중앙값 | W 중앙값 | 변화 | H p99 | W p99 |
+| --- | --- | ---: | ---: | ---: | ---: | ---: |
+| flat-500 | mount | 7.235166 | 7.747708 | +7.08% | 8.017667 | 8.815333 |
+| flat-500 | update | 0.206625 | 0.208542 | +0.93% | 0.301541 | 0.339792 |
+| nested-d5-f4 | mount | 23.071083 | 22.477125 | -2.57% | 27.305083 | 26.933958 |
+| array-1000 | mount | 21.756916 | 21.513417 | -1.12% | 25.173292 | 27.350916 |
+| array-1000 | update | 0.092791 | 0.092792 | +0.00% | 0.166041 | 0.165959 |
+| computed-visible-derived | mount | 0.465959 | 0.467583 | +0.35% | 0.579459 | 0.581375 |
+| computed-visible-derived | update | 0.227875 | 0.229791 | +0.84% | 0.324833 | 0.322584 |
+| oneOf-20 | update | 1.224083 | 1.208791 | -1.25% | 1.531834 | 1.689875 |
+
+flat-500 mount의 +7.08%는 재현되지 않았습니다. 기록된 회차 요약에서 H 세 회차는 7.21–7.28 ms였고 W는 7.95·7.92·7.26 ms로, 측정 세션이 두 속도 상태를 오갔습니다. 독립 진단(같은 장비, 판마다 새 프로세스로 번갈아 16회)에서 차이는 약 0.05 ms(+0.6%)였고, 잎 채움마다 배열 구조 로그의 길이를 읽고 0회 도는 루프를 거치는 비용(채움당 약 100 ns)으로 귀속되었습니다. 마운트 한 번에 hasRecursiveFill·collectFillDescendants는 0회, hasRecursiveExpansion은 500회 모두 조기 반환입니다. `transitionSettlement`가 로그를 남길 수 있는 노드(branch 호스트와 배열 노드)의 채움에서만 그 검사를 하도록 고쳤습니다. 나머지 중앙값은 -2.57%부터 +0.93%까지입니다. 운영체제·GUI·상주 도구 서비스는 중지하지 않았으며 이 한 세션의 수치만으로 개별 코드 변경의 비용을 분리하거나 다른 환경에 일반화하지 않습니다. heap byte는 별도 미측정입니다.
+
+[round-92-baseline-summary.json](./round-92-baseline-summary.json)의 `rows[].after`가 다음 변경의 W 기준선입니다. 원표본과 회차 요약은 `round-92-paired-<픽스처>-r<1|2|3>-<H|W>-{timings,summary}.json`에 보존했습니다. 30회 모두 값 관측 해시가 픽스처별로 같고 각 판의 번들 해시는 모든 회차에서 일정합니다. H 번들 `e9a4e494da023e0dd5dca2272b91466f02a41ab4a89bf6253719e26a321abdad`, W 번들 `275e61fd72ba922d4d984469afdcf9338acf8eb8dea4046606d49bc810cdd312`입니다. 생성 번들은 파일로 남기지 않았습니다.
+
+### 속도·메모리 및 검증
+
+재귀 검사는 기존 비순환 WeakMap으로 정상 생성의 조상 탐색을 O(1)에 생략합니다. 순환 후보에서만 조상·실제 원본 하위 트리를 확인하며, 청사진 전체 상대 읽기의 분석 O(선언·게이트·읽기 수)는 청사진당 한 번이고 새 영구 메모는 약한 캐시의 숫자 하나입니다. 노드 shape는 유지합니다. 이어 채움은 새 생김 커서와 O(N+D) 깊이 bucket, 기존 호스트 Set·길이 Map을 사용합니다. 게이트가 있을 때 첫 평가 branch와 현재 배열 채움 호스트의 O(B+A) 임시 Set 등록·참조를 더하고 배열 기록 수집을 기존 로그 순회에 합칩니다. 무게이트 경로는 두 추가 Set을 만들지 않습니다. 같은 라운드에 처리할 노드 수를 줄이거나 반복한 게이트 뒤집힘을 세지 않는 방식으로 시간을 줄이지 않습니다.
+
+신규 `settle.recursive-fill.test.ts`는 재귀 입력·D의 명시 종료·객체 D 반복·호출자 빈 아이템 추가, 게이트 사슬의 실제 라운드·실제 상한 초과·첫 아이템 게이트 평가·뒤집힌 게이트 하위 branch·무게이트 1회를 확인합니다. `settle.fill-descendants.test.ts`와 범용 `static-first-load-differential.test.ts`도 유지했습니다. 수정 전에는 명시 `[]`가 재귀 오류, 이어 채움이 4회, 상한 3을 강제해도 오류 없음이었고, 보강 과정에서는 caller `push(undefined)`와 새 아이템의 첫 평가가 각각 재귀 오류·라운드 2로 실패했습니다. 동일 사례가 수정 후 통과했습니다. 92C-01의 귀속은 `plan/07-switch/log.md` §3에 앞 단계 결함이 아닌 원장 공백으로 기록했습니다.
+
+최종 소스에서 PKG의 지정 명령을 실행했습니다. npx에는 `--no-install`을 붙여 기존 로컬 도구만 사용했습니다. git 쓰기·설치·다른 에이전트 실행은 없었습니다.
+
+| 명령 | 결과 |
+| --- | --- |
+| `npx vitest run --project unit --project render --project react18 --reporter=dot` | 종료 1; 409파일·3,110건 통과, todo 1; render/react18의 EVENT-070 useLayoutEffect/useEffect 두 건씩만 실패(61.96초) |
+| `npx tsc --noEmit --composite false --rootDir . -p tsconfig.json` | 종료 0 |
+| `npx eslint "src/**/*.{ts,tsx}"` | 종료 0 |
+| `node architecture/verification/07-switch/tools/check-legacy-isolation.mjs` | 종료 0; `LEGACY_ISOLATED: 1584 files checked` |
+
+범용 차등 행렬·90C-01 채움·92C-01–03 회귀 세 파일의 별도 실행은 30건 모두 통과했습니다. 재귀 배열의 기존 특성화와 두 React의 ref 렌더 사례를 합친 수정 중 검증도 59건 통과했습니다. 92라운드 측정 JSON 61개는 모두 5 MB 이하이며 최대 크기는 41,023바이트입니다.

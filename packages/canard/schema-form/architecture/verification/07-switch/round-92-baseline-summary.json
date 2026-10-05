@@ -1,0 +1,1198 @@
+{
+  "sourceCommit": "afd8ade3df3e3d42accc3be0967e74e550bde83d",
+  "sourceState": "92C-01–03 미커밋 범용 정착 수정본; 다음 변경의 기준선은 rows[].after",
+  "environment": {
+    "startedAt": "2026-10-05T09:45:52.938Z",
+    "endedAt": "2026-10-05T09:45:54.594Z",
+    "node": "v26.10.0",
+    "v8": "14.6.202.34-node.35",
+    "platform": "darwin",
+    "arch": "arm64",
+    "cpu": "Apple M1 Max",
+    "cpus": 10,
+    "memory": 68719476736,
+    "warmup": 20,
+    "samples": 101,
+    "validation": "off",
+    "mode": "development synchronous core",
+    "explicitGc": true,
+    "trace": false,
+    "bundleSha256": "e9a4e494da023e0dd5dca2272b91466f02a41ab4a89bf6253719e26a321abdad"
+  },
+  "methodology": "동일 세션의 HEAD afd8ade3d(H)와 작업트리(W). 픽스처마다 H→W, W→H, H→W, 각 판·회차 새 프로세스에서 예열 20·표본 101, 303 원표본의 nearest-rank median/p99. validation off, 명시적 GC, 메모리 번들 뒤 esbuild 종료. 다른 명령·테스트·에이전트와 병렬 실행 없음.",
+  "limits": "운영체제·GUI 및 상주 도구 서비스는 중지하지 않았습니다. heap byte는 미측정입니다. 작은 차이는 이 측정만으로 변경에 귀속하지 않습니다.",
+  "rows": [
+    {
+      "fixture": "flat-500",
+      "mode": "mount",
+      "before": {
+        "median": 7.235165999999481,
+        "p99": 8.017667000000074,
+        "sampleCount": 303
+      },
+      "after": {
+        "median": 7.747708000000102,
+        "p99": 8.81533300000001,
+        "sampleCount": 303
+      },
+      "changePercent": 7.084039260476649
+    },
+    {
+      "fixture": "flat-500",
+      "mode": "update",
+      "before": {
+        "median": 0.20662500000071304,
+        "p99": 0.3015410000002703,
+        "sampleCount": 303
+      },
+      "after": {
+        "median": 0.2085420000000795,
+        "p99": 0.3397920000000454,
+        "sampleCount": 303
+      },
+      "changePercent": 0.9277676947899938
+    },
+    {
+      "fixture": "nested-d5-f4",
+      "mode": "mount",
+      "before": {
+        "median": 23.071082999999817,
+        "p99": 27.305083000000195,
+        "sampleCount": 303
+      },
+      "after": {
+        "median": 22.477125,
+        "p99": 26.933957999999848,
+        "sampleCount": 303
+      },
+      "changePercent": -2.5744695210008994
+    },
+    {
+      "fixture": "array-1000",
+      "mode": "mount",
+      "before": {
+        "median": 21.756916000000274,
+        "p99": 25.173291999999492,
+        "sampleCount": 303
+      },
+      "after": {
+        "median": 21.51341699999989,
+        "p99": 27.350916000000097,
+        "sampleCount": 303
+      },
+      "changePercent": -1.1191797587506436
+    },
+    {
+      "fixture": "array-1000",
+      "mode": "update",
+      "before": {
+        "median": 0.09279100000003382,
+        "p99": 0.1660410000004049,
+        "sampleCount": 303
+      },
+      "after": {
+        "median": 0.09279199999991761,
+        "p99": 0.1659589999999298,
+        "sampleCount": 303
+      },
+      "changePercent": 0.0010776905990717012
+    },
+    {
+      "fixture": "computed-visible-derived",
+      "mode": "mount",
+      "before": {
+        "median": 0.4659590000001117,
+        "p99": 0.5794590000000426,
+        "sampleCount": 303
+      },
+      "after": {
+        "median": 0.46758299999999053,
+        "p99": 0.5813750000000368,
+        "sampleCount": 303
+      },
+      "changePercent": 0.34852851857747336
+    },
+    {
+      "fixture": "computed-visible-derived",
+      "mode": "update",
+      "before": {
+        "median": 0.22787500000004002,
+        "p99": 0.3248329999996713,
+        "sampleCount": 303
+      },
+      "after": {
+        "median": 0.22979100000009112,
+        "p99": 0.3225840000000062,
+        "sampleCount": 303
+      },
+      "changePercent": 0.8408118486234795
+    },
+    {
+      "fixture": "oneOf-20",
+      "mode": "update",
+      "before": {
+        "median": 1.2240830000000642,
+        "p99": 1.5318339999998898,
+        "sampleCount": 303
+      },
+      "after": {
+        "median": 1.2087910000000193,
+        "p99": 1.689875000000029,
+        "sampleCount": 303
+      },
+      "changePercent": -1.2492616922254562
+    }
+  ],
+  "runs": [
+    {
+      "fixture": "flat-500",
+      "run": 1,
+      "variant": "H",
+      "environment": {
+        "startedAt": "2026-10-05T09:45:52.938Z",
+        "endedAt": "2026-10-05T09:45:54.594Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpu": "Apple M1 Max",
+        "cpus": 10,
+        "memory": 68719476736,
+        "warmup": 20,
+        "samples": 101,
+        "validation": "off",
+        "mode": "development synchronous core",
+        "explicitGc": true,
+        "trace": false,
+        "bundleSha256": "e9a4e494da023e0dd5dca2272b91466f02a41ab4a89bf6253719e26a321abdad"
+      },
+      "mount": {
+        "median": 7.2764579999998205,
+        "p99": 7.840458000000581,
+        "sampleCount": 101
+      },
+      "update": {
+        "median": 0.2071250000008149,
+        "p99": 0.2955419999998412,
+        "sampleCount": 101
+      },
+      "observationsSha256": "a02621472d545476f52b4a784704de6327e2e5009501510c44f61440c936b78f",
+      "note": "같은 새 스키마·전체 BF 상호작용에서 모든 표본의 mount/update 값과 안정 진단을 확인했습니다. 시간 원표본에는 숫자 배열만 저장합니다."
+    },
+    {
+      "fixture": "flat-500",
+      "run": 1,
+      "variant": "W",
+      "environment": {
+        "startedAt": "2026-10-05T09:45:54.755Z",
+        "endedAt": "2026-10-05T09:45:56.488Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpu": "Apple M1 Max",
+        "cpus": 10,
+        "memory": 68719476736,
+        "warmup": 20,
+        "samples": 101,
+        "validation": "off",
+        "mode": "development synchronous core",
+        "explicitGc": true,
+        "trace": false,
+        "bundleSha256": "275e61fd72ba922d4d984469afdcf9338acf8eb8dea4046606d49bc810cdd312"
+      },
+      "mount": {
+        "median": 7.951084000000037,
+        "p99": 8.866582999999991,
+        "sampleCount": 101
+      },
+      "update": {
+        "median": 0.21254100000010112,
+        "p99": 0.3265830000000278,
+        "sampleCount": 101
+      },
+      "observationsSha256": "a02621472d545476f52b4a784704de6327e2e5009501510c44f61440c936b78f",
+      "note": "같은 새 스키마·전체 BF 상호작용에서 모든 표본의 mount/update 값과 안정 진단을 확인했습니다. 시간 원표본에는 숫자 배열만 저장합니다."
+    },
+    {
+      "fixture": "flat-500",
+      "run": 2,
+      "variant": "W",
+      "environment": {
+        "startedAt": "2026-10-05T09:45:56.645Z",
+        "endedAt": "2026-10-05T09:45:58.367Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpu": "Apple M1 Max",
+        "cpus": 10,
+        "memory": 68719476736,
+        "warmup": 20,
+        "samples": 101,
+        "validation": "off",
+        "mode": "development synchronous core",
+        "explicitGc": true,
+        "trace": false,
+        "bundleSha256": "275e61fd72ba922d4d984469afdcf9338acf8eb8dea4046606d49bc810cdd312"
+      },
+      "mount": {
+        "median": 7.920250000000124,
+        "p99": 8.81533300000001,
+        "sampleCount": 101
+      },
+      "update": {
+        "median": 0.20987500000001091,
+        "p99": 0.35104200000000674,
+        "sampleCount": 101
+      },
+      "observationsSha256": "a02621472d545476f52b4a784704de6327e2e5009501510c44f61440c936b78f",
+      "note": "같은 새 스키마·전체 BF 상호작용에서 모든 표본의 mount/update 값과 안정 진단을 확인했습니다. 시간 원표본에는 숫자 배열만 저장합니다."
+    },
+    {
+      "fixture": "flat-500",
+      "run": 2,
+      "variant": "H",
+      "environment": {
+        "startedAt": "2026-10-05T09:46:02.019Z",
+        "endedAt": "2026-10-05T09:46:03.665Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpu": "Apple M1 Max",
+        "cpus": 10,
+        "memory": 68719476736,
+        "warmup": 20,
+        "samples": 101,
+        "validation": "off",
+        "mode": "development synchronous core",
+        "explicitGc": true,
+        "trace": false,
+        "bundleSha256": "e9a4e494da023e0dd5dca2272b91466f02a41ab4a89bf6253719e26a321abdad"
+      },
+      "mount": {
+        "median": 7.227708999999777,
+        "p99": 8.153291999999965,
+        "sampleCount": 101
+      },
+      "update": {
+        "median": 0.2115830000002461,
+        "p99": 0.3015410000002703,
+        "sampleCount": 101
+      },
+      "observationsSha256": "a02621472d545476f52b4a784704de6327e2e5009501510c44f61440c936b78f",
+      "note": "같은 새 스키마·전체 BF 상호작용에서 모든 표본의 mount/update 값과 안정 진단을 확인했습니다. 시간 원표본에는 숫자 배열만 저장합니다."
+    },
+    {
+      "fixture": "flat-500",
+      "run": 3,
+      "variant": "H",
+      "environment": {
+        "startedAt": "2026-10-05T09:46:07.293Z",
+        "endedAt": "2026-10-05T09:46:08.923Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpu": "Apple M1 Max",
+        "cpus": 10,
+        "memory": 68719476736,
+        "warmup": 20,
+        "samples": 101,
+        "validation": "off",
+        "mode": "development synchronous core",
+        "explicitGc": true,
+        "trace": false,
+        "bundleSha256": "e9a4e494da023e0dd5dca2272b91466f02a41ab4a89bf6253719e26a321abdad"
+      },
+      "mount": {
+        "median": 7.213458000000173,
+        "p99": 7.969166999999288,
+        "sampleCount": 101
+      },
+      "update": {
+        "median": 0.1967080000003989,
+        "p99": 0.2958749999997963,
+        "sampleCount": 101
+      },
+      "observationsSha256": "a02621472d545476f52b4a784704de6327e2e5009501510c44f61440c936b78f",
+      "note": "같은 새 스키마·전체 BF 상호작용에서 모든 표본의 mount/update 값과 안정 진단을 확인했습니다. 시간 원표본에는 숫자 배열만 저장합니다."
+    },
+    {
+      "fixture": "flat-500",
+      "run": 3,
+      "variant": "W",
+      "environment": {
+        "startedAt": "2026-10-05T09:46:09.084Z",
+        "endedAt": "2026-10-05T09:46:10.728Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpu": "Apple M1 Max",
+        "cpus": 10,
+        "memory": 68719476736,
+        "warmup": 20,
+        "samples": 101,
+        "validation": "off",
+        "mode": "development synchronous core",
+        "explicitGc": true,
+        "trace": false,
+        "bundleSha256": "275e61fd72ba922d4d984469afdcf9338acf8eb8dea4046606d49bc810cdd312"
+      },
+      "mount": {
+        "median": 7.260334000000057,
+        "p99": 8.186583000000155,
+        "sampleCount": 101
+      },
+      "update": {
+        "median": 0.20433299999990595,
+        "p99": 0.3020000000000209,
+        "sampleCount": 101
+      },
+      "observationsSha256": "a02621472d545476f52b4a784704de6327e2e5009501510c44f61440c936b78f",
+      "note": "같은 새 스키마·전체 BF 상호작용에서 모든 표본의 mount/update 값과 안정 진단을 확인했습니다. 시간 원표본에는 숫자 배열만 저장합니다."
+    },
+    {
+      "fixture": "nested-d5-f4",
+      "run": 1,
+      "variant": "H",
+      "environment": {
+        "startedAt": "2026-10-05T09:46:46.595Z",
+        "endedAt": "2026-10-05T09:46:50.492Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpu": "Apple M1 Max",
+        "cpus": 10,
+        "memory": 68719476736,
+        "warmup": 20,
+        "samples": 101,
+        "validation": "off",
+        "mode": "development synchronous core",
+        "explicitGc": true,
+        "trace": false,
+        "bundleSha256": "e9a4e494da023e0dd5dca2272b91466f02a41ab4a89bf6253719e26a321abdad"
+      },
+      "mount": {
+        "median": 24.184708000000683,
+        "p99": 27.146041999999397,
+        "sampleCount": 101
+      },
+      "update": {
+        "median": 0.3791669999991427,
+        "p99": 0.46866700000009587,
+        "sampleCount": 101
+      },
+      "observationsSha256": "18a017c8ef099fe21bc5f4cb89e81bda1919e4afd4e0cc1c49e8065bb0d31261",
+      "note": "같은 새 스키마·전체 BF 상호작용에서 모든 표본의 mount/update 값과 안정 진단을 확인했습니다. 시간 원표본에는 숫자 배열만 저장합니다."
+    },
+    {
+      "fixture": "nested-d5-f4",
+      "run": 1,
+      "variant": "W",
+      "environment": {
+        "startedAt": "2026-10-05T09:46:50.649Z",
+        "endedAt": "2026-10-05T09:46:54.296Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpu": "Apple M1 Max",
+        "cpus": 10,
+        "memory": 68719476736,
+        "warmup": 20,
+        "samples": 101,
+        "validation": "off",
+        "mode": "development synchronous core",
+        "explicitGc": true,
+        "trace": false,
+        "bundleSha256": "275e61fd72ba922d4d984469afdcf9338acf8eb8dea4046606d49bc810cdd312"
+      },
+      "mount": {
+        "median": 21.986665999999786,
+        "p99": 25.15300000000002,
+        "sampleCount": 101
+      },
+      "update": {
+        "median": 0.3450000000000273,
+        "p99": 0.44566599999984646,
+        "sampleCount": 101
+      },
+      "observationsSha256": "18a017c8ef099fe21bc5f4cb89e81bda1919e4afd4e0cc1c49e8065bb0d31261",
+      "note": "같은 새 스키마·전체 BF 상호작용에서 모든 표본의 mount/update 값과 안정 진단을 확인했습니다. 시간 원표본에는 숫자 배열만 저장합니다."
+    },
+    {
+      "fixture": "nested-d5-f4",
+      "run": 2,
+      "variant": "W",
+      "environment": {
+        "startedAt": "2026-10-05T09:46:54.459Z",
+        "endedAt": "2026-10-05T09:46:58.372Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpu": "Apple M1 Max",
+        "cpus": 10,
+        "memory": 68719476736,
+        "warmup": 20,
+        "samples": 101,
+        "validation": "off",
+        "mode": "development synchronous core",
+        "explicitGc": true,
+        "trace": false,
+        "bundleSha256": "275e61fd72ba922d4d984469afdcf9338acf8eb8dea4046606d49bc810cdd312"
+      },
+      "mount": {
+        "median": 24.024832999999944,
+        "p99": 27.475165999999945,
+        "sampleCount": 101
+      },
+      "update": {
+        "median": 0.3783330000001115,
+        "p99": 0.4991660000000593,
+        "sampleCount": 101
+      },
+      "observationsSha256": "18a017c8ef099fe21bc5f4cb89e81bda1919e4afd4e0cc1c49e8065bb0d31261",
+      "note": "같은 새 스키마·전체 BF 상호작용에서 모든 표본의 mount/update 값과 안정 진단을 확인했습니다. 시간 원표본에는 숫자 배열만 저장합니다."
+    },
+    {
+      "fixture": "nested-d5-f4",
+      "run": 2,
+      "variant": "H",
+      "environment": {
+        "startedAt": "2026-10-05T09:47:02.078Z",
+        "endedAt": "2026-10-05T09:47:05.950Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpu": "Apple M1 Max",
+        "cpus": 10,
+        "memory": 68719476736,
+        "warmup": 20,
+        "samples": 101,
+        "validation": "off",
+        "mode": "development synchronous core",
+        "explicitGc": true,
+        "trace": false,
+        "bundleSha256": "e9a4e494da023e0dd5dca2272b91466f02a41ab4a89bf6253719e26a321abdad"
+      },
+      "mount": {
+        "median": 23.426665999999386,
+        "p99": 27.73425000000043,
+        "sampleCount": 101
+      },
+      "update": {
+        "median": 0.367167000000336,
+        "p99": 0.45354200000019773,
+        "sampleCount": 101
+      },
+      "observationsSha256": "18a017c8ef099fe21bc5f4cb89e81bda1919e4afd4e0cc1c49e8065bb0d31261",
+      "note": "같은 새 스키마·전체 BF 상호작용에서 모든 표본의 mount/update 값과 안정 진단을 확인했습니다. 시간 원표본에는 숫자 배열만 저장합니다."
+    },
+    {
+      "fixture": "nested-d5-f4",
+      "run": 3,
+      "variant": "H",
+      "environment": {
+        "startedAt": "2026-10-05T09:47:09.610Z",
+        "endedAt": "2026-10-05T09:47:13.279Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpu": "Apple M1 Max",
+        "cpus": 10,
+        "memory": 68719476736,
+        "warmup": 20,
+        "samples": 101,
+        "validation": "off",
+        "mode": "development synchronous core",
+        "explicitGc": true,
+        "trace": false,
+        "bundleSha256": "e9a4e494da023e0dd5dca2272b91466f02a41ab4a89bf6253719e26a321abdad"
+      },
+      "mount": {
+        "median": 22.102499999999964,
+        "p99": 25.058082999999897,
+        "sampleCount": 101
+      },
+      "update": {
+        "median": 0.3480829999998605,
+        "p99": 0.45791599999938626,
+        "sampleCount": 101
+      },
+      "observationsSha256": "18a017c8ef099fe21bc5f4cb89e81bda1919e4afd4e0cc1c49e8065bb0d31261",
+      "note": "같은 새 스키마·전체 BF 상호작용에서 모든 표본의 mount/update 값과 안정 진단을 확인했습니다. 시간 원표본에는 숫자 배열만 저장합니다."
+    },
+    {
+      "fixture": "nested-d5-f4",
+      "run": 3,
+      "variant": "W",
+      "environment": {
+        "startedAt": "2026-10-05T09:47:13.444Z",
+        "endedAt": "2026-10-05T09:47:17.120Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpu": "Apple M1 Max",
+        "cpus": 10,
+        "memory": 68719476736,
+        "warmup": 20,
+        "samples": 101,
+        "validation": "off",
+        "mode": "development synchronous core",
+        "explicitGc": true,
+        "trace": false,
+        "bundleSha256": "275e61fd72ba922d4d984469afdcf9338acf8eb8dea4046606d49bc810cdd312"
+      },
+      "mount": {
+        "median": 22.1063750000003,
+        "p99": 25.115166000000045,
+        "sampleCount": 101
+      },
+      "update": {
+        "median": 0.347582999999986,
+        "p99": 0.4460000000000264,
+        "sampleCount": 101
+      },
+      "observationsSha256": "18a017c8ef099fe21bc5f4cb89e81bda1919e4afd4e0cc1c49e8065bb0d31261",
+      "note": "같은 새 스키마·전체 BF 상호작용에서 모든 표본의 mount/update 값과 안정 진단을 확인했습니다. 시간 원표본에는 숫자 배열만 저장합니다."
+    },
+    {
+      "fixture": "array-1000",
+      "run": 1,
+      "variant": "H",
+      "environment": {
+        "startedAt": "2026-10-05T09:47:35.877Z",
+        "endedAt": "2026-10-05T09:47:39.394Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpu": "Apple M1 Max",
+        "cpus": 10,
+        "memory": 68719476736,
+        "warmup": 20,
+        "samples": 101,
+        "validation": "off",
+        "mode": "development synchronous core",
+        "explicitGc": true,
+        "trace": false,
+        "bundleSha256": "e9a4e494da023e0dd5dca2272b91466f02a41ab4a89bf6253719e26a321abdad"
+      },
+      "mount": {
+        "median": 21.734959000000345,
+        "p99": 25.55054100000052,
+        "sampleCount": 101
+      },
+      "update": {
+        "median": 0.09187499999916326,
+        "p99": 0.15895799999998417,
+        "sampleCount": 101
+      },
+      "observationsSha256": "c5d0238845c7129774a44c424feb66237994b3738b19a25d940d28c6e4912ab1",
+      "note": "같은 새 스키마·전체 BF 상호작용에서 모든 표본의 mount/update 값과 안정 진단을 확인했습니다. 시간 원표본에는 숫자 배열만 저장합니다."
+    },
+    {
+      "fixture": "array-1000",
+      "run": 1,
+      "variant": "W",
+      "environment": {
+        "startedAt": "2026-10-05T09:47:39.553Z",
+        "endedAt": "2026-10-05T09:47:42.960Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpu": "Apple M1 Max",
+        "cpus": 10,
+        "memory": 68719476736,
+        "warmup": 20,
+        "samples": 101,
+        "validation": "off",
+        "mode": "development synchronous core",
+        "explicitGc": true,
+        "trace": false,
+        "bundleSha256": "275e61fd72ba922d4d984469afdcf9338acf8eb8dea4046606d49bc810cdd312"
+      },
+      "mount": {
+        "median": 20.97699999999986,
+        "p99": 25.190541000000053,
+        "sampleCount": 101
+      },
+      "update": {
+        "median": 0.09054100000003018,
+        "p99": 0.17154100000004746,
+        "sampleCount": 101
+      },
+      "observationsSha256": "c5d0238845c7129774a44c424feb66237994b3738b19a25d940d28c6e4912ab1",
+      "note": "같은 새 스키마·전체 BF 상호작용에서 모든 표본의 mount/update 값과 안정 진단을 확인했습니다. 시간 원표본에는 숫자 배열만 저장합니다."
+    },
+    {
+      "fixture": "array-1000",
+      "run": 2,
+      "variant": "W",
+      "environment": {
+        "startedAt": "2026-10-05T09:47:43.120Z",
+        "endedAt": "2026-10-05T09:47:46.538Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpu": "Apple M1 Max",
+        "cpus": 10,
+        "memory": 68719476736,
+        "warmup": 20,
+        "samples": 101,
+        "validation": "off",
+        "mode": "development synchronous core",
+        "explicitGc": true,
+        "trace": false,
+        "bundleSha256": "275e61fd72ba922d4d984469afdcf9338acf8eb8dea4046606d49bc810cdd312"
+      },
+      "mount": {
+        "median": 21.043083000000024,
+        "p99": 24.870124999999916,
+        "sampleCount": 101
+      },
+      "update": {
+        "median": 0.09404200000017227,
+        "p99": 0.16370800000004238,
+        "sampleCount": 101
+      },
+      "observationsSha256": "c5d0238845c7129774a44c424feb66237994b3738b19a25d940d28c6e4912ab1",
+      "note": "같은 새 스키마·전체 BF 상호작용에서 모든 표본의 mount/update 값과 안정 진단을 확인했습니다. 시간 원표본에는 숫자 배열만 저장합니다."
+    },
+    {
+      "fixture": "array-1000",
+      "run": 2,
+      "variant": "H",
+      "environment": {
+        "startedAt": "2026-10-05T09:47:50.170Z",
+        "endedAt": "2026-10-05T09:47:53.648Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpu": "Apple M1 Max",
+        "cpus": 10,
+        "memory": 68719476736,
+        "warmup": 20,
+        "samples": 101,
+        "validation": "off",
+        "mode": "development synchronous core",
+        "explicitGc": true,
+        "trace": false,
+        "bundleSha256": "e9a4e494da023e0dd5dca2272b91466f02a41ab4a89bf6253719e26a321abdad"
+      },
+      "mount": {
+        "median": 21.79229200000009,
+        "p99": 25.016459000000395,
+        "sampleCount": 101
+      },
+      "update": {
+        "median": 0.09295899999960966,
+        "p99": 0.15679199999976845,
+        "sampleCount": 101
+      },
+      "observationsSha256": "c5d0238845c7129774a44c424feb66237994b3738b19a25d940d28c6e4912ab1",
+      "note": "같은 새 스키마·전체 BF 상호작용에서 모든 표본의 mount/update 값과 안정 진단을 확인했습니다. 시간 원표본에는 숫자 배열만 저장합니다."
+    },
+    {
+      "fixture": "array-1000",
+      "run": 3,
+      "variant": "H",
+      "environment": {
+        "startedAt": "2026-10-05T09:47:57.268Z",
+        "endedAt": "2026-10-05T09:48:00.735Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpu": "Apple M1 Max",
+        "cpus": 10,
+        "memory": 68719476736,
+        "warmup": 20,
+        "samples": 101,
+        "validation": "off",
+        "mode": "development synchronous core",
+        "explicitGc": true,
+        "trace": false,
+        "bundleSha256": "e9a4e494da023e0dd5dca2272b91466f02a41ab4a89bf6253719e26a321abdad"
+      },
+      "mount": {
+        "median": 21.591457999999875,
+        "p99": 24.72466700000041,
+        "sampleCount": 101
+      },
+      "update": {
+        "median": 0.09283400000003894,
+        "p99": 0.1660410000004049,
+        "sampleCount": 101
+      },
+      "observationsSha256": "c5d0238845c7129774a44c424feb66237994b3738b19a25d940d28c6e4912ab1",
+      "note": "같은 새 스키마·전체 BF 상호작용에서 모든 표본의 mount/update 값과 안정 진단을 확인했습니다. 시간 원표본에는 숫자 배열만 저장합니다."
+    },
+    {
+      "fixture": "array-1000",
+      "run": 3,
+      "variant": "W",
+      "environment": {
+        "startedAt": "2026-10-05T09:48:00.894Z",
+        "endedAt": "2026-10-05T09:48:04.542Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpu": "Apple M1 Max",
+        "cpus": 10,
+        "memory": 68719476736,
+        "warmup": 20,
+        "samples": 101,
+        "validation": "off",
+        "mode": "development synchronous core",
+        "explicitGc": true,
+        "trace": false,
+        "bundleSha256": "275e61fd72ba922d4d984469afdcf9338acf8eb8dea4046606d49bc810cdd312"
+      },
+      "mount": {
+        "median": 22.573374999999942,
+        "p99": 27.476083000000017,
+        "sampleCount": 101
+      },
+      "update": {
+        "median": 0.09658300000000963,
+        "p99": 0.162541999999803,
+        "sampleCount": 101
+      },
+      "observationsSha256": "c5d0238845c7129774a44c424feb66237994b3738b19a25d940d28c6e4912ab1",
+      "note": "같은 새 스키마·전체 BF 상호작용에서 모든 표본의 mount/update 값과 안정 진단을 확인했습니다. 시간 원표본에는 숫자 배열만 저장합니다."
+    },
+    {
+      "fixture": "computed-visible-derived",
+      "run": 1,
+      "variant": "H",
+      "environment": {
+        "startedAt": "2026-10-05T09:48:19.791Z",
+        "endedAt": "2026-10-05T09:48:20.442Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpu": "Apple M1 Max",
+        "cpus": 10,
+        "memory": 68719476736,
+        "warmup": 20,
+        "samples": 101,
+        "validation": "off",
+        "mode": "development synchronous core",
+        "explicitGc": true,
+        "trace": false,
+        "bundleSha256": "e9a4e494da023e0dd5dca2272b91466f02a41ab4a89bf6253719e26a321abdad"
+      },
+      "mount": {
+        "median": 0.46770799999967494,
+        "p99": 0.5572090000000571,
+        "sampleCount": 101
+      },
+      "update": {
+        "median": 0.2272080000002461,
+        "p99": 0.31966700000020865,
+        "sampleCount": 101
+      },
+      "observationsSha256": "f72e986299c7eb0ddfccd152d27f739844140ee53f9d115c12a28af449cf09cb",
+      "note": "같은 새 스키마·전체 BF 상호작용에서 모든 표본의 mount/update 값과 안정 진단을 확인했습니다. 시간 원표본에는 숫자 배열만 저장합니다."
+    },
+    {
+      "fixture": "computed-visible-derived",
+      "run": 1,
+      "variant": "W",
+      "environment": {
+        "startedAt": "2026-10-05T09:48:20.598Z",
+        "endedAt": "2026-10-05T09:48:21.258Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpu": "Apple M1 Max",
+        "cpus": 10,
+        "memory": 68719476736,
+        "warmup": 20,
+        "samples": 101,
+        "validation": "off",
+        "mode": "development synchronous core",
+        "explicitGc": true,
+        "trace": false,
+        "bundleSha256": "275e61fd72ba922d4d984469afdcf9338acf8eb8dea4046606d49bc810cdd312"
+      },
+      "mount": {
+        "median": 0.4695000000000391,
+        "p99": 0.5719159999999874,
+        "sampleCount": 101
+      },
+      "update": {
+        "median": 0.22604200000000674,
+        "p99": 0.31766700000002857,
+        "sampleCount": 101
+      },
+      "observationsSha256": "f72e986299c7eb0ddfccd152d27f739844140ee53f9d115c12a28af449cf09cb",
+      "note": "같은 새 스키마·전체 BF 상호작용에서 모든 표본의 mount/update 값과 안정 진단을 확인했습니다. 시간 원표본에는 숫자 배열만 저장합니다."
+    },
+    {
+      "fixture": "computed-visible-derived",
+      "run": 2,
+      "variant": "W",
+      "environment": {
+        "startedAt": "2026-10-05T09:48:21.413Z",
+        "endedAt": "2026-10-05T09:48:22.066Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpu": "Apple M1 Max",
+        "cpus": 10,
+        "memory": 68719476736,
+        "warmup": 20,
+        "samples": 101,
+        "validation": "off",
+        "mode": "development synchronous core",
+        "explicitGc": true,
+        "trace": false,
+        "bundleSha256": "275e61fd72ba922d4d984469afdcf9338acf8eb8dea4046606d49bc810cdd312"
+      },
+      "mount": {
+        "median": 0.45591699999999946,
+        "p99": 0.5533750000000168,
+        "sampleCount": 101
+      },
+      "update": {
+        "median": 0.23225000000002183,
+        "p99": 0.31579199999998764,
+        "sampleCount": 101
+      },
+      "observationsSha256": "f72e986299c7eb0ddfccd152d27f739844140ee53f9d115c12a28af449cf09cb",
+      "note": "같은 새 스키마·전체 BF 상호작용에서 모든 표본의 mount/update 값과 안정 진단을 확인했습니다. 시간 원표본에는 숫자 배열만 저장합니다."
+    },
+    {
+      "fixture": "computed-visible-derived",
+      "run": 2,
+      "variant": "H",
+      "environment": {
+        "startedAt": "2026-10-05T09:48:25.708Z",
+        "endedAt": "2026-10-05T09:48:26.371Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpu": "Apple M1 Max",
+        "cpus": 10,
+        "memory": 68719476736,
+        "warmup": 20,
+        "samples": 101,
+        "validation": "off",
+        "mode": "development synchronous core",
+        "explicitGc": true,
+        "trace": false,
+        "bundleSha256": "e9a4e494da023e0dd5dca2272b91466f02a41ab4a89bf6253719e26a321abdad"
+      },
+      "mount": {
+        "median": 0.4720830000001115,
+        "p99": 0.5804169999996702,
+        "sampleCount": 101
+      },
+      "update": {
+        "median": 0.2331250000002001,
+        "p99": 0.32462500000019645,
+        "sampleCount": 101
+      },
+      "observationsSha256": "f72e986299c7eb0ddfccd152d27f739844140ee53f9d115c12a28af449cf09cb",
+      "note": "같은 새 스키마·전체 BF 상호작용에서 모든 표본의 mount/update 값과 안정 진단을 확인했습니다. 시간 원표본에는 숫자 배열만 저장합니다."
+    },
+    {
+      "fixture": "computed-visible-derived",
+      "run": 3,
+      "variant": "H",
+      "environment": {
+        "startedAt": "2026-10-05T09:48:29.975Z",
+        "endedAt": "2026-10-05T09:48:30.629Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpu": "Apple M1 Max",
+        "cpus": 10,
+        "memory": 68719476736,
+        "warmup": 20,
+        "samples": 101,
+        "validation": "off",
+        "mode": "development synchronous core",
+        "explicitGc": true,
+        "trace": false,
+        "bundleSha256": "e9a4e494da023e0dd5dca2272b91466f02a41ab4a89bf6253719e26a321abdad"
+      },
+      "mount": {
+        "median": 0.45583299999998417,
+        "p99": 0.5386670000002596,
+        "sampleCount": 101
+      },
+      "update": {
+        "median": 0.22633300000006784,
+        "p99": 0.3248329999996713,
+        "sampleCount": 101
+      },
+      "observationsSha256": "f72e986299c7eb0ddfccd152d27f739844140ee53f9d115c12a28af449cf09cb",
+      "note": "같은 새 스키마·전체 BF 상호작용에서 모든 표본의 mount/update 값과 안정 진단을 확인했습니다. 시간 원표본에는 숫자 배열만 저장합니다."
+    },
+    {
+      "fixture": "computed-visible-derived",
+      "run": 3,
+      "variant": "W",
+      "environment": {
+        "startedAt": "2026-10-05T09:48:30.787Z",
+        "endedAt": "2026-10-05T09:48:31.439Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpu": "Apple M1 Max",
+        "cpus": 10,
+        "memory": 68719476736,
+        "warmup": 20,
+        "samples": 101,
+        "validation": "off",
+        "mode": "development synchronous core",
+        "explicitGc": true,
+        "trace": false,
+        "bundleSha256": "275e61fd72ba922d4d984469afdcf9338acf8eb8dea4046606d49bc810cdd312"
+      },
+      "mount": {
+        "median": 0.47212500000000546,
+        "p99": 0.5840410000000134,
+        "sampleCount": 101
+      },
+      "update": {
+        "median": 0.23183299999999463,
+        "p99": 0.3236660000000029,
+        "sampleCount": 101
+      },
+      "observationsSha256": "f72e986299c7eb0ddfccd152d27f739844140ee53f9d115c12a28af449cf09cb",
+      "note": "같은 새 스키마·전체 BF 상호작용에서 모든 표본의 mount/update 값과 안정 진단을 확인했습니다. 시간 원표본에는 숫자 배열만 저장합니다."
+    },
+    {
+      "fixture": "oneOf-20",
+      "run": 1,
+      "variant": "H",
+      "environment": {
+        "startedAt": "2026-10-05T09:48:55.698Z",
+        "endedAt": "2026-10-05T09:48:56.689Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpu": "Apple M1 Max",
+        "cpus": 10,
+        "memory": 68719476736,
+        "warmup": 20,
+        "samples": 101,
+        "validation": "off",
+        "mode": "development synchronous core",
+        "explicitGc": true,
+        "trace": false,
+        "bundleSha256": "e9a4e494da023e0dd5dca2272b91466f02a41ab4a89bf6253719e26a321abdad"
+      },
+      "mount": {
+        "median": 1.8609580000002097,
+        "p99": 2.1200840000001335,
+        "sampleCount": 101
+      },
+      "update": {
+        "median": 1.1823750000003201,
+        "p99": 1.434624999999869,
+        "sampleCount": 101
+      },
+      "observationsSha256": "bb6990f4421fa3089a544621f58a65d4fdef1792123004bf1ff3e7c5451100ae",
+      "note": "같은 새 스키마·전체 BF 상호작용에서 모든 표본의 mount/update 값과 안정 진단을 확인했습니다. 시간 원표본에는 숫자 배열만 저장합니다."
+    },
+    {
+      "fixture": "oneOf-20",
+      "run": 1,
+      "variant": "W",
+      "environment": {
+        "startedAt": "2026-10-05T09:48:56.850Z",
+        "endedAt": "2026-10-05T09:48:57.848Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpu": "Apple M1 Max",
+        "cpus": 10,
+        "memory": 68719476736,
+        "warmup": 20,
+        "samples": 101,
+        "validation": "off",
+        "mode": "development synchronous core",
+        "explicitGc": true,
+        "trace": false,
+        "bundleSha256": "275e61fd72ba922d4d984469afdcf9338acf8eb8dea4046606d49bc810cdd312"
+      },
+      "mount": {
+        "median": 1.8710000000000377,
+        "p99": 2.0977920000000267,
+        "sampleCount": 101
+      },
+      "update": {
+        "median": 1.1738339999999425,
+        "p99": 1.4525409999999965,
+        "sampleCount": 101
+      },
+      "observationsSha256": "bb6990f4421fa3089a544621f58a65d4fdef1792123004bf1ff3e7c5451100ae",
+      "note": "같은 새 스키마·전체 BF 상호작용에서 모든 표본의 mount/update 값과 안정 진단을 확인했습니다. 시간 원표본에는 숫자 배열만 저장합니다."
+    },
+    {
+      "fixture": "oneOf-20",
+      "run": 2,
+      "variant": "W",
+      "environment": {
+        "startedAt": "2026-10-05T09:48:58.006Z",
+        "endedAt": "2026-10-05T09:48:58.992Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpu": "Apple M1 Max",
+        "cpus": 10,
+        "memory": 68719476736,
+        "warmup": 20,
+        "samples": 101,
+        "validation": "off",
+        "mode": "development synchronous core",
+        "explicitGc": true,
+        "trace": false,
+        "bundleSha256": "275e61fd72ba922d4d984469afdcf9338acf8eb8dea4046606d49bc810cdd312"
+      },
+      "mount": {
+        "median": 1.8561670000000277,
+        "p99": 2.0360000000000014,
+        "sampleCount": 101
+      },
+      "update": {
+        "median": 1.1780839999999557,
+        "p99": 1.4412919999999758,
+        "sampleCount": 101
+      },
+      "observationsSha256": "bb6990f4421fa3089a544621f58a65d4fdef1792123004bf1ff3e7c5451100ae",
+      "note": "같은 새 스키마·전체 BF 상호작용에서 모든 표본의 mount/update 값과 안정 진단을 확인했습니다. 시간 원표본에는 숫자 배열만 저장합니다."
+    },
+    {
+      "fixture": "oneOf-20",
+      "run": 2,
+      "variant": "H",
+      "environment": {
+        "startedAt": "2026-10-05T09:49:02.647Z",
+        "endedAt": "2026-10-05T09:49:03.659Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpu": "Apple M1 Max",
+        "cpus": 10,
+        "memory": 68719476736,
+        "warmup": 20,
+        "samples": 101,
+        "validation": "off",
+        "mode": "development synchronous core",
+        "explicitGc": true,
+        "trace": false,
+        "bundleSha256": "e9a4e494da023e0dd5dca2272b91466f02a41ab4a89bf6253719e26a321abdad"
+      },
+      "mount": {
+        "median": 1.8631669999999758,
+        "p99": 2.0816670000003796,
+        "sampleCount": 101
+      },
+      "update": {
+        "median": 1.1862920000003214,
+        "p99": 1.445165999999972,
+        "sampleCount": 101
+      },
+      "observationsSha256": "bb6990f4421fa3089a544621f58a65d4fdef1792123004bf1ff3e7c5451100ae",
+      "note": "같은 새 스키마·전체 BF 상호작용에서 모든 표본의 mount/update 값과 안정 진단을 확인했습니다. 시간 원표본에는 숫자 배열만 저장합니다."
+    },
+    {
+      "fixture": "oneOf-20",
+      "run": 3,
+      "variant": "H",
+      "environment": {
+        "startedAt": "2026-10-05T09:49:07.297Z",
+        "endedAt": "2026-10-05T09:49:08.321Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpu": "Apple M1 Max",
+        "cpus": 10,
+        "memory": 68719476736,
+        "warmup": 20,
+        "samples": 101,
+        "validation": "off",
+        "mode": "development synchronous core",
+        "explicitGc": true,
+        "trace": false,
+        "bundleSha256": "e9a4e494da023e0dd5dca2272b91466f02a41ab4a89bf6253719e26a321abdad"
+      },
+      "mount": {
+        "median": 2.015708999999333,
+        "p99": 2.266208000000006,
+        "sampleCount": 101
+      },
+      "update": {
+        "median": 1.256167000000005,
+        "p99": 1.5437500000007276,
+        "sampleCount": 101
+      },
+      "observationsSha256": "bb6990f4421fa3089a544621f58a65d4fdef1792123004bf1ff3e7c5451100ae",
+      "note": "같은 새 스키마·전체 BF 상호작용에서 모든 표본의 mount/update 값과 안정 진단을 확인했습니다. 시간 원표본에는 숫자 배열만 저장합니다."
+    },
+    {
+      "fixture": "oneOf-20",
+      "run": 3,
+      "variant": "W",
+      "environment": {
+        "startedAt": "2026-10-05T09:49:08.476Z",
+        "endedAt": "2026-10-05T09:49:09.505Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpu": "Apple M1 Max",
+        "cpus": 10,
+        "memory": 68719476736,
+        "warmup": 20,
+        "samples": 101,
+        "validation": "off",
+        "mode": "development synchronous core",
+        "explicitGc": true,
+        "trace": false,
+        "bundleSha256": "275e61fd72ba922d4d984469afdcf9338acf8eb8dea4046606d49bc810cdd312"
+      },
+      "mount": {
+        "median": 1.8683750000000146,
+        "p99": 2.3123750000000314,
+        "sampleCount": 101
+      },
+      "update": {
+        "median": 1.3411249999999768,
+        "p99": 1.7508339999999407,
+        "sampleCount": 101
+      },
+      "observationsSha256": "bb6990f4421fa3089a544621f58a65d4fdef1792123004bf1ff3e7c5451100ae",
+      "note": "같은 새 스키마·전체 BF 상호작용에서 모든 표본의 mount/update 값과 안정 진단을 확인했습니다. 시간 원표본에는 숫자 배열만 저장합니다."
+    }
+  ]
+}

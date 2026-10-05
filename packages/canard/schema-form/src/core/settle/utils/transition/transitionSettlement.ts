@@ -16,6 +16,9 @@ import { withdrawDetachedFills } from './withdrawDetachedFills';
 import { runDeriveRounds } from '../derivation/runDeriveRounds';
 import { hasWrongKindBranchAncestor } from './hasWrongKindBranchAncestor';
 import { updateOutput } from '../compute/updateOutput';
+import { collectFillDescendants } from './collectFillDescendants';
+import { hasRecursiveFill } from './hasRecursiveFill';
+import { RECURSIVE_SHAPE_DIVERGED } from '../errors/settleErrorCode';
 
 /**
  * Apply appearance fills and final-list interpretation within a bounded round.
@@ -39,12 +42,27 @@ export const transitionSettlement = <Self extends SchemaNodeRecord<Self>>(
   const cap = getTransitionCap(context.root.runtime.blueprint);
   const filled = context.hasGates ? new Set<string>() : undefined;
   const filledNodes = context.hasGates ? undefined : new Set<Self>();
+  let fillHosts: Set<Self> | undefined;
+  let fillAncestors: Map<Self, number> | undefined;
+  let newArrayHosts: Set<Self> | undefined;
+  let descendantsByDepth: Self[][] | undefined;
+  let appearances: Iterator<Self>;
+  let appearanceCount = 0;
   let rounds = 0;
   while (true) {
     context.automaticChanged = false;
-    const enteredByDepth: Self[][] = [];
-    for (const node of context.entered)
-      (enteredByDepth[node.depth] ??= []).push(node);
+    newArrayHosts?.clear();
+    const continuingFill = descendantsByDepth !== undefined;
+    const enteredByDepth: Self[][] = descendantsByDepth ?? [];
+    descendantsByDepth = undefined;
+    if (!continuingFill) {
+      appearances = context.entered.values();
+      appearanceCount = context.entered.size;
+      for (let index = 0; index < appearanceCount; index++) {
+        const node = appearances.next().value!;
+        (enteredByDepth[node.depth] ??= []).push(node);
+      }
+    }
     for (let depth = 0; depth < enteredByDepth.length; depth++) {
       const entered = enteredByDepth[depth];
       if (!entered) continue;
@@ -64,13 +82,39 @@ export const transitionSettlement = <Self extends SchemaNodeRecord<Self>>(
         if (context.kind !== 'load' && hasWrongKindBranchAncestor(node)) continue;
         if (context.deriveState?.activeUnsetTargets.has(node)) continue;
         if (node.raw !== undefined) continue;
+        if (node.behavior.type === 'array' &&
+          context.distributedInputs.get(node)?.input !== undefined) continue;
         const value = readDefault(node, context.selectedDeclarationIds);
         if (value === undefined || !isMissingRaw(node, context)) continue;
+        if (node.behavior.strategy === 'branch') {
+          if (fillHosts && hasRecursiveFill(node, fillHosts, context)) {
+            recordSettlementFailure(context, new SchemaFormError(RECURSIVE_SHAPE_DIVERGED,
+              `Recursive shape diverged at ${node.path}`, { path: node.path }), 'budget');
+            context.exceededBudget = 'recursion';
+            context.inTransition = false;
+            return;
+          }
+          (fillHosts ??= new Set()).add(node);
+          fillAncestors ??= new Map();
+          if (!fillAncestors.has(node) || fillAncestors.get(node) === -1)
+            fillAncestors.set(node, node.itemCount);
+        }
         context.filledNodes.add(node);
         context.automatic = true;
         context.writtenInputs.set(node, value);
+        // markWrite logs array structure only for branch hosts and array nodes.
+        const logsStructure = node.behavior.strategy === 'branch' || node.behavior.type === 'array';
+        const arrayLogStart = logsStructure ? context.arrayStructureLog.length : 0;
         markWrite(node, value, context);
         context.automatic = false;
+        if (logsStructure) for (let logIndex = arrayLogStart; logIndex < context.arrayStructureLog.length; logIndex++) {
+          const entry = context.arrayStructureLog[logIndex];
+          if (fillAncestors && (!fillAncestors.has(entry.host) ||
+            fillAncestors.get(entry.host) === -1))
+            fillAncestors.set(entry.host, entry.previousItemCount);
+          if (context.hasGates && entry.host.itemCount > entry.previousItemCount)
+            (newArrayHosts ??= new Set()).add(entry.host);
+        }
       }
     }
     for (const [node, original] of context.writtenInputs) {
@@ -93,11 +137,12 @@ export const transitionSettlement = <Self extends SchemaNodeRecord<Self>>(
       return;
     }
     if (!context.automaticChanged) {
+      if (continuingFill && context.hasGates) continue;
       withdrawDetachedFills(context);
       context.inTransition = false;
       return;
     }
-    rounds++;
+    if (!continuingFill) rounds++;
     if (rounds > cap) {
       recordSettlementFailure(context, new SchemaFormError(BUDGET_EXCEEDED,
         `Transition budget exceeded at ${context.target.path}`,
@@ -125,6 +170,12 @@ export const transitionSettlement = <Self extends SchemaNodeRecord<Self>>(
     if (context.exceededBudget) {
       context.inTransition = false;
       return;
+    }
+    if (fillAncestors && context.entered.size > appearanceCount) {
+      const count = context.entered.size;
+      descendantsByDepth = collectFillDescendants(context, appearances!,
+        count - appearanceCount, fillAncestors, newArrayHosts);
+      appearanceCount = count;
     }
   }
 };

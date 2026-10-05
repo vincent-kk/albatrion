@@ -1,0 +1,49 @@
+{
+  "sourceCommit": "afd8ade3d",
+  "sourceState": "90C-01 미커밋 수정본",
+  "review": "origin/1.0.0-beta의 round-90-closing.md, 34321c81f",
+  "redToGreen": {
+    "before": "배열 D 1개·1,000개, 아이템 안 배열 D, 객체 D 안 배열 D가 SCHEMA_FORM_ERROR.BUDGET_EXCEEDED로 실패했습니다. 차등 행렬의 1개·1,000개도 정상 완료 기대에서 실패했습니다. 재귀 기본값은 요청된 정착 오류 대신 전이 예산 초과였습니다.",
+    "after": "새 회귀/특성화 10건과 차등 행렬 11건, 합계 21건 통과했습니다.",
+    "characterization": "DisableAutomaticWrites와 WRITE-088 push(v)는 수정 전에도 통과했으며 현재 동작을 유지합니다.",
+    "additional": "새 자손의 채움 없음 뒤 게이트 형제 채움, unset/derived 우선순위, 유한 상대 게이트 재귀 및 무한 기본값 재귀 절단을 확인했습니다.",
+    "matrixChange": "1개·1,000개 두 BUDGET_EXCEEDED 기대를 WRITE-082·SETTLE-005·90C-01에 따른 정상 완료·stable·label 채움으로 변경했습니다. 빈 배열의 기존 방출은 유지합니다."
+  },
+  "verification": [
+    {
+      "command": "npx vitest run --project unit --project render --project react18 --reporter=dot",
+      "exit": 1,
+      "seconds": 76.861,
+      "passedFiles": 408,
+      "failedFiles": 2,
+      "passedTests": 3101,
+      "failedTests": 4,
+      "todo": 1,
+      "failures": [
+        "render: EVENT-070 useLayoutEffect",
+        "render: EVENT-070 useEffect",
+        "react18: EVENT-070 useLayoutEffect",
+        "react18: EVENT-070 useEffect"
+      ],
+      "note": "허용된 네 실패 외 실패는 없습니다. 각 watchdog 값 201이 200 미만이어야 한다는 기존 기대에서 실패했습니다."
+    },
+    {
+      "command": "npx tsc --noEmit --composite false --rootDir . -p tsconfig.json",
+      "exit": 0,
+      "seconds": 8.882
+    },
+    {
+      "command": "npx eslint \"src/**/*.{ts,tsx}\"",
+      "exit": 0,
+      "seconds": 6.012
+    },
+    {
+      "command": "node architecture/verification/07-switch/tools/check-legacy-isolation.mjs",
+      "exit": 0,
+      "seconds": 0.432,
+      "checkedFiles": 1582
+    }
+  ],
+  "measurement": "round-90-baseline-summary.json의 최종 소스 측정: 픽스처·회차마다 새 프로세스, 20회 예열·101표본·3회, 303개 합산 median/p99, validation OFF, 다른 명령·테스트·추가 에이전트 동시 실행 없음",
+  "constraints": "지정 stage-07 안에서만 파일 변경. git 쓰기·설치·추가 에이전트 실행 없음. 시간 원표본은 숫자 배열만, 세부는 요약 JSON. 빌드 출력 파일 생성 없음."
+}
